@@ -35,18 +35,13 @@ llama.cpp 的 `--ctx-size` 是总 KV 上下文（会被槽平分）；rerank 物
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | $VENV tools/gt6_rag/server.py
 ```
 
-## 关于 workspace hook 的信任审核（UI 弹卡问题）
+## 关于 PreToolUse 钩子的注册位置
 
-`.zcode/config.json` 里声明的 PreToolUse 钩子属于 workspace 作用域，ZCode 出于安全
-会在 UI 弹「workspace hook 审核」卡（提示 `workspace_hooks_execute_code`）。要点：
-
-- 审核卡出现在**会话聊天流**（pending interaction），不在 Settings 页 —— 设置里看不到是正常的。
-- 点一次"信任"即持久生效：写入 `~/.zcode/security/workspace-hook-trust-v1.json`
-  （按钩子声明的 sha256 digest 记录；钩子内容改动后需重新信任一次）。
-- 不想弹卡：把 `.zcode/config.json` 的 `hooks` 段移到用户级
-  `~/.zcode/cli/config.json`（用户作用域免审核）。`guard-commit.sh` 已内置 cwd 自检
-  （只在本工作区与 MGT6GA-trees 内拦截），移到用户级也不会影响其他项目。
-- 即使钩子未信任，GPG 约束仍有 git 层兜底：`commit.gpgsign=true` + `.githooks/*`。
+GPG 提交拦截钩子已注册在**用户级** `~/.zcode/cli/config.json`（hooks 段），
+不再走 workspace 作用域 —— 用户级免信任审核，无弹卡。
+`guard-commit.sh` 内置 cwd 自检（只在本工作区与 `MGT6GA-trees` 内拦截 git commit），
+因此挂在用户级也等价于项目级约束。若克隆到其他机器，把同样的 hooks 段复制到
+该机器的用户配置即可（脚本路径按实际仓库位置调整）。
 
 ## MCP 工具一览（服务器名 gt6-brain）
 
