@@ -31,8 +31,10 @@ import gregapi.oredict.OreDictMaterialStack;
  * @author Gregorius Techneticies
  *
  * Port deviations: upstream builds gregapi.code.ArrayListNoNulls (gregapi/code is outside this
- * card's FILES_SCOPE, plain ArrayList used) and creates stacks via OM.stack(material, amount),
- * which is exactly new OreDictMaterialStack(material, amount) - OM is not ported yet.
+ * card's FILES_SCOPE, plain ArrayList used with the NoNulls semantics inlined: null elements are
+ * silently dropped on add) and creates stacks via the OM.stack(material, amount) equivalent
+ * {@link gregapi.oredict.OreDictMaterial#stack} (null material yields a null stack, which the
+ * NoNulls list then drops, exactly like upstream) - OM itself is not ported yet.
  */
 public class OreDictConfigurationComponent implements IOreDictConfigurationComponent {
 	private final List<OreDictMaterialStack> mList;
@@ -42,7 +44,7 @@ public class OreDictConfigurationComponent implements IOreDictConfigurationCompo
 	public OreDictConfigurationComponent(long aCommonDivider, OreDictMaterialStack... aComponents) {
 		mCommonDivider = aCommonDivider;
 		mList = new ArrayList<>();
-		if (aComponents != null) for (OreDictMaterialStack tMaterial : aComponents) mList.add(tMaterial);
+		if (aComponents != null) for (OreDictMaterialStack tMaterial : aComponents) if (tMaterial != null) mList.add(tMaterial); // ArrayListNoNulls drops null elements silently
 		mDividedList = new ArrayList<>();
 		for (OreDictMaterialStack tMaterial : mList) mDividedList.add(new OreDictMaterialStack(tMaterial.mMaterial, tMaterial.mAmount / mCommonDivider));
 	}

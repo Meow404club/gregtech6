@@ -95,6 +95,26 @@ public class OreDictMaterialChemistryTest {
 	}
 
 	@Test
+	public void chemicalFormulaCapsAtSubscript300Plus() {
+		// NUM_SUB has 301 entries; index 300 (upstream CS.java:200) is the "₃₀₀₊" marker capping amounts of 300+ Units
+		OreDictMaterial fe = element("Form Cap Fe", 26, 30, 1811, 3134, 7.874, "Fe");
+		OreDictMaterial alloy = mat("Form Capped", "Form Capped");
+		alloy.put(DECOMPOSABLE);
+		alloy.setMcfg(0, fe, 400 * U);
+		assertEquals("Fe\u2083\u2080\u2080\u208A", alloy.mTooltipChemical);
+	}
+
+	@Test
+	public void setMcfgDropsNullMaterialComponents() {
+		// upstream OM.stack(null, amount) yields null and the NoNulls component list drops it (OM.java:485)
+		OreDictMaterial fe = element("Form Null Fe", 26, 30, 1811, 3134, 7.874, "Fe");
+		OreDictMaterial alloy = mat("Form Null Dropped", "Form Null Dropped");
+		alloy.setMcfg(0, fe, U, null, 5 * U);
+		assertEquals(1, alloy.mComponents.getComponents().size());
+		assertSame(fe, alloy.mComponents.getComponents().get(0).mMaterial);
+	}
+
+	@Test
 	public void chemicalFormulaSingleComponentCopiesTooltip() {
 		OreDictMaterial fe = element("Form Only", 26, 30, 1811, 3134, 7.874, "Fe");
 		OreDictMaterial alloy = mat("Form Copy", "Form Copy");

@@ -138,7 +138,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	/** The Material which is the target for selecting the preferred Tool Handle. */ // :279-280
 	public OreDictMaterial mHandleMaterial = this;
 
-	/** The Targets for certain kinds of Processing for this Material. */ // :282-295 (OM.stack(x, y) is exactly new OreDictMaterialStack(x, y); the chain queries over these live in task gt-material-graph)
+	/** The Targets for certain kinds of Processing for this Material. */ // :282-295 (OM.stack(this, x) == new OreDictMaterialStack(this, x) because "this" is never null; the chain queries over these live in task gt-material-graph)
 	public OreDictMaterialStack
 	mTargetCrushing     = new OreDictMaterialStack(this, U),
 	mTargetPulver       = new OreDictMaterialStack(this, U),
@@ -320,16 +320,22 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 
 	/** Upstream CS.java:132 "C = 273"; local constant since CS is outside this card's FILES_SCOPE. */
 	private static final long C = 273;
-	/** Upstream CS.java:169-201 is a literal String[310] with the Unicode subscript spellings of 0..309; generated here with identical values (CS is outside this card's FILES_SCOPE). */
-	private static final String[] NUM_SUB = new String[310];
+	/** Upstream CS.java:169-201 is a literal String[301]: indices 0..299 are the Unicode subscript spellings of the decimal digits, index 300 (:200) is "₃₀₀₊" marking "300 or more"; generated here with identical values (CS is outside this card's FILES_SCOPE). */
+	private static final String[] NUM_SUB = new String[301];
 	static {
 		StringBuilder tBuilder = new StringBuilder();
-		for (int i = 0; i < NUM_SUB.length; i++) {
+		for (int i = 0; i < NUM_SUB.length - 1; i++) {
 			tBuilder.setLength(0);
 			String tDigits = Integer.toString(i);
 			for (int j = 0; j < tDigits.length(); j++) tBuilder.append((char)(tDigits.charAt(j) + 0x2050)); // '0'(0x30)+0x2050 = 0x2080 = subscript zero
 			NUM_SUB[i] = tBuilder.toString();
 		}
+		NUM_SUB[NUM_SUB.length - 1] = "\u2083\u2080\u2080\u208A"; // upstream CS.java:200 "₃₀₀₊", the "300 or more" cap
+	}
+
+	/** OM.stack(OreDictMaterial, long) equivalent (upstream gregapi/util/OM.java:485): a null Material yields a null Stack, which the NoNulls list of the configuration component then drops, exactly like upstream. */
+	private static OreDictMaterialStack stack(OreDictMaterial aMaterial, long aAmount) {
+		return aMaterial == null ? null : new OreDictMaterialStack(aMaterial, aAmount);
 	}
 
 	private static final PrintStream ERR = MaterialRegistry.ERR_LOG; // upstream CS.java:853 ERR
@@ -430,7 +436,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 			aCommonDivider = tAmount / U;
 			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
 		}
-		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1)));
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, stack(aMaterial1, aAmount1)));
 	}
 	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2) { // :535-542
 		if (aCommonDivider == 0) {
@@ -438,7 +444,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 			aCommonDivider = tAmount / U;
 			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
 		}
-		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2)));
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, stack(aMaterial1, aAmount1), stack(aMaterial2, aAmount2)));
 	}
 	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3) { // :543-550
 		if (aCommonDivider == 0) {
@@ -446,7 +452,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 			aCommonDivider = tAmount / U;
 			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
 		}
-		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3)));
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, stack(aMaterial1, aAmount1), stack(aMaterial2, aAmount2), stack(aMaterial3, aAmount3)));
 	}
 	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4) { // :551-558
 		if (aCommonDivider == 0) {
@@ -454,7 +460,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 			aCommonDivider = tAmount / U;
 			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
 		}
-		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4)));
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, stack(aMaterial1, aAmount1), stack(aMaterial2, aAmount2), stack(aMaterial3, aAmount3), stack(aMaterial4, aAmount4)));
 	}
 	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5) { // :559-566
 		if (aCommonDivider == 0) {
@@ -462,7 +468,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 			aCommonDivider = tAmount / U;
 			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
 		}
-		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4), new OreDictMaterialStack(aMaterial5, aAmount5)));
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, stack(aMaterial1, aAmount1), stack(aMaterial2, aAmount2), stack(aMaterial3, aAmount3), stack(aMaterial4, aAmount4), stack(aMaterial5, aAmount5)));
 	}
 	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6) { // :567-574
 		long tAmount = aAmount1+aAmount2+aAmount3+aAmount4+aAmount5+aAmount6;
@@ -470,7 +476,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 			aCommonDivider = tAmount / U;
 			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
 		}
-		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4), new OreDictMaterialStack(aMaterial5, aAmount5), new OreDictMaterialStack(aMaterial6, aAmount6)));
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, stack(aMaterial1, aAmount1), stack(aMaterial2, aAmount2), stack(aMaterial3, aAmount3), stack(aMaterial4, aAmount4), stack(aMaterial5, aAmount5), stack(aMaterial6, aAmount6)));
 	}
 	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7) { // :575-582
 		long tAmount = aAmount1+aAmount2+aAmount3+aAmount4+aAmount5+aAmount6+aAmount7;
@@ -478,7 +484,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 			aCommonDivider = tAmount / U;
 			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
 		}
-		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4), new OreDictMaterialStack(aMaterial5, aAmount5), new OreDictMaterialStack(aMaterial6, aAmount6), new OreDictMaterialStack(aMaterial7, aAmount7)));
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, stack(aMaterial1, aAmount1), stack(aMaterial2, aAmount2), stack(aMaterial3, aAmount3), stack(aMaterial4, aAmount4), stack(aMaterial5, aAmount5), stack(aMaterial6, aAmount6), stack(aMaterial7, aAmount7)));
 	}
 	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7, OreDictMaterial aMaterial8, long aAmount8) { // :583-590
 		long tAmount = aAmount1+aAmount2+aAmount3+aAmount4+aAmount5+aAmount6+aAmount7+aAmount8;
@@ -486,7 +492,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 			aCommonDivider = tAmount / U;
 			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
 		}
-		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4), new OreDictMaterialStack(aMaterial5, aAmount5), new OreDictMaterialStack(aMaterial6, aAmount6), new OreDictMaterialStack(aMaterial7, aAmount7), new OreDictMaterialStack(aMaterial8, aAmount8)));
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, stack(aMaterial1, aAmount1), stack(aMaterial2, aAmount2), stack(aMaterial3, aAmount3), stack(aMaterial4, aAmount4), stack(aMaterial5, aAmount5), stack(aMaterial6, aAmount6), stack(aMaterial7, aAmount7), stack(aMaterial8, aAmount8)));
 	}
 	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7, OreDictMaterial aMaterial8, long aAmount8, OreDictMaterial aMaterial9, long aAmount9) { // :591-598
 		long tAmount = aAmount1+aAmount2+aAmount3+aAmount4+aAmount5+aAmount6+aAmount7+aAmount8+aAmount9;
@@ -494,7 +500,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 			aCommonDivider = tAmount / U;
 			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
 		}
-		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4), new OreDictMaterialStack(aMaterial5, aAmount5), new OreDictMaterialStack(aMaterial6, aAmount6), new OreDictMaterialStack(aMaterial7, aAmount7), new OreDictMaterialStack(aMaterial8, aAmount8), new OreDictMaterialStack(aMaterial9, aAmount9)));
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, stack(aMaterial1, aAmount1), stack(aMaterial2, aAmount2), stack(aMaterial3, aAmount3), stack(aMaterial4, aAmount4), stack(aMaterial5, aAmount5), stack(aMaterial6, aAmount6), stack(aMaterial7, aAmount7), stack(aMaterial8, aAmount8), stack(aMaterial9, aAmount9)));
 	}
 
 	public OreDictMaterial uumMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1) { // :602-609
@@ -639,7 +645,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setCrushing(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetCrushing.mMaterial.mTargetedCrushing.remove(this);
-		mTargetCrushing = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetCrushing = stack(aMaterial, aAmount);
 		aMaterial.mTargetedCrushing.add(this);
 		return this;
 	}
@@ -648,7 +654,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setPulver(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetPulver.mMaterial.mTargetedPulver.remove(this);
-		mTargetPulver = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetPulver = stack(aMaterial, aAmount);
 		aMaterial.mTargetedPulver.add(this);
 		return this;
 	}
@@ -657,7 +663,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setSmelting(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetSmelting.mMaterial.mTargetedSmelting.remove(this);
-		mTargetSmelting = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetSmelting = stack(aMaterial, aAmount);
 		aMaterial.mTargetedSmelting.add(this);
 		if (aAmount > 0) put(TDG.MELTING);
 		return this;
@@ -667,7 +673,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setSolidifying(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetSolidifying.mMaterial.mTargetedSolidifying.remove(this);
-		mTargetSolidifying = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetSolidifying = stack(aMaterial, aAmount);
 		aMaterial.mTargetedSolidifying.add(this);
 		return this;
 	}
@@ -676,7 +682,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setSmashing(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetSmashing.mMaterial.mTargetedSmashing.remove(this);
-		mTargetSmashing = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetSmashing = stack(aMaterial, aAmount);
 		aMaterial.mTargetedSmashing.add(this);
 		return this;
 	}
@@ -685,7 +691,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setCutting(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetCutting.mMaterial.mTargetedCutting.remove(this);
-		mTargetCutting = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetCutting = stack(aMaterial, aAmount);
 		aMaterial.mTargetedCutting.add(this);
 		return this;
 	}
@@ -694,7 +700,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setWorking(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetWorking.mMaterial.mTargetedWorking.remove(this);
-		mTargetWorking = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetWorking = stack(aMaterial, aAmount);
 		aMaterial.mTargetedWorking.add(this);
 		return this;
 	}
@@ -703,7 +709,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setForging(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetForging.mMaterial.mTargetedForging.remove(this);
-		mTargetForging = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetForging = stack(aMaterial, aAmount);
 		aMaterial.mTargetedForging.add(this);
 		return this;
 	}
@@ -712,7 +718,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setBurning(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetBurning.mMaterial.mTargetedBurning.remove(this);
-		mTargetBurning = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetBurning = stack(aMaterial, aAmount);
 		aMaterial.mTargetedBurning.add(this);
 		return this;
 	}
@@ -721,7 +727,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setBending(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetBending.mMaterial.mTargetedBending.remove(this);
-		mTargetBending = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetBending = stack(aMaterial, aAmount);
 		aMaterial.mTargetedBending.add(this);
 		return this;
 	}
@@ -730,7 +736,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setCompressing(OreDictMaterial aMaterial, long aAmount) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetCompressing.mMaterial.mTargetedCompressing.remove(this);
-		mTargetCompressing = new OreDictMaterialStack(aMaterial, aAmount);
+		mTargetCompressing = stack(aMaterial, aAmount);
 		aMaterial.mTargetedCompressing.add(this);
 		return this;
 	}
@@ -739,7 +745,7 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public OreDictMaterial setGenerifying(OreDictMaterial aMaterial) {
 		if (aMaterial == null) aMaterial = this;
 		mTargetGenerifying.mMaterial.mTargetedGenerifying.remove(this);
-		mTargetGenerifying = new OreDictMaterialStack(aMaterial, U);
+		mTargetGenerifying = stack(aMaterial, U);
 		aMaterial.mTargetedGenerifying.add(this);
 		return this;
 	}
