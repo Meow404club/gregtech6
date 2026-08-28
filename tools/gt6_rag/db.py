@@ -138,10 +138,9 @@ def contextual_prefix(source: str, rel_path: str, header: str, lang: str) -> str
     of asking an LLM to write it.
     """
     if lang == "java":
-        cls = rel_path.rsplit("/", 1)[-1].removesuffix(".java")
         pkg = rel_path.rsplit("/", 1)[0].replace("/", ".")
-        h = header.strip() or "(top-level)"
-        return f"[{source}] file {rel_path} (package {pkg}); chunk: {cls} — {h}"
+        h = header or rel_path
+        return f"[{source}] file {rel_path} (package {pkg}); chunk: {h}"
     if lang == "md":
         return f"[{source}] doc {rel_path} — section: {header}"
     return f"[{source}] {rel_path} — {header}"
@@ -205,10 +204,13 @@ def index_source(con: sqlite3.Connection, source: str, cfg: dict,
         if not force and row and abs(row[0] - st.st_mtime) < 1 and row[1] == st.st_size:
             skipped += 1
             continue
-        chunks = chunk_file(lang, text)
+        chunks = chunk_file(lang, text, rel)
         if not chunks:
             continue
-        for ord_, (line, header, ctext) in enumerate(chunks):
+        for ord_, chunk in enumerate(chunks):
+            line = chunk["line"]
+            header = chunk["header"]
+            ctext = chunk["text"]
             batch.append({
                 "rel": rel, "line": line, "ord": ord_, "header": header,
                 "text": ctext,

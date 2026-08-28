@@ -4,6 +4,8 @@
     "api_key": "<在此填入你的 key>",
     "model": "Qwen3-Embedding-4B",
     "batch_size": 32,
+    "max_batch_tokens": 30000,
+    "max_item_chars": 12000,
     "truncate_dims": 1536,
     "query_instruction": "Instruct: Given a search query about Minecraft modding (Java source code, Forge/NeoForge APIs, GregTech 6 porting), retrieve relevant source code or documentation passages that answer the query\nQuery: "
   }

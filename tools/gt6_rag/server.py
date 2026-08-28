@@ -13,6 +13,7 @@ sys.path.insert(0, str(TOOLS_DIR))
 from mcp.server.fastmcp import FastMCP  # noqa: E402
 
 import gt6_rag.search as S  # noqa: E402
+import gt6_rag.memory as M  # noqa: E402
 from gt6_rag import db  # noqa: E402
 
 mcp = FastMCP(
@@ -85,12 +86,50 @@ def refresh_index(source: str | None = None) -> str:
 
 
 @mcp.tool()
+def remember(kind: str, text: str) -> str:
+    """写入语义记忆（自动嵌入）。kind 建议: decision|research|bug|merge|handoff|lesson。
+    相似度≥0.97 视为重复忽略；≥0.80 追加合并进旧记忆（mem0 式 UPDATE）。"""
+    try:
+        return _j(M.remember(kind, text))
+    except Exception as e:
+        return _j({"error": str(e)})
+
+
+@mcp.tool()
+def recall(query: str, k: int = 8, kind: str | None = None) -> str:
+    """语义回忆历史记忆（带时效衰减，活跃优先）。会话开始、动手前先 recall，避免重复考古。"""
+    try:
+        return _j(M.recall(query, k, kind))
+    except Exception as e:
+        return _j({"error": str(e)})
+
+
+@mcp.tool()
+def forget(memory_id: int) -> str:
+    """软删除一条语义记忆（保留审计痕迹）。"""
+    try:
+        return _j(M.forget(memory_id))
+    except Exception as e:
+        return _j({"error": str(e)})
+
+
+@mcp.tool()
 def kg_add(src: str, rel: str, dst: str, note: str = "",
            node_types: dict | None = None) -> str:
     """知识图谱记录一条关系：src -[rel]-> dst（例: kg_add("GT6_MetaTileEntity","UPGRADES_TO","GT6_MultiMachine")）。
+    三元组会同时嵌入语义索引（可用 kg_search 语义检索）。
     node_types 可选 {"节点名": "Class|Texture|Recipe|Machine|Material|Concept"}。"""
     try:
-        return _j(S.kg_add(src, rel, dst, note, node_types))
+        return _j(M.kg_add_embedded(src, rel, dst, note, node_types))
+    except Exception as e:
+        return _j({"error": str(e)})
+
+
+@mcp.tool()
+def kg_search(query: str, k: int = 10) -> str:
+    """语义检索知识图谱三元组（如 "多方块校验怎么做的"）。精确过滤用 kg_query。"""
+    try:
+        return _j(M.kg_search(query, k))
     except Exception as e:
         return _j({"error": str(e)})
 

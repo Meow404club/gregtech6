@@ -54,18 +54,38 @@ def search_code(query: str, sources: list[str] | None = None, limit: int = 8,
     qv = embed_query(query)
     fts_expr = _fts_query(query)
 
-    # ---- semantic candidates
+    # ---- semantic candidates (in-memory matrix per source; numpy fast path)
     vec_hits: dict[tuple, float] = {}
-    for src in active:
-        for path, line, ord_, text, blob in con.execute(
-            "SELECT path, line, ord, text, vec FROM chunks WHERE source=?", (src,)
-        ):
-            if path_glob and not (fnmatch.fnmatch(path, path_glob)
-                                  or fnmatch.fnmatch(path.split("/")[-1], path_glob)):
+    try:
+        import numpy as _np
+        for src in active:
+            rows = con.execute(
+                "SELECT rowid, path, line, ord, vec FROM chunks WHERE source=?", (src,)
+            ).fetchall()
+            if not rows:
                 continue
-            score = db.cosine(qv, db.blob_to_vec(blob))
-            if score > 0.15:
-                vec_hits[(src, path, ord_)] = score
+            dim = len(rows[0][4]) // 4
+            mat = _np.empty((len(rows), dim), dtype=_np.float32)
+            for i, r in enumerate(rows):
+                mat[i] = _np.frombuffer(r[4], dtype=_np.float32)
+            scores = mat @ _np.asarray(qv, dtype=_np.float32)
+            for i, (rowid, path, line, ord_, _blob) in enumerate(rows):
+                if path_glob and not (fnmatch.fnmatch(path, path_glob)
+                                      or fnmatch.fnmatch(path.split("/")[-1], path_glob)):
+                    continue
+                if scores[i] > 0.15:
+                    vec_hits[(src, path, ord_)] = float(scores[i])
+    except ImportError:
+        for src in active:
+            for path, line, ord_, text, blob in con.execute(
+                "SELECT path, line, ord, text, vec FROM chunks WHERE source=?", (src,)
+            ):
+                if path_glob and not (fnmatch.fnmatch(path, path_glob)
+                                      or fnmatch.fnmatch(path.split("/")[-1], path_glob)):
+                    continue
+                score = db.cosine(qv, db.blob_to_vec(blob))
+                if score > 0.15:
+                    vec_hits[(src, path, ord_)] = score
     vec_rank = sorted(vec_hits.items(), key=lambda kv: -kv[1])
 
     # ---- lexical candidates (bm25 over contextualized body)
