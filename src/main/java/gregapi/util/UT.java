@@ -34,5 +34,24 @@ public class UT {
 		public static long divup(long aNumber, long aDivider) {
 			return aNumber / aDivider + (aNumber % aDivider == 0 ? 0 : 1);
 		}
+
+		/** Binds a Value between two Boundaries. */ // UT.java:1544-1546 verbatim (added by task gt-material-model)
+		public static long bind(long aMin, long aMax, long aBoundValue) {
+			return aMin > aMax ? Math.max(aMax, Math.min(aMin, aBoundValue)) : Math.max(aMin, Math.min(aMax, aBoundValue));
+		}
+
+		public static byte bind2(long aBoundValue) {return (byte) Math.max(0, Math.min(          3, aBoundValue));} // UT.java:1554 verbatim
+
+		public static byte bind4(long aBoundValue) {return (byte) Math.max(0, Math.min(         15, aBoundValue));} // UT.java:1556 verbatim
+
+		/** Checks if the Object converts to a non-empty String. */ // UT.java:1512-1514 verbatim; the BiomeGenBase branch of upstream stringValidate is MC-coupled and stays behind
+		public static boolean stringValid(Object aString) {
+			return aString != null && !aString.toString().isEmpty();
+		}
+
+		/** toUpperCases the first Character of the String and returns it. */ // UT.java:1653-1656 verbatim
+		public static String capitalise(String aString) {
+			return aString == null ? "" : aString.length() <= 1 ? aString.toUpperCase() : aString.substring(0, 1).toUpperCase() + aString.substring(1);
+		}
 	}
 }
