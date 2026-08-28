@@ -35,5 +35,5 @@ description: "GT6 现代复兴计划会话上下文装载器。每次会话开�
 ## 铁律提醒（装载后必须遵守）
 
 - 不猜测任何现代 API：动手前用 `search_code` / `sym_query` / `get_source` 查证。
-- 提交必须 GPG 签名（`git commit -S -s`）且经 review-merge Agent 审查（见 gt6-workflow 技能）。
+- 提交必须 GPG 签名（`git commit -S -s`）且经 review-merge Agent 审查（流程见 AGENTS.md 三、并行 PR 工作流）。
 - 每完成一个子任务：`remember`/`state_update` 落账 + `kg_add` 记录关键关系。

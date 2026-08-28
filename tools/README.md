@@ -19,11 +19,34 @@ $VENV -m gt6_rag.index gt6 vanilla         # 只索引指定源
 $VENV -m gt6_rag.index --limit-files 5 all # 小规模试跑
 ```
 
-MCP 服务器由 ZCode 项目配置自动拉起，无需手动运行；调试时可：
+## 本地推理服务（ZCode 会话前先拉起）
+
+```bash
+tools/embed_server.sh    # 嵌入服务 Qwen3-Embedding-4B Q8  → 127.0.0.1:8937（12 槽）
+tools/rerank_server.sh   # 精排服务 Qwen3-Reranker-0.6B Q8 → 127.0.0.1:8938（4 槽）
+```
+
+llama.cpp 的 `--ctx-size` 是总 KV 上下文（会被槽平分）；rerank 物理批 `-ub` 必须 ≥ 单条
+输入 token 数（默认 512 会 500）。远端中转回退配置见 `tools/config.json` 的 remote_fallback。
+
+## MCP 服务器由 ZCode 项目配置自动拉起
 
 ```bash
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | $VENV tools/gt6_rag/server.py
 ```
+
+## 关于 workspace hook 的信任审核（UI 弹卡问题）
+
+`.zcode/config.json` 里声明的 PreToolUse 钩子属于 workspace 作用域，ZCode 出于安全
+会在 UI 弹「workspace hook 审核」卡（提示 `workspace_hooks_execute_code`）。要点：
+
+- 审核卡出现在**会话聊天流**（pending interaction），不在 Settings 页 —— 设置里看不到是正常的。
+- 点一次"信任"即持久生效：写入 `~/.zcode/security/workspace-hook-trust-v1.json`
+  （按钩子声明的 sha256 digest 记录；钩子内容改动后需重新信任一次）。
+- 不想弹卡：把 `.zcode/config.json` 的 `hooks` 段移到用户级
+  `~/.zcode/cli/config.json`（用户作用域免审核）。`guard-commit.sh` 已内置 cwd 自检
+  （只在本工作区与 MGT6GA-trees 内拦截），移到用户级也不会影响其他项目。
+- 即使钩子未信任，GPG 约束仍有 git 层兜底：`commit.gpgsign=true` + `.githooks/*`。
 
 ## MCP 工具一览（服务器名 gt6-brain）
 
