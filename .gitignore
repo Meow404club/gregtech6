@@ -12,3 +12,7 @@ tools/**/__pycache__/
 
 # 密钥文件（pre-commit 强制拦截）
 tools/config.json
+
+# Gradle
+.gradle/
+build/
