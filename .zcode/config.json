@@ -1,0 +1,29 @@
+{
+  "mcp": {
+    "servers": {
+      "gt6-brain": {
+        "type": "stdio",
+        "command": "/home/brokestar/workspace/MGT6GA/gregtech6/tools/.venv/bin/python",
+        "args": ["/home/brokestar/workspace/MGT6GA/gregtech6/tools/gt6_rag/server.py"],
+        "timeoutMs": 60000
+      }
+    }
+  },
+  "hooks": {
+    "enabled": true,
+    "events": {
+      "PreToolUse": [
+        {
+          "matcher": "Bash",
+          "hooks": [
+            {
+              "type": "process",
+              "command": "/home/brokestar/workspace/MGT6GA/gregtech6/.githooks/guard-commit.sh",
+              "timeoutMs": 10000
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

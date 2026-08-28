@@ -1,0 +1,58 @@
+{
+  "gt6": {
+    "root": "tmp/gt6-1.7.10/src/main/java",
+    "lang": "java",
+    "include": ["**/*.java"],
+    "exclude": [],
+    "desc": "GregTech 6 官方 1.7.10 源码（移植对象，考古第一优先）"
+  },
+  "gtceu-modern": {
+    "root": "tmp/refs/gtceu-modern/src/main/java",
+    "lang": "java",
+    "include": ["**/*.java"],
+    "exclude": [],
+    "desc": "GregTech CEu Modern 1.20.1 源码（现代 GT 参考实现）"
+  },
+  "vanilla": {
+    "root": "tmp/vanilla-1.20.1",
+    "lang": "java",
+    "include": ["net/**/*.java", "com/**/*.java"],
+    "exclude": [],
+    "desc": "原版 Minecraft 1.20.1 反编译源码（Mojang 官方映射名，真理之眼）"
+  },
+  "forge-api": {
+    "root": "tmp/refs/forge-api",
+    "lang": "java",
+    "include": ["**/src/main/java/**/*.java", "**/src/generated/java/**/*.java"],
+    "exclude": ["**/src/test/**/*.java"],
+    "desc": "MinecraftForge API：1.7.10 / 1.8.9 / 1.12.2 / 1.20.1 分支"
+  },
+  "neoforge-api": {
+    "root": "tmp/refs/neoforge-api/neoforge-1.20.1/src/main/java",
+    "lang": "java",
+    "include": ["**/*.java"],
+    "exclude": [],
+    "desc": "NeoForge 1.20.1 API 源码"
+  },
+  "forge-docs": {
+    "root": "tmp/refs/forge-docs",
+    "lang": "md",
+    "include": ["**/docs/**/*.md"],
+    "exclude": ["**/CHANGELOG*", "**/LICENSE*"],
+    "desc": "MinecraftForge 官方文档（1.12.x～1.21.x 各分支）"
+  },
+  "neoforge-docs": {
+    "root": "tmp/refs/neoforge-docs/neoforge",
+    "lang": "md",
+    "include": ["docs/**/*.md", "primer/**/*.md", "modpack/**/*.md"],
+    "exclude": [],
+    "desc": "NeoForge 官方文档（当前版本文档站）"
+  },
+  "project": {
+    "root": ".",
+    "lang": "md",
+    "include": ["docs/**/*.md", "AGENTS.md"],
+    "exclude": [],
+    "desc": "本项目自身的移植决策、状态与架构文档"
+  }
+}
