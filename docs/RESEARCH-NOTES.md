@@ -50,6 +50,27 @@ max_chars 从 2000 提到 6000（~1.5-2k token，完整一节），只有超大�
 
 性能修正：向量检索换 numpy 矩阵点积（55k 块 0.4s → 0.1s）。
 
+## 2026-08-28(深夜) · Reranking 精排落地
+
+- **选型**：Qwen3-Reranker-0.6B Q8（Voodisss GGUF-llama_cpp 移植版）。理由：
+  MTEB Reranking 榜 jina-reranker-v3 0.826 与 Qwen3-Reranker 同档，但后者与我们的
+  嵌入模型同家族同 tokenizer（架构 Qwen3ForCausalLM），GGUF 兼容风险最低；
+  0.6B Q8 仅 ~0.6GB 显存，7900XT 余量 ~9.5GB 足够双模型共存，无需 CPU 卸载。
+  MTEB results 数据里 reranker 记录很少（只有 jina-v3 有 4 任务记录），
+  Qwen3 官方报告 BEIR-avg 0.6B=0.831 / 4B=0.842。
+- **部署**：`tools/rerank_server.sh`，端口 8938，原生 `--rerank` → `/v1/rerank` 端点。
+  调用量小 → 4 槽 × 6144 ctx。
+- **关键坑**：rerank 的输入是整段 (query+doc) 拼接，llama.cpp 的物理批 `-ub` 默认
+  512 token，超长输入直接 500（"input (714 tokens) is too large"）。必须 `-ub 4096`。
+  （`--batch-size` 只是逻辑批，不影响此限制。）
+- **三级管线**：向量+BM25 RRF（召回 20）→ Cross-Encoder 精排（重排取 top-N）→
+  标识符重合 boost 兜底。`search_code(rerank=False)` 可跳过；服务不可用自动降级。
+- **A/B 实测**（limit=3，4 个真实考古问题）：
+  - `getUpdateTag 数据同步`：精排后 BlockEntity.java 升到第 2（0.9497 vs
+    ClientboundBlockEntityDataPacket 0.998），修正了 embedding 阶段的语序偏差；
+  - 其余问题 top1 不变但分数拉开（0.94~0.999 vs 噪声 0.02），上下文质量提升；
+  - 平均开销 0.4~0.7s/查询（8 候选），查询期可接受，索引期不用。
+
 ## 待验证 / 下一步
 
 - [ ] 用 10 个真实考古问题做检索质量基准（Recall@5 人工评判），固化到 `tools/eval/`
