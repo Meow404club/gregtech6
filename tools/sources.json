@@ -51,7 +51,7 @@
   "project": {
     "root": ".",
     "lang": "md",
-    "include": ["docs/**/*.md", "AGENTS.md"],
+    "include": ["docs/*.md", "docs/**/*.md", "AGENTS.md"],
     "exclude": [],
     "desc": "本项目自身的移植决策、状态与架构文档"
   }
