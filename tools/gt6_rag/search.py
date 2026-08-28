@@ -39,8 +39,38 @@ def _fts_query(query: str) -> str:
     return " OR ".join('"%s"' % t.replace('"', '""') for t in toks[:24])
 
 
+def _rerank(query: str, docs: list[str], timeout: int = 120) -> list[float] | None:
+    """Call the local llama-server /v1/rerank endpoint (Qwen3-Reranker).
+
+    Returns scores aligned with docs, or None if the service is unavailable
+    (caller falls back to the fusion order).
+    """
+    import json as _json
+    import urllib.request as _ur
+    cfg = db.load_config() if hasattr(db, "load_config") else {}
+    base = _rerank._base  # type: ignore[attr-defined]
+    body = _json.dumps({"model": "qwen3-reranker", "query": query, "documents": docs}).encode()
+    req = _ur.Request(base.rstrip("/") + "/rerank", data=body,
+                      headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        opener = _ur.build_opener(_ur.ProxyHandler({}))
+        with opener.open(req, timeout=timeout) as resp:
+            data = _json.loads(resp.read().decode())
+        out = [0.0] * len(docs)
+        for r in data.get("results", []):
+            if 0 <= r["index"] < len(docs):
+                out[r["index"]] = float(r["relevance_score"])
+        return out
+    except Exception:
+        return None
+
+
+_rerank._base = "http://127.0.0.1:8938/v1"  # type: ignore[attr-defined]
+
+
 def search_code(query: str, sources: list[str] | None = None, limit: int = 8,
-                path_glob: str | None = None, candidate_k: int = 20) -> list[dict]:
+                path_glob: str | None = None, candidate_k: int = 20,
+                rerank: bool = True) -> list[dict]:
     subset = _sources_subset(sources)
     if not subset:
         return []
@@ -133,11 +163,22 @@ def search_code(query: str, sources: list[str] | None = None, limit: int = 8,
             "section": header,
             "score": round(rrf + 0.05 * lex, 5),
             "snippet": text[:1200],
+            "_text": text,
         })
         if len(results) >= limit:
             break
+
+    # ---- reranking (cross-encoder precision stage; see RESEARCH-NOTES)
+    if rerank and len(results) > 1:
+        scores = _rerank(query, [r["_text"][:2000] for r in results])
+        if scores is not None:
+            for r, s in zip(results, scores):
+                r["rerank"] = round(s, 4)
+                r["score"] = round(s, 4)  # cross-encoder verdict wins
+            results.sort(key=lambda r: -r["score"])
+    for r in results:
+        r.pop("_text", None)
     con.close()
-    results.sort(key=lambda r: -r["score"])
     return results
 
 
