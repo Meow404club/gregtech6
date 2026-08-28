@@ -23,7 +23,9 @@ package gregapi.oredict;
 import static gregapi.data.CS.F;
 import static gregapi.data.CS.T;
 import static gregapi.data.CS.U;
+import static gregapi.data.CS.UD;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,6 +39,8 @@ import gregapi.code.ITagDataContainer;
 import gregapi.code.TagData;
 import gregapi.data.TD;
 import gregapi.oredict.configurations.IOreDictConfigurationComponent;
+import gregapi.oredict.configurations.OreDictConfigurationComponent;
+import gregapi.util.UT;
 
 /**
  * @author Gregorius Techneticies
@@ -287,6 +291,597 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 
 	public OreDictMaterial hide(boolean aHidden) { // :395-398
 		mHidden = aHidden;
+		return this;
+	}
+
+	/**
+	 * Tags referenced here whose TD groups (TD.Atomic/Compounds/Processing/ItemGenerator) are not
+	 * ported yet - gregapi/data/TD.java is outside this card's FILES_SCOPE.
+	 * TagData.createTagData is idempotent by upper-cased name, so these constants UNIFY with the
+	 * real TD constants as soon as task gt-material-dataset ports them with the upstream key
+	 * strings referenced in the comments. No line of this class has to change for that.
+	 */
+	private static class TDG {
+		static final TagData ELEMENT           = TagData.createTagData("ATOMIC.ELEMENT");                // TD.java:305
+		static final TagData NO_ADVANCED_TOOLS = TagData.createTagData("PROPERTIES.NO_ADVANCED_TOOLS");  // TD.java:450
+		static final TagData HAS_TOOL_STATS    = TagData.createTagData("PROPERTIES.HAS_TOOL_STATS");     // TD.java:452
+		static final TagData ALLOY             = TagData.createTagData("COMPOUNDS.ALLOY");               // TD.java:481
+		static final TagData APPROXIMATE       = TagData.createTagData("COMPOUNDS.APPROXIMATE");         // TD.java:490
+		static final TagData DECOMPOSABLE      = TagData.createTagData("COMPOUNDS.DECOMPOSABLE");        // TD.java:493
+		static final TagData CENTRIFUGE        = TagData.createTagData("PROCESSING.CENTRIFUGABLE");      // TD.java:501
+		static final TagData ELECTROLYSER      = TagData.createTagData("PROCESSING.ELECTROLYSABLE");     // TD.java:503
+		static final TagData CRUCIBLE_ALLOY    = TagData.createTagData("PROCESSING.CRUCIBLE_ALLOY");     // TD.java:505
+		static final TagData UUM               = TagData.createTagData("PROCESSING.UUM_SYNTHESISABLE");  // TD.java:511
+		static final TagData MELTING           = TagData.createTagData("PROCESSING.MELTING");            // TD.java:525
+		static final TagData PARTS             = TagData.createTagData("ITEMGENERATOR.PARTS");           // TD.java:562
+		static final TagData STICKS            = TagData.createTagData("ITEMGENERATOR.STICKS");          // TD.java:568
+		static final TagData PLATES            = TagData.createTagData("ITEMGENERATOR.PLATES");          // TD.java:571
+	}
+
+	/** Upstream CS.java:132 "C = 273"; local constant since CS is outside this card's FILES_SCOPE. */
+	private static final long C = 273;
+	/** Upstream CS.java:169-201 is a literal String[310] with the Unicode subscript spellings of 0..309; generated here with identical values (CS is outside this card's FILES_SCOPE). */
+	private static final String[] NUM_SUB = new String[310];
+	static {
+		StringBuilder tBuilder = new StringBuilder();
+		for (int i = 0; i < NUM_SUB.length; i++) {
+			tBuilder.setLength(0);
+			String tDigits = Integer.toString(i);
+			for (int j = 0; j < tDigits.length(); j++) tBuilder.append((char)(tDigits.charAt(j) + 0x2050)); // '0'(0x30)+0x2050 = 0x2080 = subscript zero
+			NUM_SUB[i] = tBuilder.toString();
+		}
+	}
+
+	private static final PrintStream ERR = MaterialRegistry.ERR_LOG; // upstream CS.java:853 ERR
+
+	public OreDictMaterial alloyCentrifuge() {return put(TDG.CENTRIFUGE).alloySimple();} // :424
+	public OreDictMaterial alloyElectrolyzer() {return put(TDG.ELECTROLYSER).alloySimple();} // :425
+	public OreDictMaterial alloySimple() { // :426-429
+		mAlloyCreationRecipes.add(mComponents);
+		return put(TDG.ALLOY, TDG.DECOMPOSABLE, TDG.CRUCIBLE_ALLOY);
+	}
+
+	public OreDictMaterial alloyCentrifuge(long aMelt) {return put(TDG.CENTRIFUGE).alloySimple(aMelt);} // :431
+	public OreDictMaterial alloyElectrolyzer(long aMelt) {return put(TDG.ELECTROLYSER).alloySimple(aMelt);} // :432
+	public OreDictMaterial alloySimple(long aMelt) { // :433-436
+		mAlloyCreationRecipes.add(mComponents);
+		return put(TDG.ALLOY, TDG.DECOMPOSABLE, TDG.CRUCIBLE_ALLOY).heat(aMelt);
+	}
+
+	public OreDictMaterial alloyCentrifuge(long aMelt, long aBoil) {return put(TDG.CENTRIFUGE).alloySimple(aMelt, aBoil);} // :438
+	public OreDictMaterial alloyElectrolyzer(long aMelt, long aBoil) {return put(TDG.ELECTROLYSER).alloySimple(aMelt, aBoil);} // :439
+	public OreDictMaterial alloySimple(long aMelt, long aBoil) { // :440-443
+		mAlloyCreationRecipes.add(mComponents);
+		return put(TDG.ALLOY, TDG.DECOMPOSABLE, TDG.CRUCIBLE_ALLOY).heat(aMelt, aBoil);
+	}
+
+	public OreDictMaterial alloyCentrifuge(OreDictMaterial aHeat) { // :445-447
+		return put(TDG.CENTRIFUGE).alloySimple(aHeat);
+	}
+	public OreDictMaterial alloyElectrolyzer(OreDictMaterial aHeat) { // :448-450
+		return put(TDG.ELECTROLYSER).alloySimple(aHeat);
+	}
+	public OreDictMaterial alloySimple(OreDictMaterial aHeat) { // :451-453
+		return put(TDG.ALLOY, TDG.DECOMPOSABLE, TDG.CRUCIBLE_ALLOY).heat(aHeat);
+	}
+
+	/** Sets the Molecule Configuration or Components of this Material. Calculates the Average of the MainStats and sets them. */ // :468-525 verbatim (TD references swapped for the unifying TDG constants)
+	public OreDictMaterial setMoleculeConfiguration(IOreDictConfigurationComponent aComponents) {
+		if (contains(TDG.ELEMENT)) new IllegalArgumentException("Detected problematic tampering with Elements of the Periodic Table").printStackTrace(ERR);
+
+		mComponents = aComponents;
+		double tDivider = 0, tProtons = 0, tElectrons = 0, tNeutrons = 0, tMass = 0, tGramPerCubicCentimeter = 0, tMeltingPoint = 0, tBoilingPoint = 0, tPlasmaPoint = 0;
+		for (OreDictMaterialStack tMaterial : aComponents.getComponents()) tDivider += tMaterial.mAmount;
+		for (OreDictMaterialStack tMaterial : aComponents.getComponents()) {
+			tProtons                += (tMaterial.mMaterial.mProtons                * tMaterial.mAmount) / UD;
+			tElectrons              += (tMaterial.mMaterial.mElectrons              * tMaterial.mAmount) / UD;
+			tNeutrons               += (tMaterial.mMaterial.mNeutrons               * tMaterial.mAmount) / UD;
+			tMass                   += (tMaterial.mMaterial.mMass                   * tMaterial.mAmount) / UD;
+			tGramPerCubicCentimeter += (tMaterial.mMaterial.mGramPerCubicCentimeter * tMaterial.mAmount) / UD;
+			tMeltingPoint           += (tMaterial.mMaterial.mMeltingPoint           * tMaterial.mAmount) / tDivider;
+			tBoilingPoint           += (tMaterial.mMaterial.mBoilingPoint           * tMaterial.mAmount) / tDivider;
+			tPlasmaPoint            += (tMaterial.mMaterial.mPlasmaPoint            * tMaterial.mAmount) / tDivider;
+		}
+		mProtons = (long)tProtons;
+		mElectrons = (long)tElectrons;
+		mNeutrons = (long)tNeutrons;
+		mMass = (long)tMass;
+		mMeltingPoint = Math.max(1, (long)tMeltingPoint);
+		mBoilingPoint = Math.max(mMeltingPoint+1, (long)tBoilingPoint);
+		mPlasmaPoint = Math.max(mBoilingPoint+1, (long)tPlasmaPoint);
+		mGramPerCubicCentimeter = tGramPerCubicCentimeter;
+
+		if (!contains(TDG.APPROXIMATE) && containsAny(TDG.UUM, TDG.DECOMPOSABLE)) {
+			mTooltipChemical = "";
+			List<OreDictMaterialStack> tComponents = aComponents.getUndividedComponents();
+			if (tComponents.size() == 1 && tComponents.get(0).mAmount == U) {
+				mTooltipChemical = tComponents.get(0).mMaterial.mTooltipChemical;
+			} else for (OreDictMaterialStack tMaterial : tComponents) {
+				if (UT.Code.stringValid(tMaterial.mMaterial.mTooltipChemical) && !tMaterial.mMaterial.contains(TDG.APPROXIMATE)) {
+					if (tMaterial.mMaterial.contains(TDG.ELEMENT) || tMaterial.mMaterial.mComponents == null || (tMaterial.mMaterial.mComponents.getUndividedComponents().size() == 1 && tMaterial.mMaterial.mComponents.getComponents().get(0).mAmount == U)) {
+						mTooltipChemical += tMaterial.mMaterial.mTooltipChemical;
+					} else {
+						mTooltipChemical += "("+tMaterial.mMaterial.mTooltipChemical+")";
+					}
+				} else {
+					mTooltipChemical += "("+tMaterial.mMaterial.mNameLocal+")";
+				}
+				if (tMaterial.mAmount > U) {
+					if (tMaterial.mMaterial.mComponents == null) {
+						mTooltipChemical += NUM_SUB[(int)UT.Code.bind(0, NUM_SUB.length-1, tMaterial.mAmount / U)];
+					} else if ((tMaterial.mAmount / U) % tMaterial.mMaterial.mComponents.getCommonDivider() == 0) {
+						if ((tMaterial.mAmount / U) / tMaterial.mMaterial.mComponents.getCommonDivider() > 1) {
+							mTooltipChemical += NUM_SUB[(int)UT.Code.bind(0, NUM_SUB.length-1, (tMaterial.mAmount / U) / tMaterial.mMaterial.mComponents.getCommonDivider())];
+						} else {
+							// nothing to add in this case.
+						}
+					} else {
+						mTooltipChemical += NUM_SUB[(int)UT.Code.bind(0, NUM_SUB.length-1, tMaterial.mAmount / U)] + "," + NUM_SUB[(int)UT.Code.bind(0, NUM_SUB.length-1, tMaterial.mMaterial.mComponents.getCommonDivider())];
+					}
+				}
+			}
+		}
+		return this;
+	}
+
+	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1) { // :527-534 (OM.stack unfolded)
+		if (aCommonDivider == 0) {
+			long tAmount = aAmount1;
+			aCommonDivider = tAmount / U;
+			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
+		}
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1)));
+	}
+	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2) { // :535-542
+		if (aCommonDivider == 0) {
+			long tAmount = aAmount1+aAmount2;
+			aCommonDivider = tAmount / U;
+			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
+		}
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2)));
+	}
+	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3) { // :543-550
+		if (aCommonDivider == 0) {
+			long tAmount = aAmount1+aAmount2+aAmount3;
+			aCommonDivider = tAmount / U;
+			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
+		}
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3)));
+	}
+	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4) { // :551-558
+		if (aCommonDivider == 0) {
+			long tAmount = aAmount1+aAmount2+aAmount3+aAmount4;
+			aCommonDivider = tAmount / U;
+			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
+		}
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4)));
+	}
+	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5) { // :559-566
+		if (aCommonDivider == 0) {
+			long tAmount = aAmount1+aAmount2+aAmount3+aAmount4+aAmount5;
+			aCommonDivider = tAmount / U;
+			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
+		}
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4), new OreDictMaterialStack(aMaterial5, aAmount5)));
+	}
+	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6) { // :567-574
+		long tAmount = aAmount1+aAmount2+aAmount3+aAmount4+aAmount5+aAmount6;
+		if (aCommonDivider == 0) {
+			aCommonDivider = tAmount / U;
+			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
+		}
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4), new OreDictMaterialStack(aMaterial5, aAmount5), new OreDictMaterialStack(aMaterial6, aAmount6)));
+	}
+	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7) { // :575-582
+		long tAmount = aAmount1+aAmount2+aAmount3+aAmount4+aAmount5+aAmount6+aAmount7;
+		if (aCommonDivider == 0) {
+			aCommonDivider = tAmount / U;
+			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
+		}
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4), new OreDictMaterialStack(aMaterial5, aAmount5), new OreDictMaterialStack(aMaterial6, aAmount6), new OreDictMaterialStack(aMaterial7, aAmount7)));
+	}
+	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7, OreDictMaterial aMaterial8, long aAmount8) { // :583-590
+		long tAmount = aAmount1+aAmount2+aAmount3+aAmount4+aAmount5+aAmount6+aAmount7+aAmount8;
+		if (aCommonDivider == 0) {
+			aCommonDivider = tAmount / U;
+			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
+		}
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4), new OreDictMaterialStack(aMaterial5, aAmount5), new OreDictMaterialStack(aMaterial6, aAmount6), new OreDictMaterialStack(aMaterial7, aAmount7), new OreDictMaterialStack(aMaterial8, aAmount8)));
+	}
+	public OreDictMaterial setMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7, OreDictMaterial aMaterial8, long aAmount8, OreDictMaterial aMaterial9, long aAmount9) { // :591-598
+		long tAmount = aAmount1+aAmount2+aAmount3+aAmount4+aAmount5+aAmount6+aAmount7+aAmount8+aAmount9;
+		if (aCommonDivider == 0) {
+			aCommonDivider = tAmount / U;
+			if (tAmount % U != 0) ERR.println("WARNING: Material '"+mNameInternal+"' has an Amount of " + tAmount + " Components and automatically generates a divider, that is leaving a tiny rest after the division, breaking some Material Amounts. Manual setting of Variables is required.");
+		}
+		return setMoleculeConfiguration(new OreDictConfigurationComponent(aCommonDivider, new OreDictMaterialStack(aMaterial1, aAmount1), new OreDictMaterialStack(aMaterial2, aAmount2), new OreDictMaterialStack(aMaterial3, aAmount3), new OreDictMaterialStack(aMaterial4, aAmount4), new OreDictMaterialStack(aMaterial5, aAmount5), new OreDictMaterialStack(aMaterial6, aAmount6), new OreDictMaterialStack(aMaterial7, aAmount7), new OreDictMaterialStack(aMaterial8, aAmount8), new OreDictMaterialStack(aMaterial9, aAmount9)));
+	}
+
+	public OreDictMaterial uumMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1) { // :602-609
+		if (aMaterial1.contains(TDG.UUM)) {
+			put(TDG.UUM);
+		} else {
+			ERR.println("WARNING: " + mNameInternal + " has a UUM Config with impossible Materials.");
+		}
+		return setMcfg(aCommonDivider, aMaterial1, aAmount1);
+	}
+	public OreDictMaterial uumMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2) { // :610-617
+		if (aMaterial1.contains(TDG.UUM) && aMaterial2.contains(TDG.UUM)) {
+			put(TDG.UUM);
+		} else {
+			ERR.println("WARNING: " + mNameInternal + " has a UUM Config with impossible Materials.");
+		}
+		return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2);
+	}
+	public OreDictMaterial uumMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3) { // :618-625
+		if (aMaterial1.contains(TDG.UUM) && aMaterial2.contains(TDG.UUM) && aMaterial3.contains(TDG.UUM)) {
+			put(TDG.UUM);
+		} else {
+			ERR.println("WARNING: " + mNameInternal + " has a UUM Config with impossible Materials.");
+		}
+		return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3);
+	}
+	public OreDictMaterial uumMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4) { // :626-633
+		if (aMaterial1.contains(TDG.UUM) && aMaterial2.contains(TDG.UUM) && aMaterial3.contains(TDG.UUM) && aMaterial4.contains(TDG.UUM)) {
+			put(TDG.UUM);
+		} else {
+			ERR.println("WARNING: " + mNameInternal + " has a UUM Config with impossible Materials.");
+		}
+		return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4);
+	}
+	public OreDictMaterial uumMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5) { // :634-641
+		if (aMaterial1.contains(TDG.UUM) && aMaterial2.contains(TDG.UUM) && aMaterial3.contains(TDG.UUM) && aMaterial4.contains(TDG.UUM) && aMaterial5.contains(TDG.UUM)) {
+			put(TDG.UUM);
+		} else {
+			ERR.println("WARNING: " + mNameInternal + " has a UUM Config with impossible Materials.");
+		}
+		return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5);
+	}
+	public OreDictMaterial uumMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6) { // :642-649
+		if (aMaterial1.contains(TDG.UUM) && aMaterial2.contains(TDG.UUM) && aMaterial3.contains(TDG.UUM) && aMaterial4.contains(TDG.UUM) && aMaterial5.contains(TDG.UUM) && aMaterial6.contains(TDG.UUM)) {
+			put(TDG.UUM);
+		} else {
+			ERR.println("WARNING: " + mNameInternal + " has a UUM Config with impossible Materials.");
+		}
+		return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6);
+	}
+	public OreDictMaterial uumMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7) { // :650-657
+		if (aMaterial1.contains(TDG.UUM) && aMaterial2.contains(TDG.UUM) && aMaterial3.contains(TDG.UUM) && aMaterial4.contains(TDG.UUM) && aMaterial5.contains(TDG.UUM) && aMaterial6.contains(TDG.UUM) && aMaterial7.contains(TDG.UUM)) {
+			put(TDG.UUM);
+		} else {
+			ERR.println("WARNING: " + mNameInternal + " has a UUM Config with impossible Materials.");
+		}
+		return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6, aMaterial7, aAmount7);
+	}
+	public OreDictMaterial uumMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7, OreDictMaterial aMaterial8, long aAmount8) { // :658-665
+		if (aMaterial1.contains(TDG.UUM) && aMaterial2.contains(TDG.UUM) && aMaterial3.contains(TDG.UUM) && aMaterial4.contains(TDG.UUM) && aMaterial5.contains(TDG.UUM) && aMaterial6.contains(TDG.UUM) && aMaterial7.contains(TDG.UUM) && aMaterial8.contains(TDG.UUM)) {
+			put(TDG.UUM);
+		} else {
+			ERR.println("WARNING: " + mNameInternal + " has a UUM Config with impossible Materials.");
+		}
+		return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6, aMaterial7, aAmount7, aMaterial8, aAmount8);
+	}
+	public OreDictMaterial uumMcfg(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7, OreDictMaterial aMaterial8, long aAmount8, OreDictMaterial aMaterial9, long aAmount9) { // :666-673
+		if (aMaterial1.contains(TDG.UUM) && aMaterial2.contains(TDG.UUM) && aMaterial3.contains(TDG.UUM) && aMaterial4.contains(TDG.UUM) && aMaterial5.contains(TDG.UUM) && aMaterial6.contains(TDG.UUM) && aMaterial7.contains(TDG.UUM) && aMaterial8.contains(TDG.UUM) && aMaterial9.contains(TDG.UUM)) {
+			put(TDG.UUM);
+		} else {
+			ERR.println("WARNING: " + mNameInternal + " has a UUM Config with impossible Materials.");
+		}
+		return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6, aMaterial7, aAmount7, aMaterial8, aAmount8, aMaterial9, aAmount9);
+	}
+
+	// Yes it is spelled Aloy because of being Four Letters long, for alignment reasons. // :675
+
+	public OreDictMaterial setAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1) {return setMcfg(aCommonDivider, aMaterial1, aAmount1).alloyCentrifuge();} // :677-679
+	public OreDictMaterial setAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2) {return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2).alloyCentrifuge();} // :680-682
+	public OreDictMaterial setAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3) {return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3).alloyCentrifuge();} // :683-685
+	public OreDictMaterial setAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4) {return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4).alloyCentrifuge();} // :686-688
+	public OreDictMaterial setAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5) {return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5).alloyCentrifuge();} // :689-691
+	public OreDictMaterial setAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6) {return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6).alloyCentrifuge();} // :692-694
+	public OreDictMaterial setAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7) {return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6, aMaterial7, aAmount7).alloyCentrifuge();} // :695-697
+	public OreDictMaterial setAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7, OreDictMaterial aMaterial8, long aAmount8) {return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6, aMaterial7, aAmount7, aMaterial8, aAmount8).alloyCentrifuge();} // :698-700
+	public OreDictMaterial setAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7, OreDictMaterial aMaterial8, long aAmount8, OreDictMaterial aMaterial9, long aAmount9) {return setMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6, aMaterial7, aAmount7, aMaterial8, aAmount8, aMaterial9, aAmount9).alloyCentrifuge();} // :701-703
+
+	public OreDictMaterial uumAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1) {return uumMcfg(aCommonDivider, aMaterial1, aAmount1).alloyCentrifuge();} // :707-709
+	public OreDictMaterial uumAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2) {return uumMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2).alloyCentrifuge();} // :710-712
+	public OreDictMaterial uumAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3) {return uumMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3).alloyCentrifuge();} // :713-715
+	public OreDictMaterial uumAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4) {return uumMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4).alloyCentrifuge();} // :716-718
+	public OreDictMaterial uumAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5) {return uumMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5).alloyCentrifuge();} // :719-721
+	public OreDictMaterial uumAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6) {return uumMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6).alloyCentrifuge();} // :722-724
+	public OreDictMaterial uumAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7) {return uumMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6, aMaterial7, aAmount7).alloyCentrifuge();} // :725-727
+	public OreDictMaterial uumAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7, OreDictMaterial aMaterial8, long aAmount8) {return uumMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6, aMaterial7, aAmount7, aMaterial8, aAmount8).alloyCentrifuge();} // :728-730
+	public OreDictMaterial uumAloy(long aCommonDivider, OreDictMaterial aMaterial1, long aAmount1, OreDictMaterial aMaterial2, long aAmount2, OreDictMaterial aMaterial3, long aAmount3, OreDictMaterial aMaterial4, long aAmount4, OreDictMaterial aMaterial5, long aAmount5, OreDictMaterial aMaterial6, long aAmount6, OreDictMaterial aMaterial7, long aAmount7, OreDictMaterial aMaterial8, long aAmount8, OreDictMaterial aMaterial9, long aAmount9) {return uumMcfg(aCommonDivider, aMaterial1, aAmount1, aMaterial2, aAmount2, aMaterial3, aAmount3, aMaterial4, aAmount4, aMaterial5, aAmount5, aMaterial6, aAmount6, aMaterial7, aAmount7, aMaterial8, aAmount8, aMaterial9, aAmount9).alloyCentrifuge();} // :731-733
+
+	@Deprecated public OreDictMaterial setTooltip(String aTooltip) {mTooltipChemical = aTooltip; return this;} // :737
+
+	public OreDictMaterial tooltip(String aTooltip) { // :739-742
+		mTooltipChemical = aTooltip;
+		return this;
+	}
+
+	public OreDictMaterial handle(OreDictMaterial aHandle) { // :744-747
+		mHandleMaterial = aHandle;
+		return this;
+	}
+
+	public OreDictMaterial setAllToTheOutputOf(OreDictMaterial aMaterial) { // :749-762
+		if (aMaterial == null) aMaterial = this;
+		setPulver     (aMaterial.mTargetPulver     .mMaterial, aMaterial.mTargetPulver     .mAmount);
+		setSmelting   (aMaterial.mTargetSmelting   .mMaterial, aMaterial.mTargetSmelting   .mAmount);
+		setSolidifying(aMaterial.mTargetSolidifying.mMaterial, aMaterial.mTargetSolidifying.mAmount);
+		setSmashing   (aMaterial.mTargetSmashing   .mMaterial, aMaterial.mTargetSmashing   .mAmount);
+		setCutting    (aMaterial.mTargetCutting    .mMaterial, aMaterial.mTargetCutting    .mAmount);
+		setWorking    (aMaterial.mTargetWorking    .mMaterial, aMaterial.mTargetWorking    .mAmount);
+		setForging    (aMaterial.mTargetForging    .mMaterial, aMaterial.mTargetForging    .mAmount);
+		setBurning    (aMaterial.mTargetBurning    .mMaterial, aMaterial.mTargetBurning    .mAmount);
+		setBending    (aMaterial.mTargetBending    .mMaterial, aMaterial.mTargetBending    .mAmount);
+		setCompressing(aMaterial.mTargetCompressing.mMaterial, aMaterial.mTargetCompressing.mAmount);
+		return this;
+	}
+
+	public OreDictMaterial setAllToTheOutputOf(OreDictMaterial aMaterial, long aMultiplier, long aDivider) { // :764-778
+		if (aMaterial == null) aMaterial = this;
+		setPulver     (aMaterial.mTargetPulver     .mMaterial,(aMaterial.mTargetPulver     .mAmount * aMultiplier) / aDivider);
+		setSmelting   (aMaterial.mTargetSmelting   .mMaterial,(aMaterial.mTargetSmelting   .mAmount * aMultiplier) / aDivider);
+		setSolidifying(aMaterial.mTargetSolidifying.mMaterial,(aMaterial.mTargetSolidifying.mAmount * aMultiplier) / aDivider);
+		setSmashing   (aMaterial.mTargetSmashing   .mMaterial,(aMaterial.mTargetSmashing   .mAmount * aMultiplier) / aDivider);
+		setCutting    (aMaterial.mTargetCutting    .mMaterial,(aMaterial.mTargetCutting    .mAmount * aMultiplier) / aDivider);
+		setWorking    (aMaterial.mTargetWorking    .mMaterial,(aMaterial.mTargetWorking    .mAmount * aMultiplier) / aDivider);
+		setForging    (aMaterial.mTargetForging    .mMaterial,(aMaterial.mTargetForging    .mAmount * aMultiplier) / aDivider);
+		setBurning    (aMaterial.mTargetBurning    .mMaterial,(aMaterial.mTargetBurning    .mAmount * aMultiplier) / aDivider);
+		setBending    (aMaterial.mTargetBending    .mMaterial,(aMaterial.mTargetBending    .mAmount * aMultiplier) / aDivider);
+		setCompressing(aMaterial.mTargetCompressing.mMaterial,(aMaterial.mTargetCompressing.mAmount * aMultiplier) / aDivider);
+		setCrushing   (aMaterial.mTargetCrushing   .mMaterial,(aMaterial.mTargetCrushing   .mAmount * aMultiplier) / aDivider);
+		return this;
+	}
+
+	/** The result of trying to ore process it, if you want to disable ore processing, then set the Amount to 0. If aMaterial == null it will choose the previous Material instead, which is usually "this". */ // :780-787
+	public OreDictMaterial setCrushing(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetCrushing.mMaterial.mTargetedCrushing.remove(this);
+		mTargetCrushing = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedCrushing.add(this);
+		return this;
+	}
+
+	/** The result of trying to pulverise it, if you want to disable pulverising, then set the Amount to 0. If aMaterial == null it will choose the previous Material instead, which is usually "this". */ // :789-796
+	public OreDictMaterial setPulver(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetPulver.mMaterial.mTargetedPulver.remove(this);
+		mTargetPulver = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedPulver.add(this);
+		return this;
+	}
+
+	/** The result of trying to smelt it, if you want to disable smelting, then set the Amount to 0. If aMaterial == null it will choose "this". */ // :798-806
+	public OreDictMaterial setSmelting(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetSmelting.mMaterial.mTargetedSmelting.remove(this);
+		mTargetSmelting = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedSmelting.add(this);
+		if (aAmount > 0) put(TDG.MELTING);
+		return this;
+	}
+
+	/** The result of cooling it down, if you want to disable cooling down, then set the Amount to 0. If aMaterial == null it will choose "this". */ // :808-815
+	public OreDictMaterial setSolidifying(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetSolidifying.mMaterial.mTargetedSolidifying.remove(this);
+		mTargetSolidifying = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedSolidifying.add(this);
+		return this;
+	}
+
+	/** The result of trying to smash it, if you want to disable smashing, then set the Amount to 0. If aMaterial == null it will choose "this". */ // :817-824
+	public OreDictMaterial setSmashing(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetSmashing.mMaterial.mTargetedSmashing.remove(this);
+		mTargetSmashing = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedSmashing.add(this);
+		return this;
+	}
+
+	/** The result of trying to cut it, if you want to disable cutting, then set the Amount to 0. If aMaterial == null it will choose "this". */ // :826-833
+	public OreDictMaterial setCutting(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetCutting.mMaterial.mTargetedCutting.remove(this);
+		mTargetCutting = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedCutting.add(this);
+		return this;
+	}
+
+	/** The result of trying to craft with it, if you want to disable working, then set the Amount to 0. If aMaterial == null it will choose "this". */ // :835-842
+	public OreDictMaterial setWorking(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetWorking.mMaterial.mTargetedWorking.remove(this);
+		mTargetWorking = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedWorking.add(this);
+		return this;
+	}
+
+	/** The result of trying to forge it, if you want to disable forging, then set the Amount to 0. If aMaterial == null it will choose "this". */ // :844-851
+	public OreDictMaterial setForging(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetForging.mMaterial.mTargetedForging.remove(this);
+		mTargetForging = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedForging.add(this);
+		return this;
+	}
+
+	/** The result of trying to burn it (Ashes for example), if you want to disable burning, then set the Amount to 0. If aMaterial == null it will choose "this". */ // :853-860
+	public OreDictMaterial setBurning(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetBurning.mMaterial.mTargetedBurning.remove(this);
+		mTargetBurning = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedBurning.add(this);
+		return this;
+	}
+
+	/** The result of trying to bend it, if you want to disable bending, then set the Amount to 0. If aMaterial == null it will choose "this". */ // :862-869
+	public OreDictMaterial setBending(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetBending.mMaterial.mTargetedBending.remove(this);
+		mTargetBending = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedBending.add(this);
+		return this;
+	}
+
+	/** The result of trying to compress it, if you want to disable compressing, then set the Amount to 0. If aMaterial == null it will choose "this". */ // :871-878
+	public OreDictMaterial setCompressing(OreDictMaterial aMaterial, long aAmount) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetCompressing.mMaterial.mTargetedCompressing.remove(this);
+		mTargetCompressing = new OreDictMaterialStack(aMaterial, aAmount);
+		aMaterial.mTargetedCompressing.add(this);
+		return this;
+	}
+
+	/** The result of trying to generify it, If aMaterial == null it will choose "this". */ // :880-887
+	public OreDictMaterial setGenerifying(OreDictMaterial aMaterial) {
+		if (aMaterial == null) aMaterial = this;
+		mTargetGenerifying.mMaterial.mTargetedGenerifying.remove(this);
+		mTargetGenerifying = new OreDictMaterialStack(aMaterial, U);
+		aMaterial.mTargetedGenerifying.add(this);
+		return this;
+	}
+
+	@Deprecated public OreDictMaterial setQuality(float aToolSpeed, long aToolDurability, long aToolQuality) {return qual(3, aToolSpeed, aToolDurability, aToolQuality);} // :889
+
+	public OreDictMaterial qual(long aHarvestLevel) {return qual(mToolTypes, mToolSpeed, mToolDurability, aHarvestLevel);} // :891
+	public OreDictMaterial qual(float aSpeed, long aDurability, long aQuality) {return qual(3, aSpeed, aDurability, aQuality);} // :892
+	/** Sets the Tool Quality of this Material. */ // :893-902
+	public OreDictMaterial qual(long aType, double aSpeed, long aDurability, long aQuality) {
+		mToolTypes = UT.Code.bind2(aType);
+		mToolDurability = Math.max(1, aDurability);
+		mToolQuality = UT.Code.bind4(aQuality);
+		mToolSpeed = (float)aSpeed;
+		if (aType > 0) put(TDG.HAS_TOOL_STATS, TDG.PARTS, TDG.STICKS, TDG.PLATES);
+		if (aType < 3) put(TDG.NO_ADVANCED_TOOLS);
+		return this;
+	}
+
+	@Deprecated public OreDictMaterial stealQuality(OreDictMaterial aStatsToCopy) {return qual(aStatsToCopy);} // :1132
+	public OreDictMaterial qual(OreDictMaterial aStatsToCopy) { // :1133-1135
+		return qual(aStatsToCopy.mToolTypes, aStatsToCopy.mToolSpeed, aStatsToCopy.mToolDurability, aStatsToCopy.mToolQuality);
+	}
+
+	@Deprecated public OreDictMaterial setMeltingPoint(long aMeltingPoint) {return heat(aMeltingPoint);} // :904
+	/** Sets the energetic Stats of this Material. Everything is measured in Kelvin. */ // :905-915
+	public OreDictMaterial heat(long aMeltingPoint) {
+		if (contains(TDG.ELEMENT)) {
+			if (mMeltingPoint != 1000 && aMeltingPoint != mMeltingPoint) new IllegalArgumentException("Detected problematic tampering with Elements of the Periodic Table").printStackTrace(ERR);
+		//  if (mBoilingPoint != 3000 && aBoilingPoint != mBoilingPoint) new IllegalArgumentException("Detected problematic tampering with Elements of the Periodic Table").printStackTrace(ERR);
+		}
+		mMeltingPoint = aMeltingPoint;
+		mBoilingPoint = mMeltingPoint * 2;
+		mPlasmaPoint = mBoilingPoint * 100;
+		return this;
+	}
+
+	@Deprecated public OreDictMaterial setStatsEnergetic(long aMeltingPoint, long aBoilingPoint) {return heat(aMeltingPoint, aBoilingPoint);} // :917
+	/** Sets the energetic Stats of this Material. Everything is measured in Kelvin. */ // :918-929
+	public OreDictMaterial heat(long aMeltingPoint, long aBoilingPoint) {
+		if (contains(TDG.ELEMENT)) {
+			if (mMeltingPoint != 1000 && aMeltingPoint != mMeltingPoint) new IllegalArgumentException("Detected problematic tampering with Elements of the Periodic Table").printStackTrace(ERR);
+			if (mBoilingPoint != 3000 && aBoilingPoint != mBoilingPoint) new IllegalArgumentException("Detected problematic tampering with Elements of the Periodic Table").printStackTrace(ERR);
+		}
+		if (aMeltingPoint > aBoilingPoint) throw new IllegalArgumentException("The Melting Point cannot be above the Boiling Point.");
+		mMeltingPoint = aMeltingPoint;
+		mBoilingPoint = aBoilingPoint;
+		mPlasmaPoint = aBoilingPoint * 100;
+		return this;
+	}
+
+	@Deprecated public OreDictMaterial setStatsEnergetic(long aMeltingPoint, long aBoilingPoint, long aPlasmaPoint) {return heat(aMeltingPoint, aBoilingPoint, aPlasmaPoint);} // :931
+	/** Sets the energetic Stats of this Material. Everything is measured in Kelvin. */ // :932-944
+	public OreDictMaterial heat(long aMeltingPoint, long aBoilingPoint, long aPlasmaPoint) {
+		if (contains(TDG.ELEMENT)) {
+			if (mMeltingPoint != 1000 && aMeltingPoint != mMeltingPoint) new IllegalArgumentException("Detected problematic tampering with Elements of the Periodic Table").printStackTrace(ERR);
+			if (mBoilingPoint != 3000 && aBoilingPoint != mBoilingPoint) new IllegalArgumentException("Detected problematic tampering with Elements of the Periodic Table").printStackTrace(ERR);
+		}
+		if (aMeltingPoint > aBoilingPoint) throw new IllegalArgumentException("The Melting Point cannot be above the Boiling Point.");
+		if (aBoilingPoint > aPlasmaPoint) throw new IllegalArgumentException("The Boiling Point cannot be above the Plasmafication Point.");
+		mMeltingPoint = aMeltingPoint;
+		mBoilingPoint = aBoilingPoint;
+		mPlasmaPoint = aPlasmaPoint;
+		return this;
+	}
+
+	/** Copies the energetic Stats of another Material. */ // :1128-1130
+	public OreDictMaterial heat(OreDictMaterial aStatsToCopy) {
+		return heat(aStatsToCopy.mMeltingPoint, aStatsToCopy.mBoilingPoint, aStatsToCopy.mPlasmaPoint);
+	}
+
+	/** Sets the atomic and energetic Stats of this Element. */ // :946-955
+	public OreDictMaterial setStats(long aProtonsAndElectrons, long aNeutrons, long aMeltingPoint, long aBoilingPoint, double aGramPerCubicCentimeter) {
+		heat(aMeltingPoint, aBoilingPoint);
+		mProtons = aProtonsAndElectrons;
+		mElectrons = aProtonsAndElectrons;
+		mNeutrons = aNeutrons;
+		mMass = aProtonsAndElectrons + aNeutrons;
+		mGramPerCubicCentimeter = aGramPerCubicCentimeter;
+		return this;
+	}
+
+	/** Sets the atomic Stats of this Material. */ // :957-965
+	public OreDictMaterial setStatsElement(long aProtons, long aElectrons, long aNeutrons, long aAdditionalMass, double aGramPerCubicCentimeter) {
+		mProtons = aProtons;
+		mElectrons = aElectrons;
+		mNeutrons = aNeutrons;
+		mMass = aProtons + aNeutrons + aAdditionalMass;
+		mGramPerCubicCentimeter = aGramPerCubicCentimeter;
+		return this;
+	}
+
+	/** Copies the atomic Stats of another Material. */ // :1137-1144
+	public OreDictMaterial stealStatsElement(OreDictMaterial aStatsToCopy) {
+		mProtons                = aStatsToCopy.mProtons;
+		mElectrons              = aStatsToCopy.mElectrons;
+		mNeutrons               = aStatsToCopy.mNeutrons;
+		mMass                   = aStatsToCopy.mMass;
+		mGramPerCubicCentimeter = aStatsToCopy.mGramPerCubicCentimeter;
+		return this;
+	}
+
+	/** Adds an Enchantment for Tools. Upstream :1204-1207 takes the Enchantment object; ID string per the MC-coupling policy. */
+	public OreDictMaterial addEnchantmentForTools(String aEnchantmentID, long aEnchantmentLevel) {
+		mEnchantmentTools.add(new EnchantmentStack(aEnchantmentID, aEnchantmentLevel));
+		return this;
+	}
+
+	/** Adds an Enchantment for Damage dealing Weapons and Ammos. */ // :1209-1213
+	public OreDictMaterial addEnchantmentForDamage(String aEnchantmentID, long aEnchantmentLevel) {
+		addEnchantmentForWeapons(aEnchantmentID, aEnchantmentLevel);
+		addEnchantmentForAmmo(aEnchantmentID, aEnchantmentLevel);
+		return this;
+	}
+
+	/** Adds an Enchantment for Weapons. */ // :1215-1218
+	public OreDictMaterial addEnchantmentForWeapons(String aEnchantmentID, long aEnchantmentLevel) {
+		mEnchantmentWeapons.add(new EnchantmentStack(aEnchantmentID, aEnchantmentLevel));
+		return this;
+	}
+
+	/** Adds an Enchantment for Ammos. */ // :1220-1223 (upstream clamps the level of one specific vanilla Enchantment via a raw field reference; that MC special case is stripped)
+	public OreDictMaterial addEnchantmentForAmmo(String aEnchantmentID, long aEnchantmentLevel) {
+		mEnchantmentAmmo.add(new EnchantmentStack(aEnchantmentID, aEnchantmentLevel));
+		return this;
+	}
+
+	/** Adds an Enchantment for Ranged Weapons. */ // :1225-1228
+	public OreDictMaterial addEnchantmentForRanged(String aEnchantmentID, long aEnchantmentLevel) {
+		mEnchantmentRanged.add(new EnchantmentStack(aEnchantmentID, aEnchantmentLevel));
+		return this;
+	}
+
+	/** Adds an Enchantment for Fishing Rods. */ // :1230-1233
+	public OreDictMaterial addEnchantmentForFishing(String aEnchantmentID, long aEnchantmentLevel) {
+		mEnchantmentFishing.add(new EnchantmentStack(aEnchantmentID, aEnchantmentLevel));
+		return this;
+	}
+
+	/** Adds an Enchantment for Armors. */ // :1235-1238
+	public OreDictMaterial addEnchantmentForArmors(String aEnchantmentID, long aEnchantmentLevel) {
+		mEnchantmentArmors.add(new EnchantmentStack(aEnchantmentID, aEnchantmentLevel));
 		return this;
 	}
 
