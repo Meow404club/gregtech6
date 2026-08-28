@@ -4,9 +4,10 @@
 
 ## 立即（基础设施收尾）
 
-- [ ] 首次架构拆解：`/architect GT6 材料系统`，产出第 1 阶段模块卡
-- [ ] 验证 MCP 服务器在 ZCode 会话中自动连接（Settings → MCP 查看 gt6-brain）
-- [ ] 试运行一次完整任务流：/researcher → /coder → /review-merge（材料系统第一个模块）
+- [x] 首次架构拆解：`/architect GT6 材料系统`，产出第 1 阶段模块卡（2026-08-28，5 卡）
+- [x] 验证 MCP 服务器在 ZCode 会话中自动连接（gt6-brain 六键 state 全通）
+- [x] 试运行一次完整任务流：/researcher → /coder → /review-merge（卡1 gt-material-foundation 已合入 2f3be03）
+- [ ] 卡2 gt-material-model：OreDictMaterial 完整模型 + 注册状态机 + MaterialResolver（in_progress）
 
 ## 第 1 阶段（材料系统）
 
