@@ -37,6 +37,7 @@ import gregapi.code.HashSetNoNulls;
 import gregapi.code.ICondition;
 import gregapi.code.ITagDataContainer;
 import gregapi.code.TagData;
+import gregapi.data.MT;
 import gregapi.data.TD;
 import gregapi.oredict.configurations.IOreDictConfigurationComponent;
 import gregapi.oredict.configurations.OreDictConfigurationComponent;
@@ -187,14 +188,8 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 		mHashID = sHashID++;
 	}
 
-	/**
-	 * Registry-free constructor. Upstream this constructor is private (:321); it stays public
-	 * WITHOUT any registry interaction only because the card-1 MT.NULL stub (gregapi.data.MT,
-	 * outside this card's FILES_SCOPE) calls it directly. Task gt-material-dataset re-routes
-	 * MT.NULL through MaterialRegistry.createMaterial(-1, "NULL", "NULL") (upstream MT.java:524),
-	 * after which this constructor should be re-privatized.
-	 */
-	public OreDictMaterial(short aID, String aNameInternal, String aNameLocal) {
+	/** Registry-free constructor. Upstream this constructor is private (:321); re-privatized by task gt-material-dataset once MT.NULL moved to createMaterial(-1, "NULL", "NULL") (upstream MT.java:524), exactly as the card-2 handoff planned. */
+	private OreDictMaterial(short aID, String aNameInternal, String aNameLocal) {
 		this((MaterialRegistry)null, aID, aNameInternal, aNameLocal);
 	}
 
@@ -369,6 +364,20 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	}
 	public OreDictMaterial alloySimple(OreDictMaterial aHeat) { // :451-453
 		return put(TDG.ALLOY, TDG.DECOMPOSABLE, TDG.CRUCIBLE_ALLOY).heat(aHeat);
+	}
+
+	/** Registers an Alloying Recipe for this Material and fills {@link #ALLOYS}. Upstream :455-466 verbatim (TD.Atomic.ELEMENT via the unifying TDG constant; MT.Air is available since task gt-material-dataset ported the MT table). */
+	public OreDictMaterial addAlloyingRecipe(IOreDictConfigurationComponent aConfiguration) {
+		ALLOYS.add(this);
+		for (OreDictMaterialStack tMaterial : aConfiguration.getUndividedComponents()) {
+			if (tMaterial.mMaterial != MT.Air) {
+				if (mMeltingPoint >= tMaterial.mMaterial.mBoilingPoint && !contains(TDG.ELEMENT)) mMeltingPoint = Math.max(C+20, tMaterial.mMaterial.mBoilingPoint-20);
+				if (mMeltingPoint >= tMaterial.mMaterial.mBoilingPoint) ERR.println("The Alloy '" + mNameInternal + "' cannot be created due to the Melting Point being higher than the Boiling Point of its Component '" + tMaterial.mMaterial.mNameInternal + "'");
+			}
+			tMaterial.mMaterial.mAlloyComponentReferences.add(this);
+		}
+		mAlloyCreationRecipes.add(aConfiguration);
+		return this;
 	}
 
 	/** Sets the Molecule Configuration or Components of this Material. Calculates the Average of the MainStats and sets them. */ // :468-525 verbatim (TD references swapped for the unifying TDG constants)

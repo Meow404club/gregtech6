@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import gregapi.data.MT;
 
 public class OreDictMaterialStackTest {
-	private static final OreDictMaterial IRON = new OreDictMaterial((short)1, "IRON", "IRON");
-	private static final OreDictMaterial COPPER = new OreDictMaterial((short)2, "COPPER", "COPPER");
+	private static final OreDictMaterial IRON = new MaterialRegistry().createMaterial(1, "IRON", "IRON"); // detached registry (constructor privatized by gt-material-dataset)
+	private static final OreDictMaterial COPPER = new MaterialRegistry().createMaterial(2, "COPPER", "COPPER");
 
 	@Test
 	public void nullMaterialFallsBackToMTNULL() {
@@ -79,7 +79,7 @@ public class OreDictMaterialStackTest {
 
 	@Test
 	public void weightUsesDensityFormula() {
-		OreDictMaterial tSteelLike = new OreDictMaterial((short)3, "TESTSTEEL", "TESTSTEEL");
+		OreDictMaterial tSteelLike = new MaterialRegistry().createMaterial(3, "TESTSTEEL", "TESTSTEEL");
 		tSteelLike.mGramPerCubicCentimeter = 7.8;
 		// (g/cm^3 * 111.111111 * amount) / U  (OreDictMaterial.java:1401)
 		assertEquals(7.8 * 111.111111, new OreDictMaterialStack(tSteelLike, U).weight(), 1e-9);
