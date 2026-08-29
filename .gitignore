@@ -22,3 +22,6 @@ mdk/run/
 
 # DataGenerator HashCache 本地账本（含运行时间戳，跨机器伪 diff；产物 JSON 本体已入库）
 mdk/src/generated/resources/.cache/
+
+# 客户端/服务端运行日志（会话时间戳，无入库价值）
+mdk/logs/
