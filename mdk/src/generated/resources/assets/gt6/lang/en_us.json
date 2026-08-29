@@ -1,5 +1,6 @@
 {
   "block.gt6.example_chest": "GT Example Chest",
+  "block.gt6.oven": "Oven",
   "block.gt6.wood_fluid_pipe_medium": "Wood Fluid Pipe",
   "block.gt6.wood_fluid_pipe_small": "Small Wood Fluid Pipe",
   "fluid.gt6.iron_molten": "Molten Iron",
@@ -2281,6 +2282,7 @@
   "itemGroup.gt6.ingot_quintuple": "5x Ingots",
   "itemGroup.gt6.ingot_triple": "3x Ingots",
   "itemGroup.gt6.lens": "Lenses",
+  "itemGroup.gt6.machines": "Machines",
   "itemGroup.gt6.minecart_wheels": "Cart Wheels",
   "itemGroup.gt6.nugget": "Nuggets",
   "itemGroup.gt6.ore_raw": "Raw Ores",
