@@ -49,6 +49,7 @@ public final class GT6EnUs extends LanguageProvider {
         addPrefixTemplates();
         addMaterialNames();
         addExampleMachine();
+        addFluidPipes();
     }
 
     /**
@@ -60,6 +61,20 @@ public final class GT6EnUs extends LanguageProvider {
     private void addExampleMachine() {
         add("block.gt6.example_chest", "GT Example Chest");
         add("itemGroup.gt6.chests", "Chests");
+    }
+
+    /**
+     * Fluid pipe keys (task p4-fluid-pipes, W1-exclusive provider additions): the two wood
+     * tiers, the "Fluid Pipes" category tab (the upstream MTE category name,
+     * MultiTileEntityPipeFluid.java:83-98) and the molten iron FluidType description
+     * (descriptionId set at GTFluids.IRON_MOLTEN_TYPE, the FL.create local-name counterpart
+     * Loader_Fluids.java:40-106).
+     */
+    private void addFluidPipes() {
+        add("block.gt6.wood_fluid_pipe_small", "Small Wood Fluid Pipe");
+        add("block.gt6.wood_fluid_pipe_medium", "Wood Fluid Pipe");
+        add("itemGroup.gt6.fluid_pipes", "Fluid Pipes");
+        add("fluid.gt6.iron_molten", "Molten Iron");
     }
 
     /** One title key per creative-visible prefix tab (CreativeTab.java:32 shape, upstream mNameCategory). */
