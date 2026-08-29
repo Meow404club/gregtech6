@@ -1,4 +1,5 @@
 {
+  "block.gt6.example_chest": "GT Example Chest",
   "gt6.material.abyssal_oat": "Abyssal Oat",
   "gt6.material.abyssalnite": "Abyssalnite",
   "gt6.material.acacia": "Acacia",
@@ -2249,6 +2250,7 @@
   "itemGroup.gt6.casing_small": "Item Casings",
   "itemGroup.gt6.chain": "Chains",
   "itemGroup.gt6.chemtube": "Glass Tubes",
+  "itemGroup.gt6.chests": "Chests",
   "itemGroup.gt6.chunk_gt": "Chunks",
   "itemGroup.gt6.crushed": "Crushed Ores",
   "itemGroup.gt6.crushed_centrifuged": "Refined Ores",

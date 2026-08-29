@@ -10,8 +10,9 @@ import net.minecraftforge.fml.common.Mod;
  * lives in net.minecraftforge.data.event and has no Client/Server inner sub-events — providers are
  * gated with {@code event.includeClient()} only (GatherDataEvent.java:28).
  *
- * <p>Client data this phase: item models (GT6ItemModels) + en_us lang (GT6EnUs). Server providers
- * (recipes/tags/loot) are later phases; blockstates do not exist yet.
+ * <p>Client data this phase: item models (GT6ItemModels) + en_us lang (GT6EnUs), joined by
+ * blockstates/block models (GT6BlockStates) with the p3-example-machine chest. Server providers
+ * (recipes/tags/loot) are later phases.
  */
 @Mod.EventBusSubscriber(modid = GT6DataGenerators.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6DataGenerators {
@@ -28,6 +29,9 @@ public final class GT6DataGenerators {
                 new GT6ItemModels(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
             event.getGenerator().addProvider(true,
                 new GT6EnUs(event.getGenerator().getPackOutput()));
+            // task p3-example-machine: first blockstate/block model provider (chest)
+            event.getGenerator().addProvider(true,
+                new GT6BlockStates(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
         }
     }
 }
