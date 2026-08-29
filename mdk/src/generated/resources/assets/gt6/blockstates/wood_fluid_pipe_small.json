@@ -1,0 +1,196 @@
+{
+  "variants": {
+    "connections=0": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=1": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=10": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=11": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=12": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=13": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=14": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=15": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=16": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=17": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=18": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=19": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=2": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=20": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=21": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=22": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=23": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=24": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=25": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=26": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=27": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=28": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=29": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=3": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=30": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=31": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=32": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=33": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=34": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=35": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=36": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=37": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=38": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=39": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=4": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=40": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=41": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=42": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=43": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=44": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=45": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=46": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=47": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=48": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=49": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=5": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=50": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=51": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=52": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=53": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=54": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=55": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=56": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=57": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=58": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=59": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=6": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=60": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=61": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=62": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=63": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=7": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=8": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    },
+    "connections=9": {
+      "model": "gt6:block/wood_fluid_pipe_small"
+    }
+  }
+}
