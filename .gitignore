@@ -16,3 +16,6 @@ tools/config.json
 # Gradle
 .gradle/
 build/
+
+# Mod dev 运行目录（runClient/runServer/runData 工作目录，含世界数据）
+mdk/run/
