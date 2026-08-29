@@ -1363,10 +1363,12 @@ public class MT {
 	public static OreDictMaterial Gabbro, Basalt, Marble, Limestone, Greenschist, Blueschist, Kimberlite, Quartzite;
 	public static OreDictMaterial GraniteRed, GraniteBlack, Granite, Andesite, Diorite, Blackstone, Gneiss, Greywacke;
 	public static OreDictMaterial Siltstone, Rhyolite, Migmatite, Chert, Dacite, Shale, Slate, Eclogite;
-	/** Upstream MT.java:524 NULL is created at class-load time (like the upstream <clinit>), so MaterialRegistry.get(name, MT.NULL) keeps working before init(). */
+	/** Upstream MT.java:524 NULL is the first material of the class body. The static block keeps MaterialRegistry.get(name, MT.NULL) working before init(); createNull() is called again at the top of every flood, because a registry reset wipes the class-load generation away (task p2-registry-reset-idempotency: this was the one entry the batch conversion could not cover). */
 	static {
-		NULL = create(-1, "NULL").setStatsElement(0,0,0,0,0).put(INVALID_MATERIAL, DONT_SHOW_THIS_COMPONENT);
+		NULL = createNull();
 	}
+
+	private static OreDictMaterial createNull() {return create(-1, "NULL").setStatsElement(0,0,0,0,0).put(INVALID_MATERIAL, DONT_SHOW_THIS_COMPONENT);}
 
 	private static void reg0000() { // upstream MT.java:524-569
 		Empty = create(0, "Empty").setStatsElement(0,0,0,0,0).put(EMPTY, AUTO_BLACKLIST, DONT_SHOW_THIS_COMPONENT);
@@ -2693,6 +2695,9 @@ public class MT {
 	public static void init() {
 		if (INITIALIZED && MaterialRegistry.INSTANCE.MATERIAL_MAP.get("NULL") == NULL) return;
 		INITIALIZED = true;
+		ALL_MATERIALS_REGISTERED_HERE.clear(); // port: the set is the create() ledger of the current flood generation (a000 freezes 1496 per generation); without this it accumulates every post-reset generation forever (the static-residue class of bug this card fixes)
+		NULL = createNull(); // upstream :524 creates NULL at class-load once; re-register it per flood so reset() cannot lose the fallback target
+		ANY.create(); // port: upstream fires the ANY table's class-init at the first helper reference (ported MT.java:315 create(), :609 diamond()); pinned here so a registry reset re-registers the entries (see ANY.create)
 		reg0000();
 		reg0001();
 		reg0002();
@@ -2731,31 +2736,48 @@ public class MT {
 		reg0035();
 		fixups(); // upstream :1879-1883 static{} runs after the main fields and before the @Deprecated alias fields
 		reg0036();
+		STONES.init(); // port: the alias fields of upstream MT.java:1919-1945 load STONES right here; the ported aliases are reg0037/reg0038
 		reg0037();
 		reg0038();
 		// Making sure shit is statically loaded, damn it. // upstream :1890-1900
 		H.getClass();
-		OREMATS.Magnetite.getClass();
-		WOODS.Oak.getClass();
-		STONES.Basalt.getClass();
+		OREMATS.init(); // upstream OREMATS.Magnetite.getClass(); the port's re-runnable batch replaces the class-init
+		WOODS.init(); // upstream WOODS.Oak.getClass();
 		AM.init(); // upstream :1896 AM.Hydrogen.getClass(); AM is chunk-registered in this port, so init() replaces the class-load trigger
 		ANY.init();
-		TECH.Unknown.getClass();
-		TECH.init();
-		UNUSED.Vis.getClass();
+		TECH.init(); // upstream :1897 TECH.Unknown.getClass() forces the class whose init chunks follow; the port creates the TECH fields inside init()
+		UNUSED.init(); // upstream UNUSED.Vis.getClass();
 	}
 
 	/** Technical Materials, which are only there for Recipes and such. */
 	public static class TECH {
-		@SuppressWarnings("hiding") @Deprecated public static final OreDictMaterial Brick = MT.Brick, AnyGlowstone = ANY.Glowstone, AnyWax = ANY.Wax, AnyWood = ANY.Wood, AnyStone = ANY.Stone, AnyClay = ANY.Clay, AnyIron = ANY.Fe, AnyIronSteel = ANY.Steel, AnyCopper = ANY.Cu, AnySilicon = ANY.Si, AnyTungsten = ANY.W, AnyThaumicCrystal = ANY.ThaumCrystal, AnySalt = ANY.Salt, AnySteel = ANY._Steel, AnyBronze = ANY._Bronze, AnyMetal = ANY._Metal; // upstream MT.java:1950
+		private static boolean sCreated = false;
 
-		// upstream MT.java:1952-1958 (small set, keeps its natural class-init)
-		public static final OreDictMaterial
-		Organic     = invalid("Organic"    ).put(IGNORE_IN_COLOR_LOG, DONT_SHOW_THIS_COMPONENT),
-		Crystal     = invalid("Crystal"    ).put(IGNORE_IN_COLOR_LOG, DONT_SHOW_THIS_COMPONENT, BRITTLE, CRYSTAL),
-		Unknown     = invalid("Unknown"    ).put(IGNORE_IN_COLOR_LOG, DONT_SHOW_THIS_COMPONENT),
-		Cobblestone = invalid("Cobblestone").put(IGNORE_IN_COLOR_LOG, DONT_SHOW_THIS_COMPONENT, UNRECYCLABLE),
-		RefinedIron = steal(stealLooks(invalid("RefinedIron"), HSLA), WroughtIron).setLocal("Refined Iron").setAllToTheOutputOf(Fe).put(IGNORE_IN_COLOR_LOG, SMITHABLE, MELTING).addReRegistrationToThis(WroughtIron);
+		@SuppressWarnings("hiding") @Deprecated public static OreDictMaterial
+		Brick,
+		AnyGlowstone,
+		AnyWax,
+		AnyWood,
+		AnyStone,
+		AnyClay,
+		AnyIron,
+		AnyIronSteel,
+		AnyCopper,
+		AnySilicon,
+		AnyTungsten,
+		AnyThaumicCrystal,
+		AnySalt,
+		AnySteel,
+		AnyBronze,
+		AnyMetal; // upstream MT.java:1950
+
+		// upstream MT.java:1952-1958 (small set; assigned in init() below since task p2-registry-reset-idempotency: as class-init fields they stayed frozen on the first generation's instances after a registry reset)
+		public static OreDictMaterial
+		Organic,
+		Crystal,
+		Unknown,
+		Cobblestone,
+		RefinedIron;
 
 		// upstream MT.java:3412-3426 String template locals, promoted to fields so the init chunks can share them
 		private static final String tMakeSteel = "In order to make Steel you just need to melt Iron or Wrought Iron in a Smelting Crucible and apply Air to it using an Engine.";
@@ -2765,8 +2787,35 @@ public class MT {
 		private static final String tKillWerewolf = "It is also very useful in order to kill Werewolves and alike, since everyone knows how Werewolves are allergic to Silver! It also works on Armor like a kind of Thorns (without the stupid extra armor damage)";
 		private static final String tKillSlime = "Somehow this Material dissolves Slimey substances and therefore causes severe damage to Slimes and similar Creatures!";
 
-		/** Upstream TECH.init :1959-3591, split into 32 chunks (red line: no giant methods). */
+		/** Upstream TECH.init :1959-3591, split into 32 chunks (red line: no giant methods).
+		 *  The TECH alias fields (upstream MT.java:1950) and the invalid-material fields
+		 *  (upstream :1952-1958) are assigned here instead of the class-init, so every MT.init()
+		 *  generation re-binds them to the current instances; the identity-check guard keeps a
+		 *  same-generation re-call a no-op (MT.java:2694 / AM.java:655 style). */
 		static void init() {
+			if (sCreated && OreDictMaterial.MATERIAL_MAP.get("Organic") == Organic) return;
+			sCreated = true;
+		Brick = MT.Brick;
+		AnyGlowstone = ANY.Glowstone;
+		AnyWax = ANY.Wax;
+		AnyWood = ANY.Wood;
+		AnyStone = ANY.Stone;
+		AnyClay = ANY.Clay;
+		AnyIron = ANY.Fe;
+		AnyIronSteel = ANY.Steel;
+		AnyCopper = ANY.Cu;
+		AnySilicon = ANY.Si;
+		AnyTungsten = ANY.W;
+		AnyThaumicCrystal = ANY.ThaumCrystal;
+		AnySalt = ANY.Salt;
+		AnySteel = ANY._Steel;
+		AnyBronze = ANY._Bronze;
+		AnyMetal = ANY._Metal;
+		Organic = invalid("Organic"    ).put(IGNORE_IN_COLOR_LOG, DONT_SHOW_THIS_COMPONENT);
+		Crystal = invalid("Crystal"    ).put(IGNORE_IN_COLOR_LOG, DONT_SHOW_THIS_COMPONENT, BRITTLE, CRYSTAL);
+		Unknown = invalid("Unknown"    ).put(IGNORE_IN_COLOR_LOG, DONT_SHOW_THIS_COMPONENT);
+		Cobblestone = invalid("Cobblestone").put(IGNORE_IN_COLOR_LOG, DONT_SHOW_THIS_COMPONENT, UNRECYCLABLE);
+		RefinedIron = steal(stealLooks(invalid("RefinedIron"), HSLA), WroughtIron).setLocal("Refined Iron").setAllToTheOutputOf(Fe).put(IGNORE_IN_COLOR_LOG, SMITHABLE, MELTING).addReRegistrationToThis(WroughtIron);
 			init0();
 			init1();
 			init2();
@@ -4148,424 +4197,880 @@ public class MT {
 
 	public static class OREMATS {
 		@Deprecated @SuppressWarnings("hiding")
-		public static final OreDictMaterial Pyrolusite = MnO2, Rutile = TiO2, Hematite = Fe2O3, Magnesite = MgCO3, Gypsum = MT.Gypsum, Bentonite = MT.Bentonite, FullersEarth = Palygorskite, Kaolinite = MT.Kaolinite;
+		public static OreDictMaterial
+		Pyrolusite,
+		Rutile,
+		Hematite,
+		Magnesite,
+		Gypsum,
+		Bentonite,
+		FullersEarth,
+		Kaolinite;
 		
-		public static final OreDictMaterial
-		Cassiterite             = oredustelec( 9108, "Cassiterite"               , SET_METALLIC  , 220, 220, 220, 255, MORTAR, FURNACE, "CassiteriteSand"                                             ).setSmelting(Sn   , 3*U4).addSourceOf(Sn       ).setMcfg( 1, Sn             , 1*U, O                , 2*U)                                                                                                .heat(3 * Sn.mMeltingPoint / 2), CassiteriteSand = Cassiterite,
-		Garnierite              = oredustelec( 9118, "Garnierite"                , SET_METALLIC  ,  50, 200,  70, 255, MORTAR, BLACKLISTED_SMELTER, MAGNETIC_PASSIVE, WASHING_PERSULFATE              ).setSmelting(Ni   , 3*U4).addSourceOf(Ni       ).setMcfg( 1, Ni             , 1*U, O                , 1*U)                                                                                                .qual(0),
-		Uraninite               = oredustdcmp( 9134, "Uraninite"                 , SET_RAD       ,  35,  35,  35, 255, BLACKLISTED_SMELTER                                                            ).setSmelting(U_238,   U3).addSourceOf(U_238    ).setMcfg( 1, U_238          , 1*U, O                , 2*U)                                                                                                ,
-		Magnetite               = oredustdcmp( 9122, "Magnetite"                 , SET_METALLIC  ,  30,  30,  30, 255, MORTAR, MELTING, MAGNETIC_PASSIVE                                              )                         .addSourceOf(Fe       ).setMcfg( 0, Fe             , 3*U, O                , 4*U)                                                                                                .qual(0).heat(Fe.mMeltingPoint),
-		BasalticMineralSand     = oredustdcmp( 9003, "Basaltic Mineral Sand"     , SET_METALLIC  ,  40,  50,  40, 255, MORTAR, MELTING, MAGNETIC_PASSIVE                                              )                         .addSourceOf(Fe       ).setMcfg( 0, Fe             , 3*U, O                , 4*U)                                                                                                .qual(0).heat(Fe.mMeltingPoint),
-		GraniticMineralSand     = oredustdcmp( 9004, "Granitic Mineral Sand"     , SET_METALLIC  ,  40,  60,  60, 255, MORTAR, MELTING, MAGNETIC_PASSIVE                                              )                         .addSourceOf(Fe       ).setMcfg( 0, Fe             , 3*U, O                , 4*U)                                                                                                .qual(0).heat(Fe.mMeltingPoint),
-		
-		Realgar                 = oredustdcmp( 9109, "Realgar"                   , SET_EMERALD   , 157,  33,  35, 255, G_GEM_ORES_TRANSPARENT, MORTAR, BRITTLE, FURNACE, CRYSTAL                      ).setSmelting(As   ,   U3).addSourceOf(As       ).uumMcfg( 0, As             , 1*U, S                , 1*U)                                                                                                .qual(0),
-		Cinnabar                = oredustcent( 9114, "Cinnabar"                  , SET_REDSTONE  , 150,   0,   0, 255, G_GEM_ORES_TRANSPARENT, MORTAR, BRITTLE, CRYSTAL, PULVERIZING_CINNABAR         ).setSmelting(Hg   ,   U3).addSourceOf(Hg       ).uumMcfg( 0, Hg             , 1*U, S                , 1*U)                                                                                                ,
-		Molybdenite             = oredustdcmp( 9123, "Molybdenite"               , SET_METALLIC  ,  25,  25,  25, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER, WASHING_FIRESTONE                     ).setSmelting(Mo   ,   U4).addSourceOf(Mo       ).uumMcfg( 0, Mo             , 1*U, S                , 2*U)                                                                                                ,
-		Sphalerite              = oredustdcmp( 9130, "Sphalerite"                , SET_DULL      , 222, 222,   0, 255, G_GEM_ORES, MORTAR, FURNACE, WASHING_PERSULFATE                                ).setSmelting(Zn   ,   U3).addSourceOf(Zn       ).uumMcfg( 0, Zn             , 1*U, S                , 1*U)                                                                                                ,
-		Stibnite                = oredustdcmp( 9131, "Stibnite"                  , SET_METALLIC  ,  70,  70,  70, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(Sb   ,   U4).addSourceOf(Sb       ).uumMcfg( 0, Sb             , 2*U, S                , 3*U)                                                                                                .heat(823),
-		Pentlandite             = oredustdcmp( 9145, "Pentlandite"               , SET_DULL      , 165, 150,   5, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER, MAGNETIC_PASSIVE, WASHING_PERSULFATE  ).setSmelting(Ni   ,   U3).addSourceOf(Ni       ).uumMcfg( 0, Ni             , 9*U, S                , 8*U)                                                                                                .qual(0), // (Fe,Ni)9S8
-		Chalcopyrite            = oredustdcmp( 9111, "Chalcopyrite"              , SET_DULL      , 160, 120,  40, 255, G_GEM_ORES, MORTAR, FURNACE                                                    ).setSmelting(Cu   , 2*U9).addSourceOf(Cu,Fe    ).uumMcfg( 0, Cu             , 1*U, Fe               , 1*U, S                , 2*U)                                                                        .qual(0),
-		Arsenopyrite            = oredustdcmp( 9216, "Arsenopyrite"              , SET_CUBE_SHINY, 250, 240,  30, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(As   ,   U4).addSourceOf(Fe,As    ).uumMcfg( 0, Fe             , 1*U, As               , 1*U, S                , 1*U)                                                                        .qual(0),
-		Cobaltite               = oredustdcmp( 9115, "Cobaltite"                 , SET_METALLIC  ,  80,  80, 250, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER, MAGNETIC_PASSIVE, WASHING_PERSULFATE  ).setSmelting(Co   ,   U4).addSourceOf(Co,As    ).uumMcfg( 0, Co             , 1*U, As               , 1*U, S                , 1*U)                                                                        .qual(0),
-		Galena                  = oredustdcmp( 9117, "Galena"                    , SET_DULL      , 100,  60, 100, 255, G_GEM_ORES, MORTAR, FURNACE                                                    ).setSmelting(Pb   ,   U3).addSourceOf(Pb,Ag    ).uumMcfg( 0, Pb             , 3*U, Ag               , 3*U, S                , 2*U)                                                                        ,
-		Cooperite               = oredustdcmp( 9116, "Cooperite"                 , SET_METALLIC  , 130, 160, 230, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER, WASHING_MERCURY, "Sheldonite"         ).setSmelting(Pt   ,   U3).addSourceOf(Pt,Ni,Pd ).uumMcfg( 0, Pt             , 3*U, Ni               , 1*U, Pd               , 1*U, S                , 1*U)                                                .setLocal("Sheldonite"),
-		Tetrahedrite            = oredustdcmp( 9132, "Tetrahedrite"              , SET_DULL      , 200,  32,   0, 255, G_GEM_ORES, MORTAR, FURNACE, WASHING_PERSULFATE                                ).setSmelting(Cu   ,   U4).addSourceOf(Cu,Sb,Fe ).uumMcfg( 0, Cu             , 3*U, Sb               , 1*U, Fe               , 1*U, S                , 3*U)                                                , // Cu3SbS3 + x(Fe,Zn)6Sb2S9
-		Kesterite               = oredustdcmp( 9213, "Kesterite"                 , SET_DULL      , 105, 155, 105, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(Cu   ,   U9).addSourceOf(Cu,Zn,Sn ).uumMcfg( 0, Cu             , 2*U, Zn               , 1*U, Sn               , 1*U, S                , 4*U)                                                ,
-		Stannite                = oredustdcmp( 9214, "Stannite"                  , SET_METALLIC  , 155, 145,  55, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(Cu   ,   U9).addSourceOf(Cu,Fe,Sn ).uumMcfg( 0, Cu             , 2*U, Fe               , 1*U, Sn               , 1*U, S                , 4*U)                                                ,
-		Barite                  = oredustelec( 9160, "Barite"                    , SET_DULL      , 230, 235, 255, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(Ba   ,   U9).addSourceOf(Ba       ).uumMcfg( 0, Ba             , 1*U, S                , 1*U, O                , 4*U)                                                                        .heat(1853),
-		Celestine               = oredustelec( 9110, "Celestine"                 , SET_DULL      , 200, 205, 240, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(Sr   ,   U9).addSourceOf(Sr       ).uumMcfg( 0, Sr             , 1*U, S                , 1*U, O                , 4*U)                                                                        ,
-		
-		Scheelite               = oredustdcmp( 9128, "Scheelite"                 , SET_DULL      , 200, 140,  20, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE, "CalciumTungstate"                     )                         .addSourceOf(W        ).uumMcfg( 0, Ca             , 1*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3),
-		Wolframite              = oredustdcmp( 9217, "Wolframite"                , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                         )                         .addSourceOf(W        ).uumMcfg( 0, Mg             , 1*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3),
-		Ferberite               = oredustdcmp( 9194, "Ferberite"                 , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                         )                         .addSourceOf(W,Fe     ).uumMcfg( 0, Fe             , 1*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3),
-		Huebnerite              = oredustdcmp( 9195, "Huebnerite"                , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE, "Gyubnera"                             )                         .addSourceOf(W,Mn     ).uumMcfg( 0, Mn             , 1*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3),
-		Tungstate               = oredustdcmp( 9133, "Tungstate"                 , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                         )                         .addSourceOf(W,Li     ).uumMcfg( 0, Li             , 2*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3),
-		// TODO Actual Processing, but I don't know what could do it
-		Stolzite                = oredustdcmp( 9193, "Stolzite"                  , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE, "Raspite"                              ).setSmelting(WO3  ,4* U6).addSourceOf(W,Pb     ).uumMcfg( 0, Pb             , 1*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3),
-		Russellite              = oredustdcmp( 9196, "Russellite"                , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                         ).setSmelting(WO3  ,4* U9).addSourceOf(W,Bi     ).setMcfg( 0, Bi             , 2*U, WO3              , 4*U, O                , 3*U)                                                                        .qual(3),
-		Pinalite                = oredustdcmp( 9197, "Pinalite"                  , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                         ).setSmelting(WO3  ,4*U11).addSourceOf(W,Pb     ).uumMcfg( 0, Pb             , 3*U, WO3              , 4*U, Cl               , 2*U, O                , 2*U)                                                .qual(3), 
-		
-		Wollastonite            = oredustelec( 9164, "Wollastonite"              , SET_DULL      , 240, 240, 240, 255, BLACKLISTED_SMELTER                                                            )                                                .setMcfg( 0, Ca             , 1*U, SiO2             , 3*U, O                , 1*U)                                                                        , // CaSiO3
-		
-		Zeolite                 = oredustelec( 9165, "Zeolite"                   , SET_DULL      , 240, 230, 230, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Na,Al    ).setMcfg( 0, Al2O3          , 5*U, Na               , 2*U, SiO2             ,12*U, H2O              , 6*U, O                , 1*U)                        , // Na2Al2Si4O12 2H2O
-		Pollucite               = oredustelec( 9147, "Pollucite"                 , SET_DULL      , 240, 210, 210, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Cs,Al    ).setMcfg( 0, Al2O3          , 5*U, Cs               , 2*U, SiO2             ,12*U, H2O              , 6*U, O                , 1*U)                        , // Cs2Al2Si4O12 2H2O (also a source of Rb)
-		
-		BrownLimonite           = oredustdcmp( 9106, "Brown Limonite"            , SET_METALLIC  , 200, 100,   0, 255, MORTAR, MELTING, MAGNETIC_PASSIVE                                              ).setSmelting(Fe2O3,   U2).addSourceOf(Fe       ).setMcfg( 0, Fe             , 1*U, H                , 1*U, O                , 2*U)                                                                        .qual(0).heat(1523), // FeO(OH)
-		YellowLimonite          = oredustdcmp( 9137, "Yellow Limonite"           , SET_METALLIC  , 200, 200,   0, 255, MORTAR, MELTING, MAGNETIC_PASSIVE, "BogIron"                                   ).setSmelting(Fe2O3,   U2).addSourceOf(Fe       ).setMcfg( 0, Fe             , 1*U, H                , 1*U, O                , 2*U)                                                                        .qual(0).heat(1523), // FeO(OH) + a bit Ni and Co
-		
-		Ferrovanadium           = oredustcent( 9143, "Vanadium Magnetite"        , SET_METALLIC  ,  35,  35,  60, 255, MORTAR, MELTING, MOLTEN, MAGNETIC_PASSIVE, WASHING_FIRESTONE, "Ferrovanadium"  )                         .addSourceOf(V,Fe     ).setMcfg( 0, Magnetite      , 1*U, V2O5             , 1*U)                                                                                                , // Mixture of Fe3O4 and V2O5. Technically Ferrovanadium is an Alloy of Iron and Vanadium. I should not have blindly copied PFAA and assumed it was an Ore.
-		Tantalite               = oredustelec( 9148, "Tantalite"                 , SET_METALLIC  , 145,  80,  40, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                 )                         .addSourceOf(Ta,Mn    ).setMcfg( 0, Ta2O5          , 7*U, MnO2             , 1*U)                                                                                                , // (Fe, Mn)Ta2O6
-		Columbite               = oredustelec( 9246, "Columbite"                 , SET_METALLIC  ,  65,  77,  14, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                 )                         .addSourceOf(Nb,Mn    ).setMcfg( 0, Nb2O5          , 7*U, MnO2             , 1*U)                                                                                                , // (Fe, Mn)Nb2O6
-		Coltan                  = oredustcent( 9247, "Coltan"                    , SET_METALLIC  , 105,  83,  66, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                 )                         .addSourceOf(Ta,Nb,Mn ).setMcfg( 0, Tantalite      , 1*U, Columbite        , 1*U)                                                                                                ,
-		
-		Ilmenite                = oredustdcmp( 9120, "Ilmenite"                  , SET_METALLIC  ,  70,  55,  50, 255, MORTAR, MELTING, MOLTEN, MAGNETIC_PASSIVE, WASHING_FIRESTONE, "Illmenite", "TitaniumIron")               .addSourceOf(Ti,Fe    ).uumMcfg( 0, Fe             , 1*U, Ti               , 1*U, O                , 3*U)                                                                        .qual(2),
-		Bauxite                 = oredustdcmp( 9105, "Bauxite"                   , SET_DULL      , 200, 100,   0, 255, MORTAR, BLACKLISTED_SMELTER, APPROXIMATE                                       )                         .addSourceOf(Al,Ti    ).setMcfg( 0, TiO2           , 1*U, Ilmenite         , 2*U, Al2O3            , 2*U)                                                                        .qual(2).heat(2800),
-		Chromite                = oredustelec( 9113, "Chromite"                  , SET_METALLIC  ,  35,  20,  15, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                 ).setSmelting(Cr   , 2*U9).addSourceOf(Cr,Fe    ).setMcfg( 0, Fe             , 1*U, Cr               , 2*U, O                , 4*U)                                                                        .qual(0),
-		Powellite               = oredustcent( 9124, "Powellite"                 , SET_DULL      , 255, 255,   0, 255, MORTAR, BLACKLISTED_SMELTER                                                    ).setSmelting(Mo   ,   U9).addSourceOf(Mo       ).setMcfg( 0, Ca             , 1*U, Mo               , 1*U, O                , 4*U)                                                                        ,
-		Wulfenite               = oredustcent( 9136, "Wulfenite"                 , SET_DULL      , 255, 128,   0, 255, MORTAR, BLACKLISTED_SMELTER                                                    ).setSmelting(Mo   ,   U9).addSourceOf(Mo,Pb    ).setMcfg( 0, Pb             , 1*U, Mo               , 1*U, O                , 4*U)                                                                        ,
-		Bastnasite              = oredustelec( 9144, "Bastnasite"                , SET_FINE      , 200, 110,  45, 255, MORTAR, BLACKLISTED_SMELTER                                                    ).setSmelting(Ce   ,   U9).addSourceOf(Ce,F     ).setMcfg( 0, Ce             , 1*U, C                , 1*U, F                , 1*U, O                , 3*U)                                                , // (Ce, La, Y)CO3F
-		Pitchblende             = oredustcent( 9155, "Pitchblende"               , SET_RAD       , 100, 110,   0, 255, MORTAR, BLACKLISTED_SMELTER                                                    ).setSmelting(U_238,   U5).addSourceOf(U_238,Th ).setMcfg( 0, Uraninite      , 3*U, Th               , 1*U, Pb               , 1*U)                                                                        ,
-		Malachite               = oredustelec( 9156, "Malachite"                 , SET_LAPIS     ,   5,  95,   5, 255, MORTAR, G_GEM_ORES, FURNACE, WASHING_PERSULFATE                                ).setSmelting(Cu   ,   U6).addSourceOf(Cu       ).setMcfg( 0, Cu             , 2*U, CO3              , 4*U, H                , 2*U, O                , 2*U)                                                , // Cu2CO3(OH)2
-		Bromargyrite            = oredustelec( 9210, "Bromargyrite"              , SET_DULL      ,  90,  45,  10, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_MERCURY                                   ).setSmelting(Ag   ,   U3).addSourceOf(Ag,Br    ).setMcfg( 0, Ag             , 1*U, Br               , 1*U)                                                                                                ,
-		Smithsonite             = oredustelec( 9211, "Smithsonite"               , SET_DULL      , 110, 223, 210, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_MERCURY, WASHING_PERSULFATE               ).setSmelting(Zn   ,   U6).addSourceOf(Zn       ).setMcfg( 0, Zn             , 1*U, C                , 1*U, O                , 3*U)                                                                        ,
-		Sperrylite              = oredustelec( 9212, "Sperrylite"                , SET_SHINY     , 105, 105, 105, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_MERCURY                                   ).setSmelting(Pt   ,   U4).addSourceOf(Pt,As    ).setMcfg( 0, Pt             , 1*U, As               , 2*U)                                                                                                ,
-		
-		Perlite                 = oredustdcmp( 9138, "Perlite"                   , SET_DULL      ,  30,  20,  30, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 1, Obsidian       , 1*U, H2O              , 1*U)                                                                                                ,
-		Trona                   = oredustelec( 9159, "Trona"                     , SET_METALLIC  , 135, 135,  95, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 6, Na2CO3         , 6*U, H2O              , 6*U)                                                                                                ,
-		Mirabilite              = oredustdcmp( 9157, "Mirabilite"                , SET_DULL      , 240, 250, 210, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 7, Na2SO4         , 7*U, H2O              ,30*U)                                                                                                ,
-		Bischofite              = oredustdcmp( 9221, "Bischofite"                , SET_ROUGH     ,  99, 104, 118, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 3, MgCl2          , 3*U, H2O              , 6*U)                                                                                                ,
-		
-		Borax                   = oredustdcmp( 9139, "Borax"                     , SET_FINE      , 250, 250, 250, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(B,Na     ).setMcfg( 0, Na             , 2*U, B                , 4*U, H2O              ,30*U, O                , 7*U)                                                ,
-		Diatomite               = oredustcent( 9001, "Diatomite"                 , SET_DULL      , 225, 225, 225, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 0, Flint          , 8*U, Fe2O3            , 1*U, Sapphire         , 1*U)                                                                        ,
-		
-		Spodumene               = oredustelec( 9146, "Spodumene"                 , SET_DULL      , 190, 170, 170, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al,Li    ).setMcfg( 0, Al2O3          , 5*U, Li               , 2*U, SiO2             ,12*U, O                , 1*U)                                                , // LiAl(SiO3)2
-		Lepidolite              = oredustelec( 9149, "Lepidolite"                , SET_FINE      , 240,  50, 140, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al,K,Li,F).setMcfg( 0, Al2O3          ,10*U, K                , 1*U, Li               , 3*U, F                , 2*U, O                , 6*U)                        , // K(Li,Al,Rb)3(Al,Si)4O10(F,OH)2
-		Glauconite              = oredustelec( 9150, "Glauconite"                , SET_DULL      , 130, 180,  60, 255, MORTAR, BLACKLISTED_SMELTER, "GlauconiteSand"                                  )                         .addSourceOf(Al,K     ).setMcfg( 0, Al2O3          ,10*U, K                , 1*U, Mg               , 2*U, H2O              , 3*U, O                , 7*U)                        , GlauconiteSand = Glauconite, // (K,Na)(Fe3+,Al,Mg)2(Si,Al)4O10(OH)2
-//      GlauconiteSand          = oredustelec( 9151, "Glauconite Sand"           , SET_DULL      , 130, 180,  60, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al,K     ).setMcfg( 0, Al2O3          ,10*U, K                , 1*U, Mg               , 2*U, H2O              , 3*U, O                , 7*U)                        , // (K,Na)(Fe3+,Al,Mg)2(Si,Al)4O10(OH)2
-		Vermiculite             = oredustelec( 9152, "Vermiculite"               , SET_METALLIC  , 200, 180,  15, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al       ).setMcfg( 0, Al2O3          ,10*U, Fe               , 3*U, SiO2             ,12*U, H2O              ,12*U, H                , 2*U)                        , // (Mg+2, Fe+2, Fe+3)3 [(AlSi)4O10] (OH)2 4H2O)
-		Mica                    = oredustelec( 9158, "Mica"                      , SET_FINE      , 195, 195, 205, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al,K,F   ).setMcfg( 0, Al2O3          ,15*U, K                , 2*U, SiO2             ,18*U, F                , 4*U)                                                , // KAl2(AlSi3O10)(F,OH)2
-		Kyanite                 = oredustelec( 9166, "Kyanite"                   , SET_FLINT     , 110, 110, 250, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al       ).setMcfg( 0, Al2O3          , 5*U, SiO2             , 3*U)                                                                                                , // Al2SiO5
-		Alunite                 = oredustelec( 9162, "Alunite"                   , SET_METALLIC  , 225, 180,  65, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al,K     ).setMcfg( 0, Al2O3          ,15*U, KOH              , 6*U, SO3              ,16*U, H2O              ,15*U, O                , 9*U)                        , // KAl3(SO4)2(OH)6
-		
-		GarnetSand              = oredustcent( 9005, "Garnet Sand"               , SET_SAND      , 200, 100,   0, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 0, Almandine      , 1*U, Andradite        , 1*U, Grossular        , 1*U, Pyrope           , 1*U, Spessartine      , 1*U, Uvarovite        , 1*U),
-		QuartzSand              = oredustcent( 9006, "Quartz Sand"               , SET_SAND      , 200, 200, 200, 255, MORTAR, BLACKLISTED_SMELTER, QUARTZ                                            ).setSmelting(SiO2 ,   U3)                       .setMcfg( 0, CertusQuartz   , 1*U, MilkyQuartz      , 1*U)                                                                                                ,
-		
-		DiduraniumTrioxide      = oredustelec( 9198, "Diduranium Trioxide"       , SET_DULL      ,  45, 145, 145, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn       ).setMcfg( 0, Dn             , 2*U, O                , 3*U)                                                                                                .qual(4),
-		DuraniumHexafluoride    = oredustelec( 9199, "Duranium Hexafluoride"     , SET_DULL      ,  25, 175, 125, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn,F     ).setMcfg( 0, Dn             , 1*U, F                , 6*U)                                                                                                .qual(4),
-		DuraniumHexachloride    = oredustelec( 9200, "Duranium Hexachloride"     , SET_DULL      ,  75, 175, 145, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn       ).setMcfg( 0, Dn             , 1*U, Cl               , 6*U)                                                                                                .qual(4),
-		DuraniumHexabromide     = oredustelec( 9201, "Duranium Hexabromide"      , SET_DULL      ,  45, 125, 175, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn,Br    ).setMcfg( 0, Dn             , 1*U, Br               , 6*U)                                                                                                .qual(4),
-		DuraniumHexaiodide      = oredustelec( 9202, "Duranium Hexaiodide"       , SET_DULL      ,  75, 125, 175, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn,I     ).setMcfg( 0, Dn             , 1*U, I                , 6*U)                                                                                                .qual(4),
-		DuraniumHexaastatide    = oredustelec( 9203, "Duranium Hexaastatide"     , SET_DULL      ,  25, 145, 175, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn,At    ).setMcfg( 0, Dn             , 1*U, At               , 6*U)                                                                                                .qual(4),
-		TritaniumDioxide        = oredustelec( 9204, "Tritanium Dioxide"         , SET_DULL      ,  25, 185, 125, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn       ).setMcfg( 0, Tn             , 1*U, O                , 2*U)                                                                                                .qual(4),
-		TritaniumHexafluoride   = oredustelec( 9205, "Tritanium Hexafluoride"    , SET_DULL      ,  85, 125, 125, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn,F     ).setMcfg( 0, Tn             , 1*U, F                , 6*U)                                                                                                .qual(4),
-		TritaniumHexachloride   = oredustelec( 9206, "Tritanium Hexachloride"    , SET_DULL      ,  55, 185, 155, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn       ).setMcfg( 0, Tn             , 1*U, Cl               , 6*U)                                                                                                .qual(4),
-		TritaniumHexabromide    = oredustelec( 9207, "Tritanium Hexabromide"     , SET_DULL      ,  55, 125, 155, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn,Br    ).setMcfg( 0, Tn             , 1*U, Br               , 6*U)                                                                                                .qual(4),
-		TritaniumHexaiodide     = oredustelec( 9208, "Tritanium Hexaiodide"      , SET_DULL      ,  85, 185, 185, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn,I     ).setMcfg( 0, Tn             , 1*U, I                , 6*U)                                                                                                .qual(4),
-		TritaniumHexaastatide   = oredustelec( 9209, "Tritanium Hexaastatide"    , SET_DULL      ,  25, 125, 185, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn,At    ).setMcfg( 0, Tn             , 1*U, At               , 6*U)                                                                                                .qual(4);
+		public static OreDictMaterial
+		Cassiterite,
+		CassiteriteSand,
+		Garnierite,
+		Uraninite,
+		Magnetite,
+		BasalticMineralSand,
+		GraniticMineralSand,
+		Realgar,
+		Cinnabar,
+		Molybdenite,
+		Sphalerite,
+		Stibnite,
+		Pentlandite,
+		Chalcopyrite,
+		Arsenopyrite,
+		Cobaltite,
+		Galena,
+		Cooperite,
+		Tetrahedrite,
+		Kesterite,
+		Stannite,
+		Barite,
+		Celestine,
+		Scheelite,
+		Wolframite,
+		Ferberite,
+		Huebnerite,
+		Tungstate,
+		Stolzite,
+		Russellite,
+		Pinalite,
+		Wollastonite,
+		Zeolite,
+		Pollucite,
+		BrownLimonite,
+		YellowLimonite,
+		Ferrovanadium,
+		Tantalite,
+		Columbite,
+		Coltan,
+		Ilmenite,
+		Bauxite,
+		Chromite,
+		Powellite,
+		Wulfenite,
+		Bastnasite,
+		Pitchblende,
+		Malachite,
+		Bromargyrite,
+		Smithsonite,
+		Sperrylite,
+		Perlite,
+		Trona,
+		Mirabilite,
+		Bischofite,
+		Borax,
+		Diatomite,
+		Spodumene,
+		Lepidolite,
+		Glauconite,
+		GlauconiteSand,
+		Vermiculite,
+		Mica,
+		Kyanite,
+		Alunite,
+		GarnetSand,
+		QuartzSand,
+		DiduraniumTrioxide,
+		DuraniumHexafluoride,
+		DuraniumHexachloride,
+		DuraniumHexabromide,
+		DuraniumHexaiodide,
+		DuraniumHexaastatide,
+		TritaniumDioxide,
+		TritaniumHexafluoride,
+		TritaniumHexachloride,
+		TritaniumHexabromide,
+		TritaniumHexaiodide,
+		TritaniumHexaastatide;
+
+		/** Re-runnable creation batch. Upstream builds these as static-final class-init fields
+	 *  (once per JVM); after MaterialRegistry.reset() the entries were gone from MATERIAL_MAP and
+	 *  the static fields kept pointing at orphaned first-generation instances. The port assigns
+	 *  them here with the identity-check guard style of MT.java:2694 / AM.java:655, so every
+	 *  MT.init() generation re-creates them into the current registry. */
+		static void init() {
+			if (sCreated && OreDictMaterial.MATERIAL_MAP.get("Cassiterite") == Cassiterite) return;
+			sCreated = true;
+		Pyrolusite = MnO2;
+		Rutile = TiO2;
+		Hematite = Fe2O3;
+		Magnesite = MgCO3;
+		Gypsum = MT.Gypsum;
+		Bentonite = MT.Bentonite;
+		FullersEarth = Palygorskite;
+		Kaolinite = MT.Kaolinite;
+		Cassiterite = oredustelec( 9108, "Cassiterite"               , SET_METALLIC  , 220, 220, 220, 255, MORTAR, FURNACE, "CassiteriteSand"                                             ).setSmelting(Sn   , 3*U4).addSourceOf(Sn       ).setMcfg( 1, Sn             , 1*U, O                , 2*U)                                                                                                .heat(3 * Sn.mMeltingPoint / 2);
+		CassiteriteSand = Cassiterite;
+		Garnierite = oredustelec( 9118, "Garnierite"                , SET_METALLIC  ,  50, 200,  70, 255, MORTAR, BLACKLISTED_SMELTER, MAGNETIC_PASSIVE, WASHING_PERSULFATE              ).setSmelting(Ni   , 3*U4).addSourceOf(Ni       ).setMcfg( 1, Ni             , 1*U, O                , 1*U)                                                                                                .qual(0);
+		Uraninite = oredustdcmp( 9134, "Uraninite"                 , SET_RAD       ,  35,  35,  35, 255, BLACKLISTED_SMELTER                                                            ).setSmelting(U_238,   U3).addSourceOf(U_238    ).setMcfg( 1, U_238          , 1*U, O                , 2*U);
+		Magnetite = oredustdcmp( 9122, "Magnetite"                 , SET_METALLIC  ,  30,  30,  30, 255, MORTAR, MELTING, MAGNETIC_PASSIVE                                              )                         .addSourceOf(Fe       ).setMcfg( 0, Fe             , 3*U, O                , 4*U)                                                                                                .qual(0).heat(Fe.mMeltingPoint);
+		BasalticMineralSand = oredustdcmp( 9003, "Basaltic Mineral Sand"     , SET_METALLIC  ,  40,  50,  40, 255, MORTAR, MELTING, MAGNETIC_PASSIVE                                              )                         .addSourceOf(Fe       ).setMcfg( 0, Fe             , 3*U, O                , 4*U)                                                                                                .qual(0).heat(Fe.mMeltingPoint);
+		GraniticMineralSand = oredustdcmp( 9004, "Granitic Mineral Sand"     , SET_METALLIC  ,  40,  60,  60, 255, MORTAR, MELTING, MAGNETIC_PASSIVE                                              )                         .addSourceOf(Fe       ).setMcfg( 0, Fe             , 3*U, O                , 4*U)                                                                                                .qual(0).heat(Fe.mMeltingPoint);
+		Realgar = oredustdcmp( 9109, "Realgar"                   , SET_EMERALD   , 157,  33,  35, 255, G_GEM_ORES_TRANSPARENT, MORTAR, BRITTLE, FURNACE, CRYSTAL                      ).setSmelting(As   ,   U3).addSourceOf(As       ).uumMcfg( 0, As             , 1*U, S                , 1*U)                                                                                                .qual(0);
+		Cinnabar = oredustcent( 9114, "Cinnabar"                  , SET_REDSTONE  , 150,   0,   0, 255, G_GEM_ORES_TRANSPARENT, MORTAR, BRITTLE, CRYSTAL, PULVERIZING_CINNABAR         ).setSmelting(Hg   ,   U3).addSourceOf(Hg       ).uumMcfg( 0, Hg             , 1*U, S                , 1*U);
+		Molybdenite = oredustdcmp( 9123, "Molybdenite"               , SET_METALLIC  ,  25,  25,  25, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER, WASHING_FIRESTONE                     ).setSmelting(Mo   ,   U4).addSourceOf(Mo       ).uumMcfg( 0, Mo             , 1*U, S                , 2*U);
+		Sphalerite = oredustdcmp( 9130, "Sphalerite"                , SET_DULL      , 222, 222,   0, 255, G_GEM_ORES, MORTAR, FURNACE, WASHING_PERSULFATE                                ).setSmelting(Zn   ,   U3).addSourceOf(Zn       ).uumMcfg( 0, Zn             , 1*U, S                , 1*U);
+		Stibnite = oredustdcmp( 9131, "Stibnite"                  , SET_METALLIC  ,  70,  70,  70, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(Sb   ,   U4).addSourceOf(Sb       ).uumMcfg( 0, Sb             , 2*U, S                , 3*U)                                                                                                .heat(823);
+		Pentlandite = oredustdcmp( 9145, "Pentlandite"               , SET_DULL      , 165, 150,   5, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER, MAGNETIC_PASSIVE, WASHING_PERSULFATE  ).setSmelting(Ni   ,   U3).addSourceOf(Ni       ).uumMcfg( 0, Ni             , 9*U, S                , 8*U)                                                                                                .qual(0);
+		 // (Fe,Ni)9S8
+		Chalcopyrite = oredustdcmp( 9111, "Chalcopyrite"              , SET_DULL      , 160, 120,  40, 255, G_GEM_ORES, MORTAR, FURNACE                                                    ).setSmelting(Cu   , 2*U9).addSourceOf(Cu,Fe    ).uumMcfg( 0, Cu             , 1*U, Fe               , 1*U, S                , 2*U)                                                                        .qual(0);
+		Arsenopyrite = oredustdcmp( 9216, "Arsenopyrite"              , SET_CUBE_SHINY, 250, 240,  30, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(As   ,   U4).addSourceOf(Fe,As    ).uumMcfg( 0, Fe             , 1*U, As               , 1*U, S                , 1*U)                                                                        .qual(0);
+		Cobaltite = oredustdcmp( 9115, "Cobaltite"                 , SET_METALLIC  ,  80,  80, 250, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER, MAGNETIC_PASSIVE, WASHING_PERSULFATE  ).setSmelting(Co   ,   U4).addSourceOf(Co,As    ).uumMcfg( 0, Co             , 1*U, As               , 1*U, S                , 1*U)                                                                        .qual(0);
+		Galena = oredustdcmp( 9117, "Galena"                    , SET_DULL      , 100,  60, 100, 255, G_GEM_ORES, MORTAR, FURNACE                                                    ).setSmelting(Pb   ,   U3).addSourceOf(Pb,Ag    ).uumMcfg( 0, Pb             , 3*U, Ag               , 3*U, S                , 2*U);
+		Cooperite = oredustdcmp( 9116, "Cooperite"                 , SET_METALLIC  , 130, 160, 230, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER, WASHING_MERCURY, "Sheldonite"         ).setSmelting(Pt   ,   U3).addSourceOf(Pt,Ni,Pd ).uumMcfg( 0, Pt             , 3*U, Ni               , 1*U, Pd               , 1*U, S                , 1*U)                                                .setLocal("Sheldonite");
+		Tetrahedrite = oredustdcmp( 9132, "Tetrahedrite"              , SET_DULL      , 200,  32,   0, 255, G_GEM_ORES, MORTAR, FURNACE, WASHING_PERSULFATE                                ).setSmelting(Cu   ,   U4).addSourceOf(Cu,Sb,Fe ).uumMcfg( 0, Cu             , 3*U, Sb               , 1*U, Fe               , 1*U, S                , 3*U);
+		 // Cu3SbS3 + x(Fe,Zn)6Sb2S9
+		Kesterite = oredustdcmp( 9213, "Kesterite"                 , SET_DULL      , 105, 155, 105, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(Cu   ,   U9).addSourceOf(Cu,Zn,Sn ).uumMcfg( 0, Cu             , 2*U, Zn               , 1*U, Sn               , 1*U, S                , 4*U);
+		Stannite = oredustdcmp( 9214, "Stannite"                  , SET_METALLIC  , 155, 145,  55, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(Cu   ,   U9).addSourceOf(Cu,Fe,Sn ).uumMcfg( 0, Cu             , 2*U, Fe               , 1*U, Sn               , 1*U, S                , 4*U);
+		Barite = oredustelec( 9160, "Barite"                    , SET_DULL      , 230, 235, 255, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(Ba   ,   U9).addSourceOf(Ba       ).uumMcfg( 0, Ba             , 1*U, S                , 1*U, O                , 4*U)                                                                        .heat(1853);
+		Celestine = oredustelec( 9110, "Celestine"                 , SET_DULL      , 200, 205, 240, 255, G_GEM_ORES, MORTAR, BLACKLISTED_SMELTER                                        ).setSmelting(Sr   ,   U9).addSourceOf(Sr       ).uumMcfg( 0, Sr             , 1*U, S                , 1*U, O                , 4*U);
+		Scheelite = oredustdcmp( 9128, "Scheelite"                 , SET_DULL      , 200, 140,  20, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE, "CalciumTungstate"                     )                         .addSourceOf(W        ).uumMcfg( 0, Ca             , 1*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3);
+		Wolframite = oredustdcmp( 9217, "Wolframite"                , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                         )                         .addSourceOf(W        ).uumMcfg( 0, Mg             , 1*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3);
+		Ferberite = oredustdcmp( 9194, "Ferberite"                 , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                         )                         .addSourceOf(W,Fe     ).uumMcfg( 0, Fe             , 1*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3);
+		Huebnerite = oredustdcmp( 9195, "Huebnerite"                , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE, "Gyubnera"                             )                         .addSourceOf(W,Mn     ).uumMcfg( 0, Mn             , 1*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3);
+		Tungstate = oredustdcmp( 9133, "Tungstate"                 , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                         )                         .addSourceOf(W,Li     ).uumMcfg( 0, Li             , 2*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3);
+				// TODO Actual Processing, but I don't know what could do it
+		Stolzite = oredustdcmp( 9193, "Stolzite"                  , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE, "Raspite"                              ).setSmelting(WO3  ,4* U6).addSourceOf(W,Pb     ).uumMcfg( 0, Pb             , 1*U, WO3              , 4*U, O                , 1*U)                                                                        .qual(3);
+		Russellite = oredustdcmp( 9196, "Russellite"                , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                         ).setSmelting(WO3  ,4* U9).addSourceOf(W,Bi     ).setMcfg( 0, Bi             , 2*U, WO3              , 4*U, O                , 3*U)                                                                        .qual(3);
+		Pinalite = oredustdcmp( 9197, "Pinalite"                  , SET_DULL      ,  55,  50,  35, 255, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                         ).setSmelting(WO3  ,4*U11).addSourceOf(W,Pb     ).uumMcfg( 0, Pb             , 3*U, WO3              , 4*U, Cl               , 2*U, O                , 2*U)                                                .qual(3);
+		Wollastonite = oredustelec( 9164, "Wollastonite"              , SET_DULL      , 240, 240, 240, 255, BLACKLISTED_SMELTER                                                            )                                                .setMcfg( 0, Ca             , 1*U, SiO2             , 3*U, O                , 1*U);
+		 // CaSiO3
+		Zeolite = oredustelec( 9165, "Zeolite"                   , SET_DULL      , 240, 230, 230, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Na,Al    ).setMcfg( 0, Al2O3          , 5*U, Na               , 2*U, SiO2             ,12*U, H2O              , 6*U, O                , 1*U);
+		 // Na2Al2Si4O12 2H2O
+		Pollucite = oredustelec( 9147, "Pollucite"                 , SET_DULL      , 240, 210, 210, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Cs,Al    ).setMcfg( 0, Al2O3          , 5*U, Cs               , 2*U, SiO2             ,12*U, H2O              , 6*U, O                , 1*U);
+		 // Cs2Al2Si4O12 2H2O (also a source of Rb)
+		BrownLimonite = oredustdcmp( 9106, "Brown Limonite"            , SET_METALLIC  , 200, 100,   0, 255, MORTAR, MELTING, MAGNETIC_PASSIVE                                              ).setSmelting(Fe2O3,   U2).addSourceOf(Fe       ).setMcfg( 0, Fe             , 1*U, H                , 1*U, O                , 2*U)                                                                        .qual(0).heat(1523);
+		 // FeO(OH)
+		YellowLimonite = oredustdcmp( 9137, "Yellow Limonite"           , SET_METALLIC  , 200, 200,   0, 255, MORTAR, MELTING, MAGNETIC_PASSIVE, "BogIron"                                   ).setSmelting(Fe2O3,   U2).addSourceOf(Fe       ).setMcfg( 0, Fe             , 1*U, H                , 1*U, O                , 2*U)                                                                        .qual(0).heat(1523);
+		 // FeO(OH) + a bit Ni and Co
+		Ferrovanadium = oredustcent( 9143, "Vanadium Magnetite"        , SET_METALLIC  ,  35,  35,  60, 255, MORTAR, MELTING, MOLTEN, MAGNETIC_PASSIVE, WASHING_FIRESTONE, "Ferrovanadium"  )                         .addSourceOf(V,Fe     ).setMcfg( 0, Magnetite      , 1*U, V2O5             , 1*U);
+		 // Mixture of Fe3O4 and V2O5. Technically Ferrovanadium is an Alloy of Iron and Vanadium. I should not have blindly copied PFAA and assumed it was an Ore.
+		Tantalite = oredustelec( 9148, "Tantalite"                 , SET_METALLIC  , 145,  80,  40, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                 )                         .addSourceOf(Ta,Mn    ).setMcfg( 0, Ta2O5          , 7*U, MnO2             , 1*U);
+		 // (Fe, Mn)Ta2O6
+		Columbite = oredustelec( 9246, "Columbite"                 , SET_METALLIC  ,  65,  77,  14, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                 )                         .addSourceOf(Nb,Mn    ).setMcfg( 0, Nb2O5          , 7*U, MnO2             , 1*U);
+		 // (Fe, Mn)Nb2O6
+		Coltan = oredustcent( 9247, "Coltan"                    , SET_METALLIC  , 105,  83,  66, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                 )                         .addSourceOf(Ta,Nb,Mn ).setMcfg( 0, Tantalite      , 1*U, Columbite        , 1*U);
+		Ilmenite = oredustdcmp( 9120, "Ilmenite"                  , SET_METALLIC  ,  70,  55,  50, 255, MORTAR, MELTING, MOLTEN, MAGNETIC_PASSIVE, WASHING_FIRESTONE, "Illmenite", "TitaniumIron")               .addSourceOf(Ti,Fe    ).uumMcfg( 0, Fe             , 1*U, Ti               , 1*U, O                , 3*U)                                                                        .qual(2);
+		Bauxite = oredustdcmp( 9105, "Bauxite"                   , SET_DULL      , 200, 100,   0, 255, MORTAR, BLACKLISTED_SMELTER, APPROXIMATE                                       )                         .addSourceOf(Al,Ti    ).setMcfg( 0, TiO2           , 1*U, Ilmenite         , 2*U, Al2O3            , 2*U)                                                                        .qual(2).heat(2800);
+		Chromite = oredustelec( 9113, "Chromite"                  , SET_METALLIC  ,  35,  20,  15, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_FIRESTONE                                 ).setSmelting(Cr   , 2*U9).addSourceOf(Cr,Fe    ).setMcfg( 0, Fe             , 1*U, Cr               , 2*U, O                , 4*U)                                                                        .qual(0);
+		Powellite = oredustcent( 9124, "Powellite"                 , SET_DULL      , 255, 255,   0, 255, MORTAR, BLACKLISTED_SMELTER                                                    ).setSmelting(Mo   ,   U9).addSourceOf(Mo       ).setMcfg( 0, Ca             , 1*U, Mo               , 1*U, O                , 4*U);
+		Wulfenite = oredustcent( 9136, "Wulfenite"                 , SET_DULL      , 255, 128,   0, 255, MORTAR, BLACKLISTED_SMELTER                                                    ).setSmelting(Mo   ,   U9).addSourceOf(Mo,Pb    ).setMcfg( 0, Pb             , 1*U, Mo               , 1*U, O                , 4*U);
+		Bastnasite = oredustelec( 9144, "Bastnasite"                , SET_FINE      , 200, 110,  45, 255, MORTAR, BLACKLISTED_SMELTER                                                    ).setSmelting(Ce   ,   U9).addSourceOf(Ce,F     ).setMcfg( 0, Ce             , 1*U, C                , 1*U, F                , 1*U, O                , 3*U);
+		 // (Ce, La, Y)CO3F
+		Pitchblende = oredustcent( 9155, "Pitchblende"               , SET_RAD       , 100, 110,   0, 255, MORTAR, BLACKLISTED_SMELTER                                                    ).setSmelting(U_238,   U5).addSourceOf(U_238,Th ).setMcfg( 0, Uraninite      , 3*U, Th               , 1*U, Pb               , 1*U);
+		Malachite = oredustelec( 9156, "Malachite"                 , SET_LAPIS     ,   5,  95,   5, 255, MORTAR, G_GEM_ORES, FURNACE, WASHING_PERSULFATE                                ).setSmelting(Cu   ,   U6).addSourceOf(Cu       ).setMcfg( 0, Cu             , 2*U, CO3              , 4*U, H                , 2*U, O                , 2*U);
+		 // Cu2CO3(OH)2
+		Bromargyrite = oredustelec( 9210, "Bromargyrite"              , SET_DULL      ,  90,  45,  10, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_MERCURY                                   ).setSmelting(Ag   ,   U3).addSourceOf(Ag,Br    ).setMcfg( 0, Ag             , 1*U, Br               , 1*U);
+		Smithsonite = oredustelec( 9211, "Smithsonite"               , SET_DULL      , 110, 223, 210, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_MERCURY, WASHING_PERSULFATE               ).setSmelting(Zn   ,   U6).addSourceOf(Zn       ).setMcfg( 0, Zn             , 1*U, C                , 1*U, O                , 3*U);
+		Sperrylite = oredustelec( 9212, "Sperrylite"                , SET_SHINY     , 105, 105, 105, 255, MORTAR, BLACKLISTED_SMELTER, WASHING_MERCURY                                   ).setSmelting(Pt   ,   U4).addSourceOf(Pt,As    ).setMcfg( 0, Pt             , 1*U, As               , 2*U);
+		Perlite = oredustdcmp( 9138, "Perlite"                   , SET_DULL      ,  30,  20,  30, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 1, Obsidian       , 1*U, H2O              , 1*U);
+		Trona = oredustelec( 9159, "Trona"                     , SET_METALLIC  , 135, 135,  95, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 6, Na2CO3         , 6*U, H2O              , 6*U);
+		Mirabilite = oredustdcmp( 9157, "Mirabilite"                , SET_DULL      , 240, 250, 210, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 7, Na2SO4         , 7*U, H2O              ,30*U);
+		Bischofite = oredustdcmp( 9221, "Bischofite"                , SET_ROUGH     ,  99, 104, 118, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 3, MgCl2          , 3*U, H2O              , 6*U);
+		Borax = oredustdcmp( 9139, "Borax"                     , SET_FINE      , 250, 250, 250, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(B,Na     ).setMcfg( 0, Na             , 2*U, B                , 4*U, H2O              ,30*U, O                , 7*U);
+		Diatomite = oredustcent( 9001, "Diatomite"                 , SET_DULL      , 225, 225, 225, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 0, Flint          , 8*U, Fe2O3            , 1*U, Sapphire         , 1*U);
+		Spodumene = oredustelec( 9146, "Spodumene"                 , SET_DULL      , 190, 170, 170, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al,Li    ).setMcfg( 0, Al2O3          , 5*U, Li               , 2*U, SiO2             ,12*U, O                , 1*U);
+		 // LiAl(SiO3)2
+		Lepidolite = oredustelec( 9149, "Lepidolite"                , SET_FINE      , 240,  50, 140, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al,K,Li,F).setMcfg( 0, Al2O3          ,10*U, K                , 1*U, Li               , 3*U, F                , 2*U, O                , 6*U);
+		 // K(Li,Al,Rb)3(Al,Si)4O10(F,OH)2
+		Glauconite = oredustelec( 9150, "Glauconite"                , SET_DULL      , 130, 180,  60, 255, MORTAR, BLACKLISTED_SMELTER, "GlauconiteSand"                                  )                         .addSourceOf(Al,K     ).setMcfg( 0, Al2O3          ,10*U, K                , 1*U, Mg               , 2*U, H2O              , 3*U, O                , 7*U);
+		GlauconiteSand = Glauconite;
+		 // (K,Na)(Fe3+,Al,Mg)2(Si,Al)4O10(OH)2
+		//      GlauconiteSand          = oredustelec( 9151, "Glauconite Sand"           , SET_DULL      , 130, 180,  60, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al,K     ).setMcfg( 0, Al2O3          ,10*U, K                , 1*U, Mg               , 2*U, H2O              , 3*U, O                , 7*U)                        , // (K,Na)(Fe3+,Al,Mg)2(Si,Al)4O10(OH)2
+		Vermiculite = oredustelec( 9152, "Vermiculite"               , SET_METALLIC  , 200, 180,  15, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al       ).setMcfg( 0, Al2O3          ,10*U, Fe               , 3*U, SiO2             ,12*U, H2O              ,12*U, H                , 2*U);
+		 // (Mg+2, Fe+2, Fe+3)3 [(AlSi)4O10] (OH)2 4H2O)
+		Mica = oredustelec( 9158, "Mica"                      , SET_FINE      , 195, 195, 205, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al,K,F   ).setMcfg( 0, Al2O3          ,15*U, K                , 2*U, SiO2             ,18*U, F                , 4*U);
+		 // KAl2(AlSi3O10)(F,OH)2
+		Kyanite = oredustelec( 9166, "Kyanite"                   , SET_FLINT     , 110, 110, 250, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al       ).setMcfg( 0, Al2O3          , 5*U, SiO2             , 3*U);
+		 // Al2SiO5
+		Alunite = oredustelec( 9162, "Alunite"                   , SET_METALLIC  , 225, 180,  65, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                         .addSourceOf(Al,K     ).setMcfg( 0, Al2O3          ,15*U, KOH              , 6*U, SO3              ,16*U, H2O              ,15*U, O                , 9*U);
+		 // KAl3(SO4)2(OH)6
+		GarnetSand = oredustcent( 9005, "Garnet Sand"               , SET_SAND      , 200, 100,   0, 255, MORTAR, BLACKLISTED_SMELTER                                                    )                                                .setMcfg( 0, Almandine      , 1*U, Andradite        , 1*U, Grossular        , 1*U, Pyrope           , 1*U, Spessartine      , 1*U, Uvarovite        , 1*U);
+		QuartzSand = oredustcent( 9006, "Quartz Sand"               , SET_SAND      , 200, 200, 200, 255, MORTAR, BLACKLISTED_SMELTER, QUARTZ                                            ).setSmelting(SiO2 ,   U3)                       .setMcfg( 0, CertusQuartz   , 1*U, MilkyQuartz      , 1*U);
+		DiduraniumTrioxide = oredustelec( 9198, "Diduranium Trioxide"       , SET_DULL      ,  45, 145, 145, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn       ).setMcfg( 0, Dn             , 2*U, O                , 3*U)                                                                                                .qual(4);
+		DuraniumHexafluoride = oredustelec( 9199, "Duranium Hexafluoride"     , SET_DULL      ,  25, 175, 125, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn,F     ).setMcfg( 0, Dn             , 1*U, F                , 6*U)                                                                                                .qual(4);
+		DuraniumHexachloride = oredustelec( 9200, "Duranium Hexachloride"     , SET_DULL      ,  75, 175, 145, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn       ).setMcfg( 0, Dn             , 1*U, Cl               , 6*U)                                                                                                .qual(4);
+		DuraniumHexabromide = oredustelec( 9201, "Duranium Hexabromide"      , SET_DULL      ,  45, 125, 175, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn,Br    ).setMcfg( 0, Dn             , 1*U, Br               , 6*U)                                                                                                .qual(4);
+		DuraniumHexaiodide = oredustelec( 9202, "Duranium Hexaiodide"       , SET_DULL      ,  75, 125, 175, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn,I     ).setMcfg( 0, Dn             , 1*U, I                , 6*U)                                                                                                .qual(4);
+		DuraniumHexaastatide = oredustelec( 9203, "Duranium Hexaastatide"     , SET_DULL      ,  25, 145, 175, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Dn,At    ).setMcfg( 0, Dn             , 1*U, At               , 6*U)                                                                                                .qual(4);
+		TritaniumDioxide = oredustelec( 9204, "Tritanium Dioxide"         , SET_DULL      ,  25, 185, 125, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn       ).setMcfg( 0, Tn             , 1*U, O                , 2*U)                                                                                                .qual(4);
+		TritaniumHexafluoride = oredustelec( 9205, "Tritanium Hexafluoride"    , SET_DULL      ,  85, 125, 125, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn,F     ).setMcfg( 0, Tn             , 1*U, F                , 6*U)                                                                                                .qual(4);
+		TritaniumHexachloride = oredustelec( 9206, "Tritanium Hexachloride"    , SET_DULL      ,  55, 185, 155, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn       ).setMcfg( 0, Tn             , 1*U, Cl               , 6*U)                                                                                                .qual(4);
+		TritaniumHexabromide = oredustelec( 9207, "Tritanium Hexabromide"     , SET_DULL      ,  55, 125, 155, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn,Br    ).setMcfg( 0, Tn             , 1*U, Br               , 6*U)                                                                                                .qual(4);
+		TritaniumHexaiodide = oredustelec( 9208, "Tritanium Hexaiodide"      , SET_DULL      ,  85, 185, 185, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn,I     ).setMcfg( 0, Tn             , 1*U, I                , 6*U)                                                                                                .qual(4);
+		TritaniumHexaastatide = oredustelec( 9209, "Tritanium Hexaastatide"    , SET_DULL      ,  25, 125, 185, 255, BLACKLISTED_SMELTER                                                            )                         .addSourceOf(Tn,At    ).setMcfg( 0, Tn             , 1*U, At               , 6*U)                                                                                                .qual(4);
+		}
+
+		private static boolean sCreated = false;
+
 	}
 	
 	/** Had to move a chunk of Materials into its own Class due to space Issues... */
 	public static class STONES {
 		@SuppressWarnings("hiding")
-		public static final OreDictMaterial
-		SpaceRock    = stone    ( 8512, "Space Stone" , SET_SPACE ,  99,  99,  99, 255, MELTING, MOLTEN)                                                                                                                                                     .qual(1, 5.0, 32, 1).setGenerifying(Stone).addSourceOf(He,He_3).setLocal("Space"),
-		MoonRock     = stone    ( 8513, "Moon Stone"              , 189, 189, 189, 255, MELTING, MOLTEN)                                                                                                                                                     .qual(1, 5.0, 32, 1).setGenerifying(Stone).setLocal("Moon"),
-		MoonTurf     = stone    ( 8514, "Moon Turf"               , 207, 207, 207, 255)                                                                                                                                                                      .qual(1, 3.0, 16, 1).setGenerifying(Stone).addSourceOf(He,He_3),
-		MarsRock     = stone    ( 8515, "Mars Stone"              , 189,  77,  77, 255, MELTING, MOLTEN)                                                                                                                                                     .qual(1, 5.0, 32, 1).setGenerifying(Stone).setLocal("Mars"),
-		MarsSand     = stone    ( 8516, "Mars Sand"               , 207,  66,  66, 255)                                                                                                                                                                      .qual(1, 3.0, 16, 1).setGenerifying(Stone),
-		SkyStone     = stonecent( 8528, "Sky Stone"               ,  81,  92,  96, 255)                                                            .setMcfg( 0, Peridot        , 2*U, RareEarth        , 1*U, MeteoricIron     , 1*U, Obsidian         , 5*U).qual(1, 5.0, 64, 2).setGenerifying(Stone).heat(2200),
-		Holystone    = stone    ( 8522, "Holystone"               , 172, 172, 172, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).heat(2000),
-		Livingrock   = stone    ( 8521, "Livingrock"              , 195, 205, 195, 255)                                                                                                                                                                      .qual(1, 5.0,128, 2).setGenerifying(Stone).heat(1800),
-		Deadrock     = stone    ( 8523, "Deadrock"                , 153, 153, 168, 255, UNBURNABLE)                                                                                                                                                          .qual(1, 5.0,128, 2).setGenerifying(Stone).heat(1800),
-		Betweenstone = stone    ( 8519, "Betweenstone"            , 100, 160, 110, 255)                                                                                                                                                                      .qual(1, 4.0, 32, 1).setGenerifying(Stone).heat(1000),
-		Pitstone     = stone    ( 8520, "Pitstone"                ,  40,  50,  30, 255)                                                                                                                                                                      .qual(1, 4.0, 32, 1).setGenerifying(Stone).heat(1200),
-		Cragrock     = stone    ( 8524, "Cragrock"                ,  93,  96, 107, 255)                                                                                                                                                                      .qual(1, 4.0, 32, 1).setGenerifying(Stone).heat(1400),
-		Templerock   = brick    ( 8525, "Templerock"              , 171, 158, 106, 255, WITHER_PROOF)                                                                                                                                                        .qual(1, 5.0,128, 1).setGenerifying(Stone).heat(1600),
-		Mazestone    = brick    ( 8526, "Mazestone"               , 110, 120, 110, 255, WITHER_PROOF)                                                                                                                                                        .qual(1, 5.0,128, 3).setGenerifying(Stone).heat(2000),
-		Castlerock   = brick    ( 8527, "Castlerock"              , 198, 185, 186, 255, WITHER_PROOF)                                                                                                                                                        .qual(1, 5.0,128, 3).setGenerifying(Stone).heat(2000),
-		Umber        = stone    ( 8517, "Umber"                   , 111,  77,  11, 255)                                                                                                                                                                      .qual(1, 3.0, 32, 1).setGenerifying(Stone).heat( 987).setLocal("Umberstone"),
-		Shale        = stonecent( 9190, "Shale"                   , 142, 142, 168, 255)                                                            .setMcfg( 0, CaCO3          , 2*U, MilkyQuartz      , 1*U, Clay             , 1*U)                        .qual(1, 2.0, 16, 0).setGenerifying(Stone),
-		Redrock      = stonecent( 8509, "Redrock"                 , 255,  80,  50, 255, "RedRock")                                                 .setMcfg( 0, CaCO3          , 2*U, Flint            , 1*U, ClayRed          , 1*U)                        .qual(1, 2.5, 16, 1).setGenerifying(Stone),
-		Komatiite    = stonecent( 9177, "Komatiite"               , 190, 190, 105, 255, UNBURNABLE)                                                .setMcfg( 0, Peridot        , 1*U, MgCO3            , 2*U, Flint            , 6*U, DarkAsh          , 3*U).qual(1, 3.0, 32, 2).setGenerifying(Stone).heat(1673),
-		Pumice       = stonecent( 9000, "Pumice"      , SET_DULL  , 220, 216, 127, 255, UNBURNABLE)                                                .setMcfg( 0, Peridot        , 3*U, MgCO3            , 2*U, Flint            , 4*U, DarkAsh          , 2*U).qual(1, 3.0, 32, 2).setGenerifying(Stone).heat(1673),
-		Gabbro       = stonecent( 9176, "Gabbro"                  ,  65,  60,  60, 255, UNBURNABLE)                                                .setMcfg( 0, Peridot        , 1*U, CaCO3            , 3*U, Flint            , 8*U, DarkAsh          , 4*U).qual(1, 3.0, 32, 2).setGenerifying(Stone).heat(1673),
-		Basalt       = stonecent( 8505, "Basalt"                  ,  60,  50,  50, 255, UNBURNABLE, UNRECYCLABLE)                                  .setMcfg( 0, Peridot        , 1*U, CaCO3            , 3*U, Flint            , 8*U, DarkAsh          , 4*U).qual(1, 3.0, 32, 2).setGenerifying(Stone).heat(1673),
-		Marble       = stonecent( 8506, "Marble"                  , 200, 200, 200, 255)                                                            .setMcfg( 0, Mg             , 1*U, CaCO3            , 7*U)                                                .qual(1, 2.5, 16, 1).setGenerifying(Stone).setSmelting(CaCO3, 2*U3),
-		Limestone    = stonecent( 9189, "Limestone"               , 230, 200, 130, 255, BETWEENLANDS)                                              .setMcfg( 0, CaCO3          , 1*U)                                                                        .qual(1, 2.5, 16, 1).setGenerifying(Stone).setSmelting(CaCO3, U2),
-		Greenschist  = stone    ( 9171, "Greenschist"             , 105, 190, 105, 255, MD.UB)                                                                                                                                                               .qual(1, 2.0, 24, 1).setGenerifying(Stone).setLocal("Green Schist"),
-		Blueschist   = stone    ( 9184, "Blueschist"              , 105, 105, 190, 255, MD.UB)                                                                                                                                                               .qual(1, 2.0, 24, 1).setGenerifying(Stone).setLocal("Blue Schist"),
-		Grayschist   = stone    ( 9244, "Grayschist"              , 145, 140, 145, 255, MD.EB)                                                                                                                                                               .qual(1, 2.0, 24, 1).setGenerifying(Stone).setLocal("Gray Schist"),
-		Pinkschist   = stone    ( 9245, "Pinkschist"              , 220, 195, 195, 255, MD.PFAA)                                                                                                                                                             .qual(1, 2.0, 24, 1).setGenerifying(Stone).setLocal("Pink Schist"),
-		Gneiss       = stone    ( 9170, "Gneiss"                  , 255, 201, 134, 255)                                                                                                                                                                      .qual(1, 2.0, 24, 1).setGenerifying(Stone),
-		Kimberlite   = stone    ( 9218, "Kimberlite"              , 100,  70,  10, 255)                                                                                                                                                                      .qual(1, 2.0, 24, 2).setGenerifying(Stone),
-		Quartzite    = stone    ( 9180, "Quartzite"   , SET_QUARTZ, 230, 205, 205, 255, G_QUARTZ_ORES, CRYSTALLISABLE, QUARTZ, BLACKLISTED_SMELTER)                                                                                                          .qual(1, 1.7, 32, 1).setGenerifying(Stone).setSmelting(SiO2, U),
-		GraniteRed   = stoneelec( 8507, "GraniteRed"              , 160,  60,  70, 255)                                                            .setMcfg( 0, Biotite        , 1*U, PotassiumFeldspar, 1*U, Flint            , 1*U)                        .qual(1, 3.0, 64, 3).setGenerifying(Stone).heat(1500).setLocal("Red Granite"),
-		GraniteBlack = stoneelec( 8508, "GraniteBlack"            ,  20,  20,  20, 255)                                                            .setMcfg( 0, Biotite        , 1*U, PotassiumFeldspar, 1*U, Flint            , 1*U)                        .qual(1, 3.0, 64, 3).setGenerifying(Stone).heat(1500).setLocal("Black Granite"),
-		Granite      = stoneelec( 8518, "Granite"                 , 160, 120, 130, 255)                                                            .setMcfg( 0, Biotite        , 1*U, PotassiumFeldspar, 1*U, Flint            , 1*U)                        .qual(1, 3.0, 64, 1).setGenerifying(Stone).heat(1500),
-		Andesite     = stone    ( 9188, "Andesite"                , 191, 191, 191, 255)                                                                                                                                                                      .qual(1, 2.5, 16, 1).setGenerifying(Stone),
-		Diorite      = stone    ( 8511, "Diorite"                 , 240, 240, 240, 255, UNBURNABLE)                                                                                                                                                          .qual(1, 2.5, 16, 1).setGenerifying(Stone),
-		Blackstone   = brick    ( 9223, "Blackstone"              ,  30,  20,  20, 255, UNRECYCLABLE)                                                                                                                                                        .qual(1, 5.0, 64, 1).setGenerifying(Stone),
-		Greywacke    = stone    ( 9173, "Greywacke"               , 176, 176, 176, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 1).setGenerifying(Stone),
-		Siltstone    = stone    ( 9178, "Siltstone"               , 250, 205, 205, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 0).setGenerifying(Stone),
-		Rhyolite     = stone    ( 9179, "Rhyolite"                , 121, 121, 121, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 1).setGenerifying(Stone),
-		Migmatite    = stone    ( 9181, "Migmatite"               ,  70,  40,  40, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 1).setGenerifying(Stone),
-		Chert        = stone    ( 9186, "Chert"                   , 105,  10,  10, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 0).setGenerifying(Stone),
-		Dacite       = stone    ( 9187, "Dacite"                  , 131, 131, 131, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 1).setGenerifying(Stone),
-		Slate        = stone    ( 9222, "Slate"                   , 148, 151, 156, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 0).setGenerifying(Stone),
-		Deepslate    = stone    ( 9248, "Deepslate"               ,  57,  59,  61, 255)                                                                                                                                                                      .qual(1, 2.0, 32, 1).setGenerifying(Stone),
-		Eclogite     = stone    ( 9191, "Eclogite"                ,  90,  40,  40, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 1).setGenerifying(Stone),
-		PhobosRock   = stone    ( 9249, "PhobosRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Phobos"   ),
-		DeimosRock   = stone    ( 9250, "DeimosRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Deimos"   ),
-		VenusRock    = stone    ( 9251, "VenusRock"               , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Venus"    ),
-		MercuryRock  = stone    ( 9252, "MercuryRock"             , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Mercury"  ),
-		CeresRock    = stone    ( 9253, "CeresRock"               , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Ceres"    ),
-		JupiterRock  = stone    ( 9254, "JupiterRock"             , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Jupiter"  ),
-		IoRock       = stone    ( 9255, "IoRock"                  , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Io"       ),
-		EuropaRock   = stone    ( 9256, "EuropaRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Europa"   ),
-		GanymedeRock = stone    ( 9257, "GanymedeRock"            , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Ganymede" ),
-		CallistoRock = stone    ( 9258, "CallistoRock"            , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Callisto" ),
-		SaturnRock   = stone    ( 9259, "SaturnRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Saturn"   ),
-		RheaRock     = stone    ( 9260, "RheaRock"                , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Rhea"     ),
-		TitanRock    = stone    ( 9261, "TitanRock"               , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Titan"    ),
-		OberonRock   = stone    ( 9262, "OberonRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Oberon"   ),
-		IapetusRock  = stone    ( 9263, "IapetusRock"             , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Iapetus"  ),
-		UranusRock   = stone    ( 9264, "UranusRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Uranus"   ),
-		TitaniaRock  = stone    ( 9265, "TitaniaRock"             , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Titania"  ),
-		NeptuneRock  = stone    ( 9266, "NeptuneRock"             , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Neptune"  ),
-		TritonRock   = stone    ( 9267, "TritonRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Triton"   ),
-		PlutoRock    = stone    ( 9268, "PlutoRock"               , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Pluto"    ),
-		ErisRock     = stone    ( 9269, "ErisRock"                , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Eris"     ),
-		Kepler22bRock= stone    ( 9270, "Kepler22bRock"           , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Kepler22b");
+		public static OreDictMaterial
+		SpaceRock,
+		MoonRock,
+		MoonTurf,
+		MarsRock,
+		MarsSand,
+		SkyStone,
+		Holystone,
+		Livingrock,
+		Deadrock,
+		Betweenstone,
+		Pitstone,
+		Cragrock,
+		Templerock,
+		Mazestone,
+		Castlerock,
+		Umber,
+		Shale,
+		Redrock,
+		Komatiite,
+		Pumice,
+		Gabbro,
+		Basalt,
+		Marble,
+		Limestone,
+		Greenschist,
+		Blueschist,
+		Grayschist,
+		Pinkschist,
+		Gneiss,
+		Kimberlite,
+		Quartzite,
+		GraniteRed,
+		GraniteBlack,
+		Granite,
+		Andesite,
+		Diorite,
+		Blackstone,
+		Greywacke,
+		Siltstone,
+		Rhyolite,
+		Migmatite,
+		Chert,
+		Dacite,
+		Slate,
+		Deepslate,
+		Eclogite,
+		PhobosRock,
+		DeimosRock,
+		VenusRock,
+		MercuryRock,
+		CeresRock,
+		JupiterRock,
+		IoRock,
+		EuropaRock,
+		GanymedeRock,
+		CallistoRock,
+		SaturnRock,
+		RheaRock,
+		TitanRock,
+		OberonRock,
+		IapetusRock,
+		UranusRock,
+		TitaniaRock,
+		NeptuneRock,
+		TritonRock,
+		PlutoRock,
+		ErisRock,
+		Kepler22bRock;
+
+		/** Re-runnable creation batch. Upstream builds these as static-final class-init fields
+	 *  (once per JVM); after MaterialRegistry.reset() the entries were gone from MATERIAL_MAP and
+	 *  the static fields kept pointing at orphaned first-generation instances. The port assigns
+	 *  them here with the identity-check guard style of MT.java:2694 / AM.java:655, so every
+	 *  MT.init() generation re-creates them into the current registry. */
+		static void init() {
+			if (sCreated && OreDictMaterial.MATERIAL_MAP.get("SpaceRock") == SpaceRock) return;
+			sCreated = true;
+		SpaceRock = stone    ( 8512, "Space Stone" , SET_SPACE ,  99,  99,  99, 255, MELTING, MOLTEN)                                                                                                                                                     .qual(1, 5.0, 32, 1).setGenerifying(Stone).addSourceOf(He,He_3).setLocal("Space");
+		MoonRock = stone    ( 8513, "Moon Stone"              , 189, 189, 189, 255, MELTING, MOLTEN)                                                                                                                                                     .qual(1, 5.0, 32, 1).setGenerifying(Stone).setLocal("Moon");
+		MoonTurf = stone    ( 8514, "Moon Turf"               , 207, 207, 207, 255)                                                                                                                                                                      .qual(1, 3.0, 16, 1).setGenerifying(Stone).addSourceOf(He,He_3);
+		MarsRock = stone    ( 8515, "Mars Stone"              , 189,  77,  77, 255, MELTING, MOLTEN)                                                                                                                                                     .qual(1, 5.0, 32, 1).setGenerifying(Stone).setLocal("Mars");
+		MarsSand = stone    ( 8516, "Mars Sand"               , 207,  66,  66, 255)                                                                                                                                                                      .qual(1, 3.0, 16, 1).setGenerifying(Stone);
+		SkyStone = stonecent( 8528, "Sky Stone"               ,  81,  92,  96, 255)                                                            .setMcfg( 0, Peridot        , 2*U, RareEarth        , 1*U, MeteoricIron     , 1*U, Obsidian         , 5*U).qual(1, 5.0, 64, 2).setGenerifying(Stone).heat(2200);
+		Holystone = stone    ( 8522, "Holystone"               , 172, 172, 172, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).heat(2000);
+		Livingrock = stone    ( 8521, "Livingrock"              , 195, 205, 195, 255)                                                                                                                                                                      .qual(1, 5.0,128, 2).setGenerifying(Stone).heat(1800);
+		Deadrock = stone    ( 8523, "Deadrock"                , 153, 153, 168, 255, UNBURNABLE)                                                                                                                                                          .qual(1, 5.0,128, 2).setGenerifying(Stone).heat(1800);
+		Betweenstone = stone    ( 8519, "Betweenstone"            , 100, 160, 110, 255)                                                                                                                                                                      .qual(1, 4.0, 32, 1).setGenerifying(Stone).heat(1000);
+		Pitstone = stone    ( 8520, "Pitstone"                ,  40,  50,  30, 255)                                                                                                                                                                      .qual(1, 4.0, 32, 1).setGenerifying(Stone).heat(1200);
+		Cragrock = stone    ( 8524, "Cragrock"                ,  93,  96, 107, 255)                                                                                                                                                                      .qual(1, 4.0, 32, 1).setGenerifying(Stone).heat(1400);
+		Templerock = brick    ( 8525, "Templerock"              , 171, 158, 106, 255, WITHER_PROOF)                                                                                                                                                        .qual(1, 5.0,128, 1).setGenerifying(Stone).heat(1600);
+		Mazestone = brick    ( 8526, "Mazestone"               , 110, 120, 110, 255, WITHER_PROOF)                                                                                                                                                        .qual(1, 5.0,128, 3).setGenerifying(Stone).heat(2000);
+		Castlerock = brick    ( 8527, "Castlerock"              , 198, 185, 186, 255, WITHER_PROOF)                                                                                                                                                        .qual(1, 5.0,128, 3).setGenerifying(Stone).heat(2000);
+		Umber = stone    ( 8517, "Umber"                   , 111,  77,  11, 255)                                                                                                                                                                      .qual(1, 3.0, 32, 1).setGenerifying(Stone).heat( 987).setLocal("Umberstone");
+		Shale = stonecent( 9190, "Shale"                   , 142, 142, 168, 255)                                                            .setMcfg( 0, CaCO3          , 2*U, MilkyQuartz      , 1*U, Clay             , 1*U)                        .qual(1, 2.0, 16, 0).setGenerifying(Stone);
+		Redrock = stonecent( 8509, "Redrock"                 , 255,  80,  50, 255, "RedRock")                                                 .setMcfg( 0, CaCO3          , 2*U, Flint            , 1*U, ClayRed          , 1*U)                        .qual(1, 2.5, 16, 1).setGenerifying(Stone);
+		Komatiite = stonecent( 9177, "Komatiite"               , 190, 190, 105, 255, UNBURNABLE)                                                .setMcfg( 0, Peridot        , 1*U, MgCO3            , 2*U, Flint            , 6*U, DarkAsh          , 3*U).qual(1, 3.0, 32, 2).setGenerifying(Stone).heat(1673);
+		Pumice = stonecent( 9000, "Pumice"      , SET_DULL  , 220, 216, 127, 255, UNBURNABLE)                                                .setMcfg( 0, Peridot        , 3*U, MgCO3            , 2*U, Flint            , 4*U, DarkAsh          , 2*U).qual(1, 3.0, 32, 2).setGenerifying(Stone).heat(1673);
+		Gabbro = stonecent( 9176, "Gabbro"                  ,  65,  60,  60, 255, UNBURNABLE)                                                .setMcfg( 0, Peridot        , 1*U, CaCO3            , 3*U, Flint            , 8*U, DarkAsh          , 4*U).qual(1, 3.0, 32, 2).setGenerifying(Stone).heat(1673);
+		Basalt = stonecent( 8505, "Basalt"                  ,  60,  50,  50, 255, UNBURNABLE, UNRECYCLABLE)                                  .setMcfg( 0, Peridot        , 1*U, CaCO3            , 3*U, Flint            , 8*U, DarkAsh          , 4*U).qual(1, 3.0, 32, 2).setGenerifying(Stone).heat(1673);
+		Marble = stonecent( 8506, "Marble"                  , 200, 200, 200, 255)                                                            .setMcfg( 0, Mg             , 1*U, CaCO3            , 7*U)                                                .qual(1, 2.5, 16, 1).setGenerifying(Stone).setSmelting(CaCO3, 2*U3);
+		Limestone = stonecent( 9189, "Limestone"               , 230, 200, 130, 255, BETWEENLANDS)                                              .setMcfg( 0, CaCO3          , 1*U)                                                                        .qual(1, 2.5, 16, 1).setGenerifying(Stone).setSmelting(CaCO3, U2);
+		Greenschist = stone    ( 9171, "Greenschist"             , 105, 190, 105, 255, MD.UB)                                                                                                                                                               .qual(1, 2.0, 24, 1).setGenerifying(Stone).setLocal("Green Schist");
+		Blueschist = stone    ( 9184, "Blueschist"              , 105, 105, 190, 255, MD.UB)                                                                                                                                                               .qual(1, 2.0, 24, 1).setGenerifying(Stone).setLocal("Blue Schist");
+		Grayschist = stone    ( 9244, "Grayschist"              , 145, 140, 145, 255, MD.EB)                                                                                                                                                               .qual(1, 2.0, 24, 1).setGenerifying(Stone).setLocal("Gray Schist");
+		Pinkschist = stone    ( 9245, "Pinkschist"              , 220, 195, 195, 255, MD.PFAA)                                                                                                                                                             .qual(1, 2.0, 24, 1).setGenerifying(Stone).setLocal("Pink Schist");
+		Gneiss = stone    ( 9170, "Gneiss"                  , 255, 201, 134, 255)                                                                                                                                                                      .qual(1, 2.0, 24, 1).setGenerifying(Stone);
+		Kimberlite = stone    ( 9218, "Kimberlite"              , 100,  70,  10, 255)                                                                                                                                                                      .qual(1, 2.0, 24, 2).setGenerifying(Stone);
+		Quartzite = stone    ( 9180, "Quartzite"   , SET_QUARTZ, 230, 205, 205, 255, G_QUARTZ_ORES, CRYSTALLISABLE, QUARTZ, BLACKLISTED_SMELTER)                                                                                                          .qual(1, 1.7, 32, 1).setGenerifying(Stone).setSmelting(SiO2, U);
+		GraniteRed = stoneelec( 8507, "GraniteRed"              , 160,  60,  70, 255)                                                            .setMcfg( 0, Biotite        , 1*U, PotassiumFeldspar, 1*U, Flint            , 1*U)                        .qual(1, 3.0, 64, 3).setGenerifying(Stone).heat(1500).setLocal("Red Granite");
+		GraniteBlack = stoneelec( 8508, "GraniteBlack"            ,  20,  20,  20, 255)                                                            .setMcfg( 0, Biotite        , 1*U, PotassiumFeldspar, 1*U, Flint            , 1*U)                        .qual(1, 3.0, 64, 3).setGenerifying(Stone).heat(1500).setLocal("Black Granite");
+		Granite = stoneelec( 8518, "Granite"                 , 160, 120, 130, 255)                                                            .setMcfg( 0, Biotite        , 1*U, PotassiumFeldspar, 1*U, Flint            , 1*U)                        .qual(1, 3.0, 64, 1).setGenerifying(Stone).heat(1500);
+		Andesite = stone    ( 9188, "Andesite"                , 191, 191, 191, 255)                                                                                                                                                                      .qual(1, 2.5, 16, 1).setGenerifying(Stone);
+		Diorite = stone    ( 8511, "Diorite"                 , 240, 240, 240, 255, UNBURNABLE)                                                                                                                                                          .qual(1, 2.5, 16, 1).setGenerifying(Stone);
+		Blackstone = brick    ( 9223, "Blackstone"              ,  30,  20,  20, 255, UNRECYCLABLE)                                                                                                                                                        .qual(1, 5.0, 64, 1).setGenerifying(Stone);
+		Greywacke = stone    ( 9173, "Greywacke"               , 176, 176, 176, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 1).setGenerifying(Stone);
+		Siltstone = stone    ( 9178, "Siltstone"               , 250, 205, 205, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 0).setGenerifying(Stone);
+		Rhyolite = stone    ( 9179, "Rhyolite"                , 121, 121, 121, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 1).setGenerifying(Stone);
+		Migmatite = stone    ( 9181, "Migmatite"               ,  70,  40,  40, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 1).setGenerifying(Stone);
+		Chert = stone    ( 9186, "Chert"                   , 105,  10,  10, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 0).setGenerifying(Stone);
+		Dacite = stone    ( 9187, "Dacite"                  , 131, 131, 131, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 1).setGenerifying(Stone);
+		Slate = stone    ( 9222, "Slate"                   , 148, 151, 156, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 0).setGenerifying(Stone);
+		Deepslate = stone    ( 9248, "Deepslate"               ,  57,  59,  61, 255)                                                                                                                                                                      .qual(1, 2.0, 32, 1).setGenerifying(Stone);
+		Eclogite = stone    ( 9191, "Eclogite"                ,  90,  40,  40, 255)                                                                                                                                                                      .qual(1, 2.0, 16, 1).setGenerifying(Stone);
+		PhobosRock = stone    ( 9249, "PhobosRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Phobos"   );
+		DeimosRock = stone    ( 9250, "DeimosRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Deimos"   );
+		VenusRock = stone    ( 9251, "VenusRock"               , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Venus"    );
+		MercuryRock = stone    ( 9252, "MercuryRock"             , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Mercury"  );
+		CeresRock = stone    ( 9253, "CeresRock"               , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Ceres"    );
+		JupiterRock = stone    ( 9254, "JupiterRock"             , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Jupiter"  );
+		IoRock = stone    ( 9255, "IoRock"                  , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Io"       );
+		EuropaRock = stone    ( 9256, "EuropaRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Europa"   );
+		GanymedeRock = stone    ( 9257, "GanymedeRock"            , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Ganymede" );
+		CallistoRock = stone    ( 9258, "CallistoRock"            , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Callisto" );
+		SaturnRock = stone    ( 9259, "SaturnRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Saturn"   );
+		RheaRock = stone    ( 9260, "RheaRock"                , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Rhea"     );
+		TitanRock = stone    ( 9261, "TitanRock"               , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Titan"    );
+		OberonRock = stone    ( 9262, "OberonRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Oberon"   );
+		IapetusRock = stone    ( 9263, "IapetusRock"             , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Iapetus"  );
+		UranusRock = stone    ( 9264, "UranusRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Uranus"   );
+		TitaniaRock = stone    ( 9265, "TitaniaRock"             , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Titania"  );
+		NeptuneRock = stone    ( 9266, "NeptuneRock"             , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Neptune"  );
+		TritonRock = stone    ( 9267, "TritonRock"              , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Triton"   );
+		PlutoRock = stone    ( 9268, "PlutoRock"               , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Pluto"    );
+		ErisRock = stone    ( 9269, "ErisRock"                , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Eris"     );
+		Kepler22bRock = stone    ( 9270, "Kepler22bRock"           , 189, 189, 189, 255)                                                                                                                                                                      .qual(1, 5.0,128, 1).setGenerifying(Stone).setLocal("Kepler22b");
+		}
+
+		private static boolean sCreated = false;
+
 	}
 	
 	/** Taking over Wood Materials from QwerTech, with major changes because damn that shit was broken. */
 	public static class WOODS {
 		@SuppressWarnings("hiding")
-		public static final OreDictMaterial
-		Oak                 = woodnormal( 9300, "Oak"                     , "Oak"                 , 180, 144,  90, 3.0, 32, MD.MC),
-		Birch               = woodnormal( 9301, "Birch"                   , "Birch"               , 215, 204, 142, 2.5, 24, MD.MC),
-		Spruce              = woodnormal( 9302, "Spruce"                  , "Spruce"              , 102,  79,  47, 3.0, 24, MD.MC),
-		Jungle              = woodnormal( 9303, "Junglewood"              , "Junglewood"          , 177, 128,  92, 2.0, 16, MD.MC),
-		Acacia              = woodnormal( 9304, "Acacia"                  , "Acacia"              , 186, 104,  59, 2.5, 24, MD.MC),
-		DarkOak             = woodnormal( 9305, "DarkOak"                 , "Dark Oak"            ,  70,  45,  21, 3.5, 32, MD.MC),
-		Crimson             = woodnormal( 9306, "Crimsonwood"             , "Crimsonwood"         , 180,  90, 106, 2.5, 24, MD.NeLi, UNBURNABLE),
-		Warped              = woodnormal( 9307, "Warpedwood"              , "Warped Wood"         ,  42, 141, 133, 3.5, 32, MD.NeLi, UNBURNABLE),
-		Foxfire             = woodnormal( 9408, "Foxfirewood"             , "Foxfire"             ,  51,  51, 101, 4.0, 24, MD.NeLi, UNBURNABLE),
-		
-		Compressed          = woodnormal( 9308, "WoodCompressed"          , "Compressed Wood"     ,  94,  60,  25, 1.5,  8, MD.GT).setPulver(Wood, U),
-		Dead                = woodnormal( 9309, "WoodDead"                , "Dead Wood"           , 116, 108,  63, 1.5,  8, MD.BoP),
-		Rotten              = woodnormal( 9310, "WoodRotten"              , "Rotten Wood"         ,  22,  44,  15, 1.0,  8, MD.GT),
-		Mossy               = woodnormal( 9311, "WoodMossy"               , "Mossy Wood"          ,  29, 127,   0, 1.5,  8, MD.GT),
-		Frozen              = woodnormal( 9312, "WoodFrozen"              , "Frozen Wood"         ,  84, 125, 125, 1.0,  8, MD.GT),
-		Scorched            = woodnormal( 9404, "WoodScorched"            , "Scorched Wood"       ,  44,  44,  44, 1.0,  8, MD.ERE),
-		Varnished           = woodnormal( 9405, "WoodVarnished"           , "Varnished Wood"      ,  73,  48,  16, 3.0, 32, MD.ERE),
-		Bleached            = woodnormal( 9407, "WoodBleached"            , "Bleached Wood"       , 255, 255, 255, 2.0, 16, MD.ERE),
-		Tainted             = woodnormal( 9406, "WoodTainted"             , "Tainted Wood"        ,  90,  23, 231, 1.0, 64, MD.TCFM, MAGICAL),
-		
-		Maple               = woodnormal( 9313, "Maple"                   , "Maple"               , 151,  26,  26, 3.0, 24, MD.FR),
-		Willow              = woodnormal( 9314, "Willow"                  , "Willow"              ,  37, 150,   0, 2.0, 16, MD.FR),
-		BlueMahoe           = woodnormal( 9315, "BlueMahoe"               , "Blue Mahoe"          ,  15, 103, 254, 3.0, 24, MD.FR),
-		Hazel               = woodnormal( 9316, "Hazel"                   , "Hazel"               , 228, 175, 175, 2.5, 16, MD.BINNIE),
-		Cinnamon            = woodnormal( 9317, "Cinnamonwood"            , "Cinnawood"           ,  65, 192, 192, 1.5, 16, MD.HaC),
-		Coconut             = woodnormal( 9318, "Coconutwood"             , "Coconut"             , 255, 170,   0, 3.0, 16, MD.TROPIC),
-		Rainbowood          = woodnormal( 9319, "Rainbowood"              , "Rainbowood"          , 200,  64, 245, 4.0, 64, MD.GT, MAGICAL, UNBURNABLE),
-		BlueSpruce          = woodnormal( 9409, "BlueSpruce"              , "Blue Spruce"         , 213, 213, 217, 3.0, 24, MD.GT),
-		
-		Towerwood           = woodnormal( 9320, "Towerwood"               , "Towerwood"           , 166, 101,  58, 4.0, 64, MD.TF),
-		Witchwood           = woodnormal( 9321, "Witchwood"               , "Witchwood"           , 118, 112, 142, 3.5, 48, MD.ARS, MAGICAL),
-		Ogre                = woodnormal( 9322, "Ogrewood"                , "Ogrewood"            , 180,  90, 106, 4.0, 48, MD.MoCr),
-		Wyvern              = woodnormal( 9323, "Wyvernwood"              , "Wyvernwood"          ,  77, 159, 158, 4.0, 48, MD.MoCr),
-		Aspen               = woodnormal( 9324, "Aspen"                   , "Aspen"               ,  68,  65,  50, 2.0, 24, MD.TFC),
-		DouglasFir          = woodnormal( 9325, "DouglasFir"              , "Douglas Fir"         , 249, 197, 154, 2.5, 24, MD.TFC),
-		Sycamore            = woodnormal( 9326, "Sycamore"                , "Sycamore"            , 214, 155,  69, 3.0, 16, MD.TFC),
-		WhiteCedar          = woodnormal( 9327, "WhiteCedar"              , "White Cedar"         , 219, 219, 205, 2.5, 24, MD.TFC),
-		WhiteElm            = woodnormal( 9328, "WhiteElm"                , "White Elm"           , 162, 167, 103, 2.0, 32, MD.TFC),
-		Thorntree           = woodnormal( 9329, "Thorntree"               , "Thorntree"           , 180, 144,  90, 3.0, 32, MD.EB),
-		SilverPine          = woodnormal( 9330, "SilverPine"              , "Silver Pine"         ,  32,   7,  70, 3.0, 32, MD.EB),
-		Alder               = woodnormal( 9331, "Alder"                   , "Alder"               , 177,  95,  87, 2.5, 32, MD.WTCH),
-		Hawthorn            = woodnormal( 9332, "Hawthorn"                , "Hawthorn"            , 188, 182, 178, 3.0, 24, MD.WTCH),
-		Rowan               = woodnormal( 9333, "Rowan"                   , "Rowan"               , 205, 172,  87, 3.5, 24, MD.WTCH),
-		Mahogany            = woodnormal( 9356, "Mahogany"                , "Mahogany"            , 111,  61,  55, 4.0, 48, MD.TROPIC),
-		Palm                = woodnormal( 9358, "Palm"                    , "Palm"                , 201, 124,  69, 3.0, 16, MD.TROPIC),
-		
-		Autumn              = woodnormal( 9334, "Autumnwood"              , "Autumn Wood"         , 191,  64,  35, 2.5, 24, MD.EBXL),
-		Cypress             = woodnormal( 9336, "Cypress"                 , "Cypress"             , 185, 187, 181, 2.5, 16, MD.EBXL),
-		Fir                 = woodnormal( 9337, "Fir"                     , "Fir"                 , 110, 106,  63, 2.0, 32, MD.EBXL),
-		JapaneseMaple       = woodnormal( 9338, "JapaneseMaple"           , "Japanese Maple"      , 152,  76,  86, 3.0, 24, MD.EBXL),
-		RainbowEucalyptus   = woodnormal( 9339, "RainbowEucalyptus"       , "Rainbow Eucalyptus"  , 116, 141, 198, 3.0, 32, MD.EBXL),
-		Redwood             = woodnormal( 9340, "Redwood"                 , "Redwood"             , 163, 115,  70, 3.5, 24, MD.EBXL),
-		Sakura              = woodnormal( 9341, "Sakura"                  , "Sakura"              , 250, 161, 122, 3.0, 32, MD.EBXL),
-		
-		Balsa               = woodnormal( 9342, "Balsa"                   , "Balsa"               , 165, 158, 151, 2.0, 16, MD.FR),
-		Baobab              = woodnormal( 9343, "Baobab"                  , "Baobab"              , 136, 145,  95, 2.0, 16, MD.FR),
-		Cherry              = woodnormal( 9344, "Cherrywood"              , "Cherrywood"          , 173, 124,  50, 2.5, 24, MD.FR),
-		Chestnut            = woodnormal( 9345, "Chestnutwood"            , "Chestnutwood"        , 179, 162,  85, 3.0, 32, MD.FR),
-		Citrus              = woodnormal( 9346, "Citruswood"              , "Citruswood"          , 152, 163,  28, 2.5, 24, MD.FR),
-		Cocobolo            = woodnormal( 9347, "Cocobolowood"            , "Cocobolowood"        , 121,  18,   2, 3.0, 16, MD.FR),
-		Ebony               = woodnormal( 9348, "Ebony"                   , "Ebony"               ,  58,  52,  46, 4.0, 48, MD.FR),
-		Giganteum           = woodnormal( 9349, "Giganteumwood"           , "Giganteumwood"       , 102,  47,  39, 2.0, 16, MD.FR),
-		Greenheart          = woodnormal( 9350, "Greenheart"              , "Greenheart"          ,  76, 118,  88, 2.5, 16, MD.FR),
-		Ipe                 = woodnormal( 9351, "Ipe"                     , "Ipe"                 , 101,  58,  39, 2.0, 24, MD.FR),
-		Kapok               = woodnormal( 9352, "Kapok"                   , "Kapok"               , 116, 108,  52, 2.0, 24, MD.FR),
-		Larch               = woodnormal( 9353, "Larch"                   , "Larch"               , 215, 151, 133, 2.5, 16, MD.FR),
-		Lime                = woodnormal( 9354, "Limewood"                , "Limewood"            , 206, 154, 104, 2.5, 24, MD.FR),
-		Mahoe               = woodnormal( 9355, "Mahoe"                   , "Mahoe"               , 121, 147, 166, 3.0, 24, MD.FR),
-		Padauk              = woodnormal( 9357, "Padauk"                  , "Padauk"              , 179,  99,  59, 2.0, 24, MD.FR, "Paduak"),
-		Papaya              = woodnormal( 9359, "Papayawood"              , "Papayawood"          , 218, 200, 109, 3.0, 16, MD.FR),
-		Plum                = woodnormal( 9360, "Plumwood"                , "Plumwood"            , 171,  99, 123, 2.5, 16, MD.FR),
-		Poplar              = woodnormal( 9361, "Poplar"                  , "Poplar"              , 204, 204, 123, 2.5, 24, MD.FR),
-		Sequoia             = woodnormal( 9362, "Sequoia"                 , "Sequoia"             , 142,  87,  84, 2.0, 24, MD.FR),
-		Teak                = woodnormal( 9363, "Teak"                    , "Teak"                , 123, 115,  95, 3.0, 16, MD.FR),
-		Walnut              = woodnormal( 9364, "Walnutwood"              , "Walnutwood"          ,  98,  78,  64, 3.0, 32, MD.FR),
-		Wenge               = woodnormal( 9365, "Wenge"                   , "Wenge"               ,  88,  81,  70, 2.5, 16, MD.FR),
-		Zebrawood           = woodnormal( 9366, "Zebrawood"               , "Zebrawood"           , 172, 139,  86, 2.0, 24, MD.FR),
-		Pine                = woodnormal( 9335, "Pine"                    , "Pine"                , 187, 151,  77, 3.0, 32, MD.FR),
-		
-		Darkwood            = woodnormal( 9367, "Darkwood"                , "Darkwood"            ,  51,  45,  54, 2.5, 32, MD.BoP),
-		Ethereal            = woodnormal( 9368, "Etherealwood"            , "Etherealwood"        ,  76, 150, 115, 3.0, 24, MD.BoP),
-		Gold                = woodnormal( 9369, "Goldwood"                , "Goldwood"            , 210, 187, 151, 2.5, 24, MD.BoP),
-		HellBark            = woodnormal( 9370, "Hellbark"                , "Hellbark"            , 200, 150, 100, 4.0, 16, MD.BoP),
-		Jacaranda           = woodnormal( 9371, "Jacaranda"               , "Jacaranda"           , 201, 171, 162, 2.5, 16, MD.BoP),
-		Mangrove            = woodnormal( 9372, "Mangrove"                , "Mangrove"            , 236, 228, 217, 2.0, 24, MD.BoP),
-		SacredOak           = woodnormal( 9373, "SacredOak"               , "Sacred Oak"          , 159, 132,  77, 4.0, 48, MD.BoP),
-		Magic               = woodnormal( 9374, "Magicwood"               , "Magicwood"           ,  90, 105, 180, 3.5, 32, MD.BoP, MAGICAL),
-		
-		Apple               = woodnormal( 9375, "Applewood"               , "Applewood"           ,  97,  49,  36, 2.0, 24, MD.BINNIE_TREE),
-		Ash                 = woodnormal( 9376, "Ashwood"                 , "Ashwood"             , 244, 190,  90, 3.5, 16, MD.BINNIE_TREE),
-		Beech               = woodnormal( 9377, "Beech"                   , "Beech"               , 226, 144,  68, 2.0, 32, MD.BINNIE_TREE),
-		Box                 = woodnormal( 9378, "Boxwood"                 , "Boxwood"             , 253, 237, 192, 2.0, 24, MD.BINNIE_TREE),
-		Brazilwood          = woodnormal( 9379, "Brazilwood"              , "Brazilwood"          , 112,  55,  84, 3.0, 16, MD.BINNIE_TREE),
-		Butternut           = woodnormal( 9380, "Butternutwood"           , "Butternutwood"       , 237, 163, 112, 2.5, 16, MD.BINNIE_TREE),
-		Cedar               = woodnormal( 9381, "Cedar"                   , "Cedar"               , 217,  88,  37, 2.0, 24, MD.BINNIE_TREE),
-		Elder               = woodnormal( 9382, "Elderwood"               , "Elderwood"           , 189, 141, 115, 2.5, 16, MD.BINNIE_TREE),
-		Elm                 = woodnormal( 9383, "Elm"                     , "Elm"                 , 243, 163,  90, 3.0, 24, MD.BINNIE_TREE),
-		Eucalyptus          = woodnormal( 9384, "Eucalyptus"              , "Eucalyptus"          , 245, 164, 130, 2.5, 24, MD.BINNIE_TREE),
-		Fig                 = woodnormal( 9385, "Figwood"                 , "Figwood"             , 202, 126,  27, 2.0, 16, MD.BINNIE_TREE),
-		Gingko              = woodnormal( 9386, "Gingko"                  , "Gingko"              , 243, 226, 173, 2.0, 24, MD.BINNIE_TREE),
-		Hemlock             = woodnormal( 9387, "Hemlock"                 , "Hemlock"             , 196, 174,  96, 3.0, 16, MD.BINNIE_TREE),
-		Hickory             = woodnormal( 9388, "Hickory"                 , "Hickory"             , 218, 174, 134, 2.5, 16, MD.BINNIE_TREE),
-		Holly               = woodnormal( 9389, "Holly"                   , "Holly"               , 248, 242, 226, 2.0, 24, MD.BINNIE_TREE),
-		Hornbeam            = woodnormal( 9390, "Hornbeam"                , "Hornbeam"            , 195, 147,  87, 2.0, 16, MD.BINNIE_TREE),
-		Iroko               = woodnormal( 9391, "Iroko"                   , "Iroko"               , 117,  47,   0, 3.0, 24, MD.BINNIE_TREE),
-		Locust              = woodnormal( 9392, "Locust"                  , "Locust"              , 195, 140,  87, 2.0, 24, MD.BINNIE_TREE),
-		Logwood             = woodnormal( 9393, "Logwood"                 , "Logwood"             , 166,  44,  34, 2.5, 24, MD.BINNIE_TREE),
-		Maclura             = woodnormal( 9394, "Maclura"                 , "Maclura"             , 242, 168,  29, 2.0, 32, MD.BINNIE_TREE),
-		Olive               = woodnormal( 9395, "Olivewood"               , "Olivewood"           , 174, 169, 129, 3.0, 16, MD.BINNIE_TREE),
-		Pear                = woodnormal( 9396, "Pearwood"                , "Pearwood"            , 180, 127,  97, 2.5, 24, MD.BINNIE_TREE),
-		PinkIvory           = woodnormal( 9397, "PinkIvory"               , "Pink Ivory"          , 234, 125, 148, 2.5, 24, MD.BINNIE_TREE),
-		Purpleheart         = woodnormal( 9398, "Purpleheart"             , "Purpleheart"         ,  91,  22,  45, 2.0, 16, MD.BINNIE_TREE),
-		Rosewood            = woodnormal( 9399, "Rosewood"                , "Rosewood"            , 128,  12,   0, 3.0, 16, MD.BINNIE_TREE),
-		Sweetgum            = woodnormal( 9400, "Sweetgum"                , "Sweetgum"            , 215, 140,  74, 2.5, 16, MD.BINNIE_TREE),
-		Syzgium             = woodnormal( 9401, "Syzgium"                 , "Syzgium"             , 221, 184, 183, 2.5, 24, MD.BINNIE_TREE),
-		Whitebeam           = woodnormal( 9402, "Whitebeam"               , "Whitebeam"           , 192, 183, 174, 3.0, 16, MD.BINNIE_TREE),
-		Yew                 = woodnormal( 9403, "Yew"                     , "Yew"                 , 226, 160, 114, 2.5, 32, MD.BINNIE_TREE);
+		public static OreDictMaterial
+		Oak,
+		Birch,
+		Spruce,
+		Jungle,
+		Acacia,
+		DarkOak,
+		Crimson,
+		Warped,
+		Foxfire,
+		Compressed,
+		Dead,
+		Rotten,
+		Mossy,
+		Frozen,
+		Scorched,
+		Varnished,
+		Bleached,
+		Tainted,
+		Maple,
+		Willow,
+		BlueMahoe,
+		Hazel,
+		Cinnamon,
+		Coconut,
+		Rainbowood,
+		BlueSpruce,
+		Towerwood,
+		Witchwood,
+		Ogre,
+		Wyvern,
+		Aspen,
+		DouglasFir,
+		Sycamore,
+		WhiteCedar,
+		WhiteElm,
+		Thorntree,
+		SilverPine,
+		Alder,
+		Hawthorn,
+		Rowan,
+		Mahogany,
+		Palm,
+		Autumn,
+		Cypress,
+		Fir,
+		JapaneseMaple,
+		RainbowEucalyptus,
+		Redwood,
+		Sakura,
+		Balsa,
+		Baobab,
+		Cherry,
+		Chestnut,
+		Citrus,
+		Cocobolo,
+		Ebony,
+		Giganteum,
+		Greenheart,
+		Ipe,
+		Kapok,
+		Larch,
+		Lime,
+		Mahoe,
+		Padauk,
+		Papaya,
+		Plum,
+		Poplar,
+		Sequoia,
+		Teak,
+		Walnut,
+		Wenge,
+		Zebrawood,
+		Pine,
+		Darkwood,
+		Ethereal,
+		Gold,
+		HellBark,
+		Jacaranda,
+		Mangrove,
+		SacredOak,
+		Magic,
+		Apple,
+		Ash,
+		Beech,
+		Box,
+		Brazilwood,
+		Butternut,
+		Cedar,
+		Elder,
+		Elm,
+		Eucalyptus,
+		Fig,
+		Gingko,
+		Hemlock,
+		Hickory,
+		Holly,
+		Hornbeam,
+		Iroko,
+		Locust,
+		Logwood,
+		Maclura,
+		Olive,
+		Pear,
+		PinkIvory,
+		Purpleheart,
+		Rosewood,
+		Sweetgum,
+		Syzgium,
+		Whitebeam,
+		Yew;
+
+		/** Re-runnable creation batch. Upstream builds these as static-final class-init fields
+	 *  (once per JVM); after MaterialRegistry.reset() the entries were gone from MATERIAL_MAP and
+	 *  the static fields kept pointing at orphaned first-generation instances. The port assigns
+	 *  them here with the identity-check guard style of MT.java:2694 / AM.java:655, so every
+	 *  MT.init() generation re-creates them into the current registry. */
+		static void init() {
+			if (sCreated && OreDictMaterial.MATERIAL_MAP.get("Oak") == Oak) return;
+			sCreated = true;
+		Oak = woodnormal( 9300, "Oak"                     , "Oak"                 , 180, 144,  90, 3.0, 32, MD.MC);
+		Birch = woodnormal( 9301, "Birch"                   , "Birch"               , 215, 204, 142, 2.5, 24, MD.MC);
+		Spruce = woodnormal( 9302, "Spruce"                  , "Spruce"              , 102,  79,  47, 3.0, 24, MD.MC);
+		Jungle = woodnormal( 9303, "Junglewood"              , "Junglewood"          , 177, 128,  92, 2.0, 16, MD.MC);
+		Acacia = woodnormal( 9304, "Acacia"                  , "Acacia"              , 186, 104,  59, 2.5, 24, MD.MC);
+		DarkOak = woodnormal( 9305, "DarkOak"                 , "Dark Oak"            ,  70,  45,  21, 3.5, 32, MD.MC);
+		Crimson = woodnormal( 9306, "Crimsonwood"             , "Crimsonwood"         , 180,  90, 106, 2.5, 24, MD.NeLi, UNBURNABLE);
+		Warped = woodnormal( 9307, "Warpedwood"              , "Warped Wood"         ,  42, 141, 133, 3.5, 32, MD.NeLi, UNBURNABLE);
+		Foxfire = woodnormal( 9408, "Foxfirewood"             , "Foxfire"             ,  51,  51, 101, 4.0, 24, MD.NeLi, UNBURNABLE);
+		Compressed = woodnormal( 9308, "WoodCompressed"          , "Compressed Wood"     ,  94,  60,  25, 1.5,  8, MD.GT).setPulver(Wood, U);
+		Dead = woodnormal( 9309, "WoodDead"                , "Dead Wood"           , 116, 108,  63, 1.5,  8, MD.BoP);
+		Rotten = woodnormal( 9310, "WoodRotten"              , "Rotten Wood"         ,  22,  44,  15, 1.0,  8, MD.GT);
+		Mossy = woodnormal( 9311, "WoodMossy"               , "Mossy Wood"          ,  29, 127,   0, 1.5,  8, MD.GT);
+		Frozen = woodnormal( 9312, "WoodFrozen"              , "Frozen Wood"         ,  84, 125, 125, 1.0,  8, MD.GT);
+		Scorched = woodnormal( 9404, "WoodScorched"            , "Scorched Wood"       ,  44,  44,  44, 1.0,  8, MD.ERE);
+		Varnished = woodnormal( 9405, "WoodVarnished"           , "Varnished Wood"      ,  73,  48,  16, 3.0, 32, MD.ERE);
+		Bleached = woodnormal( 9407, "WoodBleached"            , "Bleached Wood"       , 255, 255, 255, 2.0, 16, MD.ERE);
+		Tainted = woodnormal( 9406, "WoodTainted"             , "Tainted Wood"        ,  90,  23, 231, 1.0, 64, MD.TCFM, MAGICAL);
+		Maple = woodnormal( 9313, "Maple"                   , "Maple"               , 151,  26,  26, 3.0, 24, MD.FR);
+		Willow = woodnormal( 9314, "Willow"                  , "Willow"              ,  37, 150,   0, 2.0, 16, MD.FR);
+		BlueMahoe = woodnormal( 9315, "BlueMahoe"               , "Blue Mahoe"          ,  15, 103, 254, 3.0, 24, MD.FR);
+		Hazel = woodnormal( 9316, "Hazel"                   , "Hazel"               , 228, 175, 175, 2.5, 16, MD.BINNIE);
+		Cinnamon = woodnormal( 9317, "Cinnamonwood"            , "Cinnawood"           ,  65, 192, 192, 1.5, 16, MD.HaC);
+		Coconut = woodnormal( 9318, "Coconutwood"             , "Coconut"             , 255, 170,   0, 3.0, 16, MD.TROPIC);
+		Rainbowood = woodnormal( 9319, "Rainbowood"              , "Rainbowood"          , 200,  64, 245, 4.0, 64, MD.GT, MAGICAL, UNBURNABLE);
+		BlueSpruce = woodnormal( 9409, "BlueSpruce"              , "Blue Spruce"         , 213, 213, 217, 3.0, 24, MD.GT);
+		Towerwood = woodnormal( 9320, "Towerwood"               , "Towerwood"           , 166, 101,  58, 4.0, 64, MD.TF);
+		Witchwood = woodnormal( 9321, "Witchwood"               , "Witchwood"           , 118, 112, 142, 3.5, 48, MD.ARS, MAGICAL);
+		Ogre = woodnormal( 9322, "Ogrewood"                , "Ogrewood"            , 180,  90, 106, 4.0, 48, MD.MoCr);
+		Wyvern = woodnormal( 9323, "Wyvernwood"              , "Wyvernwood"          ,  77, 159, 158, 4.0, 48, MD.MoCr);
+		Aspen = woodnormal( 9324, "Aspen"                   , "Aspen"               ,  68,  65,  50, 2.0, 24, MD.TFC);
+		DouglasFir = woodnormal( 9325, "DouglasFir"              , "Douglas Fir"         , 249, 197, 154, 2.5, 24, MD.TFC);
+		Sycamore = woodnormal( 9326, "Sycamore"                , "Sycamore"            , 214, 155,  69, 3.0, 16, MD.TFC);
+		WhiteCedar = woodnormal( 9327, "WhiteCedar"              , "White Cedar"         , 219, 219, 205, 2.5, 24, MD.TFC);
+		WhiteElm = woodnormal( 9328, "WhiteElm"                , "White Elm"           , 162, 167, 103, 2.0, 32, MD.TFC);
+		Thorntree = woodnormal( 9329, "Thorntree"               , "Thorntree"           , 180, 144,  90, 3.0, 32, MD.EB);
+		SilverPine = woodnormal( 9330, "SilverPine"              , "Silver Pine"         ,  32,   7,  70, 3.0, 32, MD.EB);
+		Alder = woodnormal( 9331, "Alder"                   , "Alder"               , 177,  95,  87, 2.5, 32, MD.WTCH);
+		Hawthorn = woodnormal( 9332, "Hawthorn"                , "Hawthorn"            , 188, 182, 178, 3.0, 24, MD.WTCH);
+		Rowan = woodnormal( 9333, "Rowan"                   , "Rowan"               , 205, 172,  87, 3.5, 24, MD.WTCH);
+		Mahogany = woodnormal( 9356, "Mahogany"                , "Mahogany"            , 111,  61,  55, 4.0, 48, MD.TROPIC);
+		Palm = woodnormal( 9358, "Palm"                    , "Palm"                , 201, 124,  69, 3.0, 16, MD.TROPIC);
+		Autumn = woodnormal( 9334, "Autumnwood"              , "Autumn Wood"         , 191,  64,  35, 2.5, 24, MD.EBXL);
+		Cypress = woodnormal( 9336, "Cypress"                 , "Cypress"             , 185, 187, 181, 2.5, 16, MD.EBXL);
+		Fir = woodnormal( 9337, "Fir"                     , "Fir"                 , 110, 106,  63, 2.0, 32, MD.EBXL);
+		JapaneseMaple = woodnormal( 9338, "JapaneseMaple"           , "Japanese Maple"      , 152,  76,  86, 3.0, 24, MD.EBXL);
+		RainbowEucalyptus = woodnormal( 9339, "RainbowEucalyptus"       , "Rainbow Eucalyptus"  , 116, 141, 198, 3.0, 32, MD.EBXL);
+		Redwood = woodnormal( 9340, "Redwood"                 , "Redwood"             , 163, 115,  70, 3.5, 24, MD.EBXL);
+		Sakura = woodnormal( 9341, "Sakura"                  , "Sakura"              , 250, 161, 122, 3.0, 32, MD.EBXL);
+		Balsa = woodnormal( 9342, "Balsa"                   , "Balsa"               , 165, 158, 151, 2.0, 16, MD.FR);
+		Baobab = woodnormal( 9343, "Baobab"                  , "Baobab"              , 136, 145,  95, 2.0, 16, MD.FR);
+		Cherry = woodnormal( 9344, "Cherrywood"              , "Cherrywood"          , 173, 124,  50, 2.5, 24, MD.FR);
+		Chestnut = woodnormal( 9345, "Chestnutwood"            , "Chestnutwood"        , 179, 162,  85, 3.0, 32, MD.FR);
+		Citrus = woodnormal( 9346, "Citruswood"              , "Citruswood"          , 152, 163,  28, 2.5, 24, MD.FR);
+		Cocobolo = woodnormal( 9347, "Cocobolowood"            , "Cocobolowood"        , 121,  18,   2, 3.0, 16, MD.FR);
+		Ebony = woodnormal( 9348, "Ebony"                   , "Ebony"               ,  58,  52,  46, 4.0, 48, MD.FR);
+		Giganteum = woodnormal( 9349, "Giganteumwood"           , "Giganteumwood"       , 102,  47,  39, 2.0, 16, MD.FR);
+		Greenheart = woodnormal( 9350, "Greenheart"              , "Greenheart"          ,  76, 118,  88, 2.5, 16, MD.FR);
+		Ipe = woodnormal( 9351, "Ipe"                     , "Ipe"                 , 101,  58,  39, 2.0, 24, MD.FR);
+		Kapok = woodnormal( 9352, "Kapok"                   , "Kapok"               , 116, 108,  52, 2.0, 24, MD.FR);
+		Larch = woodnormal( 9353, "Larch"                   , "Larch"               , 215, 151, 133, 2.5, 16, MD.FR);
+		Lime = woodnormal( 9354, "Limewood"                , "Limewood"            , 206, 154, 104, 2.5, 24, MD.FR);
+		Mahoe = woodnormal( 9355, "Mahoe"                   , "Mahoe"               , 121, 147, 166, 3.0, 24, MD.FR);
+		Padauk = woodnormal( 9357, "Padauk"                  , "Padauk"              , 179,  99,  59, 2.0, 24, MD.FR, "Paduak");
+		Papaya = woodnormal( 9359, "Papayawood"              , "Papayawood"          , 218, 200, 109, 3.0, 16, MD.FR);
+		Plum = woodnormal( 9360, "Plumwood"                , "Plumwood"            , 171,  99, 123, 2.5, 16, MD.FR);
+		Poplar = woodnormal( 9361, "Poplar"                  , "Poplar"              , 204, 204, 123, 2.5, 24, MD.FR);
+		Sequoia = woodnormal( 9362, "Sequoia"                 , "Sequoia"             , 142,  87,  84, 2.0, 24, MD.FR);
+		Teak = woodnormal( 9363, "Teak"                    , "Teak"                , 123, 115,  95, 3.0, 16, MD.FR);
+		Walnut = woodnormal( 9364, "Walnutwood"              , "Walnutwood"          ,  98,  78,  64, 3.0, 32, MD.FR);
+		Wenge = woodnormal( 9365, "Wenge"                   , "Wenge"               ,  88,  81,  70, 2.5, 16, MD.FR);
+		Zebrawood = woodnormal( 9366, "Zebrawood"               , "Zebrawood"           , 172, 139,  86, 2.0, 24, MD.FR);
+		Pine = woodnormal( 9335, "Pine"                    , "Pine"                , 187, 151,  77, 3.0, 32, MD.FR);
+		Darkwood = woodnormal( 9367, "Darkwood"                , "Darkwood"            ,  51,  45,  54, 2.5, 32, MD.BoP);
+		Ethereal = woodnormal( 9368, "Etherealwood"            , "Etherealwood"        ,  76, 150, 115, 3.0, 24, MD.BoP);
+		Gold = woodnormal( 9369, "Goldwood"                , "Goldwood"            , 210, 187, 151, 2.5, 24, MD.BoP);
+		HellBark = woodnormal( 9370, "Hellbark"                , "Hellbark"            , 200, 150, 100, 4.0, 16, MD.BoP);
+		Jacaranda = woodnormal( 9371, "Jacaranda"               , "Jacaranda"           , 201, 171, 162, 2.5, 16, MD.BoP);
+		Mangrove = woodnormal( 9372, "Mangrove"                , "Mangrove"            , 236, 228, 217, 2.0, 24, MD.BoP);
+		SacredOak = woodnormal( 9373, "SacredOak"               , "Sacred Oak"          , 159, 132,  77, 4.0, 48, MD.BoP);
+		Magic = woodnormal( 9374, "Magicwood"               , "Magicwood"           ,  90, 105, 180, 3.5, 32, MD.BoP, MAGICAL);
+		Apple = woodnormal( 9375, "Applewood"               , "Applewood"           ,  97,  49,  36, 2.0, 24, MD.BINNIE_TREE);
+		Ash = woodnormal( 9376, "Ashwood"                 , "Ashwood"             , 244, 190,  90, 3.5, 16, MD.BINNIE_TREE);
+		Beech = woodnormal( 9377, "Beech"                   , "Beech"               , 226, 144,  68, 2.0, 32, MD.BINNIE_TREE);
+		Box = woodnormal( 9378, "Boxwood"                 , "Boxwood"             , 253, 237, 192, 2.0, 24, MD.BINNIE_TREE);
+		Brazilwood = woodnormal( 9379, "Brazilwood"              , "Brazilwood"          , 112,  55,  84, 3.0, 16, MD.BINNIE_TREE);
+		Butternut = woodnormal( 9380, "Butternutwood"           , "Butternutwood"       , 237, 163, 112, 2.5, 16, MD.BINNIE_TREE);
+		Cedar = woodnormal( 9381, "Cedar"                   , "Cedar"               , 217,  88,  37, 2.0, 24, MD.BINNIE_TREE);
+		Elder = woodnormal( 9382, "Elderwood"               , "Elderwood"           , 189, 141, 115, 2.5, 16, MD.BINNIE_TREE);
+		Elm = woodnormal( 9383, "Elm"                     , "Elm"                 , 243, 163,  90, 3.0, 24, MD.BINNIE_TREE);
+		Eucalyptus = woodnormal( 9384, "Eucalyptus"              , "Eucalyptus"          , 245, 164, 130, 2.5, 24, MD.BINNIE_TREE);
+		Fig = woodnormal( 9385, "Figwood"                 , "Figwood"             , 202, 126,  27, 2.0, 16, MD.BINNIE_TREE);
+		Gingko = woodnormal( 9386, "Gingko"                  , "Gingko"              , 243, 226, 173, 2.0, 24, MD.BINNIE_TREE);
+		Hemlock = woodnormal( 9387, "Hemlock"                 , "Hemlock"             , 196, 174,  96, 3.0, 16, MD.BINNIE_TREE);
+		Hickory = woodnormal( 9388, "Hickory"                 , "Hickory"             , 218, 174, 134, 2.5, 16, MD.BINNIE_TREE);
+		Holly = woodnormal( 9389, "Holly"                   , "Holly"               , 248, 242, 226, 2.0, 24, MD.BINNIE_TREE);
+		Hornbeam = woodnormal( 9390, "Hornbeam"                , "Hornbeam"            , 195, 147,  87, 2.0, 16, MD.BINNIE_TREE);
+		Iroko = woodnormal( 9391, "Iroko"                   , "Iroko"               , 117,  47,   0, 3.0, 24, MD.BINNIE_TREE);
+		Locust = woodnormal( 9392, "Locust"                  , "Locust"              , 195, 140,  87, 2.0, 24, MD.BINNIE_TREE);
+		Logwood = woodnormal( 9393, "Logwood"                 , "Logwood"             , 166,  44,  34, 2.5, 24, MD.BINNIE_TREE);
+		Maclura = woodnormal( 9394, "Maclura"                 , "Maclura"             , 242, 168,  29, 2.0, 32, MD.BINNIE_TREE);
+		Olive = woodnormal( 9395, "Olivewood"               , "Olivewood"           , 174, 169, 129, 3.0, 16, MD.BINNIE_TREE);
+		Pear = woodnormal( 9396, "Pearwood"                , "Pearwood"            , 180, 127,  97, 2.5, 24, MD.BINNIE_TREE);
+		PinkIvory = woodnormal( 9397, "PinkIvory"               , "Pink Ivory"          , 234, 125, 148, 2.5, 24, MD.BINNIE_TREE);
+		Purpleheart = woodnormal( 9398, "Purpleheart"             , "Purpleheart"         ,  91,  22,  45, 2.0, 16, MD.BINNIE_TREE);
+		Rosewood = woodnormal( 9399, "Rosewood"                , "Rosewood"            , 128,  12,   0, 3.0, 16, MD.BINNIE_TREE);
+		Sweetgum = woodnormal( 9400, "Sweetgum"                , "Sweetgum"            , 215, 140,  74, 2.5, 16, MD.BINNIE_TREE);
+		Syzgium = woodnormal( 9401, "Syzgium"                 , "Syzgium"             , 221, 184, 183, 2.5, 24, MD.BINNIE_TREE);
+		Whitebeam = woodnormal( 9402, "Whitebeam"               , "Whitebeam"           , 192, 183, 174, 3.0, 16, MD.BINNIE_TREE);
+		Yew = woodnormal( 9403, "Yew"                     , "Yew"                 , 226, 160, 114, 2.5, 32, MD.BINNIE_TREE);
+		}
+
+		private static boolean sCreated = false;
+
 	}
 	
 	/** The "I don't care" Section, everything I don't want to do anything with right now. Just to make the Material Finder shut up about them. But I do see potential uses in some of these Materials. */
 	public static class UNUSED {
-		public static final OreDictMaterial
-		OsmiumTetroxide             = unused    ("Osmium Tetroxide"           ).setMcfg( 0, Os, 1*U, O, 4*U),
-		SodiumPeroxide              = unused    ("Sodium Peroxide"            ).setMcfg( 0, Na, 2*U, O, 2*U), // Yellowish
-		IridiumSodiumOxide          = unused    ("Iridium Sodium Oxide"       ),
-		Iridiron                    = setPriorityPrefix(unused    ("IridiumIron"                ), 3).put(G_INGOT).setMcfg( 0, Ir, 1*U, Fe, 1*U).setLocal("Iridiron"),
-		IridironReinforced          = setPriorityPrefix(unused    ("IridiumIronReinforced"      ), 3).put(G_INGOT).setMcfg( 0, Ir, 1*U, Fe, 1*U).setLocal("Reinforced Iridiron"),
-		LimePure                    = unused    ("LimePure"                   ).setLocal("Pure Lime"),
-		TNT                         = unused    ("TNT"                        ).setOriginalMod(MD.MC.mID).put(EXPLOSIVE,  FLAMMABLE),
-		TerrasteelAlloyRaw          = setPriorityPrefix(unused    ("TerrasteelAlloyRaw"         ), 3).put(G_INGOT, MAGICAL, "RawTerrasteelAlloy").setLocal("Raw Terrasteel Alloy"),
-		TerrasteelAlloyStrengthened = setPriorityPrefix(unused    ("TerrasteelAlloyStrengthened"), 3).put(G_INGOT, MAGICAL, "StrengthenedTerrasteelAlloy").setLocal("Strengthened Terrasteel Alloy"),
-		Vis                         = unused    ("Vis"                        ).put(DECOMPOSABLE).setMcfg( 0, Ma, 1*U),
-		Voidstone                   = unused    ("Voidstone"                  ),
-		Mercassium                  = setPriorityPrefix(unused    ("Mercassium"                 ), 3).qual(3,  6.0,  64,  1).put(G_INGOT_ORES),
-		Osmonium                    = setPriorityPrefix(unused    ("Osmonium"                   ), 3).qual(3,  6.0,  64,  1).put(G_INGOT_ORES),
-		Phoenixite                  = setPriorityPrefix(unused    ("Phoenixite"                 ), 3).qual(3,  6.0,  64,  1).put(G_INGOT_ORES),
-		Antimatter                  = unused    ("Antimatter"                 ).put(ANTIMATTER),
-		Starconium                  = setPriorityPrefix(unused    ("Starconium"                 ), 3).put(G_INGOT_ORES),
-		Thyrium                     = setPriorityPrefix(unused    ("Thyrium"                    ), 3).put(G_INGOT_ORES),
-		Zectium                     = setPriorityPrefix(unused    ("Zectium"                    ), 3).put(G_INGOT_ORES),
-		Draconic                    = setPriorityPrefix(deprecated("Draconic"                   ), 2).put(G_DUST),
-		Teslatite                   = setPriorityPrefix(unused    ("InfusedTeslatite"           ), 2).put(G_DUST).setLocal("Teslatite"), // 1 Redstone + 1 Nikolite = 1 Teslatite; and 8 Teslatite + 1 Gold = 1 Purple Alloy;
-		IrridantUranium             = setPriorityPrefix(unused    ("Irridant Uranium"           ), 3).put(G_INGOT),
-		IrridantReinforced          = setPriorityPrefix(unused    ("IrridantReinforced"         ), 3).put(G_INGOT),
-		IronSharp                   = setPriorityPrefix(unused    ("IronSharp"                  ), 3).put(G_INGOT).setLocal("Sharp Iron"),
-		ObsidianFlux                = setPriorityPrefix(unused    ("Obsidian Flux"              ), 3).put(G_INGOT),
-		CrystalFlux                 = setPriorityPrefix(unused    ("Crystal Flux"               ), 1).put(G_GEM, CRYSTAL, BRITTLE),
-		Mimichite                   = setPriorityPrefix(unused    ("Mimichite"                  ), 1).put(G_GEM_ORES, CRYSTAL, BRITTLE),
-		Infernal                    = unused    ("Infernal"                   ),
-		Invisium                    = setPriorityPrefix(unused    ("Invisium"                   ), 2).put(G_DUST),
-		Lodestone                   = setPriorityPrefix(unused    ("Lodestone"                  ), 2).put(G_DUST_ORES),
-		Luminite                    = setPriorityPrefix(unused    ("Luminite"                   ), 2).put(G_DUST_ORES),
-		Magma                       = unused    ("Magma"                      ),
-		Mawsitsit                   = setPriorityPrefix(unused    ("Mawsitsit"                  ), 2).put(G_DUST),
-		Nether                      = unused    ("Nether"                     ),
-		Painite                     = unused    ("Painite"                    ),
-		Petroleum                   = setPriorityPrefix(unused    ("Petroleum"                  ), 2).put(G_DUST_ORES),
-		Pewter                      = unused    ("Pewter"                     ),
-		Potash                      = unused    ("Potash"                     ),
-		Randomite                   = setPriorityPrefix(unused    ("Randomite"                  ), 2).put(G_DUST_ORES),
-		RyuDragonRyder              = unused    ("RyuDragonRyder"             ),
-		Tar                         = unused    ("Tar"                        ),
-		TarPitch                    = unused    ("Tar Pitch"                  ),
-		Cavenium                    = unused    ("Cavenium"                   ),
-		CaveniumRefined             = unused    ("CaveniumRefined"            ).put("RefinedCavenium").setLocal("Refined Cavenium"),
-		Infitite                    = unused    ("Infitite"                   ),
-		Magnite                     = unused    ("Magnite"                    ),
-		Hexcite                     = unused    ("Hexcite"                    ),
-		Tapazite                    = setPriorityPrefix(unused    ("Tapazite"                   ), 2).put(G_DUST),
-		Tourmaline                  = setPriorityPrefix(unused    ("Tourmaline"                 ), 2).put(G_DUST),
-		Turquoise                   = setPriorityPrefix(unused    ("Turquoise"                  ), 2).put(G_DUST),
-		Wimalite                    = setPriorityPrefix(unused    ("Wimalite"                   ), 2).put(G_DUST_ORES),
-		Adamite                     = setPriorityPrefix(unused    ("Adamite"                    ), 2).put(G_DUST_ORES),
-		Adluorite                   = setPriorityPrefix(unused    ("Adluorite"                  ), 2).put(G_DUST_ORES),
-		Agate                       = setPriorityPrefix(unused    ("Agate"                      ), 2).put(G_DUST),
-		Ammonium                    = setPriorityPrefix(unused    ("Ammonium"                   ), 2).put(G_DUST),
-		Bitumen                     = setPriorityPrefix(unused    ("Bitumen"                    ), 2).put(G_DUST_ORES),
-		Bloodstone                  = setPriorityPrefix(unused    ("Bloodstone"                 ), 2).put(G_DUST),
-		Citrine                     = setPriorityPrefix(unused    ("Citrine"                    ), 2).put(G_DUST),
-		Coral                       = setPriorityPrefix(unused    ("Coral"                      ), 2).put(G_DUST),
-		Chrysocolla                 = setPriorityPrefix(unused    ("Chrysocolla"                ), 2).put(G_DUST),
-		DarkStone                   = setPriorityPrefix(unused    ("Dark Stone"                 ), 2).put(G_DUST),
-		Demonite                    = setPriorityPrefix(unused    ("Demonite"                   ), 2).put(G_DUST),
-		InfusedGold                 = setPriorityPrefix(unused    ("Infused Gold"               ), 3).put(G_INGOT),
-		Daffergon                   = setPriorityPrefix(unused    ("Daffergon"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES), // Dellite Ore
-		Reiium                      = setPriorityPrefix(unused    ("Reiium"                     ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES), // Reiite Ore
-		Weidanium                   = setPriorityPrefix(unused    ("Weidanium"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES), // Weidite Ore
-		Verticium                   = setPriorityPrefix(unused    ("Verticium"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES),
-		Australium                  = setPriorityPrefix(unused    ("Australium"                 ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES),
-		Schrabidium                 = setRGBa(setPriorityPrefix(unused    ("Schrabidium"                ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES,  MAGNETIC_ACTIVE,  AUTO_COLLECTING,  MELTING,  MOLTEN),  50, 255, 255, 255),
-		Starmetal                   = setPriorityPrefix(unused    ("Starmetal"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE_ORES),
-		Unobtainium                 = setPriorityPrefix(unused    ("Unobtainium"                ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE_ORES),
-		CMBSteel                    = setPriorityPrefix(unused    ("CMB Steel"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE),
-		DuraSteel                   = setPriorityPrefix(unused    ("DuraSteel"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE).setLocal("High-Speed Steel"),
-		AdvancedAlloy               = setPriorityPrefix(unused    ("Advanced Alloy"             ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE),
-		Saturnite                   = setPriorityPrefix(unused    ("Saturnite"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE),
-		Dineutronium                = setPriorityPrefix(unused    ("Dineutronium"               ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE),
-		MagnetizedTungsten          = setPriorityPrefix(unused    ("Magnetized Tungsten"        ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT,  MAGNETIC_ACTIVE,  AUTO_COLLECTING),
-		Euphemium                   = setRGBa(setPriorityPrefix(unused    ("Euphemium"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT,  MELTING,  MOLTEN), 255, 150, 255, 255),
-		Rupee                       = unused    ("Rupee"                      ).setOriginalMod(MD.DRPG.mID),
-		Arlemite                    = unused    ("Arlemite"                   ).setOriginalMod(MD.DRPG.mID),
-		Realmite                    = unused    ("Realmite"                   ).setOriginalMod(MD.DRPG.mID),
-		Bloodgem                    = unused    ("Bloodgem"                   ).setOriginalMod(MD.DRPG.mID),
-		Netheryte                   = unused    ("Netheryte"                  ).setOriginalMod(MD.DRPG.mID),
-		Eden                        = unused    ("Eden"                       ).setOriginalMod(MD.DRPG.mID),
-		Wildwood                    = unused    ("Wildwood"                   ).setOriginalMod(MD.DRPG.mID),
-		Apalachia                   = unused    ("Apalachia"                  ).setOriginalMod(MD.DRPG.mID),
-		Skythern                    = unused    ("Skythern"                   ).setOriginalMod(MD.DRPG.mID),
-		Mortum                      = unused    ("Mortum"                     ).setOriginalMod(MD.DRPG.mID),
-		Arcanium                    = unused    ("Arcanium"                   ).setOriginalMod(MD.DRPG.mID),
-		Energized                   = unused    ("Energized"                  ),
-		Reinforced                  = unused    ("Reinforced"                 ),
-		Mud                         = unused    ("Mud"                        ).put(IGNORE_IN_COLOR_LOG),
-		Cream                       = unused    ("Cream"                      ).put(IGNORE_IN_COLOR_LOG),
-		Cluster                     = unused    ("Cluster"                    ),
-		Sweet                       = unused    ("Sweet"                      ),
-		Gelatine                    = unused    ("Gelatine"                   ),
-		Satinspar                   = unused    ("Satinspar"                  ),
-		Selenite                    = unused    ("Selenite"                   ),
-		Jet                         = unused    ("Jet"                        ),
-		Microcline                  = unused    ("Microcline"                 ),
-		Serpentine                  = unused    ("Serpentine"                 ),// byproduct pietersite, which is a fake? Tiger eye
-		Sylvite                     = unused    ("Sylvite"                    ),
-		Goshen                      = unused    ("Goshen"                     ),
-		Joshen                      = unused    ("Joshen"                     ),
-		Itarius                     = unused    ("Itarius"                    ),
-		Legendary                   = unused    ("Legendary"                  ),
-		MutatedIron                 = unused    ("Mutated Iron"               ),
-		Witheria                    = unused    ("Witheria"                   ),
-		RubberTreeSap               = unused    ("Rubber Tree Sap"            ),
-		GraveyardDirt               = unused    ("Graveyard Dirt"             ),
-		Cocaine                     = unused    ("Cocaine"                    ),
-		Vile                        = unused    ("Vile"                       ),
-		Dull                        = unused    ("Dull"                       ),
-		Dark                        = unused    ("Dark"                       ),
-		Soulium                     = unused    ("Soulium"                    ),
-		Tennantite                  = unused    ("Tennantite"                 ),
-		Alfium                      = unused    ("Alfium"                     ),
-		Ryu                         = unused    ("Ryu"                        ),
-		Mutation                    = unused    ("Mutation"                   ),
-		HOPGraphite                 = unused    ("HOPGraphite"                ),
-		EnrichedCopper              = unused    ("Enriched Copper"            ),
-		DiamondCopper               = unused    ("Diamond Copper"             ),
-		Fairy                       = unused    ("Fairy"                      ),
-		Pokefennium                 = unused    ("Pokefennium"                );
+		public static OreDictMaterial
+		OsmiumTetroxide,
+		SodiumPeroxide,
+		IridiumSodiumOxide,
+		Iridiron,
+		IridironReinforced,
+		LimePure,
+		TNT,
+		TerrasteelAlloyRaw,
+		TerrasteelAlloyStrengthened,
+		Vis,
+		Voidstone,
+		Mercassium,
+		Osmonium,
+		Phoenixite,
+		Antimatter,
+		Starconium,
+		Thyrium,
+		Zectium,
+		Draconic,
+		Teslatite,
+		IrridantUranium,
+		IrridantReinforced,
+		IronSharp,
+		ObsidianFlux,
+		CrystalFlux,
+		Mimichite,
+		Infernal,
+		Invisium,
+		Lodestone,
+		Luminite,
+		Magma,
+		Mawsitsit,
+		Nether,
+		Painite,
+		Petroleum,
+		Pewter,
+		Potash,
+		Randomite,
+		RyuDragonRyder,
+		Tar,
+		TarPitch,
+		Cavenium,
+		CaveniumRefined,
+		Infitite,
+		Magnite,
+		Hexcite,
+		Tapazite,
+		Tourmaline,
+		Turquoise,
+		Wimalite,
+		Adamite,
+		Adluorite,
+		Agate,
+		Ammonium,
+		Bitumen,
+		Bloodstone,
+		Citrine,
+		Coral,
+		Chrysocolla,
+		DarkStone,
+		Demonite,
+		InfusedGold,
+		Daffergon,
+		Reiium,
+		Weidanium,
+		Verticium,
+		Australium,
+		Schrabidium,
+		Starmetal,
+		Unobtainium,
+		CMBSteel,
+		DuraSteel,
+		AdvancedAlloy,
+		Saturnite,
+		Dineutronium,
+		MagnetizedTungsten,
+		Euphemium,
+		Rupee,
+		Arlemite,
+		Realmite,
+		Bloodgem,
+		Netheryte,
+		Eden,
+		Wildwood,
+		Apalachia,
+		Skythern,
+		Mortum,
+		Arcanium,
+		Energized,
+		Reinforced,
+		Mud,
+		Cream,
+		Cluster,
+		Sweet,
+		Gelatine,
+		Satinspar,
+		Selenite,
+		Jet,
+		Microcline,
+		Serpentine,
+		Sylvite,
+		Goshen,
+		Joshen,
+		Itarius,
+		Legendary,
+		MutatedIron,
+		Witheria,
+		RubberTreeSap,
+		GraveyardDirt,
+		Cocaine,
+		Vile,
+		Dull,
+		Dark,
+		Soulium,
+		Tennantite,
+		Alfium,
+		Ryu,
+		Mutation,
+		HOPGraphite,
+		EnrichedCopper,
+		DiamondCopper,
+		Fairy,
+		Pokefennium;
+
+		/** Re-runnable creation batch. Upstream builds these as static-final class-init fields
+	 *  (once per JVM); after MaterialRegistry.reset() the entries were gone from MATERIAL_MAP and
+	 *  the static fields kept pointing at orphaned first-generation instances. The port assigns
+	 *  them here with the identity-check guard style of MT.java:2694 / AM.java:655, so every
+	 *  MT.init() generation re-creates them into the current registry. */
+		static void init() {
+			if (sCreated && OreDictMaterial.MATERIAL_MAP.get("OsmiumTetroxide") == OsmiumTetroxide) return;
+			sCreated = true;
+		OsmiumTetroxide = unused    ("Osmium Tetroxide"           ).setMcfg( 0, Os, 1*U, O, 4*U);
+		SodiumPeroxide = unused    ("Sodium Peroxide"            ).setMcfg( 0, Na, 2*U, O, 2*U);
+		 // Yellowish
+		IridiumSodiumOxide = unused    ("Iridium Sodium Oxide"       );
+		Iridiron = setPriorityPrefix(unused    ("IridiumIron"                ), 3).put(G_INGOT).setMcfg( 0, Ir, 1*U, Fe, 1*U).setLocal("Iridiron");
+		IridironReinforced = setPriorityPrefix(unused    ("IridiumIronReinforced"      ), 3).put(G_INGOT).setMcfg( 0, Ir, 1*U, Fe, 1*U).setLocal("Reinforced Iridiron");
+		LimePure = unused    ("LimePure"                   ).setLocal("Pure Lime");
+		TNT = unused    ("TNT"                        ).setOriginalMod(MD.MC.mID).put(EXPLOSIVE,  FLAMMABLE);
+		TerrasteelAlloyRaw = setPriorityPrefix(unused    ("TerrasteelAlloyRaw"         ), 3).put(G_INGOT, MAGICAL, "RawTerrasteelAlloy").setLocal("Raw Terrasteel Alloy");
+		TerrasteelAlloyStrengthened = setPriorityPrefix(unused    ("TerrasteelAlloyStrengthened"), 3).put(G_INGOT, MAGICAL, "StrengthenedTerrasteelAlloy").setLocal("Strengthened Terrasteel Alloy");
+		Vis = unused    ("Vis"                        ).put(DECOMPOSABLE).setMcfg( 0, Ma, 1*U);
+		Voidstone = unused    ("Voidstone"                  );
+		Mercassium = setPriorityPrefix(unused    ("Mercassium"                 ), 3).qual(3,  6.0,  64,  1).put(G_INGOT_ORES);
+		Osmonium = setPriorityPrefix(unused    ("Osmonium"                   ), 3).qual(3,  6.0,  64,  1).put(G_INGOT_ORES);
+		Phoenixite = setPriorityPrefix(unused    ("Phoenixite"                 ), 3).qual(3,  6.0,  64,  1).put(G_INGOT_ORES);
+		Antimatter = unused    ("Antimatter"                 ).put(ANTIMATTER);
+		Starconium = setPriorityPrefix(unused    ("Starconium"                 ), 3).put(G_INGOT_ORES);
+		Thyrium = setPriorityPrefix(unused    ("Thyrium"                    ), 3).put(G_INGOT_ORES);
+		Zectium = setPriorityPrefix(unused    ("Zectium"                    ), 3).put(G_INGOT_ORES);
+		Draconic = setPriorityPrefix(deprecated("Draconic"                   ), 2).put(G_DUST);
+		Teslatite = setPriorityPrefix(unused    ("InfusedTeslatite"           ), 2).put(G_DUST).setLocal("Teslatite");
+		 // 1 Redstone + 1 Nikolite = 1 Teslatite; and 8 Teslatite + 1 Gold = 1 Purple Alloy;
+		IrridantUranium = setPriorityPrefix(unused    ("Irridant Uranium"           ), 3).put(G_INGOT);
+		IrridantReinforced = setPriorityPrefix(unused    ("IrridantReinforced"         ), 3).put(G_INGOT);
+		IronSharp = setPriorityPrefix(unused    ("IronSharp"                  ), 3).put(G_INGOT).setLocal("Sharp Iron");
+		ObsidianFlux = setPriorityPrefix(unused    ("Obsidian Flux"              ), 3).put(G_INGOT);
+		CrystalFlux = setPriorityPrefix(unused    ("Crystal Flux"               ), 1).put(G_GEM, CRYSTAL, BRITTLE);
+		Mimichite = setPriorityPrefix(unused    ("Mimichite"                  ), 1).put(G_GEM_ORES, CRYSTAL, BRITTLE);
+		Infernal = unused    ("Infernal"                   );
+		Invisium = setPriorityPrefix(unused    ("Invisium"                   ), 2).put(G_DUST);
+		Lodestone = setPriorityPrefix(unused    ("Lodestone"                  ), 2).put(G_DUST_ORES);
+		Luminite = setPriorityPrefix(unused    ("Luminite"                   ), 2).put(G_DUST_ORES);
+		Magma = unused    ("Magma"                      );
+		Mawsitsit = setPriorityPrefix(unused    ("Mawsitsit"                  ), 2).put(G_DUST);
+		Nether = unused    ("Nether"                     );
+		Painite = unused    ("Painite"                    );
+		Petroleum = setPriorityPrefix(unused    ("Petroleum"                  ), 2).put(G_DUST_ORES);
+		Pewter = unused    ("Pewter"                     );
+		Potash = unused    ("Potash"                     );
+		Randomite = setPriorityPrefix(unused    ("Randomite"                  ), 2).put(G_DUST_ORES);
+		RyuDragonRyder = unused    ("RyuDragonRyder"             );
+		Tar = unused    ("Tar"                        );
+		TarPitch = unused    ("Tar Pitch"                  );
+		Cavenium = unused    ("Cavenium"                   );
+		CaveniumRefined = unused    ("CaveniumRefined"            ).put("RefinedCavenium").setLocal("Refined Cavenium");
+		Infitite = unused    ("Infitite"                   );
+		Magnite = unused    ("Magnite"                    );
+		Hexcite = unused    ("Hexcite"                    );
+		Tapazite = setPriorityPrefix(unused    ("Tapazite"                   ), 2).put(G_DUST);
+		Tourmaline = setPriorityPrefix(unused    ("Tourmaline"                 ), 2).put(G_DUST);
+		Turquoise = setPriorityPrefix(unused    ("Turquoise"                  ), 2).put(G_DUST);
+		Wimalite = setPriorityPrefix(unused    ("Wimalite"                   ), 2).put(G_DUST_ORES);
+		Adamite = setPriorityPrefix(unused    ("Adamite"                    ), 2).put(G_DUST_ORES);
+		Adluorite = setPriorityPrefix(unused    ("Adluorite"                  ), 2).put(G_DUST_ORES);
+		Agate = setPriorityPrefix(unused    ("Agate"                      ), 2).put(G_DUST);
+		Ammonium = setPriorityPrefix(unused    ("Ammonium"                   ), 2).put(G_DUST);
+		Bitumen = setPriorityPrefix(unused    ("Bitumen"                    ), 2).put(G_DUST_ORES);
+		Bloodstone = setPriorityPrefix(unused    ("Bloodstone"                 ), 2).put(G_DUST);
+		Citrine = setPriorityPrefix(unused    ("Citrine"                    ), 2).put(G_DUST);
+		Coral = setPriorityPrefix(unused    ("Coral"                      ), 2).put(G_DUST);
+		Chrysocolla = setPriorityPrefix(unused    ("Chrysocolla"                ), 2).put(G_DUST);
+		DarkStone = setPriorityPrefix(unused    ("Dark Stone"                 ), 2).put(G_DUST);
+		Demonite = setPriorityPrefix(unused    ("Demonite"                   ), 2).put(G_DUST);
+		InfusedGold = setPriorityPrefix(unused    ("Infused Gold"               ), 3).put(G_INGOT);
+		Daffergon = setPriorityPrefix(unused    ("Daffergon"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES);
+		 // Dellite Ore
+		Reiium = setPriorityPrefix(unused    ("Reiium"                     ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES);
+		 // Reiite Ore
+		Weidanium = setPriorityPrefix(unused    ("Weidanium"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES);
+		 // Weidite Ore
+		Verticium = setPriorityPrefix(unused    ("Verticium"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES);
+		Australium = setPriorityPrefix(unused    ("Australium"                 ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES);
+		Schrabidium = setRGBa(setPriorityPrefix(unused    ("Schrabidium"                ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_ORES,  MAGNETIC_ACTIVE,  AUTO_COLLECTING,  MELTING,  MOLTEN),  50, 255, 255, 255);
+		Starmetal = setPriorityPrefix(unused    ("Starmetal"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE_ORES);
+		Unobtainium = setPriorityPrefix(unused    ("Unobtainium"                ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE_ORES);
+		CMBSteel = setPriorityPrefix(unused    ("CMB Steel"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE);
+		DuraSteel = setPriorityPrefix(unused    ("DuraSteel"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE).setLocal("High-Speed Steel");
+		AdvancedAlloy = setPriorityPrefix(unused    ("Advanced Alloy"             ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE);
+		Saturnite = setPriorityPrefix(unused    ("Saturnite"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE);
+		Dineutronium = setPriorityPrefix(unused    ("Dineutronium"               ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT_MACHINE);
+		MagnetizedTungsten = setPriorityPrefix(unused    ("Magnetized Tungsten"        ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT,  MAGNETIC_ACTIVE,  AUTO_COLLECTING);
+		Euphemium = setRGBa(setPriorityPrefix(unused    ("Euphemium"                  ), 3).setOriginalMod(MD.HBM.mID).put(G_INGOT,  MELTING,  MOLTEN), 255, 150, 255, 255);
+		Rupee = unused    ("Rupee"                      ).setOriginalMod(MD.DRPG.mID);
+		Arlemite = unused    ("Arlemite"                   ).setOriginalMod(MD.DRPG.mID);
+		Realmite = unused    ("Realmite"                   ).setOriginalMod(MD.DRPG.mID);
+		Bloodgem = unused    ("Bloodgem"                   ).setOriginalMod(MD.DRPG.mID);
+		Netheryte = unused    ("Netheryte"                  ).setOriginalMod(MD.DRPG.mID);
+		Eden = unused    ("Eden"                       ).setOriginalMod(MD.DRPG.mID);
+		Wildwood = unused    ("Wildwood"                   ).setOriginalMod(MD.DRPG.mID);
+		Apalachia = unused    ("Apalachia"                  ).setOriginalMod(MD.DRPG.mID);
+		Skythern = unused    ("Skythern"                   ).setOriginalMod(MD.DRPG.mID);
+		Mortum = unused    ("Mortum"                     ).setOriginalMod(MD.DRPG.mID);
+		Arcanium = unused    ("Arcanium"                   ).setOriginalMod(MD.DRPG.mID);
+		Energized = unused    ("Energized"                  );
+		Reinforced = unused    ("Reinforced"                 );
+		Mud = unused    ("Mud"                        ).put(IGNORE_IN_COLOR_LOG);
+		Cream = unused    ("Cream"                      ).put(IGNORE_IN_COLOR_LOG);
+		Cluster = unused    ("Cluster"                    );
+		Sweet = unused    ("Sweet"                      );
+		Gelatine = unused    ("Gelatine"                   );
+		Satinspar = unused    ("Satinspar"                  );
+		Selenite = unused    ("Selenite"                   );
+		Jet = unused    ("Jet"                        );
+		Microcline = unused    ("Microcline"                 );
+		Serpentine = unused    ("Serpentine"                 );
+		// byproduct pietersite, which is a fake? Tiger eye
+		Sylvite = unused    ("Sylvite"                    );
+		Goshen = unused    ("Goshen"                     );
+		Joshen = unused    ("Joshen"                     );
+		Itarius = unused    ("Itarius"                    );
+		Legendary = unused    ("Legendary"                  );
+		MutatedIron = unused    ("Mutated Iron"               );
+		Witheria = unused    ("Witheria"                   );
+		RubberTreeSap = unused    ("Rubber Tree Sap"            );
+		GraveyardDirt = unused    ("Graveyard Dirt"             );
+		Cocaine = unused    ("Cocaine"                    );
+		Vile = unused    ("Vile"                       );
+		Dull = unused    ("Dull"                       );
+		Dark = unused    ("Dark"                       );
+		Soulium = unused    ("Soulium"                    );
+		Tennantite = unused    ("Tennantite"                 );
+		Alfium = unused    ("Alfium"                     );
+		Ryu = unused    ("Ryu"                        );
+		Mutation = unused    ("Mutation"                   );
+		HOPGraphite = unused    ("HOPGraphite"                );
+		EnrichedCopper = unused    ("Enriched Copper"            );
+		DiamondCopper = unused    ("Diamond Copper"             );
+		Fairy = unused    ("Fairy"                      );
+		Pokefennium = unused    ("Pokefennium"                );
+		}
+
+		private static boolean sCreated = false;
+
 	}
 }
