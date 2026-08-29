@@ -130,8 +130,10 @@ public final class OreDictMaterial implements ITagDataContainer<OreDictMaterial>
 	public final List<IOreDictConfigurationComponent> mAlloyCreationRecipes = new ArrayList<>();
 	/** List of Achievement IDs you get for creating an instance of this Material. Upstream :269-270 is List&lt;Achievement&gt;, stripped to ID strings per the MC-coupling policy. */
 	public final List<String> mAchievementsForCreation = new ArrayList<>();
-	/** Contains the most useful Prefix made of 1 Unit for this Material. */ // :271-272 (mPriorityPrefix :273-274 is OreDictPrefix-typed and belongs to task gt-ore-prefix)
+	/** Contains the most useful Prefix made of 1 Unit for this Material. */ // :271-272
 	public int mPriorityPrefixIndex = 0;
+	/** Contains the most useful Prefix made of 1 Unit for this Material. The public field IS the upstream accessor (OreDictMaterial.java has no getter/setter for it; OP.java:629-634 assigns it directly). */ // :273-274 (declared by task gt-ore-prefix)
+	public OreDictPrefix mPriorityPrefix = null;
 	/** The Material which is the target for Recycling a Crafting Recipe. Mainly to prevent things like Iron from showing up twice in the Ingredients List */ // :275-276
 	public OreDictMaterial mTargetReversing = this;
 	/** The Material which is the target for Re-Registration. */ // :277-278
