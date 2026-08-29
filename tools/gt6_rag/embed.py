@@ -37,25 +37,39 @@ def load_config() -> dict:
     return _config
 
 
-def _post_batch(texts: list[str], retries: int = 7) -> list[list[float]]:
+def _post_batch(texts: list[str], retries: int | None = None) -> list[list[float]]:
     cfg = load_config()
     payload = json.dumps({"model": cfg["model"], "input": texts}).encode("utf-8")
     headers = {"Content-Type": "application/json"}
     if cfg.get("api_key"):
         headers["Authorization"] = f"Bearer {cfg['api_key']}"
     url = cfg["base_url"].rstrip("/") + "/embeddings"
+    # 交互式小请求（remember/recall/search_code）必须把总预算压在 MCP 客户端
+    # 超时（60s）之内：共享的 GPU 服务饱和时，长超时×多重试会让调用隐形挂死。
+    # 大批量（索引构建）没有客户端在等，保留长超时与多次重试。
+    est = _token_estimate(texts)
+    if est < 2000:
+        timeout = int(cfg.get("interactive_timeout_s", 15))
+        if retries is None:
+            retries = int(cfg.get("interactive_retries", 1))
+    else:
+        timeout = int(cfg.get("batch_timeout_s", 240))
+        if retries is None:
+            retries = 7
     last_err: Exception | None = None
     for attempt in range(retries):
         req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
         try:
-            with _opener.open(req, timeout=240) as resp:
+            with _opener.open(req, timeout=timeout) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
             return [d["embedding"] for d in sorted(data["data"], key=lambda d: d["index"])]
         except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, OSError,
                 json.JSONDecodeError, KeyError) as e:
             last_err = e
             time.sleep(min(60, (2 ** attempt) * 2) + random.random() * 2)
-    raise RuntimeError(f"embedding request failed after {retries} retries: {last_err}")
+    raise RuntimeError(
+        f"embedding request failed after {retries} retries "
+        f"(url={url}, timeout={timeout}s, items={len(texts)}, est_tokens={est}): {last_err}")
 
 
 def _truncate(v: list[float], dims: int) -> list[float]:
