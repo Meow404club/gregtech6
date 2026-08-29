@@ -74,6 +74,7 @@ def replaceProperties = [
         mod_license      : property('mod_license').toString(),
         mod_name         : property('mod_name').toString(),
         mod_description  : property('mod_description').toString(),
+        mod_authors      : property('mod_authors').toString(),
 ]
 
 def generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
