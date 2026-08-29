@@ -119,3 +119,28 @@ legacyForge.ideSyncTask generateModMetadata
 // DataGen 产物挂进 main resources（GTCEu build.gradle:24-28 同构，datagen 代码留 main sourceSet，
 // 产物目录零手写 JSON——红线：所有 JSON 由 DataProvider 生成）
 sourceSets.main.resources.srcDir 'src/generated/resources'
+
+// ---- Test sourceSet（p3-fullprefix-creativetab：注册判定/first-wins/判据收敛断言）----
+// 测试 JVM 需要加载 gregapi（root jar，经 main 类路径）与 main 类引用的 MC 类型
+// （GTMaterialItems 的字节码校验需要 net.minecraft 类在测试类路径上），
+// 故把 main 的 compile/runtimeClasspath 追加进 test——仅测试类路径配置，runs/jar 不受影响。
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+sourceSets.test {
+    compileClasspath += sourceSets.main.compileClasspath
+    runtimeClasspath += sourceSets.main.runtimeClasspath
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    testLogging {
+        events 'failed', 'skipped'
+        exceptionFormat 'full'
+    }
+    // 材料系统全量 init 属内存敏感（MT 1273 材料 + 全量物品枚举），与根项目测试同量级
+    maxHeapSize = '2g'
+}

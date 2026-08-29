@@ -9,6 +9,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.GT6Mod;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.registry.GTMaterialItems;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -23,7 +24,11 @@ import net.minecraftforge.common.data.LanguageProvider;
  * <li>{@code gt6.material.<material_snake>} = the English local name — exactly the field
  *     {@code MaterialPrefixItem.getName} fills the template with
  *     (MaterialPrefixItem.java:65, mNameLocal);</li>
- * <li>{@code itemGroup.gt6.materials} — the creative tab title.</li>
+ * <li>{@code itemGroup.gt6.<prefix_snake>} = one per creative-visible prefix tab, valued with the
+ *     prefix's mNameCategory — upstream registers the tab with
+ *     {@code LH.add("itemGroup." + mNameInternal, mNameCategory)} (CreativeTab.java:32, created at
+ *     PrefixItem.java:90); the tab set is taken from {@link GTMaterialItems#tabPrefixes()} so lang
+ *     keys cannot drift from the registered tabs.</li>
  * </ul>
  *
  * <p>The per-item override keys {@code gt6.<prefix>_<material>} are intentionally NOT generated:
@@ -40,9 +45,17 @@ public final class GT6EnUs extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        add("itemGroup.gt6.materials", "GT6 Materials");
+        addTabTitles();
         addPrefixTemplates();
         addMaterialNames();
+    }
+
+    /** One title key per creative-visible prefix tab (CreativeTab.java:32 shape, upstream mNameCategory). */
+    private void addTabTitles() {
+        for (OreDictPrefix tPrefix : GTMaterialItems.tabPrefixes()) {
+            add("itemGroup.gt6." + MaterialPrefixItem.snakeCase(tPrefix.mNameInternal),
+                tPrefix.mNameCategory == null ? tPrefix.mNameInternal : tPrefix.mNameCategory);
+        }
     }
 
     /** Table a: one "%s"-template per prefix, all of OP.VALUES (post-OP.init()). */
