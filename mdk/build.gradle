@@ -40,9 +40,16 @@ legacyForge {
         server {
             server()
         }
-        // runData 的 --mod/--all/--output/--existing 四参数归 p2-datagen-pipeline 卡补
+        // Data run 四参数照搬 GTCEu gradle/scripts/moddevgradle.gradle:111-122 先例（ADR-P2-4）。
+        // --existing 指向 main/resources：ModelBuilder.texture()（Forge 1.20.1 ModelBuilder.java:145-146）
+        // 对 layer0 做 ExistingFileHelper 存在性校验，占位贴图必须已在 src/main/resources。
         data {
             data()
+            sourceSet = sourceSets.main
+            programArguments.addAll('--mod', modId)
+            programArguments.addAll('--all')
+            programArguments.addAll('--output', file('src/generated/resources/').getAbsolutePath())
+            programArguments.addAll('--existing', file('src/main/resources/').getAbsolutePath())
         }
     }
 }
@@ -79,3 +86,7 @@ def generateModMetadata = tasks.register('generateModMetadata', ProcessResources
 // 展开产物挂进 main resources（以任务为 srcDir 自动接线任务依赖）
 sourceSets.main.resources.srcDir generateModMetadata
 legacyForge.ideSyncTask generateModMetadata
+
+// DataGen 产物挂进 main resources（GTCEu build.gradle:24-28 同构，datagen 代码留 main sourceSet，
+// 产物目录零手写 JSON——红线：所有 JSON 由 DataProvider 生成）
+sourceSets.main.resources.srcDir 'src/generated/resources'
