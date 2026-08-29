@@ -2,19 +2,26 @@
 
 > 权威数据在 `state_read("todo")`。新增任务请同时写 MCP state 与本文件。
 
-## 立即（基础设施收尾）
+## 第 1 阶段（材料系统）——✅ 已完成（2026-08-29）
 
-- [x] 首次架构拆解：`/architect GT6 材料系统`，产出第 1 阶段模块卡（2026-08-28，5 卡）
-- [x] 验证 MCP 服务器在 ZCode 会话中自动连接（gt6-brain 六键 state 全通）
-- [x] 试运行一次完整任务流：/researcher → /coder → /review-merge（卡1 gt-material-foundation 已合入 2f3be03）
-- [ ] 卡2 gt-material-model：OreDictMaterial 完整模型 + 注册状态机 + MaterialResolver（in_progress）
+- [x] 卡1 gt-material-foundation：Gradle 骨架 + TagData/OreDictMaterialStack/Serializer（merge 2f3be03，34 测）
+- [x] 卡2 gt-material-model：OreDictMaterial 完整模型 + MaterialRegistry 状态机（merge 1b7251c，73 测）
+- [x] 卡3 gt-material-dataset：TD 全量 + MT 1273 材料 + AM/ANY（merge e408927，97 测）
+- [x] 卡4 gt-ore-prefix：OreDictPrefix + OP 421 前缀 + mPriorityPrefix（merge 3d0aac3，133 测）
+- [x] 卡5 gt-material-graph：MaterialGraph 链查询 + 合金组分引用图（merge 972dbad，161 测）
 
-## 第 1 阶段（材料系统）
+## 立即（第 2 阶段入口）
 
-- [ ] 研究：GT6 Materials 类族结构与属性字段全集（/researcher）
-- [ ] 设计：现代材料注册方案（纯 Java 层 + 单元测试，无 MC 依赖）
+- [ ] /researcher 调研：NeoForge 1.20.1 注册（DeferredRegister）与 DataGen 落地模板
+- [ ] /architect 拆第 2 阶段模块卡（MDK composite/include 挂载方案）
+
+## 第 2 阶段（从第 1 阶段继承的遗留）
+
+- [ ] 卡3 缺口①：MaterialRegistry.reset() 后 AM/ANY 的 INITIALIZED 守卫不感知 reset（~450 条不重注册）
+- [ ] 卡3 缺口②③：TECH 别名静态字段测试顺序敏感；Invar 重灌后 2 条同内容配方写入点未定位
+- [ ] applyCrucibleAlloyReferences 接线：挂 NeoForge postInit 生命周期
+- [ ] 卡4 延后 47 条前缀（依赖 OreDictMaterialCondition 条件系统移植）
 
 ## 待办池
 
-- [ ] 评估 NeoForge 1.20.1 的 DataGen 在本项目的落地模板
 - [ ] 建立移植进度看板（按 GT6 子系统统计已移植/未移植）
