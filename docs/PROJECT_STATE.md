@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 2 阶段：Forge 1.20.1 MDK 挂载 + 注册桥 + DataGen`（**2026-08-29 收官**：五卡全数合入 main HEAD a6312ab，188 单测全绿，runServer/runClient 冒烟通过，ADR-P2-6 六条验收线全满足）
+`第 3 阶段：BlockEntity + AbstractContainerMenu + Screen 框架`（**2026-08-30 收官**：四卡全数合入 main HEAD 2a04936，221 单测全绿，56253 物品 + 96 creative tab，chest 示例机器全链打通，ADR-P3-8 六条验收线全满足）
 
 > **平台修正 2026-08-29**：原目标"NeoForge 1.20.1"被证伪——NeoForge 官方 maven 从未发布 20.1.x 产物（versions API `filter=20.1` 返回空，主会话独立复核），NeoForged 自家 ModDevGradle 把 1.20.1 路由给 `legacyforge` 变体，文档站最早只到 1.20.3。用户裁决：目标平台 = **MinecraftForge 1.20.1（47.4.10）**，构建插件 = MDG legacyforge 2.0.144。1.20.1 的 API 面即 `net.minecraftforge.*` + RegistryObject（DeferredHolder 是 20.2+ 才有），第 1 阶段的所有调研结论不受影响。
 
@@ -13,7 +13,7 @@
 
 - [x] 第 1 阶段：材料系统纯逻辑抽取（无 MC 依赖，含单元测试）——2026-08-29 收官
 - [x] 第 2 阶段：Forge 1.20.1 MDK 挂载 + 注册桥 + DataGen——2026-08-29 收官（188 测全绿；2469 材料物品注册；runData 管线可复现）
-- [ ] 第 3 阶段：BlockEntity + AbstractContainerMenu + Screen 框架（含全量前缀注册 421×材料 + creative tab 分组）
+- [x] 第 3 阶段：BlockEntity + AbstractContainerMenu + Screen 框架——2026-08-30 收官（221 测全绿；56253 物品 + 96 tab；BE/Menu/Screen/chest 全链）
 - [ ] 第 4 阶段：管线 / Cover / 多方块渲染（BakedModel 路线）
 
 ## 关键决策
@@ -31,6 +31,9 @@
 | 2026-08-29 | 注册桥 | 方案 A 两段桥：FMLConstructModEvent.enqueueWork 跑 MT.init()（open→closed）→ 直接监听 RegisterEvent 遍历 MaterialRegistry×OP 动态灌入 → FMLCommonSetupEvent.enqueueWork 调 applyCrucibleAlloyReferences（postInit 等价物）；DeferredRegister 逐条句柄只适合少量手写物品；Registrate 留第 3 阶段 | GTRegistrate.java:148-151（LOW 优先级监听 RegisterEvent）；DeferredRegister.java:177-178（窗外抛 ISE）；FMLCommonSetupEvent.java:24-28 |
 | 2026-08-28 | MC 耦合剥离 | NBT→Serializer 接口；FluidStack/Enchantment/Achievement→字符串/枚举 ID；TextureSet/IIconContainer→名称引用；ItemStack 字段删除 | OreDictMaterialStack.java:31；OreDictMaterial.java:252-254,315,319 |
 | 2026-08-28 | 红线-静态初始化 | 禁复刻 MT.java 巨型静态块（65536 上限）；数据分批注册；注册表可重置；GAPI.mStartedInit 改注册表状态机 | MT.java:45 作者自注；OreDictMaterial.java:153-155 |
+| 2026-08-30 | BE 形态 | 共享 BlockEntityType + validBlocks 多挂为默认（独立 BET 仅单 Block 最小面例外）；Capability（ForgeCapabilities.ITEM_HANDLER）缝合进 BE 框架卡，Forge patch 在 setRemoved/onChunkUnloaded 自动插 invalidateCaps，只需覆写 invalidateCaps | ADR-P3-1/P3-2；RegisterCapabilitiesEvent.java:14-16；IItemHandler.java:15（@AutoRegisterCapability）；BlockEntity.java.patch:45/:51 |
+| 2026-08-30 | 注册接线 | 新注册一律卡内自持监听，GT6Mod/GTModBusListener 全阶段冻结（并行前提）；自持取 mod bus=Bus.MOD.bus().get()（Mod.java:81）；1.20.1 无 RegisterMenuScreensEvent，MenuScreens.register（Forge AT 提权 public）唯一挂法 FMLClientSetupEvent.enqueueWork | ADR-P3-3/P3-4；accesstransformer.cfg:73；forge-docs gui/screens.md:314 |
+| 2026-08-30 | 注册宇宙 | 全量前缀注册宇宙=上游物品路径 105 前缀（Loader_Items.java:57-171 逐行核验恰 105），468×isGeneratingItem naive 展开 476,183 对否决；ore/block/pipe/wire 走 PrefixBlock/MTE 非物品路径；id 撞车 first-wins | ADR 2026-08-30-p3-fullprefix-registration-universe；runServer 日志 56253/0 撞键/945 归并/363 跳过 |
 
 ## 第 1 阶段模块卡（2026-08-28）
 
@@ -111,3 +114,26 @@
 - TECH tMake* 串冻结首代（内容代间不变，惰性）
 - 服务端侧特例键回退模板名（@OnlyIn 隔离的已知取舍）
 - GT6DatagenItems 与注册桥白名单两处判据（items() 主路径天然同步，扩前缀时留意）
+
+## 第 3 阶段收官记录（2026-08-30，主会话 phase-closeout）
+
+> 合入链：43fcb1a（BE 框架，rebase 后 5550c8a…fb759de）→ b49d3e2（Menu/Screen 基建）→ 0348638（全量前缀 + creative tab，内含审查归一 9e230cd 与产物重生成）→ b6b01eb（chest 示例机器，WAVE-2 串行），docs/gitignore 收官镜像 2a04936。WAVE-1 三卡并行（files_scope 零交叠 + ADR-P3-4 GT6Mod 冻结）。
+
+**ADR-P3-8 验收线核验**：
+1. ✅ 根 `clean check --no-build-cache` 221 测（root 188 + mdk 33）0 失败 0 FROM-CACHE，根 src 零 net.minecraft。
+2. ✅ `:mdk:build` 绿；runServer 合并态 Done（2.903s）零 GT6 ERROR；runData 两跑 written 53785→0 逐字节可复现。
+3. ✅ 打开链自动化：RCON `/gt6machine check` → createMenu 90 槽（54 内容 + 36 背包）、stillValid、openers 0→1→0（审查官合并态重放）；chest NBT round-trip 单测 6 项。交互级 GUI 目视留用户。
+4. ✅ BE 持久化单测：mdk test sourceSet 33 项（BE 框架 17 + 前缀注册 10 + chest 6）。
+5. ✅ GPG 全验（原提交 + rebase 重写 + 审查归一提交逐个 verify-commit）；FILES_SCOPE 零越界；GT6Mod/GTModBusListener diff 为空（每分支核验 + 主会话 0348638..b6b01eb 区间复核）。
+6. ✅ 共享 BET+validBlocks 默认（chest 独立 BET 为 ADR-P3-1 授权例外）；capability 缝合不独立成卡；两处 SPEC 偏离（menu 自持注册走 RegisterEvent、注册宇宙 105 item-path）经独立证据裁决升格 ADR。
+
+**阶段成果数字**：56,253 材料物品（105 上游物品路径前缀 × isGeneratingItem，first-wins 零 id 撞键，945 重复对归并，363 非物品前缀留痕跳过）；96 creative tab；56,285 模型 JSON + lang 2,336 键；2,785 占位 PNG（40 iconset）。BE 框架：TileEntityBase01Root/03TicksAndSync 最小面移植 + onTick 八段分发逐字 + vanilla 双通道同步（getUpdateTag/ClientboundBlockEntityDataPacket）+ 共享 BET + capability 缝合 + MaterialStackNBT short 存档兼容。Menu/Screen 基建：GTGuiMenu/GTGuiScreen（bindPlayerInventory 直译）+ Slot 三件套能力模型 + gt6:debug /gt6gui + MenuScreens 唯一挂法。chest 示例机器：54 槽 + 动态行布局（ContainerCommonChest:39-43 逐字）+ gt6:chests tab + /gt6machine 打开链验证指令。
+
+**重大修正（研究期）**：GT6 1.7.10 不把材料身份写进常规 ItemStack NBT——"a"/"i"/"m" 键仅坩埚/熔炼类 BE 内部 NBT（OreDictMaterialStack save/load，消费点 Crucible/Smeltery/Mold/DustFunnel）；常规材料物品身份=注册物品本身，BE 读槽位按 item 反查。
+
+**遗留池（进第 4 阶段+）**：
+- 特性层：trapped/comparator/涂装/TESR/lid 动画/getOpenGUIs 1200t 重同步、chest BlockItem loot table（掉落空，归 loot datagen 卡）
+- ADR-P3-6 延后池：slotClick 全局拦截（Slot 能力模型重构）、rebootGUIs、cover 负 GUIID
+- ContainerData 进度条业务面（第 4 阶段首台真加工机器落地）；第 4 阶段主线=管线/Cover/多方块渲染（BakedModel）
+- 交互级验证：/give+tint（P2）与 GUI 目视（P3）留用户 runClient
+- 旧池沿用：PrefixRegistry 未 close、MT.NULL.mHandleMaterial=null、TECH tMake 冻结首代、服务端特例键回退、移植进度看板

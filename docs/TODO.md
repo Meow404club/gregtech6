@@ -21,21 +21,25 @@
 - [x] p2-datagen-pipeline：runData 管线 + 2469 模型 + lang 两表 + 103 占位 PNG（merge 139c8c4）
 - [x] phase-closeout：ADR-P2-6 六条验收线全满足（188 测 / runServer Done×3 / runData 可复现 / runClient 冒烟过）
 
-## 第 3 阶段（BlockEntity + 容器 + Screen 框架）——入口
+## 第 3 阶段（BE + 容器 + Screen 框架）——✅ 已完成（2026-08-30）
 
-- [ ] /architect 拆第 3 阶段模块卡（BlockEntity + AbstractContainerMenu + Screen；全量前缀注册 421×材料 + creative tab 分组归此阶段）
-- [ ] /researcher（按需）：BlockEntity 类型注册/-capability/Menu 网络同步在 1.20.1 的模板考古
+- [x] 调研三卡：BE 框架 / Menu+Screen / Capability+持久化（重大修正：GT6 不把材料身份写常规 ItemStack NBT，a/i/m 键仅坩埚/熔炼类 BE 内部 NBT）
+- [x] architect 拆卡：4 卡 8 ADR 两波次（ADR-P3-1 共享 BET、P3-2 capability 缝合、P3-3 screen 挂载时机、P3-4 GT6Mod 冻结自持注册、P3-5 chest 选型、P3-6 延后池、P3-7 全量前缀纳入主序列、P3-8 验收线）
+- [x] p3-be-framework：01Root/03TicksAndSync 最小面 + 同步层 vanilla 双通道 + 共享 BET + capability 缝合 + MaterialStackNBT short 兼容（merge 43fcb1a）
+- [x] p3-menu-framework：GTMenuTypes + GTGuiMenu/GTGuiScreen + Slot 三件套 + /gt6gui + MenuScreens 唯一挂法（merge b49d3e2）
+- [x] p3-fullprefix-creativetab：105 item-path 前缀全量注册 56253 物品 + 96 creative tab + 双判据收敛（merge 0348638）
+- [x] p3-example-machine：chest 全链（54 槽 + 动态行 + 打开链 RCON 实证 + blockstate/model/lang datagen）（merge b6b01eb）
+- [x] phase-closeout：ADR-P3-8 六条验收线全满足（221 测 / runData 可复现 / GT6Mod diff 空 / mdk/logs gitignore 2a04936）
 
-## 从第 2 阶段继承的遗留（池）
+## 第 4 阶段（管线 / Cover / 多方块渲染 BakedModel）——入口
 
-- [ ] 全量前缀注册（421×材料）+ creative tab 按前缀分组（现白名单 4 前缀单 tab，ADR-P2-3 有意收缩）
-- [ ] PrefixRegistry 未 close（注册桥只裁 MaterialRegistry）
-- [ ] MT.NULL.mHandleMaterial=null（两相化副作用，上游 AnyWoodPlastic；工具卡落地时注意）
-- [ ] TECH tMake* 串冻结首代（内容代间不变，惰性）
-- [ ] 服务端侧特例键回退模板名（@OnlyIn 隔离取舍，GTCEu 同款）
-- [ ] GT6DatagenItems 与注册桥白名单两处判据（扩前缀时同步）
-- [ ] 交互级 /give + tint 目视验证（用户下次 runClient 顺手验）
+- [ ] /researcher（按需）：FluidStack/管网、Cover API、多方块结构校验与 BakedModel 动态渲染的 1.20.1 模板考古
+- [ ] /architect 拆第 4 阶段模块卡；首台真加工机器（craftProgress→ContainerData 进度条业务面在此落地）
 
-## 待办池
+## 遗留池
 
+- [ ] 特性层：trapped/comparator/涂装/TESR/lid 动画/getOpenGUIs 1200t 重同步、chest BlockItem loot table
+- [ ] ADR-P3-6 延后池：slotClick 全局拦截（Slot 能力模型重构）、rebootGUIs、cover 负 GUIID
+- [ ] PrefixRegistry 未 close；MT.NULL.mHandleMaterial=null（工具卡注意）；TECH tMake 冻结首代；服务端特例键回退
+- [ ] 交互级验证：/give+tint（P2）与 GUI 目视（P3）留用户 runClient
 - [ ] 建立移植进度看板（按 GT6 子系统统计已移植/未移植）
