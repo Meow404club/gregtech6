@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:item/material_sets/stone/tool_head_raw_arrow"
+  }
+}

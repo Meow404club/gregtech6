@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:item/material_sets/metallic/tool_head_raw_universal_spade"
+  }
+}
