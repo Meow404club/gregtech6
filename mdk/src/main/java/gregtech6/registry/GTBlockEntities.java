@@ -1,6 +1,13 @@
 package gregtech6.registry;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
@@ -12,8 +19,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.block.GTExampleChestBlock;
 import gregtech6.block.TestMachineBlock;
 import gregtech6.tileentity.TestMachineBlockEntity;
+import gregtech6.tileentity.example.GTExampleChestBlockEntity;
 
 /**
  * Block + BlockEntityType registration, card-owned (ADR-P3-4): the deferred registers
@@ -53,6 +62,51 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("test_machine", () -> BlockEntityType.Builder.of(
 					TestMachineBlockEntity::new, TEST_MACHINE.get(), TEST_MACHINE_IDLE.get()).build(null));
 
+	// -------------------------------------------------------------------------
+	// example chest (task p3-example-machine, WAVE-2)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The example chest block — upstream default hardness/resistance (MultiTileEntityChest.java:85
+	 * mHardness = 6, mResistance = 3), wooden sound like the wooden chest family.
+	 */
+	public static final RegistryObject<Block> EXAMPLE_CHEST = BLOCKS.register("example_chest",
+			() -> new GTExampleChestBlock(BlockBehaviour.Properties.of().strength(6.0F, 3.0F).sound(SoundType.WOOD)));
+
+	/**
+	 * The example chest BET: one class, its one block (ADR-P3-1 shape — the multi-attach form
+	 * degenerates to a single valid block until material variants arrive). Registry path mirrors
+	 * GTExampleChestBlockEntity#getTileEntityName like the test machine pair.
+	 */
+	public static final RegistryObject<BlockEntityType<GTExampleChestBlockEntity>> EXAMPLE_CHEST_BE =
+			BLOCK_ENTITY_TYPES.register("example_chest", () -> BlockEntityType.Builder.of(
+					GTExampleChestBlockEntity::new, EXAMPLE_CHEST.get()).build(null));
+
+	/**
+	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest
+	 * BlockItem. DeferredRegister form per the task card (Bus.MOD.bus().get() self-contained).
+	 */
+	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
+
+	public static final RegistryObject<Item> EXAMPLE_CHEST_ITEM = ITEMS.register("example_chest",
+			() -> new BlockItem(EXAMPLE_CHEST.get(), new Item.Properties()));
+
+	/**
+	 * Creative tab for the example chest. Upstream tab archaeology: the chest lives in the
+	 * MTE-registry-owned per-category tab — aRegistry.add(..., "Chests", ..., 32745, ...)
+	 * (Loader_MultiTileEntities.java:132) creates one shared CreativeTab per category id
+	 * (MultiTileEntityRegistry.java:191). The flat "chests" tab is the minimal port equivalent;
+	 * the per-registry tab system is a later card.
+	 */
+	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
+
+	public static final RegistryObject<CreativeModeTab> CHESTS_TAB = CREATIVE_MODE_TABS.register("chests",
+			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0) // vanilla CreativeModeTab.java:46-48
+					.title(Component.translatable("itemGroup.gt6.chests"))
+					.icon(() -> new ItemStack(EXAMPLE_CHEST_ITEM.get()))
+					.displayItems((aParameters, aOutput) -> aOutput.accept(new ItemStack(EXAMPLE_CHEST_ITEM.get())))
+					.build());
+
 	private GTBlockEntities() {}
 
 	/**
@@ -66,5 +120,7 @@ public final class GTBlockEntities {
 		IEventBus tModBus = Mod.EventBusSubscriber.Bus.MOD.bus().get();
 		BLOCKS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
+		ITEMS.register(tModBus);
+		CREATIVE_MODE_TABS.register(tModBus);
 	}
 }

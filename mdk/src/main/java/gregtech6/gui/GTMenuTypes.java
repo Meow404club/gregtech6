@@ -6,7 +6,10 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * GT6 {@link MenuType} registry — every GT6 GUI shape gets one MenuType (the 1.20.1 replacement of
@@ -35,8 +38,23 @@ public final class GTMenuTypes {
     /** Registry path of the debug GUI (MenuType id {@code gt6:debug}). */
     public static final String DEBUG_MENU_ID = "debug";
 
+    /** Registry path of the example chest GUI (MenuType id {@code gt6:example_chest}). */
+    public static final String EXAMPLE_CHEST_MENU_ID = "example_chest";
+
     /** Set during RegisterEvent; read via {@link #gtDebug()}. */
     private static MenuType<GTDebugMenu> gtDebugMenu;
+
+    /**
+     * The example chest MenuType (task p3-example-machine) — the DeferredRegister +
+     * {@code Bus.MOD.bus().get()} form the BE framework proved self-contained
+     * (Mod.java:81; GTBlockEntities precedent). Appended next to the debug RegisterEvent
+     * idiom, which stays as-is: both idioms are review-verified paths to the same
+     * RegisterEvent stream, and new registrations standardise on this one.
+     */
+    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MOD_ID);
+
+    public static final RegistryObject<MenuType<GTExampleChestMenu>> EXAMPLE_CHEST_MENU =
+        MENUS.register(EXAMPLE_CHEST_MENU_ID, () -> IForgeMenuType.create(GTExampleChestMenu::new));
 
     private GTMenuTypes() {
     }
@@ -48,6 +66,17 @@ public final class GTMenuTypes {
             throw new IllegalStateException(MOD_ID + ":" + DEBUG_MENU_ID + " used before registration");
         }
         return menuType;
+    }
+
+    /** The {@code gt6:example_chest} menu type (RegistryObject.get fails fast when unbound). */
+    public static MenuType<GTExampleChestMenu> exampleChest() {
+        return EXAMPLE_CHEST_MENU.get();
+    }
+
+    /** FMLConstructModEvent = first mod-bus lifecycle stage, strictly before any RegisterEvent (GTBlockEntities.onModConstruct doc). */
+    @SubscribeEvent
+    public static void onModConstruct(FMLConstructModEvent aEvent) {
+        MENUS.register(Mod.EventBusSubscriber.Bus.MOD.bus().get());
     }
 
     /** Menu registry fill; the MENU registry key filters the fan-out (one event per registry type). */
