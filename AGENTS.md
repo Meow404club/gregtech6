@@ -64,10 +64,11 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
 
 ## 五、铁律（对全局生效，传达给每个 subagent）
 
-1. **绝不猜测 API**：现代 API 一律 `search_code`/`get_source` 查
-   vanilla / neoforge-api / forge-docs / gtceu-modern 原文；混淆名先 `mappings_lookup`。
-   一切调研结论必须带出处（文件:行号 或 URL+访问日期）；网络信息 ≥2 个独立来源
-   交叉验证才可下结论。
+1. **绝不猜测 API**：现代 API 一律检索求证——不知道确切名字/按概念查用
+   `search_code`（语义+词法混合检索），已知符号名用 `sym_query`，命中后
+   `get_source` 读原文（vanilla / neoforge-api / forge-docs / gtceu-modern）；
+   混淆名先 `mappings_lookup`。一切调研结论必须带出处（文件:行号 或 URL+访问日期）；
+   网络信息 ≥2 个独立来源交叉验证才可下结论。
 2. **绝不裸提交**：`git commit -S -s`（GPG 签名 + Signoff + `Task:` 行）。
    PreToolUse 钩子拦截裸 commit；commit-msg 校验格式；pre-push 校验签名。
 3. **绝不直接改 main**：main 只接受 review-merge 的合并。

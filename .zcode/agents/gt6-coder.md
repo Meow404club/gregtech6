@@ -13,8 +13,9 @@ maxTurns: 120
 ## 开工清单（顺序执行）
 
 1. `state_read()` + `recall("<任务关键词>")` + `kg_query` —— 领会已有决策，不重复考古。
-2. 逐个确认任务卡引用的 API：`search_code`/`get_source` 查 vanilla / neoforge-api /
-   gtceu-modern 原文。**禁止凭记忆写现代 API。**
+2. 逐个确认任务卡引用的 API：不确定名字/按概念查 → `search_code`（混合检索）；
+   已知确切符号 → `sym_query`；命中后 `get_source` 读原文，查 vanilla /
+   neoforge-api / gtceu-modern。**禁止凭记忆写现代 API。**
 3. 建工作树：`git worktree add ../MGT6GA-trees/<SLUG> -b work/<SLUG>`（在仓库根
    /home/brokestar/workspace/MGT6GA/gregtech6 下执行）。
 4. 小步实现：一个功能点 → 编译/测试通过 → 一个提交。

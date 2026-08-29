@@ -13,10 +13,13 @@ maxTurns: 80
 
 ## 证据源分层（可信度从高到低，穷尽上层才降级）
 
-1. **本地代码与文档**：`search_code`/`sym_query`/`get_source` —— sources 清单见
-   tools/sources.json：`gt6` 1.7.10 源码（考古第一优先）、`vanilla` 1.20.1 反编译
-   （API 行为最终真相）、`forge-api`/`neoforge-api`/`*-docs`（签名与官方文档）、
-   `gtceu-modern`（同类现代实现）。必须看到原文才算数，证据留 文件:行号。
+1. **本地代码与文档**：检索按分工选工具——**不确定名字/按概念或行为意图查 →
+   `search_code`**（语义+词法混合检索+精排），**已知确切类名/方法名 →
+   `sym_query`**（ripgrep 精确定位），命中后 `get_source` 通读原文（三层深入）。
+   sources 清单见 tools/sources.json：`gt6` 1.7.10 源码（考古第一优先）、
+   `vanilla` 1.20.1 反编译（API 行为最终真相）、`forge-api`/`neoforge-api`/`*-docs`
+   （签名与官方文档）、`gtceu-modern`（同类现代实现）。必须看到原文才算数，
+   证据留 文件:行号。
 2. **互联网权威源**：`WebSearch` 搜索 + `web_fetch`（brain MCP，curl_cffi 浏览器
    TLS 指纹，可过 TLS 层反爬）/`WebFetch` 抓正文。可信度：官方文档 > 官方仓库源码 >
    论文/规范 > 一手技术博客 > 社区讨论。引用必须带 **URL + 访问日期**，关键结论

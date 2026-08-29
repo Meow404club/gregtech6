@@ -33,7 +33,14 @@ from gt6_rag import db  # noqa: E402
 
 HOST = "127.0.0.1"
 PORT = int(os.environ.get("GT6_BRAIN_PORT", "8939"))
-SERVER_INFO = {"name": "gt6-brain", "version": "2.1-http"}
+SERVER_INFO = {"name": "gt6-brain", "version": "2.2-http"}
+# 随 initialize 下发、注入所有 agent 的全局引导（stdio/FastMCP 时代有，HTTP 重写时曾丢失）
+INSTRUCTIONS = (
+    "GT6 现代复兴计划的记忆与检索中枢。动手前先检索，按需选工具："
+    "不确定确切类名/方法名、按概念或行为意图找代码（如'多方块校验怎么做的'）→ search_code"
+    "（语义+词法混合检索+精排）；已知确切符号名 → sym_query（ripgrep 快速精确定位）；"
+    "命中后 get_source 通读原文——不要凭记忆猜 API。重要结论写入 remember/state 与 KG。"
+)
 
 SESSIONS: set[str] = set()
 
@@ -70,11 +77,15 @@ T = lambda name, type_, req, desc: {"name": name, "type": type_, "required": req
 TOOLS: dict[str, dict] = {
     "search_code": dict(
         impl=S.search_code,
-        params=[T("query", "string", True, "语义检索查询词"),
+        params=[T("query", "string", True, "语义检索查询词（自然语言概念/意图描述，不是符号名）"),
                 T("sources", "array", False, "资料源子集，如 [\"gt6\",\"vanilla\"]"),
                 T("limit", "integer", False, "返回条数"),
                 T("path_glob", "string", False, "文件名 glob 过滤")],
-        desc="语义检索已索引的源码/文档（GT6 1.7.10、GTCEu Modern、原版 1.20.1 反编译、Forge/NeoForge API 与文档、项目 docs）。\n\n"
+        desc="语义+词法混合检索已索引的源码/文档（向量+BM25+RRF+Cross-Encoder 精排；GT6 1.7.10、"
+             "GTCEu Modern、原版 1.20.1 反编译、Forge/NeoForge API 与文档、项目 docs）。\n\n"
+             "适用：不知道确切类名/方法名、按概念或行为意图找代码（如'多方块校验怎么做的'、"
+             "'物品同步到客户端的逻辑在哪'）、跨资料源找同类实现。\n"
+             "已知确切符号名时 sym_query 更快；本工具命中后用 get_source 通读原文。\n"
              "sources 可选: gt6, gtceu-modern, vanilla, forge-api, neoforge-api, forge-docs, neoforge-docs, project。\n"
              "path_glob 如 \"*TileEntity*.java\"。返回相关代码块（含文件路径、行号、片段）。"),
     "get_source": dict(
@@ -89,7 +100,9 @@ TOOLS: dict[str, dict] = {
                 T("sources", "array", False, "资料源子集"),
                 T("glob", "string", False, "文件名 glob"),
                 T("limit", "integer", False, "返回条数")],
-        desc="ripgrep 正则精确搜索（类名/方法名/字符串常量）。例: pattern=\"class MetaTileEntity\" glob=\"*.java\"。"),
+        desc="ripgrep 正则精确搜索：已知确切类名/方法名/字符串常量时的快速定位。\n"
+             "例: pattern=\"class MetaTileEntity\" glob=\"*.java\"。\n"
+             "不确定符号名、或按概念/行为找代码时，先用 search_code 语义检索。"),
     "mappings_lookup": dict(
         impl=S.mappings_lookup,
         params=[T("term", "string", True, "混淆名或 Mojang 名")],
@@ -240,6 +253,7 @@ def handle_message(msg: dict) -> dict | None:
             "protocolVersion": client_v,
             "capabilities": {"tools": {"listChanged": False}},
             "serverInfo": SERVER_INFO,
+            "instructions": INSTRUCTIONS,
         })
         res["_session"] = uuid.uuid4().hex  # 由 HTTP 层转成 Mcp-Session-Id 响应头
         SESSIONS.add(res["_session"])
