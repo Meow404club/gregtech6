@@ -1,0 +1,76 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev.legacyforge' version '2.0.144'
+}
+
+group = 'gregtech6'
+version = property('mod_version').toString()
+
+description = 'GT6 Modern Revival - MinecraftForge 1.20.1 mod layer (gregapi is consumed from the root project)'
+
+def modId = property('mod_id').toString()
+def minecraftVersion = property('minecraft_version').toString()
+def forgeVersion = property('forge_version').toString()
+def forgeMajor = forgeVersion.split('\\.')[0]
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+legacyForge {
+    // MinecraftForge userdev 坐标（files.minecraftforge.net promotions recommended，2026-08-29 查证）
+    version = "${minecraftVersion}-${forgeVersion}"
+
+    mods {
+        "${modId}" {
+            sourceSet sourceSets.main
+        }
+    }
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+        }
+        // runData 的 --mod/--all/--output/--existing 四参数归 p2-datagen-pipeline 卡补
+        data {
+            data()
+        }
+    }
+}
+
+dependencies {
+    // 根项目 = gregapi java-library（ADR-P2-1：不 shadow，发布形态后续再定）
+    implementation project(':')
+}
+
+// mods.toml 模板展开，同构 GTCEu gradle/scripts/resources.gradle:34-63
+def replaceProperties = [
+        version          : project.version.toString(),
+        mod_id           : modId,
+        minecraft_version: minecraftVersion,
+        loader_version   : forgeMajor,
+        forge_version    : forgeMajor,
+        mod_license      : property('mod_license').toString(),
+        mod_name         : property('mod_name').toString(),
+        mod_description  : property('mod_description').toString(),
+]
+
+def generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into layout.buildDirectory.dir('generated/sources/modMetadata')
+}
+
+// 展开产物挂进 main resources（以任务为 srcDir 自动接线任务依赖）
+sourceSets.main.resources.srcDir generateModMetadata
+legacyForge.ideSyncTask generateModMetadata
