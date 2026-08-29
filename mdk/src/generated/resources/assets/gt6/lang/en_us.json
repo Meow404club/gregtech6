@@ -1,5 +1,8 @@
 {
   "block.gt6.example_chest": "GT Example Chest",
+  "block.gt6.wood_fluid_pipe_medium": "Wood Fluid Pipe",
+  "block.gt6.wood_fluid_pipe_small": "Small Wood Fluid Pipe",
+  "fluid.gt6.iron_molten": "Molten Iron",
   "gt6.material.abyssal_oat": "Abyssal Oat",
   "gt6.material.abyssalnite": "Abyssalnite",
   "gt6.material.acacia": "Acacia",
@@ -2262,6 +2265,7 @@
   "itemGroup.gt6.dust_div72": "1/72nd Dusts",
   "itemGroup.gt6.dust_small": "Small Dusts",
   "itemGroup.gt6.dust_tiny": "Tiny Dusts",
+  "itemGroup.gt6.fluid_pipes": "Fluid Pipes",
   "itemGroup.gt6.foil": "Foils",
   "itemGroup.gt6.gear_gt": "Gears",
   "itemGroup.gt6.gear_gt_small": "Small Gears",
