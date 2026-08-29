@@ -76,6 +76,11 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
 3. **绝不直接改 main**：main 只接受 review-merge 的合并。
 4. **绝不手写 DataGen 能生成的 JSON**；渲染用 BakedModel 路线。
 5. **绝不留无记录的决策**：结论进 `remember()`/`state_update`，结构关系进 `kg_add`。
+6. **绝不前台/阻塞等待不退出的进程**（runServer/runClient 等游戏本体与一切常驻服务）：
+   前台跑会吃满工具超时，后台跑再阻塞式取输出永远等不到退出。正确姿势：
+   `nohup ./gradlew :mdk:runServer > /tmp/xxx.log 2>&1 & echo $! > /tmp/xxx.pid`，
+   然后轮询**读日志文件**判定成功标记（如 `Done (…)!`），收尾按 PID/端口杀进程。
+   会自行退出的有限任务（check/build/runData）不受此限。
 
 ## 六、上下文工程纪律（Anthropic 上下文工程指南的落地）
 
