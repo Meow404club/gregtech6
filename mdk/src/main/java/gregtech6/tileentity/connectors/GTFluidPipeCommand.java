@@ -118,11 +118,22 @@ public final class GTFluidPipeCommand {
 			return 0;
 		}
 
-		// 2. inject 100 L of water into A from a side that is not toward B (upstream external fill :480-490)
+		// 2. inject 100 L of water into A from a connected side that is not toward B (upstream external fill :480-490)
 		byte tInjectSide = injectionSide(tPipeA, tSideToB);
+		if (tInjectSide < 0) {
+			aSource.sendFailure(Component.literal("INJECT SKIPPED: no connected open side on A (upstream :464 fill gate — leave one side facing air)"));
+			return 0;
+		}
 		int tInjected = new SideFluidHandler(tPipeA, tInjectSide).fill(new FluidStack(Fluids.WATER, (int)INJECTED), FluidAction.EXECUTE);
 		if (tInjected != INJECTED) {
 			aSource.sendFailure(Component.literal("INJECT FAILED: filled " + tInjected + " of " + INJECTED + " L from side " + tInjectSide));
+			return 0;
+		}
+		// the fill marker is asserted NOW: it is consumed by A's next distribute round
+		// (the round-end clear :331 is upstream verbatim — the mask guards exactly one round)
+		byte tMaskAAfterFill = tPipeA.mLastReceivedFrom[0];
+		if ((tMaskAAfterFill & TileEntityBase09Connector.SBIT[tInjectSide]) == 0) {
+			aSource.sendFailure(Component.literal("FILL MARKER MISSING: A must carry SBIT[" + tInjectSide + "] right after the injection (upstream :487)"));
 			return 0;
 		}
 
@@ -148,10 +159,6 @@ public final class GTFluidPipeCommand {
 			aSource.sendFailure(Component.literal("BACKFLOW VIOLATION: A must NOT carry SBIT[" + tSideToB + "] (fluid never flowed B -> A)"));
 			return 0;
 		}
-		if ((tMaskA & TileEntityBase09Connector.SBIT[tInjectSide]) == 0) {
-			aSource.sendFailure(Component.literal("FILL MARKER MISSING: A must carry SBIT[" + tInjectSide + "] from the injection (upstream :487)"));
-			return 0;
-		}
 
 		// 6. equilibrium is stable: B's next rounds skip the masked side (:378) and drain nothing
 		tPipeB.updateEntity();
@@ -171,13 +178,17 @@ public final class GTFluidPipeCommand {
 		return Command.SINGLE_SUCCESS;
 	}
 
-	/** The first side that is neither toward B nor facing another pipe — the deterministic injection port. */
+	/**
+	 * The first injection port: connected (the upstream :464 fill gate), not toward B, and
+	 * not facing another pipe. -1 when the pipe has no usable open side (fully buried).
+	 */
 	private static byte injectionSide(GTFluidPipeBlockEntity aPipe, byte aSideToB) {
 		for (byte tSide = 0; tSide < 6; tSide++) {
 			if (tSide == aSideToB) continue;
+			if (!aPipe.canAcceptFluidsFrom(tSide)) continue;
 			if (aPipe.hasLevel() && aPipe.getLevel().getBlockEntity(aPipe.getBlockPos().relative(Direction.from3DDataValue(tSide))) instanceof GTFluidPipeBlockEntity) continue;
 			return tSide;
 		}
-		return (byte)(aSideToB == 0 ? 1 : 0);
+		return -1;
 	}
 }

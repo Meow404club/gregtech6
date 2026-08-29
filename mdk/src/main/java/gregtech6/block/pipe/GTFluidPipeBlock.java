@@ -1,7 +1,6 @@
 package gregtech6.block.pipe;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -62,14 +61,5 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState aState) {
 		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
-	}
-
-	@Override
-	public void onRemove(BlockState aState, Level aLevel, BlockPos aPos, BlockState aNewState, boolean aMovedByPiston) {
-		// keep the ticker contract of GTEntityBlock intact; the upstream break fluid dump
-		// (MultiTileEntityPipeFluid.java:432-445) is a pool cut — contents void with the block
-		if (aState.hasBlockEntity() && (!aState.is(aNewState.getBlock()) || aNewState.hasBlockEntity())) {
-			aLevel.removeBlockEntity(aPos);
-		}
 	}
 }
