@@ -27,9 +27,9 @@ public class OreDictMaterialChemistryTest {
 	private static final TagData HAS_TOOL_STATS = TagData.createTagData("PROPERTIES.HAS_TOOL_STATS");
 	private static final TagData NO_ADVANCED_TOOLS = TagData.createTagData("PROPERTIES.NO_ADVANCED_TOOLS");
 
-	/** Detached (registry-free) material, upstream constructor semantics. */
+	/** Detached material: created inside a throwaway registry instance (constructor privatized by gt-material-dataset; upstream semantics preserved: mID -1, no INSTANCE registration). */
 	private static OreDictMaterial mat(String aName, String aLocal) {
-		return new OreDictMaterial((short)-1, aName, aLocal);
+		return new MaterialRegistry().createMaterial(-1, aName, aLocal);
 	}
 
 	private static OreDictMaterial element(String aName, long aProtons, long aNeutrons, long aMelt, long aBoil, double aDensity, String aTooltip) {
@@ -387,7 +387,7 @@ public class OreDictMaterialChemistryTest {
 		assertSame(m, m.setLocal("Pretty Name"));
 		assertEquals("Pretty Name", m.getLocal());
 		assertSame(m, m.setLocal(null)); // null falls back to the internal name (:332)
-		assertEquals("Fluent Mat", m.getLocal()); // detached material: internal name as passed in
+		assertEquals("FluentMat", m.getLocal()); // the constructor is private now, so the name goes through createMaterial's sanitize (upstream :204-206), which strips the space
 		assertSame(m, m.setOriginalMod("somemod"));
 		assertEquals("somemod", m.mOriginalMod);
 		assertSame(m, m.setOriginalMod(null)); // null keeps the old value (upstream :343)

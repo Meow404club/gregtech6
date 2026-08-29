@@ -19,7 +19,7 @@ import gregapi.oredict.MaterialStackSerializer.MemoryStorage;
 import gregapi.oredict.MaterialStackSerializer.Storage;
 
 public class MaterialStackSerializerTest {
-	private static final OreDictMaterial REGISTERED = new OreDictMaterial((short)5, "TIN", "TIN");
+	private static final OreDictMaterial REGISTERED = new MaterialRegistry().createMaterial(5, "TIN", "TIN"); // detached registry (constructor privatized by gt-material-dataset)
 
 	private static MaterialResolver resolver() {
 		return new MaterialResolver() {

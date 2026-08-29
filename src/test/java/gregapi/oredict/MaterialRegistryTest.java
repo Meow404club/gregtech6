@@ -170,7 +170,7 @@ public class MaterialRegistryTest {
 		MaterialRegistry r = new MaterialRegistry();
 		assertSame(MT.NULL, r.get("Never Registered"));
 		assertSame(MT.NULL, r.get(31337L));
-		OreDictMaterial fallback = new OreDictMaterial((short)-1, "Fallback", "Fallback");
+		OreDictMaterial fallback = new MaterialRegistry().createMaterial(-1, "Fallback", "Fallback"); // detached: registers into a throwaway registry (constructor privatized by gt-material-dataset)
 		assertSame(fallback, r.get("Never Registered", fallback));
 		assertSame(fallback, r.get(-1, fallback));
 	}
