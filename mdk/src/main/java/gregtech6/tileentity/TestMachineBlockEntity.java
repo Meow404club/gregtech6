@@ -14,14 +14,10 @@ import gregtech6.registry.GTBlockEntities;
  * WAVE-2 chest, ADR-P3-5). Exercises the 01Root/03TicksAndSync face end to end:
  * the eight-phase tick dispatch, the item-handler capability, and both sync channels.
  *
- * <p>NBT layout:
- * <ul>
- * <li>disk (saveAdditional/load): "tick_count" + "inventory" + the base "te_name";</li>
- * <li>client sync (getUpdateTag -> handleUpdateTag/onDataPacket -> load):
- *     "sync_value" only — the client copy tracks the server tick count without the
- *     full disk state, mirroring the upstream getClientDataPacket(false) partial
- *     sync idea.</li>
- * </ul>
+ * <p>NBT: "tick_count" + "inventory" + the base "te_name", written by saveAdditional.
+ * Both sync channels deliver the same payload (the base 03 getUpdateTag =
+ * saveWithoutMetadata, the upstream getClientDataPacket(true) "send all" case; the
+ * partial-sync routing of getClientDataPacket(false) is a later feature need).
  */
 public class TestMachineBlockEntity extends TileEntityBase03TicksAndSync {
 
@@ -38,6 +34,12 @@ public class TestMachineBlockEntity extends TileEntityBase03TicksAndSync {
 		// mIsTicking follows the mounting block (upstream notick chain: TileEntityBase01Root(false))
 		super(aState.getBlock() instanceof TestMachineBlock tBlock ? tBlock.isTicking() : true, aType, aPos, aState);
 		setInventory(new GTItemStackHandler(4, this::setChanged));
+	}
+
+	/** Bare constructor for offline unit tests (no registry, no BlockEntity triple). */
+	public TestMachineBlockEntity(GTItemStackHandler aInventory, boolean aTicking) {
+		super(aTicking, null, BlockPos.ZERO, null);
+		setInventory(aInventory);
 	}
 
 	@Override
@@ -66,23 +68,12 @@ public class TestMachineBlockEntity extends TileEntityBase03TicksAndSync {
 	@Override
 	public void load(CompoundTag aNBT) {
 		super.load(aNBT);
-		// disk channel wins over the sync channel when both keys are present
-		if (aNBT.contains("sync_value", Tag.TAG_ANY_NUMERIC)) {
-			mTickCount = aNBT.getInt("sync_value");
-		}
 		if (aNBT.contains("tick_count", Tag.TAG_ANY_NUMERIC)) {
 			mTickCount = aNBT.getLong("tick_count");
 		}
 		if (aNBT.contains("inventory", Tag.TAG_COMPOUND)) {
 			mInventory.deserializeNBT(aNBT.getCompound("inventory"));
 		}
-	}
-
-	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tTag = super.getUpdateTag();
-		tTag.putInt("sync_value", (int) mTickCount);
-		return tTag;
 	}
 
 	public long getTickCount() {

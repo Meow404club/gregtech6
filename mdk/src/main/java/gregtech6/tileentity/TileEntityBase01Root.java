@@ -246,4 +246,9 @@ public abstract class TileEntityBase01Root extends BlockEntity {
 		super.invalidateCaps();
 		mItemHandlerCap.invalidate();
 	}
+
+	/** Raw capability handle (package-private test seam — ForgeCapabilities cannot class-init offline, so runtime code goes through {@link #getCapability}). */
+	LazyOptional<IItemHandler> itemHandlerCapability() {
+		return mItemHandlerCap;
+	}
 }
