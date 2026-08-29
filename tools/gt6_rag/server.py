@@ -11,7 +11,7 @@
 （无服务端主动推送，故不实现 GET SSE 流，按规范对 GET 返回 405）。
 业务逻辑全部在 gt6_rag.search / gt6_rag.memory，本文件只做协议壳。
 
-启动：tools/gt6_brain_server.sh（nohup 常驻，日志 tmp/index/brain-server.log）
+启动：tools/services.sh start brain（nohup 常驻，日志 tmp/index/brain-server.log）
 """
 from __future__ import annotations
 
@@ -28,6 +28,7 @@ sys.path.insert(0, str(TOOLS_DIR))
 
 import gt6_rag.search as S  # noqa: E402
 import gt6_rag.memory as M  # noqa: E402
+import gt6_rag.web as W  # noqa: E402
 from gt6_rag import db  # noqa: E402
 
 HOST = "127.0.0.1"
@@ -93,6 +94,15 @@ TOOLS: dict[str, dict] = {
         impl=S.mappings_lookup,
         params=[T("term", "string", True, "混淆名或 Mojang 名")],
         desc="查询 1.20.1 混淆名 ↔ Mojang 官方映射名（类/字段/方法双向模糊匹配）。看到 a/b/c 之类混淆名时用它。"),
+    "web_fetch": dict(
+        impl=W.web_fetch,
+        params=[T("url", "string", True, "http(s) URL"),
+                T("timeout", "integer", False, "超时秒数（默认 20）"),
+                T("max_chars", "integer", False, "正文截断长度（默认 30000）"),
+                T("raw", "boolean", False, "true=返回原始 HTML，默认转纯文本")],
+        desc="抓取网页（curl_cffi 浏览器 TLS 指纹，可过 TLS 层反爬；需执行 JS 的挑战页过不了）。\n"
+             "默认 HTML 转纯文本；返回 url(重定向后)/status/content_type/truncated；403/503 等反爬页原样返回内容以便判断封锁原因。\n"
+             "与 WebSearch 配合：先搜索，再用本工具精读目标页正文。"),
     "refresh_index": dict(
         impl=tool_refresh_index,
         params=[T("source", "string", False, "只刷新指定资料源；空则全部")],

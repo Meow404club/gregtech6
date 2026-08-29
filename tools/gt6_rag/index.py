@@ -1,8 +1,15 @@
-"""CLI indexer: python -m gt6_rag.index [source ...|all] [--force] [--limit-files N]"""
+"""Indexer CLI: tools/.venv/bin/python tools/gt6_rag/index.py [source ...|all] [--force] [--limit-files N]
+
+Self-bootstraps sys.path, so it runs from any cwd (repo root, tools/, elsewhere).
+"""
 from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
+
+TOOLS_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(TOOLS_DIR))
 
 
 def main() -> None:
