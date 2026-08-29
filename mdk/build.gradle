@@ -62,6 +62,34 @@ dependencies {
     // implementation 依赖不会进 BootstrapLauncher 的 -DlegacyClassPath.file。
     // 2026-08-29 :mdk:runServer 实证 gregapi NoClassDefFoundError，按 MDG 官方机制补挂。
     additionalRuntimeClasspath project(path: ':', configuration: 'runtimeElements')
+    // mdk 单测（p3-be-framework）：BE NBT round-trip / onTick 分发 / 材料适配器，
+    // CompoundTag 与 Builder.of(...).build(null) 离线构造不需注册表。
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// test sourceSet 复用 main 的输出与类路径：MDG（moddevgradle 2.0.144）只把游戏库配置
+// modDevCompileDependencies/modDevRuntimeDependencies 挂到 main 的 compile/runtime
+// classpath（主工程 probeConfigs 实测 extendsFrom 列表），test sourceSet 需自行 extendsFrom，
+// implementation project(':') 的 gregapi 经 java 插件默认传导。
+configurations {
+    testCompileClasspath.extendsFrom modDevCompileDependencies
+    testRuntimeClasspath.extendsFrom modDevRuntimeDependencies
+}
+
+sourceSets {
+    test {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
 }
 
 // mods.toml 模板展开，同构 GTCEu gradle/scripts/resources.gradle:34-63
