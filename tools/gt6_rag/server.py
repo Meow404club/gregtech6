@@ -189,6 +189,15 @@ def _coerce(params_spec, args: dict) -> dict:
         elif p["type"] == "array":
             if v is not None and not isinstance(v, list):
                 v = [v]
+        elif p["type"] in ("object", "any") and isinstance(v, str):
+            # 客户端偶发把对象参数双编码成字符串（实测曾把 tasks 任务板整体替换成
+            # 字符串化的 JSON）。防御：形如 JSON 的字符串解回对象，解不开就原样传。
+            s = v.strip()
+            if s[:1] in "{[":
+                try:
+                    v = json.loads(s)
+                except json.JSONDecodeError:
+                    pass
         kwargs[p["name"]] = v
     return kwargs
 
