@@ -50,6 +50,11 @@ legacyForge {
 dependencies {
     // 根项目 = gregapi java-library（ADR-P2-1：不 shadow，发布形态后续再定）
     implementation project(':')
+    // MDG legacyforge（1.20.1）的 run 类路径只含游戏库：per-run legacyClasspath 配置仅
+    // extendsFrom additionalRuntimeClasspath（ModDevRunWorkflow.configureLegacyClasspath），
+    // implementation 依赖不会进 BootstrapLauncher 的 -DlegacyClassPath.file。
+    // 2026-08-29 :mdk:runServer 实证 gregapi NoClassDefFoundError，按 MDG 官方机制补挂。
+    additionalRuntimeClasspath project(path: ':', configuration: 'runtimeElements')
 }
 
 // mods.toml 模板展开，同构 GTCEu gradle/scripts/resources.gradle:34-63
