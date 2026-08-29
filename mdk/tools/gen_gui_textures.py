@@ -4,8 +4,16 @@
 The framework screens (gregtech6.gui.GTGuiScreen) blit a 256x256 texture canvas whose panel
 sits at UV 0,0 — the vanilla container texture convention (DispenserScreen.java:31-33 blits
 imageWidth x imageHeight from UV 0,0; AbstractContainerScreen.java:32-33 defaults 176x166).
-Currently produced: debug.png for GTDebugScreen (176x166 panel, 3 content slots + 36 player
-slots matching GTDebugMenu's bindPlayerInventory(84) geometry).
+Produced GUI canvases:
+  debug.png          GTDebugScreen (176x166 panel, 3 content slots + 36 player slots,
+                     matching GTDebugMenu's bindPlayerInventory(84) geometry)
+  example_chest.png  GTExampleChestScreen (176x222 panel = 114 + 6 rows * 18, vanilla
+                     ContainerScreen.java:18 formula; 54 content slots at the
+                     ContainerCommonChest.java:39-43 pitch + player offset
+                     103+(6-4)*18 = 139 + hotbar, matching GTExampleChestMenu)
+
+Also produces the chest's placeholder 16x16 block texture (gt6:block/example_chest) —
+the blockstate model is datagen JSON, the layer texture is a PNG.
 
 Pure standard library (hand-rolled PNG: zlib+struct, mirroring mdk/tools/gen_textures.py),
 idempotent (skips existing files unless --force), deterministic output bytes. Textures are
@@ -31,15 +39,32 @@ SLOT_DARK = (0x37, 0x37, 0x37)  # slot inset top/left
 SLOT_LIGHT = (0xFF, 0xFF, 0xFF)  # slot inset bottom/right
 TRANSPARENT = (0, 0, 0, 0)
 
-CANVAS = 256  # texture file edge
-PANEL_W, PANEL_H = 176, 166
+# block placeholder palette: plain crate-like grey tile, deterministic
+BLOCK_BASE = (0x9A, 0x9A, 0x9A)
+BLOCK_DARK = (0x5F, 0x5F, 0x5F)
+BLOCK_SEAM = (0x7C, 0x7C, 0x7C)
 
-# slot cell top-left corners (panel coordinates), 18px pitch:
-# 3 content slots at (61,24) + player rows at (8,84)/(8,102)/(8,120) + hotbar (8,142)
-CONTENT_SLOTS = [(61 + 18 * i, 24) for i in range(3)]
-PLAYER_ROWS = [(8 + 18 * j, 84 + 18 * i) for i in range(3) for j in range(9)]
-HOTBAR = [(8 + 18 * j, 142) for j in range(9)]
-SLOTS = CONTENT_SLOTS + PLAYER_ROWS + HOTBAR
+CANVAS = 256  # GUI texture file edge
+BLOCK_SIZE = 16  # block texture edge
+
+PANEL_W = 176
+
+# debug.png geometry: 3 content slots at (61,24) + player rows at (8,84)/(8,102)/(8,120)
+# + hotbar (8,142), 18px pitch, panel 176x166
+DEBUG_CONTENT_SLOTS = [(61 + 18 * i, 24) for i in range(3)]
+DEBUG_PLAYER_OFFSET = 84
+DEBUG_PANEL_H = 166
+
+
+def content_grid(columns, rows, origin_x, origin_y):
+    """18px-pitch slot grid (ContainerCommonChest.java:41 pitch)."""
+    return [(origin_x + 18 * x, origin_y + 18 * y) for y in range(rows) for x in range(columns)]
+
+
+def player_slots(offset):
+    """bindPlayerInventory shape (ContainerCommon.java:327-332): 3x9 rows + hotbar at offset+58."""
+    return ([(8 + 18 * j, offset + 18 * i) for i in range(3) for j in range(9)]
+            + [(8 + 18 * j, offset + 58) for j in range(9)])
 
 
 def write_png(path: Path, width: int, height: int, pixels: list) -> None:
@@ -58,24 +83,24 @@ def write_png(path: Path, width: int, height: int, pixels: list) -> None:
                      + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
 
 
-def gui_debug_pixels() -> list:
-    """RGBA pixel list for a 256x256 canvas with a 176x166 panel at 0,0 (GTDebugMenu geometry)."""
+def gui_pixels(panel_h: int, content_slots: list, player_offset: int) -> list:
+    """RGBA pixel list for a 256x256 canvas with a 176x(panel_h) panel at 0,0."""
     px = [TRANSPARENT] * (CANVAS * CANVAS)
-    for y in range(PANEL_H):
+    for y in range(panel_h):
         for x in range(PANEL_W):
             if x == 0 or y == 0:
                 color = HIGHLIGHT
-            elif x == PANEL_W - 1 or y == PANEL_H - 1:
+            elif x == PANEL_W - 1 or y == panel_h - 1:
                 color = SHADOW
             else:
                 color = PANEL
             px[y * CANVAS + x] = (*color, 255)
     # recessed 18x18 slot cells (inner 16x16 recess, vanilla-style inset)
-    for sx, sy in SLOTS:
+    for sx, sy in content_slots + player_slots(player_offset):
         for dy in range(-1, 17):
             for dx in range(-1, 17):
                 x, y = sx + dx, sy + dy
-                if not (0 <= x < PANEL_W and 0 <= y < PANEL_H):
+                if not (0 <= x < PANEL_W and 0 <= y < panel_h):
                     continue  # keep the outer panel edges intact
                 if dx == -1 or dy == -1:
                     color = SLOT_DARK
@@ -84,6 +109,29 @@ def gui_debug_pixels() -> list:
                 else:
                     color = SLOT_BG
                 px[y * CANVAS + x] = (*color, 255)
+    return px
+
+
+def debug_gui_pixels() -> list:
+    return gui_pixels(DEBUG_PANEL_H, DEBUG_CONTENT_SLOTS, DEBUG_PLAYER_OFFSET)
+
+
+def example_chest_gui_pixels() -> list:
+    """GTExampleChestMenu geometry: 54 content slots (6 rows from y=18), player offset 139
+    (103 + (6-4)*18, ContainerCommonChest.java:42), hotbar 197."""
+    content = content_grid(9, 6, 8, 18)
+    return gui_pixels(222, content, 139)
+
+
+def example_chest_block_pixels() -> list:
+    """16x16 deterministic crate-style placeholder: dark border, inner seam frame."""
+    px = []
+    for y in range(BLOCK_SIZE):
+        for x in range(BLOCK_SIZE):
+            edge = x == 0 or y == 0 or x == BLOCK_SIZE - 1 or y == BLOCK_SIZE - 1
+            seam = not edge and (x in (4, 11) or y in (4, 11))
+            color = BLOCK_DARK if edge else (BLOCK_SEAM if seam else BLOCK_BASE)
+            px.append((*color, 255))
     return px
 
 
@@ -98,15 +146,17 @@ def main() -> None:
     out_root = Path(args.out) if args.out else repo_root / "mdk" / "src" / "main" / "resources"
 
     targets = {
-        "assets/gt6/textures/gui/debug.png": gui_debug_pixels,
+        "assets/gt6/textures/gui/debug.png": (CANVAS, CANVAS, debug_gui_pixels),
+        "assets/gt6/textures/gui/example_chest.png": (CANVAS, CANVAS, example_chest_gui_pixels),
+        "assets/gt6/textures/block/example_chest.png": (BLOCK_SIZE, BLOCK_SIZE, example_chest_block_pixels),
     }
     written, skipped = 0, 0
-    for rel, producer in targets.items():
+    for rel, (width, height, producer) in targets.items():
         path = out_root / rel
         if path.exists() and not args.force:
             skipped += 1
             continue
-        write_png(path, CANVAS, CANVAS, producer())
+        write_png(path, width, height, producer())
         written += 1
         print(f"wrote {path}")
     print(f"done: {written} written, {skipped} skipped")

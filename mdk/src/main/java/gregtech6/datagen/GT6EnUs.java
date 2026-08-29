@@ -48,6 +48,18 @@ public final class GT6EnUs extends LanguageProvider {
         addTabTitles();
         addPrefixTemplates();
         addMaterialNames();
+        addExampleMachine();
+    }
+
+    /**
+     * Example machine keys (task p3-example-machine): the chest block display name and the
+     * "chests" creative tab title. The tab carries the upstream MTE-registry category name
+     * ("Chests", Loader_MultiTileEntities.java:132 / MultiTileEntityRegistry.java:191); the
+     * block name resolves through MenuProvider#getDisplayName (block.getName).
+     */
+    private void addExampleMachine() {
+        add("block.gt6.example_chest", "GT Example Chest");
+        add("itemGroup.gt6.chests", "Chests");
     }
 
     /** One title key per creative-visible prefix tab (CreativeTab.java:32 shape, upstream mNameCategory). */
