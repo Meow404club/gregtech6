@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 2 阶段：Forge 1.20.1 MDK 挂载 + 注册桥 + DataGen`（2026-08-29 启动；三张前置研究卡已完成 2/3，DataGen 卡在途）
+`第 2 阶段：Forge 1.20.1 MDK 挂载 + 注册桥 + DataGen`（2026-08-29 启动；三张前置研究卡全部完成，gt6-architect 拆卡中）
 
 > **平台修正 2026-08-29**：原目标"NeoForge 1.20.1"被证伪——NeoForge 官方 maven 从未发布 20.1.x 产物（versions API `filter=20.1` 返回空，主会话独立复核），NeoForged 自家 ModDevGradle 把 1.20.1 路由给 `legacyforge` 变体，文档站最早只到 1.20.3。用户裁决：目标平台 = **MinecraftForge 1.20.1（47.4.10）**，构建插件 = MDG legacyforge 2.0.144。1.20.1 的 API 面即 `net.minecraftforge.*` + RegistryObject（DeferredHolder 是 20.2+ 才有），第 1 阶段的所有调研结论不受影响。
 
