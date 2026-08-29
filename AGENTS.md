@@ -71,6 +71,8 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
    网络信息 ≥2 个独立来源交叉验证才可下结论。
 2. **绝不裸提交**：`git commit -S -s`（GPG 签名 + Signoff + `Task:` 行）。
    PreToolUse 钩子拦截裸 commit；commit-msg 校验格式；pre-push 校验签名。
+   **签名超时/失败一律报告阻塞等用户处理，严禁 kill gpg-agent/pinentry 或重启 agent**——
+   24h 口令缓存驻留在 gpg-agent 进程内，杀即清空，此后所有签名都会弹窗卡死无人值守的 subagent。
 3. **绝不直接改 main**：main 只接受 review-merge 的合并。
 4. **绝不手写 DataGen 能生成的 JSON**；渲染用 BakedModel 路线。
 5. **绝不留无记录的决策**：结论进 `remember()`/`state_update`，结构关系进 `kg_add`。
