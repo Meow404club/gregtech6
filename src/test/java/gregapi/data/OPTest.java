@@ -54,13 +54,13 @@ public class OPTest {
 				throw new AssertionError(e);
 			}
 		}
-		assertEquals(406, count, "406 of the upstream 453 prefix fields are ported (47 deferred entries: OreDictMaterialCondition families + cascaded dependents)");
+		assertEquals(453, count, "all 453 upstream prefix fields are ported (the 47 OreDictMaterialCondition-deferred entries were unlocked by p2-material-condition-system)");
 	}
 
 	@Test
 	public void registryIsOpenAndCollectionsAreFilled() {
 		assertTrue(PrefixRegistry.INSTANCE.isOpen());
-		assertEquals(421, OreDictPrefix.VALUES.size(), "405 create/unused calls + 16 NEW identical-name prefixes of the 17 listed upstream: 'raw' (oreRaw :133) dedupes against the existing unused(\"raw\") prefix (:531), exactly like upstream");
+		assertEquals(468, OreDictPrefix.VALUES.size(), "452 create/unused calls + 17 NEW identical-name prefixes of the 17 listed upstream - 1 dedup: 'raw' (oreRaw :133) dedupes against the existing unused(\"raw\") prefix (:531), exactly like upstream");
 		assertTrue(OreDictPrefix.sPrefixes.size() >= OreDictPrefix.VALUES.size());
 	}
 

@@ -21,12 +21,15 @@
 package gregapi.data;
 
 import static gregapi.data.CS.*;
+import static gregapi.oredict.OreDictMaterialCondition.qualmin; // upstream OP.java:40-41
+import static gregapi.oredict.OreDictMaterialCondition.typemin;
 
 import gregapi.code.ICondition;
 import gregapi.code.ICondition.And;
 import gregapi.code.ICondition.Or;
 import gregapi.code.TagData; // And/Or imports = upstream OP.java:23-24
 import gregapi.oredict.OreDictMaterial;
+import gregapi.oredict.OreDictMaterialCondition; // upstream OP.java:26
 import gregapi.oredict.OreDictPrefix;
 import gregapi.oredict.PrefixRegistry;
 
@@ -45,9 +48,13 @@ import gregapi.oredict.PrefixRegistry;
  *   the Phase-2 datagen batches run cleanly one after another.
  * - THAUMCRAFT CUT: every .aspects(TC...) segment (OP.java:55-426 etc.) is removed per the
  *   MC-coupling policy; mAspects lives on Phase-2 OreDictPrefix work only.
- * - OreDictMaterialCondition NOT ported (outside FILES_SCOPE): the prefixes whose condition
- *   needs meltmin/qualmin/typemin are deferred, i.e. ingotHot (:166) and the toolHead* / tool*
- *   families (:232-276), 47 entries total.
+ * - OreDictMaterialCondition is ported verbatim (upstream gregapi/oredict/
+ *   OreDictMaterialCondition.java:31-126, 14 predicates) by task p2-material-condition-system,
+ *   which unlocked the 47 deferred prefixes: ingotHot (:166), the toolHead* family (:232-254),
+ *   the toolHeadRaw* family (:256-268), the tool* family (:270-276) and the arrowGtWood /
+ *   arrowGtPlastic / arrow cascade (:281-283). The ingotHot.mHeatDamage assignment (upstream
+ *   :578) runs in init(); the toolHeadDrill/Chainsaw/Wrench/PickaxeGem forceItemGeneration
+ *   (MT.Empty) calls (:618-621) stay deferred with the MT/ANY block.
  * - MT/ANY-dependent blocks of the static initializer are deferred to the dataset card
  *   (gt-material-dataset) or later: washing listeners (:569-572, MC items), bottle.mContainerItem
  *   (:574, ItemStack), disableItemGeneration/forceItemGeneration tables (:603-625, MT.*), and the
@@ -129,6 +136,16 @@ public class OP {
 	private static final TagData NO_PREFIX_FILTERING = TagData.createTagData("PREFIX.NO_PREFIX_FILTERING", "Not Prefix Filterable");
 	private static final TagData TOOL_ALIKE = TagData.createTagData("PREFIX.TOOL_ALIKE", "Tool");
 	private static final TagData PREFIX_UNUSED = TagData.createTagData("PREFIX.PREFIX_UNUSED", "Unused Prefix");
+	// Phase-2 additions for the 47 unlocked prefixes (task p2-material-condition-system); keys
+	// from TD.java, unified with the real TD constants via the idempotent factory:
+	// INGOTS_HOT = TD.java:572, WOOD = :385, TOOL_HEAD = :274, NEEDS_HANDLE = :276,
+	// NEEDS_SHARPENING = :278, WEAPON_ALIKE = :282.
+	private static final TagData INGOTS_HOT = TagData.createTagData("ITEMGENERATOR.INGOTS_HOT");
+	private static final TagData WOOD = TagData.createTagData("PROPERTIES.WOOD", "Wood");
+	private static final TagData TOOL_HEAD = TagData.createTagData("PREFIX.TOOL_HEAD", "Tool Head");
+	private static final TagData NEEDS_HANDLE = TagData.createTagData("PREFIX.NEEDS_HANDLE", "Needs Handle");
+	private static final TagData NEEDS_SHARPENING = TagData.createTagData("PREFIX.NEEDS_SHARPENING", "Needs Sharpening");
+	private static final TagData WEAPON_ALIKE = TagData.createTagData("PREFIX.WEAPON_ALIKE", "Weapon");
 
 	// Upstream :54-563 as non-final fields (assigned by the reg* batches, see class javadoc).
 	public static OreDictPrefix ore;
@@ -233,6 +250,7 @@ public class OP {
 	public static OreDictPrefix ingotQuadruple;
 	public static OreDictPrefix ingotTriple;
 	public static OreDictPrefix ingotDouble;
+	public static OreDictPrefix ingotHot; // upstream :166 (unlocked by p2-material-condition-system)
 	public static OreDictPrefix ingot;
 	public static OreDictPrefix billet;
 	public static OreDictPrefix chunkGt;
@@ -286,6 +304,50 @@ public class OP {
 	public static OreDictPrefix casingMachineQuadruple;
 	public static OreDictPrefix casingMachineDense;
 	public static OreDictPrefix rotor;
+	// Upstream :232-276 (unlocked by p2-material-condition-system).
+	public static OreDictPrefix toolHeadSaw;
+	public static OreDictPrefix toolHeadFile;
+	public static OreDictPrefix toolHeadChisel;
+	public static OreDictPrefix toolHeadBuzzSaw;
+	public static OreDictPrefix toolHeadChainsaw;
+	public static OreDictPrefix toolHeadWrench;
+	public static OreDictPrefix toolHeadDrill;
+	public static OreDictPrefix toolHeadSword;
+	public static OreDictPrefix toolHeadPickaxe;
+	public static OreDictPrefix toolHeadShovel;
+	public static OreDictPrefix toolHeadSpade;
+	public static OreDictPrefix toolHeadAxe;
+	public static OreDictPrefix toolHeadHoe;
+	public static OreDictPrefix toolHeadSense;
+	public static OreDictPrefix toolHeadPlow;
+	public static OreDictPrefix toolHeadHammer;
+	public static OreDictPrefix toolHeadScrewdriver;
+	public static OreDictPrefix toolHeadBuilderwand;
+	public static OreDictPrefix toolHeadConstructionPickaxe;
+	public static OreDictPrefix toolHeadPickaxeGem;
+	public static OreDictPrefix toolHeadAxeDouble;
+	public static OreDictPrefix toolHeadUniversalSpade;
+	public static OreDictPrefix toolHeadArrow;
+	public static OreDictPrefix toolHeadRawSaw;
+	public static OreDictPrefix toolHeadRawChisel;
+	public static OreDictPrefix toolHeadRawSword;
+	public static OreDictPrefix toolHeadRawPickaxe;
+	public static OreDictPrefix toolHeadRawShovel;
+	public static OreDictPrefix toolHeadRawSpade;
+	public static OreDictPrefix toolHeadRawUniversalSpade;
+	public static OreDictPrefix toolHeadRawAxe;
+	public static OreDictPrefix toolHeadRawAxeDouble;
+	public static OreDictPrefix toolHeadRawHoe;
+	public static OreDictPrefix toolHeadRawSense;
+	public static OreDictPrefix toolHeadRawPlow;
+	public static OreDictPrefix toolHeadRawArrow;
+	public static OreDictPrefix toolSword;
+	public static OreDictPrefix toolPickaxe;
+	public static OreDictPrefix toolShovel;
+	public static OreDictPrefix toolAxe;
+	public static OreDictPrefix toolHoe;
+	public static OreDictPrefix toolShears;
+	public static OreDictPrefix tool;
 	public static OreDictPrefix chemtube;
 	public static OreDictPrefix cell;
 	public static OreDictPrefix bucket;
@@ -294,6 +356,9 @@ public class OP {
 	public static OreDictPrefix bulletGtSmall;
 	public static OreDictPrefix bulletGtMedium;
 	public static OreDictPrefix bulletGtLarge;
+	public static OreDictPrefix arrowGtWood; // upstream :281 (cascade, unlocked by p2-material-condition-system)
+	public static OreDictPrefix arrowGtPlastic; // upstream :282
+	public static OreDictPrefix arrow; // upstream :283
 	public static OreDictPrefix armorHelmet;
 	public static OreDictPrefix armorChestplate;
 	public static OreDictPrefix armorLeggings;
@@ -558,6 +623,7 @@ public class OP {
 		mInitialized = T;
 		regOres(); regCrushed(); regDusts(); regIngots(); regGems(); regPlates(); regParts(); regContainers(); regArmor(); regPipes(); regWires(); regCrates(); regBlocks(); regPlants(); regMisc(); regDyes(); regElectric(); regUnused();
 		regArrays();
+		ingotHot.mHeatDamage = 3.0F; // upstream OP.java:578 (unlocked by p2-material-condition-system)
 		regFamiliarPrefixes();
 		applyPriorityPrefixes();
 	}
@@ -667,6 +733,7 @@ public class OP {
 		ingotQuadruple = null;
 		ingotTriple = null;
 		ingotDouble = null;
+		ingotHot = null;
 		ingot = null;
 		billet = null;
 		chunkGt = null;
@@ -720,6 +787,49 @@ public class OP {
 		casingMachineQuadruple = null;
 		casingMachineDense = null;
 		rotor = null;
+		toolHeadSaw = null;
+		toolHeadFile = null;
+		toolHeadChisel = null;
+		toolHeadBuzzSaw = null;
+		toolHeadChainsaw = null;
+		toolHeadWrench = null;
+		toolHeadDrill = null;
+		toolHeadSword = null;
+		toolHeadPickaxe = null;
+		toolHeadShovel = null;
+		toolHeadSpade = null;
+		toolHeadAxe = null;
+		toolHeadHoe = null;
+		toolHeadSense = null;
+		toolHeadPlow = null;
+		toolHeadHammer = null;
+		toolHeadScrewdriver = null;
+		toolHeadBuilderwand = null;
+		toolHeadConstructionPickaxe = null;
+		toolHeadPickaxeGem = null;
+		toolHeadAxeDouble = null;
+		toolHeadUniversalSpade = null;
+		toolHeadArrow = null;
+		toolHeadRawSaw = null;
+		toolHeadRawChisel = null;
+		toolHeadRawSword = null;
+		toolHeadRawPickaxe = null;
+		toolHeadRawShovel = null;
+		toolHeadRawSpade = null;
+		toolHeadRawUniversalSpade = null;
+		toolHeadRawAxe = null;
+		toolHeadRawAxeDouble = null;
+		toolHeadRawHoe = null;
+		toolHeadRawSense = null;
+		toolHeadRawPlow = null;
+		toolHeadRawArrow = null;
+		toolSword = null;
+		toolPickaxe = null;
+		toolShovel = null;
+		toolAxe = null;
+		toolHoe = null;
+		toolShears = null;
+		tool = null;
 		chemtube = null;
 		cell = null;
 		bucket = null;
@@ -728,6 +838,9 @@ public class OP {
 		bulletGtSmall = null;
 		bulletGtMedium = null;
 		bulletGtLarge = null;
+		arrowGtWood = null;
+		arrowGtPlastic = null;
+		arrow = null;
 		armorHelmet = null;
 		armorChestplate = null;
 		armorLeggings = null;
@@ -1097,6 +1210,7 @@ public class OP {
 	ingotQuadruple = create("ingotQuadruple"               , "4x Ingots"                       , "Quadruple "                      , " Ingot"                          ).setMaterialStats(U * 4)     .setCondition(MULTIINGOTS)                                                                                  .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SIMPLIFIABLE, SCANNABLE, EXTRUDER_FODDER, TOOLTIP_MATERIAL).setMinStacksize( 2).addIdenticalNames("ingotQuad"); // A quadruple Ingot.
 	ingotTriple = create("ingotTriple"                  , "3x Ingots"                       , "Triple "                         , " Ingot"                          ).setMaterialStats(U * 3)     .setCondition(MULTIINGOTS)                                                                                  .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SIMPLIFIABLE, SCANNABLE, EXTRUDER_FODDER, TOOLTIP_MATERIAL).setMinStacksize( 3); // A triple Ingot.
 	ingotDouble = create("ingotDouble"                  , "2x Ingots"                       , "Double "                         , " Ingot"                          ).setMaterialStats(U * 2)     .setCondition(MULTIINGOTS)                                                                                  .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SIMPLIFIABLE, SCANNABLE, EXTRUDER_FODDER, TOOLTIP_MATERIAL).setMinStacksize( 5); // A double Ingot. Introduced by TerraFirmaCraft
+	ingotHot = create("ingotHot"                     , "Hot Ingots"                      , "Hot "                            , " Ingot"                          ).setMaterialStats(U    )     .setCondition(new And(INGOTS_HOT, SMITHABLE, OreDictMaterialCondition.meltmin(800)))                        .add(              BURNABLE, TOOLTIP_ENCHANTS, TOOLTIP_MATERIAL, HIDDEN).setMinStacksize( 4); // A hot Ingot. OP.java:166
 	ingot = create("ingot"                        , "Ingots"                          , ""                                , " Ingot"                          ).setMaterialStats(U    )     .setCondition(INGOTS)                                                                                       .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SIMPLIFIABLE, INGOT_BASED, SCANNABLE, EXTRUDER_FODDER, TOOLTIP_MATERIAL).setMinStacksize(64); // A regular Ingot. Introduced by Eloraam
 	billet = create("billet"                       , "Billets"                         , ""                                , " Billet"                         ).setMaterialStats(U3* 2)     .setCondition(ingot)                                                                                        .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SIMPLIFIABLE, INGOT_BASED, EXTRUDER_FODDER, TOOLTIP_MATERIAL).setMinStacksize( 3); // A small Ingot. Introduced by HBM
 	chunkGt = create("chunkGt"                      , "Chunks"                          , ""                                , " Chunk"                          ).setMaterialStats(U4   )     .setCondition(ingot)                                                                                        .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SIMPLIFIABLE, INGOT_BASED, EXTRUDER_FODDER, TOOLTIP_MATERIAL).setMinStacksize( 4); // A large Nugget.
@@ -1162,6 +1276,50 @@ public class OP {
 	casingMachineQuadruple = create("casingMachineQuadruple"       , "Reinforced Machine Casings"      , "Reinforced "                     , " Machine Casing"                 ).setMaterialStats(U *26)     .setCondition(casingMachine)                                                                                .add(UNIFICATABLE, BURNABLE                  , RECYCLABLE, SIMPLIFIABLE, SCANNABLE, EXTRUDER_FODDER, TOOLTIP_MATERIAL).setMinStacksize( 1).setStacksize(2);
 	casingMachineDense = create("casingMachineDense"           , "Dense Machine Casings"           , "Dense "                          , " Machine Casing"                 ).setMaterialStats(U *56)     .setCondition(casingMachine)                                                                                .add(UNIFICATABLE, BURNABLE                  , RECYCLABLE, SIMPLIFIABLE, SCANNABLE, EXTRUDER_FODDER, TOOLTIP_MATERIAL).setMinStacksize( 1).setStacksize(1);
 	rotor = create("rotor"                        , "Rotors"                          , ""                                , " Rotor"                          ).setMaterialStats(U*4+U4)    .setCondition(PARTS)                                                                                        .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SIMPLIFIABLE, SCANNABLE, TOOLTIP_MATERIAL                 ).setMinStacksize(16).setStacksize(16); // consisting out of 4 Plates, 1 Ring.
+	// Upstream OP.java:232-276, unlocked by p2-material-condition-system.
+	toolHeadSaw = create("toolHeadSaw"                  , "Saw Blades"                      , ""                                , " Saw Blade"                      ).setMaterialStats(U * 2 -U9) .setCondition(new And(typemin(2), BOUNCY.NOT, STRETCHY.NOT))                                                .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :232
+	toolHeadFile = create("toolHeadFile"                 , "File Heads"                      , ""                                , " File Head"                      ).setMaterialStats(3 *U2)     .setCondition(new And(typemin(2), BOUNCY.NOT, STRETCHY.NOT))                                                .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :233
+	toolHeadChisel = create("toolHeadChisel"               , "Chisel Heads"                    , ""                                , " Chisel Head"                    ).setMaterialStats(3 *U2 -U9) .setCondition(new And(typemin(2), BOUNCY.NOT, STRETCHY.NOT))                                                .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :234
+	toolHeadBuzzSaw = create("toolHeadBuzzSaw"              , "Buzzsaw Blades"                  , ""                                , " Buzzsaw Blade"                  ).setMaterialStats(U * 4)     .setCondition(new And(typemin(2), BOUNCY.NOT, STRETCHY.NOT))                                                .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD              ).setStacksize(16); // :235
+	toolHeadChainsaw = create("toolHeadChainsaw"             , "Chainsaw Tips"                   , ""                                , " Chainsaw Tip"                   ).setMaterialStats(U * 2)     .setCondition(new And(typemin(2), BOUNCY.NOT, STRETCHY.NOT, chain))                                         .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD              ).setStacksize(16); // :236
+	toolHeadWrench = create("toolHeadWrench"               , "Wrench Tips"                     , ""                                , " Wrench Tip"                     ).setMaterialStats(U * 4)     .setCondition(new And(typemin(2), BOUNCY.NOT, STRETCHY.NOT))                                                .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD              ).setStacksize(16); // :237
+	toolHeadDrill = create("toolHeadDrill"                , "Drill Tips"                      , ""                                , " Drill Tip"                      ).setMaterialStats(U * 4)     .setCondition(new And(typemin(2), BOUNCY.NOT, STRETCHY.NOT))                                                .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD              ).setStacksize(16); // :238
+	toolHeadSword = create("toolHeadSword"                , "Sword Blades"                    , ""                                , " Sword Blade"                    ).setMaterialStats(U * 2 -U9) .setCondition(typemin(1))                                                                                   .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :239
+	toolHeadPickaxe = create("toolHeadPickaxe"              , "Pickaxe Heads"                   , ""                                , " Pickaxe Head"                   ).setMaterialStats(U * 3 -U9) .setCondition(typemin(1))                                                                                   .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :240
+	toolHeadShovel = create("toolHeadShovel"               , "Shovel Heads"                    , ""                                , " Shovel Head"                    ).setMaterialStats(U     -U9) .setCondition(typemin(1))                                                                                   .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :241
+	toolHeadSpade = create("toolHeadSpade"                , "Spade Heads"                     , ""                                , " Spade Head"                     ).setMaterialStats(U     -U9) .setCondition(typemin(1))                                                                                   .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :242
+	toolHeadAxe = create("toolHeadAxe"                  , "Axe Heads"                       , ""                                , " Axe Head"                       ).setMaterialStats(U * 3 -U9) .setCondition(typemin(1))                                                                                   .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :243
+	toolHeadHoe = create("toolHeadHoe"                  , "Hoe Heads"                       , ""                                , " Hoe Head"                       ).setMaterialStats(U * 2 -U9) .setCondition(typemin(1))                                                                                   .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :244
+	toolHeadSense = create("toolHeadSense"                , "Sense Blades"                    , ""                                , " Sense Blade"                    ).setMaterialStats(U * 3 -U9) .setCondition(typemin(1))                                                                                   .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :245
+	toolHeadPlow = create("toolHeadPlow"                 , "Plow Heads"                      , ""                                , " Plow Head"                      ).setMaterialStats(U * 4 -U9) .setCondition(typemin(1))                                                                                   .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :246
+	toolHeadHammer = create("toolHeadHammer"               , "Hammer Heads"                    , ""                                , " Hammer Head"                    ).setMaterialStats(U * 6)     .setCondition(new And(typemin(1), new Or(BOUNCY, STRETCHY, WOOD, qualmin(1))))                              .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :247
+	toolHeadScrewdriver = create("toolHeadScrewdriver"          , "Screwdriver Tips"                , ""                                , " Screwdriver Tip"                ).setMaterialStats(U    )     .setCondition(typemin(2))                                                                                   .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :248
+	toolHeadBuilderwand = create("toolHeadBuilderwand"          , "Builder's Wand Caps"             , ""                                , " Builder's Wand Cap"             ).setMaterialStats(U * 1)     .setCondition(typemin(2))                                                                                   .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :249
+	toolHeadConstructionPickaxe = create("toolHeadConstructionPickaxe"  , "Construction Pickaxe Heads"      , ""                                , " Construction Pickaxe Head"      ).setMaterialStats(U * 3 -U9) .setCondition(new And(toolHeadPickaxe, typemin(2)))                                                         .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :250
+	toolHeadPickaxeGem = create("toolHeadPickaxeGem"           , "Gem tipped Pickaxe Heads"        , ""                                , " tipped Pickaxe Head"            ).setMaterialStats(U * 1)     .setCondition(new And(gemFlawed, typemin(1)))                                                               .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :251
+	toolHeadAxeDouble = create("toolHeadAxeDouble"            , "Double Axe Heads"                , ""                                , " Double Axe Head"                ).setMaterialStats(U*5-2 *U9) .setCondition(new And(toolHeadAxe, typemin(2)))                                                             .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_HANDLE).setStacksize(16); // :252
+	toolHeadUniversalSpade = create("toolHeadUniversalSpade"       , "Universal Spade Heads"           , ""                                , " Universal Spade Head"           ).setMaterialStats(U  -2 *U9) .setCondition(new And(toolHeadShovel, toolHeadSaw))                                                         .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD              ).setStacksize(16); // :253
+	toolHeadArrow = create("toolHeadArrow"                , "Arrow Heads"                     , ""                                , " Arrow Head"                     ).setMaterialStats(U9   )     .setCondition(new And(PROJECTILES, typemin(1)))                                                             .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD              ).setStacksize(64); // :254
+	toolHeadRawSaw = create("toolHeadRawSaw"               , "Raw Saw Blades"                  , "Raw "                            , " Saw Blade"                      ).setMaterialStats(U * 2)     .setCondition(toolHeadSaw)                                                                                  .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :256
+	toolHeadRawChisel = create("toolHeadRawChisel"            , "Raw Chisel Heads"                , "Raw "                            , " Chisel Head"                    ).setMaterialStats(3 *U2)     .setCondition(toolHeadChisel)                                                                               .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :257
+	toolHeadRawSword = create("toolHeadRawSword"             , "Raw Sword Blades"                , "Raw "                            , " Sword Blade"                    ).setMaterialStats(U * 2)     .setCondition(toolHeadSword)                                                                                .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :258
+	toolHeadRawPickaxe = create("toolHeadRawPickaxe"           , "Raw Pickaxe Heads"               , "Raw "                            , " Pickaxe Head"                   ).setMaterialStats(U * 3)     .setCondition(toolHeadPickaxe)                                                                              .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :259
+	toolHeadRawShovel = create("toolHeadRawShovel"            , "Raw Shovel Heads"                , "Raw "                            , " Shovel Head"                    ).setMaterialStats(U    )     .setCondition(toolHeadShovel)                                                                               .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :260
+	toolHeadRawSpade = create("toolHeadRawSpade"             , "Raw Spade Heads"                 , "Raw "                            , " Spade Head"                     ).setMaterialStats(U    )     .setCondition(toolHeadSpade)                                                                                .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :261
+	toolHeadRawUniversalSpade = create("toolHeadRawUniversalSpade"    , "Raw Universal Spade Heads"       , "Raw "                            , " Universal Spade Head"           ).setMaterialStats(U     -U9) .setCondition(toolHeadUniversalSpade)                                                                       .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :262
+	toolHeadRawAxe = create("toolHeadRawAxe"               , "Raw Axe Heads"                   , "Raw "                            , " Axe Head"                       ).setMaterialStats(U * 3)     .setCondition(toolHeadAxe)                                                                                  .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :263
+	toolHeadRawAxeDouble = create("toolHeadRawAxeDouble"         , "Raw Double Axe Heads"            , "Raw "                            , " Double Axe Head"                ).setMaterialStats(U * 5)     .setCondition(toolHeadAxeDouble)                                                                            .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :264
+	toolHeadRawHoe = create("toolHeadRawHoe"               , "Raw Hoe Heads"                   , "Raw "                            , " Hoe Head"                       ).setMaterialStats(U * 2)     .setCondition(toolHeadHoe)                                                                                  .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :265
+	toolHeadRawSense = create("toolHeadRawSense"             , "Raw Sense Blades"                , "Raw "                            , " Sense Blade"                    ).setMaterialStats(U * 3)     .setCondition(toolHeadSense)                                                                                .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :266
+	toolHeadRawPlow = create("toolHeadRawPlow"              , "Raw Plow Heads"                  , "Raw "                            , " Plow Head"                      ).setMaterialStats(U * 4)     .setCondition(toolHeadPlow)                                                                                 .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE, SCANNABLE, TOOL_HEAD, NEEDS_SHARPENING, NEEDS_HANDLE).setStacksize(16, 2); // :267
+	toolHeadRawArrow = create("toolHeadRawArrow"             , "Raw Arrow Heads"                 , "Raw "                            , " Arrow Head"                     ).setMaterialStats(U8   )     .setCondition(toolHeadArrow)                                                                                .add(UNIFICATABLE, BURNABLE, TOOLTIP_ENCHANTS, RECYCLABLE           , TOOL_HEAD, NEEDS_SHARPENING              ).setStacksize(64, 2); // :268
+	toolSword = create("toolSword"                    , "Swords"                          , ""                                , ""                                ).setMaterialStats(U * 2)     .setCondition(typemin(1))                                                                                   .add(TOOL_ALIKE, BURNABLE, RECYCLABLE, WEAPON_ALIKE).setStacksize( 1); // vanilly Sword :270
+	toolPickaxe = create("toolPickaxe"                  , "Pickaxes"                        , ""                                , ""                                ).setMaterialStats(U * 3)     .setCondition(typemin(1))                                                                                   .add(TOOL_ALIKE, BURNABLE, RECYCLABLE              ).setStacksize( 1); // vanilly Pickaxe :271
+	toolShovel = create("toolShovel"                   , "Shovels"                         , ""                                , ""                                ).setMaterialStats(U    )     .setCondition(typemin(1))                                                                                   .add(TOOL_ALIKE, BURNABLE, RECYCLABLE              ).setStacksize( 1); // vanilly Shovel :272
+	toolAxe = create("toolAxe"                      , "Axes"                            , ""                                , ""                                ).setMaterialStats(U * 3)     .setCondition(typemin(1))                                                                                   .add(TOOL_ALIKE, BURNABLE, RECYCLABLE, WEAPON_ALIKE).setStacksize( 1); // vanilly Axe :273
+	toolHoe = create("toolHoe"                      , "Hoes"                            , ""                                , ""                                ).setMaterialStats(U * 2)     .setCondition(typemin(1))                                                                                   .add(TOOL_ALIKE, BURNABLE, RECYCLABLE              ).setStacksize( 1); // vanilly Hoe :274
+	toolShears = create("toolShears"                   , "Shears"                          , ""                                , ""                                ).setMaterialStats(U * 2)     .setCondition(typemin(1))                                                                                   .add(TOOL_ALIKE, BURNABLE, RECYCLABLE              ).setStacksize( 1); // vanilly Shears :275
+	tool = create("tool"                         , "Tools"                           , ""                                , ""                                )                             .setCondition(typemin(1))                                                                                   .add(TOOL_ALIKE                                    ).setStacksize( 1); // toolPot, toolSkillet, toolSaucepan, toolBakeware, toolCuttingboard, toolMortarandpestle, toolMixingbowl, toolJuicer :276
 	}
 
 	private static void regPipes() {
@@ -1173,6 +1331,10 @@ public class OP {
 	bulletGtSmall = create("bulletGtSmall"                , "Small Bullets"                   , "Small "                          , " Bullet"                         ).setMaterialStats(U9   )     .setCondition(new Or(PROJECTILES, EMPTY))                                                                   .add(UNIFICATABLE, BURNABLE, AMMO_ALIKE, UNIFICATABLE_RECIPES, RECYCLABLE, SIMPLIFIABLE              );
 	bulletGtMedium = create("bulletGtMedium"               , "Medium Bullets"                  , "Medium "                         , " Bullet"                         ).setMaterialStats(2 *U9)     .setCondition(new Or(PROJECTILES, EMPTY))                                                                   .add(UNIFICATABLE, BURNABLE, AMMO_ALIKE, UNIFICATABLE_RECIPES, RECYCLABLE, SIMPLIFIABLE              );
 	bulletGtLarge = create("bulletGtLarge"                , "Large Bullets"                   , "Large "                          , " Bullet"                         ).setMaterialStats(U3   )     .setCondition(new Or(PROJECTILES, EMPTY))                                                                   .add(UNIFICATABLE, BURNABLE, AMMO_ALIKE, UNIFICATABLE_RECIPES, RECYCLABLE, SIMPLIFIABLE              );
+	// Upstream OP.java:281-283, cascade on toolHeadArrow, unlocked by p2-material-condition-system.
+	arrowGtWood = create("arrowGtWood"                  , "Regular Arrows"                  , ""                                , " Arrow"                          ).setMaterialStats(U9   )     .setCondition(new Or(toolHeadArrow, EMPTY))                                                                 .add(UNIFICATABLE, BURNABLE, AMMO_ALIKE, UNIFICATABLE_RECIPES, RECYCLABLE, SIMPLIFIABLE, WEAPON_ALIKE); // Arrow made of 1/4 Ingot/Dust + Wooden Stick. :281
+	arrowGtPlastic = create("arrowGtPlastic"               , "Light Arrows"                    , "Light "                          , " Arrow"                          ).setMaterialStats(U9   )     .setCondition(new Or(toolHeadArrow, EMPTY))                                                                 .add(UNIFICATABLE, BURNABLE, AMMO_ALIKE, UNIFICATABLE_RECIPES, RECYCLABLE, SIMPLIFIABLE, WEAPON_ALIKE); // Arrow made of 1/4 Ingot/Dust + Plastic Stick. :282
+	arrow = create("arrow"                        , "Arrows"                          , ""                                , ""                                )                             .setCondition(toolHeadArrow)                                                                                .add(                        AMMO_ALIKE, SELF_REFERENCING, WEAPON_ALIKE                              ); // :283
 	}
 
 	private static void regWires() {
