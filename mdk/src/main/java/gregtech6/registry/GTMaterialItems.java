@@ -82,16 +82,25 @@ public final class GTMaterialItems {
             long tCount = 0;
             for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
                 if (tMaterial == null || tMaterial.mID < 0) continue;
-                if (!tPrefix.isGeneratingItem(tMaterial)) continue; // PrefixItem.java:104
-                String tId = MaterialPrefixItem.snakeCase(tPrefix.mNameInternal) + "_" + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal);
+                // Same-name re-registrations (old ID + new ID, createMaterial NOTICE path) live in two
+                // array slots; the item id must belong to the current registration target
+                // (MaterialRegistry.java:182-185 = upstream OreDictMaterial.java:199-202), merging
+                // deprecated aliases onto one item.
+                tMaterial = MaterialRegistry.INSTANCE.get(tMaterial);
+                final OreDictMaterial fMaterial = tMaterial;
+                if (fMaterial == null || fMaterial.mID < 0) continue;
+                if (!tPrefix.isGeneratingItem(fMaterial)) continue; // PrefixItem.java:104
+                PrefixMaterial tKey = new PrefixMaterial(tPrefix, fMaterial);
+                if (INDEX.containsKey(tKey)) continue; // alias slot: the registration target already owns the item
+                String tId = MaterialPrefixItem.snakeCase(tPrefix.mNameInternal) + "_" + MaterialPrefixItem.snakeCase(fMaterial.mNameInternal);
                 ResourceLocation tLoc = gtId(tId);
                 if (!REGISTERED_IDS.add(tLoc)) { // defensive dedup, ADR-P2-2 fix 1
                     GT6Mod.LOGGER.warn("GT6 skipped duplicate item id {}", tLoc);
                     continue;
                 }
                 RegistryObject<Item> tHandle = RegistryObject.create(tLoc, Registries.ITEM, "gt6"); // RegistryObject.java:62
-                event.register(Registries.ITEM, tLoc, () -> new MaterialPrefixItem(new Item.Properties(), tPrefix, tMaterial)); // RegisterEvent.java:54-63
-                INDEX.put(new PrefixMaterial(tPrefix, tMaterial), tHandle);
+                event.register(Registries.ITEM, tLoc, () -> new MaterialPrefixItem(new Item.Properties(), tPrefix, fMaterial)); // RegisterEvent.java:54-63
+                INDEX.put(tKey, tHandle);
                 tCount++;
                 tTotal++;
             }
