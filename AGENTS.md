@@ -97,6 +97,10 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
 - 读：`recall(query)`（语义检索历史结论）、`state_read`、`kg_query`、`search_code`、
   `sym_query`、`get_source`、`mappings_lookup`、`refresh_index`、`project_status`。
 - 每次合并/决策/发现 bug 后必须写记忆；`docs/PROJECT_STATE.md` 同步镜像。
+- **记忆写入预算**：`remember` 只放可复用结论与阶段锚点，单条 ≤ ~1200 字；逐文件/
+  逐提交的 handoff 细节写 state（tasks）与 docs 镜像，不进 remember。每阶段收官
+  必须清理已被锚点蒸馏的 handoff/merge/research 历史条目（硬删，防 recall 灌爆上下文）——
+  收官锚点必须先写全，删除才安全。
 
 ## 八、目录地图
 
