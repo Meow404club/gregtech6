@@ -38,69 +38,141 @@ import static gregapi.data.TD.Properties.*;
  */
 public class ANY {
 	private static OreDictMaterial any(String aNameOreDict) {return OreDictMaterial.createMaterial(-1, aNameOreDict, aNameOreDict).put(UNUSED_MATERIAL, INVALID_MATERIAL, IGNORE_IN_COLOR_LOG);}
-	private static boolean INITIALIZED = F;
+	private static boolean CREATED = F;
 
 	/** Technical Materials, which are only there for Recipes and such. */
-	public static final OreDictMaterial
-	Glowstone       = any("Any Glowstone"       ),
-	Diamond         = any("Any Diamond"         ),
-	Sapphire        = any("Any Sapphire"        ),
-	Emerald         = any("Any Emerald"         ),
-	Amethyst        = any("Any Amethyst"        ),
-	Garnet          = any("Any Garnet"          ),
-	Jasper          = any("Any Jasper"          ),
-	TigerEye        = any("Any Tiger Eye"       ),
-	Aventurine      = any("Any Aventurine"      ),
-	Amber           = any("Any Amber"           ),
-	Fluorite        = any("Any Fluorite"        ), CaF2 = Fluorite,
-	Phosphorus      = any("Any Phosphorus"      ),
-	Blaze           = any("Any Blaze"           ),
-	Prismarine      = any("Any Prismarine"      ),
-	Grains          = any("Any Grains"          ),
-	Flour           = any("Any Flour"           ),
-	FlourGrains     = any("Any Flour Or Grains" ),
-	Wax             = any("Any Wax"             ),
-	Stone           = any("Any Stone"           ),
-	Calcite         = any("Any Calcite"         ),
-	Clay            = any("Any Clay"            ),
-	Salt            = any("Any Salt"            ),
-	Fe              = any("Any Iron"            ),
-	Iron            = any("Any Iron Or Steel"   ),
-	Steel           = any("Any Iron-Steel"      ),
-	BlackSteel      = any("Any Black Steel"     ),
-	BlueSteel       = any("Any Blue Steel"      ),
-	RedSteel        = any("Any Red Steel"       ),
-	MagicIron       = any("Any Magic Iron"      ),
-	Cu              = any("Any Copper"          ),
-	Ash             = any("Any Ashes"           ),
-	C               = any("Any Carbon"          ),
-	Coal            = any("Any Coal/Carbon"     ),
-	Si              = any("Any Silicon"         ),
-	SiO2            = any("Any Silicon Dioxide" ),
-	Quartz          = any("Quartz"              ),
-	Sand            = any("Any Sand"            ),
-	W               = any("Any Tungsten"        ),
-	ThaumCrystal    = any("Any Thaumic Crystal" ),
-	Hexorium        = any("Hexorium"            ),
-	Wood            = any("Any Wood"            ),
-	WoodDefault     = any("Any Default Wood"    ),
-	WoodNormal      = any("Any Normal Wood"     ),
-	WoodMagical     = any("Any Magical Wood"    ),
-	WoodTreated     = any("Any Treated Wood"    ),
-	WoodUntreated   = any("Any Untreated Wood"  ),
-	WoodPlastic     = any("Any Wood Or Plastic" ),
-	Rubber          = any("Any Rubber"          ),
-	Plastic         = any("Any Plastic"         ),
-	PlasticHard     = any("Any Hard Plastic"    ),
+	public static OreDictMaterial
+	Glowstone,
+	Diamond,
+	Sapphire,
+	Emerald,
+	Amethyst,
+	Garnet,
+	Jasper,
+	TigerEye,
+	Aventurine,
+	Amber,
+	Fluorite,
+	CaF2,
+	Phosphorus,
+	Blaze,
+	Prismarine,
+	Grains,
+	Flour,
+	FlourGrains,
+	Wax,
+	Stone,
+	Calcite,
+	Clay,
+	Salt,
+	Fe,
+	Iron,
+	Steel,
+	BlackSteel,
+	BlueSteel,
+	RedSteel,
+	MagicIron,
+	Cu,
+	Ash,
+	C,
+	Coal,
+	Si,
+	SiO2,
+	Quartz,
+	Sand,
+	W,
+	ThaumCrystal,
+	Hexorium,
+	Wood,
+	WoodDefault,
+	WoodNormal,
+	WoodMagical,
+	WoodTreated,
+	WoodUntreated,
+	WoodPlastic,
+	Rubber,
+	Plastic,
+	PlasticHard,
+	_Steel,
+	_Bronze,
+	_Metal;
 
-	_Steel          = any("Any Steel"           ),
-	_Bronze         = any("Any Bronze"          ),
-	_Metal          = any("Any Metal"           );
+	/** Creation phase. Upstream builds this table as the class-init of ANY (upstream ANY.java:44-98),
+	 *  fired at the first helper reference during the MT flood (e.g. the ported MT.java:315 create() and
+	 *  :609 diamond() helpers). As a class-init it ran exactly once per JVM, so after a registry reset
+	 *  the 53 entries vanished from MATERIAL_MAP and never came back (the card-3 size gap). The port
+	 *  pins the creation to the top of MT.init() with the same identity-check guard style as
+	 *  MT.java:2694 and AM.java:655: after reset() the map lookup misses and the batch re-runs. */
+	protected static void create() {
+		if (CREATED && OreDictMaterial.MATERIAL_MAP.get("AnyGlowstone") == Glowstone) return;
+		CREATED = T;
+		Glowstone = any("Any Glowstone"       );
+		Diamond = any("Any Diamond"         );
+		Sapphire = any("Any Sapphire"        );
+		Emerald = any("Any Emerald"         );
+		Amethyst = any("Any Amethyst"        );
+		Garnet = any("Any Garnet"          );
+		Jasper = any("Any Jasper"          );
+		TigerEye = any("Any Tiger Eye"       );
+		Aventurine = any("Any Aventurine"      );
+		Amber = any("Any Amber"           );
+		Fluorite = any("Any Fluorite"        );
+		CaF2 = Fluorite;
+		Phosphorus = any("Any Phosphorus"      );
+		Blaze = any("Any Blaze"           );
+		Prismarine = any("Any Prismarine"      );
+		Grains = any("Any Grains"          );
+		Flour = any("Any Flour"           );
+		FlourGrains = any("Any Flour Or Grains" );
+		Wax = any("Any Wax"             );
+		Stone = any("Any Stone"           );
+		Calcite = any("Any Calcite"         );
+		Clay = any("Any Clay"            );
+		Salt = any("Any Salt"            );
+		Fe = any("Any Iron"            );
+		Iron = any("Any Iron Or Steel"   );
+		Steel = any("Any Iron-Steel"      );
+		BlackSteel = any("Any Black Steel"     );
+		BlueSteel = any("Any Blue Steel"      );
+		RedSteel = any("Any Red Steel"       );
+		MagicIron = any("Any Magic Iron"      );
+		Cu = any("Any Copper"          );
+		Ash = any("Any Ashes"           );
+		C = any("Any Carbon"          );
+		Coal = any("Any Coal/Carbon"     );
+		Si = any("Any Silicon"         );
+		SiO2 = any("Any Silicon Dioxide" );
+		Quartz = any("Quartz"              );
+		Sand = any("Any Sand"            );
+		W = any("Any Tungsten"        );
+		ThaumCrystal = any("Any Thaumic Crystal" );
+		Hexorium = any("Hexorium"            );
+		Wood = any("Any Wood"            );
+		WoodDefault = any("Any Default Wood"    );
+		WoodNormal = any("Any Normal Wood"     );
+		WoodMagical = any("Any Magical Wood"    );
+		WoodTreated = any("Any Treated Wood"    );
+		WoodUntreated = any("Any Untreated Wood"  );
+		WoodPlastic = any("Any Wood Or Plastic" );
+		Rubber = any("Any Rubber"          );
+		Plastic = any("Any Plastic"         );
+		PlasticHard = any("Any Hard Plastic"    );
+		_Steel = any("Any Steel"           );
+		_Bronze = any("Any Bronze"          );
+		_Metal = any("Any Metal"           );
+	}
 
+
+	/**
+	 * Wiring phase (upstream ANY.java:92-157): binds the alias groups to the current MT generation
+	 * via steal/stealLooks/addReRegistrationToThis and wires the mTargetReversing pairs. Called
+	 * once per MT.init() flood after the reg batches, so it re-binds whenever a reset re-created
+	 * the MT targets. No early-return guard on purpose: every operation here is an idempotent
+	 * setter or a Set-add, so a re-run on the same generation is a no-op in effect; the
+	 * reset-aware identity check lives in {@link #create()}, which owns the registration side
+	 * (same split as MT.java:2694 / AM.java:655 guarding the registration).
+	 */
 	protected static void init() {
-		if (INITIALIZED) return;
-		INITIALIZED = T;
-
 		MT.stealLooks(MT.steal(Glowstone, MT.Glowstone), MT.Glowstone).setLocal("Glowstone").setAllToTheOutputOf(MT.Glowstone).put(CRYSTAL, GLOWING, LIGHTING);
 		MT.stealLooks(MT.steal(Diamond, MT.Diamond), MT.Diamond).setLocal("Diamond").setAllToTheOutputOf(MT.Diamond).put(CRYSTAL, VALUABLE).addReRegistrationToThis(MT.Diamantine);
 		MT.stealLooks(MT.steal(Sapphire, MT.BlueSapphire), MT.Sapphire).setLocal("Sapphire").setAllToTheOutputOf(MT.Sapphire).put(CRYSTAL, VALUABLE);
