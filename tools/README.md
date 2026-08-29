@@ -7,6 +7,12 @@
 - `gt6_rag/index.py` —— 索引器：扫描 `sources.json` 中的资料源，cAST 结构感知切块后调用 Qwen3-Embedding-4B 嵌入，存入 SQLite（`tmp/index/rag.db`）。支持增量（按 mtime/size 跳过未变化文件）。
 - `gt6_rag/server.py` —— MCP 服务器（Streamable HTTP 常驻守护，纯标准库协议壳）：语义检索、精确符号搜索、原文阅读、混淆映射查询、网页抓取、知识图谱（KG）、项目状态记忆。
 - `gt6_rag/web.py` —— `web_fetch` 抓网页（curl_cffi 浏览器 TLS 指纹）。
+- `gt6_rag/harvest.py` —— `harvest` 资料收割：把反复参考的外部资料落盘
+  `tmp/harvest/<name>/`（page=HTML→Markdown，file=原样，repo=tar.gz 安全解包）。
+  **只落盘不索引**——落盘即可被 `get_source`/`sym_query(sources=['harvest'])` 阅读；
+  是否入 RAG 由 gt6-curator 裁决后 `refresh_index(source="harvest")` 增量索引。
+  裁剪规则在 `tmp/harvest/exclude.json`（glob 数组，相对 tmp/harvest；不入库、
+  即时生效）。
 - `gt6_services.sh` —— 服务总线：`{start|stop|restart|status} [brain|embed|rerank|all]`。
 - `config.json` —— 嵌入 API 配置（含密钥，已被 .gitignore 排除；模板见 `config.example.json`）。
 - `sources.json` —— 资料源注册表（路径相对仓库根）。
@@ -63,6 +69,7 @@ GPG 提交拦截钩子已注册在**用户级** `~/.zcode/cli/config.json`（hoo
 | `get_source(file, start?, end?)` | 按相对路径读取原始文件（带行号） |
 | `sym_query(pattern, sources?, glob?)` | ripgrep 正则精确搜索：**已知确切类名/方法名/字符串时的快速定位** |
 | `web_fetch(url, timeout?, max_chars?, raw?)` | 抓网页（curl_cffi 浏览器 TLS 指纹）：HTML 自动转纯文本，raw=true 返回原始 HTML。能过 TLS 指纹层反爬（实测 zillow 等 urllib 403 页）；需执行 JS 的挑战页（如 g2.com）过不了，需真浏览器方案 |
+| `harvest(url, name, kind?, raw?, timeout?)` | 资料收割到 tmp/harvest/<name>/（page 网页转 Markdown / file 原样 / repo tar.gz 安全解包）。只落盘不索引，落盘即可 get_source/sym_query 阅读；入 RAG 由 gt6-curator 裁决 |
 | `mappings_lookup(term)` | 1.20.1 混淆名 ↔ Mojang 官方名互查 |
 | `refresh_index(source?)` | 后台重建/增量更新索引 |
 | `kg_add / kg_query / kg_del` | 知识图谱：记录/检索实体关系 |

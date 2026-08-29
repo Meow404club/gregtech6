@@ -1,6 +1,6 @@
 # GT6 现代复兴计划 · 组织者宪法（主 Agent 专用）
 
-> 本文件只被主会话入口加载。五个执行角色（architect/researcher/coder/review-merge/debugger）
+> 本文件只被主会话入口加载。六个执行角色（architect/researcher/coder/review-merge/debugger/curator）
 > 是 `.zcode/agents/` 下的 subagent 模板（`injectAgentsMd: false`），**不会**读到本文件——
 > 你（主 Agent）派发任务时必须把它们的系统提示词中需要的上下文写进任务卡。
 
@@ -24,6 +24,7 @@
 | `gt6-coder` | **可并行**：worktree 内实现任务 | 任务卡（slug、spec、证据、验收标准） | commit hash 列表 + 变更摘要 + 自测结果 |
 | `gt6-review-merge` | 审查分支、解决冲突、合入 main | 分支名 + 审查重点 | verdict + 合并 commit hash |
 | `gt6-debugger` | 构建/崩溃/Mixin 排障 | 错误现场 + 复现方式 | 根因 + 修复 + 验证输出 |
+| `gt6-curator` | harvest 资料审查：噪声子目录剔除、入 RAG 裁决、增量索引+检索验证 | harvest 清单（name+URL）+ 调研背景 | 每资料裁决 + exclude 规则 + state(harvest_log) 落账 |
 
 ## 三、并行 PR 工作流（像开源项目一样跑）
 
@@ -50,6 +51,12 @@
 - **合并串行**：任何时刻只允许一个 review-merge 在动 main。
 - **批量合并会话**：并行完成的多个分支尽量交给**同一个** review-merge 会话顺序审查+合并（一次会话过完 main 锁，省去每分支单独派会的开销）；仅当单分支审查异常复杂才拆独立会话。
 - coder 死循环/超时 → 废弃分支（`git worktree remove` + 删分支 + status=aborted）重新拆卡，不救活烂摊子。
+
+**研究资料管线**：researcher 用 `harvest` 工具把反复参考的外部资料落盘
+`tmp/harvest/<name>/`（落盘即可读，不自动入 RAG，不阻塞调用）→ 主 agent 把清单
+随派发交 `gt6-curator` 审查（噪声子目录剔除 + 入库裁决 + 增量索引 + 检索验证；
+curator 只动 tmp/harvest 与其 exclude 规则，无需 git 流程）→ 主 agent 把裁决
+回链研究卡/任务板。
 
 ## 四、任务卡规范（派给 coder 的 prompt 必含）
 
@@ -107,7 +114,8 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
 ```
 tmp/gt6-1.7.10/        GT6 官方源码（移植对象）      tmp/vanilla-1.20.1/ 原版反编译
 tmp/refs/gtceu-modern/ GTCEu Modern 参考实现         tmp/refs/forge-api|neoforge-api|*-docs
-tools/gt6_rag/         检索与记忆工具链（入库）       .zcode/agents/ 五角色 subagent 模板
-.zcode/commands/       各阶段派发快捷命令             .githooks/ commit 校验链
-docs/                  状态镜像 / 架构文档 / 调研笔记
+tmp/harvest/           researcher 收割区（curator 裁决入库，exclude.json=裁剪规则）
+tools/gt6_rag/         检索与记忆工具链（入库）       tools/services.sh 服务总线
+.zcode/agents/         六角色 subagent 模板          .zcode/commands/   各阶段派发快捷命令
+.githooks/             commit 校验链                 docs/              状态镜像 / 架构文档 / 调研笔记
 ```

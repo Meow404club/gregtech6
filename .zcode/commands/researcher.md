@@ -11,8 +11,10 @@ description: 派发研究员子代理（gt6-researcher）：GT6 代码考古 / �
    C 方案选型；不确定就留给子代理自选）
 2. 已知线索：先 recall/kg_search 查过的结论直接贴入，避免重复调研
 3. 期望产出：研究卡（模式 / 分层证据（本地 文件:行号；网络 URL+访问日期）/
-   结论（选型题=推荐+理由）/ 风险）
+   结论（选型题=推荐+理由）/ 风险 / harvest 清单（若有，name+URL+用途））
 4. 落账要求：remember(kind="research")；选型结论加 state_update(decisions)；
    有实体关系加 kg_add（如 GT6_X MAPS_TO MC_Y）
 
-子代理返回后（主 Agent 落账）：state_update(decisions) + 把研究卡编号挂到任务板。
+子代理返回后（主 Agent 落账）：state_update(decisions) + 把研究卡编号挂到任务板；
+研究卡带 harvest 清单时，派发 `gt6-curator` 审查入库（curator 自主完成裁剪、
+增量索引与检索验证，主 agent 只需回链裁决结果）。
