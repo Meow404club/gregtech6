@@ -36,7 +36,11 @@ import gregtech6.registry.GTMachines;
  *     the acceptance asserts all three states observed (progress &gt;0 &lt;32767, done
  *     32767 via mSuccessful, idle -1) plus the output slot filling. The real server ticker
  *     keeps ticking alongside — this only accelerates the same dispatcher.</li>
- * <li>{@code check [<pos>]} — state report: slots, progress trio, energy, stop flags.</li>
+ * <li>{@code check [<pos>]} — state report: slots, progress trio, energy, stop flags;</li>
+ * <li>{@code rotate &lt;side 0..6&gt; [<pos>]} — the front-facing rotation through the
+ *     same BE entry the shift-hoe grid path calls ({@link TileEntityOven#setFrontFacing},
+ *     task p6-oven-rotation): vertical sides (0/1), SIDE_INVALID (6) and the
+ *     same-facing call are REJECTED.</li>
  * </ul>
  *
  * <p>The ContainerData assertions go through the server-side live computation — the same
@@ -82,9 +86,17 @@ public final class GTOvenCommand {
 			.then(Commands.literal("check")
 				.executes(context -> check(context.getSource(), null))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
-					.executes(context -> check(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
+					.executes(context -> check(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))))
+			.then(Commands.literal("rotate")
+				.then(Commands.argument("side", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0, 6))
+					.executes(context -> rotate(context.getSource(),
+							(byte) com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "side"), null))
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(context -> rotate(context.getSource(),
+								(byte) com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "side"),
+								BlockPosArgument.getLoadedBlockPos(context, "pos"))))));
 		event.getDispatcher().register(tOven);
-		LOGGER.info("Registered GT6 machine acceptance command /gt6oven (place|input|run|check)");
+		LOGGER.info("Registered GT6 machine acceptance command /gt6oven (place|input|run|check|rotate)");
 	}
 
 	private static TileEntityOven ovenAt(CommandSourceStack source, BlockPos pos) {
@@ -175,6 +187,31 @@ public final class GTOvenCommand {
 			tDataValue, tOven.mProgress, tOven.mMaxProgress, tOven.mEnergy,
 			tOven.mStopped, tOven.mRedstoneStopped, tOven.mActive, tOven.mRunning, tOven.getFacing());
 		source.sendSuccess(() -> Component.literal(tReport), false);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The rotation acceptance entry (task p6-oven-rotation ⑦): the same BE entry the
+	 * shift-hoe grid path calls — {@link TileEntityOven#setFrontFacing} — so the command
+	 * asserts exactly what the interaction rotates. Rejections mirror the BE double
+	 * guard: vertical sides (0/1), SIDE_INVALID (6) and the same-facing call all report
+	 * REJECTED and leave the facing untouched (the RCON chain asserts the rejects and
+	 * reads the resulting facing back through the check's {@code facing=%d}).
+	 */
+	private static int rotate(CommandSourceStack source, byte side, BlockPos pos) {
+		TileEntityOven tOven = ovenAt(source, pos);
+		if (tOven == null) {
+			source.sendFailure(Component.literal("No TileEntityOven at " + (pos != null ? pos.toShortString() : "the source position")));
+			return 0;
+		}
+		byte tOld = tOven.getFacing();
+		if (!tOven.setFrontFacing(side)) {
+			source.sendFailure(Component.literal("GT6 oven rotate REJECTED: side " + side
+					+ " (vertical/invalid/same-facing; facing stays " + tOld + ") at " + tOven.getBlockPos().toShortString()));
+			return 0;
+		}
+		source.sendSuccess(() -> Component.literal("GT6 oven rotate OK: facing " + tOld + " -> " + tOven.getFacing()
+				+ " at " + tOven.getBlockPos().toShortString()), false);
 		return Command.SINGLE_SUCCESS;
 	}
 }
