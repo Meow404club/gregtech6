@@ -2,6 +2,7 @@ package gregtech6.tank;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.core.BlockPos;
@@ -15,9 +16,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregapi.data.MT;
 import gregtech6.covers.CoverRegistry;
 import gregtech6.covers.covers.CoverPump;
 import gregtech6.covers.covers.CoverTextureSimple;
+import gregtech6.registry.GTBarrels;
+import gregtech6.registry.GTBarrels.MetalDrumRow;
+import gregtech6.registry.GTMaterialItems;
 import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
@@ -30,11 +35,18 @@ import gregtech6.tileentity.tank.GTBarrelPlasticBlockEntity;
  * over the three BE classes (the upstream Wood :39 / Plastic :38 / Metal no-override shape).
  *
  * <p>The capacity/melting block-carrier rows (wood 16000 L/340 K, plastic 32000 L/370 K,
- * metal 64000 L/MAX) are exercised live by {@code /gt6tank stat} in the p6 RCON chain —
+ * metal 64000 L/bridge) are exercised live by {@code /gt6tank stat} in the RCON chain —
  * the same split the p4 card used for the 340 K ceiling (TileEntityBase08BarrelTest
  * header: a mod Block cannot be constructed after the offline boot, the Forge block
  * registries are intrusive-holder registries frozen by Bootstrap, and the offline vanilla
  * fixture blocks keep the BE ctor at the 16000 L / MAX_VALUE defaults).
+ *
+ * <p>Task p7-barrel-high-tier-melt-bridge extends the offline half with the pure-data
+ * surfaces that need no Block construction: the high-tier row truth table
+ * (GTBarrels.HIGH_TIER_METAL_DRUMS — capacity/explicit-HU/display-name literals,
+ * upstream Loader_MultiTileEntities.java:2159-2170) and the melting-point bridge formula
+ * (the verbatim TileEntityBase08Barrel.readFromNBT2 :66 else-branch over the live dataset,
+ * GTMaterialItems.initMaterials precedent for the offline material universe).
  */
 public class GTBarrelFamilyTest extends GTOfflineTestBase {
 
@@ -51,6 +63,10 @@ public class GTBarrelFamilyTest extends GTOfflineTestBase {
 	@SuppressWarnings("unchecked")
 	@BeforeAll
 	static void buildOfflineFixtures() {
+		// the offline material universe for the p7 bridge assertions (the
+		// GT6RecipesCokeOvenTest:60 precedent; per-generation refill, idempotent by design)
+		GTMaterialItems.initMaterials();
+
 		BlockEntityType<GTBarrelBlockEntity>[] tWood = (BlockEntityType<GTBarrelBlockEntity>[]) new BlockEntityType<?>[1];
 		tWood[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GTBarrelBlockEntity(tWood[0], aPos, aState),
@@ -171,5 +187,87 @@ public class GTBarrelFamilyTest extends GTOfflineTestBase {
 		assertFalse(tMetal.getCoverItem((byte) 2).isEmpty(), "metal × plate install lands");
 		assertTrue(tMetal.setCoverItem((byte) 3, new ItemStack(Items.BRICK), null, false, false));
 		assertFalse(tMetal.getCoverItem((byte) 3).isEmpty(), "metal × pump install lands — the p5 pump machinery rides the drum");
+	}
+
+	// ---------------------------------------------------------------------------
+	// task p7-barrel-high-tier-melt-bridge — the high-tier row truth table and the
+	// melting-point bridge, the offline (no Block construction) halves
+	// ---------------------------------------------------------------------------
+
+	/** The row lookup by registry path (the truth-table rows are keyed by it). */
+	private static MetalDrumRow rowByPath(String aPath) {
+		return GTBarrels.HIGH_TIER_METAL_DRUMS.stream().filter(aRow -> aRow.path().equals(aPath)).findFirst().orElseThrow();
+	}
+
+	private static void assertRow(String aPath, String aDisplay, long aCapacity, long aHU) {
+		MetalDrumRow tRow = rowByPath(aPath);
+		assertEquals(aDisplay, tRow.displayName(), aPath);
+		assertEquals(aCapacity, tRow.capacityL(), aPath);
+		assertEquals(aHU, tRow.explicitHU(), aPath);
+		assertNotNull(tRow.material().get(), aPath + " — spec ③: the MT constant resolves (zero skip rows)");
+	}
+
+	/**
+	 * The twelve upstream rows, verbatim (Loader_MultiTileEntities.java:2159-2170): the
+	 * capacity ladder, the two explicit NBT_CAPACITY_HU rows, the display names and the
+	 * material resolution (spec ③ — no skipped rows: every MT constant lives in the
+	 * ported dataset).
+	 */
+	@Test
+	public void highTierMetalDrumRowTruthTable() {
+		assertEquals(12, GTBarrels.HIGH_TIER_METAL_DRUMS.size(), "128K×3 + 256K×3 + 512K + 1.024M + 4.096M×2 + 8.192M + 10B");
+		assertRow("barrel_tungsten_alloy", "Tungsten Alloy Drum", 128000, -1);
+		assertRow("barrel_titanium", "Titanium Drum", 128000, -1);
+		assertRow("barrel_netherite", "Netherite Drum", 128000, -1);
+		assertRow("barrel_tungstensteel", "Tungstensteel Drum", 256000, -1);
+		assertRow("barrel_tungsten", "Tungsten Drum", 256000, -1);
+		assertRow("barrel_void_metal", "Voidmetal Drum", 256000, -1);
+		assertRow("barrel_tantalum_hafnium_carbide", "Tantalum Hafnium Carbide Drum", 512000, -1);
+		assertRow("barrel_gaia_spirit", "Gaia Drum", 1024000, -1);
+		assertRow("barrel_adamantium", "Adamantium Drum", 4096000, -1);
+		assertRow("barrel_draconium", "Draconium Drum", 4096000, -1);
+		assertRow("barrel_awakened_draconium", "Awakened Draconium Drum", 8192000, 10000);
+		assertRow("barrel_infinity", "Infinity Drum", 10000000000L, 1000000000L);
+	}
+
+	/**
+	 * The bridge else-branch (TileEntityBase08Barrel.java:66 {@code (long)(mMeltingPoint *
+	 * 1.25)}) over the live dataset — literal spot checks where the material melting
+	 * point is directly traceable, plus the per-row formula agreement (no hardcoded
+	 * drift) and the 保 MAX clause.
+	 */
+	@Test
+	public void meltingPointBridgeFormula() {
+		// traceable literals: Bronze = Cu 1357 K (MT.java:1004 element, :1705 heat(Cu.mMeltingPoint))
+		assertEquals(1696, GTBarrels.meltingPointK(MT.Bronze), "(long)(1357 * 1.25) = (long) 1696.25 — the bronze drum ceiling");
+		// VoidMetal heat(3000, 5000) (MT.java:2508)
+		assertEquals(3750, GTBarrels.meltingPointK(MT.VoidMetal), "(long)(3000 * 1.25)");
+		// Ta4HfC5 heat(4263) (MT.java:2467)
+		assertEquals(5328, GTBarrels.meltingPointK(MT.Ta4HfC5), "(long)(4263 * 1.25) = (long) 5328.75");
+		// Draconium heat(4500) (MT.java:2585)
+		assertEquals(5625, GTBarrels.meltingPointK(MT.Draconium), "(long)(4500 * 1.25)");
+		// Ad element melt 5225 K (MT.java:1656)
+		assertEquals(6531, GTBarrels.meltingPointK(MT.Ad), "(long)(5225 * 1.25) = (long) 6531.25");
+		// 保 MAX: a MAX_VALUE material stays never-melting (the upstream double-cast
+		// saturation reaches the same ceiling — the explicit branch just states it)
+		assertEquals(Long.MAX_VALUE, GTBarrels.meltingPointK(Long.MAX_VALUE), "MAX melting material → MAX ceiling");
+		// every formula row agrees with the live dataset — the bridge computes, never guesses
+		for (MetalDrumRow tRow : GTBarrels.HIGH_TIER_METAL_DRUMS) {
+			if (tRow.explicitHU() >= 0) continue;
+			assertEquals((long)(tRow.material().get().mMeltingPoint * 1.25), tRow.meltingPointK(), tRow.path());
+		}
+	}
+
+	/**
+	 * The bridge branch 1 (upstream :66 {@code if (aNBT.hasKey(NBT_CAPACITY_HU))
+	 * mMeltingPoint = aNBT.getLong(NBT_CAPACITY_HU)}) — the two rows carrying an explicit
+	 * HU are transcribed verbatim and win over the material formula.
+	 */
+	@Test
+	public void meltingPointBridgeExplicitHURows() {
+		assertEquals(10000, rowByPath("barrel_awakened_draconium").meltingPointK(),
+				"upstream NBT_CAPACITY_HU=10000 (Loader_MultiTileEntities.java:2169)");
+		assertEquals(1000000000L, rowByPath("barrel_infinity").meltingPointK(),
+				"upstream NBT_CAPACITY_HU=1000000000 (:2170) — the effectively-never-melting Infinity ceiling");
 	}
 }
