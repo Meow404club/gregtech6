@@ -21,10 +21,11 @@ import gregtech6.client.render.GTRenderModelListener;
  *
  * <p>Targets: the three oven blockstate models (inactive/active/running —
  * GT6BlockStates.addOven) each get wrapped, so every ACTIVE/RUNNING variant renders
- * plates. The ATLAS WIRING is the consumer-side datagen: the plate sprite
- * ({@code gt6:item/material_sets/metallic/plate}) lands as an explicit source in
- * {@code assets/gt6/atlases/blocks.json} through GT6Atlases (GTRenderModelListener
- * atlas note — the foundation ships zero textures, the consumer card lands them).
+ * plates. The ATLAS WIRING is the consumer-side datagen (GT6Atlases → the Forge
+ * SpriteSourceProvider): the plate sprite ({@code gt6:item/material_sets/metallic/plate})
+ * lands as an explicit single-file source in the block atlas definition
+ * (GTRenderModelListener atlas note — the foundation ships zero textures, the consumer
+ * card lands them).
  */
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTCoverClientListener {

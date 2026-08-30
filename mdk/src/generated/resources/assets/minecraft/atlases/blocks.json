@@ -1,0 +1,8 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:item/material_sets/metallic/plate"
+    }
+  ]
+}
