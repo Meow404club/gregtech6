@@ -45,7 +45,7 @@ public final class GT6ItemModels extends ItemModelProvider {
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */
-    static String iconsetOf(OreDictMaterial material) {
+    public static String iconsetOf(OreDictMaterial material) {
         List<String> tSets = material.mTextureSetsItems;
         return tSets == null || tSets.isEmpty() || tSets.get(0) == null || tSets.get(0).isBlank()
             ? "none"
