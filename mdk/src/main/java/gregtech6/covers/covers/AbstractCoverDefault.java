@@ -9,6 +9,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 
+import net.minecraftforge.fluids.FluidStack;
+
 import gregtech6.covers.CoverData;
 import gregtech6.covers.CoverRegistry;
 import gregtech6.covers.ICover;
@@ -79,4 +81,10 @@ public abstract class AbstractCoverDefault implements ICover {
 
 	@Override public void onBlockUpdate(byte aCoverSide, CoverData aData) {/**/} // :75
 	@Override public void onStoppedUpdate(byte aCoverSide, CoverData aData, boolean aStopped) {/**/} // :76
+
+	/** Upstream default for the :218 hook — no gate unless the cover mounts one (the pump cover does). */
+	@Override public boolean interceptFluidFill(byte aCoverSide, CoverData aData, byte aSide, @Nullable FluidStack aFluidToFill) {return false;}
+
+	/** Upstream default for the :219 hook. */
+	@Override public boolean interceptFluidDrain(byte aCoverSide, CoverData aData, byte aSide, @Nullable FluidStack aFluidToDrain) {return false;}
 }

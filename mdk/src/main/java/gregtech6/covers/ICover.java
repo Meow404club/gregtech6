@@ -8,6 +8,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+import net.minecraftforge.fluids.FluidStack;
+
 /**
  * The cover behaviour contract — 1.20.1 port of gregapi/cover/ICover.java (226 lines)
  * trimmed to the first-cover surface (task p4-cover-core ②, ADR
@@ -34,15 +36,20 @@ import net.minecraft.world.item.ItemStack;
  * <p>Side order: {@code byte} face indices follow the GT6 side order, which equals
  * {@link Direction#get3DDataValue()} (the chest/oven facing precedent).
  *
- * <p>Cut to the pool (spec ②): the logistics/fluid intercept family :209-225, the
- * redstone hooks :190-192, the GUI hooks :198-199 (zero-GUI: the negative-GUIID
- * openCoverGUI path is dead code upstream, R4-3), the bounds/collision family
- * :201-207, onWalkOver :148, addToolTips :143 and the connector hooks :75-80/:183.
+ * <p>Cut to the pool (spec ②): the item/redstone/GUI hooks :190-207, the logistics
+ * override family :220-225 and the connector hooks :75-80/:183. The two fluid
+ * intercept hooks (:218-219) are RESTORED with the pump cover (task p5-barrel-side-rules
+ * spec F): {@link #interceptFluidFill}/{@link #interceptFluidDrain} are the one-way
+ * gate the CoverPump mounts on its covered face; the rest of the fluid family
+ * (getFluidTank*Override/defaults, :221-225) stays pooled.
  */
 public interface ICover {
 
 	/** Upstream CS.TOOL_crowbar — the tool id the dismantling path keys on. */
 	String TOOL_CROWBAR = "crowbar";
+
+	/** Upstream CS.TOOL_screwdriver — the tool id the pump cover's direction toggle keys on (p5 spec C). */
+	String TOOL_SCREWDRIVER = "screwdriver";
 
 	/** Called when the cover got successfully loaded (upstream :45). */
 	void onCoverLoaded(byte aCoverSide, CoverData aData);
@@ -142,6 +149,20 @@ public interface ICover {
 	/** Upstream :196 — the sprite for the holder face visible on adjacent covered sides. */
 	@Nullable
 	ResourceLocation getCoverTextureHolder(byte aCoverSide, CoverData aData, byte aTextureSide);
+
+	/**
+	 * Upstream :218 — the restored fluid intercept. {@code aCoverSide} is the face carrying
+	 * this cover, {@code aSide} the face the fill was requested on; they only differ for
+	 * callers that route one face's request across another cover. @return true to prevent
+	 * the fill (the CoverPump out-face refuses incoming fluid, CoverPump.java:92).
+	 */
+	boolean interceptFluidFill(byte aCoverSide, CoverData aData, byte aSide, @Nullable FluidStack aFluidToFill);
+
+	/**
+	 * Upstream :219 — @return true to prevent the drain out of that face (the CoverPump
+	 * in-face refuses outgoing fluid, CoverPump.java:93).
+	 */
+	boolean interceptFluidDrain(byte aCoverSide, CoverData aData, byte aSide, @Nullable FluidStack aFluidToDrain);
 
 	/**
 	 * Convenience for player-type narrowing (upstream callers pass {@code Entity} and

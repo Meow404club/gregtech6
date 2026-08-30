@@ -13,6 +13,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.fluids.FluidStack;
+
+import gregtech6.fluid.FluidTankGT;
 
 /**
  * The composite coverable-BE surface — 1.20.1 port of the upstream
@@ -293,6 +296,42 @@ public interface ICoverableTE {
 	/** Upstream updateClientData :308 — flags the 03 sync window; the host narrows. */
 	default void syncCoverClientData() {
 		if (this instanceof gregtech6.tileentity.TileEntityBase03TicksAndSync tSync) tSync.updateClientData();
+	}
+
+	// ---------------------------------------------------------------------------
+	// fluid intercept iteration (upstream 04Covers :368-374, restored with p5-barrel-side-rules)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream getFluidTankFillable's cover gate (:368-372): the cover on the queried face
+	 * may refuse the fill. The BarrelFluidHandler wrapper calls this BEFORE its side rules
+	 * (spec A — the cover gate first, then the admission rule). The side-less query (-1)
+	 * carries no face, so no cover can answer it.
+	 */
+	default boolean interceptFluidFill(byte aSide, @Nullable FluidStack aFluidToFill) {
+		if (!hasCovers() || !validSide(aSide)) return false; // :368
+		ICover tCover = getCovers().mBehaviours[aSide];
+		return tCover != null && tCover.interceptFluidFill(aSide, getCovers(), aSide, aFluidToFill); // :370
+	}
+
+	/** Upstream getFluidTankDrainable's cover gate (:374+) — same shape as the fill gate. */
+	default boolean interceptFluidDrain(byte aSide, @Nullable FluidStack aFluidToDrain) {
+		if (!hasCovers() || !validSide(aSide)) return false;
+		ICover tCover = getCovers().mBehaviours[aSide];
+		return tCover != null && tCover.interceptFluidDrain(aSide, getCovers(), aSide, aFluidToDrain);
+	}
+
+	/**
+	 * The pump-cover direct-call seam (p5 spec F, ADR ⑦): the tank the CoverPump pushes
+	 * through. {@code null} = the host has no pump-addressable tank (the pump refuses
+	 * placement there, the upstream :43 {@code canTick() && instanceof IFluidHandler}
+	 * gate). The barrel overrides this to hand out {@code mTank} — the pump moves fluid
+	 * straight through the tank and so bypasses the BarrelFluidHandler side rules, the
+	 * free reverse-output exemption (the upstream FL.move(IFluidTank, ...) direct-call
+	 * shape, FL.java:845-846).
+	 */
+	default @Nullable FluidTankGT getCoverPumpTank() {
+		return null;
 	}
 
 	// ---------------------------------------------------------------------------
