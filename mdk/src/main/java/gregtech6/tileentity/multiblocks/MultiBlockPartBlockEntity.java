@@ -15,6 +15,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 
+import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.TileEntityBase01Root;
 
 /**
@@ -119,6 +120,11 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 
 	, NOTHING                    = ~EVERYTHING
 	;
+
+	/** The registry-path constructor (the BlockEntityType.Builder.of factory form, the oven precedent). */
+	public MultiBlockPartBlockEntity(BlockPos aPos, BlockState aState) {
+		this(GTMultiBlocks.MULTIBLOCK_PART_BE.get(), aPos, aState);
+	}
 
 	/** The test seam: offline fixtures build their own BET (the frozen registry keeps .get() out of reach). */
 	public MultiBlockPartBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
