@@ -1,4 +1,5 @@
 {
+  "block.gt6.barrel_wood": "Wooden Barrel",
   "block.gt6.example_chest": "GT Example Chest",
   "block.gt6.multiblock_coke_oven": "Coke Oven",
   "block.gt6.multiblock_coke_oven_bricks": "Coke Oven Bricks",
@@ -2268,6 +2269,7 @@
   "itemGroup.gt6.dust_div72": "1/72nd Dusts",
   "itemGroup.gt6.dust_small": "Small Dusts",
   "itemGroup.gt6.dust_tiny": "Tiny Dusts",
+  "itemGroup.gt6.fluid_containers": "Fluid Containers",
   "itemGroup.gt6.fluid_pipes": "Fluid Pipes",
   "itemGroup.gt6.foil": "Foils",
   "itemGroup.gt6.gear_gt": "Gears",

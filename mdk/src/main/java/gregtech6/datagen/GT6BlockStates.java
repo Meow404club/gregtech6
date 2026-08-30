@@ -9,6 +9,7 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import gregtech6.block.GTOvenBlock;
+import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMachines;
@@ -50,6 +51,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
         addOven();
         addMultiBlocks();
+        addBarrel();
     }
 
     /**
@@ -88,6 +90,19 @@ public final class GT6BlockStates extends BlockStateProvider {
                 modLoc("block/multiblock_coke_oven_bottom"), modLoc("block/multiblock_coke_oven_top"),
                 modLoc("block/" + aFrontTexture), modLoc("block/multiblock_coke_oven_side"),
                 modLoc("block/multiblock_coke_oven_side"), modLoc("block/multiblock_coke_oven_side"));
+    }
+
+    /**
+     * Task p4-fluid-barrel (W3 provider addition, merge order multiblock→barrel→cover): the
+     * wood fluid barrel as a cube_all placeholder over {@code gt6:textures/block/barrel_wood.png}
+     * (the barrel TESR/lid is a feature-layer omission, MultiTileEntityBarrelWood.java:44-54)
+     * plus the BlockItem model parenting the block model. The texture is a script-generated
+     * placeholder PNG, not JSON.
+     */
+    private void addBarrel() {
+        Block tBarrel = GTBarrels.BARREL.get();
+        simpleBlock(tBarrel, models().cubeAll("barrel_wood", modLoc("block/barrel_wood")));
+        itemModels().withExistingParent("barrel_wood", modLoc("block/barrel_wood"));
     }
 
     /**

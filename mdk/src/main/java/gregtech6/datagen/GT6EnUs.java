@@ -52,6 +52,18 @@ public final class GT6EnUs extends LanguageProvider {
         addFluidPipes();
         addMachines();
         addMultiBlocks();
+        addBarrels();
+    }
+
+    /**
+     * Fluid barrel keys (task p4-fluid-barrel, W3 provider additions): the wood fluid barrel
+     * display name (upstream "Wooden Barrel", the MultiTileEntityBarrelWood row
+     * Loader_MultiTileEntities.java:2136) and the "Fluid Containers" creative tab (the
+     * upstream MTE-registry category of the same row).
+     */
+    private void addBarrels() {
+        add("block.gt6.barrel_wood", "Wooden Barrel");
+        add("itemGroup.gt6.fluid_containers", "Fluid Containers");
     }
 
     /**
