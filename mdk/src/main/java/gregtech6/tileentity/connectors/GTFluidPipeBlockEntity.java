@@ -188,10 +188,12 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 			}
 
 			// :401-410 — any other fluid handler, probed with 1 L and then the full stack (both simulate).
-			// spec ③ gate: the external push runs ONLY through faces carrying the output arrow
-			// (isOutputFace = ioMask bit AND connected — the explicit pump-valve semantics of
-			// task p4-pipe-flow-control); pipe-to-pipe equalisation above is NOT gated.
-			if (!isOutputFace(tSide)) continue;
+			// spec ① (task p5-pipe-flow-semantics): the arrow mask is an OPT-IN pump valve on top
+			// of the GT6 default — mask == 0 keeps the upstream all-faces push (upstream :400-410
+			// gates only on backflow :378 + canEmitFluidsTo :380 + cover :382, no ioMask concept);
+			// a non-zero mask restricts the push to the arrow faces. Pipe-to-pipe equalisation
+			// above is NOT gated.
+			if (!externalPushAllowed(tSide)) continue;
 			IFluidHandler tHandler = tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, tDirection.getOpposite()).orElse(null);
 			if (tHandler == null) continue;
 			FluidStack tProbe1 = aTank.get(1), tProbeAll = aTank.get(Long.MAX_VALUE);
@@ -361,6 +363,22 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	 */
 	public boolean isOutputFace(byte aSide) {
 		return aSide >= 0 && aSide < 6 && (mIoMask & SBIT[aSide]) != 0 && connected(aSide);
+	}
+
+	/**
+	 * spec ① (task p5-pipe-flow-semantics) — the full external-push truth table, the
+	 * corrected form of the p4 hard gate (which left a mask==0 pipe pushing nowhere):
+	 * <ul>
+	 * <li>{@code mIoMask == 0} → the GT6 default, every face pushes (the connection gate
+	 *     itself stays with canEmitFluidsTo, distribute :380);</li>
+	 * <li>{@code mIoMask != 0} → {@link #isOutputFace}, i.e. arrow bit AND connected.</li>
+	 * </ul>
+	 * Only the distribute external branch consults this — the fill-reject twin lives in
+	 * {@link SideFluidHandler#fill}, never in canAcceptFluidsFrom/getFluidTankFillable
+	 * (those are shared with the pipe-to-pipe equalisation receiver, distribute :180).
+	 */
+	public boolean externalPushAllowed(byte aSide) {
+		return mIoMask == 0 || isOutputFace(aSide);
 	}
 
 	/**
