@@ -2,6 +2,8 @@ package gregtech6.covers;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.logging.LogUtils;
@@ -90,13 +92,19 @@ public final class GTCoverCommand {
 						.executes(context -> dismantle(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
 								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))))
 			.then(Commands.literal("mode")
-				// the p5 screwdriver relay — flips the pump cover's direction lane (0 out ↔ 1 in)
-				.executes(context -> mode(context.getSource(), null, Direction.UP))
+				// the p5 screwdriver relay — flips the pump cover's direction lane (0 out ↔ 1 in);
+				// the optional trailing word pins the target direction ("out"/"in") so an RCON
+				// chain can SET a direction instead of guessing the toggle parity
+				.executes(context -> mode(context.getSource(), null, Direction.UP, null))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
-					.executes(context -> mode(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP))
+					.executes(context -> mode(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP, null))
 					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
 						.executes(context -> mode(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
-								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))))
+								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")), null))
+						.then(Commands.argument("target", com.mojang.brigadier.arguments.StringArgumentType.word())
+							.executes(context -> mode(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
+									parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")),
+									com.mojang.brigadier.arguments.StringArgumentType.getString(context, "target")))))))
 			.then(Commands.literal("check")
 				.executes(context -> check(context.getSource(), null))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -194,9 +202,11 @@ public final class GTCoverCommand {
 	/**
 	 * The p5 mode relay: onCoverToolClick with {@link ICover#TOOL_SCREWDRIVER} — the cover
 	 * dispatch skips the crowbar branch (a screwdriver is not a hoe) and hands the tool id
-	 * to the covered behaviour, whose onToolClick flips the visual lane.
+	 * to the covered behaviour, whose onToolClick flips the visual lane. With
+	 * {@code aTarget} ("out"/"in") the command SETS the direction (a single flip when the
+	 * lane differs); without it the command is the plain toggle relay.
 	 */
-	private static int mode(CommandSourceStack source, BlockPos pos, Direction side) {
+	private static int mode(CommandSourceStack source, BlockPos pos, Direction side, @Nullable String aTarget) {
 		CoverableHost tHost = coverableHostAt(source, pos);
 		if (tHost == null) {
 			source.sendFailure(Component.literal("No coverable GT6 BlockEntity at " + (pos != null ? pos.toShortString() : "the source position")));
@@ -207,13 +217,27 @@ public final class GTCoverCommand {
 			source.sendFailure(Component.literal("GT6 cover mode FAILED: no cover on face " + side + " at " + tHost.pos().toShortString()));
 			return 0;
 		}
-		long tDamage = tHost.host().onCoverToolClick(ICover.TOOL_SCREWDRIVER, null, ItemStack.EMPTY, tSide, false);
+		Short tDesired = null;
+		if (aTarget != null) {
+			tDesired = aTarget.equalsIgnoreCase("out") ? (short) 0 : aTarget.equalsIgnoreCase("in") ? (short) 1 : null;
+			if (tDesired == null) {
+				source.sendFailure(Component.literal("GT6 cover mode FAILED: unknown direction '" + aTarget + "' (use out|in)"));
+				return 0;
+			}
+		}
+		short tCurrent = tHost.host().getCovers() == null ? 0 : tHost.host().getCovers().mVisuals[tSide];
+		boolean tFlipNeeded = tDesired == null || tDesired != tCurrent;
+		long tDamage = tFlipNeeded ? tHost.host().onCoverToolClick(ICover.TOOL_SCREWDRIVER, null, ItemStack.EMPTY, tSide, false) : 0;
 		short tVisual = tHost.host().getCovers() == null ? 0 : tHost.host().getCovers().mVisuals[tSide];
 		String tDirection = tVisual == 0 ? "out" : "in";
-		String tReport = String.format("GT6 cover mode %s face %s at %s: toolDamage=%d, visual=%d (%s)",
-				tHost.host(), side, tHost.pos().toShortString(), tDamage, tVisual, tDirection);
-		if (tDamage == 0 || (tVisual != 0 && tVisual != 1)) {
-			source.sendFailure(Component.literal("GT6 cover mode FAILED: " + tReport));
+		String tReport = String.format("GT6 cover mode %s face %s at %s: toolDamage=%d, visual=%d (%s), flipped=%s",
+				tHost.host(), side, tHost.pos().toShortString(), tDamage, tVisual, tDirection, tFlipNeeded);
+		if (tFlipNeeded && tDamage == 0) {
+			source.sendFailure(Component.literal("GT6 cover mode FAILED: the screwdriver toggle did not fire — " + tReport));
+			return 0;
+		}
+		if (tDesired != null && tVisual != tDesired) {
+			source.sendFailure(Component.literal("GT6 cover mode FAILED: direction did not land — " + tReport));
 			return 0;
 		}
 		source.sendSuccess(() -> Component.literal("GT6 cover mode OK: " + tReport), false);
