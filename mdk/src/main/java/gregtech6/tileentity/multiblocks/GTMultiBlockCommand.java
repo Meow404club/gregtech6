@@ -41,9 +41,11 @@ import gregtech6.registry.GTMultiBlocks;
  *     cheap-path check, forced recheck on failure, verdict + linked-part census;</li>
  * <li>{@code tick <pos> <ticks>} — drives the dispatcher manually (the same updateEntity the
  *     real ticker runs), exercising the onTickFirst forced check and the 600-tick poll;</li>
- * <li>{@code input <count> [item] [pos]} — the p6 acceptance feed: inserts through the
- *     gated item capability (slot 0 only); the default feed is gt6:gem_coal, the explicit
- *     item form covers the tag-path oak_log assertion;</li>
+ * <li>{@code input <count> [item|prefix material] [pos]} — the p6/p7 acceptance feed:
+ *     inserts through the gated item capability (slot 0 only); the default feed is
+ *     gt6:gem_coal, the explicit {@code item} form covers the tag-path oak_log assertion,
+ *     and the p7 {@code prefix material} form (case-insensitive internal names, e.g.
+ *     {@code dust Oilshale}) drives the oil-shale rows through GTMaterialItems;</li>
  * <li>{@code ignite [pos]} — the TOOL_igniter branch (MultiTileEntityBasicMachine
  *     :373-379 → TileEntityBase10MultiBlockMachine.ignite());</li>
  * <li>{@code check <pos>} additionally reports the processing state (progress/energy/
@@ -83,20 +85,32 @@ public final class GTMultiBlockCommand {
 			.then(Commands.literal("input")
 				.then(Commands.argument("count", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 999))
 					.executes(aContext -> input(aContext.getSource(),
-							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"), null, null))
+							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"), null, null, null, null))
 					.then(Commands.argument("item", net.minecraft.commands.arguments.item.ItemArgument.item(aEvent.getBuildContext()))
 						.executes(aContext -> input(aContext.getSource(),
 								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"),
-								net.minecraft.commands.arguments.item.ItemArgument.getItem(aContext, "item"), null))
+								net.minecraft.commands.arguments.item.ItemArgument.getItem(aContext, "item"), null, null, null))
 						.then(Commands.argument("pos", BlockPosArgument.blockPos())
 							.executes(aContext -> input(aContext.getSource(),
 									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"),
-									net.minecraft.commands.arguments.item.ItemArgument.getItem(aContext, "item"),
+									net.minecraft.commands.arguments.item.ItemArgument.getItem(aContext, "item"), null, null,
 									BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+					.then(Commands.argument("prefix", com.mojang.brigadier.arguments.StringArgumentType.word())
+						.then(Commands.argument("material", com.mojang.brigadier.arguments.StringArgumentType.word())
+							.executes(aContext -> input(aContext.getSource(),
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"), null,
+									com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "prefix"),
+									com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "material"), null))
+							.then(Commands.argument("pos", BlockPosArgument.blockPos())
+								.executes(aContext -> input(aContext.getSource(),
+										com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"), null,
+										com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "prefix"),
+										com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "material"),
+										BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(aContext -> input(aContext.getSource(),
 								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"),
-								null, BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))
+								null, null, null, BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))
 			.then(Commands.literal("ignite")
 				.executes(aContext -> ignite(aContext.getSource(), null))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -259,13 +273,17 @@ public final class GTMultiBlockCommand {
 	}
 
 	/**
-	 * {@code input <count> [item] [pos]} — fills the input slot through the gated item
-	 * capability (the slot-0 insert gate, canInsertItem2 :549-554). The default feed is
-	 * gt6:gem_coal (GTMaterialItems.get(OP.gem, MT.Coal), the card ruling); an explicit
-	 * {@code item} argument covers the tag-path acceptance (minecraft:oak_log).
+	 * {@code input <count> [item|prefix material] [pos]} — fills the input slot through the
+	 * gated item capability (the slot-0 insert gate, canInsertItem2 :549-554). The default
+	 * feed is gt6:gem_coal (GTMaterialItems.get(OP.gem, MT.Coal), the p6 card ruling); an
+	 * explicit {@code item} argument covers the tag-path acceptance (minecraft:oak_log), and
+	 * the p7 {@code prefix material} form resolves the GT material universe (case-insensitive
+	 * prefix internal name over OreDictPrefix.VALUES, MaterialRegistry.byName with the
+	 * upstream sanitize fallback) so the oil-shale rows are drivable without hand-naming ids.
 	 */
 	private static int input(CommandSourceStack aSource, int aCount,
-			@Nullable net.minecraft.commands.arguments.item.ItemInput aItem, BlockPos aPos) {
+			@Nullable net.minecraft.commands.arguments.item.ItemInput aItem,
+			@Nullable String aPrefixName, @Nullable String aMaterialName, BlockPos aPos) {
 		TileEntityCokeOven tOven = ovenAt(aSource, aPos);
 		if (tOven == null) {
 			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + (aPos != null ? aPos.toShortString() : "the source position")));
@@ -279,6 +297,21 @@ public final class GTMultiBlockCommand {
 				aSource.sendFailure(Component.literal("Cannot resolve item: " + e));
 				return 0;
 			}
+		} else if (aPrefixName != null && aMaterialName != null) {
+			gregapi.oredict.OreDictPrefix tPrefix = findPrefix(aPrefixName);
+			gregapi.oredict.OreDictMaterial tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.byName(aMaterialName);
+			if (tMaterial == null) tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.byName(gregapi.oredict.MaterialRegistry.sanitize(aMaterialName));
+			if (tPrefix == null || tMaterial == null) {
+				aSource.sendFailure(Component.literal("Cannot resolve GT material pair: " + aPrefixName + " " + aMaterialName));
+				return 0;
+			}
+			net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tHandle =
+					gregtech6.registry.GTMaterialItems.get(tPrefix, tMaterial);
+			if (tHandle == null || !tHandle.isPresent()) {
+				aSource.sendFailure(Component.literal("No gt6 item for prefix '" + tPrefix.mNameInternal + "' + material '" + tMaterial.mNameInternal + "'"));
+				return 0;
+			}
+			tStack = new ItemStack(tHandle.get(), aCount);
 		} else {
 			net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tHandle =
 					gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.gem, gregapi.data.MT.Coal);
@@ -302,6 +335,15 @@ public final class GTMultiBlockCommand {
 		aSource.sendSuccess(() -> Component.literal(tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The case-insensitive internal-name lookup over the registered prefixes (RCON-friendly). */
+	@Nullable
+	private static gregapi.oredict.OreDictPrefix findPrefix(String aName) {
+		for (gregapi.oredict.OreDictPrefix tPrefix : gregapi.oredict.OreDictPrefix.VALUES) {
+			if (tPrefix.mNameInternal.equalsIgnoreCase(aName)) return tPrefix;
+		}
+		return null;
 	}
 
 	/** {@code ignite [pos]} — the TOOL_igniter branch (:373-379), the acceptance-chain ignition entry. */
