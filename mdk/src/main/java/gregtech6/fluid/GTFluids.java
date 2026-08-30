@@ -139,6 +139,56 @@ public final class GTFluids {
 			() -> new LiquidBlock(NATURAL_GAS, BlockBehaviour.Properties.of()
 					.noCollission().noLootTable())); // a gas block: no strength ramp, nothing drops
 
+	private static ForgeFlowingFluid.Properties creosoteProperties() {
+		// the four-DR template again (natural_gas :96-140 shape, the iron_molten :61-94 original)
+		return new ForgeFlowingFluid.Properties(CREOSOTE_TYPE, CREOSOTE, CREOSOTE_FLOWING)
+				.block(CREOSOTE_BLOCK);
+	}
+
+	/**
+	 * {@code gt6:creosote} — the Coke Oven by-product carrier (task p6-cokeoven-processing,
+	 * ADR ruling ③). Density +1000 is a PORT-OWNED CARRIER VALUE, not an upstream measurement:
+	 * the port's density consumers only branch on the sign (the P5 gravity rule, FL.java:775
+	 * strictly {@code > 0} = heavier than air), the material density bridge stays in the pool.
+	 * 300 K keeps it wood-barrel safe; heavier than air means the barrel pushes it out of the
+	 * BOTTOM face — the P5 gravity semantics compose with the Coke Oven's top push for free.
+	 * Client layers reuse the vanilla water textures over a dark-brown creosote tint (the
+	 * natural_gas initializeClient shape); no bucket item (the RCON driver fills barrels
+	 * through the capability, the mB amounts ride the machine's output tank).
+	 */
+	public static final RegistryObject<FluidType> CREOSOTE_TYPE = FLUID_TYPES.register("creosote",
+			() -> new FluidType(FluidType.Properties.create()
+					.descriptionId("fluid.gt6.creosote")
+					.temperature(300)
+					.density(1000)) {
+				@Override
+				public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+					aConsumer.accept(new IClientFluidTypeExtensions() {
+						private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
+						private static final ResourceLocation FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
+
+						@Override
+						public ResourceLocation getStillTexture() {return STILL;}
+
+						@Override
+						public ResourceLocation getFlowingTexture() {return FLOW;}
+
+						@Override
+						public int getTintColor() {return 0xFF3B2410;} // dark creosote brown over the vanilla textures
+					});
+				}
+			});
+
+	public static final RegistryObject<FlowingFluid> CREOSOTE = FLUIDS.register("creosote",
+			() -> new ForgeFlowingFluid.Source(creosoteProperties()));
+
+	public static final RegistryObject<Fluid> CREOSOTE_FLOWING = FLUIDS.register("creosote_flowing",
+			() -> new ForgeFlowingFluid.Flowing(creosoteProperties()));
+
+	public static final RegistryObject<LiquidBlock> CREOSOTE_BLOCK = BLOCKS.register("creosote_block",
+			() -> new LiquidBlock(CREOSOTE, BlockBehaviour.Properties.of()
+					.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
+
 	private GTFluids() {}
 
 	@SubscribeEvent
@@ -166,6 +216,11 @@ public final class GTFluids {
 					ForgeRegistries.FLUIDS.getKey(NATURAL_GAS_FLOWING.get()),
 					ForgeRegistries.FLUID_TYPES.get().getKey(NATURAL_GAS_TYPE.get()),
 					NATURAL_GAS_TYPE.get().getDensity());
+			GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} density {} (the coke oven by-product, p6)",
+					ForgeRegistries.FLUIDS.getKey(CREOSOTE.get()),
+					ForgeRegistries.FLUIDS.getKey(CREOSOTE_FLOWING.get()),
+					ForgeRegistries.FLUID_TYPES.get().getKey(CREOSOTE_TYPE.get()),
+					CREOSOTE_TYPE.get().getDensity());
 			GT6Mod.LOGGER.info("GT6 vanilla fluid types: water {} lava {} (FluidBridge carries them without registration)",
 					ForgeRegistries.FLUID_TYPES.get().getKey(ForgeMod.WATER_TYPE.get()),
 					ForgeRegistries.FLUID_TYPES.get().getKey(ForgeMod.LAVA_TYPE.get()));
