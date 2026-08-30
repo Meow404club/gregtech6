@@ -31,7 +31,7 @@ import gregtech6.tileentity.machines.TileEntityOven;
  * (upstream byte mFacing, the GT6 side order == Direction horizontal subset) plus
  * ACTIVE/RUNNING, the two visual bits of upstream getVisualData :1010-1011
  * ({@code (mActive?1:0)|(mRunning?2:0)}) re-expressed as properties (A-tier rendering:
- * 24 datagen blockstate variants, no dynamic model yet).
+ * 16 datagen blockstate variants (4 horizontal facings), no dynamic model yet).
  *
  * <p>use() is the chest/open-GUI chain (GTExampleChestBlock.use, upstream
  * onBlockActivated3 :483-486 → openGUI) without the blocked-above guard (a furnace-style

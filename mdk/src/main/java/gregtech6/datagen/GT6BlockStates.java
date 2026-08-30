@@ -51,7 +51,7 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * Task p4-machine-oven (W2-exclusive provider addition): the A-tier Oven rendering — a
-     * pure datagen blockstate over 6 facing x 2 active x 2 running = 24 variants. Three
+     * pure datagen blockstate over 4 horizontal facings x 2 active x 2 running = 16 variants (HORIZONTAL_FACING, A-tier furnace idiom). Three
      * models (inactive/active/running), each a {@code cube} with the four-texture key set
      * (top/bottom/side/front, spec 8): the front texture is the state carrier, mirroring the
      * upstream getTexture2 overlay pick (MultiTileEntityBasicMachine.java:1014, mActive →
