@@ -292,7 +292,8 @@ public final class GTMultiBlockCommand {
 				.map(tHandler -> tHandler.insertItem(0, tStack, false))
 				.orElse(tStack);
 		int tInserted = aCount - tLeftover.getCount();
-		String tReport = String.format("GT6 coke oven input %d %s at %s: inserted %d%s", aCount, tStack.getItem(),
+		String tReport = String.format("GT6 coke oven input %d %s at %s: inserted %d%s", aCount,
+				net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(tStack.getItem()),
 				tOven.getBlockPos().toShortString(), tInserted, tLeftover.isEmpty() ? "" : ", leftover " + tLeftover.getCount());
 		if (tInserted <= 0) {
 			aSource.sendFailure(Component.literal(tReport));
