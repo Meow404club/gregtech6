@@ -36,6 +36,13 @@ import gregtech6.tileentity.tank.TileEntityBase08Barrel;
  * face: our wrapper gained side rules, and a pump mounted on a side face would dead-lock
  * against them (the architect correction; upstream's face-routed pump worked only because
  * upstream barrels have no side rules — FL.java:846 already calls the tank directly).
+ * The same correction extends to the PULL end: in-mode drains the neighbour through its
+ * side-less capability (the 1.20.1 all-open entry, ruling ⑥ — the natural counterpart of
+ * upstream's direct tank access), because the neighbour's own side rules would otherwise
+ * refuse every side-face drain ("sides take in, never give") and dead-lock the pull.
+ * The PUSH end stays face-routed (the neighbour's back face): fill is face-open on
+ * barrels, and pushing into a pipe must land as SideFluidHandler.fill(side) so the pipe
+ * keeps its intake semantics (ruling ⑦).
  */
 public class CoverPump extends AbstractCoverDefault {
 
@@ -67,31 +74,33 @@ public class CoverPump extends AbstractCoverDefault {
 		if (!aIsServerSide || aData.mStopped || !isPumpBeat(aTimer)) return; // :68
 		FluidTankGT tTank = aData.mTileEntity.getCoverPumpTank();
 		if (tTank == null) return;
-		IFluidHandler tAdjacent = adjacentHandler(aData.mTileEntity, aCoverSide);
-		if (tAdjacent == null) return;
 		// :71-73 — the while-loop keeps upstream fidelity; with a single tank and a
 		// bucket-free fill surface one move already consumes the whole budget.
 		if (aData.mVisuals[aCoverSide] == 0) { // out: host tank → the adjacent handler
 			long tBudget = THROUGHPUT, tMoved = 1;
-			while (tMoved > 0 && tBudget > 0) tBudget -= (tMoved = TileEntityBase08Barrel.moveTankToHandler(tTank, tAdjacent, tBudget));
-		} else { // in: the adjacent handler → the host tank
+			while (tMoved > 0 && tBudget > 0) tBudget -= (tMoved = TileEntityBase08Barrel.moveTankToHandler(tTank, adjacentHandler(aData.mTileEntity, aCoverSide, false), tBudget));
+		} else { // in: the adjacent tank → the host tank
 			long tBudget = THROUGHPUT, tMoved = 1;
-			while (tMoved > 0 && tBudget > 0) tBudget -= (tMoved = TileEntityBase08Barrel.moveHandlerToTank(tAdjacent, tTank, tBudget));
+			while (tMoved > 0 && tBudget > 0) tBudget -= (tMoved = TileEntityBase08Barrel.moveHandlerToTank(adjacentHandler(aData.mTileEntity, aCoverSide, true), tTank, tBudget));
 		}
 	}
 
 	/**
-	 * Upstream getAdjacentTank(aSide) (WorldAndCoords.java:118-129): the handler of the
-	 * block at the covered face, probed at its back face — the same neighbour query the
-	 * barrel gravity push and the pipe distribute use (GTFluidPipeBlockEntity.java:195).
+	 * Upstream getAdjacentTank(aSide) (WorldAndCoords.java:118-129) — the handler of the
+	 * block at the covered face. The push probes the neighbour's back face (the same
+	 * neighbour query the barrel gravity push and the pipe distribute use,
+	 * GTFluidPipeBlockEntity.java:195); the pull uses the side-less query instead, because
+	 * the neighbour's side rules would refuse every side-face drain and dead-lock the
+	 * pump's own pull (the barrel null-side path is the all-open one, ruling ⑥).
 	 */
-	private static @Nullable IFluidHandler adjacentHandler(ICoverableTE aHost, byte aCoverSide) {
+	private static @Nullable IFluidHandler adjacentHandler(ICoverableTE aHost, byte aCoverSide, boolean aSideLessPull) {
 		BlockEntity tBE = aHost.self();
 		Level tLevel = tBE.getLevel();
 		if (tLevel == null) return null;
 		Direction tDir = Direction.from3DDataValue(aCoverSide);
 		BlockEntity tNeighbor = tLevel.getBlockEntity(tBE.getBlockPos().relative(tDir));
-		return tNeighbor == null ? null : tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, tDir.getOpposite()).orElse(null);
+		return tNeighbor == null ? null
+				: tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, aSideLessPull ? null : tDir.getOpposite()).orElse(null);
 	}
 
 	/** Upstream :59-62 — the screwdriver flips the visual lane 0 ↔ 1 (the pipe special case is cut with its subsystem); 1000 = the tool damage. */
