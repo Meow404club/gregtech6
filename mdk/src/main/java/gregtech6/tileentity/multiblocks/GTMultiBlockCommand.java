@@ -278,8 +278,8 @@ public final class GTMultiBlockCommand {
 	 * feed is gt6:gem_coal (GTMaterialItems.get(OP.gem, MT.Coal), the p6 card ruling); an
 	 * explicit {@code item} argument covers the tag-path acceptance (minecraft:oak_log), and
 	 * the p7 {@code prefix material} form resolves the GT material universe (case-insensitive
-	 * prefix internal name over OreDictPrefix.VALUES, MaterialRegistry.byName with the
-	 * upstream sanitize fallback) so the oil-shale rows are drivable without hand-naming ids.
+	 * internal names via {@link #findPrefix}/{@link #findMaterial}, e.g. {@code dust OilShale})
+	 * so the oil-shale rows are drivable without hand-naming ids.
 	 */
 	private static int input(CommandSourceStack aSource, int aCount,
 			@Nullable net.minecraft.commands.arguments.item.ItemInput aItem,
@@ -299,8 +299,7 @@ public final class GTMultiBlockCommand {
 			}
 		} else if (aPrefixName != null && aMaterialName != null) {
 			gregapi.oredict.OreDictPrefix tPrefix = findPrefix(aPrefixName);
-			gregapi.oredict.OreDictMaterial tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.byName(aMaterialName);
-			if (tMaterial == null) tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.byName(gregapi.oredict.MaterialRegistry.sanitize(aMaterialName));
+			gregapi.oredict.OreDictMaterial tMaterial = findMaterial(aMaterialName);
 			if (tPrefix == null || tMaterial == null) {
 				aSource.sendFailure(Component.literal("Cannot resolve GT material pair: " + aPrefixName + " " + aMaterialName));
 				return 0;
@@ -342,6 +341,26 @@ public final class GTMultiBlockCommand {
 	private static gregapi.oredict.OreDictPrefix findPrefix(String aName) {
 		for (gregapi.oredict.OreDictPrefix tPrefix : gregapi.oredict.OreDictPrefix.VALUES) {
 			if (tPrefix.mNameInternal.equalsIgnoreCase(aName)) return tPrefix;
+		}
+		return null;
+	}
+
+	/**
+	 * The case-insensitive internal-name lookup over the registered materials, merged onto the
+	 * registration target (MaterialRegistry.get alias resolution). byName alone is exact-match
+	 * AND can land on an id -1 auto-invalid placeholder shadowing the real name — e.g. the
+	 * oredict name "Oil Shale" gives mNameInternal "OilShale" (item gt6:dust_oil_shale) while
+	 * "Oilshale" sits in the map as an mID -1 husk — so the scan requires mID >= 0.
+	 */
+	@Nullable
+	private static gregapi.oredict.OreDictMaterial findMaterial(String aName) {
+		gregapi.oredict.OreDictMaterial tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.byName(aName);
+		if (tMaterial == null) tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.byName(gregapi.oredict.MaterialRegistry.sanitize(aName));
+		if (tMaterial != null && tMaterial.mID >= 0) return gregapi.oredict.MaterialRegistry.INSTANCE.get(tMaterial);
+		for (gregapi.oredict.OreDictMaterial tCandidate : gregapi.oredict.OreDictMaterial.MATERIAL_MAP.values()) {
+			if (tCandidate.mID >= 0 && tCandidate.mNameInternal.equalsIgnoreCase(aName)) {
+				return gregapi.oredict.MaterialRegistry.INSTANCE.get(tCandidate);
+			}
 		}
 		return null;
 	}
