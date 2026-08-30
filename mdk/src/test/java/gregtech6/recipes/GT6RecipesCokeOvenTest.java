@@ -81,7 +81,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 	@Test
 	void walkAssertsEveryRowResolvesInTheUniverse() {
 		Set<PrefixMaterial> tUniverse = new HashSet<>(GTMaterialItems.registrationOrder());
-		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.TABLE) {
+		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.table()) {
 			assertTrue(tUniverse.contains(new PrefixMaterial(tRow.inPrefix(), tRow.inMaterial())),
 					"row " + tRow.note() + ": input " + tRow.inPrefix().mNameInternal + "/" + tRow.inMaterial().mNameInternal + " must be a registered pair");
 			for (GT6RecipesCokeOven.Output tOutput : tRow.outputs()) {
@@ -128,7 +128,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 	/** The pooled entries: no block prefix, no Oilshale, and the skip list declares them. */
 	@Test
 	void pooledEntriesAreDeclaredNotTranscribed() {
-		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.TABLE) {
+		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.table()) {
 			assertNotSame(OP.blockRaw, tRow.inPrefix());
 			assertNotSame(OP.blockIngot, tRow.inPrefix());
 			assertNotSame(OP.blockGem, tRow.inPrefix());
@@ -142,7 +142,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		assertTrue(tSkipped.contains("Oilshale"));
 		assertTrue(tSkipped.contains("beam"));
 		assertTrue(tSkipped.contains("#minecraft:logs"), "the tag listener replaces the log family");
-		assertEquals(24, GT6RecipesCokeOven.TABLE.size(), "12 Coal + 12 Lignite transcribed rows");
+		assertEquals(24, GT6RecipesCokeOven.table().size(), "12 Coal + 12 Lignite transcribed rows");
 	}
 
 	/** The creosote fluid is registered under the gt6:creosote id (the live registry is RCON-verified). */
@@ -160,7 +160,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCokeOven.sCreosoteResolver = () -> Fluids.WATER; // stand-in carrier; the real fluid id is asserted above
 
 		GT6RecipesCokeOven.load();
-		assertEquals(GT6RecipesCokeOven.TABLE.size(), GT6RecipeMaps.COKE_OVEN.mRecipeList.size(), "every row resolves in the synthetic universe — zero skips");
+		assertEquals(GT6RecipesCokeOven.table().size(), GT6RecipeMaps.COKE_OVEN.mRecipeList.size(), "every row resolves in the synthetic universe — zero skips");
 
 		// the positive control lookup: a gem Coal stack finds its row and consumes it
 		GT6RecipesCokeOven.StaticRow tRow = findRow(OP.gem, MT.Coal);
@@ -207,7 +207,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 	}
 
 	private static GT6RecipesCokeOven.StaticRow findRow(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
-		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.TABLE) {
+		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.table()) {
 			if (tRow.inPrefix() == aPrefix && tRow.inMaterial() == aMaterial) return tRow;
 		}
 		return null;

@@ -103,9 +103,21 @@ public final class GT6RecipesCokeOven {
 
 	/**
 	 * The 24 transcribed material-universe rows (Loader_Recipes_Other.java:775-786 Coal,
-	 * :791-802 Lignite). Order mirrors the upstream file order.
+	 * :791-802 Lignite), order mirroring the upstream file order.
+	 *
+	 * <p><b>Lazily built</b>: {@code TABLE} used to be a static field, but the
+	 * {@code @EventBusSubscriber} annotation scan class-loads this class at MOD CONSTRUCTION —
+	 * before {@code MT.init()} — so the OP/MT references captured there were null (the live
+	 * server poured 0/24; the offline tests only passed because their {@code @BeforeAll}
+	 * initialized the materials first). {@link #table()} defers the capture to the first
+	 * {@link #load()} call, after the material system exists.
 	 */
-	public static final List<StaticRow> TABLE = List.of(
+	private static volatile List<StaticRow> sTable = null;
+
+	/** The transcribed rows, captured on first use (one material generation). */
+	public static List<StaticRow> table() {
+		List<StaticRow> tTable = sTable;
+		if (tTable == null) sTable = tTable = List.of(
 		// Coal (Loader_Recipes_Other.java:775-786)
 		new StaticRow(":775", OP.gem                  , MT.Coal, 1, 3600,  500, new Output(OP.gem   , MT.CoalCoke, 1)),
 		new StaticRow(":776", OP.nugget               , MT.Coal, 9, 3600,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
@@ -132,6 +144,8 @@ public final class GT6RecipesCokeOven {
 		new StaticRow(":800", OP.crushedPurifiedTiny  , MT.Lignite, 9, 3600,  750, chunkOut(OP.chunkGt, MT.LigniteCoke, 5)),
 		new StaticRow(":801", OP.crushedCentrifuged   , MT.Lignite, 1, 3600,  750, chunkOut(OP.chunkGt, MT.LigniteCoke, 6)),
 		new StaticRow(":802", OP.crushedCentrifugedTiny, MT.Lignite, 9, 3600, 750, chunkOut(OP.chunkGt, MT.LigniteCoke, 6)));
+		return tTable;
+	}
 
 	/** The coal/lignite chunk-family outputs: n identical chunkGt stacks (:783-786/:799-802). */
 	private static Output[] chunkOut(OreDictPrefix aPrefix, OreDictMaterial aMaterial, int aCount) {
@@ -170,7 +184,7 @@ public final class GT6RecipesCokeOven {
 		if (tMap == null) return; // reset() between init and load — a broken lifecycle, nothing to pour into
 
 		int tPoured = 0, tSkipped = 0;
-		for (StaticRow tRow : TABLE) {
+		for (StaticRow tRow : table()) {
 			Recipe tRecipe = buildRecipe(tRow);
 			if (tRecipe == null) {tSkipped++; continue;} // = upstream mat() → null silent drop
 			tMap.addRecipe(tRecipe);
@@ -219,8 +233,9 @@ public final class GT6RecipesCokeOven {
 		return tHandle == null ? null : tHandle.get();
 	}
 
-	/** Test seam: clears the poured flag so a fresh generation can re-pour (RecipeMap.reset() clears the maps). */
+	/** Test seam: clears the poured flag and the captured table so a fresh generation can re-pour. */
 	static void resetForTest() {
 		sLoaded = false;
+		sTable = null;
 	}
 }
