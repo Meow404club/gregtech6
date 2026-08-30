@@ -246,11 +246,13 @@ public final class GTMultiBlockCommand {
 			ItemStack tStack = aOven.slot(i);
 			if (tStack.isEmpty()) continue;
 			if (rSlots.length() > 0) rSlots.append(", ");
-			rSlots.append(i).append("=").append(tStack.getCount()).append("x ").append(tStack.getItem());
+			rSlots.append(i).append("=").append(tStack.getCount()).append("x ")
+					.append(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(tStack.getItem()));
 		}
 		String tTank = aOven.mTanksOutput[0].isEmpty()
 				? "-"
-				: aOven.mTanksOutput[0].amount() + "mB " + aOven.mTanksOutput[0].fluid().getFluid();
+				: aOven.mTanksOutput[0].amount() + "mB "
+						+ net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(aOven.mTanksOutput[0].fluid().getFluid());
 		return String.format("machine: progress=%d/%d energy=%d min_energy=%d ignited=%d active=%s running=%s stopped=%s tank=[%s] slots=[%s]",
 				aOven.mProgress, aOven.mMaxProgress, aOven.mEnergy, aOven.mMinEnergy, aOven.mIgnited,
 				aOven.mActive, aOven.mRunning, aOven.mStopped, tTank, rSlots.length() == 0 ? "-" : rSlots);
