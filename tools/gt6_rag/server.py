@@ -83,7 +83,8 @@ TOOLS: dict[str, dict] = {
                 T("limit", "integer", False, "返回条数"),
                 T("path_glob", "string", False, "文件名 glob 过滤")],
         desc="语义+词法混合检索已索引的源码/文档（向量+BM25+RRF+Cross-Encoder 精排；GT6 1.7.10、"
-             "GTCEu Modern、原版 1.20.1 反编译、Forge/NeoForge API 与文档、项目 docs）。\n\n"
+             "GTCEu Modern、原版 1.20.1 反编译、Forge/NeoForge API 与文档、project=本仓移植代码"
+             "（根 gregapi+mdk 1.20.1+单测+tools）与 docs 决策文档）。\n\n"
              "适用：不知道确切类名/方法名、按概念或行为意图找代码（如'多方块校验怎么做的'、"
              "'物品同步到客户端的逻辑在哪'）、跨资料源找同类实现。\n"
              "已知确切符号名时 sym_query 更快；本工具命中后用 get_source 通读原文。\n"

@@ -104,10 +104,14 @@ def iter_source_files(source: str, cfg: dict, limit_files: int | None = None):
         return
     inc = cfg.get("include", ["**/*"])
     exc = cfg.get("exclude", [])
+    # prune 按目录名整棵剪枝（project 源 root="." 时避免走进 tmp/、mdk/src/generated
+    # 等数万文件的无关子树——exclude 只滤文件，os.walk 仍会遍历）
+    prune = frozenset(cfg.get("prune", []))
     n = 0
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = sorted(d for d in dirnames
-                             if d not in (".git", "node_modules", "build", ".gradle", "target"))
+                             if d not in (".git", "node_modules", "build", ".gradle", "target")
+                             and d not in prune)
         for fn in sorted(filenames):
             full = Path(dirpath) / fn
             rel_root = full.relative_to(root).as_posix()

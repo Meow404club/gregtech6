@@ -73,14 +73,34 @@
   },
   "project": {
     "root": ".",
-    "lang": "md",
+    "lang": "auto",
     "include": [
       "docs/*.md",
       "docs/**/*.md",
-      "AGENTS.md"
+      "AGENTS.md",
+      "src/main/java/**/*.java",
+      "src/test/java/**/*.java",
+      "mdk/src/main/java/**/*.java",
+      "mdk/src/test/java/**/*.java",
+      "tools/*.py",
+      "tools/**/*.py"
     ],
-    "exclude": [],
-    "desc": "本项目自身的移植决策、状态与架构文档"
+    "exclude": [
+      "tmp/**",
+      "tools/.venv/**"
+    ],
+    "prune": [
+      "tmp",
+      "generated",
+      "run",
+      "out",
+      ".venv",
+      "__pycache__",
+      ".zcode",
+      ".githooks",
+      "gradle"
+    ],
+    "desc": "本项目移植仓库本体：根 gregapi(src/) + mdk 1.20.1 模块 Java 源码与单测 + tools 工具链 + docs/AGENTS 决策文档"
   },
   "harvest": {
     "root": "tmp/harvest",
