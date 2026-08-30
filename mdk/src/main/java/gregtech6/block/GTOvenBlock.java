@@ -84,6 +84,13 @@ public class GTOvenBlock extends GTEntityBlock {
 		}
 		BlockEntity tBlockEntity = aLevel.getBlockEntity(aPos);
 		if (tBlockEntity instanceof TileEntityOven tOven && aPlayer instanceof ServerPlayer tServerPlayer) {
+			// upstream onBlockActivated2 :106-133 — the cover machinery consumes the click first
+			// (the covered-face intercepts, then the attachCoversFirst install branch :118-123);
+			// false falls through to the GUI open (upstream onBlockActivated3 = :124)
+			if (tOven.onCoverUse(aPlayer, (byte) aHit.getDirection().get3DDataValue(), aPlayer.getItemInHand(aHand),
+					(float) (aHit.getLocation().x - aPos.getX()), (float) (aHit.getLocation().y - aPos.getY()), (float) (aHit.getLocation().z - aPos.getZ()))) {
+				return InteractionResult.CONSUME;
+			}
 			NetworkHooks.openScreen(tServerPlayer, tOven, aPos); // upstream openGUI
 		}
 		return InteractionResult.CONSUME;
