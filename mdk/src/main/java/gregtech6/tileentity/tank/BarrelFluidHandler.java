@@ -112,6 +112,7 @@ public class BarrelFluidHandler implements IFluidHandler {
 	 * sides (2-5) refuse every drain. An empty content refuses on the gated faces too.
 	 */
 	public static boolean drainAllowedBySide(byte aSide, @Nullable FluidStack aFluid) {
+		if (aSide < 0) return true; // ruling ⑥: the side-less path never consults the content
 		return drainAllowedBySide(aSide, fluidDensitySign(aFluid));
 	}
 
