@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -16,7 +17,14 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
+import gregtech6.client.render.GTModelProperties;
+import gregtech6.client.render.GTRenderUpdates;
+import gregtech6.covers.CoverData;
+import gregtech6.covers.GTCoverRenderSnapshot;
+import gregtech6.covers.ICoverableTE;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
@@ -60,8 +68,15 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * are feature-layer omissions. The world-fill path deliberately has NO fill-time fluid
  * gate: upstream fills first and melts on the next tick (:162 is the protection), the
  * {@code allowFluid} temperature gate (:233-235) belonged to the cut item face.
+ *
+ * <p>Cover wiring (task p5-barrel-side-rules spec ④ — the oven :167-177/:221/:230/:241/:652
+ * template, composition over the {@link ICoverableTE} defaults): the store lives here, the
+ * covers ride the NBT pair and the 03 sync channels, and the barrel hands
+ * {@code mTank} out through {@link #getCoverPumpTank()} — the pump-cover direct-call seam
+ * that lets the pump bypass the {@link BarrelFluidHandler} side rules (the upstream
+ * FL.move(IFluidTank, ...) shape, the free reverse-output exemption).
  */
-public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSync {
+public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSync implements ICoverableTE {
 
 	/** NBT keys — upstream CS.java:1355/:1258/:1262 ("gt.capacity.hu"/"gt.tank"/"gt.tankcap") in the in-repo plain key form. */
 	public static final String NBT_CAPACITY_HU = "capacity.hu";
@@ -73,6 +88,29 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 
 	/** Upstream :55 — the melt-down ceiling in Kelvin; MAX_VALUE means nothing melts (no material bridge). */
 	public long mMeltingPoint = Long.MAX_VALUE;
+
+	/** Upstream 06Covers :63 mCovers — {@code null} while no face carries a cover (the oven template). */
+	public CoverData mCovers = null;
+
+	@Override
+	public CoverData getCovers() {
+		return mCovers;
+	}
+
+	@Override
+	public void setCovers(CoverData aCoverData) {
+		mCovers = aCoverData;
+	}
+
+	/**
+	 * The p5 pump seam (ICoverableTE.getCoverPumpTank): the pump cover moves fluid straight
+	 * through {@code mTank}, bypassing the {@link BarrelFluidHandler} side rules — direct
+	 * tank access is the upstream FL.move(IFluidTank, ...) semantics (FL.java:845-846).
+	 */
+	@Override
+	public FluidTankGT getCoverPumpTank() {
+		return mTank;
+	}
 
 	protected TileEntityBase08Barrel(boolean aIsTicking, BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 		super(aIsTicking, aType, aPos, aState);
@@ -94,24 +132,116 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 		mTank.setPreventDraining(keepsFilter()); // :69 — stickiness re-applied on every load
 		if (aNBT.contains(NBT_TANK_CAPACITY, Tag.TAG_ANY_NUMERIC)) mTank.setCapacity(aNBT.getLong(NBT_TANK_CAPACITY));
 		mTank.readFromNBT(aNBT, NBT_TANK); // :69
+		readCoversFromNBT(aNBT); // upstream 06Covers :68 — the covers ride the tank NBT pair
 	}
 
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
 		mTank.writeToNBT(aNBT, NBT_TANK); // :77 (mode/progress ride the cut sealed-fermentation pool)
+		writeCoversToNBT(aNBT); // upstream 06Covers :74
 	}
 
 	// ---------------------------------------------------------------------------
-	// tick: the melt-down judgment (upstream onTick2 :157-218, everything but :162 cut)
+	// tick chain: covers validity + pre/post + the melt-down judgment (:157-218 trimmed)
 	// ---------------------------------------------------------------------------
 
 	@Override
+	public void onTickFirst(boolean aIsServerSide) {
+		if (aIsServerSide) {
+			checkCoverValidity(); // upstream 06Covers :191 — the admission sweep rides onTickFirst (oven :221 template)
+		}
+	}
+
+	@Override
 	public void onTick(long aTimer, boolean aIsServerSide) {
-		if (!aIsServerSide) return;
-		FluidStack tFluid = mTank.getFluid();
-		if (tFluid == null || tFluid.isEmpty() || tFluid.getAmount() <= 0) return; // :160-161
-		if (meltsDown(tFluid) && meltdown()) return; // :162
+		// upstream 06Covers :200 — the cover tick precedes the barrel business (oven :230 template)
+		if (hasCovers()) getCovers().tickPre(aTimer, aIsServerSide, mBlockUpdated, false);
+		if (aIsServerSide) {
+			FluidStack tFluid = mTank.getFluid();
+			if (tFluid == null || tFluid.isEmpty() || tFluid.getAmount() <= 0) return; // :160-161
+			if (meltsDown(tFluid) && meltdown()) return; // :162
+			pushByGravity(); // the p5 passive discharge (spec ②) — after the melt judgment, per the card
+		}
+		// upstream 06Covers :202 — the cover tick follows the barrel business (oven :241 template)
+		if (hasCovers()) getCovers().tickPost(aTimer, aIsServerSide, mBlockUpdated, false);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the passive gravity discharge (p5 spec ② — the upstream B[0] connected-tank push
+	// FL.move(IFluidTank, ...) :845-846, made an always-on rule with a bounded budget)
+	// ---------------------------------------------------------------------------
+
+	/** Ruling ② — 1000 L/tick: full force (the upstream Long.MAX → bindInt) would void a 16000 L barrel in one tick and make the pump's rate meaningless. */
+	public static final long GRAVITY_TRANSFER_PER_TICK = 1000;
+
+	/**
+	 * The p5 gravity push: lighter-than-air rises (UP), everything else falls (DOWN — the
+	 * binary ruling ③; the upstream gas → ALL_SIDES_VERTICAL double branch is cut with the
+	 * FL.gas name-list machinery, density 0 falls with the upstream {@code else} catch-all).
+	 * The move is the fill-then-drain shape: the target's acceptance is measured by an
+	 * executed fill BEFORE the source pays, so a refusing or absent neighbour costs
+	 * nothing. Both ends bypass the {@link BarrelFluidHandler} side rules on purpose —
+	 * the source is {@code mTank} directly and the target is the neighbour's own
+	 * capability at its back face (the upstream getAdjacentTank → FL.move direct-call
+	 * semantics, FL.java:846); pushing into a pipe lands as SideFluidHandler.fill(side),
+	 * pushing into a barrel is its face-open fill.
+	 */
+	protected void pushByGravity() {
+		Direction tDir = gravityDirection(BarrelFluidHandler.fluidDensitySign(mTank.getFluid()));
+		if (hasLevel()) {
+			BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(tDir));
+			IFluidHandler tTarget = tNeighbor == null ? null
+					: tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, tDir.getOpposite()).orElse(null); // WorldAndCoords.getAdjacentTank :118-129 对位
+			if (tTarget != null && moveTankToHandler(mTank, tTarget, GRAVITY_TRANSFER_PER_TICK) > 0) onTankChanged();
+		}
+	}
+
+	/**
+	 * The gravity branch of the discharge: the strict GT6 lighter verdict sends the
+	 * content UP, every other sign falls DOWN (the upstream :210-212 lighter→top /
+	 * else→bottom pair with the gas branch cut, ruling ③).
+	 */
+	public static Direction gravityDirection(int aDensitySign) {
+		return aDensitySign < 0 ? Direction.UP : Direction.DOWN;
+	}
+
+	/**
+	 * FL.move(IFluidTank, DelegatorTileEntity, max) (FL.java:845-846): simulate the
+	 * withdrawal, executed-fill the target, and only then withdraw what the target
+	 * actually took — fill-then-drain never over-withdraws and a refusal moves 0.
+	 */
+	public static long moveTankToHandler(FluidTankGT aFrom, @Nullable IFluidHandler aTo, long aMaxMoved) {
+		if (aTo == null || aMaxMoved <= 0) return 0;
+		FluidStack tDrained = aFrom.drain(FluidTankGT.bindInt(aMaxMoved), FluidAction.SIMULATE);
+		if (tDrained == null || tDrained.isEmpty() || tDrained.getAmount() <= 0) return 0;
+		int tFilled = aTo.fill(tDrained.copy(), FluidAction.EXECUTE);
+		if (tFilled <= 0) return 0;
+		aFrom.drain(tFilled, FluidAction.EXECUTE);
+		return tFilled;
+	}
+
+	/** The reversed FL.move (the pump-cover in-mode): simulate-drain the source handler, executed-fill the host tank, then withdraw what landed. */
+	public static long moveHandlerToTank(@Nullable IFluidHandler aFrom, @Nullable FluidTankGT aTo, long aMaxMoved) {
+		if (aFrom == null || aTo == null || aMaxMoved <= 0) return 0;
+		FluidStack tDrained = aFrom.drain(FluidTankGT.bindInt(aMaxMoved), FluidAction.SIMULATE);
+		if (tDrained == null || tDrained.isEmpty() || tDrained.getAmount() <= 0) return 0;
+		int tFilled = aTo.fill(tDrained.copy(), FluidAction.EXECUTE);
+		if (tFilled <= 0) return 0;
+		aFrom.drain(tFilled, FluidAction.EXECUTE);
+		return tFilled;
+	}
+
+	@Override
+	public boolean onTickCheck(long aTimer) {
+		// upstream 06Covers :184-186 — the cover visual sync opens the 03 sync window
+		return (hasCovers() && getCovers().requiresSync()) || super.onTickCheck(aTimer);
+	}
+
+	@Override
+	public void onTickChecked(long aTimer) {
+		super.onTickChecked(aTimer);
+		if (hasCovers()) getCovers().resetSync(); // upstream 06Covers :178-181
 	}
 
 	/**
@@ -160,6 +290,54 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 	public void onTankChanged() {
 		setChanged();
 		updateClientData();
+	}
+
+	// ---------------------------------------------------------------------------
+	// cover render sync (the oven :644-652 template — the covers ride the two sync
+	// channels through saveAdditional/load; the client lands the refresh on arrival)
+	// ---------------------------------------------------------------------------
+
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		scheduleCoverRenderRefresh();
+	}
+
+	@Override
+	public void handleUpdateTag(CompoundTag aTag) {
+		super.handleUpdateTag(aTag);
+		scheduleCoverRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket) {
+		super.onDataPacket(aNet, aPacket);
+		scheduleCoverRenderRefresh(); // block-update channel (cover changes)
+	}
+
+	private void scheduleCoverRenderRefresh() {
+		if (hasCovers() && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
+	}
+
+	/**
+	 * The C-grade render hook (IForgeBlockEntity.java:174): a covered barrel hands the
+	 * render thread the immutable per-face sprite snapshot (the oven template); uncovered
+	 * barrels keep {@code ModelData.EMPTY} and render through the plain blockstate model.
+	 */
+	@Override
+	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		CoverData tCovers = mCovers;
+		if (tCovers == null) return super.getModelData();
+		java.util.Map<Direction, net.minecraft.resources.ResourceLocation> tSprites = new java.util.EnumMap<>(Direction.class);
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			if (tCovers.mBehaviours[tSide] == null) continue;
+			net.minecraft.resources.ResourceLocation tSprite = tCovers.mBehaviours[tSide].getCoverTextureSurface(tSide, tCovers);
+			if (tSprite != null) tSprites.put(Direction.from3DDataValue(tSide), tSprite);
+		}
+		if (tSprites.isEmpty()) return super.getModelData();
+		return GTModelProperties.derive(super.getModelData())
+				.with(GTModelProperties.RENDER_SNAPSHOT, new GTCoverRenderSnapshot(tSprites))
+				.build();
 	}
 
 	// ---------------------------------------------------------------------------

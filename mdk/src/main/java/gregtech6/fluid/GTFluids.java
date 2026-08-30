@@ -93,6 +93,52 @@ public final class GTFluids {
 			() -> new LiquidBlock(IRON_MOLTEN, BlockBehaviour.Properties.of()
 					.noCollission().strength(100.0F).noLootTable())); // FluidTypeTest.java:155-156 shape
 
+	private static ForgeFlowingFluid.Properties naturalGasProperties() {
+		// the four-DR template again (task p5-barrel-side-rules spec ⑤, the iron_molten :61-94 shape)
+		return new ForgeFlowingFluid.Properties(NATURAL_GAS_TYPE, NATURAL_GAS, NATURAL_GAS_FLOWING)
+				.block(NATURAL_GAS_BLOCK);
+	}
+
+	/**
+	 * {@code gt6:natural_gas} — the lightweight acceptance carrier of the top-discharge rule
+	 * (p5 spec ⑤, ruling ④): density −100 puts it strictly below air's 0 (the GT6 lighter
+	 * verdict, FL.java:775), 300 K keeps it wood-barrel safe. No bucket item — the RCON
+	 * driver fills through the barrel capability directly, and the client layers reuse the
+	 * vanilla water textures over a pale gas tint (the iron_molten initializeClient shape).
+	 */
+	public static final RegistryObject<FluidType> NATURAL_GAS_TYPE = FLUID_TYPES.register("natural_gas",
+			() -> new FluidType(FluidType.Properties.create()
+					.descriptionId("fluid.gt6.natural_gas")
+					.temperature(300)
+					.density(-100)) {
+				@Override
+				public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+					aConsumer.accept(new IClientFluidTypeExtensions() {
+						private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
+						private static final ResourceLocation FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
+
+						@Override
+						public ResourceLocation getStillTexture() {return STILL;}
+
+						@Override
+						public ResourceLocation getFlowingTexture() {return FLOW;}
+
+						@Override
+						public int getTintColor() {return 0x66FFF2B0;} // pale gas tint over the vanilla textures
+					});
+				}
+			});
+
+	public static final RegistryObject<FlowingFluid> NATURAL_GAS = FLUIDS.register("natural_gas",
+			() -> new ForgeFlowingFluid.Source(naturalGasProperties()));
+
+	public static final RegistryObject<Fluid> NATURAL_GAS_FLOWING = FLUIDS.register("natural_gas_flowing",
+			() -> new ForgeFlowingFluid.Flowing(naturalGasProperties()));
+
+	public static final RegistryObject<LiquidBlock> NATURAL_GAS_BLOCK = BLOCKS.register("natural_gas_block",
+			() -> new LiquidBlock(NATURAL_GAS, BlockBehaviour.Properties.of()
+					.noCollission().noLootTable())); // a gas block: no strength ramp, nothing drops
+
 	private GTFluids() {}
 
 	@SubscribeEvent
@@ -115,6 +161,11 @@ public final class GTFluids {
 					ForgeRegistries.FLUIDS.getKey(IRON_MOLTEN_FLOWING.get()),
 					ForgeRegistries.FLUID_TYPES.get().getKey(IRON_MOLTEN_TYPE.get()),
 					ForgeRegistries.BLOCKS.getKey(IRON_MOLTEN_BLOCK.get()));
+			GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} density {} (the p5 lighter carrier)",
+					ForgeRegistries.FLUIDS.getKey(NATURAL_GAS.get()),
+					ForgeRegistries.FLUIDS.getKey(NATURAL_GAS_FLOWING.get()),
+					ForgeRegistries.FLUID_TYPES.get().getKey(NATURAL_GAS_TYPE.get()),
+					NATURAL_GAS_TYPE.get().getDensity());
 			GT6Mod.LOGGER.info("GT6 vanilla fluid types: water {} lava {} (FluidBridge carries them without registration)",
 					ForgeRegistries.FLUID_TYPES.get().getKey(ForgeMod.WATER_TYPE.get()),
 					ForgeRegistries.FLUID_TYPES.get().getKey(ForgeMod.LAVA_TYPE.get()));

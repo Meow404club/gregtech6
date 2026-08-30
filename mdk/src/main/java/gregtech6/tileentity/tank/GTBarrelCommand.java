@@ -6,9 +6,12 @@ import com.mojang.logging.LogUtils;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -76,10 +79,97 @@ public final class GTBarrelCommand {
 				.then(Commands.literal("melt")
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(aContext -> melt(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+				.then(Commands.literal("fill")
+					// p5 spec ⑥ — /gt6tank fill <pos> [side] <fluid> <amount>; the side-less
+					// form is the all-open path (mSide == -1), an explicit side exercises the
+					// side rules and the cover intercepts through the side-wrapped handler.
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.then(Commands.argument("fluid", ResourceLocationArgument.id())
+							.then(Commands.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+								.executes(aContext -> fill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), null,
+										ResourceLocationArgument.getId(aContext, "fluid"),
+										com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "amount")))))
+						.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
+							.then(Commands.argument("fluid", ResourceLocationArgument.id())
+								.then(Commands.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+									.executes(aContext -> fill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+											parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "side")),
+											ResourceLocationArgument.getId(aContext, "fluid"),
+											com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "amount"))))))))
+				.then(Commands.literal("draw")
+					// p5 spec ⑥ — /gt6tank draw <pos> [side] <amount>
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.then(Commands.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+							.executes(aContext -> draw(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), null,
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "amount"))))
+						.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
+							.then(Commands.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+								.executes(aContext -> draw(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+										parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "side")),
+										com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "amount")))))))
 				.then(Commands.literal("stat")
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(aContext -> stat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
-		LOGGER.info("Registered GT6 fluid barrel command /gt6tank (accept|melt|stat)");
+		LOGGER.info("Registered GT6 fluid barrel command /gt6tank (accept|melt|fill|draw|stat)");
+	}
+
+	/** {@code down|up|north|south|west|east} → Direction (the GTCoverCommand parse, mirrored here so the driver stays self-contained). */
+	private static Direction parseSide(String aWord) throws CommandSyntaxException {
+		Direction tSide = Direction.byName(aWord.toLowerCase());
+		if (tSide == null) throw new com.mojang.brigadier.exceptions.SimpleCommandExceptionType(Component.literal("Unknown side: " + aWord)).create();
+		return tSide;
+	}
+
+	/**
+	 * The p5 fill driver: inject through the (side-wrapped) capability and report the
+	 * accepted amount — 0 with the REJECTED marker is a legitimate verdict (a side face,
+	 * a refused pump face or a full/mixed tank), not a command failure, so the RCON chain
+	 * can assert on it.
+	 */
+	private static int fill(CommandSourceStack aSource, BlockPos aPos, @javax.annotation.Nullable Direction aSide, ResourceLocation aFluidId, int aAmount) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof TileEntityBase08Barrel tBarrel)) {
+			aSource.sendFailure(Component.literal("No GT6 barrel BlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		net.minecraft.world.level.material.Fluid tFluid = ForgeRegistries.FLUIDS.getValue(aFluidId);
+		if (tFluid == null || tFluid.defaultFluidState() == null || tFluid.defaultFluidState().isEmpty()) {
+			aSource.sendFailure(Component.literal("Unknown fluid: " + aFluidId));
+			return 0;
+		}
+		IFluidHandler tHandler = tBarrel.getCapability(ForgeCapabilities.FLUID_HANDLER, aSide).orElse(null);
+		if (tHandler == null) {
+			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the barrel exposes no FLUID_HANDLER on " + (aSide == null ? "the side-less query" : aSide)));
+			return 0;
+		}
+		int tFilled = tHandler.fill(new FluidStack(tFluid, aAmount), FluidAction.EXECUTE);
+		String tLine = String.format("GT6 tank fill at %s face %s: filled %d/%d L of %s%s, tank holds %d L",
+				aPos.toShortString(), aSide == null ? "any" : aSide, tFilled, aAmount, aFluidId,
+				tFilled == 0 ? " (REJECTED)" : " (ACCEPTED)", tBarrel.mTank.amount());
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The p5 draw driver: withdraw through the (side-wrapped) capability — the mirror of {@link #fill}. */
+	private static int draw(CommandSourceStack aSource, BlockPos aPos, @javax.annotation.Nullable Direction aSide, int aAmount) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof TileEntityBase08Barrel tBarrel)) {
+			aSource.sendFailure(Component.literal("No GT6 barrel BlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		IFluidHandler tHandler = tBarrel.getCapability(ForgeCapabilities.FLUID_HANDLER, aSide).orElse(null);
+		if (tHandler == null) {
+			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the barrel exposes no FLUID_HANDLER on " + (aSide == null ? "the side-less query" : aSide)));
+			return 0;
+		}
+		FluidStack tDrawn = tHandler.drain(aAmount, FluidAction.EXECUTE);
+		int tDrawnAmount = tDrawn == null ? 0 : tDrawn.getAmount();
+		String tFluid = tDrawn == null || tDrawn.isEmpty() ? "nothing" : ForgeRegistries.FLUIDS.getKey(tDrawn.getFluid()).toString();
+		String tLine = String.format("GT6 tank draw at %s face %s: drawn %d/%d L of %s%s, tank holds %d L",
+				aPos.toShortString(), aSide == null ? "any" : aSide, tDrawnAmount, aAmount, tFluid,
+				tDrawnAmount == 0 ? " (REJECTED)" : " (ACCEPTED)", tBarrel.mTank.amount());
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int stat(CommandSourceStack aSource, BlockPos aPos) {

@@ -40,5 +40,9 @@ public final class GT6Atlases extends SpriteSourceProvider {
         // the pipe flow-arrow sprite (task p4-pipe-flow-control spec ④) — stitched by the
         // runtime-built GTFluidPipeFlowModel quads, so it must live in the block atlas
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFlowModel.ARROW_SPRITE, Optional.empty()));
+        // the pump-cover direction sprites (task p5-barrel-side-rules spec ③) — the plate
+        // renderer stitches whichever the visual lane currently encodes (0 = out, 1 = in)
+        atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.covers.covers.CoverPump.PUMP_OUT_SPRITE, Optional.empty()));
+        atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.covers.covers.CoverPump.PUMP_IN_SPRITE, Optional.empty()));
     }
 }
