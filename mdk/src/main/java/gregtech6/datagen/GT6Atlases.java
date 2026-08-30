@@ -37,5 +37,8 @@ public final class GT6Atlases extends SpriteSourceProvider {
     protected void addSources() {
         ResourceLocation tCoverSprite = GT6Covers.ironPlateSprite();
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(tCoverSprite, Optional.empty()));
+        // the pipe flow-arrow sprite (task p4-pipe-flow-control spec ④) — stitched by the
+        // runtime-built GTFluidPipeFlowModel quads, so it must live in the block atlas
+        atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFlowModel.ARROW_SPRITE, Optional.empty()));
     }
 }

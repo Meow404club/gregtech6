@@ -429,6 +429,21 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		if (mIoMask != 0 && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
 	}
 
+	/**
+	 * The C-grade render hook (IForgeBlockEntity.java:174): a pipe with output arrows
+	 * hands the render thread the immutable {@link gregtech6.client.render.PipeFlowSnapshot};
+	 * unmarked pipes keep {@code ModelData.EMPTY} and render through the plain blockstate
+	 * model (spec ④ — the zero-blockstate overlay, the oven cover snapshot form).
+	 */
+	@Override
+	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		byte tMask = getIoMask();
+		if (tMask == 0) return super.getModelData();
+		return gregtech6.client.render.GTModelProperties.derive(super.getModelData())
+				.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask))
+				.build();
+	}
+
 	// ---------------------------------------------------------------------------
 	// capability (spec ⑤ — the side wrapper per getCapability call, GTCEu IOFluidHandlerList form)
 	// ---------------------------------------------------------------------------
