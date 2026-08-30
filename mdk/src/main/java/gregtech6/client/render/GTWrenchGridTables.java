@@ -36,7 +36,9 @@ public final class GTWrenchGridTables {
 		/** Red wrench icon — the face is not connected / the mode bit is unset. */
 		PIPE_BLOCK("textures/gui/overlay/tool_pipe_block.png"),
 		/** Arrow icon — the face carries the output-arrow ioMask bit (shift mode). */
-		IO_FACING_ROTATION("textures/gui/overlay/tool_io_facing_rotation.png");
+		IO_FACING_ROTATION("textures/gui/overlay/tool_io_facing_rotation.png"),
+		/** Rotation icon — the cell rotates the machine's front facing (shift mode, the oven). */
+		FRONT_FACING_ROTATION("textures/gui/overlay/tool_front_facing_rotation.png");
 
 		/** Texture path relative to {@code assets/gt6/}. */
 		public final String texturePath;
@@ -123,6 +125,26 @@ public final class GTWrenchGridTables {
 			return (aIoMask & tBit) != 0 ? GTWrenchGridIcon.IO_FACING_ROTATION : GTWrenchGridIcon.PIPE_BLOCK;
 		}
 		return (aConnections & tBit) != 0 ? GTWrenchGridIcon.PIPE_CONNECT : GTWrenchGridIcon.PIPE_BLOCK;
+	}
+
+	/**
+	 * The machine-rotation icon table (task p6-oven-rotation, the second table of the
+	 * grid — ADR 2026-08-30-p6-oven-rotation ruling ④): the oven counterpart of
+	 * {@link #iconFor}. Without shift the machine grid draws no icons at all (GTCEu
+	 * MetaMachine sideTips :683-688 — the arrows are the shift mode only; the grid
+	 * lines still render via shouldRenderGrid :670). With shift, a cell is live when
+	 * the side it stands for is horizontal (2..5, the HORIZONTAL_FACING domain — the
+	 * RotationState.HORIZONTAL :777 counterpart) and not the machine's own front (the
+	 * isFacingValid :770-771 front exclusion); the front's own side, the vertical
+	 * sides (down/up plus the corner cells that fall back onto vertical OPOS entries)
+	 * and SIDE_INVALID all stay null. Note the corner cells of a horizontal face stand
+	 * for the opposite horizontal side ({@code OPOS[face]}), so they rotate too — the
+	 * table IS the specification, same ruling as the pipe table.
+	 */
+	public static GTWrenchGridIcon ovenCellIcon(boolean aShift, byte aCellSide, byte aFrontFacing) {
+		if (!aShift) return null;
+		return aCellSide >= 2 && aCellSide <= 5 && aCellSide != aFrontFacing
+				? GTWrenchGridIcon.FRONT_FACING_ROTATION : null;
 	}
 
 	/** Assemble a UT6 hit vector from in-face (u,v): the normal axis stays 0.5. */

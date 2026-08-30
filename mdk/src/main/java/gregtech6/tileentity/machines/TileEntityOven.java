@@ -541,6 +541,26 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	}
 
 	/**
+	 * GTCEu MetaMachine.setFrontFacing :794-811 counterpart (task p6-oven-rotation): the
+	 * shift-click edge-cell rotation of the wrench grid. Only a horizontal side (2..5, the
+	 * HORIZONTAL_FACING domain) different from the current facing rotates — the same-facing
+	 * call is the :796 no-op and vertical/invalid sides are rejected (the
+	 * allowExtendedFacing=false shape; the callers exclude the front side as well, the
+	 * GTCEu isFacingValid :770-778 double guard). Persistence keeps the spec-7 double
+	 * write: mFacing + NBT stays the persistent authority, applyVisualState re-applies the
+	 * BlockState (setBlock(state, 3) — the client display authority).
+	 *
+	 * @return true when the facing actually changed (the rotation-consumer/command feedback).
+	 */
+	public boolean setFrontFacing(byte aSide) {
+		if (aSide < 2 || aSide > 5 || aSide == mFacing) return false; // :796 no-op + the horizontal domain
+		mFacing = aSide;
+		setChanged();
+		applyVisualState();
+		return true;
+	}
+
+	/**
 	 * Applies FACING/ACTIVE/RUNNING onto the BlockState (upstream getVisualData :1010-1011
 	 * two-bit payload) — the vanilla furnace setBlock(state, 3) idiom; same-block state
 	 * changes keep the BE (LevelChunk.setBlockState:292).

@@ -18,8 +18,10 @@ import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import gregtech6.block.GTOvenBlock;
 import gregtech6.block.pipe.GTFluidPipeBlock;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
+import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
  * The FORGE-bus listener of the wrench 3x3 grid overlay (task p5-wrench-ui-gtceu) —
@@ -37,7 +39,10 @@ import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
  *
  * <p>Filter = hoe held in either hand (the same {@code ToolActions.HOE_DIG} predicate
  * as {@link GTFluidPipeBlock#use} at :104 — the "shown means clickable" invariant)
- * hovering a {@link GTFluidPipeBlockEntity}; shift switches the two display modes.
+ * hovering a {@link GTFluidPipeBlockEntity} (the connection/ioMask modes, task
+ * p5-wrench-ui-gtceu) or a {@link TileEntityOven} (the front-rotation mode, task
+ * p6-oven-rotation — shift marks the rotatable cells, the same predicate
+ * {@link GTOvenBlock#use} rotates through); shift switches the display modes.
  * Bare hands and other items never show the grid.
  */
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -58,12 +63,19 @@ public final class GTWrenchHighlightListener {
 
 		BlockHitResult tTarget = aEvent.getTarget();
 		BlockEntity tTile = tPlayer.level().getBlockEntity(tTarget.getBlockPos());
-		if (!(tTile instanceof GTFluidPipeBlockEntity tPipe)) return;
 
 		PoseStack tPoseStack = aEvent.getPoseStack();
 		Camera tCamera = aEvent.getCamera();
 		MultiBufferSource tBuffers = aEvent.getMultiBufferSource();
-		GTWrenchGridRenderer.renderGrid(tPoseStack, tBuffers, tCamera, tTarget, tPlayer.isShiftKeyDown(), tPipe);
+		if (tTile instanceof GTFluidPipeBlockEntity tPipe) {
+			GTWrenchGridRenderer.renderGrid(tPoseStack, tBuffers, tCamera, tTarget, tPlayer.isShiftKeyDown(), tPipe);
+		} else if (tTile instanceof TileEntityOven tOven) {
+			// task p6-oven-rotation — the front facing reads the BlockState, the client
+			// display authority: setBlock(state, 3) syncs the state without re-sending
+			// the BE NBT, so the BE's own mFacing byte can be stale here
+			byte tFrontFacing = (byte) tOven.getBlockState().getValue(GTOvenBlock.FACING).get3DDataValue();
+			GTWrenchGridRenderer.renderOvenGrid(tPoseStack, tBuffers, tCamera, tTarget, tPlayer.isShiftKeyDown(), tFrontFacing);
+		}
 		// no cancel — the vanilla selection box renders as usual
 	}
 

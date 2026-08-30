@@ -1,6 +1,7 @@
 package gregtech6.client.render;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -134,5 +135,67 @@ public class GTWrenchGridTablesTest {
 		assertEquals("textures/gui/overlay/tool_pipe_connect.png", GTWrenchGridIcon.PIPE_CONNECT.texturePath);
 		assertEquals("textures/gui/overlay/tool_pipe_block.png", GTWrenchGridIcon.PIPE_BLOCK.texturePath);
 		assertEquals("textures/gui/overlay/tool_io_facing_rotation.png", GTWrenchGridIcon.IO_FACING_ROTATION.texturePath);
+		assertEquals("textures/gui/overlay/tool_front_facing_rotation.png", GTWrenchGridIcon.FRONT_FACING_ROTATION.texturePath);
+	}
+
+	/**
+	 * The oven rotation table (task p6-oven-rotation acceptance 1): the full 6 faces x
+	 * 9 cells x front 2..5 x both shift states = 432 assertions. The expectation per
+	 * cell is derived from the HARDCODED 54-cell table of
+	 * {@link #cellSideFullTable54Cells()} — so this checks that ovenCellIcon consumes
+	 * exactly the same cell geometry the grid draws, and nothing else: non-shift draws
+	 * no icon at all (GTCEu sideTips :683-688), shift marks exactly the cells whose
+	 * side is horizontal (2..5) and not the front (isFacingValid :770-771 shape).
+	 */
+	@Test
+	public void ovenCellIconFullTable() {
+		byte[][] tCellTable = new byte[6][];
+		tCellTable[0] = new byte[] { UT6.OPOS[0], 2, UT6.OPOS[0], 4, 0, 5, UT6.OPOS[0], 3, UT6.OPOS[0] };
+		tCellTable[1] = new byte[] { UT6.OPOS[1], 2, UT6.OPOS[1], 4, 1, 5, UT6.OPOS[1], 3, UT6.OPOS[1] };
+		tCellTable[2] = new byte[] { UT6.OPOS[2], 0, UT6.OPOS[2], 4, 2, 5, UT6.OPOS[2], 1, UT6.OPOS[2] };
+		tCellTable[3] = new byte[] { UT6.OPOS[3], 0, UT6.OPOS[3], 4, 3, 5, UT6.OPOS[3], 1, UT6.OPOS[3] };
+		tCellTable[4] = new byte[] { UT6.OPOS[4], 0, UT6.OPOS[4], 2, 4, 3, UT6.OPOS[4], 1, UT6.OPOS[4] };
+		tCellTable[5] = new byte[] { UT6.OPOS[5], 0, UT6.OPOS[5], 2, 5, 3, UT6.OPOS[5], 1, UT6.OPOS[5] };
+
+		int tAssertions = 0;
+		for (byte tFace = 0; tFace < 6; tFace++) {
+			for (int tRow = 0; tRow < 3; tRow++) {
+				for (int tCol = 0; tCol < 3; tCol++) {
+					byte tCellSide = GTWrenchGridTables.cellSide(tFace, tCol, tRow);
+					assertEquals(tCellTable[tFace][tRow * 3 + tCol], tCellSide,
+							"cell table anchor face " + tFace + " cell (" + tCol + "," + tRow + ")");
+					for (byte tFront = 2; tFront <= 5; tFront++) {
+						assertNull(GTWrenchGridTables.ovenCellIcon(false, tCellSide, tFront),
+								"non-shift draws nothing: face " + tFace + " cell (" + tCol + "," + tRow + ") front " + tFront);
+						GTWrenchGridIcon tExpected = (tCellSide >= 2 && tCellSide <= 5 && tCellSide != tFront)
+								? GTWrenchGridIcon.FRONT_FACING_ROTATION
+								: null;
+						assertEquals(tExpected, GTWrenchGridTables.ovenCellIcon(true, tCellSide, tFront),
+								"shift face " + tFace + " cell (" + tCol + "," + tRow + ") side " + tCellSide + " front " + tFront);
+						tAssertions += 2;
+					}
+				}
+			}
+		}
+		assertEquals(432, tAssertions, "6 faces x 9 cells x 4 fronts x 2 shift states");
+	}
+
+	/**
+	 * The shift-mode marked-cell counts per (face, front) against the same hardcoded
+	 * table — the coarse shape of the full table: the centre cell of the front face is
+	 * never marked (it stands for the front itself), and every horizontal face's
+	 * centre cell IS marked when the front differs.
+	 */
+	@Test
+	public void ovenCellIconCentreCellShape() {
+		for (byte tFace = 0; tFace < 6; tFace++) {
+			byte tCentreSide = GTWrenchGridTables.cellSide(tFace, (byte)1, (byte)1);
+			for (byte tFront = 2; tFront <= 5; tFront++) {
+				// the front's own centre cell (tCentreSide == tFront) is the no-op cell
+				assertEquals(tCentreSide != tFront && tCentreSide >= 2 && tCentreSide <= 5,
+						GTWrenchGridTables.ovenCellIcon(true, tCentreSide, tFront) != null,
+						"centre of face " + tFace + " front " + tFront);
+			}
+		}
 	}
 }
