@@ -17,6 +17,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import gregtech6.block.GTOvenBlock;
+import gregtech6.client.render.GTModelProperties;
+import gregtech6.client.render.GTRenderUpdates;
+import gregtech6.covers.CoverData;
+import gregtech6.covers.GTCoverRenderSnapshot;
+import gregtech6.covers.ICoverableTE;
 import gregtech6.gui.machines.GTOvenMenu;
 import gregtech6.gui.machines.GTOvenMenus;
 import gregtech6.registry.GTMachines;
@@ -90,7 +95,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * double-written NBT + BlockState (spec 7): NBT is the persistent authority, the BlockState
  * is re-applied from it.
  */
-public class TileEntityOven extends TileEntityBase03TicksAndSync implements MenuProvider {
+public class TileEntityOven extends TileEntityBase03TicksAndSync implements MenuProvider, ICoverableTE {
 
 	// checkRecipe result codes (upstream :672-675 verbatim).
 	public static final int DID_NOT_FIND_RECIPE = 0;
@@ -153,6 +158,24 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	protected byte mFacing = 2;
 	protected boolean oActive = false, oRunning = false;
 
+	// ---------------------------------------------------------------------------
+	// covers (task p4-cover-core ⑤ — composition: the store lives here, the 06Covers
+	// behaviour comes from the ICoverableTE defaults; the base-class chain is untouched)
+	// ---------------------------------------------------------------------------
+
+	/** Upstream 06Covers :63 mCovers — {@code null} while no face carries a cover. */
+	public CoverData mCovers = null;
+
+	@Override
+	public CoverData getCovers() {
+		return mCovers;
+	}
+
+	@Override
+	public void setCovers(CoverData aCoverData) {
+		mCovers = aCoverData;
+	}
+
 	/**
 	 * BET factory for BlockEntityType.Builder.of — resolves the shared type through the registry at runtime.
 	 */
@@ -194,6 +217,8 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	@Override
 	public void onTickFirst(boolean aIsServerSide) {
 		if (aIsServerSide) {
+			// upstream 06Covers :191 — the validity sweep rides onTickFirst before the machine business
+			checkCoverValidity();
 			// upstream :446 — checkStructure(T) always passes for the single-block machine (:962-964)
 			if (!mActive) checkRecipe(false, mRunning || mStopped);
 		}
@@ -201,6 +226,8 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 
 	@Override
 	public void onTick(long aTimer, boolean aIsServerSide) {
+		// upstream 06Covers :200 — the cover tick precedes the machine business
+		if (hasCovers()) getCovers().tickPre(aTimer, aIsServerSide, mBlockUpdated, mInventoryChanged);
 		if (aIsServerSide) {
 			// option C: redstone stop gate (upstream :453 mBlockUpdated toggleable-source refresh spot)
 			mRedstoneStopped = hasLevel() && getLevel().hasNeighborSignal(getBlockPos());
@@ -210,16 +237,20 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 			doWork(aTimer);
 			// upstream :459 fluid auto-output and :463 structural re-check :465-466 display refresh are cut
 		}
+		// upstream 06Covers :202 — the cover tick follows the machine business
+		if (hasCovers()) getCovers().tickPost(aTimer, aIsServerSide, mBlockUpdated, mInventoryChanged);
 	}
 
 	@Override
 	public boolean onTickCheck(long aTimer) {
-		// upstream :471-473 verbatim (the visual-data change pair)
-		return mActive != oActive || mRunning != oRunning || super.onTickCheck(aTimer);
+		// upstream :471-473 verbatim (the visual-data change pair) + 06Covers :184-186 (the cover visual sync)
+		return (hasCovers() && getCovers().requiresSync()) || mActive != oActive || mRunning != oRunning || super.onTickCheck(aTimer);
 	}
 
 	@Override
 	public void onTickChecked(long aTimer) {
+		// upstream 06Covers :178-181 — the visual sync flags reset after the sync window
+		if (hasCovers()) getCovers().resetSync();
 		applyVisualState();
 	}
 
@@ -561,6 +592,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		ListTag tOutputs = new ListTag();
 		for (ItemStack tStack : mOutputItems) if (tStack != null && !tStack.isEmpty()) tOutputs.add(tStack.save(new CompoundTag()));
 		aNBT.put(NBT_OUTPUT, tOutputs); // upstream NBT_INV_OUT.i :166-167 (list form)
+		writeCoversToNBT(aNBT); // upstream 06Covers :74
 	}
 
 	@Override
@@ -581,6 +613,64 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 			mOutputItems = new ItemStack[tOutputs.size()];
 			for (int i = 0; i < tOutputs.size(); i++) mOutputItems[i] = ItemStack.of(tOutputs.getCompound(i));
 		}
+		readCoversFromNBT(aNBT); // upstream 06Covers :68
+	}
+
+	// ---------------------------------------------------------------------------
+	// cover sync + render refresh (task p4-cover-core ⑦/⑥)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The covers ride the two sync channels through {@code saveAdditional/load} (both
+	 * converge on {@link #load}). After either channel lands, the client schedules the
+	 * render refresh pair — the server side triggers it implicitly: a cover change flags
+	 * the sync window ({@link #syncCoverClientData} → sendClientData → sendBlockUpdated),
+	 * the client BE data packet lands here, and the pair (sendBlockUpdated +
+	 * requestModelDataUpdate) pushes the fresh snapshot into the ModelDataManager before
+	 * the rebuild task reads it. The server blockEvent forward (GTRenderUpdates template)
+	 * is the alternative once the Block side enters this card's scope.
+	 */
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		scheduleCoverRenderRefresh();
+	}
+
+	@Override
+	public void handleUpdateTag(CompoundTag aTag) {
+		super.handleUpdateTag(aTag);
+		scheduleCoverRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket) {
+		super.onDataPacket(aNet, aPacket);
+		scheduleCoverRenderRefresh(); // block-update channel (cover changes, machine visuals)
+	}
+
+	private void scheduleCoverRenderRefresh() {
+		if (hasCovers() && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
+	}
+
+	/**
+	 * The C-grade render hook (IForgeBlockEntity.java:174): a covered oven hands the
+	 * render thread the immutable per-face sprite snapshot; uncovered ovens keep
+	 * {@code ModelData.EMPTY} and render through the plain blockstate model.
+	 */
+	@Override
+	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		CoverData tCovers = mCovers;
+		if (tCovers == null) return super.getModelData();
+		java.util.Map<net.minecraft.core.Direction, net.minecraft.resources.ResourceLocation> tSprites = new java.util.EnumMap<>(net.minecraft.core.Direction.class);
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			if (tCovers.mBehaviours[tSide] == null) continue;
+			net.minecraft.resources.ResourceLocation tSprite = tCovers.mBehaviours[tSide].getCoverTextureSurface(tSide, tCovers);
+			if (tSprite != null) tSprites.put(net.minecraft.core.Direction.from3DDataValue(tSide), tSprite);
+		}
+		if (tSprites.isEmpty()) return super.getModelData();
+		return GTModelProperties.derive(super.getModelData())
+				.with(GTModelProperties.RENDER_SNAPSHOT, new GTCoverRenderSnapshot(tSprites))
+				.build();
 	}
 
 	// ---------------------------------------------------------------------------
