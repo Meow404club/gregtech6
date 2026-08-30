@@ -109,8 +109,8 @@ public final class GTFluidPipeCommand {
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.then(Commands.argument("side", IntegerArgumentType.integer(0, 5))
 							.then(Commands.argument("amount", IntegerArgumentType.integer(1, 1000000))
-								.executes(aContext -> inject(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-										(byte)IntegerArgumentType.getInteger(aContext, "side"), IntegerArgumentType.getInteger(aContext, "amount")))))))));
+									.executes(aContext -> inject(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+										(byte)IntegerArgumentType.getInteger(aContext, "side"), IntegerArgumentType.getInteger(aContext, "amount"))))))));
 		LOGGER.info("Registered GT6 fluid pipe command /gt6pipe (accept|stat|place|toggle|output|clear|inject)");
 	}
 
