@@ -49,19 +49,30 @@
 - [x] p5-barrel-side-rules（researcher→architect→coder）：桶六面可入 + 重力排放（底排重/顶排轻/侧只进，1000 L/tick）+ CoverPump（单向门+直调 host 罐）+ gt6:natural_gas 验收载体（merge 7e7dbbb，13 提交）
 - [x] phase-closeout：根 188 + mdk 229 测全绿，RCON 链合并态复放 pipe 19/19 + barrel 38/38，runData 幂等，GPG 全验
 
-## 第 6 阶段——入口（等压缩后"继续"开）
+## 第 6 阶段（入口：CokeOven 加工 / oven 旋转 / 桶族）——✅ 已完成（2026-08-31）
 
-- [ ] 研究卡：RM.CokeOven 多方块加工业务（配方面未考古，researcher 先行）
-- [ ] 直接卡：oven 朝向旋转（GTCEu setFrontFacing 语义 + front_facing_rotation 贴图随卡再借，渲染器 instanceof 缝）∥ 渲染器次要观察清理 ∥ Metal/Plastic 桶恢复装饰盖限制 ∥ tools/rcon README 增补 NUL 事实
+- [x] 研究卡 p6-research-rm-cokeoven：RM 配方系统全景（85 图/Recipe.add/findRecipe 全貌）+ CokeOven 加工侧考古（BasicMachine 1036 行/TU 自发电/并行 16/39 条配方）+ 关键证伪（流体输出不撞 P5 侧规则：fill 六面全开仅 drain 受门）
+- [x] p6-oven-rotation：GTCEu setFrontFacing 经扳手九宫格（use 分支 cover 门后插入+UT6 同源+ovenCellIcon 纯函数 432 断言）+ 第 4 张贴图借用 + 渲染器 :113/:151 顺手清（merge 7d7a73f，6 提交）
+- [x] p6-barrel-metal-plastic：木桶恢复上游 isDecorative 逐字谓词（泵盖拒/plate 过）+ gt6:barrel_plastic 32000L + gt6:barrel_metal 64000L（容量熔点走块载体）+ P5 基类冻结面零触碰（merge cd46e3a，4 提交）
+- [x] p6-cokeoven-processing：TileEntityBase10MultiBlockMachine 基类 + TileEntityCokeOven 改继承（tY-2 层 3x3 UP 面扫描）+ COKE_OVEN 图静态 24 行 + **用户裁定：原木配方 #minecraft:logs tag 驱动**（40 条活证）+ gt6:creosote + /gt6multiblock input|ignite（merge 9839b39，7 提交）
+- [x] tools/rcon README 增补帧尾 NUL 读帧纪律（e8da825，纠正 P5 锚点失真措辞）
+- [x] phase-closeout：批量 review-merge 三连审全 approve（根 188+mdk 263 全绿 / RCON 17+32+19 合并态复放 / runData 幂等 / GPG 全验）
+
+## 下一波候选（等压缩后"继续"按池开）
+
+- [ ] cokeoven 回补行：gt6:oil(+asphalt)→油页岩 9 条 ∥ block 族 6 条（PrefixBlock 物品路径）∥ beam/竹/木弹丸
+- [ ] metal 高档鼓注册行（128K→10B）+ 材质熔点桥（metal 不熔偏离的回补面）
+- [ ] CokeOven GUI/Menu + 控制器流体罐 capability（12 槽面）
+- [ ] RM 壳缺口池：containsInput/minTankSize/三哈希索引/auto-IO+containsInput 插槽查验
+- [ ] 机器族 Shredder/Crusher/Lathe ∥ C 档 oven 动态渲染升级 + D 档多方块成型态渲染 ∥ D 完整能量网 ITileEntityEnergy
 
 ## 遗留池
 
 - [ ] 特性层：trapped/comparator/涂装/TESR/lid 动画/getOpenGUIs 1200t 重同步、chest BlockItem loot table
 - [ ] ADR-P3-6 延后池：slotClick 全局拦截（Slot 能力模型重构）、rebootGUIs、cover 负 GUIID
 - [ ] PrefixRegistry 未 close；MT.NULL.mHandleMaterial=null（工具卡注意）；TECH tMake 冻结首代；服务端特例键回退
-- [ ] 机器族 Shredder/Crusher/Lathe；D 完整能量网 ITileEntityEnergy；cover intercept 族+红石钩+正式 crowbar
+- [ ] cover intercept 族+红石钩+正式 crowbar
 - [ ] barrel 密封发酵+连通罐 B[0]+破坏倾倒；FluidTankGT keepFilter 0 量持久化缺口（归 Logistics 罐卡）；builder wand 物品化
-- [ ] C 档 oven 动态渲染升级 + D 档多方块成型态渲染
-- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI（P4）、cover 板/管道箭头（P4）、扳手九宫格 UI 六条+泵盖 plate/pump 贴图+natural_gas 外观（P5）
-- [ ] 渲染器次要观察清理（GTWrenchGridRenderer :114 死方法 + :151 注释措辞，下卡触碰顺手清）
+- [ ] creosote 材质密度桥（FluidType 载体值回补）；per-map/per-recipe Config duration 覆盖（上游 :357-365，声明不复刻）
+- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI（P4）、cover 板/管道箭头（P4）、扳手九宫格 UI 六条+泵盖 plate/pump 贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint 点火/creosote 渲染（P6）
 - [ ] 建立移植进度看板（按 GT6 子系统统计已移植/未移植）

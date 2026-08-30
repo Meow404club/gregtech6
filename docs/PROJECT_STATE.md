@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 5 阶段：管道语义修正 / 桶重力侧规则+泵盖 / 扳手九宫格 UI / RCON 工具链`（**2026-08-30 收官**：四卡全数合入 main HEAD 7e7dbbb，根 188 + mdk 229 单测全绿，RCON 验收链合并态复放 pipe 19/19 + barrel 38/38，ADR-P5 各卡红线全满足）
+`第 6 阶段（入口）：CokeOven 加工业务 / oven 朝向旋转 / Metal·Plastic 桶族`（**2026-08-31 收官**：三卡全数合入 main HEAD 9839b39，根 188 + mdk 263 单测全绿，RCON 三链合并态复放 oven 17/19·barrel 32/32·cokeoven 19/19，批量 review-merge 单会话三连审全 approve）
 
 > **平台修正 2026-08-29**：原目标"NeoForge 1.20.1"被证伪——NeoForge 官方 maven 从未发布 20.1.x 产物（versions API `filter=20.1` 返回空，主会话独立复核），NeoForged 自家 ModDevGradle 把 1.20.1 路由给 `legacyforge` 变体，文档站最早只到 1.20.3。用户裁决：目标平台 = **MinecraftForge 1.20.1（47.4.10）**，构建插件 = MDG legacyforge 2.0.144。1.20.1 的 API 面即 `net.minecraftforge.*` + RegistryObject（DeferredHolder 是 20.2+ 才有），第 1 阶段的所有调研结论不受影响。
 
@@ -16,6 +16,7 @@
 - [x] 第 3 阶段：BlockEntity + AbstractContainerMenu + Screen 框架——2026-08-30 收官（221 测全绿；56253 物品 + 96 tab；BE/Menu/Screen/chest 全链）
 - [x] 第 4 阶段：管线 / Cover / 多方块渲染（BakedModel）+ 首台加工机器——2026-08-30 收官（387 测全绿；Oven/管线/多方块/桶/Cover/渲染基建/流向控制八卡）
 - [x] 第 5 阶段：管道语义修正 / 桶重力侧规则+泵盖 / 扳手九宫格 UI / RCON 工具链——2026-08-30 收官（417 测全绿；tools/rcon 正典客户端入库；瞬态 overlay 红线例外；桶侧规则+CoverPump+gt6:natural_gas）
+- [x] 第 6 阶段（入口）：CokeOven 加工业务 / oven 朝向旋转 / Metal·Plastic 桶族——2026-08-31 收官（451 测全绿；首台真加工多方块机+`#minecraft:logs` tag 驱动原木配方+gt6:creosote；木桶装饰盖保真恢复；GTCEu setFrontFacing 经九宫格）
 
 ## 关键决策
 
@@ -176,3 +177,18 @@
 **承重教训（新增）**：vanilla TEXT RenderType composite 默认 CULL——世界直绘 quad face 1/2/5 顶点发射序须反转（u×v 叉积定向，详见 remember id81）；vanilla 1.20.1 RCON 响应无 NUL 填充——解析须按长度字段/rstrip，勿盲截两字节；normal 世界出生点 y=64 地形 solid——RCON 链前置 `/fill ... air` 清场；RCON 脚本 cmd() 首匹配帧即返（死等会吃掉泵/重力的 tick 时序）。
 
 **遗留（进第 6 阶段池，state todo pool）**：RM.CokeOven 加工业务（研究卡先行）、oven 朝向旋转（front_facing_rotation 贴图随卡再借）、Metal/Plastic 桶恢复装饰盖限制、渲染器两处次要观察清理（:114 死方法/:151 注释措辞）、tools/rcon README 增补响应无 NUL 事实、旧池沿用（机器族/能量网/cover intercept 族/barrel 密封发酵连通罐/C·D 档渲染/ADR-P3-6 等）。runClient 目视留用户：扳手九宫格 UI 六条、泵盖 plate/pump 贴图、natural_gas 外观。
+
+## 第 6 阶段收官记录（2026-08-31，主会话 phase-closeout）
+
+> 入口范围：研究卡 RM.CokeOven（id84 考古：RM.java:61-161 共 85 图；CokeOven 加工全在 TileEntityBase10MultiBlockMachine→MultiTileEntityBasicMachine，NBT_RECIPEMAP 注册注入，TU 自发电无电点燃续烧，并行 16，3600t）+ 三张实现卡。合入链：7d7a73f（oven-rotation）→ cd46e3a（barrel-metal-plastic）→ 9839b39（cokeoven-processing），批量 review-merge 单会话三连审全 approve。插曲：zcode 客户端重启中断一轮（三 agent 按残局进度精准 resume：oven 接手 2 提交续做/barrel 重跑/cokeoven 架构师重做）；用户裁定修正：焦炉原木配方改 `#minecraft:logs` tag 驱动适配其他 mod（上游 OreDict:205 监听器的 1.20.1 对位）；tools/rcon README 增补帧尾 NUL 读帧纪律（e8da825，纠正 P5 锚点「响应无 NUL 填充」失真措辞——事实=两 NUL 计入 length，真坑是 length-10 读法后再盲切的**双剥**）。
+
+**各卡语义定论**：
+- **p6-oven-rotation**（7d7a73f）：GTCEu setFrontFacing 经扳手九宫格——旋转分支插 GTOvenBlock.use 的 onCoverUse 之后 openScreen 之前（cover 意图构造性优先，零重排）；side 解析与九宫格同源 UT6.getSideWrenching；合法性=side∈[2,5]≠facing，shift 非法=CONSUME 永不开 GUI；setFrontFacing=no-op 同向→mFacing+setChanged+applyVisualState（FACING 已驱动 blockstate 16 变体=零 datagen）；GTWrenchGridTables.ovenCellIcon 纯函数（432 断言全表）+Renderer 抽 drawCellIcon helper（pipe 路径字节级不变）；tool_front_facing_rotation.png 第 4 张借图署名；顺手清 :113 死方法+:151 注释措辞。
+- **p6-barrel-metal-plastic**（cd46e3a）：木桶恢复上游 MultiTileEntityBarrelWood.java:39 逐字谓词 allowCover→isDecorative（plate 白名单过/泵盖拒；违规已装盖 checkCoverValidity 首 tick 掉落自愈）；新 gt6:barrel_plastic（32000L/370K/仅装饰盖）+gt6:barrel_metal（64000L/全盖/melting MAX_VALUE=声明偏离，材质熔点桥入池）；容量熔点走 GTBarrelBlock 块载体 capacityL()+ticker Supplier 参数；P5 基类冻结面 diff 全空；CoverPumpTest 宿主 wood→metal 越界经审查 accept（P5「木桶全开」假设被本卡推翻后的强制镜像，零断言弱化，覆盖迁移 GTBarrelFamilyTest）。
+- **p6-cokeoven-processing**（9839b39）：首台真加工多方块机——新 TileEntityBase10MultiBlockMachine 基类（BasicMachine 裁剪直译：TU 自发电/两段式 checkRecipe/并行 16/点火门/canOutput 逐字/doOutputFluids fill-then-deduct）；TileEntityCokeOven 改继承+getFluidOutputTarget=tY-2 层 3x3 UP 面 capability 扫描+缓存失效重扫；COKE_OVEN 图（RM.java:78 逐参）+静态 24 行（煤 12+褐煤 12；block 族 6+油页岩 9 裁池）+gt6:creosote（density+1000 port-owned 载体值）；**用户裁定落地：原木配方 #minecraft:logs tag 驱动**（GT6CokeOvenLogExpansion 纯函数+GT6CokeOvenTagListener FORGE 总线 TagsUpdatedEvent shouldUpdateStaticData 门，身份子集替换幂等，40 条 tag 配方活证）；研究卡"流体输出撞 P5 侧规则"风险被证伪（fill 六面全开仅 drain 受门，推液走 UP 面=上游 SIDE_TOP 1:1）。
+
+**最终门禁**：根 clean check 188 + mdk 263 测全绿（真并集口径：229+6+4+24）；runData 二跑 written:0；runServer 合并态零 ERROR（recipes poured 24/0 + log recipes rebuilt 40）；RCON 三链合并态复放 oven 17/17 + barrel 32/32 + cokeoven 19/19（跨卡集成点=creosote 进 barrel 卡改过的桶，活证）；GPG 全验（含 rebase 重签）。
+
+**承重教训（新增）**：`@EventBusSubscriber` 注解扫描在 mod 构造期 class-load 监听类——静态表捕获的 OP/MT 引用当时为 null，离线测试因 @BeforeAll 先 initMaterials 掩盖（a9027ac 修复=惰性求值+resetForTest 清缓存）；RCON 帧尾 2×NUL 不消费→每包 2 字节泄漏全流错位（读帧纪律已入 tools/rcon/README.md）；离线 mod Block 构造被 intrusive-holder 冻结闸+Not-bootstrapped 双堵（活体 /gt6tank stat 承担载体断言，沿 p4 先例）。
+
+**遗留（池，state todo pool）**：cokeoven 回补行（gt6:oil/asphalt→油页岩 9 条、block 族 6 条、beam/竹/木弹丸）、metal 高档鼓 128K→10B 注册行、材质熔点桥、CokeOven GUI/Menu+控制器流体罐 capability、RM 壳缺口池（containsInput/minTankSize/三哈希索引/auto-IO）、creosote 密度桥、per-recipe Config duration、旧池沿用（机器族/C+D 档渲染/能量网/cover intercept 族/barrel 密封发酵连通罐等）。runClient 目视留用户：oven 旋转六条、新桶外观与 plate 渲染、flint 点火、creosote 流体渲染。
