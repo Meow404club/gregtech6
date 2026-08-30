@@ -198,14 +198,15 @@ public interface ICoverableTE {
 	 * attachCoversFirst install branch (:118-123 — one item consumed, creative players
 	 * don't pay :121). {@code false} = the caller proceeds to its own use action
 	 * (upstream onBlockActivated3 :124/:126 — the oven opens its GUI). The pipe-placement
-	 * re-side (:108) and the allowInteraction gate (:107) are cut with their subsystems
-	 * (ownership dropped in P3; usePipePlacementMode = pool).
+	 * re-side (:108) is cut with its subsystem; the :107 allowInteraction gate (with its
+	 * {@code aPlayer == null} short-circuit) is cut with ownership (dropped in P3) — a
+	 * null player simply pays for the install and skips the placed-sound hook.
 	 *
 	 * @param aHeldStack the stack in the clicking hand (caller passes the live hand stack)
 	 * @return true when the cover machinery consumed the click.
 	 */
-	default boolean onCoverUse(Player aPlayer, byte aSide, ItemStack aHeldStack, float aHitX, float aHitY, float aHitZ) {
-		if (!validSide(aSide) || aPlayer == null) return false; // :107 shape
+	default boolean onCoverUse(@Nullable Player aPlayer, byte aSide, @Nullable ItemStack aHeldStack, float aHitX, float aHitY, float aHitZ) {
+		if (!validSide(aSide)) return false; // :107 shape (the player-null/allowInteraction halves are the ownership cut)
 		if (hasCovers() && getCovers().mBehaviours[aSide] != null) { // :110
 			ICover tCover = getCovers().mBehaviours[aSide];
 			if (tCover.onCoverClickedRight(aSide, getCovers(), aPlayer, aSide, aHitX, aHitY, aHitZ)) return true; // :111
@@ -214,7 +215,7 @@ public interface ICoverableTE {
 		// :118-123 attachCoversFirst branch — :124 (onBlockActivated3) is the caller's action
 		if (!attachCoversFirst(aSide)) return false;
 		if (aHeldStack != null && !aHeldStack.isEmpty() && setCoverItem(aSide, aHeldStack, aPlayer, false, true)) { // :120
-			if (!aPlayer.getAbilities().instabuild) aHeldStack.shrink(1); // :121 (UT.Entities.hasInfiniteItems → instabuild)
+			if (aPlayer == null || !aPlayer.getAbilities().instabuild) aHeldStack.shrink(1); // :121 (UT.Entities.hasInfiniteItems → instabuild)
 			return true;
 		}
 		return false;
