@@ -1,13 +1,17 @@
 package gregtech6.datagen;
 
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+import gregtech6.block.GTOvenBlock;
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTFluidPipes;
+import gregtech6.registry.GTMachines;
 
 /**
  * Blockstate + block model provider (task p3-example-machine — the first blockstates this
@@ -42,6 +46,45 @@ public final class GT6BlockStates extends BlockStateProvider {
         itemModels().withExistingParent("example_chest", modLoc("block/example_chest"));
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get());
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
+        addOven();
+    }
+
+    /**
+     * Task p4-machine-oven (W2-exclusive provider addition): the A-tier Oven rendering — a
+     * pure datagen blockstate over 4 horizontal facings x 2 active x 2 running = 16 variants (HORIZONTAL_FACING, A-tier furnace idiom). Three
+     * models (inactive/active/running), each a {@code cube} with the four-texture key set
+     * (top/bottom/side/front, spec 8): the front texture is the state carrier, mirroring the
+     * upstream getTexture2 overlay pick (MultiTileEntityBasicMachine.java:1014, mActive →
+     * mTexturesActive : mRunning → mTexturesRunning : mTexturesInactive); the y rotation maps
+     * the FACING property (model-space north = front). Textures are script-generated
+     * placeholder PNGs, not JSON.
+     */
+    private void addOven() {
+        Block tOven = GTMachines.OVEN.get();
+        ModelFile tInactive = ovenModel("oven", "oven_front");
+        ModelFile tActive = ovenModel("oven_active", "oven_front_active");
+        ModelFile tRunning = ovenModel("oven_running", "oven_front_running");
+        getVariantBuilder(tOven).forAllStates(aState -> {
+            int tY;
+            switch (aState.getValue(GTOvenBlock.FACING)) {
+                case SOUTH -> tY = 180;
+                case WEST -> tY = 270;
+                case EAST -> tY = 90;
+                default -> tY = 0; // NORTH
+            }
+            ModelFile tModel = aState.getValue(GTOvenBlock.ACTIVE) ? tActive
+                    : aState.getValue(GTOvenBlock.RUNNING) ? tRunning : tInactive;
+            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+        });
+        itemModels().withExistingParent("oven", modLoc("block/oven"));
+    }
+
+    /** One cube model over the four-texture key set: down/up/north(front)/south+east+west(side). */
+    private ModelFile ovenModel(String aName, String aFrontTexture) {
+        return models().cube(aName,
+                modLoc("block/oven_bottom"), modLoc("block/oven_top"),
+                modLoc("block/" + aFrontTexture), modLoc("block/oven_side"),
+                modLoc("block/oven_side"), modLoc("block/oven_side"));
     }
 
     /**
