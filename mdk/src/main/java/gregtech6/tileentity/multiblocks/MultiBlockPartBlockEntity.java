@@ -241,12 +241,24 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 		if (aCapability == ForgeCapabilities.ITEM_HANDLER
 				|| aCapability == ForgeCapabilities.FLUID_HANDLER
 				|| aCapability == ForgeCapabilities.ENERGY) {
-			ITileEntityMultiBlockController tTarget = getTarget(false);
-			if (tTarget instanceof BlockEntity tController) {
+			BlockEntity tController = relayTarget();
+			if (tController != null) {
 				return tController.getCapability(aCapability, aSide);
 			}
 			return LazyOptional.empty();
 		}
 		return super.getCapability(aCapability, aSide);
+	}
+
+	/**
+	 * The relay resolution half, as a package-private seam: ForgeCapabilities cannot
+	 * class-init offline ("This will be implemented by a transformer", CapabilityToken:28),
+	 * so the tests verify THIS half and the one-line getCapability delegation rides the
+	 * already-covered Forge mechanism.
+	 */
+	@Nullable
+	BlockEntity relayTarget() {
+		ITileEntityMultiBlockController tTarget = getTarget(false);
+		return tTarget instanceof BlockEntity tController ? tController : null;
 	}
 }
