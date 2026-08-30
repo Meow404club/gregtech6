@@ -71,6 +71,7 @@ FILES_SCOPE: 预期触碰的文件/目录（用于并行隔离）
 ACCEPTANCE: 可验证的完成标准（编译通过 / 测试 / 具体行为）
 BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
 ```
+测试验收链优先复用 tools/rcon/gt6rcon.py（协议与服务端开启、nohup 短轮询纪律、各机器标准链目录见 tools/rcon/README.md），不要每任务重写 RCON 脚本。
 
 ## 五、铁律（对全局生效，传达给每个 subagent）
 
