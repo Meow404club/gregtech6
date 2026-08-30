@@ -7,6 +7,14 @@
     {
       "type": "minecraft:single",
       "resource": "gt6:block/pipe_flow_arrow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/cover_pump_out"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/cover_pump_in"
     }
   ]
 }
