@@ -1,13 +1,21 @@
 package gregtech6.registry;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,6 +26,9 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregapi.data.ANY;
+import gregapi.data.MT;
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.GT6Mod;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
@@ -31,17 +42,27 @@ import gregtech6.tileentity.tank.GTBarrelPlasticBlockEntity;
  * a separate class keeps the W3 card scopes disjoint.
  *
  * <p>The barrel family (task p4-fluid-barrel wood, p6-barrel-metal-plastic wood-carrier
- * extension + plastic/metal) ports the upstream tank rows (Loader_MultiTileEntities
- * .java:2136/:2140/:2150/:2151, category "Fluid Containers"): each material row carries
- * its own TE class and BET, the capacity and melt-down ceiling ride the block (the W1
- * registration-NBT-carrier pattern). Creative tab ownership (card note ④): all barrels
- * belong to the "Fluid Containers" category — the upstream MTE-registry category of the
- * same rows — as this card's minimal per-card tab.
+ * extension + plastic/metal, p7-barrel-high-tier-melt-bridge the 128K→10B ladder)
+ * ports the upstream tank rows (Loader_MultiTileEntities.java:2136-2170, category
+ * "Fluid Containers"): each material row carries its own TE class and BET, the capacity
+ * and melt-down ceiling ride the block (the W1 registration-NBT-carrier pattern).
+ * Creative tab ownership (card note ④): all barrels belong to the "Fluid Containers"
+ * category — the upstream MTE-registry category of the same rows — as this card's
+ * minimal per-card tab.
+ *
+ * <p>Task p7-barrel-high-tier-melt-bridge: (a) the material melting-point bridge —
+ * {@link #meltingPointK} is the verbatim {@code TileEntityBase08Barrel.readFromNBT2}
+ * :66 pair of branches (explicit NBT_CAPACITY_HU wins, else
+ * {@code (long)(mMaterial.mMeltingPoint * 1.25)}), which revokes the P6 declared
+ * deviation "metal MAX_VALUE never melts" — the bronze drum now carries its real
+ * dataset ceiling; (b) the high-tier metal drum rows :2159-2170 (128K and above —
+ * the 64K non-bronze alloy variants stay a pool cut) as shared-BET multi-mounts
+ * (ADR-P3-1): one {@link GTBarrelMetalBlockEntity}, twelve blocks, zero new BE classes.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTBarrels {
 
-	public static final DeferredRegister<net.minecraft.world.level.block.Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "gt6");
+	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "gt6");
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
@@ -53,7 +74,7 @@ public final class GTBarrels {
 	 * so this row is a zero-behaviour-change re-statement.
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL = BLOCKS.register("barrel_wood",
-			() -> new GTBarrelBlock(16000, 340, () -> GTBarrels.BARREL_BE.get(), net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+			() -> new GTBarrelBlock(16000, 340, () -> GTBarrels.BARREL_BE.get(), BlockBehaviour.Properties.of()
 					.strength(1.0F, 5.0F).sound(SoundType.WOOD)));
 
 	/** The barrel BET: one BlockEntityType over the wood barrel (registry order BLOCKS before BLOCK_ENTITY_TYPES). */
@@ -72,7 +93,7 @@ public final class GTBarrels {
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL_PLASTIC = BLOCKS.register("barrel_plastic",
 			() -> new GTBarrelBlock(32000, 370, () -> GTBarrels.BARREL_PLASTIC_BE.get(),
-					net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+					BlockBehaviour.Properties.of()
 							.strength(1.0F, 5.0F).sound(SoundType.WOOL)));
 
 	/** The plastic canister BET: validity over the plastic barrel only (one TE class per material row). */
@@ -85,20 +106,105 @@ public final class GTBarrels {
 
 	/**
 	 * Metal drum — 64000 L bronze tier (upstream row Loader_MultiTileEntities.java:2151,
-	 * the lowest metal drum of the 64K→10B ladder). Declared deviation: MAX_VALUE ceiling
-	 * (never melts) — the upstream rows carry no explicit HU and the
-	 * {@code mMaterial.mMeltingPoint * 1.25} formula needs the material melting-point
-	 * bridge this repo does not ship (pool item). Copper sound for the bronze drum.
+	 * the lowest metal drum of the 64K→10B ladder). The P6 declared deviation (MAX_VALUE,
+	 * never melts) is revoked by the material melting-point bridge (task
+	 * p7-barrel-high-tier-melt-bridge spec ①): the ceiling is the verbatim :66 else-branch
+	 * over the live dataset — Bronze carries Copper's 1357 K (MT.java:1705
+	 * {@code heat(Cu.mMeltingPoint)}), so the drum melts at (long)(1357 * 1.25) = 1696 K.
+	 * Copper sound for the bronze drum.
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL_METAL = BLOCKS.register("barrel_metal",
-			() -> new GTBarrelBlock(64000, Long.MAX_VALUE, () -> GTBarrels.BARREL_METAL_BE.get(),
-					net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-							.strength(1.0F, 5.0F).sound(SoundType.COPPER)));
+			() -> new GTBarrelBlock(64000, meltingPointK(MT.Bronze), () -> GTBarrels.BARREL_METAL_BE.get(),
+					BlockBehaviour.Properties.of()
+							.strength(1.0F, 6.0F).sound(SoundType.COPPER)));
 
-	/** The metal drum BET: validity over the metal drum only (one TE class per material row). */
+	/**
+	 * One high-tier metal drum row — the upstream
+	 * {@code aRegistry.add("<display>", "Fluid Containers", <id>, 32719,
+	 * MultiTileEntityBarrelMetal.class, ..., NBT_TANK_CAPACITY, <capacity>, ...,
+	 * [NBT_CAPACITY_HU, <hu>], ...)} lines (Loader_MultiTileEntities.java:2159-2170),
+	 * the block-carrier projection.
+	 *
+	 * <p>Spec ③ discipline: a row whose MT constant is absent from the ported dataset is
+	 * dropped at porting time and recorded on the card — all twelve constants are present
+	 * (verified per-line against MT.java), so the table is complete and zero rows skip; a
+	 * null resolution at registration would be a porting bug and fails loudly (never a
+	 * guessed number).
+	 *
+	 * @param path        the registry path (also the blockstate/model/lang key tail)
+	 * @param displayName the upstream row display name, verbatim
+	 * @param material    the upstream {@code aMat} (resolved lazily — class-load precedes MT.init)
+	 * @param capacityL   the upstream NBT_TANK_CAPACITY
+	 * @param explicitHU  the upstream NBT_CAPACITY_HU when the row carries one, else -1
+	 *                    (the :66 else-branch applies)
+	 * @param resistanceF the upstream NBT_RESISTANCE (NBT_HARDNESS is 1.0F on every row)
+	 */
+	public record MetalDrumRow(String path, String displayName, Supplier<OreDictMaterial> material,
+			long capacityL, long explicitHU, float resistanceF) {
+
+		/** The block-carrier melting point: explicit NBT_CAPACITY_HU wins, else the :66 material formula. */
+		public long meltingPointK() {
+			return explicitHU >= 0 ? explicitHU : GTBarrels.meltingPointK(material.get());
+		}
+	}
+
+	/**
+	 * The 128K-and-above drum ladder (Loader_MultiTileEntities.java:2159-2170, upstream
+	 * row order): 128K {TungstenAlloy, Ti, Netherite} → 256K {Tungstensteel,
+	 * Tungsten(ANY.W), Voidmetal} → 512K {Ta4HfC5} → 1.024M {Gaia} → 4.096M {Adamantium,
+	 * Draconium} → 8.192M {Awakened Draconium, NBT_CAPACITY_HU=10000} → 10B {Infinity,
+	 * NBT_CAPACITY_HU=1000000000}. The two explicit-HU rows are transcribed verbatim —
+	 * the :66 branch 1 overrides the material formula (the Infinity drum's ceiling is
+	 * upstream's own 1e9 K, an effectively-never-melting figure; the card's "保 MAX"
+	 * clause covers materials whose dataset mMeltingPoint IS MAX_VALUE, see
+	 * {@link #meltingPointK(long)}). The 64K non-bronze alloy variants (:2152-2158) stay
+	 * a pool cut per the card boundary.
+	 */
+	public static final List<MetalDrumRow> HIGH_TIER_METAL_DRUMS = List.of(
+			new MetalDrumRow("barrel_tungsten_alloy", "Tungsten Alloy Drum", () -> MT.TungstenAlloy, 128000, -1, 9.0F),
+			new MetalDrumRow("barrel_titanium", "Titanium Drum", () -> MT.Ti, 128000, -1, 9.0F),
+			new MetalDrumRow("barrel_netherite", "Netherite Drum", () -> MT.Netherite, 128000, -1, 9.0F),
+			new MetalDrumRow("barrel_tungstensteel", "Tungstensteel Drum", () -> MT.TungstenSteel, 256000, -1, 12.5F),
+			new MetalDrumRow("barrel_tungsten", "Tungsten Drum", () -> ANY.W, 256000, -1, 10.0F),
+			new MetalDrumRow("barrel_void_metal", "Voidmetal Drum", () -> MT.VoidMetal, 256000, -1, 10.0F),
+			new MetalDrumRow("barrel_tantalum_hafnium_carbide", "Tantalum Hafnium Carbide Drum", () -> MT.Ta4HfC5, 512000, -1, 10.0F),
+			new MetalDrumRow("barrel_gaia_spirit", "Gaia Drum", () -> MT.GaiaSpirit, 1024000, -1, 25.0F),
+			new MetalDrumRow("barrel_adamantium", "Adamantium Drum", () -> MT.Ad, 4096000, -1, 100.0F),
+			new MetalDrumRow("barrel_draconium", "Draconium Drum", () -> MT.Draconium, 4096000, -1, 100.0F),
+			new MetalDrumRow("barrel_awakened_draconium", "Awakened Draconium Drum", () -> MT.DraconiumAwakened, 8192000, 10000, 100.0F),
+			new MetalDrumRow("barrel_infinity", "Infinity Drum", () -> MT.Infinity, 10000000000L, 1000000000L, 100.0F));
+
+	/**
+	 * The high-tier blocks/BlockItems, one pair per row. The material suppliers resolve
+	 * inside the registration lambdas (RegisterEvent — strictly after the ConstructMod
+	 * enqueueWork that runs MT.init(), the GTMaterialItems.onRegister precedent), so the
+	 * bridge reads live dataset values; the {@code GTBarrels.}-qualified BET reference is
+	 * the legal forward-reference form (the P6 lambda lesson).
+	 */
+	public static final Map<String, RegistryObject<GTBarrelBlock>> METAL_DRUM_BLOCKS = new LinkedHashMap<>();
+	public static final Map<String, RegistryObject<Item>> METAL_DRUM_ITEMS = new LinkedHashMap<>();
+	static {
+		for (MetalDrumRow tRow : HIGH_TIER_METAL_DRUMS) {
+			METAL_DRUM_BLOCKS.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBarrelBlock(tRow.capacityL(), tRow.meltingPointK(),
+							() -> GTBarrels.BARREL_METAL_BE.get(), BlockBehaviour.Properties.of()
+									.strength(1.0F, tRow.resistanceF()).sound(SoundType.COPPER))));
+			METAL_DRUM_ITEMS.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new BlockItem(GTBarrels.METAL_DRUM_BLOCKS.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/**
+	 * The metal drum BET — the shared-BET multi-mount (ADR-P3-1, the GT6 "one TE class,
+	 * many material blocks" counterpart): valid over the bronze drum AND every high-tier
+	 * row; zero new BE classes.
+	 */
 	public static final RegistryObject<BlockEntityType<GTBarrelMetalBlockEntity>> BARREL_METAL_BE =
 			BLOCK_ENTITY_TYPES.register("barrel_metal", () -> BlockEntityType.Builder.of(
-					GTBarrelMetalBlockEntity::new, BARREL_METAL.get()).build(null));
+					GTBarrelMetalBlockEntity::new,
+					Stream.concat(Stream.of(GTBarrels.BARREL_METAL.get()),
+							GTBarrels.METAL_DRUM_BLOCKS.values().stream().map(RegistryObject::get))
+						.toArray(Block[]::new)).build(null));
 
 	public static final RegistryObject<Item> BARREL_METAL_ITEM = ITEMS.register("barrel_metal",
 			() -> new BlockItem(BARREL_METAL.get(), new Item.Properties()));
@@ -112,10 +218,34 @@ public final class GTBarrels {
 						aOutput.accept(new ItemStack(BARREL_ITEM.get()));
 						aOutput.accept(new ItemStack(BARREL_PLASTIC_ITEM.get()));
 						aOutput.accept(new ItemStack(BARREL_METAL_ITEM.get()));
+						for (RegistryObject<Item> tItem : GTBarrels.METAL_DRUM_ITEMS.values()) aOutput.accept(new ItemStack(tItem.get()));
 					})
 					.build());
 
 	private GTBarrels() {}
+
+	/**
+	 * The material melting-point bridge (task p7 spec ①) — the verbatim
+	 * {@code TileEntityBase08Barrel.readFromNBT2} :66 pair of branches split over two
+	 * overloads: the row NBT home is the block carrier, so the explicit-HU branch lives
+	 * in {@link MetalDrumRow#meltingPointK()} and this helper is the else-branch
+	 * {@code mMeltingPoint = (long)(mMaterial.mMeltingPoint * 1.25)} — the Java
+	 * double-multiply + long cast, its truncation included.
+	 */
+	public static long meltingPointK(OreDictMaterial aMaterial) {
+		return aMaterial == null ? Long.MAX_VALUE : meltingPointK(aMaterial.mMeltingPoint);
+	}
+
+	/**
+	 * The raw :66 else-branch arithmetic. A MAX_VALUE material stays MAX_VALUE (保 MAX —
+	 * the upstream form reaches the same ceiling through the double-cast saturation,
+	 * {@code (long)(Long.MAX_VALUE * 1.25)} clamps to Long.MAX_VALUE; the explicit branch
+	 * just states it), so a never-melting material yields a never-melting drum.
+	 */
+	public static long meltingPointK(long aMaterialMeltingPointK) {
+		if (aMaterialMeltingPointK >= Long.MAX_VALUE) return Long.MAX_VALUE;
+		return (long)(aMaterialMeltingPointK * 1.25);
+	}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GTFluidPipes.onModConstruct shape). */
 	@SubscribeEvent
@@ -131,10 +261,16 @@ public final class GTBarrels {
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			GT6Mod.LOGGER.info("GT6 fluid barrels registered: {} {} L @ {} K / {} {} L @ {} K / {} {} L @ MAX K",
+			GT6Mod.LOGGER.info("GT6 fluid barrels registered: {} {} L @ {} K / {} {} L @ {} K / {} {} L @ {} K",
 					ForgeRegistries.BLOCKS.getKey(BARREL.get()), BARREL.get().capacityL(), BARREL.get().meltingPointK(),
 					ForgeRegistries.BLOCKS.getKey(BARREL_PLASTIC.get()), BARREL_PLASTIC.get().capacityL(), BARREL_PLASTIC.get().meltingPointK(),
-					ForgeRegistries.BLOCKS.getKey(BARREL_METAL.get()), BARREL_METAL.get().capacityL());
+					ForgeRegistries.BLOCKS.getKey(BARREL_METAL.get()), BARREL_METAL.get().capacityL(), BARREL_METAL.get().meltingPointK());
+			// the p7 acceptance ④: one log row per drum, capacity + bridge melting point
+			for (MetalDrumRow tRow : HIGH_TIER_METAL_DRUMS) {
+				RegistryObject<GTBarrelBlock> tBlock = GTBarrels.METAL_DRUM_BLOCKS.get(tRow.path());
+				GT6Mod.LOGGER.info("GT6 metal drum registered: {} \"{}\" {} L @ {} K",
+						tBlock.getId(), tRow.displayName(), tRow.capacityL(), tBlock.get().meltingPointK());
+			}
 		});
 	}
 }
