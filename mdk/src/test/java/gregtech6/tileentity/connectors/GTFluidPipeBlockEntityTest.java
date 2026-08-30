@@ -133,6 +133,48 @@ public class GTFluidPipeBlockEntityTest extends GTOfflineTestBase {
 	}
 
 	@Test
+	public void fillRejectionTableForMarkedOutputFaces() {
+		// task p5-pipe-flow-semantics acceptance ② — the SideFluidHandler.fill static reject:
+		// an arrow-marked face is a pump outlet and refuses the external back-fill; the gate
+		// lives in the wrapper (never in canAcceptFluidsFrom/getFluidTankFillable, which the
+		// pipe-to-pipe equalisation receiver shares) and precedes onFilledFrom
+		FluidStack tWater = new FluidStack(Fluids.WATER, 100);
+
+		// mask == 0 → every side accepts (the GT6 default; the reject is arrow-scoped)
+		GTFluidPipeBlockEntity tMaskless = connectedPipe();
+		assertEquals(100, new SideFluidHandler(tMaskless, (byte)2).fill(tWater, FluidAction.EXECUTE),
+				"mask == 0 accepts the fill on any side");
+
+		// mask != 0 → the arrow face statically refuses, action-independently
+		GTFluidPipeBlockEntity tPipe = connectedPipe();
+		tPipe.toggleOutput((byte)2);
+		SideFluidHandler tMarked = new SideFluidHandler(tPipe, (byte)2);
+		assertEquals(0, tMarked.fill(tWater, FluidAction.EXECUTE), "arrow-marked face refuses the external fill");
+		assertEquals(0, tMarked.fill(tWater, FluidAction.SIMULATE), "the reject is action-independent");
+		assertEquals(0, tPipe.mTanks[0].amount(), "nothing entered the tank");
+		assertEquals(0, tPipe.mLastReceivedFrom[0],
+				"a rejected fill records no mLastReceivedFrom bit — the static reject precedes onFilledFrom");
+
+		// unmarked faces keep accepting under the same non-zero mask and still record their bit
+		assertEquals(100, new SideFluidHandler(tPipe, (byte)3).fill(tWater, FluidAction.EXECUTE),
+				"an unmarked face accepts under the same non-zero mask");
+		assertEquals(TileEntityBase09Connector.SBIT[3], tPipe.mLastReceivedFrom[0] & TileEntityBase09Connector.SBIT[3],
+				"accepted fills still record their source side (upstream :487)");
+		assertEquals(0, tPipe.mLastReceivedFrom[0] & TileEntityBase09Connector.SBIT[2], "the marked face's bit stays clear");
+
+		// the side-less handler (-1) is unaffected by the mask (isOutputFace bounds-checks)
+		assertEquals(100, new SideFluidHandler(tPipe, (byte)-1).fill(tWater, FluidAction.EXECUTE),
+				"mSide == -1 bypasses the arrow reject");
+
+		// unconnected faces still reject through the untouched canAcceptFluidsFrom gate
+		GTFluidPipeBlockEntity tHalfOpen = connectedPipe();
+		tHalfOpen.toggleOutput((byte)2);
+		tHalfOpen.disconnect((byte)4, true);
+		assertEquals(0, new SideFluidHandler(tHalfOpen, (byte)4).fill(tWater, FluidAction.EXECUTE),
+				"an unconnected face still rejects via canAcceptFluidsFrom — the original gate is untouched");
+	}
+
+	@Test
 	public void divupIsCeilingDivision() {
 		assertEquals(50, GTFluidPipeBlockEntity.divup(100, 2));
 		assertEquals(34, GTFluidPipeBlockEntity.divup(100, 3), "upstream UT.java:1697");
