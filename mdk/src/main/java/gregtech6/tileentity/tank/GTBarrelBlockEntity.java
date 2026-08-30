@@ -7,10 +7,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import gregtech6.block.tank.GTBarrelBlock;
+import gregtech6.covers.ICover;
 import gregtech6.registry.GTBarrels;
 
 /**
- * The wood fluid barrel (task p4-fluid-barrel) — the concrete mount of the ported
+ * The wood fluid barrel (task p4-fluid-barrel, cover admission restored by task
+ * p6-barrel-metal-plastic ①) — the concrete mount of the ported
  * {@link TileEntityBase08Barrel} family base, the counterpart of the upstream
  * {@code MultiTileEntityBarrelWood} row (gregtech/tileentity/tanks/MultiTileEntityBarrelWood.java:38).
  *
@@ -21,6 +23,15 @@ import gregtech6.registry.GTBarrels;
  * {@link GTBarrelBlock#meltingPointK()} block property. The {@code NBT_CAPACITY_HU}
  * read seam (:66) still overrides the field at load. Wood does NOT override
  * {@code keepsFilter()} upstream — the barrel drains to a true empty.
+ *
+ * <p>Cover admission (task p6-barrel-metal-plastic ①): the upstream :39 verbatim
+ * predicate — {@code allowCover → aCover.isDecorative(aSide, getCoverData())} — restores
+ * the decorative-only rule: CoverTextureSimple plates pass (the p4 iron-plate cover),
+ * functional covers like the pump are refused; the P5泵盖全开裁偏离就此回补. A cover
+ * installed before this gate stays valid but any newly refused one drops itself on the
+ * first tick through {@code ICoverableTE.checkCoverValidity} (06Covers :207-215) — zero
+ * migration code. The null guard is defensive: upstream reaches this with a non-null
+ * store (setCoverItem :135 builds it before the :146 gate).
  */
 public class GTBarrelBlockEntity extends TileEntityBase08Barrel {
 
@@ -41,6 +52,12 @@ public class GTBarrelBlockEntity extends TileEntityBase08Barrel {
 			mTank.setCapacity(tBarrel.capacityL());
 			mMeltingPoint = tBarrel.meltingPointK();
 		}
+	}
+
+	/** Upstream MultiTileEntityBarrelWood.java:39 verbatim — decorative covers only. */
+	@Override
+	public boolean allowCover(byte aSide, ICover aCover) {
+		return getCovers() != null && aCover.isDecorative(aSide, getCovers());
 	}
 
 	@Override
