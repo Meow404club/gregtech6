@@ -51,6 +51,7 @@ public final class GT6EnUs extends LanguageProvider {
         addExampleMachine();
         addFluidPipes();
         addMachines();
+        addMultiBlocks();
     }
 
     /**
@@ -61,6 +62,17 @@ public final class GT6EnUs extends LanguageProvider {
     private void addMachines() {
         add("block.gt6.oven", "Oven");
         add("itemGroup.gt6.machines", "Machines");
+    }
+
+    /**
+     * Multiblock family keys (task p4-multiblock-framework, W3 provider order 1:
+     * multiblock→barrel→cover): the Coke Oven controller + bricks part display names (the
+     * upstream coke oven bricks MTE 18000 naming) and the "Multiblocks" creative tab.
+     */
+    private void addMultiBlocks() {
+        add("block.gt6.multiblock_coke_oven", "Coke Oven");
+        add("block.gt6.multiblock_coke_oven_bricks", "Coke Oven Bricks");
+        add("itemGroup.gt6.multiblocks", "Multiblocks");
     }
 
     /**

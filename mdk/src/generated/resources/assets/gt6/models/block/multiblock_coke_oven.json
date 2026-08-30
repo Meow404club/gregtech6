@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/multiblock_coke_oven_bottom",
+    "east": "gt6:block/multiblock_coke_oven_side",
+    "north": "gt6:block/multiblock_coke_oven_front",
+    "south": "gt6:block/multiblock_coke_oven_side",
+    "up": "gt6:block/multiblock_coke_oven_top",
+    "west": "gt6:block/multiblock_coke_oven_side"
+  }
+}

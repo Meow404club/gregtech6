@@ -1,0 +1,86 @@
+package gregtech6.block.multiblock;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+
+import gregtech6.registry.GTMultiBlocks;
+import gregtech6.tileentity.multiblocks.ITileEntityMultiBlockController;
+import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
+
+/**
+ * The multiblock part block — the 1.20.1 body of the GT6 multiblock part MTE family (the
+ * "one part TE class, many part blocks" shape: the shared {@link GTMultiBlocks#MULTIBLOCK_PART_BE},
+ * one Block instance per part type, ADR-P3-1).
+ *
+ * <p>Extends {@link BaseEntityBlock} DIRECTLY, not GTEntityBlock: the part BE is the notick
+ * chain (MultiBlockPartBlockEntity extends TileEntityBase01Root, no dispatcher), while
+ * GTEntityBlock hard-types its ticker to TileEntityBase03TicksAndSync. BaseEntityBlock's
+ * default {@code getTicker} is null — exactly the notick-chain equivalent, no override needed.
+ *
+ * <p>Change propagation (upstream IMTE_OnBlockAdded :187-197 / IMTE_BreakBlock :176-184 →
+ * controller.onStructureChange, task card ⑤): the 1.20.1 hooks are {@link #onPlace} and
+ * {@link #playerWillDestroy}. NEVER onRemove — the remembered BaseEntityBlock trap (a
+ * self-written onRemove removes the BE on same-block state changes and drives setBlock-based
+ * state writes into a kill+recreate loop; LevelChunk.setBlockState:292 CHECK branch keeps the
+ * BE across flips). The part has no state properties anyway.
+ *
+ * <p>onPlace ordering note: LevelChunk.setBlockState calls onPlace (:282) BEFORE the new
+ * block entity is attached (:286-292) — the propagation here touches only NEIGHBOUR cells
+ * (whose BEs exist), never this block's own.
+ */
+public class GTMultiBlockPartBlock extends BaseEntityBlock {
+
+	public GTMultiBlockPartBlock(Properties aProperties) {
+		super(aProperties);
+	}
+
+	@Override
+	public RenderShape getRenderShape(BlockState aState) {
+		return RenderShape.MODEL; // BaseEntityBlock default is INVISIBLE (BER assumption)
+	}
+
+	@Override
+	@Nullable
+	public BlockEntity newBlockEntity(BlockPos aPos, BlockState aState) {
+		// BlockEntityType.create -> factory (BlockEntityType.java:288-290)
+		return GTMultiBlocks.MULTIBLOCK_PART_BE.get().create(aPos, aState);
+	}
+
+	/** Upstream onBlockAdded :187-197 — flag every adjacent part's controller and every adjacent controller. */
+	@Override
+	public void onPlace(BlockState aState, Level aLevel, BlockPos aPos, BlockState aOldState, boolean aMoving) {
+		super.onPlace(aState, aLevel, aPos, aOldState, aMoving);
+		if (aLevel.isClientSide() || aState.is(aOldState.getBlock())) return; // same-block flip guard (belt & braces)
+		for (Direction tSide : Direction.values()) {
+			BlockEntity tNeighbor = aLevel.getBlockEntity(aPos.relative(tSide));
+			if (tNeighbor instanceof MultiBlockPartBlockEntity tPart) {
+				ITileEntityMultiBlockController tController = tPart.getTarget(false);
+				if (tController != null) tController.onStructureChange();
+			} else if (tNeighbor instanceof ITileEntityMultiBlockController tController) {
+				tController.onStructureChange();
+			}
+		}
+	}
+
+	/** Upstream breakBlock :176-184 — release the claim, then force the controller recheck. */
+	@Override
+	public void playerWillDestroy(Level aLevel, BlockPos aPos, BlockState aState, Player aPlayer) {
+		super.playerWillDestroy(aLevel, aPos, aState, aPlayer);
+		if (aLevel.isClientSide()) return;
+		if (aLevel.getBlockEntity(aPos) instanceof MultiBlockPartBlockEntity tPart) {
+			ITileEntityMultiBlockController tTarget = tPart.getTarget(false);
+			if (tTarget != null) {
+				tPart.clearTarget();
+				tTarget.onStructureChange();
+			}
+		}
+	}
+}
