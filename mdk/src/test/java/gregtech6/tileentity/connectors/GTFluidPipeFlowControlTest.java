@@ -25,9 +25,10 @@ import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase.MultiBlockL
 
 /**
  * The flow-control offline tests (task p4-pipe-flow-control acceptance ①): the ioMask
- * NBT round-trip, the isOutputFace gate truth table (ioMask bit x connected), the
- * toggle entries, the unmarked-external-face distribute skip, and the onPlaced
- * support/back-connect semantics on a stub level.
+ * NBT round-trip, the isOutputFace/externalPushAllowed gate truth tables (ioMask bit x
+ * connected; task p5-pipe-flow-semantics adds the mask==0 GT6-default row), the toggle
+ * entries, the unmarked-external-face distribute skip, and the onPlaced support/
+ * back-connect semantics on a stub level.
  *
  * <p>Offline stub adaptation of the onPlaced table (the card's "贴靠流体罐" row): a
  * live fluid-handler neighbour needs {@code ForgeCapabilities.FLUID_HANDLER}, which does
@@ -126,10 +127,42 @@ public class GTFluidPipeFlowControlTest {
 	}
 
 	@Test
-	public void distributeSkipsUnmarkedExternalFaces() {
-		// the negative half of the gate, offline-safe: an external (non-pipe) BE neighbour
-		// with NO output arrow on its side never reaches the capability probe — the round
-		// must be a silent no-op (no push, no crash), the unmarked-face pump-valve semantics
+	public void externalPushAllowedTruthTable() {
+		// task p5-pipe-flow-semantics acceptance ① — the corrected distribute gate (the p4
+		// hard gate left a mask==0 pipe pushing nowhere, off the GT6 default)
+		GTFluidPipeBlockEntity tPipe = sType.create(POS_A, Blocks.STONE.defaultBlockState());
+
+		// mask == 0 → the GT6 default: every valid face pushes, connected or not (the
+		// connection gate itself stays with canEmitFluidsTo, the distribute loop :380)
+		tPipe.mIoMask = 0;
+		tPipe.mConnections = 0;
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			assertTrue(tPipe.externalPushAllowed(tSide), "mask == 0 → GT6 default all-faces push (side " + tSide + ")");
+		}
+
+		// mask != 0 → the arrow bit AND the connection decide
+		tPipe.mConnections = TileEntityBase09Connector.SBIT[0];
+		tPipe.mIoMask = TileEntityBase09Connector.SBIT[0];
+		assertTrue(tPipe.externalPushAllowed((byte)0), "marked AND connected");
+		assertFalse(tPipe.externalPushAllowed((byte)1), "unmarked face under a non-zero mask");
+		tPipe.mIoMask = TileEntityBase09Connector.SBIT[1];
+		assertFalse(tPipe.externalPushAllowed((byte)0), "connected but the arrow sits on another face under a non-zero mask");
+		tPipe.mIoMask = TileEntityBase09Connector.SBIT[0];
+		tPipe.mConnections = 0;
+		assertFalse(tPipe.externalPushAllowed((byte)0), "marked but unconnected — the arrow gates at runtime");
+		// out-of-range sides carry no bit under a non-zero mask (isOutputFace bounds check)
+		assertFalse(tPipe.externalPushAllowed((byte)6));
+		assertFalse(tPipe.externalPushAllowed((byte)-1));
+	}
+
+	@Test
+	public void distributeSkipsUnmarkedExternalFacesUnderANonZeroMask() {
+		// the offline-safe half of the spec ① gate: with a NON-ZERO mask, an external
+		// (non-pipe) BE neighbour without the arrow never reaches the capability probe —
+		// the round must be a silent no-op (no push, no crash). The mask==0 probe half (the
+		// GT6 default all-faces push) executes the live ForgeCapabilities lookup, which
+		// cannot class-init offline (MultiBlockPartBlockEntityTest:91) — that half is RCON
+		// territory (p5-pipe-flow-semantics acceptance ②/③).
 		MultiBlockLevel tLevel = new MultiBlockLevel();
 		GTFluidPipeBlockEntity tPipe = place(tLevel, POS_A);
 		BlockPos tPosSign = POS_A.relative(Direction.EAST);
@@ -138,6 +171,7 @@ public class GTFluidPipeFlowControlTest {
 
 		tPipe.mConnections = 63; // connected everywhere
 		tPipe.mTanks[0].fill(new FluidStack(Fluids.WATER, 100), FluidAction.EXECUTE);
+		tPipe.mIoMask = TileEntityBase09Connector.SBIT[1]; // a non-zero mask, arrow NOT on the EAST sign face (5)
 
 		// six passes cover every phase offset ((timer + offset) % 5 == 0 fires once)
 		for (int i = 0; i < 6; i++) tPipe.updateEntity();

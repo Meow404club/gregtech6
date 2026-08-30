@@ -66,10 +66,21 @@ public class SideFluidHandler implements IFluidHandler {
 		return aTank >= 0 && aTank < mTile.mTanks.length && mTile.mTanks[aTank].isFluidValid(aStack);
 	}
 
-	/** Upstream :480-490 — the fillable-tank lookup plus the source-direction record. */
+	/**
+	 * Upstream :480-490 — the fillable-tank lookup plus the source-direction record, plus
+	 * the task p5-pipe-flow-semantics spec ② static reject: an arrow-marked face is a pump
+	 * outlet and refuses external back-fill. The gate sits HERE — never in
+	 * canAcceptFluidsFrom/getFluidTankFillable, which the pipe-to-pipe equalisation receiver
+	 * shares (distribute calls getFluidTankFillable directly, bypassing this wrapper).
+	 */
 	@Override
 	public int fill(FluidStack aResource, FluidAction aAction) {
 		if (aResource == null || aResource.isEmpty()) return 0;
+		// the static reject, before getFluidTankFillable/onFilledFrom: a rejected fill records
+		// no mLastReceivedFrom bit (orthogonal to the one-round dynamic backflow marker, which
+		// only ever forms on accepted fills). mSide == -1 is unaffected (isOutputFace
+		// bounds-checks the side).
+		if (mSide >= 0 && mTile.isOutputFace(mSide)) return 0;
 		FluidTankGT tTank = mTile.getFluidTankFillable(mSide, aResource);
 		if (tTank == null) return 0;
 		int rFilled = tTank.fill(aResource, aAction);
