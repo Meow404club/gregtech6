@@ -1,5 +1,7 @@
 {
   "block.gt6.example_chest": "GT Example Chest",
+  "block.gt6.multiblock_coke_oven": "Coke Oven",
+  "block.gt6.multiblock_coke_oven_bricks": "Coke Oven Bricks",
   "block.gt6.oven": "Oven",
   "block.gt6.wood_fluid_pipe_medium": "Wood Fluid Pipe",
   "block.gt6.wood_fluid_pipe_small": "Small Wood Fluid Pipe",
@@ -2284,6 +2286,7 @@
   "itemGroup.gt6.lens": "Lenses",
   "itemGroup.gt6.machines": "Machines",
   "itemGroup.gt6.minecart_wheels": "Cart Wheels",
+  "itemGroup.gt6.multiblocks": "Multiblocks",
   "itemGroup.gt6.nugget": "Nuggets",
   "itemGroup.gt6.ore_raw": "Raw Ores",
   "itemGroup.gt6.plate": "Plates",

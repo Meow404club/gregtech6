@@ -12,6 +12,8 @@ import gregtech6.block.GTOvenBlock;
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMachines;
+import gregtech6.registry.GTMultiBlocks;
+import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 
 /**
  * Blockstate + block model provider (task p3-example-machine — the first blockstates this
@@ -47,6 +49,45 @@ public final class GT6BlockStates extends BlockStateProvider {
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get());
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
         addOven();
+        addMultiBlocks();
+    }
+
+    /**
+     * Task p4-multiblock-framework (W3 provider order 1: multiblock→barrel→cover): the FORMED
+     * blockstate fallback rendering (spec ⑧) — the Coke Oven controller carries the base-owned
+     * FACING + FORMED properties (TileEntityBase10MultiBlockBase :188-189 bit-3 replacement),
+     * 4 facings x 2 formed = 8 variants over two cube models; the front texture is the formed
+     * state carrier (mirrors the upstream getTexture2 mStructureOkay pick). The bricks part is
+     * a plain cube_all (no properties). Textures are script-generated placeholder PNGs.
+     */
+    private void addMultiBlocks() {
+        Block tCokeOven = GTMultiBlocks.COKE_OVEN.get();
+        ModelFile tUnformed = cokeOvenModel("multiblock_coke_oven", "multiblock_coke_oven_front");
+        ModelFile tFormed = cokeOvenModel("multiblock_coke_oven_formed", "multiblock_coke_oven_front_formed");
+        getVariantBuilder(tCokeOven).forAllStates(aState -> {
+            int tY;
+            switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                case SOUTH -> tY = 180;
+                case WEST -> tY = 270;
+                case EAST -> tY = 90;
+                default -> tY = 0; // NORTH
+            }
+            ModelFile tModel = aState.getValue(TileEntityBase10MultiBlockBase.FORMED) ? tFormed : tUnformed;
+            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+        });
+        itemModels().withExistingParent("multiblock_coke_oven", modLoc("block/multiblock_coke_oven"));
+
+        Block tBricks = GTMultiBlocks.COKE_OVEN_BRICKS.get();
+        simpleBlock(tBricks, models().cubeAll("multiblock_coke_oven_bricks", modLoc("block/multiblock_coke_oven_bricks")));
+        itemModels().withExistingParent("multiblock_coke_oven_bricks", modLoc("block/multiblock_coke_oven_bricks"));
+    }
+
+    /** One cube model over the four-texture key set: down/up/north(front)/south+east+west(side). */
+    private ModelFile cokeOvenModel(String aName, String aFrontTexture) {
+        return models().cube(aName,
+                modLoc("block/multiblock_coke_oven_bottom"), modLoc("block/multiblock_coke_oven_top"),
+                modLoc("block/" + aFrontTexture), modLoc("block/multiblock_coke_oven_side"),
+                modLoc("block/multiblock_coke_oven_side"), modLoc("block/multiblock_coke_oven_side"));
     }
 
     /**
