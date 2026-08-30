@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -16,6 +17,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 import gregtech6.client.render.GTModelProperties;
 import gregtech6.client.render.GTRenderUpdates;
@@ -158,9 +161,75 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 			FluidStack tFluid = mTank.getFluid();
 			if (tFluid == null || tFluid.isEmpty() || tFluid.getAmount() <= 0) return; // :160-161
 			if (meltsDown(tFluid) && meltdown()) return; // :162
+			pushByGravity(); // the p5 passive discharge (spec ②) — after the melt judgment, per the card
 		}
 		// upstream 06Covers :202 — the cover tick follows the barrel business (oven :241 template)
 		if (hasCovers()) getCovers().tickPost(aTimer, aIsServerSide, mBlockUpdated, false);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the passive gravity discharge (p5 spec ② — the upstream B[0] connected-tank push
+	// FL.move(IFluidTank, ...) :845-846, made an always-on rule with a bounded budget)
+	// ---------------------------------------------------------------------------
+
+	/** Ruling ② — 1000 L/tick: full force (the upstream Long.MAX → bindInt) would void a 16000 L barrel in one tick and make the pump's rate meaningless. */
+	public static final long GRAVITY_TRANSFER_PER_TICK = 1000;
+
+	/**
+	 * The p5 gravity push: lighter-than-air rises (UP), everything else falls (DOWN — the
+	 * binary ruling ③; the upstream gas → ALL_SIDES_VERTICAL double branch is cut with the
+	 * FL.gas name-list machinery, density 0 falls with the upstream {@code else} catch-all).
+	 * The move is the fill-then-drain shape: the target's acceptance is measured by an
+	 * executed fill BEFORE the source pays, so a refusing or absent neighbour costs
+	 * nothing. Both ends bypass the {@link BarrelFluidHandler} side rules on purpose —
+	 * the source is {@code mTank} directly and the target is the neighbour's own
+	 * capability at its back face (the upstream getAdjacentTank → FL.move direct-call
+	 * semantics, FL.java:846); pushing into a pipe lands as SideFluidHandler.fill(side),
+	 * pushing into a barrel is its face-open fill.
+	 */
+	protected void pushByGravity() {
+		Direction tDir = gravityDirection(BarrelFluidHandler.fluidDensitySign(mTank.getFluid()));
+		if (hasLevel()) {
+			BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(tDir));
+			IFluidHandler tTarget = tNeighbor == null ? null
+					: tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, tDir.getOpposite()).orElse(null); // WorldAndCoords.getAdjacentTank :118-129 对位
+			if (tTarget != null && moveTankToHandler(mTank, tTarget, GRAVITY_TRANSFER_PER_TICK) > 0) onTankChanged();
+		}
+	}
+
+	/**
+	 * The gravity branch of the discharge: the strict GT6 lighter verdict sends the
+	 * content UP, every other sign falls DOWN (the upstream :210-212 lighter→top /
+	 * else→bottom pair with the gas branch cut, ruling ③).
+	 */
+	public static Direction gravityDirection(int aDensitySign) {
+		return aDensitySign < 0 ? Direction.UP : Direction.DOWN;
+	}
+
+	/**
+	 * FL.move(IFluidTank, DelegatorTileEntity, max) (FL.java:845-846): simulate the
+	 * withdrawal, executed-fill the target, and only then withdraw what the target
+	 * actually took — fill-then-drain never over-withdraws and a refusal moves 0.
+	 */
+	public static long moveTankToHandler(FluidTankGT aFrom, @Nullable IFluidHandler aTo, long aMaxMoved) {
+		if (aTo == null || aMaxMoved <= 0) return 0;
+		FluidStack tDrained = aFrom.drain(FluidTankGT.bindInt(aMaxMoved), FluidAction.SIMULATE);
+		if (tDrained == null || tDrained.isEmpty() || tDrained.getAmount() <= 0) return 0;
+		int tFilled = aTo.fill(tDrained.copy(), FluidAction.EXECUTE);
+		if (tFilled <= 0) return 0;
+		aFrom.drain(tFilled, FluidAction.EXECUTE);
+		return tFilled;
+	}
+
+	/** The reversed FL.move (the pump-cover in-mode): simulate-drain the source handler, executed-fill the host tank, then withdraw what landed. */
+	public static long moveHandlerToTank(@Nullable IFluidHandler aFrom, @Nullable FluidTankGT aTo, long aMaxMoved) {
+		if (aFrom == null || aTo == null || aMaxMoved <= 0) return 0;
+		FluidStack tDrained = aFrom.drain(FluidTankGT.bindInt(aMaxMoved), FluidAction.SIMULATE);
+		if (tDrained == null || tDrained.isEmpty() || tDrained.getAmount() <= 0) return 0;
+		int tFilled = aTo.fill(tDrained.copy(), FluidAction.EXECUTE);
+		if (tFilled <= 0) return 0;
+		aFrom.drain(tFilled, FluidAction.EXECUTE);
+		return tFilled;
 	}
 
 	@Override
