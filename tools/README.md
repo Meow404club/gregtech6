@@ -51,6 +51,15 @@ tools/services.sh start brain
 curl -s 127.0.0.1:8939/health      # {"status":"ok","tools":16,...}
 ```
 
+## 周期性增量索引（autorefresh）
+
+brain 守护内置调度线程：启动 30s 后首轮、之后每轮间隔 600s，对配置的源
+（默认 `project`）起独立索引子进程——mtime 增量，无改动零嵌入，真有变更时
+单轮秒级。开关与节奏在 `tools/config.json` 的 `"autorefresh"` 块
+（`enabled/interval_s/sources/startup_delay_s/run_timeout_s`），
+生命周期日志 `tmp/index/autorefresh.log`，索引输出与手动 refresh 共用
+`tmp/index/refresh.log`。
+
 ## 关于 PreToolUse 钩子的注册位置
 
 GPG 提交拦截钩子已注册在**用户级** `~/.zcode/cli/config.json`（hooks 段），
