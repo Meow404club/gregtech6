@@ -22,7 +22,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import gregapi.code.TagData;
 import gregapi.data.TD;
+import gregtech6.client.render.GTRenderUpdates;
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.util.UT6;
 
 /**
  * 1.20.1 counterpart of gregapi/tileentity/connectors/MultiTileEntityPipeFluid.java
@@ -69,6 +71,9 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	public static final String NBT_TANK_PREFIX = "tank.";
 	public static final String NBT_LAST_PREFIX = "last.";
 	public static final String NBT_TRANSFERRED = "transferred";
+
+	/** The ioMask NBT key (task p4-pipe-flow-control spec ⑤ — the only new key of the card). */
+	public static final String NBT_IO_MASK = "ioMask";
 
 	/** Upstream :74 — one 6-bit source mask per tank. */
 	public byte[] mLastReceivedFrom = new byte[0];
@@ -119,9 +124,12 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 			// the random stagger of the two-phase upstream tick lists (:128-135) — GTCEu offset style
 			mPhaseOffset = getLevel().random.nextInt(DISTRIBUTION_PERIOD);
 			mPhaseAssigned = true;
-			// the onPlaced handshake (upstream :82-96) run on the first tick: idempotent, and it
-			// also covers /setblock placement (setPlacedBy never fires there)
-			for (byte tSide = 0; tSide < 6; tSide++) connect(tSide, true);
+			// NO auto-handshake here (task p4-pipe-flow-control spec ② — the new baseline is
+			// "GT6 pipes never auto-connect"): upstream does its placement connect in onPlaced
+			// (TileEntityBase09Connector.java:82-96, driven here by the BlockItem place chain),
+			// everything after that is manual per-face work. The W1 first-tick all-sides
+			// handshake would resurrect connections the user manually disconnected (mConnections
+			// persists across chunk loads, upstream :53-62).
 		}
 	}
 
@@ -179,7 +187,11 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 				continue;
 			}
 
-			// :401-410 — any other fluid handler, probed with 1 L and then the full stack (both simulate)
+			// :401-410 — any other fluid handler, probed with 1 L and then the full stack (both simulate).
+			// spec ③ gate: the external push runs ONLY through faces carrying the output arrow
+			// (isOutputFace = ioMask bit AND connected — the explicit pump-valve semantics of
+			// task p4-pipe-flow-control); pipe-to-pipe equalisation above is NOT gated.
+			if (!isOutputFace(tSide)) continue;
 			IFluidHandler tHandler = tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, tDirection.getOpposite()).orElse(null);
 			if (tHandler == null) continue;
 			FluidStack tProbe1 = aTank.get(1), tProbeAll = aTank.get(Long.MAX_VALUE);
@@ -290,6 +302,149 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	}
 
 	// ---------------------------------------------------------------------------
+	// placement (upstream onPlaced :82-96 — task p4-pipe-flow-control spec ②)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream TileEntityBase09Connector.onPlaced (:82-96), server side, driven by the
+	 * BlockItem place chain (GTFluidPipeBlockItem.placeBlock — the only vanilla hook that
+	 * holds both the live BE and the BlockPlaceContext; the architect ruling rejects a
+	 * BE.onLoad first-check because every chunk load would replay the support-side connect
+	 * and resurrect manually disconnected pipes). aSide is the CLICKED face
+	 * (context.getClickedFace(), 0..5): the pipe side that touches the neighbour is its
+	 * opposite — the upstream OPOS flip (:84). A support block that is not a pipe/fluid
+	 * container fails the connect → all six sides stay unconnected (upstream :87).
+	 *
+	 * <p>The upstream :86 allowInteraction ownership gate is cut (no ownership chain in
+	 * this port, deviation recorded on the card). /setblock placement never reaches here —
+	 * the seam is accepted on the card (GT6 does not auto-connect anyway); headless
+	 * acceptance drives this method explicitly via /gt6pipe place.
+	 */
+	public void onPlaced(byte aSide) {
+		if (aSide < 0 || aSide >= 6 || !hasLevel() || !isServerSide()) return;
+		connect(UT6.OPOS[aSide], true); // upstream :84/:87
+		// upstream :88-93 — symmetric back-connect to neighbouring connectors that already
+		// connect towards this pipe (the Delegator mSideOfTileEntity validity check is the
+		// opposite-side tautology and folds away with the direct BE access)
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(Direction.from3DDataValue(tSide)));
+			if (tNeighbor instanceof TileEntityBase09Connector tConnector) {
+				byte tOpposite = (byte)Direction.from3DDataValue(tSide).getOpposite().get3DDataValue();
+				if (tConnector.connected(tOpposite)
+						&& haveOneCommonElement(tConnector.getConnectorTypes(tOpposite), getConnectorTypes(tSide))) {
+					connect(tSide, true); // upstream :91
+				}
+			}
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// per-face output arrows (spec ①/③ — the monkeywrench output layer of
+	// MultiTileEntityPipeItem.java:128-153, single-layered onto one mask)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The 6-bit output-arrow mask (task p4-pipe-flow-control spec ①): a set bit = the face
+	 * pushes to external fluid handlers. Decoupled from the connection state — any face can
+	 * carry the arrow, the gate is applied at runtime ({@link #isOutputFace}).
+	 */
+	public byte mIoMask = 0;
+
+	/** The clamp mirrors getConnections() — the whole 6-bit space. */
+	public byte getIoMask() {
+		return (byte)(mIoMask & 63);
+	}
+
+	/**
+	 * spec ③ — the distribute gate for the external IFluidHandler branch: the face carries
+	 * the arrow AND is connected. Pipe-to-pipe equalisation is never gated.
+	 */
+	public boolean isOutputFace(byte aSide) {
+		return aSide >= 0 && aSide < 6 && (mIoMask & SBIT[aSide]) != 0 && connected(aSide);
+	}
+
+	/**
+	 * The shift-right-click toggle (the monkeywrench :128-153 single-layered): the side
+	 * flips, marked → unmarked or the reverse; the other bits stay untouched; several faces
+	 * can be marked at once; no three-state cycle. /gt6pipe output shares this entry.
+	 */
+	public boolean toggleOutput(byte aSide) {
+		if (aSide < 0 || aSide >= 6) return false;
+		mIoMask ^= SBIT[aSide];
+		outputChanged();
+		return true;
+	}
+
+	/** /gt6pipe clear — drop every arrow on the pipe. */
+	public void clearOutputs() {
+		if (mIoMask == 0) return;
+		mIoMask = 0;
+		outputChanged();
+	}
+
+	/**
+	 * The right-click (hoe = the wrench substitute, ToolActions.HOE_DIG — the cover
+	 * onCoverToolClick precedent) connection toggle of upstream onToolClick2
+	 * (TileEntityBase09Connector.java:70-79): connected → disconnect, else connect. The
+	 * air/liquid branch of connect (upstream :141, mdk isAirOrLiquid) stays the open-end
+	 * "manual pipe mouth" semantics. /gt6pipe toggle shares this entry.
+	 */
+	public boolean toggleConnection(byte aSide) {
+		if (aSide < 0 || aSide >= 6) return false;
+		if (connected(aSide)) return disconnect(aSide, true);
+		return connect(aSide, true);
+	}
+
+	/** spec ①/⑤ — every arrow change: dirty + the client sync window + the render-update pair. */
+	private void outputChanged() {
+		setChanged();
+		updateClientData();
+		GTRenderUpdates.scheduleRenderUpdate(this);
+	}
+
+	// ---------------------------------------------------------------------------
+	// arrow render + client sync (spec ⑤ — the two 03 sync channels carry the ioMask
+	// through saveAdditional/load; the client refreshes the render snapshot on each landing)
+	// ---------------------------------------------------------------------------
+
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		scheduleFlowRenderRefresh();
+	}
+
+	@Override
+	public void handleUpdateTag(CompoundTag aTag) {
+		super.handleUpdateTag(aTag);
+		scheduleFlowRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket) {
+		super.onDataPacket(aNet, aPacket);
+		scheduleFlowRenderRefresh(); // block-update channel (arrow changes)
+	}
+
+	private void scheduleFlowRenderRefresh() {
+		if (mIoMask != 0 && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
+	}
+
+	/**
+	 * The C-grade render hook (IForgeBlockEntity.java:174): a pipe with output arrows
+	 * hands the render thread the immutable {@link gregtech6.client.render.PipeFlowSnapshot};
+	 * unmarked pipes keep {@code ModelData.EMPTY} and render through the plain blockstate
+	 * model (spec ④ — the zero-blockstate overlay, the oven cover snapshot form).
+	 */
+	@Override
+	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		byte tMask = getIoMask();
+		if (tMask == 0) return super.getModelData();
+		return gregtech6.client.render.GTModelProperties.derive(super.getModelData())
+				.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask))
+				.build();
+	}
+
+	// ---------------------------------------------------------------------------
 	// capability (spec ⑤ — the side wrapper per getCapability call, GTCEu IOFluidHandlerList form)
 	// ---------------------------------------------------------------------------
 
@@ -314,6 +469,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 			aNBT.putByte(NBT_LAST_PREFIX + i, mLastReceivedFrom[i]);
 		}
 		aNBT.putLong(NBT_TRANSFERRED, mTransferredAmount);
+		aNBT.putByte(NBT_IO_MASK, mIoMask); // spec ⑤ — the plain-key byte (bit0-5)
 	}
 
 	@Override
@@ -327,6 +483,9 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		}
 		if (aNBT.contains(NBT_TRANSFERRED, Tag.TAG_ANY_NUMERIC)) {
 			mTransferredAmount = aNBT.getLong(NBT_TRANSFERRED);
+		}
+		if (aNBT.contains(NBT_IO_MASK, Tag.TAG_ANY_NUMERIC)) {
+			mIoMask = (byte)(aNBT.getByte(NBT_IO_MASK) & 63); // bit0-5 clamp, the mConnections form
 		}
 	}
 }

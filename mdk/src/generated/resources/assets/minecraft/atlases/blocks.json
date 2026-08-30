@@ -3,6 +3,10 @@
     {
       "type": "minecraft:single",
       "resource": "gt6:item/material_sets/metallic/plate"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/pipe_flow_arrow"
     }
   ]
 }

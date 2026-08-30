@@ -1,6 +1,11 @@
 package gregtech6.block.pipe;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -8,15 +13,21 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraftforge.common.ToolActions;
 
 import gregtech6.block.GTEntityBlock;
+import gregtech6.client.render.GTRenderUpdates;
 import gregtech6.registry.GTFluidPipes;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
+import gregtech6.util.UT6;
 
 /**
  * The GT6 fluid pipe block (task p4-fluid-pipes spec ④) — the block side of the pipe
  * family over the shared BET (ADR-P3-1: one BlockEntityType mounting several blocks,
- * the GT6 "one TE class, many material blocks" counterpart). W1 ships the two wood
+ * the GT6 "one TE class, many material blocks" counterpart). W1 shipped the two wood
  * tiers (the card fixes aStat=50 at 50 L / 300 L per tank; the upstream tiny/small/
  * medium multiplier row MultiTileEntityPipeFluid.java:92-94 is collapsed into the two
  * card-named tiers, other materials/tank-counts are a later card).
@@ -27,7 +38,27 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * (onConnectionChange), and the datagen emits a variant per mask value (GT6 renders
  * its connections from the mask too, getTextureSide :522).
  *
- * <p>The BE does the work: this block only carries the tier capacity and the state.
+ * <p>Flow-control interaction (task p4-pipe-flow-control spec ①) — the two-layer
+ * {@code use} wiring over the upstream tool-click semantics:
+ * <ul>
+ * <li>hoe-class tool ({@code ToolActions.HOE_DIG} — the wrench substitute, the cover
+ *     onCoverToolClick precedent) right click = the per-face connection toggle of
+ *     upstream onToolClick2 (TileEntityBase09Connector.java:70-79): connected →
+ *     disconnect, else connect;</li>
+ * <li>hoe + shift = the per-face output-arrow toggle (the monkeywrench output layer,
+ *     MultiTileEntityPipeItem.java:128-153 single-layered);</li>
+ * <li>the target face is {@code UT6.getSideWrenching} over the 0..1 hit offsets
+ *     (upstream UT.java:1776-1798 — clicked face + edge thresholds + OPOS corner
+ *     fallback);</li>
+ * <li>everything else passes through. The BE runs server-side only; the client returns
+ *     CONSUME to claim the interaction.</li>
+ * </ul>
+ *
+ * <p>{@link #triggerEvent} is the consumer-side wiring of the C-grade render-update
+ * pair (GTRenderUpdates.java:31-46 template): the server-side
+ * {@code scheduleRenderUpdate} bounces here as a blockEvent, and the client block
+ * forwards it back into the client scheduleRenderUpdate pair. NO onRemove override —
+ * the BaseEntityBlock kill+recreate lesson (remember id59).
  */
 public class GTFluidPipeBlock extends GTEntityBlock {
 
@@ -61,5 +92,48 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState aState) {
 		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+	}
+
+	// ---------------------------------------------------------------------------
+	// flow-control interaction (spec ①)
+	// ---------------------------------------------------------------------------
+
+	@Override
+	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+		ItemStack tStack = aPlayer.getItemInHand(aHand);
+		if (tStack.isEmpty() || !tStack.canPerformAction(ToolActions.HOE_DIG)) return InteractionResult.PASS;
+		if (aLevel.isClientSide) return InteractionResult.CONSUME; // claim the interaction, the BE executes server-side
+
+		BlockEntity tTile = aLevel.getBlockEntity(aPos);
+		if (!(tTile instanceof GTFluidPipeBlockEntity tPipe)) return InteractionResult.PASS;
+		byte tClickedSide = (byte)aHit.getDirection().get3DDataValue();
+		// the 0..1 in-face offsets — upstream passes the raw hit fractions of the clicked face
+		float tHitX = (float)(aHit.getLocation().x - aPos.getX());
+		float tHitY = (float)(aHit.getLocation().y - aPos.getY());
+		float tHitZ = (float)(aHit.getLocation().z - aPos.getZ());
+		byte tTargetSide = UT6.getSideWrenching(tClickedSide, tHitX, tHitY, tHitZ);
+
+		if (aPlayer.isShiftKeyDown()) {
+			tPipe.toggleOutput(tTargetSide); // shift+right-click = the output arrow (monkeywrench layer)
+		} else {
+			tPipe.toggleConnection(tTargetSide); // right-click = the wrench connection toggle (onToolClick2)
+		}
+		return InteractionResult.CONSUME;
+	}
+
+	// ---------------------------------------------------------------------------
+	// render-update event forward (GTRenderUpdates.java:31-46 consumer template)
+	// ---------------------------------------------------------------------------
+
+	@Override
+	public boolean triggerEvent(BlockState aState, Level aLevel, BlockPos aPos, int aId, int aParam) {
+		if (aId == GTRenderUpdates.RENDER_UPDATE_EVENT_ID && aLevel.isClientSide) {
+			BlockEntity tTile = aLevel.getBlockEntity(aPos);
+			if (tTile != null) {
+				GTRenderUpdates.scheduleRenderUpdate(tTile);
+				return true;
+			}
+		}
+		return super.triggerEvent(aState, aLevel, aPos, aId, aParam);
 	}
 }

@@ -2,7 +2,6 @@ package gregtech6.registry;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,6 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.block.pipe.GTFluidPipeBlock;
+import gregtech6.block.pipe.GTFluidPipeBlockItem;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 
 /**
@@ -62,10 +62,10 @@ public final class GTFluidPipes {
 					GTFluidPipeBlockEntity::new, WOOD_FLUID_PIPE_SMALL.get(), WOOD_FLUID_PIPE_MEDIUM.get()).build(null));
 
 	public static final RegistryObject<Item> WOOD_FLUID_PIPE_SMALL_ITEM = ITEMS.register("wood_fluid_pipe_small",
-			() -> new BlockItem(WOOD_FLUID_PIPE_SMALL.get(), new Item.Properties()));
+			() -> new GTFluidPipeBlockItem(WOOD_FLUID_PIPE_SMALL.get(), new Item.Properties()));
 
 	public static final RegistryObject<Item> WOOD_FLUID_PIPE_MEDIUM_ITEM = ITEMS.register("wood_fluid_pipe_medium",
-			() -> new BlockItem(WOOD_FLUID_PIPE_MEDIUM.get(), new Item.Properties()));
+			() -> new GTFluidPipeBlockItem(WOOD_FLUID_PIPE_MEDIUM.get(), new Item.Properties()));
 
 	/**
 	 * The "Fluid Pipes" category tab — the upstream MTE-registry category
