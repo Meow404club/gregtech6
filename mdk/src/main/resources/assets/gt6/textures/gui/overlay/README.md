@@ -1,6 +1,6 @@
 # gui/overlay — borrowed wrench-grid icons
 
-The three PNGs in this directory are copied from
+The four PNGs in this directory are copied from
 **GregTech CEu Modern** (https://github.com/GregTechCEu/GregTech-Modern),
 version **8.0.0**, files
 `src/main/resources/assets/gtceu/textures/gui/overlay/`:
@@ -8,6 +8,8 @@ version **8.0.0**, files
 - `tool_pipe_connect.png` — green wrench icon (connected face)
 - `tool_pipe_block.png` — red wrench icon (unconnected / inactive face)
 - `tool_io_facing_rotation.png` — arrow icon (output-arrow ioMask face)
+- `tool_front_facing_rotation.png` — rotation icon (front-facing rotation cell,
+  task p6-oven-rotation)
 
 Copied on 2026-08-30. Upstream license: **LGPL-3.0-or-later**.
 
