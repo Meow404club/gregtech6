@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 4 阶段：管线 / Cover / 多方块渲染（BakedModel）+ 首台加工机器`（**2026-08-30 收官**：八卡全数合入 main HEAD 0d21a59，根 188 + mdk 199 单测全绿，首台真加工机器 Oven / 流体管线 / 多方块框架 / 粘性罐桶 / Cover 域 / C 档渲染基建 / 逐面流向控制全落地，ADR-P4 六条验收线全满足）
+`第 5 阶段：管道语义修正 / 桶重力侧规则+泵盖 / 扳手九宫格 UI / RCON 工具链`（**2026-08-30 收官**：四卡全数合入 main HEAD 7e7dbbb，根 188 + mdk 229 单测全绿，RCON 验收链合并态复放 pipe 19/19 + barrel 38/38，ADR-P5 各卡红线全满足）
 
 > **平台修正 2026-08-29**：原目标"NeoForge 1.20.1"被证伪——NeoForge 官方 maven 从未发布 20.1.x 产物（versions API `filter=20.1` 返回空，主会话独立复核），NeoForged 自家 ModDevGradle 把 1.20.1 路由给 `legacyforge` 变体，文档站最早只到 1.20.3。用户裁决：目标平台 = **MinecraftForge 1.20.1（47.4.10）**，构建插件 = MDG legacyforge 2.0.144。1.20.1 的 API 面即 `net.minecraftforge.*` + RegistryObject（DeferredHolder 是 20.2+ 才有），第 1 阶段的所有调研结论不受影响。
 
@@ -15,6 +15,7 @@
 - [x] 第 2 阶段：Forge 1.20.1 MDK 挂载 + 注册桥 + DataGen——2026-08-29 收官（188 测全绿；2469 材料物品注册；runData 管线可复现）
 - [x] 第 3 阶段：BlockEntity + AbstractContainerMenu + Screen 框架——2026-08-30 收官（221 测全绿；56253 物品 + 96 tab；BE/Menu/Screen/chest 全链）
 - [x] 第 4 阶段：管线 / Cover / 多方块渲染（BakedModel）+ 首台加工机器——2026-08-30 收官（387 测全绿；Oven/管线/多方块/桶/Cover/渲染基建/流向控制八卡）
+- [x] 第 5 阶段：管道语义修正 / 桶重力侧规则+泵盖 / 扳手九宫格 UI / RCON 工具链——2026-08-30 收官（417 测全绿；tools/rcon 正典客户端入库；瞬态 overlay 红线例外；桶侧规则+CoverPump+gt6:natural_gas）
 
 ## 关键决策
 
@@ -159,3 +160,19 @@
 - GTCEu 式扳手交互 UI（9 宫格红绿图标覆盖层）+箭头等贴图从 GTCEu 资产直接借用
 - RCON 验收工具链合入主项目 tools/rcon/（现各 agent /tmp 一次性脚本五份重复）
 - 旧池沿用：CokeOven 加工业务（RM.CokeOven 配方考古）、机器族、C/D 档渲染升级、D 完整能量网、cover intercept 族、FluidTankGT keepFilter 0 量持久化缺口（归 Logistics 罐卡）、chest loot table、ADR-P3-6 池、PrefixRegistry 未 close、移植进度看板
+
+## 第 5 阶段收官记录（2026-08-30，主会话 phase-closeout）
+
+> 合入链：aa7d9aa（rcon-tooling）→ 4b415c8（pipe-flow-semantics）→ 18b7fe5（wrench-ui-gtceu）→ 7e7dbbb（barrel-side-rules，13 提交）。四卡全程后台并行派发（id68 纪律），review-merge 串行审查逐卡合入。阶段外基建：RAG project 源扩为移植仓库本体（7c2fa46）+ brain 内置 10 分钟自动索引（dd8d33c）+ state_update 深合并修复（080f544/e4c7923）。
+
+**各卡语义定论**：
+- **p5-rcon-tooling**（aa7d9aa）：`tools/rcon/gt6rcon.py`（279 行正典客户端：帧协议/auth 后排空/按 rid 多帧收集/--expect 断言/FAILED 检测/退出码 0·1·2·3）+ README 四节（协议/服务端开启/nohup 短轮询纪律/五族机器标准链目录）+ AGENTS.md 指针行——后续所有任务卡的验收链一律复用，不再每任务重写。
+- **p5-pipe-flow-semantics**（4b415c8）：管道流向终态（用户裁定落地）= `externalPushAllowed`（ioMask==0 → GT6 默认全外推；ioMask!=0 → 仅 isOutputFace）+ `SideFluidHandler.fill` 静态拒回流（包装层、先于 onFilledFrom，拒绝零防回流位；`canAcceptFluidsFrom`/`getFluidTankFillable` 零改动——1.7.10 :386 管↔管接收端直调实证，门进 BE 层会连带杀均压）。
+- **p5-wrench-ui-gtceu**（18b7fe5）：GTCEu 九宫格扳手 UI。**红线首次修订为双判据**：持久态渲染（绑定方块存续、进 chunk mesh）=BakedModel 唯一路线不变；瞬态输入反馈 overlay（生命周期绑定指针悬停、每帧重建）=唯一合法挂点 `RenderHighlightEvent.Block`（本仓首个 FORGE 主总线监听器），三约束=零 BE 静态引用/零写入/不取消事件。三件套 GTWrenchGridTables（纯 MC-free，cellSide 与点击拾取同源 UT6.getSideWrenching）/GTWrenchGridRenderer（世界坐标直绘）/GTWrenchHighlightListener + 3 张贴图（LGPL-3.0-or-later 署名随目录 README）。oven 朝向旋转裁池。
+- **p5-barrel-side-rules**（7e7dbbb）：桶六面可注入；被动重力排放（底排 density>0/顶排 density<0/侧只进，严格 GT6 符号口径不采 Forge javadoc ≤0，1000 L/tick 预算，fill-then-drain 推不进不扣源）；CoverPump（上游 :42-98 裁译：秒拍/1000 L/s/visual 0出1进/单向门逐字/getCoverPumpTank 直调 host 罐绕自家 wrapper）；桶 BE 挂 ICoverableTE；gt6:natural_gas（density -100）作顶面排放验收载体；泵 pull 端走对端 side-less capability 防对端侧规则死锁（裁定⑥ side-less=作为整体的罐）。
+
+**最终门禁**：根 clean check 188 + mdk 229 测全绿；runData 二跑 written:0；runServer 合并态零 GT6 ERROR；RCON 链合并态复放 pipe 19/19 + barrel 38/38；GPG 全验（含多轮 rebase 重签）。
+
+**承重教训（新增）**：vanilla TEXT RenderType composite 默认 CULL——世界直绘 quad face 1/2/5 顶点发射序须反转（u×v 叉积定向，详见 remember id81）；vanilla 1.20.1 RCON 响应无 NUL 填充——解析须按长度字段/rstrip，勿盲截两字节；normal 世界出生点 y=64 地形 solid——RCON 链前置 `/fill ... air` 清场；RCON 脚本 cmd() 首匹配帧即返（死等会吃掉泵/重力的 tick 时序）。
+
+**遗留（进第 6 阶段池，state todo pool）**：RM.CokeOven 加工业务（研究卡先行）、oven 朝向旋转（front_facing_rotation 贴图随卡再借）、Metal/Plastic 桶恢复装饰盖限制、渲染器两处次要观察清理（:114 死方法/:151 注释措辞）、tools/rcon README 增补响应无 NUL 事实、旧池沿用（机器族/能量网/cover intercept 族/barrel 密封发酵连通罐/C·D 档渲染/ADR-P3-6 等）。runClient 目视留用户：扳手九宫格 UI 六条、泵盖 plate/pump 贴图、natural_gas 外观。
