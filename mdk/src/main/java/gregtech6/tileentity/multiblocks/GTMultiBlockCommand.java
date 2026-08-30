@@ -1,6 +1,7 @@
 package gregtech6.tileentity.multiblocks;
 
 import com.mojang.brigadier.Command;
+import javax.annotation.Nullable;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.logging.LogUtils;
 import net.minecraft.commands.CommandSourceStack;
@@ -39,7 +40,14 @@ import gregtech6.registry.GTMultiBlocks;
  * <li>{@code check <pos>} — the magnifying glass (upstream onMagnifyingGlass :160-170):
  *     cheap-path check, forced recheck on failure, verdict + linked-part census;</li>
  * <li>{@code tick <pos> <ticks>} — drives the dispatcher manually (the same updateEntity the
- *     real ticker runs), exercising the onTickFirst forced check and the 600-tick poll.</li>
+ *     real ticker runs), exercising the onTickFirst forced check and the 600-tick poll;</li>
+ * <li>{@code input <count> [item] [pos]} — the p6 acceptance feed: inserts through the
+ *     gated item capability (slot 0 only); the default feed is gt6:gem_coal, the explicit
+ *     item form covers the tag-path oak_log assertion;</li>
+ * <li>{@code ignite [pos]} — the TOOL_igniter branch (MultiTileEntityBasicMachine
+ *     :373-379 → TileEntityBase10MultiBlockMachine.ignite());</li>
+ * <li>{@code check <pos>} additionally reports the processing state (progress/energy/
+ *     ignited/tank/slots) since p6.</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = "gt6")
@@ -72,6 +80,27 @@ public final class GTMultiBlockCommand {
 			.then(Commands.literal("check")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> check(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+			.then(Commands.literal("input")
+				.then(Commands.argument("count", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 999))
+					.executes(aContext -> input(aContext.getSource(),
+							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"), null, null))
+					.then(Commands.argument("item", net.minecraft.commands.arguments.item.ItemArgument.item(aEvent.getBuildContext()))
+						.executes(aContext -> input(aContext.getSource(),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"),
+								net.minecraft.commands.arguments.item.ItemArgument.getItem(aContext, "item"), null))
+						.then(Commands.argument("pos", BlockPosArgument.blockPos())
+							.executes(aContext -> input(aContext.getSource(),
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"),
+									net.minecraft.commands.arguments.item.ItemArgument.getItem(aContext, "item"),
+									BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(aContext -> input(aContext.getSource(),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"),
+								null, BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))
+			.then(Commands.literal("ignite")
+				.executes(aContext -> ignite(aContext.getSource(), null))
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(aContext -> ignite(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
 			.then(Commands.literal("tick")
 				.then(Commands.argument("ticks", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 20000))
 					.executes(aContext -> tick(aContext.getSource(),
@@ -81,7 +110,7 @@ public final class GTMultiBlockCommand {
 								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "ticks"),
 								BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
 		aEvent.getDispatcher().register(tMulti);
-		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|check|tick)");
+		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|check|tick|input|ignite)");
 	}
 
 	private static TileEntityCokeOven ovenAt(CommandSourceStack aSource, BlockPos aPos) {
@@ -199,7 +228,90 @@ public final class GTMultiBlockCommand {
 		boolean tBlockFormed = tLevel.getBlockState(tOven.getBlockPos()).getValue(TileEntityBase10MultiBlockBase.FORMED);
 		String tReport = String.format("GT6 coke oven at %s: %s okay=%s block_formed=%s linked_parts=%d/25",
 				tOven.getBlockPos().toShortString(), tVerdict, tOven.mStructureOkay, tBlockFormed, tLinked);
+		String tMachine = machineReport(tOven);
 		if (!tOven.mStructureOkay || !tBlockFormed) {
+			aSource.sendFailure(Component.literal(tReport + " | " + tMachine));
+			return 0;
+		}
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		aSource.sendSuccess(() -> Component.literal(tMachine), false);
+		LOGGER.info(tReport + " | " + tMachine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The processing-state report (task p6 acceptance: progress/energy/ignited/tank/slots). */
+	private static String machineReport(TileEntityCokeOven aOven) {
+		StringBuilder rSlots = new StringBuilder();
+		for (int i = 0; i < aOven.INVENTORY_SIZE; i++) {
+			ItemStack tStack = aOven.slot(i);
+			if (tStack.isEmpty()) continue;
+			if (rSlots.length() > 0) rSlots.append(", ");
+			rSlots.append(i).append("=").append(tStack.getCount()).append("x ").append(tStack.getItem());
+		}
+		String tTank = aOven.mTanksOutput[0].isEmpty()
+				? "-"
+				: aOven.mTanksOutput[0].amount() + "mB " + aOven.mTanksOutput[0].fluid().getFluid();
+		return String.format("machine: progress=%d/%d energy=%d min_energy=%d ignited=%d active=%s running=%s stopped=%s tank=[%s] slots=[%s]",
+				aOven.mProgress, aOven.mMaxProgress, aOven.mEnergy, aOven.mMinEnergy, aOven.mIgnited,
+				aOven.mActive, aOven.mRunning, aOven.mStopped, tTank, rSlots.length() == 0 ? "-" : rSlots);
+	}
+
+	/**
+	 * {@code input <count> [item] [pos]} — fills the input slot through the gated item
+	 * capability (the slot-0 insert gate, canInsertItem2 :549-554). The default feed is
+	 * gt6:gem_coal (GTMaterialItems.get(OP.gem, MT.Coal), the card ruling); an explicit
+	 * {@code item} argument covers the tag-path acceptance (minecraft:oak_log).
+	 */
+	private static int input(CommandSourceStack aSource, int aCount,
+			@Nullable net.minecraft.commands.arguments.item.ItemInput aItem, BlockPos aPos) {
+		TileEntityCokeOven tOven = ovenAt(aSource, aPos);
+		if (tOven == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + (aPos != null ? aPos.toShortString() : "the source position")));
+			return 0;
+		}
+		ItemStack tStack;
+		if (aItem != null) {
+			try {
+				tStack = new ItemStack(aItem.getItem(), aCount);
+			} catch (Exception e) {
+				aSource.sendFailure(Component.literal("Cannot resolve item: " + e));
+				return 0;
+			}
+		} else {
+			net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tHandle =
+					gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.gem, gregapi.data.MT.Coal);
+			if (tHandle == null || !tHandle.isPresent()) {
+				aSource.sendFailure(Component.literal("gt6:gem_coal is not registered"));
+				return 0;
+			}
+			tStack = new ItemStack(tHandle.get(), aCount);
+		}
+		ItemStack tLeftover = tOven.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER, null)
+				.map(tHandler -> tHandler.insertItem(0, tStack, false))
+				.orElse(tStack);
+		int tInserted = aCount - tLeftover.getCount();
+		String tReport = String.format("GT6 coke oven input %d %s at %s: inserted %d%s", aCount, tStack.getItem(),
+				tOven.getBlockPos().toShortString(), tInserted, tLeftover.isEmpty() ? "" : ", leftover " + tLeftover.getCount());
+		if (tInserted <= 0) {
+			aSource.sendFailure(Component.literal(tReport));
+			return 0;
+		}
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** {@code ignite [pos]} — the TOOL_igniter branch (:373-379), the acceptance-chain ignition entry. */
+	private static int ignite(CommandSourceStack aSource, BlockPos aPos) {
+		TileEntityCokeOven tOven = ovenAt(aSource, aPos);
+		if (tOven == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + (aPos != null ? aPos.toShortString() : "the source position")));
+			return 0;
+		}
+		tOven.ignite();
+		String tReport = String.format("GT6 coke oven ignited at %s: requires_ignition=%s ignited=%d",
+				tOven.getBlockPos().toShortString(), tOven.mRequiresIgnition, tOven.mIgnited);
+		if (!tOven.mRequiresIgnition) {
 			aSource.sendFailure(Component.literal(tReport));
 			return 0;
 		}
