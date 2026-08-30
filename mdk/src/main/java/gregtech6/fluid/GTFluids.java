@@ -189,6 +189,60 @@ public final class GTFluids {
 			() -> new LiquidBlock(CREOSOTE, BlockBehaviour.Properties.of()
 					.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
 
+	private static ForgeFlowingFluid.Properties oilProperties() {
+		// the four-DR template again (creosote :142-190 shape, the iron_molten :61-94 original)
+		return new ForgeFlowingFluid.Properties(OIL_TYPE, OIL, OIL_FLOWING)
+				.block(OIL_BLOCK);
+	}
+
+	/**
+	 * {@code gt6:oil} — the Coke Oven's oil-shale cracking output (task p7-cokeoven-backfill,
+	 * spec ①; the upstream rows Loader_Recipes_Other.java:807-814 pour
+	 * {@code MT.Oil.liquid(U4/U2, F)}). Both carrier values are UPSTREAM-VERIFIED, unlike the
+	 * creosote port-owned precedent: temperature 300 K is the hardcoded default of the 4-arg
+	 * {@code FL.create("oil", "Oil", MT.Oil, 1)} registration (Loader_Fluids.java:77 →
+	 * FL.java:1088), and density 1000 comes out of the upstream material-density formula
+	 * (FL.java:1128-1130: {@code 1000 * mGramPerCubicCentimeter} for the STATE_LIQUID branch,
+	 * with the OreDictMaterial default 1.0 g/cm³ far above the 0.0012 air weight, CS.java:859)
+	 * — heavier than air, so the P5 barrel gravity rule drains it out of the BOTTOM face, the
+	 * same free composition creosote enjoys. Client layers reuse the vanilla water textures
+	 * over a near-black crude tint (MT.Oil RGBa 10/10/10, MT.java:2041; the creosote
+	 * initializeClient shape); no bucket item (the RCON driver fills barrels through the
+	 * capability, the mB amounts ride the machine's output tank).
+	 */
+	public static final RegistryObject<FluidType> OIL_TYPE = FLUID_TYPES.register("oil",
+			() -> new FluidType(FluidType.Properties.create()
+					.descriptionId("fluid.gt6.oil")
+					.temperature(300)
+					.density(1000)) {
+				@Override
+				public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+					aConsumer.accept(new IClientFluidTypeExtensions() {
+						private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
+						private static final ResourceLocation FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
+
+						@Override
+						public ResourceLocation getStillTexture() {return STILL;}
+
+						@Override
+						public ResourceLocation getFlowingTexture() {return FLOW;}
+
+						@Override
+						public int getTintColor() {return 0xFF0A0A0A;} // the MT.Oil crude near-black over the vanilla textures
+					});
+				}
+			});
+
+	public static final RegistryObject<FlowingFluid> OIL = FLUIDS.register("oil",
+			() -> new ForgeFlowingFluid.Source(oilProperties()));
+
+	public static final RegistryObject<Fluid> OIL_FLOWING = FLUIDS.register("oil_flowing",
+			() -> new ForgeFlowingFluid.Flowing(oilProperties()));
+
+	public static final RegistryObject<LiquidBlock> OIL_BLOCK = BLOCKS.register("oil_block",
+			() -> new LiquidBlock(OIL, BlockBehaviour.Properties.of()
+					.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
+
 	private GTFluids() {}
 
 	@SubscribeEvent
@@ -221,6 +275,11 @@ public final class GTFluids {
 					ForgeRegistries.FLUIDS.getKey(CREOSOTE_FLOWING.get()),
 					ForgeRegistries.FLUID_TYPES.get().getKey(CREOSOTE_TYPE.get()),
 					CREOSOTE_TYPE.get().getDensity());
+			GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} density {} (the oil-shale output, p7)",
+					ForgeRegistries.FLUIDS.getKey(OIL.get()),
+					ForgeRegistries.FLUIDS.getKey(OIL_FLOWING.get()),
+					ForgeRegistries.FLUID_TYPES.get().getKey(OIL_TYPE.get()),
+					OIL_TYPE.get().getDensity());
 			GT6Mod.LOGGER.info("GT6 vanilla fluid types: water {} lava {} (FluidBridge carries them without registration)",
 					ForgeRegistries.FLUID_TYPES.get().getKey(ForgeMod.WATER_TYPE.get()),
 					ForgeRegistries.FLUID_TYPES.get().getKey(ForgeMod.LAVA_TYPE.get()));
