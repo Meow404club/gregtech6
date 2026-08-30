@@ -36,21 +36,24 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *
  * <p>Field translation (:92-109): mEnergy/mInputMin/mInput/mInputMax = 0/16/32/64 (:98
  * defaults), mProgress/mMaxProgress (:108), mSuccessful/mActive/mRunning (:109), mStopped
- * (:92), mCouldUseRecipe, mOutputBlocked dropped with the neighbor auto-IO, mOutputItems
- * (:102), mLastRecipe/mCurrentRecipe (:100). The IIconContainer texture sets (:104) become
- * the BlockState ACTIVE/RUNNING properties (upstream getVisualData :1010-1011 = the same
- * two bits); mParallel/ignition/fluid tanks are cut with their subsystems.
+ * (:92), mIgnited (:93), mCouldUseRecipe, mOutputBlocked dropped with the neighbor auto-IO,
+ * mOutputItems (:102), mLastRecipe/mCurrentRecipe (:100). The IIconContainer texture sets
+ * (:104) become the BlockState ACTIVE/RUNNING properties (upstream getVisualData :1010-1011
+ * = the same two bits); mParallel/fluid tanks are cut with their subsystems.
  *
  * <p>Tick business (trimmed verbatim):
  * <ul>
  * <li>{@link #doWork(long)} :780-793 verbatim (single-block {@code checkStructure} :962-964
- *     folded to true; the ignition decrement :792 cut with mIgnited);</li>
+ *     folded to true; the :792 ignition decrement stays — mIgnited is the post-action
+ *     re-check window, see the field doc);</li>
  * <li>{@link #doActive(long, long)} :795-887 with mProgress += min(mInputMax, mEnergy) :813
  *     — the progress unit IS an energy unit (ADR-P4), item output placement i % outCount
  *     :816, and the carryover :843 (mProgress -= mMaxProgress when the outputs cleared)
- *     kept; the parallel/ignition/alternating-energy (:815) and fluid-output (:817-835)
- *     branches are cut, as is the neighbor auto-push block :867-884 (no logistics surface
- *     yet — outputs stay in the slot, which keeps the upstream canOutput blockage).</li>
+ *     kept; the parallel and alternating-energy (:815) branches are cut, as is the fluid
+ *     output placement (:817-835) and the neighbor auto-push block :867-884 (no logistics
+ *     surface yet — outputs stay in the slot, which keeps the upstream canOutput
+ *     blockage). The mRequiresIgnition feature is cut with it (aApplyRecipe passes
+ *     through unchanged, :737).</li>
  * <li>{@link #checkRecipe(boolean, boolean)} :683-778 with the doInputItems auto-IO (:687)
  *     and the parallel-count blocks (:729-732/:742-745) cut; the energy math :761-774 is
  *     verbatim including the overclock {@code while (mMinEnergy < mInputMin && mMinEnergy *
@@ -107,6 +110,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	public static final String NBT_PROGRESS = "progress";
 	public static final String NBT_MAXPROGRESS = "maxprogress";
 	public static final String NBT_STOPPED = "stopped";
+	public static final String NBT_IGNITED = "ignited";
 	public static final String NBT_ACTIVE = "active";
 	public static final String NBT_RUNNING = "running";
 	public static final String NBT_OUTPUT = "output";
@@ -125,6 +129,15 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	public long mProgress = 0, mMaxProgress = 0;
 	public boolean mSuccessful = false, mActive = false, mRunning = false;
 	public boolean mStopped = false, mNoConstantEnergy = false, mCouldUseRecipe = false, mInventoryChanged = false;
+	/**
+	 * Upstream :93 mIgnited — NOT the ignition-required feature (mRequiresIgnition, cut) but
+	 * the post-action re-check window: every successful output placement sets it to 40 (:816/
+	 * :851) and doWork decrements it (:792), which keeps the doActive recipe re-check (:800)
+	 * firing after each completion — mInventoryChanged alone cannot (onTickResetChecks clears
+	 * it every tick end), so without this counter the carryover :843 would be wiped by the
+	 * :803 reset before the next process could start.
+	 */
+	public byte mIgnited = 0;
 
 	/** Option C runtime latch (ADR-P4): set by a neighbor redstone signal, never persisted. */
 	public boolean mRedstoneStopped = false;
@@ -243,6 +256,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		}
 		mEnergy -= mInputMax;
 		if (mEnergy < 0) mEnergy = 0; // :791
+		if (mIgnited > 0) mIgnited--; // :792
 	}
 
 	/** Upstream :795-887 — progress = energy units (:813), output wrap i % outCount (:816), carryover (:843). */
@@ -250,8 +264,8 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		boolean rActive = false;
 
 		if (mMaxProgress <= 0) {
-			// :798-805 — (mIgnited > 0 || mInventoryChanged || !mRunning || aTimer%1200 == 5), ignition cut
-			if ((mInventoryChanged || !mRunning || aTimer % 1200 == 5) && checkRecipe(!mStopped, true) == FOUND_AND_SUCCESSFULLY_USED_RECIPE) {
+			// :798-805 verbatim — mIgnited is the post-action re-check window (see field doc)
+			if ((mIgnited > 0 || mInventoryChanged || !mRunning || aTimer % 1200 == 5) && checkRecipe(!mStopped, true) == FOUND_AND_SUCCESSFULLY_USED_RECIPE) {
 				onProcessStarted();
 			} else {
 				mProgress = 0;
@@ -270,6 +284,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 				// :816 — outputs wrap around the output slot range: i % mOutputItemsCount
 				for (int i = 0; i < mOutputItems.length; i++) if (mOutputItems[i] != null && addStackToSlot(SLOT_OUTPUT + (i % OUTPUT_ITEMS_COUNT), mOutputItems[i])) {
 					mSuccessful = true;
+					mIgnited = 40; // :816
 					mOutputItems[i] = null;
 					continue;
 				}
@@ -286,6 +301,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 					mMaxProgress = 0;
 					mOutputItems = new ItemStack[0];
 					mSuccessful = true;
+					mIgnited = 40; // :851
 					onProcessFinished();
 				}
 			}
@@ -298,7 +314,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	/** Upstream :889-900 — sound interrupt and neighbor output push cut, CONSTANT_ENERGY reset verbatim. */
 	public boolean doInactive(long aTimer) {
 		if (CONSTANT_ENERGY && !mNoConstantEnergy) mProgress = 0; // :894
-		if (mRunning || mInventoryChanged || aTimer % 1200 == 5) { // :895 (mIgnited cut)
+		if (mRunning || mIgnited > 0 || mInventoryChanged || aTimer % 1200 == 5) { // :895
 			checkRecipe(false, true); // :897 (the checkStructure(T) call :896 always passes)
 		}
 		return false;
@@ -539,6 +555,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		aNBT.putLong(NBT_PROGRESS, mProgress); // upstream NBT_PROGRESS :133
 		aNBT.putLong(NBT_MAXPROGRESS, mMaxProgress); // upstream NBT_MAXPROGRESS :134
 		aNBT.putBoolean(NBT_STOPPED, mStopped); // upstream NBT_STOPPED :117
+		aNBT.putByte(NBT_IGNITED, mIgnited); // upstream NBT_IGNITION :136
 		aNBT.putBoolean(NBT_ACTIVE, mActive); // upstream NBT_ACTIVE :116
 		aNBT.putBoolean(NBT_RUNNING, mRunning); // upstream NBT_RUNNING :118
 		ListTag tOutputs = new ListTag();
@@ -556,6 +573,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		mProgress = aNBT.getLong(NBT_PROGRESS); // :133
 		mMaxProgress = aNBT.getLong(NBT_MAXPROGRESS); // :134
 		if (aNBT.contains(NBT_STOPPED)) mStopped = aNBT.getBoolean(NBT_STOPPED); // :117
+		if (aNBT.contains(NBT_IGNITED, Tag.TAG_ANY_NUMERIC)) mIgnited = aNBT.getByte(NBT_IGNITED); // :136
 		if (aNBT.contains(NBT_ACTIVE)) mActive = aNBT.getBoolean(NBT_ACTIVE); // :116
 		if (aNBT.contains(NBT_RUNNING)) mRunning = aNBT.getBoolean(NBT_RUNNING); // :118
 		if (aNBT.contains(NBT_OUTPUT, Tag.TAG_LIST)) {
