@@ -42,6 +42,10 @@ public final class GT6ItemModels extends ItemModelProvider {
                     + iconsetOf(tEntry.material())
                     + "/" + MaterialPrefixItem.snakeCase(tEntry.prefix().mNameInternal)));
         }
+        // the p5 pump cover item (task p5-barrel-side-rules ruling ⑥) — the item shows the
+        // out-facing plate art; the direction sprites live in the block atlas via GT6Atlases
+        withExistingParent("cover_pump", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/cover_pump_out"));
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

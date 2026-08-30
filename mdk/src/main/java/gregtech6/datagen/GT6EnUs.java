@@ -110,6 +110,7 @@ public final class GT6EnUs extends LanguageProvider {
         add("block.gt6.wood_fluid_pipe_medium", "Wood Fluid Pipe");
         add("itemGroup.gt6.fluid_pipes", "Fluid Pipes");
         add("fluid.gt6.iron_molten", "Molten Iron");
+        add("fluid.gt6.natural_gas", "Natural Gas"); // task p5-barrel-side-rules spec ⑤ — the lighter-fluid acceptance carrier
     }
 
     /** One title key per creative-visible prefix tab (CreativeTab.java:32 shape, upstream mNameCategory). */
