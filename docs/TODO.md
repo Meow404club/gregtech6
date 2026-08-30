@@ -31,10 +31,22 @@
 - [x] p3-example-machine：chest 全链（54 槽 + 动态行 + 打开链 RCON 实证 + blockstate/model/lang datagen）（merge b6b01eb）
 - [x] phase-closeout：ADR-P3-8 六条验收线全满足（221 测 / runData 可复现 / GT6Mod diff 空 / mdk/logs gitignore 2a04936）
 
-## 第 4 阶段（管线 / Cover / 多方块渲染 BakedModel）——入口
+## 第 4 阶段（管线 / Cover / 多方块渲染 BakedModel + 首台加工机器）——✅ 已完成（2026-08-30）
 
-- [ ] /researcher（按需）：FluidStack/管网、Cover API、多方块结构校验与 BakedModel 动态渲染的 1.20.1 模板考古
-- [ ] /architect 拆第 4 阶段模块卡；首台真加工机器（craftProgress→ContainerData 进度条业务面在此落地）
+- [x] 调研五卡：流体管线/Cover/多方块校验/BakedModel 渲染/加工机器（全带 文件:行号 证据链）
+- [x] architect 拆卡：8 卡 10 ADR 三波次（recipe 分层/流体直译/能量边界/首机选型/渲染路线/cover 路线/多方块逐字/流向控制/验收总纲）
+- [x] W1：p4-recipe-core（Recipe 壳+两段式消耗+vanilla 桥，merge 02b7b8b）∥ p4-fluid-pipes（FluidTankGT+逐段泵送+防回流+熔融铁，merge 5ae1d6f）
+- [x] W2：p4-machine-oven（首机 Oven+能量 A/C+进度=能量单位，merge 5b07953）∥ p4-render-foundation（RENDER_SNAPSHOT+GTDynamicBakedModel+双件套，merge aa9679b）
+- [x] W3：p4-multiblock-framework（四路触发+checkAndSetTarget+CokeOven，merge 400732c）∥ p4-fluid-barrel（16000L 粘性罐+熔毁，merge 27e8cce）∥ p4-cover-core（CoverData+CoverPlateModel+零 GUI，merge 87badb3）
+- [x] p4-pipe-flow-control（用户追加）：不自动握手基线+右键连接切换+shift 右键 ioMask 箭头+isOutputFace 外推门控+箭头渲染链（merge 0d21a59）
+- [x] phase-closeout：ADR-P4 六条验收线全满足（根 188+mdk 199 测 / 合并态 RCON 全链 / runData 幂等 / GPG 全验）
+
+## 第 5 阶段（池已立，state key=p5-pool）——入口
+
+- [ ] p5-pipe-flow-semantics（免研究）：ioMask==0 恢复 GT6 全外推；箭头面拒绝回流
+- [ ] p5-barrel-side-rules（researcher 先行）：桶重力侧规则（密度<0 判轻）+泵盖 CoverPump 移植
+- [ ] p5-wrench-ui-gtceu（researcher 先行）：GTCEu 式扳手 9 宫格红绿 UI 考古+贴图直接借用
+- [ ] p5-rcon-tooling-infra（免研究）：RCON 验收工具链合入 tools/rcon/（先 harvest /tmp 五份脚本蒸馏）
 
 ## 遗留池
 

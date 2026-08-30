@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 3 阶段：BlockEntity + AbstractContainerMenu + Screen 框架`（**2026-08-30 收官**：四卡全数合入 main HEAD 2a04936，221 单测全绿，56253 物品 + 96 creative tab，chest 示例机器全链打通，ADR-P3-8 六条验收线全满足）
+`第 4 阶段：管线 / Cover / 多方块渲染（BakedModel）+ 首台加工机器`（**2026-08-30 收官**：八卡全数合入 main HEAD 0d21a59，根 188 + mdk 199 单测全绿，首台真加工机器 Oven / 流体管线 / 多方块框架 / 粘性罐桶 / Cover 域 / C 档渲染基建 / 逐面流向控制全落地，ADR-P4 六条验收线全满足）
 
 > **平台修正 2026-08-29**：原目标"NeoForge 1.20.1"被证伪——NeoForge 官方 maven 从未发布 20.1.x 产物（versions API `filter=20.1` 返回空，主会话独立复核），NeoForged 自家 ModDevGradle 把 1.20.1 路由给 `legacyforge` 变体，文档站最早只到 1.20.3。用户裁决：目标平台 = **MinecraftForge 1.20.1（47.4.10）**，构建插件 = MDG legacyforge 2.0.144。1.20.1 的 API 面即 `net.minecraftforge.*` + RegistryObject（DeferredHolder 是 20.2+ 才有），第 1 阶段的所有调研结论不受影响。
 
@@ -14,7 +14,7 @@
 - [x] 第 1 阶段：材料系统纯逻辑抽取（无 MC 依赖，含单元测试）——2026-08-29 收官
 - [x] 第 2 阶段：Forge 1.20.1 MDK 挂载 + 注册桥 + DataGen——2026-08-29 收官（188 测全绿；2469 材料物品注册；runData 管线可复现）
 - [x] 第 3 阶段：BlockEntity + AbstractContainerMenu + Screen 框架——2026-08-30 收官（221 测全绿；56253 物品 + 96 tab；BE/Menu/Screen/chest 全链）
-- [ ] 第 4 阶段：管线 / Cover / 多方块渲染（BakedModel 路线）
+- [x] 第 4 阶段：管线 / Cover / 多方块渲染（BakedModel）+ 首台加工机器——2026-08-30 收官（387 测全绿；Oven/管线/多方块/桶/Cover/渲染基建/流向控制八卡）
 
 ## 关键决策
 
@@ -137,3 +137,25 @@
 - ContainerData 进度条业务面（第 4 阶段首台真加工机器落地）；第 4 阶段主线=管线/Cover/多方块渲染（BakedModel）
 - 交互级验证：/give+tint（P2）与 GUI 目视（P3）留用户 runClient
 - 旧池沿用：PrefixRegistry 未 close、MT.NULL.mHandleMaterial=null、TECH tMake 冻结首代、服务端特例键回退、移植进度看板
+
+## 第 4 阶段收官记录（2026-08-30，主会话 phase-closeout）
+
+> 合入链：02b7b8b（recipe-core）→ 5ae1d6f（fluid-pipes，W1 并行）→ 5b07953（machine-oven+f82a104 归一）∥ aa9679b（render-foundation，W2）→ 400732c（multiblock）→ 27e8cce（barrel）→ 87badb3（cover-core+2e89501 归一接线，W3 串行合入）→ 0d21a59（pipe-flow-control，用户追加需求第 8 卡）。
+
+**ADR-P4 验收线核验**：
+1. ✅ 根 `clean check` 188 测全绿 + 根 src 零 net.minecraft；mdk 199 测全绿（配方 30+管线 20+渲染 22+oven 18+多方块 20+桶 8+cover 28+流向 14+基建存量，分波累进 83→105→123→143→151→179→199）。
+2. ✅ `:mdk:build` 绿；runServer 合并态 Done（3.408s）零 GT6 ERROR；runData 各卡二跑 written:0 幂等。
+3. ✅ 服务端自动化验收=RCON 指令链全过：oven place→input→run 三态+8x stone；pipe place 贴靠放置→toggle 断开 inject REJECTED→output 外推恢复→clear 不外推→accept 均衡；multiblock frame→FORMED→拆→did-not-form→wand 自动放置→610tick 保持；cover install→hoe dismantle 掉落；barrel accept 16000L→melt 熔毁。交互级目视（oven GUI/cover 板/管道箭头）留用户 runClient。
+4. ✅ NBT round-trip 单测扩面：FluidTankGT LAmount 溢出/CoverData 6 面/mTargetPos/ioMask/mProgress/mEnergy。
+5. ✅ GPG 全验（含 rebase 重签与审查归一提交）；FILES_SCOPE 零越界；GT6Mod/GTModBusListener diff 为空；datagen W3 显式合并序 multiblock→barrel→cover 执行。
+
+**域语义定论**：配方=findRecipe 只查+isRecipeInputEqual 两段式消耗+RecipeMapFurnace vanilla RecipeManager 桥（Recipe 全落 mdk，根 gregapi 零 MC import）；流体=逐段 BE 泵送无网络对象+FluidTankGT long 内部量/LAmount 溢出键+防回流一轮掩码+分相错峰；机器=进度=能量单位（mProgress+=min(mInputMax,mEnergy)）+A 常量满压假电源+C 红石独立闩锁+**mIgnited 是 post-action 复检窗口不可裁**；渲染=RENDER_SNAPSHOT 快照契约（禁 BE 引用）+GTDynamicBakedModel+scheduleRenderUpdate 双件套（**requestModelDataUpdate 单独不触发 chunk rebuild**）；多方块=代码即 pattern 逐字直译（否决 GTCEu DSL）+四路触发+checkAndSetTarget 两遍 wand 语义+FORMED property；cover=CoverData 6 面并行数组+零 GUI+CoverPlateModel epsilon 0.002；barrel=16000L 粘性罐+熔毁双支；管道（用户特性）=**绝不自动握手**（onPlaced 仅贴靠面 OPOS 连接）+右键逐面连接切换+shift 右键逐面输出箭头（ioMask XOR）+isOutputFace 外推门控。
+
+**承重教训**：BaseEntityBlock 禁自创 onRemove 覆写（BE kill+recreate 循环，LevelChunk:292 CHECK 分支保 BE）；headless 验收 spawn 外 chunk 已加载不实体 tick，须 `/forceload add 0 0` 前置；FluidType 温度/密度离线不可查表（RegistryObject NPE），判定逻辑留原始值比较缝。
+
+**遗留移交（进第 5 阶段池，state key=p5-pool）**：
+- 管道语义修正（用户已确认）：ioMask==0 时恢复 GT6 原版全外推；箭头面拒绝回流（canAcceptFluidsFrom=connected&&!isOutputFace）
+- 桶重力侧规则（注入六面全开，抽液=底面重流体/顶面轻流体，FL.lighter=density<0→FluidType.getDensity）+泵盖 CoverPump 正统移植
+- GTCEu 式扳手交互 UI（9 宫格红绿图标覆盖层）+箭头等贴图从 GTCEu 资产直接借用
+- RCON 验收工具链合入主项目 tools/rcon/（现各 agent /tmp 一次性脚本五份重复）
+- 旧池沿用：CokeOven 加工业务（RM.CokeOven 配方考古）、机器族、C/D 档渲染升级、D 完整能量网、cover intercept 族、FluidTankGT keepFilter 0 量持久化缺口（归 Logistics 罐卡）、chest loot table、ADR-P3-6 池、PrefixRegistry 未 close、移植进度看板
