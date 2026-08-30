@@ -36,6 +36,13 @@ import 复用：`sys.path.insert(0, "tools/rcon"); import gt6rcon`，用
   - 本客户端按 id 匹配、与 type 无关，两者通吃。
 - **杂散帧**：auth 回包后实测偶有 0-id 帧（疑似 Forge 侧产物）；客户端 auth 后排空 1s
   窗口，命令阶段不匹配 id 的帧一律丢弃，迟帧/分帧不会错配。
+- **尾部 NUL 在 body 内，流上无额外填充**：两 NUL 计入 `length`——vanilla 发送端
+  `writeInt(payload.length + 10)` 后补写两 NUL（`RconClient.java:112/:116-117`），读完
+  定长 body 后流上没有更多 NUL。剥 NUL 二选一：定长 body 内 `body[8:-2]`
+  （`gt6rcon.py:87`）或按 `length - 10` 直读 payload，**不许叠加**。
+- **双剥鉴戒**：P4 时代任务本地脚本曾按 `length - 10` 读 payload 后又盲切 `[:-2]`，
+  把真实载荷末两字符一起剁掉，断言子串恰在尾部时必挂（脚本已淘汰不入库）。读帧
+  统一走 `read_packet` 一条路。
 - **失败文本也回传**：成功与失败行都进 RCON 缓冲（`RconConsoleSource.java:36/:45`）。
   GT6 全部验收指令的失败行都含字面量 `FAILED`（GTFluidPipeCommand.java:161/:207、
   GTCoverCommand.java:125/:162、GTOvenCommand.java:149 等实证），故客户端把输出含
