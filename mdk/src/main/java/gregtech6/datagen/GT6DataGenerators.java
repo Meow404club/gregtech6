@@ -32,6 +32,9 @@ public final class GT6DataGenerators {
             // task p3-example-machine: first blockstate/block model provider (chest)
             event.getGenerator().addProvider(true,
                 new GT6BlockStates(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
+            // task p4-cover-core (W3 explicit order 3): the cover plate sprite joins the block atlas
+            event.getGenerator().addProvider(true,
+                new GT6Atlases(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
         }
     }
 }
