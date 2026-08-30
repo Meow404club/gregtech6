@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -28,6 +27,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
 import gregtech6.fluid.GTFluids;
+import gregtech6.registry.GTBarrels;
 
 /**
  * {@code /gt6tank} — the automated fluid-barrel acceptance command (task p4-fluid-barrel
@@ -180,19 +180,22 @@ public final class GTBarrelCommand {
 			return 0;
 		}
 
-		// one dispatcher pass: the :162 judgment fires, meltdown() voids the tank and sets fire
+		// one dispatcher pass: the :162 judgment fires, meltdown() voids the tank and burns the barrel down
 		tBarrel.updateEntity();
 
 		if (tBarrel.mTank.amount() != 0) {
 			aSource.sendFailure(Component.literal("MELTDOWN FAILED: " + tBarrel.mTank.amount() + " L of molten iron survived the tick"));
 			return 0;
 		}
-		if (!tLevel.getBlockState(aPos).is(Blocks.FIRE)) {
-			aSource.sendFailure(Component.literal("FIRE MISSING: the barrel must burn down (upstream setToFire :227)"));
+		// the barrel block must be gone (setToFire :227). Mid-air fire self-extinguishes through the
+		// vanilla BushBlock.canSurvive neighbour update (setBlock UPDATE_ALL resolves it synchronously),
+		// so the stable observable is "no longer the barrel", not "is fire".
+		if (tLevel.getBlockState(aPos).is(GTBarrels.BARREL.get())) {
+			aSource.sendFailure(Component.literal("BARREL SURVIVED: the barrel must burn down (upstream setToFire :227)"));
 			return 0;
 		}
 
-		String tOk = String.format("GT6 melt check OK at %s: %d L of gt6:iron_molten (%d K) against the %d K wood ceiling melted the barrel down to fire",
+		String tOk = String.format("GT6 melt check OK at %s: %d L of gt6:iron_molten (%d K) against the %d K wood ceiling voided the tank and burned the barrel down",
 				aPos.toShortString(), BUCKET, TileEntityBase08Barrel.fluidTemperature(tMoltenIron), WOOD_MELTING_POINT);
 		aSource.sendSuccess(() -> Component.literal(tOk), false);
 		LOGGER.info(tOk);
