@@ -3,18 +3,26 @@ package gregtech6.tileentity.multiblocks;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 import gregtech6.registry.GTMultiBlocks;
 
 /**
  * 1.20.1 port of the Coke Oven multiblock controller — direct translation of
- * gregtech/tileentity/multiblocks/MultiTileEntityCokeOven.java:44-103 (task
- * p4-multiblock-framework W3, spec ④): the STRUCTURE face only.
+ * gregtech/tileentity/multiblocks/MultiTileEntityCokeOven.java:44-103 (structure face:
+ * task p4-multiblock-framework W3; machine face: task p6-cokeoven-processing).
  *
  * <p>checkStructure2 (:46-60) verbatim: the 3x3x3 loop around the cell behind the facing
  * (getOffsetXN/YN/ZN arithmetic — "Main Block centered on Side and facing outwards"), the
@@ -29,17 +37,30 @@ import gregtech6.registry.GTMultiBlocks;
  * <li>the part identity: upstream MTE (registry 18000-style id, registry-id pair) is the
  *     {@link #getPartBlock()} Block — the "coke oven bricks" part type as a Block instance
  *     (card note: ids keep the gt6:multiblock_* prefix, the card-ruled form);</li>
- * <li>extends {@link TileEntityBase10MultiBlockBase} instead of TileEntityBase10MultiBlockMachine
- *     — the machine business face (RM.CokeOven recipes, tanks, energy) is a later card
- *     (spec ⑦: 加工业务不入卡, the recipe side is unsurveyed pool);</li>
+ * <li>extends {@link TileEntityBase10MultiBlockMachine} (the upstream parent class of the
+ *     same name) since p6-cokeoven-processing: the TU self-generation, doWork/checkRecipe/
+ *     parallel/ignition business and the fluid push live there — this class carries only
+ *     the Coke Oven shape and its fluid-output scan;</li>
  * <li>isInsideStructure (:76-79) verbatim bounding box;</li>
- * <li>the mFluidOutputTarget fluid-output scan (:81-96) and the delegate targets (:98-100)
- *     are processing business — out with the machine face;</li>
+ * <li>{@link #getFluidOutputTarget(Fluid)} (:84-96 verbatim shape): the cache-then-rescan
+ *     fluid target one layer BELOW the structure (tY-2 relative to the facing offsets,
+ *     :87) scanned as a 3x3 (:88); the upstream {@code WD.te(..., SIDE_TOP)} +
+ *     {@code canFill(SIDE_TOP, fluid)} pair (:89-90) becomes the target capability queried
+ *     at Direction.UP (the ADR ruling ① — SIDE_TOP 1:1) with a 1 mB SIMULATE fill probe
+ *     (the fill-acceptance equivalent of canFill). The cache is the upstream :81 field —
+ *     invalidated when the cell no longer exposes a handler (:85 exists()), and a failed
+ *     scan caches nothing (upstream :95 caches null → the next call rescans anyway);</li>
+ * <li>the item/fluid input+output target trio (:98-100, all null) folds away: the port cut
+ *     the auto-IO surface with it (the machine base has no doInputItems/doOutputItems);</li>
  * <li>the tooltip LH block (:62-73) needs the LH stack — the structure description lives on
  *     the lang/datagen side.</li>
  * </ul>
  */
-public class TileEntityCokeOven extends TileEntityBase10MultiBlockBase {
+public class TileEntityCokeOven extends TileEntityBase10MultiBlockMachine {
+
+	/** The cached output-target cell (upstream :81 mFluidOutputTarget; a cell, re-resolved per push). */
+	@Nullable
+	private BlockPos mFluidOutputTargetPos = null;
 
 	/** The registry-path constructor (the BlockEntityType.Builder.of factory form, the oven precedent). */
 	public TileEntityCokeOven(BlockPos aPos, BlockState aState) {
@@ -98,5 +119,39 @@ public class TileEntityCokeOven extends TileEntityBase10MultiBlockBase {
 	public boolean isInsideStructure(int aX, int aY, int aZ) {
 		int tX = getOffsetXN(mFacing), tY = getOffsetYN(mFacing), tZ = getOffsetZN(mFacing);
 		return aX >= tX - 1 && aY >= tY - 1 && aZ >= tZ - 1 && aX <= tX + 1 && aY <= tY + 1 && aZ <= tZ + 1;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the fluid output target (:81-96)
+	// ---------------------------------------------------------------------------
+
+	/** Upstream :84-96 — cache-then-scan, the layer BELOW the structure (tY-2), 3x3, UP-face acceptance. */
+	@Override
+	protected IFluidHandler getFluidOutputTarget(Fluid aOutput) {
+		// :85 — the cache is valid while the cell still exposes a fluid handler
+		if (mFluidOutputTargetPos != null) {
+			IFluidHandler tCached = fluidHandlerAt(mFluidOutputTargetPos);
+			if (tCached != null) return tCached;
+			mFluidOutputTargetPos = null; // the target vanished → rescan (the upstream !exists() branch)
+		}
+		if (aOutput == null || !hasLevel() || isClientSide()) return null;
+		int tX = getOffsetXN(mFacing), tY = getOffsetYN(mFacing) - 2, tZ = getOffsetZN(mFacing); // :87
+		for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) { // :88
+			BlockPos tPos = new BlockPos(tX + i, tY, tZ + j);
+			IFluidHandler tHandler = fluidHandlerAt(tPos);
+			if (tHandler != null && tHandler.fill(new FluidStack(aOutput, 1), FluidAction.SIMULATE) > 0) { // :90 canFill(SIDE_TOP)
+				mFluidOutputTargetPos = tPos.immutable(); // :91
+				return tHandler;
+			}
+		}
+		return null; // :95 — nothing accepts; the failed scan caches nothing (upstream caches null, the next call rescans)
+	}
+
+	/** The capability resolve at the UP face (the upstream WD.te(..., SIDE_TOP) 1:1, ADR ruling ①). */
+	@Nullable
+	private IFluidHandler fluidHandlerAt(BlockPos aPos) {
+		BlockEntity tNeighbor = getLevel().getBlockEntity(aPos);
+		if (tNeighbor == null) return null;
+		return tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, Direction.UP).resolve().orElse(null); // the CoverPump :103 idiom, the side pinned UP
 	}
 }
