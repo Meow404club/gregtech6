@@ -15,6 +15,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.registry.GTBarrels;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
  * The wood fluid barrel block (task p4-fluid-barrel) — the block side of the barrel
@@ -55,6 +56,16 @@ public class GTBarrelBlock extends GTEntityBlock {
 
 	@Override
 	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+		// p5 spec ④ — the cover machinery consumes the click first (the GTOvenBlock 2e89501
+		// three-line pattern over ICoverableTE.onCoverUse: the covered-face intercepts, then
+		// the attachCoversFirst install branch); false falls through to the bucket face below.
+		// Runs on both sides like the FluidUtil idiom — the server pass is authoritative,
+		// the client pass is the prediction.
+		if (aLevel.getBlockEntity(aPos) instanceof TileEntityBase08Barrel tBarrel
+				&& tBarrel.onCoverUse(aPlayer, (byte) aHit.getDirection().get3DDataValue(), aPlayer.getItemInHand(aHand),
+						(float) (aHit.getLocation().x - aPos.getX()), (float) (aHit.getLocation().y - aPos.getY()), (float) (aHit.getLocation().z - aPos.getZ()))) {
+			return InteractionResult.CONSUME;
+		}
 		// spec ② — FluidUtil.java:64 signature; runs on both sides like the documented idiom,
 		// the server pass is authoritative, the client pass is the prediction.
 		return FluidUtil.interactWithFluidHandler(aPlayer, aHand, aLevel, aPos, aHit.getDirection())

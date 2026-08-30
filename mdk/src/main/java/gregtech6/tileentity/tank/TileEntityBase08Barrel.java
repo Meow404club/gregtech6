@@ -17,6 +17,11 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 
+import gregtech6.client.render.GTModelProperties;
+import gregtech6.client.render.GTRenderUpdates;
+import gregtech6.covers.CoverData;
+import gregtech6.covers.GTCoverRenderSnapshot;
+import gregtech6.covers.ICoverableTE;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
@@ -60,8 +65,15 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * are feature-layer omissions. The world-fill path deliberately has NO fill-time fluid
  * gate: upstream fills first and melts on the next tick (:162 is the protection), the
  * {@code allowFluid} temperature gate (:233-235) belonged to the cut item face.
+ *
+ * <p>Cover wiring (task p5-barrel-side-rules spec ④ — the oven :167-177/:221/:230/:241/:652
+ * template, composition over the {@link ICoverableTE} defaults): the store lives here, the
+ * covers ride the NBT pair and the 03 sync channels, and the barrel hands
+ * {@code mTank} out through {@link #getCoverPumpTank()} — the pump-cover direct-call seam
+ * that lets the pump bypass the {@link BarrelFluidHandler} side rules (the upstream
+ * FL.move(IFluidTank, ...) shape, the free reverse-output exemption).
  */
-public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSync {
+public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSync implements ICoverableTE {
 
 	/** NBT keys — upstream CS.java:1355/:1258/:1262 ("gt.capacity.hu"/"gt.tank"/"gt.tankcap") in the in-repo plain key form. */
 	public static final String NBT_CAPACITY_HU = "capacity.hu";
@@ -73,6 +85,29 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 
 	/** Upstream :55 — the melt-down ceiling in Kelvin; MAX_VALUE means nothing melts (no material bridge). */
 	public long mMeltingPoint = Long.MAX_VALUE;
+
+	/** Upstream 06Covers :63 mCovers — {@code null} while no face carries a cover (the oven template). */
+	public CoverData mCovers = null;
+
+	@Override
+	public CoverData getCovers() {
+		return mCovers;
+	}
+
+	@Override
+	public void setCovers(CoverData aCoverData) {
+		mCovers = aCoverData;
+	}
+
+	/**
+	 * The p5 pump seam (ICoverableTE.getCoverPumpTank): the pump cover moves fluid straight
+	 * through {@code mTank}, bypassing the {@link BarrelFluidHandler} side rules — direct
+	 * tank access is the upstream FL.move(IFluidTank, ...) semantics (FL.java:845-846).
+	 */
+	@Override
+	public FluidTankGT getCoverPumpTank() {
+		return mTank;
+	}
 
 	protected TileEntityBase08Barrel(boolean aIsTicking, BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 		super(aIsTicking, aType, aPos, aState);
@@ -94,24 +129,50 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 		mTank.setPreventDraining(keepsFilter()); // :69 — stickiness re-applied on every load
 		if (aNBT.contains(NBT_TANK_CAPACITY, Tag.TAG_ANY_NUMERIC)) mTank.setCapacity(aNBT.getLong(NBT_TANK_CAPACITY));
 		mTank.readFromNBT(aNBT, NBT_TANK); // :69
+		readCoversFromNBT(aNBT); // upstream 06Covers :68 — the covers ride the tank NBT pair
 	}
 
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
 		mTank.writeToNBT(aNBT, NBT_TANK); // :77 (mode/progress ride the cut sealed-fermentation pool)
+		writeCoversToNBT(aNBT); // upstream 06Covers :74
 	}
 
 	// ---------------------------------------------------------------------------
-	// tick: the melt-down judgment (upstream onTick2 :157-218, everything but :162 cut)
+	// tick chain: covers validity + pre/post + the melt-down judgment (:157-218 trimmed)
 	// ---------------------------------------------------------------------------
 
 	@Override
+	public void onTickFirst(boolean aIsServerSide) {
+		if (aIsServerSide) {
+			checkCoverValidity(); // upstream 06Covers :191 — the admission sweep rides onTickFirst (oven :221 template)
+		}
+	}
+
+	@Override
 	public void onTick(long aTimer, boolean aIsServerSide) {
-		if (!aIsServerSide) return;
-		FluidStack tFluid = mTank.getFluid();
-		if (tFluid == null || tFluid.isEmpty() || tFluid.getAmount() <= 0) return; // :160-161
-		if (meltsDown(tFluid) && meltdown()) return; // :162
+		// upstream 06Covers :200 — the cover tick precedes the barrel business (oven :230 template)
+		if (hasCovers()) getCovers().tickPre(aTimer, aIsServerSide, mBlockUpdated, false);
+		if (aIsServerSide) {
+			FluidStack tFluid = mTank.getFluid();
+			if (tFluid == null || tFluid.isEmpty() || tFluid.getAmount() <= 0) return; // :160-161
+			if (meltsDown(tFluid) && meltdown()) return; // :162
+		}
+		// upstream 06Covers :202 — the cover tick follows the barrel business (oven :241 template)
+		if (hasCovers()) getCovers().tickPost(aTimer, aIsServerSide, mBlockUpdated, false);
+	}
+
+	@Override
+	public boolean onTickCheck(long aTimer) {
+		// upstream 06Covers :184-186 — the cover visual sync opens the 03 sync window
+		return (hasCovers() && getCovers().requiresSync()) || super.onTickCheck(aTimer);
+	}
+
+	@Override
+	public void onTickChecked(long aTimer) {
+		super.onTickChecked(aTimer);
+		if (hasCovers()) getCovers().resetSync(); // upstream 06Covers :178-181
 	}
 
 	/**
@@ -160,6 +221,54 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 	public void onTankChanged() {
 		setChanged();
 		updateClientData();
+	}
+
+	// ---------------------------------------------------------------------------
+	// cover render sync (the oven :644-652 template — the covers ride the two sync
+	// channels through saveAdditional/load; the client lands the refresh on arrival)
+	// ---------------------------------------------------------------------------
+
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		scheduleCoverRenderRefresh();
+	}
+
+	@Override
+	public void handleUpdateTag(CompoundTag aTag) {
+		super.handleUpdateTag(aTag);
+		scheduleCoverRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket) {
+		super.onDataPacket(aNet, aPacket);
+		scheduleCoverRenderRefresh(); // block-update channel (cover changes)
+	}
+
+	private void scheduleCoverRenderRefresh() {
+		if (hasCovers() && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
+	}
+
+	/**
+	 * The C-grade render hook (IForgeBlockEntity.java:174): a covered barrel hands the
+	 * render thread the immutable per-face sprite snapshot (the oven template); uncovered
+	 * barrels keep {@code ModelData.EMPTY} and render through the plain blockstate model.
+	 */
+	@Override
+	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		CoverData tCovers = mCovers;
+		if (tCovers == null) return super.getModelData();
+		java.util.Map<Direction, net.minecraft.resources.ResourceLocation> tSprites = new java.util.EnumMap<>(Direction.class);
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			if (tCovers.mBehaviours[tSide] == null) continue;
+			net.minecraft.resources.ResourceLocation tSprite = tCovers.mBehaviours[tSide].getCoverTextureSurface(tSide, tCovers);
+			if (tSprite != null) tSprites.put(Direction.from3DDataValue(tSide), tSprite);
+		}
+		if (tSprites.isEmpty()) return super.getModelData();
+		return GTModelProperties.derive(super.getModelData())
+				.with(GTModelProperties.RENDER_SNAPSHOT, new GTCoverRenderSnapshot(tSprites))
+				.build();
 	}
 
 	// ---------------------------------------------------------------------------
