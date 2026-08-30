@@ -104,8 +104,14 @@ public final class GTFluidPipeCommand {
 									(byte)IntegerArgumentType.getInteger(aContext, "side"))))))
 				.then(Commands.literal("clear")
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
-						.executes(aContext -> clear(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
-		LOGGER.info("Registered GT6 fluid pipe command /gt6pipe (accept|stat|place|toggle|output|clear)");
+						.executes(aContext -> clear(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+				.then(Commands.literal("inject")
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.then(Commands.argument("side", IntegerArgumentType.integer(0, 5))
+							.then(Commands.argument("amount", IntegerArgumentType.integer(1, 1000000))
+								.executes(aContext -> inject(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+										(byte)IntegerArgumentType.getInteger(aContext, "side"), IntegerArgumentType.getInteger(aContext, "amount")))))))));
+		LOGGER.info("Registered GT6 fluid pipe command /gt6pipe (accept|stat|place|toggle|output|clear|inject)");
 	}
 
 	private static int stat(CommandSourceStack aSource, BlockPos aPos) {
@@ -180,6 +186,25 @@ public final class GTFluidPipeCommand {
 		}
 		tPipe.clearOutputs();
 		String tLine = "GT6 pipe clear at " + aPos.toShortString() + ": ioMask " + tPipe.getIoMask();
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The headless external-fill driver: pushes {@code amount} L of water through the
+	 * pipe's side handler ({@link SideFluidHandler#fill} — the real external entry, the
+	 * upstream :480-490 fill path). Makes the acceptance-side "fill=0" observable: a
+	 * toggled-off (unconnected) side rejects the fill with 0.
+	 */
+	private static int inject(CommandSourceStack aSource, BlockPos aPos, byte aSide, int aAmount) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTFluidPipeBlockEntity tPipe)) {
+			aSource.sendFailure(Component.literal("No GTFluidPipeBlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		int tFilled = new SideFluidHandler(tPipe, aSide).fill(new FluidStack(Fluids.WATER, aAmount), FluidAction.EXECUTE);
+		String tLine = "GT6 pipe inject at " + aPos.toShortString() + " side " + aSide + ": filled " + tFilled
+				+ " of " + aAmount + " L" + (tFilled == 0 ? " (REJECTED)" : "");
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
