@@ -93,16 +93,25 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p4-fluid-barrel (W3 provider addition, merge order multiblock→barrel→cover): the
-     * wood fluid barrel as a cube_all placeholder over {@code gt6:textures/block/barrel_wood.png}
-     * (the barrel TESR/lid is a feature-layer omission, MultiTileEntityBarrelWood.java:44-54)
-     * plus the BlockItem model parenting the block model. The texture is a script-generated
-     * placeholder PNG, not JSON.
+     * Task p4-fluid-barrel (W3 provider addition, merge order multiblock→barrel→cover),
+     * extended by task p6-barrel-metal-plastic: the three-barrel family (wood/plastic/
+     * metal) each as a cube_all placeholder over its
+     * {@code gt6:textures/block/barrel_<material>.png} (the barrel TESR/lid is a
+     * feature-layer omission, MultiTileEntityBarrelWood.java:44-54) plus the BlockItem
+     * model parenting the block model. The textures are script-generated placeholder
+     * PNGs, not JSON.
      */
     private void addBarrel() {
-        Block tBarrel = GTBarrels.BARREL.get();
-        simpleBlock(tBarrel, models().cubeAll("barrel_wood", modLoc("block/barrel_wood")));
-        itemModels().withExistingParent("barrel_wood", modLoc("block/barrel_wood"));
+        addBarrel(GTBarrels.BARREL.get());
+        addBarrel(GTBarrels.BARREL_PLASTIC.get());
+        addBarrel(GTBarrels.BARREL_METAL.get());
+    }
+
+    /** One cube_all barrel + its BlockItem parent (the p4 wood barrel shape, reused per material row). */
+    private void addBarrel(Block aBarrel) {
+        String tName = aBarrel.getDescriptionId().replace("block.gt6.", "");
+        simpleBlock(aBarrel, models().cubeAll(tName, modLoc("block/" + tName)));
+        itemModels().withExistingParent(tName, modLoc("block/" + tName));
     }
 
     /**

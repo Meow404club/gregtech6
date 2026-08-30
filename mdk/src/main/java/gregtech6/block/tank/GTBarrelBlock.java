@@ -12,16 +12,22 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import net.minecraftforge.fluids.FluidUtil;
 
+import java.util.function.Supplier;
+
 import gregtech6.block.GTEntityBlock;
-import gregtech6.registry.GTBarrels;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
- * The wood fluid barrel block (task p4-fluid-barrel) — the block side of the barrel
- * family over the barrel BET (the GTFluidPipeBlock carrier pattern: the block carries
- * the registration value upstream wrote into the MTE definition NBT, here the
- * {@code NBT_CAPACITY_HU=340} melt-down ceiling, Loader_MultiTileEntities.java:2136).
+ * The fluid barrel block — the block side of the barrel family (task p4-fluid-barrel,
+ * extended by task p6-barrel-metal-plastic). The carrier pattern: the block carries the
+ * registration values upstream wrote into the MTE definition NBT (the GTFluidPipeBlock
+ * carrier shape) — here the {@code NBT_TANK_CAPACITY} tank size and the
+ * {@code NBT_CAPACITY_HU} melt-down ceiling (Loader_MultiTileEntities.java:2136-2151)
+ * — plus the BET this barrel family member mounts: upstream assigns one TE class per
+ * material row (Wood/Plastic/Metal), so the ctor takes the ticker type as a Supplier
+ * (the RegistryObject is unbound at registration-lambda time) and each member points
+ * at its own BET.
  *
  * <p>{@code use} is the bucket interaction face (spec ②): the documented Forge idiom
  * over {@link FluidUtil#interactWithFluidHandler(Player, InteractionHand, Level, BlockPos,
@@ -32,11 +38,31 @@ import gregtech6.tileentity.tank.TileEntityBase08Barrel;
  */
 public class GTBarrelBlock extends GTEntityBlock {
 
+	private final long mCapacityL;
 	private final long mMeltingPointK;
+	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
-	public GTBarrelBlock(long aMeltingPointK, Properties aProperties) {
+	/**
+	 * @param aCapacityL the tank size (upstream {@code NBT_TANK_CAPACITY}: wood 16000,
+	 *        plastic 32000, metal 64000 — Loader_MultiTileEntities.java:2140/:2150/:2151)
+	 * @param aMeltingPointK the melt-down ceiling (upstream {@code NBT_CAPACITY_HU}: wood
+	 *        340, plastic 370; MAX_VALUE = never melts — the metal drum rows carry no HU
+	 *        and the upstream {@code mMaterial.mMeltingPoint * 1.25} formula needs the
+	 *        material bridge this repo does not ship, so metal is a declared deviation)
+	 * @param aTickerType the BET this family member mounts (one TE class per material row,
+	 *        the upstream Wood/Plastic/Metal trio shape)
+	 */
+	public GTBarrelBlock(long aCapacityL, long aMeltingPointK,
+			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, Properties aProperties) {
 		super(aProperties);
+		mCapacityL = aCapacityL;
 		mMeltingPointK = aMeltingPointK;
+		mTickerType = aTickerType;
+	}
+
+	/** The tank size in litres (upstream NBT_TANK_CAPACITY, Loader_MultiTileEntities.java:2140/:2150/:2151). */
+	public long capacityL() {
+		return mCapacityL;
 	}
 
 	/** The melt-down ceiling in Kelvin (upstream NBT_CAPACITY_HU=340, Loader_MultiTileEntities.java:2136). */
@@ -46,7 +72,7 @@ public class GTBarrelBlock extends GTEntityBlock {
 
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
-		return GTBarrels.BARREL_BE.get();
+		return mTickerType.get();
 	}
 
 	@Override

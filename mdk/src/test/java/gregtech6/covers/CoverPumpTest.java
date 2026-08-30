@@ -30,6 +30,7 @@ import gregtech6.covers.covers.CoverTextureSimple;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.tank.BarrelFluidHandler;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
+import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 import gregtech6.tileentity.machines.TileEntityOven;
 
@@ -40,32 +41,38 @@ import gregtech6.tileentity.machines.TileEntityOven;
  * answers BEFORE the side rule — the reachable offline proof of spec A's ordering). The
  * live per-second transfer itself is the RCON chain's job (a real level and a real
  * neighbour are out of the offline doubles' reach).
+ *
+ * <p>Pump host re-judgment (task p6-barrel-metal-plastic ①, the offline mirror of the
+ * RCON chain re-record): the wood barrel restored the upstream decorative-only
+ * {@code allowCover} (MultiTileEntityBarrelWood.java:39), so the pump mounts the metal
+ * drum here — the upstream MultiTileEntityBarrelMetal takes the base default and admits
+ * every cover. The wood/plastic refusals live in GTBarrelFamilyTest's predicate table.
  */
 public class CoverPumpTest extends GTCoverTestBase {
 
-	static BlockEntityType<GTBarrelBlockEntity> sBarrelType;
+	static BlockEntityType<GTBarrelMetalBlockEntity> sBarrelType;
 
 	@SuppressWarnings("unchecked")
 	@BeforeAll
 	static void buildBarrelFixture() {
-		// the base @BeforeAll already bootstrapped; build the barrel BET over the vanilla fixture block
+		// the base @BeforeAll already bootstrapped; build the metal drum BET over the vanilla fixture block
 		SharedConstants.tryDetectVersion();
-		BlockEntityType<GTBarrelBlockEntity>[] tHolder = (BlockEntityType<GTBarrelBlockEntity>[]) new BlockEntityType<?>[1];
+		BlockEntityType<GTBarrelMetalBlockEntity>[] tHolder = (BlockEntityType<GTBarrelMetalBlockEntity>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(
-				(aPos, aState) -> new GTBarrelBlockEntity(tHolder[0], aPos, aState),
+				(aPos, aState) -> new GTBarrelMetalBlockEntity(tHolder[0], aPos, aState),
 				Blocks.STONE, Blocks.DIRT).build(null);
 		sBarrelType = tHolder[0];
 	}
 
-	static GTBarrelBlockEntity barrel() {
+	static GTBarrelMetalBlockEntity barrel() {
 		return sBarrelType.create(COVER_POS, Blocks.STONE.defaultBlockState());
 	}
 
-	/** Mounts a fresh pump cover on the face and returns the barrel + its store. */
-	static GTBarrelBlockEntity pumpBarrel(byte aSide) {
-		GTBarrelBlockEntity tBarrel = barrel();
+	/** Mounts a fresh pump cover on the face and returns the drum + its store. */
+	static GTBarrelMetalBlockEntity pumpBarrel(byte aSide) {
+		GTBarrelMetalBlockEntity tBarrel = barrel();
 		CoverRegistry.put(Items.BRICK, new CoverPump());
-		assertTrue(tBarrel.setCoverItem(aSide, new ItemStack(Items.BRICK), null, false, true), "the pump mounts on the barrel (the mTank seam)");
+		assertTrue(tBarrel.setCoverItem(aSide, new ItemStack(Items.BRICK), null, false, true), "the pump mounts on the metal drum (the mTank seam)");
 		return tBarrel;
 	}
 
@@ -81,16 +88,16 @@ public class CoverPumpTest extends GTCoverTestBase {
 		assertTrue(tPump.interceptCoverPlacement((byte) 5, tOvenData, null),
 				"the oven exposes no pump tank (ICoverableTE.getCoverPumpTank default null) — the pump refuses");
 
-		GTBarrelBlockEntity tBarrel = barrel();
+		GTBarrelMetalBlockEntity tBarrel = barrel();
 		CoverData tBarrelData = CoverRegistry.coverdata(tBarrel, null);
 		assertFalse(tPump.interceptCoverPlacement((byte) 5, tBarrelData, null),
-				"the barrel hands out mTank — the pump mounts (ruling ⑤: the wood barrel admits covers)");
+				"the metal drum hands out mTank — the pump mounts (p6 re-judgment: the drum admits the pump, wood/plastic refuse functional covers)");
 	}
 
 	@Test
 	public void barrelOverridesThePumpSeamWithItsTankAndTheOvenStaysNull() {
-		GTBarrelBlockEntity tBarrel = barrel();
-		assertSame(tBarrel.mTank, tBarrel.getCoverPumpTank(), "the direct-call seam is the barrel's own tank");
+		GTBarrelMetalBlockEntity tBarrel = barrel();
+		assertSame(tBarrel.mTank, tBarrel.getCoverPumpTank(), "the direct-call seam is the drum's own tank");
 		TileEntityOven tOven = bareOven();
 		assertNull(tOven.getCoverPumpTank(), "hosts without a pump tank stay null");
 	}
@@ -101,7 +108,7 @@ public class CoverPumpTest extends GTCoverTestBase {
 
 	@Test
 	public void pumpOneWayGateTable() {
-		GTBarrelBlockEntity tBarrel = pumpBarrel((byte) 5); // east face, visual 0 = out
+		GTBarrelMetalBlockEntity tBarrel = pumpBarrel((byte) 5); // east face, visual 0 = out
 		CoverData tData = tBarrel.getCovers();
 		assertNotNull(tData);
 		CoverPump tPump = (CoverPump) tData.mBehaviours[5];
@@ -122,7 +129,7 @@ public class CoverPumpTest extends GTCoverTestBase {
 
 	@Test
 	public void screwdriverTogglesTheDirectionAndDamagesTheTool() {
-		GTBarrelBlockEntity tBarrel = pumpBarrel((byte) 5);
+		GTBarrelMetalBlockEntity tBarrel = pumpBarrel((byte) 5);
 		CoverData tData = tBarrel.getCovers();
 		CoverPump tPump = (CoverPump) tData.mBehaviours[5];
 
@@ -153,7 +160,7 @@ public class CoverPumpTest extends GTCoverTestBase {
 
 	@Test
 	public void pumpDirectionRoundTripsThroughTheCoversNbt() {
-		GTBarrelBlockEntity tBarrel = pumpBarrel((byte) 5);
+		GTBarrelMetalBlockEntity tBarrel = pumpBarrel((byte) 5);
 		CoverData tData = tBarrel.getCovers();
 		tData.visual((byte) 5, (short) 1); // the screwdriver flipped it to IN
 
@@ -174,7 +181,7 @@ public class CoverPumpTest extends GTCoverTestBase {
 		assertTrue(tPumped.contains(CoverData.VISUAL_KEYS[5]), "the pump keeps it (the gate is needsVisualsSaved)");
 
 		// rehydration: a fresh store over the saved compound restores the behaviour + the lane
-		GTBarrelBlockEntity tBack = barrel();
+		GTBarrelMetalBlockEntity tBack = barrel();
 		CoverData tBackData = CoverRegistry.coverdata(tBack, tCoversTag);
 		assertNotNull(tBackData.mBehaviours[5], "the pump re-resolves from the id lane");
 		assertEquals(1, tBackData.mVisuals[5], "the direction survives the round-trip");
@@ -190,7 +197,7 @@ public class CoverPumpTest extends GTCoverTestBase {
 		// pump on the BOTTOM face, in-mode: the bottom face normally drains the heavier —
 		// but the in-face drain gate refuses first, so the wrapper returns EMPTY without
 		// ever reaching the density verdict (which is live-registry territory offline).
-		GTBarrelBlockEntity tBarrel = pumpBarrel((byte) 0);
+		GTBarrelMetalBlockEntity tBarrel = pumpBarrel((byte) 0);
 		tBarrel.getCovers().visual((byte) 0, (short) 1);
 		tBarrel.mTank.fill(new FluidStack(Fluids.WATER, 500), FluidAction.EXECUTE);
 
@@ -202,7 +209,7 @@ public class CoverPumpTest extends GTCoverTestBase {
 	@Test
 	public void wrapperFillHonoursTheOutFaceGate() {
 		// pump on the EAST face, out-mode: fill has no side rule, so the gate is the refuser
-		GTBarrelBlockEntity tBarrel = pumpBarrel((byte) 5);
+		GTBarrelMetalBlockEntity tBarrel = pumpBarrel((byte) 5);
 		tBarrel.mTank.fill(new FluidStack(Fluids.WATER, 500), FluidAction.EXECUTE);
 		FluidTankGT tTank = tBarrel.mTank;
 
@@ -218,7 +225,7 @@ public class CoverPumpTest extends GTCoverTestBase {
 
 	@Test
 	public void pumpTickWithoutALevelIsAHarmlessNoOp() {
-		GTBarrelBlockEntity tBarrel = pumpBarrel((byte) 5);
+		GTBarrelMetalBlockEntity tBarrel = pumpBarrel((byte) 5);
 		tBarrel.mTank.fill(new FluidStack(Fluids.WATER, 500), FluidAction.EXECUTE);
 		// no level → no adjacent handler → the beat fires and moves nothing (offline guard)
 		tBarrel.getCovers().tickPre(5, true, false, false);
