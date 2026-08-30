@@ -32,12 +32,13 @@ public class GTBarrelBlockEntity extends TileEntityBase08Barrel {
 	/**
 	 * Full constructor — also the offline (test) entry point: a null type falls back to
 	 * the registry type at runtime, tests pass an offline-built BET (W1 precedent). The
-	 * melting ceiling comes from the block property; non-GT-barrel blocks (offline
-	 * vanilla fixtures) leave the MAX_VALUE default.
+	 * melting ceiling and the tank size come from the block properties; non-GT-barrel
+	 * blocks (offline vanilla fixtures) leave the 16000 L / MAX_VALUE defaults.
 	 */
 	public GTBarrelBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 		super(true, aType != null ? aType : GTBarrels.BARREL_BE.get(), aPos, aState);
 		if (aState.getBlock() instanceof GTBarrelBlock tBarrel) {
+			mTank.setCapacity(tBarrel.capacityL());
 			mMeltingPoint = tBarrel.meltingPointK();
 		}
 	}
