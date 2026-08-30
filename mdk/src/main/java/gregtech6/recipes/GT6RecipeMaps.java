@@ -30,6 +30,13 @@ import java.util.HashSet;
  * 1/1/1, fluid slots 1/1/0, minimal inputs 0, power 1). The GUI path uses the
  * gt6 namespace instead of the upstream assets/gregtech one.
  *
+ * <p>{@code COKE_OVEN} mirrors RM.CokeOven (RM.java:78, the 25-arg overload folding the
+ * trailing defaults): "gt.recipe.cokeoven", "Coke Oven", NEI name null → the internal name,
+ * progress 0/1, GUI machines/CokeOven (a string only — no asset shipped, the same form as
+ * the Oven line), item slots 1/9/1, fluid slots 0/1/0, minimal inputs 1, power 1.
+ * The recipes are poured in statically by {@link GT6RecipesCokeOven} (FMLCommonSetup) and
+ * the tag-driven log subset by {@link GT6CokeOvenTagListener} (TagsUpdatedEvent).
+ *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
@@ -38,6 +45,9 @@ import java.util.HashSet;
 public class GT6RecipeMaps {
 	/** RM.java:103 — the Oven/Furnace map backed by the vanilla smelting recipes. */
 	public static volatile RecipeMapFurnace FURNACE;
+
+	/** RM.java:78 — the Coke Oven map (1 in / 9 out items, 0 in / 1 out fluids). */
+	public static volatile RecipeMap COKE_OVEN;
 
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
@@ -50,11 +60,20 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		COKE_OVEN = new RecipeMap(new HashSet<>(),
+				"gt.recipe.cokeoven", "Coke Oven", null,
+				0, 1,
+				"gt6:textures/gui/machines/CokeOven",
+				/*IN-OUT-MIN-ITEM=*/ 1, 9, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 1, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
 	}
 
 	/** Port-only: drops the whole generation (RecipeMap.RECIPE_MAPS included) for a clean re-init. */
 	public static synchronized void reset() {
 		FURNACE = null;
+		COKE_OVEN = null;
 		RecipeMap.reset();
 	}
 }
