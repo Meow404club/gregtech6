@@ -74,8 +74,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	 * mOutputFluidCount==0 arms): 1-3 → one row from x 107 at y 25; 4-6 → two rows at y 16/34;
 	 * 7+ → 3 columns x 4 rows (x 107/125/143, y 7/25/43/61 — the 12-output default branch).
 	 */
-	static int[] outputGridPos(int aIndex, int aCount) {
-		if (aCount <= 3) return new int[] {107 + 18 * aIndex, 25};
+	public static int[] outputGridPos(int aIndex, int aCount) {		if (aCount <= 3) return new int[] {107 + 18 * aIndex, 25};
 		if (aCount <= 6) return new int[] {107 + 18 * (aIndex % 3), aIndex < 3 ? 16 : 34};
 		return new int[] {107 + 18 * (aIndex % 3), 7 + 18 * (aIndex / 3)};
 	}
