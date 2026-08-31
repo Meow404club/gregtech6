@@ -1,0 +1,196 @@
+{
+  "variants": {
+    "connections=0": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=1": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=10": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=11": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=12": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=13": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=14": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=15": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=16": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=17": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=18": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=19": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=2": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=20": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=21": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=22": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=23": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=24": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=25": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=26": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=27": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=28": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=29": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=3": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=30": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=31": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=32": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=33": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=34": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=35": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=36": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=37": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=38": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=39": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=4": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=40": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=41": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=42": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=43": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=44": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=45": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=46": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=47": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=48": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=49": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=5": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=50": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=51": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=52": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=53": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=54": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=55": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=56": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=57": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=58": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=59": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=6": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=60": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=61": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=62": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=63": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=7": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=8": {
+      "model": "gt6:block/wire_electric_2x"
+    },
+    "connections=9": {
+      "model": "gt6:block/wire_electric_2x"
+    }
+  }
+}
