@@ -307,12 +307,16 @@ public final class GT6BlockStates extends BlockStateProvider {
             GTMaterialPrefixBlock tPrefixBlock = (GTMaterialPrefixBlock)tBlock;
             String tPrefixSnake = GTMaterialItems.snakeCase(tPrefixBlock.prefix.mNameInternal);
             String tSetSnake = blockSetOf(tPrefixBlock.material);
-            String tModelName = "materialicons/" + tSetSnake + "/" + tPrefixSnake;
+            // Full "block/..." model path: getBuilder skips the folder prefix for "/"-bearing
+            // names (ModelProvider.extendWithFolder), so the block/ segment must be explicit —
+            // that keeps the tracked/built location == models/block/materialicons/... == the
+            // item-parent lookup below.
+            String tModelName = "block/materialicons/" + tSetSnake + "/" + tPrefixSnake;
             ModelFile tModel = tShared.computeIfAbsent(tModelName,
                     tKey -> tintedCubeAll(tKey, modLoc("block/materialicons/" + tSetSnake + "/" + tPrefixSnake)));
             simpleBlock(tBlock, tModel);
             itemModels().withExistingParent(GTMaterialItems.itemIdOf(tPrefixBlock.prefix, tPrefixBlock.material),
-                    modLoc("block/" + tModelName));
+                    modLoc(tModelName));
         }
         LOGGER.info("GT6 prefix blocks: {} blocks over {} shared (prefix x set) models",
                 GTMaterialBlocks.blockArray().length, tShared.size());
@@ -323,9 +327,11 @@ public final class GT6BlockStates extends BlockStateProvider {
      * a full 0..16 element with all six faces on {@code #all}, cullface per side and
      * {@code tintindex 0} (the vanilla grass_block/leaves element idiom; no explicit UVs —
      * they default to the element bounds, byte-equivalent to vanilla cube_all output).
+     * {@code aName} must be the full {@code block/...} model path (see addPrefixBlocks).
      */
     private ModelFile tintedCubeAll(String aName, ResourceLocation aTexture) {
-        BlockModelBuilder tModel = models().withExistingParent(aName, mcLoc("block/block"))
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
                 .texture("all", aTexture)
                 .texture("particle", "#all");
         tModel.element()
