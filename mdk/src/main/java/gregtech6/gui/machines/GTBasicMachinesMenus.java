@@ -13,19 +13,24 @@ import net.minecraftforge.registries.RegistryObject;
 /**
  * Machine {@link MenuType} registration, card-owned (ADR-P3-4): the machine family gets its
  * own self-contained DeferredRegister listener (GTOvenMenus :21 shape — GTMenuTypes stays
- * frozen). One MenuType per registered machine ({@code gt6:shredder|crusher|lathe}); each
- * factory closes over its own RegistryObject so the shared {@link GTBasicMachineMenu} network
- * constructor binds the type it was opened with.
+ * frozen). One MenuType per registered machine ({@code gt6:shredder|crusher|lathe|cokeoven});
+ * each factory closes over its own RegistryObject so the shared {@link GTBasicMachineMenu}
+ * network constructor binds the type it was opened with. The cokeoven entry is the first
+ * multiblock consumer — its factory takes the
+ * {@link GTBasicMachineMenu#networkMultiBlock} path (task p8-cokeoven-gui-menu ③).
  */
 @Mod.EventBusSubscriber(modid = GTBasicMachinesMenus.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTBasicMachinesMenus {
 
 	public static final String MOD_ID = "gt6";
 
-	/** Registry paths of the machine GUIs (MenuType ids, lowercase — Loader_MultiTileEntities :1294-1309). */
+	private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
+
+	/** Registry paths of the machine GUIs (MenuType ids, lowercase — Loader_MultiTileEntities :1193/:1294-1309). */
 	public static final String SHREDDER_MENU_ID = "shredder";
 	public static final String CRUSHER_MENU_ID = "crusher";
 	public static final String LATHE_MENU_ID = "lathe";
+	public static final String COKE_OVEN_MENU_ID = "cokeoven";
 
 	public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MOD_ID);
 
@@ -37,6 +42,9 @@ public final class GTBasicMachinesMenus {
 
 	public static final RegistryObject<MenuType<GTBasicMachineMenu>> LATHE_MENU =
 		MENUS.register(LATHE_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.LATHE_MENU.get(), aId, aInv, aData)));
+
+	public static final RegistryObject<MenuType<GTBasicMachineMenu>> COKE_OVEN_MENU =
+		MENUS.register(COKE_OVEN_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.networkMultiBlock(GTBasicMachinesMenus.COKE_OVEN_MENU.get(), aId, aInv, aData)));
 
 	private GTBasicMachinesMenus() {
 	}
@@ -56,9 +64,15 @@ public final class GTBasicMachinesMenus {
 		return LATHE_MENU.get();
 	}
 
+	/** The {@code gt6:cokeoven} menu type (the multiblock machine GUI). */
+	public static MenuType<GTBasicMachineMenu> cokeoven() {
+		return COKE_OVEN_MENU.get();
+	}
+
 	/** FMLConstructModEvent = first mod-bus lifecycle stage, strictly before any RegisterEvent (GTMenuTypes.java:76-80 precedent). */
 	@SubscribeEvent
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
 		MENUS.register(Mod.EventBusSubscriber.Bus.MOD.bus().get());
+		LOGGER.info("GT6 machine menu 'cokeoven' registered (gt6:cokeoven — the TileEntityBase10MultiBlockMachine GUI path, task p8-cokeoven-gui-menu)");
 	}
 }

@@ -151,6 +151,15 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		return new GTBasicMachineMenu(aMenuType, aContainerId, aPlayerInventory, resolveTileEntity(aPlayerInventory, aExtraData));
 	}
 
+	/**
+	 * The multiblock-machine factory path (task p8-cokeoven-gui-menu ①) — the cokeoven
+	 * MenuType closure (GTBasicMachinesMenus) calls this: same BlockPos payload contract,
+	 * the resolve hard-checks {@link TileEntityBase10MultiBlockMachine} instead.
+	 */
+	public static GTBasicMachineMenu networkMultiBlock(MenuType<GTBasicMachineMenu> aMenuType, int aContainerId, Inventory aPlayerInventory, @Nullable FriendlyByteBuf aExtraData) {
+		return new GTBasicMachineMenu(aMenuType, aContainerId, aPlayerInventory, resolveMultiBlockMachine(aPlayerInventory, aExtraData));
+	}
+
 	private static TileEntityBasicMachine resolveTileEntity(Inventory aPlayerInventory, @Nullable FriendlyByteBuf aExtraData) {
 		if (aExtraData == null) {
 			throw new IllegalArgumentException("gt6 machine menus require the NetworkHooks.openScreen BlockPos payload (no data bridge)");
@@ -161,7 +170,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		throw new IllegalArgumentException("gt6 machine menu opened without its block entity (chunk not loaded?)");
 	}
 
-	/** The multiblock resolve — the cokeoven twin of resolveTileEntity (lands with the multiblock Host, task p8 ②). */
+	/** The multiblock resolve — the cokeoven twin of {@link #resolveTileEntity} (p8 ②). */
 	private static TileEntityBase10MultiBlockMachine resolveMultiBlockMachine(Inventory aPlayerInventory, @Nullable FriendlyByteBuf aExtraData) {
 		if (aExtraData == null) {
 			throw new IllegalArgumentException("gt6 machine menus require the NetworkHooks.openScreen BlockPos payload (no data bridge)");

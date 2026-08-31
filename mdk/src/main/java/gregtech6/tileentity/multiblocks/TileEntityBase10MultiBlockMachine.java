@@ -7,6 +7,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,6 +27,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
 
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.gui.machines.GTBasicMachineMenu;
+import gregtech6.gui.machines.GTBasicMachinesMenus;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
@@ -90,8 +98,16 @@ import gregtech6.tileentity.GTItemStackHandler;
  * trio, mRequiresIgnition = true + mIgnited, mLastRecipe/mCurrentRecipe, the pending
  * mOutputItems/mOutputFluids and the single output tank (upstream FluidTankGT default
  * constructor capacity = Long.MAX_VALUE, upstream FluidTankGT.java:49).
+ *
+ * <p>GUI face (task p8-cokeoven-gui-menu ②): the class implements MenuProvider +
+ * {@link GTBasicMachineMenu.Host} — the Host methods read the raw slot/field face directly
+ * (the upstream ContainerCommonBasicMachine reads the TE inventory the same way; the
+ * output no-put rule is the menu's OutputSlot), so the Coke Oven reuses the
+ * single-block machine menu and screen without a class of its own. The menu opens
+ * through {@link #getMenuType()}, defaulting to the cokeoven MenuType (the only existing
+ * subclass — future multiblock machines override it with their own registration).
  */
-public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10MultiBlockBase {
+public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10MultiBlockBase implements MenuProvider, GTBasicMachineMenu.Host {
 
 	// checkRecipe result codes (upstream :672-675 verbatim).
 	public static final int DID_NOT_FIND_RECIPE = 0;
@@ -558,6 +574,65 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	public void onProcessStarted() {/**/}
 
 	public void onProcessFinished() {/**/}
+
+	// ---------------------------------------------------------------------------
+	// GUI (upstream getGUIClient2/getGUIServer2 :1007-1008 → MenuProvider; the Host
+	// face is the raw slot/field read — ContainerCommonBasicMachine reads the TE
+	// inventory directly the same way, task p8-cokeoven-gui-menu ②)
+	// ---------------------------------------------------------------------------
+
+	/** The menu binds this as the SlotItemHandler container (TileEntityBasicMachine :199 same shape). */
+	@Override
+	public GTItemStackHandler getInventory() {
+		return mInventory;
+	}
+
+	/** The RecipeMap output slot count (the cokeoven map carries 9 — the output grid's 3x4 branch). */
+	@Override
+	public int getOutputSlotCount() {
+		return recipes().mOutputItemsCount;
+	}
+
+	@Override
+	public boolean isSuccessful() {
+		return mSuccessful;
+	}
+
+	@Override
+	public long getProgress() {
+		return mProgress;
+	}
+
+	@Override
+	public long getMaxProgress() {
+		return mMaxProgress;
+	}
+
+	/** The mGUITexture = mRecipes.mGUIPath semantics (MultiTileEntityBasicMachine.java:114). */
+	@Override
+	public String getGuiTexture() {
+		return recipes().mGUIPath;
+	}
+
+	@Override
+	public AbstractContainerMenu createMenu(int aContainerId, Inventory aPlayerInventory, Player aPlayer) {
+		return new GTBasicMachineMenu(getMenuType(), aContainerId, aPlayerInventory, this);
+	}
+
+	/**
+	 * The MenuType this machine's GUI opens with — the only existing subclass is the Coke
+	 * Oven (Loader_MultiTileEntities.java:1193), so the default is the cokeoven registration;
+	 * future multiblock machines override this with their own MenuType.
+	 */
+	protected MenuType<? extends GTBasicMachineMenu> getMenuType() {
+		return GTBasicMachinesMenus.cokeoven();
+	}
+
+	/** The controller block's translatable name (TileEntityBasicMachine :686 same shape). */
+	@Override
+	public Component getDisplayName() {
+		return getBlockState().getBlock().getName();
+	}
 
 	// ---------------------------------------------------------------------------
 	// capability exposure — the gating IItemHandler (insert input-only, extract output-only)
