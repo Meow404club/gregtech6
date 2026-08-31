@@ -68,15 +68,17 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * upstream — never ported into this OP, so every {@code mPrefix.mByProducts} is empty and
  * the byproduct loop :127-136 is structurally dormant) stay pooled.
  *
- * <p><b>Chances semantics</b> (the reason this card needed Recipe.mChances): every row is
- * chance-bearing — the pre-output slot 0 carries the upstream 0-sentinel (RecipeMapHandlerCrushing.java:82-85
- * writes the main output twice: slot 0 chance 0, slot 1 chance 10000). Upstream Recipe.java:906
- * rewrites {@code chances[i] <= 0} to 10000 in the ctor, making the sentinel a second full
- * output; the port does NOT replicate that rewrite and its {@code chance == 0 → no output}
- * ruling (Recipe.java javadoc) means slot 0 stays dead: the port crushes one oreRaw into
- * the single main output. The Cinnabar gem row (:111-125) is genuinely probabilistic
- * (2500 + byproduct bonuses over a 10000 base) — exercised through
- * {@link Recipe#getOutputs(Random, int)}.
+	 * <p><b>Chances semantics</b> (the reason this card needed Recipe.mChances): every row is
+	 * chance-bearing — the pre-output slot 0 carries the upstream 0-sentinel (RecipeMapHandlerCrushing.java:77-85
+	 * writes the main output twice: slot 0 chance 0, slot 1 chance 10000). Upstream Recipe.java:906
+	 * rewrites {@code chances[i] <= 0} to 10000 in the ctor, making the sentinel a second full
+	 * output — every handler row crushes into TWO main outputs. The p9 yield reform (task
+	 * p9-recipe-yield-reform) writes that end state directly: the port emits BOTH slots at
+	 * 10000 (the sentinel's upstream-effective value) instead of relying on the ctor rewrite
+	 * it does NOT replicate, while the {@code chance == 0 → no output} code ruling (Recipe.java
+	 * javadoc) stays untouched — no sentinel slots are written anymore. The Cinnabar gem row
+	 * (:111-125) is genuinely probabilistic (2500 + byproduct bonuses over a 10000 base) —
+	 * exercised through {@link Recipe#getOutputs(Random, int)}.
  *
  * <p><b>Skipped upstream branches (declared, not silent)</b>: the {@code oreSmall}/oreRich/oreNormal
  * TODO branch (:73-76, upstream returns F) transcribes as a skip; the netherrack-family
@@ -112,7 +114,7 @@ public final class GT6RecipesOreChain {
 			boolean poorTinyBranch,
 			/** mOreProcessingMultiplier x branch factor (upstream :53-67; x3 for the tiny branch :69). */
 			long multiplier,
-			/** Extra main-output copies: 8 for blockRaw (:86-103), 2 for DENSE_ORE (:104-110), 0 else. */
+			/** Extra main-output copies beyond the double-slot base: 7 for blockRaw (:86-103), 2 for DENSE_ORE (:104-110), 0 else. */
 			int extraCopies,
 			/** DENSE_ORE prefix flag: duration x2 (:109) and the Cinnabar gem count (:124). */
 			boolean dense,
@@ -199,7 +201,7 @@ public final class GT6RecipesOreChain {
 		if (aPrefix == OP.oreSmall || aPrefix == OP.oreRich || aPrefix == OP.oreNormal) return null; // upstream :73-76 TODO = F
 		int tExtraCopies = 0;
 		boolean tDense = aPrefix.contains(TD.Prefix.DENSE_ORE);
-		if (aPrefix == OP.blockRaw) tExtraCopies = 8; // upstream :86-103
+		if (aPrefix == OP.blockRaw) tExtraCopies = 7; // upstream :86-103 — 7 copies; the sentinel+duplicate pair (:78-85) is the buildRecipe base since the p9 reform
 		if (tDense) tExtraCopies += 2; // upstream :104-110
 		long tCinnabarChance = cinnabarBonus(aMaterial); // upstream :111-122
 		return new OreChainPlan(aNote, aPrefix, aMaterial, crushingTarget(aMaterial), false, tMultiplier, tExtraCopies, tDense, tCinnabarChance, cinnabarGemCount(aPrefix, tDense), aPrefix.mByProducts);
@@ -277,8 +279,9 @@ public final class GT6RecipesOreChain {
 	 * or every main-output candidate fails to resolve (the upstream {@code mat()} → null
 	 * / {@code return F} drop semantics, :81).
 	 *
-	 * <p>Row shapes: the main path emits the main output once (the chance-0 sentinel slot
-	 * dies in the port — see the class doc), then {@code extraCopies} more, then the
+	 * <p>Row shapes: the main path emits the main output TWICE (the upstream sentinel +
+	 * duplicate pair :77-85, both slots at 10000 — the p9 yield reform, see the class doc),
+	 * then {@code extraCopies} more, then the
 	 * probabilistic Cinnabar gem (if its chance sums positive, :123), then the prefix
 	 * byproduct dusts (10000 each, :132). The poor-tiny branch emits one tiny output with
 	 * {@code null} chances (upstream :71 passes null; every row is deterministic there).
@@ -305,8 +308,9 @@ public final class GT6RecipesOreChain {
 		ItemStack[] tOutputs = new ItemStack[aOutputItemsCount];
 		long[] tChances = new long[aOutputItemsCount];
 		int tIndex = 0;
-		tOutputs[tIndex] = tMain; tChances[tIndex++] = 10000; // the first copy (:84-85); the upstream slot-0 chance-0 sentinel stays dead in the port
-		for (int i = 0; i < aPlan.extraCopies(); i++) {tOutputs[tIndex] = tMain; tChances[tIndex++] = 10000;} // :86-110
+		tOutputs[tIndex] = tMain; tChances[tIndex++] = 10000; // slot 0: the upstream chance-0 sentinel (:78) at its ctor-rewritten effective value (:906) — the p9 reform writes 10000 directly
+		tOutputs[tIndex] = tMain; tChances[tIndex++] = 10000; // slot 1: the duplicate main output (:84-85) — every row crushes into TWO main outputs (upstream parity)
+		for (int i = 0; i < aPlan.extraCopies(); i++) {tOutputs[tIndex] = tMain; tChances[tIndex++] = 10000;} // :86-110 — blockRaw 7 / DENSE 2 copies
 		if (tIndex < tOutputs.length && aPlan.cinnabarChance() > 0) { // :123
 			tChances[tIndex] = aPlan.cinnabarChance();
 			tOutputs[tIndex++] = resolveStack(OP.gem, MT.OREMATS.Cinnabar, aPlan.cinnabarCount()); // :124 — may stay null like upstream mat()

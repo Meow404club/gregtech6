@@ -27,11 +27,12 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Crusher ore chain (task p8-recipe-chances-orechain ④): the pure planner math against
- * the upstream handler branches (RecipeMapHandlerCrushing.java:50-137), the pour
- * reconciliation over the offline material universe (the cokeoven/ShCL template), and the
- * row shapes end-to-end (Fe → 3x Hematite at 1152 t; blockRaw 9 slots at x9/2 duration;
- * the Cinnabar gem row at its summed chance).
+ * The Crusher ore chain (task p8-recipe-chances-orechain ④, yields reformed by
+ * p9-recipe-yield-reform): the pure planner math against the upstream handler branches
+ * (RecipeMapHandlerCrushing.java:50-137), the pour reconciliation over the offline material
+ * universe (the cokeoven/ShCL template), and the row shapes end-to-end (Fe → the double
+ * 3x Hematite base at 1152 t — two 10000 main slots, upstream sentinel+dup parity;
+ * blockRaw 9 slots at x9/2 duration; the Cinnabar gem row at its summed chance).
  */
 class GT6RecipesOreChainTest extends GTRecipesOfflineTestBase {
 
@@ -143,7 +144,7 @@ class GT6RecipesOreChainTest extends GTRecipesOfflineTestBase {
 
 		GT6RecipesOreChain.OreChainPlan tBlockRaw = GT6RecipesOreChain.planRow(OP.blockRaw, MT.Fe, ":154");
 		assertNotNull(tBlockRaw);
-		assertEquals(8, tBlockRaw.extraCopies(), "blockRaw fills 8 more slots (:86-103)");
+		assertEquals(7, tBlockRaw.extraCopies(), "blockRaw fills 7 more slots (:86-103) — the sentinel+dup pair is the double-slot buildRecipe base (p9 reform)");
 		assertEquals(10368, GT6RecipesOreChain.crushingDuration(tBlockRaw, 6), "128 x 6 x 3 x 9 / 2");
 
 		// the DENSE_ORE shape is unreachable in the first wave — exercised on a hand-built plan
@@ -192,29 +193,32 @@ class GT6RecipesOreChainTest extends GTRecipesOfflineTestBase {
 		assertNull(GT6RecipesOreChain.buildRecipe(tPlan, 12), "all three tiers missing = the upstream :81 return F");
 	}
 
-	/** The chances assembly: Fe row = single deterministic slot; the Cinnabar row = +probabilistic gem. */
+	/** The chances assembly: Fe row = the double deterministic base; the Cinnabar row = +probabilistic gem. */
 	@Test
 	void chancesAssemblyFeAndCinnabar() {
 		GT6RecipesOreChain.OreChainPlan tFe = GT6RecipesOreChain.planRow(OP.oreRaw, MT.Fe, ":153");
 		GT6RecipesOreChain.sMaterialItemResolver = (aPrefix, aMaterial) -> Items.BRICK;
 		Recipe tFeRow = GT6RecipesOreChain.buildRecipe(tFe, 12);
 		assertNotNull(tFeRow);
-		assertEquals(1, tFeRow.mOutputs.length, "Fe has no Cinnabar affinity and no prefix byproducts — one slot after the trim");
-		assertArrayEquals(new long[] {10000}, tFeRow.mChances);
+		assertEquals(2, tFeRow.mOutputs.length, "Fe has no Cinnabar affinity and no prefix byproducts — the double main-output base after the trim (p9 reform)");
+		assertArrayEquals(new long[] {10000, 10000}, tFeRow.mChances, "both main slots at 10000 — the sentinel at its upstream ctor-rewritten value (:906)");
 		assertEquals(1152, tFeRow.mDuration);
 		assertEquals(16, tFeRow.mEUt, "the handler rows run at eUt 16 (upstream :137 trailing args)");
-		assertEquals(3, tFeRow.getOutputs(new Random(1), 1)[0].getCount());
+		ItemStack[] tFeSampled = tFeRow.getOutputs(new Random(1), 1);
+		assertEquals(3, tFeSampled[0].getCount());
+		assertEquals(3, tFeSampled[1].getCount(), "the second main slot emits the same 3-count stack (upstream two-main-output parity)");
 
 		GT6RecipesOreChain.OreChainPlan tCinnabar = GT6RecipesOreChain.planRow(OP.oreRaw, MT.OREMATS.Cinnabar, ":153");
 		assertNotNull(tCinnabar);
 		assertEquals(3000, tCinnabar.cinnabarChance());
 		Recipe tCinnabarRow = GT6RecipesOreChain.buildRecipe(tCinnabar, 12);
 		assertNotNull(tCinnabarRow);
-		assertEquals(2, tCinnabarRow.mOutputs.length, "main + gem Cinnabar");
-		assertEquals(3000, tCinnabarRow.mChances[1], "the gem slot carries the summed chance (:111-125)");
+		assertEquals(3, tCinnabarRow.mOutputs.length, "double main + gem Cinnabar");
+		assertEquals(3000, tCinnabarRow.mChances[2], "the gem slot carries the summed chance (:111-125)");
 		ItemStack[] tSampled = tCinnabarRow.getOutputs(new Random(3), 1);
-		assertNotNull(tSampled[0], "the 10000 main slot always emits");
-		assertTrue(tSampled[1] == null || tSampled[1].getCount() == 1, "the 30% gem is unit Bernoulli — 0 or 1 at processCount 1");
+		assertNotNull(tSampled[0], "the first 10000 main slot always emits");
+		assertNotNull(tSampled[1], "the second 10000 main slot always emits (p9 double yield)");
+		assertTrue(tSampled[2] == null || tSampled[2].getCount() == 1, "the 30% gem is unit Bernoulli — 0 or 1 at processCount 1");
 	}
 
 	/** The blockRaw row shape (:86-103): 9 main slots all-10000, duration x9/2, gem count 9 (:124). */
@@ -225,7 +229,7 @@ class GT6RecipesOreChainTest extends GTRecipesOfflineTestBase {
 		GT6RecipesOreChain.sMaterialItemResolver = (aPrefix, aMaterial) -> Items.BRICK; // stub: the blockRaw items the prefixblock card will register
 		Recipe tRow = GT6RecipesOreChain.buildRecipe(tPlan, 12);
 		assertNotNull(tRow, "blockRaw rows pour once the prefixblock card registers the items (stub stand-ins here)");
-		assertEquals(9, tRow.mOutputs.length, "1 + 8 copies (:84-103)");
+		assertEquals(9, tRow.mOutputs.length, "the double base + 7 block copies = the upstream 9 main slots (:77-103)");
 		assertEquals(6, tRow.mOutputs[0].getCount(), "multiplier 6 → 6 Hematite per block");
 		for (int i = 0; i < 9; i++) assertEquals(10000, tRow.mChances[i], "every main slot is deterministic");
 		assertEquals(10368, tRow.mDuration);
@@ -338,8 +342,9 @@ class GT6RecipesOreChainTest extends GTRecipesOfflineTestBase {
 		assertEquals(15, tInputs[0].getCount(), "one pass consumes exactly one oreRaw");
 		ItemStack[] tOutputs = tFound.getOutputs(1);
 		long tExpectedCount = GT6RecipesOreChain.mainOutputCount(tControl, tPlan.multiplier());
-		assertEquals(1, tOutputs.length);
+		assertEquals(2, tOutputs.length, "every plain row yields the double main-output base (p9 reform)");
 		assertEquals(tExpectedCount, tOutputs[0].getCount(), "the main output carries the multiplier-scaled count");
+		assertEquals(tExpectedCount, tOutputs[1].getCount(), "the duplicate main slot carries the same count (upstream parity)");
 		assertEquals(GT6RecipesOreChain.crushingDuration(tPlan, tOutputs[0].getCount()), tFound.mDuration);
 	}
 }
