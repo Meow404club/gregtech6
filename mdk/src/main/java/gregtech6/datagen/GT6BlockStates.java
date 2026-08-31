@@ -7,8 +7,10 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.block.GTOvenBlock;
+import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTFluidPipes;
@@ -100,17 +102,29 @@ public final class GT6BlockStates extends BlockStateProvider {
      * feature-layer omission, MultiTileEntityBarrelWood.java:44-54) plus the BlockItem
      * model parenting the block model. The textures are script-generated placeholder
      * PNGs, not JSON.
+     *
+     * <p>Task p7-barrel-high-tier-melt-bridge spec ④: the twelve high-tier metal drums
+     * (Loader_MultiTileEntities.java:2159-2170) share the ONE {@code barrel_metal.png} —
+     * every model JSON references the same PNG, so the model count grows with the rows
+     * and the PNG count does not.
      */
     private void addBarrel() {
         addBarrel(GTBarrels.BARREL.get());
         addBarrel(GTBarrels.BARREL_PLASTIC.get());
         addBarrel(GTBarrels.BARREL_METAL.get());
+        for (RegistryObject<GTBarrelBlock> tDrum : GTBarrels.METAL_DRUM_BLOCKS.values())
+            addBarrel(tDrum.get(), "barrel_metal");
     }
 
     /** One cube_all barrel + its BlockItem parent (the p4 wood barrel shape, reused per material row). */
     private void addBarrel(Block aBarrel) {
+        addBarrel(aBarrel, aBarrel.getDescriptionId().replace("block.gt6.", ""));
+    }
+
+    /** The same shape over an explicit texture tail (the p7 shared-PNG drum family form). */
+    private void addBarrel(Block aBarrel, String aTexture) {
         String tName = aBarrel.getDescriptionId().replace("block.gt6.", "");
-        simpleBlock(aBarrel, models().cubeAll(tName, modLoc("block/" + tName)));
+        simpleBlock(aBarrel, models().cubeAll(tName, modLoc("block/" + aTexture)));
         itemModels().withExistingParent(tName, modLoc("block/" + tName));
     }
 

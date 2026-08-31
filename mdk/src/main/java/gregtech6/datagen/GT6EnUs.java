@@ -60,12 +60,25 @@ public final class GT6EnUs extends LanguageProvider {
      * p6-barrel-metal-plastic): the barrel display names (upstream rows — "Wooden Barrel"
      * Loader_MultiTileEntities.java:2136, "Plastic Canister" :2150, "Bronze Drum" :2151)
      * and the "Fluid Containers" creative tab (the upstream MTE-registry category of the
-     * same rows).
+     * same rows). Task p7-barrel-high-tier-melt-bridge: the high-tier drum rows
+     * :2159-2170, display names verbatim.
      */
     private void addBarrels() {
         add("block.gt6.barrel_wood", "Wooden Barrel");
         add("block.gt6.barrel_plastic", "Plastic Canister");
         add("block.gt6.barrel_metal", "Bronze Drum");
+        add("block.gt6.barrel_tungsten_alloy", "Tungsten Alloy Drum");
+        add("block.gt6.barrel_titanium", "Titanium Drum");
+        add("block.gt6.barrel_netherite", "Netherite Drum");
+        add("block.gt6.barrel_tungstensteel", "Tungstensteel Drum");
+        add("block.gt6.barrel_tungsten", "Tungsten Drum");
+        add("block.gt6.barrel_void_metal", "Voidmetal Drum");
+        add("block.gt6.barrel_tantalum_hafnium_carbide", "Tantalum Hafnium Carbide Drum");
+        add("block.gt6.barrel_gaia_spirit", "Gaia Drum");
+        add("block.gt6.barrel_adamantium", "Adamantium Drum");
+        add("block.gt6.barrel_draconium", "Draconium Drum");
+        add("block.gt6.barrel_awakened_draconium", "Awakened Draconium Drum");
+        add("block.gt6.barrel_infinity", "Infinity Drum");
         add("itemGroup.gt6.fluid_containers", "Fluid Containers");
     }
 
