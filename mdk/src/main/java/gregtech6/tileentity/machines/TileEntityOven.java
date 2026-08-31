@@ -21,6 +21,7 @@ import gregapi.data.TD;
 
 import gregtech6.block.GTOvenBlock;
 import gregtech6.client.render.GTModelProperties;
+import gregtech6.client.render.GTOvenRenderSnapshot;
 import gregtech6.client.render.GTRenderUpdates;
 import gregtech6.covers.CoverData;
 import gregtech6.covers.GTCoverRenderSnapshot;
@@ -103,7 +104,9 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * furnace idiom (AbstractFurnaceBlockEntity.serverTick: {@code level.setBlock(pos, state,
  * 3)} — same-block state changes keep the BE, LevelChunk.setBlockState:292). Facing is
  * double-written NBT + BlockState (spec 7): NBT is the persistent authority, the BlockState
- * is re-applied from it.
+ * is re-applied from it. Since p9-render-c-oven-overlay the same two fields additionally
+ * project into the C-grade {@link GTOvenRenderSnapshot} ({@code getModelData()}); the
+ * client arm of the render pair rides {@link #load} (both sync channels converge there).
  */
 public class TileEntityOven extends TileEntityBase03TicksAndSync implements MenuProvider, ICoverableTE {
 
@@ -177,6 +180,14 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	/** Upstream :92 mFacing (byte, GT6 side order == Direction.getIndex()) — chest precedent. */
 	protected byte mFacing = 2;
 	protected boolean oActive = false, oRunning = false;
+	/**
+	 * Client-side render-dirty flag (task p9-render-c-oven-overlay): set when the client
+	 * copy of {@code mActive}/{@code mRunning} changes through {@link #load} (both sync
+	 * channels converge there) and consumed by {@link #scheduleRenderRefresh} — the client
+	 * arm of the scheduleRenderUpdate pair (requestModelDataUpdate alone never triggers a
+	 * chunk rebuild, GTRenderUpdates class doc).
+	 */
+	private boolean mOvenVisualDirty = false;
 
 	// ---------------------------------------------------------------------------
 	// covers (task p4-cover-core ⑤ — composition: the store lives here, the 06Covers
@@ -700,6 +711,9 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 
 	@Override
 	public void load(CompoundTag aNBT) {
+		// the client visual-field change detector: mActive/mRunning are rewritten below,
+		// so the pre-load values must be captured before super.load/the field reads
+		boolean tWasActive = mActive, tWasRunning = mRunning;
 		super.load(aNBT);
 		if (aNBT.contains(NBT_FACING, Tag.TAG_ANY_NUMERIC)) mFacing = aNBT.getByte(NBT_FACING);
 		if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) mInventory.deserializeNBT(aNBT.getCompound(NBT_INVENTORY));
@@ -717,6 +731,10 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 			for (int i = 0; i < tOutputs.size(); i++) mOutputItems[i] = ItemStack.of(tOutputs.getCompound(i));
 		}
 		readCoversFromNBT(aNBT); // upstream 06Covers :68
+		// task p9-render-c-oven-overlay: the client write point of mActive/mRunning — both
+		// sync channels (chunk data + block update) converge on this load; flag the render
+		// pair, scheduleRenderRefresh consumes it
+		if (hasLevel() && isClientSide() && (mActive != tWasActive || mRunning != tWasRunning)) mOvenVisualDirty = true;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -736,43 +754,76 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	@Override
 	public void onLoad() {
 		super.onLoad();
-		scheduleCoverRenderRefresh();
+		scheduleRenderRefresh();
 	}
 
 	@Override
 	public void handleUpdateTag(CompoundTag aTag) {
 		super.handleUpdateTag(aTag);
-		scheduleCoverRenderRefresh(); // chunk-data channel (login/chunk load)
+		scheduleRenderRefresh(); // chunk-data channel (login/chunk load)
 	}
 
 	@Override
 	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket) {
 		super.onDataPacket(aNet, aPacket);
-		scheduleCoverRenderRefresh(); // block-update channel (cover changes, machine visuals)
-	}
-
-	private void scheduleCoverRenderRefresh() {
-		if (hasCovers() && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
+		scheduleRenderRefresh(); // block-update channel (cover changes, machine visuals)
 	}
 
 	/**
-	 * The C-grade render hook (IForgeBlockEntity.java:174): a covered oven hands the
-	 * render thread the immutable per-face sprite snapshot; uncovered ovens keep
-	 * {@code ModelData.EMPTY} and render through the plain blockstate model.
+	 * The client arm of the scheduleRenderUpdate pair (task p4-cover-core ⑦ + task
+	 * p9-render-c-oven-overlay): fires when the covers changed OR the oven visual fields
+	 * changed through {@link #load} — the pair (sendBlockUpdated + requestModelDataUpdate)
+	 * pushes the fresh snapshot into the ModelDataManager before the rebuild task reads
+	 * it. The server side needs no blockEvent forward here: the machine's visual writes
+	 * already ride the vanilla channels (applyVisualState setBlock(state, 3) + the
+	 * onTickCheck sync window), and both client channels land in {@link #load}, which
+	 * flags {@link #mOvenVisualDirty}.
+	 */
+	private void scheduleRenderRefresh() {
+		if (!hasLevel() || !isClientSide()) return;
+		if (!mOvenVisualDirty && !hasCovers()) return;
+		mOvenVisualDirty = false;
+		GTRenderUpdates.scheduleRenderUpdate(this);
+	}
+
+	/**
+	 * The C-grade render hook (IForgeBlockEntity.java:174), rebuilt by task
+	 * p9-render-c-oven-overlay as a two-snapshot payload over disjoint properties:
+	 * <ul>
+	 * <li>{@link GTModelProperties#OVEN_SNAPSHOT} — always present: the read-only
+	 *     projection of {@code mActive}/{@code mRunning} taken at this exact moment
+	 *     (single-writer: those fields are the only source; the blockstate ACTIVE/RUNNING
+	 *     properties and this snapshot are both readers of them, never a second writer).</li>
+	 * <li>{@link GTModelProperties#RENDER_SNAPSHOT} — the cover chain (p4-cover-core),
+	 *     present exactly when a face carries a cover; untouched.</li>
+	 * </ul>
+	 * The {@link GTOvenOverlayModel} keys on the oven property, the cover plate model on
+	 * the cover property — the second ModelProperty exists precisely because
+	 * RENDER_SNAPSHOT is single-valued and the cover value must not be overwritten.
 	 */
 	@Override
 	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		GTOvenRenderSnapshot tOven = new GTOvenRenderSnapshot(mActive, mRunning);
 		CoverData tCovers = mCovers;
-		if (tCovers == null) return super.getModelData();
+		if (tCovers == null) {
+			return GTModelProperties.derive(super.getModelData())
+					.with(GTModelProperties.OVEN_SNAPSHOT, tOven)
+					.build();
+		}
 		java.util.Map<net.minecraft.core.Direction, net.minecraft.resources.ResourceLocation> tSprites = new java.util.EnumMap<>(net.minecraft.core.Direction.class);
 		for (byte tSide = 0; tSide < 6; tSide++) {
 			if (tCovers.mBehaviours[tSide] == null) continue;
 			net.minecraft.resources.ResourceLocation tSprite = tCovers.mBehaviours[tSide].getCoverTextureSurface(tSide, tCovers);
 			if (tSprite != null) tSprites.put(net.minecraft.core.Direction.from3DDataValue(tSide), tSprite);
 		}
-		if (tSprites.isEmpty()) return super.getModelData();
+		if (tSprites.isEmpty()) {
+			return GTModelProperties.derive(super.getModelData())
+					.with(GTModelProperties.OVEN_SNAPSHOT, tOven)
+					.build();
+		}
 		return GTModelProperties.derive(super.getModelData())
 				.with(GTModelProperties.RENDER_SNAPSHOT, new GTCoverRenderSnapshot(tSprites))
+				.with(GTModelProperties.OVEN_SNAPSHOT, tOven)
 				.build();
 	}
 
