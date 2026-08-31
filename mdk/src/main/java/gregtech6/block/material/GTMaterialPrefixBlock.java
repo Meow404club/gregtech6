@@ -20,8 +20,10 @@ import gregapi.oredict.OreDictPrefix;
  * <p>A PURE block: no EntityBlock, no ticker, no BlockEntity — upstream
  * {@code PrefixBlock.createNewTileEntity} returns {@code null} unconditionally
  * (PrefixBlock.java:584). No {@code onRemove} override either (project lesson id59).
- * Blockstate/model/loot JSONs are the render card's surface (p8-prefixblock-render);
- * this class carries none of that. Declared deviation: the upstream per-prefix
+ * Blockstate/model/loot JSONs live in the datagen providers (p8-prefixblock-render);
+ * this class only carries the client tint colour seam ({@link #blockColor()} /
+ * {@link #tintARGB()}, upstream PrefixBlock.java:279-282). Declared deviation: the
+ * upstream per-prefix
  * {@code aGravity} flag (blockDust falls, Loader_PrefixBlocks.java:42 arg 1 = T) and the
  * harvest tool/level gating are not ported on this pure block — vanilla 1.20.1 models
  * gravity through FallingBlock and tool gating through loot/hooks, both deferred to the
@@ -71,5 +73,37 @@ public class GTMaterialPrefixBlock extends Block {
 
     private static BlockBehaviour.Properties props(float hardness, float resistance, SoundType sound, MapColor color) {
         return BlockBehaviour.Properties.of().mapColor(color).strength(hardness, resistance).sound(sound);
+    }
+
+    /**
+     * The client {@code BlockColor} for every material prefix block (task p8-prefixblock-render
+     * spec ③), registered once over the whole block array in GTClientHandlers — the world-side
+     * half of the tint. Upstream colours the block render pass as
+     * {@code UT.Code.getRGBInt(aMaterial.fRGBa[mPrefix.mState])} (PrefixBlock.java:279-282,
+     * getRenderColor verbatim colour pick); every block* prefix has {@code mState == STATE_SOLID}
+     * (= 0, OreDictPrefix.java:104 port), so the picked colour is {@code fRGBaSolid}.
+     *
+     * <p>Per the Forge docs this does NOT colour the BlockItem — the inventory half is the
+     * separate {@code ItemColor} (GTMaterialPrefixBlockItem.tintColor) registered over the
+     * block items in the same handler class.
+     */
+    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
+    public static net.minecraft.client.color.block.BlockColor blockColor() {
+        return (aState, aLevel, aPos, aTintIndex) -> {
+            if (aTintIndex == 0 && aState.getBlock() instanceof GTMaterialPrefixBlock tBlock) return tBlock.tintARGB();
+            return -1;
+        };
+    }
+
+    /** The shared ARGB tint colour of this block: {@code fRGBa[prefix.mState]} (PrefixBlock.java:279-282), UT.Code.getRGBInt :1580-1582 encoding. */
+    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
+    public int tintARGB() {
+        short[] tRGBa = material.fRGBa[prefix.mState];
+        return 0xFF000000 | (bind8(tRGBa[0]) << 16) | (bind8(tRGBa[1]) << 8) | bind8(tRGBa[2]); // UT.Code.getRGBInt, UT.java:1580-1582
+    }
+
+    /** Upstream UT.Code.bind8 semantics: clamp to 0-255. */
+    private static int bind8(long aValue) {
+        return (int)Math.max(0, Math.min(255, aValue));
     }
 }

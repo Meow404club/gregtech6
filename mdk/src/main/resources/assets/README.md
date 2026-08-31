@@ -18,6 +18,15 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   (upstream `CokeOven.png`, task p8-cokeoven-gui-menu; sha256
   `a582c690865eb98115a639432731999d5cf13d2163ae8f532b2de10789f77572`)
 
+Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
+base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from
+upstream `src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/<Prefix>.png`
+(exactly the prefix x live-texture-set intersection the datagen models reference,
+sha256 verified byte-identical; the `_OVERLAY` pass textures are NOT borrowed —
+the port renders single-pass grayscale + tint). The material colour comes from
+the runtime `RegisterColorHandlersEvent` tint (`fRGBa[prefix.mState]`), mirroring
+upstream `PrefixBlock.getRenderColor` (PrefixBlock.java:279-282).
+
 Filenames were lowercased on borrow: 1.20.1 `ResourceLocation` paths only
 accept `[a-z0-9_.-/]`. The PNG contents are byte-identical to upstream
 (sha256 verified, no rescaling or redrawing).

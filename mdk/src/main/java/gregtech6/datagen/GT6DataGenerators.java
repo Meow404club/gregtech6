@@ -11,8 +11,9 @@ import net.minecraftforge.fml.common.Mod;
  * gated with {@code event.includeClient()} only (GatherDataEvent.java:28).
  *
  * <p>Client data this phase: item models (GT6ItemModels) + en_us lang (GT6EnUs), joined by
- * blockstates/block models (GT6BlockStates) with the p3-example-machine chest. Server providers
- * (recipes/tags/loot) are later phases.
+ * blockstates/block models (GT6BlockStates) with the p3-example-machine chest. Server providers:
+ * the material prefix blocks' loot tables (GT6LootTables, task p8-prefixblock-render); recipes
+ * and tags are still later phases.
  */
 @Mod.EventBusSubscriber(modid = GT6DataGenerators.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6DataGenerators {
@@ -36,5 +37,8 @@ public final class GT6DataGenerators {
             event.getGenerator().addProvider(true,
                 new GT6Atlases(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
         }
+        // task p8-prefixblock-render ④: the material prefix blocks' self-drop loot tables (server data)
+        event.getGenerator().addProvider(true,
+            new GT6LootTables(event.getGenerator().getPackOutput()));
     }
 }

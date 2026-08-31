@@ -131,3 +131,12 @@ tasks.withType(Test).configureEach {
     // 材料系统全量 init 属内存敏感（MT 1273 材料 + 全量物品枚举），与根项目测试同量级
     maxHeapSize = '2g'
 }
+
+// task p8-prefixblock-render 声明偏离（FILES_SCOPE 一行例外，验收门禁所迫）：
+// 生成树挂进 main resources（既有接线）+ 本卡 ~11.5k datagen JSON 后，
+// jar 条目数越过 zip 上限 65535（"Archive contains more than 65535 entries"）。
+// zip64 打开扩展头，java.util.zip/Forge SecureJar 均可读；仅影响打包产物，
+// runs 走 exploded classpath 不受影响。
+tasks.named('jar') {
+    zip64 = true
+}
