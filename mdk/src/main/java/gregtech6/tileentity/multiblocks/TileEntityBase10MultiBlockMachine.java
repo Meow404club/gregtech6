@@ -678,6 +678,12 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		if (aCapability == ForgeCapabilities.ITEM_HANDLER) {
 			return mGatedCap.cast(); // the gated surface shadows the root's raw inventory exposure
 		}
+		if (aCapability == ForgeCapabilities.FLUID_HANDLER) {
+			// spec ③ — the fresh-wrapper-per-call form (TileEntityBase08Barrel:348-351): a
+			// stored LazyOptional would memoize the wrapper and freeze the FIRST-queried side
+			// into it, breaking the side-aware drain (UP vs the five faces).
+			return LazyOptional.of(() -> new MultiBlockFluidHandler(this, aSide)).cast();
+		}
 		return super.getCapability(aCapability, aSide);
 	}
 
