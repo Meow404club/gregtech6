@@ -54,6 +54,16 @@ public final class GT6EnUs extends LanguageProvider {
         addMachines();
         addMultiBlocks();
         addBarrels();
+        addEnergySource();
+    }
+
+    /**
+     * Test energy source key (task p8-d4-energy-source spec ②): the block display name,
+     * the upstream family it borrows the shape from (MultiTileEntitySolarPanelElectric,
+     * the simplest generator form).
+     */
+    private void addEnergySource() {
+        add("block.gt6.energy_source", "Test Energy Source");
     }
 
     /**

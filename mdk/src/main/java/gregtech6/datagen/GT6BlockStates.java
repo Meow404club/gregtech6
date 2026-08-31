@@ -13,6 +13,7 @@ import gregtech6.block.GTOvenBlock;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTBlockEntities;
+import gregtech6.registry.GTEnergySources;
 import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMultiBlocks;
@@ -60,6 +61,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMachine(GTMachines.LATHE.get(), "lathe");
         addMultiBlocks();
         addBarrel();
+        addEnergySource();
     }
 
     /**
@@ -217,5 +219,17 @@ public final class GT6BlockStates extends BlockStateProvider {
         var tModel = models().cubeAll(tName, modLoc("block/wire_electric"));
         getVariantBuilder(aWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
         itemModels().withExistingParent(tName, modLoc("block/" + tName));
+    }
+
+    /**
+     * Task p8-d4-energy-source spec ② — the test energy source: one cube_all over
+     * {@code gt6:textures/block/energy_source.png} (the borrowed upstream
+     * solarpanel_electric_8eu side texture, the p7-gui-family byte-identical form) plus
+     * the BlockItem model parenting the block model. No properties, a single variant.
+     */
+    private void addEnergySource() {
+        Block tSource = GTEnergySources.ENERGY_SOURCE.get();
+        simpleBlock(tSource, models().cubeAll("energy_source", modLoc("block/energy_source")));
+        itemModels().withExistingParent("energy_source", modLoc("block/energy_source"));
     }
 }

@@ -11,6 +11,9 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   (upstream `Crusher.png`, task p7-gui-family)
 - `gt6/textures/gui/machines/lathe.png` — Lathe GUI background
   (upstream `Lathe.png`, task p7-gui-family)
+- `gt6/textures/block/energy_source.png` — test energy source block texture
+  (upstream `textures/blocks/machines/solarpanels/solarpanel_electric_8eu/colored/side.png`,
+  task p8-d4-energy-source — the SolarPanelElectric family the rig ports)
 
 Filenames were lowercased on borrow: 1.20.1 `ResourceLocation` paths only
 accept `[a-z0-9_.-/]`. The PNG contents are byte-identical to upstream
