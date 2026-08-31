@@ -63,13 +63,20 @@ public final class GTMaterialBlocks {
     private static final Map<GTMaterialItems.PrefixMaterial, RegistryObject<Item>> INDEX = new LinkedHashMap<>();
     /** Runtime index (prefix, material) -> block handle (item suppliers + the render card's blockArray). */
     private static final Map<GTMaterialItems.PrefixMaterial, RegistryObject<Block>> BLOCK_INDEX = new LinkedHashMap<>();
-    /** Defensive dedup across re-fired RegisterEvents (ADR-P2-2 fix 1). */
-    private static final Set<ResourceLocation> REGISTERED_IDS = new HashSet<>();
+    /** Defensive dedup across re-fired RegisterEvents (ADR-P2-2 fix 1) — PER REGISTRY: blocks and items share the same id path but live in different registries. */
+    private static final Set<ResourceLocation> REGISTERED_BLOCK_IDS = new HashSet<>();
+    private static final Set<ResourceLocation> REGISTERED_ITEM_IDS = new HashSet<>();
 
     private GTMaterialBlocks() {
     }
 
-    /** RegisterEvent, LOW priority: BLOCK segment -> ITEM segment -> CREATIVE_MODE_TAB segment (GTMaterialItems:90-96 shape). */
+    /**
+     * RegisterEvent, LOW priority: BLOCK segment -> ITEM segment -> CREATIVE_MODE_TAB segment
+     * (GTMaterialItems:90-96 shape). {@code @SubscribeEvent} is load-bearing — the class-level
+     * {@code @Mod.EventBusSubscriber} only auto-registers METHODS carrying it (the missing
+     * annotation meant the listener silently never fired on the first runServer attempt).
+     */
+    @net.minecraftforge.eventbus.api.SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW)
     public static void onRegister(RegisterEvent event) {
         if (event.getRegistryKey() == Registries.BLOCK) {
             registerBlocks(event);
@@ -135,7 +142,7 @@ public final class GTMaterialBlocks {
         int tTotal = 0;
         for (GTMaterialItems.PrefixMaterial tPair : tSet.kept()) {
             ResourceLocation tLoc = gtId(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
-            if (!REGISTERED_IDS.add(tLoc)) { // defensive dedup, ADR-P2-2 fix 1
+            if (!REGISTERED_BLOCK_IDS.add(tLoc)) { // defensive dedup, ADR-P2-2 fix 1
                 GT6Mod.LOGGER.warn("GT6 skipped duplicate block id {}", tLoc);
                 continue;
             }
@@ -155,10 +162,10 @@ public final class GTMaterialBlocks {
         int tTotal = 0;
         for (GTMaterialItems.PrefixMaterial tPair : enumerate().kept()) { // same walk, same order
             ResourceLocation tLoc = gtId(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
-            if (!REGISTERED_IDS.add(tLoc)) { // the block id collided first — skip its item too
+            RegistryObject<Block> tBlock = BLOCK_INDEX.get(tPair); // null when the BLOCK id collided and was skipped — then no item either
+            if (tBlock == null || !REGISTERED_ITEM_IDS.add(tLoc)) { // per-registry dedup, ADR-P2-2 fix 1
                 continue;
             }
-            RegistryObject<Block> tBlock = BLOCK_INDEX.get(tPair); // resolved: BLOCK fires before ITEM
             OreDictPrefix tPrefix = tPair.prefix();
             event.register(Registries.ITEM, tLoc,
                     () -> new GTMaterialPrefixBlockItem(new Item.Properties(), tPrefix, tPair.material(), tBlock.get()));
