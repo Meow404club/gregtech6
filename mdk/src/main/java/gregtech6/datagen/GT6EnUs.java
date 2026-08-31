@@ -50,6 +50,7 @@ public final class GT6EnUs extends LanguageProvider {
         addMaterialNames();
         addExampleMachine();
         addFluidPipes();
+        addElectricWires();
         addMachines();
         addMultiBlocks();
         addBarrels();
@@ -80,6 +81,18 @@ public final class GT6EnUs extends LanguageProvider {
         add("block.gt6.barrel_awakened_draconium", "Awakened Draconium Drum");
         add("block.gt6.barrel_infinity", "Infinity Drum");
         add("itemGroup.gt6.fluid_containers", "Fluid Containers");
+    }
+
+    /**
+     * Electric wire keys (task p7-d2-cable spec ⑥): the two W1 variants (the upstream row
+     * names "1x &lt;material&gt; Wire" / "2x ...", MultiTileEntityWireElectric.java:72-73,
+     * material-less here) and the "Electric Wires" category tab (the upstream MTE category
+     * name, addElectricWires :72).
+     */
+    private void addElectricWires() {
+        add("block.gt6.wire_electric_1x", "1x Electric Wire");
+        add("block.gt6.wire_electric_2x", "2x Electric Wire");
+        add("itemGroup.gt6.electric_wires", "Electric Wires");
     }
 
     /**
