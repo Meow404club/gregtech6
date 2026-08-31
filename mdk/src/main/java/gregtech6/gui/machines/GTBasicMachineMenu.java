@@ -13,7 +13,9 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import gregtech6.gui.GTGuiMenu;
 import gregtech6.tileentity.GTItemStackHandler;
+import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
+import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 
 /**
  * Basic-machine menu — the data-driven generalization of the oven menu (GTOvenMenu) onto the
@@ -37,14 +39,48 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * 0 → units(min(mMaxProgress, mProgress), mMaxProgress, Short.MAX_VALUE, T) normalized, else
  * -1. The server menu computes it live on every broadcastChanges poll; the client menu caches
  * it through set() and the screen reads {@link #getProgressBar()}.
+ *
+ * <p>Host parametrization (task p8-cokeoven-gui-menu ①): the menu talks to its backing
+ * machine through the six-method {@link Host} interface instead of the hard
+ * {@link TileEntityBasicMachine} type — the single-block machines keep their ctor (the
+ * gui-domain adapter wraps their public face, the machine domain stays untouched) and the
+ * multiblock machines ({@link TileEntityBase10MultiBlockMachine}) implement Host directly.
  */
 public class GTBasicMachineMenu extends GTGuiMenu {
 
 	/** Success flag value (upstream :281, Short.MAX_VALUE). */
 	public static final int PROGRESS_DONE = Short.MAX_VALUE;
 
-	/** The BE bound as the menu's backing container (upstream mTileEntity, ContainerCommon.java:42). */
-	public final TileEntityBasicMachine tileEntity;
+	/**
+	 * The machine face this menu needs (upstream mTileEntity, ContainerCommon.java:42, cut to
+	 * the business six): the inventory the slots bind, the RecipeMap-derived slot shape, the
+	 * three-state progress inputs and the GUI texture path. Implemented by the multiblock
+	 * machine base directly; the single-block machines are adapted in the gui domain.
+	 */
+	public interface Host {
+		/** The backing inventory (the SlotItemHandler container). */
+		GTItemStackHandler getInventory();
+		/** The output slot count of the RecipeMap shape (upstream getDefaultInventory :526). */
+		int getOutputSlotCount();
+		/** The :281 success flag. */
+		boolean isSuccessful();
+		/** The :283 progress counter. */
+		long getProgress();
+		/** The :282 process length. */
+		long getMaxProgress();
+		/** The mGUITexture = mRecipes.mGUIPath semantics (MultiTileEntityBasicMachine.java:114). */
+		String getGuiTexture();
+	}
+
+	/** The machine bound as the menu's backing container (upstream mTileEntity, ContainerCommon.java:42). */
+	public final Host tileEntity;
+
+	/**
+	 * The validity face of {@link #stillValid} (upstream isUseableByPlayerGUI,
+	 * ContainerCommon.java:326) — every Host provider is a ticking GT6 BE; the six-method
+	 * Host stays business-only, the alive/distance check reads the BE directly.
+	 */
+	private final TileEntityBase03TicksAndSync mBackingEntity;
 
 	/** Content slot count: 1 input + mOutputItemsCount outputs. */
 	public final int contentSlotCount;
@@ -53,13 +89,23 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	private int mProgressBar = -1;
 
 	public GTBasicMachineMenu(MenuType<?> aMenuType, int aContainerId, Inventory aPlayerInventory, TileEntityBasicMachine aTileEntity) {
-		super(aMenuType, aContainerId, aPlayerInventory);
-		this.tileEntity = aTileEntity;
+		this(aMenuType, aContainerId, aPlayerInventory, hostOf(aTileEntity), aTileEntity);
+	}
 
-		GTItemStackHandler tInventory = aTileEntity.getInventory();
+	/** The multiblock path (upstream getGUIServer shape): the Host provider is its own backing BE. */
+	public GTBasicMachineMenu(MenuType<?> aMenuType, int aContainerId, Inventory aPlayerInventory, Host aHost) {
+		this(aMenuType, aContainerId, aPlayerInventory, aHost, aHost instanceof TileEntityBase03TicksAndSync tEntity ? tEntity : null);
+	}
+
+	private GTBasicMachineMenu(MenuType<?> aMenuType, int aContainerId, Inventory aPlayerInventory, Host aHost, @Nullable TileEntityBase03TicksAndSync aBacking) {
+		super(aMenuType, aContainerId, aPlayerInventory);
+		this.tileEntity = aHost;
+		this.mBackingEntity = aBacking;
+
+		GTItemStackHandler tInventory = aHost.getInventory();
 		// upstream ContainerCommonBasicMachine.addSlots :55/:162 — 1 input + N outputs, all outputs setCanPut(F)
 		addSlot(new SlotItemHandler(tInventory, TileEntityBasicMachine.SLOT_INPUT, 53, 25)); // :55 (mInputItemsCount == 1)
-		int tOutputs = aTileEntity.getOutputSlotCount();
+		int tOutputs = aHost.getOutputSlotCount();
 		for (int i = 0; i < tOutputs; i++) {
 			int[] tPos = outputGridPos(i, tOutputs);
 			addSlot(new OutputSlot(tInventory, TileEntityBasicMachine.SLOT_INPUT + 1 + i, tPos[0], tPos[1])); // :162 setCanPut(F)
@@ -67,6 +113,23 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		this.contentSlotCount = 1 + tOutputs;
 		bindPlayerInventory(84); // standard machine panel (ContainerCommon.java:327-332 default offset)
 		addDataSlots(this.mProgressData);
+	}
+
+	/**
+	 * The gui-domain adapter (task p8-cokeoven-gui-menu ①): wraps the single-block machine's
+	 * public face — getInventory :199 / getOutputSlotCount :208 / mSuccessful/mProgress/
+	 * mMaxProgress :107-113 / public final mRecipes :161 (mGUIPath) — so the machine domain
+	 * needs no gui knowledge (no implements, the file stays frozen for D3/M1).
+	 */
+	static Host hostOf(TileEntityBasicMachine aMachine) {
+		return new Host() {
+			@Override public GTItemStackHandler getInventory() { return aMachine.getInventory(); }
+			@Override public int getOutputSlotCount() { return aMachine.getOutputSlotCount(); }
+			@Override public boolean isSuccessful() { return aMachine.mSuccessful; }
+			@Override public long getProgress() { return aMachine.mProgress; }
+			@Override public long getMaxProgress() { return aMachine.mMaxProgress; }
+			@Override public String getGuiTexture() { return aMachine.mRecipes.mGUIPath; }
+		};
 	}
 
 	/**
@@ -82,7 +145,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	/**
 	 * IForgeMenuType factory shape — resolves the BE from the BlockPos payload (oven menu
 	 * precedent, NetworkHooks.openScreen :176). Each registered MenuType binds its own factory
-	 * closing over the type (GTBasicMachinesMenus), so one menu class serves three ids.
+	 * closing over the type (GTBasicMachinesMenus), so one menu class serves the machine ids.
 	 */
 	public static GTBasicMachineMenu network(MenuType<GTBasicMachineMenu> aMenuType, int aContainerId, Inventory aPlayerInventory, @Nullable FriendlyByteBuf aExtraData) {
 		return new GTBasicMachineMenu(aMenuType, aContainerId, aPlayerInventory, resolveTileEntity(aPlayerInventory, aExtraData));
@@ -98,19 +161,38 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		throw new IllegalArgumentException("gt6 machine menu opened without its block entity (chunk not loaded?)");
 	}
 
+	/** The multiblock resolve — the cokeoven twin of resolveTileEntity (lands with the multiblock Host, task p8 ②). */
+	private static TileEntityBase10MultiBlockMachine resolveMultiBlockMachine(Inventory aPlayerInventory, @Nullable FriendlyByteBuf aExtraData) {
+		if (aExtraData == null) {
+			throw new IllegalArgumentException("gt6 machine menus require the NetworkHooks.openScreen BlockPos payload (no data bridge)");
+		}
+		if (aPlayerInventory.player.level().getBlockEntity(aExtraData.readBlockPos()) instanceof TileEntityBase10MultiBlockMachine tMachine) {
+			return tMachine;
+		}
+		throw new IllegalArgumentException("gt6 multiblock machine menu opened without its block entity (chunk not loaded?)");
+	}
+
 	/**
 	 * The three-state progress value (upstream ContainerCommonBasicMachine.java:280-286
 	 * verbatim). Server-authoritative: this is the exact function the vanilla data-slot sync
 	 * polls every broadcastChanges.
 	 */
 	public int computeProgressValue() {
-		if (this.tileEntity.mSuccessful) {
+		return progressValue(this.tileEntity);
+	}
+
+	/**
+	 * The three-state progress function over any Host — the static assertion face for the
+	 * RCON chain (no Player/Menu instance needed there, task p8-cokeoven-gui-menu ⑨).
+	 */
+	public static int progressValue(Host aHost) {
+		if (aHost.isSuccessful()) {
 			return PROGRESS_DONE; // :281
 		}
-		if (this.tileEntity.mMaxProgress > 0) { // :282
+		if (aHost.getMaxProgress() > 0) { // :282
 			return (int) TileEntityBasicMachine.units(
-					Math.min(this.tileEntity.mMaxProgress, this.tileEntity.mProgress),
-					this.tileEntity.mMaxProgress, Short.MAX_VALUE, true); // :283
+					Math.min(aHost.getMaxProgress(), aHost.getProgress()),
+					aHost.getMaxProgress(), Short.MAX_VALUE, true); // :283
 		}
 		return -1; // :285
 	}
@@ -141,11 +223,12 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	/** Upstream canInteractWith → isUseableByPlayerGUI (chest menu shape: !isDead, distance² ≤ 64). */
 	@Override
 	public boolean stillValid(Player aPlayer) {
-		return !this.tileEntity.isDead() && !this.tileEntity.isRemoved()
+		if (mBackingEntity == null) return false;
+		return !mBackingEntity.isDead() && !mBackingEntity.isRemoved()
 			&& aPlayer.distanceToSqr(
-				this.tileEntity.getBlockPos().getX() + 0.5D,
-				this.tileEntity.getBlockPos().getY() + 0.5D,
-				this.tileEntity.getBlockPos().getZ() + 0.5D) <= 64.0D;
+				mBackingEntity.getBlockPos().getX() + 0.5D,
+				mBackingEntity.getBlockPos().getY() + 0.5D,
+				mBackingEntity.getBlockPos().getZ() + 0.5D) <= 64.0D;
 	}
 
 	@Override
