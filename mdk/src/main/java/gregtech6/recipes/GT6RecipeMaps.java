@@ -86,7 +86,7 @@ public class GT6RecipeMaps {
 		COKE_OVEN = new RecipeMap(new HashSet<>(),
 				"gt.recipe.cokeoven", "Coke Oven", null,
 				0, 1,
-				"gt6:textures/gui/machines/CokeOven",
+				"gt6:textures/gui/machines/cokeoven",
 				/*IN-OUT-MIN-ITEM=*/ 1, 9, 1,
 				/*IN-OUT-MIN-FLUID=*/ 0, 1, 0,
 				/*MIN=*/ 1,

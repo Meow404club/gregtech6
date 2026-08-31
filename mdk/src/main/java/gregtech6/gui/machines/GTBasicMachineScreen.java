@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 import gregtech6.gui.GTGuiScreen;
-import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
  * Basic-machine screen — the client half replacing upstream getGUIClient2/
@@ -37,11 +36,13 @@ public class GTBasicMachineScreen extends GTGuiScreen<GTBasicMachineMenu> {
 	}
 
 	/**
-	 * Upstream mGUITexture = mRecipes.mGUIPath (:114) as a ResourceLocation — the W1 map
+	 * Upstream mGUITexture = mRecipes.mGUIPath (:114) as a ResourceLocation — the map
 	 * constants are full "namespace:path.png" strings (RecipeMap.java:84 appends .png).
+	 * Host-typed since p8-cokeoven-gui-menu ①: single-block and multiblock machines
+	 * alike carry the path through {@link GTBasicMachineMenu.Host#getGuiTexture()}.
 	 */
-	public static ResourceLocation backgroundOf(TileEntityBasicMachine aMachine) {
-		String tPath = aMachine.mRecipes.mGUIPath;
+	public static ResourceLocation backgroundOf(GTBasicMachineMenu.Host aMachine) {
+		String tPath = aMachine.getGuiTexture();
 		int tColon = tPath.indexOf(':');
 		if (tColon < 0) throw new IllegalArgumentException("RecipeMap mGUIPath is not a namespaced path: " + tPath);
 		return ResourceLocation.fromNamespaceAndPath(tPath.substring(0, tColon), tPath.substring(tColon + 1));

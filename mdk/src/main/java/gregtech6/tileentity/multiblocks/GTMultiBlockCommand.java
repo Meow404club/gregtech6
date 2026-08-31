@@ -19,6 +19,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 
+import gregtech6.gui.machines.GTBasicMachineMenu;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
@@ -48,6 +49,9 @@ import gregtech6.registry.GTMultiBlocks;
  *     {@code dust Oilshale}) drives the oil-shale rows through GTMaterialItems;</li>
  * <li>{@code ignite [pos]} — the TOOL_igniter branch (MultiTileEntityBasicMachine
  *     :373-379 → TileEntityBase10MultiBlockMachine.ignite());</li>
+ * <li>{@code menu <pos>} — the GUI geometry/progress report (task p8-cokeoven-gui-menu ⑨):
+ *     slot shapes, the player offset and the three-state progress, asserted through the
+ *     static Host faces — no Menu instance (RCON has no Player);</li>
  * <li>{@code check <pos>} additionally reports the processing state (progress/energy/
  *     ignited/tank/slots) since p6.</li>
  * </ul>
@@ -122,9 +126,12 @@ public final class GTMultiBlockCommand {
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(aContext -> tick(aContext.getSource(),
 								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "ticks"),
-								BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
+								BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))
+			.then(Commands.literal("menu")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(aContext -> menu(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))));
 		aEvent.getDispatcher().register(tMulti);
-		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|check|tick|input|ignite)");
+		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|check|tick|input|ignite|menu)");
 	}
 
 	private static TileEntityCokeOven ovenAt(CommandSourceStack aSource, BlockPos aPos) {
@@ -398,6 +405,38 @@ public final class GTMultiBlockCommand {
 		String tReport = String.format("GT6 coke oven ticked %d at %s: timer=%d okay=%s",
 				aTicks, tOven.getBlockPos().toShortString(), tOven.getTimer(), tOven.mStructureOkay);
 		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * {@code menu <pos>} — the GUI geometry/progress report (task p8-cokeoven-gui-menu ⑨,
+	 * the machine-report shape :257-273): content slot count, the input slot's menu position,
+	 * the first/last output grid positions, the player-inventory offset and the total slot
+	 * count, the three-state progress value and the GUI texture path. The assertions run
+	 * through the STATIC faces — {@link GTBasicMachineMenu#progressValue(GTBasicMachineMenu.Host)}
+	 * and {@link GTBasicMachineMenu#outputGridPos} over the BE's Host implementation — no Menu
+	 * instance is constructed (RCON has no Player/Inventory).
+	 */
+	private static int menu(CommandSourceStack aSource, BlockPos aPos) {
+		TileEntityCokeOven tOven = ovenAt(aSource, aPos);
+		if (tOven == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + aPos.toShortString()));
+			return 0;
+		}
+		GTBasicMachineMenu.Host tHost = tOven;
+		int tOutputs = tHost.getOutputSlotCount();
+		int tContentSlots = 1 + tOutputs; // 1 input + N outputs (the menu's addSlot sequence)
+		int[] tOut0 = GTBasicMachineMenu.outputGridPos(0, tOutputs);
+		int[] tOutLast = GTBasicMachineMenu.outputGridPos(tOutputs - 1, tOutputs);
+		int tProgress = GTBasicMachineMenu.progressValue(tHost);
+		// (53,25) = the input slot position, offset 84 = the standard machine-panel player bind,
+		// 46 = 10 content + 36 player slots (GTBasicMachineMenu ctor + bindPlayerInventory(84))
+		String tReport = String.format(
+				"menu: content_slots=%d slot0=(%d,%d) out0=(%d,%d) out%d=(%d,%d) player_offset=%d total_slots=%d progress=%d texture=%s",
+				tContentSlots, 53, 25, tOut0[0], tOut0[1], tOutputs - 1, tOutLast[0], tOutLast[1],
+				84, tContentSlots + 36, tProgress, tHost.getGuiTexture());
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
 	}
 }

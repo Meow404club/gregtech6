@@ -57,7 +57,9 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.COKE_OVEN.mPower);
 		assertEquals(0, GT6RecipeMaps.COKE_OVEN.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.COKE_OVEN.mProgressBarAmount);
-		assertEquals("gt6:textures/gui/machines/CokeOven.png", GT6RecipeMaps.COKE_OVEN.mGUIPath);
+		// lowercase since p8-cokeoven-gui-menu ⑥ — the 1.20.1 ResourceLocation charset makes
+		// the upstream-style "CokeOven" spelling unparseable for GTBasicMachineScreen.backgroundOf
+		assertEquals("gt6:textures/gui/machines/cokeoven.png", GT6RecipeMaps.COKE_OVEN.mGUIPath);
 	}
 
 	@Test

@@ -14,6 +14,9 @@ Machine GUI backgrounds borrowed from **GregTech 6**
 - `gt6/textures/block/energy_source.png` — test energy source block texture
   (upstream `textures/blocks/machines/solarpanels/solarpanel_electric_8eu/colored/side.png`,
   task p8-d4-energy-source — the SolarPanelElectric family the rig ports)
+- `gt6/textures/gui/machines/cokeoven.png` — Coke Oven GUI background
+  (upstream `CokeOven.png`, task p8-cokeoven-gui-menu; sha256
+  `a582c690865eb98115a639432731999d5cf13d2163ae8f532b2de10789f77572`)
 
 Filenames were lowercased on borrow: 1.20.1 `ResourceLocation` paths only
 accept `[a-z0-9_.-/]`. The PNG contents are byte-identical to upstream
