@@ -42,26 +42,33 @@ import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.fluid.GTFluids;
+import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 
 /**
  * The Coke Oven recipe book — task p6-cokeoven-processing (ADR ruling ② static pour +
  * the 2026-08-30 coordinator amendment: log recipes are TAG-driven, this file owns the
- * material-universe rows only).
+ * material-universe rows only; task p8-prefixblock-registry backfills the seven block
+ * rows, 32 → 39).
  *
  * <p><b>Upstream source</b>: Loader_Recipes_Other.java:775-815 — 39
  * {@code RM.CokeOven.addRecipe1(T, 0, dur, input, NF, fluidOut, outputs...)} rows. The
  * upstream registration form {@code mat(prefix).mat(material, n)} silently drops the row
  * when the (prefix, material) pair has no item (mat() → null); the port keeps that shape:
- * the table below is DATA, and {@link #load()} resolves every row through
- * {@link GTMaterialItems#get} at pour time, skipping + counting unresolvable rows.
+ * the table below is DATA, and {@link #load()} resolves every row at pour time through
+ * {@link GTMaterialItems#get} with a {@link GTMaterialBlocks#get} fallback (the p8 block
+ * items — since p8 the block* pairs resolve), skipping + counting unresolvable rows.
  *
  * <p><b>Fluid amounts</b>: upstream {@code MT.Creosote.liquid(U2, F)} yields Forge mB
  * through OreDictMaterial.liquid (:1307-1311) — {@code units(aMaterialAmount, mLiquidUnit,
  * mLiquid.amount, F)} with the default {@code mLiquidUnit = U} (:313) and a 1000 mB
- * per-unit fluid stack — so U2 → 500, U → 1000, 3*U4 → 750, 3*U2 → 1500 mB. The oil-shale
- * rows carry {@code MT.Oil.liquid(U4/U2, F)} → 250/500 mB. The table carries those resolved
- * mB values (the port's FluidTankGT amounts are mB, the 16000 L barrel precedent).
+ * per-unit fluid stack — so U2 → 500, U → 1000, U4 → 250 mB (and 3*U4 → 750, 3*U2 → 1500).
+ * The oil-shale rows carry {@code MT.Oil.liquid(U4/U2, F)} → 250/500 mB. The table carries
+ * those resolved mB values (the port's FluidTankGT amounts are mB, the 16000 L barrel
+ * precedent). The p8 block rows follow the same scale: 9*U = 9000, 9*U2 = 4500, 27*U2 =
+ * 13500, 27*U4 = 6750, 9*U4 = 2250 mB (:787-789/:803-805/:815 — the :804/:805 amount is
+ * 27*U4 = 6750, per the file scale; a 3375 figure in the task card contradicted its own
+ * :803 = 27*U2 = 13500 line and the evidence rows).
  *
  * <p><b>Fluid identity</b> (task p7-cokeoven-backfill, spec ③): the row's fluid field is the
  * gt6 fluid id path (creosote/oil) instead of a hardcoded creosote amount; each row resolves
@@ -69,14 +76,13 @@ import gregtech6.registry.GTMaterialItems;
  * rows exactly like the upstream absent-fluid behaviour.
  *
  * <p><b>Skipped upstream rows (the pool, not silent — asserted by the offline walk)</b>:
- * the block-family six (:787-789 Coal / :803-805 Lignite — blockRaw/blockIngot/blockGem are
- * not item-path prefixes, GTMaterialItems.itemPathPrefixes) and the oil-shale blockDust row
- * (:815 — blockDust is likewise not an item-path prefix, the PrefixBlock pool). The other
- * eight oil-shale rows (:807-814) are BACKFILLED by p7 (gt6:oil registered). Plus the
+ * the block-family six (:787-789 Coal / :803-805 Lignite) and the oil-shale blockDust row
+ * (:815) were pooled in p6/p7 (block* prefixes had no items) and are BACKFILLED by task
+ * p8-prefixblock-registry — GTMaterialBlocks now registers the block universe, the two
+ * resolvers below fall back to it, and the table carries all seven rows (39 total). The
  * Woods/OreDict/Crops/Tools dynamic surface (:176-180/:197-201, OreDict:205, Crops:76,
- * Tools:418) which the coordinator amendment replaces with the tag-driven
- * {@link GT6CokeOvenTagListener} (one recipe per #minecraft:logs item; beam/bamboo/wood-pellet
- * have no tagged item and stay pooled).
+ * Tools:418) is replaced by the tag-driven {@link GT6CokeOvenTagListener} (one recipe per
+ * #minecraft:logs item; beam/bamboo/wood-pellet have no tagged item and stay pooled).
  *
  * <p><b>Load timing</b> (ADR ruling ②): a self-contained MOD-bus listener pouring at
  * FMLCommonSetup.enqueueWork — the ConstructMod-time init (GTMachines.onModConstruct
@@ -111,8 +117,8 @@ public final class GT6RecipesCokeOven {
 	static Function<String, Fluid> sFluidResolver = GT6RecipesCokeOven::resolveFluid;
 
 	/**
-	 * The 32 transcribed material-universe rows (Loader_Recipes_Other.java:775-786 Coal,
-	 * :791-802 Lignite, :807-814 Oilshale), order mirroring the upstream file order.
+	 * The 39 transcribed material-universe rows (Loader_Recipes_Other.java:775-789 Coal,
+	 * :791-805 Lignite, :807-815 Oilshale), order mirroring the upstream file order.
 	 *
 	 * <p><b>Lazily built</b>: {@code TABLE} used to be a static field, but the
 	 * {@code @EventBusSubscriber} annotation scan class-loads this class at MOD CONSTRUCTION —
@@ -140,6 +146,10 @@ public final class GT6RecipesCokeOven {
 		new StaticRow(":784", OP.crushedPurifiedTiny  , MT.Coal, 9, 3600, FLUID_CREOSOTE,  500, chunkOut(OP.chunkGt, MT.CoalCoke, 5)),
 		new StaticRow(":785", OP.crushedCentrifuged   , MT.Coal, 1, 3600, FLUID_CREOSOTE,  500, chunkOut(OP.chunkGt, MT.CoalCoke, 6)),
 		new StaticRow(":786", OP.crushedCentrifugedTiny, MT.Coal, 9, 3600, FLUID_CREOSOTE, 500, chunkOut(OP.chunkGt, MT.CoalCoke, 6)),
+		// Coal storage blocks (Loader_Recipes_Other.java:787-789 — backfilled by p8, GTMaterialBlocks items)
+		new StaticRow(":787", OP.blockRaw                , MT.Coal, 1, 32400, FLUID_CREOSOTE, 9000, new Output(OP.blockIngot, MT.CoalCoke, 2)),
+		new StaticRow(":788", OP.blockIngot              , MT.Coal, 1, 32400, FLUID_CREOSOTE, 4500, new Output(OP.blockIngot, MT.CoalCoke, 1)),
+		new StaticRow(":789", OP.blockGem                , MT.Coal, 1, 32400, FLUID_CREOSOTE, 4500, new Output(OP.blockGem  , MT.CoalCoke, 1)),
 		// Lignite (Loader_Recipes_Other.java:791-802)
 		new StaticRow(":791", OP.gem                  , MT.Lignite, 1, 3600, FLUID_CREOSOTE,  750, new Output(OP.gem   , MT.LigniteCoke, 1)),
 		new StaticRow(":792", OP.nugget               , MT.Lignite, 9, 3600, FLUID_CREOSOTE,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
@@ -153,7 +163,11 @@ public final class GT6RecipesCokeOven {
 		new StaticRow(":800", OP.crushedPurifiedTiny  , MT.Lignite, 9, 3600, FLUID_CREOSOTE,  750, chunkOut(OP.chunkGt, MT.LigniteCoke, 5)),
 		new StaticRow(":801", OP.crushedCentrifuged   , MT.Lignite, 1, 3600, FLUID_CREOSOTE,  750, chunkOut(OP.chunkGt, MT.LigniteCoke, 6)),
 		new StaticRow(":802", OP.crushedCentrifugedTiny, MT.Lignite, 9, 3600, FLUID_CREOSOTE, 750, chunkOut(OP.chunkGt, MT.LigniteCoke, 6)),
-		// Oilshale (Loader_Recipes_Other.java:807-814 — backfilled by p7; the :815 blockDust row stays pooled)
+		// Lignite storage blocks (Loader_Recipes_Other.java:803-805 — backfilled by p8, GTMaterialBlocks items)
+		new StaticRow(":803", OP.blockRaw              , MT.Lignite, 1, 32400, FLUID_CREOSOTE, 13500, new Output(OP.blockIngot, MT.LigniteCoke, 2)),
+		new StaticRow(":804", OP.blockIngot            , MT.Lignite, 1, 32400, FLUID_CREOSOTE,  6750, new Output(OP.blockIngot, MT.LigniteCoke, 1)),
+		new StaticRow(":805", OP.blockGem              , MT.Lignite, 1, 32400, FLUID_CREOSOTE,  6750, new Output(OP.blockGem  , MT.LigniteCoke, 1)),
+		// Oilshale (Loader_Recipes_Other.java:807-814 backfilled by p7; :815 blockDust backfilled by p8)
 		new StaticRow(":807", OP.dust                  , MT.Oilshale, 1, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
 		new StaticRow(":808", OP.oreRaw                , MT.Oilshale, 1, 7200, FLUID_OIL, 500, new Output(OP.dustTiny, MT.Asphalt, 2)),
 		new StaticRow(":809", OP.crushed               , MT.Oilshale, 1, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
@@ -161,7 +175,8 @@ public final class GT6RecipesCokeOven {
 		new StaticRow(":811", OP.crushedPurified       , MT.Oilshale, 1, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
 		new StaticRow(":812", OP.crushedPurifiedTiny   , MT.Oilshale, 9, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
 		new StaticRow(":813", OP.crushedCentrifuged    , MT.Oilshale, 1, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
-		new StaticRow(":814", OP.crushedCentrifugedTiny, MT.Oilshale, 9, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)));
+		new StaticRow(":814", OP.crushedCentrifugedTiny, MT.Oilshale, 9, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
+		new StaticRow(":815", OP.blockDust             , MT.Oilshale, 1, 32400, FLUID_OIL, 2250, new Output(OP.dust, MT.Asphalt, 1)));
 		return tTable;
 	}
 
@@ -174,12 +189,14 @@ public final class GT6RecipesCokeOven {
 
 	/**
 	 * The skipped upstream surface, kept as DATA for the audit walk (see class doc):
-	 * the block-family six, the oil-shale blockDust row, and the dynamic log/beam family now
-	 * owned by the tag listener (beam/bamboo/wood-pellet have no tagged counterpart → pooled).
+	 * the block rows (:787-789/:803-805/:815) were p6/p7 pool and are BACKFILLED by task
+	 * p8-prefixblock-registry (GTMaterialBlocks + the resolver fallback); the dynamic
+	 * log/beam family is now owned by the tag listener (beam/bamboo/wood-pellet have no
+	 * tagged counterpart → pooled).
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
-		"Loader_Recipes_Other.java:787-789/:803-805 — blockRaw/blockIngot/blockGem x Coal/Lignite (block prefixes are not item-path; p6 pool)",
-		"Loader_Recipes_Other.java:815 — Oilshale blockDust row (blockDust is not an item-path prefix, the PrefixBlock pool; p7 ruling)",
+		"Loader_Recipes_Other.java:787-789/:803-805 — blockRaw/blockIngot/blockGem x Coal/Lignite: BACKFILLED by p8-prefixblock-registry (GTMaterialBlocks block items; was the p6 pool)",
+		"Loader_Recipes_Other.java:815 — Oilshale blockDust row: BACKFILLED by p8-prefixblock-registry (blockDust joined the block universe; was the p7 ruling)",
 		"Loader_Recipes_Woods.java:197-201 — beam family (no beam item; p6 pool)",
 		"Loader_Recipes_Woods.java:165-180 log family — replaced by the #minecraft:logs tag listener (coordinator amendment 2026-08-30)",
 		"Loader_Recipes_Other.java:205 OreDict listener — no dynamic oredict surface; static pour only",
@@ -238,16 +255,18 @@ public final class GT6RecipesCokeOven {
 				new FluidStack[0], tFluidOutputs, aRow.duration(), 0, 0);
 	}
 
-	/** The live item lookup (GTMaterialItems.get :287) — null when the pair has no item-path item. */
+	/** The live item lookup (GTMaterialItems.get :287) with the p8 block-item fallback (GTMaterialBlocks.get) — null when the pair has neither. */
 	@Nullable
 	private static Item resolveItem(Output aOutput) {
 		RegistryObject<Item> tHandle = GTMaterialItems.get(aOutput.prefix(), aOutput.material());
+		if (tHandle == null) tHandle = GTMaterialBlocks.get(aOutput.prefix(), aOutput.material()); // p8: the block universe
 		return tHandle == null ? null : tHandle.get();
 	}
 
 	@Nullable
 	private static Item resolveInput(StaticRow aRow) {
 		RegistryObject<Item> tHandle = GTMaterialItems.get(aRow.inPrefix(), aRow.inMaterial());
+		if (tHandle == null) tHandle = GTMaterialBlocks.get(aRow.inPrefix(), aRow.inMaterial()); // p8: the block universe
 		return tHandle == null ? null : tHandle.get();
 	}
 

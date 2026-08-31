@@ -24,22 +24,27 @@ import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.fluid.GTFluids;
+import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Coke Oven recipe pour (tasks p6-cokeoven-processing + p7-cokeoven-backfill):
+ * The Coke Oven recipe pour (tasks p6-cokeoven-processing + p7-cokeoven-backfill +
+ * p8-prefixblock-registry): 39 rows = 32 item-universe rows + the 7 backfilled block rows
+ * (Loader_Recipes_Other.java:787-789/:803-805/:815 — GTMaterialBlocks pairs).
  * <ul>
  * <li>the transcription walk: every (prefix, material) pair of every row resolves inside
- *     the offline material universe ({@link GTMaterialItems#registrationOrder}) — the
- *     "self-consistency, no hand-counted total" ruling;</li>
+ *     the offline material universe (the union of {@link GTMaterialItems#registrationOrder}
+ *     and {@link GTMaterialBlocks#registrationOrder}) — the "self-consistency, no
+ *     hand-counted total" ruling;</li>
  * <li>the positive controls: gem Coal → gem CoalCoke + 500 mB creosote (U2) at 3600 t
- *     (p6), and dust Oilshale → dustTiny Asphalt + 250 mB oil (U4) at 3600 t (p7,
- *     Loader_Recipes_Other.java:807), plus the full end-to-end pour + lookup through
- *     injected resolvers;</li>
- * <li>the pooled entries (block-family six, the :815 blockDust row, the dynamic log
- *     family) are NOT in the table and ARE declared in
- *     {@link GT6RecipesCokeOven#SKIPPED_UPSTREAM};</li>
+ *     (p6), dust Oilshale → dustTiny Asphalt + 250 mB oil (U4) at 3600 t (p7,
+ *     Loader_Recipes_Other.java:807), and the p8 block rows (32400 t, 9*U/9*U2/27*U2/27*U4
+ *     creosote + 9*U4 oil per the file scale), plus the full end-to-end pour + lookup
+ *     through injected resolvers;</li>
+ * <li>the pooled entries are now only the dynamic log family (beam/bamboo/wood-pellet),
+ *     declared in {@link GT6RecipesCokeOven#SKIPPED_UPSTREAM}; the block rows are IN the
+ *     table since p8 (declared there as backfilled);</li>
  * <li>the gt6:creosote/gt6:oil fluid id assertions (the registry itself is live-verified
  *     by the RCON chain — offline cannot touch the Forge registries).</li>
  * </ul>
@@ -66,6 +71,9 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		for (PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
 			SYNTHETIC_ITEMS.put(tPair, tPool.get(tNext++ % tPool.size()));
 		}
+		for (PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) { // the p8 block universe
+			SYNTHETIC_ITEMS.putIfAbsent(tPair, tPool.get(tNext++ % tPool.size()));
+		}
 		sDefaultOutputResolver = GT6RecipesCokeOven.sOutputItemResolver;
 		sDefaultInputResolver = GT6RecipesCokeOven.sInputItemResolver;
 		sDefaultFluidResolver = GT6RecipesCokeOven.sFluidResolver;
@@ -80,10 +88,11 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCokeOven.resetForTest();
 	}
 
-	/** Every row's input and output pairs must live in the registered universe (self-consistency). */
+	/** Every row's input and output pairs must live in the registered universe (item + block, self-consistency). */
 	@Test
 	void walkAssertsEveryRowResolvesInTheUniverse() {
 		Set<PrefixMaterial> tUniverse = new HashSet<>(GTMaterialItems.registrationOrder());
+		tUniverse.addAll(GTMaterialBlocks.registrationOrder()); // the p8 block universe
 		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.table()) {
 			assertTrue(tUniverse.contains(new PrefixMaterial(tRow.inPrefix(), tRow.inMaterial())),
 					"row " + tRow.note() + ": input " + tRow.inPrefix().mNameInternal + "/" + tRow.inMaterial().mNameInternal + " must be a registered pair");
@@ -132,17 +141,24 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		assertEquals(2, tOreRaw.outputs()[0].count(), "the oreRaw row yields two dustTiny Asphalt");
 	}
 
-	/** All eight oil-shale rows carry the U4/U2 oil amounts of the upstream table (:807-814). */
+	/** All nine oil-shale rows carry the U4/U2 oil amounts of the upstream table (:807-815). */
 	@Test
 	void oilShaleFamilyShapes() {
-		assertEquals(8, GT6RecipesCokeOven.table().stream().filter(tRow -> tRow.inMaterial() == MT.Oilshale).count(),
-				"eight of the nine upstream oil-shale rows (the :815 blockDust row stays pooled)");
+		assertEquals(9, GT6RecipesCokeOven.table().stream().filter(tRow -> tRow.inMaterial() == MT.Oilshale).count(),
+				"all nine upstream oil-shale rows (the :815 blockDust row backfilled by p8)");
 		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.table()) {
 			if (tRow.inMaterial() != MT.Oilshale) continue;
 			assertEquals(GT6RecipesCokeOven.FLUID_OIL, tRow.fluid());
-			assertEquals(OP.oreRaw == tRow.inPrefix() ? 500 : 250, tRow.fluidMB(), "U2 for :808, U4 elsewhere");
+			if (OP.blockDust == tRow.inPrefix()) {
+				assertEquals(":815", tRow.note());
+				assertEquals(32400, tRow.duration());
+				assertEquals(2250, tRow.fluidMB(), "9*U4 oil = 2250 mB");
+				assertEquals(OP.dust, tRow.outputs()[0].prefix(), ":815 outputs full dust, not dustTiny");
+			} else {
+				assertEquals(OP.oreRaw == tRow.inPrefix() ? 500 : 250, tRow.fluidMB(), "U2 for :808, U4 elsewhere");
+				assertEquals(OP.dustTiny, tRow.outputs()[0].prefix());
+			}
 			assertEquals(1, tRow.outputs().length);
-			assertEquals(OP.dustTiny, tRow.outputs()[0].prefix());
 			assertSame(MT.Asphalt, tRow.outputs()[0].material());
 		}
 	}
@@ -168,25 +184,81 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		assertEquals(6, findRow(OP.crushedCentrifuged, MT.Lignite).outputs().length);
 	}
 
-	/** The pooled entries: no block prefix (incl. the :815 blockDust Oilshale row), and the skip list declares them. */
+	/**
+	 * The p8 flip: the seven block rows ARE transcribed (39 = 32 + 7), and the skip list
+	 * declares them backfilled instead of pooled; the remaining pools (beam, the log-family
+	 * replacement) stay declared.
+	 */
 	@Test
-	void pooledEntriesAreDeclaredNotTranscribed() {
-		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.table()) {
-			assertNotSame(OP.blockRaw, tRow.inPrefix());
-			assertNotSame(OP.blockIngot, tRow.inPrefix());
-			assertNotSame(OP.blockGem, tRow.inPrefix());
-			assertNotSame(OP.blockDust, tRow.inPrefix());
-			for (GT6RecipesCokeOven.Output tOutput : tRow.outputs()) {
-				assertNotSame(MT.Oilshale, tOutput.material());
-			}
+	void blockRowsBackfilled39Total() {
+		assertEquals(39, GT6RecipesCokeOven.table().size(), "39 = 32 item-universe rows + 7 backfilled block rows");
+		Map<String, GT6RecipesCokeOven.StaticRow> tByNote = new java.util.HashMap<>();
+		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.table()) tByNote.put(tRow.note(), tRow);
+		for (String tNote : List.of(":787", ":788", ":789", ":803", ":804", ":805", ":815")) {
+			assertTrue(tByNote.containsKey(tNote), "block row " + tNote + " must be transcribed");
 		}
 		String tSkipped = String.join("\n", GT6RecipesCokeOven.SKIPPED_UPSTREAM);
-		assertTrue(tSkipped.contains("blockRaw"));
-		assertTrue(tSkipped.contains("blockDust"));
-		assertTrue(tSkipped.contains("Oilshale"));
+		assertTrue(tSkipped.contains("BACKFILLED by p8-prefixblock-registry"), "the block rows are declared backfilled, not pooled");
+		assertTrue(tSkipped.contains(":787-789/:803-805") && tSkipped.contains(":815"), "both former pool entries declare the backfill");
 		assertTrue(tSkipped.contains("beam"));
 		assertTrue(tSkipped.contains("#minecraft:logs"), "the tag listener replaces the log family");
-		assertEquals(32, GT6RecipesCokeOven.table().size(), "12 Coal + 12 Lignite + 8 Oilshale transcribed rows");
+	}
+
+	/** The seven p8 block rows carry the upstream shapes: 32400 t, the file-scale mB amounts, the block outputs. */
+	@Test
+	void blockRowShapes() {
+		GT6RecipesCokeOven.StaticRow t787 = findRow(OP.blockRaw, MT.Coal);
+		assertNotNull(t787, ":787 blockRaw Coal");
+		assertEquals(1, t787.inCount());
+		assertEquals(32400, t787.duration());
+		assertEquals(9000, t787.fluidMB(), "9*U creosote = 9000 mB");
+		assertEquals(OP.blockIngot, t787.outputs()[0].prefix());
+		assertSame(MT.CoalCoke, t787.outputs()[0].material());
+		assertEquals(2, t787.outputs()[0].count());
+
+		GT6RecipesCokeOven.StaticRow t788 = findRow(OP.blockIngot, MT.Coal);
+		assertNotNull(t788, ":788 blockIngot Coal");
+		assertEquals(32400, t788.duration());
+		assertEquals(4500, t788.fluidMB(), "9*U2 creosote = 4500 mB");
+		assertEquals(OP.blockIngot, t788.outputs()[0].prefix());
+		assertEquals(1, t788.outputs()[0].count());
+
+		GT6RecipesCokeOven.StaticRow t789 = findRow(OP.blockGem, MT.Coal);
+		assertNotNull(t789, ":789 blockGem Coal");
+		assertEquals(32400, t789.duration());
+		assertEquals(4500, t789.fluidMB(), "9*U2 creosote = 4500 mB");
+		assertEquals(OP.blockGem, t789.outputs()[0].prefix());
+		assertSame(MT.CoalCoke, t789.outputs()[0].material());
+
+		GT6RecipesCokeOven.StaticRow t803 = findRow(OP.blockRaw, MT.Lignite);
+		assertNotNull(t803, ":803 blockRaw Lignite");
+		assertEquals(32400, t803.duration());
+		assertEquals(13500, t803.fluidMB(), "27*U2 creosote = 13500 mB");
+		assertEquals(OP.blockIngot, t803.outputs()[0].prefix());
+		assertSame(MT.LigniteCoke, t803.outputs()[0].material());
+		assertEquals(2, t803.outputs()[0].count());
+
+		GT6RecipesCokeOven.StaticRow t804 = findRow(OP.blockIngot, MT.Lignite);
+		assertNotNull(t804, ":804 blockIngot Lignite");
+		assertEquals(32400, t804.duration());
+		assertEquals(6750, t804.fluidMB(), "27*U4 creosote = 6750 mB (the file scale: U4 = 250 mB per :791 = 3*U4 = 750 and :807 = U4 = 250)");
+		assertEquals(OP.blockIngot, t804.outputs()[0].prefix());
+		assertSame(MT.LigniteCoke, t804.outputs()[0].material());
+
+		GT6RecipesCokeOven.StaticRow t805 = findRow(OP.blockGem, MT.Lignite);
+		assertNotNull(t805, ":805 blockGem Lignite");
+		assertEquals(32400, t805.duration());
+		assertEquals(6750, t805.fluidMB(), "27*U4 creosote = 6750 mB");
+		assertEquals(OP.blockGem, t805.outputs()[0].prefix());
+		assertSame(MT.LigniteCoke, t805.outputs()[0].material());
+
+		GT6RecipesCokeOven.StaticRow t815 = findRow(OP.blockDust, MT.Oilshale);
+		assertNotNull(t815, ":815 blockDust Oilshale");
+		assertEquals(32400, t815.duration());
+		assertEquals(2250, t815.fluidMB(), "9*U4 oil = 2250 mB");
+		assertEquals(OP.dust, t815.outputs()[0].prefix());
+		assertSame(MT.Asphalt, t815.outputs()[0].material());
+		assertEquals(1, t815.outputs()[0].count());
 	}
 
 	/** The creosote and oil fluids are registered under their gt6 ids (the live registry is RCON-verified). */
@@ -247,7 +319,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCokeOven.sFluidResolver = tFluidId -> GT6RecipesCokeOven.FLUID_CREOSOTE.equals(tFluidId) ? Fluids.WATER : null;
 
 		GT6RecipesCokeOven.load();
-		assertEquals(24, GT6RecipeMaps.COKE_OVEN.mRecipeList.size(), "the 8 oil rows skip when gt6:oil does not resolve — the p6 pool shape");
+		assertEquals(30, GT6RecipeMaps.COKE_OVEN.mRecipeList.size(), "the 9 oil rows skip when gt6:oil does not resolve (39 - 9 = 30)");
 	}
 
 	/** The oil-shale end-to-end lookup: dust Oilshale → dustTiny Asphalt + 250 mB oil (:807). */
@@ -274,6 +346,31 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		assertEquals(250, tFluids[0].getAmount(), "U4 oil = 250 mB");
 	}
 
+	/** The p8 block-row end-to-end lookup: blockIngot Coal → blockIngot CoalCoke + 4500 mB creosote (:788). */
+	@Test
+	void blockRowEndToEnd() {
+		GT6RecipesCokeOven.sOutputItemResolver = tOutput -> SYNTHETIC_ITEMS.get(new PrefixMaterial(tOutput.prefix(), tOutput.material()));
+		GT6RecipesCokeOven.sInputItemResolver = tRow -> SYNTHETIC_ITEMS.get(new PrefixMaterial(tRow.inPrefix(), tRow.inMaterial()));
+		GT6RecipesCokeOven.sFluidResolver = tFluidId -> Fluids.WATER;
+
+		GT6RecipesCokeOven.load();
+		Item tBlockIngotCoal = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.blockIngot, MT.Coal));
+		Item tBlockIngotCoalCoke = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.blockIngot, MT.CoalCoke));
+		ItemStack[] tInputs = {new ItemStack(tBlockIngotCoal, 4)};
+
+		Recipe tFound = GT6RecipeMaps.COKE_OVEN.findRecipe(null, 4, ItemStack.EMPTY, null, tInputs);
+		assertNotNull(tFound, "the blockIngot Coal row must be findable after the pour");
+		assertEquals(32400, tFound.mDuration);
+		assertTrue(tFound.isRecipeInputEqual(true, false, null, tInputs));
+		assertEquals(3, tInputs[0].getCount());
+		ItemStack[] tOutputs = tFound.getOutputs(1);
+		assertEquals(1, tOutputs.length);
+		assertEquals(tBlockIngotCoalCoke, tOutputs[0].getItem());
+		FluidStack[] tFluids = tFound.getFluidOutputs(1);
+		assertEquals(1, tFluids.length);
+		assertEquals(4500, tFluids[0].getAmount(), "9*U2 creosote = 4500 mB");
+	}
+
 	/** load() is idempotent within a generation. */
 	@Test
 	void loadIsIdempotent() {
@@ -282,7 +379,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCokeOven.sFluidResolver = tFluidId -> Fluids.WATER;
 		GT6RecipesCokeOven.load();
 		int tFirst = GT6RecipeMaps.COKE_OVEN.mRecipeList.size();
-		assertEquals(32, tFirst);
+		assertEquals(39, tFirst);
 		GT6RecipesCokeOven.load();
 		assertEquals(tFirst, GT6RecipeMaps.COKE_OVEN.mRecipeList.size(), "the second load must not stack");
 	}

@@ -279,7 +279,9 @@ public final class GTMultiBlockCommand {
 	 * explicit {@code item} argument covers the tag-path acceptance (minecraft:oak_log), and
 	 * the p7 {@code prefix material} form resolves the GT material universe (case-insensitive
 	 * internal names via {@link #findPrefix}/{@link #findMaterial}, e.g. {@code dust OilShale})
-	 * so the oil-shale rows are drivable without hand-naming ids.
+	 * so the oil-shale rows are drivable without hand-naming ids. Since p8 the resolution
+	 * falls back to {@code GTMaterialBlocks.get} when the item path misses, so block items
+	 * ({@code input blockIngot Coal}) feed the oven too.
 	 */
 	private static int input(CommandSourceStack aSource, int aCount,
 			@Nullable net.minecraft.commands.arguments.item.ItemInput aItem,
@@ -306,6 +308,7 @@ public final class GTMultiBlockCommand {
 			}
 			net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tHandle =
 					gregtech6.registry.GTMaterialItems.get(tPrefix, tMaterial);
+			if (tHandle == null || !tHandle.isPresent()) tHandle = gregtech6.registry.GTMaterialBlocks.get(tPrefix, tMaterial); // p8: block items (e.g. blockIngot Coal)
 			if (tHandle == null || !tHandle.isPresent()) {
 				aSource.sendFailure(Component.literal("No gt6 item for prefix '" + tPrefix.mNameInternal + "' + material '" + tMaterial.mNameInternal + "'"));
 				return 0;

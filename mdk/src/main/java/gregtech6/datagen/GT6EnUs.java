@@ -9,6 +9,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.GT6Mod;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
@@ -46,6 +47,7 @@ public final class GT6EnUs extends LanguageProvider {
     @Override
     protected void addTranslations() {
         addTabTitles();
+        addBlockTabTitles();
         addPrefixTemplates();
         addMaterialNames();
         addExampleMachine();
@@ -64,6 +66,24 @@ public final class GT6EnUs extends LanguageProvider {
      */
     private void addEnergySource() {
         add("block.gt6.energy_source", "Test Energy Source");
+    }
+
+    /**
+     * The seven material prefix BLOCK tab titles (task p8-prefixblock-registry, spec ⑦):
+     * one per creative-visible block prefix (upstream PrefixBlockItem.java:66-67 creates one
+     * CreativeTab per block* prefix with the prefix's mNameCategory as its label), keyed
+     * {@code itemGroup.gt6.block_raw} etc. — the same "itemGroup.&lt;internal&gt; = mNameCategory"
+     * composition as {@link #addTabTitles()}, over {@link GTMaterialBlocks#tabPrefixes()} so
+     * the lang keys cannot drift from the registered tabs. Values: "Blocks of Ore"/"Blocks of
+     * Gems"/"Blocks of Dusts"/"Blocks of Ingots"/"Blocks of Plates"/"Blocks of Gem Plates"/
+     * "Blocks of Cast Metal" (OP.java:345-351 mNameCategory). This is the ONLY lang delta of
+     * the card — the block items themselves compose the existing tagprefix templates.
+     */
+    private void addBlockTabTitles() {
+        for (OreDictPrefix tPrefix : GTMaterialBlocks.tabPrefixes()) {
+            add("itemGroup.gt6." + MaterialPrefixItem.snakeCase(tPrefix.mNameInternal),
+                tPrefix.mNameCategory == null ? tPrefix.mNameInternal : tPrefix.mNameCategory);
+        }
     }
 
     /**
