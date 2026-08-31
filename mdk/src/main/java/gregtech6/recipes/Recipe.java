@@ -20,6 +20,7 @@
 package gregtech6.recipes;
 
 import java.util.Arrays;
+import java.util.Random;
 
 import javax.annotation.Nullable;
 
@@ -37,8 +38,11 @@ import net.minecraftforge.fluids.FluidStack;
  * The upstream OreDict unification inside {@code checkStacksEqual} is replaced
  * by plain item + tag equality ({@link #isSameItemAndTag}); NBT-lenient matching
  * keeps the upstream {@code mNoNBTChecks || !recipeInput.hasTagCompound()} rule.
- * Output chances are fixed at 100% (Furnace has no probabilistic outputs), so
- * the mChances/mMaxChances arrays are not carried.
+ * Output chances are carried since p8-recipe-chances-orechain: {@link #mChances} is a
+ * 10000-based per-output-slot chance array aligned to {@link #mOutputs} (upstream
+ * Recipe.java:666 carries {@code mChances, mMaxChances}; {@code mMaxChances} is NOT
+ * ported — its every read defaults to 10000, upstream Recipe.java:687, so the port
+ * folds that constant into the chance semantics, declared deviation).
  *
  * <p><b>Consumer contract (pinned for p4-machine-oven):</b>
  * {@code RecipeMap.findRecipe} and {@code RecipeMapFurnace.findRecipe} only
@@ -53,6 +57,19 @@ public class Recipe {
 	public ItemStack[] mInputs, mOutputs;
 	/** If you want to change the Output, feel free to modify or even replace the whole ItemStack Array, for Inputs, please add a new Recipe, because of the HashMaps. */
 	public FluidStack[] mFluidInputs, mFluidOutputs;
+	/**
+	 * Per-output-slot chance, 10000 = 100% (upstream Recipe.java:665-666). {@code null} or
+	 * an all-10000 array is behaviourally identical to the pre-chances port (every
+	 * deterministic row of the existing loaders). Array length is aligned to {@link #mOutputs}
+	 * by the chances-bearing constructor; indices past a shorter array read as 10000
+	 * (upstream getOutputChance :686 out-of-bounds → getMaxChance :687 → 10000, with
+	 * mMaxChances folded to the constant). A chance of 0 yields NO output — declared
+	 * deviation: upstream Recipe.java:765-767 passes chance==0 through as an unconditional
+	 * output (masked in practice by the ctor's {@code chances[i] <= 0 → 10000} rewrite,
+	 * upstream Recipe.java:906, which the port does NOT replicate).
+	 */
+	@Nullable
+	public long[] mChances;
 
 	public long mDuration, mEUt, mSpecialValue;
 
@@ -71,6 +88,23 @@ public class Recipe {
 	 * @param aCanBeBuffered if this Recipe may be cached by a Machine as mLastRecipe (upstream :886 passes F for the furnace-generated Recipes at RecipeMapFurnace.java:154).
 	 */
 	public Recipe(boolean aCanBeBuffered, @Nullable ItemStack[] aInputs, @Nullable ItemStack[] aOutputs, @Nullable FluidStack[] aFluidInputs, @Nullable FluidStack[] aFluidOutputs, long aDuration, long aEUt, long aSpecialValue) {
+		this(aCanBeBuffered, aInputs, aOutputs, aFluidInputs, aFluidOutputs, aDuration, aEUt, aSpecialValue, null);
+	}
+
+	/**
+	 * Chances-bearing constructor, the 8-param form with {@code aChances} appended at the
+	 * tail (upstream carries chances as the 7th parameter of the 12-arg ctor, the shape the
+	 * RecipeMapHandlerCrushing.java:137 call site uses; the port appends instead of
+	 * re-matching positions). Upstream Recipe.java:893 pads a short chances array up to the
+	 * output length and Recipe.java:906 rewrites every {@code chance <= 0} to 10000 — the
+	 * port does neither: a short array keeps reading 10000 past its end (same observable
+	 * result via the :686/:687 default) while a 0 chance stays 0 and yields NO output (the
+	 * declared deviation documented on {@link #mChances}).
+	 *
+	 * @param aChances per-output chances, 10000 = 100%; aligned (trimmed) to the trimmed
+	 *        output array length; {@code null} = the deterministic pre-chances behaviour.
+	 */
+	public Recipe(boolean aCanBeBuffered, @Nullable ItemStack[] aInputs, @Nullable ItemStack[] aOutputs, @Nullable FluidStack[] aFluidInputs, @Nullable FluidStack[] aFluidOutputs, long aDuration, long aEUt, long aSpecialValue, @Nullable long[] aChances) {
 		mCanBeBuffered = aCanBeBuffered;
 		mInputs = withoutTrailingNulls(aInputs);
 		mOutputs = withoutTrailingNulls(aOutputs);
@@ -79,6 +113,13 @@ public class Recipe {
 		mDuration = aDuration;
 		mEUt = aEUt;
 		mSpecialValue = aSpecialValue;
+		if (aChances == null) {
+			mChances = null;
+		} else {
+			// align to the trailing-null-trimmed outputs ("same length as mOutputs"); a
+			// shorter array stays short — reads past its end default to 10000 (upstream :686).
+			mChances = Arrays.copyOf(aChances, Math.min(aChances.length, mOutputs.length));
+		}
 	}
 
 	/** Upstream Recipe.setNeedEmptyOut (Recipe.java:709). */
@@ -91,22 +132,74 @@ public class Recipe {
 		return Math.abs(mEUt * mDuration);
 	}
 
-	/** Upstream Recipe.getOutputs (Recipe.java:749) with the random chance branches trimmed away: Furnace-level outputs are always 100%. */
+	/**
+	 * Deterministic convenience overload (upstream Recipe.java:741 — the pre-chances port
+	 * shape). Kept for the existing machine call sites (compile-zero-change); on a
+	 * chances-bearing row it resolves probabilistic slots at FULL certainty and chance-0
+	 * slots to nothing — use {@link #getOutputs(Random, int)} for real chance semantics.
+	 */
 	public ItemStack[] getOutputs() {
 		return getOutputs(1);
 	}
 
-	/** @param aProcessCount multiplier for parallel processing (upstream ST.mul_ semantics). */
+	/** Deterministic convenience overload (upstream Recipe.java:745-747 shape), see {@link #getOutputs()}. */
 	public ItemStack[] getOutputs(int aProcessCount) {
 		ItemStack[] rArray = new ItemStack[mOutputs.length];
 		for (int i = 0; i < rArray.length; i++) {
 			ItemStack tOutput = mOutputs[i];
-			if (tOutput != null && !tOutput.isEmpty()) {
+			if (tOutput == null || tOutput.isEmpty()) continue;
+			long tChance = outputChance(i);
+			if (tChance <= 0) continue; // declared deviation: upstream :765-767 would pass through
+			// >= 10000 = the deterministic whole-stack branch; 0 < chance < 10000 = the
+			// deterministic convenience reading (every Bernoulli trial succeeds).
+			rArray[i] = tOutput.copy();
+			rArray[i].grow(tOutput.getCount() * (Math.max(1, aProcessCount) - 1));
+		}
+		return rArray;
+	}
+
+	/**
+	 * Upstream Recipe.getOutputs(Random, int) (Recipe.java:749-771). For every output slot:
+	 * chance &gt;= 10000 → the deterministic whole stack × processCount (:758-759, the
+	 * behaviour of every pre-chances row); 0 &lt; chance &lt; 10000 → per-unit Bernoulli
+	 * sampling, {@code random.nextInt(10000) < chance} per unit of
+	 * {@code stackSize × processCount} with unit-by-unit accumulation (:761-763); chance
+	 * &lt;= 0 → NO output (declared deviation — upstream :765-767 passes the slot through,
+	 * a bug the ctor's :906 rewrite used to mask; the port keeps 0 = never).
+	 *
+	 * @param aRandom injected RNG; {@code null} → a fresh {@code Random} (upstream :751).
+	 *        The upstream RNGSUS singleton is not ported.
+	 */
+	public ItemStack[] getOutputs(@Nullable Random aRandom, int aProcessCount) {
+		Random tRandom = aRandom == null ? new Random() : aRandom; // upstream :751
+		ItemStack[] rArray = new ItemStack[mOutputs.length];
+		for (int i = 0; i < rArray.length; i++) {
+			ItemStack tOutput = mOutputs[i];
+			if (tOutput == null || tOutput.isEmpty()) continue;
+			long tChance = outputChance(i);
+			if (tChance <= 0) continue; // declared deviation: upstream :765-767 would pass through
+			if (tChance >= 10000) {
 				rArray[i] = tOutput.copy();
-				rArray[i].grow(tOutput.getCount() * (Math.max(1, aProcessCount) - 1));
+				rArray[i].grow(tOutput.getCount() * (Math.max(1, aProcessCount) - 1)); // upstream :758-759 ST.mul_
+			} else {
+				for (int j = 0, k = tOutput.getCount() * Math.max(1, aProcessCount); j < k; j++) {
+					if (tRandom.nextInt(10000) < tChance) { // upstream :761, tMax folded to 10000
+						if (rArray[i] == null) rArray[i] = tOutput.copyWithCount(1); else rArray[i].grow(1); // upstream :762 unit accumulation
+					}
+				}
 			}
 		}
 		return rArray;
+	}
+
+	/**
+	 * Upstream getOutputChance :686 with {@code mMaxChances} folded to the constant 10000
+	 * (upstream getMaxChance :687 returns 10000 for every out-of-bounds/default read —
+	 * mMaxChances is not ported, declared deviation).
+	 */
+	private long outputChance(int aIndex) {
+		if (mChances == null || aIndex < 0 || aIndex >= mChances.length) return 10000;
+		return mChances[aIndex];
 	}
 
 	/** Upstream Recipe.getFluidOutputs (Recipe.java:735) — no chance processing involved. */
