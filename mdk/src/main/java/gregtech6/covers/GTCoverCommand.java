@@ -27,6 +27,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
 import gregtech6.client.render.GTModelProperties;
+import gregtech6.covers.covers.CoverRedstoneEmitter;
+import gregtech6.util.UT6;
 
 /**
  * {@code /gt6cover} — the cover acceptance command (task p4-cover-core acceptance ②,
@@ -35,7 +37,11 @@ import gregtech6.client.render.GTModelProperties;
  * {@code TileEntityOven} to {@link ICoverableTE} (the barrel joins the covered family),
  * adds the optional {@code itemId} install argument (any registered cover item) and the
  * {@code mode} subcommand (the screwdriver relay that flips the pump direction).
- * The right-click install and the crowbar dismantle run through the ICoverableTE
+ * Task p9-redstone-cover-emitter extends the {@code mode} target vocabulary with
+ * {@code cutter} (the emitter's strong-gate toggle, relayed through the same
+ * onCoverToolClick arm) and adds the {@code signal} subcommand — the direct
+ * {@code covers.visual(side, bind4(v), true)} write that tunes the redstone emitter's
+ * tier. The right-click install and the crowbar dismantle run through the ICoverableTE
  * dispatches; the hoe-class crowbar substitute is a real hoe in the fake player's hand,
  * so the ToolActions classification path is what gets exercised:
  *
@@ -44,13 +50,23 @@ import gregtech6.client.render.GTModelProperties;
  *     force=F, blockUpdate=T): the Registry check (:295-296), the set (:302),
  *     onCoverPlaced (:304) and causeBlockUpdate (:306) run; the report asserts the
  *     covers NBT keys and the render snapshot mask (acceptance ③ server evidence);
- *     the item defaults to gt6:plate_iron, the pump chain passes gt6:cover_pump;</li>
+ *     the item defaults to gt6:plate_iron, the pump chain passes gt6:cover_pump,
+ *     the emitter chain gt6:cover_redstone_emitter;</li>
  * <li>{@code dismantle [<pos>] [<side>]} — onCoverToolClick with a hoe: the :145-152
  *     path drops the cover (popResource, acceptance's 掉落断言 via an ItemEntity scan)
  *     and the store dissolves to {@code null} (:313-317, 全空回 null);</li>
- * <li>{@code mode [<pos>] [<side>]} — onCoverToolClick with the screwdriver tool id:
- *     the covered behaviour's onToolClick relay (the pump cover flips its visual lane
- *     0 out ↔ 1 in);</li>
+ * <li>{@code mode [<pos>] [<side>] [<target>]} — onCoverToolClick with the screwdriver
+ *     tool id: the covered behaviour's onToolClick relay (the pump cover flips its
+ *     visual lane 0 out ↔ 1 in). {@code target=cutter} relays the emitter's
+ *     TOOL_CUTTER id instead (the mValues bit-0 strong-gate toggle, upstream
+ *     CoverRedstoneEmitter :42-46) — a cover that answers neither id returns 0 and
+ *     the command fails;</li>
+ * <li>{@code signal [<pos>] [<side>] <0-15>} — the declared-deviation acceptance
+ *     channel: the direct {@code covers.visual(side, bind4(v), true)} tier write on
+ *     the emitter plate (upstream the bare-hand keypad :72-109 is the player channel).
+ *     The value change fires sendBlockUpdateFromCover through CoverData.visual
+ *     (:142-150), refreshing the redstone neighbours; the report carries the host
+ *     exit readings (weak/strong toward a receiver on that face).</li>
  * <li>{@code check [<pos>]} — the covers NBT + snapshot report.</li>
  * </ul>
  *
@@ -105,12 +121,27 @@ public final class GTCoverCommand {
 							.executes(context -> mode(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
 									parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")),
 									com.mojang.brigadier.arguments.StringArgumentType.getString(context, "target")))))))
+			.then(Commands.literal("signal")
+				// the p9 emitter acceptance channel — the direct visual-lane write (the player
+				// channel is the bare-hand keypad on the plate); pos/side default like install
+				.then(Commands.argument("value", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0, 15))
+					.executes(context -> signal(context.getSource(), null, Direction.UP,
+							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "value"))))
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.argument("value", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0, 15))
+						.executes(context -> signal(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP,
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "value"))))
+					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
+						.then(Commands.argument("value", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0, 15))
+							.executes(context -> signal(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
+									parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")),
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "value")))))))
 			.then(Commands.literal("check")
 				.executes(context -> check(context.getSource(), null))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(context -> check(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
 		event.getDispatcher().register(tCover);
-		LOGGER.info("Registered GT6 cover acceptance command /gt6cover (install|dismantle|mode|check)");
+		LOGGER.info("Registered GT6 cover acceptance command /gt6cover (install|dismantle|mode|signal|check)");
 	}
 
 	/** {@code down|up|north|south|west|east} → Direction; 1.20.1 ships no direction argument type. */
@@ -205,6 +236,13 @@ public final class GTCoverCommand {
 	 * to the covered behaviour, whose onToolClick flips the visual lane. With
 	 * {@code aTarget} ("out"/"in") the command SETS the direction (a single flip when the
 	 * lane differs); without it the command is the plain toggle relay.
+	 *
+	 * <p>Task p9: {@code aTarget == "cutter"} relays {@link CoverRedstoneEmitter#TOOL_CUTTER}
+	 * instead — the emitter's strong-gate toggle (upstream CoverRedstoneEmitter :42-46,
+	 * {@code mValues ^ B[0]} with the block update). The cutter relay is always a toggle
+	 * (upstream semantics — no pinned target); a cover answering neither id returns 0 and
+	 * the command fails, so the pump is untouched by the new word (it does not know
+	 * "cutter") and the emitter does not answer the screwdriver.
 	 */
 	private static int mode(CommandSourceStack source, BlockPos pos, Direction side, @Nullable String aTarget) {
 		CoverableHost tHost = coverableHostAt(source, pos);
@@ -217,30 +255,72 @@ public final class GTCoverCommand {
 			source.sendFailure(Component.literal("GT6 cover mode FAILED: no cover on face " + side + " at " + tHost.pos().toShortString()));
 			return 0;
 		}
+		boolean tCutter = aTarget != null && "cutter".equalsIgnoreCase(aTarget);
 		Short tDesired = null;
-		if (aTarget != null) {
+		if (aTarget != null && !tCutter) {
 			tDesired = aTarget.equalsIgnoreCase("out") ? (short) 0 : aTarget.equalsIgnoreCase("in") ? (short) 1 : null;
 			if (tDesired == null) {
-				source.sendFailure(Component.literal("GT6 cover mode FAILED: unknown direction '" + aTarget + "' (use out|in)"));
+				source.sendFailure(Component.literal("GT6 cover mode FAILED: unknown direction '" + aTarget + "' (use out|in|cutter)"));
 				return 0;
 			}
 		}
 		short tCurrent = tHost.host().getCovers() == null ? 0 : tHost.host().getCovers().mVisuals[tSide];
-		boolean tFlipNeeded = tDesired == null || tDesired != tCurrent;
-		long tDamage = tFlipNeeded ? tHost.host().onCoverToolClick(ICover.TOOL_SCREWDRIVER, null, ItemStack.EMPTY, tSide, false) : 0;
+		boolean tFlipNeeded = tCutter || tDesired == null || tDesired != tCurrent;
+		long tDamage = tFlipNeeded ? tHost.host().onCoverToolClick(tCutter ? CoverRedstoneEmitter.TOOL_CUTTER : ICover.TOOL_SCREWDRIVER, null, ItemStack.EMPTY, tSide, false) : 0;
 		short tVisual = tHost.host().getCovers() == null ? 0 : tHost.host().getCovers().mVisuals[tSide];
+		boolean tStrong = tHost.host().getCovers() != null && tHost.host().getCovers().mValues[tSide] != 0;
 		String tDirection = tVisual == 0 ? "out" : "in";
-		String tReport = String.format("GT6 cover mode %s face %s at %s: toolDamage=%d, visual=%d (%s), flipped=%s",
-				tHost.host(), side, tHost.pos().toShortString(), tDamage, tVisual, tDirection, tFlipNeeded);
+		String tReport = String.format("GT6 cover mode %s face %s at %s: tool=%s, toolDamage=%d, visual=%d (%s), strong=%s, flipped=%s",
+				tHost.host(), side, tHost.pos().toShortString(), tCutter ? "cutter" : "screwdriver", tDamage, tVisual, tDirection, tStrong, tFlipNeeded);
 		if (tFlipNeeded && tDamage == 0) {
-			source.sendFailure(Component.literal("GT6 cover mode FAILED: the screwdriver toggle did not fire — " + tReport));
+			source.sendFailure(Component.literal("GT6 cover mode FAILED: the tool toggle did not fire — " + tReport));
 			return 0;
 		}
-		if (tDesired != null && tVisual != tDesired) {
+		if (tCutter && tDamage != 1000) {
+			source.sendFailure(Component.literal("GT6 cover mode FAILED: the cutter relay did not answer — " + tReport));
+			return 0;
+		}
+		if (!tCutter && tDesired != null && tVisual != tDesired) {
 			source.sendFailure(Component.literal("GT6 cover mode FAILED: direction did not land — " + tReport));
 			return 0;
 		}
 		source.sendSuccess(() -> Component.literal("GT6 cover mode OK: " + tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The p9 emitter acceptance channel (the declared deviation — the player channel is
+	 * the bare-hand keypad): the direct {@code covers.visual(side, bind4(aValue), true)}
+	 * tier write. CoverData.visual fires {@code sendBlockUpdateFromCover} on the change
+	 * (:142-150), so the redstone neighbours re-query the host exits without any extra
+	 * API; the report carries those exit readings toward a receiver on the written face.
+	 */
+	private static int signal(CommandSourceStack source, BlockPos pos, Direction side, int aValue) {
+		CoverableHost tHost = coverableHostAt(source, pos);
+		if (tHost == null) {
+			source.sendFailure(Component.literal("No coverable GT6 BlockEntity at " + (pos != null ? pos.toShortString() : "the source position")));
+			return 0;
+		}
+		byte tSide = (byte) side.get3DDataValue();
+		if (!tHost.host().isCovered(tSide)) {
+			source.sendFailure(Component.literal("GT6 cover signal FAILED: no cover on face " + side + " at " + tHost.pos().toShortString()));
+			return 0;
+		}
+		byte tTier = CoverRedstoneEmitter.bind4(aValue);
+		tHost.host().getCovers().visual(tSide, tTier, true);
+		// the host exit readings toward a receiver sitting on the written face (the vanilla
+		// query hands in OPOS[face]; the bridge folds it back — the same numbers the lamp sees)
+		byte tQuery = UT6.OPOS[tSide];
+		int tWeak = tHost.host().getRedstoneOutWeak(tQuery, 0);
+		int tStrong = tHost.host().getRedstoneOutStrong(tQuery, 0);
+		String tReport = String.format("GT6 cover signal %s face %s at %s: tier=%d, outWeak=%d, outStrong=%d",
+				tHost.host(), side, tHost.pos().toShortString(), tTier, tWeak, tStrong);
+		if (tWeak != tTier) {
+			source.sendFailure(Component.literal("GT6 cover signal FAILED: the weak exit does not read the written tier — " + tReport));
+			return 0;
+		}
+		source.sendSuccess(() -> Component.literal("GT6 cover signal OK: " + tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
 	}
