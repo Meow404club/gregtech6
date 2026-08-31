@@ -69,25 +69,41 @@
 - [x] p7-basicmachine-family：TileEntityBasicMachine 共享基类（并行段恢复+能量数学两分支+功率帽活语义）+ 三机 BE/Block/Menu/Screen + /gt6machine 三链（merge d0a1ebe，6 提交）
 - [x] phase-closeout：根 205 + mdk 318 = 523 全绿，RCON 各链合并态复放全过，三次环境中断断点恢复零损失，D3∥D4 按用户指令移 P8
 
-## 下一波候选（P8，等压缩后"继续"按池开）
+## 第 8 阶段（能量网端到端 / PrefixBlock 方块宇宙 / 机器族收尾 / CokeOven GUI+流体罐）——✅ 已完成（2026-09-01）
 
-- [ ] **P8 首批：D3-energy-consumer（Oven doInject 真实现 + ENERGY_FAKE_SOURCE 开关，对接机器族 supplyEnergy 缝）∥ D4-energy-source（命令驱动测试发电机）**；端到端 gen→wire→oven 闭环 + wattage 正向记账 + 烧线断言 + canConnect emitting 支回补 + doActive :815 注释勘误/KU 脉冲决断（义务清单：tasks.p7-d3/d4-energy-*.e2e_obligations）
-- [ ] 机器族收尾池：T2-T4 档位（128/512/2048 + PARALLEL 8/16/32）/ RECYCLABLE 按需合成 / ore 链（需 Recipe.chances + OM 数据）/ compat 全部
-- [ ] CokeOven GUI/Menu + 控制器流体罐 capability（12 槽面）
-- [ ] PrefixBlock 方块宇宙（blockRaw/blockIngot/blockGem/blockDust 前缀方块 + BlockItem + datagen，解锁 cokeoven block 行 7 条）
+- [x] p8-d3-energy-consumer ∥ p8-d4-energy-source：Oven doInject 真实现 + mdk Root 默认块/overcharge + ENERGY_FAKE_SOURCE 开关 ∥ 测试发电机 + /gt6energy + canConnect 双探针回补；**gen→wire→oven e2e 五项闭环**（完整冶炼/wattageLast=30/超压 16 strikes 烧线/超流 2A/回归无损）（merge 2e87186 + e2bce89）
+- [x] p8-prefixblock-registry：GTMaterialBlocks 3773 对七前缀注册家 + 7 创造栏 + cokeoven block 7 行回填 poured 39（merge 2e79c7e，8 提交）
+- [x] p8-recipe-chances-orechain：Recipe.mChances + Crusher ore 链静态化 poured 493 + addRecipe 双空守卫（幽灵配方根修）（merge c69c09b，6 提交）
+- [x] p8-cokeoven-gui-menu：Menu Host 接口化 + GUI 串小写地雷修复 + cokeoven.png + 10 交互槽（merge 63e3f7d，7 提交）
+- [x] p8-machine-tiers-doinject：T2-T4 三机全梯 9 块 + 基类 doInject/alternating 恢复 + KU 负脉冲过零双态（merge 6b258f2，6 提交）
+- [x] p8-prefixblock-render：175 共享模型 + 11494 datagen JSON + 灰度 PNG + tint + loot 自掉表（merge a01fa07，7 提交）
+- [x] p8-cokeoven-fluid-capability：drain-only 流体罐 capability + P6 推液守恒活证（merge 7516c3b，3 提交）
+- [x] phase-closeout：根 205 + mdk 415 = 620 全绿，RCON 各链复放全过，zcode bug 断点恢复零损失
+
+## 下一波候选（P9，等压缩后"继续"按池开）
+
+- [ ] 线缆全谱系：16 线 5 缆 / 真材质渲染 / 扳手交互（use=PASS）/ IC2 拉取 / bundled channel
 - [ ] C 档 oven 动态渲染升级 + D 档多方块成型态渲染
-- [ ] 线缆后续：16 线 5 缆全谱系 / 真材质渲染 / 扳手交互 / IC2 拉取 / bundled channel
+- [ ] cover intercept 族 + 红石钩 + 正式 crowbar（GT6 工具系统入口）
+- [ ] barrel 密封发酵 + 连通罐 B[0] + 破坏倾倒；Gas-proof 四防族；桶 GUI/tap/funnel
+- [ ] 机器族 compat 全部（外域 mod 配方）
+- [ ] 按需 researcher→architect 开新域（权威池=state todo.pool）
 
 ## 遗留池
 
-- [ ] RM 壳缺口池：containsInput/minTankSize/三哈希索引/auto-IO/findRecipe 空 mInputs 直通幽灵配方语义（P4 壳再议）；GT6RecipesCokeOvenTest AIR 池隐患（recipes 域首卡顺手清）
+- [ ] **M2 哨兵产量翻案**：上游 HandlerCrushing 槽0=0 哨兵+槽1=10000 重复=每行 2 份主产出，port chance==0-null 后 oreRaw 1 份；翻案=buildRecipe base 改双 10000 槽（493 行不变）
+- [ ] **rotor 族卡**：ENERGY_FAKE_SOURCE 翻默认 false + 拆 :815 悬置折叠（M1 声明移除路径）；RU/KU 网供电真语义
+- [ ] :511 FACE_CONNECTED 侧掩码 side-gated IO + auto-IO + containsInput 插槽查验；minTankSize/三哈希索引（配方面增长后性能观测触发）
+- [ ] ore 方块行激活（BlocksGT.ore/oreBroken 形状，方块宇宙已解锁）+ blockRaw 493 行
+- [ ] 多方块件面流体代理（MultiBlockPartBlockEntity 转发）；/gt6energy 无 BE 失败行补 FAILED 字面量
+- [ ] W1 两条 javadoc nit（:274-275→:267-268；输入槽 y 恒 25 vs 上游 >6?7:25 条件形）
+- [ ] RM 壳缺口余项：containsInput 物品版消费面（随 auto-IO）；GT6RecipesCokeOvenTest AIR 隐患已由 M2 守卫+清理闭合 ✅
 - [ ] 特性层：trapped/comparator/涂装/TESR/lid 动画、chest BlockItem loot table
 - [ ] ADR-P3-6 延后池：slotClick 全局拦截（Slot 能力模型重构）、rebootGUIs、cover 负 GUIID
 - [ ] PrefixRegistry 未 close；MT.NULL.mHandleMaterial=null（工具卡注意）；TECH tMake 冻结首代
-- [ ] cover intercept 族+红石钩+正式 crowbar
 - [ ] barrel 密封发酵+连通罐 B[0]+破坏倾倒；Gas-proof 四防族；桶 GUI/tap/funnel/IFluidContainerItem 物品面；FluidTankGT keepFilter 0 量持久化缺口（归 Logistics 罐卡）；builder wand 物品化
 - [ ] creosote 材质密度桥（载体值回补）；per-map/per-recipe Config duration 覆盖
-- [ ] beam/竹/木弹丸 cokeoven 行（待物品宇宙；木弹丸出自 Mixer 已证伪非 Shredder 输出）
+- [ ] beam/竹 cokeoven 行（物品宇宙已解锁可回看；木弹丸出自 Mixer 已证伪非 Shredder 输出）
 - [ ] GTBarrelMetalBlockEntity javadoc P6 偏离文字过时（下卡触碰该文件顺手清）
 - [ ] 旧池：PrefixRegistry 未 close 项/移植进度看板（按 GT6 子系统统计已移植/未移植）
-- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI+cover 板/管道箭头（P4）、扳手九宫格 UI 六条+泵盖贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint 点火/creosote 渲染（P6）、三机 GUI 打开+12/2 输出槽布局（P7）、12 高档鼓外观（P7）
+- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI+cover 板/管道箭头（P4）、扳手九宫格六条+泵盖贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint/creosote 渲染（P6）、三机 GUI+12/2 槽布局（P7）、12 高档鼓外观（P7）、cokeoven GUI 对帧/方块染色 tint/创造栏 7 tab/侧面装桶顶面拒（P8）

@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 7 阶段：cokeoven 回补 / 高档鼓+熔点桥 / 机器族（三图+三机）/ 能量网 D1·D2 / 机台贴图`（**2026-08-31 收官**：七卡全数合入 main HEAD d0a1ebe，根 205 + mdk 318 = 523 单测全绿，RCON 各链合并态复放全过，三次环境中断（zcode 重启/WSL 重启/zcode bug）断点落账恢复零损失；D3∥D4 按用户指令移 P8）
+`第 8 阶段：能量网端到端（D3·D4）/ PrefixBlock 方块宇宙 / 机器族收尾（档位+ore 链）/ CokeOven GUI+流体罐`（**2026-09-01 收官**：八卡全数合入 main HEAD 7516c3b，根 205 + mdk 415 = 620 单测全绿，gen→wire→oven 端到端五项闭环验证，RCON 各链合并态复放全过，zcode bug 一次断点恢复零损失）
 
 > **平台修正 2026-08-29**：原目标"NeoForge 1.20.1"被证伪——NeoForge 官方 maven 从未发布 20.1.x 产物（versions API `filter=20.1` 返回空，主会话独立复核），NeoForged 自家 ModDevGradle 把 1.20.1 路由给 `legacyforge` 变体，文档站最早只到 1.20.3。用户裁决：目标平台 = **MinecraftForge 1.20.1（47.4.10）**，构建插件 = MDG legacyforge 2.0.144。1.20.1 的 API 面即 `net.minecraftforge.*` + RegistryObject（DeferredHolder 是 20.2+ 才有），第 1 阶段的所有调研结论不受影响。
 
@@ -18,6 +18,7 @@
 - [x] 第 5 阶段：管道语义修正 / 桶重力侧规则+泵盖 / 扳手九宫格 UI / RCON 工具链——2026-08-30 收官（417 测全绿；tools/rcon 正典客户端入库；瞬态 overlay 红线例外；桶侧规则+CoverPump+gt6:natural_gas）
 - [x] 第 6 阶段（入口）：CokeOven 加工业务 / oven 朝向旋转 / Metal·Plastic 桶族——2026-08-31 收官（451 测全绿；首台真加工多方块机+`#minecraft:logs` tag 驱动原木配方+gt6:creosote；木桶装饰盖保真恢复；GTCEu setFrontFacing 经九宫格）
 - [x] 第 7 阶段：cokeoven 回补 / 高档鼓+熔点桥 / 机器族 / 能量网 D1·D2——2026-08-31 收官（523 测全绿；gt6:oil+油页岩 8 行；熔点桥撤销 metal 不熔偏离+12 高档鼓梯 128K→10B；SHREDDER/CRUSHER/LATHE 三图三机（Crusher 并行 4）；ITileEntityEnergy 14 方法面+GTWireBlockEntity+三机 BE+GUI；D3∥D4 移 P8）
+- [x] 第 8 阶段：能量网端到端 / PrefixBlock 方块宇宙 / 机器族收尾 / CokeOven GUI+流体罐——2026-09-01 收官（620 测全绿；Oven doInject 真实现+gen→wire→oven 端到端闭环五项验证；3773 对前缀方块+11494 datagen JSON；T2-T4 三机全梯+基类 doInject/alternating 恢复+KU 负脉冲过零；Recipe.chances+Crusher ore 链+poured 493；CokeOven Menu/Screen+流体罐 capability+推液守恒）
 
 ## 第 7 阶段收官记录（2026-08-31，主会话 phase-closeout）
 
@@ -34,6 +35,23 @@
 承重教训（入记忆）：①幽灵配方（测试池含 AIR → 空输入直通）②单类 JVM 探针须先 `GTMaterialItems.initMaterials()`（类装载环）③并行卡 RCON 编排 = 卡专用端口 + 按 PID 精确杀 + 禁泛模式 pgrep（三次险情）④清理用 mdk/run 路径特征。期中断三次（zcode 重启/WSL 重启/zcode bug），断点落账恢复零损失。
 
 **P8 移交**：D3∥D4（义务清单在 `tasks.p7-d3/d4-energy-*.e2e_obligations`：doActive :815 注释勘误 + KU 脉冲决断 / wattage 正向记账 / 烧线断言 / canConnect emitting 支回补）+ todo.pool 全量候选。
+
+## 第 8 阶段收官记录（2026-09-01，主会话 phase-closeout）
+
+合入链：`2e87186`(D4)→`e2bce89`(D3)→`2e79c7e`(A)→`c69c09b`(M2)→`63e3f7d`(W1)→`6b258f2`(M1)→`a01fa07`(B)→`7516c3b`(W2)，起点 001e3a4，全程单卡/批量 review-merge 全 approve、GPG 全验、合并态门禁逐批复验。
+
+- **p8-d4-energy-source**：GTEnergySource 测试发电机 + `/gt6energy` + GTWireBlockEntity.canConnect 双探针回补（EnergyCompat:102；connections 63 vs 缺回补 47 活证）；`isEnergyEmittingTo` 取 aTheoretical 无关静态探针（Root:714），卡面字面公式会击穿 gen→wire 连接（审查 ACCEPT）。
+- **p8-d3-energy-consumer**：Oven doInject 真实现（:489-508 直译）+ mdk Root 默认块/overcharge/explode + `ENERGY_FAKE_SOURCE` 默认 false + UT6.tierMax；**gen→wire→oven 端到端五项闭环**：连续源完整冶炼 cobble→stone、wattageLast=30 正向记账、超压 16 strikes 烧线（炉存活）、超流 2A 烧线、rotate/facing 回归无损。
+- **p8-prefixblock-registry**：GTMaterialBlocks 注册家 3773 对七前缀（census Raw618/Gem217/Dust1096/Ingot483/Plate673/PlateGem203/Solid483）+ first-wins + get 缝 + 7 创造栏 + cokeoven block 7 行回填 poured 39（:804 流体量实为 6750，卡文 3375 系错数，审查勘正）。
+- **p8-recipe-chances-orechain**：Recipe.mChances（10000 基准，chance==0 裁 null = 对上游 :765-767 透传疑似 bug 的声明偏离）+ addRecipe 双空拒收守卫（幽灵配方根修）+ GT6RecipesOreChain ore 链静态化 poured 493 精确对账；根 OM 零改动（三字段基线已含且更全）。
+- **p8-cokeoven-gui-menu**：GTBasicMachineMenu Host 接口化（机器域零触碰）+ 多方块基类 MenuProvider + COKE_OVEN GUI 串大写地雷修复（ResourceLocation 必炸）+ cokeoven.png CC0 借入；「12 槽」证伪为 10 交互槽；mSuccessful 单 tick 态经 fast_cmd 竞速捕获 progress=32767 活证。
+- **p8-machine-tiers-doinject**：T2-T4 三机全梯 9 块（能量三值 64/128/256 · 256/512/1024 · 1024/2048/4096；Crusher PARALLEL 8/16/32）+ 基类 doInject/alternating 半恢复 + `ENERGY_FAKE_SOURCE` 默认 TRUE（:501 类型等值门使 EU 网进不了 RU/KU 机，默认 false=三族死块）；**KU 跃迁=过零检测**（EngineSteam:146 ±KU 真交流），卡面「停注入下一 tick 出」被三链实证物理不可能，负脉冲 finalSize 单命令全周期替代（审查 ACCEPT）；3 家族 BET 多挂 T1-T4（T1 零回归）。
+- **p8-prefixblock-render**：模型合并 175 共享（前缀×实存集，防 per-pair 膨胀）+ 11494 datagen JSON（3773 blockstate+3773 item model+3773 loot 自掉表）+ 175 灰度 PNG sha256 全等借入 + fRGBa tint 双侧注册（Forge BlockColor 不染 BlockItem=声明偏离②实证）+ jar zip64（71232 条目>65535，声明偏离①）。
+- **p8-cokeoven-fluid-capability**：MultiBlockFluidHandler drain-only wrapper（掩码 61 纯函数旋转，无裸 side==UP；null-side=上游 :144 SBIT_A 忠实镜像非偏离）+ 基类 capability 段 6 行窄改 + P6 推液守恒活证（桶 6995+8000=14995 机罐清零=同罐两消费者并存）。
+
+承重教训（入记忆）：①手动 inject 无法完成完整冶炼（CONSTANT_ENERGY :894 清 parked progress + RCON 往返≥2tick）——完整 smelt 须连续源 e2e；②GTWireBlock 无回连钩子——能量链 gen/oven 必须先于 wire 放置；③KU 跃迁测试按负脉冲过零写，勿写「停止注入出料」；④RCON 快机（4tick 周期）三态断言结构性竞态，慢机保全断言；⑤>65535 jar 条目须 zip64。期中断：zcode bug 一次（断点落账恢复零损失）+ worktree 外部扰动一次（审查官重跑全门禁固化）。
+
+**P9 移交**：todo.pool（M2 哨兵产量翻案 / rotor 族翻 ENERGY_FAKE_SOURCE 默认 false+拆 :815 悬置 / :511 侧掩码 side-gated IO / ore 方块行激活 / 多方块件面流体代理 / `/gt6energy` FAILED 字面量 / runClient 目视 backlog）。
 
 ## 关键决策
 
