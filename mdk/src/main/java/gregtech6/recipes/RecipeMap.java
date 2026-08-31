@@ -99,9 +99,28 @@ public class RecipeMap {
 	/**
 	 * Registers a Recipe into this Map. Upstream Recipe.add() feeds three hash
 	 * indexes; the linear-scan port appends to {@code mRecipeList} directly.
+	 *
+	 * <p><b>Double-empty guard (p8-recipe-chances-orechain)</b>: a recipe with neither item
+	 * nor fluid inputs is REJECTED — not added to {@code mRecipeList}, no exception thrown,
+	 * {@code null} returned. Upstream is structurally immune to these ghost recipes at the
+	 * index layer: {@code addToItemMap} (upstream Recipe.java:632-640) never buckets a
+	 * recipe without inputs, so {@code findRecipeInternal} can never match one. This port
+	 * scans {@code mRecipeList} linearly and {@code Recipe.checkStacksEqual} passes vacuously
+	 * over an empty {@code mInputs} (Recipe.java:775 upstream — no required inputs = every
+	 * caller-side input set matches), so an empty-input row would match EVERY lookup. The
+	 * invariant "every stored recipe has at least one input leg" must therefore be enforced
+	 * at the registration layer here — the upstream-layering equivalent. Rejections are not
+	 * logged here (the map carries no logger; the loaders' skip-and-count pour statistics
+	 * cover the audit trail, GT6RecipesCokeOven/GT6RecipesShCL precedent). Returning
+	 * {@code null} is compatible with the existing call chain (loaders treat a null
+	 * {@code addRecipe} result as a drop, the upstream {@code null != addRecipe(...)}
+	 * idiom).
 	 */
+	@Nullable
 	public Recipe addRecipe(@Nullable Recipe aRecipe) {
-		if (aRecipe != null && aRecipe.mEnabled && !aRecipe.mFakeRecipe) mRecipeList.add(aRecipe);
+		if (aRecipe == null) return null;
+		if (aRecipe.mInputs.length == 0 && aRecipe.mFluidInputs.length == 0) return null; // ghost-recipe guard, see javadoc
+		if (aRecipe.mEnabled && !aRecipe.mFakeRecipe) mRecipeList.add(aRecipe);
 		return aRecipe;
 	}
 

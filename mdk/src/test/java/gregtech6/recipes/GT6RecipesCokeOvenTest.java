@@ -69,7 +69,14 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		java.util.List<Item> tPool = net.minecraft.core.registries.BuiltInRegistries.ITEM.stream().toList();
 		int tNext = 0;
 		for (PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
-			SYNTHETIC_ITEMS.put(tPair, tPool.get(tNext++ % tPool.size()));
+			Item tItem;
+			// AIR (or any item making an empty stack) must be skipped: new ItemStack(AIR, n) is an
+			// empty stack, the Recipe ctor trims it, and the resulting empty-input row would match
+			// EVERY lookup (the p7 ghost recipe). The RecipeMap.addRecipe double-empty guard
+			// (p8-recipe-chances-orechain ②) is the structural backstop; keeping AIR out of the
+			// pool keeps the poured-count assertions exact.
+			do {tItem = tPool.get(tNext++ % tPool.size());} while (new ItemStack(tItem, 1).isEmpty());
+			SYNTHETIC_ITEMS.put(tPair, tItem);
 		}
 		for (PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) { // the p8 block universe
 			SYNTHETIC_ITEMS.putIfAbsent(tPair, tPool.get(tNext++ % tPool.size()));
