@@ -52,8 +52,22 @@ def remember(kind: str, text: str) -> dict:
         con.commit()
         con.close()
         return {"ok": True, "action": "noop_duplicate", "id": best_id, "sim": round(best_sim, 3)}
+    if best_sim >= 0.90 and best_id is not None:
+        # ≥0.90 近同事实：supersede——旧记忆失效但保留（演化链可查），新记忆生效。
+        # mem0 REPLACE 裁决的零模型变体（生成模型依赖度=零）。
+        con.execute("UPDATE memories SET active=0, invalid_at=?, updated=? WHERE id=?",
+                    (now, now, best_id))
+        cur = con.execute(
+            "INSERT INTO memories(kind, text, vec, active, supersedes_id, created, updated)"
+            " VALUES(?,?,?,1,?,?,?)",
+            (kind, text, db.vec_to_blob(vec), best_id, now, now))
+        con.commit()
+        nid = cur.lastrowid
+        con.close()
+        return {"ok": True, "action": "superseded", "new_id": nid,
+                "supersedes": best_id, "sim": round(best_sim, 3)}
     if best_sim >= 0.80 and best_id is not None:
-        # complementary info: merge into existing memory (UPDATE)
+        # 0.80~0.90 互补信息：文本合并进旧记忆（保持单行上下文完整）
         row = con.execute("SELECT text FROM memories WHERE id=?", (best_id,)).fetchone()
         merged = (row[0] + "\n[update] " + text)[:4000]
         mvec = embed_texts([merged])[0]
@@ -104,7 +118,7 @@ def recall(query: str, k: int = 8, kind: str | None = None) -> list[dict]:
 def forget(memory_id: int) -> dict:
     con = db.connect()
     _ensure_tables(con)
-    con.execute("UPDATE memories SET active=0 WHERE id=?", (memory_id,))
+    con.execute("UPDATE memories SET active=0, invalid_at=strftime('%s','now') WHERE id=?", (memory_id,))
     con.commit()
     con.close()
     return {"ok": True, "forgotten": memory_id}
