@@ -23,6 +23,7 @@ import gregtech6.block.GTExampleChestBlock;
 import gregtech6.block.TestMachineBlock;
 import gregtech6.tileentity.TestMachineBlockEntity;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
+import gregtech6.tileentity.energy.GTEnergySourceBlockEntity;
 import gregtech6.tileentity.example.GTExampleChestBlockEntity;
 
 /**
@@ -98,6 +99,20 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<GTWireBlockEntity>> WIRE_ELECTRIC_BE =
 			BLOCK_ENTITY_TYPES.register("wire_electric", () -> BlockEntityType.Builder.of(
 					GTWireBlockEntity::new, GTWires.WIRE_ELECTRIC_1X.get(), GTWires.WIRE_ELECTRIC_2X.get()).build(null));
+
+	// -------------------------------------------------------------------------
+	// test energy source (task p8-d4-energy-source)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The test energy source BET (task p8-d4-energy-source spec ② — the BET type row lives
+	 * here per the card, the block/item in GTEnergySources; the WIRE_ELECTRIC_BE
+	 * cross-register resolution shape). Registry path "energy_source" mirrors
+	 * GTEnergySourceBlockEntity#getTileEntityName like every other row.
+	 */
+	public static final RegistryObject<BlockEntityType<GTEnergySourceBlockEntity>> ENERGY_SOURCE_BE =
+			BLOCK_ENTITY_TYPES.register("energy_source", () -> BlockEntityType.Builder.of(
+					GTEnergySourceBlockEntity::new, GTEnergySources.ENERGY_SOURCE.get()).build(null));
 
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest
