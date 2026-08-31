@@ -16,6 +16,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregapi.code.TagData;
+import gregapi.data.TD;
+
 import gregtech6.block.GTOvenBlock;
 import gregtech6.client.render.GTModelProperties;
 import gregtech6.client.render.GTRenderUpdates;
@@ -71,18 +74,25 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *     tank refresh (:459, :465-466) are cut.</li>
  * </ul>
  *
- * <p>Energy (ADR-P4 ruling): option A — a constant full-voltage fake power source. Upstream
- * onTick2 :454-455 fed {@code mEnergy++} per tick (TU trickle); the port instead refills
- * {@code mEnergy = mInputMax} every tick while the machine is not stopped, and doWork drains
- * {@code mInputMax} :791, so every active tick advances progress by exactly mInputMax
- * energy units. Option C — redstone stop: a neighbor signal gates the fake source through a
- * runtime latch ({@link #mRedstoneStopped}) OR'ed at the energy gate, the
- * {@link #setStateOnOff(boolean)} :1027 shape stays on the manual NBT-persisted
- * {@link #mStopped}; the latch is separate so a falling redstone edge cannot release a
- * manual stop. Option D seam — {@link #doInject} keeps the upstream signature :489-508 as a
- * stub so the full energy net replaces the fake source without touching this class again.
- * {@code CONSTANT_ENERGY} (GT_API.java:510, default T) drives the doInactive progress reset
- * :894 verbatim.
+ * <p>Energy (ADR-P4 ruling, degraded by task p8-d3 §③): option A — the constant
+ * full-voltage fake power source — is now gated behind the {@link #ENERGY_FAKE_SOURCE}
+ * static test switch, default {@code false} = the machine is grid-fed only through the
+ * real energy network surface (the ITileEntityEnergy default block on
+ * TileEntityBase01Root, upstream :489-519): doInject :489-508 verbatim (see the method),
+ * the EU-only face/type/sizes :510-519 and the Root gate :717 (Min=16=Rec/2: packets
+ * below it are swallowed, aSize &gt; 64=Max overcharges). Upstream onTick2 :454-455 fed
+ * {@code mEnergy++} per tick (TU trickle); the port instead refills
+ * {@code mEnergy = mInputMax} every tick while the machine is not stopped — but only
+ * when ENERGY_FAKE_SOURCE is on (the offline test fixtures set it, p4/p6 semantics).
+ * doWork drains {@code mInputMax} :791 regardless of the source. Option C — redstone
+ * stop: a neighbor signal gates the fake source through a runtime latch
+ * ({@link #mRedstoneStopped}) OR'ed at the energy gate, the {@link #setStateOnOff(boolean)}
+ * :1027 shape stays on the manual NBT-persisted {@link #mStopped}; the latch is separate
+ * so a falling redstone edge cannot release a manual stop. Note: with the default
+ * grid-fed mode the p4/p6 smelting RCON chains lose their power premise — they must be
+ * driven over the energy network (/gt6wire inject) from p8-d3 on.
+ * {@code CONSTANT_ENERGY} (GT_API.java:510, default T) drives the doInactive progress
+ * reset :894 verbatim.
  *
  * <p>Recipe consumption follows the p4-recipe-core pinned contract: findRecipe only LOOKS UP
  * (RecipeMapFurnace.findRecipe), consuming is
@@ -105,6 +115,16 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 
 	/** GT_API.java:510 CONSTANT_ENERGY default (config field of the same name upstream). */
 	public static final boolean CONSTANT_ENERGY = true;
+
+	/**
+	 * Option A degradation switch (task p8-d3 §③): the constant full-voltage fake power
+	 * source of ADR-P4. {@code false} (default, the shipped semantic) = grid-fed only —
+	 * the machine accepts EU through the ITileEntityEnergy network surface
+	 * ({@link #doInject}); {@code true} = the p4/p6 fake source refills
+	 * {@code mEnergy = mInputMax} every tick. The offline test fixtures turn it on
+	 * (GTMachinesOfflineTestBase) so the p4 acceptance stays regression-covered.
+	 */
+	public static boolean ENERGY_FAKE_SOURCE = false;
 
 	// NBT keys — plain in-repo form (the chest precedent: upstream "gt.*" keys carry the
 	// same names; the vanilla "id" slot collision that forced the gt. prefix is gone).
@@ -232,7 +252,8 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 			// option C: redstone stop gate (upstream :453 mBlockUpdated toggleable-source refresh spot)
 			mRedstoneStopped = hasLevel() && getLevel().hasNeighborSignal(getBlockPos());
 			// option A: constant full-voltage fake power (upstream :454-455 TU trickle replaced; :791 drains it below)
-			if (!mStopped && !mRedstoneStopped) mEnergy = mInputMax;
+			// — now gated behind ENERGY_FAKE_SOURCE (task p8-d3 §③): default false = grid-fed via doInject only.
+			if (ENERGY_FAKE_SOURCE && !mStopped && !mRedstoneStopped) mEnergy = mInputMax;
 
 			doWork(aTimer);
 			// upstream :459 fluid auto-output and :463 structural re-check :465-466 display refresh are cut
@@ -444,17 +465,79 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	}
 
 	// ---------------------------------------------------------------------------
-	// energy surface (ADR-P4)
+	// energy surface (task p8-d3 §② — the network consumer face, upstream
+	// MultiTileEntityBasicMachine :489-519)
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * Option D seam (ADR-P4): upstream :489-508 signature kept as a stub — the constant
-	 * fake power source (option A) bypasses injection, so the full energy net (option D)
-	 * replaces the fake source without touching the tick business again.
+	 * Upstream :489-508 verbatim minus the charging branch (:497-500 — mChargeRequirement/
+	 * mEnergyTypeCharged are outside the oven trimmed field set :133, declared deviation):
+	 * a stopped machine refuses (0, :490); an over-voltage packet overcharges
+	 * ({@code aSize > mInputMax = 64}) and reports the whole amount as used (:493-495);
+	 * accepted EU packets charge {@code min(mInputMax - mEnergy, size * amount)} energy,
+	 * consuming the corresponding packet count with the rounding-up remainder
+	 * (:501-505). Called through the Root gate (:717) — so simulation calls
+	 * ({@code aDoInject = false}) and below-minimum packets (Min = 16, swallowed) never
+	 * reach this body, and the overcharge flag is consumed by the machine's own next tick.
 	 */
-	public long doInject(gregapi.code.TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
+	@Override
+	public long doInject(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
+		if (mStopped) return 0;
+		boolean tPositive = (aSize > 0);
+		aSize = Math.abs(aSize);
+		if (aSize > getEnergySizeInputMax(aEnergyType, aSide)) {
+			if (aDoInject) overcharge(aSize, aEnergyType);
+			return aAmount;
+		}
+		// :497-500 charging branch cut (mChargeRequirement/mEnergyTypeCharged, declared deviation)
+		if (aEnergyType == TD.Energy.EU) { // :501 mEnergyTypeAccepted == EU for the oven
+			if (aDoInject) mStateNew = tPositive;
+			long tInput = Math.min(mInputMax - mEnergy, aSize * aAmount), tConsumed = Math.min(aAmount, (tInput/aSize) + (tInput%aSize!=0?1:0));
+			if (aDoInject) mEnergy += tConsumed * aSize;
+			return tConsumed;
+		}
 		return 0;
 	}
+
+	/**
+	 * Upstream :510 for the oven shape: accepting EU only, emitting nothing
+	 * (mEnergyTypeEmitted is null) and the charging pair is cut with the charging branch.
+	 */
+	@Override public boolean isEnergyType(TagData aEnergyType, byte aSide, boolean aEmitting) {return !aEmitting && aEnergyType == TD.Energy.EU;}
+
+	/**
+	 * Upstream :511 minus the FACE_CONNECTED rotation-index mask item — the mask
+	 * semantics (the 6-bit energy-input sides mask indexed through the facing rotation)
+	 * collapse to the all-sides constant for the oven (SIDES full 1) and hang on the
+	 * {@link #isEnergyInputSide(byte)} seam; the doInject body is orthogonal to the mask.
+	 * The {@code (aTheoretical || !mStopped)} prefix keeps conductors visually connected
+	 * to a stopped machine.
+	 */
+	@Override public boolean isEnergyAcceptingFrom(TagData aEnergyType, byte aSide, boolean aTheoretical) {return (aTheoretical || !mStopped) && isEnergyInputSide(aSide) && super.isEnergyAcceptingFrom(aEnergyType, aSide, aTheoretical);}
+
+	/**
+	 * The :511 input-mask seam — all six sides for the oven (upstream mEnergyInputs all-1
+	 * shape). Overridable seam for machines with real per-side masks.
+	 */
+	public boolean isEnergyInputSide(byte aSide) {return true;}
+
+	/** Upstream :513 + the oven trimmed field set :133. */
+	@Override public long getEnergySizeInputMin(TagData aEnergyType, byte aSide) {return mInputMin;}
+
+	/** Upstream :514 + the oven trimmed field set :133. */
+	@Override public long getEnergySizeInputRecommended(TagData aEnergyType, byte aSide) {return mInput;}
+
+	/** Upstream :515 + the oven trimmed field set :133 — also the overcharge threshold in {@link #doInject}. */
+	@Override public long getEnergySizeInputMax(TagData aEnergyType, byte aSide) {return mInputMax;}
+
+	/** Upstream :519 (mEnergyTypeAccepted.AS_LIST) — EU only. */
+	@Override public java.util.Collection<TagData> getEnergyTypes(byte aSide) {return TD.Energy.EU.AS_LIST;}
+
+	/** Upstream :92 mStateNew — the alternating-state latch written by doInject :502. The
+	 * :815 alternating consumer is cut (the machine-family ADR keeps the alternating
+	 * half-maintain in the pool) and EU is not an ALL_ALTERNATING member (TD.java:219 =
+	 * (F, KU)), so the latch stays write-only here; kept for the verbatim :501-505 shape. */
+	public boolean mStateNew = false;
 
 	/** Upstream :1027 verbatim (manual stop toggle; the redstone latch is separate). */
 	public boolean setStateOnOff(boolean aOnOff) {
