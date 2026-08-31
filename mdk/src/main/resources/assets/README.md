@@ -112,3 +112,73 @@ were census-verified to exist; only these 12 are consumed.
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
+
+Redstone Emitter cover textures, task p9-redstone-cover-emitter: the 17 PNGs
+under `gt6/textures/block/redstone_emitter/` (`0.png`..`15.png` + `underlay.png`)
+derive from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/covers/redstoneemitter/`
+(the `CoverRedstoneEmitter.java:116-135` texture table `sTextures[0..15]` +
+`sTexturesBase` underlay — the tier digit drawn over the key-pad panel).
+UPSTREAM SOURCES sha256 (provenance):
+
+- `0.png`          `da225602274cd7769c7ce7c74e23d29f84cd6e08d77f3a6cedf5cc8f7efa1cc7`
+- `1.png`          `a407c167ef8365400016a797e34577a8d9c9b6da6e7049d0b7a280307b7c0731`
+- `2.png`          `622d6f2a90b342366a98180f0a4b8a257b4c718908abd2b96deae4f6a9f1a0f1`
+- `3.png`          `d0d30c15da3f7bcddadbd347a99756e3c59c17870ba00238dc9e771290ee2b3f`
+- `4.png`          `ffb243256575a2e80a6a18cf1aa057241959b745ee02ce50b420a03933d94a6a`
+- `5.png`          `751b8ced7db40f0a5b284d1763f4b1d03fb4a559f73277da8c389ca7502bb8bf`
+- `6.png`          `bd47d5cd7bb3ed1fc17d30c4c405716c46246f359a276c56be8d5f0282ff33f5`
+- `7.png`          `945780fdf0e036b853ac844fdd9e2fc17bb5740098a6b48786c6f1389391b9a2`
+- `8.png`          `50577244ea9ba4406d6541eda6e042ec2f284bb1fce673293ae726faf0ab45cc`
+- `9.png`          `e09830ea78842c0b11d1e9f0e9be0fb697859177be7e6ab684363c0fc7ab2b20`
+- `10.png`         `b4025444ec680bc3cbc8f22bd66fb8c4c64294fbbea8ed932c83cbc917bbf23a`
+- `11.png`         `cab01fef8674e5611ec99e5a87b0595ec1e4df8379a10b6c9f4806c30550a592`
+- `12.png`         `1eba237ba18bd29f2800e326118adba65a39dbf0dca9fb037d3fd6bbc96aea85`
+- `13.png`         `4d02bba819e7368ae9b8ef5441fca9d586ddc37f4a9b3b553af2802fa2e923c3`
+- `14.png`         `3ac3ffc4f17a13b6ffdb9ed2c18f845100315854467acdec0c45b7ca772969d0`
+- `15.png`         `797d94f589520541dfb74922a86e1f40b48454a3083880e23a78e620504caa48`
+- `underlay.png`   `5951db3704bfc3346837196c66207e99e58a26e9079abfaa2376fb3e87962c37`
+
+Composition (declared, the p9-render-d-formed-look option-(b) precedent): the
+upstream tier PNGs are 6-8%-opaque digit OVERLAYS — upstream stacks them
+`BlockTextureMulti(sTexturesBase, sTextures[tier])` (:111). The 1.20.1 plate
+renderer stitches ONE sprite per face (`CoverPlateModel.planQuads` —
+`GTCoverRenderSnapshot.sprite(tFace)`), so the 16 shipped tier PNGs are the
+offline source-over composition `underlay + digit` (alpha flattened, RGBA,
+16x16, no rescaling or redrawing of either layer); `underlay.png` itself is
+byte-identical to upstream (sha256 above, re-verified post-borrow). The
+upstream `BACKGROUND_COVER` third layer (covers/base.png) is NOT composed — it
+belongs to the attachment/holder faces only (:112-113), and per the
+CoverTextureSimple fold note the plate background layer stays out of the
+single-sprite plate.
+
+- `0.png`          `da225602274cd7769c7ce7c74e23d29f84cd6e08d77f3a6cedf5cc8f7efa1cc7`
+- `1.png`          `a407c167ef8365400016a797e34577a8d9c9b6da6e7049d0b7a280307b7c0731`
+- `2.png`          `622d6f2a90b342366a98180f0a4b8a257b4c718908abd2b96deae4f6a9f1a0f1`
+- `3.png`          `d0d30c15da3f7bcddadbd347a99756e3c59c17870ba00238dc9e771290ee2b3f`
+- `4.png`          `ffb243256575a2e80a6a18cf1aa057241959b745ee02ce50b420a03933d94a6a`
+- `5.png`          `751b8ced7db40f0a5b284d1763f4b1d03fb4a559f73277da8c389ca7502bb8bf`
+- `6.png`          `bd47d5cd7bb3ed1fc17d30c4c405716c46246f359a276c56be8d5f0282ff33f5`
+- `7.png`          `945780fdf0e036b853ac844fdd9e2fc17bb5740098a6b48786c6f1389391b9a2`
+- `8.png`          `50577244ea9ba4406d6541eda6e042ec2f284bb1fce673293ae726faf0ab45cc`
+- `9.png`          `e09830ea78842c0b11d1e9f0e9be0fb697859177be7e6ab684363c0fc7ab2b20`
+- `10.png`         `b4025444ec680bc3cbc8f22bd66fb8c4c64294fbbea8ed932c83cbc917bbf23a`
+- `11.png`         `cab01fef8674e5611ec99e5a87b0595ec1e4df8379a10b6c9f4806c30550a592`
+- `12.png`         `1eba237ba18bd29f2800e326118adba65a39dbf0dca9fb037d3fd6bbc96aea85`
+- `13.png`         `4d02bba819e7368ae9b8ef5441fca9d586ddc37f4a9b3b553af2802fa2e923c3`
+- `14.png`         `3ac3ffc4f17a13b6ffdb9ed2c18f845100315854467acdec0c45b7ca772969d0`
+- `15.png`         `797d94f589520541dfb74922a86e1f40b48454a3083880e23a78e620504caa48`
+- `underlay.png`   `5951db3704bfc3346837196c66207e99e58a26e9079abfaa2376fb3e87962c37`
+
+Path mapping (declared): upstream `machines/covers/redstoneemitter/<n>` is
+lowercased/underscored to `redstone_emitter/<n>` (1.20.1 `ResourceLocation`
+charset), and the group lands under `textures/block/` — the vanilla block atlas
+ships a cross-namespace `directory("block")` source (vanilla
+`assets/minecraft/atlases/blocks.json`), so the sprite ids
+`gt6:block/redstone_emitter/<tier|underlay>` are auto-stitched with zero extra
+atlas wiring (the same convention the pump-cover sprites use). The card's
+`textures/cover/` sketch would NOT be scanned by any atlas source and
+`GT6Atlases.java` is outside this card's FILES_SCOPE, hence the micro-deviation.
+
+Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
