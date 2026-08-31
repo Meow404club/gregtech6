@@ -20,12 +20,16 @@ import gregtech6.registry.GTBarrels;
  * {@code ICoverableTE} default lets everything through, and the p5 pump machinery rides
  * the frozen {@link TileEntityBase08Barrel} base.
  *
- * <p>Declared deviation: the 64000 L bronze drum never melts. The upstream rows carry no
- * explicit {@code NBT_CAPACITY_HU} and melt through the
- * {@code mMaterial.mMeltingPoint * 1.25} formula (gregapi TileEntityBase08Barrel.java:66),
- * which needs the material melting-point bridge this repo does not ship (pool item) —
- * {@code Long.MAX_VALUE} keeps the drum at the base never-melt default rather than a
- * guessed number.
+ * <p>Melting: the P6-era declared deviation ("MAX_VALUE, never melts — the material
+ * melting-point bridge is a pool item") was revoked by task p7-barrel-high-tier-melt-bridge.
+ * The bridge now ships as {@code GTBarrels.meltingPointK} — the verbatim gregapi
+ * TileEntityBase08Barrel.java:66 else-branch {@code (long)(mMaterial.mMeltingPoint * 1.25)}
+ * — and the ctor below reads the ceiling off the block carrier ({@code meltingPointK()}),
+ * so the 64000 L bronze drum carries Copper's 1357 K dataset point (MT.java:1705
+ * {@code heat(Cu.mMeltingPoint)}) and melts at 1696 K (live-server verified, task p7).
+ * The twelve high-tier drum rows (Loader_MultiTileEntities.java:2159-2170, 128 K to 10 B)
+ * share this BE as multi-mounts through {@code GTBarrels.HIGH_TIER_METAL_DRUMS}; a row
+ * with an explicit {@code NBT_CAPACITY_HU} takes that value verbatim over the formula.
  */
 public class GTBarrelMetalBlockEntity extends TileEntityBase08Barrel {
 

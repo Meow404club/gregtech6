@@ -25,12 +25,14 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  * statically registered {@link GTBasicMachineScreen}.
  *
  * <p>Slot geometry is derived from the RecipeMap constants (the upstream switch :51-270
- * shape): the input slot (content 0) at (53,25) — the mInputItemsCount==1 case :55 —, then
+ * shape): the input slot (content 0) at (53,25) — the mInputItemsCount==1 case :55, with
+ * upstream's y = mInputFluidCount&gt;6?7:25 conditional pinned to the 25 arm here (every
+ * recipe map this menu serves is fluid-less, so the >6 arm never fires) —, then
  * mOutputItemsCount output slots in the upstream output-grid layout (:169-270, the
  * mOutputFluidCount==0 arms): 1-3 = one row from x 107 at y 25; 4-6 = two rows at y 16/34;
  * 7+ = 3 columns x 4 rows (x 107/125/143, y 7/25/43/61). Shredder/Crusher land on the 12
  * case (the default branch :247-269), the Lathe on the 2 case (:178-181). The special slot
- * (:49) and the fluid displays (:274-275) are out — the port slot shape has neither. All
+ * (:49) and the fluid displays (:267-268) are out — the port slot shape has neither. All
  * outputs are setCanPut(F) → {@link OutputSlot}. The player inventory binds at the standard
  * 176x166 machine-panel offset 84.
  *
@@ -104,7 +106,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 
 		GTItemStackHandler tInventory = aHost.getInventory();
 		// upstream ContainerCommonBasicMachine.addSlots :55/:162 — 1 input + N outputs, all outputs setCanPut(F)
-		addSlot(new SlotItemHandler(tInventory, TileEntityBasicMachine.SLOT_INPUT, 53, 25)); // :55 (mInputItemsCount == 1)
+		addSlot(new SlotItemHandler(tInventory, TileEntityBasicMachine.SLOT_INPUT, 53, 25)); // :55 (mInputItemsCount == 1; upstream y = mInputFluidCount>6?7:25, pinned to the 25 arm here)
 		int tOutputs = aHost.getOutputSlotCount();
 		for (int i = 0; i < tOutputs; i++) {
 			int[] tPos = outputGridPos(i, tOutputs);

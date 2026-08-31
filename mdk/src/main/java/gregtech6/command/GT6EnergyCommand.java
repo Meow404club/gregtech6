@@ -74,7 +74,7 @@ public final class GT6EnergyCommand {
 
 	private static int stat(CommandSourceStack aSource, BlockPos aPos) {
 		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTEnergySourceBlockEntity aEnergySource)) {
-			aSource.sendFailure(Component.literal("No GTEnergySourceBlockEntity at " + aPos.toShortString()));
+			aSource.sendFailure(Component.literal("STAT FAILED: no energy source BE at " + aPos.toShortString()));
 			return 0;
 		}
 		String tLine = "GT6 energy source stat at " + aPos.toShortString() + ": voltage " + aEnergySource.mVoltage
@@ -110,7 +110,7 @@ public final class GT6EnergyCommand {
 			return 0;
 		}
 		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTEnergySourceBlockEntity tSource)) {
-			aSource.sendFailure(Component.literal("No GTEnergySourceBlockEntity at " + aPos.toShortString()));
+			aSource.sendFailure(Component.literal("MODE FAILED: no energy source BE at " + aPos.toShortString()));
 			return 0;
 		}
 		tSource.setEmitting(tOn);
@@ -122,7 +122,7 @@ public final class GT6EnergyCommand {
 
 	private static int volt(CommandSourceStack aSource, BlockPos aPos, long aVoltage) {
 		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTEnergySourceBlockEntity tSource)) {
-			aSource.sendFailure(Component.literal("No GTEnergySourceBlockEntity at " + aPos.toShortString()));
+			aSource.sendFailure(Component.literal("VOLT FAILED: no energy source BE at " + aPos.toShortString()));
 			return 0;
 		}
 		tSource.setVoltage(aVoltage);
@@ -134,7 +134,7 @@ public final class GT6EnergyCommand {
 
 	private static int amp(CommandSourceStack aSource, BlockPos aPos, long aAmperage) {
 		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTEnergySourceBlockEntity tSource)) {
-			aSource.sendFailure(Component.literal("No GTEnergySourceBlockEntity at " + aPos.toShortString()));
+			aSource.sendFailure(Component.literal("AMP FAILED: no energy source BE at " + aPos.toShortString()));
 			return 0;
 		}
 		tSource.setAmperage(aAmperage);
