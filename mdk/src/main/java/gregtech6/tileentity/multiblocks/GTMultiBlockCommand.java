@@ -8,14 +8,19 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 
@@ -52,6 +57,11 @@ import gregtech6.registry.GTMultiBlocks;
  * <li>{@code menu <pos>} — the GUI geometry/progress report (task p8-cokeoven-gui-menu ⑨):
  *     slot shapes, the player offset and the three-state progress, asserted through the
  *     static Host faces — no Menu instance (RCON has no Player);</li>
+ * <li>{@code fluid <pos> [side] drain <mB>|fill <mB>} + {@code fluid <pos> stat} — the
+ *     fluid-capability probe face (task p8-cokeoven-fluid-capability ⑥): drain walks the
+ *     capability of the queried face (no side argument = the side-less query) and reports
+ *     the drawn amount, fill is the always-zero acceptance probe (只出不进), stat reports
+ *     the tank content in the machine-report {@code tank=[...]} shape;</li>
  * <li>{@code check <pos>} additionally reports the processing state (progress/energy/
  *     ignited/tank/slots) since p6.</li>
  * </ul>
@@ -129,9 +139,32 @@ public final class GTMultiBlockCommand {
 								BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))
 			.then(Commands.literal("menu")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
-					.executes(aContext -> menu(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))));
+					.executes(aContext -> menu(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+			.then(Commands.literal("fluid")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.literal("stat")
+						.executes(aContext -> fluidStat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))
+					.then(Commands.literal("drain")
+						.then(Commands.argument("mB", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+							.executes(aContext -> fluidDrain(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), null,
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB")))))
+					.then(Commands.literal("fill")
+						.then(Commands.argument("mB", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+							.executes(aContext -> fluidFill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), null,
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB")))))
+					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
+						.then(Commands.literal("drain")
+							.then(Commands.argument("mB", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+								.executes(aContext -> fluidDrain(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+										parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "side")),
+										com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB")))))
+						.then(Commands.literal("fill")
+							.then(Commands.argument("mB", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+								.executes(aContext -> fluidFill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+										parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "side")),
+										com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB"))))))));
 		aEvent.getDispatcher().register(tMulti);
-		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|check|tick|input|ignite|menu)");
+		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|check|tick|input|ignite|menu|fluid)");
 	}
 
 	private static TileEntityCokeOven ovenAt(CommandSourceStack aSource, BlockPos aPos) {
@@ -438,5 +471,93 @@ public final class GTMultiBlockCommand {
 		aSource.sendSuccess(() -> Component.literal(tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the fluid-capability probe face (task p8-cokeoven-fluid-capability ⑥)
+	// ---------------------------------------------------------------------------
+
+	/** {@code fluid <pos> stat} — the tank content in the machine-report {@code tank=[...]} shape, plus the side-less capability view. */
+	private static int fluidStat(CommandSourceStack aSource, BlockPos aPos) {
+		TileEntityCokeOven tOven = ovenAt(aSource, aPos);
+		if (tOven == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + aPos.toShortString()));
+			return 0;
+		}
+		IFluidHandler tHandler = tOven.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, null).orElse(null);
+		String tTank = tOven.mTanksOutput[0].isEmpty() ? "-" : tOven.mTanksOutput[0].amount() + "mB "
+				+ net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(tOven.mTanksOutput[0].fluid().getFluid()); // the machineReport tank shape
+		String tLine = String.format("GT6 coke oven fluid stat at %s: tank=[%s] cap_tanks=%d capacity=%d",
+				tOven.getBlockPos().toShortString(), tTank, tHandler == null ? 0 : tHandler.getTanks(), tHandler == null ? 0 : tHandler.getTankCapacity(0));
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * {@code fluid <pos> [side] drain <mB>} — draws through the capability of the queried
+	 * face (no side argument = the side-less query); the UP face reports 0 (REJECTED), the
+	 * five other faces pass (the rotated mask 61). A 0-draw is an assertable outcome, not a
+	 * command error (the GTBarrelCommand.draw precedent).
+	 */
+	private static int fluidDrain(CommandSourceStack aSource, BlockPos aPos, @Nullable Direction aSide, int aAmount) {
+		TileEntityCokeOven tOven = ovenAt(aSource, aPos);
+		if (tOven == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + aPos.toShortString()));
+			return 0;
+		}
+		IFluidHandler tHandler = tOven.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, aSide).orElse(null);
+		if (tHandler == null) {
+			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the coke oven exposes no FLUID_HANDLER on "
+					+ (aSide == null ? "the side-less query" : aSide)));
+			return 0;
+		}
+		FluidStack tDrained = tHandler.drain(aAmount, FluidAction.EXECUTE);
+		int tGot = tDrained == null ? 0 : tDrained.getAmount();
+		String tFluid = tDrained == null || tDrained.isEmpty() ? "nothing" : net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(tDrained.getFluid()).toString();
+		String tLine = String.format("GT6 coke oven fluid drain at %s face %s: drained %d/%d mB of %s%s, tank holds %d mB",
+				tOven.getBlockPos().toShortString(), aSide == null ? "any" : aSide.getName(), tGot, aAmount, tFluid,
+				tGot == 0 ? " (REJECTED)" : " (ACCEPTED)", tOven.mTanksOutput[0].amount());
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * {@code fluid <pos> [side] fill <mB>} — the acceptance probe: the wrapper refuses every
+	 * face and fluid (只出不进, the upstream getFluidTankFillable2 :566 mask-0 leg), so the
+	 * accepted amount is always 0. The probe fluid is the tank's own content when present
+	 * (the honest "would it take more of itself" offer), else vanilla water.
+	 */
+	private static int fluidFill(CommandSourceStack aSource, BlockPos aPos, @Nullable Direction aSide, int aAmount) {
+		TileEntityCokeOven tOven = ovenAt(aSource, aPos);
+		if (tOven == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + aPos.toShortString()));
+			return 0;
+		}
+		IFluidHandler tHandler = tOven.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, aSide).orElse(null);
+		if (tHandler == null) {
+			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the coke oven exposes no FLUID_HANDLER on "
+					+ (aSide == null ? "the side-less query" : aSide)));
+			return 0;
+		}
+		FluidStack tProbe = !tOven.mTanksOutput[0].isEmpty() && tOven.mTanksOutput[0].fluid() != null
+				? new FluidStack(tOven.mTanksOutput[0].fluid().getFluid(), aAmount)
+				: new FluidStack(Fluids.WATER, aAmount);
+		int tAccepted = tHandler.fill(tProbe, FluidAction.EXECUTE);
+		String tLine = String.format("GT6 coke oven fluid fill at %s face %s: accepted %d/%d mB of %s%s, tank holds %d mB",
+				tOven.getBlockPos().toShortString(), aSide == null ? "any" : aSide.getName(), tAccepted, aAmount,
+				net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(tProbe.getFluid()).toString(),
+				tAccepted == 0 ? " (REJECTED)" : " (ACCEPTED)", tOven.mTanksOutput[0].amount());
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** {@code down|up|north|south|west|east} → Direction (the GTBarrelCommand parse, mirrored so the driver stays self-contained). */
+	private static Direction parseSide(String aWord) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		Direction tSide = Direction.byName(aWord.toLowerCase());
+		if (tSide == null) throw new com.mojang.brigadier.exceptions.SimpleCommandExceptionType(Component.literal("Unknown side: " + aWord)).create();
+		return tSide;
 	}
 }
