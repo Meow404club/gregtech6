@@ -167,6 +167,7 @@ public final class GT6RecipesOreChain {
 			}
 		}
 		LOGGER.info("GT6 Crusher ore-chain recipes poured: {} loaded, {} skipped (unresolvable prefix/material items — blockRaw rows until the prefixblock card, = upstream mat() null drops)", tPoured, tSkipped);
+		sLoaded = true;
 	}
 
 	/**
