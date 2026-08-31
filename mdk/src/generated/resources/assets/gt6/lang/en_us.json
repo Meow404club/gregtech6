@@ -2277,6 +2277,7 @@
   "gt6.tagprefix.wire_gt15": "15x %s Wire",
   "gt6.tagprefix.wire_gt16": "16x %s Wire",
   "gt6.tagprefix.wood": "%s",
+  "item.gt6.crowbar": "Crowbar",
   "itemGroup.gt6.arrow_gt_plastic": "Light Arrows",
   "itemGroup.gt6.arrow_gt_wood": "Regular Arrows",
   "itemGroup.gt6.billet": "Billets",

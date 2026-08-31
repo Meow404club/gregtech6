@@ -46,6 +46,11 @@ public final class GT6ItemModels extends ItemModelProvider {
         // out-facing plate art; the direction sprites live in the block atlas via GT6Atlases
         withExistingParent("cover_pump", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/cover_pump_out"));
+        // the formal crowbar item (task p9-tool-crowbar): handheld parent = the vanilla
+        // tool shape (the GTCEu tools/crowbar.json precedent), texture = the upstream
+        // CROWBAR.png borrow (assets/README.md attribution)
+        withExistingParent("crowbar", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/crowbar"));
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

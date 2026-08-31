@@ -57,6 +57,15 @@ public final class GT6EnUs extends LanguageProvider {
         addMultiBlocks();
         addBarrels();
         addEnergySource();
+        addTools();
+    }
+
+    /**
+     * Tool keys (task p9-tool-crowbar spec ④): the crowbar display name — the upstream
+     * tool family name ("Crowbar", the GT_Tool_Crowbar registration row wording).
+     */
+    private void addTools() {
+        add("item.gt6.crowbar", "Crowbar");
     }
 
     /**

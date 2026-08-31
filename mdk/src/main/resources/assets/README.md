@@ -17,6 +17,13 @@ Machine GUI backgrounds borrowed from **GregTech 6**
 - `gt6/textures/gui/machines/cokeoven.png` — Coke Oven GUI background
   (upstream `CokeOven.png`, task p8-cokeoven-gui-menu; sha256
   `a582c690865eb98115a639432731999d5cf13d2163ae8f532b2de10789f77572`)
+- `gt6/textures/item/crowbar.png` — crowbar item texture (upstream
+  `textures/items/iconsets/CROWBAR.png`, task p9-tool-crowbar; sha256
+  `4190549e7662b5fe4657face4097818eb1a4745f16b1740de11e619f8f046894`).
+  Upstream tints this grayscale icon with the tool material colour
+  (GT_Tool_Crowbar.getRGBa → MT.Steel.mRGBaSolid); the port renders it
+  un-tinted at the single steel tier — declared deviation, a runtime tint
+  rides the tool-family pool card.
 
 Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
 base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from
