@@ -21,7 +21,6 @@ package gregtech6.recipes;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -60,18 +59,24 @@ import gregtech6.registry.GTMaterialItems;
  * <p><b>Fluid amounts</b>: upstream {@code MT.Creosote.liquid(U2, F)} yields Forge mB
  * through OreDictMaterial.liquid (:1307-1311) — {@code units(aMaterialAmount, mLiquidUnit,
  * mLiquid.amount, F)} with the default {@code mLiquidUnit = U} (:313) and a 1000 mB
- * per-unit fluid stack — so U2 → 500, U → 1000, 3*U4 → 750, 3*U2 → 1500 mB. The table
- * carries those resolved mB values (the port's FluidTankGT amounts are mB, the 16000 L
- * barrel precedent).
+ * per-unit fluid stack — so U2 → 500, U → 1000, 3*U4 → 750, 3*U2 → 1500 mB. The oil-shale
+ * rows carry {@code MT.Oil.liquid(U4/U2, F)} → 250/500 mB. The table carries those resolved
+ * mB values (the port's FluidTankGT amounts are mB, the 16000 L barrel precedent).
+ *
+ * <p><b>Fluid identity</b> (task p7-cokeoven-backfill, spec ③): the row's fluid field is the
+ * gt6 fluid id path (creosote/oil) instead of a hardcoded creosote amount; each row resolves
+ * its fluid through {@link #sFluidResolver} at pour time, so an unregistered fluid skips its
+ * rows exactly like the upstream absent-fluid behaviour.
  *
  * <p><b>Skipped upstream rows (the pool, not silent — asserted by the offline walk)</b>:
  * the block-family six (:787-789 Coal / :803-805 Lignite — blockRaw/blockIngot/blockGem are
- * not item-path prefixes, GTMaterialItems.itemPathPrefixes) and the oil-shale nine
- * (:807-815 — outputs MT.Oil, gt6:oil is unregistered). Plus the Woods/OreDict/Crops/Tools
- * dynamic surface (:176-180/:197-201, OreDict:205, Crops:76, Tools:418) which the
- * coordinator amendment replaces with the tag-driven {@link GT6CokeOvenTagListener}
- * (one recipe per #minecraft:logs item; beam/bamboo/wood-pellet have no tagged item and
- * stay pooled).
+ * not item-path prefixes, GTMaterialItems.itemPathPrefixes) and the oil-shale blockDust row
+ * (:815 — blockDust is likewise not an item-path prefix, the PrefixBlock pool). The other
+ * eight oil-shale rows (:807-814) are BACKFILLED by p7 (gt6:oil registered). Plus the
+ * Woods/OreDict/Crops/Tools dynamic surface (:176-180/:197-201, OreDict:205, Crops:76,
+ * Tools:418) which the coordinator amendment replaces with the tag-driven
+ * {@link GT6CokeOvenTagListener} (one recipe per #minecraft:logs item; beam/bamboo/wood-pellet
+ * have no tagged item and stay pooled).
  *
  * <p><b>Load timing</b> (ADR ruling ②): a self-contained MOD-bus listener pouring at
  * FMLCommonSetup.enqueueWork — the ConstructMod-time init (GTMachines.onModConstruct
@@ -83,27 +88,31 @@ public final class GT6RecipesCokeOven {
 
 	private static final Logger LOGGER = LogUtils.getLogger();
 
+	/** The gt6 fluid id paths the table rows output (the {@code MT.X.liquid(..)} upstream slot). */
+	public static final String FLUID_CREOSOTE = "creosote", FLUID_OIL = "oil";
+
 	/** One output tuple of a table row (the upstream {@code prefix.mat(material, n)} call). */
 	public record Output(OreDictPrefix prefix, OreDictMaterial material, int count) {}
 
 	/**
 	 * One transcribed upstream row: input (prefix, material, count), duration (ticks), the
-	 * creosote output in mB ({@code <= 0} = none — the upstream NF slot), and the outputs.
-	 * {@code note} carries the upstream line number for the audit walk.
+	 * fluid output as a gt6 fluid id path + amount in mB ({@code <= 0} = none — the upstream
+	 * NF slot), and the outputs. {@code note} carries the upstream line number for the audit
+	 * walk.
 	 */
 	public record StaticRow(String note, OreDictPrefix inPrefix, OreDictMaterial inMaterial, int inCount,
-			long duration, long creosote, Output... outputs) {}
+			long duration, String fluid, long fluidMB, Output... outputs) {}
 
 	/** The resolution seam: the live registry lookups by default, fixtures injected offline. */
 	static Function<Output, Item> sOutputItemResolver = GT6RecipesCokeOven::resolveItem;
 	/** Same seam for the input side. */
 	static Function<StaticRow, Item> sInputItemResolver = GT6RecipesCokeOven::resolveInput;
-	/** The creosote fluid seam (null = unregistered → every creosote row skips, the upstream absent-fluid behaviour). */
-	static Supplier<Fluid> sCreosoteResolver = () -> GTFluids.CREOSOTE.get();
+	/** The fluid seam (null = unregistered → the row skips, the upstream absent-fluid behaviour). */
+	static Function<String, Fluid> sFluidResolver = GT6RecipesCokeOven::resolveFluid;
 
 	/**
-	 * The 24 transcribed material-universe rows (Loader_Recipes_Other.java:775-786 Coal,
-	 * :791-802 Lignite), order mirroring the upstream file order.
+	 * The 32 transcribed material-universe rows (Loader_Recipes_Other.java:775-786 Coal,
+	 * :791-802 Lignite, :807-814 Oilshale), order mirroring the upstream file order.
 	 *
 	 * <p><b>Lazily built</b>: {@code TABLE} used to be a static field, but the
 	 * {@code @EventBusSubscriber} annotation scan class-loads this class at MOD CONSTRUCTION —
@@ -119,31 +128,40 @@ public final class GT6RecipesCokeOven {
 		List<StaticRow> tTable = sTable;
 		if (tTable == null) sTable = tTable = List.of(
 		// Coal (Loader_Recipes_Other.java:775-786)
-		new StaticRow(":775", OP.gem                  , MT.Coal, 1, 3600,  500, new Output(OP.gem   , MT.CoalCoke, 1)),
-		new StaticRow(":776", OP.nugget               , MT.Coal, 9, 3600,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
-		new StaticRow(":777", OP.chunkGt              , MT.Coal, 4, 3600,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
-		new StaticRow(":778", OP.billet               , MT.Coal, 3, 7200, 1000, new Output(OP.ingot , MT.CoalCoke, 2)),
-		new StaticRow(":779", OP.ingot                , MT.Coal, 1, 3600,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
-		new StaticRow(":780", OP.oreRaw               , MT.Coal, 1, 7200, 1000, new Output(OP.ingot , MT.CoalCoke, 2)),
-		new StaticRow(":781", OP.crushed              , MT.Coal, 1, 3600,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
-		new StaticRow(":782", OP.crushedTiny          , MT.Coal, 9, 3600,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
-		new StaticRow(":783", OP.crushedPurified      , MT.Coal, 1, 3600,  500, chunkOut(OP.chunkGt, MT.CoalCoke, 5)),
-		new StaticRow(":784", OP.crushedPurifiedTiny  , MT.Coal, 9, 3600,  500, chunkOut(OP.chunkGt, MT.CoalCoke, 5)),
-		new StaticRow(":785", OP.crushedCentrifuged   , MT.Coal, 1, 3600,  500, chunkOut(OP.chunkGt, MT.CoalCoke, 6)),
-		new StaticRow(":786", OP.crushedCentrifugedTiny, MT.Coal, 9, 3600, 500, chunkOut(OP.chunkGt, MT.CoalCoke, 6)),
+		new StaticRow(":775", OP.gem                  , MT.Coal, 1, 3600, FLUID_CREOSOTE,  500, new Output(OP.gem   , MT.CoalCoke, 1)),
+		new StaticRow(":776", OP.nugget               , MT.Coal, 9, 3600, FLUID_CREOSOTE,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
+		new StaticRow(":777", OP.chunkGt              , MT.Coal, 4, 3600, FLUID_CREOSOTE,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
+		new StaticRow(":778", OP.billet               , MT.Coal, 3, 7200, FLUID_CREOSOTE, 1000, new Output(OP.ingot , MT.CoalCoke, 2)),
+		new StaticRow(":779", OP.ingot                , MT.Coal, 1, 3600, FLUID_CREOSOTE,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
+		new StaticRow(":780", OP.oreRaw               , MT.Coal, 1, 7200, FLUID_CREOSOTE, 1000, new Output(OP.ingot , MT.CoalCoke, 2)),
+		new StaticRow(":781", OP.crushed              , MT.Coal, 1, 3600, FLUID_CREOSOTE,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
+		new StaticRow(":782", OP.crushedTiny          , MT.Coal, 9, 3600, FLUID_CREOSOTE,  500, new Output(OP.ingot , MT.CoalCoke, 1)),
+		new StaticRow(":783", OP.crushedPurified      , MT.Coal, 1, 3600, FLUID_CREOSOTE,  500, chunkOut(OP.chunkGt, MT.CoalCoke, 5)),
+		new StaticRow(":784", OP.crushedPurifiedTiny  , MT.Coal, 9, 3600, FLUID_CREOSOTE,  500, chunkOut(OP.chunkGt, MT.CoalCoke, 5)),
+		new StaticRow(":785", OP.crushedCentrifuged   , MT.Coal, 1, 3600, FLUID_CREOSOTE,  500, chunkOut(OP.chunkGt, MT.CoalCoke, 6)),
+		new StaticRow(":786", OP.crushedCentrifugedTiny, MT.Coal, 9, 3600, FLUID_CREOSOTE, 500, chunkOut(OP.chunkGt, MT.CoalCoke, 6)),
 		// Lignite (Loader_Recipes_Other.java:791-802)
-		new StaticRow(":791", OP.gem                  , MT.Lignite, 1, 3600,  750, new Output(OP.gem   , MT.LigniteCoke, 1)),
-		new StaticRow(":792", OP.nugget               , MT.Lignite, 9, 3600,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
-		new StaticRow(":793", OP.chunkGt              , MT.Lignite, 4, 3600,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
-		new StaticRow(":794", OP.billet               , MT.Lignite, 3, 7200, 1500, new Output(OP.ingot , MT.LigniteCoke, 2)),
-		new StaticRow(":795", OP.ingot                , MT.Lignite, 1, 3600,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
-		new StaticRow(":796", OP.oreRaw               , MT.Lignite, 1, 7200, 1500, new Output(OP.ingot , MT.LigniteCoke, 2)),
-		new StaticRow(":797", OP.crushed              , MT.Lignite, 1, 3600,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
-		new StaticRow(":798", OP.crushedTiny          , MT.Lignite, 9, 3600,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
-		new StaticRow(":799", OP.crushedPurified      , MT.Lignite, 1, 3600,  750, chunkOut(OP.chunkGt, MT.LigniteCoke, 5)),
-		new StaticRow(":800", OP.crushedPurifiedTiny  , MT.Lignite, 9, 3600,  750, chunkOut(OP.chunkGt, MT.LigniteCoke, 5)),
-		new StaticRow(":801", OP.crushedCentrifuged   , MT.Lignite, 1, 3600,  750, chunkOut(OP.chunkGt, MT.LigniteCoke, 6)),
-		new StaticRow(":802", OP.crushedCentrifugedTiny, MT.Lignite, 9, 3600, 750, chunkOut(OP.chunkGt, MT.LigniteCoke, 6)));
+		new StaticRow(":791", OP.gem                  , MT.Lignite, 1, 3600, FLUID_CREOSOTE,  750, new Output(OP.gem   , MT.LigniteCoke, 1)),
+		new StaticRow(":792", OP.nugget               , MT.Lignite, 9, 3600, FLUID_CREOSOTE,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
+		new StaticRow(":793", OP.chunkGt              , MT.Lignite, 4, 3600, FLUID_CREOSOTE,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
+		new StaticRow(":794", OP.billet               , MT.Lignite, 3, 7200, FLUID_CREOSOTE, 1500, new Output(OP.ingot , MT.LigniteCoke, 2)),
+		new StaticRow(":795", OP.ingot                , MT.Lignite, 1, 3600, FLUID_CREOSOTE,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
+		new StaticRow(":796", OP.oreRaw               , MT.Lignite, 1, 7200, FLUID_CREOSOTE, 1500, new Output(OP.ingot , MT.LigniteCoke, 2)),
+		new StaticRow(":797", OP.crushed              , MT.Lignite, 1, 3600, FLUID_CREOSOTE,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
+		new StaticRow(":798", OP.crushedTiny          , MT.Lignite, 9, 3600, FLUID_CREOSOTE,  750, new Output(OP.ingot , MT.LigniteCoke, 1)),
+		new StaticRow(":799", OP.crushedPurified      , MT.Lignite, 1, 3600, FLUID_CREOSOTE,  750, chunkOut(OP.chunkGt, MT.LigniteCoke, 5)),
+		new StaticRow(":800", OP.crushedPurifiedTiny  , MT.Lignite, 9, 3600, FLUID_CREOSOTE,  750, chunkOut(OP.chunkGt, MT.LigniteCoke, 5)),
+		new StaticRow(":801", OP.crushedCentrifuged   , MT.Lignite, 1, 3600, FLUID_CREOSOTE,  750, chunkOut(OP.chunkGt, MT.LigniteCoke, 6)),
+		new StaticRow(":802", OP.crushedCentrifugedTiny, MT.Lignite, 9, 3600, FLUID_CREOSOTE, 750, chunkOut(OP.chunkGt, MT.LigniteCoke, 6)),
+		// Oilshale (Loader_Recipes_Other.java:807-814 — backfilled by p7; the :815 blockDust row stays pooled)
+		new StaticRow(":807", OP.dust                  , MT.Oilshale, 1, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
+		new StaticRow(":808", OP.oreRaw                , MT.Oilshale, 1, 7200, FLUID_OIL, 500, new Output(OP.dustTiny, MT.Asphalt, 2)),
+		new StaticRow(":809", OP.crushed               , MT.Oilshale, 1, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
+		new StaticRow(":810", OP.crushedTiny           , MT.Oilshale, 9, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
+		new StaticRow(":811", OP.crushedPurified       , MT.Oilshale, 1, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
+		new StaticRow(":812", OP.crushedPurifiedTiny   , MT.Oilshale, 9, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
+		new StaticRow(":813", OP.crushedCentrifuged    , MT.Oilshale, 1, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
+		new StaticRow(":814", OP.crushedCentrifugedTiny, MT.Oilshale, 9, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)));
 		return tTable;
 	}
 
@@ -156,12 +174,12 @@ public final class GT6RecipesCokeOven {
 
 	/**
 	 * The skipped upstream surface, kept as DATA for the audit walk (see class doc):
-	 * the block-family six, the oil-shale nine, and the dynamic log/beam family now owned by
-	 * the tag listener (beam/bamboo/wood-pellet have no tagged counterpart → pooled).
+	 * the block-family six, the oil-shale blockDust row, and the dynamic log/beam family now
+	 * owned by the tag listener (beam/bamboo/wood-pellet have no tagged counterpart → pooled).
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
 		"Loader_Recipes_Other.java:787-789/:803-805 — blockRaw/blockIngot/blockGem x Coal/Lignite (block prefixes are not item-path; p6 pool)",
-		"Loader_Recipes_Other.java:807-815 — Oilshale nine rows (output fluid gt6:oil unregistered; p6 pool)",
+		"Loader_Recipes_Other.java:815 — Oilshale blockDust row (blockDust is not an item-path prefix, the PrefixBlock pool; p7 ruling)",
 		"Loader_Recipes_Woods.java:197-201 — beam family (no beam item; p6 pool)",
 		"Loader_Recipes_Woods.java:165-180 log family — replaced by the #minecraft:logs tag listener (coordinator amendment 2026-08-30)",
 		"Loader_Recipes_Other.java:205 OreDict listener — no dynamic oredict surface; static pour only",
@@ -207,10 +225,10 @@ public final class GT6RecipesCokeOven {
 		}
 
 		FluidStack[] tFluidOutputs;
-		if (aRow.creosote() > 0) {
-			Fluid tCreosote = sCreosoteResolver.get();
-			if (tCreosote == null) return null;
-			tFluidOutputs = new FluidStack[] {new FluidStack(tCreosote, (int)aRow.creosote())};
+		if (aRow.fluidMB() > 0) {
+			Fluid tFluid = sFluidResolver.apply(aRow.fluid());
+			if (tFluid == null) return null;
+			tFluidOutputs = new FluidStack[] {new FluidStack(tFluid, (int)aRow.fluidMB())};
 		} else {
 			tFluidOutputs = new FluidStack[0];
 		}
@@ -231,6 +249,17 @@ public final class GT6RecipesCokeOven {
 	private static Item resolveInput(StaticRow aRow) {
 		RegistryObject<Item> tHandle = GTMaterialItems.get(aRow.inPrefix(), aRow.inMaterial());
 		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The live fluid lookup by gt6 id path — null for an unknown path (the row skips, the
+	 * upstream absent-fluid semantics) and while the DeferredRegister has not fired yet.
+	 */
+	@Nullable
+	private static Fluid resolveFluid(String aFluidId) {
+		if (FLUID_CREOSOTE.equals(aFluidId)) return GTFluids.CREOSOTE.get();
+		if (FLUID_OIL.equals(aFluidId)) return GTFluids.OIL.get();
+		return null;
 	}
 
 	/** Test seam: clears the poured flag and the captured table so a fresh generation can re-pour. */
