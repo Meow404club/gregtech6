@@ -1,5 +1,10 @@
 package gregtech6.registry;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -7,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -30,10 +36,19 @@ import gregtech6.block.wire.GTWireBlockItem;
  * blocks here — safe because the vanilla registry order fires the Block registration
  * event before the BlockEntityType one, across DeferredRegisters (GTBlockEntities doc).
  *
- * <p>The two variants follow the task card (spec ⑤): 1x = 32 EU / 1 A / 1 loss (the
- * upstream field defaults, MultiTileEntityWireElectric.java:64) and 2x = 32 EU / 2 A /
- * 1 loss (the upstream "2x" bandwidth doubling :73). The 16-wire 5-cable material
- * spectrum (addElectricWires :71-109) is a pool item.
+ * <p>The p7 pair (spec ⑤ of that card) stays: 1x = 32 EU / 1 A / 1 loss (the upstream field
+ * defaults, MultiTileEntityWireElectric.java:64) and 2x = 32 EU / 2 A / 1 loss (the upstream
+ * "2x" bandwidth doubling :73) — they are the material-less legacy anchors the P8 RCON
+ * chain and the gen→wire→oven e2e regression drive on, untouched.
+ *
+ * <p>Task p9-wire-family-w1 (spec ①/②) adds the FULL spectrum over the {@link GTWireSpecs}
+ * table — the direct addElectricWires :71-109 / Loader_MultiTileEntities.java:1914-1950
+ * transcription: 620 per-pair Block+BlockItem registrations (16 bare wires per material,
+ * +5 insulated cables on the 28 cable rows; 620 = 28×21 + 2×16). One static loop registers
+ * every {@link GTWireSpecs.Variant}; the shared BET's valid-block list is
+ * {@link #wireBlockArray()} (GTBlockEntities). Material dereference happens inside the
+ * registration suppliers (post MT.init, the GTBarrels lazy-row discipline); the registry
+ * names come from the pre-init {@link GTWireSpecs.Row#token} field.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTWires {
@@ -57,6 +72,48 @@ public final class GTWires {
 
 	public static final RegistryObject<Item> WIRE_ELECTRIC_2X_ITEM = ITEMS.register("wire_electric_2x",
 			() -> new GTWireBlockItem(WIRE_ELECTRIC_2X.get(), new Item.Properties()));
+
+	// -------------------------------------------------------------------------
+	// the p9-wire-family-w1 spectrum: 620 per-(row, form, size) pairs over GTWireSpecs
+	// -------------------------------------------------------------------------
+
+	/** The family blocks, GTWireSpecs order (upstream Loader row order, 16 wires then 5 cables per row). */
+	public static final List<RegistryObject<GTWireBlock>> FAMILY_BLOCKS = new ArrayList<>();
+
+	/** The family BlockItems, same order (stacksTo = the upstream literal 64/n ladder). */
+	public static final List<RegistryObject<Item>> FAMILY_ITEMS = new ArrayList<>();
+
+	/** The selector index: registry path -> family block (GTWireCommand / tests). */
+	public static final Map<String, RegistryObject<GTWireBlock>> FAMILY_BY_NAME = new LinkedHashMap<>();
+
+	static {
+		for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) {
+			String tName = GTWireSpecs.registryName(tVariant);
+			if (FAMILY_BY_NAME.containsKey(tName)) throw new IllegalStateException("gt6 wire family: duplicate registry name " + tName);
+			RegistryObject<GTWireBlock> tBlock = BLOCKS.register(tName,
+					() -> new GTWireBlock(tVariant.voltage(), tVariant.amperage(), tVariant.loss(),
+							tVariant.row().material().get(), tVariant.size(), tVariant.insulated(),
+							tVariant.diameter(), BlockBehaviour.Properties.of()
+									.strength(1.0F, 2.0F).sound(SoundType.COPPER))); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0
+			RegistryObject<Item> tItem = ITEMS.register(tName,
+					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack())));
+			FAMILY_BLOCKS.add(tBlock);
+			FAMILY_ITEMS.add(tItem);
+			FAMILY_BY_NAME.put(tName, tBlock);
+		}
+	}
+
+	/**
+	 * Every electric-wire block this registry owns (the p7 legacy pair + the 620 family) —
+	 * the shared BET's valid-block list (GTBlockEntities.WIRE_ELECTRIC_BE, one line per the card).
+	 */
+	public static Block[] wireBlockArray() {
+		Block[] rBlocks = new Block[2 + FAMILY_BLOCKS.size()];
+		rBlocks[0] = WIRE_ELECTRIC_1X.get();
+		rBlocks[1] = WIRE_ELECTRIC_2X.get();
+		for (int i = 0; i < FAMILY_BLOCKS.size(); i++) rBlocks[2 + i] = FAMILY_BLOCKS.get(i).get();
+		return rBlocks;
+	}
 
 	/**
 	 * The "Electric Wires" category tab — the upstream MTE-registry category

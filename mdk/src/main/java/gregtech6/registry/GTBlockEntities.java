@@ -89,16 +89,18 @@ public final class GTBlockEntities {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Shared electric-wire BET over both variants (task p7-d2-cable spec ⑤ — the BET type
+	 * Shared electric-wire BET over the whole family (task p7-d2-cable spec ⑤ — the BET type
 	 * row lives here per the card, the blocks/items in GTWires; ADR-P3-1 one-type-many-
 	 * blocks). The supplier resolves the GTWires block RegistryObjects — safe because the
 	 * vanilla registry order fires the Block event before the BlockEntityType event across
-	 * DeferredRegisters. Registry path "wire_electric" mirrors
+	 * DeferredRegisters. Since task p9-wire-family-w1 the valid-block list is the ONE-LINE
+	 * family reference {@link GTWires#wireBlockArray()} (the p7 legacy pair + the 620
+	 * GTWireSpecs variants). Registry path "wire_electric" mirrors
 	 * GTWireBlockEntity#getTileEntityName like every other row.
 	 */
 	public static final RegistryObject<BlockEntityType<GTWireBlockEntity>> WIRE_ELECTRIC_BE =
 			BLOCK_ENTITY_TYPES.register("wire_electric", () -> BlockEntityType.Builder.of(
-					GTWireBlockEntity::new, GTWires.WIRE_ELECTRIC_1X.get(), GTWires.WIRE_ELECTRIC_2X.get()).build(null));
+					GTWireBlockEntity::new, GTWires.wireBlockArray()).build(null));
 
 	// -------------------------------------------------------------------------
 	// test energy source (task p8-d4-energy-source)

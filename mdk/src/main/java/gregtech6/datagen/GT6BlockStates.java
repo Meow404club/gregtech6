@@ -27,6 +27,7 @@ import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMultiBlocks;
+import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 
@@ -67,6 +68,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
         addWire(GTWires.WIRE_ELECTRIC_1X.get());
         addWire(GTWires.WIRE_ELECTRIC_2X.get());
+        addWireFamily(); // task p9-wire-family-w1 ⑥ — the 620-block loop, isolated section
         addOven();
         addMachine(GTMachines.SHREDDER.get(), "shredder"); // task p7-basicmachine-family ④
         addMachine(GTMachines.CRUSHER.get(), "crusher");
@@ -276,6 +278,31 @@ public final class GT6BlockStates extends BlockStateProvider {
         var tModel = models().cubeAll(tName, modLoc("block/wire_electric"));
         getVariantBuilder(aWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
         itemModels().withExistingParent(tName, modLoc("block/" + tName));
+    }
+
+    /**
+     * Task p9-wire-family-w1 spec ⑥ — the 620-block wire family, looped over the
+     * {@link GTWireSpecs} table (the p7 addWire shape, generalised). ANTI-BLOAT (the card red
+     * line: no 64-variant x 620 = 40k-entry explosion): ONE shared placeholder cube_all model
+     * ({@code gt6:block/wire_electric.png}, the p7 shared-PNG form), and per block ONE
+     * blockstate JSON whose SINGLE property-less variant (the {@code ""} key, emitted by
+     * {@code partialState().setModels}) maps ALL 64 {@link gregtech6.block.wire.GTWireBlock}
+     * CONNECTIONS states onto the shared model — vanilla resolves an empty variant key as no
+     * predicates = a wildcard over every state (ModelBakery.java:173 predicate parser: an
+     * empty key list yields the always-true predicate). The per-block item model (unavoidable
+     * one-JSON-per-item, the P8 3773 precedent) parents the shared placeholder through the
+     * same provider pass (the GT6BlockStates.java:29-33 flush order). The connection-aware
+     * model picking is the W2 card's BakedModel replacing this placeholder target.
+     */
+    private void addWireFamily() {
+        ModelFile tPlaceholder = models().cubeAll("wire_family_placeholder", modLoc("block/wire_electric"));
+        for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) {
+            String tName = GTWireSpecs.registryName(tVariant);
+            getVariantBuilder(GTWires.FAMILY_BY_NAME.get(tName).get())
+                    .partialState().setModels(new ConfiguredModel(tPlaceholder));
+            itemModels().withExistingParent(tName, modLoc("block/wire_family_placeholder"));
+        }
+        LOGGER.info("GT6 wire family: {} placeholder blockstates over 1 shared model", GTWireSpecs.EXPECTED_VARIANTS);
     }
 
     /**

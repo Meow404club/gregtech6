@@ -11,6 +11,7 @@ import gregtech6.GT6Mod;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GTWireSpecs;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -126,12 +127,17 @@ public final class GT6EnUs extends LanguageProvider {
      * Electric wire keys (task p7-d2-cable spec ⑥): the two W1 variants (the upstream row
      * names "1x &lt;material&gt; Wire" / "2x ...", MultiTileEntityWireElectric.java:72-73,
      * material-less here) and the "Electric Wires" category tab (the upstream MTE category
-     * name, addElectricWires :72).
+     * name, addElectricWires :72). Task p9-wire-family-w1: the 620 family rows looped over
+     * {@link GTWireSpecs} — the upstream row string verbatim per variant
+     * ({@code "1x Tin Wire"}, {@code "12x Tin Cable"} = size + local name + form).
      */
     private void addElectricWires() {
         add("block.gt6.wire_electric_1x", "1x Electric Wire");
         add("block.gt6.wire_electric_2x", "2x Electric Wire");
         add("itemGroup.gt6.electric_wires", "Electric Wires");
+        for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) {
+            add("block.gt6." + GTWireSpecs.registryName(tVariant), GTWireSpecs.displayName(tVariant));
+        }
     }
 
     /**
