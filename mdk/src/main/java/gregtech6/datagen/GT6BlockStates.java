@@ -281,28 +281,42 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p9-wire-family-w1 spec ⑥ — the 620-block wire family, looped over the
-     * {@link GTWireSpecs} table (the p7 addWire shape, generalised). ANTI-BLOAT (the card red
-     * line: no 64-variant x 620 = 40k-entry explosion): ONE shared placeholder cube_all model
-     * ({@code gt6:block/wire_electric.png}, the p7 shared-PNG form), and per block ONE
-     * blockstate JSON whose SINGLE property-less variant (the {@code ""} key, emitted by
-     * {@code partialState().setModels}) maps ALL 64 {@link gregtech6.block.wire.GTWireBlock}
-     * CONNECTIONS states onto the shared model — vanilla resolves an empty variant key as no
-     * predicates = a wildcard over every state (ModelBakery.java:173 predicate parser: an
-     * empty key list yields the always-true predicate). The per-block item model (unavoidable
-     * one-JSON-per-item, the P8 3773 precedent) parents the shared placeholder through the
-     * same provider pass (the GT6BlockStates.java:29-33 flush order). The connection-aware
-     * model picking is the W2 card's BakedModel replacing this placeholder target.
+     * Task p9-wire-family-w1 spec ⑥, MODEL TARGET UPGRADED by task p9-wire-family-w2
+     * (the card's "换模型目标为 GTWireBakedModel+贴图化模型"): the 620-block wire family,
+     * looped over the {@link GTWireSpecs} table. The blockstate form is UNCHANGED from W1 —
+     * per block ONE blockstate JSON whose SINGLE property-less variant (the {@code ""} key,
+     * emitted by {@code partialState().setModels}) maps ALL 64
+     * {@link gregtech6.block.wire.GTWireBlock} CONNECTIONS states onto a shared model
+     * (vanilla resolves an empty variant key as no predicates = a wildcard over every
+     * state, ModelBakery.java:173). What changed is the shared model TARGET: instead of the
+     * W1 placeholder cube, the target is one SHARED tinted model per live texture set
+     * (the addPrefixBlocks merge rule — the distinct {@code materialicons/<set>/wire.png}
+     * first entries across the 30 wire rows; census 2026-09-01: exactly
+     * {@code copper, shiny, metallic, dull, quartz, rad, none} — 7 sets, "none" =
+     * upstream SET_NONE for the empty-list Superconductor row, every PNG borrowed
+     * byte-identical, assets/README.md). The shared models carry {@code tintindex 0} (the
+     * runtime {@link gregtech6.client.wire.GTWireTint} material dye); the true
+     * connection-aware geometry (core + arms) is installed at bake time by
+     * {@link gregtech6.client.wire.GTWireClientListener}, which replaces the per-state
+     * AND item baked keys — this JSON model stays as the fallback carrier and the item
+     * parent. A cable's shared fallback shows no insulation shell (the tier texture is
+     * per-diameter) — a fallback-only simplification, the world form is the baked model.
+     * Still NO 64-variant x 620 listing (the ADR red line).
      */
     private void addWireFamily() {
-        ModelFile tPlaceholder = models().cubeAll("wire_family_placeholder", modLoc("block/wire_electric"));
+        Map<String, ModelFile> tShared = new HashMap<>(); // one shared model per texture set, built on first use
         for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) {
             String tName = GTWireSpecs.registryName(tVariant);
+            String tSet = blockSetOf(tVariant.row().material().get());
+            String tModelName = "block/materialicons/" + tSet + "/wire";
+            ModelFile tModel = tShared.computeIfAbsent(tModelName,
+                    tKey -> tintedCubeAll(tKey, modLoc("block/materialicons/" + tSet + "/wire")));
             getVariantBuilder(GTWires.FAMILY_BY_NAME.get(tName).get())
-                    .partialState().setModels(new ConfiguredModel(tPlaceholder));
-            itemModels().withExistingParent(tName, modLoc("block/wire_family_placeholder"));
+                    .partialState().setModels(new ConfiguredModel(tModel));
+            itemModels().withExistingParent(tName, modLoc(tModelName));
         }
-        LOGGER.info("GT6 wire family: {} placeholder blockstates over 1 shared model", GTWireSpecs.EXPECTED_VARIANTS);
+        LOGGER.info("GT6 wire family: {} blockstates over {} shared (set) models",
+                GTWireSpecs.EXPECTED_VARIANTS, tShared.size());
     }
 
     /**
@@ -392,14 +406,13 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * The material's BLOCK texture-set name, lower-snaked; an empty/blank list falls back
-     * to {@code "none"} = upstream SET_NONE (TextureSet.java:188 — the
-     * GT6ItemModels.iconsetOf mirror, on the block list; MT.setTextures MT.java:210-215
-     * assigns the set name strings).
+     * to {@code "none"} = upstream SET_NONE (TextureSet.java:188; MT.setTextures
+     * MT.java:210-215 assigns the set name strings). Since task p9-wire-family-w2 the
+     * implementation lives in the MC-free single source
+     * {@link gregtech6.client.wire.GTWireTextures} (shared with the client listener — this
+     * class's statics bootstrap-gate the offline test JVM, that one does not).
      */
     public static String blockSetOf(OreDictMaterial aMaterial) {
-        List<String> tSets = aMaterial.mTextureSetsBlock;
-        return tSets == null || tSets.isEmpty() || tSets.get(0) == null || tSets.get(0).isBlank()
-                ? "none"
-                : GTMaterialItems.snakeCase(tSets.get(0));
+        return gregtech6.client.wire.GTWireTextures.blockSetOf(aMaterial);
     }
 }

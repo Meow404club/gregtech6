@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "gt6:block/wire_family_placeholder"
+      "model": "gt6:block/materialicons/quartz/wire"
     }
   }
 }

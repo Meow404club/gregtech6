@@ -161,15 +161,29 @@ class GT6PrefixBlockRenderDatagenTest {
         }
     }
 
-    /** The borrowed PNG inventory is exactly the 175 referenced (prefix x set) files — no strays. */
+    /**
+     * The prefix-borrowed PNG inventory is exactly the 175 referenced (prefix x set) files —
+     * no strays WITHIN the prefix borrow. Since task p9-wire-family-w2 the tree also hosts
+     * the 7 wire-family {@code wire.png} borrows (one per live texture set of the 30 wire
+     * rows, pinned by GTWireTextureCensusTest), so the walk is filtered to the
+     * prefix-referenced names instead of counting the whole directory.
+     */
     @Test
     void borrowedPngCountMatchesModelCount() throws Exception {
         String tRoot = "/assets/gt6/textures/block/materialicons";
         var tUrl = GT6PrefixBlockRenderDatagenTest.class.getResource(tRoot);
         assertNotNull(tUrl, "the materialicons resource root must exist");
+        java.util.Set<String> tReferenced = new java.util.HashSet<>();
+        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) {
+            String tSetSnake = GT6BlockStates.blockSetOf(tPair.material());
+            String tPrefixSnake = GTMaterialItems.snakeCase(tPair.prefix().mNameInternal);
+            tReferenced.add(tSetSnake + "/" + tPrefixSnake + ".png");
+        }
         int tCount = 0;
         try (var tWalk = java.nio.file.Files.walk(java.nio.file.Path.of(tUrl.toURI()))) {
-            tCount = (int)tWalk.filter(p -> p.toString().endsWith(".png")).count();
+            tCount = (int)tWalk.filter(p -> p.toString().endsWith(".png"))
+                    .filter(p -> tReferenced.contains(p.getParent().getFileName() + "/" + p.getFileName()))
+                    .count();
         }
         assertEquals(175, tCount, "one borrowed PNG per referenced (prefix x set) model");
     }

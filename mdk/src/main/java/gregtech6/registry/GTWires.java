@@ -119,6 +119,12 @@ public final class GTWires {
 	 * The "Electric Wires" category tab — the upstream MTE-registry category
 	 * ("Electric Wires", MultiTileEntityWireElectric.java:72 addElectricWires
 	 * aCreativeTabID) as the minimal per-card tab, the GTFluidPipes.FLUID_PIPES_TAB shape.
+	 *
+	 * <p>Task p9-wire-family-w2 (the W1 review handoff): the displayItems are TABLE-DRIVEN
+	 * over the full spectrum — upstream registers every addElectricWires row into this
+	 * category (the whole 16-wire + 5-cable ladder per material), so the legacy pair is
+	 * followed by all 620 family items in registration order (the W1 loop order = the
+	 * upstream Loader row order).
 	 */
 	public static final RegistryObject<CreativeModeTab> ELECTRIC_WIRES_TAB = CREATIVE_MODE_TABS.register("electric_wires",
 			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
@@ -127,6 +133,9 @@ public final class GTWires {
 					.displayItems((aParameters, aOutput) -> {
 						aOutput.accept(new ItemStack(WIRE_ELECTRIC_1X_ITEM.get()));
 						aOutput.accept(new ItemStack(WIRE_ELECTRIC_2X_ITEM.get()));
+						for (RegistryObject<Item> tFamilyItem : FAMILY_ITEMS) {
+							aOutput.accept(new ItemStack(tFamilyItem.get()));
+						}
 					})
 					.build());
 
