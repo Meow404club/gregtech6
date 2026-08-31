@@ -92,9 +92,31 @@ public final class GT6BlockStates extends BlockStateProvider {
      * Task p4-multiblock-framework (W3 provider order 1: multiblock→barrel→cover): the FORMED
      * blockstate fallback rendering (spec ⑧) — the Coke Oven controller carries the base-owned
      * FACING + FORMED properties (TileEntityBase10MultiBlockBase :188-189 bit-3 replacement),
-     * 4 facings x 2 formed = 8 variants over two cube models; the front texture is the formed
-     * state carrier (mirrors the upstream getTexture2 mStructureOkay pick). The bricks part is
-     * a plain cube_all (no properties). Textures are script-generated placeholder PNGs.
+     * 4 facings x 2 formed = 8 variants over two cube models.
+     *
+     * <p>Erratum (task p9-render-d-formed-look; the earlier "mirrors the upstream getTexture2
+     * mStructureOkay pick" wording here was wrong): upstream getTexture2
+     * (TileEntityBase10MultiBlockBase.java:192-194) picks the front-vs-side texture GROUPS by
+     * {@code aSide == mFacing} over a colored+overlay two-layer stack, and NO upstream
+     * consumer picks the front/side texture groups by mStructureOkay — every getTexture2,
+     * including the Crucible's own (MultiTileEntityCrucible.java:643-651), keys the group on
+     * {@code aSide == mFacing}. The only known VISUAL mStructureOkay consumers are the render
+     * pass count (MultiTileEntityLargeTurbine.getRenderPasses2 :109-111, formed renders an
+     * extra pass) and the render bounds (MultiTileEntityCrucible.setBlockBounds2 :628-638) —
+     * neither touches the texture groups. The formed/unformed dual model below is therefore
+     * a DECLARED this-port enhancement beyond upstream, kept as-is: the FORMED
+     * blockstate is the RCON {@code execute if block ...[formed=true]} assertion surface, and
+     * the GTCEu IS_FORMED ModelProperty technique is not adopted (zero-benefit refactor,
+     * ADR 2026-09-01-p9-render-d-formed-look).
+     *
+     * <p>Texture census (same task, negative): upstream ships NO
+     * {@code machines/multiblockmains/cokeoven/} PNG group at all — the colored/overlay/
+     * colored_front/overlay_front icon paths the upstream controller registers
+     * (TileEntityBase10MultiBlockBase.java:66-81, NBT_TEXTURE "cokeoven",
+     * Loader_MultiTileEntities.java:1193) are missing resources in the upstream snapshot, so
+     * there is nothing to borrow. Per the borrow-or-declare rule nothing was redrawn: the
+     * script-generated placeholder PNGs stay (see assets README). The bricks part is a plain
+     * cube_all (no properties).
      */
     private void addMultiBlocks() {
         Block tCokeOven = GTMultiBlocks.COKE_OVEN.get();

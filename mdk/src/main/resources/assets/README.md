@@ -41,3 +41,26 @@ logos, so CC0 applies.
 Wrench-grid icons in `gt6/textures/gui/overlay/` come from GregTech CEu
 Modern under LGPL-3.0-or-later — see `gt6/textures/gui/overlay/README.md`
 for that attribution.
+
+Task p9-render-d-formed-look (2026-09-01) — coke oven controller texture
+census, NEGATIVE result, declared deviation: the plan was to borrow upstream
+`textures/blocks/machines/multiblockmains/cokeoven/` colored+overlay groups
+(the controller look of `TileEntityBase10MultiBlockBase.getTexture2`,
+:192-194 — front/side groups picked by `aSide == mFacing` over a colored+
+overlay two-layer stack; the icon paths themselves are built at :66-81 from
+NBT_TEXTURE "cokeoven", Loader_MultiTileEntities.java:1193). Census found NO
+such PNG group upstream at all — neither `colored/` nor `overlay/` nor the
+`colored_front/`/`overlay_front/` variants ship in the snapshot (the
+`multiblockmains/` directory contains only bedrockdrill, crucible, gasturbine,
+largeboiler, largedynamo, largeheatexchanger, largeturbine, lightningrod,
+logisticscore, tankmetal, tankwood, vondagraagg), so the upstream controller
+itself registers missing-resource icons. Nothing to borrow, and per the
+borrow-or-declare rule nothing was redrawn: the script-generated placeholder
+PNGs (`multiblock_coke_oven*.png`) remain. The only upstream `cokeoven`
+texture family that DOES exist is `basicmachines/cokeoven/` — a
+basicmachine-layout group (back/bottom/front/left/right/top naming, machine
+state overlays) belonging to a different machine family; it is NOT the
+multiblock controller look and was not borrowed, out of this card's scope.
+The addMultiBlocks javadoc in `GT6BlockStates.java` carries the accompanying
+getTexture2 erratum (front by facing, never by formed; the FORMED dual model
+is a declared port enhancement beyond upstream).
