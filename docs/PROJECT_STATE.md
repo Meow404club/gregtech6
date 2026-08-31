@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 6 阶段（入口）：CokeOven 加工业务 / oven 朝向旋转 / Metal·Plastic 桶族`（**2026-08-31 收官**：三卡全数合入 main HEAD 9839b39，根 188 + mdk 263 单测全绿，RCON 三链合并态复放 oven 17/19·barrel 32/32·cokeoven 19/19，批量 review-merge 单会话三连审全 approve）
+`第 7 阶段：cokeoven 回补 / 高档鼓+熔点桥 / 机器族（三图+三机）/ 能量网 D1·D2 / 机台贴图`（**2026-08-31 收官**：七卡全数合入 main HEAD d0a1ebe，根 205 + mdk 318 = 523 单测全绿，RCON 各链合并态复放全过，三次环境中断（zcode 重启/WSL 重启/zcode bug）断点落账恢复零损失；D3∥D4 按用户指令移 P8）
 
 > **平台修正 2026-08-29**：原目标"NeoForge 1.20.1"被证伪——NeoForge 官方 maven 从未发布 20.1.x 产物（versions API `filter=20.1` 返回空，主会话独立复核），NeoForged 自家 ModDevGradle 把 1.20.1 路由给 `legacyforge` 变体，文档站最早只到 1.20.3。用户裁决：目标平台 = **MinecraftForge 1.20.1（47.4.10）**，构建插件 = MDG legacyforge 2.0.144。1.20.1 的 API 面即 `net.minecraftforge.*` + RegistryObject（DeferredHolder 是 20.2+ 才有），第 1 阶段的所有调研结论不受影响。
 
@@ -17,6 +17,23 @@
 - [x] 第 4 阶段：管线 / Cover / 多方块渲染（BakedModel）+ 首台加工机器——2026-08-30 收官（387 测全绿；Oven/管线/多方块/桶/Cover/渲染基建/流向控制八卡）
 - [x] 第 5 阶段：管道语义修正 / 桶重力侧规则+泵盖 / 扳手九宫格 UI / RCON 工具链——2026-08-30 收官（417 测全绿；tools/rcon 正典客户端入库；瞬态 overlay 红线例外；桶侧规则+CoverPump+gt6:natural_gas）
 - [x] 第 6 阶段（入口）：CokeOven 加工业务 / oven 朝向旋转 / Metal·Plastic 桶族——2026-08-31 收官（451 测全绿；首台真加工多方块机+`#minecraft:logs` tag 驱动原木配方+gt6:creosote；木桶装饰盖保真恢复；GTCEu setFrontFacing 经九宫格）
+- [x] 第 7 阶段：cokeoven 回补 / 高档鼓+熔点桥 / 机器族 / 能量网 D1·D2——2026-08-31 收官（523 测全绿；gt6:oil+油页岩 8 行；熔点桥撤销 metal 不熔偏离+12 高档鼓梯 128K→10B；SHREDDER/CRUSHER/LATHE 三图三机（Crusher 并行 4）；ITileEntityEnergy 14 方法面+GTWireBlockEntity+三机 BE+GUI；D3∥D4 移 P8）
+
+## 第 7 阶段收官记录（2026-08-31，主会话 phase-closeout）
+
+合入链：`55ecfef`(backfill)→`5ff9a5e`(barrel)→`dfb4a30`(D1)→`26a3c77`(gui)→`2fda5bc`(W1)→`f77c7a3`(D2)→`d0a1ebe`(basicmachine)，全程批量/单卡 review-merge 全 approve、GPG 全验、合并态门禁逐批复验。
+
+- **p7-cokeoven-backfill**：gt6:oil 四 DR 组（温度/密度/tint 全带上游证据链）+ 油页岩 8 行回补（poured 24→32；blockDust 行裁池→PrefixBlock 方块宇宙池项）+ Row 泛化 (fluidId,mB) + `/gt6multiblock input` 泛化 `<prefix> <material>`；findMaterial 修复 = `mID>=0` 门（byName 会命中 mID=-1 的 auto-invalid 壳）。
+- **p7-barrel-high-tier-melt-bridge**：材质熔点桥 `mMeltingPoint×1.25`（撤销 P6「metal 不熔」声明偏离，Bronze 1696K 活证熔毁）+ 12 高档鼓梯 128K→10B 全注册（Infinity 1e9K = 上游 :2170 显式 HU 裁定）+ 共享 BET 多挂 13 块。
+- **p7-d1-energy-core**：根模块 `ITileEntityEnergy` 14 方法面 + Util 三件套（emit 六面循环/递减/break 逐字）+ EnergyBridge 缝 + EnergyGate + CS 三常量（`RF_PER_EU=4`；`OVERCHARGE_EXPLOSIONS=T` 为卡面裁决，上游默认 F，ADR ①(e) 依据）；根模块零 net.minecraft 红线 grep 门。
+- **p7-gui-family**：三机台 PNG 借入（GT6 上游 CC0 1.0 公域，sha256 逐字节全等）+ 小写命名（1.20.1 ResourceLocation 路径硬约束）。
+- **p7-recipe-maps-shcl**：SHREDDER/CRUSHER/LATHE 三图 15 参逐参 + 首批确定性静态行（Crusher 宝石链 poured 545 = 436+109，108 skip = 97 缺出-prefix 物 + 11 条件门，与上游缺出物 false-return 同语义）；AIR 幽灵配方修复（池含 Items.AIR → 空栈 → `withoutTrailingNulls` 裁空输入 → findRecipe 探测路径直通，lesson 入记忆）。
+- **p7-d2-cable**：GTWireBlockEntity 直译（09Connector 只读复用零提缝 + transferElectricity 逐字 + EnergyTarget(邻BE,对侧)）+ GTWireBlock 64 变体 + 2 变体（32EU/1A·2A）+ `/gt6wire`；超压不烧 = burn 仅在有安培流动时累计（上游 :188 语义锁）。
+- **p7-basicmachine-family**：TileEntityBasicMachine 共享基类（checkRecipe 并行段恢复 + 能量数学两分支 verbatim + canOutput :626-629 功率帽为活语义）+ supplyEnergy() A 档假电源缝 + doInject 空壳指路 D3 + 数据驱动槽位/Menu/Screen + `/gt6machine` 三链（Crusher 4 并行一周期活证）+ GTClientMachineListener 越界 accept（MenuScreens 唯一挂点）。
+
+承重教训（入记忆）：①幽灵配方（测试池含 AIR → 空输入直通）②单类 JVM 探针须先 `GTMaterialItems.initMaterials()`（类装载环）③并行卡 RCON 编排 = 卡专用端口 + 按 PID 精确杀 + 禁泛模式 pgrep（三次险情）④清理用 mdk/run 路径特征。期中断三次（zcode 重启/WSL 重启/zcode bug），断点落账恢复零损失。
+
+**P8 移交**：D3∥D4（义务清单在 `tasks.p7-d3/d4-energy-*.e2e_obligations`：doActive :815 注释勘误 + KU 脉冲决断 / wattage 正向记账 / 烧线断言 / canConnect emitting 支回补）+ todo.pool 全量候选。
 
 ## 关键决策
 
