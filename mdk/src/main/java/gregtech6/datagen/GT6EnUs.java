@@ -137,6 +137,18 @@ public final class GT6EnUs extends LanguageProvider {
         add("block.gt6.shredder", "Shredder");
         add("block.gt6.crusher", "Crusher");
         add("block.gt6.lathe", "Lathe");
+        // task p8-machine-tiers-doinject ⑧: the T2-T4 ladder — the upstream row names carry
+        // the material tier in parentheses (:1295-1297/:1301-1303/:1307-1309); the port
+        // registers by tier index, so the display names say "Tier N".
+        add("block.gt6.shredder_t2", "Shredder (Tier 2)");
+        add("block.gt6.shredder_t3", "Shredder (Tier 3)");
+        add("block.gt6.shredder_t4", "Shredder (Tier 4)");
+        add("block.gt6.crusher_t2", "Crusher (Tier 2)");
+        add("block.gt6.crusher_t3", "Crusher (Tier 3)");
+        add("block.gt6.crusher_t4", "Crusher (Tier 4)");
+        add("block.gt6.lathe_t2", "Lathe (Tier 2)");
+        add("block.gt6.lathe_t3", "Lathe (Tier 3)");
+        add("block.gt6.lathe_t4", "Lathe (Tier 4)");
         add("itemGroup.gt6.machines", "Machines");
     }
 
