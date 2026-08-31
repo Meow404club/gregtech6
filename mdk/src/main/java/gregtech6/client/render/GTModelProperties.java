@@ -42,6 +42,18 @@ public final class GTModelProperties {
 	 */
 	public static final ModelProperty<GTRenderSnapshot> RENDER_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
 
+	/**
+	 * The second snapshot property (task p9-render-c-oven-overlay ⑤/coexistence ruling):
+	 * the oven state overlay snapshot ({@link GTOvenRenderSnapshot}). RENDER_SNAPSHOT is
+	 * a single-valued ModelProperty — the cover chain (p4-cover-core,
+	 * TileEntityOvenCoverTest:122-137) already occupies it, so the oven snapshot must ride
+	 * its own key instead of overwriting the cover value. A BE may carry both at once
+	 * (a covered oven): {@code getModelData()} builds them together, each consumer model
+	 * keys on its own property ({@code GTOvenOverlayModel} gates on this one, the cover
+	 * plate model on RENDER_SNAPSHOT — the existing cover chain is untouched).
+	 */
+	public static final ModelProperty<GTOvenRenderSnapshot> OVEN_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
+
 	private GTModelProperties() {
 	}
 

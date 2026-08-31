@@ -40,7 +40,20 @@ import net.minecraftforge.fml.common.Mod;
  * JSON is forbidden; SpriteResourceLoader merges sources across namespaces — atlas
  * sources list, forge-docs). Runtime side — resolve the sprite through
  * {@code Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(spriteId)}
- * (Minecraft.java:2386) and bake the quad's UVs from it.
+ * (Minecraft.java:2386) and bake the quad's UVs from it. Textures living under
+ * {@code textures/block/} are additionally always stitched by vanilla's cross-namespace
+ * {@code directory("block")} atlas source (vanilla blocks.json) — the explicit source is
+ * belt-and-suspenders.
+ *
+ * <p>DISPATCH-KEY SHAPE (clarified by task p9-render-c-oven-overlay): vanilla ModelBakery
+ * loads one TOP-LEVEL model per BLOCK STATE (ModelBakery.java:136
+ * {@code loadTopLevel(BlockModelShaper.stateToModelLocation(block, state))}), so the map
+ * exposed here is keyed by per-state {@link net.minecraft.resources.ModelResourceLocation}s
+ * ({@code gt6:oven#active=…,facing=…,running=…}) — the blockstate JSON's model-file paths
+ * are only unbaked dependencies and never appear as keys. A consumer targeting a
+ * variant-based block must therefore register its per-state keys (see
+ * {@link GTOvenClientListener} for the oven's 16-key form); a model-file id in the
+ * template above silently degrades (the absent-target skip below).
  */
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTRenderModelListener {
