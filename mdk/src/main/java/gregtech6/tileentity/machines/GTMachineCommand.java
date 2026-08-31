@@ -27,7 +27,6 @@ import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 import gregapi.data.OP;
-import gregapi.oredict.OreDictMaterial;
 import gregtech6.gui.machines.GTBasicMachineMenu;
 import gregtech6.gui.machines.GTBasicMachinesMenus;
 import gregtech6.registry.GTMaterialItems;
@@ -107,21 +106,34 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The crusher acceptance feed: the first (prefix, material) pair of the gem-chain
-	 * registration order whose gt6 item resolved (Loader_Recipes_Handlers.java:69-73 walk —
-	 * the first row is gemLegendary, so the first resolvable material of OP.gem feeds :72's
-	 * gem → gemFlawed x2). Null-feed rows are the offline/unregistered edge; the command
-	 * reports them.
+	 * The crusher acceptance feed: the first material of the gem-chain registration order
+	 * that survives ALL THREE upstream gates — the both-side mat() resolution of :72
+	 * (:209/:214, a gem material without a registered gemFlawed item has its row skipped in
+	 * the pour), the poured row itself, and the canOutput chain-processing power cap
+	 * :626-629 (a row with duration × mEUt × 4 > mInputMax × 600 would be bound BELOW 4
+	 * parallel — e.g. zirconium, duration 1024 — and the feed would not demonstrate the
+	 * 4-parallel one-cycle acceptance). All three gates read the LIVE poured map.
 	 */
 	private static Item firstGemChainGem() {
 		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
 			if (tPair.prefix() != OP.gem) continue;
-			RegistryObject<Item> tHandle = GTMaterialItems.get(tPair.prefix(), tPair.material());
-			if (tHandle != null && tHandle.isPresent()) return tHandle.get();
-			OreDictMaterial tMaterial = tPair.material();
-			LOGGER.info("GT6 machine feed: gem material {} has no registered item, walking on", tMaterial.mNameInternal);
+			RegistryObject<Item> tIn = GTMaterialItems.get(OP.gem, tPair.material());
+			RegistryObject<Item> tOut = GTMaterialItems.get(OP.gemFlawed, tPair.material());
+			if (tIn == null || !tIn.isPresent() || tOut == null || !tOut.isPresent()) continue;
+			// the T1 crusher shape: mEUt, mParallel 4, mInputMax 64 — the cap :628 must leave 4 intact
+			gregtech6.recipes.Recipe tRecipe = crusherRowFor(tIn.get());
+			if (tRecipe != null && tRecipe.mEUt * tRecipe.mDuration * 4 <= 64L * 600) return tIn.get();
+			LOGGER.info("GT6 machine feed: gem material {} skipped (no poured :72 row or the :626-629 cap binds below 4 parallel)", tPair.material().mNameInternal);
 		}
-		throw new IllegalStateException("No gt6:gem item resolved for the crusher feed");
+		throw new IllegalStateException("No gt6:gem→gemFlawed pair with a cap-safe :72 row resolved for the crusher feed");
+	}
+
+	/** The poured :72 row for a gem item, or null (the row carries input gem x1). */
+	private static gregtech6.recipes.Recipe crusherRowFor(net.minecraft.world.item.Item aGemItem) {
+		for (gregtech6.recipes.Recipe tRecipe : gregtech6.recipes.GT6RecipeMaps.CRUSHER.mRecipeList) {
+			if (tRecipe.mInputs.length == 1 && tRecipe.mInputs[0].getItem() == aGemItem && tRecipe.mInputs[0].getCount() == 1) return tRecipe;
+		}
+		return null;
 	}
 
 	private static TileEntityBasicMachine machineAt(CommandSourceStack source, BlockPos pos) {
