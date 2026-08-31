@@ -180,11 +180,11 @@ public final class GTOvenCommand {
 		CompoundTag tDebug = new CompoundTag();
 		tOven.saveAdditional(tDebug);
 		String tReport = String.format(
-			"GT6 oven at %s: input=%s output=%s data=%d progress=%d/%d energy=%d stopped=%s redstone=%s active=%s running=%s facing=%d",
+			"GT6 oven at %s: input=%s output=%s data=%d progress=%d/%d energy=%d minenergy=%d stopped=%s redstone=%s active=%s running=%s facing=%d",
 			tOven.getBlockPos().toShortString(),
 			tOven.getInventory().getStackInSlot(TileEntityOven.SLOT_INPUT).getItem() + "x" + tOven.getInventory().getStackInSlot(TileEntityOven.SLOT_INPUT).getCount(),
 			tOven.getInventory().getStackInSlot(TileEntityOven.SLOT_OUTPUT).getItem() + "x" + tOven.getInventory().getStackInSlot(TileEntityOven.SLOT_OUTPUT).getCount(),
-			tDataValue, tOven.mProgress, tOven.mMaxProgress, tOven.mEnergy,
+			tDataValue, tOven.mProgress, tOven.mMaxProgress, tOven.mEnergy, tOven.mMinEnergy,
 			tOven.mStopped, tOven.mRedstoneStopped, tOven.mActive, tOven.mRunning, tOven.getFacing());
 		source.sendSuccess(() -> Component.literal(tReport), false);
 		return Command.SINGLE_SUCCESS;
