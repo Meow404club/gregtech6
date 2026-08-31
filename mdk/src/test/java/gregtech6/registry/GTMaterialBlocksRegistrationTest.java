@@ -147,4 +147,55 @@ class GTMaterialBlocksRegistrationTest {
         assertEquals(keptMaterialNames(OP.blockIngot), keptMaterialNames(OP.blockSolid),
                 "blockIngot and blockSolid families are the same material set");
     }
+
+    /** The production block path must equal the upstream seven-name spec, in loader file order. */
+    @org.junit.jupiter.api.Test
+    void blockPathMatchesUpstreamSpec() {
+        List<OreDictPrefix> tProduction = GTMaterialBlocks.blockPathPrefixes();
+        List<String> tNames = new ArrayList<>();
+        for (OreDictPrefix tPrefix : tProduction) tNames.add(tPrefix.mNameInternal);
+        assertEquals(UPSTREAM_BLOCK_PATH, tNames, "block path must be the Loader_PrefixBlocks.java:40-46 spec, in file order");
+        assertEquals(7, tProduction.size());
+    }
+
+    /** The production enumeration must reproduce the pinned census exactly (per prefix, total, order). */
+    @org.junit.jupiter.api.Test
+    void productionEnumerationMatchesCensus() {
+        List<GTMaterialItems.PrefixMaterial> tOrder = GTMaterialBlocks.registrationOrder();
+        assertEquals(PINNED_TOTAL, tOrder.size(), "production walk size = pinned census total");
+        Map<String, Integer> tPerPrefix = new LinkedHashMap<>();
+        for (GTMaterialItems.PrefixMaterial tPair : tOrder) tPerPrefix.merge(tPair.prefix().mNameInternal, 1, Integer::sum);
+        for (String tPrefix : UPSTREAM_BLOCK_PATH) {
+            assertEquals(PINNED_CENSUS.get(tPrefix), tPerPrefix.get(tPrefix), tPrefix + " production count");
+        }
+        // prefix order = OP.VALUES order projected on the block path = the loader spec order
+        List<String> tOrderNames = new ArrayList<>();
+        for (GTMaterialItems.PrefixMaterial tPair : tOrder) {
+            if (!tOrderNames.contains(tPair.prefix().mNameInternal)) tOrderNames.add(tPair.prefix().mNameInternal);
+        }
+        assertEquals(UPSTREAM_BLOCK_PATH, tOrderNames, "production prefix order must follow the census walk");
+    }
+
+    /** The block universe has zero first-wins id drops (measured), and the enumeration bookkeeping says so. */
+    @org.junit.jupiter.api.Test
+    void blockUniverseHasZeroIdCollisions() {
+        GTMaterialBlocks.Enumeration tSet = GTMaterialBlocks.enumerate();
+        assertEquals(0, tSet.duplicateIdDrops(), "the block census measured zero id collisions");
+        assertEquals(PINNED_TOTAL, tSet.kept().size());
+    }
+
+    /** All seven block prefixes are creative-visible (none HIDDEN, all non-empty) in loader order. */
+    @org.junit.jupiter.api.Test
+    void tabPrefixesAreTheSevenStorageFamilies() {
+        List<String> tNames = new ArrayList<>();
+        for (OreDictPrefix tPrefix : GTMaterialBlocks.tabPrefixes()) tNames.add(tPrefix.mNameInternal);
+        assertEquals(UPSTREAM_BLOCK_PATH, tNames, "7 tabs, one per non-empty non-HIDDEN block prefix (PrefixBlockItem.java:65-67)");
+    }
+
+    /** Offline (registries never fire) the get seam returns null — the resolver fallback treats that as absent. */
+    @org.junit.jupiter.api.Test
+    void getSeamIsNullBeforeRegistration() {
+        org.junit.jupiter.api.Assertions.assertNull(GTMaterialBlocks.get(OP.blockIngot, MT.Coal),
+                "no RegisterEvent has fired offline — the seam must be null, not a dangling handle");
+    }
 }
