@@ -133,19 +133,35 @@ public final class GTMachineCommand {
 							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "ticks"),
 							BlockPosArgument.getLoadedBlockPos(context, "pos"))))));
 		// task p8-machine-tiers-doinject ⑤(b): the FALSE-regime rig — inject+consume pairs.
+		// finalSize = the OPTIONAL half-cycle pair: iteration ticks-1 runs at <finalSize>
+		// instead of <size>, so a whole KU pulse cycle (positive train to completion + the
+		// negative transition pair) lands inside ONE command — across RCON calls the idle
+		// ticks reset the parked progress through doInactive's CONSTANT_ENERGY :894 (the
+		// D3 wire-chain lesson, now proven for the machines too).
 		tMachine.then(Commands.literal("inject")
 			.then(Commands.argument("ticks", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 20000))
 				.executes(context -> inject(context.getSource(),
-						com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "ticks"), null, null))
+						com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "ticks"), null, null, null))
 				.then(Commands.argument("size", com.mojang.brigadier.arguments.IntegerArgumentType.integer(-4096, 4096))
 					.executes(context -> inject(context.getSource(),
 							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "ticks"),
-							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "size"), null))
+							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "size"), null, null))
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(context -> inject(context.getSource(),
 								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "ticks"),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "size"), null,
+								BlockPosArgument.getLoadedBlockPos(context, "pos"))))
+					.then(Commands.argument("finalSize", com.mojang.brigadier.arguments.IntegerArgumentType.integer(-4096, 4096))
+						.executes(context -> inject(context.getSource(),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "ticks"),
 								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "size"),
-								BlockPosArgument.getLoadedBlockPos(context, "pos")))))));
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "finalSize"), null))
+						.then(Commands.argument("pos", BlockPosArgument.blockPos())
+							.executes(context -> inject(context.getSource(),
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "ticks"),
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "size"),
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "finalSize"),
+									BlockPosArgument.getLoadedBlockPos(context, "pos"))))))));
 		tMachine.then(Commands.literal("check")
 			.executes(context -> check(context.getSource(), null))
 			.then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -254,28 +270,32 @@ public final class GTMachineCommand {
 	/**
 	 * The FALSE-regime rig (task p8-machine-tiers-doinject ⑤(b)): {@code ticks} iterations
 	 * of one direct doInject (size defaults to the machine's mInputMax; negative = the AC
-	 * half-cycle) + one dispatcher tick, so each iteration IS one injection tick.
+	 * half-cycle; {@code finalSize} = the optional LAST iteration's size, the negative
+	 * transition pair) + one dispatcher tick per iteration, so each iteration IS one
+	 * injection tick and a full KU pulse cycle closes inside one command.
 	 */
-	private static int inject(CommandSourceStack source, int ticks, Integer size, BlockPos pos) {
+	private static int inject(CommandSourceStack source, int ticks, Integer size, Integer finalSize, BlockPos pos) {
 		TileEntityBasicMachine tMachine = machineAt(source, pos);
 		if (tMachine == null) {
 			source.sendFailure(Component.literal("No TileEntityBasicMachine at " + (pos != null ? pos.toShortString() : "the source position")));
 			return 0;
 		}
 		long tSize = size != null ? size : tMachine.mInputMax;
-		if (tSize == 0) {
+		long tFinalSize = finalSize != null ? finalSize : tSize;
+		if (tSize == 0 || tFinalSize == 0) {
 			source.sendFailure(Component.literal("inject refused: size 0 is gated by the Root :717 aSize != 0 rule (the verbatim :503 math divides by the size)"));
 			return 0;
 		}
 		long tUsed = 0;
 		for (int i = 0; i < ticks; i++) {
-			tUsed += tMachine.doInject(tMachine.mEnergyTypeAccepted, INJECT_SIDE, tSize, 1, true);
+			long tIterationSize = (finalSize != null && i == ticks - 1) ? tFinalSize : tSize;
+			tUsed += tMachine.doInject(tMachine.mEnergyTypeAccepted, INJECT_SIDE, tIterationSize, 1, true);
 			tMachine.updateEntity();
 		}
 		String tOutputs = outputList(tMachine);
 		String tReport = String.format(
-			"GT6 %s inject ticks=%d size=%d used=%d progress=%d/%d energy=%d state=new:%s/old:%s outputs=[%s] at %s",
-			tMachine.getTileEntityName(), ticks, tSize, tUsed,
+			"GT6 %s inject ticks=%d size=%d finalSize=%s used=%d progress=%d/%d energy=%d state=new:%s/old:%s outputs=[%s] at %s",
+			tMachine.getTileEntityName(), ticks, tSize, finalSize, tUsed,
 			tMachine.mProgress, tMachine.mMaxProgress, tMachine.mEnergy,
 			tMachine.mStateNew, tMachine.mStateOld, tOutputs, tMachine.getBlockPos().toShortString());
 		source.sendSuccess(() -> Component.literal(tReport), false);
