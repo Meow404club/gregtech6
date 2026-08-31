@@ -291,15 +291,19 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * Upstream :201 (EnergyCompat.canConnectElectricity specialised per the card): a
-	 * non-connector neighbour connects when it is an {@link ITileEntityEnergy} accepting
-	 * EU on the side facing us, probed theoretically (the conductor visual connect).
+	 * Upstream :201 → EnergyCompat.canConnectElectricity :102 — the DOUBLE probe,
+	 * accepting {@code ||} emitting, both probed theoretically (the conductor visual
+	 * connect). The emitting branch is the p8-d4-energy-source backfill of the upstream
+	 * :102 verbatim pair: a pure emitter BE (e.g. the test energy source, whose
+	 * isEnergyAcceptingFrom is permanently false) must be wire-connectable, or the
+	 * gen→wire chain can never form (the D2 review handoff obligation).
 	 */
 	@Override
 	public boolean canConnect(byte aSide, @Nullable BlockEntity aNeighbor) {
 		if (!(aNeighbor instanceof ITileEntityEnergy tEnergy)) return false;
 		byte tOpposite = (byte)Direction.from3DDataValue(aSide).getOpposite().get3DDataValue();
-		return tEnergy.isEnergyAcceptingFrom(TD.Energy.EU, tOpposite, true);
+		return tEnergy.isEnergyAcceptingFrom(TD.Energy.EU, tOpposite, true)
+				|| tEnergy.isEnergyEmittingTo(TD.Energy.EU, tOpposite, true);
 	}
 
 	@Override
