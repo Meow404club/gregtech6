@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 8 阶段：能量网端到端（D3·D4）/ PrefixBlock 方块宇宙 / 机器族收尾（档位+ore 链）/ CokeOven GUI+流体罐`（**2026-09-01 收官**：八卡全数合入 main HEAD 7516c3b，根 205 + mdk 415 = 620 单测全绿，gen→wire→oven 端到端五项闭环验证，RCON 各链合并态复放全过，zcode bug 一次断点恢复零损失）
+`第 9 阶段：线缆全谱系（620 块）/ 渲染 C+D 档 / cover 红石钩+正式 crowbar / M2 配方翻案 / 命令小修`（**2026-09-01 收官**：九卡全数合入 main HEAD 05bcebb，根 205 + mdk 484 = 689 单测全绿，RCON 各链合并态复放全过，runData 二跑 written:0；render-D 一轮打回→amend→复审演化为审查纪律成例）
 
 > **平台修正 2026-08-29**：原目标"NeoForge 1.20.1"被证伪——NeoForge 官方 maven 从未发布 20.1.x 产物（versions API `filter=20.1` 返回空，主会话独立复核），NeoForged 自家 ModDevGradle 把 1.20.1 路由给 `legacyforge` 变体，文档站最早只到 1.20.3。用户裁决：目标平台 = **MinecraftForge 1.20.1（47.4.10）**，构建插件 = MDG legacyforge 2.0.144。1.20.1 的 API 面即 `net.minecraftforge.*` + RegistryObject（DeferredHolder 是 20.2+ 才有），第 1 阶段的所有调研结论不受影响。
 
@@ -19,6 +19,7 @@
 - [x] 第 6 阶段（入口）：CokeOven 加工业务 / oven 朝向旋转 / Metal·Plastic 桶族——2026-08-31 收官（451 测全绿；首台真加工多方块机+`#minecraft:logs` tag 驱动原木配方+gt6:creosote；木桶装饰盖保真恢复；GTCEu setFrontFacing 经九宫格）
 - [x] 第 7 阶段：cokeoven 回补 / 高档鼓+熔点桥 / 机器族 / 能量网 D1·D2——2026-08-31 收官（523 测全绿；gt6:oil+油页岩 8 行；熔点桥撤销 metal 不熔偏离+12 高档鼓梯 128K→10B；SHREDDER/CRUSHER/LATHE 三图三机（Crusher 并行 4）；ITileEntityEnergy 14 方法面+GTWireBlockEntity+三机 BE+GUI；D3∥D4 移 P8）
 - [x] 第 8 阶段：能量网端到端 / PrefixBlock 方块宇宙 / 机器族收尾 / CokeOven GUI+流体罐——2026-09-01 收官（620 测全绿；Oven doInject 真实现+gen→wire→oven 端到端闭环五项验证；3773 对前缀方块+11494 datagen JSON；T2-T4 三机全梯+基类 doInject/alternating 恢复+KU 负脉冲过零；Recipe.chances+Crusher ore 链+poured 493；CokeOven Menu/Screen+流体罐 capability+推液守恒）
+- [x] 第 9 阶段：线缆全谱系 / 渲染 C+D 档 / cover 红石钩+正式 crowbar / M2 配方翻案 / 命令小修——2026-09-01 收官（689 测全绿；GTWireSpecs 30 材质表直译 620 块+连接感知 BakedModel 真材质渲染（恰 7 iconset 零造图）；oven overlay 动态渲染+per-state MRL 键控机制发现；FORMED 双模型勘误钉死+超上游增强裁定；ICover 红石三钩框架（冻结面显式 ADR 解冻）+CoverRedstoneEmitter 首个真红石盖；正式 crowbar 工具系统入口（OR 门零迁移）；M2 哨兵翻案双 10000 槽构成对位）
 
 ## 第 7 阶段收官记录（2026-08-31，主会话 phase-closeout）
 
@@ -52,6 +53,24 @@
 承重教训（入记忆）：①手动 inject 无法完成完整冶炼（CONSTANT_ENERGY :894 清 parked progress + RCON 往返≥2tick）——完整 smelt 须连续源 e2e；②GTWireBlock 无回连钩子——能量链 gen/oven 必须先于 wire 放置；③KU 跃迁测试按负脉冲过零写，勿写「停止注入出料」；④RCON 快机（4tick 周期）三态断言结构性竞态，慢机保全断言；⑤>65535 jar 条目须 zip64。期中断：zcode bug 一次（断点落账恢复零损失）+ worktree 外部扰动一次（审查官重跑全门禁固化）。
 
 **P9 移交**：todo.pool（M2 哨兵产量翻案 / rotor 族翻 ENERGY_FAKE_SOURCE 默认 false+拆 :815 悬置 / :511 侧掩码 side-gated IO / ore 方块行激活 / 多方块件面流体代理 / `/gt6energy` FAILED 字面量 / runClient 目视 backlog）。
+
+## 第 9 阶段收官记录（2026-09-01，主会话 phase-closeout）
+
+合入链：`34a4f57`(polish)→`794bb1c`(yield)→`55242e2`(render-D)→`5bca6e6`(redstone-hooks)→`e4bedea`(render-C)→`e93ea25`(crowbar)→`59390be`(W1)→`a76c9b0`(emitter)→`ea285e3`(W2)，起点 368e46e（96e7286 后 3 个 brain/docs 提交），全程单卡 review-merge、GPG 全验；render-D 一轮打回（审查证伪过度断言）→amend 重签→复审通过的演化链为纪律成例。
+
+- **p9-command-gui-polish**：`/gt6energy` 四 op 失败行补 FAILED 字面量（对齐命令族 `<OP> FAILED:` 风格）+ GTBasicMachineMenu 两条 javadoc 事实化（:267-268 流体显示槽 / `(>6)?7:25` 条件形）+ GTBarrelMetalBlockEntity javadoc 按 P7 熔点桥现实改写（Bronze 1696K 链逐项核实）。
+- **p9-recipe-yield-reform**（M2 翻案）：buildRecipe base 双 10000 槽（上游 `Recipe.java:906` chances≤0→10000 ctor 改写实存=严格等价）+ blockRaw extraCopies 8→7（2+7=9 与上游构成对位；翻案前 1+8=9 系总数巧合构成错；plain 1→2、dense-plain 3→4）+ poured 493 不变 + chance==0→null 保留；RCON 活证 out[1] 从恒空到双份主产出。
+- **p9-render-c-oven-overlay**：GTOvenRenderSnapshot + OVEN_SNAPSHOT 第二 ModelProperty（cover 链共存）+ GTOvenOverlayModel cutout overlay + quirk mActive 恒优先 mRunning（:1014）+ property 唯一写源/snapshot 只读投影双通道纪律；**机制发现**=烘焙 top-level 键是 per-state MRL（vanilla ModelBakery:136），16 变体方块动态模型必须 per-state 键控（单模型映射被静默跳过）——后续变体方块动态模型承重结论；12 PNG 借入（census 24 张全实存，colored+inactive 组裁剪=声明偏离）。
+- **p9-render-d-formed-look**：census 负结果=上游 multiblockmains/ 无 cokeoven 控制器贴图组（基类注册路径上游即 missing），占位保留零造图；javadoc 勘误经打回收缩为真命题（上游无消费者按 mStructureOkay 选贴图组；视觉消费仅 LargeTurbine getRenderPasses2 render-pass 数与 Crucible setBlockBounds2 两处）；FORMED 双模型=超上游增强钉死保留（否决 GTCEu IS_FORMED ModelProperty）。
+- **p9-redstone-hooks**：ICover+3 红石钩（:190-192）+ AbstractCoverDefault 三默认 + ICoverableTE 两出口（上游承载=TileEntityBase04Covers:409-441，卡面 06Covers 系笔误实读纠正）+ GTOvenBlock getSignal 桥（bridgeSignal static 纯函数）；冻结面显式 ADR 解冻（恰 ICover+3/ICoverableTE+2，框架先行单次解冻多卡复用）；CoverData 零 diff；OPOS 反转地雷由六向真值表钉死；mRedstoneStopped 只锁假电源充能门不挡电网 doInject（承重事实核实）。
+- **p9-tool-crowbar**：正式 crowbar（GT6ToolActions.CROWBAR 禁 HOE_DIG + useOn 直派 onCoverToolClick:246-247 OR 门零迁移 + 耐久 512 + 10000→1 耐久点映射）+ GT6Tools 注册 + /gt6tool dismantle + crowbar.png 上游逐字节借入；hoe 三谓词零触（扳手 UI 回归红线）。
+- **p9-redstone-cover-emitter**：首个真红石盖（上游 136 行直译：weak=bind4(mVisuals)/strong=mValues bit0 门不并机器默认值 + 裸右键 16 键区（:72-109 含 0↔15 wrap）+ cutter TOOL_CUTTER 类内常量；入向 getRedstoneIn 零覆写=上游无此方法实证）+ /gt6cover signal 验收通道 + 17 张贴图（档位图离线合成=声明偏离）；六冻结文件零 diff。
+- **p9-wire-family-w1**：GTWireSpecs 30 材质行直译 addElectricWires（Loader:1914-1950+V 表 CS:148-154）+ 620 块（28×21+2 纯线×16 census 钉数零裁行）+ use=PASS 显式语义锁 + IC2 拉取不复刻留 FE↔EU 桥缝 javadoc + bundled aChannel 占位闭环 + 每块 1 blockstate 单空 variant 键（禁 64-variant×620 爆炸）；RCON 22/22 跨档+16 strikes+超流+e2e。
+- **p9-wire-family-w2**：GTWireBakedModel（CONNECTIONS mask→内芯+六向臂 10ConnectorRendered:113-140 直译，tLength=0，64 形状缓存，mask 全走 BlockState 禁 ModelData）+ tint 材质色/绝缘灰叠层 + census 恰 7 iconset 零缺口零造图 + tab 620 全员；P8 钉测窄域化 ACCEPT（过滤集与生产同源+自家 census 补位=共享目录借入成例）。
+
+承重教训（入记忆）：①过度断言必被审查证伪（"20 消费者全逻辑门"→真命题收缩+amend 重签演化链）；②测试计数 stale 口径两起（424/457 误报）——审查官 JUnit XML 实测对账成例；③共享目录借入各带自家 census；④64EU=烤炉 overcharge 上限，更大包炸炉连坐，高压验收须炉安全包；⑤嵌入服务降级（remember 长文本 400）→锚点 state 先行+拆条落账；⑥rebase 误提交冲突标记事故（自曝+软重置+审查 grep 复验成例）。新增 known_bugs open：gt6oven place 覆盖拆盖跨重启复活（covers/oven 域 debugger 候选）。
+
+**P10 移交**：todo.pool（debug 优先 place 覆盖拆盖复活 / 线缆三族 / 工具族池 / cover 残余 / oven tint 全保真层 / 机器 compat / RECYCLABLE / rotor / ore 方块行 / barrel 特性层 / runClient 目视 backlog）。
 
 ## 关键决策
 

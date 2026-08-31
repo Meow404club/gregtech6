@@ -80,8 +80,16 @@
 - [x] p8-cokeoven-fluid-capability：drain-only 流体罐 capability + P6 推液守恒活证（merge 7516c3b，3 提交）
 - [x] phase-closeout：根 205 + mdk 415 = 620 全绿，RCON 各链复放全过，zcode bug 断点恢复零损失
 
-## 下一波候选（P9，等压缩后"继续"按池开）
+## 第 9 阶段（线缆全谱系 / 渲染 C+D 档 / cover 红石钩+正式 crowbar / 配方翻案+命令小修）——✅ 已完成（2026-09-01）
 
+- [x] p9-command-gui-polish：/gt6energy 四 op FAILED 字面量 + GTBasicMachineMenu 两条 javadoc nit + 桶 javadoc P7 现实化（merge 34a4f57，2 提交）
+- [x] p9-recipe-yield-reform（M2 哨兵产量翻案）：buildRecipe base 双 10000 槽 + blockRaw extraCopies 8→7（构成严格对位上游）+ poured 493 不变 + RCON 活证双份主产出（merge 794bb1c，1 提交）
+- [x] p9-render-d-formed-look：census 负结果（上游无 cokeoven 控制器贴图组）+ javadoc 勘误真命题收缩 + FORMED 双模型增强钉死（merge 55242e2，1 提交，打回→amend→复审过）
+- [x] p9-redstone-hooks：ICover 红石三钩框架 + ICoverableTE 两出口 + GTOvenBlock 信号桥 + RedstoneHooksTest（merge 5bca6e6，4 提交）
+- [x] p9-render-c-oven-overlay：GTOvenRenderSnapshot + overlay cutout 动态渲染 + per-state MRL 键控机制发现（merge e4bedea，3 提交）
+- [x] p9-tool-crowbar：正式 crowbar（ToolAction+useOn 直派 OR 门零迁移）+ /gt6tool dismantle + 贴图借入（merge e93ea25，5 提交）
+- [x] p9-redstone-cover-emitter：首个真红石盖（出向双覆写+16 键区+cutter strong）+ /gt6cover signal（merge a76c9b0，5 提交）
+- [x] phase-closeout：根 205 + mdk 484 = 689 全绿，RCON 各链复放全过（W2 链 48/48），runData 二跑 written:0
 - [x] 线缆全谱系：16 线 5 缆 620 块+真材质渲染 **landed**（W1+W2 双卡闭合 2026-09-01，merge 59390be+ea285e3）；剩余全部入池：cutter 交互（归 p9 工具族池，接口预期=IBlockToolable 链，ADR ⑤）/ IC2 拉取·FE 桥缝（onTick 同位 javadoc 缝在位）/ 红石·激光·物流线族（能量语义不同，独立后续卡，ADR ⑩）；runClient 目视入池：材质色差/绝缘层/连接臂几何
   - [x] **W1 电线索数据驱动铺开（闭合）**：GTWireSpecs 30 材质行直译 addElectricWires（WireElectric:71-109）+Loader:1914-1950，V 表 CS.java:148-154 逐字；620=28 材质x21+2 纯线 x16 零裁行（ADR 2026-09-01-p9-wire-family ④）+GTWires 静态循环 620 对 Block+BlockItem（stacksTo 64/n 梯+缆字面 64/32/16/8/4）+GTWireBlock 载体扩 material/size/insulated/diameter（W2 种子）+use=PASS 显式语义锁（cutter 走 IBlockToolable 非扳手，GTWireBlockUseLockTest）+GTWireBlockEntity 传输/燃烧数学零 diff（P8 语义锁；IC2 拉取/FE 桥缝+aChannel bundled 两占位仅 javadoc）+/gt6wire 三形态选择器+datagen 每块 1 blockstate（空 variant 键通配，禁 64x620 爆炸）+620 item/loot/lang。数字疑点闭合：coder 报 422/424 系 rebase 前 stale 口径，合并态实测 mdk 456/0（447 基线+新 9 测）+runData 二跑 written:0；64EU=32EU 烤炉 overcharge 上限/更大包炸炉连坐实证入 KG（merge 59390be，4 提交 99df23d..01e298f）
   - [x] **W2 连接感知 BakedModel 真材质渲染（闭合）**：GTWireBakedModel=上游 10ConnectorRendered:113-140 直译（pass0 内芯+pass1-6 六向臂 quad，tLength=0 臂到边界、:139 埋面跳过、:138 外帽 getTextureConnected/侧壁 getTextureSide，64 形状缓存，mask 全走 BlockState CONNECTIONS 禁 ModelData/BEWLR=ADR ⑨）+addWireFamily 模型目标改造（单空 variant 键法不变，7 共享 set 模型=30 材质行 census 恰 copper/shiny/metallic/dull/quartz/rad/none）+13 PNG 借入（7 wire.png+6 INSULATION 绝缘罩，sha256 审查官复验 13/13 字节一致零造图）+tintindex 染 fRGBaSolid+绝缘灰(64,64,64) 叠层（WireElectric:237-238 梯逐字，0.002 epsilon cutout 防 z-fight）+item=mask 12（:107 worldObj==null SBIT_S|SBIT_N）+GTWireClientListener per-state MRL+item 双路由（render-C per-state 键控纪律）+ELECTRIC_WIRES_TAB 620 全员+GTWireCommand javadoc 勘误。**P8 钉测窄域化裁决 ACCEPT**：175 钉值按 prefix 引用集（production walk 派生）过滤=防漂移原意保持，无散图方向由 GTWireTextureCensusTest 3 例补位（13 张存在性+7 set 精确结构+wire.png 字节哈希），后续共享目录借入各带自家 census 成惯例。门禁复审：mdk 484/0（456+17 新+11 covers）+根 205/0+build 绿+runData written:0（620 bs/7 set 模型实测）+RCON 48/48 W1 链复跑（渲染改造零行为变化：GTWireBlockEntity/注册循环/onRemove 零 diff）。审查观察（非阻塞）：上游 :108/:114 mDiameter>=1.0F 单 pass 全方块特例未单独建模，16px 缆连接面靠等深 quad 确定性覆盖呈现上游观感，后续池可补 javadoc 声明（merge ea285e3，6 提交 766063d..e826a0d，ADR 2026-09-01-p9-wire-family ③③(c)⑨）
@@ -113,4 +121,9 @@
 - [x] GTBarrelMetalBlockEntity javadoc P6 偏离文字过时（按 p7 熔点桥现实改写，merge 34a4f57）
 - [ ] GTBarrelBlock.java :48-51 aMeltingPointK javadoc 仍留 P6 "MAX_VALUE 不熔=声明偏离" 旧文（p7 桥后过时；下卡触碰该文件顺手清）
 - [ ] 旧池：PrefixRegistry 未 close 项/移植进度看板（按 GT6 子系统统计已移植/未移植）
-- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI+cover 板/管道箭头（P4）、扳手九宫格六条+泵盖贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint/creosote 渲染（P6）、三机 GUI+12/2 槽布局（P7）、12 高档鼓外观（P7）、cokeoven GUI 对帧/方块染色 tint/创造栏 7 tab/侧面装桶顶面拒（P8）、oven overlay 激活/运行态六面朝向目视+截面（solid 材质层与 cutout overlay 层分离）+fallback 材质层（无快照时纯 A 档）（P9）
+- [ ] **debug 优先**：gt6oven place 覆盖既有炉后，原点位已拆 cover 跨重启复活（三连重启复现，未覆盖点位正常；known_bugs 在案，covers/oven 域 debugger 卡候选）
+- [ ] 线缆三族独立卡：红石族（RedAlloy/Signalum/Lumium，损=MAX_RANGE 分数）+ Laser（:24900 无损）+ Logistics（:24901 物流）；Laminator 绝缘配方；裸线触电行为；foam 涂装不移植声明；:108/:114 mDiameter>=1.0F 单 pass 全方块特例 javadoc
+- [ ] 工具族池：crowbar 挖掘扩展（rails/circuits/开箱）/合成配方/材质梯度/创意 tab/运行时染色；cutter 接线（TOOL_cutter 走 IBlockToolable 链，线缆连接管理交接）
+- [ ] cover 残余：Controller/SelectorRedstone/ConductorIN/OUT 盖族；item intercept 族；cover 板动态模型 per-state 键缺口（render-C doc 勘误在案）；ghost 结构预览（瞬态 RenderHighlightEvent 例外+结构 pattern）
+- [ ] 渲染残余：oven colored+mRGBa tint 全保真层增量
+- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI+cover 板/管道箭头（P4）、扳手九宫格六条+泵盖贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint/creosote 渲染（P6）、三机 GUI+12/2 槽布局（P7）、12 高档鼓外观（P7）、cokeoven GUI 对帧/方块染色 tint/创造栏 7 tab/侧面装桶顶面拒（P8）、oven overlay 激活/运行态六面朝向目视+截面（solid 材质层与 cutout overlay 层分离）+fallback 材质层（无快照时纯 A 档）、emitter 键区贴图+档位数字+item 外观、线缆材质色差+绝缘层+连接臂几何、cokeoven FORMED 占位（上游无图无视觉差）（P9）
