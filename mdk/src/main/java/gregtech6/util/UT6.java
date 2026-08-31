@@ -26,7 +26,26 @@ public final class UT6 {
 	/** Upstream CS.java:522 — SIDE_INVALID = 6. */
 	public static final byte SIDE_INVALID = 6;
 
+	/**
+	 * Upstream CS.java:151 verbatim — the EU voltage ladder (V). {@link #tierMax} walks it;
+	 * 8 * 4^i per step, sixteen entries up to 2^33.
+	 */
+	public static final long[] VOLTAGES = { 8, 32, 128,  512, 2048,  8192, 32768, 131072,  524288, 2097152,  8388608, 33554432, 134217728,  536870912, 2147483648L,  8589934592L};
+
 	private UT6() {
+	}
+
+	/**
+	 * Upstream UT.Code.tierMax (UT.java:1388-1393) verbatim — the first index of
+	 * {@link #VOLTAGES} whose value is {@code >= |aSize|}, or the table length when the
+	 * size is off the top of the ladder. Pure logic, offline-testable (task p8-d3 §①:
+	 * the overcharge explosion-strength curve).
+	 */
+	public static byte tierMax(long aSize) {
+		byte i = -1;
+		aSize = Math.abs(aSize);
+		while (++i < VOLTAGES.length) if (aSize <= VOLTAGES[i]) return i;
+		return i;
 	}
 
 	/**

@@ -15,6 +15,9 @@ import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.machines.GTMachinesOfflineTestBase.MachineLevel;
 
+import gregapi.code.TagData;
+import gregapi.data.TD;
+
 /**
  * Acceptance 1 (task p4-machine-oven): the energy semantics of the ADR-P4 option-A fake
  * power source, traced against the upstream math (MultiTileEntityBasicMachine.java:761-774
@@ -182,5 +185,128 @@ public class TileEntityOvenEnergyTest extends GTMachinesOfflineTestBase {
 		tLevel.mNeighborSignal = false;
 		drive(tOven, 1);
 		assertEquals(256, tOven.mMaxProgress, "the machine resumes when the signal drops");
+	}
+
+	// -------------------------------------------------------------------------
+	// grid-fed mode group (task p8-d3 §⑤): ENERGY_FAKE_SOURCE = false — the machine
+	// eats EU packets through the ITileEntityEnergy surface (Root gate :717 + oven
+	// doInject :489-508). No drive() here: the fake source is off, the energy stays
+	// exactly what the injections booked.
+	// -------------------------------------------------------------------------
+
+	/** The oven with the fake source OFF (the shipped default semantic). */
+	private TileEntityOven netModeOven() {
+		TileEntityOven.ENERGY_FAKE_SOURCE = false;
+		return makeOven(smeltingLevel());
+	}
+
+	@Test
+	void netModeInjectChargesUpToTheCapacityClamp() {
+		// 32 EU x 2 packets: tInput = min(64-0, 32*2) = 64, tConsumed = min(2, 64/32) = 2,
+		// mEnergy += 2*32 = 64 (:501-505) — the tank sits exactly at mInputMax.
+		TileEntityOven tOven = netModeOven();
+
+		long tUsed = tOven.doEnergyInjection(TD.Energy.EU, (byte)2, 32, 2, true);
+		assertEquals(2, tUsed, "both packets consumed");
+		assertEquals(64, tOven.mEnergy, "mEnergy = 2 packets * 32 EU, at the mInputMax clamp");
+
+		tUsed = tOven.doEnergyInjection(TD.Energy.EU, (byte)2, 32, 2, true);
+		assertEquals(0, tUsed, "a full tank consumes nothing (tInput = min(64-64, 64) = 0)");
+		assertEquals(64, tOven.mEnergy, "the clamp holds");
+	}
+
+	@Test
+	void netModeExcessPacketsAreClampedToTheFreeTankSpace() {
+		// 64 EU x 2 packets into the empty tank: tInput = min(64, 128) = 64,
+		// tConsumed = min(2, 64/64) = 1 — only ONE packet is consumed, the second refused.
+		TileEntityOven tOven = netModeOven();
+
+		long tUsed = tOven.doEnergyInjection(TD.Energy.EU, (byte)2, 64, 2, true);
+		assertEquals(1, tUsed, "only one of the two 64 EU packets fits");
+		assertEquals(64, tOven.mEnergy, "the tank is full");
+	}
+
+	@Test
+	void netModeSimulationDoesNotBookEnergy() {
+		// aDoInject = false runs the same math without mutating (:503/:504 guards):
+		// tInput = min(64-0, 32*5) = 64, tConsumed = min(5, 64/32) = 2 — the probe reports
+		// the two packets that WOULD fit.
+		TileEntityOven tOven = netModeOven();
+
+		long tUsed = tOven.doEnergyInjection(TD.Energy.EU, (byte)2, 32, 5, false);
+		assertEquals(2, tUsed, "the probe reports what WOULD be consumed");
+		assertEquals(0, tOven.mEnergy, "nothing booked");
+
+		tUsed = tOven.doEnergyInjection(TD.Energy.EU, (byte)2, 32, 5, true);
+		assertEquals(2, tUsed, "the real injection consumes the same two packets");
+		assertEquals(64, tOven.mEnergy, "the tank is at the clamp");
+	}
+
+	@Test
+	void netModeStoppedMachineRefusesInjection() {
+		// :490 — a stopped machine returns 0 before anything else; the Root gate
+		// (isEnergyAcceptingFrom without the theoretical flag) bounces first for the
+		// doEnergyInjection path, the direct doInject bounce is the :490 line itself.
+		TileEntityOven tOven = netModeOven();
+		tOven.mStopped = true;
+
+		assertEquals(0, tOven.doEnergyInjection(TD.Energy.EU, (byte)2, 32, 2, true), "the gate refuses (not accepting)");
+		assertEquals(0, tOven.doInject(TD.Energy.EU, (byte)2, 32, 2, true), ":490 refuses directly");
+		assertEquals(0, tOven.mEnergy, "nothing booked");
+		assertFalse(tOven.isEnergyAcceptingFrom(TD.Energy.EU, (byte)2, false), "a stopped machine is not accepting");
+		assertTrue(tOven.isEnergyAcceptingFrom(TD.Energy.EU, (byte)2, true), "aTheoretical keeps conductors visually connected (:511)");
+	}
+
+	@Test
+	void netModeBelowMinimumPacketsAreSwallowedByTheRootGate() {
+		// Root gate :717: EU is not size-irrelevant and |8| < InputMin (16 = mInput/2),
+		// so the packet is "used" (aAmount returned) but doInject never runs — the energy
+		// vanishes, the machine never sees it.
+		TileEntityOven tOven = netModeOven();
+
+		long tUsed = tOven.doEnergyInjection(TD.Energy.EU, (byte)2, 8, 5, true);
+		assertEquals(5, tUsed, "the offered amount reports as used (swallowed)");
+		assertEquals(0, tOven.mEnergy, "doInject never ran, nothing booked");
+		assertEquals(0, tOven.mEnergy, "the machine state is untouched");
+	}
+
+	@Test
+	void netModeOvervoltageOverchargesAndSuspendsTheExplosion() {
+		// :493-495 — aSize 128 > InputMax 64 overcharges and the WHOLE amount reports as
+		// used; mEnergy stays untouched. The oven ticks (mIsTicking), so the explosion is
+		// NOT instant from the wire's tick context: it suspends into mExplosionStrength
+		// with the tierMax curve (UT6.tierMax(128) = 2) and the machine stays alive until
+		// its own tick consumes the flag. The instant/tick-consumption split is covered
+		// offline in TileEntityBase01RootEnergyTest (the stub Level cannot take
+		// destroyBlock) and live by the RCON overcharge chain (the block really explodes).
+		TileEntityOven tOven = netModeOven();
+		tOven.getInventory().insertItem(TileEntityOven.SLOT_INPUT, new ItemStack(Items.SAND, 8), false);
+
+		long tUsed = tOven.doEnergyInjection(TD.Energy.EU, (byte)2, 128, 1, true);
+		assertEquals(1, tUsed, "the overcharged packet reports as fully used (:495)");
+		assertEquals(0, tOven.mEnergy, "no energy booked on the overcharge path");
+		assertEquals(2.0F, tOven.mExplosionStrength, 0.0F, "the suspended strength = UT6.tierMax(128) = 2");
+		assertFalse(tOven.isDead(), "the machine survives until its own tick consumes the flag");
+
+		// a second over-voltage burst keeps the MAX of the demands (:482).
+		tOven.doEnergyInjection(TD.Energy.EU, (byte)2, 512, 1, true);
+		assertEquals(3.0F, tOven.mExplosionStrength, 0.0F, "tierMax(512) = 3 wins the max");
+	}
+
+	@Test
+	void netModeEnergyTypeSurfaceIsEuOnly() {
+		// :510/:519 — accepting EU only, emitting nothing, sizes 16/32/64 (:513-515 + :133).
+		TileEntityOven tOven = netModeOven();
+
+		assertTrue(tOven.isEnergyType(TD.Energy.EU, (byte)2, false), "accepts EU");
+		assertFalse(tOven.isEnergyType(TD.Energy.EU, (byte)2, true), "emits nothing");
+		assertFalse(tOven.isEnergyType(TD.Energy.RF, (byte)2, false), "RF is not the accepted type");
+		assertEquals(1, tOven.getEnergyTypes((byte)6).size(), "EU.AS_LIST (:519)");
+		assertEquals(TD.Energy.EU, tOven.getEnergyTypes((byte)6).iterator().next(), "the single type is EU");
+		assertEquals(16, tOven.getEnergySizeInputMin(TD.Energy.EU, (byte)2), "InputMin = mInputMin (:513)");
+		assertEquals(32, tOven.getEnergySizeInputRecommended(TD.Energy.EU, (byte)2), "InputRec = mInput (:514)");
+		assertEquals(64, tOven.getEnergySizeInputMax(TD.Energy.EU, (byte)2), "InputMax = mInputMax (:515)");
+		assertFalse(tOven.isEnergyEmittingTo(TD.Energy.EU, (byte)2, false), "the oven never emits");
+		assertTrue(tOven.isSurfaceEnergyAttachable((byte)2), "the Root attachment seam defaults to true (all-sides mask collapsed, :511 seam)");
 	}
 }

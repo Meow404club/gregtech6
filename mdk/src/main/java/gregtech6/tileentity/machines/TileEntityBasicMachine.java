@@ -60,8 +60,10 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * <li>{@link #doActive(long, long)} :795-887 with the carryover block :843-851 verbatim —
  *     mProgress += min(mInputMax, mEnergy) :813 (the progress unit IS an energy unit),
  *     item output placement wraps i % mOutputItemsCount :816; the alternating-energy half
- *     of the :815 gate is cut (doInject is a stub so mStateNew has no writer, and RU/KU/TU
- *     are not alternating types); the fluid placement (:817-835) and the neighbor auto-push
+ *     of the :815 gate is cut (the base doInject is still a stub so mStateNew has no
+ *     network-side writer; upstream TD.java:219 ALL_ALTERNATING = (F, KU) — KU/Crusher
+ *     IS a member, its alternating half-restore is a pool item); the fluid placement
+ *     (:817-835) and the neighbor auto-push
  *     blocks (:853-858/:867-884) are cut (no logistics surface — outputs stay in the slots,
  *     which keeps the upstream canOutput blockage);</li>
  * <li>{@link #checkRecipe(boolean, boolean)} :683-778 with the doInputItems auto-IO (:687)
@@ -307,8 +309,12 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 			if (mProgress <= mMaxProgress) {
 				mProgress += aEnergy; // :813 — the progress unit IS an energy unit (ADR-P4)
 			}
-			// :815 — the alternating-energy half (mStateOld && !mStateNew) is cut: doInject is a
-			// stub so mStateNew has no writer, and RU/KU/TU are not ALL_ALTERNATING members
+			// :815 — the alternating-energy half (mStateOld && !mStateNew) is cut: the base
+			// doInject is still a stub (the D3 network surface landed on the oven only), so
+			// mStateNew has no network-side writer and keeping the alternating half would
+			// deadlock the machines. Erratum (task p8-d3, ruling 2): upstream TD.java:219 is
+			// ALL_ALTERNATING = (F, KU) — KU/Crusher IS a member (the earlier note claiming
+			// RU/KU/TU all absent was wrong); the KU alternating half-restore is a pool item.
 			if (mProgress >= mMaxProgress) {
 				// :816 — outputs wrap around the output slot range: i % mOutputItemsCount
 				for (int i = 0; i < mOutputItems.length; i++) if (mOutputItems[i] != null && addStackToSlot(mRecipes.mInputItemsCount + (i % mRecipes.mOutputItemsCount), mOutputItems[i])) {

@@ -64,6 +64,11 @@ public abstract class GTMachinesOfflineTestBase extends GTRecipesOfflineTestBase
 	@BeforeEach
 	void initRecipeMaps() {
 		GT6RecipeMaps.init();
+		// task p8-d3 §③: the option-A fake source is a static test switch now (default
+		// false = grid-fed). The offline fixtures keep it ON so the p4 acceptance keeps
+		// its power premise; the net-mode tests flip it off at their own start and this
+		// per-test restore keeps the classes independent of execution order.
+		TileEntityOven.ENERGY_FAKE_SOURCE = true;
 	}
 
 	@AfterEach
