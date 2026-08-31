@@ -91,10 +91,10 @@
 
 ## 遗留池
 
-- [ ] **M2 哨兵产量翻案**：上游 HandlerCrushing 槽0=0 哨兵+槽1=10000 重复=每行 2 份主产出，port chance==0-null 后 oreRaw 1 份；翻案=buildRecipe base 改双 10000 槽（493 行不变）
+- [x] **M2 哨兵产量翻案**：上游 HandlerCrushing 槽0=0 哨兵+槽1=10000 重复=每行 2 份主产出，port chance==0-null 后 oreRaw 1 份；翻案=buildRecipe base 改双 10000 槽（493 行不变）（merge 794bb1c，fix e31f48b；plain=2/blockRaw=9/dense 组合=11 对位上游）
 - [ ] **rotor 族卡**：ENERGY_FAKE_SOURCE 翻默认 false + 拆 :815 悬置折叠（M1 声明移除路径）；RU/KU 网供电真语义
 - [ ] :511 FACE_CONNECTED 侧掩码 side-gated IO + auto-IO + containsInput 插槽查验；minTankSize/三哈希索引（配方面增长后性能观测触发）
-- [ ] ore 方块行激活（BlocksGT.ore/oreBroken 形状，方块宇宙已解锁）+ blockRaw 493 行
+- [ ] ore 方块行激活（BlocksGT.ore/oreBroken 形状，方块宇宙已解锁）+ blockRaw 493 行——依赖本项：blockRaw 9 槽行（p9 翻案后 2 base+7 块 copies=9 份，行形状已对位上游）在其物品注册前不 poured
 - [ ] 多方块件面流体代理（MultiBlockPartBlockEntity 转发）；/gt6energy 无 BE 失败行补 FAILED 字面量已由 p9-command-gui-polish 闭合 ✅
 - [x] W1 两条 javadoc nit（:274-275→:267-268；输入槽 y 恒 25 vs 上游 >6?7:25 条件形）（merge 34a4f57）
 - [ ] RM 壳缺口余项：containsInput 物品版消费面（随 auto-IO）；GT6RecipesCokeOvenTest AIR 隐患已由 M2 守卫+清理闭合 ✅
