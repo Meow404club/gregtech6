@@ -16,6 +16,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMultiBlocks;
+import gregtech6.registry.GTWires;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 
 /**
@@ -51,6 +52,8 @@ public final class GT6BlockStates extends BlockStateProvider {
         itemModels().withExistingParent("example_chest", modLoc("block/example_chest"));
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get());
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
+        addWire(GTWires.WIRE_ELECTRIC_1X.get());
+        addWire(GTWires.WIRE_ELECTRIC_2X.get());
         addOven();
         addMultiBlocks();
         addBarrel();
@@ -175,6 +178,22 @@ public final class GT6BlockStates extends BlockStateProvider {
         String tName = aPipe.getDescriptionId().replace("block.gt6.", "");
         var tModel = models().cubeAll(tName, modLoc("block/fluid_pipe_wood"));
         getVariantBuilder(aPipe).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+        itemModels().withExistingParent(tName, modLoc("block/" + tName));
+    }
+
+    /**
+     * Task p7-d2-cable spec ⑥ — the electric wires, the pipe section shape: one shared
+     * cube_all model over {@code gt6:textures/block/wire_electric.png} (both variants
+     * reference the same PNG, the p7 shared-PNG drum family form) with a variant per
+     * {@link gregtech6.block.wire.GTWireBlock} CONNECTIONS mask value (0..63, the 6-bit
+     * connection state — the 64-variant exhaustive listing comes out of forAllStates, no
+     * hand-written JSON) plus the BlockItem model parenting the block model. The texture
+     * is an inline-script generated placeholder PNG, not JSON.
+     */
+    private void addWire(Block aWire) {
+        String tName = aWire.getDescriptionId().replace("block.gt6.", "");
+        var tModel = models().cubeAll(tName, modLoc("block/wire_electric"));
+        getVariantBuilder(aWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
         itemModels().withExistingParent(tName, modLoc("block/" + tName));
     }
 }
