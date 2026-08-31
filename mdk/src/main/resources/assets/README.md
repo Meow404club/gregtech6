@@ -182,3 +182,36 @@ atlas wiring (the same convention the pump-cover sprites use). The card's
 
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+Electric wire family textures, task p9-wire-family-w2: the 7 grayscale wire
+icons under `gt6/textures/block/materialicons/<set>/wire.png` (sets
+`copper, shiny, metallic, dull, quartz, rad, none` — the exact iconset census of
+the 30 wire rows; `none` = upstream `NONE/wire.png`, landing the setless
+Superconductor row) come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/wire.png`,
+byte-identical (upstream ships the SAME wire.png bytes in every set, sha256
+`d9343ea989b6585f8fea8ed6aba7db86f477bc7f63553db1f8d4d06794077bad`; census
+2026-09-01 found wire.png present in ALL upstream iconsets — zero coverage
+gaps, no placeholder fallback needed). The 6 insulation jacket masks under
+`gt6/textures/block/iconsets/insulation_{tiny,small,medium,large,huge,full}.png`
+come from upstream `textures/blocks/iconsets/INSULATION_<TIER>.png`
+(byte-identical, sha256 below), rendered as the gray-64 tinted overlay layers
+(MultiTileEntityWireElectric.java:237-238). The material colour is the runtime
+`RegisterColorHandlersEvent` tint on index 0 (`fRGBaSolid`), the jacket rides
+tint index 1.
+
+- `materialicons/copper/wire.png` … `materialicons/none/wire.png` (7 copies,
+  byte-identical) `d9343ea989b6585f8fea8ed6aba7db86f477bc7f63553db1f8d4d06794077bad`
+- `iconsets/insulation_tiny.png`   `7835cf39b86904ee279b7656c1ed080ed736f47efe2e164cb908726c93fd6e42`
+- `iconsets/insulation_small.png`  `5332c96d9c4af24985a10a954547d3608fe33bdd803b16ee42cef9bd38a9b207`
+- `iconsets/insulation_medium.png` `fb3c6765612def8793fad6fe4c203b38b87226f1044c0ecdb27c2a87cf0aeb97`
+- `iconsets/insulation_large.png`  `4154396a428bfd2a4c020b784a877268cb1ac72ddb9c5e7b5a7f6c32f0d53434`
+- `iconsets/insulation_huge.png`   `081ae186c680cccc6cd602558cfb4baef9f5a150ba9583d27ad72f2f410e74ce`
+- `iconsets/insulation_full.png`   `54a4eb56bf6ce30a93a283e9a14c97dd97d0657bce01da8769d3429b0f631dd0`
+
+Filenames lowercased on borrow (1.20.1 ResourceLocation charset), contents
+byte-identical. Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal
+Public Domain Dedication** (same upstream `README.md` block as above).
+Declared deviation: the painted-foam colour variant (`isPainted() ? mRGBa`)
+is not ported — foam is not in this card's scope, the unpainted gray-64 jacket
+is rendered.
