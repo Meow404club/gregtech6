@@ -36,7 +36,14 @@ import net.minecraftforge.fluids.FluidStack;
  * <p>Side order: {@code byte} face indices follow the GT6 side order, which equals
  * {@link Direction#get3DDataValue()} (the chest/oven facing precedent).
  *
- * <p>Cut to the pool (spec ②): the item/redstone/GUI hooks :190-207, the logistics
+ * <p>The redstone hook triple :190-192 is RESTORED with the cover redstone framework
+ * (task p9-redstone-hooks, ADR 2026-09-01-p9-redstone-hooks — the P4 spec ② pool cut is
+ * lifted verbatim): {@link #getRedstoneIn} is the covered face's incoming read,
+ * {@link #getRedstoneOutWeak}/{@link #getRedstoneOutStrong} the emission pair the host
+ * exits hand the machine default to. The item/GUI hooks :198-216 stay pooled (the GUI
+ * pair is upstream dead code, the item family is the pooled D card).
+ *
+ * <p>Cut to the pool (spec ②): the item/GUI hooks :198-207, the logistics
  * override family :220-225 and the connector hooks :75-80/:183. The two fluid
  * intercept hooks (:218-219) are RESTORED with the pump cover (task p5-barrel-side-rules
  * spec F): {@link #interceptFluidFill}/{@link #interceptFluidDrain} are the one-way
@@ -137,6 +144,26 @@ public interface ICover {
 
 	/** Upstream :188 — the CoverData writeToNBT :75 visual-persistence gate. */
 	boolean needsVisualsSaved(byte aCoverSide, CoverData aData);
+
+	/**
+	 * Upstream :190 — the incoming redstone read on the face carrying this cover. The
+	 * default (AbstractCoverDefault :78) passes the neighbouring block's signal straight
+	 * through, so a plain cover never blocks redstone; a redstone cover (the emitter
+	 * family, C card) overrides the world query. The host dispatches through
+	 * {@link ICoverableTE#getRedstoneIncoming}.
+	 */
+	byte getRedstoneIn(byte aCoverSide, CoverData aData);
+
+	/**
+	 * Upstream :191 — the weak redstone emission of the face carrying this cover.
+	 * {@code aDefaultRedstone} is the machine's own weak emission on the queried face:
+	 * covers that do not emit just return it (the host exits feed the machine value in,
+	 * upstream :429/:436).
+	 */
+	byte getRedstoneOutWeak(byte aCoverSide, CoverData aData, byte aDefaultRedstone);
+
+	/** Upstream :192 — the strong (comparator-grade) emission, same contract as the weak one. */
+	byte getRedstoneOutStrong(byte aCoverSide, CoverData aData, byte aDefaultRedstone);
 
 	/** Upstream :194 — the atlas sprite id painted on the cover plate's outer face (null = no plate). */
 	@Nullable

@@ -1,6 +1,7 @@
 package gregtech6.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -8,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,6 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.network.NetworkHooks;
 
+import gregtech6.covers.ICoverableTE;
 import gregtech6.registry.GTMachines;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityOven;
@@ -79,6 +82,38 @@ public class GTOvenBlock extends GTEntityBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState aState) {
 		return RenderShape.MODEL; // BaseEntityBlock.java:19-21 default is INVISIBLE (BER assumption)
+	}
+
+	@Override
+	public int getSignal(BlockState aState, BlockGetter aLevel, BlockPos aPos, Direction aDirection) {
+		// upstream 04Covers :427-431 isProvidingWeakPower — the vanilla query direction is
+		// the side the RECEIVER sees the machine from; the emission face is UT6.OPOS of it
+		// (folded inside the ICoverableTE exit). super.getSignal (the vanilla Block
+		// default, 0 for the oven) rides in as the machine-default argument the cover may
+		// override (task p9-redstone-hooks; the P6/P8 multiblock bases are deliberately
+		// NOT bridged — ADR FORBIDDEN ④, the multiblock per-face dispatch is unresearched).
+		return bridgeSignal(aLevel, aPos, aDirection, super.getSignal(aState, aLevel, aPos, aDirection), false);
+	}
+
+	@Override
+	public int getDirectSignal(BlockState aState, BlockGetter aLevel, BlockPos aPos, Direction aDirection) {
+		// upstream :433-438 isProvidingStrongPower — same bridge shape as getSignal.
+		return bridgeSignal(aLevel, aPos, aDirection, super.getDirectSignal(aState, aLevel, aPos, aDirection), true);
+	}
+
+	/**
+	 * The :427-438 bridge body, shared by both exits. The {@code aMachineDefault} is the
+	 * vanilla Block emission (0 for the oven); a coverable BE at {@code aPos} may
+	 * override it through the ICoverableTE exit. Static so the offline truth tables can
+	 * drive it without constructing the block (the registry-freeze precedent,
+	 * TileEntityOvenFacingTest) — the live dispatch stays covered by the RCON chain.
+	 */
+	public static int bridgeSignal(BlockGetter aLevel, BlockPos aPos, Direction aDirection, int aMachineDefault, boolean aStrong) {
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) {
+			byte tSide = (byte) aDirection.get3DDataValue();
+			return aStrong ? tCoverable.getRedstoneOutStrong(tSide, aMachineDefault) : tCoverable.getRedstoneOutWeak(tSide, aMachineDefault);
+		}
+		return aMachineDefault;
 	}
 
 	@Override

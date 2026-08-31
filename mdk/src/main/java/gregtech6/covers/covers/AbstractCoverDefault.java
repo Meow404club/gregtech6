@@ -2,12 +2,15 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -21,9 +24,10 @@ import gregtech6.covers.ICoverableTE;
  * gregapi/cover/covers/AbstractCoverDefault.java (:49-112), trimmed to the ported
  * {@link ICover} surface (task p4-cover-core ②). The sound hooks map the upstream
  * custom SFX.GT_SCREWDRIVER/SFX.MC_BREAK onto vanilla equivalents (the GT sound
- * registration system stays pooled); the addToolTips :77, bounds/collisions :85-88 and
- * the redstone/GUI/logistics/fluid defaults :78-80/:82-83/:93-109 live in their pooled
- * method groups.
+ * registration system stays pooled); the addToolTips :77 and bounds/collisions :85-88
+ * stay pooled; the redstone defaults :78-80 are RESTORED with the cover redstone
+ * framework (task p9-redstone-hooks — a plain cover is transparent to redstone); the
+ * GUI/logistics defaults :82-83/:93-109 live in their pooled method groups.
  */
 public abstract class AbstractCoverDefault implements ICover {
 
@@ -81,6 +85,30 @@ public abstract class AbstractCoverDefault implements ICover {
 
 	@Override public void onBlockUpdate(byte aCoverSide, CoverData aData) {/**/} // :75
 	@Override public void onStoppedUpdate(byte aCoverSide, CoverData aData, boolean aStopped) {/**/} // :76
+
+	/**
+	 * Upstream :78 — the neighbouring block's signal read at the covered face. The
+	 * {@code getIndirectPowerLevelTo} counterpart is {@code Level.getSignal} at
+	 * {@code pos.relative(face)} (the ADR declared deviation, truth-table pinned), the
+	 * result clamped to the 0..15 redstone scale (UT.Code.bind4). A plain cover is
+	 * transparent to redstone — the world read passes straight through.
+	 */
+	@Override
+	public byte getRedstoneIn(byte aCoverSide, CoverData aData) {
+		Level tLevel = aData.mTileEntity.self().getLevel();
+		if (tLevel == null) return 0;
+		Direction tFace = Direction.from3DDataValue(aCoverSide);
+		BlockPos tNeighbour = aData.mTileEntity.self().getBlockPos().relative(tFace);
+		return (byte) Math.max(0, Math.min(15, tLevel.getSignal(tNeighbour, tFace)));
+	}
+
+	/** Upstream :79 — a non-emitting cover passes the machine's own weak emission through. */
+	@Override
+	public byte getRedstoneOutWeak(byte aCoverSide, CoverData aData, byte aDefaultRedstone) {return aDefaultRedstone;}
+
+	/** Upstream :80 — a non-emitting cover passes the machine's own strong emission through. */
+	@Override
+	public byte getRedstoneOutStrong(byte aCoverSide, CoverData aData, byte aDefaultRedstone) {return aDefaultRedstone;}
 
 	/** Upstream default for the :218 hook — no gate unless the cover mounts one (the pump cover does). */
 	@Override public boolean interceptFluidFill(byte aCoverSide, CoverData aData, byte aSide, @Nullable FluidStack aFluidToFill) {return false;}

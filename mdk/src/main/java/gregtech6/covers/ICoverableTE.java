@@ -16,6 +16,7 @@ import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.fluids.FluidStack;
 
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.util.UT6;
 
 /**
  * The composite coverable-BE surface — 1.20.1 port of the upstream
@@ -41,6 +42,15 @@ import gregtech6.fluid.FluidTankGT;
  * the render refresh in its own {@code onDataPacket}/{@code onLoad} hooks calling
  * {@code GTRenderUpdates.scheduleRenderUpdate} (the pair's client branch; the server
  * blockEvent forward stays the GTRenderUpdates class-doc template for Blocks we own).
+ *
+ * <p>Redstone query exits (task p9-redstone-hooks, upstream 04Covers :408-441 with the
+ * Root :577-588 world-only form): {@link #getRedstoneIncoming} — the covered face
+ * answers through {@link ICover#getRedstoneIn}, bare faces read the world directly;
+ * {@link #getRedstoneOutWeak}/{@link #getRedstoneOutStrong} — the cover on the OPOS
+ * face overrides the machine's own emission (fed in as the default argument). The
+ * Block-carrier bridge lives on {@code GTOvenBlock.getSignal/getDirectSignal}; the
+ * multiblock bases are deliberately NOT bridged (ADR FORBIDDEN ④ — the multiblock
+ * per-face redstone dispatch is unresearched).
  */
 public interface ICoverableTE {
 
@@ -332,6 +342,87 @@ public interface ICoverableTE {
 	 */
 	default @Nullable FluidTankGT getCoverPumpTank() {
 		return null;
+	}
+
+	// ---------------------------------------------------------------------------
+	// redstone query exits (upstream 04Covers :408-441, task p9-redstone-hooks)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream :409-424 (the bare-host branch is the Root :577-588 world-only form).
+	 * The covered face answers through {@link ICover#getRedstoneIn} — a redstone cover
+	 * OVERRIDES the world query; a bare face reads the neighbouring block directly
+	 * ({@code Level.getSignal} is the {@code getIndirectPowerLevelTo} counterpart, the
+	 * ADR declared deviation); the invalid side folds to the six-face maximum with the
+	 * early 15 exit (:411-422, cover-aware — the Root :580-585 form is its cover-free
+	 * degenerate case). A host without a level reads 0 (upstream Root :578).
+	 *
+	 * @param aSide the GT6 side index, or any out-of-domain byte for the six-face fold
+	 */
+	default byte getRedstoneIncoming(byte aSide) {
+		Level tLevel = self().getLevel();
+		if (tLevel == null) return 0; // upstream Root :578
+		if (!validSide(aSide)) { // upstream SIDES_INVALID :411-422
+			byte rRedstone = 0;
+			for (byte tSide = 0; tSide < 6; tSide++) {
+				rRedstone = (byte) Math.max(rRedstone, coverOrWorldRedstoneIn(tLevel, tSide));
+				if (rRedstone >= 15) return 15; // :419
+			}
+			return rRedstone;
+		}
+		if (!hasCovers()) return worldRedstoneIn(tLevel, aSide); // :410 super form (Root :587)
+		return coverOrWorldRedstoneIn(tLevel, aSide); // :423
+	}
+
+	/**
+	 * Upstream :427-431 {@code isProvidingWeakPower} — the vanilla query hands in the
+	 * side the RECEIVER sees the machine from ({@code aOppositeSide}); the actual
+	 * emission face is {@link UT6#OPOS} of it. The cover on that face OVERRIDES the
+	 * machine's own weak emission; no cover passes the default straight through.
+	 *
+	 * @param aOppositeSide    the GT6 side the querying neighbour sits on (0..5)
+	 * @param aDefaultRedstone the machine's own weak emission (the Block bridge feeds
+	 *                         the vanilla Block default in)
+	 */
+	default int getRedstoneOutWeak(byte aOppositeSide, int aDefaultRedstone) {
+		return redstoneOut(aOppositeSide, aDefaultRedstone, true); // :427-431
+	}
+
+	/** Upstream :433-438 {@code isProvidingStrongPower} — same shape as the weak exit. */
+	default int getRedstoneOutStrong(byte aOppositeSide, int aDefaultRedstone) {
+		return redstoneOut(aOppositeSide, aDefaultRedstone, false); // :433-438
+	}
+
+	/** The :427-438 shared body — {@code aWeak} picks the cover hook (weak vs strong). */
+	private int redstoneOut(byte aOppositeSide, int aDefaultRedstone, boolean aWeak) {
+		if (aOppositeSide < 0 || aOppositeSide >= UT6.OPOS.length) return aDefaultRedstone;
+		byte tActualSide = UT6.OPOS[aOppositeSide]; // :428/:435
+		CoverData tCovers = getCovers();
+		if (tCovers != null && validSide(tActualSide) && tCovers.mBehaviours[tActualSide] != null) {
+			byte tDefault = bind4(aDefaultRedstone);
+			return aWeak
+					? tCovers.mBehaviours[tActualSide].getRedstoneOutWeak(tActualSide, tCovers, tDefault) // :429
+					: tCovers.mBehaviours[tActualSide].getRedstoneOutStrong(tActualSide, tCovers, tDefault); // :436
+		}
+		return aDefaultRedstone; // :430/:437 — the machine emission passes through
+	}
+
+	/** The :415/:417/:423 face resolution — the cover on that face overrides the world query. */
+	private byte coverOrWorldRedstoneIn(Level aLevel, byte aSide) {
+		CoverData tCovers = getCovers();
+		if (tCovers != null && tCovers.mBehaviours[aSide] != null) return tCovers.mBehaviours[aSide].getRedstoneIn(aSide, tCovers);
+		return worldRedstoneIn(aLevel, aSide);
+	}
+
+	/** Upstream Root :587 — the neighbouring block's signal, clamped 0..15 (UT.Code.bind4). */
+	private byte worldRedstoneIn(Level aLevel, byte aSide) {
+		Direction tFace = Direction.from3DDataValue(aSide);
+		return bind4(aLevel.getSignal(self().getBlockPos().relative(tFace), tFace));
+	}
+
+	/** Upstream UT.Code.bind4 — the 0..15 redstone scale clamp. */
+	static byte bind4(int aValue) {
+		return (byte) Math.max(0, Math.min(15, aValue));
 	}
 
 	// ---------------------------------------------------------------------------
