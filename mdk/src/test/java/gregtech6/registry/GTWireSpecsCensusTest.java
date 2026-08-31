@@ -1,0 +1,192 @@
+/**
+ * Census and representative-row assertions for the electric-wire data table (task
+ * p9-wire-family-w1 spec ⑦). The table ({@link GTWireSpecs}) is the direct transcription of
+ * upstream addElectricWires (MultiTileEntityWireElectric.java:71-109) and the 30-material
+ * registration loop (Loader_MultiTileEntities.java:1914-1950); this test pins the 620 count
+ * (28 cable rows x 21 + 2 pure-wire rows x 16), the CS.java:148-154 voltage table, one fully
+ * decomposed representative row per voltage tier band, the 16-wire/5-cable shape ladders and
+ * the selector/name invariants. An independent recount walks the rows again (the
+ * GTMaterialItemsRegistrationTest "independent recount" discipline).
+ */
+package gregtech6.registry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import gregapi.oredict.OreDictMaterial;
+import gregtech6.registry.GTWireSpecs.Row;
+import gregtech6.registry.GTWireSpecs.Variant;
+
+public class GTWireSpecsCensusTest {
+
+    @BeforeAll
+    public static void initMaterialSystem() {
+        GTMaterialItems.initMaterials();
+    }
+
+    /** The CS.java:148-154 V table, transcribed independently for the cross-check. */
+    private static final long[] UPSTREAM_V = {
+            8, 32, 128, 512, 2048, 8192, 32768, 131072,
+            524288, 2097152, 8388608, 33554432, 134217728, 536870912, 2147483648L, 8589934592L};
+
+    @Test
+    public void censusIsExactly620() {
+        List<Variant> tVariants = GTWireSpecs.variants();
+        assertEquals(620, tVariants.size(), "28 cable rows x 21 + 2 pure-wire rows x 16 = 620 (the ADR scale ruling)");
+        // independent recount, from the rows alone
+        int tRecount = 0;
+        for (Row tRow : GTWireSpecs.ROWS) tRecount += tRow.cable() ? 16 + 5 : 16;
+        assertEquals(620, tRecount);
+        assertEquals(GTWireSpecs.EXPECTED_VARIANTS, tVariants.size());
+        assertEquals(30, GTWireSpecs.ROWS.size(), "Loader:1914-1950 registers exactly 30 material rows");
+        assertEquals(28, GTWireSpecs.ROWS.stream().filter(Row::cable).count(), "Graphene (:1948) and Superconductor (:1950) are the only pure-wire rows");
+        // the derived list preserves the row-major upstream order: 21 variants per cable row, 16 per pure-wire row
+        assertEquals(21, tVariants.stream().filter(v -> v.row() == GTWireSpecs.ROWS.get(0)).count());
+        assertEquals(16, tVariants.stream().filter(v -> v.row() == GTWireSpecs.ROWS.get(28)).count());
+    }
+
+    @Test
+    public void voltageTableMatchesCS148to154() {
+        assertEquals(16, GTWireSpecs.V.length);
+        for (int i = 0; i < 16; i++) assertEquals(UPSTREAM_V[i], GTWireSpecs.V[i], "V[" + i + "] must equal CS.java:148-154");
+        assertEquals(8, GTWireSpecs.V[0]);
+        assertEquals(8589934592L, GTWireSpecs.V[15]);
+    }
+
+    /** Helper: the bare-wire variant of a row at size n. */
+    private static Variant wire(Row aRow, int aSize) {
+        return GTWireSpecs.variants().stream().filter(v -> v.row() == aRow && !v.insulated() && v.size() == aSize).findFirst().orElse(null);
+    }
+
+    /** Helper: the insulated-cable variant of a row at size n. */
+    private static Variant cable(Row aRow, int aSize) {
+        return GTWireSpecs.variants().stream().filter(v -> v.row() == aRow && v.insulated() && v.size() == aSize).findFirst().orElse(null);
+    }
+
+    @Test
+    public void representativeRowsAreDirectTranslations() {
+        // Sn, Loader:1914 — V[1]*1 = 32 EU, 1 A base, lossWire 2 / lossCable 1
+        Row tSn = GTWireSpecs.ROWS.get(0);
+        assertEquals(32, tSn.voltage());
+        assertEquals(1, tSn.amperage());
+        assertEquals(2, tSn.lossWire());
+        assertEquals(1, tSn.lossCable());
+        assertTrue(tSn.cable());
+        assertEquals(32, wire(tSn, 1).voltage());
+        assertEquals(1, wire(tSn, 1).amperage());
+        assertEquals(2, wire(tSn, 1).loss());
+        // Cu, Loader:1918 — V[2]*2 = 256 EU
+        assertEquals(256, GTWireSpecs.ROWS.get(3).voltage());
+        // Kanthal, Loader:1922 — V[3] = 512 EU, 4 A, 4/3 loss
+        Row tKanthal = GTWireSpecs.ROWS.get(6);
+        assertEquals(512, tKanthal.voltage());
+        assertEquals(4, tKanthal.amperage());
+        assertEquals(4, tKanthal.lossWire());
+        assertEquals(3, tKanthal.lossCable());
+        // W, Loader:1934 — V[4]*3 = 6144 EU, 8 A, 3/2 loss; wireGt16 carries 8*16 = 128 A
+        Row tW = GTWireSpecs.ROWS.get(17);
+        assertEquals(6144, tW.voltage());
+        assertEquals(8, tW.amperage());
+        assertEquals(3, tW.lossWire());
+        assertEquals(2, tW.lossCable());
+        assertEquals(128, wire(tW, 16).amperage());
+        assertEquals(6144, wire(tW, 16).voltage());
+        // Superconductor, Loader:1950 — V[15] = 8589934592 EU, 4 A, 1/1 loss, pure wire (16 variants only)
+        Row tSuper = GTWireSpecs.ROWS.get(29);
+        assertEquals(8589934592L, tSuper.voltage());
+        assertEquals(4, tSuper.amperage());
+        assertEquals(1, tSuper.lossWire());
+        assertEquals(1, tSuper.lossCable());
+        assertTrue(!tSuper.cable());
+        assertNull(cable(tSuper, 1), "Superconductor registers no cables");
+        assertNull(cable(GTWireSpecs.ROWS.get(28), 1), "Graphene (:1948) registers no cables");
+        // the pure-wire rows also carry contactDamageWire=false (upstream F,F,F)
+        assertTrue(!GTWireSpecs.ROWS.get(28).contactDamageWire() && !GTWireSpecs.ROWS.get(29).contactDamageWire());
+        assertTrue(GTWireSpecs.ROWS.get(0).contactDamageWire() && !GTWireSpecs.ROWS.get(0).contactDamageCable(), "metal rows: T, F (upstream :1914-1946)");
+    }
+
+    @Test
+    public void wireAndCableShapeLaddersMatchAddElectricWires() {
+        Row tSn = GTWireSpecs.ROWS.get(0);
+        // bare wires :72-87 — diameters PX_P[2,3,4,6,7,7,8,8,9,10,11,12,13,14,15,16], stack 64/n, amp *n
+        int[] tDiameters = {2, 3, 4, 6, 7, 7, 8, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+        for (int tSize = 1; tSize <= 16; tSize++) {
+            Variant tWire = wire(tSn, tSize);
+            assertNotNull(tWire, "wireGt" + (tSize < 10 ? "0" : "") + tSize);
+            assertEquals(tDiameters[tSize - 1], tWire.diameter(), "PX_P diameter of wireGt" + tSize);
+            assertEquals(64 / tSize, tWire.maxStack(), "max stack 64/" + tSize);
+            assertEquals(tSn.amperage() * tSize, tWire.amperage(), "bandwidth a*n at size " + tSize);
+            assertEquals(tSn.lossWire(), tWire.loss());
+            assertTrue(!tWire.insulated());
+        }
+        // insulated cables :89-93 — sizes 1/2/4/8/12, stacks 64/32/16/8/4 (upstream literals), diameters 4/6/8/12/16
+        int[] tSizes = {1, 2, 4, 8, 12};
+        int[] tStacks = {64, 32, 16, 8, 4};
+        int[] tCableDiameters = {4, 6, 8, 12, 16};
+        for (int i = 0; i < tSizes.length; i++) {
+            Variant tCable = cable(tSn, tSizes[i]);
+            assertNotNull(tCable, "cableGt" + (tSizes[i] < 10 ? "0" : "") + tSizes[i]);
+            assertEquals(tStacks[i], tCable.maxStack(), "the upstream literal stack of cableGt" + tSizes[i]);
+            assertEquals(tCableDiameters[i], tCable.diameter());
+            assertEquals(tSn.amperage() * tSizes[i], tCable.amperage());
+            assertEquals(tSn.lossCable(), tCable.loss(), "cables burn aLossCable, not aLossWire");
+            assertTrue(tCable.insulated());
+            assertEquals(tSn.voltage(), tCable.voltage());
+        }
+        // there is no cableGt03/05..07 style row
+        assertNull(cable(tSn, 3));
+        assertNull(cable(tSn, 16));
+    }
+
+    @Test
+    public void tokensMatchMaterialsAndNamesAreUnique() {
+        Set<String> tNames = new HashSet<>();
+        List<Variant> tVariants = GTWireSpecs.variants();
+        for (Variant tVariant : tVariants) {
+            String tName = GTWireSpecs.registryName(tVariant);
+            assertTrue(tNames.add(tName), "registry name must be unique: " + tName);
+            // the stored token must equal the live snake-cased material internal name (drift lock)
+            OreDictMaterial tMaterial = tVariant.row().material().get();
+            assertNotNull(tMaterial);
+            assertEquals(GTMaterialItems.snakeCase(tMaterial.mNameInternal), GTWireSpecs.materialToken(tVariant.row()), "token drift on " + tName);
+            assertTrue(tMaterial.mNameLocal != null && !tMaterial.mNameLocal.isBlank(), "display-name source missing for " + tName);
+        }
+        assertEquals(620, tNames.size());
+        // name forms
+        assertTrue(tNames.contains("wire_tin_gt01"));
+        assertTrue(tNames.contains("wire_tungsten_gt16"));
+        assertTrue(tNames.contains("cable_tin_gt12"));
+        assertTrue(tNames.contains("wire_superconductor_gt01"));
+        assertTrue(!tNames.contains("cable_superconductor_gt01"));
+    }
+
+    @Test
+    public void selectorFindsByMaterialSizeForm() {
+        assertEquals(32, GTWireSpecs.find("tin", 1, false).voltage());
+        assertEquals(4, GTWireSpecs.find("tin", 12, true).maxStack(), "12x Tin Cable stacks to the upstream literal 4");
+        assertEquals("cable_tungsten_gt08", GTWireSpecs.registryName(GTWireSpecs.find("tungsten", 8, true)));
+        assertEquals(8589934592L, GTWireSpecs.find("superconductor", 4, false).voltage());
+        assertEquals(GTWireSpecs.find("Tin", 4, false).voltage(), GTWireSpecs.find("tin", 4, false).voltage(), "token match is case-insensitive");
+        assertNull(GTWireSpecs.find("unobtainium", 1, false));
+        assertNull(GTWireSpecs.find("tin", 3, true), "no cableGt03");
+        assertNull(GTWireSpecs.find("superconductor", 1, true), "pure-wire row has no cable form");
+    }
+
+    @Test
+    public void displayNamesAreTheUpstreamRowStrings() {
+        assertEquals("1x Tin Wire", GTWireSpecs.displayName(GTWireSpecs.find("tin", 1, false)));
+        assertEquals("16x Tin Wire", GTWireSpecs.displayName(GTWireSpecs.find("tin", 16, false)));
+        assertEquals("12x Tin Cable", GTWireSpecs.displayName(GTWireSpecs.find("tin", 12, true)));
+        assertEquals("1x Superconductor Wire", GTWireSpecs.displayName(GTWireSpecs.find("superconductor", 1, false)));
+        assertEquals("8x Tungsten Wire", GTWireSpecs.displayName(GTWireSpecs.find("tungsten", 8, false)));
+    }
+}

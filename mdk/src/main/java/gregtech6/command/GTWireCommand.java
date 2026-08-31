@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 
 import gregapi.data.TD;
+import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
@@ -31,8 +32,15 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
  * per ADR-P3-4, the GTFluidPipeCommand template.
  *
  * <ul>
- * <li>{@code place <1x|2x> <pos>} — the headless placement driver: setBlock the wire
- *     variant at pos, then the automatic neighbour-scan connect (card wording): every
+ * <li>{@code place <1x|2x> <pos>} — the p7 legacy tier driver (the P8 RCON chain and the
+ *     gen→wire→oven e2e regression keep driving it), and since task p9-wire-family-w1 also
+ *     the full registry-path form {@code place wire_sn_gt04 <pos>} / {@code place cable_w_gt08 <pos>};</li>
+ * <li>{@code place <material> <size> <pos>} and {@code place <material> <size> cable <pos>}
+ *     — the 620-block selector (spec ③): material token = the snake-cased row token from
+ *     {@link GTWireSpecs} ({@code sn}, {@code annealed_copper}, {@code si_c}, ...), size 1..16
+ *     (cables 1/2/4/8/12), {@code cable} = the insulated form. Resolves through
+ *     {@link GTWireSpecs#find} + {@link GTWires#FAMILY_BY_NAME};</li>
+ * <li>every place form then runs the automatic neighbour-scan connect (card wording): every
  *     side runs the {@link GTWireBlockEntity#connect(byte, boolean)} handshake, which
  *     gates itself on the connector-type intersection for wire neighbours
  *     (WIRE_ELECTRIC), the {@code canConnect} energy-acceptor probe for machines and the
@@ -65,10 +73,22 @@ public final class GTWireCommand {
 			Commands.literal("gt6wire")
 				.requires(aSource -> aSource.hasPermission(2))
 				.then(Commands.literal("place")
-					.then(Commands.argument("tier", StringArgumentType.word())
+					.then(Commands.argument("spec", StringArgumentType.word())
 						.then(Commands.argument("pos", BlockPosArgument.blockPos())
-							.executes(aContext -> place(aContext.getSource(), StringArgumentType.getString(aContext, "tier"),
-									BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))
+							.executes(aContext -> place(aContext.getSource(), StringArgumentType.getString(aContext, "spec"),
+									BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))
+						.then(Commands.argument("size", IntegerArgumentType.integer(1, 16))
+							.then(Commands.argument("pos", BlockPosArgument.blockPos())
+								.executes(aContext -> placeFamily(aContext.getSource(),
+										StringArgumentType.getString(aContext, "spec"),
+										IntegerArgumentType.getInteger(aContext, "size"), false,
+										BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))
+							.then(Commands.literal("cable")
+								.then(Commands.argument("pos", BlockPosArgument.blockPos())
+									.executes(aContext -> placeFamily(aContext.getSource(),
+											StringArgumentType.getString(aContext, "spec"),
+											IntegerArgumentType.getInteger(aContext, "size"), true,
+											BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))))
 				.then(Commands.literal("connect")
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.then(Commands.argument("side", IntegerArgumentType.integer(0, 5))
@@ -107,19 +127,50 @@ public final class GTWireCommand {
 		return Command.SINGLE_SUCCESS;
 	}
 
-	/** The headless placement driver (spec ⑦): setBlock, then the automatic neighbour-scan connect. */
-	private static int place(CommandSourceStack aSource, String aTier, BlockPos aPos) {
-		ServerLevel tLevel = aSource.getLevel();
-		var tBlock = switch (aTier) {
+	/**
+	 * The headless placement driver (spec ⑦): setBlock, then the automatic neighbour-scan
+	 * connect. The spec is the p7 legacy tier ("1x"/"2x") or a family registry path
+	 * ("wire_sn_gt04" / "cable_w_gt08", the p9-wire-family-w1 selector).
+	 */
+	private static int place(CommandSourceStack aSource, String aSpec, BlockPos aPos) {
+		var tBlock = switch (aSpec) {
 			case "1x" -> GTWires.WIRE_ELECTRIC_1X.get();
 			case "2x" -> GTWires.WIRE_ELECTRIC_2X.get();
-			default -> null;
+			default -> GTWires.FAMILY_BY_NAME.containsKey(aSpec) ? GTWires.FAMILY_BY_NAME.get(aSpec).get() : null;
 		};
 		if (tBlock == null) {
-			aSource.sendFailure(Component.literal("PLACE FAILED: unknown wire tier '" + aTier + "' (use 1x or 2x)"));
+			aSource.sendFailure(Component.literal("PLACE FAILED: unknown wire spec '" + aSpec
+					+ "' (use 1x, 2x, a registry path like wire_sn_gt04, or <material> <size> [cable] <pos>)"));
 			return 0;
 		}
-		tLevel.setBlock(aPos, tBlock.defaultBlockState(), Block.UPDATE_ALL);
+		return placeWire(aSource, tBlock, aSpec, aPos);
+	}
+
+	/**
+	 * The 620-block family selector (task p9-wire-family-w1 spec ③): material token + size
+	 * (+ optional "cable" literal resolved upstream in the brigadier tree) — resolved through
+	 * the GTWireSpecs table and the GTWires family index.
+	 */
+	private static int placeFamily(CommandSourceStack aSource, String aMaterial, long aSize, boolean aInsulated, BlockPos aPos) {
+		GTWireSpecs.Variant tVariant = GTWireSpecs.find(aMaterial, (int)aSize, aInsulated);
+		if (tVariant == null) {
+			aSource.sendFailure(Component.literal("PLACE FAILED: no wire variant for material '" + aMaterial
+					+ "', size " + aSize + (aInsulated ? " (cable)" : "") + " — sizes: wire 1..16, cable 1/2/4/8/12"));
+			return 0;
+		}
+		String tName = GTWireSpecs.registryName(tVariant);
+		var tRegistryObject = GTWires.FAMILY_BY_NAME.get(tName);
+		if (tRegistryObject == null) {
+			aSource.sendFailure(Component.literal("PLACE FAILED: variant " + tName + " is not registered"));
+			return 0;
+		}
+		return placeWire(aSource, tRegistryObject.get(), tName, aPos);
+	}
+
+	/** The common placement tail: setBlock + the automatic neighbour-scan connect + the report line. */
+	private static int placeWire(CommandSourceStack aSource, Block aBlock, String aLabel, BlockPos aPos) {
+		ServerLevel tLevel = aSource.getLevel();
+		tLevel.setBlock(aPos, aBlock.defaultBlockState(), Block.UPDATE_ALL);
 		if (!(tLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire)) {
 			aSource.sendFailure(Component.literal("PLACE FAILED: no wire BE at " + aPos.toShortString()));
 			return 0;
@@ -128,7 +179,7 @@ public final class GTWireCommand {
 		for (byte tSide = 0; tSide < 6; tSide++) {
 			if (tWire.connect(tSide, true)) tConnected++;
 		}
-		String tLine = "GT6 wire placed at " + aPos.toShortString() + ": tier " + aTier + " (" + tWire.mVoltage + " EU/"
+		String tLine = "GT6 wire placed at " + aPos.toShortString() + ": tier " + aLabel + " (" + tWire.mVoltage + " EU/"
 				+ tWire.mAmperage + " A/" + tWire.mLoss + " loss), connected sides " + tConnected
 				+ ", connections " + tWire.getConnections();
 		aSource.sendSuccess(() -> Component.literal(tLine), false);

@@ -1,5 +1,6 @@
 package gregtech6.datagen;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -11,7 +12,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
 import gregtech6.block.material.GTMaterialPrefixBlock;
+import gregtech6.block.wire.GTWireBlock;
 import gregtech6.registry.GTMaterialBlocks;
+import gregtech6.registry.GTWires;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * Loot tables of the material prefix blocks (task p8-prefixblock-render spec ④). One
@@ -37,12 +41,44 @@ import gregtech6.registry.GTMaterialBlocks;
 public final class GT6LootTables extends LootTableProvider {
 
     public GT6LootTables(PackOutput output) {
-        super(output, Set.of(), List.of(new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK)));
+        super(output, Set.of(), List.of(
+                new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
+                new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK))); // task p9-wire-family-w1 ⑥
     }
 
     /** The block list this provider owns: exactly the material prefix block array (the census walk order). */
     public static List<Block> lootBlocks() {
         return List.of(GTMaterialBlocks.blockArray());
+    }
+
+    /** The wire-family block list this second provider owns: the 620 GTWireSpecs variants (datagen JVM). */
+    public static List<Block> wireLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (RegistryObject<GTWireBlock> tWire : GTWires.FAMILY_BLOCKS) rBlocks.add(tWire.get());
+        return rBlocks;
+    }
+
+    /**
+     * The wire-family self-drop provider (task p9-wire-family-w1 ⑥): known-blocks narrowed
+     * to {@link #wireLootBlocks()} so the missing-table validation covers exactly this card's
+     * surface; the legacy p7 pair keeps shipping without a table (pre-existing state, not
+     * this card's delta).
+     */
+    public static final class GT6WireBlockLoot extends BlockLootSubProvider {
+
+        public GT6WireBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return wireLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : wireLootBlocks()) dropSelf(tBlock); // the p8 self-drop direct translation
+        }
     }
 
     public static final class GT6BlockLoot extends BlockLootSubProvider {

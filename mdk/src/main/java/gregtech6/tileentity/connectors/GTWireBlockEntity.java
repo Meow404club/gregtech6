@@ -70,10 +70,14 @@ import gregtech6.util.UT6;
  *     owns no onPlaced in this port.</li>
  * </ul>
  *
- * <p>Cuts (pool, per the card): the 16-wire/5-cable material spectrum and its registration
- * row (W1 ships two voltage-carried variants over the block carrier), the material/
- * insulation conductor data (ITileEntityEnergyDataConductor), the contact damage and the
- * texture/render passes, the tooltips and the electrometer tool click, the IC2 pull.
+ * <p>Cuts and placeholders after task p9-wire-family-w1: the material spectrum itself now
+ * EXISTS (620 GTWireSpecs variants share THIS ONE BE class over the block carrier — the
+ * upstream "one TE class, many material rows" shape), but the material/insulation conductor
+ * data (ITileEntityEnergyDataConductor), the contact damage and the texture/render passes,
+ * the tooltips and the electrometer tool click, and the IC2 pull remain pool items. The two
+ * standing placeholders are declared at their exact positions below: the IC2-pull cut on
+ * {@link #onTick} (with the reserved external-energy-bridge seam) and the bundled-channel
+ * {@code aChannel} parameter on {@link #transferElectricity}.
  * Persistence: the upstream writeToNBT2 (:121-123) is an empty body — the ratings travel
  * on the block carrier ({@link GTWireBlock}, the GTBarrelBlock registration-carrier
  * precedent), so this BE adds NO NBT beyond the base {@code mConnections}.
@@ -135,6 +139,17 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	// tick (upstream onTick2 :145-168, server branch trimmed)
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * Upstream onTick2 :145-168, server branch. PLACEHOLDER DECLARATION (task p9-wire-family-w1
+	 * spec 5a): the IC2 IEnergySource pull branch (upstream :156-165 — the wire TICKS actively
+	 * pull from IC2 energy sources adjacent to it: EnergyCompat.IC_ENERGY gate, EnergyNet
+	 * unwrap, {@code getOfferedEnergy}, drawEnergy only after a successful transfer) is NOT
+	 * replicated — this port has no IC2. The cut position IS the reserved seam for a future
+	 * external-energy sink bridge (FE↔EU, the GTCEu EUToFEProvider precedent): an active pull
+	 * of neighbour-offered energy into {@link #transferElectricity} belongs exactly here, in
+	 * this loop position, after the burn-gate. No bridge interface, no code — javadoc only,
+	 * the transport math below stays byte-frozen (the RCON 27/27 semantic lock).
+	 */
 	@Override
 	public void onTick(long aTimer, boolean aIsServerSide) {
 		if (aIsServerSide) { // upstream :148
