@@ -55,6 +55,9 @@ public final class GT6BlockStates extends BlockStateProvider {
         addWire(GTWires.WIRE_ELECTRIC_1X.get());
         addWire(GTWires.WIRE_ELECTRIC_2X.get());
         addOven();
+        addMachine(GTMachines.SHREDDER.get(), "shredder"); // task p7-basicmachine-family ④
+        addMachine(GTMachines.CRUSHER.get(), "crusher");
+        addMachine(GTMachines.LATHE.get(), "lathe");
         addMultiBlocks();
         addBarrel();
     }
@@ -132,8 +135,10 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p4-machine-oven (W2-exclusive provider addition): the A-tier Oven rendering — a
-     * pure datagen blockstate over 4 horizontal facings x 2 active x 2 running = 16 variants (HORIZONTAL_FACING, A-tier furnace idiom). Three
+     * Task p4-machine-oven (W2-exclusive provider addition), generalized by task
+     * p7-basicmachine-family into {@link #addMachine(Block, String)}: the A-tier machine
+     * rendering — a pure datagen blockstate over 4 horizontal facings x 2 active x 2
+     * running = 16 variants (HORIZONTAL_FACING, A-tier furnace idiom). Three
      * models (inactive/active/running), each a {@code cube} with the four-texture key set
      * (top/bottom/side/front, spec 8): the front texture is the state carrier, mirroring the
      * upstream getTexture2 overlay pick (MultiTileEntityBasicMachine.java:1014, mActive →
@@ -142,11 +147,28 @@ public final class GT6BlockStates extends BlockStateProvider {
      * placeholder PNGs, not JSON.
      */
     private void addOven() {
-        Block tOven = GTMachines.OVEN.get();
-        ModelFile tInactive = ovenModel("oven", "oven_front");
-        ModelFile tActive = ovenModel("oven_active", "oven_front_active");
-        ModelFile tRunning = ovenModel("oven_running", "oven_front_running");
-        getVariantBuilder(tOven).forAllStates(aState -> {
+        addMachine(GTMachines.OVEN.get(), "oven");
+    }
+
+    /**
+     * The addOven generalization (task p7-basicmachine-family ④): one {@code aBase} machine
+     * = three models ({@code aBase}, {@code aBase_active}, {@code aBase_running}) with the
+     * front textures {@code aBase_front}/{@code _active}/{@code _running} and the shared
+     * oven body textures (the in-scope placeholder set is the per-machine fronts only), the
+     * 16-variant blockstate, and the BlockItem model parenting the block model. The oven
+     * output is byte-identical to the pre-generalization shape (base "oven").
+     *
+     * <p>Property interning: both GTOvenBlock.FACING and GTBasicMachineBlock.FACING are the
+     * BlockStateProperties.HORIZONTAL_FACING instance, and GTOvenBlock.ACTIVE/RUNNING and
+     * GTBasicMachineBlock.ACTIVE/RUNNING are the BooleanProperty.create("active"/"running")
+     * interned instances (BooleanProperty.java BY_NAME cache) — so the GTOvenBlock property
+     * reads below cover the machine blocks too.
+     */
+    private void addMachine(Block aBlock, String aBase) {
+        ModelFile tInactive = machineModel(aBase, aBase + "_front");
+        ModelFile tActive = machineModel(aBase + "_active", aBase + "_front_active");
+        ModelFile tRunning = machineModel(aBase + "_running", aBase + "_front_running");
+        getVariantBuilder(aBlock).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(GTOvenBlock.FACING)) {
                 case SOUTH -> tY = 180;
@@ -158,11 +180,11 @@ public final class GT6BlockStates extends BlockStateProvider {
                     : aState.getValue(GTOvenBlock.RUNNING) ? tRunning : tInactive;
             return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
         });
-        itemModels().withExistingParent("oven", modLoc("block/oven"));
+        itemModels().withExistingParent(aBase, modLoc("block/" + aBase));
     }
 
     /** One cube model over the four-texture key set: down/up/north(front)/south+east+west(side). */
-    private ModelFile ovenModel(String aName, String aFrontTexture) {
+    private ModelFile machineModel(String aName, String aFrontTexture) {
         return models().cube(aName,
                 modLoc("block/oven_bottom"), modLoc("block/oven_top"),
                 modLoc("block/" + aFrontTexture), modLoc("block/oven_side"),

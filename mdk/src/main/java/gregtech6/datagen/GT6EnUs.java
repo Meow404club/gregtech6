@@ -96,12 +96,17 @@ public final class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Machine family keys (task p4-machine-oven, W2-exclusive provider additions): the oven
-     * block display name (upstream "Oven", Loader_MultiTileEntities.java:1288-1291) and the
-     * "Machines" creative tab (the upstream MTE-registry category of the same row).
+     * Machine family keys (task p4-machine-oven, W2-exclusive provider additions; extended
+     * by task p7-basicmachine-family): the oven block display name (upstream "Oven",
+     * Loader_MultiTileEntities.java:1288-1291), the machine family display names (upstream
+     * rows "Shredder"/"Crusher"/"Lathe", :1294/:1300/:1306) and the "Machines" creative tab
+     * (the upstream MTE-registry category of the same rows).
      */
     private void addMachines() {
         add("block.gt6.oven", "Oven");
+        add("block.gt6.shredder", "Shredder");
+        add("block.gt6.crusher", "Crusher");
+        add("block.gt6.lathe", "Lathe");
         add("itemGroup.gt6.machines", "Machines");
     }
 
