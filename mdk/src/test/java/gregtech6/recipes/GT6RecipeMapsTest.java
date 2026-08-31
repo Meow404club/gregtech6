@@ -65,10 +65,16 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		GT6RecipeMaps.init();
 		RecipeMapFurnace tFirst = GT6RecipeMaps.FURNACE;
 		RecipeMap tFirstCoke = GT6RecipeMaps.COKE_OVEN;
+		RecipeMap tFirstShredder = GT6RecipeMaps.SHREDDER;
+		RecipeMap tFirstCrusher = GT6RecipeMaps.CRUSHER;
+		RecipeMap tFirstLathe = GT6RecipeMaps.LATHE;
 		GT6RecipeMaps.init();
 		assertSame(tFirst, GT6RecipeMaps.FURNACE, "init within one generation must not recreate (upstream :139 would throw on the duplicate name)");
 		assertSame(tFirstCoke, GT6RecipeMaps.COKE_OVEN);
-		assertEquals(2, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven");
+		assertSame(tFirstShredder, GT6RecipeMaps.SHREDDER);
+		assertSame(tFirstCrusher, GT6RecipeMaps.CRUSHER);
+		assertSame(tFirstLathe, GT6RecipeMaps.LATHE);
+		assertEquals(5, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe");
 	}
 
 	@Test
