@@ -1,21 +1,31 @@
 package gregtech6.datagen;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
+import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTEnergySources;
 import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMachines;
+import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GTWires;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
@@ -41,6 +51,8 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  * PNG (same hand-rolled style as mdk/tools/gen_gui_textures.py), not JSON.
  */
 public final class GT6BlockStates extends BlockStateProvider {
+
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("gt6");
 
     public GT6BlockStates(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, GT6DataGenerators.MOD_ID, existingFileHelper);
@@ -73,6 +85,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMultiBlocks();
         addBarrel();
         addEnergySource();
+        addPrefixBlocks(); // task p8-prefixblock-render ①
     }
 
     /**
@@ -253,5 +266,85 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tSource = GTEnergySources.ENERGY_SOURCE.get();
         simpleBlock(tSource, models().cubeAll("energy_source", modLoc("block/energy_source")));
         itemModels().withExistingParent("energy_source", modLoc("block/energy_source"));
+    }
+
+    /**
+     * Task p8-prefixblock-render spec ① — the 3773 material prefix blocks
+     * ({@link GTMaterialBlocks#blockArray()}, the card-A census order).
+     *
+     * <p><b>Model merging rule (pinned, anti-bloat)</b>: one SHARED block model per
+     * (prefix, live-texture-set) pair — for each of the seven storage prefixes the live
+     * set is the distinct {@code material.mTextureSetsBlock} first entry across that
+     * prefix's registered pairs (upstream OreDictMaterial.java:252 + TextureSet.java:188-228;
+     * port: MT.setTextures, MT.java:210-215). Measured 2026-08-31 (pinned by
+     * GT6PrefixBlockRenderDatagenTest): 29+22+36+22+23+21+22 = 175 shared models, so the
+     * total JSON output is 175 models + 3773 blockstates + 3773 item models — NOT a model
+     * per material pair (per-pair models are an explicit red line, and a per-material
+     * texture would not tint anyway). <b>Fallback</b>: a material with an empty/blank set
+     * list resolves to {@code "none"} = upstream SET_NONE (TextureSet.java:188; the
+     * GT6ItemModels.iconsetOf mirror on the block list) — measured over the registered
+     * 3773 pairs the fallback never fires today, but it keeps the generator total: no set
+     * name is dereferenced blindly. The grayscale texture carries the SHAPE, the material
+     * colour comes from the runtime tint ({@code fRGBa[prefix.mState]},
+     * RegisterColorHandlersEvent.Block) — so a fallback loses only the texture detail,
+     * never the material identity.
+     *
+     * <p>Each model is an element-built cube_all with {@code tintindex 0} on all six faces
+     * (the vanilla grass/leaves idiom — the parent {@code block/block} carries the item
+     * display transforms, the faces carry {@code #all} + cullface, UVs default to the
+     * element bounds exactly like vanilla {@code cube_all}). Blockstate = one JSON per
+     * block, a single variant onto the shared model. Item model = one JSON per block,
+     * {@code withExistingParent} onto the shared block model — same provider, same pass,
+     * so the parent resolves in the ExistingFileHelper (BlockStateProvider.run flushes
+     * block models before item models, the GT6BlockStates.java:29-33 precedent — the very
+     * reason the ADR moved the models off card A). Textures are the borrowed upstream
+     * grayscale PNGs ({@code gt6:textures/block/materialicons/<set>/<prefix>.png},
+     * lowercased per the 1.20.1 ResourceLocation constraint; assets/README.md attribution).
+     */
+    private void addPrefixBlocks() {
+        Map<String, ModelFile> tShared = new HashMap<>(); // one shared model per (prefix, set), built on first use
+        for (Block tBlock : GTMaterialBlocks.blockArray()) {
+            GTMaterialPrefixBlock tPrefixBlock = (GTMaterialPrefixBlock)tBlock;
+            String tPrefixSnake = GTMaterialItems.snakeCase(tPrefixBlock.prefix.mNameInternal);
+            String tSetSnake = blockSetOf(tPrefixBlock.material);
+            String tModelName = "materialicons/" + tSetSnake + "/" + tPrefixSnake;
+            ModelFile tModel = tShared.computeIfAbsent(tModelName,
+                    tKey -> tintedCubeAll(tKey, modLoc("block/materialicons/" + tSetSnake + "/" + tPrefixSnake)));
+            simpleBlock(tBlock, tModel);
+            itemModels().withExistingParent(GTMaterialItems.itemIdOf(tPrefixBlock.prefix, tPrefixBlock.material),
+                    modLoc("block/" + tModelName));
+        }
+        LOGGER.info("GT6 prefix blocks: {} blocks over {} shared (prefix x set) models",
+                GTMaterialBlocks.blockArray().length, tShared.size());
+    }
+
+    /**
+     * One tinted cube_all block model: parent block/block (the 3D item display transforms),
+     * a full 0..16 element with all six faces on {@code #all}, cullface per side and
+     * {@code tintindex 0} (the vanilla grass_block/leaves element idiom; no explicit UVs —
+     * they default to the element bounds, byte-equivalent to vanilla cube_all output).
+     */
+    private ModelFile tintedCubeAll(String aName, ResourceLocation aTexture) {
+        BlockModelBuilder tModel = models().withExistingParent(aName, mcLoc("block/block"))
+                .texture("all", aTexture)
+                .texture("particle", "#all");
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#all").tintindex(0).cullface(aDir))
+                .end();
+        return tModel;
+    }
+
+    /**
+     * The material's BLOCK texture-set name, lower-snaked; an empty/blank list falls back
+     * to {@code "none"} = upstream SET_NONE (TextureSet.java:188 — the
+     * GT6ItemModels.iconsetOf mirror, on the block list; MT.setTextures MT.java:210-215
+     * assigns the set name strings).
+     */
+    public static String blockSetOf(OreDictMaterial aMaterial) {
+        List<String> tSets = aMaterial.mTextureSetsBlock;
+        return tSets == null || tSets.isEmpty() || tSets.get(0) == null || tSets.get(0).isBlank()
+                ? "none"
+                : GTMaterialItems.snakeCase(tSets.get(0));
     }
 }
