@@ -13,6 +13,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.covers.covers.CoverPump;
+import gregtech6.covers.covers.CoverRedstoneEmitter;
 import gregtech6.covers.covers.CoverTextureSimple;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMaterialItems;
@@ -37,6 +38,10 @@ import gregapi.data.OP;
  * one through the card-local ITEMS DeferredRegister (the GTFluids four-DR shape,
  * construct-phase registration) and mounts {@link CoverPump} on it in {@link #init()}.
  *
+ * <p><b>gt6:cover_redstone_emitter</b> (task p9-redstone-cover-emitter) — the first real
+ * redstone cover, same own-item route as the pump; mounts {@link CoverRedstoneEmitter}
+ * in {@link #init()}.
+ *
  * <p>Lifecycle: {@link #init()} is idempotent and runs from FMLCommonSetup (after item
  * registration, before any world interaction). Offline tests never call it — they
  * register their own vanilla-item covers, because {@code RegistryObject.get()} is
@@ -51,6 +56,14 @@ public final class GT6Covers {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "gt6");
 
 	public static final RegistryObject<Item> COVER_PUMP = ITEMS.register("cover_pump",
+			() -> new Item(new Item.Properties()));
+
+	/**
+	 * The p9 redstone-emitter cover item — the second cover that owns its item (the
+	 * emitter's 16-zone keypad plate has no plate-item analogue either). Registered
+	 * through the same card-local ITEMS DeferredRegister as the pump.
+	 */
+	public static final RegistryObject<Item> COVER_REDSTONE_EMITTER = ITEMS.register("cover_redstone_emitter",
 			() -> new Item(new Item.Properties()));
 
 	private static boolean sInitialized = false;
@@ -69,15 +82,16 @@ public final class GT6Covers {
 		aEvent.enqueueWork(GT6Covers::init);
 	}
 
-	/** Idempotent registration of the covers (the iron plate + the p5 pump). */
+	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter). */
 	public static void init() {
 		if (sInitialized) return;
 		sInitialized = true;
 		Item tPlate = GTMaterialItems.get(OP.plate, MT.Iron).get();
 		CoverRegistry.put(tPlate, new CoverTextureSimple(ironPlateSprite()));
 		CoverRegistry.put(COVER_PUMP.get(), new CoverPump()); // p5 spec C — the pump mounts its own item
-		LOGGER.info("GT6 covers registered: {} -> CoverTextureSimple({}), {} -> CoverPump",
-				tPlate, ironPlateSprite(), COVER_PUMP.getId());
+		CoverRegistry.put(COVER_REDSTONE_EMITTER.get(), new CoverRedstoneEmitter()); // p9 — the first real redstone cover
+		LOGGER.info("GT6 covers registered: {} -> CoverTextureSimple({}), {} -> CoverPump, {} -> CoverRedstoneEmitter",
+				tPlate, ironPlateSprite(), COVER_PUMP.getId(), COVER_REDSTONE_EMITTER.getId());
 	}
 
 	/**
