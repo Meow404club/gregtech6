@@ -59,6 +59,7 @@ public final class GT6EnUs extends LanguageProvider {
         addBarrels();
         addEnergySource();
         addTools();
+        addCovers();
     }
 
     /**
@@ -67,6 +68,16 @@ public final class GT6EnUs extends LanguageProvider {
      */
     private void addTools() {
         add("item.gt6.crowbar", "Crowbar");
+    }
+
+    /**
+     * The cover item display names. Task p9-redstone-cover-emitter: the redstone emitter
+     * cover (upstream MultiItemTechnological.java:80 — meta 1021, display name
+     * "Redstone Emitter" verbatim; the "Emits a constant Redstone Signal" tooltip rides
+     * the upstream addToolTips channel which the single-item port does not carry).
+     */
+    private void addCovers() {
+        add("item.gt6.cover_redstone_emitter", "Redstone Emitter");
     }
 
     /**

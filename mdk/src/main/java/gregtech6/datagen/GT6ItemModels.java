@@ -51,6 +51,11 @@ public final class GT6ItemModels extends ItemModelProvider {
         // CROWBAR.png borrow (assets/README.md attribution)
         withExistingParent("crowbar", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/crowbar"));
+        // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
+        // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
+        // in textures/block/, auto-stitched by the vanilla atlas directory source)
+        withExistingParent("cover_redstone_emitter", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/redstone_emitter/0"));
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */
