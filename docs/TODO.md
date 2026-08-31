@@ -85,7 +85,10 @@
 - [ ] 线缆全谱系：16 线 5 缆 / 真材质渲染 / 扳手交互（use=PASS）/ IC2 拉取 / bundled channel
 - [ ] C 档 oven 动态渲染升级（work/p9-render-c-oven-overlay 在途）
 - [x] **D 档多方块成型态渲染**：census 负结果闭合——上游快照无 machines/multiblockmains/cokeoven/ 贴图组可借（控制器注册的四组图标路径上游本即 missing），按勿造图红线降级为声明偏离：FORMED formed/unformed 双模型保留（RCON 断言面，不换 GTCEu IS_FORMED）；getTexture2 javadoc 勘误按审查裁决收缩为真命题（初稿"all 20 mStructureOkay consumers 零视觉"被 LargeTurbine:109-111 getRenderPasses2 / Crucible:628-638 setBlockBounds2 两处视觉消费证伪；收缩后=无一消费者按 mStructureOkay 选贴图组）（merge 55242e2，c8efdc0，ADR 2026-09-01-p9-render-d-formed-look）
-- [ ] cover intercept 族 + 红石钩 + 正式 crowbar（GT6 工具系统入口）
+- [x] **红石钩框架（cover intercept 族拆注·闭合）**：ICover+3 红石钩（上游 ICover.java:190-192 逐签名）+AbstractCoverDefault 三默认（:78-80，getIndirectPowerLevelTo 对位偏离已声明）+ICoverableTE 两出口（入向 04Covers:409-424+Root:577-588 三分支/出向 :427-438 OPOS 翻转+机器默认值 bind4）+GTOvenBlock getSignal/getDirectSignal 载体桥（bridgeSignal static 纯函数，P6/P8 基类零触碰）+RedstoneHooksTest 10 用例（OPOS 六向真值表防反转）；上游承载勘误=TileEntityBase04Covers:409-441（卡面 06Covers 系笔误，审查核验成立）；CoverData/TileEntityOven 零 diff；item/GUI 钩仍冻结（merge 5bca6e6，4 提交 a16a034..daeb744，ADR 2026-09-01-p9-redstone-hooks）
+  - [ ] 正式 crowbar（work/p9-tool-crowbar 在途，GT6 工具系统入口，与红石钩框架零交叠）
+  - [ ] C 红石 emitter 盖（p9-redstone-cover-emitter 待派，红石钩框架唯一下游，DEPENDS_ON 已闭合可派发）
+  - [ ] cover item intercept 族（冻结池另议）；左键/GUI 钩=研究员双死代码实锤不复刻
 - [ ] barrel 密封发酵 + 连通罐 B[0] + 破坏倾倒；Gas-proof 四防族；桶 GUI/tap/funnel
 - [ ] 机器族 compat 全部（外域 mod 配方）
 - [ ] 按需 researcher→architect 开新域（权威池=state todo.pool）
