@@ -120,6 +120,16 @@ public abstract class TileEntityBasicMachineOfflineTestBase extends GTMachinesOf
 				new ItemStack[] {new ItemStack(sStickLongStoneItem, 1)}, null, null, 16, 16, 0)); // :524
 	}
 
+	/**
+	 * The machine-family regime switch resets to the SHIPPED default (TRUE) per test — the
+	 * class-execution-order guard, same job as the oven switch restore above (task
+	 * p8-machine-tiers-doinject ④: the net-mode tests flip it off at their own start).
+	 */
+	@BeforeEach
+	void initMachineFakeSource() {
+		TileEntityBasicMachine.ENERGY_FAKE_SOURCE = true;
+	}
+
 	// ------------------------------------------------------------------
 	// fixtures
 	// ------------------------------------------------------------------

@@ -59,6 +59,17 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMachine(GTMachines.SHREDDER.get(), "shredder"); // task p7-basicmachine-family ④
         addMachine(GTMachines.CRUSHER.get(), "crusher");
         addMachine(GTMachines.LATHE.get(), "lathe");
+        // task p8-machine-tiers-doinject ⑧: the T2-T4 ladder, +9 rows (the tier blocks share
+        // the T1 front textures — the tier is not a visual state upstream either)
+        addMachine(GTMachines.SHREDDER_T2.get(), "shredder_t2", "shredder");
+        addMachine(GTMachines.SHREDDER_T3.get(), "shredder_t3", "shredder");
+        addMachine(GTMachines.SHREDDER_T4.get(), "shredder_t4", "shredder");
+        addMachine(GTMachines.CRUSHER_T2.get(), "crusher_t2", "crusher");
+        addMachine(GTMachines.CRUSHER_T3.get(), "crusher_t3", "crusher");
+        addMachine(GTMachines.CRUSHER_T4.get(), "crusher_t4", "crusher");
+        addMachine(GTMachines.LATHE_T2.get(), "lathe_t2", "lathe");
+        addMachine(GTMachines.LATHE_T3.get(), "lathe_t3", "lathe");
+        addMachine(GTMachines.LATHE_T4.get(), "lathe_t4", "lathe");
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -167,9 +178,20 @@ public final class GT6BlockStates extends BlockStateProvider {
      * reads below cover the machine blocks too.
      */
     private void addMachine(Block aBlock, String aBase) {
-        ModelFile tInactive = machineModel(aBase, aBase + "_front");
-        ModelFile tActive = machineModel(aBase + "_active", aBase + "_front_active");
-        ModelFile tRunning = machineModel(aBase + "_running", aBase + "_front_running");
+        addMachine(aBlock, aBase, aBase);
+    }
+
+    /**
+     * The texture-base overload (task p8-machine-tiers-doinject ⑧): the model names derive
+     * from {@code aBase} (so shredder_t2 gets shredder_t2/_active/_running models + its own
+     * 16-variant blockstate + the item parent) while the FRONT TEXTURES stay on the family's
+     * T1 set ({@code aTextureBase_front*}) — the tier is not a visual state upstream (the
+     * rows :1294-1309 share the NBT_TEXTURE per family), so the ladder adds zero PNGs.
+     */
+    private void addMachine(Block aBlock, String aBase, String aTextureBase) {
+        ModelFile tInactive = machineModel(aBase, aTextureBase + "_front");
+        ModelFile tActive = machineModel(aBase + "_active", aTextureBase + "_front_active");
+        ModelFile tRunning = machineModel(aBase + "_running", aTextureBase + "_front_running");
         getVariantBuilder(aBlock).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(GTOvenBlock.FACING)) {
