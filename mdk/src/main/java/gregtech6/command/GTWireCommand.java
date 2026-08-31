@@ -37,7 +37,7 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
  *     the full registry-path form {@code place wire_sn_gt04 <pos>} / {@code place cable_w_gt08 <pos>};</li>
  * <li>{@code place <material> <size> <pos>} and {@code place <material> <size> cable <pos>}
  *     — the 620-block selector (spec ③): material token = the snake-cased row token from
- *     {@link GTWireSpecs} ({@code sn}, {@code annealed_copper}, {@code si_c}, ...), size 1..16
+ *     {@link GTWireSpecs} ({@code sn}, {@code annealed_copper}, {@code carborundum}, ...), size 1..16
  *     (cables 1/2/4/8/12), {@code cable} = the insulated form. Resolves through
  *     {@link GTWireSpecs#find} + {@link GTWires#FAMILY_BY_NAME};</li>
  * <li>every place form then runs the automatic neighbour-scan connect (card wording): every
