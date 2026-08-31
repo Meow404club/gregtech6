@@ -83,7 +83,8 @@
 ## 下一波候选（P9，等压缩后"继续"按池开）
 
 - [ ] 线缆全谱系：16 线 5 缆 / 真材质渲染 / 扳手交互（use=PASS）/ IC2 拉取 / bundled channel
-- [ ] C 档 oven 动态渲染升级 + D 档多方块成型态渲染
+- [ ] C 档 oven 动态渲染升级（work/p9-render-c-oven-overlay 在途）
+- [x] **D 档多方块成型态渲染**：census 负结果闭合——上游快照无 machines/multiblockmains/cokeoven/ 贴图组可借（控制器注册的四组图标路径上游本即 missing），按勿造图红线降级为声明偏离：FORMED formed/unformed 双模型保留（RCON 断言面，不换 GTCEu IS_FORMED）；getTexture2 javadoc 勘误按审查裁决收缩为真命题（初稿"all 20 mStructureOkay consumers 零视觉"被 LargeTurbine:109-111 getRenderPasses2 / Crucible:628-638 setBlockBounds2 两处视觉消费证伪；收缩后=无一消费者按 mStructureOkay 选贴图组）（merge 55242e2，c8efdc0，ADR 2026-09-01-p9-render-d-formed-look）
 - [ ] cover intercept 族 + 红石钩 + 正式 crowbar（GT6 工具系统入口）
 - [ ] barrel 密封发酵 + 连通罐 B[0] + 破坏倾倒；Gas-proof 四防族；桶 GUI/tap/funnel
 - [ ] 机器族 compat 全部（外域 mod 配方）
