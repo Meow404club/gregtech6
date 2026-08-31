@@ -92,19 +92,28 @@ public class GTOvenBlock extends GTEntityBlock {
 		// default, 0 for the oven) rides in as the machine-default argument the cover may
 		// override (task p9-redstone-hooks; the P6/P8 multiblock bases are deliberately
 		// NOT bridged — ADR FORBIDDEN ④, the multiblock per-face dispatch is unresearched).
-		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) {
-			return tCoverable.getRedstoneOutWeak((byte) aDirection.get3DDataValue(), super.getSignal(aState, aLevel, aPos, aDirection));
-		}
-		return super.getSignal(aState, aLevel, aPos, aDirection);
+		return bridgeSignal(aLevel, aPos, aDirection, super.getSignal(aState, aLevel, aPos, aDirection), false);
 	}
 
 	@Override
 	public int getDirectSignal(BlockState aState, BlockGetter aLevel, BlockPos aPos, Direction aDirection) {
 		// upstream :433-438 isProvidingStrongPower — same bridge shape as getSignal.
+		return bridgeSignal(aLevel, aPos, aDirection, super.getDirectSignal(aState, aLevel, aPos, aDirection), true);
+	}
+
+	/**
+	 * The :427-438 bridge body, shared by both exits. The {@code aMachineDefault} is the
+	 * vanilla Block emission (0 for the oven); a coverable BE at {@code aPos} may
+	 * override it through the ICoverableTE exit. Static so the offline truth tables can
+	 * drive it without constructing the block (the registry-freeze precedent,
+	 * TileEntityOvenFacingTest) — the live dispatch stays covered by the RCON chain.
+	 */
+	public static int bridgeSignal(BlockGetter aLevel, BlockPos aPos, Direction aDirection, int aMachineDefault, boolean aStrong) {
 		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) {
-			return tCoverable.getRedstoneOutStrong((byte) aDirection.get3DDataValue(), super.getDirectSignal(aState, aLevel, aPos, aDirection));
+			byte tSide = (byte) aDirection.get3DDataValue();
+			return aStrong ? tCoverable.getRedstoneOutStrong(tSide, aMachineDefault) : tCoverable.getRedstoneOutWeak(tSide, aMachineDefault);
 		}
-		return super.getDirectSignal(aState, aLevel, aPos, aDirection);
+		return aMachineDefault;
 	}
 
 	@Override
