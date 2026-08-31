@@ -7,11 +7,14 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraftforge.network.NetworkHooks;
 
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
@@ -26,8 +29,12 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
  * a main-hand flint-and-steel click on the controller ignites it server-side
  * ({@link TileEntityCokeOven#ignite()} = the upstream TOOL_igniter branch
  * MultiTileEntityBasicMachine:373-379) and consumes one durability point — the flint is the
- * igniter stand-in (the hoe = crowbar substitution precedent). Every other interaction
- * keeps the base behaviour.
+ * igniter stand-in (the hoe = crowbar substitution precedent).
+ *
+ * <p>p8-cokeoven-gui-menu adds the GUI open: any other right-click opens the machine menu
+ * (upstream MultiTileEntityCokeOven inherits getGUIServer/getGUIClient2 unchanged — formed
+ * or not, the GUI opens and an unformed oven just runs no recipe). The flint branch stays
+ * first: the ignition intent wins the click.
  */
 public class GTCokeOvenBlock extends GTMultiBlockControllerBlock {
 
@@ -48,6 +55,20 @@ public class GTCokeOvenBlock extends GTMultiBlockControllerBlock {
 			tOven.ignite(); // no-op while !mRequiresIgnition (the upstream :377 return-0 shape)
 			if (!tOven.mRequiresIgnition) return InteractionResult.PASS;
 			tHeld.hurtAndBreak(1, aPlayer, p -> p.broadcastBreakEvent(aHand == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND)); // CONSUME the tool
+			return InteractionResult.CONSUME;
+		}
+		// task p8-cokeoven-gui-menu ⑤ — the GUI open (upstream MultiTileEntityCokeOven has no
+		// GUI override: it inherits getGUIServer/getGUIClient2, so a non-flint right-click opens
+		// the machine GUI whether or not the structure is formed — an unformed oven just runs no
+		// recipe). The flint branch above stays first: the ignition intent wins the click (the
+		// p6-oven-rotation cover-intent-first construction). The open itself is the GTOvenBlock
+		// :115 precedent — NetworkHooks.openScreen with the BlockPos payload the menu factory
+		// resolves the BE from.
+		if (aLevel.getBlockEntity(aPos) instanceof TileEntityCokeOven tOven) {
+			if (aLevel.isClientSide()) return InteractionResult.SUCCESS;
+			if (aPlayer instanceof ServerPlayer tServerPlayer) {
+				NetworkHooks.openScreen(tServerPlayer, tOven, aPos);
+			}
 			return InteractionResult.CONSUME;
 		}
 		return super.use(aState, aLevel, aPos, aPlayer, aHand, aHit);

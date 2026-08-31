@@ -31,6 +31,8 @@ public final class GTClientMachineListener {
 				(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
 			MenuScreens.register(GTBasicMachinesMenus.lathe(),
 				(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
+			MenuScreens.register(GTBasicMachinesMenus.cokeoven(),
+				(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
 		});
 	}
 }
