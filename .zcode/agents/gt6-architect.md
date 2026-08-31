@@ -14,8 +14,8 @@ maxTurns: 40
 
 ## 工作流
 
-1. 用 gt6-brain MCP：`state_read()`、`recall("<目标>")`、`kg_query(entity=<系统>)`
-   —— 已有决策不许重做。
+1. 用 gt6-brain MCP：`state_read()`（目录页，决策明细按 key 取）、`recall("<目标>")`、
+   `kg_query(entity=<系统>)` —— 已有决策不许重做。
 2. `search_code(sources=["gt6"])` 确认子系统边界与耦合面；每个模块边界必须引用
    GT6 源码证据（文件:行号）。
 3. 产出**模块卡**（每张含：名称、GT6 原始类清单、依赖、风险等级、验收标准、

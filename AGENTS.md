@@ -10,7 +10,8 @@
 
 ## 一、开局必做（每个新会话）
 
-1. `state_read()` 恢复状态；`project_status()` 看索引/worktree/提交概况。
+1. `state_read()`（目录页：各账本最近更新与规模）恢复状态概览，需要哪本再按 key 取；
+   `project_status()` 看索引/worktree/提交概况与 memory_health。
 2. `recall()`（语义记忆）查与本次目标相关的历史结论，避免重复调研。
 3. 读 `docs/PROJECT_STATE.md` 与 `docs/TODO.md` 镜像。
 4. 索引为空则先在 `tools/` 后台跑 `.venv/bin/python -m gt6_rag.index all`。

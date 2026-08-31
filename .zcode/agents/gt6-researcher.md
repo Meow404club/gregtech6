@@ -38,12 +38,13 @@ maxTurns: 80
 
 ## 通用流程
 
-1. `state_read()` + `recall("<问题>")` + `kg_search("<问题>")` —— 已有结论不重查。
+1. `state_read()`（目录页，需要内容再按 key 取）+ `recall("<问题>")` + `kg_search("<问题>")` —— 已有结论不重查。
 2. 按模式执行证据链。
 3. 落账：`remember(kind="research", text="<一句话结论+证据>")`；
    选型/决策类结论加 `state_update(key="decisions", merge=true, ...)`；
    有实体关系则 `kg_add(...)`（如 `GT6_X MAPS_TO MC_Y`、`MC_X TRAPS Y`、
-   `TOPIC_A SUPERSEDED_BY TOPIC_B`）。
+   `TOPIC_A SUPERSEDED_BY TOPIC_B`）；推翻既有关系用 `kg_invalidate`（保留历史），
+   记忆层面的修订直接 remember（近同事实自动 supersede）。
 4. 只读纪律：不动代码、不改文件（Bash 已禁用）。需要实验/POC 验证的，
    写 POC 任务卡建议主会话派发 coder，自己不越界动手。
 

@@ -7,7 +7,9 @@ description: "GT6 现代复兴计划会话上下文装载器。每次会话开�
 
 在开始任何工作之前，按顺序执行：
 
-1. 用 MCP 工具 `state_read` 读取全部项目状态（tasks 任务板 / decisions / known_bugs / progress / architecture）。
+1. 用 MCP 工具 `state_read`（无参=目录页）浏览各账本的最近更新与规模；需要哪本
+   （tasks 任务板 / decisions / known_bugs / progress）再 `state_read(key)` 取内容——
+   列表/记录型倒序（最新在前）超长自动截断。
 2. 用 `recall("<本次目标关键词>")` 语义回忆历史结论（研究/决策/交接），避免重复考古。
 3. 用 `project_status()` 查看检索索引规模、KG 条数、worktree 列表与最近提交。
 4. 读 `docs/PROJECT_STATE.md` 与 `docs/TODO.md`（镜像；MCP state 为权威）。
@@ -36,4 +38,7 @@ description: "GT6 现代复兴计划会话上下文装载器。每次会话开�
 
 - 不猜测任何现代 API：动手前用 `search_code` / `sym_query` / `get_source` 查证。
 - 提交必须 GPG 签名（`git commit -S -s`）且经 review-merge Agent 审查（流程见 AGENTS.md 三、并行 PR 工作流）。
-- 每完成一个子任务：`remember`/`state_update` 落账 + `kg_add` 记录关键关系。
+- 每完成一个子任务：`remember`/`state_update` 落账 + `kg_add` 记录关键关系
+  （关系过时用 `kg_invalidate` 保留历史，不 kg_del）。
+- 阶段收官：`kg_stats()` 看健康度——孤儿 >20 / KG 节点 >500 / state_kv >100 键
+  即触发整理（kg_prune dry→真删 + 软删记忆硬清 + tmp.* 过期清扫）。
