@@ -37,6 +37,20 @@ import java.util.HashSet;
  * The recipes are poured in statically by {@link GT6RecipesCokeOven} (FMLCommonSetup) and
  * the tag-driven log subset by {@link GT6CokeOvenTagListener} (TagsUpdatedEvent).
  *
+ * <p>{@code SHREDDER} / {@code CRUSHER} / {@code LATHE} mirror RM.Shredder (RM.java:134),
+ * RM.Crusher (:135) and RM.Lathe (:97), transcribed parameter-for-parameter: internal name,
+ * local name, NEI name null → the internal name, progress 0/1, GUI machines/Shredder|
+ * Crusher|Lathe, item slots 1/12/1 | 1/12/1 | 1/2/1, fluid slots 0/0/0, minimal inputs 0,
+ * power 1. Two documented deviations: (a) the trailing 9 NEI args ("", 1, "", T,T,T,T,F,T,T)
+ * have no counterpart in the 15-arg port ctor — declared deviation, same as the other maps;
+ * (b) RM.Shredder is a {@code RecipeMapShredder} subclass upstream, whose on-demand
+ * getRecipeFor RECYCLABLE synthesis (RecipeMapShredder.java:47-64) is a recipe-POOL feature
+ * and stays pooled — the port carries the base {@link RecipeMap} with the identical constants.
+ * The GUI paths are lowercase (1.20.1 ResourceLocation paths are [a-z0-9_.-/] — the earlier
+ * uppercase FURNACE/COKE_OVEN strings never shipped an asset, the gui-family card lands the
+ * assets for these three). Recipes are poured in statically by {@link GT6RecipesShCL}
+ * (FMLCommonSetup).
+ *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
@@ -48,6 +62,15 @@ public class GT6RecipeMaps {
 
 	/** RM.java:78 — the Coke Oven map (1 in / 9 out items, 0 in / 1 out fluids). */
 	public static volatile RecipeMap COKE_OVEN;
+
+	/** RM.java:134 — the Shredder map (1 in / 12 out items, 0 in / 0 out fluids). Base-class form; see the class doc for the subclass deviation. */
+	public static volatile RecipeMap SHREDDER;
+
+	/** RM.java:135 — the Crusher map (1 in / 12 out items, 0 in / 0 out fluids). */
+	public static volatile RecipeMap CRUSHER;
+
+	/** RM.java:97 — the Lathe map (1 in / 2 out items, 0 in / 0 out fluids). */
+	public static volatile RecipeMap LATHE;
 
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
@@ -68,12 +91,39 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 1, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
+		SHREDDER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.shredder", "Shredder", null,
+				0, 1,
+				"gt6:textures/gui/machines/shredder",
+				/*IN-OUT-MIN-ITEM=*/ 1, 12, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		CRUSHER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.crusher", "Crusher", null,
+				0, 1,
+				"gt6:textures/gui/machines/crusher",
+				/*IN-OUT-MIN-ITEM=*/ 1, 12, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		LATHE = new RecipeMap(new HashSet<>(),
+				"gt.recipe.lathe", "Lathe", null,
+				0, 1,
+				"gt6:textures/gui/machines/lathe",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 	}
 
 	/** Port-only: drops the whole generation (RecipeMap.RECIPE_MAPS included) for a clean re-init. */
 	public static synchronized void reset() {
 		FURNACE = null;
 		COKE_OVEN = null;
+		SHREDDER = null;
+		CRUSHER = null;
+		LATHE = null;
 		RecipeMap.reset();
 	}
 }
