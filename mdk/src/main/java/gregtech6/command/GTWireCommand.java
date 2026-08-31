@@ -73,10 +73,22 @@ public final class GTWireCommand {
 			Commands.literal("gt6wire")
 				.requires(aSource -> aSource.hasPermission(2))
 				.then(Commands.literal("place")
-					.then(Commands.argument("tier", StringArgumentType.word())
+					.then(Commands.argument("spec", StringArgumentType.word())
 						.then(Commands.argument("pos", BlockPosArgument.blockPos())
-							.executes(aContext -> place(aContext.getSource(), StringArgumentType.getString(aContext, "tier"),
-									BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))
+							.executes(aContext -> place(aContext.getSource(), StringArgumentType.getString(aContext, "spec"),
+									BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))
+						.then(Commands.argument("size", IntegerArgumentType.integer(1, 16))
+							.then(Commands.argument("pos", BlockPosArgument.blockPos())
+								.executes(aContext -> placeFamily(aContext.getSource(),
+										StringArgumentType.getString(aContext, "spec"),
+										IntegerArgumentType.getInteger(aContext, "size"), false,
+										BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))
+							.then(Commands.literal("cable")
+								.then(Commands.argument("pos", BlockPosArgument.blockPos())
+									.executes(aContext -> placeFamily(aContext.getSource(),
+											StringArgumentType.getString(aContext, "spec"),
+											IntegerArgumentType.getInteger(aContext, "size"), true,
+											BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))))
 				.then(Commands.literal("connect")
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.then(Commands.argument("side", IntegerArgumentType.integer(0, 5))
