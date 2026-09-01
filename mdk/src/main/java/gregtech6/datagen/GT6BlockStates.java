@@ -69,6 +69,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addWire(GTWires.WIRE_ELECTRIC_1X.get());
         addWire(GTWires.WIRE_ELECTRIC_2X.get());
         addWireFamily(); // task p9-wire-family-w1 ⑥ — the 620-block loop, isolated section
+        addRedstoneWireFamily(); // task p10-wire-redstone-family — the 6-block redstone loop
         addOven();
         addMachine(GTMachines.SHREDDER.get(), "shredder"); // task p7-basicmachine-family ④
         addMachine(GTMachines.CRUSHER.get(), "crusher");
@@ -317,6 +318,35 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         LOGGER.info("GT6 wire family: {} blockstates over {} shared (set) models",
                 GTWireSpecs.EXPECTED_VARIANTS, tShared.size());
+    }
+
+    /**
+     * Task p10-wire-redstone-family — the redstone-wire family (6 blocks over
+     * {@link GTWireSpecs#REDSTONE_ROWS}), the addWireFamily pipe over the redstone variant
+     * list. The three materials (RedAlloy/Signalum/Lumium) all resolve to the
+     * {@code copper} texture set (clloy/clloymachine construct with SET_COPPER —
+     * MT.java:697/701), which the W2 borrow already shipped, so zero new PNGs. The same
+     * single property-less variant wildcard maps the 64 CONNECTIONS states per block onto
+     * the shared tinted model; the connection-aware baked geometry (GTWireClientListener)
+     * drives its table off the ELECTRIC variant list only, so the redstone blocks render
+     * through this JSON fallback cube — a fallback-only simplification, the render-R1b
+     * card owns the redstone visuals (the fixed insulation tint :184 and the mState
+     * brightness :81-82 are declared render-layer items).
+     */
+    private void addRedstoneWireFamily() {
+        Map<String, ModelFile> tShared = new HashMap<>(); // one shared model per texture set, built on first use
+        for (GTWireSpecs.Variant tVariant : GTWireSpecs.redstoneVariants()) {
+            String tName = GTWireSpecs.registryName(tVariant);
+            String tSet = blockSetOf(tVariant.row().material().get());
+            String tModelName = "block/materialicons/" + tSet + "/wire";
+            ModelFile tModel = tShared.computeIfAbsent(tModelName,
+                    tKey -> tintedCubeAll(tKey, modLoc("block/materialicons/" + tSet + "/wire")));
+            getVariantBuilder(GTWires.REDSTONE_BY_NAME.get(tName).get())
+                    .partialState().setModels(new ConfiguredModel(tModel));
+            itemModels().withExistingParent(tName, modLoc(tModelName));
+        }
+        LOGGER.info("GT6 redstone wire family: {} blockstates over {} shared (set) models",
+                GTWireSpecs.EXPECTED_REDSTONE_VARIANTS, tShared.size());
     }
 
     /**

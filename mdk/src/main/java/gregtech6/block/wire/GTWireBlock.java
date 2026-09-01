@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.registry.GTBlockEntities;
+import gregtech6.registry.GTWires;
 import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWireSpecs.Row.Family;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
@@ -240,9 +241,14 @@ public class GTWireBlock extends GTEntityBlock {
 	// itself is the R1b card. Same for the mState texture-brightness/tint layers (the bare
 	// wire visual :81-82) — render-layer work, zero block-code footprint here.
 
+	/**
+	 * The per-family BET (task p10): redstone rows resolve GTWires.WIRE_REDSTONE_BE (the 6
+	 * redstone blocks), electric rows keep GTBlockEntities.WIRE_ELECTRIC_BE (the p7 pair +
+	 * the 620 family) — the same BE CLASS mounts both, the family gate lives inside it.
+	 */
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
-		return GTBlockEntities.WIRE_ELECTRIC_BE.get();
+		return mFamily == Family.REDSTONE ? GTWires.WIRE_REDSTONE_BE.get() : GTBlockEntities.WIRE_ELECTRIC_BE.get();
 	}
 
 	@Override

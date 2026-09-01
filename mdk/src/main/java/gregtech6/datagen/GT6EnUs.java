@@ -161,6 +161,12 @@ public final class GT6EnUs extends LanguageProvider {
         for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) {
             add("block.gt6." + GTWireSpecs.registryName(tVariant), GTWireSpecs.displayName(tVariant));
         }
+        // task p10-wire-redstone-family — the redstone family (Loader:1893-1902), table-tail
+        // append: "Red Alloy Wire"/"Red Alloy Cable"/"Lumium Wirelamp" (the upstream
+        // registration names, no size prefix, the GTWireSpecs.displayName redstone branch).
+        for (GTWireSpecs.Variant tVariant : GTWireSpecs.redstoneVariants()) {
+            add("block.gt6." + GTWireSpecs.registryName(tVariant), GTWireSpecs.displayName(tVariant));
+        }
     }
 
     /**
