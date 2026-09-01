@@ -15,12 +15,14 @@ import gregtech6.recipes.GT6RecipeMaps;
 
 /**
  * Acceptance 2 (task p7-basicmachine-family ⑦, regime-extended by task
- * p8-machine-tiers-doinject ②③④): the option-A fake-power math under the TRUE regime
- * (supplyEnergy refills to mInputMax, doWork :791 drains exactly mInputMax — every active
- * tick advances the progress by exactly mInputMax energy units :813) plus the FALSE-regime
- * group: the restored doInject :489-508 math, the KU transition dual-state (continuous
- * positive injection never delivers; the positive→non-positive transition tick does — the
- * upstream Steam Engine :146 ±alternation) and the TRUE-mode zero-regression pair.
+ * p8-machine-tiers-doinject ②③④, source-flip rewritten by task p11-rotor-source-flip):
+ * the option-A fake-power math under the legacy TRUE seam (supplyEnergy refills to
+ * mInputMax, doWork :791 drains exactly mInputMax — every active tick advances the
+ * progress by exactly mInputMax energy units :813) plus the shipped-default FALSE group:
+ * the restored doInject :489-508 math, the KU transition dual-state (continuous positive
+ * injection never delivers; the positive→non-positive transition tick does — the upstream
+ * Steam Engine :146 ±alternation) and the alternating-source square-wave delivery (the
+ * p11 rewrite of the former TRUE-suspension assertion).
  */
 public class TileEntityBasicMachineEnergyTest extends TileEntityBasicMachineOfflineTestBase {
 
@@ -60,12 +62,13 @@ public class TileEntityBasicMachineEnergyTest extends TileEntityBasicMachineOffl
 	}
 
 	// -------------------------------------------------------------------------
-	// grid-fed regime group (task p8-machine-tiers-doinject ②④): ENERGY_FAKE_SOURCE =
-	// false — the machine eats packets of its accepted type through the ITileEntityEnergy
-	// surface (Root gate :717 + the restored doInject :489-508). doInject math first.
+	// grid-fed group (the SHIPPED default since task p11-rotor-source-flip;
+	// p8-machine-tiers-doinject ②④): ENERGY_FAKE_SOURCE = false — the machine eats
+	// packets of its accepted type through the ITileEntityEnergy surface (Root gate :717
+	// + the restored doInject :489-508). doInject math first.
 	// -------------------------------------------------------------------------
 
-	/** The machine with the fake source OFF (the shipped-default regime flip). */
+	/** The machine with the fake source OFF (the shipped default, declared explicitly against the TRUE fixture restore). */
 	private TileEntityBasicMachine netMachine(gregtech6.recipes.RecipeMap aMap, int aParallel, boolean aParallelDuration, gregapi.code.TagData aType) {
 		TileEntityBasicMachine.ENERGY_FAKE_SOURCE = false;
 		return makeMachine(aMap, aParallel, aParallelDuration, aType);
@@ -175,17 +178,36 @@ public class TileEntityBasicMachineEnergyTest extends TileEntityBasicMachineOffl
 	}
 
 	@Test
-	void fakeSourceRegimeStillDeliversKuImmediately() {
-		// The TRUE-mode zero-regression assertion (task p8-machine-tiers-doinject ④): the
-		// :815 alternating arm is suspended for the whole family, so the same KU crusher
-		// under the A-tier fake source delivers on the completing tick like any other
-		// machine (the pre-p8 behavior; the latch pair stays write-only-consulted-never).
-		TileEntityBasicMachine tMachine = makeMachine(GT6RecipeMaps.CRUSHER, 4, true, TD.Energy.KU); // ENERGY_FAKE_SOURCE = true (the base per-test restore)
+	void kuCrusherDeliversOnTheZeroCrossingUnderAnAlternatingSource() {
+		// THE p11 REWRITE (task p11-rotor-source-flip, replacing the retired
+		// fakeSourceRegimeStillDeliversKuImmediately TRUE-suspension assertion — the same
+		// KU alternating/zero-crossing semantics, now driven by the SOURCE form instead of
+		// the fake supply): the /gt6energy alternating rig emits the upstream EngineSteam
+		// :146 square wave (+/+/-/- by the 2-bit piston phase), so the crusher's injection
+		// stream is a +64/-64 alternation. KU IS an ALL_ALTERNATING member (root
+		// TD.java:216), so the delivery can only fire on a positive→non-positive transition
+		// tick (:815 mStateOld && !mStateNew) — i.e. on the negative packet of each cycle
+		// once the progress has completed.
+		TileEntityBasicMachine tMachine = netMachine(GT6RecipeMaps.CRUSHER, 4, true, TD.Energy.KU);
 		tMachine.getInventory().insertItem(TileEntityBasicMachine.SLOT_INPUT, new ItemStack(sGemItem, 4), false);
 
-		drive(tMachine, 16);
-		assertTrue(tMachine.mProgress >= tMachine.mMaxProgress || tMachine.mMaxProgress == 0, "the fake source completes the process window");
-		assertFalse(tMachine.getInventory().getStackInSlot(1).isEmpty(), "the suspended arm delivers on the completing tick (zero regression)");
+		// mMaxProgress = 16 eUt * 16 duration * 4 parallel = 1024; each +64/-64 cycle books
+		// 128 (the :503 math stores |size|). After 7 cycles the progress sits at 896, cycle
+		// 8's positive packet rides it to 1024, and its negative packet IS the zero-crossing
+		// tick that completes the process AND opens the :815 arm on that very tick.
+		for (int i = 0; i < 7; i++) {
+			assertEquals(1, tMachine.doInject(TD.Energy.KU, (byte)2, 64, 1, true), "cycle " + i + " positive packet");
+			drive(tMachine, 1);
+			assertEquals(1, tMachine.doInject(TD.Energy.KU, (byte)2, -64, 1, true), "cycle " + i + " negative packet (the square wave)");
+			drive(tMachine, 1);
+			assertTrue(tMachine.getInventory().getStackInSlot(1).isEmpty(), "cycles 1-7 sit below completion — nothing may deliver");
+		}
+		// cycle 8: the zero-crossing delivery.
+		assertEquals(1, tMachine.doInject(TD.Energy.KU, (byte)2, 64, 1, true), "cycle 8 positive packet (progress 896 → 1024)");
+		drive(tMachine, 1);
+		assertEquals(1, tMachine.doInject(TD.Energy.KU, (byte)2, -64, 1, true), "cycle 8 negative packet — the zero-crossing");
+		drive(tMachine, 1);
+		assertEquals(8, tMachine.getInventory().getStackInSlot(1).getCount(), "the zero-crossing tick delivered the 4-parallel output (2x gemFlawed each)");
 	}
 
 	@Test

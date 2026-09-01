@@ -149,14 +149,17 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 		// line, size=mVoltage x amount=mAmperage (the declared single-mode simplification);
 		// p11: the alternating mode signs the size by the 2-bit piston phase (the upstream
 		// EngineSteam :113-114 advance + :146 sign form verbatim)
-		if (aIsServerSide && mEmitting) {
-			long tSize = mVoltage;
-			if (mAlternating) {
-				mPiston += 1; mPiston &= 3; // upstream :113-114 (the 2-bit phase)
-				tSize = mPiston > 1 ? -mVoltage : mVoltage; // upstream :146 sign form
-			}
-			ITileEntityEnergy.Util.emitEnergyToNetwork(mEnergyType, tSize, mAmperage, this, adjacency());
+		if (aIsServerSide && mEmitting) emitOnce();
+	}
+
+	/** The per-tick emit, split out so the offline tests can drive the square wave directly (the live entry is {@link #onTick}). */
+	void emitOnce() {
+		long tSize = mVoltage;
+		if (mAlternating) {
+			mPiston += 1; mPiston &= 3; // upstream :113-114 (the 2-bit phase)
+			tSize = mPiston > 1 ? -mVoltage : mVoltage; // upstream :146 sign form
 		}
+		ITileEntityEnergy.Util.emitEnergyToNetwork(mEnergyType, tSize, mAmperage, this, adjacency());
 	}
 
 	/**
@@ -164,8 +167,18 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 	 * (GTWireBlockEntity.transferElectricity :187): the neighbour BE plus the side of it
 	 * that faces us (the upstream DelegatorTileEntity pair in pure-data form). Null for
 	 * unloaded/absent neighbours — Util.emitEnergyToSide returns 0 for those.
+	 *
+	 * <p>{@code mAdjacencyOverride} is the offline test seam (the emitBooks fixture drives a
+	 * hand-built adjacency without a level): when set, it replaces the live resolution.
 	 */
+	private IEnergyAdjacency mAdjacencyOverride = null;
+
+	void setAdjacencyOverride(@Nullable IEnergyAdjacency aAdjacency) {
+		mAdjacencyOverride = aAdjacency;
+	}
+
 	private IEnergyAdjacency adjacency() {
+		if (mAdjacencyOverride != null) return mAdjacencyOverride;
 		return aSide -> {
 			if (!hasLevel()) return null;
 			BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(Direction.from3DDataValue(aSide)));
@@ -268,10 +281,31 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 	 * a new TagData for an unknown name (TagData.java:77-80), so a typo would silently
 	 * create a type nobody accepts — here an unknown name returns null and the caller
 	 * (the /gt6energy type command) reports the failure; the NBT load keeps the current type.
+	 *
+	 * <p>Matching covers the registered TagData mName ("ENERGY.KINETIC_ROTATION", ...) AND
+	 * the upstream LH local-short aliases ("RU"/"KU"/"EU"/... — TD.java:81-172 carries them
+	 * as the createTagData local-short args, which the port-level TagData drops), so the
+	 * RCON dial accepts the GT6 vocabulary.
 	 */
 	public static TagData resolveEnergyType(String aName) {
+		if (aName == null || aName.isEmpty()) return null;
 		for (TagData tTag : TagData.TAGS) if (tTag.mName.equalsIgnoreCase(aName)) return tTag;
-		return null;
+		return switch (aName.toUpperCase()) {
+			case "EU" -> TD.Energy.EU;
+			case "RU" -> TD.Energy.RU;
+			case "KU" -> TD.Energy.KU;
+			case "HU" -> TD.Energy.HU;
+			case "CU" -> TD.Energy.CU;
+			case "LU" -> TD.Energy.LU;
+			case "MU" -> TD.Energy.MU;
+			case "NU" -> TD.Energy.NU;
+			case "QU" -> TD.Energy.QU;
+			case "AU" -> TD.Energy.AU;
+			case "TU" -> TD.Energy.TU;
+			case "RF" -> TD.Energy.RF;
+			case "MJ" -> TD.Energy.MJ;
+			default -> null;
+		};
 	}
 
 	/** The mode setters arm persistence (the wire/oven command set form). */
