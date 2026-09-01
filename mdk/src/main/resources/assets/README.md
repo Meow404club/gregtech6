@@ -256,12 +256,42 @@ verified:
 
 Path mapping (declared, the redstone-conductor precedent): upstream
 `machines/covers/redstoneswitch/circuit` is lowercased/underscored to
-`redstone_switch/circuit` (1.20.1 `ResourceLocation` charset), landing under
-`textures/block/` — the vanilla block atlas `directory("block")` source
-auto-stitches the sprite id `gt6:block/redstone_switch/circuit` with zero extra
-atlas wiring. The upstream `BACKGROUND_COVER` layer (the attachment/holder
+`redstone_switch/circuit` (1.20.1 `ResourceLocation` charset), landing
+under `textures/block/` — the vanilla block atlas `directory("block")` source
+auto-stitches the sprite id `gt6:block/redstone_switch/circuit` with zero
+extra atlas wiring. The upstream `BACKGROUND_COVER` layer (the attachment/holder
 faces, `CoverControllerRedstone.java:62-63`) is NOT borrowed — it folds into
 the single-sprite plate like every cover (AbstractCoverDefault :71-72 defaults).
+
+Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
+Laser Fiber Wire textures, task p11-wire-fiber-texture: the 2 PNGs under
+`gt6/textures/block/iconsets/` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/iconsets/`
+(the `MultiTileEntityWireLaser.java:121-122` fixed texture pair — both
+`getTextureSide` and `getTextureConnected` return
+`BlockTextureMulti(BlockTextureDefault(FIBER_WIRE, mRGBa),
+BlockTextureDefault(FIBER_WIRE_OVERLAY))`, no glow layer), byte-identical
+to upstream (16x16 RGBA, `cmp` + sha256 verified per file):
+
+- `fiber_wire.png`          `1b383e640e9882b2cf927dde24cc0a1563c23e025224bb2846946f6a958e731e`
+  (upstream `FIBER_WIRE.png`; the sprite id is `gt6:block/iconsets/fiber_wire`)
+- `fiber_wire_overlay.png`  `1aa8d9d32a7626d16eec2f54cad4056772a8c6c2abc738c0649994a8ea989add`
+  (upstream `FIBER_WIRE_OVERLAY.png`; the sprite id is
+  `gt6:block/iconsets/fiber_wire_overlay`)
+
+Path mapping (declared, the p9-wire-family-w2 insulation-mask precedent):
+upstream `iconsets/<UPPER_SNAKE>.png` is lowercased to
+`iconsets/<lower_snake>.png` (1.20.1 `ResourceLocation` charset), landing under
+`textures/block/` — the vanilla block atlas `directory("block")` source
+auto-stitches both sprite ids with zero extra atlas wiring (the same
+convention the insulation masks use). The FIBER_WIRE base layer carries the
+upstream `mRGBa` dye through the runtime tint index 0
+(`GTWireTint.tintARGB`, the row material is `MT.NULL` per Loader:1815); the
+FIBER_WIRE_OVERLAY layer renders un-tinted (upstream `BlockTextureDefault`
+without a colour argument). Filenames lowercased on borrow, contents
+byte-identical, no rescaling or redrawing.
 
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).

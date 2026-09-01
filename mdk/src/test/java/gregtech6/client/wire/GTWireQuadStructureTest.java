@@ -7,6 +7,8 @@
  * (TileEntityBase10ConnectorRendered.setBlockBounds2 :124-129) and core box (:115), and the
  * texture pick of :138-139 (core = getTextureSide, caps = getTextureConnected, buried faces
  * skipped), with the :238 insulation tier ladder from MultiTileEntityWireElectric.
+ * Task p11-wire-fiber-texture appends the fiber form (planShapesFiber): the laser family
+ * twins every material quad with an untinted FIBER_WIRE_OVERLAY (WireLaser :121-122).
  */
 package gregtech6.client.wire;
 
@@ -162,5 +164,76 @@ public class GTWireQuadStructureTest {
         // the p7 legacy pair carries diameter 0 — the readFromNBT2 :64 clamp floors at PX_P[2] = 2/16
         List<Shape> tShapes = GTWireBakedModel.planShapes(false, 0, 0);
         assertEquals(0.4375, tShapes.get(0).box()[0], 1e-9, "(1 - 0.125) / 2 = 0.4375");
+    }
+
+    // -------------------------------------------------------------------------
+    // task p11-wire-fiber-texture — the laser (fiber) family form
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void fiberMaskZeroIsTheCorePair() {
+        // PX_P[6] = 6/16 diameter (Loader:1815) — the core pair: 6 dyed bases + 6 untinted overlays
+        List<Shape> tShapes = GTWireBakedModel.planShapesFiber(6, 0);
+        assertEquals(12, tShapes.size(), "core: 6 FIBER_WIRE bases + 6 FIBER_WIRE_OVERLAY twins");
+        assertEquals(6, countKind(tShapes, SpriteKind.WIRE));
+        assertEquals(6, countKind(tShapes, SpriteKind.FIBER_OVERLAY));
+        for (Shape tShape : tShapes) {
+            if (tShape.kind() == SpriteKind.WIRE) {
+                assertEquals(0, tShape.tintIndex(), "the fiber base carries the mRGBa dye on tint index 0");
+            } else {
+                assertEquals(-1, tShape.tintIndex(), "FIBER_WIRE_OVERLAY is untinted (the no-colour BlockTextureDefault)");
+                assertEquals(SpriteKind.FIBER_OVERLAY, tShape.kind());
+                assertEquals(core(6)[0] - GTWireBakedModel.INSULATION_EPSILON, tShape.box()[0], 1e-9,
+                        "the overlay box is inflated past the base face (the same outward form as the tier masks)");
+                assertNull(tShape.cull(), "internal faces never cull");
+            }
+        }
+    }
+
+    @Test
+    public void fiberFullMaskTwinsEveryMaterialQuad() {
+        List<Shape> tShapes = GTWireBakedModel.planShapesFiber(6, 63);
+        // the bare plan (6 core + 6x5 arm faces = 36) plus one twin each — :121/:122 pick
+        // the SAME pair for getTextureSide AND getTextureConnected, so caps AND walls twin
+        assertEquals(72, tShapes.size());
+        assertEquals(36, countKind(tShapes, SpriteKind.WIRE));
+        assertEquals(36, countKind(tShapes, SpriteKind.FIBER_OVERLAY));
+        assertEquals(0, countKind(tShapes, SpriteKind.INSULATION_FULL), "no insulation on the fiber family");
+        // every twin mirrors its base one-to-one: same face + same cull + the exact
+        // epsilon-inflated box (inflate = outward on all six planes, the tier-mask form)
+        for (Shape tBase : tShapes) {
+            if (tBase.kind() != SpriteKind.WIRE) continue;
+            double[] tExpectedBox = new double[6];
+            for (int tI = 0; tI < 6; tI++) tExpectedBox[tI] = tBase.box()[tI] + (tI < 3 ? -1.0 : 1.0) * GTWireBakedModel.INSULATION_EPSILON;
+            Shape tTwin = tShapes.stream().filter(s -> s.kind() == SpriteKind.FIBER_OVERLAY
+                    && s.face() == tBase.face() && s.cull() == tBase.cull()).filter(s -> {
+                        for (int tI = 0; tI < 6; tI++) if (Math.abs(s.box()[tI] - tExpectedBox[tI]) > 1e-9) return false;
+                        return true;
+                    }).findFirst().orElse(null);
+            assertTrue(tTwin != null, "missing overlay twin for the " + tBase.face() + " base quad "
+                    + java.util.Arrays.toString(tBase.box()));
+        }
+    }
+
+    @Test
+    public void fiberPlansNeverLeakIntoTheElectricForms() {
+        // the electric/redstone planner entry stays overlay-free — the p11 branch keys off
+        // Params.overlaySprite, the (insulated, diameter, mask) plans are untouched
+        for (int tMask = 0; tMask < 64; tMask++) {
+            assertEquals(0, countKind(GTWireBakedModel.planShapes(false, 6, tMask), SpriteKind.FIBER_OVERLAY),
+                    "bare electric plan must not grow fiber overlays at mask " + tMask);
+            assertEquals(0, countKind(GTWireBakedModel.planShapes(true, 6, tMask), SpriteKind.FIBER_OVERLAY),
+                    "cable electric plan must not grow fiber overlays at mask " + tMask);
+        }
+        assertEquals(6, GTWireBakedModel.planShapes(false, 6, 0).size(), "the bare plan count is unchanged by p11");
+    }
+
+    @Test
+    public void fiberQuadCountIsMonotoneInTheMask() {
+        for (int tMask = 0; tMask < 64; tMask++) {
+            int tBits = Integer.bitCount(tMask);
+            assertEquals(2 * (6 + 5 * tBits), GTWireBakedModel.planShapesFiber(6, tMask).size(),
+                    "fiber quad count at mask " + tMask + " = the bare count doubled");
+        }
     }
 }

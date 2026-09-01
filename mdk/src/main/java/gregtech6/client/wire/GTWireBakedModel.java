@@ -64,6 +64,20 @@ import gregtech6.block.wire.GTWireBlock;
  * The insulation tier follows the upstream :238 diameter ladder: &lt;0.37 TINY, &lt;0.49
  * SMALL, &lt;0.74 MEDIUM, &lt;0.99 LARGE, else HUGE (diameters = PX_P/16, CS.java:492).
  *
+ * <p>Task p11-wire-fiber-texture — the LASER family branch (MultiTileEntityWireLaser.java
+ * :121-122): upstream overrides BOTH texture picks with the SAME fixed pair
+ * {@code BlockTextureMulti(BlockTextureDefault(FIBER_WIRE, mRGBa),
+ * BlockTextureDefault(FIBER_WIRE_OVERLAY))} — every visible face (core, arm caps AND arm
+ * side walls, the :138/:139 picks) carries the dyed fiber base plus the untinted overlay,
+ * and there is NO glow layer (the {@code BlockTextureDefault} two-arg form has no
+ * brightness argument). The port renders this as a parallel family form next to the
+ * electric bare/cable pair: {@link Params} gains the {@code overlaySprite} carrier (null =
+ * electric/redstone behaviour, byte-for-byte the pre-p11 plans) and the fiber planner
+ * {@link #planShapesFiber} emits one {@link SpriteKind#FIBER_OVERLAY} twin (untinted,
+ * {@link #INSULATION_EPSILON}-inflated, same face/cull) per material quad. The dye still
+ * rides tint index 0 through {@link GTWireTint} — the row material is MT.NULL
+ * (Loader_MultiTileEntities.java:1815), the same {@code mRGBa} source upstream dyes with.
+ *
  * <p>The tier/full overlays sit ON the material quads, so they are inflated by
  * {@value #INSULATION_EPSILON} (the GTCEu COVER_OVERLAY z-fight epsilon, the
  * GTFluidPipeFlowModel/oven precedent) and rendered on the cutout layer; the material
@@ -83,7 +97,7 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 	public static final float MIN_DIAMETER_PX = 2.0F;
 
 	/** Which sprite a planned face carries. */
-	public enum SpriteKind { WIRE, INSULATION_FULL, INSULATION_TINY, INSULATION_SMALL, INSULATION_MEDIUM, INSULATION_LARGE, INSULATION_HUGE }
+	public enum SpriteKind { WIRE, FIBER_OVERLAY, INSULATION_FULL, INSULATION_TINY, INSULATION_SMALL, INSULATION_MEDIUM, INSULATION_LARGE, INSULATION_HUGE }
 
 	/**
 	 * One planned face quad: the facing (also the per-side chunk dispatch key), the box in
@@ -97,8 +111,19 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 		}
 	}
 
-	/** The immutable per-block render identity (the W1 carrier fields, GTWireBlock). */
-	public record Params(@Nullable ResourceLocation wireSprite, boolean insulated, int diameterPx) {}
+	/**
+	 * The immutable per-block render identity (the W1 carrier fields, GTWireBlock). The
+	 * p11 laser branch rides {@code overlaySprite}: null = the electric/redstone forms
+	 * (plans unchanged), non-null = the FIBER_WIRE(+OVERLAY) pair of WireLaser :121-122.
+	 */
+	public record Params(@Nullable ResourceLocation wireSprite, @Nullable ResourceLocation overlaySprite,
+			boolean insulated, int diameterPx) {
+
+		/** The pre-p11 three-field form (every electric/redstone/legacy row). */
+		public Params(@Nullable ResourceLocation aWireSprite, boolean aInsulated, int aDiameterPx) {
+			this(aWireSprite, null, aInsulated, aDiameterPx);
+		}
+	}
 
 	private static final FaceBakery BAKERY = new FaceBakery();
 
@@ -151,8 +176,10 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 		}
 		int tMask = aState != null && aState.hasProperty(GTWireBlock.CONNECTIONS)
 				? aState.getValue(GTWireBlock.CONNECTIONS) : ITEM_MASK;
-		List<BakedQuad> tAll = mBakedCache.computeIfAbsent(tMask, tM -> bakeShapes(
-				planShapes(mParams.insulated(), mParams.diameterPx(), tM)));
+		boolean tFiber = mParams.overlaySprite() != null; // the p11 laser branch (WireLaser :121-122)
+		List<BakedQuad> tAll = mBakedCache.computeIfAbsent(tMask, tM -> tFiber
+				? bakeShapes(planShapesFiber(mParams.diameterPx(), tM))
+				: bakeShapes(planShapes(mParams.insulated(), mParams.diameterPx(), tM)));
 		if (aSide == null) return tAll;
 		List<BakedQuad> rOut = new ArrayList<>(tAll.size());
 		for (BakedQuad tQuad : tAll) if (tQuad.getDirection() == aSide) rOut.add(tQuad);
@@ -180,6 +207,11 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 		if (aKind == SpriteKind.WIRE) {
 			return mParams.wireSprite() != null ? mParams.wireSprite()
 					: new ResourceLocation("gt6", "block/wire_electric"); // legacy pair: the p7 placeholder texture
+		}
+		if (aKind == SpriteKind.FIBER_OVERLAY) {
+			// the p11 laser overlay layer (WireLaser :121-122, untinted)
+			return mParams.overlaySprite() != null ? mParams.overlaySprite()
+					: new ResourceLocation("gt6", "block/iconsets/fiber_wire_overlay");
 		}
 		return new ResourceLocation("gt6", "block/iconsets/insulation_" + kindTail(aKind));
 	}
@@ -232,6 +264,31 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 	public static List<Shape> planShapes(boolean aInsulated, int aDiameterPx, int aMask) {
 		long tKey = (aInsulated ? 1L : 0L) | ((long) (aDiameterPx & 0x1F) << 1) | ((long) (aMask & 0x3F) << 8);
 		return SHAPE_CACHE.computeIfAbsent(tKey, tK -> planShapesUncached(aInsulated, aDiameterPx, aMask));
+	}
+
+	/**
+	 * The p11 LASER family form (MultiTileEntityWireLaser :121-122): the BARE geometry —
+	 * upstream registers exactly one fiber wire, no cable form (Loader:1814-1815) — with
+	 * one untinted {@link SpriteKind#FIBER_OVERLAY} twin per material quad. Upstream picks
+	 * the SAME pair for {@code getTextureSide} AND {@code getTextureConnected} (:121/:122),
+	 * so core, arm caps and arm side walls all carry the overlay — the twins mirror the
+	 * base quads one-to-one (same face, same cull, {@link #INSULATION_EPSILON}-inflated
+	 * box, tint index -1 = no dye, the {@code BlockTextureDefault} no-colour argument).
+	 * Builds on the uncached bare plan (the SHAPE_CACHE lists are shared and must stay
+	 * unmutated); the fiber result caches under its own bit-7 key.
+	 */
+	public static List<Shape> planShapesFiber(int aDiameterPx, int aMask) {
+		long tKey = 1L << 7 | ((long) (aDiameterPx & 0x1F) << 1) | ((long) (aMask & 0x3F) << 8); // bit 7 = the fiber namespace
+		return SHAPE_CACHE.computeIfAbsent(tKey, tK -> {
+			List<Shape> rShapes = planShapesUncached(false, aDiameterPx, aMask);
+			List<Shape> tTwins = new ArrayList<>(rShapes.size());
+			for (Shape tShape : rShapes) {
+				if (tShape.kind() != SpriteKind.WIRE) continue; // a bare plan is all-WIRE; the filter is belt and suspenders
+				tTwins.add(new Shape(tShape.face(), inflate(tShape.box()), -1, SpriteKind.FIBER_OVERLAY, tShape.cull()));
+			}
+			rShapes.addAll(tTwins);
+			return rShapes;
+		});
 	}
 
 	private static List<Shape> planShapesUncached(boolean aInsulated, int aDiameterPx, int aMask) {

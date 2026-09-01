@@ -1,9 +1,12 @@
 /**
- * The client param table (task p9-wire-family-w2): 620 family paths + 2 legacy anchors,
- * each carrying its row's texture set, insulated form and PX_P diameter — the dispatch
- * fuel {@link GTWireClientListener} feeds the bake replacement. Spot rows pin the set
- * census per form (bare wires AND cables of one row share the set — the insulation is a
- * quad layer, not a different texture set).
+ * The client param table (task p9-wire-family-w2): 620 electric family paths + 1 laser
+ * row (task p11-wire-fiber-texture) + 2 legacy anchors, each carrying its row's texture
+ * set, insulated form and PX_P diameter — the dispatch fuel {@link GTWireClientListener}
+ * feeds the bake replacement. Spot rows pin the set census per form (bare wires AND
+ * cables of one row share the set — the insulation is a quad layer, not a different
+ * texture set). The laser row pins the fixed FIBER_WIRE+OVERLAY pair
+ * (MultiTileEntityWireLaser.java:121-122) and the electric rows pin overlaySprite == null
+ * (the branch separation — the p11 laser form must never leak into the electric plans).
  */
 package gregtech6.client.wire;
 
@@ -29,11 +32,13 @@ public class GTWireClientParamsTest {
 
     @Test
     public void tableCoversTheFullSpectrum() {
-        assertEquals(622, GTWireClientListener.paramsCount(), "620 family rows + 2 legacy anchors");
+        assertEquals(623, GTWireClientListener.paramsCount(), "620 electric rows + 1 laser row + 2 legacy anchors");
         assertNotNull(GTWireClientListener.paramsFor("wire_tin_gt01"));
         assertNotNull(GTWireClientListener.paramsFor("cable_tungsten_gt08"));
         assertNotNull(GTWireClientListener.paramsFor("wire_superconductor_gt16"));
+        assertNotNull(GTWireClientListener.paramsFor("wire_laser"), "the p11 laser row joins the per-state MRL table");
         assertNull(GTWireClientListener.paramsFor("wire_unknown_gt01"), "no phantom paths");
+        assertNull(GTWireClientListener.paramsFor("wire_red_alloy"), "the redstone family stays on the JSON fallback (the R1b card)");
         assertNull(GTWireClientListener.paramsFor("oven"), "non-wire paths stay vanilla");
     }
 
@@ -71,5 +76,27 @@ public class GTWireClientParamsTest {
         assertEquals(false, tLegacy.insulated());
         assertEquals(0, tLegacy.diameterPx(), "diameter 0 = the model floors at PX_P[2] (readFromNBT2 :64 clamp)");
         assertEquals(tLegacy, GTWireClientListener.paramsFor("wire_electric_2x"), "both anchors share the form");
+    }
+
+    @Test
+    public void laserRowCarriesTheFixedFiberPair() {
+        // MultiTileEntityWireLaser.java:121-122 — BlockTextureMulti(FIBER_WIRE tinted mRGBa,
+        // FIBER_WIRE_OVERLAY untinted); Loader:1814-1815 — one block, PX_P[6], no cable form.
+        GTWireBakedModel.Params tLaser = GTWireClientListener.paramsFor("wire_laser");
+        assertNotNull(tLaser);
+        assertEquals(new ResourceLocation(GTRenderModelListener.MOD_ID, "block/iconsets/fiber_wire"), tLaser.wireSprite(),
+                "the borrowed FIBER_WIRE base (tint index 0 = the mRGBa dye)");
+        assertEquals(new ResourceLocation(GTRenderModelListener.MOD_ID, "block/iconsets/fiber_wire_overlay"),
+                tLaser.overlaySprite(), "the untinted FIBER_WIRE_OVERLAY layer");
+        assertEquals(false, tLaser.insulated(), "the bare fiber form — no cable upstream");
+        assertEquals(6, tLaser.diameterPx(), "PX_P[6] (Loader:1815 NBT_DIAMETER)");
+    }
+
+    @Test
+    public void electricRowsStayOverlayFree() {
+        // branch separation: null overlaySprite = the pre-p11 electric/redstone planner form
+        assertNull(GTWireClientListener.paramsFor("wire_tin_gt01").overlaySprite());
+        assertNull(GTWireClientListener.paramsFor("cable_tin_gt12").overlaySprite());
+        assertNull(GTWireClientListener.paramsFor("wire_electric_1x").overlaySprite());
     }
 }

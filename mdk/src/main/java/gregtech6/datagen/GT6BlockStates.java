@@ -74,7 +74,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         Map<String, ModelFile> tWireShared = new HashMap<>();
         addWireFamily(tWireShared); // task p9-wire-family-w1 ⑥ — the 620-block loop, isolated section
         addRedstoneWireFamily(tWireShared); // task p10-wire-redstone-family — the 6-block redstone loop
-        addLaserWireFamily(tWireShared); // task p10-wire-laser-placeholder — the 1-block laser loop
+        addLaserWireFamily(tWireShared); // task p10-wire-laser-placeholder — the 1-block laser loop (render target upgraded to the baked fiber model by p11-wire-fiber-texture)
         addOven();
         addMachine(GTMachines.SHREDDER.get(), "shredder"); // task p7-basicmachine-family ④
         addMachine(GTMachines.CRUSHER.get(), "crusher");
@@ -332,7 +332,8 @@ public final class GT6BlockStates extends BlockStateProvider {
      * MT.java:697/701), which the W2 borrow already shipped, so zero new PNGs. The same
      * single property-less variant wildcard maps the 64 CONNECTIONS states per block onto
      * the shared tinted model; the connection-aware baked geometry (GTWireClientListener)
-     * drives its table off the ELECTRIC variant list only, so the redstone blocks render
+     * drives its table off the ELECTRIC variant list plus — since task
+     * p11-wire-fiber-texture — the laser row, so the redstone blocks still render
      * through this JSON fallback cube — a fallback-only simplification, the render-R1b
      * card owns the redstone visuals (the fixed insulation tint :184 and the mState
      * brightness :81-82 are declared render-layer items).
@@ -358,11 +359,19 @@ public final class GT6BlockStates extends BlockStateProvider {
      * The row material is MT.NULL (upstream NBT_MATERIAL MT.NULL, Loader:1815), which
      * resolves to the {@code none} set (GTWireTextures.blockSetOf empty-list rule) — the
      * W2 borrow already shipped that set (the Superconductor row), so zero new PNGs.
-     * Upstream renders the laser wire with the FIXED FIBER_WIRE texture pair
-     * (MultiTileEntityWireLaser :121-122, non-material-dyed) — a distinct fiber visual
-     * stays a render-pool item; the shared tinted fallback cube is the placeholder form,
-     * exactly like the redstone blocks. The same single property-less variant wildcard
-     * maps the 64 CONNECTIONS states onto the shared model (no 64-variant listing).
+     *
+     * <p>Task p11-wire-fiber-texture UPGRADED the runtime target: the listener table
+     * ({@link gregtech6.client.wire.GTWireClientListener#buildParams}) now covers
+     * {@code wire_laser}, so every per-state key AND the item key bake into the
+     * {@link gregtech6.client.wire.GTWireBakedModel} fiber form (the fixed FIBER_WIRE
+     * + FIBER_WIRE_OVERLAY pair, MultiTileEntityWireLaser :121-122) — the block no longer
+     * RENDERS through this JSON. The shared tinted cube stays generated UNCHANGED as the
+     * per-state key carrier + item parent (the addWireFamily architecture, spec-pinned:
+     * the blockstate's single wildcard variant is what mints the 64 per-state
+     * {@code gt6:wire_laser#connections=N} keys the listener swaps), and as the baked
+     * fallback safety net if the listener never fires. This is the exact shape the 620
+     * electric rows have; the redstone rows remain the only JSON-rendered family (the
+     * p11-wire-brightness card owns them — zero redstone changes here).
      */
     private void addLaserWireFamily(Map<String, ModelFile> aShared) {
         for (GTWireSpecs.Variant tVariant : GTWireSpecs.laserVariants()) {

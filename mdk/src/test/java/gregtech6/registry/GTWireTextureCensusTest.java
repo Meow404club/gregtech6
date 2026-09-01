@@ -54,6 +54,11 @@ public class GTWireTextureCensusTest {
             assertNotNull(getClass().getResource("/assets/gt6/textures/block/iconsets/insulation_" + tTail + ".png"),
                     "missing borrowed insulation_" + tTail + ".png");
         }
+        // task p11-wire-fiber-texture — the laser fiber pair (MultiTileEntityWireLaser :121-122)
+        assertNotNull(getClass().getResource("/assets/gt6/textures/block/iconsets/fiber_wire.png"),
+                "missing borrowed fiber_wire.png");
+        assertNotNull(getClass().getResource("/assets/gt6/textures/block/iconsets/fiber_wire_overlay.png"),
+                "missing borrowed fiber_wire_overlay.png");
     }
 
     @Test
@@ -71,5 +76,24 @@ public class GTWireTextureCensusTest {
         assertEquals("d9343ea989b6585f8fea8ed6aba7db86f477bc7f63553db1f8d4d06794077bad", tReference,
                 "the upstream wire.png bytes (byte-identical borrow)");
         assertTrue(tReference != null && tReference.length() == 64);
+    }
+
+    /** Task p11-wire-fiber-texture: the fiber pair pins its upstream sha256 (assets/README.md). */
+    @Test
+    public void theFiberPairIsTheUpstreamBytes() throws Exception {
+        MessageDigest tDigest = MessageDigest.getInstance("SHA-256");
+        assertEquals("1b383e640e9882b2cf927dde24cc0a1563c23e025224bb2846946f6a958e731e",
+                sha256(tDigest, "/assets/gt6/textures/block/iconsets/fiber_wire.png"),
+                "fiber_wire.png must be the byte-identical upstream FIBER_WIRE.png");
+        assertEquals("1aa8d9d32a7626d16eec2f54cad4056772a8c6c2abc738c0649994a8ea989add",
+                sha256(tDigest, "/assets/gt6/textures/block/iconsets/fiber_wire_overlay.png"),
+                "fiber_wire_overlay.png must be the byte-identical upstream FIBER_WIRE_OVERLAY.png");
+    }
+
+    private static String sha256(MessageDigest aDigest, String aResource) throws Exception {
+        byte[] tBytes = GTWireTextureCensusTest.class.getResourceAsStream(aResource).readAllBytes();
+        StringBuilder tHex = new StringBuilder();
+        for (byte tB : aDigest.digest(tBytes)) tHex.append(String.format("%02x", tB));
+        return tHex.toString();
     }
 }

@@ -39,6 +39,23 @@ public final class GTWireTextures {
 		return new net.minecraft.resources.ResourceLocation("gt6", "block/materialicons/" + aSet + "/wire");
 	}
 
+	/**
+	 * The laser family's fixed texture pair (task p11-wire-fiber-texture) — the borrowed
+	 * FIBER_WIRE icons (MultiTileEntityWireLaser.java:121-122; upstream
+	 * {@code textures/blocks/iconsets/FIBER_WIRE[_OVERLAY].png}, lowercased on borrow,
+	 * assets/README.md). The base carries the dye through tint index 0, the overlay is
+	 * untinted — {@code BlockTextureMulti(BlockTextureDefault(FIBER_WIRE, mRGBa),
+	 * BlockTextureDefault(FIBER_WIRE_OVERLAY))}, no glow layer.
+	 */
+	public static net.minecraft.resources.ResourceLocation fiberSprite() {
+		return new net.minecraft.resources.ResourceLocation("gt6", "block/iconsets/fiber_wire");
+	}
+
+	/** The untinted overlay half of the laser pair ({@code FIBER_WIRE_OVERLAY}). */
+	public static net.minecraft.resources.ResourceLocation fiberOverlaySprite() {
+		return new net.minecraft.resources.ResourceLocation("gt6", "block/iconsets/fiber_wire_overlay");
+	}
+
 	/** The legacy p7 placeholder texture (the material-less anchors). */
 	public static net.minecraft.resources.ResourceLocation legacySprite() {
 		return new net.minecraft.resources.ResourceLocation("gt6", "block/wire_electric");
