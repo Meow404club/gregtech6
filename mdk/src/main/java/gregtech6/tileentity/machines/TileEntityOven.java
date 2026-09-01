@@ -112,7 +112,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * project into the C-grade {@link GTOvenRenderSnapshot} ({@code getModelData()}); the
  * client arm of the render pair rides {@link #load} (both sync channels converge there).
  */
-public class TileEntityOven extends TileEntityBase03TicksAndSync implements MenuProvider, ICoverableTE {
+public class TileEntityOven extends TileEntityBase03TicksAndSync implements MenuProvider, ICoverableTE, ITileEntitySwitchableOnOff {
 
 	// checkRecipe result codes (upstream :672-675 verbatim).
 	public static final int DID_NOT_FIND_RECIPE = 0;

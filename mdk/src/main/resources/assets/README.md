@@ -237,3 +237,24 @@ the p9 emitter note).
 
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+Redstone Machine Switch cover texture, task p10-cover-controller-redstone: the
+1 PNG under `gt6/textures/block/redstone_switch/` comes from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/covers/redstoneswitch/`
+(the `CoverControllerRedstone.java:65` `sTextureForeground` single sprite,
+`machines/covers/redstoneswitch/circuit`), byte-identical to upstream, sha256
+verified:
+
+- `circuit.png`       `08926925e9654c93de87fab5dbeeeb1f456ade5cfd414a10c3dfd34ada46d1a6`
+
+Path mapping (declared, the redstone-conductor precedent): upstream
+`machines/covers/redstoneswitch/circuit` is lowercased/underscored to
+`redstone_switch/circuit` (1.20.1 `ResourceLocation` charset), landing under
+`textures/block/` — the vanilla block atlas `directory("block")` source
+auto-stitches the sprite id `gt6:block/redstone_switch/circuit` with zero extra
+atlas wiring. The upstream `BACKGROUND_COVER` layer (the attachment/holder
+faces, `CoverControllerRedstone.java:62-63`) is NOT borrowed — it folds into
+the single-sprite plate like every cover (AbstractCoverDefault :71-72 defaults).
+
+Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).

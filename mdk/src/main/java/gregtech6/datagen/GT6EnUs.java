@@ -85,11 +85,16 @@ public final class GT6EnUs extends LanguageProvider {
      * MultiItemTechnological.java:88-89 — metas 1029/1030, display names
      * "Redstone Conductor Cover (Accept)"/"(Emit)" verbatim; the transfer-direction
      * tooltips ride the same cut addToolTips channel).
+     * Task p10-cover-controller-redstone: the machine switch (upstream
+     * MultiItemTechnological.java:64 — meta 1005, display name "Redstone Machine
+     * Switch" verbatim; the "Turns Machines ON/OFF using Redstone" tooltip and the
+     * screwdriver tooltip ride the cut addToolTips channel).
      */
     private void addCovers() {
         add("item.gt6.cover_redstone_emitter", "Redstone Emitter");
         add("item.gt6.cover_redstone_conductor_in", "Redstone Conductor Cover (Accept)");
         add("item.gt6.cover_redstone_conductor_out", "Redstone Conductor Cover (Emit)");
+        add("item.gt6.cover_redstone_machine_switch", "Redstone Machine Switch");
     }
 
     /**

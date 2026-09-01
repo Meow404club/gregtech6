@@ -63,6 +63,11 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("block/redstone_conductor/in"));
         withExistingParent("cover_redstone_conductor_out", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/redstone_conductor/out"));
+        // the p10 redstone machine switch (task p10-cover-controller-redstone) — the item
+        // shows the switch plate art, a byte-identical upstream borrow living in
+        // textures/block/redstone_switch/ (assets/README.md attribution)
+        withExistingParent("cover_redstone_machine_switch", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/redstone_switch/circuit"));
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

@@ -2906,6 +2906,7 @@
   "item.gt6.cover_redstone_conductor_in": "Redstone Conductor Cover (Accept)",
   "item.gt6.cover_redstone_conductor_out": "Redstone Conductor Cover (Emit)",
   "item.gt6.cover_redstone_emitter": "Redstone Emitter",
+  "item.gt6.cover_redstone_machine_switch": "Redstone Machine Switch",
   "item.gt6.crowbar": "Crowbar",
   "itemGroup.gt6.arrow_gt_plastic": "Light Arrows",
   "itemGroup.gt6.arrow_gt_wood": "Regular Arrows",
