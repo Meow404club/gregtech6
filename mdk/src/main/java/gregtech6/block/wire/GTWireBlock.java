@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -15,6 +16,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -72,6 +76,19 @@ public class GTWireBlock extends GTEntityBlock {
 	private final boolean mInsulated;
 	private final int mDiameter;
 	private final Family mFamily;
+	private final boolean mContactDamage;
+
+	/**
+	 * The upstream :219 contact-damage collision box — the 2px inset
+	 * {@code box(PX_P[2], PX_P[2], PX_P[2], PX_N[2], PX_N[2], PX_N[2])}
+	 * (PX_P[2] = 2/16 = 0.125, PX_N[2] = 14/16 = 0.875). It is the ENABLER of the whole
+	 * shock mechanic: 1.20.1 {@code Entity.checkInsideBlocks} (Entity.java:966-989) fires
+	 * {@code entityInside} for every block volume the entity AABB overlaps, and an entity
+	 * standing ON a full cube overlaps nothing — with the inset box the entity sinks the
+	 * 2px into the wire cell, the overlap exists, and the hook runs (upstream feeds the
+	 * same inset through IMTE_GetCollisionBoundingBoxFromPool for exactly that reason).
+	 */
+	private static final VoxelShape CONTACT_SHAPE = Shapes.box(0.125, 0.125, 0.125, 0.875, 0.875, 0.875);
 
 	/**
 	 * The p7 legacy form (the two material-less variants) — the vanilla-block fallback ratings
@@ -118,6 +135,7 @@ public class GTWireBlock extends GTEntityBlock {
 		mInsulated = aInsulated;
 		mDiameter = aDiameter;
 		mFamily = aFamily;
+		mContactDamage = contactDamageOf(aFamily, aInsulated, aMaterial);
 		registerDefaultState(defaultBlockState().setValue(CONNECTIONS, 0));
 	}
 
@@ -160,6 +178,38 @@ public class GTWireBlock extends GTEntityBlock {
 	/** The family column (task p10): ELECTRIC = the EU pump rows, REDSTONE = the push-BFS signal rows. */
 	public Family family() {
 		return mFamily;
+	}
+
+	/**
+	 * The spec contact-damage flag (the upstream {@code NBT_CONTACTDAMAGE} registration data,
+	 * read into {@code TileEntityBase10ConnectorRendered.mContactDamage} :64). Derived at
+	 * construction from the {@link GTWireSpecs} row the block carries (see
+	 * {@link #contactDamageOf}); TRUE only on the BARE wires of the 28 shock-flagged rows —
+	 * insulated cables ({@code contactDamageCable = F} on every row), the Graphene and
+	 * Superconductor pure wires and every non-ELECTRIC row are inert.
+	 */
+	public boolean contactDamage() {
+		return mContactDamage;
+	}
+
+	/**
+	 * The {@code NBT_CONTACTDAMAGE} derivation. The registration carrier ({@code GTWires})
+	 * builds every block from the {@link GTWireSpecs.Variant} record, which has no flag
+	 * column — the flag is instead re-derived from the block's row identity here, the
+	 * upstream mapping being: wires take {@code aContactDamageWire} (:72-87), cables take
+	 * {@code aContactDamageCable} (:89-93), both F on the Graphene/Superconductor rows
+	 * (Loader:1948/:1950) and F on every redstone row (no NBT_CONTACTDAMAGE exists on the
+	 * Loader:1893-1902 registration at all). Blocks without row identity (the material-less
+	 * p7 legacy pair) carry the upstream FIELD default F — upstream reads the flag only
+	 * when present ({@code if (aNBT.hasKey(NBT_CONTACTDAMAGE))}, :64) and the field
+	 * initialises to F (:57), so a registration without the flag is an inert wire.
+	 */
+	private static boolean contactDamageOf(Family aFamily, boolean aInsulated, @Nullable OreDictMaterial aMaterial) {
+		if (aFamily != Family.ELECTRIC || aMaterial == null) return false;
+		for (GTWireSpecs.Row tRow : GTWireSpecs.ROWS) {
+			if (tRow.material().get() == aMaterial) return aInsulated ? tRow.contactDamageCable() : tRow.contactDamageWire();
+		}
+		return false;
 	}
 
 	/**
@@ -229,6 +279,42 @@ public class GTWireBlock extends GTEntityBlock {
 			return tWire.getComparatorOut();
 		}
 		return super.getAnalogOutputSignal(aState, aLevel, aPos);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the contact-damage hook (task p10-wire-contact-damage spec 1)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream MultiTileEntityWireElectric.onEntityCollidedWithBlock :203 —
+	 * {@code if (mContactDamage && !mFoamDried) UT.Entities.applyElectricityDamage(aEntity,
+	 * mWattageLast)} — relocated from the TE to the 1.20.1 Block hook
+	 * ({@code Entity.checkInsideBlocks} Entity.java:966-989 drives it for every overlapped
+	 * block volume, both sides; the client guard lives below). The {@code mFoamDried}
+	 * exemption is剪除 with the foam system (the C-Foam ADR — foam is a declared pool item,
+	 * so no dried-foam state can exist to gate on). The family gate rides
+	 * {@link #mContactDamage} (false on every non-ELECTRIC row) plus the BE-side
+	 * {@code isRedstone()} re-gate in {@link GTWireBlockEntity#applyElectricityDamage}.
+	 */
+	@Override
+	public void entityInside(BlockState aState, Level aLevel, BlockPos aPos, Entity aEntity) {
+		super.entityInside(aState, aLevel, aPos, aEntity);
+		if (!mContactDamage || aLevel.isClientSide) return;
+		if (aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire) {
+			tWire.applyElectricityDamage(aEntity); // upstream :203 — the wattage gate lives on the BE
+		}
+	}
+
+	/**
+	 * Upstream TileEntityBase10ConnectorRendered.getCollisionBoundingBoxFromPool :219 —
+	 * {@code mContactDamage ? box(PX_P[2]..PX_N[2]) : super} (the {@code !mFoamDried}
+	 * half is剪除 with foam). The 2px inset is what lets an entity sink into the wire cell
+	 * so {@link #entityInside} actually fires while standing on the wire (see
+	 * {@link #CONTACT_SHAPE}); inert wires keep the plain full cube.
+	 */
+	@Override
+	public VoxelShape getCollisionShape(BlockState aState, BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
+		return mContactDamage ? CONTACT_SHAPE : super.getCollisionShape(aState, aLevel, aPos, aContext);
 	}
 
 	// -- placeholders declared, NOT implemented (the R1b render card owns them) --
