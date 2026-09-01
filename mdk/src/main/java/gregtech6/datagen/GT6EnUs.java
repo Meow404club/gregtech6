@@ -81,9 +81,15 @@ public final class GT6EnUs extends LanguageProvider {
      * cover (upstream MultiItemTechnological.java:80 — meta 1021, display name
      * "Redstone Emitter" verbatim; the "Emits a constant Redstone Signal" tooltip rides
      * the upstream addToolTips channel which the single-item port does not carry).
+     * Task p10-cover-conductor-redstone: the conductor pair (upstream
+     * MultiItemTechnological.java:88-89 — metas 1029/1030, display names
+     * "Redstone Conductor Cover (Accept)"/"(Emit)" verbatim; the transfer-direction
+     * tooltips ride the same cut addToolTips channel).
      */
     private void addCovers() {
         add("item.gt6.cover_redstone_emitter", "Redstone Emitter");
+        add("item.gt6.cover_redstone_conductor_in", "Redstone Conductor Cover (Accept)");
+        add("item.gt6.cover_redstone_conductor_out", "Redstone Conductor Cover (Emit)");
     }
 
     /**

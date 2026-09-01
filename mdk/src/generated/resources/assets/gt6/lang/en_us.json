@@ -2897,6 +2897,8 @@
   "gt6.tagprefix.wire_gt15": "15x %s Wire",
   "gt6.tagprefix.wire_gt16": "16x %s Wire",
   "gt6.tagprefix.wood": "%s",
+  "item.gt6.cover_redstone_conductor_in": "Redstone Conductor Cover (Accept)",
+  "item.gt6.cover_redstone_conductor_out": "Redstone Conductor Cover (Emit)",
   "item.gt6.cover_redstone_emitter": "Redstone Emitter",
   "item.gt6.crowbar": "Crowbar",
   "itemGroup.gt6.arrow_gt_plastic": "Light Arrows",

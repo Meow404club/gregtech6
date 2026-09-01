@@ -56,6 +56,13 @@ public final class GT6ItemModels extends ItemModelProvider {
         // in textures/block/, auto-stitched by the vanilla atlas directory source)
         withExistingParent("cover_redstone_emitter", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/redstone_emitter/0"));
+        // the p10 redstone conductor pair (task p10-cover-conductor-redstone) — the items
+        // show their own plate art, byte-identical upstream borrows living in
+        // textures/block/redstone_conductor/ (assets/README.md attribution)
+        withExistingParent("cover_redstone_conductor_in", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/redstone_conductor/in"));
+        withExistingParent("cover_redstone_conductor_out", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/redstone_conductor/out"));
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

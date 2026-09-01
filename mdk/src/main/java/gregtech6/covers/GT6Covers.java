@@ -13,6 +13,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.covers.covers.CoverPump;
+import gregtech6.covers.covers.CoverRedstoneConductorIN;
+import gregtech6.covers.covers.CoverRedstoneConductorOUT;
 import gregtech6.covers.covers.CoverRedstoneEmitter;
 import gregtech6.covers.covers.CoverTextureSimple;
 import gregtech6.item.MaterialPrefixItem;
@@ -66,6 +68,18 @@ public final class GT6Covers {
 	public static final RegistryObject<Item> COVER_REDSTONE_EMITTER = ITEMS.register("cover_redstone_emitter",
 			() -> new Item(new Item.Properties()));
 
+	/**
+	 * The p10 redstone conductor pair — the accept marker and the emit face of the
+	 * wire-through cover (task p10-cover-conductor-redstone; upstream
+	 * MultiItemTechnological.java:88-89 metas 1029/1030). Same card-local ITEMS
+	 * DeferredRegister as the pump and the emitter.
+	 */
+	public static final RegistryObject<Item> COVER_REDSTONE_CONDUCTOR_IN = ITEMS.register("cover_redstone_conductor_in",
+			() -> new Item(new Item.Properties()));
+
+	public static final RegistryObject<Item> COVER_REDSTONE_CONDUCTOR_OUT = ITEMS.register("cover_redstone_conductor_out",
+			() -> new Item(new Item.Properties()));
+
 	private static boolean sInitialized = false;
 
 	private GT6Covers() {
@@ -82,7 +96,7 @@ public final class GT6Covers {
 		aEvent.enqueueWork(GT6Covers::init);
 	}
 
-	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter). */
+	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter + the p10 conductor pair). */
 	public static void init() {
 		if (sInitialized) return;
 		sInitialized = true;
@@ -90,8 +104,10 @@ public final class GT6Covers {
 		CoverRegistry.put(tPlate, new CoverTextureSimple(ironPlateSprite()));
 		CoverRegistry.put(COVER_PUMP.get(), new CoverPump()); // p5 spec C — the pump mounts its own item
 		CoverRegistry.put(COVER_REDSTONE_EMITTER.get(), new CoverRedstoneEmitter()); // p9 — the first real redstone cover
-		LOGGER.info("GT6 covers registered: {} -> CoverTextureSimple({}), {} -> CoverPump, {} -> CoverRedstoneEmitter",
-				tPlate, ironPlateSprite(), COVER_PUMP.getId(), COVER_REDSTONE_EMITTER.getId());
+		CoverRegistry.put(COVER_REDSTONE_CONDUCTOR_IN.get(), new CoverRedstoneConductorIN()); // p10 — the accept marker
+		CoverRegistry.put(COVER_REDSTONE_CONDUCTOR_OUT.get(), new CoverRedstoneConductorOUT()); // p10 — the wire-through face
+		LOGGER.info("GT6 covers registered: {} -> CoverTextureSimple({}), {} -> CoverPump, {} -> CoverRedstoneEmitter, {} -> CoverRedstoneConductorIN, {} -> CoverRedstoneConductorOUT",
+				tPlate, ironPlateSprite(), COVER_PUMP.getId(), COVER_REDSTONE_EMITTER.getId(), COVER_REDSTONE_CONDUCTOR_IN.getId(), COVER_REDSTONE_CONDUCTOR_OUT.getId());
 	}
 
 	/**
