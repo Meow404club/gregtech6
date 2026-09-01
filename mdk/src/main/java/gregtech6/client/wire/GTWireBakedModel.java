@@ -78,6 +78,23 @@ import gregtech6.block.wire.GTWireBlock;
  * rides tint index 0 through {@link GTWireTint} — the row material is MT.NULL
  * (Loader_MultiTileEntities.java:1815), the same {@code mRGBa} source upstream dyes with.
  *
+ * <p>Task p11-wire-brightness — the REDSTONE family joins the table (the last family off
+ * the JSON fallback; the same swap the electric rows got, {@link GTWireClientListener}
+ * feeds the six rows with the row's set sprite and the cable's insulation layers). The
+ * per-family jacket colour rides {@link GTWireTint} (the upstream redstone fixed
+ * {@code 96,64,64} jacket, MultiTileEntityWireRedstoneInsulated :184-185, against the
+ * electric {@code 64,64,64} :237-238). DECLARED DEVIATION: upstream flips a dynamic
+ * TEXTURE-fullbright flag on the bare redstone wire quads — {@code mState > 0}
+ * (MultiTileEntityWireRedstone :81-82, the BlockTextureDefault brightness argument:
+ * constant 240 light and AO off, BlockTextureDefault.java:150/:168/:194-196), and the
+ * insulated class reuses the static material flag {@code mIsGlowing} the same way
+ * (:185). A per-signal lightmap override from a BakedModel needs ModelData/BEWLR — the
+ * P9 ADR red line (this model is a pure state function of {@link GTWireBlock#CONNECTIONS},
+ * it never touches the BE) — so the flag is declared UNIMPLEMENTED here: with signal up,
+ * RedAlloy/Signalum bare wires render at world light instead of constant full brightness.
+ * The real light counterpart (the Lumium Wirelamp) is the world-light emission on
+ * {@code GTWireBlock.getLightEmission}, which lights these same quads through the engine.
+ *
  * <p>The tier/full overlays sit ON the material quads, so they are inflated by
  * {@value #INSULATION_EPSILON} (the GTCEu COVER_OVERLAY z-fight epsilon, the
  * GTFluidPipeFlowModel/oven precedent) and rendered on the cutout layer; the material

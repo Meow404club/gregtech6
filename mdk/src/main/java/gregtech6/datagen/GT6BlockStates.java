@@ -331,12 +331,21 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@code copper} texture set (clloy/clloymachine construct with SET_COPPER —
      * MT.java:697/701), which the W2 borrow already shipped, so zero new PNGs. The same
      * single property-less variant wildcard maps the 64 CONNECTIONS states per block onto
-     * the shared tinted model; the connection-aware baked geometry (GTWireClientListener)
-     * drives its table off the ELECTRIC variant list plus — since task
-     * p11-wire-fiber-texture — the laser row, so the redstone blocks still render
-     * through this JSON fallback cube — a fallback-only simplification, the render-R1b
-     * card owns the redstone visuals (the fixed insulation tint :184 and the mState
-     * brightness :81-82 are declared render-layer items).
+     * the shared tinted model.
+     *
+     * <p>Task p11-wire-brightness UPGRADED the runtime target (the fiber-card shape): the
+     * listener table ({@link gregtech6.client.wire.GTWireClientListener#buildParams}) now
+     * covers the six redstone paths, so every per-state key
+     * {@code gt6:wire_red_alloy#connections=0..63} et al AND the item keys bake into the
+     * {@link gregtech6.client.wire.GTWireBakedModel} electric form — the block no longer
+     * RENDERS through this JSON. The shared tinted cube stays generated UNCHANGED as the
+     * per-state key carrier + item parent (spec-pinned: the blockstate's single wildcard
+     * variant is what mints the 64 per-state keys the listener swaps), and as the baked
+     * fallback safety net if the listener never fires. The family's render specifics live
+     * elsewhere: the jacket colour is the per-family tint ({@code 96,64,64},
+     * MultiTileEntityWireRedstoneInsulated :184-185, in gregtech6.client.wire.GTWireTint)
+     * and the bare-wire {@code mState > 0} texture-fullbright (:81-82) is the declared
+     * GTWireBakedModel deviation.
      */
     private void addRedstoneWireFamily(Map<String, ModelFile> aShared) {
         for (GTWireSpecs.Variant tVariant : GTWireSpecs.redstoneVariants()) {
@@ -370,8 +379,8 @@ public final class GT6BlockStates extends BlockStateProvider {
      * the blockstate's single wildcard variant is what mints the 64 per-state
      * {@code gt6:wire_laser#connections=N} keys the listener swaps), and as the baked
      * fallback safety net if the listener never fires. This is the exact shape the 620
-     * electric rows have; the redstone rows remain the only JSON-rendered family (the
-     * p11-wire-brightness card owns them — zero redstone changes here).
+     * electric rows and — since task p11-wire-brightness — the 6 redstone rows have;
+     * every wire family now renders through the per-state baked model.
      */
     private void addLaserWireFamily(Map<String, ModelFile> aShared) {
         for (GTWireSpecs.Variant tVariant : GTWireSpecs.laserVariants()) {

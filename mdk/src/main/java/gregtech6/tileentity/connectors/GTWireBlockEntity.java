@@ -129,6 +129,23 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	public long mRedstone = 0;
 
 	/**
+	 * Upstream MultiTileEntityWireRedstone :36 — the visual/emission byte,
+	 * {@code bind4(divup(mRedstone, MAX_RANGE))} 0..15 (:53). THE LIGHT VALUE (task
+	 * p11-wire-brightness: {@code GTWireBlock.getLightEmission} reads it through
+	 * {@link #mRedstone}) and the texture-fullbright data pin upstream (:81-82, the render
+	 * side is a declared deviation). Server side it refreshes in {@link #onTickCheck}
+	 * (:51-58 — the dispatcher consumes a {@code true} return as the visual-sync trigger);
+	 * client side it refreshes in {@link #load} — the {@code setVisualData} :62-67 landing
+	 * over the vanilla two-channel sync.
+	 *
+	 * <p>DEVIATION: upstream persists it (NBT_STATE :41/:47) because the upstream
+	 * {@code gt.mredstone} reload truncates to a byte — this port round-trips the full
+	 * long (the declared p10 load deviation), so {@code mState} stays transient and is
+	 * re-derived from {@link #mRedstone} on every load/tick.
+	 */
+	public byte mState = 0;
+
+	/**
 	 * Upstream :56 — the side the strongest input came from (GT6 side order, or
 	 * {@link #SIDE_UNDEFINED}); updateRedstone :126-130 keeps it and updateRedstone's
 	 * own baseline excludes it from the rescan (ALL_SIDES_VALID_BUT[oReceived]).
@@ -344,6 +361,68 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	public void onTickFirst(boolean aIsServerSide) {
 		super.onTickFirst(aIsServerSide);
 		if (isRedstone()) updateConnectionStatus(); // :87
+	}
+
+	/**
+	 * Upstream MultiTileEntityWireRedstone onTickCheck :51-58, verbatim shape (task
+	 * p11-wire-brightness): the per-tick refresh of {@link #mState} — the change DETECTOR of
+	 * the visual/emission byte. A change does two things, exactly the upstream pair:
+	 * <ul>
+	 * <li>{@code if (mIsGlowing) updateLightValue()} (:55) → {@link #refreshGlowLight} — the
+	 *     {@code level.getLightEngine().checkBlock(pos)} modern form (the
+	 *     {@code updateLightValue} TileEntityBase01Root :549-554 landing; the official
+	 *     {@code LevelSensitiveLightBlockTest} :119 pattern), gated by {@link #glowingWire()};</li>
+	 * <li>{@code return T} (:56) → the dispatcher ({@code TileEntityBase03TicksAndSync.updateEntity})
+	 *     calls {@code sendClientData()} → {@code level.sendBlockUpdated} → the ChunkHolder
+	 *     broadcast (:222/:238-251) ships {@link #getUpdatePacket} whose tag IS
+	 *     {@link #getUpdateTag} = {@code saveWithoutMetadata()} → carries {@code gt.mredstone}
+	 *     (written by {@link #saveAdditional}) → the client {@code load()} re-derives the state
+	 *     and re-checks its own light engine. THE EXISTING visual-sync channel — no new
+	 *     protocol, this override is the only piece the chain was missing.</li>
+	 * </ul>
+	 * The upstream call order is preserved: {@code onTick} runs the value scan (:104) BEFORE
+	 * this check reads it (the dispatcher phase order), so the byte lags the BFS by at most
+	 * one tick — upstream-identical.
+	 */
+	@Override
+	public boolean onTickCheck(long aTimer) {
+		if (isRedstone()) { // the bare-class body (MultiTileEntityWireRedstone :51-58); electric/laser keep the base
+			byte tOldState = mState;
+			mState = UT6.bind4(UT6.divup(mRedstone, GTWireSpecs.MAX_RANGE)); // :53
+			if (tOldState != mState) {
+				if (glowingWire()) refreshGlowLight(); // :55 — the updateLightValue chain, mIsGlowing-gated
+				return true; // :56 — the visual sync (dispatcher sendClientData), NOT light-gated
+			}
+			return super.onTickCheck(aTimer); // :58
+		}
+		return super.onTickCheck(aTimer);
+	}
+
+	/**
+	 * The upstream {@code mIsGlowing} gate of the light chain, as the port can ask it: the
+	 * material GLOWING flag rides the BLOCK ({@link GTWireBlock#luminous()}) AND the light
+	 * must respect the upstream CLASS split — only the BARE wire class implements
+	 * {@code IMTE_GetLightValue} (MultiTileEntityWireRedstone :35/:79), the insulated parent
+	 * (MultiTileEntityWireRedstoneInsulated) never answers the query, so a glowing cable
+	 * ({@code aInsulated} true) stays dark: {@code getLightValue} never fires on it upstream,
+	 * {@link #refreshGlowLight} never fires on it here.
+	 */
+	public boolean glowingWire() {
+		return isRedstone() && getBlockState().getBlock() instanceof GTWireBlock tWire
+				&& tWire.luminous() && !tWire.insulated();
+	}
+
+	/**
+	 * The upstream {@code updateLightValue} (TileEntityBase01Root :549-554 — set the own cell
+	 * and re-light the six neighbours) collapsed to the 1.20.1 one-liner: the light engine's
+	 * {@code checkBlock(pos)} re-samples the block through {@code GTWireBlock.getLightEmission}
+	 * and re-propagates to the neighbours itself (the engine owns the spread now). PROTECTED
+	 * SEAM: the offline tests override this to record the trigger — a minimal Level double has
+	 * no chunk source to hand {@code getLightEngine()} (Level.java:333 →
+	 * {@code getChunkSource().getLightEngine()}).
+	 */
+	protected void refreshGlowLight() {
+		if (hasLevel()) getLevel().getLightEngine().checkBlock(getBlockPos());
 	}
 
 	/**
@@ -1050,5 +1129,15 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 		if (aNBT.contains(NBT_MREDSTONE, Tag.TAG_ANY_NUMERIC)) mRedstone = aNBT.getLong(NBT_MREDSTONE); // :63 — DEVIATION, see below
 		if (aNBT.contains(NBT_MODE, Tag.TAG_ANY_NUMERIC)) mMode = aNBT.getByte(NBT_MODE); // :64
 		// :65 (NBT_PIPELOSS) — the loss rides the block carrier in this port (GTWireBlock.lossL), not NBT.
+		// BOTH sync channels converge here on the client (chunk data = handleUpdateTag default,
+		// block-update = onDataPacket default) — the upstream setVisualData :62-67 landing (task
+		// p11-wire-brightness): re-derive mState from the fresh signal and re-check the client
+		// light engine when it moved (the packet that carries gt.mredstone is exactly the one
+		// onTickCheck's `true` return triggers — see the onTickCheck javadoc).
+		if (isClientSide()) {
+			byte tOldState = mState;
+			mState = UT6.bind4(UT6.divup(mRedstone, GTWireSpecs.MAX_RANGE)); // :64
+			if (tOldState != mState && glowingWire()) refreshGlowLight(); // :65, the mIsGlowing gate
+		}
 	}
 }

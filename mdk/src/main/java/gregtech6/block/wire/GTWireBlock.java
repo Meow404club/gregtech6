@@ -31,6 +31,7 @@ import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWireSpecs.Row.Family;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
+import gregtech6.util.UT6;
 
 /**
  * The GT6 electric wire block (task p7-d2-cable spec ④) — the block side of the wire
@@ -78,6 +79,7 @@ public class GTWireBlock extends GTEntityBlock {
 	private final int mDiameter;
 	private final Family mFamily;
 	private final boolean mContactDamage;
+	private final boolean mLuminous;
 
 	/**
 	 * The upstream :219 contact-damage collision box — the 2px inset
@@ -137,6 +139,7 @@ public class GTWireBlock extends GTEntityBlock {
 		mDiameter = aDiameter;
 		mFamily = aFamily;
 		mContactDamage = contactDamageOf(aFamily, aInsulated, aMaterial);
+		mLuminous = luminousOf(aFamily, aMaterial);
 		registerDefaultState(defaultBlockState().setValue(CONNECTIONS, 0));
 	}
 
@@ -209,6 +212,29 @@ public class GTWireBlock extends GTEntityBlock {
 		if (aFamily != Family.ELECTRIC || aMaterial == null) return false;
 		for (GTWireSpecs.Row tRow : GTWireSpecs.ROWS) {
 			if (tRow.material().get() == aMaterial) return aInsulated ? tRow.contactDamageCable() : tRow.contactDamageWire();
+		}
+		return false;
+	}
+
+	/**
+	 * The upstream material GLOWING attribute (the wirelamp data pin, task p10 spec 8):
+	 * {@code mIsGlowing = material.contains(TD.Properties.GLOWING)} (TileEntityBase10ConnectorRendered
+	 * :69) — only the Lumium row carries it (MT.java:1792; RedAlloy/Signalum do not), so only
+	 * the "Lumium Wirelamp" registration (Loader:1901) is a light source. Derived from the
+	 * {@link GTWireSpecs#REDSTONE_ROWS} table like {@link #contactDamageOf} (GTWires builds this
+	 * block from the same rows — the constructor stays untouched, no new carrier column).
+	 * The emission itself lives in {@link #getLightEmission}; the change chain lives on the BE
+	 * ({@code GTWireBlockEntity.onTickCheck} → {@code refreshGlowLight}).
+	 */
+	public boolean luminous() {
+		return mLuminous;
+	}
+
+	/** The {@code material GLOWING} derivation — redstone rows only, matched by material identity. */
+	private static boolean luminousOf(Family aFamily, @Nullable OreDictMaterial aMaterial) {
+		if (aFamily != Family.REDSTONE || aMaterial == null) return false;
+		for (GTWireSpecs.Row tRow : GTWireSpecs.REDSTONE_ROWS) {
+			if (tRow.material().get() == aMaterial) return tRow.luminous();
 		}
 		return false;
 	}
@@ -353,15 +379,51 @@ public class GTWireBlock extends GTEntityBlock {
 		return mContactDamage ? CONTACT_SHAPE : super.getCollisionShape(aState, aLevel, aPos, aContext);
 	}
 
-	// -- placeholders declared, NOT implemented (the R1b render card owns them) --
+	// ---------------------------------------------------------------------------
+	// the light emission (task p11-wire-brightness spec 1 — the wirelamp)
+	// ---------------------------------------------------------------------------
 
-	// getLightValue (upstream MultiTileEntityWireRedstone :79, mIsGlowing ? mState : 0) is
-	// deliberately NOT overridden: the 1.20.1 light engine reads the BlockState/Block only,
-	// never the BlockEntity, so a live BE-driven light value needs the R1b state-carrier
-	// (or ModelData) design first. PLACEHOLDER DECLARATION (task p10 spec 8): the Lumium
-	// wirelamp row carries the luminous data pin (GTWireSpecs.Row.luminous), the light
-	// itself is the R1b card. Same for the mState texture-brightness/tint layers (the bare
-	// wire visual :81-82) — render-layer work, zero block-code footprint here.
+	/**
+	 * Upstream MultiTileEntityWireRedstone :79 — {@code getLightValue() = mIsGlowing ? mState : 0}
+	 * with {@code mState = bind4(divup(mRedstone, MAX_RANGE))} (:53), read through the BE the same
+	 * way the 1.7.10 light engine polled it (MultiTileEntityBlock.java:212,
+	 * {@code bind4(TE.getLightValue())}). The 1.20.1 landing is THIS override — the
+	 * level-sensitive {@code IForgeBlock.getLightEmission(state, level, pos)} (IForgeBlock.java
+	 * :113, the official {@code LevelSensitiveLightBlockTest} :82-89 form: the BlockState grows no
+	 * property, the value lives on the BlockEntity) — and the CHANGE side moves from the upstream
+	 * {@code updateLightValue} (TileEntityBase01Root :549-554, own cell + six neighbours re-lit) to
+	 * {@code level.getLightEngine().checkBlock(pos)}, driven by the BE wherever {@code mState}
+	 * changes ({@code GTWireBlockEntity.onTickCheck} :51-58 server, {@code load()} client — the
+	 * upstream {@code setVisualData} :62-67 landing; the Forge patches route the whole light
+	 * engine through the level-sensitive getter, BlockLightEngine.java.patch:8/:17).
+	 *
+	 * <p>WORKER-THREAD CONTRACT: the getter "may be called on a worker thread" (IForgeBlock.java
+	 * :106-110 — the 1.20.1 server light tasks run on the ChunkMap workers), so the BE probe MUST
+	 * go through {@code getExistingBlockEntity} (IForgeBlockGetter.java:30-50 — skips the
+	 * {@code Level#getBlockEntity} promote-on-access path, exactly what the official sample's
+	 * {@code level.getExistingBlockEntity(pos)} :84 does); an {@code ImposterProtoChunk} sampled
+	 * at the light-engine boundary would otherwise race the chunk promotion.
+	 *
+	 * <p>The gates are the upstream CLASS split, verbatim: the bare wire class implements
+	 * {@code IMTE_GetLightValue} (MultiTileEntityWireRedstone :35/:79) while its insulated parent
+	 * (MultiTileEntityWireRedstoneInsulated) does NOT — a glowing MATERIAL on the cable form
+	 * (the Lumium Cable, Loader:1902) stays dark upstream and stays dark here. So: REDSTONE
+	 * family + {@link #luminous()} + bare form + a BE present, else the vanilla default.
+	 *
+	 * <p>DECLARED DEVIATION (render side, not here): the upstream bare wire also flips a
+	 * TEXTURE-fullbright flag {@code mState > 0} (WireRedstone :81-82 — RedAlloy/Signalum wires
+	 * render their quads at constant brightness with the signal up). That is a lightmap-side
+	 * quad property with no world-light counterpart; it needs ModelData/BEWLR (the P9 ADR red
+	 * line) and is declared unimplemented (see GTWireBakedModel).
+	 */
+	@Override
+	public int getLightEmission(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
+		if (mFamily == Family.REDSTONE && mLuminous && !mInsulated
+				&& aLevel.getExistingBlockEntity(aPos) instanceof GTWireBlockEntity tWire) {
+			return UT6.bind4(UT6.divup(tWire.mRedstone, GTWireSpecs.MAX_RANGE)); // upstream :53/:79
+		}
+		return super.getLightEmission(aState, aLevel, aPos);
+	}
 
 	/**
 	 * The per-family BET (task p10): redstone rows resolve GTWires.WIRE_REDSTONE_BE (the 6
