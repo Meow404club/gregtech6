@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 9 阶段：线缆全谱系（620 块）/ 渲染 C+D 档 / cover 红石钩+正式 crowbar / M2 配方翻案 / 命令小修`（**2026-09-01 收官**：九卡全数合入 main HEAD 05bcebb，根 205 + mdk 484 = 689 单测全绿，RCON 各链合并态复放全过，runData 二跑 written:0；render-D 一轮打回→amend→复审演化为审查纪律成例）
+`第 10 阶段：debug 修复 / 红石线族+触电 / cutter / cover 红石盖族四件套 / ghost 预览 POC / vanilla 配方行 / tools tab+挖掘面 / Laser 占位`（**2026-09-01 收官**：十二卡全数合入 main HEAD 376d6eb，根 205 + mdk 580 = 785 单测全绿，各卡 RCON 活证+审查侧复放，runData 全程二跑 written:0；WSL OOM 续跑与 gradle daemon 纪律演化为运维节点）
 
 > **平台修正 2026-08-29**：原目标"NeoForge 1.20.1"被证伪——NeoForge 官方 maven 从未发布 20.1.x 产物（versions API `filter=20.1` 返回空，主会话独立复核），NeoForged 自家 ModDevGradle 把 1.20.1 路由给 `legacyforge` 变体，文档站最早只到 1.20.3。用户裁决：目标平台 = **MinecraftForge 1.20.1（47.4.10）**，构建插件 = MDG legacyforge 2.0.144。1.20.1 的 API 面即 `net.minecraftforge.*` + RegistryObject（DeferredHolder 是 20.2+ 才有），第 1 阶段的所有调研结论不受影响。
 
@@ -20,6 +20,7 @@
 - [x] 第 7 阶段：cokeoven 回补 / 高档鼓+熔点桥 / 机器族 / 能量网 D1·D2——2026-08-31 收官（523 测全绿；gt6:oil+油页岩 8 行；熔点桥撤销 metal 不熔偏离+12 高档鼓梯 128K→10B；SHREDDER/CRUSHER/LATHE 三图三机（Crusher 并行 4）；ITileEntityEnergy 14 方法面+GTWireBlockEntity+三机 BE+GUI；D3∥D4 移 P8）
 - [x] 第 8 阶段：能量网端到端 / PrefixBlock 方块宇宙 / 机器族收尾 / CokeOven GUI+流体罐——2026-09-01 收官（620 测全绿；Oven doInject 真实现+gen→wire→oven 端到端闭环五项验证；3773 对前缀方块+11494 datagen JSON；T2-T4 三机全梯+基类 doInject/alternating 恢复+KU 负脉冲过零；Recipe.chances+Crusher ore 链+poured 493；CokeOven Menu/Screen+流体罐 capability+推液守恒）
 - [x] 第 9 阶段：线缆全谱系 / 渲染 C+D 档 / cover 红石钩+正式 crowbar / M2 配方翻案 / 命令小修——2026-09-01 收官（689 测全绿；GTWireSpecs 30 材质表直译 620 块+连接感知 BakedModel 真材质渲染（恰 7 iconset 零造图）；oven overlay 动态渲染+per-state MRL 键控机制发现；FORMED 双模型勘误钉死+超上游增强裁定；ICover 红石三钩框架（冻结面显式 ADR 解冻）+CoverRedstoneEmitter 首个真红石盖；正式 crowbar 工具系统入口（OR 门零迁移）；M2 哨兵翻案双 10000 槽构成对位）
+- [x] 第 10 阶段：debug 修复 / 红石线族+触电 / cutter / cover 红石盖族 / ghost 预览 POC / vanilla 配方行 / Laser 占位——2026-09-01 收官（785 测全绿；known_bugs 首项 place 覆盖拆盖复活关闭（虚分派黑洞根因）；红石线族 push BFS 值存 BE+三桥+格程 4:1 衰减活证；触电 entityInside+2px 内缩机制+tierMax×4 真值表；cutter 九宫格 toggle 九文件零 diff；ConductorIN/OUT+ControllerRedstone+item intercept 恰八钩+cover 板 per-state 键修复（红石盖族四件套）；cokeoven 结构残影 POC；CRUSHER/SHREDDER vanilla 缺口 5 行+外域 mod 配方声明不复刻；tools 创意 tab+crowbar 挖掘面；Laser 占位壳+Logistics 裁池）
 
 ## 第 7 阶段收官记录（2026-08-31，主会话 phase-closeout）
 
@@ -71,6 +72,26 @@
 承重教训（入记忆）：①过度断言必被审查证伪（"20 消费者全逻辑门"→真命题收缩+amend 重签演化链）；②测试计数 stale 口径两起（424/457 误报）——审查官 JUnit XML 实测对账成例；③共享目录借入各带自家 census；④64EU=烤炉 overcharge 上限，更大包炸炉连坐，高压验收须炉安全包；⑤嵌入服务降级（remember 长文本 400）→锚点 state 先行+拆条落账；⑥rebase 误提交冲突标记事故（自曝+软重置+审查 grep 复验成例）。新增 known_bugs open：gt6oven place 覆盖拆盖跨重启复活（covers/oven 域 debugger 候选）。
 
 **P10 移交**：todo.pool（debug 优先 place 覆盖拆盖复活 / 线缆三族 / 工具族池 / cover 残余 / oven tint 全保真层 / 机器 compat / RECYCLABLE / rotor / ore 方块行 / barrel 特性层 / runClient 目视 backlog）。
+
+## 第 10 阶段收官记录（2026-09-01，主会话 phase-closeout）
+
+合入链：`de3daea`(creative-tab)→`787c57b`(crowbar-mining)→`cee748a`(cover-plate)∥`c25ed08`(ghost-poc)→`432cfd5`(debug 修复)→`503d242`(compat)∥`ca435ce`(conductor)∥`dfc7c73`(R1 红石线)→`8496595`(item-intercept)→`b86e272`(controller)∥`d98ce8b`(cutter)→`6b7226f`(E1 触电)→`376d6eb`(L1 laser 占位)，基线 a0a950c（用户基建提交 01eab87 hooks+7f04a88 brain fix 在序中），批量/单卡 review-merge 全 approve、GPG 全验、合并态门禁逐批复验；WSL OOM 中断一次（四会话续跑+compat 漏派补派）零丢失。
+
+- **p10-debug-oven-cover-resurrect**（known_bugs 首项关闭）：根因=`causeBlockUpdate()` 虚分派被 `TileEntityBase01Root` public final 同名（:243-245，仅置 mDoesBlockUpdate 缓冲）遮蔽 ICoverableTE 持 setChanged 的 default——装/拆盖从不 setChanged，chunk 永不脏化；place 覆盖同态炉在 vanilla `LevelChunk.setBlockState` 相等早退连 unsaved 都不置；`ChunkMap.save:786 !isUnsaved()` 跳存→盘上残留盖存活期窗口 NBT→重启复活。修复=setCoverItem 无条件 setChanged+:306 改 sendBlockUpdateFromCover 补持久半边（3 文件 +69/-3，无 onRemove 红线零触碰）；修复前三连重启确定性复活→修复后双点位全 null；回归四路径测试。承重教训：**接口 default 被宿主 final 遮蔽=虚分派黑洞，持久化副作用必须显式直发**。
+- **p10-wire-redstone-family**（R1）：红石族三材质六方块（RedAlloy/Signalum/Lumium wirelamp，Loader:1893-1902 直译，损=MAX_RANGE/16|/64|/16）——push BFS verbatim（doRedstoneUpdate 双 HashSet 层序）值存 GTWireBlockEntity（mRedstone/mReceived/mMode），**BlockState 零新增 property 红线**；GTWireBlock 三桥（getSignal/getDirectSignal weak=strong 同值 bind4 邻块修正+比较器 floor）；vanilla 输入 strong-only+REDSTONE_SINKS 拒收；spec family/luminous 列+BET fallback family 分流（GTBlockEntities 零触）；RCON 衰减**笔算自证逐位吻合**（Signalum 3 跳=MAX×15−3×(MAX/64)=32111591412，RedAlloy 4:1 格程活证）；vanilla 源→GT 线→vanilla 灯 strong 桥 scoreboard。
+- **p10-wire-contact-damage**（E1+四 ride-along）：entityInside 触电+**2px 碰撞内缩机制**（1.20.1 checkInsideBlocks 只在 Entity.move() 内跑，全立方碰撞箱站立方永不触发=内缩是钩子前提，vanilla 反编译三环坐实）；tierMax(wattage)×4 全梯真值表（32EU→4…8G→60）；未传电不咬（mWattageLast 门，不持久化=上游 writeToNBT2 空体语义，p7 零新增 NBT 契约测试背书）；免疫=创造（四槽 HAZMATS_LIGHTNING 装备面声明裁池）；伤害源=vanilla lightningBolt；ride-along=红石 6 块 loot+load javadoc 偏离声明（上游 getByte 截断读）+connect :130-140 视觉连接分枝+**soak 5/5 零 flap（R1 灯灭遗留闭合）**。
+- **p10-cover-conductor-redstone + p10-cover-controller-redstone**（红石盖族）：ConductorIN 纯标记+ConductorOUT 穿机导线（weak=bind4(mValues)+onBlockUpdate 扫全脸 IN 取 max；DELAYED_BLOCK_UPDATES 队列不复刻=直写声明偏离）+GTOvenBlock.neighborChanged 分发缝接活（CoverData.onBlockUpdate 全仓零调用方→接活，上游母本 06Covers:382）；CoverControllerRedstone 五臂内联（放置门/移除复位/placed+load 同步/onBlockUpdate 驱动/tick 轮询）+NEW ITileEntitySwitchableOnOff+TileEntityOven 一行 implements+极性 bind1(in)!=(values&1) 手工验真（=上游 "Runs when OFF"）+screwdriver bit0 返 1000；RCON 火把→IN→OUT 灯三拍+进度冻结断言。Selector/AutoRedstone/ControllerCovers 裁池。
+- **p10-cover-item-intercept**（冻结面扩面 ADR）：ICover 解冻**恰八钩**（:209-16 interceptItemInsert/Extract+override 三 claim+answering 三答）+AbstractCoverDefault 八默认+ICoverableTE 三宿主门（04Covers:343-365 分发形状）+TileEntityOven 侧感知 IItemHandler wrapper（六面惰性 LazyOptional，宿主半边由 wrapper 内层承担=语义等价，盖拆即时生效）；消费盖五件池；GUI 钩/左键死代码红线维持。
+- **p10-cover-plate-perstate-fix**（P9 render-C 勘误落地）：GTCoverClientListener 3 个模型文件 id 死键→GTOvenClientListener.targetModelIds() 16 per-state MRL 只读复用；声明工作状态=plates 与 overlay 同键 last-wins 单层（合并 dispatch 留后续）。
+- **p10-tool-creative-tab + p10-tool-crowbar-mining**：GT6Tools 自持 'tools' tab（表驱动，cutter 落地后两行）；crowbar 挖掘面=isMinableBlock（GT_Tool_Crowbar:108-114）1.20.1 等价 getDestroySpeed+isCorrectToolForDrops，rails=BaseRailBlock+circuits=显式红石 IO 集 26 块（GTCEu harvestTag 路线证伪裁决）+速度 6.0F 铁级声明偏离；classifies() 不动永不 HOE_DIG；crowbar 配方（需锤锉）/材质梯度/染色裁池。
+- **p10-tool-cutter**：CUTTER ToolAction+CUTTER_ID 与 emitter 同串 parity 钉死；useOn 双臂（wire 九宫格 toggle 走既有 connect/disconnect API+cover relay 走 :275-276）；**九文件零 diff**（GTWireBlock/GTWireBlockEntity/Command/09Connector/ICover/ICoverableTE/CoverData/GT6Covers/Emitter）；RCON cut 三拍 63→59→63+EU 链真断供 used 1→0→1；P9 use=PASS 语义锁留位兑现；payPerPoint 双调潜伏缝入 known_bugs（现值安全，未来 ≥10000 cover 双扣→工具池卡修）。
+- **p10-ghost-preview-poc**：多方块结构残影 POC——RenderHighlightEvent.Block 同帧画 27 格线框（Forge patch:121-132，cancel 只吞原版选框）；**致命陷阱**=checkStructure2 内含 removeBlock 世界写（TileEntityCokeOven:100-101）禁客户端跑求 pattern→独立纯表 26 格+FACING 纯函数旋转；P5 瞬态例外三约束（零静态/零写入/零取消）；FORMED=只画外壳 12 外沿；持续型 hologram/JEI/Sodium 裁池，全量卡边界 P11+。
+- **p10-compat-vanilla-rows**（机器族 compat 定义落地）：上游 compat 面 a/b/c 分类——(b) 类 59 个 Compat_Recipes_*+Loader_Recipes_Foreign+散布 MD.* 门=**外域 mod 配方声明不复刻**（不写门代码，复活条件=宇宙引入外域 mod 时按 tag listener 重建）；vanilla 缺口实测仅 5 行落地（CRUSHER obsidian dust x8@10000+x1@2500/netherbrick chances 四档/netherrack·endstone→rockGt×4+SHREDDER bone→bonemeal；:82 输入偏离=blockSolid Obsidian 未注册实证）；chances 四档透传测试法=受控 Random 恒 9999 全灭 sub-10000 档而 10000 档走免采样整栈分支（端到端活证）；Hammer/Mortar 行归工具池。
+- **p10-wire-laser-placeholder**（L1）：Family.LASER 单行直译（Loader:1814-1815，PX_P[6]/loss0/容量 Long.MAX 数据钉）+transferLaser 纯壳（返 0，上游 :66-86 语义抄录+复活条件=LU 载体卡+converters 四收发端机器池）+inert 三不（不烧/不触电/不接 EU，RCON EU NOTHING FLOWED 跨 laser 腿活证）；Logistics 裁池（纯连接标记，消费方全未移植）。
+
+承重教训（入记忆）：①gradle daemon 互杀（--stop 全局击落他会在飞构建/服务器）→**--stop 全面禁用**（用户裁定，daemon -Xmx1g 有界常驻）+跑服原子化单 bash（起服→Done→链→杀 PID）；②新 worktree 缺 eula.txt 致 runServer 静默退场；③任务板登记与 Agent 派发必须同批核对 agentId（compat 漏派事故，工作树缺失才暴露）；④RCON 断言口径：冶炼断言=progress+stopped（done 采样受超频 pacing 不可靠）/`data get` 读不了非 BE 方块用 `execute if block`/红石灯后放不自发读信号；⑤叠基卡模式（controller/L1）+rebase 后分支头 hash 必须回报下游叠基卡；⑥测试计数以审查实测为准（circuits 25→26 块、intercept 13→11 测两起笔误勘正）；⑦WSL OOM 四会话中断→worktree 现场盘点（提交数/未提交 diff 鉴别）续跑零丢失。known_bugs 新增 open：cutter payPerPoint 双调缝（工具池卡）；connector mask stale connection 位（无邻居重扫描，wire 池评估）。
+
+**P11 移交**：todo.pool（首候选 wire_laser loot+connector stale 同域小卡 / R1b 渲染亮度层 / flat tab 族 / payPerPoint 缝 / cover 残余 Selector·Auto·消费盖五件·合并 dispatch / ghost 全量卡 / 机器族余项 RECYCLABLE·rotor·:511·ore 方块行 / 桶 chest 特性层 / 基建池 /gt6machine 双注册劫持·gt6rcon allow_failed·ADR 整理·风格扫 / runClient 目视 backlog P10 增量）。
 
 ## 关键决策
 

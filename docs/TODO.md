@@ -98,10 +98,26 @@
 - [x] **红石钩框架（cover intercept 族拆注·闭合）**：ICover+3 红石钩（上游 ICover.java:190-192 逐签名）+AbstractCoverDefault 三默认（:78-80，getIndirectPowerLevelTo 对位偏离已声明）+ICoverableTE 两出口（入向 04Covers:409-424+Root:577-588 三分支/出向 :427-438 OPOS 翻转+机器默认值 bind4）+GTOvenBlock getSignal/getDirectSignal 载体桥（bridgeSignal static 纯函数，P6/P8 基类零触碰）+RedstoneHooksTest 10 用例（OPOS 六向真值表防反转）；上游承载勘误=TileEntityBase04Covers:409-441（卡面 06Covers 系笔误，审查核验成立）；CoverData/TileEntityOven 零 diff；item/GUI 钩仍冻结（merge 5bca6e6，4 提交 a16a034..daeb744，ADR 2026-09-01-p9-redstone-hooks）——【全段闭合 2026-09-01：三卡全 landed=红石钩框架 5bca6e6+正式 crowbar e93ea25+C emitter a76c9b0，唯一下游 emitter 落地即收官，剩余仅冻结池 item intercept 族】
   - [x] **正式 crowbar（GT6 工具系统入口·闭合）**：GT6ToolActions.CROWBAR（ToolAction "gt6_crowbar"，红线=永不 HOE_DIG，hoe 三谓词扳手 UI 零混入）+GTCrowbarItem（useOn 直派 ICoverableTE.onCoverToolClick(ICover.TOOL_CROWBAR,…):246-247 既有 OR 门零迁移，ICover/ICoverableTE/CoverData 零 diff；crowbarToolClick 单源分发供 /gt6tool dismantle 复用=验收面与玩家面一致；攻 2.0 保留）+GT6Tools 自持 DeferredRegister（gt6:crowbar 耐久 512，无 tab）+/gt6tool dismantle（RCON 验收：install→dismantle 断 toolDamage=10000+crowbarDamage=1/512+coverInInventory→hoe 路径回归）+上游 CROWBAR.png 逐字节借入（sha256 审查官复验一致，README 署名）+CrowbarTest 6 测（分类器红线/id 直派/id 单独成立/无 id 闭门/hoe 回归/耐久映射）。声明偏离（ADR ⑦）：广播链扁化 useOn 直派（GUI 宿主 block.use 先吞点击，游戏内右键不可达，验收主路径=命令）/10000→1 耐久点/单钢级 512/每格 50·每击 200 折单点/canBlock 格挡剪除/染色不移植。工具族池卡移交：挖掘扩展（rails/circuits/openableCrowbar）/配方 hVS VSV SVf/材质梯度/创意 tab/运行时染色（merge e93ea25，5 提交 a19bce0..1ab706f，ADR 2026-09-01-p9-tool-crowbar）
   - [x] **C 红石 emitter 盖（闭合）**：CoverRedstoneEmitter——上游 136 行直译：出向双覆写直接返回不并机器默认值（weak=bind4(visual) 档位道/strong=mValues!=0?weak:0，:55-62）+裸右键 16 键区调档（:72-109 逐字，上左-1/上右+1 双 wrap/下排 ^8^4^2^1，facingCoordsClicked+PX_P/PX_N 类内纯函数对位）+cutter strong 门切换（TOOL_CUTTER 类内常量返 1000，ICover 冻结面零触碰）+入向 getRedstoneIn 零覆写（上游无此方法实证）+attachment 旗标内联（intercept 双 F+opaque/sealable 双 F，基类 onCoverClickedLeft 本 F 中性省略）+needsVisualsSaved 档位持久；GT6Covers 注册（cover_pump 同构 ITEMS DR）+/gt6cover mode cutter relay+signal 验收子命令（直写 covers.visual(...,true) 声明偏离，报告带 host 出口 weak/strong 读数）；17 张贴图借入 textures/block/redstone_emitter/（underlay 逐字节一致+16 档位图离线 source-over 合成=BlockTextureMulti 双层单 sprite 承不住的声明偏离，vanilla 块图集 directory 源零接线自动入图集，README 记上游 sha256 全表）；CoverRedstoneEmitterTest 11 用例（出向真值表 default-blind 证据/键区 zone 真值表含 wrap+四类 miss+异面盲区/cutter 计数/入向直传查询计数/NBT 往返）。声明偏离：magnifyingglass 读数与 onToolClick2 host-relay 臂不复刻（非 cutter 返 0）。六冻结文件+hoe/GT6Mod 零 diff；冲突标记事故（72a701b）当场软重置修复，终树零残留不在链（merge a76c9b0，5 提交 775f74a..2456d25，mdk 467/0=main 基线 456+新类 11 对账闭合，ADR 2026-09-01-p9-redstone-cover-emitter）
-  - [ ] cover item intercept 族（冻结池另议）；左键/GUI 钩=研究员双死代码实锤不复刻
+  - [ ] cover item intercept 族（P10 已落地框架，见下段）；左键/GUI 钩=研究员双死代码实锤不复刻
 - [ ] barrel 密封发酵 + 连通罐 B[0] + 破坏倾倒；Gas-proof 四防族；桶 GUI/tap/funnel
-- [ ] 机器族 compat 全部（外域 mod 配方）
 - [ ] 按需 researcher→architect 开新域（权威池=state todo.pool）
+
+## 第 10 阶段（debug 修复 / 红石线族+触电 / cutter / cover 红石盖族 / ghost 预览 POC / vanilla 配方行 / Laser 占位）——✅ 已完成（2026-09-01）
+
+- [x] p10-debug-oven-cover-resurrect：known_bugs 首项关闭——causeBlockUpdate 虚分派被 Root final 遮蔽→装拆盖不 setChanged→盘上残留盖存活期 NBT 复活；修=setCoverItem 无条件 setChanged+sendBlockUpdateFromCover 持久半边（merge 432cfd5，3 文件 +69/-3，三连重启双点位全 null）
+- [x] p10-wire-redstone-family（R1）：红石族三材质六方块 push BFS verbatim 值存 BE（BlockState 零新增 property）+GTWireBlock 三桥+spec family 列+BET fallback 分流；RCON 衰减笔算逐位吻合（Signalum=MAX×15−3×(MAX/64)）+strong 桥 scoreboard（merge dfc7c73，9 提交）
+- [x] p10-wire-contact-damage（E1+四 ride-along）：entityInside 触电+2px 碰撞内缩机制（checkInsideBlocks 只在 Entity.move 内跑=内缩是钩子前提）+tierMax×4 全梯真值表+未传电不咬（mWattageLast 不持久化=上游空体 NBT 语义）；ride-along=红石 6 块 loot+load javadoc 偏离声明+connect :130-140 视觉连接分枝+soak 5/5 零 flap（R1 flap 遗留闭合）（merge 6b7226f，5 提交）
+- [x] p10-cover-conductor-redstone：ConductorIN 纯标记+ConductorOUT 穿机导线（onBlockUpdate 扫全脸 IN 取 max 直写）+GTOvenBlock.neighborChanged 分发缝接活（merge ca435ce，5 提交）
+- [x] p10-cover-controller-redstone：CoverControllerRedstone 五臂内联+ITileEntitySwitchableOnOff+TileEntityOven 一行 implements+极性手工验真（=上游 Runs when OFF）+screwdriver bit0 返 1000（merge b86e272，6 提交，叠基 conductor）
+- [x] p10-cover-item-intercept：ICover 解冻恰八钩+八默认+三宿主门+oven 侧感知 IItemHandler wrapper（宿主半边等价成立，盖拆即时生效）；ADR 2026-09-01-p10-cover-item-intercept（merge 8496595，2 提交）
+- [x] p10-cover-plate-perstate-fix：P9 render-C 勘误落地——3 模型文件 id 死键→16 per-state MRL（GTOvenClientListener 零 diff 只读复用）+wrap/parity 哨兵测试（merge cee748a，3 提交）
+- [x] p10-tool-creative-tab：GT6Tools 自持 'tools' tab 表驱动+lang（merge de3daea，3 提交，OOM 续跑现场零修正）
+- [x] p10-tool-crowbar-mining：挖掘面 getDestroySpeed/isCorrectToolForDrops+rails/circuits 显式集 26 块（harvestTag 路线证伪裁决）+classifies 不动永不 HOE_DIG（merge 787c57b，1 提交，OOM 续跑补门禁）
+- [x] p10-tool-cutter：CUTTER ToolAction+CUTTER_ID parity 钉死+useOn 双臂（wire 九宫格 toggle 走既有 API+cover relay）+九文件零 diff+RCON cut 三拍+EU 真断供（merge d98ce8b，5 提交）；payPerPoint 双调潜伏缝入 known_bugs（现值安全）
+- [x] p10-ghost-preview-poc：cokeoven 27 格结构残影——RenderHighlightEvent 瞬态例外+pattern 独立纯表（checkStructure2 含 removeBlock 世界写禁客户端跑）+FORMED 只画外壳 12 沿（merge c25ed08，2 提交）
+- [x] p10-compat-vanilla-rows：外域 mod 配方声明不复刻（59 Compat_Recipes_* 类）+vanilla 缺口 5 行（CRUSHER obsidian/netherbrick 四档/netherrack/endstone+SHREDDER bone）；chances 四档测试法=受控 Random 端到端活证（merge 503d242，2 提交）
+- [x] p10-wire-laser-placeholder（L1）：Family.LASER 单行直译+transferLaser 纯壳（复活条件 javadoc）+inert 三不+EU NOTHING FLOWED 活证；Logistics 裁池（merge 376d6eb，3 提交）
+- [x] phase-closeout：根 205 + mdk 580 = 785 全绿，runData 全程二跑 written:0，各卡 RCON 活证+审查侧复放；WSL OOM 中断四会话续跑零丢失+compat 漏派补派
 
 ## 遗留池
 
@@ -121,9 +137,11 @@
 - [x] GTBarrelMetalBlockEntity javadoc P6 偏离文字过时（按 p7 熔点桥现实改写，merge 34a4f57）
 - [ ] GTBarrelBlock.java :48-51 aMeltingPointK javadoc 仍留 P6 "MAX_VALUE 不熔=声明偏离" 旧文（p7 桥后过时；下卡触碰该文件顺手清）
 - [ ] 旧池：PrefixRegistry 未 close 项/移植进度看板（按 GT6 子系统统计已移植/未移植）
-- [ ] **debug 优先**：gt6oven place 覆盖既有炉后，原点位已拆 cover 跨重启复活（三连重启复现，未覆盖点位正常；known_bugs 在案，covers/oven 域 debugger 卡候选）
-- [ ] 线缆三族独立卡：红石族（RedAlloy/Signalum/Lumium，损=MAX_RANGE 分数）+ Laser（:24900 无损）+ Logistics（:24901 物流）；Laminator 绝缘配方；裸线触电行为；foam 涂装不移植声明；:108/:114 mDiameter>=1.0F 单 pass 全方块特例 javadoc
-- [ ] 工具族池：crowbar 挖掘扩展（rails/circuits/开箱）/合成配方/材质梯度/创意 tab/运行时染色；cutter 接线（TOOL_cutter 走 IBlockToolable 链，线缆连接管理交接）
-- [ ] cover 残余：Controller/SelectorRedstone/ConductorIN/OUT 盖族；item intercept 族；cover 板动态模型 per-state 键缺口（render-C doc 勘误在案）；ghost 结构预览（瞬态 RenderHighlightEvent 例外+结构 pattern）
-- [ ] 渲染残余：oven colored+mRGBa tint 全保真层增量
-- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI+cover 板/管道箭头（P4）、扳手九宫格六条+泵盖贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint/creosote 渲染（P6）、三机 GUI+12/2 槽布局（P7）、12 高档鼓外观（P7）、cokeoven GUI 对帧/方块染色 tint/创造栏 7 tab/侧面装桶顶面拒（P8）、oven overlay 激活/运行态六面朝向目视+截面（solid 材质层与 cutout overlay 层分离）+fallback 材质层（无快照时纯 A 档）、emitter 键区贴图+档位数字+item 外观、线缆材质色差+绝缘层+连接臂几何、cokeoven FORMED 占位（上游无图无视觉差）（P9）
+- [x] **debug 优先**：gt6oven place 覆盖拆盖跨重启复活——P10 已关闭 ✅（merge 432cfd5，虚分派黑洞根因+持久半边修复，三连重启全绿）
+- [x] 线缆三族独立卡——P10 全落 ✅：红石族（R1 dfc7c73）+裸线触电（E1 6b7226f）+Laser 占位（L1 376d6eb）；Logistics 裁池（消费方全未移植）；foam 不移植声明在档；:108/:114 满径单 pass 特例归 R1b 渲染池；Laminator 绝缘配方挂机器族池
+- [x] 工具族池（P10 落部分）：crowbar 挖掘扩展 ✅（787c57b，circuits 显式集 26 块）/创意 tab ✅（de3daea）/cutter 接线 ✅（d98ce8b，九宫格 toggle）；余项：合成配方（上游需锤锉工具件，不发明 vanilla 代料）/材质梯度/运行时染色（含 cutter payPerPoint 双调缝一并修，known_bugs open 现值安全）
+- [x] cover 残余（P10 落大部分）：ConductorIN/OUT ✅（ca435ce）/ControllerRedstone ✅（b86e272）/item intercept 框架 ✅（8496595）/cover 板 per-state 键 ✅（cee748a）/ghost 结构预览 POC ✅（c25ed08）；余项：SelectorRedstone（依赖 SwitchableMode；R1 已落=mMode 驱动者可解）/AutoRedstone（依赖 running state）/ControllerCovers/消费盖五件（item-intercept 框架已落可逐个移植）/cover 板与 overlay 合并 dispatch 模型
+- [ ] 渲染残余：oven colored+mRGBa tint 全保真层增量；**R1b 线缆亮度层**：wirelamp getLightValue（mIsGlowing×mState）+红石绝缘固定色 tint+裸线 mState 亮度+满径 58 活体单 pass 特判+FIBER_WIRE 贴图
+- [ ] **P11 首候选（同域小卡）**：wire_laser loot 一行 append（同 E1 补红石法）+connector mask stale connection 位评估（mask 仅 connect/disconnect 握手维护无邻居重扫描，先置空气侧 wire 被异族线后置替代时保留 stale 位）
+- [ ] **基建池**：/gt6machine 双注册 literal 劫持（check 子命令被 chest 劫，main 既有，改名可解）/gt6rcon allow_failed 参（解锁负断言与多盖共存链）/item-intercept ADR 字符串形状整理/E1 javadoc 中文混入风格扫/energy_source 默认 mEmitting=false 需 /data merge 点火（RCON harness 注记）
+- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI+cover 板/管道箭头（P4）、扳手九宫格六条+泵盖贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint/creosote 渲染（P6）、三机 GUI+12/2 槽布局（P7）、12 高档鼓外观（P7）、cokeoven GUI 对帧/方块染色 tint/创造栏 7 tab/侧面装桶顶面拒（P8）、oven overlay 六面+截面+fallback 材质层/emitter 键区贴图+档位数字+item 外观/线缆材质色差+绝缘层+连接臂几何/cokeoven FORMED 占位（P9）、**tools tab 图标排序/cutter 贴图/ghost 结构残影六条（出现/随 facing 旋转/FORMED 外壳框/移开消失/与高亮共存/原版选框保留）/红石线材质色差+lamp 发光（R1b 后）/laser wire 外观（P10）**
