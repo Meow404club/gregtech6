@@ -528,6 +528,20 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * so this override completes the upstream :141 disjunction for the REDSTONE rows by
 	 * connecting to any solid non-BE neighbour. Electric rows are untouched (their
 	 * canConnect needs a BE, the air/liquid routing is exactly the upstream behaviour).
+	 *
+	 * <p>THE :130-140 BRANCH (task p10-wire-contact-damage ride-along, the R1 review
+	 * handoff): upstream gives a redstone wire a SECOND escape hatch inside the connector
+	 * neighbourhood — when the neighbour IS an {@code ITileEntityConnector} but the two
+	 * connector-type sets share NO element (TileEntityBase09Connector.java:130-140, the
+	 * arm after the :118 intersection gate), the redstone wire still connects. That arm is
+	 * what visually joins a redstone wire to an ELECTRIC wire (and any other connector of
+	 * a different family): WIRE_REDSTONE and WIRE_ELECTRIC never intersect, so without it
+	 * the two families render as disconnected blocks even when they touch. The connection
+	 * is ONE-SIDED and purely visual/mask-level: the upstream :130-140 body sets the own
+	 * bit and fires the change chain but never calls the partner back (no :126 reciprocal),
+	 * and the partner's mask stays clean — a pure appearance difference, exactly upstream.
+	 * Intersecting connector neighbours still fall through to the base handshake (the
+	 * symmetric + notify form); electric rows never reach this branch.
 	 */
 	@Override
 	public boolean connect(byte aSide, boolean aNotify) {
@@ -540,6 +554,14 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 			if (tNeighbor == null && !tTargetState.isAir() && (tTargetFluid == null || tTargetFluid.isEmpty())) {
 				setConnectionBit(aSide); // the upstream :142-151 body (bit + notify + block update + onConnectionChange)
 				return true;
+			}
+			if (tNeighbor instanceof TileEntityBase09Connector tConnector) { // upstream :116 — the connector neighbourhood
+				byte tOpposite = (byte)Direction.from3DDataValue(aSide).getOpposite().get3DDataValue();
+				if (!haveOneCommonElement(tConnector.getConnectorTypes(tOpposite), getConnectorTypes(aSide))) {
+					setConnectionBit(aSide); // upstream :130-140 — the type-divergent visual connect, one-sided
+					return true;
+				}
+				// intersecting types: fall through to the base handshake (the :118 symmetric + notify form)
 			}
 		}
 		return super.connect(aSide, aNotify);
