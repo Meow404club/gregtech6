@@ -809,6 +809,16 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 
 	// -- persistence (upstream readFromNBT2 :60-67 / writeToNBT2 :70-75, redstone rows) --
 
+	/**
+	 * DEVIATION DECLARATION (task p10-wire-contact-damage ride-along, the R1 review
+	 * handoff): on {@code gt.mredstone} this port deliberately does NOT reproduce the
+	 * upstream read — upstream :63 reloads with {@code aNBT.getByte("gt.mredstone")}, a
+	 * TRUNCATED 8-bit read of a value written as a full long (:74,
+	 * {@code UT.NBT.setNumber}): any stored signal above 127 reloads wrong upstream. The
+	 * full-range signal (0..{@code GTWireSpecs.MAX_RANGE} = 2^31-1) can never fit a byte,
+	 * so the wide {@code getLong} here is the correct round trip and is kept as a declared
+	 * deviation, not an accident of translation.
+	 */
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
@@ -823,7 +833,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 		super.load(aNBT);
 		if (!isRedstone()) return;
 		if (aNBT.contains(NBT_MRECEIVED, Tag.TAG_ANY_NUMERIC)) mReceived = aNBT.getByte(NBT_MRECEIVED); // :62
-		if (aNBT.contains(NBT_MREDSTONE, Tag.TAG_ANY_NUMERIC)) mRedstone = aNBT.getLong(NBT_MREDSTONE); // :63 (upstream reads the wide form)
+		if (aNBT.contains(NBT_MREDSTONE, Tag.TAG_ANY_NUMERIC)) mRedstone = aNBT.getLong(NBT_MREDSTONE); // :63 — DEVIATION, see below
 		if (aNBT.contains(NBT_MODE, Tag.TAG_ANY_NUMERIC)) mMode = aNBT.getByte(NBT_MODE); // :64
 		// :65 (NBT_PIPELOSS) — the loss rides the block carrier in this port (GTWireBlock.lossL), not NBT.
 	}
