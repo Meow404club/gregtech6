@@ -19,7 +19,10 @@ import org.jetbrains.annotations.Nullable;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.registry.GTBlockEntities;
+import gregtech6.registry.GTWireSpecs;
+import gregtech6.registry.GTWireSpecs.Row.Family;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
  * The GT6 electric wire block (task p7-d2-cable spec ④) — the block side of the wire
@@ -65,6 +68,7 @@ public class GTWireBlock extends GTEntityBlock {
 	private final int mSize;
 	private final boolean mInsulated;
 	private final int mDiameter;
+	private final Family mFamily;
 
 	/**
 	 * The p7 legacy form (the two material-less variants) — the vanilla-block fallback ratings
@@ -75,7 +79,7 @@ public class GTWireBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The full W1 carrier (task p9-wire-family-w1 spec ②).
+	 * The full W1 carrier (task p9-wire-family-w1 spec ②) — the electric family form.
 	 *
 	 * @param aVoltage the packet size ceiling in EU (upstream NBT_PIPESIZE)
 	 * @param aAmperage the packet count ceiling (upstream NBT_PIPEBANDWIDTH)
@@ -87,6 +91,21 @@ public class GTWireBlock extends GTEntityBlock {
 	 */
 	public GTWireBlock(long aVoltage, long aAmperage, long aLoss, @Nullable OreDictMaterial aMaterial,
 			int aSize, boolean aInsulated, int aDiameter, Properties aProperties) {
+		this(aVoltage, aAmperage, aLoss, aMaterial, aSize, aInsulated, aDiameter, Family.ELECTRIC, aProperties);
+	}
+
+	/**
+	 * The family carrier (task p10-wire-redstone-family): one extra column over the W1
+	 * form. A REDSTONE-family block is the same visual carrier (the CONNECTIONS mask
+	 * stays THE ONLY BlockState payload — spec 3 red line: the signal VALUE lives on the
+	 * BlockEntity, a POWER-style state property would be the 64×16 variant explosion the
+	 * research card bans) while its BE mounts the push-BFS redstone semantics instead of
+	 * the EU pump. {@code aVoltage/aAmperage} sit at 0/1 on redstone rows (the EU face
+	 * family is gated off at the BE); {@code aLoss} is the upstream NBT_PIPELOSS
+	 * (MAX_RANGE/16|/64).
+	 */
+	public GTWireBlock(long aVoltage, long aAmperage, long aLoss, @Nullable OreDictMaterial aMaterial,
+			int aSize, boolean aInsulated, int aDiameter, Family aFamily, Properties aProperties) {
 		super(aProperties);
 		mVoltage = aVoltage;
 		mAmperage = aAmperage;
@@ -95,6 +114,7 @@ public class GTWireBlock extends GTEntityBlock {
 		mSize = aSize;
 		mInsulated = aInsulated;
 		mDiameter = aDiameter;
+		mFamily = aFamily;
 		registerDefaultState(defaultBlockState().setValue(CONNECTIONS, 0));
 	}
 
@@ -132,6 +152,27 @@ public class GTWireBlock extends GTEntityBlock {
 	/** The upstream PX_P diameter index (NBT_DIAMETER — the W2 geometry seed, W1 data-only). */
 	public int diameter() {
 		return mDiameter;
+	}
+
+	/** The family column (task p10): ELECTRIC = the EU pump rows, REDSTONE = the push-BFS signal rows. */
+	public Family family() {
+		return mFamily;
+	}
+
+	/**
+	 * The upstream mBlockUpdated bridge (MultiTileEntityWireRedstoneInsulated :103 —
+	 * {@code if (mBlockUpdated) updateConnectionStatus()}): vanilla delivers a neighbour
+	 * change here and the BE consumes the flag in its next server tick (the vanilla-side
+	 * trigger of the connection re-scan; the BFS triggers themselves are the connection
+	 * change :94 and the per-tick convergence :104). The 1.7.10 MTE block fed the same
+	 * flag from onNeighborBlockChange.
+	 */
+	@Override
+	public void neighborChanged(BlockState aState, Level aLevel, BlockPos aPos, Block aNeighborBlock, BlockPos aFromPos, boolean aIsMoving) {
+		super.neighborChanged(aState, aLevel, aPos, aNeighborBlock, aFromPos, aIsMoving);
+		if (aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire) {
+			tWire.markBlockUpdated();
+		}
 	}
 
 	/**
