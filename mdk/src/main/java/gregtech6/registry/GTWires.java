@@ -238,6 +238,51 @@ public final class GTWires {
 		return rBlocks;
 	}
 
+	// -------------------------------------------------------------------------
+	// the p11-flat-redstone-tab split: one tab per upstream MTE-registry category
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Electric Wires tab membership table (task p11-flat-redstone-tab): the legacy pair
+	 * followed by the 620 electric family items — EXACTLY what upstream registers into the
+	 * "Electric Wires" category (every addElectricWires row,
+	 * MultiTileEntityWireElectric.java:72-109 aCreativeTabID 28366). The redstone and laser
+	 * rows are NOT members: upstream files them under their own categories (see
+	 * {@link #REDSTONE_WIRES_TAB} / {@link #LASER_WIRES_TAB}) — the standing P9 observation
+	 * item is resolved by this card. Table-driven (the GT6Tools.TAB_TABLE form) so the
+	 * membership is assertable offline.
+	 */
+	public static final List<RegistryObject<Item>> ELECTRIC_WIRES_TAB_TABLE;
+
+	static {
+		List<RegistryObject<Item>> tTable = new ArrayList<>(2 + FAMILY_ITEMS.size());
+		tTable.add(WIRE_ELECTRIC_1X_ITEM);
+		tTable.add(WIRE_ELECTRIC_2X_ITEM);
+		tTable.addAll(FAMILY_ITEMS);
+		ELECTRIC_WIRES_TAB_TABLE = List.copyOf(tTable);
+	}
+
+	/**
+	 * The Redstone Wires tab membership: exactly the 6 redstone family items — upstream
+	 * registers every Loader_MultiTileEntities.java:1895-1902 row with the category string
+	 * "Redstone Wires" and the tab id 27050, a category the electric rows never join.
+	 */
+	public static final List<RegistryObject<Item>> REDSTONE_WIRES_TAB_TABLE = REDSTONE_ITEMS;
+
+	/**
+	 * The Laser Wires tab membership: exactly the 1 laser fiber wire — upstream registers it
+	 * with the category string "Laser Wires" and the tab id 24900 (Loader:1815), its own
+	 * single-member category, NOT "Redstone Wires" (the evidence-based trim of this card:
+	 * the laser keeps its own tab instead of riding the redstone one).
+	 */
+	public static final List<RegistryObject<Item>> LASER_WIRES_TAB_TABLE = LASER_ITEMS;
+
+	/** The tab title key (the GT6Tools.TAB_TITLE_KEY shape) — upstream display "Redstone Wires". */
+	public static final String REDSTONE_TAB_TITLE_KEY = "itemGroup.gt6.redstone_wires";
+
+	/** The tab title key — upstream display "Laser Wires" (Loader:1815 category string). */
+	public static final String LASER_TAB_TITLE_KEY = "itemGroup.gt6.laser_wires";
+
 	/**
 	 * The "Electric Wires" category tab — the upstream MTE-registry category
 	 * ("Electric Wires", MultiTileEntityWireElectric.java:72 addElectricWires
@@ -247,29 +292,58 @@ public final class GTWires {
 	 * over the full spectrum — upstream registers every addElectricWires row into this
 	 * category (the whole 16-wire + 5-cable ladder per material), so the legacy pair is
 	 * followed by all 620 family items in registration order (the W1 loop order = the
-	 * upstream Loader row order).
+	 * upstream Loader row order). Task p11-flat-redstone-tab: the table IS the membership
+	 * ({@link #ELECTRIC_WIRES_TAB_TABLE}, 2 + 620) — the p10 interim riders (6 redstone + 1
+	 * laser) moved to their own upstream categories below.
 	 */
 	public static final RegistryObject<CreativeModeTab> ELECTRIC_WIRES_TAB = CREATIVE_MODE_TABS.register("electric_wires",
 			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
 					.title(Component.translatable("itemGroup.gt6.electric_wires"))
 					.icon(() -> new ItemStack(WIRE_ELECTRIC_2X_ITEM.get()))
 					.displayItems((aParameters, aOutput) -> {
-						aOutput.accept(new ItemStack(WIRE_ELECTRIC_1X_ITEM.get()));
-						aOutput.accept(new ItemStack(WIRE_ELECTRIC_2X_ITEM.get()));
-						for (RegistryObject<Item> tFamilyItem : FAMILY_ITEMS) {
-							aOutput.accept(new ItemStack(tFamilyItem.get()));
+						for (RegistryObject<Item> tRow : ELECTRIC_WIRES_TAB_TABLE) {
+							aOutput.accept(new ItemStack(tRow.get()));
 						}
-						// task p10-wire-redstone-family: the 6 redstone items ride the same flat
-						// tab (upstream "Redstone Wires" is its own MTE category, Loader:1893-1902;
-						// the per-category tab split stays the standing P9 observation item).
-						for (RegistryObject<Item> tRedstoneItem : REDSTONE_ITEMS) {
-							aOutput.accept(new ItemStack(tRedstoneItem.get()));
+					})
+					.build());
+
+	/**
+	 * The "Redstone Wires" category tab (task p11-flat-redstone-tab) — upstream 1.7.10 has
+	 * NO static tab icon and NO custom tab texture here: the MTE registry lazily creates
+	 * {@code new CreativeTab(mNameInternal + "." + tabID, aCategoricalName,
+	 * Item.getItemFromBlock(mBlock), tabID)} (MultiTileEntityRegistry.java:191,
+	 * gregapi/item/CreativeTab.java:33-48), i.e. the icon is the MTE block ITEM at meta =
+	 * the tab id 27050 = the Signalum bare wire (Loader:1898 registers id 27050), and the
+	 * title is the category string via {@code LH.add("itemGroup." + name, aLocal)}
+	 * (CreativeTab.java:35). Ported: icon = {@code wire_signalum} (REDSTONE_ITEMS index 2,
+	 * the redstoneVariants order red_alloy/signalum/lumium × wire/cable), title key
+	 * {@link #REDSTONE_TAB_TITLE_KEY} (GT6EnUs "Redstone Wires").
+	 */
+	public static final RegistryObject<CreativeModeTab> REDSTONE_WIRES_TAB = CREATIVE_MODE_TABS.register("redstone_wires",
+			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+					.title(Component.translatable(REDSTONE_TAB_TITLE_KEY))
+					.icon(() -> new ItemStack(REDSTONE_WIRES_TAB_TABLE.get(2).get())) // upstream icon meta 27050 = Signalum Wire, Loader:1898
+					.displayItems((aParameters, aOutput) -> {
+						for (RegistryObject<Item> tRow : REDSTONE_WIRES_TAB_TABLE) {
+							aOutput.accept(new ItemStack(tRow.get()));
 						}
-						// task p10-wire-laser-placeholder: the laser item rides the same flat tab
-						// (upstream "Laser Wires" is its own MTE category, Loader:1815 — the same
-						// standing observation item as the redstone rows above).
-						for (RegistryObject<Item> tLaserItem : LASER_ITEMS) {
-							aOutput.accept(new ItemStack(tLaserItem.get()));
+					})
+					.build());
+
+	/**
+	 * The "Laser Wires" category tab (task p11-flat-redstone-tab) — upstream Loader:1815
+	 * registers the "Laser Fiber Wire" with the category string "Laser Wires" and the tab id
+	 * 24900: a single-member category whose icon is the fiber wire itself (the same
+	 * MultiTileEntityRegistry.java:191 icon rule, meta 24900 = the one registered id).
+	 * Title key {@link #LASER_TAB_TITLE_KEY} (GT6EnUs "Laser Wires").
+	 */
+	public static final RegistryObject<CreativeModeTab> LASER_WIRES_TAB = CREATIVE_MODE_TABS.register("laser_wires",
+			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+					.title(Component.translatable(LASER_TAB_TITLE_KEY))
+					.icon(() -> new ItemStack(LASER_WIRES_TAB_TABLE.get(0).get())) // upstream icon meta 24900 = the fiber wire, Loader:1815
+					.displayItems((aParameters, aOutput) -> {
+						for (RegistryObject<Item> tRow : LASER_WIRES_TAB_TABLE) {
+							aOutput.accept(new ItemStack(tRow.get()));
 						}
 					})
 					.build());
