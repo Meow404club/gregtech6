@@ -25,11 +25,13 @@ import net.minecraftforge.fml.common.Mod;
  * {@link ConcurrentHashMap} and factories must not touch anything but the baked model they
  * receive. BakingCompleted (ModelEvent.java:91) is read-only and deliberately unused.
  *
- * <p>CONSUMER TEMPLATE (W3 p4-cover-core):
+ * <p>CONSUMER TEMPLATE (W3 p4-cover-core; the key shape corrected to the per-state
+ * form by p10-cover-plate-perstate-fix — a variant block's registration is its FULL
+ * per-state key set, not one entry):
  * <pre>{@code
  * // during mod construction (before the first resource reload):
  * GTRenderModelListener.registerDynamicModel(
- *     new ResourceLocation("gt6", "block/machine/oven"),
+ *     new ModelResourceLocation("gt6", "oven", "active=true,facing=north,running=false"),
  *     baked -> new OvenDynamicModel(baked)); // OvenDynamicModel extends GTDynamicBakedModel
  * }</pre>
  *
@@ -52,8 +54,9 @@ import net.minecraftforge.fml.common.Mod;
  * ({@code gt6:oven#active=…,facing=…,running=…}) — the blockstate JSON's model-file paths
  * are only unbaked dependencies and never appear as keys. A consumer targeting a
  * variant-based block must therefore register its per-state keys (see
- * {@link GTOvenClientListener} for the oven's 16-key form); a model-file id in the
- * template above silently degrades (the absent-target skip below).
+ * {@link GTOvenClientListener} for the oven's 16-key form); a model-file id (the
+ * template's pre-p10 form, landed until p10-cover-plate-perstate-fix) silently
+ * degrades (the absent-target skip below).
  */
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTRenderModelListener {

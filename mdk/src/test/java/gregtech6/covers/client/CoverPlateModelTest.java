@@ -113,7 +113,7 @@ public class CoverPlateModelTest {
 		assertEquals(0, gregtech6.client.render.GTRenderModelListener.registeredCount());
 		GTCoverClientListener.register();
 		assertEquals(GTCoverClientListener.TARGET_MODELS.size(), gregtech6.client.render.GTRenderModelListener.registeredCount(),
-				"the three oven blockstate models carry the dynamic plate model");
+				"the oven's 16 per-state models carry the dynamic plate model");
 		GTCoverClientListener.register(); // idempotent
 		assertEquals(GTCoverClientListener.TARGET_MODELS.size(), gregtech6.client.render.GTRenderModelListener.registeredCount());
 	}
