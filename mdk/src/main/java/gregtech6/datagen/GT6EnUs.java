@@ -175,6 +175,12 @@ public final class GT6EnUs extends LanguageProvider {
         for (GTWireSpecs.Variant tVariant : GTWireSpecs.redstoneVariants()) {
             add("block.gt6." + GTWireSpecs.registryName(tVariant), GTWireSpecs.displayName(tVariant));
         }
+        // task p10-wire-laser-placeholder — the laser family (Loader:1814-1815), table-tail
+        // append: "Laser Fiber Wire" (the upstream registration name verbatim, no size
+        // prefix, the GTWireSpecs.displayName laser branch — the row is material-less).
+        for (GTWireSpecs.Variant tVariant : GTWireSpecs.laserVariants()) {
+            add("block.gt6." + GTWireSpecs.registryName(tVariant), GTWireSpecs.displayName(tVariant));
+        }
     }
 
     /**
