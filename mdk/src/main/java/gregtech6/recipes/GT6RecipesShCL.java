@@ -52,13 +52,19 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
  * The Shredder / Crusher / Lathe recipe book — task p7-recipe-maps-shcl (first deterministic
- * static batch for the basicmachine-family BE card).
+ * static batch for the basicmachine-family BE card), extended by task
+ * p10-compat-vanilla-rows (the vanilla backfill of the machine-family compat research: the
+ * SHREDDER bone row + the four CRUSHER {@code stone*} rows — after these, the in-port
+ * 5-map vanilla coverage gap of the compat research is closed).
  *
  * <p><b>Upstream sources</b>: {@code RM.Shredder.addRecipe1} rows in
- * Loader_Recipes_Vanilla.java:688-693 + :707-708 (Shredder), :523-524 (Lathe), and the
+ * Loader_Recipes_Vanilla.java:688-693 + :697 + :707-708 (Shredder), :523-524 (Lathe), the
  * gem-chain {@code RecipeMapHandlerPrefix} rows in Loader_Recipes_Handlers.java:69-73/:75
- * (Crusher). All transcribed outputs are deterministic — the port carries no chances (the
- * P4 Recipe shell has none; its only touching window is the ore-chain backfill pool card).
+ * (Crusher), and the OreDict {@code stone*} listener Crusher rows in
+ * Loader_Recipes_OreDict.java:82-96 (Crusher, the p10 backfill). The p7 batch is fully
+ * deterministic — null chances; the p10 backfill rows :82/:88 carry the upstream
+ * {@code new long[] {...}} chance literals through {@link Recipe#mChances} (the P8
+ * 9-arg ctor; {@code getOutputs(Random, int)} Bernoulli semantics).
  *
  * <p><b>Row shapes</b>: the Shredder/Lathe rows mirror the upstream
  * {@code addRecipe1(aOptimize, aEUt, aDuration, input, outputs...)} calls verbatim — fixed
@@ -108,10 +114,21 @@ public final class GT6RecipesShCL {
 	}
 
 	/**
-	 * One transcribed Shredder/Lathe row (the upstream {@code addRecipe1(aOptimize, aEUt,
-	 * aDuration, input, outputs...)} call). {@code note} carries the upstream line number.
+	 * One transcribed Shredder/Lathe/Crusher-vanilla row (the upstream
+	 * {@code addRecipe1(aOptimize, aEUt, aDuration, [chances,] input, outputs...)} call).
+	 * {@code note} carries the upstream line number.
+	 *
+	 * <p>{@code chances} is the p10-compat-vanilla-rows extension: the chance-bearing rows
+	 * (OreDict:82/:88) carry the upstream {@code new long[] {...}} literal through
+	 * {@link Recipe#mChances} (the P8 9-arg ctor, chances tail-appended). {@code null} = the
+	 * deterministic shape — what every pre-p10 row uses via the compact constructor.
 	 */
-	public record FixedRow(String note, Slot input, long eUt, long duration, Slot... outputs) {}
+	public record FixedRow(String note, Slot input, long eUt, long duration, @Nullable long[] chances, Slot... outputs) {
+		/** The compact deterministic form (null chances) — the pre-p10 row shape. */
+		public FixedRow(String note, Slot input, long eUt, long duration, Slot... outputs) {
+			this(note, input, eUt, duration, null, outputs);
+		}
+	}
 
 	/**
 	 * One transcribed Crusher prefix-handler template (the upstream
@@ -127,9 +144,11 @@ public final class GT6RecipesShCL {
 	static Function<Supplier<Item>, Item> sVanillaItemResolver = Supplier::get;
 
 	/**
-	 * The transcribed rows (Loader_Recipes_Vanilla.java:688-693 + :707-708), order mirroring
-	 * the upstream file order. All eUt 16; :692/:693 carry the {@code OM.dust(MT.Stone, U*9)}
-	 * nine-dust output.
+	 * The transcribed rows (Loader_Recipes_Vanilla.java:688-693 + :697 + :707-708), order
+	 * mirroring the upstream file order. All eUt 16; :692/:693 carry the
+	 * {@code OM.dust(MT.Stone, U*9)} nine-dust output; :697 is the p10-compat-vanilla-rows
+	 * backfill (bone → 4 bonemeal — the upstream {@code IL.Dye_Bonemeal} item is the
+	 * 1.7.10 white-dye meta, whose 1.20.1 identity is {@link Items#BONE_MEAL}).
 	 *
 	 * <p><b>Lazily built</b>: the {@code @EventBusSubscriber} annotation scan class-loads this
 	 * class at MOD CONSTRUCTION — before {@code MT.init()} — so OP/MT references must not be
@@ -149,6 +168,8 @@ public final class GT6RecipesShCL {
 		new FixedRow(":690", Slot.vanilla(() -> Blocks.COBWEB.asItem(), 1), 16,  16, Slot.vanilla(() -> Items.STRING, 1)),
 		new FixedRow(":692", Slot.vanilla(() -> Blocks.COBBLESTONE.asItem(), 1), 16, 16, Slot.material(OP.dust, MT.Stone, 9)),
 		new FixedRow(":693", Slot.vanilla(() -> Blocks.STONE.asItem(), 1)  , 16,  16, Slot.material(OP.dust     , MT.Stone, 9)),
+		// Loader_Recipes_Vanilla.java:697 — the p10 backfill; :698 WiMo_Thick_Bone and :699 melon stay CUT (see SKIPPED_UPSTREAM)
+		new FixedRow(":697", Slot.vanilla(() -> Items.BONE, 1)             , 16,  32, Slot.vanilla(() -> Items.BONE_MEAL, 4)),
 		// Loader_Recipes_Vanilla.java:707-708 — the MT.Blaze representative of the ANY.Blaze.mToThis loop (the group expansion is pooled)
 		new FixedRow(":707", Slot.material(OP.stick    , MT.Blaze, 1)     , 16,  32, Slot.material(OP.dustSmall, MT.Blaze, 2)),
 		new FixedRow(":708", Slot.material(OP.stickLong, MT.Blaze, 1)     , 16,  64, Slot.material(OP.dust     , MT.Blaze, 1)));
@@ -186,11 +207,56 @@ public final class GT6RecipesShCL {
 	}
 
 	/**
+	 * The p10-compat-vanilla-rows Crusher backfill: the four vanilla rows of the
+	 * {@code stone*} OreDict listeners (Loader_Recipes_OreDict.java:82/:88/:92/:96), in
+	 * upstream file order. Upstream these fire as oredict-listener events (the Forge 1.7.10
+	 * vanilla registrations "stoneNetherrack"/"stoneEndstone"/"stoneNetherBrick" plus the GT
+	 * {@code blockSolidObsidian} registration); the port transcribes the static equivalents.
+	 *
+	 * <p><b>Input identity</b>: :88/:92/:96 bind to the vanilla blocks (Blocks.NETHER_BRICKS /
+	 * NETHERRACK / END_STONE — the 1.20.1 identities of the 1.7.10 vanilla oredict names).
+	 * :82 upstream input is the GT {@code blockSolidObsidian} block, but the port block
+	 * universe generates NO blockSolid Obsidian — the {@code blockSolid → blockIngot → ingot
+	 * → ITEMGENERATOR.INGOTS} condition chain fails for the STONE-family material (offline
+	 * probe: {@code OP.blockSolid.isGeneratingItem(MT.Obsidian) == false}) — so the input is
+	 * the vanilla obsidian block: declared deviation, same gameplay identity (GT6 1.7.10
+	 * worldgen replaces vanilla obsidian with that block).
+	 *
+	 * <p><b>Output identity</b>: the :82 fallback chain
+	 * {@code IL.RC_Crushed_Obsidian.get(1, IL.HBM_Crushed_Obsidian.get(1, dust Obsidian x8))}
+	 * resolves to its dust tail — the RC/HBM crushed items are foreign-mod items that do not
+	 * exist in this port (declared, no IL surface). :92/:96 produce {@code OP.rockGt} x4, and
+	 * (rockGt, Netherrack/Endstone) both resolve inside the port item universe.
+	 */
+	private static volatile List<FixedRow> sCrusherVanillaRows = null;
+
+	/** The transcribed Crusher vanilla rows, captured on first use (one material generation). */
+	public static List<FixedRow> crusherVanillaTable() {
+		List<FixedRow> tTable = sCrusherVanillaRows;
+		if (tTable == null) sCrusherVanillaRows = tTable = List.of(
+		// Loader_Recipes_OreDict.java:82 — chances {10000, 2500}, duration 600
+		new FixedRow(":82", Slot.vanilla(() -> Blocks.OBSIDIAN.asItem(), 1), 16, 600, new long[] {10000, 2500},
+				Slot.material(OP.dust, MT.Obsidian, 8), Slot.material(OP.dust, MT.Obsidian, 1)),
+		// Loader_Recipes_OreDict.java:88 — four independent single-brick slots at descending certainty
+		new FixedRow(":88", Slot.vanilla(() -> Blocks.NETHER_BRICKS.asItem(), 1), 16, 16, new long[] {10000, 9000, 8000, 7000},
+				Slot.vanilla(() -> Items.NETHER_BRICK, 1), Slot.vanilla(() -> Items.NETHER_BRICK, 1),
+				Slot.vanilla(() -> Items.NETHER_BRICK, 1), Slot.vanilla(() -> Items.NETHER_BRICK, 1)),
+		// Loader_Recipes_OreDict.java:92 — deterministic
+		new FixedRow(":92", Slot.vanilla(() -> Blocks.NETHERRACK.asItem(), 1), 16, 16, Slot.material(OP.rockGt, MT.Netherrack, 4)),
+		// Loader_Recipes_OreDict.java:96 — deterministic
+		new FixedRow(":96", Slot.vanilla(() -> Blocks.END_STONE.asItem(), 1), 16, 16, Slot.material(OP.rockGt, MT.Endstone, 4)));
+		return tTable;
+	}
+
+	/**
 	 * The skipped upstream surface, kept as DATA for the audit walk (see class doc). Everything
 	 * here is a POOL item of the machine-family wave, not a silent drop.
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
-		"Loader_Recipes_Vanilla.java:691 reeds / :694-696 generator modules / :697-699 bone+melon (IL or chance outputs; p7 pool)",
+		"Loader_Recipes_Vanilla.java:691 reeds → IL.Remains_Plant and :699 melon 6000-chance → IL.Remains_Fruit: CUT — the GT Remains_* items do not exist in this port (p10-compat-vanilla-rows; :697 bone→bonemeal BACKFILLED there)",
+		"Loader_Recipes_Vanilla.java:694-696 generator modules (IL.Module_* items; p7 pool) + :698 WiMo_Thick_Bone (foreign-mod item, CUT)",
+		"Loader_Recipes_OreDict.java:81/:87/:91/:95 Hammer + :83 pulverizing sibling rows of the stone* listeners — tool-family pool (handoff p10-arch-tools-covers), and :84 Boxinator TF_Pick_Giant IL.exists() branch — foreign-mod gate, declared, no gates ported",
+		"Loader_Recipes_OreDict.java:82/:88/:92/:96 Crusher rows BACKFILLED by p10-compat-vanilla-rows (:82 input = vanilla obsidian — the port block universe generates no blockSolid Obsidian, the ITEMGENERATOR.INGOTS chain fails; declared deviation)",
 		"Loader_Recipes_Vanilla.java:702-706 ANY.Blaze.mToThis group expansion + :709-712 compressor rows (only the MT.Blaze representative is transcribed; p7 pool)",
 		"Loader_Recipes_Handlers.java:64-67/:74 rockGt/rawOreChunk/chunk/rubble/gemChipped prefix rows with null outputs (mTargetCrushing pulverize-remains semantics; needs Recipe chances; ore-chain backfill pool)",
 		"Loader_Recipes_Handlers.java:77 RecipeMapHandlerCrushing — the crushed-family ore chain (Recipe chances + Cinnabar probability; ore-chain backfill pool)",
@@ -214,6 +280,7 @@ public final class GT6RecipesShCL {
 		pourFixed(GT6RecipeMaps.SHREDDER, "Shredder", shredderTable());
 		pourFixed(GT6RecipeMaps.LATHE, "Lathe", latheTable());
 		pourCrusher(GT6RecipeMaps.CRUSHER, crusherTable());
+		pourFixed(GT6RecipeMaps.CRUSHER, "Crusher vanilla", crusherVanillaTable()); // p10-compat-vanilla-rows
 		sLoaded = true;
 	}
 
@@ -263,8 +330,9 @@ public final class GT6RecipesShCL {
 			tOutputs[i] = resolveSlot(aRow.outputs()[i]);
 			if (tOutputs[i] == null) return null;
 		}
-		// the upstream addRecipe1(T, eUt, dur, ...) shape: buffered, no fluids, no special value
-		return new Recipe(true, new ItemStack[] {tInput}, tOutputs, new FluidStack[0], new FluidStack[0], aRow.duration(), aRow.eUt(), 0);
+		// the upstream addRecipe1(T, eUt, dur, ...) shape: buffered, no fluids, no special value;
+		// the p10 chance rows carry their chances literal through the P8 9-arg ctor (null = deterministic)
+		return new Recipe(true, new ItemStack[] {tInput}, tOutputs, new FluidStack[0], new FluidStack[0], aRow.duration(), aRow.eUt(), 0, aRow.chances());
 	}
 
 	/**
@@ -324,5 +392,6 @@ public final class GT6RecipesShCL {
 		sShredderRows = null;
 		sLatheRows = null;
 		sCrusherTemplates = null;
+		sCrusherVanillaRows = null;
 	}
 }
