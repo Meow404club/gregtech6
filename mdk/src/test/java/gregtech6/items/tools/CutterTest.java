@@ -4,15 +4,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import net.minecraftforge.common.ToolActions;
@@ -22,8 +32,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import gregtech6.covers.CoverData;
 import gregtech6.covers.CoverRegistry;
 import gregtech6.covers.TileEntityOvenCoverProbe;
+import gregtech6.covers.covers.AbstractCoverDefault;
 import gregtech6.covers.covers.CoverRedstoneEmitter;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.tileentity.GTOfflineTestBase;
@@ -235,5 +247,100 @@ public class CutterTest extends GTOfflineTestBase {
 		ItemStack tDying = new ItemStack(Items.WOODEN_HOE);
 		tDying.setDamageValue(tDying.getMaxDamage() - 1);
 		assertTrue(tDying.hurt(1, RandomSource.create(), null), "the final unit reports the break");
+	}
+
+	/**
+	 * The known_bugs 2026-09-01 #1 counting stub (p11-cutter-payperpoint): the cover arm
+	 * through the CONTEXT overload must call payPerPoint exactly ONCE. Upstream ruling —
+	 * the single payment sits at the item layer (Behavior_Tool.java:63 aggregates the
+	 * IBlockToolable.Util.onToolClick chain and pays once), while the host relay
+	 * TileEntityBase06Covers.onToolClick returns raw units from every arm (:151/:159/:162)
+	 * without paying. The stub cover answers with a FULL point's worth (10000 units); the
+	 * {@link GTCutterItem#sPayPerPointCalls} counter is the call count, player-independent
+	 * (the offline Player wall — FluidType registry boot — blocks the hurtAndBreak route,
+	 * the same reason CrowbarTest routes the physical payment to RCON).
+	 */
+	@Test
+	void contextCoverArmPaysExactlyOncePerClick() {
+		CoverRegistry.put(Items.BRICK, new StubCover()); // replaces the @BeforeEach emitter on the same key
+		TileEntityOvenCoverProbe tOven = new TileEntityOvenCoverProbe(sProbeType, COVER_POS, Blocks.BRICKS.defaultBlockState());
+		CoverClickLevel tLevel = new CoverClickLevel(tOven);
+		assertTrue(tOven.setCoverItem((byte) 4, new ItemStack(Items.BRICK), null, true, false), "install accepted");
+		ItemStack tCarrier = new ItemStack(Items.WOODEN_HOE);
+		UseOnContext tContext = new TestContext(tLevel, null, InteractionHand.MAIN_HAND, tCarrier,
+				new BlockHitResult(new Vec3(2.0, 2.5, 3.25), Direction.WEST, COVER_POS, false));
+		int tCountBefore = GTCutterItem.sPayPerPointCalls;
+
+		// click 1 — one payPerPoint call for the whole cover-arm click
+		assertEquals(10000, GTCutterItem.cutterToolClick(tContext), "the stub relay return");
+		assertEquals(tCountBefore + 1, GTCutterItem.sPayPerPointCalls,
+				"payPerPoint fired ONCE for the cover-arm click (the double-charge seam would read +2)");
+
+		// click 2 — the count accumulates one per click, proving per-click singleness
+		assertEquals(10000, GTCutterItem.cutterToolClick(tContext), "the stub relay return again");
+		assertEquals(tCountBefore + 2, GTCutterItem.sPayPerPointCalls,
+				"one call per click — the double-charge seam would read +4 here");
+	}
+
+	/**
+	 * The observable-behaviour regression half of the same bug: the emitter's 1000-unit
+	 * relay return stays below one point through the SAME context seam, so the carrier
+	 * pays nothing — the pre-fix and post-fix observables are identical (the double call
+	 * rounded to zero twice before; the single call rounds to zero once now).
+	 */
+	@Test
+	void contextEmitterRelayStillPaysNothingBelowOnePoint() {
+		TileEntityOvenCoverProbe tOven = new TileEntityOvenCoverProbe(sProbeType, COVER_POS, Blocks.BRICKS.defaultBlockState());
+		CoverClickLevel tLevel = new CoverClickLevel(tOven);
+		assertTrue(tOven.setCoverItem((byte) 4, new ItemStack(Items.BRICK), null, true, false), "install accepted");
+		ItemStack tCarrier = new ItemStack(Items.WOODEN_HOE);
+		UseOnContext tContext = new TestContext(tLevel, null, InteractionHand.MAIN_HAND, tCarrier,
+				new BlockHitResult(new Vec3(2.0, 2.5, 3.25), Direction.WEST, COVER_POS, false));
+		int tCountBefore = GTCutterItem.sPayPerPointCalls;
+
+		assertEquals(1000, GTCutterItem.cutterToolClick(tContext), "the emitter relay return (CoverRedstoneEmitter :45)");
+		assertEquals(tCountBefore + 1, GTCutterItem.sPayPerPointCalls, "the single outer pay call");
+		assertEquals(0, tCarrier.getDamageValue(), "1000 < 10000 → zero points, the pre-fix observable is unchanged");
+	}
+
+	// ------------------------------------------------------------------ fixtures
+
+	/**
+	 * The 10000-unit relay stub — an {@link AbstractCoverDefault} that answers the cutter
+	 * with one full vanilla point worth of upstream units (the counting-stub carrier).
+	 */
+	public static class StubCover extends AbstractCoverDefault {
+		@Override
+		public long onToolClick(byte aCoverSide, CoverData aData, String aToolId, long aRemainingDurability,
+				Entity aPlayer, boolean aSneaking, byte aSideClicked, float aHitX, float aHitY, float aHitZ) {
+			return GTCutterItem.TOOL_DAMAGE_PER_CUT;
+		}
+	}
+
+	/** The context level — a MachineLevel that yields the covered probe at {@link #COVER_POS}. */
+	public static class CoverClickLevel extends GTMachinesOfflineTestBase.MachineLevel {
+		public final TileEntityOvenCoverProbe mProbe;
+
+		public CoverClickLevel(TileEntityOvenCoverProbe aProbe) {
+			super(new GTRecipesOfflineTestBase.TestRecipeManager());
+			mProbe = aProbe;
+		}
+
+		@Override
+		public BlockEntity getBlockEntity(BlockPos aPos) {
+			return aPos.equals(COVER_POS) ? mProbe : null;
+		}
+	}
+
+	/**
+	 * The context double — exposes the protected five-argument UseOnContext constructor
+	 * (the public one derives the level and the held stack from a real player, which the
+	 * offline JVM has no workable double for) so the tests can drive the dispatch seam
+	 * with a nullable player.
+	 */
+	public static class TestContext extends UseOnContext {
+		public TestContext(Level aLevel, @Nullable Player aPlayer, InteractionHand aHand, ItemStack aStack, BlockHitResult aHit) {
+			super(aLevel, aPlayer, aHand, aStack, aHit);
+		}
 	}
 }

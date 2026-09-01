@@ -114,7 +114,8 @@ public class GTCutterItem extends Item {
 	/**
 	 * The single dispatch + payment surface over a context, shared by {@link #useOn} and
 	 * the {@code /gt6tool cut} acceptance command (single-source semantics, the
-	 * {@code /gt6tool dismantle} shape).
+	 * {@code /gt6tool dismantle} shape). The :135 pay below is the SOLE payPerPoint site —
+	 * the upstream Behavior_Tool.java:63 item layer (both arms, paid once on the aggregate).
 	 *
 	 * @return the upstream tool damage (10000 per wire toggle, 1000 per emitter relay) or 0.
 	 */
@@ -150,12 +151,28 @@ public class GTCutterItem extends Item {
 	/**
 	 * The cover arm — the ICoverableTE :275-276 relay with the reserved
 	 * {@link GT6ToolActions#CUTTER_ID}; the command and the offline doubles share it.
+	 *
+	 * <p>RELAYS ONLY — it must NOT pay. Upstream ruling (known_bugs 2026-09-01 #1): the
+	 * single tool-damage payment sits at the ITEM layer — Behavior_Tool.onItemUseFirst
+	 * aggregates the whole {@code IBlockToolable.Util.onToolClick} chain and pays once
+	 * (Behavior_Tool.java:63, {@code doDamage(units(tDamage, 10000, mDamage, T))}) — while
+	 * the host relay TileEntityBase06Covers.onToolClick returns the raw units from all
+	 * three arms (crowbar :151, cover :159, onToolClick2 :162) without paying, and the
+	 * covers return raw too (CoverRedstoneEmitter.java:51). This overload IS the :159
+	 * relay; the {@link #cutterToolClick(UseOnContext)} outer :135 pay is the Behavior_Tool
+	 * layer. A pay here double-charged the same damage (fixed p11-cutter-payperpoint).
 	 */
 	public static long cutterToolClick(ICoverableTE aHost, @Nullable Player aPlayer, ItemStack aStack, byte aSide, boolean aSneaking) {
-		long tDamage = aHost.onCoverToolClick(GT6ToolActions.CUTTER_ID, aPlayer, aStack, aSide, aSneaking);
-		payPerPoint(aStack, aPlayer, tDamage);
-		return tDamage;
+		return aHost.onCoverToolClick(GT6ToolActions.CUTTER_ID, aPlayer, aStack, aSide, aSneaking);
 	}
+
+	/**
+	 * The payPerPoint invocation counter — package-private counting-stub seam for the
+	 * offline tests (p11-cutter-payperpoint, known_bugs 2026-09-01 #1): the cover arm
+	 * must reach this exactly ONCE per click (the outer context overload is the sole
+	 * payment site — the upstream Behavior_Tool.java:63 item layer).
+	 */
+	static int sPayPerPointCalls;
 
 	/**
 	 * The durability mapping — one vanilla point per full {@link #TOOL_DAMAGE_PER_CUT}
@@ -163,6 +180,7 @@ public class GTCutterItem extends Item {
 	 * the GTCrowbarItem.crowbarToolClick payment verbatim).
 	 */
 	private static void payPerPoint(ItemStack aStack, @Nullable Player aPlayer, long aDamage) {
+		sPayPerPointCalls++;
 		long tPoints = aDamage / TOOL_DAMAGE_PER_CUT;
 		if (tPoints > 0 && aPlayer != null) {
 			aStack.hurtAndBreak((int) tPoints, aPlayer, p -> p.broadcastBreakEvent(EquipmentSlot.MAINHAND));
