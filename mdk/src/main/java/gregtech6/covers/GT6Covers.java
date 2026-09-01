@@ -12,6 +12,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.covers.covers.CoverControllerRedstone;
 import gregtech6.covers.covers.CoverPump;
 import gregtech6.covers.covers.CoverRedstoneConductorIN;
 import gregtech6.covers.covers.CoverRedstoneConductorOUT;
@@ -80,6 +81,16 @@ public final class GT6Covers {
 	public static final RegistryObject<Item> COVER_REDSTONE_CONDUCTOR_OUT = ITEMS.register("cover_redstone_conductor_out",
 			() -> new Item(new Item.Properties()));
 
+	/**
+	 * The p10 redstone machine switch cover — the controller that holds a switchable
+	 * machine stopped/running by the redstone on its face (task
+	 * p10-cover-controller-redstone; upstream MultiItemTechnological.java:64 meta 1005).
+	 * Same card-local ITEMS DeferredRegister as the pump, the emitter and the conductor
+	 * pair.
+	 */
+	public static final RegistryObject<Item> COVER_REDSTONE_MACHINE_SWITCH = ITEMS.register("cover_redstone_machine_switch",
+			() -> new Item(new Item.Properties()));
+
 	private static boolean sInitialized = false;
 
 	private GT6Covers() {
@@ -96,7 +107,7 @@ public final class GT6Covers {
 		aEvent.enqueueWork(GT6Covers::init);
 	}
 
-	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter + the p10 conductor pair). */
+	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter + the p10 conductor pair + the p10 machine switch). */
 	public static void init() {
 		if (sInitialized) return;
 		sInitialized = true;
@@ -106,8 +117,9 @@ public final class GT6Covers {
 		CoverRegistry.put(COVER_REDSTONE_EMITTER.get(), new CoverRedstoneEmitter()); // p9 — the first real redstone cover
 		CoverRegistry.put(COVER_REDSTONE_CONDUCTOR_IN.get(), new CoverRedstoneConductorIN()); // p10 — the accept marker
 		CoverRegistry.put(COVER_REDSTONE_CONDUCTOR_OUT.get(), new CoverRedstoneConductorOUT()); // p10 — the wire-through face
-		LOGGER.info("GT6 covers registered: {} -> CoverTextureSimple({}), {} -> CoverPump, {} -> CoverRedstoneEmitter, {} -> CoverRedstoneConductorIN, {} -> CoverRedstoneConductorOUT",
-				tPlate, ironPlateSprite(), COVER_PUMP.getId(), COVER_REDSTONE_EMITTER.getId(), COVER_REDSTONE_CONDUCTOR_IN.getId(), COVER_REDSTONE_CONDUCTOR_OUT.getId());
+		CoverRegistry.put(COVER_REDSTONE_MACHINE_SWITCH.get(), new CoverControllerRedstone()); // p10 — the redstone on/off machine switch
+		LOGGER.info("GT6 covers registered: {} -> CoverTextureSimple({}), {} -> CoverPump, {} -> CoverRedstoneEmitter, {} -> CoverRedstoneConductorIN, {} -> CoverRedstoneConductorOUT, {} -> CoverControllerRedstone",
+				tPlate, ironPlateSprite(), COVER_PUMP.getId(), COVER_REDSTONE_EMITTER.getId(), COVER_REDSTONE_CONDUCTOR_IN.getId(), COVER_REDSTONE_CONDUCTOR_OUT.getId(), COVER_REDSTONE_MACHINE_SWITCH.getId());
 	}
 
 	/**
