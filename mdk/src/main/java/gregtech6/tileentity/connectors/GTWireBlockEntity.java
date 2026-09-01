@@ -9,6 +9,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RedStoneWireBlock;
@@ -79,14 +82,18 @@ import gregtech6.util.UT6;
  * <p>Cuts and placeholders after task p9-wire-family-w1: the material spectrum itself now
  * EXISTS (620 GTWireSpecs variants share THIS ONE BE class over the block carrier — the
  * upstream "one TE class, many material rows" shape), but the material/insulation conductor
- * data (ITileEntityEnergyDataConductor), the contact damage and the texture/render passes,
+ * data (ITileEntityEnergyDataConductor), the texture/render passes,
  * the tooltips and the electrometer tool click, and the IC2 pull remain pool items. The two
  * standing placeholders are declared at their exact positions below: the IC2-pull cut on
  * {@link #onTick} (with the reserved external-energy-bridge seam) and the bundled-channel
- * {@code aChannel} parameter on {@link #transferElectricity}.
- * Persistence: the upstream writeToNBT2 (:121-123) is an empty body — the ratings travel
- * on the block carrier ({@link GTWireBlock}, the GTBarrelBlock registration-carrier
- * precedent), so this BE adds NO NBT beyond the base {@code mConnections}.
+ * {@code aChannel} parameter on {@link #transferElectricity}. The contact damage JOINED in
+ * task p10-wire-contact-damage ({@link #applyElectricityDamage}, the :203 hook over the
+ * block-side entityInside). Persistence: the upstream writeToNBT2 (:121-123) is an empty
+ * body — the ratings travel on the block carrier ({@link GTWireBlock}, the GTBarrelBlock
+ * registration-carrier precedent), so this BE adds NO NBT beyond the base
+ * {@code mConnections} and the redstone family keys; {@link #mWattageLast} is TRANSIENT by
+ * the same upstream body (fresh load = 0 = the wire cannot bite until power flows again —
+ * the restart-safe property of the shock gate), the p7 card's NBT test pins that contract.
  */
 public class GTWireBlockEntity extends TileEntityBase09Connector implements ITileEntityEnergy, GTWireRedstoneNode {
 
@@ -317,6 +324,65 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	}
 
 	// ---------------------------------------------------------------------------
+	// the contact damage (task p10-wire-contact-damage — upstream :203 + UT.Entities)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The shock payload, upstream UT.Entities.applyElectricityDamage :3024-3031 mapped onto
+	 * the BE that owns {@link #mWattageLast}:
+	 * {@code damage = tierMax(wattage) * 4} (UT6.tierMax, the UT.java:1388-1393 verbatim
+	 * port over the V table), applied only when {@code damage > 0 && LivingEntity && alive}
+	 * — the {@code damage > 0} clause IS the "unpowered wires don't bite" gate:
+	 * {@code tierMax(0) == 0} and {@link #mWattageLast} only becomes non-zero after a tick
+	 * window during which amperes actually flowed (onTick :153-155 lag), so a wire that
+	 * never transferred — including EVERY fresh world load, since the p7 NBT contract keeps
+	 * {@code mWattageLast} transient (upstream writeToNBT2 :121-123 empty body) — is
+	 * harmless. Damage 0 at 8 EU (tier 0), 4 at 32 EU (tier 1), 16 at 2048 (tier 4),
+	 * 60 at 8589934592 (tier 15); there is NO sneak reduction and NO custom cooldown — the
+	 * vanilla invulnerability frames inside {@code LivingEntity.hurt} are the throttle,
+	 * exactly upstream's {@code attackEntityFrom} cadence.
+	 *
+	 * <p>Damage source: upstream {@code DamageSources.getElectricDamage()} is the IC2
+	 * {@code DMG_ELECTRIC} source with a heat fallback (gregapi/damage/DamageSources.java:34-38);
+	 * with no IC2 in 1.20.1 this port uses the vanilla engine's own electric damage
+	 * {@code lightningBolt} ({@code Level.damageSources().lightningBolt()}) — the same
+	 * family GTCEu Modern puts its ELECTRIC type in ({@code DamageTypeTags.IS_LIGHTNING},
+	 * GTDamageTypes.java:20-22). A gt6-custom DamageType would need a datapack bootstrap
+	 * provider outside this card's file scope; declared deviation.
+	 *
+	 * <p>Immunity: creative mode ports (the {@code isCreative(aEntity)} clause of
+	 * upstream isWearingFullElectroHazmat, UT.java:2904-2908). The ARMOR half of that check
+	 * (four equipment slots of {@code ArmorsGT.HAZMATS_LIGHTNING}) has no counterpart — this
+	 * port mounts no armor system at all (zero ArmorItem/ArmorMaterial surface) — declared
+	 * cut: no armor grants lightning-hazmat immunity here, the damage always applies to
+	 * non-creative LivingEntities.
+	 *
+	 * @return whether the damage went through (the upstream boolean, unused by the :203 caller)
+	 */
+	public boolean applyElectricityDamage(Entity aEntity) {
+		long tDamage = pendingContactDamage();
+		if (tDamage <= 0 || !(aEntity instanceof LivingEntity tLiving) || !tLiving.isAlive() || isContactImmune(tLiving)) return false;
+		return tLiving.hurt(getLevel().damageSources().lightningBolt(), tDamage); // TFC_DAMAGE_MULTIPLIER == 1 (no TFC)
+	}
+
+	/**
+	 * The gated {@code tierMax(mWattageLast) * 4} accessor — the pure decision half of
+	 * {@link #applyElectricityDamage} so the offline truth tables drive the exact formula
+	 * the live hook applies. The {@link #isRedstone()} gate is the family lock: redstone
+	 * rows mount no shock semantics at all (the redstone registration carries no
+	 * NBT_CONTACTDAMAGE — Loader:1893-1902 — and upstream keeps the families on separate
+	 * classes, the shock hook existing only on MultiTileEntityWireElectric :203).
+	 */
+	public long pendingContactDamage() {
+		return isRedstone() ? 0 : UT6.tierMax(mWattageLast) * 4L;
+	}
+
+	/** The creative clause of upstream isWearingFullElectroHazmat (UT.java:2904-2908); the armor half is a declared cut (see above). */
+	public static boolean isContactImmune(Entity aEntity) {
+		return aEntity instanceof Player tPlayer && tPlayer.isCreative();
+	}
+
+	// ---------------------------------------------------------------------------
 	// transferElectricity (upstream :170-189 verbatim)
 	// ---------------------------------------------------------------------------
 
@@ -462,6 +528,20 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * so this override completes the upstream :141 disjunction for the REDSTONE rows by
 	 * connecting to any solid non-BE neighbour. Electric rows are untouched (their
 	 * canConnect needs a BE, the air/liquid routing is exactly the upstream behaviour).
+	 *
+	 * <p>THE :130-140 BRANCH (task p10-wire-contact-damage ride-along, the R1 review
+	 * handoff): upstream gives a redstone wire a SECOND escape hatch inside the connector
+	 * neighbourhood — when the neighbour IS an {@code ITileEntityConnector} but the two
+	 * connector-type sets share NO element (TileEntityBase09Connector.java:130-140, the
+	 * arm after the :118 intersection gate), the redstone wire still connects. That arm is
+	 * what visually joins a redstone wire to an ELECTRIC wire (and any other connector of
+	 * a different family): WIRE_REDSTONE and WIRE_ELECTRIC never intersect, so without it
+	 * the two families render as disconnected blocks even when they touch. The connection
+	 * is ONE-SIDED and purely visual/mask-level: the upstream :130-140 body sets the own
+	 * bit and fires the change chain but never calls the partner back (no :126 reciprocal),
+	 * and the partner's mask stays clean — a pure appearance difference, exactly upstream.
+	 * Intersecting connector neighbours still fall through to the base handshake (the
+	 * symmetric + notify form); electric rows never reach this branch.
 	 */
 	@Override
 	public boolean connect(byte aSide, boolean aNotify) {
@@ -474,6 +554,14 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 			if (tNeighbor == null && !tTargetState.isAir() && (tTargetFluid == null || tTargetFluid.isEmpty())) {
 				setConnectionBit(aSide); // the upstream :142-151 body (bit + notify + block update + onConnectionChange)
 				return true;
+			}
+			if (tNeighbor instanceof TileEntityBase09Connector tConnector) { // upstream :116 — the connector neighbourhood
+				byte tOpposite = (byte)Direction.from3DDataValue(aSide).getOpposite().get3DDataValue();
+				if (!haveOneCommonElement(tConnector.getConnectorTypes(tOpposite), getConnectorTypes(aSide))) {
+					setConnectionBit(aSide); // upstream :130-140 — the type-divergent visual connect, one-sided
+					return true;
+				}
+				// intersecting types: fall through to the base handshake (the :118 symmetric + notify form)
 			}
 		}
 		return super.connect(aSide, aNotify);
@@ -743,6 +831,16 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 
 	// -- persistence (upstream readFromNBT2 :60-67 / writeToNBT2 :70-75, redstone rows) --
 
+	/**
+	 * DEVIATION DECLARATION (task p10-wire-contact-damage ride-along, the R1 review
+	 * handoff): on {@code gt.mredstone} this port deliberately does NOT reproduce the
+	 * upstream read — upstream :63 reloads with {@code aNBT.getByte("gt.mredstone")}, a
+	 * TRUNCATED 8-bit read of a value written as a full long (:74,
+	 * {@code UT.NBT.setNumber}): any stored signal above 127 reloads wrong upstream. The
+	 * full-range signal (0..{@code GTWireSpecs.MAX_RANGE} = 2^31-1) can never fit a byte,
+	 * so the wide {@code getLong} here is the correct round trip and is kept as a declared
+	 * deviation, not an accident of translation.
+	 */
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
@@ -757,7 +855,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 		super.load(aNBT);
 		if (!isRedstone()) return;
 		if (aNBT.contains(NBT_MRECEIVED, Tag.TAG_ANY_NUMERIC)) mReceived = aNBT.getByte(NBT_MRECEIVED); // :62
-		if (aNBT.contains(NBT_MREDSTONE, Tag.TAG_ANY_NUMERIC)) mRedstone = aNBT.getLong(NBT_MREDSTONE); // :63 (upstream reads the wide form)
+		if (aNBT.contains(NBT_MREDSTONE, Tag.TAG_ANY_NUMERIC)) mRedstone = aNBT.getLong(NBT_MREDSTONE); // :63 — DEVIATION, see below
 		if (aNBT.contains(NBT_MODE, Tag.TAG_ANY_NUMERIC)) mMode = aNBT.getByte(NBT_MODE); // :64
 		// :65 (NBT_PIPELOSS) — the loss rides the block carrier in this port (GTWireBlock.lossL), not NBT.
 	}
