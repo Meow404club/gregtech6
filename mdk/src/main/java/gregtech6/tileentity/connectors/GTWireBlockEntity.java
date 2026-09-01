@@ -311,13 +311,21 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 		if (isRedstone()) { // upstream onTick2 :98-106, server branch
 			if (aIsServerSide) {
 				for (int i : ALL_SIDES) mVanillaSides[i] = -1; // :102 — the vanilla input cache is a per-tick cache
-				if (mBlockUpdated) updateConnectionStatus(); // :103 — upstream onBlockUpdated -> mBlockUpdated
+				if (mBlockUpdated) {
+					validateConnections(); // p11 — the prune runs first so :103/:104 read post-prune masks
+					updateConnectionStatus(); // :103 — upstream onBlockUpdated -> mBlockUpdated
+				}
 				if (updateRedstone(REDSTONE_ID)) GTWireRedstoneNode.doRedstoneUpdate(this, REDSTONE_ID); // :104 — the convergence trigger
 			}
 			return;
 		}
-		if (isLaser()) return; // upstream :57-64 trimmed to a no-op — the inert family mounts no tick machinery
+		if (isLaser()) { // upstream :57-64 trimmed to a no-op — the inert family mounts no tick machinery
+			if (aIsServerSide && mBlockUpdated) validateConnections(); // p11 — the deferred re-check (laser bits prune too)
+			return;
+		}
 		if (aIsServerSide) { // upstream :148
+			if (mBlockUpdated) validateConnections(); // p11 — the deferred re-check of the sync prune (upstream never
+			// consumed mBlockUpdated on the electric rows at all — the exact gap behind the stale mask)
 			if (mBurnCounter >= 16) {
 				setToFire(); // upstream :149-150
 			} else {
@@ -736,6 +744,95 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 				}
 			}
 		}
+	}
+
+	// ===========================================================================
+	// the stale-mask prune (task p11-connector-stale-mask)
+	// ===========================================================================
+
+	/**
+	 * The neighbour-change maintenance path the connection mask never had. UPSTREAM
+	 * ARCHAEOLOGY: 1.7.10 maintains {@code mConnections} ONLY through the connect/disconnect
+	 * handshakes — the connector base (TileEntityBase09Connector.java:111-153/:156-172),
+	 * {@code onPlaced} (:82-96) and the cutter tool click (:70-79) — with NO rescan anywhere:
+	 * {@code MultiTileEntityWireElectric.onTick2} (:145-168) never consumes
+	 * {@code mBlockUpdated}, and the redstone wire's consumption
+	 * (MultiTileEntityWireRedstoneInsulated :103 → {@code updateConnectionStatus} :135-138)
+	 * recomputes only {@code mConnectedToNonWire}, never the mask. The stale bit therefore
+	 * exists upstream too — but it was INVISIBLE there: the upstream mask only drove textures
+	 * and gates, and a bit into air was indistinguishable from a legitimate open end (the
+	 * base connect accepts air, :141). THIS port promotes the mask to the CONNECTIONS
+	 * BlockState (the W2 render + the redstone gating read it), where a bit pointing at a
+	 * foreign-family wire is a visible, contract-violating lie: the port's own connect()
+	 * (the upstream :118 intersection gate — the one-sided :130-140 arm exists ONLY for
+	 * {@code this instanceof ITileEntityRedstoneWire}) makes an electric-towards-redstone bit
+	 * unreachable through every legitimate path, so it can ONLY be residue of a neighbour
+	 * that changed underneath the wire (the P10 E1 RCON finding: swap the neighbour wire's
+	 * family via {@code /setblock} and the old bit survives forever).
+	 *
+	 * <p>This method re-derives the connect decision for every CONNECTED side against the
+	 * CURRENT neighbour ({@link #canStayConnected}) and drops the bits that no longer hold
+	 * ({@code disconnect(aSide, false)} — no notify: the partner is by definition either not
+	 * a connector at all or a divergent-family connector whose own one-sided bit is none of
+	 * this wire's business). PRUNE-ONLY: it never auto-connects, so a deliberate manual
+	 * disconnect can never be resurrected by a neighbour change, and the redstone push-BFS
+	 * triggers stay exactly the upstream pair (the connection change :93-94, run from inside
+	 * the {@code disconnect} → {@code onConnectionChange} chain that already exists).
+	 *
+	 * <p>Driven synchronously from {@link GTWireBlock#updateShape} (the only seam
+	 * {@code /setblock} reaches — its flags=2 carry no {@code neighborChanged}) and from
+	 * {@link GTWireBlock#neighborChanged} (player break/place), with the
+	 * {@code mBlockUpdated} per-tick consumption in {@link #onTick} as the deferred
+	 * catch-all (the headless-server reality: loaded-but-not-entity-ticking chunks never
+	 * reach onTick, so the sync paths carry the fix). Safe inside the vanilla neighbour
+	 * cascade: the only level write is the {@code disconnect} → {@code onConnectionChange}
+	 * state update, which the 1.19.3+ neighbour-update queue contains, and unloaded
+	 * neighbour spots are skipped (the {@code isLoaded} guard in {@link #canStayConnected})
+	 * so a chunk-border wire can never prune a bit it cannot judge — nor trigger a
+	 * synchronous chunk load.
+	 */
+	public void validateConnections() {
+		if (!hasLevel() || !isServerSide()) return;
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			if (connected(tSide) && !canStayConnected(tSide)) disconnect(tSide, false);
+		}
+	}
+
+	/**
+	 * The {@code p11} validity half: would {@link #connect(byte, boolean)} accept the
+	 * CURRENT neighbour on {@code aSide} as a NEW connection? Mirrors the connect decision
+	 * branch for branch, read-only:
+	 * <ul>
+	 * <li>redstone rows answer TRUE unconditionally — upstream the redstone wire accepts
+	 *     every neighbour: {@code canConnect} is the verbatim TRUE
+	 *     (MultiTileEntityWireRedstoneInsulated :172), divergent connectors still connect
+	 *     one-sidedly (the base :130-140 arm), solids through the same arm and air/liquid
+	 *     through the base :141 arm — so NO redstone bit can ever be stale;</li>
+	 * <li>a connector neighbour needs the type intersection (upstream :118) — a
+	 *     divergent-family wire (electric↔redstone/laser) is exactly the P10 E1 residue;</li>
+	 * <li>a non-connector BE needs the {@link #canConnect} probe (upstream :141 — the EU
+	 *     acceptor/emitter double probe on the electric rows, permanently false on laser);</li>
+	 * <li>no BE: air/liquid stays a valid open end (upstream :141 — this is what keeps a
+	 *     cut/cleared neighbour from pruning the wire's open end, the NOT-a-bug half of the
+	 *     repro matrix), a solid block is not.</li>
+	 * </ul>
+	 * Unloaded spots (the chunk-border case) return TRUE — keep the bit, judge nothing.
+	 */
+	public boolean canStayConnected(byte aSide) {
+		if (aSide < 0 || aSide >= 6) return false;
+		if (!hasLevel()) return true; // offline/persistence view — nothing to re-derive against
+		if (isRedstone()) return true; // upstream :172 + :130-140 + :141 — the redstone wire accepts everything
+		BlockPos tTarget = getBlockPos().relative(Direction.from3DDataValue(aSide));
+		if (!getLevel().isLoaded(tTarget)) return true; // unloaded neighbour: no verdict, no sync chunk load
+		BlockEntity tNeighbor = getLevel().getBlockEntity(tTarget);
+		if (tNeighbor instanceof TileEntityBase09Connector tConnector) { // upstream :116-118
+			byte tOpposite = (byte)Direction.from3DDataValue(aSide).getOpposite().get3DDataValue();
+			return haveOneCommonElement(tConnector.getConnectorTypes(tOpposite), getConnectorTypes(aSide));
+		}
+		if (tNeighbor != null) return canConnect(aSide, tNeighbor); // upstream :141 — the non-connector BE arm
+		BlockState tState = getLevel().getBlockState(tTarget); // the isAirOrLiquid form of the base (private there)
+		FluidState tFluid = tState.getFluidState();
+		return tState.isAir() || (tFluid != null && !tFluid.isEmpty()); // upstream :141 — open ends stay
 	}
 
 	// ===========================================================================

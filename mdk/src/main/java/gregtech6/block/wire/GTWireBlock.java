@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -219,13 +220,48 @@ public class GTWireBlock extends GTEntityBlock {
 	 * trigger of the connection re-scan; the BFS triggers themselves are the connection
 	 * change :94 and the per-tick convergence :104). The 1.7.10 MTE block fed the same
 	 * flag from onNeighborBlockChange.
+	 *
+	 * <p>Since task p11-connector-stale-mask this hook ALSO runs the synchronous
+	 * connection-mask rescan ({@link GTWireBlockEntity#validateConnections}) — the flag-1
+	 * half of the two delivery channels (this one and {@link #updateShape}; see there for
+	 * why both exist). Player break/place arrives through here; deferring the prune to the
+	 * BE tick alone would strand the fix on any loaded-but-not-entity-ticking chunk.
 	 */
 	@Override
 	public void neighborChanged(BlockState aState, Level aLevel, BlockPos aPos, Block aNeighborBlock, BlockPos aFromPos, boolean aIsMoving) {
 		super.neighborChanged(aState, aLevel, aPos, aNeighborBlock, aFromPos, aIsMoving);
 		if (aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire) {
+			tWire.validateConnections(); // p11 — the stale-bit prune, synchronous
 			tWire.markBlockUpdated();
 		}
+	}
+
+	/**
+	 * The second delivery channel of the p11 stale-mask prune — and the one that alone sees
+	 * EVERY state-level neighbour change: vanilla {@code /setblock} (and {@code /fill})
+	 * place with flags=2 ONLY (SetBlockCommand.java:97 → BlockInput.place(ServerLevel,
+	 * BlockPos, 2)), so the flag-1 {@code neighborChanged} arm of markAndNotifyBlock
+	 * (Level.java:230-233, {@code blockUpdated}) never fires — while the shape-update arm
+	 * ({@code ($$2 & 16) == 0 && $$3 > 0}, Level.java:238-242) DOES. That arm lands here.
+	 * The vanilla precedent for maintaining a connection property on exactly this seam is
+	 * RedStoneWireBlock.updateShape :187-198 (recalculates its sides from the neighbour).
+	 *
+	 * <p>The override stays read-only itself and delegates the mask decision to the BE
+	 * ({@link GTWireBlockEntity#validateConnections} — prune-only, never auto-reconnect, so
+	 * a cutter/manual disconnect can never be resurrected by a neighbour change); the
+	 * {@code markBlockUpdated} flag additionally arms the deferred per-tick re-check (the
+	 * upstream MultiTileEntityWireRedstoneInsulated :103 consumption). The vanilla neighbour
+	 * updater (1.19.3+ queue, the max-chained-neighbor-updates cap) contains any setBlock
+	 * cascade the prune's own state write produces.
+	 */
+	@Override
+	public BlockState updateShape(BlockState aState, Direction aDirection, BlockState aNeighborState,
+			LevelAccessor aLevel, BlockPos aPos, BlockPos aNeighborPos) {
+		if (!aLevel.isClientSide() && aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire) {
+			tWire.validateConnections(); // p11 — fires for /setblock, where neighborChanged (flag 1) does not
+			tWire.markBlockUpdated();
+		}
+		return super.updateShape(aState, aDirection, aNeighborState, aLevel, aPos, aNeighborPos);
 	}
 
 	/**
