@@ -66,6 +66,8 @@ public final class GT6EnUs extends LanguageProvider {
     /**
      * Tool keys (task p9-tool-crowbar spec ④): the crowbar display name — the upstream
      * tool family name ("Crowbar", the GT_Tool_Crowbar registration row wording).
+     * Task p10-tool-cutter spec ③: the wire cutter display name ("Wire Cutter", the
+     * upstream WIRECUTTER registration row wording, Loader_Tools.java:131 verbatim).
      * Task p10-tool-creative-tab: the "Tools" creative tab title (the upstream ToolsGT
      * meta-tool category, Loader_Tools.java:114-145 registration rows; the key comes from
      * GT6Tools.TAB_TITLE_KEY so the lang face cannot drift from the registered tab —
@@ -73,6 +75,7 @@ public final class GT6EnUs extends LanguageProvider {
      */
     private void addTools() {
         add("item.gt6.crowbar", "Crowbar");
+        add("item.gt6.cutter", "Wire Cutter");
         add(GT6Tools.TAB_TITLE_KEY, "Tools");
     }
 

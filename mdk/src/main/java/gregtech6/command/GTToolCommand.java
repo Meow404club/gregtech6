@@ -25,7 +25,9 @@ import org.slf4j.Logger;
 
 import gregtech6.covers.ICoverableTE;
 import gregtech6.items.tools.GTCrowbarItem;
+import gregtech6.items.tools.GTCutterItem;
 import gregtech6.registry.GT6Tools;
+import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
  * {@code /gt6tool} — the tool acceptance command (task p9-tool-crowbar spec ③; the
@@ -40,6 +42,12 @@ import gregtech6.registry.GT6Tools;
  *     at the face (a synthetic BlockHitResult, the miss-free constructor form), run the
  *     shared dispatch and assert the upstream 10000 return, the one-point durability
  *     payment and the cover leaving the store; the report names the inventory landing.</li>
+ * <li>{@code cut <pos> <side>} (task p10-tool-cutter spec ③) — give the fake player a
+ *     gt6:cutter and run the same-shape dispatch into
+ *     {@link GTCutterItem#cutterToolClick(UseOnContext)}; the report asserts the :76
+ *     10000 return, the one-point durability payment and the wire's CONNECTIONS mask
+ *     flipping (the connections before/after pair — the acceptance drives the flip
+ *     round-trip with two cuts against /gt6wire stat).</li>
  * </ul>
  *
  * <p>This is the TOOL_CROWBAR-id half of the ICoverableTE :246-247 OR gate — the
@@ -64,9 +72,15 @@ public final class GTToolCommand {
 					.executes(context -> dismantle(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP))
 					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
 						.executes(context -> dismantle(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
+								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))))
+			.then(Commands.literal("cut")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(context -> cut(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP))
+					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
+						.executes(context -> cut(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
 								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))));
 		event.getDispatcher().register(tTool);
-		LOGGER.info("Registered GT6 tool acceptance command /gt6tool (dismantle)");
+		LOGGER.info("Registered GT6 tool acceptance command /gt6tool (dismantle, cut)");
 	}
 
 	/** {@code down|up|north|south|west|east} → Direction (the GTCoverCommand parser shape). */
@@ -114,6 +128,44 @@ public final class GTToolCommand {
 			return 0;
 		}
 		source.sendSuccess(() -> Component.literal("gt6tool dismantle check OK: " + tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * Cutter-toggle the wire connection through the item's own dispatch (task
+	 * p10-tool-cutter spec ③, the dismantle shape): the fake player holds a gt6:cutter,
+	 * the synthetic hit lands at the block centre so the nine-grid resolves the clicked
+	 * face itself, and the report asserts the :76 10000 return, the 1-point durability
+	 * payment and the CONNECTIONS mask flip.
+	 */
+	private static int cut(CommandSourceStack source, BlockPos pos, Direction side) {
+		ServerLevel tLevel = source.getLevel();
+		BlockPos tTarget = pos != null ? pos : BlockPos.containing(source.getPosition());
+		if (!(tLevel.getBlockEntity(tTarget) instanceof GTWireBlockEntity tWire)) {
+			source.sendFailure(Component.literal("No GT6 wire BlockEntity at " + tTarget.toShortString()));
+			return 0;
+		}
+		int tConnectionsBefore = tWire.getConnections();
+		ItemStack tCutter = new ItemStack(GT6Tools.CUTTER.get());
+		var tFakePlayer = FakePlayerFactory.getMinecraft(tLevel);
+		tFakePlayer.getInventory().clearContent();
+		tFakePlayer.setItemInHand(InteractionHand.MAIN_HAND, tCutter);
+		// the same UseOnContext shape useOn receives: the synthetic centre hit pins the
+		// clicked face at the block pos (isInside=false, the plain four-arg constructor)
+		var tContext = new UseOnContext(tFakePlayer, InteractionHand.MAIN_HAND,
+				new BlockHitResult(Vec3.atCenterOf(tTarget), side, tTarget, false));
+		long tDamage = GTCutterItem.cutterToolClick(tContext);
+		int tConnectionsAfter = tWire.getConnections();
+		int tHeldDamage = tCutter.getDamageValue();
+		String tReport = String.format("gt6tool cut face %s at %s: toolDamage=%d, cutterDamage=%d/%d, connections %d->%d",
+				side, tTarget.toShortString(), tDamage, tHeldDamage, GTCutterItem.DURABILITY_POINTS,
+				tConnectionsBefore, tConnectionsAfter);
+		if (tDamage != GTCutterItem.TOOL_DAMAGE_PER_CUT || tHeldDamage != 1 || tConnectionsAfter == tConnectionsBefore) {
+			source.sendFailure(Component.literal("gt6tool cut FAILED: " + tReport));
+			return 0;
+		}
+		source.sendSuccess(() -> Component.literal("gt6tool cut check OK: " + tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
 	}
