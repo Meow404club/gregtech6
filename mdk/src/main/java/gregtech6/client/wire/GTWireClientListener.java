@@ -27,7 +27,10 @@ import gregtech6.registry.GTWireSpecs;
  * the first resource reload): every wire block registry path → its immutable
  * {@link GTWireBakedModel.Params} (borrowed texture set, insulated form, PX_P diameter).
  * The paths come from the {@link GTWireSpecs} table (the W1 registration is driven by the
- * same rows, so path drift is structurally impossible) plus the two legacy p7 anchors.
+ * same rows, so path drift is structurally impossible) plus the two legacy p7 anchors —
+ * and, since task p11-wire-fiber-texture, the laser row ({@code wire_laser}, the fixed
+ * FIBER_WIRE+OVERLAY pair of MultiTileEntityWireLaser :121-122; the redstone rows stay
+ * out, their JSON-fallback migration is the p11-wire-brightness card).
  *
  * <p>② BAKE DISPATCH ({@link ModelEvent.ModifyBakingResult}, the only Forge hook whose
  * model map is still modifiable after baking — the {@link GTRenderModelListener} discipline):
@@ -80,6 +83,14 @@ public final class GTWireClientListener {
 	/**
 	 * The param table (idempotent, test-callable). Materials dereference here is safe:
 	 * MT.init ran during mod loading, long before client setup / the first bake.
+	 *
+	 * <p>Task p11-wire-fiber-texture: the LASER rows join the table (the p10 placeholder
+	 * card left them off — the {@code wire_laser} blockstate fell back to the shared JSON
+	 * cube). From now on every per-state key {@code gt6:wire_laser#connections=0..63} AND
+	 * the item key carry a {@link GTWireBakedModel} in the fiber form (the fixed
+	 * FIBER_WIRE+OVERLAY pair, MultiTileEntityWireLaser :121-122): the same swap the
+	 * 620 electric rows get, the redstone family deliberately stays on the JSON fallback
+	 * (the p11-wire-brightness card owns that migration).
 	 */
 	public static synchronized void buildParams() {
 		if (sBuilt) return;
@@ -88,6 +99,13 @@ public final class GTWireClientListener {
 		for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) {
 			PARAMS.put(GTWireSpecs.registryName(tVariant), new GTWireBakedModel.Params(
 					GTWireTextures.wireSprite(GTWireTextures.blockSetOf(tVariant.row().material().get())),
+					tVariant.insulated(), tVariant.diameter()));
+		}
+		// task p11 — the laser pair: base FIBER_WIRE (tint 0 = the mRGBa dye, the row
+		// material MT.NULL) + untinted FIBER_WIRE_OVERLAY (WireLaser :121-122, no glow).
+		for (GTWireSpecs.Variant tVariant : GTWireSpecs.laserVariants()) {
+			PARAMS.put(GTWireSpecs.registryName(tVariant), new GTWireBakedModel.Params(
+					GTWireTextures.fiberSprite(), GTWireTextures.fiberOverlaySprite(),
 					tVariant.insulated(), tVariant.diameter()));
 		}
 		sBuilt = true;
@@ -99,7 +117,7 @@ public final class GTWireClientListener {
 		return PARAMS.get(aRegistryPath);
 	}
 
-	/** The table size — 620 family rows + 2 legacy anchors (smoke assertion). */
+	/** The table size — 620 electric rows + 1 laser row + 2 legacy anchors (smoke assertion). */
 	public static int paramsCount() {
 		return PARAMS.size();
 	}
