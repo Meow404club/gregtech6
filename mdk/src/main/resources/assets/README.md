@@ -215,3 +215,25 @@ Public Domain Dedication** (same upstream `README.md` block as above).
 Declared deviation: the painted-foam colour variant (`isPainted() ? mRGBa`)
 is not ported — foam is not in this card's scope, the unpainted gray-64 jacket
 is rendered.
+
+Redstone Conductor cover textures, task p10-cover-conductor-redstone: the 2
+PNGs under `gt6/textures/block/redstone_conductor/` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/covers/redstoneconductor/`
+(the `CoverRedstoneConductorIN.java:35` / `CoverRedstoneConductorOUT.java:63`
+`sTexture` single sprites), byte-identical to upstream, sha256 verified:
+
+- `in.png`           `161950d47ab5c59cecab653dff1b39dba7bf762bdeba34bccd39bf8530a47435`
+- `out.png`          `ba5343909a38a13761d5942b1fef5983cdb6be22627c5519803b4114ec9e7ca6`
+
+Path mapping (declared, the redstone-emitter precedent): upstream
+`machines/covers/redstoneconductor/<in|out>` is lowercased/underscored to
+`redstone_conductor/<in|out>` (1.20.1 `ResourceLocation` charset), landing
+under `textures/block/` — the vanilla block atlas `directory("block")` source
+auto-stitches the sprite ids `gt6:block/redstone_conductor/<in|out>` with zero
+extra atlas wiring. The upstream `BACKGROUND_COVER` layer
+(covers/base.png, the attachment/holder faces) is NOT borrowed — it folds into
+the single-sprite plate like every cover (AbstractCoverDefault :71-72 defaults,
+the p9 emitter note).
+
+Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
