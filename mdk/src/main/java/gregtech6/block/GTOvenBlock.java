@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -99,6 +100,33 @@ public class GTOvenBlock extends GTEntityBlock {
 	public int getDirectSignal(BlockState aState, BlockGetter aLevel, BlockPos aPos, Direction aDirection) {
 		// upstream :433-438 isProvidingStrongPower — same bridge shape as getSignal.
 		return bridgeSignal(aLevel, aPos, aDirection, super.getDirectSignal(aState, aLevel, aPos, aDirection), true);
+	}
+
+	@Override
+	public void neighborChanged(BlockState aState, Level aLevel, BlockPos aPos, Block aBlock, BlockPos aFromPos, boolean aIsMoving) {
+		// upstream TileEntityBase06Covers.java:382 onNeighborBlockChange — the host-side
+		// half of the cover dispatch (the 1.20.1 counterpart of the 1.7.10
+		// onNeighborBlockChange notification is this Block hook, BlockBehaviour.java:138).
+		// Every cover on the block receives onBlockUpdate — the seam the redstone
+		// conductor OUT face refreshes its cached value through (task
+		// p10-cover-conductor-redstone; the seam existed in CoverData.onBlockUpdate with
+		// zero callers until this override). super keeps the vanilla debug-packet default.
+		super.neighborChanged(aState, aLevel, aPos, aBlock, aFromPos, aIsMoving);
+		dispatchCoverBlockUpdate(aLevel, aPos);
+	}
+
+	/**
+	 * The :382 dispatch body — every cover on a coverable BE at {@code aPos} receives
+	 * {@code onBlockUpdate}. Static so the offline truth tables can drive it without
+	 * constructing the block (the {@link #bridgeSignal} precedent — the live
+	 * notification path is covered by the RCON chain). Covers gate their own writes
+	 * server-side (the emitter :151 shape), so the dispatch stays unguarded like
+	 * upstream.
+	 */
+	public static void dispatchCoverBlockUpdate(BlockGetter aLevel, BlockPos aPos) {
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable && tCoverable.hasCovers()) {
+			tCoverable.getCovers().onBlockUpdate();
+		}
 	}
 
 	/**
