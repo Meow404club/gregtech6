@@ -618,7 +618,16 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 		BlockPos tTarget = getBlockPos().relative(Direction.from3DDataValue(aSide));
 		BlockState tState = getLevel().getBlockState(tTarget);
 		boolean tCorrection = tState.getBlock() instanceof RedStoneWireBlock || tState.isRedstoneConductor(getLevel(), tTarget); // :144
-		return UT6.bind4(UT6.divup(mRedstone, GTWireSpecs.MAX_RANGE) - (tCorrection ? 1 : 0));
+		return emissionValue(mRedstone, tCorrection);
+	}
+
+	/**
+	 * The :144 emission expression, exact — {@code bind4(divup(mRedstone, MAX_RANGE) -
+	 * correction)} — lifted as a static so the offline truth tables drive the vanilla
+	 * output formula (including the neighbour-correction branch) with no Level.
+	 */
+	public static byte emissionValue(long aRedstone, boolean aNeighbourCorrection) {
+		return UT6.bind4(UT6.divup(aRedstone, GTWireSpecs.MAX_RANGE) - (aNeighbourCorrection ? 1 : 0));
 	}
 
 	/**
