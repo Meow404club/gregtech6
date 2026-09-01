@@ -54,15 +54,21 @@ public final class GT6LootTables extends LootTableProvider {
     /**
      * The wire-family block list this second provider owns: the 620 GTWireSpecs variants
      * (datagen JVM) plus, since task p10-wire-contact-damage (the R1 review handoff), the
-     * 6 redstone-family blocks — they are the same wire carrier block (GTWireBlock) and
-     * breaking a placed one must drop the item, the identical upstream Drops==null
-     * self-drop default. The two material-less p7 legacy anchors keep shipping without a
-     * table (pre-existing state, not this card's delta).
+     * 6 redstone-family blocks, plus, since task p11-wire-laser-loot, the laser-family
+     * blocks — they are the same wire carrier block (GTWireBlock) and breaking a placed
+     * one must drop the item, the identical upstream Drops==null self-drop default
+     * (PrefixBlock.java:227; the laser carrier is MultiTileEntityWireLaser, the same
+     * gregapi Drops machinery, MultiTileEntityWireLaser.java:48 extends
+     * TileEntityBase10ConnectorRendered). There is NO separate laser loot path: until this
+     * card the single {@code wire_laser} block shipped table-less and broke into nothing.
+     * The two material-less p7 legacy anchors keep shipping without a table (pre-existing
+     * state, not this card's delta).
      */
     public static List<Block> wireLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         for (RegistryObject<GTWireBlock> tWire : GTWires.FAMILY_BLOCKS) rBlocks.add(tWire.get());
         for (RegistryObject<GTWireBlock> tWire : GTWires.REDSTONE_BLOCKS) rBlocks.add(tWire.get());
+        for (RegistryObject<GTWireBlock> tWire : GTWires.LASER_BLOCKS) rBlocks.add(tWire.get());
         return rBlocks;
     }
 
