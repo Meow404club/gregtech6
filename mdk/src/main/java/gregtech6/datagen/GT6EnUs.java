@@ -9,6 +9,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.GT6Mod;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTWireSpecs;
@@ -65,9 +66,14 @@ public final class GT6EnUs extends LanguageProvider {
     /**
      * Tool keys (task p9-tool-crowbar spec ④): the crowbar display name — the upstream
      * tool family name ("Crowbar", the GT_Tool_Crowbar registration row wording).
+     * Task p10-tool-creative-tab: the "Tools" creative tab title (the upstream ToolsGT
+     * meta-tool category, Loader_Tools.java:114-145 registration rows; the key comes from
+     * GT6Tools.TAB_TITLE_KEY so the lang face cannot drift from the registered tab —
+     * the offline test pins the literal on both sides).
      */
     private void addTools() {
         add("item.gt6.crowbar", "Crowbar");
+        add(GT6Tools.TAB_TITLE_KEY, "Tools");
     }
 
     /**
