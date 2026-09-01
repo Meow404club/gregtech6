@@ -329,12 +329,20 @@ public class GTWireBlock extends GTEntityBlock {
 
 	/**
 	 * The per-family BET (task p10): redstone rows resolve GTWires.WIRE_REDSTONE_BE (the 6
-	 * redstone blocks), electric rows keep GTBlockEntities.WIRE_ELECTRIC_BE (the p7 pair +
-	 * the 620 family) — the same BE CLASS mounts both, the family gate lives inside it.
+	 * redstone blocks), laser rows resolve GTWires.WIRE_LASER_BE (task
+	 * p10-wire-laser-placeholder — the 1 laser block, the WIRE_REDSTONE_BE precedent:
+	 * the valid-block list MUST carry every block that stamps the BET, the
+	 * promotePendingBlockEntity lesson), electric rows keep
+	 * GTBlockEntities.WIRE_ELECTRIC_BE (the p7 pair + the 620 family) — the same BE CLASS
+	 * mounts all three, the family gate lives inside it. (Task p10-wire-laser-placeholder
+	 * NARROW touch: this ternary line is the registration-required branch for the laser
+	 * BET mount; everything else in this file is untouched.)
 	 */
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
-		return mFamily == Family.REDSTONE ? GTWires.WIRE_REDSTONE_BE.get() : GTBlockEntities.WIRE_ELECTRIC_BE.get();
+		return mFamily == Family.REDSTONE ? GTWires.WIRE_REDSTONE_BE.get()
+				: mFamily == Family.LASER ? GTWires.WIRE_LASER_BE.get()
+				: GTBlockEntities.WIRE_ELECTRIC_BE.get();
 	}
 
 	@Override

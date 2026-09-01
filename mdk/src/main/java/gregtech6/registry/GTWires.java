@@ -85,7 +85,16 @@ public final class GTWires {
 	/** The family BlockItems, same order (stacksTo = the upstream literal 64/n ladder). */
 	public static final List<RegistryObject<Item>> FAMILY_ITEMS = new ArrayList<>();
 
-	/** The selector index: registry path -> family block (GTWireCommand / tests). */
+	/**
+	 * The selector index: registry path -> family block (GTWireCommand / tests). Task
+	 * p10-wire-laser-placeholder: the laser path ({@code wire_laser}) ALSO keys in here —
+	 * this map is the {@code /gt6wire place <registry-path>} resolution channel, and keying
+	 * the laser block into it lets the EXISTING command branch place and read the laser
+	 * wire with ZERO command-surface change (the card's "reuse the existing family path,
+	 * zero special logic"). The lists stay family-pure: {@link #FAMILY_BLOCKS} remains the
+	 * ELECTRIC-only block list (the WIRE_ELECTRIC_BE valid-block source), the laser block
+	 * lives in {@link #LASER_BLOCKS}.
+	 */
 	public static final Map<String, RegistryObject<GTWireBlock>> FAMILY_BY_NAME = new LinkedHashMap<>();
 
 	static {
@@ -145,6 +154,51 @@ public final class GTWires {
 		return rBlocks;
 	}
 
+	// -------------------------------------------------------------------------
+	// the p10-wire-laser-placeholder: 1 per-pair registration over GTWireSpecs.laserVariants()
+	// -------------------------------------------------------------------------
+
+	/** The laser-family blocks (Loader:1814-1815 — exactly one, the bare fiber wire). */
+	public static final List<RegistryObject<GTWireBlock>> LASER_BLOCKS = new ArrayList<>();
+
+	/** The laser-family BlockItems, same order. */
+	public static final List<RegistryObject<Item>> LASER_ITEMS = new ArrayList<>();
+
+	/** The laser selector index: registry path -> family block (tests / the FAMILY_BY_NAME channel). */
+	public static final Map<String, RegistryObject<GTWireBlock>> LASER_BY_NAME = new LinkedHashMap<>();
+
+	static {
+		for (GTWireSpecs.Variant tVariant : GTWireSpecs.laserVariants()) {
+			String tName = GTWireSpecs.registryName(tVariant);
+			if (LASER_BY_NAME.containsKey(tName)) throw new IllegalStateException("gt6 laser wire family: duplicate registry name " + tName);
+			// task p10-wire-laser-placeholder — the laser block carries the LASER family column;
+			// voltage 0 / amperage 1 / loss 0 (upstream getEnergyLossPerMeter :114 = 0 — the
+			// LOSSLESS wire; the Long.MAX_VALUE LU ratings stay the GTWireSpecs.LASER_CAPACITY
+			// data pin, the EU face family is gated off at the BE), diameter PX_P[6] (:1815
+			// NBT_DIAMETER), maxStack 64 (:1815), CONTACTDAMAGE F (:1815 — the inert family).
+			RegistryObject<GTWireBlock> tBlock = BLOCKS.register(tName,
+					() -> new GTWireBlock(0, 1, tVariant.loss(),
+							tVariant.row().material().get(), tVariant.size(), tVariant.insulated(),
+							tVariant.diameter(), GTWireSpecs.Row.Family.LASER, BlockBehaviour.Properties.of()
+									.strength(1.0F, 2.0F).sound(SoundType.COPPER))); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0 (:1815)
+			RegistryObject<Item> tItem = ITEMS.register(tName,
+					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack())));
+			LASER_BLOCKS.add(tBlock);
+			LASER_ITEMS.add(tItem);
+			LASER_BY_NAME.put(tName, tBlock);
+			// the /gt6wire place channel (see FAMILY_BY_NAME) — the existing command branch
+			// resolves the laser path from here, zero GTWireCommand surface.
+			FAMILY_BY_NAME.put(tName, tBlock);
+		}
+	}
+
+	/** Every laser-wire block this registry owns — the WIRE_LASER_BE valid-block list. */
+	public static Block[] laserBlockArray() {
+		Block[] rBlocks = new Block[LASER_BLOCKS.size()];
+		for (int i = 0; i < LASER_BLOCKS.size(); i++) rBlocks[i] = LASER_BLOCKS.get(i).get();
+		return rBlocks;
+	}
+
 	/**
 	 * The shared redstone-wire BET (task p10): one BlockEntityType over the 6 family blocks,
 	 * same BET class as the electric wire (the shared-carrier ruling — the family gate lives
@@ -158,6 +212,19 @@ public final class GTWires {
 	public static final RegistryObject<BlockEntityType<GTWireBlockEntity>> WIRE_REDSTONE_BE =
 			BLOCK_ENTITY_TYPES.register("wire_redstone", () -> BlockEntityType.Builder.of(
 					GTWireBlockEntity::new, redstoneBlockArray()).build(null));
+
+	/**
+	 * The shared laser-wire BET (task p10-wire-laser-placeholder): one BlockEntityType over
+	 * the 1 laser family block, same BET class as the electric/redstone wires (the
+	 * shared-carrier ruling — the family gate lives on the BE itself), the WIRE_REDSTONE_BE
+	 * precedent verbatim. Owns its own DeferredRegister so GTBlockEntities stays untouched;
+	 * the Block event fires before the BlockEntityType event across DeferredRegisters of
+	 * the same listener (this file registers BLOCKS before BLOCK_ENTITY_TYPES in
+	 * onModConstruct — the GTBlockEntities doc guarantee).
+	 */
+	public static final RegistryObject<BlockEntityType<GTWireBlockEntity>> WIRE_LASER_BE =
+			BLOCK_ENTITY_TYPES.register("wire_laser", () -> BlockEntityType.Builder.of(
+					GTWireBlockEntity::new, laserBlockArray()).build(null));
 
 	/**
 	 * Every electric-wire block this registry owns (the p7 legacy pair + the 620 family) —
@@ -197,6 +264,12 @@ public final class GTWires {
 						// the per-category tab split stays the standing P9 observation item).
 						for (RegistryObject<Item> tRedstoneItem : REDSTONE_ITEMS) {
 							aOutput.accept(new ItemStack(tRedstoneItem.get()));
+						}
+						// task p10-wire-laser-placeholder: the laser item rides the same flat tab
+						// (upstream "Laser Wires" is its own MTE category, Loader:1815 — the same
+						// standing observation item as the redstone rows above).
+						for (RegistryObject<Item> tLaserItem : LASER_ITEMS) {
+							aOutput.accept(new ItemStack(tLaserItem.get()));
 						}
 					})
 					.build());

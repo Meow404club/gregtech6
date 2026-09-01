@@ -74,6 +74,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         Map<String, ModelFile> tWireShared = new HashMap<>();
         addWireFamily(tWireShared); // task p9-wire-family-w1 ⑥ — the 620-block loop, isolated section
         addRedstoneWireFamily(tWireShared); // task p10-wire-redstone-family — the 6-block redstone loop
+        addLaserWireFamily(tWireShared); // task p10-wire-laser-placeholder — the 1-block laser loop
         addOven();
         addMachine(GTMachines.SHREDDER.get(), "shredder"); // task p7-basicmachine-family ④
         addMachine(GTMachines.CRUSHER.get(), "crusher");
@@ -349,6 +350,33 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         LOGGER.info("GT6 redstone wire family: {} blockstates over the shared (set) model pool",
                 GTWireSpecs.EXPECTED_REDSTONE_VARIANTS);
+    }
+
+    /**
+     * Task p10-wire-laser-placeholder — the laser-wire family (1 block over
+     * {@link GTWireSpecs#LASER_ROWS}), the addWireFamily pipe over the laser variant list.
+     * The row material is MT.NULL (upstream NBT_MATERIAL MT.NULL, Loader:1815), which
+     * resolves to the {@code none} set (GTWireTextures.blockSetOf empty-list rule) — the
+     * W2 borrow already shipped that set (the Superconductor row), so zero new PNGs.
+     * Upstream renders the laser wire with the FIXED FIBER_WIRE texture pair
+     * (MultiTileEntityWireLaser :121-122, non-material-dyed) — a distinct fiber visual
+     * stays a render-pool item; the shared tinted fallback cube is the placeholder form,
+     * exactly like the redstone blocks. The same single property-less variant wildcard
+     * maps the 64 CONNECTIONS states onto the shared model (no 64-variant listing).
+     */
+    private void addLaserWireFamily(Map<String, ModelFile> aShared) {
+        for (GTWireSpecs.Variant tVariant : GTWireSpecs.laserVariants()) {
+            String tName = GTWireSpecs.registryName(tVariant);
+            String tSet = blockSetOf(tVariant.row().material().get());
+            String tModelName = "block/materialicons/" + tSet + "/wire";
+            ModelFile tModel = aShared.computeIfAbsent(tModelName,
+                    tKey -> tintedCubeAll(tKey, modLoc("block/materialicons/" + tSet + "/wire")));
+            getVariantBuilder(GTWires.LASER_BY_NAME.get(tName).get())
+                    .partialState().setModels(new ConfiguredModel(tModel));
+            itemModels().withExistingParent(tName, modLoc(tModelName));
+        }
+        LOGGER.info("GT6 laser wire family: {} blockstates over the shared (set) model pool",
+                GTWireSpecs.EXPECTED_LASER_VARIANTS);
     }
 
     /**
