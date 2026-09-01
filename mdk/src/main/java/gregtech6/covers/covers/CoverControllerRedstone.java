@@ -87,7 +87,7 @@ public class CoverControllerRedstone extends AbstractCoverDefault {
 	@Override
 	public void onCoverRemove(byte aCoverSide, CoverData aData, @Nullable Entity aPlayer) {
 		super.onCoverRemove(aCoverSide, aData, aPlayer);
-		if (aData.mTileEntity instanceof ITileEntitySwitchableOnOff tTE && tTE.self().getLevel() != null) {
+		if (aData.mTileEntity instanceof ITileEntitySwitchableOnOff tTE && aData.mTileEntity.self().getLevel() != null) {
 			tTE.setStateOnOff(true);
 		}
 	}
@@ -99,7 +99,7 @@ public class CoverControllerRedstone extends AbstractCoverDefault {
 	@Override
 	public void onCoverLoaded(byte aCoverSide, CoverData aData) {
 		super.onCoverLoaded(aCoverSide, aData);
-		if (aData.mTileEntity instanceof ITileEntitySwitchableOnOff tTE && tTE.self().getLevel() != null) {
+		if (aData.mTileEntity instanceof ITileEntitySwitchableOnOff tTE && aData.mTileEntity.self().getLevel() != null) {
 			tTE.setStateOnOff(getStateOnOff(aCoverSide, aData));
 		}
 	}
@@ -107,7 +107,7 @@ public class CoverControllerRedstone extends AbstractCoverDefault {
 	@Override
 	public void onCoverPlaced(byte aCoverSide, CoverData aData, @Nullable Entity aPlayer, ItemStack aCover) {
 		super.onCoverPlaced(aCoverSide, aData, aPlayer, aCover);
-		if (aData.mTileEntity instanceof ITileEntitySwitchableOnOff tTE && tTE.self().getLevel() != null) {
+		if (aData.mTileEntity instanceof ITileEntitySwitchableOnOff tTE && aData.mTileEntity.self().getLevel() != null) {
 			tTE.setStateOnOff(getStateOnOff(aCoverSide, aData));
 		}
 	}
@@ -118,7 +118,7 @@ public class CoverControllerRedstone extends AbstractCoverDefault {
 
 	@Override
 	public void onBlockUpdate(byte aCoverSide, CoverData aData) {
-		if (aData.mTileEntity instanceof ITileEntitySwitchableOnOff tTE && tTE.self().getLevel() != null) {
+		if (aData.mTileEntity instanceof ITileEntitySwitchableOnOff tTE && aData.mTileEntity.self().getLevel() != null) {
 			tTE.setStateOnOff(getStateOnOff(aCoverSide, aData));
 		}
 	}
