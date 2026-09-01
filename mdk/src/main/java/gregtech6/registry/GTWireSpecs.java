@@ -116,8 +116,31 @@ public final class GTWireSpecs {
 			return new Row(idComment, token, material, 0, 0, 1, loss, loss, false, false, true, Family.REDSTONE, luminous);
 		}
 
-		/** The family column (task p10): ELECTRIC = the 620 addElectricWires variants, REDSTONE = the push-BFS signal family. */
-		public enum Family { ELECTRIC, REDSTONE }
+		/**
+		 * The family column (task p10): ELECTRIC = the 620 addElectricWires variants (the EU
+		 * pump), REDSTONE = the push-BFS signal family, LASER = the LU placeholder family
+		 * (task p10-wire-laser-placeholder — the data pins land, the LU flood is a declared
+		 * shell, see {@link #laserVariants}).
+		 */
+		public enum Family { ELECTRIC, REDSTONE, LASER }
+
+		/**
+		 * The laser-row factory (task p10-wire-laser-placeholder, the
+		 * Loader_MultiTileEntities.java:1814-1815 transcription): upstream registers exactly
+		 * ONE "Laser Fiber Wire" (24900) — no size ladder, no cable form — with
+		 * {@code NBT_MATERIAL, MT.NULL} (the row is material-less in spirit, the fiber
+		 * carries no alloy), {@code NBT_DIAMETER, PX_P[6]}, {@code NBT_CONTACTDAMAGE, F}
+		 * (no shock, and the laser class mounts no burn machinery at all — inert family).
+		 * The loss is upstream {@code getEnergyLossPerMeter = 0} (:114, the LOSSLESS wire)
+		 * and the LU ratings {@code Long.MAX_VALUE} (:101-106/:112-113) stay the
+		 * {@link #LASER_CAPACITY} data pin — the EU face family is NOT mounted (voltage 0).
+		 * The token derives from the upstream tile-entity name
+		 * {@code gt.multitileentity.connector.wire.laser} (:128), NOT from the material
+		 * internal name — the electric drift lock does not apply to this row.
+		 */
+		public static Row laser(String idComment, String token) {
+			return new Row(idComment, token, () -> MT.NULL, 0, 0, 1, 0, 0, false, false, false, Family.LASER, false);
+		}
 	}
 
 	/** The 30 registration rows, verbatim in Loader_MultiTileEntities.java:1914-1950 file order. */
@@ -217,6 +240,45 @@ public final class GTWireSpecs {
 	public static final int EXPECTED_REDSTONE_VARIANTS = 6;
 
 	/**
+	 * The LU carrier ratings of the laser family, verbatim from
+	 * MultiTileEntityWireLaser.java:101-106 (getEnergySizeInput/OutputRecommended/Max =
+	 * {@code Long.MAX_VALUE}) and :112-113 (getEnergyMaxSize/getEnergyMaxPackets for LU =
+	 * {@code Long.MAX_VALUE}) — pure DATA on this port: the D1-D4 energy net mounts only
+	 * the RU/KU/EU carriers, so the laser family accepts NOTHING (the BE family gate), and
+	 * these values revive with the LU carrier card.
+	 */
+	public static final long LASER_CAPACITY = Long.MAX_VALUE;
+
+	/**
+	 * The laser-family registration rows (task p10-wire-laser-placeholder): exactly ONE
+	 * row, verbatim from Loader_MultiTileEntities.java:1814-1815 — upstream registers a
+	 * single "Laser Fiber Wire" (id 24900, maxStack 64, NBT_DIAMETER PX_P[6],
+	 * NBT_CONTACTDAMAGE F). Kept OUT of {@link #ROWS} (the 30 electric rows) and
+	 * {@link #REDSTONE_ROWS} (the 3 signal rows), the same census-separation discipline.
+	 */
+	public static final List<Row> LASER_ROWS = List.of(
+		/* :1814-1815 */ Row.laser("Loader:1814-1815", "laser")
+	);
+
+	/** The laser census yardstick: 1 row × 1 form (the bare fiber wire; no cable upstream). */
+	public static final int EXPECTED_LASER_VARIANTS = 1;
+
+	/**
+	 * The laser-family spectrum (task p10-wire-laser-placeholder): ONE variant — the bare
+	 * fiber wire at PX_P[6] diameter, maxStack 64, loss 0 (upstream
+	 * getEnergyLossPerMeter :114 = 0). There is NO size ladder and NO cable form upstream
+	 * (Loader:1815 is a single aRegistry.add), so the registry path carries no
+	 * {@code _gt} tail: {@code wire_laser}.
+	 */
+	public static List<Variant> laserVariants() {
+		List<Variant> rVariants = new ArrayList<>(1);
+		for (Row tRow : LASER_ROWS) {
+			rVariants.add(new Variant(tRow, false, 1, tRow.voltage(), tRow.amperage(), tRow.lossWire(), 6, 64, false)); // PX_P[6] :1815
+		}
+		return rVariants;
+	}
+
+	/**
 	 * The redstone-family spectrum (task p10-wire-redstone-family): 3 rows × 2 forms, kept OUT
 	 * of {@link #variants()} (that list is the 620 electric variants the census pins). Upstream
 	 * registers exactly ONE wire and ONE cable per material — there is NO size ladder on the
@@ -239,10 +301,11 @@ public final class GTWireSpecs {
 	 * (the snake-cased material internal name, the GTMaterialItems.itemIdOf composition rule).
 	 * The redstone family (task p10) has NO size ladder, so its paths carry no {@code _gt<NN>}
 	 * tail: {@code wire_red_alloy} / {@code cable_red_alloy} / ... (the upstream registration
-	 * is one id per form, Loader:1893-1902).
+	 * is one id per form, Loader:1893-1902). The laser family (task p10-wire-laser-placeholder)
+	 * is the same one-id form: {@code wire_laser} (Loader:1814-1815, a single registration).
 	 */
 	public static String registryName(Variant aVariant) {
-		if (aVariant.row().family() == Row.Family.REDSTONE) {
+		if (aVariant.row().family() == Row.Family.REDSTONE || aVariant.row().family() == Row.Family.LASER) {
 			return (aVariant.insulated() ? "cable_" : "wire_") + aVariant.row().token();
 		}
 		return (aVariant.insulated() ? "cable_" : "wire_") + aVariant.row().token() + "_gt"
@@ -253,9 +316,13 @@ public final class GTWireSpecs {
 	 * The display name — the electric form is the upstream row string
 	 * {@code "1x " + aMat.getLocal() + " Wire"/"Cable"} (:72/:89); the redstone form is the
 	 * upstream registration name without a size prefix ("RedAlloy Wire" :1894, "Lumium
-	 * Wirelamp" :1900 — the bare Lumium wire is the WIRELAMP, its cable is a plain "Cable").
+	 * Wirelamp" :1900 — the bare Lumium wire is the WIRELAMP, its cable is a plain "Cable");
+	 * the laser form is the upstream registration name verbatim, "Laser Fiber Wire"
+	 * (Loader:1815 — the row is material-less (NBT_MATERIAL MT.NULL), so there is no
+	 * material local name to compose).
 	 */
 	public static String displayName(Variant aVariant) {
+		if (aVariant.row().family() == Row.Family.LASER) return "Laser Fiber Wire"; // Loader:1815 verbatim
 		OreDictMaterial tMaterial = aVariant.row().material().get();
 		String tLocal = tMaterial == null || tMaterial.mNameLocal == null ? aVariant.row().idComment() : tMaterial.mNameLocal;
 		if (aVariant.row().family() == Row.Family.REDSTONE) {
@@ -308,5 +375,10 @@ public final class GTWireSpecs {
 				MOD_ID + " wire table: expected 3 redstone rows (Loader:1893-1902), found " + REDSTONE_ROWS.size());
 		if (redstoneVariants().size() != EXPECTED_REDSTONE_VARIANTS) throw new IllegalStateException(
 				MOD_ID + " wire table: expected " + EXPECTED_REDSTONE_VARIANTS + " redstone variants, found " + redstoneVariants().size());
+		// task p10-wire-laser-placeholder — the laser family split (1 row x 1 form, Loader:1814-1815)
+		if (LASER_ROWS.size() != 1) throw new IllegalStateException(
+				MOD_ID + " wire table: expected 1 laser row (Loader:1814-1815), found " + LASER_ROWS.size());
+		if (laserVariants().size() != EXPECTED_LASER_VARIANTS) throw new IllegalStateException(
+				MOD_ID + " wire table: expected " + EXPECTED_LASER_VARIANTS + " laser variants, found " + laserVariants().size());
 	}
 }

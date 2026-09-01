@@ -11,6 +11,7 @@
 package gregtech6.registry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,6 +23,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.registry.GTWireSpecs.Row;
 import gregtech6.registry.GTWireSpecs.Variant;
@@ -264,5 +266,54 @@ public class GTWireSpecsCensusTest {
         assertNull(GTWireSpecs.findRedstone("unobtainium", false));
         assertNull(GTWireSpecs.findRedstone("tin", false), "the electric tokens are not redstone rows");
         assertNull(GTWireSpecs.find("red_alloy", 1, false), "the redstone tokens are not electric rows");
+    }
+
+    // -------------------------------------------------------------------------
+    // the laser family (task p10-wire-laser-placeholder, Loader:1814-1815)
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void laserFamilyCensus() {
+        assertEquals(1, GTWireSpecs.LASER_ROWS.size(), "Loader:1814-1815 registers exactly ONE laser row");
+        List<Variant> tVariants = GTWireSpecs.laserVariants();
+        assertEquals(1, tVariants.size(), "one form only — the bare fiber wire, NO size ladder, NO cable upstream");
+        assertEquals(GTWireSpecs.EXPECTED_LASER_VARIANTS, tVariants.size());
+        // the electric and redstone censuses stay EXACTLY theirs — three separate pipelines
+        assertEquals(620, GTWireSpecs.variants().size());
+        assertEquals(30, GTWireSpecs.ROWS.size());
+        assertEquals(3, GTWireSpecs.REDSTONE_ROWS.size());
+        assertEquals(6, GTWireSpecs.redstoneVariants().size());
+    }
+
+    @Test
+    public void laserRowIsDirectTranslation() {
+        // Loader:1814-1815 — "Laser Fiber Wire", 24900, NBT_MATERIAL MT.NULL, NBT_DIAMETER
+        // PX_P[6], NBT_CONTACTDAMAGE F, maxStack 64; lossless (:114), LU ratings Long.MAX_VALUE
+        Row tLaser = GTWireSpecs.LASER_ROWS.get(0);
+        assertEquals("laser", tLaser.token(), "the token derives from the TE name gt.multitileentity.connector.wire.laser (:128), not the material");
+        assertEquals(GTWireSpecs.Row.Family.LASER, tLaser.family());
+        assertEquals(MT.NULL, tLaser.material().get(), "NBT_MATERIAL MT.NULL (Loader:1815) — the row is material-less in spirit");
+        assertEquals(0, tLaser.lossWire(), "getEnergyLossPerMeter = 0 (MultiTileEntityWireLaser :114) — the LOSSLESS wire");
+        assertTrue(!tLaser.cable(), "a single registration :1815 — no cable form");
+        assertTrue(!tLaser.contactDamageWire() && !tLaser.contactDamageCable(), "NBT_CONTACTDAMAGE F (:1815); the laser class mounts no burn machinery at all");
+        assertEquals(0, tLaser.voltage(), "the EU face family is NOT mounted on the laser family");
+        assertTrue(!tLaser.luminous(), "FIBER_WIRE is a fixed texture, not a glowing material (:121-122)");
+        assertEquals(Long.MAX_VALUE, GTWireSpecs.LASER_CAPACITY, "the LU ratings :101-106/:112-113 stay the data pin");
+    }
+
+    @Test
+    public void laserVariantShapeAndName() {
+        Variant tLaser = GTWireSpecs.laserVariants().get(0);
+        assertFalse(tLaser.insulated(), "the bare fiber wire only");
+        assertEquals(6, tLaser.diameter(), "NBT_DIAMETER PX_P[6] (Loader:1815)");
+        assertEquals(64, tLaser.maxStack(), "the :1815 maxStack literal");
+        assertEquals(0, tLaser.voltage());
+        assertEquals(0, tLaser.loss());
+        assertEquals("wire_laser", GTWireSpecs.registryName(tLaser), "no _gt tail — a single id upstream");
+        assertEquals("Laser Fiber Wire", GTWireSpecs.displayName(tLaser), "the :1815 registration name verbatim");
+        // no collision with the 620 electric names
+        Set<String> tElectricNames = new HashSet<>();
+        for (Variant tVariant : GTWireSpecs.variants()) tElectricNames.add(GTWireSpecs.registryName(tVariant));
+        assertFalse(tElectricNames.contains("wire_laser"));
     }
 }
