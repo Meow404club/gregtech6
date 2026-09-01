@@ -48,6 +48,16 @@ public final class UT6 {
 		return i;
 	}
 
+	/** Upstream UT.Code.bind4 (UT.java:1556) verbatim — the 0..15 vanilla redstone clamp. */
+	public static byte bind4(long aBoundValue) {
+		return (byte) Math.max(0, Math.min(15, aBoundValue));
+	}
+
+	/** Upstream UT.Code.divup (UT.java:1697-1699) verbatim — divides but rounds up. */
+	public static long divup(long aNumber, long aDivider) {
+		return aNumber / aDivider + (aNumber % aDivider == 0 ? 0 : 1);
+	}
+
 	/**
 	 * This Function determines the direction a Block gets when being Wrenched.
 	 * Upstream UT.java:1776-1798 verbatim — aSide is the clicked face, the hit

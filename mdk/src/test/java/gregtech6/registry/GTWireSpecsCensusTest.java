@@ -189,4 +189,80 @@ public class GTWireSpecsCensusTest {
         assertEquals("1x Superconductor Wire", GTWireSpecs.displayName(GTWireSpecs.find("superconductor", 1, false)));
         assertEquals("8x Tungsten Wire", GTWireSpecs.displayName(GTWireSpecs.find("tungsten", 8, false)));
     }
+
+    // -------------------------------------------------------------------------
+    // the redstone family (task p10-wire-redstone-family, Loader:1893-1902)
+    // -------------------------------------------------------------------------
+
+    /** The upstream losses as the raw long divisions (MAX_RANGE = Integer.MAX_VALUE, ITileEntityRedstoneWire :32). */
+    private static final long MAX_RANGE = Integer.MAX_VALUE;
+
+    @Test
+    public void redstoneFamilyCensus() {
+        assertEquals(3, GTWireSpecs.REDSTONE_ROWS.size(), "Loader:1893-1902 registers exactly 3 redstone material rows");
+        List<Variant> tVariants = GTWireSpecs.redstoneVariants();
+        assertEquals(6, tVariants.size(), "3 rows x 2 forms (wire + cable), NO size ladder upstream");
+        assertEquals(GTWireSpecs.EXPECTED_REDSTONE_VARIANTS, tVariants.size());
+        // the electric census stays EXACTLY the 620 — the redstone family is a separate pipeline
+        assertEquals(620, GTWireSpecs.variants().size());
+        assertEquals(30, GTWireSpecs.ROWS.size());
+        // every redstone row carries both forms, no contact damage, amperage 1 (upstream :80)
+        for (Row tRow : GTWireSpecs.REDSTONE_ROWS) {
+            assertTrue(tRow.cable(), "redstone rows register the cable form too");
+            assertTrue(!tRow.contactDamageWire() && !tRow.contactDamageCable(), "no CONTACTDAMAGE on Loader:1893-1902 (spec 7: no shock, no burn)");
+            assertEquals(1, tRow.amperage(), "the upstream PIPE_STATS_BANDWIDTH literal (Insulated :80)");
+            assertEquals(GTWireSpecs.Row.Family.REDSTONE, tRow.family());
+        }
+    }
+
+    @Test
+    public void redstoneFamilyRowsAreDirectTranslations() {
+        // RedAlloy, Loader:1893-1895 — loss MAX_RANGE/16, not luminous
+        Row tRedAlloy = GTWireSpecs.REDSTONE_ROWS.get(0);
+        assertEquals("red_alloy", tRedAlloy.token());
+        assertEquals(MAX_RANGE / 16, tRedAlloy.lossWire());
+        assertEquals(MAX_RANGE / 16, tRedAlloy.lossCable());
+        assertTrue(!tRedAlloy.luminous());
+        // Signalum, Loader:1896-1898 — loss MAX_RANGE/64 (the 4x range per strength point)
+        Row tSignalum = GTWireSpecs.REDSTONE_ROWS.get(1);
+        assertEquals("signalum", tSignalum.token());
+        assertEquals(MAX_RANGE / 64, tSignalum.lossWire());
+        assertEquals(MAX_RANGE / 64, tSignalum.lossCable());
+        assertTrue(!tSignalum.luminous());
+        // Lumium, Loader:1899-1901 — loss MAX_RANGE/16, the GLOWING material (MT.java:1792)
+        Row tLumium = GTWireSpecs.REDSTONE_ROWS.get(2);
+        assertEquals("lumium", tLumium.token());
+        assertEquals(MAX_RANGE / 16, tLumium.lossWire());
+        assertTrue(tLumium.luminous(), "Lumium carries GLOWING (mIsGlowing) — the wirelamp data pin");
+        // no voltage: the EU face family is not mounted on redstone wires
+        assertEquals(0, tRedAlloy.voltage());
+        assertEquals(134217727L, MAX_RANGE / 16, "Integer.MAX_VALUE/16 integer division");
+        assertEquals(33554431L, MAX_RANGE / 64, "Integer.MAX_VALUE/64 integer division");
+    }
+
+    @Test
+    public void redstoneVariantsShapesAndNames() {
+        // wire = PX_P[2] diameter, cable = PX_P[4]; both maxStack 64 (one form, no ladder)
+        for (Variant tVariant : GTWireSpecs.redstoneVariants()) {
+            assertEquals(1, tVariant.size());
+            assertEquals(tVariant.insulated() ? 4 : 2, tVariant.diameter(), "PX_P[2]/PX_P[4] (Loader:1893-1902 NBT_DIAMETER)");
+            assertEquals(64, tVariant.maxStack());
+            assertEquals(0, tVariant.voltage());
+        }
+        // registry names: no _gt tail (no size ladder upstream)
+        assertEquals("wire_red_alloy", GTWireSpecs.registryName(GTWireSpecs.findRedstone("red_alloy", false)));
+        assertEquals("cable_red_alloy", GTWireSpecs.registryName(GTWireSpecs.findRedstone("red_alloy", true)));
+        assertEquals("wire_signalum", GTWireSpecs.registryName(GTWireSpecs.findRedstone("signalum", false)));
+        assertEquals("cable_lumium", GTWireSpecs.registryName(GTWireSpecs.findRedstone("lumium", true)));
+        // display names: no size prefix; the bare Lumium wire is the WIRELAMP (Loader:1900)
+        assertEquals("Red Alloy Wire", GTWireSpecs.displayName(GTWireSpecs.findRedstone("red_alloy", false)));
+        assertEquals("Red Alloy Cable", GTWireSpecs.displayName(GTWireSpecs.findRedstone("red_alloy", true)));
+        assertEquals("Signalum Wire", GTWireSpecs.displayName(GTWireSpecs.findRedstone("signalum", false)));
+        assertEquals("Lumium Wirelamp", GTWireSpecs.displayName(GTWireSpecs.findRedstone("lumium", false)));
+        assertEquals("Lumium Cable", GTWireSpecs.displayName(GTWireSpecs.findRedstone("lumium", true)));
+        // selector edges
+        assertNull(GTWireSpecs.findRedstone("unobtainium", false));
+        assertNull(GTWireSpecs.findRedstone("tin", false), "the electric tokens are not redstone rows");
+        assertNull(GTWireSpecs.find("red_alloy", 1, false), "the redstone tokens are not electric rows");
+    }
 }
