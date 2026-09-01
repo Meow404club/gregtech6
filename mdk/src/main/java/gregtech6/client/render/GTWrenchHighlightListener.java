@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,6 +23,8 @@ import gregtech6.block.GTOvenBlock;
 import gregtech6.block.pipe.GTFluidPipeBlock;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.machines.TileEntityOven;
+import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
+import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 
 /**
  * The FORGE-bus listener of the wrench 3x3 grid overlay (task p5-wrench-ui-gtceu) —
@@ -40,9 +43,12 @@ import gregtech6.tileentity.machines.TileEntityOven;
  * <p>Filter = hoe held in either hand (the same {@code ToolActions.HOE_DIG} predicate
  * as {@link GTFluidPipeBlock#use} at :104 — the "shown means clickable" invariant)
  * hovering a {@link GTFluidPipeBlockEntity} (the connection/ioMask modes, task
- * p5-wrench-ui-gtceu) or a {@link TileEntityOven} (the front-rotation mode, task
+ * p5-wrench-ui-gtceu), a {@link TileEntityOven} (the front-rotation mode, task
  * p6-oven-rotation — shift marks the rotatable cells, the same predicate
- * {@link GTOvenBlock#use} rotates through); shift switches the display modes.
+ * {@link GTOvenBlock#use} rotates through) or a {@link TileEntityCokeOven} (the
+ * structure ghost preview, task p10-ghost-preview-poc — a formed shell shows only its
+ * outer frame, an unformed one the full 27-cell wireframe of the hardcoded pure
+ * pattern); shift switches the display modes.
  * Bare hands and other items never show the grid.
  */
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -75,6 +81,16 @@ public final class GTWrenchHighlightListener {
 			// the BE NBT, so the BE's own mFacing byte can be stale here
 			byte tFrontFacing = (byte) tOven.getBlockState().getValue(GTOvenBlock.FACING).get3DDataValue();
 			GTWrenchGridRenderer.renderOvenGrid(tPoseStack, tBuffers, tCamera, tTarget, tPlayer.isShiftKeyDown(), tFrontFacing);
+		} else if (tTile instanceof TileEntityCokeOven tOven) {
+			// task p10-ghost-preview-poc — the structure ghost. Same BlockState rule: the
+			// FACING/FORMED pair of the state is the client display authority (the BE's
+			// own mFacing/mStructureOkay can both be stale here), and the pattern is the
+			// renderer's hardcoded pure table — checkStructure2 is never run on the
+			// client (it carries the centre-cell removeBlock world write)
+			BlockState tState = tOven.getBlockState();
+			byte tFacing = (byte) tState.getValue(TileEntityBase10MultiBlockBase.FACING).get3DDataValue();
+			boolean tFormed = tState.getValue(TileEntityBase10MultiBlockBase.FORMED);
+			GTMultiBlockPreviewRenderer.renderPreview(tPoseStack, tBuffers, tCamera, tTarget.getBlockPos(), tFacing, tFormed);
 		}
 		// no cancel — the vanilla selection box renders as usual
 	}
