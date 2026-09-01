@@ -86,14 +86,17 @@ public class GT6ToolsCreativeTabTest {
 	}
 
 	/**
-	 * The display table: exactly one row (the crowbar) in display order — the p10 card
-	 * pins the cutter-free state; the cutter card appends row 2 and updates this test.
+	 * The display table: exactly two rows (the crowbar, then the cutter) in display
+	 * order — the p10-tool-cutter card appended row 2 (task p10-tool-creative-tab pinned
+	 * the cutter-free state before it).
 	 */
 	@Test
-	public void displayTableIsExactlyTheCrowbarRow() {
-		assertEquals(1, GT6Tools.TAB_TABLE.size(), "the Tools tab displays exactly the crowbar until the cutter lands");
+	public void displayTableIsExactlyTheCrowbarAndCutterRows() {
+		assertEquals(2, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the crowbar and the cutter");
 		assertSame(GT6Tools.CROWBAR, GT6Tools.TAB_TABLE.get(0), "row 0 is the registered crowbar item, not a parallel supplier");
+		assertSame(GT6Tools.CUTTER, GT6Tools.TAB_TABLE.get(1), "row 1 is the registered cutter item, not a parallel supplier");
 		assertEquals(rl("crowbar"), GT6Tools.TAB_TABLE.get(0).getId());
+		assertEquals(rl("cutter"), GT6Tools.TAB_TABLE.get(1).getId());
 	}
 
 	/**

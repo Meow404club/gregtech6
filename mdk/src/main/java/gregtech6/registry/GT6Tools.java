@@ -19,6 +19,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.GT6Mod;
 import gregtech6.items.tools.GTCrowbarItem;
+import gregtech6.items.tools.GTCutterItem;
 
 /**
  * The GT6 tool registration home — task p9-tool-crowbar spec ③, the ADR
@@ -66,15 +67,25 @@ public final class GT6Tools {
 			() -> new GTCrowbarItem(new Item.Properties().durability(GTCrowbarItem.DURABILITY_POINTS)));
 
 	/**
-	 * The "Tools" tab display table — one row per registered tool item, in display order.
-	 * Table-driven so the tool-family cards append ONE row each (the cutter,
-	 * p10-tool-cutter, appends the next row). Pure data: {@link RegistryObject#getId()}
-	 * reads the pre-registration name field (RegistryObject.java:287) and nothing here
-	 * resolves {@code get()} — the offline test asserts the table shape and the ITEMS
-	 * parity without touching the frozen registry; the displayItems generator below does
-	 * the runtime resolution (the GTWires.ELECTRIC_WIRES_TAB form).
+	 * The formal wire cutter — item id {@code gt6:cutter} (task p10-tool-cutter spec ③).
+	 * Single steel tier, durability 512 (upstream {@code 4*U} material-scaled,
+	 * Loader_Tools.java:131 — the ladder is a pool cut, the same ruling as the crowbar).
+	 * Upstream display name "Wire Cutter" (the same :131 registration row); no attack
+	 * attributes — the cutter is not a weapon (GT_Tool_WireCutter :53-65 cut).
 	 */
-	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR);
+	public static final RegistryObject<Item> CUTTER = ITEMS.register("cutter",
+			() -> new GTCutterItem(new Item.Properties().durability(GTCutterItem.DURABILITY_POINTS)));
+
+	/**
+	 * The "Tools" tab display table — one row per registered tool item, in display order.
+	 * Table-driven so the tool-family cards append ONE row each. Pure data:
+	 * {@link RegistryObject#getId()} reads the pre-registration name field
+	 * (RegistryObject.java:287) and nothing here resolves {@code get()} — the offline test
+	 * asserts the table shape and the ITEMS parity without touching the frozen registry;
+	 * the displayItems generator below does the runtime resolution (the
+	 * GTWires.ELECTRIC_WIRES_TAB form).
+	 */
+	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -84,9 +95,9 @@ public final class GT6Tools {
 
 	/**
 	 * The "Tools" category tab — id {@code gt6:tools}, title key {@link #TAB_TITLE_KEY},
-	 * icon and sole entry the crowbar. The
-	 * upstream analogue is the ToolsGT meta-tool block living in its own creative
-	 * category (the registration rows Loader_Tools.java:114-145).
+	 * icon the crowbar, entries the {@link #TAB_TABLE} rows (the crowbar then the cutter;
+	 * the upstream analogue is the ToolsGT meta-tool block living in its own creative
+	 * category, the registration rows Loader_Tools.java:114-145).
 	 */
 	public static final RegistryObject<CreativeModeTab> TOOLS_TAB = CREATIVE_MODE_TABS.register("tools",
 			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
@@ -116,6 +127,8 @@ public final class GT6Tools {
 		aEvent.enqueueWork(() -> {
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.CROWBAR.get()), GTCrowbarItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.CUTTER.get()), GTCutterItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

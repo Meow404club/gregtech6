@@ -51,6 +51,11 @@ public final class GT6ItemModels extends ItemModelProvider {
         // CROWBAR.png borrow (assets/README.md attribution)
         withExistingParent("crowbar", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/crowbar"));
+        // the formal wire cutter item (task p10-tool-cutter): handheld parent = the vanilla
+        // tool shape (the crowbar row shape), texture = the upstream WIRE_CUTTER.png
+        // borrow (assets/README.md attribution)
+        withExistingParent("cutter", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/cutter"));
         // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)

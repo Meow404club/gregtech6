@@ -24,6 +24,13 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   (GT_Tool_Crowbar.getRGBa → MT.Steel.mRGBaSolid); the port renders it
   un-tinted at the single steel tier — declared deviation, a runtime tint
   rides the tool-family pool card.
+- `gt6/textures/item/cutter.png` — wire cutter item texture (upstream
+  `textures/items/iconsets/WIRE_CUTTER.png`, task p10-tool-cutter; sha256
+  `3ccb7a752f1b51f6ed7940462098523826491ea595f27cedae8882efa66167c0`).
+  Same single-steel-tier story as the crowbar: upstream tints the tool head
+  (GT_Tool_WireCutter.getRGBa :95-97, the material pool) and renders only the
+  WIRE_CUTTER head layer (the :91 handle layer is VOID); the port shows the
+  grayscale head un-tinted — declared deviation, same runtime-tint pool.
 
 Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
 base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from

@@ -29,6 +29,26 @@ public final class GT6ToolActions {
 	 */
 	public static final ToolAction CROWBAR = ToolAction.get("gt6_crowbar");
 
+	/**
+	 * The wire-cutter stack-classification action ("gt6_cutter" — task p10-tool-cutter
+	 * spec ①). Upstream rides the {@code TOOL_cutter} behaviour string
+	 * (GT_Tool_WireCutter.java:101 {@code Behavior_Tool(TOOL_cutter, …)}) while the wire
+	 * block entities gate on {@code getFacingTool() == TOOL_cutter}
+	 * (MultiTileEntityWireElectric.java:245); the port flattens the classification onto
+	 * this Forge {@link ToolAction} and keeps the string for the dispatch seam as
+	 * {@link #CUTTER_ID}. Consumer: {@link GTCutterItem}.
+	 */
+	public static final ToolAction CUTTER = ToolAction.get("gt6_cutter");
+
+	/**
+	 * The upstream {@code CS.TOOL_cutter} dispatch id ("cutter", CS.java:1064) — the
+	 * string the wire connection toggle and the cover tool relay key on. MUST stay
+	 * identical to {@code CoverRedstoneEmitter.TOOL_CUTTER} (the strong-gate toggle is
+	 * the live cover-side consumer of this exact string); the parity is pinned by the
+	 * offline test while the emitter file itself stays zero-diff (card spec ①).
+	 */
+	public static final String CUTTER_ID = "cutter";
+
 	private GT6ToolActions() {
 	}
 }
