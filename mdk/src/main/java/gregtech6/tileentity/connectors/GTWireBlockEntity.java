@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 
 import gregapi.code.HashSetNoNulls;
 import gregapi.code.TagData;
@@ -434,6 +435,33 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	// ---------------------------------------------------------------------------
 	// connection (upstream :201 canConnect / :243 connector types / :82-96 onPlaced)
 	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream :172 verbatim in the base handshake — BUT the base connect (:141) routes
+	 * non-BE neighbours through air/liquid ONLY in this port, while upstream still offers
+	 * {@code canConnect(aSide, delegator)} to them (the delegator carries the BLOCK even
+	 * when the tile entity is null). For the redstone family that difference is the whole
+	 * vanilla interface: the wire must ATTACH to lamps, redstone blocks and plain blocks
+	 * (canEmitRedstoneToVanilla/canAcceptRedstoneFromVanilla gate on {@code connected}),
+	 * so this override completes the upstream :141 disjunction for the REDSTONE rows by
+	 * connecting to any solid non-BE neighbour. Electric rows are untouched (their
+	 * canConnect needs a BE, the air/liquid routing is exactly the upstream behaviour).
+	 */
+	@Override
+	public boolean connect(byte aSide, boolean aNotify) {
+		if (isRedstone() && aSide >= 0 && aSide < 6 && !connected(aSide) && hasLevel()) {
+			BlockPos tTarget = getBlockPos().relative(Direction.from3DDataValue(aSide));
+			BlockEntity tNeighbor = getLevel().getBlockEntity(tTarget);
+			// the isAirOrLiquid form of the base (private there), negated: the solid non-BE slot
+			BlockState tTargetState = getLevel().getBlockState(tTarget);
+			FluidState tTargetFluid = tTargetState.getFluidState();
+			if (tNeighbor == null && !tTargetState.isAir() && (tTargetFluid == null || tTargetFluid.isEmpty())) {
+				setConnectionBit(aSide); // the upstream :142-151 body (bit + notify + block update + onConnectionChange)
+				return true;
+			}
+		}
+		return super.connect(aSide, aNotify);
+	}
 
 	/**
 	 * Upstream :201 → EnergyCompat.canConnectElectricity :102 — the DOUBLE probe,
