@@ -1,9 +1,11 @@
 package gregtech6.block.wire;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -19,7 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.registry.GTBlockEntities;
+import gregtech6.registry.GTWires;
+import gregtech6.registry.GTWireSpecs;
+import gregtech6.registry.GTWireSpecs.Row.Family;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
  * The GT6 electric wire block (task p7-d2-cable spec ④) — the block side of the wire
@@ -65,6 +71,7 @@ public class GTWireBlock extends GTEntityBlock {
 	private final int mSize;
 	private final boolean mInsulated;
 	private final int mDiameter;
+	private final Family mFamily;
 
 	/**
 	 * The p7 legacy form (the two material-less variants) — the vanilla-block fallback ratings
@@ -75,7 +82,7 @@ public class GTWireBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The full W1 carrier (task p9-wire-family-w1 spec ②).
+	 * The full W1 carrier (task p9-wire-family-w1 spec ②) — the electric family form.
 	 *
 	 * @param aVoltage the packet size ceiling in EU (upstream NBT_PIPESIZE)
 	 * @param aAmperage the packet count ceiling (upstream NBT_PIPEBANDWIDTH)
@@ -87,6 +94,21 @@ public class GTWireBlock extends GTEntityBlock {
 	 */
 	public GTWireBlock(long aVoltage, long aAmperage, long aLoss, @Nullable OreDictMaterial aMaterial,
 			int aSize, boolean aInsulated, int aDiameter, Properties aProperties) {
+		this(aVoltage, aAmperage, aLoss, aMaterial, aSize, aInsulated, aDiameter, Family.ELECTRIC, aProperties);
+	}
+
+	/**
+	 * The family carrier (task p10-wire-redstone-family): one extra column over the W1
+	 * form. A REDSTONE-family block is the same visual carrier (the CONNECTIONS mask
+	 * stays THE ONLY BlockState payload — spec 3 red line: the signal VALUE lives on the
+	 * BlockEntity, a POWER-style state property would be the 64×16 variant explosion the
+	 * research card bans) while its BE mounts the push-BFS redstone semantics instead of
+	 * the EU pump. {@code aVoltage/aAmperage} sit at 0/1 on redstone rows (the EU face
+	 * family is gated off at the BE); {@code aLoss} is the upstream NBT_PIPELOSS
+	 * (MAX_RANGE/16|/64).
+	 */
+	public GTWireBlock(long aVoltage, long aAmperage, long aLoss, @Nullable OreDictMaterial aMaterial,
+			int aSize, boolean aInsulated, int aDiameter, Family aFamily, Properties aProperties) {
 		super(aProperties);
 		mVoltage = aVoltage;
 		mAmperage = aAmperage;
@@ -95,6 +117,7 @@ public class GTWireBlock extends GTEntityBlock {
 		mSize = aSize;
 		mInsulated = aInsulated;
 		mDiameter = aDiameter;
+		mFamily = aFamily;
 		registerDefaultState(defaultBlockState().setValue(CONNECTIONS, 0));
 	}
 
@@ -134,6 +157,27 @@ public class GTWireBlock extends GTEntityBlock {
 		return mDiameter;
 	}
 
+	/** The family column (task p10): ELECTRIC = the EU pump rows, REDSTONE = the push-BFS signal rows. */
+	public Family family() {
+		return mFamily;
+	}
+
+	/**
+	 * The upstream mBlockUpdated bridge (MultiTileEntityWireRedstoneInsulated :103 —
+	 * {@code if (mBlockUpdated) updateConnectionStatus()}): vanilla delivers a neighbour
+	 * change here and the BE consumes the flag in its next server tick (the vanilla-side
+	 * trigger of the connection re-scan; the BFS triggers themselves are the connection
+	 * change :94 and the per-tick convergence :104). The 1.7.10 MTE block fed the same
+	 * flag from onNeighborBlockChange.
+	 */
+	@Override
+	public void neighborChanged(BlockState aState, Level aLevel, BlockPos aPos, Block aNeighborBlock, BlockPos aFromPos, boolean aIsMoving) {
+		super.neighborChanged(aState, aLevel, aPos, aNeighborBlock, aFromPos, aIsMoving);
+		if (aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire) {
+			tWire.markBlockUpdated();
+		}
+	}
+
 	/**
 	 * The explicit PASS lock (spec ④): non-tool right-clicks are never consumed — the wire has
 	 * no GUI and the connection tool is the cutter on the IBlockToolable chain, not use. See
@@ -145,9 +189,66 @@ public class GTWireBlock extends GTEntityBlock {
 		return InteractionResult.PASS;
 	}
 
+	// ---------------------------------------------------------------------------
+	// the redstone emission bridge (task p10-wire-redstone-family spec 4)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream isProvidingWeakPower :140-145 via the BE body (weak == strong, the :140-152
+	 * ONE-body rule). The vanilla query direction is the side the RECEIVER sees the wire
+	 * from (the GTOvenBlock.bridgeSignal :88-96 / ICoverableTE.redstoneOut :397-399
+	 * convention — upstream getWeakPower's side parameter, verbatim); the BE flips it to
+	 * the emission face with OPOS and applies the neighbour correction there. Electric
+	 * rows never reach the redstone body ({@code isRedstone()} gates it to 0 — they have
+	 * no redstone semantics upstream either, the vanilla Block default 0 rides in).
+	 */
+	@Override
+	public int getSignal(BlockState aState, BlockGetter aLevel, BlockPos aPos, Direction aDirection) {
+		if (aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire && tWire.isRedstone()) {
+			return tWire.getRedstoneOut((byte)aDirection.get3DDataValue(), false);
+		}
+		return super.getSignal(aState, aLevel, aPos, aDirection);
+	}
+
+	/** Upstream isProvidingStrongPower :147-152 — the same bridge, strong form (same body upstream). */
+	@Override
+	public int getDirectSignal(BlockState aState, BlockGetter aLevel, BlockPos aPos, Direction aDirection) {
+		if (aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire && tWire.isRedstone()) {
+			return tWire.getRedstoneOut((byte)aDirection.get3DDataValue(), true);
+		}
+		return super.getDirectSignal(aState, aLevel, aPos, aDirection);
+	}
+
+	/**
+	 * Upstream getComparatorInputOverride :155-157 — the comparator reads
+	 * {@code bind4(mRedstone / MAX_RANGE)} (floor division, the upstream literal).
+	 */
+	@Override
+	public int getAnalogOutputSignal(BlockState aState, Level aLevel, BlockPos aPos) {
+		if (aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire && tWire.isRedstone()) {
+			return tWire.getComparatorOut();
+		}
+		return super.getAnalogOutputSignal(aState, aLevel, aPos);
+	}
+
+	// -- placeholders declared, NOT implemented (the R1b render card owns them) --
+
+	// getLightValue (upstream MultiTileEntityWireRedstone :79, mIsGlowing ? mState : 0) is
+	// deliberately NOT overridden: the 1.20.1 light engine reads the BlockState/Block only,
+	// never the BlockEntity, so a live BE-driven light value needs the R1b state-carrier
+	// (or ModelData) design first. PLACEHOLDER DECLARATION (task p10 spec 8): the Lumium
+	// wirelamp row carries the luminous data pin (GTWireSpecs.Row.luminous), the light
+	// itself is the R1b card. Same for the mState texture-brightness/tint layers (the bare
+	// wire visual :81-82) — render-layer work, zero block-code footprint here.
+
+	/**
+	 * The per-family BET (task p10): redstone rows resolve GTWires.WIRE_REDSTONE_BE (the 6
+	 * redstone blocks), electric rows keep GTBlockEntities.WIRE_ELECTRIC_BE (the p7 pair +
+	 * the 620 family) — the same BE CLASS mounts both, the family gate lives inside it.
+	 */
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
-		return GTBlockEntities.WIRE_ELECTRIC_BE.get();
+		return mFamily == Family.REDSTONE ? GTWires.WIRE_REDSTONE_BE.get() : GTBlockEntities.WIRE_ELECTRIC_BE.get();
 	}
 
 	@Override

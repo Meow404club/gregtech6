@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
@@ -25,6 +26,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.block.wire.GTWireBlock;
 import gregtech6.block.wire.GTWireBlockItem;
+import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
  * Electric wire registration, card-owned (ADR-P3-4): self-contained
@@ -103,6 +105,60 @@ public final class GTWires {
 		}
 	}
 
+	// -------------------------------------------------------------------------
+	// the p10-wire-redstone-family: 6 per-(row, form) pairs over GTWireSpecs.REDSTONE_ROWS
+	// -------------------------------------------------------------------------
+
+	/** The redstone-family blocks, GTWireSpecs.redstoneVariants() order (Loader:1893-1902 row order). */
+	public static final List<RegistryObject<GTWireBlock>> REDSTONE_BLOCKS = new ArrayList<>();
+
+	/** The redstone-family BlockItems, same order (upstream maxStack 64 on both forms). */
+	public static final List<RegistryObject<Item>> REDSTONE_ITEMS = new ArrayList<>();
+
+	/** The redstone selector index: registry path -> family block (GTWireCommand / datagen). */
+	public static final Map<String, RegistryObject<GTWireBlock>> REDSTONE_BY_NAME = new LinkedHashMap<>();
+
+	static {
+		for (GTWireSpecs.Variant tVariant : GTWireSpecs.redstoneVariants()) {
+			String tName = GTWireSpecs.registryName(tVariant);
+			if (REDSTONE_BY_NAME.containsKey(tName)) throw new IllegalStateException("gt6 redstone wire family: duplicate registry name " + tName);
+			// task p10 — the redstone block carries the family column (the push-BFS BE mount);
+			// voltage 0 / amperage 1 (the EU face family is gated off at the BE), loss = the
+			// upstream NBT_PIPELOSS (MAX_RANGE/16|/64), diameter PX_P[2] wire / PX_P[4] cable.
+			RegistryObject<GTWireBlock> tBlock = BLOCKS.register(tName,
+					() -> new GTWireBlock(0, 1, tVariant.loss(),
+							tVariant.row().material().get(), tVariant.size(), tVariant.insulated(),
+							tVariant.diameter(), GTWireSpecs.Row.Family.REDSTONE, BlockBehaviour.Properties.of()
+									.strength(1.0F, 2.0F).sound(SoundType.COPPER))); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0 (:1893-1902)
+			RegistryObject<Item> tItem = ITEMS.register(tName,
+					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack())));
+			REDSTONE_BLOCKS.add(tBlock);
+			REDSTONE_ITEMS.add(tItem);
+			REDSTONE_BY_NAME.put(tName, tBlock);
+		}
+	}
+
+	/** Every redstone-wire block this registry owns — the WIRE_REDSTONE_BE valid-block list. */
+	public static Block[] redstoneBlockArray() {
+		Block[] rBlocks = new Block[REDSTONE_BLOCKS.size()];
+		for (int i = 0; i < REDSTONE_BLOCKS.size(); i++) rBlocks[i] = REDSTONE_BLOCKS.get(i).get();
+		return rBlocks;
+	}
+
+	/**
+	 * The shared redstone-wire BET (task p10): one BlockEntityType over the 6 family blocks,
+	 * same BET class as the electric wire (the shared-carrier ruling — the family gate lives
+	 * on the BE itself). Owns its own DeferredRegister so GTBlockEntities stays untouched
+	 * (the W1 card surface); the Block event fires before the BlockEntityType event across
+	 * DeferredRegisters of the same listener (the GTBlockEntities doc guarantee — this file
+	 * registers BLOCKS before BETS in onModConstruct).
+	 */
+	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
+
+	public static final RegistryObject<BlockEntityType<GTWireBlockEntity>> WIRE_REDSTONE_BE =
+			BLOCK_ENTITY_TYPES.register("wire_redstone", () -> BlockEntityType.Builder.of(
+					GTWireBlockEntity::new, redstoneBlockArray()).build(null));
+
 	/**
 	 * Every electric-wire block this registry owns (the p7 legacy pair + the 620 family) —
 	 * the shared BET's valid-block list (GTBlockEntities.WIRE_ELECTRIC_BE, one line per the card).
@@ -136,6 +192,12 @@ public final class GTWires {
 						for (RegistryObject<Item> tFamilyItem : FAMILY_ITEMS) {
 							aOutput.accept(new ItemStack(tFamilyItem.get()));
 						}
+						// task p10-wire-redstone-family: the 6 redstone items ride the same flat
+						// tab (upstream "Redstone Wires" is its own MTE category, Loader:1893-1902;
+						// the per-category tab split stays the standing P9 observation item).
+						for (RegistryObject<Item> tRedstoneItem : REDSTONE_ITEMS) {
+							aOutput.accept(new ItemStack(tRedstoneItem.get()));
+						}
 					})
 					.build());
 
@@ -145,8 +207,9 @@ public final class GTWires {
 	@SubscribeEvent
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
 		IEventBus tModBus = Mod.EventBusSubscriber.Bus.MOD.bus().get();
-		BLOCKS.register(tModBus);
+		BLOCKS.register(tModBus); // before BLOCK_ENTITY_TYPES — the valid-block resolution guarantee
 		ITEMS.register(tModBus);
 		CREATIVE_MODE_TABS.register(tModBus);
+		BLOCK_ENTITY_TYPES.register(tModBus);
 	}
 }

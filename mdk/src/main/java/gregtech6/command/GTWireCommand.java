@@ -25,6 +25,7 @@ import gregapi.data.TD;
 import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
+import gregtech6.util.UT6;
 
 /**
  * {@code /gt6wire} — the automated electric-wire acceptance command (task p7-d2-cable
@@ -55,10 +56,20 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
  *     {@link GTWireBlockEntity#doEnergyInjection} with aDoInject=true (the real push);
  *     reports the used amperage (0 = nothing flowed — the upstream :188 no-consumer
  *     semantics the card pins for the burn assertions).</li>
- * <li>{@code stat <pos>} — dump voltage/amperage/loss/burnCounter/wattageLast/
- *     transferredAmperes/connections/mTimer.</li>
- * </ul>
- */
+	 * <li>{@code stat <pos>} — dump voltage/amperage/loss/burnCounter/wattageLast/
+	 *     transferredAmperes/connections/mTimer.</li>
+	 * <li>{@code place <redstone-name> <pos>} and {@code redstone <material> [cable] <pos>}
+	 *     (task p10) — the redstone-family selector over {@link GTWireSpecs#findRedstone}
+	 *     + {@link GTWires#REDSTONE_BY_NAME}: registry paths {@code wire_red_alloy} /
+	 *     {@code cable_signalum} / {@code wire_lumium} (no size tail), or the token form;
+	 *     the place tail then runs the same automatic neighbour-scan connect (the
+	 *     redstone canConnect is the upstream :172 unconditional TRUE);</li>
+	 * <li>{@code signal <pos>} (task p10) — the redstone acceptance read-out: mRedstone
+	 *     (the full-range value), mReceived (the strongest source side), mMode, mLoss and
+	 *     the bind4 vanilla emission — the RCON verification channel for the push-BFS
+	 *     chain (place → feed → lamp on/off, the distance-decay ladder).</li>
+	 * </ul>
+	 */
 @Mod.EventBusSubscriber(modid = "gt6")
 public final class GTWireCommand {
 
@@ -94,6 +105,20 @@ public final class GTWireCommand {
 						.then(Commands.argument("side", IntegerArgumentType.integer(0, 5))
 							.executes(aContext -> connect(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
 									(byte)IntegerArgumentType.getInteger(aContext, "side"))))))
+				.then(Commands.literal("redstone") // task p10-wire-redstone-family — the redstone selector
+					.then(Commands.argument("material", StringArgumentType.word())
+						.then(Commands.argument("pos", BlockPosArgument.blockPos())
+							.executes(aContext -> placeRedstone(aContext.getSource(),
+									StringArgumentType.getString(aContext, "material"), false,
+									BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))
+						.then(Commands.literal("cable")
+							.then(Commands.argument("pos", BlockPosArgument.blockPos())
+								.executes(aContext -> placeRedstone(aContext.getSource(),
+										StringArgumentType.getString(aContext, "material"), true,
+										BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))))
+				.then(Commands.literal("signal") // task p10 — the redstone acceptance read-out (RCON channel)
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(aContext -> signal(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
 				.then(Commands.literal("neighbors")
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(aContext -> neighbors(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
@@ -109,7 +134,7 @@ public final class GTWireCommand {
 				.then(Commands.literal("stat")
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(aContext -> stat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
-		LOGGER.info("Registered GT6 electric wire command /gt6wire (place|connect|neighbors|inject|stat)");
+		LOGGER.info("Registered GT6 wire command /gt6wire (place|connect|redstone|signal|neighbors|inject|stat)");
 	}
 
 	private static int stat(CommandSourceStack aSource, BlockPos aPos) {
@@ -136,14 +161,38 @@ public final class GTWireCommand {
 		var tBlock = switch (aSpec) {
 			case "1x" -> GTWires.WIRE_ELECTRIC_1X.get();
 			case "2x" -> GTWires.WIRE_ELECTRIC_2X.get();
-			default -> GTWires.FAMILY_BY_NAME.containsKey(aSpec) ? GTWires.FAMILY_BY_NAME.get(aSpec).get() : null;
+			// task p10 — the redstone registry paths (wire_red_alloy / cable_signalum / ...)
+			// resolve through their own index; the name spaces never collide (no _gt tail).
+			default -> GTWires.REDSTONE_BY_NAME.containsKey(aSpec) ? GTWires.REDSTONE_BY_NAME.get(aSpec).get()
+					: GTWires.FAMILY_BY_NAME.containsKey(aSpec) ? GTWires.FAMILY_BY_NAME.get(aSpec).get() : null;
 		};
 		if (tBlock == null) {
 			aSource.sendFailure(Component.literal("PLACE FAILED: unknown wire spec '" + aSpec
-					+ "' (use 1x, 2x, a registry path like wire_sn_gt04, or <material> <size> [cable] <pos>)"));
+					+ "' (use 1x, 2x, a registry path like wire_sn_gt04 / wire_red_alloy, or <material> <size> [cable] <pos>)"));
 			return 0;
 		}
 		return placeWire(aSource, tBlock, aSpec, aPos);
+	}
+
+	/**
+	 * The redstone-family selector (task p10): token + optional "cable" literal — resolved
+	 * through {@link GTWireSpecs#findRedstone} and the {@link GTWires#REDSTONE_BY_NAME}
+	 * index. There is NO size argument (the family has no size ladder, Loader:1893-1902).
+	 */
+	private static int placeRedstone(CommandSourceStack aSource, String aMaterial, boolean aInsulated, BlockPos aPos) {
+		GTWireSpecs.Variant tVariant = GTWireSpecs.findRedstone(aMaterial, aInsulated);
+		if (tVariant == null) {
+			aSource.sendFailure(Component.literal("PLACE FAILED: no redstone variant for material '" + aMaterial
+					+ (aInsulated ? "' (cable)" : "'") + " — rows: red_alloy, signalum, lumium"));
+			return 0;
+		}
+		String tName = GTWireSpecs.registryName(tVariant);
+		var tRegistryObject = GTWires.REDSTONE_BY_NAME.get(tName);
+		if (tRegistryObject == null) {
+			aSource.sendFailure(Component.literal("PLACE FAILED: variant " + tName + " is not registered"));
+			return 0;
+		}
+		return placeWire(aSource, tRegistryObject.get(), tName, aPos);
 	}
 
 	/**
@@ -219,6 +268,32 @@ public final class GTWireCommand {
 		}
 		String tLine = "GT6 wire neighbors at " + aPos.toShortString() + ": " + tCensus + "connections "
 				+ tWire.getConnections();
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The redstone acceptance read-out (task p10, the RCON verification channel): the
+	 * full-range mRedstone, the remembered strongest source side, the constant-strength
+	 * mode, the loss, and the derived vanilla emission (bind4(divup(mRedstone, MAX_RANGE)),
+	 * the value a lamp at the endpoint actually sees before neighbour correction).
+	 */
+	private static int signal(CommandSourceStack aSource, BlockPos aPos) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTWireBlockEntity aWire) || !aWire.isRedstone()) {
+			aSource.sendFailure(Component.literal("No redstone wire BE at " + aPos.toShortString()));
+			return 0;
+		}
+		long tVanilla = UT6.divup(aWire.mRedstone, GTWireSpecs.MAX_RANGE);
+		StringBuilder tSides = new StringBuilder();
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			tSides.append(tSide).append('=').append(aWire.mVanillaSides[tSide])
+					.append(aWire.connected(tSide) ? "c" : "").append(' ');
+		}
+		String tLine = "GT6 redstone signal at " + aPos.toShortString() + ": mRedstone " + aWire.mRedstone
+				+ " (bind4 " + Math.max(0, Math.min(15, tVanilla)) + "), mReceived " + aWire.mReceived
+				+ ", mMode " + aWire.mMode + ", mLoss " + aWire.mLoss + ", connections " + aWire.getConnections()
+				+ ", connectedToNonWire " + aWire.mConnectedToNonWire + ", vanillaIn { " + tSides + "}";
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
