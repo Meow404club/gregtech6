@@ -1,9 +1,11 @@
 package gregtech6.block.wire;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -185,6 +187,58 @@ public class GTWireBlock extends GTEntityBlock {
 			InteractionHand aHand, BlockHitResult aHit) {
 		return InteractionResult.PASS;
 	}
+
+	// ---------------------------------------------------------------------------
+	// the redstone emission bridge (task p10-wire-redstone-family spec 4)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream isProvidingWeakPower :140-145 via the BE body (weak == strong, the :140-152
+	 * ONE-body rule). The vanilla query direction is the side the RECEIVER sees the wire
+	 * from (the GTOvenBlock.bridgeSignal :88-96 / ICoverableTE.redstoneOut :397-399
+	 * convention — upstream getWeakPower's side parameter, verbatim); the BE flips it to
+	 * the emission face with OPOS and applies the neighbour correction there. Electric
+	 * rows never reach the redstone body ({@code isRedstone()} gates it to 0 — they have
+	 * no redstone semantics upstream either, the vanilla Block default 0 rides in).
+	 */
+	@Override
+	public int getSignal(BlockState aState, BlockGetter aLevel, BlockPos aPos, Direction aDirection) {
+		if (aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire && tWire.isRedstone()) {
+			return tWire.getRedstoneOut((byte)aDirection.get3DDataValue(), false);
+		}
+		return super.getSignal(aState, aLevel, aPos, aDirection);
+	}
+
+	/** Upstream isProvidingStrongPower :147-152 — the same bridge, strong form (same body upstream). */
+	@Override
+	public int getDirectSignal(BlockState aState, BlockGetter aLevel, BlockPos aPos, Direction aDirection) {
+		if (aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire && tWire.isRedstone()) {
+			return tWire.getRedstoneOut((byte)aDirection.get3DDataValue(), true);
+		}
+		return super.getDirectSignal(aState, aLevel, aPos, aDirection);
+	}
+
+	/**
+	 * Upstream getComparatorInputOverride :155-157 — the comparator reads
+	 * {@code bind4(mRedstone / MAX_RANGE)} (floor division, the upstream literal).
+	 */
+	@Override
+	public int getAnalogOutputSignal(BlockState aState, Level aLevel, BlockPos aPos) {
+		if (aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire && tWire.isRedstone()) {
+			return tWire.getComparatorOut();
+		}
+		return super.getAnalogOutputSignal(aState, aLevel, aPos);
+	}
+
+	// -- placeholders declared, NOT implemented (the R1b render card owns them) --
+
+	// getLightValue (upstream MultiTileEntityWireRedstone :79, mIsGlowing ? mState : 0) is
+	// deliberately NOT overridden: the 1.20.1 light engine reads the BlockState/Block only,
+	// never the BlockEntity, so a live BE-driven light value needs the R1b state-carrier
+	// (or ModelData) design first. PLACEHOLDER DECLARATION (task p10 spec 8): the Lumium
+	// wirelamp row carries the luminous data pin (GTWireSpecs.Row.luminous), the light
+	// itself is the R1b card. Same for the mState texture-brightness/tint layers (the bare
+	// wire visual :81-82) — render-layer work, zero block-code footprint here.
 
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
