@@ -80,12 +80,22 @@ public class GTWireGlowLightTest extends GTOfflineTestBase {
 			return mBlockEntities.get(aPos);
 		}
 
+		/**
+		 * The probe the light getter MUST use (IForgeBlock.java:106-110 worker-thread contract —
+		 * {@code GTWireBlock.getLightEmission} calls {@code getExistingBlockEntity}). The default
+		 * {@code instanceof Level} branch walks {@code hasChunk → level.getChunk} (IForgeBlockGetter
+		 * :32-39), and this double's chunkSource is null — delegate straight to the map instead.
+		 */
+		@Override
+		public BlockEntity getExistingBlockEntity(BlockPos aPos) {
+			return mBlockEntities.get(aPos);
+		}
+
 		@Override
 		public BlockState getBlockState(BlockPos aPos) {
 			return mStates.getOrDefault(aPos, Blocks.AIR.defaultBlockState());
 		}
 	}
-
 	/** Records the {@code refreshGlowLight} triggers instead of calling the engine — a minimal Level has no chunk source to hand {@code getLightEngine()} (Level.java:333). */
 	static final class CountingWire extends GTWireBlockEntity {
 		int lightChecks;

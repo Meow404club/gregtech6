@@ -397,6 +397,13 @@ public class GTWireBlock extends GTEntityBlock {
 	 * upstream {@code setVisualData} :62-67 landing; the Forge patches route the whole light
 	 * engine through the level-sensitive getter, BlockLightEngine.java.patch:8/:17).
 	 *
+	 * <p>WORKER-THREAD CONTRACT: the getter "may be called on a worker thread" (IForgeBlock.java
+	 * :106-110 — the 1.20.1 server light tasks run on the ChunkMap workers), so the BE probe MUST
+	 * go through {@code getExistingBlockEntity} (IForgeBlockGetter.java:30-50 — skips the
+	 * {@code Level#getBlockEntity} promote-on-access path, exactly what the official sample's
+	 * {@code level.getExistingBlockEntity(pos)} :84 does); an {@code ImposterProtoChunk} sampled
+	 * at the light-engine boundary would otherwise race the chunk promotion.
+	 *
 	 * <p>The gates are the upstream CLASS split, verbatim: the bare wire class implements
 	 * {@code IMTE_GetLightValue} (MultiTileEntityWireRedstone :35/:79) while its insulated parent
 	 * (MultiTileEntityWireRedstoneInsulated) does NOT — a glowing MATERIAL on the cable form
@@ -412,7 +419,7 @@ public class GTWireBlock extends GTEntityBlock {
 	@Override
 	public int getLightEmission(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
 		if (mFamily == Family.REDSTONE && mLuminous && !mInsulated
-				&& aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire) {
+				&& aLevel.getExistingBlockEntity(aPos) instanceof GTWireBlockEntity tWire) {
 			return UT6.bind4(UT6.divup(tWire.mRedstone, GTWireSpecs.MAX_RANGE)); // upstream :53/:79
 		}
 		return super.getLightEmission(aState, aLevel, aPos);
