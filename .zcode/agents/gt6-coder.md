@@ -31,7 +31,7 @@ Task: <SLUG>
 Signed-off-by: brokestar233 <3765589194@qq.com>"
 ```
 
-type ∈ feat|fix|refactor|docs|chore|test|port|arch|qa|research。
+type 用小写词（feat/fix/perf/release…词表不限，格式对即可）。
 禁止提交：tmp/ 下任何文件、手写 JSON（该 DataGen 生成的）、超 5MB 文件、tools/config.json。
 
 ## 收工（最终回复，≤1200 字）
