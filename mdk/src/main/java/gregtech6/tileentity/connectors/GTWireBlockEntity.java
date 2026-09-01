@@ -210,15 +210,31 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * the upstream field defaults (:64). Since task p10 the carrier family also arms the
 	 * redstone state (a REDSTONE-family {@link GTWireBlock} row mounts the push-BFS
 	 * signal semantics; electric rows mount the EU pump, untouched).
+	 *
+	 * <p>THE FALLBACK IS FAMILY-AWARE (the RCON diagnostic round lesson): the
+	 * {@code BlockEntityType.Builder.of(GTWireBlockEntity::new, ...)} method reference
+	 * binds the (pos, state) constructor, so a redstone BET factory lands HERE with a null
+	 * type — a hardcoded electric fallback would stamp every redstone BE with the
+	 * WIRE_ELECTRIC_BE type, and the Level ticker gate (GTEntityBlock.getTicker,
+	 * {@code aType != tickerType()}) would silently kill the whole tick chain (mVanillaSides
+	 * stayed -1 forever, the RCON live proof). The fallback therefore resolves the BET by
+	 * the carrier family; it runs at world-load time, long after both BETs registered.
 	 */
 	public GTWireBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
-		super(true, aType != null ? aType : GTBlockEntities.WIRE_ELECTRIC_BE.get(), aPos, aState);
+		super(true, aType != null ? aType : tickerTypeOf(aState), aPos, aState);
 		mRedstoneFamily = aState.getBlock() instanceof GTWireBlock tWire && tWire.family() == GTWireSpecs.Row.Family.REDSTONE;
 		if (aState.getBlock() instanceof GTWireBlock tWire) {
 			mVoltage = tWire.voltageL();
 			mAmperage = tWire.amperageL();
 			mLoss = tWire.lossL();
 		}
+	}
+
+	/** The family-resolved default BET (the fallback of the full constructor, see its javadoc). */
+	private static BlockEntityType<? extends GTWireBlockEntity> tickerTypeOf(BlockState aState) {
+		return aState.getBlock() instanceof GTWireBlock tWire && tWire.family() == GTWireSpecs.Row.Family.REDSTONE
+				? gregtech6.registry.GTWires.WIRE_REDSTONE_BE.get()
+				: GTBlockEntities.WIRE_ELECTRIC_BE.get();
 	}
 
 	/** The family gate for everything redstone on this shared class (task p10). */

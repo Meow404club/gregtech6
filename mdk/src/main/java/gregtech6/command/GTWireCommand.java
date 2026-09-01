@@ -285,10 +285,15 @@ public final class GTWireCommand {
 			return 0;
 		}
 		long tVanilla = UT6.divup(aWire.mRedstone, GTWireSpecs.MAX_RANGE);
+		StringBuilder tSides = new StringBuilder();
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			tSides.append(tSide).append('=').append(aWire.mVanillaSides[tSide])
+					.append(aWire.connected(tSide) ? "c" : "").append(' ');
+		}
 		String tLine = "GT6 redstone signal at " + aPos.toShortString() + ": mRedstone " + aWire.mRedstone
 				+ " (bind4 " + Math.max(0, Math.min(15, tVanilla)) + "), mReceived " + aWire.mReceived
 				+ ", mMode " + aWire.mMode + ", mLoss " + aWire.mLoss + ", connections " + aWire.getConnections()
-				+ ", connectedToNonWire " + aWire.mConnectedToNonWire;
+				+ ", connectedToNonWire " + aWire.mConnectedToNonWire + ", vanillaIn { " + tSides + "}";
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
