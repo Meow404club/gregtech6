@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -63,7 +64,10 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	 */
 	private static final Set<Item> RESERVED_VANILLA_ITEMS = Set.of(
 			Items.FLINT, Items.GRAVEL, Items.SAND, Items.COBWEB, Items.STRING,
-			Items.COBBLESTONE, Items.STONE, Items.GLASS_PANE);
+			Items.COBBLESTONE, Items.STONE, Items.GLASS_PANE,
+			// p10-compat-vanilla-rows vanilla identities (row inputs and the all-vanilla outputs)
+			Items.BONE, Items.BONE_MEAL, Items.NETHER_BRICK,
+			Blocks.NETHER_BRICKS.asItem(), Blocks.NETHERRACK.asItem(), Blocks.END_STONE.asItem(), Blocks.OBSIDIAN.asItem());
 
 	@BeforeAll
 	static void buildSyntheticUniverse() {
@@ -144,11 +148,11 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	// row-shape spot checks
 	// ------------------------------------------------------------------
 
-	/** The Shredder table: 7 rows, the exact upstream shapes (Vanilla:688-693/:707-708). */
+	/** The Shredder table: 8 rows, the exact upstream shapes (Vanilla:688-693/:697/:707-708). */
 	@Test
 	void shredderRowShapes() {
 		List<GT6RecipesShCL.FixedRow> tTable = GT6RecipesShCL.shredderTable();
-		assertEquals(7, tTable.size(), "5 vanilla rows + 2 Blaze rows (the group expansion is pooled)");
+		assertEquals(8, tTable.size(), "5 vanilla rows + the :697 bone backfill + 2 Blaze rows (the group expansion is pooled)");
 
 		GT6RecipesShCL.FixedRow tFlint = findFixedRow(tTable, ":688");
 		assertNotNull(tFlint);
@@ -185,7 +189,77 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, tStickLong.outputs()[0].count());
 		assertSame(OP.dust, tStickLong.outputs()[0].prefix());
 
+		// :697 — the p10 backfill: bone → 4 bonemeal (upstream IL.Dye_Bonemeal.get(4) = the
+		// 1.7.10 white-dye meta, whose 1.20.1 identity is Items.BONE_MEAL); deterministic, 32 t
+		GT6RecipesShCL.FixedRow tBone = findFixedRow(tTable, ":697");
+		assertNotNull(tBone);
+		assertEquals(Items.BONE, tBone.input().vanilla().get());
+		assertEquals(1, tBone.input().count());
+		assertEquals(16, tBone.eUt());
+		assertEquals(32, tBone.duration());
+		assertNull(tBone.chances(), "the bone row is deterministic (upstream addRecipe1 has no chances literal)");
+		assertEquals(1, tBone.outputs().length);
+		assertEquals(Items.BONE_MEAL, tBone.outputs()[0].vanilla().get());
+		assertEquals(4, tBone.outputs()[0].count());
+
 		// every row runs at eUt 16 (the addRecipe1 second arg)
+		for (GT6RecipesShCL.FixedRow tRow : tTable) assertEquals(16, tRow.eUt(), "row " + tRow.note());
+	}
+
+	/** The p10 Crusher vanilla rows (OreDict:82/:88/:92/:96): inputs, outputs, and the chance literals. */
+	@Test
+	void crusherVanillaRowShapes() {
+		List<GT6RecipesShCL.FixedRow> tTable = GT6RecipesShCL.crusherVanillaTable();
+		assertEquals(4, tTable.size(), "obsidian + netherbrick + netherrack + endstone (upstream file order)");
+
+		// :82 — obsidian: dust x8 @10000 + dust x1 @2500, duration 600; the input is the vanilla
+		// obsidian block (the port block universe generates no blockSolid Obsidian — deviation declared)
+		GT6RecipesShCL.FixedRow tObsidian = findFixedRow(tTable, ":82");
+		assertNotNull(tObsidian);
+		assertEquals(Blocks.OBSIDIAN.asItem(), tObsidian.input().vanilla().get(), "the :82 input is the vanilla obsidian block (declared deviation)");
+		assertEquals(16, tObsidian.eUt());
+		assertEquals(600, tObsidian.duration());
+		assertArrayEquals(new long[] {10000, 2500}, tObsidian.chances(), "the upstream new long[] {10000, 2500} literal");
+		assertEquals(2, tObsidian.outputs().length);
+		assertSame(OP.dust, tObsidian.outputs()[0].prefix());
+		assertSame(MT.Obsidian, tObsidian.outputs()[0].material());
+		assertEquals(8, tObsidian.outputs()[0].count(), "the dust tail of the IL.RC/HBM fallback chain = x8");
+		assertSame(OP.dust, tObsidian.outputs()[1].prefix());
+		assertEquals(1, tObsidian.outputs()[1].count(), "the 2500-chance second slot");
+
+		// :88 — nether bricks: four independent single-brick slots at descending certainty
+		GT6RecipesShCL.FixedRow tBricks = findFixedRow(tTable, ":88");
+		assertNotNull(tBricks);
+		assertEquals(Blocks.NETHER_BRICKS.asItem(), tBricks.input().vanilla().get());
+		assertEquals(16, tBricks.eUt());
+		assertEquals(16, tBricks.duration());
+		assertArrayEquals(new long[] {10000, 9000, 8000, 7000}, tBricks.chances(), "the upstream four-tier chance literal");
+		assertEquals(4, tBricks.outputs().length);
+		for (GT6RecipesShCL.Slot tSlot : tBricks.outputs()) {
+			assertEquals(Items.NETHER_BRICK, tSlot.vanilla().get());
+			assertEquals(1, tSlot.count());
+		}
+
+		// :92/:96 — the rockGt rows are deterministic (no chances literal upstream)
+		GT6RecipesShCL.FixedRow tNetherrack = findFixedRow(tTable, ":92");
+		assertNotNull(tNetherrack);
+		assertEquals(Blocks.NETHERRACK.asItem(), tNetherrack.input().vanilla().get());
+		assertNull(tNetherrack.chances());
+		assertEquals(16, tNetherrack.duration());
+		assertEquals(1, tNetherrack.outputs().length);
+		assertSame(OP.rockGt, tNetherrack.outputs()[0].prefix());
+		assertSame(MT.Netherrack, tNetherrack.outputs()[0].material());
+		assertEquals(4, tNetherrack.outputs()[0].count());
+
+		GT6RecipesShCL.FixedRow tEndstone = findFixedRow(tTable, ":96");
+		assertNotNull(tEndstone);
+		assertEquals(Blocks.END_STONE.asItem(), tEndstone.input().vanilla().get());
+		assertNull(tEndstone.chances());
+		assertEquals(1, tEndstone.outputs().length);
+		assertSame(OP.rockGt, tEndstone.outputs()[0].prefix());
+		assertSame(MT.Endstone, tEndstone.outputs()[0].material());
+		assertEquals(4, tEndstone.outputs()[0].count());
+
 		for (GT6RecipesShCL.FixedRow tRow : tTable) assertEquals(16, tRow.eUt(), "row " + tRow.note());
 	}
 
@@ -279,10 +353,16 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 				if (crusherRowResolves(tTpl, tMaterial)) tExpectedCrusher++;
 			}
 		}
+		int tExpectedCrusherVanilla = 0;
+		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.crusherVanillaTable()) if (fixedRowResolves(tRow)) tExpectedCrusherVanilla++;
 
 		assertEquals(tExpectedShredder, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "Shredder poured = transcribed - skipped");
 		assertEquals(tExpectedLathe, GT6RecipeMaps.LATHE.mRecipeList.size(), "Lathe poured = transcribed - skipped");
-		assertEquals(tExpectedCrusher, GT6RecipeMaps.CRUSHER.mRecipeList.size(), "Crusher poured = expanded - skipped");
+		assertEquals(tExpectedCrusher + tExpectedCrusherVanilla, GT6RecipeMaps.CRUSHER.mRecipeList.size(),
+				"Crusher poured = expanded templates + vanilla rows - skipped");
+		// all four p10 vanilla rows must resolve inside the offline synthetic universe
+		// ((rockGt, Netherrack/Endstone) and (dust, Obsidian) are in the registration walk)
+		assertEquals(4, tExpectedCrusherVanilla, "the p10 Crusher vanilla rows all resolve");
 	}
 
 	/** The gem chain expands over the registered gemLegendary materials, in registration order. */
@@ -322,12 +402,12 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 
 		GT6RecipesShCL.load();
 
-		// Shredder: :689 gravel→sand and :690 web→string are all-vanilla; the other five rows touch material items
-		assertEquals(2, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "the two all-vanilla Shredder rows pour");
+		// Shredder: :689 gravel→sand, :690 web→string and :697 bone→bonemeal are all-vanilla; the other five rows touch material items
+		assertEquals(3, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "the three all-vanilla Shredder rows pour");
 		// Lathe: both rows produce material items → all skip
 		assertEquals(0, GT6RecipeMaps.LATHE.mRecipeList.size());
-		// Crusher: every expansion is material-both-sides → all skip
-		assertEquals(0, GT6RecipeMaps.CRUSHER.mRecipeList.size());
+		// Crusher: :88 netherbrick→bricks is all-vanilla; the gem expansion + :82/:92/:96 touch material items
+		assertEquals(1, GT6RecipeMaps.CRUSHER.mRecipeList.size(), "the all-vanilla netherbrick row pours");
 	}
 
 	/** load() is idempotent within a generation (the second call must not double-pour). */
@@ -437,6 +517,119 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
+	// p10-compat-vanilla-rows: end-to-end lookups + the chances passthrough proof
+	// ------------------------------------------------------------------
+
+	/**
+	 * THE offline live proof of the four-tier chance literal (task acceptance): the :88 row's
+	 * {@code new long[] {10000, 9000, 8000, 7000}} survives the pour into {@link Recipe#mChances}
+	 * and each tier behaves per the {@code getOutputs(Random, int)} threshold semantics.
+	 */
+	@Test
+	void crusherNetherBrickRowPassesTheFourTierChancesThrough() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		GT6RecipesShCL.sVanillaItemResolver = Supplier::get;
+		GT6RecipesShCL.load();
+
+		ItemStack[] tInputs = {new ItemStack(Blocks.NETHER_BRICKS.asItem(), 1)};
+		Recipe tFound = GT6RecipeMaps.CRUSHER.findRecipe(null, 16, ItemStack.EMPTY, null, tInputs);
+		assertNotNull(tFound, "the :88 netherbrick row must be found");
+		assertEquals(16, tFound.mDuration);
+		assertEquals(16, tFound.mEUt);
+		assertArrayEquals(new long[] {10000, 9000, 8000, 7000}, tFound.mChances,
+				"the upstream four-tier literal must pass through the pour untouched");
+
+		// an always-succeeding RNG → every tier yields its single brick; the 10000 slot takes the
+		// deterministic whole-stack branch (it never even samples)
+		ItemStack[] tAll = tFound.getOutputs(new AlwaysYesRandom(), 1);
+		for (int i = 0; i < 4; i++) {
+			assertNotNull(tAll[i], "slot " + i + " must yield under an always-succeeding RNG");
+			assertEquals(Items.NETHER_BRICK, tAll[i].getItem());
+			assertEquals(1, tAll[i].getCount());
+		}
+		// an always-failing RNG (9999) → only the 10000 slot survives, the three sub-10000 tiers stay empty
+		ItemStack[] tTop = tFound.getOutputs(new AlwaysNoRandom(), 1);
+		assertNotNull(tTop[0], "the 10000 slot is the deterministic whole-stack branch");
+		assertEquals(Items.NETHER_BRICK, tTop[0].getItem());
+		assertEquals(1, tTop[0].getCount());
+		for (int i = 1; i < 4; i++) assertNull(tTop[i], "sub-10000 tier " + i + " must yield nothing under an always-failing RNG");
+	}
+
+	/** The :82 obsidian row: duration 600, the {10000, 2500} literal, and both slots' chance semantics. */
+	@Test
+	void crusherObsidianRowChancesEndToEnd() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		GT6RecipesShCL.sVanillaItemResolver = Supplier::get;
+		GT6RecipesShCL.load();
+
+		Item tDustObsidian = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dust, MT.Obsidian));
+		ItemStack[] tInputs = {new ItemStack(Blocks.OBSIDIAN.asItem(), 1)};
+		Recipe tFound = GT6RecipeMaps.CRUSHER.findRecipe(null, 16, ItemStack.EMPTY, null, tInputs);
+		assertNotNull(tFound, "the :82 obsidian row must be found");
+		assertEquals(600, tFound.mDuration);
+		assertArrayEquals(new long[] {10000, 2500}, tFound.mChances);
+
+		// always-failing RNG: the main 8-dust output is full certainty, the 25% bonus stays empty
+		ItemStack[] tMain = tFound.getOutputs(new AlwaysNoRandom(), 1);
+		assertEquals(tDustObsidian, tMain[0].getItem());
+		assertEquals(8, tMain[0].getCount(), "the dust tail of the IL.RC/HBM fallback chain");
+		assertNull(tMain[1], "9999 !< 2500 — the bonus slot must stay empty");
+		// always-succeeding RNG: the bonus slot adds exactly its 1 dust
+		ItemStack[] tBoth = tFound.getOutputs(new AlwaysYesRandom(), 1);
+		assertEquals(8, tBoth[0].getCount());
+		assertNotNull(tBoth[1]);
+		assertEquals(tDustObsidian, tBoth[1].getItem());
+		assertEquals(1, tBoth[1].getCount());
+	}
+
+	/** The :92/:96 rockGt rows: deterministic x4 outputs through the SHREDDER-sibling lookup path. */
+	@Test
+	void crusherRockGtRowsEndToEnd() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		GT6RecipesShCL.sVanillaItemResolver = Supplier::get;
+		GT6RecipesShCL.load();
+
+		Item tRockNetherrack = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.rockGt, MT.Netherrack));
+		ItemStack[] tInputs = {new ItemStack(Blocks.NETHERRACK.asItem(), 1)};
+		Recipe tFound = GT6RecipeMaps.CRUSHER.findRecipe(null, 16, ItemStack.EMPTY, null, tInputs);
+		assertNotNull(tFound, "the :92 netherrack row must be found");
+		assertNull(tFound.mChances, "the rockGt rows are deterministic");
+		assertEquals(16, tFound.mDuration);
+		ItemStack[] tOutputs = tFound.getOutputs(1);
+		assertEquals(1, tOutputs.length);
+		assertEquals(tRockNetherrack, tOutputs[0].getItem());
+		assertEquals(4, tOutputs[0].getCount());
+
+		Item tRockEndstone = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.rockGt, MT.Endstone));
+		ItemStack[] tEndInputs = {new ItemStack(Blocks.END_STONE.asItem(), 1)};
+		Recipe tEndFound = GT6RecipeMaps.CRUSHER.findRecipe(null, 16, ItemStack.EMPTY, null, tEndInputs);
+		assertNotNull(tEndFound, "the :96 endstone row must be found");
+		ItemStack[] tEndOutputs = tEndFound.getOutputs(1);
+		assertEquals(tRockEndstone, tEndOutputs[0].getItem());
+		assertEquals(4, tEndOutputs[0].getCount());
+	}
+
+	/** The :697 bone row through the SHREDDER map: find, consume, 4 bonemeal out. */
+	@Test
+	void shredderBoneRowEndToEnd() {
+		GT6RecipesShCL.sVanillaItemResolver = Supplier::get;
+		GT6RecipesShCL.load();
+
+		ItemStack[] tInputs = {new ItemStack(Items.BONE, 1)};
+		Recipe tFound = GT6RecipeMaps.SHREDDER.findRecipe(null, 16, ItemStack.EMPTY, null, tInputs);
+		assertNotNull(tFound, "the :697 bone row must be found");
+		assertEquals(32, tFound.mDuration);
+		assertNull(tFound.mChances);
+		assertTrue(tFound.isRecipeInputEqual(true, false, null, tInputs));
+		assertEquals(0, tInputs[0].getCount(), "one pass consumes exactly one bone");
+
+		ItemStack[] tOutputs = tFound.getOutputs(1);
+		assertEquals(1, tOutputs.length);
+		assertEquals(Items.BONE_MEAL, tOutputs[0].getItem());
+		assertEquals(4, tOutputs[0].getCount());
+	}
+
+	// ------------------------------------------------------------------
 	// pooled surface
 	// ------------------------------------------------------------------
 
@@ -445,13 +638,19 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	void pooledEntriesAreDeclaredNotTranscribed() {
 		String tSkipped = String.join("\n", GT6RecipesShCL.SKIPPED_UPSTREAM);
 		assertTrue(tSkipped.contains(":691"), "the reeds IL row is pooled");
+		assertTrue(tSkipped.contains(":699"), "the melon 6000-chance row is CUT (Remains_Fruit has no port item)");
+		assertTrue(tSkipped.contains("Remains_Plant") && tSkipped.contains("Remains_Fruit"),
+				"the GT Remains_* output items are declared absent from this port");
+		assertTrue(tSkipped.contains(":697"), "the bone row's backfill is declared where it was once pooled");
 		assertTrue(tSkipped.contains("rockGt"), "the null-output prefix rows are pooled");
 		assertTrue(tSkipped.contains("RecipeMapHandlerCrushing"), "the crushed-family ore chain is pooled (chances window)");
 		assertTrue(tSkipped.contains("RECYCLABLE"), "the RecipeMapShredder on-demand synthesis is pooled");
 		assertTrue(tSkipped.contains("wood loop"), "the OreDict wood loop is pooled");
-		assertEquals(7, GT6RecipesShCL.shredderTable().size());
+		assertTrue(tSkipped.contains("blockSolid Obsidian"), "the :82 input deviation (vanilla obsidian) is declared");
+		assertEquals(8, GT6RecipesShCL.shredderTable().size());
 		assertEquals(2, GT6RecipesShCL.latheTable().size());
 		assertEquals(6, GT6RecipesShCL.crusherTable().size());
+		assertEquals(4, GT6RecipesShCL.crusherVanillaTable().size());
 	}
 
 	// ------------------------------------------------------------------
@@ -500,5 +699,25 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 		static net.minecraft.world.level.block.Block COBWEB = net.minecraft.world.level.block.Blocks.COBWEB;
 		static net.minecraft.world.level.block.Block GLASS_PANE = net.minecraft.world.level.block.Blocks.GLASS_PANE;
 		static net.minecraft.world.level.block.Block STONE = net.minecraft.world.level.block.Blocks.STONE;
+		// p10-compat-vanilla-rows identities
+		static net.minecraft.world.level.block.Block NETHER_BRICKS = net.minecraft.world.level.block.Blocks.NETHER_BRICKS;
+		static net.minecraft.world.level.block.Block NETHERRACK = net.minecraft.world.level.block.Blocks.NETHERRACK;
+		static net.minecraft.world.level.block.Block END_STONE = net.minecraft.world.level.block.Blocks.END_STONE;
+		static net.minecraft.world.level.block.Block OBSIDIAN = net.minecraft.world.level.block.Blocks.OBSIDIAN;
+	}
+
+	/**
+	 * RNG stubs for the chance-tier semantics — {@code java.util.Random.nextInt(int)} is
+	 * overridable, so the tiers are exercised EXACTLY instead of sampling: an always-0
+	 * generator succeeds every live chance; an always-(bound-1) generator fails every
+	 * sub-10000 chance (9999 &lt; 10000 only, and the 10000 slots take the deterministic
+	 * whole-stack branch without ever sampling).
+	 */
+	private static final class AlwaysYesRandom extends Random {
+		@Override public int nextInt(int aBound) { return 0; }
+	}
+
+	private static final class AlwaysNoRandom extends Random {
+		@Override public int nextInt(int aBound) { return aBound - 1; }
 	}
 }
