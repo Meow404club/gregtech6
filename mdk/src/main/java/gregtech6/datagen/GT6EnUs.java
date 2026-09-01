@@ -13,6 +13,7 @@ import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTWireSpecs;
+import gregtech6.registry.GTWires;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -181,6 +182,13 @@ public final class GT6EnUs extends LanguageProvider {
         for (GTWireSpecs.Variant tVariant : GTWireSpecs.laserVariants()) {
             add("block.gt6." + GTWireSpecs.registryName(tVariant), GTWireSpecs.displayName(tVariant));
         }
+        // task p11-flat-redstone-tab — the two new tab titles, the upstream MTE category
+        // strings verbatim: "Redstone Wires" (every Loader:1895-1902 row, tab id 27050) and
+        // "Laser Wires" (Loader:1815, tab id 24900) — upstream registers the display via
+        // LH.add("itemGroup." + name, aCategoricalName) (CreativeTab.java:35, created at
+        // MultiTileEntityRegistry.java:191), so the value is the registration literal.
+        add(GTWires.REDSTONE_TAB_TITLE_KEY, "Redstone Wires");
+        add(GTWires.LASER_TAB_TITLE_KEY, "Laser Wires");
     }
 
     /**
