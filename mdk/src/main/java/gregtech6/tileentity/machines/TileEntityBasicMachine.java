@@ -59,14 +59,14 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *     folded to true; the :792 ignition decrement stays);</li>
  * <li>{@link #doActive(long, long)} :795-887 with the carryover block :843-851 verbatim —
  *     mProgress += min(mInputMax, mEnergy) :813 (the progress unit IS an energy unit),
- *     item output placement wraps i % mOutputItemsCount :816; the :815 gate is RESTORED to
- *     the upstream form (task p8-machine-tiers-doinject ③) —
+ *     item output placement wraps i % mOutputItemsCount :816; the :815 gate is the
+ *     upstream form VERBATIM (restored p8-machine-tiers-doinject ③, the p11 unwound
+ *     fold) —
  *     {@code mStateOld && !mStateNew || !ALL_ALTERNATING.contains(mEnergyTypeAccepted)} with
- *     the :865 {@code mStateOld = mStateNew} shift — under the ENERGY_FAKE_SOURCE regime
- *     table below (TRUE suspends the alternating arm for the whole family, FALSE runs the
- *     upstream semantics where the KU/Crusher machine delivers its outputs only on the
- *     injection positive→non-positive transition tick, the AC half-cycle of the upstream
- *     Steam Engine :146 ±alternation); the fluid placement
+ *     the :865 {@code mStateOld = mStateNew} shift: the KU/Crusher machine delivers its
+ *     outputs only on the injection positive→non-positive transition tick, the AC
+ *     half-cycle of the upstream Steam Engine :146 ±alternation (the live source is the
+ *     /gt6energy alternating rig); the fluid placement
  *     (:817-835) and the neighbor auto-push
  *     blocks (:853-858/:867-884) are cut (no logistics surface — outputs stay in the slots,
  *     which keeps the upstream canOutput blockage);</li>
@@ -84,26 +84,29 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * </ul>
  *
  * <p>Energy (ADR ruling 2026-08-31-p7-machine-family ④ / 2026-08-31-p7-energy-network D1,
- * closed out by task p8-machine-tiers-doinject): BOTH options are live behind the
- * {@link #ENERGY_FAKE_SOURCE} regime switch —
+ * closed out by task p8-machine-tiers-doinject, the DEFAULT flipped by task
+ * p11-rotor-source-flip): BOTH options stay live behind the {@link #ENERGY_FAKE_SOURCE}
+ * regime switch —
  * <table>
  * <tr><th>ENERGY_FAKE_SOURCE</th><th>supply path</th><th>the :815 alternating arm</th></tr>
- * <tr><td>{@code true} (default)</td><td>the A-tier fake source via {@link #supplyEnergy()}
- *     (oven :74-77 semantics verbatim: refill mEnergy = mInputMax every tick while not
- *     stopped; doWork drains mInputMax :791)</td><td>SUSPENDED for the whole family —
- *     the gate degenerates to "progress complete" (the pre-p8 behavior, zero regression;
- *     with no RU/KU network writer the KU latch would never flip and Crusher would
- *     deadlock)</td></tr>
- * <tr><td>{@code false}</td><td>the ITileEntityEnergy network surface only
- *     ({@link #doInject} through the Root gate — oven :81-83 shape)</td><td>full upstream
- *     semantics (KU outputs only on the transition tick; RU/Lathe/Shredder output on every
+ * <tr><td>{@code false} (default, the upstream truth)</td><td>the ITileEntityEnergy network
+ *     surface only ({@link #doInject} through the Root gate — oven :81-83 shape); the
+ *     RU/KU carriers are fed by the rotor-family source rig ({@code /gt6energy type|alt},
+ *     the upstream EngineSteam :146 ±alternation form)</td><td>full upstream semantics
+ *     (KU outputs only on the transition tick; RU/Lathe/Shredder output on every
  *     completed tick — TD.java:216 ALL_ALTERNATING = (F, KU))</td></tr>
+ * <tr><td>{@code true} (the retired M1 port-ism, kept as the offline/regression seam —
+ *     the oven :134 switch same shape)</td><td>the A-tier fake source via
+ *     {@link #supplyEnergy()} (oven :74-77 semantics verbatim: refill mEnergy = mInputMax
+ *     every tick while not stopped; doWork drains mInputMax :791)</td><td>SUSPENDED for the
+ *     whole family — the pre-p8 behavior</td></tr>
  * </table>
- * The default TRUE is a port-ism ruling (ADR 2026-08-31-p8-machine-closeout ②(d)): the
- * upstream :501 type-equality gate keeps the EU-only network out of the RU/KU machines and
- * no RU/KU source exists yet, so FALSE-by-default would make all three families dead
- * blocks. The removal path is the rotor-family card (a real ±KU alternating source,
- * upstream EngineSteam :146 form): it flips the default and unwinds the suspension fold.
+ * The TRUE default was an M1 port-ism ruling (ADR 2026-08-31-p8-machine-closeout ②(d)):
+ * the upstream :501 type-equality gate kept the then-EU-only network out of the RU/KU
+ * machines, so FALSE-by-default would have made all three families dead blocks. Task
+ * p11-rotor-source-flip shipped the parameterised RU/KU ±alternating source
+ * (GTEnergySourceBlockEntity, upstream EngineSteam :146 form) and retired the port-ism:
+ * the default is the upstream truth again and the :815 suspension fold is unwound.
  * {@link #doInject} is the upstream :489-508 body minus the charging branch (:497-500,
  * mEnergyTypeCharged/mChargeRequirement are outside the trimmed field set — declared
  * deviation, the oven :492 same shape); the :511 FACE_CONNECTED side mask is not ported
@@ -138,19 +141,17 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	public static final boolean CONSTANT_ENERGY = true;
 
 	/**
-	 * The energy regime switch (task p8-machine-tiers-doinject ④, the oven p8-d3 §③ shape
-	 * with the DEFAULT REVERSED). {@code true} (default) = the A-tier fake source feeds the
-	 * family through {@link #supplyEnergy()} AND the :815 alternating arm is suspended
-	 * (zero regression); {@code false} = grid-fed only through {@link #doInject} and the
-	 * :815 gate runs the full upstream semantics. Why not false-by-default (ADR
-	 * 2026-08-31-p8-machine-closeout ②(d)): the upstream :501 type-equality gate admits only
-	 * the accepted type — the EU-only network (the sole live source family, p8-d3/d4) cannot
-	 * enter a RU/KU machine, so FALSE-by-default would make Shredder/Crusher/Lathe dead
-	 * blocks on a live server and break the p7 RCON chains. Removal path = the rotor-family
-	 * card: it ships the ±KU alternating source (upstream EngineSteam :146 form), flips this
-	 * default to false and unwinds the :815 suspension fold.
+	 * The energy regime switch (task p8-machine-tiers-doinject ④, the oven p8-d3 §③ shape;
+	 * DEFAULT FLIPPED to false by task p11-rotor-source-flip). {@code false} (shipped
+	 * default, the upstream truth — the switch itself is a pure port invention with ZERO
+	 * upstream hits) = grid-fed only through {@link #doInject} and the :815 gate runs the
+	 * full upstream semantics; the rotor-family source rig (the /gt6energy type|alt dials,
+	 * the upstream EngineSteam :146 ±alternation form) feeds the RU/KU carriers. {@code
+	 * true} = the A-tier fake source feeds the family through {@link #supplyEnergy()} AND
+	 * the :815 alternating arm is suspended — the retired M1 port-ism, kept ONLY as the
+	 * offline/regression seam (the oven :134 switch, default false there since p8-d3).
 	 */
-	public static boolean ENERGY_FAKE_SOURCE = true;
+	public static boolean ENERGY_FAKE_SOURCE = false;
 
 	// NBT keys — plain in-repo form (the oven precedent, TileEntityOven.java:111-121).
 	public static final String NBT_FACING = "facing";
@@ -194,9 +195,9 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * {@code mStateOld && !mStateNew} fires exactly on the injection positive→non-positive
 	 * transition (the AC half-cycle; the upstream Steam Engine :146 alternates the packet
 	 * sign by piston phase). Only mStateNew persists (NBT_STATE+".new"); mStateOld
-	 * re-derives on the first active tick after a load. Under ENERGY_FAKE_SOURCE=true the
-	 * :815 suspension keeps the gate from consulting the pair, but the writes stay verbatim
-	 * so the FALSE regime needs no re-touch.
+	 * re-derives on the first active tick after a load. The retired
+	 * ENERGY_FAKE_SOURCE=TRUE regime suspends the :815 arm's consult (the writes stay
+	 * verbatim); the shipped FALSE default runs this pair at full upstream semantics.
 	 */
 	public boolean mStateNew = false, mStateOld = false;
 	/** Upstream :97 — the parallel process cap (Crusher NBT_PARALLEL 4, :1300). */
@@ -361,17 +362,15 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 			if (mProgress <= mMaxProgress) {
 				mProgress += aEnergy; // :813 — the progress unit IS an energy unit (ADR-P4)
 			}
-			// :815 RESTORED (task p8-machine-tiers-doinject ③) — upstream verbatim
+			// :815 upstream verbatim (the p8 suspension fold UNWOUND by task
+			// p11-rotor-source-flip — with ENERGY_FAKE_SOURCE retired to false this is the
+			// only live shape; upstream MultiTileEntityBasicMachine.java:815):
 			// `mStateOld && !mStateNew || !ALL_ALTERNATING.contains(mEnergyTypeAccepted)`
-			// with the ENERGY_FAKE_SOURCE suspension folded into the non-alternating arm:
-			// TRUE  → `!(F && …)` = true  — the arm is suspended for the WHOLE family (the
-			//         pre-p8 behavior; the KU latch has no network writer and would deadlock
-			//         Crusher — port-ism, removal path = rotor family card);
-			// FALSE → `!(T && contains)` = `!contains` — the full upstream semantics. KU is
-			//         an ALL_ALTERNATING member (root TD.java:216 = (F, KU)) and delivers its
-			//         outputs only on the injection positive→non-positive transition tick;
-			//         RU/Lathe/Shredder output on every completed tick.
-			if (mProgress >= mMaxProgress && (mStateOld && !mStateNew || !(!ENERGY_FAKE_SOURCE && TD.Energy.ALL_ALTERNATING.contains(mEnergyTypeAccepted)))) {
+			// KU is an ALL_ALTERNATING member (root TD.java:216 = (F, KU)) and delivers its
+			// outputs only on the injection positive→non-positive transition tick (the AC
+			// half-cycle of the upstream Steam Engine :146 ±alternation); RU/Lathe/Shredder
+			// output on every completed tick.
+			if (mProgress >= mMaxProgress && (mStateOld && !mStateNew || !TD.Energy.ALL_ALTERNATING.contains(mEnergyTypeAccepted))) {
 				// :816 — outputs wrap around the output slot range: i % mOutputItemsCount
 				for (int i = 0; i < mOutputItems.length; i++) if (mOutputItems[i] != null && addStackToSlot(mRecipes.mInputItemsCount + (i % mRecipes.mOutputItemsCount), mOutputItems[i])) {
 					mSuccessful = true;
@@ -564,10 +563,10 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * {@code min(mInputMax - mEnergy, size * amount)} energy, consuming the corresponding
 	 * packet count with the rounding-up remainder (:501-505) and latching mStateNew to the
 	 * packet sign (:502 — the alternating half-cycle marker). RU/KU carrier note: the :501
-	 * type-equality gate admits the accepted type ONLY — with the live network being
-	 * EU-only, this body is reachable for the RU/KU rows through the test rig (RCON
-	 * {@code inject}) and the offline drivers, and through a future rotor-family source;
-	 * the ENERGY_FAKE_SOURCE=TRUE default keeps the family alive via the A-tier seam.
+	 * type-equality gate admits the accepted type ONLY — the live writers are the
+	 * /gt6machine inject rig and the rotor-family source (the /gt6energy type|alt dials
+	 * driving the natural tick); the retired ENERGY_FAKE_SOURCE=TRUE A-tier seam is the
+	 * only non-network supply left.
 	 */
 	@Override
 	public long doInject(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
