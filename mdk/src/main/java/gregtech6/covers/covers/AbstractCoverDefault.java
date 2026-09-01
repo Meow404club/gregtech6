@@ -27,7 +27,11 @@ import gregtech6.covers.ICoverableTE;
  * registration system stays pooled); the addToolTips :77 and bounds/collisions :85-88
  * stay pooled; the redstone defaults :78-80 are RESTORED with the cover redstone
  * framework (task p9-redstone-hooks — a plain cover is transparent to redstone); the
- * GUI/logistics defaults :82-83/:93-109 live in their pooled method groups.
+ * item-intercept defaults :93-100 are RESTORED with the side-aware item capability
+ * framework (task p10-cover-item-intercept — a plain cover is transparent to item
+ * transfer: no intercept, no override, the host default passes straight through); the
+ * GUI defaults :82-83 and the fluid override family defaults :102-109 live in their
+ * pooled method groups.
  */
 public abstract class AbstractCoverDefault implements ICover {
 
@@ -109,6 +113,40 @@ public abstract class AbstractCoverDefault implements ICover {
 	/** Upstream :80 — a non-emitting cover passes the machine's own strong emission through. */
 	@Override
 	public byte getRedstoneOutStrong(byte aCoverSide, CoverData aData, byte aDefaultRedstone) {return aDefaultRedstone;}
+
+	/**
+	 * Upstream :93-100 — the eight item-family defaults of a plain cover: no intercept
+	 * (:93/:94 return false), no override claim (:95-97 return false), the host's slot
+	 * array passes through (:98) and both transfer answers admit (:99/:100 return true).
+	 * The host dispatch (ICoverableTE item gates) only reaches the answering pair when
+	 * the override claim fired, so the plain-cover item behaviour is the untouched host
+	 * surface — the framework card mounts no consuming cover (the five-cover pool:
+	 * Shutter/Conveyor/RobotArm/FilterItem/RetrieverItem).
+	 */
+
+	/** Upstream :93 — no plain cover refuses an insert. */
+	@Override public boolean interceptItemInsert(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide) {return false;}
+
+	/** Upstream :94 — no plain cover refuses an extract. */
+	@Override public boolean interceptItemExtract(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide) {return false;}
+
+	/** Upstream :95 — no plain cover claims the accessible-slots answer. */
+	@Override public boolean getAccessibleSlotsFromSideOverride(byte aCoverSide, CoverData aData, byte aSide) {return false;}
+
+	/** Upstream :96 — no plain cover claims the insert answer. */
+	@Override public boolean canInsertItemOverride(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide) {return false;}
+
+	/** Upstream :97 — no plain cover claims the extract answer. */
+	@Override public boolean canExtractItemOverride(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide) {return false;}
+
+	/** Upstream :98 — the host's slot array passes straight through (only reached on an override claim). */
+	@Override public int[] getAccessibleSlotsFromSide(byte aCoverSide, CoverData aData, byte aSide, int[] aDefault) {return aDefault;}
+
+	/** Upstream :99 — the insert answer admits (only reached on an override claim). */
+	@Override public boolean canInsertItem(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide) {return true;}
+
+	/** Upstream :100 — the extract answer admits (only reached on an override claim). */
+	@Override public boolean canExtractItem(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide) {return true;}
 
 	/** Upstream default for the :218 hook — no gate unless the cover mounts one (the pump cover does). */
 	@Override public boolean interceptFluidFill(byte aCoverSide, CoverData aData, byte aSide, @Nullable FluidStack aFluidToFill) {return false;}

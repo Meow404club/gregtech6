@@ -16,6 +16,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+
 import gregapi.code.TagData;
 import gregapi.data.TD;
 
@@ -825,6 +829,99 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 				.with(GTModelProperties.RENDER_SNAPSHOT, new GTCoverRenderSnapshot(tSprites))
 				.with(GTModelProperties.OVEN_SNAPSHOT, tOven)
 				.build();
+	}
+
+	// ---------------------------------------------------------------------------
+	// capability exposure — the side-aware cover-gated IItemHandler
+	// (task p10-cover-item-intercept, ADR 2026-09-01-p10-cover-item-intercept)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The per-face capability handles (BasicMachine {@code mGatedCap} shape, TileEntityBasicMachine:222,
+	 * indexed by {@code Direction.get3DDataValue()} — the GT6 side order). Lazily created at the
+	 * capability request that captures the {@link Direction}, invalidated with the BE.
+	 */
+	@SuppressWarnings("unchecked")
+	private final LazyOptional<IItemHandler>[] mCoverGatedCaps = new LazyOptional[6];
+
+	/**
+	 * Upstream the oven sat on the 04Covers host, whose final ISidedInventory dispatch
+	 * (TileEntityBase04Covers:343-365) consulted the queried face's cover before every
+	 * insert/extract/slot query reached the inventory. The 1.20.1 counterpart shadows the
+	 * root's raw item-handler exposure (TileEntityBase01Root:407-415) with a side-aware
+	 * decorator: the capability request captures the face, the decorator runs the
+	 * {@link ICoverableTE} item gates for that face BEFORE the inner inventory is touched.
+	 * The side-less query (null direction, e.g. GTMultiBlockCommand:366) keeps the raw
+	 * handler — the upstream SIDES_INVALID face never consults a cover either (:355).
+	 */
+	@Override
+	public <T> LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> aCapability, @Nullable Direction aSide) {
+		if (aCapability == ForgeCapabilities.ITEM_HANDLER && aSide != null) {
+			int tIndex = aSide.get3DDataValue();
+			LazyOptional<IItemHandler> tCap = mCoverGatedCaps[tIndex];
+			if (tCap == null) {
+				tCap = LazyOptional.of(() -> newCoverGatedHandler(aSide)); // the request captures the face
+				mCoverGatedCaps[tIndex] = tCap;
+			}
+			return tCap.cast();
+		}
+		return super.getCapability(aCapability, aSide);
+	}
+
+	@Override
+	public void invalidateCaps() {
+		super.invalidateCaps();
+		for (LazyOptional<IItemHandler> tCap : mCoverGatedCaps) if (tCap != null) tCap.invalidate();
+	}
+
+	/**
+	 * The side-aware decorator over {@link #getInventory()} (the BasicMachine anonymous
+	 * gated-handler shape, TileEntityBasicMachine:696-716). Insert/extract consult the
+	 * captured face's cover gates first — an intercept hit refuses, an override hit lets
+	 * the cover answer AND the inner inventory still applies its own admission (the
+	 * upstream {@code && canInsertItem2} :353/:362 host half), the slot-visibility gate
+	 * narrows automation to the cover's accessible slots when claimed. Public: the
+	 * offline test seam (ForgeCapabilities cannot class-init offline, the
+	 * TestMachineBlockEntityNBTTest:71 precedent) and the future machine-card reuse face.
+	 *
+	 * @param aSide the face the capability was requested on — the gates key on it
+	 */
+	public IItemHandler newCoverGatedHandler(Direction aSide) {
+		GTItemStackHandler tInventory = getInventory();
+		byte tCoverSide = (byte) aSide.get3DDataValue();
+		int[] tAllSlots = new int[tInventory.getSlots()];
+		for (int i = 0; i < tAllSlots.length; i++) tAllSlots[i] = i;
+		return new IItemHandler() {
+			@Override public int getSlots() {return tInventory.getSlots();}
+			@Override public ItemStack getStackInSlot(int aSlot) {return tInventory.getStackInSlot(aSlot);}
+			@Override public int getSlotLimit(int aSlot) {return tInventory.getSlotLimit(aSlot);}
+
+			@Override
+			public boolean isItemValid(int aSlot, ItemStack aStack) {
+				return slotVisible(aSlot) && canInsertItem(tCoverSide, aSlot, aStack) && tInventory.isItemValid(aSlot, aStack);
+			}
+
+			@Override
+			public ItemStack insertItem(int aSlot, ItemStack aStack, boolean aSimulate) {
+				if (aStack == null || aStack.isEmpty()) return aStack;
+				if (!slotVisible(aSlot) || !canInsertItem(tCoverSide, aSlot, aStack)) return aStack; // the refused stack returns untouched
+				return tInventory.insertItem(aSlot, aStack, aSimulate);
+			}
+
+			@Override
+			public ItemStack extractItem(int aSlot, int aAmount, boolean aSimulate) {
+				// the 06Covers :336 form: the extract query carries no stack, the slot's content answers
+				if (!slotVisible(aSlot) || !canExtractItem(tCoverSide, aSlot, tInventory.getStackInSlot(aSlot))) return ItemStack.EMPTY;
+				return tInventory.extractItem(aSlot, aAmount, aSimulate);
+			}
+
+			/** The :344-347 slot-visibility gate — only the cover's accessible slots when it claims the override. */
+			private boolean slotVisible(int aSlot) {
+				int[] tAccessible = getAccessibleSlotsFromSide(tCoverSide, tAllSlots);
+				for (int tVisible : tAccessible) if (tVisible == aSlot) return true;
+				return false;
+			}
+		};
 	}
 
 	// ---------------------------------------------------------------------------

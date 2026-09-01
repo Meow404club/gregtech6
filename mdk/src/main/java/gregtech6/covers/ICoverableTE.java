@@ -328,6 +328,65 @@ public interface ICoverableTE {
 	}
 
 	// ---------------------------------------------------------------------------
+	// item intercept gates (upstream 04Covers :343-365 host-final dispatch shape,
+	// task p10-cover-item-intercept; the 06Covers :319-343 twin is the same shape)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream getAccessibleSlotsFromSide :343-347 — the face's slot visibility gate:
+	 * the cover on the queried face answers through {@link ICover#getAccessibleSlotsFromSide}
+	 * when it claims the override (:345), the host default passes through otherwise (:346).
+	 * The 1.20.1 counterpart hands the host default IN (the wrapper computes it), because
+	 * the composition model has no ISidedInventory final to host it.
+	 *
+	 * @param aSide the GT6 side index of the queried face
+	 */
+	default int[] getAccessibleSlotsFromSide(byte aSide, int[] aDefault) {
+		if (hasCovers() && validSide(aSide)) { // :345 (hasCovers && SIDES_VALID)
+			ICover tCover = getCovers().mBehaviours[aSide];
+			if (tCover != null && tCover.getAccessibleSlotsFromSideOverride(aSide, getCovers(), aSide)) {
+				return tCover.getAccessibleSlotsFromSide(aSide, getCovers(), aSide, aDefault); // :345
+			}
+		}
+		return aDefault; // :346
+	}
+
+	/**
+	 * Upstream canInsertItem :349-356 — the face's insert gate: an intercept hit refuses
+	 * (:352), an override hit lets the cover answer (:353), a bare/claim-free face
+	 * passes (:355). The upstream {@code && canInsertItem2} host half lives in the
+	 * wrapped item handler the gate guards (the composition model: the decorator calls
+	 * the inner handler's own admission AFTER this gate passes), so {@code true} here
+	 * means "the cover layer does not object".
+	 *
+	 * @param aSide  the GT6 side index of the face the insert was requested on
+	 * @param aSlot  the target inventory slot
+	 * @param aStack the stack offered (never null — EMPTY is the upstream null form)
+	 */
+	default boolean canInsertItem(byte aSide, int aSlot, ItemStack aStack) {
+		if (hasCovers() && validSide(aSide)) { // :351
+			ICover tCover = getCovers().mBehaviours[aSide];
+			if (tCover != null) {
+				if (tCover.interceptItemInsert(aSide, getCovers(), aSlot, aStack, aSide)) return false; // :352
+				if (tCover.canInsertItemOverride(aSide, getCovers(), aSlot, aStack, aSide)) return tCover.canInsertItem(aSide, getCovers(), aSlot, aStack, aSide); // :353
+			}
+		}
+		return true; // :355 — the host surface is not obstructed
+	}
+
+	/** Upstream canExtractItem :358-365 — the face's extract gate, same shape as the insert gate. */
+	default boolean canExtractItem(byte aSide, int aSlot, ItemStack aStack) {
+		if (hasCovers() && validSide(aSide)) { // :360-361
+			ICover tCover = getCovers().mBehaviours[aSide];
+			if (tCover != null) {
+				if (tCover.interceptItemExtract(aSide, getCovers(), aSlot, aStack, aSide)) return false; // :361
+				if (tCover.canExtractItemOverride(aSide, getCovers(), aSlot, aStack, aSide)) return tCover.canExtractItem(aSide, getCovers(), aSlot, aStack, aSide); // :362
+			}
+		}
+		return true; // :364
+	}
+
+	// ---------------------------------------------------------------------------
 	// fluid intercept iteration (upstream 04Covers :368-374, restored with p5-barrel-side-rules)
 	// ---------------------------------------------------------------------------
 

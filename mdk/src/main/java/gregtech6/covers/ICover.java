@@ -31,6 +31,10 @@ import net.minecraftforge.fluids.FluidStack;
  * <li>the texture triple :194-196 (surface/attachment/holder) — the upstream
  *     {@code ITexture} return becomes the atlas sprite id the plate renderer stitches
  *     into the block atlas.</li>
+ * <li>the item-intercept family :209-216 (task p10-cover-item-intercept, ADR
+ *     2026-09-01-p10-cover-item-intercept — the "pooled D card" cut is lifted, the
+ *     freeze-face expansion is that ADR's single sanctioned one): the intercept pair
+ *     :209-210, the override triple :211-213 and the answering triple :214-216.</li>
  * </ul>
  *
  * <p>Side order: {@code byte} face indices follow the GT6 side order, which equals
@@ -40,15 +44,22 @@ import net.minecraftforge.fluids.FluidStack;
  * (task p9-redstone-hooks, ADR 2026-09-01-p9-redstone-hooks — the P4 spec ② pool cut is
  * lifted verbatim): {@link #getRedstoneIn} is the covered face's incoming read,
  * {@link #getRedstoneOutWeak}/{@link #getRedstoneOutStrong} the emission pair the host
- * exits hand the machine default to. The item/GUI hooks :198-216 stay pooled (the GUI
- * pair is upstream dead code, the item family is the pooled D card).
+ * exits hand the machine default to. The item-intercept family :209-216 is RESTORED
+ * with the side-aware item capability framework (task p10-cover-item-intercept, ADR
+ * 2026-09-01-p10-cover-item-intercept — the "pooled D card" javadoc cut is lifted;
+ * note the older ":320-343" line anchor was a transcription error: upstream ICover is
+ * 226 lines total, the item family is :209-216, while :320-343 is the HOST-side
+ * dispatch in TileEntityBase04Covers). The GUI hook pair :198-199 stays UNPORTED (the
+ * upstream dead-code red line holds: no host dispatches them and no GUI cover exists).
  *
- * <p>Cut to the pool (spec ②): the item/GUI hooks :198-207, the logistics
+ * <p>Cut to the pool (spec ②): the GUI hook pair :198-199, the fluid
  * override family :220-225 and the connector hooks :75-80/:183. The two fluid
  * intercept hooks (:218-219) are RESTORED with the pump cover (task p5-barrel-side-rules
  * spec F): {@link #interceptFluidFill}/{@link #interceptFluidDrain} are the one-way
  * gate the CoverPump mounts on its covered face; the rest of the fluid family
- * (getFluidTank*Override/defaults, :221-225) stays pooled.
+ * (getFluidTank*Override/defaults, :220-225) stays pooled. The five consuming covers
+ * (Shutter/Conveyor/RobotArm/FilterItem/RetrieverItem) stay pooled with the framework
+ * card (the B-card precedent: framework without a real consumer).
  */
 public interface ICover {
 
@@ -176,6 +187,54 @@ public interface ICover {
 	/** Upstream :196 — the sprite for the holder face visible on adjacent covered sides. */
 	@Nullable
 	ResourceLocation getCoverTextureHolder(byte aCoverSide, CoverData aData, byte aTextureSide);
+
+	/**
+	 * Upstream :209 — the insert interceptor. @return true to REFUSE the insert through
+	 * the face carrying this cover (the first gate the host dispatch runs, before the
+	 * override/answering pair).
+	 *
+	 * @param aSlot  the target inventory slot
+	 * @param aStack the stack offered (never null — {@link ItemStack#EMPTY} is the
+	 *               1.20.1 form of the upstream null stack)
+	 * @param aSide  the face the insert was requested on
+	 */
+	boolean interceptItemInsert(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide);
+
+	/** Upstream :210 — the extract interceptor, same contract as {@link #interceptItemInsert}. */
+	boolean interceptItemExtract(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide);
+
+	/**
+	 * Upstream :211 — the accessible-slots override claim. @return true to make the
+	 * face's {@link #getAccessibleSlotsFromSide} answer (instead of passing the host
+	 * default through).
+	 */
+	boolean getAccessibleSlotsFromSideOverride(byte aCoverSide, CoverData aData, byte aSide);
+
+	/**
+	 * Upstream :212 — the insert override claim. @return true to make the face's
+	 * {@link #canInsertItem} answer (ANDed with the host admission, upstream :353).
+	 */
+	boolean canInsertItemOverride(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide);
+
+	/** Upstream :213 — the extract override claim, same contract as {@link #canInsertItemOverride}. */
+	boolean canExtractItemOverride(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide);
+
+	/**
+	 * Upstream :214 — the accessible slots answer. Only consulted when
+	 * {@link #getAccessibleSlotsFromSideOverride} returned true; {@code aDefault} is the
+	 * host's own slot array, pass it through unchanged when the cover does not narrow.
+	 */
+	int[] getAccessibleSlotsFromSide(byte aCoverSide, CoverData aData, byte aSide, int[] aDefault);
+
+	/**
+	 * Upstream :215 — the insert answer. Only consulted when
+	 * {@link #canInsertItemOverride} returned true; the result is ANDed with the host's
+	 * own admission (upstream :353 {@code && canInsertItem2}).
+	 */
+	boolean canInsertItem(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide);
+
+	/** Upstream :216 — the extract answer, same contract as {@link #canInsertItem}. */
+	boolean canExtractItem(byte aCoverSide, CoverData aData, int aSlot, ItemStack aStack, byte aSide);
 
 	/**
 	 * Upstream :218 — the restored fluid intercept. {@code aCoverSide} is the face carrying
