@@ -24,7 +24,7 @@ import gregtech6.registry.GTMachines;
 
 /**
  * {@code /gt6oven} — the machine-level acceptance command (task p4-machine-oven ⑨, W2
- * exclusive, RCON-drivable like the chest's /gt6machine). Console-safe throughout
+ * exclusive, RCON-drivable like the chest's /gt6chest). Console-safe throughout
  * (FakePlayerFactory for the menu path, no client involved):
  *
  * <ul>
