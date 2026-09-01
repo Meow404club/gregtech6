@@ -62,6 +62,39 @@ public class TileEntityOvenCoverTest extends GTCoverTestBase {
 		assertFalse(tOven.setCoverItem((byte) 1, ItemStack.EMPTY, null, false, true));
 	}
 
+	/**
+	 * Task p10-debug-oven-cover-resurrect regression (known_bugs 2026-09-01): a cover
+	 * store mutation MUST flag the BE changed — the dispatch used to land on the
+	 * TileEntityBase01Root.causeBlockUpdate override (final, mDoesBlockUpdate buffer),
+	 * which shadows the persisting ICoverableTE default, so the removal left the chunk
+	 * clean: the alive-window save kept the covers NBT on disk, later saves were skipped
+	 * (ChunkMap.save !isUnsaved) and the dismantled cover resurrected across restart.
+	 */
+	@Test
+	void coverStoreMutationsMarkTheBEChanged() {
+		TileEntityOvenCoverProbe tOven = leveledOven();
+		int tBefore = tOven.mChangedCount;
+		assertTrue(tOven.setCoverItem((byte) 1, new ItemStack(Items.IRON_INGOT), null, false, true));
+		assertTrue(tOven.mChangedCount > tBefore, "the install reaches setChanged — the cover reaches disk with the next save");
+
+		tBefore = tOven.mChangedCount;
+		assertTrue(tOven.setCoverItem((byte) 1, ItemStack.EMPTY, null, false, true));
+		assertNull(tOven.getCovers());
+		assertTrue(tOven.mChangedCount > tBefore, "the dismantle reaches setChanged — the removal re-dirties the chunk so the stale covers NBT is overwritten (the resurrect root cause)");
+
+		// the :286 no-op removal mutates nothing → no persistence mark
+		tBefore = tOven.mChangedCount;
+		assertFalse(tOven.setCoverItem((byte) 1, ItemStack.EMPTY, null, false, true));
+		assertEquals(tBefore, tOven.mChangedCount, "the rejected no-op does not mark the BE changed");
+
+		// the value/visual lanes ride the same seam (CoverData.value/visual →
+		// sendBlockUpdateFromCover) — the emitter tier now persists too
+		tOven.setCoverItem((byte) 2, new ItemStack(Items.IRON_INGOT), null, false, true);
+		tBefore = tOven.mChangedCount;
+		tOven.getCovers().value((byte) 2, (short) 3, true);
+		assertTrue(tOven.mChangedCount > tBefore, "CoverData.value(aBlockUpdate=T) reaches setChanged through the same seam");
+	}
+
 	@Test
 	void disallowedFaceRefusedAndSweptByCheckCoverValidity() {
 		TileEntityOvenCoverProbe tOven = leveledOven();

@@ -162,7 +162,12 @@ public interface ICoverableTE {
 		getCovers().set(aSide, aStack);
 		if (getCovers().mBehaviours[aSide] != null) getCovers().mBehaviours[aSide].onCoverPlaced(aSide, getCovers(), aPlayer, aStack == null ? ItemStack.EMPTY : aStack);
 
-		if (aBlockUpdate) causeBlockUpdate(); // :306
+		// the store changed — the persistence mark is UNCONDITIONAL (the :306 block-update
+		// half stays gated): a mutation that never reaches disk resurrects across restart
+		// (task p10-debug-oven-cover-resurrect). sendBlockUpdateFromCover carries the mark.
+		self().setChanged();
+
+		if (aBlockUpdate) sendBlockUpdateFromCover(); // :306
 
 		syncCoverClientData(); // :308 updateClientData — the two-channel sync carries the covers
 
@@ -286,9 +291,23 @@ public interface ICoverableTE {
 	// host-side hooks (the upstream ITileEntityCoverable members :38-41)
 	// ---------------------------------------------------------------------------
 
-	/** Upstream sendBlockUpdateFromCover — neighbors + change marker. */
+	/**
+	 * Upstream sendBlockUpdateFromCover — neighbors + change marker.
+	 *
+	 * <p>The persistence half is issued HERE explicitly: the neighbor half below dispatches
+	 * through {@link #causeBlockUpdate()}, whose interface default (:295-301) carries the
+	 * {@code setChanged()} — but every host in this port extends
+	 * {@code TileEntityBase01Root}, whose {@code public final causeBlockUpdate()} SHADOWS
+	 * that default and only buffers the neighbor update for ticking hosts
+	 * (mDoesBlockUpdate, upstream :444). Without the explicit mark, a cover store mutation
+	 * never flags the chunk for save: a save crossing the cover-alive window persists the
+	 * covers NBT, the removal leaves the chunk clean, the next save skips it
+	 * (ChunkMap.save {@code !isUnsaved()} gate) and the covers resurrect across restart
+	 * (task p10-debug-oven-cover-resurrect, known_bugs 2026-09-01).
+	 */
 	default void sendBlockUpdateFromCover() {
-		causeBlockUpdate();
+		self().setChanged(); // the persistence half (see above)
+		causeBlockUpdate(); // :306 the neighbor half — buffered for ticking hosts, unchanged
 	}
 
 	/** Upstream causeBlockUpdate — neighbor notifications + the BE change marker. */

@@ -21,9 +21,23 @@ public class TileEntityOvenCoverProbe extends TileEntityOven {
 	public final List<ItemStack> mDropped = new ArrayList<>();
 	public final List<Byte> mDropSides = new ArrayList<>();
 	public int mAllowMask = 0b111111;
+	/**
+	 * Records {@code setChanged()} (the chunk-dirty persistence mark) — task
+	 * p10-debug-oven-cover-resurrect regression: the cover dispatch must reach it. The
+	 * stub level makes the super call a documented no-op (hasChunkAt → false), so the
+	 * count is the only observable.
+	 */
+	public int mChangedCount = 0;
 
 	public TileEntityOvenCoverProbe(BlockEntityType<TileEntityOvenCoverProbe> aType, BlockPos aPos, BlockState aState) {
 		super(aType, aPos, aState);
+	}
+
+	@Override
+	public void setChanged() {
+		mChangedCount++;
+		// super deliberately not called: the stub level's blockEntityChanged path is a
+		// no-op by fixture design (GTMachinesOfflineTestBase.MachineLevel.hasChunkAt)
 	}
 
 	@Override
