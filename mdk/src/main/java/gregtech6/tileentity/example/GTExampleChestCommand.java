@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import gregtech6.gui.GTMenuTypes;
 
 /**
- * {@code /gt6machine} — the automated open-chain proof for the example chest
+ * {@code /gt6chest} — the automated open-chain proof for the example chest
  * (task p3-example-machine acceptance 4), the {@code /gt6gui} shape (GTGuiCommand) applied to
  * a real MenuProvider block entity. Two subcommands:
  *
@@ -45,6 +45,14 @@ import gregtech6.gui.GTMenuTypes;
  * <p>Game-bus listener (default {@code Bus.FORGE}) and self-contained per ADR-P3-4. The
  * blocked-above placement guard of the block's use() is deliberately not replayed here — this
  * exercises the open chain, not the placement guard.
+ *
+ * <p>Renamed from {@code /gt6machine} (task p11-gt6machine-literal-fix): the original root
+ * literal was registered twice — here and by GTMachineCommand — and Brigadier's
+ * CommandNode.addChild silently merges same-name literals into ONE dispatch node, so the
+ * bare {@code /gt6machine check} slot resolved to this class's chest check while the
+ * machine family advertised its own check subcommand. Per the port's one-feature-one-root
+ * convention (gt6wire/gt6cover/gt6tool/gt6oven/...) the chest proof now owns
+ * {@code /gt6chest}; {@code /gt6machine} belongs to the machine family alone.
  */
 @Mod.EventBusSubscriber(modid = GTMenuTypes.MOD_ID)
 public final class GTExampleChestCommand {
@@ -60,7 +68,7 @@ public final class GTExampleChestCommand {
 	@SubscribeEvent
 	public static void onRegisterCommands(RegisterCommandsEvent event) {
 		event.getDispatcher().register(
-			Commands.literal("gt6machine")
+			Commands.literal("gt6chest")
 				.requires(source -> source.hasPermission(2))
 				.then(Commands.literal("open")
 					.executes(context -> openChest(context.getSource().getPlayerOrException())))
@@ -68,7 +76,7 @@ public final class GTExampleChestCommand {
 					.executes(context -> checkChest(context.getSource(), null))
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(context -> checkChest(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"))))));
-		LOGGER.info("Registered GT6 open-chain command /gt6machine (open|check)");
+		LOGGER.info("Registered GT6 open-chain command /gt6chest (open|check)");
 	}
 
 	/** Real-player path: full NetworkHooks.openScreen chain (same call site as the block's use()). */
