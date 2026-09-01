@@ -2,6 +2,7 @@ package gregtech6.tileentity.energy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
@@ -272,6 +273,86 @@ public class GTEnergySourceBlockEntityTest extends GTOfflineTestBase {
 	// the canConnect double probe (p8 ruling 1 — the GTWireBlockEntity backfill,
 	// upstream EnergyCompat.canConnectElectricity :102 accepting || emitting)
 	// ---------------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------------
+	// the p11 dials (task p11-rotor-source-flip): the emitted type + the ±alternating mode
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void typeDialCarriesTheEmittedTypeFace() {
+		GTEnergySourceBlockEntity tSource = sType.create(POS, Blocks.STONE.defaultBlockState());
+		// the reference-equality contract: the dial sets the SHARED TD.Energy instance
+		tSource.setEnergyType(TD.Energy.RU);
+		assertTrue(tSource.isEnergyType(TD.Energy.RU, (byte)0, true), "the emitting probe follows the dial (RU)");
+		assertFalse(tSource.isEnergyType(TD.Energy.EU, (byte)0, true), "the old EU pin is gone");
+		assertFalse(tSource.isEnergyType(TD.Energy.RU, (byte)0, false), "the accepting probe stays pure-source");
+		assertTrue(tSource.isEnergyEmittingTo(TD.Energy.RU, (byte)3, true), "the theoretical face follows the dial");
+		assertFalse(tSource.isEnergyEmittingTo(TD.Energy.KU, (byte)3, true), "a foreign type stays locked");
+		assertEquals(TD.Energy.RU.AS_LIST, tSource.getEnergyTypes((byte)6), "the type list follows the dial");
+
+		tSource.setEnergyType(TD.Energy.KU);
+		assertTrue(tSource.isEnergyType(TD.Energy.KU, (byte)0, true), "the dial moves to KU");
+		assertFalse(tSource.isEnergyType(TD.Energy.RU, (byte)0, true), "RU is locked out again");
+
+		// the name lookup returns the REGISTERED instance (never a rogue mint)
+		assertEquals(TD.Energy.RU, GTEnergySourceBlockEntity.resolveEnergyType("ru"), "case-insensitive, shared instance");
+		assertNull(GTEnergySourceBlockEntity.resolveEnergyType("NOT_A_REAL_TYPE"), "an unknown name resolves to null — no mint");
+	}
+
+	@Test
+	public void alternatingModeSquaresThePacketSign() {
+		// the upstream EngineSteam :146 form: mPiston += 1; mPiston &= 3 (:113-114), then
+		// size = mPiston > 1 ? -size : size — from phase 0 the emit sequence is +,-,-,+
+		// (each period holds exactly one positive→non-positive crossing, the machine :815
+		// delivery edge). The plain (non-alternating) emit stays all-positive. Driven via
+		// emitOnce directly: the offline fixture's updateEntity runs client-side (no emit).
+		GTEnergySourceBlockEntity tSource = sType.create(POS, Blocks.STONE.defaultBlockState());
+		CountingSink tSink = new CountingSink(POS.offset(0, 0, 1));
+		IEnergyAdjacency tAdjacency = aSide -> aSide == 3 ? new EnergyTarget(tSink, (byte)2) : null;
+		tSource.setAdjacencyOverride(tAdjacency); // the offline emit seam (no level on the fixture)
+		tSource.setEmitting(true);
+		tSource.setAmperage(1);
+
+		// alternating OFF: every packet positive (the p8-d4 card form)
+		for (int i = 0; i < 3; i++) tSource.emitOnce();
+		assertEquals(32, tSink.lastSize, "non-alternating emit stays positive");
+
+		// alternating ON: the 2-bit piston square wave +,-,-,+
+		tSource.setAlternating(true);
+		long[] tExpected = {32, -32, -32, 32};
+		for (int i = 0; i < 4; i++) {
+			tSource.emitOnce();
+			assertEquals(tExpected[i], tSink.lastSize, "alternating emit " + i + " follows the piston phase (mPiston=" + tSource.mPiston + ")");
+		}
+		// the negative packets flowed at full |size| (the Util layer does not abs — the
+		// :503 machine math owns the direction-agnostic booking)
+		assertEquals(32, Math.abs(tSink.lastSize), "the magnitude rides mVoltage");
+	}
+
+	@Test
+	public void energyTypeAndAlternatingNbtRoundTrip() {
+		GTEnergySourceBlockEntity tSource = sType.create(POS, Blocks.STONE.defaultBlockState());
+		tSource.setEnergyType(TD.Energy.RU);
+		tSource.setAlternating(true);
+
+		CompoundTag tSaved = tSource.saveWithoutMetadata();
+		assertEquals(TD.Energy.RU.mName, tSaved.getString("energytype"), "the p11 energytype key rides the TagData mName");
+		assertTrue(tSaved.getBoolean("alternating"), "the p11 alternating key");
+
+		GTEnergySourceBlockEntity tBack = sType.create(POS, Blocks.STONE.defaultBlockState());
+		tBack.load(tSaved);
+		assertEquals(TD.Energy.RU, tBack.mEnergyType, "the type survives as the SHARED instance (the :501 gate is reference equality)");
+		assertTrue(tBack.mAlternating, "the alternating mode survives");
+
+		// an unknown persisted name keeps the LOADING BE's current type (no rogue mint on
+		// load, no silent EU clobber of a configured type)
+		CompoundTag tGarbage = tSource.saveWithoutMetadata();
+		tGarbage.putString("energytype", "NOT_A_REAL_TYPE");
+		GTEnergySourceBlockEntity tKept = sType.create(POS, Blocks.STONE.defaultBlockState());
+		tKept.setEnergyType(TD.Energy.RU); // the operator had configured RU before the broken save replays
+		tKept.load(tGarbage);
+		assertEquals(TD.Energy.RU, tKept.mEnergyType, "an unknown name does not clobber the type on load");
+	}
 
 	@Test
 	public void wireConnectsToThePureEmitterThroughTheEmittingBranch() {

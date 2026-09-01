@@ -39,10 +39,23 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * emit} — the mode gate lives in the tick, not the face); here {@code if (mEmitting)}
  * takes exactly that spot.
  *
- * <p>EU face family (upstream :104-110):
+ * <p>Task p11-rotor-source-flip extensions (the rotor-family source regime): the emitted
+ * TYPE is parameterised ({@link #mEnergyType}, default EU — the p8-d4 card form) and an
+ * ALTERNATING mode ({@link #mAlternating}) reproduces the upstream Steam Engine :146
+ * piston-phase ±alternation verbatim: a 2-bit phase counter (the :113-114
+ * {@code mPiston += 1; mPiston &= 3;} form, ticked once per emit) signs the packet
+ * {@code mPiston > 1 ? -mVoltage : mVoltage} — the +/+/-/- square wave whose
+ * positive→non-positive transitions drive the machine :815 alternating arm (KU delivers
+ * only on the zero-crossing tick). The phase byte is NOT persisted (the rig re-derives a
+ * square-wave phase from zero on reload — a declared test-rig simplification; the upstream
+ * engine does persist mPiston). EU machines (the oven) ignore RU/KU packets through their
+ * :501 type gate; RU/KU machines (Shredder/Crusher/Lathe) accept ONLY the matching type,
+ * so the rig type must be set to the machine's carrier.
+ *
+ * <p>Emitted-type face family (upstream :104-110, the type now a field):
  * <ul>
- * <li>{@link #isEnergyType} = {@code aEmitting && type == EU} (upstream :104 verbatim
- *     with EU pinned for the emitted-type field);</li>
+ * <li>{@link #isEnergyType} = {@code aEmitting && type == mEnergyType} (upstream :104
+ *     verbatim with the emitted-type field read);</li>
  * <li>{@link #isEnergyEmittingTo} = the upstream Root default shape
  *     (TileEntityBase01Root.java:714 — aTheoretical-insensitive, all six sides here,
  *     the {@code getSurfaceSizeAttachable} term has no cover layer in this port) with
@@ -61,8 +74,9 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *     (upstream :108-109 carry mOutput; the card flattens the /8 min to 0).</li>
  * </ul>
  *
- * <p>Persistence: the card's three plain keys "emitting"/"voltage"/"amperage" ride
- * {@code saveAdditional}/{@code load} (the te_name key is the 01Root base).
+ * <p>Persistence: the card's three plain keys "emitting"/"voltage"/"amperage" plus the
+ * p11 keys "energytype"/"alternating" ride {@code saveAdditional}/{@code load} (the
+ * te_name key is the 01Root base).
  */
 public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync implements ITileEntityEnergy {
 
@@ -70,6 +84,9 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 	public static final String NBT_EMITTING = "emitting";
 	public static final String NBT_VOLTAGE = "voltage";
 	public static final String NBT_AMPERAGE = "amperage";
+	/** The p11 keys: the emitted energy type (persisted as the TagData mName) and the ±alternating mode. */
+	public static final String NBT_ENERGY_TYPE = "energytype";
+	public static final String NBT_ALTERNATING = "alternating";
 
 	/** The packet size in EU pushed per packet (the upstream NBT_OUTPUT carrier, :58). */
 	public long mVoltage = 32;
@@ -79,6 +96,30 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 
 	/** The RCON-driven mode gate — the mStopped/mBurning slot of the upstream family (:84/:102). */
 	public boolean mEmitting = false;
+
+	/**
+	 * The emitted energy type (p11: parameterised off the p8-d4 EU pin). The :501 machine
+	 * gate is reference-equality, so this MUST be a shared TD.Energy constant — set only
+	 * through {@link #setEnergyType} / {@link #resolveEnergyType} (the registered-instance
+	 * lookup).
+	 */
+	public TagData mEnergyType = TD.Energy.EU;
+
+	/**
+	 * The ±alternating mode (p11): on = the emit signs the packet by the 2-bit piston phase
+	 * (upstream EngineSteam :146 {@code mPiston > 1 ? -tOutput : tOutput}) — the square wave
+	 * whose zero-crossings drive the machine :815 alternating arm. Off (default, the p8-d4
+	 * form) = every packet positive.
+	 */
+	public boolean mAlternating = false;
+
+	/**
+	 * The 2-bit piston phase (upstream EngineSteam :113-114 {@code mPiston += 1; mPiston &= 3;}
+	 * shape) — advanced once per alternating emit, so the sign sequence is +/+/-/- (+ = the
+	 * phase pair 0-1, - = 2-3). NOT persisted: the rig re-derives the phase from zero on
+	 * reload (declared test-rig simplification).
+	 */
+	public byte mPiston = 0;
 
 	/** BET factory for BlockEntityType.Builder.of — resolves the shared type through the registry at runtime. */
 	public GTEnergySourceBlockEntity(BlockPos aPos, BlockState aState) {
@@ -105,10 +146,20 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 	@Override
 	public void onTick(long aTimer, boolean aIsServerSide) {
 		// upstream :83-84 (server branch) + :157/:162 — the single Util call of the evidence
-		// line, size=mVoltage x amount=mAmperage (the declared single-mode simplification)
-		if (aIsServerSide && mEmitting) {
-			ITileEntityEnergy.Util.emitEnergyToNetwork(TD.Energy.EU, mVoltage, mAmperage, this, adjacency());
+		// line, size=mVoltage x amount=mAmperage (the declared single-mode simplification);
+		// p11: the alternating mode signs the size by the 2-bit piston phase (the upstream
+		// EngineSteam :113-114 advance + :146 sign form verbatim)
+		if (aIsServerSide && mEmitting) emitOnce();
+	}
+
+	/** The per-tick emit, split out so the offline tests can drive the square wave directly (the live entry is {@link #onTick}). */
+	void emitOnce() {
+		long tSize = mVoltage;
+		if (mAlternating) {
+			mPiston += 1; mPiston &= 3; // upstream :113-114 (the 2-bit phase)
+			tSize = mPiston > 1 ? -mVoltage : mVoltage; // upstream :146 sign form
 		}
+		ITileEntityEnergy.Util.emitEnergyToNetwork(mEnergyType, tSize, mAmperage, this, adjacency());
 	}
 
 	/**
@@ -116,8 +167,18 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 	 * (GTWireBlockEntity.transferElectricity :187): the neighbour BE plus the side of it
 	 * that faces us (the upstream DelegatorTileEntity pair in pure-data form). Null for
 	 * unloaded/absent neighbours — Util.emitEnergyToSide returns 0 for those.
+	 *
+	 * <p>{@code mAdjacencyOverride} is the offline test seam (the emitBooks fixture drives a
+	 * hand-built adjacency without a level): when set, it replaces the live resolution.
 	 */
+	private IEnergyAdjacency mAdjacencyOverride = null;
+
+	void setAdjacencyOverride(@Nullable IEnergyAdjacency aAdjacency) {
+		mAdjacencyOverride = aAdjacency;
+	}
+
 	private IEnergyAdjacency adjacency() {
+		if (mAdjacencyOverride != null) return mAdjacencyOverride;
 		return aSide -> {
 			if (!hasLevel()) return null;
 			BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(Direction.from3DDataValue(aSide)));
@@ -128,17 +189,17 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 	}
 
 	// ---------------------------------------------------------------------------
-	// EU face family (upstream :104-110)
+	// emitted-type face family (upstream :104-110, the type a p11 field)
 	// ---------------------------------------------------------------------------
 
 	@Override
 	public boolean isEnergyType(TagData aEnergyType, byte aSide, boolean aEmitting) {
-		return aEmitting && aEnergyType == TD.Energy.EU; // upstream :104, EU pinned
+		return aEmitting && aEnergyType == mEnergyType; // upstream :104, the emitted-type field
 	}
 
 	@Override
 	public Collection<TagData> getEnergyTypes(byte aSide) {
-		return TD.Energy.EU.AS_LIST; // upstream :110
+		return mEnergyType.AS_LIST; // upstream :110
 	}
 
 	@Override
@@ -188,7 +249,7 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 	public long getEnergyOffered(TagData aEnergyType, byte aSide, long aSize) {return 0;}
 
 	// ---------------------------------------------------------------------------
-	// NBT (the card's three plain keys)
+	// NBT (the card's three plain keys + the p11 energytype/alternating pair)
 	// ---------------------------------------------------------------------------
 
 	@Override
@@ -197,6 +258,8 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 		aNBT.putBoolean(NBT_EMITTING, mEmitting);
 		aNBT.putLong(NBT_VOLTAGE, mVoltage);
 		aNBT.putLong(NBT_AMPERAGE, mAmperage);
+		aNBT.putString(NBT_ENERGY_TYPE, mEnergyType.mName);
+		aNBT.putBoolean(NBT_ALTERNATING, mAlternating);
 	}
 
 	@Override
@@ -205,6 +268,44 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 		if (aNBT.contains(NBT_EMITTING, Tag.TAG_ANY_NUMERIC)) mEmitting = aNBT.getBoolean(NBT_EMITTING);
 		if (aNBT.contains(NBT_VOLTAGE, Tag.TAG_ANY_NUMERIC)) mVoltage = aNBT.getLong(NBT_VOLTAGE);
 		if (aNBT.contains(NBT_AMPERAGE, Tag.TAG_ANY_NUMERIC)) mAmperage = aNBT.getLong(NBT_AMPERAGE);
+		if (aNBT.contains(NBT_ENERGY_TYPE, Tag.TAG_STRING)) {
+			TagData tParsed = resolveEnergyType(aNBT.getString(NBT_ENERGY_TYPE));
+			if (tParsed != null) mEnergyType = tParsed; // an unknown name keeps the current type (no rogue mint)
+		}
+		if (aNBT.contains(NBT_ALTERNATING, Tag.TAG_ANY_NUMERIC)) mAlternating = aNBT.getBoolean(NBT_ALTERNATING);
+	}
+
+	/**
+	 * The name → shared-instance lookup (the :501 machine gate is reference equality).
+	 * Deliberately NOT {@link TagData#createTagData(String)}: that call MINTS AND REGISTERS
+	 * a new TagData for an unknown name (TagData.java:77-80), so a typo would silently
+	 * create a type nobody accepts — here an unknown name returns null and the caller
+	 * (the /gt6energy type command) reports the failure; the NBT load keeps the current type.
+	 *
+	 * <p>Matching covers the registered TagData mName ("ENERGY.KINETIC_ROTATION", ...) AND
+	 * the upstream LH local-short aliases ("RU"/"KU"/"EU"/... — TD.java:81-172 carries them
+	 * as the createTagData local-short args, which the port-level TagData drops), so the
+	 * RCON dial accepts the GT6 vocabulary.
+	 */
+	public static TagData resolveEnergyType(String aName) {
+		if (aName == null || aName.isEmpty()) return null;
+		for (TagData tTag : TagData.TAGS) if (tTag.mName.equalsIgnoreCase(aName)) return tTag;
+		return switch (aName.toUpperCase()) {
+			case "EU" -> TD.Energy.EU;
+			case "RU" -> TD.Energy.RU;
+			case "KU" -> TD.Energy.KU;
+			case "HU" -> TD.Energy.HU;
+			case "CU" -> TD.Energy.CU;
+			case "LU" -> TD.Energy.LU;
+			case "MU" -> TD.Energy.MU;
+			case "NU" -> TD.Energy.NU;
+			case "QU" -> TD.Energy.QU;
+			case "AU" -> TD.Energy.AU;
+			case "TU" -> TD.Energy.TU;
+			case "RF" -> TD.Energy.RF;
+			case "MJ" -> TD.Energy.MJ;
+			default -> null;
+		};
 	}
 
 	/** The mode setters arm persistence (the wire/oven command set form). */
@@ -220,6 +321,16 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 
 	public void setAmperage(long aAmperage) {
 		mAmperage = aAmperage;
+		setChanged();
+	}
+
+	public void setEnergyType(TagData aEnergyType) {
+		mEnergyType = aEnergyType;
+		setChanged();
+	}
+
+	public void setAlternating(boolean aAlternating) {
+		mAlternating = aAlternating;
 		setChanged();
 	}
 }

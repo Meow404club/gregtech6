@@ -121,9 +121,13 @@ public abstract class TileEntityBasicMachineOfflineTestBase extends GTMachinesOf
 	}
 
 	/**
-	 * The machine-family regime switch resets to the SHIPPED default (TRUE) per test — the
-	 * class-execution-order guard, same job as the oven switch restore above (task
-	 * p8-machine-tiers-doinject ④: the net-mode tests flip it off at their own start).
+	 * The machine-family regime fixture: TRUE per test — the RETIRED A-tier seam, kept as
+	 * the offline coverage for the legacy supply semantics (supplyEnergy + the pre-p11
+	 * behavior; the oven fixture GTMachinesOfflineTestBase:71 same shape). NOT the shipped
+	 * default any more: task p11-rotor-source-flip flipped
+	 * {@link TileEntityBasicMachine#ENERGY_FAKE_SOURCE} to false — the grid-fed tests flip
+	 * it off at their own start (netMachine), and this restore point re-arms the seam for
+	 * the fixture-regime tests that follow.
 	 */
 	@BeforeEach
 	void initMachineFakeSource() {

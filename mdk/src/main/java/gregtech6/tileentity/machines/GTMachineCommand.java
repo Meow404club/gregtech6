@@ -48,8 +48,8 @@ import gregtech6.registry.GTMachines;
  *     live menu ContainerData value ({@link GTBasicMachineMenu#computeProgressValue()}): the
  *     acceptance asserts all three states observed (progress &gt;0 &lt;32767, done 32767 via
  *     mSuccessful, idle -1) plus the output slots filling. The real server ticker keeps
- *     ticking alongside — this only accelerates the same dispatcher. TRUE-regime only
- *     (the A-tier fake source must be on);</li>
+ *     ticking alongside — this only accelerates the same dispatcher. Needs the fake-source
+ *     seam on ({@code fakesource on}): the shipped default is grid-fed via doInject;</li>
  * <li>{@code inject <ticks> [<size>] [<pos>]} — the FALSE-regime test rig: one loop
  *     iteration = one direct {@code doInject(mEnergyTypeAccepted, side, size, 1, true)}
  *     (size defaults to the machine's mInputMax; a NEGATIVE size is the AC half-cycle,
@@ -64,8 +64,10 @@ import gregtech6.registry.GTMachines;
  * </ul>
  *
  * <p>Plus the regime switch {@code /gt6machine fakesource on|off|stat} — flips
- * {@link TileEntityBasicMachine#ENERGY_FAKE_SOURCE} at runtime (the RCON chain flips the
- * whole family between the A-tier fake source and the grid-fed doInject semantics).
+ * {@link TileEntityBasicMachine#ENERGY_FAKE_SOURCE} at runtime (task
+ * p11-rotor-source-flip: {@code off} IS the shipped default — grid-fed via doInject with
+ * the full upstream :815 semantics, the RU/KU machines fed by the /gt6energy source rig;
+ * {@code on} re-arms the retired A-tier seam with the :815 alternating arm suspended).
  */
 @Mod.EventBusSubscriber(modid = "gt6")
 public final class GTMachineCommand {
@@ -313,7 +315,7 @@ public final class GTMachineCommand {
 		return tOutputs.toString();
 	}
 
-	/** The regime switch (task p8-machine-tiers-doinject ⑤(c)): on|off|stat over ENERGY_FAKE_SOURCE. */
+	/** The regime switch (task p8-machine-tiers-doinject ⑤(c); default flipped by p11-rotor-source-flip): on|off|stat over ENERGY_FAKE_SOURCE. */
 	private static LiteralArgumentBuilder<CommandSourceStack> fakesource() {
 		return Commands.literal("fakesource")
 			.then(Commands.literal("on").executes(context -> setFakeSource(context.getSource(), true)))
@@ -321,8 +323,8 @@ public final class GTMachineCommand {
 			.then(Commands.literal("stat").executes(context -> {
 				boolean tOn = TileEntityBasicMachine.ENERGY_FAKE_SOURCE;
 				String tReport = "GT6 machine ENERGY_FAKE_SOURCE=" + tOn + (tOn
-						? " (A-tier fake source, the :815 alternating arm suspended)"
-						: " (grid-fed via doInject, the full upstream :815 semantics)");
+						? " (the RETIRED A-tier seam re-armed, the :815 alternating arm suspended)"
+						: " (shipped default: grid-fed via doInject, the full upstream :815 semantics — feed the RU/KU machines with /gt6energy)");
 				context.getSource().sendSuccess(() -> Component.literal(tReport), false);
 				return Command.SINGLE_SUCCESS;
 			}));
