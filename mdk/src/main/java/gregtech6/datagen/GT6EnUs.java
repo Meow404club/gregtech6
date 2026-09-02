@@ -102,6 +102,11 @@ public final class GT6EnUs extends LanguageProvider {
      * MultiItemTechnological.java:65 — meta 1006, display name "Auto Redstone
      * Machine Switch" verbatim) and the cover controller (:84 — meta 1025,
      * "Cover Controller" verbatim); the tooltips ride the cut addToolTips channel.
+     * Task p11-cover-conveyor-robotarm: the conveyor + robot arm tier ladders (upstream
+     * MultiItemTechnological.java:51/:53 — metas 12040+i / 12080+i, display names
+     * "Compact Electric Conveyor (...)"/"Compact Robot Arm (...)" verbatim, the suffixes
+     * are VN[0..9] (CS.java:154 voltage numerals; tier i = the 512>>i period); the
+     * "Transfers a Stack every N Ticks" tooltips ride the cut addToolTips channel).
      */
     private void addCovers() {
         add("item.gt6.cover_redstone_emitter", "Redstone Emitter");
@@ -112,6 +117,11 @@ public final class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_item_filter", "Item Filter");
         add("item.gt6.cover_auto_redstone_machine_switch", "Auto Redstone Machine Switch");
         add("item.gt6.cover_controller", "Cover Controller");
+        String[] tTiers = {"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "PUV1"};
+        for (int i = 0; i < tTiers.length; i++) {
+            add("item.gt6.cover_conveyor_" + i, "Compact Electric Conveyor (" + tTiers[i] + ")");
+            add("item.gt6.cover_robot_arm_" + i, "Compact Robot Arm (" + tTiers[i] + ")");
+        }
     }
 
     /**

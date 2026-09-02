@@ -88,6 +88,17 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("block/auto_redstone_switch/circuit"));
         withExistingParent("cover_controller", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/cover_switch/circuit"));
+        // the p11 conveyor + robot arm tier ladders (task p11-cover-conveyor-robotarm) —
+        // 10 items each (one per 512>>i timing tier), all sharing the out-facing plate art
+        // (upstream's items all show the same cover texture; the in/out sprites live in
+        // textures/block/{conveyor,robotarm}/, byte-identical upstream borrows with their
+        // animation mcmeta — assets/README.md attribution)
+        for (int i = 0; i < gregtech6.covers.covers.CoverConveyor.TIMING_TIERS.length; i++) {
+            withExistingParent("cover_conveyor_" + i, mcLoc("item/generated"))
+                .texture("layer0", modLoc("block/conveyor/out"));
+            withExistingParent("cover_robot_arm_" + i, mcLoc("item/generated"))
+                .texture("layer0", modLoc("block/robotarm/out"));
+        }
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

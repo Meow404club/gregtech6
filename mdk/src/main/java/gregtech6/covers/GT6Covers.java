@@ -3,6 +3,9 @@ package gregtech6.covers;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
@@ -12,6 +15,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.covers.covers.CoverConveyor;
 import gregtech6.covers.covers.CoverControllerAutoRedstone;
 import gregtech6.covers.covers.CoverControllerCovers;
 import gregtech6.covers.covers.CoverControllerRedstone;
@@ -20,6 +24,7 @@ import gregtech6.covers.covers.CoverPump;
 import gregtech6.covers.covers.CoverRedstoneConductorIN;
 import gregtech6.covers.covers.CoverRedstoneConductorOUT;
 import gregtech6.covers.covers.CoverRedstoneEmitter;
+import gregtech6.covers.covers.CoverRobotArm;
 import gregtech6.covers.covers.CoverShutter;
 import gregtech6.covers.covers.CoverTextureSimple;
 import gregtech6.item.MaterialPrefixItem;
@@ -49,7 +54,13 @@ import gregapi.data.OP;
  * redstone cover, same own-item route as the pump; mounts {@link CoverRedstoneEmitter}
  * in {@link #init()}.
  *
- * <p>Lifecycle: {@link #init()} is idempotent and runs from FMLCommonSetup (after item
+	 * <p><b>gt6:cover_conveyor_0..9 / gt6:cover_robot_arm_0..9</b> (task
+	 * p11-cover-conveyor-robotarm) — the ten timing tiers of the two item-transport covers
+	 * (upstream MultiItemTechnological.java:51/:53 metas 12040+i / 12080+i, one item per
+	 * {@code 512>>i} tick PERIOD), mounting {@link CoverConveyor} / {@link CoverRobotArm}
+	 * in {@link #init()}.
+	 *
+	 * <p>Lifecycle: {@link #init()} is idempotent and runs from FMLCommonSetup (after item
  * registration, before any world interaction). Offline tests never call it — they
  * register their own vanilla-item covers, because {@code RegistryObject.get()} is
  * unbound outside the mod lifecycle.
@@ -133,6 +144,33 @@ public final class GT6Covers {
 	public static final RegistryObject<Item> COVER_CONTROLLER = ITEMS.register("cover_controller",
 			() -> new Item(new Item.Properties()));
 
+	/**
+	 * The p11 ten conveyor timing tiers — one item per tier, upstream
+	 * MultiItemTechnological.java:51 metas 12040+i ("Compact Electric Conveyor", each
+	 * carrying a {@link CoverConveyor} with the {@code 512>>i} tick PERIOD). Registered
+	 * through the same card-local ITEMS DeferredRegister as every own-item cover.
+	 */
+	public static final List<RegistryObject<Item>> COVER_CONVEYORS = new ArrayList<>();
+	static {
+		for (int i = 0; i < CoverConveyor.TIMING_TIERS.length; i++) {
+			final int tTier = i;
+			COVER_CONVEYORS.add(ITEMS.register("cover_conveyor_" + tTier, () -> new Item(new Item.Properties())));
+		}
+	}
+
+	/**
+	 * The p11 ten robot arm timing tiers — upstream MultiItemTechnological.java:53 metas
+	 * 12080+i ("Compact Robot Arm", each carrying a {@link CoverRobotArm} with the same
+	 * {@code 512>>i} table).
+	 */
+	public static final List<RegistryObject<Item>> COVER_ROBOT_ARMS = new ArrayList<>();
+	static {
+		for (int i = 0; i < CoverConveyor.TIMING_TIERS.length; i++) {
+			final int tTier = i;
+			COVER_ROBOT_ARMS.add(ITEMS.register("cover_robot_arm_" + tTier, () -> new Item(new Item.Properties())));
+		}
+	}
+
 	private static boolean sInitialized = false;
 
 	private GT6Covers() {
@@ -149,7 +187,7 @@ public final class GT6Covers {
 		aEvent.enqueueWork(GT6Covers::init);
 	}
 
-	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter + the p10 conductor pair + the p10 machine switch + the p11 shutter/filter pair + the p11 controller pair). */
+	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter + the p10 conductor pair + the p10 machine switch + the p11 shutter/filter pair + the p11 controller pair + the p11 conveyor/arm tiers). */
 	public static void init() {
 		if (sInitialized) return;
 		sInitialized = true;
@@ -164,8 +202,14 @@ public final class GT6Covers {
 		CoverRegistry.put(COVER_ITEM_FILTER.get(), new CoverFilterItem()); // p11 — the whitelist/blacklist face filter
 		CoverRegistry.put(COVER_AUTO_REDSTONE_MACHINE_SWITCH.get(), new CoverControllerAutoRedstone()); // p11 — the lets-it-finish machine switch
 		CoverRegistry.put(COVER_CONTROLLER.get(), new CoverControllerCovers()); // p11 — the cover-layer stop switch + cross-face relay
-		LOGGER.info("GT6 covers registered: {} -> CoverTextureSimple({}), {} -> CoverPump, {} -> CoverRedstoneEmitter, {} -> CoverRedstoneConductorIN, {} -> CoverRedstoneConductorOUT, {} -> CoverControllerRedstone, {} -> CoverShutter, {} -> CoverFilterItem, {} -> CoverControllerAutoRedstone, {} -> CoverControllerCovers",
-				tPlate, ironPlateSprite(), COVER_PUMP.getId(), COVER_REDSTONE_EMITTER.getId(), COVER_REDSTONE_CONDUCTOR_IN.getId(), COVER_REDSTONE_CONDUCTOR_OUT.getId(), COVER_REDSTONE_MACHINE_SWITCH.getId(), COVER_SHUTTER.getId(), COVER_ITEM_FILTER.getId(), COVER_AUTO_REDSTONE_MACHINE_SWITCH.getId(), COVER_CONTROLLER.getId());
+		for (int i = 0; i < CoverConveyor.TIMING_TIERS.length; i++) {
+			// p11 — the ten timing tiers of the two item-transport covers (512>>i tick periods)
+			CoverRegistry.put(COVER_CONVEYORS.get(i).get(), new CoverConveyor(CoverConveyor.TIMING_TIERS[i]));
+			CoverRegistry.put(COVER_ROBOT_ARMS.get(i).get(), new CoverRobotArm(CoverConveyor.TIMING_TIERS[i]));
+		}
+		LOGGER.info("GT6 covers registered: {} -> CoverTextureSimple({}), {} -> CoverPump, {} -> CoverRedstoneEmitter, {} -> CoverRedstoneConductorIN, {} -> CoverRedstoneConductorOUT, {} -> CoverControllerRedstone, {} -> CoverShutter, {} -> CoverFilterItem, {} -> CoverControllerAutoRedstone, {} -> CoverControllerCovers, {} conveyor tiers, {} robot arm tiers",
+				tPlate, ironPlateSprite(), COVER_PUMP.getId(), COVER_REDSTONE_EMITTER.getId(), COVER_REDSTONE_CONDUCTOR_IN.getId(), COVER_REDSTONE_CONDUCTOR_OUT.getId(), COVER_REDSTONE_MACHINE_SWITCH.getId(), COVER_SHUTTER.getId(), COVER_ITEM_FILTER.getId(), COVER_AUTO_REDSTONE_MACHINE_SWITCH.getId(), COVER_CONTROLLER.getId(),
+				COVER_CONVEYORS.size(), COVER_ROBOT_ARMS.size());
 	}
 
 	/**
