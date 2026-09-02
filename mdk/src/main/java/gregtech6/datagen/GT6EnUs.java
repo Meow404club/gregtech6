@@ -8,6 +8,7 @@ import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.GT6Mod;
+import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GT6Tools;
@@ -60,6 +61,7 @@ public class GT6EnUs extends LanguageProvider {
         addMaterialNames();
         addExampleMachine();
         addFluidPipes();
+        addEngineFluids();
         addElectricWires();
         addMachines();
         addMultiBlocks();
@@ -69,6 +71,34 @@ public class GT6EnUs extends LanguageProvider {
         addCovers();
         addJeiInfo();
     }
+
+    /**
+     * Engine fuel family keys (task p12-engine-fuel-fluids spec ③): one description entry
+     * per {@link GTFluids.EngineFluidSpec} row — the exact descriptionId the FluidType is
+     * registered with, walked from {@link GTFluids#ENGINE_SPECS} so the lang face cannot
+     * drift from the registered fluids. Values are the upstream display names: the
+     * material local names (MT.java:1884 "Steam" / :1891 "Distilled Water" /
+     * :2040 "Ethanol" / :2044 "Fuel Oil" local / :2045 "Nitro-Fuel" / :2046-2048
+     * Kerosine/Diesel/Petrol) and "Jet Fuel" for the material-less compat fluid
+     * (FL.java:422 "rc jet fuel", the common name).
+     */
+    private void addEngineFluids() {
+        for (GTFluids.EngineFluid tFamily : GTFluids.engineFluids()) {
+            add(tFamily.spec.descriptionId(), DISPLAY_NAMES.get(tFamily.spec.name()));
+        }
+    }
+
+    /** The engine-family display names, keyed by gt6 id path (see addEngineFluids for the anchors). */
+    private static final java.util.Map<String, String> DISPLAY_NAMES = java.util.Map.of(
+        "steam"           , "Steam",
+        "distilled_water" , "Distilled Water",
+        "diesel"          , "Diesel",
+        "kerosine"        , "Kerosine",
+        "petrol"          , "Petrol",
+        "fuel"            , "Fuel",
+        "nitrofuel"       , "Nitro-Fuel",
+        "jetfuel"         , "Jet Fuel",
+        "ethanol"         , "Ethanol");
 
     /**
      * The JEI ingredient info page (task p12-jei-integration, ADR 2026-09-02-p12-jei-dependency):
