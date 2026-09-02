@@ -156,6 +156,11 @@ def set_block(client, pos, block):
     return _run(client, f"setblock {fmt(pos)} {block}")
 
 
+def set_block_command(pos, block):
+    """The declarative form: just the command string for a chain Step."""
+    return f"setblock {fmt(pos)} {block}"
+
+
 def place_oven(client, pos):
     """/gt6oven place — the universal BE host of the cover/oven chains."""
     return _run(client, f"gt6oven place {fmt(pos)}")
@@ -163,14 +168,23 @@ def place_oven(client, pos):
 
 def place_hopper(client, pos, facing="down"):
     """A vanilla hopper: the push/suck gate driver above or below a machine."""
-    return _run(client, f"setblock {fmt(pos)} hopper[facing={facing}]")
+    return _run(client, hopper_command(pos, facing))
+
+
+def hopper_command(pos, facing="down"):
+    """The declarative hopper placement (the push/suck gate driver)."""
+    return f"setblock {fmt(pos)} hopper[facing={facing}]"
 
 
 def feed_container(client, pos, slot, item, count):
     """`item replace block ... container.N with minecraft:<item> <count>`."""
-    return _run(client,
-                f"item replace block {fmt(pos)} container.{slot} "
-                f"with minecraft:{item} {count}")
+    return _run(client, feed_container_command(pos, slot, item, count))
+
+
+def feed_container_command(pos, slot, item, count):
+    """The declarative container fill (the hopper/machine input setter)."""
+    return (f"item replace block {fmt(pos)} container.{slot} "
+            f"with minecraft:{item} {count}")
 
 
 def redstone_block(client, pos, on=True):
