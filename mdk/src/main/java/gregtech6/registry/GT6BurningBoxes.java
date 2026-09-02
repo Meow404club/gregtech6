@@ -262,7 +262,7 @@ public final class GT6BurningBoxes {
 
 	static {}
 
-	/** All 97 rows in registration order: Brick + Solid(26) + Liquid + Gas + FluidBed. */
+	/** All 97 rows in registration order: Brick + Solid(27) + Liquid(22) + Gas(22) + FluidBed(26). */
 	public static List<BurningBoxRow> allRows() {
 		List<BurningBoxRow> rRows = new ArrayList<>(1 + SOLID_ROWS.size() + LIQUID_ROWS.size() + GAS_ROWS.size() + FLUIDBED_ROWS.size());
 		rRows.add(BRICK_ROW);

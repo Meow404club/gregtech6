@@ -62,21 +62,21 @@ import java.util.HashSet;
  * Loader_Fuels.java:77-120, keyed by the fluid, valued |EUt × duration| power per fluid
  * unit (Recipe.java:723-725 getAbsoluteTotalPower semantics).
  *
-	 * <p>{@code BURN} / {@code FLUIDBED} mirror the FM.java:41 / FM.java:40 RecipeMapFuel rows
-	 * (task p13-hu-steam-foundation, decision 2026-09-03-p13-boiler-family-split ②): "Burnable
-	 * Fuels" ("gt.recipe.fuels.burn", item 1/2/0, fluid 1/2/0, minimal inputs 1) and "Fluidized
-	 * Bed Fuels" ("gt.recipe.fuels.fluidbed", item 1/2/1, fluid 1/2/1, minimal inputs 2) — the
-	 * two maps differ ONLY in those minimal-input columns. Same base-{@link RecipeMap} form as
-	 * {@code ENGINE_FUELS}: upstream {@code RecipeMapFuel} is a thin shell (the aFuelMap=T flag
-	 * feeding Recipe.java:142 FUEL_MAP_LIST plus the addFuel row helper), which has no port
-	 * counterpart until a pour card needs it. The BURN rows pour in with the W2 burning-box
-	 * card ({@link GT6RecipesBurnFuels}, FMLCommonSetup — the Loader_Fuels.java:77-120 BURN
-	 * column, the p12 ENGINE_FUELS transcription shape); FLUIDBED stays DECLARED-empty (the
-	 * spec ⑥ archaeology verdict on GT6RecipesBurnFuels — the upstream :37-43 material rows
-	 * need calcite/ash/burn-time primitives no card has landed). {@code FURNACE_FUEL} joins
-	 * them as the FM.java:38 on-demand synthesizer (no rows, ever — see its class doc).
-	 * Until the Liquid/Gas Burning Box consumers went live (this card) there was zero
-	 * findRecipe consumer for BURN.
+ * <p>{@code BURN} / {@code FLUIDBED} mirror the FM.java:41 / FM.java:40 RecipeMapFuel rows
+ * (task p13-hu-steam-foundation, decision 2026-09-03-p13-boiler-family-split ②): "Burnable
+ * Fuels" ("gt.recipe.fuels.burn", item 1/2/0, fluid 1/2/0, minimal inputs 1) and "Fluidized
+ * Bed Fuels" ("gt.recipe.fuels.fluidbed", item 1/2/1, fluid 1/2/1, minimal inputs 2) — the
+ * two maps differ ONLY in those minimal-input columns. Same base-{@link RecipeMap} form as
+ * {@code ENGINE_FUELS}: upstream {@code RecipeMapFuel} is a thin shell (the aFuelMap=T flag
+ * feeding Recipe.java:142 FUEL_MAP_LIST plus the addFuel row helper), which has no port
+ * counterpart until a pour card needs it. The BURN rows pour in with the W2 burning-box
+ * card ({@link GT6RecipesBurnFuels}, FMLCommonSetup — the Loader_Fuels.java:77-120 BURN
+ * column, the p12 ENGINE_FUELS transcription shape); FLUIDBED stays DECLARED-empty (the
+ * spec ⑥ archaeology verdict on GT6RecipesBurnFuels — the upstream :37-43 material rows
+ * need calcite/ash/burn-time primitives no card has landed). {@code FURNACE_FUEL} joins
+ * them as the FM.java:38 on-demand synthesizer (no rows, ever — see its class doc).
+ * Until the Liquid/Gas Burning Box consumers went live (this card) there was zero
+ * findRecipe consumer for BURN.
  *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and

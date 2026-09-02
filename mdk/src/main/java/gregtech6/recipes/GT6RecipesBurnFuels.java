@@ -74,8 +74,10 @@ import gregtech6.fluid.GTFluids;
  * pour stays EMPTY on three unportable primitives, all pool-card content:
  * (a) {@code gt6} registers no Calcite fluid (GTFluids census) and FLUIDBED's
  * minimal-fluid-input column is 1 — a row without the fluid leg cannot exist;
- * (b) the port {@link gregapi.oredict.OreDictMaterial} carries neither
- * {@code mFurnaceBurnTime} nor {@code mTargetBurning} (grep-verified), so the row
+ * (b) the port {@link gregapi.oredict.OreDictMaterial} loads NO burn-time or
+ * target-burning DATA — the {@code mFurnaceBurnTime} field (:91) and the
+ * {@code mTargetBurning} stack (:154) exist but nothing in the port assigns them
+ * (mFurnaceBurnTime stays 0; mTargetBurning amount stays 0), so the row
  * power/output legs have no data source;
  * (c) {@code OP.blockDust} is not one of the port's item-path prefixes
  * (GTMaterialItems.itemPathPrefixes, the Loader_Items.java:57-171 gate) — the 5-size
