@@ -43,9 +43,9 @@ public class GTGeneratorGasBlockEntity extends GTGeneratorLiquidBlockEntity {
 		super(aType, aPos, aState);
 	}
 
-	/** The BET factory form (the diesel 2-arg shape — the shared type resolves at tick time). */
+	/** The BET factory form — the shared type resolves at BE-creation time (the TestMachineBlockEntity ruling). */
 	public GTGeneratorGasBlockEntity(BlockPos aPos, BlockState aState) {
-		this(null, aPos, aState);
+		this(gregtech6.registry.GTBlockEntities.BURNING_BOX_GAS_BE.get(), aPos, aState);
 	}
 
 	@Override

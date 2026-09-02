@@ -79,9 +79,9 @@ public class GTGeneratorFluidBedBlockEntity extends GTGeneratorSolidBlockEntity 
 		super(aType, aPos, aState);
 	}
 
-	/** The BET factory form (the diesel 2-arg shape — the shared type resolves at tick time). */
+	/** The BET factory form — the shared type resolves at BE-creation time (the TestMachineBlockEntity ruling). */
 	public GTGeneratorFluidBedBlockEntity(BlockPos aPos, BlockState aState) {
-		this(null, aPos, aState);
+		this(gregtech6.registry.GTBlockEntities.BURNING_BOX_FLUIDBED_BE.get(), aPos, aState);
 	}
 
 	@Override

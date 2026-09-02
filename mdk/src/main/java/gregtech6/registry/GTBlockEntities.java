@@ -241,9 +241,14 @@ public final class GTBlockEntities {
 					GTBlockEntities::solidBurningBoxFactory,
 					GT6BurningBoxes.blockArray(gregtech6.registry.GT6BurningBoxes.Family.SOLID)).build(null));
 
-	/** The SOLID family factory — the abstract base mounts through an anonymous concrete subclass. */
+	/**
+	 * The SOLID family factory — the abstract base mounts through an anonymous concrete
+	 * subclass, and the shared type resolves at BE-CREATION time (post-registration, the
+	 * TestMachineBlockEntity 2-arg ruling — a NULL type would break the ticker identity
+	 * gate AND the saveId registry lookup).
+	 */
 	private static gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity solidBurningBoxFactory(net.minecraft.core.BlockPos aPos, net.minecraft.world.level.block.state.BlockState aState) {
-		return new gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity(null, aPos, aState) {};
+		return new gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity(BURNING_BOX_SOLID_BE.get(), aPos, aState) {};
 	}
 
 	/**
