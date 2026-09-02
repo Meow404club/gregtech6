@@ -42,7 +42,7 @@ worktree 内 `git rebase main` 逐提交解决；GT6 语义冲突必须回查 1.
 ```bash
 cd ../MGT6GA-trees/<slug> && git rebase main   # 如落后
 cd /home/brokestar/workspace/MGT6GA/gregtech6
-git merge --no-ff work/<slug> -S -s -m "merge: <slug> 经审查合入
+git merge --no-ff work/<slug> -S -m "merge: <slug> 经审查合入
 
 Task: <slug>
 Signed-off-by: brokestar233 <3765589194@qq.com>"
