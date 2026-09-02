@@ -26,6 +26,7 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
 import gregtech6.tileentity.energy.GTAxleBlockEntity;
 import gregtech6.tileentity.energy.GTCrankBlockEntity;
 import gregtech6.tileentity.energy.GTEnergySourceBlockEntity;
+import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.example.GTExampleChestBlockEntity;
 
 /**
@@ -167,6 +168,23 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.attachment.GTFunnelBlockEntity>> FUNNEL_BE =
 			BLOCK_ENTITY_TYPES.register("funnel", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.attachment.GTFunnelBlockEntity::new, GT6Attachments.funnelBlockArray()).build(null));
+
+	// -------------------------------------------------------------------------
+	// steam engine (task p12-engine-steam) — the kinetics family's second BET row
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Steam Engine BET (task p12-engine-steam spec ② — the BET type row lives here per
+	 * the card, the 28 blocks/items in {@link GT6Kinetics#STEAM_ENGINE_BLOCKS}; the
+	 * WIRE_ELECTRIC_BE one-line family-reference shape over
+	 * {@link GT6Kinetics#steamEngineBlockArray()}). ADR-P3-1 one-shared-type-many-blocks:
+	 * the engine variants are one BE class, the row config rides the block carrier.
+	 * Registry path "steam_engine" mirrors
+	 * GTSteamEngineBlockEntity#getTileEntityName like every other row.
+	 */
+	public static final RegistryObject<BlockEntityType<GTSteamEngineBlockEntity>> STEAM_ENGINE_BE =
+			BLOCK_ENTITY_TYPES.register("steam_engine", () -> BlockEntityType.Builder.of(
+					GTSteamEngineBlockEntity::new, GT6Kinetics.steamEngineBlockArray()).build(null));
 
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest

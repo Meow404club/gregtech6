@@ -5,12 +5,24 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,7 +33,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.block.energy.GTAxleBlock;
+import gregtech6.block.GTEntityBlock;
 import gregtech6.block.energy.GTCrankBlock;
+import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 
 /**
  * The kinetics registration family home (task p12-engine-crank spec ③): the shared
@@ -51,6 +66,16 @@ import gregtech6.block.energy.GTCrankBlock;
  * 6/9/12/16 px. The table is NAME+NUMBER only — no OreDictMaterial references: the static
  * init of this class runs at MOD construct time, where MT is not yet initialized (the
  * GTFluids lesson, p6 a9027ac).
+ * <p>Task p12-engine-steam appends the Steam Engine family: the full
+ * Loader_MultiTileEntities.java:583-612 row projection (both the Steam Engine and Strong
+ * Steam Engine ladders), the efficiency/capacity/output values riding the block carrier
+ * ({@link SteamEngineBlock#row()}, the GTBarrelBlock capacityL shape), one shared BET
+ * ({@link GTBlockEntities#STEAM_ENGINE_BE}, ADR-P3-1 multi-mount). COUNT ERRATUM
+ * (census over card text, the p12-jei-integration brick-count precedent): the task card
+ * says "26 variants, 13+13" but 1300..1313 and 1350..1363 are FOURTEEN ids each — the
+ * upstream loop :584-597 + :599-612 adds 14+14 = 28 rows, and the wire-W1 "no upstream
+ * subset" ruling forbids dropping the two the card's arithmetic lost. The table below is
+ * the verbatim 28.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Kinetics {
@@ -159,6 +184,148 @@ public final class GT6Kinetics {
 						fSpec, fSize));
 				AXLE_BLOCKS.put(tName, tBlock);
 				AXLE_ITEMS.put(tName, ITEMS.register(tName, () -> new BlockItem(tBlock.get(), new Item.Properties())));
+	// steam engines (task p12-engine-steam — Loader_MultiTileEntities.java:583-612)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * One Steam Engine registration row — the block-carrier projection of one upstream
+	 * {@code aRegistry.add(..., MultiTileEntityEngineSteam.class, ..., UT.NBT.make(...))}
+	 * line (:584-597 the Steam ladder, :599-612 the Strong ladder; values transcribed
+	 * verbatim, {@code NBT_OUTPUT = N/STEAM_PER_EU} divided out — 2 L steam per EU, the
+	 * loader's own CS.java:240 constant, so the KU packet is N/2).
+	 *
+	 * @param path           the gt6 registry path (the blockstate/model/lang key tail)
+	 * @param displayName    the upstream row display name, verbatim
+	 * @param efficiency     the upstream NBT_EFFICIENCY (ten-thousandths)
+	 * @param energyCapacity the upstream NBT_CAPACITY (the KU store, NOT tank litres — the
+	 *                       tank re-derives as STEAM_PER_WATER * output * 2, EngineSteam :80)
+	 * @param outputKU       the upstream NBT_OUTPUT (the nominal KU/t packet)
+	 * @param hardness       the upstream NBT_HARDNESS
+	 * @param resistance     the upstream NBT_RESISTANCE
+	 * @param wooden         the row's {@code aWooden} flag (the IronWood rows) — the sound tier
+	 */
+	public record SteamEngineRow(String path, String displayName, short efficiency, long energyCapacity,
+			long outputKU, float hardness, float resistance, boolean wooden) {
+		/** The block properties of the row (hardness/resistance/sound verbatim). */
+		public BlockBehaviour.Properties properties() {
+			return BlockBehaviour.Properties.of()
+					.strength(hardness, resistance)
+					.sound(wooden ? SoundType.WOOD : SoundType.METAL);
+		}
+	}
+
+	/**
+	 * The 28 steam-engine rows, upstream line order (:584-597 then :599-612). Every
+	 * efficiency 3000..6450 and output 8..256 KU/t; the IronWood pair is the aWooden tier.
+	 */
+	public static final List<SteamEngineRow> STEAM_ENGINES = List.of(
+			// the Steam Engine ladder (meta 1300-1313)
+			new SteamEngineRow("steam_engine_lead"            , "Steam Engine (Lead)"           , (short)3000,  16000,   8,  4.0F,  4.0F, false),
+			new SteamEngineRow("steam_engine_tin_alloy"       , "Steam Engine (Tin Alloy)"      , (short)4000,  20000,  10,  4.0F,  4.0F, false),
+			new SteamEngineRow("steam_engine_bronze"          , "Steam Engine (Bronze)"         , (short)5000,  24000,  12,  7.0F,  7.0F, false),
+			new SteamEngineRow("steam_engine_arsenic_copper"  , "Steam Engine (Arsenic Copper)" , (short)5000,  24000,  12,  7.0F,  7.0F, false),
+			new SteamEngineRow("steam_engine_arsenic_bronze"  , "Steam Engine (Arsenic Bronze)" , (short)5000,  28000,  14,  7.0F,  7.0F, false),
+			new SteamEngineRow("steam_engine_brass"           , "Steam Engine (Brass)"          , (short)5000,  24000,  12,  7.0F,  7.0F, false),
+			new SteamEngineRow("steam_engine_invar"           , "Steam Engine (Invar)"          , (short)6400,  16000,   8,  4.0F,  4.0F, false),
+			new SteamEngineRow("steam_engine_iron_wood"       , "Steam Engine (Iron Wood)"      , (short)6450,  16000,   8,  4.0F,  4.0F, true ),
+			new SteamEngineRow("steam_engine_steel"           , "Steam Engine (Steel)"          , (short)5000,  32000,  16,  6.0F,  6.0F, false),
+			new SteamEngineRow("steam_engine_fiery_steel"     , "Steam Engine (Fiery Steel)"    , (short)6200,  64000,  32,  7.0F,  7.0F, false),
+			new SteamEngineRow("steam_engine_chromium"        , "Steam Engine (Chromium)"       , (short)6300,  96000,  48,  4.0F,  4.0F, false),
+			new SteamEngineRow("steam_engine_titanium"        , "Steam Engine (Titanium)"       , (short)5800, 112000,  56,  9.0F,  9.0F, false),
+			new SteamEngineRow("steam_engine_tungsten"        , "Steam Engine (Tungsten)"       , (short)5800, 128000,  64, 10.0F, 10.0F, false),
+			new SteamEngineRow("steam_engine_tungstensteel"   , "Steam Engine (Tungstensteel)"  , (short)6000, 128000,  64, 12.5F, 12.5F, false),
+			// the Strong Steam Engine ladder (meta 1350-1363)
+			new SteamEngineRow("strong_steam_engine_lead"          , "Strong Steam Engine (Lead)"           , (short)3000,  64000,  32,  4.0F,  4.0F, false),
+			new SteamEngineRow("strong_steam_engine_tin_alloy"     , "Strong Steam Engine (Tin Alloy)"      , (short)4000,  80000,  40,  4.0F,  4.0F, false),
+			new SteamEngineRow("strong_steam_engine_bronze"        , "Strong Steam Engine (Bronze)"         , (short)5000,  96000,  48,  7.0F,  7.0F, false),
+			new SteamEngineRow("strong_steam_engine_arsenic_copper", "Strong Steam Engine (Arsenic Copper)" , (short)5000,  96000,  48,  7.0F,  7.0F, false),
+			new SteamEngineRow("strong_steam_engine_arsenic_bronze", "Strong Steam Engine (Arsenic Bronze)" , (short)5000, 112000,  56,  7.0F,  7.0F, false),
+			new SteamEngineRow("strong_steam_engine_brass"         , "Strong Steam Engine (Brass)"          , (short)5000,  96000,  48,  7.0F,  7.0F, false),
+			new SteamEngineRow("strong_steam_engine_invar"         , "Strong Steam Engine (Invar)"          , (short)6400,  64000,  32,  4.0F,  4.0F, false),
+			new SteamEngineRow("strong_steam_engine_iron_wood"     , "Strong Steam Engine (Iron Wood)"      , (short)6450,  64000,  32,  4.0F,  4.0F, true ),
+			new SteamEngineRow("strong_steam_engine_steel"         , "Strong Steam Engine (Steel)"          , (short)5000, 128000,  64,  6.0F,  6.0F, false),
+			new SteamEngineRow("strong_steam_engine_fiery_steel"   , "Strong Steam Engine (Fiery Steel)"    , (short)6200, 256000, 128,  7.0F,  7.0F, false),
+			new SteamEngineRow("strong_steam_engine_chromium"      , "Strong Steam Engine (Chromium)"       , (short)6300, 384000, 192,  4.0F,  4.0F, false),
+			new SteamEngineRow("strong_steam_engine_titanium"      , "Strong Steam Engine (Titanium)"       , (short)5800, 448000, 224,  9.0F,  9.0F, false),
+			new SteamEngineRow("strong_steam_engine_tungsten"      , "Strong Steam Engine (Tungsten)"       , (short)5800, 512000, 256, 10.0F, 10.0F, false),
+			new SteamEngineRow("strong_steam_engine_tungstensteel" , "Strong Steam Engine (Tungstensteel)"  , (short)6000, 512000, 256, 12.5F, 12.5F, false));
+
+	/**
+	 * The 28 blocks/BlockItems, one pair per row — the GTBarrels METAL_DRUM_BLOCKS loop
+	 * shape (the registration-lambda resolves the row's live values; the {@code GT6Kinetics.}
+	 * qualified map reads are the legal forward-reference form, the P6 lambda lesson).
+	 */
+	public static final Map<String, RegistryObject<SteamEngineBlock>> STEAM_ENGINE_BLOCKS = new LinkedHashMap<>();
+	public static final Map<String, RegistryObject<Item>> STEAM_ENGINE_ITEMS = new LinkedHashMap<>();
+	static {
+		for (SteamEngineRow tRow : STEAM_ENGINES) {
+			STEAM_ENGINE_BLOCKS.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new SteamEngineBlock(tRow, tRow.properties())));
+			STEAM_ENGINE_ITEMS.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new BlockItem(GT6Kinetics.STEAM_ENGINE_BLOCKS.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The one-line family reference for the shared BET (the GTWires.wireBlockArray shape). */
+	public static Block[] steamEngineBlockArray() {
+		return STEAM_ENGINE_BLOCKS.values().stream().map(RegistryObject::get).toArray(Block[]::new);
+	}
+
+	/**
+	 * The steam-engine block — the facing cube carrier over the shared BET (the
+	 * GTCrankBlock shape minus the click drive: the engine has no GUI, no tool face and no
+	 * use() interaction — the soft-hammer toggle is the p12-engine-steam pool cut and the
+	 * on/off gate is the {@code /gt6engine mode} command). The row (efficiency/capacity/
+	 * output/hardness) rides THIS block (the GTBarrelBlock capacityL registration-carrier
+	 * pattern): the BE reads it off the placed BlockState.
+	 *
+	 * <p>Nested here per the task card ("GT6Kinetics.java — 26-row table append +
+	 * efficiency/output carrier"): the whole family lands in this one card-owned file.
+	 */
+	public static final class SteamEngineBlock extends GTEntityBlock {
+
+		/** Facing property (horizontal — the placement orientation; the KU emit side is this Direction). */
+		public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+
+		private final SteamEngineRow mRow;
+
+		public SteamEngineBlock(SteamEngineRow aRow, Properties aProperties) {
+			super(aProperties);
+			mRow = aRow;
+			registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+		}
+
+		/** The registration row (the GTBarrelBlock.capacityL carrier read). */
+		public SteamEngineRow row() {
+			return mRow;
+		}
+
+		@Override
+		protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> aBuilder) {
+			aBuilder.add(FACING);
+		}
+
+		@Override
+		public BlockState getStateForPlacement(BlockPlaceContext aContext) {
+			// the player's horizontal look direction — the KU emit side faces the machine
+			return defaultBlockState().setValue(FACING, aContext.getHorizontalDirection());
+		}
+
+		@Override
+		protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
+			return GTBlockEntities.STEAM_ENGINE_BE.get();
+		}
+
+		@Override
+		public RenderShape getRenderShape(BlockState aState) {
+			return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+		}
+
+		@Override
+		public void setPlacedBy(Level aLevel, BlockPos aPos, BlockState aState, LivingEntity aPlacer, ItemStack aStack) {
+			super.setPlacedBy(aLevel, aPos, aState, aPlacer, aStack);
+			if (aPlacer instanceof net.minecraft.world.entity.player.Player tPlayer && aLevel.getBlockEntity(aPos) instanceof GTSteamEngineBlockEntity tEngine) {
+				tEngine.setFacingFromPlacement(tPlayer); // the oven/crank placement mirror
 			}
 		}
 	}

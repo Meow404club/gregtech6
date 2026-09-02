@@ -24,6 +24,7 @@ import gregapi.data.TD;
 import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregtech6.tileentity.energy.GTAxleBlockEntity;
 import gregtech6.tileentity.energy.GTCrankBlockEntity;
+import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 
 /**
  * {@code /gt6engine} — the engine-chain acceptance command home (task p12-engine-crank
@@ -42,6 +43,11 @@ import gregtech6.tileentity.energy.GTCrankBlockEntity;
  *     DECLARED counterfactual of "a potionless player keeps cranking" — the player
  *     right-click ({@code GTCrankBlock.use}) stays the real-interaction path. ticks 0
  *     stops a running window (the chain's stop gate).</li>
+ * <li>{@code mode <pos> on|off} — task p12-engine-steam: the steam-engine on/off gate
+ *     ({@link GTSteamEngineBlockEntity#setStopped}, the upstream
+ *     MultiTileEntityEngineSteam.java:225 setStateOnOff seam) — the RCON counterfactual
+ *     of the :175 soft-hammer toggle (the tool face is the pool cut). {@code stat} gains
+ *     the steam-engine detail branch (facing/stopped/active/heat-state/energy/tank).</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = "gt6")
@@ -63,9 +69,18 @@ public final class GTEngineCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.then(Commands.argument("ticks", IntegerArgumentType.integer(0, 1000000000))
 						.executes(aContext -> crank(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-								IntegerArgumentType.getInteger(aContext, "ticks"))))));
+								IntegerArgumentType.getInteger(aContext, "ticks"))))))
+			// task p12-engine-steam — the steam-engine on/off gate: the
+			// ITileEntityAdjacentOnOff.setStateOnOff seam (MultiTileEntityEngineSteam.java:225)
+			// in command form, the RCON counterfactual of the soft-hammer toggle (:175, pool)
+			.then(Commands.literal("mode")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.literal("on")
+						.executes(aContext -> mode(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), true)))
+					.then(Commands.literal("off")
+						.executes(aContext -> mode(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), false)))));
 		aEvent.getDispatcher().register(tEngine);
-		LOGGER.info("Registered GT6 engine-chain command /gt6engine (stat | crank) — the crank + future engine family acceptance home");
+		LOGGER.info("Registered GT6 engine-chain command /gt6engine (stat | crank | mode) — the crank + steam-engine + future engine family acceptance home");
 	}
 
 	/**
@@ -77,6 +92,29 @@ public final class GTEngineCommand {
 	 */
 	private static int stat(CommandSourceStack aSource, BlockPos aPos) {
 		ServerLevel tLevel = aSource.getLevel();
+		if (tLevel.getBlockEntity(aPos) instanceof GTSteamEngineBlockEntity tEngine) {
+			// the task p12-engine-steam readback: the conversion state surface the chain
+			// asserts (facing/stopped/active/heat-state/energy/output band/piston/tank)
+			String tFacing = Direction.from3DDataValue(tEngine.getFacing()).getName();
+			String tTank = tEngine.mTank.isEmpty() ? "tank=empty" : "tank=" + tEngine.mTank.amount() + "/"
+					+ tEngine.mTank.capacity() + "L "
+					+ net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(tEngine.mTank.getFluid().getFluid());
+			String tLine = "GT6 steam engine at " + aPos.toShortString()
+					+ ": facing=" + tFacing + "(" + tEngine.getFacing() + ") emit-side"
+					+ ", back(steam)=" + Direction.from3DDataValue(tEngine.backSide()).getName()
+					+ ", stopped=" + tEngine.mStopped
+					+ ", active=" + tEngine.mActive
+					+ ", emitting=" + tEngine.mEmitsEnergy
+					+ ", state=" + tEngine.mState + "/31"
+					+ ", energy=" + tEngine.mEnergy + "/" + tEngine.mCapacity + " KU"
+					+ ", output=" + tEngine.mOutput + " KU/t"
+					+ ", efficiency=" + tEngine.mEfficiency + "/10000"
+					+ ", piston=" + tEngine.mPiston
+					+ ", " + tTank;
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
 		if (tLevel.getBlockEntity(aPos) instanceof GTCrankBlockEntity tCrank) {
 			String tFacing = Direction.from3DDataValue(tCrank.getFacing()).getName();
 			String tLine = "GT6 crank at " + aPos.toShortString()
@@ -132,6 +170,27 @@ public final class GTEngineCommand {
 				? "GT6 crank drive at " + aPos.toShortString() + ": armed " + tCrank.mDriveTicks + " ticks"
 						+ " (RU packet " + tCrank.mPacketSize + "x" + tCrank.mPacketAmount + " per tick)"
 				: "GT6 crank drive at " + aPos.toShortString() + ": stopped (drive=" + tCrank.mDriveTicks + " ticks)";
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The steam-engine on/off gate (task p12-engine-steam spec ③): {@code on} clears
+	 * {@link GTSteamEngineBlockEntity#mStopped}, {@code off} sets it — the upstream :225
+	 * {@code setStateOnOff} pair in command form (the RCON counterfactual of the :175 soft
+	 * hammer, which rides the tool pool). The overheat stop (:155) re-arms through the same
+	 * latch; the chain's stop gate asserts {@code stopped=true} through {@code stat}.
+	 */
+	private static int mode(CommandSourceStack aSource, BlockPos aPos, boolean aOn) {
+		ServerLevel tLevel = aSource.getLevel();
+		if (!(tLevel.getBlockEntity(aPos) instanceof GTSteamEngineBlockEntity tEngine)) {
+			aSource.sendFailure(Component.literal("MODE FAILED: no steam engine BE at " + aPos.toShortString()));
+			return 0;
+		}
+		tEngine.setStopped(!aOn);
+		String tLine = "GT6 steam engine mode at " + aPos.toShortString() + ": " + (aOn ? "on" : "off")
+				+ " (stopped=" + tEngine.mStopped + ")";
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
