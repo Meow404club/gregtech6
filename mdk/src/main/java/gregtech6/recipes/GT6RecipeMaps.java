@@ -62,6 +62,18 @@ import java.util.HashSet;
  * Loader_Fuels.java:77-120, keyed by the fluid, valued |EUt × duration| power per fluid
  * unit (Recipe.java:723-725 getAbsoluteTotalPower semantics).
  *
+ * <p>{@code BURN} / {@code FLUIDBED} mirror the FM.java:41 / FM.java:40 RecipeMapFuel rows
+ * (task p13-hu-steam-foundation, decision 2026-09-03-p13-boiler-family-split ②): "Burnable
+ * Fuels" ("gt.recipe.fuels.burn", item 1/2/0, fluid 1/2/0, minimal inputs 1) and "Fluidized
+ * Bed Fuels" ("gt.recipe.fuels.fluidbed", item 1/2/1, fluid 1/2/1, minimal inputs 2) — the
+ * two maps differ ONLY in those minimal-input columns. Same base-{@link RecipeMap} form as
+ * {@code ENGINE_FUELS}: upstream {@code RecipeMapFuel} is a thin shell (the aFuelMap=T flag
+ * feeding Recipe.java:142 FUEL_MAP_LIST plus the addFuel row helper), which has no port
+ * counterpart until the W2 pour card needs it — RecipeMapFurnaceFuel (FM.Furnace) is likewise
+ * deferred to its W2 consumer card. DECLARED skeleton state: both maps register EMPTY — the
+ * fuel rows pour in with the W2 burning-box card, and until then there is zero findRecipe
+ * consumer.
+ *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
@@ -85,6 +97,12 @@ public class GT6RecipeMaps {
 
 	/** FM.java:45 — the Engine Fuels map (1 in / 2 out items, 1 in / 2 out fluids; the fuel rows are fluid-only). */
 	public static volatile RecipeMap ENGINE_FUELS;
+
+	/** FM.java:40 — the Fluidized Bed Fuels map (1/2/1 items, 1/2/1 fluids, minimal inputs 2; empty until the W2 burning-box card pours the rows). */
+	public static volatile RecipeMap FLUIDBED;
+
+	/** FM.java:41 — the Burnable Fuels map (1/2/0 items, 1/2/0 fluids, minimal inputs 1; empty until the W2 burning-box card pours the rows). */
+	public static volatile RecipeMap BURN;
 
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
@@ -137,6 +155,25 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
+		// the FM.java:40/:41 pair, upstream declaration order (FluidBed :40 before Burn :41);
+		// against ENGINE_FUELS above the rows differ ONLY in the minimal-input columns:
+		// FLUIDBED min-item 1 / min-fluid 1 / MIN 2 vs BURN 0 / 0 / 1
+		FLUIDBED = new RecipeMap(new HashSet<>(),
+				"gt.recipe.fuels.fluidbed", "Fluidized Bed Fuels", null,
+				0, 1,
+				"gt6:textures/gui/machines/default",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 2, 1,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		BURN = new RecipeMap(new HashSet<>(),
+				"gt.recipe.fuels.burn", "Burnable Fuels", null,
+				0, 1,
+				"gt6:textures/gui/machines/default",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
 	}
 
 	/** Port-only: drops the whole generation (RecipeMap.RECIPE_MAPS included) for a clean re-init. */
@@ -147,6 +184,8 @@ public class GT6RecipeMaps {
 		CRUSHER = null;
 		LATHE = null;
 		ENGINE_FUELS = null;
+		FLUIDBED = null;
+		BURN = null;
 		RecipeMap.reset();
 	}
 }

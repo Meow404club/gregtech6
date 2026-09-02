@@ -282,6 +282,28 @@ public final class GTFluids {
 	public static final int STEAM_PER_EU = 2;
 
 	/**
+	 * CS.java:238 — "The value of how many Energy Units a Liter of Water needs to turn into
+	 * Steam" (the BOILER-side global, decision 2026-09-03-p13-boiler-family-split ②). This is
+	 * the heat price of one litre of feed water; pair it with {@link #STEAM_PER_WATER_GLOBAL}
+	 * for the steam yield and {@link #STEAM_PER_EU} for the 80 × 2 = 160 self-consistency.
+	 * NOT the engine recycle math — the engine converts steam back with its own private
+	 * {@link #STEAM_PER_WATER} = 200.
+	 */
+	public static final int EU_PER_WATER = 80;
+
+	/**
+	 * CS.java:242 — "The value of how much Steam a Liter of Water is worth. The Standard is
+	 * 160 Steam = 1 Water" (the BOILER-side global, decision 2026-09-03-p13-boiler-family-split
+	 * ②). The {@code _GLOBAL} suffix exists because the short name is TAKEN by the engine-private
+	 * {@link #STEAM_PER_WATER} = 200 (MultiTileEntityEngineSteam.java:58, the engine's own
+	 * steam→water recycle ratio, its five P12 consumers read that one) — the boiler side must
+	 * only ever read THIS constant, and the two different upstream quantities must never be
+	 * conflated (the scope-naming lesson). Self-consistent: {@link #EU_PER_WATER} 80 ×
+	 * {@link #STEAM_PER_EU} 2 = 160.
+	 */
+	public static final int STEAM_PER_WATER_GLOBAL = 160;
+
+	/**
 	 * One engine-fuel declaration row: the pure data of one gt6 fluid family (readable
 	 * OFFLINE — the tests assert these declared values without touching the registries;
 	 * the live FluidType carries the same numbers at registration time).
