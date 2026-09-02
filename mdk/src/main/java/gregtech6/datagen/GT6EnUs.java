@@ -98,6 +98,10 @@ public final class GT6EnUs extends LanguageProvider {
      * verbatim) and the item filter (upstream :82 — meta 1023, display name
      * "Item Filter" verbatim); the toggle/filter tooltips ride the same cut
      * addToolTips channel.
+     * Task p11-cover-controllers: the auto redstone switch (upstream
+     * MultiItemTechnological.java:65 — meta 1006, display name "Auto Redstone
+     * Machine Switch" verbatim) and the cover controller (:84 — meta 1025,
+     * "Cover Controller" verbatim); the tooltips ride the cut addToolTips channel.
      */
     private void addCovers() {
         add("item.gt6.cover_redstone_emitter", "Redstone Emitter");
@@ -106,6 +110,8 @@ public final class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_redstone_machine_switch", "Redstone Machine Switch");
         add("item.gt6.cover_shutter", "Shutter Cover");
         add("item.gt6.cover_item_filter", "Item Filter");
+        add("item.gt6.cover_auto_redstone_machine_switch", "Auto Redstone Machine Switch");
+        add("item.gt6.cover_controller", "Cover Controller");
     }
 
     /**
