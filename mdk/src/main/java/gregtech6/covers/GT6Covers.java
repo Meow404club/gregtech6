@@ -12,6 +12,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.covers.covers.CoverControllerAutoRedstone;
+import gregtech6.covers.covers.CoverControllerCovers;
 import gregtech6.covers.covers.CoverControllerRedstone;
 import gregtech6.covers.covers.CoverFilterItem;
 import gregtech6.covers.covers.CoverPump;
@@ -111,6 +113,26 @@ public final class GT6Covers {
 	public static final RegistryObject<Item> COVER_ITEM_FILTER = ITEMS.register("cover_item_filter",
 			() -> new Item(new Item.Properties()));
 
+	/**
+	 * The p11 auto redstone machine switch — the "lets it finish" controller (task
+	 * p11-cover-controllers; upstream MultiItemTechnological.java:65 meta 1006,
+	 * "Auto Redstone Machine Switch"). Holds a mid-process machine ON through a
+	 * signal drop until the current process produces. Same card-local ITEMS
+	 * DeferredRegister as the P10 switch.
+	 */
+	public static final RegistryObject<Item> COVER_AUTO_REDSTONE_MACHINE_SWITCH = ITEMS.register("cover_auto_redstone_machine_switch",
+			() -> new Item(new Item.Properties()));
+
+	/**
+	 * The p11 cover controller — the cover-layer stop switch (task
+	 * p11-cover-controllers; upstream MultiItemTechnological.java:84 meta 1025,
+	 * "Cover Controller"). Drives {@code CoverData.setStopped} for the OTHER covers
+	 * on the block and relays clicks/tool clicks across faces. Same card-local
+	 * ITEMS DeferredRegister.
+	 */
+	public static final RegistryObject<Item> COVER_CONTROLLER = ITEMS.register("cover_controller",
+			() -> new Item(new Item.Properties()));
+
 	private static boolean sInitialized = false;
 
 	private GT6Covers() {
@@ -127,7 +149,7 @@ public final class GT6Covers {
 		aEvent.enqueueWork(GT6Covers::init);
 	}
 
-	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter + the p10 conductor pair + the p10 machine switch + the p11 shutter/filter pair). */
+	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter + the p10 conductor pair + the p10 machine switch + the p11 shutter/filter pair + the p11 controller pair). */
 	public static void init() {
 		if (sInitialized) return;
 		sInitialized = true;
@@ -140,8 +162,10 @@ public final class GT6Covers {
 		CoverRegistry.put(COVER_REDSTONE_MACHINE_SWITCH.get(), new CoverControllerRedstone()); // p10 — the redstone on/off machine switch
 		CoverRegistry.put(COVER_SHUTTER.get(), new CoverShutter()); // p11 — the open/closed face gate
 		CoverRegistry.put(COVER_ITEM_FILTER.get(), new CoverFilterItem()); // p11 — the whitelist/blacklist face filter
-		LOGGER.info("GT6 covers registered: {} -> CoverTextureSimple({}), {} -> CoverPump, {} -> CoverRedstoneEmitter, {} -> CoverRedstoneConductorIN, {} -> CoverRedstoneConductorOUT, {} -> CoverControllerRedstone, {} -> CoverShutter, {} -> CoverFilterItem",
-				tPlate, ironPlateSprite(), COVER_PUMP.getId(), COVER_REDSTONE_EMITTER.getId(), COVER_REDSTONE_CONDUCTOR_IN.getId(), COVER_REDSTONE_CONDUCTOR_OUT.getId(), COVER_REDSTONE_MACHINE_SWITCH.getId(), COVER_SHUTTER.getId(), COVER_ITEM_FILTER.getId());
+		CoverRegistry.put(COVER_AUTO_REDSTONE_MACHINE_SWITCH.get(), new CoverControllerAutoRedstone()); // p11 — the lets-it-finish machine switch
+		CoverRegistry.put(COVER_CONTROLLER.get(), new CoverControllerCovers()); // p11 — the cover-layer stop switch + cross-face relay
+		LOGGER.info("GT6 covers registered: {} -> CoverTextureSimple({}), {} -> CoverPump, {} -> CoverRedstoneEmitter, {} -> CoverRedstoneConductorIN, {} -> CoverRedstoneConductorOUT, {} -> CoverControllerRedstone, {} -> CoverShutter, {} -> CoverFilterItem, {} -> CoverControllerAutoRedstone, {} -> CoverControllerCovers",
+				tPlate, ironPlateSprite(), COVER_PUMP.getId(), COVER_REDSTONE_EMITTER.getId(), COVER_REDSTONE_CONDUCTOR_IN.getId(), COVER_REDSTONE_CONDUCTOR_OUT.getId(), COVER_REDSTONE_MACHINE_SWITCH.getId(), COVER_SHUTTER.getId(), COVER_ITEM_FILTER.getId(), COVER_AUTO_REDSTONE_MACHINE_SWITCH.getId(), COVER_CONTROLLER.getId());
 	}
 
 	/**

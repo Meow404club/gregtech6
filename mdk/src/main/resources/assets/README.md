@@ -293,6 +293,52 @@ cover (AbstractCoverDefault :71-72 defaults).
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
+Auto Redstone Machine Switch cover texture, task p11-cover-controllers: the
+1 PNG under `gt6/textures/block/auto_redstone_switch/` comes from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/covers/autoredstoneswitch/`
+(the `CoverControllerAutoRedstone.java:67` `sTextureForeground` single sprite,
+`machines/covers/autoredstoneswitch/circuit`), byte-identical to upstream,
+sha256 verified:
+
+- `circuit.png`       `637b71f4547bf42f2778c08e1072158d4dfa7c10b68d133fe6a39ea262a40fb0`
+
+Path mapping (declared, the P10 redstone-switch precedent): upstream
+`machines/covers/autoredstoneswitch/circuit` is lowercased/underscored to
+`auto_redstone_switch/circuit` (1.20.1 `ResourceLocation` charset), landing
+under `textures/block/` — the vanilla block atlas `directory("block")` source
+auto-stitches the sprite id `gt6:block/auto_redstone_switch/circuit` with zero
+extra atlas wiring. The upstream `BACKGROUND_COVER` layer (the attachment/holder
+faces, `CoverControllerAutoRedstone.java:64-65`) is NOT borrowed — it folds into
+the single-sprite plate like every cover (AbstractCoverDefault :71-72 defaults).
+
+Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
+Cover Controller cover texture, task p11-cover-controllers: the 1 PNG under
+`gt6/textures/block/cover_switch/` comes from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/covers/coverswitch/`
+(the `CoverControllerCovers.java:104` `sTextureForeground` single sprite,
+`machines/covers/coverswitch/circuit`), byte-identical to upstream, sha256
+verified:
+
+- `circuit.png`       `c7a5e3ba9a69ee6c43146d098dec8d582be88aff2bc9d6222775bfc050e46bf6`
+
+Path mapping (declared, the P10 redstone-switch precedent): upstream
+`machines/covers/coverswitch/circuit` is lowercased/underscored to
+`cover_switch/circuit` (1.20.1 `ResourceLocation` charset), landing under
+`textures/block/` — the vanilla block atlas `directory("block")` source
+auto-stitches the sprite id `gt6:block/cover_switch/circuit` with zero extra
+atlas wiring. The upstream `coverswitch/base` background (`:104`
+`sTextureBackground`, the attachment/holder faces, `:101-102`) is NOT borrowed —
+it folds into the single-sprite plate like every cover (AbstractCoverDefault
+:71-72 defaults, the BACKGROUND_COVER layer note).
+
+Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
+Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
 Laser Fiber Wire textures, task p11-wire-fiber-texture: the 2 PNGs under
 `gt6/textures/block/iconsets/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/iconsets/`
