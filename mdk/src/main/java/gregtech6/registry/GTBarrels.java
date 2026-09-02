@@ -33,6 +33,7 @@ import gregtech6.GT6Mod;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.item.GTBarrelBlockItem;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
+import gregtech6.tileentity.tank.GTBarrelLogisticsBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelPlasticBlockEntity;
 
@@ -213,6 +214,35 @@ public final class GTBarrels {
 	public static final RegistryObject<Item> BARREL_METAL_ITEM = ITEMS.register("barrel_metal",
 			() -> new GTBarrelBlockItem(BARREL_METAL.get(), new Item.Properties().stacksTo(16)));
 
+	/**
+	 * Logistics Tank — the keepFilter barrel (task p12-barrel-keepfilter-logistics), the
+	 * upstream row Loader_MultiTileEntities.java:2171 verbatim on the load-bearing numbers:
+	 * {@code "Logistics Tank", MultiTileEntityBarrelLogistics, NBT_HARDNESS 1.0F,
+	 * NBT_RESISTANCE 10.0F, NBT_TANK_CAPACITY 1000000L, NBT_CAPACITY_HU 100000} — the block
+	 * carrier takes capacityL = 1000000 and the 100000 K melt ceiling; the block sound is
+	 * the metal-drum COPPER stand-in (the row material is ANY.W = tungsten with the
+	 * aUtilMetal tool set — NOT the wood set the task-card sketch guessed, upstream :2171
+	 * read verbatim). Declared cuts: the row's four-proof flags (all T) are the P4 quartet
+	 * pool with no port consumer; the upstream category is "Logistics" (id 17997) and the
+	 * recipe references {@code IL.Cover_Logistics_Generic_Storage} +
+	 * {@code IL.FIELD_GENERATORS} — no logistics pipe network exists in the port, so the
+	 * barrel pools into this "Fluid Containers" tab below and stays /give-reachable, card
+	 * spec ②.
+	 */
+	public static final RegistryObject<GTBarrelBlock> BARREL_LOGISTICS = BLOCKS.register("barrel_logistics",
+			() -> new GTBarrelBlock(1000000, 100000, () -> GTBarrels.BARREL_LOGISTICS_BE.get(),
+					BlockBehaviour.Properties.of()
+							.strength(1.0F, 10.0F).sound(SoundType.COPPER)));
+
+	/** The logistics tank BET: one BlockEntityType over the logistics barrel only (one TE class per material row, the wood/plastic shape). */
+	public static final RegistryObject<BlockEntityType<GTBarrelLogisticsBlockEntity>> BARREL_LOGISTICS_BE =
+			BLOCK_ENTITY_TYPES.register("barrel_logistics", () -> BlockEntityType.Builder.of(
+					GTBarrelLogisticsBlockEntity::new, BARREL_LOGISTICS.get()).build(null));
+
+	/** The logistics tank item — the p12 carrier item (same shape as the wood row). */
+	public static final RegistryObject<Item> BARREL_LOGISTICS_ITEM = ITEMS.register("barrel_logistics",
+			() -> new GTBarrelBlockItem(BARREL_LOGISTICS.get(), new Item.Properties().stacksTo(16)));
+
 	/** The "Fluid Containers" category tab (upstream MTE category of the barrel row, :2136 column 2). */
 	public static final RegistryObject<CreativeModeTab> FLUID_CONTAINERS_TAB = CREATIVE_MODE_TABS.register("fluid_containers",
 			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
@@ -222,6 +252,7 @@ public final class GTBarrels {
 						aOutput.accept(new ItemStack(BARREL_ITEM.get()));
 						aOutput.accept(new ItemStack(BARREL_PLASTIC_ITEM.get()));
 						aOutput.accept(new ItemStack(BARREL_METAL_ITEM.get()));
+						aOutput.accept(new ItemStack(BARREL_LOGISTICS_ITEM.get())); // the :2171 row pools here — its upstream "Logistics" category is a port pool cut
 						for (RegistryObject<Item> tItem : GTBarrels.METAL_DRUM_ITEMS.values()) aOutput.accept(new ItemStack(tItem.get()));
 					})
 					.build());
@@ -269,6 +300,9 @@ public final class GTBarrels {
 					ForgeRegistries.BLOCKS.getKey(BARREL.get()), BARREL.get().capacityL(), BARREL.get().meltingPointK(),
 					ForgeRegistries.BLOCKS.getKey(BARREL_PLASTIC.get()), BARREL_PLASTIC.get().capacityL(), BARREL_PLASTIC.get().meltingPointK(),
 					ForgeRegistries.BLOCKS.getKey(BARREL_METAL.get()), BARREL_METAL.get().capacityL(), BARREL_METAL.get().meltingPointK());
+			// the p12 keepFilter row (:2171) — one log line, same shape as the drum rows
+			GT6Mod.LOGGER.info("GT6 logistics tank registered: {} \"Logistics Tank\" {} L @ {} K (keepsFilter)",
+					BARREL_LOGISTICS.getId(), BARREL_LOGISTICS.get().capacityL(), BARREL_LOGISTICS.get().meltingPointK());
 			// the p7 acceptance ④: one log row per drum, capacity + bridge melting point
 			for (MetalDrumRow tRow : HIGH_TIER_METAL_DRUMS) {
 				RegistryObject<GTBarrelBlock> tBlock = GTBarrels.METAL_DRUM_BLOCKS.get(tRow.path());

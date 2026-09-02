@@ -25,6 +25,8 @@ import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.item.GTBarrelBlockItem;
 import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
+import gregtech6.tileentity.tank.GTBarrelLogisticsBlockEntity;
+import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
@@ -44,6 +46,8 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 
 	static BlockEntityType<GTBarrelBlockEntity> sType;
 	static BlockEntityType<StickyBarrelBlockEntity> sStickyType;
+	static BlockEntityType<GTBarrelMetalBlockEntity> sMetalType;
+	static BlockEntityType<GTBarrelLogisticsBlockEntity> sLogisticsType;
 
 	/** The MultiTileEntityBarrelLogistics keepsFilter()=T precedent (Logistics.java:40) as the sticky test mount. */
 	static final class StickyBarrelBlockEntity extends TileEntityBase08Barrel {
@@ -77,6 +81,20 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 				(aPos, aState) -> new StickyBarrelBlockEntity(tStickyHolder[0], aPos, aState),
 				Blocks.STONE).build(null);
 		sStickyType = tStickyHolder[0];
+
+		BlockEntityType<GTBarrelMetalBlockEntity>[] tMetal = (BlockEntityType<GTBarrelMetalBlockEntity>[]) new BlockEntityType<?>[1];
+		tMetal[0] = BlockEntityType.Builder.of(
+				(aPos, aState) -> new GTBarrelMetalBlockEntity(tMetal[0], aPos, aState),
+				Blocks.STONE).build(null);
+		sMetalType = tMetal[0];
+
+		// the real logistics BE (task p12-barrel-keepfilter-logistics) over the same vanilla
+		// fixture shape — the BE ctor takes the offline BET, the GTBarrels constants stay untouched
+		BlockEntityType<GTBarrelLogisticsBlockEntity>[] tLogistics = (BlockEntityType<GTBarrelLogisticsBlockEntity>[]) new BlockEntityType<?>[1];
+		tLogistics[0] = BlockEntityType.Builder.of(
+				(aPos, aState) -> new GTBarrelLogisticsBlockEntity(tLogistics[0], aPos, aState),
+				Blocks.STONE).build(null);
+		sLogisticsType = tLogistics[0];
 	}
 
 	@Test
@@ -110,12 +128,13 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 		assertTrue(tBack.mTank.contains(new FluidStack(Fluids.WATER, 1)), "preventDraining keeps the fluid identity at 0 L");
 		assertTrue(tBack.mTank.getFluid() != null, "the identity stack stays reachable");
 
-		// the empty-but-identity state still writes the NBT_TANK key under preventDraining (writeToNBT :85),
-		// but its payload degrades: W1 FluidTankGT.writeToNBT rebinds the live stack to 0 L in place and a
-		// 0-amount 1.20.1 FluidStack is empty-flagged (FluidStack.updateEmpty :173), so the written
-		// FluidName serializes as "minecraft:empty". Known FluidTankGT gap (out of this card's files scope)
-		// — the keepFilter/logistics barrel that needs 0 L persistence carries the fix with its port card;
-		// the wood barrel (keepsFilter=F) never reaches the 0-amount-identity state (drains to null).
+		// the empty-but-identity state writes the NBT_TANK key under preventDraining (writeToNBT
+		// :85) AND carries the real identity since task p12-barrel-keepfilter-logistics: the
+		// W1-era payload degraded to "minecraft:empty" (the 1.20.1 empty flag collapsed
+		// FluidStack.writeToNBT) — the logistics card's FluidTankGT serialization fix now writes
+		// the real FluidName at Amount 0, asserted over the real BE below
+		// (logisticsBarrelIdentitySurvivesTheZeroAmountRoundTrip). The W1 assertion here (the key
+		// stays under preventDraining) is unchanged and still passes.
 		CompoundTag tEmptied = tBack.saveWithoutMetadata();
 		assertTrue(tEmptied.contains(TileEntityBase08Barrel.NBT_TANK, Tag.TAG_COMPOUND), "the key stays under preventDraining (:85)");
 	}
@@ -245,5 +264,85 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 		ItemStack tBlank = new ItemStack(Items.GLASS_BOTTLE);
 		tBlank.getOrCreateTag().put(TileEntityBase08Barrel.NBT_TANK, new CompoundTag());
 		assertFalse(GTBarrelBlockItem.hasContent(tBlank), "a present-but-empty compound is not content");
+	}
+
+	// ---------------------------------------------------------------------------
+	// task p12-barrel-keepfilter-logistics — the real BE replaces the sticky test
+	// mount as the keepsFilter()=T consumer (the mount above stays as the base-class
+	// regression). The StickyBarrelBlockEntity mount (:49) is retained per the card
+	// spec ③; the logistics BE asserts the same stickiness over the real class.
+	// ---------------------------------------------------------------------------
+
+	/** The upstream :39-40 override pair on the real BE — keepsFilter T (the only one) + canBeSealed F; the metal control arm stays F/null. */
+	@Test
+	public void logisticsBarrelKeepsFilterAndRefusesSealing() {
+		GTBarrelLogisticsBlockEntity tBe = sLogisticsType.create(POS, Blocks.STONE.defaultBlockState());
+		assertTrue(tBe.keepsFilter(), "the MultiTileEntityBarrelLogistics override (Logistics.java:40) — the port's only T");
+		assertFalse(tBe.canBeSealed(), "the :39 transcription — the logistics tank refuses the seal");
+		assertEquals("barrel_logistics", tBe.getTileEntityName(), "the BET path mirror (GTBarrels.BARREL_LOGISTICS_BE)");
+
+		// the control arm: the metal drum takes the base default (drains to null, seal face cut port-wide)
+		GTBarrelMetalBlockEntity tMetal = sMetalType.create(POS, Blocks.STONE.defaultBlockState());
+		assertFalse(tMetal.keepsFilter(), "metal takes the base :284 default — keepsFilter=F (zero semantic drift)");
+	}
+
+	/**
+	 * The keepFilter acceptance (card acceptance a): fill → drain to 0 → the saved NBT
+	 * carries the REAL identity at Amount 0 (the writeToNBT :85 judgement + the 1.20.1
+	 * empty-flag fix) → a fresh BE loads it back with the identity intact → refilling the
+	 * same fluid succeeds. The drain only sticks after a load pass — the :132
+	 * {@code setPreventDraining(keepsFilter())} wiring is the load-time re-arm.
+	 */
+	@Test
+	public void logisticsBarrelIdentitySurvivesTheZeroAmountRoundTrip() {
+		// seed: fill 100, save, reload — the load pass arms preventDraining (:132)
+		GTBarrelLogisticsBlockEntity tBe = sLogisticsType.create(POS, Blocks.STONE.defaultBlockState());
+		assertEquals(100, tBe.mTank.fill(new FluidStack(Fluids.WATER, 100), FluidAction.EXECUTE));
+		GTBarrelLogisticsBlockEntity tArmed = sLogisticsType.create(POS, Blocks.STONE.defaultBlockState());
+		tArmed.load(tBe.saveWithoutMetadata());
+
+		// drain to 0: the identity stays in the tank (mPreventDraining, upstream :121-126)
+		tArmed.mTank.drain(100, FluidAction.EXECUTE);
+		assertEquals(0, tArmed.mTank.amount());
+		assertTrue(tArmed.mTank.contains(new FluidStack(Fluids.WATER, 1)), "the identity survives the drain to 0 in memory");
+
+		// the write half: the saved NBT carries the REAL fluid name at Amount 0 — the
+		// writeToNBT fix (pre-card the payload degraded to "minecraft:empty", the W1 known gap)
+		CompoundTag tZero = tArmed.saveWithoutMetadata();
+		assertTrue(tZero.contains(TileEntityBase08Barrel.NBT_TANK, Tag.TAG_COMPOUND), "the :85 judgement keeps the key at 0 L");
+		CompoundTag tTankTag = tZero.getCompound(TileEntityBase08Barrel.NBT_TANK);
+		assertEquals("minecraft:water", tTankTag.getString("FluidName"), "writeToNBT 0 量含身份 — the real FluidName, not minecraft:empty");
+		assertEquals(0, tTankTag.getInt("Amount"), "Amount 0 — the 0-amount state itself persists");
+
+		// the read half: a fresh BE loads the 0-amount identity back (loadFluidStackFromNBT
+		// keeps the raw fluid on the empty-flagged stack) and refilling the same fluid succeeds
+		GTBarrelLogisticsBlockEntity tBack = sLogisticsType.create(POS, Blocks.STONE.defaultBlockState());
+		tBack.load(tZero);
+		assertEquals(0, tBack.mTank.amount(), "the loaded tank is at 0 L");
+		assertTrue(tBack.mTank.contains(new FluidStack(Fluids.WATER, 1)), "load→身份在 — the identity rides the round trip");
+		assertEquals(100, tBack.mTank.fill(new FluidStack(Fluids.WATER, 100), FluidAction.EXECUTE),
+				"重灌同流体成功 — the kept filter accepts its own fluid again");
+
+		// and the re-drained tank saves the same shape again (the :132 re-arm on the load pass above)
+		tBack.mTank.drain(100, FluidAction.EXECUTE);
+		CompoundTag tAgain = tBack.saveWithoutMetadata();
+		assertEquals("minecraft:water", tAgain.getCompound(TileEntityBase08Barrel.NBT_TANK).getString("FluidName"),
+				"the zero-amount identity persists on every subsequent save");
+	}
+
+	/** The control arm (card acceptance a): the metal drum at drain-0 is a TRUE empty — no identity, no tank key (base semantics, zero drift). */
+	@Test
+	public void metalControlBarrelDrainsToTrueEmptyWithoutIdentity() {
+		GTBarrelMetalBlockEntity tBe = sMetalType.create(POS, Blocks.STONE.defaultBlockState());
+		assertEquals(100, tBe.mTank.fill(new FluidStack(Fluids.WATER, 100), FluidAction.EXECUTE));
+		GTBarrelMetalBlockEntity tArmed = sMetalType.create(POS, Blocks.STONE.defaultBlockState());
+		tArmed.load(tBe.saveWithoutMetadata()); // the :132 wiring runs with keepsFilter=F — nothing to arm
+
+		tArmed.mTank.drain(100, FluidAction.EXECUTE);
+		assertEquals(0, tArmed.mTank.amount());
+		assertNull(tArmed.mTank.getFluid(), "drain 0 身份清 — the base barrels drain to a null content (upstream :124)");
+		CompoundTag tSaved = tArmed.saveWithoutMetadata();
+		assertFalse(tSaved.contains(TileEntityBase08Barrel.NBT_TANK, Tag.TAG_COMPOUND),
+				"the writeToNBT :91 remove branch — no key, no identity (the keepFilter contrast)");
 	}
 }

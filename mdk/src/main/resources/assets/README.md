@@ -466,5 +466,26 @@ rows as the placeholder (the tint/animation/render-family is the render pool
 card; the GTWires shared-texture form). The upstream `.mcmeta` files are NOT
 borrowed (no animation carrier in the static cube-column model).
 
+Logistics Tank block texture, task p12-barrel-keepfilter-logistics: the 1 PNG
+`gt6/textures/block/barrel_logistics.png` comes from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/tanks/logistics/colored/side.png`
+(the `MultiTileEntityBarrelLogistics.java:44-46` `getTexture2` colored base
+sprite for the TBS sides, 16x16 RGBA), byte-identical to upstream, sha256
+verified:
+
+- `barrel_logistics.png` `f348ace8e2d98ed701a060a87c4c66ec25b708449cd96611b66aa01cc9c595f1`
+
+Path mapping (declared): upstream
+`machines/tanks/logistics/colored/side` flattens to `barrel_logistics` — the
+barrel family's one-PNG-per-row `cube_all` convention (GT6BlockStates
+`addBarrel`, the p4/p6 shape; the upstream TESR/lid two-pass form is a
+feature-layer omission). Declared deviation (the crank/crowbar single-pass
+precedent): the upstream look is `BlockTextureMulti(colored, overlay)` tinted
+with the ANY.W material colour; the port renders the grayscale colored base
+un-tinted and does NOT borrow the `overlay/{bottom,top,side}.png` group — the
+mRGBa tint and the overlay pass ride the render pool with the other barrels.
+Filenames lowercased on borrow, contents byte-identical, no rescaling or
+redrawing.
+
 Copied on 2026-09-02. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).

@@ -254,6 +254,7 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.barrel_draconium", "Draconium Drum");
         add("block.gt6.barrel_awakened_draconium", "Awakened Draconium Drum");
         add("block.gt6.barrel_infinity", "Infinity Drum");
+        add("block.gt6.barrel_logistics", "Logistics Tank"); // task p12-barrel-keepfilter-logistics — the :2171 row name verbatim
         add("itemGroup.gt6.fluid_containers", "Fluid Containers");
     }
 
