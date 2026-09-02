@@ -2,6 +2,8 @@ package gregtech6.tileentity.multiblocks;
 
 import javax.annotation.Nullable;
 
+import java.util.function.Predicate;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
@@ -17,6 +19,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
+import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
@@ -42,6 +45,9 @@ import gregtech6.registry.GTMultiBlocks;
  *     parallel/ignition business and the fluid push live there — this class carries only
  *     the Coke Oven shape and its fluid-output scan;</li>
  * <li>isInsideStructure (:76-79) verbatim bounding box;</li>
+ * <li>{@link #getStructurePattern()} (task p12-ghost-pattern-api): the shape above,
+ *     declared for client-side display consumers — display data only, the check itself
+ *     is untouched;</li>
  * <li>{@link #getFluidOutputTarget(Fluid)} (:84-96 verbatim shape): the cache-then-rescan
  *     fluid target one layer BELOW the structure (tY-2 relative to the facing offsets,
  *     :87) scanned as a 3x3 (:88); the upstream {@code WD.te(..., SIDE_TOP)} +
@@ -61,6 +67,10 @@ public class TileEntityCokeOven extends TileEntityBase10MultiBlockMachine {
 	/** The cached output-target cell (upstream :81 mFluidOutputTarget; a cell, re-resolved per push). */
 	@Nullable
 	private BlockPos mFluidOutputTargetPos = null;
+
+	/** The declared structure pattern (lazy — {@link #getPartBlock()} is stable per instance). */
+	@Nullable
+	private GTMultiBlockPattern mStructurePattern = null;
 
 	/** The registry-path constructor (the BlockEntityType.Builder.of factory form, the oven precedent). */
 	public TileEntityCokeOven(BlockPos aPos, BlockState aState) {
@@ -84,6 +94,34 @@ public class TileEntityCokeOven extends TileEntityBase10MultiBlockMachine {
 	 */
 	protected Block getPartBlock() {
 		return GTMultiBlocks.COKE_OVEN_BRICKS.get();
+	}
+
+	/**
+	 * The declared structure pattern ({@link GTMultiBlockPattern} binding,
+	 * task p12-ghost-pattern-api): the 26 brick cells in the upstream checkStructure2 loop
+	 * order (:97-111, {@code i} outer / {@code j} middle / {@code k} inner — the same loop
+	 * {@link #checkStructure2} walks) plus the hollow air centre appended (:52 — a non-air
+	 * centre is a check failure, NOT a silent clear). Declared, never derived by running
+	 * checkStructure2: its centre cell writes the world (:100-101, the upstream
+	 * setBlockToAir pair) and the pattern carries none of the check's backfill semantics.
+	 * The brick judgement reuses the {@link #getPartBlock()} hook, so the offline fixture
+	 * binding flows into the pattern automatically. Read-only display data —
+	 * {@link #checkStructure2} is untouched and never consults it.
+	 */
+	@Override
+	@Nullable
+	public GTMultiBlockPattern getStructurePattern() {
+		if (mStructurePattern == null) {
+			Predicate<BlockState> tBrick = GTMultiBlockPattern.is(getPartBlock());
+			GTMultiBlockPattern.Builder tBuilder = GTMultiBlockPattern.builder();
+			for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) for (int k = -1; k <= 1; k++) {
+				if (i == 0 && j == 0 && k == 0) continue; // the centre — declared hollow below
+				tBuilder.part(i, j, k, tBrick);
+			}
+			tBuilder.hollow(0, 0, 0, GTMultiBlockPattern.AIR);
+			mStructurePattern = tBuilder.build();
+		}
+		return mStructurePattern;
 	}
 
 	/** Upstream :46-60 verbatim. */

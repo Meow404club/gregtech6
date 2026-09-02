@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregtech6.multiblock.GTMultiBlockPattern;
+
 /**
  * 1.20.1 counterpart of gregapi/tileentity/multiblocks/ITileEntityMultiBlockController.java
  * (task p4-multiblock-framework, W3).
@@ -36,6 +38,20 @@ public interface ITileEntityMultiBlockController {
 
 	/** Upstream :43. */
 	void onStructureChange();
+
+	/**
+	 * The declared structure pattern (task p12-ghost-pattern-api) — read-only display
+	 * data for client-side consumers (the ghost preview). Default null = no declaration:
+	 * existence-probe machines (LightningRod/BedrockDrill census class) keep their
+	 * hand-written checkStructure2 and never bind one. NEVER consulted by
+	 * {@link TileEntityBase10MultiBlockBase#checkStructure} — the server check stays
+	 * hand-written per machine (the pattern derives from that check, not vice versa, and
+	 * checkStructure2 is never run to build one — it writes the world).
+	 */
+	@Nullable
+	default GTMultiBlockPattern getStructurePattern() {
+		return null;
+	}
 
 	/**
 	 * Upstream Util (:46-85) — the structure-filling core shared by every multiblock.
