@@ -17,6 +17,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
+import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
@@ -96,6 +97,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addEnergySource();
         addPrefixBlocks(); // task p8-prefixblock-render ①
         addCrank(); // task p12-engine-crank
+        addAxles(); // task p12-axle-family
     }
 
     /**
@@ -423,6 +425,27 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tCrank = GT6Kinetics.CRANK.get();
         simpleBlock(tCrank, models().cubeAll("crank", modLoc("block/crank")));
         itemModels().withExistingParent("crank", modLoc("block/crank"));
+    }
+
+    /**
+     * Task p12-axle-family — the 44 axle blocks (11 materials x 4 diameters): ONE shared
+     * {@code cube_column} model over the borrowed static {@code gt6:block/axle} texture
+     * (end == side, the GTWires shared-texture form; assets/README.md attribution) and a
+     * 3-variant blockstate per block driving the AXIS property — the vanilla
+     * {@code axisBlock} rotation map (y = none, x = 90/90, z = 90/180) without the
+     * RotatedPillarBlock type coupling. The 44 BlockItem models parent the shared block
+     * model (44 one-line JSONs, the crank {@code itemModels()} precedent carried per row).
+     */
+    private void addAxles() {
+        ModelFile tModel = models().cubeColumn("axle", modLoc("block/axle"), modLoc("block/axle"));
+        for (RegistryObject<GTAxleBlock> tAxle : GT6Kinetics.AXLE_BLOCKS.values()) {
+            getVariantBuilder(tAxle.get()).forAllStates(aState -> switch (aState.getValue(GTAxleBlock.AXIS)) {
+                case X -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 90, false)};
+                case Y -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
+                case Z -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 180, false)};
+            });
+            itemModels().withExistingParent(tAxle.getId().getPath(), modLoc("block/axle"));
+        }
     }
 
     /**

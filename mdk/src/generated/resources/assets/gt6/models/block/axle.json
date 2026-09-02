@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "gt6:block/axle",
+    "side": "gt6:block/axle"
+  }
+}

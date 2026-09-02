@@ -11,6 +11,7 @@ import gregtech6.GT6Mod;
 import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
+import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
@@ -194,9 +195,21 @@ public class GT6EnUs extends LanguageProvider {
      * Kinetics family keys (task p12-engine-crank): the Hand Crank display name — the
      * upstream registration row wording ("Hand Crank",
      * Loader_MultiTileEntities.java:2106). The engine + transmission family appends here.
+     *
+     * <p>Task p12-axle-family: the 44 axle rows — {@code block.gt6.axle_<material>_<size>}
+     * = "{@code <Size> <Material> Axle}" (the upstream row wording: "Small Wooden Axle"
+     * :1663 hard-codes the Wooden display; the metal rows carry mNameLocal, e.g. "Small
+     * Bronze Axle" :1672). Table-driven over {@link GT6Kinetics#AXLE_SPECS} — the lang
+     * cannot drift from the registry names.
      */
     private void addKinetics() {
         add("block.gt6.crank", "Hand Crank");
+        for (GT6Kinetics.AxleSpec tSpec : GT6Kinetics.AXLE_SPECS) {
+            for (int tSize = 0; tSize < GT6Kinetics.AXLE_DIAMETERS.length; tSize++) {
+                add("block.gt6." + GT6Kinetics.axleName(tSpec.material(), tSize),
+                        GT6Kinetics.axleDisplay(tSpec, tSize));
+            }
+        }
     }
 
     /**

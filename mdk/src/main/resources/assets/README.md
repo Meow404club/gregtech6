@@ -447,3 +447,24 @@ or redrawing.
 
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+Axle block texture, task p12-axle-family: the 1 PNG
+`gt6/textures/block/axle.png` comes from upstream
+`src/main/resources/assets/gregtech/textures/blocks/iconsets/AXLE.png`,
+byte-identical to upstream, sha256 verified:
+
+- `axle.png`   `12f95f070c3eb11a04e5a5ae5a8e461e88b1f13bc71bed33fad9f4187474a49b`
+
+Path mapping (declared, the p11-wire-fiber-texture precedent): upstream
+`iconsets/AXLE.png` is lowercased to `axle.png`, landing under
+`textures/block/` (1.20.1 `ResourceLocation` charset). Declared deviation: the
+upstream axle picks per-material textures with a rotation animation group
+(`Textures.BlockIcons.AXLES[...]` per side x rotationDir, MultiTileEntityAxle
+:171-172; the `AXLE_CLOCKWISE`/`AXLE_COUNTERCLOCKWISE` mcmeta animation strips)
+— the port ships ONE shared static texture over all 44 material x diameter
+rows as the placeholder (the tint/animation/render-family is the render pool
+card; the GTWires shared-texture form). The upstream `.mcmeta` files are NOT
+borrowed (no animation carrier in the static cube-column model).
+
+Copied on 2026-09-02. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).

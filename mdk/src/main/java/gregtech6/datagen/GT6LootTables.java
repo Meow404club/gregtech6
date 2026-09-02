@@ -11,9 +11,11 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
+import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.wire.GTWireBlock;
 import gregtech6.registry.GTMaterialBlocks;
+import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GTWires;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -43,7 +45,8 @@ public final class GT6LootTables extends LootTableProvider {
     public GT6LootTables(PackOutput output) {
         super(output, Set.of(), List.of(
                 new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
-                new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK))); // task p9-wire-family-w1 ⑥
+                new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
+                new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK))); // task p12-axle-family
     }
 
     /** The block list this provider owns: exactly the material prefix block array (the census walk order). */
@@ -92,6 +95,38 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : wireLootBlocks()) dropSelf(tBlock); // the p8 self-drop direct translation
+        }
+    }
+
+    /**
+     * The axle-family block list (task p12-axle-family): the 44 material x diameter rows
+     * (datagen JVM). The upstream axle registers {@code canDrop(0) == F} with the MTE
+     * default drop = the block item itself (MultiTileEntityAxle.java:153, the popOff
+     * {@code getDrops} path of TileEntityBase04:173-177 — the axle's overspeed break drops
+     * its own item through {@code level.destroyBlock(pos, true)}); the 1.20.1 equivalent
+     * is exactly {@code dropSelf} like the wire family.
+     */
+    public static List<Block> axleLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (RegistryObject<GTAxleBlock> tAxle : GT6Kinetics.AXLE_BLOCKS.values()) rBlocks.add(tAxle.get());
+        return rBlocks;
+    }
+
+    /** The axle-family self-drop provider (task p12-axle-family — the popOff drop path). */
+    public static final class GT6AxleBlockLoot extends BlockLootSubProvider {
+
+        public GT6AxleBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return axleLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : axleLootBlocks()) dropSelf(tBlock);
         }
     }
 
