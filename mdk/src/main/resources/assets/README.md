@@ -509,6 +509,30 @@ over the whole cube — the mRGBa material tint (MT.Ceramic/Plastic/StainlessSte
 and the multi-pass overlay/faucet stack (MultiTileEntityFluidTap getRenderPasses2
 :178-208) ride the render pool card, the single-model deviation the crank card
 declared first.
+Steam Engine family textures, task p12-engine-steam: the 3 PNGs under
+`gt6/textures/block/steam_engine_{front,back,side}.png` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/engines/kinetic_steam/colored/`
+(the `MultiTileEntityEngineSteam.java:276-284` `sColoreds` icon group —
+`front` = the KU emit face, `back` = the steam face, `side` = the four
+perpendicular faces), byte-identical to upstream, sha256 verified:
+
+- `steam_engine_front.png` `33bcc0c562a18e2c773a9c6259b7751a7a21029befcc79b89c383de7d779495d`
+- `steam_engine_back.png`  `9927d1c9d187485779681587e2c0d5cec7198bc29ccfc7e75691730e07a149b5`
+- `steam_engine_side.png`  `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+
+Path mapping (declared, the crank precedent): upstream
+`machines/engines/kinetic_steam/colored/<face>` lowercased to
+`steam_engine_<face>.png` under `textures/block/`. The upstream
+`overlay/<face>` second layer (the :285-294 `sOverlays` stack) is NOT
+borrowed — the port renders the single-pass cube model (the
+p8-prefixblock-render single-pass grayscale ruling). Both the Steam Engine
+and Strong Steam Engine loader rows share this one texture group upstream
+(same MTE class, no per-material icon differentiation), so all 28 blocks
+share the three sprites. Upstream tints the grayscale `colored` icons with
+the row material's mRGBa and renders the heat gauge via the
+`sEngineColors[mState]` engine core (:56, :269) — the port shows the
+grayscale icons un-tinted with no active/heat visuals: declared deviation,
+the tint and the heat-state model swap ride the render pool card.
 
 Copied on 2026-09-02. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).

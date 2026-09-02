@@ -100,6 +100,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addCrank(); // task p12-engine-crank
         addAxles(); // task p12-axle-family
         addAttachments(); // task p12-tap-funnel-attachment
+        addSteamEngines(); // task p12-engine-steam
     }
 
     /**
@@ -471,6 +472,40 @@ public final class GT6BlockStates extends BlockStateProvider {
             String tTexture = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? "tap" : "funnel";
             simpleBlock(tBlock, models().cubeAll(tRow.path(), modLoc("block/" + tTexture)));
             itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+        }
+    }
+
+    /**
+     * Task p12-engine-steam — the Steam Engine family (all 28 rows of
+     * {@link GT6Kinetics#STEAM_ENGINES}, the no-upstream-subset ruling): ONE shared
+     * oriented cube model for the whole family — front (the KU emit face) / back (the
+     * steam face) / side over the three borrowed upstream
+     * {@code machines/engines/kinetic_steam/colored/} icons (assets/README.md sha256
+     * attribution), rotated per {@code FACING} exactly like the machine ladder
+     * ({@code addMachine}) but with NO active/running split — upstream keys the visuals
+     * on synced mState/mActive byte data (getTexture2 :263-273, the seven-pass bespoke
+     * renderer), which is the render-pool item; the port machine blocks carry no
+     * active-state blockstate property. The 26 variants are visually identical here
+     * (upstream tints the grayscale icons per material mRGBa — the crank-card un-tinted
+     * deviation, the runtime tint rides the render pool).
+     */
+    private void addSteamEngines() {
+        ModelFile tModel = models().cube("steam_engine",
+                modLoc("block/steam_engine_side"), modLoc("block/steam_engine_side"),   // bottom/top
+                modLoc("block/steam_engine_front"), modLoc("block/steam_engine_back"),  // north(front)/south(back)
+                modLoc("block/steam_engine_side"), modLoc("block/steam_engine_side"));  // west/east
+        for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) {
+            Block tBlock = GT6Kinetics.STEAM_ENGINE_BLOCKS.get(tRow.path()).get();
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY = switch (aState.getValue(GT6Kinetics.SteamEngineBlock.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), modLoc("block/steam_engine"));
         }
     }
 

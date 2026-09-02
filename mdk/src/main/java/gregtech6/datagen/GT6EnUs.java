@@ -212,6 +212,13 @@ public class GT6EnUs extends LanguageProvider {
                         GT6Kinetics.axleDisplay(tSpec, tSize));
             }
         }
+        // task p12-engine-steam — the 28 engine display names, the upstream row wording
+        // verbatim ("Steam Engine (Lead)" .. "Strong Steam Engine (Tungstensteel)",
+        // Loader_MultiTileEntities.java:584-612), walked from the STEAM_ENGINES table so
+        // the keys cannot drift from the registered blocks
+        for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) {
+            add("block.gt6." + tRow.path(), tRow.displayName());
+        }
     }
 
     /**
