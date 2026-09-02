@@ -11,6 +11,7 @@ import gregtech6.GT6Mod;
 import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
+import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
@@ -69,6 +70,7 @@ public class GT6EnUs extends LanguageProvider {
         addBarrels();
         addEnergySource();
         addKinetics(); // task p12-engine-crank
+        addAttachments(); // task p12-tap-funnel-attachment
         addTools();
         addCovers();
         addJeiInfo();
@@ -209,6 +211,19 @@ public class GT6EnUs extends LanguageProvider {
                 add("block.gt6." + GT6Kinetics.axleName(tSpec.material(), tSize),
                         GT6Kinetics.axleDisplay(tSpec, tSize));
             }
+        }
+    }
+
+    /**
+     * Attachment family keys (task p12-tap-funnel-attachment spec ⑤): one display entry
+     * per {@link GT6Attachments.AttachmentRow} — the upstream registration row display
+     * names verbatim ("Ceramic Tap" .. "Adamantium Funnel",
+     * Loader_MultiTileEntities.java:2108-2120), walked from {@link GT6Attachments#ROWS}
+     * so the lang face cannot drift from the registered rows.
+     */
+    private void addAttachments() {
+        for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
+            add("block.gt6." + tRow.path(), tRow.displayName());
         }
     }
 
