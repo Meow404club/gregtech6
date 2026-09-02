@@ -224,6 +224,56 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("transformer_rotation", () -> BlockEntityType.Builder.of(
 					GTTransformerRotationBlockEntity::new, GT6Kinetics.TRANSFORMER_ROTATION.get()).build(null));
 
+	// -------------------------------------------------------------------------
+	// the burning boxes (task p13-burning-box-family) — the four shared family rows
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Solid Burning Box BET (task p13-burning-box-family spec ⑦ — the shared
+	 * multi-mount form over the Brick row + the 26 metal Solid rows of
+	 * {@link GT6BurningBoxes}; the AXLE_BE one-type-many-blocks shape). The abstract
+	 * family base mounts through an anonymous concrete subclass — the SOLID family has
+	 * no named concrete BE (the card's "Brick/Metal 走块载体行不另类" ruling).
+	 * Registry path "burning_box_solid".
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity>> BURNING_BOX_SOLID_BE =
+			BLOCK_ENTITY_TYPES.register("burning_box_solid", () -> BlockEntityType.Builder.of(
+					GTBlockEntities::solidBurningBoxFactory,
+					GT6BurningBoxes.blockArray(gregtech6.registry.GT6BurningBoxes.Family.SOLID)).build(null));
+
+	/** The SOLID family factory — the abstract base mounts through an anonymous concrete subclass. */
+	private static gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity solidBurningBoxFactory(net.minecraft.core.BlockPos aPos, net.minecraft.world.level.block.state.BlockState aState) {
+		return new gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity(null, aPos, aState) {};
+	}
+
+	/**
+	 * The Liquid Burning Box BET — the 22 FM.Burn liquid rows. Registry path
+	 * "burning_box_liquid" mirrors GTGeneratorLiquidBlockEntity.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.energy.generators.GTGeneratorLiquidBlockEntity>> BURNING_BOX_LIQUID_BE =
+			BLOCK_ENTITY_TYPES.register("burning_box_liquid", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.energy.generators.GTGeneratorLiquidBlockEntity::new,
+					GT6BurningBoxes.blockArray(gregtech6.registry.GT6BurningBoxes.Family.LIQUID)).build(null));
+
+	/**
+	 * The Gas Burning Box BET — the 22 FM.Burn gas rows (FM.Burn, NOT FM.Gas — the
+	 * Loader :645-673 ruling). Registry path "burning_box_gas" mirrors
+	 * GTGeneratorGasBlockEntity.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.energy.generators.GTGeneratorGasBlockEntity>> BURNING_BOX_GAS_BE =
+			BLOCK_ENTITY_TYPES.register("burning_box_gas", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.energy.generators.GTGeneratorGasBlockEntity::new,
+					GT6BurningBoxes.blockArray(gregtech6.registry.GT6BurningBoxes.Family.GAS)).build(null));
+
+	/**
+	 * The Fluidized Bed Burning Box BET — the 26 FM.FluidBed rows. Registry path
+	 * "burning_box_fluidbed" mirrors GTGeneratorFluidBedBlockEntity.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.energy.generators.GTGeneratorFluidBedBlockEntity>> BURNING_BOX_FLUIDBED_BE =
+			BLOCK_ENTITY_TYPES.register("burning_box_fluidbed", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.energy.generators.GTGeneratorFluidBedBlockEntity::new,
+					GT6BurningBoxes.blockArray(gregtech6.registry.GT6BurningBoxes.Family.FLUIDBED)).build(null));
+
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest
 	 * BlockItem. DeferredRegister form per the task card (Bus.MOD.bus().get() self-contained).

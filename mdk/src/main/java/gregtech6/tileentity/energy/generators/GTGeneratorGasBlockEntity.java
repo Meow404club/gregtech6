@@ -43,6 +43,11 @@ public class GTGeneratorGasBlockEntity extends GTGeneratorLiquidBlockEntity {
 		super(aType, aPos, aState);
 	}
 
+	/** The BET factory form (the diesel 2-arg shape — the shared type resolves at tick time). */
+	public GTGeneratorGasBlockEntity(BlockPos aPos, BlockState aState) {
+		this(null, aPos, aState);
+	}
+
 	@Override
 	public String getTileEntityName() {
 		return "burning_box.gas"; // the family base name; the concrete BET rows carry their own registry paths
