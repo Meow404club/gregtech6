@@ -27,6 +27,7 @@ import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialBlocks;
+import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GTWireSpecs;
@@ -98,6 +99,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addPrefixBlocks(); // task p8-prefixblock-render ①
         addCrank(); // task p12-engine-crank
         addAxles(); // task p12-axle-family
+        addAttachments(); // task p12-tap-funnel-attachment
     }
 
     /**
@@ -446,6 +448,29 @@ public final class GT6BlockStates extends BlockStateProvider {
                 case Z -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 180, false)};
             });
             itemModels().withExistingParent(tAxle.getId().getPath(), modLoc("block/axle"));
+        }
+    }
+
+    /**
+     * Task p12-tap-funnel-attachment spec ⑤ — the 12 wall attachments: one cube_all
+     * per row over the TWO family textures, {@code tap.png} (borrowed from upstream
+     * {@code machines/tools/tap/colored/side.png}) and {@code funnel.png} (upstream
+     * {@code machines/tools/funnel/colored/side.png}), the barrel_metal shared-PNG
+     * precedent — every row's model JSON references the family PNG, the model count
+     * grows with the rows and the PNG count does not. The upstream texture stack is the
+     * mRGBa-tinted colored layer + an overlay pass (MultiTileEntityFluidTap.java:181-208
+     * three-pass faucet/spout boxes); the port shows the grayscale side icon un-tinted
+     * over the WHOLE cube (the thin-plate getShape is the collision-free outline), the
+     * per-face rotated plate model and the tint riding the render pool card (the crank
+     * single-model deviation repeated). The empty-partial variant key applies the model
+     * to all six facings.
+     */
+    private void addAttachments() {
+        for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
+            Block tBlock = GT6Attachments.BLOCKS_BY_PATH.get(tRow.path()).get();
+            String tTexture = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? "tap" : "funnel";
+            simpleBlock(tBlock, models().cubeAll(tRow.path(), modLoc("block/" + tTexture)));
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
         }
     }
 

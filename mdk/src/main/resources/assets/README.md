@@ -487,5 +487,28 @@ mRGBa tint and the overlay pass ride the render pool with the other barrels.
 Filenames lowercased on borrow, contents byte-identical, no rescaling or
 redrawing.
 
+Fluid Tap + Fluid Funnel block textures, task p12-tap-funnel-attachment: the 2 PNGs
+under `gt6/textures/block/` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/tools/` (the
+`MultiTileEntityFluidTap.java:130-133` / `MultiTileEntityFluidFunnel.java:130-132`
+`machines/tools/<tap|funnel>/colored|overlay` icon stack), byte-identical to upstream,
+sha256 verified:
+
+- `tap.png`     `df1d3c727e965deeee4ce13a6670fdfb3f77aaff80e735f2a1ed489f38114412`
+  (upstream `machines/tools/tap/colored/side.png`)
+- `funnel.png`  `df1d3c727e965deeee4ce13a6670fdfb3f77aaff80e735f2a1ed489f38114412`
+  (upstream `machines/tools/funnel/colored/side.png` — the SAME grayscale icon bytes
+  as the tap side; the two families were visually separated upstream by the OVERLAY
+  pass and the mRGBa material tint, which the port does not carry)
+
+Shared per family: all 6 tap rows' model JSONs reference the one `tap.png`, all 6
+funnel rows the one `funnel.png` (the barrel_metal shared-PNG precedent). Path
+mapping (declared, the crank precedent): upstream `machines/tools/<family>/colored/side`
+is flat-mapped to `textures/block/<family>.png`; the grayscale icon renders UN-TINTED
+over the whole cube — the mRGBa material tint (MT.Ceramic/Plastic/StainlessSteel/...)
+and the multi-pass overlay/faucet stack (MultiTileEntityFluidTap getRenderPasses2
+:178-208) ride the render pool card, the single-model deviation the crank card
+declared first.
+
 Copied on 2026-09-02. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).

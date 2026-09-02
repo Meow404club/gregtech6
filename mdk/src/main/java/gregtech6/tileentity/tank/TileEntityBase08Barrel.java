@@ -75,8 +75,21 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * {@code mTank} out through {@link #getCoverPumpTank()} — the pump-cover direct-call seam
  * that lets the pump bypass the {@link BarrelFluidHandler} side rules (the upstream
  * FL.move(IFluidTank, ...) shape, the free reverse-output exemption).
+ *
+ * <p>Task p12-tap-funnel-attachment mounts the attachment faces: {@code tapDrain} and
+ * {@code funnelFill} (upstream :273-276, the two hooks the mdk trim list flagged as the
+ * restore point) — the Tap/Funnel attachments' direct-tank channel, translated on the
+ * tank itself with the upstream single-gate shape. The sealed-bit gate of :270/:275
+ * ({@code (mMode & B[1]) != 0}) has no mMode in the port (both mode bits are cut, the
+ * P4 declaration) so the two hooks are the unsealed always-open form — declared. Both
+ * hooks bypass the {@link BarrelFluidHandler} side rules on purpose (the upstream
+ * hooks drain/fill {@code mTank} directly, the attachment faces are their own
+ * channel), and an executed move marks the BE dirty like the capability path.
  */
-public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSync implements ICoverableTE {
+public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSync
+		implements ICoverableTE,
+		gregtech6.tileentity.attachment.GTTapBlockEntity.TapAccessible,
+		gregtech6.tileentity.attachment.GTFunnelBlockEntity.FunnelAccessible {
 
 	/** NBT keys — upstream CS.java:1355/:1258/:1262 ("gt.capacity.hu"/"gt.tank"/"gt.tankcap") in the in-repo plain key form. */
 	public static final String NBT_CAPACITY_HU = "capacity.hu";
@@ -119,6 +132,35 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 	/** Upstream :284 — the base barrels drain to null; the logistics barrel keeps the filter (Logistics.java:40). */
 	public boolean keepsFilter() {
 		return false;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the attachment faces (upstream :273-276, task p12-tap-funnel-attachment spec ④)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream :274-276 verbatim minus the sealed-bit gate (no mMode in the port, the
+	 * declared always-open form): the tank drains DIRECTLY — no side rules, no cover
+	 * intercept (the attachment channel, the upstream {@code mTank.drain} call); the
+	 * {@code int} upstream amount rides the {@link FluidTankGT#bindInt} seam.
+	 */
+	@Override
+	public FluidStack tapDrain(byte aSide, int aMaxDrain, boolean aDoDrain) {
+		FluidStack tDrained = mTank.drain(FluidTankGT.bindInt(aMaxDrain),
+				aDoDrain ? FluidAction.EXECUTE : FluidAction.SIMULATE);
+		if (aDoDrain && tDrained != null && !tDrained.isEmpty()) onTankChanged();
+		return tDrained;
+	}
+
+	/**
+	 * Upstream :269-271 verbatim minus the sealed-bit gate (the same declaration): the
+	 * tank fills DIRECTLY — no side rules, no cover intercept.
+	 */
+	@Override
+	public int funnelFill(byte aSide, FluidStack aFluid, boolean aDoFill) {
+		int tFilled = mTank.fill(aFluid, aDoFill ? FluidAction.EXECUTE : FluidAction.SIMULATE);
+		if (aDoFill && tFilled > 0) onTankChanged();
+		return tFilled;
 	}
 
 	// ---------------------------------------------------------------------------
