@@ -14,37 +14,46 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import gregtech6.multiblock.GTMultiBlockPattern;
+
 /**
- * The multiblock structure ghost preview (task p10-ghost-preview-poc — the Coke Oven
- * minimal closed loop): drawn per frame from the {@code RenderHighlightEvent.Block}
- * parameters while a wrench (hoe substitute) hovers a controller, exactly like the
- * wrench grid of {@link GTWrenchGridRenderer} — the same transient input-feedback
- * exception of ADR 2026-08-30-p5-wrench-ui, its three constraints honored structurally:
- * zero static BE/Level references (everything arrives per frame by value), zero writes,
- * no event cancellation (the vanilla selection box stays).
+ * The multiblock structure ghost preview (task p10-ghost-preview-poc POC; task
+ * p12-ghost-pattern-api lifted to the declarative API): drawn per frame from the
+ * {@code RenderHighlightEvent.Block} parameters while a wrench (hoe substitute) hovers
+ * a controller, exactly like the wrench grid of {@link GTWrenchGridRenderer} — the same
+ * transient input-feedback exception of ADR 2026-08-30-p5-wrench-ui, its three
+ * constraints honored structurally: zero static BE/Level references (everything arrives
+ * per frame by value), zero writes, no event cancellation (the vanilla selection box
+ * stays).
  *
- * <p><b>The pattern is a hardcoded pure table, never {@code checkStructure2}.</b> The
- * upstream/port structure check carries a world write in its centre cell ({@code
- * getLevel().removeBlock(...)} — TileEntityCokeOven.java:100-101, the upstream
- * setBlockToAir pair), so running it on the client to "ask for the shape" is forbidden.
- * The table below is the 26 canonical loop cells of that same check
- * (TileEntityCokeOven.java:97-111: {@code for i, j, k in -1..1} minus the air centre),
- * written out literally; the facing dependence enters only through the structure-centre
- * offset {@code -OFF[mFacing]} — the pure {@code getOffsetXN/YN/ZN} arithmetic
- * (TileEntityBase01Root.java:174-176 tables, :194-206 accessors) mirrored in
- * {@link #cellOffset}. The upstream loop adds {@code i, j, k} in WORLD axes (the Coke
- * Oven shape is axis-aligned for every facing), so no additional per-cell rotation
- * exists to invent: the facing rotates the centre, the cells stay world-axis — the
- * offline four-facing full-table test pins this constructively.
+ * <p><b>The pattern arrives from the controller binding, never from
+ * {@code checkStructure2}.</b> The listener hands in whatever
+ * {@code getStructurePattern()} declares (null = nothing drawn). The pattern is the
+ * declarative {@link GTMultiBlockPattern} — pure display data whose cells transcribe
+ * the upstream check's loop without ever running it: the check writes the world (the
+ * centre-cell {@code removeBlock}, TileEntityCokeOven.java:100-101) and embeds the
+ * builder-wand auto-place, both deliberately outside the pattern API. The facing
+ * dependence enters only through the structure-centre anchor {@code -OFF[mFacing]} —
+ * the pure {@code getOffsetXN/YN/ZN} arithmetic (TileEntityBase01Root.java:174-176
+ * tables, :194-206 accessors), generalized off this class into
+ * {@link GTMultiBlockPattern#anchorOffset(byte)}. The upstream loop adds
+ * {@code i, j, k} in WORLD axes (the Coke Oven shape is axis-aligned for every
+ * facing), so no additional per-cell rotation exists to invent: the facing rotates the
+ * centre, the cells stay world-axis — the offline four-facing full-table test pins
+ * this constructively, and the vertex-stream test pins this renderer's emission to the
+ * POC's literal draw, frame-equal.
  *
- * <p><b>Draw mode ruling (FORMED):</b> formed structure → only the 12 outer edges of
- * the 3x3x3 shell; unformed → all 27 cell wireframes (26 bricks in the wrench-grid
- * pulse blue + the centre air cell in flat grey, the "keep this hollow" marker).
- * Rationale: 26 brick wireframes over already-real blocks is pure occlusion noise, but
- * skipping entirely would waste the cheapest "this is a formed multiblock" affordance —
- * the shell frame marks the machine without hiding it. Both modes read nothing beyond
- * the BlockState the listener already holds ({@code FORMED},
- * TileEntityBase10MultiBlockBase.java:58).
+ * <p><b>Draw mode ruling (FORMED — unchanged from the POC):</b> formed structure →
+ * only the 12 outer edges of the pattern's bounding shell; unformed → one cell
+ * wireframe per pattern cell in declaration order (parts in the wrench-grid pulse
+ * blue, hollow markers in flat grey — the "keep this hollow" marker). Rationale: part
+ * wireframes over already-real blocks is pure occlusion noise, but skipping entirely
+ * would waste the cheapest "this is a formed multiblock" affordance — the shell frame
+ * marks the machine without hiding it. Both modes read nothing beyond the BlockState
+ * the listener already holds ({@code FORMED}, TileEntityBase10MultiBlockBase.java:58)
+ * plus the pattern. The shell is derived from the pattern bounds
+ * ({@code min - 0.5 .. max + 0.5}) — for the 3x3x3 Coke Oven shell that is the POC's
+ * centre ± 1.5 box, bit-equal.
  *
  * <p><b>Frame plumbing (the P5 verified path):</b> the event pose stack is the
  * renderLevel frame pose (world-axis origin), so the draw translates by
@@ -59,11 +68,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * dispatched only there (forge patch LevelRenderer.java.patch:121-132,
  * ForgeHooksClient.java:270-282).
  *
- * <p><b>Cut pool (deliberately not implemented here):</b> persistent holograms (a
- * {@code RenderLevelStageEvent} category needing its own ADR — P11+ pool), partial-match
- * green/red cell colouring, JEI/REI preview GUI, Sodium shader-pipeline compatibility
- * (this path never touches the chunk-baking pipeline, so the GTCEu-style SodiumCompat
- * surface does not exist here), ghost textures (pure colour lines suffice for the POC).
+ * <p><b>Not on this card (the following ghost cards):</b> translucent pattern faces,
+ * green/red per-cell match colouring (its per-cell lookup is
+ * {@code Cell.matches(worldState)}), JEI/REI preview GUI. Still cut pool: persistent
+ * holograms (a {@code RenderLevelStageEvent} category needing its own ADR — P11+
+ * pool), Sodium shader-pipeline compatibility (this path never touches the
+ * chunk-baking pipeline, so the GTCEu-style SodiumCompat surface does not exist here),
+ * ghost textures (pure colour lines suffice).
  *
  * <p>The facing byte is the vanilla {@code get3DDataValue()} of the BlockState
  * {@code HORIZONTAL_FACING} — the client display authority (the BE's own {@code mFacing}
@@ -74,68 +85,26 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public final class GTMultiBlockPreviewRenderer {
 
-	/**
-	 * The 26 canonical pattern cells — the literal {@code (i, j, k)} loop body of
-	 * TileEntityCokeOven.java:97-111 minus the {@code (0, 0, 0)} air centre, in the
-	 * upstream loop order (i outer, j middle, k inner). World-axis coordinates relative
-	 * to the structure centre; the facing rotation happens in {@link #cellOffset}.
-	 * NEVER derive this table by running {@code checkStructure2} — it writes the world
-	 * (the centre {@code removeBlock}, TileEntityCokeOven.java:100-101).
-	 */
-	public static final int[][] PATTERN_CELLS = {
-			// i = -1
-			{ -1, -1, -1 }, { -1, -1, 0 }, { -1, -1, 1 },
-			{ -1, 0, -1 }, { -1, 0, 0 }, { -1, 0, 1 },
-			{ -1, 1, -1 }, { -1, 1, 0 }, { -1, 1, 1 },
-			// i = 0 — the (0, 0, 0) air centre is NOT a brick cell
-			{ 0, -1, -1 }, { 0, -1, 0 }, { 0, -1, 1 },
-			{ 0, 0, -1 }, { 0, 0, 1 },
-			{ 0, 1, -1 }, { 0, 1, 0 }, { 0, 1, 1 },
-			// i = 1
-			{ 1, -1, -1 }, { 1, -1, 0 }, { 1, -1, 1 },
-			{ 1, 0, -1 }, { 1, 0, 0 }, { 1, 0, 1 },
-			{ 1, 1, -1 }, { 1, 1, 0 }, { 1, 1, 1 }
-	};
-
-	/**
-	 * The GT6 side-offset tables mirrored from TileEntityBase01Root.java:174-176 (the
-	 * {@code OFFX/OFFY/OFFZ} of {@code getOffsetXN/YN/ZN}, :194-206) — the specification
-	 * the offline test asserts against. Index = the side byte / {@code get3DDataValue()}.
-	 */
-	private static final int[] OFF_X = { 0, 0, 0, 0, -1, 1 };
-	private static final int[] OFF_Y = { 0, 1, 0, 0, 0, 0 };
-	private static final int[] OFF_Z = { 0, 0, -1, 1, 0, 0 };
-
-	/** The pulse is the wrench-grid one (GTCEu :163-164 verbatim via GTWrenchGridRenderer:139-140, ~2.5 s). */
-	private static final float COLOR_AIR = 0.5F; // the flat grey of the centre air cell
+	/** The flat grey of the hollow-marker cell (the "keep this hollow" centre, POC COLOR_AIR). */
+	private static final float COLOR_AIR = 0.5F;
 
 	private GTMultiBlockPreviewRenderer() {
 	}
 
 	/**
-	 * The pure facing rotation — the world offset of one canonical pattern cell
-	 * {@code (i, j, k)} relative to the CONTROLLER position, for a controller facing
-	 * {@code aFacing} (a {@code get3DDataValue()} byte): the upstream
-	 * {@code tX + i, tY + j, tZ + k} arithmetic (TileEntityCokeOven.java:92/:97-111)
-	 * with {@code tX/tY/tZ = controller - OFF[facing]} (the getOffsetXN/YN/ZN pure
-	 * mirror, TileEntityBase01Root.java:194-206). MC-free — the offline test drives it
-	 * directly.
-	 */
-	public static int[] cellOffset(byte aFacing, int aI, int aJ, int aK) {
-		return new int[] { aI - OFF_X[aFacing], aJ - OFF_Y[aFacing], aK - OFF_Z[aFacing] };
-	}
-
-	/**
 	 * Draws one frame of the ghost. All state arrives by value from the listener this
-	 * very frame: the controller position (the hovered block), the facing byte and the
-	 * formed bit read off the BlockState (the client display authority), the event's
-	 * world-frame pose stack and its frame buffer source.
+	 * very frame: the controller position (the hovered block), the declared pattern
+	 * (null = nothing to draw), the facing byte and the formed bit read off the
+	 * BlockState (the client display authority), the event's world-frame pose stack and
+	 * its frame buffer source.
 	 */
 	public static void renderPreview(PoseStack aPoseStack, MultiBufferSource aBuffers, Camera aCamera,
-			BlockPos aControllerPos, byte aFacing, boolean aFormed) {
-		int tCx = aControllerPos.getX() - OFF_X[aFacing];
-		int tCy = aControllerPos.getY() - OFF_Y[aFacing];
-		int tCz = aControllerPos.getZ() - OFF_Z[aFacing];
+			BlockPos aControllerPos, GTMultiBlockPattern aPattern, byte aFacing, boolean aFormed) {
+		if (aPattern == null) return;
+		int[] tAnchor = GTMultiBlockPattern.anchorOffset(aFacing);
+		int tCx = aControllerPos.getX() + tAnchor[0];
+		int tCy = aControllerPos.getY() + tAnchor[1];
+		int tCz = aControllerPos.getZ() + tAnchor[2];
 
 		Vec3 tCamPos = aCamera.getPosition();
 		aPoseStack.pushPose();
@@ -143,21 +112,38 @@ public final class GTMultiBlockPreviewRenderer {
 
 		VertexConsumer tBuffer = aBuffers.getBuffer(RenderType.lines());
 		RenderSystem.lineWidth(3);
-		PoseStack.Pose tPose = aPoseStack.last();
-		float tRG = pulseRG();
-		if (aFormed) {
-			// the 12 outer edges of the 3x3x3 shell — the formed ruling (class javadoc)
-			drawBoxEdges(tPose, tBuffer, tCx, tCy, tCz, 1.5F, tRG, 1.0F);
-		} else {
-			for (int tCell = 0; tCell < PATTERN_CELLS.length; tCell++) {
-				drawBoxEdges(tPose, tBuffer, tCx + PATTERN_CELLS[tCell][0], tCy + PATTERN_CELLS[tCell][1],
-						tCz + PATTERN_CELLS[tCell][2], 0.5F, tRG, 1.0F);
-			}
-			// the centre air cell — the "keep this hollow" marker in flat grey
-			drawBoxEdges(tPose, tBuffer, tCx, tCy, tCz, 0.5F, COLOR_AIR, COLOR_AIR);
-		}
+		emitPattern(aPoseStack.last(), tBuffer, tCx, tCy, tCz, aPattern, aFormed, pulseRG());
 
 		aPoseStack.popPose();
+	}
+
+	/**
+	 * The pure per-frame emission — the POC draw loop with the hardcoded table swapped
+	 * for the pattern's cells, in declaration order (the Coke Oven declares its 26
+	 * bricks in the upstream loop order, hollow centre appended last, so the emission
+	 * order is the POC's). Package-visible so the offline vertex-stream test can pin it
+	 * against the POC's literal draw. {@code aCx/aCy/aCz} = the structure centre in
+	 * world space (controller + anchor); {@code aRG} = the pulse colour.
+	 */
+	static void emitPattern(PoseStack.Pose aPose, VertexConsumer aBuffer, int aCx, int aCy, int aCz,
+			GTMultiBlockPattern aPattern, boolean aFormed, float aRG) {
+		if (aFormed) {
+			// the 12 outer edges of the pattern's bounding shell — the formed ruling (class javadoc);
+			// min - 0.5 .. max + 0.5 is bit-equal to the POC's centre ± 1.5 for the 3x3x3 shell
+			drawBoxEdges(aPose, aBuffer,
+					aCx + aPattern.minX() - 0.5F, aCy + aPattern.minY() - 0.5F, aCz + aPattern.minZ() - 0.5F,
+					aCx + aPattern.maxX() + 0.5F, aCy + aPattern.maxY() + 0.5F, aCz + aPattern.maxZ() + 0.5F,
+					aRG, 1.0F);
+		} else {
+			for (GTMultiBlockPattern.Cell tCell : aPattern.cells()) {
+				float tRG = tCell.isHollow() ? COLOR_AIR : aRG;
+				float tB = tCell.isHollow() ? COLOR_AIR : 1.0F;
+				drawBoxEdges(aPose, aBuffer,
+						aCx + tCell.x - 0.5F, aCy + tCell.y - 0.5F, aCz + tCell.z - 0.5F,
+						aCx + tCell.x + 0.5F, aCy + tCell.y + 0.5F, aCz + tCell.z + 0.5F,
+						tRG, tB);
+			}
+		}
 	}
 
 	/** The wrench-grid pulse (GTWrenchGridRenderer:139 — GTCEu :163-164 verbatim). */
@@ -166,29 +152,28 @@ public final class GTMultiBlockPreviewRenderer {
 	}
 
 	/**
-	 * Emits the 12 edges of the axis-aligned box centred at (aX, aY, aZ) with half-size
-	 * aHalf — the drawLine emission is the GTWrenchGridRenderer:152-162 idiom verbatim
-	 * (vertex/normal per endpoint, opaque alpha; LINES takes the colour straight).
+	 * Emits the 12 edges of the axis-aligned box spanning (aMinX..aMaxX, aMinY..aMaxY,
+	 * aMinZ..aMaxZ) — the drawLine emission is the GTWrenchGridRenderer:152-162 idiom
+	 * verbatim (vertex/normal per endpoint, opaque alpha; LINES takes the colour
+	 * straight), the edge order the POC's bottom-4/top-4/vertical-4.
 	 */
 	private static void drawBoxEdges(PoseStack.Pose aPose, VertexConsumer aBuffer,
-			float aX, float aY, float aZ, float aHalf, float aRG, float aB) {
-		float tX0 = aX - aHalf, tY0 = aY - aHalf, tZ0 = aZ - aHalf;
-		float tX1 = aX + aHalf, tY1 = aY + aHalf, tZ1 = aZ + aHalf;
+			float aMinX, float aMinY, float aMinZ, float aMaxX, float aMaxY, float aMaxZ, float aRG, float aB) {
 		// the 4 bottom edges
-		drawLine(aPose, aBuffer, tX0, tY0, tZ0, tX1, tY0, tZ0, aRG, aB);
-		drawLine(aPose, aBuffer, tX1, tY0, tZ0, tX1, tY0, tZ1, aRG, aB);
-		drawLine(aPose, aBuffer, tX1, tY0, tZ1, tX0, tY0, tZ1, aRG, aB);
-		drawLine(aPose, aBuffer, tX0, tY0, tZ1, tX0, tY0, tZ0, aRG, aB);
+		drawLine(aPose, aBuffer, aMinX, aMinY, aMinZ, aMaxX, aMinY, aMinZ, aRG, aB);
+		drawLine(aPose, aBuffer, aMaxX, aMinY, aMinZ, aMaxX, aMinY, aMaxZ, aRG, aB);
+		drawLine(aPose, aBuffer, aMaxX, aMinY, aMaxZ, aMinX, aMinY, aMaxZ, aRG, aB);
+		drawLine(aPose, aBuffer, aMinX, aMinY, aMaxZ, aMinX, aMinY, aMinZ, aRG, aB);
 		// the 4 top edges
-		drawLine(aPose, aBuffer, tX0, tY1, tZ0, tX1, tY1, tZ0, aRG, aB);
-		drawLine(aPose, aBuffer, tX1, tY1, tZ0, tX1, tY1, tZ1, aRG, aB);
-		drawLine(aPose, aBuffer, tX1, tY1, tZ1, tX0, tY1, tZ1, aRG, aB);
-		drawLine(aPose, aBuffer, tX0, tY1, tZ1, tX0, tY1, tZ0, aRG, aB);
+		drawLine(aPose, aBuffer, aMinX, aMaxY, aMinZ, aMaxX, aMaxY, aMinZ, aRG, aB);
+		drawLine(aPose, aBuffer, aMaxX, aMaxY, aMinZ, aMaxX, aMaxY, aMaxZ, aRG, aB);
+		drawLine(aPose, aBuffer, aMaxX, aMaxY, aMaxZ, aMinX, aMaxY, aMaxZ, aRG, aB);
+		drawLine(aPose, aBuffer, aMinX, aMaxY, aMaxZ, aMinX, aMaxY, aMinZ, aRG, aB);
 		// the 4 vertical edges
-		drawLine(aPose, aBuffer, tX0, tY0, tZ0, tX0, tY1, tZ0, aRG, aB);
-		drawLine(aPose, aBuffer, tX1, tY0, tZ0, tX1, tY1, tZ0, aRG, aB);
-		drawLine(aPose, aBuffer, tX1, tY0, tZ1, tX1, tY1, tZ1, aRG, aB);
-		drawLine(aPose, aBuffer, tX0, tY0, tZ1, tX0, tY1, tZ1, aRG, aB);
+		drawLine(aPose, aBuffer, aMinX, aMinY, aMinZ, aMinX, aMaxY, aMinZ, aRG, aB);
+		drawLine(aPose, aBuffer, aMaxX, aMinY, aMinZ, aMaxX, aMaxY, aMinZ, aRG, aB);
+		drawLine(aPose, aBuffer, aMaxX, aMinY, aMaxZ, aMaxX, aMaxY, aMaxZ, aRG, aB);
+		drawLine(aPose, aBuffer, aMinX, aMinY, aMaxZ, aMinX, aMaxY, aMaxZ, aRG, aB);
 	}
 
 	/** One world-space edge — GTWrenchGridRenderer:152-162 verbatim (decomposed coordinates). */
