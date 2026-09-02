@@ -51,6 +51,17 @@ import java.util.HashSet;
  * assets for these three). Recipes are poured in statically by {@link GT6RecipesShCL}
  * (FMLCommonSetup).
  *
+ * <p>{@code ENGINE_FUELS} mirrors RM.sFuelsEngine = FM.Engine (RM.java:172 → FM.java:45, the
+ * RecipeMapFuel row folding the trailing NEI defaults): "gt.recipe.fuels.engine", "Engine
+ * Fuels", NEI name null → the internal name, progress 0/1, GUI machines/Default (lowercase
+ * — no asset shipped, the FURNACE-line form), item slots 1/2/0, fluid slots 1/2/0, minimal
+ * inputs 1, power 1. MIN-ITEMS 0 + IN-FLUID 1 is what makes upstream treat the map as
+ * fluid-only-capable (Recipe.java:518-523 checks the fluid hash indexes when
+ * {@code mMinimalInputItems == 0}). The rows are poured in statically by
+ * {@link GT6RecipesEngineFuels} (FMLCommonSetup) — one row per FM.Engine fuel fluid of
+ * Loader_Fuels.java:77-120, keyed by the fluid, valued |EUt × duration| power per fluid
+ * unit (Recipe.java:723-725 getAbsoluteTotalPower semantics).
+ *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
@@ -71,6 +82,9 @@ public class GT6RecipeMaps {
 
 	/** RM.java:97 — the Lathe map (1 in / 2 out items, 0 in / 0 out fluids). */
 	public static volatile RecipeMap LATHE;
+
+	/** FM.java:45 — the Engine Fuels map (1 in / 2 out items, 1 in / 2 out fluids; the fuel rows are fluid-only). */
+	public static volatile RecipeMap ENGINE_FUELS;
 
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
@@ -115,6 +129,14 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		ENGINE_FUELS = new RecipeMap(new HashSet<>(),
+				"gt.recipe.fuels.engine", "Engine Fuels", null,
+				0, 1,
+				"gt6:textures/gui/machines/default",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
 	}
 
 	/** Port-only: drops the whole generation (RecipeMap.RECIPE_MAPS included) for a clean re-init. */
@@ -124,6 +146,7 @@ public class GT6RecipeMaps {
 		SHREDDER = null;
 		CRUSHER = null;
 		LATHE = null;
+		ENGINE_FUELS = null;
 		RecipeMap.reset();
 	}
 }
