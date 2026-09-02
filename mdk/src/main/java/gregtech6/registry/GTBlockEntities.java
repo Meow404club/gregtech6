@@ -23,6 +23,7 @@ import gregtech6.block.GTExampleChestBlock;
 import gregtech6.block.TestMachineBlock;
 import gregtech6.tileentity.TestMachineBlockEntity;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
+import gregtech6.tileentity.energy.GTCrankBlockEntity;
 import gregtech6.tileentity.energy.GTEnergySourceBlockEntity;
 import gregtech6.tileentity.example.GTExampleChestBlockEntity;
 
@@ -115,6 +116,20 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<GTEnergySourceBlockEntity>> ENERGY_SOURCE_BE =
 			BLOCK_ENTITY_TYPES.register("energy_source", () -> BlockEntityType.Builder.of(
 					GTEnergySourceBlockEntity::new, GTEnergySources.ENERGY_SOURCE.get()).build(null));
+
+	// -------------------------------------------------------------------------
+	// hand crank (task p12-engine-crank) — the kinetics family's first BET row
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Hand Crank BET (task p12-engine-crank spec ③ — the BET type row lives here per
+	 * the card, the block/item in GT6Kinetics; the ENERGY_SOURCE_BE cross-register
+	 * resolution shape). Registry path "crank" mirrors
+	 * GTCrankBlockEntity#getTileEntityName like every other row.
+	 */
+	public static final RegistryObject<BlockEntityType<GTCrankBlockEntity>> CRANK_BE =
+			BLOCK_ENTITY_TYPES.register("crank", () -> BlockEntityType.Builder.of(
+					GTCrankBlockEntity::new, GT6Kinetics.CRANK.get()).build(null));
 
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest

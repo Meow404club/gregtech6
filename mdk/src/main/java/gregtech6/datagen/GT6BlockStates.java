@@ -26,6 +26,7 @@ import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialBlocks;
+import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
@@ -94,6 +95,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBarrel();
         addEnergySource();
         addPrefixBlocks(); // task p8-prefixblock-render ①
+        addCrank(); // task p12-engine-crank
     }
 
     /**
@@ -407,6 +409,20 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tSource = GTEnergySources.ENERGY_SOURCE.get();
         simpleBlock(tSource, models().cubeAll("energy_source", modLoc("block/energy_source")));
         itemModels().withExistingParent("energy_source", modLoc("block/energy_source"));
+    }
+
+    /**
+     * Task p12-engine-crank — the Hand Crank: one cube_all over
+     * {@code gt6:textures/block/crank.png} (the borrowed upstream crank front icon, the
+     * energy_source byte-identical-borrow form; assets/README.md attribution), single
+     * model for every state — the FACING property drives the EMIT side, not the visuals
+     * (the idle/spin dual texture of upstream getRenderPasses2 :125-130 is the render
+     * pool item). The empty-partial variant key applies the model to all four facings.
+     */
+    private void addCrank() {
+        Block tCrank = GT6Kinetics.CRANK.get();
+        simpleBlock(tCrank, models().cubeAll("crank", modLoc("block/crank")));
+        itemModels().withExistingParent("crank", modLoc("block/crank"));
     }
 
     /**

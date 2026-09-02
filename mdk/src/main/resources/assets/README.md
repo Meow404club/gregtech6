@@ -14,6 +14,14 @@ Machine GUI backgrounds borrowed from **GregTech 6**
 - `gt6/textures/block/energy_source.png` — test energy source block texture
   (upstream `textures/blocks/machines/solarpanels/solarpanel_electric_8eu/colored/side.png`,
   task p8-d4-energy-source — the SolarPanelElectric family the rig ports)
+- `gt6/textures/block/crank.png` — Hand Crank block texture (upstream
+  `textures/blocks/machines/tools/crank/colored/front.png`, task p12-engine-crank;
+  sha256 `a29789c46513a00f1d866a8351c777c8c2b7a365e5a387145f6d6b6dd2abf07a`).
+  Upstream tints this grayscale "colored" icon with the material colour
+  (ANY.Iron mRGBa via the MTE mRGBa pass) and layers the spin overlay
+  (`crank/colored/frontspin.png`) while cranking; the port shows the grayscale
+  icon un-tinted with no active visual — declared deviation, the tint and the
+  ACTIVE-state model swap ride the render pool card.
 - `gt6/textures/gui/machines/cokeoven.png` — Coke Oven GUI background
   (upstream `CokeOven.png`, task p8-cokeoven-gui-menu; sha256
   `a582c690865eb98115a639432731999d5cf13d2163ae8f532b2de10789f77572`)

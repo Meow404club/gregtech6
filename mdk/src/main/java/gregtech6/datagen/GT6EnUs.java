@@ -67,6 +67,7 @@ public class GT6EnUs extends LanguageProvider {
         addMultiBlocks();
         addBarrels();
         addEnergySource();
+        addKinetics(); // task p12-engine-crank
         addTools();
         addCovers();
         addJeiInfo();
@@ -187,6 +188,15 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addEnergySource() {
         add("block.gt6.energy_source", "Test Energy Source");
+    }
+
+    /**
+     * Kinetics family keys (task p12-engine-crank): the Hand Crank display name — the
+     * upstream registration row wording ("Hand Crank",
+     * Loader_MultiTileEntities.java:2106). The engine + transmission family appends here.
+     */
+    private void addKinetics() {
+        add("block.gt6.crank", "Hand Crank");
     }
 
     /**
