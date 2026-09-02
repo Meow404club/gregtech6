@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import gregapi.code.TagData;
 import gregapi.data.TD;
 import gregapi.tileentity.energy.ITileEntityEnergy;
+import gregtech6.tileentity.energy.GTAxleBlockEntity;
 import gregtech6.tileentity.energy.GTCrankBlockEntity;
 
 /**
@@ -67,7 +68,13 @@ public final class GTEngineCommand {
 		LOGGER.info("Registered GT6 engine-chain command /gt6engine (stat | crank) — the crank + future engine family acceptance home");
 	}
 
-	/** The BE energy-surface readback (spec ④ stat): crank detail, generic energy dump, failure otherwise. */
+	/**
+	 * The BE energy-surface readback (spec ④ stat): crank detail, axle detail, generic
+	 * energy dump, failure otherwise. The axle branch IS the tachometer channel (task
+	 * p12-axle-family spec ⑤ — the upstream onToolClick2 :82-87
+	 * {@code mTransferredLast + " RU/t"} readout is pooled to this command): axis, the
+	 * VMAX speed rating, the bandwidth rating, and the last-tick transferred magnitude.
+	 */
 	private static int stat(CommandSourceStack aSource, BlockPos aPos) {
 		ServerLevel tLevel = aSource.getLevel();
 		if (tLevel.getBlockEntity(aPos) instanceof GTCrankBlockEntity tCrank) {
@@ -80,6 +87,17 @@ public final class GTEngineCommand {
 					+ ", amount=" + tCrank.mPacketAmount
 					+ ", band " + GTCrankBlockEntity.OUTPUT_SIZE + "/" + GTCrankBlockEntity.OUTPUT_SIZE + "/" + GTCrankBlockEntity.OUTPUT_SIZE
 					+ ", offered=" + tCrank.getEnergyOffered(TD.Energy.RU, (byte) tCrank.getFacing(), GTCrankBlockEntity.OUTPUT_SIZE);
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
+		if (tLevel.getBlockEntity(aPos) instanceof GTAxleBlockEntity tAxle) {
+			String tLine = "GT6 axle at " + aPos.toShortString()
+					+ ": axis=" + tAxle.mAxis
+					+ ", speed rating=" + tAxle.mSpeed + " RU"
+					+ ", bandwidth=" + tAxle.mPower + " packets/t"
+					+ ", transferred=" + tAxle.mTransferredLast + " RU/t (last tick magnitude)"
+					+ ", break pending=" + tAxle.mBreakPending;
 			aSource.sendSuccess(() -> Component.literal(tLine), false);
 			LOGGER.info(tLine);
 			return Command.SINGLE_SUCCESS;
