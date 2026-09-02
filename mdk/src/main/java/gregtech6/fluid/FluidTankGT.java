@@ -4,10 +4,12 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.material.Fluids;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * 1.20.1 counterpart of gregapi/fluid/FluidTankGT.java (implements 1.7.10 IFluidTank).
@@ -74,7 +76,20 @@ public class FluidTankGT implements IFluidTank {
 			CompoundTag tNBT = aNBT.getCompound(aKey);
 			if (!tNBT.isEmpty()) {
 				mFluid = FluidStack.loadFluidStackFromNBT(tNBT);
-				mAmount = (isEmpty() ? 0 : tNBT.contains(NBT_L_AMOUNT, Tag.TAG_ANY_NUMERIC) ? tNBT.getLong(NBT_L_AMOUNT) : mFluid.getAmount());
+				if (mFluid != null && mFluid.getRawFluid() == Fluids.EMPTY) {
+					mFluid = null; // a legacy degraded "minecraft:empty" payload (pre-fix save) or a bare key: a truly empty tank
+					mAmount = 0;
+				} else if (mFluid != null && mFluid.isEmpty()) {
+					// The keepFilter payload (Amount 0 with a REAL FluidName — what writeToNBT now
+					// writes): loadFluidStackFromNBT empty-flagged the 0-amount stack, which would
+					// collapse the kept identity to Fluids.EMPTY. Upstream :56 loads the REAL fluid
+					// at amount 0 — the 1.20.1 carrier rebuilds it un-collapsed at a unit amount
+					// (mAmount stays the authoritative 0; task p12-barrel-keepfilter-logistics).
+					mFluid = new FluidStack(mFluid.getRawFluid(), 1);
+					mAmount = 0;
+				} else {
+					mAmount = (isEmpty() ? 0 : tNBT.contains(NBT_L_AMOUNT, Tag.TAG_ANY_NUMERIC) ? tNBT.getLong(NBT_L_AMOUNT) : mFluid.getAmount());
+				}
 			}
 		}
 		return this;
@@ -85,7 +100,23 @@ public class FluidTankGT implements IFluidTank {
 		if (mFluid != null && (mPreventDraining || mAmount > 0)) {
 			CompoundTag tNBT = new CompoundTag();
 			mFluid.setAmount(bindInt(mAmount)); // upstream :73 mutates the stack amount in place
-			aNBT.put(aKey, mFluid.writeToNBT(tNBT));
+			if (mFluid.isEmpty()) {
+				// The 1.20.1 empty-flag artifact (the keepFilter persistence gap this card fixes,
+				// task p12-barrel-keepfilter-logistics): once a stack is empty-flagged — which
+				// {@code setAmount(0)} above always does (FluidStack.updateEmpty: amount <= 0) —
+				// {@code FluidStack.writeToNBT} writes {@code getFluid()}, which collapses to
+				// Fluids.EMPTY, so the payload degraded to {@code FluidName: "minecraft:empty"} and
+				// the kept identity was lost on the very first save. Upstream :70-80 has no such
+				// hole: a 1.7.10 FluidStack carries no empty flag, so the :71-78/:84-88 judgement
+				// persists the REAL identity at 0 L ({@code mFluid.getFluid()} stays the filter
+				// fluid). The raw fluid still names the identity here, so the judgement's promise
+				// (writeToNBT 0 量含身份) is honoured by writing the registry name from it.
+				tNBT.putString("FluidName", ForgeRegistries.FLUIDS.getKey(mFluid.getRawFluid()).toString());
+				tNBT.putInt("Amount", 0);
+			} else {
+				mFluid.writeToNBT(tNBT);
+			}
+			aNBT.put(aKey, tNBT);
 			if (mAmount > Integer.MAX_VALUE) tNBT.putLong(NBT_L_AMOUNT, mAmount);
 		} else {
 			aNBT.remove(aKey);
@@ -143,7 +174,12 @@ public class FluidTankGT implements IFluidTank {
 	@Override
 	@Nullable
 	public FluidStack getFluid() {
-		if (mFluid != null) mFluid.setAmount(bindInt(mAmount)); // upstream :359 rebinds the amount
+		// upstream :359 rebinds the amount in place; the 1.20.1 carrier skips the rebind at 0 L
+		// — setAmount(0) empty-flags the stack (FluidStack.updateEmpty) and collapses the kept
+		// filter identity the keepFilter state exists to preserve (task
+		// p12-barrel-keepfilter-logistics). The upstream rebind at 0 was loss-free (no empty
+		// flag on a 1.7.10 FluidStack); mAmount stays the authoritative amount either way.
+		if (mFluid != null && mAmount > 0) mFluid.setAmount(bindInt(mAmount));
 		return mFluid;
 	}
 
@@ -246,18 +282,36 @@ public class FluidTankGT implements IFluidTank {
 		return this;
 	}
 
-	/** Upstream :314 — null content is the empty state (upstream keeps the stack, not just the amount). */
+	/**
+	 * Upstream :314 verbatim — null content is the empty state (upstream keeps the stack, not
+	 * just the amount). The W1 port added {@code || mFluid.isEmpty()} for the 1.20.1 empty
+	 * flag; that collapsed the keepFilter state ({@code mFluid != null, mAmount == 0}) into
+	 * "empty", so a refill ADOPTED any fluid instead of gating on the kept filter — task
+	 * p12-barrel-keepfilter-logistics restores the upstream verdict. The state is only
+	 * reachable under {@code mPreventDraining} (every other path ends in setEmpty's null).
+	 */
 	public boolean isEmpty() {
-		return mFluid == null || mFluid.isEmpty();
+		return mFluid == null;
 	}
 
 	public boolean isFull() {return mAmount >= capacity();}
 	public boolean has(long aAmount) {return mAmount >= aAmount;}
 	public boolean has() {return mAmount > 0;}
 
-	/** Upstream :321 — amount-independent fluid equality (FluidStack.isFluidEqual :260). */
+	/**
+	 * Upstream :321 — amount-independent fluid equality ({@code FL.equal} works on the REAL
+	 * fluid; a 1.7.10 FluidStack has no empty flag). The 1.20.1 carrier routes the comparison
+	 * through the raw fluid when the stored stack is empty-flagged (the keepFilter 0-amount
+	 * state): {@code isFluidEqual} collapses it to Fluids.EMPTY on both sides and would
+	 * answer false for the very identity this state exists to keep (task
+	 * p12-barrel-keepfilter-logistics). A non-empty stored stack takes the plain
+	 * {@code isFluidEqual} path, bit-identical to the W1 behaviour.
+	 */
 	public boolean contains(@Nullable FluidStack aFluid) {
-		return mFluid != null && !mFluid.isEmpty() && aFluid != null && !aFluid.isEmpty() && mFluid.isFluidEqual(aFluid);
+		if (mFluid == null || aFluid == null || aFluid.isEmpty()) return false;
+		if (!mFluid.isEmpty()) return mFluid.isFluidEqual(aFluid);
+		if (mFluid.getRawFluid() != aFluid.getRawFluid()) return false;
+		return mFluid.getTag() == null ? aFluid.getTag() == null : aFluid.getTag() != null && mFluid.getTag().equals(aFluid.getTag());
 	}
 
 	/** Upstream :330-331. */
