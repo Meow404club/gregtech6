@@ -73,6 +73,13 @@ public final class GT6ItemModels extends ItemModelProvider {
         // textures/block/redstone_switch/ (assets/README.md attribution)
         withExistingParent("cover_redstone_machine_switch", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/redstone_switch/circuit"));
+        // the p11 shutter + item-filter covers (task p11-cover-shutter-filter) — the items
+        // show their normal/whitelist plate art, byte-identical upstream borrows living in
+        // textures/block/shutter/ and textures/block/filteritem/ (assets/README.md attribution)
+        withExistingParent("cover_shutter", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/shutter/normal"));
+        withExistingParent("cover_item_filter", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/filteritem/normal"));
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */
