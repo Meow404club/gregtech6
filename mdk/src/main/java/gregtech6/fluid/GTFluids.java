@@ -268,16 +268,17 @@ public final class GTFluids {
 
 	/**
 	 * The engine-steam conversion constants (task p12-engine-fuel-fluids spec ④, consumed by
-	 * the p12-engine-steam card): {@code STEAM_PER_WATER = 200} is
-	 * MultiTileEntityEngineSteam.java:58 verbatim (200 L steam per 1 L water — the tooltip
-	 * math at :98 and the tank capacity at :80 both read it), and {@code STEAM_PER_EU = 2} is
-	 * CS.java:240 verbatim (2 L steam per EU — the CS.java:242 default is 160, but every
-	 * steam consumer pins its own 200/2 pair; the card pins the EngineSteam values). Parked
-	 * HERE (not in a GT6Kinetics constants class) because the engine-crank card owns that
-	 * file in parallel — the steam card re-homes them on rebase, declared in the card.
+	 * the p12-engine-steam card). {@code STEAM_PER_WATER = 200} is the ENGINE-PRIVATE value —
+	 * MultiTileEntityEngineSteam.java:58 {@code public static final int STEAM_PER_WATER = 200},
+	 * the engine's own steam→water recycle ratio (the tooltip math at :98 and the tank
+	 * capacity at :80 both read it); it is NOT the global standard — CS.java:242 carries the
+	 * separate global {@code STEAM_PER_WATER = 160} that the BOILER side uses (= EU_PER_WATER
+	 * 80 × STEAM_PER_EU 2). {@code STEAM_PER_EU = 2} is CS.java:240 verbatim, unambiguous.
+	 * Parked HERE (not in a GT6Kinetics constants class) because the engine-crank card owns
+	 * that file in parallel — the steam card re-homes them on rebase, declared in the card.
 	 */
 	public static final int STEAM_PER_WATER = 200;
-	/** CS.java:240 — 2 L steam per EU, the steam-to-energy divisor of EngineSteam/TurbineSteam. */
+	/** CS.java:240 — 2 L steam per EU, the steam-to-energy divisor of EngineSteam/TurbineSteam (global, no engine-private override). */
 	public static final int STEAM_PER_EU = 2;
 
 	/**

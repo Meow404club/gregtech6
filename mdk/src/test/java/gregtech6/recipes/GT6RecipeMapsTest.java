@@ -62,6 +62,27 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:textures/gui/machines/cokeoven.png", GT6RecipeMaps.COKE_OVEN.mGUIPath);
 	}
 
+	/** The FM.java:45 Engine Fuels map constants (task p12-engine-fuel-fluids). */
+	@Test
+	void initRegistersEngineFuelsMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		assertNotNull(GT6RecipeMaps.ENGINE_FUELS);
+		assertSame(GT6RecipeMaps.ENGINE_FUELS, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.engine"));
+		assertEquals("Engine Fuels", GT6RecipeMaps.ENGINE_FUELS.mNameLocal);
+		assertEquals("gt.recipe.fuels.engine", GT6RecipeMaps.ENGINE_FUELS.mNameNEI, "FM.java:45 passes null → the internal name");
+		assertEquals(1, GT6RecipeMaps.ENGINE_FUELS.mInputItemsCount);
+		assertEquals(2, GT6RecipeMaps.ENGINE_FUELS.mOutputItemsCount);
+		assertEquals(0, GT6RecipeMaps.ENGINE_FUELS.mMinimalInputItems, "MIN-ITEMS 0 — the upstream fluid-only lookup switch (Recipe.java:518-523)");
+		assertEquals(1, GT6RecipeMaps.ENGINE_FUELS.mInputFluidCount);
+		assertEquals(2, GT6RecipeMaps.ENGINE_FUELS.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.ENGINE_FUELS.mMinimalInputFluids);
+		assertEquals(1, GT6RecipeMaps.ENGINE_FUELS.mMinimalInputs);
+		assertEquals(1, GT6RecipeMaps.ENGINE_FUELS.mPower);
+		assertEquals(0, GT6RecipeMaps.ENGINE_FUELS.mProgressBarDirection);
+		assertEquals(1, GT6RecipeMaps.ENGINE_FUELS.mProgressBarAmount);
+		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.ENGINE_FUELS.mGUIPath, "the FM.java:45 machines/Default row, lowercased");
+	}
+
 	@Test
 	void reinitIsIdempotentWithinAGeneration() {
 		GT6RecipeMaps.init();
@@ -70,13 +91,15 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		RecipeMap tFirstShredder = GT6RecipeMaps.SHREDDER;
 		RecipeMap tFirstCrusher = GT6RecipeMaps.CRUSHER;
 		RecipeMap tFirstLathe = GT6RecipeMaps.LATHE;
+		RecipeMap tFirstEngine = GT6RecipeMaps.ENGINE_FUELS;
 		GT6RecipeMaps.init();
 		assertSame(tFirst, GT6RecipeMaps.FURNACE, "init within one generation must not recreate (upstream :139 would throw on the duplicate name)");
 		assertSame(tFirstCoke, GT6RecipeMaps.COKE_OVEN);
 		assertSame(tFirstShredder, GT6RecipeMaps.SHREDDER);
 		assertSame(tFirstCrusher, GT6RecipeMaps.CRUSHER);
 		assertSame(tFirstLathe, GT6RecipeMaps.LATHE);
-		assertEquals(5, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe");
+		assertSame(tFirstEngine, GT6RecipeMaps.ENGINE_FUELS);
+		assertEquals(6, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + engine fuels");
 	}
 
 	@Test
@@ -84,20 +107,26 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		GT6RecipeMaps.init();
 		RecipeMapFurnace tFirst = GT6RecipeMaps.FURNACE;
 		RecipeMap tFirstCoke = GT6RecipeMaps.COKE_OVEN;
+		RecipeMap tFirstEngine = GT6RecipeMaps.ENGINE_FUELS;
 
 		GT6RecipeMaps.reset();
 		assertNull(GT6RecipeMaps.FURNACE);
 		assertNull(GT6RecipeMaps.COKE_OVEN);
+		assertNull(GT6RecipeMaps.ENGINE_FUELS);
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("mc.recipe.furnace"), "reset drops the registry entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.cokeoven"), "reset drops the coke oven entry");
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.fuels.engine"), "reset drops the engine fuels entry");
 
 		GT6RecipeMaps.init();
 		assertNotNull(GT6RecipeMaps.FURNACE);
 		assertNotNull(GT6RecipeMaps.COKE_OVEN);
+		assertNotNull(GT6RecipeMaps.ENGINE_FUELS);
 		assertNotSame(tFirst, GT6RecipeMaps.FURNACE, "re-init after reset creates a fresh generation");
 		assertNotSame(tFirstCoke, GT6RecipeMaps.COKE_OVEN);
+		assertNotSame(tFirstEngine, GT6RecipeMaps.ENGINE_FUELS);
 		assertSame(GT6RecipeMaps.FURNACE, RecipeMap.RECIPE_MAPS.get("mc.recipe.furnace"));
 		assertSame(GT6RecipeMaps.COKE_OVEN, RecipeMap.RECIPE_MAPS.get("gt.recipe.cokeoven"));
+		assertSame(GT6RecipeMaps.ENGINE_FUELS, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.engine"));
 	}
 
 	/** The duplicate-name guard fires when a second generation is created without a reset (upstream Recipe.java:139). */
