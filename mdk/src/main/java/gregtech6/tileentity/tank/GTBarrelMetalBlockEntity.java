@@ -49,6 +49,17 @@ public class GTBarrelMetalBlockEntity extends TileEntityBase08Barrel {
 
 	// No allowCover override — the upstream MultiTileEntityBarrelMetal takes the base default.
 
+	/**
+	 * The :2151-2170 rows ALL carry NBT_GASPROOF=T (task p13 — verified per line): the
+	 * carrier value when the block is a GT barrel, the class truth as the offline-fixture
+	 * fallback. The exemption covers the :180 gas gate ONLY — the :184 allowFluid gate
+	 * still voids the power-conductor fluids (steam fizzes out of a gas-proof drum).
+	 */
+	@Override
+	public boolean gasProof() {
+		return getBlockState().getBlock() instanceof GTBarrelBlock tBarrel ? tBarrel.gasProof() : true;
+	}
+
 	@Override
 	public String getTileEntityName() {
 		return "barrel_metal"; // BET registry path mirrors it (GTBarrels.BARREL_METAL_BE)

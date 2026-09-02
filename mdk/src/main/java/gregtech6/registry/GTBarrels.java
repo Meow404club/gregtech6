@@ -76,7 +76,7 @@ public final class GTBarrels {
 	 * so this row is a zero-behaviour-change re-statement.
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL = BLOCKS.register("barrel_wood",
-			() -> new GTBarrelBlock(16000, 340, () -> GTBarrels.BARREL_BE.get(), BlockBehaviour.Properties.of()
+			() -> new GTBarrelBlock(16000, 340, false, () -> GTBarrels.BARREL_BE.get(), BlockBehaviour.Properties.of()
 					.strength(1.0F, 5.0F).sound(SoundType.WOOD)));
 
 	/** The barrel BET: one BlockEntityType over the wood barrel (registry order BLOCKS before BLOCK_ENTITY_TYPES). */
@@ -90,12 +90,13 @@ public final class GTBarrels {
 
 	/**
 	 * Plastic canister — 32000 L, melts down at 370 K (upstream NBT_CAPACITY_HU row,
-	 * Loader_MultiTileEntities.java:2150; the upstream GASPROOF flag is a P4 quartet pool
-	 * cut with no consumer). The block properties are placeholders like every barrel
-	 * texture here: WOOL is the closest vanilla stand-in for plastic.
+	 * Loader_MultiTileEntities.java:2150). The row's NBT_GASPROOF=T rides the block
+	 * carrier (task p13): the steam fizz chain reads it through the BE's gasProof()
+	 * override and the item-face fill gate. The block properties are placeholders like
+	 * every barrel texture here: WOOL is the closest vanilla stand-in for plastic.
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL_PLASTIC = BLOCKS.register("barrel_plastic",
-			() -> new GTBarrelBlock(32000, 370, () -> GTBarrels.BARREL_PLASTIC_BE.get(),
+			() -> new GTBarrelBlock(32000, 370, true, () -> GTBarrels.BARREL_PLASTIC_BE.get(),
 					BlockBehaviour.Properties.of()
 							.strength(1.0F, 5.0F).sound(SoundType.WOOL)));
 
@@ -118,7 +119,7 @@ public final class GTBarrels {
 	 * Copper sound for the bronze drum.
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL_METAL = BLOCKS.register("barrel_metal",
-			() -> new GTBarrelBlock(64000, meltingPointK(MT.Bronze), () -> GTBarrels.BARREL_METAL_BE.get(),
+			() -> new GTBarrelBlock(64000, meltingPointK(MT.Bronze), true, () -> GTBarrels.BARREL_METAL_BE.get(),
 					BlockBehaviour.Properties.of()
 							.strength(1.0F, 6.0F).sound(SoundType.COPPER)));
 
@@ -190,7 +191,7 @@ public final class GTBarrels {
 	static {
 		for (MetalDrumRow tRow : HIGH_TIER_METAL_DRUMS) {
 			METAL_DRUM_BLOCKS.put(tRow.path(), BLOCKS.register(tRow.path(),
-					() -> new GTBarrelBlock(tRow.capacityL(), tRow.meltingPointK(),
+					() -> new GTBarrelBlock(tRow.capacityL(), tRow.meltingPointK(), true,
 							() -> GTBarrels.BARREL_METAL_BE.get(), BlockBehaviour.Properties.of()
 									.strength(1.0F, tRow.resistanceF()).sound(SoundType.COPPER))));
 			METAL_DRUM_ITEMS.put(tRow.path(), ITEMS.register(tRow.path(),
@@ -222,15 +223,16 @@ public final class GTBarrels {
 	 * carrier takes capacityL = 1000000 and the 100000 K melt ceiling; the block sound is
 	 * the metal-drum COPPER stand-in (the row material is ANY.W = tungsten with the
 	 * aUtilMetal tool set — NOT the wood set the task-card sketch guessed, upstream :2171
-	 * read verbatim). Declared cuts: the row's four-proof flags (all T) are the P4 quartet
-	 * pool with no port consumer; the upstream category is "Logistics" (id 17997) and the
+	 * read verbatim). Declared cuts: the row's plasma/acid/magic-proof flags are the P4
+	 * quartet pool without a port consumer (the gas-proof flag rides the carrier since
+	 * task p13); the upstream category is "Logistics" (id 17997) and the
 	 * recipe references {@code IL.Cover_Logistics_Generic_Storage} +
 	 * {@code IL.FIELD_GENERATORS} — no logistics pipe network exists in the port, so the
 	 * barrel pools into this "Fluid Containers" tab below and stays /give-reachable, card
 	 * spec ②.
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL_LOGISTICS = BLOCKS.register("barrel_logistics",
-			() -> new GTBarrelBlock(1000000, 100000, () -> GTBarrels.BARREL_LOGISTICS_BE.get(),
+			() -> new GTBarrelBlock(1000000, 100000, true, () -> GTBarrels.BARREL_LOGISTICS_BE.get(),
 					BlockBehaviour.Properties.of()
 							.strength(1.0F, 10.0F).sound(SoundType.COPPER)));
 
