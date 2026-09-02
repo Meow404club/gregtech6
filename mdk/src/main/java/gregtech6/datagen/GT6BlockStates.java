@@ -178,6 +178,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBarrel(GTBarrels.BARREL.get());
         addBarrel(GTBarrels.BARREL_PLASTIC.get());
         addBarrel(GTBarrels.BARREL_METAL.get());
+        addBarrel(GTBarrels.BARREL_LOGISTICS.get()); // task p12-barrel-keepfilter-logistics — the :2171 row, own PNG
         for (RegistryObject<GTBarrelBlock> tDrum : GTBarrels.METAL_DRUM_BLOCKS.values())
             addBarrel(tDrum.get(), "barrel_metal");
     }
