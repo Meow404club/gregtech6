@@ -198,14 +198,23 @@ class RconClient:
 
 def run_chain(host, port, password, commands, expects=None,
               timeout=DEFAULT_CONNECT_TIMEOUT,
-              first_timeout=DEFAULT_FIRST_TIMEOUT, quiet_window=DEFAULT_QUIET_WINDOW):
+              first_timeout=DEFAULT_FIRST_TIMEOUT, quiet_window=DEFAULT_QUIET_WINDOW,
+              allow_failed=None):
     """Connect, auth, run the command chain, apply index-keyed expectations.
 
-    expects maps 1-based command index -> expected substring. Returns
-    (failure_count, [(command, [outputs]), ...]). Every output containing the
-    literal marker "FAILED" counts as a failure — the GT6 acceptance commands
+    expects maps 1-based command index -> expected substring. allow_failed is an
+    optional collection of 1-based command indices that MAY fail: a FAILED marker
+    or a missed expectation on a marked command is reported as ALLOWED instead of
+    FAIL and does not count into the returned failure count (the chain keeps
+    executing either way — a coexistence chain pins an expected-REJECTED step in
+    the middle without failing the whole acceptance). Default None/empty = every
+    failure counts, the historical behaviour byte for byte.
+
+    Returns (failure_count, [(command, [outputs]), ...]). Every output containing
+    the literal marker "FAILED" counts as a failure — the GT6 acceptance commands
     send their failure lines with exactly that word.
     """
+    allowed = set(allow_failed) if allow_failed else set()
     failure = 0
     transcript = []
     with RconClient(host, port, password, timeout,
@@ -216,13 +225,20 @@ def run_chain(host, port, password, commands, expects=None,
             body = "\n".join(outs)
             print(f"$ {command}\n{body if body else '<no response>'}")
             if "FAILED" in body:
-                print(f"[command {index}: FAILED marker in output -> FAIL]")
-                failure += 1
+                if index in allowed:
+                    print(f"[command {index}: FAILED marker in output -> ALLOWED]")
+                else:
+                    print(f"[command {index}: FAILED marker in output -> FAIL]")
+                    failure += 1
             expected = (expects or {}).get(index)
             if expected is not None:
                 hit = expected in body
-                print(f"[expect {index}: {expected!r} -> {'PASS' if hit else 'FAIL'}]")
-                if not hit:
+                if hit:
+                    print(f"[expect {index}: {expected!r} -> PASS]")
+                elif index in allowed:
+                    print(f"[expect {index}: {expected!r} -> ALLOWED]")
+                else:
+                    print(f"[expect {index}: {expected!r} -> FAIL]")
                     failure += 1
     return failure, transcript
 
@@ -254,6 +270,12 @@ def main(argv=None):
     parser.add_argument("--expect", action="append", default=[], metavar="N:SUBSTRING",
                         help="1-based command index and expected substring, repeatable; "
                              "a command without expectation is just printed")
+    parser.add_argument("--allow-failed", action="append", type=int, default=[], metavar="N",
+                        dest="allow_failed",
+                        help="1-based command index that MAY fail, repeatable: a FAILED "
+                             "marker or a missed --expect on it is reported as ALLOWED "
+                             "instead of FAIL and does not fail the chain (coexistence "
+                             "chains pin an expected-REJECTED step in the middle)")
     parser.add_argument("commands", nargs="+", help="server commands, run in order")
     args = parser.parse_args(argv)
 
@@ -261,11 +283,16 @@ def main(argv=None):
         expects = dict(_parse_expect(spec) for spec in args.expect)
     except ValueError as exc:
         parser.error(str(exc))
+    if any(n < 1 for n in args.allow_failed):
+        parser.error("--allow-failed index must be >= 1")
+    if args.allow_failed and max(args.allow_failed) > len(args.commands):
+        parser.error(f"--allow-failed index out of range 1..{len(args.commands)}")
 
     try:
         failure, _ = run_chain(args.host, args.port, args.password,
                                args.commands, expects, args.timeout,
-                               first_timeout=args.response_timeout)
+                               first_timeout=args.response_timeout,
+                               allow_failed=args.allow_failed)
     except RconAuthError:
         print("AUTH FAILED")
         return 2

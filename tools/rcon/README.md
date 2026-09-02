@@ -12,6 +12,23 @@ python3 tools/rcon/gt6rcon.py --password <pw> \
     --expect 1:connections\ 16 --expect 2:ioMask\ 0
 ```
 
+**预期失败的步**：`--allow-failed N`（N 为 1 基命令序号，可重复）把该步标记为可失败——
+输出含 `FAILED` 字样或 `--expect` 未命中时记为 **ALLOWED**，不计入退出码，链照常走完
+（多盖共存断言场景：「重复装同面必被拒」的探针步夹在链中间，不该让整条验收挂掉）。
+默认不传此参数 = 从前行为逐字节不变（任何失败 → 退出码 1）。示例：
+
+```bash
+# 第 3 步重复安装同面 cover 必被拒（失败行含 FAILED）——标记后整链退出码 0
+python3 tools/rcon/gt6rcon.py --password <pw> \
+    "gt6oven place 40 64 40" \
+    "gt6cover install 40 64 40 up" \
+    "gt6cover install 40 64 40 up" \
+    "gt6cover check 40 64 40" \
+    --expect 2:ok=true --allow-failed 3 --expect 4:store=alive
+```
+
+import 侧同义：`gt6rcon.run_chain(..., allow_failed={3})`（1 基序号集合）。
+
 退出码：0 成功；1 断言失败；2 认证失败（AUTH FAILED）；3 连接失败（CONNECT FAILED）。
 慢指令（如 `gt6oven run <大 tick>`）加 `--response-timeout 30`。
 import 复用：`sys.path.insert(0, "tools/rcon"); import gt6rcon`，用
