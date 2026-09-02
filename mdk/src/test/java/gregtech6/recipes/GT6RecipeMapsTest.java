@@ -83,6 +83,48 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.ENGINE_FUELS.mGUIPath, "the FM.java:45 machines/Default row, lowercased");
 	}
 
+	/** The FM.java:40 Fluidized Bed Fuels map constants (task p13-hu-steam-foundation). */
+	@Test
+	void initRegistersFluidBedMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		assertNotNull(GT6RecipeMaps.FLUIDBED);
+		assertSame(GT6RecipeMaps.FLUIDBED, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.fluidbed"));
+		assertEquals("Fluidized Bed Fuels", GT6RecipeMaps.FLUIDBED.mNameLocal);
+		assertEquals("gt.recipe.fuels.fluidbed", GT6RecipeMaps.FLUIDBED.mNameNEI, "FM.java:40 passes null → the internal name");
+		assertEquals(1, GT6RecipeMaps.FLUIDBED.mInputItemsCount);
+		assertEquals(2, GT6RecipeMaps.FLUIDBED.mOutputItemsCount);
+		assertEquals(1, GT6RecipeMaps.FLUIDBED.mMinimalInputItems, "FM.java:40 MIN-ITEM 1 — the column that differs from the Burn row");
+		assertEquals(1, GT6RecipeMaps.FLUIDBED.mInputFluidCount);
+		assertEquals(2, GT6RecipeMaps.FLUIDBED.mOutputFluidCount);
+		assertEquals(1, GT6RecipeMaps.FLUIDBED.mMinimalInputFluids, "FM.java:40 MIN-FLUID 1 — the column that differs from the Burn row");
+		assertEquals(2, GT6RecipeMaps.FLUIDBED.mMinimalInputs, "FM.java:40 MIN 2 — the column that differs from the Burn row");
+		assertEquals(1, GT6RecipeMaps.FLUIDBED.mPower);
+		assertEquals(0, GT6RecipeMaps.FLUIDBED.mProgressBarDirection);
+		assertEquals(1, GT6RecipeMaps.FLUIDBED.mProgressBarAmount);
+		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.FLUIDBED.mGUIPath, "the FM.java:40 machines/Default row, lowercased");
+	}
+
+	/** The FM.java:41 Burnable Fuels map constants (task p13-hu-steam-foundation). */
+	@Test
+	void initRegistersBurnMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		assertNotNull(GT6RecipeMaps.BURN);
+		assertSame(GT6RecipeMaps.BURN, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.burn"));
+		assertEquals("Burnable Fuels", GT6RecipeMaps.BURN.mNameLocal);
+		assertEquals("gt.recipe.fuels.burn", GT6RecipeMaps.BURN.mNameNEI, "FM.java:41 passes null → the internal name");
+		assertEquals(1, GT6RecipeMaps.BURN.mInputItemsCount);
+		assertEquals(2, GT6RecipeMaps.BURN.mOutputItemsCount);
+		assertEquals(0, GT6RecipeMaps.BURN.mMinimalInputItems, "FM.java:41 MIN-ITEM 0 — same shape as the FM.java:45 Engine row");
+		assertEquals(1, GT6RecipeMaps.BURN.mInputFluidCount);
+		assertEquals(2, GT6RecipeMaps.BURN.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.BURN.mMinimalInputFluids, "FM.java:41 MIN-FLUID 0");
+		assertEquals(1, GT6RecipeMaps.BURN.mMinimalInputs, "FM.java:41 MIN 1");
+		assertEquals(1, GT6RecipeMaps.BURN.mPower);
+		assertEquals(0, GT6RecipeMaps.BURN.mProgressBarDirection);
+		assertEquals(1, GT6RecipeMaps.BURN.mProgressBarAmount);
+		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.BURN.mGUIPath, "the FM.java:41 machines/Default row, lowercased");
+	}
+
 	@Test
 	void reinitIsIdempotentWithinAGeneration() {
 		GT6RecipeMaps.init();
@@ -92,6 +134,8 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		RecipeMap tFirstCrusher = GT6RecipeMaps.CRUSHER;
 		RecipeMap tFirstLathe = GT6RecipeMaps.LATHE;
 		RecipeMap tFirstEngine = GT6RecipeMaps.ENGINE_FUELS;
+		RecipeMap tFirstFluidBed = GT6RecipeMaps.FLUIDBED;
+		RecipeMap tFirstBurn = GT6RecipeMaps.BURN;
 		GT6RecipeMaps.init();
 		assertSame(tFirst, GT6RecipeMaps.FURNACE, "init within one generation must not recreate (upstream :139 would throw on the duplicate name)");
 		assertSame(tFirstCoke, GT6RecipeMaps.COKE_OVEN);
@@ -99,7 +143,9 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstCrusher, GT6RecipeMaps.CRUSHER);
 		assertSame(tFirstLathe, GT6RecipeMaps.LATHE);
 		assertSame(tFirstEngine, GT6RecipeMaps.ENGINE_FUELS);
-		assertEquals(6, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + engine fuels");
+		assertSame(tFirstFluidBed, GT6RecipeMaps.FLUIDBED);
+		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
+		assertEquals(8, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + engine fuels + fluid bed + burn");
 	}
 
 	@Test
@@ -108,25 +154,37 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		RecipeMapFurnace tFirst = GT6RecipeMaps.FURNACE;
 		RecipeMap tFirstCoke = GT6RecipeMaps.COKE_OVEN;
 		RecipeMap tFirstEngine = GT6RecipeMaps.ENGINE_FUELS;
+		RecipeMap tFirstFluidBed = GT6RecipeMaps.FLUIDBED;
+		RecipeMap tFirstBurn = GT6RecipeMaps.BURN;
 
 		GT6RecipeMaps.reset();
 		assertNull(GT6RecipeMaps.FURNACE);
 		assertNull(GT6RecipeMaps.COKE_OVEN);
 		assertNull(GT6RecipeMaps.ENGINE_FUELS);
+		assertNull(GT6RecipeMaps.FLUIDBED, "reset drops the fluid bed entry too");
+		assertNull(GT6RecipeMaps.BURN, "reset drops the burn entry too");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("mc.recipe.furnace"), "reset drops the registry entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.cokeoven"), "reset drops the coke oven entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.fuels.engine"), "reset drops the engine fuels entry");
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.fuels.fluidbed"), "reset drops the fluid bed entry");
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.fuels.burn"), "reset drops the burn entry");
 
 		GT6RecipeMaps.init();
 		assertNotNull(GT6RecipeMaps.FURNACE);
 		assertNotNull(GT6RecipeMaps.COKE_OVEN);
 		assertNotNull(GT6RecipeMaps.ENGINE_FUELS);
+		assertNotNull(GT6RecipeMaps.FLUIDBED);
+		assertNotNull(GT6RecipeMaps.BURN);
 		assertNotSame(tFirst, GT6RecipeMaps.FURNACE, "re-init after reset creates a fresh generation");
 		assertNotSame(tFirstCoke, GT6RecipeMaps.COKE_OVEN);
 		assertNotSame(tFirstEngine, GT6RecipeMaps.ENGINE_FUELS);
+		assertNotSame(tFirstFluidBed, GT6RecipeMaps.FLUIDBED);
+		assertNotSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(GT6RecipeMaps.FURNACE, RecipeMap.RECIPE_MAPS.get("mc.recipe.furnace"));
 		assertSame(GT6RecipeMaps.COKE_OVEN, RecipeMap.RECIPE_MAPS.get("gt.recipe.cokeoven"));
 		assertSame(GT6RecipeMaps.ENGINE_FUELS, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.engine"));
+		assertSame(GT6RecipeMaps.FLUIDBED, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.fluidbed"));
+		assertSame(GT6RecipeMaps.BURN, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.burn"));
 	}
 
 	/** The duplicate-name guard fires when a second generation is created without a reset (upstream Recipe.java:139). */
