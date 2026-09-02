@@ -31,6 +31,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.GT6Mod;
 import gregtech6.block.tank.GTBarrelBlock;
+import gregtech6.item.GTBarrelBlockItem;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelPlasticBlockEntity;
@@ -82,8 +83,9 @@ public final class GTBarrels {
 			BLOCK_ENTITY_TYPES.register("barrel_wood", () -> BlockEntityType.Builder.of(
 					GTBarrelBlockEntity::new, BARREL.get()).build(null));
 
+	/** The barrel item — the p12 carrier item: FLUID_HANDLER_ITEM capability + the :290 content-stacking rule (empty barrels stack to 16). */
 	public static final RegistryObject<Item> BARREL_ITEM = ITEMS.register("barrel_wood",
-			() -> new BlockItem(BARREL.get(), new Item.Properties()));
+			() -> new GTBarrelBlockItem(BARREL.get(), new Item.Properties().stacksTo(16)));
 
 	/**
 	 * Plastic canister — 32000 L, melts down at 370 K (upstream NBT_CAPACITY_HU row,
@@ -101,8 +103,9 @@ public final class GTBarrels {
 			BLOCK_ENTITY_TYPES.register("barrel_plastic", () -> BlockEntityType.Builder.of(
 					GTBarrelPlasticBlockEntity::new, BARREL_PLASTIC.get()).build(null));
 
+	/** The plastic canister item — the p12 carrier item (same shape as the wood row). */
 	public static final RegistryObject<Item> BARREL_PLASTIC_ITEM = ITEMS.register("barrel_plastic",
-			() -> new BlockItem(BARREL_PLASTIC.get(), new Item.Properties()));
+			() -> new GTBarrelBlockItem(BARREL_PLASTIC.get(), new Item.Properties().stacksTo(16)));
 
 	/**
 	 * Metal drum — 64000 L bronze tier (upstream row Loader_MultiTileEntities.java:2151,
@@ -190,7 +193,7 @@ public final class GTBarrels {
 							() -> GTBarrels.BARREL_METAL_BE.get(), BlockBehaviour.Properties.of()
 									.strength(1.0F, tRow.resistanceF()).sound(SoundType.COPPER))));
 			METAL_DRUM_ITEMS.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(GTBarrels.METAL_DRUM_BLOCKS.get(tRow.path()).get(), new Item.Properties())));
+					() -> new GTBarrelBlockItem(GTBarrels.METAL_DRUM_BLOCKS.get(tRow.path()).get(), new Item.Properties().stacksTo(16))));
 		}
 	}
 
@@ -206,8 +209,9 @@ public final class GTBarrels {
 							GTBarrels.METAL_DRUM_BLOCKS.values().stream().map(RegistryObject::get))
 						.toArray(Block[]::new)).build(null));
 
+	/** The metal drum item — the p12 carrier item (same shape as the wood row). */
 	public static final RegistryObject<Item> BARREL_METAL_ITEM = ITEMS.register("barrel_metal",
-			() -> new BlockItem(BARREL_METAL.get(), new Item.Properties()));
+			() -> new GTBarrelBlockItem(BARREL_METAL.get(), new Item.Properties().stacksTo(16)));
 
 	/** The "Fluid Containers" category tab (upstream MTE category of the barrel row, :2136 column 2). */
 	public static final RegistryObject<CreativeModeTab> FLUID_CONTAINERS_TAB = CREATIVE_MODE_TABS.register("fluid_containers",
