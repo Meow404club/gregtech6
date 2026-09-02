@@ -12,6 +12,16 @@ def modId = property('mod_id').toString()
 def minecraftVersion = property('minecraft_version').toString()
 def forgeVersion = property('forge_version').toString()
 def forgeMajor = forgeVersion.split('\\.')[0]
+def jeiVersion = property('jei_version').toString()
+
+// JEI（task p12-jei-integration，ADR 2026-09-02-p12-jei-dependency）：blamejared maven。
+// 子项目局部 repositories —— root build.gradle 零污染（settings.gradle 不动）。
+repositories {
+    maven {
+        name = 'blamejared'
+        url = uri('https://maven.blamejared.com/')
+    }
+}
 
 java {
     toolchain {
@@ -62,6 +72,14 @@ dependencies {
     // implementation 依赖不会进 BootstrapLauncher 的 -DlegacyClassPath.file。
     // 2026-08-29 :mdk:runServer 实证 gregapi NoClassDefFoundError，按 MDG 官方机制补挂。
     additionalRuntimeClasspath project(path: ':', configuration: 'runtimeElements')
+    // JEI（本仓首个第三方 mod 依赖，ADR 2026-09-02-p12-jei-dependency）：坐标三件。
+    // MDG legacyforge mod* 配置自动 SRG→official 重映射且非传递（LEGACY.md:68-92）：
+    // API 两件 compileOnly（编译面，不进 jar/run）；impl 一件 runtimeOnly —— LEGACY.md L74
+    // mod* = 同名标准配置的 child，重映射产物并入 run 类路径 → runClient 可见 JEI。
+    // 版本钉值 gradle.properties jei_version；GTCEu 1.20.1 先例（GTJEIPlugin.java）。
+    modCompileOnly "mezz.jei:jei-${minecraftVersion}-common-api:${jeiVersion}"
+    modCompileOnly "mezz.jei:jei-${minecraftVersion}-forge-api:${jeiVersion}"
+    modRuntimeOnly "mezz.jei:jei-${minecraftVersion}-forge:${jeiVersion}"
     // mdk 单测（p3-be-framework + p3-fullprefix-creativetab 归一）：BE NBT round-trip /
     // onTick 分发 / 材料适配器 / 注册判定与 first-wins 断言；junit-bom 全模块一份。
     testImplementation platform('org.junit:junit-bom:5.10.2')
