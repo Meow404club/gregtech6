@@ -99,22 +99,26 @@ public class FluidTankGT implements IFluidTank {
 	public CompoundTag writeToNBT(CompoundTag aNBT, String aKey) {
 		if (mFluid != null && (mPreventDraining || mAmount > 0)) {
 			CompoundTag tNBT = new CompoundTag();
-			mFluid.setAmount(bindInt(mAmount)); // upstream :73 mutates the stack amount in place
-			if (mFluid.isEmpty()) {
-				// The 1.20.1 empty-flag artifact (the keepFilter persistence gap this card fixes,
-				// task p12-barrel-keepfilter-logistics): once a stack is empty-flagged — which
-				// {@code setAmount(0)} above always does (FluidStack.updateEmpty: amount <= 0) —
-				// {@code FluidStack.writeToNBT} writes {@code getFluid()}, which collapses to
-				// Fluids.EMPTY, so the payload degraded to {@code FluidName: "minecraft:empty"} and
-				// the kept identity was lost on the very first save. Upstream :70-80 has no such
-				// hole: a 1.7.10 FluidStack carries no empty flag, so the :71-78/:84-88 judgement
-				// persists the REAL identity at 0 L ({@code mFluid.getFluid()} stays the filter
-				// fluid). The raw fluid still names the identity here, so the judgement's promise
-				// (writeToNBT 0 量含身份) is honoured by writing the registry name from it.
-				tNBT.putString("FluidName", ForgeRegistries.FLUIDS.getKey(mFluid.getRawFluid()).toString());
+			// upstream :73 rebinds the stack amount IN PLACE; the 1.20.1 carrier mutates a COPY —
+			// setAmount(0) empty-flags the mutated stack, and the save/sync path (updateClientData
+			// → saveAdditional) would otherwise collapse the LIVE kept-filter stack in memory
+			// (live-proven: the show line degraded to "minecraft:empty" right after a draw to 0 L;
+			// task p12-barrel-keepfilter-logistics). mFluid.amount is a derived cache either way —
+			// getFluid() rebinds it on every read.
+			FluidStack tCopy = mFluid.copy();
+			tCopy.setAmount(bindInt(mAmount));
+			if (tCopy.isEmpty()) {
+				// The 1.20.1 empty-flag artifact (the keepFilter persistence gap this card fixes):
+				// a 0-amount stack serializes through {@code FluidStack.writeToNBT} as
+				// {@code FluidName: "minecraft:empty"} ({@code getFluid()} collapses to
+				// Fluids.EMPTY once empty-flagged), while upstream :70-80/:84-88 keeps the REAL
+				// identity at 0 L ({@code mFluid.getFluid()} stays the filter fluid). The raw
+				// fluid still names the identity, so the judgement's promise (writeToNBT
+				// 0 量含身份) is honoured by writing the registry name from it.
+				tNBT.putString("FluidName", ForgeRegistries.FLUIDS.getKey(tCopy.getRawFluid()).toString());
 				tNBT.putInt("Amount", 0);
 			} else {
-				mFluid.writeToNBT(tNBT);
+				tCopy.writeToNBT(tNBT);
 			}
 			aNBT.put(aKey, tNBT);
 			if (mAmount > Integer.MAX_VALUE) tNBT.putLong(NBT_L_AMOUNT, mAmount);
