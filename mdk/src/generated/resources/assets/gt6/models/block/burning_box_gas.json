@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/burning_box_gas",
+    "east": "gt6:block/burning_box_gas",
+    "north": "gt6:block/burning_box_gas",
+    "south": "gt6:block/burning_box_gas",
+    "up": "gt6:block/burning_box_gas",
+    "west": "gt6:block/burning_box_gas"
+  }
+}
