@@ -84,3 +84,25 @@
   未收（卡钉 :77-120）；GT6EnUs "Fuel" 展示名与 MT.java:2044 "Fuel Oil" 不一致
   （lang 取通用名，非语义错误，备忘）。
 - **基线**：main 20bb36d（派发时前移取当时 HEAD 惯例）。
+
+## 勘误附录（2026-09-02 审查期回写）
+
+1. **keepFilter 载体"机制零改动/FluidTankGT 零 diff"前提有误**：p12-barrel-keepfilter-logistics
+   实现期证明 0 量身份 round-trip（验收 a）在 W1 版 FluidTankGT 上不可达——审查官
+   逐点核验上游 gregapi/fluid/FluidTankGT.java 后裁定六点修复**全部为原文语义恢复**
+   （isEmpty=:314 逐字、contains=:321 空标记载体重表达、writeToNBT=:70-80 同字节
+   载荷+copy 写防 1.20.1 setAmount(0) 空标记毒化活栈、readFromNBT 结果态保持、
+   getFluid=:359 跳过 0 量重绑、legacy minecraft:empty=W1 降级数据迁移），非发明
+   语义；"W1 测试注释预授权"（carrier 卡 TileEntityBase08BarrelTest:117 'carries
+   the fix with its port card'）逐字在案。合入 d79440c（mdk 782/0+metal 对照臂身份
+   清=默认语义零漂移实证）。
+2. **Axle 材质表规格外行**：上游 Loader_MultiTileEntities.java:1749-1752 另有第 12
+   材质 Trinaquadalloy（VMAX[8]=1048576，带宽 256/512/1024/2048）在卡钉 :1662-1744
+   范围外未收入 AXLE_SPECS（44 行止于 Trinitanium）——入池，后续卡显式声明补行。
+3. **蒸汽入罐偏离**（详见配套裁定 ADR 2026-09-02-p12-steam-proof-deviation）：研究
+   证伪"桶=正典蒸汽载体"的笼统表述——上游一切桶/罐装不住蒸汽（POWER_CONDUCTING
+   销毁链，FL.java:85），正典载体=管道+机器内置罐；本链 RCON 注汽改直打引擎进汽面
+   （正典形态），罐面/物品面销毁链与拒入门=声明偏离，P13 锅炉卡 W1 四件前置强制
+   还账（FL 名单地基/基类 tick fizz 两查/gasProof 载体行/物品面 fill 门）。
+4. **登记行勘误**：Logistics Tank 注册行实为 ANY.W=钨系+aUtilMetal（Loader:2171
+   实读），卡面"木系 aUtilWood"系笔误，以实现为准（合入 d79440c）。

@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 11 阶段：wire 语义四件（loot/stale mask/亮度层/fiber 渲染）/ rotor 假电源退役 / cover 消费族五件 / RCON 框架三层化 / cover 双层渲染`（**2026-09-02 收官**：十五卡全数合入 main HEAD 2f3fe44，根 205 + mdk 705 = 910 单测全绿，一次打回（R1b worker-thread 契约）复审演化过；known_bugs 三项全 fixed 零 open；RCON 测试链框架化入库）
+`第 12 阶段：多方块 ghost 全量（pattern API 上收 / 整面半透明+绿红匹配 / JEI 联动）/ 流体罐引擎链（容器面·燃料面·三源·传动面）/ 基建池余项`（**2026-09-03 收官**：十三卡全数合入 main HEAD 41721ac0，根 205 + mdk 846 = 1051 单测全绿，一次打回（gearbox waste leg 漏斗语义）返工复审过；审查会话轮换制入宪法；两条活体全链上 main：蒸汽→KU→crusher ∥ 柴油→axle→shredder 零损；P13 锅炉族 SPEC 已备）
 
 > **平台修正 2026-08-29**：原目标"NeoForge 1.20.1"被证伪——NeoForge 官方 maven 从未发布 20.1.x 产物（versions API `filter=20.1` 返回空，主会话独立复核），NeoForged 自家 ModDevGradle 把 1.20.1 路由给 `legacyforge` 变体，文档站最早只到 1.20.3。用户裁决：目标平台 = **MinecraftForge 1.20.1（47.4.10）**，构建插件 = MDG legacyforge 2.0.144。1.20.1 的 API 面即 `net.minecraftforge.*` + RegistryObject（DeferredHolder 是 20.2+ 才有），第 1 阶段的所有调研结论不受影响。
 
@@ -22,6 +22,7 @@
 - [x] 第 9 阶段：线缆全谱系 / 渲染 C+D 档 / cover 红石钩+正式 crowbar / M2 配方翻案 / 命令小修——2026-09-01 收官（689 测全绿；GTWireSpecs 30 材质表直译 620 块+连接感知 BakedModel 真材质渲染（恰 7 iconset 零造图）；oven overlay 动态渲染+per-state MRL 键控机制发现；FORMED 双模型勘误钉死+超上游增强裁定；ICover 红石三钩框架（冻结面显式 ADR 解冻）+CoverRedstoneEmitter 首个真红石盖；正式 crowbar 工具系统入口（OR 门零迁移）；M2 哨兵翻案双 10000 槽构成对位）
 - [x] 第 10 阶段：debug 修复 / 红石线族+触电 / cutter / cover 红石盖族 / ghost 预览 POC / vanilla 配方行 / Laser 占位——2026-09-01 收官（785 测全绿；known_bugs 首项 place 覆盖拆盖复活关闭（虚分派黑洞根因）；红石线族 push BFS 值存 BE+三桥+格程 4:1 衰减活证；触电 entityInside+2px 内缩机制+tierMax×4 真值表；cutter 九宫格 toggle 九文件零 diff；ConductorIN/OUT+ControllerRedstone+item intercept 恰八钩+cover 板 per-state 键修复（红石盖族四件套）；cokeoven 结构残影 POC；CRUSHER/SHREDDER vanilla 缺口 5 行+外域 mod 配方声明不复刻；tools 创意 tab+crowbar 挖掘面；Laser 占位壳+Logistics 裁池）
 - [x] 第 11 阶段：wire 语义四件 / rotor 假电源退役 / cover 消费族五件 / RCON 框架三层化 / cover 双层渲染——2026-09-02 收官（910 测全绿；laser loot 补洞（恰 1 块实证）；cutter payPerPoint 双计修复+connector stale 位「只剪不连」修复（known_bugs 两项 closed）；FIBER 渲染对+laser 入 baked model；/gt6chest 命令劫持修复（Brigadier 静默合并实证）；Redstone Wires/Laser Wires 独立创意类目（laser 单成员独立 tab 按上游证据裁剪）；R1b 亮度层=getLightEmission 读 BE（worker-thread 契约 getExistingBlockEntity）+红石绝缘 0xFF604040 修正+红石 6 块入 baked model；rotor=ENERGY_FAKE_SOURCE port-ism 退役+:374 拆回上游 :815 逐字+KU 交替方波过零沿活证；GTItemMover=ST.move 八锚点子集；cover 消费族 Shutter/FilterItem/Conveyor/RobotArm 落地（512>>i=tick 周期裁决）；gt6rcon allow_failed；RCON 三层框架（漏站点必红结构保证+--stop/pkill 禁令模块强制化+链条入库）；cover 板双层渲染（census 反证 14 盖全双层））
+- [x] 第 12 阶段：多方块 ghost 全量 / 流体罐引擎链 / 基建池余项——2026-09-03 收官（1051 测全绿；ghost=GTMultiBlockPattern 声明 API（谓词缝+三类动态逃生舱）+整面半透明绿红分色（debugQuads 零新 RenderType+内缩 0.002）+JEI 15.56 接入（本仓首个第三方依赖）+cokeoven 信息页；引擎链=桶物品面 FLUID_HANDLER_ITEM+打桶丢液修复+Logistics Tank keepFilter+Tap/Funnel 附件两族+九流体 ENGINE_FUELS 图+Crank/EngineSteam 28 变体/Diesel 8 档三源+Axle/GearBox/Transformer 传动面（零新 EnergyType）；基建池=CJK 全扫+docs/adr/ 六篇成文；蒸汽入罐 POWER_CONDUCTING 实证+声明偏离裁定；审查会话轮换制入宪法）
 
 ## 第 7 阶段收官记录（2026-08-31，主会话 phase-closeout）
 
@@ -117,6 +118,28 @@
 承重教训（入记忆）：①light 引擎等 worker-thread 采样须 getExistingBlockEntity（IForgeBlock:106-110），getBlockEntity 过渡态竞争——打回根因；②provider 触碰必跑 runData 二跑（providers 即生成树契约）；③RCON fill 清场区=站点 bbox 派生（手写必漏，框架结构解决）+drops 断言锚 containment 非列表头（掉落物抛掷随机）；④census 先行两次救卡（CoverFilterItem 类名勘正/14 盖全双层反证预设）；⑤Brigadier 同名 literal 静默合并——命令注册须唯一性测试；⑥staged flip 中间提交自带红须提交消息明示（审查备案不拦）。known_bugs 状态：三项全 fixed 零 open。
 
 **P12 移交**：决策点=多方块 ghost 全量 vs 流体罐引擎（含桶 GUI/tap/funnel→燃料→Engine/Axle/GearBox 真机链），用户定序；基建池（cover 域 3 文件混入含 TileEntityOvenCoverTest:34 字符串裁量+E1 期外 14 文件 CJK+decisions ADR 字符串整理）；池化等前置（SelectorRedstone 等首个 SwitchableMode 宿主/RetrieverItem 等 item pipe/engines-axle 等流体罐燃料）；runClient 目视 backlog P11 增量（cover 板双层/线缆发光/三 tab 分页/conveyor 动画/monkeywrench 臂）。
+
+## 第 12 阶段收官记录（2026-09-03，主会话 phase-closeout）
+
+合入链：`33eaab1`(hygiene)∥`248c66b`(pattern-api)→`dbc55ef`(render-match)→`6be2862`(jei)→`250422a`(fuel-fluids)→`0a15759`(crank)→`c00d3b3`(carrier)→`93b5913`(axle)→`d79440c`(keepfilter)→`2f3fdad`(tap-funnel)→`8e28c3a`(steam)→`b3b9ac1`(diesel)→`41721ac0`(gearbox)，基线 43c04ed。十三卡全 approve（一次打回 gearbox waste leg 返工复审过）、GPG 全验、合并态门禁逐批复验；基建提交 975aadc（审查模板 -s 坑）/20bb36d+5db3bdb（ADR 转正六篇）/3cbece7（审查轮换制）。研究四张先行（ghost 双卡/容器面/引擎面）+锅炉族研究（P13 输入）+蒸汽储罐求证（用户疑问）+architect 两轮拆卡裁定+curator 两批入库。
+
+- **p12-hygiene-style-adr**：E1 期外 CJK 全扫 43 行/26 文件（42 译 1 留=TileEntityOvenCoverTest:34 断言字面量）；docs/adr/ 目录+四节约定建立，p10-cover-item-intercept ADR 首篇转正；25 文件剥注释 token 流逐字相同（连字面量零变更）。
+- **p12-ghost-pattern-api**：GTMultiBlockPattern 声明 API（不可变 cell 列表+Predicate<BlockState> 谓词缝+is/anyOf/AIR 工厂+FACING 旋转 6 朝向全表+边界折叠+build 校验）；controller 接口 getStructurePattern 默认 null（存在性探测缝）；TileEntityCokeOven 纯增量绑定（checkStructure2 逐字节未动）；顶点流钉测=与 POC c25ed08 逐位等价（期望侧测试内独立重算非自证）。
+- **p12-ghost-render-match**：GTMultiBlockGhostMatcher 三值分类器纯函数（判据全骑谓词缝，hollow 中心声明 AIR 谓词非硬编码）；debugQuads 原样零新 RenderType+lines 棱线；绿红最小集（绿=匹配/红=缺失或不匹配/hollow 空气 SKIP 非空气红/pattern 外永不判错）；z-fight=顶点内缩 0.002（polygonOffset 在冻结 composite 上结构性不可用）；FORMED shell 位等价零变化。
+- **p12-jei-integration**：本仓首个第三方 mod 依赖——JEI 15.56.0.205（blamejared maven 子项目局部+modCompileOnly×2+modRuntimeOnly）；@JeiPlugin 插件类自持；coke oven 信息页 addIngredientInfo 纯文字（lang 走 datagen）；runClient 冒烟活证 modRuntimeOnly 重映射产物入 run 类路径（LEGACY.md L74）；**@JeiPlugin=CLASS 保留级**运行时反射恒 null→测试断言下沉字节码层；信息页砖数 25（上游 tooltip 字面，26 系循环格数口径勘误）。
+- **p12-engine-fuel-fluids**：九流体表驱动（steam 气型 373K/−100+蒸馏水+柴油族+酒精）+ENGINE_FUELS 图（Loader_Fuels:77-120 直译：JetFuel 1536/Diesel=Petrol=Kerosine 448/Fuel 512/nitro 768/ethanol 144）；STEAM_PER_WATER=200 归属精确钉死（EngineSteam:58 引擎私有；CS.java:242=160 全局标准=锅炉侧，两值并存）。
+- **p12-engine-crank**：手摇曲柄最小 RU 恒负号直流源（size=-divup(8*pot2,pot1)+amount=haste 逐字，UT.java:3079-3116 药水映射）；GT6Kinetics 注册家+/gt6engine 命令家（stat 通用 dump+crank 直驱）；RCON e2e crank→shredder 52 断言（63/64 堵转确定性端点）。
+- **p12-fluid-item-carrier**：打桶丢液修复（GTBarrelBlock.getDrops 上游同缝直译非 onRemove；本仓桶族 loot-table-less=打桶什么都不掉比丢液更彻底）+GTBarrelBlockItem FLUID_HANDLER_ITEM（'tank' 键 BE↔物品 round-trip 偏离声明+有内容 maxStack 1）+/gt6tank fill·drain·show 测试基建（全链注汽通道）。
+- **p12-axle-family**：RU 传动轴 44 行全表（11 材质×4 直径，Trinitanium 262144 止）邻接递归零损+超速 popOff（defer 一拍 destroyBlock 非 onRemove）+原额退回；AXIS 三向 port-ism；GT6LootTables 自掉表。
+- **p12-barrel-keepfilter-logistics**：Logistics Tank BE 两 override（keepsFilter=T+canBeSealed=F）+**FluidTankGT 六点修复**（卡面零 diff 被验收强制覆盖，审查裁定全为上游原文恢复：isEmpty/contains/writeToNBT copy 写防空标记毒化/readFromNBT/getFluid 重绑/legacy 迁移；预授权注释逐字在案）——0 量身份保留闭环。
+- **p12-tap-funnel-attachment**：Tap/Funnel 贴面附件两族（Tap 优先级链六段逐字：VOIDING→simulate 拒气酸→锅 334/667/1000→tap-to-tap→XP/Mob→手持容器；Funnel simulate 全收才实灌+空容器回给）；桶 tapDrain/funnelFill 两钩恢复；MAGICPROOF 死数据记录不载；GT6Attachments 注册家。
+- **p12-engine-steam**：EngineSteam 28 变体真机（**卡面 26 系笔误**，Loader 两段各 14）蒸汽→KU 交流方波（2bit mPiston 周期 32−mState+打空耗散+过热停机清罐+蒸馏水推侧面环）；活塞相位持久化（rig 不持久=声明差异点）；注汽直打引擎背面进汽门（POWER_CONDUCTING 裁定落地形态）。**P12 首条全链闭环：蒸汽→KU→crusher**。
+- **p12-engine-diesel**：MotorLiquid 8 档柴油机（FM.Engine 燃料→RU 直流+DC 恒幅同号+双罐 mRate*10+尾气 CO2 计数器双臂+缺料停机臂）；**consumeFuel (F,F) 门+台账排水=1.20.1 载体适配正当偏离**（上游 IFluidTank[] 重载台账真抽 vs 本仓 FluidStack[] shrink，照抄=自由能漏洞，两相测试钉死）。**第二链闭环：柴油→axle×3→shredder 零损**。
+- **p12-gearbox-transformer**（唯一打回→返工）：GearBox 掩码/checkGears 拓扑/doInject 五分支/输出轮询 max(1,power/3)+TransformerRotation ÷4×4；**打回=converter waste leg 未移植未声明**（上游木档"不通就漏光"漏斗语义，TE_Behavior_Energy_Converter:92 每拍无条件泄流）——返工补 leg+归零/不重发断言，复审过。
+
+承重教训（入记忆）：①审查会话上下文有界轮换（单会话 ≤3 分支，AGENTS.md 3cbece7 用户裁定）——长上下文稀释审查质量；②拆卡=architect 职责，主会话不得代拆（ops.discipline card_authoring）；③git merge 无 signoff 短选项（-s=strategy）；④append 面冲突"git 对齐吞行"反复出现（闭合括号被切，审查编译捕获两起）——共享面保留双方后须括号平衡双验；⑤STEAM_PER_WATER 双常量并存（EngineSteam:58=200 引擎私有 / CS.java:242=160 全局）引用必须注作用域；⑥@JeiPlugin CLASS 保留级=运行时反射不可见，检测断言下沉字节码层；⑦1.20.1 FluidStack 空标记归一 EMPTY=烧干保身份态不可表示类载体适配（keepfilter 六点修复+diesel consumeFuel (F,F) 同族，均须两相测试钉死）；⑧上游"桶=蒸汽载体"系误裁——POWER_CONDUCTING 销毁链使一切桶/罐装不住蒸汽（用户疑问触发求证）。known_bugs：零 open。
+
+**P13 移交**：p13-boiler-steam-family SPEC 已备（研究卡四问+三缝裁定：四波串行=HU 前置+燃料图→火盒 GeneratorSolid→BoilerTank 单方块→LargeBoiler 多方块【pattern API 可机械导出】；**蒸汽偏离还账四件强制前置**=FL 名单地基/基类 tick fizz 两查/gasProof 载体行/物品面 fill 门，ADR 2026-09-02-p12-steam-proof-deviation）；池项新增：Trinaquadalloy 轴行/p12-gear-items 齿轮实物/carbon_dioxide 流体/Corrupt PNG 6 条/engine-steam 措辞残留；决策点=P13 定序（锅炉族 vs 其余池项）用户定。
 
 ## 关键决策
 
