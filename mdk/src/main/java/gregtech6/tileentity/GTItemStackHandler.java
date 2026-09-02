@@ -24,13 +24,13 @@ public class GTItemStackHandler extends ItemStackHandler {
 		super(aSize);
 	}
 
-	/** Hook constructor: BEs bind {@code this::setChanged} so mutation marks the BE dirty (CustomItemStackHandler.java:50-52 同构). */
+	/** Hook constructor: BEs bind {@code this::setChanged} so mutation marks the BE dirty (same shape as CustomItemStackHandler.java:50-52). */
 	public GTItemStackHandler(int aSize, Runnable aOnContentsChanged) {
 		super(aSize);
 		mOnContentsChanged = aOnContentsChanged;
 	}
 
-	/** Hook constructor with a per-slot insert filter (CustomItemStackHandler.java:26, :45-47 同构). */
+	/** Hook constructor with a per-slot insert filter (same shape as CustomItemStackHandler.java:26, :45-47). */
 	public GTItemStackHandler(int aSize, Runnable aOnContentsChanged, Predicate<ItemStack> aFilter) {
 		super(aSize);
 		mOnContentsChanged = aOnContentsChanged;

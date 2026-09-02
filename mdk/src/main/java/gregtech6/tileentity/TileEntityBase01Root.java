@@ -395,8 +395,8 @@ public abstract class TileEntityBase01Root extends BlockEntity implements ITileE
 
 	/**
 	 * Subclasses owning an inventory call this once from their constructor; the handler's
-	 * content-change hook binds {@code this::setChanged} (GTItemStackHandler, GTCEu
-	 * CustomItemStackHandler.java:18-52 同构) so every mutation marks the BE dirty.
+	 * content-change hook binds {@code this::setChanged} (GTItemStackHandler, the same shape
+	 * as GTCEu CustomItemStackHandler.java:18-52) so every mutation marks the BE dirty.
 	 */
 	protected void setInventory(GTItemStackHandler aInventory) {
 		mInventory = aInventory;

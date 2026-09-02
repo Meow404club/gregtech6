@@ -39,13 +39,13 @@ public class GT6Mod {
     private final GTModBusListener modBusListener = new GTModBusListener();
 
     public GT6Mod() {
-        // 1.20.1 取 mod bus 的唯一姿势：FMLJavaModLoadingContext.get().getModEventBus()
-        //（构造器注入 IEventBus 是 20.2+ 才有）。
+        // 1.20.1's only way to obtain the mod bus: FMLJavaModLoadingContext.get().getModEventBus()
+        // (constructor-injected IEventBus only exists in 20.2+).
         modBus = FMLJavaModLoadingContext.get().getModEventBus();
         Objects.requireNonNull(modBus, "mod event bus must be available at construct time");
         modBus.register(modBusListener);
         modBus.addListener(this::onCommonSetup);
-        // client-only 事件监听（RegisterColorHandlersEvent.Item 只在 client fire），侧隔离进 @OnlyIn 类
+        // client-only event listening (RegisterColorHandlersEvent.Item fires on the client only); keep the side isolation inside the @OnlyIn class
         if (FMLEnvironment.dist == Dist.CLIENT) GTClientHandlers.init(modBus);
     }
 
@@ -54,7 +54,7 @@ public class GT6Mod {
             int tReferences = MaterialGraph.applyCrucibleAlloyReferences();
             GT6Mod.LOGGER.info("GT6 common setup: applyCrucibleAlloyReferences completed ({} alloy reverse references)", tReferences);
         });
-        // RegisterEvent 监听用后即注销（GTCEu GTRegistrate.java:156-159 先例）
+        // unregister the RegisterEvent listener right after use (precedent: GTCEu GTRegistrate.java:156-159)
         modBus.unregister(modBusListener);
     }
 }

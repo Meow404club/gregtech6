@@ -28,7 +28,7 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
  * GTMachines precedent): controller + part blocks, their BlockEntityTypes, items, and the
  * "multiblocks" creative tab — task p4-multiblock-framework.
  *
- * <p>id 选型 (task card ④ note): the registry paths keep the card-ruled {@code gt6:multiblock_*}
+ * <p>id choice (task card ④ note): the registry paths keep the card-ruled {@code gt6:multiblock_*}
  * prefix — {@code multiblock_coke_oven} (controller), {@code multiblock_coke_oven_bricks}
  * (the 26-cell part, upstream MTE id 18000 "coke oven bricks"). The BET paths mirror the
  * {@code getTileEntityName} values like every prior pair: {@code multiblock_coke_oven} and

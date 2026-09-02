@@ -40,10 +40,11 @@ import net.minecraftforge.client.model.data.ModelData;
  * and gets refreshed through the {@link GTRenderUpdates#scheduleRenderUpdate} pair. BEWLR
  * and TESR are forbidden project-wide by the same ADR (animation exception stays pooled).
  *
- * <p>GTCEu 对位：MachineModel.getQuads (MachineModel.java:238-258) 同型分发骨架（命中走机器
- * quads，未命中走 item/默认渲染），但其 LEVEL/POS 属性方案在 getQuads 里现场
- * MetaMachine.getMachine(level, pos)（MachineModel.java:215/:265）——正是我们的红线所禁，
- * 故本基座只认快照。
+ * <p>GTCEu counterpart: MachineModel.getQuads (MachineModel.java:238-258) is a dispatch
+ * skeleton of the same shape (hit → machine quads, miss → item/default rendering), but its
+ * LEVEL/POS property scheme does a live MetaMachine.getMachine(level, pos) inside getQuads
+ * (MachineModel.java:215/:265) — exactly what our red line forbids, so this base class
+ * only ever reads snapshots.
  */
 public abstract class GTDynamicBakedModel implements IDynamicBakedModel {
 

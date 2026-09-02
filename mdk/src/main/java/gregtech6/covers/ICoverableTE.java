@@ -174,7 +174,7 @@ public interface ICoverableTE {
 		return checkIfCoversEmptyAndDeleteIfNeeded(); // :310
 	}
 
-	/** Upstream :313-317 — an all-empty store dissolves back to {@code null} (acceptance: 全空回 null). */
+	/** Upstream :313-317 — an all-empty store dissolves back to {@code null} (acceptance: an all-empty store returns null). */
 	default boolean checkIfCoversEmptyAndDeleteIfNeeded() {
 		if (getCovers() == null) return true;
 		if (!getCovers().isEmpty()) return true;

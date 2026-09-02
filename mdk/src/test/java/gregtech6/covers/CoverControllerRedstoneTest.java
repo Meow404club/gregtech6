@@ -36,7 +36,8 @@ import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
  *     ways (:52-54, through the conductor card's GTOvenBlock dispatch seam) and the
  *     tick arm polls server-side only (:57-59);</li>
  * <li>the polarity truth table (:68-70) — bit 0 clear = runs while the face sees
- *     signal, bit 0 set (the screwdriver toggle) = the inverse 有信号停/无信号跑;
+ *     signal, bit 0 set (the screwdriver toggle) = the inverse: signal stops it, no signal
+ *     runs it;
  *     bind1 clamps the whole 0..15 scale onto the 0/1 logic level;</li>
  * <li>the screwdriver toggle (:42-46) — bit 0 flips, 1000 tool damage, non-screwdriver
  *     ids answered with 0 (the magnifyingglass/host-relay cut declaration);</li>
@@ -248,7 +249,7 @@ public class CoverControllerRedstoneTest extends GTCoverTestBase {
 			tData.mValues[FACE] = 0;
 			assertEquals(tFeed != 0 ? 1 : 0, tSwitch.getStateOnOff(FACE, tData) ? 1 : 0,
 					"feed " + tFeed + ", bit clear: getStateOnOff == (feed != 0)");
-			// bit 0 SET — the screwdriver arm: 有信号停/无信号跑
+			// bit 0 SET — the screwdriver arm: signal stops it, no signal runs it
 			tData.mValues[FACE] = 1;
 			assertEquals(tFeed == 0 ? 1 : 0, tSwitch.getStateOnOff(FACE, tData) ? 1 : 0,
 					"feed " + tFeed + ", bit set: getStateOnOff == (feed == 0)");

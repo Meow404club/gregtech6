@@ -11,7 +11,7 @@ import gregtech6.fluid.FluidTankGT;
 
 /**
  * The side-aware {@link IFluidHandler} wrapper over a {@link TileEntityBase08Barrel}
- * (task p4-fluid-barrel spec ①, "side 包装，W1 同型"): the 1.20.1 IFluidHandler carries
+ * (task p4-fluid-barrel spec ①, "side wrapper, W1 same shape"): the 1.20.1 IFluidHandler carries
  * no Direction parameter, so the side travels through the
  * {@code getCapability(FLUID_HANDLER, Direction)} wrapper — the W1
  * SideFluidHandler shape (GTFluidPipeBlockEntity.java:297-303), typed to the barrel.

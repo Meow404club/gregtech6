@@ -160,7 +160,7 @@ public class GTModelPropertiesTest extends GTOfflineRenderTestBase {
 
 	@Test
 	public void blockPosPropertyCarriesPositionSemantics() {
-		// Position-carrying snapshots (GTCEu GTModelProperties.java:15 POS 对位, but frozen
+		// Position-carrying snapshots (GTCEu GTModelProperties.java:15 POS counterpart, but frozen
 		// into the snapshot instead of reaching for the live level): BlockPos is immutable.
 		ModelProperty<BlockPos> tPosProp = new ModelProperty<>();
 		ModelData tData = GTModelProperties.snapshot().with(tPosProp, BlockPos.ZERO).build();
