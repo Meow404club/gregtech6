@@ -47,7 +47,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
                 new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
                 new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task p12-axle-family
-                new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK))); // task p12-engine-diesel
+                new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK), // task p12-engine-diesel
+                new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK))); // task p12-gearbox-transformer
     }
 
     /** The block list this provider owns: exactly the material prefix block array (the census walk order). */
@@ -128,6 +129,35 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : axleLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The kinetics-machine block list (task p12-gearbox-transformer): the gearbox + the
+     * rotation transformer, the wood kinetic rows. The upstream MTEs register
+     * {@code canDrop(0) == F} with the default drop = the block item itself
+     * (MultiTileEntityGearBox.java:426 / TileEntityBase10EnergyConverter.java:161); the
+     * 1.20.1 equivalent is exactly {@code dropSelf} like the axle/wire families.
+     */
+    public static List<Block> kineticsLootBlocks() {
+        return List.of(GT6Kinetics.GEARBOX.get(), GT6Kinetics.TRANSFORMER_ROTATION.get());
+    }
+
+    /** The kinetics-machine self-drop provider (task p12-gearbox-transformer). */
+    public static final class GT6KineticsBlockLoot extends BlockLootSubProvider {
+
+        public GT6KineticsBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return kineticsLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : kineticsLootBlocks()) dropSelf(tBlock);
         }
     }
 

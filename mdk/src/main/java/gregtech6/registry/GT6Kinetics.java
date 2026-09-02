@@ -38,6 +38,8 @@ import gregtech6.block.energy.GTCrankBlock;
 import gregtech6.block.energy.GTDieselEngineBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
+import gregtech6.block.energy.GTGearBoxBlock;
+import gregtech6.block.energy.GTTransformerRotationBlock;
 
 /**
  * The kinetics registration family home (task p12-engine-crank spec ③): the shared
@@ -91,6 +93,39 @@ public final class GT6Kinetics {
 
 	public static final RegistryObject<Item> CRANK_ITEM = ITEMS.register("crank",
 			() -> new BlockItem(CRANK.get(), new Item.Properties()));
+
+	// -------------------------------------------------------------------------
+	// the gearbox + rotation transformer (task p12-gearbox-transformer) — the wood
+	// kinetic rows, one variant each (the material family fan-out rides the pool)
+	// -------------------------------------------------------------------------
+
+	/** The Custom Wooden Gearbox row rating (Loader :1669: {@code NBT_INPUT, VMAX[0]} = 16; the literal carries the {@link #VMAX} forward reference). */
+	public static final long GEARBOX_MAX_THROUGHPUT = 16;
+
+	/**
+	 * The Wooden Transformer Gearbox row (Loader :1668): {@code NBT_INPUT, V[0]},
+	 * {@code NBT_OUTPUT, 2}, {@code NBT_MULTIPLIER, 4} — speed ÷ 4, power × 4 (the wood
+	 * row 8→2, the bronze row :1677 32→8 by the same rule).
+	 */
+	public static final long TRANSFORMER_INPUT_SPEED = 8;
+	public static final long TRANSFORMER_OUTPUT_SPEED = 2;
+	public static final long TRANSFORMER_MULTIPLIER = 4;
+
+	/** The GearBox (upstream "Custom Wooden Gearbox" meta 24809, MultiTileEntityGearBox port). */
+	public static final RegistryObject<GTGearBoxBlock> GEARBOX = BLOCKS.register("gearbox",
+			() -> new GTGearBoxBlock(BlockBehaviour.Properties.of()
+					.strength(6.0F, 6.0F).sound(SoundType.WOOD)));
+
+	public static final RegistryObject<Item> GEARBOX_ITEM = ITEMS.register("gearbox",
+			() -> new BlockItem(GEARBOX.get(), new Item.Properties()));
+
+	/** The Rotation Transformer (upstream "Wooden Transformer Gearbox" meta 24808, the MultiTileEntityTransformerRotation port). */
+	public static final RegistryObject<GTTransformerRotationBlock> TRANSFORMER_ROTATION = BLOCKS.register("transformer_rotation",
+			() -> new GTTransformerRotationBlock(BlockBehaviour.Properties.of()
+					.strength(6.0F, 6.0F).sound(SoundType.WOOD)));
+
+	public static final RegistryObject<Item> TRANSFORMER_ROTATION_ITEM = ITEMS.register("transformer_rotation",
+			() -> new BlockItem(TRANSFORMER_ROTATION.get(), new Item.Properties()));
 
 	// -------------------------------------------------------------------------
 	// the axle family (task p12-axle-family) — 11 materials x 4 diameters = 44

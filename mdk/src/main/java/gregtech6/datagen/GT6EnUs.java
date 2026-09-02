@@ -242,6 +242,10 @@ public class GT6EnUs extends LanguageProvider {
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
             add("block.gt6." + tRow.path(), tRow.displayName());
         }
+        // task p12-gearbox-transformer: the wood kinetic rows (the upstream row wording,
+        // "Custom Wooden Gearbox" :1669 / "Wooden Transformer Gearbox" :1668)
+        add("block.gt6.gearbox", "Custom Wooden Gearbox");
+        add("block.gt6.transformer_rotation", "Wooden Transformer Gearbox");
     }
 
     /**

@@ -19,6 +19,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
 import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.energy.GTDieselEngineBlock;
+import gregtech6.block.energy.GTTransformerRotationBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
@@ -103,6 +104,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addAttachments(); // task p12-tap-funnel-attachment
         addSteamEngines(); // task p12-engine-steam
         addDieselEngines(); // task p12-engine-diesel
+        addGearBoxTransformer(); // task p12-gearbox-transformer
     }
 
     /**
@@ -527,6 +529,36 @@ public final class GT6BlockStates extends BlockStateProvider {
             simpleBlock(tBlock.get(), models().cubeAll("diesel_engine", modLoc("block/diesel_engine")));
             itemModels().withExistingParent(tBlock.getId().getPath(), modLoc("block/diesel_engine"));
         }
+    }
+
+    /**
+     * Task p12-gearbox-transformer — the GearBox (one cube_all over the borrowed
+     * {@code gt6:block/gearbox} texture, the upstream iconsets/GEARBOX.png; assets/README.md
+     * attribution) and the Rotation Transformer (the crank facing-cube shape: an
+     * {@code orientable} model over the borrowed transformer_rotation colored front/side
+     * textures, the FRONT = input face, BACK = output face —
+     * MultiTileEntityTransformerRotation :42-45). Both single wood-row variants (the
+     * material fan-out is the pool), no connection-mask visual layer (the per-face gear
+     * overlays are the render pool). The static placeholder texture carries no rotation
+     * animation — declared with the axle.
+     */
+    private void addGearBoxTransformer() {
+        Block tBox = GT6Kinetics.GEARBOX.get();
+        simpleBlock(tBox, models().cubeAll("gearbox", modLoc("block/gearbox")));
+        itemModels().withExistingParent("gearbox", modLoc("block/gearbox"));
+
+        Block tTrans = GT6Kinetics.TRANSFORMER_ROTATION.get();
+        ModelFile tTransModel = models().orientable("transformer_rotation",
+                modLoc("block/transformer_rotation_side"), modLoc("block/transformer_rotation_front"), modLoc("block/transformer_rotation_side"));
+        getVariantBuilder(tTrans).forAllStates(aState -> {
+            // the vanilla horizontal-facing rotation map (Direction.getFrontRotationYaw form)
+            Direction tFacing = aState.getValue(GTTransformerRotationBlock.FACING);
+            return ConfiguredModel.builder()
+                    .modelFile(tTransModel)
+                    .rotationY((int) (tFacing.toYRot() + 180) % 360)
+                    .build();
+        });
+        itemModels().withExistingParent("transformer_rotation", modLoc("block/transformer_rotation"));
     }
 
     /**

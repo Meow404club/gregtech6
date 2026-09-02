@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gt6:block/transformer_rotation",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/transformer_rotation"
+    },
+    "facing=south": {
+      "model": "gt6:block/transformer_rotation",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gt6:block/transformer_rotation",
+      "y": 270
+    }
+  }
+}

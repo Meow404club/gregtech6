@@ -29,6 +29,8 @@ import gregtech6.tileentity.energy.GTAxleBlockEntity;
 import gregtech6.tileentity.energy.GTCrankBlockEntity;
 import gregtech6.tileentity.energy.GTDieselEngineBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
+import gregtech6.tileentity.energy.GTGearBoxBlockEntity;
+import gregtech6.tileentity.energy.GTTransformerRotationBlockEntity;
 
 /**
  * {@code /gt6engine} — the engine-chain acceptance command home (task p12-engine-crank
@@ -63,7 +65,15 @@ import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
  *     {@link GTDieselEngineBlockEntity#funnelFill} under the containsInput gate — the
  *     DECLARED acceptance channel while the p12-tap-funnel-attachment card is in flight
  *     (no GUI, no funnel item in this port).</li>
+ * <li>{@code gearbox <pos> <gearmask> <axlemask>} — the direct connection-mask write
+ *     (task p12-gearbox-transformer spec 3): gearmask = bits 0-5 gear faces, axlemask =
+ *     the through-axle axis (0 none / 1 X / 2 Y / 3 Z). The RCON acceptance channel for
+ *     the monkey-wrench data structure — the P9 "acceptance channel is not the upstream
+ *     player semantics" ruling; the gear-item installation is the p12-gear-items pool.</li>
  * </ul>
+ *
+ * <p>{@code stat} also carries the gearbox/transformer detail branches (the tachometer /
+ * magnifying-glass readouts pooled here — the p12-gearbox-transformer ruling).
  */
 @Mod.EventBusSubscriber(modid = "gt6")
 public final class GTEngineCommand {
@@ -111,9 +121,17 @@ public final class GTEngineCommand {
 					.then(Commands.argument("fluid", ResourceLocationArgument.id())
 						.then(Commands.argument("amount", IntegerArgumentType.integer(1, 1000000000))
 							.executes(aContext -> fuel(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-									ResourceLocationArgument.getId(aContext, "fluid"), IntegerArgumentType.getInteger(aContext, "amount")))))));
+									ResourceLocationArgument.getId(aContext, "fluid"), IntegerArgumentType.getInteger(aContext, "amount")))))))
+			// task p12-gearbox-transformer — the direct connection-mask write (the RCON
+			// acceptance channel for the monkey-wrench :142-153 data structure)
+			.then(Commands.literal("gearbox")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.argument("gearmask", IntegerArgumentType.integer(0, 63))
+						.then(Commands.argument("axlemask", IntegerArgumentType.integer(0, 3))
+							.executes(aContext -> gearbox(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									IntegerArgumentType.getInteger(aContext, "gearmask"), IntegerArgumentType.getInteger(aContext, "axlemask")))))));
 		aEvent.getDispatcher().register(tEngine);
-		LOGGER.info("Registered GT6 engine-chain command /gt6engine (stat | crank | mode | fill | fuel) — the engine family acceptance home");
+		LOGGER.info("Registered GT6 engine-chain command /gt6engine (stat | crank | mode | fill | fuel | gearbox) — the engine + transmission family acceptance home");
 	}
 
 	/**
@@ -203,6 +221,35 @@ public final class GTEngineCommand {
 					+ ", output tank=" + (tEngine.mTanks[1].has() && tEngine.mTanks[1].getFluid() != null ? ForgeRegistries.FLUIDS.getKey(tEngine.mTanks[1].getFluid().getFluid()) + " x" + tEngine.mTanks[1].amount() : "empty")
 					+ ", " + tExhaust
 					+ ", efficiency=" + tEngine.mEfficiency;
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
+		if (tLevel.getBlockEntity(aPos) instanceof GTGearBoxBlockEntity tBox) {
+			String tLine = "GT6 gearbox at " + aPos.toShortString()
+					+ ": gears=" + (tBox.mAxleGear & 63) + " (bits0-5)"
+					+ ", axle=" + tBox.axleAxis() + " (0=none 1=X 2=Y 3=Z)"
+					+ ", gearsWork=" + tBox.mGearsWork
+					+ ", jammed=" + tBox.mJammed
+					+ ", maxThroughPut=" + tBox.mMaxThroughPut + " RU"
+					+ ", current speed=" + tBox.mCurrentSpeed + " x power=" + tBox.mCurrentPower
+					+ ", transferred=" + tBox.mTransferredLast + " RU/t (last tick magnitude)"
+					+ ", order=" + tBox.mOrder;
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
+		if (tLevel.getBlockEntity(aPos) instanceof GTTransformerRotationBlockEntity tTrans) {
+			String tLine = "GT6 transformer_rotation at " + aPos.toShortString()
+					+ ": facing=" + Direction.from3DDataValue(tTrans.getFacing()).getName() + "(" + tTrans.getFacing() + ") input-side"
+					+ ", multiplier=" + GTTransformerRotationBlockEntity.MULTIPLIER + " (speed ÷" + GTTransformerRotationBlockEntity.MULTIPLIER
+					+ " power ×" + GTTransformerRotationBlockEntity.MULTIPLIER + ", " + GTTransformerRotationBlockEntity.INPUT_SPEED + "→"
+					+ GTTransformerRotationBlockEntity.OUTPUT_SPEED + " wood row)"
+					+ ", storage=" + tTrans.mStorage + "/" + GTTransformerRotationBlockEntity.STORAGE_CAPACITY
+					+ ", active=" + tTrans.mActive
+					+ ", last in=" + tTrans.mLastInSize + "x" + tTrans.mLastInAmount
+					+ ", last out=" + tTrans.mLastOutSize + "x" + tTrans.mLastOutAmount
+					+ ", overload strikes=" + tTrans.mExplosionPrevention;
 			aSource.sendSuccess(() -> Component.literal(tLine), false);
 			LOGGER.info(tLine);
 			return Command.SINGLE_SUCCESS;
@@ -331,6 +378,29 @@ public final class GTEngineCommand {
 		}
 		String tLine = "GT6 diesel engine at " + aPos.toShortString() + ": filled " + tFilled + " L of " + tId
 				+ " (input " + tEngine.mTanks[0].amount() + "/" + tEngine.mTanks[0].capacity() + " L)";
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The gearbox mask write (task p12-gearbox-transformer spec 3 — the RCON acceptance
+	 * channel, the P9 "acceptance channel is not the upstream player semantics" ruling):
+	 * {@code gearmask} = the bits 0-5 gear faces, {@code axlemask} = the bits 6-7 through-
+	 * axle axis (0 = none, 1 = X, 2 = Y, 3 = Z) — the monkey-wrench :142-153 data
+	 * structure without the tool (the wrench installation itself is the p12-gear-items
+	 * pool card). Clears the jam and re-checks the topology like the tool path (:148-149).
+	 */
+	private static int gearbox(CommandSourceStack aSource, BlockPos aPos, int aGearMask, int aAxleMask) {
+		ServerLevel tLevel = aSource.getLevel();
+		if (!(tLevel.getBlockEntity(aPos) instanceof GTGearBoxBlockEntity tBox)) {
+			aSource.sendFailure(Component.literal("GEARBOX FAILED: no gearbox BE at " + aPos.toShortString()));
+			return 0;
+		}
+		tBox.setMasks(aGearMask, aAxleMask);
+		String tLine = "GT6 gearbox at " + aPos.toShortString() + ": masks set gears=" + (tBox.mAxleGear & 63)
+				+ ", axle=" + tBox.axleAxis()
+				+ ", gearsWork=" + tBox.mGearsWork;
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
