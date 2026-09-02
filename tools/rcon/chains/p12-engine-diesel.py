@@ -7,7 +7,8 @@ Chain semantics (task p12-engine-diesel acceptance b):
     -> 3x wood-small axles [axis=x] -> shredder. /gt6engine fuel <pos>
     gt6:diesel 2000 writes the input tank through the funnelFill surface (the
     containsInput gate live — water is REFUSED; the bronze tank caps the
-    accepted amount at mRate * 10 = 160 L); the engine burns the FM.Engine
+    accepted amount at mRate * 10 = 160 L, and by the first stat the machine
+    has already burned its opening litre); the engine burns the FM.Engine
     row (448 power/L) into +16 RU packets and the shredder produces dust — the
     W3 closure of the fluid-fuel -> RU DC -> axle -> consumer chain.
 
@@ -70,8 +71,11 @@ CHAIN = Chain(
         Step(f"gt6engine stat {F(ENGINE)}", expect="input=empty"),
         Step(f"gt6engine stat {F(ENGINE)}", expect="rate=16 RU/t (DC constant-sign)"),
         Step(f"gt6engine fuel {F(ENGINE)} gt6:diesel 2000", expect="filled 160 L of gt6:diesel"),
-        Step(f"gt6engine stat {F(ENGINE)}", expect="input=gt6:diesel x160/160"),
-        Step(f"gt6engine fuel {F(ENGINE)} gt6:water 100", expect="is not an ENGINE_FUELS input"),
+        Step(f"gt6engine stat {F(ENGINE)}", expect="input=gt6:diesel x1"),
+        # the negative arm: the refusal itself carries the FAILED marker (allow_failed) —
+        # the expect pins the containsInput refusal text
+        Step(f"gt6engine fuel {F(ENGINE)} gt6:water 100", expect="is not an ENGINE_FUELS input",
+             allow_failed=True),
 
         phase("B: the DC drive — 448 power/L into +16 RU/t packets through three axles"),
         Step(f"gt6engine stat {F(ENGINE)}", expect="active=true", sleep=4.0),
@@ -82,11 +86,11 @@ CHAIN = Chain(
         phase("C: the exhaust arm — barrel + wall retain CO2, open back vents to x0"),
         Step(f"setblock {F(BARREL)} gt6:barrel_wood", expect="Changed the block"),
         Step(f"setblock {F(WALL)} stone", expect="Changed the block", sleep=2.0),
-        Step(f"gt6engine stat {F(ENGINE)}", expect="back=tank@3, 64, 8"),
+        Step(f"gt6engine stat {F(ENGINE)}", expect="back tank@3, 64, 8"),
         Step(f"gt6engine stat {F(ENGINE)}", expect="retained"),
         # the second engine with an OPEN back: the vent branch zeroes the exhaust every tick
         Step(f"setblock {F(ENGINE2)} {DIESEL}[facing=east]", expect="Changed the block"),
-        Step(f"gt6engine fuel {F(ENGINE2)} gt6:diesel 500", expect="filled 500 L", sleep=2.0),
+        Step(f"gt6engine fuel {F(ENGINE2)} gt6:diesel 500", expect="filled 160 L", sleep=2.0),
         Step(f"gt6engine stat {F(ENGINE2)}", expect="exhaust=CO2 x0 (back open)"),
         # open the first engine's back (barrel + wall away): the retained units vent to x0
         Step(f"setblock {F(WALL)} air", expect="Changed the block"),

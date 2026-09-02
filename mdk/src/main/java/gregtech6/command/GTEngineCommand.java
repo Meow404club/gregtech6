@@ -2,7 +2,6 @@ package gregtech6.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.logging.LogUtils;
 
@@ -12,6 +11,7 @@ import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 
@@ -108,10 +108,10 @@ public final class GTEngineCommand {
 			// attachment card is in flight
 			.then(Commands.literal("fuel")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
-					.then(Commands.argument("fluid", StringArgumentType.string())
+					.then(Commands.argument("fluid", ResourceLocationArgument.id())
 						.then(Commands.argument("amount", IntegerArgumentType.integer(1, 1000000000))
 							.executes(aContext -> fuel(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-									StringArgumentType.getString(aContext, "fluid"), IntegerArgumentType.getInteger(aContext, "amount")))))));
+									ResourceLocationArgument.getId(aContext, "fluid"), IntegerArgumentType.getInteger(aContext, "amount")))))));
 		aEvent.getDispatcher().register(tEngine);
 		LOGGER.info("Registered GT6 engine-chain command /gt6engine (stat | crank | mode | fill | fuel) — the engine family acceptance home");
 	}
@@ -296,7 +296,11 @@ public final class GTEngineCommand {
 	}
 
 	/**
-	 * The fuel subcommand (task p12-engine-diesel spec ⑤) — the RCON counterpart of the
+	 * The fluid id argument is the vanilla {@code ResourceLocationArgument.id()} form — a
+	 * namespaced id ({@code gt6:diesel}); the brigadier string reader would reject the
+	 * colon in an unquoted word.
+	 *
+	 * <p>The fuel subcommand (task p12-engine-diesel spec ⑤) — the RCON counterpart of the
 	 * upstream funnel face (MultiTileEntityMotorLiquid.java:203-207): the diesel engine's
 	 * input tank is filled through {@link GTDieselEngineBlockEntity#funnelFill}, gated on
 	 * the same containsInput seam (a non-fuel fluid is REFUSED, the acceptance chain's
@@ -304,13 +308,12 @@ public final class GTEngineCommand {
 	 * resolves against gt6. This is the DECLARED acceptance channel while the
 	 * p12-tap-funnel-attachment card is in flight (no GUI, no funnel item in this port).
 	 */
-	private static int fuel(CommandSourceStack aSource, BlockPos aPos, String aFluidId, int aAmount) {
+	private static int fuel(CommandSourceStack aSource, BlockPos aPos, ResourceLocation tId, int aAmount) {
 		ServerLevel tLevel = aSource.getLevel();
 		if (!(tLevel.getBlockEntity(aPos) instanceof GTDieselEngineBlockEntity tEngine)) {
 			aSource.sendFailure(Component.literal("FUEL FAILED: no diesel engine BE at " + aPos.toShortString()));
 			return 0;
 		}
-		ResourceLocation tId = new ResourceLocation(aFluidId.contains(":") ? aFluidId : "gt6:" + aFluidId);
 		net.minecraft.world.level.material.Fluid tFluid = ForgeRegistries.FLUIDS.getValue(tId);
 		if (tFluid == null) {
 			aSource.sendFailure(Component.literal("FUEL FAILED: unknown fluid " + tId));
