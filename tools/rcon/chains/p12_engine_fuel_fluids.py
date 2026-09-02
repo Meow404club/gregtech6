@@ -27,12 +27,15 @@ for _path in (str(_HERE), str(_HERE.parent)):
     if _path not in sys.path:
         sys.path.insert(0, _path)
 
+import gt6world
 from framework import Chain, Step, main, phase
 
 CHAIN = Chain(
     name="p12-engine-fuel-fluids",
     slug="p12eff",                       # /tmp/gt6_rs_p12eff.* artifacts
-    sites=(),                            # a pure smoke: no world sites, no fills
+    # the framework's region() refuses an empty site list — one benign anchor keeps the
+    # standard forceload + bbox-cleanup pass structure; NO step touches it
+    sites=gt6world.declare_sites(gt6world.Site(0, 64, 0)),
     preferred_ports=(25716, 25707),      # (rcon, query) — the card's pinned pair
     game_port=25706,                     # the card's server port
     steps=[
