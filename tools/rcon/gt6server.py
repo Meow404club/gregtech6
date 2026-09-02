@@ -280,11 +280,15 @@ def stop_server(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grace=10.0
     """
     pid_file = Path(pid_file)
     report = {"wrapper_pid": None, "rcon_stop": None, "jvm_pid": None, "leftover_ports": []}
-    if not pid_file.exists():
-        print(f"[gt6server] no pid file {pid_file} — nothing to stop")
+    pid = None
+    if pid_file.exists():
+        pid = int(pid_file.read_text(encoding="utf-8").strip() or 0)
+        report["wrapper_pid"] = pid
+    elif not rcon:
+        print(f"[gt6server] no pid file {pid_file} and no rcon info — nothing to stop")
         return report
-    pid = int(pid_file.read_text(encoding="utf-8").strip() or 0)
-    report["wrapper_pid"] = pid
+    else:
+        print(f"[gt6server] no pid file {pid_file} — falling back to the rcon port owner")
 
     if rcon:
         host, rcon_port, password = rcon
@@ -297,23 +301,32 @@ def stop_server(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grace=10.0
             report["rcon_stop"] = f"failed: {exc}"
             print(f"[gt6server] RCON stop unavailable ({exc}) — falling back to pid kill")
 
-    if _wait_gone(pid, grace):
+    def _port_owner_kill():
+        """SIGTERM the JVM that owns our rcon port (ours by construction)."""
+        if not rcon:
+            return False
+        jvm = port_owner(rcon[1])
+        if jvm is not None and jvm != pid:
+            report["jvm_pid"] = jvm
+            _terminate(jvm, f"server JVM (owner of rcon port {rcon[1]})")
+            if not _wait_gone(jvm, jvm_grace):
+                print(f"[gt6server] JVM {jvm} survived SIGTERM — SIGKILL")
+                try:
+                    os.kill(jvm, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                _wait_gone(jvm, 5.0)
+            return True
+        return False
+
+    if pid is not None and _wait_gone(pid, grace):
         print(f"[gt6server] gradle wrapper {pid} exited")
-    else:
-        if rcon:
-            rcon_port = rcon[1]
-            jvm = port_owner(rcon_port)
-            if jvm is not None and jvm != pid:
-                report["jvm_pid"] = jvm
-                _terminate(jvm, f"server JVM (owner of rcon port {rcon_port})")
-                if not _wait_gone(jvm, jvm_grace):
-                    print(f"[gt6server] JVM {jvm} survived SIGTERM — SIGKILL")
-                    try:
-                        os.kill(jvm, signal.SIGKILL)
-                    except ProcessLookupError:
-                        pass
-                    _wait_gone(jvm, 5.0)
-        if not _wait_gone(pid, term_grace):
+    elif pid is not None:
+        if _port_owner_kill() and _wait_gone(pid, term_grace):
+            print(f"[gt6server] gradle wrapper {pid} exited after JVM stop")
+        elif not process_alive(pid):
+            print(f"[gt6server] gradle wrapper {pid} exited")
+        else:
             _terminate(pid, "gradle wrapper")
             if not _wait_gone(pid, 5.0):
                 print(f"[gt6server] wrapper {pid} survived SIGTERM — SIGKILL")
@@ -323,16 +336,19 @@ def stop_server(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grace=10.0
                     pass
             else:
                 print(f"[gt6server] gradle wrapper {pid} terminated")
-        else:
-            print(f"[gt6server] gradle wrapper {pid} exited after JVM stop")
+    else:
+        # no recorded pid: just make sure our rcon port is released
+        _port_owner_kill()
 
     if rcon:
+        # final closure: whatever the path above did, our rcon port must end free.
+        # This is also the orphan-JVM fix (wrapper dead, server still listening).
+        if not _port_owner_kill():
+            print(f"[gt6server] port {rcon[1]} free")
         leftover = port_owner(rcon[1])
         if leftover is not None:
             report["leftover_ports"].append((rcon[1], leftover))
             print(f"[gt6server] WARNING: port {rcon[1]} still owned by pid {leftover}")
-        else:
-            print(f"[gt6server] port {rcon[1]} free")
     return report
 
 
