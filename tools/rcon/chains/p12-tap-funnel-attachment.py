@@ -65,13 +65,13 @@ CHAIN = Chain(
         Step(f"setblock {TAP} gt6:tap_stainless_steel[facing=west]", expect="Changed the block"),
         Step(f"setblock {CAULDRON} minecraft:cauldron", expect="Changed the block"),
         Step(f"gt6tank tap {TAP}", expect="cauldron level 0 -> 3, drained 1000"),
-        Step(CAULDRON_IS_FULL, expect="The gamerule keepInventory"),
-        Step(f"gt6tank stat {P}", expect="holds 7000/16000 L of minecraft:water"),
+        Step(CAULDRON_IS_FULL, expect="Gamerule keepInventory is currently set to"),
+        Step(f"gt6tank stat {P}", expect="7000/16000 L of minecraft:water"),
 
         phase("C: the funnel on the south face — the virtual bucket refills the barrel (the loop closes)"),
         Step(f"setblock {FUNNEL} gt6:funnel_stainless_steel[facing=north]", expect="Changed the block"),
         Step(f"gt6tank funnel {FUNNEL}", expect="poured 1000 L of minecraft:water"),
-        Step(f"gt6tank stat {P}", expect="holds 8000/16000 L of minecraft:water"),
+        Step(f"gt6tank stat {P}", expect="8000/16000 L of minecraft:water"),
     ],
 )
 
