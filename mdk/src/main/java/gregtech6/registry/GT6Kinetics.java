@@ -184,6 +184,10 @@ public final class GT6Kinetics {
 						fSpec, fSize));
 				AXLE_BLOCKS.put(tName, tBlock);
 				AXLE_ITEMS.put(tName, ITEMS.register(tName, () -> new BlockItem(tBlock.get(), new Item.Properties())));
+			}
+		}
+	}
+
 	// steam engines (task p12-engine-steam — Loader_MultiTileEntities.java:583-612)
 	// -------------------------------------------------------------------------
 
