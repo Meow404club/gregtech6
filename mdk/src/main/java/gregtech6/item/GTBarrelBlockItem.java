@@ -44,7 +44,9 @@ public class GTBarrelBlockItem extends BlockItem {
 	@Override
 	@Nullable
 	public ICapabilityProvider initCapabilities(ItemStack aStack, @Nullable CompoundTag aNBT) {
-		return new GTBarrelItemFluidHandler(aStack, ((GTBarrelBlock) getBlock()).capacityL());
+		// the task-p13 item-face gates ride the same carrier: capacity AND the NBT_GASPROOF row flag
+		return new GTBarrelItemFluidHandler(aStack, ((GTBarrelBlock) getBlock()).capacityL())
+				.setGasProof(((GTBarrelBlock) getBlock()).gasProof());
 	}
 
 	/** Upstream :290 — {@code mTank.has() ? 1 : aDefault}: content kills stacking. */

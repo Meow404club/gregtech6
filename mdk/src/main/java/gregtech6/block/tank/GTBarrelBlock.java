@@ -54,6 +54,7 @@ public class GTBarrelBlock extends GTEntityBlock {
 
 	private final long mCapacityL;
 	private final long mMeltingPointK;
+	private final boolean mGasProof;
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
 	/**
@@ -63,14 +64,21 @@ public class GTBarrelBlock extends GTEntityBlock {
 	 *        340, plastic 370; MAX_VALUE = never melts — the metal drum rows carry no HU
 	 *        and the upstream {@code mMaterial.mMeltingPoint * 1.25} formula needs the
 	 *        material bridge this repo does not ship, so metal is a declared deviation)
+	 * @param aGasProof the upstream {@code NBT_GASPROOF} row flag (task p13): F on the
+	 *        wood family (:2136-2149), T on plastic (:2150), every metal drum
+	 *        (:2151-2170) and the logistics tank (:2171) — the registration home of the
+	 *        gas-proof quartet value; the item face reads it (the GTBarrelBlockItem
+	 *        handler), the BE classes mirror it through their {@code gasProof()}
+	 *        overrides
 	 * @param aTickerType the BET this family member mounts (one TE class per material row,
 	 *        the upstream Wood/Plastic/Metal trio shape)
 	 */
-	public GTBarrelBlock(long aCapacityL, long aMeltingPointK,
+	public GTBarrelBlock(long aCapacityL, long aMeltingPointK, boolean aGasProof,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, Properties aProperties) {
 		super(aProperties);
 		mCapacityL = aCapacityL;
 		mMeltingPointK = aMeltingPointK;
+		mGasProof = aGasProof;
 		mTickerType = aTickerType;
 	}
 
@@ -82,6 +90,11 @@ public class GTBarrelBlock extends GTEntityBlock {
 	/** The melt-down ceiling in Kelvin (upstream NBT_CAPACITY_HU=340, Loader_MultiTileEntities.java:2136). */
 	public long meltingPointK() {
 		return mMeltingPointK;
+	}
+
+	/** The upstream NBT_GASPROOF row flag (task p13, the capacityL/meltingPointK carrier seam). */
+	public boolean gasProof() {
+		return mGasProof;
 	}
 
 	@Override

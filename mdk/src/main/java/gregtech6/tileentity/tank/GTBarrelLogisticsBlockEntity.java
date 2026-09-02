@@ -74,6 +74,17 @@ public class GTBarrelLogisticsBlockEntity extends GTBarrelMetalBlockEntity {
 		return true;
 	}
 
+	/**
+	 * The :2171 row carries NBT_GASPROOF=T (task p13) — transcribed explicitly so the row
+	 * citation stands on its own (it would ride the metal override through the class
+	 * hierarchy otherwise): the carrier value when the block is a GT barrel, the class
+	 * truth as the offline-fixture fallback.
+	 */
+	@Override
+	public boolean gasProof() {
+		return getBlockState().getBlock() instanceof GTBarrelBlock tBarrel ? tBarrel.gasProof() : true;
+	}
+
 	/** Upstream Logistics.java:39 verbatim — see the class javadoc: a transcription, the port's seal face is a base-level cut. */
 	public boolean canBeSealed() {
 		return false;

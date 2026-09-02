@@ -45,6 +45,16 @@ public class GTBarrelPlasticBlockEntity extends TileEntityBase08Barrel {
 		return getCovers() != null && aCover.isDecorative(aSide, getCovers());
 	}
 
+	/**
+	 * The :2150 row carries NBT_GASPROOF=T (task p13): the carrier value when the block is
+	 * a GT barrel, the class truth as the offline-fixture fallback (every plastic row
+	 * upstream is gas-proof, so a non-GT fixture block still reports T).
+	 */
+	@Override
+	public boolean gasProof() {
+		return getBlockState().getBlock() instanceof GTBarrelBlock tBarrel ? tBarrel.gasProof() : true;
+	}
+
 	@Override
 	public String getTileEntityName() {
 		return "barrel_plastic"; // BET registry path mirrors it (GTBarrels.BARREL_PLASTIC_BE)

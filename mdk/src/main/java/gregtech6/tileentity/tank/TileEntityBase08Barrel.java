@@ -26,6 +26,7 @@ import gregtech6.covers.CoverData;
 import gregtech6.covers.GTCoverRenderSnapshot;
 import gregtech6.covers.ICoverableTE;
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.fluid.GTFluidLists;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
@@ -61,13 +62,16 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *
  * <p>Cuts (pool, per the card spec ③): the sealed fermentation (RM.Fermenter :190 and the
  * mMode sealed bit with its fill/drain gates), the vertically-connected-tank mode B[0]
- * (:133/:209-213) and the gas/acid/plasma/magic proof quartet (:164-186/:251-254). With
- * both mode bits gone the {@code mMode} field itself has no consumer and is cut; the
- * item-form {@code IFluidContainerItem} face, the tool clicks (:106-154), the funnel/tap
- * interfaces, the rotting and the {@code onlySimple()} filter (FL.simple infra absent)
- * are feature-layer omissions. The world-fill path deliberately has NO fill-time fluid
- * gate: upstream fills first and melts on the next tick (:162 is the protection), the
- * {@code allowFluid} temperature gate (:233-235) belonged to the cut item face.
+ * (:133/:209-213) and the acid/plasma/magic proofs (:170-179) with their item-face
+ * quartet tail (:252-254). With both mode bits gone the {@code mMode} field itself has
+ * no consumer and is cut; the tool clicks (:106-154), the rotting and the
+ * {@code onlySimple()} filter (FL.simple infra absent) are feature-layer omissions. The
+ * world-fill path deliberately has NO fill-time fluid gate: upstream fills first and
+ * the tick judgment is the protection (:162 melt / :180 gas / :184 allowFluid), the
+ * upstream {@code allowFluid} temperature branch (:234) is covered by that same melt
+ * judgment. Task p13 restores the :180 gas gate and the :184 allowFluid gate (the
+ * power-conductor list form) with the {@link #gasProof()} override point — the P5
+ * freeze is narrowed by ADR 2026-09-03-p13-barrel-base-unfreeze.
  *
  * <p>Cover wiring (task p5-barrel-side-rules spec ④ — the oven :167-177/:221/:230/:241/:652
  * template, composition over the {@link ICoverableTE} defaults): the store lives here, the
@@ -132,6 +136,50 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 	/** Upstream :284 — the base barrels drain to null; the logistics barrel keeps the filter (Logistics.java:40). */
 	public boolean keepsFilter() {
 		return false;
+	}
+
+	/**
+	 * Upstream {@code mGasProof} (:62/:95/:180/:251) as the subclass override point — the
+	 * base default {@code false} is the wood-family row truth (NBT_GASPROOF=F on every
+	 * wood row, Loader_MultiTileEntities.java:2136-2149). Task p13: the gas tick gate
+	 * below reads this — GASPROOF exempts the GAS-list gate ONLY, never the allowFluid
+	 * gate (the upstream :180 and :184 doors are independent).
+	 */
+	public boolean gasProof() {
+		return false;
+	}
+
+	/**
+	 * Upstream :233-235, the task-p13 minimal face: {@code !FL.powerconducting(aFluid)} is
+	 * the only list gate the port carries — the temperature branch is the melt judgment's
+	 * job (:162 runs first in onTick) and the {@code onlySimple} filter is a pool cut.
+	 * The name form keeps the predicate offline-testable (UT.powerconducting, UT.java:187
+	 * = {@code POWER_CONDUCTING.contains(getName())}); the tick gate below voids on
+	 * {@code !allowFluid} exactly like upstream :184.
+	 */
+	public boolean allowFluid(String aFluidName) {
+		return !GTFluidLists.isPowerConducting(aFluidName);
+	}
+
+	/**
+	 * The fluid's registry-path name — the 1.20.1 counterpart of upstream
+	 * {@code Fluid.getName()} (UT.java:187). Instance seam so offline fixtures can rename
+	 * a vanilla stack (the live form is {@link GTFluidLists#name}; the gt6 fluids are
+	 * registry-side and exercised by the RCON chain — the GTFluidsEngineFamilyTest
+	 * offline/live split precedent).
+	 */
+	protected String fluidName(FluidStack aFluid) {
+		return GTFluidLists.name(aFluid);
+	}
+
+	/**
+	 * Upstream :181-182 — {@code UT.Sounds.send(SFX.MC_FIZZ)} + {@code GarbageGT.trash(mTank)}.
+	 * The sound half is pooled (the port ships no sound face); the trash half is the
+	 * mandatory tank clear, announced like every executed mutation.
+	 */
+	protected void fizzTrash() {
+		mTank.setEmpty(); // the GarbageGT.trash(mTank) half
+		onTankChanged();
 	}
 
 	// ---------------------------------------------------------------------------
@@ -203,7 +251,13 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 			FluidStack tFluid = mTank.getFluid();
 			if (tFluid == null || tFluid.isEmpty() || tFluid.getAmount() <= 0) return; // :160-161
 			if (meltsDown(tFluid) && meltdown()) return; // :162
-			pushByGravity(); // the p5 passive discharge (spec ②) — after the melt judgment, per the card
+			// the p13 fizz pair (upstream :180-186), inserted between the melt judgment and
+			// the gravity push: the gas gate FIRST, the allowFluid gate SECOND — GASPROOF
+			// exempts the gas gate only, the two doors are independent (upstream :180 vs :184).
+			String tName = fluidName(tFluid);
+			if (!gasProof() && GTFluidLists.isGas(tName)) { fizzTrash(); return; } // :180-182
+			if (!allowFluid(tName)) { fizzTrash(); return; } // :184-186 — the power-conductor list voids the tank
+			pushByGravity(); // the p5 passive discharge (spec ②) — after the melt/fizz judgments, per the card
 		}
 		// upstream 06Covers :202 — the cover tick follows the barrel business (oven :241 template)
 		if (hasCovers()) getCovers().tickPost(aTimer, aIsServerSide, mBlockUpdated, false);
