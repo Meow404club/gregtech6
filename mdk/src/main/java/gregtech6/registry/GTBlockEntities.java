@@ -28,6 +28,8 @@ import gregtech6.tileentity.energy.GTCrankBlockEntity;
 import gregtech6.tileentity.energy.GTDieselEngineBlockEntity;
 import gregtech6.tileentity.energy.GTEnergySourceBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
+import gregtech6.tileentity.energy.GTGearBoxBlockEntity;
+import gregtech6.tileentity.energy.GTTransformerRotationBlockEntity;
 import gregtech6.tileentity.example.GTExampleChestBlockEntity;
 
 /**
@@ -200,6 +202,27 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<GTDieselEngineBlockEntity>> DIESEL_ENGINE_BE =
 			BLOCK_ENTITY_TYPES.register("diesel_engine", () -> BlockEntityType.Builder.of(
 					GTDieselEngineBlockEntity::new, GT6Kinetics.dieselBlockArray()).build(null));
+	// gearbox + rotation transformer (task p12-gearbox-transformer)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The GearBox BET (task p12-gearbox-transformer — the BET type row lives here per the
+	 * card family form, the block/item in GT6Kinetics; the CRANK_BE single-mount shape).
+	 * Registry path "gearbox" mirrors GTGearBoxBlockEntity#getTileEntityName like every
+	 * other row.
+	 */
+	public static final RegistryObject<BlockEntityType<GTGearBoxBlockEntity>> GEARBOX_BE =
+			BLOCK_ENTITY_TYPES.register("gearbox", () -> BlockEntityType.Builder.of(
+					GTGearBoxBlockEntity::new, GT6Kinetics.GEARBOX.get()).build(null));
+
+	/**
+	 * The Rotation Transformer BET (task p12-gearbox-transformer — the CRANK_BE
+	 * single-mount shape, the block/item in GT6Kinetics). Registry path
+	 * "transformer_rotation" mirrors GTTransformerRotationBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<GTTransformerRotationBlockEntity>> TRANSFORMER_BE =
+			BLOCK_ENTITY_TYPES.register("transformer_rotation", () -> BlockEntityType.Builder.of(
+					GTTransformerRotationBlockEntity::new, GT6Kinetics.TRANSFORMER_ROTATION.get()).build(null));
 
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest
