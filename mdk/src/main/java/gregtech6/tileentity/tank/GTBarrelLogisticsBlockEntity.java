@@ -59,6 +59,13 @@ public class GTBarrelLogisticsBlockEntity extends GTBarrelMetalBlockEntity {
 	 */
 	public GTBarrelLogisticsBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 		super(aType != null ? aType : GTBarrels.BARREL_LOGISTICS_BE.get(), aPos, aState);
+		// The :132 stickiness wiring rides BE load() — but a FRESHLY PLACED barrel never
+		// reaches load(CompoundTag) (setblock/place creates the BE without restore NBT), so a
+		// placement-born logistics tank stayed unarmed until the first chunk reload and
+		// drained to a true empty (live-proven by the card's RCON chain, the W1 wood barrel
+		// could never expose the gap with its keepsFilter=F). The ctor arm closes it;
+		// load() re-applies the same verdict on every restore (both call keepsFilter()).
+		mTank.setPreventDraining(keepsFilter());
 	}
 
 	/** Upstream Logistics.java:40 — the ONLY keepsFilter()=T barrel in both codebases. */
