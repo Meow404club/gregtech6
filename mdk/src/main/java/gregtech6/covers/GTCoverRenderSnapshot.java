@@ -50,8 +50,9 @@ import gregtech6.client.render.GTRenderSnapshot;
  * both maps are frozen by {@code Map.copyOf} before entering {@code ModelData} (the
  * ModelData.java:28 iron law).
  *
- * <p>GTCEu 对位：ICoverableRenderer.renderCovers (ICoverableRenderer.java:43-91) 从
- * COVER_MODEL_DATA 拿每面数据；我们把同形数据提前冻进快照，getQuads 只读不查世界。
+ * <p>GTCEu counterpart: ICoverableRenderer.renderCovers (ICoverableRenderer.java:43-91)
+ * reads the per-face data out of COVER_MODEL_DATA; we freeze the same-shaped data into the
+ * snapshot ahead of time, so getQuads stays read-only and never queries the world.
  */
 public record GTCoverRenderSnapshot(Map<Direction, ResourceLocation> coverSprites,
 		Map<Direction, List<ResourceLocation>> layers) implements GTRenderSnapshot {

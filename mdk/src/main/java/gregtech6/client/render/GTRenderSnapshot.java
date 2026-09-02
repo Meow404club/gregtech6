@@ -17,9 +17,11 @@ package gregtech6.client.render;
  * produced by {@code List.copyOf}/{@code Map.copyOf}). Never hold a {@code BlockEntity}
  * reference here — snapshots are the render-thread's detached view of machine state.
  *
- * <p>GT6 对位：GTCEu 侧走 GTModelProperties.LEVEL/POS 在 getQuads 里现场查机（MachineModel.java:215
- * MetaMachine.getMachine(level, pos)）；我们的红线禁在 getQuads 里触碰活动 BE（渲染线程快照不可变），
- * 故快照由 BE 在 getModelData() 时预制，模型只读。
+ * <p>GT6 counterpart: the GTCEu side resolves the machine live inside getQuads via
+ * GTModelProperties.LEVEL/POS (MachineModel.java:215 MetaMachine.getMachine(level, pos));
+ * our red line forbids touching a live BE inside getQuads (render-thread snapshots must be
+ * immutable), so the snapshot is pre-built by the BE at getModelData() time and the model
+ * is read-only.
  */
 public interface GTRenderSnapshot {
 }

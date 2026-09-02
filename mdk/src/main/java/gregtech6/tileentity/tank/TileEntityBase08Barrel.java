@@ -192,7 +192,7 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 		if (hasLevel()) {
 			BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(tDir));
 			IFluidHandler tTarget = tNeighbor == null ? null
-					: tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, tDir.getOpposite()).orElse(null); // WorldAndCoords.getAdjacentTank :118-129 对位
+					: tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, tDir.getOpposite()).orElse(null); // counterpart of WorldAndCoords.getAdjacentTank :118-129
 			if (tTarget != null && moveTankToHandler(mTank, tTarget, GRAVITY_TRANSFER_PER_TICK) > 0) onTankChanged();
 		}
 	}

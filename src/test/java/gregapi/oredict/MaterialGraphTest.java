@@ -154,7 +154,7 @@ public class MaterialGraphTest {
 
 	@Test
 	public void chainExpansionRespectsDepthLimit() {
-		// The depth limit is the hard "防炸" bound on top of the visited-set termination rule.
+		// The depth limit is the hard "no-blowup" bound on top of the visited-set termination rule.
 		assertTrue(MaterialGraph.expandChain(MT.Fe, Process.CRUSHING, 0).isEmpty());
 		assertEquals(1, MaterialGraph.expandChain(MT.Fe, Process.CRUSHING, 1).size());
 		assertThrows(IllegalArgumentException.class, () -> MaterialGraph.expandChain(MT.Fe, Process.CRUSHING, -1));

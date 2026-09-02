@@ -11,8 +11,9 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import gregtech6.covers.GT6Covers;
 
 /**
- * The atlas sources provider (task p4-cover-core ⑥ — "atlases/blocks.json sources 落地,
- * 本卡消费贴图入图集"; the C-grade foundation shipped zero textures, GTRenderModelListener
+ * The atlas sources provider (task p4-cover-core ⑥ — "land the atlases/blocks.json sources;
+ * this card's consumed textures join the atlas"; the C-grade foundation shipped zero
+ * textures, GTRenderModelListener
  * class note). Every sprite a dynamic model stitches into runtime-built plate quads must
  * be present in the block atlas. The Forge-convention target is the atlas id's own
  * namespace ({@code BLOCKS_ATLAS} = minecraft:blocks → the generated file is

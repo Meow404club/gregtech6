@@ -118,7 +118,7 @@ class TileEntityBase10MultiBlockMachineTest extends GTMultiBlocksOfflineTestBase
 		tOven.mInventory.insertItem(0, new ItemStack(Items.COAL, 2), false);
 
 		// not ignited: the apply call is gated (upstream :737) → the probe branch :740 returns
-		// FOUND_AND_COULD_HAVE_USED_RECIPE without consuming (the card's "不消耗" clause)
+		// FOUND_AND_COULD_HAVE_USED_RECIPE without consuming (the card's "no consumption" clause)
 		assertEquals(TileEntityBase10MultiBlockMachine.FOUND_AND_COULD_HAVE_USED_RECIPE, tOven.checkRecipe(true, false));
 		assertEquals(2, tOven.slot(0).getCount(), "the ignition gate must keep the input intact");
 

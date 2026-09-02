@@ -146,7 +146,7 @@ public class GTFluidPipeFlowModel extends GTDynamicBakedModel {
 		Vector3f tFrom = new Vector3f((float) tBox[0] * 16, (float) tBox[1] * 16, (float) tBox[2] * 16);
 		Vector3f tTo = new Vector3f((float) tBox[3] * 16, (float) tBox[4] * 16, (float) tBox[5] * 16);
 		float[] tUv = uvOf(aPlan.quadFace(), tBox[0] * 16, tBox[1] * 16, tBox[2] * 16, tBox[3] * 16, tBox[4] * 16, tBox[5] * 16);
-		// cull = null — the arrow never culls (spec ④: 箭头面不 cull)
+		// cull = null — the arrow never culls (spec ④: the arrow face never culls)
 		return BAKERY.bakeQuad(tFrom, tTo,
 				new BlockElementFace(null, 0, aPlan.sprite().toString(), new BlockFaceUV(tUv, 0)),
 				aSprite, aPlan.quadFace(), BlockModelRotation.X0_Y0, null, true, aPlan.sprite());

@@ -30,7 +30,8 @@ import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase.MultiBlockL
  * entries, the unmarked-external-face distribute skip, and the onPlaced support/
  * back-connect semantics on a stub level.
  *
- * <p>Offline stub adaptation of the onPlaced table (the card's "贴靠流体罐" row): a
+ * <p>Offline stub adaptation of the onPlaced table (the card's "supported by an adjacent
+ * fluid tank" row): a
  * live fluid-handler neighbour needs {@code ForgeCapabilities.FLUID_HANDLER}, which does
  * not class-initialise offline (the multiblock card finding) — the support-side
  * semantics (OPOS flip + exactly one side connected + the rest untouched) are asserted

@@ -27,7 +27,8 @@ import gregtech6.registry.GTBarrels;
  * <p>Cover admission (task p6-barrel-metal-plastic ①): the upstream :39 verbatim
  * predicate — {@code allowCover → aCover.isDecorative(aSide, getCoverData())} — restores
  * the decorative-only rule: CoverTextureSimple plates pass (the p4 iron-plate cover),
- * functional covers like the pump are refused; the P5泵盖全开裁偏离就此回补. A cover
+ * functional covers like the pump are refused; the P5 pump-covers-open-all-faces deviation
+ * is thereby redeemed. A cover
  * installed before this gate stays valid but any newly refused one drops itself on the
  * first tick through {@code ICoverableTE.checkCoverValidity} (06Covers :207-215) — zero
  * migration code. The null guard is defensive: upstream reaches this with a non-null

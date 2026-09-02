@@ -158,7 +158,7 @@ public class GTEnergySourceBlockEntityTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the emitter face gate (spec ④: isEnergyEmittingTo 门 = isEnergyType / EU 锁 / accepting = F)
+	// the emitter face gate (spec ④: the isEnergyEmittingTo gate = isEnergyType / the EU lock / accepting = F)
 	// ---------------------------------------------------------------------------
 
 	@Test

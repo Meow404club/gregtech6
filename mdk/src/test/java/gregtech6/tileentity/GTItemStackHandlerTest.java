@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 /**
  * GTItemStackHandler contract: content-change hook on every mutating path
  * (Forge ItemStackHandler setStackInSlot :45 / insertItem :101 / extractItem :128/:141)
- * and per-slot insert filter (GTCEu CustomItemStackHandler.java:26,:45-47 同构).
+ * and per-slot insert filter (same shape as GTCEu CustomItemStackHandler.java:26,:45-47).
  */
 public class GTItemStackHandlerTest extends GTOfflineTestBase {
 

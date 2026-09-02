@@ -234,7 +234,7 @@ public class GTBarrelFamilyTest extends GTOfflineTestBase {
 	 * The bridge else-branch (TileEntityBase08Barrel.java:66 {@code (long)(mMeltingPoint *
 	 * 1.25)}) over the live dataset — literal spot checks where the material melting
 	 * point is directly traceable, plus the per-row formula agreement (no hardcoded
-	 * drift) and the 保 MAX clause.
+	 * drift) and the keep-MAX clause.
 	 */
 	@Test
 	public void meltingPointBridgeFormula() {
@@ -248,7 +248,7 @@ public class GTBarrelFamilyTest extends GTOfflineTestBase {
 		assertEquals(5625, GTBarrels.meltingPointK(MT.Draconium), "(long)(4500 * 1.25)");
 		// Ad element melt 5225 K (MT.java:1656)
 		assertEquals(6531, GTBarrels.meltingPointK(MT.Ad), "(long)(5225 * 1.25) = (long) 6531.25");
-		// 保 MAX: a MAX_VALUE material stays never-melting (the upstream double-cast
+		// keep-MAX: a MAX_VALUE material stays never-melting (the upstream double-cast
 		// saturation reaches the same ceiling — the explicit branch just states it)
 		assertEquals(Long.MAX_VALUE, GTBarrels.meltingPointK(Long.MAX_VALUE), "MAX melting material → MAX ceiling");
 		// every formula row agrees with the live dataset — the bridge computes, never guesses

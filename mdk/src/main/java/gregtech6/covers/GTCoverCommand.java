@@ -53,8 +53,9 @@ import gregtech6.util.UT6;
  *     the item defaults to gt6:plate_iron, the pump chain passes gt6:cover_pump,
  *     the emitter chain gt6:cover_redstone_emitter;</li>
  * <li>{@code dismantle [<pos>] [<side>]} — onCoverToolClick with a hoe: the :145-152
- *     path drops the cover (popResource, acceptance's 掉落断言 via an ItemEntity scan)
- *     and the store dissolves to {@code null} (:313-317, 全空回 null);</li>
+ *     path drops the cover (popResource, the acceptance drop assertion via an ItemEntity
+ *     scan) and the store dissolves to {@code null} (:313-317, an all-empty store returns
+ *     null);</li>
  * <li>{@code mode [<pos>] [<side>] [<target>]} — onCoverToolClick with the screwdriver
  *     tool id: the covered behaviour's onToolClick relay (the pump cover flips its
  *     visual lane 0 out ↔ 1 in). {@code target=cutter} relays the emitter's
@@ -211,7 +212,7 @@ public final class GTCoverCommand {
 		// the world drop (the give-path is covered by the unit-test double), so aPlayer = null
 		// forces the popResource branch deterministically.
 		long tDamage = tHost.host().onCoverToolClick("", null, new ItemStack(Items.WOODEN_HOE), tSide, false);
-		// the 掉落断言: the popResource path drops at the covered face — scan a small box
+		// the drop assertion: the popResource path drops at the covered face — scan a small box
 		BlockPos tDropPos = tHost.pos().relative(side);
 		List<? extends ItemEntity> tDrops = source.getLevel().getEntitiesOfClass(ItemEntity.class,
 				new AABB(tDropPos.getX() - 2, tDropPos.getY() - 2, tDropPos.getZ() - 2, tDropPos.getX() + 3, tDropPos.getY() + 3, tDropPos.getZ() + 3));

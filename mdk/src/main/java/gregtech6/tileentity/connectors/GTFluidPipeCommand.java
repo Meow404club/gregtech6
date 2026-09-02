@@ -276,12 +276,12 @@ public final class GTFluidPipeCommand {
 		byte tMaskB = tPipeB.mLastReceivedFrom[0];
 		byte tMaskA = tPipeA.mLastReceivedFrom[0];
 
-		// 4. equalisation (acceptance: 罐量均分)
+		// 4. equalisation (acceptance: the tank contents split evenly)
 		if (tAmountA != tAmountB || tAmountA != INJECTED / 2) {
 			aSource.sendFailure(Component.literal("SPLIT FAILED: A=" + tAmountA + " L, B=" + tAmountB + " L (expected " + (INJECTED / 2) + "/" + (INJECTED / 2) + ")"));
 			return 0;
 		}
-		// 5. anti-backflow markers (acceptance: 防回流位)
+		// 5. anti-backflow markers (acceptance: the anti-backflow bits)
 		if ((tMaskB & TileEntityBase09Connector.SBIT[tSideToA]) == 0) {
 			aSource.sendFailure(Component.literal("BACKFLOW MARKER MISSING: B must carry SBIT[" + tSideToA + "] (upstream :389 records the receiver)"));
 			return 0;

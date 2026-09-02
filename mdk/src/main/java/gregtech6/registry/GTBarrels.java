@@ -155,7 +155,7 @@ public final class GTBarrels {
 	 * Draconium} → 8.192M {Awakened Draconium, NBT_CAPACITY_HU=10000} → 10B {Infinity,
 	 * NBT_CAPACITY_HU=1000000000}. The two explicit-HU rows are transcribed verbatim —
 	 * the :66 branch 1 overrides the material formula (the Infinity drum's ceiling is
-	 * upstream's own 1e9 K, an effectively-never-melting figure; the card's "保 MAX"
+	 * upstream's own 1e9 K, an effectively-never-melting figure; the card's "keep-MAX"
 	 * clause covers materials whose dataset mMeltingPoint IS MAX_VALUE, see
 	 * {@link #meltingPointK(long)}). The 64K non-bronze alloy variants (:2152-2158) stay
 	 * a pool cut per the card boundary.
@@ -237,7 +237,7 @@ public final class GTBarrels {
 	}
 
 	/**
-	 * The raw :66 else-branch arithmetic. A MAX_VALUE material stays MAX_VALUE (保 MAX —
+	 * The raw :66 else-branch arithmetic. A MAX_VALUE material stays MAX_VALUE (keep-MAX —
 	 * the upstream form reaches the same ceiling through the double-cast saturation,
 	 * {@code (long)(Long.MAX_VALUE * 1.25)} clamps to Long.MAX_VALUE; the explicit branch
 	 * just states it), so a never-melting material yields a never-melting drum.
