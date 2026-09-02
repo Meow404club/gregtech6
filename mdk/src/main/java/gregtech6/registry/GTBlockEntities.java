@@ -25,6 +25,7 @@ import gregtech6.tileentity.TestMachineBlockEntity;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
 import gregtech6.tileentity.energy.GTAxleBlockEntity;
 import gregtech6.tileentity.energy.GTCrankBlockEntity;
+import gregtech6.tileentity.energy.GTDieselEngineBlockEntity;
 import gregtech6.tileentity.energy.GTEnergySourceBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.example.GTExampleChestBlockEntity;
@@ -185,6 +186,20 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<GTSteamEngineBlockEntity>> STEAM_ENGINE_BE =
 			BLOCK_ENTITY_TYPES.register("steam_engine", () -> BlockEntityType.Builder.of(
 					GTSteamEngineBlockEntity::new, GT6Kinetics.steamEngineBlockArray()).build(null));
+
+	// diesel engine (task p12-engine-diesel) — the kinetics family's shared multi-mount row
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Diesel Engine BET (task p12-engine-diesel — the BET type row lives here per the
+	 * card, the 8 tier blocks/items in GT6Kinetics; the AXLE_BE one-type-many-blocks
+	 * multi-mount form over {@link GT6Kinetics#dieselBlockArray()}). Registry path
+	 * "diesel_engine" mirrors GTDieselEngineBlockEntity#getTileEntityName like every other
+	 * row.
+	 */
+	public static final RegistryObject<BlockEntityType<GTDieselEngineBlockEntity>> DIESEL_ENGINE_BE =
+			BLOCK_ENTITY_TYPES.register("diesel_engine", () -> BlockEntityType.Builder.of(
+					GTDieselEngineBlockEntity::new, GT6Kinetics.dieselBlockArray()).build(null));
 
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest

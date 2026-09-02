@@ -35,6 +35,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.block.energy.GTCrankBlock;
+import gregtech6.block.energy.GTDieselEngineBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 
@@ -334,12 +335,88 @@ public final class GT6Kinetics {
 		}
 	}
 
+	// -------------------------------------------------------------------------
+	// the diesel engine family (task p12-engine-diesel) — 8 material tiers
+	// -------------------------------------------------------------------------
+
+	/**
+	 * One Loader Diesel Engine row (Loader_MultiTileEntities.java:721-729), name+number only
+	 * (no MT at construct time — the AXLE_SPECS ruling). Every upstream row carries the same
+	 * shape: NBT_FUELMAP FM.Engine, NBT_EFFICIENCY 10000, NBT_ENERGY_EMITTED TD.Energy.RU,
+	 * NBT_HARDNESS 6.0F / NBT_RESISTANCE 6.0F, the "Diesel Engine (Material)" wording, meta
+	 * 9145-9149 + 9197-9199 — only the material and NBT_OUTPUT vary, so the table is
+	 * material + output only, and the constants live on the BE/block (efficiency on
+	 * GTDieselEngineBlockEntity.mEfficiency, hardness/resistance on the registration loop).
+	 *
+	 * <p>Rows in the upstream declaration order :721-729: Bronze 9147 → 16, ArsenicCopper
+	 * 9146 → 16, ArsenicBronze 9145 → 24, Steel (ANY.Steel) 9148 → 32, Invar 9149 → 64,
+	 * Ti 9197 → 128, TungstenSteel 9198 → 256, Ir 9199 → 512 RU/t. Material slugs follow the
+	 * AXLE_SPECS port material registry form ({@code gt6.material.<slug>}; ANY.Steel →
+	 * "steel", MT.Ti → "titanium", MT.Ir → "iridium").
+	 */
+	public record DieselSpec(String material, String displayName, long output) {}
+
+	/** The eight registration rows, the Loader :721-729 declaration order (class doc). */
+	public static final List<DieselSpec> DIESEL_SPECS = List.of(
+			new DieselSpec("bronze", "Bronze", 16),
+			new DieselSpec("arsenic_copper", "Arsenic Copper", 16),
+			new DieselSpec("arsenic_bronze", "Arsenic Bronze", 24),
+			new DieselSpec("steel", "Steel", 32),
+			new DieselSpec("invar", "Invar", 64),
+			new DieselSpec("titanium", "Titanium", 128),
+			new DieselSpec("tungstensteel", "Tungstensteel", 256),
+			new DieselSpec("iridium", "Iridium", 512));
+
+	/** The 8 registered diesel engine blocks (the BET/datagen/loot walkers iterate this). */
+	public static final Map<String, RegistryObject<GTDieselEngineBlock>> DIESEL_BLOCKS = new LinkedHashMap<>();
+
+	/** The 8 registered diesel engine items, same keys as {@link #DIESEL_BLOCKS}. */
+	public static final Map<String, RegistryObject<Item>> DIESEL_ITEMS = new LinkedHashMap<>();
+
+	/** The registry-name form: {@code diesel_engine_<material>}. */
+	public static String dieselName(String aMaterial) {
+		return "diesel_engine_" + aMaterial;
+	}
+
+	/** The lang/display-name form: {@code <Material> Diesel Engine} (the upstream "Diesel Engine (Bronze)" row wording, port naming convention). */
+	public static String dieselDisplay(DieselSpec aSpec) {
+		return aSpec.displayName() + " Diesel Engine";
+	}
+
+	/** The block list in declaration order (the BET multi-mount array + the loot/datagen walkers). */
+	public static Block[] dieselBlockArray() {
+		Block[] rBlocks = new Block[DIESEL_BLOCKS.size()];
+		int i = 0;
+		for (RegistryObject<GTDieselEngineBlock> tBlock : DIESEL_BLOCKS.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/**
+	 * The diesel engine registration loop — 8 material rows, the Loader :721-729 row body:
+	 * NBT_HARDNESS 6.0F / NBT_RESISTANCE 6.0F (every row), the METAL sound of the machine
+	 * block convention (the GTMachines Shredder rows). The output rate rides the block
+	 * instance (the GTAxleBlock spec carrier form — the 1.20.1 carrier of the upstream
+	 * registration NBT NBT_OUTPUT). Same plain-loop-before-attach mechanics as
+	 * {@link #registerAxles()}.
+	 */
+	private static void registerDieselEngines() {
+		for (DieselSpec tSpec : DIESEL_SPECS) {
+			String tName = dieselName(tSpec.material());
+			final DieselSpec fSpec = tSpec;
+			RegistryObject<GTDieselEngineBlock> tBlock = BLOCKS.register(tName, () -> new GTDieselEngineBlock(
+					BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), fSpec));
+			DIESEL_BLOCKS.put(tName, tBlock);
+			DIESEL_ITEMS.put(tName, ITEMS.register(tName, () -> new BlockItem(tBlock.get(), new Item.Properties())));
+		}
+	}
+
 	private GT6Kinetics() {}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GTBlockEntities.onModConstruct doc). */
 	@SubscribeEvent
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
 		registerAxles();
+		registerDieselEngines();
 		IEventBus tModBus = Mod.EventBusSubscriber.Bus.MOD.bus().get();
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
