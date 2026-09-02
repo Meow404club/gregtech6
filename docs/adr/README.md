@@ -28,6 +28,8 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-01 | [2026-09-01-p10-cover-item-intercept.md](2026-09-01-p10-cover-item-intercept.md) | ICover item 族冻结面扩面：恰八钩解冻 + 三宿主门 + TileEntityOven 侧感知 wrapper |
 | 2026-09-02 | [2026-09-02-p12-ghost-render-translucent.md](2026-09-02-p12-ghost-render-translucent.md) | RenderHighlightEvent 瞬态例外扩面：整面半透明 + 绿红分色（三约束保持） |
 | 2026-09-02 | [2026-09-02-p12-jei-dependency.md](2026-09-02-p12-jei-dependency.md) | 首个第三方 mod 依赖：JEI 接入（版本/坐标/类路径/信息页，含砖数 26→25 勘误附录） |
+| 2026-09-02 | [2026-09-02-p12-rotation-carrier.md](2026-09-02-p12-rotation-carrier.md) | 旋转载体：零新 EnergyType，复用 RU/KU+push 握手，Axle 邻接递归 |
+| 2026-09-02 | [2026-09-02-p12-fluid-engine-chain.md](2026-09-02-p12-fluid-engine-chain.md) | 流体罐引擎链总 ADR：范围/三波九卡/蒸汽产源/声明偏离（含桶 GUI 终裁） |
 
 ## 占位（历史 ADR，未回填，权威原文在 state `decisions` 账本与 docs/PROJECT_STATE.md）
 
