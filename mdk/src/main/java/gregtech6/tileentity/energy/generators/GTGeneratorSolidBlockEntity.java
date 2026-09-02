@@ -455,7 +455,8 @@ public abstract class GTGeneratorSolidBlockEntity extends TileEntityBase03TicksA
 		mAdjacencyOverride = aAdjacency;
 	}
 
-	private IEnergyAdjacency adjacency() {
+	/** The per-tick adjacency resolver (protected — the Liquid/GAS subclasses share the tick emit path). */
+	protected IEnergyAdjacency adjacency() {
 		if (mAdjacencyOverride != null) return mAdjacencyOverride;
 		return aSide -> {
 			if (!hasLevel()) return null;
