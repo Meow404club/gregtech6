@@ -1,5 +1,5 @@
 /**
- * The wire texture census (task p9-wire-family-w2 spec ④ — "census 先行"): the borrowed
+ * The wire texture census (task p9-wire-family-w2 spec ④ — "census first"): the borrowed
  * {@code materialicons/<set>/wire.png} coverage is counted per ICONSET (not per material —
  * 30 rows collapse into few sets). The set of a row comes from
  * {@link gregtech6.client.wire.GTWireTextures#blockSetOf} (the MC-free single source the

@@ -34,6 +34,20 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
  * MultiTileEntitySolarPanelElectric :160-162 evidence line). Also hosts the
  * GTWireBlockEntity.canConnect double-probe assertions (the p8 ruling 1 backfill:
  * upstream EnergyCompat.canConnectElectricity :102 accepting || emitting).
+ *
+ * <p>Offline-harness note on the mEmitting default (task p11-infra-hygiene-bundle,
+ * the in-case record): {@code mEmitting} starts {@code false} (the p8-d4 card) and
+ * NOTHING in the offline harness flips it or fires the tick emit on its own — there is
+ * no server ticker, {@code onTick} only runs when a test drives {@code updateEntity()}
+ * by hand. Note the side resolution: a level-less fixture takes the SERVER branch of
+ * the tick chain ({@code TileEntityBase01Root.isClientSide()} :164-166 needs a non-null
+ * level, so {@code isServerSide()} :159-161 is {@code true}) — the gate that keeps a
+ * fresh fixture silent is {@code mEmitting = false} itself; once armed, the level-less
+ * {@code adjacency()} resolves every side to {@code null} and the emit books 0 (that is
+ * why {@code onTickOfflineIsANoCrashNoOp} is a no-op without a crash). Emission-asserting
+ * tests must therefore {@code setEmitting(true)} AND wire the emit seam explicitly
+ * ({@code emitOnce()} or an {@code mAdjacencyOverride}) — a forgotten flip or a forgotten
+ * adjacency wiring reads as zero packets booked, never as an error.
  */
 public class GTEnergySourceBlockEntityTest extends GTOfflineTestBase {
 
@@ -305,7 +319,9 @@ public class GTEnergySourceBlockEntityTest extends GTOfflineTestBase {
 		// size = mPiston > 1 ? -size : size — from phase 0 the emit sequence is +,-,-,+
 		// (each period holds exactly one positive→non-positive crossing, the machine :815
 		// delivery edge). The plain (non-alternating) emit stays all-positive. Driven via
-		// emitOnce directly: the offline fixture's updateEntity runs client-side (no emit).
+		// emitOnce directly: the bare seam under test — no server ticker exists offline
+		// (see the class-javadoc harness note), and updateEntity would only re-wrap this
+		// same emitOnce in timer bookkeeping.
 		GTEnergySourceBlockEntity tSource = sType.create(POS, Blocks.STONE.defaultBlockState());
 		CountingSink tSink = new CountingSink(POS.offset(0, 0, 1));
 		IEnergyAdjacency tAdjacency = aSide -> aSide == 3 ? new EnergyTarget(tSink, (byte)2) : null;

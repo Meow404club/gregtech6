@@ -60,7 +60,7 @@ import gregtech6.registry.GTMultiBlocks;
  * <li>{@code fluid <pos> [side] drain <mB>|fill <mB>} + {@code fluid <pos> stat} — the
  *     fluid-capability probe face (task p8-cokeoven-fluid-capability ⑥): drain walks the
  *     capability of the queried face (no side argument = the side-less query) and reports
- *     the drawn amount, fill is the always-zero acceptance probe (只出不进), stat reports
+ *     the drawn amount, fill is the always-zero acceptance probe (output-only), stat reports
  *     the tank content in the machine-report {@code tank=[...]} shape;</li>
  * <li>{@code check <pos>} additionally reports the processing state (progress/energy/
  *     ignited/tank/slots) since p6.</li>
@@ -525,7 +525,7 @@ public final class GTMultiBlockCommand {
 
 	/**
 	 * {@code fluid <pos> [side] fill <mB>} — the acceptance probe: the wrapper refuses every
-	 * face and fluid (只出不进, the upstream getFluidTankFillable2 :566 mask-0 leg), so the
+	 * face and fluid (output-only, the upstream getFluidTankFillable2 :566 mask-0 leg), so the
 	 * accepted amount is always 0. The probe fluid is the tank's own content when present
 	 * (the honest "would it take more of itself" offer), else vanilla water.
 	 */

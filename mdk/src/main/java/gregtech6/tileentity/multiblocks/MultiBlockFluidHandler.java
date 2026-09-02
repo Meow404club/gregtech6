@@ -27,7 +27,7 @@ import gregtech6.fluid.FluidTankGT;
  * <li><b>fill</b> is refused for every face and fluid: the Coke Oven registers no
  *     {@code NBT_TANK_SIDE_IN} (Loader :1193), so the upstream
  *     {@code getFluidTankFillable2} input-mask leg (:566, {@code mFluidInputs = 0}) never
- *     connects — the machine has no input tank (只出不进), both overloads return 0;</li>
+ *     connects — the machine has no input tank (output-only), both overloads return 0;</li>
  * <li>an executed drain marks the machine dirty exactly like the upstream
  *     {@code tapDrain} {@code updateInventory()} beat (:919) — {@code setChanged()} plus
  *     {@code mInventoryChanged = true}, which feeds the {@code doActive} recipe re-check
@@ -139,7 +139,7 @@ public class MultiBlockFluidHandler implements IFluidHandler {
 		return aTank == 0 ? mMachine.mTanksOutput[0].getCapacity() : 0;
 	}
 
-	/** The take-nothing face: {@code fill} refuses every fluid, so no stack is ever valid to insert (the 只出不进 contract). */
+	/** The take-nothing face: {@code fill} refuses every fluid, so no stack is ever valid to insert (the output-only contract). */
 	@Override
 	public boolean isFluidValid(int aTank, FluidStack aStack) {
 		return false;

@@ -20,7 +20,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
  * 6 world faces + the side-less query, UP refuses, the five other faces and null admit —
  * and the fill-is-always-zero contract. The wrapper drain/fill semantics run against the
  * offline fixture oven (the GTMultiBlocksOfflineTestBase boot; the LIVE capability chain
- * through getCapability is the RCON gate, the card's 活体 ruling).
+ * through getCapability is the RCON gate, the card's live-chain ruling).
  */
 class GT6MultiBlockFluidTest extends GTMultiBlocksOfflineTestBase {
 
