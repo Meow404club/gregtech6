@@ -84,8 +84,12 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * <p>Port-side feed seam (declared, no upstream line): upstream steam arrived pushed by
  * pipes/funnels into {@code getFluidTankFillable2}; this port adds a back-face PULL —
  * each server tick the engine drains up to its free tank space from the adjacent fluid
- * handler on its back face (steam only, the :239 gate). The RCON acceptance chain's
- * {@code /gt6tank fill}-ed barrel plays the pipe; the capability fill door
+ * handler on its back face (steam only, the :239 gate), consulted through the NEIGHBOUR's
+ * top face (see {@link #mFluidAdjacency}). The RCON acceptance chain's {@code /gt6tank
+ * fill}-ed metal drum plays the pipe (the wood barrel is unusable here twice over: it
+ * MELTS at 373 K steam under its 340 K ceiling, and upstream gives it no GASPROOF flag —
+ * the port barrel fill door carries no gas-admission gate itself, a declared deviation
+ * parked with the p12-research-steam-barrel-gasproof finding); the capability fill door
  * ({@link EngineFluidHandler}) stays open for real pipe carriers.
  *
  * <p>Facing: the BlockState {@code FACING} is the command-side authority and
@@ -156,13 +160,21 @@ public class GTSteamEngineBlockEntity extends TileEntityBase03TicksAndSync imple
 	public IntSupplier mByproductAmount = () -> 1;
 	public Function<Integer, FluidStack> mByproductMake = amount -> new FluidStack(GTFluids.DISTILLED_WATER.source.get(), amount);
 
-	/** The live neighbour fluid handler lookup, per side of THIS engine; null when absent. Offline-replaceable. */
+	/**
+	 * The live neighbour fluid handler lookup, per side of THIS engine; null when absent.
+	 * The neighbour is consulted through its TOP face — the TileEntityCokeOven
+	 * .fluidHandlerAt :193 pinned-UP precedent: the p5 barrel side rules let a tank GIVE
+	 * fluids only from bottom (heavier than air) / top (lighter than air) faces, and steam
+	 * (density −100) leaves through the top; the byproduct push re-uses the same handle
+	 * (fills are admitted from any face). Offline-replaceable (the test seams key on this
+	 * engine's own side, the live lambda only routes the POSITION).
+	 */
 	public Function<Byte, IFluidHandler> mFluidAdjacency = aSide -> {
 		if (!hasLevel()) return null;
 		BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(Direction.from3DDataValue(aSide)));
 		if (tNeighbor == null || tNeighbor.isRemoved()) return null;
 		return tNeighbor.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER,
-				Direction.from3DDataValue(aSide).getOpposite()).orElse(null);
+				Direction.UP).orElse(null);
 	};
 
 	/** The offline seam setter (the setAdjacencyOverride shape of the P8/P11 rigs). */
