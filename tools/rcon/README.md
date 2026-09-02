@@ -3,6 +3,20 @@
 单一正典客户端 `gt6rcon.py`（蒸馏自 5 份 P4 参考脚本，重复实现已合并）。
 测试验收链一律复用它，不要再写任务本地 RCON 脚本。
 
+**三层框架（2026-09-02 起，新卡 RCON 链一律走框架，链条入库 `tools/rcon/chains/`）**：
+
+```
+gt6server.py   生命周期层：eula 预检 / ss 端口预检顺延 / nohup 起服 / Done 轮询 / 按 PID 精确停服
+gt6world.py    世界层：站点注册表 → bbox 自动清场（漏站点=测试必红，结构性消灭静默污染）+ 摆放 helper
+chains/        链层：每卡一条 python 模块（sites + lifecycle 配置 + steps），声明式、可审查复放
+gt6rcon.py     客户端层：帧协议/断言判定（judge_output），CLI 与 chains 共用同一套判定语义
+```
+
+约定：**新卡的 RCON 验收链不再手写 bash 段、不再落 tmp/**——在 `chains/` 建一条
+`Chain` 模块提交入库，`python3 tools/rcon/chains/<卡名>.py` 一条命令完成
+起服→两遍跑（第二遍=幂等证明，清场由 gt6world 自动 bbox）→按 PID 停服。
+旧 tmp 链是历史工件，不迁移不删除；要迁移见文末「从旧链迁移」。
+
 ```
 # 单条命令
 python3 tools/rcon/gt6rcon.py --password <pw> "gt6oven place 30 64 30"
@@ -70,6 +84,9 @@ import 复用：`sys.path.insert(0, "tools/rcon"); import gt6rcon`，用
 
 ## ② 服务端开启 RCON
 
+（手工姿势存档——框架用户不用做这步，`gt6server.provision_run_dir` 自动写
+eula + ports + online-mode；本节留给手动调试参考。）
+
 `mdk/run/server.properties`（整个 `mdk/run/` 已 gitignore，**不入库、测试后还原**）：
 
 ```properties
@@ -84,6 +101,9 @@ online-mode=false   # 仅 headless 无正版账号时；测完还原
 - 起服后确认监听：`ss -tlnp | grep 25575`。
 
 ## ③ nohup + 短轮询纪律
+
+（手工姿势存档——`gt6server.start_server/wait_done/stop_server` 就是本节纪律的
+模块化落地，框架用户不用手敲。）
 
 游戏本体永不自行退出——严禁前台跑、严禁阻塞等待退出。唯一正典姿势（在 worktree 根，
 **必须 `./gradlew`，系统 gradle 8.7 过不了 MDG**）：
@@ -190,3 +210,98 @@ R "gt6multiblock check 50 64 50"  --expect 1:block_formed=true    # 恢复成型
 
 （FACING north → 结构核在南侧一格：controller (50,64,50) 的核为 (50,64,51)，壳=核 ±1
 立方 26 格，其中一格是 controller 本体。）
+
+## ⑤ 三层框架用法（新卡 RCON 链的正典姿势）
+
+### 生命周期层 gt6server（ops 纪律的模块化落地）
+
+```python
+import sys; sys.path.insert(0, "tools/rcon")
+import gt6server
+
+gt6server.ensure_eula("mdk/run")                     # eula 缺失=静默 24s 退场（ghost-poc 鉴戒），模块兜死
+ports = gt6server.pick_ports(25662, 2)               # ss 预检，占用则 +1 顺延；传元组则各起点独立顺延
+log, pid = gt6server.artifact_paths("myslug")        # /tmp/gt6_rs_<slug>.{log,pid}，12 阶段既成约定的唯一定义点
+gt6server.provision_run_dir(".", game_port, rcon_port, query_port, "gt6")
+pid = gt6server.start_server(".", log, pid)          # nohup 语义（start_new_session），绝不前台、绝不阻塞等
+gt6server.wait_done(log, timeout=600, pid=pid)       # 轮询日志 Done 标记；进程死了立刻抛错，绝不对死者长轮询
+gt6server.stop_server(pid, rcon=("127.0.0.1", rcon_port, "gt6"))
+```
+
+固化的行为（用户明令，模块强制）：eula 缺失静默退场不可能发生；**`--stop` 全面禁用**；
+**禁泛 pkill/pgrep**——停服只走 RCON `stop` → 记录的 PID → 只属于我们 rcon 端口的
+JVM（`ss -ltnp` 按端口精确定位），gradle daemon 一律不碰。
+
+### 世界层 gt6world（站点注册 + bbox 自动清场）
+
+```python
+import gt6world
+
+OVEN, HOPPER = gt6world.Site(0, 64, 0), gt6world.Site(0, 65, 0)
+sites = gt6world.declare_sites(OVEN, HOPPER, "10 64 10")   # Site/三元组/"x y z" 都收
+region = gt6world.region(sites)                            # 联合 bbox 外扩 MARGIN=2
+gt6world.cleanup_commands(region)     # ['fill -2 61 -2 26 67 26 air']（超 32768 自动分片）
+gt6world.forceload_commands(region)   # ['forceload add -16 -16 31 31']（超 256 区块自动分片）
+```
+
+**漏站点类错误结构性消灭**：站点注册一次，fill 区=全部站点联合 bbox 外扩常数——
+站点漏注册 = fill 区不含它 = 下一轮必红（不会再静默污染第二轮）。
+2026-09-02 shutter 链的 fill 18..26 漏掉 24 站点教训，即由此封死。
+
+摆放 helper（提炼自真链）：`place_oven(client, pos)`、`place_hopper(client, pos, facing)`、
+`feed_container(client, pos, slot, item, count)`、`redstone_block(client, pos, on)`；
+声明式命令串版：`hopper_command/feed_container_command/set_block_command`。
+teardown 断言：`store_null_command(pos)` + `STORE_NULL_EXPECT="store=null"`。
+
+### 链层 chains/（声明式，入库可复放）
+
+每卡一条模块：sites + lifecycle 配置 + steps。试点样板见
+`chains/p11_cover_shutter_filter.py`（p11shutterfilter_atom.sh 的逐步迁移）：
+
+```python
+from framework import Chain, Step, main, phase
+import gt6world
+
+CHAIN = Chain(
+    name="my-card", slug="mycard",
+    sites=gt6world.declare_sites(gt6world.Site(0, 64, 0), gt6world.Site(0, 65, 0)),
+    preferred_ports=(25662, 25672),            # 本卡锚定 rcon/query 对；game 口自动取 rcon-10，忙则顺延
+    passes=2,                                  # 第二遍 = 幂等证明（清场由 gt6world 自动 bbox）
+    steps=[
+        phase("A: 分节标题（纯打印，不计入断言序号）"),
+        Step("gt6oven place 0 64 0", expect="placed"),
+        Step("item replace block 0 65 0 container.0 with minecraft:iron_ingot 8", sleep=4),  # tick 驱动断言的真实时序
+        Step("gt6cover install 0 64 0 up gt6:cover_shutter", expect="OK"),
+        Step("gt6cover install 0 64 0 up", allow_failed=True),  # 预期失败步：记 ALLOWED 不计退出码
+        Step(gt6world.store_null_command(gt6world.Site(0, 64, 0)),
+             expect=gt6world.STORE_NULL_EXPECT),               # teardown 断言
+    ],
+)
+
+if __name__ == "__main__":
+    main(CHAIN)
+```
+
+一条命令跑全程（起服→两遍→停服→退出码）：
+
+```bash
+python3 -u tools/rcon/chains/p11_cover_shutter_filter.py
+```
+
+判定语义与 CLI 同源：steps 经 `gt6rcon.judge_output`（run_chain 的同一判定器）——
+输出含字面量 `FAILED` 或 expect 未命中即 FAIL（allow_failed=True 记 ALLOWED），
+打印行与 `gt6rcon.py` CLI 逐字一致。简单链也可直接
+`gt6rcon.run_chain(host, port, password, commands, expects, allow_failed={n})`。
+
+### 从旧链迁移（tmp/ bash 段 → chains/ 模块）
+
+1. 段头端口/ss 预检/eula/nohup/Done 轮询/按 PID 杀 → 全部删除，交给框架
+   （`preferred_ports` 填本卡锚定对，artifacts 沿用原 slug 名）。
+2. 每条 `rc "cmd" --expect 1:子串` → `Step("cmd", expect="子串")`；
+   `--allow-failed N` → 该步 `allow_failed=True`。
+3. 裸 `sleep N`（时序等待）→ 挂到**前一步**的 `sleep=N`（判定器在命令后等待，
+   等待窗口才是断言有效性的来源，别挂到断言步自己身上）。
+4. `if [ $? -ne 0 ]; then break; fi` → 删除（框架每步必跑，全图诊断，退出码仍如实）。
+5. 手写 `fill` 清场区 → 删除，改把**每个方块位置**（机器+料斗+邻居）登记进
+   `sites`——bbox 联合自动覆盖，新摆的件记得注册。
+6. `gt6cover check <pos>` store=null 收尾 → `store_null_command(pos)` 步。
