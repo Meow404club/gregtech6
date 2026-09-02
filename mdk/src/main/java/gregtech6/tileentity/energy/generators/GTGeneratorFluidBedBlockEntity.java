@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
@@ -220,6 +221,16 @@ public class GTGeneratorFluidBedBlockEntity extends GTGeneratorSolidBlockEntity 
 				if (tInput != null && !tInput.isEmpty() && tInput.isFluidEqual(aFluid)) return true;
 		}
 		return false;
+	}
+
+	/** The :123 spread with the FluidBed family's FLAME_RANGE 2 volume (the Liquid-class overload). */
+	protected void trySpreadFire(int aFlameRange) {
+		if (!hasLevel()) return;
+		BlockPos tCenter = getBlockPos();
+		int tX = tCenter.getX() - aFlameRange + rng(2 * aFlameRange + 1);
+		int tY = tCenter.getY() - 1 + rng(2 + aFlameRange);
+		int tZ = tCenter.getZ() - aFlameRange + rng(2 * aFlameRange + 1);
+		placeFire(getLevel(), new BlockPos(tX, tY, tZ));
 	}
 
 	// ---------------------------------------------------------------------------
