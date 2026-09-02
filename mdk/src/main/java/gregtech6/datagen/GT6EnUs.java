@@ -9,6 +9,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.GT6Mod;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
@@ -40,8 +41,12 @@ import net.minecraftforge.common.data.LanguageProvider;
  * {@code Language.has(specialKey)} check (MaterialPrefixItem.java:64) fall through to the
  * template. LanguageProvider sorts keys (TreeMap) and writes via DataProvider.saveStable, so the
  * output is deterministic across runs.
+ *
+ * <p>Non-final on purpose: the offline lang-key reconciliation test (GT6EnUsJeiInfoTest,
+ * task p12-jei-integration) records {@code add()} through a same-package subclass — the only
+ * way to observe {@code addTranslations()} output without a datagen run.
  */
-public final class GT6EnUs extends LanguageProvider {
+public class GT6EnUs extends LanguageProvider {
 
     public GT6EnUs(PackOutput output) {
         super(output, GT6DataGenerators.MOD_ID, "en_us");
@@ -62,6 +67,27 @@ public final class GT6EnUs extends LanguageProvider {
         addEnergySource();
         addTools();
         addCovers();
+        addJeiInfo();
+    }
+
+    /**
+     * The JEI ingredient info page (task p12-jei-integration, ADR 2026-09-02-p12-jei-dependency):
+     * the coke oven structure description shown by JEI's built-in info page on the controller
+     * item — the consumer is {@code GT6JeiPlugin.registerRecipes}
+     * ({@code addIngredientInfo} → {@code Component.translatable}), so the key comes from the
+     * plugin's constant and cannot drift from the consumer side.
+     *
+     * <p>Structure facts are pinned by the port's own live gate (task p6-cokeoven-processing,
+     * RCON {@code gt6multiblock frame/check}: {@code linked_parts=25/25}): the 3x3x3 cube has
+     * the controller in the middle of one face and an EMPTY center cell, so the bricks count is
+     * 25 (the structure loop checks 26 cells, one of which is the controller itself).
+     */
+    private void addJeiInfo() {
+        add(GT6JeiPlugin.INFO_KEY_COKE_OVEN,
+            "The Coke Oven is a 3x3x3 cube: place the Coke Oven in the middle of one side, facing "
+            + "outward, leave the center cell of the cube empty, and fill the remaining 25 cells "
+            + "with Coke Oven Bricks. Ignite the controller to start it - it makes its own heat, "
+            + "and a tank on the layer below the structure collects the Creosote.");
     }
 
     /**
