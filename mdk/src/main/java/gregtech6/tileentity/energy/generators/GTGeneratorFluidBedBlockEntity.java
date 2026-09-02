@@ -228,6 +228,22 @@ public class GTGeneratorFluidBedBlockEntity extends GTGeneratorSolidBlockEntity 
 		return false;
 	}
 
+	/**
+	 * The upstream canInsertItem2 (:258 {@code mRecipes.containsInput(aStack, ...)}) —
+	 * "is this item an FM.FluidBed row input" at the linear-scan level (the
+	 * containsFuelInput closure, the item leg). The FLUIDBED map is declared-empty this
+	 * wave, so this answers false for everything until the calcite/ash/burn-time card.
+	 */
+	public boolean containsFluidBedItem(@Nullable ItemStack aStack) {
+		RecipeMap tMap = fluidBedMap();
+		if (tMap == null || aStack == null || aStack.isEmpty()) return false;
+		for (Recipe tRecipe : tMap.mRecipeList) {
+			for (ItemStack tInput : tRecipe.mInputs)
+				if (tInput != null && !tInput.isEmpty() && ItemStack.isSameItemSameTags(aStack, tInput)) return true;
+		}
+		return false;
+	}
+
 	/** The :123 spread with the FluidBed family's FLAME_RANGE 2 volume (the Liquid-class overload). */
 	protected void trySpreadFire(int aFlameRange) {
 		if (!hasLevel()) return;

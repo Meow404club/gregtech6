@@ -229,6 +229,13 @@ public class GT6EnUs extends LanguageProvider {
         for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
             add("block.gt6." + GT6Kinetics.dieselName(tSpec.material()), GT6Kinetics.dieselDisplay(tSpec));
         }
+        // task p13-burning-box-family — the 97 burning-box display names, the upstream row
+        // wording verbatim ("Brick Burning Box (Solid)" :519 .. "Dense Fluidized Bed
+        // Burning Box (Ta4HfC5)" :704), walked from the row tables so the keys cannot
+        // drift from the registered blocks
+        for (gregtech6.registry.GT6BurningBoxes.BurningBoxRow tRow : gregtech6.registry.GT6BurningBoxes.allRows()) {
+            add("block.gt6." + tRow.path(), tRow.displayName());
+        }
     }
 
     /**
