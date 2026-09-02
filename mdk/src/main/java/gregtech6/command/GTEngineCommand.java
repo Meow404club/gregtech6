@@ -378,10 +378,10 @@ public final class GTEngineCommand {
 		}
 		String tLine = "GT6 diesel engine at " + aPos.toShortString() + ": filled " + tFilled + " L of " + tId
 				+ " (input " + tEngine.mTanks[0].amount() + "/" + tEngine.mTanks[0].capacity() + " L)";
-			aSource.sendSuccess(() -> Component.literal(tLine), false);
-			LOGGER.info(tLine);
-			return Command.SINGLE_SUCCESS;
-		}
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
 
 	/**
 	 * The gearbox mask write (task p12-gearbox-transformer spec 3 — the RCON acceptance

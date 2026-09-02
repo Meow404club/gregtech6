@@ -42,6 +42,13 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * back out (units(consumed × tOut, outRec × mult = 8, inRec = 8) — the 8|8 identity).
  * So one 16×1 input becomes one 4×4 output burst: ÷4 speed, ×4 power.
  *
+ * <p>The waste leg (the converter :92 tail, LIVE — the row carries
+ * {@code NBT_WASTE_ENERGY = T}, Loader :1668): EVERY tick the capacitor vents
+ * {@code units(mEnergyIN.mMax = 16, 16, 16 - aMode = 16) = 16} = the whole capacity
+ * (mMode is the constant 0 of this port), unconditionally after the emit attempt.
+ * Upstream is a FUNNEL that vents what did not flow ("不通就漏光") — a burst the
+ * consumer refused is gone and the next tick has nothing to re-emit — not a buffer.
+ *
  * <p>Direction (upstream :131 {@code mNegativeInput = (aSize < 0)} + the converter
  * aNegative leg): RU ∈ ALL_NEGATIVE_ALLOWED (TD.java:205 — the gate :121 is live), so a
  * negative (counterclockwise) input emits a NEGATIVE output burst — the sign is
@@ -81,6 +88,16 @@ public class GTTransformerRotationBlockEntity extends TileEntityBase03TicksAndSy
 
 	/** The capacitor capacity (readEnergyBehavior :75 = tInput × 2). */
 	public static final long STORAGE_CAPACITY = INPUT_SPEED * 2;
+
+	/**
+	 * The row's NBT_WASTE_ENERGY = T (Loader :1668) — the waste leg of the converter
+	 * (TE_Behavior_Energy_Converter.doConversion :92) is LIVE: every tick the capacitor
+	 * vents {@code units(mEnergyIN.mMax = 16, 16, 16 - aMode = 16) = 16} = the whole
+	 * capacity (mMode is the constant 0 of this port). Upstream is a FUNNEL that vents
+	 * what did not flow out ("不通就漏光" — the source's packet shows as consumed either
+	 * way), not a buffer.
+	 */
+	public static final boolean WASTE_ENERGY = true;
 
 	/** The capacitor energy in input-size units (upstream mStorage.mEnergy). */
 	public long mStorage = 0;
@@ -188,6 +205,11 @@ public class GTTransformerRotationBlockEntity extends TileEntityBase03TicksAndSy
 			// a REFUSED burst (the consumer's queue full) keeps the last successful
 			// records — "last out" means the last EMITTED burst, not this tick's
 		}
+		// the waste leg (the converter :92 tail, aMode = 0 constant-folded: units(16, 16,
+		// 16) = 16 = INPUT_SIZE_MAX) — runs UNCONDITIONALLY every tick, so whatever the
+		// capacitor held past this tick's flow is VENTED: a refused burst drains the
+		// whole store and the next tick has nothing to re-emit (the funnel semantics)
+		if (WASTE_ENERGY) mStorage = Math.max(0, mStorage - INPUT_SIZE_MAX);
 	}
 
 	// ---------------------------------------------------------------------------

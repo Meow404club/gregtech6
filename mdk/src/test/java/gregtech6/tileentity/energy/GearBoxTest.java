@@ -549,6 +549,31 @@ public class GearBoxTest extends GTOfflineTestBase {
 	}
 
 	@Test
+	public void wasteVentDrainsRefusedBurstsAndDoesNotReemit() {
+		// the waste leg (the converter :92 tail — the row NBT_WASTE_ENERGY = T, Loader
+		// :1668; aMode = 0 → units(16, 16, 16) = 16 = the whole capacity): a burst the
+		// consumer refuses is VENTED the same tick — upstream is a funnel that vents
+		// what did not flow ("不通就漏光"), not a buffer
+		GTTransformerRotationBlockEntity tTrans = transformer();
+		tTrans.setAdjacencyOverride(aSide -> null); // the 全拒 tick: no consumer anywhere
+
+		assertEquals(1, tTrans.doInject(TD.Energy.RU, (byte) 2, -16, 1, true));
+		assertEquals(16, tTrans.mStorage);
+		tTrans.onTick(11, true);
+		assertEquals(0, tTrans.mStorage, "the refused burst vents the whole capacitor");
+		assertFalse(tTrans.mActive);
+		assertEquals(0, tTrans.mLastOutSize, "nothing was emitted — no record");
+
+		// 下拍不重发: the vent left nothing stored, so the next tick emits nothing even
+		// with a hungry sink attached
+		CappedSink tSink = new CappedSink(POS.east(), 64);
+		tTrans.setAdjacencyOverride(aSide -> aSide == 3 ? new EnergyTarget(tSink, (byte) 2) : null);
+		tTrans.onTick(12, true);
+		assertTrue(tSink.calls.isEmpty(), "the vented burst must not re-emit on the next tick");
+		assertEquals(0, tTrans.mStorage);
+	}
+
+	@Test
 	public void transformerNbtRoundTrip() {
 		GTTransformerRotationBlockEntity tTrans = transformer();
 		tTrans.mStorage = 12;

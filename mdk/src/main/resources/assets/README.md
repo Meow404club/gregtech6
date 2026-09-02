@@ -562,7 +562,7 @@ PNGs under `gt6/textures/block/` come from upstream
 `src/main/resources/assets/gregtech/textures/`, byte-identical to upstream, sha256
 verified:
 
-- `gearbox.png`                    `6f36d27836e0ee13fc54515e58fac44b75347d7b00d0ead792e24c846f4853f8`  (iconsets/GEARBOX.png)
+- `gearbox.png`                    `6f36d27836e0ee13fc54515e58fac44b75347d7b00d0ead792e24c846f4853f8`  (blocks/iconsets/GEARBOX.png)
 - `transformer_rotation_front.png` `fd2ac7adc0f7aa8ab2d0434a17847fe747f6b50ec3b16d8499da945f3b7db766`  (machines/transformers/transformer_rotation/colored/front.png)
 - `transformer_rotation_side.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (machines/transformers/transformer_rotation/colored/side.png)
 
