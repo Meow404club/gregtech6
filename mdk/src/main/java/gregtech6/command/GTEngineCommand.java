@@ -48,6 +48,12 @@ import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
  *     MultiTileEntityEngineSteam.java:225 setStateOnOff seam) — the RCON counterfactual
  *     of the :175 soft-hammer toggle (the tool face is the pool cut). {@code stat} gains
  *     the steam-engine detail branch (facing/stopped/active/heat-state/energy/tank).</li>
+ * <li>{@code fill <pos> <amount>} — task p12-engine-steam, ADR
+ *     2026-09-02-p12-steam-proof-deviation: the DIRECT steam-injection channel — pushes
+ *     gt6:steam through the engine's back-face capability door (the canonical
+ *     intake-face supply, the pipe-into-getFluidTankFillable2 :239 form); the door's
+ *     gates (stopped / steam-only / back face) make a REJECTED echo a legitimate
+ *     chain verdict.</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = "gt6")
@@ -78,9 +84,18 @@ public final class GTEngineCommand {
 					.then(Commands.literal("on")
 						.executes(aContext -> mode(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), true)))
 					.then(Commands.literal("off")
-						.executes(aContext -> mode(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), false)))));
+						.executes(aContext -> mode(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), false)))))
+			// task p12-engine-steam — the DIRECT steam-injection channel (ADR
+			// 2026-09-02-p12-steam-proof-deviation): pushes gt6:steam through the engine's
+			// BACK-face capability door — the canonical intake-face supply (what a 1.7.10
+			// pipe did into getFluidTankFillable2), never a tank intermediate
+			.then(Commands.literal("fill")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.argument("amount", IntegerArgumentType.integer(1))
+						.executes(aContext -> fill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+								IntegerArgumentType.getInteger(aContext, "amount"))))));
 		aEvent.getDispatcher().register(tEngine);
-		LOGGER.info("Registered GT6 engine-chain command /gt6engine (stat | crank | mode) — the crank + steam-engine + future engine family acceptance home");
+		LOGGER.info("Registered GT6 engine-chain command /gt6engine (stat | crank | mode | fill) — the crank + steam-engine + future engine family acceptance home");
 	}
 
 	/**
@@ -191,6 +206,38 @@ public final class GTEngineCommand {
 		tEngine.setStopped(!aOn);
 		String tLine = "GT6 steam engine mode at " + aPos.toShortString() + ": " + (aOn ? "on" : "off")
 				+ " (stopped=" + tEngine.mStopped + ")";
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The direct steam-injection channel (task p12-engine-steam, ADR
+	 * 2026-09-02-p12-steam-proof-deviation): pushes gt6:steam through the engine's
+	 * BACK-face capability door — the canonical intake-face supply, the 1.7.10
+	 * pipe-into-{@code getFluidTankFillable2}(:239) form. The door itself carries the
+	 * gates (stopped refusal, steam-only, back face), so a REJECTED echo is a legitimate
+	 * verdict the chain asserts (the stop gate). No tank intermediate: the
+	 * POWER_CONDUCTING destruction chain that kills steam in every upstream tank is
+	 * sidestepped by never storing steam in a tank.
+	 */
+	private static int fill(CommandSourceStack aSource, BlockPos aPos, int aAmount) {
+		ServerLevel tLevel = aSource.getLevel();
+		if (!(tLevel.getBlockEntity(aPos) instanceof GTSteamEngineBlockEntity tEngine)) {
+			aSource.sendFailure(Component.literal("FILL FAILED: no steam engine BE at " + aPos.toShortString()));
+			return 0;
+		}
+		net.minecraftforge.fluids.capability.IFluidHandler tDoor = tEngine.getCapability(
+				net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER,
+				Direction.from3DDataValue(tEngine.backSide())).orElse(null);
+		if (tDoor == null) {
+			aSource.sendFailure(Component.literal("FILL FAILED: no intake-face door at " + aPos.toShortString()));
+			return 0;
+		}
+		int tFilled = tDoor.fill(new net.minecraftforge.fluids.FluidStack(gregtech6.fluid.GTFluids.STEAM.source.get(), aAmount),
+				net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+		String tLine = String.format("GT6 steam engine fill at %s: filled %d/%d L of gt6:steam%s, tank holds %d L",
+				aPos.toShortString(), tFilled, aAmount, tFilled == 0 ? " (REJECTED)" : " (ACCEPTED)", tEngine.mTank.amount());
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;

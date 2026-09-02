@@ -86,11 +86,13 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * each server tick the engine drains up to its free tank space from the adjacent fluid
  * handler on its back face (steam only, the :239 gate), consulted through the NEIGHBOUR's
  * top face (see {@link #mFluidAdjacency}). The RCON acceptance chain's {@code /gt6tank
- * fill}-ed metal drum plays the pipe (the wood barrel is unusable here twice over: it
- * MELTS at 373 K steam under its 340 K ceiling, and upstream gives it no GASPROOF flag —
- * the port barrel fill door carries no gas-admission gate itself, a declared deviation
- * parked with the p12-research-steam-barrel-gasproof finding); the capability fill door
- * ({@link EngineFluidHandler}) stays open for real pipe carriers.
+ * fill}-ed metal drum plays the pipe. POWER_CONDUCTING caveat (the
+ * p12-research-steam-barrel-gasproof verdict): upstream NO tank holds steam — the
+ * steam flag set carries POWER_CONDUCTING, so a filled tank is destroyed the next tick
+ * (wood/plastic melt at their 340/370 K ceilings, metal/Logistics fizz away); the port
+ * barrels carry no such destruction chain, a DECLARED deviation (steam persists here),
+ * and the metal drum is the closest-to-legal acceptance carrier. The capability fill
+ * door ({@link EngineFluidHandler}) stays open for real pipe carriers.
  *
  * <p>Facing: the BlockState {@code FACING} is the command-side authority and
  * {@link #mFacing} the BE runtime mirror, the GTCrankBlockEntity form — re-synced from the

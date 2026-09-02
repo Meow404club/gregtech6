@@ -7,35 +7,41 @@ full loop: steam -> KU -> crusher.
   A /gt6energy rig regression: the p8-d4/p11 source rig still runs verbatim next to the
     command root; /gt6engine stat reads the rig through the generic energy-surface dump.
 
-  B the e2e pair: a Tungsten Steam Engine lands via /setblock with an explicit facing
-    (gt6:steam_engine_tungsten[facing=north] — the state is the facing authority, the BE
-    mirror re-syncs at the tick head), a steam-filled METAL drum sits on the BACK (south)
-    face and a crusher on the FRONT (north) face. /gt6tank fill is the carrier card's
-    steam-injection channel (DEPENDENCY SATISFIED: p12-fluid-item-carrier merged c00d3b3).
+  B the e2e quad — DIRECT intake-face injection (ADR 2026-09-02-p12-steam-proof-deviation,
+    the coordinator ruling that supersedes the drum arm): a Tungsten Steam Engine lands
+    via /setblock with an explicit facing (gt6:steam_engine_tungsten[facing=north] — the
+    state is the facing authority, the BE mirror re-syncs at the tick head), a crusher on
+    the FRONT (north) face, a byproduct barrel on the EAST side ring, and the steam goes
+    STRAIGHT into the engine's BACK intake face via /gt6engine fill — the capability-door
+    push, the exact 1.7.10 pipe-into-getFluidTankFillable2(:239) canonical form. NO tank
+    intermediate: upstream NO tank holds steam (the POWER_CONDUCTING destruction chain —
+    wood/plastic melt, metal/Logistics fizz, the first chain runs reproduced the melt),
+    and the port carries that destruction only as a declared deviation parked for the P13
+    boiler card; the injection channel here can never break when P13 lands.
 
-    ENGINE CHOICE (budget-driven, first pass lesson): the crusher's input band is
-    minIn=16 / maxIn=64 (the T1 row the machine command ships), so the Lead engine's
-    tOutput = 8*(mState+1)/16 only clears the band floor AT state 31 — razor-thin against
-    its own 16,000 KU overheat clamp. The Tungsten row (mOutput 64, eff 5800 -> 58 KU per
-    200 L batch, cap 128,000 KU) reaches the :141 gate at state 8 = ~28,900 KU with
-    tOutput = 36 KU/t already mid-band. Two metal-drum fills = 128,000 L = 640 batches =
-    37,120 KU: above the ramp, far below the 128,000 KU clamp — no overheat on this arm.
+    ENGINE CHOICE (budget, second pass lesson — the OVERCHARGE gate is live): a packet
+    ABOVE the consumer's maxIn=64 detonates the crusher (TileEntityBasicMachine.doInject
+    :493-494 -> the Root overcharge/explode body — a blown-off machine was observed when
+    the store crested state 18 / tOutput 76). The Tungsten row (mOutput 64, eff 5800 ->
+    58 KU per 200 L batch, cap 128,000 KU, tank 25,600 L) fed 8 x 24,000 L = 192,000 L =
+    960 batches = 55,680 KU store -> state 14 -> tOutput 60, inside the band with the
+    state-16 cliff at +2 fills of margin. Emission tail ~26,800 KU at ~60 KU/t covers the
+    8-gem job (2 x ~16,384 progress cycles at book-rate 60/t) with zero-crossings every
+    ~36 ticks; the byproduct barrel collects 960 L of distilled_water (1 L per batch).
 
-    BARREL CHOICE (first pass lesson): the WOOD barrel MELTS at 373 K steam (the 340 K
-    wood ceiling, TileEntityBase08Barrel meltdown) — the first chain run's barrel turned
-    to fire mid-drive. The metal drum's 1696 K ceiling holds steam safely.
+  C the door's stopped-refusal proof: mode off, a fill echoes "filled 0" (the :239
+    !mStopped half through the SAME door the steam came in), mode on resumes.
 
-  C the byproduct + consumption proofs: the side barrel (east, on the FACING-perpendicular
-    ring) receives distilled_water (1 L per 200 L batch, :125); a fresh fill of the steam
-    drum reports (ACCEPTED) — only possible if the engine CONSUMED steam, the
-    deterministic drum-drop proof.
+  D /gt6tank water regression (the carrier command face, unchanged by the ruling): a wood
+    barrel takes 16,000 L of water through the side-less capability path.
 
-  D the overheat arm: a second engine (the Lead row) + metal drum, no crusher — nothing
-    discharges the store, so mEnergy climbs to capacity while mState pins past 30: the
-    :155 stop + :156 tank vent. 16,000 KU needs ~107,000 L at the Lead row's 30 KU/batch
-    = 1.7 drum fills; two fills (128,000 L -> 19,200 KU) force it. After the stop the
-    pull gate refuses (the :239 !mStopped half), so the drum keeps its remainder — a
-    fresh fill REJECTS, and stat shows stopped=true + tank=empty.
+  E the overheat arm (Invar row — the fastest overheat budget: eff 6400 = 64 KU per
+    200 L batch against the 16,000 KU clamp = 250 batches = 50,000 L): a dead-ended
+    engine, nothing discharges the store, mEnergy climbs past the clamp while mState
+    pins past 30 — the :155 stop + :156 tank vent. 15 fills (48,000 L = 15,360 KU gross,
+    under the clamp) assert ACCEPTED, 3 un-asserted fills force the crossing, stat shows
+    stopped=true + tank=empty, and the post-stop fill echoes "filled 0" — the :239 gate
+    holds forever.
 
 Run:  python3 tools/rcon/chains/p12-engine-steam.py
 """
@@ -53,21 +59,31 @@ from framework import Chain, Step, main, phase
 
 F = gt6world.fmt
 
-# The declared sites — the /gt6energy rig, the engine+crusher+drum+byproduct e2e quad,
-# and the overheat pair; the bbox cleanup union covers all of them per pass.
+# The declared sites — the /gt6energy rig, the engine+crusher+byproduct e2e quad, the
+# water-regression barrel, and the overheat pair; the bbox cleanup union covers them all.
 RIG = gt6world.Site(0, 64, 0)
-ENGINE, CRUSHER, DRUM, DWTANK = (gt6world.Site(4, 64, 8), gt6world.Site(4, 64, 7),
-                                 gt6world.Site(4, 64, 9), gt6world.Site(5, 64, 8))
-ENGINE2, DRUM2 = gt6world.Site(8, 64, 8), gt6world.Site(8, 64, 9)
+ENGINE, CRUSHER, DWTANK = gt6world.Site(4, 64, 8), gt6world.Site(4, 64, 7), gt6world.Site(5, 64, 8)
+WATER = gt6world.Site(4, 64, 12)
+ENGINE2 = gt6world.Site(8, 64, 8)
 
-FILL = f"gt6tank fill {F(DRUM)} gt6:steam 64000"
-FILL2 = f"gt6tank fill {F(DRUM2)} gt6:steam 64000"
+FILL = f"gt6engine fill {F(ENGINE)} 24000"
+FILL2 = f"gt6engine fill {F(ENGINE2)} 3200"
+
+# The working arm's metered store: 8 x 24,000 L (one drum-batch less than the tank's
+# 25,600 L ceiling per landing, converted within the tick between fills).
+RAMP_FILLS = [Step(FILL, expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=20.0 if i == 7 else 0.5)
+              for i in range(8)]
+# The overheat arm: 15 accepted fills stay under the clamp, 5 un-asserted ones cross it
+# (the state-31 emission bleeds 16 KU/tick, so the last ~240 KU take two extra fills —
+# observed 15,759/16,000 at 18 fills).
+OVERHEAT_FILLS = ([Step(FILL2, expect="filled 3200/3200 L of gt6:steam (ACCEPTED)", sleep=0.3) for _ in range(15)]
+                  + [Step(FILL2, sleep=0.3) for _ in range(5)])
 
 
 CHAIN = Chain(
     name="p12-engine-steam",
     slug="p12engsteam",
-    sites=gt6world.declare_sites(RIG, ENGINE, CRUSHER, DRUM, DWTANK, ENGINE2, DRUM2),
+    sites=gt6world.declare_sites(RIG, ENGINE, CRUSHER, DWTANK, WATER, ENGINE2),
     preferred_ports=(25719, 25729),      # this card's pinned rcon/query pair
     game_port=25709,                     # the pinned game port (rcon - 10)
     steps=[
@@ -76,33 +92,33 @@ CHAIN = Chain(
         Step(f"gt6energy stat {F(RIG)}", expect="voltage 32 EU"),
         Step(f"gt6engine stat {F(RIG)}", expect="accepts []"),
 
-        phase("B: the e2e quad — tungsten engine(facing) + back drum + front crusher + mode on"),
+        phase("B: the e2e quad — tungsten engine(facing) + front crusher + side byproduct barrel + direct intake fills"),
         Step(f"setblock {F(ENGINE)} gt6:steam_engine_tungsten[facing=north]", expect="Changed the block"),
         Step(f"execute if block {F(ENGINE)} gt6:steam_engine_tungsten[facing=north]", expect="Test passed"),
-        Step(f"setblock {F(DRUM)} gt6:barrel_metal", expect="Changed the block"),
-        Step(FILL, expect="filled 64000/64000 L of gt6:steam"),
-        Step(f"gt6engine stat {F(ENGINE)}", expect="facing=north(2) emit-side"),
         Step(f"gt6engine stat {F(ENGINE)}", expect="output=64 KU/t"),
         Step(f"gt6machine crusher place {F(CRUSHER)}", expect="GT6 crusher placed at 4, 64, 7"),
         Step(f"gt6machine crusher input 8 {F(CRUSHER)}", expect="8x gem_glass into slot 0"),
+        Step(f"setblock {F(DWTANK)} gt6:barrel_wood", expect="Changed the block"),
         Step(f"gt6engine mode {F(ENGINE)} on", expect=": on (stopped=false)"),
-
-        phase("C: the ramp — a second drum through the back-face pull, then the crusher verdict"),
-        Step(FILL, expect="(ACCEPTED)", sleep=2.0),
-        Step(FILL, expect="(ACCEPTED)", sleep=2.0),
-        Step(FILL, expect="(ACCEPTED)", sleep=16.0),
+        *RAMP_FILLS,
         Step(f"gt6machine crusher check {F(CRUSHER)}", expect="out[0]=", sleep=8.0),
         Step(f"gt6tank stat {F(DWTANK)}", expect="L of gt6:distilled_water"),
-        Step(FILL, expect="(ACCEPTED)"),  # a full drum would REJECT — the drop proof
 
-        phase("D: the overheat arm — two drums into a dead-ended Lead store, then the stop + vent"),
-        Step(f"setblock {F(ENGINE2)} gt6:steam_engine_lead[facing=north]", expect="Changed the block"),
-        Step(f"setblock {F(DRUM2)} gt6:barrel_metal", expect="Changed the block"),
-        Step(FILL2, expect="filled 64000/64000 L of gt6:steam", sleep=2.0),
-        Step(FILL2, expect="(ACCEPTED)", sleep=4.0),
+        phase("C: the intake door's stopped-refusal proof (mode off -> filled 0 -> mode on)"),
+        Step(f"gt6engine mode {F(ENGINE)} off", expect=": off (stopped=true)"),
+        Step(f"gt6engine fill {F(ENGINE)} 1000", expect="filled 0/1000 L of gt6:steam (REJECTED)"),
+        Step(f"gt6engine mode {F(ENGINE)} on", expect=": on (stopped=false)"),
+
+        phase("D: /gt6tank water regression (the carrier command face, unchanged by the ruling)"),
+        Step(f"setblock {F(WATER)} gt6:barrel_wood", expect="Changed the block"),
+        Step(f"gt6tank fill {F(WATER)} minecraft:water 16000", expect="filled 16000/16000 L of minecraft:water"),
+
+        phase("E: the overheat arm — 18 direct fills into a dead-ended Invar store, then the stop + vent"),
+        Step(f"setblock {F(ENGINE2)} gt6:steam_engine_invar[facing=north]", expect="Changed the block"),
+        *OVERHEAT_FILLS,
         Step(f"gt6engine stat {F(ENGINE2)}", expect="stopped=true"),
         Step(f"gt6engine stat {F(ENGINE2)}", expect="tank=empty"),
-        Step(FILL2, expect="(REJECTED)"),  # the stopped engine never drank the remainder
+        Step(FILL2, expect="filled 0/3200 L of gt6:steam (REJECTED)"),  # the :239 gate holds
     ],
 )
 
