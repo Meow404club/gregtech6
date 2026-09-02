@@ -368,3 +368,35 @@ byte-identical, no rescaling or redrawing.
 
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+Conveyor + Robot Arm cover textures, task p11-cover-conveyor-robotarm: the 4
+PNGs + 4 animation mcmeta files under `gt6/textures/block/conveyor/` and
+`gt6/textures/block/robotarm/` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/covers/conveyor/`
+and `.../covers/robotarm/` (the `CoverConveyor.java:92-94` / `CoverRobotArm.java:118-120`
+`sTextureIn`/`sTextureOut` pair — `machines/covers/conveyor/<in|out>` and
+`machines/covers/robotarm/<in|out>`), byte-identical to upstream, sha256
+verified:
+
+- `conveyor/in.png`            `1a98c8952bc685f3a7c4b93bb3b26ad8440b340063d77cd658c072dfe3dfdc8a`
+- `conveyor/out.png`           `c7da006b0724127581662e5a853654ef69f92bd909582e74d94d4cb6a0fc11d7`
+- `robotarm/in.png`            `9e41ccc13c149f3f82ca52d3b41bcfcfcb831fdbb5665601ccab837e4b61566e`
+- `robotarm/out.png`           `b4f0125e39d28a71e5f9d2b16c2abf9fe257c9a4cbf91b5737c0a91ddf91a648`
+- `<conveyor|robotarm>/<in|out>.png.mcmeta` (4 copies)
+  `920176fe0c003f6f293aab5fc344418356377d273c414a8f5378755e25674891`
+
+Path mapping (declared, the redstone-conductor precedent): upstream
+`machines/covers/<conveyor|robotarm>/<in|out>` is lowercased to
+`<conveyor|robotarm>/<in|out>` (1.20.1 `ResourceLocation` charset), landing
+under `textures/block/` — the vanilla block atlas `directory("block")` source
+auto-stitches the sprite ids `gt6:block/conveyor/<in|out>` and
+`gt6:block/robotarm/<in|out>` with zero extra atlas wiring. The PNGs are the
+upstream 16x64 four-frame animation strips (frametime 2, the `.mcmeta`
+contents copied verbatim), so the plate sprites stay ANIMATED in 1.20.1 — the
+vanilla atlas animation system drives the frames, the plate quads sample the
+logical 16x16 region. The upstream `BACKGROUND_COVER` layer (covers/base.png,
+the attachment/holder faces) is NOT borrowed — it folds into the
+single-sprite plate like every cover (AbstractCoverDefault :71-72 defaults).
+
+Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
