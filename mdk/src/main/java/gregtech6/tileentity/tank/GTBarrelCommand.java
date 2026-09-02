@@ -123,8 +123,22 @@ public final class GTBarrelCommand {
 					// a broken barrel's dropped item reports through its FLUID_HANDLER_ITEM
 					// capability (the break-carries-content live proof).
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
-						.executes(aContext -> show(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
-		LOGGER.info("Registered GT6 fluid barrel command /gt6tank (accept|melt|fill|draw|stat|show)");
+						.executes(aContext -> show(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+				.then(Commands.literal("tap")
+					// p12-tap-funnel-attachment — the tap acceptance channel: runs the tap at
+					// pos through its EMPTY-HAND chain (the deterministic counterfactual of "an
+					// empty-handed player clicks"; the player right-click is the real
+					// interaction — DECLARED deviation, the card's acceptance (b)).
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(aContext -> tap(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+				.then(Commands.literal("funnel")
+					// p12-tap-funnel-attachment — the funnel acceptance channel: runs the
+					// funnel at pos with a VIRTUAL WATER BUCKET (the deterministic
+					// counterfactual of "a player holding a water bucket clicks"; the empty
+					// container is reported, not given — DECLARED deviation).
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(aContext -> funnel(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
+		LOGGER.info("Registered GT6 fluid barrel command /gt6tank (accept|melt|fill|draw|stat|show|tap|funnel)");
 	}
 
 	/** {@code down|up|north|south|west|east} → Direction (the GTCoverCommand parse, mirrored here so the driver stays self-contained). */
@@ -132,6 +146,45 @@ public final class GTBarrelCommand {
 		Direction tSide = Direction.byName(aWord.toLowerCase());
 		if (tSide == null) throw new com.mojang.brigadier.exceptions.SimpleCommandExceptionType(Component.literal("Unknown side: " + aWord)).create();
 		return tSide;
+	}
+
+	/**
+	 * The p12 tap acceptance channel (spec ⑦): drives the tap BE at pos through its
+	 * empty-hand chain with a null player — the upstream {@code onBlockActivated3}
+	 * :77-176 empty-hand form, the real interaction being the block {@code use}. The
+	 * report carries the stable tokens the RCON chain asserts on
+	 * ({@code cauldron level a -> b, drained N L} / {@code refused a gas} / ...).
+	 */
+	private static int tap(CommandSourceStack aSource, BlockPos aPos) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof gregtech6.tileentity.attachment.GTTapBlockEntity tTap)) {
+			aSource.sendFailure(Component.literal("No GT6 tap BlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		String tReport = tTap.activate(null, (byte)Direction.NORTH.get3DDataValue(), null);
+		String tLine = "GT6 tap at " + aPos.toShortString() + " (facing "
+				+ Direction.from3DDataValue(tTap.mFacing) + "): " + tReport;
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The p12 funnel acceptance channel (spec ⑦): drives the funnel BE at pos with a
+	 * virtual water bucket (the upstream :68-93 bucket-form pour, one item's content) —
+	 * the empty container form is reported, not given (no player to receive it).
+	 */
+	private static int funnel(CommandSourceStack aSource, BlockPos aPos) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof gregtech6.tileentity.attachment.GTFunnelBlockEntity tFunnel)) {
+			aSource.sendFailure(Component.literal("No GT6 funnel BlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		ItemStack tVirtualBucket = new ItemStack(Items.WATER_BUCKET);
+		String tReport = tFunnel.activate(null, (byte)Direction.NORTH.get3DDataValue(), tVirtualBucket);
+		String tLine = "GT6 funnel at " + aPos.toShortString() + " (facing "
+				+ Direction.from3DDataValue(tFunnel.mFacing) + ", virtual water bucket): " + tReport;
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
 	}
 
 	/**
