@@ -47,10 +47,12 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
  * p5-wrench-ui-gtceu), a {@link TileEntityOven} (the front-rotation mode, task
  * p6-oven-rotation — shift marks the rotatable cells, the same predicate
  * {@link GTOvenBlock#use} rotates through) or a {@link TileEntityCokeOven} (the
- * structure ghost preview, tasks p10-ghost-preview-poc/p12-ghost-pattern-api — a formed
- * shell shows only its outer frame, an unformed one one wireframe per declared pattern
- * cell; the pattern comes from the {@code getStructurePattern()} controller binding,
- * null = nothing drawn); shift switches the display modes.
+ * structure ghost preview, tasks p10-ghost-preview-poc / p12-ghost-pattern-api /
+ * p12-ghost-render-match — a formed shell shows only its outer frame, an unformed one
+ * per-cell translucent faces in green/red match colouring, judged fresh per frame
+ * against the Level through the {@code Cell.matches} predicates; the pattern comes from
+ * the {@code getStructurePattern()} controller binding, null = nothing drawn); shift
+ * switches the display modes.
  * Bare hands and other items never show the grid.
  */
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -84,19 +86,21 @@ public final class GTWrenchHighlightListener {
 			byte tFrontFacing = (byte) tOven.getBlockState().getValue(GTOvenBlock.FACING).get3DDataValue();
 			GTWrenchGridRenderer.renderOvenGrid(tPoseStack, tBuffers, tCamera, tTarget, tPlayer.isShiftKeyDown(), tFrontFacing);
 		} else if (tTile instanceof TileEntityCokeOven tOven) {
-			// tasks p10-ghost-preview-poc + p12-ghost-pattern-api — the structure ghost. Same
-			// BlockState rule: the FACING/FORMED pair of the state is the client display
-			// authority (the BE's own mFacing/mStructureOkay can both be stale here); the
-			// pattern comes from the controller binding (getStructurePattern, default null =
-			// no declaration, nothing drawn) — checkStructure2 is never run on the client
-			// (it carries the centre-cell removeBlock world write)
+			// tasks p10-ghost-preview-poc + p12-ghost-pattern-api + p12-ghost-render-match — the
+			// structure ghost. Same BlockState rule: the FACING/FORMED pair of the state is the
+			// client display authority (the BE's own mFacing/mStructureOkay can both be stale
+			// here); the pattern comes from the controller binding (getStructurePattern, default
+			// null = no declaration, nothing drawn) — checkStructure2 is never run on the client
+			// (it carries the centre-cell removeBlock world write). The Level rides along by
+			// value for the per-frame green/red match reads (GTMultiBlockGhostMatcher — reads
+			// only, zero writes).
 			GTMultiBlockPattern tPattern = tOven.getStructurePattern();
 			if (tPattern != null) {
 				BlockState tState = tOven.getBlockState();
 				byte tFacing = (byte) tState.getValue(TileEntityBase10MultiBlockBase.FACING).get3DDataValue();
 				boolean tFormed = tState.getValue(TileEntityBase10MultiBlockBase.FORMED);
-				GTMultiBlockPreviewRenderer.renderPreview(tPoseStack, tBuffers, tCamera, tTarget.getBlockPos(), tPattern,
-						tFacing, tFormed);
+				GTMultiBlockPreviewRenderer.renderPreview(tPoseStack, tBuffers, tCamera, tPlayer.level(),
+						tTarget.getBlockPos(), tPattern, tFacing, tFormed);
 			}
 		}
 		// no cancel — the vanilla selection box renders as usual

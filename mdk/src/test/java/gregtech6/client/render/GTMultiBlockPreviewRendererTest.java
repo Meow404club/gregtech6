@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,21 +19,23 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.multiblock.GTMultiBlockPattern;
 
 /**
- * The ghost preview emission pin (tasks p10-ghost-preview-poc → p12-ghost-pattern-api,
- * offline): the renderer now draws whatever the pattern API declares, and this test
- * pins the drawn result to the POC's literal draw — ① a recording
- * {@link VertexConsumer} captures the exact vertex stream of
- * {@link GTMultiBlockPreviewRenderer#emitPattern} and compares it vertex-by-vertex
- * (positions AND colours, exact float equality) against the POC emission recomputed
- * here from its hardcoded 26-cell table (GTMultiBlockPreviewRenderer.java PATTERN_CELLS
- * at c25ed08) — per facing, formed and unformed: the card's "frame-equal" acceptance;
- * ② the four-facing full-table rotation — every one of the 26 cells plus the air centre
- * maps through the pattern API to the upstream
- * {@code controller - OFF[facing] + (i, j, k)} arithmetic against a test-local mirror of
- * the OFF tables (TileEntityBase01Root.java:174-176 — the specification, independent of
- * the pattern code), with the centre offsets hardcoded per facing; ③ the shell geometry
- * per facing: the pattern bounds always span the 3x3x3 cube one cell BEHIND the
- * controller and level with it.
+ * The ghost preview emission pin (tasks p10-ghost-preview-poc → p12-ghost-pattern-api →
+ * p12-ghost-render-match, offline): ① the FORMED shell draw is STILL the POC's literal
+ * draw — a recording {@link VertexConsumer} captures the exact vertex stream of
+ * {@link GTMultiBlockPreviewRenderer#emitFormedShell} and compares it vertex-by-vertex
+ * (positions AND colours, exact float equality) against the POC shell emission
+ * recomputed here (the c25ed08 draw) — per facing, the "FORMED = zero change" ruling;
+ * ② the UNFORMED green/red stream — per-cell translucent face quads
+ * ({@link RenderType#debugQuads()} calibre: vertex + colour only, face alpha 0.3) plus
+ * the opaque same-colour edge wire, GREEN (0.2, 1.0, 0.2) / RED (1.0, 0.2, 0.2),
+ * SKIP cells painting nothing, verdict order the declaration order, vertices inset by
+ * 0.002 from the block bounds (the z-fight ruling); ③ the four-facing full-table
+ * rotation — every one of the 26 cells plus the air centre maps through the pattern
+ * API to the upstream {@code controller - OFF[facing] + (i, j, k)} arithmetic against a
+ * test-local mirror of the OFF tables (TileEntityBase01Root.java:174-176 — the
+ * specification, independent of the pattern code), with the centre offsets hardcoded
+ * per facing; ④ the shell geometry per facing: the pattern bounds always span the
+ * 3x3x3 cube one cell BEHIND the controller and level with it.
  *
  * <p>Nothing here touches a real GL surface: the recorder swallows the vertex calls,
  * the pose stack is identity math. The pattern must never be derived from
@@ -47,11 +50,20 @@ public class GTMultiBlockPreviewRendererTest extends GTOfflineRenderTestBase {
 	private static final int[] OFF_Y = { 0, 1, 0, 0, 0, 0 };
 	private static final int[] OFF_Z = { 0, 0, -1, 1, 0, 0 };
 
-	/** The flat grey of the centre air cell — the POC COLOR_AIR. */
-	private static final float COLOR_AIR = 0.5F;
+	/** The face alpha — the Litematica wrongBlock calibre (#4CFF3333 ≙ alpha 0.30). */
+	private static final float FACE_ALPHA = 0.3F;
+	/** The green/red triplets — the renderer constants' test-local mirror (the spec). */
+	private static final float[] GREEN = { 0.2F, 1.0F, 0.2F };
+	private static final float[] RED = { 1.0F, 0.2F, 0.2F };
+	/** The z-fight vertex inset — the renderer constant's test-local mirror. */
+	private static final float INSET = 0.002F;
+
+	// -------------------------------------------------------------------------
+	// ① the FORMED shell — still the POC draw, frame-equal (the zero-change ruling)
+	// -------------------------------------------------------------------------
 
 	@Test
-	public void emissionIsFrameEqualToThePocDraw() {
+	public void formedShellIsFrameEqualToThePocDraw() {
 		float tRG = 0.3F; // any fixed pulse value — both sides receive the same one
 		byte[] tFacings = { 2, 3, 4, 5 };
 		GTMultiBlockPattern tPattern = cokeOvenPatternLikePoc();
@@ -60,18 +72,110 @@ public class GTMultiBlockPreviewRendererTest extends GTOfflineRenderTestBase {
 		for (byte tFacing : tFacings) {
 			// the structure centre for a controller at (100, 64, 100)
 			int tCx = 100 - OFF_X[tFacing], tCy = 64 - OFF_Y[tFacing], tCz = 100 - OFF_Z[tFacing];
-			for (boolean tFormed : new boolean[] { false, true }) {
-				Recorder tActual = new Recorder();
-				GTMultiBlockPreviewRenderer.emitPattern(tPose.last(), tActual, tCx, tCy, tCz, tPattern, tFormed, tRG);
-				Recorder tExpected = new Recorder();
-				pocDraw(tExpected, tCx, tCy, tCz, tFormed, tRG);
-				String tWhere = "facing " + tFacing + " formed " + tFormed;
-				tExpected.assertSameStream(tActual, tWhere);
-				tComparisons++;
-			}
+			Recorder tActual = new Recorder();
+			GTMultiBlockPreviewRenderer.emitFormedShell(tPose.last(), tActual, tCx, tCy, tCz, tPattern, tRG);
+			Recorder tExpected = new Recorder();
+			pocShell(tExpected, tCx, tCy, tCz, tRG);
+			tExpected.assertSameStream(tActual, "facing " + tFacing);
+			tComparisons++;
 		}
-		assertEquals(8, tComparisons, "four facings x two draw modes, all pinned");
+		assertEquals(4, tComparisons, "four facings, all pinned");
 	}
+
+	// -------------------------------------------------------------------------
+	// ② the UNFORMED green/red stream
+	// -------------------------------------------------------------------------
+
+	/** All-SKIP verdicts paint nothing at all (the matched hollow centre, the Coke Oven formed-centre case). */
+	@Test
+	public void allSkipPaintsNothing() {
+		GTMultiBlockPattern tPattern = singleCellPattern(0, 0, 0);
+		Recorder tFaces = new Recorder(), tLines = new Recorder();
+		PoseStack tPose = new PoseStack();
+		GTMultiBlockPreviewRenderer.emitUnformed(tPose.last(), tFaces, tLines, tPattern,
+				verdicts(GTMultiBlockGhostMatcher.Verdict.SKIP), 0, 0, 0);
+		assertEquals(0, tFaces.mVertices.size(), "no face vertices for a skipped cell");
+		assertEquals(0, tLines.mVertices.size(), "no edge vertices for a skipped cell");
+	}
+
+	/** One GREEN cell: 24 face vertices (6 quads x 4, debugQuads calibre, alpha 0.3) + 24 opaque edge vertices, inset by 0.002. */
+	@Test
+	public void greenCellPaintsTranslucentFacesAndOpaqueEdges() {
+		assertCellStream(GTMultiBlockGhostMatcher.Verdict.GREEN, GREEN, "green");
+		assertCellStream(GTMultiBlockGhostMatcher.Verdict.RED, RED, "red");
+	}
+
+	private static void assertCellStream(GTMultiBlockGhostMatcher.Verdict aVerdict, float[] aRGB, String aLabel) {
+		GTMultiBlockPattern tPattern = singleCellPattern(0, 0, 1);
+		Recorder tFaces = new Recorder(), tLines = new Recorder();
+		PoseStack tPose = new PoseStack();
+		// structure centre at the origin → the cell (0,0,1) spans x/y in [-0.5+.., 0.5-..], z in [0.5+.., 1.5-..]
+		GTMultiBlockPreviewRenderer.emitUnformed(tPose.last(), tFaces, tLines, tPattern,
+				verdicts(aVerdict), 0, 0, 0);
+		// the same arithmetic as emitGhostCell, in the same evaluation order (bit-equality)
+		float tX0 = -0.5F + INSET, tY0 = -0.5F + INSET, tZ0 = 0.5F + INSET;
+		float tX1 = 0.5F - INSET, tY1 = 0.5F - INSET, tZ1 = 1.5F - INSET;
+		// the face stream: 6 quads x 4 vertices, colour (r, g, b, 0.3)
+		Recorder tExpectedFaces = new Recorder();
+		expectedCellFaces(tExpectedFaces, tX0, tY0, tZ0, tX1, tY1, tZ1, aRGB);
+		tExpectedFaces.assertSameStream(tFaces, aLabel + " faces");
+		// the edge stream: 12 edges x 2 vertices, same colour opaque
+		Recorder tExpectedLines = new Recorder();
+		edgeLoop(tExpectedLines, tX0, tY0, tZ0, tX1, tY1, tZ1, aRGB[0], aRGB[1], aRGB[2]);
+		tExpectedLines.assertSameStream(tLines, aLabel + " edges");
+	}
+
+	/** The verdict order is the declaration order; SKIP cells are passed over, colours follow the verdicts. */
+	@Test
+	public void verdictOrderFollowsDeclarationOrder() {
+		GTMultiBlockPattern.Builder tBuilder = GTMultiBlockPattern.builder();
+		tBuilder.part(0, 0, 0, (BlockState aState) -> true);
+		tBuilder.part(1, 0, 0, (BlockState aState) -> true);
+		tBuilder.part(2, 0, 0, (BlockState aState) -> true);
+		GTMultiBlockPattern tPattern = tBuilder.build();
+		Recorder tFaces = new Recorder(), tLines = new Recorder();
+		PoseStack tPose = new PoseStack();
+		GTMultiBlockPreviewRenderer.emitUnformed(tPose.last(), tFaces, tLines, tPattern, Arrays.asList(
+				GTMultiBlockGhostMatcher.Verdict.GREEN,
+				GTMultiBlockGhostMatcher.Verdict.SKIP,
+				GTMultiBlockGhostMatcher.Verdict.RED), 0, 0, 0);
+		// 2 painted cells x 24 vertices; the first 24 green, the last 24 red
+		assertEquals(48, tFaces.mVertices.size(), "the skipped cell paints no faces");
+		assertEquals(48, tLines.mVertices.size(), "the skipped cell paints no edges");
+		for (int i = 0; i < 24; i++) assertVertexColour(tFaces.mVertices.get(i), GREEN, FACE_ALPHA, "face " + i + " green half");
+		for (int i = 24; i < 48; i++) assertVertexColour(tFaces.mVertices.get(i), RED, FACE_ALPHA, "face " + i + " red half");
+		for (int i = 0; i < 24; i++) assertVertexColour(tLines.mVertices.get(i), GREEN, 1.0F, "edge " + i + " green half");
+		for (int i = 24; i < 48; i++) assertVertexColour(tLines.mVertices.get(i), RED, 1.0F, "edge " + i + " red half");
+		// the painted cells are cell 0 (centre 0,0,0 → x in [-0.498, 0.498]) and cell 2 (centre 2,0,0 → x in [1.502, 2.498])
+		assertFaceSpan(tFaces, 0, 24, -0.5F + INSET, 0.5F - INSET, -0.5F + INSET, 0.5F - INSET, -0.5F + INSET, 0.5F - INSET);
+		assertFaceSpan(tFaces, 24, 48, 1.5F + INSET, 2.5F - INSET, -0.5F + INSET, 0.5F - INSET, -0.5F + INSET, 0.5F - INSET);
+	}
+
+	private static void assertVertexColour(float[] aVertex, float[] aRGB, float aAlpha, String aWhere) {
+		assertEquals(aRGB[0], aVertex[3], 0.0F, aWhere + " r");
+		assertEquals(aRGB[1], aVertex[4], 0.0F, aWhere + " g");
+		assertEquals(aRGB[2], aVertex[5], 0.0F, aWhere + " b");
+		assertEquals(aAlpha, aVertex[6], 0.0F, aWhere + " a");
+	}
+
+	/** Every vertex in [aFrom, aTo) of the recorder lies exactly on the given inset box surface. */
+	private static void assertFaceSpan(Recorder aRecorder, int aFrom, int aTo,
+			float aMinX, float aMaxX, float aMinY, float aMaxY, float aMinZ, float aMaxZ) {
+		for (int i = aFrom; i < aTo; i++) {
+			float[] tV = aRecorder.mVertices.get(i);
+			assertTrue(on(tV[0], aMinX, aMaxX), "vertex " + i + " x on the inset surface");
+			assertTrue(on(tV[1], aMinY, aMaxY), "vertex " + i + " y on the inset surface");
+			assertTrue(on(tV[2], aMinZ, aMaxZ), "vertex " + i + " z on the inset surface");
+		}
+	}
+
+	private static boolean on(float aValue, float aMin, float aMax) {
+		return aValue == aMin || aValue == aMax;
+	}
+
+	// -------------------------------------------------------------------------
+	// ③/④ the pattern API rotation + shell geometry (unchanged from the pattern-api card)
+	// -------------------------------------------------------------------------
 
 	@Test
 	public void fourFacingsFullTable() {
@@ -157,55 +261,84 @@ public class GTMultiBlockPreviewRendererTest extends GTOfflineRenderTestBase {
 	}
 
 	// -------------------------------------------------------------------------
-	// the POC emission, recomputed literally — the frame-equality spec
+	// the expected emissions, recomputed literally — the stream specs
 	// -------------------------------------------------------------------------
 
-	/** The POC's hardcoded PATTERN_CELLS (the literal upstream loop minus the centre). */
-	private static final int[][] POC_CELLS = {
-			{ -1, -1, -1 }, { -1, -1, 0 }, { -1, -1, 1 },
-			{ -1, 0, -1 }, { -1, 0, 0 }, { -1, 0, 1 },
-			{ -1, 1, -1 }, { -1, 1, 0 }, { -1, 1, 1 },
-			{ 0, -1, -1 }, { 0, -1, 0 }, { 0, -1, 1 },
-			{ 0, 0, -1 }, { 0, 0, 1 },
-			{ 0, 1, -1 }, { 0, 1, 0 }, { 0, 1, 1 },
-			{ 1, -1, -1 }, { 1, -1, 0 }, { 1, -1, 1 },
-			{ 1, 0, -1 }, { 1, 0, 0 }, { 1, 0, 1 },
-			{ 1, 1, -1 }, { 1, 1, 0 }, { 1, 1, 1 }
-	};
-
-	/** The POC renderPreview draw body for an already-centred (cx, cy, cz). */
-	private static void pocDraw(Recorder aRecorder, int aCx, int aCy, int aCz, boolean aFormed, float aRG) {
-		if (aFormed) {
-			// drawBoxEdges(pose, buffer, tCx, tCy, tCz, 1.5F, tRG, 1.0F) — the shell ruling
-			pocBox(aRecorder, aCx - 1.5F, aCy - 1.5F, aCz - 1.5F, aCx + 1.5F, aCy + 1.5F, aCz + 1.5F, aRG, 1.0F);
-		} else {
-			for (int[] tCell : POC_CELLS) {
-				pocBox(aRecorder, aCx + tCell[0] - 0.5F, aCy + tCell[1] - 0.5F, aCz + tCell[2] - 0.5F,
-						aCx + tCell[0] + 0.5F, aCy + tCell[1] + 0.5F, aCz + tCell[2] + 0.5F, aRG, 1.0F);
-			}
-			// the centre air cell in flat grey
-			pocBox(aRecorder, aCx - 0.5F, aCy - 0.5F, aCz - 0.5F, aCx + 0.5F, aCy + 0.5F, aCz + 0.5F, COLOR_AIR, COLOR_AIR);
-		}
+	/** The POC's formed-shell draw for an already-centred (cx, cy, cz) — the shell ruling, bit-equal target. */
+	private static void pocShell(Recorder aRecorder, int aCx, int aCy, int aCz, float aRG) {
+		pocBox(aRecorder, aCx - 1.5F, aCy - 1.5F, aCz - 1.5F, aCx + 1.5F, aCy + 1.5F, aCz + 1.5F, aRG, 1.0F);
 	}
 
 	/** The POC drawBoxEdges (center ± half unfolded to min/max), edge order verbatim. */
 	private static void pocBox(Recorder aRecorder, float x0, float y0, float z0, float x1, float y1, float z1, float aRG, float aB) {
 		// the 4 bottom edges
-		aRecorder.edge(x0, y0, z0, x1, y0, z0, aRG, aB);
-		aRecorder.edge(x1, y0, z0, x1, y0, z1, aRG, aB);
-		aRecorder.edge(x1, y0, z1, x0, y0, z1, aRG, aB);
-		aRecorder.edge(x0, y0, z1, x0, y0, z0, aRG, aB);
+		aRecorder.edge(x0, y0, z0, x1, y0, z0, aRG, aRG, aB);
+		aRecorder.edge(x1, y0, z0, x1, y0, z1, aRG, aRG, aB);
+		aRecorder.edge(x1, y0, z1, x0, y0, z1, aRG, aRG, aB);
+		aRecorder.edge(x0, y0, z1, x0, y0, z0, aRG, aRG, aB);
 		// the 4 top edges
-		aRecorder.edge(x0, y1, z0, x1, y1, z0, aRG, aB);
-		aRecorder.edge(x1, y1, z0, x1, y1, z1, aRG, aB);
-		aRecorder.edge(x1, y1, z1, x0, y1, z1, aRG, aB);
-		aRecorder.edge(x0, y1, z1, x0, y1, z0, aRG, aB);
+		aRecorder.edge(x0, y1, z0, x1, y1, z0, aRG, aRG, aB);
+		aRecorder.edge(x1, y1, z0, x1, y1, z1, aRG, aRG, aB);
+		aRecorder.edge(x1, y1, z1, x0, y1, z1, aRG, aRG, aB);
+		aRecorder.edge(x0, y1, z1, x0, y1, z0, aRG, aRG, aB);
 		// the 4 vertical edges
-		aRecorder.edge(x0, y0, z0, x0, y1, z0, aRG, aB);
-		aRecorder.edge(x1, y0, z0, x1, y1, z0, aRG, aB);
-		aRecorder.edge(x1, y0, z1, x1, y1, z1, aRG, aB);
-		aRecorder.edge(x0, y0, z1, x0, y1, z1, aRG, aB);
+		aRecorder.edge(x0, y0, z0, x0, y1, z0, aRG, aRG, aB);
+		aRecorder.edge(x1, y0, z0, x1, y1, z0, aRG, aRG, aB);
+		aRecorder.edge(x1, y0, z1, x1, y1, z1, aRG, aRG, aB);
+		aRecorder.edge(x0, y0, z1, x0, y1, z1, aRG, aRG, aB);
 	}
+
+	/**
+	 * The expected face stream of one ghost cell spanning (x0..x1, y0..y1, z0..z1) —
+	 * the {@code drawCellFaces} emission in its exact order: bottom, top, north, south,
+	 * west, east, one quad each, colour (r, g, b, 0.3).
+	 */
+	private static void expectedCellFaces(Recorder aRecorder, float x0, float y0, float z0, float x1, float y1, float z1,
+			float aR, float aG, float aB) {
+		// bottom / top
+		aRecorder.quad(x0, y0, z0, x1, y0, z0, x1, y0, z1, x0, y0, z1, aR, aG, aB);
+		aRecorder.quad(x0, y1, z0, x1, y1, z0, x1, y1, z1, x0, y1, z1, aR, aG, aB);
+		// north / south
+		aRecorder.quad(x0, y0, z0, x1, y0, z0, x1, y1, z0, x0, y1, z0, aR, aG, aB);
+		aRecorder.quad(x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1, aR, aG, aB);
+		// west / east
+		aRecorder.quad(x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0, aR, aG, aB);
+		aRecorder.quad(x1, y0, z0, x1, y0, z1, x1, y1, z1, x1, y1, z0, aR, aG, aB);
+	}
+
+	private static void expectedCellFaces(Recorder aRecorder, float x0, float y0, float z0, float x1, float y1, float z1, float[] aRGB) {
+		expectedCellFaces(aRecorder, x0, y0, z0, x1, y1, z1, aRGB[0], aRGB[1], aRGB[2]);
+	}
+
+	/**
+	 * The expected edge stream of one ghost cell — the {@code drawBoxEdges} order
+	 * (the POC's bottom-4/top-4/vertical-4), same colour opaque.
+	 */
+	private static void expectedCellEdges(Recorder aRecorder, float x0, float y0, float z0, float x1, float y1, float z1, float[] aRGB) {
+		edgeLoop(aRecorder, x0, y0, z0, x1, y1, z1, aRGB[0], aRGB[1], aRGB[2]);
+	}
+
+	private static void edgeLoop(Recorder aRecorder, float x0, float y0, float z0, float x1, float y1, float z1, float aR, float aG, float aB) {
+		// the 4 bottom edges
+		aRecorder.edge(x0, y0, z0, x1, y0, z0, aR, aG, aB);
+		aRecorder.edge(x1, y0, z0, x1, y0, z1, aR, aG, aB);
+		aRecorder.edge(x1, y0, z1, x0, y0, z1, aR, aG, aB);
+		aRecorder.edge(x0, y0, z1, x0, y0, z0, aR, aG, aB);
+		// the 4 top edges
+		aRecorder.edge(x0, y1, z0, x1, y1, z0, aR, aG, aB);
+		aRecorder.edge(x1, y1, z0, x1, y1, z1, aR, aG, aB);
+		aRecorder.edge(x1, y1, z1, x0, y1, z1, aR, aG, aB);
+		aRecorder.edge(x0, y1, z1, x0, y1, z0, aR, aG, aB);
+		// the 4 vertical edges
+		aRecorder.edge(x0, y0, z0, x0, y1, z0, aR, aG, aB);
+		aRecorder.edge(x1, y0, z0, x1, y1, z0, aR, aG, aB);
+		aRecorder.edge(x1, y0, z1, x1, y1, z1, aR, aG, aB);
+		aRecorder.edge(x0, y0, z1, x0, y1, z1, aR, aG, aB);
+	}
+
+	// -------------------------------------------------------------------------
+	// fixtures
+	// -------------------------------------------------------------------------
 
 	/** The declared Coke Oven shape, as TileEntityCokeOven.getStructurePattern builds it. */
 	private static GTMultiBlockPattern cokeOvenPatternLikePoc() {
@@ -216,6 +349,18 @@ public class GTMultiBlockPreviewRendererTest extends GTOfflineRenderTestBase {
 		}
 		tBuilder.hollow(0, 0, 0, (BlockState aState) -> true);
 		return tBuilder.build();
+	}
+
+	private static GTMultiBlockPattern singleCellPattern(int aX, int aY, int aZ) {
+		GTMultiBlockPattern.Builder tBuilder = GTMultiBlockPattern.builder();
+		tBuilder.part(aX, aY, aZ, (BlockState aState) -> true);
+		return tBuilder.build();
+	}
+
+	private static List<GTMultiBlockGhostMatcher.Verdict> verdicts(GTMultiBlockGhostMatcher.Verdict aVerdict) {
+		List<GTMultiBlockGhostMatcher.Verdict> tVerdicts = new ArrayList<>();
+		tVerdicts.add(aVerdict);
+		return tVerdicts;
 	}
 
 	private static long pack(int[] aCell) {
@@ -230,17 +375,26 @@ public class GTMultiBlockPreviewRendererTest extends GTOfflineRenderTestBase {
 
 	/**
 	 * The recording vertex consumer — captures the exact per-vertex positions and
-	 * colours of the LINES emission; normals/uv/lightmap are swallowed (drawLine emits
-	 * the face normal per endpoint, identical on both sides by construction).
+	 * colours of both the LINES and the debugQuads emission; normals/uv/lightmap are
+	 * swallowed (drawLine emits the face normal per endpoint, identical on both sides by
+	 * construction).
 	 */
 	private static final class Recorder implements VertexConsumer {
 
 		private final List<float[]> mVertices = new ArrayList<>();
 		private float mX, mY, mZ;
 
-		private void edge(float x0, float y0, float z0, float x1, float y1, float z1, float aRG, float aB) {
-			vertexRaw(x0, y0, z0, aRG, aRG, aB, 1.0F);
-			vertexRaw(x1, y1, z1, aRG, aRG, aB, 1.0F);
+		private void edge(float x0, float y0, float z0, float x1, float y1, float z1, float aR, float aG, float aB) {
+			vertexRaw(x0, y0, z0, aR, aG, aB, 1.0F);
+			vertexRaw(x1, y1, z1, aR, aG, aB, 1.0F);
+		}
+
+		private void quad(float aX0, float aY0, float aZ0, float aX1, float aY1, float aZ1,
+				float aX2, float aY2, float aZ2, float aX3, float aY3, float aZ3, float aR, float aG, float aB) {
+			vertexRaw(aX0, aY0, aZ0, aR, aG, aB, FACE_ALPHA);
+			vertexRaw(aX1, aY1, aZ1, aR, aG, aB, FACE_ALPHA);
+			vertexRaw(aX2, aY2, aZ2, aR, aG, aB, FACE_ALPHA);
+			vertexRaw(aX3, aY3, aZ3, aR, aG, aB, FACE_ALPHA);
 		}
 
 		private void vertexRaw(float aX, float aY, float aZ, float aR, float aG, float aB, float aA) {
