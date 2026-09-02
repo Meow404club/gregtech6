@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import org.jetbrains.annotations.NotNull;
 
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.fluid.GTFluidLists;
 
 /**
  * The item face of the barrel family (task p12-fluid-item-carrier spec ③) — the
@@ -72,6 +73,33 @@ public class GTBarrelItemFluidHandler implements IFluidHandlerItem, ICapabilityS
 	public GTBarrelItemFluidHandler setPreventDraining(boolean aPrevent) {
 		mTank.setPreventDraining(aPrevent);
 		return this;
+	}
+
+	/**
+	 * The gas-proof seam (task p13): the upstream item fill's {@code mGasProof} reads the
+	 * BLOCK carrier through {@code GTBarrelBlockItem.initCapabilities} — the same
+	 * capacityL-riding pattern. Base F (the wood-family rows, :2136-2149).
+	 */
+	private boolean mGasProof = false;
+
+	/** Fluent gas-proof arm (the {@link #setPreventDraining} shape): the carrier's NBT_GASPROOF row value. */
+	public GTBarrelItemFluidHandler setGasProof(boolean aGasProof) {
+		mGasProof = aGasProof;
+		return this;
+	}
+
+	/**
+	 * The fluid's registry-path name (the {@link TileEntityBase08Barrel} fluidName seam):
+	 * instance so offline fixtures can rename a vanilla stack — the live form is
+	 * {@code GTFluidLists.name} (the offline/live split precedent).
+	 */
+	protected String fluidName(@Nullable FluidStack aFluid) {
+		return GTFluidLists.name(aFluid);
+	}
+
+	/** The upstream :233-235 allowFluid, the task-p13 port face: the power-conductor list is the only list gate (the temperature branch is the melt judgment's job, onlySimple cut). */
+	private static boolean allowFluid(String aFluidName) {
+		return !GTFluidLists.isPowerConducting(aFluidName);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -134,10 +162,19 @@ public class GTBarrelItemFluidHandler implements IFluidHandlerItem, ICapabilityS
 		return mTank.isFluidValid(aStack);
 	}
 
-	/** Upstream item fill (TileEntityBase08Barrel :248-258, writeItemNBT back onto the stack) with the template count guard (:108). */
+	/**
+	 * Upstream item fill (TileEntityBase08Barrel :248-258, writeItemNBT back onto the stack)
+	 * with the template count guard (:108) and the task-p13 gate pair in the upstream
+	 * order: :250 !allowFluid (the power-conductor list) first, :251 !gasProof && gas
+	 * second. Drain carries no fluid gate — a barrel still holding steam from before the
+	 * card can always be drained back out (the pre-card stock clean-up path).
+	 */
 	@Override
 	public int fill(@Nullable FluidStack aFluid, FluidAction aAction) {
 		if (mContainer.getCount() != 1) return 0;
+		String tName = fluidName(aFluid);
+		if (!allowFluid(tName)) return 0; // upstream :250 — the power-conductor list refuses first
+		if (!mGasProof && GTFluidLists.isGas(tName)) return 0; // upstream :251 — then the gas gate
 		int tFilled = mTank.fill(aFluid, aAction);
 		if (tFilled > 0 && aAction.execute()) writeToContainerTag(); // upstream :256 UT.NBT.set(aStack, writeItemNBT(...))
 		return tFilled;

@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,14 +33,13 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * the established offline-NPE face (route around via narrow overrides, the
  * BarrelFluidHandler {@code (byte, int)} seam precedent).
  *
- * <p>Truth table (upstream TileEntityBase08Barrel :162 melt first, :180 gas gate, :184
- * allowFluid gate — the two doors independent, GASPROOF exempts the gas gate only):
- * steam vs wood (gasProof F, 340 K) = melt fires, gas gate unreached; steam vs metal
- * (gasProof T) = gas gate skipped, the allowFluid gate trash ONCE; water vs metal = both
- * gates pass, zero consumption. Plus the four-family gasProof values. The item-face
- * fill gate pair (:250 allowFluid, then :251 gas) rides the same file — the task p13
- * second half.
- */
+	 * <p>Truth table (upstream TileEntityBase08Barrel :162 melt first, :180 gas gate, :184
+	 * allowFluid gate — the two doors independent, GASPROOF exempts the gas gate only):
+	 * steam vs wood (gasProof F, 340 K) = melt fires, gas gate unreached; steam vs metal
+	 * (gasProof T) = gas gate skipped, the allowFluid gate trash ONCE; water vs metal = both
+	 * gates pass, zero consumption. Plus the four-family gasProof values and the item-face
+	 * fill gate pair (:250 allowFluid first, then :251 gas, drain gate-free).
+	 */
 public class BarrelFizzChainTest extends GTOfflineTestBase {
 
 	static final BlockPos POS = new BlockPos(2, 3, 4);
@@ -279,5 +280,69 @@ public class BarrelFizzChainTest extends GTOfflineTestBase {
 		assertTrue(tBe.allowFluid("water"), "the port allowFluid: plain water is allowed");
 		assertFalse(tBe.allowFluid("steam"), "the port allowFluid: power-conductor fluids are refused (UT.java:187)");
 		assertTrue(tBe.allowFluid("natural_gas"), "natural gas is not power-conducting — allowed");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the item-face fill gate pair (upstream :250 allowFluid first, then :251 gas;
+	// the drain face is gate-free — the pre-card stock clean-up semantics)
+	// ---------------------------------------------------------------------------
+
+	/** The item-face fixture: a rename seam over the real handler (the gasProof flag rides the real fluent arm). */
+	static final class NamedItemHandler extends GTBarrelItemFluidHandler {
+		String overrideName = null;
+
+		NamedItemHandler(boolean aGasProof) {
+			super(new ItemStack(Items.GLASS_BOTTLE), 16000);
+			setGasProof(aGasProof);
+		}
+
+		@Override
+		protected String fluidName(FluidStack aFluid) {
+			return overrideName != null ? overrideName : super.fluidName(aFluid);
+		}
+
+		/** The "steam" fill probe: the gates see the renamed stack, the real vanilla water keeps the fill legal offline. */
+		int runSteamFillProbe() {
+			overrideName = "steam";
+			return fill(new FluidStack(Fluids.WATER, 100), FluidAction.EXECUTE);
+		}
+	}
+
+	/** steam fills NOTHING on any barrel: refused on the gas-proof drums AND the plain wood barrel alike. */
+	@Test
+	public void itemFillRefusesSteamOnGasProofAndPlainBarrelsAlike() {
+		assertEquals(0, new NamedItemHandler(false).runSteamFillProbe(),
+				"wood (gasProof F): the :251 gas gate alone refuses steam");
+		assertEquals(0, new NamedItemHandler(true).runSteamFillProbe(),
+				"metal/plastic/logistics (gasProof T): the :250 allowFluid gate STILL refuses steam — the doors are independent");
+	}
+
+	/** natural gas fills only into the gas-proof container (the :251 gas gate, not the list gate). */
+	@Test
+	public void itemFillNaturalGasNeedsGasProof() {
+		NamedItemHandler tWood = new NamedItemHandler(false);
+		tWood.overrideName = "natural_gas";
+		assertEquals(0, tWood.fill(new FluidStack(Fluids.WATER, 100), FluidAction.EXECUTE),
+				"the :251 gas gate refuses natural gas without gas-proof");
+
+		NamedItemHandler tMetal = new NamedItemHandler(true);
+		tMetal.overrideName = "natural_gas";
+		assertEquals(100, tMetal.fill(new FluidStack(Fluids.WATER, 100), FluidAction.EXECUTE),
+				"a gas-proof item container takes natural gas (it is not power-conducting)");
+	}
+
+	/** water fills normally through both gate orders, and the drain face is gate-free (pre-card stock drains out). */
+	@Test
+	public void itemFillWaterNormalAndDrainFaceIsGateFree() {
+		NamedItemHandler tHandler = new NamedItemHandler(true);
+		assertEquals(100, tHandler.fill(new FluidStack(Fluids.WATER, 100), FluidAction.EXECUTE),
+				"water passes the :250 list gate and the :251 gas gate");
+
+		// the pre-card stock clean-up: a tank already holding "steam" (the name the gates see)
+		// still drains — the drain face consults no list
+		tHandler.overrideName = "steam";
+		FluidStack tDrained = tHandler.drain(1000, FluidAction.EXECUTE);
+		assertEquals(100, tDrained.getAmount(), "the legacy stock drains out in full");
+		assertEquals(0, tHandler.getFluidInTank(0).getAmount());
 	}
 }
