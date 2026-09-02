@@ -48,7 +48,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
                 new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task p12-axle-family
                 new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK), // task p12-engine-diesel
-                new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK))); // task p12-gearbox-transformer
+                new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task p12-gearbox-transformer
+                new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK))); // task p13-burning-box-family
     }
 
     /** The block list this provider owns: exactly the material prefix block array (the census walk order). */
@@ -207,6 +208,38 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : engineLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The burning-box family block list (task p13-burning-box-family): all 97 rows
+     * (Brick + Solid + Liquid + Gas + FluidBed). The upstream machines carry the MTE
+     * default self-drop (canDrop(0) == T across the generator family); the 1.20.1
+     * equivalent is exactly {@code dropSelf}.
+     */
+    public static List<Block> burningBoxLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6BurningBoxes.BurningBoxRow tRow : gregtech6.registry.GT6BurningBoxes.allRows()) {
+            rBlocks.add(gregtech6.registry.GT6BurningBoxes.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The burning-box family self-drop provider (task p13-burning-box-family). */
+    public static final class GT6BurningBoxBlockLoot extends BlockLootSubProvider {
+
+        public GT6BurningBoxBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return burningBoxLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : burningBoxLootBlocks()) dropSelf(tBlock);
         }
     }
 }

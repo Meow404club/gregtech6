@@ -104,6 +104,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addAttachments(); // task p12-tap-funnel-attachment
         addSteamEngines(); // task p12-engine-steam
         addDieselEngines(); // task p12-engine-diesel
+        addBurningBoxes(); // task p13-burning-box-family
         addGearBoxTransformer(); // task p12-gearbox-transformer
     }
 
@@ -644,5 +645,42 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     public static String blockSetOf(OreDictMaterial aMaterial) {
         return gregtech6.client.wire.GTWireTextures.blockSetOf(aMaterial);
+    }
+
+    /**
+     * Task p13-burning-box-family — the 97 burning-box rows (Loader_MultiTileEntities.java
+     * :517-704): ONE shared oriented cube model per FAMILY over the four grayscale
+     * family textures (gt6:block/burning_box_{solid,liquid,gas,fluidbed}, generated
+     * placeholders — the upstream colored/overlay iconsets have no borrowable source in
+     * this repo, the assets/README.md note), front = the FACING (the fuel/ignite face),
+     * rotated per FACING exactly like the steam-engine ladder (addSteamEngines). The
+     * Brick row shares the SOLID model (the same BE family, the stone-sound carrier).
+     * The 97 BlockItem models parent their family model (the crank per-row form). The
+     * per-material mRGBa tint and the burning overlay_active family are the render
+     * pool card (the steam-engine ruling repeated).
+     */
+    private void addBurningBoxes() {
+        java.util.Map<gregtech6.registry.GT6BurningBoxes.Family, ModelFile> tModels = new java.util.EnumMap<>(gregtech6.registry.GT6BurningBoxes.Family.class);
+        for (gregtech6.registry.GT6BurningBoxes.Family tFamily : gregtech6.registry.GT6BurningBoxes.Family.values()) {
+            String tTex = "block/burning_box_" + tFamily.name().toLowerCase(java.util.Locale.ROOT);
+            tModels.put(tFamily, models().cube("burning_box_" + tFamily.name().toLowerCase(java.util.Locale.ROOT),
+                    modLoc(tTex), modLoc(tTex),          // bottom/top
+                    modLoc(tTex), modLoc(tTex),          // north(front)/south(back) — one face, FACING drives the front semantics
+                    modLoc(tTex), modLoc(tTex)));        // west/east
+        }
+        for (gregtech6.registry.GT6BurningBoxes.BurningBoxRow tRow : gregtech6.registry.GT6BurningBoxes.allRows()) {
+            Block tBlock = gregtech6.registry.GT6BurningBoxes.BLOCKS_BY_PATH.get(tRow.path()).get();
+            ModelFile tModel = tModels.get(tRow.family());
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY = switch (aState.getValue(gregtech6.registry.GT6BurningBoxes.BurningBoxBlock.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
     }
 }

@@ -577,3 +577,19 @@ tint are the render pool card).
 
 Copied on 2026-09-02. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+Burning Box family block textures, task p13-burning-box-family: the 4 PNGs under
+`gt6/textures/block/burning_box_*.png` are GENERATED grayscale placeholders — the
+upstream burning-box iconsets
+(`machines/generators/burning_{solid,liquid,gas,fluidbed}/colored/*.png` +
+`overlay`/`overlay_active` fronts) have no borrowable source in this repo's
+snapshot tree. Declared deviation: upstream layers per-face colored icons with the
+active overlay keyed on the synced mBurning bit (getTexture2,
+MultiTileEntityGeneratorSolid :233-family) and tints per material mRGBa — the port
+ships ONE shared static texture per FAMILY over all rows, the FACING property
+drives the front (the fuel/ignite face) semantics, and the tint/active-overlay
+family is the render pool card (the crank/steam-engine ruling repeated).
+
+Generated on 2026-09-03 (no upstream bytes; nothing to sha256 — the placeholder
+glyph is a dark border + box outline + glowing core, deterministic generator in
+the card's tooling).
