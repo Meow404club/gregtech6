@@ -13,8 +13,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.AABB;
 
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -29,7 +31,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import org.slf4j.Logger;
 
+import java.util.List;
+
 import gregtech6.fluid.GTFluids;
+import gregtech6.item.GTBarrelBlockItem;
 import gregtech6.registry.GTBarrels;
 
 /**
@@ -52,6 +57,9 @@ import gregtech6.registry.GTBarrels;
  *     and {@link TileEntityBase08Barrel#meltdown()} — the tank is voided and the block
  *     replaced with fire (:227).</li>
  * <li>{@code stat <pos>} — dump amount/capacity/temperature/melting point for debugging.</li>
+ * <li>{@code show <pos>} (task p12-fluid-item-carrier) — the BE-and-drop assertion
+ *     surface: the barrel BE's tank, or the dropped barrel item's content through its
+ *     FLUID_HANDLER_ITEM capability — the break-carries-content verdict.</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = "gt6")
@@ -109,8 +117,14 @@ public final class GTBarrelCommand {
 										com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "amount")))))))
 				.then(Commands.literal("stat")
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
-						.executes(aContext -> stat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
-		LOGGER.info("Registered GT6 fluid barrel command /gt6tank (accept|melt|fill|draw|stat)");
+						.executes(aContext -> stat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+				.then(Commands.literal("show")
+					// p12 — the BE-and-drop assertion surface: a barrel BE reports its tank,
+					// a broken barrel's dropped item reports through its FLUID_HANDLER_ITEM
+					// capability (the break-carries-content live proof).
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(aContext -> show(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
+		LOGGER.info("Registered GT6 fluid barrel command /gt6tank (accept|melt|fill|draw|stat|show)");
 	}
 
 	/** {@code down|up|north|south|west|east} → Direction (the GTCoverCommand parse, mirrored here so the driver stays self-contained). */
@@ -181,6 +195,48 @@ public final class GTBarrelCommand {
 				aPos.toShortString(), aBarrel.mTank.amount(), aBarrel.mTank.capacity(),
 				aBarrel.mTank.isEmpty() ? "nothing" : ForgeRegistries.FLUIDS.getKey(aBarrel.mTank.getFluid().getFluid()),
 				TileEntityBase08Barrel.fluidTemperature(aBarrel.mTank.getFluid()), aBarrel.mMeltingPoint);
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The p12 show driver — the BE-and-drop assertion surface. A barrel BE at pos reports
+	 * its live tank; with no BE (the barrel was just broken) the dropped barrel item near
+	 * pos reports through its own FLUID_HANDLER_ITEM capability — the drop content being
+	 * visible at all is the break-carries-content verdict ({@code GTBarrelBlock.getDrops}
+	 * + the item capability, live-side). Stable assertion tokens:
+	 * {@code holds <amount>/<cap> L of <fluid>}.
+	 */
+	private static int show(CommandSourceStack aSource, BlockPos aPos) {
+		ServerLevel tLevel = aSource.getLevel();
+		if (tLevel.getBlockEntity(aPos) instanceof TileEntityBase08Barrel tBarrel) {
+			String tLine = String.format("GT6 tank show at %s: holds %d/%d L of %s",
+					aPos.toShortString(), tBarrel.mTank.amount(), tBarrel.mTank.capacity(),
+					tBarrel.mTank.isEmpty() ? "nothing" : ForgeRegistries.FLUIDS.getKey(tBarrel.mTank.getFluid().getFluid()));
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
+		AABB tBox = new AABB(aPos).inflate(2.0);
+		List<ItemEntity> tDrops = tLevel.getEntitiesOfClass(ItemEntity.class, tBox,
+				tEntity -> tEntity.getItem().getItem() instanceof GTBarrelBlockItem);
+		if (tDrops.isEmpty()) {
+			aSource.sendFailure(Component.literal("GT6 tank show at " + aPos.toShortString()
+					+ ": no barrel BE and no dropped barrel item within 2 blocks"));
+			return 0;
+		}
+		ItemStack tStack = tDrops.get(0).getItem(); // fill destroy drops exactly one barrel item
+		IFluidHandler tHandler = tStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).orElse(null);
+		String tLine;
+		if (tHandler == null) {
+			tLine = String.format("GT6 tank show at %s: dropped barrel item carries NO FLUID_HANDLER_ITEM capability", aPos.toShortString());
+		} else {
+			FluidStack tContent = tHandler.getFluidInTank(0);
+			tLine = String.format("GT6 tank show at %s: dropped barrel item holds %d/%d L of %s",
+					aPos.toShortString(), tContent.getAmount(), tHandler.getTankCapacity(0),
+					tContent.isEmpty() ? "nothing" : ForgeRegistries.FLUIDS.getKey(tContent.getFluid()));
+		}
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
