@@ -51,6 +51,17 @@ import gregtech6.covers.GTCoverRenderSnapshot;
  * Plates are opaque, so quads emit on the solid layer only (the chunk renderer gates
  * the layer calls through the model's ChunkRenderTypeSet; null = the all-layers pass).
  *
+ * <p>LAYER TABLE (task p11-render-cover-multilayer): the snapshot carries the upstream
+ * {@code BlockTextureMulti} stack per face (bottom first — the plate background plus the
+ * surface sprite; see {@code GTCoverRenderSnapshot} census). Layer 0 emits exactly the
+ * rule set above at the unmoved slab position, so a single-layer face plans
+ * byte-identically to the pre-p11 planner; every further layer adds ONE quad on the
+ * covered-face pass only (the foreground is a face decal — rim/back stay the background
+ * plate), its slab shifted outward along the cover normal by
+ * {@code PLATE_EPSILON * layerIndex} so stacked layers never coplanar-fight. The shift
+ * runs along the quad normal, so the front face's UV extents (the two tangential axes)
+ * are unchanged and every layer's foreground sits pixel-aligned over the background.
+ *
  * <p>RED LINE: reads ONLY the immutable snapshot — no BlockEntity is reachable from
  * here (render-thread semantics, GTDynamicBakedModel class doc). CLIENT-ONLY class:
  * it is instantiated exclusively through the Dist.CLIENT
@@ -104,9 +115,10 @@ public class CoverPlateModel extends GTDynamicBakedModel {
 
 	/**
 	 * One planned plate quad: the quad's facing (and cullface), the slab box in
-	 * 0..1 block space, the sprite id and the cover face it belongs to.
+	 * 0..1 block space, the sprite id, the cover face it belongs to and the layer
+	 * index within the face's layer table (0 = the plate background).
 	 */
-	public record PlateQuad(Direction quadFace, boolean cull, Direction coverFace, double[] box, ResourceLocation sprite) {
+	public record PlateQuad(Direction quadFace, boolean cull, Direction coverFace, double[] box, ResourceLocation sprite, int layer) {
 
 		/** Box copy guard — the planner builds fresh arrays per quad. */
 		public PlateQuad {
@@ -118,25 +130,50 @@ public class CoverPlateModel extends GTDynamicBakedModel {
 	public static List<PlateQuad> planQuads(GTCoverRenderSnapshot aSnapshot, @Nullable Direction aSide) {
 		List<PlateQuad> rPlans = new ArrayList<>();
 		for (Direction tFace : Direction.values()) {
-			ResourceLocation tSprite = aSnapshot.sprite(tFace);
-			if (tSprite == null) continue;
-			double[] tSlab = slabOf(tFace);
+			List<ResourceLocation> tLayers = aSnapshot.layers(tFace);
+			if (tLayers.isEmpty()) continue;
 			if (aSide == null) {
-				// ICoverableRenderer.java:76 — the inner back face (unculled), null pass only
-				rPlans.add(new PlateQuad(tFace.getOpposite(), false, tFace, tSlab, tSprite));
+				// ICoverableRenderer.java:76 — the inner back face (unculled), null pass, background layer only
+				rPlans.add(new PlateQuad(tFace.getOpposite(), false, tFace, slabOf(tFace), tLayers.get(0), 0));
 				continue;
 			}
 			if (aSide == tFace) {
-				// the plate's outer face, culled by the neighbour at the cover face
-				rPlans.add(new PlateQuad(tFace, true, tFace, tSlab, tSprite));
+				// the plate's outer face, culled by the neighbour at the cover face —
+				// the background slab, then each foreground layer offset by epsilon * index
+				ResourceLocation tBase = tLayers.get(0);
+				rPlans.add(new PlateQuad(tFace, true, tFace, slabOf(tFace), tBase, 0));
+				for (int i = 1; i < tLayers.size(); i++) {
+					rPlans.add(new PlateQuad(tFace, true, tFace, slabOf(tFace, i), tLayers.get(i), i));
+				}
 				continue;
 			}
 			if (aSide.getAxis() != tFace.getAxis() && !aSnapshot.hasCover(aSide)) {
-				// the plate's rim on the perpendicular pass, suppressed when that face has its own cover
-				rPlans.add(new PlateQuad(aSide, true, tFace, tSlab, tSprite));
+				// the plate's rim on the perpendicular pass, suppressed when that face has its own cover — background layer only
+				rPlans.add(new PlateQuad(aSide, true, tFace, slabOf(tFace), tLayers.get(0), 0));
 			}
 		}
 		return rPlans;
+	}
+
+	/**
+	 * The slab box on the given face in 0..1 space — the covered face's outer 2px,
+	 * inflated by {@link #PLATE_EPSILON} on all axes (GTCEu COVER_OVERLAY shape).
+	 * Layer 0 is the unmoved plate; layer {@code i} shifts outward along the face
+	 * normal by {@code PLATE_EPSILON * i} (the layer-table z-fight guard).
+	 */
+	public static double[] slabOf(Direction aFace, int aLayer) {
+		double[] rSlab = slabOf(aFace);
+		if (aLayer == 0) return rSlab;
+		double tOffset = PLATE_EPSILON * aLayer;
+		switch (aFace) {
+			case DOWN:  rSlab[1] -= tOffset; rSlab[4] -= tOffset; break;
+			case UP:    rSlab[1] += tOffset; rSlab[4] += tOffset; break;
+			case NORTH: rSlab[2] -= tOffset; rSlab[5] -= tOffset; break;
+			case SOUTH: rSlab[2] += tOffset; rSlab[5] += tOffset; break;
+			case WEST:  rSlab[0] -= tOffset; rSlab[3] -= tOffset; break;
+			case EAST:  rSlab[0] += tOffset; rSlab[3] += tOffset; break;
+		}
+		return rSlab;
 	}
 
 	/**

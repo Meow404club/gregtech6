@@ -400,3 +400,42 @@ single-sprite plate like every cover (AbstractCoverDefault :71-72 defaults).
 
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+Cover plate BACKGROUND layer textures, task p11-render-cover-multilayer: the 2
+PNGs under `gt6/textures/block/covers/` and `gt6/textures/block/cover_switch/`
+come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/covers/`
+byte-identical to upstream, sha256 verified:
+
+- `covers/base.png`           `1e69e5b9205f64da1f3f24b6f717ce5e95d9b11394769cbccc820852789f8bdc`
+  (upstream `machines/covers/base.png` — the `AbstractCoverDefault.java:111`
+  `BACKGROUND_COVER` shared plate background)
+- `cover_switch/base.png`     `29775ad9a45b231e3725fe4336a2f00b35b6ecf1568cf9f66b15b6d646a58db7`
+  (upstream `machines/covers/coverswitch/base.png` — the
+  `CoverControllerCovers.java:104` `sTextureBackground`, the cover controller's
+  OWN background, not the shared base)
+
+This section SUPERSEDES the per-card "the upstream `BACKGROUND_COVER` layer is
+NOT borrowed — it folds into the single-sprite plate" notes above (p9 emitter,
+p10 conductor/switch, p11 shutter/filter/controllers/conveyor notes): the
+p11-render-cover-multilayer snapshot carries a per-face LAYER TABLE now
+(`GTCoverRenderSnapshot.layers` — the census `BlockTextureMulti` stack, bottom
+first), so every registered cover plate renders `covers/base` (or
+`cover_switch/base` for the cover controller) beneath its surface sprite, each
+layer offset by the plate epsilon per index against z-fighting. The earlier
+folds are thereby undone without re-touching any of those PNGs. The emitter's
+16 tier PNGs stay the offline `underlay + digit` composition and now ride one
+`covers/base` layer beneath them (upstream paints `BACKGROUND_COVER` under the
+surface multi, `CoverRedstoneEmitter.java:112`).
+
+Path mapping (declared, the redstone-conductor precedent):
+`machines/covers/base` → `covers/base` and
+`machines/covers/coverswitch/base` → `cover_switch/base` (1.20.1
+`ResourceLocation` charset), landing under `textures/block/` — the vanilla block
+atlas `directory("block")` source auto-stitches the sprite ids
+`gt6:block/covers/base` and `gt6:block/cover_switch/base` with zero extra atlas
+wiring. Filenames lowercased on borrow, contents byte-identical, no rescaling
+or redrawing.
+
+Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
