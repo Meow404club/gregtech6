@@ -78,7 +78,7 @@ public class GTFunnelBlockEntity extends GTAttachmentSmallBlockEntity {
 	 * ignores it).
 	 */
 	@Override
-	public String activate(@Nullable Player aPlayer, byte aSide, @Nullable ItemStack aHeld) {
+	protected String activateChain(@Nullable Player aPlayer, byte aSide, @Nullable ItemStack aHeld) {
 		if (!isServerSide()) return "client side";
 		if (aHeld == null || aHeld.isEmpty()) return "nothing held";
 

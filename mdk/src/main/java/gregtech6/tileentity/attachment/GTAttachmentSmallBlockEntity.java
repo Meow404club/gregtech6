@@ -230,8 +230,30 @@ public abstract class GTAttachmentSmallBlockEntity extends TileEntityBase03Ticks
 	 * empty hand (tap) / the no-op (funnel); {@code aPlayer} null = the RCON acceptance
 	 * channel. Returns the action report (the player path ignores it).
 	 */
-	public abstract String activate(@Nullable net.minecraft.world.entity.player.Player aPlayer, byte aSide,
+	public final String activate(@Nullable net.minecraft.world.entity.player.Player aPlayer, byte aSide,
+			@Nullable net.minecraft.world.item.ItemStack aHeld) {
+		syncFacingFromState(); // the /setblock path bypasses setPlacedBy - re-sync before every chain
+		return activateChain(aPlayer, aSide, aHeld);
+	}
+
+	/** The per-family chain body (the upstream onBlockActivated3 form). */
+	protected abstract String activateChain(@Nullable net.minecraft.world.entity.player.Player aPlayer, byte aSide,
 			@Nullable net.minecraft.world.item.ItemStack aHeld);
+
+	/**
+	 * The BE facing mirror re-sync from the blockstate (the crank syncFacingFromState
+	 * pattern): {@code /setblock gt6:tap_stainless_steel[facing=west]} carries the
+	 * facing in the STATE and never runs setPlacedBy, so the mirror is re-read at every
+	 * activation head. Keyed on the PROPERTY, so an offline fixture without it (a plain
+	 * STONE state) leaves the field alone. NOT persisted (the state is the one
+	 * authority - the crank declaration).
+	 */
+	void syncFacingFromState() {
+		BlockState tState = getBlockState();
+		if (tState.hasProperty(gregtech6.block.attachment.GTAttachmentSmallBlock.FACING)) {
+			mFacing = (byte)tState.getValue(gregtech6.block.attachment.GTAttachmentSmallBlock.FACING).get3DDataValue();
+		}
+	}
 
 	/** The live block-use entry: the player's MAIN HAND (the upstream getCurrentEquippedItem). */
 	public void onPlayerUse(net.minecraft.world.entity.player.Player aPlayer, byte aSide) {

@@ -149,7 +149,7 @@ public class GTTapBlockEntity extends GTAttachmentSmallBlockEntity {
 	 *                empty = the empty-hand branches
 	 */
 	@Override
-	public String activate(@Nullable Player aPlayer, byte aSide, @Nullable ItemStack aHeld) {
+	protected String activateChain(@Nullable Player aPlayer, byte aSide, @Nullable ItemStack aHeld) {
 		if (!isServerSide()) return "client side";
 		BlockEntity tTarget = adjacent();
 		if (!(tTarget instanceof TapAccessible tSource)) return "no tap-accessible container on the facing side";
