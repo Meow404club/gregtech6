@@ -244,10 +244,13 @@ public final class GTBarrelCommand {
 			aSource.sendFailure(Component.literal("No GT6 barrel BlockEntity at " + aPos.toShortString()));
 			return 0;
 		}
-		String tLine = String.format("GT6 barrel stat at %s: %d/%d L of %s, temperature %d K, melting point %d K",
+		// the task-p13 report adds the gas-proof verdict (the carrier/class override value
+		// the fizz chain consumes) to the capacity/temperature/melting line
+		String tLine = String.format("GT6 barrel stat at %s: %d/%d L of %s, temperature %d K, melting point %d K, gas-proof %s",
 				aPos.toShortString(), aBarrel.mTank.amount(), aBarrel.mTank.capacity(),
 				aBarrel.mTank.isEmpty() ? "nothing" : ForgeRegistries.FLUIDS.getKey(aBarrel.mTank.getFluid().getFluid()),
-				TileEntityBase08Barrel.fluidTemperature(aBarrel.mTank.getFluid()), aBarrel.mMeltingPoint);
+				TileEntityBase08Barrel.fluidTemperature(aBarrel.mTank.getFluid()), aBarrel.mMeltingPoint,
+				aBarrel.gasProof());
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
