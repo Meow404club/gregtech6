@@ -98,7 +98,7 @@
 - [x] **红石钩框架（cover intercept 族拆注·闭合）**：ICover+3 红石钩（上游 ICover.java:190-192 逐签名）+AbstractCoverDefault 三默认（:78-80，getIndirectPowerLevelTo 对位偏离已声明）+ICoverableTE 两出口（入向 04Covers:409-424+Root:577-588 三分支/出向 :427-438 OPOS 翻转+机器默认值 bind4）+GTOvenBlock getSignal/getDirectSignal 载体桥（bridgeSignal static 纯函数，P6/P8 基类零触碰）+RedstoneHooksTest 10 用例（OPOS 六向真值表防反转）；上游承载勘误=TileEntityBase04Covers:409-441（卡面 06Covers 系笔误，审查核验成立）；CoverData/TileEntityOven 零 diff；item/GUI 钩仍冻结（merge 5bca6e6，4 提交 a16a034..daeb744，ADR 2026-09-01-p9-redstone-hooks）——【全段闭合 2026-09-01：三卡全 landed=红石钩框架 5bca6e6+正式 crowbar e93ea25+C emitter a76c9b0，唯一下游 emitter 落地即收官，剩余仅冻结池 item intercept 族】
   - [x] **正式 crowbar（GT6 工具系统入口·闭合）**：GT6ToolActions.CROWBAR（ToolAction "gt6_crowbar"，红线=永不 HOE_DIG，hoe 三谓词扳手 UI 零混入）+GTCrowbarItem（useOn 直派 ICoverableTE.onCoverToolClick(ICover.TOOL_CROWBAR,…):246-247 既有 OR 门零迁移，ICover/ICoverableTE/CoverData 零 diff；crowbarToolClick 单源分发供 /gt6tool dismantle 复用=验收面与玩家面一致；攻 2.0 保留）+GT6Tools 自持 DeferredRegister（gt6:crowbar 耐久 512，无 tab）+/gt6tool dismantle（RCON 验收：install→dismantle 断 toolDamage=10000+crowbarDamage=1/512+coverInInventory→hoe 路径回归）+上游 CROWBAR.png 逐字节借入（sha256 审查官复验一致，README 署名）+CrowbarTest 6 测（分类器红线/id 直派/id 单独成立/无 id 闭门/hoe 回归/耐久映射）。声明偏离（ADR ⑦）：广播链扁化 useOn 直派（GUI 宿主 block.use 先吞点击，游戏内右键不可达，验收主路径=命令）/10000→1 耐久点/单钢级 512/每格 50·每击 200 折单点/canBlock 格挡剪除/染色不移植。工具族池卡移交：挖掘扩展（rails/circuits/openableCrowbar）/配方 hVS VSV SVf/材质梯度/创意 tab/运行时染色（merge e93ea25，5 提交 a19bce0..1ab706f，ADR 2026-09-01-p9-tool-crowbar）
   - [x] **C 红石 emitter 盖（闭合）**：CoverRedstoneEmitter——上游 136 行直译：出向双覆写直接返回不并机器默认值（weak=bind4(visual) 档位道/strong=mValues!=0?weak:0，:55-62）+裸右键 16 键区调档（:72-109 逐字，上左-1/上右+1 双 wrap/下排 ^8^4^2^1，facingCoordsClicked+PX_P/PX_N 类内纯函数对位）+cutter strong 门切换（TOOL_CUTTER 类内常量返 1000，ICover 冻结面零触碰）+入向 getRedstoneIn 零覆写（上游无此方法实证）+attachment 旗标内联（intercept 双 F+opaque/sealable 双 F，基类 onCoverClickedLeft 本 F 中性省略）+needsVisualsSaved 档位持久；GT6Covers 注册（cover_pump 同构 ITEMS DR）+/gt6cover mode cutter relay+signal 验收子命令（直写 covers.visual(...,true) 声明偏离，报告带 host 出口 weak/strong 读数）；17 张贴图借入 textures/block/redstone_emitter/（underlay 逐字节一致+16 档位图离线 source-over 合成=BlockTextureMulti 双层单 sprite 承不住的声明偏离，vanilla 块图集 directory 源零接线自动入图集，README 记上游 sha256 全表）；CoverRedstoneEmitterTest 11 用例（出向真值表 default-blind 证据/键区 zone 真值表含 wrap+四类 miss+异面盲区/cutter 计数/入向直传查询计数/NBT 往返）。声明偏离：magnifyingglass 读数与 onToolClick2 host-relay 臂不复刻（非 cutter 返 0）。六冻结文件+hoe/GT6Mod 零 diff；冲突标记事故（72a701b）当场软重置修复，终树零残留不在链（merge a76c9b0，5 提交 775f74a..2456d25，mdk 467/0=main 基线 456+新类 11 对账闭合，ADR 2026-09-01-p9-redstone-cover-emitter）
-  - [ ] cover item intercept 族（P10 已落地框架，见下段）；左键/GUI 钩=研究员双死代码实锤不复刻
+  - [x] cover item intercept 族——P11 消费盖五件落地四件（Shutter/FilterItem/Conveyor/RobotArm，见第 11 阶段段）；RetrieverItem 池化等 item pipe；左键/GUI 钩=研究员双死代码实锤不复刻
 - [ ] barrel 密封发酵 + 连通罐 B[0] + 破坏倾倒；Gas-proof 四防族；桶 GUI/tap/funnel
 - [ ] 按需 researcher→architect 开新域（权威池=state todo.pool）
 
@@ -119,10 +119,29 @@
 - [x] p10-wire-laser-placeholder（L1）：Family.LASER 单行直译+transferLaser 纯壳（复活条件 javadoc）+inert 三不+EU NOTHING FLOWED 活证；Logistics 裁池（merge 376d6eb，3 提交）
 - [x] phase-closeout：根 205 + mdk 580 = 785 全绿，runData 全程二跑 written:0，各卡 RCON 活证+审查侧复放；WSL OOM 中断四会话续跑零丢失+compat 漏派补派
 
+## 第 11 阶段（wire 语义四件 / rotor 假电源退役 / cover 消费族五件 / RCON 框架三层化 / cover 双层渲染）——✅ 已完成（2026-09-02）
+
+- [x] p11-wire-laser-loot：laser loot 补洞（原本破坏零掉落）并入共享 wire provider；卡面「16 块」证伪=恰 1 块（Loader:1814-1815 单 ID，EXPECTED_LASER_VARIANTS=1）（merge bc9317e，2 提交）
+- [x] p11-cutter-payperpoint：known_bugs #1 closed——上游唯一计费点 Behavior_Tool.onItemUseFirst:60/:63（relay 全裸返）→内层重载改纯 relay；计数桩正反验证（merge 84e451d，2 提交）
+- [x] p11-connector-stale-mask：known_bugs #2 closed——「只剪不连」（红石行 keep=canConnect 恒真）+updateShape 唯一全覆盖缝（/setblock flags=2）+onTick 兜底；根因=CONNECTIONS BlockState 契约违背（上游掩码只驱动贴图）（merge 72636d4，1 提交，RCON 7/7）
+- [x] p11-wire-fiber-texture：FIBER_WIRE/OVERLAY 两 PNG 借入+GTWireBakedModel laser 分支（base 染色+overlay 双生子）+laser per-state MRL；fallback 行留载体（merge 39340f8，3 提交）
+- [x] p11-gt6machine-literal-fix：/gt6machine 双注册劫持（Brigadier addChild 同名 literal 静默合并）→chest 改 **/gt6chest**+双根不相交测试（merge b6d839a，2 提交）
+- [x] p11-flat-redstone-tab：Redstone Wires（27050，icon=Signalum 裸线）+Laser Wires（24900 单成员独立 tab，按上游证据裁剪）+电 tab 余 622 三表驱动（merge 1ecf0ca，2 提交）
+- [x] p11-wire-brightness（R1b，唯一打回→复审过）：getLightEmission 读 BE（**worker-thread 契约 getExistingBlockEntity**，IForgeBlock:106-110）+onTickCheck verbatim+checkBlock+红石绝缘 0xFF604040 修 P10 错色+红石 6 块入 baked model+mState 不持久化（merge 62b2ee2，4 提交）
+- [x] p11-rotor-source-flip：ENERGY_FAKE_SOURCE port-ism 退役（上游零命中）+:374 拆回上游 :815 逐字+KU 交替方波过零沿 RCON 活证+RU/KU=EU 引用等值门隔离不需新 EnergyType（merge 542d7a5，3 提交）
+- [x] p11-item-mover-helper：GTItemMover=ST.move 八锚点子集（simulate 探针 hook 零落账+同槽 abort verbatim+裁剪 7 项锚行号）+21 真值表（merge 5308c78，1 提交）
+- [x] p11-infra-hygiene-bundle：gt6rcon allow_failed（默认路径逐字节同构）+javadoc 中英混入 13 处修正（主流=纯英文）+mEmitting harness 注记+Root.isServerSide 勘误（merge 0868a4b，3 提交+审查 tab fixup）
+- [x] p11-cover-shutter-filter：CoverShutter 四拦截 (visual==0)==mStopped+CoverFilterItem（census 勘正类名）白黑名单 gt.filter.item→mNBTs；4 管线臂声明裁除；RCON 27/27（merge 73d8881，2 提交）
+- [x] p11-cover-controllers：AutoRedstone 不等式/ControllerCovers 相等式互反对拍+双形 instanceof 读机器字段（机器类禁触）+setStopped 跨面中继；RCON hold 不可观察裁决（merge b69fd52，2 提交，RCON 35/35）
+- [x] p11-cover-conveyor-robotarm：**512>>i=tick 周期裁决**（SERVER_TIME%mTiming）+arm 四象限 ignoreSide 逐位+4 动画 PNG+10+10 注册；审查 follow-up c394548 补收 controllers 漏跑 runData→**provider 必跑 runData 纪律**（merge b43be51，4 提交，RCON 30/30）
+- [x] p11-rcon-framework（用户指示）：gt6server/gt6world/chains 三层——漏站点必红结构保证+--stop/pkill 禁令模块强制化+链条入库；试点 shutter 链迁移两遍 66/0 幂等（merge 5d7c143，6 提交）
+- [x] p11-render-cover-multilayer：census 反证 14 盖全 base+fg 双层（06Covers:449-463）+snapshot 层表+PLATE_EPSILON*layer 不进 UV+layer0 逐字节等价承重墙+2 PNG 补借 SUPERSEDE（merge 2f3fe44，2 提交）
+- [x] phase-closeout：根 205 + mdk 705 = 910 全绿；三张研究卡先行（R1b 五子命题/cover 残余批/rotor 族）；一次打回复审演化；用户「干完先停」暂停点一次后复工
+
 ## 遗留池
 
 - [x] **M2 哨兵产量翻案**：上游 HandlerCrushing 槽0=0 哨兵+槽1=10000 重复=每行 2 份主产出，port chance==0-null 后 oreRaw 1 份；翻案=buildRecipe base 改双 10000 槽（493 行不变）（merge 794bb1c，fix e31f48b；plain=2/blockRaw=9/dense 组合=11 对位上游）
-- [ ] **rotor 族卡**：ENERGY_FAKE_SOURCE 翻默认 false + 拆 :815 悬置折叠（M1 声明移除路径）；RU/KU 网供电真语义
+- [x] **rotor 族卡（语义面）——P11 已落 ✅**：ENERGY_FAKE_SOURCE 退役+拆 :815（实为 mdk :374）悬置折叠+RU/KU 真语义（542d7a5）；**真机载体池化**：EngineSteam/Axle/GearBox/大涡轮等流体罐+燃料系统解锁（engines-axle 池）
 - [ ] :511 FACE_CONNECTED 侧掩码 side-gated IO + auto-IO + containsInput 插槽查验；minTankSize/三哈希索引（配方面增长后性能观测触发）
 - [ ] ore 方块行激活（BlocksGT.ore/oreBroken 形状，方块宇宙已解锁）+ blockRaw 493 行——依赖本项：blockRaw 9 槽行（p9 翻案后 2 base+7 块 copies=9 份，行形状已对位上游）在其物品注册前不 poured
 - [ ] 多方块件面流体代理（MultiBlockPartBlockEntity 转发）；/gt6energy 无 BE 失败行补 FAILED 字面量已由 p9-command-gui-polish 闭合 ✅
@@ -141,7 +160,8 @@
 - [x] 线缆三族独立卡——P10 全落 ✅：红石族（R1 dfc7c73）+裸线触电（E1 6b7226f）+Laser 占位（L1 376d6eb）；Logistics 裁池（消费方全未移植）；foam 不移植声明在档；:108/:114 满径单 pass 特例归 R1b 渲染池；Laminator 绝缘配方挂机器族池
 - [x] 工具族池（P10 落部分）：crowbar 挖掘扩展 ✅（787c57b，circuits 显式集 26 块）/创意 tab ✅（de3daea）/cutter 接线 ✅（d98ce8b，九宫格 toggle）；余项：合成配方（上游需锤锉工具件，不发明 vanilla 代料）/材质梯度/运行时染色（含 cutter payPerPoint 双调缝一并修，known_bugs open 现值安全）
 - [x] cover 残余（P10 落大部分）：ConductorIN/OUT ✅（ca435ce）/ControllerRedstone ✅（b86e272）/item intercept 框架 ✅（8496595）/cover 板 per-state 键 ✅（cee748a）/ghost 结构预览 POC ✅（c25ed08）；余项：SelectorRedstone（依赖 SwitchableMode；R1 已落=mMode 驱动者可解）/AutoRedstone（依赖 running state）/ControllerCovers/消费盖五件（item-intercept 框架已落可逐个移植）/cover 板与 overlay 合并 dispatch 模型
-- [ ] 渲染残余：oven colored+mRGBa tint 全保真层增量；**R1b 线缆亮度层**：wirelamp getLightValue（mIsGlowing×mState）+红石绝缘固定色 tint+裸线 mState 亮度+满径 58 活体单 pass 特判+FIBER_WIRE 贴图
-- [ ] **P11 首候选（同域小卡）**：wire_laser loot 一行 append（同 E1 补红石法）+connector mask stale connection 位评估（mask 仅 connect/disconnect 握手维护无邻居重扫描，先置空气侧 wire 被异族线后置替代时保留 stale 位）
-- [ ] **基建池**：/gt6machine 双注册 literal 劫持（check 子命令被 chest 劫，main 既有，改名可解）/gt6rcon allow_failed 参（解锁负断言与多盖共存链）/item-intercept ADR 字符串形状整理/E1 javadoc 中文混入风格扫/energy_source 默认 mEmitting=false 需 /data merge 点火（RCON harness 注记）
-- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI+cover 板/管道箭头（P4）、扳手九宫格六条+泵盖贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint/creosote 渲染（P6）、三机 GUI+12/2 槽布局（P7）、12 高档鼓外观（P7）、cokeoven GUI 对帧/方块染色 tint/创造栏 7 tab/侧面装桶顶面拒（P8）、oven overlay 六面+截面+fallback 材质层/emitter 键区贴图+档位数字+item 外观/线缆材质色差+绝缘层+连接臂几何/cokeoven FORMED 占位（P9）、**tools tab 图标排序/cutter 贴图/ghost 结构残影六条（出现/随 facing 旋转/FORMED 外壳框/移开消失/与高亮共存/原版选框保留）/红石线材质色差+lamp 发光（R1b 后）/laser wire 外观（P10）**
+- [x] 渲染残余：**R1b 线缆亮度层 P11 已落 ✅**（62b2ee2：wirelamp getLightEmission 读 BE+红石绝缘固定色 0xFF604040 修正+裸线 mState 全亮+FIBER_WIRE 贴图）；满径 :108/:114 单 pass 特判=几何等价仅 quad 数差异，裁池归 javadoc 项；余：oven colored+mRGBa tint 全保真层增量+**cover 双层已落**（2f3fe44）+Attachment/Holder 面与 showsConnectorFront 池化（研究卡 q5 草图②）
+- [x] **P11 首候选（同域小卡）——双落 ✅**：wire_laser loot 补洞（bc9317e，恰 1 块实证）+connector mask stale 位「只剪不连」修复（72636d4）
+- [x] **基建池（P11 落大部分）**：/gt6machine 双注册劫持 ✅（b6d839a 改 /gt6chest）/gt6rcon allow_failed ✅（0868a4b）/E1 期 javadoc 风格扫 ✅（3846971）/energy_source harness 注记 ✅（4a377f1）/RCON 框架化 ✅（5d7c143 三层+链条入库）；余项：item-intercept ADR 字符串形状整理/**cover 域 3 文件混入**（GTCoverCommand:56/:57/:214+ICoverableTE:177+TileEntityOvenCoverTest:34 断言字符串字面量须单独裁量）/**E1 期外 14 文件 CJK 残留**
+- [ ] **P12 决策点（用户定序）**：多方块 ghost 全量卡（POC 已落：pattern API 上收/整面半透明/绿红匹配/JEI 联动）vs **流体罐引擎链**（桶 GUI·tap·funnel·IFluidContainerItem/FluidTankGT keepFilter→燃料→Engine/Axle/GearBox 真机——Rotor RU/KU 语义 P11 已备好就差载体）
+- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI+cover 板/管道箭头（P4）、扳手九宫格六条+泵盖贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint/creosote 渲染（P6）、三机 GUI+12/2 槽布局（P7）、12 高档鼓外观（P7）、cokeoven GUI 对帧/方块染色 tint/创造栏 7 tab/侧面装桶顶面拒（P8）、oven overlay 六面+截面+fallback 材质层/emitter 键区贴图+档位数字+item 外观/线缆材质色差+绝缘层+连接臂几何/cokeoven FORMED 占位（P9）、tools tab 图标排序/cutter 贴图/ghost 结构残影六条/红石线材质色差+lamp 发光（R1b 后）/laser wire 外观（P10）、**cover 板双层渲染+发光线世界内光晕/红石电缆 96,64,64 罩色（R1b）/Redstone Wires+Laser Wires 独立类目三分页/conveyor·robotarm 动画贴图（P11）**
