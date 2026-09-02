@@ -23,6 +23,7 @@ import gregtech6.block.GTExampleChestBlock;
 import gregtech6.block.TestMachineBlock;
 import gregtech6.tileentity.TestMachineBlockEntity;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
+import gregtech6.tileentity.energy.GTAxleBlockEntity;
 import gregtech6.tileentity.energy.GTCrankBlockEntity;
 import gregtech6.tileentity.energy.GTEnergySourceBlockEntity;
 import gregtech6.tileentity.example.GTExampleChestBlockEntity;
@@ -130,6 +131,20 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<GTCrankBlockEntity>> CRANK_BE =
 			BLOCK_ENTITY_TYPES.register("crank", () -> BlockEntityType.Builder.of(
 					GTCrankBlockEntity::new, GT6Kinetics.CRANK.get()).build(null));
+
+	// -------------------------------------------------------------------------
+	// axle (task p12-axle-family) — the kinetics family's shared multi-mount row
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Axle BET (task p12-axle-family spec ③ — the BET type row lives here per the card,
+	 * the 44 blocks/items in GT6Kinetics; the WIRE_ELECTRIC_BE one-type-many-blocks
+	 * multi-mount form over {@link GT6Kinetics#axleBlockArray()}). Registry path "axle"
+	 * mirrors GTAxleBlockEntity#getTileEntityName like every other row.
+	 */
+	public static final RegistryObject<BlockEntityType<GTAxleBlockEntity>> AXLE_BE =
+			BLOCK_ENTITY_TYPES.register("axle", () -> BlockEntityType.Builder.of(
+					GTAxleBlockEntity::new, GT6Kinetics.axleBlockArray()).build(null));
 
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest

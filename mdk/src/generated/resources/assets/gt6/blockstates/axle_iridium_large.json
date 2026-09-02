@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "gt6:block/axle",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "gt6:block/axle"
+    },
+    "axis=z": {
+      "model": "gt6:block/axle",
+      "x": 90,
+      "y": 180
+    }
+  }
+}
