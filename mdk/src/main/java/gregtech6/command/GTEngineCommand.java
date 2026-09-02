@@ -221,6 +221,10 @@ public final class GTEngineCommand {
 					+ ", output tank=" + (tEngine.mTanks[1].has() && tEngine.mTanks[1].getFluid() != null ? ForgeRegistries.FLUIDS.getKey(tEngine.mTanks[1].getFluid().getFluid()) + " x" + tEngine.mTanks[1].amount() : "empty")
 					+ ", " + tExhaust
 					+ ", efficiency=" + tEngine.mEfficiency;
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
 		if (tLevel.getBlockEntity(aPos) instanceof GTGearBoxBlockEntity tBox) {
 			String tLine = "GT6 gearbox at " + aPos.toShortString()
 					+ ": gears=" + (tBox.mAxleGear & 63) + " (bits0-5)"
@@ -374,6 +378,12 @@ public final class GTEngineCommand {
 		}
 		String tLine = "GT6 diesel engine at " + aPos.toShortString() + ": filled " + tFilled + " L of " + tId
 				+ " (input " + tEngine.mTanks[0].amount() + "/" + tEngine.mTanks[0].capacity() + " L)";
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
+
+	/**
 	 * The gearbox mask write (task p12-gearbox-transformer spec 3 — the RCON acceptance
 	 * channel, the P9 "acceptance channel is not the upstream player semantics" ruling):
 	 * {@code gearmask} = the bits 0-5 gear faces, {@code axlemask} = the bits 6-7 through-

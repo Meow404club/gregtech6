@@ -47,7 +47,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
                 new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
                 new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task p12-axle-family
-                new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK))); // task p12-engine-diesel
+                new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK), // task p12-engine-diesel
                 new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK))); // task p12-gearbox-transformer
     }
 

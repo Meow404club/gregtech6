@@ -529,6 +529,9 @@ public final class GT6BlockStates extends BlockStateProvider {
             simpleBlock(tBlock.get(), models().cubeAll("diesel_engine", modLoc("block/diesel_engine")));
             itemModels().withExistingParent(tBlock.getId().getPath(), modLoc("block/diesel_engine"));
         }
+    }
+
+    /**
      * Task p12-gearbox-transformer — the GearBox (one cube_all over the borrowed
      * {@code gt6:block/gearbox} texture, the upstream iconsets/GEARBOX.png; assets/README.md
      * attribution) and the Rotation Transformer (the crank facing-cube shape: an
