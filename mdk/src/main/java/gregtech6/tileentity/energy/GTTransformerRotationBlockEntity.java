@@ -173,7 +173,6 @@ public class GTTransformerRotationBlockEntity extends TileEntityBase03TicksAndSy
 		long tOutput = mStorage * OUTPUT_SPEED / INPUT_SPEED; // units(storage, inRec=8, outRec=2, roundDown) — 8|2 divides
 		boolean tCanEmit = tOutput >= OUTPUT_SIZE_MIN; // the converter :65 gate
 		mActive = false;
-		mLastOutSize = mLastOutAmount = 0;
 		if (tCanEmit) {
 			// the converter :87-88 emit — RU is negative-allowed (TD.java:205) so the
 			// aNegative leg (Base10EnergyConverter :121) signs the burst
@@ -186,6 +185,8 @@ public class GTTransformerRotationBlockEntity extends TileEntityBase03TicksAndSy
 				mLastOutSize = tSign * tOutput;
 				mLastOutAmount = tEmitted;
 			}
+			// a REFUSED burst (the consumer's queue full) keeps the last successful
+			// records — "last out" means the last EMITTED burst, not this tick's
 		}
 	}
 
