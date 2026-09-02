@@ -536,3 +536,23 @@ the tint and the heat-state model swap ride the render pool card.
 
 Copied on 2026-09-02. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+Diesel Engine block texture, task p12-engine-diesel: the 1 PNG
+`gt6/textures/block/diesel_engine.png` comes from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/generators/motor_liquid/colored/front.png`,
+byte-identical to upstream, sha256 verified:
+
+- `diesel_engine.png`   `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
+
+Path mapping (the p12-axle-family precedent): the upstream MTE icon
+`machines/generators/motor_liquid/colored/front` lands as
+`textures/block/diesel_engine.png` (1.20.1 `ResourceLocation` charset).
+Declared deviation: upstream layers per-face colored icons with the
+`overlay`/`overlay_active` fronts (MultiTileEntityMotorLiquid :242-254,
+getTexture2 :216-221) and tints them per material (mRGBa) — the port ships
+ONE shared static texture over all 8 tiers, the FACING property drives the
+emit side, not the visuals (the crank ruling; the per-face/active/tint
+family is the render pool card). The overlay PNGs are NOT borrowed.
+
+Copied on 2026-09-02. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).

@@ -18,6 +18,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
 import gregtech6.block.energy.GTAxleBlock;
+import gregtech6.block.energy.GTDieselEngineBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
@@ -101,6 +102,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addAxles(); // task p12-axle-family
         addAttachments(); // task p12-tap-funnel-attachment
         addSteamEngines(); // task p12-engine-steam
+        addDieselEngines(); // task p12-engine-diesel
     }
 
     /**
@@ -506,6 +508,24 @@ public final class GT6BlockStates extends BlockStateProvider {
                 return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
             });
             itemModels().withExistingParent(tRow.path(), modLoc("block/steam_engine"));
+        }
+    }
+
+    /**
+     * Task p12-engine-diesel — the 8 diesel engine tiers (Loader_MultiTileEntities.java
+     * :721-729): ONE shared cube_all over the borrowed upstream motor_liquid front icon
+     * {@code gt6:textures/block/diesel_engine.png} (assets/README.md attribution) and ONE
+     * blockstate variant per block — the FACING property drives the EMIT side, not the
+     * visuals, exactly the crank ruling (the upstream front/back/sides colored +
+     * overlay_active texture family, MultiTileEntityMotorLiquid.java:242-254 +
+     * getTexture2 :216-221, is the render pool item; the per-material mRGBa tint is the
+     * same pool). The 8 BlockItem models parent the shared block model (the crank
+     * {@code itemModels()} form per row).
+     */
+    private void addDieselEngines() {
+        for (RegistryObject<GTDieselEngineBlock> tBlock : GT6Kinetics.DIESEL_BLOCKS.values()) {
+            simpleBlock(tBlock.get(), models().cubeAll("diesel_engine", modLoc("block/diesel_engine")));
+            itemModels().withExistingParent(tBlock.getId().getPath(), modLoc("block/diesel_engine"));
         }
     }
 

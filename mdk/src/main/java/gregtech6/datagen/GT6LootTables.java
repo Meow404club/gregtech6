@@ -46,7 +46,8 @@ public final class GT6LootTables extends LootTableProvider {
         super(output, Set.of(), List.of(
                 new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
                 new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
-                new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK))); // task p12-axle-family
+                new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task p12-axle-family
+                new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK))); // task p12-engine-diesel
     }
 
     /** The block list this provider owns: exactly the material prefix block array (the census walk order). */
@@ -145,6 +146,37 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : lootBlocks()) dropSelf(tBlock); // Drops(this,this,this,this,F,F,0,0) direct translation
+        }
+    }
+
+    /**
+     * The diesel engine family block list (task p12-engine-diesel): the 8 material tiers
+     * (datagen JVM). The upstream engine registers the MTE default drop (canDrop(0) == T,
+     * MultiTileEntityMotorLiquid.java:224 — the block item itself, the same
+     * Drops==null self-drop default as the axle/wire rows); the 1.20.1 equivalent is
+     * exactly {@code dropSelf}.
+     */
+    public static List<Block> engineLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (Block tEngine : GT6Kinetics.dieselBlockArray()) rBlocks.add(tEngine);
+        return rBlocks;
+    }
+
+    /** The diesel engine family self-drop provider (task p12-engine-diesel). */
+    public static final class GT6EngineBlockLoot extends BlockLootSubProvider {
+
+        public GT6EngineBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return engineLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : engineLootBlocks()) dropSelf(tBlock);
         }
     }
 }

@@ -203,6 +203,11 @@ public class GT6EnUs extends LanguageProvider {
      * :1663 hard-codes the Wooden display; the metal rows carry mNameLocal, e.g. "Small
      * Bronze Axle" :1672). Table-driven over {@link GT6Kinetics#AXLE_SPECS} — the lang
      * cannot drift from the registry names.
+     *
+     * <p>Task p12-engine-diesel: the 8 diesel engine rows —
+     * {@code block.gt6.diesel_engine_<material>} = "{@code <Material> Diesel Engine}" (the
+     * upstream row wording "Diesel Engine (Bronze)" :721-729, the port noun-order
+     * convention). Table-driven over {@link GT6Kinetics#DIESEL_SPECS}.
      */
     private void addKinetics() {
         add("block.gt6.crank", "Hand Crank");
@@ -218,6 +223,11 @@ public class GT6EnUs extends LanguageProvider {
         // the keys cannot drift from the registered blocks
         for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) {
             add("block.gt6." + tRow.path(), tRow.displayName());
+        }
+        // task p12-engine-diesel — the 8 engine display names, walked from the DIESEL_SPECS
+        // table so the keys cannot drift from the registered blocks
+        for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
+            add("block.gt6." + GT6Kinetics.dieselName(tSpec.material()), GT6Kinetics.dieselDisplay(tSpec));
         }
     }
 

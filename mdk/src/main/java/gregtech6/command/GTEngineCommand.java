@@ -11,11 +11,14 @@ import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import org.slf4j.Logger;
 
@@ -24,6 +27,7 @@ import gregapi.data.TD;
 import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregtech6.tileentity.energy.GTAxleBlockEntity;
 import gregtech6.tileentity.energy.GTCrankBlockEntity;
+import gregtech6.tileentity.energy.GTDieselEngineBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 
 /**
@@ -54,6 +58,11 @@ import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
  *     intake-face supply, the pipe-into-getFluidTankFillable2 :239 form); the door's
  *     gates (stopped / steam-only / back face) make a REJECTED echo a legitimate
  *     chain verdict.</li>
+ * <li>{@code fuel <pos> <fluid> <amount>} — the diesel engine's funnel-face counterpart
+ *     (task p12-engine-diesel spec ⑤): fills the input tank through
+ *     {@link GTDieselEngineBlockEntity#funnelFill} under the containsInput gate — the
+ *     DECLARED acceptance channel while the p12-tap-funnel-attachment card is in flight
+ *     (no GUI, no funnel item in this port).</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = "gt6")
@@ -93,9 +102,18 @@ public final class GTEngineCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.then(Commands.argument("amount", IntegerArgumentType.integer(1))
 						.executes(aContext -> fill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-								IntegerArgumentType.getInteger(aContext, "amount"))))));
+								IntegerArgumentType.getInteger(aContext, "amount"))))))
+			// task p12-engine-diesel — the funnel-face supply channel (the RCON counterpart
+			// of MotorLiquid funnelFill :203-207), the acceptance arm while the tap-funnel
+			// attachment card is in flight
+			.then(Commands.literal("fuel")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.argument("fluid", ResourceLocationArgument.id())
+						.then(Commands.argument("amount", IntegerArgumentType.integer(1, 1000000000))
+							.executes(aContext -> fuel(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									ResourceLocationArgument.getId(aContext, "fluid"), IntegerArgumentType.getInteger(aContext, "amount")))))));
 		aEvent.getDispatcher().register(tEngine);
-		LOGGER.info("Registered GT6 engine-chain command /gt6engine (stat | crank | mode | fill) — the crank + steam-engine + future engine family acceptance home");
+		LOGGER.info("Registered GT6 engine-chain command /gt6engine (stat | crank | mode | fill | fuel) — the engine family acceptance home");
 	}
 
 	/**
@@ -151,6 +169,40 @@ public final class GTEngineCommand {
 					+ ", bandwidth=" + tAxle.mPower + " packets/t"
 					+ ", transferred=" + tAxle.mTransferredLast + " RU/t (last tick magnitude)"
 					+ ", break pending=" + tAxle.mBreakPending;
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
+		if (tLevel.getBlockEntity(aPos) instanceof GTDieselEngineBlockEntity tEngine) {
+			// the diesel readback (task p12-engine-diesel): the upstream :163-168 magnifying-glass
+			// "Input/Output" click readout plus the surfaces the acceptance chain asserts — the
+			// DC band (rate), the stored energy, the fuel-swap state, the activity trinary and
+			// the CO2 exhaust counter with its back-face arm state.
+			net.minecraftforge.fluids.FluidStack tInput = tEngine.mTanks[0].getFluid();
+			String tBack;
+			BlockPos tBackPos = aPos.relative(tEngine.back());
+			if (tLevel.getBlockEntity(tBackPos) != null && !tLevel.getBlockEntity(tBackPos).isRemoved()) tBack = "tank@" + tBackPos.toShortString();
+			else if (!tLevel.getBlockState(tBackPos).getCollisionShape(tLevel, tBackPos).isEmpty()) tBack = "solid";
+			else tBack = "open";
+			// the retention verdict mirrors the vent arm exactly (upstream :142): the probe is
+			// the block PAST the back face (getOffset(OPOS[mFacing], 1)) — "retained" while
+			// that block is solid and units are held, gone the moment it opens
+			BlockPos tVentPos = tBackPos.relative(tEngine.back());
+			boolean tVentBlocked = !tLevel.getBlockState(tVentPos).getCollisionShape(tLevel, tVentPos).isEmpty();
+			String tExhaust = "exhaust=CO2 x" + tEngine.mExhaustCO2
+					+ (tVentBlocked && tEngine.mExhaustCO2 > 0 ? " retained" : "")
+					+ " (back " + tBack + ")";
+			String tLine = "GT6 diesel engine at " + aPos.toShortString()
+					+ ": facing=" + Direction.from3DDataValue(tEngine.getFacing()).getName() + "(" + tEngine.getFacing() + ") emit-side"
+					+ ", rate=" + tEngine.mRate + " RU/t (DC constant-sign)"
+					+ ", energy=" + tEngine.mEnergy
+					+ ", stopped=" + tEngine.mStopped
+					+ ", active=" + tEngine.mActive
+					+ ", activity state=" + tEngine.mActivityState
+					+ ", input=" + (tInput == null ? "empty" : ForgeRegistries.FLUIDS.getKey(tInput.getFluid()) + " x" + tEngine.mTanks[0].amount() + "/" + tEngine.mTanks[0].capacity())
+					+ ", output tank=" + (tEngine.mTanks[1].has() && tEngine.mTanks[1].getFluid() != null ? ForgeRegistries.FLUIDS.getKey(tEngine.mTanks[1].getFluid().getFluid()) + " x" + tEngine.mTanks[1].amount() : "empty")
+					+ ", " + tExhaust
+					+ ", efficiency=" + tEngine.mEfficiency;
 			aSource.sendSuccess(() -> Component.literal(tLine), false);
 			LOGGER.info(tLine);
 			return Command.SINGLE_SUCCESS;
@@ -238,6 +290,47 @@ public final class GTEngineCommand {
 				net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
 		String tLine = String.format("GT6 steam engine fill at %s: filled %d/%d L of gt6:steam%s, tank holds %d L",
 				aPos.toShortString(), tFilled, aAmount, tFilled == 0 ? " (REJECTED)" : " (ACCEPTED)", tEngine.mTank.amount());
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The fluid id argument is the vanilla {@code ResourceLocationArgument.id()} form — a
+	 * namespaced id ({@code gt6:diesel}); the brigadier string reader would reject the
+	 * colon in an unquoted word.
+	 *
+	 * <p>The fuel subcommand (task p12-engine-diesel spec ⑤) — the RCON counterpart of the
+	 * upstream funnel face (MultiTileEntityMotorLiquid.java:203-207): the diesel engine's
+	 * input tank is filled through {@link GTDieselEngineBlockEntity#funnelFill}, gated on
+	 * the same containsInput seam (a non-fuel fluid is REFUSED, the acceptance chain's
+	 * negative arm). The fluid id carries the namespace ({@code gt6:diesel}); a bare path
+	 * resolves against gt6. This is the DECLARED acceptance channel while the
+	 * p12-tap-funnel-attachment card is in flight (no GUI, no funnel item in this port).
+	 */
+	private static int fuel(CommandSourceStack aSource, BlockPos aPos, ResourceLocation tId, int aAmount) {
+		ServerLevel tLevel = aSource.getLevel();
+		if (!(tLevel.getBlockEntity(aPos) instanceof GTDieselEngineBlockEntity tEngine)) {
+			aSource.sendFailure(Component.literal("FUEL FAILED: no diesel engine BE at " + aPos.toShortString()));
+			return 0;
+		}
+		net.minecraft.world.level.material.Fluid tFluid = ForgeRegistries.FLUIDS.getValue(tId);
+		if (tFluid == null) {
+			aSource.sendFailure(Component.literal("FUEL FAILED: unknown fluid " + tId));
+			return 0;
+		}
+		net.minecraftforge.fluids.FluidStack tStack = new net.minecraftforge.fluids.FluidStack(tFluid, aAmount);
+		if (!tEngine.containsFuelInput(tStack)) {
+			aSource.sendFailure(Component.literal("FUEL FAILED: " + tId + " is not an ENGINE_FUELS input (containsInput gate)"));
+			return 0;
+		}
+		int tFilled = tEngine.funnelFill(tStack, true);
+		if (tFilled <= 0) {
+			aSource.sendFailure(Component.literal("FUEL FAILED: input tank full or incompatible at " + aPos.toShortString()));
+			return 0;
+		}
+		String tLine = "GT6 diesel engine at " + aPos.toShortString() + ": filled " + tFilled + " L of " + tId
+				+ " (input " + tEngine.mTanks[0].amount() + "/" + tEngine.mTanks[0].capacity() + " L)";
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
