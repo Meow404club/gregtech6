@@ -196,6 +196,32 @@ class RconClient:
         return False
 
 
+def judge_output(index, body, expected=None, allowed=False):
+    """Print and score one command's output; return 1 when it counts as a failure.
+
+    The single verdict printer shared by run_chain (CLI) and the chains
+    framework (tools/rcon/chains/) so both layers report identically: a literal
+    "FAILED" marker in the body and a missed expectation each count, an
+    `allowed` command reports ALLOWED instead and does not count.
+    """
+    failure = 0
+    if "FAILED" in body:
+        if allowed:
+            print(f"[command {index}: FAILED marker in output -> ALLOWED]")
+        else:
+            print(f"[command {index}: FAILED marker in output -> FAIL]")
+            failure += 1
+    if expected is not None:
+        if expected in body:
+            print(f"[expect {index}: {expected!r} -> PASS]")
+        elif allowed:
+            print(f"[expect {index}: {expected!r} -> ALLOWED]")
+        else:
+            print(f"[expect {index}: {expected!r} -> FAIL]")
+            failure += 1
+    return failure
+
+
 def run_chain(host, port, password, commands, expects=None,
               timeout=DEFAULT_CONNECT_TIMEOUT,
               first_timeout=DEFAULT_FIRST_TIMEOUT, quiet_window=DEFAULT_QUIET_WINDOW,
@@ -224,22 +250,8 @@ def run_chain(host, port, password, commands, expects=None,
             transcript.append((command, outs))
             body = "\n".join(outs)
             print(f"$ {command}\n{body if body else '<no response>'}")
-            if "FAILED" in body:
-                if index in allowed:
-                    print(f"[command {index}: FAILED marker in output -> ALLOWED]")
-                else:
-                    print(f"[command {index}: FAILED marker in output -> FAIL]")
-                    failure += 1
-            expected = (expects or {}).get(index)
-            if expected is not None:
-                hit = expected in body
-                if hit:
-                    print(f"[expect {index}: {expected!r} -> PASS]")
-                elif index in allowed:
-                    print(f"[expect {index}: {expected!r} -> ALLOWED]")
-                else:
-                    print(f"[expect {index}: {expected!r} -> FAIL]")
-                    failure += 1
+            failure += judge_output(index, body, (expects or {}).get(index),
+                                    index in allowed)
     return failure, transcript
 
 
