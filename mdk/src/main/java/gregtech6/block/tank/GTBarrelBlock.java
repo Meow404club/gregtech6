@@ -1,17 +1,24 @@
 package gregtech6.block.tank;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 
 import net.minecraftforge.fluids.FluidUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import gregtech6.block.GTEntityBlock;
@@ -35,6 +42,13 @@ import gregtech6.tileentity.tank.TileEntityBase08Barrel;
  * is filled from the barrel first, then drained into it (:95/:98 order), the item swap
  * and stow handled by FluidUtil. The barrel capability resolves through the
  * side-wrapped {@code BarrelFluidHandler} (getFluidHandler(level, pos, side) :457).
+ *
+ * <p>Task p12-fluid-item-carrier adds the item-carrier faces: {@code getDrops} rides
+ * the loot-context BLOCK_ENTITY parameter and projects the tank + covers NBT onto the
+ * dropped {@code GTBarrelBlockItem} (the upstream getDrops chain :157-162 → :81-85,
+ * the fix for "breaking a filled barrel voids the content"), the item's
+ * {@code FLUID_HANDLER_ITEM} capability serves the same tank semantics, and placement
+ * reads the item NBT back into the fresh BE — content survives break AND place.
  */
 public class GTBarrelBlock extends GTEntityBlock {
 
@@ -78,6 +92,45 @@ public class GTBarrelBlock extends GTEntityBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState aState) {
 		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+	}
+
+	/**
+	 * The break-drops face (task p12-fluid-item-carrier spec ①) — the upstream getDrops
+	 * chain verbatim, the fix for the in-repo gap "breaking a filled barrel voids the
+	 * content": upstream {@code TileEntityBase03MultiTileEntities.getDrops} (:157-162)
+	 * returns exactly one item — the registry item carrying {@code writeItemNBT} output,
+	 * whose barrel branch ({@code TileEntityBase08Barrel.writeItemNBT2} :81-85 over
+	 * {@code 06Covers.writeItemNBT} :81-82) writes the tank onto the stack. The 1.20.1
+	 * seam is the loot-context BLOCK_ENTITY parameter: the barrel BE rides the loot
+	 * builder and {@link #writeItemNBT} projects its tank + covers onto the family's own
+	 * item — which placement then reads back through the same keys. The loot-table layer
+	 * is vanilla furniture the upstream seam bypasses (the family ships table-less, so
+	 * pre-card a broken barrel dropped NOTHING); fortune/silk never mattered upstream
+	 * either. Deliberately NOT an {@code onRemove} override (the red line): getDrops is
+	 * the upstream seam, it never touches the BlockEntity lifecycle.
+	 */
+	@Override
+	public List<ItemStack> getDrops(BlockState aState, LootParams.Builder aBuilder) {
+		BlockEntity tBE = aBuilder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+		if (!(tBE instanceof TileEntityBase08Barrel tBarrel)) return super.getDrops(aState, aBuilder);
+		List<ItemStack> tDrops = new ArrayList<>(1); // upstream :158 rList = ST.arraylist()
+		tDrops.add(writeItemNBT(tBarrel, new ItemStack(this.asItem()))); // upstream :160 tRegistry.getItem(id, writeItemNBT(...))
+		return tDrops;
+	}
+
+	/**
+	 * The upstream {@code writeItemNBT2} :81-85 trimmed to what the port carries — the
+	 * tank (mode/sealed progress ride the cut sealed-fermentation pool) plus the covers
+	 * (upstream {@code 06Covers.writeItemNBT} :82, the in-repo
+	 * {@code ICoverableTE.writeCoversToNBT} pair). An empty, cover-less barrel keeps a
+	 * null tag: the drop is byte-identical to the pre-card behaviour.
+	 */
+	public static ItemStack writeItemNBT(TileEntityBase08Barrel aBarrel, ItemStack aStack) {
+		CompoundTag tTag = aStack.hasTag() ? aStack.getTag() : new CompoundTag();
+		aBarrel.mTank.writeToNBT(tTag, TileEntityBase08Barrel.NBT_TANK); // upstream :84
+		aBarrel.writeCoversToNBT(tTag); // upstream 06Covers :82
+		aStack.setTag(tTag.isEmpty() ? null : tTag); // an empty barrel keeps the tag-less pre-card drop shape
+		return aStack;
 	}
 
 	@Override

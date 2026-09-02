@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,6 +21,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregtech6.block.tank.GTBarrelBlock;
+import gregtech6.item.GTBarrelBlockItem;
 import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
@@ -190,5 +194,56 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 		assertTrue(tBe.meltdown());
 		assertEquals(0, tBe.mTank.amount(), "meltdown() voids the tank (the GarbageGT.trash half, :223/:226)");
 		assertNull(tBe.mTank.getFluid());
+	}
+
+	// ---------------------------------------------------------------------------
+	// task p12-fluid-item-carrier — the BE↔item round-trip seam: getDrops writes the
+	// tank onto the drop item (upstream 03:157-162 → Base08:81-85), placement reads it
+	// back (GTBarrelBlockItem.applyItemNBT); both halves over the offline BE fixtures
+	// (a mod Block cannot be constructed — the getDrops/placeBlock wrappers themselves
+	// are the live /gt6tank show assertions)
+	// ---------------------------------------------------------------------------
+
+	/** The break half: a filled barrel's drop item carries the tank NBT; the place half reads the same keys back into a fresh BE. */
+	@Test
+	public void dropItemNbtCarriesTankAndRestoresOnPlacement() {
+		GTBarrelBlockEntity tBe = sType.create(POS, Blocks.STONE.defaultBlockState());
+		tBe.mTank.fill(new FluidStack(Fluids.WATER, 1234), FluidAction.EXECUTE);
+
+		ItemStack tDrop = GTBarrelBlock.writeItemNBT(tBe, new ItemStack(Items.GLASS_BOTTLE));
+		assertTrue(tDrop.hasTag(), "the filled drop carries a tag");
+		CompoundTag tTankTag = tDrop.getTag().getCompound(TileEntityBase08Barrel.NBT_TANK);
+		assertEquals("minecraft:water", tTankTag.getString("FluidName"), "the drop item NBT names the fluid");
+		assertEquals(1234, tTankTag.getInt("Amount"), "the drop item NBT carries the amount");
+
+		// the place half: the same tag loads into a fresh BE — the round trip closes
+		GTBarrelBlockEntity tPlaced = sType.create(POS, Blocks.STONE.defaultBlockState());
+		GTBarrelBlockItem.applyItemNBT(tDrop, tPlaced);
+		assertEquals(1234, tPlaced.mTank.amount(), "placement restores the content (the fix's other half)");
+		assertTrue(tPlaced.mTank.contains(new FluidStack(Fluids.WATER, 1)), "placement restores the identity");
+	}
+
+	/** An empty, cover-less barrel drops byte-identical to the pre-card behaviour: no tag at all. */
+	@Test
+	public void emptyBarrelDropKeepsTheLegacyShape() {
+		GTBarrelBlockEntity tBe = sType.create(POS, Blocks.STONE.defaultBlockState());
+		ItemStack tDrop = GTBarrelBlock.writeItemNBT(tBe, new ItemStack(Items.GLASS_BOTTLE));
+		assertFalse(tDrop.hasTag(), "no content, no covers → the tagless pre-card drop (acceptance a)");
+		assertFalse(GTBarrelBlockItem.hasContent(tDrop), "the :290 stacking predicate reads empty");
+	}
+
+	/** The :290 {@code mTank.has() ? 1 : aDefault} predicate over the item tag (the override itself is live-side). */
+	@Test
+	public void hasContentPredicateDrivesTheStackingRule() {
+		ItemStack tEmpty = new ItemStack(Items.GLASS_BOTTLE);
+		assertFalse(GTBarrelBlockItem.hasContent(tEmpty), "no tag → no content");
+
+		ItemStack tFilled = new ItemStack(Items.GLASS_BOTTLE);
+		tFilled.getOrCreateTag().put(TileEntityBase08Barrel.NBT_TANK, new FluidStack(Fluids.WATER, 1).writeToNBT(new CompoundTag()));
+		assertTrue(GTBarrelBlockItem.hasContent(tFilled), "a non-empty tank compound = content → max stack 1");
+
+		ItemStack tBlank = new ItemStack(Items.GLASS_BOTTLE);
+		tBlank.getOrCreateTag().put(TileEntityBase08Barrel.NBT_TANK, new CompoundTag());
+		assertFalse(GTBarrelBlockItem.hasContent(tBlank), "a present-but-empty compound is not content");
 	}
 }
