@@ -243,8 +243,13 @@ public final class GTBurnerCommand {
 	private static int fires(CommandSourceStack aSource, BlockPos aPos, int aRange) {
 		ServerLevel tLevel = aSource.getLevel();
 		int tCount = countFire(tLevel, aPos, aRange);
+		// the LIVE count is transient (fire dies as it consumes its support), so the
+		// VISIBLE verdict rides the CUMULATIVE family telemetry — grown since boot, it
+		// cannot un-land
+		long tTotal = GTGeneratorSolidBlockEntity.sFiresSpreadTotal;
 		String tLine = "GT6 burning box fire scan at " + aPos.toShortString() + " range " + aRange
-				+ ": fires=" + tCount + (tCount > 0 ? " spread=VISIBLE" : " spread=NONE");
+				+ ": fires=" + tCount + " total=" + tTotal
+				+ (tTotal > 0 ? " spread=VISIBLE" : " spread=NONE");
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;

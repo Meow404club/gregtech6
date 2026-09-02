@@ -296,6 +296,16 @@ public abstract class GTGeneratorSolidBlockEntity extends TileEntityBase03TicksA
 	 * {@code Blocks.FIRE} setBlock flag 3 (:711/:720 the {@code Blocks.fire} writes).
 	 */
 	public static boolean placeFire(Level aLevel, BlockPos aPos) {
+		boolean tPlaced = placeFireInner(aLevel, aPos);
+		if (tPlaced) sFiresSpreadTotal++; // the cumulative acceptance telemetry (the /gt6burner fires readout)
+		return tPlaced;
+	}
+
+	/** The cumulative fire-drop count across the family since class load — the robust arm of the RCON 明火蔓延臂 (live fire is too transient to scan for). */
+	public static long sFiresSpreadTotal = 0;
+
+	/** The WD.fire body proper (the placeFire doc), split so the telemetry wrap stays one line. */
+	private static boolean placeFireInner(Level aLevel, BlockPos aPos) {
 		BlockState tState = aLevel.getBlockState(aPos);
 		if (aLevel.getFluidState(aPos).is(net.minecraft.tags.FluidTags.LAVA) || tState.getBlock() == Blocks.FIRE) return false; // :708
 		if (!tState.getCollisionShape(aLevel, aPos).isEmpty()) return false; // :709 the no-collision gate
