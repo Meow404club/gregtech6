@@ -1,5 +1,8 @@
 package gregtech6.fluid;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import net.minecraft.resources.ResourceLocation;
@@ -44,6 +47,26 @@ import gregtech6.registry.GTFluidPipes;
  * <p>Client textures: the {@code initializeClient} override points the still/flow layers
  * at the vanilla water textures with a molten tint (FluidTypeTest.java:82-150 shape) —
  * no dedicated PNG this card; the blockstate render-type wiring is a client-pool item.
+ *
+ * <p>Engine fuel family (task p12-engine-fuel-fluids): nine FURTHER fluids —
+ * {@code steam} (the gaseous one), {@code distilled_water}, and the seven FM.Engine fuels
+ * {@code diesel/kerosine/petrol/fuel/nitrofuel/jetfuel/ethanol} — registered through a
+ * TABLE-DRIVEN helper ({@link #ENGINE_SPECS}, one row per fluid family) that folds the
+ * four-DR template into {@link #engineFluid(String)}: FluidType + Source/Flowing over one
+ * shared {@link ForgeFlowingFluid.Properties}, <b>no LiquidBlock and no bucket</b> —
+ * fluid-only, the "a bucket item is optional in the template" precedent of the class doc
+ * above. Litmus ruling (card spec ①): HAND-LISTED template rows, not a material bridge —
+ * (a) the bridge seam {@code FluidBridge} is a molten-family lookup map outside this
+ * card's file scope; (b) GTFluids static init runs at MOD CONSTRUCTION (the
+ * @EventBusSubscriber class-load, the p6 a9027ac lesson) where {@code MT.*} fields are
+ * still null, so the table must not capture material objects — the upstream material
+ * data is transcribed as literals instead, each row's javadoc citing its MT.java row;
+ * (c) 1.20.1 Forge registration is explicit DeferredRegister calls either way — the
+ * bridge is a lookup seam, not a registration path. Every declaration value is
+ * upstream-anchored except the JetFuel tint (no JetFuel material exists upstream, the
+ * fluid is the "rc jet fuel" compat name, FL.java:422 — the tint is a port-owned
+ * declared value). The FM.Engine fuel rows that consume these fluids live in
+ * {@link gregtech6.recipes.GT6RecipesEngineFuels}.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTFluids {
@@ -243,6 +266,154 @@ public final class GTFluids {
 			() -> new LiquidBlock(OIL, BlockBehaviour.Properties.of()
 					.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
 
+	/**
+	 * The engine-steam conversion constants (task p12-engine-fuel-fluids spec ④, consumed by
+	 * the p12-engine-steam card): {@code STEAM_PER_WATER = 200} is
+	 * MultiTileEntityEngineSteam.java:58 verbatim (200 L steam per 1 L water — the tooltip
+	 * math at :98 and the tank capacity at :80 both read it), and {@code STEAM_PER_EU = 2} is
+	 * CS.java:240 verbatim (2 L steam per EU — the CS.java:242 default is 160, but every
+	 * steam consumer pins its own 200/2 pair; the card pins the EngineSteam values). Parked
+	 * HERE (not in a GT6Kinetics constants class) because the engine-crank card owns that
+	 * file in parallel — the steam card re-homes them on rebase, declared in the card.
+	 */
+	public static final int STEAM_PER_WATER = 200;
+	/** CS.java:240 — 2 L steam per EU, the steam-to-energy divisor of EngineSteam/TurbineSteam. */
+	public static final int STEAM_PER_EU = 2;
+
+	/**
+	 * One engine-fuel declaration row: the pure data of one gt6 fluid family (readable
+	 * OFFLINE — the tests assert these declared values without touching the registries;
+	 * the live FluidType carries the same numbers at registration time).
+	 *
+	 * @param name       the gt6 registry path and the fluid id the fuel table references
+	 * @param temperature in K; density (negative = lighter than air, the FL.java:775 sign
+	 *                   rule the port's gravity consumers branch on); viscosity; tint (ARGB
+	 *                   over the vanilla water textures, the iron_molten :81 precedent);
+	 *                   gas = the gaseous declaration (upstream STATE_GASEOUS semantics:
+	 *                   FL.java:1105 sets density −100 / viscosity 200 for gas-state fluids).
+	 */
+	public record EngineFluidSpec(String name, int temperature, int density, int viscosity, int tint, boolean gas) {
+		/** The lang/description key, the descriptionId the FluidType is registered with. */
+		public String descriptionId() {return "fluid.gt6." + name;}
+	}
+
+	/**
+	 * The nine engine-family rows, declaration order mirroring the card list. Every value is
+	 * upstream-anchored: steam 373 K is the FL.java:794 hardcode ({@code C+100}, C = 273,
+	 * CS.java:132), density −100 / viscosity 200 the STATE_GASEOUS carriers (FL.java:1105;
+	 * also the :1132 gas branch {@code -0.1 / 0.0010} for MT.Steam's 0.0010 g/cm³,
+	 * MT.java:1884 — lighter than the 0.0012 air weight); the liquids ride the
+	 * createLiquid :1072 temperature formula (the fuel materials' {@code .heat(100, 400)} =
+	 * melting 100 K &lt; 300 → the 300 K clamp) and the :1130 liquid density formula (default
+	 * 1.0 g/cm³ → 1000); tints are the materials' RGBa (MT.java:1884/:1891/:2040/:2044-2048);
+	 * JetFuel has no material (the "rc jet fuel" compat name, FL.java:422) — 300 K / 1000
+	 * carrier values and a port-owned amber tint, declared in the card.
+	 */
+	public static final List<EngineFluidSpec> ENGINE_SPECS = List.of(
+		new EngineFluidSpec("steam"          , 373, -100,  200, 0xFFC8C8C8, true ), // MT.Steam 200,200,200 — the gaseous one
+		new EngineFluidSpec("distilled_water", 300, 1000, 1000, 0xFF6E6EFF, false), // MT.DistWater 110,110,255 "Distilled Water"
+		new EngineFluidSpec("diesel"         , 300, 1000, 1000, 0xFFFFFF00, false), // MT.Diesel 255,255,0 (MT.java:2047)
+		new EngineFluidSpec("kerosine"       , 300, 1000, 1000, 0xFF0000FF, false), // MT.Kerosine 0,0,255 (MT.java:2046)
+		new EngineFluidSpec("petrol"         , 300, 1000, 1000, 0xFFFF0000, false), // MT.Petrol 255,0,0 (MT.java:2048)
+		new EngineFluidSpec("fuel"           , 300, 1000, 1000, 0xFFFFFF00, false), // MT.Fuel 255,255,0 "Fuel Oil" (MT.java:2044)
+		new EngineFluidSpec("nitrofuel"      , 300, 1000, 1000, 0xFFC8FF00, false), // MT.NitroFuel 200,255,0 "Nitro-Fuel" (MT.java:2045)
+		new EngineFluidSpec("jetfuel"        , 300, 1000, 1000, 0xFFD8C060, false), // no upstream material (FL.java:422) — port-owned declared values
+		new EngineFluidSpec("ethanol"        , 300, 1000, 1000, 0xFFFF8000, false)); // MT.Ethanol 255,128,0 (MT.java:2040)
+
+	/** One registered engine family: the declared spec + the three live handles. Fluid-only — no block, no bucket. */
+	public static final class EngineFluid {
+		/** The declaration row ({@link #ENGINE_SPECS}); the offline-readable half. */
+		public final EngineFluidSpec spec;
+		public final RegistryObject<FluidType> type;
+		public final RegistryObject<FlowingFluid> source;
+		public final RegistryObject<Fluid> flowing;
+
+		EngineFluid(EngineFluidSpec aSpec, RegistryObject<FluidType> aType, RegistryObject<FlowingFluid> aSource, RegistryObject<Fluid> aFlowing) {
+			spec = aSpec; type = aType; source = aSource; flowing = aFlowing;
+		}
+	}
+
+	/** The family row for a gt6 id path, or null (the fuel-table lookup seam, GT6RecipesCokeOven.resolveFluid shape). */
+	public static EngineFluidSpec engineSpec(String aName) {
+		for (EngineFluidSpec tSpec : ENGINE_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/**
+	 * The table-driven registration helper: applies the four-DR template (the iron_molten
+	 * :61-94 shape) to one spec row — FluidType carrying the declared
+	 * temperature/density/viscosity, Source/Flowing over one shared Properties — and
+	 * attaches NOTHING else: no LiquidBlock (fluid-only, the bucket-optional precedent) and
+	 * no bucket item. Client layers reuse the vanilla water textures over the row's tint
+	 * (the natural_gas initializeClient shape). The Properties are built inside the
+	 * supplier lambdas (registry-event time), reading the Source/Flowing handles off the
+	 * seam maps below — the same forward-reference shape as the static-field
+	 * moltenIronProperties() template.
+	 */
+	private static EngineFluid engineFluid(String aName) {
+		EngineFluidSpec tSpec = engineSpec(aName);
+		if (tSpec == null) throw new IllegalArgumentException("no engine fluid spec: " + aName);
+		RegistryObject<FluidType> tType = FLUID_TYPES.register(tSpec.name(), () -> new FluidType(FluidType.Properties.create()
+				.descriptionId(tSpec.descriptionId())
+				.temperature(tSpec.temperature())
+				.density(tSpec.density())
+				.viscosity(tSpec.viscosity())) {
+			@Override
+			public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+				aConsumer.accept(new IClientFluidTypeExtensions() {
+					private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
+					private static final ResourceLocation FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
+
+					@Override
+					public ResourceLocation getStillTexture() {return STILL;}
+
+					@Override
+					public ResourceLocation getFlowingTexture() {return FLOW;}
+
+					@Override
+					public int getTintColor() {return tSpec.tint();}
+				});
+			}
+		});
+		RegistryObject<FlowingFluid> tSource = FLUIDS.register(tSpec.name(),
+				() -> new ForgeFlowingFluid.Source(engineProperties(tSpec, tType)));
+		RegistryObject<Fluid> tFlowing = FLUIDS.register(tSpec.name() + "_flowing",
+				() -> new ForgeFlowingFluid.Flowing(engineProperties(tSpec, tType)));
+		SOURCE_SEAM.put(tSpec.name(), tSource);
+		FLOWING_SEAM.put(tSpec.name(), tFlowing);
+		return new EngineFluid(tSpec, tType, tSource, tFlowing);
+	}
+
+	/** The shared per-family Properties — called at registry-event time only (see engineFluid). */
+	private static ForgeFlowingFluid.Properties engineProperties(EngineFluidSpec aSpec, RegistryObject<FluidType> aType) {
+		// NO .block(...) — the fluid-only declaration of this card
+		return new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aSpec.name()), FLOWING_SEAM.get(aSpec.name()));
+	}
+
+	private static final Map<String, RegistryObject<FlowingFluid>> SOURCE_SEAM = new LinkedHashMap<>();
+	private static final Map<String, RegistryObject<Fluid>> FLOWING_SEAM = new LinkedHashMap<>();
+
+	/**
+	 * The nine engine-family registrations — one line per fluid family, data from
+	 * {@link #ENGINE_SPECS}. Static-init order: the DeferredRegister fields above are
+	 * initialized first, the entries accumulate and fire with the existing
+	 * {@link #onModConstruct} (types before fluids, FluidTypeTest.java:169-172 order).
+	 */
+	public static final EngineFluid STEAM           = engineFluid("steam");
+	public static final EngineFluid DISTILLED_WATER = engineFluid("distilled_water");
+	public static final EngineFluid DIESEL          = engineFluid("diesel");
+	public static final EngineFluid KEROSINE        = engineFluid("kerosine");
+	public static final EngineFluid PETROL          = engineFluid("petrol");
+	public static final EngineFluid FUEL            = engineFluid("fuel");
+	public static final EngineFluid NITROFUEL       = engineFluid("nitrofuel");
+	public static final EngineFluid JETFUEL         = engineFluid("jetfuel");
+	public static final EngineFluid ETHANOL         = engineFluid("ethanol");
+
+	/** The nine registered families in {@link #ENGINE_SPECS} declaration order (the lang/table walkers). */
+	public static List<EngineFluid> engineFluids() {
+		return List.of(STEAM, DISTILLED_WATER, DIESEL, KEROSINE, PETROL, FUEL, NITROFUEL, JETFUEL, ETHANOL);
+	}
+
 	private GTFluids() {}
 
 	@SubscribeEvent
@@ -286,6 +457,16 @@ public final class GTFluids {
 			// keep the pipe registration visible in the same smoke line group
 			GT6Mod.LOGGER.info("GT6 fluid pipes registered: {} {}",
 					GTFluidPipes.WOOD_FLUID_PIPE_SMALL.getId(), GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.getId());
+			// task p12-engine-fuel-fluids — the engine family, one smoke line per fluid (the
+			// live registry keys, mirroring the four per-fluid lines above)
+			for (EngineFluid tFamily : engineFluids()) {
+				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}{}",
+						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
+						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
+						tFamily.spec.temperature(),
+						tFamily.spec.density(),
+						tFamily.spec.gas() ? " (gaseous)" : "");
+			}
 		});
 	}
 }
