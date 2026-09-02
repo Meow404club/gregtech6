@@ -146,6 +146,28 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("axle", () -> BlockEntityType.Builder.of(
 					GTAxleBlockEntity::new, GT6Kinetics.axleBlockArray()).build(null));
 
+	// -------------------------------------------------------------------------
+	// wall attachments (task p12-tap-funnel-attachment) — the shared-BET pair
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The fluid-tap BET (task p12-tap-funnel-attachment spec ⑤ — the BET type rows live
+	 * here per the card, the 6 tap blocks/items in GT6Attachments; the CRANK_BE
+	 * cross-register resolution shape, the shared-BET multi-mount ADR-P3-1 over the
+	 * whole family). Registry path "tap" mirrors GTTapBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.attachment.GTTapBlockEntity>> TAP_BE =
+			BLOCK_ENTITY_TYPES.register("tap", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.attachment.GTTapBlockEntity::new, GT6Attachments.tapBlockArray()).build(null));
+
+	/**
+	 * The fluid-funnel BET — the same shape over the 6 funnel blocks. Registry path
+	 * "funnel" mirrors GTFunnelBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.attachment.GTFunnelBlockEntity>> FUNNEL_BE =
+			BLOCK_ENTITY_TYPES.register("funnel", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.attachment.GTFunnelBlockEntity::new, GT6Attachments.funnelBlockArray()).build(null));
+
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest
 	 * BlockItem. DeferredRegister form per the task card (Bus.MOD.bus().get() self-contained).
