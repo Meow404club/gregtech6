@@ -144,9 +144,19 @@ public abstract class GTGeneratorSolidBlockEntity extends TileEntityBase03TicksA
 		return mRecipesMapOverride != null ? mRecipesMapOverride : GT6RecipeMaps.FURNACE_FUEL;
 	}
 
-	/** BET factory for BlockEntityType.Builder.of — the concrete family resolves its shared type (the diesel full-ctor form). */
+	/**
+	 * BET factory for BlockEntityType.Builder.of — the concrete family resolves its shared
+	 * type (the diesel full-ctor form). The ROW VALUES (rate/efficiency) read off the
+	 * placed BLOCK carrier HERE — the GTDieselEngineBlockEntity ctor pattern (:201) — so
+	 * every placement path (/setblock and RCON place included, not just BlockItem
+	 * setPlacedBy) mounts the row config.
+	 */
 	public GTGeneratorSolidBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 		super(true, aType, aPos, aState);
+		if (aState.getBlock() instanceof gregtech6.registry.GT6BurningBoxes.BurningBoxBlock tBoxBlock) {
+			mRate = Math.max(1, tBoxBlock.row().rate());
+			mEfficiency = tBoxBlock.row().efficiency();
+		}
 	}
 
 	@Override

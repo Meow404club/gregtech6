@@ -391,15 +391,7 @@ public final class GT6BurningBoxes {
 			return InteractionResult.PASS;
 		}
 
-		@Override
-		public void setPlacedBy(Level aLevel, BlockPos aPos, BlockState aState, LivingEntity aPlacer, ItemStack aStack) {
-			super.setPlacedBy(aLevel, aPos, aState, aPlacer, aStack);
-			if (aLevel.getBlockEntity(aPos) instanceof GTGeneratorSolidBlockEntity tBox) {
-				tBox.mRate = Math.max(1, mRow.rate()); // the row output — the 1.20.1 carrier of NBT_OUTPUT
-				tBox.mEfficiency = mRow.efficiency(); // the row efficiency — the carrier of NBT_EFFICIENCY
-				tBox.setChanged();
-			}
-		}
+
 	}
 
 	private GT6BurningBoxes() {}
