@@ -41,7 +41,7 @@ import gregtech6.client.render.GTOvenRenderSnapshot.OvenOverlayGroup;
  *     The A-tier model is the single-writer discipline's fallback anchor: the
  *     ACTIVE/RUNNING properties stay the unique correct source (driven by the BE fields
  *     through {@code applyVisualState} setBlock(state, 3)), so on a snapshot miss the
- *     block renders exactly as before (ADR ③: property 保留 = A 档 fallback 唯一正确源).
+	 *     block renders exactly as before (ADR ③: keeping the property = the single correct source of the A-tier fallback).
  *     It renders on the solid layer (plus the null all-layers pass).</li>
  * <li><b>state overlay layer</b> — six full-face quads on the cutout layer, textured from
  *     the upstream {@code overlay_active}/{@code overlay_running} groups

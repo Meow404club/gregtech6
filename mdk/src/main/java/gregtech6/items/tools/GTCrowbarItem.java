@@ -245,7 +245,7 @@ public class GTCrowbarItem extends Item {
 	/**
 	 * The stack classifier — the ONLY action this item performs is
 	 * {@link GT6ToolActions#CROWBAR}. Never HOE_DIG: the three wrench-substitute
-	 * predicates classify on it (the card's 扳手 UI 回归 red line), and the ICoverableTE
+	 * predicates classify on it (the card's wrench-UI-regression red line), and the ICoverableTE
 	 * :246-247 OR gate would fire the legacy substitute path instead of the id path.
 	 *
 	 * <p>The decision lives in this static seam so the offline tests can pin it without

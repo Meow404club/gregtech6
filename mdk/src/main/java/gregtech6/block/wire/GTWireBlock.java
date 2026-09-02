@@ -353,7 +353,7 @@ public class GTWireBlock extends GTEntityBlock {
 	 * mWattageLast)} — relocated from the TE to the 1.20.1 Block hook
 	 * ({@code Entity.checkInsideBlocks} Entity.java:966-989 drives it for every overlapped
 	 * block volume, both sides; the client guard lives below). The {@code mFoamDried}
-	 * exemption is剪除 with the foam system (the C-Foam ADR — foam is a declared pool item,
+	 * exemption is excised along with the foam system (the C-Foam ADR — foam is a declared pool item,
 	 * so no dried-foam state can exist to gate on). The family gate rides
 	 * {@link #mContactDamage} (false on every non-ELECTRIC row) plus the BE-side
 	 * {@code isRedstone()} re-gate in {@link GTWireBlockEntity#applyElectricityDamage}.
@@ -370,7 +370,7 @@ public class GTWireBlock extends GTEntityBlock {
 	/**
 	 * Upstream TileEntityBase10ConnectorRendered.getCollisionBoundingBoxFromPool :219 —
 	 * {@code mContactDamage ? box(PX_P[2]..PX_N[2]) : super} (the {@code !mFoamDried}
-	 * half is剪除 with foam). The 2px inset is what lets an entity sink into the wire cell
+	 * half is excised along with foam). The 2px inset is what lets an entity sink into the wire cell
 	 * so {@link #entityInside} actually fires while standing on the wire (see
 	 * {@link #CONTACT_SHAPE}); inert wires keep the plain full cube.
 	 */

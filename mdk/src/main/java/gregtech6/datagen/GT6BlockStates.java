@@ -288,7 +288,7 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * Task p9-wire-family-w1 spec ⑥, MODEL TARGET UPGRADED by task p9-wire-family-w2
-     * (the card's "换模型目标为 GTWireBakedModel+贴图化模型"): the 620-block wire family,
+	     * (the card's "swap the model target to GTWireBakedModel + textured models"): the 620-block wire family,
      * looped over the {@link GTWireSpecs} table. The blockstate form is UNCHANGED from W1 —
      * per block ONE blockstate JSON whose SINGLE property-less variant (the {@code ""} key,
      * emitted by {@code partialState().setModels}) maps ALL 64

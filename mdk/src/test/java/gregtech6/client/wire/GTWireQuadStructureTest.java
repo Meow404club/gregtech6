@@ -1,6 +1,6 @@
 /**
  * The 64-connection-state quad structure of {@link GTWireBakedModel} (task
- * p9-wire-family-w2 acceptance "64 连接态 quad 结构单测"): the planner is a pure
+ * p9-wire-family-w2 acceptance "64 connection-state quad structure unit test"): the planner is a pure
  * (insulated, diameter, mask) → face/box/tint/sprite-kind function — the offline half of
  * the visual correctness (the runClient eye check stays with the user). Every expected box
  * below is the direct transcription of the upstream arm switch

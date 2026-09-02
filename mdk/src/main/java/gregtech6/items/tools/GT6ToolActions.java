@@ -10,7 +10,7 @@ import net.minecraftforge.common.ToolActions;
  * ToolsGT meta ids (CS.java:1734-1755, CROWBAR=20); this port flattens both layers
  * onto Forge {@link ToolAction}s — the id string stays {@code ICover.TOOL_CROWBAR}
  * ("crowbar") at the ICoverableTE dispatch seam while the stack-classification layer
- * becomes the action below (the "栈→id 分类器" seam the research card pinned).
+ * becomes the action below (the "stack-to-id classifier" seam the research card pinned).
  *
  * <p>RED LINE (card spec ①): the crowbar action is deliberately NOT an alias of
  * {@link ToolActions#HOE_DIG}. {@code canPerformAction(HOE_DIG)} is the wrench
