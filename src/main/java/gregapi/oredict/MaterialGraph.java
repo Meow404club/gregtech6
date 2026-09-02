@@ -150,7 +150,7 @@ public final class MaterialGraph {
      * 1. the current material targets itself (upstream default OreDictMaterial.java:284 and the
      *    "disabled" amount-0 form) - the self stack is NOT appended;
      * 2. the next material was already visited - a cycle closes, the closing edge is NOT appended;
-     * 3. aMaxSteps hops were taken (guard against pathological graphs; "防炸" bound).
+     * 3. aMaxSteps hops were taken (guard against pathological graphs; the "no-blowup" bound).
      * The visited-set rule 2 already makes every walk finite, aMaxSteps is the hard belt.
      *
      * @param aMaxSteps maximum number of edges to follow, must be >= 0
