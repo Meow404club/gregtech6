@@ -266,6 +266,33 @@ the single-sprite plate like every cover (AbstractCoverDefault :71-72 defaults).
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
+Shutter + Item Filter cover textures, task p11-cover-shutter-filter: the 4 PNGs
+under `gt6/textures/block/shutter/` and `gt6/textures/block/filteritem/` come
+from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/covers/shutter/`
+and `.../covers/filteritem/` (the `CoverShutter.java:93-95` and
+`CoverFilterItem.java:145-147` normal/inverted sprite pairs), byte-identical
+to upstream, sha256 verified:
+
+- `shutter/normal.png`     `ba4629fca0823fc13e82ae33ecf3fded2fa23ec27f6b9ff8b47fecd8df9caadd`
+- `shutter/inverted.png`   `f028857975fd9b231b9d4a79b5c2c18d6d95d41be6bbbecec85fa35ccb9a5db6`
+- `filteritem/normal.png`  `142c9ef5b8327f195273557ede3bb2e77b83a1a8881e1b81bd76e27f9c0c7d4c`
+- `filteritem/inverted.png` `a61b9b8e49fbd86c10abe840264398de8c71f0f02f1a8ecb092d9231fe00bd39`
+
+Path mapping (declared, the redstone-conductor precedent): upstream
+`machines/covers/shutter/<normal|inverted>` and
+`machines/covers/filteritem/<normal|inverted>` lowercased/underscored to
+`shutter/<...>` and `filteritem/<...>` (1.20.1 `ResourceLocation` charset),
+landing under `textures/block/` — the vanilla block atlas `directory("block")`
+source auto-stitches the sprite ids `gt6:block/shutter/<normal|inverted>` and
+`gt6:block/filteritem/<normal|inverted>` with zero extra atlas wiring. The
+upstream `BACKGROUND_COVER` layer (covers/base.png, the attachment/holder
+faces) is NOT borrowed — it folds into the single-sprite plate like every
+cover (AbstractCoverDefault :71-72 defaults).
+
+Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
 Laser Fiber Wire textures, task p11-wire-fiber-texture: the 2 PNGs under
 `gt6/textures/block/iconsets/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/iconsets/`

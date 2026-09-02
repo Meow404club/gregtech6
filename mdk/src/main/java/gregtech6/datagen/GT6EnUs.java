@@ -93,12 +93,19 @@ public final class GT6EnUs extends LanguageProvider {
      * MultiItemTechnological.java:64 — meta 1005, display name "Redstone Machine
      * Switch" verbatim; the "Turns Machines ON/OFF using Redstone" tooltip and the
      * screwdriver tooltip ride the cut addToolTips channel).
+     * Task p11-cover-shutter-filter: the shutter (upstream
+     * MultiItemTechnological.java:85 — meta 1026, display name "Shutter Cover"
+     * verbatim) and the item filter (upstream :82 — meta 1023, display name
+     * "Item Filter" verbatim); the toggle/filter tooltips ride the same cut
+     * addToolTips channel.
      */
     private void addCovers() {
         add("item.gt6.cover_redstone_emitter", "Redstone Emitter");
         add("item.gt6.cover_redstone_conductor_in", "Redstone Conductor Cover (Accept)");
         add("item.gt6.cover_redstone_conductor_out", "Redstone Conductor Cover (Emit)");
         add("item.gt6.cover_redstone_machine_switch", "Redstone Machine Switch");
+        add("item.gt6.cover_shutter", "Shutter Cover");
+        add("item.gt6.cover_item_filter", "Item Filter");
     }
 
     /**
