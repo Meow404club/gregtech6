@@ -9,7 +9,12 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+//?} else {
+/*import net.minecraft.world.item.component.CustomData;
+import gregtech6.registry.GT6DataComponents;
+ *///?}
 
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
@@ -41,6 +46,7 @@ public class GTBarrelBlockItem extends BlockItem {
 		super(aBlock, aProperties);
 	}
 
+	//? if forge {
 	@Override
 	@Nullable
 	public ICapabilityProvider initCapabilities(ItemStack aStack, @Nullable CompoundTag aNBT) {
@@ -48,6 +54,11 @@ public class GTBarrelBlockItem extends BlockItem {
 		return new GTBarrelItemFluidHandler(aStack, ((GTBarrelBlock) getBlock()).capacityL())
 				.setGasProof(((GTBarrelBlock) getBlock()).gasProof());
 	}
+	//?} else {
+	/*// (1.21.1: IForgeItem.initCapabilities does not exist — the item face moves to the W4
+	// registration wave via RegisterCapabilitiesEvent.registerItem(FLUID_HANDLER_ITEM, item,
+	// provider), constructing the same GTBarrelItemFluidHandler over capacityL()+gasProof().)
+	 *///?}
 
 	/** Upstream :290 — {@code mTank.has() ? 1 : aDefault}: content kills stacking. */
 	@Override
@@ -57,9 +68,17 @@ public class GTBarrelBlockItem extends BlockItem {
 
 	/** True when the stack carries a tank compound — the :290 {@code mTank.has()} item-tag form (the FluidTankGT write gate keeps the key present iff content is). */
 	public static boolean hasContent(ItemStack aStack) {
+		//? if forge {
 		CompoundTag tTag = aStack.getTag();
 		return tTag != null && tTag.contains(TileEntityBase08Barrel.NBT_TANK, CompoundTag.TAG_COMPOUND)
 				&& !tTag.getCompound(TileEntityBase08Barrel.NBT_TANK).isEmpty();
+		//?} else {
+		/*CustomData tData = aStack.get(GT6DataComponents.BARREL_CONTENT);
+		if (tData == null || tData.isEmpty()) return false;
+		CompoundTag tTag = tData.copyTag();
+		return tTag.contains(TileEntityBase08Barrel.NBT_TANK, CompoundTag.TAG_COMPOUND)
+				&& !tTag.getCompound(TileEntityBase08Barrel.NBT_TANK).isEmpty();
+		 *///?}
 	}
 
 	/**
@@ -77,10 +96,19 @@ public class GTBarrelBlockItem extends BlockItem {
 
 	/** The read seam over the same-key NBT pair: item tag → BE tank + covers (mirrors {@code TileEntityBase08Barrel.load} :129-136). */
 	public static void applyItemNBT(ItemStack aStack, TileEntityBase08Barrel aBarrel) {
+		//? if forge {
 		CompoundTag tTag = aStack.getTag();
 		if (tTag == null) return;
 		aBarrel.mTank.readFromNBT(tTag, TileEntityBase08Barrel.NBT_TANK);
 		aBarrel.readCoversFromNBT(tTag); // upstream 06Covers :68 — covers ride the same item tag
 		aBarrel.setChanged();
+		//?} else {
+		/*CustomData tData = aStack.get(GT6DataComponents.BARREL_CONTENT);
+		CustomData tCovers = aStack.get(GT6DataComponents.COVER_PAYLOAD);
+		if (tData == null && tCovers == null) return;
+		if (tData != null) aBarrel.mTank.readFromNBT(tData.copyTag(), TileEntityBase08Barrel.NBT_TANK);
+		if (tCovers != null) aBarrel.readCoversFromNBT(tCovers.copyTag()); // the 's'..'x' lane keys ride COVER_PAYLOAD
+		aBarrel.setChanged();
+		 *///?}
 	}
 }
