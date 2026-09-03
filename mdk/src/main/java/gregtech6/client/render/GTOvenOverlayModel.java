@@ -209,7 +209,10 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 
 	/** The sprite id for one overlay group and texture face ({@code gt6:block/oven_overlay_<group>_<face>}). */
 	public static ResourceLocation spriteOf(OvenOverlayGroup aGroup, OvenTextureFace aFace) {
-		return new ResourceLocation(GTRenderModelListener.MOD_ID,
+		// fromNamespaceAndPath, not the two-arg ctor: private in 1.21.1, and Forge 1.20.1
+		// backported the same factory (both legs javap-proven, p15-adapt-registry-core) —
+		// the swap table's conservative regex skips this call (concat expression argument).
+		return ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID,
 				SPRITE_PREFIX + aGroup.textureKey() + "_" + aFace.textureKey());
 	}
 

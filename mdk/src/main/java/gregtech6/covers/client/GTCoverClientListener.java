@@ -67,8 +67,10 @@ public final class GTCoverClientListener {
 
 	/** Idempotent registration (also the test hook — the listener class never loads in tests implicitly). */
 	public static void register() {
+		// String-key form: the 1.21.1 ModelResourceLocation record is not a ResourceLocation,
+		// the factory table is keyed by toString() (leg-neutral, GTRenderModelListener doc)
 		for (ModelResourceLocation tTarget : TARGET_MODELS) {
-			GTRenderModelListener.registerDynamicModel(tTarget, CoverPlateModel::new);
+			GTRenderModelListener.registerDynamicModel(tTarget.toString(), CoverPlateModel::new);
 		}
 	}
 }

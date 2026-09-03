@@ -78,6 +78,12 @@ stonecutter parameters {
         "net.minecraftforge.items." to "net.neoforged.neoforge.items.",
         "net.minecraftforge.common.capabilities." to "net.neoforged.neoforge.common.capabilities.",
         "net.minecraftforge.common.util." to "net.neoforged.neoforge.common.util.",
+        // W5 client 批（p15-adapt-client）：ToolActions 21.1 删除 → ItemAbilities 改名替代
+        // （javap universal 21.1.249：net/neoforged/neoforge/common/ItemAbilities.class 在、
+        // ToolActions 无；HOE_DIG 常量同名同义，canPerformAction(ItemAbility) 语义同）。
+        // 必须先于下一条 ToolAction（单数）条目——ToolActions 含子串 ToolAction，长键先序，
+        // 否则复数条目永远找不到 forge 形文本（首轮实测：import 行只换了包留下 ToolActions 类名）。
+        "net.minecraftforge.common.ToolActions" to "net.neoforged.neoforge.common.ItemAbilities",
         "net.minecraftforge.common.ToolAction" to "net.neoforged.neoforge.common.ToolAction",
         "net.minecraftforge.data.event." to "net.neoforged.neoforge.data.event.",
         // 注册类同名换包（DeferredRegister/RegisterEvent；RegistryObject/ITagManager 语义面 W4）
@@ -198,6 +204,39 @@ stonecutter parameters {
         "ForgeMod\\.(WATER_TYPE|LAVA_TYPE)\\.get(?![A-Za-z_])" to "NeoForgeMod.\$1.value",
         "ForgeFlowingFluid(?![A-Za-z_])" to "BaseFlowingFluid",
         "new\\s+LiquidBlock\\(([A-Z][A-Z_0-9]*)," to "new LiquidBlock(\$1.get(),",
+        // ---- W5 client 批（p15-adapt-client）：VertexConsumer 1.21 改名 + bakeQuad 八参化 +
+        // ToolActions 简单名。javap compiledWithNeoForge 21.1 jar 实证：
+        // · VertexConsumer：vertex→addVertex、color→setColor、normal→setNormal、uv→setUv、
+        //   uv2→setUv2（签名同型），endVertex 删除（1.21 即写 builder）。全仓 census：
+        //   五符号仅 GTMultiBlockPreviewRenderer/GTWrenchGridRenderer 代码体命中（9 链），
+        //   测试 stub 的 `public void endVertex()` 无点前缀天然不命中；
+        // · normal 必须长锚 `([A-Za-z0-9]+)\.normal\(\),`——裸 \.normal\( 会吃掉
+        //   PoseStack.Pose.normal()（取法线矩阵，1.21 同名存在，绝不可换）；
+        // · FaceBakery.bakeQuad 21.1 八参（删 1.20.1 尾参 ResourceLocation name），
+        //   4 处调用尾参两形态精确锚定（GTWireBakedModel:256 aSprite.contents().name() /
+        //   CoverPlateModel:208·GTOvenOverlayModel:247·GTFluidPipeFlowModel:152 aPlan.sprite()；
+        //   census：`, null, true, ` 其余命中全是 setCoverItem/assertTrue 实参，尾型不匹配）；
+        // · ToolActions 简单名换 ItemAbilities：左边界 (?<![A-Za-z0-9_]) 挡自研
+        //   GT6ToolActions（GTCutterItem/CoverControllerCoversTest 域）子串自撞。
+        "\\.vertex\\(" to ".addVertex(",
+        "\\.color\\(" to ".setColor(",
+        // normal 长锚 + 实参换型：1.20.1 Forge 的 normal(Matrix3f, x, y, z) 重载（实参
+        // Pose.normal() 取法线矩阵）21.1 删除，setNormal(Pose, x, y, z) 直接收 Pose 本体
+        // （javap IBakedModelExtension 同 jar：VertexConsumer default setNormal(Pose,float,
+        // float,float)）——捕获 Pose 变量名，剥掉 .normal() 取矩阵链。裸 \.normal\( 会误伤
+        // PoseStack.Pose.normal() 调用本身（1.21 同名存在，绝不可换）。
+        "\\.normal\\(([A-Za-z0-9]+)\\.normal\\(\\)," to ".setNormal(\$1,",
+        "\\.uv\\(" to ".setUv(",
+        // 0.7 拒收空串替换（"Replacing with an empty string is not reversible"）——
+        // endVertex 删除落成单空格（链尾 `;` 前残留空格对 javac 无意义）
+        "\\.endVertex\\(\\)" to " ",
+        // uv2 单参打包形 → setLight：1.20.1 Forge uv2(int packed) 便利重载 21.1 删除，
+        // vanilla default setLight(int) 实现就是拆包喂 setUv2（1.21.1 decompile 实证：
+        // setLight(p) => setUv2(p & 65535, p >> 16 & 65535)，语义逐字节同构）。
+        "\\.uv2\\(([^(),]+)\\)" to ".setLight(\$1)",
+        ", null, true, [a-zA-Z]+\\.sprite\\(\\)\\);" to ", null, true);",
+        ", null, true, [a-zA-Z]+\\.contents\\(\\)\\.name\\(\\)\\);" to ", null, true);",
+        "(?<![A-Za-z0-9_])ToolActions\\." to "ItemAbilities.",
     ).forEach { (pattern, to) ->
         replacements.regex(neoforgeSide) {
             replace(pattern, to)

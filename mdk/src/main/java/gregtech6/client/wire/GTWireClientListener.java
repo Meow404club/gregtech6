@@ -5,9 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.resources.ResourceLocation;
-
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -69,15 +66,20 @@ public final class GTWireClientListener {
 	public static void onModifyBakingResult(ModelEvent.ModifyBakingResult aEvent) {
 		if (!sBuilt) buildParams(); // ordering guard — client setup always ran first; belt and suspenders
 		Map<String, GTWireBakedModel> tModels = new ConcurrentHashMap<>();
-		for (Map.Entry<ResourceLocation, BakedModel> tEntry : aEvent.getModels().entrySet()) {
-			ResourceLocation tKey = tEntry.getKey();
-			if (!GTRenderModelListener.MOD_ID.equals(tKey.getNamespace())) continue;
-			GTWireBakedModel.Params tParams = PARAMS.get(tKey.getPath());
+		// var for the entry: 1.20.1 keys the map by ResourceLocation, 1.21.1 by the
+		// ModelResourceLocation record (no longer a ResourceLocation — no getNamespace/
+		// getPath). The key is read through its toString ("ns:path[#variant]" on BOTH
+		// legs), path = the segment before the optional '#' variant separator.
+		for (var tEntry : aEvent.getModels().entrySet()) {
+			String tKeyString = tEntry.getKey().toString();
+			if (!tKeyString.startsWith(GTRenderModelListener.MOD_ID + ":")) continue;
+			String tPath = tKeyString.substring(GTRenderModelListener.MOD_ID.length() + 1).split("#", 2)[0];
+			GTWireBakedModel.Params tParams = PARAMS.get(tPath);
 			if (tParams == null) continue;
 			// one model instance per block — the per-state keys and the item key share the
 			// same fallback ancestry (both descend from the same shared set model), so the
 			// static-property delegation is identical whichever key built it first
-			tEntry.setValue(tModels.computeIfAbsent(tKey.getPath(),
+			tEntry.setValue(tModels.computeIfAbsent(tPath,
 					tP -> new GTWireBakedModel(tEntry.getValue(), tParams)));
 		}
 	}

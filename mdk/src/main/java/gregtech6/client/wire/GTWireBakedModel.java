@@ -230,7 +230,9 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 			return mParams.overlaySprite() != null ? mParams.overlaySprite()
 					: new ResourceLocation("gt6", "block/iconsets/fiber_wire_overlay");
 		}
-		return new ResourceLocation("gt6", "block/iconsets/insulation_" + kindTail(aKind));
+		// the two-arg ctor is private in 1.21.1 (Forge 1.20.1 backported fromNamespaceAndPath,
+	// both legs javap-proven) — the conservative swap regex skips the concatenated argument
+	return ResourceLocation.fromNamespaceAndPath("gt6", "block/iconsets/insulation_" + kindTail(aKind));
 	}
 
 	private static String kindTail(SpriteKind aKind) {
