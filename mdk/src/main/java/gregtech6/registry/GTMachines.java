@@ -288,8 +288,11 @@ public final class GTMachines {
 		return applyRow(tMachine, tRow);
 	}
 
-	/** The row→BE mask assignment (package-private — the offline row test drives it against the fixture machine). */
-	static TileEntityBasicMachine applyRow(TileEntityBasicMachine aMachine, GTBasicMachineBlock.MachineRow aRow) {
+	/**
+	 * The row→BE mask assignment (public — the offline row test drives it against the
+	 * fixture machine; the BET factory calls it right after the {@link #machine} half).
+	 */
+	public static TileEntityBasicMachine applyRow(TileEntityBasicMachine aMachine, GTBasicMachineBlock.MachineRow aRow) {
 		aMachine.mEnergyInputs = aRow.energySides();
 		aMachine.mFluidInputs = aRow.fluidIn();
 		aMachine.mFluidOutputs = aRow.fluidOut();
