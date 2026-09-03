@@ -13,9 +13,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+//?}
 import net.minecraftforge.items.IItemHandler;
 
 import gregapi.code.TagData;
@@ -88,8 +90,10 @@ public abstract class TileEntityBase01Root extends BlockEntity implements ITileE
 	/** The inventory carrier, assigned by subclasses via {@link #setInventory(GTItemStackHandler)} (null = no inventory). */
 	protected GTItemStackHandler mInventory;
 
+	//? if forge {
 	/** Lazy capability handle over {@link #mInventory} (ADR-P3-2). */
 	private LazyOptional<IItemHandler> mItemHandlerCap = LazyOptional.empty();
+	//?}
 
 	/** Upstream constructor (boolean aIsTicking, :119-121) extended with the mandatory 1.20.1 BlockEntity triple (:27-31). */
 	protected TileEntityBase01Root(boolean aIsTicking, BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
@@ -100,15 +104,21 @@ public abstract class TileEntityBase01Root extends BlockEntity implements ITileE
 	/** return the internal Name of this TileEntity to be registered. DO NOT START YOUR NAME WITH "gt."!!! (upstream :154-155) */
 	public abstract String getTileEntityName();
 
+	//? if forge {
 	@Override
+	//?}
 	public void load(CompoundTag aNBT) {
+		//? if forge {
 		super.load(aNBT);
+		//?}
 		// upstream readFromNBT :134-141 restored x/y/z and guarded the negative-Y crash;
 		// both are vanilla's job now (position from chunk metadata, negative Y legal),
 		// so the base load is the documented hook point for subclasses.
 	}
 
+	//? if forge {
 	@Override
+	//?}
 	protected void saveAdditional(CompoundTag aNBT) {
 		// upstream writeToNBT :144-152 wrote "id" = getTileEntityName() plus the position;
 		// the vanilla "id" slot is the BET registry key now (saveId :74-81), so the name
@@ -116,6 +126,25 @@ public abstract class TileEntityBase01Root extends BlockEntity implements ITileE
 		// BlockEntity.loadStatic (:99-126).
 		aNBT.putString("te_name", getTileEntityName());
 	}
+
+	//? if neoforge {
+	/* // 21.1 canonical NBT hooks: 1.21.1 BlockEntity carries loadAdditional/saveAdditional
+	   // with the serialization HolderLookup.Provider (1.21.1 javap) and no
+	   // load(CompoundTag)/saveAdditional(CompoundTag). The (CompoundTag) forms above stay
+	   // as plain members because the whole BE tree (09Connector, 10MultiBlockBase,
+	   // machines, ...) overrides and super-calls them — the fork delegates the vanilla
+	   // provider hooks into that chain; the W4 NBT wave re-shapes the tree onto the
+	   // provider signatures.
+	@Override
+	protected void loadAdditional(CompoundTag aNBT, net.minecraft.core.HolderLookup.Provider aProvider) {
+		load(aNBT);
+	}
+
+	@Override
+	protected void saveAdditional(CompoundTag aNBT, net.minecraft.core.HolderLookup.Provider aProvider) {
+		saveAdditional(aNBT);
+	}
+	 *///?}
 
 	@Override
 	public void setChanged() {
@@ -400,9 +429,12 @@ public abstract class TileEntityBase01Root extends BlockEntity implements ITileE
 	 */
 	protected void setInventory(GTItemStackHandler aInventory) {
 		mInventory = aInventory;
+		//? if forge {
 		mItemHandlerCap = LazyOptional.of(() -> aInventory);
+		//?}
 	}
 
+	//? if forge {
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		// IItemHandler carries @AutoRegisterCapability (IItemHandler.java:15) — no
@@ -419,9 +451,21 @@ public abstract class TileEntityBase01Root extends BlockEntity implements ITileE
 		super.invalidateCaps();
 		mItemHandlerCap.invalidate();
 	}
+	//?}
 
+	//? if forge {
 	/** Raw capability handle (package-private test seam — ForgeCapabilities cannot class-init offline, so runtime code goes through {@link #getCapability}). */
 	LazyOptional<IItemHandler> itemHandlerCapability() {
 		return mItemHandlerCap;
 	}
+	//?}
+	//? if neoforge {
+	/* // Raw inventory handle (package-private test seam). 21.1 has no LazyOptional and
+	   // BlockEntity carries no getCapability to override (21.1.249 javap: zero capability
+	   // methods) — the handler exposes through the RegisterCapabilitiesEvent provider
+	   // wiring (net.neoforged.neoforge.capabilities) and the store reads directly.
+	IItemHandler itemHandlerCapability() {
+		return mInventory;
+	}
+	 *///?}
 }

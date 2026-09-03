@@ -11,9 +11,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+//?}
 
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.TileEntityBase01Root;
@@ -230,6 +232,7 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 	// the capability relay (the 698-line interface face → 3 capabilities)
 	// ---------------------------------------------------------------------------
 
+	//? if forge {
 	/**
 	 * ITEM_HANDLER / FLUID_HANDLER / ENERGY resolve against the target controller — the
 	 * upstream re-exposure of the controller's IO surfaces onto every part (:206-225 and the
@@ -249,6 +252,13 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 		}
 		return super.getCapability(aCapability, aSide);
 	}
+	//?}
+	//? if neoforge {
+	/* // 21.1 face: BlockEntity carries no getCapability to override — the part relay
+	   // re-forms as RegisterCapabilitiesEvent provider wiring: the part's provider
+	   // resolves the controller (relayTarget()) and answers through the level query
+	   // (ILevelExtension.getCapability), preserving the controller-owned lifecycle.
+	 *///?}
 
 	/**
 	 * The relay resolution half, as a package-private seam: ForgeCapabilities cannot

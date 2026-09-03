@@ -13,9 +13,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+//?}
+//? if neoforge {
+/* import net.neoforged.neoforge.capabilities.Capabilities;
+ *///?}
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -287,8 +292,17 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 		Direction tDir = gravityDirection(BarrelFluidHandler.fluidDensitySign(mTank.getFluid()));
 		if (hasLevel()) {
 			BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(tDir));
+			//? if forge {
 			IFluidHandler tTarget = tNeighbor == null ? null
 					: tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, tDir.getOpposite()).orElse(null); // counterpart of WorldAndCoords.getAdjacentTank :118-129
+			//?}
+			//? if neoforge {
+			/* // 21.1: BlockEntity carries no getCapability — the query goes through the level
+			   // (ILevelExtension.getCapability returns the handler directly, null when the
+			   // neighbour has no fluid cap):
+			IFluidHandler tTarget = tNeighbor == null ? null
+					: getLevel().getCapability(Capabilities.FluidHandler.BLOCK, tNeighbor.getBlockPos(), tDir.getOpposite()); // counterpart of WorldAndCoords.getAdjacentTank :118-129
+			 *///?}
 			if (tTarget != null && moveTankToHandler(mTank, tTarget, GRAVITY_TRANSFER_PER_TICK) > 0) onTankChanged();
 		}
 	}
@@ -399,6 +413,7 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 		scheduleCoverRenderRefresh();
 	}
 
+	//? if forge {
 	@Override
 	public void handleUpdateTag(CompoundTag aTag) {
 		super.handleUpdateTag(aTag);
@@ -410,6 +425,22 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 		super.onDataPacket(aNet, aPacket);
 		scheduleCoverRenderRefresh(); // block-update channel (cover changes)
 	}
+	//?}
+	//? if neoforge {
+	/* // 21.1 sync face: both IBlockEntityExtension hooks gain the serialization
+	   // HolderLookup.Provider parameter (1.21.1 javap); the refresh schedule rides either.
+	@Override
+	public void handleUpdateTag(CompoundTag aTag, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.handleUpdateTag(aTag, aProvider);
+		scheduleCoverRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.onDataPacket(aNet, aPacket, aProvider);
+		scheduleCoverRenderRefresh(); // block-update channel (cover changes)
+	}
+	 *///?}
 
 	private void scheduleCoverRenderRefresh() {
 		if (hasCovers() && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
@@ -440,6 +471,7 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 	// capability (spec ① — fresh per-call side wrapper, GTFluidPipeBlockEntity.java:297-303 form)
 	// ---------------------------------------------------------------------------
 
+	//? if forge {
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.FLUID_HANDLER) {
@@ -448,4 +480,11 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 		}
 		return super.getCapability(aCapability, aSide);
 	}
+	//?}
+	//? if neoforge {
+	/* // 21.1 face: no getCapability to override — the per-side BarrelFluidHandler exposes
+	   // through the RegisterCapabilitiesEvent provider wiring
+	   // (net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent), keeping the
+	   // fresh-per-call side semantics in the provider lambda.
+	 *///?}
 }
