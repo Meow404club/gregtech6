@@ -10,6 +10,11 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraft.world.level.material.Fluids;
 
+//? if neoforge {
+/*import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
+ *///?}
+
 /**
  * Upstream Recipe semantics: isRecipeInputEqual probe/consume dual mode
  * (Recipe.java:800-818), two-phase atomicity (:804-815), stack-size and NBT
@@ -69,7 +74,11 @@ class RecipeTest extends GTRecipesOfflineTestBase {
 		// recipe input matches any NBT on the machine input.
 		Recipe tRecipe = new Recipe(true, SAND, GLASS, null, null, 16, 16, 0);
 		ItemStack tTagged = new ItemStack(Items.SAND, 8);
+		//? if forge {
 		tTagged.setTag(new CompoundTag());
+		//?} else {
+		/*tTagged.set(DataComponents.CUSTOM_DATA, CustomData.of(new CompoundTag()));
+		 *///?}
 
 		assertTrue(tRecipe.isRecipeInputEqual(false, false, null, tTagged));
 	}
@@ -79,16 +88,28 @@ class RecipeTest extends GTRecipesOfflineTestBase {
 		ItemStack tTaggedSand = new ItemStack(Items.SAND, 8);
 		CompoundTag tTag = new CompoundTag();
 		tTag.putString("foo", "bar");
+		//? if forge {
 		tTaggedSand.setTag(tTag);
+		//?} else {
+		/*tTaggedSand.set(DataComponents.CUSTOM_DATA, CustomData.of(tTag));
+		 *///?}
 		Recipe tRecipe = new Recipe(true, new ItemStack[] {tTaggedSand}, GLASS, null, null, 16, 16, 0);
 
 		ItemStack tOtherTag = new ItemStack(Items.SAND, 8);
 		CompoundTag tTag2 = new CompoundTag();
 		tTag2.putString("foo", "bar");
+		//? if forge {
 		tOtherTag.setTag(tTag2);
+		//?} else {
+		/*tOtherTag.set(DataComponents.CUSTOM_DATA, CustomData.of(tTag2));
+		 *///?}
 
 		assertTrue(tRecipe.isRecipeInputEqual(false, false, null, tOtherTag.copy()), "equal tags match");
+		//? if forge {
 		tOtherTag.getTag().putString("foo", "nope");
+		//?} else {
+		/*CustomData.update(DataComponents.CUSTOM_DATA, tOtherTag, t -> t.putString("foo", "nope"));
+		 *///?}
 		assertFalse(tRecipe.isRecipeInputEqual(false, false, null, tOtherTag), "different tags do not match");
 	}
 
@@ -97,7 +118,11 @@ class RecipeTest extends GTRecipesOfflineTestBase {
 		ItemStack tTaggedSand = new ItemStack(Items.SAND, 8);
 		CompoundTag tTag = new CompoundTag();
 		tTag.putString("foo", "bar");
+		//? if forge {
 		tTaggedSand.setTag(tTag);
+		//?} else {
+		/*tTaggedSand.set(DataComponents.CUSTOM_DATA, CustomData.of(tTag));
+		 *///?}
 		Recipe tRecipe = new Recipe(true, new ItemStack[] {tTaggedSand}, GLASS, null, null, 16, 16, 0);
 		tRecipe.mNoNBTChecks = true;
 
