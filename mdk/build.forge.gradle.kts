@@ -37,6 +37,9 @@ java {
 
 tasks.withType(JavaCompile::class).configureEach {
     options.encoding = "UTF-8"
+    // 全量诊断协议（M3 门禁口径，decisions.2026-09-03-p15-m1-gate）：javac 默认 maxerrs=100
+    // 会截断错误清单，maxerrs=100000 保证红文件数/错误数全量可数（对 1.20.1 全绿面零影响）。
+    options.compilerArgs.addAll(listOf("-Xmaxerrs", "100000", "-Xmaxwarns", "100000"))
 }
 
 legacyForge {
@@ -117,7 +120,9 @@ sourceSets["test"].runtimeClasspath += sourceSets["main"].output
 sourceSets["test"].compileClasspath += sourceSets["main"].compileClasspath
 sourceSets["test"].runtimeClasspath += sourceSets["main"].runtimeClasspath
 
-// mods.toml 模板展开，同构 GTCEu gradle/scripts/resources.gradle:34-63（模板本体在共享 mdk/src/main/templates）
+// mods.toml 模板展开，同构 GTCEu gradle/scripts/resources.gradle:34-63（模板本体在共享 mdk/src/main/templates）。
+// 双模板互斥（W2）：本节点 exclude neoforge.mods.toml（NeoForge 1.20.5+ 专有文件名），
+// neoforge 节点对称 exclude mods.toml——避免非本节点元数据进 jar。
 val replaceProperties = mapOf(
     "version" to project.version.toString(),
     "mod_id" to modId,
@@ -133,6 +138,7 @@ val replaceProperties = mapOf(
 val generateModMetadata = tasks.register("generateModMetadata", ProcessResources::class) {
     inputs.properties(replaceProperties)
     expand(replaceProperties)
+    exclude("META-INF/neoforge.mods.toml") // neoforge 专有元数据不进 forge 产物
     from(sharedDir.resolve("src/main/templates"))
     into(layout.buildDirectory.dir("generated/sources/modMetadata"))
 }
