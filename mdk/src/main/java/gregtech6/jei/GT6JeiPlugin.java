@@ -19,6 +19,20 @@ import gregtech6.registry.GTMultiBlocks;
  * the implicit default constructor satisfies the second half. Same shape as the GTCEu Modern
  * precedent (GTJEIPlugin.java:43-44: {@code @JeiPlugin} + {@code implements IModPlugin}).
  *
+ * <p>Dual-node wiring (task p15-jei-dual-wiring): this single shared source compiles against
+ * both pinned JEI stacks — 1.20.1 Forge (mezz.jei:jei-1.20.1-{common-api,forge-api}:15.56.0.205,
+ * modCompileOnly/modRuntimeOnly, mdk/build.forge.gradle.kts) and 1.21.1 NeoForge
+ * (mezz.jei:jei-1.21.1-{common-api,neoforge-api}:19.52.0.422, plain compileOnly/runtimeOnly —
+ * the moddev plugin registers no mod* remapping configurations, live configuration probe
+ * 2026-09-04). javap on the two generations shows the consumed faces identical ({@code IModPlugin}
+ * 20 methods with {@code getPluginUid() : ResourceLocation} abstract, {@code IRecipeRegistration}
+ * including {@code addIngredientInfo(ItemLike, Component...)}), so no chisel fork exists in this
+ * file; the only cross-version hazard (the 1.21.1 {@code ResourceLocation} two-arg constructor
+ * removal) is digested by the stonecutter swap table. The class stays strictly on the
+ * loader-neutral common API — the platform packages ({@code mezz.jei.api.forge} /
+ * {@code mezz.jei.api.neoforge}) are deliberately untouched, pinned by the GT6JeiPluginTest
+ * bytecode guard (noPlatformSpecificJeiApiInBytecode).
+ *
  * <p>Self-contained by card ruling: this class touches nothing in {@code GT6Mod} /
  * {@code GTModBusListener} (frozen) — JEI loads it on its own when present. JEI is a
  * client-only mod, so on a dedicated server the JEI jar sits dormant on the classpath and this
