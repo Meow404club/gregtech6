@@ -40,7 +40,14 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  * <li>{@code fill <pos> <amount>} — the water-intake channel: water through the BOTTOM-face
  *     capability door (the :262 canonical intake form — what a pipe did into
  *     getFluidTankFillable2); the door's water-only half makes a REJECTED echo a legitimate
- *     verdict. The top-face refusal is the door's own (no capability there).</li>
+ *     verdict. The top-face refusal is the door's own (no capability there).
+ *     {@code fill <pos> <amount> distw} — the distilled-water half of the same door: upstream
+ *     :262 is {@code FL.water} and the DistW fluid carries the WATER tag (FL.java:111), so the
+ *     upstream door admits it; the P13 live door seam (mWaterMatch, GTBoilerTankBlockEntity
+ *     .java:172) is the vanilla-water-only default, so the distilled half rides the acceptance
+ *     channel as a direct mTanks[0] fill of the GTFluids.DISTILLED_WATER identity — exactly
+ *     what the upstream door would have accepted, and the :119 mDistwMatch criterion then
+ *     classifies the content.</li>
  * <li>{@code inject-hu <pos> <amount>} — the direct HU supply: one packet through
  *     doEnergyInjection (the Root synchronized gate, the firebox emit form aSize=1) — the
  *     acceptance counterfactual while no cable/wire HU carrier exists; the door's gates
@@ -55,6 +62,9 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  *     TOOL_magnifyingglass lines (:186-196), the tanks, the energy store, the gauge, the
  *     facing and the row path (the stored/capacity reporting surface of :257-258 — the
  *     capacitor interface half is the cut ADR-D1 subsystem).</li>
+ * <li>{@code efficiency <pos>} — the calcification readout (task p14-boiler-distw-immunity):
+ *     the :119/:188-192 state as ONE line carrying the PRISTINE/SCALED verdict token, so a
+ *     chain asserts the efficiency verdict without string negation.</li>
  * <li>{@code dismantle <pos>} — the removedByPlayer arm (:202-205): barometer &gt; 4 (the
  *     null player IS the non-creative counterfactual) → explode(T) instant; then the block
  *     is removed either way (the :204 setBlockToAir).</li>
@@ -81,7 +91,10 @@ public final class GTBoilerCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.then(Commands.argument("amount", IntegerArgumentType.integer(1, 1000000000))
 						.executes(aContext -> fill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-								IntegerArgumentType.getInteger(aContext, "amount"))))))
+								IntegerArgumentType.getInteger(aContext, "amount")))
+						.then(Commands.literal("distw")
+							.executes(aContext -> fillDistw(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									IntegerArgumentType.getInteger(aContext, "amount")))))))
 			.then(Commands.literal("inject-hu")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.then(Commands.argument("amount", IntegerArgumentType.integer(1, 1000000000))
@@ -99,11 +112,14 @@ public final class GTBoilerCommand {
 			.then(Commands.literal("stat")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> stat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+			.then(Commands.literal("efficiency")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(aContext -> efficiency(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
 			.then(Commands.literal("dismantle")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> dismantle(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))));
 		aEvent.getDispatcher().register(tBoiler);
-		LOGGER.info("Registered GT6 boiler command /gt6boiler (place | fill | inject-hu | barometer | decalcify | plunge | stat | dismantle) — the steam boiler tank acceptance home");
+		LOGGER.info("Registered GT6 boiler command /gt6boiler (place | fill [distw] | inject-hu | barometer | decalcify | plunge | stat | efficiency | dismantle) — the steam boiler tank acceptance home");
 	}
 
 	/** The place arm — the GTOvenCommand.place form over the variant path lookup. */
@@ -146,7 +162,33 @@ public final class GTBoilerCommand {
 	}
 
 	/**
-	 * The direct HU supply arm — one packet through the doEnergyInjection gate (the aSize=1
+	 * The distilled-water half of the intake (task p14-boiler-distw-immunity). Upstream the
+	 * :262 fill gate is {@code FL.water(aFluidToFill)} and the DistW fluid carries the WATER
+	 * tag (FL.java:111) — the upstream door admits distilled water canonically. The P13 live
+	 * door seam (mWaterMatch, GTBoilerTankBlockEntity.java:172) is the vanilla-water-only
+	 * default, so the distilled half rides the acceptance channel as a DIRECT mTanks[0] fill
+	 * of the GTFluids.DISTILLED_WATER identity — exactly the outcome the upstream door would
+	 * have produced; the :119 mDistwMatch criterion then classifies the content (the immune
+	 * arm of the P14 RCON chain).
+	 */
+	private static int fillDistw(CommandSourceStack aSource, BlockPos aPos, int aAmount) {
+		ServerLevel tLevel = aSource.getLevel();
+		if (!(tLevel.getBlockEntity(aPos) instanceof GTBoilerTankBlockEntity tBoiler)) {
+			aSource.sendFailure(Component.literal("FILL FAILED: no boiler tank BE at " + aPos.toShortString()));
+			return 0;
+		}
+		net.minecraft.world.level.material.Fluid tDistw = GTFluids.DISTILLED_WATER.source.get();
+		int tFilled = tBoiler.mTanks[0].fill(new FluidStack(tDistw, aAmount), IFluidHandler.FluidAction.EXECUTE);
+		String tLine = String.format("GT6 boiler fill at %s: filled %d/%d L of %s%s, water tank holds %d L",
+				aPos.toShortString(), tFilled, aAmount, net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(tDistw),
+				tFilled == 0 ? " (REJECTED)" : " (ACCEPTED)", tBoiler.mTanks[0].amount());
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The HU supply arm — one packet through the doEnergyInjection gate (the aSize=1
 	 * firebox emit form); a wrong-type refusal is a legitimate verdict (the door gates).
 	 */
 	private static int injectHu(CommandSourceStack aSource, BlockPos aPos, int aAmount) {
@@ -251,6 +293,26 @@ public final class GTBoilerCommand {
 		String tText = tLine.toString();
 		aSource.sendSuccess(() -> Component.literal(tText), false);
 		LOGGER.info(tText);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The calcification readout (task p14-boiler-distw-immunity) — the :119/:188-192 state
+	 * as one line with the PRISTINE/SCALED verdict token: a chain asserts the verdict by
+	 * substring (no negation), the exact efficiency number rides along for the transcript.
+	 */
+	private static int efficiency(CommandSourceStack aSource, BlockPos aPos) {
+		ServerLevel tLevel = aSource.getLevel();
+		if (!(tLevel.getBlockEntity(aPos) instanceof GTBoilerTankBlockEntity tBoiler)) {
+			aSource.sendFailure(Component.literal("EFFICIENCY FAILED: no boiler tank BE at " + aPos.toShortString()));
+			return 0;
+		}
+		String tVerdict = tBoiler.mEfficiency >= 10000 ? "PRISTINE" : "SCALED " + (10000 - tBoiler.mEfficiency);
+		String tLine = "GT6 boiler efficiency at " + aPos.toShortString() + ": efficiency=" + tBoiler.mEfficiency
+				+ "/10000 (" + tVerdict + "), calcification="
+				+ (tBoiler.mEfficiency < 10000 ? (10000 - tBoiler.mEfficiency) / 100 + "%" : "none");
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
 	}
 
