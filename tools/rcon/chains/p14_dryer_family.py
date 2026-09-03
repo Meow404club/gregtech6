@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+"""p14-dryer-family — the Dryer ladder acceptance chain (declarative framework).
+
+Chain semantics (task p14-dryer-family ACCEPTANCE): four dryers placed (the placed
+default FACING = north, no placer through the command), then per tier the row geometry
+and the declared-empty-map verdict:
+
+  place → fluid fill east/south minecraft:water (the rotated SBIT_B|SBIT_L tank-in mask:
+          relative back = world south, relative left = world east — ACCEPTED) →
+  fluid fill down / up (the negative arms: bottom is the SBIT_D ENERGY face, top is the
+          SBIT_U OUT-only face — REJECTED, 0 filled is a legitimate verdict) →
+  fluid draw up (the OUT mask is open but the output bank is empty and the input tank is
+          fill-only — REJECTED) →
+  fluid stat (the live census: in[0]=1000 L of water — the constructed 1000 mB default tank exactly filled + the six-side face lists, the :511
+          isEnergyAcceptingFrom probe pinned to energyIn=down) →
+  input 1 (the minimal stub feed arm: bricks, the upstream frame 'B' column) →
+  inject 40 (HU packets through doInject at the row's mInputMax — the HU carrier live) →
+  check (the tier columns: parallel 8/16/32/64 + parallelDuration + recIn 32/128/512/2048,
+          data=-2 = the menu-less carrier marker, progress=0/0 — the declared-empty DRYING
+          map never starts, outputs stay empty, 产出零).
+
+The two framework passes are the [0, 0] idempotency proof; the pass-open bbox cleanup
+restores the sites between passes.
+
+Run:  python3 tools/rcon/chains/p14_dryer_family.py
+"""
+
+import sys
+from pathlib import Path
+
+_HERE = Path(__file__).resolve().parent
+for _path in (str(_HERE), str(_HERE.parent)):
+    if _path not in sys.path:
+        sys.path.insert(0, _path)
+
+import gt6world
+from framework import Chain, Step, main, phase
+
+F = gt6world.fmt
+
+# The four dryer sites, >=16 blocks apart, clear of the p13/p14 chains' sites. The placed
+# default facing is north (place() sets defaultBlockState, no placer), so the rotated
+# tank-in faces are world east (relative left) + world south (relative back) on all four.
+T1 = gt6world.Site(100, 64, 100, dx=1, dy=2, dz=1)
+T2 = gt6world.Site(116, 64, 100, dx=1, dy=2, dz=1)
+T3 = gt6world.Site(132, 64, 100, dx=1, dy=2, dz=1)
+T4 = gt6world.Site(148, 64, 100, dx=1, dy=2, dz=1)
+
+# (literal, pos, parallel, recIn, maxIn) — the tier columns the check report must pin;
+# maxIn doubles as the inject packet size (the size-then-pos branch of the inject tree
+# needs the explicit size before the coordinate)
+TIERS = [
+    ("dryer",    T1, "parallel=8",  "recIn=32",   64),
+    ("dryer_t2", T2, "parallel=16", "recIn=128",  256),
+    ("dryer_t3", T3, "parallel=32", "recIn=512",  1024),
+    ("dryer_t4", T4, "parallel=64", "recIn=2048", 4096),
+]
+
+steps = []
+
+# ------------------------------------------- the four tiers, one protocol each
+for literal, pos, parallel, recin, maxin in TIERS:
+    steps += [
+        phase(f"{literal}: place, the rotated tank masks, the stub feed, HU, the empty-map verdict"),
+        Step(f"gt6machine {literal} place {F(pos)}", expect=f"GT6 {literal} placed"),
+        # the positive arms — relative back (world south) + relative left (world east)
+        Step(f"gt6machine {literal} fluid fill east minecraft:water 700 {F(pos)}",
+             expect="filled 700/700 L of minecraft:water (ACCEPTED)"),
+        Step(f"gt6machine {literal} fluid fill south minecraft:water 300 {F(pos)}",
+             expect="filled 300/300 L of minecraft:water (ACCEPTED)"),
+        # the negative arms — the bottom (the SBIT_D energy face) and the top (OUT-only)
+        Step(f"gt6machine {literal} fluid fill down minecraft:water 100 {F(pos)}",
+             expect="filled 0/100 L of minecraft:water (REJECTED)"),
+        Step(f"gt6machine {literal} fluid fill up minecraft:water 100 {F(pos)}",
+             expect="filled 0/100 L of minecraft:water (REJECTED)"),
+        # the OUT arm: the top mask is open, the output bank is empty, the input tank is
+        # fill-only — nothing is drainable
+        Step(f"gt6machine {literal} fluid draw up 100 {F(pos)}",
+             expect="drawn 0/100 L of nothing (REJECTED)"),
+        # the live census + the six-side face lists (the :511 probe pinned to bottom-only)
+        Step(f"gt6machine {literal} fluid stat {F(pos)}",
+             expect="in[0]=1000 L of minecraft:water"),
+        Step(f"gt6machine {literal} fluid stat {F(pos)}",
+             expect="masks fluidIn=100 fluidOut=66 energyIn=65"),
+        Step(f"gt6machine {literal} fluid stat {F(pos)}",
+             expect="faces fluidIn=south,east fluidOut=up energyIn=down"),
+        # the minimal stub feed arm (the DRYING item slot; never starts a process)
+        Step(f"gt6machine {literal} input 1 {F(pos)}",
+             expect="input: 1x bricks into slot 0"),
+        # the HU carrier live at the row's tier band — one mInputMax packet per iteration
+        # (the :503 band saturates at mInputMax - mEnergy; doWork drains it back each tick)
+        Step(f"gt6machine {literal} inject 40 {maxin} {F(pos)}",
+             expect="used=40 progress=0/0"),
+        Step(f"gt6machine {literal} inject 40 {maxin} {F(pos)}",
+             expect="outputs=[]"),
+        # the empty-map verdict + the tier columns + the menu-less marker
+        Step(f"gt6machine {literal} check {F(pos)}", expect="progress=0/0"),
+        Step(f"gt6machine {literal} check {F(pos)}", expect="active=false"),
+        Step(f"gt6machine {literal} check {F(pos)}", expect=parallel),
+        Step(f"gt6machine {literal} check {F(pos)}", expect="parallelDuration=true"),
+        Step(f"gt6machine {literal} check {F(pos)}", expect=recin),
+        Step(f"gt6machine {literal} check {F(pos)}", expect="data=-2"),
+        Step(f"gt6machine {literal} check {F(pos)}", expect="input=bricks"),
+    ]
+
+# ------------------------------------------- teardown
+steps += [
+    phase("C: teardown — the explicit restore over the dryer row (the pass-open bbox is the backstop)"),
+    Step("fill 93 61 93 156 68 107 air", expect="filled"),
+    Step("time query daytime", expect="The time is"),
+]
+
+CHAIN = Chain(
+    name="p14-dryer-family",
+    slug="p14dryer",
+    sites=gt6world.declare_sites(T1, T2, T3, T4),
+    preferred_ports=(25753, 25763),      # this card's pinned rcon/query pair
+    steps=steps,
+)
+
+
+if __name__ == "__main__":
+    main(CHAIN)
