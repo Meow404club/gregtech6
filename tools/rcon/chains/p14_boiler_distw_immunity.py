@@ -14,7 +14,7 @@ rng-DETERMINISTIC, the water arm is the random control):
     never isFull — the water cap makes an explosion arithmetically IMPOSSIBLE; the plunge
     clears the steam, water-first, so the second plunge is the timing-jitter backstop).
     16 rounds = 128 conversion ticks over ~1200 ticks of powered window. The round-1
-    barometer=15 + efficiency probes prove the conversions RAN on distilled water
+    barometer=16 + efficiency probes prove the conversions RAN on distilled water
     (deterministic — no dice on this arm); the final verdict is efficiency=10000/10000
     (PRISTINE).
 
@@ -74,11 +74,11 @@ for _round in range(ROUNDS):
              expect="booked 80000/80000 HU (ACCEPTED)", sleep=ROUND_SLEEP),
     ]
     if _round == 0:
-        # the round-1 live proof: 1000 conversions happened (160000 L = exactly half tank,
-        # barometer 15) and the distilled criterion already held through them — both
-        # deterministic on this arm
+        # the round-1 live proof: 1000 conversions happened (160000 L = exactly half tank →
+        # barometer 16 = 1+160000*30/320000, the UT.Code.scale 1..31 gauge) and the
+        # distilled criterion already held through them — both deterministic on this arm
         steps += [
-            Step(f"gt6boiler barometer {DB}", expect="barometer=15"),
+            Step(f"gt6boiler barometer {DB}", expect="barometer=16"),
             Step(f"gt6boiler efficiency {DB}", expect="efficiency=10000/10000 (PRISTINE)"),
         ]
     steps += [
