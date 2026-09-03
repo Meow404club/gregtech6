@@ -100,6 +100,17 @@ public class GTWireBlock extends GTEntityBlock {
 	public GTWireBlock(long aVoltage, long aAmperage, long aLoss, Properties aProperties) {
 		this(aVoltage, aAmperage, aLoss, null, 1, false, 0, aProperties);
 	}
+	//? if neoforge {
+	/*
+	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+	// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+	// precedent — a parse-time default carrying no live config; world save/load never
+	// runs through this codec (the registry-id + property mapper does).
+	@Override
+	protected com.mojang.serialization.MapCodec<? extends GTWireBlock> codec() {
+		return simpleCodec(aProperties -> new GTWireBlock(32, 1, 1, aProperties));
+	}
+	*///?}
 
 	/**
 	 * The full W1 carrier (task p9-wire-family-w1 spec ②) — the electric family form.

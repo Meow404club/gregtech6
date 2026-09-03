@@ -44,6 +44,17 @@ public class GTExampleChestBlock extends GTEntityBlock {
 	public GTExampleChestBlock(Properties aProperties) {
 		super(aProperties);
 	}
+	//? if neoforge {
+	/*
+	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+	// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+	// precedent — a parse-time default carrying no live config; world save/load never
+	// runs through this codec (the registry-id + property mapper does).
+	@Override
+	protected com.mojang.serialization.MapCodec<? extends GTExampleChestBlock> codec() {
+		return simpleCodec(aProperties -> new GTExampleChestBlock(aProperties));
+	}
+	*///?}
 
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {

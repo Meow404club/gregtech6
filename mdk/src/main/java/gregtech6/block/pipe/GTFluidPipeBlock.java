@@ -72,6 +72,17 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 		mCapacityPerTank = aCapacityPerTank;
 		registerDefaultState(defaultBlockState().setValue(CONNECTIONS, 0));
 	}
+	//? if neoforge {
+	/*
+	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+	// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+	// precedent — a parse-time default carrying no live config; world save/load never
+	// runs through this codec (the registry-id + property mapper does).
+	@Override
+	protected com.mojang.serialization.MapCodec<? extends GTFluidPipeBlock> codec() {
+		return simpleCodec(aProperties -> new GTFluidPipeBlock(50, aProperties));
+	}
+	*///?}
 
 	/** Per-tank capacity in Liters (upstream NBT_TANK_CAPACITY :114). */
 	public long capacityPerTank() {

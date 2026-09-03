@@ -341,6 +341,17 @@ public final class GT6BurningBoxes {
 			mRow = aRow;
 			registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
 		}
+		//? if neoforge {
+		/*
+		// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+		// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+		// precedent — a parse-time default carrying no live config; world save/load never
+		// runs through this codec (the registry-id + property mapper does).
+		@Override
+		protected com.mojang.serialization.MapCodec<? extends BurningBoxBlock> codec() {
+			return simpleCodec(aProperties -> new BurningBoxBlock(SOLID_ROWS.get(0), aProperties));
+		}
+		*///?}
 
 		/** The registration row (the GTBarrelBlock.capacityL carrier read). */
 		public BurningBoxRow row() {

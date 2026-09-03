@@ -49,6 +49,17 @@ public class GTDieselEngineBlock extends GTEntityBlock {
 		spec = aSpec;
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
 	}
+	//? if neoforge {
+	/*
+	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+	// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+	// precedent — a parse-time default carrying no live config; world save/load never
+	// runs through this codec (the registry-id + property mapper does).
+	@Override
+	protected com.mojang.serialization.MapCodec<? extends GTDieselEngineBlock> codec() {
+		return simpleCodec(aProperties -> new GTDieselEngineBlock(aProperties, GT6Kinetics.DIESEL_SPECS.get(0)));
+	}
+	*///?}
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> aBuilder) {
