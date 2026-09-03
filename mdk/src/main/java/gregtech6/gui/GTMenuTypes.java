@@ -9,7 +9,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegisterEvent;
+//? if forge {
 import net.minecraftforge.registries.RegistryObject;
+//?} else {
+/*import net.neoforged.neoforge.registries.DeferredHolder;
+// 21.1: RegistryObject moved to the Holder-typed DeferredHolder (one extra generic
+// parameter — RegistryObject<T> becomes DeferredHolder<R, T extends R>, javap on
+// neoforge-21.1.249); not swap-able, forked per file (ADR-P15-3 r1 priority 3).
+ *///?}
 
 /**
  * GT6 {@link MenuType} registry — every GT6 GUI shape gets one MenuType (the 1.20.1 replacement of
@@ -29,6 +36,12 @@ import net.minecraftforge.registries.RegistryObject;
  * what DeferredRegister wraps internally (DeferredRegister.java:379 addEntries). Typed access goes
  * through the {@code gtDebug()} accessor, which fails fast if used before registration completed
  * on the current side (registry events fire on both client and dedicated server).
+ *
+ * <p>21.1 face (task p15-adapt-registry-core): the typed handle is a {@code DeferredHolder}
+ * (RegistryObject deleted on 21.1) and the self-contained mod-bus source is
+ * {@code ModList.get().getModContainerById(...).getEventBus()} — {@code Bus.MOD.bus()} has no
+ * accessor there. Both forms delegate to the same RegisterEvent stream; the 1.20.1 face is
+ * unchanged.
  */
 @Mod.EventBusSubscriber(modid = GTMenuTypes.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTMenuTypes {
@@ -53,8 +66,13 @@ public final class GTMenuTypes {
      */
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MOD_ID);
 
+    //? if forge {
     public static final RegistryObject<MenuType<GTExampleChestMenu>> EXAMPLE_CHEST_MENU =
         MENUS.register(EXAMPLE_CHEST_MENU_ID, () -> IForgeMenuType.create(GTExampleChestMenu::new));
+    //?} else {
+    /*public static final DeferredHolder<MenuType<?>, MenuType<GTExampleChestMenu>> EXAMPLE_CHEST_MENU =
+        MENUS.register(EXAMPLE_CHEST_MENU_ID, () -> IForgeMenuType.create(GTExampleChestMenu::new));
+     *///?}
 
     private GTMenuTypes() {
     }
@@ -76,7 +94,14 @@ public final class GTMenuTypes {
     /** FMLConstructModEvent = first mod-bus lifecycle stage, strictly before any RegisterEvent (GTBlockEntities.onModConstruct doc). */
     @SubscribeEvent
     public static void onModConstruct(FMLConstructModEvent aEvent) {
+        //? if forge {
         MENUS.register(Mod.EventBusSubscriber.Bus.MOD.bus().get());
+        //?} else {
+        /*// 21.1: Mod.EventBusSubscriber.Bus lost its bus() accessor (annotation moved to
+        // net.neoforged.fml.common.EventBusSubscriber without it); the self-contained bus
+        // source is the container itself — ModContainer.getEventBus() (loader-4.0.44 javap).
+        MENUS.register(net.neoforged.fml.ModList.get().getModContainerById(MOD_ID).orElseThrow().getEventBus());
+         *///?}
     }
 
     /** Menu registry fill; the MENU registry key filters the fan-out (one event per registry type). */

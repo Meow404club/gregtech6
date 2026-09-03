@@ -15,7 +15,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.registries.RegisterEvent;
+//? if forge {
 import net.minecraftforge.registries.RegistryObject;
+//?} else {
+/*import net.neoforged.neoforge.registries.DeferredHolder;
+// 21.1: RegistryObject → DeferredHolder (one extra generic parameter, javap
+// neoforge-21.1.249); not swap-able, forked per file (ADR-P15-3 r1 priority 3).
+ *///?}
 
 import gregapi.data.MT;
 import gregapi.data.OP;
@@ -67,7 +73,11 @@ import gregtech6.item.MaterialPrefixItem;
 public final class GTMaterialItems {
 
     /** Runtime index (prefix, material) -> handle, in registration order (creative tab display order). */
+    //? if forge {
     private static final Map<PrefixMaterial, RegistryObject<Item>> INDEX = new LinkedHashMap<>();
+    //?} else {
+    /*private static final Map<PrefixMaterial, DeferredHolder<Item, Item>> INDEX = new LinkedHashMap<>();
+     *///?}
     /** Defensive dedup across re-fired RegisterEvents (ADR-P2-2 fix 1). */
     private static final Set<ResourceLocation> REGISTERED_IDS = new HashSet<>();
 
@@ -225,7 +235,11 @@ public final class GTMaterialItems {
                 GT6Mod.LOGGER.warn("GT6 skipped duplicate item id {}", tLoc);
                 continue;
             }
+            //? if forge {
             RegistryObject<Item> tHandle = RegistryObject.create(tLoc, Registries.ITEM, "gt6"); // RegistryObject.java:62
+            //?} else {
+            /*DeferredHolder<Item, Item> tHandle = DeferredHolder.create(Registries.ITEM, tLoc); // DeferredHolder.create(ResourceKey, id), javap neoforge-21.1.249
+             *///?}
             event.register(Registries.ITEM, tLoc, () -> new MaterialPrefixItem(new Item.Properties(), tPair.prefix(), tPair.material())); // RegisterEvent.java:54-63
             INDEX.put(tPair, tHandle);
             tTotal++;
@@ -258,7 +272,11 @@ public final class GTMaterialItems {
         int tTabCount = 0;
         for (OreDictPrefix tPrefix : tabPrefixes()) {
             List<PrefixMaterial> tTabItems = tGroups.get(tPrefix);
+            //? if forge {
             RegistryObject<Item> tIcon = INDEX.get(tTabItems.get(0)); // upstream icon = the prefix item itself with wildcard metadata (CreativeTab.java:28-35)
+            //?} else {
+            /*DeferredHolder<Item, Item> tIcon = INDEX.get(tTabItems.get(0)); // upstream icon = the prefix item itself with wildcard metadata (CreativeTab.java:28-35)
+             *///?}
             String tSnake = snakeCase(tPrefix.mNameInternal);
             final int tColumnF = tColumn;
             event.register(Registries.CREATIVE_MODE_TAB, gtId(tSnake), () ->
@@ -284,6 +302,7 @@ public final class GTMaterialItems {
     }
 
     /** Query API for later cards: the handle of a prefix x material item, or null if not registered. */
+    //? if forge {
     public static RegistryObject<Item> get(OreDictPrefix prefix, OreDictMaterial material) {
         return INDEX.get(new PrefixMaterial(prefix, material));
     }
@@ -292,9 +311,23 @@ public final class GTMaterialItems {
     public static Map<PrefixMaterial, RegistryObject<Item>> items() {
         return Collections.unmodifiableMap(INDEX);
     }
+    //?} else {
+    /*public static DeferredHolder<Item, Item> get(OreDictPrefix prefix, OreDictMaterial material) {
+        return INDEX.get(new PrefixMaterial(prefix, material));
+    }
+
+    // All registered handles (unmodifiable, registration order).
+    public static Map<PrefixMaterial, DeferredHolder<Item, Item>> items() {
+        return Collections.unmodifiableMap(INDEX);
+    }
+     *///?}
 
     /** All registered items as an array, for ItemColors.register(ItemColor, ItemLike...) (client seam). */
     public static Item[] itemArray() {
+        //? if forge {
         return INDEX.values().stream().map(RegistryObject::get).toArray(Item[]::new);
+        //?} else {
+        /*return INDEX.values().stream().map(DeferredHolder::get).toArray(Item[]::new);
+         *///?}
     }
 }
