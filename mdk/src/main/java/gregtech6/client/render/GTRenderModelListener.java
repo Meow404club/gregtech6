@@ -64,11 +64,18 @@ public final class GTRenderModelListener {
 	public static final String MOD_ID = "gt6";
 
 	/**
-	 * Target blockstate-model id → dynamic model factory (input = the freshly baked
-	 * fallback model). Concurrent because registration runs on the mod thread while
+	 * Target key string → dynamic model factory (input = the freshly baked fallback model).
+	 * Concurrent because registration runs on the mod thread while
 	 * {@link #onModifyBakingResult} fires on a resource-reload worker thread.
+	 *
+	 * <p>The key is the target id's {@code toString()} form — leg-neutral by design:
+	 * 1.20.1 keys the event map by {@code ResourceLocation} (a supertype of
+	 * ModelResourceLocation), 1.21.1 keys it by the ModelResourceLocation <em>record</em>
+	 * (which no longer extends ResourceLocation and drops getNamespace/getPath). Both
+	 * types stringify to the same {@code ns:path[#variant]} shape on both legs, so the
+	 * lookup is a plain String get off the baked key.
 	 */
-	private static final Map<ResourceLocation, Function<BakedModel, BakedModel>> DYNAMIC_MODEL_FACTORIES =
+	private static final Map<String, Function<BakedModel, BakedModel>> DYNAMIC_MODEL_FACTORIES =
 			new ConcurrentHashMap<>();
 
 	private GTRenderModelListener() {
@@ -81,6 +88,15 @@ public final class GTRenderModelListener {
 	 * the map-replacement semantics of the baking result.
 	 */
 	public static void registerDynamicModel(ResourceLocation aTargetModelId, Function<BakedModel, BakedModel> aFactory) {
+		registerDynamicModel(aTargetModelId.toString(), aFactory);
+	}
+
+	/**
+	 * The String-key form (the ModelResourceLocation targets arrive here via
+	 * {@code toString()} — the record form of 1.21.1 is not a ResourceLocation, so the
+	 * overloads keep every caller leg-compilable without per-caller forks).
+	 */
+	public static void registerDynamicModel(String aTargetModelId, Function<BakedModel, BakedModel> aFactory) {
 		DYNAMIC_MODEL_FACTORIES.put(aTargetModelId, aFactory);
 	}
 
@@ -97,13 +113,16 @@ public final class GTRenderModelListener {
 	@SubscribeEvent
 	public static void onModifyBakingResult(ModelEvent.ModifyBakingResult aEvent) {
 		// Worker thread — only the model registry map is legal to touch here
-		// (ModelEvent.java:40-43). A target whose baked model is absent (typo, datagen
-		// gap, conditional model) is skipped silently: replacing nothing is the safe
-		// degradation, and the blockstate JSON keeps rendering vanilla.
-		DYNAMIC_MODEL_FACTORIES.forEach((tTargetModelId, tFactory) -> {
-			BakedModel tBaked = aEvent.getModels().get(tTargetModelId);
-			if (tBaked != null) {
-				aEvent.getModels().put(tTargetModelId, tFactory.apply(tBaked));
+		// (ModelEvent.java:40-43). Iteration runs over the BAKED map (not the factory
+		// table): a registered target whose baked model is absent (typo, datagen gap,
+		// conditional model) is skipped silently — replacing nothing is the safe
+		// degradation, and the blockstate JSON keeps rendering vanilla. The key match is
+		// String-based (see DYNAMIC_MODEL_FACTORIES): leg-neutral across the 1.20.1
+		// ResourceLocation keys and the 1.21.1 ModelResourceLocation record keys.
+		aEvent.getModels().forEach((tBakedKey, tBaked) -> {
+			Function<BakedModel, BakedModel> tFactory = DYNAMIC_MODEL_FACTORIES.get(tBakedKey.toString());
+			if (tFactory != null) {
+				aEvent.getModels().put(tBakedKey, tFactory.apply(tBaked));
 			}
 		});
 	}

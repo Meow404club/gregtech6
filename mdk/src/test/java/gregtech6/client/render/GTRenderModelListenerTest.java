@@ -63,7 +63,7 @@ public class GTRenderModelListenerTest extends GTOfflineRenderTestBase {
 	@Test
 	public void registeredTargetsAreReplacedInTheBakingResult() {
 		BakedModel tFallback = new FallbackProbe();
-		GTRenderModelListener.registerDynamicModel(TARGET, WrappedProbe::new);
+		GTRenderModelListener.registerDynamicModel(TARGET.toString(), WrappedProbe::new);
 		assertEquals(1, GTRenderModelListener.registeredCount());
 
 		Map<ResourceLocation, BakedModel> tModels = new HashMap<>();
@@ -77,7 +77,7 @@ public class GTRenderModelListenerTest extends GTOfflineRenderTestBase {
 
 	@Test
 	public void absentTargetsDegradeSilently() {
-		GTRenderModelListener.registerDynamicModel(ABSENT, WrappedProbe::new);
+		GTRenderModelListener.registerDynamicModel(ABSENT.toString(), WrappedProbe::new);
 
 		Map<ResourceLocation, BakedModel> tModels = new HashMap<>();
 		tModels.put(TARGET, new FallbackProbe());
@@ -89,8 +89,8 @@ public class GTRenderModelListenerTest extends GTOfflineRenderTestBase {
 
 	@Test
 	public void reRegistrationIsLastWins() {
-		GTRenderModelListener.registerDynamicModel(TARGET, WrappedProbe::new);
-		GTRenderModelListener.registerDynamicModel(TARGET, WrappedProbe::new);
+		GTRenderModelListener.registerDynamicModel(TARGET.toString(), WrappedProbe::new);
+		GTRenderModelListener.registerDynamicModel(TARGET.toString(), WrappedProbe::new);
 		assertEquals(1, GTRenderModelListener.registeredCount(), "same id re-registers in place (map replacement)");
 	}
 }

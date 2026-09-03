@@ -39,8 +39,11 @@ public final class GTPipeFlowClientListener {
 
 	/** Idempotent registration (also the test hook — the listener class never loads in tests implicitly). */
 	public static void register() {
+		// String-key form (toString) — the 1.21.1 event map keys by the ModelResourceLocation
+		// record, so the factory table is keyed leg-neutrally by the id string
 		for (String tModel : TARGET_MODELS) {
-			GTRenderModelListener.registerDynamicModel(new ResourceLocation(GTRenderModelListener.MOD_ID, tModel), GTFluidPipeFlowModel::new);
+			GTRenderModelListener.registerDynamicModel(
+					new ResourceLocation(GTRenderModelListener.MOD_ID, tModel).toString(), GTFluidPipeFlowModel::new);
 		}
 	}
 }

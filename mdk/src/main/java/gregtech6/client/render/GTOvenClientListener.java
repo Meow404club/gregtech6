@@ -45,8 +45,16 @@ public final class GTOvenClientListener {
 		for (boolean tActive : new boolean[] {false, true}) {
 			for (String tFacing : new String[] {"north", "south", "west", "east"}) {
 				for (boolean tRunning : new boolean[] {false, true}) {
-					rTargets.add(new ModelResourceLocation(GTRenderModelListener.MOD_ID, OVEN_BLOCK_PATH,
-							"active=" + tActive + ",facing=" + tFacing + ",running=" + tRunning));
+					// 1.20.1: (namespace, path, variant) String triple; 1.21.1: the record
+					// ctor is (ResourceLocation id, String variant) — the record no longer
+					// extends ResourceLocation (javap compiledWithNeoForge 21.1 jar)
+					String tVariant = "active=" + tActive + ",facing=" + tFacing + ",running=" + tRunning;
+					//? if forge {
+					rTargets.add(new ModelResourceLocation(GTRenderModelListener.MOD_ID, OVEN_BLOCK_PATH, tVariant));
+					//? } else {
+					/*rTargets.add(new ModelResourceLocation(
+							new ResourceLocation(GTRenderModelListener.MOD_ID, OVEN_BLOCK_PATH), tVariant));*/
+					//? }
 				}
 			}
 		}
@@ -60,8 +68,10 @@ public final class GTOvenClientListener {
 
 	/** Idempotent registration (also the test hook — the listener class never loads in tests implicitly). */
 	public static void register() {
-		for (ResourceLocation tTarget : targetModelIds()) {
-			GTRenderModelListener.registerDynamicModel(tTarget, GTOvenOverlayModel::new);
+		// the String-key overload of GTRenderModelListener (the 1.21.1 MRL record is not a
+		// ResourceLocation, so the table is keyed by toString() — leg-neutral)
+		for (ModelResourceLocation tTarget : targetModelIds()) {
+			GTRenderModelListener.registerDynamicModel(tTarget.toString(), GTOvenOverlayModel::new);
 		}
 	}
 }
