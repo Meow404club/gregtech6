@@ -1054,6 +1054,16 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		return aSlot >= mRecipes.mInputItemsCount && aSlot < mRecipes.mInputItemsCount + mRecipes.mOutputItemsCount;
 	}
 
+	/**
+	 * The per-call wrapper factory — the {@code getCapability(FLUID_HANDLER, aSide)} seam.
+	 * Package-private so the offline tests drive the wrapper directly (the ForgeCapabilities
+	 * tokens are transformer-resolved and unresolvable offline, the
+	 * GT6MultiBlockFluidTest direct-construction precedent).
+	 */
+	IFluidHandler newFluidHandler(@Nullable Direction aSide) {
+		return new BasicMachineFluidHandler(this, aSide);
+	}
+
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.ITEM_HANDLER) {
@@ -1063,7 +1073,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 			// the fresh-wrapper-per-call form (TileEntityBase10MultiBlockMachine:681-686): a
 			// stored LazyOptional would memoize the wrapper and freeze the FIRST-queried side
 			// into the stateless per-side handler
-			return LazyOptional.of(() -> new BasicMachineFluidHandler(this, aSide)).cast();
+			return LazyOptional.of(() -> newFluidHandler(aSide)).cast();
 		}
 		return super.getCapability(aCapability, aSide);
 	}
