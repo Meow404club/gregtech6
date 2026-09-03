@@ -203,7 +203,10 @@ public final class GTMultiBlockCommand {
 								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "amount"))))))
 			.then(Commands.literal("dismantle")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
-					.executes(aContext -> boilerDismantle(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
+					.executes(aContext -> boilerDismantle(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+			.then(Commands.literal("plunge")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(aContext -> boilerPlunge(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
 		aEvent.getDispatcher().register(tMulti);
 		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|check|tick|input|ignite|menu|fluid|boiler place|frame|wand|check|stat|fill|inject-hu|dismantle)");
 	}
@@ -845,6 +848,24 @@ public final class GTMultiBlockCommand {
 		String tLine = String.format("GT6 large boiler inject-hu at %s: booked %d/%d HU%s, store holds %d/%d HU",
 				aPos.toShortString(), tBooked, aAmount, tBooked == 0 ? " (REJECTED)" : " (ACCEPTED)",
 				tBoiler.mEnergy, tBoiler.mCapacity);
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The TOOL_plunger arm (:275-278) — the water tank first, else the steam tank; the
+	 * teardown channel of the acceptance chain.
+	 */
+	private static int boilerPlunge(CommandSourceStack aSource, BlockPos aPos) {
+		TileEntityLargeBoiler tBoiler = boilerAt(aSource, aPos);
+		if (tBoiler == null) {
+			aSource.sendFailure(Component.literal("BOILER PLUNGE FAILED: no TileEntityLargeBoiler at " + aPos.toShortString()));
+			return 0;
+		}
+		long tTrashed = tBoiler.plunger();
+		String tLine = "GT6 large boiler plunge at " + aPos.toShortString() + ": trashed " + tTrashed + " L"
+				+ " (water=" + tBoiler.mTanks[0].amount() + ", steam=" + tBoiler.mTanks[1].amount() + ")";
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
