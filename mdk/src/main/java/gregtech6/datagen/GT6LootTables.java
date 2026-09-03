@@ -3,7 +3,9 @@ package gregtech6.datagen;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
@@ -17,7 +19,6 @@ import gregtech6.block.wire.GTWireBlock;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GTWires;
-import net.minecraftforge.registries.RegistryObject;
 
 /**
  * Loot tables of the material prefix blocks (task p8-prefixblock-render spec ④). One
@@ -37,12 +38,38 @@ import net.minecraftforge.registries.RegistryObject;
  * <p>Table count == block count == 3773 (the card-A census yardstick): {@link #generate()}
  * maps 1:1 over {@link GTMaterialBlocks#blockArray()}, and {@link #getKnownBlocks()} is
  * narrowed to the same array so the provider's missing-table validation only covers the
- * blocks this card owns (Forge patch on BlockLootSubProvider; machines/barrels/pipes are
+ * blocks this card owns (the loader-patched {@code getKnownBlocks} narrowing hook exists
+ * on BOTH legs — the Forge 1.20.1 patch and a NeoForge 21.1 override alike, javap-verified;
+ * machines/barrels/pipes are
  * other cards' surfaces and must not be validated here).
  */
 public final class GT6LootTables extends LootTableProvider {
 
-    public GT6LootTables(PackOutput output) {
+    /**
+     * {@code lookupProvider} is the shared cross-version seam: Forge 1.20.1's GatherDataEvent
+     * already exposes {@code getLookupProvider()} (the forge-1.20.1 datagen docs pass it the
+     * same way), so the constructor signature is identical on both legs — only the
+     * {@code super} wiring differs. 1.21.1 javap ground truth: LootTableProvider grew a 4th
+     * constructor parameter (the registry lookup future) and SubProviderEntry's first
+     * component changed from Supplier to Function&lt;HolderLookup.Provider,
+     * LootTableSubProvider&gt; — the same {@code GT6XxxLoot::new} references satisfy both
+     * shapes via the forked sub-provider constructors below (provider-arg on 1.21.1,
+     * no-arg on 1.20.1). The 1.20.1 leg takes the parameter and ignores it.
+     */
+    public GT6LootTables(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        //? if neoforge {
+        /*
+        super(output, Set.of(), List.of(
+                new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
+                new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
+                new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task p12-axle-family
+                new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK), // task p12-engine-diesel
+                new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task p12-gearbox-transformer
+                new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task p13-burning-box-family
+                new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
+                new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK)), // task p14-dryer-family
+            lookupProvider);
+         *///?} else {
         super(output, Set.of(), List.of(
                 new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
                 new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
@@ -52,6 +79,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task p13-burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK))); // task p14-dryer-family
+        //?}
     }
 
     /** The block list this provider owns: exactly the material prefix block array (the census walk order). */
@@ -74,9 +102,9 @@ public final class GT6LootTables extends LootTableProvider {
      */
     public static List<Block> wireLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
-        for (RegistryObject<GTWireBlock> tWire : GTWires.FAMILY_BLOCKS) rBlocks.add(tWire.get());
-        for (RegistryObject<GTWireBlock> tWire : GTWires.REDSTONE_BLOCKS) rBlocks.add(tWire.get());
-        for (RegistryObject<GTWireBlock> tWire : GTWires.LASER_BLOCKS) rBlocks.add(tWire.get());
+        for (var tWire : GTWires.FAMILY_BLOCKS) rBlocks.add(tWire.get());
+        for (var tWire : GTWires.REDSTONE_BLOCKS) rBlocks.add(tWire.get());
+        for (var tWire : GTWires.LASER_BLOCKS) rBlocks.add(tWire.get());
         return rBlocks;
     }
 
@@ -88,9 +116,16 @@ public final class GT6LootTables extends LootTableProvider {
      */
     public static final class GT6WireBlockLoot extends BlockLootSubProvider {
 
+        //? if neoforge {
+        /*
+        public GT6WireBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
         public GT6WireBlockLoot() {
             super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         }
+        //?}
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
@@ -113,16 +148,23 @@ public final class GT6LootTables extends LootTableProvider {
      */
     public static List<Block> axleLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
-        for (RegistryObject<GTAxleBlock> tAxle : GT6Kinetics.AXLE_BLOCKS.values()) rBlocks.add(tAxle.get());
+        for (var tAxle : GT6Kinetics.AXLE_BLOCKS.values()) rBlocks.add(tAxle.get());
         return rBlocks;
     }
 
     /** The axle-family self-drop provider (task p12-axle-family — the popOff drop path). */
     public static final class GT6AxleBlockLoot extends BlockLootSubProvider {
 
+        //? if neoforge {
+        /*
+        public GT6AxleBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
         public GT6AxleBlockLoot() {
             super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         }
+        //?}
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
@@ -149,9 +191,16 @@ public final class GT6LootTables extends LootTableProvider {
     /** The kinetics-machine self-drop provider (task p12-gearbox-transformer). */
     public static final class GT6KineticsBlockLoot extends BlockLootSubProvider {
 
+        //? if neoforge {
+        /*
+        public GT6KineticsBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
         public GT6KineticsBlockLoot() {
             super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         }
+        //?}
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
@@ -166,10 +215,17 @@ public final class GT6LootTables extends LootTableProvider {
 
     public static final class GT6BlockLoot extends BlockLootSubProvider {
 
+        //? if neoforge {
+        /*
+        public GT6BlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
         public GT6BlockLoot() {
             // no explosion-resistant items: every drop survives-explosion-gated (vanilla default form)
             super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         }
+        //?}
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
@@ -198,9 +254,16 @@ public final class GT6LootTables extends LootTableProvider {
     /** The diesel engine family self-drop provider (task p12-engine-diesel). */
     public static final class GT6EngineBlockLoot extends BlockLootSubProvider {
 
+        //? if neoforge {
+        /*
+        public GT6EngineBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
         public GT6EngineBlockLoot() {
             super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         }
+        //?}
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
@@ -230,9 +293,16 @@ public final class GT6LootTables extends LootTableProvider {
     /** The burning-box family self-drop provider (task p13-burning-box-family). */
     public static final class GT6BurningBoxBlockLoot extends BlockLootSubProvider {
 
+        //? if neoforge {
+        /*
+        public GT6BurningBoxBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
         public GT6BurningBoxBlockLoot() {
             super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         }
+        //?}
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
@@ -262,9 +332,16 @@ public final class GT6LootTables extends LootTableProvider {
     /** The boiler-tank family self-drop provider (task p13-boiler-tank). */
     public static final class GT6BoilerTankBlockLoot extends BlockLootSubProvider {
 
+        //? if neoforge {
+        /*
+        public GT6BoilerTankBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
         public GT6BoilerTankBlockLoot() {
             super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         }
+        //?}
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
@@ -295,9 +372,16 @@ public final class GT6LootTables extends LootTableProvider {
     /** The dryer-family self-drop provider (task p14-dryer-family). */
     public static final class GT6DryerBlockLoot extends BlockLootSubProvider {
 
+        //? if neoforge {
+        /*
+        public GT6DryerBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
         public GT6DryerBlockLoot() {
             super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         }
+        //?}
 
         @Override
         protected Iterable<Block> getKnownBlocks() {

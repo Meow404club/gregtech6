@@ -13,7 +13,6 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
@@ -204,7 +203,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBarrel(GTBarrels.BARREL_PLASTIC.get());
         addBarrel(GTBarrels.BARREL_METAL.get());
         addBarrel(GTBarrels.BARREL_LOGISTICS.get()); // task p12-barrel-keepfilter-logistics — the :2171 row, own PNG
-        for (RegistryObject<GTBarrelBlock> tDrum : GTBarrels.METAL_DRUM_BLOCKS.values())
+        for (var tDrum : GTBarrels.METAL_DRUM_BLOCKS.values())
             addBarrel(tDrum.get(), "barrel_metal");
     }
 
@@ -464,7 +463,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     private void addAxles() {
         ModelFile tModel = models().cubeColumn("axle", modLoc("block/axle"), modLoc("block/axle"));
-        for (RegistryObject<GTAxleBlock> tAxle : GT6Kinetics.AXLE_BLOCKS.values()) {
+        for (var tAxle : GT6Kinetics.AXLE_BLOCKS.values()) {
             getVariantBuilder(tAxle.get()).forAllStates(aState -> switch (aState.getValue(GTAxleBlock.AXIS)) {
                 case X -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 90, false)};
                 case Y -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
@@ -543,7 +542,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@code itemModels()} form per row).
      */
     private void addDieselEngines() {
-        for (RegistryObject<GTDieselEngineBlock> tBlock : GT6Kinetics.DIESEL_BLOCKS.values()) {
+        for (var tBlock : GT6Kinetics.DIESEL_BLOCKS.values()) {
             simpleBlock(tBlock.get(), models().cubeAll("diesel_engine", modLoc("block/diesel_engine")));
             itemModels().withExistingParent(tBlock.getId().getPath(), modLoc("block/diesel_engine"));
         }

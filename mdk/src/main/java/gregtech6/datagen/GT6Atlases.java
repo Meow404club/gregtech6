@@ -1,8 +1,10 @@
 package gregtech6.datagen;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.client.renderer.texture.atlas.sources.SingleFile;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.SpriteSourceProvider;
@@ -30,12 +32,46 @@ import gregtech6.covers.GT6Covers;
  */
 public final class GT6Atlases extends SpriteSourceProvider {
 
-    public GT6Atlases(PackOutput output, ExistingFileHelper existingFileHelper) {
+    /**
+     * {@code lookupProvider} is the shared cross-version seam: Forge 1.20.1's GatherDataEvent
+     * already exposes {@code getLookupProvider()} (the forge-1.20.1 datagen docs pass it the
+     * same way), so the constructor signature is identical on both legs — only the
+     * {@code super} wiring differs (1.21.1 javap: {@code (PackOutput, CompletableFuture<
+     * HolderLookup.Provider>, String, ExistingFileHelper)} — the mod id moved before the
+     * file helper and the registry lookup joined the parameter list). The 1.20.1 leg takes
+     * the parameter and ignores it.
+     */
+    public GT6Atlases(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
+        ExistingFileHelper existingFileHelper) {
+        //? if neoforge {
+        /*
+        super(output, lookupProvider, GT6DataGenerators.MOD_ID, existingFileHelper);
+         *///?} else {
         super(output, existingFileHelper, GT6DataGenerators.MOD_ID);
+        //?}
     }
 
+    /**
+     * The provider hook fork: 1.21.1 has NO {@code addSources} any more — the abstract
+     * subclass contract is JsonCodecProvider's {@code gather()} (javap 21.1.249:
+     * SpriteSourceProvider declares only the atlas constants + {@code atlas(ResourceLocation)},
+     * NeoForgeSpriteSourceProvider overrides {@code gather}); Forge 1.20.1 keeps its own
+     * {@code addSources} hook. Both one-line hooks delegate to the shared body below.
+     */
     @Override
+    //? if neoforge {
+    /*
+    protected void gather() {
+        addAtlasSources();
+    }
+     *///?} else {
     protected void addSources() {
+        addAtlasSources();
+    }
+    //?}
+
+    /** The shared atlas source list (byte-identical output on both legs — same JSON format). */
+    private void addAtlasSources() {
         ResourceLocation tCoverSprite = GT6Covers.ironPlateSprite();
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(tCoverSprite, Optional.empty()));
         // the pipe flow-arrow sprite (task p4-pipe-flow-control spec ④) — stitched by the
