@@ -52,10 +52,13 @@ stonecutter parameters {
     // -- string 表：纯包名 shift / 全限定名锚定改名（反向在 forge 源零命中 → no-op）--
     // 特定条目在前（存在子串包含关系时保证长键先执行）。
     listOf(
-        // 常见 data 类：ExistingFileHelper/SpriteSourceProvider 迁 client.data，LanguageProvider 迁 data.language
-        "net.minecraftforge.common.data.ExistingFileHelper" to "net.neoforged.neoforge.client.data.ExistingFileHelper",
-        "net.minecraftforge.common.data.SpriteSourceProvider" to "net.neoforged.neoforge.client.data.SpriteSourceProvider",
-        "net.minecraftforge.common.data.LanguageProvider" to "net.neoforged.neoforge.data.language.LanguageProvider",
+        // 常见 data 类：三类 21.1 真值同在 common.data（p15-adapt-datagen 勘正：W2 初版的
+        // client.data/data.language 目标在 neoforge 21.1.249 不存在——javap universal jar
+        // 实证 net/neoforged/neoforge/common/data/{ExistingFileHelper,SpriteSourceProvider,
+        // LanguageProvider}.class 三件齐，compileJava 报"程序包不存在"复现；1.21.2+ 才迁出）。
+        "net.minecraftforge.common.data.ExistingFileHelper" to "net.neoforged.neoforge.common.data.ExistingFileHelper",
+        "net.minecraftforge.common.data.SpriteSourceProvider" to "net.neoforged.neoforge.common.data.SpriteSourceProvider",
+        "net.minecraftforge.common.data.LanguageProvider" to "net.neoforged.neoforge.common.data.LanguageProvider",
         // 菜单扩展接口改名（IForgeMenuType → IMenuTypeExtension；import 与代码体全限定名两用）
         "net.minecraftforge.common.extensions.IForgeMenuType" to "net.neoforged.neoforge.common.extensions.IMenuTypeExtension",
         "IForgeMenuType.create" to "IMenuTypeExtension.create",
