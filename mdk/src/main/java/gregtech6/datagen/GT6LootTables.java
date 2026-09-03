@@ -49,7 +49,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task p12-axle-family
                 new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK), // task p12-engine-diesel
                 new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task p12-gearbox-transformer
-                new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK))); // task p13-burning-box-family
+                new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task p13-burning-box-family
+                new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK))); // task p13-boiler-tank
     }
 
     /** The block list this provider owns: exactly the material prefix block array (the census walk order). */
@@ -240,6 +241,38 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : burningBoxLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The boiler-tank family block list (task p13-boiler-tank): all 26 rows. The upstream
+     * machines carry the MTE default self-drop (canDrop :269 returns F for the TANK
+     * inventory — the boiler has no item inventory at all; the block itself drops, the
+     * vanilla {@code dropSelf} equivalent).
+     */
+    public static List<Block> boilerTankLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6Boilers.BoilerRow tRow : gregtech6.registry.GT6Boilers.allRows()) {
+            rBlocks.add(gregtech6.registry.GT6Boilers.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The boiler-tank family self-drop provider (task p13-boiler-tank). */
+    public static final class GT6BoilerTankBlockLoot extends BlockLootSubProvider {
+
+        public GT6BoilerTankBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return boilerTankLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : boilerTankLootBlocks()) dropSelf(tBlock);
         }
     }
 }
