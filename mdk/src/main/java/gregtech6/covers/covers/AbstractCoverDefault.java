@@ -14,6 +14,11 @@ import net.minecraft.world.level.Level;
 
 import net.minecraftforge.fluids.FluidStack;
 
+//? if neoforge {
+/*import net.minecraft.world.item.component.CustomData;
+import gregtech6.registry.GT6DataComponents;
+ *///?}
+
 import gregtech6.covers.CoverData;
 import gregtech6.covers.CoverRegistry;
 import gregtech6.covers.ICover;
@@ -67,7 +72,11 @@ public abstract class AbstractCoverDefault implements ICover {
 	public ItemStack getCoverItem(byte aCoverSide, CoverData aData) { // :62 — ST.make(id, 1, meta, nbt)
 		ItemStack tStack = new ItemStack(CoverRegistry.getItem(aData.mIDs[aCoverSide]), 1);
 		CompoundTag tTag = aData.mNBTs[aCoverSide];
+		//? if forge {
 		if (tTag != null && !tTag.isEmpty()) tStack.setTag(tTag.copy());
+		//?} else {
+		/*if (tTag != null && !tTag.isEmpty()) CustomData.set(GT6DataComponents.COVER_PAYLOAD, tStack, tTag); // CustomData.of copies
+		 *///?}
 		return tStack;
 	}
 
