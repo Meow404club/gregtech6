@@ -16,7 +16,9 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+//? if forge {
 import net.minecraftforge.network.NetworkHooks;
+//?}
 import org.slf4j.Logger;
 
 import gregtech6.gui.GTMenuTypes;
@@ -90,7 +92,11 @@ public final class GTExampleChestCommand {
 			player.sendSystemMessage(Component.literal("No GTExampleChestBlockEntity in reach (aim at the example chest)"));
 			return 0;
 		}
+		//? if forge {
 		NetworkHooks.openScreen(player, chest, pos);
+		//?} else {
+		/*player.openMenu(chest, tBuf -> tBuf.writeBlockPos(pos));
+		 *///?}
 		LOGGER.info("GT6 open chain verified: MenuProvider.createMenu ran for GTExampleChestBlockEntity at {} (using players now {})", pos, chest.getUsingPlayers());
 		return Command.SINGLE_SUCCESS;
 	}
