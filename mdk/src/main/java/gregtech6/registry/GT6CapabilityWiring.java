@@ -1,10 +1,7 @@
 //? if neoforge {
 /*package gregtech6.registry;
 
-import java.util.Objects;
-
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -49,14 +46,16 @@ import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
 // ItemLike arguments EAGERLY (asItem() inside the handler, javap), which is exactly why the
 // lookups happen here and not earlier.
 //
-// Why BuiltInRegistries lookups instead of holder fields: the registry homes
-// (GTMachines/GTBlockEntities/GTMultiBlocks/GTFluidPipes/GTBarrels) still sit on the 21.1
-// unresolved RegistryObject type on this leg — referencing their fields from here would
-// cascade unresolved-type errors into this file (the type is the error, not the field).
-// Switch to DeferredHolder references when the registry-blocks cards fork those homes. The
-// eight BET paths are pinned against the registry rows by GT6CapabilityWiringSeamTest
-// (RegistryObject.getId() reads the construction-time name, no binding needed). Every lookup
-// fails fast: a missing row must never surface as a silently capability-less block or item.
+// Holder references, not id lookups: the registry-blocks card (p15-adapt-registry-blocks)
+// forked the registry homes onto DeferredRegister/DeferredHolder, so this class reads the
+// BET handles directly — GTMachines.SHREDDER_BE.get() & co. — instead of the former
+// BuiltInRegistries id lookups. Same fail-fast semantics, one step earlier: an unbound
+// DeferredHolder.get() throws exactly where the Objects.requireNonNull lookup threw, and
+// the eight registry paths stay pinned against the rows by GT6CapabilityWiringSeamTest
+// (DeferredHolder.getId() reads the construction-time name, no binding needed — the old
+// RegistryObject.getId() precedent verbatim). The barrel carrier seam keeps its registry
+// CLASS scan (BuiltInRegistries.ITEM.stream) — there is no holder list to reference: the
+// scan mirrors the Forge initCapabilities face, where the capability rides the item class.
 //
 // Self-contained @EventBusSubscriber (ADR-P3-4), no bus attribute (21.1 deprecates it and
 // routes by event type — RegisterCapabilitiesEvent is an IModBusEvent; the GT6DataComponents
@@ -81,52 +80,44 @@ public final class GT6CapabilityWiring {
 
 	private static void registerMachineBlockEntities(RegisterCapabilitiesEvent aEvent) {
 		// the p7 shredder/crusher/lathe ladder — one BE class, three BETs, item + fluid faces
-		BlockEntityType<TileEntityBasicMachine> tShredder = type(TileEntityBasicMachine.class, "shredder");
+		BlockEntityType<TileEntityBasicMachine> tShredder = GTMachines.SHREDDER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tShredder,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tShredder,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		BlockEntityType<TileEntityBasicMachine> tCrusher = type(TileEntityBasicMachine.class, "crusher");
+		BlockEntityType<TileEntityBasicMachine> tCrusher = GTMachines.CRUSHER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCrusher,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCrusher,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		BlockEntityType<TileEntityBasicMachine> tLathe = type(TileEntityBasicMachine.class, "lathe");
+		BlockEntityType<TileEntityBasicMachine> tLathe = GTMachines.LATHE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLathe,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLathe,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
-		BlockEntityType<TileEntityOven> tOven = type(TileEntityOven.class, "oven");
+		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		// the fluid-only faces (p13 boiler family, p12 steam engine, p8 large boiler, p4 pipe)
-		BlockEntityType<GTBoilerTankBlockEntity> tBoilerTank = type(GTBoilerTankBlockEntity.class, "boiler_tank");
+		BlockEntityType<GTBoilerTankBlockEntity> tBoilerTank = GTBlockEntities.BOILER_TANK_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBoilerTank,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		BlockEntityType<GTSteamEngineBlockEntity> tEngine = type(GTSteamEngineBlockEntity.class, "steam_engine");
+		BlockEntityType<GTSteamEngineBlockEntity> tEngine = GTBlockEntities.STEAM_ENGINE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tEngine,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		BlockEntityType<TileEntityLargeBoiler> tLargeBoiler = type(TileEntityLargeBoiler.class, "multiblock_large_boiler");
+		BlockEntityType<TileEntityLargeBoiler> tLargeBoiler = GTMultiBlocks.LARGE_BOILER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLargeBoiler,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		BlockEntityType<GTFluidPipeBlockEntity> tPipe = type(GTFluidPipeBlockEntity.class, "fluid_pipe");
+		BlockEntityType<GTFluidPipeBlockEntity> tPipe = GTFluidPipes.FLUID_PIPE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPipe,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
-	// The unchecked cast is the BET's own class invariant: the factory in the registry row
-	// constructs exactly this BE class (GTMachines.SHREDDER_BE, GTBlockEntities.STEAM_ENGINE_BE,
-	// GTMultiBlocks.LARGE_BOILER_BE, GTFluidPipes.FLUID_PIPE_BE — all typed to the same class).
-	// The class literal is only the call-site type witness for the inference.
-	private static <BE extends BlockEntity> BlockEntityType<BE> type(Class<? extends BlockEntity> aWitness, String aPath) {
-		BlockEntityType<?> tType = Objects.requireNonNull(
-				BuiltInRegistries.BLOCK_ENTITY_TYPE.get(gtId(aPath)),
-				"gt6 capability wiring: BlockEntityType gt6:" + aPath + " not present at RegisterCapabilitiesEvent — registry rows must fire before capability wiring");
-		@SuppressWarnings("unchecked")
-		BlockEntityType<BE> rType = (BlockEntityType<BE>) tType;
-		return rType;
-	}
+// (The former id-lookup helper — BuiltInRegistries.BLOCK_ENTITY_TYPE.get + an unchecked
+// cast witnessed by a class literal — is gone with the swap to holder references: each
+// GT*_*_BE field is already typed DeferredHolder<BlockEntityType<?>, BlockEntityType<BE>>,
+// so .get() hands over the exact type with no cast at all.)
 
 	// -- the carrier seam: registerItem(FLUID_HANDLER_ITEM, provider, every GTBarrelBlockItem) --
 
@@ -147,8 +138,5 @@ public final class GT6CapabilityWiring {
 		return new GTBarrelItemFluidHandler(aStack, tBlock.capacityL()).setGasProof(tBlock.gasProof());
 	}
 
-	private static ResourceLocation gtId(String aPath) {
-		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
-	}
 }
  *///?}
