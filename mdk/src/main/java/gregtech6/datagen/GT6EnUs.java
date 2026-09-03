@@ -375,11 +375,22 @@ public class GT6EnUs extends LanguageProvider {
      * Multiblock family keys (task p4-multiblock-framework, W3 provider order 1:
      * multiblock→barrel→cover): the Coke Oven controller + bricks part display names (the
      * upstream coke oven bricks MTE 18000 naming) and the "Multiblocks" creative tab.
+     * Task p13-large-boiler appends the Large Boiler family: the five variant display
+     * names + the five Dense Wall names + the Heat Transmitter (the upstream
+     * aRegistry.add name column verbatim, Loader_MultiTileEntities.java
+     * :1159-1165/:1176/:1248-1252).
      */
     private void addMultiBlocks() {
         add("block.gt6.multiblock_coke_oven", "Coke Oven");
         add("block.gt6.multiblock_coke_oven_bricks", "Coke Oven Bricks");
         add("itemGroup.gt6.multiblocks", "Multiblocks");
+        for (var tRow : gregtech6.registry.GTMultiBlocks.LARGE_BOILER_ROWS) {
+            add("block.gt6." + tRow.path(), tRow.displayName());
+        }
+        for (var tRow : gregtech6.registry.GTMultiBlocks.WALL_ROWS) {
+            add("block.gt6." + tRow.path(), tRow.displayName());
+        }
+        add("block.gt6." + gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.path(), gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.displayName());
     }
 
     /**

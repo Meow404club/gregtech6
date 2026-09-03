@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/large_boiler/wall",
+    "east": "gt6:block/large_boiler/main",
+    "north": "gt6:block/large_boiler/main",
+    "south": "gt6:block/large_boiler/main",
+    "up": "gt6:block/large_boiler/wall",
+    "west": "gt6:block/large_boiler/main"
+  }
+}

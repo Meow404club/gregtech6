@@ -74,6 +74,10 @@ public final class GTMultiBlockCommand {
 	/** The wand stock: the full 25-brick structure in one stack (27 cells = air centre + 25 bricks + the controller). */
 	private static final int WAND_STOCK = 25;
 
+	/** The boiler wand stocks (task p13-large-boiler): 9 transmitters + 25 walls (34 parts, the controller + the hollow excluded). */
+	private static final int BOILER_WAND_TRANSMITTER_STOCK = 9;
+	private static final int BOILER_WAND_WALL_STOCK = 25;
+
 	private GTMultiBlockCommand() {
 	}
 
@@ -153,18 +157,58 @@ public final class GTMultiBlockCommand {
 							.executes(aContext -> fluidFill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), null,
 									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB")))))
 					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
-						.then(Commands.literal("drain")
-							.then(Commands.argument("mB", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
-								.executes(aContext -> fluidDrain(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-										parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "side")),
-										com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB")))))
-						.then(Commands.literal("fill")
-							.then(Commands.argument("mB", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
-								.executes(aContext -> fluidFill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-										parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "side")),
-										com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB"))))))));
+							.then(Commands.literal("drain")
+								.then(Commands.argument("mB", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+									.executes(aContext -> fluidDrain(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+											parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "side")),
+											com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB")))))
+							.then(Commands.literal("fill")
+								.then(Commands.argument("mB", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+									.executes(aContext -> fluidFill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+											parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "side")),
+											com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB"))))))));
+		// task p13-large-boiler — the Large Boiler arm (append-only: the same place/wand/check
+		// shape over the five variant rows; the existing CokeOven arms are untouched)
+		tMulti.then(Commands.literal("boiler")
+			.then(Commands.literal("place")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.argument("variant", com.mojang.brigadier.arguments.StringArgumentType.word())
+						.executes(aContext -> boilerPlace(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+								com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "variant"))))))
+			.then(Commands.literal("frame")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.argument("variant", com.mojang.brigadier.arguments.StringArgumentType.word())
+						.executes(aContext -> boilerFrame(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+								com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "variant"))))))
+			.then(Commands.literal("wand")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.argument("variant", com.mojang.brigadier.arguments.StringArgumentType.word())
+						.executes(aContext -> boilerWand(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+								com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "variant"))))))
+			.then(Commands.literal("check")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(aContext -> boilerCheck(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+			.then(Commands.literal("stat")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(aContext -> boilerStat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+			.then(Commands.literal("fill")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.argument("mB", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+						.executes(aContext -> boilerFill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB"))))))
+			.then(Commands.literal("inject-hu")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 2000000000))
+						.executes(aContext -> boilerInjectHu(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "amount"))))))
+			.then(Commands.literal("dismantle")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(aContext -> boilerDismantle(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+			.then(Commands.literal("plunge")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(aContext -> boilerPlunge(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
 		aEvent.getDispatcher().register(tMulti);
-		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|check|tick|input|ignite|menu|fluid)");
+		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|check|tick|input|ignite|menu|fluid|boiler place|frame|wand|check|stat|fill|inject-hu|dismantle)");
 	}
 
 	private static TileEntityCokeOven ovenAt(CommandSourceStack aSource, BlockPos aPos) {
@@ -559,5 +603,292 @@ public final class GTMultiBlockCommand {
 		Direction tSide = Direction.byName(aWord.toLowerCase());
 		if (tSide == null) throw new com.mojang.brigadier.exceptions.SimpleCommandExceptionType(Component.literal("Unknown side: " + aWord)).create();
 		return tSide;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the Large Boiler arm (task p13-large-boiler — the place/wand/check shape over the
+	// five variant rows; every failure line carries the FAILED literal, the RCON contract)
+	// ---------------------------------------------------------------------------
+
+	/** The variant row lookup — null for an unknown path (the GT6Boilers.blockByPath form). */
+	@Nullable
+	private static gregtech6.registry.GTMultiBlocks.LargeBoilerRow boilerRow(String aVariant) {
+		for (gregtech6.registry.GTMultiBlocks.LargeBoilerRow tRow : gregtech6.registry.GTMultiBlocks.LARGE_BOILER_ROWS) {
+			if (tRow.path().equalsIgnoreCase(aVariant)) return tRow;
+		}
+		return null;
+	}
+
+	@Nullable
+	private static TileEntityLargeBoiler boilerAt(CommandSourceStack aSource, @Nullable BlockPos aPos) {
+		ServerLevel tLevel = aSource.getLevel();
+		BlockPos tTarget = aPos != null ? aPos : BlockPos.containing(aSource.getPosition());
+		return tLevel.getBlockEntity(tTarget) instanceof TileEntityLargeBoiler tBoiler ? tBoiler : null;
+	}
+
+	/** The structure anchor: one cell in FRONT of the facing at the SAME layer (upstream :98 — no getOffsetYN). */
+	private static BlockPos boilerAnchor(TileEntityLargeBoiler aBoiler) {
+		return new BlockPos(aBoiler.getOffsetXN(aBoiler.mFacing), aBoiler.getBlockPos().getY(), aBoiler.getOffsetZN(aBoiler.mFacing));
+	}
+
+	private static int boilerPlace(CommandSourceStack aSource, BlockPos aPos, String aVariant) {
+		gregtech6.registry.GTMultiBlocks.LargeBoilerRow tRow = boilerRow(aVariant);
+		net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GTMultiBlocks.boilerBlockByPath(aVariant);
+		if (tRow == null || tBlock == null) {
+			aSource.sendFailure(Component.literal("BOILER PLACE FAILED: unknown boiler variant " + aVariant));
+			return 0;
+		}
+		aSource.getLevel().setBlock(aPos, tBlock.defaultBlockState(), 3);
+		String tLine = "GT6 large boiler placed at " + aPos.toShortString() + ": " + aVariant
+				+ " (output " + tRow.outputSteamPerTick() + " SU/t, walls " + tRow.wallPath() + ")";
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * Places the 34 part cells around the anchor (occupied cells kept): the 9-transmitter
+	 * base (y-1), the 8 middle-ring walls (the 9th middle cell IS the controller, the
+	 * checkAndSetTarget self-cell arm passes it), the top centre and the two 8-cell rings —
+	 * the hollow air cell above the anchor stays untouched.
+	 */
+	private static int boilerFrame(CommandSourceStack aSource, BlockPos aPos, String aVariant) {
+		TileEntityLargeBoiler tBoiler = boilerAt(aSource, aPos);
+		gregtech6.registry.GTMultiBlocks.LargeBoilerRow tRow = boilerRow(aVariant);
+		if (tBoiler == null) {
+			aSource.sendFailure(Component.literal("BOILER FRAME FAILED: no TileEntityLargeBoiler at " + aPos.toShortString()));
+			return 0;
+		}
+		if (tRow == null) {
+			aSource.sendFailure(Component.literal("BOILER FRAME FAILED: unknown boiler variant " + aVariant));
+			return 0;
+		}
+		ServerLevel tLevel = aSource.getLevel();
+		BlockPos tAnchor = boilerAnchor(tBoiler);
+		net.minecraft.world.level.block.Block tWall = gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(tRow.wallPath()).get();
+		net.minecraft.world.level.block.Block tTransmitter = gregtech6.registry.GTMultiBlocks.HEAT_TRANSMITTER.get();
+		int[] tPlaced = {0};
+		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) tPlaced[0] += frameCell(tLevel, tAnchor.offset(tDX, -1, tDZ), tTransmitter);
+		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
+			BlockPos tCell = tAnchor.offset(tDX, 0, tDZ);
+			if (!tCell.equals(tBoiler.getBlockPos())) tPlaced[0] += frameCell(tLevel, tCell, tWall);
+		}
+		tPlaced[0] += frameCell(tLevel, tAnchor.offset(0, 2, 0), tWall);
+		for (int i = 1; i < 3; i++) {
+			tPlaced[0] += frameCell(tLevel, tAnchor.offset(-1, i, -1), tWall);
+			tPlaced[0] += frameCell(tLevel, tAnchor.offset(0, i, -1), tWall);
+			tPlaced[0] += frameCell(tLevel, tAnchor.offset(1, i, -1), tWall);
+			tPlaced[0] += frameCell(tLevel, tAnchor.offset(-1, i, 0), tWall);
+			tPlaced[0] += frameCell(tLevel, tAnchor.offset(1, i, 0), tWall);
+			tPlaced[0] += frameCell(tLevel, tAnchor.offset(-1, i, 1), tWall);
+			tPlaced[0] += frameCell(tLevel, tAnchor.offset(0, i, 1), tWall);
+			tPlaced[0] += frameCell(tLevel, tAnchor.offset(1, i, 1), tWall);
+		}
+		int tReported = tPlaced[0];
+		aSource.sendSuccess(() -> Component.literal("GT6 large boiler frame: " + tReported + " parts placed around " + tAnchor.toShortString()), false);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** One frame cell: air cells get the block, occupied cells keep their content. */
+	private static int frameCell(ServerLevel aLevel, BlockPos aPos, net.minecraft.world.level.block.Block aBlock) {
+		if (aLevel.getBlockState(aPos).isAir()) {
+			aLevel.setBlock(aPos, aBlock.defaultBlockState(), 3);
+			return 1;
+		}
+		return 0;
+	}
+
+	/**
+	 * The builder-wand simulation (the cokeoven wand shape): a FakePlayer inventory stocked
+	 * with 9 transmitters + 25 walls of the variant, the placing checkStructure2 pass, then
+	 * the linking checkStructure pass.
+	 */
+	private static int boilerWand(CommandSourceStack aSource, BlockPos aPos, String aVariant) {
+		TileEntityLargeBoiler tBoiler = boilerAt(aSource, aPos);
+		gregtech6.registry.GTMultiBlocks.LargeBoilerRow tRow = boilerRow(aVariant);
+		if (tBoiler == null) {
+			aSource.sendFailure(Component.literal("BOILER WAND FAILED: no TileEntityLargeBoiler at " + aPos.toShortString()));
+			return 0;
+		}
+		if (tRow == null) {
+			aSource.sendFailure(Component.literal("BOILER WAND FAILED: unknown boiler variant " + aVariant));
+			return 0;
+		}
+		net.minecraft.world.entity.player.Inventory tInventory = FakePlayerFactory.getMinecraft(aSource.getLevel()).getInventory();
+		ItemStack tTransmitters = new ItemStack(gregtech6.registry.GTMultiBlocks.PART_ITEMS_BY_PATH.get(gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.path()).get(), BOILER_WAND_TRANSMITTER_STOCK);
+		ItemStack tWalls = new ItemStack(gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(tRow.wallPath()).get().asItem(), BOILER_WAND_WALL_STOCK);
+		tInventory.items.set(0, tTransmitters);
+		tInventory.items.set(1, tWalls);
+
+		tBoiler.checkStructure2(tBoiler.getBlockPos(), null, tInventory); // the placing pass
+		boolean tFormed = tBoiler.checkStructure(true);                   // the linking pass
+
+		int tLeftTransmitters = tInventory.items.get(0).getCount();
+		int tLeftWalls = tInventory.items.get(1).getCount();
+		String tReport = String.format("GT6 large boiler wand at %s: variant=%s formed=%s, stock tx %d -> %d, walls %d -> %d",
+				tBoiler.getBlockPos().toShortString(), aVariant, tFormed, BOILER_WAND_TRANSMITTER_STOCK, tLeftTransmitters, BOILER_WAND_WALL_STOCK, tLeftWalls);
+		if (!tFormed) {
+			aSource.sendFailure(Component.literal("GT6 multiblock boiler wand check FAILED: " + tReport));
+			return 0;
+		}
+		aSource.sendSuccess(() -> Component.literal("GT6 multiblock boiler wand check OK: " + tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The magnifying-glass verdict + a linked-part census over the 34 part cells. */
+	private static int boilerCheck(CommandSourceStack aSource, BlockPos aPos) {
+		TileEntityLargeBoiler tBoiler = boilerAt(aSource, aPos);
+		if (tBoiler == null) {
+			aSource.sendFailure(Component.literal("BOILER CHECK FAILED: no TileEntityLargeBoiler at " + aPos.toShortString()));
+			return 0;
+		}
+		String tVerdict;
+		if (tBoiler.checkStructure(false)) {
+			tVerdict = "Structure is formed already!";
+		} else {
+			tVerdict = tBoiler.checkStructure(true) ? "Structure did form just now!" : "Structure did not form!";
+		}
+		int tLinked = 0;
+		BlockPos tAnchor = boilerAnchor(tBoiler);
+		ServerLevel tLevel = aSource.getLevel();
+		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) tLinked += linkedCell(tLevel, tAnchor.offset(tDX, -1, tDZ), tBoiler);
+		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
+			BlockPos tCell = tAnchor.offset(tDX, 0, tDZ);
+			if (!tCell.equals(tBoiler.getBlockPos())) tLinked += linkedCell(tLevel, tCell, tBoiler);
+		}
+		tLinked += linkedCell(tLevel, tAnchor.offset(0, 2, 0), tBoiler);
+		for (int i = 1; i < 3; i++) {
+			tLinked += linkedCell(tLevel, tAnchor.offset(-1, i, -1), tBoiler);
+			tLinked += linkedCell(tLevel, tAnchor.offset(0, i, -1), tBoiler);
+			tLinked += linkedCell(tLevel, tAnchor.offset(1, i, -1), tBoiler);
+			tLinked += linkedCell(tLevel, tAnchor.offset(-1, i, 0), tBoiler);
+			tLinked += linkedCell(tLevel, tAnchor.offset(1, i, 0), tBoiler);
+			tLinked += linkedCell(tLevel, tAnchor.offset(-1, i, 1), tBoiler);
+			tLinked += linkedCell(tLevel, tAnchor.offset(0, i, 1), tBoiler);
+			tLinked += linkedCell(tLevel, tAnchor.offset(1, i, 1), tBoiler);
+		}
+		boolean tBlockFormed = tLevel.getBlockState(tBoiler.getBlockPos()).getValue(TileEntityBase10MultiBlockBase.FORMED);
+		String tReport = String.format("GT6 large boiler at %s: %s okay=%s block_formed=%s linked_parts=%d/34",
+				tBoiler.getBlockPos().toShortString(), tVerdict, tBoiler.mStructureOkay, tBlockFormed, tLinked);
+		if (!tBoiler.mStructureOkay || !tBlockFormed) {
+			aSource.sendFailure(Component.literal(tReport));
+			return 0;
+		}
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	private static int linkedCell(ServerLevel aLevel, BlockPos aPos, TileEntityLargeBoiler aBoiler) {
+		return aLevel.getBlockEntity(aPos) instanceof MultiBlockPartBlockEntity tPart && tPart.getTarget(false) == aBoiler ? 1 : 0;
+	}
+
+	/** The full readback: variant, walls, facing, formed, the thermometer line, tanks, gauge, calcification. */
+	private static int boilerStat(CommandSourceStack aSource, BlockPos aPos) {
+		TileEntityLargeBoiler tBoiler = boilerAt(aSource, aPos);
+		if (tBoiler == null) {
+			aSource.sendFailure(Component.literal("BOILER STAT FAILED: no TileEntityLargeBoiler at " + aPos.toShortString()));
+			return 0;
+		}
+		StringBuilder tLine = new StringBuilder("GT6 large boiler (").append(tBoiler.getTileEntityName()).append(") at ")
+				.append(aPos.toShortString())
+				.append(": facing=").append(Direction.from3DDataValue(tBoiler.mFacing).getName())
+				.append("(").append(tBoiler.mFacing).append(") formed=").append(tBoiler.mStructureOkay)
+				.append(", ").append(tBoiler.thermometer())
+				.append(", demand=").append(tBoiler.mOutput / 2).append(" HU/t (heat transmitters)")
+				.append(", output=").append(tBoiler.mOutput).append(" SU/t (five pipe holes, >half tank)")
+				.append(", efficiency=").append(tBoiler.mEfficiency).append("/10000")
+				.append(", barometer=").append(tBoiler.mBarometer).append("/31")
+				.append(", water=");
+		if (tBoiler.mTanks[0].isEmpty()) tLine.append("empty");
+		else tLine.append(tBoiler.mTanks[0].amount()).append("/").append(tBoiler.mTanks[0].capacity()).append("L");
+		tLine.append(", steam=");
+		if (tBoiler.mTanks[1].isEmpty()) tLine.append("empty");
+		else tLine.append(tBoiler.mTanks[1].amount()).append("/").append(tBoiler.mTanks[1].capacity()).append("L");
+		if (!tBoiler.mTanks[0].has()) tLine.append(", WARNING: NO WATER!!!");
+		String tText = tLine.toString();
+		aSource.sendSuccess(() -> Component.literal(tText), false);
+		LOGGER.info(tText);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The water-intake arm — water through the controller's fluid door (the :380 water-only
+	 * gate; the door's own halves make a REJECTED echo a legitimate verdict).
+	 */
+	private static int boilerFill(CommandSourceStack aSource, BlockPos aPos, int aAmount) {
+		TileEntityLargeBoiler tBoiler = boilerAt(aSource, aPos);
+		if (tBoiler == null) {
+			aSource.sendFailure(Component.literal("BOILER FILL FAILED: no TileEntityLargeBoiler at " + aPos.toShortString()));
+			return 0;
+		}
+		IFluidHandler tDoor = tBoiler.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER,
+				Direction.DOWN).orElse(null);
+		if (tDoor == null) {
+			aSource.sendFailure(Component.literal("BOILER FILL FAILED: no fluid door at " + aPos.toShortString()));
+			return 0;
+		}
+		int tFilled = tDoor.fill(new FluidStack(Fluids.WATER, aAmount), FluidAction.EXECUTE);
+		String tLine = String.format("GT6 large boiler fill at %s: filled %d/%d L of minecraft:water%s, water tank holds %d L",
+				aPos.toShortString(), tFilled, aAmount, tFilled == 0 ? " (REJECTED)" : " (ACCEPTED)", tBoiler.mTanks[0].amount());
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The direct HU supply arm — one packet through the doEnergyInjection gate (the aSize=1 firebox emit form). */
+	private static int boilerInjectHu(CommandSourceStack aSource, BlockPos aPos, int aAmount) {
+		TileEntityLargeBoiler tBoiler = boilerAt(aSource, aPos);
+		if (tBoiler == null) {
+			aSource.sendFailure(Component.literal("BOILER INJECT FAILED: no TileEntityLargeBoiler at " + aPos.toShortString()));
+			return 0;
+		}
+		long tBooked = tBoiler.doEnergyInjection(gregapi.data.TD.Energy.HU, (byte)0, 1, aAmount, true);
+		String tLine = String.format("GT6 large boiler inject-hu at %s: booked %d/%d HU%s, store holds %d/%d HU",
+				aPos.toShortString(), tBooked, aAmount, tBooked == 0 ? " (REJECTED)" : " (ACCEPTED)",
+				tBoiler.mEnergy, tBoiler.mCapacity);
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The TOOL_plunger arm (:275-278) — the water tank first, else the steam tank; the
+	 * teardown channel of the acceptance chain.
+	 */
+	private static int boilerPlunge(CommandSourceStack aSource, BlockPos aPos) {
+		TileEntityLargeBoiler tBoiler = boilerAt(aSource, aPos);
+		if (tBoiler == null) {
+			aSource.sendFailure(Component.literal("BOILER PLUNGE FAILED: no TileEntityLargeBoiler at " + aPos.toShortString()));
+			return 0;
+		}
+		long tTrashed = tBoiler.plunger();
+		String tLine = "GT6 large boiler plunge at " + aPos.toShortString() + ": trashed " + tTrashed + " L"
+				+ " (water=" + tBoiler.mTanks[0].amount() + ", steam=" + tBoiler.mTanks[1].amount() + ")";
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The removedByPlayer arm (:313-316): the null player IS the non-creative
+	 * counterfactual — barometer &gt; 4 → explode(T) instant; the block is removed either
+	 * way (the :315 setBlockToAir). The W3 review-note dismantle step, exercised on the
+	 * Large Boiler's own controller.
+	 */
+	private static int boilerDismantle(CommandSourceStack aSource, BlockPos aPos) {
+		TileEntityLargeBoiler tBoiler = boilerAt(aSource, aPos);
+		if (tBoiler == null) {
+			aSource.sendFailure(Component.literal("BOILER DISMANTLE FAILED: no TileEntityLargeBoiler at " + aPos.toShortString()));
+			return 0;
+		}
+		boolean tExploded = tBoiler.dismantle(null);
+		aSource.getLevel().destroyBlock(aPos, false); // the :315 setBlockToAir (already gone on the exploded arm)
+		String tLine = "GT6 large boiler dismantle at " + aPos.toShortString() + ": barometer=" + tBoiler.mBarometer
+				+ (tExploded ? " — pressurised, EXPLODED (instant)" : " — quiet, removed");
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
 	}
 }

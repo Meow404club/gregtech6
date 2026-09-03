@@ -107,6 +107,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBurningBoxes(); // task p13-burning-box-family
         addBoilers(); // task p13-boiler-tank
         addGearBoxTransformer(); // task p12-gearbox-transformer
+        addLargeBoiler(); // task p13-large-boiler
     }
 
     /**
@@ -714,5 +715,48 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
+    }
+
+    /**
+     * Task p13-large-boiler — the Large Boiler family (Loader_MultiTileEntities.java
+     * :1159-1165/:1176/:1248-1252): the five Dense Wall part blocks + the Heat Transmitter
+     * part block as plain cube_all over the generated grayscale placeholders (upstream has
+     * no borrowable "largeboiler"/"metalwalldense" texture group in this snapshot — the
+     * W2 burning-box ruling), and the five boiler variant controllers over ONE shared
+     * oriented cube model (front = the barometer face) rotated per FACING exactly like
+     * addBoilers; the FORMED variants map to the same model (the formed-look visual is the
+     * p9 pool). The 11 BlockItem models parent their block models.
+     */
+    private void addLargeBoiler() {
+        ModelFile tMain = models().cube("large_boiler_main",
+                modLoc("block/large_boiler/wall"), modLoc("block/large_boiler/wall"),
+                modLoc("block/large_boiler/main"), modLoc("block/large_boiler/main"),
+                modLoc("block/large_boiler/main"), modLoc("block/large_boiler/main"));
+        for (var tRow : gregtech6.registry.GTMultiBlocks.LARGE_BOILER_ROWS) {
+            Block tBlock = gregtech6.registry.GTMultiBlocks.LARGE_BOILER_BLOCKS_BY_PATH.get(tRow.path()).get();
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY = switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tMain).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), tMain.getLocation());
+        }
+        for (var tRow : gregtech6.registry.GTMultiBlocks.WALL_ROWS) {
+            addLargeBoilerPart(tRow.path(), "block/large_boiler/wall");
+        }
+        addLargeBoilerPart(gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.path(), "block/large_boiler/transmitter");
+    }
+
+    /** One cube_all part block + its BlockItem parent (the coke-oven-bricks shape). */
+    private void addLargeBoilerPart(String aPath, String aTexture) {
+        Block tBlock = gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(aPath) != null
+                ? gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(aPath).get()
+                : gregtech6.registry.GTMultiBlocks.HEAT_TRANSMITTER.get();
+        simpleBlock(tBlock, models().cubeAll(aPath, modLoc(aTexture)));
+        itemModels().withExistingParent(aPath, modLoc("block/" + aPath));
     }
 }

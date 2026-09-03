@@ -593,3 +593,9 @@ family is the render pool card (the crank/steam-engine ruling repeated).
 Generated on 2026-09-03 (no upstream bytes; nothing to sha256 — the placeholder
 glyph is a dark border + box outline + glowing core, deterministic generator in
 the card's tooling).
+
+- `gt6/textures/block/large_boiler/{wall,transmitter,main}.png` — generated grayscale
+  placeholders (task p13-large-boiler). Upstream ships no borrowable
+  `machines/multiblockmains/largeboiler/` or `metalwalldense` texture group in this
+  snapshot (the cokeoven census repeated); the borrow-or-declare rule keeps the
+  script-generated placeholders.
