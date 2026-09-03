@@ -178,7 +178,15 @@ public final class GT6Covers {
 
 	@net.minecraftforge.eventbus.api.SubscribeEvent
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
+		//? if forge {
 		IEventBus tModBus = net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD.bus().get();
+		//?} else {
+		/*IEventBus tModBus = net.neoforged.fml.ModList.get().getModContainerById("gt6").orElseThrow().getEventBus();
+		//21.1: the FQ Mod.EventBusSubscriber.Bus form is gone with the annotation rework; a
+		//self-contained listener reaches the mod bus through its mod container (javap
+		//loader-4.0.44: ModContainer.getEventBus public abstract) — the GT6Mod/GTMenuTypes
+		//fork precedent.
+		*///?}
 		ITEMS.register(tModBus); // the RegisterEvent listener must be in place before registration runs
 	}
 
@@ -218,7 +226,14 @@ public final class GT6Covers {
 	 * the item texture can never drift apart.
 	 */
 	public static ResourceLocation ironPlateSprite() {
+		//? if forge {
 		return new ResourceLocation("gt6", "item/material_sets/" + GT6ItemModels.iconsetOf(MT.Iron) + "/" + MaterialPrefixItem.snakeCase(OP.plate.mNameInternal));
+		//?} else {
+		/*return ResourceLocation.fromNamespaceAndPath("gt6", "item/material_sets/" + GT6ItemModels.iconsetOf(MT.Iron) + "/" + MaterialPrefixItem.snakeCase(OP.plate.mNameInternal));
+		//21.1 privatised the two-arg ResourceLocation constructor; the swap-table regex
+		//(conservative no-parens argument form) cannot reach this row — the embedded
+		//iconsetOf(MT.Iron) call — so it forks here (ADR-P15-3 r1 priority 3).
+		*///?}
 	}
 
 	/** Test seam (P1 registry discipline). */

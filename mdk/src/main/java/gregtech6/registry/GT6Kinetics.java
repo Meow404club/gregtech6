@@ -334,6 +334,17 @@ public final class GT6Kinetics {
 			mRow = aRow;
 			registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
 		}
+		//? if neoforge {
+		/*
+		// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+		// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+		// precedent — a parse-time default carrying no live config; world save/load never
+		// runs through this codec (the registry-id + property mapper does).
+		@Override
+		protected com.mojang.serialization.MapCodec<? extends SteamEngineBlock> codec() {
+			return simpleCodec(aProperties -> new SteamEngineBlock(STEAM_ENGINES.get(0), aProperties));
+		}
+		*///?}
 
 		/** The registration row (the GTBarrelBlock.capacityL carrier read). */
 		public SteamEngineRow row() {
@@ -452,7 +463,14 @@ public final class GT6Kinetics {
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
 		registerAxles();
 		registerDieselEngines();
+		//? if forge {
 		IEventBus tModBus = Mod.EventBusSubscriber.Bus.MOD.bus().get();
+		//?} else {
+		/*IEventBus tModBus = net.neoforged.fml.ModList.get().getModContainerById("gt6").orElseThrow().getEventBus();
+		//21.1: Mod.EventBusSubscriber.Bus died with the annotation rework; a self-contained
+		//listener reaches the mod bus through its mod container (javap loader-4.0.44:
+		//ModContainer.getEventBus public abstract) — the GT6Mod/GTMenuTypes fork precedent.
+		*///?}
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
 	}
