@@ -265,7 +265,11 @@ public class Recipe {
 		for (ItemStack tInput : mInputs) if (tInput != null && !tInput.isEmpty()) {
 			boolean temp = true;
 			// upstream: ignoreNBT = mNoNBTChecks || !tInput.hasTag()
+			//? if forge {
 			boolean tIgnoreNBT = mNoNBTChecks || !tInput.hasTag();
+			//?} else {
+			/*boolean tIgnoreNBT = mNoNBTChecks || tInput.getComponents().isEmpty();
+			 *///?}
 			for (int i = 0; i < aInputs.length; i++) if (!tChecked[i]) {
 				ItemStack aInput = aInputs[i];
 				if (aInput != null && !aInput.isEmpty()) {
@@ -288,7 +292,11 @@ public class Recipe {
 	private static boolean isSameItemAndTag(ItemStack aInput, ItemStack tInput, boolean aIgnoreNBT) {
 		if (aIgnoreNBT) return aInput.getItem() == tInput.getItem();
 		// ItemStack.isSameItemSameTags compares Objects.equals(tag, tag) (vanilla 1.20.1 :428-433).
+		//? if forge {
 		return ItemStack.isSameItemSameTags(aInput, tInput);
+		//?} else {
+		/*return ItemStack.isSameItemSameComponents(aInput, tInput);
+		 *///?}
 	}
 
 	private static ItemStack[] withoutTrailingNulls(@Nullable ItemStack[] aArray) {
