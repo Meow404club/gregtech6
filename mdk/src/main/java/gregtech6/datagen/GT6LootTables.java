@@ -50,7 +50,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK), // task p12-engine-diesel
                 new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task p12-gearbox-transformer
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task p13-burning-box-family
-                new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK))); // task p13-boiler-tank
+                new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
+                new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK))); // task p14-dryer-family
     }
 
     /** The block list this provider owns: exactly the material prefix block array (the census walk order). */
@@ -273,6 +274,39 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : boilerTankLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The dryer-family block list (task p14-dryer-family): the four Dryer rows
+     * (Loader_MultiTileEntities.java:1477-1480). The upstream machines carry the MTE
+     * default self-drop (canDrop(0) == T — the block item itself, the same Drops==null
+     * default as the boiler/burning-box families); the 1.20.1 equivalent is exactly
+     * {@code dropSelf}.
+     */
+    public static List<Block> dryerLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.DRYER_ROWS) {
+            rBlocks.add(gregtech6.registry.GTMachines.DRYER_BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The dryer-family self-drop provider (task p14-dryer-family). */
+    public static final class GT6DryerBlockLoot extends BlockLootSubProvider {
+
+        public GT6DryerBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return dryerLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : dryerLootBlocks()) dropSelf(tBlock);
         }
     }
 }

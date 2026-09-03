@@ -368,6 +368,13 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.lathe_t2", "Lathe (Tier 2)");
         add("block.gt6.lathe_t3", "Lathe (Tier 3)");
         add("block.gt6.lathe_t4", "Lathe (Tier 4)");
+        // task p14-dryer-family — the four Dryer rows, the upstream name column verbatim
+        // ("Dryer (" + aMat.getLocal() + ")", Loader_MultiTileEntities.java:1477-1480 over
+        // the MT.DATA.Heat_T[1..4] locals Steel/Invar/Titanium/Tungsten Carbide, MT.java:3689)
+        // — the boiler-row shape (the GT6Boilers displayName carrier), not the tier-index form.
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.DRYER_ROWS) {
+            add("block.gt6." + tRow.path(), tRow.displayName());
+        }
         add("itemGroup.gt6.machines", "Machines");
     }
 
