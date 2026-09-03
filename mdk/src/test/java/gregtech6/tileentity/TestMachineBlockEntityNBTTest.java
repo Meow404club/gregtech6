@@ -19,7 +19,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+//? if forge {
 import net.minecraftforge.common.util.LazyOptional;
+//?}
 import net.minecraftforge.items.IItemHandler;
 
 /**
@@ -70,9 +72,17 @@ public class TestMachineBlockEntityNBTTest extends GTOfflineTestBase {
 		// inventory goes in through the capability handle (ADR-P3-2; the getCapability
 		// branch against ForgeCapabilities.ITEM_HANDLER needs the live transformer stack
 		// and is exercised by :mdk:runServer instead)
+		//? if forge {
 		LazyOptional<IItemHandler> tCap = tBe.itemHandlerCapability();
 		assertTrue(tCap.isPresent());
 		tCap.orElseThrow(IllegalStateException::new).insertItem(0, new ItemStack(Items.DIAMOND, 32), false);
+		//?}
+		//? if neoforge {
+		/* // 21.1 seam: the store comes back directly, no LazyOptional wrapper.
+		IItemHandler tCap = tBe.itemHandlerCapability();
+		assertNotNull(tCap);
+		tCap.insertItem(0, new ItemStack(Items.DIAMOND, 32), false);
+		 *///?}
 
 		// four dispatcher passes -> mTickCount == 4
 		for (int i = 0; i < 4; i++) tBe.updateEntity();
@@ -87,9 +97,17 @@ public class TestMachineBlockEntityNBTTest extends GTOfflineTestBase {
 		tBack.load(tSaved);
 		assertEquals(4, tBack.getTickCount());
 
+		//? if forge {
 		LazyOptional<IItemHandler> tBackCap = tBack.itemHandlerCapability();
 		assertSame(tBack.getInventory(), tBackCap.orElseThrow(IllegalStateException::new));
 		assertEquals(32, tBackCap.orElseThrow(IllegalStateException::new).extractItem(0, 64, true).getCount());
+		//?}
+		//? if neoforge {
+		/*
+		IItemHandler tBackCap = tBack.itemHandlerCapability();
+		assertSame(tBack.getInventory(), tBackCap);
+		assertEquals(32, tBackCap.extractItem(0, 64, true).getCount());
+		 *///?}
 	}
 
 	@Test
@@ -115,6 +133,7 @@ public class TestMachineBlockEntityNBTTest extends GTOfflineTestBase {
 		assertEquals(2, tClient.getTickCount());
 	}
 
+	//? if forge {
 	@Test
 	public void capabilityInvalidatesWithoutTouchingLifecycleCallbacks() {
 		TestMachineBlockEntity tBe = sType.create(POS, Blocks.STONE.defaultBlockState());
@@ -125,6 +144,12 @@ public class TestMachineBlockEntityNBTTest extends GTOfflineTestBase {
 		assertFalse(tCap.isPresent());
 		assertFalse(tBe.itemHandlerCapability().isPresent());
 	}
+	//?}
+	//? if neoforge {
+	/* // no 21.1 counterpart: with per-call providers there is no cached LazyOptional to
+	   // invalidate — invalidateCapabilities() (IBlockEntityExtension) is a no-op for this
+	   // face and needs no offline assertion.
+	 *///?}
 
 	@Test
 	public void canUpdateFalseBEsNeverEnterTheDispatcher() {
