@@ -18,9 +18,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+//?}
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -173,15 +175,19 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	/** The inventory store (also bound into the root capability slot — see the gated exposure below). */
 	protected GTItemStackHandler mInventory;
 
+	//? if forge {
 	/** The capability wrapper LazyOptional (built in the constructor, invalidated with the root's own). */
 	private final LazyOptional<IItemHandler> mGatedCap;
+	//?}
 
 	protected TileEntityBase10MultiBlockMachine(BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 		// the 10Base constructor already enables ticking (the structure poll + TU generation are tick-driven)
 		super(aType, aPos, aState);
 		mInventory = new GTItemStackHandler(INVENTORY_SIZE, this::onInventoryChanged);
 		setInventory(mInventory); // root binding: marks dirty through onContentsChanged
+		//? if forge {
 		mGatedCap = LazyOptional.of(() -> new GatedItemHandler());
+		//?}
 	}
 
 	/** Lazy RM.CokeOven resolution (the oven :204-211 precedent; upstream :525 resolves via NBT_RECIPEMAP). */
@@ -434,7 +440,14 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			ItemStack tSlot = slot(j);
 			if (tSlot != null && !tSlot.isEmpty()) {
 				if (aRecipe.mNeedsEmptyOutput) return 0; // :633-636 (the mMode half is cut with mMode)
+				//? if forge {
 				if (!ItemStack.isSameItemSameTags(tSlot, tOutput)) {mOutputBlocked++; return 0;} // :637-640 — blocked
+				//?}
+				//? if neoforge {
+				/* // 1.21.1: isSameItemSameTags renamed to isSameItemSameComponents
+				   // (1.21.1 ItemStack javap).
+				if (!ItemStack.isSameItemSameComponents(tSlot, tOutput)) {mOutputBlocked++; return 0;} // :637-640 — blocked
+				 *///?}
 				rMaxTimes = Math.min(rMaxTimes, (tSlot.getMaxStackSize() - tSlot.getCount()) / tOutput.getCount()); // :641
 				if (rMaxTimes <= 0) {mOutputBlocked++; return 0;} // :642-645
 			} else {
@@ -448,7 +461,14 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 				if (aRecipe.mFluidOutputs[j] == null) {
 					tRequiredEmptyTanks--;
 				} else for (FluidTankGT tTank : mTanksOutput) if (tTank.contains(aRecipe.mFluidOutputs[j])) {
+					//? if forge {
 					if (tTank.has(Math.max(16000, 1 + (long)aRecipe.mFluidOutputs[j].getAmount() * mParallel)) && !FLUIDS_VOID_OVERFLOW.contains(String.valueOf(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(aRecipe.mFluidOutputs[j].getFluid())))) return 0; // :659
+					//?}
+					//? if neoforge {
+					/* // 1.21.1: the registry handle is BuiltInRegistries.FLUID (the swap's
+					   // Registries.FLUID is the ResourceKey, not the Registry — no getKey).
+					if (tTank.has(Math.max(16000, 1 + (long)aRecipe.mFluidOutputs[j].getAmount() * mParallel)) && !FLUIDS_VOID_OVERFLOW.contains(String.valueOf(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(aRecipe.mFluidOutputs[j].getFluid())))) return 0; // :659
+					 *///?}
 					tRequiredEmptyTanks--;
 					break;
 				}
@@ -538,7 +558,13 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			mInventoryChanged = true;
 			return true;
 		}
+		//? if forge {
 		if (!ItemStack.isSameItemSameTags(tCurrent, aStack)) return false;
+		//?}
+		//? if neoforge {
+		/* // 1.21.1: isSameItemSameComponents (see checkRecipe fork).
+		if (!ItemStack.isSameItemSameComponents(tCurrent, aStack)) return false;
+		 *///?}
 		int tLimit = Math.min(mInventory.getSlotLimit(aSlot), tCurrent.getMaxStackSize());
 		if (tLimit - tCurrent.getCount() < aStack.getCount()) return false;
 		tCurrent.grow(aStack.getCount()); // direct mutation — flag the change like upstream updateInventory
@@ -673,6 +699,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		return aSlot >= recipes().mInputItemsCount && aSlot < recipes().mInputItemsCount + recipes().mOutputItemsCount;
 	}
 
+	//? if forge {
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.ITEM_HANDLER) {
@@ -692,11 +719,20 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		super.invalidateCaps();
 		mGatedCap.invalidate();
 	}
+	//?}
+	//? if neoforge {
+	/* // 21.1 face: BlockEntity carries no getCapability/invalidateCaps to override — the
+	   // gated item surface (GatedItemHandler) and the per-side MultiBlockFluidHandler
+	   // expose through the RegisterCapabilitiesEvent provider wiring
+	   // (net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent); the fluid side
+	   // keeps the fresh-wrapper-per-call semantics in the provider lambda.
+	 *///?}
 
 	// ---------------------------------------------------------------------------
 	// NBT (the oven readFromNBT2/writeToNBT2 shape)
 	// ---------------------------------------------------------------------------
 
+	//? if forge {
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
@@ -742,6 +778,64 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		}
 		mTanksOutput[0].readFromNBT(aNBT, NBT_OUTPUT_TANK);
 	}
+	//?}
+	//? if neoforge {
+	/* // 21.1 NBT face: the (CompoundTag) signatures ride the shared chain (the 01Root
+	   // fork retains them for the BE tree; the canonical loadAdditional/saveAdditional
+	   // delegate in). Only the provider-needing IO calls fork — the serialization
+	   // HolderLookup.Provider comes from the level registry access until the W4 NBT wave
+	   // threads the vanilla-passed provider through the chain
+	   // (1.21.1 ItemStack/FluidStack/ItemStackHandler javap: all NBT IO takes a provider;
+	   // parseOptional keeps the empty-on-garbage semantics of ItemStack.of /
+	   // loadFluidStackFromNBT).
+	@Override
+	protected void saveAdditional(CompoundTag aNBT) {
+		super.saveAdditional(aNBT);
+		net.minecraft.core.HolderLookup.Provider aProvider = getLevel().registryAccess();
+		aNBT.put(NBT_INVENTORY, mInventory.serializeNBT(aProvider));
+		aNBT.putLong(NBT_ENERGY, mEnergy);
+		aNBT.putLong(NBT_MINENERGY, mMinEnergy);
+		aNBT.putLong(NBT_PROGRESS, mProgress);
+		aNBT.putLong(NBT_MAXPROGRESS, mMaxProgress);
+		aNBT.putBoolean(NBT_STOPPED, mStopped);
+		aNBT.putByte(NBT_IGNITED, mIgnited);
+		aNBT.putBoolean(NBT_ACTIVE, mActive);
+		aNBT.putBoolean(NBT_RUNNING, mRunning);
+		ListTag tOutputItems = new ListTag();
+		for (ItemStack tStack : mOutputItems) if (tStack != null && !tStack.isEmpty()) tOutputItems.add(tStack.save(aProvider, new CompoundTag()));
+		aNBT.put(NBT_OUTPUT_ITEMS, tOutputItems);
+		ListTag tOutputFluids = new ListTag();
+		for (FluidStack tStack : mOutputFluids) if (tStack != null && !tStack.isEmpty()) tOutputFluids.add(tStack.save(aProvider, new CompoundTag()));
+		aNBT.put(NBT_OUTPUT_FLUIDS, tOutputFluids);
+		mTanksOutput[0].writeToNBT(aNBT, NBT_OUTPUT_TANK);
+	}
+
+	@Override
+	public void load(CompoundTag aNBT) {
+		super.load(aNBT);
+		net.minecraft.core.HolderLookup.Provider aProvider = getLevel().registryAccess();
+		if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) mInventory.deserializeNBT(aProvider, aNBT.getCompound(NBT_INVENTORY));
+		mEnergy = aNBT.getLong(NBT_ENERGY);
+		mMinEnergy = aNBT.getLong(NBT_MINENERGY);
+		mProgress = aNBT.getLong(NBT_PROGRESS);
+		mMaxProgress = aNBT.getLong(NBT_MAXPROGRESS);
+		if (aNBT.contains(NBT_STOPPED)) mStopped = aNBT.getBoolean(NBT_STOPPED);
+		if (aNBT.contains(NBT_IGNITED, Tag.TAG_ANY_NUMERIC)) mIgnited = aNBT.getByte(NBT_IGNITED);
+		if (aNBT.contains(NBT_ACTIVE)) mActive = aNBT.getBoolean(NBT_ACTIVE);
+		if (aNBT.contains(NBT_RUNNING)) mRunning = aNBT.getBoolean(NBT_RUNNING);
+		if (aNBT.contains(NBT_OUTPUT_ITEMS, Tag.TAG_LIST)) {
+			ListTag tOutputItems = aNBT.getList(NBT_OUTPUT_ITEMS, Tag.TAG_COMPOUND);
+			mOutputItems = new ItemStack[tOutputItems.size()];
+			for (int i = 0; i < tOutputItems.size(); i++) mOutputItems[i] = ItemStack.parseOptional(aProvider, tOutputItems.getCompound(i));
+		}
+		if (aNBT.contains(NBT_OUTPUT_FLUIDS, Tag.TAG_LIST)) {
+			ListTag tOutputFluids = aNBT.getList(NBT_OUTPUT_FLUIDS, Tag.TAG_COMPOUND);
+			mOutputFluids = new FluidStack[tOutputFluids.size()];
+			for (int i = 0; i < tOutputFluids.size(); i++) mOutputFluids[i] = FluidStack.parseOptional(aProvider, tOutputFluids.getCompound(i));
+		}
+		mTanksOutput[0].readFromNBT(aNBT, NBT_OUTPUT_TANK);
+	}
+	 *///?}
 
 	// ---------------------------------------------------------------------------
 	// upstream UT.Code.units (UT.java:1677-1683) — the TileEntityOven copy
