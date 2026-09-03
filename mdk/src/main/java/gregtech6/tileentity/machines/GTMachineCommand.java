@@ -241,7 +241,11 @@ public final class GTMachineCommand {
 			if (tPair.prefix() != OP.gem) continue;
 			RegistryObject<Item> tIn = GTMaterialItems.get(OP.gem, tPair.material());
 			RegistryObject<Item> tOut = GTMaterialItems.get(OP.gemFlawed, tPair.material());
+			//? if forge {
 			if (tIn == null || !tIn.isPresent() || tOut == null || !tOut.isPresent()) continue;
+			//?} else {
+			/*if (tIn == null || !tIn.isBound() || tOut == null || !tOut.isBound()) continue;
+			 *///?}
 			// the T1 crusher shape: mEUt, mParallel 4, mInputMax 64 — the cap :628 must leave 4 intact
 			gregtech6.recipes.Recipe tRecipe = crusherRowFor(tIn.get());
 			if (tRecipe != null && tRecipe.mEUt * tRecipe.mDuration * 4 <= 64L * 600) return tIn.get();
@@ -303,7 +307,11 @@ public final class GTMachineCommand {
 			aSource.sendFailure(Component.literal("Unknown fluid: " + aFluidId));
 			return 0;
 		}
+		//? if forge {
 		net.minecraftforge.fluids.capability.IFluidHandler tHandler = tMachine.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, tSide).orElse(null);
+		//?} else {
+		/*net.minecraftforge.fluids.capability.IFluidHandler tHandler = tMachine.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, tSide);
+		 *///?}
 		if (tHandler == null) {
 			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the machine exposes no FLUID_HANDLER on " + tSide));
 			return 0;
@@ -325,7 +333,11 @@ public final class GTMachineCommand {
 			aSource.sendFailure(Component.literal("No TileEntityBasicMachine at " + (aPos != null ? aPos.toShortString() : "the source position")));
 			return 0;
 		}
+		//? if forge {
 		net.minecraftforge.fluids.capability.IFluidHandler tHandler = tMachine.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, tSide).orElse(null);
+		//?} else {
+		/*net.minecraftforge.fluids.capability.IFluidHandler tHandler = tMachine.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, tSide);
+		 *///?}
 		if (tHandler == null) {
 			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the machine exposes no FLUID_HANDLER on " + tSide));
 			return 0;

@@ -18,7 +18,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+//?} else {
+/*import net.neoforged.neoforge.capabilities.Capabilities;
+ *///?}
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -203,7 +207,11 @@ public final class GTBarrelCommand {
 			aSource.sendFailure(Component.literal("Unknown fluid: " + aFluidId));
 			return 0;
 		}
+		//? if forge {
 		IFluidHandler tHandler = tBarrel.getCapability(ForgeCapabilities.FLUID_HANDLER, aSide).orElse(null);
+		//?} else {
+		/*IFluidHandler tHandler = tBarrel.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, tBarrel.getBlockPos(), aSide);
+		 *///?}
 		if (tHandler == null) {
 			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the barrel exposes no FLUID_HANDLER on " + (aSide == null ? "the side-less query" : aSide)));
 			return 0;
@@ -223,7 +231,11 @@ public final class GTBarrelCommand {
 			aSource.sendFailure(Component.literal("No GT6 barrel BlockEntity at " + aPos.toShortString()));
 			return 0;
 		}
+		//? if forge {
 		IFluidHandler tHandler = tBarrel.getCapability(ForgeCapabilities.FLUID_HANDLER, aSide).orElse(null);
+		//?} else {
+		/*IFluidHandler tHandler = tBarrel.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, tBarrel.getBlockPos(), aSide);
+		 *///?}
 		if (tHandler == null) {
 			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the barrel exposes no FLUID_HANDLER on " + (aSide == null ? "the side-less query" : aSide)));
 			return 0;
@@ -283,7 +295,11 @@ public final class GTBarrelCommand {
 			return 0;
 		}
 		ItemStack tStack = tDrops.get(0).getItem(); // fill destroy drops exactly one barrel item
+		//? if forge {
 		IFluidHandler tHandler = tStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).orElse(null);
+		//?} else {
+		/*IFluidHandler tHandler = tStack.getCapability(Capabilities.FluidHandler.ITEM);
+		 *///?}
 		String tLine;
 		if (tHandler == null) {
 			tLine = String.format("GT6 tank show at %s: dropped barrel item carries NO FLUID_HANDLER_ITEM capability", aPos.toShortString());
@@ -305,7 +321,11 @@ public final class GTBarrelCommand {
 			aSource.sendFailure(Component.literal("No GT6 barrel BlockEntity at " + aPos.toShortString()));
 			return 0;
 		}
+		//? if forge {
 		IFluidHandler tHandler = tBarrel.getCapability(ForgeCapabilities.FLUID_HANDLER, null).orElse(null);
+		//?} else {
+		/*IFluidHandler tHandler = tBarrel.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, tBarrel.getBlockPos(), null);
+		 *///?}
 		if (tHandler == null) {
 			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the barrel exposes no FLUID_HANDLER"));
 			return 0;
@@ -364,7 +384,11 @@ public final class GTBarrelCommand {
 			aSource.sendFailure(Component.literal("No GT6 barrel BlockEntity at " + aPos.toShortString()));
 			return 0;
 		}
+		//? if forge {
 		IFluidHandler tHandler = tBarrel.getCapability(ForgeCapabilities.FLUID_HANDLER, null).orElse(null);
+		//?} else {
+		/*IFluidHandler tHandler = tBarrel.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, tBarrel.getBlockPos(), null);
+		 *///?}
 		if (tHandler == null) {
 			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the barrel exposes no FLUID_HANDLER"));
 			return 0;
