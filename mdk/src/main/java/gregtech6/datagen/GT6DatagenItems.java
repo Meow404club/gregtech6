@@ -2,13 +2,11 @@ package gregtech6.datagen;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.registry.GTMaterialItems;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.RegistryObject;
 
 /**
  * The set of material prefix items both client providers consume, as
@@ -16,7 +14,9 @@ import net.minecraftforge.registries.RegistryObject;
  *
  * <p>Primary source is the registration bridge index ({@link GTMaterialItems#items()}) — by
  * construction exactly the registered set, and the item id is taken from the registered
- * {@link RegistryObject#getId()} so model ids cannot drift from registry ids.
+ * holder's registry id (the registry-holder {@code getId} accessor — the holder type is
+ * loader-owned and deliberately never named here, so the walk survives the
+ * RegistryObject/DeferredHolder family swap) so model ids cannot drift from registry ids.
  *
  * <p>The headless fallback is {@link GTMaterialItems#registrationOrder()} — since the
  * p3-fullprefix-creativetab criterion convergence there is ONE enumeration walk (universe
@@ -34,10 +34,10 @@ final class GT6DatagenItems {
 
     /** All registered material prefix items; registration bridge data when available, shared walk otherwise. */
     static List<Entry> collect() {
-        Map<GTMaterialItems.PrefixMaterial, RegistryObject<Item>> tIndex = GTMaterialItems.items();
+        var tIndex = GTMaterialItems.items();
         if (!tIndex.isEmpty()) {
             List<Entry> rEntries = new ArrayList<>(tIndex.size());
-            for (Map.Entry<GTMaterialItems.PrefixMaterial, RegistryObject<Item>> tPair : tIndex.entrySet()) {
+            for (var tPair : tIndex.entrySet()) {
                 rEntries.add(new Entry(tPair.getKey().prefix(), tPair.getKey().material(), tPair.getValue().getId().getPath()));
             }
             return rEntries;
