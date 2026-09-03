@@ -23,6 +23,10 @@ import net.minecraft.world.phys.Vec3;
 
 import net.minecraftforge.event.RegisterCommandsEvent;
 
+import net.minecraft.SharedConstants;
+import net.minecraft.server.Bootstrap;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gregtech6.tileentity.example.GTExampleChestCommand;
@@ -53,11 +57,16 @@ import gregtech6.tileentity.machines.GTMachineCommand;
  */
 public class GTCommandTreeLiteralTest {
 
-	/** The machine-family root's exact subtree (p7 12 machine literals + p8 fakesource). */
+	/**
+	 * The machine-family root's exact subtree (p7 12 machine literals + p8 fakesource;
+	 * the p14 dryer ladder grew it to 16 — the census follows the tree, task
+	 * p14-dryer-family).
+	 */
 	private static final Set<String> MACHINE_ROOT_CHILDREN = Set.of("fakesource",
 		"shredder", "shredder_t2", "shredder_t3", "shredder_t4",
 		"crusher", "crusher_t2", "crusher_t3", "crusher_t4",
-		"lathe", "lathe_t2", "lathe_t3", "lathe_t4");
+		"lathe", "lathe_t2", "lathe_t3", "lathe_t4",
+		"dryer", "dryer_t2", "dryer_t3", "dryer_t4");
 
 	private static CommandSourceStack stack() {
 		// permission level 2 satisfies both commands' requires(...) gate; level/server are
@@ -72,6 +81,25 @@ public class GTCommandTreeLiteralTest {
 		GTExampleChestCommand.onRegisterCommands(tEvent);
 		GTMachineCommand.onRegisterCommands(tEvent);
 		return tDispatcher;
+	}
+
+	/**
+	 * The vanilla boot (the GTMachinesOfflineTestBase :47 idiom, added by task
+	 * p14-dryer-family): registration does build only builders, but it class-initializes
+	 * {@code GTMachines} (the RegistryObject references) whose {@code <clinit>} needs
+	 * ForgeRegistries — a bootable JVM state. The old "without any bootstrap" claim above
+	 * held only while test-class ORDER kept this class behind a bootstrapping class in the
+	 * shared test JVM; the p14 dryer test class reshuffled that order and exposed the
+	 * dependency.
+	 */
+	@BeforeAll
+	static void bootVanilla() {
+		SharedConstants.tryDetectVersion();
+		try {
+			Bootstrap.bootStrap();
+		} catch (Throwable ignored) {
+			// NetworkHooks.init() failure is expected offline; registries are ready by now.
+		}
 	}
 
 	/** The deepest resolved node of a parse — the dispatch slot the input lands on. */
