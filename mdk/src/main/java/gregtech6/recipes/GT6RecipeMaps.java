@@ -78,6 +78,20 @@ import java.util.HashSet;
  * Until the Liquid/Gas Burning Box consumers went live (this card) there was zero
  * findRecipe consumer for BURN.
  *
+ * <p>{@code DISTILLERY} / {@code DRYING} mirror the RM.java:70 / RM.java:71 base-{@link
+ * RecipeMap} rows (task p14-drying-distillery-maps, decision 2026-09-03-p14-distilled-loop
+ * ⑥), declared in the upstream order (Distillery :70 before Drying :71):
+ * "gt.recipe.distillery" / "Distillery" (item 1/2/1, fluid 1/2/1, minimal inputs 2) and
+ * "gt.recipe.drying" / "Dryer" (item 1/1/0, fluid 1/3/0, minimal inputs 1). The trailing
+ * NEI booleans fold away in the 15-arg port ctor like every other map. The GUI paths are
+ * the upstream machines/Distillery|Dryer strings lowercased (the same 1.20.1
+ * ResourceLocation-charset convention as the Shredder line — {@code
+ * GTBasicMachineScreen.backgroundOf} parses this string). Both maps stay DECLARED-empty:
+ * zero rows are poured (the Drying Water→Distilled Water row is the W3 loop-closure card,
+ * Loader_Recipes_Chem.java:525; the Distillery rows additionally need the Circuit_Selector
+ * item system, which is pooled). Until the W2 dryer-family / W3 loop-closure cards went
+ * live there are zero findRecipe consumers for either map.
+ *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
@@ -107,6 +121,12 @@ public class GT6RecipeMaps {
 
 	/** FM.java:41 — the Burnable Fuels map (1/2/0 items, 1/2/0 fluids, minimal inputs 1; empty until the W2 burning-box card pours the rows). */
 	public static volatile RecipeMap BURN;
+
+	/** RM.java:70 — the Distillery map (1/2/1 items, 1/2/1 fluids, minimal inputs 2; DECLARED-empty — rows are pooled behind the circuit-selector item system). */
+	public static volatile RecipeMap DISTILLERY;
+
+	/** RM.java:71 — the Drying map (1/1/0 items, 1/3/0 fluids, minimal inputs 1; DECLARED-empty — the Water→DistW row pours with the W3 loop-closure card). */
+	public static volatile RecipeMap DRYING;
 
 	/**
 	 * FM.java:38 — the Furnace Fuels map (task p13-burning-box-family spec ①): the
@@ -188,6 +208,24 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
+		// the RM.java:70/:71 pair, upstream declaration order (Distillery :70 before Drying :71);
+		// Distillery carries MIN 2 (item AND fluid minimum 1 each), Drying MIN 1 — both DECLARED-empty
+		DISTILLERY = new RecipeMap(new HashSet<>(),
+				"gt.recipe.distillery", "Distillery", null,
+				0, 1,
+				"gt6:textures/gui/machines/distillery",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 2, 1,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		DRYING = new RecipeMap(new HashSet<>(),
+				"gt.recipe.drying", "Dryer", null,
+				0, 1,
+				"gt6:textures/gui/machines/dryer",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 3, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
 		// FM.java:38 — the Solid Burning Box fuel face: an on-demand synthesizer over the
 		// ForgeHooks.getBurnTime bridge, no static rows (RecipeMapFurnaceFuel class doc)
 		FURNACE_FUEL = new RecipeMapFurnaceFuel();
@@ -203,6 +241,8 @@ public class GT6RecipeMaps {
 		ENGINE_FUELS = null;
 		FLUIDBED = null;
 		BURN = null;
+		DISTILLERY = null;
+		DRYING = null;
 		FURNACE_FUEL = null;
 		RecipeMap.reset();
 	}

@@ -125,6 +125,50 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.BURN.mGUIPath, "the FM.java:41 machines/Default row, lowercased");
 	}
 
+	/** The RM.java:70 Distillery map constants (task p14-drying-distillery-maps). */
+	@Test
+	void initRegistersDistilleryMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		assertNotNull(GT6RecipeMaps.DISTILLERY);
+		assertSame(GT6RecipeMaps.DISTILLERY, RecipeMap.RECIPE_MAPS.get("gt.recipe.distillery"));
+		assertEquals("Distillery", GT6RecipeMaps.DISTILLERY.mNameLocal);
+		assertEquals("gt.recipe.distillery", GT6RecipeMaps.DISTILLERY.mNameNEI, "RM.java:70 passes null → the internal name");
+		assertEquals(1, GT6RecipeMaps.DISTILLERY.mInputItemsCount);
+		assertEquals(2, GT6RecipeMaps.DISTILLERY.mOutputItemsCount);
+		assertEquals(1, GT6RecipeMaps.DISTILLERY.mMinimalInputItems, "RM.java:70 MIN-ITEM 1");
+		assertEquals(1, GT6RecipeMaps.DISTILLERY.mInputFluidCount);
+		assertEquals(2, GT6RecipeMaps.DISTILLERY.mOutputFluidCount);
+		assertEquals(1, GT6RecipeMaps.DISTILLERY.mMinimalInputFluids, "RM.java:70 MIN-FLUID 1");
+		assertEquals(2, GT6RecipeMaps.DISTILLERY.mMinimalInputs, "RM.java:70 MIN 2 — item AND fluid minimum 1 each, the FLUIDBED column shape");
+		assertEquals(1, GT6RecipeMaps.DISTILLERY.mPower);
+		assertEquals(0, GT6RecipeMaps.DISTILLERY.mProgressBarDirection);
+		assertEquals(1, GT6RecipeMaps.DISTILLERY.mProgressBarAmount);
+		assertEquals("gt6:textures/gui/machines/distillery.png", GT6RecipeMaps.DISTILLERY.mGUIPath, "the RM.java:70 machines/Distillery row, lowercased");
+		assertTrue(GT6RecipeMaps.DISTILLERY.mRecipeList.isEmpty(), "DECLARED-empty: rows are pooled behind the circuit-selector item system");
+	}
+
+	/** The RM.java:71 Drying map constants (task p14-drying-distillery-maps). */
+	@Test
+	void initRegistersDryingMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		assertNotNull(GT6RecipeMaps.DRYING);
+		assertSame(GT6RecipeMaps.DRYING, RecipeMap.RECIPE_MAPS.get("gt.recipe.drying"));
+		assertEquals("Dryer", GT6RecipeMaps.DRYING.mNameLocal);
+		assertEquals("gt.recipe.drying", GT6RecipeMaps.DRYING.mNameNEI, "RM.java:71 passes null → the internal name");
+		assertEquals(1, GT6RecipeMaps.DRYING.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.DRYING.mOutputItemsCount);
+		assertEquals(0, GT6RecipeMaps.DRYING.mMinimalInputItems, "RM.java:71 MIN-ITEM 0 — the Water→DistW row is item-input-free");
+		assertEquals(1, GT6RecipeMaps.DRYING.mInputFluidCount);
+		assertEquals(3, GT6RecipeMaps.DRYING.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.DRYING.mMinimalInputFluids, "RM.java:71 MIN-FLUID 0");
+		assertEquals(1, GT6RecipeMaps.DRYING.mMinimalInputs, "RM.java:71 MIN 1");
+		assertEquals(1, GT6RecipeMaps.DRYING.mPower);
+		assertEquals(0, GT6RecipeMaps.DRYING.mProgressBarDirection);
+		assertEquals(1, GT6RecipeMaps.DRYING.mProgressBarAmount);
+		assertEquals("gt6:textures/gui/machines/dryer.png", GT6RecipeMaps.DRYING.mGUIPath, "the RM.java:71 machines/Dryer row, lowercased");
+		assertTrue(GT6RecipeMaps.DRYING.mRecipeList.isEmpty(), "DECLARED-empty: the Water→DistW row pours with the W3 loop-closure card");
+	}
+
 	@Test
 	void reinitIsIdempotentWithinAGeneration() {
 		GT6RecipeMaps.init();
@@ -136,6 +180,8 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		RecipeMap tFirstEngine = GT6RecipeMaps.ENGINE_FUELS;
 		RecipeMap tFirstFluidBed = GT6RecipeMaps.FLUIDBED;
 		RecipeMap tFirstBurn = GT6RecipeMaps.BURN;
+		RecipeMap tFirstDistillery = GT6RecipeMaps.DISTILLERY;
+		RecipeMap tFirstDrying = GT6RecipeMaps.DRYING;
 		GT6RecipeMaps.init();
 		assertSame(tFirst, GT6RecipeMaps.FURNACE, "init within one generation must not recreate (upstream :139 would throw on the duplicate name)");
 		assertSame(tFirstCoke, GT6RecipeMaps.COKE_OVEN);
@@ -145,7 +191,9 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstEngine, GT6RecipeMaps.ENGINE_FUELS);
 		assertSame(tFirstFluidBed, GT6RecipeMaps.FLUIDBED);
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
-		assertEquals(9, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + engine fuels + fluid bed + burn + furnace fuel (the p13 RecipeMapFurnaceFuel append)");
+		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
+		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
+		assertEquals(11, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + engine fuels + fluid bed + burn + distillery + drying + furnace fuel (the p13 RecipeMapFurnaceFuel append, then the p14 RM.java:70/:71 pair)");
 	}
 
 	@Test
@@ -156,6 +204,8 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		RecipeMap tFirstEngine = GT6RecipeMaps.ENGINE_FUELS;
 		RecipeMap tFirstFluidBed = GT6RecipeMaps.FLUIDBED;
 		RecipeMap tFirstBurn = GT6RecipeMaps.BURN;
+		RecipeMap tFirstDistillery = GT6RecipeMaps.DISTILLERY;
+		RecipeMap tFirstDrying = GT6RecipeMaps.DRYING;
 
 		GT6RecipeMaps.reset();
 		assertNull(GT6RecipeMaps.FURNACE);
@@ -163,11 +213,15 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertNull(GT6RecipeMaps.ENGINE_FUELS);
 		assertNull(GT6RecipeMaps.FLUIDBED, "reset drops the fluid bed entry too");
 		assertNull(GT6RecipeMaps.BURN, "reset drops the burn entry too");
+		assertNull(GT6RecipeMaps.DISTILLERY, "reset drops the distillery entry too");
+		assertNull(GT6RecipeMaps.DRYING, "reset drops the drying entry too");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("mc.recipe.furnace"), "reset drops the registry entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.cokeoven"), "reset drops the coke oven entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.fuels.engine"), "reset drops the engine fuels entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.fuels.fluidbed"), "reset drops the fluid bed entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.fuels.burn"), "reset drops the burn entry");
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.distillery"), "reset drops the distillery entry");
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.drying"), "reset drops the drying entry");
 
 		GT6RecipeMaps.init();
 		assertNotNull(GT6RecipeMaps.FURNACE);
@@ -175,16 +229,22 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertNotNull(GT6RecipeMaps.ENGINE_FUELS);
 		assertNotNull(GT6RecipeMaps.FLUIDBED);
 		assertNotNull(GT6RecipeMaps.BURN);
+		assertNotNull(GT6RecipeMaps.DISTILLERY);
+		assertNotNull(GT6RecipeMaps.DRYING);
 		assertNotSame(tFirst, GT6RecipeMaps.FURNACE, "re-init after reset creates a fresh generation");
 		assertNotSame(tFirstCoke, GT6RecipeMaps.COKE_OVEN);
 		assertNotSame(tFirstEngine, GT6RecipeMaps.ENGINE_FUELS);
 		assertNotSame(tFirstFluidBed, GT6RecipeMaps.FLUIDBED);
 		assertNotSame(tFirstBurn, GT6RecipeMaps.BURN);
+		assertNotSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
+		assertNotSame(tFirstDrying, GT6RecipeMaps.DRYING);
 		assertSame(GT6RecipeMaps.FURNACE, RecipeMap.RECIPE_MAPS.get("mc.recipe.furnace"));
 		assertSame(GT6RecipeMaps.COKE_OVEN, RecipeMap.RECIPE_MAPS.get("gt.recipe.cokeoven"));
 		assertSame(GT6RecipeMaps.ENGINE_FUELS, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.engine"));
 		assertSame(GT6RecipeMaps.FLUIDBED, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.fluidbed"));
 		assertSame(GT6RecipeMaps.BURN, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.burn"));
+		assertSame(GT6RecipeMaps.DISTILLERY, RecipeMap.RECIPE_MAPS.get("gt.recipe.distillery"));
+		assertSame(GT6RecipeMaps.DRYING, RecipeMap.RECIPE_MAPS.get("gt.recipe.drying"));
 	}
 
 	/** The duplicate-name guard fires when a second generation is created without a reset (upstream Recipe.java:139). */
