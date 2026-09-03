@@ -3,7 +3,8 @@
 // 证据：tmp/harvest/stonecutter-template/build.neoforge.gradle.kts.txt:1-46（neoForge 块/runs/mods register）。
 // W2 段补全（与 forge 节点同构）：runs client/server/data + test sourceSet 类路径接线 +
 // generateModMetadata（META-INF/neoforge.mods.toml，NeoForge 1.20.5+ 元数据文件名）+ zip64 + 诊断协议 maxerrs。
-// JEI 不接线（W5 卡做，见任务卡 SPEC 不做项）；datagen 产物默认共享（下文 srcDir）。
+// W5 段（task p15-jei-dual-wiring）：JEI 1.21.1 三件接线（见 dependencies JEI 注释段）；
+// datagen 产物默认共享（下文 srcDir）。
 import org.gradle.jvm.tasks.Jar
 
 plugins {
@@ -15,9 +16,19 @@ version = property("mod_version").toString()
 
 val modId = property("mod_id").toString()
 val mcVer = property("deps.minecraft").toString()
+val jeiVer = property("jei_version").toString()
 
 // 共享锚点：控制器项目目录（mdk/），即节点共享资源/模板/datagen 产物的真实位置。
 val sharedDir = parent!!.projectDir
+
+// JEI（task p15-jei-dual-wiring）：blamejared maven，与 forge 节点同仓同源
+// （mdk/build.forge.gradle.kts JEI 段同构；坐标来源证据见 dependencies JEI 注释段）。
+repositories {
+    maven {
+        name = "blamejared"
+        url = uri("https://maven.blamejared.com/")
+    }
+}
 
 // 1.21.1 节点 = Java 21（本机 java-21-openjdk；ADR-P15-2：gregapi 钉 17，17 产物可被 21 工具链直接消费）
 java {
@@ -69,8 +80,33 @@ neoForge {
 }
 
 dependencies {
-    // gregapi 挂法 L2：根项目 java-library（Java17 产物）
+    // 根项目 = gregapi java-library（Java17 产物）
     implementation(project(":"))
+    // JEI 1.21.1（task p15-jei-dual-wiring；ADR 2026-09-02-p12-jei-dependency 的跨版本延续）：
+    // 坐标三件 mezz.jei:jei-${mcVer}-{common-api,neoforge-api,neoforge}:19.52.0.422——
+    // blamejared maven-metadata <latest>（2026-09-03）+ Modrinth "19.52.0.422 for NeoForge 1.21.1"
+    // 双源一致；降级预案 19.51.0.418（Modrinth 最新 release 标记位）。
+    // ${jeiVer} 解析自节点参数 mdk/versions/1.21.1-neoforge/gradle.properties 的同名键（节点级
+    // gradle.properties 遮蔽根值；探针实证 2026-09-04：本节点 19.52.0.422 / 1.20.1-forge 仍
+    // 15.56.0.205），故表达式与 forge 节点 property("jei_version") 完全同构。
+    //
+    // 与 1.20.1 节点（mdk/build.forge.gradle.kts:93-95 modCompileOnly/modRuntimeOnly）的关键差异：
+    // mod* 重映射配置是 legacyforge 插件专有（LEGACY.md:68-92 "Remapping Mod Dependencies"——
+    // SRG→official、同名标准配置的 child、非传递），本节点 moddev 插件（2.0.144）不注册它们
+    // （活体探针实证 2026-09-04：:mdk:1.20.1-forge 配置面含 modApi/modCompileOnly/
+    // modCompileOnlyApi/modImplementation/modRuntimeOnly，:mdk:1.21.1-neoforge 仅
+    // modDevCompileDependencies/modDevRuntimeDependencies，mod* 全缺）。NeoForge 1.20.5+ 发行 mod
+    // 本就以 official（mojmap）命名运行、无 SRG 中间映射步，无需重映射——两代 JEI API 面 javap
+    // 实证逐方法全同（IModPlugin 20 方法/IRecipeRegistration/JeiPlugin 注解，15.56.0.205 vs
+    // 19.52.0.422），GT6JeiPlugin 零分叉即双节点可编译（RL 两参 ctor 由 stonecutter swap 消化，
+    // 生成腿 GT6JeiPlugin.java:49 实证 fromNamespaceAndPath）。
+    // API 两件 compileOnly（编译面，不进 run）；impl 一件 runtimeOnly——impl jar 自带全部 api 类
+    //（unzip 实证 jei-1.21.1-neoforge-19.52.0.422.jar 含 mezz/jei/api 198 类），经
+    // sourceSets["test"].runtimeClasspath += main.runtimeClasspath（下文）进测试 JVM，与
+    // 1.20.1 节点 GT6JeiPluginTest 的类加载路径同构。
+    compileOnly("mezz.jei:jei-${mcVer}-common-api:${jeiVer}")
+    compileOnly("mezz.jei:jei-${mcVer}-neoforge-api:${jeiVer}")
+    runtimeOnly("mezz.jei:jei-${mcVer}-neoforge:${jeiVer}")
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

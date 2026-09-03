@@ -10,7 +10,11 @@
  *     no JEI runtime, no registry events);</li>
  * <li>{@code getPluginUid()} returns a non-null, stable, literal-pinned id;</li>
  * <li>the annotation is present and the no-arg constructor exists (reflection = the same
- *     faces JEI's scanner reads).</li>
+ *     faces JEI's scanner reads);</li>
+ * <li>the bytecode references only the loader-neutral JEI common API — never the platform
+ *     packages (mezz/jei/api/forge/, mezz/jei/api/neoforge/) — so the single shared source
+ *     keeps compiling on both the 1.20.1 Forge and 1.21.1 NeoForge legs (task
+ *     p15-jei-dual-wiring).</li>
  * </ul>
  * The lang-key reconciliation ({@link GT6JeiPlugin#INFO_KEY_COKE_OVEN} ↔ the GT6EnUs
  * provider) rides the datagen-side test (GT6EnUsJeiInfoTest) plus the runData gate; here we
@@ -19,6 +23,7 @@
 package gregtech6.jei;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -54,6 +59,26 @@ public class GT6JeiPluginTest {
 			String tBytes = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
 			assertTrue(tBytes.contains("Lmezz/jei/api/JeiPlugin;"),
 					"@JeiPlugin annotation missing from the class file — JEI would never detect the plugin");
+		}
+	}
+
+	@Test
+	public void noPlatformSpecificJeiApiInBytecode() throws Exception {
+		// Dual-node guard (task p15-jei-dual-wiring): the plugin source is shared across the
+		// 1.20.1 Forge leg (JEI forge-api exposes mezz/jei/api/forge/) and the 1.21.1 NeoForge
+		// leg (JEI neoforge-api exposes mezz/jei/api/neoforge/ — NeoForgeTypes). A single
+		// shared source only compiles on both legs if it sticks to the loader-neutral common
+		// API — assert exactly that at the bytecode layer, the same layer the annotation test
+		// above reads (and the only layer that survives compile-time on both legs).
+		try (java.io.InputStream in = GT6JeiPlugin.class.getResourceAsStream("GT6JeiPlugin.class")) {
+			assertNotNull(in, "plugin class resource not found on the test classpath");
+			String tBytes = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
+			assertTrue(tBytes.contains("mezz/jei/api/"),
+					"plugin must reference the JEI common API — none found, wiring drifted?");
+			assertFalse(tBytes.contains("mezz/jei/api/forge/"),
+					"forge-only JEI API referenced — the 1.21.1 NeoForge leg would not compile");
+			assertFalse(tBytes.contains("mezz/jei/api/neoforge/"),
+					"neoforge-only JEI API referenced — the 1.20.1 Forge leg would not compile");
 		}
 	}
 
