@@ -108,12 +108,12 @@ import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
  * thermometer surface — the capacitor interface half is the cut ADR-D1 subsystem with no
  * port surface (declared).
  *
- * <p><b>The fluid face (:262-264)</b>: the capability door exists on every side BUT the top
- * (SIDES_BOTTOM_HORIZONTAL, the :262 half), fill = water only into the water tank, drain =
- * the :263 null (steam never leaves through the sides — only the top push), both tanks
- * exposed (:264). The funnel face (:236-238, the FunnelAccessible contract): water only,
- * any side. Non-water injection is a REFUSAL, not destruction (the bucket semantics are the
- * barrel's, not the boiler's).
+ * <p><b>The fluid face (:262-264)</b>: the tank VIEW is side-blind — both tanks exposed on
+ * every capability query (:264; the fluid-pipe connect handshake queries it). The FILL gate
+ * carries the :262 halves: water only, never the top face (SIDES_BOTTOM_HORIZONTAL); drain
+ * is the :263 null (steam never leaves through the sides — only the top push). The funnel
+ * face (:236-238, the FunnelAccessible contract): water only, any side. Non-water injection
+ * is a REFUSAL, not destruction (the bucket semantics are the barrel's, not the boiler's).
  *
  * <p><b>Row configuration</b> rides the block carrier ({@link GT6Boilers.BoilerTankBlock#row()},
  * the SteamEngineBlock form; the BE ctor reads it so every placement path mounts the row) —
@@ -220,15 +220,20 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 		return "boiler_tank"; // BET registry path mirrors it (GTBlockEntities.BOILER_TANK_BE)
 	}
 
-	/** The :78 tank formula — 10000 L of steam tank per SU/t of nominal output. */
+	/** The :78 tank formula — the upstream double assignment pairs the HU store with the steam tank. */
 	public long steamTankCapacity() {
 		return mOutput * 10000;
 	}
 
-	/** The output setter (row load + the offline tests) — re-derives the steam tank capacity, the :78 pairing. */
+	/**
+	 * The output setter (row load + the offline tests) — the upstream :78 verbatim:
+	 * {@code mTanks[1].setCapacity(mCapacity = mOutput * 10000)} — the steam tank AND the
+	 * HU store share the value (the :148 overheat ceiling scales with the row).
+	 */
 	public void setOutput(long aOutput) {
 		mOutput = Math.max(1, aOutput);
-		mTanks[1].setCapacity(steamTankCapacity());
+		mCapacity = steamTankCapacity();
+		mTanks[1].setCapacity(mCapacity);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -477,33 +482,44 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 	// capacitor interface half is the cut ADR-D1 subsystem, no port surface (class doc).
 
 	// ---------------------------------------------------------------------------
-	// the fluid capability door (:262-264 — every side BUT the top, water-only fill,
-	// no drain, both tanks exposed)
+	// the fluid capability door (:262-264 — the tank view is SIDE-BLIND (:264), the
+	// fill gate carries the SIDES_BOTTOM_HORIZONTAL face half, drain stays null)
 	// ---------------------------------------------------------------------------
-
-	private final IFluidHandler mFluidHandler = new BoilerFluidHandler();
 
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.FLUID_HANDLER) {
-			// the :262 SIDES_BOTTOM_HORIZONTAL face half lives HERE — the top face exposes
-			// no door at all (the steam leaves through the internal top push, never through
-			// a capability); the side-less query stays open (the BarrelFluidHandler convention)
-			if (aSide != null && aSide.get3DDataValue() == SIDE_UP) {
-				return LazyOptional.empty();
-			}
-			return LazyOptional.of(() -> mFluidHandler).cast();
+			// the FRESH per-call side wrapper (the pipe SideFluidHandler form): the side is
+			// part of the handler identity. The exposure is deliberate on EVERY side — the
+			// upstream tank view (:264 getFluidTanks2) has NO side gate, and the fluid-pipe
+			// canConnect handshake (GTFluidPipeBlockEntity.java:281-287) queries THIS face's
+			// handler to link; what the top face refuses is FILL only (the :262 half, inside
+			// the wrapper). A null side stays open (the BarrelFluidHandler convention).
+			return LazyOptional.of(() -> new BoilerFluidHandler(aSide)).cast();
 		}
 		return super.getCapability(aCapability, aSide);
 	}
 
 	/**
-	 * The door behind the capability: fill = the :262 fluid half (water only, into the water
-	 * tank — the face half lives in {@link #getCapability}), drain = the :263 null (steam
-	 * never leaves through the sides), the tank view exposes both (:264). A non-water fluid
-	 * is REFUSED, not destroyed — the boiler has no fizz semantics.
+	 * The door behind the capability: fill = the :262 gate (water only, never the top face —
+	 * the steam leaves through the internal top push, never through a capability), drain =
+	 * the :263 null (steam never leaves through the sides), the tank view exposes both (:264).
+	 * A non-water fluid is REFUSED, not destroyed — the boiler has no fizz semantics.
 	 */
 	private class BoilerFluidHandler implements IFluidHandler {
+
+		@Nullable
+		private final Direction mSide;
+
+		BoilerFluidHandler(@Nullable Direction aSide) {
+			mSide = aSide;
+		}
+
+		/** The :262 SIDES_BOTTOM_HORIZONTAL face half — the top fill refusal. */
+		private boolean fillableFace() {
+			return mSide == null || mSide.get3DDataValue() != SIDE_UP;
+		}
+
 		@Override public int getTanks() {return mTanks.length;} // :264
 		@Override public FluidStack getFluidInTank(int aTank) {
 			FluidStack tStack = (aTank >= 0 && aTank < mTanks.length) ? mTanks[aTank].get() : null;
@@ -517,7 +533,8 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 		@Override
 		public int fill(FluidStack aResource, FluidAction aAction) {
 			if (aResource == null || aResource.isEmpty()) return 0;
-			if (!mWaterMatch.apply(aResource.getFluid())) return 0; // :262 FL.water half
+			if (!fillableFace()) return 0; // :262 the face half
+			if (!mWaterMatch.apply(aResource.getFluid())) return 0; // :262 the FL.water half
 			return mTanks[0].fill(aResource, aAction);
 		}
 
