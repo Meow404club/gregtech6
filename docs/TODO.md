@@ -156,6 +156,15 @@
 - [x] 基建：审查会话轮换制入宪法（3cbece7，单会话 ≤3 分支）+审查模板 -s 修正（975aadc）+双 ADR 转正成文（20bb36d+5db3bdb）
 - [x] phase-closeout：根 205 + mdk 846 = 1051 全绿；一次打回返工复审过；两审查会话轮换；两研究卡+锅炉研究+蒸汽求证四张先行
 
+## 第 13 阶段（锅炉蒸汽族：还账四件 / HU·蒸汽常量地基 / 火盒五亚型 / 锅炉坦克 / 大锅炉多方块）——✅ 已完成（2026-09-03）
+
+- [x] p13-steam-proof-repay 还账四件：GTFluidLists 名单地基（POWER_CONDUCTING/GAS，natural_gas 名单键=registry path 等价）+Base08 tick fizz 两查+gasProof 载体行四族+物品面 fill 双门+P5 基类解冻显式 ADR（merge 42d6220e；metal 注汽 tick 清零=P12 蒸汽偏离窗口关闭）
+- [x] p13-hu-steam-foundation：EU_PER_WATER=80+STEAM_PER_WATER_GLOBAL=160（引擎私有 200 零 diff，四联断言机检）+BURN/FLUIDBED 图骨架+HU 握手 fixture 5 测零生产代码（merge 1e78600e）
+- [x] p13-burning-box-family 火盒五亚型：97 块全发 HU（Solid 27/Liquid 22 单罐勘误/Gas 22 实证 FM.Burn/FluidBed 26 活表空声明）+RecipeMapFurnaceFuel=getBurnTime 动态桥（duration=burnTime×25）+BURN 7 行 pour+明火蔓延（累计计数器断言）（merge e405bef3）
+- [x] p13-boiler-tank 锅炉坦克：26 材质档+转化式 GLOBAL 160（grep 零 200）+爆炸四触发+空烧不爆负断言+爆炸执行 Root 桥（O2 落定）+**正典链 e2e 闭环：火盒→锅炉→管道→EngineSteam→KU→crusher+蒸馏水副产**（merge cfcd9909）
+- [x] p13-large-boiler 大锅炉：5 变体多方块+pattern 缝够用零 diff（part 格实 35+1）+五孔负载均衡（:247 先除后减=85/85）+Dense Wall 勘误+HeatTransmitter 独立 BE 转推+拆墙即炸/无压幸存双面活证+dismantle 臂（merge 35ec9b21）
+- [x] phase-closeout：根 205 + mdk 943 = 1148 全绿；五卡零打回；每波新审查会话轮换制；--no-build-cache 排假绿入门禁纪律；decisions 账本覆盖事故重建+list 账本写纪律（ops.discipline.state_ledger_append）
+
 ## 遗留池
 
 - [x] **M2 哨兵产量翻案**：上游 HandlerCrushing 槽0=0 哨兵+槽1=10000 重复=每行 2 份主产出，port chance==0-null 后 oreRaw 1 份；翻案=buildRecipe base 改双 10000 槽（493 行不变）（merge 794bb1c，fix e31f48b；plain=2/blockRaw=9/dense 组合=11 对位上游）
@@ -182,6 +191,8 @@
 - [x] **P11 首候选（同域小卡）——双落 ✅**：wire_laser loot 补洞（bc9317e，恰 1 块实证）+connector mask stale 位「只剪不连」修复（72636d4）
 - [x] **基建池（P11 落大部分）**：/gt6machine 双注册劫持 ✅（b6d839a 改 /gt6chest）/gt6rcon allow_failed ✅（0868a4b）/E1 期 javadoc 风格扫 ✅（3846971）/energy_source harness 注记 ✅（4a377f1）/RCON 框架化 ✅（5d7c143 三层+链条入库）；余项：item-intercept ADR 字符串形状整理/**cover 域 3 文件混入**（GTCoverCommand:56/:57/:214+ICoverableTE:177+TileEntityOvenCoverTest:34 断言字符串字面量须单独裁量）/**E1 期外 14 文件 CJK 残留**
 - [x] **P12 决策点（用户定序）——双落 ✅**：多方块 ghost 全量（pattern API/半透明绿红/JEI，248c66b+dbc55ef+6be286e→6be2862）+ 流体罐引擎链（容器·燃料·三源·传动十卡全谱，250422a..41721ac0）；蒸汽储罐疑问求证成立（POWER_CONDUCTING，一切桶/罐装不住蒸汽）
-- [ ] **P13 决策点（用户定序）**：p13-boiler-steam-family 锅炉族（研究 SPEC 已备四波：HU 前置+燃料图→火盒→BoilerTank→LargeBoiler；**蒸汽偏离还账四件强制前置**，ADR 2026-09-02-p12-steam-proof-deviation）vs 其余池项
+- [x] **P13 决策点（用户定序）——双落 ✅**：p13-boiler-steam-family 锅炉族五卡四波全合（还账四件强制前置已清+HU/蒸汽常量地基+火盒五亚型+锅炉坦克+大锅炉，1148 测零打回）；正典蒸汽链 e2e 闭环
+- [ ] **P14 决策点（用户定序）**：蒸馏水闭环（Distillery/Drying，HU 消费端+水垢蒸馏水免疫正典）/cover 残余（SelectorRedstone 等 SwitchableMode 宿主/RetrieverItem 等 item pipe）/机器族余项（:511/ore 方块行）/桶密封发酵+连通罐 B[0]+builder wand/P12 新增池
+- [ ] **P13 新增池**：FluidBed 活表（待 calcite 流体+ash 材质+mFurnaceBurnTime 三原语）/BURN :45-76 油脂 creosote 段/JEI 大锅炉信息页（cokeoven 先例）/barometer 逐态视觉/明火臂 λ 波动+W4 A 臂 rng 免疫断言（链卡）/火盒·锅炉·大锅炉贴图正典化（现灰度占位）/SFX fizz 音效/LH:511 voided tooltip/64K 非 bronze 合金鼓/ic2steam 兼容名/热流体物品 fill 门（若引入热流体灌入源）/W3 dismantle RCON 臂（链未行使仅离线覆盖）
 - [ ] **P12 新增池**：Trinaquadalloy 轴行（Loader:1749-1752 规格外第 12 材质）/p12-gear-items 齿轮实物安装+猴扳手反转+软锤停机/carbon_dioxide 流体注册（diesel 尾气推臂待激活）/mdk cokeoven Corrupt PNG 6 条（P8 借图内容问题）/engine-steam GT6BlockStates javadoc "26 variants" 措辞残留/Transformer waste 池（EngineRotation RU↔KU 桥/TurbineSteam/便携容器族/润滑脂）
-- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI+cover 板/管道箭头（P4）、扳手九宫格六条+泵盖贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint/creosote 渲染（P6）、三机 GUI+12/2 槽布局（P7）、12 高档鼓外观（P7）、cokeoven GUI 对帧/方块染色 tint/创造栏 7 tab/侧面装桶顶面拒（P8）、oven overlay 六面+截面+fallback 材质层/emitter 键区贴图+档位数字+item 外观/线缆材质色差+绝缘层+连接臂几何/cokeoven FORMED 占位（P9）、tools tab 图标排序/cutter 贴图/ghost 结构残影六条/红石线材质色差+lamp 发光（R1b 后）/laser wire 外观（P10）、cover 板双层渲染+发光线世界内光晕/红石电缆 96,64,64 罩色（R1b）/Redstone Wires+Laser Wires 独立类目三分页/conveyor·robotarm 动画贴图（P11）、**ghost 绿面/红面/混合/成形 shell 零变化/alpha 观感/棱线可见性（P12）/JEI 搜 coke oven 出信息页+面板正常无 crash（P12）/crank·蒸汽机·柴油机·axle·gearbox·transformer 放置朝向与运转观感+桶 tap/funnel 灌排回路（P12）**
+- [ ] 交互级验证（runClient 目视留用户）：/give+tint（P2）、oven GUI+cover 板/管道箭头（P4）、扳手九宫格六条+泵盖贴图+natural_gas 外观（P5）、oven 旋转六条/新桶外观/flint/creosote 渲染（P6）、三机 GUI+12/2 槽布局（P7）、12 高档鼓外观（P7）、cokeoven GUI 对帧/方块染色 tint/创造栏 7 tab/侧面装桶顶面拒（P8）、oven overlay 六面+截面+fallback 材质层/emitter 键区贴图+档位数字+item 外观/线缆材质色差+绝缘层+连接臂几何/cokeoven FORMED 占位（P9）、tools tab 图标排序/cutter 贴图/ghost 结构残影六条/红石线材质色差+lamp 发光（R1b 后）/laser wire 外观（P10）、cover 板双层渲染+发光线世界内光晕/红石电缆 96,64,64 罩色（R1b）/Redstone Wires+Laser Wires 独立类目三分页/conveyor·robotarm 动画贴图（P11）、**ghost 绿面/红面/混合/成形 shell 零变化/alpha 观感/棱线可见性（P12）/JEI 搜 coke oven 出信息页+面板正常无 crash（P12）/crank·蒸汽机·柴油机·axle·gearbox·transformer 放置朝向与运转观感+桶 tap/funnel 灌排回路（P12）/火盒燃烧态观感+明火蔓延/锅炉气压计 visual/大锅炉成型外观+ghost 绿红/五孔出汽（P13）**

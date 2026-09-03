@@ -31,6 +31,9 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-02 | [2026-09-02-p12-rotation-carrier.md](2026-09-02-p12-rotation-carrier.md) | 旋转载体：零新 EnergyType，复用 RU/KU+push 握手，Axle 邻接递归 |
 | 2026-09-02 | [2026-09-02-p12-fluid-engine-chain.md](2026-09-02-p12-fluid-engine-chain.md) | 流体罐引擎链总 ADR：范围/三波九卡/蒸汽产源/声明偏离（含桶 GUI 终裁） |
 | 2026-09-02 | [2026-09-02-p12-steam-proof-deviation.md](2026-09-02-p12-steam-proof-deviation.md) | 蒸汽四防销毁链：声明偏离 + P13 强制还账四件（POWER_CONDUCTING 实证；2026-09-03 O1 补账转正） |
+| 2026-09-03 | [2026-09-03-p13-barrel-base-unfreeze.md](2026-09-03-p13-barrel-base-unfreeze.md) | TileEntityBase08Barrel P5 冻结面恰量解冻：tick 两查+gasProof 覆写点+allowFluid 最小面（还账四件随卡 ADR） |
+| 2026-09-03 | [2026-09-03-p13-hu-energy-face.md](2026-09-03-p13-hu-energy-face.md) | HU 能量面零新 EnergyType：复用 push 握手，发射面仅顶面（原 state 条目因账本覆盖事故按 architect 卡重建成文） |
+| 2026-09-03 | [2026-09-03-p13-boiler-family-split.md](2026-09-03-p13-boiler-family-split.md) | 锅炉族总拆定裁定：四波串行/端口/注册家/常量作用域纪律/爆炸纪律（同上重建成文） |
 
 ## 占位（历史 ADR，未回填，权威原文在 state `decisions` 账本与 docs/PROJECT_STATE.md）
 
