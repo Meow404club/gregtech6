@@ -25,3 +25,8 @@ mdk/src/generated/resources/.cache/
 
 # 客户端/服务端运行日志（会话时间戳，无入库价值）
 mdk/logs/
+
+# P15 石匠节点运行目录（runClient/runServer/runData，游戏库与世界数据不入库；
+# 节点 build/ 与 stonecutter cache 由全局 build//.gradle/ 规则覆盖）
+mdk/versions/*/run/
+mdk/versions/*/logs/
