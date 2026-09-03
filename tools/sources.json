@@ -124,7 +124,10 @@
       "**/*.json",
       "**/*.yaml",
       "**/*.yml",
-      "**/*.toml"
+      "**/*.toml",
+      "**/*.kts",
+      "**/*.gradle",
+      "**/*.properties"
     ],
     "exclude": [
       "**/meta.json"
