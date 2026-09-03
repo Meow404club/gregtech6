@@ -22,9 +22,14 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+//? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+//?} else {
+/*import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+ *///?}
 
 import gregapi.code.TagData;
 import gregapi.data.TD;
@@ -522,7 +527,11 @@ public class TileEntityLargeBoiler extends TileEntityBase10MultiBlockBase implem
 		};
 		BlockEntity tNeighbor = getLevel().getBlockEntity(tPos);
 		if (tNeighbor == null || tNeighbor.isRemoved()) return null;
+		//? if forge {
 		return tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, STEAM_TARGET_SIDES[aIndex]).orElse(null);
+		//?} else {
+		/*return getLevel().getCapability(Capabilities.FluidHandler.BLOCK, tPos, STEAM_TARGET_SIDES[aIndex]);
+		 *///?}
 	}
 
 	@Nullable
@@ -698,6 +707,7 @@ public class TileEntityLargeBoiler extends TileEntityBase10MultiBlockBase implem
 	// face, fill = the FL.water gate (:380 has NO face half), drain = the steam tank (:381))
 	// ---------------------------------------------------------------------------
 
+	//? if forge {
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.FLUID_HANDLER) {
@@ -708,6 +718,19 @@ public class TileEntityLargeBoiler extends TileEntityBase10MultiBlockBase implem
 		}
 		return super.getCapability(aCapability, aSide);
 	}
+	//?} else {
+	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — W4's
+	// RegisterCapabilitiesEvent.registerBlockEntity delegates to this member; no @Override.
+	// The FRESH per-call side wrapper form is kept: the side is accepted unused — the :380
+	// fillable gate has NO face half on this machine, the intake gating lives on the part
+	// modes upstream and on the door's water-only half here.)
+	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
+		if (aCapability == Capabilities.FluidHandler.BLOCK) {
+			return (T) new LargeBoilerFluidHandler();
+		}
+		return null;
+	}
+	 *///?}
 
 	/**
 	 * The door behind the capability: fill = the :380 water-only gate into the water tank

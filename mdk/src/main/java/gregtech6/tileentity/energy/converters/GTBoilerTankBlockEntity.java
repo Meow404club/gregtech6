@@ -21,9 +21,14 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+//? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+//?} else {
+/*import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+ *///?}
 
 import gregapi.code.TagData;
 import gregapi.data.TD;
@@ -486,6 +491,7 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 	// fill gate carries the SIDES_BOTTOM_HORIZONTAL face half, drain stays null)
 	// ---------------------------------------------------------------------------
 
+	//? if forge {
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.FLUID_HANDLER) {
@@ -499,6 +505,21 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 		}
 		return super.getCapability(aCapability, aSide);
 	}
+	//?} else {
+	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — W4's
+	// RegisterCapabilitiesEvent.registerBlockEntity delegates to this member; no @Override.
+	// The FRESH per-call side wrapper form is kept: the side is part of the handler identity.
+	// The exposure stays deliberate on EVERY side — the upstream tank view (:264) has NO side
+	// gate and the fluid-pipe canConnect handshake queries THIS face's handler to link; what
+	// the top face refuses is FILL only (the :262 half, inside the wrapper). A null side stays
+	// open (the BarrelFluidHandler convention).
+	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
+		if (aCapability == Capabilities.FluidHandler.BLOCK) {
+			return (T) new BoilerFluidHandler(aSide);
+		}
+		return null;
+	}
+	 *///?}
 
 	/**
 	 * The door behind the capability: fill = the :262 gate (water only, never the top face —
@@ -556,7 +577,11 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 		if (aSide == null || aSide != SIDE_UP || !hasLevel()) return null;
 		BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().above());
 		if (tNeighbor == null || tNeighbor.isRemoved()) return null;
+		//? if forge {
 		return tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, Direction.DOWN).orElse(null);
+		//?} else {
+		/*return getLevel().getCapability(Capabilities.FluidHandler.BLOCK, tNeighbor.getBlockPos(), Direction.DOWN);
+		 *///?}
 	};
 
 	/** The offline seam setter for the top-neighbour fluid handler (the test fixture form). */

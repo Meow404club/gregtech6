@@ -19,9 +19,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+//?} else {
+/*import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+ *///?}
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -266,7 +271,11 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	private final Supplier<MenuType<GTBasicMachineMenu>> mMenuType;
 
 	// capability handle (P6 gated-item-handler precedent)
+	//? if forge {
 	private final LazyOptional<IItemHandler> mGatedCap = LazyOptional.of(this::newGatedHandler);
+	//?} else {
+	/*private IItemHandler mGatedHandler; // (1.21.1) the LazyOptional.of lazy semantics kept — created at the first query; 21.1 has no invalidation surface
+	 *///?}
 
 	/**
 	 * Full constructor — the BET factory entry (Builder.of(...).build(null) works without a
@@ -1064,6 +1073,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		return new BasicMachineFluidHandler(this, aSide);
 	}
 
+	//? if forge {
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.ITEM_HANDLER) {
@@ -1083,6 +1093,22 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		super.invalidateCaps();
 		mGatedCap.invalidate();
 	}
+	//?} else {
+	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — this member
+	// is the provider seam; W4's RegisterCapabilitiesEvent.registerBlockEntity delegates to it.
+	// No @Override: the parent method does not exist on 21.1.)
+	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
+		if (aCapability == Capabilities.ItemHandler.BLOCK) {
+			if (mGatedHandler == null) mGatedHandler = newGatedHandler();
+			return (T) mGatedHandler; // the gated surface shadows the root's raw inventory exposure
+		}
+		if (aCapability == Capabilities.FluidHandler.BLOCK) {
+			// the fresh-wrapper-per-call form: the side is part of the handler identity
+			return (T) newFluidHandler(aSide);
+		}
+		return null;
+	}
+	 *///?}
 
 	// ---------------------------------------------------------------------------
 	// facing + visual state (BlockState double-write, P4 spec 7)

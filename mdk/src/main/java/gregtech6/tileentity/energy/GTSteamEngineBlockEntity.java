@@ -18,9 +18,14 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+//? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+//?} else {
+/*import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+ *///?}
 
 import gregapi.code.TagData;
 import gregapi.data.TD;
@@ -175,8 +180,13 @@ public class GTSteamEngineBlockEntity extends TileEntityBase03TicksAndSync imple
 		if (!hasLevel()) return null;
 		BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(Direction.from3DDataValue(aSide)));
 		if (tNeighbor == null || tNeighbor.isRemoved()) return null;
+		//? if forge {
 		return tNeighbor.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER,
 				Direction.UP).orElse(null);
+		//?} else {
+		/*return getLevel().getCapability(Capabilities.FluidHandler.BLOCK,
+				tNeighbor.getBlockPos(), Direction.UP);
+		 *///?}
 	};
 
 	/** The offline seam setter (the setAdjacencyOverride shape of the P8/P11 rigs). */
@@ -470,6 +480,7 @@ public class GTSteamEngineBlockEntity extends TileEntityBase03TicksAndSync imple
 
 	private final IFluidHandler mFluidHandler = new EngineFluidHandler();
 
+	//? if forge {
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.FLUID_HANDLER) {
@@ -482,6 +493,21 @@ public class GTSteamEngineBlockEntity extends TileEntityBase03TicksAndSync imple
 		}
 		return super.getCapability(aCapability, aSide);
 	}
+	//?} else {
+	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — W4's
+	// RegisterCapabilitiesEvent.registerBlockEntity delegates to this member; no @Override.)
+	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
+		if (aCapability == Capabilities.FluidHandler.BLOCK) {
+			// the :239 side gate lives HERE — only the back face exposes the fill door
+			// (the side-less query stays open, the BarrelFluidHandler convention)
+			if (aSide != null && aSide.get3DDataValue() != backSide()) {
+				return null; // the LazyOptional.empty() counterpart
+			}
+			return (T) mFluidHandler;
+		}
+		return null;
+	}
+	 *///?}
 
 	/**
 	 * The tank door behind the back-face capability: fill = the :239 fluid+mode gate (the
