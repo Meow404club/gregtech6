@@ -16,8 +16,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+//?} else {
+/*import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+ *///?}
 import net.minecraftforge.items.IItemHandler;
 
 import gregapi.code.TagData;
@@ -841,8 +846,12 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	 * indexed by {@code Direction.get3DDataValue()} — the GT6 side order). Lazily created at the
 	 * capability request that captures the {@link Direction}, invalidated with the BE.
 	 */
+	//? if forge {
 	@SuppressWarnings("unchecked")
 	private final LazyOptional<IItemHandler>[] mCoverGatedCaps = new LazyOptional[6];
+	//?} else {
+	/*private final IItemHandler[] mCoverGatedHandlers = new IItemHandler[6]; // (1.21.1) the per-face lazy cache kept — live cover state, cover removal still immediate; no invalidation surface
+	 *///?}
 
 	/**
 	 * Upstream the oven sat on the 04Covers host, whose final ISidedInventory dispatch
@@ -854,6 +863,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	 * The side-less query (null direction, e.g. GTMultiBlockCommand:366) keeps the raw
 	 * handler — the upstream SIDES_INVALID face never consults a cover either (:355).
 	 */
+	//? if forge {
 	@Override
 	public <T> LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.ITEM_HANDLER && aSide != null) {
@@ -873,6 +883,24 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		super.invalidateCaps();
 		for (LazyOptional<IItemHandler> tCap : mCoverGatedCaps) if (tCap != null) tCap.invalidate();
 	}
+	//?} else {
+	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — W4's
+	// RegisterCapabilitiesEvent.registerBlockEntity delegates to this member; no @Override.
+	// The per-face lazy cache keeps the p10 semantics: the wrapper consults the LIVE cover
+	// state, so cover removal still takes effect immediately.)
+	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
+		if (aCapability == Capabilities.ItemHandler.BLOCK && aSide != null) {
+			int tIndex = aSide.get3DDataValue();
+			IItemHandler tHandler = mCoverGatedHandlers[tIndex];
+			if (tHandler == null) {
+				tHandler = newCoverGatedHandler(aSide); // the request captures the face
+				mCoverGatedHandlers[tIndex] = tHandler;
+			}
+			return (T) tHandler;
+		}
+		return null;
+	}
+	 *///?}
 
 	/**
 	 * The side-aware decorator over {@link #getInventory()} (the BasicMachine anonymous

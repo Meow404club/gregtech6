@@ -14,9 +14,14 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+//?} else {
+/*import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+ *///?}
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -194,7 +199,11 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 			// a non-zero mask restricts the push to the arrow faces. Pipe-to-pipe equalisation
 			// above is NOT gated.
 			if (!externalPushAllowed(tSide)) continue;
+			//? if forge {
 			IFluidHandler tHandler = tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, tDirection.getOpposite()).orElse(null);
+			//?} else {
+			/*IFluidHandler tHandler = getLevel().getCapability(Capabilities.FluidHandler.BLOCK, tNeighbor.getBlockPos(), tDirection.getOpposite());
+			 *///?}
 			if (tHandler == null) continue;
 			FluidStack tProbe1 = aTank.get(1), tProbeAll = aTank.get(Long.MAX_VALUE);
 			if ((tProbe1 != null && tHandler.fill(tProbe1, IFluidHandler.FluidAction.SIMULATE) > 0)
@@ -280,7 +289,11 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	@Override
 	public boolean canConnect(byte aSide, @Nullable BlockEntity aNeighbor) {
 		if (aNeighbor == null) return false;
+		//? if forge {
 		IFluidHandler tHandler = aNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, Direction.from3DDataValue(aSide).getOpposite()).orElse(null);
+		//?} else {
+		/*IFluidHandler tHandler = getLevel().getCapability(Capabilities.FluidHandler.BLOCK, aNeighbor.getBlockPos(), Direction.from3DDataValue(aSide).getOpposite());
+		 *///?}
 		return tHandler != null && tHandler.getTanks() > 0;
 	}
 
@@ -466,6 +479,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	// capability (spec ⑤ — the side wrapper per getCapability call, GTCEu IOFluidHandlerList form)
 	// ---------------------------------------------------------------------------
 
+	//? if forge {
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.FLUID_HANDLER) {
@@ -474,6 +488,17 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		}
 		return super.getCapability(aCapability, aSide);
 	}
+	//?} else {
+	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — W4's
+	// RegisterCapabilitiesEvent.registerBlockEntity delegates to this member; no @Override.
+	// Fresh per-call wrapper kept: the side is part of the handler identity.
+	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
+		if (aCapability == Capabilities.FluidHandler.BLOCK) {
+			return (T) new SideFluidHandler(this, aSide);
+		}
+		return null;
+	}
+	 *///?}
 
 	// ---------------------------------------------------------------------------
 	// NBT (upstream :105-146, tank contents only — the tank shape is block-derived)
