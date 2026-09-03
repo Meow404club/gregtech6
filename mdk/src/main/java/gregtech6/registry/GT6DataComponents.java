@@ -27,12 +27,15 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 // Registration hooks through the mod-bus RegisterEvent (the NeoForge 21.1 unified registry
 // event, RegisterEvent.register(ResourceKey, ResourceLocation, Supplier) — javap truth on
 // neoforge-21.1.249-universal.jar), keeping the card-local self-contained listener shape
-// (ADR-P3-4). Deliberately a DeferredRegister-free shim: no mod-ctor wiring point exists
-// for a 1.21.1-only file in the shared source, and the annotation scan needs none.
+// (ADR-P3-4). No bus attribute on the annotation: NeoForge 21.1 deprecates it and routes
+// listeners by event type (RegisterEvent is an IModBusEvent) — the same canonical form the
+// swap table produces for the carried-over 1.20.1 annotations. Deliberately a
+// DeferredRegister-free shim: no mod-ctor wiring point exists for a 1.21.1-only file in
+// the shared source, and the annotation scan needs none.
 // Block-comment-free body by discipline: the wrapped leg tolerates no inner block comments
 // (the wrapper is one), hence // comments only (ADR-P15-3 r1 implementation rule).
 
-@EventBusSubscriber(modid = "gt6", bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = "gt6")
 public class GT6DataComponents {
 
 	public static final DataComponentType<CustomData> BARREL_CONTENT = DataComponentType
