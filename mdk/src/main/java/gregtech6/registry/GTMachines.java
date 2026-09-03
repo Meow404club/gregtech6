@@ -147,7 +147,7 @@ public final class GTMachines {
 			BLOCK_ENTITY_TYPES.register("shredder", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> machine(GTMachines.SHREDDER_BE.get(), aPos, aState, GT6RecipeMaps.SHREDDER, 1, false,
 							TD.Energy.RU, tierOf(aState.getBlock(), GTMachines.SHREDDER, GTMachines.SHREDDER_T2, GTMachines.SHREDDER_T3, GTMachines.SHREDDER_T4),
-							GTBasicMachinesMenus.SHREDDER_MENU),
+							GTBasicMachinesMenus.SHREDDER_MENU::get),
 					SHREDDER.get(), SHREDDER_T2.get(), SHREDDER_T3.get(), SHREDDER_T4.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> CRUSHER_BE =
@@ -155,14 +155,14 @@ public final class GTMachines {
 					(aPos, aState) -> machine(GTMachines.CRUSHER_BE.get(), aPos, aState, GT6RecipeMaps.CRUSHER,
 							CRUSHER_PARALLEL[tierOf(aState.getBlock(), GTMachines.CRUSHER, GTMachines.CRUSHER_T2, GTMachines.CRUSHER_T3, GTMachines.CRUSHER_T4)], true,
 							TD.Energy.KU, tierOf(aState.getBlock(), GTMachines.CRUSHER, GTMachines.CRUSHER_T2, GTMachines.CRUSHER_T3, GTMachines.CRUSHER_T4),
-							GTBasicMachinesMenus.CRUSHER_MENU),
+							GTBasicMachinesMenus.CRUSHER_MENU::get),
 					CRUSHER.get(), CRUSHER_T2.get(), CRUSHER_T3.get(), CRUSHER_T4.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> LATHE_BE =
 			BLOCK_ENTITY_TYPES.register("lathe", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> machine(GTMachines.LATHE_BE.get(), aPos, aState, GT6RecipeMaps.LATHE, 1, false,
 							TD.Energy.RU, tierOf(aState.getBlock(), GTMachines.LATHE, GTMachines.LATHE_T2, GTMachines.LATHE_T3, GTMachines.LATHE_T4),
-							GTBasicMachinesMenus.LATHE_MENU),
+							GTBasicMachinesMenus.LATHE_MENU::get),
 					LATHE.get(), LATHE_T2.get(), LATHE_T3.get(), LATHE_T4.get()).build(null));
 
 	public static final RegistryObject<Item> SHREDDER_ITEM = ITEMS.register("shredder",
@@ -192,6 +192,113 @@ public final class GTMachines {
 	public static final RegistryObject<Item> LATHE_T4_ITEM = ITEMS.register("lathe_t4",
 			() -> new BlockItem(LATHE_T4.get(), new Item.Properties()));
 
+	// ---------------------------------------------------------------------------
+	// the Dryer family (task p14-dryer-family) — the four rows
+	// Loader_MultiTileEntities.java:1476-1480 (aClass = MultiTileEntityBasicMachine,
+	// NBT_TEXTURE "dryer", TD.Energy.HU, RM.Drying, NBT_CHEAP_OVERCLOCKING T,
+	// NBT_PARALLEL_DURATION T). ONE family BET over the four tier blocks — the tier
+	// config is the MachineRow carried by the placed block (the GT6Boilers row-record
+	// precedent), not a tierOf dispatch. The connectivity masks (CS.java:612 SBIT
+	// values, the GTBasicMachineBlock copies): energy = SBIT_D|SBIT_A (the :151 read
+	// ORs SBIT_A onto NBT_ENERGY_ACCEPTED_SIDES), tank in = SBIT_B|SBIT_L|SBIT_A (the
+	// :143 read), tank out = SBIT_U|SBIT_A (the :144 read), item in/out the same
+	// :137/:138 columns (data-only — the item-face gate rides the item-IO pool); the
+	// four auto sides are the :139/:140/:145/:146 columns (the auto-IO pool, data-only).
+	// ---------------------------------------------------------------------------
+
+	/** The four Dryer rows, upstream line order :1477-1480 (T1-T4). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> DRYER_ROWS = java.util.List.of(
+			dryer("dryer"  , "Dryer (Steel)"          , 20311, "Steel"          ,  6.0F, 0,   8),
+			dryer("dryer_t2", "Dryer (Invar)"         , 20312, "Invar"          ,  4.0F, 1,  16),
+			dryer("dryer_t3", "Dryer (Titanium)"      , 20313, "Titanium"       ,  9.0F, 2,  32),
+			dryer("dryer_t4", "Dryer (Tungsten Carbide)", 20314, "Tungsten Carbide", 12.5F, 3, 64));
+
+	/**
+	 * One row factory — the four Dryer columns that differ (path/name/id/material/hardness/
+	 * tier/parallel) plus the seven that are family constants (RM.Drying through the
+	 * supplier, HU, "dryer" texture, the masks, the auto sides, cheap overclocking T, no
+	 * menu — the GUI pool card owns the {@code gt6:dryer} MenuType registration).
+	 */
+	private static GTBasicMachineBlock.MachineRow dryer(String aPath, String aDisplay, int aMetaId, String aMaterial, float aHardness, int aTier, int aParallel) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aDisplay, aMetaId, aMaterial, aHardness, aTier, aParallel, true,
+				() -> GT6RecipeMaps.DRYING, TD.Energy.HU, "dryer",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A),
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A),
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A),
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A),
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A),
+				(byte)5 /*NBT_TANK_SIDE_AUTO_IN SIDE_BACK*/, (byte)1 /*NBT_TANK_SIDE_AUTO_OUT SIDE_TOP*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu — the GUI pool card*/, true /*NBT_CHEAP_OVERCLOCKING T*/);
+	}
+
+	/** The registered Dryer blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> DRYER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Dryer items, same keys as {@link #DRYER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> DRYER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : DRYER_ROWS) {
+			DRYER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.DRYER_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			DRYER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new BlockItem(GTMachines.DRYER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Dryer block list in registration order (the loot/datagen walkers). */
+	public static Block[] dryerBlockArray() {
+		Block[] rBlocks = new Block[DRYER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : DRYER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine dryer — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block dryerBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = DRYER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The ONE Dryer family BET: the class and the configuration factory are shared, the
+	 * validBlocks set multi-attaches the four tier blocks T1-T4 (the p8 ladder shape), and
+	 * the factory reads the row off the placed BlockState's block — the block identity IS
+	 * the config carrier here (the row record replaced the tierOf dispatch).
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> DRYER_BE =
+			BLOCK_ENTITY_TYPES.register("dryer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> dryerMachine(GTMachines.DRYER_BE.get(), aPos, aState),
+					dryerBlockArray()).build(null));
+
+	/**
+	 * The Dryer BET factory body: the row's parallel/duration/energy-type/tier-input half
+	 * rides the shared {@link #machine} helper (menu null — the GUI pool), then the
+	 * W1a carrier assignment lands the row's connectivity masks directly on the BE
+	 * (mEnergyInputs/mFluidInputs/mFluidOutputs — the :511/:566/:575 gate geometry;
+	 * the default 127 zero-regression stays proven for the legacy families).
+	 */
+	private static TileEntityBasicMachine dryerMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), null);
+		return applyRow(tMachine, tRow);
+	}
+
+	/**
+	 * The row→BE mask assignment (public — the offline row test drives it against the
+	 * fixture machine; the BET factory calls it right after the {@link #machine} half).
+	 */
+	public static TileEntityBasicMachine applyRow(TileEntityBasicMachine aMachine, GTBasicMachineBlock.MachineRow aRow) {
+		aMachine.mEnergyInputs = aRow.energySides();
+		aMachine.mFluidInputs = aRow.fluidIn();
+		aMachine.mFluidOutputs = aRow.fluidOut();
+		return aMachine;
+	}
+
 	/** The tier index of a family block (0=T1 .. 3=T4) — BE creation time, every RO is resolved. */
 	private static int tierOf(Block aBlock, RegistryObject<Block> aT1, RegistryObject<Block> aT2, RegistryObject<Block> aT3, RegistryObject<Block> aT4) {
 		if (aBlock == aT2.get()) return 1;
@@ -204,11 +311,14 @@ public final class GTMachines {
 	 * The BET factory body: constructor-injected config + the per-row carrier and energy
 	 * three-value assignment (:1294-1309 NBT_ENERGY_ACCEPTED + NBT_INPUT through the :126
 	 * conversion — TileEntityBasicMachine :137 fields are non-final by upstream design :98).
+	 * The menu travels as a plain supplier since task p14-dryer-family (null = the
+	 * menu-less carrier — the supplier form is what a null menu needs, a RegistryObject
+	 * method reference would capture the null receiver and explode at BE creation).
 	 */
 	private static TileEntityBasicMachine machine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
 			net.minecraft.world.level.block.state.BlockState aState, RecipeMap aRecipes, int aParallel, boolean aParallelDuration,
-			gregapi.code.TagData aEnergyType, int aTier, RegistryObject<MenuType<GTBasicMachineMenu>> aMenu) {
-		TileEntityBasicMachine tMachine = new TileEntityBasicMachine(aType, aPos, aState, aRecipes, aParallel, aParallelDuration, aMenu::get);
+			gregapi.code.TagData aEnergyType, int aTier, @javax.annotation.Nullable java.util.function.Supplier<MenuType<GTBasicMachineMenu>> aMenu) {
+		TileEntityBasicMachine tMachine = new TileEntityBasicMachine(aType, aPos, aState, aRecipes, aParallel, aParallelDuration, aMenu);
 		tMachine.mEnergyTypeAccepted = aEnergyType;
 		long[] tInputs = TIER_INPUTS[aTier];
 		tMachine.mInputMin = tInputs[0];
@@ -239,9 +349,13 @@ public final class GTMachines {
 							aOutput.accept(new ItemStack(CRUSHER_T2_ITEM.get()));
 							aOutput.accept(new ItemStack(CRUSHER_T3_ITEM.get()));
 							aOutput.accept(new ItemStack(CRUSHER_T4_ITEM.get()));
-							aOutput.accept(new ItemStack(LATHE_T2_ITEM.get()));
-							aOutput.accept(new ItemStack(LATHE_T3_ITEM.get()));
-							aOutput.accept(new ItemStack(LATHE_T4_ITEM.get()));
+								aOutput.accept(new ItemStack(LATHE_T2_ITEM.get()));
+								aOutput.accept(new ItemStack(LATHE_T3_ITEM.get()));
+								aOutput.accept(new ItemStack(LATHE_T4_ITEM.get()));
+								// task p14-dryer-family: the Dryer ladder, +4 rows
+								for (GTBasicMachineBlock.MachineRow tRow : DRYER_ROWS) {
+									aOutput.accept(new ItemStack(DRYER_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
 						})
 					.build());
 

@@ -95,6 +95,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMachine(GTMachines.LATHE_T2.get(), "lathe_t2", "lathe");
         addMachine(GTMachines.LATHE_T3.get(), "lathe_t3", "lathe");
         addMachine(GTMachines.LATHE_T4.get(), "lathe_t4", "lathe");
+        addDryer(); // task p14-dryer-family
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -108,6 +109,20 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBoilers(); // task p13-boiler-tank
         addGearBoxTransformer(); // task p12-gearbox-transformer
         addLargeBoiler(); // task p13-large-boiler
+    }
+
+    /**
+     * Task p14-dryer-family — the four Dryer rows (Loader_MultiTileEntities.java
+     * :1477-1480, all four NBT_TEXTURE "dryer"): the addMachine texture-base overload —
+     * model names per path (dryer/dryer_t2/... own 16-variant blockstates + item
+     * parents) while the FRONT TEXTURES stay on the family "dryer" set (the tier is not
+     * a visual state upstream either, the p8 ruling — the ladder adds three PNGs total,
+     * the placeholder fronts).
+     */
+    private void addDryer() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.DRYER_ROWS) {
+            addMachine(GTMachines.DRYER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
     }
 
     /**
