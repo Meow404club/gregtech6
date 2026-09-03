@@ -6,22 +6,26 @@ Chain semantics (task p14-boiler-distw-immunity ACCEPTANCE — the :119 criterio
 conjunct short-circuits the whole scaling branch for a distilled tank: the immune arm is
 rng-DETERMINISTIC, the water arm is the random control):
 
-  A the distilled-water immune arm: place a lead boiler → 16 rounds of
-    [fill 2000 L of gt6:distilled_water → inject 160000 HU → sleep ~71 ticks → plunge ×2].
-    One round converts exactly 2000 L (250 conversions/tick = the 640000/2560 lattice
-    bound; 2000 × 80 HU = the exact injection) into 320000 L of steam = EXACTLY half tank
-    (barometer 15, no push, no isFull — the plunge then clears it; water-first, so the
-    second plunge is the timing-jitter backstop). 16 rounds = 128 conversion ticks over
-    ~1200 ticks of powered window. The round-1 barometer=15 + efficiency probes prove the
-    conversions RAN on distilled water; the final verdict is efficiency=10000/10000
-    (PRISTINE) — deterministic, no dice.
+  A the distilled-water immune arm: place a lead boiler (mOutput 32 → steam tank
+    320000 → the :116 lattice bound 125 conversions/tick) → 16 rounds of
+    [fill 1000 L of gt6:distilled_water → inject 80000 HU → sleep ~71 ticks → plunge ×2].
+    One round converts exactly 1000 L (8 conversion ticks at the 125 lattice; 1000 × 80 HU
+    = the exact injection) into 160000 L of steam = EXACTLY half tank (tAmount 0 → no push,
+    never isFull — the water cap makes an explosion arithmetically IMPOSSIBLE; the plunge
+    clears the steam, water-first, so the second plunge is the timing-jitter backstop).
+    16 rounds = 128 conversion ticks over ~1200 ticks of powered window. The round-1
+    barometer=15 + efficiency probes prove the conversions RAN on distilled water
+    (deterministic — no dice on this arm); the final verdict is efficiency=10000/10000
+    (PRISTINE).
 
   B the plain-water control arm: the identical protocol with minecraft:water through the
     BOTTOM capability door (the :262 canonical intake). Each conversion tick rolls a true
-    rng(10); a hit decrements mEfficiency by tConversions=250 (the :120). Over the 128
+    rng(10); a hit decrements mEfficiency by tConversions=125 (the :120). Over the 128
     conversion ticks P(NO hit) = 0.9^128 ≈ 1.1e-6 — under the architect's 3e-6 note
     (0.9^120) — so the final verdict "(SCALED" is assert-able. The exact efficiency value
-    is NOT pinned (the live dice), only the scaled verdict.
+    is NOT pinned (the live dice), only the scaled verdict — which doubles as the proof
+    the conversions RAN (scaling happens on conversion ticks only), so this arm carries no
+    mid-round probe (a round-1 barometer read would dice-flap between 14 and 15).
 
   The distw intake rides `gt6boiler fill <pos> <amount> distw` — the distilled half of the
   :262 door as the acceptance channel: upstream the gate is FL.water and DistW carries the
@@ -52,26 +56,27 @@ WATER = gt6world.Site(216, 64, 56, dx=1, dy=2, dz=1)
 DB = F(DISTW)   # the distilled arm's boiler
 WB = F(WATER)   # the water control's boiler
 
-ROUNDS = 16          # × 8 conversion ticks = 128 conversion ticks per arm
+ROUNDS = 16          # × 8 conversion ticks (1000 conversions at the 125 lattice) = 128 per arm
 ROUND_SLEEP = 3.75   # ~71 ticks: the 8 conversion ticks plus idle — the arm spans ~1200 ticks
 
 steps = []
 
 # ------------------------------------------------- A: the distilled-water immune arm
 steps += [
-    phase("A: the distw immune arm — 16 rounds of fill distw + 160000 HU; efficiency stays PRISTINE"),
+    phase("A: the distw immune arm — 16 rounds of fill distw + 80000 HU; efficiency stays PRISTINE"),
     Step(f"gt6boiler place {DB} steam_boiler_tank_lead", expect="GT6 boiler tank placed"),
 ]
 for _round in range(ROUNDS):
     steps += [
-        Step(f"gt6boiler fill {DB} 2000 distw",
-             expect="filled 2000/2000 L of gt6:distilled_water (ACCEPTED)"),
-        Step(f"gt6boiler inject-hu {DB} 160000",
-             expect="booked 160000/160000 HU (ACCEPTED)", sleep=ROUND_SLEEP),
+        Step(f"gt6boiler fill {DB} 1000 distw",
+             expect="filled 1000/1000 L of gt6:distilled_water (ACCEPTED)"),
+        Step(f"gt6boiler inject-hu {DB} 80000",
+             expect="booked 80000/80000 HU (ACCEPTED)", sleep=ROUND_SLEEP),
     ]
     if _round == 0:
-        # the round-1 live proof: 2000 conversions happened (320000 L = exactly half tank,
-        # barometer 15) and the distilled criterion already held through them
+        # the round-1 live proof: 1000 conversions happened (160000 L = exactly half tank,
+        # barometer 15) and the distilled criterion already held through them — both
+        # deterministic on this arm
         steps += [
             Step(f"gt6boiler barometer {DB}", expect="barometer=15"),
             Step(f"gt6boiler efficiency {DB}", expect="efficiency=10000/10000 (PRISTINE)"),
@@ -95,16 +100,11 @@ steps += [
 ]
 for _round in range(ROUNDS):
     steps += [
-        Step(f"gt6boiler fill {WB} 2000",
-             expect="filled 2000/2000 L of minecraft:water (ACCEPTED)"),
-        Step(f"gt6boiler inject-hu {WB} 160000",
-             expect="booked 160000/160000 HU (ACCEPTED)", sleep=ROUND_SLEEP),
+        Step(f"gt6boiler fill {WB} 1000",
+             expect="filled 1000/1000 L of minecraft:water (ACCEPTED)"),
+        Step(f"gt6boiler inject-hu {WB} 80000",
+             expect="booked 80000/80000 HU (ACCEPTED)", sleep=ROUND_SLEEP),
     ]
-    if _round == 0:
-        steps += [
-            # conversions ran; the dice may or may not have hit yet — no efficiency probe here
-            Step(f"gt6boiler barometer {WB}", expect="barometer=15"),
-        ]
     steps += [
         Step(f"gt6boiler plunge {WB}", expect="trashed "),
         Step(f"gt6boiler plunge {WB}"),
