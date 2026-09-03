@@ -6,10 +6,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
+//?} else {
+/*import net.minecraft.world.item.component.CustomData;
+import gregtech6.registry.GT6DataComponents;
+ *///?}
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -46,9 +51,15 @@ import gregtech6.fluid.GTFluidLists;
  * that {@link com.mojang.brigadier}-free tests exercise directly and that
  * {@link GTBarrelBlockItem} rides from {@code initCapabilities} (IForgeItem.java:678).
  */
+//? if forge {
 public class GTBarrelItemFluidHandler implements IFluidHandlerItem, ICapabilitySerializable<CompoundTag> {
+//?} else {
+/*public class GTBarrelItemFluidHandler implements IFluidHandlerItem {
+ *///?}
 
+	//? if forge {
 	private final LazyOptional<IFluidHandlerItem> mHolder = LazyOptional.of(() -> this);
+	//?}
 
 	@NotNull
 	private final ItemStack mContainer;
@@ -66,7 +77,11 @@ public class GTBarrelItemFluidHandler implements IFluidHandlerItem, ICapabilityS
 	public GTBarrelItemFluidHandler(@NotNull ItemStack aContainer, long aCapacityL) {
 		mContainer = aContainer;
 		mTank.setCapacity(aCapacityL);
+		//? if forge {
 		if (aContainer.hasTag()) readFromContainerTag();
+		//?} else {
+		/*if (aContainer.get(GT6DataComponents.BARREL_CONTENT) != null) readFromContainerTag();
+		 *///?}
 	}
 
 	/** The stickiness seam (the BE load :132 {@code setPreventDraining(keepsFilter())} item counterpart) — the future logistics barrel item flips this. */
@@ -107,25 +122,45 @@ public class GTBarrelItemFluidHandler implements IFluidHandlerItem, ICapabilityS
 	// ---------------------------------------------------------------------------
 
 	/** Reads {@link TileEntityBase08Barrel#NBT_TANK} out of the container tag (a fresh deserialized empty tank when the key is absent). */
+	//? if forge {
 	private void readFromContainerTag() {
 		mTank.readFromNBT(mContainer.getTag(), TileEntityBase08Barrel.NBT_TANK);
 	}
+	//?} else {
+	/*private void readFromContainerTag() {
+		CustomData tData = mContainer.get(GT6DataComponents.BARREL_CONTENT);
+		if (tData != null) mTank.readFromNBT(tData.copyTag(), TileEntityBase08Barrel.NBT_TANK);
+	}
+	 *///?}
 
 	/** Writes the tank under {@link TileEntityBase08Barrel#NBT_TANK} into the container tag; an emptied tank removes the key and a then-empty tag is dropped entirely, so a drained barrel item is byte-identical to a never-filled one (stacking restored). */
+	//? if forge {
 	private void writeToContainerTag() {
 		CompoundTag tTag = mContainer.getOrCreateTag();
 		mTank.writeToNBT(tTag, TileEntityBase08Barrel.NBT_TANK);
 		if (tTag.isEmpty()) mContainer.setTag(null);
 	}
+	//?} else {
+	/*private void writeToContainerTag() {
+		CompoundTag tTag = new CompoundTag();
+		mTank.writeToNBT(tTag, TileEntityBase08Barrel.NBT_TANK);
+		if (tTag.isEmpty()) mContainer.remove(GT6DataComponents.BARREL_CONTENT);
+		else CustomData.set(GT6DataComponents.BARREL_CONTENT, mContainer, tTag);
+	}
+	 *///?}
 
+	//? if forge {
 	@Override
+	//?}
 	public CompoundTag serializeNBT() {
 		CompoundTag tTag = new CompoundTag();
 		mTank.writeToNBT(tTag, TileEntityBase08Barrel.NBT_TANK);
 		return tTag;
 	}
 
+	//? if forge {
 	@Override
+	//?}
 	public void deserializeNBT(CompoundTag aNBT) {
 		mTank.readFromNBT(aNBT, TileEntityBase08Barrel.NBT_TANK);
 	}
@@ -199,10 +234,17 @@ public class GTBarrelItemFluidHandler implements IFluidHandlerItem, ICapabilityS
 		return tDrained == null ? FluidStack.EMPTY : tDrained;
 	}
 
+	//? if forge {
 	/** The capability this provider serves (the FLUID_HANDLER_ITEM slot, ForgeCapabilities.java:22). */
 	@Override
 	@NotNull
 	public <T> LazyOptional<T> getCapability(@NotNull Capability<T> aCap, @Nullable Direction aSide) {
 		return ForgeCapabilities.FLUID_HANDLER_ITEM.orEmpty(aCap, mHolder);
 	}
+	//?} else {
+	/*// (1.21.1: no item-capability provider face here — ICapabilitySerializable/LazyOptional are
+	// gone and IForgeItem.initCapabilities does not exist; the W4 registration wave exposes this
+	// handler through RegisterCapabilitiesEvent.registerItem(FLUID_HANDLER_ITEM, item, provider),
+	// delegating to this class's fill/drain + serializeNBT/deserializeNBT payload seam.)
+	 *///?}
 }

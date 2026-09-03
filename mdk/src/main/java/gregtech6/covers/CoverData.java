@@ -5,6 +5,11 @@ import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
+//? if neoforge {
+/*import net.minecraft.world.item.component.CustomData;
+import gregtech6.registry.GT6DataComponents;
+ *///?}
+
 /**
  * 1.20.1 port of gregapi/cover/CoverData.java — the 6-face parallel-array cover store
  * (task p4-cover-core ①, ADR 2026-08-30-p4-cover-route keeps the GT6 singleton +
@@ -108,8 +113,13 @@ public class CoverData {
 	/** Upstream :122-124 — the ItemStack form of {@link #set(byte, short, short, CompoundTag)}. */
 	public CoverData set(byte aSide, @Nullable ItemStack aStack) {
 		if (aStack == null || aStack.isEmpty()) return set(aSide, (short) 0, (short) 0, null);
+		//? if forge {
 		CompoundTag tTag = aStack.getTag();
 		return set(aSide, (short) CoverRegistry.getId(aStack.getItem()), (short) 0, tTag == null || tTag.isEmpty() ? null : tTag.copy());
+		//?} else {
+		/*CustomData tData = aStack.get(GT6DataComponents.COVER_PAYLOAD);
+		return set(aSide, (short) CoverRegistry.getId(aStack.getItem()), (short) 0, tData == null || tData.isEmpty() ? null : tData.copyTag());
+		 *///?}
 	}
 
 	/** Upstream :126-131 verbatim — empty NBT compounds are not stored (:129). */
@@ -169,7 +179,11 @@ public class CoverData {
 		if (mBehaviours[aSide] == null) {
 			CompoundTag tTag = mNBTs[aSide] == null || mNBTs[aSide].isEmpty() ? null : mNBTs[aSide];
 			ItemStack tStack = new ItemStack(CoverRegistry.getItem(mIDs[aSide]), 1);
+			//? if forge {
 			if (tTag != null) tStack.setTag(tTag.copy());
+			//?} else {
+			/*if (tTag != null) CustomData.set(GT6DataComponents.COVER_PAYLOAD, tStack, tTag); // CustomData.of copies — the lane is not aliased
+			 *///?}
 			return tStack;
 		}
 		return mBehaviours[aSide].getCoverItem(aSide, this);

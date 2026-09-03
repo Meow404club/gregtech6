@@ -9,7 +9,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+//?} else {
+/*import net.neoforged.neoforge.capabilities.Capabilities;
+ *///?}
 import net.minecraftforge.items.IItemHandler;
 
 import gregtech6.covers.CoverData;
@@ -56,10 +60,18 @@ public class CoverConveyor extends AbstractCoverDefault {
 	public static final int[] TIMING_TIERS = {512, 256, 128, 64, 32, 16, 8, 4, 2, 1};
 
 	/** The atlas sprite of the out-facing plate (visual 0). */
+	//? if forge {
 	public static final ResourceLocation CONVEYOR_OUT_SPRITE = new ResourceLocation("gt6", "block/conveyor/out");
+	//?} else {
+	/*public static final ResourceLocation CONVEYOR_OUT_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/conveyor/out");
+	 *///?}
 
 	/** The atlas sprite of the in-facing plate (visual 1). */
+	//? if forge {
 	public static final ResourceLocation CONVEYOR_IN_SPRITE = new ResourceLocation("gt6", "block/conveyor/in");
+	//?} else {
+	/*public static final ResourceLocation CONVEYOR_IN_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/conveyor/in");
+	 *///?}
 
 	/** Upstream :43-47 — the constructor argument is the tick period, floored at 1. */
 	public final int mTiming;
@@ -123,7 +135,12 @@ public class CoverConveyor extends AbstractCoverDefault {
 	public static @Nullable IItemHandler hostHandler(ICoverableTE aHost, byte aSide, boolean aSideLess) {
 		BlockEntity tBE = aHost.self();
 		if (tBE.getLevel() == null) return null; // the offline guard (the CoverPump.adjacentHandler precedent)
+		//? if forge {
 		return tBE.getCapability(ForgeCapabilities.ITEM_HANDLER, aSideLess ? null : Direction.from3DDataValue(aSide)).orElse(null);
+		//?} else {
+		/*return tBE.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,
+				tBE.getBlockPos(), aSideLess ? null : Direction.from3DDataValue(aSide));
+		 *///?}
 	}
 
 	/**
@@ -139,7 +156,12 @@ public class CoverConveyor extends AbstractCoverDefault {
 		Direction tDir = Direction.from3DDataValue(aCoverSide);
 		BlockEntity tNeighbour = tLevel.getBlockEntity(tBE.getBlockPos().relative(tDir));
 		if (tNeighbour == null) return null;
+		//? if forge {
 		return tNeighbour.getCapability(ForgeCapabilities.ITEM_HANDLER, aSideLess ? null : tDir.getOpposite()).orElse(null);
+		//?} else {
+		/*return tLevel.getCapability(Capabilities.ItemHandler.BLOCK,
+				tNeighbour.getBlockPos(), aSideLess ? null : tDir.getOpposite());
+		 *///?}
 	}
 
 	/** Upstream :57-59 — the screwdriver flips the visual lane 0 ↔ 1 (the pipe special case is cut with its subsystem); 1000 = the tool damage. */

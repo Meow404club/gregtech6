@@ -8,7 +8,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+//?} else {
+/*import net.neoforged.neoforge.capabilities.Capabilities;
+ *///?}
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -50,10 +54,18 @@ public class CoverPump extends AbstractCoverDefault {
 	public static final long THROUGHPUT = 1000;
 
 	/** The atlas sprite of the out-facing plate (visual 0). */
+	//? if forge {
 	public static final ResourceLocation PUMP_OUT_SPRITE = new ResourceLocation("gt6", "block/cover_pump_out");
+	//?} else {
+	/*public static final ResourceLocation PUMP_OUT_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover_pump_out");
+	 *///?}
 
 	/** The atlas sprite of the in-facing plate (visual 1). */
+	//? if forge {
 	public static final ResourceLocation PUMP_IN_SPRITE = new ResourceLocation("gt6", "block/cover_pump_in");
+	//?} else {
+	/*public static final ResourceLocation PUMP_IN_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover_pump_in");
+	 *///?}
 
 	/** The upstream :68 server beat — {@code SERVER_TIME % 20 == 5}; exposed for the offline phase table. */
 	public static boolean isPumpBeat(long aTimer) {
@@ -99,8 +111,14 @@ public class CoverPump extends AbstractCoverDefault {
 		if (tLevel == null) return null;
 		Direction tDir = Direction.from3DDataValue(aCoverSide);
 		BlockEntity tNeighbor = tLevel.getBlockEntity(tBE.getBlockPos().relative(tDir));
+		//? if forge {
 		return tNeighbor == null ? null
 				: tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, aSideLessPull ? null : tDir.getOpposite()).orElse(null);
+		//?} else {
+		/*return tNeighbor == null ? null
+				: tLevel.getCapability(Capabilities.FluidHandler.BLOCK,
+						tNeighbor.getBlockPos(), aSideLessPull ? null : tDir.getOpposite());
+		 *///?}
 	}
 
 	/** Upstream :59-62 — the screwdriver flips the visual lane 0 ↔ 1 (the pipe special case is cut with its subsystem); 1000 = the tool damage. */

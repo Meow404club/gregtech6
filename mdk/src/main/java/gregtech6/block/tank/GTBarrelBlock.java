@@ -15,6 +15,12 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 
+//? if neoforge {
+/*import com.mojang.serialization.MapCodec;
+import net.minecraft.world.item.component.CustomData;
+import gregtech6.registry.GT6DataComponents;
+ *///?}
+
 import net.minecraftforge.fluids.FluidUtil;
 
 import java.util.ArrayList;
@@ -82,6 +88,16 @@ public class GTBarrelBlock extends GTEntityBlock {
 		mTickerType = aTickerType;
 	}
 
+	//? if neoforge {
+	/*// (1.21.1: BlockBehaviour.codec() is abstract — the first concrete GTEntityBlock subclass
+	// carries the hole. The vanilla ChestBlock shape (simpleCodec over a fixed closure) never
+	// round-trips through datapacks: the barrel is code-registered like every GT6 block.)
+	@Override
+	protected MapCodec<GTBarrelBlock> codec() {
+		return simpleCodec(aProperties -> new GTBarrelBlock(mCapacityL, mMeltingPointK, mGasProof, mTickerType, aProperties));
+	}
+	 *///?}
+
 	/** The tank size in litres (upstream NBT_TANK_CAPACITY, Loader_MultiTileEntities.java:2140/:2150/:2151). */
 	public long capacityL() {
 		return mCapacityL;
@@ -139,13 +155,25 @@ public class GTBarrelBlock extends GTEntityBlock {
 	 * null tag: the drop is byte-identical to the pre-card behaviour.
 	 */
 	public static ItemStack writeItemNBT(TileEntityBase08Barrel aBarrel, ItemStack aStack) {
+		//? if forge {
 		CompoundTag tTag = aStack.hasTag() ? aStack.getTag() : new CompoundTag();
 		aBarrel.mTank.writeToNBT(tTag, TileEntityBase08Barrel.NBT_TANK); // upstream :84
 		aBarrel.writeCoversToNBT(tTag); // upstream 06Covers :82
 		aStack.setTag(tTag.isEmpty() ? null : tTag); // an empty barrel keeps the tag-less pre-card drop shape
+		//?} else {
+		/*CompoundTag tTank = new CompoundTag();
+		aBarrel.mTank.writeToNBT(tTank, TileEntityBase08Barrel.NBT_TANK); // upstream :84
+		if (tTank.isEmpty()) aStack.remove(GT6DataComponents.BARREL_CONTENT);
+		else CustomData.set(GT6DataComponents.BARREL_CONTENT, aStack, tTank);
+		CompoundTag tCovers = new CompoundTag();
+		aBarrel.writeCoversToNBT(tCovers); // upstream 06Covers :82 — the 's'..'x' lane keys ride COVER_PAYLOAD
+		if (tCovers.isEmpty()) aStack.remove(GT6DataComponents.COVER_PAYLOAD);
+		else CustomData.set(GT6DataComponents.COVER_PAYLOAD, aStack, tCovers);
+		 *///?}
 		return aStack;
 	}
 
+	//? if forge {
 	@Override
 	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
 		// p5 spec ④ — the cover machinery consumes the click first (the GTOvenBlock 2e89501
@@ -164,4 +192,22 @@ public class GTBarrelBlock extends GTEntityBlock {
 				? InteractionResult.SUCCESS
 				: InteractionResult.PASS;
 	}
+	//?} else {
+	/*// (1.21.1: Block.use is gone — useWithoutItem is the same-seam hook: the default
+	// useItemOn returns PASS_TO_DEFAULT_BLOCK_INTERACTION for every click, so useWithoutItem
+	// receives both empty-hand and item-hand right clicks exactly like the 1.20.1 use().
+	// Declared deviation: the hook has no InteractionHand parameter — MAIN_HAND stands in,
+	// off-hand bucket clicks degrade to the main hand on the 1.21.1 node.)
+	@Override
+	protected InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+		if (aLevel.getBlockEntity(aPos) instanceof TileEntityBase08Barrel tBarrel
+				&& tBarrel.onCoverUse(aPlayer, (byte) aHit.getDirection().get3DDataValue(), aPlayer.getItemInHand(InteractionHand.MAIN_HAND),
+						(float) (aHit.getLocation().x - aPos.getX()), (float) (aHit.getLocation().y - aPos.getY()), (float) (aHit.getLocation().z - aPos.getZ()))) {
+			return InteractionResult.CONSUME;
+		}
+		return FluidUtil.interactWithFluidHandler(aPlayer, InteractionHand.MAIN_HAND, aLevel, aPos, aHit.getDirection())
+				? InteractionResult.SUCCESS
+				: InteractionResult.PASS;
+	}
+	 *///?}
 }

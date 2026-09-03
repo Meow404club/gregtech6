@@ -10,6 +10,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+//? if neoforge {
+/*import net.minecraft.world.item.component.CustomData;
+import gregtech6.registry.GT6DataComponents;
+ *///?}
+
 import org.junit.jupiter.api.Test;
 
 import gregtech6.covers.covers.CoverTextureSimple;
@@ -51,7 +56,11 @@ public class CoverDataTest extends GTCoverTestBase {
 		CompoundTag tPayload = new CompoundTag();
 		tPayload.putBoolean("foo", true);
 		ItemStack tCoverStack = new ItemStack(Items.BRICKS);
+		//? if forge {
 		tCoverStack.setTag(tPayload);
+		//?} else {
+		/*CustomData.set(GT6DataComponents.COVER_PAYLOAD, tCoverStack, tPayload);
+		 *///?}
 		tData.set((byte) 0, tCoverStack);
 		tData.visual((byte) 0, (short) 3);
 		tData.value((byte) 0, (short) 9);
@@ -68,7 +77,12 @@ public class CoverDataTest extends GTCoverTestBase {
 
 		CoverData tBack = new CoverData(bareOven(), tTag);
 		assertEquals(Items.BRICKS, tBack.getCoverItem((byte) 0).getItem(), "the removal drop rebuilds");
+		//? if forge {
 		assertTrue(tBack.getCoverItem((byte) 0).getTag().getBoolean("foo"), "the payload rehydrates");
+		//?} else {
+		/*CustomData tBackData = tBack.getCoverItem((byte) 0).get(GT6DataComponents.COVER_PAYLOAD);
+		assertTrue(tBackData != null && tBackData.copyTag().getBoolean("foo"), "the payload rehydrates");
+		 *///?}
 	}
 
 	@Test
