@@ -166,7 +166,9 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.DRYING.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.DRYING.mProgressBarAmount);
 		assertEquals("gt6:textures/gui/machines/dryer.png", GT6RecipeMaps.DRYING.mGUIPath, "the RM.java:71 machines/Dryer row, lowercased");
-		assertTrue(GT6RecipeMaps.DRYING.mRecipeList.isEmpty(), "DECLARED-empty: the Water→DistW row pours with the W3 loop-closure card");
+		// the declared-empty assertion on mRecipeList lived here until the W3 pour (task
+		// p14-loop-closure-chain) landed the :525 Water row — the row-level contract now
+		// lives in GT6RecipesDryingTest
 	}
 
 	@Test
