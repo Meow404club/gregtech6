@@ -105,6 +105,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addSteamEngines(); // task p12-engine-steam
         addDieselEngines(); // task p12-engine-diesel
         addBurningBoxes(); // task p13-burning-box-family
+        addBoilers(); // task p13-boiler-tank
         addGearBoxTransformer(); // task p12-gearbox-transformer
     }
 
@@ -645,6 +646,37 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     public static String blockSetOf(OreDictMaterial aMaterial) {
         return gregtech6.client.wire.GTWireTextures.blockSetOf(aMaterial);
+    }
+
+    /**
+     * Task p13-boiler-tank — the 26 Steam Boiler Tank rows (Loader_MultiTileEntities.java
+     * :553-579): ONE oriented cube model over the boiler_steam texture set (the grayscale
+     * placeholders — the upstream machines/tanks/boiler_steam colored+overlay iconsets and
+     * the BI.BAROMETER gauge have no borrowable source in this repo, the assets precedent;
+     * the FRONT face carries the gauge texture, FACING drives the front semantics, the
+     * barometer 5-bit visual is the synced BE payload — the per-state gauge rendering is
+     * the render pool, the burning-box ruling repeated). Both ladders share the model (the
+     * SAME block class upstream, :552 aClass). The 26 BlockItem models parent it.
+     */
+    private void addBoilers() {
+        String tTex = "block/boiler_steam/";
+        ModelFile tModel = models().cube("steam_boiler_tank",
+                modLoc(tTex + "bottom"), modLoc(tTex + "top"),          // bottom/top
+                modLoc(tTex + "front"), modLoc(tTex + "side"),          // north(front = the barometer face)/south
+                modLoc(tTex + "side"), modLoc(tTex + "side"));          // west/east
+        for (gregtech6.registry.GT6Boilers.BoilerRow tRow : gregtech6.registry.GT6Boilers.allRows()) {
+            Block tBlock = gregtech6.registry.GT6Boilers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY = switch (aState.getValue(gregtech6.registry.GT6Boilers.BoilerTankBlock.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
     }
 
     /**

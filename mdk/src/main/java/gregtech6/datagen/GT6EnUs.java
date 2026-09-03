@@ -236,6 +236,13 @@ public class GT6EnUs extends LanguageProvider {
         for (gregtech6.registry.GT6BurningBoxes.BurningBoxRow tRow : gregtech6.registry.GT6BurningBoxes.allRows()) {
             add("block.gt6." + tRow.path(), tRow.displayName());
         }
+        // task p13-boiler-tank — the 26 boiler display names, the upstream row wording
+        // verbatim ("Steam Boiler Tank (Lead)" :553 .. "Strong Steam Boiler Tank (Ultimet)"
+        // :579), walked from the row tables so the keys cannot drift from the registered
+        // blocks
+        for (gregtech6.registry.GT6Boilers.BoilerRow tRow : gregtech6.registry.GT6Boilers.allRows()) {
+            add("block.gt6." + tRow.path(), tRow.displayName());
+        }
     }
 
     /**

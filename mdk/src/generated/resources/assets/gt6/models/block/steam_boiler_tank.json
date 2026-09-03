@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/boiler_steam/bottom",
+    "east": "gt6:block/boiler_steam/side",
+    "north": "gt6:block/boiler_steam/front",
+    "south": "gt6:block/boiler_steam/side",
+    "up": "gt6:block/boiler_steam/top",
+    "west": "gt6:block/boiler_steam/side"
+  }
+}

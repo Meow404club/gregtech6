@@ -279,6 +279,22 @@ public final class GTBlockEntities {
 					gregtech6.tileentity.energy.generators.GTGeneratorFluidBedBlockEntity::new,
 					GT6BurningBoxes.blockArray(gregtech6.registry.GT6BurningBoxes.Family.FLUIDBED)).build(null));
 
+	// -------------------------------------------------------------------------
+	// the steam boiler tank (task p13-boiler-tank) — the converters family's BET row
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Steam Boiler Tank BET (task p13-boiler-tank spec ⑨ — the BET type row lives here
+	 * per the card, the 26 blocks/items in {@link GT6Boilers}; the AXLE_BE one-type-many-
+	 * blocks multi-mount form over {@link GT6Boilers#blockArray()}). ADR-P3-1 one-shared-
+	 * type-many-blocks: both ladders (Steam + Strong, 13+13) are ONE BE class, the row
+	 * config rides the block carrier. Registry path "boiler_tank" mirrors
+	 * GTBoilerTankBlockEntity#getTileEntityName like every other row.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity>> BOILER_TANK_BE =
+			BLOCK_ENTITY_TYPES.register("boiler_tank", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity::new, GT6Boilers.blockArray()).build(null));
+
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest
 	 * BlockItem. DeferredRegister form per the task card (Bus.MOD.bus().get() self-contained).
