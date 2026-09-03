@@ -1,4 +1,0 @@
-rootProject.name = 'gregtech6'
-
-// ADR-P2-1：根保持 gregapi java-library 零改动，mdk 子项目消费 implementation project(':')
-include 'mdk'
