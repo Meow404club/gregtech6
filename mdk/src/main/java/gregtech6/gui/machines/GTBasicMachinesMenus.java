@@ -8,7 +8,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.DeferredRegister;
+//? if forge {
 import net.minecraftforge.registries.RegistryObject;
+//?} else {
+/*import net.neoforged.neoforge.registries.DeferredHolder;
+// 21.1: RegistryObject → DeferredHolder (one extra generic parameter, javap
+// neoforge-21.1.249); not swap-able, forked per file (ADR-P15-3 r1 priority 3).
+ *///?}
 
 /**
  * Machine {@link MenuType} registration, card-owned (ADR-P3-4): the machine family gets its
@@ -34,6 +40,7 @@ public final class GTBasicMachinesMenus {
 
 	public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MOD_ID);
 
+	//? if forge {
 	public static final RegistryObject<MenuType<GTBasicMachineMenu>> SHREDDER_MENU =
 		MENUS.register(SHREDDER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.SHREDDER_MENU.get(), aId, aInv, aData)));
 
@@ -45,6 +52,19 @@ public final class GTBasicMachinesMenus {
 
 	public static final RegistryObject<MenuType<GTBasicMachineMenu>> COKE_OVEN_MENU =
 		MENUS.register(COKE_OVEN_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.networkMultiBlock(GTBasicMachinesMenus.COKE_OVEN_MENU.get(), aId, aInv, aData)));
+	//?} else {
+	/*public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> SHREDDER_MENU =
+		MENUS.register(SHREDDER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.SHREDDER_MENU.get(), aId, aInv, aData)));
+
+	public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> CRUSHER_MENU =
+		MENUS.register(CRUSHER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.CRUSHER_MENU.get(), aId, aInv, aData)));
+
+	public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> LATHE_MENU =
+		MENUS.register(LATHE_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.LATHE_MENU.get(), aId, aInv, aData)));
+
+	public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> COKE_OVEN_MENU =
+		MENUS.register(COKE_OVEN_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.networkMultiBlock(GTBasicMachinesMenus.COKE_OVEN_MENU.get(), aId, aInv, aData)));
+	 *///?}
 
 	private GTBasicMachinesMenus() {
 	}
@@ -72,7 +92,13 @@ public final class GTBasicMachinesMenus {
 	/** FMLConstructModEvent = first mod-bus lifecycle stage, strictly before any RegisterEvent (GTMenuTypes.java:76-80 precedent). */
 	@SubscribeEvent
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
+		//? if forge {
 		MENUS.register(Mod.EventBusSubscriber.Bus.MOD.bus().get());
+		//?} else {
+		/*// 21.1: the self-contained bus source is the container (ModContainer.getEventBus,
+		// loader-4.0.44 javap; Bus.MOD.bus() has no accessor there) — GTMenuTypes.onModConstruct form.
+		MENUS.register(net.neoforged.fml.ModList.get().getModContainerById(MOD_ID).orElseThrow().getEventBus());
+		 *///?}
 		LOGGER.info("GT6 machine menu 'cokeoven' registered (gt6:cokeoven — the TileEntityBase10MultiBlockMachine GUI path, task p8-cokeoven-gui-menu)");
 	}
 }

@@ -9,7 +9,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+//? if forge {
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+//?} else {
+/*// 21.1: FMLJavaModLoadingContext no longer exists. The mod event bus arrives through
+// constructor injection instead — FMLModContainer.constructMod picks the public constructor
+// and injects IEventBus / ModContainer / Dist parameters (loader-4.0.44 bytecode,
+// getConstructors() + Map.of(IEventBus, ModContainer, FMLModContainer, Dist)).
+ *///?}
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import gregapi.oredict.MaterialGraph;
@@ -38,10 +45,19 @@ public class GT6Mod {
     /** Registered by instance so it can be unregistered again after CommonSetup (eventbus-6.0.5 keys object registrations by instance). */
     private final GTModBusListener modBusListener = new GTModBusListener();
 
+    //? if forge {
     public GT6Mod() {
         // 1.20.1's only way to obtain the mod bus: FMLJavaModLoadingContext.get().getModEventBus()
         // (constructor-injected IEventBus only exists in 20.2+).
         modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    //?} else {
+    /*public GT6Mod(IEventBus aModBus) {
+        // 21.1 constructor injection — the P15 wiring hang point: this is the bus every
+        // DeferredRegister, the RegisterEvent bridge and the RegisterCapabilitiesEvent
+        // listener (GT6CapabilityWiring) ride. One-injection-point deviation from the 1.20.1
+        // no-arg form; the three-segment bridge below is untouched.
+        modBus = aModBus;
+     *///?}
         Objects.requireNonNull(modBus, "mod event bus must be available at construct time");
         modBus.register(modBusListener);
         modBus.addListener(this::onCommonSetup);

@@ -9,7 +9,8 @@
 //   :mdk:1.20.1-forge:test            1.20.1 永续红线（968 绿，--no-build-cache 实测）
 //   :mdk:1.21.1-neoforge:compileJava  1.21.1 门禁遥测（红但走通到编译诊断，ADR-P15-10 r1）
 //   :mdk:1.21.1-neoforge:compileTestJava  1.21.1 测试面清单（v1-test，配置面绿/源错误允许）
-//   :mdk:1.20.1-forge:stonecutterPrepareMain  1.20.1 侧预处理输出（swap 零变化断言的比对面）
+//   :mdk:1.20.1-forge:stonecutterPrepare  1.20.1 侧预处理输出（swap 零变化断言的比对面；
+//   任务实名无 Main 后缀——W4 r1 勘正，SCPrepareTask 注册名 stonecutterPrepare）
 
 plugins {
     id("dev.kikugie.stonecutter")
@@ -87,12 +88,17 @@ stonecutter parameters {
         replacements.string(neoforgeSide) { replace(from, to) }
     }
 
-    // -- regex 表：ForgeRegistries → vanilla Registries（键名单复数漂移 + .getValue→.get API 漂移）--
+    // -- regex 表：ForgeRegistries 键名族 + ResourceLocation 构造器 + EventBusSubscriber --
     // 反向哨兵使 forge 侧预处理零变化（子串碰撞：Registries.X ⊂ ForgeRegistries.X*）。
     // DeferredRegister.create(Registries.X, modid) 走 (ResourceKey, modid) 重载——本仓既有
     // Registries.ITEM/MENU/CREATIVE_MODE_TAB 同型用法（编译实证），1.20.1/1.21.1 双侧同重载。
-    // .getKey 方法名双侧同名（返回 ResourceKey vs ResourceLocation 的类型漂移是 W4 语义面，
-    // 相关文件本就在红清单内，此处只做机械键名换）。
+    // W4 r1 勘正+消化（p15-adapt-registry-core）：查询面成员 .getValue→.get / .getKey 的
+    // 旧目标 Registries.X 是错的——Registries.X 是 ResourceKey（非 Registry），其上没有
+    // .get/.getKey（W3 capability-core 的 swap 残余实测）；正解 BuiltInRegistries.X =
+    // vanilla Registry，1.20.1/1.21.1 双侧同名同字段（双侧 recompile jar javap 实证），
+    // .get(ResourceLocation)→T、.getKey(T)→ResourceLocation 与 ForgeRegistries 查询面同型。
+    // ResourceLocation 两参构造器 21.1 删除（private 化），Forge 1.20.1 backport 了同名
+    // 工厂 fromNamespaceAndPath——双侧 recompile jar javap 实证；保守正则见条目注。
     val neverMatch = "\u0000stonecutter.never.matched\u0000"
     listOf(
         // import 行先行（其余条目命中代码体；import 无键名后缀，需独立锚定整行）
@@ -100,20 +106,31 @@ stonecutter parameters {
         // 代码体全限定形态（net.minecraftforge.registries.ForgeRegistries.X，run1 第 2 轮补）：
         // 必须先于简单名条目——否则简单名条目把尾段换成 Registries.X 后残留未换包前缀
         // （run1 实证产生 13 处 "net.minecraftforge.registries.Registries" 缝合错误）。
-        "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.FLUIDS\\.getValue(?![A-Za-z_])" to "net.minecraft.core.registries.Registries.FLUID.get",
-        "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.ITEMS\\.getValue(?![A-Za-z_])" to "net.minecraft.core.registries.Registries.ITEM.get",
+        "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.FLUIDS\\.getValue(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.FLUID.get",
+        "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.ITEMS\\.getValue(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.ITEM.get",
+        "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.FLUIDS\\.getKey(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey",
         "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.BLOCK_ENTITY_TYPES(?![A-Za-z_])" to "net.minecraft.core.registries.Registries.BLOCK_ENTITY_TYPE",
         "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.FLUIDS(?![A-Za-z_])" to "net.minecraft.core.registries.Registries.FLUID",
         "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.BLOCKS(?![A-Za-z_])" to "net.minecraft.core.registries.Registries.BLOCK",
         "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.ITEMS(?![A-Za-z_])" to "net.minecraft.core.registries.Registries.ITEM",
-        // 特定 .getValue → .get（Registry API 名漂移；先于一般键名条目）
-        "ForgeRegistries\\.FLUIDS\\.getValue(?![A-Za-z_])" to "Registries.FLUID.get",
-        "ForgeRegistries\\.ITEMS\\.getValue(?![A-Za-z_])" to "Registries.ITEM.get",
+        // 特定 .getValue → .get / .getKey（Registry 查询面；先于一般键名条目；目标一律 FQ
+        // BuiltInRegistries——不依赖源文件既有 import）
+        "ForgeRegistries\\.FLUIDS\\.getValue(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.FLUID.get",
+        "ForgeRegistries\\.ITEMS\\.getValue(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.ITEM.get",
+        "ForgeRegistries\\.FLUIDS\\.getKey(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey",
+        "ForgeRegistries\\.ITEMS\\.getKey(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey",
+        "ForgeRegistries\\.BLOCKS\\.getKey(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey",
         // 键名单复数漂移（边界断言防 BLOCKS 吃 BLOCK_ENTITY_TYPES、FLUIDS 吃 FLUID_TYPES 等前缀误伤）
         "ForgeRegistries\\.BLOCK_ENTITY_TYPES(?![A-Za-z_])" to "Registries.BLOCK_ENTITY_TYPE",
         "ForgeRegistries\\.FLUIDS(?![A-Za-z_])" to "Registries.FLUID",
         "ForgeRegistries\\.BLOCKS(?![A-Za-z_])" to "Registries.BLOCK",
         "ForgeRegistries\\.ITEMS(?![A-Za-z_])" to "Registries.ITEM",
+        // ResourceLocation 两参构造器 → fromNamespaceAndPath（W4 r1 消化；census：简单名 44 处 +
+        // FQ 5 处可消化）。保守正则：实参位禁逗号与括号——嵌套调用/带括号表达式实参一律不命中
+        // （实测 3 处漏网：GT6Covers:221/GTOvenOverlayModel:212/GTWireBakedModel:233，留语义波
+        // //?），组引用不会缝合进任何带括号的实参。Kotlin \$1 转义组引用。FQ 形态先行。
+        "new\\s+net\\.minecraft\\.resources\\.ResourceLocation\\(([^(),]+),\\s*([^(),]+)\\)" to "net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(\$1, \$2)",
+        "new\\s+ResourceLocation\\(([^(),]+),\\s*([^(),]+)\\)" to "ResourceLocation.fromNamespaceAndPath(\$1, \$2)",
         // @Mod.EventBusSubscriber → 独立注解 @EventBusSubscriber（run2 第 3 轮补；21.1 rework：
         // 注解移 net.neoforged.fml.common.EventBusSubscriber，bus 属性删除——总线按事件类型自动判定，
         // docs.neoforged.net/docs/1.21.1/concepts/events/）。目标用全限定注解（免 import 行管理，W4 可润色）。
@@ -121,7 +138,8 @@ stonecutter parameters {
         "@Mod\\.EventBusSubscriber\\(Bus\\.MOD\\)" to "@net.neoforged.fml.common.EventBusSubscriber()",
         // 注解头（@ 锚定 + 转义点分；@Mod.EventBusSubscriber(Dist.CLIENT) 位置 value 形态同批消化）
         "@Mod\\.EventBusSubscriber\\(" to "@net.neoforged.fml.common.EventBusSubscriber(",
-        // 尾随 bus 子句删除（census：bus 恒为末位属性，51 注解位 22 MOD + 3 FORGE）
+        // 尾随 bus 子句删除（census 勘正 W4 r1：实测 54 注解位 / 34 尾随 bus=；run2 原记
+        // "51 注解位 22 MOD + 3 FORGE" 口径有误，勘正见 state tmp.w4.registry-core）
         ", bus = Mod\\.EventBusSubscriber\\.Bus\\.(MOD|FORGE)\\)" to ")",
     ).forEach { (pattern, to) ->
         replacements.regex(neoforgeSide) {

@@ -8,7 +8,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.DeferredRegister;
+//? if forge {
 import net.minecraftforge.registries.RegistryObject;
+//?} else {
+/*import net.neoforged.neoforge.registries.DeferredHolder;
+// 21.1: RegistryObject → DeferredHolder (one extra generic parameter, javap
+// neoforge-21.1.249); not swap-able, forked per file (ADR-P15-3 r1 priority 3).
+ *///?}
 
 /**
  * Machine {@link MenuType} registration, card-owned (ADR-P3-4): the oven gets its own
@@ -27,8 +33,13 @@ public final class GTOvenMenus {
 
 	public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MOD_ID);
 
+	//? if forge {
 	public static final RegistryObject<MenuType<GTOvenMenu>> OVEN_MENU =
 		MENUS.register(OVEN_MENU_ID, () -> IForgeMenuType.create(GTOvenMenu::new));
+	//?} else {
+	/*public static final DeferredHolder<MenuType<?>, MenuType<GTOvenMenu>> OVEN_MENU =
+		MENUS.register(OVEN_MENU_ID, () -> IForgeMenuType.create(GTOvenMenu::new));
+	 *///?}
 
 	private GTOvenMenus() {
 	}
@@ -41,6 +52,12 @@ public final class GTOvenMenus {
 	/** FMLConstructModEvent = first mod-bus lifecycle stage, strictly before any RegisterEvent (GTMenuTypes.java:76-80 precedent). */
 	@SubscribeEvent
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
+		//? if forge {
 		MENUS.register(Mod.EventBusSubscriber.Bus.MOD.bus().get());
+		//?} else {
+		/*// 21.1: the self-contained bus source is the container (ModContainer.getEventBus,
+		// loader-4.0.44 javap; Bus.MOD.bus() has no accessor there) — GTMenuTypes.onModConstruct form.
+		MENUS.register(net.neoforged.fml.ModList.get().getModContainerById(MOD_ID).orElseThrow().getEventBus());
+		 *///?}
 	}
 }
