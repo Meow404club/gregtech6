@@ -28,13 +28,11 @@ java {
 
 tasks.withType(JavaCompile::class).configureEach {
     options.encoding = "UTF-8"
-    // 全量诊断协议（M3 门禁口径，decisions.2026-09-03-p15-m1-gate；W1 机制实证五）：
-    // javac 默认 maxerrs=100 会截断错误清单 → maxerrs/maxwarns 100000 全量可数；
-    // -Xdiags:compact 单行压缩诊断（W1 ADR §5 W2 建议），削减巨型诊断经 Gradle
-    // 消息枢纽回传的 OOM/卡死面（client 端 launcher 仅 64m 堆，2026-09-04 实证复现）。
-    options.compilerArgs.addAll(
-        listOf("-Xmaxerrs", "100000", "-Xmaxwarns", "100000", "-Xdiags:compact")
-    )
+    // 全量诊断协议（M3 门禁口径，decisions.2026-09-03-p15-m1-gate）：javac 默认 maxerrs=100
+    // 会截断错误清单 → maxerrs/maxwarns 100000 全量可数。W1 机制实证五：巨型诊断经 Gradle
+    // 消息枢纽回传会在收尾阶段 OOM（client launcher 仅 64m 堆），但诊断流完整落地可按行提取
+    // （-Xdiags:compact 实测被 Gradle 编译管线忽略，输出仍 verbose，2026-09-04——不再挂载）。
+    options.compilerArgs.addAll(listOf("-Xmaxerrs", "100000", "-Xmaxwarns", "100000"))
 }
 
 neoForge {
