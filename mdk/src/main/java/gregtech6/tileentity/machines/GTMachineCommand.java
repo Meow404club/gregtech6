@@ -11,6 +11,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -35,8 +36,9 @@ import gregtech6.registry.GTMachines;
 /**
  * {@code /gt6machine} — the machine-family acceptance command (task p7-basicmachine-family
  * ⑥, RCON-drivable, GTOvenCommand :63-98 template, console-safe throughout; extended by
- * task p8-machine-tiers-doinject ⑤): one literal per registered machine
- * ({@code shredder|crusher|lathe} × {@code [t2|t3|t4]}, 12 rows) carrying the subcommands
+ * task p8-machine-tiers-doinject ⑤ and task p14-dryer-family): one literal per registered
+ * machine ({@code shredder|crusher|lathe|dryer} × {@code [t2|t3|t4]}, 16 rows) carrying
+ * the subcommands
  *
  * <ul>
  * <li>{@code place [<pos>]} — setBlock a fresh machine (FACING north);</li>
@@ -60,7 +62,13 @@ import gregtech6.registry.GTMachines;
  *     shape — a 0 packet would divide by zero in the verbatim :503 math);</li>
  * <li>{@code check [<pos>]} — state report: progress/maxprogress/energy/minenergy/the
  *     energy three values (minIn/recIn/maxIn)/state latch/active/running/parallel + the
- *     slot contents.</li>
+ *     slot contents (a menu-less carrier reports {@code data=-2} — the trio is a menu
+ *     surface);</li>
+ * <li>{@code fluid fill <side> <fluid> <amount> [<pos>]} / {@code fluid draw <side>
+ *     <amount> [<pos>]} / {@code fluid stat [<pos>]} (task p14-dryer-family) — the
+ *     side-gated FLUID_HANDLER driver over the p14-machine-fluid-face carriers: the
+ *     rotated row masks answer fill/draw (0 = REJECTED is a legitimate verdict) and stat
+ *     dumps the tank census plus the live fluid/energy face lists (task p14-dryer-family).</li>
  * </ul>
  *
  * <p>Plus the regime switch {@code /gt6machine fakesource on|off|stat} — flips
@@ -101,13 +109,24 @@ public final class GTMachineCommand {
 			.then(machine("lathe", GTMachines.LATHE, () -> net.minecraft.world.level.block.Blocks.STONE.asItem())) // Loader_Recipes_Vanilla.java:524
 			.then(machine("lathe_t2", GTMachines.LATHE_T2, () -> net.minecraft.world.level.block.Blocks.STONE.asItem()))
 			.then(machine("lathe_t3", GTMachines.LATHE_T3, () -> net.minecraft.world.level.block.Blocks.STONE.asItem()))
-			.then(machine("lathe_t4", GTMachines.LATHE_T4, () -> net.minecraft.world.level.block.Blocks.STONE.asItem()));
+			.then(machine("lathe_t4", GTMachines.LATHE_T4, () -> net.minecraft.world.level.block.Blocks.STONE.asItem()))
+			// task p14-dryer-family: the dryer ladder — the input feed is a minimal STUB
+			// (the DRYING map is declared-empty until the W3 pour, so no feed can ever
+			// start a process; bricks mirror the upstream frame column 'B' = brick_block)
+			.then(machine("dryer", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer"), () -> Items.BRICKS))
+			.then(machine("dryer_t2", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer_t2"), () -> Items.BRICKS))
+			.then(machine("dryer_t3", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer_t3"), () -> Items.BRICKS))
+			.then(machine("dryer_t4", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer_t4"), () -> Items.BRICKS));
 		event.getDispatcher().register(tMachine);
-		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe x t1..t4 | fakesource x place|input|run|inject|check)");
+		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer x t1..t4 | fakesource x place|input|run|inject|check|fluid)");
 		// the p8 ladder registration line (the runServer gate asserts it): the three family
 		// BETs resolve — proof the RegistryObjects bound.
 		LOGGER.info("GT6 machine ladder registered: 12 blocks / 3 family BETs (T1-T4 validBlocks multi-attach), tiers "
 			+ java.util.Arrays.deepToString(GTMachines.TIER_INPUTS) + " crusher parallel " + java.util.Arrays.toString(GTMachines.CRUSHER_PARALLEL));
+		// the p14 dryer registration smoke line (the runServer gate asserts it): the family
+		// BET resolves, the row config is the upstream :1477-1480 columns.
+		LOGGER.info("GT6 dryer family registered: 4 blocks / 1 family BET (T1-T4 validBlocks multi-attach), HU bottom-face energy, "
+			+ "RM.Drying (gt.recipe.drying) row map, parallel 8/16/32/64 + parallelDuration, hardness 6/4/9/12.5");
 	}
 
 	/** One machine literal with its four subcommands (the oven command shape, parameterised). */
@@ -168,6 +187,43 @@ public final class GTMachineCommand {
 			.executes(context -> check(context.getSource(), null))
 			.then(Commands.argument("pos", BlockPosArgument.blockPos())
 				.executes(context -> check(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
+		// task p14-dryer-family — the fluid arm (the /gt6tank fill/draw driver shape over
+		// the machine's side-gated FLUID_HANDLER): fill/draw report 0 with the REJECTED
+		// marker as a legitimate verdict (a masked face, an empty output tank), so the
+		// RCON chain can assert on the row's rotated connectivity masks; stat dumps the
+		// tank contents plus the live six-side mask faces (fluid in/out + the :511 energy
+		// accepts). The first LIVE surface of the p14-machine-fluid-face carriers — the
+		// W1a offline half drove them through the package-private factory only.
+		tMachine.then(Commands.literal("fluid")
+			.then(Commands.literal("fill")
+				.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
+					.then(Commands.argument("fluid", net.minecraft.commands.arguments.ResourceLocationArgument.id())
+						.then(Commands.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+							.executes(context -> fluidFill(context.getSource(),
+									com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side"),
+									net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "fluid"),
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "amount"), null))
+							.then(Commands.argument("pos", BlockPosArgument.blockPos())
+								.executes(context -> fluidFill(context.getSource(),
+										com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side"),
+										net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "fluid"),
+										com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "amount"),
+										BlockPosArgument.getLoadedBlockPos(context, "pos"))))))))
+			.then(Commands.literal("draw")
+				.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
+					.then(Commands.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+						.executes(context -> fluidDraw(context.getSource(),
+								com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side"),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "amount"), null))
+						.then(Commands.argument("pos", BlockPosArgument.blockPos())
+							.executes(context -> fluidDraw(context.getSource(),
+									com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side"),
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "amount"),
+									BlockPosArgument.getLoadedBlockPos(context, "pos")))))))
+			.then(Commands.literal("stat")
+				.executes(context -> fluidStat(context.getSource(), null))
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(context -> fluidStat(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"))))));
 		return tMachine;
 	}
 
@@ -208,6 +264,149 @@ public final class GTMachineCommand {
 		return tLevel.getBlockEntity(tTarget) instanceof TileEntityBasicMachine tMachine ? tMachine : null;
 	}
 
+	/**
+	 * The menu-or-null probe (task p14-dryer-family): the menu-less carriers (the dryer —
+	 * the GUI pool card owns the MenuType registration) throw the documented
+	 * IllegalStateException out of createMenu; the command surface degrades instead of
+	 * crashing ({@code check} reports {@code data=-2}, {@code run} refuses).
+	 */
+	@javax.annotation.Nullable
+	private static GTBasicMachineMenu menuOrNull(TileEntityBasicMachine aMachine, ServerPlayer aFakePlayer) {
+		try {
+			return (GTBasicMachineMenu) aMachine.createMenu(0, aFakePlayer.getInventory(), aFakePlayer);
+		} catch (IllegalStateException tMenuLess) {
+			return null;
+		}
+	}
+
+	/** The GT6 side word → Direction (the /gt6tank parse, mirrored so this driver stays self-contained). */
+	private static Direction parseSide(String aWord) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		Direction tSide = Direction.byName(aWord.toLowerCase(java.util.Locale.ROOT));
+		if (tSide == null) throw new com.mojang.brigadier.exceptions.SimpleCommandExceptionType(Component.literal("Unknown side: " + aWord)).create();
+		return tSide;
+	}
+
+	/**
+	 * The p14 fluid fill driver: inject through the side-gated FLUID_HANDLER capability and
+	 * report the accepted amount — 0 with the REJECTED marker is a legitimate verdict (a
+	 * masked face per the row's mFluidInputs, or a full/mixed tank), the /gt6tank form.
+	 */
+	private static int fluidFill(CommandSourceStack aSource, String aSideWord, net.minecraft.resources.ResourceLocation aFluidId, int aAmount, @javax.annotation.Nullable BlockPos aPos) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		Direction tSide = parseSide(aSideWord);
+		TileEntityBasicMachine tMachine = machineAt(aSource, aPos);
+		if (tMachine == null) {
+			aSource.sendFailure(Component.literal("No TileEntityBasicMachine at " + (aPos != null ? aPos.toShortString() : "the source position")));
+			return 0;
+		}
+		net.minecraft.world.level.material.Fluid tFluid = net.minecraftforge.registries.ForgeRegistries.FLUIDS.getValue(aFluidId);
+		if (tFluid == null || tFluid.defaultFluidState() == null || tFluid.defaultFluidState().isEmpty()) {
+			aSource.sendFailure(Component.literal("Unknown fluid: " + aFluidId));
+			return 0;
+		}
+		net.minecraftforge.fluids.capability.IFluidHandler tHandler = tMachine.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, tSide).orElse(null);
+		if (tHandler == null) {
+			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the machine exposes no FLUID_HANDLER on " + tSide));
+			return 0;
+		}
+		int tFilled = tHandler.fill(new net.minecraftforge.fluids.FluidStack(tFluid, aAmount), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+		String tLine = String.format("GT6 %s fluid fill at %s face %s: filled %d/%d L of %s%s, input tanks hold %d L",
+				tMachine.getTileEntityName(), tMachine.getBlockPos().toShortString(), tSide, tFilled, aAmount, aFluidId,
+				tFilled == 0 ? " (REJECTED)" : " (ACCEPTED)", tankTotal(tMachine.mTanksInput));
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The p14 fluid draw driver — the mirror of {@link #fluidFill} over the mFluidOutputs mask. */
+	private static int fluidDraw(CommandSourceStack aSource, String aSideWord, int aAmount, @javax.annotation.Nullable BlockPos aPos) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		Direction tSide = parseSide(aSideWord);
+		TileEntityBasicMachine tMachine = machineAt(aSource, aPos);
+		if (tMachine == null) {
+			aSource.sendFailure(Component.literal("No TileEntityBasicMachine at " + (aPos != null ? aPos.toShortString() : "the source position")));
+			return 0;
+		}
+		net.minecraftforge.fluids.capability.IFluidHandler tHandler = tMachine.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, tSide).orElse(null);
+		if (tHandler == null) {
+			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the machine exposes no FLUID_HANDLER on " + tSide));
+			return 0;
+		}
+		net.minecraftforge.fluids.FluidStack tDrawn = tHandler.drain(aAmount, net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+		int tDrawnAmount = tDrawn == null ? 0 : tDrawn.getAmount();
+		String tFluid = tDrawn == null || tDrawn.isEmpty() ? "nothing" : net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(tDrawn.getFluid()).toString();
+		String tLine = String.format("GT6 %s fluid draw at %s face %s: drawn %d/%d L of %s%s, output tanks hold %d L",
+				tMachine.getTileEntityName(), tMachine.getBlockPos().toShortString(), tSide, tDrawnAmount, aAmount, tFluid,
+				tDrawnAmount == 0 ? " (REJECTED)" : " (ACCEPTED)", tankTotal(tMachine.mTanksOutput));
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The p14 fluid stat driver: the tank census plus the LIVE rotated-mask faces —
+	 * {@code fluidIn=...} / {@code fluidOut=...} over the six world sides (the
+	 * GTSideTables rotation of the row's masks) and {@code energyIn=...} (the :511
+	 * isEnergyAcceptingFrom probe on the accepted type, theoretical arm). The assertion
+	 * line the RCON chain pins the dryer's bottom-face energy + back/left tank geometry on.
+	 */
+	private static int fluidStat(CommandSourceStack aSource, @javax.annotation.Nullable BlockPos aPos) {
+		TileEntityBasicMachine tMachine = machineAt(aSource, aPos);
+		if (tMachine == null) {
+			aSource.sendFailure(Component.literal("No TileEntityBasicMachine at " + (aPos != null ? aPos.toShortString() : "the source position")));
+			return 0;
+		}
+		StringBuilder tIn = new StringBuilder();
+		for (int i = 0; i < tMachine.mTanksInput.length; i++) {
+			gregtech6.fluid.FluidTankGT tTank = tMachine.mTanksInput[i];
+			tIn.append(i == 0 ? "" : ", ").append("in[").append(i).append("]=").append(tTank.amount()).append(" L of ")
+					.append(tTank.isEmpty() ? "nothing" : net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(tTank.getFluid().getFluid()));
+		}
+		StringBuilder tOut = new StringBuilder();
+		for (int i = 0; i < tMachine.mTanksOutput.length; i++) {
+			gregtech6.fluid.FluidTankGT tTank = tMachine.mTanksOutput[i];
+			tOut.append(i == 0 ? "" : ", ").append("out[").append(i).append("]=").append(tTank.amount()).append(" L of ")
+					.append(tTank.isEmpty() ? "nothing" : net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(tTank.getFluid().getFluid()));
+		}
+		String tLine = String.format("GT6 %s fluid stat at %s: %s; %s; masks fluidIn=%d fluidOut=%d energyIn=%d; faces fluidIn=%s fluidOut=%s energyIn=%s",
+				tMachine.getTileEntityName(), tMachine.getBlockPos().toShortString(), tIn, tOut,
+				tMachine.mFluidInputs, tMachine.mFluidOutputs, tMachine.mEnergyInputs,
+				maskFaces(tMachine, tMachine.mFluidInputs), maskFaces(tMachine, tMachine.mFluidOutputs),
+				energyAcceptFaces(tMachine));
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The total content of one tank bank (the stat/fill report). */
+	private static long tankTotal(gregtech6.fluid.FluidTankGT[] aTanks) {
+		long rTotal = 0;
+		for (gregtech6.fluid.FluidTankGT tTank : aTanks) rTotal += tTank.amount();
+		return rTotal;
+	}
+
+	/** The world faces the rotated mask accepts (the GTSideTables lookup, the six-side walk). */
+	private static String maskFaces(TileEntityBasicMachine aMachine, byte aMask) {
+		StringBuilder rFaces = new StringBuilder();
+		for (Direction tSide : Direction.values()) {
+			if (gregtech6.util.GTSideTables.faceConnected(aMachine.getFacing(), (byte)tSide.get3DDataValue(), aMask)) {
+				if (rFaces.length() > 0) rFaces.append(",");
+				rFaces.append(tSide);
+			}
+		}
+		return rFaces.length() > 0 ? rFaces.toString() : "none";
+	}
+
+	/** The world faces the machine accepts the carrier energy type on (the live :511 probe, theoretical arm). */
+	private static String energyAcceptFaces(TileEntityBasicMachine aMachine) {
+		StringBuilder rFaces = new StringBuilder();
+		for (Direction tSide : Direction.values()) {
+			if (aMachine.isEnergyAcceptingFrom(aMachine.mEnergyTypeAccepted, (byte)tSide.get3DDataValue(), true)) {
+				if (rFaces.length() > 0) rFaces.append(",");
+				rFaces.append(tSide);
+			}
+		}
+		return rFaces.length() > 0 ? rFaces.toString() : "none";
+	}
+
 	private static int place(CommandSourceStack source, RegistryObject<Block> aBlock, BlockPos pos) {
 		BlockPos tTarget = pos != null ? pos : BlockPos.containing(source.getPosition());
 		ServerLevel tLevel = source.getLevel();
@@ -240,7 +439,13 @@ public final class GTMachineCommand {
 			return 0;
 		}
 		ServerPlayer tFakePlayer = FakePlayerFactory.getMinecraft(source.getLevel());
-		GTBasicMachineMenu tMenu = (GTBasicMachineMenu) tMachine.createMenu(0, tFakePlayer.getInventory(), tFakePlayer);
+		GTBasicMachineMenu tMenu = menuOrNull(tMachine, tFakePlayer);
+		if (tMenu == null) {
+			// the menu-less carrier (the dryer — the GUI pool card owns the MenuType); the
+			// trio probe is a menu surface, so run refuses instead of crashing
+			source.sendFailure(Component.literal("GT6 machine run refused: no MenuType bound (the menu-less carrier's GUI is the pool card's surface); use inject+check instead"));
+			return 0;
+		}
 
 		boolean tSeenProgress = false, tSeenDone = false, tSeenIdle = false;
 		int tLastValue = tMenu.computeProgressValue();
@@ -345,9 +550,11 @@ public final class GTMachineCommand {
 			return 0;
 		}
 		ServerPlayer tFakePlayer = FakePlayerFactory.getMinecraft(source.getLevel());
-		GTBasicMachineMenu tMenu = (GTBasicMachineMenu) tMachine.createMenu(0, tFakePlayer.getInventory(), tFakePlayer);
-		int tDataValue = tMenu.computeProgressValue();
-		tMenu.removed(tFakePlayer);
+		GTBasicMachineMenu tMenu = menuOrNull(tMachine, tFakePlayer);
+		// the menu-less carrier (the dryer) reports data=-2 instead of crashing — the
+		// ContainerData trio is a menu surface, the field report below is not
+		int tDataValue = tMenu != null ? tMenu.computeProgressValue() : -2;
+		if (tMenu != null) tMenu.removed(tFakePlayer);
 
 		StringBuilder tSlots = new StringBuilder();
 		ItemStack tInput = tMachine.getInventory().getStackInSlot(TileEntityBasicMachine.SLOT_INPUT);
