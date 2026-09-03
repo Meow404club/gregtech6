@@ -326,9 +326,15 @@ public final class GTEngineCommand {
 			aSource.sendFailure(Component.literal("FILL FAILED: no steam engine BE at " + aPos.toShortString()));
 			return 0;
 		}
+		//? if forge {
 		net.minecraftforge.fluids.capability.IFluidHandler tDoor = tEngine.getCapability(
 				net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER,
 				Direction.from3DDataValue(tEngine.backSide())).orElse(null);
+		//?} else {
+		/*net.minecraftforge.fluids.capability.IFluidHandler tDoor = tEngine.getCapability(
+				net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+				Direction.from3DDataValue(tEngine.backSide()));
+		 *///?}
 		if (tDoor == null) {
 			aSource.sendFailure(Component.literal("FILL FAILED: no intake-face door at " + aPos.toShortString()));
 			return 0;

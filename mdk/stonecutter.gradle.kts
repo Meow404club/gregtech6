@@ -108,6 +108,10 @@ stonecutter parameters {
         // （run1 实证产生 13 处 "net.minecraftforge.registries.Registries" 缝合错误）。
         "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.FLUIDS\\.getValue(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.FLUID.get",
         "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.ITEMS\\.getValue(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.ITEM.get",
+        // FQ ITEMS.getKey（W5 命令面补）：FQ FLUIDS.getKey 早有同名条目而 ITEMS 漏配——
+        // FQ 裸 ITEMS 条目先执行吃掉前缀，留下 Registries.ITEM.getKey（ResourceKey 无
+        // getKey，GTMultiBlockCommand:348/415 实测"找不到符号 getKey(Item)"）。补齐同型。
+        "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.ITEMS\\.getKey(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey",
         "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.FLUIDS\\.getKey(?![A-Za-z_])" to "net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey",
         "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.BLOCK_ENTITY_TYPES(?![A-Za-z_])" to "net.minecraft.core.registries.Registries.BLOCK_ENTITY_TYPE",
         "net\\.minecraftforge\\.registries\\.ForgeRegistries\\.FLUIDS(?![A-Za-z_])" to "net.minecraft.core.registries.Registries.FLUID",
@@ -165,6 +169,10 @@ stonecutter parameters {
         //   Block 注册事件内 .get() 已解析。
         // 条目序：FQ 换包先行（防后半段换型留旧包前缀的缝合错误，W2 run1 教训），嵌套 BET
         // 先于简单名，具体元素型先于块类兜底（兜底 [A-Za-z0-9]+ 两位起，不吃泛型字母 T）。
+        // FQ 参数化形态必须先于下方 FQ 类名换包条目：类名先换则泛型实参只剩 1 个
+        // （DeferredHolder 需要 2 个，GTMultiBlockCommand:393/402 "类型变量数目错误" 实测；
+        // W4 lesson id258 同源——to 串组引用条目与换包条目的执行序洞）。
+        "net\\.minecraftforge\\.registries\\.RegistryObject<net\\.minecraft\\.world\\.item\\.Item(?![A-Za-z_])>" to "net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.Item>",
         "net\\.minecraftforge\\.registries\\.RegistryObject(?![A-Za-z_])" to "net.neoforged.neoforge.registries.DeferredHolder",
         "RegistryObject<BlockEntityType<([^<>()]+)>>" to "DeferredHolder<BlockEntityType<?>, BlockEntityType<$1>>",
         "RegistryObject<net\\.minecraft\\.world\\.item\\.Item(?![A-Za-z_])>" to "DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.Item>",

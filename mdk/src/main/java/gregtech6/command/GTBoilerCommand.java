@@ -146,8 +146,13 @@ public final class GTBoilerCommand {
 			aSource.sendFailure(Component.literal("FILL FAILED: no boiler tank BE at " + aPos.toShortString()));
 			return 0;
 		}
+		//? if forge {
 		IFluidHandler tDoor = tBoiler.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER,
 				Direction.DOWN).orElse(null);
+		//?} else {
+		/*IFluidHandler tDoor = tBoiler.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+				Direction.DOWN);
+		 *///?}
 		if (tDoor == null) {
 			aSource.sendFailure(Component.literal("FILL FAILED: no intake-face door at " + aPos.toShortString()));
 			return 0;

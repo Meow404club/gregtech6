@@ -392,8 +392,16 @@ public final class GTMultiBlockCommand {
 			}
 			net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tHandle =
 					gregtech6.registry.GTMaterialItems.get(tPrefix, tMaterial);
+			//? if forge {
 			if (tHandle == null || !tHandle.isPresent()) tHandle = gregtech6.registry.GTMaterialBlocks.get(tPrefix, tMaterial); // p8: block items (e.g. blockIngot Coal)
+			//?} else {
+			/*if (tHandle == null || !tHandle.isBound()) tHandle = gregtech6.registry.GTMaterialBlocks.get(tPrefix, tMaterial); // p8: block items
+			 *///?}
+			//? if forge {
 			if (tHandle == null || !tHandle.isPresent()) {
+			//?} else {
+			/*if (tHandle == null || !tHandle.isBound()) {
+			 *///?}
 				aSource.sendFailure(Component.literal("No gt6 item for prefix '" + tPrefix.mNameInternal + "' + material '" + tMaterial.mNameInternal + "'"));
 				return 0;
 			}
@@ -401,15 +409,24 @@ public final class GTMultiBlockCommand {
 		} else {
 			net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tHandle =
 					gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.gem, gregapi.data.MT.Coal);
+			//? if forge {
 			if (tHandle == null || !tHandle.isPresent()) {
+			//?} else {
+			/*if (tHandle == null || !tHandle.isBound()) {
+			 *///?}
 				aSource.sendFailure(Component.literal("gt6:gem_coal is not registered"));
 				return 0;
 			}
 			tStack = new ItemStack(tHandle.get(), aCount);
 		}
+		//? if forge {
 		ItemStack tLeftover = tOven.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER, null)
 				.map(tHandler -> tHandler.insertItem(0, tStack, false))
 				.orElse(tStack);
+		//?} else {
+		/*net.neoforged.neoforge.items.IItemHandler tItemDoor = tOven.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, tOven.getBlockPos(), null);
+		ItemStack tLeftover = tItemDoor == null ? tStack : tItemDoor.insertItem(0, tStack, false);
+		 *///?}
 		int tInserted = aCount - tLeftover.getCount();
 		String tReport = String.format("GT6 coke oven input %d %s at %s: inserted %d%s", aCount,
 				net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(tStack.getItem()),
@@ -528,7 +545,11 @@ public final class GTMultiBlockCommand {
 			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + aPos.toShortString()));
 			return 0;
 		}
+		//? if forge {
 		IFluidHandler tHandler = tOven.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, null).orElse(null);
+		//?} else {
+		/*IFluidHandler tHandler = tOven.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, tOven.getBlockPos(), null);
+		 *///?}
 		String tTank = tOven.mTanksOutput[0].isEmpty() ? "-" : tOven.mTanksOutput[0].amount() + "mB "
 				+ net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(tOven.mTanksOutput[0].fluid().getFluid()); // the machineReport tank shape
 		String tLine = String.format("GT6 coke oven fluid stat at %s: tank=[%s] cap_tanks=%d capacity=%d",
@@ -550,7 +571,11 @@ public final class GTMultiBlockCommand {
 			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + aPos.toShortString()));
 			return 0;
 		}
+		//? if forge {
 		IFluidHandler tHandler = tOven.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, aSide).orElse(null);
+		//?} else {
+		/*IFluidHandler tHandler = tOven.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, tOven.getBlockPos(), aSide);
+		 *///?}
 		if (tHandler == null) {
 			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the coke oven exposes no FLUID_HANDLER on "
 					+ (aSide == null ? "the side-less query" : aSide)));
@@ -579,7 +604,11 @@ public final class GTMultiBlockCommand {
 			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + aPos.toShortString()));
 			return 0;
 		}
+		//? if forge {
 		IFluidHandler tHandler = tOven.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, aSide).orElse(null);
+		//?} else {
+		/*IFluidHandler tHandler = tOven.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, tOven.getBlockPos(), aSide);
+		 *///?}
 		if (tHandler == null) {
 			aSource.sendFailure(Component.literal("CAPABILITY MISSING: the coke oven exposes no FLUID_HANDLER on "
 					+ (aSide == null ? "the side-less query" : aSide)));
@@ -823,8 +852,13 @@ public final class GTMultiBlockCommand {
 			aSource.sendFailure(Component.literal("BOILER FILL FAILED: no TileEntityLargeBoiler at " + aPos.toShortString()));
 			return 0;
 		}
+		//? if forge {
 		IFluidHandler tDoor = tBoiler.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER,
 				Direction.DOWN).orElse(null);
+		//?} else {
+		/*IFluidHandler tDoor = tBoiler.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+				Direction.DOWN);
+		 *///?}
 		if (tDoor == null) {
 			aSource.sendFailure(Component.literal("BOILER FILL FAILED: no fluid door at " + aPos.toShortString()));
 			return 0;
