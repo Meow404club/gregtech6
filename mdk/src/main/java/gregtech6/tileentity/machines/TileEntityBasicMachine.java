@@ -33,6 +33,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import gregtech6.util.GTSideTables;
 
 /**
  * The shared single-block machine base — direct translation of upstream
@@ -109,10 +110,11 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * the default is the upstream truth again and the :815 suspension fold is unwound.
  * {@link #doInject} is the upstream :489-508 body minus the charging branch (:497-500,
  * mEnergyTypeCharged/mChargeRequirement are outside the trimmed field set — declared
- * deviation, the oven :492 same shape); the :511 FACE_CONNECTED side mask is not ported
- * (side-gated IO pool) and the receiving gate eats the Root all-sides default. Side
- * configuration and the RU/KU accepted-energy types are carrier fields; no named energy
- * interface is introduced (IEnergyPolicy ownership is D1's).
+ * deviation, the oven :492 same shape); the :511 FACE_CONNECTED receiving gate IS ported
+ * since task p14-machine-fluid-face ({@link #mEnergyInputs} + the rotation lookup, default
+ * 127 = the former Root all-sides behaviour bit-for-bit). Side configuration and the RU/KU
+ * accepted-energy types are carrier fields; no named energy interface is introduced
+ * (IEnergyPolicy ownership is D1's).
  *
  * <p>Recipe consumption follows the p4-recipe-core pinned contract: findRecipe only LOOKS UP,
  * consuming is {@code Recipe.isRecipeInputEqual(true, false, fluids, inputs)} (:725/:738
@@ -188,6 +190,17 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	public byte mIgnited = 0;
 	/** Upstream :99 — the accepted-energy carrier (Shredder/Lathe = TD.Energy.RU, Crusher = TD.Energy.KU, :1294/:1300/:1306). */
 	public TagData mEnergyTypeAccepted = TD.Energy.TU;
+	/**
+	 * Upstream :93 — the ACCEPTING-face connectivity mask, in machine-relative side bits
+	 * (bit 0 = bottom, 1 = top, 2..5 = left/front/right/back, 6 = undefined), read through
+	 * the :511 rotation gate. The default 127 = every relative side connected = the
+	 * pre-p14 behaviour bit-for-bit (FACE_CONNECTED[any][127] is {@code true} for relative
+	 * sides 0-6). Registration rows re-point it post-construction (the carrier pattern of
+	 * mParallel/mEnergyTypeAccepted — upstream NBT make(...) at :1294-1309 writes
+	 * NBT_ENERGY_ACCEPTED_SIDES; the port keeps registration config constructor/factory
+	 * injected and NOT persisted, the loadKeepsTheConstructorInjectedConfig contract).
+	 */
+	public byte mEnergyInputs = 127;
 	/**
 	 * Upstream :92 mStateNew/mStateOld — the alternating-injection latch pair. mStateNew is
 	 * written by {@link #doInject} :502 (the sign of the last packet: positive → true); the
@@ -595,9 +608,24 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 */
 	@Override public boolean isEnergyType(TagData aEnergyType, byte aSide, boolean aEmitting) {return !aEmitting && aEnergyType == mEnergyTypeAccepted;}
 
-	// :511 isEnergyAcceptingFrom NOT overridden — the FACE_CONNECTED rotation mask is the
-	// side-gated IO pool item; the receiving gate eats the Root all-sides default. The
-	// stopped-machine refusal lives at the :490 line above (and nothing is booked either way).
+	/**
+	 * Upstream :511 VERBATIM (task p14-machine-fluid-face ②): the receiving gate is the
+	 * rotated connectivity mask — {@code FACE_CONNECTED[FACING_ROTATIONS[mFacing][aSide]]
+	 * [mEnergyInputs]} over the {@code aTheoretical || !mStopped} arm — ANDed with the
+	 * super arm (the Root isEnergyType/isSurfaceEnergyAttachable chain,
+	 * TileEntityBase01Root.java:338). The default mEnergyInputs = 127 keeps every relative
+	 * side connected, so the pre-p14 all-sides behaviour is bit-for-bit (the
+	 * defaultMaskAcceptsEverywhere truth table); registration rows that set the mask
+	 * (upstream NBT_ENERGY_ACCEPTED_SIDES, e.g. the Dryer SBIT_D bottom-face rows,
+	 * Loader_MultiTileEntities.java:1477-1480) get the exact upstream face geometry.
+	 * The stopped-machine refusal of {@link #doInject} (:490) stays at the doInject line;
+	 * this gate is the theoretical/mode probe the network and conductors consult.
+	 */
+	@Override
+	public boolean isEnergyAcceptingFrom(TagData aEnergyType, byte aSide, boolean aTheoretical) {
+		return (aTheoretical || !mStopped) && GTSideTables.faceConnected(mFacing, aSide, mEnergyInputs)
+				&& super.isEnergyAcceptingFrom(aEnergyType, aSide, aTheoretical);
+	}
 
 	/** Upstream :513. */
 	@Override public long getEnergySizeInputMin(TagData aEnergyType, byte aSide) {return mInputMin;}
