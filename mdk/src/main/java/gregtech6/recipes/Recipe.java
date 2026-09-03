@@ -268,7 +268,7 @@ public class Recipe {
 			//? if forge {
 			boolean tIgnoreNBT = mNoNBTChecks || !tInput.hasTag();
 			//?} else {
-			/*boolean tIgnoreNBT = mNoNBTChecks || tInput.getComponents().isEmpty();
+			/*boolean tIgnoreNBT = mNoNBTChecks || tInput.getComponentsPatch().isEmpty();
 			 *///?}
 			for (int i = 0; i < aInputs.length; i++) if (!tChecked[i]) {
 				ItemStack aInput = aInputs[i];
