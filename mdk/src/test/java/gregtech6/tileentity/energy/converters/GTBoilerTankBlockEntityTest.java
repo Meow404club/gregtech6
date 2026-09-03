@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -102,6 +103,36 @@ public class GTBoilerTankBlockEntityTest extends GTOfflineTestBase {
 	private static void fillDistw(FixtureBoiler aBoiler, long aAmount) {
 		aBoiler.mTanks[0].setEmpty();
 		aBoiler.mTanks[0].add(aAmount, new FluidStack(Fluids.FLOWING_WATER, (int)Math.min(Integer.MAX_VALUE, aAmount)));
+	}
+
+	/** Fills the water tank with an arbitrary stand-in identity (the SpDew/MnWtr controls). */
+	private static void fillStandin(FixtureBoiler aBoiler, Fluid aFluid, long aAmount) {
+		aBoiler.mTanks[0].setEmpty();
+		aBoiler.mTanks[0].add(aAmount, new FluidStack(aFluid, (int)Math.min(Integer.MAX_VALUE, aAmount)));
+	}
+
+	/**
+	 * The sustained-run harness: {@code aTicks} CONVERSION ticks at 3 conversions/tick
+	 * (mOutput 1 → the steam tank 10000 → the :116 lattice bound 10000/2560 = 3), venting
+	 * the steam tank after every tick — the harness keeps the push gate (:139-142) and the
+	 * isFull trigger (:148) out of the assertion, so the only variable left is the :119
+	 * scaling verdict. The budget per run: water 4000 → 1333 ticks at 3/t ≥ the 1200
+	 * asked; HU 300000 → 3750 whole ticks ≥ ditto. Returns the cumulative steam yield.
+	 */
+	private static long runConversionTicks(FixtureBoiler aBoiler, int aTicks) {
+		long tYield = 0;
+		for (int t = 0; t < aTicks; t++) {
+			aBoiler.onTick(t + 1, true);
+			tYield += aBoiler.mTanks[1].amount();
+			aBoiler.mTanks[1].setEmpty();
+		}
+		return tYield;
+	}
+
+	/** The sustained-run budget: mOutput 1, full water tank, 300000 HU (see runConversionTicks). */
+	private static void primeSustainedRun(FixtureBoiler aBoiler) {
+		aBoiler.setOutput(1); // steam tank 10000 → the /2560 lattice = 3 conversions/tick
+		aBoiler.mEnergy = 300000;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -549,5 +580,95 @@ public class GTBoilerTankBlockEntityTest extends GTOfflineTestBase {
 		for (GT6Boilers.BoilerRow tRow : tRows) {
 			assertTrue(GT6Boilers.BLOCKS_BY_PATH.containsKey(tRow.path()), "the map key: " + tRow.path());
 		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// 9. the distilled-water immunity canon (task p14-boiler-distw-immunity) — the
+	//    :119 criterion `rng(10) == 0 && mEfficiency > 5000 && has() && !FL.distw(...)`
+	//    short-circuits on the LAST conjunct: a distilled tank makes the whole scaling
+	//    branch rng-INDEPENDENT (deterministic immunity), while the family mates
+	//    SpDew/MnWtr (FL.java:113/:119 — both carry the WATER tag, so upstream :262
+	//    FL.water admits them) are NOT immune: distw() = FL.DistW.is is the SINGULAR
+	//    identity (FL.java:699-703). The canonical budget is 1200 conversion ticks with
+	//    every rng arm — mRngOverride 0 (a hit every tick), 1 (never a hit) and a
+	//    fixed-seed random (arbitrary rolls, deterministic CI).
+	// ---------------------------------------------------------------------------
+
+	/** The offline SpDew stand-in (any non-DistW identity; vanilla has five fluids). */
+	private static final Fluid SPDEW = Fluids.FLOWING_LAVA;
+	/** The offline MnWtr stand-in — disjoint from the DistW stand-in FLOWING_WATER. */
+	private static final Fluid MNWTR = Fluids.LAVA;
+
+	@Test
+	public void theDistwImmuneArmsHold10000AcrossEveryRngArmOver1200ConversionTicks() {
+		// arm 1 — mRngOverride → 0: every tick WOULD be a scale hit for a water tank
+		FixtureBoiler tBoiler = boiler();
+		tBoiler.setRngOverride(() -> 0);
+		primeSustainedRun(tBoiler);
+		fillDistw(tBoiler, 4000);
+		long tYield = runConversionTicks(tBoiler, 1200);
+		assertEquals(10000, tBoiler.mEfficiency, "rng 0 arm: the distilled criterion short-circuits, efficiency untouched");
+		assertEquals(576000, tYield, "1200 ticks × 3 conversions × 160 L — the yield NEVER degraded");
+		assertEquals(400, tBoiler.mTanks[0].amount(), "3600 of 4000 L converted (3/t × 1200t) — every tick converted");
+		assertEquals(12000, tBoiler.mEnergy, "3600 × 80 HU consumed — the exact :124 accounting");
+
+		// arm 2 — mRngOverride → 1: rng(10) never 0 — trivially no scaling either
+		FixtureBoiler tNoHit = boiler();
+		tNoHit.setRngOverride(() -> 1);
+		primeSustainedRun(tNoHit);
+		fillDistw(tNoHit, 4000);
+		runConversionTicks(tNoHit, 1200);
+		assertEquals(10000, tNoHit.mEfficiency, "rng 1 arm: efficiency untouched");
+
+		// arm 3 — the random arm: a fixed-seed Random rolls arbitrary values (deterministic CI)
+		java.util.Random tRandom = new java.util.Random(20260901L);
+		FixtureBoiler tRolled = boiler();
+		tRolled.setRngOverride(() -> tRandom.nextInt(10));
+		primeSustainedRun(tRolled);
+		fillDistw(tRolled, 4000);
+		runConversionTicks(tRolled, 1200);
+		assertEquals(10000, tRolled.mEfficiency, "random arm: whatever the rolls, distw is immune — the rng-INDEPENDENCE");
+	}
+
+	@Test
+	public void plainWaterScalesOver1200ConversionTicks() {
+		// the control: the identical budget with plain water and the every-tick-hit arm
+		FixtureBoiler tBoiler = boiler();
+		tBoiler.setRngOverride(() -> 0);
+		primeSustainedRun(tBoiler);
+		fillWater(tBoiler, 4000);
+		runConversionTicks(tBoiler, 1200);
+		assertEquals(6400, tBoiler.mEfficiency, "10000 - 3 conversions × 1200 ticks — the sustained :120 decrement");
+		assertTrue(tBoiler.mEfficiency < 10000, "plain water is NOT immune");
+		assertTrue(tBoiler.mEfficiency >= 5000, "the :121 floor holds");
+	}
+
+	@Test
+	public void spDewAndMnWtrAreNotImmuneTheCriterionIsTheDistwSingularity() {
+		// the seam truth table — FL.java:699-703: distw() is FL.DistW.is, the SINGULAR
+		// identity; the family mates are NOT it (upstream they even pass the :262 FL.water
+		// intake — the WATER tag at FL.java:113/:119 — so they reach the tank and scale)
+		FixtureBoiler tSeamProbe = boiler();
+		assertTrue(tSeamProbe.mDistwMatch.apply(Fluids.FLOWING_WATER), "the DistW stand-in matches");
+		assertFalse(tSeamProbe.mDistwMatch.apply(SPDEW), "SpDew is NOT distw");
+		assertFalse(tSeamProbe.mDistwMatch.apply(MNWTR), "MnWtr is NOT distw");
+
+		// the SpDew control: same 1200-tick budget, same every-tick-hit arm — it scales
+		FixtureBoiler tSpDew = boiler();
+		tSpDew.setRngOverride(() -> 0);
+		primeSustainedRun(tSpDew);
+		fillStandin(tSpDew, SPDEW, 4000);
+		runConversionTicks(tSpDew, 1200);
+		assertEquals(6400, tSpDew.mEfficiency, "spectral_dew is water-family but NOT immune");
+		assertTrue(tSpDew.mEfficiency < 10000);
+
+		// the MnWtr control: ditto
+		FixtureBoiler tMnWtr = boiler();
+		tMnWtr.setRngOverride(() -> 0);
+		primeSustainedRun(tMnWtr);
+		fillStandin(tMnWtr, MNWTR, 4000);
+		runConversionTicks(tMnWtr, 1200);
+		assertEquals(6400, tMnWtr.mEfficiency, "mineral water is water-family but NOT immune");
+		assertTrue(tMnWtr.mEfficiency < 10000);
 	}
 }
