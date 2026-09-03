@@ -141,6 +141,55 @@ stonecutter parameters {
         // 尾随 bus 子句删除（census 勘正 W4 r1：实测 54 注解位 / 34 尾随 bus=；run2 原记
         // "51 注解位 22 MOD + 3 FORGE" 口径有误，勘正见 state tmp.w4.registry-core）
         ", bus = Mod\\.EventBusSubscriber\\.Bus\\.(MOD|FORGE)\\)" to ")",
+        // FQ 注解形态（census 实测 2 文件：GT6Covers:68/GTMaterialBlocks:59——
+        // @net.minecraftforge.fml.common.Mod.EventBusSubscriber 全限定写法；fml 包移位 string
+        // 条目先行换掉 net.minecraftforge.fml.common.Mod 后，这里锚定 neoforge 形收尾。顺序：
+        // 尾随 bus 子句先删（FQ 形），再换注解头——与简单名条目同序原则。
+        ", bus = net\\.neoforged\\.fml\\.common\\.Mod\\.EventBusSubscriber\\.Bus\\.(MOD|FORGE)\\)" to ")",
+        "@net\\.neoforged\\.fml\\.common\\.Mod\\.EventBusSubscriber\\(" to "@net.neoforged.fml.common.EventBusSubscriber(",
+        // ---- W4 registry-blocks 批（p15-adapt-registry-blocks）：RegistryObject→DeferredHolder
+        // 换装 + GTFluids 流体模板面。全部 regex+reverse 哨兵（单侧安全）——这些换装若走 string
+        // 条目，forge 侧反向会撞 //? 注释腿里的 to 形文本（GTMaterialItems:21/GTMenuTypes:20
+        // 已有 DeferredHolder import 注释腿；GT6DataComponents 惰性先例），regex 哨兵使 forge
+        // 侧预处理绝对零变化。证据一律 javap（universal 21.1.249 / recompile 21.1 jar）：
+        // · DeferredRegister.register = <I extends T> DeferredHolder<T, I>——supplier 具体型经
+        //   目标类型/lambda 推断保留；RegistryObject<T> 机械映射到 DeferredHolder<DR元素宽型, T>
+        //   （泛型参数位变化 = W2 不入表的原因，现按 DR 元素型逐条列目）；
+        // · DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T>；getId()/get() 与
+        //   RegistryObject 同义（GT6CapabilityWiringSeamTest 的 getId() pin 不变）；
+        // · FluidType 21.1 在 net.neoforged.neoforge.fluids 存在（fluids 子树 string 移位已覆盖
+        //   其 import）；ForgeFlowingFluid 21.1 改名 BaseFlowingFluid（Properties 三 supplier
+        //   构造同型）；IClientFluidTypeExtensions 在 client.extensions.common（移位已覆盖）；
+        // · LiquidBlock 21.1 vanilla 只有 (FlowingFluid, Properties) 构造（1.20.1 Forge 的
+        //   Supplier 重载不在）；vanilla 注册序 FLUID 先于 BLOCK（Registries.java 挂载序），
+        //   Block 注册事件内 .get() 已解析。
+        // 条目序：FQ 换包先行（防后半段换型留旧包前缀的缝合错误，W2 run1 教训），嵌套 BET
+        // 先于简单名，具体元素型先于块类兜底（兜底 [A-Za-z0-9]+ 两位起，不吃泛型字母 T）。
+        "net\\.minecraftforge\\.registries\\.RegistryObject(?![A-Za-z_])" to "net.neoforged.neoforge.registries.DeferredHolder",
+        "RegistryObject<BlockEntityType<([^<>()]+)>>" to "DeferredHolder<BlockEntityType<?>, BlockEntityType<$1>>",
+        "RegistryObject<net\\.minecraft\\.world\\.item\\.Item(?![A-Za-z_])>" to "DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.Item>",
+        "RegistryObject<net\\.minecraft\\.world\\.level\\.block\\.Block(?![A-Za-z_])>" to "DeferredHolder<Block, net.minecraft.world.level.block.Block>",
+        "RegistryObject<FlowingFluid(?![A-Za-z_])>" to "DeferredHolder<Fluid, FlowingFluid>",
+        "RegistryObject<FluidType(?![A-Za-z_])>" to "DeferredHolder<FluidType, FluidType>",
+        "RegistryObject<LiquidBlock(?![A-Za-z_])>" to "DeferredHolder<net.minecraft.world.level.block.Block, LiquidBlock>",
+        "RegistryObject<\\? extends ([A-Za-z0-9_.]+)>" to "DeferredHolder<Fluid, \$1>",
+        "RegistryObject<Fluid(?![A-Za-z_])>" to "DeferredHolder<Fluid, Fluid>",
+        "RegistryObject<Item(?![A-Za-z_])>" to "DeferredHolder<Item, Item>",
+        "RegistryObject<CreativeModeTab(?![A-Za-z_])>" to "DeferredHolder<CreativeModeTab, CreativeModeTab>",
+        "RegistryObject<([A-Z][A-Za-z0-9]+)>" to "DeferredHolder<Block, \$1>",
+        "RegistryObject::get" to "DeferredHolder::get",
+        // GTFluids：FLUID_TYPES 注册键与查询面（NeoForgeRegistries.FLUID_TYPES 是 Registry 本尊
+        // 非 Supplier，.get() 链一并消化）；ForgeMod 水类型常量 21.1 = NeoForgeMod 同名
+        // Holder<FluidType>（.value()）。三条目加左边界 (?<![A-Za-z_])：目标 NeoForgeRegistries
+        // 含子串 "ForgeRegistries"——无左断言会自撞（首轮实测：Neo + FQ 双前缀缝合）。
+        // ForgeMod 条目目标不带 ()：源 .get 后随的 () 残留即成 .value()（首轮 value()() 实测）。
+        "(?<![A-Za-z_])ForgeRegistries\\.FLUID_TYPES\\.get\\(\\)\\.getKey(?![A-Za-z_])" to "net.neoforged.neoforge.registries.NeoForgeRegistries.FLUID_TYPES.getKey",
+        "(?<![A-Za-z_])ForgeRegistries\\.Keys\\.FLUID_TYPES(?![A-Za-z_])" to "net.neoforged.neoforge.registries.NeoForgeRegistries.Keys.FLUID_TYPES",
+        "(?<![A-Za-z_])ForgeRegistries\\.FLUID_TYPES(?![A-Za-z_])" to "net.neoforged.neoforge.registries.NeoForgeRegistries.FLUID_TYPES",
+        "import net\\.minecraftforge\\.common\\.ForgeMod;" to "import net.neoforged.neoforge.common.NeoForgeMod;",
+        "ForgeMod\\.(WATER_TYPE|LAVA_TYPE)\\.get(?![A-Za-z_])" to "NeoForgeMod.\$1.value",
+        "ForgeFlowingFluid(?![A-Za-z_])" to "BaseFlowingFluid",
+        "new\\s+LiquidBlock\\(([A-Z][A-Z_0-9]*)," to "new LiquidBlock(\$1.get(),",
     ).forEach { (pattern, to) ->
         replacements.regex(neoforgeSide) {
             replace(pattern, to)

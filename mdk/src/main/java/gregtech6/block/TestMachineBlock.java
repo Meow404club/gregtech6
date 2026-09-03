@@ -29,6 +29,17 @@ public class TestMachineBlock extends GTEntityBlock {
 		super(aProperties);
 		mTicking = aTicking;
 	}
+	//? if neoforge {
+	/*
+	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+	// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+	// precedent — a parse-time default carrying no live config; world save/load never
+	// runs through this codec (the registry-id + property mapper does).
+	@Override
+	protected com.mojang.serialization.MapCodec<? extends TestMachineBlock> codec() {
+		return simpleCodec(aProperties -> new TestMachineBlock(true, aProperties));
+	}
+	*///?}
 
 	public boolean isTicking() {
 		return mTicking;

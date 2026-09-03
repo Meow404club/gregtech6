@@ -41,6 +41,17 @@ public class GTCokeOvenBlock extends GTMultiBlockControllerBlock {
 	public GTCokeOvenBlock(Properties aProperties) {
 		super(aProperties);
 	}
+	//? if neoforge {
+	/*
+	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+	// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+	// precedent — a parse-time default carrying no live config; world save/load never
+	// runs through this codec (the registry-id + property mapper does).
+	@Override
+	protected com.mojang.serialization.MapCodec<? extends GTCokeOvenBlock> codec() {
+		return simpleCodec(aProperties -> new GTCokeOvenBlock(aProperties));
+	}
+	*///?}
 
 	@Override
 	protected BlockEntityType<? extends gregtech6.tileentity.TileEntityBase03TicksAndSync> tickerType() {

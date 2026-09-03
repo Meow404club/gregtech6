@@ -44,6 +44,17 @@ public class GTLargeBoilerBlock extends GTMultiBlockControllerBlock {
 		super(aProperties);
 		mRow = aRow;
 	}
+	//? if neoforge {
+	/*
+	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+	// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+	// precedent — a parse-time default carrying no live config; world save/load never
+	// runs through this codec (the registry-id + property mapper does).
+	@Override
+	protected com.mojang.serialization.MapCodec<? extends GTLargeBoilerBlock> codec() {
+		return simpleCodec(aProperties -> new GTLargeBoilerBlock(GTMultiBlocks.LARGE_BOILER_ROWS.get(0), aProperties));
+	}
+	*///?}
 
 	/** The registration row (the BoilerTankBlock.row carrier read — output + wall variant). */
 	public GTMultiBlocks.LargeBoilerRow row() {

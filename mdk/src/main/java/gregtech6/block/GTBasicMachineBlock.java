@@ -119,6 +119,17 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	public GTBasicMachineBlock(Properties aProperties, Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType) {
 		this(aProperties, aTickerType, null);
 	}
+	//? if neoforge {
+	/*
+	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+	// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+	// precedent — a parse-time default carrying no live config; world save/load never
+	// runs through this codec (the registry-id + property mapper does).
+	@Override
+	protected com.mojang.serialization.MapCodec<? extends GTBasicMachineBlock> codec() {
+		return simpleCodec(aProperties -> new GTBasicMachineBlock(aProperties, () -> gregtech6.registry.GTMachines.OVEN_BE.get()));
+	}
+	*///?}
 
 	public GTBasicMachineBlock(Properties aProperties, Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, @Nullable MachineRow aRow) {
 		super(aProperties);

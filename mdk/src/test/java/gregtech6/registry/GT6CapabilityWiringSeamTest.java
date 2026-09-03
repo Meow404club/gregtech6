@@ -9,15 +9,16 @@ import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
  * The 1.20.1-side pin for {@link GT6CapabilityWiring} — the wiring class itself is a
- * 1.21.1-only file (its 1.20.1 leg is empty), so its lookup table cannot be read from here.
- * What CAN be pinned is the other half of every lookup: the registry rows the wiring targets.
- * If a row is renamed without updating the wiring's literal, this test fails here first.
- * (RegistryObject.getId() reads the name field set at construction — no registry binding
- * needed, the GT6ToolsCreativeTabTest javadoc precedent.)
+ * 1.21.1-only file (its 1.20.1 leg is empty), so its references cannot be read from here.
+ * What CAN be pinned is the other half of every reference: the registry rows the wiring
+ * resolves through its holder fields. If a row is renamed, this test fails here first.
+ * (RegistryObject.getId() on 1.20.1 / DeferredHolder.getId() on 21.1 both read the name
+ * field set at construction — no registry binding needed, the GT6ToolsCreativeTabTest
+ * javadoc precedent.)
  */
 public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 
-	/** The eight BlockEntityType paths the 21.1 wiring resolves by literal, per registry row. */
+	/** The eight BlockEntityType handles the 21.1 wiring dereferences, per registry row. */
 	@Test
 	public void beWiringPathsPinnedToRegistryRows() {
 		assertEquals("shredder", GTMachines.SHREDDER_BE.getId().getPath());
