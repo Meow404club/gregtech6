@@ -71,8 +71,16 @@ public class GTLargeBoilerBlock extends GTMultiBlockControllerBlock {
 	 * the wall MTE id pair becomes the Block identity the row carries).
 	 */
 	public net.minecraft.world.level.block.Block wallBlock() {
+		//? if forge {
 		net.minecraftforge.registries.RegistryObject<GTMultiBlockPartBlock> tHandle =
 				GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(mRow.wallPath());
+		//?} else {
+		/*net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.block.Block, GTMultiBlockPartBlock> tHandle =
+				GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(mRow.wallPath());
+		//21.1: the FQ-parameterised form is not covered by the swap's block-class fallback
+		//(simple-name only) and the bare FQ entry would leave DeferredHolder with one type
+		//argument (id258 family) — the exact two-parameter shape is spelled out here.
+		*///?}
 		return tHandle == null ? GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(GTMultiBlocks.WALL_ROWS.get(0).path()).get() : tHandle.get();
 	}
 
@@ -94,6 +102,7 @@ public class GTLargeBoilerBlock extends GTMultiBlockControllerBlock {
 	 * CONTROLLER block: barometer &gt; 4 while a NON-creative player breaks it → explode(T)
 	 * (instant). Creative players and sub-4 pressure just break it (the W3 form).
 	 */
+	//? if forge {
 	@Override
 	public void playerWillDestroy(Level aLevel, BlockPos aPos, BlockState aState, Player aPlayer) {
 		super.playerWillDestroy(aLevel, aPos, aState, aPlayer);
@@ -101,6 +110,18 @@ public class GTLargeBoilerBlock extends GTMultiBlockControllerBlock {
 			tBoiler.dismantle(aPlayer); // :314 — the creative check inside
 		}
 	}
+	//?} else {
+	/*@Override
+	public BlockState playerWillDestroy(Level aLevel, BlockPos aPos, BlockState aState, Player aPlayer) {
+	//21.1: BlockBehaviour.playerWillDestroy returns BlockState (void on 1.20.1, javap Block
+	//21.1.249) — the override return type drifts; the tail hands back the state untouched.
+		super.playerWillDestroy(aLevel, aPos, aState, aPlayer);
+		if (!aLevel.isClientSide && aLevel.getBlockEntity(aPos) instanceof TileEntityLargeBoiler tBoiler) {
+			tBoiler.dismantle(aPlayer); // :314 — the creative check inside
+		}
+		return aState;
+	}
+	*///?}
 
 	/**
 	 * Upstream :318-322 onExploded — the caught-in-a-neighbour's-explosion second blast

@@ -110,7 +110,14 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	// ---------------------------------------------------------------------------
 
 	@Override
+	//? if forge {
 	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+	//?} else {
+	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
+	//(javap BlockBehaviour 21.1.249); the game loop drives MAIN_HAND first.
+	InteractionHand aHand = InteractionHand.MAIN_HAND;
+	*///?}
 		ItemStack tStack = aPlayer.getItemInHand(aHand);
 		if (tStack.isEmpty() || !tStack.canPerformAction(ToolActions.HOE_DIG)) return InteractionResult.PASS;
 		if (aLevel.isClientSide) return InteractionResult.CONSUME; // claim the interaction, the BE executes server-side

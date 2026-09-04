@@ -14,7 +14,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
+//? if forge {
 import net.minecraftforge.network.NetworkHooks;
+//?}
 
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
@@ -67,14 +69,25 @@ public class GTExampleChestBlock extends GTEntityBlock {
 	}
 
 	@Override
+	//? if forge {
 	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+	//?} else {
+	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
+	//(javap BlockBehaviour 21.1.249); the game loop drives MAIN_HAND first.
+	InteractionHand aHand = InteractionHand.MAIN_HAND;
+	*///?}
 		// AbstractFurnaceBlock.use :39-45 shape
 		if (aLevel.isClientSide()) {
 			return InteractionResult.SUCCESS;
 		}
 		BlockEntity tBlockEntity = aLevel.getBlockEntity(aPos);
 		if (tBlockEntity instanceof GTExampleChestBlockEntity tChest && aPlayer instanceof ServerPlayer tServerPlayer && !isBlockedAbove(aLevel, aPos)) {
+			//? if forge {
 			NetworkHooks.openScreen(tServerPlayer, tChest, aPos); // upstream openGUI (TileEntityBase01Root.java:180)
+			//?} else {
+			/*tServerPlayer.openMenu(tChest, tBuf -> tBuf.writeBlockPos(aPos)); // 21.1: NetworkHooks deleted — ServerPlayer.openMenu(MenuProvider, buf) carries the pos payload (the command-file precedent)
+			*///?}
 		}
 		return InteractionResult.CONSUME;
 	}

@@ -84,7 +84,14 @@ public class GTCrankBlock extends GTEntityBlock {
 	}
 
 	@Override
+	//? if forge {
 	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+	//?} else {
+	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
+	//(javap BlockBehaviour 21.1.249); the game loop drives MAIN_HAND first.
+	InteractionHand aHand = InteractionHand.MAIN_HAND;
+	*///?}
 		// the GTOvenBlock.use client/server split shape, the body = upstream
 		// onBlockActivated3 :103-112 (server arm only, always consume — no GUI)
 		if (aLevel.isClientSide()) {

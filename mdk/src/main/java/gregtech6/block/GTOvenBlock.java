@@ -23,7 +23,9 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 import net.minecraftforge.common.ToolActions;
+//? if forge {
 import net.minecraftforge.network.NetworkHooks;
+//?}
 
 import gregtech6.covers.ICoverableTE;
 import gregtech6.registry.GTMachines;
@@ -156,7 +158,14 @@ public class GTOvenBlock extends GTEntityBlock {
 	}
 
 	@Override
+	//? if forge {
 	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+	//?} else {
+	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
+	//(javap BlockBehaviour 21.1.249); the game loop drives MAIN_HAND first.
+	InteractionHand aHand = InteractionHand.MAIN_HAND;
+	*///?}
 		// AbstractFurnaceBlock.use :39-45 shape, upstream onBlockActivated3 :483-486
 		if (aLevel.isClientSide()) {
 			return InteractionResult.SUCCESS;
@@ -186,7 +195,11 @@ public class GTOvenBlock extends GTEntityBlock {
 						(float) (aHit.getLocation().z - aPos.getZ())));
 				return InteractionResult.CONSUME;
 			}
+			//? if forge {
 			NetworkHooks.openScreen(tServerPlayer, tOven, aPos); // upstream openGUI
+			//?} else {
+			/*tServerPlayer.openMenu(tOven, tBuf -> tBuf.writeBlockPos(aPos)); // 21.1: NetworkHooks deleted — ServerPlayer.openMenu(MenuProvider, buf) carries the pos payload (the command-file precedent)
+			*///?}
 		}
 		return InteractionResult.CONSUME;
 	}

@@ -32,7 +32,14 @@ public final class FluidBridge {
 	/** The TCon molten-metal Liter convention (Loader_Fluids.java:161: 144 L per material unit). */
 	public static final long L_PER_MOLTEN_UNIT = 144;
 
+	//? if forge {
 	private static final Map<String, RegistryObject<? extends Fluid>> MOLTEN_FLUIDS = new HashMap<>();
+	//?} else {
+	/*private static final Map<String, net.neoforged.neoforge.registries.DeferredHolder<Fluid, ? extends Fluid>> MOLTEN_FLUIDS = new HashMap<>();
+	//21.1: the swap's wildcard entry ate the "? extends " literal segment (id258 family) —
+	//the type face is spelled out per leg here; the wildcard second parameter is covariant
+	//(Supplier/Holder read positions only), so the FlowingFluid holder puts in fine.
+	*///?}
 
 	static {
 		MOLTEN_FLUIDS.put("iron", GTFluids.IRON_MOLTEN);
@@ -44,8 +51,14 @@ public final class FluidBridge {
 	@Nullable
 	public static net.minecraft.world.level.material.Fluid moltenFluidForMaterial(@Nullable String aMaterialName) {
 		if (aMaterialName == null) return null;
+		//? if forge {
 		RegistryObject<? extends Fluid> tEntry = MOLTEN_FLUIDS.get(aMaterialName.toLowerCase(java.util.Locale.ROOT));
 		return tEntry == null || !tEntry.isPresent() ? null : tEntry.get();
+		//?} else {
+		/*net.neoforged.neoforge.registries.DeferredHolder<Fluid, ? extends Fluid> tEntry = MOLTEN_FLUIDS.get(aMaterialName.toLowerCase(java.util.Locale.ROOT));
+		//21.1: RegistryObject.isPresent → Holder.isBound (the command-file truth).
+		return tEntry == null || !tEntry.isBound() ? null : tEntry.get();
+		*///?}
 	}
 
 	/**

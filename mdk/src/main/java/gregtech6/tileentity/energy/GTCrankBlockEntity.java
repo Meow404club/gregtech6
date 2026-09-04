@@ -283,10 +283,19 @@ public class GTCrankBlockEntity extends TileEntityBase03TicksAndSync implements 
 	}
 
 	/** UT.Entities.pot (UT.java:3079-3086) — -1 without the effect, the amplifier bind6-clamped otherwise. */
+	//? if forge {
 	private static int pot(Player aPlayer, MobEffect aEffect) {
 		if (!aPlayer.hasEffect(aEffect)) return -1;
 		return Math.min(63, Math.max(0, aPlayer.getEffect(aEffect).getAmplifier()));
 	}
+	//?} else {
+	/*// 21.1: the MobEffects constants are Holder<MobEffect> and hasEffect/getEffect take the
+	//Holder (javap MobEffectInstance/MobEffects 21.1.249) — only the parameter type drifts.
+	private static int pot(Player aPlayer, net.minecraft.core.Holder<MobEffect> aEffect) {
+		if (!aPlayer.hasEffect(aEffect)) return -1;
+		return Math.min(63, Math.max(0, aPlayer.getEffect(aEffect).getAmplifier()));
+	}
+	*///?}
 
 	// ---------------------------------------------------------------------------
 	// facing (the BlockState is the command-side authority, the field the runtime mirror)
