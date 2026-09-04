@@ -189,6 +189,14 @@ def _intersects(a, b):
     return all(a[i] <= b[i + 3] and b[i] <= a[i + 3] for i in range(3))
 
 
+def _chain_exit(res):
+    """The chain-level exit from either record shape (perboot carries 'exit',
+    session records carry pass_failures/exception)."""
+    if "exit" in res:
+        return res["exit"]
+    return 1 if (_failed(res)) else 0
+
+
 def diff_results(old_path, new_path):
     """Per-chain, per-step verdict diff between two sweep JSONs."""
     old = json.loads(Path(old_path).read_text(encoding="utf-8"))
@@ -206,7 +214,7 @@ def diff_results(old_path, new_path):
     for name in sorted(names_old & names_new):
         o, n = old["chains"][name], new["chains"][name]
         ov, nv = o.get("verdicts") or [], n.get("verdicts") or []
-        if o["exit"] != n["exit"]:
+        if _chain_exit(o) != _chain_exit(n):
             print(f"  {name}: EXIT differs {o['exit']} -> {n['exit']}")
             hard += 1
             differences += 1
