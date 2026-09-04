@@ -186,6 +186,14 @@ class Step:
                  verdict semantics are byte-identical to a single shot and only
                  the timing mechanism changes. Replaces worst-case fixed sleeps
                  where the expect itself is the waited-for condition.
+    node_cmds  — per-node command overrides keyed by node_key(node) ("1.20.1",
+                 "1.21.1", ...). The chain-level dual-node sweep runs the same
+                 steps on both nodes; where a COMMAND's wire shape (not its
+                 assertion) is loader-versioned — the 21.1 FluidStack codec
+                 NBT keys vs the forge FluidName/Amount shape — the override
+                 swaps the key shape and ONLY the key shape: the judged expect,
+                 the verified target and the step order stay byte-identical
+                 (task p15-dual-gate-closure, the p12fic key-shape ruling).
     """
     cmd: str = None
     expect: str = None
@@ -193,6 +201,17 @@ class Step:
     sleep: float = 0.0
     poll: float = 0.0
     label: str = None
+    node_cmds: dict = None
+
+
+def step_cmd(step, node=None):
+    """The command this step runs on `node`: the node_cmds override when the
+    node has one, the plain cmd otherwise (the default-node shape)."""
+    if step.node_cmds and node is not None:
+        override = step.node_cmds.get(node_key(node))
+        if override is not None:
+            return override
+    return step.cmd
 
 
 def phase(label):
@@ -241,19 +260,19 @@ def _step_verdict(step, body):
     return "ALLOWED" if missed else "PASS"
 
 
-def _poll_step(client, step):
+def _poll_step(client, step, cmd):
     """Resend the command until it matches or the poll deadline; return the final body.
 
     run_command never raises on a silent server (it returns []), so a resend is
     always safe. Every attempt is a full honest command: probes are read-only
     stats in practice, and the final body — the one judged — is the last one sent.
     """
-    print(f"$ {step.cmd}   # poll <= {step.poll:g}s")
+    print(f"$ {cmd}   # poll <= {step.poll:g}s")
     deadline = time.monotonic() + step.poll
     attempts = 0
     while True:
         attempts += 1
-        outs = client.run_command(step.cmd)
+        outs = client.run_command(cmd)
         body = "\n".join(outs) if isinstance(outs, list) else str(outs)
         if _step_matches(step, body):
             return body
@@ -264,14 +283,16 @@ def _poll_step(client, step):
         time.sleep(POLL_INTERVAL)
 
 
-def run_steps(client, steps, verdicts=None):
+def run_steps(client, steps, verdicts=None, node=None):
     """Judge the steps of one pass against an authenticated RconClient.
 
     Returns the failure count. Label-only steps print headers and are skipped
     in numbering; command steps print the gt6rcon transcript and verdicts.
     `verdicts`, when given a list, receives one {"index", "cmd", "verdict"}
     record per command step — the per-step ledger the sweep runner diffs
-    between execution models (session vs per-chain boot).
+    between execution models (session vs per-chain boot). `node` resolves the
+    per-node command override (Step.node_cmds); the recorded cmd is the one
+    actually sent.
     """
     failure = 0
     index = 0
@@ -280,16 +301,17 @@ def run_steps(client, steps, verdicts=None):
             print(f"\n=== {step.label}")
             continue
         index += 1
+        cmd = step_cmd(step, node)
         if step.poll:
-            body = _poll_step(client, step)
+            body = _poll_step(client, step, cmd)
             print(body if body else "<no response>")
         else:
-            outs = client.run_command(step.cmd)
+            outs = client.run_command(cmd)
             body = "\n".join(outs) if isinstance(outs, list) else str(outs)
-            print(f"$ {step.cmd}\n{body if body else '<no response>'}")
+            print(f"$ {cmd}\n{body if body else '<no response>'}")
         failure += gt6rcon.judge_output(index, body, step.expect, step.allow_failed)
         if verdicts is not None:
-            verdicts.append({"index": index, "cmd": step.cmd,
+            verdicts.append({"index": index, "cmd": cmd,
                              "verdict": _step_verdict(step, body)})
         if step.sleep:
             time.sleep(step.sleep)
@@ -308,7 +330,7 @@ def _run_pass(chain, region_, rcon_port, number, total, verdicts=None):
             print(f"$ {command}   # gt6world bbox cleanup over the declared sites")
             client.run_command(command)
         time.sleep(1)
-        return run_steps(client, chain.steps, verdicts)
+        return run_steps(client, chain.steps, verdicts, node=chain.node)
 
 
 def run(chain, passes=None, verdicts=None):

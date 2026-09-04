@@ -50,8 +50,13 @@ TP_DROP = f"tp @e[type=item,x={BARREL.x},y={BARREL.y},z={BARREL.z},distance=..16
 # the item-entity kill sweep around the site (items are not touched by the bbox fill)
 KILL = f"kill @e[type=item,x={BARREL.x - 2},y={BARREL.y - 2},z={BARREL.z - 2},dx=4,dy=6,dz=4]"
 # the exact compound shape the drop carries (FluidStack NBT: FluidName + Amount) —
-# the same-key round trip through the real BE load
+# the same-key round trip through the real BE load. On the 21.1 node the BE load
+# face is the codec (FluidStack.parseOptional — the forge shape fails it to EMPTY,
+# probe-verified 2026-09-04: legacy keys land "holds 0", codec keys land 8000), so
+# the injection command swaps the KEY SHAPE only — same verified target, same
+# expect (task p15-dual-gate-closure; the shape rides Step.node_cmds).
 DROP_TANK = '{FluidName:"minecraft:water",Amount:8000}'
+DROP_TANK_1211 = '{id:"minecraft:water",amount:8000}'
 
 
 CHAIN = Chain(
@@ -75,7 +80,8 @@ CHAIN = Chain(
 
         phase("C: place back — the drop's tank compound reloads into the placed barrel"),
         Step(f"setblock {P} gt6:barrel_wood", expect="Changed the block"),
-        Step(f"data modify block {P} tank set value {DROP_TANK}", expect="Modified block data", sleep=1),
+        Step(f"data modify block {P} tank set value {DROP_TANK}", expect="Modified block data", sleep=1,
+             node_cmds={"1.21.1": f"data modify block {P} tank set value {DROP_TANK_1211}"}),
         Step(f"gt6tank show {P}", expect="holds 8000/16000 L of minecraft:water"),
 
         phase("D: drain 8000 — the wood barrel drains to a true empty (keepsFilter=F)"),

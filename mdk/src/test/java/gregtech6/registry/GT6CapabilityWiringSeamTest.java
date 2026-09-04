@@ -18,7 +18,11 @@ import gregtech6.tileentity.GTOfflineTestBase;
  */
 public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 
-	/** The eight BlockEntityType handles the 21.1 wiring dereferences, per registry row. */
+	/**
+	 * The nine BlockEntityType handles the 21.1 wiring dereferences, per registry row
+	 * (the ninth is the 2026-09-04 multiblock-part relay wiring — the pipe-hole family's
+	 * capability face, GT6CapabilityWiring MULTIBLOCK_PART_BE row).
+	 */
 	@Test
 	public void beWiringPathsPinnedToRegistryRows() {
 		assertEquals("shredder", GTMachines.SHREDDER_BE.getId().getPath());
@@ -29,6 +33,7 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		assertEquals("boiler_tank", GTBlockEntities.BOILER_TANK_BE.getId().getPath());
 		assertEquals("multiblock_large_boiler", GTMultiBlocks.LARGE_BOILER_BE.getId().getPath());
 		assertEquals("fluid_pipe", GTFluidPipes.FLUID_PIPE_BE.getId().getPath());
+		assertEquals("multiblock_part", GTMultiBlocks.MULTIBLOCK_PART_BE.getId().getPath());
 	}
 
 	/**
