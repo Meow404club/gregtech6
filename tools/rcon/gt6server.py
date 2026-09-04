@@ -196,7 +196,13 @@ def port_owner(port):
 
 
 def process_alive(pid):
-    """kill -0 semantics: True when the pid exists (a foreign-owned pid counts as alive)."""
+    """kill -0 semantics: True when the pid exists (a foreign-owned pid counts as alive).
+
+    A zombie counts as dead: an unreaped child of this interpreter still answers
+    kill -0, and wait_done must not blind-poll a boot that already exited
+    (2026-09-04: the first 1.21.1 crash left a defunct wrapper and the watcher
+    would have spun for its whole timeout).
+    """
     if pid is None:
         return False
     try:
@@ -207,7 +213,14 @@ def process_alive(pid):
         return True
     except OSError:
         return False
-    return True
+    try:
+        with open(f"/proc/{pid}/stat", "rb") as handle:
+            # stat = "pid (comm) state ..." — the state is the first field after
+            # the parenthesized comm (comm itself may contain spaces/parens).
+            state = handle.read().rsplit(b")", 1)[-1].split()[0]
+        return state != b"Z"
+    except (OSError, IndexError):
+        return True
 
 
 def log_tail(log_path, nbytes=8192):
