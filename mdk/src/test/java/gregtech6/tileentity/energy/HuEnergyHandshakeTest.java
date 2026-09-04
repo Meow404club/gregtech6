@@ -90,8 +90,13 @@ public class HuEnergyHandshakeTest extends GTOfflineTestBase {
 		public long injectionCalls = 0, acceptedAmount = 0, injectedWattage = 0, lastSize = -1, lastAmount = -1;
 		public byte lastSide = -1;
 
+		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
+		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		static final BlockEntityType<HuSink> FAKE_TYPE =
+				BlockEntityType.Builder.of((aPos, aState) -> new HuSink(aPos), Blocks.STONE).build(null);
+
 		public HuSink(BlockPos aPos) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(FAKE_TYPE, aPos, Blocks.STONE.defaultBlockState());
 		}
 
 		/**

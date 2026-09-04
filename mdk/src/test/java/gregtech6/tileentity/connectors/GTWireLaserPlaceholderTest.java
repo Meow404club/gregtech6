@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
@@ -63,13 +65,28 @@ public class GTWireLaserPlaceholderTest {
 		GTMaterialItems.initMaterials();
 		@SuppressWarnings("unchecked")
 		BlockEntityType<TestWire>[] tHolder = (BlockEntityType<TestWire>[]) new BlockEntityType<?>[1];
+		// 21.1 validates the BE type/state pair at the ctor: the valid set carries the
+		// cached GT6 wire blocks (task p15-m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
-				(aPos, aState) -> new TestWire(tHolder[0], aPos, aState), Blocks.STONE).build(null);
+				(aPos, aState) -> new TestWire(tHolder[0], aPos, aState),
+				Blocks.STONE, block(Family.LASER, MT.NULL, 0, 0), block(Family.ELECTRIC, MT.Sn, 32, 2)).build(null);
 		sType = tHolder[0];
 	}
 
-	/** Offline Block construction needs the block registry temporarily unfrozen (the UseLockTest form). */
+	/**
+	 * Offline Block construction needs the block registry temporarily unfrozen (the
+	 * UseLockTest form). Instances are memoized per carrier row — the 21.1 BE ctor
+	 * validates the state against the BET's valid set, so the fixture must hand out ONE
+	 * stable block identity per row (task p15-m4-test-infra-2).
+	 */
+	private record WireKey(Family aFamily, OreDictMaterial aMaterial, long aVoltage, long aLoss) {}
+
+	private static final Map<WireKey, GTWireBlock> sBlockCache = new HashMap<>();
+
 	private static GTWireBlock block(Family aFamily, OreDictMaterial aMaterial, long aVoltage, long aLoss) {
+		WireKey tKey = new WireKey(aFamily, aMaterial, aVoltage, aLoss);
+		GTWireBlock tCached = sBlockCache.get(tKey);
+		if (tCached != null) return tCached;
 		try {
 			Method tUnfreeze = BuiltInRegistries.BLOCK.getClass().getMethod("unfreeze");
 			tUnfreeze.setAccessible(true);
@@ -77,7 +94,9 @@ public class GTWireLaserPlaceholderTest {
 		} catch (Exception aE) {
 			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
 		}
-		return new GTWireBlock(aVoltage, 1, aLoss, aMaterial, 1, false, 6, aFamily, BlockBehaviour.Properties.of());
+		GTWireBlock tBlock = new GTWireBlock(aVoltage, 1, aLoss, aMaterial, 1, false, 6, aFamily, BlockBehaviour.Properties.of());
+		sBlockCache.put(tKey, tBlock);
+		return tBlock;
 	}
 
 	private static GTWireBlockEntity laserWire() {

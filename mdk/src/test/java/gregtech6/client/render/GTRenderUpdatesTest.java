@@ -35,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkSource;
@@ -47,6 +48,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.LevelTickAccess;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -57,6 +59,22 @@ import org.junit.jupiter.api.Test;
  * holder), extended with an isClientSide flag and event recording.
  */
 public class GTRenderUpdatesTest extends GTOfflineRenderTestBase {
+
+	/**
+	 * 21.1 BlockEntity ctor validation (validateBlockState → getType().isValid): the
+	 * RenderBE binds a real BET over the vanilla stone state — the supplier is stored,
+	 * never invoked. The BET registry needs its write window reopened after an FML boot
+	 * (the GTOfflineTestBase.unfreezeBlockEntityTypeRegistry mirror, task
+	 * p15-m4-test-infra-2).
+	 */
+	static BlockEntityType<RenderBE> sRenderType;
+
+	@BeforeAll
+	static void buildRenderFixture() {
+		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
+		sRenderType = BlockEntityType.Builder.of(
+				(aPos, aState) -> new RenderBE(new java.util.ArrayList<>()), Blocks.STONE).build(null);
+	}
 
 	/** Records the calls the pair is allowed to make, in order, across level and BE. */
 	static class RecordingLevel extends Level {
@@ -184,10 +202,9 @@ public class GTRenderUpdatesTest extends GTOfflineRenderTestBase {
 		final List<String> mTimeline;
 
 		RenderBE(List<String> aTimeline) {
-			// null BlockEntityType follows the established offline BE pattern
-			// (TileEntityBase03DispatchTest.RecordingBE); the state must be real because
-			// the server branch uses it as the blockEvent payload.
-			super(null, BlockPos.ZERO, Blocks.STONE.defaultBlockState());
+			// real BET + state: the 21.1 ctor validates the pair, and the server branch
+			// uses the state as the blockEvent payload (task p15-m4-test-infra-2).
+			super(sRenderType, BlockPos.ZERO, Blocks.STONE.defaultBlockState());
 			mTimeline = aTimeline;
 		}
 

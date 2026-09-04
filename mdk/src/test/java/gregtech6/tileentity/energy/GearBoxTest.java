@@ -81,8 +81,14 @@ public class GearBoxTest extends GTOfflineTestBase {
 		public final List<Long> calls = new ArrayList<>();
 		public long lastSize = 1;
 
+		// 21.1 ctor validation (validateBlockState → getType().isValid): the fake binds a
+		// real BET over the vanilla stone state — the supplier is stored, never invoked
+		// (task p15-m4-test-infra-2).
+		static final BlockEntityType<CappedSink> FAKE_TYPE =
+				BlockEntityType.Builder.of((aPos, aState) -> new CappedSink(aPos, 0), Blocks.STONE).build(null);
+
 		public CappedSink(BlockPos aPos, long aCap) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(FAKE_TYPE, aPos, Blocks.STONE.defaultBlockState());
 			cap = aCap;
 		}
 

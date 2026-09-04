@@ -64,6 +64,8 @@ public class TapFunnelTest extends GTOfflineTestBase {
 	static BlockEntityType<GTTapBlockEntity> sTapType;
 	static BlockEntityType<GTFunnelBlockEntity> sFunnelType;
 	static BlockEntityType<GTBarrelBlockEntity> sBarrelType;
+	static BlockEntityType<FakeTankBE> sFakeTankType;
+	static BlockEntityType<FakeFillableBE> sFakeFillableType;
 	static final BlockPos POS = new BlockPos(3, 4, 5);
 
 	@BeforeAll
@@ -78,6 +80,11 @@ public class TapFunnelTest extends GTOfflineTestBase {
 		BlockEntityType<GTBarrelBlockEntity>[] tBarrels = (BlockEntityType<GTBarrelBlockEntity>[]) new BlockEntityType<?>[1];
 		tBarrels[0] = BlockEntityType.Builder.of((aPos, aState) -> new GTBarrelBlockEntity(tBarrels[0], aPos, aState), Blocks.STONE).build(null);
 		sBarrelType = tBarrels[0];
+		// 21.1 BlockEntity ctor validates the type/state pair (validateBlockState →
+		// getType().isValid), so the fakes bind real BETs over the vanilla stone state
+		// too — the suppliers are stored, never invoked (task p15-m4-test-infra-2).
+		sFakeTankType = BlockEntityType.Builder.of((aPos, aState) -> new FakeTankBE(aPos, 0), Blocks.STONE).build(null);
+		sFakeFillableType = BlockEntityType.Builder.of((aPos, aState) -> new FakeFillableBE(aPos), Blocks.STONE).build(null);
 	}
 
 	@AfterEach
@@ -122,7 +129,7 @@ public class TapFunnelTest extends GTOfflineTestBase {
 		public long space = 4000;
 
 		FakeTankBE(BlockPos aPos, long aAmount) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(sFakeTankType, aPos, Blocks.STONE.defaultBlockState());
 			tank.set(aAmount);
 		}
 
@@ -149,7 +156,7 @@ public class TapFunnelTest extends GTOfflineTestBase {
 		public long space = 250;
 
 		FakeFillableBE(BlockPos aPos) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(sFakeFillableType, aPos, Blocks.STONE.defaultBlockState());
 		}
 
 		@Override

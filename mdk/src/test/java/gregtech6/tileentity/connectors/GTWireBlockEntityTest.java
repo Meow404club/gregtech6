@@ -51,8 +51,13 @@ public class GTWireBlockEntityTest extends GTOfflineTestBase {
 	public static class FakeSink extends BlockEntity implements ITileEntityEnergy {
 		public byte lastProbedSide = -1;
 
+		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
+		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		static final BlockEntityType<FakeSink> FAKE_TYPE =
+				BlockEntityType.Builder.of((aPos, aState) -> new FakeSink(aPos), Blocks.STONE).build(null);
+
 		public FakeSink(BlockPos aPos) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(FAKE_TYPE, aPos, Blocks.STONE.defaultBlockState());
 		}
 
 		@Override
@@ -103,8 +108,12 @@ public class GTWireBlockEntityTest extends GTOfflineTestBase {
 
 	/** Plain non-energy BE — must never connect. */
 	public static class PlainBox extends BlockEntity {
+		// 21.1 ctor validation: real BET over the vanilla stone state, supplier never invoked.
+		static final BlockEntityType<PlainBox> FAKE_TYPE =
+				BlockEntityType.Builder.of((aPos, aState) -> new PlainBox(aPos), Blocks.STONE).build(null);
+
 		public PlainBox(BlockPos aPos) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(FAKE_TYPE, aPos, Blocks.STONE.defaultBlockState());
 		}
 	}
 

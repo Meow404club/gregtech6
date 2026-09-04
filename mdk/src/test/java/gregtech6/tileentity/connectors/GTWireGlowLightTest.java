@@ -139,7 +139,12 @@ public class GTWireGlowLightTest extends GTOfflineTestBase {
 				BlockBehaviour.Properties.of());
 		sElectricWire = new GTWireBlock(32, 1, 2, MT.Sn, 1, false, 2, Family.ELECTRIC,
 				BlockBehaviour.Properties.of());
-		sType = BlockEntityType.Builder.of(GTWireBlockEntity::new, Blocks.STONE).build(null);
+		// 21.1 validates the BE type/state pair at the ctor (validateBlockState →
+		// getType().isValid), so the fixture BET's valid set carries the GT6 wire blocks
+		// the CountingWires are created over — the vanilla STONE stand-in alone cannot
+		// validate a wire state (task p15-m4-test-infra-2).
+		sType = BlockEntityType.Builder.of(GTWireBlockEntity::new,
+				Blocks.STONE, sLumiumWire, sLumiumCable, sRedAlloyWire, sElectricWire).build(null);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -274,6 +279,8 @@ public class GTWireGlowLightTest extends GTOfflineTestBase {
 	@Test
 	public void theSyncChannelsCarryTheSignal() {
 		CountingWire tWire = new CountingWire(POS, sLumiumWire.defaultBlockState());
+		WireLevel tServer = new WireLevel();
+		tWire.setLevel(tServer); // the block-update channel reads level.registryAccess() (21.1 packet face)
 		tWire.mRedstone = GTWireSpecs.MAX_RANGE * 9;
 		CompoundTag tTag = tWire.getUpdateTag(); // = saveWithoutMetadata → saveAdditional
 		assertTrue(tTag.contains(GTWireBlockEntity.NBT_MREDSTONE), "the chunk-data channel carries gt.mredstone");

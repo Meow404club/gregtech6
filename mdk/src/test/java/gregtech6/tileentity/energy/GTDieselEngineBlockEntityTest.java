@@ -71,8 +71,11 @@ public class GTDieselEngineBlockEntityTest extends GTOfflineTestBase {
 	@SuppressWarnings("unchecked")
 	static void buildOfflineFixture() {
 		BlockEntityType<GTDieselEngineBlockEntity>[] tHolder = (BlockEntityType<GTDieselEngineBlockEntity>[]) new BlockEntityType<?>[1];
+		// OAK_STAIRS joins the valid set for the facingMirrorSyncsFromState fixture (the
+		// vanilla stairs state carries the SAME HORIZONTAL_FACING property instance); 21.1
+		// validates the type/state pair at the BE ctor (task p15-m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
-				(aPos, aState) -> new GTDieselEngineBlockEntity(tHolder[0], aPos, aState), Blocks.STONE).build(null);
+				(aPos, aState) -> new GTDieselEngineBlockEntity(tHolder[0], aPos, aState), Blocks.STONE, Blocks.OAK_STAIRS).build(null);
 		sType = tHolder[0];
 
 		sFuelMap = new RecipeMap(new HashSet<>(), "gt.test.fuels", "Test Fuels", null, 0, 1,
@@ -117,8 +120,13 @@ public class GTDieselEngineBlockEntityTest extends GTOfflineTestBase {
 		public final List<Long> sizes = new ArrayList<>();
 		public byte lastSide = -1;
 
+		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
+		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		static final BlockEntityType<CountingSink> FAKE_TYPE =
+				BlockEntityType.Builder.of((aPos, aState) -> new CountingSink(aPos), Blocks.STONE).build(null);
+
 		public CountingSink(BlockPos aPos) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(FAKE_TYPE, aPos, Blocks.STONE.defaultBlockState());
 		}
 
 		@Override

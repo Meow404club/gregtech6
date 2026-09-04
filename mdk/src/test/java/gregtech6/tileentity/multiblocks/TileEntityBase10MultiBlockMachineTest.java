@@ -285,6 +285,9 @@ class TileEntityBase10MultiBlockMachineTest extends GTMultiBlocksOfflineTestBase
 		CompoundTag tTag = tOven.saveWithoutMetadata();
 
 		TestProcessingOven tRestored = new TestProcessingOven(sCokeOvenType, P1, Blocks.BRICKS.defaultBlockState());
+		// the load face reads level.registryAccess() for the provider-based inventory/fluid
+		// legs (21.1) — the fixture level supplies it (task p15-m4-test-infra-2)
+		tRestored.setLevel(tLevel);
 		tRestored.load(tTag);
 
 		assertEquals(42, tRestored.mEnergy);

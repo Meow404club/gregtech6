@@ -62,7 +62,10 @@ public class LargeBoilerPatternTest extends GTMultiBlocksOfflineTestBase {
 		tHolder[0] = BlockEntityType.Builder.of(PatternBoiler::new, Blocks.BRICKS, Blocks.STONE).build(null);
 		sBoilerType = tHolder[0];
 		BlockEntityType<HeatTransmitterBlockEntity>[] tTxHolder = (BlockEntityType<HeatTransmitterBlockEntity>[]) new BlockEntityType<?>[1];
-		tTxHolder[0] = BlockEntityType.Builder.of((aPos, aState) -> new HeatTransmitterBlockEntity(tTxHolder[0], aPos, aState), Blocks.BRICKS).build(null);
+		// the pattern mounts transmitters on the STONE cells (the part-BE factory below);
+		// 21.1 validates the type/state pair at the ctor, so STONE joins the valid set
+		// (task p15-m4-test-infra-2)
+		tTxHolder[0] = BlockEntityType.Builder.of((aPos, aState) -> new HeatTransmitterBlockEntity(tTxHolder[0], aPos, aState), Blocks.BRICKS, Blocks.STONE).build(null);
 		sTransmitterType = tTxHolder[0];
 	}
 
