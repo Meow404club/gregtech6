@@ -389,7 +389,15 @@ public final class GT6BurningBoxes {
 		}
 
 		@Override
+		//? if forge {
 		public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+		//?} else {
+		/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+		//21.1: BlockBehaviour.use folded into useWithoutItem (javap 21.1.249) — the
+		//InteractionHand param dropped from the signature; the game loop drives the hands
+		//in order and MAIN_HAND is the canonical first entry.
+		InteractionHand aHand = InteractionHand.MAIN_HAND;
+		*///?}
 			// the onBlockActivated3 :181 front gate — only the FRONT face reacts, and only
 			// the Solid/FluidBed families have a click face (the Liquid/GAS families move
 			// fluids through the tanks)
@@ -410,7 +418,14 @@ public final class GT6BurningBoxes {
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GTBlockEntities.onModConstruct doc). */
 	@SubscribeEvent
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
+		//? if forge {
 		IEventBus tModBus = Mod.EventBusSubscriber.Bus.MOD.bus().get();
+		//?} else {
+		/*IEventBus tModBus = net.neoforged.fml.ModList.get().getModContainerById("gt6").orElseThrow().getEventBus();
+		//21.1: Mod.EventBusSubscriber.Bus died with the annotation rework; a self-contained
+		//listener reaches the mod bus through its mod container (javap loader-4.0.44:
+		//ModContainer.getEventBus public abstract) — the GTMachines fork precedent.
+		*///?}
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
 	}

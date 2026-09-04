@@ -287,7 +287,14 @@ public final class GTBarrels {
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GTFluidPipes.onModConstruct shape). */
 	@SubscribeEvent
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
+		//? if forge {
 		IEventBus tModBus = Mod.EventBusSubscriber.Bus.MOD.bus().get();
+		//?} else {
+		/*IEventBus tModBus = net.neoforged.fml.ModList.get().getModContainerById("gt6").orElseThrow().getEventBus();
+		//21.1: Mod.EventBusSubscriber.Bus died with the annotation rework; a self-contained
+		//listener reaches the mod bus through its mod container (javap loader-4.0.44:
+		//ModContainer.getEventBus public abstract) — the GTMachines fork precedent.
+		*///?}
 		BLOCKS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
 		ITEMS.register(tModBus);

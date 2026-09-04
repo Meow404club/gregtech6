@@ -147,7 +147,14 @@ public final class GTMaterialBlocks {
                 continue;
             }
             OreDictPrefix tPrefix = tPair.prefix();
+            //? if forge {
             RegistryObject<Block> tHandle = RegistryObject.create(tLoc, Registries.BLOCK, "gt6");
+            //?} else {
+            /*DeferredHolder<Block, Block> tHandle = net.neoforged.neoforge.registries.DeferredHolder.create(Registries.BLOCK, tLoc);
+            //21.1: RegistryObject.create(name, key, modid) died with the class; DeferredHolder
+            //.create(key, id) is the same lazy registration handle (javap DeferredHolder 21.1.249:
+            //create(ResourceKey<? extends Registry<R>>, ResourceLocation)) — argument order swapped.
+            *///?}
             event.register(Registries.BLOCK, tLoc, () -> new GTMaterialPrefixBlock(tPrefix, tPair.material()));
             BLOCK_INDEX.put(tPair, tHandle);
             tTotal++;
@@ -169,7 +176,12 @@ public final class GTMaterialBlocks {
             OreDictPrefix tPrefix = tPair.prefix();
             event.register(Registries.ITEM, tLoc,
                     () -> new GTMaterialPrefixBlockItem(new Item.Properties(), tPrefix, tPair.material(), tBlock.get()));
+            //? if forge {
             INDEX.put(tPair, RegistryObject.create(tLoc, Registries.ITEM, "gt6"));
+            //?} else {
+            /*INDEX.put(tPair, net.neoforged.neoforge.registries.DeferredHolder.create(Registries.ITEM, tLoc));
+            //21.1: same DeferredHolder.create(key, id) mapping as the registerBlocks arm above.
+            *///?}
             tTotal++;
         }
         GT6Mod.LOGGER.info("GT6 registered {} material prefix block items in total", tTotal);

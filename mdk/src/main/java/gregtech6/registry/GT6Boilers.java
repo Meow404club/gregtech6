@@ -286,6 +286,7 @@ public final class GT6Boilers {
 		 * pressure just break it. This is the pre-removal player face, NOT an onRemove
 		 * override (the card red line).
 		 */
+		//? if forge {
 		@Override
 		public void playerWillDestroy(Level aLevel, BlockPos aPos, BlockState aState, Player aPlayer) {
 			super.playerWillDestroy(aLevel, aPos, aState, aPlayer);
@@ -293,6 +294,19 @@ public final class GT6Boilers {
 				tBoiler.dismantle(aPlayer); // :203 — the creative check inside
 			}
 		}
+		//?} else {
+		/*@Override
+		public BlockState playerWillDestroy(Level aLevel, BlockPos aPos, BlockState aState, Player aPlayer) {
+		//21.1: BlockBehaviour.playerWillDestroy returns BlockState (void on 1.20.1, javap
+		//Block 21.1.249) — the override return type drifts; the tail hands back the state
+		//untouched (vanilla TntBlock return-shape, no state swap on this path).
+			super.playerWillDestroy(aLevel, aPos, aState, aPlayer);
+			if (!aLevel.isClientSide && aLevel.getBlockEntity(aPos) instanceof GTBoilerTankBlockEntity tBoiler) {
+				tBoiler.dismantle(aPlayer); // :203 — the creative check inside
+			}
+			return aState;
+		}
+		*///?}
 
 		/**
 		 * Upstream :208-211 onExploded — the caught-in-a-neighbour's-explosion second blast.
@@ -315,7 +329,14 @@ public final class GT6Boilers {
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GTBlockEntities.onModConstruct doc). */
 	@SubscribeEvent
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
+		//? if forge {
 		IEventBus tModBus = Mod.EventBusSubscriber.Bus.MOD.bus().get();
+		//?} else {
+		/*IEventBus tModBus = net.neoforged.fml.ModList.get().getModContainerById("gt6").orElseThrow().getEventBus();
+		//21.1: Mod.EventBusSubscriber.Bus died with the annotation rework; a self-contained
+		//listener reaches the mod bus through its mod container (javap loader-4.0.44:
+		//ModContainer.getEventBus public abstract) — the GTMachines fork precedent.
+		*///?}
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
 	}
