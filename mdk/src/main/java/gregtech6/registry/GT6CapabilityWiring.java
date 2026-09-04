@@ -141,10 +141,22 @@ public final class GT6CapabilityWiring {
 	// BarrelFluidHandler per call, the side part of the handler identity (the gasProof-quartet
 	// comment there). The provider lambda keeps the fresh-per-call semantics verbatim —
 	// NOT a memoized handler, or the first-queried side would freeze into it.
+	//
+	// ALL FOUR barrel BETs, not just the wood one (2026-09-04, ADR-P15-4 runtime gate):
+	// registerBlockEntity resolves against the BET's validBlocks — the wood-only row left
+	// metal/plastic/logistics drums capability-blind on this node (live probe: both
+	// "gt6tank fill ... CAPABILITY MISSING" sided AND side-less; the forge leg cannot see
+	// the gap because every BE overrides getCapability directly). One BET per material
+	// row (GTBarrels:83/:104/:207/:240), same fresh-per-call provider for all.
 
 	private static void registerBarrelBlockFluidHandler(RegisterCapabilitiesEvent aEvent) {
-		BlockEntityType<GTBarrelBlockEntity> tBarrel = GTBarrels.BARREL_BE.get();
-		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBarrel,
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GTBarrels.BARREL_BE.get(),
+				(aBe, aSide) -> new BarrelFluidHandler(aBe, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GTBarrels.BARREL_PLASTIC_BE.get(),
+				(aBe, aSide) -> new BarrelFluidHandler(aBe, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GTBarrels.BARREL_METAL_BE.get(),
+				(aBe, aSide) -> new BarrelFluidHandler(aBe, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GTBarrels.BARREL_LOGISTICS_BE.get(),
 				(aBe, aSide) -> new BarrelFluidHandler(aBe, aSide));
 	}
 
