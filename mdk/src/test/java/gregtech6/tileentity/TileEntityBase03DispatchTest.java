@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import org.junit.jupiter.api.Test;
 
@@ -23,8 +25,17 @@ public class TileEntityBase03DispatchTest extends GTOfflineTestBase {
 		boolean mThrowInOnTick = false;
 		boolean mForceCheck = false;
 
+		/**
+		 * 21.1 BlockEntity ctor validates its type/state pair (validateBlockState →
+		 * getType().isValid(), javap 21.1.249), so the fixture binds a synthetic BET over
+		 * the vanilla stone block instead of the pre-21.1 nulls (task p15-m4-test-infra).
+		 * The supplier is stored, never invoked — no init cycle with TEST_TYPE.
+		 */
+		private static final BlockEntityType<RecordingBE> TEST_TYPE = BlockEntityType.Builder
+				.of((aPos, aState) -> new RecordingBE(true), Blocks.STONE).build(null);
+
 		RecordingBE(boolean aTicking) {
-			super(aTicking, null, BlockPos.ZERO, null);
+			super(aTicking, TEST_TYPE, BlockPos.ZERO, Blocks.STONE.defaultBlockState());
 		}
 
 		@Override
