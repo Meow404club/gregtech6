@@ -19,7 +19,10 @@ import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.machines.TileEntityOven;
+import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
+import gregtech6.tileentity.tank.BarrelFluidHandler;
+import gregtech6.tileentity.tank.GTBarrelBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
 
 // RegisterCapabilitiesEvent wiring (task p15-adapt-registry-core) — the 1.21.1 leg of the two
@@ -31,7 +34,10 @@ import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
 //   registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)).
 //   Capability coverage mirrors each forge getCapability exactly: shredder/crusher/lathe
 //   serve item + fluid, the oven serves item only, boiler tank/steam engine/large
-//   boiler/fluid pipe serve fluid only.
+//   boiler/fluid pipe serve fluid only. The commands-card handoff (p15-adapt-commands)
+//   adds the coke-oven pair (item + fluid off the TileEntityBase10MultiBlockMachine seam)
+//   and the barrel BLOCK fluid face (the fresh-per-call BarrelFluidHandler) — both were
+//   CAPABILITY MISSING at runtime before this card.
 // · item carrier (p15-fork-carrier-components): GTBarrelBlockItem.initCapabilities is
 //   Forge-only; on 21.1 the same GTBarrelItemFluidHandler construction (capacityL AND the
 //   gasProof row flag off the block carrier) rides registerItem instead. The item face is
@@ -73,6 +79,8 @@ public final class GT6CapabilityWiring {
 	@SubscribeEvent
 	public static void onRegisterCapabilities(RegisterCapabilitiesEvent aEvent) {
 		registerMachineBlockEntities(aEvent);
+		registerCokeOvenFaces(aEvent);
+		registerBarrelBlockFluidHandler(aEvent);
 		registerBarrelItemHandlers(aEvent);
 	}
 
@@ -112,6 +120,32 @@ public final class GT6CapabilityWiring {
 		BlockEntityType<GTFluidPipeBlockEntity> tPipe = GTFluidPipes.FLUID_PIPE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPipe,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+	}
+
+	// -- the coke oven (p8 multiblock controller; the commands-card handoff) --
+	// The forge face lives on TileEntityBase10MultiBlockMachine.getCapability (item = the
+	// gated inventory surface, fluid = the fresh per-side MultiBlockFluidHandler); the 21.1
+	// seam member of the same shape (:731) serves both through the same lambda form as the
+	// machines above.
+
+	private static void registerCokeOvenFaces(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<TileEntityCokeOven> tOven = GTMultiBlocks.COKE_OVEN_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tOven,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+	}
+
+	// -- the barrel block (p4/p6 tank family) --
+	// The forge face is TileEntityBase08Barrel.getCapability: FLUID_HANDLER → a FRESH
+	// BarrelFluidHandler per call, the side part of the handler identity (the gasProof-quartet
+	// comment there). The provider lambda keeps the fresh-per-call semantics verbatim —
+	// NOT a memoized handler, or the first-queried side would freeze into it.
+
+	private static void registerBarrelBlockFluidHandler(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GTBarrelBlockEntity> tBarrel = GTBarrels.BARREL_BE.get();
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBarrel,
+				(aBe, aSide) -> new BarrelFluidHandler(aBe, aSide));
 	}
 
 // (The former id-lookup helper — BuiltInRegistries.BLOCK_ENTITY_TYPE.get + an unchecked

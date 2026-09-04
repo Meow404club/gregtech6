@@ -726,6 +726,20 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	   // expose through the RegisterCapabilitiesEvent provider wiring
 	   // (net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent); the fluid side
 	   // keeps the fresh-wrapper-per-call semantics in the provider lambda.
+	   //
+	   // The seam the wiring delegates to (the TileEntityLargeBoiler:727 form — no @Override,
+	   // forge getCapability :704-715 mirrored): the gated item surface is rebuilt fresh per
+	   // query here (the forge mGatedCap LazyOptional memoizes, but the wrapper is a stateless
+	   // view over mInventory, so fresh-per-call is semantically identical).
+	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
+		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
+			return (T) new GatedItemHandler();
+		}
+		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK) {
+			return (T) new MultiBlockFluidHandler(this, aSide);
+		}
+		return null;
+	}
 	 *///?}
 
 	// ---------------------------------------------------------------------------
