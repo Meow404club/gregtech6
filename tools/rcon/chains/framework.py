@@ -546,6 +546,11 @@ def run_session_recorded(chains, node=None, concurrency=None):
     gt6server.provision_run_dir(WORKTREE_ROOT, game_port, rcon_port, query_port,
                                 password, node=node)
     boot_timeout = max(chain.boot_timeout for chain in chains)
+    if concurrency > 1:
+        # vanilla routes every rcon command through one server-wide
+        # RconConsoleSource (DedicatedServer.java:517-521) — concurrent streams
+        # cross-contaminate responses unless the wire is atomic per command
+        gt6rcon.set_wire_lock(threading.Lock())
     pid = gt6server.start_server(WORKTREE_ROOT, log_path, pid_path, gradle_task=task)
     results = {}
     waves_seen = []
@@ -575,6 +580,7 @@ def run_session_recorded(chains, node=None, concurrency=None):
                 _run_wave(wave, rcon_port, log_path, slug, results, lock)
     finally:
         gt6server.stop_server(pid_path, rcon=(chains[0].host, rcon_port, password))
+        gt6rcon.set_wire_lock(None)
 
     for name, res in results.items():
         print(f"[{slug}] {name}: pass failures {res['pass_failures']}, "

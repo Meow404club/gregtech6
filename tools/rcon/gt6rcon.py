@@ -119,6 +119,26 @@ def auth(sock, password, drain_window=DEFAULT_AUTH_DRAIN):
     return rid
 
 
+# The wire lock (optional, set by the concurrent session executor): vanilla's
+# DedicatedServer.runCommand (DedicatedServer.java:517-521) routes EVERY rcon
+# command through ONE server-wide RconConsoleSource — prepareForCommand() clears
+# the shared output buffer, the command writes into it, getCommandResponse()
+# reads it back. Two concurrent rcon connections therefore cross-contaminate
+# responses (observed live 2026-09-04: chain A's stat step answered with chain
+# B's response text, both commands logged executed). Holding this lock from
+# send until THIS connection's first response frame keeps the shared-source
+# cycle atomic per command; the quiet-window collection tail that follows runs
+# outside the lock, so the client-side overlap — the concurrency payoff — is
+# preserved. Never set for the CLI / per-chain boot / serial session paths.
+_WIRE_LOCK = None
+
+
+def set_wire_lock(lock):
+    """Install (or clear with None) the cross-thread rcon wire lock."""
+    global _WIRE_LOCK
+    _WIRE_LOCK = lock
+
+
 def run_command(sock, command, req_id,
                 first_timeout=DEFAULT_FIRST_TIMEOUT, quiet_window=DEFAULT_QUIET_WINDOW):
     """SERVERDATA_EXECCOMMAND; return every response payload for req_id as a list.
@@ -126,27 +146,43 @@ def run_command(sock, command, req_id,
     Responses can arrive split and late (live observation), so: wait up to
     first_timeout for the first matching frame, then keep collecting for up to
     quiet_window of silence. Non-matching frames (strays, late neighbours) are
-    discarded rather than misattributed.
+    discarded rather than misattributed. With the wire lock installed, the lock
+    is held from the send until the first matching frame — the proof that the
+    server's shared RconConsoleSource cycle has completed for this command.
     """
-    send_packet(sock, req_id, SERVERDATA_EXECCOMMAND, command.encode("utf-8"))
-    outs = []
-    deadline = time.monotonic() + first_timeout
-    while True:
-        remaining = deadline - time.monotonic()
-        if remaining <= 0:
-            break
-        sock.settimeout(remaining)
-        try:
-            rid, _, out = read_packet(sock)
-        except (socket.timeout, TimeoutError):
-            continue
-        except (ConnectionError, OSError):
-            break
-        if rid == req_id and out:
-            outs.append(out)
-            # after the first hit, stop at the next quiet_window of silence
-            deadline = min(deadline, time.monotonic() + quiet_window)
-    return outs
+    locked = _WIRE_LOCK is not None
+    if locked:
+        _WIRE_LOCK.acquire()
+    first_matched = False
+    try:
+        send_packet(sock, req_id, SERVERDATA_EXECCOMMAND, command.encode("utf-8"))
+        outs = []
+        deadline = time.monotonic() + first_timeout
+        quiet_deadline = None
+        while True:
+            remaining = (deadline if quiet_deadline is None else quiet_deadline) \
+                - time.monotonic()
+            if remaining <= 0:
+                break
+            sock.settimeout(remaining)
+            try:
+                rid, _, out = read_packet(sock)
+            except (socket.timeout, TimeoutError):
+                continue
+            except (ConnectionError, OSError):
+                break
+            if rid == req_id and out:
+                if locked and not first_matched:
+                    _WIRE_LOCK.release()
+                    locked = False
+                first_matched = True
+                outs.append(out)
+                # after the first hit, stop at the next quiet_window of silence
+                quiet_deadline = time.monotonic() + quiet_window
+        return outs
+    finally:
+        if locked:
+            _WIRE_LOCK.release()
 
 
 class RconClient:
