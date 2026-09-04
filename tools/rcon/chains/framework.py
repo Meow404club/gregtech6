@@ -57,11 +57,18 @@ class Step:
     allow_failed — FAILED marker / missed expect reported ALLOWED, not counted
     sleep      — seconds to wait after the command (tick-driven assertions:
                  hopper transfers need real server ticks to happen)
+    poll       — poll-to-expect: RESEND the command until the response matches
+                 (the single-shot judge's pass condition) or this many seconds
+                 elapse; the final response is then judged exactly once, so the
+                 verdict semantics are byte-identical to a single shot and only
+                 the timing mechanism changes. Replaces worst-case fixed sleeps
+                 where the expect itself is the waited-for condition.
     """
     cmd: str = None
     expect: str = None
     allow_failed: bool = False
     sleep: float = 0.0
+    poll: float = 0.0
     label: str = None
 
 
@@ -88,11 +95,55 @@ class Chain:
                                                 # --node <name> overrides for dual-node sweeps)
 
 
-def run_steps(client, steps):
+POLL_INTERVAL = 1.0      # seconds between poll resends (server ticks pace the state)
+
+
+def _step_matches(step, body):
+    """The single-shot judge's pass condition, without printing — the poll gate."""
+    if "FAILED" in body and not step.allow_failed:
+        return False
+    return step.expect is None or step.expect in body
+
+
+def _step_verdict(step, body):
+    """The verdict string for the record: the same two conditions judge_output scores."""
+    missed = "FAILED" in body or (step.expect is not None and step.expect not in body)
+    if missed and not step.allow_failed:
+        return "FAIL"
+    return "ALLOWED" if missed else "PASS"
+
+
+def _poll_step(client, step):
+    """Resend the command until it matches or the poll deadline; return the final body.
+
+    run_command never raises on a silent server (it returns []), so a resend is
+    always safe. Every attempt is a full honest command: probes are read-only
+    stats in practice, and the final body — the one judged — is the last one sent.
+    """
+    print(f"$ {step.cmd}   # poll <= {step.poll:g}s")
+    deadline = time.monotonic() + step.poll
+    attempts = 0
+    while True:
+        attempts += 1
+        outs = client.run_command(step.cmd)
+        body = "\n".join(outs) if isinstance(outs, list) else str(outs)
+        if _step_matches(step, body):
+            return body
+        if time.monotonic() >= deadline:
+            print(f"  [poll: giving up after {step.poll:g}s, {attempts} attempts]")
+            return body
+        print(f"  [poll {attempts}: not yet]")
+        time.sleep(POLL_INTERVAL)
+
+
+def run_steps(client, steps, verdicts=None):
     """Judge the steps of one pass against an authenticated RconClient.
 
     Returns the failure count. Label-only steps print headers and are skipped
     in numbering; command steps print the gt6rcon transcript and verdicts.
+    `verdicts`, when given a list, receives one {"index", "cmd", "verdict"}
+    record per command step — the per-step ledger the sweep runner diffs
+    between execution models (session vs per-chain boot).
     """
     failure = 0
     index = 0
@@ -101,16 +152,23 @@ def run_steps(client, steps):
             print(f"\n=== {step.label}")
             continue
         index += 1
-        outs = client.run_command(step.cmd)
-        body = "\n".join(outs) if isinstance(outs, list) else str(outs)
-        print(f"$ {step.cmd}\n{body if body else '<no response>'}")
+        if step.poll:
+            body = _poll_step(client, step)
+            print(body if body else "<no response>")
+        else:
+            outs = client.run_command(step.cmd)
+            body = "\n".join(outs) if isinstance(outs, list) else str(outs)
+            print(f"$ {step.cmd}\n{body if body else '<no response>'}")
         failure += gt6rcon.judge_output(index, body, step.expect, step.allow_failed)
+        if verdicts is not None:
+            verdicts.append({"index": index, "cmd": step.cmd,
+                             "verdict": _step_verdict(step, body)})
         if step.sleep:
             time.sleep(step.sleep)
     return failure
 
 
-def _run_pass(chain, region_, rcon_port, number, total):
+def _run_pass(chain, region_, rcon_port, number, total, verdicts=None):
     print(f"\n===== {chain.name} pass {number}/{total} =====")
     with gt6rcon.RconClient(chain.host, rcon_port, chain.password,
                             first_timeout=chain.response_timeout) as client:
@@ -122,11 +180,16 @@ def _run_pass(chain, region_, rcon_port, number, total):
             print(f"$ {command}   # gt6world bbox cleanup over the declared sites")
             client.run_command(command)
         time.sleep(1)
-        return run_steps(client, chain.steps)
+        return run_steps(client, chain.steps, verdicts)
 
 
-def run(chain, passes=None):
-    """Boot the server, run all passes, stop precisely; return the exit code."""
+def run(chain, passes=None, verdicts=None):
+    """Boot the server, run all passes, stop precisely; return the exit code.
+
+    This is the per-chain boot model, kept byte for byte as the GT6_SESSION=off
+    fallback path (decision 2026-09-04-rcon-gate-split ④). `verdicts`, when given
+    a list, receives the per-step verdict ledger of every pass.
+    """
     passes = chain.passes if passes is None else passes
     node = chain.node or requested_node() or DEFAULT_NODE
     task = gt6server.gradle_task(node)
@@ -155,7 +218,8 @@ def run(chain, passes=None):
               f"({gt6world.command_blocks_used(region_)} blocks, "
               f"{len(gt6world.cleanup_commands(region_))} fill)")
         for number in range(1, passes + 1):
-            per_pass.append(_run_pass(chain, region_, rcon_port, number, passes))
+            per_pass.append(_run_pass(chain, region_, rcon_port, number, passes,
+                                      verdicts))
     finally:
         gt6server.stop_server(pid_path, rcon=(chain.host, rcon_port, chain.password))
 
