@@ -97,9 +97,14 @@ public class FluidTankGT implements IFluidTank {
 				}
 				//?} else {
 				/*// 21.1 leg: parseOptional rides the codec face; a degraded payload lands EMPTY.
-				//KNOWN 21.1 DELTA: the keepFilter payload (Amount 0 + real FluidName) collapses to
-				//EMPTY through OPTIONAL_CODEC's xmap, so the kept identity is lost across a 21.1
-				//save/load — the forge leg's raw-fluid rebuild has no public API to feed it.
+				//KNOWN 21.1 DELTA (scope corrected, p15-prod-fix-fluidstack-save): ONLY the 0-amount
+				//keepFilter payload is lost — it carries no codec keys ("FluidName"/"Amount" are the
+				//forge shapes), so parseOptional fails it to EMPTY (javap 21.1.249:
+				//parse(...).orElse(EMPTY), never throws) and the kept identity does not survive a
+				//21.1 save/load; the forge leg's raw-fluid rebuild has no public API to feed it.
+				//NON-ZERO roundtrips are lossless now that writeToNBT keeps the save() return tag —
+				//the earlier "3 red FluidTankGTTest roundtrips" were that discarded-return bug, not
+				//this delta.
 				mFluid = FluidStack.parseOptional(nbtAccess(), tNBT);
 				if (mFluid.getFluid() == Fluids.EMPTY) {
 					mFluid = null; // a legacy degraded payload or a codec-collapsed 0-amount: a truly empty tank
@@ -145,7 +150,22 @@ public class FluidTankGT implements IFluidTank {
 				//? if forge {
 				tCopy.writeToNBT(tNBT);
 				//?} else {
-				/*tCopy.save(nbtAccess(), tNBT); // 21.1: the codec save face (writeToNBT deleted)
+				/*// 21.1: the codec save face (writeToNBT deleted). save(Provider, Tag) RETURNS a fresh
+				//tag and never writes the passed one (javap 21.1.249: wrapEncodingExceptions →
+				//CODEC.encode(..., prefix).getOrThrow() — the probe target stayed {}), so the return
+				//value must be kept: discarding it wrote a permanently empty {tank:{}} and every
+				//roundtrip read folded to 0 (p15-prod-fix-fluidstack-save). The cast is safe — the
+				//fluid record codec only ever emits a CompoundTag ({"id", "amount"}), and the
+				//LAmount overflow below needs the CompoundTag surface anyway. The passed tag stays
+				//as the DFU prefix argument; the codec emits its own {"id","amount"} shape.
+				tNBT = (CompoundTag)tCopy.save(nbtAccess(), tNBT);
+				// Upstream :73 byte-compat (ADR-P15-1): the GT6 contract keys must stay present next
+				// to the codec's own face — "Amount" (the int-bound value) and "FluidName" (the
+				// identity) are what the drop-item/item-handler payloads and legacy GT6 readers
+				// name; the read side (parseOptional) ignores unknown keys, and LAmount below rides
+				// the same tag either way.
+				tNBT.putString("FluidName", net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(tCopy.getFluid()).toString());
+				tNBT.putInt("Amount", bindInt(mAmount));
 				*///?}
 			}
 			aNBT.put(aKey, tNBT);
