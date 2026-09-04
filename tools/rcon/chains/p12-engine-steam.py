@@ -104,9 +104,11 @@ CHAIN = Chain(
         Step(f"setblock {F(DWTANK)} gt6:barrel_wood", expect="Changed the block"),
         Step(f"gt6engine mode {F(ENGINE)} on", expect=": on (stopped=false)"),
         *RAMP_FILLS,
-        # poll-to-expect (the old sleep=8): out[0]= IS the first-completion condition;
-        # the byproduct stat below polls its own monotonic accumulation in turn
-        Step(f"gt6machine crusher check {F(CRUSHER)}", expect="out[0]=", poll=12.0),
+        # poll-to-expect: out[0]= IS the completion condition. The R1-full run
+        # measured the real production window: the old shape gave 28 s (the fill-8
+        # sleep=20 + this check's sleep=8) and the crusher needs ~18 s + spin-up, so
+        # the poll bound is 35 s — the old effective window restored with margin.
+        Step(f"gt6machine crusher check {F(CRUSHER)}", expect="out[0]=", poll=35.0),
         Step(f"gt6tank stat {F(DWTANK)}", expect="L of gt6:distilled_water", poll=10.0),
 
         phase("C: the intake door's stopped-refusal proof (mode off -> filled 0 -> mode on)"),
