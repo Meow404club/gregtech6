@@ -70,8 +70,11 @@ FILL = f"gt6engine fill {F(ENGINE)} 24000"
 FILL2 = f"gt6engine fill {F(ENGINE2)} 3200"
 
 # The working arm's metered store: 8 x 24,000 L (one drum-batch less than the tank's
-# 25,600 L ceiling per landing, converted within the tick between fills).
-RAMP_FILLS = [Step(FILL, expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=20.0 if i == 7 else 0.5)
+# 25,600 L ceiling per landing, converted within the tick between fills). The LAST
+# landing waits for drained head-room: poll-to-expect (the old worst-case sleep=20) —
+# a REJECTED fill changes nothing, so resend until it is ACCEPTED.
+RAMP_FILLS = [Step(FILL, expect="filled 24000/24000 L of gt6:steam (ACCEPTED)",
+                   poll=30.0 if i == 7 else 0.5)
               for i in range(8)]
 # The overheat arm: 15 accepted fills stay under the clamp, 5 un-asserted ones cross it
 # (the state-31 emission bleeds 16 KU/tick, so the last ~240 KU take two extra fills —
@@ -101,8 +104,12 @@ CHAIN = Chain(
         Step(f"setblock {F(DWTANK)} gt6:barrel_wood", expect="Changed the block"),
         Step(f"gt6engine mode {F(ENGINE)} on", expect=": on (stopped=false)"),
         *RAMP_FILLS,
-        Step(f"gt6machine crusher check {F(CRUSHER)}", expect="out[0]=", sleep=8.0),
-        Step(f"gt6tank stat {F(DWTANK)}", expect="L of gt6:distilled_water"),
+        # poll-to-expect: out[0]= IS the completion condition. The R1-full run
+        # measured the real production window: the old shape gave 28 s (the fill-8
+        # sleep=20 + this check's sleep=8) and the crusher needs ~18 s + spin-up, so
+        # the poll bound is 35 s — the old effective window restored with margin.
+        Step(f"gt6machine crusher check {F(CRUSHER)}", expect="out[0]=", poll=35.0),
+        Step(f"gt6tank stat {F(DWTANK)}", expect="L of gt6:distilled_water", poll=10.0),
 
         phase("C: the intake door's stopped-refusal proof (mode off -> filled 0 -> mode on)"),
         Step(f"gt6engine mode {F(ENGINE)} off", expect=": off (stopped=true)"),

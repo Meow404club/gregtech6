@@ -28,12 +28,19 @@ the KNOWN DELTA note: LOST (player-visible difference for architect adjudication
 import argparse
 import sys
 import time
+from pathlib import Path
 
-sys.path.insert(0, "/home/brokestar/workspace/MGT6GA/MGT6GA-trees/p15-rcon-dual-gate/tools/rcon")
+# .../tools/rcon/chains/p15_keepfilter_reboot_probe.py — parents[1] is tools/rcon
+# (the module imports), parents[3] is this worktree's root (the review handoff of
+# 2026-09-04: the hardcoded p15-rcon-dual-gate worktree path died with that
+# worktree; the probe must run from wherever it is checked out).
+_TOOLS_RCON = Path(__file__).resolve().parents[1]
+if str(_TOOLS_RCON) not in sys.path:
+    sys.path.insert(0, str(_TOOLS_RCON))
 import gt6rcon
 import gt6server
 
-WORKTREE = "/home/brokestar/workspace/MGT6GA/MGT6GA-trees/p15-rcon-dual-gate"
+WORKTREE = str(Path(__file__).resolve().parents[3])
 PASSWORD = "gt6"
 BARREL = "150 64 150"          # far from every chain's site bbox
 FORCELOAD = "forceload add 128 128 160 160"

@@ -78,7 +78,8 @@ CHAIN = Chain(
              allow_failed=True),
 
         phase("B: the DC drive — 448 power/L into +16 RU/t packets through three axles"),
-        Step(f"gt6engine stat {F(ENGINE)}", expect="active=true", sleep=4.0),
+        # poll-to-expect (the old sleep=4): the fuelled engine flips active within ticks
+        Step(f"gt6engine stat {F(ENGINE)}", expect="active=true", poll=10.0),
         Step(f"gt6machine shredder check {F(SHREDDER)}", expect="out[0]="),
         Step(f"gt6engine stat {F(AXLE3)}", expect="transferred=16 RU/t"),
         Step(f"gt6engine stat {F(AXLE3)}", expect="break pending=false"),
@@ -99,9 +100,12 @@ CHAIN = Chain(
 
         phase("D: the burnout arm — fuel 4 burns dry, input=empty and active=false"),
         Step(f"setblock {F(ENGINE3)} {DIESEL}[facing=east]", expect="Changed the block"),
-        Step(f"gt6engine fuel {F(ENGINE3)} gt6:diesel 4", expect="filled 4 L", sleep=14.0),
-        Step(f"gt6engine stat {F(ENGINE3)}", expect="input=empty"),
-        Step(f"gt6engine stat {F(ENGINE3)}", expect="active=false"),
+        Step(f"gt6engine fuel {F(ENGINE3)} gt6:diesel 4", expect="filled 4 L"),
+        # poll-to-expect (the old sleep=14 on the fuel step): 4 L burn dry in a handful
+        # of seconds; input=empty and active=false are terminal — resend the read-only
+        # stats until each lands
+        Step(f"gt6engine stat {F(ENGINE3)}", expect="input=empty", poll=20.0),
+        Step(f"gt6engine stat {F(ENGINE3)}", expect="active=false", poll=8.0),
     ],
 )
 

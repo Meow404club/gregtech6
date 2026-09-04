@@ -67,10 +67,11 @@ steps += [
 ]
 # the buffer charge: 40000 raw × 2500/10000 = 10000, minus ≤40 ticks × 16 → energy 9344..9984
 steps += [Step(f"gt6burner stat {F(BOX)}", expect="energy=9")]
-# the burn window: ~80 s ≈ 1500 ticks since ignite (the measured ~19 tps) — the coal
-# deaths land at ~0/625/1250/1875 ticks, so exactly THREE are gone at readback
-# (the buffer drains at mRate 16 into the void — the no-sink W2 boundary)
-steps += [Step("time query daytime", expect="The time is", sleep=80.0)]
+# the burn window: coal deaths land at ~0/625/1250/1875 ticks (the measured ~19 tps),
+# so exactly THREE are gone once the third death lands (~66 s; the buffer drains at
+# mRate 16 into the void — the no-sink W2 boundary). poll-to-expect: resend the
+# read-only stat until the fuel drain shows x3; the verdict step below re-asserts it
+steps += [Step(f"gt6burner stat {F(BOX)}", expect="fuel=minecraft:coal x3", poll=100.0)]
 steps += [
     Step(f"gt6burner stat {F(BOX)}", expect="fuel=minecraft:coal x3"),
     Step(f"gt6burner stat {F(BOX)}", expect="burning=true"),
@@ -89,8 +90,14 @@ for tX in CLUSTER_XS:
     steps += [Step(f"gt6burner fuel {tX} 64 30 minecraft:coal 4", expect="minecraft:coal x4")]
 for tX in CLUSTER_XS:
     steps += [Step(f"gt6burner ignite {tX} 64 30", expect="burning=true")]
-# the burn window: ~50 s ≈ 1000 ticks (+ the fuel/ignite loop) → ~10 expected fires
-steps += [Step("time query daytime", expect="The time is", sleep=50.0)]
+# the burn window: ~1000 ticks (+ the fuel/ignite loop) → ~10 nominal fires; the FIRST
+# fire lands within seconds (24 boxes × rng(2500) per tick). poll-to-expect: the
+# cumulative family telemetry is monotonic — resend until spread=VISIBLE. The live
+# rate is emission-gated (the fire roll sits inside the mEnergy >= mRate emit branch,
+# and the void-sink buffer hovers below the gate most ticks), so the observed rate is
+# ~2 fires per 50 s window (the R0 baseline), not the nominal 10.5 — the 150 s bound
+# covers the full fuel lifetime and cuts the zero-fire flake to ~e^-6 per pass.
+steps += [Step("gt6burner fires 42 64 30 16", expect="spread=VISIBLE", poll=150.0)]
 steps += [
     Step(f"gt6burner stat 42 64 30", expect="burning=true"),
     # the INSIDE aggregate scan: the VISIBLE verdict rides the CUMULATIVE family

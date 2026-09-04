@@ -385,10 +385,19 @@ def stop_server(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grace=10.0
     return report
 
 
-def server_error_lines(log_path):
-    """Count of [Server thread/ERROR] lines — the segments' closing report line."""
+def server_error_lines(log_path, start_byte=0):
+    """Count of [Server thread/ERROR] lines — the segments' closing report line.
+
+    start_byte scopes the count to the log suffix written from there on: the
+    session model shares one log across chains, and each chain's ERROR report
+    reads only its own slice (framework._run_chain_on_server records the byte
+    offset at the chain boundary). Default 0 keeps the whole-file count.
+    """
     try:
-        text = Path(log_path).read_text(encoding="utf-8", errors="replace")
+        with Path(log_path).open("rb") as handle:
+            if start_byte:
+                handle.seek(max(0, start_byte))
+            text = handle.read().decode("utf-8", "replace")
     except OSError:
         return 0
     return sum(1 for line in text.splitlines() if "[Server thread/ERROR]" in line)

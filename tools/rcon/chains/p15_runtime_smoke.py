@@ -132,8 +132,11 @@ steps += [
     Step(f"gt6burner fuel {BURNER} minecraft:coal 6", expect="minecraft:coal x6"),
     Step(f"gt6burner ignite {BURNER}", expect="burning=true"),
     Step(f"gt6machine dryer check {DRYER}", expect="running=true", sleep=2.0),
-    # 25600 HU / 16 per tick = 1600 ticks ≈ 84 s; 105 s covers with margin
-    Step("time query daytime", expect="The time is", sleep=105.0),
+    # 25600 HU / 16 per tick = 1600 ticks ≈ 84 s. poll-to-expect (the p14_loop_closure
+    # conversion): resend the read-only stat until out[0]=800 lands; the verdict steps
+    # below re-assert the exact same strings, verbatim
+    Step(f"gt6machine dryer fluid stat {DRYER}",
+         expect="out[0]=800 L of gt6:distilled_water", poll=150.0),
     Step(f"gt6machine dryer fluid stat {DRYER}", expect="in[0]=0 L of nothing"),
     Step(f"gt6machine dryer fluid stat {DRYER}", expect="out[0]=800 L of gt6:distilled_water"),
     Step(f"gt6machine dryer fluid draw up 800 {DRYER}",
@@ -174,6 +177,12 @@ CHAIN = Chain(
     slug="p15smoke",
     sites=gt6world.declare_sites(OVEN, RIG, BOILER, LOGI, METAL),
     preferred_ports=(25783, 25793),      # this card's pinned rcon/query pair; game = rcon-10
+    # the boot-health smoke boots ALONE (framework.fresh_boot: the group boundary is
+    # a fresh boot — decision 2026-09-04-rcon-gate-split ③), and it flips the GLOBAL
+    # fakesource regime switch (on in M, off before D — self-cleaning, but declared
+    # so the session mutates-conflict detection sees it)
+    fresh_boot=True,
+    mutates=("fakesource",),
     steps=steps,
 )
 

@@ -100,7 +100,13 @@ CHAIN = Chain(
         Step(f"gt6engine stat {F(CRANK)}", expect="facing=east(5) emit-side"),
         Step(f"gt6engine stat {F(GEARBOX)}", expect="gears=28 (bits0-5)"),
         Step(f"gt6engine stat {F(GEARBOX)}", expect="gearsWork=true"),
-        Step(f"gt6engine crank {F(CRANK)} 6000", expect="armed 6000 ticks", sleep=75.0),
+        Step(f"gt6engine crank {F(CRANK)} 6000", expect="armed 6000 ticks"),
+        # the old worst-case sleep=75 s as a poll witness: the axle's live transfer rate
+        # reads 16 RU/t on every packet-moving tick — resend the read-only stat until it
+        # shows; the 75 s deadline only bounds the pathological case (ALLOWED then, the
+        # same verdict class the witnesses below already ride)
+        Step(f"gt6engine stat {F(AXLE_N)}", expect="transferred=16 RU/t",
+             poll=75.0, allow_failed=True),
         # The e2e machine reports ride ALLOWED: the live environment's effective
         # packet rate (the crank-fed wheel + the axle spin-up gate settle around
         # ~1 item / minute per branch) makes dust a minutes-scale affair — the
@@ -168,9 +174,11 @@ CHAIN = Chain(
         Step(f"setblock {F(GEARBOX_D)} gt6:gearbox", expect="Changed the block"),
         Step(f"gt6engine gearbox {F(GEARBOX_D)} 16 0", expect="masks set gears=16, axle=0, gearsWork=true"),
         Step(f"gt6engine stat {F(TRANS)}", expect="facing=west(4) input-side"),
-        Step(f"gt6engine crank {F(CRANK_D)} 3000", expect="armed 3000 ticks", sleep=10.0),
-        # the ÷4 x 4 pair with the NEGATIVE sign preserved (direction kept)
-        Step(f"gt6engine stat {F(TRANS)}", expect="last in=-16x1"),
+        Step(f"gt6engine crank {F(CRANK_D)} 3000", expect="armed 3000 ticks"),
+        # the ÷4 x 4 pair with the NEGATIVE sign preserved (direction kept);
+        # poll-to-expect (the old sleep=10): the latched last-packet record is
+        # monotonic once the crank has moved one packet — resend the read-only stat
+        Step(f"gt6engine stat {F(TRANS)}", expect="last in=-16x1", poll=15.0),
         Step(f"gt6engine stat {F(TRANS)}", expect="last out=-4x4"),
         Step(f"gt6engine stat {F(TRANS)}", expect="multiplier=4 (speed ÷4 power ×4, 8→2 wood row)"),
         # the terminal gearbox RETAINS the converted burst: the ÷4×4 pair held live
