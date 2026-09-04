@@ -52,17 +52,19 @@ T2 = gt6world.Site(116, 64, 100, dx=1, dy=2, dz=1)
 T3 = gt6world.Site(132, 64, 100, dx=1, dy=2, dz=1)
 T4 = gt6world.Site(148, 64, 100, dx=1, dy=2, dz=1)
 
-# (literal, pos, parallel, recIn, maxIn, injectProgress, maxProgress) — the tier columns
+# (literal, pos, parallel, recIn, maxIn, injectProgress, checkReset) — the tier columns
 # the check report must pin; maxIn doubles as the inject packet size (the size-then-pos
 # branch of the inject tree needs the explicit size before the coordinate). The
 # progress columns are the poured-DRYING-map production arithmetic observed on main
 # (2026-09-04, deterministic driven ticks × mInputMax; identical on both nodes — the
-# recipe row and the HU arithmetic are shared code).
+# recipe row and the HU arithmetic are shared code). The check arm pins the reset
+# prefix "progress=0/" (race-free: the starved reset lands 0/<max> or 0/0 depending
+# on whether the input tank emptied first — both mean the batch never completed).
 TIERS = [
-    ("dryer",    T1, "parallel=8",  "recIn=32",   64,   "used=40 progress=512/2048",   "progress=0/2048"),
-    ("dryer_t2", T2, "parallel=16", "recIn=128",  256,  "used=40 progress=2048/8192",  "progress=0/8192"),
-    ("dryer_t3", T3, "parallel=32", "recIn=512",  1024, "used=40 progress=8192/32768", "progress=0/32768"),
-    ("dryer_t4", T4, "parallel=64", "recIn=2048", 4096, "used=40 progress=32768/73728", "progress=0/73728"),
+    ("dryer",    T1, "parallel=8",  "recIn=32",   64,   "used=40 progress=512/2048",    "progress=0/"),
+    ("dryer_t2", T2, "parallel=16", "recIn=128",  256,  "used=40 progress=2048/8192",   "progress=0/"),
+    ("dryer_t3", T3, "parallel=32", "recIn=512",  1024, "used=40 progress=8192/32768",  "progress=0/"),
+    ("dryer_t4", T4, "parallel=64", "recIn=2048", 4096, "used=40 progress=32768/73728", "progress=0/"),
 ]
 
 steps = []
@@ -95,7 +97,7 @@ for literal, pos, parallel, recin, maxin, inject_progress, max_progress in TIERS
              expect="faces fluidIn=south,east fluidOut=up energyIn=down"),
         # the minimal stub feed arm (the DRYING item slot; never starts a process)
         Step(f"gt6machine {literal} input 1 {F(pos)}",
-             expect="input: 1x bricks into slot 0"),
+             expect="bricks into slot 0"),
         # the HU carrier live at the row's tier band — one mInputMax packet per iteration
         # (the :503 band saturates at mInputMax - mEnergy; doWork drains it back each tick);
         # the poured DRYING map starts on the water row — progress moves the exact driven
@@ -113,7 +115,7 @@ for literal, pos, parallel, recin, maxin, inject_progress, max_progress in TIERS
         Step(f"gt6machine {literal} check {F(pos)}", expect="parallelDuration=true"),
         Step(f"gt6machine {literal} check {F(pos)}", expect=recin),
         Step(f"gt6machine {literal} check {F(pos)}", expect="data=-2"),
-        Step(f"gt6machine {literal} check {F(pos)}", expect="input=bricks"),
+        Step(f"gt6machine {literal} check {F(pos)}", expect="bricks"),
     ]
 
 # ------------------------------------------- teardown

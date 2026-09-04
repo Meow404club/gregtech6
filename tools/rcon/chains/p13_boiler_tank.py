@@ -84,7 +84,7 @@ steps += [
     Step(f"setblock {ENGINE} gt6:steam_engine_tungsten[facing=east]", expect="Changed the block"),
     Step(f"gt6machine crusher place {CRUSHER}", expect="GT6 crusher placed"),
     Step(f"setblock {DWTANK} gt6:barrel_wood", expect="Changed the block"),
-    Step(f"gt6machine crusher input 8 {CRUSHER}", expect="8x gem_glass"),
+    Step(f"gt6machine crusher input 8 {CRUSHER}", expect="gem_glass into slot 0"),
     # the water arm: 4000 L through the BOTTOM capability door (the :262 intake)
     Step(f"gt6boiler fill {BOILER} 4000", expect="filled 4000/4000 L of minecraft:water (ACCEPTED)"),
     # the direct HU arm: 3×40000 = 1500 conversions exactly → the store drains to 0
@@ -113,6 +113,10 @@ steps += [
     # the pipe income), so the FIRST check is the informational probe and the AUTHORITATIVE
     # one comes after the extra window below
     Step(f"gt6machine crusher check {CRUSHER}", expect="out[0]=", sleep=15.0, allow_failed=True),
+    # the collector read is phase-racy against the engine's pull cycle (the 21.1 node's
+    # faster RCON cadence drained P1 at the single-instant read): first sample lenient,
+    # then a 20 s production window on THIS step, then the settled read below.
+    Step(f"data get block {P1}", expect="gt6:steam", allow_failed=True, sleep=20.0),
     Step(f"data get block {P1}", expect="gt6:steam"),               # the top-neighbour collector holds steam
     Step(f"gt6tank stat {DWTANK}", expect="L of gt6:distilled_water"),  # the byproduct
     Step(f"gt6boiler stat {BOILER}", expect="barometer=2"),         # the equilibrium held

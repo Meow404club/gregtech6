@@ -110,6 +110,15 @@ steps += [
     Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)"),
     # round 3: comfortably above half — the load balance drains toward all five pipes
     Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)", sleep=3.0),
+    Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)"),
+    # rounds 4+5 (2026-09-04, the p14 immunity era): the vanilla-water scaling branch
+    # runs the row at efficiency 5000/10000 — each round now yields ~10.24M steam
+    # (water-limited), so three rounds land at ~30.7M = BELOW the 40.96M half-tank gate
+    # and the five holes never open (observed identically on both nodes). Two more
+    # rounds lift the tank past half at the halved yield.
+    Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)", sleep=2.5),
+    Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)"),
+    Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)", sleep=3.0),
     Step(f"gt6multiblock boiler stat {LB}", expect="output=8192"),  # the row value rides the stat (deterministic)
     # the live load-balance evidence: every collector holds steam (the exact split is the
     # offline truth table's — the live tick jitter makes ratios non-assertable, the W2 λ-lesson)
