@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # GT6 服务总线：统一管理 brain MCP(HTTP) + llama embed(8937) + llama rerank(8938)。
-# 用法: tools/gt6_services.sh {start|stop|restart|status} [brain|embed|rerank|all]
+# 用法: tools/gt6_services.sh {start|stop|restart|status|doctor} [brain|embed|rerank|all]
+#   doctor [阈值MB]  # RSS 越限自动重启（变长请求下 llama scratch 高水位滞留，见
+#                    # embed_server.sh 注释；阈值默认 embed 10240 / 其余 4096。可挂 cron）
 #   start          # 默认 all：起全部未运行的服务
 #   start embed    # 只起指定服务
 # 注意：llama /health 在模型加载期返回 503，探活以 HTTP 200 为准。
@@ -65,12 +67,30 @@ stop_one() {
   echo "$svc: stopped"
 }
 
+rss_of() {  # 服务进程 RSS MB（按端口反查 pid）
+  local pid
+  pid=$(ss -tlnp 2>/dev/null | grep -E "[:.]$(port_of "$1") " | grep -oP 'pid=\K[0-9]+' | head -1)
+  [ -n "$pid" ] && echo $(( $(ps -o rss= -p "$pid" 2>/dev/null | tr -d ' ') / 1024 )) || echo 0
+}
+
 status_one() {
-  local svc=$1
+  local svc=$1 rss; rss=$(rss_of "$svc")
   if is_up "$svc"; then
-    printf "%-8s UP   :%s  %s\n" "$svc" "$(port_of "$svc")" "$(curl -s -m 2 "http://127.0.0.1:$(port_of "$svc")/health")"
+    printf "%-8s UP   :%s  RSS=%sMB  %s\n" "$svc" "$(port_of "$svc")" "$rss" "$(curl -s -m 2 "http://127.0.0.1:$(port_of "$svc")/health")"
   else
     printf "%-8s DOWN :%s\n" "$svc" "$(port_of "$svc")"
+  fi
+}
+
+doctor_one() {  # RSS 越限 → 重启（llama scratch 高水位滞留的自愈兜底）
+  local svc=$1 limit=$2 rss
+  rss=$(rss_of "$svc")
+  if ! is_up "$svc"; then echo "$svc: DOWN（doctor 不拉起，按需 start）"; return 0; fi
+  if [ "$rss" -gt "$limit" ]; then
+    echo "$svc: RSS=${rss}MB > ${limit}MB → restart"
+    stop_one "$svc"; sleep 1; start_one "$svc"
+  else
+    echo "$svc: RSS=${rss}MB ≤ ${limit}MB 正常"
   fi
 }
 
@@ -90,6 +110,16 @@ main() {
       ;;
     status)
       local s; for s in "${services[@]}"; do status_one "$s"; done
+      ;;
+    doctor)
+      local s
+      for s in "${services[@]}"; do
+        case $s in
+          embed) doctor_one "$s" "${3:-${EMBED_RSS_LIMIT:-10240}}" ;;
+          brain) doctor_one "$s" "${3:-${BRAIN_RSS_LIMIT:-4096}}" ;;
+          rerank) doctor_one "$s" "${3:-${RERANK_RSS_LIMIT:-4096}}" ;;
+        esac
+      done
       ;;
     *) echo "usage: $0 {start|stop|restart|status} [brain|embed|rerank|all]"; exit 1 ;;
   esac

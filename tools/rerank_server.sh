@@ -13,6 +13,11 @@ CTX_PER_SLOT="${CTX_PER_SLOT:-6144}"
 CTX=$((SLOTS * CTX_PER_SLOT))
 UBATCH="${UBATCH:-4096}"   # 物理批上限：rerank 输入是整段 (query+doc)，必须 ≥ 单输入 token 数
 
+# RSS 行为实测：同 embed_server.sh——scratch 钉在历史峰值（有界不归还），超限走 doctor
+export MALLOC_ARENA_MAX=2
+export MALLOC_TRIM_THRESHOLD_=134217728
+export MALLOC_ARENA_MAX=2
+export MALLOC_TRIM_THRESHOLD_=134217728
 export HSA_ENABLE_DXG_DETECTION=1
 export KFD_NPS_RELAX=1
 export PATH="$PATH:/opt/rocm/bin"

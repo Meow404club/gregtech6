@@ -31,7 +31,8 @@ $VENV tools/gt6_rag/index.py --limit-files 5 all # 小规模试跑
 ```bash
 tools/services.sh start          # brain(MCP :8939) + embed(:8937) + rerank(:8938)
 tools/services.sh start brain    # 只起 brain（不需要 GPU；embed/rerank 需 LLAMA_BIN）
-tools/services.sh status         # 三服务总览（探活只认 HTTP 200）
+tools/services.sh status         # 三服务总览（含 RSS；探活只认 HTTP 200）
+tools/services.sh doctor         # RSS 越限自动重启（可挂 cron，见下）
 ```
 
 - `embed` 复用 `embed_server.sh`（自带 HIP 环境）；`rerank` 参数内联固化（4 槽×6k，
@@ -50,6 +51,14 @@ Mcp-Session-Id 会话。`.zcode/config.json` 以 `type:http` 直连。主会话�
 tools/services.sh start brain
 curl -s 127.0.0.1:8939/health      # {"status":"ok","tools":16,...}
 ```
+
+## llama-server RSS 行为（非泄漏，有界高水位）
+
+变长请求会使 llama.cpp 把 compute/scratch 缓冲扩到**历史最大负载**对应的规模并
+长期持有（实测同规格批次连打 8 次零增长）——长期运行表现为 RSS 只升不降，
+但上界 ≈ 基线(权重+KV) + 峰值请求的 scratch，不会无限增长。处置：
+`services.sh doctor`（默认 embed>10GB / 其余>4GB 时自动重启，无状态服务重启
+代价 ~45s），挂 cron 即可；MALLOC_TRIM 对此无效（缓冲未归还 glibc）。
 
 ## 周期性增量索引（autorefresh）
 
