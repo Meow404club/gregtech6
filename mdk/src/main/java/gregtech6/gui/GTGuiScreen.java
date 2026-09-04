@@ -42,7 +42,11 @@ public abstract class GTGuiScreen<T extends GTGuiMenu> extends AbstractContainer
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        //? if forge {
         this.renderBackground(guiGraphics);
+        //?} else {
+        /*this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        *///?}
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
