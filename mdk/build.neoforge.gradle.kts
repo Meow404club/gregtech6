@@ -55,6 +55,26 @@ neoForge {
         }
     }
 
+    // 测试 JVM 基建（task p15-m4-test-infra）：unitTest 让 1.21.1 测试 JVM 走 FML 引导而非裸 JUnit，
+    // 根治 FeatureFlags clinit 的 FeatureFlagLoader.loadModdedFlags→LoadingModList.get() null 级联
+    // （1.21.1 test 394 实跑 169 红中的 158 clinit + 2 /0 次生，state tmp.m4.final-clear 独立分解）。
+    // DSL 形态求证（moddev-gradle-2.0.144.jar javap，非文档记忆）：
+    //   NeoForgeExtension.unitTest(Action<UnitTest>) / UnitTest.enable() → ModDevRunWorkflow.configureTesting
+    //   → setupTestTask：Test task 挂 dependsOn(prepareNeoForgeTestFiles + writeNeoForgeTestClasspath)、
+    //   workingDir=build/minecraft-junit、-Dfml.junit.argsfile + gradle mod folders jvmArgumentProvider；
+    //   junit-fml（userdev config.json testLibraries，21.1.249 = fancymodloader:junit-fml:4.0.44）以
+    //   JUnit Platform LauncherSessionListener 形态在测试 worker 内引导 FML。NeoForge 21.1.249
+    //   userdev config.json runs.junit（BootstrapLauncher forgejunitdev）齐备——MDG 配置期校验该
+    //   run type 存在（PrepareTest.resolveRunType 缺失即抛）。loadedMods 约定值 = mods 容器全集。
+    unitTest {
+        enable()
+        // testedMod 必须显式指认（MDG 官方 testproject 同款）：RunUtils.buildModFolders 仅当
+        // testedMod 存在时才把 test sourceSet 输出并入被测 mod 的 mod folder——否则 FML 的
+        // ModuleClassLoader 看不到测试类，Gradle junitClassLoader（=FML loader）Class.forName
+        // 直接 CNFE（2026-09-04 实测：4/394 起步即全红，Executor XML stack = ModuleClassLoader）。
+        testedMod = mods.named(modId)
+    }
+
     runs {
         // 节点本地 run 目录（避免 1.20.1/1.21.1 游戏库互相污染；模板 build.neoforge.gradle.kts.txt:28-35 同构）
         register("client") {
