@@ -19,6 +19,7 @@ import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.machines.TileEntityOven;
+import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 import gregtech6.tileentity.tank.BarrelFluidHandler;
@@ -120,6 +121,24 @@ public final class GT6CapabilityWiring {
 		BlockEntityType<GTFluidPipeBlockEntity> tPipe = GTFluidPipes.FLUID_PIPE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPipe,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// the multiblock PART relay (the pipe-hole family: the collector attach on
+		// GTFluidPipeBlockEntity.canConnect + the boiler push face) — the forge face is
+		// MultiBlockPartBlockEntity.getCapability relaying ITEM/FLUID to the target
+		// controller; the 21.1 provider resolves relayTarget() (the seam widened for
+		// this wiring, its stated consumer) and answers through the level query, which
+		// lands on the controller's own registered provider. 2026-09-04, ADR-P15-4:
+		// without it every pipe-hole position is capability-blind on this node and the
+		// /gt6pipe place against a hole reports connections 0 (1.20.1 cannot see the
+		// gap — the BE override answers directly). Fluid face only: the chain- and
+		// player-reachable face of the part family on this node today.
+		BlockEntityType<MultiBlockPartBlockEntity> tPart = GTMultiBlocks.MULTIBLOCK_PART_BE.get();
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPart,
+				(aBe, aSide) -> {
+					net.minecraft.world.level.block.entity.BlockEntity tTarget = aBe.relayTarget();
+					if (tTarget == null || !tTarget.hasLevel()) return null;
+					return tTarget.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,
+							tTarget.getBlockPos(), aSide);
+				});
 	}
 
 	// -- the coke oven (p8 multiblock controller; the commands-card handoff) --
@@ -141,10 +160,22 @@ public final class GT6CapabilityWiring {
 	// BarrelFluidHandler per call, the side part of the handler identity (the gasProof-quartet
 	// comment there). The provider lambda keeps the fresh-per-call semantics verbatim —
 	// NOT a memoized handler, or the first-queried side would freeze into it.
+	//
+	// ALL FOUR barrel BETs, not just the wood one (2026-09-04, ADR-P15-4 runtime gate):
+	// registerBlockEntity resolves against the BET's validBlocks — the wood-only row left
+	// metal/plastic/logistics drums capability-blind on this node (live probe: both
+	// "gt6tank fill ... CAPABILITY MISSING" sided AND side-less; the forge leg cannot see
+	// the gap because every BE overrides getCapability directly). One BET per material
+	// row (GTBarrels:83/:104/:207/:240), same fresh-per-call provider for all.
 
 	private static void registerBarrelBlockFluidHandler(RegisterCapabilitiesEvent aEvent) {
-		BlockEntityType<GTBarrelBlockEntity> tBarrel = GTBarrels.BARREL_BE.get();
-		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBarrel,
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GTBarrels.BARREL_BE.get(),
+				(aBe, aSide) -> new BarrelFluidHandler(aBe, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GTBarrels.BARREL_PLASTIC_BE.get(),
+				(aBe, aSide) -> new BarrelFluidHandler(aBe, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GTBarrels.BARREL_METAL_BE.get(),
+				(aBe, aSide) -> new BarrelFluidHandler(aBe, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GTBarrels.BARREL_LOGISTICS_BE.get(),
 				(aBe, aSide) -> new BarrelFluidHandler(aBe, aSide));
 	}
 

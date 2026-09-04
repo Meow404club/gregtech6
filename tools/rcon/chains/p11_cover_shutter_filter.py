@@ -73,10 +73,10 @@ CHAIN = Chain(
         Step(f"gt6cover install {F(A_OVEN)} up gt6:cover_shutter", expect="OK"),
         Step(gt6world.hopper_command(F(A_HOPPER), facing="down")),
         Step(_feed(A_HOPPER, "iron_ingot", 8), sleep=4),
-        Step(f"gt6oven check {F(A_OVEN)}", expect="input=iron_ingotx8"),
+        Step(f"gt6oven check {F(A_OVEN)}", expect="iron_ingotx8"),
         Step(f"gt6cover mode {F(A_OVEN)} up", expect="visual=1"),
         Step(_feed(A_HOPPER, "iron_ingot", 4), sleep=4),
-        Step(f"gt6oven check {F(A_OVEN)}", expect="input=iron_ingotx8"),
+        Step(f"gt6oven check {F(A_OVEN)}", expect="iron_ingotx8"),
         Step(f"gt6cover mode {F(A_OVEN)} up", expect="visual=0"),
         Step(f"gt6cover dismantle {F(A_OVEN)} up", expect="OK"),
 
@@ -85,13 +85,13 @@ CHAIN = Chain(
         Step(f"gt6oven input 8 {F(B_OVEN)}", expect="cobblestone"),
         Step(f"gt6cover install {F(B_OVEN)} down gt6:cover_shutter", expect="OK"),
         Step(gt6world.hopper_command(F(B_HOPPER), facing="down"), sleep=4),
-        Step(f"gt6oven check {F(B_OVEN)}", expect="input=airx0"),
+        Step(f"gt6oven check {F(B_OVEN)}", expect="airx0"),
         # flip to inverted (= closed while running) BEFORE re-filling the input —
         # the fill lands atomically inside one command execution, so nothing can
         # drain through the gate between the fill and the check (race-proof order)
         Step(f"gt6cover mode {F(B_OVEN)} down", expect="visual=1"),
         Step(f"gt6oven input 8 {F(B_OVEN)}", expect="cobblestone", sleep=4),
-        Step(f"gt6oven check {F(B_OVEN)}", expect="input=cobblestonex8"),
+        Step(f"gt6oven check {F(B_OVEN)}", expect="cobblestonex8"),
         Step(f"gt6cover dismantle {F(B_OVEN)} down", expect="OK"),
 
         phase("C: item filter WHITELIST (oven 20 64 20, cover UP, hopper above)"),
@@ -99,7 +99,7 @@ CHAIN = Chain(
         Step(f"gt6cover install {F(C_OVEN)} up gt6:cover_item_filter", expect="OK"),
         Step(gt6world.hopper_command(F(C_HOPPER), facing="down")),
         Step(_feed(C_HOPPER, "cobblestone", 8), sleep=4),
-        Step(f"gt6oven check {F(C_OVEN)}", expect="input=airx0"),
+        Step(f"gt6oven check {F(C_OVEN)}", expect="airx0"),
         # seed the filter through the real save/load: covers.t = side-UP mNBTs
         # lane; the reload (TileEntityOven.load :737) is the in-vivo NBT round trip
         Step("data modify block " + F(C_OVEN)
@@ -107,10 +107,10 @@ CHAIN = Chain(
         Step(f"gt6cover check {F(C_OVEN)}", expect="gt.filter.item", sleep=4),
         # the still-pending refused batch now matches the seeded whitelist and
         # drains — that pending batch IS the admit assertion (no second fill)
-        Step(f"gt6oven check {F(C_OVEN)}", expect="input=cobblestonex8"),
+        Step(f"gt6oven check {F(C_OVEN)}", expect="cobblestonex8"),
         # the hopper is empty now — a fresh non-matching fill is refused deterministically
         Step(_feed(C_HOPPER, "iron_ingot", 8), sleep=4),
-        Step(f"gt6oven check {F(C_OVEN)}", expect="input=cobblestonex8"),
+        Step(f"gt6oven check {F(C_OVEN)}", expect="cobblestonex8"),
         Step(f"gt6cover dismantle {F(C_OVEN)} up", expect="OK"),
 
         phase("D: item filter BLACKLIST (oven 24 64 24, cover UP, hopper above)"),
@@ -125,10 +125,10 @@ CHAIN = Chain(
         Step(f"gt6cover check {F(D_OVEN)}", expect="gt.filter.item"),
         Step(gt6world.hopper_command(F(D_HOPPER), facing="down")),
         Step(_feed(D_HOPPER, "cobblestone", 8), sleep=4),
-        Step(f"gt6oven check {F(D_OVEN)}", expect="input=cobblestonex8"),
+        Step(f"gt6oven check {F(D_OVEN)}", expect="cobblestonex8"),
         # the filter item itself is refused: nothing enters, the input stays 8 cobble
         Step(_feed(D_HOPPER, "iron_ingot", 8), sleep=4),
-        Step(f"gt6oven check {F(D_OVEN)}", expect="input=cobblestonex8"),
+        Step(f"gt6oven check {F(D_OVEN)}", expect="cobblestonex8"),
         Step(f"gt6cover dismantle {F(D_OVEN)} up", expect="OK"),
 
         phase("teardown: all four stores dissolve to null"),

@@ -106,7 +106,9 @@ online-mode=false   # 仅 headless 无正版账号时；测完还原
 模块化落地，框架用户不用手敲。）
 
 游戏本体永不自行退出——严禁前台跑、严禁阻塞等待退出。唯一正典姿势（在 worktree 根，
-**必须 `./gradlew`，系统 gradle 8.7 过不了 MDG**）：
+**必须 `./gradlew`，系统 gradle 8.7 过不了 MDG**）。服务端一律带 `--nogui`
+（用户裁定 2026-09-04：DedicatedServer 控制台 GUI 不许弹出；两节点的 server run
+配置已内置该程序参数，经框架 `gt6server.start_server` 起服即自动生效）：
 
 ```bash
 nohup ./gradlew :mdk:runServer > /tmp/gt6_rs_<slug>.log 2>&1 & echo $! > /tmp/gt6_rs_<slug>.pid
@@ -254,6 +256,17 @@ gt6world.forceload_commands(region)   # ['forceload add -16 -16 31 31']（超 25
 teardown 断言：`store_null_command(pos)` + `STORE_NULL_EXPECT="store=null"`。
 
 ### 链层 chains/（声明式，入库可复放）
+
+**节点选择（P15 石匠矩阵起）**：链模块本身版本无关；启动节点由
+`Chain.node`（模块内钉死）或运行面 `--node <name>`（双节点横扫同一链不碰模块）决定，
+缺省 `1.20.1-forge`。节点决定两件事：gradle 任务 `:mdk:<node>:runServer`（裸
+`:mdk:runServer` 已随石匠骨架消亡）与节点本地 run 目录 `mdk/versions/<node>/run`
+（eula/server.properties 各节点独立，世界存档互不污染）。双节点门禁（ADR-P15-4）
+= 同一链集合两节点各跑一遍（passes=2 幂等含内），全绿即 `[0,0]×2` 双节点。
+21.1 前置事实（2026-09-04 首验）：gregapi 走 additionalRuntimeClasspath 才进
+moddev run（build.neoforge.gradle.kts）；桶族四 BET 的 FLUID_HANDLER 面在
+GT6CapabilityWiring 逐 BET 注册——缺一即该方块 capability-blind（1.20.1 侧
+getCapability 覆写形态看不到这类缺口，链上才会现形）。
 
 每卡一条模块：sites + lifecycle 配置 + steps。试点样板见
 `chains/p11_cover_shutter_filter.py`（p11shutterfilter_atom.sh 的逐步迁移）：

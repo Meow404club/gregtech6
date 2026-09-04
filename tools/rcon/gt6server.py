@@ -33,10 +33,30 @@ from pathlib import Path
 import gt6rcon
 
 RUN_DIR_RELATIVE = Path("mdk") / "run"
+# Since the P15 stonecutter skeleton each loader node is its own gradle project with a
+# node-local run dir (mdk/versions/<node>/run — both build scripts' `gameDirectory =
+# file("run/")` are versioned-project-relative), so the two nodes never share game state.
+NODE_RUN_DIR_TEMPLATE = "mdk/versions/{node}/run"
 ARTIFACT_DIR = Path("/tmp")
 
 DONE_MARKER = "Done ("
-GRADLE_TASK = ":mdk:runServer"
+GRADLE_TASK = ":mdk:runServer"   # pre-stonecutter legacy; unused by the node-aware path
+
+
+def gradle_task(node=None):
+    """The boot task for a stonecutter node: ``:mdk:<node>:runServer``.
+
+    The bare ``:mdk:runServer`` died with the P15 stonecutter skeleton (the controller
+    project's buildFileName is stonecutter.gradle.kts and registers no runs) — every
+    node boot must address the versioned subproject.
+    """
+    return f":mdk:{node}:runServer" if node else GRADLE_TASK
+
+
+def run_dir(worktree, node=None):
+    """The run directory of a boot: node-local since the stonecutter skeleton."""
+    relative = NODE_RUN_DIR_TEMPLATE.format(node=node) if node else RUN_DIR_RELATIVE
+    return Path(worktree) / relative
 
 
 def artifact_paths(slug):
@@ -107,12 +127,12 @@ def write_server_properties(run_dir, game_port, rcon_port, query_port, password)
     return props
 
 
-def provision_run_dir(worktree, game_port, rcon_port, query_port, password):
-    """Bootstrap <worktree>/mdk/run: eula + server.properties. Returns the run dir."""
-    run_dir = Path(worktree) / RUN_DIR_RELATIVE
-    ensure_eula(run_dir)
-    write_server_properties(run_dir, game_port, rcon_port, query_port, password)
-    return run_dir
+def provision_run_dir(worktree, game_port, rcon_port, query_port, password, node=None):
+    """Bootstrap the node's run dir: eula + server.properties. Returns the run dir."""
+    run_dir_ = run_dir(worktree, node)
+    ensure_eula(run_dir_)
+    write_server_properties(run_dir_, game_port, rcon_port, query_port, password)
+    return run_dir_
 
 
 def listening_ports():
@@ -176,7 +196,13 @@ def port_owner(port):
 
 
 def process_alive(pid):
-    """kill -0 semantics: True when the pid exists (a foreign-owned pid counts as alive)."""
+    """kill -0 semantics: True when the pid exists (a foreign-owned pid counts as alive).
+
+    A zombie counts as dead: an unreaped child of this interpreter still answers
+    kill -0, and wait_done must not blind-poll a boot that already exited
+    (2026-09-04: the first 1.21.1 crash left a defunct wrapper and the watcher
+    would have spun for its whole timeout).
+    """
     if pid is None:
         return False
     try:
@@ -187,7 +213,14 @@ def process_alive(pid):
         return True
     except OSError:
         return False
-    return True
+    try:
+        with open(f"/proc/{pid}/stat", "rb") as handle:
+            # stat = "pid (comm) state ..." — the state is the first field after
+            # the parenthesized comm (comm itself may contain spaces/parens).
+            state = handle.read().rsplit(b")", 1)[-1].split()[0]
+        return state != b"Z"
+    except (OSError, IndexError):
+        return True
 
 
 def log_tail(log_path, nbytes=8192):
@@ -223,8 +256,8 @@ def wait_done(log_path, timeout=300.0, poll=1.0, pid=None):
     return False
 
 
-def start_server(worktree, log_path, pid_path):
-    """nohup semantics: detached `./gradlew :mdk:runServer`, log + pid artifacts.
+def start_server(worktree, log_path, pid_path, gradle_task=GRADLE_TASK):
+    """nohup semantics: detached `./gradlew <gradle_task>`, log + pid artifacts.
 
     Returns the recorded (gradle wrapper) pid — the one the phase-era segments
     wrote with `echo $! > $PIDF`. The wrapper is the tracked handle; the server
@@ -234,7 +267,7 @@ def start_server(worktree, log_path, pid_path):
     log = log_path.open("w")  # truncates, like the segments' `: > "$LOG"`
     try:
         process = subprocess.Popen(
-            ["./gradlew", GRADLE_TASK],
+            ["./gradlew", gradle_task],
             cwd=str(worktree),
             stdout=log,
             stderr=subprocess.STDOUT,
@@ -371,6 +404,8 @@ def main(argv=None):
     parser.add_argument("--rcon-port", type=int, default=25662)
     parser.add_argument("--query-port", type=int, default=25672)
     parser.add_argument("--password", default="gt6")
+    parser.add_argument("--node", default=None,
+                        help="stonecutter node (e.g. 1.21.1-neoforge); default = legacy :mdk:runServer")
     args = parser.parse_args(argv)
     log_path, pid_path = artifact_paths(args.slug)
     if args.action == "status":
@@ -378,7 +413,7 @@ def main(argv=None):
         return 0
     if args.action == "provision":
         provision_run_dir(args.worktree, args.game_port, args.rcon_port,
-                          args.query_port, args.password)
+                          args.query_port, args.password, node=args.node)
         return 0
     stop_server(pid_path, rcon=("127.0.0.1", args.rcon_port, args.password))
     return 0

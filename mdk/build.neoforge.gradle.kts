@@ -84,6 +84,9 @@ neoForge {
         register("server") {
             server()
             gameDirectory = file("run/")
+            // 用户裁定（2026-09-04，随 ADR-P15-4 卡合并）：服务端启动一律 nogui——
+            // DedicatedServer 控制台 GUI 不许弹出，headless 验收机的唯一正典形态。
+            programArguments.addAll("--nogui")
         }
         // Data run 四参数与 forge 节点同构（GTCEu gradle/scripts/moddevgradle.gradle:111-122 先例，ADR-P2-4）。
         // --existing 指向共享 main/resources：占位贴图存在性校验（Forge 1.20.1 ModelBuilder 同机制）。
@@ -102,6 +105,14 @@ neoForge {
 dependencies {
     // 根项目 = gregapi java-library（Java17 产物）
     implementation(project(":"))
+    // moddev run 类路径与 1.20.1 legacyforge 同坑同修（build.forge.gradle.kts:83-89 同源）：
+    // 无 neoforge.mods.toml 的普通库不进 run——MDG README "External Dependencies: Runs"
+    // 原文即本症状（ClassNotFoundException at run time），per-run classpath 只 extendsFrom
+    // additionalRuntimeClasspath（ModDevRunWorkflow.java:100 create("additionalRuntimeClasspath")，
+    // 源码 tmp/harvest/moddevgradle-src）。2026-09-04 :mdk:1.21.1-neoforge:runServer 首验实证：
+    // FML 自动订阅扫描反射 GT6Mod 方法签名时 NoClassDefFoundError: gregapi/oredict/OreDictPrefix
+    // → mod loading crash（/tmp/gt6_rs_p15boot1211.log:91）。
+    "additionalRuntimeClasspath"(project(path = ":", configuration = "runtimeElements"))
     // JEI 1.21.1（task p15-jei-dual-wiring；ADR 2026-09-02-p12-jei-dependency 的跨版本延续）：
     // 坐标三件 mezz.jei:jei-${mcVer}-{common-api,neoforge-api,neoforge}:19.52.0.422——
     // blamejared maven-metadata <latest>（2026-09-03）+ Modrinth "19.52.0.422 for NeoForge 1.21.1"
