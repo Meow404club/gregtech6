@@ -48,6 +48,90 @@
     "exclude": [],
     "desc": "NeoForge 1.20.1 API 源码"
   },
+  "neoforge-api-latest": {
+    "root": "tmp/refs/neoforge-api/neoforge-26.1/src/main/java",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [],
+    "desc": "NeoForge 26.1（MC 26.1，发行版 26.1.2.103 线）API 源码——最新版 MC 参考面，后续高版本移植用"
+  },
+  "neoforge-api-1211": {
+    "root": "tmp/harvest/neoforge-api-1211/src/main/java",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [],
+    "desc": "NeoForge 1.21.1 API 源码（1.21.1 分支，P15 现役目标版）"
+  },
+  "neoforge-api-1214": {
+    "root": "tmp/harvest/neoforge-api-1214/src/main/java",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [],
+    "desc": "NeoForge 1.21.4 API 源码（1.21.4 分支，高用量版）"
+  },
+  "neoforge-api-1218": {
+    "root": "tmp/harvest/neoforge-api-1218/src/main/java",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [],
+    "desc": "NeoForge 1.21.8 API 源码（1.21.8 分支，高用量版）"
+  },
+  "neoforge-api-12111": {
+    "root": "tmp/harvest/neoforge-api-12111/src/main/java",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [],
+    "desc": "NeoForge 1.21.11 API 源码（1.21.11 分支，LTS）"
+  },
+  "neoforge-docs-full": {
+    "root": "tmp/harvest/neoforge-docs-full",
+    "lang": "md",
+    "include": [
+      "**/*.md",
+      "**/*.mdx"
+    ],
+    "exclude": [
+      "**/node_modules/**"
+    ],
+    "desc": "NeoForge 官方文档仓整仓（docs/=26.x 当前版 + versioned_docs/=1.20.4~1.21.11 九冻结版）——版本敏感事件/API 的版本对位检索"
+  },
+  "jei-api-1211": {
+    "root": "tmp/harvest/jei-1211-api-src",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [],
+    "desc": "JEI 1.21.1 API 源码（common-api 178 文件 + neoforge-api，-sources jar 解包）"
+  },
+  "mcmeta-data-1211": {
+    "root": "tmp/harvest/mcmeta-data-1211/data",
+    "lang": "json",
+    "include": [
+      "**/*.json"
+    ],
+    "exclude": [],
+    "desc": "原版 MC 1.21.1 data 包 JSON（recipe/tag/loot 表等，mcmeta 1.21.1-data tag）"
+  },
+  "mcmeta-data-261": {
+    "root": "tmp/harvest/mcmeta-data-261/data",
+    "lang": "json",
+    "include": [
+      "**/*.json"
+    ],
+    "exclude": [],
+    "desc": "原版 MC 26.1 data 包 JSON（含 spawn_conditions 新面，mcmeta 26.1-data tag）"
+  },
   "forge-docs": {
     "root": "tmp/refs/forge-docs",
     "lang": "md",
@@ -132,7 +216,17 @@
       "**/*.properties"
     ],
     "exclude": [
-      "**/meta.json"
+      "**/meta.json",
+      "neoforge-api-1211/**",
+      "neoforge-api-1214/**",
+      "neoforge-api-1218/**",
+      "neoforge-api-12111/**",
+      "neoforge-docs-full/**",
+      "jei-1211-api-src/**",
+      "jei-1211-common-api-src/**",
+      "jei-1211-neoforge-api-src/**",
+      "mcmeta-data-1211/**",
+      "mcmeta-data-261/**"
     ],
     "desc": "researcher 收割的外部参考资料（harvest 工具写入；主 agent 审查 meta 后 refresh_index(source='harvest') 增量入 RAG）"
   }
