@@ -15,7 +15,9 @@ registration face (task p15-rcon-dual-gate spec ③).
   M basic machine: the shredder arm (GTMachineCommand canon) behind the
     documented fakesource regime switch — place / input / run / check with the
     ContainerData three-state verdict (progress=true done=true idle=true) and
-    gt6:dust_stone in the output.
+    dust_stone in the output; the flag is global, so it is turned OFF again
+    before the D phase (the self-feed would eat the loop arm's pre-ignition
+    running=false).
 
   B boiler: the p13 deterministic immune arm — 800 L distw + 64000 HU →
     efficiency 10000/10000 (PRISTINE, the :119 distilled short-circuit) and
@@ -91,12 +93,18 @@ steps += [
     # pre-p8 legacy — the bare oven arm it describes fails on BOTH nodes today).
     Step("gt6machine fakesource on", expect="ENERGY_FAKE_SOURCE set true"),
     Step(f"gt6machine shredder place {OV}", expect="GT6 shredder placed"),
-    Step(f"gt6machine shredder input 8 {OV}", expect="8x minecraft:cobblestone"),
+    Step(f"gt6machine shredder input 8 {OV}", expect="cobblestone into slot 0"),
     # one Step = one expect (framework semantics); a failed run emits the FAILED
     # literal, which the judge counts on its own — the ContainerData three-state
     # line plus output are the sufficient assertions here.
     Step(f"gt6machine shredder run 200 {OV}", expect="progress=true done=true idle=true"),
-    Step(f"gt6machine shredder check {OV}", expect="gt6:dust_stone"),
+    # the out[0] column renders via ItemStack.toString: namespaced on 21.1
+    # ("63x gt6:dust_stone"), plain on 1.20.1 ("63x dust_stone") — the bare class
+    # name is the cross-version substring.
+    Step(f"gt6machine shredder check {OV}", expect="dust_stone"),
+    # the flag is GLOBAL: turn it off before the D phase — the loop arm's
+    # pre-ignition running=false must not be eaten by the self-feed
+    Step("gt6machine fakesource off", expect="ENERGY_FAKE_SOURCE set false"),
 ]
 
 # ------------------------------------------------- B: the boiler arm

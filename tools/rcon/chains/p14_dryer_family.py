@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """p14-dryer-family — the Dryer ladder acceptance chain (declarative framework).
 
-Chain semantics (task p14-dryer-family ACCEPTANCE): four dryers placed (the placed
-default FACING = north, no placer through the command), then per tier the row geometry
-and the declared-empty-map verdict:
+Chain semantics (task p14-dryer-family ACCEPTANCE, arm ⑥ re-landed 2026-09-04 per
+the card's own pool debt "pour DRYING 行时…改 RCON 链空图臂为产出行"): four dryers
+placed (the placed default FACING = north, no placer through the command), then per
+tier the row geometry and the PRODUCTION verdict — the DRYING map is no longer empty
+(the p14 loop-closure card poured the water→distilled_water row), so the old
+declared-empty arms (progress=0/0) are stale on main and were rewritten:
 
   place → fluid fill east/south minecraft:water (the rotated SBIT_B|SBIT_L tank-in mask:
           relative back = world south, relative left = world east — ACCEPTED) →
@@ -14,10 +17,13 @@ and the declared-empty-map verdict:
   fluid stat (the live census: in[0]=1000 L of water — the constructed 1000 mB default tank exactly filled + the six-side face lists, the :511
           isEnergyAcceptingFrom probe pinned to energyIn=down) →
   input 1 (the minimal stub feed arm: bricks, the upstream frame 'B' column) →
-  inject 40 (HU packets through doInject at the row's mInputMax — the HU carrier live) →
+  inject 40 (HU packets through doInject at the row's mInputMax — the HU carrier live;
+          the poured DRYING map starts: progress moves by the exact driven arithmetic
+          40 ticks at mInputMax — 512/2048, 2048/8192, 8192/32768, 32768/73728) →
   check (the tier columns: parallel 8/16/32/64 + parallelDuration + recIn 32/128/512/2048,
-          data=-2 = the menu-less carrier marker, progress=0/0 — the declared-empty DRYING
-          map never starts, outputs stay empty, 产出零).
+          data=-2 = the menu-less carrier marker; after the driven loop the batch resets
+          on the first starved tick: progress=0/<maxProgress>, active=false, outputs
+          stay empty — the batch never completes inside 40 ticks, 产出零).
 
 The two framework passes are the [0, 0] idempotency proof; the pass-open bbox cleanup
 restores the sites between passes.
@@ -46,22 +52,25 @@ T2 = gt6world.Site(116, 64, 100, dx=1, dy=2, dz=1)
 T3 = gt6world.Site(132, 64, 100, dx=1, dy=2, dz=1)
 T4 = gt6world.Site(148, 64, 100, dx=1, dy=2, dz=1)
 
-# (literal, pos, parallel, recIn, maxIn) — the tier columns the check report must pin;
-# maxIn doubles as the inject packet size (the size-then-pos branch of the inject tree
-# needs the explicit size before the coordinate)
+# (literal, pos, parallel, recIn, maxIn, injectProgress, maxProgress) — the tier columns
+# the check report must pin; maxIn doubles as the inject packet size (the size-then-pos
+# branch of the inject tree needs the explicit size before the coordinate). The
+# progress columns are the poured-DRYING-map production arithmetic observed on main
+# (2026-09-04, deterministic driven ticks × mInputMax; identical on both nodes — the
+# recipe row and the HU arithmetic are shared code).
 TIERS = [
-    ("dryer",    T1, "parallel=8",  "recIn=32",   64),
-    ("dryer_t2", T2, "parallel=16", "recIn=128",  256),
-    ("dryer_t3", T3, "parallel=32", "recIn=512",  1024),
-    ("dryer_t4", T4, "parallel=64", "recIn=2048", 4096),
+    ("dryer",    T1, "parallel=8",  "recIn=32",   64,   "used=40 progress=512/2048",   "progress=0/2048"),
+    ("dryer_t2", T2, "parallel=16", "recIn=128",  256,  "used=40 progress=2048/8192",  "progress=0/8192"),
+    ("dryer_t3", T3, "parallel=32", "recIn=512",  1024, "used=40 progress=8192/32768", "progress=0/32768"),
+    ("dryer_t4", T4, "parallel=64", "recIn=2048", 4096, "used=40 progress=32768/73728", "progress=0/73728"),
 ]
 
 steps = []
 
 # ------------------------------------------- the four tiers, one protocol each
-for literal, pos, parallel, recin, maxin in TIERS:
+for literal, pos, parallel, recin, maxin, inject_progress, max_progress in TIERS:
     steps += [
-        phase(f"{literal}: place, the rotated tank masks, the stub feed, HU, the empty-map verdict"),
+        phase(f"{literal}: place, the rotated tank masks, the stub feed, HU, the production verdict"),
         Step(f"gt6machine {literal} place {F(pos)}", expect=f"GT6 {literal} placed"),
         # the positive arms — relative back (world south) + relative left (world east)
         Step(f"gt6machine {literal} fluid fill east minecraft:water 700 {F(pos)}",
@@ -88,13 +97,17 @@ for literal, pos, parallel, recin, maxin in TIERS:
         Step(f"gt6machine {literal} input 1 {F(pos)}",
              expect="input: 1x bricks into slot 0"),
         # the HU carrier live at the row's tier band — one mInputMax packet per iteration
-        # (the :503 band saturates at mInputMax - mEnergy; doWork drains it back each tick)
+        # (the :503 band saturates at mInputMax - mEnergy; doWork drains it back each tick);
+        # the poured DRYING map starts on the water row — progress moves the exact driven
+        # arithmetic, the batch cannot complete inside 40 ticks so outputs stay empty
         Step(f"gt6machine {literal} inject 40 {maxin} {F(pos)}",
-             expect="used=40 progress=0/0"),
+             expect=inject_progress),
         Step(f"gt6machine {literal} inject 40 {maxin} {F(pos)}",
              expect="outputs=[]"),
-        # the empty-map verdict + the tier columns + the menu-less marker
-        Step(f"gt6machine {literal} check {F(pos)}", expect="progress=0/0"),
+        # the production verdict + the tier columns + the menu-less marker: the driven
+        # loop's batch resets on the first starved real tick (active=false), leaving the
+        # recipe-aware maxProgress on the dial
+        Step(f"gt6machine {literal} check {F(pos)}", expect=max_progress),
         Step(f"gt6machine {literal} check {F(pos)}", expect="active=false"),
         Step(f"gt6machine {literal} check {F(pos)}", expect=parallel),
         Step(f"gt6machine {literal} check {F(pos)}", expect="parallelDuration=true"),
