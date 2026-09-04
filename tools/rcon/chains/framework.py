@@ -4,8 +4,11 @@
 `python3 tools/rcon/chains/<chain>.py` performs, in one pass:
 
   1. gt6server.pick_ports — ss pre-checked rcon/query/game ports with bump;
-  2. gt6server.provision_run_dir — eula + server.properties in THIS worktree;
-  3. gt6server.start_server + wait_done — the nohup semantics, Done polled;
+  2. gt6server.provision_run_dir — eula + server.properties in THIS worktree,
+     in the node's own run dir (mdk/versions/<node>/run since the stonecutter
+     skeleton; --node <name> or Chain.node picks the node, default 1.20.1-forge);
+  3. gt6server.start_server + wait_done — the nohup semantics, Done polled
+     (:mdk:<node>:runServer);
   4. per pass: gt6world forceload + bbox cleanup (the declared sites, structurally
      complete), then the chain's steps judged via gt6rcon.judge_output;
   5. gt6server.stop_server — RCON stop, then precise pid kills; daemons untouched.
@@ -28,6 +31,22 @@ import gt6world
 
 # .../tools/rcon/chains/framework.py -> parents[3] is the worktree root
 WORKTREE_ROOT = Path(__file__).resolve().parents[3]
+
+# The stonecutter vcsVersion node — where the in-tree shared sources compile as-is.
+# The bare :mdk:runServer task died with the P15 stonecutter skeleton; every boot
+# now addresses a versioned subproject (:mdk:<node>:runServer) with a node-local
+# run dir (mdk/versions/<node>/run). A chain pins its node via Chain.node; a
+# runner-level --node override lets the dual-node sweeps run the same chain on
+# both nodes without touching the chain modules.
+DEFAULT_NODE = "1.20.1-forge"
+
+
+def requested_node(argv=None):
+    """The --node <name> CLI override, or None when absent (argv-safe for tests)."""
+    argv = sys.argv if argv is None else argv
+    if "--node" in argv:
+        return argv[argv.index("--node") + 1]
+    return None
 
 
 @dataclass
@@ -65,6 +84,8 @@ class Chain:
     boot_timeout: float = 600.0                 # first boot in a fresh worktree compiles
     response_timeout: float = 15.0              # per-command deadline (atom-era value)
     passes: int = 2                             # pass 2 is the idempotency proof
+    node: str = None                            # stonecutter node (None = DEFAULT_NODE;
+                                                # --node <name> overrides for dual-node sweeps)
 
 
 def run_steps(client, steps):
@@ -107,17 +128,20 @@ def _run_pass(chain, region_, rcon_port, number, total):
 def run(chain, passes=None):
     """Boot the server, run all passes, stop precisely; return the exit code."""
     passes = chain.passes if passes is None else passes
+    node = chain.node or requested_node() or DEFAULT_NODE
+    task = gt6server.gradle_task(node)
     rcon_port, query_port, game_port = gt6server.pick_ports(
         chain.preferred_ports + ((chain.game_port,)
                                  if chain.game_port else
                                  (chain.preferred_ports[0] - 10,)))
     log_path, pid_path = gt6server.artifact_paths(chain.slug)
+    print(f"[{chain.name}] node {node} ({task})")
     print(f"[{chain.name}] ports rcon={rcon_port} query={query_port} game={game_port}")
     print(f"[{chain.name}] worktree {WORKTREE_ROOT}, artifacts {log_path}")
 
     gt6server.provision_run_dir(WORKTREE_ROOT, game_port, rcon_port, query_port,
-                                chain.password)
-    pid = gt6server.start_server(WORKTREE_ROOT, log_path, pid_path)
+                                chain.password, node=node)
+    pid = gt6server.start_server(WORKTREE_ROOT, log_path, pid_path, gradle_task=task)
     per_pass = []
     try:
         if not gt6server.wait_done(log_path, chain.boot_timeout, pid=pid):
