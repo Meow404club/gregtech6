@@ -1,0 +1,363 @@
+#!/usr/bin/env python3
+"""sweep — full-set RCON sweep runner for the GT6 acceptance chains (layer 4).
+
+One command runs every chain against one node, in one of two execution models,
+and records a per-step verdict ledger + wall-clock timings to /tmp JSON:
+
+  python3 tools/rcon/sweep.py --mode session            # one boot per group
+  python3 tools/rcon/sweep.py --mode perboot            # the GT6_SESSION=off model
+  python3 tools/rcon/sweep.py --mode session --only p14loop,p13bb
+  python3 tools/rcon/sweep.py --mode perboot --probe    # + keepfilter reboot probe
+  python3 tools/rcon/sweep.py --diff a.json b.json      # per-step verdict diff
+  python3 tools/rcon/sweep.py --dual ../MGT6GA-trees/<other> --other-node 1.21.1-neoforge
+
+The session model boots once per SESSION_GROUPS cluster (coordinate bands of
+the chain sites — a chain's leftovers face the next chain's boundary cleanup
+within the band; cross-band distances make drift physically impossible), and
+framework.plan_groups still splits further on fresh_boot / mutates. The
+perboot model calls framework.run per chain — byte for byte the
+GT6_SESSION=off fallback path (decision 2026-09-04-rcon-gate-split ④).
+
+Wall is max(nodes), not sum(nodes): --dual runs the other node's sweep in its
+own worktree (gradle runServer holds a per-project lock, so same-worktree
+dual boots would serialize — ADR-P15-4) and reports both walls. The artifact
+slug carries the node suffix, so the two nodes' /tmp artifacts never collide.
+"""
+
+import argparse
+import importlib.util
+import json
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+_HERE = Path(__file__).resolve().parent            # tools/rcon
+for _path in (str(_HERE), str(_HERE / "chains")):
+    if _path not in sys.path:
+        sys.path.insert(0, _path)
+
+import framework
+import gt6server
+import gt6world
+
+# The full set in session order: coordinate-band clusters (see --plan). The
+# p14 dryer and p14 loop bands share the (100, 64, 100) site — same cluster so
+# each one's boundary cleanup covers the other's leftovers.
+SESSION_GROUPS = (
+    ("p11_cover_shutter_filter", "p12-engine-crank", "p12-axle-family",
+     "p12-gearbox-transformer", "p12-engine-diesel", "p12-engine-steam",
+     "p12_engine_fuel_fluids"),
+    ("p13_hu_steam_foundation", "p13_burning_box_family", "p12-fluid-item-carrier",
+     "p12-tap-funnel-attachment", "p12-barrel-keepfilter-logistics",
+     "p13_steam_proof_repay"),
+    ("p14_dryer_family", "p14_loop_closure", "p13_boiler_tank"),
+    ("p14_boiler_distw_immunity", "p13_large_boiler"),
+    ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
+)
+
+PROBE_MODULE = "p15_keepfilter_reboot_probe"
+
+
+def load_chain(stem):
+    """Import chains/<stem>.py and return its module-level CHAIN."""
+    path = _HERE / "chains" / f"{stem}.py"
+    spec = importlib.util.spec_from_file_location(f"sweep_chain_{stem}", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.CHAIN
+
+
+def ordered_stems():
+    seen, stems = set(), []
+    for group in SESSION_GROUPS:
+        for stem in group:
+            if stem not in seen:
+                seen.add(stem)
+                stems.append(stem)
+    return stems
+
+
+def select(stems, only):
+    if not only:
+        return list(stems)
+    keys = {part.strip() for part in only.split(",") if part.strip()}
+    picked = []
+    for stem in stems:
+        chain = load_chain(stem)
+        if stem in keys or chain.slug in keys or chain.name in keys:
+            picked.append(stem)
+    missing = keys - {stem for stem in picked}
+    for key in list(missing):
+        for stem in stems:
+            chain = load_chain(stem)
+            if key in (chain.slug, chain.name):
+                picked.append(stem)
+                missing.discard(key)
+                break
+    if missing:
+        raise SystemExit(f"sweep: unknown chain key(s): {sorted(missing)}")
+    return [stem for stem in stems if stem in set(picked)]
+
+
+def result_path(mode, node):
+    suffix = framework.node_suffix(node)
+    return gt6server.ARTIFACT_DIR / f"gt6_rs_sweep_{mode}_{suffix}.json"
+
+
+def run_perboot(stems, node):
+    """The per-chain boot model, in process: framework.run per chain."""
+    chains = {}
+    started = time.monotonic()
+    for stem in stems:
+        chain = load_chain(stem)
+        chain.node = node                      # sweep-level --node override
+        verdicts = []
+        t0 = time.monotonic()
+        try:
+            code = framework.run(chain, verdicts=verdicts)
+        except Exception as exc:               # one broken boot must not kill the sweep
+            print(f"[sweep] {chain.name}: EXCEPTION {exc!r}")
+            code = 1
+        log_path, _ = gt6server.artifact_paths(chain.slug)
+        chains[chain.name] = {
+            "exit": code,
+            "seconds": round(time.monotonic() - t0, 1),
+            "error_lines": gt6server.server_error_lines(log_path),
+            "verdicts": verdicts,
+        }
+    wall = time.monotonic() - started
+    return {"mode": "perboot", "node": node, "wall_s": round(wall, 1),
+            "boots": len(stems), "chains": chains}
+
+
+def run_session_instrumented(stems, node):
+    """run_session per cluster, capturing the per-chain verdict ledgers.
+
+    Mirrors framework.run_session's boot/stop plumbing (same ports, same
+    session slug, same boundary helper) but keeps each chain's
+    {pass_failures, error_lines, verdicts, seconds} record for the sweep JSON.
+    The verdict semantics are framework's own — nothing is re-judged here.
+    """
+
+    clusters = [[stem for stem in group if stem in set(stems)] for group in SESSION_GROUPS]
+    boot_groups = []
+    for cluster in clusters:
+        if not cluster:
+            continue
+        loaded = []
+        for stem in cluster:
+            chain = load_chain(stem)
+            chain.node = node
+            loaded.append(chain)
+        # plan_groups stays authoritative: fresh_boot / mutates split inside a band
+        boot_groups.extend(framework.plan_groups(loaded))
+
+    chains = {}
+    started = time.monotonic()
+    boots = 0
+    overall = 0
+    for group in boot_groups:
+        node_ = node or framework.DEFAULT_NODE
+        task = gt6server.gradle_task(node_)
+        rcon_port, query_port, game_port = gt6server.pick_ports(
+            framework.SESSION_PORTS.get(framework.node_key(node_),
+                                        framework.SESSION_PORTS["1.20.1"]))
+        slug = f"session_{framework.node_suffix(node_)}"
+        log_path, pid_path = gt6server.artifact_paths(slug)
+        password = group[0].password
+        print(f"[sweep] session boot: {len(group)} chain(s) "
+              f"({', '.join(c.name for c in group)})")
+        gt6server.provision_run_dir(framework.WORKTREE_ROOT, game_port, rcon_port,
+                                    query_port, password, node=node_)
+        pid = gt6server.start_server(framework.WORKTREE_ROOT, log_path, pid_path,
+                                     gradle_task=task)
+        boots += 1
+        t0 = time.monotonic()
+        code = 0
+        try:
+            if not gt6server.wait_done(log_path, max(c.boot_timeout for c in group),
+                                       pid=pid):
+                raise RuntimeError(f"session boot never reached Done; tail:\n"
+                                   f"{gt6server.log_tail(log_path)}")
+            print(f"[sweep] session up in {time.monotonic() - t0:.0f}s")
+            time.sleep(2)
+            for chain in group:
+                tc = time.monotonic()
+                res = framework._run_chain_on_server(chain, rcon_port, log_path, slug)
+                res["seconds"] = round(time.monotonic() - tc, 1)
+                res["exit"] = 0 if not any(res["pass_failures"]) else 1
+                chains[chain.name] = res
+                if res["exit"]:
+                    code = 1
+        except Exception as exc:
+            print(f"[sweep] session group EXCEPTION: {exc!r}")
+            code = 1
+        finally:
+            gt6server.stop_server(pid_path, rcon=(group[0].host, rcon_port, password))
+        if code:
+            overall = 1
+    wall = time.monotonic() - started
+    return {"mode": "session", "node": node, "wall_s": round(wall, 1),
+            "boots": boots, "exit": overall, "chains": chains}
+
+
+def show_plan():
+    print(f"worktree {framework.WORKTREE_ROOT}")
+    print(f"{len(ordered_stems())} chains in {len(SESSION_GROUPS)} cluster(s)\n")
+    for group in SESSION_GROUPS:
+        print(f"  cluster ({len(group)}): {', '.join(group)}")
+        boxes = {}
+        for stem in group:
+            chain = load_chain(stem)
+            boxes[chain.name] = gt6world.region(chain.sites)
+        names = list(boxes)
+        for i, name in enumerate(names):
+            for other in names[i + 1:]:
+                if _intersects(boxes[name], boxes[other]):
+                    print(f"    note: {name} bbox intersects {other} bbox "
+                          f"(boundary cleanup covers the shared band)")
+        for name in names:
+            x1, y1, z1, x2, y2, z2 = boxes[name]
+            print(f"    {name}: bbox x{x1}..{x2} y{y1}..{y2} z{z1}..{z2}")
+        print()
+
+
+def _intersects(a, b):
+    return all(a[i] <= b[i + 3] and b[i] <= a[i + 3] for i in range(3))
+
+
+def diff_results(old_path, new_path):
+    """Per-chain, per-step verdict diff between two sweep JSONs."""
+    old = json.loads(Path(old_path).read_text(encoding="utf-8"))
+    new = json.loads(Path(new_path).read_text(encoding="utf-8"))
+    print(f"diff: {old_path} ({old['mode']}, {old['node']}, wall {old['wall_s']}s, "
+          f"{old.get('boots')} boots)  vs  {new_path} ({new['mode']}, {new['node']}, "
+          f"wall {new['wall_s']}s, {new.get('boots')} boots)")
+    names_old, names_new = set(old["chains"]), set(new["chains"])
+    if names_old - names_new:
+        print(f"  chains only in OLD: {sorted(names_old - names_new)}")
+    if names_new - names_old:
+        print(f"  chains only in NEW: {sorted(names_new - names_old)}")
+    differences = 0
+    hard = 0
+    for name in sorted(names_old & names_new):
+        o, n = old["chains"][name], new["chains"][name]
+        ov, nv = o.get("verdicts") or [], n.get("verdicts") or []
+        if o["exit"] != n["exit"]:
+            print(f"  {name}: EXIT differs {o['exit']} -> {n['exit']}")
+            hard += 1
+            differences += 1
+        for a, b in zip(ov, nv):
+            if a["verdict"] != b["verdict"] or a["cmd"] != b["cmd"]:
+                differences += 1
+                if {a["verdict"], b["verdict"]} & {"FAIL"}:
+                    hard += 1
+                print(f"  {name} step {a['index']}: {a['verdict']} -> {b['verdict']}"
+                      f"\n    old: {a['cmd']}\n    new: {b['cmd']}")
+        if len(ov) != len(nv):
+            print(f"  {name}: step count differs {len(ov)} vs {len(nv)}")
+            differences += 1
+    verdict = "IDENTICAL" if differences == 0 else \
+              f"{differences} difference(s), {hard} failure-relevant"
+    print(f"\nverdict diff: {verdict}")
+    return 0 if differences == 0 else 1
+
+
+def run_dual(args):
+    """Run this node's sweep here + the other node's sweep in its worktree."""
+    other = Path(args.dual).resolve()
+    head = subprocess.run(["git", "-C", str(other), "rev-parse", "HEAD"],
+                          capture_output=True, text=True, check=True).stdout.strip()
+    mine = subprocess.run(["git", "-C", str(framework.WORKTREE_ROOT), "rev-parse", "HEAD"],
+                          capture_output=True, text=True, check=True).stdout.strip()
+    if head != mine:
+        raise SystemExit(f"--dual: commit mismatch: {other} at {head[:12]}, "
+                         f"here {mine[:12]} — same-commit discipline (ADR-P15-4)")
+    other_node = args.other_node
+    cmd = [sys.executable, "tools/rcon/sweep.py", "--mode", args.mode,
+           "--node", other_node]
+    if args.only:
+        cmd += ["--only", args.only]
+    other_log = gt6server.ARTIFACT_DIR / f"gt6_rs_sweep_{other_node}.log"
+    print(f"[sweep] dual: spawning {other_node} in {other} "
+          f"(log {other_log}, same commit {mine[:12]})")
+    with other_log.open("w") as log:
+        proc = subprocess.Popen(cmd, cwd=str(other), stdout=log,
+                                stderr=subprocess.STDOUT, start_new_session=True)
+        try:
+            mine_json = run_and_record(args)
+        finally:
+            print(f"[sweep] dual: waiting for {other_node} (pid {proc.pid}) ...")
+            proc.wait()
+    other_json = result_path(args.mode, other_node)
+    if not other_json.exists():
+        print(f"[sweep] dual: {other_node} produced no result json — see {other_log}")
+        return 1
+    other_res = json.loads(other_json.read_text(encoding="utf-8"))
+    print(f"\n[sweep] dual wall: {framework.node_suffix(args.node or framework.DEFAULT_NODE)} "
+          f"= {mine_json['wall_s']}s, {other_node} = {other_res['wall_s']}s "
+          f"-> max = {max(mine_json['wall_s'], other_res['wall_s'])}s")
+    return mine_json["exit"] | other_res.get("exit", 1)
+
+
+def run_and_record(args):
+    """Run the sweep for this node and write the result JSON; return it."""
+    node = args.node or framework.DEFAULT_NODE
+    stems = select(ordered_stems(), args.only)
+    started = time.monotonic()
+    if args.mode == "perboot":
+        result = run_perboot(stems, node)
+    else:
+        result = run_session_instrumented(stems, node)
+    result["wall_s"] = round(time.monotonic() - started, 1)
+    path = result_path(args.mode, node)
+    path.write_text(json.dumps(result, indent=1), encoding="utf-8")
+    failures = [name for name, res in result["chains"].items() if res.get("exit")]
+    print(f"\n[sweep] {args.mode} wall {result['wall_s']}s, boots {result['boots']}, "
+          f"{len(stems)} chains, failures: {failures or 'none'}")
+    print(f"[sweep] results -> {path}")
+    return result
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(prog="sweep")
+    parser.add_argument("--mode", choices=["session", "perboot"], default="session")
+    parser.add_argument("--node", default=None,
+                        help="stonecutter node (default 1.20.1-forge)")
+    parser.add_argument("--only", default=None,
+                        help="comma list of module stem / slug / chain name")
+    parser.add_argument("--plan", action="store_true",
+                        help="print the cluster plan + bbox overlaps and exit")
+    parser.add_argument("--probe", action="store_true",
+                        help="run the keepfilter reboot probe after the sweep")
+    parser.add_argument("--diff", nargs=2, metavar=("OLD_JSON", "NEW_JSON"),
+                        help="per-step verdict diff between two sweep results")
+    parser.add_argument("--dual", default=None, metavar="OTHER_WORKTREE",
+                        help="also run OTHER_NODE there in parallel (same commit enforced)")
+    parser.add_argument("--other-node", default="1.21.1-neoforge")
+    args = parser.parse_args(argv)
+
+    if args.diff:
+        return diff_results(*args.diff)
+    if args.plan:
+        show_plan()
+        return 0
+
+    if args.dual:
+        code = run_dual(args)
+    else:
+        result = run_and_record(args)
+        code = 1 if any(res.get("exit") for res in result["chains"].values()) else 0
+
+    if args.probe:
+        node = args.node or framework.DEFAULT_NODE
+        print(f"\n[sweep] keepfilter reboot probe on {node}")
+        code |= subprocess.call([sys.executable,
+                                 str(_HERE / "chains" / f"{PROBE_MODULE}.py"),
+                                 "--node", node])
+    return code
+
+
+if __name__ == "__main__":
+    sys.exit(main())

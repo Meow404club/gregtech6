@@ -318,3 +318,36 @@ python3 -u tools/rcon/chains/p11_cover_shutter_filter.py
 5. 手写 `fill` 清场区 → 删除，改把**每个方块位置**（机器+料斗+邻居）登记进
    `sites`——bbox 联合自动覆盖，新摆的件记得注册。
 6. `gt6cover check <pos>` store=null 收尾 → `store_null_command(pos)` 步。
+
+## ⑥ 会话执行模型与全集 sweep（p15-rcon-session-perf）
+
+boot 是全集 wall 的第一大头（52-59s/次）。两条正典路径，`GT6_SESSION` 一键切换：
+
+- **session（默认）**：`framework.run_session` 一次 boot 跑 N 链。三层隔离：
+  ①链边界跑该链声明 sites 的 bbox cleanup（漏站点必红=结构强制）；
+  ②会话级全局态复位基线（time set day / weather clear / vanilla gamerule 集）
+  ③`fresh_boot` 链自成单例组、`mutates` 键冲突拆组（`plan_groups`）。
+  判定语义零变：同 steps / 同 judge / 同 passes。
+- **per-chain boot**：`GT6_SESSION=off python3 chains/<chain>.py` 原样回退
+  （`run()` 逐字节保留，门禁永不因优化阻塞）。
+
+时序等待的正典形态是 **poll-to-expect**：`Step(cmd, expect=..., poll=秒)` 重发
+只读探针直到 expect 命中或超时（最终响应只判定一次，verdict 与单发一致），
+替代最坏情况定长 `sleep`；`sleep` 保留给"相隔 N 秒两次读数"类停稳证明。
+
+全集 runner（单/双节点）：
+
+```bash
+python3 tools/rcon/sweep.py --plan                    # 看坐标簇分组
+python3 tools/rcon/sweep.py --mode session            # 会话模型全集
+python3 tools/rcon/sweep.py --mode perboot            # 基线模型全集
+python3 tools/rcon/sweep.py --diff old.json new.json  # 逐 step verdict diff
+python3 tools/rcon/sweep.py --mode session --dual ../MGT6GA-trees/<另一节点wt> \
+    --other-node 1.21.1-neoforge                      # 双 worktree 双节点，wall=max
+```
+
+结果（逐 step PASS/FAIL/ALLOWED 账本 + 每链/总 wall）落
+`/tmp/gt6_rs_sweep_<mode>_<节点后缀>.json`；session 端口按节点段错开
+（1.20.1=256xx、1.21.1=25752/25762/25772），artifact slug 带节点后缀。
+`--dual` 强制两 worktree 同 commit（gradle runServer 持项目锁，同 worktree
+双 boot 会被串行化——ADR-P15-4 双节点正典形态）。
