@@ -61,6 +61,10 @@ legacyForge {
         register("server") {
             server()
             gameDirectory = file("run/")
+            // 用户裁定（2026-09-04，随 ADR-P15-4 卡合并）：服务端启动一律 nogui——
+            // DedicatedServer 控制台 GUI 不许弹出，headless 验收机的唯一正典形态。
+            // --nogui 两写法 forge 启动器都认，取带杠的显式形。
+            programArguments.addAll("--nogui")
         }
         // Data run 四参数照搬 GTCEu gradle/scripts/moddevgradle.gradle:111-122 先例（ADR-P2-4）。
         // --existing 指向共享 main/resources：ModelBuilder.texture()（Forge 1.20.1 ModelBuilder.java:145-146）

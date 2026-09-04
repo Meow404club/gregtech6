@@ -106,7 +106,9 @@ online-mode=false   # 仅 headless 无正版账号时；测完还原
 模块化落地，框架用户不用手敲。）
 
 游戏本体永不自行退出——严禁前台跑、严禁阻塞等待退出。唯一正典姿势（在 worktree 根，
-**必须 `./gradlew`，系统 gradle 8.7 过不了 MDG**）：
+**必须 `./gradlew`，系统 gradle 8.7 过不了 MDG**）。服务端一律带 `--nogui`
+（用户裁定 2026-09-04：DedicatedServer 控制台 GUI 不许弹出；两节点的 server run
+配置已内置该程序参数，经框架 `gt6server.start_server` 起服即自动生效）：
 
 ```bash
 nohup ./gradlew :mdk:runServer > /tmp/gt6_rs_<slug>.log 2>&1 & echo $! > /tmp/gt6_rs_<slug>.pid

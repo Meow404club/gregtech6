@@ -84,6 +84,9 @@ neoForge {
         register("server") {
             server()
             gameDirectory = file("run/")
+            // 用户裁定（2026-09-04，随 ADR-P15-4 卡合并）：服务端启动一律 nogui——
+            // DedicatedServer 控制台 GUI 不许弹出，headless 验收机的唯一正典形态。
+            programArguments.addAll("--nogui")
         }
         // Data run 四参数与 forge 节点同构（GTCEu gradle/scripts/moddevgradle.gradle:111-122 先例，ADR-P2-4）。
         // --existing 指向共享 main/resources：占位贴图存在性校验（Forge 1.20.1 ModelBuilder 同机制）。
