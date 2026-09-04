@@ -61,8 +61,14 @@ public class GTGeneratorSolidBlockEntityTest extends GTOfflineTestBase {
 		public long injectedAmount = 0, injectionCalls = 0;
 		public byte lastSide = -1;
 
+		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
+		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		static final net.minecraft.world.level.block.entity.BlockEntityType<HuSink> FAKE_TYPE =
+				net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(
+						(aPos, aState) -> new HuSink(aPos), Blocks.STONE).build(null);
+
 		public HuSink(BlockPos aPos) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(FAKE_TYPE, aPos, Blocks.STONE.defaultBlockState());
 		}
 
 		@Override

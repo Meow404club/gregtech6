@@ -66,8 +66,11 @@ public class GTSteamEngineBlockEntityTest extends GTOfflineTestBase {
 	@SuppressWarnings("unchecked")
 	static void buildOfflineFixture() {
 		BlockEntityType<GTSteamEngineBlockEntity>[] tHolder = (BlockEntityType<GTSteamEngineBlockEntity>[]) new BlockEntityType<?>[1];
+		// OAK_STAIRS joins the valid set for the facingSyncFromState fixture (the vanilla
+		// stairs state carries the SAME HORIZONTAL_FACING property instance); 21.1 validates
+		// the type/state pair at the BE ctor (task p15-m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
-				(aPos, aState) -> new GTSteamEngineBlockEntity(tHolder[0], aPos, aState), Blocks.STONE).build(null);
+				(aPos, aState) -> new GTSteamEngineBlockEntity(tHolder[0], aPos, aState), Blocks.STONE, Blocks.OAK_STAIRS).build(null);
 		sType = tHolder[0];
 	}
 
@@ -103,8 +106,13 @@ public class GTSteamEngineBlockEntityTest extends GTOfflineTestBase {
 		public long calls = 0, lastSize = 1, lastAmount = 0;
 		public byte lastSide = -1;
 
+		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
+		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		static final BlockEntityType<CountingSink> FAKE_TYPE =
+				BlockEntityType.Builder.of((aPos, aState) -> new CountingSink(aPos), Blocks.STONE).build(null);
+
 		public CountingSink(BlockPos aPos) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(FAKE_TYPE, aPos, Blocks.STONE.defaultBlockState());
 		}
 
 		@Override

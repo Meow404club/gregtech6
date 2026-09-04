@@ -89,13 +89,25 @@ public class GTWireConnectBranchTest extends GTOfflineTestBase {
 		GTMaterialItems.initMaterials();
 		@SuppressWarnings("unchecked")
 		BlockEntityType<TestWire>[] tHolder = (BlockEntityType<TestWire>[]) new BlockEntityType<?>[1];
+		// 21.1 validates the BE type/state pair at the ctor: the valid set carries the
+		// cached GT6 wire blocks (task p15-m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
-				(aPos, aState) -> new TestWire(tHolder[0], aPos, aState), Blocks.STONE).build(null);
+				(aPos, aState) -> new TestWire(tHolder[0], aPos, aState),
+				Blocks.STONE, block(Family.REDSTONE), block(Family.ELECTRIC)).build(null);
 		sType = tHolder[0];
 	}
 
-	/** Offline Block construction needs the block registry temporarily unfrozen (the UseLockTest form). */
+	/**
+	 * Offline Block construction needs the block registry temporarily unfrozen (the
+	 * UseLockTest form). Instances are memoized per family — the 21.1 BE ctor validates
+	 * the state against the BET's valid set, so the fixture must hand out ONE stable
+	 * block identity per family (task p15-m4-test-infra-2).
+	 */
+	private static final Map<Family, GTWireBlock> sBlockCache = new HashMap<>();
+
 	private static GTWireBlock block(Family aFamily) {
+		GTWireBlock tCached = sBlockCache.get(aFamily);
+		if (tCached != null) return tCached;
 		try {
 			Method tUnfreeze = BuiltInRegistries.BLOCK.getClass().getMethod("unfreeze");
 			tUnfreeze.setAccessible(true);
@@ -103,9 +115,11 @@ public class GTWireConnectBranchTest extends GTOfflineTestBase {
 		} catch (Exception aE) {
 			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
 		}
-		return aFamily == Family.REDSTONE
+		GTWireBlock tBlock = aFamily == Family.REDSTONE
 				? new GTWireBlock(0, 1, GTWireSpecs.MAX_RANGE / 16, MT.RedAlloy, 1, false, 2, aFamily, BlockBehaviour.Properties.of())
 				: new GTWireBlock(32, 1, 2, MT.Sn, 1, false, 2, aFamily, BlockBehaviour.Properties.of());
+		sBlockCache.put(aFamily, tBlock);
+		return tBlock;
 	}
 
 	@Test

@@ -53,8 +53,11 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 	@SuppressWarnings("unchecked")
 	static void buildOfflineFixture() {
 		BlockEntityType<GTAxleBlockEntity>[] tHolder = (BlockEntityType<GTAxleBlockEntity>[]) new BlockEntityType<?>[1];
+		// OAK_LOG joins the valid set for the axisFaceTruthTable mirror fixture (the vanilla
+		// log state carries the SAME BlockStateProperties.AXIS instance); 21.1 validates the
+		// type/state pair at the BE ctor (task p15-m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
-				(aPos, aState) -> new GTAxleBlockEntity(tHolder[0], aPos, aState), Blocks.STONE).build(null);
+				(aPos, aState) -> new GTAxleBlockEntity(tHolder[0], aPos, aState), Blocks.STONE, Blocks.OAK_LOG).build(null);
 		sType = tHolder[0];
 	}
 
@@ -72,8 +75,13 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 		public byte lastSide = -1;
 		public final TagData acceptedType;
 
+		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
+		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		static final BlockEntityType<CountingSink> FAKE_TYPE =
+				BlockEntityType.Builder.of((aPos, aState) -> new CountingSink(aPos, TD.Energy.RU), Blocks.STONE).build(null);
+
 		public CountingSink(BlockPos aPos, TagData aAcceptedType) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(FAKE_TYPE, aPos, Blocks.STONE.defaultBlockState());
 			acceptedType = aAcceptedType;
 		}
 
@@ -139,11 +147,14 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 	public static class EmittingSource extends BlockEntity implements ITileEntityEnergy {
 		public final TagData emittedType;
 
+		// 21.1 ctor validation: real BET over the vanilla stone state, supplier never invoked.
+		static final BlockEntityType<EmittingSource> FAKE_TYPE =
+				BlockEntityType.Builder.of((aPos, aState) -> new EmittingSource(aPos, TD.Energy.RU), Blocks.STONE).build(null);
+
 		public EmittingSource(BlockPos aPos, TagData aEmittedType) {
-			super(null, aPos, Blocks.STONE.defaultBlockState());
+			super(FAKE_TYPE, aPos, Blocks.STONE.defaultBlockState());
 			emittedType = aEmittedType;
 		}
-
 		@Override
 		public boolean isEnergyType(TagData aEnergyType, byte aSide, boolean aEmitting) {
 			return aEmitting && aEnergyType == emittedType;
@@ -189,6 +200,18 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 
 		@Override
 		public long getEnergySizeOutputMax(TagData aEnergyType, byte aSide) {return 0;}
+	}
+
+	/** Plain non-energy BE — the non-consumer probe of canConnect/the injection chain. */
+	public static class PlainBox extends BlockEntity {
+		// 21.1 ctor validation: real BET over the vanilla stone state, supplier never invoked
+		// (task p15-m4-test-infra-2).
+		static final BlockEntityType<PlainBox> FAKE_TYPE =
+				BlockEntityType.Builder.of((aPos, aState) -> new PlainBox(aPos), Blocks.STONE).build(null);
+
+		public PlainBox(BlockPos aPos) {
+			super(FAKE_TYPE, aPos, Blocks.STONE.defaultBlockState());
+		}
 	}
 
 	/**
@@ -307,7 +330,7 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 
 		// a non-axle NON-energy neighbor (a plain BE): Util hands it to the bridge seam,
 		// nobody consumes → 0 back to the caller (the same unconsumed semantics)
-		BlockEntity tPlain = new BlockEntity(null, POS.south(), Blocks.STONE.defaultBlockState()) {};
+		BlockEntity tPlain = new PlainBox(POS.south());
 		tAxle.setAdjacencyOverride(aSide -> aSide == 3 ? new EnergyTarget(tPlain, (byte) 2) : null);
 		assertEquals(0, tAxle.doEnergyInjection(TD.Energy.RU, (byte) 2, -16, 1, true));
 	}
@@ -322,7 +345,7 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 		assertFalse(tAxle.canConnect((byte) 2, new CountingSink(POS.south(), TD.Energy.EU)));
 		assertFalse(tAxle.canConnect((byte) 2, new CountingSink(POS.south(), TD.Energy.KU)));
 		// a plain (non-energy) BE and null refuse (upstream :136)
-		assertFalse(tAxle.canConnect((byte) 2, new BlockEntity(null, POS.south(), Blocks.STONE.defaultBlockState()) {}));
+		assertFalse(tAxle.canConnect((byte) 2, new PlainBox(POS.south())));
 		assertFalse(tAxle.canConnect((byte) 2, null));
 
 		// and the axle's own face family only ever speaks RU (upstream :139/:140)

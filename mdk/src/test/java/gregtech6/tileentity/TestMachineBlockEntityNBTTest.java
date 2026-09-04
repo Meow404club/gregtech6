@@ -7,17 +7,24 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Method;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import gregtech6.block.TestMachineBlock;
 
 //? if forge {
 import net.minecraftforge.common.util.LazyOptional;
@@ -31,10 +38,11 @@ import net.minecraftforge.items.IItemHandler;
  *
  * <p>Offline fixtures use vanilla blocks (a fresh Block cannot be constructed after
  * the offline boot freezes the registries), which still exercises the shared-BET
- * multi-mount: one BlockEntityType over two distinct blocks (ADR-P3-1). Ticking and
- * passive BE instances differ through the bare test constructor (mIsTicking mirrors
- * what TestMachineBlock passes in-game). The GTEntityBlock ticker lambda itself runs
- * only against live blocks — covered by the WAVE-2 example machine card.
+ * multi-mount: one BlockEntityType over distinct blocks (ADR-P3-1). Ticking and
+ * passive BE instances differ through the fixture {@code TestMachineBlock(false)}
+ * state (mIsTicking mirrors what TestMachineBlock passes in-game). The GTEntityBlock
+ * ticker lambda itself runs only against live blocks — covered by the WAVE-2 example
+ * machine card.
  */
 public class TestMachineBlockEntityNBTTest extends GTOfflineTestBase {
 
@@ -42,14 +50,31 @@ public class TestMachineBlockEntityNBTTest extends GTOfflineTestBase {
 
 	static BlockEntityType<TestMachineBlockEntity> sType;
 
+	/**
+	 * The notick {@link TestMachineBlock} stand-in: the bare {@code TestMachineBlockEntity}
+	 * constructor passed a null BET/state, which the 21.1 ctor validation rejects
+	 * (validateBlockState → getType().isValid). The passive fixture block drives the same
+	 * {@code mIsTicking = isTicking()} ctor branch through the full constructor instead
+	 * (task p15-m4-test-infra-2).
+	 */
+	static TestMachineBlock sPassiveBlock;
+
 	@BeforeAll
 	static void buildOfflineFixtures() {
 		// offline holders avoid the RegistryObject.get() path of the runtime factory
 		@SuppressWarnings("unchecked")
 		BlockEntityType<TestMachineBlockEntity>[] tHolder = (BlockEntityType<TestMachineBlockEntity>[]) new BlockEntityType<?>[1];
+		try {
+			Method tUnfreeze = BuiltInRegistries.BLOCK.getClass().getMethod("unfreeze");
+			tUnfreeze.setAccessible(true);
+			tUnfreeze.invoke(BuiltInRegistries.BLOCK);
+		} catch (Exception aE) {
+			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+		}
+		sPassiveBlock = new TestMachineBlock(false, BlockBehaviour.Properties.of());
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TestMachineBlockEntity(tHolder[0], aPos, aState),
-				Blocks.STONE, Blocks.DIRT).build(null);
+				Blocks.STONE, Blocks.DIRT, sPassiveBlock).build(null);
 		sType = tHolder[0];
 	}
 
@@ -113,6 +138,11 @@ public class TestMachineBlockEntityNBTTest extends GTOfflineTestBase {
 	@Test
 	public void syncChannelsCarryTheUpdateTagBothWays() {
 		TestMachineBlockEntity tServer = sType.create(POS, Blocks.STONE.defaultBlockState());
+		// the block-update channel (getUpdatePacket, vanilla ClientboundBlockEntityDataPacket
+		// :31) reads level.registryAccess() — the map-backed MultiBlockLevel supplies it
+		// (a bare MinimalLevel leaves setChanged NPE-ing on the null chunk source, the
+		// dispatcher swallows it and the tick never counts)
+		tServer.setLevel(new gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase.MultiBlockLevel());
 		tServer.updateEntity();
 		tServer.updateEntity();
 
@@ -153,8 +183,10 @@ public class TestMachineBlockEntityNBTTest extends GTOfflineTestBase {
 
 	@Test
 	public void canUpdateFalseBEsNeverEnterTheDispatcher() {
-		// the bare constructor mirrors the notick chain: TileEntityBase01Root(false)
-		TestMachineBlockEntity tPassive = new TestMachineBlockEntity(new GTItemStackHandler(4, () -> {}), false);
+		// the passive fixture block drives the notick branch of the full constructor
+		// (mIsTicking = TestMachineBlock.isTicking() = false — the bare constructor form
+		// the 21.1 ctor validation retired)
+		TestMachineBlockEntity tPassive = new TestMachineBlockEntity(sType, POS, sPassiveBlock.defaultBlockState());
 		assertFalse(tPassive.canUpdate(), "upstream TileEntityBase01Root.java:440 = mIsTicking && mShouldRefresh");
 
 		// machines can also stop and resume by flipping mShouldRefresh (same upstream gate)
@@ -167,11 +199,15 @@ public class TestMachineBlockEntityNBTTest extends GTOfflineTestBase {
 
 	@Test
 	public void passiveHandlersSurviveARoundTripToo() {
-		TestMachineBlockEntity tBe = new TestMachineBlockEntity(new GTItemStackHandler(2, () -> {}), false);
+		// full constructor over the passive fixture block + the injected 2-slot handler
+		// (the setInventory seam the bare constructor used to serve)
+		TestMachineBlockEntity tBe = new TestMachineBlockEntity(sType, POS, sPassiveBlock.defaultBlockState());
+		tBe.setInventory(new GTItemStackHandler(2, () -> {}));
 		tBe.getInventory().setStackInSlot(0, new ItemStack(Items.EMERALD, 9));
 
 		CompoundTag tSaved = tBe.saveWithoutMetadata();
-		TestMachineBlockEntity tBack = new TestMachineBlockEntity(new GTItemStackHandler(2, () -> {}), false);
+		TestMachineBlockEntity tBack = new TestMachineBlockEntity(sType, POS, sPassiveBlock.defaultBlockState());
+		tBack.setInventory(new GTItemStackHandler(2, () -> {}));
 		tBack.load(tSaved);
 
 		assertEquals(9, tBack.getInventory().getStackInSlot(0).getCount());
