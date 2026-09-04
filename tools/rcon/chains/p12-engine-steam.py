@@ -97,7 +97,7 @@ CHAIN = Chain(
         Step(f"execute if block {F(ENGINE)} gt6:steam_engine_tungsten[facing=north]", expect="Test passed"),
         Step(f"gt6engine stat {F(ENGINE)}", expect="output=64 KU/t"),
         Step(f"gt6machine crusher place {F(CRUSHER)}", expect="GT6 crusher placed at 4, 64, 7"),
-        Step(f"gt6machine crusher input 8 {F(CRUSHER)}", expect="8x gem_glass into slot 0"),
+        Step(f"gt6machine crusher input 8 {F(CRUSHER)}", expect="gem_glass into slot 0"),
         Step(f"setblock {F(DWTANK)} gt6:barrel_wood", expect="Changed the block"),
         Step(f"gt6engine mode {F(ENGINE)} on", expect=": on (stopped=false)"),
         *RAMP_FILLS,

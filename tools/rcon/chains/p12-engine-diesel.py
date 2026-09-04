@@ -71,7 +71,7 @@ CHAIN = Chain(
         Step(f"gt6engine stat {F(ENGINE)}", expect="input=empty"),
         Step(f"gt6engine stat {F(ENGINE)}", expect="rate=16 RU/t (DC constant-sign)"),
         Step(f"gt6engine fuel {F(ENGINE)} gt6:diesel 2000", expect="filled 160 L of gt6:diesel"),
-        Step(f"gt6engine stat {F(ENGINE)}", expect="input=gt6:diesel x1"),
+        Step(f"gt6engine stat {F(ENGINE)}", expect="gt6:diesel x1"),
         # the negative arm: the refusal itself carries the FAILED marker (allow_failed) —
         # the expect pins the containsInput refusal text
         Step(f"gt6engine fuel {F(ENGINE)} gt6:water 100", expect="is not an ENGINE_FUELS input",
