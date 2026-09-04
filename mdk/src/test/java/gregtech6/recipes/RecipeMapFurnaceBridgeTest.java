@@ -134,7 +134,11 @@ class RecipeMapFurnaceBridgeTest extends GTRecipesOfflineTestBase {
 	@Test
 	void emptyRecipeManagerYieldsNoRecipe() {
 		GT6RecipeMaps.init();
+		//? if forge {
 		MinimalLevel tEmptyLevel = new MinimalLevel(new RecipeManager());
+		//?} else {
+		/*MinimalLevel tEmptyLevel = new MinimalLevel(new RecipeManager(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS)); // 21.1: the ctor takes the registries
+		*///?}
 		assertNull(GT6RecipeMaps.FURNACE.findRecipe(tEmptyLevel, null, 64, null, null, new ItemStack(Items.SAND, 4)));
 		assertNull(RecipeMapFurnace.getSmeltingResult(tEmptyLevel, new ItemStack(Items.SAND)));
 	}

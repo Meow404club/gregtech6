@@ -62,7 +62,11 @@ public class TestMachineBlockEntity extends TileEntityBase03TicksAndSync {
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
 		aNBT.putLong("tick_count", mTickCount);
+		//? if forge {
 		aNBT.put("inventory", mInventory.serializeNBT());
+		//?} else {
+		/*aNBT.put("inventory", mInventory.serializeNBT(NBT_ACCESS)); // 21.1: ItemStackHandler NBT takes the registries
+		*///?}
 	}
 
 	@Override
@@ -72,7 +76,11 @@ public class TestMachineBlockEntity extends TileEntityBase03TicksAndSync {
 			mTickCount = aNBT.getLong("tick_count");
 		}
 		if (aNBT.contains("inventory", Tag.TAG_COMPOUND)) {
+			//? if forge {
 			mInventory.deserializeNBT(aNBT.getCompound("inventory"));
+			//?} else {
+			/*mInventory.deserializeNBT(NBT_ACCESS, aNBT.getCompound("inventory")); // 21.1: provider-first
+			*///?}
 		}
 	}
 

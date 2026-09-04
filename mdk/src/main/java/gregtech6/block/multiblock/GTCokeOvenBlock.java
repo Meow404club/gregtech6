@@ -14,7 +14,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
+//? if forge {
 import net.minecraftforge.network.NetworkHooks;
+//?}
 
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
@@ -59,13 +61,24 @@ public class GTCokeOvenBlock extends GTMultiBlockControllerBlock {
 	}
 
 	@Override
+	//? if forge {
 	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+	//?} else {
+	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
+	//(javap BlockBehaviour 21.1.249); the game loop drives MAIN_HAND first.
+	InteractionHand aHand = InteractionHand.MAIN_HAND;
+	*///?}
 		ItemStack tHeld = aPlayer.getItemInHand(aHand);
 		if (tHeld.is(Items.FLINT_AND_STEEL) && aLevel.getBlockEntity(aPos) instanceof TileEntityCokeOven tOven) {
 			if (aLevel.isClientSide()) return InteractionResult.SUCCESS;
 			tOven.ignite(); // no-op while !mRequiresIgnition (the upstream :377 return-0 shape)
 			if (!tOven.mRequiresIgnition) return InteractionResult.PASS;
+			//? if forge {
 			tHeld.hurtAndBreak(1, aPlayer, p -> p.broadcastBreakEvent(aHand == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND)); // CONSUME the tool
+			//?} else {
+			/*tHeld.hurtAndBreak(1, aPlayer, aHand == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND); // CONSUME the tool (21.1: hurtAndBreak takes the slot, the break event rides inside)
+			*///?}
 			return InteractionResult.CONSUME;
 		}
 		// task p8-cokeoven-gui-menu ⑤ — the GUI open (upstream MultiTileEntityCokeOven has no
@@ -78,10 +91,18 @@ public class GTCokeOvenBlock extends GTMultiBlockControllerBlock {
 		if (aLevel.getBlockEntity(aPos) instanceof TileEntityCokeOven tOven) {
 			if (aLevel.isClientSide()) return InteractionResult.SUCCESS;
 			if (aPlayer instanceof ServerPlayer tServerPlayer) {
+				//? if forge {
 				NetworkHooks.openScreen(tServerPlayer, tOven, aPos);
+				//?} else {
+				/*tServerPlayer.openMenu(tOven, tBuf -> tBuf.writeBlockPos(aPos)); // 21.1: NetworkHooks deleted (the command-file precedent)
+				*///?}
 			}
 			return InteractionResult.CONSUME;
 		}
+		//? if forge {
 		return super.use(aState, aLevel, aPos, aPlayer, aHand, aHit);
+		//?} else {
+		/*return super.useWithoutItem(aState, aLevel, aPos, aPlayer, aHit);
+		*///?}
 	}
 }

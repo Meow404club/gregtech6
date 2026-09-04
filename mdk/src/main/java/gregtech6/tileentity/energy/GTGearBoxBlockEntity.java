@@ -411,7 +411,11 @@ public class GTGearBoxBlockEntity extends TileEntityBase03TicksAndSync implement
 		BlockPos tPos = getBlockPos();
 		Item tScrap = null;
 		RegistryObject<Item> tScrapItem = GTMaterialItems.get(OP.scrapGt, MT.WoodTreated);
+		//? if forge {
 		if (tScrapItem != null && tScrapItem.isPresent()) tScrap = tScrapItem.get();
+		//?} else {
+		/*if (tScrapItem != null && tScrapItem.isBound()) tScrap = tScrapItem.get(); // 21.1: RegistryObject.isPresent → Holder.isBound (the command-file truth)
+		*///?}
 		int tScrapCount = 9 + getLevel().random.nextInt(27); // upstream 9+rng(27)
 		if (tScrap != null) spawnDrop(new ItemStack(tScrap, tScrapCount), tPos);
 		if (aGearCount > 1) spawnDrop(new ItemStack(getBlockState().getBlock(), aGearCount - 1), tPos); // the gear leg → the block item (declared)

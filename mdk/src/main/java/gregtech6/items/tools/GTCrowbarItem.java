@@ -149,9 +149,22 @@ public class GTCrowbarItem extends Item {
 			Blocks.ACACIA_BUTTON, Blocks.DARK_OAK_BUTTON, Blocks.MANGROVE_BUTTON, Blocks.CHERRY_BUTTON,
 			Blocks.BAMBOO_BUTTON, Blocks.CRIMSON_BUTTON, Blocks.WARPED_BUTTON);
 
+	//? if forge {
 	private final Multimap<Attribute, AttributeModifier> mAttackModifiers = ImmutableMultimap.of(
 			Attributes.ATTACK_DAMAGE,
 			new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", (double) ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION));
+	//?} else {
+	/*// 21.1: the per-slot Multimap override point died with the DataComponents rework —
+	//the default attributes ride ItemAttributeModifiers (javap Item 21.1.249:
+	//getDefaultAttributeModifiers() → ItemAttributeModifiers; BASE_ATTACK_DAMAGE_UUID →
+	//BASE_ATTACK_DAMAGE_ID ResourceLocation; Operation.ADDITION → ADD_VALUE).
+	private final net.minecraft.world.item.component.ItemAttributeModifiers mAttackModifiers = net.minecraft.world.item.component.ItemAttributeModifiers
+			.builder()
+			.add(Attributes.ATTACK_DAMAGE,
+					new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, (double) ATTACK_DAMAGE, AttributeModifier.Operation.ADD_VALUE),
+					net.minecraft.world.entity.EquipmentSlotGroup.MAINHAND)
+			.build();
+	*///?}
 
 	public GTCrowbarItem(Properties aProperties) {
 		super(aProperties);
@@ -206,10 +219,17 @@ public class GTCrowbarItem extends Item {
 		return true;
 	}
 
+	//? if forge {
 	@Override
 	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot aSlot) {
 		return aSlot == EquipmentSlot.MAINHAND ? mAttackModifiers : super.getDefaultAttributeModifiers(aSlot);
 	}
+	//?} else {
+	/*@Override
+	public net.minecraft.world.item.component.ItemAttributeModifiers getDefaultAttributeModifiers() {
+		return mAttackModifiers;
+	}
+	*///?}
 
 	/**
 	 * The mining-surface seam — the upstream isMinableBlock :108-114 modern halves
@@ -232,7 +252,13 @@ public class GTCrowbarItem extends Item {
 
 	/** The drop-authorization half of isMinableBlock (SwordItem.java:68 shape). */
 	@Override
+	//? if forge {
 	public boolean isCorrectToolForDrops(BlockState aState) {
+	//?} else {
+	/*public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
+	//21.1: the stack parameter joined the signature (javap Item 21.1.249) — unused here
+	//(the mineable surface is a pure BlockState function).
+	*///?}
 		return mines(aState);
 	}
 

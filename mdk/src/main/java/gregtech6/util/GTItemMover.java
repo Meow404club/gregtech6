@@ -205,13 +205,24 @@ public final class GTItemMover {
 	private static int canPut(IItemHandler aTo, int aSlotTo, ItemStack aStackFrom, ItemStack aStackTo, int aMaxSize) {
 		// ST.java:689 — empty → min(aMaxSize, limit); identical → that minus existing; else 0.
 		int rMaxMove = aStackTo.isEmpty() ? Math.min(aMaxSize, aTo.getSlotLimit(aSlotTo))
+				//? if forge {
 				: ItemHandlerHelper.canItemStacksStack(aStackTo, aStackFrom) ? Math.min(aMaxSize, aTo.getSlotLimit(aSlotTo)) - aStackTo.getCount()
+				//?} else {
+				/*: ItemStack.isSameItemSameComponents(aStackTo, aStackFrom) ? Math.min(aMaxSize, aTo.getSlotLimit(aSlotTo)) - aStackTo.getCount()
+				//21.1: ItemHandlerHelper.canItemStacksStack is gone (javap ItemHandlerHelper 21.1.249 —
+				//only the insert family remains); this arm guarantees aStackTo non-empty, so the
+				//same-item-same-components identity test is the exact stackability predicate.
+				*///?}
 				: 0;
 		// ST.java:690 first clause — no room, no move.
 		if (rMaxMove <= 0) return 0;
 		// ST.java:690 second clause (isItemValidForSlot) + :692 (canInsertItem) — the simulated
 		// remainder is the handler-world measurement of both.
+		//? if forge {
 		ItemStack tRest = aTo.insertItem(aSlotTo, ItemHandlerHelper.copyStackWithSize(aStackFrom, rMaxMove), true);
+		//?} else {
+		/*ItemStack tRest = aTo.insertItem(aSlotTo, aStackFrom.copyWithCount(rMaxMove), true); // 21.1: copyStackWithSize deleted — vanilla copyWithCount is the same copy-at-count
+		*///?}
 		return rMaxMove - tRest.getCount();
 	}
 

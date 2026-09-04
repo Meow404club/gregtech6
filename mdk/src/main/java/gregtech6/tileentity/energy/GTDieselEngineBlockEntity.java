@@ -14,7 +14,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluid;
+//? if forge {
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+//?}
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -430,7 +432,11 @@ public class GTDieselEngineBlockEntity extends TileEntityBase03TicksAndSync impl
 		if (tCO2 == null) return; // the FL.exists semantics: no registered fluid, nothing can leave as a stack
 		BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(back()));
 		if (tNeighbor == null || tNeighbor.isRemoved()) return;
+		//? if forge {
 		IFluidHandler tHandler = tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, back().getOpposite()).orElse(null);
+		//?} else {
+		/*IFluidHandler tHandler = getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, tNeighbor.getBlockPos(), back().getOpposite()); // 21.1: the level-form BlockCapability query (the coke-oven/barrel precedent)
+		*///?}
 		if (tHandler == null) return;
 		long tMoved = tHandler.fill(new FluidStack(tCO2, (int)Math.min(Integer.MAX_VALUE, mExhaustCO2)), IFluidHandler.FluidAction.EXECUTE);
 		mExhaustCO2 -= tMoved;

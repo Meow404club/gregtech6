@@ -182,7 +182,13 @@ public class CoverShutterFilterTest extends GTCoverTestBase {
 		// NOT NBT sensitive (upstream ST.equal(filter, stack, T)): the display-name
 		// component noise on the offered stack never changes the verdict
 		ItemStack tTagged = stack(Items.IRON_INGOT, 8);
+		//? if forge {
 		tTagged.getOrCreateTag().putBoolean("gt6_test_marker", true);
+		//?} else {
+		/*CompoundTag tNoise = tTagged.getOrDefault(gregtech6.registry.GT6DataComponents.COVER_PAYLOAD, net.minecraft.world.item.component.CustomData.EMPTY).copyTag(); // 21.1: no free-form tag — the noise rides a scratch component lane
+		tNoise.putBoolean("gt6_test_marker", true);
+		net.minecraft.world.item.component.CustomData.set(gregtech6.registry.GT6DataComponents.COVER_PAYLOAD, tTagged, tNoise);
+		*///?}
 		assertTrue(CoverFilterItem.matches(tOven.getCovers(), (byte) 2, tTagged), "the match ignores the stack tag");
 		// count-insensitive: a 1-count filter matches a 64-count offer
 		assertTrue(CoverFilterItem.matches(tOven.getCovers(), (byte) 2, stack(Items.IRON_INGOT, 64)));
@@ -235,7 +241,11 @@ public class CoverShutterFilterTest extends GTCoverTestBase {
 		// the pure core of the set: the tag shape under the verbatim upstream key
 		CompoundTag tLane = CoverFilterItem.filterTagFor(stack(Items.IRON_INGOT, 64));
 		assertTrue(tLane.contains(CoverFilterItem.FILTER_KEY, Tag.TAG_COMPOUND), "the upstream key gt.filter.item");
+		//? if forge {
 		ItemStack tSaved = ItemStack.of(tLane.getCompound(CoverFilterItem.FILTER_KEY));
+		//?} else {
+		/*ItemStack tSaved = ItemStack.parseOptional(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS, tLane.getCompound(CoverFilterItem.FILTER_KEY)); // 21.1: the codec parse face
+		*///?}
 		assertEquals(Items.IRON_INGOT, tSaved.getItem(), "the identity write (the meta cycle is the declared deviation collapse)");
 		assertEquals(1, tSaved.getCount(), "a 1-count filter stack (upstream ST.make(item, 1, meta))");
 	}

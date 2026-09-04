@@ -184,7 +184,14 @@ public class GTAttachmentSmallBlock extends Block implements EntityBlock {
 	 * player's MAIN HAND (the upstream {@code getCurrentEquippedItem}).
 	 */
 	@Override
+	//? if forge {
 	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+	//?} else {
+	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
+	//(javap BlockBehaviour 21.1.249); the game loop drives MAIN_HAND first.
+	InteractionHand aHand = InteractionHand.MAIN_HAND;
+	*///?}
 		if (aLevel.isClientSide()) return InteractionResult.SUCCESS;
 		if (aLevel.getBlockEntity(aPos) instanceof GTAttachmentSmallBlockEntity tAttachment) {
 			tAttachment.onPlayerUse(aPlayer, (byte)aHit.getDirection().get3DDataValue());

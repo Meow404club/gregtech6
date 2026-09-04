@@ -120,12 +120,20 @@ public class GTBarrelItemFluidHandlerTest extends GTOfflineTestBase {
 		ItemStack tStack = new ItemStack(Items.GLASS_BOTTLE);
 		GTBarrelItemFluidHandler tHandler = new GTBarrelItemFluidHandler(tStack, 16000);
 		tHandler.fill(new FluidStack(Fluids.WATER, 100), FluidAction.EXECUTE);
+		//? if forge {
 		assertTrue(tStack.hasTag(), "the filled container carries its tag");
+		//?} else {
+		/*assertTrue(tStack.get(gregtech6.registry.GT6DataComponents.BARREL_CONTENT) != null, "the filled container carries its payload component");
+		*///?}
 
 		tHandler.drain(100, FluidAction.EXECUTE);
 		assertTrue(tHandler.getFluidInTank(0).isEmpty(), "keepsFilter=F: the identity is cleared at 0 L");
 		assertFalse(tHandler.serializeNBT().contains(TileEntityBase08Barrel.NBT_TANK), "the tank key is removed (writeToNBT remove branch)");
+		//? if forge {
 		assertFalse(tStack.hasTag(), "the emptied container drops the whole tag — identical to a never-filled one, stacking restored");
+		//?} else {
+		/*assertFalse(tStack.get(gregtech6.registry.GT6DataComponents.BARREL_CONTENT) != null, "the emptied container drops the payload component — identical to a never-filled one, stacking restored");
+		*///?}
 		assertTrue(GTBarrelBlockItem.hasContent(tStack) == false, "the :290 stacking predicate reads empty again");
 	}
 
@@ -148,7 +156,13 @@ public class GTBarrelItemFluidHandlerTest extends GTOfflineTestBase {
 
 		// the ctor reads an already-filled container tag back
 		ItemStack tFilled = new ItemStack(Items.GLASS_BOTTLE);
+		//? if forge {
 		tFilled.getOrCreateTag().put(TileEntityBase08Barrel.NBT_TANK, new FluidStack(Fluids.LAVA, 500).writeToNBT(new CompoundTag()));
+		//?} else {
+		/*CompoundTag tPre = new CompoundTag();
+		tPre.put(TileEntityBase08Barrel.NBT_TANK, new FluidStack(Fluids.LAVA, 500).save(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS, new CompoundTag())); // 21.1: the codec save face
+		net.minecraft.world.item.component.CustomData.set(gregtech6.registry.GT6DataComponents.BARREL_CONTENT, tFilled, tPre); // 21.1: the payload rides the CustomData component
+		*///?}
 		assertEquals(500, new GTBarrelItemFluidHandler(tFilled, 16000).getFluidInTank(0).getAmount(), "a pre-filled container tag loads at construction");
 	}
 }

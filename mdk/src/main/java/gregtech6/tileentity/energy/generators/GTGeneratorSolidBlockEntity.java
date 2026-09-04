@@ -509,7 +509,11 @@ public abstract class GTGeneratorSolidBlockEntity extends TileEntityBase03TicksA
 		aNBT.putBoolean(NBT_ACTIVE, mBurning); // :80
 		aNBT.putShort(NBT_EFFICIENCY, mEfficiency);
 		aNBT.putLong(NBT_OUTPUT, mRate); // the row rate rides NBT for a clean round trip
+		//? if forge {
 		aNBT.put("gt.inv", mInventory.serializeNBT());
+		//?} else {
+		/*aNBT.put("gt.inv", mInventory.serializeNBT(NBT_ACCESS)); // 21.1: ItemStackHandler NBT takes the registries
+		*///?}
 	}
 
 	@Override
@@ -521,6 +525,10 @@ public abstract class GTGeneratorSolidBlockEntity extends TileEntityBase03TicksA
 		if (aNBT.contains(NBT_EFFICIENCY, Tag.TAG_ANY_NUMERIC)) {
 			mEfficiency = (short)Math.max(0, Math.min(10000, aNBT.getShort(NBT_EFFICIENCY))); // :72 UT.Code.bind_(0, 10000, ...)
 		}
+		//? if forge {
 		if (aNBT.contains("gt.inv", Tag.TAG_COMPOUND)) mInventory.deserializeNBT(aNBT.getCompound("gt.inv"));
+		//?} else {
+		/*if (aNBT.contains("gt.inv", Tag.TAG_COMPOUND)) mInventory.deserializeNBT(NBT_ACCESS, aNBT.getCompound("gt.inv")); // 21.1: provider-first
+		*///?}
 	}
 }

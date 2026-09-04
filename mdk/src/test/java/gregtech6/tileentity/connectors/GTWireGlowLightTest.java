@@ -86,10 +86,15 @@ public class GTWireGlowLightTest extends GTOfflineTestBase {
 		 * {@code instanceof Level} branch walks {@code hasChunk → level.getChunk} (IForgeBlockGetter
 		 * :32-39), and this double's chunkSource is null — delegate straight to the map instead.
 		 */
+		//? if forge {
 		@Override
 		public BlockEntity getExistingBlockEntity(BlockPos aPos) {
 			return mBlockEntities.get(aPos);
 		}
+		//?} else {
+		/*// 21.1: the forge getExistingBlockEntity patch is gone — the class's own
+		//getBlockEntity override is the vanilla read and needs no twin.
+		*///?}
 
 		@Override
 		public BlockState getBlockState(BlockPos aPos) {

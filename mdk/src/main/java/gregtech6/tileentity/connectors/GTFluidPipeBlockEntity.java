@@ -444,6 +444,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		scheduleFlowRenderRefresh();
 	}
 
+	//? if forge {
 	@Override
 	public void handleUpdateTag(CompoundTag aTag) {
 		super.handleUpdateTag(aTag);
@@ -455,6 +456,20 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		super.onDataPacket(aNet, aPacket);
 		scheduleFlowRenderRefresh(); // block-update channel (arrow changes)
 	}
+	//?} else {
+	/*@Override
+	public void handleUpdateTag(CompoundTag aTag, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.handleUpdateTag(aTag, aProvider);
+		scheduleFlowRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.onDataPacket(aNet, aPacket, aProvider);
+		scheduleFlowRenderRefresh(); // block-update channel (arrow changes)
+	}
+	// 21.1: both IBlockEntityExtension hooks gain the serialization provider (javap)
+	*///?}
 
 	private void scheduleFlowRenderRefresh() {
 		if (mIoMask != 0 && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);

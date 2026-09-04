@@ -23,7 +23,9 @@ import javax.annotation.Nullable;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+//? if forge {
 import net.minecraftforge.common.ForgeHooks;
+//?}
 import net.minecraftforge.fluids.FluidStack;
 
 /**
@@ -82,7 +84,11 @@ public class RecipeMapFurnaceFuel extends RecipeMap {
 	@Nullable
 	public Recipe findFuelRecipe(ItemStack aInput) {
 		if (aInput == null || aInput.isEmpty()) return null;
+		//? if forge {
 		int tBurnTime = ForgeHooks.getBurnTime(aInput, RecipeType.SMELTING); // the :53 ST.fuel counterpart
+		//?} else {
+		/*int tBurnTime = aInput.getBurnTime(RecipeType.SMELTING); // 21.1: ForgeHooks.getBurnTime deleted — IItemStackExtension.getBurnTime(RecipeType) is the same query (javap 21.1.249)
+		*///?}
 		if (tBurnTime <= 0) return null;
 		ItemStack tContainer = aInput.hasCraftingRemainingItem() ? aInput.getCraftingRemainingItem() : null; // the :56 ST.container counterpart
 		ItemStack tOne = aInput.copy();

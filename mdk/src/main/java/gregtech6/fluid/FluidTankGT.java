@@ -65,7 +65,11 @@ public class FluidTankGT implements IFluidTank {
 	public FluidTankGT(@Nullable CompoundTag aNBT, long aCapacity) {
 		mCapacity = aCapacity;
 		if (aNBT != null && !aNBT.isEmpty()) {
+			//? if forge {
 			mFluid = FluidStack.loadFluidStackFromNBT(aNBT);
+			//?} else {
+			/*mFluid = FluidStack.parseOptional(nbtAccess(), aNBT); // 21.1: the codec parse face (javap 21.1.249); a failed parse lands EMPTY, folded to 0 below
+			*///?}
 			mAmount = (isEmpty() ? 0 : aNBT.contains(NBT_L_AMOUNT, Tag.TAG_ANY_NUMERIC) ? aNBT.getLong(NBT_L_AMOUNT) : mFluid.getAmount());
 		}
 	}
@@ -75,6 +79,7 @@ public class FluidTankGT implements IFluidTank {
 		if (aNBT.contains(aKey, Tag.TAG_COMPOUND)) {
 			CompoundTag tNBT = aNBT.getCompound(aKey);
 			if (!tNBT.isEmpty()) {
+				//? if forge {
 				mFluid = FluidStack.loadFluidStackFromNBT(tNBT);
 				if (mFluid != null && mFluid.getRawFluid() == Fluids.EMPTY) {
 					mFluid = null; // a legacy degraded "minecraft:empty" payload (pre-fix save) or a bare key: a truly empty tank
@@ -90,6 +95,19 @@ public class FluidTankGT implements IFluidTank {
 				} else {
 					mAmount = (isEmpty() ? 0 : tNBT.contains(NBT_L_AMOUNT, Tag.TAG_ANY_NUMERIC) ? tNBT.getLong(NBT_L_AMOUNT) : mFluid.getAmount());
 				}
+				//?} else {
+				/*// 21.1 leg: parseOptional rides the codec face; a degraded payload lands EMPTY.
+				//KNOWN 21.1 DELTA: the keepFilter payload (Amount 0 + real FluidName) collapses to
+				//EMPTY through OPTIONAL_CODEC's xmap, so the kept identity is lost across a 21.1
+				//save/load — the forge leg's raw-fluid rebuild has no public API to feed it.
+				mFluid = FluidStack.parseOptional(nbtAccess(), tNBT);
+				if (mFluid.getFluid() == Fluids.EMPTY) {
+					mFluid = null; // a legacy degraded payload or a codec-collapsed 0-amount: a truly empty tank
+					mAmount = 0;
+				} else {
+					mAmount = (isEmpty() ? 0 : tNBT.contains(NBT_L_AMOUNT, Tag.TAG_ANY_NUMERIC) ? tNBT.getLong(NBT_L_AMOUNT) : mFluid.getAmount());
+				}
+				*///?}
 			}
 		}
 		return this;
@@ -115,10 +133,20 @@ public class FluidTankGT implements IFluidTank {
 				// identity at 0 L ({@code mFluid.getFluid()} stays the filter fluid). The raw
 				// fluid still names the identity, so the judgement's promise (writeToNBT
 				// 0 量含身份) is honoured by writing the registry name from it.
+				// 21.1: the live mFluid carries its own non-zero amount cache in this state, so
+				// getFluid() reads the REAL identity there too (the collapse only hits tCopy).
+				//? if forge {
 				tNBT.putString("FluidName", ForgeRegistries.FLUIDS.getKey(tCopy.getRawFluid()).toString());
+				//?} else {
+				/*tNBT.putString("FluidName", net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(mFluid.getFluid()).toString());
+				*///?}
 				tNBT.putInt("Amount", 0);
 			} else {
+				//? if forge {
 				tCopy.writeToNBT(tNBT);
+				//?} else {
+				/*tCopy.save(nbtAccess(), tNBT); // 21.1: the codec save face (writeToNBT deleted)
+				*///?}
 			}
 			aNBT.put(aKey, tNBT);
 			if (mAmount > Integer.MAX_VALUE) tNBT.putLong(NBT_L_AMOUNT, mAmount);
@@ -231,7 +259,11 @@ public class FluidTankGT implements IFluidTank {
 	public FluidStack drain(int aDrained, FluidAction aAction) {
 		if (isEmpty() || aDrained <= 0) return FluidStack.EMPTY;
 		if (mAmount < aDrained) aDrained = (int)mAmount;
+		//? if forge {
 		FluidStack rFluid = new FluidStack(mFluid, aDrained);
+		//?} else {
+		/*FluidStack rFluid = mFluid.copyWithAmount(aDrained); // 21.1: no copy ctor — copyWithAmount(int) is the same identity-at-count (javap 21.1.249)
+		*///?}
 		if (aAction.execute()) {
 			mAmount -= aDrained;
 			if (mAmount <= 0) {
@@ -314,8 +346,16 @@ public class FluidTankGT implements IFluidTank {
 	public boolean contains(@Nullable FluidStack aFluid) {
 		if (mFluid == null || aFluid == null || aFluid.isEmpty()) return false;
 		if (!mFluid.isEmpty()) return mFluid.isFluidEqual(aFluid);
+		//? if forge {
 		if (mFluid.getRawFluid() != aFluid.getRawFluid()) return false;
 		return mFluid.getTag() == null ? aFluid.getTag() == null : aFluid.getTag() != null && mFluid.getTag().equals(aFluid.getTag());
+		//?} else {
+		/*// 21.1: getRawFluid/getTag are gone with the component rework — the empty-flagged
+		//keepFilter arm compares the collapsed getFluid() pair and delegates the tag half to
+		//the forge-parity static (FluidStack.areFluidStackTagsEqual, javap 21.1.249).
+		if (mFluid.getFluid() != aFluid.getFluid()) return false;
+		return FluidStack.areFluidStackTagsEqual(mFluid, aFluid);
+		*///?}
 	}
 
 	/** Upstream :330-331. */
@@ -352,8 +392,20 @@ public class FluidTankGT implements IFluidTank {
 	/** Upstream :357. */
 	@Nullable
 	public FluidStack get(long aMax) {
+		//? if forge {
 		return isEmpty() || aMax <= 0 ? null : new FluidStack(mFluid, bindInt(Math.min(mAmount, aMax)));
+		//?} else {
+		/*return isEmpty() || aMax <= 0 ? null : mFluid.copyWithAmount(bindInt(Math.min(mAmount, aMax))); // 21.1: no copy ctor — copyWithAmount(int)
+		*///?}
 	}
+
+	//? if neoforge {
+	/*// 21.1: the FluidStack codec face (parse/save) needs a HolderLookup.Provider — the frozen
+	//builtin registry view serves offline tests and in-world saves alike (fluid id lookup only).
+	private static net.minecraft.core.HolderLookup.Provider nbtAccess() {
+		return net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY);
+	}
+	*///?}
 
 	/** Upstream UT.Code.bindInt (UT.java:1565) — the long→int boundary clamp. */
 	public static int bindInt(long aBoundValue) {

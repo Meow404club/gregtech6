@@ -82,10 +82,19 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	}
 
 	/** Upstream breakBlock :176-184 — release the claim, then force the controller recheck. */
+	//? if forge {
 	@Override
 	public void playerWillDestroy(Level aLevel, BlockPos aPos, BlockState aState, Player aPlayer) {
 		super.playerWillDestroy(aLevel, aPos, aState, aPlayer);
 		if (aLevel.isClientSide()) return;
+	//?} else {
+	/*@Override
+	public BlockState playerWillDestroy(Level aLevel, BlockPos aPos, BlockState aState, Player aPlayer) {
+	//21.1: BlockBehaviour.playerWillDestroy returns BlockState (void on 1.20.1, javap Block
+	//21.1.249) — the override return type drifts; the tail hands back the state untouched.
+		super.playerWillDestroy(aLevel, aPos, aState, aPlayer);
+		if (aLevel.isClientSide()) return aState;
+	*///?}
 		if (aLevel.getBlockEntity(aPos) instanceof MultiBlockPartBlockEntity tPart) {
 			ITileEntityMultiBlockController tTarget = tPart.getTarget(false);
 			if (tTarget != null) {
@@ -93,5 +102,8 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 				tTarget.onStructureChange();
 			}
 		}
+		//? if neoforge {
+		/*return aState;
+		*///?}
 	}
 }

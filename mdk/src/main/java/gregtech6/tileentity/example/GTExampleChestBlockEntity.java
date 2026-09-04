@@ -165,7 +165,11 @@ public class GTExampleChestBlockEntity extends TileEntityBase03TicksAndSync impl
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
 		aNBT.putByte(NBT_FACING, mFacing);
+		//? if forge {
 		aNBT.put(NBT_INVENTORY, mInventory.serializeNBT());
+		//?} else {
+		/*aNBT.put(NBT_INVENTORY, mInventory.serializeNBT(NBT_ACCESS)); // 21.1: ItemStackHandler NBT takes the registries
+		*///?}
 		// mUsingPlayers/mRGBa/hardness stay out of the disk NBT exactly like upstream :108-113
 	}
 
@@ -176,7 +180,11 @@ public class GTExampleChestBlockEntity extends TileEntityBase03TicksAndSync impl
 			mFacing = aNBT.getByte(NBT_FACING);
 		}
 		if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) {
+			//? if forge {
 			mInventory.deserializeNBT(aNBT.getCompound(NBT_INVENTORY));
+			//?} else {
+			/*mInventory.deserializeNBT(NBT_ACCESS, aNBT.getCompound(NBT_INVENTORY)); // 21.1: provider-first
+			*///?}
 		}
 	}
 }

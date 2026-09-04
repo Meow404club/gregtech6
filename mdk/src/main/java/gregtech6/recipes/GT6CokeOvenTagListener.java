@@ -14,7 +14,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+//? if forge {
 import net.minecraftforge.registries.tags.ITag;
+//?}
 
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
@@ -69,11 +71,20 @@ public final class GT6CokeOvenTagListener {
 
 		// the tag content: the log universe (vanilla + any mod that appends to #minecraft:logs)
 		List<Item> tLogs = new ArrayList<>();
+		//? if forge {
 		net.minecraftforge.registries.tags.ITagManager<Item> tTagManager = ForgeRegistries.ITEMS.tags(); // IForgeRegistry.java:78
 		if (tTagManager != null) {
 			ITag<Item> tTag = tTagManager.getTag(ItemTags.LOGS);
 			if (tTag.isBound()) for (Item tItem : tTag) tLogs.add(tItem); // ITag<V> iterates the VALUES (ITag.java:20)
 		}
+		//?} else {
+		/*// 21.1: the ITagManager/ITag face is gone — Registry#getTag hands the HolderSet.Named
+		//directly (javap Registry 21.1.249); an unbound named set iterates empty, so the
+		//forge leg's isBound gate folds into the iteration itself.
+		net.minecraft.core.registries.BuiltInRegistries.ITEM.getTag(ItemTags.LOGS).ifPresent(tNamed -> {
+			for (net.minecraft.core.Holder<Item> tHolder : tNamed) tLogs.add(tHolder.value());
+		});
+		*///?}
 
 		// the expansion inputs: the charcoal gem (MT.Charcoal, OP.gem) + gt6:creosote
 		Item tCharcoal = resolve(new GTMaterialItems.PrefixMaterial(OP.gem, MT.Charcoal));

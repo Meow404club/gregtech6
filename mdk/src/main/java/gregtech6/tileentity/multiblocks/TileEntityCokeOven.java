@@ -14,7 +14,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 
+//? if forge {
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+//?}
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -190,6 +192,13 @@ public class TileEntityCokeOven extends TileEntityBase10MultiBlockMachine {
 	private IFluidHandler fluidHandlerAt(BlockPos aPos) {
 		BlockEntity tNeighbor = getLevel().getBlockEntity(aPos);
 		if (tNeighbor == null) return null;
+		//? if forge {
 		return tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, Direction.UP).resolve().orElse(null); // the CoverPump :103 idiom, the side pinned UP
+		//?} else {
+		/*// 21.1: BlockEntity carries no getCapability — the query goes through the level
+		//(ILevelExtension.getCapability returns the handler directly, null when absent; the
+		//TileEntityBase08Barrel:300 precedent).
+		return getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, aPos, Direction.UP);
+		*///?}
 	}
 }

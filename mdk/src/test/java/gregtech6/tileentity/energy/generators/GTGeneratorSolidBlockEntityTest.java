@@ -27,7 +27,9 @@ import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMapFurnaceFuel;
 import gregtech6.tileentity.GTOfflineTestBase;
 import net.minecraft.world.item.crafting.RecipeType;
+//? if forge {
 import net.minecraftforge.common.ForgeHooks;
+//?}
 
 /**
  * Task p13-burning-box-family — the offline acceptance fixture for the Solid Burning
@@ -101,7 +103,12 @@ public class GTGeneratorSolidBlockEntityTest extends GTOfflineTestBase {
 		sType = tHolder[0];
 		GT6RecipeMaps.init(); // the live FURNACE_FUEL instance (the shared append face)
 		try {
+			//? if forge {
 			ForgeHooks.updateBurns(); // the vanilla VANILLA_BURNS population (ForgeInternalHandler:106 live path) — offline-safe after Bootstrap
+			//?} else {
+			/*// 21.1: updateBurns is gone — the fuel values ride the FuelValues datapack face,
+			//no offline population hook; the burn-time gates below assumeTrue-skip instead.
+			*///?}
 		} catch (Throwable tIgnored) {
 			// the bridge test gates itself on getBurnTime availability
 		}
@@ -191,7 +198,11 @@ public class GTGeneratorSolidBlockEntityTest extends GTOfflineTestBase {
 	@Test
 	public void theRefuelGateFiresOnlyUnderTwoPackets() {
 		org.junit.jupiter.api.Assumptions.assumeTrue(
+				//? if forge {
 				ForgeHooks.getBurnTime(new ItemStack(Items.COAL), RecipeType.SMELTING) > 0,
+				//?} else {
+				/*new ItemStack(Items.COAL).getBurnTime(RecipeType.SMELTING) > 0, // 21.1: IItemStackExtension face
+				*///?}
 				"the VANILLA_BURNS population (updateBurns ran) — without it the charge math rides the units() test above");
 		FixtureBox tBox = new FixtureBox(POS, Blocks.STONE.defaultBlockState());
 		tBox.mRate = 16;
@@ -244,7 +255,11 @@ public class GTGeneratorSolidBlockEntityTest extends GTOfflineTestBase {
 
 	@Test
 	public void theFurnaceBridgeAnswersTheVanillaFuelValues() {
+		//? if forge {
 		org.junit.jupiter.api.Assumptions.assumeTrue(ForgeHooks.getBurnTime(new ItemStack(Items.COAL), RecipeType.SMELTING) > 0,
+		//?} else {
+		/*org.junit.jupiter.api.Assumptions.assumeTrue(new ItemStack(Items.COAL).getBurnTime(RecipeType.SMELTING) > 0,
+		*///?}
 				"the VANILLA_BURNS map populated (updateBurns ran); without it the bridge test is vacuous");
 		Recipe tRecipe = GT6RecipeMaps.FURNACE_FUEL.findFuelRecipe(new ItemStack(Items.COAL));
 		assertTrue(tRecipe != null, "coal is a furnace fuel");

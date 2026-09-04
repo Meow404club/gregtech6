@@ -71,7 +71,11 @@ public class CoverFilterItem extends AbstractCoverDefault {
 	 */
 	public static CompoundTag filterTagFor(ItemStack aHeld) {
 		CompoundTag tLane = new CompoundTag();
+		//? if forge {
 		tLane.put(FILTER_KEY, new ItemStack(aHeld.getItem(), 1).save(new CompoundTag())); // upstream ST.make(item, 1, meta)
+		//?} else {
+		/*tLane.put(FILTER_KEY, new ItemStack(aHeld.getItem(), 1).save(nbtAccess(), new CompoundTag())); // 21.1: the save face takes the registries
+		*///?}
 		return tLane;
 	}
 
@@ -81,9 +85,21 @@ public class CoverFilterItem extends AbstractCoverDefault {
 	 * vanilla item identity (the meta axis is dead in 1.20.1, so no wildcard branch).
 	 */
 	public static boolean matches(CoverData aData, byte aCoverSide, ItemStack aStack) {
+		//? if forge {
 		ItemStack tFilter = ItemStack.of(aData.mNBTs[aCoverSide].getCompound(FILTER_KEY)); // upstream ST.load
+		//?} else {
+		/*ItemStack tFilter = ItemStack.parseOptional(nbtAccess(), aData.mNBTs[aCoverSide].getCompound(FILTER_KEY)); // 21.1: the codec parse face
+		*///?}
 		return !tFilter.isEmpty() && tFilter.getItem() == aStack.getItem(); // ST.equal(filter, stack, T): item yes, NBT no, count no
 	}
+
+	//? if neoforge {
+	/*// 21.1: the ItemStack save/parse face needs a HolderLookup.Provider — the frozen builtin
+	//registry view serves the offline tests and the live cover click alike (item id only).
+	private static net.minecraft.core.HolderLookup.Provider nbtAccess() {
+		return net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY);
+	}
+	*///?}
 
 	/**
 	 * Upstream :115-120 verbatim — the insert gate: another face is not gated
@@ -139,8 +155,13 @@ public class CoverFilterItem extends AbstractCoverDefault {
 		if (tPlayer != null && aData.mTileEntity.isServerSideTE()) { // :90
 			ItemStack tHeld = tPlayer.getMainHandItem(); // upstream getCurrentEquippedItem
 			if (!tHeld.isEmpty()) { // :92 ST.valid
+				//? if forge {
 				ItemStack tFilter = aData.mNBTs[aCoverSide] == null || !aData.mNBTs[aCoverSide].contains(FILTER_KEY, Tag.TAG_COMPOUND)
 						? ItemStack.EMPTY : ItemStack.of(aData.mNBTs[aCoverSide].getCompound(FILTER_KEY)); // :93 ST.load
+				//?} else {
+				/*ItemStack tFilter = aData.mNBTs[aCoverSide] == null || !aData.mNBTs[aCoverSide].contains(FILTER_KEY, Tag.TAG_COMPOUND)
+				? ItemStack.EMPTY : ItemStack.parseOptional(nbtAccess(), aData.mNBTs[aCoverSide].getCompound(FILTER_KEY)); // :93 ST.load (21.1: the codec parse face)
+				*///?}
 				if (tFilter.isEmpty() || tFilter.getItem() == tHeld.getItem()) { // :94 ST.invalid / :98 ST.equal(T) — the meta cycle collapses
 					aData.mNBTs[aCoverSide] = filterTagFor(tHeld); // :95/:100/:104
 					if (aData.mTileEntity.self().getLevel() != null) // :96/:101/:105 SFX.MC_CLICK → the vanilla UI click placeholder

@@ -61,9 +61,17 @@ public class GT6ToolsCreativeTabTest {
 		return new ResourceLocation("gt6", aPath);
 	}
 
+	//? if forge {
 	private static Set<ResourceLocation> itemIds(Iterable<RegistryObject<Item>> aEntries) {
+	//?} else {
+	/*private static Set<ResourceLocation> itemIds(Iterable<net.neoforged.neoforge.registries.DeferredHolder<Item, ? extends Item>> aEntries) { // 21.1: getEntries hands the wildcard holder
+	*///?}
 		Set<ResourceLocation> rIds = new LinkedHashSet<>();
+		//? if forge {
 		for (RegistryObject<Item> tEntry : aEntries) rIds.add(tEntry.getId());
+		//?} else {
+		/*for (net.neoforged.neoforge.registries.DeferredHolder<Item, ? extends Item> tEntry : aEntries) rIds.add(tEntry.getId()); // 21.1: wildcard holder
+		*///?}
 		return rIds;
 	}
 
@@ -108,7 +116,11 @@ public class GT6ToolsCreativeTabTest {
 	@Test
 	public void tableAndItemsRegistryAreInParity() {
 		Set<ResourceLocation> tTableIds = new LinkedHashSet<>();
+		//? if forge {
 		for (RegistryObject<Item> tRow : GT6Tools.TAB_TABLE) {
+		//?} else {
+		/*for (net.neoforged.neoforge.registries.DeferredHolder<Item, ? extends Item> tRow : GT6Tools.TAB_TABLE) { // 21.1: the table stores the wildcard holder
+		*///?}
 			tTableIds.add(tRow.getId());
 		}
 		Set<ResourceLocation> tRegisteredIds = itemIds(GT6Tools.ITEMS.getEntries());
@@ -120,7 +132,11 @@ public class GT6ToolsCreativeTabTest {
 	@Test
 	public void tabsRegistryHoldsExactlyTheToolsTab() {
 		Set<ResourceLocation> tIds = new LinkedHashSet<>();
+		//? if forge {
 		for (RegistryObject<CreativeModeTab> tTab : GT6Tools.CREATIVE_MODE_TABS.getEntries()) {
+		//?} else {
+		/*for (net.neoforged.neoforge.registries.DeferredHolder<CreativeModeTab, ? extends CreativeModeTab> tTab : GT6Tools.CREATIVE_MODE_TABS.getEntries()) { // 21.1: wildcard holder
+		*///?}
 			tIds.add(tTab.getId());
 		}
 		assertEquals(Set.of(rl("tools")), tIds);

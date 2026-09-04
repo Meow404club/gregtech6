@@ -307,8 +307,15 @@ public class GTWireBlock extends GTEntityBlock {
 	 * the class javadoc; do not override again.
 	 */
 	@Override
+	//? if forge {
 	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer,
 			InteractionHand aHand, BlockHitResult aHit) {
+	//?} else {
+	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer,
+			BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
+	//(javap BlockBehaviour 21.1.249).
+	*///?}
 		return InteractionResult.PASS;
 	}
 
@@ -430,7 +437,13 @@ public class GTWireBlock extends GTEntityBlock {
 	@Override
 	public int getLightEmission(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
 		if (mFamily == Family.REDSTONE && mLuminous && !mInsulated
+				//? if forge {
 				&& aLevel.getExistingBlockEntity(aPos) instanceof GTWireBlockEntity tWire) {
+				//?} else {
+				/*&& aLevel.getBlockEntity(aPos) instanceof GTWireBlockEntity tWire) {
+				//21.1: the forge getExistingBlockEntity patch is gone — BlockGetter.getBlockEntity
+				//is already a null-safe read here.
+				*///?}
 			return UT6.bind4(UT6.divup(tWire.mRedstone, GTWireSpecs.MAX_RANGE)); // upstream :53/:79
 		}
 		return super.getLightEmission(aState, aLevel, aPos);

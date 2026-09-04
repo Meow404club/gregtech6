@@ -83,8 +83,12 @@ stonecutter parameters {
         // ToolActions 无；HOE_DIG 常量同名同义，canPerformAction(ItemAbility) 语义同）。
         // 必须先于下一条 ToolAction（单数）条目——ToolActions 含子串 ToolAction，长键先序，
         // 否则复数条目永远找不到 forge 形文本（首轮实测：import 行只换了包留下 ToolActions 类名）。
+        // M4 勘正（p15-m4-final-clear）：单数 ToolAction 在 21.1 同样不存在（javap 实证
+        // net/neoforged/neoforge/common/ToolAction.class 缺席），自研动作走 ItemAbility.get(name)——
+        // 目标勘正为 ItemAbility（W5 原目标 net...common.ToolAction 在 21.1 不存在，GT6ToolActions
+        // 首行 import 红）。简单名 ToolAction→ItemAbility 落 regex 表（下段）。
         "net.minecraftforge.common.ToolActions" to "net.neoforged.neoforge.common.ItemAbilities",
-        "net.minecraftforge.common.ToolAction" to "net.neoforged.neoforge.common.ToolAction",
+        "net.minecraftforge.common.ToolAction" to "net.neoforged.neoforge.common.ItemAbility",
         "net.minecraftforge.data.event." to "net.neoforged.neoforge.data.event.",
         // 注册类同名换包（DeferredRegister/RegisterEvent；RegistryObject/ITagManager 语义面 W4）
         "net.minecraftforge.registries.DeferredRegister" to "net.neoforged.neoforge.registries.DeferredRegister",
@@ -186,7 +190,10 @@ stonecutter parameters {
         "RegistryObject<FlowingFluid(?![A-Za-z_])>" to "DeferredHolder<Fluid, FlowingFluid>",
         "RegistryObject<FluidType(?![A-Za-z_])>" to "DeferredHolder<FluidType, FluidType>",
         "RegistryObject<LiquidBlock(?![A-Za-z_])>" to "DeferredHolder<net.minecraft.world.level.block.Block, LiquidBlock>",
-        "RegistryObject<\\? extends ([A-Za-z0-9_.]+)>" to "DeferredHolder<Fluid, \$1>",
+        // M4 勘正：通配条目已删——to 串 "DeferredHolder<Fluid, \$1>" 吞掉 "\? extends " 字面段
+        //（\$1 只捕元素型，wildcard 丢失 → FluidBridge 的 Map 值型被改写成 DeferredHolder<Fluid,Fluid>，
+        // 与 FlowingFluid 实参不兼容）；FluidBridge 3 位点已改 //? 双腿（id258 同源教训：
+        // to 串组引用会吞字面段，入表前必须核产物全文）。
         "RegistryObject<Fluid(?![A-Za-z_])>" to "DeferredHolder<Fluid, Fluid>",
         "RegistryObject<Item(?![A-Za-z_])>" to "DeferredHolder<Item, Item>",
         "RegistryObject<CreativeModeTab(?![A-Za-z_])>" to "DeferredHolder<CreativeModeTab, CreativeModeTab>",
@@ -237,6 +244,42 @@ stonecutter parameters {
         ", null, true, [a-zA-Z]+\\.sprite\\(\\)\\);" to ", null, true);",
         ", null, true, [a-zA-Z]+\\.contents\\(\\)\\.name\\(\\)\\);" to ", null, true);",
         "(?<![A-Za-z0-9_])ToolActions\\." to "ItemAbilities.",
+        // ToolAction 简单名（M4 批）：自研动作常量 GT6ToolActions.CROWBAR/CUTTER 走
+        // ItemAbility.get(name)（javap ItemAbility：get(String) 工厂在、ToolAction 类 21.1 删除）。
+        // 左边界挡 GT6ToolActions/右边界 ?![A-Za-z0-9_] 防吃 ToolActions 前缀（复数条目先行）。
+        "(?<![A-Za-z0-9_])ToolAction(?![A-Za-z0-9_])" to "ItemAbility",
+        // ---- M4 批（p15-m4-final-clear）----
+        // ItemStack.isSameItemSameTags → isSameItemSameComponents（1.20.5 DataComponents 改名，
+        // javap ItemStack 21.1.249；10 位点普查全同形，机械改名入表）。
+        "(?<![A-Za-z0-9_])ItemStack\\.isSameItemSameTags\\(" to "ItemStack.isSameItemSameComponents(",
+        // hurtAndBreak 的 Consumer lambda → EquipmentSlot 实参（21.1 (int,LivingEntity,Consumer)
+        // 重载删除，(int,LivingEntity,EquipmentSlot) 内部播 broadcastBreakEvent；javap）。
+        // 锚定 lambda 体自引用形式 p -> p.broadcastBreakEvent(MAINHAND)（GTCutterItem:186/
+        // GTCrowbarItem:197,205 三位点；GTCokeOvenBlock:68 条件形不入表走 //?）。
+        "([a-zA-Z][a-zA-Z0-9]*) -> \\1\\.broadcastBreakEvent\\(EquipmentSlot\\.MAINHAND\\)" to "EquipmentSlot.MAINHAND",
+        // ---- M4 test 面（compileTestJava 清零）：Provider 化无参调用 + 单参 RL ctor ----
+        // 21.1 的 BlockEntity.saveWithoutMetadata/getUpdateTag/handleUpdateTag 与
+        // ItemStackHandler.serializeNBT/deserializeNBT 全部收 HolderLookup.Provider——测试面的
+        // 无参调用统一补挂 TileEntityBase03TicksAndSync.NBT_ACCESS（public static，frozen
+        // builtin registry 视图）。main 普查：无参活代码 0 处（活腿全在 /* 注释腿内，改写无害）。
+        // 单参 ResourceLocation ctor 21.1 私有化 → parse（必须先于其后的同形条目执行？否——
+        // 两参条目在前已消化双参形，单参形落此处独立锚定；[^(),] 排除逗号即不重叠）。
+        "new\\s+net\\.minecraft\\.resources\\.ResourceLocation\\(([^(),]+)\\)" to "net.minecraft.resources.ResourceLocation.parse(\$1)",
+        "new\\s+ResourceLocation\\(([^(),]+)\\)" to "ResourceLocation.parse(\$1)",
+        "\\.saveWithoutMetadata\\(\\)" to ".saveWithoutMetadata(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS)",
+        "\\.getUpdateTag\\(\\)" to ".getUpdateTag(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS)",
+        "\\.handleUpdateTag\\(([^(),]+)\\)" to ".handleUpdateTag(\$1, gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS)",
+        // 勘正：serializeNBT/deserializeNBT 无参 swap 已撤——GTBarrelItemFluidHandler 的
+        // 21.1 面自有 no-arg NBT API（非 ItemStackHandler），无差别补参会破坏其调用点；
+        // ItemStackHandler 接收者的测试位点（GTItemStackHandlerTest）走 //? 手改。
+        // MRL 三串 ctor → record (ResourceLocation, variant)（21.1 record 化，javap；
+        // 测试面 per-state key 断言 8 位点同形字符串字面量）。RL 两参 getNamespace/getPath
+        // 不受影响（MRL 无参直呼的接收者各文件手改）。
+        "new\\s+ModelResourceLocation\\(\"([^\"]+)\",\\s*\"([^\"]+)\",\\s*\"([^\"]+)\"\\)" to "new ModelResourceLocation(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(\"\$1\", \"\$2\"), \"\$3\")",
+        // ModifyBakingResult 三参化未入表——swap 会重匹配自身产物（双 null 尾缀），改测试位点手改。
+        // FluidStack.getRawFluid → getFluid（21.1 删除 collapse-getter；测试断言全部作用在
+        // 非空 stack 上，getFluid 的空折叠不触）——main 活代码 0 处（已双腿），测试 6 位点。
+        "\\.getRawFluid\\(\\)" to ".getFluid()",
     ).forEach { (pattern, to) ->
         replacements.regex(neoforgeSide) {
             replace(pattern, to)

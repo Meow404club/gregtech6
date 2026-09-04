@@ -72,10 +72,19 @@ public class RecipeMapFurnace extends RecipeMap {
 	/** Vanilla smelting query (upstream :54 RM.get_smelting). Returns a COPY of the result stack. */
 	@Nullable
 	public static ItemStack getSmeltingResult(Level aLevel, ItemStack aInput) {
+		//? if forge {
 		return aLevel.getRecipeManager()
 				.getRecipeFor(RecipeType.SMELTING, new SingleSlotContainer(aInput), aLevel)
 				.map(tRecipe -> tRecipe.getResultItem(aLevel.registryAccess()).copy())
 				.orElse(null);
+		//?} else {
+		/*// 21.1: getRecipeFor takes a RecipeInput and returns Optional<RecipeHolder<T>>
+		//(javap RecipeManager 21.1.249; SingleSlotContainer is forge-side) — unwrap .value().
+		return aLevel.getRecipeManager()
+				.getRecipeFor(RecipeType.SMELTING, new net.minecraft.world.item.crafting.SingleRecipeInput(aInput), aLevel)
+				.map(tRecipe -> tRecipe.value().getResultItem(aLevel.registryAccess()).copy())
+				.orElse(null);
+		*///?}
 	}
 
 	/** Upstream containsInput (RecipeMapFurnace.java:157): is the given stack smeltable at all? */

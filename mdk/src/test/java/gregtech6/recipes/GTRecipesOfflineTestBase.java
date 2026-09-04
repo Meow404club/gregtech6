@@ -14,7 +14,12 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+//? if forge {
 import net.minecraft.data.worldgen.BootstapContext;
+//?} else {
+/*import net.minecraft.data.worldgen.BootstrapContext;
+//1.21.1: the Mojang typo was fixed (Bootstap → Bootstrap).
+*///?}
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.Bootstrap;
@@ -66,11 +71,16 @@ public abstract class GTRecipesOfflineTestBase {
 		// ForgeMod.registerRecipeSerializers never runs offline, so the vanilla item
 		// ingredient serializer is missing from CraftingHelper's dispatch map. Register
 		// it once per JVM (@BeforeAll fires per test class).
+		//? if forge {
 		if (!sIngredientSerializerRegistered) {
 			sIngredientSerializerRegistered = true;
 			net.minecraftforge.common.crafting.CraftingHelper.register(
 					new ResourceLocation("minecraft:item"), net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE);
 		}
+		//?} else {
+		/*// 21.1: CraftingHelper/VanillaIngredientSerializer are gone — vanilla ingredients
+		//ride the vanilla Codec face, no serializer registration to fake.
+		*///?}
 	}
 
 	/**
@@ -87,7 +97,19 @@ public abstract class GTRecipesOfflineTestBase {
 			mRecipeManager = aRecipeManager;
 		}
 
+		//? if neoforge {
+		/*// 21.1: the day-time-scaling triple joined the Level abstracts.
+		@Override public float getDayTimeFraction() { return 0.0F; }
+		@Override public void setDayTimeFraction(float aFraction) {}
+		@Override public float getDayTimePerTick() { return 0.0F; }
+		@Override public void setDayTimePerTick(float aPerTick) {}
+		// 21.1: the vanilla potion-brewing holder joined the abstracts.
+		@Override public net.minecraft.world.item.alchemy.PotionBrewing potionBrewing() { return null; }
+		@Override public net.minecraft.world.TickRateManager tickRateManager() { return null; }
+		*///?}
+
 		static RegistryAccess damageTypeRegistryAccess() {
+			//? if forge {
 			MappedRegistry<DamageType> tDamageTypes = new MappedRegistry<>(Registries.DAMAGE_TYPE, Lifecycle.stable());
 			DamageTypes.bootstrap(new BootstapContext<DamageType>() {
 				@Override public Holder.Reference<DamageType> register(ResourceKey<DamageType> aKey, DamageType aValue, Lifecycle aLifecycle) {
@@ -95,6 +117,17 @@ public abstract class GTRecipesOfflineTestBase {
 				}
 				@Override public <S> HolderGetter<S> lookup(ResourceKey<? extends Registry<? extends S>> aRegistry) { throw new UnsupportedOperationException(); }
 			});
+			//?} else {
+			/*// 21.1: BootstapContext → BootstrapContext; MappedRegistry.register takes the
+			//RegistrationInfo (the bootstrap Lifecycle argument is dropped there).
+			MappedRegistry<DamageType> tDamageTypes = new MappedRegistry<>(Registries.DAMAGE_TYPE, Lifecycle.stable());
+			DamageTypes.bootstrap(new BootstrapContext<DamageType>() {
+				@Override public net.minecraft.core.Holder.Reference<DamageType> register(ResourceKey<DamageType> aKey, DamageType aValue, Lifecycle aLifecycle) {
+					return tDamageTypes.register(aKey, aValue, net.minecraft.core.RegistrationInfo.BUILT_IN);
+				}
+				@Override public <S> HolderGetter<S> lookup(ResourceKey<? extends Registry<? extends S>> aRegistry) { throw new UnsupportedOperationException(); }
+			});
+			*///?}
 			return new RegistryAccess.ImmutableRegistryAccess(Map.of(Registries.DAMAGE_TYPE, tDamageTypes)).freeze();
 		}
 
@@ -112,6 +145,9 @@ public abstract class GTRecipesOfflineTestBase {
 				@Override public boolean is(ResourceKey<DimensionType> aKey) { return false; }
 				@Override public boolean is(java.util.function.Predicate<ResourceKey<DimensionType>> aPredicate) { return false; }
 				@Override public boolean is(TagKey<DimensionType> aTag) { return false; }
+				//? if neoforge {
+				/*@Override public boolean is(Holder<DimensionType> aHolder) { return false; } // 21.1: the holder-identity probe joined Holder
+				*///?}
 				@Override public java.util.stream.Stream<TagKey<DimensionType>> tags() { return java.util.stream.Stream.empty(); }
 				@Override public Either<ResourceKey<DimensionType>, DimensionType> unwrap() { return Either.left(tKey); }
 				@Override public java.util.Optional<ResourceKey<DimensionType>> unwrapKey() { return java.util.Optional.of(tKey); }
@@ -127,12 +163,26 @@ public abstract class GTRecipesOfflineTestBase {
 		@Override public void playSeededSound(@org.jetbrains.annotations.Nullable Player aPlayer, double aX, double aY, double aZ, Holder<net.minecraft.sounds.SoundEvent> aSound, net.minecraft.sounds.SoundSource aSource, float aVolume, float aPitch, long aSeed) {}
 		@Override public String gatherChunkSourceStats() { return ""; }
 		@Override public Entity getEntity(int aId) { return null; }
+		//? if forge {
 		@Override public MapItemSavedData getMapData(String aName) { return null; }
 		@Override public void setMapData(String aName, MapItemSavedData aData) {}
+		//?} else {
+		/*// 21.1: the map-data table keys on the MapId record.
+		@Override public MapItemSavedData getMapData(net.minecraft.world.level.saveddata.maps.MapId aId) { return null; }
+		@Override public void setMapData(net.minecraft.world.level.saveddata.maps.MapId aId, MapItemSavedData aData) {}
+		*///?}
+		//? if forge {
 		@Override public int getFreeMapId() { return 0; }
+		//?} else {
+		/*@Override public net.minecraft.world.level.saveddata.maps.MapId getFreeMapId() { return new net.minecraft.world.level.saveddata.maps.MapId(0); } // 21.1: int → MapId record
+		*///?}
 		@Override public void destroyBlockProgress(int aBreakerId, net.minecraft.core.BlockPos aPos, int aProgress) {}
 		@Override public Scoreboard getScoreboard() { return new Scoreboard(); }
+		//? if forge {
 		@Override public void gameEvent(net.minecraft.world.level.gameevent.GameEvent aEvent, net.minecraft.world.phys.Vec3 aPos, net.minecraft.world.level.gameevent.GameEvent.Context aContext) {}
+		//?} else {
+		/*@Override public void gameEvent(net.minecraft.core.Holder<net.minecraft.world.level.gameevent.GameEvent> aEvent, net.minecraft.world.phys.Vec3 aPos, net.minecraft.world.level.gameevent.GameEvent.Context aContext) {} // 21.1: the event rides a Holder
+		*///?}
 		@Override public void levelEvent(@org.jetbrains.annotations.Nullable Player aPlayer, int aLevelEvent, net.minecraft.core.BlockPos aPos, int aData) {}
 		@Override public ChunkSource getChunkSource() { return null; }
 		@Override public LevelTickAccess<net.minecraft.world.level.block.Block> getBlockTicks() { return null; }
@@ -149,6 +199,10 @@ public abstract class GTRecipesOfflineTestBase {
 
 	/** Test RecipeManager exposing the protected apply() for direct offline JSON loading. */
 	public static class TestRecipeManager extends RecipeManager {
+		//? if neoforge {
+		/*// 21.1: the RecipeManager ctor takes the registries (javap 21.1.249).
+		public TestRecipeManager() { super(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS); }
+		*///?}
 		/** Bridge over the protected SimpleJsonResourceReloadListener entry point; it uses only the map argument. */
 		public void load(Map<ResourceLocation, com.google.gson.JsonElement> aMap) {
 			apply(aMap, null, null);

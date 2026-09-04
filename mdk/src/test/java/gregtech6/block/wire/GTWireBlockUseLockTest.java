@@ -53,7 +53,11 @@ public class GTWireBlockUseLockTest extends GTOfflineTestBase {
 	public void useAlwaysPasses() {
 		GTWireBlock tWire = block();
 		// arguments are ignored by the lock — nulls are the honest offline form
+		//? if forge {
 		assertEquals(InteractionResult.PASS, tWire.use(null, null, null, null, null, null),
+		//?} else {
+		/*assertEquals(InteractionResult.PASS, tWire.useWithoutItem(null, null, null, null, null),
+		*///?}
 				"the wire must never consume a right-click (spec ④ semantic lock)");
 	}
 
