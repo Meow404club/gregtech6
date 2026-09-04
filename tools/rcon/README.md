@@ -255,6 +255,17 @@ teardown 断言：`store_null_command(pos)` + `STORE_NULL_EXPECT="store=null"`�
 
 ### 链层 chains/（声明式，入库可复放）
 
+**节点选择（P15 石匠矩阵起）**：链模块本身版本无关；启动节点由
+`Chain.node`（模块内钉死）或运行面 `--node <name>`（双节点横扫同一链不碰模块）决定，
+缺省 `1.20.1-forge`。节点决定两件事：gradle 任务 `:mdk:<node>:runServer`（裸
+`:mdk:runServer` 已随石匠骨架消亡）与节点本地 run 目录 `mdk/versions/<node>/run`
+（eula/server.properties 各节点独立，世界存档互不污染）。双节点门禁（ADR-P15-4）
+= 同一链集合两节点各跑一遍（passes=2 幂等含内），全绿即 `[0,0]×2` 双节点。
+21.1 前置事实（2026-09-04 首验）：gregapi 走 additionalRuntimeClasspath 才进
+moddev run（build.neoforge.gradle.kts）；桶族四 BET 的 FLUID_HANDLER 面在
+GT6CapabilityWiring 逐 BET 注册——缺一即该方块 capability-blind（1.20.1 侧
+getCapability 覆写形态看不到这类缺口，链上才会现形）。
+
 每卡一条模块：sites + lifecycle 配置 + steps。试点样板见
 `chains/p11_cover_shutter_filter.py`（p11shutterfilter_atom.sh 的逐步迁移）：
 
