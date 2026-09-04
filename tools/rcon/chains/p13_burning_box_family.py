@@ -90,10 +90,14 @@ for tX in CLUSTER_XS:
     steps += [Step(f"gt6burner fuel {tX} 64 30 minecraft:coal 4", expect="minecraft:coal x4")]
 for tX in CLUSTER_XS:
     steps += [Step(f"gt6burner ignite {tX} 64 30", expect="burning=true")]
-# the burn window: ~1000 ticks (+ the fuel/ignite loop) → ~10 expected fires; the FIRST
+# the burn window: ~1000 ticks (+ the fuel/ignite loop) → ~10 nominal fires; the FIRST
 # fire lands within seconds (24 boxes × rng(2500) per tick). poll-to-expect: the
-# cumulative family telemetry is monotonic — resend until spread=VISIBLE
-steps += [Step("gt6burner fires 42 64 30 16", expect="spread=VISIBLE", poll=90.0)]
+# cumulative family telemetry is monotonic — resend until spread=VISIBLE. The live
+# rate is emission-gated (the fire roll sits inside the mEnergy >= mRate emit branch,
+# and the void-sink buffer hovers below the gate most ticks), so the observed rate is
+# ~2 fires per 50 s window (the R0 baseline), not the nominal 10.5 — the 150 s bound
+# covers the full fuel lifetime and cuts the zero-fire flake to ~e^-6 per pass.
+steps += [Step("gt6burner fires 42 64 30 16", expect="spread=VISIBLE", poll=150.0)]
 steps += [
     Step(f"gt6burner stat 42 64 30", expect="burning=true"),
     # the INSIDE aggregate scan: the VISIBLE verdict rides the CUMULATIVE family
