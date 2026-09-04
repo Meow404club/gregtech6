@@ -100,9 +100,22 @@ def select(stems, only):
     return [stem for stem in stems if stem in set(picked)]
 
 
-def result_path(mode, node):
+def result_path(mode, node, concurrency=1):
+    """Per-run result JSON. Session runs are namespaced by concurrency degree,
+    so the concurrency-time curve's points never overwrite one another."""
     suffix = framework.node_suffix(node)
-    return gt6server.ARTIFACT_DIR / f"gt6_rs_sweep_{mode}_{suffix}.json"
+    tag = f"{mode}_c{concurrency}" if mode == "session" else mode
+    return gt6server.ARTIFACT_DIR / f"gt6_rs_sweep_{tag}_{suffix}.json"
+
+
+def _failed(res):
+    """One chain record's failure: perboot carries 'exit', session carries
+    pass_failures / exception."""
+    if res.get("exit"):
+        return True
+    if any(res.get("pass_failures") or []):
+        return True
+    return bool(res.get("exception"))
 
 
 def run_perboot(stems, node):
@@ -131,75 +144,24 @@ def run_perboot(stems, node):
             "boots": len(stems), "chains": chains}
 
 
-def run_session_instrumented(stems, node):
-    """run_session per cluster, capturing the per-chain verdict ledgers.
+def run_session_recorded(stems, node, concurrency):
+    """The session model via framework.run_session_recorded.
 
-    Mirrors framework.run_session's boot/stop plumbing (same ports, same
-    session slug, same boundary helper) but keeps each chain's
-    {pass_failures, error_lines, verdicts, seconds} record for the sweep JSON.
-    The verdict semantics are framework's own — nothing is re-judged here.
-    """
-
-    clusters = [[stem for stem in group if stem in set(stems)] for group in SESSION_GROUPS]
-    boot_groups = []
-    for cluster in clusters:
-        if not cluster:
-            continue
-        loaded = []
-        for stem in cluster:
-            chain = load_chain(stem)
-            chain.node = node
-            loaded.append(chain)
-        # plan_groups stays authoritative: fresh_boot / mutates split inside a band
-        boot_groups.extend(framework.plan_groups(loaded))
-
-    chains = {}
-    started = time.monotonic()
-    boots = 0
-    overall = 0
-    for group in boot_groups:
-        node_ = node or framework.DEFAULT_NODE
-        task = gt6server.gradle_task(node_)
-        rcon_port, query_port, game_port = gt6server.pick_ports(
-            framework.SESSION_PORTS.get(framework.node_key(node_),
-                                        framework.SESSION_PORTS["1.20.1"]))
-        slug = f"session_{framework.node_suffix(node_)}"
-        log_path, pid_path = gt6server.artifact_paths(slug)
-        password = group[0].password
-        print(f"[sweep] session boot: {len(group)} chain(s) "
-              f"({', '.join(c.name for c in group)})")
-        gt6server.provision_run_dir(framework.WORKTREE_ROOT, game_port, rcon_port,
-                                    query_port, password, node=node_)
-        pid = gt6server.start_server(framework.WORKTREE_ROOT, log_path, pid_path,
-                                     gradle_task=task)
-        boots += 1
-        t0 = time.monotonic()
-        code = 0
-        try:
-            if not gt6server.wait_done(log_path, max(c.boot_timeout for c in group),
-                                       pid=pid):
-                raise RuntimeError(f"session boot never reached Done; tail:\n"
-                                   f"{gt6server.log_tail(log_path)}")
-            print(f"[sweep] session up in {time.monotonic() - t0:.0f}s")
-            time.sleep(2)
-            for chain in group:
-                tc = time.monotonic()
-                res = framework._run_chain_on_server(chain, rcon_port, log_path, slug)
-                res["seconds"] = round(time.monotonic() - tc, 1)
-                res["exit"] = 0 if not any(res["pass_failures"]) else 1
-                chains[chain.name] = res
-                if res["exit"]:
-                    code = 1
-        except Exception as exc:
-            print(f"[sweep] session group EXCEPTION: {exc!r}")
-            code = 1
-        finally:
-            gt6server.stop_server(pid_path, rcon=(group[0].host, rcon_port, password))
-        if code:
-            overall = 1
-    wall = time.monotonic() - started
-    return {"mode": "session", "node": node, "wall_s": round(wall, 1),
-            "boots": boots, "exit": overall, "chains": chains}
+    The stems go in FLAT (registry order): concurrency wants the whole set as
+    one admission pool — disjoint-site chains pack across the coordinate bands
+    (framework.plan_groups keeps fresh_boot/mutates exclusivity, plan_waves
+    enforces the bbox-disjoint admission). The SESSION_GROUPS clusters remain
+    only as the perboot order and the --plan documentation of the serial-band
+    layout; nothing is re-implemented here."""
+    chains = []
+    for stem in stems:
+        chain = load_chain(stem)
+        chain.node = node
+        chains.append(chain)
+    result = framework.run_session_recorded(chains, node=node,
+                                            concurrency=concurrency)
+    result["mode"] = "session"
+    return result
 
 
 def show_plan():
@@ -276,7 +238,7 @@ def run_dual(args):
                          f"here {mine[:12]} — same-commit discipline (ADR-P15-4)")
     other_node = args.other_node
     cmd = [sys.executable, "tools/rcon/sweep.py", "--mode", args.mode,
-           "--node", other_node]
+           "--node", other_node, "--concurrency", str(args.concurrency)]
     if args.only:
         cmd += ["--only", args.only]
     other_log = gt6server.ARTIFACT_DIR / f"gt6_rs_sweep_{other_node}.log"
@@ -290,7 +252,7 @@ def run_dual(args):
         finally:
             print(f"[sweep] dual: waiting for {other_node} (pid {proc.pid}) ...")
             proc.wait()
-    other_json = result_path(args.mode, other_node)
+    other_json = result_path(args.mode, other_node, args.concurrency)
     if not other_json.exists():
         print(f"[sweep] dual: {other_node} produced no result json — see {other_log}")
         return 1
@@ -309,11 +271,11 @@ def run_and_record(args):
     if args.mode == "perboot":
         result = run_perboot(stems, node)
     else:
-        result = run_session_instrumented(stems, node)
+        result = run_session_recorded(stems, node, args.concurrency)
     result["wall_s"] = round(time.monotonic() - started, 1)
-    path = result_path(args.mode, node)
+    path = result_path(args.mode, node, args.concurrency)
     path.write_text(json.dumps(result, indent=1), encoding="utf-8")
-    failures = [name for name, res in result["chains"].items() if res.get("exit")]
+    failures = [name for name, res in result["chains"].items() if _failed(res)]
     print(f"\n[sweep] {args.mode} wall {result['wall_s']}s, boots {result['boots']}, "
           f"{len(stems)} chains, failures: {failures or 'none'}")
     print(f"[sweep] results -> {path}")
@@ -327,6 +289,9 @@ def main(argv=None):
                         help="stonecutter node (default 1.20.1-forge)")
     parser.add_argument("--only", default=None,
                         help="comma list of module stem / slug / chain name")
+    parser.add_argument("--concurrency", type=int, default=None,
+                        help="session wave width (default GT6_CONCURRENCY or 1 = serial; "
+                             "N>=2 interleaves site-disjoint chains on one boot)")
     parser.add_argument("--plan", action="store_true",
                         help="print the cluster plan + bbox overlaps and exit")
     parser.add_argument("--probe", action="store_true",
@@ -337,6 +302,8 @@ def main(argv=None):
                         help="also run OTHER_NODE there in parallel (same commit enforced)")
     parser.add_argument("--other-node", default="1.21.1-neoforge")
     args = parser.parse_args(argv)
+    if args.concurrency is None:
+        args.concurrency = framework.concurrency_degree()
 
     if args.diff:
         return diff_results(*args.diff)
@@ -348,7 +315,7 @@ def main(argv=None):
         code = run_dual(args)
     else:
         result = run_and_record(args)
-        code = 1 if any(res.get("exit") for res in result["chains"].values()) else 0
+        code = 1 if any(_failed(res) for res in result["chains"].values()) else 0
 
     if args.probe:
         node = args.node or framework.DEFAULT_NODE

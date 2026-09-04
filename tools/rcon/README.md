@@ -351,3 +351,18 @@ python3 tools/rcon/sweep.py --mode session --dual ../MGT6GA-trees/<另一节点w
 （1.20.1=256xx、1.21.1=25752/25762/25772），artifact slug 带节点后缀。
 `--dual` 强制两 worktree 同 commit（gradle runServer 持项目锁，同 worktree
 双 boot 会被串行化——ADR-P15-4 双节点正典形态）。
+
+### 并发波执行（用户校准 2026-09-04：并发是主杠杆）
+
+`GT6_CONCURRENCY=N`（sweep `--concurrency N`）把同 boot 的链按**波**交织：
+一条链的 must-wait（机器加工/燃烧/生产窗 poll）期间，别的链的 step 在同一
+服务器上并发执行。准入是结构性的（`framework.plan_waves`）：
+
+- 站点 bbox **两两不相交**（gt6world.region 含 margin，任一轴分离即异址；
+  同带重叠链绝不并发——并发只发生在不同坐标带的链之间）；
+- `mutates` 非空的链降级为独占波（全局态只允许波起点的会话级复位控制点改）；
+- `fresh_boot` 链永不并入波；
+- 波宽 ≤ N；波间串行，波内每链独立 RCON 会话（原版 RCON 天然多客户端，
+  服务端命令串行、客户端 quiet_window 重叠=吞吐来源）。
+- 并发组的逐 step verdict 必须与 per-chain-boot 基线 diff 一致；不一致的组
+  用 `--concurrency 1` 重跑该组降级串行并记录。

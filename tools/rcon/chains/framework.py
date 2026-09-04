@@ -27,8 +27,10 @@ Two execution models, routed by GT6_SESSION (default on):
 Exit code: 0 when every pass judged clean, 1 otherwise.
 """
 
+import io
 import os
 import sys
+import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -106,6 +108,60 @@ def node_key(node):
 def node_suffix(node):
     """Artifact-slug-safe node tag: '1.20.1-forge' -> '1201-forge'."""
     return (node or DEFAULT_NODE).replace(".", "")
+
+
+# The concurrency degree (user calibration 2026-09-04: concurrency is THE lever —
+# a chain's must-wait window is filled with other chains' steps on the same boot).
+# Default 1 = serial waves, the diff-proven path; GT6_CONCURRENCY=N opts in.
+CONCURRENCY_ENV = "GT6_CONCURRENCY"
+
+
+def concurrency_degree():
+    """The GT6_CONCURRENCY wave-width cap (default 1; junk falls back to 1)."""
+    try:
+        return max(1, int(os.environ.get(CONCURRENCY_ENV, "1").strip() or "1"))
+    except ValueError:
+        return 1
+
+
+def _boxes_disjoint(a, b):
+    """True when the two (x1,y1,z1,x2,y2,z2) bboxes share no volume — i.e. AT
+    LEAST ONE axis separates them (the sky-level rigs all overlap on y, so the
+    x/z separation is the operative one)."""
+    return any(a[i + 3] < b[i] or b[i + 3] < a[i] for i in range(3))
+
+
+def plan_waves(chains, concurrency=1):
+    """Pack a boot group into waves of concurrently-executing chains.
+
+    The structural admission rules (user calibration, the strict form):
+      - a chain that mutates global state never shares a wave — it becomes an
+        exclusive wave of its own (the downgrade);
+      - a chain joins a wave only when its site bbox (gt6world.region, margins
+        included) is disjoint from EVERY member's — overlapping sites are
+        structurally refused, never "probably fine";
+      - fresh_boot chains never share a wave (plan_groups already isolates
+        them; refused here too as defence in depth);
+      - a wave holds at most `concurrency` chains.
+    Waves execute sequentially; the chains inside one wave interleave their
+    RCON sessions on the shared boot (one authenticated client per chain).
+    """
+    waves = []
+    for chain in chains:
+        placed = False
+        if concurrency > 1 and not chain.fresh_boot and not chain.mutates:
+            box = gt6world.region(chain.sites)
+            for wave in waves:
+                if len(wave) >= concurrency:
+                    continue
+                if all(_boxes_disjoint(box, gt6world.region(member.sites))
+                       for member in wave):
+                    wave.append(chain)
+                    placed = True
+                    break
+        if not placed:
+            waves.append([chain])
+    return waves
 
 
 def requested_node(argv=None):
@@ -335,13 +391,17 @@ def _log_size(log_path):
         return 0
 
 
-def _run_chain_on_server(chain, rcon_port, log_path, session_slug):
+def _run_chain_on_server(chain, rcon_port, log_path, session_slug,
+                         reset_baseline=True):
     """One chain against an already-running server: boundary isolation + passes.
 
-    Layer 1+2 of the session isolation: restore the global baseline, then the
+    Layer 1+2 of the session isolation: restore the global baseline (skipped
+    inside a concurrent wave — the wave-start control point owns it), then the
     chain's own forceload + bbox cleanup over its declared sites, then the
     unchanged per-pass structure (each pass still opens with its own cleanup).
-    ERROR lines are counted over this chain's slice of the shared session log.
+    ERROR lines are counted over this chain's slice of the shared session log
+    (under concurrency the slice is the chain's active window, so the count is
+    the window's total, not solely that chain's).
     """
     print(f"\n##### [{session_slug}] chain {chain.name} "
           f"(sites {len(chain.sites)}, passes {chain.passes})")
@@ -351,9 +411,10 @@ def _run_chain_on_server(chain, rcon_port, log_path, session_slug):
     region_ = gt6world.region(chain.sites)
     with gt6rcon.RconClient(chain.host, rcon_port, chain.password,
                             first_timeout=chain.response_timeout) as client:
-        for command in SESSION_RESET_COMMANDS:
-            print(f"$ {command}   # session baseline reset")
-            client.run_command(command)
+        if reset_baseline:
+            for command in SESSION_RESET_COMMANDS:
+                print(f"$ {command}   # session baseline reset")
+                client.run_command(command)
         for command in gt6world.forceload_commands(region_):
             client.run_command(command)
         for command in gt6world.cleanup_commands(region_):
@@ -369,29 +430,115 @@ def _run_chain_on_server(chain, rcon_port, log_path, session_slug):
     return {"pass_failures": per_pass, "error_lines": errors, "verdicts": verdicts}
 
 
-def run_session(chains, node=None):
-    """One boot, N chains: the session execution model (decision ①③).
+class _ThreadRouter:
+    """sys.stdout stand-in that routes writes by thread: registered wave threads
+    write into their own buffer, everyone else passes through. redirect_stdout
+    swaps the GLOBAL sys.stdout and would cross-wire concurrent chains — this
+    router is the thread-safe form of the same capture."""
 
-    Chains are grouped by plan_groups; every group reuses the running server;
-    each chain boundary restores the baseline and re-cleans the chain's own
-    sites. Per-chain verdict semantics are unchanged — same steps, same judge,
-    same passes — only the boot count drops (20 -> the group count). Returns
-    the overall exit code: 0 iff every chain judged every pass clean.
+    def __init__(self, passthrough):
+        self._passthrough = passthrough
+        self._routes = {}
+
+    def register(self, buf):
+        self._routes[threading.get_ident()] = buf
+
+    def write(self, text):
+        buf = self._routes.get(threading.get_ident())
+        return self._passthrough.write(text) if buf is None else buf.write(text)
+
+    def flush(self):
+        buf = self._routes.get(threading.get_ident())
+        (self._passthrough if buf is None else buf).flush()
+
+    def __getattr__(self, name):
+        return getattr(self._passthrough, name)
+
+
+def _run_wave(wave, rcon_port, log_path, session_slug, results, lock):
+    """Execute one wave: concurrently when it holds several chains.
+
+    Each chain runs in its own thread with its own authenticated RCON client
+    (vanilla RCON is multi-client; the commands serialize server-side but the
+    per-command quiet windows overlap client-side — that overlap is the point).
+    Transcripts are captured per chain through the thread-routing stdout and
+    printed after the join, so the evidence stays line-readable. Any thread
+    exception lands in the record as a failed chain instead of killing the boot.
+    """
+    if len(wave) == 1:
+        chain = wave[0]
+        t0 = time.monotonic()
+        results[chain.name] = _run_chain_on_server(chain, rcon_port, log_path,
+                                                   session_slug)
+        results[chain.name]["seconds"] = round(time.monotonic() - t0, 1)
+        return
+
+    buffers = {chain.name: io.StringIO() for chain in wave}
+    router = _ThreadRouter(sys.stdout)
+
+    def _worker(chain):
+        buf = buffers[chain.name]
+        router.register(buf)
+        t0 = time.monotonic()
+        try:
+            res = _run_chain_on_server(chain, rcon_port, log_path,
+                                       session_slug, reset_baseline=False)
+        except Exception as exc:  # one broken chain must not kill the wave
+            res = {"pass_failures": [1], "error_lines": -1, "verdicts": [],
+                   "exception": repr(exc)}
+        res["seconds"] = round(time.monotonic() - t0, 1)
+        with lock:
+            results[chain.name] = res
+
+    print(f"[{session_slug}] wave: {len(wave)} chains interleaved "
+          f"({', '.join(c.name for c in wave)})")
+    old_stdout = sys.stdout
+    sys.stdout = router
+    try:
+        threads = [threading.Thread(target=_worker, args=(chain,), name=chain.name)
+                   for chain in wave]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+    finally:
+        sys.stdout = old_stdout
+    for chain in wave:
+        print(f"\n----- transcript [{chain.name}] -----")
+        print(buffers[chain.name].getvalue(), end="")
+
+
+def run_session_recorded(chains, node=None, concurrency=None):
+    """One boot, N chains — the session model, returning the full record.
+
+    plan_groups splits boot groups (fresh_boot / mutates); within a group,
+    plan_waves packs mutually site-disjoint chains into concurrent waves
+    (GT6_CONCURRENCY, default 1 = serial). Each wave start is a global-baseline
+    control point; chains inside a wave declare no global mutations and own
+    disjoint site bboxes. Per-chain verdict semantics are unchanged — same
+    steps, same judge, same passes. Returns:
+      {"exit": int, "node": str, "boots": int, "wall_s": float,
+       "concurrency": int, "chains": {name: {pass_failures, error_lines,
+       verdicts, seconds, exception?}}}
     """
     chains = list(chains)
+    started = time.monotonic()
     if not chains:
-        return 0
+        return {"exit": 0, "node": node or DEFAULT_NODE, "boots": 0, "wall_s": 0.0,
+                "concurrency": 1, "chains": {}}
     nodes = {chain.node for chain in chains} - {None}
     if len(nodes) > 1:
         raise SystemExit(f"run_session: mixed nodes in one session: {sorted(nodes)}")
     node = node or (nodes.pop() if nodes else None) or requested_node() or DEFAULT_NODE
+    concurrency = concurrency if concurrency is not None else concurrency_degree()
     task = gt6server.gradle_task(node)
     groups = plan_groups(chains)
     rcon_port, query_port, game_port = gt6server.pick_ports(
         SESSION_PORTS.get(node_key(node), SESSION_PORTS["1.20.1"]))
     slug = f"session_{node_suffix(node)}"
     log_path, pid_path = gt6server.artifact_paths(slug)
-    print(f"[{slug}] node {node} ({task}): {len(chains)} chains in {len(groups)} boot group(s)")
+    print(f"[{slug}] node {node} ({task}): {len(chains)} chains in {len(groups)} "
+          f"boot group(s), concurrency {concurrency}")
     print(f"[{slug}] ports rcon={rcon_port} query={query_port} game={game_port}")
     print(f"[{slug}] worktree {WORKTREE_ROOT}, artifacts {log_path}")
 
@@ -399,9 +546,10 @@ def run_session(chains, node=None):
     gt6server.provision_run_dir(WORKTREE_ROOT, game_port, rcon_port, query_port,
                                 password, node=node)
     boot_timeout = max(chain.boot_timeout for chain in chains)
-    started = time.monotonic()
     pid = gt6server.start_server(WORKTREE_ROOT, log_path, pid_path, gradle_task=task)
     results = {}
+    waves_seen = []
+    overall = 0
     boot_s = None
     try:
         if not gt6server.wait_done(log_path, boot_timeout, pid=pid):
@@ -411,26 +559,39 @@ def run_session(chains, node=None):
         boot_s = time.monotonic() - started
         print(f"[{slug}] server up (Done) in {boot_s:.0f}s")
         time.sleep(2)
+        lock = threading.Lock()
         for group in groups:
-            for chain in group:
-                t0 = time.monotonic()
-                results[chain.name] = _run_chain_on_server(
-                    chain, rcon_port, log_path, slug)
-                results[chain.name]["seconds"] = round(time.monotonic() - t0, 1)
+            for wave in plan_waves(group, concurrency):
+                waves_seen.append([chain.name for chain in wave])
+                # the wave start is THE global-baseline control point: one
+                # client restores time/weather/gamerules before the wave's
+                # chains fan out (their boundary cleanups touch disjoint sites)
+                with gt6rcon.RconClient(chains[0].host, rcon_port, password,
+                                        first_timeout=chains[0].response_timeout
+                                        ) as client:
+                    for command in SESSION_RESET_COMMANDS:
+                        print(f"$ {command}   # wave baseline reset")
+                        client.run_command(command)
+                _run_wave(wave, rcon_port, log_path, slug, results, lock)
     finally:
         gt6server.stop_server(pid_path, rcon=(chains[0].host, rcon_port, password))
 
-    overall = 0
     for name, res in results.items():
         print(f"[{slug}] {name}: pass failures {res['pass_failures']}, "
               f"server ERROR lines: {res['error_lines']} ({res['seconds']}s)")
-        if any(res["pass_failures"]):
+        if any(res["pass_failures"]) or res.get("exception"):
             overall = 1
     wall = time.monotonic() - started
-    print(f"[{slug}] wall {wall:.0f}s (boot {boot_s:.0f}s), "
-          f"{len(groups)} boot(s) for {len(chains)} chains -> "
+    print(f"[{slug}] wall {wall:.0f}s (boot {boot_s:.0f}s), {len(groups)} boot(s), "
+          f"{len(waves_seen)} wave(s) at concurrency {concurrency} -> "
           f"{'GREEN' if overall == 0 else 'RED'}")
-    return overall
+    return {"exit": overall, "node": node, "boots": len(groups), "wall_s": round(wall, 1),
+            "concurrency": concurrency, "waves": waves_seen, "chains": results}
+
+
+def run_session(chains, node=None, concurrency=None):
+    """The session model's exit-code face (main()'s route; see run_session_recorded)."""
+    return run_session_recorded(chains, node, concurrency)["exit"]
 
 
 def main(chain):
