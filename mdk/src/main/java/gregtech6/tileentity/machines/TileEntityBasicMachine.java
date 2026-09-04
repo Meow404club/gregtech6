@@ -816,7 +816,11 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		FluidStack[] rSnapshot = new FluidStack[aTanks.length];
 		for (int i = 0; i < aTanks.length; i++) {
 			FluidStack tFluid = aTanks[i].fluid();
+			//? if forge {
 			if (tFluid != null && !tFluid.isEmpty()) rSnapshot[i] = new FluidStack(tFluid, FluidTankGT.bindInt(aTanks[i].amount()));
+			//?} else {
+			/*if (tFluid != null && !tFluid.isEmpty()) rSnapshot[i] = tFluid.copyWithAmount(FluidTankGT.bindInt(aTanks[i].amount())); // 21.1: no copy ctor — copyWithAmount(int)
+			*///?}
 		}
 		return rSnapshot;
 	}
@@ -1182,7 +1186,11 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
 		aNBT.putByte(NBT_FACING, mFacing);
+		//? if forge {
 		aNBT.put(NBT_INVENTORY, mInventory.serializeNBT());
+		//?} else {
+		/*aNBT.put(NBT_INVENTORY, mInventory.serializeNBT(NBT_ACCESS)); // 21.1: ItemStackHandler NBT takes the registries
+		*///?}
 		aNBT.putLong(NBT_ENERGY, mEnergy); // upstream NBT_ENERGY :115
 		aNBT.putLong(NBT_MINENERGY, mMinEnergy); // upstream NBT_MINENERGY :129
 		aNBT.putLong(NBT_PROGRESS, mProgress); // upstream NBT_PROGRESS :133
@@ -1193,12 +1201,20 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		aNBT.putBoolean(NBT_RUNNING, mRunning); // upstream NBT_RUNNING :118
 		aNBT.putBoolean(NBT_STATE + ".new", mStateNew); // upstream NBT_STATE+".new" :233 — only .new persists; mStateOld re-derives at the first :865 shift
 		ListTag tOutputs = new ListTag();
+		//? if forge {
 		for (ItemStack tStack : mOutputItems) if (tStack != null && !tStack.isEmpty()) tOutputs.add(tStack.save(new CompoundTag()));
+		//?} else {
+		/*for (ItemStack tStack : mOutputItems) if (tStack != null && !tStack.isEmpty()) tOutputs.add(tStack.save(NBT_ACCESS, new CompoundTag())); // 21.1: provider-first save
+		*///?}
 		aNBT.put(NBT_OUTPUT, tOutputs); // upstream NBT_INV_OUT.i :166-167 (list form)
 		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].writeToNBT(aNBT, NBT_TANK + ".in." + i); // :160
 		for (int i = 0; i < mTanksOutput.length; i++) mTanksOutput[i].writeToNBT(aNBT, NBT_TANK + ".out." + i); // :162
 		ListTag tOutputFluids = new ListTag();
+		//? if forge {
 		for (FluidStack tFluid : mOutputFluids) if (tFluid != null && !tFluid.isEmpty()) tOutputFluids.add(tFluid.writeToNBT(new CompoundTag()));
+		//?} else {
+		/*for (FluidStack tFluid : mOutputFluids) if (tFluid != null && !tFluid.isEmpty()) tOutputFluids.add(tFluid.save(NBT_ACCESS, new CompoundTag())); // 21.1: the codec save face
+		*///?}
 		aNBT.put(NBT_OUTPUT_FLUIDS, tOutputFluids); // upstream NBT_TANK_OUT.i :164-165 (list form)
 	}
 
@@ -1206,7 +1222,11 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	public void load(CompoundTag aNBT) {
 		super.load(aNBT);
 		if (aNBT.contains(NBT_FACING, Tag.TAG_ANY_NUMERIC)) mFacing = aNBT.getByte(NBT_FACING);
+		//? if forge {
 		if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) mInventory.deserializeNBT(aNBT.getCompound(NBT_INVENTORY));
+		//?} else {
+		/*if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) mInventory.deserializeNBT(NBT_ACCESS, aNBT.getCompound(NBT_INVENTORY)); // 21.1: provider-first
+		*///?}
 		mEnergy = aNBT.getLong(NBT_ENERGY); // :115
 		mMinEnergy = aNBT.getLong(NBT_MINENERGY); // :129
 		mProgress = aNBT.getLong(NBT_PROGRESS); // :133
@@ -1219,7 +1239,11 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		if (aNBT.contains(NBT_OUTPUT, Tag.TAG_LIST)) {
 			ListTag tOutputs = aNBT.getList(NBT_OUTPUT, Tag.TAG_COMPOUND);
 			mOutputItems = new ItemStack[tOutputs.size()];
+			//? if forge {
 			for (int i = 0; i < tOutputs.size(); i++) mOutputItems[i] = ItemStack.of(tOutputs.getCompound(i));
+			//?} else {
+			/*for (int i = 0; i < tOutputs.size(); i++) mOutputItems[i] = ItemStack.parseOptional(NBT_ACCESS, tOutputs.getCompound(i)); // 21.1: the codec parse face
+			*///?}
 		}
 		// :160/:162 — the tank CONTENT loads into the constructor-sized tanks (the capacity
 		// is the constructor's 1000/default ruling, never NBT-driven — NBT_TANK_CAPACITY is
@@ -1229,7 +1253,11 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		if (aNBT.contains(NBT_OUTPUT_FLUIDS, Tag.TAG_LIST)) {
 			ListTag tOutputFluids = aNBT.getList(NBT_OUTPUT_FLUIDS, Tag.TAG_COMPOUND);
 			mOutputFluids = new FluidStack[tOutputFluids.size()];
+			//? if forge {
 			for (int i = 0; i < tOutputFluids.size(); i++) mOutputFluids[i] = FluidStack.loadFluidStackFromNBT(tOutputFluids.getCompound(i));
+			//?} else {
+			/*for (int i = 0; i < tOutputFluids.size(); i++) mOutputFluids[i] = FluidStack.parseOptional(NBT_ACCESS, tOutputFluids.getCompound(i)); // 21.1: a failed parse lands EMPTY (the isEmpty consumers skip it like null)
+			*///?}
 		}
 	}
 

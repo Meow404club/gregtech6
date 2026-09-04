@@ -703,7 +703,11 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
 		aNBT.putByte(NBT_FACING, mFacing);
+		//? if forge {
 		aNBT.put(NBT_INVENTORY, mInventory.serializeNBT());
+		//?} else {
+		/*aNBT.put(NBT_INVENTORY, mInventory.serializeNBT(NBT_ACCESS)); // 21.1: ItemStackHandler NBT takes the registries
+		*///?}
 		aNBT.putLong(NBT_ENERGY, mEnergy); // upstream NBT_ENERGY :115
 		aNBT.putLong(NBT_MINENERGY, mMinEnergy); // upstream NBT_MINENERGY :129
 		aNBT.putLong(NBT_PROGRESS, mProgress); // upstream NBT_PROGRESS :133
@@ -713,7 +717,11 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		aNBT.putBoolean(NBT_ACTIVE, mActive); // upstream NBT_ACTIVE :116
 		aNBT.putBoolean(NBT_RUNNING, mRunning); // upstream NBT_RUNNING :118
 		ListTag tOutputs = new ListTag();
+		//? if forge {
 		for (ItemStack tStack : mOutputItems) if (tStack != null && !tStack.isEmpty()) tOutputs.add(tStack.save(new CompoundTag()));
+		//?} else {
+		/*for (ItemStack tStack : mOutputItems) if (tStack != null && !tStack.isEmpty()) tOutputs.add(tStack.save(NBT_ACCESS, new CompoundTag())); // 21.1: provider-first save
+		*///?}
 		aNBT.put(NBT_OUTPUT, tOutputs); // upstream NBT_INV_OUT.i :166-167 (list form)
 		writeCoversToNBT(aNBT); // upstream 06Covers :74
 	}
@@ -725,7 +733,11 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		boolean tWasActive = mActive, tWasRunning = mRunning;
 		super.load(aNBT);
 		if (aNBT.contains(NBT_FACING, Tag.TAG_ANY_NUMERIC)) mFacing = aNBT.getByte(NBT_FACING);
+		//? if forge {
 		if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) mInventory.deserializeNBT(aNBT.getCompound(NBT_INVENTORY));
+		//?} else {
+		/*if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) mInventory.deserializeNBT(NBT_ACCESS, aNBT.getCompound(NBT_INVENTORY)); // 21.1: provider-first
+		*///?}
 		mEnergy = aNBT.getLong(NBT_ENERGY); // :115
 		mMinEnergy = aNBT.getLong(NBT_MINENERGY); // :129
 		mProgress = aNBT.getLong(NBT_PROGRESS); // :133
@@ -737,7 +749,11 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		if (aNBT.contains(NBT_OUTPUT, Tag.TAG_LIST)) {
 			ListTag tOutputs = aNBT.getList(NBT_OUTPUT, Tag.TAG_COMPOUND);
 			mOutputItems = new ItemStack[tOutputs.size()];
+			//? if forge {
 			for (int i = 0; i < tOutputs.size(); i++) mOutputItems[i] = ItemStack.of(tOutputs.getCompound(i));
+			//?} else {
+			/*for (int i = 0; i < tOutputs.size(); i++) mOutputItems[i] = ItemStack.parseOptional(NBT_ACCESS, tOutputs.getCompound(i)); // 21.1: the codec parse face
+			*///?}
 		}
 		readCoversFromNBT(aNBT); // upstream 06Covers :68
 		// task p9-render-c-oven-overlay: the client write point of mActive/mRunning — both
@@ -766,6 +782,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		scheduleRenderRefresh();
 	}
 
+	//? if forge {
 	@Override
 	public void handleUpdateTag(CompoundTag aTag) {
 		super.handleUpdateTag(aTag);
@@ -777,6 +794,20 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		super.onDataPacket(aNet, aPacket);
 		scheduleRenderRefresh(); // block-update channel (cover changes, machine visuals)
 	}
+	//?} else {
+	/*@Override
+	public void handleUpdateTag(CompoundTag aTag, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.handleUpdateTag(aTag, aProvider);
+		scheduleRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.onDataPacket(aNet, aPacket, aProvider);
+		scheduleRenderRefresh(); // block-update channel (cover changes, machine visuals)
+	}
+	// 21.1: both IBlockEntityExtension hooks gain the serialization provider (javap)
+	*///?}
 
 	/**
 	 * The client arm of the scheduleRenderUpdate pair (task p4-cover-core ⑦ + task

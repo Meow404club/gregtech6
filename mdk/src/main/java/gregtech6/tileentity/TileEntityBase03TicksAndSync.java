@@ -169,10 +169,27 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 	 * state, the content contract of the upstream getClientDataPacket(true) (:52). Client
 	 * side arrives via IForgeBlockEntity.handleUpdateTag (:68, default = load(tag)).
 	 */
+	//? if forge {
 	@Override
 	public CompoundTag getUpdateTag() {
 		return saveWithoutMetadata();
 	}
+	//?} else {
+	/*@Override
+	public CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider aProvider) {
+	//21.1: BlockEntity.getUpdateTag/saveWithoutMetadata take the registries (javap 21.1.249).
+		return saveWithoutMetadata(aProvider);
+	}
+	*///?}
+
+	//? if neoforge {
+	/*// 21.1: the ItemStackHandler NBT face (serializeNBT/deserializeNBT) and the ItemStack
+	//save/parse face take a HolderLookup.Provider — the frozen builtin registry view serves
+	//offline tests and in-world saves alike (item id lookup only). Subclasses reference
+	//NBT_ACCESS in their forked save/load legs.
+	public static final net.minecraft.core.HolderLookup.Provider NBT_ACCESS =
+			net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY);
+	*///?}
 
 	/**
 	 * Block-update channel (vanilla BlockEntity.getUpdatePacket :150): vanilla

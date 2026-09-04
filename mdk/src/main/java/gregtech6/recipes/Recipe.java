@@ -212,7 +212,11 @@ public class Recipe {
 		for (int i = 0; i < rArray.length; i++) {
 			FluidStack tOutput = mFluidOutputs[i];
 			if (tOutput != null && !tOutput.isEmpty()) {
+				//? if forge {
 				rArray[i] = new FluidStack(tOutput, tOutput.getAmount() * Math.max(1, aProcessCount));
+				//?} else {
+				/*rArray[i] = tOutput.copyWithAmount(tOutput.getAmount() * Math.max(1, aProcessCount)); // 21.1: no copy ctor — copyWithAmount(int)
+				*///?}
 			}
 		}
 		return rArray;
