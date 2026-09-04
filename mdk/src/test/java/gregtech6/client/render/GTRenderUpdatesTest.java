@@ -19,7 +19,11 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+//? if forge {
 import net.minecraft.data.worldgen.BootstapContext;
+//?} else {
+/*import net.minecraft.data.worldgen.BootstrapContext; // 21.1: typo fixed
+*///?}
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
@@ -67,7 +71,18 @@ public class GTRenderUpdatesTest extends GTOfflineRenderTestBase {
 					() -> net.minecraft.util.profiling.InactiveProfiler.INSTANCE, aClientSide, false, 0L, 0);
 		}
 
+		//? if neoforge {
+		/*// 21.1: the day-time-scaling triple joined the Level abstracts.
+		@Override public float getDayTimeFraction() { return 0.0F; }
+		@Override public void setDayTimeFraction(float aFraction) {}
+		@Override public float getDayTimePerTick() { return 0.0F; }
+		@Override public void setDayTimePerTick(float aPerTick) {}
+		@Override public net.minecraft.world.item.alchemy.PotionBrewing potionBrewing() { return null; } // 21.1: vanilla brewing holder abstract
+		@Override public net.minecraft.world.TickRateManager tickRateManager() { return null; }
+		*///?}
+
 		static RegistryAccess damageTypeRegistryAccess() {
+			//? if forge {
 			MappedRegistry<DamageType> tDamageTypes = new MappedRegistry<>(Registries.DAMAGE_TYPE, Lifecycle.stable());
 			DamageTypes.bootstrap(new BootstapContext<DamageType>() {
 				@Override public Holder.Reference<DamageType> register(ResourceKey<DamageType> aKey, DamageType aValue, Lifecycle aLifecycle) {
@@ -75,6 +90,16 @@ public class GTRenderUpdatesTest extends GTOfflineRenderTestBase {
 				}
 				@Override public <S> HolderGetter<S> lookup(ResourceKey<? extends Registry<? extends S>> aRegistry) { throw new UnsupportedOperationException(); }
 			});
+			//?} else {
+			/*// 21.1: BootstapContext → BootstrapContext; MappedRegistry.register takes the RegistrationInfo.
+			MappedRegistry<DamageType> tDamageTypes = new MappedRegistry<>(Registries.DAMAGE_TYPE, Lifecycle.stable());
+			DamageTypes.bootstrap(new BootstrapContext<DamageType>() {
+				@Override public net.minecraft.core.Holder.Reference<DamageType> register(ResourceKey<DamageType> aKey, DamageType aValue, Lifecycle aLifecycle) {
+					return tDamageTypes.register(aKey, aValue, net.minecraft.core.RegistrationInfo.BUILT_IN);
+				}
+				@Override public <S> HolderGetter<S> lookup(ResourceKey<? extends Registry<? extends S>> aRegistry) { throw new UnsupportedOperationException(); }
+			});
+			*///?}
 			return new RegistryAccess.ImmutableRegistryAccess(Map.of(Registries.DAMAGE_TYPE, tDamageTypes)).freeze();
 		}
 
@@ -90,6 +115,9 @@ public class GTRenderUpdatesTest extends GTOfflineRenderTestBase {
 				@Override public boolean is(ResourceKey<DimensionType> aKey) { return false; }
 				@Override public boolean is(java.util.function.Predicate<ResourceKey<DimensionType>> aPredicate) { return false; }
 				@Override public boolean is(net.minecraft.tags.TagKey<DimensionType> aTagKey) { return false; }
+				//? if neoforge {
+				/*@Override public boolean is(Holder<DimensionType> aHolder) { return false; } // 21.1: holder-identity probe
+				*///?}
 				@Override public java.util.stream.Stream<net.minecraft.tags.TagKey<DimensionType>> tags() { return java.util.stream.Stream.empty(); }
 				@Override public Either<ResourceKey<DimensionType>, DimensionType> unwrap() { return Either.left(tKey); }
 				@Override public java.util.Optional<ResourceKey<DimensionType>> unwrapKey() { return java.util.Optional.of(tKey); }
@@ -116,12 +144,26 @@ public class GTRenderUpdatesTest extends GTOfflineRenderTestBase {
 		@Override public void playSeededSound(@org.jetbrains.annotations.Nullable Player aPlayer, double aX, double aY, double aZ, Holder<net.minecraft.sounds.SoundEvent> aSound, net.minecraft.sounds.SoundSource aSource, float aVolume, float aPitch, long aSeed) {}
 		@Override public String gatherChunkSourceStats() { return ""; }
 		@Override public Entity getEntity(int aId) { return null; }
+		//? if forge {
 		@Override public MapItemSavedData getMapData(String aName) { return null; }
 		@Override public void setMapData(String aName, MapItemSavedData aData) {}
+		//?} else {
+		/*// 21.1: the map-data table keys on the MapId record.
+		@Override public MapItemSavedData getMapData(net.minecraft.world.level.saveddata.maps.MapId aId) { return null; }
+		@Override public void setMapData(net.minecraft.world.level.saveddata.maps.MapId aId, MapItemSavedData aData) {}
+		*///?}
+		//? if forge {
 		@Override public int getFreeMapId() { return 0; }
+		//?} else {
+		/*@Override public net.minecraft.world.level.saveddata.maps.MapId getFreeMapId() { return new net.minecraft.world.level.saveddata.maps.MapId(0); } // 21.1: int → MapId record
+		*///?}
 		@Override public void destroyBlockProgress(int aBreakerId, BlockPos aPos, int aProgress) {}
 		@Override public Scoreboard getScoreboard() { return new Scoreboard(); }
+		//? if forge {
 		@Override public void gameEvent(net.minecraft.world.level.gameevent.GameEvent aEvent, Vec3 aPos, net.minecraft.world.level.gameevent.GameEvent.Context aContext) {}
+		//?} else {
+		/*@Override public void gameEvent(net.minecraft.core.Holder<net.minecraft.world.level.gameevent.GameEvent> aEvent, net.minecraft.world.phys.Vec3 aPos, net.minecraft.world.level.gameevent.GameEvent.Context aContext) {} // 21.1: the event rides a Holder
+		*///?}
 		@Override public void levelEvent(@org.jetbrains.annotations.Nullable Player aPlayer, int aLevelEvent, BlockPos aPos, int aData) {}
 		@Override public net.minecraft.world.item.crafting.RecipeManager getRecipeManager() { return null; }
 		@Override public ChunkSource getChunkSource() { return null; }

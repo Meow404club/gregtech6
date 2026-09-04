@@ -414,29 +414,46 @@ public class GTMultiBlockPreviewRendererTest extends GTOfflineRenderTestBase {
 		}
 
 		@Override
+		//? if forge {
 		public VertexConsumer vertex(double pX, double pY, double pZ) {
+		//?} else {
+		/*public VertexConsumer addVertex(float pX, float pY, float pZ) { // 21.1: the double variant is gone, the float triple is the abstract
+		*///?}
 			mX = (float)pX; mY = (float)pY; mZ = (float)pZ;
 			return this;
 		}
 
 		@Override
+		//? if forge {
 		public VertexConsumer vertex(org.joml.Matrix4f pMatrix, float pX, float pY, float pZ) {
+		//?} else {
+		/*public VertexConsumer addVertex(org.joml.Matrix4f pMatrix, float pX, float pY, float pZ) {
+		*///?}
 			mX = pX; mY = pY; mZ = pZ; // the identity pose — recorded raw
 			return this;
 		}
 
 		@Override
+		//? if forge {
 		public VertexConsumer color(int pR, int pG, int pB, int pA) {
+		//?} else {
+		/*public VertexConsumer setColor(int pR, int pG, int pB, int pA) {
+		*///?}
 			vertexRaw(mX, mY, mZ, pR / 255.0F, pG / 255.0F, pB / 255.0F, pA / 255.0F);
 			return this;
 		}
 
 		@Override
+		//? if forge {
 		public VertexConsumer color(float pR, float pG, float pB, float pA) {
+		//?} else {
+		/*public VertexConsumer setColor(float pR, float pG, float pB, float pA) {
+		*///?}
 			vertexRaw(mX, mY, mZ, pR, pG, pB, pA);
 			return this;
 		}
 
+		//? if forge {
 		@Override
 		public VertexConsumer uv(float pU, float pV) { return this; }
 
@@ -451,11 +468,32 @@ public class GTMultiBlockPreviewRendererTest extends GTOfflineRenderTestBase {
 
 		@Override
 		public void endVertex() { }
+		//?} else {
+		/*@Override
+		public VertexConsumer setUv(float pU, float pV) { return this; }
 
+		@Override
+		public VertexConsumer setUv1(int pU, int pV) { return this; } // 21.1: overlayCoords → setUv1
+
+		@Override
+		public VertexConsumer setUv2(int pU, int pV) { return this; }
+
+		@Override
+		public VertexConsumer setLight(int pLight) { return this; }
+
+		@Override
+		public VertexConsumer setNormal(float pX, float pY, float pZ) { return this; }
+		// 21.1: endVertex is gone (the 1.21 writer flushes per call) — nothing to stub.
+		*///?}
+
+		//? if forge {
 		@Override
 		public void defaultColor(int pR, int pG, int pB, int pA) { }
 
 		@Override
 		public void unsetDefaultColor() { }
+		//?} else {
+		/*// 21.1: the defaultColor face left VertexConsumer — nothing to stub.
+		*///?}
 	}
 }

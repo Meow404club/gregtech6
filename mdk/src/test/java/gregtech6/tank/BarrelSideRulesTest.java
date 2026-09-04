@@ -178,7 +178,11 @@ public class BarrelSideRulesTest extends GTOfflineTestBase {
 		public FluidStack drain(int aMaxDrain, FluidAction aAction) {
 			if (mContent == null || aMaxDrain <= 0) return FluidStack.EMPTY;
 			int tDrained = (int) Math.min(aMaxDrain, mContent.getAmount());
+			//? if forge {
 			FluidStack rStack = new FluidStack(mContent, tDrained);
+			//?} else {
+			/*FluidStack rStack = mContent.copyWithAmount(tDrained); // 21.1: no copy ctor
+			*///?}
 			if (aAction.execute()) {
 				mContent.setAmount(mContent.getAmount() - tDrained);
 				if (mContent.getAmount() <= 0) mContent = null;

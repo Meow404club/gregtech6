@@ -73,7 +73,11 @@ public class GTWiresCreativeTabTest {
 	@Test
 	public void wireTabsAreExactlyTheThreeCategoryTabs() {
 		Set<ResourceLocation> tIds = new LinkedHashSet<>();
+		//? if forge {
 		for (RegistryObject<net.minecraft.world.item.CreativeModeTab> tTab : GTWires.CREATIVE_MODE_TABS.getEntries()) {
+		//?} else {
+		/*for (net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.item.CreativeModeTab, ? extends net.minecraft.world.item.CreativeModeTab> tTab : GTWires.CREATIVE_MODE_TABS.getEntries()) { // 21.1: getEntries hands the wildcard holder
+		*///?}
 			tIds.add(tTab.getId());
 		}
 		assertEquals(Set.of(rl("electric_wires"), rl("redstone_wires"), rl("laser_wires")), tIds);

@@ -59,9 +59,17 @@ public class GTItemStackHandlerTest extends GTOfflineTestBase {
 		tHandler.setStackInSlot(1, new ItemStack(Items.DIAMOND, 32));
 		tHandler.setStackInSlot(3, new ItemStack(Items.EMERALD, 7));
 
+		//? if forge {
 		CompoundTag tTag = tHandler.serializeNBT();
+		//?} else {
+		/*CompoundTag tTag = tHandler.serializeNBT(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS); // 21.1: ItemStackHandler NBT takes the registries
+		*///?}
 		GTItemStackHandler tBack = new GTItemStackHandler(4);
+		//? if forge {
 		tBack.deserializeNBT(tTag);
+		//?} else {
+		/*tBack.deserializeNBT(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS, tTag); // 21.1: provider-first
+		*///?}
 
 		assertEquals(0, tBack.getStackInSlot(0).getCount());
 		assertEquals(32, tBack.getStackInSlot(1).getCount());

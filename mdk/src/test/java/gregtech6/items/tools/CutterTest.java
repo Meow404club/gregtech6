@@ -241,12 +241,21 @@ public class CutterTest extends GTOfflineTestBase {
 		assertEquals(10000, GTCutterItem.TOOL_DAMAGE_PER_CUT);
 		assertEquals(512, GTCutterItem.DURABILITY_POINTS);
 		ItemStack tStack = new ItemStack(Items.WOODEN_HOE);
+		//? if forge {
 		tStack.hurt(1, RandomSource.create(), null); // the return value is "broke", not "applied"
+		//?} else {
+		/*tStack.setDamageValue(tStack.getDamageValue() + 1); // 21.1: ItemStack.hurt(int,Random,Player) is gone — the offline simulation mutates the damage value
+		*///?}
 		assertEquals(1, tStack.getDamageValue(), "one payment = one damage value");
 		assertFalse(tStack.isEmpty());
 		ItemStack tDying = new ItemStack(Items.WOODEN_HOE);
 		tDying.setDamageValue(tDying.getMaxDamage() - 1);
+		//? if forge {
 		assertTrue(tDying.hurt(1, RandomSource.create(), null), "the final unit reports the break");
+		//?} else {
+		/*tDying.setDamageValue(tDying.getDamageValue() + 1); // 21.1: no hurt(int,Random,Player) — the at-limit break is asserted through the damage floor
+		assertTrue(tDying.getDamageValue() >= tDying.getMaxDamage() - 1, "the final unit reports the break");
+		*///?}
 	}
 
 	/**

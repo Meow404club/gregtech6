@@ -61,8 +61,13 @@ public class GTCoverClientListenerTest {
 		assertFalse(tTargets.contains(new ModelResourceLocation("gt6", "oven", "facing=north,active=false,running=false")),
 				"the misordered variant string is NOT a key (StateDefinition sorts by name)");
 		for (ModelResourceLocation tTarget : tTargets) {
+			//? if forge {
 			assertEquals("gt6", tTarget.getNamespace());
 			assertEquals("oven", tTarget.getPath(),
+			//?} else {
+			/*assertEquals("gt6", tTarget.id().getNamespace()); // 21.1: MRL is a record over an RL id
+			assertEquals("oven", tTarget.id().getPath(),
+			*///?}
 					"per-state keys address the BLOCK (gt6:oven#variants), not the blockstate JSON's model files (block/oven…)");
 		}
 	}
@@ -74,8 +79,14 @@ public class GTCoverClientListenerTest {
 	@Test
 	void registrationWrapsThePerStateKeysNotTheFileIds() {
 		GTCoverClientListener.register();
+		//? if forge {
 		Map<ResourceLocation, BakedModel> tStubs = new HashMap<>();
 		Map<ResourceLocation, BakedModel> tModels = new HashMap<>();
+		//?} else {
+		/*// 21.1: the baking-result table keys on the MRL record (javap ModelEvent$ModifyBakingResult).
+		Map<ModelResourceLocation, BakedModel> tStubs = new HashMap<>();
+		Map<ModelResourceLocation, BakedModel> tModels = new HashMap<>();
+		*///?}
 		for (ModelResourceLocation tKey : GTCoverClientListener.TARGET_MODELS) {
 			BakedModel tStub = new StubFallback();
 			tStubs.put(tKey, tStub);
@@ -83,12 +94,21 @@ public class GTCoverClientListenerTest {
 		}
 		for (String tDead : DEAD_FILE_IDS) {
 			BakedModel tStub = new StubFallback();
+			//? if forge {
 			tStubs.put(new ResourceLocation("gt6", tDead), tStub);
 			tModels.put(new ResourceLocation("gt6", tDead), tStub);
+			//?} else {
+			/*tStubs.put(ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath("gt6", tDead)), tStub);
+			tModels.put(ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath("gt6", tDead)), tStub);
+			*///?}
 		}
 		assertEquals(19, tModels.size());
 
+		//? if forge {
 		GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null));
+		//?} else {
+		/*GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null, null)); // 21.1: +ModelBakery
+		*///?}
 
 		for (ModelResourceLocation tKey : GTCoverClientListener.TARGET_MODELS) {
 			assertTrue(tModels.get(tKey) instanceof CoverPlateModel, "every per-state baked model is wrapped: " + tKey);
@@ -120,10 +140,18 @@ public class GTCoverClientListenerTest {
 		// decides, in-game Forge's unsorted @EventBusSubscriber scan order
 		// (AutomaticEventSubscriber.java:32-39) does.
 		ModelResourceLocation tKey = new ModelResourceLocation("gt6", "oven", "active=true,facing=north,running=false");
+		//? if forge {
 		Map<ResourceLocation, BakedModel> tModels = new HashMap<>();
+		//?} else {
+		/*Map<ModelResourceLocation, BakedModel> tModels = new HashMap<>();
+		*///?}
 		BakedModel tStub = new StubFallback();
 		tModels.put(tKey, tStub);
+		//? if forge {
 		GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null));
+		//?} else {
+		/*GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null, null)); // 21.1: +ModelBakery
+		*///?}
 		assertTrue(tModels.get(tKey) instanceof CoverPlateModel, "the last registration owns the shared key");
 		assertSame(tStub, ((CoverPlateModel) tModels.get(tKey)).getFallbackModel());
 	}

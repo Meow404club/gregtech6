@@ -230,8 +230,13 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 		tBe.mTank.fill(new FluidStack(Fluids.WATER, 1234), FluidAction.EXECUTE);
 
 		ItemStack tDrop = GTBarrelBlock.writeItemNBT(tBe, new ItemStack(Items.GLASS_BOTTLE));
+		//? if forge {
 		assertTrue(tDrop.hasTag(), "the filled drop carries a tag");
 		CompoundTag tTankTag = tDrop.getTag().getCompound(TileEntityBase08Barrel.NBT_TANK);
+		//?} else {
+		/*assertTrue(tDrop.get(gregtech6.registry.GT6DataComponents.BARREL_CONTENT) != null, "the filled drop carries its payload component");
+		CompoundTag tTankTag = tDrop.get(gregtech6.registry.GT6DataComponents.BARREL_CONTENT).copyTag().getCompound(TileEntityBase08Barrel.NBT_TANK);
+		*///?}
 		assertEquals("minecraft:water", tTankTag.getString("FluidName"), "the drop item NBT names the fluid");
 		assertEquals(1234, tTankTag.getInt("Amount"), "the drop item NBT carries the amount");
 
@@ -247,7 +252,11 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 	public void emptyBarrelDropKeepsTheLegacyShape() {
 		GTBarrelBlockEntity tBe = sType.create(POS, Blocks.STONE.defaultBlockState());
 		ItemStack tDrop = GTBarrelBlock.writeItemNBT(tBe, new ItemStack(Items.GLASS_BOTTLE));
+		//? if forge {
 		assertFalse(tDrop.hasTag(), "no content, no covers → the tagless pre-card drop (acceptance a)");
+		//?} else {
+		/*assertFalse(tDrop.get(gregtech6.registry.GT6DataComponents.BARREL_CONTENT) != null, "no content, no covers → the payload-less pre-card drop (acceptance a)");
+		*///?}
 		assertFalse(GTBarrelBlockItem.hasContent(tDrop), "the :290 stacking predicate reads empty");
 	}
 
@@ -258,11 +267,21 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 		assertFalse(GTBarrelBlockItem.hasContent(tEmpty), "no tag → no content");
 
 		ItemStack tFilled = new ItemStack(Items.GLASS_BOTTLE);
+		//? if forge {
 		tFilled.getOrCreateTag().put(TileEntityBase08Barrel.NBT_TANK, new FluidStack(Fluids.WATER, 1).writeToNBT(new CompoundTag()));
+		//?} else {
+		/*CompoundTag tPre = new CompoundTag();
+		tPre.put(TileEntityBase08Barrel.NBT_TANK, new FluidStack(Fluids.WATER, 1).save(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS, new CompoundTag())); // 21.1: the codec save face
+		net.minecraft.world.item.component.CustomData.set(gregtech6.registry.GT6DataComponents.BARREL_CONTENT, tFilled, tPre); // 21.1: the payload rides the CustomData component
+		*///?}
 		assertTrue(GTBarrelBlockItem.hasContent(tFilled), "a non-empty tank compound = content → max stack 1");
 
 		ItemStack tBlank = new ItemStack(Items.GLASS_BOTTLE);
+		//? if forge {
 		tBlank.getOrCreateTag().put(TileEntityBase08Barrel.NBT_TANK, new CompoundTag());
+		//?} else {
+		/*net.minecraft.world.item.component.CustomData.set(gregtech6.registry.GT6DataComponents.BARREL_CONTENT, tBlank, new CompoundTag()); // 21.1: a present-but-empty payload compound
+		*///?}
 		assertFalse(GTBarrelBlockItem.hasContent(tBlank), "a present-but-empty compound is not content");
 	}
 

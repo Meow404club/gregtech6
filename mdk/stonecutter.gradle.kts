@@ -257,6 +257,29 @@ stonecutter parameters {
         // 锚定 lambda 体自引用形式 p -> p.broadcastBreakEvent(MAINHAND)（GTCutterItem:186/
         // GTCrowbarItem:197,205 三位点；GTCokeOvenBlock:68 条件形不入表走 //?）。
         "([a-zA-Z][a-zA-Z0-9]*) -> \\1\\.broadcastBreakEvent\\(EquipmentSlot\\.MAINHAND\\)" to "EquipmentSlot.MAINHAND",
+        // ---- M4 test 面（compileTestJava 清零）：Provider 化无参调用 + 单参 RL ctor ----
+        // 21.1 的 BlockEntity.saveWithoutMetadata/getUpdateTag/handleUpdateTag 与
+        // ItemStackHandler.serializeNBT/deserializeNBT 全部收 HolderLookup.Provider——测试面的
+        // 无参调用统一补挂 TileEntityBase03TicksAndSync.NBT_ACCESS（public static，frozen
+        // builtin registry 视图）。main 普查：无参活代码 0 处（活腿全在 /* 注释腿内，改写无害）。
+        // 单参 ResourceLocation ctor 21.1 私有化 → parse（必须先于其后的同形条目执行？否——
+        // 两参条目在前已消化双参形，单参形落此处独立锚定；[^(),] 排除逗号即不重叠）。
+        "new\\s+net\\.minecraft\\.resources\\.ResourceLocation\\(([^(),]+)\\)" to "net.minecraft.resources.ResourceLocation.parse(\$1)",
+        "new\\s+ResourceLocation\\(([^(),]+)\\)" to "ResourceLocation.parse(\$1)",
+        "\\.saveWithoutMetadata\\(\\)" to ".saveWithoutMetadata(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS)",
+        "\\.getUpdateTag\\(\\)" to ".getUpdateTag(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS)",
+        "\\.handleUpdateTag\\(([^(),]+)\\)" to ".handleUpdateTag(\$1, gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS)",
+        // 勘正：serializeNBT/deserializeNBT 无参 swap 已撤——GTBarrelItemFluidHandler 的
+        // 21.1 面自有 no-arg NBT API（非 ItemStackHandler），无差别补参会破坏其调用点；
+        // ItemStackHandler 接收者的测试位点（GTItemStackHandlerTest）走 //? 手改。
+        // MRL 三串 ctor → record (ResourceLocation, variant)（21.1 record 化，javap；
+        // 测试面 per-state key 断言 8 位点同形字符串字面量）。RL 两参 getNamespace/getPath
+        // 不受影响（MRL 无参直呼的接收者各文件手改）。
+        "new\\s+ModelResourceLocation\\(\"([^\"]+)\",\\s*\"([^\"]+)\",\\s*\"([^\"]+)\"\\)" to "new ModelResourceLocation(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(\"\$1\", \"\$2\"), \"\$3\")",
+        // ModifyBakingResult 三参化未入表——swap 会重匹配自身产物（双 null 尾缀），改测试位点手改。
+        // FluidStack.getRawFluid → getFluid（21.1 删除 collapse-getter；测试断言全部作用在
+        // 非空 stack 上，getFluid 的空折叠不触）——main 活代码 0 处（已双腿），测试 6 位点。
+        "\\.getRawFluid\\(\\)" to ".getFluid()",
     ).forEach { (pattern, to) ->
         replacements.regex(neoforgeSide) {
             replace(pattern, to)

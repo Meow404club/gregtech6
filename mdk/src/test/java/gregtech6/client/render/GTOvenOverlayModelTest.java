@@ -145,7 +145,11 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 			for (Direction tSide : Direction.values()) {
 				OverlayPlan tPlan = GTOvenOverlayModel.planOverlayQuads(new GTOvenRenderSnapshot(tGroup == OvenOverlayGroup.ACTIVE, tGroup == OvenOverlayGroup.RUNNING),
 						Direction.NORTH, tSide).get(0);
+				//? if forge {
 				assertEquals(new ResourceLocation("gt6", "block/oven_overlay_" + tGroup.textureKey() + "_" + tPlan.textureFace().textureKey()),
+				//?} else {
+				/*assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/oven_overlay_" + tGroup.textureKey() + "_" + tPlan.textureFace().textureKey()),
+				*///?}
 						tPlan.sprite(), "the sprite id mirrors the upstream NBT_TEXTURE name form");
 			}
 		}
@@ -195,8 +199,13 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 		assertFalse(tTargets.contains(new ModelResourceLocation("gt6", "oven", "facing=north,active=false,running=false")),
 				"the misordered variant string is NOT a key (StateDefinition sorts by name)");
 		for (ModelResourceLocation tTarget : tTargets) {
+			//? if forge {
 			assertEquals("gt6", tTarget.getNamespace());
 			assertEquals("oven", tTarget.getPath());
+			//?} else {
+			/*assertEquals("gt6", tTarget.id().getNamespace()); // 21.1: MRL is a record over an RL id
+			assertEquals("oven", tTarget.id().getPath());
+			*///?}
 		}
 	}
 
@@ -208,9 +217,17 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 
 		ModelResourceLocation tKey = new ModelResourceLocation("gt6", "oven", "active=true,facing=north,running=false");
 		StubFallback tBaked = new StubFallback();
+		//? if forge {
 		java.util.Map<ResourceLocation, net.minecraft.client.resources.model.BakedModel> tModels = new java.util.HashMap<>();
+		//?} else {
+		/*java.util.Map<ModelResourceLocation, net.minecraft.client.resources.model.BakedModel> tModels = new java.util.HashMap<>(); // 21.1: the baking table keys on the MRL record
+		*///?}
 		tModels.put(tKey, tBaked);
+		//? if forge {
 		GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null));
+		//?} else {
+		/*GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null, null)); // 21.1: +ModelBakery
+		*///?}
 
 		assertTrue(tModels.get(tKey) instanceof GTOvenOverlayModel, "the per-state baked model is replaced by the overlay model");
 		assertSame(tBaked, ((GTOvenOverlayModel) tModels.get(tKey)).getFallbackModel(), "the baked model stays as the fallback (A-tier material layer)");

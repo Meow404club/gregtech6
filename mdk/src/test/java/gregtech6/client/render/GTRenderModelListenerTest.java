@@ -63,34 +63,69 @@ public class GTRenderModelListenerTest extends GTOfflineRenderTestBase {
 	@Test
 	public void registeredTargetsAreReplacedInTheBakingResult() {
 		BakedModel tFallback = new FallbackProbe();
+		//? if forge {
 		GTRenderModelListener.registerDynamicModel(TARGET.toString(), WrappedProbe::new);
+		//?} else {
+		/*GTRenderModelListener.registerDynamicModel(net.minecraft.client.resources.model.ModelResourceLocation.standalone(TARGET).toString(), WrappedProbe::new); // 21.1: the key string is the record's toString
+		*///?}
 		assertEquals(1, GTRenderModelListener.registeredCount());
 
+		//? if forge {
 		Map<ResourceLocation, BakedModel> tModels = new HashMap<>();
 		tModels.put(TARGET, tFallback);
 		GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null));
 
 		assertSame(tFallback, ((WrappedProbe) tModels.get(TARGET)).mFallback,
 				"the baked model is replaced by the factory product, which keeps it as fallback");
+		//?} else {
+		/*// 21.1: the baking table keys on the MRL record — standalone(TARGET) stringifies
+		//back to the bare "ns:path" the String-keyed factory table registered.
+		Map<net.minecraft.client.resources.model.ModelResourceLocation, BakedModel> tModels = new java.util.HashMap<>();
+		var tTargetKey = net.minecraft.client.resources.model.ModelResourceLocation.standalone(TARGET);
+		tModels.put(tTargetKey, tFallback);
+		GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null, null));
+
+		assertSame(tFallback, ((WrappedProbe) tModels.get(tTargetKey)).mFallback,
+				"the baked model is replaced by the factory product, which keeps it as fallback");
+		*///?}
 		assertEquals(1, tModels.size(), "no other entry is touched");
 	}
 
 	@Test
 	public void absentTargetsDegradeSilently() {
+		//? if forge {
 		GTRenderModelListener.registerDynamicModel(ABSENT.toString(), WrappedProbe::new);
+		//?} else {
+		/*GTRenderModelListener.registerDynamicModel(net.minecraft.client.resources.model.ModelResourceLocation.standalone(ABSENT).toString(), WrappedProbe::new); // 21.1: record toString
+		*///?}
 
+		//? if forge {
 		Map<ResourceLocation, BakedModel> tModels = new HashMap<>();
 		tModels.put(TARGET, new FallbackProbe());
 		GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null));
 
 		assertFalse(tModels.get(TARGET) instanceof WrappedProbe, "unregistered targets stay vanilla");
+		//?} else {
+		/*Map<net.minecraft.client.resources.model.ModelResourceLocation, BakedModel> tModels = new HashMap<>();
+		var tTargetKey = net.minecraft.client.resources.model.ModelResourceLocation.standalone(TARGET);
+		tModels.put(tTargetKey, new FallbackProbe());
+		GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null, null));
+
+		assertFalse(tModels.get(tTargetKey) instanceof WrappedProbe, "unregistered targets stay vanilla");
+		*///?}
 		assertNull(tModels.get(ABSENT), "an absent baked model is skipped, never fabricated");
 	}
 
 	@Test
 	public void reRegistrationIsLastWins() {
+		//? if forge {
 		GTRenderModelListener.registerDynamicModel(TARGET.toString(), WrappedProbe::new);
 		GTRenderModelListener.registerDynamicModel(TARGET.toString(), WrappedProbe::new);
+		//?} else {
+		/*String tKey = net.minecraft.client.resources.model.ModelResourceLocation.standalone(TARGET).toString(); // 21.1: record toString
+		GTRenderModelListener.registerDynamicModel(tKey, WrappedProbe::new);
+		GTRenderModelListener.registerDynamicModel(tKey, WrappedProbe::new);
+		*///?}
 		assertEquals(1, GTRenderModelListener.registeredCount(), "same id re-registers in place (map replacement)");
 	}
 }
