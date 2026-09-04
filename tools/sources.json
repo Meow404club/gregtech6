@@ -27,6 +27,53 @@
     "exclude": [],
     "desc": "原版 Minecraft 1.20.1 反编译源码（Mojang 官方映射名，真理之眼）"
   },
+  "vanilla-mc-1211": {
+    "root": "tmp/refs/vanilla-mc/1.21.1",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [
+      "net/neoforged/**"
+    ],
+    "desc": "原版 MC 1.21.1 反编译源码（Mojang 映射，P15 现役目标版；NeoForge 补丁源已剔除）"
+  },
+  "vanilla-mc-1214": {
+    "root": "tmp/refs/vanilla-mc/1.21.4",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [],
+    "desc": "原版 MC 1.21.4 反编译源码（NFRT gameSources，Mojang 映射）"
+  },
+  "vanilla-mc-1218": {
+    "root": "tmp/refs/vanilla-mc/1.21.8",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [],
+    "desc": "原版 MC 1.21.8 反编译源码（NFRT gameSources，Mojang 映射）"
+  },
+  "vanilla-mc-12111": {
+    "root": "tmp/refs/vanilla-mc/1.21.11",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [],
+    "desc": "原版 MC 1.21.11 反编译源码（NFRT gameSources，Mojang 映射，LTS）"
+  },
+  "vanilla-mc-261": {
+    "root": "tmp/refs/vanilla-mc/26.1",
+    "lang": "java",
+    "include": [
+      "**/*.java"
+    ],
+    "exclude": [],
+    "desc": "原版 MC 26.1 反编译源码（NFRT gameSources，Mojang 映射，最新世代：RL→Identifier）"
+  },
   "forge-api": {
     "root": "tmp/refs/forge-api",
     "lang": "java",
