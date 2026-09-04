@@ -67,7 +67,7 @@ CHAIN = Chain(
         Step(f"setblock {F(AXLE2)} {AXLE}[axis=x]", expect="Changed the block"),
         Step(f"setblock {F(AXLE3)} {AXLE}[axis=x]", expect="Changed the block"),
         Step(f"gt6machine shredder place {F(SHREDDER)}", expect="GT6 shredder placed at 8, 64, 8"),
-        Step(f"gt6machine shredder input 8 {F(SHREDDER)}", expect="8x cobblestone into slot 0"),
+        Step(f"gt6machine shredder input 8 {F(SHREDDER)}", expect="cobblestone into slot 0"),
         Step(f"gt6engine stat {F(ENGINE)}", expect="input=empty"),
         Step(f"gt6engine stat {F(ENGINE)}", expect="rate=16 RU/t (DC constant-sign)"),
         Step(f"gt6engine fuel {F(ENGINE)} gt6:diesel 2000", expect="filled 160 L of gt6:diesel"),

@@ -261,13 +261,16 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 	 *///?}
 
 	/**
-	 * The relay resolution half, as a package-private seam: ForgeCapabilities cannot
+	 * The relay resolution half, as a seam: ForgeCapabilities cannot
 	 * class-init offline ("This will be implemented by a transformer", CapabilityToken:28),
 	 * so the tests verify THIS half and the one-line getCapability delegation rides the
-	 * already-covered Forge mechanism.
+	 * already-covered Forge mechanism. Package-private at birth; widened to public for
+	 * the 21.1 provider wiring (GT6CapabilityWiring lives in gregtech6.registry — a
+	 * cross-package consumer), a visibility-only change with no behavioral delta on
+	 * either leg.
 	 */
 	@Nullable
-	BlockEntity relayTarget() {
+	public BlockEntity relayTarget() {
 		ITileEntityMultiBlockController tTarget = getTarget(false);
 		return tTarget instanceof BlockEntity tController ? tController : null;
 	}

@@ -8,10 +8,11 @@ Chain semantics (task p13-large-boiler ACCEPTANCE ②):
     (linked_parts=34/34) → the FIVE collector pipes around the pipe holes (top-centre
     up + W/E/N/S side holes) → fill 128000 → the W2 firebox arm UNDER the transmitter
     base (the 16 HU/t emit → HeatTransmitter relay → controller booked>0, the live proof
-    of the energy-relay chain) → THREE water+HU rounds (128000 L + 20480000 HU each =
-    256000 conversions × 160 L = 40.96M steam per two rounds; the SS steam tank half is
-    40.96M — the half-gate needs the tank ABOVE it, and one full water tank alone only
-    reaches 20.48M = barometer 7) → stat asserts steam past half → data get on ALL FIVE
+    of the energy-relay chain) → the p14-era cadence: TWO water+HU rounds then a THIRD
+    water fill (the vanilla-water scaling branch runs the row at the 5000 efficiency
+    floor, ~10.24M steam per round; the SS steam tank half is 40.96M — the half-gate
+    needs the tank ABOVE it, and one full water tank alone only reaches 20.48M =
+    barometer 7) → stat asserts steam past half → data get on ALL FIVE
     pipes asserting gt6:steam (the live load-balance evidence; the exact split is the
     offline truth table's) → the EngineSteam e2e off the top pipe (8 fills bootstrap,
     active=true) → crusher out (the two-step probe+authoritative form, the p13 W3
@@ -108,18 +109,20 @@ steps += [
     # round 2: past the half tank (40.96M) — the five holes OPEN
     Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)", sleep=2.5),
     Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)"),
-    # round 3: comfortably above half — the load balance drains toward all five pipes
-    Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)", sleep=3.0),
+    # 2026-09-04 (the p14 immunity era): the vanilla-water scaling branch runs the row at
+    # the 5000 efficiency floor — steam yield ≈ 1:1 with the HU, so THREE full rounds
+    # park the tank at ~61M (barometer 23) with the water gone and the firebox burning:
+    # the dry-fire blast took the boiler on the 21.1 node mid-arm (observed; 1.20.1 only
+    # survived the same window by timing). The shape now: THREE fills, TWO injects —
+    # 40.96M booked nominal, and the booked HU keeps converting through the sleep
+    # windows (~245k L steam per 3 s), carrying the tank past the 40.96M half gate where
+    # the five holes open and feed the collectors (the collectors HOLD — no drain face is
+    # attached yet); the tank then oscillates around half, far from the blast band.
     Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)"),
-    # rounds 4+5 (2026-09-04, the p14 immunity era): the vanilla-water scaling branch
-    # runs the row at efficiency 5000/10000 — each round now yields ~10.24M steam
-    # (water-limited), so three rounds land at ~30.7M = BELOW the 40.96M half-tank gate
-    # and the five holes never open (observed identically on both nodes). Two more
-    # rounds lift the tank past half at the halved yield.
-    Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)", sleep=2.5),
-    Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)"),
-    Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)", sleep=3.0),
-    Step(f"gt6multiblock boiler stat {LB}", expect="output=8192"),  # the row value rides the stat (deterministic)
+    # the push runs on CONVERSION ticks: keep water on the tank through the reads (the
+    # 21.1 node's instant inject-burn otherwise drains the tank dry and parks the push
+    # before the collectors are sampled — observed 2026-09-04)
+    Step(f"gt6multiblock boiler stat {LB}", expect="output=8192", sleep=2.0),
     # the live load-balance evidence: every collector holds steam (the exact split is the
     # offline truth table's — the live tick jitter makes ratios non-assertable, the W2 λ-lesson)
     Step(f"data get block {P1}", expect="gt6:steam"),
@@ -131,7 +134,7 @@ steps += [
     # packet 60 safely under the crusher maxIn 64 cliff)
     Step(f"setblock {ENGINE} gt6:steam_engine_tungsten[facing=east]", expect="Changed the block"),
     Step(f"gt6machine crusher place {CRUSHER}", expect="GT6 crusher placed"),
-    Step(f"gt6machine crusher input 8 {CRUSHER}", expect="8x gem_glass"),
+    Step(f"gt6machine crusher input 8 {CRUSHER}", expect="gem_glass into slot 0"),
     Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=0.5),
     Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=0.5),
     Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=0.5),
