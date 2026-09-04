@@ -96,8 +96,11 @@ steps += [
     Step(f"gt6machine dryer check {DRYER}", expect="running=true", sleep=2.0),
     Step(f"gt6machine dryer check {DRYER}", expect="active=true"),
     # the production window: 25600 HU / 16 per tick = 1600 ticks ≈ 84 s at the measured
-    # ~19 tps; 105 s covers with margin (the tail batch burns the last 40 L at 4-parallel)
-    Step("time query daytime", expect="The time is", sleep=105.0),
+    # ~19 tps (the tail batch burns the last 40 L at 4-parallel). poll-to-expect: the
+    # read-only stat IS the completion probe — resend until out[0]=800 lands; the two
+    # verdict steps below re-assert the exact same strings, verbatim
+    Step(f"gt6machine dryer fluid stat {DRYER}",
+         expect="out[0]=800 L of gt6:distilled_water", poll=150.0),
     # the exact pour verdict: everything consumed, 1000 × 8/10 = 800 L of distilled water
     Step(f"gt6machine dryer fluid stat {DRYER}", expect="in[0]=0 L of nothing"),
     Step(f"gt6machine dryer fluid stat {DRYER}", expect="out[0]=800 L of gt6:distilled_water"),

@@ -142,11 +142,13 @@ steps += [
     Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=0.5),
     Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=0.5),
     Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=0.5),
-    Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=7.0),
+    # the last landing needs drained head-room first: poll-to-expect (the old sleep=7) —
+    # a REJECTED fill changes nothing, so resend until it is ACCEPTED
+    Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", poll=15.0),
     Step(f"gt6engine stat {ENGINE}", expect="active=true"),
     # the recipe rides the engine's oscillation — probe first, authoritative second (the p13 lesson)
-    Step(f"gt6machine crusher check {CRUSHER}", expect="out[0]=", sleep=15.0, allow_failed=True),
-    Step(f"gt6machine crusher check {CRUSHER}", expect="out[0]=", sleep=60.0),
+    Step(f"gt6machine crusher check {CRUSHER}", expect="out[0]=", poll=15.0, allow_failed=True),
+    Step(f"gt6machine crusher check {CRUSHER}", expect="out[0]=", poll=75.0),  # the product, authoritative
     # the in-arm teardown
     Step(f"gt6burner extinguish {FIREBOX}", expect="burning=false"),
     Step(f"gt6multiblock boiler plunge {LB}", expect="trashed "),

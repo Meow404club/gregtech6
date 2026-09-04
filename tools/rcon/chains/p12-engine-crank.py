@@ -92,7 +92,10 @@ CHAIN = Chain(
         Step(f"gt6engine crank {F(CRANK2)} 300", expect="armed 300 ticks", sleep=3.0),
         Step(f"gt6machine shredder check {F(SHREDDER2)}", expect="active=true"),
         Step(f"gt6engine crank {F(CRANK2)} 0", expect="stopped (drive=0 ticks)"),
-        Step(f"gt6machine shredder check {F(SHREDDER2)}", expect="energy=0", sleep=5.0),
+        # poll-to-expect (the old sleep=5): the buffer drains every tick once the drive
+        # is stopped; energy=0 is terminal. The check AFTER this one keeps its sleep=5 —
+        # the two-reads-five-seconds-apart shape IS the stays-stopped proof
+        Step(f"gt6machine shredder check {F(SHREDDER2)}", expect="energy=0", poll=10.0),
         Step(f"gt6machine shredder check {F(SHREDDER2)}", expect="active=false"),
         Step(f"gt6machine shredder check {F(SHREDDER2)}", expect="energy=0", sleep=5.0),
         Step(f"gt6machine shredder check {F(SHREDDER2)}", expect="active=false"),

@@ -107,20 +107,22 @@ steps += [
     Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=0.5),
     Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=0.5),
     Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=0.5),
-    Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", sleep=7.0),
+    # the last landing needs the tank drained head-room first: poll-to-expect (the old
+    # sleep=7) — a REJECTED fill changes nothing, so resend until it is ACCEPTED
+    Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)", poll=15.0),
     Step(f"gt6engine stat {ENGINE}", expect="active=true"),
     # the recipe rides the engine's oscillation (the state-8 deactivation gate re-arms on
     # the pipe income), so the FIRST check is the informational probe and the AUTHORITATIVE
     # one comes after the extra window below
-    Step(f"gt6machine crusher check {CRUSHER}", expect="out[0]=", sleep=15.0, allow_failed=True),
+    Step(f"gt6machine crusher check {CRUSHER}", expect="out[0]=", poll=20.0, allow_failed=True),
     # the collector read is phase-racy against the engine's pull cycle (the 21.1 node's
-    # faster RCON cadence drained P1 at the single-instant read): first sample lenient,
-    # then a 20 s production window on THIS step, then the settled read below.
-    Step(f"data get block {P1}", expect="gt6:steam", allow_failed=True, sleep=20.0),
+    # faster RCON cadence drained P1 at the single-instant read): first sample lenient
+    # (poll-to-expect, the old 20 s window), then the settled read below.
+    Step(f"data get block {P1}", expect="gt6:steam", allow_failed=True, poll=25.0),
     Step(f"data get block {P1}", expect="gt6:steam"),               # the top-neighbour collector holds steam
     Step(f"gt6tank stat {DWTANK}", expect="L of gt6:distilled_water"),  # the byproduct
     Step(f"gt6boiler stat {BOILER}", expect="barometer=2"),         # the equilibrium held
-    Step(f"gt6machine crusher check {CRUSHER}", expect="out[0]=", sleep=60.0),  # the product, authoritative
+    Step(f"gt6machine crusher check {CRUSHER}", expect="out[0]=", poll=75.0),  # the product, authoritative
     # the in-arm teardown (the equilibrium would eventually fill the tank: by design)
     Step(f"gt6burner extinguish {FIREBOX}", expect="burning=false"),
     Step(f"gt6boiler plunge {BOILER}", expect="trashed "),
