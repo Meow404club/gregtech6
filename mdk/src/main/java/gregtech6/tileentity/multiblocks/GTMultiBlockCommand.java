@@ -11,8 +11,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -25,6 +28,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 
 import gregtech6.gui.machines.GTBasicMachineMenu;
+import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.registry.GTMultiBlocks;
 
@@ -44,6 +48,11 @@ import gregtech6.registry.GTMultiBlocks;
  *     {@code checkStructure2(controllerPos, player=null, fakeInventory)} (the consume path:
  *     null player auto-approves the canEdit chain and ST.use-equivalent shrinks the stock)
  *     followed by the linking {@code checkStructure(true)} pass;</li>
+ * <li>{@code form <pos> [stock]} — the SET scaffold trigger (task p16-form-scaffold): the
+ *     source player (or the stocked fake player for console/RCON) completes a pattern-bound
+ *     structure from inventory — the checker's SET walk places and consumes at the missing
+ *     cells transactionally (short stock ⇒ nothing placed, nothing consumed), then the
+ *     linking checkStructure(true) pass flips FORMED;</li>
  * <li>{@code check <pos>} — the magnifying glass (upstream onMagnifyingGlass :160-170):
  *     cheap-path check, forced recheck on failure, verdict + linked-part census;</li>
  * <li>{@code tick <pos> <ticks>} — drives the dispatcher manually (the same updateEntity the
@@ -75,6 +84,13 @@ public final class GTMultiBlockCommand {
 	/** The wand stock: the full 25-brick structure in one stack (27 cells = air centre + 25 bricks + the controller). */
 	private static final int WAND_STOCK = 25;
 
+	/**
+	 * The default form stock (task p16-form-scaffold): the "give a stack" arm — the console
+	 * fake player gets this many of EVERY distinct pattern part block; a 64 stack covers the
+	 * 25-brick coke oven and leaves the shortfall visible on the negative arm.
+	 */
+	private static final int FORM_STOCK = 64;
+
 	/** The boiler wand stocks (task p13-large-boiler): 9 transmitters + 25 walls (34 parts, the controller + the hollow excluded). */
 	private static final int BOILER_WAND_TRANSMITTER_STOCK = 9;
 	private static final int BOILER_WAND_WALL_STOCK = 25;
@@ -98,6 +114,12 @@ public final class GTMultiBlockCommand {
 			.then(Commands.literal("wand")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> wand(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+			.then(Commands.literal("form")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(aContext -> form(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), FORM_STOCK))
+					.then(Commands.argument("stock", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 999))
+						.executes(aContext -> form(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "stock"))))))
 			.then(Commands.literal("check")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> check(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
@@ -209,7 +231,7 @@ public final class GTMultiBlockCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> boilerPlunge(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
 		aEvent.getDispatcher().register(tMulti);
-		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|check|tick|input|ignite|menu|fluid|boiler place|frame|wand|check|stat|fill|inject-hu|dismantle)");
+		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|form|check|tick|input|ignite|menu|fluid|boiler place|frame|wand|check|stat|fill|inject-hu|dismantle)");
 	}
 
 	private static TileEntityCokeOven ovenAt(CommandSourceStack aSource, BlockPos aPos) {
@@ -301,6 +323,79 @@ public final class GTMultiBlockCommand {
 		aSource.sendSuccess(() -> Component.literal("GT6 multiblock wand check OK: " + tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * {@code form <pos> [stock]} — the SET scaffold trigger (task p16-form-scaffold, the ADR
+	 * 2026-09-05-p16-formation-scoping ③): the three-piece path for pattern-bound controllers.
+	 * The acting player rides {@code CommandSourceStack.getPlayer()} — a real player scaffolds
+	 * from their own inventory (the {@code /give} path); console/RCON has no player, so the
+	 * Minecraft fake player is stocked with {@code stock} (default {@value #FORM_STOCK}) of
+	 * every distinct pattern part block (the wand arm's stocked-inventory recipe, plus a
+	 * clearContent — the fake player outlives one command). Then the upstream onToolClick2
+	 * shape: the checker's {@link GTMultiBlockStructureChecker#form} SET walk (the placing
+	 * pass :143), followed by the linking {@code checkStructure(true)} pass (:144) that flips
+	 * mStructureOkay and the FORMED blockstate.
+	 *
+	 * <p>Pattern-less controllers are refused — their hand-written check is the truth and the
+	 * checker has nothing to scaffold from. The not-formed report goes through sendFailure
+	 * WITHOUT the FAILED literal (the check arm's RCON contract): the negative arm asserts on
+	 * {@code formed=false} and the unchanged stock pair instead.
+	 */
+	private static int form(CommandSourceStack aSource, BlockPos aPos, int aStock) {
+		ServerLevel tLevel = aSource.getLevel();
+		if (!(tLevel.getBlockEntity(aPos) instanceof TileEntityBase10MultiBlockBase tController)) {
+			aSource.sendFailure(Component.literal("No multiblock controller at " + aPos.toShortString()));
+			return 0;
+		}
+		GTMultiBlockPattern tPattern = tController.getStructurePattern();
+		if (tPattern == null) {
+			aSource.sendFailure(Component.literal("No declared structure pattern at " + aPos.toShortString()
+					+ " (form scaffolds pattern-bound controllers only — the hand-written machines keep the wand arm)"));
+			return 0;
+		}
+		ServerPlayer tPlayer = aSource.getPlayer();
+		net.minecraft.world.entity.player.Inventory tInventory;
+		if (tPlayer != null) {
+			tInventory = tPlayer.getInventory(); // the real player spends their own stock
+		} else {
+			tInventory = FakePlayerFactory.getMinecraft(tLevel).getInventory();
+			tInventory.clearContent(); // the fake player persists across passes — the stock is per-command
+			java.util.LinkedHashSet<Block> tParts = new java.util.LinkedHashSet<>();
+			for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) if (tCell.forms()) tParts.add(tCell.partBlock);
+			int tSlot = 0;
+			for (Block tPart : tParts) tInventory.items.set(tSlot++, new ItemStack(tPart, aStock));
+		}
+		int tBefore = countPartItems(tInventory, tPattern);
+
+		GTMultiBlockStructureChecker.FormedVerdict tVerdict =
+				GTMultiBlockStructureChecker.form(tController, tController.mFacing, tPlayer, tInventory); // the placing pass
+		boolean tOkay = tController.checkStructure(true);                                                    // the linking pass
+		int tAfter = countPartItems(tInventory, tPattern);
+
+		String tReport = String.format("GT6 multiblock form at %s: formed=%s okay=%s stock %d -> %d first_failed_cell=%s",
+				aPos.toShortString(), tVerdict.formed, tOkay, tBefore, tAfter, tVerdict.describeFirstFailure());
+		if (!tVerdict.formed || !tOkay) {
+			aSource.sendFailure(Component.literal(tReport));
+			return 0;
+		}
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The part-item census — the consume path's own matcher, so the reported stock is what the scaffold can spend. */
+	private static int countPartItems(Container aInventory, GTMultiBlockPattern aPattern) {
+		int rCount = 0;
+		for (GTMultiBlockPattern.Cell tCell : aPattern.cells()) {
+			if (!tCell.forms()) continue;
+			ItemStack tWanted = new ItemStack(tCell.partBlock);
+			for (int i = 0; i < aInventory.getContainerSize(); i++) {
+				ItemStack tStack = aInventory.getItem(i);
+				if (ItemStack.isSameItemSameTags(tWanted, tStack)) rCount += tStack.getCount();
+			}
+		}
+		return rCount;
 	}
 
 	/**
