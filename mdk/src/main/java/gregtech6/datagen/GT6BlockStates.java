@@ -243,11 +243,14 @@ public final class GT6BlockStates extends BlockStateProvider {
      * 16-variant blockstate, and the BlockItem model parenting the block model. The oven
      * output is byte-identical to the pre-generalization shape (base "oven").
      *
-     * <p>Property interning: both GTOvenBlock.FACING and GTBasicMachineBlock.FACING are the
+     * <p>Property identity: both GTOvenBlock.FACING and GTBasicMachineBlock.FACING are the
      * BlockStateProperties.HORIZONTAL_FACING instance, and GTOvenBlock.ACTIVE/RUNNING and
-     * GTBasicMachineBlock.ACTIVE/RUNNING are the BooleanProperty.create("active"/"running")
-     * interned instances (BooleanProperty.java BY_NAME cache) — so the GTOvenBlock property
-     * reads below cover the machine blocks too.
+     * GTBasicMachineBlock.ACTIVE/RUNNING are aliases of the same GTBlockProperties single
+     * instances (ADR-P16-2) — so the GTOvenBlock property reads below cover the machine
+     * blocks too. (The old "BooleanProperty interning" wording here was a wrong theory:
+     * vanilla never interned by name; 1.20.1 matched same-named foreign instances only by
+     * value equality inside StateHolder, which 1.21.x replaced with identity lookup —
+     * distinct instances crash there, hence the single-owner aliases.)
      */
     private void addMachine(Block aBlock, String aBase) {
         addMachine(aBlock, aBase, aBase);

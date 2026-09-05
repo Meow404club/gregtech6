@@ -147,14 +147,17 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * Actually processing (upstream mActive, visual bit 0). Interning note: BooleanProperty
-	 * .create caches by name (BooleanProperty.java BY_NAME), so this is the SAME instance as
-	 * GTOvenBlock.ACTIVE — the shared datagen helper reads either interchangeably.
+	 * Actually processing (upstream mActive, visual bit 0) — the GTBlockProperties single
+	 * instance (ADR-P16-2), so this IS the same object as GTOvenBlock.ACTIVE by
+	 * construction; the shared datagen helper reads either interchangeably. (The old
+	 * "interning" note was a wrong theory: vanilla never interned by name — 1.20.1 only
+	 * worked because StateHolder looked properties up by value equality, and 1.21.x looks
+	 * them up by identity, where distinct instances crash.)
 	 */
-	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+	public static final BooleanProperty ACTIVE = GTBlockProperties.ACTIVE;
 
-	/** Powered / has work (upstream mRunning, visual bit 1). */
-	public static final BooleanProperty RUNNING = BooleanProperty.create("running");
+	/** Powered / has work (upstream mRunning, visual bit 1) — the GTBlockProperties single instance (ADR-P16-2). */
+	public static final BooleanProperty RUNNING = GTBlockProperties.RUNNING;
 
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 

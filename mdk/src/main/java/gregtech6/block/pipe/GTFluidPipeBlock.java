@@ -17,6 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import net.minecraftforge.common.ToolActions;
 
+import gregtech6.block.GTBlockProperties;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.client.render.GTRenderUpdates;
 import gregtech6.registry.GTFluidPipes;
@@ -62,8 +63,8 @@ import gregtech6.util.UT6;
  */
 public class GTFluidPipeBlock extends GTEntityBlock {
 
-	/** The 6-bit connection mask (0..63) — bit i = side i connected (GT6 side order). */
-	public static final IntegerProperty CONNECTIONS = IntegerProperty.create("connections", 0, 63);
+	/** The 6-bit connection mask (0..63) — bit i = side i connected (GT6 side order) — the GTBlockProperties single instance (ADR-P16-2). */
+	public static final IntegerProperty CONNECTIONS = GTBlockProperties.CONNECTIONS;
 
 	private final long mCapacityPerTank;
 

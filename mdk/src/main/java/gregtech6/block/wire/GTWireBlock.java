@@ -24,6 +24,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.block.GTBlockProperties;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTWires;
@@ -67,8 +68,8 @@ import gregtech6.util.UT6;
  */
 public class GTWireBlock extends GTEntityBlock {
 
-	/** The 6-bit connection mask (0..63) — bit i = side i connected (GT6 side order). */
-	public static final IntegerProperty CONNECTIONS = IntegerProperty.create("connections", 0, 63);
+	/** The 6-bit connection mask (0..63) — bit i = side i connected (GT6 side order) — the GTBlockProperties single instance (ADR-P16-2). */
+	public static final IntegerProperty CONNECTIONS = GTBlockProperties.CONNECTIONS;
 
 	private final long mVoltage;
 	private final long mAmperage;
