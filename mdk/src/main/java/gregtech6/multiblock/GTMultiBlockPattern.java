@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -194,9 +195,103 @@ public final class GTMultiBlockPattern {
 		}
 	}
 
+	/**
+	 * One HORIZONTAL SLAB of the structure — the declaration unit of the layer-sequence DSL
+	 * (task p16-pattern-layers). A layer is an immutable list of cells whose {@code y} is
+	 * FIXED AT 0: the caller declares the in-layer {@code (x, z)} footprint only, and the
+	 * {@link Builder#layer}/{@link Builder#repeatable} sequence assigns each layer its
+	 * {@code y} by ORDER (layer k of the sequence lands on {@code y = k} — the stacking axis
+	 * is Y throughout, the only axis the GT6 shape census uses).
+	 *
+	 * <p><b>Where this comes from (mechanism-level clean-room).</b> The kTFRUAddon
+	 * {@code LayerStructure} (LayerStructure.java:72-89) walks a layer sequence and its
+	 * {@code ExpandableLayer} (ExpandableLayer.java:47-58) probes the repeat count AT CHECK
+	 * TIME by trial-validation, rotating through "variations". None of that machinery is
+	 * portable here (AGPL — code stays; runtime probing — contradicts the P12 immutable
+	 * pattern): what carries over is the IDEA that a shape is a sequence of slabs with a
+	 * variable-length repeat in the middle, re-declared per ADR
+	 * 2026-09-05-p16-formation-scoping ② as a BUILD-TIME expansion: the family asks the
+	 * factory for layer {@code i} by index (the {@code IntFunction<Layer>} below), stamps
+	 * out {@code min..max} copies, and freezes an ordinary dumb immutable cell list — the
+	 * runtime never learns layers existed.
+	 *
+	 * <p>The layer judgement vocabulary is the SAME triple the flat builder carries —
+	 * {@link #part} (display), {@link #hollow} (the keep-empty marker) and
+	 * {@link #formingPart} (the full {@code (partBlock, usage, design)} forming expectation,
+	 * the p16-pattern-checker enrichment) — so a layered declaration is cell-for-cell
+	 * interchangeable with a flat one.
+	 */
+	public static final class Layer {
+
+		private final List<Cell> mCells;
+
+		private Layer(List<Cell> aCells) {
+			mCells = Collections.unmodifiableList(aCells);
+		}
+
+		/** The layer cells at {@code y == 0} in declaration order — immutable. */
+		public List<Cell> cells() {
+			return mCells;
+		}
+
+		/** The layer builder — the in-layer {@code (x, z)} footprint, duplicate offsets rejected. */
+		public static Builder builder() {
+			return new Builder();
+		}
+
+		/** The layer builder; offsets are layer-relative (the {@code y} comes from the sequence). */
+		public static final class Builder {
+
+			private final List<Cell> mCells = new ArrayList<>();
+			private final Set<Long> mSeen = new HashSet<>();
+
+			/** A structural part cell (drawn blue by the ghost preview) — declaration-only, no forming expectation. */
+			public Builder part(int aX, int aZ, Predicate<BlockState> aPredicate) {
+				return add(aX, aZ, aPredicate, false, 0, 0, null);
+			}
+
+			/** A must-stay-hollow marker cell (drawn grey by the ghost preview) — never carries a forming expectation. */
+			public Builder hollow(int aX, int aZ, Predicate<BlockState> aPredicate) {
+				return add(aX, aZ, aPredicate, true, 0, 0, null);
+			}
+
+			/**
+			 * A structural part cell with the FULL forming expectation — the same
+			 * {@code (partBlock, usage, design)} triple as the flat
+			 * {@link GTMultiBlockPattern.Builder#formingPart} (the usage mask in the
+			 * {@code ONLY_*} complement form, negative values the norm; the display predicate
+			 * is {@link GTMultiBlockPattern#is(Block)} on the same block).
+			 */
+			public Builder formingPart(int aX, int aZ, Block aPartBlock, int aUsage, int aDesign) {
+				if (aPartBlock == null) throw new IllegalArgumentException("a forming expectation needs a part block");
+				return add(aX, aZ, is(aPartBlock), false, aUsage, aDesign, aPartBlock);
+			}
+
+			private Builder add(int aX, int aZ, Predicate<BlockState> aPredicate, boolean aHollow, int aUsage, int aDesign, @Nullable Block aPartBlock) {
+				if (aPredicate == null) throw new IllegalArgumentException("a cell needs a predicate");
+				if (!mSeen.add(pack(aX, 0, aZ))) {
+					throw new IllegalArgumentException("duplicate layer cell (" + aX + "," + aZ + ")");
+				}
+				mCells.add(new Cell(aX, 0, aZ, aPredicate, aHollow, aUsage, aDesign, aPartBlock));
+				return this;
+			}
+
+			/** Freezes the layer (an empty layer is a bug, not a slab). */
+			public Layer build() {
+				if (mCells.isEmpty()) throw new IllegalStateException("a layer needs at least one cell");
+				return new Layer(mCells);
+			}
+		}
+	}
+
 	private final List<Cell> mCells;
 
 	private final int mMinX, mMaxX, mMinY, mMaxY, mMinZ, mMaxZ;
+
+	/** The offset key behind the duplicate rule — shared by the flat builder and the layer builder. */
+	private static long pack(int aX, int aY, int aZ) {
+		return ((long)(aX + Short.MAX_VALUE) << 34) | ((long)(aY + Short.MAX_VALUE) << 17) | (long)(aZ + Short.MAX_VALUE);
+	}
 
 	private GTMultiBlockPattern(List<Cell> aCells) {
 		mCells = Collections.unmodifiableList(aCells);
@@ -266,11 +361,47 @@ public final class GTMultiBlockPattern {
 		return new Builder();
 	}
 
-	/** The pattern builder; offsets are structure-centre-relative, axes world-aligned. */
+	/**
+	 * The pattern builder; offsets are structure-centre-relative, axes world-aligned.
+	 *
+	 * <p><b>The layer sequence (task p16-pattern-layers).</b> Beyond the flat per-cell
+	 * methods, a declaration may stack {@link Layer} slabs: {@link #layer} appends one
+	 * fixed layer, {@link #repeatable} appends a variable-length segment expanded to the
+	 * SAME layer count {@code n} that {@link #build(int)} receives (the family
+	 * {@code GTMultiBlockPatternFamily} is the per-size front over exactly this builder).
+	 * Layers are recorded unexpanded and flattened at build time — layer k of the sequence
+	 * lands on {@code y = k} — so a repeatable segment's followers shift with {@code n}
+	 * (the kTFRU {@code ExpandableLayer} idea, ADR 2026-09-05-p16-formation-scoping ②,
+	 * minus the runtime probing and the variation rotation: the expansion happens at
+	 * BUILD time and freezes an ordinary dumb immutable cell list — the P12 immutability
+	 * is untouched). The duplicate-offset rule (the {@code mSeen} precedent) spans the
+	 * WHOLE flattened result: two layers claiming the same offset is a declaration bug.
+	 */
 	public static final class Builder {
 
 		private final List<Cell> mCells = new ArrayList<>();
 		private final Set<Long> mSeen = new HashSet<>();
+
+		/** The recorded layer sequence: plain {@link Layer} slabs and {@link Repeatable} segments, unexpanded. */
+		private final List<Object> mSequence = new ArrayList<>();
+
+		/** The {@code y} of layer slot 0 (default 0 — the slab sequence is 0-based unless re-anchored). */
+		private int mOriginY = 0;
+
+		/**
+		 * Re-anchors the layer sequence: layer slot 0 lands on {@code aOriginY} instead of 0
+		 * (subsequent slots step by 1 as always). The calibre a shape centred on its
+		 * CONTROLLER layer needs — the Large Boiler's bottom transmitter slab sits at
+		 * {@code y = -1} with the controller in the middle slab ({@code originY(-1)}); a
+		 * ground-based shape keeps the 0 default.
+		 */
+		public Builder originY(int aOriginY) {
+			mOriginY = aOriginY;
+			return this;
+		}
+
+		/** One variable-length segment: {@code min..max} layers, the layer for index {@code i} asked per expansion. */
+		private record Repeatable(int mMin, int mMax, IntFunction<Layer> mLayer) {}
 
 		/** A structural part cell (drawn blue by the ghost preview) — declaration-only, no forming expectation. */
 		public Builder part(int aX, int aY, int aZ, Predicate<BlockState> aPredicate) {
@@ -305,14 +436,98 @@ public final class GTMultiBlockPattern {
 			return this;
 		}
 
-		/** Freezes the pattern (an empty declaration is a bug, not a pattern). */
-		public GTMultiBlockPattern build() {
-			if (mCells.isEmpty()) throw new IllegalStateException("a pattern needs at least one cell");
-			return new GTMultiBlockPattern(mCells);
+		/**
+		 * Appends ONE fixed layer to the sequence — its cells land on the next {@code y}
+		 * slot after the preceding sequence entries. Recorded unexpanded: a repeatable
+		 * segment later in the sequence shifts this layer's followers at {@link #build(int)}
+		 * time. Mixes with the flat per-cell methods (the flat cells keep their absolute
+		 * {@code y}); the duplicate rule catches overlaps either way.
+		 */
+		public Builder layer(Layer aLayer) {
+			if (aLayer == null) throw new IllegalArgumentException("a layer needs cells");
+			mSequence.add(aLayer);
+			return this;
 		}
 
-		private static long pack(int aX, int aY, int aZ) {
-			return ((long)(aX + Short.MAX_VALUE) << 34) | ((long)(aY + Short.MAX_VALUE) << 17) | (long)(aZ + Short.MAX_VALUE);
+		/**
+		 * Appends a VARIABLE-LENGTH segment (task p16-pattern-layers ① — the kTFRU
+		 * {@code ExpandableLayer} repeat, re-scoped to build time): the stack expands to
+		 * {@code n} layers — one per index {@code 0..n-1} of {@code aLayer} — where {@code n}
+		 * is the value {@link #build(int)} receives, validated against the declared
+		 * {@code [aMin, aMax]} window (out-of-window {@code n} is a declaration bug).
+		 * The stacking axis is Y throughout (the {@code axis=Y} of the task card — the only
+		 * axis the GT6 shape census stacks on, so it is the sequence's fixed convention,
+		 * not a per-call parameter).
+		 */
+		public Builder repeatable(int aMin, int aMax, IntFunction<Layer> aLayer) {
+			if (aMin < 0) throw new IllegalArgumentException("a negative repeat minimum is a bug");
+			if (aMax < aMin) throw new IllegalArgumentException("the repeat maximum must not undercut the minimum");
+			if (aLayer == null) throw new IllegalArgumentException("a repeatable segment needs a layer factory");
+			mSequence.add(new Repeatable(aMin, aMax, aLayer));
+			return this;
+		}
+
+		/** Freezes the pattern (an empty declaration is a bug, not a pattern). */
+		public GTMultiBlockPattern build() {
+			for (Object tEntry : mSequence) {
+				if (tEntry instanceof Repeatable) throw new IllegalStateException("a repeatable segment needs a layer count — build(int)");
+			}
+			return freeze(expand(-1));
+		}
+
+		/**
+		 * Freezes the pattern with every {@link #repeatable} segment expanded to
+		 * {@code aSize} layers — the family's per-size expansion point (task
+		 * p16-pattern-layers ②). Each segment's {@code [min, max]} window is enforced
+		 * first (out-of-window = declaration bug); the result is an ordinary immutable
+		 * dumb cell list, identical in kind to a flat declaration's.
+		 */
+		public GTMultiBlockPattern build(int aSize) {
+			if (aSize < 0) throw new IllegalArgumentException("a negative layer count is a bug");
+			for (Object tEntry : mSequence) {
+				if (tEntry instanceof Repeatable tSegment && (aSize < tSegment.mMin || aSize > tSegment.mMax)) {
+					throw new IllegalArgumentException("layer count " + aSize + " outside the declared [" + tSegment.mMin + "," + tSegment.mMax + "] window");
+				}
+			}
+			return freeze(expand(aSize));
+		}
+
+		/**
+		 * Flattens the declaration: the flat cells first (declaration order), then the
+		 * sequence left-to-right — layer k of the flattened sequence onto {@code y = k}.
+		 * The duplicate rule spans the whole result (the {@code mSeen} snapshot covers the
+		 * flat cells; the layer walk extends it — a cross-layer repeat is a declaration
+		 * bug). The snapshot is LOCAL: repeated {@code build}s of the same builder yield
+		 * equal patterns instead of tripping over their own earlier expansion.
+		 */
+		private List<Cell> expand(int aSize) {
+			List<Cell> tAll = new ArrayList<>(mCells);
+			Set<Long> tSeen = new HashSet<>(mSeen);
+			int tY = mOriginY;
+			for (Object tEntry : mSequence) {
+				if (tEntry instanceof Repeatable tSegment) {
+					for (int i = 0; i < aSize; i++) tY = appendLayer(tAll, tSeen, tSegment.mLayer().apply(i), tY);
+				} else {
+					tY = appendLayer(tAll, tSeen, (Layer)tEntry, tY);
+				}
+			}
+			return tAll;
+		}
+
+		/** Stamps one layer at {@code aY} — duplicate offsets against the WHOLE result rejected. */
+		private static int appendLayer(List<Cell> aAll, Set<Long> aSeen, Layer aLayer, int aY) {
+			for (Cell tCell : aLayer.cells()) {
+				if (!aSeen.add(pack(tCell.x, aY, tCell.z))) {
+					throw new IllegalArgumentException("duplicate pattern cell across layers (" + tCell.x + "," + aY + "," + tCell.z + ")");
+				}
+				aAll.add(new Cell(tCell.x, aY, tCell.z, tCell.predicate, tCell.hollow, tCell.usage, tCell.design, tCell.partBlock));
+			}
+			return aY + 1;
+		}
+
+		private static GTMultiBlockPattern freeze(List<Cell> aCells) {
+			if (aCells.isEmpty()) throw new IllegalStateException("a pattern needs at least one cell");
+			return new GTMultiBlockPattern(aCells);
 		}
 	}
 }

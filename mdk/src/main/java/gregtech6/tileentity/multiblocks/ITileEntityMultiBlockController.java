@@ -54,6 +54,18 @@ public interface ITileEntityMultiBlockController {
 	}
 
 	/**
+	 * The size-parametrised variant (task p16-pattern-layers ④) — the seam a variable-size
+	 * machine would back with its {@link gregtech6.multiblock.GTMultiBlockPatternFamily#forSize}
+	 * expansion. Default null = no size-parametrised declaration (deliberately no consumer
+	 * machine in this card — GT6 canon machines are fixed-size; the wrench/GUI size
+	 * consumer stays in the pool, ADR 2026-09-05-p16-formation-scoping ②).
+	 */
+	@Nullable
+	default GTMultiBlockPattern getStructurePattern(int aSize) {
+		return null;
+	}
+
+	/**
 	 * Upstream Util (:46-85) — the structure-filling core shared by every multiblock.
 	 *
 	 * <p>Port substitutions: the 1.7.10 MTE registry pair (aRegistryID/aRegistryMeta, :47)
