@@ -384,12 +384,13 @@ public final class GTMultiBlockCommand {
 		return Command.SINGLE_SUCCESS;
 	}
 
-	/** The part-item census — the consume path's own matcher, so the reported stock is what the scaffold can spend. */
+	/** The part-item census — the consume path's own matcher, so the reported stock is what the scaffold can spend. Distinct part BLOCKS (26 forming cells of one brick type are one stock line, not 26). */
 	private static int countPartItems(Container aInventory, GTMultiBlockPattern aPattern) {
+		java.util.LinkedHashSet<Block> tParts = new java.util.LinkedHashSet<>();
+		for (GTMultiBlockPattern.Cell tCell : aPattern.cells()) if (tCell.forms()) tParts.add(tCell.partBlock);
 		int rCount = 0;
-		for (GTMultiBlockPattern.Cell tCell : aPattern.cells()) {
-			if (!tCell.forms()) continue;
-			ItemStack tWanted = new ItemStack(tCell.partBlock);
+		for (Block tPart : tParts) {
+			ItemStack tWanted = new ItemStack(tPart);
 			for (int i = 0; i < aInventory.getContainerSize(); i++) {
 				ItemStack tStack = aInventory.getItem(i);
 				if (ItemStack.isSameItemSameTags(tWanted, tStack)) rCount += tStack.getCount();
