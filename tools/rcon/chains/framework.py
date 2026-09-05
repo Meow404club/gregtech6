@@ -416,6 +416,7 @@ def run(chain, passes=None, verdicts=None):
     print(f"[{chain.name}] node {node} ({task})")
     print(f"[{chain.name}] ports rcon={rcon_port} query={query_port} game={game_port}")
     print(f"[{chain.name}] worktree {WORKTREE_ROOT}, artifacts {log_path}")
+    gt6server.assert_ports_free((rcon_port, query_port, game_port), label=chain.name)
 
     gt6server.provision_run_dir(WORKTREE_ROOT, game_port, rcon_port, query_port,
                                 chain.password, node=node)
@@ -634,6 +635,7 @@ def run_session_recorded(chains, node=None, concurrency=None):
     print(f"[{slug}] ports rcon={rcon_port} query={query_port} game={game_port}"
           f"{port_note}")
     print(f"[{slug}] worktree {WORKTREE_ROOT}, artifacts {log_path}")
+    gt6server.assert_ports_free((rcon_port, query_port, game_port), label=slug)
 
     password = chains[0].password
     gt6server.provision_run_dir(WORKTREE_ROOT, game_port, rcon_port, query_port,
