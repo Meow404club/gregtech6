@@ -90,13 +90,20 @@ neoForge {
         }
         // Data run 四参数与 forge 节点同构（GTCEu gradle/scripts/moddevgradle.gradle:111-122 先例，ADR-P2-4）。
         // --existing 指向共享 main/resources：占位贴图存在性校验（Forge 1.20.1 ModelBuilder 同机制）。
-        // 注意：编译红修复前 runData 不可实跑（W1 遗留），本卡只落地 run 配置面。
+        // ADR-P17-1：输出目录按节点参数化。正典生产者唯一 = settings vcsVersion 节点
+        // （settings.gradle.kts:35 = 1.20.1-forge，其 runData --output 独写共享 tracked 正典树
+        // mdk/src/generated/resources，见 build.forge.gradle.kts data run）；本节点（1.21.1-neoforge）
+        // 产物 = 验证产物非入库面，落节点本地 build/datagen-output（.gitignore:18 全局 build/ 规则
+        // 已覆盖，零 gitignore 改动）。file() 在共享 buildscript 中解析到当前节点 projectDir
+        // （同上 gameDirectory = file("run/") 先例）；第三节点出现时按 vcsVersion 判正典
+        // （本卡不预建，YAGNI 声明）。机制因：共享 .cache 键无节点标识且 purgeStaleAndWrite
+        // 删未认领文件，双节点共写一树结构性互删（vanilla HashCache.java:46-48/:117-133，ADR-P17-1 §1.2）。
         register("data") {
             data()
             sourceSet = sourceSets["main"]
             programArguments.addAll("--mod", modId)
             programArguments.addAll("--all")
-            programArguments.addAll("--output", sharedDir.resolve("src/generated/resources").absolutePath)
+            programArguments.addAll("--output", file("build/datagen-output").absolutePath)
             programArguments.addAll("--existing", sharedDir.resolve("src/main/resources").absolutePath)
         }
     }
@@ -189,8 +196,10 @@ val generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 // 展开产物挂进 main resources（以任务为 srcDir 自动接线任务依赖）
 sourceSets["main"].resources.srcDir(generateModMetadata)
 
-// datagen 产物默认共享（W1 POC 结论）：与 1.20.1 节点同读 mdk/src/generated/resources；
-// 若两节点产物 diff → 切节点子目录（模板 build.neoforge.gradle.kts.txt:45 先例）。
+// datagen 产物 srcDir 挂载不动（ADR-P17-1）：1.21.1 runtime 继续消费共享正典树
+// mdk/src/generated/resources（模型/blockstate/lang 双节点同名同形；loot 复数带在 21.1 runtime
+// 惰性 = 继承现状的声明偏离，ADR §5）。W1 伏笔「若两节点产物 diff → 切节点子目录」已由
+// ADR-P17-1 以节点本地 runData --output（见上 runs.data）方式解决，本挂载零改动。
 sourceSets["main"].resources.srcDir(sharedDir.resolve("src/generated/resources"))
 
 tasks.withType(Test::class).configureEach {
