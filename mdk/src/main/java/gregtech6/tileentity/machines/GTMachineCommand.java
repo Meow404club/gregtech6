@@ -45,7 +45,9 @@ import gregtech6.registry.GTMachines;
  * <li>{@code input [<count>] [<pos>]} — push the default feed into the input slot (default
  *     8): shredder = cobblestone (Loader_Recipes_Vanilla.java:692), crusher = the first
  *     resolvable {@code gt6:gem_*} of the gem chain (Loader_Recipes_Handlers.java:72,
- *     gem → gemFlawed x2), lathe = stone (:524);</li>
+ *     gem → gemFlawed x2), lathe = stone (:524), dryer = bricks (the frame column stub),
+ *     distillery = the Integrated Circuit at configuration 0 (the ST.tag(0) selector the
+ *     poured :534-541 rows carry, task p16-distillery-family);</li>
  * <li>{@code run <ticks> [<pos>]} — drives the BE dispatcher tick by tick and samples the
  *     live menu ContainerData value ({@link GTBasicMachineMenu#computeProgressValue()}): the
  *     acceptance asserts all three states observed (progress &gt;0 &lt;32767, done 32767 via
@@ -116,9 +118,17 @@ public final class GTMachineCommand {
 			.then(machine("dryer", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer"), () -> Items.BRICKS))
 			.then(machine("dryer_t2", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer_t2"), () -> Items.BRICKS))
 			.then(machine("dryer_t3", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer_t3"), () -> Items.BRICKS))
-			.then(machine("dryer_t4", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer_t4"), () -> Items.BRICKS));
+			.then(machine("dryer_t4", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer_t4"), () -> Items.BRICKS))
+			// task p16-distillery-family: the distillery ladder — the input feed is the
+			// Integrated Circuit (the ST.tag(0) selector every poured :534-541 row carries;
+			// input() routes the feed through feedStack() so the stack lands with its
+			// Damage:0 configuration tag)
+			.then(machine("distillery", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
+			.then(machine("distillery_t2", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t2"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
+			.then(machine("distillery_t3", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t3"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
+			.then(machine("distillery_t4", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t4"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()));
 		event.getDispatcher().register(tMachine);
-		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer x t1..t4 | fakesource x place|input|run|inject|check|fluid)");
+		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery x t1..t4 | fakesource x place|input|run|inject|check|fluid)");
 		// the p8 ladder registration line (the runServer gate asserts it): the three family
 		// BETs resolve — proof the RegistryObjects bound.
 		LOGGER.info("GT6 machine ladder registered: 12 blocks / 3 family BETs (T1-T4 validBlocks multi-attach), tiers "
@@ -127,6 +137,10 @@ public final class GTMachineCommand {
 		// BET resolves, the row config is the upstream :1477-1480 columns.
 		LOGGER.info("GT6 dryer family registered: 4 blocks / 1 family BET (T1-T4 validBlocks multi-attach), HU bottom-face energy, "
 			+ "RM.Drying (gt.recipe.drying) row map, parallel 8/16/32/64 + parallelDuration, hardness 6/4/9/12.5");
+		// the p16 distillery registration smoke line (the runServer gate asserts it): the
+		// family BET resolves, the row config is the upstream :1398-1401 columns.
+		LOGGER.info("GT6 distillery family registered: 4 blocks / 1 family BET (T1-T4 validBlocks multi-attach), HU bottom-face energy, "
+			+ "RM.Distillery (gt.recipe.distillery) row map, parallel 8/16/32/64 + parallelDuration, hardness 6/4/9/12.5");
 	}
 
 	/** One machine literal with its four subcommands (the oven command shape, parameterised). */
@@ -427,19 +441,31 @@ public final class GTMachineCommand {
 		return Command.SINGLE_SUCCESS;
 	}
 
+	/**
+	 * The feed stack factory: plain items stack plainly; the Integrated Circuit feed lands
+	 * through {@link GT6Circuits#selector} so the stack carries its {@code Damage:0}
+	 * configuration tag (a tag-less circuit would match no poured row — the recipe inputs
+	 * route on the exact tag, the p16-distillery-family ① semantics).
+	 */
+	private static ItemStack feedStack(Supplier<Item> aFeed, int aCount) {
+		if (aFeed.get() instanceof gregtech6.item.GT6Circuits.IntegratedCircuitItem) return gregtech6.item.GT6Circuits.selector(aFeed.get(), 0); // ST.tag(0)
+		return new ItemStack(aFeed.get(), aCount);
+	}
+
 	private static int input(CommandSourceStack source, Supplier<Item> aFeed, int count, BlockPos pos) {
 		TileEntityBasicMachine tMachine = machineAt(source, pos);
 		if (tMachine == null) {
 			source.sendFailure(Component.literal("No TileEntityBasicMachine at " + (pos != null ? pos.toShortString() : "the source position")));
 			return 0;
 		}
-		ItemStack tLeftover = tMachine.getInventory().insertItem(TileEntityBasicMachine.SLOT_INPUT, new ItemStack(aFeed.get(), count), false);
+		ItemStack tFeed = feedStack(aFeed, count);
+		ItemStack tLeftover = tMachine.getInventory().insertItem(TileEntityBasicMachine.SLOT_INPUT, tFeed, false);
 		if (!tLeftover.isEmpty()) {
 			source.sendFailure(Component.literal("Input slot rejected " + tLeftover.getCount() + " of the feed (blocked?)"));
 			return 0;
 		}
-		source.sendSuccess(() -> Component.literal("GT6 " + tMachine.getTileEntityName() + " input: " + count + "x "
-				+ aFeed.get() + " into slot " + TileEntityBasicMachine.SLOT_INPUT), false);
+		source.sendSuccess(() -> Component.literal("GT6 " + tMachine.getTileEntityName() + " input: " + (tFeed.getCount() - tLeftover.getCount()) + "x "
+				+ tFeed.getItem() + " into slot " + TileEntityBasicMachine.SLOT_INPUT), false);
 		return Command.SINGLE_SUCCESS;
 	}
 
