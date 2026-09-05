@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 
 import gregtech6.gui.machines.GTBasicMachineMenu;
+import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
@@ -302,7 +303,13 @@ public final class GTMultiBlockCommand {
 		return Command.SINGLE_SUCCESS;
 	}
 
-	/** The magnifying glass (:160-170) + a linked-part census over the 26 cells. */
+	/**
+	 * The magnifying glass (:160-170) + a linked-part census over the 26 cells. Since
+	 * p16-pattern-checker the report ends with {@code first_failed_cell=} — the shared
+	 * checker's first failed cell in declaration order (index, centre-relative offset,
+	 * world cell, reason), or {@code none} when formed (the kTFRU CHECK-mode failedPos
+	 * diagnostics, clean-room; the spec ④ surface).
+	 */
 	private static int check(CommandSourceStack aSource, BlockPos aPos) {
 		TileEntityCokeOven tOven = ovenAt(aSource, aPos);
 		if (tOven == null) {
@@ -324,8 +331,12 @@ public final class GTMultiBlockCommand {
 			if (tLevel.getBlockEntity(tCell) instanceof MultiBlockPartBlockEntity tPart && tPart.getTarget(false) == tOven) tLinked++;
 		}
 		boolean tBlockFormed = tLevel.getBlockState(tOven.getBlockPos()).getValue(TileEntityBase10MultiBlockBase.FORMED);
-		String tReport = String.format("GT6 coke oven at %s: %s okay=%s block_formed=%s linked_parts=%d/25",
-				tOven.getBlockPos().toShortString(), tVerdict, tOven.mStructureOkay, tBlockFormed, tLinked);
+		// the diagnostic walk (the same pattern the check just consumed — idempotent binding)
+		GTMultiBlockStructureChecker.FormedVerdict tDiagnosis =
+				GTMultiBlockStructureChecker.check(tOven, tOven.mFacing, null, null, null);
+		String tReport = String.format("GT6 coke oven at %s: %s okay=%s block_formed=%s linked_parts=%d/25 first_failed_cell=%s",
+				tOven.getBlockPos().toShortString(), tVerdict, tOven.mStructureOkay, tBlockFormed, tLinked,
+				tDiagnosis.describeFirstFailure());
 		String tMachine = machineReport(tOven);
 		if (!tOven.mStructureOkay || !tBlockFormed) {
 			aSource.sendFailure(Component.literal(tReport + " | " + tMachine));

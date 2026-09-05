@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -29,6 +31,21 @@ import net.minecraft.world.level.block.state.BlockState;
  * setBlockToAir pair, TileEntityCokeOven.java:100-101) and it embeds the builder-wand
  * auto-place (Util.checkAndSetTarget) — both are deliberately outside this API. A pattern
  * is pure display/sharing data; the server check remains hand-written per machine.
+ *
+ * <p><b>The forming expectation (task p16-pattern-checker — the P12 ruling consciously
+ * lifted, ADR 2026-09-05-p16-formation-scoping).</b> "Display only" was the P12
+ * scoping; it is undone by pure INCREMENT here: every cell now optionally carries the
+ * upstream {@code (partBlock, design, mode)} triple as {@link Cell#partBlock}/{@link
+ * Cell#design}/{@link Cell#usage} ({@link Builder#formingPart}; the sentinel-free
+ * default — {@code partBlock == null} — keeps every pre-existing factory and call site
+ * byte-identical: the {@code is}/{@code anyOf}/{@code AIR} factories and the ghost
+ * matcher face are frozen). A cell with the triple is authoritative for the server
+ * check: the shared {@code GTMultiBlockStructureChecker} walks the pattern and drives
+ * the upstream {@code checkAndSetTarget} path per cell, ending the hand-written-twice
+ * maintenance the Coke Oven carried (pattern binding + hand-written loop, port
+ * :113-155). The existence-probe seam (above) is untouched — {@code
+ * getStructurePattern()} still defaults to null, and machines that don't bind a
+ * pattern never reach the checker.
  *
  * <p><b>The facing anchor (the generalized POC rotation).</b> The upstream loops add
  * {@code i, j, k} in WORLD axes; the facing enters only through the structure-centre
@@ -122,10 +139,37 @@ public final class GTMultiBlockPattern {
 		 */
 		public final boolean hollow;
 
-		private Cell(int aX, int aY, int aZ, Predicate<BlockState> aPredicate, boolean aHollow) {
+		/**
+		 * The forming expectation, part 1 of 3 (task p16-pattern-checker, the ADR
+		 * 2026-09-05-p16-formation-scoping enrichment): the {@code ONLY_*} usage mask the
+		 * forming check writes into the part BE (upstream checkAndSetTarget {@code aMode},
+		 * MultiBlockPartBlockEntity :85-126 table — the {@code ~NOT} complement form, so
+		 * negative values are the NORM). 0 when the cell carries no forming expectation.
+		 */
+		public final int usage;
+
+		/**
+		 * The forming expectation, part 2 of 3: the design index written into the part BE
+		 * (upstream {@code aDesign} — the boiler pipe holes carry 1). 0 when the cell
+		 * carries no forming expectation.
+		 */
+		public final int design;
+
+		/**
+		 * The forming expectation, part 3 of 3: the part {@link Block} identity the forming
+		 * check feeds {@code checkAndSetTarget} (the upstream registry-id pair — the block
+		 * judgement AND the wand auto-place stock). Null = no forming expectation.
+		 */
+		@Nullable
+		public final Block partBlock;
+
+		private Cell(int aX, int aY, int aZ, Predicate<BlockState> aPredicate, boolean aHollow, int aUsage, int aDesign, @Nullable Block aPartBlock) {
 			x = aX; y = aY; z = aZ;
 			predicate = aPredicate;
 			hollow = aHollow;
+			usage = aUsage;
+			design = aDesign;
+			partBlock = aPartBlock;
 		}
 
 		/** The judgement against one world state — the seam the green/red match card will drive per cell. */
@@ -136,6 +180,17 @@ public final class GTMultiBlockPattern {
 		/** True = a must-stay-hollow marker, false = a structural part. */
 		public boolean isHollow() {
 			return hollow;
+		}
+
+		/**
+		 * True = the cell carries the FULL forming expectation (the shared checker drives
+		 * the upstream {@code checkAndSetTarget} path with the {@link #partBlock}/
+		 * {@link #design}/{@link #usage} triple); false = a declaration-only display cell
+		 * (the P12 calibre — predicate judgement and ghost drawing only, no check-side
+		 * write). Hollow markers never carry one.
+		 */
+		public boolean forms() {
+			return partBlock != null;
 		}
 	}
 
@@ -217,22 +272,36 @@ public final class GTMultiBlockPattern {
 		private final List<Cell> mCells = new ArrayList<>();
 		private final Set<Long> mSeen = new HashSet<>();
 
-		/** A structural part cell (drawn blue by the ghost preview). */
+		/** A structural part cell (drawn blue by the ghost preview) — declaration-only, no forming expectation. */
 		public Builder part(int aX, int aY, int aZ, Predicate<BlockState> aPredicate) {
-			return add(aX, aY, aZ, aPredicate, false);
+			return add(aX, aY, aZ, aPredicate, false, 0, 0, null);
 		}
 
-		/** A must-stay-hollow marker cell (drawn grey by the ghost preview). */
+		/** A must-stay-hollow marker cell (drawn grey by the ghost preview) — never carries a forming expectation. */
 		public Builder hollow(int aX, int aY, int aZ, Predicate<BlockState> aPredicate) {
-			return add(aX, aY, aZ, aPredicate, true);
+			return add(aX, aY, aZ, aPredicate, true, 0, 0, null);
 		}
 
-		private Builder add(int aX, int aY, int aZ, Predicate<BlockState> aPredicate, boolean aHollow) {
+		/**
+		 * A structural part cell with the FULL forming expectation (task p16-pattern-checker,
+		 * the ADR 2026-09-05-p16-formation-scoping enrichment): the shared checker drives the
+		 * upstream {@code checkAndSetTarget} path with the given part block + usage mask +
+		 * design index, and the block identity doubles as the wand auto-place stock. The
+		 * cell's display predicate is {@link #is(Block)} on the same block — one declaration,
+		 * one judgement calibre (the ghost preview and the server check see the same table).
+		 * The usage mask is the {@code ONLY_*} complement form (negative values are the norm).
+		 */
+		public Builder formingPart(int aX, int aY, int aZ, Block aPartBlock, int aUsage, int aDesign) {
+			if (aPartBlock == null) throw new IllegalArgumentException("a forming expectation needs a part block");
+			return add(aX, aY, aZ, is(aPartBlock), false, aUsage, aDesign, aPartBlock);
+		}
+
+		private Builder add(int aX, int aY, int aZ, Predicate<BlockState> aPredicate, boolean aHollow, int aUsage, int aDesign, @Nullable Block aPartBlock) {
 			if (aPredicate == null) throw new IllegalArgumentException("a cell needs a predicate");
 			if (!mSeen.add(pack(aX, aY, aZ))) {
 				throw new IllegalArgumentException("duplicate pattern cell (" + aX + "," + aY + "," + aZ + ")");
 			}
-			mCells.add(new Cell(aX, aY, aZ, aPredicate, aHollow));
+			mCells.add(new Cell(aX, aY, aZ, aPredicate, aHollow, aUsage, aDesign, aPartBlock));
 			return this;
 		}
 
