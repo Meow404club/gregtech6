@@ -28,6 +28,7 @@ Exit code: 0 when every pass judged clean, 1 otherwise.
 """
 
 import io
+import hashlib
 import os
 import sys
 import threading
@@ -99,6 +100,39 @@ SESSION_PORTS = {
     "1.21.1": (25762, 25772, 25752),
 }
 
+# The bare Chain dataclass default pair — a chain carrying it has made no
+# statement of its own, so session mode may apply the node table above.
+DEFAULT_PREFERRED_PORTS = (25662, 25672)
+
+
+def session_ports(chains, node=None):
+    """The session boot's (rcon, query, game) port-start triple, from the chains.
+
+    A session binds ONE port triple no matter how many chains share the boot —
+    the chains connect through the session's rcon port (_run_chain_on_server
+    takes it as a parameter), so the per-chain `preferred_ports` pins are
+    per-boot semantics by design. Policy (P17, fixing the hardwired 25662
+    lookup the P16 closeout flagged):
+
+    - exactly one distinct declared pair among the chains (beyond the bare
+      Chain default) anchors the boot — a one-chain session now addresses the
+      same triple its per-chain boot (run) would; game = rcon-10, or the one
+      distinct declared game_port when a chain pins it;
+    - otherwise — nobody declared, or the declarations disagree (the norm:
+      every chain pins its own pair so PARALLEL per-chain boots never fight) —
+      the historical SESSION_PORTS node segments apply unchanged; they are
+      what keeps the --dual legs apart by node (ADR-P15-4).
+    """
+    fallback = SESSION_PORTS.get(node_key(node), SESSION_PORTS["1.20.1"])
+    declared = ({chain.preferred_ports for chain in chains}
+                - {DEFAULT_PREFERRED_PORTS})
+    if len(declared) != 1:
+        return fallback
+    rcon, query = declared.pop()
+    game_pins = {chain.game_port for chain in chains if chain.game_port}
+    game = game_pins.pop() if len(game_pins) == 1 else rcon - 10
+    return (rcon, query, game)
+
 
 def node_key(node):
     """'1.20.1-forge' -> '1.20.1' (the SESSION_PORTS key; loader suffix stripped)."""
@@ -108,6 +142,32 @@ def node_key(node):
 def node_suffix(node):
     """Artifact-slug-safe node tag: '1.20.1-forge' -> '1201-forge'."""
     return (node or DEFAULT_NODE).replace(".", "")
+
+
+def worktree_tag():
+    """Eight hex chars naming THIS worktree (path hash) — parallel worktrees
+    running the identical roster still get disjoint artifact pairs (the
+    --dual legs; gradle's per-project lock only serializes same-worktree)."""
+    return hashlib.md5(str(WORKTREE_ROOT).encode("utf-8")).hexdigest()[:8]
+
+
+def session_slug(chains, node=None):
+    """The session boot's artifact slug: session_<node>_<roster>-<worktree tag>.
+
+    The historical bare session_<node> gave every same-node session ONE shared
+    log/pid pair: parallel same-segment boots stomped each other's pid files —
+    the recorded handle (stop_server's first kill target) pointed at a foreign
+    boot, and the P16 first run died to an external SIGTERM mid-stomp (ADR-P16
+    closeout lesson 8). The roster (sorted unique chain slugs) identifies the
+    boot's contents; a long roster folds to a stable hash so the name stays
+    bounded. No reader of the old name exists (repo grep 2026-09-05), so this
+    is a clean rename without a compat shim.
+    """
+    roster = "+".join(sorted({chain.slug for chain in chains}))
+    if len(roster) > 40:
+        digest = hashlib.md5(roster.encode("utf-8")).hexdigest()[:8]
+        roster = f"{roster[:24]}-{digest}"
+    return f"session_{node_suffix(node)}_{roster}-{worktree_tag()}"
 
 
 # The concurrency degree (user calibration 2026-09-04: concurrency is THE lever —
@@ -563,13 +623,16 @@ def run_session_recorded(chains, node=None, concurrency=None):
     concurrency = concurrency if concurrency is not None else concurrency_degree()
     task = gt6server.gradle_task(node)
     groups = plan_groups(chains)
-    rcon_port, query_port, game_port = gt6server.pick_ports(
-        SESSION_PORTS.get(node_key(node), SESSION_PORTS["1.20.1"]))
-    slug = f"session_{node_suffix(node)}"
+    ports = session_ports(chains, node)
+    rcon_port, query_port, game_port = gt6server.pick_ports(ports)
+    slug = session_slug(chains, node)
     log_path, pid_path = gt6server.artifact_paths(slug)
     print(f"[{slug}] node {node} ({task}): {len(chains)} chains in {len(groups)} "
           f"boot group(s), concurrency {concurrency}")
-    print(f"[{slug}] ports rcon={rcon_port} query={query_port} game={game_port}")
+    port_note = "" if ports == SESSION_PORTS.get(node_key(node), SESSION_PORTS["1.20.1"]) \
+        else " (the chains' declared preferred_ports)"
+    print(f"[{slug}] ports rcon={rcon_port} query={query_port} game={game_port}"
+          f"{port_note}")
     print(f"[{slug}] worktree {WORKTREE_ROOT}, artifacts {log_path}")
 
     password = chains[0].password
