@@ -342,6 +342,11 @@ def run(chain, passes=None, verdicts=None):
     """
     passes = chain.passes if passes is None else passes
     node = chain.node or requested_node() or DEFAULT_NODE
+    chain.node = node   # write back (sweep.py:127/:160 precedent) — without it
+                        # _run_pass judges with chain.node=None and step_cmd
+                        # never applies Step.node_cmds (P16 closeout Deviations
+                        # 2: the side_io 21.1 leg merged forge {FluidName,Amount}
+                        # NBT on the 21.1 server)
     task = gt6server.gradle_task(node)
     rcon_port, query_port, game_port = gt6server.pick_ports(
         chain.preferred_ports + ((chain.game_port,)
@@ -552,6 +557,9 @@ def run_session_recorded(chains, node=None, concurrency=None):
     if len(nodes) > 1:
         raise SystemExit(f"run_session: mixed nodes in one session: {sorted(nodes)}")
     node = node or (nodes.pop() if nodes else None) or requested_node() or DEFAULT_NODE
+    for chain in chains:   # same write-back rule as run(): the steps' node_cmds
+        if chain.node is None:          # keying reads chain.node; a --node
+            chain.node = node           # override must reach step_cmd too
     concurrency = concurrency if concurrency is not None else concurrency_degree()
     task = gt6server.gradle_task(node)
     groups = plan_groups(chains)
