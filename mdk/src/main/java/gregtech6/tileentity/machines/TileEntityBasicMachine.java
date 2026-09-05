@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -80,13 +81,16 @@ import gregtech6.util.GTSideTables;
  *     half-cycle of the upstream Steam Engine :146 ±alternation (the live source is the
  *     /gt6energy alternating rig); the fluid placement (:817-835) is LIVE since task
  *     p14-machine-fluid-face (pending outputs land in mTanksOutput, containing tank
- *     first then empty — the minimal tank half; the neighbor auto-push blocks
- *     :853-858/:867-884 stay cut — no logistics surface — outputs stay in the slots and
- *     tanks, which keeps the upstream canOutput blockage);</li>
- * <li>{@link #checkRecipe(boolean, boolean)} :683-778 with the doInputItems auto-IO (:687)
- *     cut but the fluid legs LIVE since task p14-machine-fluid-face (the :706 tank census,
- *     the :709/:710 minimal-fluid gates, the :712 findRecipe tank argument and the
- *     :738/:744 consume through the tank snapshot mirror) and the PARALLEL blocks
+ *     first then empty — the minimal tank half; the neighbor ITEM auto-push blocks
+ *     :853-858/:867-884 stay cut — no item logistics surface — output ITEM slots stay
+ *     blocked, while the FLUID auto-output push (:459 → {@link #doOutputFluids}) is LIVE
+ *     since task p16-machine-side-io ② and drains a configured mFluidAutoOutput face);</li>
+ * <li>{@link #checkRecipe(boolean, boolean)} :683-778 with the :687 doInputItems ITEM
+ *     auto-IO cut (the item pool) but the fluid legs LIVE — the :706 tank census since
+ *     task p14-machine-fluid-face, the :696-705 auto-input PULL and the :716-732
+ *     mCanUseOutputTanks output-tank fallback since task p16-machine-side-io ②③, plus the
+ *     :709/:710 minimal-fluid gates, the :712 findRecipe tank argument, the
+ *     :738/:744 consume through the tank snapshot mirror, and the PARALLEL blocks
  *     (:742-745) RESTORED (the oven cut them with mParallel=1;
  *     the Crusher registers NBT_PARALLEL 4 at :1300) plus the energy math :761-774 verbatim:
  *     mParallelDuration → :766-768 (mMaxProgress × parallel count = linear duration), else
@@ -193,6 +197,27 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	public static final String NBT_TANK = "tanks";
 	/** Upstream NBT_TANK_OUT+".<i>" (:164-165 FL.load per-index keys) — the port list form, the mOutputItems NBT_OUTPUT precedent. */
 	public static final String NBT_OUTPUT_FLUIDS = "output_fluids";
+	/**
+	 * Upstream NBT_TANK_CAPACITY (:157-158 — read, NEVER written, the registration-config
+	 * family; the port re-feeds it through {@code /data merge} the same way the upstream
+	 * registry re-feeds the placement NBT). Task p16-machine-side-io ③.
+	 */
+	public static final String NBT_TANK_CAPACITY = "tank_capacity";
+	/** Upstream NBT_USE_OUTPUT_TANK (:132) — the {@link #mCanUseOutputTanks} registration key (read-only, same family). */
+	public static final String NBT_USE_OUTPUT_TANK = "use_output_tank";
+	/** Upstream NBT_INV_SIDE_IN / NBT_INV_SIDE_OUT (:137-138, OR {@link #SBIT_A} on load) — the item ACCESS masks. */
+	public static final String NBT_ITEM_SIDE_IN = "item_sides_in";
+	public static final String NBT_ITEM_SIDE_OUT = "item_sides_out";
+	/** Upstream NBT_TANK_SIDE_IN / NBT_TANK_SIDE_OUT (:143-144, OR {@link #SBIT_A} on load) — the fluid-face masks (the p14 carriers). */
+	public static final String NBT_TANK_SIDE_IN = "fluid_sides_in";
+	public static final String NBT_TANK_SIDE_OUT = "fluid_sides_out";
+	/** Upstream NBT_TANK_SIDE_AUTO_IN / NBT_TANK_SIDE_AUTO_OUT (:145-146, no SBIT_A OR) — the fluid auto-IO sides. */
+	public static final String NBT_TANK_SIDE_AUTO_IN = "fluid_sides_auto_in";
+	public static final String NBT_TANK_SIDE_AUTO_OUT = "fluid_sides_auto_out";
+	/** Upstream CS SBIT_A — the SIDE_ANY bit the NBT mask loads OR in (:137-144), so a configured mask keeps the side-less probe open. */
+	public static final byte SBIT_A = 64;
+	/** Upstream SIDE_UNDEFINED — the auto-IO side off value (:94-95 defaults; SIDES_VALID[-1+1] = F, CS.java:561-568 form). */
+	public static final byte SIDE_UNDEFINED = -1;
 
 	/** Content slot 0 is the input (upstream :81 RecipeMap order: inputs, then outputs). */
 	public static final int SLOT_INPUT = 0;
@@ -272,7 +297,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 	// capability handle (P6 gated-item-handler precedent)
 	//? if forge {
-	private final LazyOptional<IItemHandler> mGatedCap = LazyOptional.of(this::newGatedHandler);
+	private final LazyOptional<IItemHandler> mGatedCap = LazyOptional.of(() -> newGatedHandler(null));
 	//?} else {
 	/*private IItemHandler mGatedHandler; // (1.21.1) the LazyOptional.of lazy semantics kept — created at the first query; 21.1 has no invalidation surface
 	 *///?}
@@ -294,11 +319,25 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		// getDefaultInventory :524-530 — 1 input + mOutputItemsCount outputs (no special/fluid
 		// display slots in the port slot shape; the SHCL rows carry mSpecialValue 0)
 		setInventory(new GTItemStackHandler(mRecipes.mInputItemsCount + mRecipes.mOutputItemsCount, this::onInventoryChanged));
-		// :157-162 — the tanks (see the field docs for the capacity rulings)
+		// :157-162 — the tanks (see the field docs for the capacity rulings); mTankCapacity
+		// is the field-initializer 1000 here, the registration rows re-arm it through
+		// applyTankCapacity() and load() applies NBT_TANK_CAPACITY before the content read
 		mTanksInput = new FluidTankGT[mRecipes.mInputFluidCount];
-		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i] = new FluidTankGT(1000); // :159-160 (1000 default, the map leg collapsed)
+		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i] = new FluidTankGT(mTankCapacity); // :159-160 (the 1000 default; the map leg collapsed)
 		mTanksOutput = new FluidTankGT[mRecipes.mOutputFluidCount];
 		for (int i = 0; i < mTanksOutput.length; i++) mTanksOutput[i] = new FluidTankGT(); // :162 (default capacity)
+		// :217 — the ACCESSIBLE table must exist before the first capability query
+		// (the upstream readFromNBT2 tail runs it after every load too)
+		updateAccessibleSlots();
+	}
+
+	/**
+	 * Re-arms {@link #mTankCapacity} onto the input tanks (the registration-config seam:
+	 * upstream constructs them AT the :157-158 capacity, the port tanks are constructor-built
+	 * so the rows set the carrier and call this).
+	 */
+	public void applyTankCapacity() {
+		for (FluidTankGT tTank : mTanksInput) tTank.setCapacity(mTankCapacity);
 	}
 
 	@Override
@@ -338,6 +377,10 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		if (aIsServerSide) {
 			// the A-tier fake power source through the D3 seam (upstream :454-455 refresh spot)
 			supplyEnergy();
+			// upstream :459 — the fluid auto-output push arm ahead of the work chain (the
+			// mDisabledFluidOutput half is cut with the disabled family; the undefined side
+			// folds to a no-op so the registered machines keep their pre-p16 behaviour)
+			if (mFluidAutoOutput != SIDE_UNDEFINED) doOutputFluids();
 			doWork(aTimer);
 		}
 	}
@@ -507,11 +550,12 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * Upstream :683-778 — doInputItems auto-IO (:687) cut; the parallel blocks (:742-745)
-	 * restored (the oven cut them at mParallel = 1; the Crusher runs 4); the energy math
-	 * :761-774 verbatim with the RF halves of :767/:770 cut (no RF conversion in the port
-	 * constants). {@code aApplyRecipe=false} probes, {@code true} consumes (the two-stage
-	 * isRecipeInputEqual contract).
+	 * Upstream :683-778 — the :687 doInputItems ITEM auto-IO stays cut (the item auto-IO pool
+	 * item; the FLUID pull arm :696-705 is LIVE since task p16-machine-side-io ②); the
+	 * parallel blocks (:742-745) restored (the oven cut them at mParallel = 1; the Crusher
+	 * runs 4); the energy math :761-774 verbatim with the RF halves of :767/:770 cut (no RF
+	 * conversion in the port constants). {@code aApplyRecipe=false} probes, {@code true}
+	 * consumes (the two-stage isRecipeInputEqual contract).
 	 */
 	public int checkRecipe(boolean aApplyRecipe, boolean aUseAutoIO) {
 		mCouldUseRecipe = false; // :684
@@ -524,8 +568,32 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 			if (tInputs[i] != null && !tInputs[i].isEmpty()) tInputItemsCount++;
 		}
 
-		// :696-705 fluid auto-input pull cut (auto-IO pool); :706 the input-tank census
-		// RESTORED (task p14-machine-fluid-face ③)
+		// :696-705 RESTORED (task p16-machine-side-io ②, the capability translation) — the
+		// fluid auto-input PULL: the getTankInfo walk (:700) becomes the getTanks/getFluidInTank
+		// census, the FL.move_ beat (:701-702) the drain-SIMULATE → own-fill → drain-EXECUTE
+		// three-beat (the P6 push form mirrored for pull; the :697 mDisabledFluidInput half is
+		// cut with the disabled family). The :568 containsInput filter stays cut (the pool
+		// row's remaining item — the port RecipeMap carries no containsInput surface).
+		if (aUseAutoIO && mFluidAutoInput != SIDE_UNDEFINED) {
+			byte tAutoInput = worldSideOfRelative(mFluidAutoInput); // FACING_TO_SIDE (:696)
+			if (tAutoInput != SIDE_UNDEFINED) {
+				IFluidHandler tSource = getFluidInputTarget(tAutoInput); // :698
+				if (tSource != null) for (int i = 0; i < tSource.getTanks(); i++) {
+					FluidStack tInfo = tSource.getFluidInTank(i); // :700 tank info walk
+					if (tInfo == null || tInfo.isEmpty()) continue;
+					FluidTankGT tTank = fillableAny(tInfo); // :701 getFluidTankFillable(SIDE_ANY, ...) — no mask gate
+					if (tTank == null) continue;
+					int tFit = tTank.fill(copyOf(tInfo, tInfo.getAmount()), FluidAction.SIMULATE);
+					if (tFit <= 0) continue;
+					FluidStack tDrained = tSource.drain(tFit, FluidAction.EXECUTE);
+					if (tDrained == null || tDrained.isEmpty()) continue;
+					if (tDrained.getAmount() < tFit) tFit = tDrained.getAmount(); // the source under-delivered → bound the fill
+					if (tTank.fill(copyOf(tDrained, tFit), FluidAction.EXECUTE) > 0) onFluidIO(); // :702 updateInventory on move > 0
+				}
+			}
+		}
+		// :706 the input-tank census RESTORED (task p14-machine-fluid-face ③) — the pulled
+		// fluids above land here in the SAME pass
 		int tInputFluidsCount = 0;
 		for (FluidTankGT tTank : mTanksInput) if (tTank.has()) tInputFluidsCount++;
 
@@ -539,38 +607,48 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		// argument now carries the REAL input-tank snapshot (upstream passes mTanksInput).
 		Recipe tRecipe = mRecipes.findRecipe(mLastRecipe, mInputMax, ItemStack.EMPTY, tankSnapshot(mTanksInput), tInputs);
 
+		// :716-732 RESTORED (task p16-machine-side-io ③) — the mCanUseOutputTanks fallback:
+		// a failed input-tank lookup re-runs against the OUTPUT tanks and the whole consume
+		// chain below drains THEM (upstream :718/:725/:731 pass mTanksOutput). The two
+		// upstream branches differ ONLY in the tank array, so the port keeps the merged
+		// branch shape with the source array selected here.
+		boolean tUseOutputTanks = false;
+		if (tRecipe == null && mCanUseOutputTanks) { // :717
+			tRecipe = mRecipes.findRecipe(mLastRecipe, mInputMax, ItemStack.EMPTY, tankSnapshot(mTanksOutput), tInputs); // :718
+			tUseOutputTanks = tRecipe != null;
+		}
+
 		int tMaxProcessCount = 0; // :714
 
-		// :716-732 the mCanUseOutputTanks output-tank fallback is cut (no tanks); the found
-		// branch :733-746 below is the merged verbatim shape
-		if (tRecipe == null) return DID_NOT_FIND_RECIPE; // :719 shape
+		if (tRecipe == null) return DID_NOT_FIND_RECIPE; // :719/:719-shape
 
-		if (tRecipe.mCanBeBuffered) mLastRecipe = tRecipe; // :734
-		tMaxProcessCount = canOutput(tRecipe); // :735
-		if (tMaxProcessCount <= 0) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS; // :736
+		if (tRecipe.mCanBeBuffered) mLastRecipe = tRecipe; // :734/:721
+		tMaxProcessCount = canOutput(tRecipe); // :735/:722
+		if (tMaxProcessCount <= 0) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS; // :736/:723
 
 		// :737 — the ignition half (mRequiresIgnition || mIgnited > 0 || mActive) is cut.
-		// :738 — the two-stage consume runs on the tank SNAPSHOT (the frozen P4 Recipe takes
-		// FluidStack[], upstream Recipe.java:800 takes the IFluidTank[] directly and drains
-		// it in place at :833); an applied consume mirrors the exact drained amounts onto the
-		// real input tanks (the applyTankConsumption adapter, :833's tank.drain leg).
-		FluidStack[] tFluids = tankSnapshot(mTanksInput);
-		long[] tFluidBaseline = snapshotAmounts(mTanksInput);
-		if (!tRecipe.isRecipeInputEqual(aApplyRecipe, false, tFluids, tInputs)) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS; // :738
-		if (aApplyRecipe) applyTankConsumption(tFluids, tFluidBaseline);
+		// :738/:725 — the two-stage consume runs on the tank SNAPSHOT (the frozen P4 Recipe
+		// takes FluidStack[], upstream Recipe.java:800 takes the IFluidTank[] directly and
+		// drains it in place at :833); an applied consume mirrors the exact drained amounts
+		// onto the real SOURCE tanks (the applyTankConsumption adapter, :833's tank.drain leg).
+		FluidTankGT[] tSourceTanks = tUseOutputTanks ? mTanksOutput : mTanksInput;
+		FluidStack[] tFluids = tankSnapshot(tSourceTanks);
+		long[] tFluidBaseline = snapshotAmounts(tSourceTanks);
+		if (!tRecipe.isRecipeInputEqual(aApplyRecipe, false, tFluids, tInputs)) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS; // :738/:725
+		if (aApplyRecipe) applyTankConsumption(tSourceTanks, tFluids, tFluidBaseline);
 		mCouldUseRecipe = true; // :739
 		if (!aApplyRecipe) return FOUND_AND_COULD_HAVE_USED_RECIPE; // :740
 
 		if (tMaxProcessCount > 1) { // :742-745 RESTORED (oven cut this; Crusher NBT_PARALLEL 4)
-			if (!mParallelDuration && mEnergyTypeAccepted != TD.Energy.TU) { // :743 (RF half cut)
+			if (!mParallelDuration && mEnergyTypeAccepted != TD.Energy.TU) { // :743/:730 (RF half cut)
 				// UT.Code.bind(aMin, aMax, aBoundValue): the per-tick energy budget caps the count
 				tMaxProcessCount = (int)UT.Code.bind(1, tMaxProcessCount, mInput / Math.max(1, tRecipe.mEUt));
 			}
-			// :744 — 1 + the COUNT consume form (upstream Recipe.isRecipeInputEqual(int,
+			// :744/:731 — 1 + the COUNT consume form (upstream Recipe.isRecipeInputEqual(int,
 			// IFluidTank[], ...) :840-852 with the per-iteration fluid pre-check :847-851;
 			// the P4 Recipe shell is frozen, so the count loop is the local helper below)
 			tMaxProcessCount = 1 + isRecipeInputEqual(tRecipe, tMaxProcessCount - 1, tFluids, tInputs);
-			if (aApplyRecipe) applyTankConsumption(tFluids, tFluidBaseline);
+			if (aApplyRecipe) applyTankConsumption(tSourceTanks, tFluids, tFluidBaseline);
 		}
 
 		// :748-753 adjacent-inventory notify and :755 mSpecialIsStartEnergy cut (auto-IO pool)
@@ -706,10 +784,52 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * Upstream :95 — the fluid-face connectivity masks, in machine-relative side bits, read
 	 * through the rotation gate ({@code FACE_CONNECTED[FACING_ROTATIONS[mFacing][aSide]]
 	 * [mask]}, CS.java:528/:598). The default 127 = every relative side open for both
-	 * directions, the upstream field default (:95). The fluid auto-IO sides
-	 * (mFluidAutoInput/mFluidAutoOutput, upstream :95 too) stay cut with the auto-IO pool.
+	 * directions, the upstream field default (:95). The NBT load leg (:143-144, OR
+	 * {@link #SBIT_A}) is the same hasKey-guarded registration-config family as the item
+	 * masks below — absent keys keep the constructor/applyRow value (the p14
+	 * loadKeepsTheConstructorInjectedConfig contract).
 	 */
 	public byte mFluidInputs = 127, mFluidOutputs = 127;
+	/**
+	 * Upstream :94 — the per-side item ACCESS masks (machine-relative side bits, default 127
+	 * = every relative side, the upstream field default). Task p16-machine-side-io ①: they
+	 * feed {@link #updateAccessibleSlots()} (upstream :533-541) — the per-world-side
+	 * accessible-slot table every insert/extract consults. Registration rows re-point them
+	 * post-construction (the carrier pattern of mEnergyInputs; the upstream rows write
+	 * NBT_INV_SIDE_IN/OUT at :1294-1309) and the hasKey-guarded load legs (:137-138, OR
+	 * {@link #SBIT_A}) keep NBT overrides working without persisting the config (the
+	 * upstream writeToNBT2 never writes these keys either).
+	 */
+	public byte mItemInputs = 127, mItemOutputs = 127;
+	/**
+	 * Upstream :95 — the fluid auto-IO sides (machine-relative, {@link #SIDE_UNDEFINED} =
+	 * off, the upstream default). Task p16-machine-side-io ②: {@link #mFluidAutoInput} is
+	 * the PULL face the :696-705 checkRecipe arm drains from, {@link #mFluidAutoOutput} the
+	 * PUSH face the :459/:994-996 tick arm fills through — both fold to no-ops while
+	 * undefined, so the registered machines keep their exact pre-p16 behaviour. The item
+	 * auto-IO pair (mItemAutoInput/mItemAutoOutput, upstream :94) stays CUT with its pool
+	 * item (doInputItems/doOutputItems are not ported). The NBT load legs (:145-146) are
+	 * registration-config, never persisted.
+	 */
+	public byte mFluidAutoInput = SIDE_UNDEFINED, mFluidAutoOutput = SIDE_UNDEFINED;
+	/**
+	 * Upstream :92 mCanUseOutputTanks (NBT_USE_OUTPUT_TANK :132) — when the primary recipe
+	 * lookup over the input tanks fails, the checkRecipe :716-732 fallback re-runs the
+	 * lookup AND the consume against the OUTPUT tanks, so a product sitting in the output
+	 * tank can directly feed a follow-up recipe. Default false, the upstream field default;
+	 * registration rows re-point it post-construction.
+	 */
+	public boolean mCanUseOutputTanks = false;
+	/**
+	 * Upstream :157-158 — the input-tank capacity (NBT_TANK_CAPACITY, default 1000). The
+	 * carrier form of the upstream load-time local: {@link #applyTankCapacity()} re-arms the
+	 * constructed tanks (the upstream :160 constructs them AT capacity; the port tanks are
+	 * constructor-built, so the carrier + re-apply seam is the same behaviour), and
+	 * {@link #load} applies the NBT key before the content read. The upstream
+	 * {@code setCapacity(mRecipes, mParallel * 2L)} adjustable-map leg (:160) stays collapsed
+	 * with the RecipeMap mMinInputTankSizes omission (RecipeMap.java:38, the p14 ruling).
+	 */
+	public long mTankCapacity = 1000;
 	/**
 	 * Upstream :511 VERBATIM (task p14-machine-fluid-face ②): the receiving gate is the
 	 * rotated connectivity mask — {@code FACE_CONNECTED[FACING_ROTATIONS[mFacing][aSide]]
@@ -836,15 +956,17 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * removed from its snapshot copy (the first-matching-entry semantics of
 	 * Recipe.java:250 align 1:1 with the upstream tank order), then re-baselines the
 	 * amounts array so a second call after the :744 count loop drains only the delta.
+	 * The tank array is a parameter since task p16-machine-side-io ③ — the
+	 * mCanUseOutputTanks fallback consumes from mTanksOutput the same way.
 	 */
-	private void applyTankConsumption(FluidStack[] aSnapshot, long[] aBaseline) {
+	private void applyTankConsumption(FluidTankGT[] aTanks, FluidStack[] aSnapshot, long[] aBaseline) {
 		boolean tChanged = false;
-		for (int i = 0; i < mTanksInput.length && i < aSnapshot.length; i++) {
+		for (int i = 0; i < aTanks.length && i < aSnapshot.length; i++) {
 			if (aBaseline[i] <= 0) continue;
 			long tNow = (aSnapshot[i] == null || aSnapshot[i].isEmpty()) ? 0 : aSnapshot[i].getAmount();
 			long tConsumed = aBaseline[i] - tNow;
 			if (tConsumed > 0) {
-				mTanksInput[i].remove(tConsumed);
+				aTanks[i].remove(tConsumed);
 				tChanged = true;
 			}
 			aBaseline[i] = tNow;
@@ -866,19 +988,123 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	}
 
 	// ---------------------------------------------------------------------------
+	// fluid auto-IO (upstream :459/:696-705/:994-996, task p16-machine-side-io ②)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The CS.java:543-552 {@code FACING_TO_SIDE} table — the machine-relative → world side
+	 * inverse of {@link GTSideTables#FACING_ROTATIONS} (row = the world facing, column = the
+	 * relative side, value = the world side). Local to this class until a shared-table card
+	 * moves it beside {@link GTSideTables} (the util file is outside this task's scope).
+	 */
+	private static final byte[][] FACING_TO_SIDE = {
+		{0,1,2,3,4,5,6,6},
+		{0,1,2,3,4,5,6,6},
+		{0,1,5,2,4,3,6,6},
+		{0,1,4,3,5,2,6,6},
+		{0,1,2,4,3,5,6,6},
+		{0,1,3,5,2,4,6,6},
+		{0,1,2,3,4,5,6,6},
+		{0,1,2,3,4,5,6,6}
+	};
+
+	/** The upstream {@code FACING_TO_SIDE[mFacing][aRelativeSide]} lookup (both operands masked into the table domain). */
+	public byte worldSideOfRelative(byte aRelativeSide) {
+		return FACING_TO_SIDE[mFacing & 7][aRelativeSide & 7];
+	}
+
+	/** The auto-input adjacency seam (upstream :974-976 getFluidInputTarget(byte)) — the neighbor FLUID_HANDLER on that world face. */
+	@Nullable
+	protected IFluidHandler getFluidInputTarget(byte aWorldSide) {
+		return fluidHandlerAt(aWorldSide);
+	}
+
+	/**
+	 * The auto-output adjacency seam (upstream :978-980 getFluidOutputTarget(byte, Fluid)) —
+	 * the Fluid argument folds away: the port capability query is content-blind.
+	 */
+	@Nullable
+	protected IFluidHandler getFluidOutputTarget(byte aWorldSide) {
+		return fluidHandlerAt(aWorldSide);
+	}
+
+	/** The neighbor FLUID_HANDLER resolve (the TileEntityCokeOven.fluidHandlerAt :192-203 form, side parameterised; opposite face — the handler fronts ITS face toward us). */
+	@Nullable
+	private IFluidHandler fluidHandlerAt(byte aWorldSide) {
+		if (!hasLevel() || isClientSide()) return null;
+		Direction tSide = Direction.from3DDataValue(aWorldSide & 7);
+		BlockPos tPos = getBlockPos().relative(tSide);
+		//? if forge {
+		BlockEntity tNeighbor = getLevel().getBlockEntity(tPos);
+		if (tNeighbor == null) return null;
+		return tNeighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, tSide.getOpposite()).resolve().orElse(null);
+		//?} else {
+		/*// 21.1: the query goes through the level (ILevelExtension.getCapability returns the
+		//handler directly, null when absent; the TileEntityBase08Barrel:300 precedent).
+		return getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, tPos, tSide.getOpposite());
+		 *///?}
+	}
+
+	/**
+	 * Upstream :994-996 doOutputFluids — for each non-empty output tank, push through the
+	 * auto-output face's neighbor handler with the P6 three-beat (drain SIMULATE → target
+	 * fill EXECUTE → drain EXECUTE exactly what landed; 0 accepted = the source keeps
+	 * everything). The upstream {@code FL.move(tank, delegator)} is the same three-beat;
+	 * the {@code > 0} move fires the :995 updateInventory beat.
+	 */
+	public void doOutputFluids() {
+		byte tAutoOutput = worldSideOfRelative(mFluidAutoOutput);
+		if (tAutoOutput == SIDE_UNDEFINED) return;
+		for (FluidTankGT tCheck : mTanksOutput) if (tCheck.has()) { // :995
+			FluidStack tContent = tCheck.fluid();
+			if (tContent == null || tContent.isEmpty()) continue;
+			IFluidHandler tTarget = getFluidOutputTarget(tAutoOutput); // :995 per-tank target call
+			if (tTarget == null) continue;
+			FluidStack tAvailable = tCheck.drain(Integer.MAX_VALUE, FluidAction.SIMULATE);
+			if (tAvailable == null || tAvailable.isEmpty()) continue;
+			int tFilled = tTarget.fill(tAvailable, FluidAction.EXECUTE);
+			if (tFilled <= 0) continue; // the target refuses → the source keeps everything (fill-then-deduct)
+			FluidStack tDrained = tCheck.drain(tFilled, FluidAction.EXECUTE);
+			if (tDrained != null && !tDrained.isEmpty()) onFluidIO(); // :995 updateInventory on move > 0
+		}
+	}
+
+	/** Per-amount COPIES for the auto-IO hand-offs (the tankSnapshot copy form, forge/21.1 split). */
+	private static FluidStack copyOf(FluidStack aFluid, int aAmount) {
+		//? if forge {
+		return new FluidStack(aFluid, aAmount);
+		//?} else {
+		/*return aFluid.copyWithAmount(aAmount); // 21.1: no copy ctor
+		 *///?}
+	}
+
+	// ---------------------------------------------------------------------------
 	// fluid tank face (upstream :561-597, task p14-machine-fluid-face ⑤)
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * Upstream getFluidTankFillable2 :564-571 — containing input tank first, then an empty
-	 * one. The :565 auto-output-face refuse leg is cut with the auto-IO pool
-	 * (mFluidAutoOutput is out of the field set), and the :568 containsInput recipe filter
-	 * is cut with its pool item — any fluid may claim an EMPTY input tank (declared
-	 * deviation, containsInput is the same TODO.md pool row as the auto-IO).
+	 * Upstream getFluidTankFillable2 :564-571 — the :565 auto-output-face refuse leg is LIVE
+	 * since task p16-machine-side-io ② (a configured mFluidAutoOutput makes that world face
+	 * push-only: external fill is refused there), then the :566 mask gate, then the tank
+	 * walk. The :568 containsInput recipe filter is cut with its pool item — any fluid may
+	 * claim an EMPTY input tank (declared deviation; the port RecipeMap carries no
+	 * containsInput surface, the same TODO.md pool row as the auto-IO's remaining item).
 	 */
 	@Nullable
 	public FluidTankGT getFluidTankFillable(byte aWorldSide, FluidStack aFluidToFill) {
+		if (mFluidAutoOutput != SIDE_UNDEFINED && worldSideOfRelative(mFluidAutoOutput) == aWorldSide) return null; // :565 (the mDisabledFluidOutput half is cut)
 		if (!GTSideTables.faceConnected(mFacing, aWorldSide, mFluidInputs)) return null; // :566
+		return fillableAny(aFluidToFill);
+	}
+
+	/**
+	 * Upstream :701 getFluidTankFillable(SIDE_ANY, ...) — the side-less fillable the
+	 * auto-input pull consults: containing tank first (:567), then an empty one (:569); NO
+	 * mask gate (the SIDE_ANY row is all-open) and no auto-output refuse (the pull is the
+	 * machine's own initiative, not a face interaction).
+	 */
+	@Nullable
+	public FluidTankGT fillableAny(FluidStack aFluidToFill) {
 		for (int i = 0; i < mTanksInput.length; i++) if (mTanksInput[i].contains(aFluidToFill)) return mTanksInput[i]; // :567
 		for (int i = 0; i < mTanksInput.length; i++) if (mTanksInput[i].isEmpty()) return mTanksInput[i]; // :569
 		return null;
@@ -925,6 +1151,60 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	/** The executed tank-IO dirty mark (the upstream updateInventory beat, 05Inventories.java:103 — the tapDrain :919 mirror). */
 	protected void onFluidIO() {
 		onInventoryChanged();
+	}
+
+	// ---------------------------------------------------------------------------
+	// the per-side item ACCESS table (upstream :533-545, task p16-machine-side-io ①)
+	// ---------------------------------------------------------------------------
+
+	/** Upstream :543 — the per-WORLD-side accessible slot table (row 6 = the SIDE_ANY entry, built like upstream). */
+	private final int[][] mAccessible = new int[7][];
+	/** Upstream :544 — the three shared slot lists (rebuilt by {@link #updateAccessibleSlots()}). */
+	private int[] mAccessibleSlots, mAccessibleInputs, mAccessibleOutputs;
+
+	/**
+	 * Upstream :533-541 updateAccessibleSlots — rebuilds the per-world-side slot table from
+	 * the rotated {@link #mItemInputs}/{@link #mItemOutputs} masks: a side with both masks
+	 * touches EVERY slot (ACCESSIBLE_SLOTS), an input-only side the input range
+	 * (ACCESSIBLE_INPUTS), an output-only side the output range (ACCESSIBLE_OUTPUTS), a
+	 * side with neither touches nothing (ZL_INTEGER). The direction gates
+	 * ({@link #canInsertItem2}/{@link #canExtractItem2}) stay ON TOP of the table, exactly
+	 * like upstream — an output-only side still cannot INSERT into the accessible output
+	 * slots. Rebuilt at construction, after every load (:217) and on every facing change
+	 * (:1005 onFacingChange).
+	 */
+	public void updateAccessibleSlots() {
+		int tInputCount = mRecipes.mInputItemsCount, tOutputCount = mRecipes.mOutputItemsCount;
+		mAccessibleSlots = new int[tInputCount + tOutputCount];
+		for (int i = 0; i < mAccessibleSlots.length; i++) mAccessibleSlots[i] = i; // UT.Code.getAscendingArray :526
+		mAccessibleInputs = new int[tInputCount];
+		for (int i = 0; i < tInputCount; i++) mAccessibleInputs[i] = i; // :527
+		mAccessibleOutputs = new int[tOutputCount];
+		for (int i = 0; i < tOutputCount; i++) mAccessibleOutputs[i] = tInputCount + i; // :528-529
+		for (byte i = 0; i < 7; i++) { // upstream :534 — all seven rows (6 = the SIDE_ANY entry)
+			if (GTSideTables.faceConnected(mFacing, i, mItemInputs)) { // :535 — the row byte IS a world side, the rotation is inside faceConnected
+				if (GTSideTables.faceConnected(mFacing, i, mItemOutputs)) mAccessible[i] = mAccessibleSlots; else mAccessible[i] = mAccessibleInputs; // :536
+			} else {
+				if (GTSideTables.faceConnected(mFacing, i, mItemOutputs)) mAccessible[i] = mAccessibleOutputs; else mAccessible[i] = null; // :538 (ZL_INTEGER)
+			}
+		}
+	}
+
+	/**
+	 * Upstream :545 getAccessibleSlotsFromSide2 — the table row (a defensive copy: the
+	 * array is shared state), empty for a side with no access.
+	 */
+	public int[] getAccessibleSlotsFromSide(byte aWorldSide) {
+		int[] tRow = mAccessible[aWorldSide & 7];
+		return tRow == null ? new int[0] : tRow.clone();
+	}
+
+	/** The upstream touch-gate: the side's ACCESSIBLE row must list the slot before any insert/extract is even considered. */
+	public boolean isSlotAccessible(byte aWorldSide, int aSlot) {
+		int[] tRow = mAccessible[aWorldSide & 7];
+		if (tRow == null) return false;
+		for (int tSlot : tRow) if (tSlot == aSlot) return true;
+		return false;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -1030,12 +1310,15 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 	/**
 	 * The gated item surface (P6 TileEntityBase10MultiBlockMachine shape): insert only the
-	 * input slot (canInsertItem2 :549-554 trimmed to the slot-range gate — the mMode
-	 * empty-slot rule, the same-item dedup and the containsInput legs are the pool), extract
-	 * only the output slots (canExtractItem2 :556-559). Storage stays the plain
-	 * {@link GTItemStackHandler}.
+	 * input slot (canInsertItem2 :549-554 trimmed — the mMode empty-slot rule, the same-item
+	 * dedup and the containsInput legs are the pool), extract only the output slots
+	 * (canExtractItem2 :556-559). Storage stays the plain {@link GTItemStackHandler}.
+	 * Task p16-machine-side-io ①: the {@code aSide} face first consults the ACCESSIBLE
+	 * table (upstream getAccessibleSlotsFromSide2 :545 — a side may only touch the slots
+	 * its mask row lists, in BOTH directions); {@code null} = the side-less probe, which
+	 * keeps the pre-p16 all-sides behaviour (the P5 barrel side-less ruling form).
 	 */
-	private IItemHandler newGatedHandler() {
+	private IItemHandler newGatedHandler(@Nullable Direction aSide) {
 		GTItemStackHandler tInventory = mInventory;
 		return new IItemHandler() {
 			@Override public int getSlots() {return tInventory.getSlots();}
@@ -1045,16 +1328,21 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 			@Override
 			public ItemStack insertItem(int aSlot, ItemStack aStack, boolean aSimulate) {
-				if (aStack == null || aStack.isEmpty() || !canInsertItem2(aSlot)) return aStack;
+				if (aStack == null || aStack.isEmpty() || !canInsertItem2(aSlot) || !touchable(aSide, aSlot)) return aStack;
 				return tInventory.insertItem(aSlot, aStack, aSimulate);
 			}
 
 			@Override
 			public ItemStack extractItem(int aSlot, int aAmount, boolean aSimulate) {
-				if (!canExtractItem2(aSlot)) return ItemStack.EMPTY;
+				if (!canExtractItem2(aSlot) || !touchable(aSide, aSlot)) return ItemStack.EMPTY;
 				return tInventory.extractItem(aSlot, aAmount, aSimulate);
 			}
 		};
+	}
+
+	/** The touch-gate seam: null side = all-open (the side-less probe), a world face reads the ACCESSIBLE row. */
+	private boolean touchable(@Nullable Direction aSide, int aSlot) {
+		return aSide == null || isSlotAccessible((byte)aSide.get3DDataValue(), aSlot);
 	}
 
 	/** Upstream canInsertItem2 :549-554 trimmed to the slot range gate (insert only the input range). */
@@ -1068,20 +1356,29 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	}
 
 	/**
-	 * The per-call wrapper factory — the {@code getCapability(FLUID_HANDLER, aSide)} seam.
-	 * Package-private so the offline tests drive the wrapper directly (the ForgeCapabilities
-	 * tokens are transformer-resolved and unresolvable offline, the
+	 * The per-call wrapper factories — the {@code getCapability(<CAP>, aSide)} seams.
+	 * Package-private so the offline tests drive the wrappers directly (the
+	 * ForgeCapabilities tokens are transformer-resolved and unresolvable offline, the
 	 * GT6MultiBlockFluidTest direct-construction precedent).
 	 */
 	IFluidHandler newFluidHandler(@Nullable Direction aSide) {
 		return new BasicMachineFluidHandler(this, aSide);
 	}
 
+	/** The per-side gated item surface (task p16-machine-side-io ①) — null side = the all-sides form. */
+	IItemHandler newItemHandler(@Nullable Direction aSide) {
+		return newGatedHandler(aSide);
+	}
+
 	//? if forge {
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aCapability == ForgeCapabilities.ITEM_HANDLER) {
-			return mGatedCap.cast(); // the gated surface shadows the root's raw inventory exposure
+			if (aSide == null) return mGatedCap.cast(); // the side-less probe keeps the cached all-sides surface
+			// the fresh-wrapper-per-call form (the FLUID_HANDLER comment below): the side is
+			// part of the wrapper identity — a stored LazyOptional would freeze the
+			// FIRST-queried side into the ACCESSIBLE row
+			return LazyOptional.of(() -> newGatedHandler(aSide)).cast();
 		}
 		if (aCapability == ForgeCapabilities.FLUID_HANDLER) {
 			// the fresh-wrapper-per-call form (TileEntityBase10MultiBlockMachine:681-686): a
@@ -1103,8 +1400,12 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	// No @Override: the parent method does not exist on 21.1.)
 	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == Capabilities.ItemHandler.BLOCK) {
-			if (mGatedHandler == null) mGatedHandler = newGatedHandler();
-			return (T) mGatedHandler; // the gated surface shadows the root's raw inventory exposure
+			if (aSide == null) {
+				if (mGatedHandler == null) mGatedHandler = newGatedHandler(null); // the side-less cached surface
+				return (T) mGatedHandler;
+			}
+			// the fresh-per-call form: the side is part of the handler identity
+			return (T) newGatedHandler(aSide);
 		}
 		if (aCapability == Capabilities.FluidHandler.BLOCK) {
 			// the fresh-wrapper-per-call form: the side is part of the handler identity
@@ -1121,6 +1422,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	/** Chest precedent onPlaced :128-131 — GT6 side order == Direction.getIndex() (get3DDataValue). */
 	public void setFacingFromPlacement(Player aPlayer) {
 		mFacing = (byte) aPlayer.getDirection().get3DDataValue();
+		updateAccessibleSlots(); // the upstream onFacingChange :1005 beat
 		applyVisualState(); // facing changes write NBT (persistence) + BlockState (visuals) immediately
 	}
 
@@ -1138,6 +1440,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	public boolean setFrontFacing(byte aSide) {
 		if (aSide < 2 || aSide > 5 || aSide == mFacing) return false; // :796 no-op + the horizontal domain
 		mFacing = aSide;
+		updateAccessibleSlots(); // the upstream onFacingChange :1005 beat
 		setChanged();
 		applyVisualState();
 		return true;
@@ -1236,6 +1539,20 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		if (aNBT.contains(NBT_ACTIVE)) mActive = aNBT.getBoolean(NBT_ACTIVE); // :116
 		if (aNBT.contains(NBT_RUNNING)) mRunning = aNBT.getBoolean(NBT_RUNNING); // :118
 		if (aNBT.contains(NBT_STATE + ".new")) mStateNew = aNBT.getBoolean(NBT_STATE + ".new"); // :119 — mStateOld stays false, the first active tick's :865 shift re-derives it
+		// the registration-config family (task p16-machine-side-io ①②③) — hasKey-guarded
+		// legs over NEVER-persisted keys (the upstream writeToNBT2 writes none of them), so
+		// absent keys keep the constructor/applyRow values (the p14
+		// loadKeepsTheConstructorInjectedConfig contract) while /data merge (the port form of
+		// the upstream registry's placement-NBT re-feed) can override live
+		if (aNBT.contains(NBT_ITEM_SIDE_IN, Tag.TAG_ANY_NUMERIC)) mItemInputs = (byte)(aNBT.getByte(NBT_ITEM_SIDE_IN) | SBIT_A); // :137
+		if (aNBT.contains(NBT_ITEM_SIDE_OUT, Tag.TAG_ANY_NUMERIC)) mItemOutputs = (byte)(aNBT.getByte(NBT_ITEM_SIDE_OUT) | SBIT_A); // :138
+		if (aNBT.contains(NBT_TANK_SIDE_IN, Tag.TAG_ANY_NUMERIC)) mFluidInputs = (byte)(aNBT.getByte(NBT_TANK_SIDE_IN) | SBIT_A); // :143
+		if (aNBT.contains(NBT_TANK_SIDE_OUT, Tag.TAG_ANY_NUMERIC)) mFluidOutputs = (byte)(aNBT.getByte(NBT_TANK_SIDE_OUT) | SBIT_A); // :144
+		if (aNBT.contains(NBT_TANK_SIDE_AUTO_IN, Tag.TAG_ANY_NUMERIC)) mFluidAutoInput = aNBT.getByte(NBT_TANK_SIDE_AUTO_IN); // :145 (no SBIT_A OR)
+		if (aNBT.contains(NBT_TANK_SIDE_AUTO_OUT, Tag.TAG_ANY_NUMERIC)) mFluidAutoOutput = aNBT.getByte(NBT_TANK_SIDE_AUTO_OUT); // :146
+		if (aNBT.contains(NBT_USE_OUTPUT_TANK)) mCanUseOutputTanks = aNBT.getBoolean(NBT_USE_OUTPUT_TANK); // :132
+		if (aNBT.contains(NBT_TANK_CAPACITY, Tag.TAG_ANY_NUMERIC)) mTankCapacity = FluidTankGT.bindInt(aNBT.getLong(NBT_TANK_CAPACITY)); // :157-158 (UT.Code.bindInt form)
+		applyTankCapacity(); // :160 — the tanks are constructed AT capacity before the content read below
 		if (aNBT.contains(NBT_OUTPUT, Tag.TAG_LIST)) {
 			ListTag tOutputs = aNBT.getList(NBT_OUTPUT, Tag.TAG_COMPOUND);
 			mOutputItems = new ItemStack[tOutputs.size()];
@@ -1245,9 +1562,8 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 			/*for (int i = 0; i < tOutputs.size(); i++) mOutputItems[i] = ItemStack.parseOptional(NBT_ACCESS, tOutputs.getCompound(i)); // 21.1: the codec parse face
 			*///?}
 		}
-		// :160/:162 — the tank CONTENT loads into the constructor-sized tanks (the capacity
-		// is the constructor's 1000/default ruling, never NBT-driven — NBT_TANK_CAPACITY is
-		// the pool item)
+		// :160/:162 — the tank CONTENT loads into the constructor-sized tanks; the capacity
+		// was re-armed above (NBT_TANK_CAPACITY / applyTankCapacity, the :157-160 form)
 		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].readFromNBT(aNBT, NBT_TANK + ".in." + i);
 		for (int i = 0; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, NBT_TANK + ".out." + i);
 		if (aNBT.contains(NBT_OUTPUT_FLUIDS, Tag.TAG_LIST)) {
@@ -1257,8 +1573,9 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 			for (int i = 0; i < tOutputFluids.size(); i++) mOutputFluids[i] = FluidStack.loadFluidStackFromNBT(tOutputFluids.getCompound(i));
 			//?} else {
 			/*for (int i = 0; i < tOutputFluids.size(); i++) mOutputFluids[i] = FluidStack.parseOptional(NBT_ACCESS, tOutputFluids.getCompound(i)); // 21.1: a failed parse lands EMPTY (the isEmpty consumers skip it like null)
-			*///?}
+			 *///?}
 		}
+		updateAccessibleSlots(); // :217 — the upstream readFromNBT2 tail (covers an NBT-carried facing too)
 	}
 
 	// ---------------------------------------------------------------------------
