@@ -2,15 +2,20 @@ package gregtech6.multiblock;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 import gregtech6.tileentity.multiblocks.ITileEntityMultiBlockController;
 
@@ -194,5 +199,117 @@ public final class GTMultiBlockStructureChecker {
 	private static BlockPos worldCell(BlockPos aControllerPos, byte aFacing, GTMultiBlockPattern aPattern, GTMultiBlockPattern.Cell aCell) {
 		int[] tOffset = aPattern.worldOffset(aFacing, aCell);
 		return aControllerPos.offset(tOffset[0], tOffset[1], tOffset[2]);
+	}
+
+	/**
+	 * The SET scaffold walk (task p16-form-scaffold — the ADR 2026-09-05-p16-formation-scoping
+	 * SET capability): the forming path that COMPLETES a structure from the acting player's
+	 * inventory before binding it. Mechanism-level clean-room over kTFRU's SET mode
+	 * (utils.java:78-96 {@code tryPlaceTile} + :136-141 — the missing-cell-gets-placed-from-
+	 * inventory idea only; no kTFRU code, table or type is transcribed, AGPL): the placement
+	 * and the consumption here ride the upstream {@code checkAndSetTarget} builder-wand beat
+	 * (Util :51-68) — the checker never writes a block by hand.
+	 *
+	 * <p><b>Plan, then execute</b> — the scaffold is transactional (the RCON contract
+	 * "insufficient stock ⇒ not formed AND not consumed"):
+	 * <ol>
+	 * <li>the pure CHECK pass (the null triple) diagnoses the world. Already formed ⇒ return
+	 *     with zero side effects (idempotent). Unloaded ⇒ return the guard verdict and the
+	 *     caller keeps its last verdict — nothing is scaffolded through an unloaded
+	 *     neighbourhood;</li>
+	 * <li>the plan classifies every failed cell. Scaffoldable = a FORMING cell standing in an
+	 *     {@code easyRep} world cell (the Util :160-163 ruling: air or replaceable) while the
+	 *     permission chain is open (the Util :166-168 ruling: null auto-approves, creative or
+	 *     OP(2) may edit). HARD failures — never scaffolded, never consumed: a wrong block
+	 *     standing in a forming cell, a part block present but foreign-claimed (the :70-75
+	 *     arbitration cannot be scaffolded away), a non-air hollow (fail-not-clear, and the
+	 *     scaffold must not clear what CHECK would not), a declaration-only mismatch (no
+	 *     forming expectation, nothing to place), a closed permission chain. Any hard failure
+	 *     ⇒ return that list: ZERO world writes, ZERO consumption;</li>
+	 * <li>the stock check: every scaffoldable cell needs one {@code partBlock} item, counted
+	 *     with the consume path's own matcher ({@code ItemStack.isSameItemSameTags}, Util
+	 *     :130); a creative player needs no stock (the Util :171-173 infinite-items ruling).
+	 *     Short stock is itself a hard failure ⇒ zero writes, zero consumption;</li>
+	 * <li>the execution rides {@link #check} twice, exactly the upstream onToolClick2 two-pass:
+	 *     pass A with the scaffold triple ({@code aClickedAt = null} = the whole structure is
+	 *     the target, Util :120) places and consumes at the planned cells and binds the
+	 *     standing ones; pass B is the plain null-triple walk that binds the freshly-placed
+	 *     cells — the stale-reference quirk (Util :94-99) means a cell placed in pass A only
+	 *     links on this follow-up pass. Pass B's verdict is the answer.</li>
+	 * </ol>
+	 *
+	 * <p><b>The inventory-free paths stay untouched:</b> this method ADDS a strategy beside
+	 * {@link #check} and never changes it — the 600-tick poll and the onTickFirst forced check
+	 * keep calling checkStructure2 with the three-null arm and behave exactly as before.
+	 */
+	public static FormedVerdict form(ITileEntityMultiBlockController aController, byte aFacing,
+			@Nullable Player aPlayer, @Nullable Container aInventory) {
+		GTMultiBlockPattern tPattern = aController.getStructurePattern();
+		if (tPattern == null) return new FormedVerdict(true, false, new ArrayList<>());
+
+		BlockEntity tSelf = (BlockEntity) aController;
+		Level tLevel = tSelf.getLevel();
+		if (tLevel == null) return new FormedVerdict(false, false, new ArrayList<>());
+
+		// beat 1 — the pure diagnosis; formed and unloaded are final answers with zero side effects
+		FormedVerdict tDiagnosis = check(aController, aFacing, null, null, null);
+		if (tDiagnosis.formed || tDiagnosis.unloaded) return tDiagnosis;
+
+		// beat 2 — the plan: scaffoldable cells collect demand, everything else is a hard failure
+		boolean tMayEdit = aPlayer == null || aPlayer.isCreative() || aPlayer.hasPermissions(2); // the Util.canEdit ruling
+		boolean tInfiniteItems = aPlayer != null && aPlayer.isCreative(); // the Util.hasInfiniteItems ruling
+		List<FailedCell> tHard = new ArrayList<>();
+		Map<Block, Integer> tDemand = new LinkedHashMap<>(); // declaration order — the first planned cell per block fronts the stock failure
+		Map<Block, FailedCell> tFront = new LinkedHashMap<>();
+		for (FailedCell tFailure : tDiagnosis.failedCells()) {
+			GTMultiBlockPattern.Cell tCell = tPattern.cells().get(tFailure.index);
+			if (tCell.forms()) {
+				BlockState tState = tLevel.getBlockState(tFailure.pos);
+				if (tState.isAir() || tState.canBeReplaced()) { // the Util.easyRep ruling
+					if (!tMayEdit) {
+						tHard.add(new FailedCell(tFailure.index, tCell, tFailure.pos, "no permission to scaffold"));
+						continue;
+					}
+					tDemand.merge(tCell.partBlock, 1, Integer::sum);
+					tFront.putIfAbsent(tCell.partBlock, tFailure);
+				} else if (tState.is(tCell.partBlock)) {
+					tHard.add(new FailedCell(tFailure.index, tCell, tFailure.pos, "part cell foreign-claimed (scaffolding cannot fix)"));
+				} else {
+					tHard.add(new FailedCell(tFailure.index, tCell, tFailure.pos, "part cell wrong block (scaffolding cannot fix)"));
+				}
+			} else if (tCell.isHollow()) {
+				tHard.add(new FailedCell(tFailure.index, tCell, tFailure.pos, "hollow cell must be air (never scaffolded)"));
+			} else {
+				tHard.add(new FailedCell(tFailure.index, tCell, tFailure.pos, "declaration-only cell does not match (never scaffolded)"));
+			}
+		}
+
+		// beat 3 — the stock check: short stock is a hard failure BEFORE anything is placed or consumed
+		if (aInventory != null && !tInfiniteItems) {
+			for (Map.Entry<Block, Integer> tEntry : tDemand.entrySet()) {
+				int tHave = countMatching(aInventory, tEntry.getKey());
+				if (tHave < tEntry.getValue()) {
+					FailedCell tFrontCell = tFront.get(tEntry.getKey());
+					tHard.add(new FailedCell(tFrontCell.index, tPattern.cells().get(tFrontCell.index), tFrontCell.pos,
+							"insufficient stock: needs " + tEntry.getValue() + ", has " + tHave + " of " + tEntry.getKey().getDescriptionId()));
+				}
+			}
+		}
+		if (!tHard.isEmpty()) return new FormedVerdict(false, false, tHard);
+
+		// beat 4 — the execution: the SET placement pass, then the linking pass (the two-pass wand)
+		check(aController, aFacing, null, aPlayer, aInventory);
+		return check(aController, aFacing, null, null, null);
+	}
+
+	/** The stock census — the consume path's own matcher (Util :130), so what we count is what the wand beat consumes. */
+	private static int countMatching(Container aInventory, Block aBlock) {
+		ItemStack tWanted = new ItemStack(aBlock);
+		int rCount = 0;
+		for (int i = 0; i < aInventory.getContainerSize(); i++) {
+			ItemStack tStack = aInventory.getItem(i);
+			if (ItemStack.isSameItemSameTags(tWanted, tStack)) rCount += tStack.getCount();
+		}
+		return rCount;
 	}
 }
