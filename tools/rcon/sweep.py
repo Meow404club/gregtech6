@@ -43,7 +43,10 @@ import gt6world
 
 # The full set in session order: coordinate-band clusters (see --plan). The
 # p14 dryer and p14 loop bands share the (100, 64, 100) site — same cluster so
-# each one's boundary cleanup covers the other's leftovers.
+# each one's boundary cleanup covers the other's leftovers. The p16 cluster
+# (registered P17, card p17-rcon-framework-fixes) is the eight P16-card
+# chains; their per-chain 2577x pins are per-boot semantics — a shared session
+# boot follows framework.session_ports policy instead.
 SESSION_GROUPS = (
     ("p11_cover_shutter_filter", "p12-engine-crank", "p12-axle-family",
      "p12-gearbox-transformer", "p12-engine-diesel", "p12-engine-steam",
@@ -53,6 +56,9 @@ SESSION_GROUPS = (
      "p13_steam_proof_repay"),
     ("p14_dryer_family", "p14_loop_closure", "p13_boiler_tank"),
     ("p14_boiler_distw_immunity", "p13_large_boiler"),
+    ("p16_pattern_checker", "p16_aqua_fluids", "p16_side_io",
+     "p16_machine_fluid_gui", "p16_drying_rows", "p16_form_scaffold",
+     "p16_chisel", "p16_distillery"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
