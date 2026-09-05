@@ -599,3 +599,23 @@ the card's tooling).
   `machines/multiblockmains/largeboiler/` or `metalwalldense` texture group in this
   snapshot (the cokeoven census repeated); the borrow-or-declare rule keeps the
   script-generated placeholders.
+
+Dryer GUI background texture, task p16-machine-fluid-gui: the 1 PNG
+`gt6/textures/gui/machines/dryer.png` comes from upstream
+`src/main/resources/assets/gregtech/textures/gui/machines/Dryer.png`
+(256x256, the GTGuiScreen 176x166 panel canvas), byte-identical to upstream,
+sha256 verified:
+
+- `dryer.png`   `8bb2f8a89129ba44112d02ed2168c47df9f098d9098303e0505acc688090ac5e`
+
+Path mapping (the p7-gui-family / p8-cokeoven-gui-menu precedents): upstream
+`machines/Dryer` is lowercased to `machines/dryer` (1.20.1 `ResourceLocation`
+charset) — the lowercased path is exactly what the DRYING RecipeMap declares
+(`gt6:textures/gui/machines/dryer`, GT6RecipeMaps the p14 W1b card), parsed by
+`GTBasicMachineScreen.backgroundOf`. The upstream canvas paints its slot frames
+at the same coordinates the port's menu code uses (input (53,25), the 1-output
+arm (107,25), the :267-268 fluid display banks (53,63)/(107,125,143,63)), so
+the borrowed canvas and the port slot geometry align by construction.
+
+Copied on 2026-09-05. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
