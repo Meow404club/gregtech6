@@ -56,6 +56,11 @@ public final class GT6ItemModels extends ItemModelProvider {
         // borrow (assets/README.md attribution)
         withExistingParent("cutter", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/cutter"));
+        // the formal chisel item (task p16-chisel-decalcify): handheld parent = the vanilla
+        // tool shape (the crowbar row shape), texture = the upstream HANDLE_CHISEL.png
+        // borrow (assets/README.md attribution)
+        withExistingParent("chisel", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/chisel"));
         // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)

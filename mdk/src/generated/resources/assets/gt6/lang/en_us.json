@@ -3154,6 +3154,7 @@
   "gt6.tagprefix.wire_gt15": "15x %s Wire",
   "gt6.tagprefix.wire_gt16": "16x %s Wire",
   "gt6.tagprefix.wood": "%s",
+  "item.gt6.chisel": "Chisel",
   "item.gt6.cover_auto_redstone_machine_switch": "Auto Redstone Machine Switch",
   "item.gt6.cover_controller": "Cover Controller",
   "item.gt6.cover_conveyor_0": "Compact Electric Conveyor (ULV)",
