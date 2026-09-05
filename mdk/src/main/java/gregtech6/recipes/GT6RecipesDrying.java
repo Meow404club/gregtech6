@@ -39,28 +39,27 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import gregtech6.fluid.GTFluids;
 
 /**
- * The RM.Drying water-family pour — task p14-loop-closure-chain, the port counterpart of
- * the {@code RM.Drying.addRecipe0} rows of Loader_Recipes_Chem.java:525-532 (the
- * water-to-distilled-water half of the DRYING map; the ice/snow rows :510-522 and the
- * Distillery rows :534-541 stay pooled per the architect ruling — the Distillery half is
- * circuit-selector-gated upstream, the ice family needs MT.Ice/MT.Snow items).
+ * The RM.Drying recipe book — task p14-loop-closure-chain (the water family foundation)
+ * extended by task p16-drying-rows-backfill: the port counterpart of the
+ * {@code RM.Drying} rows of Loader_Recipes_Chem.java:525-532 (the water-to-distilled-water
+ * half) — the ice/snow rows :510-522 land with the same card, the Distillery rows
+ * :534-541 stay pooled (the circuit-selector-gated half, the distillery card's domain).
  *
- * <p><b>The one poured row</b> (:525): {@code Water 10 L → DistW 8 L}, EUt 16, duration
- * 16, the {@code addRecipe0(T, ...)} buffered fluid-only shape — the canonical
- * distillation loop row: the Dryer family (task p14-dryer-family) consumes it bottom-HU,
- * and the distilled output feeds the boiler immunity seam (task p14-boiler-distw-immunity)
- * closing the P14 canonical loop.
+ * <p><b>The seven poured water rows</b> (:525-532): {@code Water 10 → DistW 8} (:525, the
+ * canonical distillation loop row that closes the P14 loop), then the p16 backfill —
+ * {@code SpDew 10 → 8} (:526), {@code MnWtr 10 → 8} (:527), {@code Water_Geothermal 25 →
+ * 20} (:528), {@code Water_Boiling 25 → 20} (:529), {@code Hot_Water 25 → 20} (:531) and
+ * {@code Cold_Water 25 → 20} (:532) — all EUt 16, duration 16, the buffered
+ * {@code addRecipe0(T, ...)} fluid-only shape. Six of the seven inputs are the
+ * {@link GTFluids.AQUA_SPECS} registrations of task p16-aqua-fluids (spdew/mnwtr/
+ * water_geothermal/water_boiling/hot_water/cold_water); water is vanilla.
  *
- * <p><b>The seven pooled rows</b> (:526-532) ride the table as DATA with the census
- * verdict: {@code SpDew} (:526), {@code MnWtr} (:527), {@code Water_Geothermal} (:528),
- * {@code Water_Boiling} (:529), {@code Water_Hot} (:530), {@code Hot_Water} (:531) and
- * {@code Cold_Water} (:532) have NO registration in this port's {@link GTFluids} (the
- * full census: iron_molten, natural_gas, creosote, oil, steam, distilled_water, diesel,
- * kerosine, petrol, fuel, nitrofuel, jetfuel, ethanol — none of the water family), so the
- * rows skip with the upstream absent-fluid semantics instead of being poured against
- * nothing. The amounts (10/8 for the SpDew/MnWtr pair, 25/20 for the thermal five) are
- * transcribed verbatim so the drying-rows-backfill pool card pours them by deleting the
- * null arms of the resolver.
+ * <p><b>The one pooled water row</b> (:530): {@code Water_Hot} — the IC2 hot-water alias
+ * ("ic2hotwater", FL.java:116) is deliberately unregistered in this port (outside the
+ * p16-aqua-fluids six), so its row keeps the upstream absent-fluid skip: the resolver
+ * answers null and {@link #load()} drops the row with the upstream
+ * {@code if (FL.Water_Hot.exists())} guard semantics (the guard sits at the END of the
+ * :528 line, before the :529 pour).
  *
  * <p><b>Row shape</b>: fluid-in AND fluid-out, empty item arrays — the {@link RecipeMap#addRecipe}
  * ghost guard does not fire (the fluid leg is a real input). The offline lookup shape
@@ -72,8 +71,8 @@ import gregtech6.fluid.GTFluids;
  * <p><b>Load timing</b> (the GT6RecipesEngineFuels precedent, ADR ruling ②): a self-contained
  * MOD-bus listener pouring at FMLCommonSetup.enqueueWork — by then the DeferredRegisters of
  * {@link GTFluids} have fired, so the distilled-water output resolves. {@code load()} is
- * idempotent per JVM generation; the water family rows that lost their fluid skip SILENTLY
- * with a count (must not block the others).
+ * idempotent per JVM generation; rows that lose their fluid or item skip SILENTLY with a
+ * count (must not block the others).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6RecipesDrying {
@@ -88,8 +87,9 @@ public final class GT6RecipesDrying {
 
 	/**
 	 * The fluid seam: the live lookups by default (vanilla water in, the registered
-	 * distilled water out, the census nulls for the seven pooled ids), fixtures injected
-	 * offline (the GT6RecipesEngineFuels sFluidResolver precedent).
+	 * distilled water out, the six p16-aqua-fluids registrations, and the deliberate
+	 * null for the unregistered water_hot alias), fixtures injected offline (the
+	 * GT6RecipesEngineFuels sFluidResolver precedent).
 	 */
 	static Function<String, Fluid> sFluidResolver = GT6RecipesDrying::resolveFluid;
 
@@ -112,9 +112,9 @@ public final class GT6RecipesDrying {
 	public static List<DryingRow> table() {
 		List<DryingRow> tTable = sTable;
 		if (tTable == null) sTable = tTable = List.of(
-		// Loader_Recipes_Chem.java:525 — the Water row, the one this port pours
+		// Loader_Recipes_Chem.java:525 — the Water row, the P14 loop-closure foundation
 		new DryingRow(":525", FLUID_WATER     , 10,  8),
-		// Loader_Recipes_Chem.java:526-532 — the seven pooled rows (no port fluid, the census)
+		// Loader_Recipes_Chem.java:526-532 — the p16-aqua-fluids six + the :530 pooled alias
 		new DryingRow(":526", FLUID_SPDEW     , 10,  8),
 		new DryingRow(":527", FLUID_MNWTR     , 10,  8),
 		new DryingRow(":528", FLUID_GEOTHERMAL, 25, 20),
@@ -168,19 +168,26 @@ public final class GT6RecipesDrying {
 	}
 
 	/**
-	 * The live fluid lookup — vanilla water for the input row (no registration involved),
-	 * the registered distilled water for the output, and NULL for the seven pooled water
-	 * family ids: the port's GTFluids census registers none of them, and a null makes the
-	 * row skip exactly like an upstream {@code if (FL.X.exists())} guard around its pour
-	 * line. Only invoked at load() time (the registers are live) or through injected
-	 * offline fixtures.
+	 * The live fluid lookup — vanilla water for the :525 row, the registered distilled
+	 * water for the output, the six p16-aqua-fluids registrations for the :526-529/:531-532
+	 * rows (the RegistryObjects are live at load() time), and NULL for the water_hot alias
+	 * (:530 — "ic2hotwater", FL.java:116, unregistered in this port): a null makes the row
+	 * skip exactly like the upstream {@code if (FL.Water_Hot.exists())} guard around its
+	 * pour line. Fixtures replace the whole function offline (the tests never touch the
+	 * RegistryObjects outside a live registry).
 	 */
 	@Nullable
 	static Fluid resolveFluid(String aFluidId) {
 		return switch (aFluidId) {
-			case FLUID_WATER -> Fluids.WATER;
-			case FLUID_DISTW -> GTFluids.DISTILLED_WATER.source.get();
-			default -> null; // SpDew/MnWtr/Geothermal/Boiling/Hot/HotWater/Cold — the pooled census rows
+			case FLUID_WATER       -> Fluids.WATER;
+			case FLUID_DISTW       -> GTFluids.DISTILLED_WATER.source.get();
+			case FLUID_SPDEW       -> GTFluids.SPDEW.source.get();
+			case FLUID_MNWTR       -> GTFluids.MNWTR.source.get();
+			case FLUID_GEOTHERMAL  -> GTFluids.WATER_GEOTHERMAL.source.get();
+			case FLUID_BOILING     -> GTFluids.WATER_BOILING.source.get();
+			case FLUID_HOT_WATER   -> GTFluids.HOT_WATER.source.get();
+			case FLUID_COLD        -> GTFluids.COLD_WATER.source.get();
+			default -> null; // FLUID_HOT (:530) — the absent-fluid skip, the IC2 alias stands unregistered
 		};
 	}
 
