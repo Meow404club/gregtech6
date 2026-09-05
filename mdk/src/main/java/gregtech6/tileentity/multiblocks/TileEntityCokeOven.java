@@ -2,8 +2,6 @@ package gregtech6.tileentity.multiblocks;
 
 import javax.annotation.Nullable;
 
-import java.util.function.Predicate;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
@@ -22,6 +20,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 import gregtech6.multiblock.GTMultiBlockPattern;
+import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
@@ -29,13 +28,16 @@ import gregtech6.registry.GTMultiBlocks;
  * gregtech/tileentity/multiblocks/MultiTileEntityCokeOven.java:44-103 (structure face:
  * task p4-multiblock-framework W3; machine face: task p6-cokeoven-processing).
  *
- * <p>checkStructure2 (:46-60) verbatim: the 3x3x3 loop around the cell behind the facing
+ * <p>checkStructure2 (:46-60): the 3x3x3 loop around the cell behind the facing
  * (getOffsetXN/YN/ZN arithmetic — "Main Block centered on Side and facing outwards"), the
  * loaded-chunk guard on the four corners (:48, upstream worldObj.blockExists →
  * {@code isLoaded}), the centre cell forced to the upstream getAir/setBlockToAir pair (:52 —
  * a non-air centre is a failure, NOT a silent clear), and
  * {@code checkAndSetTarget} for the other 26 cells (:54) with the upstream mode
- * {@link MultiBlockPartBlockEntity#ONLY_ITEM_FLUID_ENERGY} and design 0.
+ * {@link MultiBlockPartBlockEntity#ONLY_ITEM_FLUID_ENERGY} and design 0. Since
+ * p16-pattern-checker the WALK is the shared checker over the bound pattern (task ③, the
+ * production pilot) — the upstream semantics above are what the pattern declares, not a
+ * second hand-written copy.
  *
  * <p>Port substitutions:
  * <ul>
@@ -47,9 +49,10 @@ import gregtech6.registry.GTMultiBlocks;
  *     parallel/ignition business and the fluid push live there — this class carries only
  *     the Coke Oven shape and its fluid-output scan;</li>
  * <li>isInsideStructure (:76-79) verbatim bounding box;</li>
- * <li>{@link #getStructurePattern()} (task p12-ghost-pattern-api): the shape above,
- *     declared for client-side display consumers — display data only, the check itself
- *     is untouched;</li>
+ * <li>{@link #getStructurePattern()} (task p12-ghost-pattern-api, enriched by
+ *     p16-pattern-checker): the shape above, now carrying the forming expectation —
+ *     since the ADR 2026-09-05-p16-formation-scoping the pattern is the check
+ *     ({@link #checkStructure2} walks it through the shared checker);</li>
  * <li>{@link #getFluidOutputTarget(Fluid)} (:84-96 verbatim shape): the cache-then-rescan
  *     fluid target one layer BELOW the structure (tY-2 relative to the facing offsets,
  *     :87) scanned as a 3x3 (:88); the upstream {@code WD.te(..., SIDE_TOP)} +
@@ -99,26 +102,26 @@ public class TileEntityCokeOven extends TileEntityBase10MultiBlockMachine {
 	}
 
 	/**
-	 * The declared structure pattern ({@link GTMultiBlockPattern} binding,
-	 * task p12-ghost-pattern-api): the 26 brick cells in the upstream checkStructure2 loop
-	 * order (:97-111, {@code i} outer / {@code j} middle / {@code k} inner — the same loop
-	 * {@link #checkStructure2} walks) plus the hollow air centre appended (:52 — a non-air
-	 * centre is a check failure, NOT a silent clear). Declared, never derived by running
-	 * checkStructure2: its centre cell writes the world (:100-101, the upstream
-	 * setBlockToAir pair) and the pattern carries none of the check's backfill semantics.
-	 * The brick judgement reuses the {@link #getPartBlock()} hook, so the offline fixture
-	 * binding flows into the pattern automatically. Read-only display data —
-	 * {@link #checkStructure2} is untouched and never consults it.
+	 * The declared structure pattern ({@link GTMultiBlockPattern} binding, task
+	 * p12-ghost-pattern-api + the p16-pattern-checker enrichment): the 26 brick cells in
+	 * the upstream checkStructure2 loop order (:97-111, {@code i} outer / {@code j}
+	 * middle / {@code k} inner — the loop order the checker no longer needs to rediscover)
+	 * plus the hollow air centre appended (:52 — a non-air centre is a check failure, NOT
+	 * a silent clear). Each brick cell carries the FULL forming expectation — part block
+	 * {@link #getPartBlock()}, design 0, usage {@link MultiBlockPartBlockEntity#ONLY_ITEM_FLUID_ENERGY}
+	 * — exactly the triple the hand-written loop passed checkAndSetTarget; since
+	 * p16-pattern-checker the pattern IS the check ({@link #checkStructure2} walks it
+	 * through the shared checker), ending the double bookkeeping. The binding is lazy,
+	 * never derived by running the old hand-written loop.
 	 */
 	@Override
 	@Nullable
 	public GTMultiBlockPattern getStructurePattern() {
 		if (mStructurePattern == null) {
-			Predicate<BlockState> tBrick = GTMultiBlockPattern.is(getPartBlock());
 			GTMultiBlockPattern.Builder tBuilder = GTMultiBlockPattern.builder();
 			for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) for (int k = -1; k <= 1; k++) {
 				if (i == 0 && j == 0 && k == 0) continue; // the centre — declared hollow below
-				tBuilder.part(i, j, k, tBrick);
+				tBuilder.formingPart(i, j, k, getPartBlock(), MultiBlockPartBlockEntity.ONLY_ITEM_FLUID_ENERGY, 0);
 			}
 			tBuilder.hollow(0, 0, 0, GTMultiBlockPattern.AIR);
 			mStructurePattern = tBuilder.build();
@@ -126,32 +129,24 @@ public class TileEntityCokeOven extends TileEntityBase10MultiBlockMachine {
 		return mStructurePattern;
 	}
 
-	/** Upstream :46-60 verbatim. */
+	/**
+	 * Upstream :46-60, now WALKED FROM THE PATTERN (task p16-pattern-checker ③ — the
+	 * production pilot): the shared checker resolves each cell through
+	 * {@link GTMultiBlockPattern#cellOffset} (the same getOffsetXN/YN/ZN anchor arithmetic
+	 * this loop used to inline), drives the same checkAndSetTarget path for the 26 bricks
+	 * and judges the centre fail-not-clear — one judgement source for the ghost preview
+	 * and the server check. The unloaded guard keeps the upstream semantics: the checker's
+	 * per-cell probe is the superset of the :48 four-corner form and an unloaded probe
+	 * keeps the last verdict (:59 — {@code return mStructureOkay}), as does the no-level
+	 * case (:133).
+	 */
 	@Override
 	public boolean checkStructure2(@Nullable BlockPos aCoordinates, @Nullable Player aPlayer, @Nullable Container aInventory) {
-		int tX = getOffsetXN(mFacing), tY = getOffsetYN(mFacing), tZ = getOffsetZN(mFacing);
-		if (!hasLevel()) return mStructureOkay;
-		if (getLevel().isLoaded(new BlockPos(tX - 1, tY, tZ - 1)) && getLevel().isLoaded(new BlockPos(tX + 1, tY, tZ - 1))
-				&& getLevel().isLoaded(new BlockPos(tX - 1, tY, tZ + 1)) && getLevel().isLoaded(new BlockPos(tX + 1, tY, tZ + 1))) {
-			boolean tSuccess = true;
-			for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) for (int k = -1; k <= 1; k++) {
-				if (i == 0 && j == 0 && k == 0) {
-					// upstream :52 — the centre must ALREADY be air; a non-air centre fails the check
-					if (getLevel().getBlockState(new BlockPos(tX + i, tY + j, tZ + k)).isAir()) {
-						getLevel().removeBlock(new BlockPos(tX + i, tY + j, tZ + k), false); // setBlockToAir
-					} else {
-						tSuccess = false;
-					}
-				} else {
-					if (!ITileEntityMultiBlockController.Util.checkAndSetTarget(this, tX + i, tY + j, tZ + k,
-							getPartBlock(), 0, MultiBlockPartBlockEntity.ONLY_ITEM_FLUID_ENERGY, aCoordinates, aPlayer, aInventory)) {
-						tSuccess = false;
-					}
-				}
-			}
-			return tSuccess;
-		}
-		return mStructureOkay; // :59 — unloaded corners keep the last verdict
+		if (!hasLevel()) return mStructureOkay; // :133
+		GTMultiBlockStructureChecker.FormedVerdict tVerdict = GTMultiBlockStructureChecker.check(
+				this, mFacing, aCoordinates, aPlayer, aInventory);
+		if (tVerdict.unloaded) return mStructureOkay; // :59 — unloaded cells keep the last verdict
+		return tVerdict.formed;
 	}
 
 	/** Upstream :76-79 verbatim. */
