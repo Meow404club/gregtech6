@@ -234,6 +234,13 @@ gt6server.stop_server(pid, rcon=("127.0.0.1", rcon_port, "gt6"))
 **禁泛 pkill/pgrep**——停服只走 RCON `stop` → 记录的 PID → 只属于我们 rcon 端口的
 JVM（`ss -ltnp` 按端口精确定位），gradle daemon 一律不碰。
 
+**boot 归属复核门（P17 机制化，任一不满足即 fail-fast `BootOwnershipError`）**：
+boot 前 `assert_ports_free` 在起服现场重跑 `ss -ltn`，本 boot 要绑的三个端口任一被占
+（含 pick 与 bind 之间的竞态窗口）即拒绝起服并报出占用者 pid——preferred 端口忙不触发
+此门（`pick_ports` 早已顺延到空闲值）；boot 后 `assert_pid_file` 读回 start_server 刚写
+的 pid 文件，内容必须等于本次 boot 的 wrapper pid——并行 boot 互踩 artifact 路径（P16
+session pid 互踩实证）在 boot 时炸，而不是收尾时把句柄指向别人进程。
+
 ### 世界层 gt6world（站点注册 + bbox 自动清场）
 
 ```python
@@ -259,7 +266,10 @@ teardown 断言：`store_null_command(pos)` + `STORE_NULL_EXPECT="store=null"`�
 
 **节点选择（P15 石匠矩阵起）**：链模块本身版本无关；启动节点由
 `Chain.node`（模块内钉死）或运行面 `--node <name>`（双节点横扫同一链不碰模块）决定，
-缺省 `1.20.1-forge`。节点决定两件事：gradle 任务 `:mdk:<node>:runServer`（裸
+缺省 `1.20.1-forge`。**节点会回写进 `chain.node`（P17）**——`Step.node_cmds` 的
+键形分叉按 `chain.node` 取值（session/perboot 两路都回写；P16 曾因 `run()` 不回写，
+side_io 的 21.1 腿 merge 误用 forge `{FluidName,Amount}` 形）。节点决定两件事：
+gradle 任务 `:mdk:<node>:runServer`（裸
 `:mdk:runServer` 已随石匠骨架消亡）与节点本地 run 目录 `mdk/versions/<node>/run`
 （eula/server.properties 各节点独立，世界存档互不污染）。双节点门禁（ADR-P15-4）
 = 同一链集合两节点各跑一遍（passes=2 幂等含内），全绿即 `[0,0]×2` 双节点。
@@ -347,10 +357,31 @@ python3 tools/rcon/sweep.py --mode session --dual ../MGT6GA-trees/<另一节点w
 ```
 
 结果（逐 step PASS/FAIL/ALLOWED 账本 + 每链/总 wall）落
-`/tmp/gt6_rs_sweep_<mode>_<节点后缀>.json`；session 端口按节点段错开
-（1.20.1=256xx、1.21.1=25752/25762/25772），artifact slug 带节点后缀。
-`--dual` 强制两 worktree 同 commit（gradle runServer 持项目锁，同 worktree
-双 boot 会被串行化——ADR-P15-4 双节点正典形态）。
+`/tmp/gt6_rs_sweep_<mode>_c<N>_<节点后缀>.json`。`--dual` 强制两 worktree 同 commit
+（gradle runServer 持项目锁，同 worktree 双 boot 会被串行化——ADR-P15-4 双节点正典形态）。
+
+**session artifact 命名（P17）**：session boot 的 log/pid 落
+`/tmp/gt6_rs_session_<节点后缀>_<链 slug 名册>-<worktree 哈希>.{log,pid}`——名册
+（排序去重的链 slug，超长折叠稳定哈希）标识本 boot 跑了什么，worktree 哈希隔离并行
+worktree 的同名 boot。旧裸名 `session_<节点后缀>` 已废（同节点段并行 session 曾互踩
+pid，P16 首跑被外部 SIGTERM 实证；无代码读取方，干净改名）。
+
+**session 端口策略（P17）**：一次 session 只绑一个 (rcon, query, game) 三元组，链经
+session 的 rcon 端口连接（链自己的 `preferred_ports` 是 per-boot 语义）。裁决
+（`framework.session_ports`）：链中恰有一种非缺省声明 → 以它锚定 boot（单链 session
+与其 per-chain boot 编址完全一致；game = rcon-10 或链钉 game_port）；无声明或声明
+分歧（常态：每链各钉一对是为了并行 per-chain boot 不打架）→ 回退 SESSION_PORTS
+节点段（1.20.1=256xx、1.21.1=25752/25762/25772，--dual 双腿靠它错开）。
+
+**全集簇（`--plan` 可视）**：p11/p12 带 → p13/p12 带 → p14 带 → p14 锅炉 →
+**p16 簇（P17 注册：pattern_checker / aqua_fluids / side_io / machine_fluid_gui /
+drying_rows / form_scaffold / chisel / distillery 八链，站点两两不相交）** →
+p15_runtime_smoke（fresh_boot 单例）。注册序 = perboot 顺序 + --plan 文档；
+session 跑法把全集摊平成一池（`run_session_recorded`）。
+
+**框架自检（无服干跑，~1s）**：`python3 tools/rcon/selftest.py`——以假 boot 面
+验证五项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
+名册化、session 端口策略、p16 簇注册、boot 归属门。退出码 0 = 全绿。
 
 ### 并发波执行（用户校准 2026-09-04：并发是主杠杆）
 
