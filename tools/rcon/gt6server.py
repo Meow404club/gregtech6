@@ -238,6 +238,61 @@ class ServerStartError(RuntimeError):
     """The boot process died before printing the Done marker."""
 
 
+class BootOwnershipError(RuntimeError):
+    """A boot-ownership gate failed: the framework refuses to boot onto (or
+    record a handle for) a foreign server — fail fast instead of connecting
+    blind (P16 closeout: the session model once attached to a stale-behavior
+    server, tasks.p16-pattern-checker; these gates mechanize the manual boot
+    ownership review that closeout ran by hand)."""
+
+
+def assert_ports_free(ports, label="boot"):
+    """Pre-boot ownership gate: every port THIS boot will bind must be free.
+
+    Re-runs `ss -ltn` at the boot site — pick_ports's freeness snapshot ages,
+    and a port grabbed between pick and bind would otherwise surface as a deep
+    Minecraft 'Failed to bind to port' minutes later. Here it fails fast,
+    naming the current owner pid. A busy PREFERRED port never trips this: the
+    caller's pick_ports already bumped to a free pick before the gate runs.
+    """
+    used = listening_ports()
+    taken = [port for port in ports if port in used]
+    if taken:
+        owners = {port: port_owner(port) for port in taken}
+        detail = ", ".join(f"{port} (pid {owner})" for port, owner in owners.items())
+        raise BootOwnershipError(
+            f"{label}: target port(s) not free before boot: {detail} — "
+            f"refusing to boot onto a foreign listener")
+    return True
+
+
+def assert_pid_file(pid_path, expected_pid, label="boot"):
+    """Post-boot ownership gate: the pid file records THIS boot's pid.
+
+    Read back and compared to the wrapper pid the boot just spawned: a file
+    clobbered by a parallel boot (or a stale leftover) would make the recorded
+    handle — stop_server's FIRST kill target — point at a foreign process.
+    Fail fast; the cleanup must never aim at someone else's pid.
+    """
+    try:
+        recorded = Path(pid_path).read_text(encoding="utf-8").strip()
+    except OSError as exc:
+        raise BootOwnershipError(
+            f"{label}: pid file {pid_path} unreadable after boot ({exc}) — "
+            f"refusing an unownable handle") from None
+    try:
+        recorded_pid = int(recorded)
+    except ValueError:
+        raise BootOwnershipError(
+            f"{label}: pid file {pid_path} holds garbage {recorded!r} — "
+            f"refusing an unownable handle") from None
+    if recorded_pid != int(expected_pid):
+        raise BootOwnershipError(
+            f"{label}: pid file {pid_path} records pid {recorded_pid}, expected "
+            f"THIS boot's pid {expected_pid} — refusing a foreign handle")
+    return True
+
+
 def wait_done(log_path, timeout=300.0, poll=1.0, pid=None):
     """Poll the log for the `Done (` marker. True = up; False = timed out.
 
@@ -276,6 +331,10 @@ def start_server(worktree, log_path, pid_path, gradle_task=GRADLE_TASK):
     finally:
         log.close()  # the child holds its own dup
     pid_path.write_text(f"{process.pid}\n", encoding="utf-8")
+    # post-boot ownership gate: read our own write back — a parallel boot
+    # clobbering this exact artifact path fails HERE, not at stop time when
+    # the recorded handle points at a foreign process (P17, P16 pid-stomp).
+    assert_pid_file(pid_path, process.pid, label=gradle_task)
     print(f"[gt6server] gradle pid {process.pid} -> {pid_path}, log -> {log_path}")
     return process.pid
 
