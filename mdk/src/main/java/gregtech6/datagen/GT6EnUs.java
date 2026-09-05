@@ -395,6 +395,16 @@ public class GT6EnUs extends LanguageProvider {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.DRYER_ROWS) {
             add("block.gt6." + tRow.path(), tRow.displayName());
         }
+        // task p16-distillery-family ② — the four Distillery rows, the same verbatim-name walk
+        // (Loader_MultiTileEntities.java:1398-1401, the MT.DATA.Heat_T[1..4] locals).
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.DISTILLERY_ROWS) {
+            add("block.gt6." + tRow.path(), tRow.displayName());
+        }
+        // task p16-distillery-family ① — the Integrated Circuit ("Selector Tag", the upstream
+        // registration name ItemIntegratedCircuit.java:50 verbatim) + the configuration
+        // tooltip ("Configuration: ", the LH line :54/:100; the number rides %s).
+        add("item.gt6.integrated_circuit", "Selector Tag");
+        add(gregtech6.item.GT6Circuits.TOOLTIP_KEY, "Configuration: %s");
         add("itemGroup.gt6.machines", "Machines");
     }
 
