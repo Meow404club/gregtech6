@@ -36,6 +36,8 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-03 | [2026-09-03-p13-boiler-family-split.md](2026-09-03-p13-boiler-family-split.md) | 锅炉族总拆定裁定：四波串行/端口/注册家/常量作用域纪律/爆炸纪律（同上重建成文） |
 | 2026-09-03 | [2026-09-03-p15-3-chisel-fork-discipline-r1.md](2026-09-03-p15-3-chisel-fork-discipline-r1.md) | ADR-P15-3 r1 成文：chisel 分叉三级优先序（下沉 gregapi > swap 表 > //?）+ javadoc 禁独占 //? 分支 |
 | 2026-09-03 | [2026-09-03-p15-10-monotone-shrink-gate-r1.md](2026-09-03-p15-10-monotone-shrink-gate-r1.md) | ADR-P15-10 r1 成文：1.21.1 单调收缩门禁口径钉 compileJava 红文件数；v1=W2 收官重测为真基线 |
+| 2026-09-05 | [2026-09-05-p16-blockstate-prop-identity.md](2026-09-05-p16-blockstate-prop-identity.md) | ADR-P16-2：BlockState Property 单一 owner（1.21.1 StateHolder Reference map 按 == 查 key；GTBlockProperties holder+类内别名） |
+| 2026-09-05 | [2026-09-05-p16-closeout-gate-ledger.md](2026-09-05-p16-closeout-gate-ledger.md) | P16 收口数据文档：四判据门禁总账 + 11 卡表 + 21.1 运行时 delta 三案 + P17 池移交 |
 
 ## 占位（历史 ADR，未回填，权威原文在 state `decisions` 账本与 docs/PROJECT_STATE.md）
 
