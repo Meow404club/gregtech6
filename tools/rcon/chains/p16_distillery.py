@@ -64,7 +64,10 @@ NEG = gt6world.Site(384, 64, 100, dx=1, dy=2, dz=1)
 # arm samples the whole DistW batch through the back face.
 TIERS = [
     # literal, pos, parallel, recIn, maxIn, eastFill, totalFill, batchTicks, draw
-    ("distillery",    T1, "parallel=8",  "recIn=32",   64,   20,  70,  40,   16),
+    # T1 takes EXACTLY its batch water: the world keeps ticking between RCON commands,
+    # so residual water keeps producing (the first pass over-delivered 40 L past the
+    # batch — the draw must land on a starved machine for a deterministic census)
+    ("distillery",    T1, "parallel=8",  "recIn=32",   64,   20,  20,  40,   16),
     ("distillery_t2", T2, "parallel=16", "recIn=128",  256,  30,  80,  140,  64),
     ("distillery_t3", T3, "parallel=32", "recIn=512",  1024, 270, 320, 530,  256),
     ("distillery_t4", T4, "parallel=64", "recIn=2048", 4096, 590, 640, 1040, 512),
@@ -84,7 +87,9 @@ for literal, pos, parallel, recin, maxin, fill, total, ticks, draw in TIERS:
         # the second tank-in half (world up, the SBIT_U column) — skipped on T1 (the
         # exact-batch fill cannot spare the 50 L); the NEG site carries the positive arm
         Step(f"gt6machine {literal} fluid fill up minecraft:water 50 {F(pos)}",
-             expect="filled 50/50 L of minecraft:water (ACCEPTED)"),
+             expect="filled 50/50 L of minecraft:water (ACCEPTED)") if literal != "distillery" else
+        Step(f"gt6machine {literal} fluid stat {F(pos)}",
+             expect=f"in[0]={total} L of minecraft:water"),
         # the negative arm — the OUT-only back (world south) refuses the fill
         Step(f"gt6machine {literal} fluid fill south minecraft:water 100 {F(pos)}",
              expect="filled 0/100 L of minecraft:water (REJECTED)"),
@@ -115,8 +120,11 @@ for literal, pos, parallel, recin, maxin, fill, total, ticks, draw in TIERS:
 steps += [
     phase("neg: water without the circuit selector — the item leg is real, 产出零"),
     Step(f"gt6machine distillery place {F(NEG)}", expect="GT6 distillery placed"),
-    Step(f"gt6machine distillery fluid fill east minecraft:water 1000 {F(NEG)}",
-         expect="filled 1000/1000 L of minecraft:water (ACCEPTED)"),
+    Step(f"gt6machine distillery fluid fill east minecraft:water 950 {F(NEG)}",
+         expect="filled 950/950 L of minecraft:water (ACCEPTED)"),
+    # the SBIT_U tank-in positive arm (T1's exact-batch fill cannot spare the 50 L)
+    Step(f"gt6machine distillery fluid fill up minecraft:water 50 {F(NEG)}",
+         expect="filled 50/50 L of minecraft:water (ACCEPTED)"),
     # NO circuit in the slot: the RM.java:70 mMinimalInputItems=1 gate starves the map
     Step(f"gt6machine distillery inject 40 64 {F(NEG)}", expect="progress=0/0"),
     Step(f"gt6machine distillery check {F(NEG)}", expect="active=false"),
