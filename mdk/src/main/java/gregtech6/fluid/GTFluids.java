@@ -67,6 +67,16 @@ import gregtech6.registry.GTFluidPipes;
  * fluid is the "rc jet fuel" compat name, FL.java:422 — the tint is a port-owned
  * declared value). The FM.Engine fuel rows that consume these fluids live in
  * {@link gregtech6.recipes.GT6RecipesEngineFuels}.
+ *
+ * <p>Aqua family (task p16-aqua-fluids): six further fluid-only rows — {@code spdew},
+ * {@code mnwtr}, {@code water_geothermal}, {@code water_boiling}, {@code hot_water},
+ * {@code cold_water} — registered through the same table-driven shape
+ * ({@link #AQUA_SPECS} + {@link #aquaFluid(String)}), which with the vanilla Water make
+ * the seven-row Drying input domain (Loader_Recipes_Chem.java:525-532); the drying rows
+ * that consume the ids live behind the GT6RecipesDrying resolver seam. Census rule of
+ * the card: parameters the upstream carries are transcribed; parameters it does not
+ * carry (the whole water_boiling definition, the tints) are honest FluidType defaults /
+ * port-owned declared values, never invented numbers — see {@link #AQUA_SPECS}.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTFluids {
@@ -437,6 +447,156 @@ public final class GTFluids {
 		return List.of(STEAM, DISTILLED_WATER, DIESEL, KEROSINE, PETROL, FUEL, NITROFUEL, JETFUEL, ETHANOL);
 	}
 
+	/**
+	 * One aqua-family declaration row (task p16-aqua-fluids) — the same offline-readable
+	 * data shape as {@link EngineFluidSpec} minus the gas flag (all six are liquids), plus
+	 * the display name inline (the lang walker reads it straight off the row, no side map).
+	 *
+	 * @param name        the gt6 registry path — the ids the downstream drying table pins
+	 *                    (GT6RecipesDrying.FLUID_SPDEW..FLUID_COLD, "the upstream FL
+	 *                    shorthands, snake-cased"), NOT the upstream 1.7.10 fluid literal
+	 *                    where the two differ (spdew/spectral_dew, mnwtr/potion.mineralwater,
+	 *                    water_geothermal/watergeothermal, water_boiling/boilingwater)
+	 * @param displayName the en_us lang value (upstream verbatim where GT6 defines the fluid)
+	 * @param temperature in K; density/viscosity the liquid carriers; tint ARGB over the
+	 *                    vanilla water textures (the iron_molten :81 precedent)
+	 */
+	public record AquaFluidSpec(String name, String displayName, int temperature, int density, int viscosity, int tint) {
+		/** The lang/description key, the descriptionId the FluidType is registered with. */
+		public String descriptionId() {return "fluid.gt6." + name;}
+	}
+
+	/**
+	 * The six aqua-family rows (task p16-aqua-fluids: SpDew/MnWtr/Geothermal/Boiling/Hot/
+	 * Cold), which with the vanilla Water make the seven-row Drying input domain of
+	 * Loader_Recipes_Chem.java:525-532. Every value is census-anchored, honestly defaulted
+	 * where the upstream carries no definition:
+	 * <ul>
+	 * <li>{@code spdew} — FL.java:113 "spectral_dew"; Loader_Fluids.java:362
+	 *     {@code FL.create(..., 1, 1000, 300)} — 300 K, display "Spectral Dew" verbatim;</li>
+	 * <li>{@code mnwtr} — FL.java:119 "potion.mineralwater"; Loader_Fluids.java:371
+	 *     {@code FL.create(..., 1, 1000, 300)} — 300 K, "Mineral Water" verbatim;</li>
+	 * <li>{@code water_geothermal} — FL.java:118 "watergeothermal"; Loader_Fluids.java:373
+	 *     {@code FL.create(..., 1, 1000, 320)} — 320 K, "Hot Spring Water" verbatim;</li>
+	 * <li>{@code water_boiling} — FL.java:117 "boilingwater" has NO GT6 Fluid definition
+	 *     (an external-mod fluid: every recipe row guards it with
+	 *     {@code FL.Water_Boiling.exists()}, Loader_Recipes_Chem.java:529) — the HONEST
+	 *     DEFAULT stands, not fabricated: the FluidType.Properties defaults (FluidType.java
+	 *     :924-926, density 1000 / temperature 300 / viscosity 1000) declared explicitly;</li>
+	 * <li>{@code hot_water} — FL.java:115 "hot_water" (external, the {@code // 60°C}
+	 *     annotation) — C+60 = 333 K, the same C = 273 (CS.java:132) constant the steam
+	 *     anchor FL.java:794 uses;</li>
+	 * <li>{@code cold_water} — FL.java:114 "cold_water" (external, {@code // 15°C}) —
+	 *     C+15 = 288 K.</li>
+	 * </ul>
+	 *
+	 * <p>Density 1000 / viscosity 1000 on every row are the STATE_LIQUID semantics
+	 * (FL.java:1104 sets viscosity 1000 and leaves the density at the FluidType default —
+	 * the material-density formula FL.java:1124-1130 is skipped for material-null
+	 * registrations), which coincide with the FluidType.Properties defaults. The tints are
+	 * PORT-OWNED DECLARED VALUES (the JetFuel precedent): the upstream FL.create aRGBa is
+	 * null/UNCOLOURED for material-null fluids (FL.java:1094) — the 1.7.10 fluids carry
+	 * dedicated texture PNGs this port does not have, so the vanilla-water layers take a
+	 * row tint. All six sit at or below 333 K — under the wood-barrel 340 K melting point
+	 * (GTBarrelCommand.WOOD_MELTING_POINT) — so the RCON chain carries them in wood
+	 * barrels. The upstream Water_Hot row ("ic2hotwater", FL.java:116, the IC2 hot-water
+	 * alias) is OUTSIDE this card's six — its drying row keeps the absent-fluid skip
+	 * (GT6RecipesDrying.buildRecipe null arm) until a card ever ports the alias.
+	 */
+	public static final List<AquaFluidSpec> AQUA_SPECS = List.of(
+		new AquaFluidSpec("spdew"           , "Spectral Dew"    , 300, 1000, 1000, 0x99C8E6FF), // Loader_Fluids.java:362 — ghostly translucent blue
+		new AquaFluidSpec("mnwtr"           , "Mineral Water"   , 300, 1000, 1000, 0xFF8ED8C0), // Loader_Fluids.java:371 — light mineral green
+		new AquaFluidSpec("water_geothermal", "Hot Spring Water", 320, 1000, 1000, 0xFF3EC8B4), // Loader_Fluids.java:373 — hot-spring turquoise
+		new AquaFluidSpec("water_boiling"   , "Boiling Water"   , 300, 1000, 1000, 0xFFB4D2E8), // no upstream definition — honest FluidType defaults
+		new AquaFluidSpec("hot_water"       , "Hot Water"       , 333, 1000, 1000, 0xFF6E6EDE), // FL.java:115 // 60°C
+		new AquaFluidSpec("cold_water"      , "Cold Water"      , 288, 1000, 1000, 0xFFBDE8FF));// FL.java:114 // 15°C
+
+	/** The aqua row for a gt6 id path, or null (the {@link #engineSpec} lookup shape). */
+	public static AquaFluidSpec aquaSpec(String aName) {
+		for (AquaFluidSpec tSpec : AQUA_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/** One registered aqua family: the declared spec + the three live handles. Fluid-only — no block, no bucket. */
+	public static final class AquaFluid {
+		/** The declaration row ({@link #AQUA_SPECS}); the offline-readable half. */
+		public final AquaFluidSpec spec;
+		public final RegistryObject<FluidType> type;
+		public final RegistryObject<FlowingFluid> source;
+		public final RegistryObject<Fluid> flowing;
+
+		AquaFluid(AquaFluidSpec aSpec, RegistryObject<FluidType> aType, RegistryObject<FlowingFluid> aSource, RegistryObject<Fluid> aFlowing) {
+			spec = aSpec; type = aType; source = aSource; flowing = aFlowing;
+		}
+	}
+
+	/**
+	 * The table-driven registration helper for one aqua row — the {@link #engineFluid}
+	 * shape verbatim: FluidType carrying the declared temperature/density/viscosity,
+	 * Source/Flowing over one shared Properties, NO LiquidBlock and NO bucket (the
+	 * fluid-only declaration; the bucket container behaviour is out of the card scope).
+	 * Client layers reuse the vanilla water textures over the row's tint (the
+	 * natural_gas initializeClient shape). Shares the SOURCE_SEAM/FLOWING_SEAM maps —
+	 * the Properties are built at registry-event time (see engineFluid).
+	 */
+	private static AquaFluid aquaFluid(String aName) {
+		AquaFluidSpec tSpec = aquaSpec(aName);
+		if (tSpec == null) throw new IllegalArgumentException("no aqua fluid spec: " + aName);
+		RegistryObject<FluidType> tType = FLUID_TYPES.register(tSpec.name(), () -> new FluidType(FluidType.Properties.create()
+				.descriptionId(tSpec.descriptionId())
+				.temperature(tSpec.temperature())
+				.density(tSpec.density())
+				.viscosity(tSpec.viscosity())) {
+			@Override
+			public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+				aConsumer.accept(new IClientFluidTypeExtensions() {
+					private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
+					private static final ResourceLocation FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
+
+					@Override
+					public ResourceLocation getStillTexture() {return STILL;}
+
+					@Override
+					public ResourceLocation getFlowingTexture() {return FLOW;}
+
+					@Override
+					public int getTintColor() {return tSpec.tint();}
+				});
+			}
+		});
+		RegistryObject<FlowingFluid> tSource = FLUIDS.register(tSpec.name(),
+				() -> new ForgeFlowingFluid.Source(aquaProperties(tSpec, tType)));
+		RegistryObject<Fluid> tFlowing = FLUIDS.register(tSpec.name() + "_flowing",
+				() -> new ForgeFlowingFluid.Flowing(aquaProperties(tSpec, tType)));
+		SOURCE_SEAM.put(tSpec.name(), tSource);
+		FLOWING_SEAM.put(tSpec.name(), tFlowing);
+		return new AquaFluid(tSpec, tType, tSource, tFlowing);
+	}
+
+	/** The shared per-family Properties for the aqua rows — called at registry-event time only (see aquaFluid). */
+	private static ForgeFlowingFluid.Properties aquaProperties(AquaFluidSpec aSpec, RegistryObject<FluidType> aType) {
+		// NO .block(...) — the fluid-only declaration of this card
+		return new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aSpec.name()), FLOWING_SEAM.get(aSpec.name()));
+	}
+
+	/**
+	 * The six aqua-family registrations — one line per fluid family, data from
+	 * {@link #AQUA_SPECS}. Static-init order: the DeferredRegister fields above are
+	 * initialized first, the entries accumulate and fire with the existing
+	 * {@link #onModConstruct} (types before fluids, FluidTypeTest.java:169-172 order).
+	 */
+	public static final AquaFluid SPDEW            = aquaFluid("spdew");
+	public static final AquaFluid MNWTR            = aquaFluid("mnwtr");
+	public static final AquaFluid WATER_GEOTHERMAL = aquaFluid("water_geothermal");
+	public static final AquaFluid WATER_BOILING    = aquaFluid("water_boiling");
+	public static final AquaFluid HOT_WATER        = aquaFluid("hot_water");
+	public static final AquaFluid COLD_WATER       = aquaFluid("cold_water");
+
+	/** The six registered families in {@link #AQUA_SPECS} declaration order (the lang/table walkers). */
+	public static List<AquaFluid> aquaFluids() {
+		return List.of(SPDEW, MNWTR, WATER_GEOTHERMAL, WATER_BOILING, HOT_WATER, COLD_WATER);
+	}
+
 	private GTFluids() {}
 
 	@SubscribeEvent
@@ -496,6 +656,15 @@ public final class GTFluids {
 						tFamily.spec.temperature(),
 						tFamily.spec.density(),
 						tFamily.spec.gas() ? " (gaseous)" : "");
+			}
+			// task p16-aqua-fluids — the aqua family, the same smoke line shape
+			for (AquaFluid tFamily : aquaFluids()) {
+				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (aqua family, {})",
+						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
+						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
+						tFamily.spec.temperature(),
+						tFamily.spec.density(),
+						tFamily.spec.displayName());
 			}
 		});
 	}
