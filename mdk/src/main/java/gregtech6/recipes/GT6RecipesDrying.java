@@ -20,14 +20,20 @@
 package gregtech6.recipes;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.RegistryObject;
 
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
@@ -36,7 +42,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import gregapi.data.MT;
+import gregapi.data.OP;
+import gregapi.oredict.OreDictMaterial;
+import gregapi.oredict.OreDictPrefix;
 import gregtech6.fluid.GTFluids;
+import gregtech6.registry.GTMaterialItems;
 
 /**
  * The RM.Drying recipe book — task p14-loop-closure-chain (the water family foundation)
@@ -60,6 +71,21 @@ import gregtech6.fluid.GTFluids;
  * answers null and {@link #load()} drops the row with the upstream
  * {@code if (FL.Water_Hot.exists())} guard semantics (the guard sits at the END of the
  * :528 line, before the :529 pour).
+ *
+ * <p><b>The ice/snow family</b> (:510-522, the p16-drying-rows-backfill second half): THIRTEEN
+ * one-item-input rows — the upstream census (the task card's "12" counts 12, the file holds 13
+ * lines, every one transcribed): six Ice dust/gem rows (:510-515), the two vanilla ice blocks
+ * (:516-517), three Snow dust rows (:518-520), the snowball (:521) and the vanilla snow block
+ * (:522). The {@code OM.dust(mat, U9/U4)} amounts become the
+ * dustTiny/dustSmall prefix items (OM.java:460-467: amount U9 → {@code OP.dustTiny.mat(mat, 1)},
+ * U4 → dustSmall, U → dust), the {@code gemChipped/gemFlawed/gem.mat(MT.Ice, 1)} calls map
+ * one-to-one. The vanilla identities are the flattening map: 1.7.10 {@code Blocks.snow} is the
+ * FULL snow block → 1.20.1 {@code Blocks#SNOW_BLOCK} (1.20.1 {@code Blocks#SNOW} is the LAYER
+ * block, Blocks.java:2147-2177); {@code Blocks.ice}/{@code packed_ice}/{@code Items.snowball}
+ * are unchanged. Every row: EUt 16, duration = 4× the output litres (the upstream
+ * {@code 111 * 4 .. 2000 * 4} literals), one item in → DistW out, the buffered
+ * {@code addRecipe1(T, ...)} shape. Unresolvable inputs skip with the upstream
+ * {@code mat()} null-drop semantics (the GT6RecipesShCL precedent).
  *
  * <p><b>Row shape</b>: fluid-in AND fluid-out, empty item arrays — the {@link RecipeMap#addRecipe}
  * ghost guard does not fire (the fluid leg is a real input). The offline lookup shape
@@ -125,6 +151,74 @@ public final class GT6RecipesDrying {
 		return tTable;
 	}
 
+	/**
+	 * The item/item seam for the ice family rows (the GT6RecipesShCL precedent): the live
+	 * lookups by default ({@link GTMaterialItems#get} and the vanilla supplier), fixtures
+	 * injected offline — new Items cannot be created offline, so the tests map the
+	 * (prefix, material) pairs onto distinct vanilla registry entries.
+	 */
+	static BiFunction<OreDictPrefix, OreDictMaterial, Item> sMaterialItemResolver = GT6RecipesDrying::resolveItem;
+	/** The vanilla item seam (only for offline determinism; live it just dereferences the supplier). */
+	static Function<Supplier<Item>, Item> sVanillaItemResolver = Supplier::get;
+
+	/**
+	 * One transcribed ice/snow row: the note of the Loader_Recipes_Chem.java line, the
+	 * single item input (a vanilla item reference or a (prefix, material) pair — always
+	 * stack size 1 upstream), the distilled output litres and the duration. EUt 16 is a
+	 * family constant (every :510-522 row carries it).
+	 */
+	public record IceRow(String note, @Nullable Supplier<Item> vanilla, @Nullable OreDictPrefix prefix,
+			@Nullable OreDictMaterial material, int count, long outAmount, long duration) {
+		/** The vanilla-block/item input form ({@code ST.make(Blocks.X, 1, W)} / {@code ST.make(Items.X, 1, W)}). */
+		public static IceRow ofVanilla(String aNote, Supplier<Item> aItem, long aOut, long aDuration) {
+			return new IceRow(aNote, aItem, null, null, 1, aOut, aDuration);
+		}
+
+		/** The material-item input form ({@code OM.dust(mat, amount)} / {@code prefix.mat(mat, 1)}). */
+		public static IceRow ofMaterial(String aNote, OreDictPrefix aPrefix, OreDictMaterial aMaterial, long aOut, long aDuration) {
+			return new IceRow(aNote, null, aPrefix, aMaterial, 1, aOut, aDuration);
+		}
+	}
+
+	/**
+	 * The thirteen transcribed ice/snow rows (Loader_Recipes_Chem.java:510-522), order
+	 * mirroring the upstream file order. Lazily built — the @EventBusSubscriber class-load
+	 * at MOD CONSTRUCTION runs before MT.init()/OP.init(), so the OP/MT references must
+	 * not be captured in static initializers (the a9027ac lesson, the ShCL javadoc:153-157).
+	 *
+	 * <p>The {@code OM.dust(mat, U9/U4)} rows become the dustTiny/dustSmall prefix items:
+	 * upstream OM.dust (OM.java:460-467) maps amount U9 → {@code OP.dustTiny.mat(mat, 1)},
+	 * U4 → {@code OP.dustSmall.mat(mat, 1)}, U → {@code OP.dust.mat(mat, 1)}. The :522
+	 * vanilla identity is 1.7.10 {@code Blocks.snow} (the FULL snow block) → 1.20.1
+	 * {@code Blocks#SNOW_BLOCK}; 1.20.1 {@code Blocks#SNOW} is the LAYER block.
+	 */
+	private static volatile List<IceRow> sIceTable = null;
+
+	/** The transcribed ice/snow rows, captured on first use (one material generation). */
+	public static List<IceRow> iceTable() {
+		List<IceRow> tTable = sIceTable;
+		if (tTable == null) sIceTable = tTable = List.of(
+		// Loader_Recipes_Chem.java:510-512 — the Ice dust ladder (OM.dust U9/U4/U)
+		IceRow.ofMaterial(":510", OP.dustTiny    , MT.Ice,  111,  111 * 4),
+		IceRow.ofMaterial(":511", OP.dustSmall   , MT.Ice,  250,  250 * 4),
+		IceRow.ofMaterial(":512", OP.dust        , MT.Ice, 1000, 1000 * 4),
+		// :513-515 — the Ice gem ladder (gemChipped/gemFlawed/gem, .mat(mat, 1) verbatim)
+		IceRow.ofMaterial(":513", OP.gemChipped  , MT.Ice,  250,  250 * 4),
+		IceRow.ofMaterial(":514", OP.gemFlawed   , MT.Ice,  500,  500 * 4),
+		IceRow.ofMaterial(":515", OP.gem         , MT.Ice, 1000, 1000 * 4),
+		// :516-517 — the vanilla ice blocks
+		IceRow.ofVanilla(":516", () -> Blocks.ICE.asItem()       , 1000, 1000 * 4),
+		IceRow.ofVanilla(":517", () -> Blocks.PACKED_ICE.asItem(), 2000, 2000 * 4),
+		// :518-520 — the Snow dust ladder (OM.dust U9/U4/U)
+		IceRow.ofMaterial(":518", OP.dustTiny    , MT.Snow,  111,  111 * 4),
+		IceRow.ofMaterial(":519", OP.dustSmall   , MT.Snow,  250,  250 * 4),
+		IceRow.ofMaterial(":520", OP.dust        , MT.Snow, 1000, 1000 * 4),
+		// :521-522 — the snowball and the vanilla snow BLOCK (:522, see the javadoc identity note)
+		IceRow.ofVanilla(":521", () -> Items.SNOWBALL            ,  250,  250 * 4),
+		IceRow.ofVanilla(":522", () -> Blocks.SNOW_BLOCK.asItem(), 1000, 1000 * 4));
+		return tTable;
+	}
+
 	/** Poured flag — one generation, one pour (upstream loaders run once per JVM). */
 	private static boolean sLoaded = false;
 
@@ -134,7 +228,7 @@ public final class GT6RecipesDrying {
 		aEvent.enqueueWork(GT6RecipesDrying::load);
 	}
 
-	/** Pours the Water row into {@link GT6RecipeMaps#DRYING}. Idempotent; unregistered-fluid rows skip with a count. */
+	/** Pours the water family rows and the ice/snow family rows into {@link GT6RecipeMaps#DRYING}. Idempotent; unresolvable rows skip with a count. */
 	public static synchronized void load() {
 		if (sLoaded) return;
 		GT6RecipeMaps.init(); // defensive + idempotent: the map exists from ConstructMod (GTMachines.java:91), tests may race it
@@ -148,8 +242,14 @@ public final class GT6RecipesDrying {
 			tMap.addRecipe(tRecipe);
 			tPoured++;
 		}
+		for (IceRow tRow : iceTable()) {
+			Recipe tRecipe = buildIceRecipe(tRow);
+			if (tRecipe == null) {tSkipped++; continue;} // the unresolvable-input silent skip (upstream mat() null drops)
+			tMap.addRecipe(tRecipe);
+			tPoured++;
+		}
 		sLoaded = true;
-		LOGGER.info("GT6 Drying poured: {} loaded, {} skipped (unregistered fluid ids, = upstream FL.exists drops)", tPoured, tSkipped);
+		LOGGER.info("GT6 Drying poured: {} loaded, {} skipped (unregistered fluid ids / unresolvable items, = upstream FL.exists + mat() drops)", tPoured, tSkipped);
 	}
 
 	/** Row → Recipe, or null when the fluid fails to resolve (the silent-skip semantics). */
@@ -165,6 +265,33 @@ public final class GT6RecipesDrying {
 				new FluidStack[] {new FluidStack(tInput, (int)aRow.inAmount())},
 				new FluidStack[] {new FluidStack(tOutput, (int)aRow.outAmount())},
 				16, 16, 0);
+	}
+
+	/**
+	 * Ice/snow row → Recipe, or null when the input item or the distilled fluid fails to
+	 * resolve (the upstream silent-drop semantics). The upstream
+	 * {@code addRecipe1(T, 16, dur, input, NF, FL.DistW.make(out), NI)} shape: buffered,
+	 * one item input, no fluid inputs, one fluid output, no item outputs, EUt 16.
+	 */
+	static Recipe buildIceRecipe(IceRow aRow) {
+		Item tInput = aRow.vanilla() != null
+				? sVanillaItemResolver.apply(aRow.vanilla())
+				: sMaterialItemResolver.apply(aRow.prefix(), aRow.material());
+		if (tInput == null) return null;
+		Fluid tOutput = sFluidResolver.apply(FLUID_DISTW);
+		if (tOutput == null) return null;
+		return new Recipe(true,
+				new ItemStack[] {new ItemStack(tInput, aRow.count())}, new ItemStack[0],
+				new FluidStack[0],
+				new FluidStack[] {new FluidStack(tOutput, (int)aRow.outAmount())},
+				aRow.duration(), 16, 0);
+	}
+
+	/** The live material-item lookup (GTMaterialItems.get) — null when the pair has no item-path item. */
+	@Nullable
+	static Item resolveItem(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
+		RegistryObject<Item> tHandle = GTMaterialItems.get(aPrefix, aMaterial);
+		return tHandle == null ? null : tHandle.get();
 	}
 
 	/**
@@ -191,8 +318,8 @@ public final class GT6RecipesDrying {
 		};
 	}
 
-	/** Test seam: clears the poured flag so a fresh generation can re-pour. */
-	static void resetForTest() {sLoaded = false;}
+	/** Test seam: clears the poured flag and the captured tables so a fresh generation can re-pour. */
+	static void resetForTest() {sLoaded = false; sIceTable = null;}
 
 	private GT6RecipesDrying() {}
 }

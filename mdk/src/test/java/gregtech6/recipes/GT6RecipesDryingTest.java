@@ -7,16 +7,33 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
+
+import gregapi.data.MT;
+import gregapi.data.OP;
+import gregapi.oredict.OreDictMaterial;
+import gregapi.oredict.OreDictPrefix;
+import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
  * The DRYING water-family pour offline tests (task p14-loop-closure-chain acceptance,
@@ -44,14 +61,38 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	@BeforeAll
 	static void captureDefaults() {
 		sDefaultFluidResolver = GT6RecipesDrying.sFluidResolver;
+		sDefaultMaterialResolver = GT6RecipesDrying.sMaterialItemResolver;
+		sDefaultVanillaResolver = GT6RecipesDrying.sVanillaItemResolver;
 	}
 
 	@AfterEach
 	void restoreResolvers() {
 		GT6RecipesDrying.sFluidResolver = sDefaultFluidResolver;
+		GT6RecipesDrying.sMaterialItemResolver = sDefaultMaterialResolver;
+		GT6RecipesDrying.sVanillaItemResolver = sDefaultVanillaResolver;
 		GT6RecipeMaps.reset();
 		GT6RecipesDrying.resetForTest();
 	}
+
+	private static BiFunction<OreDictPrefix, OreDictMaterial, Item> sDefaultMaterialResolver;
+	private static Function<Supplier<Item>, Item> sDefaultVanillaResolver;
+
+	/**
+	 * The synthetic offline universe for the ice family (the GT6RecipesShCLTest convention):
+	 * one distinct EXISTING item per (prefix, material) pair of the ice table — new Items
+	 * cannot be created offline (the intrusive vanilla item registry freezes at bootstrap),
+	 * so the driver maps pairs onto distinct vanilla registry entries; the recipe mechanics
+	 * only compare identities.
+	 */
+	private static final Map<PrefixMaterial, Item> SYNTHETIC_ITEMS = new HashMap<>();
+
+	/**
+	 * The vanilla items the ice table's vanilla rows use as inputs — kept out of the
+	 * synthetic pool so a lookup with one of them can only ever match its own row (a
+	 * synthetic (prefix, material) pair must never alias onto a vanilla row input).
+	 */
+	private static final Set<Item> RESERVED_VANILLA_ITEMS = Set.of(
+			Items.SNOWBALL, Blocks.ICE.asItem(), Blocks.PACKED_ICE.asItem(), Blocks.SNOW_BLOCK.asItem());
 
 	/** The transcription walk: eight rows, values per Loader_Recipes_Chem.java:525-532. */
 	@Test
@@ -83,6 +124,8 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	@Test
 	void loadPoursExactlyTheSevenWaterRows() {
 		GT6RecipesDrying.sFluidResolver = CENSUS_FIXTURE;
+		GT6RecipesDrying.sMaterialItemResolver = (aPrefix, aMaterial) -> null; // isolate the water family: every item row skips
+		GT6RecipesDrying.sVanillaItemResolver = s -> null;
 		GT6RecipesDrying.load();
 		assertEquals(7, GT6RecipeMaps.DRYING.mRecipeList.size(), "the seven registered water rows resolve; :530 pools");
 
@@ -198,5 +241,173 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 				"the live census: water_hot has no port fluid — the :530 row pools");
 		assertNull(GT6RecipesDrying.buildRecipe(new GT6RecipesDrying.DryingRow(":530", GT6RecipesDrying.FLUID_HOT, 25, 20)),
 				"a pooled row builds nothing (the silent-skip shape)");
+	}
+
+	// ==================================================================
+	// the ice/snow family (Loader_Recipes_Chem.java:510-522, task p16-drying-rows-backfill)
+	// ==================================================================
+
+	/** The transcription walk: thirteen rows, values per Loader_Recipes_Chem.java:510-522. */
+	@Test
+	void iceTableTranscribesTheUpstreamIceSnowFamily() {
+		List<GT6RecipesDrying.IceRow> tTable = GT6RecipesDrying.iceTable();
+		assertEquals(13, tTable.size(), "the upstream census: :510-522 holds thirteen rows (the task card said 12)");
+
+		assertIceRow(tTable, ":510", OP.dustTiny  , MT.Ice ,  111,  444);
+		assertIceRow(tTable, ":511", OP.dustSmall , MT.Ice ,  250, 1000);
+		assertIceRow(tTable, ":512", OP.dust      , MT.Ice , 1000, 4000);
+		assertIceRow(tTable, ":513", OP.gemChipped, MT.Ice ,  250, 1000);
+		assertIceRow(tTable, ":514", OP.gemFlawed , MT.Ice ,  500, 2000);
+		assertIceRow(tTable, ":515", OP.gem       , MT.Ice , 1000, 4000);
+		assertIceRow(tTable, ":518", OP.dustTiny  , MT.Snow,  111,  444);
+		assertIceRow(tTable, ":519", OP.dustSmall , MT.Snow,  250, 1000);
+		assertIceRow(tTable, ":520", OP.dust      , MT.Snow, 1000, 4000);
+
+		// the vanilla identities — the flattening map, :522 the FULL snow block (1.7.10
+		// Blocks.snow), NOT 1.20.1 Blocks.SNOW (the layer block, Blocks.java:2147-2177)
+		assertIceVanillaRow(tTable, ":516", Blocks.ICE.asItem()       , 1000, 4000);
+		assertIceVanillaRow(tTable, ":517", Blocks.PACKED_ICE.asItem(), 2000, 8000);
+		assertIceVanillaRow(tTable, ":521", Items.SNOWBALL            ,  250, 1000);
+		assertIceVanillaRow(tTable, ":522", Blocks.SNOW_BLOCK.asItem(), 1000, 4000);
+	}
+
+	private void assertIceRow(List<GT6RecipesDrying.IceRow> aTable, String aNote,
+			OreDictPrefix aPrefix, OreDictMaterial aMaterial, long aOut, long aDuration) {
+		GT6RecipesDrying.IceRow tRow = findIceRow(aTable, aNote);
+		assertSame(aPrefix, tRow.prefix(), "row " + aNote + ": the input prefix");
+		assertSame(aMaterial, tRow.material(), "row " + aNote + ": the input material");
+		assertEquals(1, tRow.count(), "row " + aNote + ": single-item input (upstream OM.dust/prefix.mat x1)");
+		assertEquals(aOut, tRow.outAmount(), "row " + aNote + ": the verbatim DistW litres");
+		assertEquals(aDuration, tRow.duration(), "row " + aNote + ": the verbatim 4x litres duration");
+	}
+
+	private void assertIceVanillaRow(List<GT6RecipesDrying.IceRow> aTable, String aNote, Item aItem, long aOut, long aDuration) {
+		GT6RecipesDrying.IceRow tRow = findIceRow(aTable, aNote);
+		assertNull(tRow.prefix(), "row " + aNote + ": a vanilla row");
+		assertSame(aItem, tRow.vanilla().get(), "row " + aNote + ": the 1.20.1 vanilla identity");
+		assertEquals(1, tRow.count(), "row " + aNote + ": single-item input (upstream ST.make x1)");
+		assertEquals(aOut, tRow.outAmount(), "row " + aNote + ": the verbatim DistW litres");
+		assertEquals(aDuration, tRow.duration(), "row " + aNote + ": the verbatim 4x litres duration");
+	}
+
+	private GT6RecipesDrying.IceRow findIceRow(List<GT6RecipesDrying.IceRow> aTable, String aNote) {
+		GT6RecipesDrying.IceRow tRow = aTable.stream().filter(r -> r.note().equals(aNote)).findFirst().orElse(null);
+		assertNotNull(tRow, "row " + aNote + " transcribed");
+		return tRow;
+	}
+
+	/**
+	 * The live-universe census: every material (prefix, material) pair of the ice table
+	 * resolves inside the port item universe ({@link GTMaterialItems#registrationOrder},
+	 * the prefix's isGeneratingItem criterion) — EXCEPT the :513/:514 gemChipped/gemFlawed
+	 * Ice rows, and that is UPSTREAM-Faithful: the gemChipped/gemFlawed condition is
+	 * And(gem, TRANSPARENT, CRYSTAL, PEARL.NOT) (OP.java:1219-1220), Ice carries
+	 * GEMS+DUSTS+TRANSPARENT via its G_GEM_TRANSPARENT set (TD.java:599) but NOT CRYSTAL
+	 * (MT.java:1013 — no CRYSTAL tag), so the item never existed upstream either and the
+	 * upstream {@code gemChipped.mat(MT.Ice, 1)} / {@code gemFlawed.mat(MT.Ice, 1)} calls
+	 * were null → those two rows are dead text in Loader_Recipes_Chem.java:513-514. The
+	 * port transcribes them (the census duty) and pours them to nothing, same skip.
+	 */
+	@Test
+	void iceFamilyPairsResolveInThePortItemUniverse() {
+		GTMaterialItems.initMaterials();
+		Set<PrefixMaterial> tUniverse = Set.copyOf(GTMaterialItems.registrationOrder());
+		Set<String> tUnresolvable = new java.util.HashSet<>();
+		for (GT6RecipesDrying.IceRow tRow : GT6RecipesDrying.iceTable()) {
+			if (tRow.prefix() == null) continue;
+			if (!tUniverse.contains(new PrefixMaterial(tRow.prefix(), tRow.material()))) tUnresolvable.add(tRow.note());
+		}
+		assertEquals(Set.of(":513", ":514"), tUnresolvable,
+				"exactly the gemChipped/gemFlawed Ice rows lack items (upstream-faithful mat() null drops)");
+	}
+
+	/**
+	 * A deterministic (prefix, material) → distinct vanilla item resolver: the first call
+	 * for a pair draws the next non-reserved, non-empty pool item and REMEMBERS it, so a
+	 * later call with the same pair re-derives exactly the item a poured row carries.
+	 * Pairs outside the port item universe answer null — the live
+	 * {@link GTMaterialItems#get} census semantics the fixture must mirror.
+	 */
+	private static BiFunction<OreDictPrefix, OreDictMaterial, Item> pairAssigningResolver() {
+		GTMaterialItems.initMaterials();
+		Set<PrefixMaterial> tUniverse = Set.copyOf(GTMaterialItems.registrationOrder());
+		List<Item> tPool = BuiltInRegistries.ITEM.stream().toList();
+		int[] tNext = {0};
+		Map<OreDictPrefix, Map<OreDictMaterial, Item>> tAssigned = new HashMap<>();
+		return (aPrefix, aMaterial) -> {
+			if (!tUniverse.contains(new PrefixMaterial(aPrefix, aMaterial))) return null;
+			Item tItem = tAssigned.computeIfAbsent(aPrefix, p -> new HashMap<>()).get(aMaterial);
+			if (tItem != null) return tItem;
+			do {tItem = tPool.get(tNext[0]++ % tPool.size());}
+			while (RESERVED_VANILLA_ITEMS.contains(tItem) || new ItemStack(tItem, 1).isEmpty());
+			tAssigned.get(aPrefix).put(aMaterial, tItem);
+			return tItem;
+		};
+	}
+
+	/**
+	 * The end-to-end pour census: with the fixture resolvers, load() lands the 7 fluid-only
+	 * water rows plus the eleven resolvable ice rows — the :513/:514 gemChipped/gemFlawed
+	 * Ice rows skip (see {@link #iceFamilyPairsResolveInThePortItemUniverse()}).
+	 */
+	@Test
+	void loadPoursTheWholeIceFamily() {
+		GTMaterialItems.initMaterials();
+		GT6RecipesDrying.sMaterialItemResolver = pairAssigningResolver();
+		GT6RecipesDrying.sFluidResolver = CENSUS_FIXTURE;
+		GT6RecipesDrying.load();
+
+		List<Recipe> tIceRecipes = GT6RecipeMaps.DRYING.mRecipeList.stream()
+				.filter(r -> r.mInputs.length == 1).toList();
+		assertEquals(11, tIceRecipes.size(), "7 water + 11 ice: the :513/:514 gem rows skip (no such items, upstream too)");
+		assertEquals(18, GT6RecipeMaps.DRYING.mRecipeList.size(), "7 water + 11 ice = the full poured census");
+		for (Recipe tRecipe : tIceRecipes) {
+			assertEquals(0, tRecipe.mFluidInputs.length, "an ice row has no fluid inputs (upstream NF)");
+			assertEquals(0, tRecipe.mOutputs.length, "an ice row has no item outputs (upstream NI)");
+			assertEquals(1, tRecipe.mFluidOutputs.length, "an ice row yields exactly the DistW stack");
+			assertEquals(16, tRecipe.mEUt, "the family EUt");
+		}
+	}
+
+	/**
+	 * The machine-shape ice row lookups: every RESOLVABLE row's single input item in the
+	 * slot finds ITS row — the found recipe carries the row's verbatim litres/duration/EUt
+	 * — and the applied consume drains exactly that one item (probe leaves the slot
+	 * untouched). Empty tanks probe fine: the rows carry no fluid inputs, and
+	 * Recipe.isRecipeInputEqual only hard-fails empty fluid arrays for rows that HAVE
+	 * fluid inputs.
+	 */
+	@Test
+	void iceRowsFindAndConsumeTheirOwnInput() {
+		GTMaterialItems.initMaterials();
+		GT6RecipesDrying.sMaterialItemResolver = pairAssigningResolver();
+		GT6RecipesDrying.sFluidResolver = CENSUS_FIXTURE;
+		GT6RecipesDrying.load();
+
+		for (GT6RecipesDrying.IceRow tRow : resolvableIceRows()) {
+			Item tInput = tRow.vanilla() != null ? GT6RecipesDrying.sVanillaItemResolver.apply(tRow.vanilla())
+					: GT6RecipesDrying.sMaterialItemResolver.apply(tRow.prefix(), tRow.material());
+			ItemStack[] tSlots = {new ItemStack(tInput, 4)};
+
+			Recipe tFound = GT6RecipeMaps.DRYING.findRecipe(null, 64, ItemStack.EMPTY, new FluidStack[0], tSlots);
+			assertNotNull(tFound, "row " + tRow.note() + ": its own input finds the row (voltage 64 covers EUt 16)");
+			assertEquals(tRow.outAmount(), tFound.mFluidOutputs[0].getAmount(), "row " + tRow.note() + ": the verbatim litres");
+			assertEquals(tRow.duration(), tFound.mDuration, "row " + tRow.note() + ": the verbatim duration");
+			assertEquals(16, tFound.mEUt, "row " + tRow.note() + ": the family EUt");
+			assertTrue(tFound.mCanBeBuffered, "row " + tRow.note() + ": the addRecipe1(T, ...) buffered shape");
+			assertTrue(tFound.isRecipeInputEqual(false, true, new FluidStack[0], tSlots), "row " + tRow.note() + ": the probe matches");
+			assertEquals(4, tSlots[0].getCount(), "row " + tRow.note() + ": the probe never consumes");
+			assertTrue(tFound.isRecipeInputEqual(true, false, new FluidStack[0], tSlots), "row " + tRow.note() + ": the consume succeeds");
+			assertEquals(3, tSlots[0].getCount(), "row " + tRow.note() + ": exactly one item drained");
+		}
+	}
+
+	/** The ice rows that resolve inside the port item universe: the vanilla rows plus the material rows in registrationOrder. */
+	private List<GT6RecipesDrying.IceRow> resolvableIceRows() {
+		GTMaterialItems.initMaterials();
+		Set<PrefixMaterial> tUniverse = Set.copyOf(GTMaterialItems.registrationOrder());
+		return GT6RecipesDrying.iceTable().stream()
+				.filter(r -> r.prefix() == null || tUniverse.contains(new PrefixMaterial(r.prefix(), r.material())))
+				.toList();
 	}
 }
