@@ -64,6 +64,7 @@ public class GT6EnUs extends LanguageProvider {
         addExampleMachine();
         addFluidPipes();
         addEngineFluids();
+        addAquaFluids();
         addElectricWires();
         addMachines();
         addMultiBlocks();
@@ -103,6 +104,22 @@ public class GT6EnUs extends LanguageProvider {
         "nitrofuel"       , "Nitro-Fuel",
         "jetfuel"         , "Jet Fuel",
         "ethanol"         , "Ethanol");
+
+    /**
+     * Aqua family keys (task p16-aqua-fluids): one description entry per
+     * {@link GTFluids.AquaFluidSpec} row — the exact descriptionId the FluidType is
+     * registered with, walked from {@link GTFluids#AQUA_SPECS} so the lang face cannot
+     * drift from the registered fluids. Values ride the row's displayName: the upstream
+     * display names verbatim where GT6 defines the fluid (Loader_Fluids.java:362
+     * "Spectral Dew" / :371 "Mineral Water" / :373 "Hot Spring Water") and the common
+     * names for the three external fluids the FL.java:114-117 shorthands spell
+     * ("Boiling Water"/"Hot Water"/"Cold Water").
+     */
+    private void addAquaFluids() {
+        for (GTFluids.AquaFluidSpec tSpec : GTFluids.AQUA_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
 
     /**
      * The JEI ingredient info page (task p12-jei-integration, ADR 2026-09-02-p12-jei-dependency):
