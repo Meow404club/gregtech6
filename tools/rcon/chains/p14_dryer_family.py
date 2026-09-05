@@ -21,9 +21,10 @@ declared-empty arms (progress=0/0) are stale on main and were rewritten:
           the poured DRYING map starts: progress moves by the exact driven arithmetic
           40 ticks at mInputMax — 512/2048, 2048/8192, 8192/32768, 32768/73728) →
   check (the tier columns: parallel 8/16/32/64 + parallelDuration + recIn 32/128/512/2048,
-          data=-2 = the menu-less carrier marker; after the driven loop the batch resets
-          on the first starved tick: progress=0/<maxProgress>, active=false, outputs
-          stay empty — the batch never completes inside 40 ticks, 产出零).
+          data=0 = the gt6:dryer menu opens since p16-machine-fluid-gui bound the row
+          supplier (the old data=-2 menu-less marker is gone); after the driven loop the
+          batch resets on the first starved tick: progress=0/<maxProgress>, active=false,
+          outputs stay empty — the batch never completes inside 40 ticks, 产出零).
 
 The two framework passes are the [0, 0] idempotency proof; the pass-open bbox cleanup
 restores the sites between passes.
@@ -106,7 +107,7 @@ for literal, pos, parallel, recin, maxin, inject_progress, max_progress in TIERS
              expect=inject_progress),
         Step(f"gt6machine {literal} inject 40 {maxin} {F(pos)}",
              expect="outputs=[]"),
-        # the production verdict + the tier columns + the menu-less marker: the driven
+        # the production verdict + the tier columns + the menu marker: the driven
         # loop's batch resets on the first starved real tick (active=false), leaving the
         # recipe-aware maxProgress on the dial
         Step(f"gt6machine {literal} check {F(pos)}", expect=max_progress),
@@ -114,7 +115,10 @@ for literal, pos, parallel, recin, maxin, inject_progress, max_progress in TIERS
         Step(f"gt6machine {literal} check {F(pos)}", expect=parallel),
         Step(f"gt6machine {literal} check {F(pos)}", expect="parallelDuration=true"),
         Step(f"gt6machine {literal} check {F(pos)}", expect=recin),
-        Step(f"gt6machine {literal} check {F(pos)}", expect="data=-2"),
+        # flipped by p16-machine-fluid-gui: the gt6:dryer menu supplier is bound, so the
+        # check probe CONSTRUCTS the menu (the old data=-2 menu-less marker is gone) and
+        # the ContainerData reads units(0, <recipe max>) = 0 on the starved-reset dial
+        Step(f"gt6machine {literal} check {F(pos)}", expect="data=0"),
         Step(f"gt6machine {literal} check {F(pos)}", expect="bricks"),
     ]
 
