@@ -1,8 +1,13 @@
 package gregtech6.gui.machines;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
@@ -11,7 +16,9 @@ import net.minecraft.world.item.ItemStack;
 
 import net.minecraftforge.items.SlotItemHandler;
 
+import gregtech6.fluid.FluidTankGT;
 import gregtech6.gui.GTGuiMenu;
+import gregtech6.gui.GTRenderSlot;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
@@ -26,15 +33,30 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  *
  * <p>Slot geometry is derived from the RecipeMap constants (the upstream switch :51-270
  * shape): the input slot (content 0) at (53,25) — the mInputItemsCount==1 case :55, with
- * upstream's y = mInputFluidCount&gt;6?7:25 conditional pinned to the 25 arm here (every
- * recipe map this menu serves is fluid-less, so the >6 arm never fires) —, then
+ * upstream's y = mInputFluidCount&gt;6?7:25 conditional pinned to the 25 arm here (the
+ * served maps stay at mInputFluidCount ≤ 6, Drying's 1 making the 25 arm fire) —, then
  * mOutputItemsCount output slots in the upstream output-grid layout (:169-270, the
  * mOutputFluidCount==0 arms): 1-3 = one row from x 107 at y 25; 4-6 = two rows at y 16/34;
  * 7+ = 3 columns x 4 rows (x 107/125/143, y 7/25/43/61). Shredder/Crusher land on the 12
  * case (the default branch :247-269), the Lathe on the 2 case (:178-181). The special slot
- * (:49) and the fluid displays (:267-268) are out — the port slot shape has neither. All
- * outputs are setCanPut(F) → {@link OutputSlot}. The player inventory binds at the standard
- * 176x166 machine-panel offset 84.
+ * (:49) stays out. All outputs are setCanPut(F) → {@link OutputSlot}. The player inventory
+ * binds at the standard 176x166 machine-panel offset 84.
+ *
+ * <p>Fluid display slots (task p16-machine-fluid-gui ②, the p8 pool item): the upstream
+ * :267-268 pair of Slot_Render banks, one display slot per RecipeMap-declared tank —
+ * mInputFluidCount inputs descending from (53,63) right-to-left, mOutputFluidCount outputs
+ * ascending from (107,63) left-to-right, both wrapping upward every 3 ({@link
+ * #fluidDisplayPos}). The Host exposes the banks as the BE's public final mTanksInput/
+ * mTanksOutput arrays (sized by the same RM counts, TileEntityBasicMachine :325-328), so
+ * each {@link FluidDisplaySlot} is paired 1:1 with its tank — the display face stays inert
+ * ({@code Slot_Render = Slot_Holo(false,false,0)}: hasItem/mayPlace/mayPickup all false,
+ * {@link #getItem()} reads EMPTY so the vanilla broadcastChanges per-slot poll
+ * (AbstractContainerMenu.java:168-170) never syncs or dereferences the backing container);
+ * the fancy fluid-content rendering stays pooled ("基础槽显示即可" — the frames are painted
+ * by the GUI background texture). The direct Host implementor (the multiblock base) and
+ * the test fakes keep the p8 six-method shape through the default-empty banks, so the
+ * cokeoven menu is byte-identical to its p8 landing (zero display slots — the COKE_OVEN
+ * map's 0-in/1-out fluid face rides the capability, not the GUI).
  *
  * <p>The single progress {@link ContainerData} is the :273-297 verbatim three-state
  * translation (the oven carries the same): mSuccessful → Short.MAX_VALUE, mMaxProgress &gt;
@@ -72,6 +94,18 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		long getMaxProgress();
 		/** The mGUITexture = mRecipes.mGUIPath semantics (MultiTileEntityBasicMachine.java:114). */
 		String getGuiTexture();
+		/**
+		 * The :267 display bank — the input tanks, in tank order (task p16-machine-fluid-gui ②).
+		 * Default-empty on purpose: the direct implementor (the multiblock base) and the test
+		 * fakes keep the p8 six-method shape and render zero display slots; the gui-domain
+		 * {@link #hostOf} adapter overrides this with the machine's live public mTanksInput.
+		 */
+		default FluidTankGT[] getFluidInputTanks() { return new FluidTankGT[0]; }
+		/**
+		 * The :268 display bank — the output tanks, in tank order (task p16-machine-fluid-gui ②).
+		 * Default-empty, same reasoning as {@link #getFluidInputTanks()}.
+		 */
+		default FluidTankGT[] getFluidOutputTanks() { return new FluidTankGT[0]; }
 	}
 
 	/** The machine bound as the menu's backing container (upstream mTileEntity, ContainerCommon.java:42). */
@@ -84,11 +118,25 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	 */
 	private final TileEntityBase03TicksAndSync mBackingEntity;
 
-	/** Content slot count: 1 input + mOutputItemsCount outputs. */
+	/** Content slot count: 1 input + mOutputItemsCount outputs (the fluid display slots sit AFTER this boundary — quickMove never targets them). */
 	public final int contentSlotCount;
 
 	/** Client-side progress cache, written by the vanilla data-slot sync (upstream mProgressBar :273). */
 	private int mProgressBar = -1;
+
+	/**
+	 * The display slots in menu order — the :267 input bank first, then the :268 output bank
+	 * (task p16-machine-fluid-gui ②); slot i of each bank is paired with tank i of the
+	 * corresponding Host array (each {@link FluidDisplaySlot} carries its tank reference).
+	 */
+	private final List<FluidDisplaySlot> mFluidDisplaySlots = new ArrayList<>();
+
+	/**
+	 * The never-read backing container of the display slots: {@link FluidDisplaySlot#getItem()}
+	 * is overridden to EMPTY (the vanilla broadcastChanges poll, AbstractContainerMenu.java:168-170,
+	 * reads every slot every tick), so this container is only ever stored by the Slot supertype.
+	 */
+	private static final SimpleContainer DISPLAY_CONTAINER = new SimpleContainer(0);
 
 	public GTBasicMachineMenu(MenuType<?> aMenuType, int aContainerId, Inventory aPlayerInventory, TileEntityBasicMachine aTileEntity) {
 		this(aMenuType, aContainerId, aPlayerInventory, hostOf(aTileEntity), aTileEntity);
@@ -113,15 +161,52 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 			addSlot(new OutputSlot(tInventory, TileEntityBasicMachine.SLOT_INPUT + 1 + i, tPos[0], tPos[1])); // :162 setCanPut(F)
 		}
 		this.contentSlotCount = 1 + tOutputs;
+		// upstream :267-268 — the Slot_Render fluid banks, one display slot per RM-declared tank,
+		// each paired 1:1 with its BE tank (task p16-machine-fluid-gui ②)
+		FluidTankGT[] tInTanks = aHost.getFluidInputTanks();
+		for (int i = 0; i < tInTanks.length; i++) {
+			FluidDisplaySlot tSlot = new FluidDisplaySlot(tInTanks[i], i, fluidDisplayPos(false, i));
+			mFluidDisplaySlots.add(tSlot);
+			addSlot(tSlot);
+		}
+		FluidTankGT[] tOutTanks = aHost.getFluidOutputTanks();
+		for (int i = 0; i < tOutTanks.length; i++) {
+			FluidDisplaySlot tSlot = new FluidDisplaySlot(tOutTanks[i], i, fluidDisplayPos(true, i));
+			mFluidDisplaySlots.add(tSlot);
+			addSlot(tSlot);
+		}
 		bindPlayerInventory(84); // standard machine panel (ContainerCommon.java:327-332 default offset)
 		addDataSlots(this.mProgressData);
+	}
+
+	/** The display slots in menu order ({@code unmodifiable}) — the :267 input bank then the :268 output bank. */
+	public List<FluidDisplaySlot> fluidDisplaySlots() {
+		return Collections.unmodifiableList(mFluidDisplaySlots);
+	}
+
+	/**
+	 * The upstream :267-268 display geometry: the input bank descends from x 53 right-to-left
+	 * ({@code 53 - (i%3)*18, 63 - (i/3)*18}), the output bank ascends from x 107 left-to-right
+	 * ({@code 107 + (i%3)*18, 63 - (i/3)*18}), both wrapping upward every 3 — the Drying shape
+	 * lands in[0]=(53,63) and out0..2=(107/125/143, 63). Static for the offline menu test
+	 * (the outputGridPos precedent).
+	 *
+	 * @param aOutput false = the input bank (:267), true = the output bank (:268)
+	 * @param aIndex  the tank index within the bank
+	 */
+	public static int[] fluidDisplayPos(boolean aOutput, int aIndex) {
+		return aOutput
+				? new int[] {107 + 18 * (aIndex % 3), 63 - 18 * (aIndex / 3)}
+				: new int[] {53 - 18 * (aIndex % 3), 63 - 18 * (aIndex / 3)};
 	}
 
 	/**
 	 * The gui-domain adapter (task p8-cokeoven-gui-menu ①): wraps the single-block machine's
 	 * public face — getInventory :199 / getOutputSlotCount :208 / mSuccessful/mProgress/
 	 * mMaxProgress :107-113 / public final mRecipes :161 (mGUIPath) — so the machine domain
-	 * needs no gui knowledge (no implements, the file stays frozen for D3/M1).
+	 * needs no gui knowledge (no implements, the file stays frozen for D3/M1). The p16 ②
+	 * overrides read the W1a public final tank arrays LIVE (same identity the fluid face
+	 * gates answer through), no snapshot.
 	 */
 	static Host hostOf(TileEntityBasicMachine aMachine) {
 		return new Host() {
@@ -131,6 +216,8 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 			@Override public long getProgress() { return aMachine.mProgress; }
 			@Override public long getMaxProgress() { return aMachine.mMaxProgress; }
 			@Override public String getGuiTexture() { return aMachine.mRecipes.mGUIPath; }
+			@Override public FluidTankGT[] getFluidInputTanks() { return aMachine.mTanksInput; }
+			@Override public FluidTankGT[] getFluidOutputTanks() { return aMachine.mTanksOutput; }
 		};
 	}
 
@@ -259,6 +346,32 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		@Override
 		public boolean mayPlace(ItemStack aStack) {
 			return false;
+		}
+	}
+
+	/**
+	 * The fluid tank display slot (task p16-machine-fluid-gui ②, the upstream :267-268
+	 * Slot_Render): a {@link GTRenderSlot} — Slot_Holo(false,false,0), inert in every
+	 * direction — paired with its backing tank ({@link #tank}, the 1:1 slot-tank pairing the
+	 * menu test asserts and the pooled fluid-content rendering would read). The slot itself
+	 * never holds live content: {@link #getItem()} reads EMPTY so the vanilla broadcastChanges
+	 * per-slot poll (AbstractContainerMenu.java:168-170) syncs nothing and never dereferences
+	 * the {@link #DISPLAY_CONTAINER} stand-in. Display-only — players cannot put anything in,
+	 * take anything out, or shift-click through it (hasItem()=false short-circuits quickMove).
+	 */
+	public static final class FluidDisplaySlot extends GTRenderSlot {
+		/** The tank this display is paired with (the Host bank element at this slot's bank index). */
+		public final FluidTankGT tank;
+
+		FluidDisplaySlot(FluidTankGT aTank, int aBankIndex, int[] aPos) {
+			super(DISPLAY_CONTAINER, aBankIndex, aPos[0], aPos[1]);
+			this.tank = aTank;
+		}
+
+		/** Slot_Render never holds live content — the screen renders the frame, the pool owns any fluid visual. */
+		@Override
+		public ItemStack getItem() {
+			return ItemStack.EMPTY;
 		}
 	}
 }
