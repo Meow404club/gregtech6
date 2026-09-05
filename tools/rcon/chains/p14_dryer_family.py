@@ -22,9 +22,14 @@ declared-empty arms (progress=0/0) are stale on main and were rewritten:
           40 ticks at mInputMax — 512/2048, 2048/8192, 8192/32768, 32768/73728) →
   check (the tier columns: parallel 8/16/32/64 + parallelDuration + recIn 32/128/512/2048,
           data=0 = the gt6:dryer menu opens since p16-machine-fluid-gui bound the row
-          supplier (the old data=-2 menu-less marker is gone); after the driven loop the
-          batch resets on the first starved tick: progress=0/<maxProgress>, active=false,
-          outputs stay empty — the batch never completes inside 40 ticks, 产出零).
+          supplier (the old data=-2 menu-less marker is gone) — t4 pins data=-1 instead:
+          its parallel-64 batch drains the whole 1000 L input tank inside the two driven
+          injects, so the post-reset re-find is DID_NOT_FIND and the dial rests on the
+          GTOvenMenu -1 arm (mMaxProgress==0), which still proves the menu constructs;
+          after the driven loop the
+          batch resets on the first starved tick: progress=0/<maxProgress> (t4: 0/0, its
+          batches complete inside the driven injects and drain the tank), active=false;
+          outputs=[] is the ITEM slot list — the DistW lands in the output TANK).
 
 The two framework passes are the [0, 0] idempotency proof; the pass-open bbox cleanup
 restores the sites between passes.
@@ -53,25 +58,35 @@ T2 = gt6world.Site(116, 64, 100, dx=1, dy=2, dz=1)
 T3 = gt6world.Site(132, 64, 100, dx=1, dy=2, dz=1)
 T4 = gt6world.Site(148, 64, 100, dx=1, dy=2, dz=1)
 
-# (literal, pos, parallel, recIn, maxIn, injectProgress, checkReset) — the tier columns
-# the check report must pin; maxIn doubles as the inject packet size (the size-then-pos
-# branch of the inject tree needs the explicit size before the coordinate). The
-# progress columns are the poured-DRYING-map production arithmetic observed on main
-# (2026-09-04, deterministic driven ticks × mInputMax; identical on both nodes — the
-# recipe row and the HU arithmetic are shared code). The check arm pins the reset
-# prefix "progress=0/" (race-free: the starved reset lands 0/<max> or 0/0 depending
-# on whether the input tank emptied first — both mean the batch never completed).
+# (literal, pos, parallel, recIn, maxIn, injectProgress, checkReset, dataDial) — the
+# tier columns the check report must pin; maxIn doubles as the inject packet size (the
+# size-then-pos branch of the inject tree needs the explicit size before the
+# coordinate). The progress columns are the poured-DRYING-map production arithmetic
+# observed on main (2026-09-04, deterministic driven ticks × mInputMax; identical on
+# both nodes — the recipe row and the HU arithmetic are shared code). The check arm
+# pins the reset prefix "progress=0/" (race-free: the starved reset lands 0/<max> or
+# 0/0 depending on whether the input tank emptied first — both mean the batch never
+# completed). The last column is the post-reset menu-dial arm (GTMachineCommand check
+# data=): t1-t3 keep water (80/160/320 L per batch off a 1000 L tank), so the starved
+# reset leaves the recipe-aware maxProgress on the dial → data=0. t4 (parallel 64)
+# burns through the whole 1000 L inside its two driven injects (batch 1 = 64 ops ×
+# 10 L completes in inject 1 at progress 32768/73728, batch 2 finishes the tank and
+# completes in inject 2 — 800 L DistW out, in[0]=0; live probe /tmp/p16co_probe_t4.log,
+# 2026-09-05), so the post-reset re-find is DID_NOT_FIND and the dial rests on the
+# GTOvenMenu -1 arm (:285, mMaxProgress==0) — data=-1, stable across real ticks.
+# data=-1 still proves the gt6:dryer menu CONSTRUCTS (the menu-less carrier reads -2);
+# found by the p16-closeout dual-node gate 2026-09-05.
 TIERS = [
-    ("dryer",    T1, "parallel=8",  "recIn=32",   64,   "used=40 progress=512/2048",    "progress=0/"),
-    ("dryer_t2", T2, "parallel=16", "recIn=128",  256,  "used=40 progress=2048/8192",   "progress=0/"),
-    ("dryer_t3", T3, "parallel=32", "recIn=512",  1024, "used=40 progress=8192/32768",  "progress=0/"),
-    ("dryer_t4", T4, "parallel=64", "recIn=2048", 4096, "used=40 progress=32768/73728", "progress=0/"),
+    ("dryer",    T1, "parallel=8",  "recIn=32",   64,   "used=40 progress=512/2048",    "progress=0/", "data=0"),
+    ("dryer_t2", T2, "parallel=16", "recIn=128",  256,  "used=40 progress=2048/8192",   "progress=0/", "data=0"),
+    ("dryer_t3", T3, "parallel=32", "recIn=512",  1024, "used=40 progress=8192/32768",  "progress=0/", "data=0"),
+    ("dryer_t4", T4, "parallel=64", "recIn=2048", 4096, "used=40 progress=32768/73728", "progress=0/", "data=-1"),
 ]
 
 steps = []
 
 # ------------------------------------------- the four tiers, one protocol each
-for literal, pos, parallel, recin, maxin, inject_progress, max_progress in TIERS:
+for literal, pos, parallel, recin, maxin, inject_progress, max_progress, data_dial in TIERS:
     steps += [
         phase(f"{literal}: place, the rotated tank masks, the stub feed, HU, the production verdict"),
         Step(f"gt6machine {literal} place {F(pos)}", expect=f"GT6 {literal} placed"),
@@ -117,8 +132,11 @@ for literal, pos, parallel, recin, maxin, inject_progress, max_progress in TIERS
         Step(f"gt6machine {literal} check {F(pos)}", expect=recin),
         # flipped by p16-machine-fluid-gui: the gt6:dryer menu supplier is bound, so the
         # check probe CONSTRUCTS the menu (the old data=-2 menu-less marker is gone) and
-        # the ContainerData reads units(0, <recipe max>) = 0 on the starved-reset dial
-        Step(f"gt6machine {literal} check {F(pos)}", expect="data=0"),
+        # the ContainerData dial reads the post-reset state — t1-t3 still hold recipe
+        # water so the re-find leaves units(0, <recipe max>) = 0; t4 drained the tank
+        # inside its own driven injects so the re-find is DID_NOT_FIND and the dial
+        # rests on the -1 arm — per-tier column, see the TIERS comment
+        Step(f"gt6machine {literal} check {F(pos)}", expect=data_dial),
         Step(f"gt6machine {literal} check {F(pos)}", expect="bricks"),
     ]
 
