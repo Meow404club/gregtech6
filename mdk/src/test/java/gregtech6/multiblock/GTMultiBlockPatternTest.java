@@ -2,6 +2,7 @@ package gregtech6.multiblock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -135,5 +136,48 @@ public class GTMultiBlockPatternTest extends GTRecipesOfflineTestBase {
 		assertTrue(GTMultiBlockPattern.AIR.test(tAir), "AIR matches air");
 		assertFalse(GTMultiBlockPattern.AIR.test(tBricks), "AIR rejects solids");
 		assertFalse(GTMultiBlockPattern.is(Blocks.BRICKS).test(tAir), "is() rejects air");
+	}
+
+	// ------------------------------------------------------------------
+	// the forming-expectation enrichment (task p16-pattern-checker ①)
+	// ------------------------------------------------------------------
+
+	@Test
+	public void enrichmentDefaultsToDeclarationOnly() {
+		// every pre-existing factory keeps the display calibre — the P12 cells, no forming expectation
+		GTMultiBlockPattern.Cell tPart = GTMultiBlockPattern.builder().part(0, 0, 0, aState -> true).build().cells().get(0);
+		assertEquals(null, tPart.partBlock, "part() carries no part block");
+		assertFalse(tPart.forms(), "part() is declaration-only");
+		assertFalse(tPart.isHollow(), "part() flag unchanged");
+		GTMultiBlockPattern.Cell tHollow = GTMultiBlockPattern.builder().hollow(0, 0, 0, GTMultiBlockPattern.AIR).build().cells().get(0);
+		assertFalse(tHollow.forms(), "hollow() never carries a forming expectation");
+		assertEquals(null, tHollow.partBlock, "hollow() carries no part block");
+	}
+
+	@Test
+	public void formingPartCarriesTheFullExpectation() {
+		// the usage mask is the ONLY_* complement form — negative values are the NORM
+		// (MultiBlockPartBlockEntity.ONLY_ITEM_FLUID_ENERGY == ~(16|32|4|8|1|2) == -64)
+		GTMultiBlockPattern.Cell tCell = GTMultiBlockPattern.builder()
+				.formingPart(1, -2, 3, Blocks.BRICKS, -64, 0).build().cells().get(0);
+		assertTrue(tCell.forms(), "formingPart() is authoritative for the server check");
+		assertSame(Blocks.BRICKS, tCell.partBlock, "the part block is the checkAndSetTarget identity");
+		assertEquals(-64, tCell.usage, "the usage mask rides the cell verbatim");
+		assertEquals(0, tCell.design, "the design index rides the cell");
+		assertTrue(tCell.matches(Blocks.BRICKS.defaultBlockState()), "the display predicate judges the same block");
+		assertFalse(tCell.matches(Blocks.STONE.defaultBlockState()), "the display predicate rejects others");
+		assertFalse(tCell.isHollow(), "formingPart() is a structural part");
+	}
+
+	@Test
+	public void formingPartValidation() {
+		assertThrows(IllegalArgumentException.class,
+				() -> GTMultiBlockPattern.builder().formingPart(0, 0, 0, null, 0, 0),
+				"a forming expectation without a block is a bug");
+		// the duplicate-offset rejection keeps working across the enriched factory too
+		GTMultiBlockPattern.Builder tBuilder = GTMultiBlockPattern.builder().formingPart(1, 1, 1, Blocks.BRICKS, 0, 0);
+		assertThrows(IllegalArgumentException.class,
+				() -> tBuilder.formingPart(1, 1, 1, Blocks.STONE, 0, 0),
+				"the enriched factory obeys the same duplicate rule");
 	}
 }
