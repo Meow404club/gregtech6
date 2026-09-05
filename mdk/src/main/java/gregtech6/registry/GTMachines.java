@@ -302,6 +302,96 @@ public final class GTMachines {
 		return aMachine;
 	}
 
+	// ---------------------------------------------------------------------------
+	// the Distillery family (task p16-distillery-family ②) — the four rows
+	// Loader_MultiTileEntities.java:1398-1401 (aClass = MultiTileEntityBasicMachine,
+	// NBT_TEXTURE "distillery", TD.Energy.HU, RM.Distillery, NBT_CHEAP_OVERCLOCKING T,
+	// NBT_PARALLEL_DURATION T). ONE family BET over the four tier blocks — the same
+	// MachineRow carrier shape as the Dryer ladder above. The connectivity masks
+	// (CS.java:612 SBIT values): energy = SBIT_D|SBIT_A (the :151 read ORs SBIT_A onto
+	// NBT_ENERGY_ACCEPTED_SIDES SBIT_D), tank in = SBIT_U|SBIT_L|SBIT_A (the :143 read —
+	// upstream NBT_TANK_SIDE_IN SBIT_U|SBIT_L), tank out = SBIT_B|SBIT_A (the :144 read),
+	// item in = SBIT_U|SBIT_L|SBIT_A (the :137 read — NBT_INV_SIDE_IN SBIT_U|SBIT_L), item
+	// out = SBIT_R|SBIT_A (the :138 read); the four auto sides are the :139/:140/:145/:146
+	// columns (data-only — the auto-IO pool). menu = the menu-less carrier (the GUI pool
+	// precedent — use() stays inert, the acceptance drives inject+check like the pre-gui
+	// dryer).
+	// ---------------------------------------------------------------------------
+
+	/** The four Distillery rows, upstream line order :1398-1401 (T1-T4). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> DISTILLERY_ROWS = java.util.List.of(
+			distillery("distillery"   , "Distillery (Steel)"          , 20191, "Steel"           ,  6.0F, 0,   8),
+			distillery("distillery_t2", "Distillery (Invar)"         , 20192, "Invar"           ,  4.0F, 1,  16),
+			distillery("distillery_t3", "Distillery (Titanium)"      , 20193, "Titanium"        ,  9.0F, 2,  32),
+			distillery("distillery_t4", "Distillery (Tungsten Carbide)", 20194, "Tungsten Carbide", 12.5F, 3, 64));
+
+	/**
+	 * One row factory — the four Distillery columns that differ (path/name/id/material/
+	 * hardness/tier/parallel) plus the seven that are family constants (RM.Distillery
+	 * through the supplier, HU, the "distillery" texture, the masks, the auto sides, cheap
+	 * overclocking T) and the null menu supplier (the menu-less carrier).
+	 */
+	private static GTBasicMachineBlock.MachineRow distillery(String aPath, String aDisplay, int aMetaId, String aMaterial, float aHardness, int aTier, int aParallel) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aDisplay, aMetaId, aMaterial, aHardness, aTier, aParallel, true,
+				() -> GT6RecipeMaps.DISTILLERY, TD.Energy.HU, "distillery",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A),
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A),
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A),
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A),
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A),
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)5 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BACK*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — the GUI pool precedent*/, true /*NBT_CHEAP_OVERCLOCKING T*/);
+	}
+
+	/** The registered Distillery blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> DISTILLERY_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Distillery items, same keys as {@link #DISTILLERY_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> DISTILLERY_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : DISTILLERY_ROWS) {
+			DISTILLERY_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.DISTILLERY_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			DISTILLERY_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new BlockItem(GTMachines.DISTILLERY_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Distillery block list in registration order (the loot/datagen walkers). */
+	public static Block[] distilleryBlockArray() {
+		Block[] rBlocks = new Block[DISTILLERY_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : DISTILLERY_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine distillery — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block distilleryBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = DISTILLERY_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The ONE Distillery family BET: the Dryer shape verbatim — the shared factory, the
+	 * four tier blocks multi-attached, the row read off the placed block.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> DISTILLERY_BE =
+			BLOCK_ENTITY_TYPES.register("distillery", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> distilleryMachine(GTMachines.DISTILLERY_BE.get(), aPos, aState),
+					distilleryBlockArray()).build(null));
+
+	/** The Distillery BET factory body — the dryerMachine body verbatim over the Distillery rows. */
+	private static TileEntityBasicMachine distilleryMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), tRow.menu());
+		return applyRow(tMachine, tRow);
+	}
+
 	/** The tier index of a family block (0=T1 .. 3=T4) — BE creation time, every RO is resolved. */
 	private static int tierOf(Block aBlock, RegistryObject<Block> aT1, RegistryObject<Block> aT2, RegistryObject<Block> aT3, RegistryObject<Block> aT4) {
 		if (aBlock == aT2.get()) return 1;
@@ -361,6 +451,14 @@ public final class GTMachines {
 								for (GTBasicMachineBlock.MachineRow tRow : DRYER_ROWS) {
 									aOutput.accept(new ItemStack(DRYER_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
+								// task p16-distillery-family: the Distillery ladder, +4 rows
+								for (GTBasicMachineBlock.MachineRow tRow : DISTILLERY_ROWS) {
+									aOutput.accept(new ItemStack(DISTILLERY_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
+								// task p16-distillery-family ①: the Integrated Circuit ("Selector Tag") —
+								// the recipe-slot selector feeds these machines, the machines tab is the
+								// nearest live category (the gregapi items tab is not ported, declared)
+								aOutput.accept(new ItemStack(gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()));
 						})
 					.build());
 

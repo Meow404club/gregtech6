@@ -95,6 +95,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMachine(GTMachines.LATHE_T3.get(), "lathe_t3", "lathe");
         addMachine(GTMachines.LATHE_T4.get(), "lathe_t4", "lathe");
         addDryer(); // task p14-dryer-family
+        addDistillery(); // task p16-distillery-family
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -121,6 +122,18 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addDryer() {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.DRYER_ROWS) {
             addMachine(GTMachines.DRYER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p16-distillery-family — the four Distillery rows (Loader_MultiTileEntities.java
+     * :1398-1401, all four NBT_TEXTURE "distillery"): the addDryer shape verbatim —
+     * model names per path, the FRONT TEXTURES stay on the family "distillery" set
+     * (three placeholder PNGs total, the p14 dryer ruling).
+     */
+    private void addDistillery() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.DISTILLERY_ROWS) {
+            addMachine(GTMachines.DISTILLERY_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

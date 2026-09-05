@@ -67,7 +67,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task p12-gearbox-transformer
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task p13-burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
-                new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK)), // task p14-dryer-family
+                new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
+                new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK)), // task p16-distillery-family
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -78,7 +79,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task p12-gearbox-transformer
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task p13-burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
-                new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK))); // task p14-dryer-family
+                new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
+                new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK))); // task p16-distillery-family
         //?}
     }
 
@@ -391,6 +393,44 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : dryerLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The distillery-family block list (task p16-distillery-family): the four Distillery
+     * rows (Loader_MultiTileEntities.java:1398-1401) — the dryerLootBlocks shape verbatim,
+     * the MTE default self-drop (the same Drops==null default).
+     */
+    public static List<Block> distilleryLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.DISTILLERY_ROWS) {
+            rBlocks.add(gregtech6.registry.GTMachines.DISTILLERY_BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The distillery-family self-drop provider (task p16-distillery-family). */
+    public static final class GT6DistilleryBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6DistilleryBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6DistilleryBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return distilleryLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : distilleryLootBlocks()) dropSelf(tBlock);
         }
     }
 }

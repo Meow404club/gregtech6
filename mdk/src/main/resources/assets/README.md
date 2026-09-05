@@ -629,3 +629,30 @@ the borrowed canvas and the port slot geometry align by construction.
 
 Copied on 2026-09-05. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+Distillery family + Integrated Circuit textures, task p16-distillery-family:
+
+- `gt6/textures/item/integrated_circuit.png` — the Integrated Circuit item icon
+  (upstream `src/main/resources/assets/gregapi/textures/items/gt.integrated_circuit/0.png`,
+  config-0 icon of the 256-icon damage ladder, ItemIntegratedCircuit.java:118), 16x16,
+  byte-identical to upstream, sha256 verified:
+
+  - `integrated_circuit.png`   `ce72e7832572432152196b3f3a96bc0efd5ed9da41878b436e9022d0090837f2`
+
+  Declared deviation: the upstream damage ladder registers 25 icons (configs 0-24) and
+  swaps them by stack damage — the research card cuts that to ONE model + the
+  "Configuration: N" tooltip; the config-0 icon is the one the creative surface and the
+  acceptance feed ever show.
+
+- `gt6/textures/block/distillery_front{,_active,_running}.png` — generated 16x16
+  grayscale placeholders (the p14 dryer-front idiom: inactive light / active mid /
+  running darker; nothing to sha256 — deterministic generator in the card's tooling).
+  The upstream Distillery iconset
+  (`textures/blocks/machines/basicmachines/distillery/{colored,overlay,overlay_active,overlay_running}`)
+  is present in the snapshot but is a MULTI-LAYER per-face stack (the
+  MultiTileEntityBasicMachine getTexture2 pass system); the port machine-model shape is
+  the shared single-cube + front-state form, so the borrow-or-declare rule keeps the
+  placeholders and the layered/tinted faithful pass system stays the render pool card.
+
+Copied / generated on 2026-09-05. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).

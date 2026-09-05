@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/oven_bottom",
+    "east": "gt6:block/oven_side",
+    "north": "gt6:block/distillery_front",
+    "south": "gt6:block/oven_side",
+    "up": "gt6:block/oven_top",
+    "west": "gt6:block/oven_side"
+  }
+}

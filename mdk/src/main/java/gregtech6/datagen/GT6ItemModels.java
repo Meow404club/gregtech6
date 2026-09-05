@@ -104,6 +104,12 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("cover_robot_arm_" + i, mcLoc("item/generated"))
                 .texture("layer0", modLoc("block/robotarm/out"));
         }
+        // the Integrated Circuit item (task p16-distillery-family ①) — item/generated over
+        // the byte-identical upstream icon borrow (gt.integrated_circuit/0.png, config 0 —
+        // the 256-icon damage ladder is the declared single-model cut, assets/README.md
+        // attribution)
+        withExistingParent("integrated_circuit", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/integrated_circuit"));
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

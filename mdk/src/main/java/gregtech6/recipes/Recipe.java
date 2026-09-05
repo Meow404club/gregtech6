@@ -73,6 +73,20 @@ public class Recipe {
 
 	public long mDuration, mEUt, mSpecialValue;
 
+	/**
+	 * The never-consumed input predicate (task p16-distillery-family ①): the consume pass
+	 * ({@code checkStacksEqual(true, ...)}) skips every matched input the predicate claims —
+	 * the production default is the Integrated Circuit identity ({@code GT6Circuits::isSelector}),
+	 * the port of the upstream STACK-SIZE-0 marker ({@code ST.tag(n)} = circuit size 0, whose
+	 * consume decrements by zero, ST.java:779-781 + Recipe.java:780-781). Size-0 is not
+	 * portable to 1.20.1, so the port carries the circuit at count 1 and reproduces the
+	 * never-consumed net effect here; the MATCH half is untouched (the {@code Damage} tag
+	 * routes the configuration number exactly). Public as the offline test seam (the machines-package row-test e2e swaps it) —
+	 * the vanilla item registry freezes at bootstrap, so the offline fixture predicate stands
+	 * in for the circuit identity (the GT6RecipesShCLTest synthetic-item convention).
+	 */
+	public static java.util.function.Predicate<ItemStack> sNotConsumable = gregtech6.item.GT6Circuits::isSelector;
+
 	/** Use this to just disable a specific Recipe. */
 	public boolean mEnabled = true;
 	/** If this Recipe is Fake and therefore doesn't get found by the findRecipe Function. */
@@ -263,6 +277,17 @@ public class Recipe {
 	 * Upstream Recipe.checkStacksEqual (Recipe.java:773-793). The OreDict manager
 	 * equality is replaced by item + tag equality; NBT is skipped when the recipe
 	 * input carries no tag (upstream {@code mNoNBTChecks || !tInput.hasTag()}).
+	 *
+	 * <p><b>The circuit identity-skip (task p16-distillery-family ①)</b>: the consume
+	 * pass never shrinks a matched INTEGRATED CIRCUIT input — the upstream ST.tag(n)
+	 * marker is a STACK-SIZE-0 input whose consume decrements by zero
+	 * (ST.java:779-781 {@code getWithDamage(0, n)} + Recipe.java:780-781
+	 * {@code stackSize -= tInput.stackSize}), and size-0 is not portable to 1.20.1
+	 * (isEmpty() == count &lt;= 0 strips it from every slot and input array), so the
+	 * port carries the circuit at count 1 and reproduces the never-consumed net
+	 * effect here by item identity (the p14 research card's required deviation,
+	 * docs/TODO.md:218). The MATCH half is untouched: the circuit's {@code Damage}
+	 * tag still routes the configuration number exactly (isSameItemAndTag below).
 	 */
 	private boolean checkStacksEqual(boolean aDecreaseStacksizeBySuccess, boolean aDontCheckStackSizes, ItemStack... aInputs) {
 		boolean[] tChecked = new boolean[aInputs.length];
@@ -278,7 +303,7 @@ public class Recipe {
 				ItemStack aInput = aInputs[i];
 				if (aInput != null && !aInput.isEmpty()) {
 					if ((aDontCheckStackSizes || aInput.getCount() >= tInput.getCount()) && isSameItemAndTag(aInput, tInput, tIgnoreNBT)) {
-						if (aDecreaseStacksizeBySuccess) aInput.shrink(tInput.getCount());
+						if (aDecreaseStacksizeBySuccess && !sNotConsumable.test(tInput)) aInput.shrink(tInput.getCount());
 						tChecked[i] = true;
 						temp = false;
 						break;
