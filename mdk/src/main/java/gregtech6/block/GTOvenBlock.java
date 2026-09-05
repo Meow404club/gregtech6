@@ -54,11 +54,11 @@ public class GTOvenBlock extends GTEntityBlock {
 	/** Facing property (horizontal — the upstream SIDES_HORIZONTAL valid sides). */
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-	/** Actually processing (upstream mActive, visual bit 0). */
-	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+	/** Actually processing (upstream mActive, visual bit 0) — the GTBlockProperties single instance (ADR-P16-2). */
+	public static final BooleanProperty ACTIVE = GTBlockProperties.ACTIVE;
 
-	/** Powered / has work (upstream mRunning, visual bit 1). */
-	public static final BooleanProperty RUNNING = BooleanProperty.create("running");
+	/** Powered / has work (upstream mRunning, visual bit 1) — the GTBlockProperties single instance (ADR-P16-2). */
+	public static final BooleanProperty RUNNING = GTBlockProperties.RUNNING;
 
 	public GTOvenBlock(Properties aProperties) {
 		super(aProperties);
