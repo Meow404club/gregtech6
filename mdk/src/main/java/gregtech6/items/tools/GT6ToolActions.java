@@ -41,6 +41,27 @@ public final class GT6ToolActions {
 	public static final ToolAction CUTTER = ToolAction.get("gt6_cutter");
 
 	/**
+	 * The chisel stack-classification action ("gt6_chisel" — task p16-chisel-decalcify
+	 * spec ①, the crowbar/cutter entry shape). Upstream rides the {@code TOOL_chisel}
+	 * behaviour string (GT_Tool_Chisel.java:98 {@code Behavior_Tool(TOOL_chisel, …)}) and
+	 * the boiler tank answers it on the onToolClick2 chain
+	 * (MultiTileEntityBoilerTank.java:165-179); the port flattens the classification onto
+	 * this Forge {@link ToolAction} and keeps the string for the dispatch seam as
+	 * {@link #CHISEL_ID}. Consumer: {@link GTChiselItem}. The other upstream TOOL_chisel
+	 * consumers (Basin/Mold/RailRoad/BlockStones...) stay the card's pool.
+	 */
+	public static final ToolAction CHISEL = ToolAction.get("gt6_chisel");
+
+	/**
+	 * The upstream {@code CS.TOOL_chisel} dispatch id ("chisel", CS.java:1060) — the
+	 * Behaviour_Tool tool-name string the boiler's onToolClick2 arm keys on (:165); the
+	 * port keeps it as the reserved dispatch id beside {@link #CHISEL} (the CUTTER_ID
+	 * shape) so a future IBlockToolable-style relay cannot drift from the upstream
+	 * constant.
+	 */
+	public static final String CHISEL_ID = "chisel";
+
+	/**
 	 * The upstream {@code CS.TOOL_cutter} dispatch id ("cutter", CS.java:1064) — the
 	 * string the wire connection toggle and the cover tool relay key on. MUST stay
 	 * identical to {@code CoverRedstoneEmitter.TOOL_CUTTER} (the strong-gate toggle is

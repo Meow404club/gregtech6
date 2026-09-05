@@ -40,6 +40,15 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   WIRE_CUTTER head layer (the :91 handle layer is VOID); the port shows the
   grayscale head un-tinted — declared deviation, same runtime-tint pool.
 
+- `gt6/textures/item/chisel.png` — chisel item texture (upstream
+  `textures/items/iconsets/HANDLE_CHISEL.png`, task p16-chisel-decalcify; sha256
+  `fef0d79fe8722697dae9175426db103b29478be033ed06a186f65fddc6e5bd2e`).
+  Same single-steel-tier story as the crowbar/cutter: upstream composes the material
+  head layer (`toolHeadChisel`) over this handle icon and tints both with the tool
+  material colour (GT_Tool_Chisel.getIcon :88, the material pool); the port shows the
+  grayscale handle silhouette un-tinted — declared deviation, same runtime-tint pool
+  (spec ③ resolves to no-tint, no client listener row).
+
 Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
 base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from
 upstream `src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/<Prefix>.png`
@@ -53,7 +62,8 @@ Filenames were lowercased on borrow: 1.20.1 `ResourceLocation` paths only
 accept `[a-z0-9_.-/]`. The PNG contents are byte-identical to upstream
 (sha256 verified, no rescaling or redrawing).
 
-Copied on 2026-08-31. Upstream license: **CC0 1.0 Universal Public Domain
+Copied on 2026-08-31; the chisel item texture (task p16-chisel-decalcify) on
+2026-09-05. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (upstream `README.md`: "All assets, unless otherwise stated, are
 dedicated to the public domain according to the CC0 1.0 Universal Public
 Domain Dedication"). The upstream logo exception (CC BY-NC) covers the

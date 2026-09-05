@@ -18,6 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.GT6Mod;
+import gregtech6.items.tools.GTChiselItem;
 import gregtech6.items.tools.GTCrowbarItem;
 import gregtech6.items.tools.GTCutterItem;
 
@@ -77,6 +78,17 @@ public final class GT6Tools {
 			() -> new GTCutterItem(new Item.Properties().durability(GTCutterItem.DURABILITY_POINTS)));
 
 	/**
+	 * The formal chisel — item id {@code gt6:chisel} (task p16-chisel-decalcify spec ①).
+	 * Single steel tier, durability 512 (the crowbar/cutter pinned family value; upstream
+	 * scales per material, Loader_Tools.java:142 — the ladder is the same pool cut).
+	 * Upstream display name "Chisel" (the same :142 registration row); the decalcify
+	 * durability mapping is the upstream behaviour's mDamage=25 conversion
+	 * (GT_Tool_Chisel.java:98, see {@link GTChiselItem#durabilityPoints}).
+	 */
+	public static final RegistryObject<Item> CHISEL = ITEMS.register("chisel",
+			() -> new GTChiselItem(new Item.Properties().durability(GTChiselItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -85,7 +97,7 @@ public final class GT6Tools {
 	 * the displayItems generator below does the runtime resolution (the
 	 * GTWires.ELECTRIC_WIRES_TAB form).
 	 */
-	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER);
+	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -136,6 +148,8 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.CROWBAR.get()), GTCrowbarItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.CUTTER.get()), GTCutterItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.CHISEL.get()), GTChiselItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",
