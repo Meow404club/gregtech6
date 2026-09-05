@@ -116,7 +116,11 @@ public class GTCoverClientListenerTest {
 					"the baked model stays as the fallback (A-tier material layer): " + tKey);
 		}
 		for (String tDead : DEAD_FILE_IDS) {
+			//? if forge {
 			assertTrue(tModels.get(new ResourceLocation("gt6", tDead)) instanceof StubFallback,
+			//?} else {
+			/*assertTrue(tModels.get(ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath("gt6", tDead))) instanceof StubFallback, // 21.1: MRL is a record over its id (no longer an RL) — the probe must use the same standalone-MRL key the stubs were inserted with (mirrors the insertion above)
+			*///?}
 					"the pre-p10 file-id key is not a registration key — its stub stays unwrapped: " + tDead);
 		}
 	}
