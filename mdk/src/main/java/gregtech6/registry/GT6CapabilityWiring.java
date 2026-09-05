@@ -34,8 +34,9 @@ import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
 //   provider delegating into that seam, per the handoff shape
 //   registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)).
 //   Capability coverage mirrors each forge getCapability exactly: shredder/crusher/lathe
-//   serve item + fluid, the oven serves item only, boiler tank/steam engine/large
-//   boiler/fluid pipe serve fluid only. The commands-card handoff (p15-adapt-commands)
+//   and the p14 dryer / p16 distillery serve item + fluid, the oven serves item only,
+//   boiler tank/steam engine/large boiler/fluid pipe serve fluid only. The commands-card
+//   handoff (p15-adapt-commands)
 //   adds the coke-oven pair (item + fluid off the TileEntityBase10MultiBlockMachine seam)
 //   and the barrel BLOCK fluid face (the fresh-per-call BarrelFluidHandler) — both were
 //   CAPABILITY MISSING at runtime before this card.
@@ -58,7 +59,7 @@ import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
 // BET handles directly — GTMachines.SHREDDER_BE.get() & co. — instead of the former
 // BuiltInRegistries id lookups. Same fail-fast semantics, one step earlier: an unbound
 // DeferredHolder.get() throws exactly where the Objects.requireNonNull lookup threw, and
-// the eight registry paths stay pinned against the rows by GT6CapabilityWiringSeamTest
+// the registry paths stay pinned against the rows by GT6CapabilityWiringSeamTest
 // (DeferredHolder.getId() reads the construction-time name, no binding needed — the old
 // RegistryObject.getId() precedent verbatim). The barrel carrier seam keeps its registry
 // CLASS scan (BuiltInRegistries.ITEM.stream) — there is no holder list to reference: the
@@ -103,6 +104,25 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLathe,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLathe,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// the p14 dryer + p16 distillery — the same BE class and the same item + fluid
+		// faces as the ladder above. 2026-09-05: both families postdate the fork and had
+		// no row here — on this node every external hopper push (the
+		// VanillaInventoryCodeHooks.insertHook level ItemHandler.BLOCK query) and every
+		// cross-machine fluid auto-IO (fluidHandlerAt's level FluidHandler.BLOCK query)
+		// landed capability-blind; the 1.20.1 leg answers from the BE override and cannot
+		// see the gap. The ADR-P15-4 shape again (the part relay and the barrel quartet
+		// were the earlier instances); GT6CapabilityWiringSeamTest
+		// .BASIC_MACHINE_FAMILY_FACES now mechanizes the guard against the next family.
+		BlockEntityType<TileEntityBasicMachine> tDryer = GTMachines.DRYER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tDryer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tDryer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tDistillery = GTMachines.DISTILLERY_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tDistillery,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tDistillery,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
