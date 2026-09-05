@@ -86,11 +86,13 @@ import java.util.HashSet;
  * NEI booleans fold away in the 15-arg port ctor like every other map. The GUI paths are
  * the upstream machines/Distillery|Dryer strings lowercased (the same 1.20.1
  * ResourceLocation-charset convention as the Shredder line — {@code
- * GTBasicMachineScreen.backgroundOf} parses this string). Both maps stay DECLARED-empty:
- * zero rows are poured (the Drying Water→Distilled Water row is the W3 loop-closure card,
- * Loader_Recipes_Chem.java:525; the Distillery rows additionally need the Circuit_Selector
- * item system, which is pooled). Until the W2 dryer-family / W3 loop-closure cards went
- * live there are zero findRecipe consumers for either map.
+ * GTBasicMachineScreen.backgroundOf} parses this string). DRYING's Water→Distilled Water row
+ * poured with the W3 loop-closure card (Loader_Recipes_Chem.java:525); DISTILLERY stayed
+ * DECLARED-empty until task p16-distillery-family ③ landed the Integrated Circuit item
+ * system (the ST.tag(0) selector every :534-541 row carries) — its seven water-family rows
+ * now pour via {@code GT6RecipesDistillery} (the other ~299 census rows stay pooled on
+ * unregistered fluids/items, the class doc carries the census). Both maps have live
+ * findRecipe consumers since the dryer/distillery family BETs.
  *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
@@ -122,7 +124,7 @@ public class GT6RecipeMaps {
 	/** FM.java:41 — the Burnable Fuels map (1/2/0 items, 1/2/0 fluids, minimal inputs 1; empty until the W2 burning-box card pours the rows). */
 	public static volatile RecipeMap BURN;
 
-	/** RM.java:70 — the Distillery map (1/2/1 items, 1/2/1 fluids, minimal inputs 2; DECLARED-empty — rows are pooled behind the circuit-selector item system). */
+	/** RM.java:70 — the Distillery map (1/2/1 items, 1/2/1 fluids, minimal inputs 2; the seven water-family rows pour via GT6RecipesDistillery, the rest of the census stays pooled). */
 	public static volatile RecipeMap DISTILLERY;
 
 	/** RM.java:71 — the Drying map (1/1/0 items, 1/3/0 fluids, minimal inputs 1; DECLARED-empty — the Water→DistW row pours with the W3 loop-closure card). */
