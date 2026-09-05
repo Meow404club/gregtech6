@@ -71,8 +71,11 @@ steps += [
     phase("A: the rig — burner below, dryer above; the bottom energy face, no fuel yet"),
     Step(f"gt6machine dryer place {DRYER}", expect="GT6 dryer placed"),
     Step(f"gt6burner place {BURNER} brick_burning_box", expect="GT6 burning box placed"),
-    # the T1 row columns + the menu-less carrier marker, before any fuel
-    Step(f"gt6machine dryer check {DRYER}", expect="data=-2"),
+    # the T1 row columns + the menu-open arm, before any fuel — flipped by
+    # p16-machine-fluid-gui: the gt6:dryer supplier is bound, so the check probe
+    # CONSTRUCTS the menu (the old data=-2 menu-less marker is gone) and the idle
+    # ContainerData (progress=0/0, never started) reads -1
+    Step(f"gt6machine dryer check {DRYER}", expect="data=-1"),
     Step(f"gt6machine dryer check {DRYER}", expect="minIn=16 recIn=32 maxIn=64"),
     Step(f"gt6machine dryer check {DRYER}", expect="running=false"),
     Step(f"gt6machine dryer check {DRYER}", expect="progress=0/0"),

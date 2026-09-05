@@ -216,8 +216,10 @@ public final class GTMachines {
 	/**
 	 * One row factory — the four Dryer columns that differ (path/name/id/material/hardness/
 	 * tier/parallel) plus the seven that are family constants (RM.Drying through the
-	 * supplier, HU, "dryer" texture, the masks, the auto sides, cheap overclocking T, no
-	 * menu — the GUI pool card owns the {@code gt6:dryer} MenuType registration).
+	 * supplier, HU, "dryer" texture, the masks, the auto sides, cheap overclocking T) and
+	 * the {@code gt6:dryer} MenuType through the supplier (task p16-machine-fluid-gui ① —
+	 * the p14 row.menu pool promise redeemed; the supplier form survives the deferred
+	 * registration, the BE reads it lazily at createMenu time).
 	 */
 	private static GTBasicMachineBlock.MachineRow dryer(String aPath, String aDisplay, int aMetaId, String aMaterial, float aHardness, int aTier, int aParallel) {
 		return new GTBasicMachineBlock.MachineRow(aPath, aDisplay, aMetaId, aMaterial, aHardness, aTier, aParallel, true,
@@ -229,7 +231,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A),
 				(byte)5 /*NBT_TANK_SIDE_AUTO_IN SIDE_BACK*/, (byte)1 /*NBT_TANK_SIDE_AUTO_OUT SIDE_TOP*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				null /*the menu — the GUI pool card*/, true /*NBT_CHEAP_OVERCLOCKING T*/);
+				GTBasicMachinesMenus.DRYER_MENU::get /*gt6:dryer — the GUI pool card redeemed (p16-machine-fluid-gui ①)*/, true /*NBT_CHEAP_OVERCLOCKING T*/);
 	}
 
 	/** The registered Dryer blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -276,15 +278,16 @@ public final class GTMachines {
 
 	/**
 	 * The Dryer BET factory body: the row's parallel/duration/energy-type/tier-input half
-	 * rides the shared {@link #machine} helper (menu null — the GUI pool), then the
-	 * W1a carrier assignment lands the row's connectivity masks directly on the BE
+	 * rides the shared {@link #machine} helper (the menu travels as the row's
+	 * {@code gt6:dryer} supplier, task p16-machine-fluid-gui ①), then the W1a carrier
+	 * assignment lands the row's connectivity masks directly on the BE
 	 * (mEnergyInputs/mFluidInputs/mFluidOutputs — the :511/:566/:575 gate geometry;
 	 * the default 127 zero-regression stays proven for the legacy families).
 	 */
 	private static TileEntityBasicMachine dryerMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
 			net.minecraft.world.level.block.state.BlockState aState) {
 		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
-		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), null);
+		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), tRow.menu());
 		return applyRow(tMachine, tRow);
 	}
 
@@ -313,7 +316,9 @@ public final class GTMachines {
 	 * conversion — TileEntityBasicMachine :137 fields are non-final by upstream design :98).
 	 * The menu travels as a plain supplier since task p14-dryer-family (null = the
 	 * menu-less carrier — the supplier form is what a null menu needs, a RegistryObject
-	 * method reference would capture the null receiver and explode at BE creation).
+	 * method reference would capture the null receiver and explode at BE creation); since
+	 * task p16-machine-fluid-gui the Dryer rows pass the bound {@code gt6:dryer} supplier
+	 * the same way.
 	 */
 	private static TileEntityBasicMachine machine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
 			net.minecraft.world.level.block.state.BlockState aState, RecipeMap aRecipes, int aParallel, boolean aParallelDuration,
