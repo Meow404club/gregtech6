@@ -38,6 +38,8 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-03 | [2026-09-03-p15-10-monotone-shrink-gate-r1.md](2026-09-03-p15-10-monotone-shrink-gate-r1.md) | ADR-P15-10 r1 成文：1.21.1 单调收缩门禁口径钉 compileJava 红文件数；v1=W2 收官重测为真基线 |
 | 2026-09-05 | [2026-09-05-p16-blockstate-prop-identity.md](2026-09-05-p16-blockstate-prop-identity.md) | ADR-P16-2：BlockState Property 单一 owner（1.21.1 StateHolder Reference map 按 == 查 key；GTBlockProperties holder+类内别名） |
 | 2026-09-05 | [2026-09-05-p16-closeout-gate-ledger.md](2026-09-05-p16-closeout-gate-ledger.md) | P16 收口数据文档：四判据门禁总账 + 11 卡表 + 21.1 运行时 delta 三案 + P17 池移交 |
+| 2026-09-05 | [2026-09-05-p17-datagen-tree.md](2026-09-05-p17-datagen-tree.md) | ADR-P17-1：datagen 共享树跨节点裁决 = 输出目录按节点参数化（正典节点共享 tracked 树不变；21.1 输出节点本地 build/；五步门禁取代六步） |
+| 2026-09-05 | [2026-09-05-p17-machine-io-adjudication.md](2026-09-05-p17-machine-io-adjudication.md) | P17①：21.1 机器 IO 两 delta 单根因（wiring 漏注册 DRYER/DISTILLERY_BE）+ IDENTICAL-22 逐条裁决（19 fix/1 permanent/2 defer，残集 IDENTICAL-3） |
 
 ## 占位（历史 ADR，未回填，权威原文在 state `decisions` 账本与 docs/PROJECT_STATE.md）
 
