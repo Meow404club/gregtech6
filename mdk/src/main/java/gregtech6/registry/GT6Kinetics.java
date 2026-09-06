@@ -131,8 +131,31 @@ public final class GT6Kinetics {
 	// the axle family (task p12-axle-family) — 11 materials x 4 diameters = 44
 	// -------------------------------------------------------------------------
 
-	/** One Loader kinetic row (Loader_MultiTileEntities.java:1662-1797), name+number only (no MT at construct time). */
-	public record AxleSpec(String material, String displayName, int tier, int[] bandwidth) {}
+	/**
+	 * One Loader kinetic row (Loader_MultiTileEntities.java:1662-1797), name+number only (no MT at construct time).
+	 * {@code matDisplay} is the row's material display word verbatim (the upstream row wording — Wood rows say
+	 * "Wooden" hard-coded, :1663-1666; the metal rows carry mNameLocal), and the composed-name unit key derives
+	 * from the material slug (see {@link #axleMatUnitKey}).
+	 */
+	public record AxleSpec(String material, String matDisplay, int tier, int[] bandwidth) {}
+
+	/** The composed axle display template "{@code %s %s Axle}" (task p20-i18n-compose-rows): size unit + material unit slots. */
+	public static final String AXLE_DISPLAY_KEY = "gt6.row.axle.display";
+
+	/** The i-th diameter size unit key (the small unit nouns the template consumes — slot-less). */
+	public static String axleSizeUnitKey(int aSizeIndex) {
+		return "gt6.row.size." + AXLE_SIZE_NAMES[aSizeIndex];
+	}
+
+	/** The i-th diameter size display word (the en unit VALUE: the capitalized upstream wording). */
+	public static String axleSizeDisplay(int aSizeIndex) {
+		return Character.toUpperCase(AXLE_SIZE_NAMES[aSizeIndex].charAt(0)) + AXLE_SIZE_NAMES[aSizeIndex].substring(1);
+	}
+
+	/** The row's material small-unit key (the gt6.row.mat namespace, slug = the row material column). */
+	public static String axleMatUnitKey(AxleSpec aSpec) {
+		return "gt6.row.mat." + aSpec.material();
+	}
 
 	/** The row speed rating: NBT_PIPESIZE = VMAX[tier] (Loader :1663 e.g. {@code NBT_PIPESIZE, VMAX[0]}). */
 	public static long axleSpeed(AxleSpec aSpec) {
@@ -186,10 +209,11 @@ public final class GT6Kinetics {
 		return "axle_" + aMaterial + "_" + AXLE_SIZE_NAMES[aSizeIndex];
 	}
 
-	/** The lang/display-name form: {@code <Size> <Material> Axle} (the upstream row wording). */
-	public static String axleDisplay(AxleSpec aSpec, int aSizeIndex) {
-		return Character.toUpperCase(AXLE_SIZE_NAMES[aSizeIndex].charAt(0)) + AXLE_SIZE_NAMES[aSizeIndex].substring(1)
-				+ " " + aSpec.displayName() + " Axle";
+	/** The composed name of an axle (the pure compose seam): the size unit + the material unit over the "%s %s Axle" template. */
+	public static net.minecraft.network.chat.MutableComponent axleDisplayOf(AxleSpec aSpec, int aSizeIndex) {
+		return net.minecraft.network.chat.Component.translatable(AXLE_DISPLAY_KEY,
+				net.minecraft.network.chat.Component.translatable(axleSizeUnitKey(aSizeIndex)),
+				net.minecraft.network.chat.Component.translatable(axleMatUnitKey(aSpec)));
 	}
 
 	/** The block list in declaration order (the BET multi-mount array + the loot/datagen walkers). */
@@ -219,13 +243,31 @@ public final class GT6Kinetics {
 						BlockBehaviour.Properties.of().strength(2.0F, 6.0F).sound(SoundType.METAL).noOcclusion(),
 						fSpec, fSize));
 				AXLE_BLOCKS.put(tName, tBlock);
-				AXLE_ITEMS.put(tName, ITEMS.register(tName, () -> new BlockItem(tBlock.get(), new Item.Properties())));
+				AXLE_ITEMS.put(tName, ITEMS.register(tName, () -> new gregtech6.block.GTComposedNameItem(tBlock.get(), new Item.Properties())));
 			}
 		}
 	}
 
 	// steam engines (task p12-engine-steam — Loader_MultiTileEntities.java:583-612)
 	// -------------------------------------------------------------------------
+
+	/** The composed Steam Engine display template "{@code Steam Engine (%s)}" (task p20-i18n-compose-rows) — one material slot. */
+	public static final String STEAM_DISPLAY_KEY = "gt6.row.steam_engine.display";
+
+	/** The Strong-ladder template "{@code Strong Steam Engine (%s)}" — the Strong wording rides the template, not a slot. */
+	public static final String STEAM_DISPLAY_STRONG_KEY = "gt6.row.steam_engine.display.strong";
+
+	/** The row's material small-unit key (the gt6.row.mat namespace, slug = the row material column). */
+	public static String steamMatUnitKey(SteamEngineRow aRow) {
+		return "gt6.row.mat." + aRow.matSlug();
+	}
+
+	/** The composed name of a steam-engine row — the template fill (the pure compose seam, the GTWireBlock.displayNameOf posture). */
+	public static net.minecraft.network.chat.MutableComponent steamDisplayOf(SteamEngineRow aRow) {
+		return net.minecraft.network.chat.Component.translatable(
+				aRow.strong() ? STEAM_DISPLAY_STRONG_KEY : STEAM_DISPLAY_KEY,
+				net.minecraft.network.chat.Component.translatable(steamMatUnitKey(aRow)));
+	}
 
 	/**
 	 * One Steam Engine registration row — the block-carrier projection of one upstream
@@ -235,7 +277,10 @@ public final class GT6Kinetics {
 	 * loader's own CS.java:240 constant, so the KU packet is N/2).
 	 *
 	 * @param path           the gt6 registry path (the blockstate/model/lang key tail)
-	 * @param displayName    the upstream row display name, verbatim
+	 * @param matSlug        the row material slug (the gt6.row.mat small-unit key tail)
+	 * @param matDisplay     the row material display word, verbatim from the old display column
+	 * @param strong         the Strong-ladder flag (the display form selector, no behavioural
+	 *                       difference upstream — the SAME class and the same NBT set)
 	 * @param efficiency     the upstream NBT_EFFICIENCY (ten-thousandths)
 	 * @param energyCapacity the upstream NBT_CAPACITY (the KU store, NOT tank litres — the
 	 *                       tank re-derives as STEAM_PER_WATER * output * 2, EngineSteam :80)
@@ -244,8 +289,8 @@ public final class GT6Kinetics {
 	 * @param resistance     the upstream NBT_RESISTANCE
 	 * @param wooden         the row's {@code aWooden} flag (the IronWood rows) — the sound tier
 	 */
-	public record SteamEngineRow(String path, String displayName, short efficiency, long energyCapacity,
-			long outputKU, float hardness, float resistance, boolean wooden) {
+	public record SteamEngineRow(String path, String matSlug, String matDisplay, boolean strong,
+			short efficiency, long energyCapacity, long outputKU, float hardness, float resistance, boolean wooden) {
 		/** The block properties of the row (hardness/resistance/sound verbatim). */
 		public BlockBehaviour.Properties properties() {
 			return BlockBehaviour.Properties.of()
@@ -260,35 +305,35 @@ public final class GT6Kinetics {
 	 */
 	public static final List<SteamEngineRow> STEAM_ENGINES = List.of(
 			// the Steam Engine ladder (meta 1300-1313)
-			new SteamEngineRow("steam_engine_lead"            , "Steam Engine (Lead)"           , (short)3000,  16000,   8,  4.0F,  4.0F, false),
-			new SteamEngineRow("steam_engine_tin_alloy"       , "Steam Engine (Tin Alloy)"      , (short)4000,  20000,  10,  4.0F,  4.0F, false),
-			new SteamEngineRow("steam_engine_bronze"          , "Steam Engine (Bronze)"         , (short)5000,  24000,  12,  7.0F,  7.0F, false),
-			new SteamEngineRow("steam_engine_arsenic_copper"  , "Steam Engine (Arsenic Copper)" , (short)5000,  24000,  12,  7.0F,  7.0F, false),
-			new SteamEngineRow("steam_engine_arsenic_bronze"  , "Steam Engine (Arsenic Bronze)" , (short)5000,  28000,  14,  7.0F,  7.0F, false),
-			new SteamEngineRow("steam_engine_brass"           , "Steam Engine (Brass)"          , (short)5000,  24000,  12,  7.0F,  7.0F, false),
-			new SteamEngineRow("steam_engine_invar"           , "Steam Engine (Invar)"          , (short)6400,  16000,   8,  4.0F,  4.0F, false),
-			new SteamEngineRow("steam_engine_iron_wood"       , "Steam Engine (Iron Wood)"      , (short)6450,  16000,   8,  4.0F,  4.0F, true ),
-			new SteamEngineRow("steam_engine_steel"           , "Steam Engine (Steel)"          , (short)5000,  32000,  16,  6.0F,  6.0F, false),
-			new SteamEngineRow("steam_engine_fiery_steel"     , "Steam Engine (Fiery Steel)"    , (short)6200,  64000,  32,  7.0F,  7.0F, false),
-			new SteamEngineRow("steam_engine_chromium"        , "Steam Engine (Chromium)"       , (short)6300,  96000,  48,  4.0F,  4.0F, false),
-			new SteamEngineRow("steam_engine_titanium"        , "Steam Engine (Titanium)"       , (short)5800, 112000,  56,  9.0F,  9.0F, false),
-			new SteamEngineRow("steam_engine_tungsten"        , "Steam Engine (Tungsten)"       , (short)5800, 128000,  64, 10.0F, 10.0F, false),
-			new SteamEngineRow("steam_engine_tungstensteel"   , "Steam Engine (Tungstensteel)"  , (short)6000, 128000,  64, 12.5F, 12.5F, false),
+			new SteamEngineRow("steam_engine_lead", "lead", "Lead", false, (short)3000, 16000, 8, 4.0F, 4.0F, false),
+			new SteamEngineRow("steam_engine_tin_alloy", "tin_alloy", "Tin Alloy", false, (short)4000, 20000, 10, 4.0F, 4.0F, false),
+			new SteamEngineRow("steam_engine_bronze", "bronze", "Bronze", false, (short)5000, 24000, 12, 7.0F, 7.0F, false),
+			new SteamEngineRow("steam_engine_arsenic_copper", "arsenic_copper", "Arsenic Copper", false, (short)5000, 24000, 12, 7.0F, 7.0F, false),
+			new SteamEngineRow("steam_engine_arsenic_bronze", "arsenic_bronze", "Arsenic Bronze", false, (short)5000, 28000, 14, 7.0F, 7.0F, false),
+			new SteamEngineRow("steam_engine_brass", "brass", "Brass", false, (short)5000, 24000, 12, 7.0F, 7.0F, false),
+			new SteamEngineRow("steam_engine_invar", "invar", "Invar", false, (short)6400, 16000, 8, 4.0F, 4.0F, false),
+			new SteamEngineRow("steam_engine_iron_wood", "iron_wood", "Iron Wood", false, (short)6450, 16000, 8, 4.0F, 4.0F, true),
+			new SteamEngineRow("steam_engine_steel", "steel", "Steel", false, (short)5000, 32000, 16, 6.0F, 6.0F, false),
+			new SteamEngineRow("steam_engine_fiery_steel", "fiery_steel", "Fiery Steel", false, (short)6200, 64000, 32, 7.0F, 7.0F, false),
+			new SteamEngineRow("steam_engine_chromium", "chromium", "Chromium", false, (short)6300, 96000, 48, 4.0F, 4.0F, false),
+			new SteamEngineRow("steam_engine_titanium", "titanium", "Titanium", false, (short)5800, 112000, 56, 9.0F, 9.0F, false),
+			new SteamEngineRow("steam_engine_tungsten", "tungsten", "Tungsten", false, (short)5800, 128000, 64, 10.0F, 10.0F, false),
+			new SteamEngineRow("steam_engine_tungstensteel", "tungstensteel", "Tungstensteel", false, (short)6000, 128000, 64, 12.5F, 12.5F, false),
 			// the Strong Steam Engine ladder (meta 1350-1363)
-			new SteamEngineRow("strong_steam_engine_lead"          , "Strong Steam Engine (Lead)"           , (short)3000,  64000,  32,  4.0F,  4.0F, false),
-			new SteamEngineRow("strong_steam_engine_tin_alloy"     , "Strong Steam Engine (Tin Alloy)"      , (short)4000,  80000,  40,  4.0F,  4.0F, false),
-			new SteamEngineRow("strong_steam_engine_bronze"        , "Strong Steam Engine (Bronze)"         , (short)5000,  96000,  48,  7.0F,  7.0F, false),
-			new SteamEngineRow("strong_steam_engine_arsenic_copper", "Strong Steam Engine (Arsenic Copper)" , (short)5000,  96000,  48,  7.0F,  7.0F, false),
-			new SteamEngineRow("strong_steam_engine_arsenic_bronze", "Strong Steam Engine (Arsenic Bronze)" , (short)5000, 112000,  56,  7.0F,  7.0F, false),
-			new SteamEngineRow("strong_steam_engine_brass"         , "Strong Steam Engine (Brass)"          , (short)5000,  96000,  48,  7.0F,  7.0F, false),
-			new SteamEngineRow("strong_steam_engine_invar"         , "Strong Steam Engine (Invar)"          , (short)6400,  64000,  32,  4.0F,  4.0F, false),
-			new SteamEngineRow("strong_steam_engine_iron_wood"     , "Strong Steam Engine (Iron Wood)"      , (short)6450,  64000,  32,  4.0F,  4.0F, true ),
-			new SteamEngineRow("strong_steam_engine_steel"         , "Strong Steam Engine (Steel)"          , (short)5000, 128000,  64,  6.0F,  6.0F, false),
-			new SteamEngineRow("strong_steam_engine_fiery_steel"   , "Strong Steam Engine (Fiery Steel)"    , (short)6200, 256000, 128,  7.0F,  7.0F, false),
-			new SteamEngineRow("strong_steam_engine_chromium"      , "Strong Steam Engine (Chromium)"       , (short)6300, 384000, 192,  4.0F,  4.0F, false),
-			new SteamEngineRow("strong_steam_engine_titanium"      , "Strong Steam Engine (Titanium)"       , (short)5800, 448000, 224,  9.0F,  9.0F, false),
-			new SteamEngineRow("strong_steam_engine_tungsten"      , "Strong Steam Engine (Tungsten)"       , (short)5800, 512000, 256, 10.0F, 10.0F, false),
-			new SteamEngineRow("strong_steam_engine_tungstensteel" , "Strong Steam Engine (Tungstensteel)"  , (short)6000, 512000, 256, 12.5F, 12.5F, false));
+			new SteamEngineRow("strong_steam_engine_lead", "lead", "Lead", true, (short)3000, 64000, 32, 4.0F, 4.0F, false),
+			new SteamEngineRow("strong_steam_engine_tin_alloy", "tin_alloy", "Tin Alloy", true, (short)4000, 80000, 40, 4.0F, 4.0F, false),
+			new SteamEngineRow("strong_steam_engine_bronze", "bronze", "Bronze", true, (short)5000, 96000, 48, 7.0F, 7.0F, false),
+			new SteamEngineRow("strong_steam_engine_arsenic_copper", "arsenic_copper", "Arsenic Copper", true, (short)5000, 96000, 48, 7.0F, 7.0F, false),
+			new SteamEngineRow("strong_steam_engine_arsenic_bronze", "arsenic_bronze", "Arsenic Bronze", true, (short)5000, 112000, 56, 7.0F, 7.0F, false),
+			new SteamEngineRow("strong_steam_engine_brass", "brass", "Brass", true, (short)5000, 96000, 48, 7.0F, 7.0F, false),
+			new SteamEngineRow("strong_steam_engine_invar", "invar", "Invar", true, (short)6400, 64000, 32, 4.0F, 4.0F, false),
+			new SteamEngineRow("strong_steam_engine_iron_wood", "iron_wood", "Iron Wood", true, (short)6450, 64000, 32, 4.0F, 4.0F, true),
+			new SteamEngineRow("strong_steam_engine_steel", "steel", "Steel", true, (short)5000, 128000, 64, 6.0F, 6.0F, false),
+			new SteamEngineRow("strong_steam_engine_fiery_steel", "fiery_steel", "Fiery Steel", true, (short)6200, 256000, 128, 7.0F, 7.0F, false),
+			new SteamEngineRow("strong_steam_engine_chromium", "chromium", "Chromium", true, (short)6300, 384000, 192, 4.0F, 4.0F, false),
+			new SteamEngineRow("strong_steam_engine_titanium", "titanium", "Titanium", true, (short)5800, 448000, 224, 9.0F, 9.0F, false),
+			new SteamEngineRow("strong_steam_engine_tungsten", "tungsten", "Tungsten", true, (short)5800, 512000, 256, 10.0F, 10.0F, false),
+			new SteamEngineRow("strong_steam_engine_tungstensteel", "tungstensteel", "Tungstensteel", true, (short)6000, 512000, 256, 12.5F, 12.5F, false));
 
 	/**
 	 * The 28 blocks/BlockItems, one pair per row — the GTBarrels METAL_DRUM_BLOCKS loop
@@ -302,7 +347,7 @@ public final class GT6Kinetics {
 			STEAM_ENGINE_BLOCKS.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new SteamEngineBlock(tRow, tRow.properties())));
 			STEAM_ENGINE_ITEMS.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(GT6Kinetics.STEAM_ENGINE_BLOCKS.get(tRow.path()).get(), new Item.Properties())));
+					() -> new gregtech6.block.GTComposedNameItem(GT6Kinetics.STEAM_ENGINE_BLOCKS.get(tRow.path()).get(), new Item.Properties())));
 		}
 	}
 
@@ -349,6 +394,12 @@ public final class GT6Kinetics {
 		/** The registration row (the GTBarrelBlock.capacityL carrier read). */
 		public SteamEngineRow row() {
 			return mRow;
+		}
+
+		/** The composed row name (task p20-i18n-compose-rows): the family template over the material small unit. */
+		@Override
+		public net.minecraft.network.chat.MutableComponent getName() {
+			return steamDisplayOf(mRow);
 		}
 
 		@Override
@@ -400,7 +451,22 @@ public final class GT6Kinetics {
 	 * AXLE_SPECS port material registry form ({@code gt6.material.<slug>}; ANY.Steel →
 	 * "steel", MT.Ti → "titanium", MT.Ir → "iridium").
 	 */
-	public record DieselSpec(String material, String displayName, long output) {}
+	/** {@code material} is the row slug (the gt6.row.mat small-unit key tail), {@code matDisplay} the row's material word verbatim. */
+	public record DieselSpec(String material, String matDisplay, long output) {}
+
+	/** The composed Diesel Engine display template "{@code %s Diesel Engine}" (task p20-i18n-compose-rows) — one material slot. */
+	public static final String DIESEL_DISPLAY_KEY = "gt6.row.diesel.display";
+
+	/** The row's material small-unit key. */
+	public static String dieselMatUnitKey(DieselSpec aSpec) {
+		return "gt6.row.mat." + aSpec.material();
+	}
+
+	/** The composed name of a diesel row (the pure compose seam). */
+	public static net.minecraft.network.chat.MutableComponent dieselDisplayOf(DieselSpec aSpec) {
+		return net.minecraft.network.chat.Component.translatable(DIESEL_DISPLAY_KEY,
+				net.minecraft.network.chat.Component.translatable(dieselMatUnitKey(aSpec)));
+	}
 
 	/** The eight registration rows, the Loader :721-729 declaration order (class doc). */
 	public static final List<DieselSpec> DIESEL_SPECS = List.of(
@@ -422,11 +488,6 @@ public final class GT6Kinetics {
 	/** The registry-name form: {@code diesel_engine_<material>}. */
 	public static String dieselName(String aMaterial) {
 		return "diesel_engine_" + aMaterial;
-	}
-
-	/** The lang/display-name form: {@code <Material> Diesel Engine} (the upstream "Diesel Engine (Bronze)" row wording, port naming convention). */
-	public static String dieselDisplay(DieselSpec aSpec) {
-		return aSpec.displayName() + " Diesel Engine";
 	}
 
 	/** The block list in declaration order (the BET multi-mount array + the loot/datagen walkers). */
@@ -452,7 +513,7 @@ public final class GT6Kinetics {
 			RegistryObject<GTDieselEngineBlock> tBlock = BLOCKS.register(tName, () -> new GTDieselEngineBlock(
 					BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), fSpec));
 			DIESEL_BLOCKS.put(tName, tBlock);
-			DIESEL_ITEMS.put(tName, ITEMS.register(tName, () -> new BlockItem(tBlock.get(), new Item.Properties())));
+			DIESEL_ITEMS.put(tName, ITEMS.register(tName, () -> new gregtech6.block.GTComposedNameItem(tBlock.get(), new Item.Properties())));
 		}
 	}
 

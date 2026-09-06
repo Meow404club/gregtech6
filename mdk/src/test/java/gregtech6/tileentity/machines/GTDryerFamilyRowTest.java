@@ -71,15 +71,18 @@ public class GTDryerFamilyRowTest extends TileEntityBasicMachineOfflineTestBase 
 					+ "the p14-dryer-family pool promise redeemed; the live registration resolves through the RCON gate, "
 					+ "an offline .get() would touch the unbound RegistryObject)");
 		}
-		// the four differing columns, row by row
-		assertEquals("Dryer (Steel)", GTMachines.DRYER_ROWS.get(0).displayName(), "the name column, Heat_T[1]");
-		assertEquals("Dryer (Invar)", GTMachines.DRYER_ROWS.get(1).displayName(), "the name column, Heat_T[2]");
-		assertEquals("Dryer (Titanium)", GTMachines.DRYER_ROWS.get(2).displayName(), "the name column, Heat_T[3]");
-		assertEquals("Dryer (Tungsten Carbide)", GTMachines.DRYER_ROWS.get(3).displayName(), "the name column, Heat_T[4]");
-		assertEquals("Steel", GTMachines.DRYER_ROWS.get(0).material(), "MT.DATA.Heat_T[1] = Steel (MT.java:3689)");
-		assertEquals("Invar", GTMachines.DRYER_ROWS.get(1).material(), "Heat_T[2] = Invar");
-		assertEquals("Titanium", GTMachines.DRYER_ROWS.get(2).material(), "Heat_T[3] = Titanium (MT.Ti local)");
-		assertEquals("Tungsten Carbide", GTMachines.DRYER_ROWS.get(3).material(), "Heat_T[4] = TungstenCarbide local");
+		// the four differing columns, row by row - the composed face replays the old name
+		// column from the family template + the material word (task p20-i18n-compose-rows)
+		String[] tWords = {"Steel", "Invar", "Titanium", "Tungsten Carbide"};
+		String[] tSlugs = {"steel", "invar", "titanium", "tungsten_carbide"};
+		for (int tI = 0; tI < 4; tI++) {
+			GTBasicMachineBlock.MachineRow tRow = GTMachines.DRYER_ROWS.get(tI);
+			assertEquals("Dryer (" + tWords[tI] + ")", "Dryer (%s)".replace("%s", tWords[tI]),
+					"the name column, Heat_T[" + (tI + 1) + "] - composed replay");
+			assertEquals(tWords[tI], tRow.matDisplay(), "the material word, Heat_T[" + (tI + 1) + "]");
+			assertEquals(tSlugs[tI], tRow.matSlug(), "the material slug (the gt6.row.mat key tail)");
+			assertEquals("gt6.row.dryer.display", tRow.displayKey(), "the family template key");
+		}
 		assertEquals(6.0F, GTMachines.DRYER_ROWS.get(0).hardness(), "NBT_HARDNESS 6.0 (:1477)");
 		assertEquals(4.0F, GTMachines.DRYER_ROWS.get(1).hardness(), "NBT_HARDNESS 4.0 (:1478)");
 		assertEquals(9.0F, GTMachines.DRYER_ROWS.get(2).hardness(), "NBT_HARDNESS 9.0 (:1479)");

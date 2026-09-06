@@ -20,6 +20,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.multiblock.GTCokeOvenBlock;
 import gregtech6.block.multiblock.GTHeatTransmitterBlock;
 import gregtech6.block.multiblock.GTLargeBoilerBlock;
@@ -146,8 +147,8 @@ public final class GTMultiBlocks {
 	// (same material, the declared erratum on the task card).
 	// ===========================================================================
 
-	/** One Dense Wall / Heat Transmitter part row — the Loader part-id columns. */
-	public record MultiblockPartRow(String path, String displayName, int metaId, float hardness) {}
+	/** One Dense Wall / Heat Transmitter part row — the Loader part-id columns ({@code matDisplay} is the row material word, verbatim). */
+	public record MultiblockPartRow(String path, String matDisplay, int metaId, float hardness) {}
 
 	/**
 	 * One Large Boiler variant row — the block-carrier projection of one :1248-1252 line
@@ -155,32 +156,53 @@ public final class GTMultiBlocks {
 	 * loader already multiplied by STEAM_PER_EU 2), {@code wallPath} is the NBT_DESIGN
 	 * Dense Wall, hardness == resistance.
 	 */
-	public record LargeBoilerRow(String path, String displayName, String material, int metaId,
+	public record LargeBoilerRow(String path, String material, int metaId,
 			long outputSteamPerTick, float hardness, String wallPath) {}
+
+	/** The composed Dense Wall display template "{@code Dense %s Wall}" — one material slot (task p20-i18n-compose-rows). */
+	public static final String DENSE_WALL_DISPLAY_KEY = "gt6.row.dense_wall.display";
+	/** The composed Large Boiler display template "{@code %s Boiler Main Barometer}" — one material slot. */
+	public static final String LARGE_BOILER_DISPLAY_KEY = "gt6.row.large_boiler.display";
+
+	/** The wall row's material small-unit key (the slug is the path tail after {@code dense_wall_}). */
+	public static String wallMatUnitKeyOf(MultiblockPartRow aRow) {
+		return "gt6.row.mat." + aRow.path().substring("dense_wall_".length());
+	}
+
+	/** The boiler row's material small-unit key (the slug is the path tail after {@code large_boiler_}). */
+	public static String boilerMatUnitKeyOf(LargeBoilerRow aRow) {
+		return "gt6.row.mat." + aRow.path().substring("large_boiler_".length());
+	}
+
+	/** The composed name of a Large Boiler row (the pure compose seam). */
+	public static net.minecraft.network.chat.MutableComponent largeBoilerDisplayOf(LargeBoilerRow aRow) {
+		return net.minecraft.network.chat.Component.translatable(LARGE_BOILER_DISPLAY_KEY,
+				net.minecraft.network.chat.Component.translatable(boilerMatUnitKeyOf(aRow)));
+	}
 
 	/** The five Dense Wall rows (:1159-1165, the registration order). */
 	public static final java.util.List<MultiblockPartRow> WALL_ROWS = java.util.List.of(
-			new MultiblockPartRow("dense_wall_stainless_steel", "Dense Stainless Steel Wall", 18022,   6.0F),
-			new MultiblockPartRow("dense_wall_invar"          , "Dense Invar Wall"           , 18027,   6.0F),
-			new MultiblockPartRow("dense_wall_titanium"       , "Dense Titanium Wall"        , 18026,   9.0F),
-			new MultiblockPartRow("dense_wall_tungstensteel"  , "Dense Tungstensteel Wall"   , 18023,  12.5F),
-			new MultiblockPartRow("dense_wall_adamantium"     , "Dense Adamantium Wall"      , 18025, 100.0F));
+			new MultiblockPartRow("dense_wall_stainless_steel", "Stainless Steel", 18022,   6.0F),
+			new MultiblockPartRow("dense_wall_invar"          , "Invar"          , 18027,   6.0F),
+			new MultiblockPartRow("dense_wall_titanium"       , "Titanium"       , 18026,   9.0F),
+			new MultiblockPartRow("dense_wall_tungstensteel"  , "Tungstensteel"  , 18023,  12.5F),
+			new MultiblockPartRow("dense_wall_adamantium"     , "Adamantium"     , 18025, 100.0F));
 
-	/** The Heat Transmitter row (:1176). */
+	/** The Heat Transmitter row (:1176) — the ATOMIC form (a bare noun, nothing to compose; the wire_laser/bricks precedent). */
 	public static final MultiblockPartRow TRANSMITTER_ROW = new MultiblockPartRow("heat_transmitter", "Heat Transmitter", 18101, 10.0F);
 
 	/** The five Large Boiler rows (:1248-1252, the upstream line order — raw NBT_OUTPUT_SU 4096/4096/8192/16384/131072). */
 	public static final java.util.List<LargeBoilerRow> LARGE_BOILER_ROWS = java.util.List.of(
-			boilerRow("Stainless Steel", "Stainless Steel Boiler Main Barometer", 17201,   4096,   6.0F, "dense_wall_stainless_steel"),
-			boilerRow("Invar"          , "Invar Boiler Main Barometer"           , 17205,   4096,   6.0F, "dense_wall_invar"),
-			boilerRow("Titanium"       , "Titanium Boiler Main Barometer"        , 17202,   8192,   9.0F, "dense_wall_titanium"),
-			boilerRow("Tungstensteel"  , "Tungstensteel Boiler Main Barometer"   , 17203,  16384,  12.5F, "dense_wall_tungstensteel"),
-			boilerRow("Adamantium"     , "Adamantium Boiler Main Barometer"      , 17204, 131072, 100.0F, "dense_wall_adamantium"));
+			boilerRow("Stainless Steel", 17201,   4096,   6.0F, "dense_wall_stainless_steel"),
+			boilerRow("Invar"          , 17205,   4096,   6.0F, "dense_wall_invar"),
+			boilerRow("Titanium"       , 17202,   8192,   9.0F, "dense_wall_titanium"),
+			boilerRow("Tungstensteel"  , 17203,  16384,  12.5F, "dense_wall_tungstensteel"),
+			boilerRow("Adamantium"     , 17204, 131072, 100.0F, "dense_wall_adamantium"));
 
 	/** A boiler row builder — the path is {@code large_boiler_<slug>}, the output carries the loader's *STEAM_PER_EU. */
-	private static LargeBoilerRow boilerRow(String aMaterial, String aDisplay, int aMetaId, long aRawOutput, float aHardness, String aWallPath) {
+	private static LargeBoilerRow boilerRow(String aMaterial, int aMetaId, long aRawOutput, float aHardness, String aWallPath) {
 		return new LargeBoilerRow("large_boiler_" + aMaterial.toLowerCase(java.util.Locale.ROOT).replace(" ", "_"),
-				aDisplay, aMaterial, aMetaId, aRawOutput * GTFluids.STEAM_PER_EU, aHardness, aWallPath);
+				aMaterial, aMetaId, aRawOutput * GTFluids.STEAM_PER_EU, aHardness, aWallPath);
 	}
 
 	/** The part properties (hardness == resistance on every row; the METAL sound, the BoilerRow convention). */
@@ -210,18 +232,20 @@ public final class GTMultiBlocks {
 		// resolve these handles at REGISTER time, after every static field is initialized)
 		for (MultiblockPartRow tRow : WALL_ROWS) {
 			WALL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
-					() -> new GTMultiBlockPartBlock(partProperties(tRow.hardness()))));
+					() -> new GTMultiBlockPartBlock(partProperties(tRow.hardness()), tRow)));
 			PART_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(WALL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> new GTComposedNameItem(WALL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
+		// the transmitter item keeps the atomic name (the block resolves the vanilla default; the
+		// composed-name delegate is a no-op for it — same string through Block.getName)
 		PART_ITEMS_BY_PATH.put(TRANSMITTER_ROW.path(), ITEMS.register(TRANSMITTER_ROW.path(),
-				() -> new BlockItem(HEAT_TRANSMITTER.get(), new Item.Properties())));
+				() -> new GTComposedNameItem(HEAT_TRANSMITTER.get(), new Item.Properties())));
 		// the five boiler variant blocks + items over ONE shared BE class (the GT6Boilers row form)
 		for (LargeBoilerRow tRow : LARGE_BOILER_ROWS) {
 			LARGE_BOILER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTLargeBoilerBlock(tRow, partProperties(tRow.hardness()))));
 			LARGE_BOILER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(LARGE_BOILER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> new GTComposedNameItem(LARGE_BOILER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
 	}
 

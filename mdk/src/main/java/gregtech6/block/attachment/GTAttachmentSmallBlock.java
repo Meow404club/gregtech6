@@ -94,15 +94,34 @@ public class GTAttachmentSmallBlock extends Block implements EntityBlock {
 
 	private final Family mFamily;
 	private final boolean mAcidProof;
+	/** The carried registration row (task p20-i18n-compose-rows) — feeds the composed tap/funnel name. */
+	private final gregtech6.registry.GT6Attachments.AttachmentRow mRow;
 	private final java.util.function.Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
-	public GTAttachmentSmallBlock(Family aFamily, boolean aAcidProof,
+	public GTAttachmentSmallBlock(gregtech6.registry.GT6Attachments.AttachmentRow aRow, boolean aAcidProof,
 			java.util.function.Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, Properties aProperties) {
 		super(aProperties);
-		mFamily = aFamily;
+		mFamily = aRow.family();
 		mAcidProof = aAcidProof;
+		mRow = aRow;
 		mTickerType = aTickerType;
 		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+	}
+
+	/** The registration row (the GTBarrelBlock registration-carrier pattern). */
+	public gregtech6.registry.GT6Attachments.AttachmentRow row() {
+		return mRow;
+	}
+
+	/**
+	 * The composed attachment name (task p20-i18n-compose-rows): the tap/funnel family
+	 * template over the gt6.row.attachment.mat small unit.
+	 */
+	@Override
+	public net.minecraft.network.chat.MutableComponent getName() {
+		return net.minecraft.network.chat.Component.translatable(
+				mRow.family() == Family.TAP ? gregtech6.registry.GT6Attachments.TAP_DISPLAY_KEY : gregtech6.registry.GT6Attachments.FUNNEL_DISPLAY_KEY,
+				net.minecraft.network.chat.Component.translatable(gregtech6.registry.GT6Attachments.matUnitKeyOf(mRow)));
 	}
 
 	public Family family() {

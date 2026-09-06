@@ -66,6 +66,12 @@ public class GTLargeBoilerBlock extends GTMultiBlockControllerBlock {
 		return mRow.path();
 	}
 
+	/** The composed boiler name (task p20-i18n-compose-rows): the {@link GTMultiBlocks#largeBoilerDisplayOf} carrier. */
+	@Override
+	public net.minecraft.network.chat.MutableComponent getName() {
+		return GTMultiBlocks.largeBoilerDisplayOf(mRow);
+	}
+
 	/**
 	 * The Boiler Wall block of this variant (upstream :66 mBoilerWalls + :77 NBT_DESIGN —
 	 * the wall MTE id pair becomes the Block identity the row carries).

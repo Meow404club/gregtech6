@@ -585,7 +585,10 @@ public class GTSteamEngineBlockEntityTest extends GTOfflineTestBase {
 		// the verbatim spot rows (Loader :584 / :591 / :597 / :599 / :612)
 		GT6Kinetics.SteamEngineRow tLead = GT6Kinetics.STEAM_ENGINES.get(0);
 		assertEquals("steam_engine_lead", tLead.path());
-		assertEquals("Steam Engine (Lead)", tLead.displayName());
+		// the composed face (task p20-i18n-compose-rows): template replay to the old row wording
+		assertEquals("Steam Engine (Lead)", "Steam Engine (%s)".replace("%s", tLead.matDisplay()));
+		assertFalse(tLead.strong(), "the normal ladder flag");
+		assertEquals("gt6.row.mat.lead", GT6Kinetics.steamMatUnitKey(tLead));
 		assertEquals(3000, tLead.efficiency());
 		assertEquals(16000, tLead.energyCapacity());
 		assertEquals(8, tLead.outputKU());
@@ -596,7 +599,9 @@ public class GTSteamEngineBlockEntityTest extends GTOfflineTestBase {
 		assertEquals(6450, tIronWood.efficiency(), "the family efficiency ceiling");
 		GT6Kinetics.SteamEngineRow tLast = GT6Kinetics.STEAM_ENGINES.get(27);
 		assertEquals("strong_steam_engine_tungstensteel", tLast.path());
-		assertEquals("Strong Steam Engine (Tungstensteel)", tLast.displayName());
+		assertEquals("Strong Steam Engine (Tungstensteel)",
+				"Strong Steam Engine (%s)".replace("%s", tLast.matDisplay()));
+		assertTrue(tLast.strong(), "the Strong ladder flag");
 		assertEquals(6000, tLast.efficiency());
 		assertEquals(512000, tLast.energyCapacity());
 		assertEquals(256, tLast.outputKU(), "the family output ceiling");

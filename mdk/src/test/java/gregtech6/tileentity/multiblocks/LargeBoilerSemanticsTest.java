@@ -451,7 +451,12 @@ public class LargeBoilerSemanticsTest extends GTMultiBlocksOfflineTestBase {
 		for (int i = 0; i < 5; i++) {
 			var tRow = tRows.get(i);
 			assertEquals(tExpected[i][0], tRow.path(), "row " + i + " path");
-			assertEquals(tExpected[i][1], tRow.displayName(), "row " + i + " display (the Loader line verbatim)");
+			// the composed face (task p20-i18n-compose-rows): the fixture display replays from
+			// the template + the material word — a per-row expansion pin
+			assertEquals(tExpected[i][1], "%s Boiler Main Barometer".replace("%s", tRow.material()),
+					"row " + i + " composed display replay (the Loader line verbatim)");
+			assertEquals("gt6.row.mat." + tRow.path().substring("large_boiler_".length()),
+					gregtech6.registry.GTMultiBlocks.boilerMatUnitKeyOf(tRow), "row " + i + " mat unit key");
 			assertEquals(tExpected[i][2], tRow.material(), "row " + i + " material");
 			assertEquals(Integer.parseInt(tExpected[i][3]), tRow.metaId(), "row " + i + " meta id");
 			assertEquals(Long.parseLong(tExpected[i][4]), tRow.outputSteamPerTick(), "row " + i + " output = raw * STEAM_PER_EU");
@@ -473,13 +478,16 @@ public class LargeBoilerSemanticsTest extends GTMultiBlocksOfflineTestBase {
 		};
 		for (int i = 0; i < 5; i++) {
 			assertEquals(tExpected[i][0], tWalls.get(i).path(), "wall " + i + " path");
-			assertEquals(tExpected[i][1], tWalls.get(i).displayName(), "wall " + i + " display");
+			assertEquals(tExpected[i][1], "Dense %s Wall".replace("%s", tWalls.get(i).matDisplay()),
+					"wall " + i + " composed display replay");
 			assertEquals(Integer.parseInt(tExpected[i][2]), tWalls.get(i).metaId(), "wall " + i + " part id");
 			assertEquals(Float.parseFloat(tExpected[i][3]), tWalls.get(i).hardness(), "wall " + i + " hardness");
 		}
 		var tTx = gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW;
 		assertEquals("heat_transmitter", tTx.path());
-		assertEquals("Heat Transmitter", tTx.displayName(), "the :1176 row verbatim");
+		// the transmitter stays ATOMIC (task p20-i18n-compose-rows) — its word rides the row's
+		// matDisplay column as the whole-string lang VALUE (the bare-noun form, nothing to compose)
+		assertEquals("Heat Transmitter", tTx.matDisplay(), "the :1176 row verbatim");
 		assertEquals(18101, tTx.metaId());
 		assertEquals(10.0F, tTx.hardness());
 	}

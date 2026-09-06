@@ -250,38 +250,74 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addKinetics() {
         add("block.gt6.crank", "Hand Crank");
+        // task p20-i18n-compose-rows — the axle/steam/diesel/burning-box/boiler families
+        // compose at runtime (the family blocks' getName); the pre-installed full strings
+        // retired into ONE family template + the row-material / size / family-word small
+        // units, walked from the row tables so the faces cannot drift from the registries
+        addAxleUnits();
+        addSteamEngineUnits();
+        addDieselUnits();
+        addBurningBoxUnits();
+        addBoilerUnits();
+    }
+
+    /** The axle template + the four size units + the eleven row-material units (the AXLE_SPECS walk). */
+    private void addAxleUnits() {
+        add(GT6Kinetics.AXLE_DISPLAY_KEY, "%s %s Axle");
+        for (int i = 0; i < GT6Kinetics.AXLE_SIZE_NAMES.length; i++) {
+            add(GT6Kinetics.axleSizeUnitKey(i), GT6Kinetics.axleSizeDisplay(i));
+        }
         for (GT6Kinetics.AxleSpec tSpec : GT6Kinetics.AXLE_SPECS) {
-            for (int tSize = 0; tSize < GT6Kinetics.AXLE_DIAMETERS.length; tSize++) {
-                add("block.gt6." + GT6Kinetics.axleName(tSpec.material(), tSize),
-                        GT6Kinetics.axleDisplay(tSpec, tSize));
-            }
+            addRowMatUnit(GT6Kinetics.axleMatUnitKey(tSpec), tSpec.matDisplay());
         }
-        // task p12-engine-steam — the 28 engine display names, the upstream row wording
-        // verbatim ("Steam Engine (Lead)" .. "Strong Steam Engine (Tungstensteel)",
-        // Loader_MultiTileEntities.java:584-612), walked from the STEAM_ENGINES table so
-        // the keys cannot drift from the registered blocks
+    }
+
+    /** The two steam-engine templates (normal/strong) + the fourteen row-material units (the STEAM_ENGINES walk). */
+    private void addSteamEngineUnits() {
+        add(GT6Kinetics.STEAM_DISPLAY_KEY, "Steam Engine (%s)");
+        add(GT6Kinetics.STEAM_DISPLAY_STRONG_KEY, "Strong Steam Engine (%s)");
         for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) {
-            add("block.gt6." + tRow.path(), tRow.displayName());
+            addRowMatUnit(GT6Kinetics.steamMatUnitKey(tRow), tRow.matDisplay());
         }
-        // task p12-engine-diesel — the 8 engine display names, walked from the DIESEL_SPECS
-        // table so the keys cannot drift from the registered blocks
+    }
+
+    /** The diesel template + the eight row-material units (the DIESEL_SPECS walk — every word shared with the steam/axle faces). */
+    private void addDieselUnits() {
+        add(GT6Kinetics.DIESEL_DISPLAY_KEY, "%s Diesel Engine");
         for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
-            add("block.gt6." + GT6Kinetics.dieselName(tSpec.material()), GT6Kinetics.dieselDisplay(tSpec));
+            addRowMatUnit(GT6Kinetics.dieselMatUnitKey(tSpec), tSpec.matDisplay());
         }
-        // task p13-burning-box-family — the 97 burning-box display names, the upstream row
-        // wording verbatim ("Brick Burning Box (Solid)" :519 .. "Dense Fluidized Bed
-        // Burning Box (Ta4HfC5)" :704), walked from the row tables so the keys cannot
-        // drift from the registered blocks
+    }
+
+    /** The four burning-box templates + three family words + the row-material units; the Brick row stays ATOMIC (the lone prefix form, Loader:519). */
+    private void addBurningBoxUnits() {
+        add(gregtech6.registry.GT6BurningBoxes.DISPLAY_KEY, "Burning Box (%s, %s)");
+        add(gregtech6.registry.GT6BurningBoxes.DISPLAY_DENSE_KEY, "Dense Burning Box (%s, %s)");
+        add(gregtech6.registry.GT6BurningBoxes.DISPLAY_FLUIDBED_KEY, "Fluidized Bed Burning Box (%s)");
+        add(gregtech6.registry.GT6BurningBoxes.DISPLAY_FLUIDBED_DENSE_KEY, "Dense Fluidized Bed Burning Box (%s)");
+        add(gregtech6.registry.GT6BurningBoxes.FAMILY_SOLID_UNIT_KEY, "Solid");
+        add(gregtech6.registry.GT6BurningBoxes.FAMILY_LIQUID_UNIT_KEY, "Liquid");
+        add(gregtech6.registry.GT6BurningBoxes.FAMILY_GAS_UNIT_KEY, "Gas");
+        add("block.gt6.brick_burning_box", "Brick Burning Box (Solid)"); // the atomic Brick row (Loader:519 verbatim)
         for (gregtech6.registry.GT6BurningBoxes.BurningBoxRow tRow : gregtech6.registry.GT6BurningBoxes.allRows()) {
-            add("block.gt6." + tRow.path(), tRow.displayName());
+            addRowMatUnit(gregtech6.registry.GT6BurningBoxes.matUnitKeyOf(tRow), tRow.material().display());
         }
-        // task p13-boiler-tank — the 26 boiler display names, the upstream row wording
-        // verbatim ("Steam Boiler Tank (Lead)" :553 .. "Strong Steam Boiler Tank (Ultimet)"
-        // :579), walked from the row tables so the keys cannot drift from the registered
-        // blocks
+    }
+
+    /** The two boiler templates (normal/strong) + the row-material units (the BOILER_ROWS walk; Ultimet is boiler-only, Loader:565/:579). */
+    private void addBoilerUnits() {
+        add(gregtech6.registry.GT6Boilers.DISPLAY_KEY, "Steam Boiler Tank (%s)");
+        add(gregtech6.registry.GT6Boilers.DISPLAY_STRONG_KEY, "Strong Steam Boiler Tank (%s)");
         for (gregtech6.registry.GT6Boilers.BoilerRow tRow : gregtech6.registry.GT6Boilers.allRows()) {
-            add("block.gt6." + tRow.path(), tRow.displayName());
+            addRowMatUnit(gregtech6.registry.GT6Boilers.matUnitKeyOf(tRow), tRow.material().display());
         }
+    }
+
+    /** Dedup across the row-family walks (a word shared by several families is ONE unit key). */
+    private final Set<String> rowMatUnitsEmitted = new HashSet<>();
+
+    private void addRowMatUnit(String aKey, String aWord) {
+        if (rowMatUnitsEmitted.add(aKey)) add(aKey, aWord);
     }
 
     /**
@@ -292,8 +328,13 @@ public class GT6EnUs extends LanguageProvider {
      * so the lang face cannot drift from the registered rows.
      */
     private void addAttachments() {
+        // task p20-i18n-compose-rows: the twelve tap/funnel rows compose at runtime — two
+        // family templates + the six material words (the attachment namespace: the row words
+        // "Stainless"/"Tantalum Hafnium Carbide" differ from the gt6.material locals)
+        add(GT6Attachments.TAP_DISPLAY_KEY, "%s Tap");
+        add(GT6Attachments.FUNNEL_DISPLAY_KEY, "%s Funnel");
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
-            add("block.gt6." + tRow.path(), tRow.displayName());
+            addRowMatUnit(GT6Attachments.matUnitKeyOf(tRow), tRow.matDisplay());
         }
         // task p12-gearbox-transformer: the wood kinetic rows (the upstream row wording,
         // "Custom Wooden Gearbox" :1669 / "Wooden Transformer Gearbox" :1668)
@@ -402,14 +443,11 @@ public class GT6EnUs extends LanguageProvider {
      * missing BOTH walks is structurally red instead of a silent raw-key render.
      */
     private void addWireRowMaterialNames() {
-        Set<String> tEmitted = new HashSet<>();
         // (a) replay the addMaterialNames guard ladder: which keys did the material walk emit?
-        for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
-            if (tMaterial == null || tMaterial.mID < 0) continue;
-            tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias merge, MaterialRegistry.java:182-185
-            if (tMaterial == null || tMaterial.mID < 0 || tMaterial.mNameLocal == null) continue;
-            tEmitted.add("gt6.material." + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal));
-        }
+        // (the shared seam, task p20-i18n-compose-rows — the B1-review suggestion: one walk
+        // implementation, consumed by this backfill AND by the parity keyface pin, kills the
+        // double-copy drift the review flagged)
+        Set<String> tEmitted = materialWalkEmittedKeys();
         // (b) backfill exactly the compose-domain misses (Set.add == was absent)
         for (List<GTWireSpecs.Row> tRows : List.of(GTWireSpecs.ROWS, GTWireSpecs.REDSTONE_ROWS)) {
             for (GTWireSpecs.Row tRow : tRows) {
@@ -433,29 +471,22 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.shredder", "Shredder");
         add("block.gt6.crusher", "Crusher");
         add("block.gt6.lathe", "Lathe");
-        // task p8-machine-tiers-doinject ⑧: the T2-T4 ladder — the upstream row names carry
-        // the material tier in parentheses (:1295-1297/:1301-1303/:1307-1309); the port
-        // registers by tier index, so the display names say "Tier N".
-        add("block.gt6.shredder_t2", "Shredder (Tier 2)");
-        add("block.gt6.shredder_t3", "Shredder (Tier 3)");
-        add("block.gt6.shredder_t4", "Shredder (Tier 4)");
-        add("block.gt6.crusher_t2", "Crusher (Tier 2)");
-        add("block.gt6.crusher_t3", "Crusher (Tier 3)");
-        add("block.gt6.crusher_t4", "Crusher (Tier 4)");
-        add("block.gt6.lathe_t2", "Lathe (Tier 2)");
-        add("block.gt6.lathe_t3", "Lathe (Tier 3)");
-        add("block.gt6.lathe_t4", "Lathe (Tier 4)");
-        // task p14-dryer-family — the four Dryer rows, the upstream name column verbatim
-        // ("Dryer (" + aMat.getLocal() + ")", Loader_MultiTileEntities.java:1477-1480 over
-        // the MT.DATA.Heat_T[1..4] locals Steel/Invar/Titanium/Tungsten Carbide, MT.java:3689)
-        // — the boiler-row shape (the GT6Boilers displayName carrier), not the tier-index form.
-        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.DRYER_ROWS) {
-            add("block.gt6." + tRow.path(), tRow.displayName());
-        }
-        // task p16-distillery-family ② — the four Distillery rows, the same verbatim-name walk
-        // (Loader_MultiTileEntities.java:1398-1401, the MT.DATA.Heat_T[1..4] locals).
-        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.DISTILLERY_ROWS) {
-            add("block.gt6." + tRow.path(), tRow.displayName());
+        // task p20-i18n-compose-rows: the nine tier rows (p8-machine-tiers-doinject ⑧) and
+        // the dryer/distillery ladders compose at runtime — one machine template + the three
+        // machine words + the ordinal tier units, and one template per row family over the
+        // gt6.row.mat small units
+        add(gregtech6.registry.GTMachines.MACHINE_DISPLAY_KEY, "%s (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_SHREDDER_UNIT_KEY, "Shredder");
+        add(gregtech6.registry.GTMachines.MACHINE_CRUSHER_UNIT_KEY, "Crusher");
+        add(gregtech6.registry.GTMachines.MACHINE_LATHE_UNIT_KEY, "Lathe");
+        add(gregtech6.registry.GTMachines.machineTierUnitKey(2), "Tier 2");
+        add(gregtech6.registry.GTMachines.machineTierUnitKey(3), "Tier 3");
+        add(gregtech6.registry.GTMachines.machineTierUnitKey(4), "Tier 4");
+        add(gregtech6.registry.GTMachines.DRYER_DISPLAY_KEY, "Dryer (%s)");
+        add(gregtech6.registry.GTMachines.DISTILLERY_DISPLAY_KEY, "Distillery (%s)");
+        for (String[] tMat : new String[][] {{"steel", "Steel"}, {"invar", "Invar"}, {"titanium", "Titanium"},
+                {"tungsten_carbide", "Tungsten Carbide"}}) {
+            addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the MT.DATA.Heat_T[1..4] locals (MT.java:3689)
         }
         // task p16-distillery-family ① — the Integrated Circuit ("Selector Tag", the upstream
         // registration name ItemIntegratedCircuit.java:50 verbatim) + the configuration
@@ -478,13 +509,19 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.multiblock_coke_oven", "Coke Oven");
         add("block.gt6.multiblock_coke_oven_bricks", "Coke Oven Bricks");
         add("itemGroup.gt6.multiblocks", "Multiblocks");
-        for (var tRow : gregtech6.registry.GTMultiBlocks.LARGE_BOILER_ROWS) {
-            add("block.gt6." + tRow.path(), tRow.displayName());
+        // task p20-i18n-compose-rows: the Dense Wall + Large Boiler rows compose at runtime
+        // (the wall/boiler blocks' getName); the Heat Transmitter stays ATOMIC (a bare noun,
+        // the Loader:1176 row verbatim — nothing to compose)
+        add(gregtech6.registry.GTMultiBlocks.DENSE_WALL_DISPLAY_KEY, "Dense %s Wall");
+        add(gregtech6.registry.GTMultiBlocks.LARGE_BOILER_DISPLAY_KEY, "%s Boiler Main Barometer");
+        for (gregtech6.registry.GTMultiBlocks.MultiblockPartRow tRow : gregtech6.registry.GTMultiBlocks.WALL_ROWS) {
+            addRowMatUnit(gregtech6.registry.GTMultiBlocks.wallMatUnitKeyOf(tRow), tRow.matDisplay());
         }
-        for (var tRow : gregtech6.registry.GTMultiBlocks.WALL_ROWS) {
-            add("block.gt6." + tRow.path(), tRow.displayName());
+        for (gregtech6.registry.GTMultiBlocks.LargeBoilerRow tRow : gregtech6.registry.GTMultiBlocks.LARGE_BOILER_ROWS) {
+            addRowMatUnit(gregtech6.registry.GTMultiBlocks.boilerMatUnitKeyOf(tRow), tRow.material());
         }
-        add("block.gt6." + gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.path(), gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.displayName());
+        add("block.gt6." + gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.path(),
+                gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.matDisplay());
     }
 
     /**
@@ -539,6 +576,24 @@ public class GT6EnUs extends LanguageProvider {
         String tPre = prefix.mMaterialPre == null ? "" : prefix.mMaterialPre;
         String tPost = prefix.mMaterialPost == null ? "" : prefix.mMaterialPost;
         return tPre + "%s" + tPost;
+    }
+
+    /**
+     * The replay of the {@link #addMaterialNames} guard ladder — the set of
+     * {@code gt6.material.<snake>} keys the registration-face walk emits (alias merge,
+     * {@code mID >= 0} only, MaterialRegistry.java:182-185). Single implementation shared by
+     * the wire-row backfill ({@link #addWireRowMaterialNames}) and the parity keyface pin
+     * (GT6LangParityTest), per the B1-review dedup suggestion (task p20-i18n-compose-rows).
+     */
+    static Set<String> materialWalkEmittedKeys() {
+        Set<String> tEmitted = new HashSet<>();
+        for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+            if (tMaterial == null || tMaterial.mID < 0) continue;
+            tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias merge, MaterialRegistry.java:182-185
+            if (tMaterial == null || tMaterial.mID < 0 || tMaterial.mNameLocal == null) continue;
+            tEmitted.add("gt6.material." + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal));
+        }
+        return tEmitted;
     }
 
     /** Table b: one entry per registration-target material (alias slots merged like the bridge). */

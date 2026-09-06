@@ -378,7 +378,11 @@ public class GTDieselEngineBlockEntityTest extends GTOfflineTestBase {
 		// mod-construct + RCON gate's surface — offline the DeferredRegister loop never fires)
 		for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
 			assertEquals("diesel_engine_" + tSpec.material(), GT6Kinetics.dieselName(tSpec.material()));
-			assertEquals(tSpec.displayName() + " Diesel Engine", GT6Kinetics.dieselDisplay(tSpec));
+			// the composed face (task p20-i18n-compose-rows): template + material unit replay
+			// to the old row wording; the key/unit faces are pinned in GT6LangParityTest
+			assertEquals(tSpec.matDisplay() + " Diesel Engine",
+					"%s Diesel Engine".replace("%s", tSpec.matDisplay()));
+			assertEquals("gt6.row.mat." + tSpec.material(), GT6Kinetics.dieselMatUnitKey(tSpec));
 		}
 		GTDieselEngineBlockEntity tEngine = engine();
 		assertEquals(10000, tEngine.mEfficiency, "NBT_EFFICIENCY 10000 on every row");
@@ -389,7 +393,7 @@ public class GTDieselEngineBlockEntityTest extends GTOfflineTestBase {
 		GT6Kinetics.DieselSpec tSpec = GT6Kinetics.DIESEL_SPECS.stream()
 				.filter(s -> s.material().equals(aMaterial)).findFirst().orElse(null);
 		assertNotNull(tSpec, aMaterial + " row present");
-		assertEquals(aDisplay, tSpec.displayName());
+		assertEquals(aDisplay, tSpec.matDisplay());
 		assertEquals(aOutput, tSpec.output(), aMaterial + " NBT_OUTPUT");
 	}
 

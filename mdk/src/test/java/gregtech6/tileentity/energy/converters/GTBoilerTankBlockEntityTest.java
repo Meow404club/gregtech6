@@ -562,7 +562,11 @@ public class GTBoilerTankBlockEntityTest extends GTOfflineTestBase {
 			GT6Boilers.BoilerRow tGot = tRows.get(i);
 			assertEquals(tWant.path(), tGot.path(), "row " + i + " path");
 			assertEquals(tWant.metaId(), tGot.metaId(), "row " + i + " meta id (the upstream line order kept)");
-			assertEquals(tWant.display(), tGot.displayName(), "row " + i + " display name");
+			// the composed face (task p20-i18n-compose-rows): the fixture display replays from
+			// the template + the material word — a per-row expansion pin (all 26 rows)
+			String tReplay = (tGot.strong() ? "Strong Steam Boiler Tank (%s)" : "Steam Boiler Tank (%s)")
+					.replace("%s", tGot.material().display());
+			assertEquals(tWant.display(), tReplay, "row " + i + " composed display replay");
 			assertEquals(tWant.output(), tGot.outputSteamPerTick(), "row " + i + " NBT_OUTPUT_SU (= raw × STEAM_PER_EU 2)");
 			assertEquals(tWant.hardness(), tGot.material().hardness(), "row " + i + " hardness");
 			assertEquals(tWant.hardness(), tGot.material().hardness(), "row " + i + " resistance == hardness");

@@ -38,6 +38,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.energy.generators.GTGeneratorFluidBedBlockEntity;
@@ -103,6 +104,53 @@ public final class GT6BurningBoxes {
 		FLUIDBED
 	}
 
+	/** The composed Solid/Liquid/Gas display template "{@code Burning Box (%s, %s)}" — family + material slots (task p20-i18n-compose-rows). */
+	public static final String DISPLAY_KEY = "gt6.row.burning_box.display";
+	/** The Dense form of the Solid/Liquid/Gas template — the Dense wording rides the template. */
+	public static final String DISPLAY_DENSE_KEY = "gt6.row.burning_box.display.dense";
+	/** The Fluidized Bed template "{@code Fluidized Bed Burning Box (%s)}" — material slot only (the upstream bracket has no family word). */
+	public static final String DISPLAY_FLUIDBED_KEY = "gt6.row.burning_box.display.fluidbed";
+	/** The Dense Fluidized Bed template. */
+	public static final String DISPLAY_FLUIDBED_DENSE_KEY = "gt6.row.burning_box.display.fluidbed_dense";
+	/** The family-word unit keys (Solid/Liquid/Gas — slot-less nouns the templates consume). */
+	public static final String FAMILY_SOLID_UNIT_KEY = "gt6.row.burning_box.family.solid";
+	public static final String FAMILY_LIQUID_UNIT_KEY = "gt6.row.burning_box.family.liquid";
+	public static final String FAMILY_GAS_UNIT_KEY = "gt6.row.burning_box.family.gas";
+
+	/** The row's display template key (the family split; Dense rides the path prefix). */
+	public static String displayKeyOf(BurningBoxRow aRow) {
+		boolean tDense = aRow.path().startsWith("dense_");
+		return switch (aRow.family()) {
+			case FLUIDBED -> tDense ? DISPLAY_FLUIDBED_DENSE_KEY : DISPLAY_FLUIDBED_KEY;
+			default -> tDense ? DISPLAY_DENSE_KEY : DISPLAY_KEY;
+		};
+	}
+
+	/** The family-word unit key of a row (null-family rows — the Brick atom — never compose). */
+	public static String familyUnitKeyOf(BurningBoxRow aRow) {
+		return switch (aRow.family()) {
+			case SOLID -> FAMILY_SOLID_UNIT_KEY;
+			case LIQUID -> FAMILY_LIQUID_UNIT_KEY;
+			case GAS -> FAMILY_GAS_UNIT_KEY;
+			case FLUIDBED -> null;
+		};
+	}
+
+	/** The row's material small-unit key. */
+	public static String matUnitKeyOf(BurningBoxRow aRow) {
+		return "gt6.row.mat." + aRow.material().slug();
+	}
+
+	/** The composed name of a burning-box row (the pure compose seam; the Brick atom keeps its atomic key). */
+	public static net.minecraft.network.chat.MutableComponent displayOf(BurningBoxRow aRow) {
+		net.minecraft.network.chat.Component tMat = net.minecraft.network.chat.Component.translatable(matUnitKeyOf(aRow));
+		if (aRow.family() == Family.FLUIDBED) {
+			return net.minecraft.network.chat.Component.translatable(displayKeyOf(aRow), tMat);
+		}
+		return net.minecraft.network.chat.Component.translatable(displayKeyOf(aRow),
+				net.minecraft.network.chat.Component.translatable(familyUnitKeyOf(aRow)), tMat);
+	}
+
 	/** One Loader material — slug + display name + the NBT_HARDNESS (== NBT_RESISTANCE) pair. */
 	public record BoxMaterial(String slug, String display, float hardness) {}
 
@@ -122,8 +170,8 @@ public final class GT6BurningBoxes {
 			MAT_TUNGSTENSTEEL = new BoxMaterial("tungstensteel"        , "Tungstensteel"         , 12.5F),
 			MAT_TANTALUM_HAFNIUM_CARBIDE = new BoxMaterial("tantalum_hafnium_carbide", "Ta4HfC5", 12.5F);
 
-	/** One registration row — the block-carrier projection of one upstream aRegistry.add line. */
-	public record BurningBoxRow(String path, String displayName, short efficiency, long rate, Family family, BoxMaterial material, boolean stone) {
+	/** One registration row — the block-carrier projection of one upstream aRegistry.add line (the display column retired into the composed-name parameters, task p20-i18n-compose-rows). */
+	public record BurningBoxRow(String path, short efficiency, long rate, Family family, BoxMaterial material, boolean stone) {
 		/** The block properties (hardness == resistance on every row; the Brick row the STONE sound). */
 		public BlockBehaviour.Properties properties() {
 			return BlockBehaviour.Properties.of()
@@ -135,128 +183,128 @@ public final class GT6BurningBoxes {
 	// the row ladders — the Loader file order, values verbatim (class doc)
 
 	/** The Brick row (:519, ID 1199) — eff 2500, out 16 HU/t, the aStone carrier. */
-	public static final BurningBoxRow BRICK_ROW = new BurningBoxRow("brick_burning_box", "Brick Burning Box (Solid)", (short)2500, 16, Family.SOLID,
+	public static final BurningBoxRow BRICK_ROW = new BurningBoxRow("brick_burning_box", (short)2500, 16, Family.SOLID,
 			new BoxMaterial("brick", "Brick", 6.0F), true);
 
 	/** The 13 Burning Box (Solid) rows (:522-534) + the 13 Dense rows (:536-548) — 27 with the Brick row. */
 	public static final List<BurningBoxRow> SOLID_ROWS = buildLadder(Family.SOLID,
 			// :522-534 — the normal ladder (IDs 1100-1112)
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_LEAD               , (short) 5000,  16),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_BISMUTH            , (short) 4500,  20),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_BRONZE             , (short) 7500,  24),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_ARSENIC_COPPER    , (short) 8000,  24),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_ARSENIC_BRONZE    , (short) 9000,  28),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_INVAR             , (short)10000,  16),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_STEEL             , (short) 7000,  32),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_CHROMIUM          , (short) 8500, 112),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_TITANIUM          , (short) 8500,  96),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_NETHERITE         , (short) 9000,  96),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_TUNGSTEN          , (short)10000, 128),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_TUNGSTENSTEEL     , (short) 9000, 128),
-			row("burning_box_solid_", "Burning Box (Solid, ", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000, 256),
+			row("burning_box_solid_", MAT_LEAD               , (short) 5000,  16),
+			row("burning_box_solid_", MAT_BISMUTH            , (short) 4500,  20),
+			row("burning_box_solid_", MAT_BRONZE             , (short) 7500,  24),
+			row("burning_box_solid_", MAT_ARSENIC_COPPER    , (short) 8000,  24),
+			row("burning_box_solid_", MAT_ARSENIC_BRONZE    , (short) 9000,  28),
+			row("burning_box_solid_", MAT_INVAR             , (short)10000,  16),
+			row("burning_box_solid_", MAT_STEEL             , (short) 7000,  32),
+			row("burning_box_solid_", MAT_CHROMIUM          , (short) 8500, 112),
+			row("burning_box_solid_", MAT_TITANIUM          , (short) 8500,  96),
+			row("burning_box_solid_", MAT_NETHERITE         , (short) 9000,  96),
+			row("burning_box_solid_", MAT_TUNGSTEN          , (short)10000, 128),
+			row("burning_box_solid_", MAT_TUNGSTENSTEEL     , (short) 9000, 128),
+			row("burning_box_solid_", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000, 256),
 			// :536-548 — the Dense ladder (IDs 1150-1162, the ×4 output)
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_LEAD               , (short) 5000,  64),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_BISMUTH            , (short) 4500,  80),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_BRONZE             , (short) 7500,  96),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_ARSENIC_COPPER    , (short) 8000,  96),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_ARSENIC_BRONZE    , (short) 9000, 112),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_INVAR             , (short)10000,  64),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_STEEL             , (short) 7000, 128),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_CHROMIUM          , (short) 8500, 448),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_TITANIUM          , (short) 8500, 384),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_NETHERITE         , (short) 9000, 384),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_TUNGSTEN          , (short)10000, 512),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_TUNGSTENSTEEL     , (short) 9000, 512),
-			row("dense_burning_box_solid_", "Dense Burning Box (Solid, ", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000,1024));
+			row("dense_burning_box_solid_", MAT_LEAD               , (short) 5000,  64),
+			row("dense_burning_box_solid_", MAT_BISMUTH            , (short) 4500,  80),
+			row("dense_burning_box_solid_", MAT_BRONZE             , (short) 7500,  96),
+			row("dense_burning_box_solid_", MAT_ARSENIC_COPPER    , (short) 8000,  96),
+			row("dense_burning_box_solid_", MAT_ARSENIC_BRONZE    , (short) 9000, 112),
+			row("dense_burning_box_solid_", MAT_INVAR             , (short)10000,  64),
+			row("dense_burning_box_solid_", MAT_STEEL             , (short) 7000, 128),
+			row("dense_burning_box_solid_", MAT_CHROMIUM          , (short) 8500, 448),
+			row("dense_burning_box_solid_", MAT_TITANIUM          , (short) 8500, 384),
+			row("dense_burning_box_solid_", MAT_NETHERITE         , (short) 9000, 384),
+			row("dense_burning_box_solid_", MAT_TUNGSTEN          , (short)10000, 512),
+			row("dense_burning_box_solid_", MAT_TUNGSTENSTEEL     , (short) 9000, 512),
+			row("dense_burning_box_solid_", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000,1024));
 
 	/** The 11+11 Liquid rows (:619-629 + :633-643); the Pb/Bi rows :617-618/:631-632 stay commented-out upstream. */
 	public static final List<BurningBoxRow> LIQUID_ROWS = buildLadder(Family.LIQUID,
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_BRONZE            , (short) 7500,  24),
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_ARSENIC_COPPER    , (short) 8000,  24),
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_ARSENIC_BRONZE    , (short) 9000,  28),
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_INVAR             , (short)10000,  16),
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_STEEL             , (short) 7000,  32),
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_CHROMIUM          , (short) 8500, 112),
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_TITANIUM          , (short) 8500,  96),
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_NETHERITE         , (short) 9000,  96),
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_TUNGSTEN          , (short)10000, 128),
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_TUNGSTENSTEEL     , (short) 9000, 128),
-			row("burning_box_liquid_", "Burning Box (Liquid, ", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000, 256),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_BRONZE            , (short) 7500,  96),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_ARSENIC_COPPER    , (short) 8000,  96),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_ARSENIC_BRONZE    , (short) 9000, 112),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_INVAR             , (short)10000,  64),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_STEEL             , (short) 7000, 128),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_CHROMIUM          , (short) 8500, 448),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_TITANIUM          , (short) 8500, 384),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_NETHERITE         , (short) 9000, 384),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_TUNGSTEN          , (short)10000, 512),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_TUNGSTENSTEEL     , (short) 9000, 512),
-			row("dense_burning_box_liquid_", "Dense Burning Box (Liquid, ", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000,1024));
+			row("burning_box_liquid_", MAT_BRONZE            , (short) 7500,  24),
+			row("burning_box_liquid_", MAT_ARSENIC_COPPER    , (short) 8000,  24),
+			row("burning_box_liquid_", MAT_ARSENIC_BRONZE    , (short) 9000,  28),
+			row("burning_box_liquid_", MAT_INVAR             , (short)10000,  16),
+			row("burning_box_liquid_", MAT_STEEL             , (short) 7000,  32),
+			row("burning_box_liquid_", MAT_CHROMIUM          , (short) 8500, 112),
+			row("burning_box_liquid_", MAT_TITANIUM          , (short) 8500,  96),
+			row("burning_box_liquid_", MAT_NETHERITE         , (short) 9000,  96),
+			row("burning_box_liquid_", MAT_TUNGSTEN          , (short)10000, 128),
+			row("burning_box_liquid_", MAT_TUNGSTENSTEEL     , (short) 9000, 128),
+			row("burning_box_liquid_", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000, 256),
+			row("dense_burning_box_liquid_", MAT_BRONZE            , (short) 7500,  96),
+			row("dense_burning_box_liquid_", MAT_ARSENIC_COPPER    , (short) 8000,  96),
+			row("dense_burning_box_liquid_", MAT_ARSENIC_BRONZE    , (short) 9000, 112),
+			row("dense_burning_box_liquid_", MAT_INVAR             , (short)10000,  64),
+			row("dense_burning_box_liquid_", MAT_STEEL             , (short) 7000, 128),
+			row("dense_burning_box_liquid_", MAT_CHROMIUM          , (short) 8500, 448),
+			row("dense_burning_box_liquid_", MAT_TITANIUM          , (short) 8500, 384),
+			row("dense_burning_box_liquid_", MAT_NETHERITE         , (short) 9000, 384),
+			row("dense_burning_box_liquid_", MAT_TUNGSTEN          , (short)10000, 512),
+			row("dense_burning_box_liquid_", MAT_TUNGSTENSTEEL     , (short) 9000, 512),
+			row("dense_burning_box_liquid_", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000,1024));
 
 	/** The 11+11 Gas rows (:649-659 + :663-673) — NBT_FUELMAP FM.Burn on EVERY row (the FM.Gas ruling). */
 	public static final List<BurningBoxRow> GAS_ROWS = buildLadder(Family.GAS,
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_BRONZE            , (short) 7500,  24),
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_ARSENIC_COPPER    , (short) 8000,  24),
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_ARSENIC_BRONZE    , (short) 9000,  28),
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_INVAR             , (short)10000,  16),
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_STEEL             , (short) 7000,  32),
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_CHROMIUM          , (short) 8500, 112),
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_TITANIUM          , (short) 8500,  96),
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_NETHERITE         , (short) 9000,  96),
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_TUNGSTEN          , (short)10000, 128),
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_TUNGSTENSTEEL     , (short) 9000, 128),
-			row("burning_box_gas_", "Burning Box (Gas, ", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000, 256),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_BRONZE            , (short) 7500,  96),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_ARSENIC_COPPER    , (short) 8000,  96),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_ARSENIC_BRONZE    , (short) 9000, 112),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_INVAR             , (short)10000,  64),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_STEEL             , (short) 7000, 128),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_CHROMIUM          , (short) 8500, 448),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_TITANIUM          , (short) 8500, 384),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_NETHERITE         , (short) 9000, 384),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_TUNGSTEN          , (short)10000, 512),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_TUNGSTENSTEEL     , (short) 9000, 512),
-			row("dense_burning_box_gas_", "Dense Burning Box (Gas, ", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000,1024));
+			row("burning_box_gas_", MAT_BRONZE            , (short) 7500,  24),
+			row("burning_box_gas_", MAT_ARSENIC_COPPER    , (short) 8000,  24),
+			row("burning_box_gas_", MAT_ARSENIC_BRONZE    , (short) 9000,  28),
+			row("burning_box_gas_", MAT_INVAR             , (short)10000,  16),
+			row("burning_box_gas_", MAT_STEEL             , (short) 7000,  32),
+			row("burning_box_gas_", MAT_CHROMIUM          , (short) 8500, 112),
+			row("burning_box_gas_", MAT_TITANIUM          , (short) 8500,  96),
+			row("burning_box_gas_", MAT_NETHERITE         , (short) 9000,  96),
+			row("burning_box_gas_", MAT_TUNGSTEN          , (short)10000, 128),
+			row("burning_box_gas_", MAT_TUNGSTENSTEEL     , (short) 9000, 128),
+			row("burning_box_gas_", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000, 256),
+			row("dense_burning_box_gas_", MAT_BRONZE            , (short) 7500,  96),
+			row("dense_burning_box_gas_", MAT_ARSENIC_COPPER    , (short) 8000,  96),
+			row("dense_burning_box_gas_", MAT_ARSENIC_BRONZE    , (short) 9000, 112),
+			row("dense_burning_box_gas_", MAT_INVAR             , (short)10000,  64),
+			row("dense_burning_box_gas_", MAT_STEEL             , (short) 7000, 128),
+			row("dense_burning_box_gas_", MAT_CHROMIUM          , (short) 8500, 448),
+			row("dense_burning_box_gas_", MAT_TITANIUM          , (short) 8500, 384),
+			row("dense_burning_box_gas_", MAT_NETHERITE         , (short) 9000, 384),
+			row("dense_burning_box_gas_", MAT_TUNGSTEN          , (short)10000, 512),
+			row("dense_burning_box_gas_", MAT_TUNGSTENSTEEL     , (short) 9000, 512),
+			row("dense_burning_box_gas_", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000,1024));
 
 	/** The 13+13 Fluidized Bed rows (:678-690 + :692-704); the Dense ladder is ×4 (256-4096). */
 	public static final List<BurningBoxRow> FLUIDBED_ROWS = buildLadder(Family.FLUIDBED,
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_LEAD               , (short) 5000,  64),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_BISMUTH            , (short) 4500,  80),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_BRONZE             , (short) 7500,  96),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_ARSENIC_COPPER    , (short) 8000,  96),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_ARSENIC_BRONZE    , (short) 9000, 112),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_INVAR             , (short)10000,  64),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_STEEL             , (short) 7000, 128),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_CHROMIUM          , (short) 8500, 448),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_TITANIUM          , (short) 8500, 384),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_NETHERITE         , (short) 9000, 384),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_TUNGSTEN          , (short)10000, 512),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_TUNGSTENSTEEL     , (short) 9000, 512),
-			row("burning_box_fluidbed_", "Fluidized Bed Burning Box (", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000,1024),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_LEAD               , (short) 5000,  256),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_BISMUTH            , (short) 4500,  320),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_BRONZE             , (short) 7500,  384),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_ARSENIC_COPPER    , (short) 8000,  384),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_ARSENIC_BRONZE    , (short) 9000,  448),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_INVAR             , (short)10000,  256),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_STEEL             , (short) 7000,  512),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_CHROMIUM          , (short) 8500, 1792),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_TITANIUM          , (short) 8500, 1536),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_NETHERITE         , (short) 9000, 1536),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_TUNGSTEN          , (short)10000, 2048),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_TUNGSTENSTEEL     , (short) 9000, 2048),
-			row("dense_burning_box_fluidbed_", "Dense Fluidized Bed Burning Box (", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000, 4096));
+			row("burning_box_fluidbed_", MAT_LEAD               , (short) 5000,  64),
+			row("burning_box_fluidbed_", MAT_BISMUTH            , (short) 4500,  80),
+			row("burning_box_fluidbed_", MAT_BRONZE             , (short) 7500,  96),
+			row("burning_box_fluidbed_", MAT_ARSENIC_COPPER    , (short) 8000,  96),
+			row("burning_box_fluidbed_", MAT_ARSENIC_BRONZE    , (short) 9000, 112),
+			row("burning_box_fluidbed_", MAT_INVAR             , (short)10000,  64),
+			row("burning_box_fluidbed_", MAT_STEEL             , (short) 7000, 128),
+			row("burning_box_fluidbed_", MAT_CHROMIUM          , (short) 8500, 448),
+			row("burning_box_fluidbed_", MAT_TITANIUM          , (short) 8500, 384),
+			row("burning_box_fluidbed_", MAT_NETHERITE         , (short) 9000, 384),
+			row("burning_box_fluidbed_", MAT_TUNGSTEN          , (short)10000, 512),
+			row("burning_box_fluidbed_", MAT_TUNGSTENSTEEL     , (short) 9000, 512),
+			row("burning_box_fluidbed_", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000,1024),
+			row("dense_burning_box_fluidbed_", MAT_LEAD               , (short) 5000,  256),
+			row("dense_burning_box_fluidbed_", MAT_BISMUTH            , (short) 4500,  320),
+			row("dense_burning_box_fluidbed_", MAT_BRONZE             , (short) 7500,  384),
+			row("dense_burning_box_fluidbed_", MAT_ARSENIC_COPPER    , (short) 8000,  384),
+			row("dense_burning_box_fluidbed_", MAT_ARSENIC_BRONZE    , (short) 9000,  448),
+			row("dense_burning_box_fluidbed_", MAT_INVAR             , (short)10000,  256),
+			row("dense_burning_box_fluidbed_", MAT_STEEL             , (short) 7000,  512),
+			row("dense_burning_box_fluidbed_", MAT_CHROMIUM          , (short) 8500, 1792),
+			row("dense_burning_box_fluidbed_", MAT_TITANIUM          , (short) 8500, 1536),
+			row("dense_burning_box_fluidbed_", MAT_NETHERITE         , (short) 9000, 1536),
+			row("dense_burning_box_fluidbed_", MAT_TUNGSTEN          , (short)10000, 2048),
+			row("dense_burning_box_fluidbed_", MAT_TUNGSTENSTEEL     , (short) 9000, 2048),
+			row("dense_burning_box_fluidbed_", MAT_TANTALUM_HAFNIUM_CARBIDE, (short)10000, 4096));
 
-	/** A normal-ladder row builder (the display name closes with the material and a ")"). */
-	private static BurningBoxRow row(String aPathPrefix, String aDisplayPrefix, BoxMaterial aMat, short aEfficiency, long aRate) {
-		return new BurningBoxRow(aPathPrefix + aMat.slug(), aDisplayPrefix + aMat.display() + ")", aEfficiency, aRate, null, aMat, false);
+	/** A normal-ladder row builder (the row path closes with the material slug; the display is composed at getName time). */
+	private static BurningBoxRow row(String aPathPrefix, BoxMaterial aMat, short aEfficiency, long aRate) {
+		return new BurningBoxRow(aPathPrefix + aMat.slug(), aEfficiency, aRate, null, aMat, false);
 	}
 
 	/** The four ladders with the family stamped (the record is family-immutable after the build). */
 	private static List<BurningBoxRow> buildLadder(Family aFamily, BurningBoxRow... aRows) {
 		List<BurningBoxRow> rRows = new ArrayList<>(aRows.length);
-		for (BurningBoxRow tRow : aRows) rRows.add(new BurningBoxRow(tRow.path(), tRow.displayName(), tRow.efficiency(), tRow.rate(), aFamily, tRow.material(), tRow.stone()));
+		for (BurningBoxRow tRow : aRows) rRows.add(new BurningBoxRow(tRow.path(), tRow.efficiency(), tRow.rate(), aFamily, tRow.material(), tRow.stone()));
 		return List.of(rRows.toArray(new BurningBoxRow[0]));
 	}
 
@@ -285,7 +333,7 @@ public final class GT6BurningBoxes {
 					() -> new BurningBoxBlock(tRow, tRow.properties())));
 			// the GT6Kinetics.STEAM_ENGINE_ITEMS qualified-read forward-reference form (the P6 lambda lesson)
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(GT6BurningBoxes.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> new GTComposedNameItem(GT6BurningBoxes.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
 	}
 
@@ -361,6 +409,12 @@ public final class GT6BurningBoxes {
 		/** The family (the BE selector + the use-face gate). */
 		public Family family() {
 			return mRow.family();
+		}
+
+		/** The composed burning-box name (task p20-i18n-compose-rows): the {@link GT6BurningBoxes#displayOf} carrier. */
+		@Override
+		public net.minecraft.network.chat.MutableComponent getName() {
+			return displayOf(mRow);
 		}
 
 		@Override

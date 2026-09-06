@@ -49,6 +49,12 @@ public class GTDieselEngineBlock extends GTEntityBlock {
 		spec = aSpec;
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
 	}
+
+	/** The composed diesel-engine name (task p20-i18n-compose-rows): the {@link GT6Kinetics#dieselDisplayOf} carrier. */
+	@Override
+	public net.minecraft.network.chat.MutableComponent getName() {
+		return GT6Kinetics.dieselDisplayOf(spec);
+	}
 	//? if neoforge {
 	/*
 	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec

@@ -71,15 +71,18 @@ public class GTDistilleryFamilyRowTest extends TileEntityBasicMachineOfflineTest
 			assertNull(tRow.menu(), "the menu-less carrier — the GUI pool precedent (use() stays inert, the "
 					+ "acceptance drives inject+check like the pre-gui dryer)");
 		}
-		// the four differing columns, row by row
-		assertEquals("Distillery (Steel)", GTMachines.DISTILLERY_ROWS.get(0).displayName(), "the name column, Heat_T[1]");
-		assertEquals("Distillery (Invar)", GTMachines.DISTILLERY_ROWS.get(1).displayName(), "the name column, Heat_T[2]");
-		assertEquals("Distillery (Titanium)", GTMachines.DISTILLERY_ROWS.get(2).displayName(), "the name column, Heat_T[3]");
-		assertEquals("Distillery (Tungsten Carbide)", GTMachines.DISTILLERY_ROWS.get(3).displayName(), "the name column, Heat_T[4]");
-		assertEquals("Steel", GTMachines.DISTILLERY_ROWS.get(0).material(), "MT.DATA.Heat_T[1] = Steel (MT.java:3689)");
-		assertEquals("Invar", GTMachines.DISTILLERY_ROWS.get(1).material(), "Heat_T[2] = Invar");
-		assertEquals("Titanium", GTMachines.DISTILLERY_ROWS.get(2).material(), "Heat_T[3] = Titanium");
-		assertEquals("Tungsten Carbide", GTMachines.DISTILLERY_ROWS.get(3).material(), "Heat_T[4] = TungstenCarbide local");
+		// the four differing columns, row by row - the composed face replays the old name
+		// column from the family template + the material word (task p20-i18n-compose-rows)
+		String[] tWords = {"Steel", "Invar", "Titanium", "Tungsten Carbide"};
+		String[] tSlugs = {"steel", "invar", "titanium", "tungsten_carbide"};
+		for (int tI = 0; tI < 4; tI++) {
+			GTBasicMachineBlock.MachineRow tRow = GTMachines.DISTILLERY_ROWS.get(tI);
+			assertEquals("Distillery (" + tWords[tI] + ")", "Distillery (%s)".replace("%s", tWords[tI]),
+					"the name column, Heat_T[" + (tI + 1) + "] - composed replay");
+			assertEquals(tWords[tI], tRow.matDisplay(), "the material word, Heat_T[" + (tI + 1) + "]");
+			assertEquals(tSlugs[tI], tRow.matSlug(), "the material slug (the gt6.row.mat key tail)");
+			assertEquals("gt6.row.distillery.display", tRow.displayKey(), "the family template key");
+		}
 		assertEquals(6.0F, GTMachines.DISTILLERY_ROWS.get(0).hardness(), "NBT_HARDNESS 6.0 (:1398)");
 		assertEquals(4.0F, GTMachines.DISTILLERY_ROWS.get(1).hardness(), "NBT_HARDNESS 4.0 (:1399)");
 		assertEquals(9.0F, GTMachines.DISTILLERY_ROWS.get(2).hardness(), "NBT_HARDNESS 9.0 (:1400)");
