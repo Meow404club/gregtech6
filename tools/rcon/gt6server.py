@@ -234,6 +234,65 @@ def log_tail(log_path, nbytes=8192):
         return handle.read().decode("utf-8", "replace")
 
 
+# Error-attribution hints for the failure diagnostics: boot crashes announce
+# themselves in logback ERROR lines (any logger, not only the server thread)
+# and in Java stack traces; the post-crash epilogue can bury them under far
+# more than the 8 KiB a plain tail window shows.
+ERROR_HINTS = ("ERROR", "Exception", "FATAL")
+
+
+def error_tail(log_path, nbytes=8192, max_lines=25):
+    """Failure diagnostics that survive fast scroll: attribution lines first.
+
+    The plain 8 KiB tail loses the crash ERROR line whenever later output —
+    gradle's post-mortem report alone dwarfs the window — pushes it out: the
+    same sick-boot blindness wait_done's fixed-window Done check had (P19).
+    Abnormal path only, so the whole-log scan costs the hot path nothing:
+    the last `max_lines` error-ish lines of the WHOLE log, then the plain
+    tail for the death scene.
+    """
+    try:
+        text = Path(log_path).read_bytes().decode("utf-8", "replace")
+    except OSError:
+        return log_tail(log_path, nbytes)
+    errors = [line for line in text.splitlines()
+              if any(hint in line for hint in ERROR_HINTS)]
+    parts = []
+    if errors:
+        shown = errors[-max_lines:]
+        parts.append(f"error-ish lines (last {len(shown)} of {len(errors)}):")
+        parts.extend(shown)
+    parts.append("--- plain tail:")
+    parts.append(log_tail(log_path, nbytes))
+    return "\n".join(parts)
+
+
+def _new_log_bytes(log_path, offset, carry=b""):
+    """The bytes appended to `log_path` since `offset`, for a monotonic scan.
+
+    Returns (chunk, new_offset, new_carry): `chunk` is the carry-prefixed
+    appended text, and `new_carry` keeps the last len(DONE_MARKER)-1 raw
+    bytes so a marker split across two reads is still matched by the next
+    chunk; a truncated/rotated log (size < offset) restarts the scan from
+    byte 0. An unreadable log reads as empty — start_server creates the
+    file, but wait_done never bets on that inside the boot race.
+    """
+    path = Path(log_path)
+    try:
+        size = path.stat().st_size
+    except OSError:
+        return "", offset, carry
+    if size < offset:
+        offset, carry = 0, b""
+    if size == offset:
+        return "", offset, carry
+    with path.open("rb") as handle:
+        handle.seek(offset)
+        chunk = carry + handle.read(size - offset)
+    keep = max(len(DONE_MARKER) - 1, 0)
+    return chunk.decode("utf-8", "replace"), size, chunk[-keep:]
+
+
 class ServerStartError(RuntimeError):
     """The boot process died before printing the Done marker."""
 
@@ -296,17 +355,29 @@ def assert_pid_file(pid_path, expected_pid, label="boot"):
 def wait_done(log_path, timeout=300.0, poll=1.0, pid=None):
     """Poll the log for the `Done (` marker. True = up; False = timed out.
 
-    Raises ServerStartError as soon as the recorded pid dies before the marker —
-    never keep polling a dead process (process discipline 2026-08-29).
+    The scan is monotonic, not a fixed tail window: the first poll reads the
+    log from byte 0, every later poll only the appended delta — a marker seen
+    once stays seen. The old last-8-KiB `log_tail` check faked a timeout on a
+    fast-scrolling sick boot whenever >8 KiB landed after `Done (` between two
+    polls, reporting "never printed Done" about a server that was up (P19).
+    The normal path does no more work than before: the log is read once in
+    total across all polls, versus a fresh 8 KiB tail re-read every poll.
+
+    Raises ServerStartError as soon as the recorded pid dies before the marker
+    — never keep polling a dead process (process discipline 2026-08-29); the
+    attribution comes from the whole log (error_tail), not from a tail that
+    the crash epilogue may have scrolled the ERROR line out of.
     """
     deadline = time.monotonic() + timeout
+    offset, carry = 0, b""
     while time.monotonic() < deadline:
-        if DONE_MARKER in log_tail(log_path):
+        chunk, offset, carry = _new_log_bytes(log_path, offset, carry)
+        if chunk and DONE_MARKER in chunk:
             return True
         if pid is not None and not process_alive(pid):
             raise ServerStartError(
-                f"boot process {pid} died before '{DONE_MARKER}'; log tail:\n"
-                f"{log_tail(log_path)}")
+                f"boot process {pid} died before '{DONE_MARKER}'; "
+                f"error attribution:\n{error_tail(log_path)}")
         time.sleep(poll)
     return False
 

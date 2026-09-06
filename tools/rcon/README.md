@@ -412,12 +412,15 @@ p15_runtime_smoke（fresh_boot 单例）。注册序 = perboot 顺序 + --plan �
 session 跑法把全集摊平成一池（`run_session_recorded`）。
 
 **框架自检（无服干跑，~1s）**：`python3 tools/rcon/selftest.py`——以假 boot 面
-验证八项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
+验证九项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
 名册化、session 端口策略、p16 簇注册、boot 归属门、sweep 结果 JSON worktree 隔离
 （P18）、quiet_window 自适应收敛纯逻辑（P18）、perboot 结果的顶层 exit 聚合键
 （P18：`--dual` 读侧 `mine_json["exit"]` 曾对 perboot 形状 KeyError——run_perboot
 只有链级 exit，run_and_record 出口以 `setdefault` 补 `_failed` 聚合键，session 模型
-framework 自算的顶层 exit 不被踩）。退出码 0 = 全绿（39 检）。
+framework 自算的顶层 exit 不被踩）、wait_done 单调扫描窗（P19：带病 boot 日志高速
+滚动会把 `Done (` 标记或崩溃 ERROR 行推出旧 8KB 尾窗，前者假超时报"never printed
+Done"、后者丢归因——改为字节偏移增量扫描（见过的标记永记、跨读边界 carry 拼接），
+死亡归因走全日志 error_tail，正常路径总读取量不升）。退出码 0 = 全绿（48 检）。
 
 ### 并发波执行（用户校准 2026-09-04：并发是主杠杆）
 
