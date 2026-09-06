@@ -1295,3 +1295,100 @@ Dedication** (same upstream `README.md` block as above).
   - `WINDMILL_TILES_A.PNG` `0ad64029594db0e360325fb3666c52aa5d524facacf03f8bfc0d5b1ed0a33804`
   - `WINDMILL_TILES_B.PNG` `7bc82814a3fb35982779453555799daa7f7f46a930abb46fd6a133e58c6faf58`
   - `SQUARE_BRICKS.PNG` `b7cfff5afad72b0359bd810564bf876f5930b3c525bfab5b6e2367640c858dc0`
+
+Machine front + shared body textures, task p20-borrow-machine-fronts: the 21
+PNGs under `gt6/textures/block/` (`<family>_front{,_active,_running}.png` for
+the six families the model enumeration carries — oven, shredder, crusher,
+lathe, dryer, distillery (GT6BlockStates.java:85-140; the T2-T4 ladder rows
+share the T1 set, zero extra PNGs) — plus the shared body key set
+`oven_{bottom,top,side}.png` the cube models hard-code, :303-308) are BAKED /
+borrowed from the upstream family iconsets
+`src/main/resources/assets/gregtech/textures/blocks/machines/basicmachines/<family>/`,
+CC0 1.0 per the upstream `README.md` block above. The P19 bake recipe
+(`bake_distillery_fronts.py`, distillery section above) is generalized by
+`mdk/tools/bake_machine_fronts.py` (deterministic, idempotent, `--machine
+group/name`); the re-run over distillery reproduces the committed P19 products
+BYTE-IDENTICALLY (sha256-verified against the digests below/above), the
+new-vs-old pipeline acceptance gate.
+
+Recipe per family (src-over compositing, output alpha 255, FRAME 0 of any
+animation strip — census 2026-09-06: strips are 16xN, N/16 ∈ {4, 6, 8} where
+stripped, NOT just the P19 "16x64 four-frame" distillery case):
+
+- `<family>_front.png`         = `colored/front` + `overlay/front`
+- `<family>_front_active.png`  = `colored/front` + `overlay_active/front` frame 0
+- `<family>_front_running.png` = `colored/front` + `overlay_running/front` frame 0
+
+The colored base is the SAME opaque grayscale PNG in all six families and in
+the oven body faces (`colored/{front,bottom,top,left,right,back}.png` are all
+byte-identical to each other, the generic machine plate):
+
+- `colored/front.png` (all 6 families) and `colored/{bottom,top,left}.png`
+  (oven body sources) `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+
+Overlay source digests per family (`overlay/front`, `overlay_active/front`,
+`overlay_running/front`):
+
+- oven        `3da4d0f7d578f6e08102a0b7615160035997d58affc26c7d13813b678c4bd7fd`
+              `fb7896fcaf05092c8ce62895b940d779af1d73b5bf9d6d912f0173e9c8b40e36` (16x128, 8 frames)
+              `cd5857690ac01a9fc10e3aadd4fe3afe3c2372d685ef0bcf14b680756b92b85e`
+- shredder    `92aba8f65d8955a5eddb687e3852d68457409be2d540983903fe8f17ef6708c8`
+              `8592fa60fdc687e7585ff8e900f1c6ada9798219172296c12e03fd5389973d99` (16x64, 4 frames)
+              `e8b1c5126229ad9c05a2ddd03cefa6093f1767133f6181ad3ebbad48ce775bbb` (16x64, 4 frames)
+- crusher     `8306618d4de778652178fb8761174baeebbefb8bae4c80b61598618af6ae7fd0`
+              `84e4deec9a2653627feb48946343b839d73709d8614f57adf1d3a19001ae12c3` (16x128, 8 frames)
+              `8b1448355e209cb60c894b42b564302bd12b5f960738c89eb022fca01667694b` (16x128, 8 frames)
+- lathe       `71134a5929e77c46002534aed767578e250381c981454583759a4ba1e57f9132`
+              `4a47271828abd1910a30fe4863fdd0c2180a8099aa48672bbd0688934a4ec6c` (16x96, 6 frames)
+              `15d955d59a6d1a33a75203672f977b709f3081c2febe16910bad58fa97e085c9` (16x96, 6 frames)
+- dryer       `5b17e8425cccdec0932990c7a31db6ef1a7d4ae96b6905ed1ca268d2cfb54a5f`
+              `bcbdd663b5fe66ea453245f93a89f7987066b42185d43d602dd738f303d83ee3` (16x128, 8 frames)
+              `b37a675b2e2ed105118a1b3de15332dc92459da03084b2310ce5d7efc7b049a0`
+- distillery  `a36ecca013dbd36ddc02f10d2ce0ec640030147ddb3c180c299fac67ad57e4d3`
+              `822b52fc5f647891438ad6467c58f05135946e6272b4e3826ccd9ffa7ce07ab6` (16x64, 4 frames)
+              `88b5c302301a4773e5b880878f9423a79d3e12c2ac05dbb2a3c31dd84c961a57`
+
+Baked product digests (16x16, fully opaque):
+
+- `oven_front.png`         `a7e6ff28615bd73a017a9e59518023b80e823a6178117d58fecfc606053d5ee6`
+- `oven_front_active.png`  `6af996a09c044b943dc6d0fc69cbe7ac74340e860b952c10429cff28426a5675`
+- `oven_front_running.png` `40ac47fac76cd859703bde605b0095cb33f55ffa9da9323fe5299f4dec75aee9`
+- `shredder_front.png`         `7987357d4fd1205431cfde328f9e442cc454d178bb87a2d05ca3659aa4d7eec3`
+- `shredder_front_active.png`  `ca114cacd51c1d662cd0ee30eab3cbfeb9df03d5afa5fb09de8bb54916f1e891`
+- `shredder_front_running.png` `7987357d4fd1205431cfde328f9e442cc454d178bb87a2d05ca3659aa4d7eec3`
+- `crusher_front.png`         `634a425059a530e1a2279342717cf77e3e1d0ff6eac2933dee0492e2118c62be`
+- `crusher_front_active.png`  `2efd256b8f70385118ecff73075b3b20d62ae9c6a6f7e674c0d7253b0c89eb70`
+- `crusher_front_running.png` `634a425059a530e1a2279342717cf77e3e1d0ff6eac2933dee0492e2118c62be`
+- `lathe_front.png`         `6b6100db65c96a4185f1563bdc0657f67f87c9c04f7d76a6fd9ebe8ae6620903`
+- `lathe_front_active.png`  `4c787010041ea75483b4eedffb17e402c8763de27e2271a4eacccf960972ec71`
+- `lathe_front_running.png` `6b6100db65c96a4185f1563bdc0657f67f87c9c04f7d76a6fd9ebe8ae6620903`
+- `dryer_front.png`         `f075bba0be3c71dfc2a9f463b9be8ae717350e1675a4531f38a25b2e1c74358c`
+- `dryer_front_active.png`  `cdbbc989598b9955868e457728dc88f4cca6e317b90e3ba3fc0d117252cc327d`
+- `dryer_front_running.png` `c02c6dda70cb39555251d5de281cefecc420c5c83c91f123ac98e402508fc81a`
+- `distillery_front.png`         `8a6ac14f9b121618afff00b3bf7372484adbe7a0307848ee9f96188536b3ce45`
+- `distillery_front_active.png`  `6fc656f9cd0a57f4023da022bb7056a6e05c93ac61f4369e7e785360ce5e7a4b`
+- `distillery_front_running.png` `f91ced667197de43286fee72872c960ef044defaffc1ed27acac70bb2f738e64`
+  (the distillery trio is UNCHANGED from the P19 bake — listed for the
+  byte-identity gate; no new bytes committed for it)
+
+Shared body byte-identical copies (no bake — single opaque layer, the landed
+single-cube model carries no body overlay pass; the P9 oven-overlay precedent):
+
+- `oven_bottom.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `basicmachines/oven/colored/bottom.png`)
+- `oven_top.png`    `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `basicmachines/oven/colored/top.png`)
+- `oven_side.png`   `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `basicmachines/oven/colored/left.png`; left == right == back
+  byte-identical upstream, so the one side key over south+east+west carries
+  NO divergence deviation)
+
+Declared deviations (the P19 rulings repeated over the six families):
+(1) animation strips are baked at FRAME 0 — the faithful multi-frame animation
+stays in the render pool; (2) the colored base keeps its neutral grayscale,
+the per-material mRGBa tint is not baked (the W3 tint card); (3) this bake is
+the canonical flat look, not the render end-state — the faithful multi-layer
+per-face pass system stays the render pool card.
+
+Baked / copied on 2026-09-06. Upstream license: **CC0 1.0 Universal Public
+Domain Dedication** (same upstream `README.md` block as above).
