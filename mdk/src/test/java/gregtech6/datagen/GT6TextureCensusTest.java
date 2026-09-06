@@ -5,7 +5,7 @@
  * <p>Policy pins asserted here (ADR-P20 §2):</p>
  * <ul>
  *   <li>the (iconset, prefix) COMBOS table in {@code mdk/tools/gen_textures.py} pins at
- *       2785 pairs over 37 sets (census 2026-08-30/09-06, research card
+ *       2785 pairs over 40 sets (census 2026-08-30/09-06, research card
  *       tasks.p20-research-texture-census);</li>
  *   <li>every combo's PNG exists <em>exactly once</em> across the static tree
  *       (mdk/src/main/resources) ∪ the generated tree (mdk/src/generated/resources) —
@@ -65,7 +65,7 @@ class GT6TextureCensusTest {
     /**
      * The pinned distinct iconset count over the same table (walked 2026-09-06: 40 sets
      * on the table and on disk; upstream TextureSet.java's 41 total includes the unused
-     * "misc" family — the research card's "37" was a stale P3-era figure).
+     * "PLASMA" family — the research card's "37" was a stale P3-era figure).
      */
     private static final int PINNED_ICONSET_TOTAL = 40;
 
@@ -131,7 +131,7 @@ class GT6TextureCensusTest {
     }
 
     /**
-     * Pin a: the COMBOS table holds exactly 2785 (iconset, prefix) pairs over 37 sets.
+     * Pin a: the COMBOS table holds exactly 2785 (iconset, prefix) pairs over 40 sets.
      * Parsed from gen_textures.py itself so the script stays the single source of truth.
      */
     @Test
