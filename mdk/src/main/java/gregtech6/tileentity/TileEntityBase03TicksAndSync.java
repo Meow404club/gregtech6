@@ -184,11 +184,70 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 
 	//? if neoforge {
 	/*// 21.1: the ItemStackHandler NBT face (serializeNBT/deserializeNBT) and the ItemStack
-	//save/parse face take a HolderLookup.Provider — the frozen builtin registry view serves
-	//offline tests and in-world saves alike (item id lookup only). Subclasses reference
-	//NBT_ACCESS in their forked save/load legs.
-	public static final net.minecraft.core.HolderLookup.Provider NBT_ACCESS =
-			net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY);
+	//save/parse face take a HolderLookup.Provider. Subclasses reference NBT_ACCESS in their
+	//forked save/load legs. The field stays FINAL: its value is a delegating Provider over the
+	//AtomicReference below (P19 B' ruling — no bare non-final static rebind). The initial
+	//delegate is the frozen builtin registry view, so offline tests, runData and every
+	//no-server path keep the P18 behaviour byte for byte; the embedded listener
+	//(ServerRegistryAccessBinder below) rebinds the delegate at ServerAboutToStart to the
+	//server's composite RegistryAccess. That rebind closes the dynamic-registry gap: 1.21
+	//enchantments are data-driven (WORLDGEN layer, BuiltInRegistries has no ENCHANTMENT
+	//field), so over the frozen view every enchanted ItemStack degrades on the parse face
+	//(RegistryFixedCodec misses the registry → ItemStack.parse → resultOrPartial →
+	//parseOptional(EMPTY)) and throws on the save face (Neo DataComponentUtil
+	//wrapEncodingExceptions rethrows). Timing (P19 research card, 1.21.1 decompile):
+	//WorldLoader.load loads the WORLDGEN layer BEFORE the server ctor
+	//(MinecraftServer.java:290 this.registries = WorldStem.registries()), and /reload only
+	//replaces the RELOADABLE loot layer (ReloadableServerRegistries replaceFrom) — the
+	//composite is stable for the server's lifetime. Chunk-load worker threads only consume
+	//this face after worlds exist, i.e. after the AboutToStart rebind, so the
+	//AtomicReference's volatile semantics are sufficient; a leftover view from a stopped
+	//server stays a legal frozen snapshot.
+	private static final java.util.concurrent.atomic.AtomicReference<net.minecraft.core.HolderLookup.Provider> NBT_ACCESS_DELEGATE =
+			new java.util.concurrent.atomic.AtomicReference<>(
+					net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY));
+
+	// Package-private seams (the GT6RecipeMaps.registerGenerationResetHook precedent): the
+	// current delegate — the frozen builtin until the first server boot — and the rebind entry
+	// the server listener and the offline tests share.
+	static net.minecraft.core.HolderLookup.Provider nbtAccessDelegate() {
+		return NBT_ACCESS_DELEGATE.get();
+	}
+
+	static void bindNbtAccess(net.minecraft.core.HolderLookup.Provider aProvider) {
+		NBT_ACCESS_DELEGATE.set(aProvider);
+	}
+
+	// The tree-wide NBT view: forwards the two abstract Provider points to the current
+	// delegate — the default createSerializationContext/asGetterLookup and the NeoForge
+	// IHolderLookupProviderExtension helpers all funnel through lookup/listRegistries, so no
+	// other override is needed.
+	public static final net.minecraft.core.HolderLookup.Provider NBT_ACCESS = new net.minecraft.core.HolderLookup.Provider() {
+		@Override
+		public java.util.stream.Stream<net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<?>>> listRegistries() {
+			return NBT_ACCESS_DELEGATE.get().listRegistries();
+		}
+
+		@Override
+		public <T> java.util.Optional<net.minecraft.core.HolderLookup.RegistryLookup<T>> lookup(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<? extends T>> aKey) {
+			return NBT_ACCESS_DELEGATE.get().lookup(aKey);
+		}
+	};
+
+	// The embedded rebind listener (ADR-P3-4 self-contained @EventBusSubscriber, no bus
+	// attribute — ServerAboutToStartEvent is a game-bus event routed by type, the
+	// GT6CapabilityWiring precedent). Nested so the annotation scan's mod-construction
+	// class-load binds only THIS nested class and never initializes the BE class (the p6
+	// a9027ac lazy-capture lesson): the outer static init still first runs at the earliest
+	// NBT_ACCESS touch, always after the registries exist.
+	@net.neoforged.fml.common.EventBusSubscriber(modid = "gt6")
+	public static final class ServerRegistryAccessBinder {
+		@net.neoforged.bus.api.SubscribeEvent
+		public static void onServerAboutToStart(net.neoforged.neoforge.event.server.ServerAboutToStartEvent aEvent) {
+			bindNbtAccess(aEvent.getServer().registryAccess());
+			GT6Mod.LOGGER.debug("NBT_ACCESS rebound to the server composite RegistryAccess");
+		}
+	}
 	*///?}
 
 	/**
