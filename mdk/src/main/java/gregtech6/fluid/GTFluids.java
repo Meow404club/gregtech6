@@ -77,6 +77,14 @@ import gregtech6.registry.GTFluidPipes;
  * the card: parameters the upstream carries are transcribed; parameters it does not
  * carry (the whole water_boiling definition, the tints) are honest FluidType defaults /
  * port-owned declared values, never invented numbers — see {@link #AQUA_SPECS}.
+ *
+ * <p>Simple-liquid family (task p19-drying-rows-backfill-2): two further fluid-only rows —
+ * {@code seawater}, {@code waterdirty} — on the SECOND AquaFluidSpec table
+ * ({@link #SIMPLE_LIQUID_SPECS}, deliberately not an AQUA_SPECS append: the upstream rows
+ * carry SIMPLE+LIQUID only, no WATER tag, and the aqua family is exactly-order-pinned),
+ * riding the same shared registration body; the consumers are the two unguarded salt rows
+ * of the Drying backfill (Loader_Recipes_Chem.java:548/:553, behind the
+ * GT6RecipesDrying resolver seam).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTFluids {
@@ -532,16 +540,26 @@ public final class GTFluids {
 
 	/**
 	 * The table-driven registration helper for one aqua row — the {@link #engineFluid}
-	 * shape verbatim: FluidType carrying the declared temperature/density/viscosity,
-	 * Source/Flowing over one shared Properties, NO LiquidBlock and NO bucket (the
-	 * fluid-only declaration; the bucket container behaviour is out of the card scope).
-	 * Client layers reuse the vanilla water textures over the row's tint (the
-	 * natural_gas initializeClient shape). Shares the SOURCE_SEAM/FLOWING_SEAM maps —
-	 * the Properties are built at registry-event time (see engineFluid).
+	 * shape verbatim. Client layers reuse the vanilla water textures over the row's tint
+	 * (the natural_gas initializeClient shape); the registration body itself is the shared
+	 * {@link #registerFluidFamily(AquaFluidSpec)} (task p19-drying-rows-backfill-2 splits
+	 * the lookup per family table, the body is one).
 	 */
 	private static AquaFluid aquaFluid(String aName) {
 		AquaFluidSpec tSpec = aquaSpec(aName);
 		if (tSpec == null) throw new IllegalArgumentException("no aqua fluid spec: " + aName);
+		return registerFluidFamily(tSpec);
+	}
+
+	/**
+	 * The shared registration body for the AquaFluidSpec tables ({@link #AQUA_SPECS} and
+	 * {@link #SIMPLE_LIQUID_SPECS}): FluidType carrying the declared
+	 * temperature/density/viscosity, Source/Flowing over one shared Properties, NO
+	 * LiquidBlock and NO bucket (the fluid-only declaration; the bucket container
+	 * behaviour is out of the card scope). Shares the SOURCE_SEAM/FLOWING_SEAM maps —
+	 * the Properties are built at registry-event time (see engineFluid).
+	 */
+	private static AquaFluid registerFluidFamily(AquaFluidSpec tSpec) {
 		RegistryObject<FluidType> tType = FLUID_TYPES.register(tSpec.name(), () -> new FluidType(FluidType.Properties.create()
 				.descriptionId(tSpec.descriptionId())
 				.temperature(tSpec.temperature())
@@ -595,6 +613,57 @@ public final class GTFluids {
 	/** The six registered families in {@link #AQUA_SPECS} declaration order (the lang/table walkers). */
 	public static List<AquaFluid> aquaFluids() {
 		return List.of(SPDEW, MNWTR, WATER_GEOTHERMAL, WATER_BOILING, HOT_WATER, COLD_WATER);
+	}
+
+	/**
+	 * The simple-liquid family (task p19-drying-rows-backfill-2 spec ③): the SECOND
+	 * AquaFluidSpec table, deliberately NOT an {@link #AQUA_SPECS} append — the architect
+	 * ruling: the two rows carry ONLY the SIMPLE+LIQUID flags upstream (FL.java:125
+	 * "seawater" / :127 "waterdirty" — no FOOD/WATER/BATH/THERMOS), while the aqua family
+	 * is pinned to its WATER-tagged six by the GT6EnUs walk and the exact-order assertion
+	 * of GTFluidsAquaFamilyTest (untouched, still green). Neither fluid has a GT6
+	 * {@code FL.create} registration upstream — the ids are external-mod fluid names GT6
+	 * only attaches drink stats to (Loader_Fluids.java:365 "Dirty" C+37 / :366 "Salty"
+	 * C+35 — DRINK stats, not fluid declarations, deliberately not transcribed) — so the
+	 * declared values are the HONEST FluidType defaults (FluidType.java:924-926, 300 K /
+	 * 1000 / 1000, which coincide with the STATE_LIQUID carriers, FL.java:1104) exactly
+	 * like the water_boiling precedent, and the tints are PORT-OWNED DECLARED VALUES (the
+	 * JetFuel/aqua precedent). They are registered as the live carriers of the two
+	 * unguarded Drying rows — Loader_Recipes_Chem.java:548 (Ocean, no exists() guard) and
+	 * :553 (Dirty_Water, no guard) — which upstream would silently drop without the
+	 * external mod providing the fluid; the port prefers the rows live (declared
+	 * port-owned decision of the architect card, the rows are transcribed verbatim
+	 * regardless).
+	 */
+	public static final List<AquaFluidSpec> SIMPLE_LIQUID_SPECS = List.of(
+		new AquaFluidSpec("seawater"  , "Seawater"    , 300, 1000, 1000, 0xFF3E8E9C), // FL.java:125 "seawater" — the Ocean shorthand, salty teal (declared)
+		new AquaFluidSpec("waterdirty", "Dirty Water" , 300, 1000, 1000, 0xFF6B6B3C));// FL.java:127 "waterdirty" — murky waste brown-green (declared)
+
+	/** The simple-liquid row for a gt6 id path, or null (the {@link #aquaSpec} lookup shape, its own table). */
+	public static AquaFluidSpec simpleLiquidSpec(String aName) {
+		for (AquaFluidSpec tSpec : SIMPLE_LIQUID_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/** The registration helper for one simple-liquid row (the {@link #aquaFluid} shape over the second table). */
+	private static AquaFluid simpleLiquidFluid(String aName) {
+		AquaFluidSpec tSpec = simpleLiquidSpec(aName);
+		if (tSpec == null) throw new IllegalArgumentException("no simple liquid fluid spec: " + aName);
+		return registerFluidFamily(tSpec);
+	}
+
+	/**
+	 * The two simple-liquid registrations — one line per fluid family, data from
+	 * {@link #SIMPLE_LIQUID_SPECS}, appended after the aqua block in the static-init order
+	 * (the DeferredRegister fields accumulate, the entries fire with the existing
+	 * {@link #onModConstruct}, types before fluids).
+	 */
+	public static final AquaFluid SEAWATER   = simpleLiquidFluid("seawater");
+	public static final AquaFluid WATERDIRTY = simpleLiquidFluid("waterdirty");
+
+	/** The two registered simple-liquid families in {@link #SIMPLE_LIQUID_SPECS} declaration order (the lang/table walkers). */
+	public static List<AquaFluid> simpleLiquids() {
+		return List.of(SEAWATER, WATERDIRTY);
 	}
 
 	private GTFluids() {}
@@ -660,6 +729,15 @@ public final class GTFluids {
 			// task p16-aqua-fluids — the aqua family, the same smoke line shape
 			for (AquaFluid tFamily : aquaFluids()) {
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (aqua family, {})",
+						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
+						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
+						tFamily.spec.temperature(),
+						tFamily.spec.density(),
+						tFamily.spec.displayName());
+			}
+			// task p19-drying-rows-backfill-2 — the simple-liquid family, the same smoke line shape
+			for (AquaFluid tFamily : simpleLiquids()) {
+				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (simple liquid, {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
 						tFamily.spec.temperature(),
