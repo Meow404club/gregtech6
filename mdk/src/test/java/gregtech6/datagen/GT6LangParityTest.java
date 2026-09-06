@@ -1,14 +1,21 @@
 /**
  * Offline guard test for task p20-i18n-zhcn-provider (ADR 2026-09-06-p20-i18n-zhcn-pipeline
- * §1.3): the zh_cn key set is structurally pinned to the en_us key set, the composed domains
- * are pinned ABSENT from zh until their B-wave cards land, and the zh coverage floor is a
- * ratchet. Same posture as GT6EnUsJeiInfoTest:52-64 — a recording LanguageProvider subclass
- * (add is public and non-final) captures every entry addTranslations() would emit, in a bare
- * JVM, no datagen run needed (the generated files themselves are gated by runData + the
- * second-run written:0 check).
+ * §1.3): the zh_cn key set is structurally pinned to the en_us key set, the not-yet-composed
+ * domains are pinned ABSENT from zh until their B-wave cards land, and the zh coverage floor
+ * is a ratchet. Same posture as GT6EnUsJeiInfoTest:52-64 — a recording LanguageProvider
+ * subclass (add is public and non-final) captures every entry addTranslations() would emit,
+ * in a bare JVM, no datagen run needed (the generated files themselves are gated by runData
+ * + the second-run written:0 check).
+ *
+ * <p>Task p20-i18n-compose-wires FLIPPED the B1 half of the guard: the wire + conveyor/
+ * robot-arm domains are now asserted COMPOSED on BOTH sides (no pre-installed full-string
+ * key survives on en or zh outside the three atomic exemptions, and the template keys exist
+ * with their argument slots in both locales) — the A-wave "absent from zh" form is gone for
+ * that domain, the B2 assertions remain.
  */
 package gregtech6.datagen;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -39,19 +47,14 @@ public class GT6LangParityTest {
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
-	 * en keys are pre-installed full strings that the B-wave cards replace with template keys
-	 * (p20-i18n-compose-wires then p20-i18n-compose-rows); every card SHRINKS its assertion as
-	 * it lands, until the list is empty. Substring form: every entry is anchored by its
-	 * {@code block.gt6.}/{@code item.gt6.} namespace so the gt6.tagprefix./gt6.material.
-	 * small-unit faces can never false-positive.
+	 * en keys are pre-installed full strings that the B-wave cards replace with template keys;
+	 * every card SHRINKS its assertion as it lands, until the list is empty. B1
+	 * (p20-i18n-compose-wires) has landed: its four entries are gone from this list and now
+	 * live under {@link #WIRES_COMPOSED_PREFIXES} in the FLIPPED both-sides form. Substring
+	 * form: every entry is anchored by its {@code block.gt6.}/{@code item.gt6.} namespace so
+	 * the gt6.tagprefix./gt6.material. small-unit faces can never false-positive.
 	 */
 	private static final List<String> COMPOSED_DOMAIN_KEYS = List.of(
-		// B1 — p20-i18n-compose-wires: the electric/redstone/laser wire + cable families,
-		// the conveyor/robot-arm tier covers
-		"block.gt6.wire_",
-		"block.gt6.cable_",
-		"item.gt6.cover_conveyor_",
-		"item.gt6.cover_robot_arm_",
 		// B2 — p20-i18n-compose-rows: stone variants + the kinetics / boiler / burning-box /
 		// large-boiler / wall / transmitter / machine-tier / attachment rows
 		"block.gt6.axle_",
@@ -69,6 +72,38 @@ public class GT6LangParityTest {
 		"block.gt6.lathe_t",
 		"block.gt6.tap_",
 		"block.gt6.funnel_");
+
+	/**
+	 * The FLIPPED B1 guard (task p20-i18n-compose-wires): these prefixes must match NO
+	 * pre-installed full-string key on EITHER locale side — the names compose at runtime
+	 * (GTWireBlock.displayNameOf / the GT6Covers cover templates) from the gt6.wire.* and
+	 * gt6.cover.* template keys.
+	 */
+	private static final List<String> WIRES_COMPOSED_PREFIXES = List.of(
+		"block.gt6.wire_",
+		"block.gt6.cable_",
+		"item.gt6.cover_conveyor_",
+		"item.gt6.cover_robot_arm_");
+
+	/**
+	 * The B1 atomic exemptions — the material-less forms that keep whole-string keys on both
+	 * faces: the two p7 legacy electric blocks (no row identity to compose from) and the
+	 * laser family (material-less, Loader:1815 verbatim).
+	 */
+	private static final Set<String> WIRES_ATOMIC_KEYS = Set.of(
+		"block.gt6.wire_electric_1x",
+		"block.gt6.wire_electric_2x",
+		"block.gt6.wire_laser");
+
+	/** The B1 template keys and their argument-slot counts (display=3: size/material/form; plain=2; the cover templates=1; the form units are slot-less NOUNS the templates consume). */
+	private static final Map<String, Integer> WIRES_TEMPLATE_SLOTS = Map.of(
+		"gt6.wire.display", 3,
+		"gt6.wire.display.plain", 2,
+		"gt6.wire.form.wire", 0,
+		"gt6.wire.form.cable", 0,
+		"gt6.wire.form.wirelamp", 0,
+		"gt6.cover.conveyor.display", 1,
+		"gt6.cover.robot_arm.display", 1);
 
 	/** Stone variants: block.gt6.<stone_snake>.<variant_snake> (17 stones x 16 variants, B2). */
 	private static final Pattern COMPOSED_STONE_KEY = Pattern.compile("^block\\.gt6\\.[a-z0-9_]+\\.[a-z0-9_]+$");
@@ -151,6 +186,48 @@ public class GT6LangParityTest {
 		assertTrue(tViolations.isEmpty(),
 			"zh must not carry pre-installed composed-domain strings before the B-wave template"
 			+ " conversion lands (each card shrinks its assertion): " + tViolations);
+	}
+
+	/**
+	 * The FLIPPED B1 guard (task p20-i18n-compose-wires): the wire + conveyor/robot-arm
+	 * domains carry NO pre-installed full-string key on EITHER side — the en strings retired
+	 * with the B1 shrink, zh never had them — outside the three atomic exemptions (the two
+	 * material-less legacy blocks and the laser family, whose descriptionId keys are the
+	 * name face on both locales).
+	 */
+	@Test
+	public void wireConveyorDomainsAreComposedOnBothSides() {
+		List<String> tViolations = new ArrayList<>();
+		Map<String, Map<String, String>> tSides = Map.of("en_us", en(), "zh_cn", zh());
+		tSides.forEach((tLocale, tEntries) -> {
+			for (String tKey : tEntries.keySet()) {
+				for (String tPrefix : WIRES_COMPOSED_PREFIXES) {
+					if (tKey.startsWith(tPrefix) && !WIRES_ATOMIC_KEYS.contains(tKey)) {
+						tViolations.add(tLocale + ":" + tKey + " (composed domain " + tPrefix + ")");
+					}
+				}
+			}
+		});
+		assertTrue(tViolations.isEmpty(),
+			"the wire/conveyor domains must compose at runtime: no pre-installed full-string key"
+			+ " may survive on either side (atomic exemptions only): " + tViolations);
+	}
+
+	/**
+	 * The B1 template face: every wire/cover template key exists in BOTH locales with its
+	 * exact argument-slot count — the parity subset alone would tolerate a zh template whose
+	 * slots drifted from the en compose contract (e.g. a lost size slot would render
+	 * "12×锡线缆" as "×锡线缆").
+	 */
+	@Test
+	public void wireTemplatesExistWithTheirSlotsOnBothSides() {
+		Map<String, Map<String, String>> tSides = Map.of("en_us", en(), "zh_cn", zh());
+		tSides.forEach((tLocale, tEntries) -> WIRES_TEMPLATE_SLOTS.forEach((tKey, tCount) -> {
+			String tValue = tEntries.get(tKey);
+			assertTrue(tValue != null, tLocale + " is missing the B1 template key " + tKey);
+			int tSeen = tValue.split("%s", -1).length - 1;
+			assertEquals(tCount, tSeen, tLocale + " template " + tKey + " = \"" + tValue + "\" slot count");
+		}));
 	}
 
 	@Test

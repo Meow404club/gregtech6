@@ -14,8 +14,11 @@
 #   mte rows are inert census data until the MTE ID-join subface lands (arch tasks.p20-arch-i18n).
 #
 direct	block.gt6.example_chest	GT 示例箱子	hand
+direct	block.gt6.wire_laser	光纤	hand
 direct	fluid.gt6.iron_molten	熔融铁	hand
 direct	fluid.gt6.natural_gas	天然气	hand
+direct	gt6.cover.conveyor.display	输送机模块 (%s)	hand
+direct	gt6.cover.robot_arm.display	机械臂 (%s)	hand
 direct	gt6.jei.info.multiblock_coke_oven	焦炉是一个 3x3x3 的立方体：将焦炉控制器放在其中一面的中央并朝外，保持立方体中心格为空，其余 25 格全部放满焦炉砖。点燃控制器即可启动——它自行积攒热量，结构下方一层的储罐会收集杂酚油。	hand
 direct	gt6.tagprefix.arrow_gt_plastic	轻质%s箭	hand
 direct	gt6.tagprefix.arrow_gt_wood	%s箭	hand
@@ -119,6 +122,11 @@ direct	gt6.tagprefix.tool_head_sword	%s剑刃	hand
 direct	gt6.tagprefix.tool_head_universal_spade	%s万用铲头	hand
 direct	gt6.tagprefix.tool_head_wrench	%s扳手头	hand
 direct	gt6.tagprefix.wire_fine	精细%s线缆	hand
+direct	gt6.wire.display	%s×%s%s	hand
+direct	gt6.wire.display.plain	%s%s	hand
+direct	gt6.wire.form.cable	线缆	hand
+direct	gt6.wire.form.wire	导线	hand
+direct	gt6.wire.form.wirelamp	灯导线	hand
 direct	item.gt6.chisel	凿子	hand
 direct	item.gt6.cover_auto_redstone_machine_switch	自动红石机器开关	hand
 direct	item.gt6.cover_controller	面板控制器	hand

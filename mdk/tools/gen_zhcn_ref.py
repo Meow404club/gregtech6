@@ -198,6 +198,29 @@ HAND_TRANSLATIONS = {
     "item.gt6.cover_controller": ("面板控制器", "hand"),
     "item.gt6.integrated_circuit": ("选择器标签", "hand"),
     "item.gt6.integrated_circuit.configuration": ("配置：%s", "hand"),
+    # ---- B1 wire-domain composed-display units (task p20-i18n-compose-wires) ----
+    # The wire family composes at runtime over gt6.wire.display[.plain] + the form units;
+    # the material slot rides the gt6.material.* small units (zero new material debt).
+    # Wording evidence:
+    #   wire/cable = GTCEu Modern zh_cn.json (tmp/refs/gtceu-modern assets/gtceu/lang,
+    #   the community-standard SPLIT: tagprefix.wire_gt_single="1x%s导线" /
+    #   cable_gt_single="1x%s线缆") — keeps the two forms distinguishable, unlike the
+    #   1.7.10 dump's uniform 线缆 (gt.multitileentity.27000/27006 both end in 线缆);
+    #   × = the CJK multiplication sign replacing the en "x" (免空格, CJK has no
+    #   inter-word spaces, the size slot glues directly onto the material);
+    #   wirelamp = 灯导线 (the Loader:1900 Lumium lamp-wire — no dump face; the 导线
+    #   head stays consistent with the wire unit);
+    #   conveyor/robot arm = dump-verbatim nouns (gt.multiitem.technological.12040=
+    #   "输送机模块 (ULV)" / :12080="机械臂 (ULV)", tmp/gregtech.lang);
+    #   the laser atomic key = dump-verbatim "光纤" (gt.multitileentity.24900).
+    "gt6.wire.display": ("%s×%s%s", "hand"),
+    "gt6.wire.display.plain": ("%s%s", "hand"),
+    "gt6.wire.form.wire": ("导线", "hand"),
+    "gt6.wire.form.cable": ("线缆", "hand"),
+    "gt6.wire.form.wirelamp": ("灯导线", "hand"),
+    "gt6.cover.conveyor.display": ("输送机模块 (%s)", "hand"),
+    "gt6.cover.robot_arm.display": ("机械臂 (%s)", "hand"),
+    "block.gt6.wire_laser": ("光纤", "hand"),
     "block.gt6.example_chest": ("GT 示例箱子", "hand"),
     "fluid.gt6.iron_molten": ("熔融铁", "hand"),
     "fluid.gt6.natural_gas": ("天然气", "hand"),

@@ -53,11 +53,11 @@ import net.minecraftforge.common.data.LanguageProvider;
  *     dump's {@code gt.material.<Pascal>} family;</li>
  * <li>{@link #addMiscUnits()} — the atomic misc keys (tools, the eight atomic covers, the
  *     circuit selector tag + its configuration tooltip, the JEI coke-oven info page, the
- *     example chest, the two port fluids). The COMPOSED domains (wire/cable families, stone
- *     variants, kinetics/boiler/burning-box rows, machine tiers, attachments, conveyor/robot
- *     arm covers) are intentionally absent — they become B-wave template keys
- *     (p20-i18n-compose-wires/-rows) and are pinned absent by the parity test's negative
- *     assertions in the meantime.</li>
+ *     example chest, the two port fluids). The COMPOSED domains became B-wave template keys
+ *     (p20-i18n-compose-wires/-rows); B1 has landed its face — see
+ *     {@link #addWireDomainUnits()} — while the B2 domains (stone variants, the
+ *     kinetics/boiler/burning-box rows, machine tiers, attachments) are still pinned absent
+ *     by the parity test's negative assertions.</li>
  * </ol>
  *
  * <p>Rows with status {@code review} (pure-ASCII dump values, suspected untranslated, e.g.
@@ -96,6 +96,31 @@ public class GT6ZhCn extends LanguageProvider {
 		addPrefixTemplates();
 		addMaterialNames();
 		addMiscUnits();
+		addWireDomainUnits();
+	}
+
+	/**
+	 * The B1 wire-domain composed-display units (task p20-i18n-compose-wires): the five
+	 * position-param templates the {@code GTWireBlock.displayNameOf} compose fills
+	 * ({@code gt6.wire.display[.plain]} + the {@code gt6.wire.form.*} units), the two cover
+	 * tier-ladder templates (the tier slot rides a plain literal — the CS.java:154 voltage
+	 * numerals are proper nouns in BOTH locales, no small-unit keys) and the laser atomic
+	 * exemption ({@code block.gt6.wire_laser}, the material-less family stays a whole-string
+	 * key on both faces). All hand rows in the reference table — the zh wording evidence
+	 * lives in the gen script's hand-layer comments. Emitted here so the en-side template
+	 * walks (GT6EnUs.addElectricWires/addCovers) have their exact zh mirror: the composed
+	 * zh wire names (e.g. "{@code 12×锡线缆}", "{@code 红色合金导线}") then cost ZERO new
+	 * material translations on top of these eight units.
+	 */
+	private void addWireDomainUnits() {
+		addDirect("gt6.wire.display");
+		addDirect("gt6.wire.display.plain");
+		addDirect("gt6.wire.form.wire");
+		addDirect("gt6.wire.form.cable");
+		addDirect("gt6.wire.form.wirelamp");
+		addDirect("gt6.cover.conveyor.display");
+		addDirect("gt6.cover.robot_arm.display");
+		addDirect("block.gt6.wire_laser");
 	}
 
 	/** The item + block prefix tab titles and the special MTE-category tabs (mirror of GT6EnUs.addTabTitles/addBlockTabTitles + the tab literals). */
@@ -148,8 +173,8 @@ public class GT6ZhCn extends LanguageProvider {
 	/**
 	 * The atomic misc units — every key here mirrors a GT6EnUs literal/constant and is part of
 	 * NO composed domain (the B-wave cards shrink those; see the class javadoc). The cover
-	 * names are the eight atomic covers; the conveyor/robot-arm tier ladders stay absent
-	 * (p20-i18n-compose-wires).
+	 * names are the eight atomic covers; the conveyor/robot-arm tier ladders compose from the
+	 * {@link #addWireDomainUnits()} templates since p20-i18n-compose-wires.
 	 */
 	private void addMiscUnits() {
 		addDirect("item.gt6.crowbar");
