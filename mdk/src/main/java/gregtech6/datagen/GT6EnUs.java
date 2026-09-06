@@ -555,20 +555,39 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The 272 stone-variant name keys (task p19-stoneblocks-registry, 17 stones x 16
-     * variants walked from {@link GTStoneBlocks#STONES} x StoneVariant so the lang face
-     * cannot drift from the registered blocks): {@code block.gt6.<stone>.<variant>} — the
-     * upstream per-meta lang block (BlockStones.java:117-132 LH.add
-     * {@code getUnlocalizedName()+".N"}) split per variant, with
-     * {@code aDefaultLocalised = aMaterial.getLocal()} (BlockStonesGT.java:38) as the stone
-     * name ({@link StoneVariant#compose}).
+     * The 16 stone-variant display templates (task p20-i18n-compose-rows, the B-wave lang
+     * ruling): the 272 pre-installed per-(stone, variant) full strings (task
+     * p19-stoneblocks-registry, 17 stones x 16 variants) RETIRED — the name composes at
+     * runtime from {@code gt6.stone.variant.<snake>} (one position-param template per
+     * {@link StoneVariant}, the stone name slot riding the {@code gt6.material.<snake>}
+     * small unit) at {@link gregtech6.block.stone.GTStoneBlock#getName}. The template VALUES
+     * are the old {@code StoneVariant.compose} branch ladder %s-ified (the upstream
+     * LH.add table BlockStones.java:117-132 verbatim); the zh face follows the dump's
+     * {@code gt.stone.andesite.N} family split (tmp/gregtech.lang:15246-15262).
      */
     private void addStoneBlocks() {
-        for (GTStoneBlocks.StoneSpec tStone : GTStoneBlocks.STONES) {
-            String tStoneName = tStone.material().get().getLocal();
-            for (StoneVariant tVariant : StoneVariant.VALUES) {
-                add("block.gt6." + tStone.snake() + "." + tVariant.snake, tVariant.compose(tStoneName));
-            }
+        for (StoneVariant tVariant : StoneVariant.VALUES) {
+            add(tVariant.key(), STONE_VARIANT_TEMPLATES[tVariant.meta()]);
         }
     }
+
+    /** The 16 variant templates, meta order — the old compose() ladder with the stone name as the {@code %s} slot. */
+    private static final String[] STONE_VARIANT_TEMPLATES = {
+            "%s",                              // 0  STONE   ".0" = the bare material name
+            "%s Cobblestone",                  // 1  COBBL   ".1"
+            "Mossy %s Cobblestone",            // 2  MCOBL   ".2"
+            "%s Bricks",                       // 3  BRICK   ".3"
+            "Cracked %s Bricks",               // 4  CRACK   ".4"
+            "Mossy %s Bricks",                 // 5  MBRIK   ".5"
+            "Chiseled %s",                     // 6  CHISL   ".6"
+            "Smooth %s",                       // 7  SMOTH   ".7"
+            "Reinforced %s Bricks",            // 8  RNFBR   ".8"
+            "Redstoned %s Bricks",             // 9  RSTBR   ".9"
+            "%s Tiles",                        // 10 TILES   ".10"
+            "Small %s Tiles",                  // 11 STILE   ".11"
+            "Small %s Bricks",                 // 12 SBRIK   ".12"
+            "%s Windmill Tiles A",             // 13 WINDA   ".13"
+            "%s Windmill Tiles B",             // 14 WINDB   ".14"
+            "%s Square Bricks"                 // 15 QBRIK   ".15"
+    };
 }
