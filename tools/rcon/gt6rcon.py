@@ -26,10 +26,20 @@ Dual use:
   - CLI:     python3 tools/rcon/gt6rcon.py --host 127.0.0.1 --port 25575 \\
                  --password gt6 "gt6pipe stat 10 64 10" --expect 1:connections
 
+The quiet window adapts per connection (P18): most commands answer in exactly one
+frame, so RconClient shrinks the collection tail after each single-frame command
+(x QUIET_DECAY, floor QUIET_FLOOR) and resets it to the full DEFAULT_QUIET_WINDOW
+the moment ANY second frame shows up (a truncated multi-frame body would forge
+FAIL verdicts — the reset is deliberately wasteful). Zero frames = no evidence,
+window unchanged. GT6_RCON_ADAPTIVE_QUIET=off (or adaptive_quiet=False) restores
+the historical fixed 0.5 s tail; the module-level run_command() signature and the
+judge_output() semantics are unchanged.
+
 Exit codes: 0 ok, 1 assertion failure, 2 auth failed, 3 connection failed.
 """
 
 import argparse
+import os
 import socket
 import struct
 import sys
@@ -50,6 +60,15 @@ DEFAULT_CONNECT_TIMEOUT = 10.0   # reference scripts: 10 s create_connection (30
 DEFAULT_AUTH_DRAIN = 1.0         # reference scripts: 1 s drain window after the auth reply
 DEFAULT_FIRST_TIMEOUT = 2.0      # reference scripts: 2.0 s deadline per command response
 DEFAULT_QUIET_WINDOW = 0.5       # collects late/multi frames, then stops early on silence
+
+# The adaptive quiet window (P18): the fixed 0.5 s tail was pure per-command
+# residue for the (overwhelmingly common) single-frame response — a full-set
+# sweep pays it hundreds of times. Decay on single-frame evidence, reset on any
+# second frame (truncating a real multi-frame body would forge FAIL verdicts —
+# conservative by design), hard floor so a hit still gets its collection tail.
+QUIET_DECAY = 0.7                # single-frame response: shrink the tail by this
+QUIET_FLOOR = 0.05               # never collect for less than this after a hit
+ADAPTIVE_QUIET_ENV = "GT6_RCON_ADAPTIVE_QUIET"  # off/0/false/no = fixed 0.5 s window
 
 
 class RconError(Exception):
@@ -185,18 +204,54 @@ def run_command(sock, command, req_id,
             _WIRE_LOCK.release()
 
 
+def adaptive_quiet_enabled():
+    """True unless GT6_RCON_ADAPTIVE_QUIET is off/0/false/no — the one-switch
+    fallback to the historical fixed-window behaviour. Checked per RconClient
+    construction, so tests and long-lived processes can pin either mode."""
+    return os.environ.get(ADAPTIVE_QUIET_ENV, "on").strip().lower() \
+        not in ("off", "0", "false", "no")
+
+
+def next_quiet_window(current, frames, reset=DEFAULT_QUIET_WINDOW,
+                      decay=QUIET_DECAY, floor=QUIET_FLOOR):
+    """The adaptive quiet window after one command (pure; the selftest pins it).
+
+    One frame: the tail was residue — decay it, never below the floor, and
+    never RAISE a window that was configured below the floor. Any second frame
+    (or third...): reset to the full window — a truncated multi-frame body
+    would forge FAIL verdicts, so the reset is deliberately wasteful (card
+    p18-rcon-sweep-quietwin: better safe than aggressive). Silence (zero
+    frames): no evidence about lateness, keep the window unchanged.
+    """
+    if frames >= 2:
+        return reset
+    if frames == 0:
+        return current
+    return min(current, max(floor, current * decay))
+
+
 class RconClient:
-    """Light connection object bundling connect/auth/run_command for reuse."""
+    """Light connection object bundling connect/auth/run_command for reuse.
+
+    Holds the adaptive quiet-window state per connection (P18): concurrency
+    gives every chain its own connection (framework._run_wave), so the state
+    is thread-self-contained and converges on what THIS socket's server
+    actually does.
+    """
 
     def __init__(self, host="127.0.0.1", port=25575, password="",
                  timeout=DEFAULT_CONNECT_TIMEOUT,
-                 first_timeout=DEFAULT_FIRST_TIMEOUT, quiet_window=DEFAULT_QUIET_WINDOW):
+                 first_timeout=DEFAULT_FIRST_TIMEOUT, quiet_window=DEFAULT_QUIET_WINDOW,
+                 adaptive_quiet=None):
         self.host = host
         self.port = port
         self.password = password
         self.timeout = timeout
         self.first_timeout = first_timeout
         self.quiet_window = quiet_window
+        self._quiet_reset = quiet_window   # decay resets to the CONFIGURED window
+        self.adaptive_quiet = adaptive_quiet_enabled() if adaptive_quiet is None \
+            else bool(adaptive_quiet)
         self._sock = None
         self._next_id = FIRST_COMMAND_ID
 
@@ -212,8 +267,12 @@ class RconClient:
             raise RconError("not connected")
         req_id = self._next_id
         self._next_id += 1
-        return run_command(self._sock, command, req_id,
+        outs = run_command(self._sock, command, req_id,
                            self.first_timeout, self.quiet_window)
+        if self.adaptive_quiet:
+            self.quiet_window = next_quiet_window(self.quiet_window, len(outs),
+                                                  reset=self._quiet_reset)
+        return outs
 
     def close(self):
         if self._sock is not None:

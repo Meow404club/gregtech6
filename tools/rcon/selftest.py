@@ -26,8 +26,12 @@ p17-rcon-framework-fixes):
   6 sweep result worktree isolation (P18, card p18-rcon-sweep-quietwin) —
     result_path names carry this worktree's tag by default and diverge under
     a foreign tag (the --dual reader's other-side lookup).
+  7 adaptive quiet window (P18, same card) — the pure convergence logic:
+    single-frame decay to a hard floor, reset on ANY second frame, silence
+    keeps the window, and the GT6_RCON_ADAPTIVE_QUIET off-switch parses.
 """
 
+import os
 import socket
 import sys
 import tempfile
@@ -255,6 +259,40 @@ def check_6_sweep_result_isolation():
           sweep._worktree_tag(framework.WORKTREE_ROOT) == framework.worktree_tag())
 
 
+def check_7_adaptive_quiet_window():
+    print("\n--- 7: adaptive quiet window (P18, pure convergence logic)")
+    full = gt6rcon.DEFAULT_QUIET_WINDOW
+    floor, decay = gt6rcon.QUIET_FLOOR, gt6rcon.QUIET_DECAY
+    check("7a single frame decays the tail",
+          gt6rcon.next_quiet_window(full, 1) == full * decay)
+    check("7b decay never crosses the floor and never raises a smaller window",
+          gt6rcon.next_quiet_window(floor, 1) == floor
+          and gt6rcon.next_quiet_window(0.02, 1) == 0.02)
+    check("7c any second frame resets to the full (configured) window",
+          gt6rcon.next_quiet_window(floor, 2) == full
+          and gt6rcon.next_quiet_window(floor, 3, reset=0.3) == 0.3)
+    check("7d silence (0 frames) keeps the window unchanged",
+          gt6rcon.next_quiet_window(0.11, 0) == 0.11)
+    window = full
+    for _ in range(40):
+        window = gt6rcon.next_quiet_window(window, 1)
+    check("7e repeated single-frame decay converges to the floor and stays",
+          window == floor)
+    old = os.environ.get(gt6rcon.ADAPTIVE_QUIET_ENV)
+    try:
+        os.environ[gt6rcon.ADAPTIVE_QUIET_ENV] = "off"
+        disabled = gt6rcon.adaptive_quiet_enabled()
+        os.environ[gt6rcon.ADAPTIVE_QUIET_ENV] = ""
+        enabled = gt6rcon.adaptive_quiet_enabled()
+    finally:
+        if old is None:
+            os.environ.pop(gt6rcon.ADAPTIVE_QUIET_ENV, None)
+        else:
+            os.environ[gt6rcon.ADAPTIVE_QUIET_ENV] = old
+    check("7f env switch: 'off' disables, empty/unset keeps adaptive on",
+          disabled is False and enabled is True)
+
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
@@ -262,6 +300,7 @@ def main():
     check_4_sweep_registry()
     check_5_ownership_gates()
     check_6_sweep_result_isolation()
+    check_7_adaptive_quiet_window()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 

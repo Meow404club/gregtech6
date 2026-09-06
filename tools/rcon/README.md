@@ -49,6 +49,15 @@ import 复用：`sys.path.insert(0, "tools/rcon"); import gt6rcon`，用
 `gt6rcon.RconClient(host, port, password)`（上下文管理器自动 connect+auth）或模块级
 `connect()/auth()/run_command()/run_chain()`。
 
+**quiet_window 自适应收敛（P18）**：`RconClient` 每 connection 维护自己的收集尾窗——
+单帧响应按 `QUIET_DECAY=0.7` 衰减（硬下限 `QUIET_FLOOR=0.05s`；配置已低于下限的
+窗口绝不回抬），见到**任何**第二帧立即重置回本 connection 配置的满窗（截断真多帧
+body 会伪造 FAIL，宁保守勿激进），零帧（沉默）不动。固定 0.5s 尾巴对占绝对多数的
+单帧命令是纯残差，全集 sweep 要付几百次。开关：`GT6_RCON_ADAPTIVE_QUIET=off`
+（或构造参数 `adaptive_quiet=False`）恢复固定 0.5s 历史行为；模块级 `run_command`
+签名与 `judge_output` 判定语义零变；并发波下每链独立 connection（framework 线程
+各持一个 client），per-connection 状态线程自洽。
+
 ## ① 帧协议与包类型
 
 ```
@@ -388,8 +397,9 @@ p15_runtime_smoke（fresh_boot 单例）。注册序 = perboot 顺序 + --plan �
 session 跑法把全集摊平成一池（`run_session_recorded`）。
 
 **框架自检（无服干跑，~1s）**：`python3 tools/rcon/selftest.py`——以假 boot 面
-验证五项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
-名册化、session 端口策略、p16 簇注册、boot 归属门。退出码 0 = 全绿。
+验证七项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
+名册化、session 端口策略、p16 簇注册、boot 归属门、sweep 结果 JSON worktree 隔离
+（P18）、quiet_window 自适应收敛纯逻辑（P18）。退出码 0 = 全绿（34 检）。
 
 ### 并发波执行（用户校准 2026-09-04：并发是主杠杆）
 
