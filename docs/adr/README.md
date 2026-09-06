@@ -47,6 +47,7 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-06 | [2026-09-06-p19-porting-split.md](2026-09-06-p19-porting-split.md) | ADR-P19 移植批拆卡：5 卡 2 波（stoneblocks registry/render∥drying∥front∥chisel）+三研究卡复核裁决（否决 GTMaterialBlocks 扩展/盐流体走 SIMPLE_LIQUID_SPECS/circuit 行整面裁池随工具卡）+共享 append-only 面合并序 |
 | 2026-09-06 | [2026-09-06-p20-texture-tree-policy.md](2026-09-06-p20-texture-tree-policy.md) | ADR-P20 贴图真图/占位双树政策：真图正典位=静态树+同路径跨树共存禁止（generated srcDir 后拷遮蔽静态树实证）+gen_textures.py skip-if-real 让位（静态树即排除表）+census 纯 JUnit 禁做 datagen provider+overlay_active 烘焙泛化+机器机身键集钉定 |
 | 2026-09-06 | [2026-09-06-p20-i18n-zhcn-pipeline.md](2026-09-06-p20-i18n-zhcn-pipeline.md) | ADR-P20 i18n zh_cn 管线：GT6ZhCn datagen provider+TSV 翻译数据源注入（非 datagen 推导，zh_cn.json 不手写）+GT6LangParityTest zh⊆en 守卫+ZH_KEY_FLOOR 棘轮+tagprefix 手译在用 105 条（否决词缀推导值源）+B 波拼接改造组合域（改造前 zh 回退英文=声明工作状态） |
+| 2026-09-06 | [2026-09-06-p20-modularui-fork-ruling.md](2026-09-06-p20-modularui-fork-ruling.md) | ADR-P20 ModularUI fork 三裁决：上游=brachy84/ModularUI-Modern per-MC 分支（1.20.1@909cda2/1.21.1@c13e141 双腿收割）+落点=仓内 vendored third-party/modularui（否独立仓：fork 期 publish 税）+LGPL-3.0 义务三件套+jarJar 双腿各嵌本腿 jar（EvalEx 嵌套存活卡②实测） |
 
 ## 占位（历史 ADR，未回填，权威原文在 state `decisions` 账本与 docs/PROJECT_STATE.md）
 
