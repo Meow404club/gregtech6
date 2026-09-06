@@ -195,7 +195,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
 		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
-		assertEquals(11, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + engine fuels + fluid bed + burn + distillery + drying + furnace fuel (the p13 RecipeMapFurnaceFuel append, then the p14 RM.java:70/:71 pair)");
+		assertEquals(12, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + furnace fuel (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append)");
 	}
 
 	@Test
