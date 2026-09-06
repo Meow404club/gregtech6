@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "variant=bricks": {
+      "model": "gt6:block/stones/prismarine_light/bricks"
+    },
+    "variant=bricks_chiseled": {
+      "model": "gt6:block/stones/prismarine_light/bricks_chiseled"
+    },
+    "variant=bricks_cracked": {
+      "model": "gt6:block/stones/prismarine_light/bricks_cracked"
+    },
+    "variant=bricks_mossy": {
+      "model": "gt6:block/stones/prismarine_light/bricks_mossy"
+    },
+    "variant=bricks_redstone": {
+      "model": "gt6:block/stones/prismarine_light/bricks_redstone"
+    },
+    "variant=bricks_reinforced": {
+      "model": "gt6:block/stones/prismarine_light/bricks_reinforced"
+    },
+    "variant=cobble": {
+      "model": "gt6:block/stones/prismarine_light/cobble"
+    },
+    "variant=cobble_mossy": {
+      "model": "gt6:block/stones/prismarine_light/cobble_mossy"
+    },
+    "variant=small_bricks": {
+      "model": "gt6:block/stones/prismarine_light/small_bricks"
+    },
+    "variant=small_tiles": {
+      "model": "gt6:block/stones/prismarine_light/small_tiles"
+    },
+    "variant=smooth": {
+      "model": "gt6:block/stones/prismarine_light/smooth"
+    },
+    "variant=square_bricks": {
+      "model": "gt6:block/stones/prismarine_light/square_bricks"
+    },
+    "variant=stone": {
+      "model": "gt6:block/stones/prismarine_light/stone"
+    },
+    "variant=tiles": {
+      "model": "gt6:block/stones/prismarine_light/tiles"
+    },
+    "variant=windmill_tiles_a": {
+      "model": "gt6:block/stones/prismarine_light/windmill_tiles_a"
+    },
+    "variant=windmill_tiles_b": {
+      "model": "gt6:block/stones/prismarine_light/windmill_tiles_b"
+    }
+  }
+}
