@@ -66,6 +66,9 @@ JarJar 内置 mod jar，后续本仓 GUI 框架逐步用它。跟随上游=跟 G
   ③ distmarker：neoforged.api.distmarker→forge.api.distmarker（TextFieldRenderer.java:13-14）；
   ④ items wrapper：neoforge.items→forge.items（包名 swap）；⑤ hooks：CommonHooks/EventHooks→ForgeHooks 系（ModularCraftingSlot.java:16-17）。
 - 预估：chisel 触碰文件两位数（<<50），其余 ~90% 文件（widget/theme/drawable/api 主体）双腿零改共享。
+  **勘误（2026-09-07 卡① 审查实测，merged 3aacc725）：483 common 中 232 文件双腿零改（48%）而非
+  ~90%；结构性漂移 112 文件走 leg-split 消化**——属纯估算修正，不推翻任何裁决（主树反选依据=
+  首编即绿+重放成本，与占比无关）；实测分布见 third-party/modularui/DIVERGE.md 与 FORK.md §2。
 - Mixin 面：core/mixins client 7+common 10+jei/emi（tree 计数），最大 GuiGraphicsMixin 5.4KB；mixin 配置双腿各自成 json。
 - 硬依赖仅 EvalEx 3.6.0；JEI/REI/EMI/Curios/Sodium/MouseTweaks 全 compileOnly 可选（dependencies.gradle:12-20）——
   fork 可裁剪不用的 integration 缩小维护面（裁剪决策留卡① probe 后定，默认先全量保真）。
