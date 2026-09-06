@@ -67,7 +67,7 @@ public final class GTMachines {
 					TileEntityOven::new, OVEN.get()).build(null));
 
 	public static final RegistryObject<Item> OVEN_ITEM = ITEMS.register("oven",
-			() -> new BlockItem(OVEN.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(OVEN.get(), new Item.Properties()));
 
 	// ---------------------------------------------------------------------------
 	// the Shredder/Crusher/Lathe machine family (task p7-basicmachine-family ②/③, the
@@ -95,41 +95,61 @@ public final class GTMachines {
 	/** The Crusher parallel row (upstream NBT_PARALLEL 4/8/16/32, :1300-1303); Shredder/Lathe carry no key → 1. */
 	public static final int[] CRUSHER_PARALLEL = {4, 8, 16, 32};
 
+	// the composed tier-ladder name face (task p20-i18n-compose-rows): the "{Machine} (Tier N)"
+	// rows compose from the machine word + the ordinal tier unit over one template
+	public static final String MACHINE_DISPLAY_KEY = "gt6.row.machine.display";
+	public static final String MACHINE_SHREDDER_UNIT_KEY = "gt6.row.machine.shredder";
+	public static final String MACHINE_CRUSHER_UNIT_KEY = "gt6.row.machine.crusher";
+	public static final String MACHINE_LATHE_UNIT_KEY = "gt6.row.machine.lathe";
+
+	/** The tier ordinal unit key ({@code gt6.row.tier.<n>}). */
+	public static String machineTierUnitKey(int aTier) {
+		return "gt6.row.tier." + aTier;
+	}
+
+	/** The pre-composed name supplier of a tier block (the 4-arg GTBasicMachineBlock carrier). */
+	private static java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> tierName(
+			String aMachineUnitKey, int aTier) {
+		return () -> net.minecraft.network.chat.Component.translatable(MACHINE_DISPLAY_KEY,
+				net.minecraft.network.chat.Component.translatable(aMachineUnitKey),
+				net.minecraft.network.chat.Component.translatable(machineTierUnitKey(aTier)));
+	}
+
 	public static final RegistryObject<Block> SHREDDER = BLOCKS.register("shredder",
 			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(7.0F, 7.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get()));
 
 	public static final RegistryObject<Block> SHREDDER_T2 = BLOCKS.register("shredder_t2",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get(), null, tierName(MACHINE_SHREDDER_UNIT_KEY, 2)));
 
 	public static final RegistryObject<Block> SHREDDER_T3 = BLOCKS.register("shredder_t3",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get(), null, tierName(MACHINE_SHREDDER_UNIT_KEY, 3)));
 
 	public static final RegistryObject<Block> SHREDDER_T4 = BLOCKS.register("shredder_t4",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get(), null, tierName(MACHINE_SHREDDER_UNIT_KEY, 4)));
 
 	public static final RegistryObject<Block> CRUSHER = BLOCKS.register("crusher",
 			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(7.0F, 7.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get()));
 
 	public static final RegistryObject<Block> CRUSHER_T2 = BLOCKS.register("crusher_t2",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get(), null, tierName(MACHINE_CRUSHER_UNIT_KEY, 2)));
 
 	public static final RegistryObject<Block> CRUSHER_T3 = BLOCKS.register("crusher_t3",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get(), null, tierName(MACHINE_CRUSHER_UNIT_KEY, 3)));
 
 	public static final RegistryObject<Block> CRUSHER_T4 = BLOCKS.register("crusher_t4",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get(), null, tierName(MACHINE_CRUSHER_UNIT_KEY, 4)));
 
 	public static final RegistryObject<Block> LATHE = BLOCKS.register("lathe",
 			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(7.0F, 7.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get()));
 
 	public static final RegistryObject<Block> LATHE_T2 = BLOCKS.register("lathe_t2",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, tierName(MACHINE_LATHE_UNIT_KEY, 2)));
 
 	public static final RegistryObject<Block> LATHE_T3 = BLOCKS.register("lathe_t3",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, tierName(MACHINE_LATHE_UNIT_KEY, 3)));
 
 	public static final RegistryObject<Block> LATHE_T4 = BLOCKS.register("lathe_t4",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, tierName(MACHINE_LATHE_UNIT_KEY, 4)));
 
 	/**
 	 * One BET per machine FAMILY (task p8-machine-tiers-doinject ①, the P6 barrel-ladder
@@ -166,31 +186,31 @@ public final class GTMachines {
 					LATHE.get(), LATHE_T2.get(), LATHE_T3.get(), LATHE_T4.get()).build(null));
 
 	public static final RegistryObject<Item> SHREDDER_ITEM = ITEMS.register("shredder",
-			() -> new BlockItem(SHREDDER.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(SHREDDER.get(), new Item.Properties()));
 	public static final RegistryObject<Item> SHREDDER_T2_ITEM = ITEMS.register("shredder_t2",
-			() -> new BlockItem(SHREDDER_T2.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(SHREDDER_T2.get(), new Item.Properties()));
 	public static final RegistryObject<Item> SHREDDER_T3_ITEM = ITEMS.register("shredder_t3",
-			() -> new BlockItem(SHREDDER_T3.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(SHREDDER_T3.get(), new Item.Properties()));
 	public static final RegistryObject<Item> SHREDDER_T4_ITEM = ITEMS.register("shredder_t4",
-			() -> new BlockItem(SHREDDER_T4.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(SHREDDER_T4.get(), new Item.Properties()));
 
 	public static final RegistryObject<Item> CRUSHER_ITEM = ITEMS.register("crusher",
-			() -> new BlockItem(CRUSHER.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(CRUSHER.get(), new Item.Properties()));
 	public static final RegistryObject<Item> CRUSHER_T2_ITEM = ITEMS.register("crusher_t2",
-			() -> new BlockItem(CRUSHER_T2.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(CRUSHER_T2.get(), new Item.Properties()));
 	public static final RegistryObject<Item> CRUSHER_T3_ITEM = ITEMS.register("crusher_t3",
-			() -> new BlockItem(CRUSHER_T3.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(CRUSHER_T3.get(), new Item.Properties()));
 	public static final RegistryObject<Item> CRUSHER_T4_ITEM = ITEMS.register("crusher_t4",
-			() -> new BlockItem(CRUSHER_T4.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(CRUSHER_T4.get(), new Item.Properties()));
 
 	public static final RegistryObject<Item> LATHE_ITEM = ITEMS.register("lathe",
-			() -> new BlockItem(LATHE.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(LATHE.get(), new Item.Properties()));
 	public static final RegistryObject<Item> LATHE_T2_ITEM = ITEMS.register("lathe_t2",
-			() -> new BlockItem(LATHE_T2.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(LATHE_T2.get(), new Item.Properties()));
 	public static final RegistryObject<Item> LATHE_T3_ITEM = ITEMS.register("lathe_t3",
-			() -> new BlockItem(LATHE_T3.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(LATHE_T3.get(), new Item.Properties()));
 	public static final RegistryObject<Item> LATHE_T4_ITEM = ITEMS.register("lathe_t4",
-			() -> new BlockItem(LATHE_T4.get(), new Item.Properties()));
+			() -> new gregtech6.block.GTComposedNameItem(LATHE_T4.get(), new Item.Properties()));
 
 	// ---------------------------------------------------------------------------
 	// the Dryer family (task p14-dryer-family) — the four rows
@@ -206,12 +226,15 @@ public final class GTMachines {
 	// four auto sides are the :139/:140/:145/:146 columns (the auto-IO pool, data-only).
 	// ---------------------------------------------------------------------------
 
+	/** The Dryer family display template key ({@code gt6.row.dryer.display}, task p20-i18n-compose-rows). */
+	public static final String DRYER_DISPLAY_KEY = "gt6.row.dryer.display";
+
 	/** The four Dryer rows, upstream line order :1477-1480 (T1-T4). */
 	public static final java.util.List<GTBasicMachineBlock.MachineRow> DRYER_ROWS = java.util.List.of(
-			dryer("dryer"  , "Dryer (Steel)"          , 20311, "Steel"          ,  6.0F, 0,   8),
-			dryer("dryer_t2", "Dryer (Invar)"         , 20312, "Invar"          ,  4.0F, 1,  16),
-			dryer("dryer_t3", "Dryer (Titanium)"      , 20313, "Titanium"       ,  9.0F, 2,  32),
-			dryer("dryer_t4", "Dryer (Tungsten Carbide)", 20314, "Tungsten Carbide", 12.5F, 3, 64));
+			dryer("dryer"  , "steel"           , "Steel"           , 20311,  6.0F, 0,   8),
+			dryer("dryer_t2", "invar"           , "Invar"           , 20312,  4.0F, 1,  16),
+			dryer("dryer_t3", "titanium"        , "Titanium"        , 20313,  9.0F, 2,  32),
+			dryer("dryer_t4", "tungsten_carbide", "Tungsten Carbide", 20314, 12.5F, 3, 64));
 
 	/**
 	 * One row factory — the four Dryer columns that differ (path/name/id/material/hardness/
@@ -221,8 +244,8 @@ public final class GTMachines {
 	 * the p14 row.menu pool promise redeemed; the supplier form survives the deferred
 	 * registration, the BE reads it lazily at createMenu time).
 	 */
-	private static GTBasicMachineBlock.MachineRow dryer(String aPath, String aDisplay, int aMetaId, String aMaterial, float aHardness, int aTier, int aParallel) {
-		return new GTBasicMachineBlock.MachineRow(aPath, aDisplay, aMetaId, aMaterial, aHardness, aTier, aParallel, true,
+	private static GTBasicMachineBlock.MachineRow dryer(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, DRYER_DISPLAY_KEY, aMetaId, aHardness, aTier, aParallel, true,
 				() -> GT6RecipeMaps.DRYING, TD.Energy.HU, "dryer",
 				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A),
 				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A),
@@ -245,8 +268,7 @@ public final class GTMachines {
 			DRYER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.DRYER_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			DRYER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(GTMachines.DRYER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			DRYER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.DRYER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
 	}
 
@@ -318,12 +340,15 @@ public final class GTMachines {
 	// dryer).
 	// ---------------------------------------------------------------------------
 
+	/** The Distillery family display template key ({@code gt6.row.distillery.display}, task p20-i18n-compose-rows). */
+	public static final String DISTILLERY_DISPLAY_KEY = "gt6.row.distillery.display";
+
 	/** The four Distillery rows, upstream line order :1398-1401 (T1-T4). */
 	public static final java.util.List<GTBasicMachineBlock.MachineRow> DISTILLERY_ROWS = java.util.List.of(
-			distillery("distillery"   , "Distillery (Steel)"          , 20191, "Steel"           ,  6.0F, 0,   8),
-			distillery("distillery_t2", "Distillery (Invar)"         , 20192, "Invar"           ,  4.0F, 1,  16),
-			distillery("distillery_t3", "Distillery (Titanium)"      , 20193, "Titanium"        ,  9.0F, 2,  32),
-			distillery("distillery_t4", "Distillery (Tungsten Carbide)", 20194, "Tungsten Carbide", 12.5F, 3, 64));
+			distillery("distillery"   , "steel"           , "Steel"           , 20191,  6.0F, 0,   8),
+			distillery("distillery_t2", "invar"           , "Invar"           , 20192,  4.0F, 1,  16),
+			distillery("distillery_t3", "titanium"        , "Titanium"        , 20193,  9.0F, 2,  32),
+			distillery("distillery_t4", "tungsten_carbide", "Tungsten Carbide", 20194, 12.5F, 3, 64));
 
 	/**
 	 * One row factory — the four Distillery columns that differ (path/name/id/material/
@@ -331,8 +356,8 @@ public final class GTMachines {
 	 * through the supplier, HU, the "distillery" texture, the masks, the auto sides, cheap
 	 * overclocking T) and the null menu supplier (the menu-less carrier).
 	 */
-	private static GTBasicMachineBlock.MachineRow distillery(String aPath, String aDisplay, int aMetaId, String aMaterial, float aHardness, int aTier, int aParallel) {
-		return new GTBasicMachineBlock.MachineRow(aPath, aDisplay, aMetaId, aMaterial, aHardness, aTier, aParallel, true,
+	private static GTBasicMachineBlock.MachineRow distillery(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, DISTILLERY_DISPLAY_KEY, aMetaId, aHardness, aTier, aParallel, true,
 				() -> GT6RecipeMaps.DISTILLERY, TD.Energy.HU, "distillery",
 				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A),
 				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A),
@@ -355,8 +380,7 @@ public final class GTMachines {
 			DISTILLERY_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.DISTILLERY_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			DISTILLERY_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(GTMachines.DISTILLERY_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			DISTILLERY_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.DISTILLERY_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
 	}
 

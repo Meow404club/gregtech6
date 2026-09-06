@@ -493,11 +493,18 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 		assertEquals(1, GT6Kinetics.AXLE_SPECS.get(1).tier());
 		assertEquals(7, GT6Kinetics.AXLE_SPECS.get(10).tier());
 
-		// the registry-name and display-name forms
+		// the registry-name form + the composed-name parameters (task p20-i18n-compose-rows:
+		// the display retired into gt6.row.axle.display over the size + row-material units —
+		// the unit VALUES here are the old row wording, the expansion pin lives in GT6LangParityTest)
 		assertEquals("axle_wood_treated_small", GT6Kinetics.axleName("wood_treated", 0));
 		assertEquals("axle_trinitanium_huge", GT6Kinetics.axleName("trinitanium", 3));
-		assertEquals("Small Wooden Axle", GT6Kinetics.axleDisplay(GT6Kinetics.AXLE_SPECS.get(0), 0)); // the :1663 wording
-		assertEquals("Huge Trinitanium Axle", GT6Kinetics.axleDisplay(GT6Kinetics.AXLE_SPECS.get(10), 3));
+		assertEquals("gt6.row.axle.display", GT6Kinetics.AXLE_DISPLAY_KEY);
+		assertEquals("Small", GT6Kinetics.axleSizeDisplay(0)); // the :1663 wording
+		assertEquals("Huge", GT6Kinetics.axleSizeDisplay(3));
+		assertEquals("Wooden", GT6Kinetics.AXLE_SPECS.get(0).matDisplay());
+		assertEquals("Trinitanium", GT6Kinetics.AXLE_SPECS.get(10).matDisplay());
+		assertEquals("gt6.row.size.small", GT6Kinetics.axleSizeUnitKey(0));
+		assertEquals("gt6.row.mat.wood_treated", GT6Kinetics.axleMatUnitKey(GT6Kinetics.AXLE_SPECS.get(0)));
 
 		// VMAX itself is the CS table verbatim (the first eight tiers the rows use)
 		assertEquals(16, GT6Kinetics.VMAX[0]);

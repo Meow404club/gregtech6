@@ -63,10 +63,12 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 * of the Dryer rows (Loader_MultiTileEntities.java:1477-1480) has a named field:
 	 *
 	 * @param path               the gt6 registry path (the blockstate/model/lang key tail)
-	 * @param displayName        the upstream row name verbatim, "Dryer (" + aMat.getLocal() + ")"
+	 * @param matSlug            the row material slug (the gt6.row.mat small-unit key tail)
+	 * @param matDisplay         the row material local name (MT.DATA.Heat_T[1..4] = Steel/Invar/
+	 *                           Titanium/Tungsten Carbide, MT.java:3689), verbatim
+	 * @param displayKey         the family display template key ({@code gt6.row.dryer.display} /
+	 *                           {@code gt6.row.distillery.display}) the composed name fills
 	 * @param metaId             the upstream MultiTileEntity id (20311-20314), the zero-diff yardstick
-	 * @param material           the row material local name (MT.DATA.Heat_T[1..4] = Steel/Invar/
-	 *                           Titanium/Tungsten Carbide, MT.java:3689)
 	 * @param hardness           the NBT_HARDNESS column (6/4/9/12.5 — NBT_RESISTANCE == hardness)
 	 * @param tier               the tier index 0..3 (the TIER_INPUTS selector — the NBT_INPUT
 	 *                           column 32/128/512/2048 through the :126 conversion lives in
@@ -95,7 +97,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 *                           port overclock loop :773 runs unconditionally, "no config
 	 *                           source, always T")
 	 */
-	public record MachineRow(String path, String displayName, int metaId, String material, float hardness,
+	public record MachineRow(String path, String matSlug, String matDisplay, String displayKey, int metaId, float hardness,
 			int tier, int parallel, boolean parallelDuration,
 			java.util.function.Supplier<gregtech6.recipes.RecipeMap> recipes, gregapi.code.TagData energyType,
 			String texture,
@@ -118,8 +120,16 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 */
 	private final MachineRow mRow;
 
+	/**
+	 * The composed-name carrier of the row-less tier blocks (task p20-i18n-compose-rows):
+	 * a pre-composed name Component the tier registrations supply — the MachineRow carrier
+	 * would change the {@link #menuBound} semantics, so the tier ladders ride this instead.
+	 */
+	@Nullable
+	private final java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> mComposedName;
+
 	public GTBasicMachineBlock(Properties aProperties, Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType) {
-		this(aProperties, aTickerType, null);
+		this(aProperties, aTickerType, null, null);
 	}
 	//? if neoforge {
 	/*
@@ -134,10 +144,32 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	*///?}
 
 	public GTBasicMachineBlock(Properties aProperties, Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, @Nullable MachineRow aRow) {
+		this(aProperties, aTickerType, aRow, null);
+	}
+
+	/** The tier-ladder form (task p20-i18n-compose-rows): a row-less block whose name is the pre-composed supplier. */
+	public GTBasicMachineBlock(Properties aProperties, Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
+			@Nullable MachineRow aRow, @Nullable java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> aComposedName) {
 		super(aProperties);
 		mTickerType = aTickerType;
 		mRow = aRow;
+		mComposedName = aComposedName;
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, net.minecraft.core.Direction.NORTH).setValue(ACTIVE, false).setValue(RUNNING, false));
+	}
+
+	/**
+	 * The composed name (task p20-i18n-compose-rows): a row carrier fills its family template
+	 * over the gt6.row.mat small unit, a tier carrier hands back its pre-composed name, the
+	 * legacy families keep the vanilla atomic-key lookup.
+	 */
+	@Override
+	public net.minecraft.network.chat.MutableComponent getName() {
+		if (mRow != null) {
+			return net.minecraft.network.chat.Component.translatable(mRow.displayKey(),
+					net.minecraft.network.chat.Component.translatable("gt6.row.mat." + mRow.matSlug()));
+		}
+		if (mComposedName != null) return mComposedName.get();
+		return super.getName();
 	}
 
 	/** The carried row, or null for the legacy row-less families. */

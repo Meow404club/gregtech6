@@ -70,14 +70,22 @@ public class GTStoneBlock extends Block {
 	}
 
 	/**
-	 * The variant-0 key of this card's 272-key lang table ({@code block.gt6.<stone>.stone}) —
-	 * both the block and its BlockItem (BlockItem.java:187-188 delegates to the block) resolve
-	 * their display name through it; the other 15 variant keys are the state-dependent names.
-	 * The vanilla default would consult the built-in registry (Block.java:365-369), which has
-	 * no meaning offline.
+	 * The composed display name (task p20-i18n-compose-rows, the B-wave lang ruling; the
+	 * GTWireBlock.getName B1 posture): the 272 pre-installed per-(stone, variant) lang keys
+	 * retired into the 16 {@code gt6.stone.variant.<snake>} templates — this block face
+	 * composes the VARIANT-0 template (the bare stone name, BlockStonesGT.java:38's
+	 * {@code aDefaultLocalised}) with the {@code gt6.material.<snake>} small-unit slot, so a
+	 * zh client renders the dump's stone word for free (the A-wave material face). The 15
+	 * other variant templates are consumed by future per-variant name surfaces (the datagen
+	 * keeps the whole template face pinned). The vanilla descriptionId default
+	 * ({@code block.gt6.<stone>}) is deliberately NOT backed by a lang key any more —
+	 * every name path routes through this override (the GTWireBlock posture; the raw-key
+	 * fallback only shows for exotic consumers of getDescriptionId itself).
 	 */
 	@Override
-	public String getDescriptionId() {
-		return "block.gt6." + this.stoneSnake + "." + StoneVariant.STONE.snake;
+	public net.minecraft.network.chat.MutableComponent getName() {
+		return net.minecraft.network.chat.Component.translatable(StoneVariant.STONE.key(),
+				net.minecraft.network.chat.Component.translatable(
+						"gt6.material." + gregtech6.item.MaterialPrefixItem.snakeCase(this.material.mNameInternal)));
 	}
 }

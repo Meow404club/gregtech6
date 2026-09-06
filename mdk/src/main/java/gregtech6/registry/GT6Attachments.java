@@ -60,10 +60,29 @@ public final class GT6Attachments {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "gt6");
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
+	/** The composed tap display template "{@code %s Tap}" — one material slot (task p20-i18n-compose-rows). */
+	public static final String TAP_DISPLAY_KEY = "gt6.row.tap.display";
+	/** The composed funnel display template "{@code %s Funnel}". */
+	public static final String FUNNEL_DISPLAY_KEY = "gt6.row.funnel.display";
+
+	/** The row's material small-unit key (the attachment namespace: the slug is the path tail after tap_/funnel_). */
+	public static String matUnitKeyOf(AttachmentRow aRow) {
+		String tPath = aRow.path();
+		String tSlug = tPath.startsWith("tap_") ? tPath.substring("tap_".length()) : tPath.substring("funnel_".length());
+		return "gt6.row.attachment.mat." + tSlug;
+	}
+
+	/** The composed name of an attachment row (the pure compose seam). */
+	public static net.minecraft.network.chat.MutableComponent displayOf(AttachmentRow aRow) {
+		return net.minecraft.network.chat.Component.translatable(
+				aRow.family() == GTAttachmentSmallBlock.Family.TAP ? TAP_DISPLAY_KEY : FUNNEL_DISPLAY_KEY,
+				net.minecraft.network.chat.Component.translatable(matUnitKeyOf(aRow)));
+	}
+
 	/** One attachment row: the upstream aRegistry.add columns, the block-carrier projection. */
 	public record AttachmentRow(
 			String path,        // the registry path (also the blockstate/model/lang key tail)
-			String displayName, // the upstream row display name, verbatim
+			String matDisplay,  // the row material word, verbatim from the old display column
 			GTAttachmentSmallBlock.Family family,
 			boolean acidProof,  // the upstream NBT_ACIDPROOF
 			float hardnessF,    // the upstream NBT_HARDNESS (0.5F on every row)
@@ -83,30 +102,31 @@ public final class GT6Attachments {
 	 * :2115-2120. acidProof per row verbatim (F/F/T/T/F/T both families).
 	 */
 	public static final List<AttachmentRow> ROWS = List.of(
-			new AttachmentRow("tap_ceramic"                     , "Ceramic Tap"                     , GTAttachmentSmallBlock.Family.TAP   , false, 0.5F,   5.0F, SoundType.STONE ),
-			new AttachmentRow("tap_plastic"                     , "Plastic Tap"                     , GTAttachmentSmallBlock.Family.TAP   , false, 0.5F,   3.0F, SoundType.WOOD  ),
-			new AttachmentRow("tap_stainless_steel"             , "Stainless Tap"                   , GTAttachmentSmallBlock.Family.TAP   , true , 0.5F,   6.0F, SoundType.METAL ),
-			new AttachmentRow("tap_tungsten"                    , "Tungsten Tap"                    , GTAttachmentSmallBlock.Family.TAP   , true , 0.5F,  10.0F, SoundType.METAL ),
-			new AttachmentRow("tap_tantalum_hafnium_carbide"    , "Tantalum Hafnium Carbide Tap"    , GTAttachmentSmallBlock.Family.TAP   , false, 0.5F,  10.0F, SoundType.METAL ),
-			new AttachmentRow("tap_adamantium"                  , "Adamantium Tap"                  , GTAttachmentSmallBlock.Family.TAP   , true , 0.5F, 100.0F, SoundType.METAL ),
-			new AttachmentRow("funnel_ceramic"                  , "Ceramic Funnel"                  , GTAttachmentSmallBlock.Family.FUNNEL, false, 0.5F,   5.0F, SoundType.STONE ),
-			new AttachmentRow("funnel_plastic"                  , "Plastic Funnel"                  , GTAttachmentSmallBlock.Family.FUNNEL, false, 0.5F,   3.0F, SoundType.WOOD  ),
-			new AttachmentRow("funnel_stainless_steel"          , "Stainless Funnel"                , GTAttachmentSmallBlock.Family.FUNNEL, true , 0.5F,   6.0F, SoundType.METAL ),
-			new AttachmentRow("funnel_tungsten"                 , "Tungsten Funnel"                 , GTAttachmentSmallBlock.Family.FUNNEL, true , 0.5F,  10.0F, SoundType.METAL ),
-			new AttachmentRow("funnel_tantalum_hafnium_carbide" , "Tantalum Hafnium Carbide Funnel" , GTAttachmentSmallBlock.Family.FUNNEL, false, 0.5F,  10.0F, SoundType.METAL ),
-			new AttachmentRow("funnel_adamantium"               , "Adamantium Funnel"               , GTAttachmentSmallBlock.Family.FUNNEL, true , 0.5F, 100.0F, SoundType.METAL ));
+			new AttachmentRow("tap_ceramic"                     , "Ceramic"                     , GTAttachmentSmallBlock.Family.TAP   , false, 0.5F,   5.0F, SoundType.STONE ),
+			new AttachmentRow("tap_plastic"                     , "Plastic"                     , GTAttachmentSmallBlock.Family.TAP   , false, 0.5F,   3.0F, SoundType.WOOD  ),
+			new AttachmentRow("tap_stainless_steel"             , "Stainless"                   , GTAttachmentSmallBlock.Family.TAP   , true , 0.5F,   6.0F, SoundType.METAL ),
+			new AttachmentRow("tap_tungsten"                    , "Tungsten"                    , GTAttachmentSmallBlock.Family.TAP   , true , 0.5F,  10.0F, SoundType.METAL ),
+			new AttachmentRow("tap_tantalum_hafnium_carbide"    , "Tantalum Hafnium Carbide"    , GTAttachmentSmallBlock.Family.TAP   , false, 0.5F,  10.0F, SoundType.METAL ),
+			new AttachmentRow("tap_adamantium"                  , "Adamantium"                  , GTAttachmentSmallBlock.Family.TAP   , true , 0.5F, 100.0F, SoundType.METAL ),
+			new AttachmentRow("funnel_ceramic"                  , "Ceramic"                  , GTAttachmentSmallBlock.Family.FUNNEL, false, 0.5F,   5.0F, SoundType.STONE ),
+			new AttachmentRow("funnel_plastic"                  , "Plastic"                  , GTAttachmentSmallBlock.Family.FUNNEL, false, 0.5F,   3.0F, SoundType.WOOD  ),
+			new AttachmentRow("funnel_stainless_steel"          , "Stainless"                , GTAttachmentSmallBlock.Family.FUNNEL, true , 0.5F,   6.0F, SoundType.METAL ),
+			new AttachmentRow("funnel_tungsten"                 , "Tungsten"                 , GTAttachmentSmallBlock.Family.FUNNEL, true , 0.5F,  10.0F, SoundType.METAL ),
+			new AttachmentRow("funnel_tantalum_hafnium_carbide" , "Tantalum Hafnium Carbide" , GTAttachmentSmallBlock.Family.FUNNEL, false, 0.5F,  10.0F, SoundType.METAL ),
+			new AttachmentRow("funnel_adamantium"               , "Adamantium"               , GTAttachmentSmallBlock.Family.FUNNEL, true , 0.5F, 100.0F, SoundType.METAL ));
 
 	/** The blocks/BlockItems, one pair per row. The {@code GT6Attachments.}-qualified reference is the legal forward-reference form (the P6 lambda lesson). */
 	public static final Map<String, RegistryObject<GTAttachmentSmallBlock>> BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
 	public static final Map<String, RegistryObject<Item>> ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
 	static {
 		for (AttachmentRow tRow : ROWS) {
+			final AttachmentRow fRow = tRow;
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
-					() -> new GTAttachmentSmallBlock(tRow.family(), tRow.acidProof(), tRow.tickerType(),
+					() -> new GTAttachmentSmallBlock(fRow, fRow.acidProof(), fRow.tickerType(),
 							BlockBehaviour.Properties.of()
-									.strength(tRow.hardnessF(), tRow.resistanceF()).sound(tRow.sound()))));
+									.strength(fRow.hardnessF(), fRow.resistanceF()).sound(fRow.sound()))));
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(GT6Attachments.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> new gregtech6.block.GTComposedNameItem(GT6Attachments.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
 	}
 

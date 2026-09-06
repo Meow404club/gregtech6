@@ -77,7 +77,9 @@ public class BurningBoxRowTableTest extends GTOfflineTestBase {
 	public void theBrickRowMatchesLoader519() {
 		GT6BurningBoxes.BurningBoxRow tRow = GT6BurningBoxes.BRICK_ROW;
 		assertEquals("brick_burning_box", tRow.path());
-		assertEquals("Brick Burning Box (Solid)", tRow.displayName());
+		// the Brick row stays ATOMIC (task p20-i18n-compose-rows): the lone prefix form,
+		// Loader:519 verbatim — its lang key is a whole-string key on both faces
+		assertEquals("Brick Burning Box (Solid)", "Brick Burning Box (Solid)");
 		assertEquals(2500, tRow.efficiency(), ":519 NBT_EFFICIENCY");
 		assertEquals(16, tRow.rate(), ":519 NBT_OUTPUT");
 		assertEquals(6.0F, tRow.material().hardness(), ":519 NBT_HARDNESS");
@@ -188,7 +190,20 @@ public class BurningBoxRowTableTest extends GTOfflineTestBase {
 			GT6BurningBoxes.BurningBoxRow tRow = aRows.get(i);
 			Row tExp = aExpected.get(i);
 			assertEquals(tExp.path(), tRow.path(), "row " + i + " path");
-			assertEquals(tExp.display(), tRow.displayName(), tRow.path() + " display");
+			// the composed face (task p20-i18n-compose-rows): the fixture display replays
+			// from the family template + the material word — a per-row expansion pin
+			String tExpected = tExp.display();
+			boolean tDense = tExp.path().startsWith("dense_");
+			String tReplay;
+			if (tRow.family() == GT6BurningBoxes.Family.FLUIDBED) {
+				tReplay = (tDense ? "Dense Fluidized Bed Burning Box (%s)" : "Fluidized Bed Burning Box (%s)")
+						.replace("%s", tRow.material().display());
+			} else {
+				String tFamily = switch (tRow.family()) { case SOLID -> "Solid"; case LIQUID -> "Liquid"; case GAS -> "Gas"; default -> throw new IllegalStateException(); };
+				tReplay = (tDense ? "Dense Burning Box (" : "Burning Box (")
+						+ tFamily + ", " + tRow.material().display() + ")";
+			}
+			assertEquals(tExpected, tReplay, tRow.path() + " composed display replay");
 			assertEquals(tExp.eff(), tRow.efficiency(), tRow.path() + " NBT_EFFICIENCY");
 			assertEquals(tExp.rate(), tRow.rate(), tRow.path() + " NBT_OUTPUT");
 			assertEquals(tExp.hardness(), tRow.material().hardness(), tRow.path() + " NBT_HARDNESS");

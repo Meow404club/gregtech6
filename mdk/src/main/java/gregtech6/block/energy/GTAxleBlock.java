@@ -63,6 +63,12 @@ public class GTAxleBlock extends GTEntityBlock {
 		diameterPx = GT6Kinetics.AXLE_DIAMETERS[aSizeIndex];
 		registerDefaultState(this.stateDefinition.any().setValue(AXIS, Direction.Axis.X));
 	}
+
+	/** The composed axle name (task p20-i18n-compose-rows): the {@link GT6Kinetics#axleDisplayOf} carrier over the registration fields. */
+	@Override
+	public net.minecraft.network.chat.MutableComponent getName() {
+		return GT6Kinetics.axleDisplayOf(spec, sizeIndex);
+	}
 	//? if neoforge {
 	/*
 	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec

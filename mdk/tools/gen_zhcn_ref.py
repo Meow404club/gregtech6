@@ -227,6 +227,130 @@ HAND_TRANSLATIONS = {
     "gt6.cover.robot_arm.display": ("机械臂 (%s)", "hand"),
     "block.gt6.wire_laser": ("光纤", "hand"),
     "block.gt6.example_chest": ("GT 示例箱子", "hand"),
+    # ---- B2 stone + rows composed-display units (task p20-i18n-compose-rows) ----
+    # The stone variants compose over gt6.stone.variant.<snake> (16 templates, the stone
+    # name slot = the gt6.material.* small units); the rows families over gt6.row.*.
+    # Wording evidence (dump = tmp/gregtech.lang):
+    #   stone templates = the gt.stone.andesite.N family split verbatim (:15246-15262):
+    #     .1 安山岩圆石 -> "%s圆石", .2 苔藓安山岩圆石 -> "苔藓%s圆石", .3 安山岩砖块,
+    #     .4 裂纹..., .5 苔藓...砖块, .6 錾制安山岩, .7 平滑安山岩, .8 钢筋...砖块,
+    #     .9 红石化...砖块, .10 安山岩方块, .11 小型...方块, .12 小型...砖块,
+    #     .13/.14 安山岩风车纹砖块A/B, .15 安山岩方砖; .0 = the bare material name;
+    #   axle = "%s%s轴" (dump gt.multitileentity.24780 "小型砷铜轴" word order, :24800-24803
+    #     "小型木制轴" -> Wooden = 木制; the size words 小型/中型/大型/巨型 = :3343/:24781/
+    #     :8790/:24783);
+    #   steam engine = 蒸汽引擎 (%s) (:11052) / 强化蒸汽引擎 (%s) (:11066);
+    #   diesel = 燃油引擎 (%s) (:15048 "燃油引擎 (砷青铜)");
+    #   burning box = 燃烧室 (%s, %s) (:10960) / 致密燃烧室 (:11010) / 流化床燃烧室 (:15018)
+    #     / 致密流化床燃烧室 (:15031); family words 固体/液体/气体 = :10960/:11091/:11176;
+    #   boiler = 蒸汽锅炉 (%s) (:11025) / 强化蒸汽锅炉 (%s) (:11038);
+    #   dryer = 干燥器 (%s) (:11603 "干燥器 (钢)");
+    #   distillery = 蒸馏器 (%s) — NO dump face (the :1398-1401 rows are absent from the
+    #     dump); DECLARED DEVIATION: hand translation, the GTCEu Modern community noun;
+    #   large boiler = %s锅炉气压计核心 (:11256 "不锈钢锅炉气压计核心");
+    #   dense wall = 致密%s壁板 (:11368 "致密不锈钢壁板");
+    #   tiers = "%s (%s)" over the machine word + the ordinal unit — NO dump face;
+    #     DECLARED DEVIATION: hand translation (等级 = the GT6 tier noun; the bracket
+    #     shape follows the dump's half-width parens);
+    #   shredder = 粉碎机 — NO dump face (the :1294 key is absent); DECLARED DEVIATION:
+    #     hand translation, kept distinct from the dump-verbatim 破碎机 (:20021 Crusher)
+    #     and 车床 (:20041 Lathe);
+    #   tap/funnel = %s龙头 / %s漏斗 (:13549 陶瓷龙头 / :13544 陶瓷漏斗);
+    #   row-material words = the gt.material.<Pascal> dump lines verbatim (Bronze :4384
+    #     青铜, Brass :4375 黄铜, ArsenicCopper :4159 砷铜, ArsenicBronze :4158 砷青铜,
+    #     Steel :5506 钢, Titanium :5589 钛, TungstenSteel :5725 钨钢, Iridium :4897 铱,
+    #     Iritanium :4901 钛铱合金, Trinitanium :5645 特林钛合金, Lead :4950 铅, TinAlloy
+    #     :5584 锡合金, Invar :4891 殷钢, IronWood :4908 铁木, FierySteel :4691 炙热钢,
+    #     Chromium :4467 铬, Tungsten :5721 钨, Bismuth :4308 铋, Netherite :5104 下界合金,
+    #     TantalumHafniumCarbide :5548 碳化钽铪, Ultimet :5736 哈氏合金, TungstenCarbide
+    #     :5722 碳化钨, StainlessSteel :5500 不锈钢, Adamantium :3589 艾德曼合金,
+    #     Ceramic :4428 陶瓷, Plastic :5245 塑料); the axle Wooden word = the dump AXLE
+    #     rows (:24800 小型木制轴), NOT the WoodTreated material face (防腐木);
+    #   atomic keys = brick_burning_box 砖块燃烧室 (固体) (:11023), heat_transmitter
+    #     热吸收装置 (:11386), gearbox 木制可调变速箱 (:24809), transformer_rotation
+    #     木制变速箱 (:24808).
+    "gt6.stone.variant.stone": ("%s", "hand"),
+    "gt6.stone.variant.cobble": ("%s圆石", "hand"),
+    "gt6.stone.variant.cobble_mossy": ("苔藓%s圆石", "hand"),
+    "gt6.stone.variant.bricks": ("%s砖块", "hand"),
+    "gt6.stone.variant.bricks_cracked": ("裂纹%s砖块", "hand"),
+    "gt6.stone.variant.bricks_mossy": ("苔藓%s砖块", "hand"),
+    "gt6.stone.variant.bricks_chiseled": ("錾制%s", "hand"),
+    "gt6.stone.variant.smooth": ("平滑%s", "hand"),
+    "gt6.stone.variant.bricks_reinforced": ("钢筋%s砖块", "hand"),
+    "gt6.stone.variant.bricks_redstone": ("红石化%s砖块", "hand"),
+    "gt6.stone.variant.tiles": ("%s方块", "hand"),
+    "gt6.stone.variant.small_tiles": ("小型%s方块", "hand"),
+    "gt6.stone.variant.small_bricks": ("小型%s砖块", "hand"),
+    "gt6.stone.variant.windmill_tiles_a": ("%s风车纹砖块A", "hand"),
+    "gt6.stone.variant.windmill_tiles_b": ("%s风车纹砖块B", "hand"),
+    "gt6.stone.variant.square_bricks": ("%s方砖", "hand"),
+    "gt6.row.axle.display": ("%s%s轴", "hand"),
+    "gt6.row.size.small": ("小型", "hand"),
+    "gt6.row.size.medium": ("中型", "hand"),
+    "gt6.row.size.large": ("大型", "hand"),
+    "gt6.row.size.huge": ("巨型", "hand"),
+    "gt6.row.steam_engine.display": ("蒸汽引擎 (%s)", "hand"),
+    "gt6.row.steam_engine.display.strong": ("强化蒸汽引擎 (%s)", "hand"),
+    "gt6.row.diesel.display": ("燃油引擎 (%s)", "hand"),
+    "gt6.row.burning_box.display": ("燃烧室 (%s, %s)", "hand"),
+    "gt6.row.burning_box.display.dense": ("致密燃烧室 (%s, %s)", "hand"),
+    "gt6.row.burning_box.display.fluidbed": ("流化床燃烧室 (%s)", "hand"),
+    "gt6.row.burning_box.display.fluidbed_dense": ("致密流化床燃烧室 (%s)", "hand"),
+    "gt6.row.burning_box.family.solid": ("固体", "hand"),
+    "gt6.row.burning_box.family.liquid": ("液体", "hand"),
+    "gt6.row.burning_box.family.gas": ("气体", "hand"),
+    "gt6.row.boiler.display": ("蒸汽锅炉 (%s)", "hand"),
+    "gt6.row.boiler.display.strong": ("强化蒸汽锅炉 (%s)", "hand"),
+    "gt6.row.dryer.display": ("干燥器 (%s)", "hand"),
+    "gt6.row.distillery.display": ("蒸馏器 (%s)", "hand"),
+    "gt6.row.large_boiler.display": ("%s锅炉气压计核心", "hand"),
+    "gt6.row.dense_wall.display": ("致密%s壁板", "hand"),
+    "gt6.row.machine.display": ("%s (%s)", "hand"),
+    "gt6.row.machine.shredder": ("粉碎机", "hand"),
+    "gt6.row.machine.crusher": ("破碎机", "hand"),
+    "gt6.row.machine.lathe": ("车床", "hand"),
+    "gt6.row.tier.2": ("等级 2", "hand"),
+    "gt6.row.tier.3": ("等级 3", "hand"),
+    "gt6.row.tier.4": ("等级 4", "hand"),
+    "gt6.row.tap.display": ("%s龙头", "hand"),
+    "gt6.row.funnel.display": ("%s漏斗", "hand"),
+    "gt6.row.mat.wood_treated": ("木制", "hand"),
+    "gt6.row.mat.bronze": ("青铜", "hand"),
+    "gt6.row.mat.brass": ("黄铜", "hand"),
+    "gt6.row.mat.arsenic_copper": ("砷铜", "hand"),
+    "gt6.row.mat.arsenic_bronze": ("砷青铜", "hand"),
+    "gt6.row.mat.steel": ("钢", "hand"),
+    "gt6.row.mat.titanium": ("钛", "hand"),
+    "gt6.row.mat.tungstensteel": ("钨钢", "hand"),
+    "gt6.row.mat.iridium": ("铱", "hand"),
+    "gt6.row.mat.titanium_iridium": ("钛铱合金", "hand"),
+    "gt6.row.mat.trinitanium": ("特林钛合金", "hand"),
+    "gt6.row.mat.lead": ("铅", "hand"),
+    "gt6.row.mat.tin_alloy": ("锡合金", "hand"),
+    "gt6.row.mat.invar": ("殷钢", "hand"),
+    "gt6.row.mat.iron_wood": ("铁木", "hand"),
+    "gt6.row.mat.fiery_steel": ("炙热钢", "hand"),
+    "gt6.row.mat.chromium": ("铬", "hand"),
+    "gt6.row.mat.tungsten": ("钨", "hand"),
+    "gt6.row.mat.bismuth": ("铋", "hand"),
+    "gt6.row.mat.netherite": ("下界合金", "hand"),
+    "gt6.row.mat.tantalum_hafnium_carbide": ("碳化钽铪", "hand"),
+    "gt6.row.mat.ultimet": ("哈氏合金", "hand"),
+    "gt6.row.mat.tungsten_carbide": ("碳化钨", "hand"),
+    "gt6.row.mat.stainless_steel": ("不锈钢", "hand"),
+    "gt6.row.mat.adamantium": ("艾德曼合金", "hand"),
+    "gt6.row.attachment.mat.ceramic": ("陶瓷", "hand"),
+    "gt6.row.attachment.mat.plastic": ("塑料", "hand"),
+    "gt6.row.attachment.mat.stainless_steel": ("不锈钢", "hand"),
+    "gt6.row.attachment.mat.tungsten": ("钨", "hand"),
+    "gt6.row.attachment.mat.tantalum_hafnium_carbide": ("碳化钽铪", "hand"),
+    "gt6.row.attachment.mat.adamantium": ("艾德曼合金", "hand"),
+    "gt6.row.mat.brick": ("砖", "hand"),
+    "block.gt6.brick_burning_box": ("砖块燃烧室 (固体)", "hand"),
+    "block.gt6.heat_transmitter": ("热吸收装置", "hand"),
+    "block.gt6.gearbox": ("木制可调变速箱", "hand"),
+    "block.gt6.transformer_rotation": ("木制变速箱", "hand"),
     "fluid.gt6.iron_molten": ("熔融铁", "hand"),
     "fluid.gt6.natural_gas": ("天然气", "hand"),
     "gt6.jei.info.multiblock_coke_oven": (

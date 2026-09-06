@@ -68,6 +68,18 @@ public enum StoneVariant implements StringRepresentable {
 		this.snake = aSnake;
 	}
 
+	/**
+	 * The variant's display template key (task p20-i18n-compose-rows, the B-wave lang ruling):
+	 * {@code gt6.stone.variant.<snake>} — ONE position-param template per variant (the stone
+	 * name rides the {@code %s} slot as the {@code gt6.material.<snake>} small unit), replacing
+	 * the 272 pre-installed per-(stone, variant) full strings the old {@code compose} fed. The
+	 * en/zh template VALUES live in the lang providers; zh wording follows the dump's
+	 * {@code gt.stone.andesite.N} family split (tmp/gregtech.lang:15246-15262).
+	 */
+	public String key() {
+		return "gt6.stone.variant." + this.snake;
+	}
+
 	/** The 1.7.10 metadata value this variant corresponds to (the declaration index). */
 	public byte meta() {
 		return (byte) ordinal();
@@ -83,29 +95,4 @@ public enum StoneVariant implements StringRepresentable {
 		return this.snake.toUpperCase(Locale.ROOT);
 	}
 
-	/**
-	 * The English display name for a stone whose material localises as {@code aStoneName}
-	 * — the upstream LH.add table (BlockStones.java:117-132) with
-	 * {@code aDefaultLocalised = aMaterial.getLocal()} (BlockStonesGT.java:38) substituted.
-	 */
-	public String compose(String aStoneName) {
-		return switch (this.ordinal()) {
-		case 0  -> aStoneName;                                  // ".0"
-		case 1  -> aStoneName + " Cobblestone";                 // ".1"
-		case 2  -> "Mossy " + aStoneName + " Cobblestone";      // ".2"
-		case 3  -> aStoneName + " Bricks";                      // ".3"
-		case 4  -> "Cracked " + aStoneName + " Bricks";         // ".4"
-		case 5  -> "Mossy " + aStoneName + " Bricks";           // ".5"
-		case 6  -> "Chiseled " + aStoneName;                    // ".6"
-		case 7  -> "Smooth " + aStoneName;                      // ".7"
-		case 8  -> "Reinforced " + aStoneName + " Bricks";      // ".8"
-		case 9  -> "Redstoned " + aStoneName + " Bricks";       // ".9"
-		case 10 -> aStoneName + " Tiles";                       // ".10"
-		case 11 -> "Small " + aStoneName + " Tiles";            // ".11"
-		case 12 -> "Small " + aStoneName + " Bricks";           // ".12"
-		case 13 -> aStoneName + " Windmill Tiles A";            // ".13"
-		case 14 -> aStoneName + " Windmill Tiles B";            // ".14"
-		default -> aStoneName + " Square Bricks";               // ".15"
-		};
-	}
 }

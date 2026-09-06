@@ -78,6 +78,13 @@ class GTStoneBlocksRegistrationTest {
         // GTMaterialBlocksRegistrationTest shape: the material system must exist before
         // any MT.STONES/OP field is dereferenced (GTMaterialItems.initMaterials()).
         GTMaterialItems.initMaterials();
+        // the composed-name face builds Component.translatable contents (task
+        // p20-i18n-compose-rows), which initializes vanilla registry classes — bootstrap
+        // first, the GT6LangParityTest.boot posture (offline-expected throwables ignored)
+        try {
+            net.minecraft.server.Bootstrap.bootStrap();
+        } catch (Throwable ignored) {
+        }
     }
 
     /** The census: 17 stones, CS.java:1668 order, each carrying exactly the 16 variants in meta order. */
@@ -202,8 +209,6 @@ class GTStoneBlocksRegistrationTest {
         assertEquals(60.0F, tBlock.getExplosionResistance(), 1.0e-6F,
                 "resistance = 6.00 * 10 (BlockMetaType.java:62, Block.java:331)");
         assertTrue(tBlock.witherProof && tBlock.harvestLevel == 3, "the granite row data rides the block");
-        assertEquals("block.gt6.granite_black.stone", tBlock.getDescriptionId(),
-                "the description id is the variant-0 lang key (offline-safe: no registry lookup)");
     }
 
     /** The oredict equivalence face: the merged OM.reg_ sets (BlockStones.java:135-194), OP-order keys. */
@@ -229,33 +234,37 @@ class GTStoneBlocksRegistrationTest {
                 "OP.stoneBricks union (:160/:162/:165-170/:177-191)");
     }
 
-    /** The 272 registration pairs resolve one lang key each, and the compose() table is the upstream lang block. */
+    /**
+     * The composed-name face (task p20-i18n-compose-rows): the 16 variant template keys
+     * (one per StoneVariant, the stone name riding the %s slot as the gt6.material small
+     * unit), and the block's own name composes the VARIANT-0 template — expansion-pinned
+     * against the old full strings (the upstream "Black Granite" column).
+     */
     @Test
-    void variantKeysCoverTheLangTable() {
+    void variantTemplatesCoverTheComposedNameFace() {
         Set<String> tKeys = new HashSet<>();
-        for (GTStoneBlocks.VariantKey tKey : GTStoneBlocks.registrationOrder()) {
-            tKeys.add("block.gt6." + tKey.stone().snake() + "." + tKey.variant().snake);
+        for (StoneVariant tVariant : StoneVariant.VALUES) tKeys.add(tVariant.key());
+        assertEquals(16, tKeys.size(), "16 distinct variant template keys");
+        assertTrue(tKeys.contains("gt6.stone.variant.bricks_chiseled"));
+        assertTrue(tKeys.contains("gt6.stone.variant.square_bricks"));
+        for (StoneVariant tVariant : StoneVariant.VALUES) {
+            assertTrue(tVariant.key().startsWith("gt6.stone.variant."),
+                    "the template-key namespace is uniform: " + tVariant.key());
         }
-        assertEquals(PINNED_TOTAL, tKeys.size(), "272 distinct lang keys");
-        assertTrue(tKeys.contains("block.gt6.granite_black.bricks_chiseled"));
-        assertTrue(tKeys.contains("block.gt6.shale.square_bricks"));
-        // BlockStones.java:117-132, the aDefaultLocalised = "Black Granite" column
-        assertEquals("Black Granite", StoneVariant.STONE.compose("Black Granite"));
-        assertEquals("Black Granite Cobblestone", StoneVariant.COBBL.compose("Black Granite"));
-        assertEquals("Mossy Black Granite Cobblestone", StoneVariant.MCOBL.compose("Black Granite"));
-        assertEquals("Black Granite Bricks", StoneVariant.BRICK.compose("Black Granite"));
-        assertEquals("Cracked Black Granite Bricks", StoneVariant.CRACK.compose("Black Granite"));
-        assertEquals("Mossy Black Granite Bricks", StoneVariant.MBRIK.compose("Black Granite"));
-        assertEquals("Chiseled Black Granite", StoneVariant.CHISL.compose("Black Granite"));
-        assertEquals("Smooth Black Granite", StoneVariant.SMOTH.compose("Black Granite"));
-        assertEquals("Reinforced Black Granite Bricks", StoneVariant.RNFBR.compose("Black Granite"));
-        assertEquals("Redstoned Black Granite Bricks", StoneVariant.RSTBR.compose("Black Granite"));
-        assertEquals("Black Granite Tiles", StoneVariant.TILES.compose("Black Granite"));
-        assertEquals("Small Black Granite Tiles", StoneVariant.STILE.compose("Black Granite"));
-        assertEquals("Small Black Granite Bricks", StoneVariant.SBRIK.compose("Black Granite"));
-        assertEquals("Black Granite Windmill Tiles A", StoneVariant.WINDA.compose("Black Granite"));
-        assertEquals("Black Granite Windmill Tiles B", StoneVariant.WINDB.compose("Black Granite"));
-        assertEquals("Black Granite Square Bricks", StoneVariant.QBRIK.compose("Black Granite"));
+        // the block face composes the variant-0 template over the gt6.material small unit;
+        // the compose CONTRACT is pinned on the contents (a bare JVM has no lang tables —
+        // the full-expansion pin lives in GT6LangParityTest over the recorded faces)
+        GTStoneBlock tGranite = new GTStoneBlock("granite_black", MT.STONES.GraniteBlack, 3.00F, 6.00F, 3, true);
+        net.minecraft.network.chat.contents.TranslatableContents tContents =
+                (net.minecraft.network.chat.contents.TranslatableContents) tGranite.getName().getContents();
+        assertEquals(StoneVariant.STONE.key(), tContents.getKey(),
+                "the block name fills the variant-0 template");
+        assertEquals(1, tContents.getArgs().length, "one slot: the gt6.material small unit");
+        net.minecraft.network.chat.contents.TranslatableContents tStoneSlot =
+                (net.minecraft.network.chat.contents.TranslatableContents)
+                        ((net.minecraft.network.chat.Component) tContents.getArgs()[0]).getContents();
+        assertEquals("gt6.material.granite_black", tStoneSlot.getKey(),
+                "the stone-name slot is the material small-unit component");
     }
 
     /** The texture segments recover the upstream icon names (the render card's PNG borrow paths). */

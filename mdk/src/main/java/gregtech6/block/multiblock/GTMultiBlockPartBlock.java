@@ -38,8 +38,31 @@ import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
  */
 public class GTMultiBlockPartBlock extends BaseEntityBlock {
 
+	/** The carried part row (task p13-large-boiler record; null = the rows without a composed name — the coke-oven bricks). */
+	@Nullable
+	private final gregtech6.registry.GTMultiBlocks.MultiblockPartRow mRow;
+
 	public GTMultiBlockPartBlock(Properties aProperties) {
 		super(aProperties);
+		this.mRow = null;
+	}
+
+	/** The wall-carrier form (task p20-i18n-compose-rows): the row feeds the composed Dense Wall name. */
+	public GTMultiBlockPartBlock(Properties aProperties, gregtech6.registry.GTMultiBlocks.MultiblockPartRow aRow) {
+		super(aProperties);
+		this.mRow = aRow;
+	}
+
+	/**
+	 * The composed Dense Wall name (task p20-i18n-compose-rows): the row-carried form fills
+	 * the {@code gt6.row.dense_wall.display} template over the gt6.row.mat small unit; the
+	 * row-less forms (the bricks) keep the vanilla atomic-key lookup.
+	 */
+	@Override
+	public net.minecraft.network.chat.MutableComponent getName() {
+		if (mRow == null) return super.getName();
+		return net.minecraft.network.chat.Component.translatable(gregtech6.registry.GTMultiBlocks.DENSE_WALL_DISPLAY_KEY,
+				net.minecraft.network.chat.Component.translatable(gregtech6.registry.GTMultiBlocks.wallMatUnitKeyOf(mRow)));
 	}
 	//? if neoforge {
 	/*

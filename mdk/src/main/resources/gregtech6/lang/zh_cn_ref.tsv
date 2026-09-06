@@ -13,13 +13,95 @@
 # filters: dropped ktfru/written.book/enchantment keys; duplicate keys: first occurrence wins.
 #   mte rows are inert census data until the MTE ID-join subface lands (arch tasks.p20-arch-i18n).
 #
+direct	block.gt6.brick_burning_box	砖块燃烧室 (固体)	hand
 direct	block.gt6.example_chest	GT 示例箱子	hand
+direct	block.gt6.gearbox	木制可调变速箱	hand
+direct	block.gt6.heat_transmitter	热吸收装置	hand
+direct	block.gt6.transformer_rotation	木制变速箱	hand
 direct	block.gt6.wire_laser	光纤	hand
 direct	fluid.gt6.iron_molten	熔融铁	hand
 direct	fluid.gt6.natural_gas	天然气	hand
 direct	gt6.cover.conveyor.display	输送机模块 (%s)	hand
 direct	gt6.cover.robot_arm.display	机械臂 (%s)	hand
 direct	gt6.jei.info.multiblock_coke_oven	焦炉是一个 3x3x3 的立方体：将焦炉控制器放在其中一面的中央并朝外，保持立方体中心格为空，其余 25 格全部放满焦炉砖。点燃控制器即可启动——它自行积攒热量，结构下方一层的储罐会收集杂酚油。	hand
+direct	gt6.row.attachment.mat.adamantium	艾德曼合金	hand
+direct	gt6.row.attachment.mat.ceramic	陶瓷	hand
+direct	gt6.row.attachment.mat.plastic	塑料	hand
+direct	gt6.row.attachment.mat.stainless_steel	不锈钢	hand
+direct	gt6.row.attachment.mat.tantalum_hafnium_carbide	碳化钽铪	hand
+direct	gt6.row.attachment.mat.tungsten	钨	hand
+direct	gt6.row.axle.display	%s%s轴	hand
+direct	gt6.row.boiler.display	蒸汽锅炉 (%s)	hand
+direct	gt6.row.boiler.display.strong	强化蒸汽锅炉 (%s)	hand
+direct	gt6.row.burning_box.display	燃烧室 (%s, %s)	hand
+direct	gt6.row.burning_box.display.dense	致密燃烧室 (%s, %s)	hand
+direct	gt6.row.burning_box.display.fluidbed	流化床燃烧室 (%s)	hand
+direct	gt6.row.burning_box.display.fluidbed_dense	致密流化床燃烧室 (%s)	hand
+direct	gt6.row.burning_box.family.gas	气体	hand
+direct	gt6.row.burning_box.family.liquid	液体	hand
+direct	gt6.row.burning_box.family.solid	固体	hand
+direct	gt6.row.dense_wall.display	致密%s壁板	hand
+direct	gt6.row.diesel.display	燃油引擎 (%s)	hand
+direct	gt6.row.distillery.display	蒸馏器 (%s)	hand
+direct	gt6.row.dryer.display	干燥器 (%s)	hand
+direct	gt6.row.funnel.display	%s漏斗	hand
+direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
+direct	gt6.row.machine.crusher	破碎机	hand
+direct	gt6.row.machine.display	%s (%s)	hand
+direct	gt6.row.machine.lathe	车床	hand
+direct	gt6.row.machine.shredder	粉碎机	hand
+direct	gt6.row.mat.adamantium	艾德曼合金	hand
+direct	gt6.row.mat.arsenic_bronze	砷青铜	hand
+direct	gt6.row.mat.arsenic_copper	砷铜	hand
+direct	gt6.row.mat.bismuth	铋	hand
+direct	gt6.row.mat.brass	黄铜	hand
+direct	gt6.row.mat.brick	砖	hand
+direct	gt6.row.mat.bronze	青铜	hand
+direct	gt6.row.mat.chromium	铬	hand
+direct	gt6.row.mat.fiery_steel	炙热钢	hand
+direct	gt6.row.mat.invar	殷钢	hand
+direct	gt6.row.mat.iridium	铱	hand
+direct	gt6.row.mat.iron_wood	铁木	hand
+direct	gt6.row.mat.lead	铅	hand
+direct	gt6.row.mat.netherite	下界合金	hand
+direct	gt6.row.mat.stainless_steel	不锈钢	hand
+direct	gt6.row.mat.steel	钢	hand
+direct	gt6.row.mat.tantalum_hafnium_carbide	碳化钽铪	hand
+direct	gt6.row.mat.tin_alloy	锡合金	hand
+direct	gt6.row.mat.titanium	钛	hand
+direct	gt6.row.mat.titanium_iridium	钛铱合金	hand
+direct	gt6.row.mat.trinitanium	特林钛合金	hand
+direct	gt6.row.mat.tungsten	钨	hand
+direct	gt6.row.mat.tungsten_carbide	碳化钨	hand
+direct	gt6.row.mat.tungstensteel	钨钢	hand
+direct	gt6.row.mat.ultimet	哈氏合金	hand
+direct	gt6.row.mat.wood_treated	木制	hand
+direct	gt6.row.size.huge	巨型	hand
+direct	gt6.row.size.large	大型	hand
+direct	gt6.row.size.medium	中型	hand
+direct	gt6.row.size.small	小型	hand
+direct	gt6.row.steam_engine.display	蒸汽引擎 (%s)	hand
+direct	gt6.row.steam_engine.display.strong	强化蒸汽引擎 (%s)	hand
+direct	gt6.row.tap.display	%s龙头	hand
+direct	gt6.row.tier.2	等级 2	hand
+direct	gt6.row.tier.3	等级 3	hand
+direct	gt6.row.tier.4	等级 4	hand
+direct	gt6.stone.variant.bricks	%s砖块	hand
+direct	gt6.stone.variant.bricks_chiseled	錾制%s	hand
+direct	gt6.stone.variant.bricks_cracked	裂纹%s砖块	hand
+direct	gt6.stone.variant.bricks_mossy	苔藓%s砖块	hand
+direct	gt6.stone.variant.bricks_redstone	红石化%s砖块	hand
+direct	gt6.stone.variant.bricks_reinforced	钢筋%s砖块	hand
+direct	gt6.stone.variant.cobble	%s圆石	hand
+direct	gt6.stone.variant.cobble_mossy	苔藓%s圆石	hand
+direct	gt6.stone.variant.small_bricks	小型%s砖块	hand
+direct	gt6.stone.variant.small_tiles	小型%s方块	hand
+direct	gt6.stone.variant.smooth	平滑%s	hand
+direct	gt6.stone.variant.square_bricks	%s方砖	hand
+direct	gt6.stone.variant.stone	%s	hand
+direct	gt6.stone.variant.tiles	%s方块	hand
+direct	gt6.stone.variant.windmill_tiles_a	%s风车纹砖块A	hand
+direct	gt6.stone.variant.windmill_tiles_b	%s风车纹砖块B	hand
 direct	gt6.tagprefix.arrow_gt_plastic	轻质%s箭	hand
 direct	gt6.tagprefix.arrow_gt_wood	%s箭	hand
 direct	gt6.tagprefix.billet	%s坯料	hand

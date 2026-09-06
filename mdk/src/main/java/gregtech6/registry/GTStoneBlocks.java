@@ -187,11 +187,12 @@ public final class GTStoneBlocks {
             /*net.neoforged.neoforge.registries.DeferredHolder<Item, Item> tHandle =
                 net.neoforged.neoforge.registries.DeferredHolder.create(Registries.ITEM, tLoc);
             *///?}
-            // Plain BlockItem, default properties (declared: no tab, no extra behaviour);
-            // getName delegates to the block (BlockItem.java:187-188) — the GTStoneBlock
-            // description-id override carries the item name for free.
+            // The composed-name BlockItem (task p20-i18n-compose-rows): the stack name
+            // delegates to the block compose (vanilla BlockItem only delegates the
+            // descriptionId — BlockItem.java:186-189 — whose lang keys retired with the
+            // B2 shrink).
             event.register(Registries.ITEM, tLoc, () ->
-                    new net.minecraft.world.item.BlockItem(BLOCKS.get(tStone.snake()).get(), new Item.Properties()));
+                    new gregtech6.block.GTComposedNameItem(BLOCKS.get(tStone.snake()).get(), new Item.Properties()));
             ITEMS.put(tStone.snake(), tHandle);
         }
         GT6Mod.LOGGER.info("GT6 registered {} GT6 stone block items", ITEMS.size());

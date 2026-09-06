@@ -38,6 +38,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.fluid.GTFluids;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
@@ -106,6 +107,22 @@ public final class GT6Boilers {
 			MAT_TUNGSTENSTEEL = new BoilerMaterial("tungstensteel", "Tungstensteel", 12.5F),
 			MAT_ULTIMET     = new BoilerMaterial("ultimet"     , "Ultimet"       , 12.5F);
 
+	/** The composed Steam Boiler Tank display template "{@code Steam Boiler Tank (%s)}" — one material slot (task p20-i18n-compose-rows). */
+	public static final String DISPLAY_KEY = "gt6.row.boiler.display";
+	/** The Strong template "{@code Strong Steam Boiler Tank (%s)}" — the Strong wording rides the template. */
+	public static final String DISPLAY_STRONG_KEY = "gt6.row.boiler.display.strong";
+
+	/** The row's material small-unit key. */
+	public static String matUnitKeyOf(BoilerRow aRow) {
+		return "gt6.row.mat." + aRow.material().slug();
+	}
+
+	/** The composed name of a boiler row (the pure compose seam). */
+	public static net.minecraft.network.chat.MutableComponent displayOf(BoilerRow aRow) {
+		return net.minecraft.network.chat.Component.translatable(aRow.strong() ? DISPLAY_STRONG_KEY : DISPLAY_KEY,
+				net.minecraft.network.chat.Component.translatable(matUnitKeyOf(aRow)));
+	}
+
 	/**
 	 * One registration row — the block-carrier projection of one upstream aRegistry.add
 	 * line. {@code metaId} is the upstream MultiTile id, kept for the zero-diff table test;
@@ -120,7 +137,7 @@ public final class GT6Boilers {
 	 * @param strong             the Strong ladder flag (the display prefix, no behavioural
 	 *                           difference upstream — the SAME class and the same NBT set)
 	 */
-	public record BoilerRow(String path, String displayName, int metaId, long outputSteamPerTick, BoilerMaterial material, boolean strong) {
+	public record BoilerRow(String path, int metaId, long outputSteamPerTick, BoilerMaterial material, boolean strong) {
 		/** The block properties (hardness == resistance on every row; the METAL sound). */
 		public BlockBehaviour.Properties properties() {
 			return BlockBehaviour.Properties.of()
@@ -135,39 +152,39 @@ public final class GT6Boilers {
 	 * 128/128/256 × STEAM_PER_EU).
 	 */
 	public static final List<BoilerRow> BOILER_ROWS = List.of(
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_LEAD            , 1200,  16),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_BISMUTH         , 1201,  20),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_BRONZE          , 1202,  24),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_ARSENIC_COPPER  , 1210,  24),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_ARSENIC_BRONZE  , 1211,  28),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_INVAR           , 1203,  16),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_STEEL           , 1204,  32),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_CHROMIUM        , 1205,  96),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_TITANIUM        , 1206, 112),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_NETHERITE       , 1209, 112),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_TUNGSTEN        , 1207, 128),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_TUNGSTENSTEEL   , 1208, 128),
-			row("steam_boiler_tank_", "Steam Boiler Tank (", MAT_ULTIMET         , 1212, 256));
+			row("steam_boiler_tank_", MAT_LEAD            , 1200,  16),
+			row("steam_boiler_tank_", MAT_BISMUTH         , 1201,  20),
+			row("steam_boiler_tank_", MAT_BRONZE          , 1202,  24),
+			row("steam_boiler_tank_", MAT_ARSENIC_COPPER  , 1210,  24),
+			row("steam_boiler_tank_", MAT_ARSENIC_BRONZE  , 1211,  28),
+			row("steam_boiler_tank_", MAT_INVAR           , 1203,  16),
+			row("steam_boiler_tank_", MAT_STEEL           , 1204,  32),
+			row("steam_boiler_tank_", MAT_CHROMIUM        , 1205,  96),
+			row("steam_boiler_tank_", MAT_TITANIUM        , 1206, 112),
+			row("steam_boiler_tank_", MAT_NETHERITE       , 1209, 112),
+			row("steam_boiler_tank_", MAT_TUNGSTEN        , 1207, 128),
+			row("steam_boiler_tank_", MAT_TUNGSTENSTEEL   , 1208, 128),
+			row("steam_boiler_tank_", MAT_ULTIMET         , 1212, 256));
 
 	/** The 13 Strong rows (:567-579, 64..1024 × STEAM_PER_EU). */
 	public static final List<BoilerRow> STRONG_BOILER_ROWS = List.of(
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_LEAD            , 1250,  64),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_BISMUTH         , 1251,  80),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_BRONZE          , 1252,  96),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_ARSENIC_COPPER  , 1260,  96),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_ARSENIC_BRONZE  , 1261, 112),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_INVAR           , 1253,  64),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_STEEL           , 1254, 128),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_CHROMIUM        , 1255, 384),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_TITANIUM        , 1256, 448),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_NETHERITE       , 1259, 448),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_TUNGSTEN        , 1257, 512),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_TUNGSTENSTEEL   , 1258, 512),
-			row("strong_steam_boiler_tank_", "Strong Steam Boiler Tank (", MAT_ULTIMET         , 1262, 1024));
+			row("strong_steam_boiler_tank_", MAT_LEAD            , 1250,  64),
+			row("strong_steam_boiler_tank_", MAT_BISMUTH         , 1251,  80),
+			row("strong_steam_boiler_tank_", MAT_BRONZE          , 1252,  96),
+			row("strong_steam_boiler_tank_", MAT_ARSENIC_COPPER  , 1260,  96),
+			row("strong_steam_boiler_tank_", MAT_ARSENIC_BRONZE  , 1261, 112),
+			row("strong_steam_boiler_tank_", MAT_INVAR           , 1253,  64),
+			row("strong_steam_boiler_tank_", MAT_STEEL           , 1254, 128),
+			row("strong_steam_boiler_tank_", MAT_CHROMIUM        , 1255, 384),
+			row("strong_steam_boiler_tank_", MAT_TITANIUM        , 1256, 448),
+			row("strong_steam_boiler_tank_", MAT_NETHERITE       , 1259, 448),
+			row("strong_steam_boiler_tank_", MAT_TUNGSTEN        , 1257, 512),
+			row("strong_steam_boiler_tank_", MAT_TUNGSTENSTEEL   , 1258, 512),
+			row("strong_steam_boiler_tank_", MAT_ULTIMET         , 1262, 1024));
 
 	/** A row builder — the NBT_OUTPUT_SU value is {@code aRawOutput * STEAM_PER_EU} (the loader's CS.java:240 = 2). */
-	private static BoilerRow row(String aPathPrefix, String aDisplayPrefix, BoilerMaterial aMat, int aMetaId, long aRawOutput) {
-		return new BoilerRow(aPathPrefix + aMat.slug(), aDisplayPrefix + aMat.display() + ")",
+	private static BoilerRow row(String aPathPrefix, BoilerMaterial aMat, int aMetaId, long aRawOutput) {
+		return new BoilerRow(aPathPrefix + aMat.slug(),
 				aMetaId, aRawOutput * GTFluids.STEAM_PER_EU, aMat, aPathPrefix.startsWith("strong"));
 	}
 
@@ -191,7 +208,7 @@ public final class GT6Boilers {
 					() -> new BoilerTankBlock(tRow, tRow.properties())));
 			// the GT6Kinetics.STEAM_ENGINE_ITEMS qualified-read forward-reference form (the P6 lambda lesson)
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(GT6Boilers.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> new GTComposedNameItem(GT6Boilers.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
 	}
 
@@ -249,6 +266,12 @@ public final class GT6Boilers {
 		/** The registration row (the GTBarrelBlock.capacityL carrier read). */
 		public BoilerRow row() {
 			return mRow;
+		}
+
+		/** The composed boiler name (task p20-i18n-compose-rows): the {@link GT6Boilers#displayOf} carrier. */
+		@Override
+		public net.minecraft.network.chat.MutableComponent getName() {
+			return displayOf(mRow);
 		}
 
 		@Override
