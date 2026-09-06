@@ -797,15 +797,19 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	/* // 21.1 NBT face: the (CompoundTag) signatures ride the shared chain (the 01Root
 	   // fork retains them for the BE tree; the canonical loadAdditional/saveAdditional
 	   // delegate in). Only the provider-needing IO calls fork — the serialization
-	   // HolderLookup.Provider comes from the level registry access until the W4 NBT wave
-	   // threads the vanilla-passed provider through the chain
+	   // HolderLookup.Provider is the frozen builtin view NBT_ACCESS, the whole-tree
+	   // 21.1 contract (ADR-P18): vanilla 1.21.1 loads a BE off the chunk via
+	   // BlockEntity.loadStatic BEFORE setLevel, so a level-sourced provider NPEs and
+	   // the chunk load silently drops the BE (dead controller) — the W4 NBT wave
+	   // (tasks.pool-w4-nbt-provider-threading) threads the vanilla-passed provider
+	   // through the chain
 	   // (1.21.1 ItemStack/FluidStack/ItemStackHandler javap: all NBT IO takes a provider;
 	   // parseOptional keeps the empty-on-garbage semantics of ItemStack.of /
 	   // loadFluidStackFromNBT).
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
-		net.minecraft.core.HolderLookup.Provider aProvider = getLevel().registryAccess();
+		net.minecraft.core.HolderLookup.Provider aProvider = NBT_ACCESS; // 21.1: the frozen builtin view (item id lookup only), level-less-safe
 		aNBT.put(NBT_INVENTORY, mInventory.serializeNBT(aProvider));
 		aNBT.putLong(NBT_ENERGY, mEnergy);
 		aNBT.putLong(NBT_MINENERGY, mMinEnergy);
@@ -827,7 +831,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	@Override
 	public void load(CompoundTag aNBT) {
 		super.load(aNBT);
-		net.minecraft.core.HolderLookup.Provider aProvider = getLevel().registryAccess();
+		net.minecraft.core.HolderLookup.Provider aProvider = NBT_ACCESS; // 21.1: level-less-safe — loadStatic runs before setLevel (ADR-P18)
 		if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) mInventory.deserializeNBT(aProvider, aNBT.getCompound(NBT_INVENTORY));
 		mEnergy = aNBT.getLong(NBT_ENERGY);
 		mMinEnergy = aNBT.getLong(NBT_MINENERGY);
