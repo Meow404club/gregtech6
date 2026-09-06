@@ -23,8 +23,12 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
+
 import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.block.wire.GTWireBlock;
 import gregtech6.registry.GTWireSpecs.Row;
 import gregtech6.registry.GTWireSpecs.Variant;
 
@@ -184,12 +188,37 @@ public class GTWireSpecsCensusTest {
     }
 
     @Test
-    public void displayNamesAreTheUpstreamRowStrings() {
-        assertEquals("1x Tin Wire", GTWireSpecs.displayName(GTWireSpecs.find("tin", 1, false)));
-        assertEquals("16x Tin Wire", GTWireSpecs.displayName(GTWireSpecs.find("tin", 16, false)));
-        assertEquals("12x Tin Cable", GTWireSpecs.displayName(GTWireSpecs.find("tin", 12, true)));
-        assertEquals("1x Superconductor Wire", GTWireSpecs.displayName(GTWireSpecs.find("superconductor", 1, false)));
-        assertEquals("8x Tungsten Wire", GTWireSpecs.displayName(GTWireSpecs.find("tungsten", 8, false)));
+    public void displayNamesComposeTheWireTemplates() {
+        // task p20-i18n-compose-wires: the pre-installed full strings ("1x Tin Wire" &co)
+        // became the GTWireBlock.displayNameOf composition — "%sx %s %s" over (size,
+        // material small unit, form unit). The REGISTRY names above stay untouched; the
+        // en template wording lives in the provider, here the slot structure is the pin.
+        TranslatableContents tName = contents(GTWireBlock.displayNameOf(GTWireSpecs.find("tin", 1, false)));
+        assertEquals(GTWireBlock.DISPLAY_KEY, tName.getKey());
+        assertEquals(3, tName.getArgs().length, "size + material + form slots");
+        assertEquals(1, ((Integer)tName.getArgs()[0]).intValue(), "slot 0 = the size numeral");
+        assertArg(tName.getArgs()[1], "gt6.material.tin");
+        assertArg(tName.getArgs()[2], GTWireBlock.FORM_WIRE_KEY);
+        // the insulated form flips the form slot; the size slot carries the multiplier
+        TranslatableContents tCable = contents(GTWireBlock.displayNameOf(GTWireSpecs.find("tin", 12, true)));
+        assertEquals(GTWireBlock.DISPLAY_KEY, tCable.getKey());
+        assertEquals(12, ((Integer)tCable.getArgs()[0]).intValue());
+        assertArg(tCable.getArgs()[2], GTWireBlock.FORM_CABLE_KEY);
+        // the pure-wire rows compose like any electric row
+        assertEquals(GTWireBlock.DISPLAY_KEY, contents(GTWireBlock.displayNameOf(GTWireSpecs.find("superconductor", 1, false))).getKey());
+        assertArg(contents(GTWireBlock.displayNameOf(GTWireSpecs.find("tungsten", 8, false))).getArgs()[1], "gt6.material.tungsten");
+    }
+
+    /** The compose seam: asserts translatable shape and returns the contents (key + args). */
+    private static TranslatableContents contents(Component aComponent) {
+        assertTrue(aComponent.getContents() instanceof TranslatableContents, "the wire display must be a translatable composition");
+        return (TranslatableContents)aComponent.getContents();
+    }
+
+    /** The material/form slot: the arg must itself be the translatable small unit with the given key. */
+    private static void assertArg(Object aArg, String aKey) {
+        assertTrue(aArg instanceof Component, "the compose slots are nested translatables");
+        assertEquals(aKey, contents((Component)aArg).getKey());
     }
 
     // -------------------------------------------------------------------------
@@ -256,12 +285,19 @@ public class GTWireSpecsCensusTest {
         assertEquals("cable_red_alloy", GTWireSpecs.registryName(GTWireSpecs.findRedstone("red_alloy", true)));
         assertEquals("wire_signalum", GTWireSpecs.registryName(GTWireSpecs.findRedstone("signalum", false)));
         assertEquals("cable_lumium", GTWireSpecs.registryName(GTWireSpecs.findRedstone("lumium", true)));
-        // display names: no size prefix; the bare Lumium wire is the WIRELAMP (Loader:1900)
-        assertEquals("Red Alloy Wire", GTWireSpecs.displayName(GTWireSpecs.findRedstone("red_alloy", false)));
-        assertEquals("Red Alloy Cable", GTWireSpecs.displayName(GTWireSpecs.findRedstone("red_alloy", true)));
-        assertEquals("Signalum Wire", GTWireSpecs.displayName(GTWireSpecs.findRedstone("signalum", false)));
-        assertEquals("Lumium Wirelamp", GTWireSpecs.displayName(GTWireSpecs.findRedstone("lumium", false)));
-        assertEquals("Lumium Cable", GTWireSpecs.displayName(GTWireSpecs.findRedstone("lumium", true)));
+        // display: the size-less PLAIN template (upstream shows no multiplier on the
+        // family); the bare Lumium wire takes the WIRELAMP form unit (Loader:1900)
+        // — task p20-i18n-compose-wires
+        TranslatableContents tWire = contents(GTWireBlock.displayNameOf(GTWireSpecs.findRedstone("red_alloy", false)));
+        assertEquals(GTWireBlock.DISPLAY_PLAIN_KEY, tWire.getKey());
+        assertEquals(2, tWire.getArgs().length, "material + form slots, NO size slot");
+        assertArg(tWire.getArgs()[0], "gt6.material.red_alloy");
+        assertArg(tWire.getArgs()[1], GTWireBlock.FORM_WIRE_KEY);
+        TranslatableContents tCable = contents(GTWireBlock.displayNameOf(GTWireSpecs.findRedstone("red_alloy", true)));
+        assertEquals(GTWireBlock.DISPLAY_PLAIN_KEY, tCable.getKey());
+        assertArg(tCable.getArgs()[1], GTWireBlock.FORM_CABLE_KEY);
+        assertArg(contents(GTWireBlock.displayNameOf(GTWireSpecs.findRedstone("lumium", false))).getArgs()[1],
+                GTWireBlock.FORM_WIRELAMP_KEY);
         // selector edges
         assertNull(GTWireSpecs.findRedstone("unobtainium", false));
         assertNull(GTWireSpecs.findRedstone("tin", false), "the electric tokens are not redstone rows");
@@ -310,7 +346,7 @@ public class GTWireSpecsCensusTest {
         assertEquals(0, tLaser.voltage());
         assertEquals(0, tLaser.loss());
         assertEquals("wire_laser", GTWireSpecs.registryName(tLaser), "no _gt tail — a single id upstream");
-        assertEquals("Laser Fiber Wire", GTWireSpecs.displayName(tLaser), "the :1815 registration name verbatim");
+        assertNull(GTWireBlock.displayNameOf(tLaser), "the material-less laser stays ATOMIC — no composition applies (:1815 verbatim key)");
         // no collision with the 620 electric names
         Set<String> tElectricNames = new HashSet<>();
         for (Variant tVariant : GTWireSpecs.variants()) tElectricNames.add(GTWireSpecs.registryName(tVariant));

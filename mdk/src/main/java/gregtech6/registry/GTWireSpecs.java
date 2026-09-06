@@ -312,25 +312,12 @@ public final class GTWireSpecs {
 				+ (aVariant.size() < 10 ? "0" : "") + aVariant.size();
 	}
 
-	/**
-	 * The display name — the electric form is the upstream row string
-	 * {@code "1x " + aMat.getLocal() + " Wire"/"Cable"} (:72/:89); the redstone form is the
-	 * upstream registration name without a size prefix ("RedAlloy Wire" :1894, "Lumium
-	 * Wirelamp" :1900 — the bare Lumium wire is the WIRELAMP, its cable is a plain "Cable");
-	 * the laser form is the upstream registration name verbatim, "Laser Fiber Wire"
-	 * (Loader:1815 — the row is material-less (NBT_MATERIAL MT.NULL), so there is no
-	 * material local name to compose).
-	 */
-	public static String displayName(Variant aVariant) {
-		if (aVariant.row().family() == Row.Family.LASER) return "Laser Fiber Wire"; // Loader:1815 verbatim
-		OreDictMaterial tMaterial = aVariant.row().material().get();
-		String tLocal = tMaterial == null || tMaterial.mNameLocal == null ? aVariant.row().idComment() : tMaterial.mNameLocal;
-		if (aVariant.row().family() == Row.Family.REDSTONE) {
-			String tForm = aVariant.insulated() ? " Cable" : aVariant.luminous() ? " Wirelamp" : " Wire";
-			return tLocal + tForm;
-		}
-		return aVariant.size() + "x " + tLocal + (aVariant.insulated() ? " Cable" : " Wire");
-	}
+	// The pre-installed display-name face (the old String displayName(Variant), the
+	// upstream row strings) retired by task p20-i18n-compose-wires: the display name is
+	// now COMPOSED at runtime — GTWireBlock.displayNameOf(Variant) fills the
+	// gt6.wire.display[.plain] templates over the gt6.material small units. This table
+	// stays pure Java (no MC classes): the compose lives on the block side, the only
+	// consumers of a display name are MC name hooks and the lang provider.
 
 	/** The snake-cased material token of a row (the command-selector material part, e.g. {@code "tin"}, {@code "carborundum"}). */
 	public static String materialToken(Row aRow) {
