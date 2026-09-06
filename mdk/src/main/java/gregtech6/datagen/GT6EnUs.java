@@ -8,6 +8,7 @@ import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.GT6Mod;
+import gregtech6.block.stone.StoneVariant;
 import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
@@ -16,6 +17,7 @@ import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
 import net.minecraft.data.PackOutput;
@@ -75,6 +77,7 @@ public class GT6EnUs extends LanguageProvider {
         addTools();
         addCovers();
         addJeiInfo();
+        addStoneBlocks(); // task p19-stoneblocks-registry — table-tail append (the drying card appends after this)
     }
 
     /**
@@ -494,6 +497,24 @@ public class GT6EnUs extends LanguageProvider {
             String tKey = "gt6.material." + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal);
             if (!tSeen.add(tKey)) continue; // first (lowest mID) definition wins
             add(tKey, tMaterial.mNameLocal);
+        }
+    }
+
+    /**
+     * The 272 stone-variant name keys (task p19-stoneblocks-registry, 17 stones x 16
+     * variants walked from {@link GTStoneBlocks#STONES} x StoneVariant so the lang face
+     * cannot drift from the registered blocks): {@code block.gt6.<stone>.<variant>} — the
+     * upstream per-meta lang block (BlockStones.java:117-132 LH.add
+     * {@code getUnlocalizedName()+".N"}) split per variant, with
+     * {@code aDefaultLocalised = aMaterial.getLocal()} (BlockStonesGT.java:38) as the stone
+     * name ({@link StoneVariant#compose}).
+     */
+    private void addStoneBlocks() {
+        for (GTStoneBlocks.StoneSpec tStone : GTStoneBlocks.STONES) {
+            String tStoneName = tStone.material().get().getLocal();
+            for (StoneVariant tVariant : StoneVariant.VALUES) {
+                add("block.gt6." + tStone.snake() + "." + tVariant.snake, tVariant.compose(tStoneName));
+            }
         }
     }
 }
