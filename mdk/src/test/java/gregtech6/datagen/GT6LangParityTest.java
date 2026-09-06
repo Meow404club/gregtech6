@@ -34,8 +34,17 @@ import net.minecraft.SharedConstants;
 import net.minecraft.data.PackOutput;
 import net.minecraft.server.Bootstrap;
 
+import gregtech6.block.stone.StoneVariant;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.registry.GT6Attachments;
+import gregtech6.registry.GT6BurningBoxes;
+import gregtech6.registry.GT6Boilers;
+import gregtech6.registry.GT6Kinetics;
+import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GTMachines;
+import gregtech6.registry.GTMultiBlocks;
+import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GTWireSpecs;
 
 public class GT6LangParityTest {
@@ -44,8 +53,11 @@ public class GT6LangParityTest {
 	 * The zh_cn coverage floor — a RATCHET: it may only be raised (by an explicit PR changing
 	 * this constant, with the new measured key count in the message), never lowered. Initial
 	 * value per the task card: material ~1770 + tabs ~110 + tagprefix ~102 + misc ~17.
+	 * Task p20-i18n-compose-rows (the B2 closeout): raised to the measured 2089 — the zh
+	 * face now carries the B2 template/unit faces (16 stone variants + 62 rows units + the
+	 * four atomic rows) on top of the A/B1 waves.
 	 */
-	private static final int ZH_KEY_FLOOR = 1800;
+	private static final int ZH_KEY_FLOOR = 2089;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -57,23 +69,11 @@ public class GT6LangParityTest {
 	 * the gt6.tagprefix./gt6.material. small-unit faces can never false-positive.
 	 */
 	private static final List<String> COMPOSED_DOMAIN_KEYS = List.of(
-		// B2 — p20-i18n-compose-rows: stone variants + the kinetics / boiler / burning-box /
-		// large-boiler / wall / transmitter / machine-tier / attachment rows
-		"block.gt6.axle_",
-		"block.gt6.steam_engine",
-		"block.gt6.steam_boiler_tank_",
-		"block.gt6.diesel_engine",
-		"block.gt6.burning_box",
-		"block.gt6.dense_wall_",
-		"block.gt6.large_boiler_",
-		"block.gt6.heat_transmitter",
-		"block.gt6.dryer_",
-		"block.gt6.distillery_",
-		"block.gt6.shredder_t",
-		"block.gt6.crusher_t",
-		"block.gt6.lathe_t",
-		"block.gt6.tap_",
-		"block.gt6.funnel_");
+		// task p20-i18n-compose-rows CLOSEOUT: the B2 card landed its composed faces (the
+		// stone templates + every rows family), so the list is EMPTY — the closeout gate.
+		// Any future composed domain must ADD its prefixes here while the pre-installed
+		// full strings still exist, and REMOVE them when its template face lands.
+		);
 
 	/**
 	 * The FLIPPED B1 guard (task p20-i18n-compose-wires): these prefixes must match NO
@@ -107,8 +107,6 @@ public class GT6LangParityTest {
 		"gt6.cover.conveyor.display", 1,
 		"gt6.cover.robot_arm.display", 1);
 
-	/** Stone variants: block.gt6.<stone_snake>.<variant_snake> (17 stones x 16 variants, B2). */
-	private static final Pattern COMPOSED_STONE_KEY = Pattern.compile("^block\\.gt6\\.[a-z0-9_]+\\.[a-z0-9_]+$");
 
 	private static Map<String, String> enEntries;
 	private static Map<String, String> zhEntries;
@@ -176,6 +174,12 @@ public class GT6LangParityTest {
 			"zh keys must be a subset of en keys (a TSV join or walk drifted off the en face): " + tMissing);
 	}
 
+	/**
+	 * The B2 closeout form of the A-wave negative assertion (task p20-i18n-compose-rows):
+	 * the list is EMPTY — every composed domain (wires B1, stones + rows B2) now carries
+	 * template faces on BOTH sides, asserted by the flipped pins below. The walk stays as
+	 * the structural gate for any future composed domain.
+	 */
 	@Test
 	public void composedDomainsStayAbsentFromZh() {
 		List<String> tViolations = new ArrayList<>();
@@ -183,7 +187,6 @@ public class GT6LangParityTest {
 			for (String tDomain : COMPOSED_DOMAIN_KEYS) {
 				if (tKey.contains(tDomain)) tViolations.add(tKey + " (B-wave domain " + tDomain + ")");
 			}
-			if (COMPOSED_STONE_KEY.matcher(tKey).matches()) tViolations.add(tKey + " (B-wave stone variant)");
 		}
 		assertTrue(tViolations.isEmpty(),
 			"zh must not carry pre-installed composed-domain strings before the B-wave template"
@@ -256,6 +259,150 @@ public class GT6LangParityTest {
 	}
 
 	/**
+	 * The B2 template face (task p20-i18n-compose-rows): every stone/rows template key
+	 * exists in BOTH locales with its exact argument-slot count (stone = 1 stone-name slot;
+	 * the rows templates carry their family slot shapes).
+	 */
+	@Test
+	public void stoneAndRowsTemplatesExistWithTheirSlotsOnBothSides() {
+		Map<String, Integer> tSlots = new java.util.LinkedHashMap<>();
+		for (StoneVariant tVariant : StoneVariant.VALUES) tSlots.put(tVariant.key(), 1);
+		tSlots.put("gt6.row.axle.display", 2);
+		tSlots.put("gt6.row.steam_engine.display", 1);
+		tSlots.put("gt6.row.steam_engine.display.strong", 1);
+		tSlots.put("gt6.row.diesel.display", 1);
+		tSlots.put("gt6.row.burning_box.display", 2);
+		tSlots.put("gt6.row.burning_box.display.dense", 2);
+		tSlots.put("gt6.row.burning_box.display.fluidbed", 1);
+		tSlots.put("gt6.row.burning_box.display.fluidbed_dense", 1);
+		tSlots.put("gt6.row.boiler.display", 1);
+		tSlots.put("gt6.row.boiler.display.strong", 1);
+		tSlots.put("gt6.row.dryer.display", 1);
+		tSlots.put("gt6.row.distillery.display", 1);
+		tSlots.put("gt6.row.large_boiler.display", 1);
+		tSlots.put("gt6.row.dense_wall.display", 1);
+		tSlots.put("gt6.row.machine.display", 2);
+		tSlots.put("gt6.row.tap.display", 1);
+		tSlots.put("gt6.row.funnel.display", 1);
+		Map<String, Map<String, String>> tSides = Map.of("en_us", en(), "zh_cn", zh());
+		tSides.forEach((tLocale, tEntries) -> tSlots.forEach((tKey, tCount) -> {
+			String tValue = tEntries.get(tKey);
+			assertTrue(tValue != null, tLocale + " is missing the B2 template key " + tKey);
+			int tSeen = tValue.split("%s", -1).length - 1;
+			assertEquals(tCount, tSeen, tLocale + " template " + tKey + " = \"" + tValue + "\" slot count");
+		}));
+		// the B2 small-unit faces: slot-less nouns + material words, both sides
+		List<String> tUnits = new ArrayList<>();
+		for (int tSize = 0; tSize < GT6Kinetics.AXLE_SIZE_NAMES.length; tSize++) tUnits.add(GT6Kinetics.axleSizeUnitKey(tSize));
+		tUnits.add(GT6BurningBoxes.FAMILY_SOLID_UNIT_KEY);
+		tUnits.add(GT6BurningBoxes.FAMILY_LIQUID_UNIT_KEY);
+		tUnits.add(GT6BurningBoxes.FAMILY_GAS_UNIT_KEY);
+		for (int tTier = 2; tTier <= 4; tTier++) tUnits.add(GTMachines.machineTierUnitKey(tTier));
+		tUnits.add(GTMachines.MACHINE_SHREDDER_UNIT_KEY);
+		tUnits.add(GTMachines.MACHINE_CRUSHER_UNIT_KEY);
+		tUnits.add(GTMachines.MACHINE_LATHE_UNIT_KEY);
+		for (GT6Kinetics.AxleSpec tSpec : GT6Kinetics.AXLE_SPECS) tUnits.add(GT6Kinetics.axleMatUnitKey(tSpec));
+		for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) tUnits.add(GT6Kinetics.steamMatUnitKey(tRow));
+		for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) tUnits.add(GT6Kinetics.dieselMatUnitKey(tSpec));
+		for (GT6BurningBoxes.BurningBoxRow tRow : GT6BurningBoxes.allRows()) tUnits.add(GT6BurningBoxes.matUnitKeyOf(tRow));
+		for (GT6Boilers.BoilerRow tRow : GT6Boilers.allRows()) tUnits.add(GT6Boilers.matUnitKeyOf(tRow));
+		for (GTMultiBlocks.LargeBoilerRow tRow : GTMultiBlocks.LARGE_BOILER_ROWS) tUnits.add(GTMultiBlocks.boilerMatUnitKeyOf(tRow));
+		for (GTMultiBlocks.MultiblockPartRow tRow : GTMultiBlocks.WALL_ROWS) tUnits.add(GTMultiBlocks.wallMatUnitKeyOf(tRow));
+		for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) tUnits.add(GT6Attachments.matUnitKeyOf(tRow));
+		tSides.forEach((tLocale, tEntries) -> {
+			for (String tUnit : tUnits) {
+				assertTrue(tEntries.containsKey(tUnit), tLocale + " is missing the B2 unit key " + tUnit);
+			}
+		});
+		// the atomic B2 rows stay whole-string on BOTH faces (the brick prefix form, the
+		// bare-noun transmitter, the two wood gearboxes)
+		for (String tAtomic : List.of("block.gt6.brick_burning_box", "block.gt6.heat_transmitter",
+				"block.gt6.gearbox", "block.gt6.transformer_rotation")) {
+			assertTrue(en().containsKey(tAtomic), "en is missing the B2 atomic key " + tAtomic);
+			assertTrue(zh().containsKey(tAtomic), "zh is missing the B2 atomic key " + tAtomic);
+		}
+	}
+
+	/**
+	 * The B2 full-expansion pin (the B1-review posture: the slot structure alone let the en
+	 * template lose its spaces — the final strings must be pinned). One or two rows per
+	 * family, replayed through the substitute() face exactly like the game renders a fully
+	 * translated template, pinned EQUAL to the upstream row strings; the zh side pins the
+	 * CJK compose shape (免空格 gluing, the dump word order).
+	 */
+	@Test
+	public void stoneAndRowsTemplatesExpandToTheUpstreamStrings() {
+		// stone: 16 variants over the "Black Granite" stone word (the old compose column)
+		String tStone = en().get("gt6.material.granite_black");
+		assertEquals("Black Granite", tStone);
+		assertEquals("Black Granite Cobblestone", substitute(en().get("gt6.stone.variant.cobble"), tStone));
+		assertEquals("Chiseled Black Granite", substitute(en().get("gt6.stone.variant.bricks_chiseled"), tStone));
+		assertEquals("Small Black Granite Bricks", substitute(en().get("gt6.stone.variant.small_bricks"), tStone));
+		assertEquals("黑色花岗岩圆石", substitute(zh().get("gt6.stone.variant.cobble"), zh().get("gt6.material.granite_black")));
+		// axle
+		assertEquals("Small Wooden Axle", expandAxle(0, "wood_treated"));
+		assertEquals("Huge Trinitanium Axle", expandAxle(3, "trinitanium"));
+		assertEquals("小型木制轴", expandAxleZh(0, "wood_treated"));
+		// steam engines
+		assertEquals("Steam Engine (Lead)", substitute(en().get("gt6.row.steam_engine.display"), en().get("gt6.row.mat.lead")));
+		assertEquals("Strong Steam Engine (Tungstensteel)", substitute(en().get("gt6.row.steam_engine.display.strong"), en().get("gt6.row.mat.tungstensteel")));
+		assertEquals("蒸汽引擎 (铅)", substitute(zh().get("gt6.row.steam_engine.display"), zh().get("gt6.row.mat.lead")));
+		// diesel
+		assertEquals("Bronze Diesel Engine", substitute(en().get("gt6.row.diesel.display"), en().get("gt6.row.mat.bronze")));
+		// burning boxes
+		assertEquals("Burning Box (Solid, Lead)", expandBurning(GT6BurningBoxes.FAMILY_SOLID_UNIT_KEY, false, "lead"));
+		assertEquals("Dense Burning Box (Gas, Tungsten)", expandBurning(GT6BurningBoxes.FAMILY_GAS_UNIT_KEY, true, "tungsten"));
+		assertEquals("Fluidized Bed Burning Box (Ta4HfC5)", expandBurning(null, false, "tantalum_hafnium_carbide"));
+		assertEquals("Dense Fluidized Bed Burning Box (Ultimet)", expandBurning(null, true, "ultimet"));
+		assertEquals("燃烧室 (固体, 铅)", expandBurningZh(GT6BurningBoxes.FAMILY_SOLID_UNIT_KEY, false, "lead"));
+		// boilers
+		assertEquals("Steam Boiler Tank (Lead)", substitute(en().get("gt6.row.boiler.display"), en().get("gt6.row.mat.lead")));
+		assertEquals("Strong Steam Boiler Tank (Ultimet)", substitute(en().get("gt6.row.boiler.display.strong"), en().get("gt6.row.mat.ultimet")));
+		// dryer/distillery
+		assertEquals("Dryer (Steel)", substitute(en().get("gt6.row.dryer.display"), en().get("gt6.row.mat.steel")));
+		assertEquals("Distillery (Tungsten Carbide)", substitute(en().get("gt6.row.distillery.display"), en().get("gt6.row.mat.tungsten_carbide")));
+		// large boiler + dense wall
+		assertEquals("Invar Boiler Main Barometer", substitute(en().get("gt6.row.large_boiler.display"), en().get("gt6.row.mat.invar")));
+		assertEquals("Dense Invar Wall", substitute(en().get("gt6.row.dense_wall.display"), en().get("gt6.row.mat.invar")));
+		// machine tiers
+		assertEquals("Shredder (Tier 2)", substitute(en().get("gt6.row.machine.display"),
+				en().get(GTMachines.MACHINE_SHREDDER_UNIT_KEY), en().get(GTMachines.machineTierUnitKey(2))));
+		assertEquals("粉碎机 (等级 3)", substitute(zh().get("gt6.row.machine.display"),
+				zh().get(GTMachines.MACHINE_SHREDDER_UNIT_KEY), zh().get(GTMachines.machineTierUnitKey(3))));
+		// attachments
+		assertEquals("Ceramic Tap", substitute(en().get("gt6.row.tap.display"), en().get("gt6.row.attachment.mat.ceramic")));
+		assertEquals("Tantalum Hafnium Carbide Funnel", substitute(en().get("gt6.row.funnel.display"), en().get("gt6.row.attachment.mat.tantalum_hafnium_carbide")));
+	}
+
+	/** The axle expansion over the en face. */
+	private static String expandAxle(int aSizeIndex, String aMatSlug) {
+		return substitute(en().get("gt6.row.axle.display"),
+				en().get(GT6Kinetics.axleSizeUnitKey(aSizeIndex)), en().get("gt6.row.mat." + aMatSlug));
+	}
+
+	/** The axle expansion over the zh face (the CJK gluing pin). */
+	private static String expandAxleZh(int aSizeIndex, String aMatSlug) {
+		return substitute(zh().get("gt6.row.axle.display"),
+				zh().get(GT6Kinetics.axleSizeUnitKey(aSizeIndex)), zh().get("gt6.row.mat." + aMatSlug));
+	}
+
+	/** The burning-box expansion over the en face (aFamilyUnit null = the fluidbed form). */
+	private static String expandBurning(String aFamilyUnit, boolean aDense, String aMatSlug) {
+		String tKey = aFamilyUnit == null
+				? (aDense ? "gt6.row.burning_box.display.fluidbed_dense" : "gt6.row.burning_box.display.fluidbed")
+				: (aDense ? "gt6.row.burning_box.display.dense" : "gt6.row.burning_box.display");
+		return aFamilyUnit == null
+				? substitute(en().get(tKey), en().get("gt6.row.mat." + aMatSlug))
+				: substitute(en().get(tKey), en().get(aFamilyUnit), en().get("gt6.row.mat." + aMatSlug));
+	}
+
+	/** The burning-box expansion over the zh face. */
+	private static String expandBurningZh(String aFamilyUnit, boolean aDense, String aMatSlug) {
+		String tKey = aDense ? "gt6.row.burning_box.display.dense" : "gt6.row.burning_box.display";
+		return substitute(zh().get(tKey), zh().get(aFamilyUnit), zh().get("gt6.row.mat." + aMatSlug));
+	}
+
+	/**
 	 * The compose material-slot presence pin (review R2 finding): the compose references
 	 * {@code gt6.material.<snake>} UNCONDITIONALLY, but tier materials are created with
 	 * {@code mID -1} (Superconductor, MT.java:986 {@code tier()}) and never reach the
@@ -280,8 +427,84 @@ public class GT6LangParityTest {
 			String tKey = "gt6.material." + MaterialPrefixItem.snakeCase(tVariant.row().material().get().mNameInternal);
 			if (!en().containsKey(tKey)) tMissing.add(GTWireSpecs.registryName(tVariant) + " -> " + tKey);
 		}
-		assertEquals(626, tChecked, "the compose domain census (the atomic laser/legacy forms are NOT in scope)");
+		assertEquals(626, tChecked, "the wire compose domain census (the atomic laser/legacy forms are NOT in scope)");
 		assertTrue(tMissing.isEmpty(), "every composed variant's material key must exist on the en face"
+			+ " (a missing face renders the RAW key at runtime): " + tMissing);
+	}
+
+	/**
+	 * The B2 keyface pin (the review R2 shape, rows + stone edition): every rows row's
+	 * compose references a small-unit key UNCONDITIONALLY — this walks the whole B2 domain
+	 * (233 rows-material slots + the 17 stone-name slots) against the en recording face, so
+	 * a row table entry whose unit key missed both the template face and the material walk
+	 * is structurally red instead of a silent raw-key render. The stone walk checks the
+	 * gt6.material small unit each of the 17 stones' getName composes with.
+	 */
+	@Test
+	public void everyComposedRowAndStoneUnitKeyIsOnTheEnFace() {
+		List<String> tMissing = new ArrayList<>();
+		int tChecked = 0;
+		// stones: the variant-0 compose of each of the 17 blocks
+		for (GTStoneBlocks.StoneSpec tStone : GTStoneBlocks.STONES) {
+			tChecked++;
+			String tKey = "gt6.material." + MaterialPrefixItem.snakeCase(tStone.material().get().mNameInternal);
+			if (!en().containsKey(tKey)) tMissing.add("stone:" + tStone.snake() + " -> " + tKey);
+		}
+		// axles
+		for (GT6Kinetics.AxleSpec tSpec : GT6Kinetics.AXLE_SPECS) {
+			for (int tSize = 0; tSize < GT6Kinetics.AXLE_DIAMETERS.length; tSize++) {
+				tChecked++;
+				if (!en().containsKey(GT6Kinetics.axleSizeUnitKey(tSize))) tMissing.add("size:" + tSize);
+				if (!en().containsKey(GT6Kinetics.axleMatUnitKey(tSpec))) tMissing.add("axle:" + tSpec.material());
+			}
+		}
+		// steam + diesel
+		for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) {
+			tChecked++;
+			if (!en().containsKey(GT6Kinetics.steamMatUnitKey(tRow))) tMissing.add("steam:" + tRow.path());
+		}
+		for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
+			tChecked++;
+			if (!en().containsKey(GT6Kinetics.dieselMatUnitKey(tSpec))) tMissing.add("diesel:" + tSpec.material());
+		}
+		// burning (the Brick atom excluded — no compose)
+		for (GT6BurningBoxes.BurningBoxRow tRow : GT6BurningBoxes.allRows()) {
+			if (tRow == GT6BurningBoxes.BRICK_ROW) continue;
+			tChecked++;
+			if (!en().containsKey(GT6BurningBoxes.matUnitKeyOf(tRow))) tMissing.add("burning:" + tRow.path());
+		}
+		// boilers
+		for (GT6Boilers.BoilerRow tRow : GT6Boilers.allRows()) {
+			tChecked++;
+			if (!en().containsKey(GT6Boilers.matUnitKeyOf(tRow))) tMissing.add("boiler:" + tRow.path());
+		}
+		// dryer + distillery
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tRows
+				: java.util.List.of(GTMachines.DRYER_ROWS, GTMachines.DISTILLERY_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tRows) {
+				tChecked++;
+				if (!en().containsKey("gt6.row.mat." + tRow.matSlug())) tMissing.add(tRow.path());
+			}
+		}
+		// large boiler + dense wall
+		for (GTMultiBlocks.LargeBoilerRow tRow : GTMultiBlocks.LARGE_BOILER_ROWS) {
+			tChecked++;
+			if (!en().containsKey(GTMultiBlocks.boilerMatUnitKeyOf(tRow))) tMissing.add("lb:" + tRow.path());
+		}
+		for (GTMultiBlocks.MultiblockPartRow tRow : GTMultiBlocks.WALL_ROWS) {
+			tChecked++;
+			if (!en().containsKey(GTMultiBlocks.wallMatUnitKeyOf(tRow))) tMissing.add("wall:" + tRow.path());
+		}
+		// attachments
+		for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
+			tChecked++;
+			if (!en().containsKey(GT6Attachments.matUnitKeyOf(tRow))) tMissing.add("att:" + tRow.path());
+		}
+		assertEquals(249, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
+            + " (44 axle + 28 steam + 8 diesel + 96 burning + 26 boiler + 4 dryer + 4 distillery"
+            + " + 5 large boiler + 5 wall + 12 attachments + 2 dry/dist shares not double-counted)"
+            + " — bump this pin ONLY with a real row-table change");
+		assertTrue(tMissing.isEmpty(), "every composed row/stone unit key must exist on the en face"
 			+ " (a missing face renders the RAW key at runtime): " + tMissing);
 	}
 

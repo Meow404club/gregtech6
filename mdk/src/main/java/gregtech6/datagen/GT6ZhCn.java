@@ -54,10 +54,10 @@ import net.minecraftforge.common.data.LanguageProvider;
  * <li>{@link #addMiscUnits()} — the atomic misc keys (tools, the eight atomic covers, the
  *     circuit selector tag + its configuration tooltip, the JEI coke-oven info page, the
  *     example chest, the two port fluids). The COMPOSED domains became B-wave template keys
- *     (p20-i18n-compose-wires/-rows); B1 has landed its face — see
- *     {@link #addWireDomainUnits()} — while the B2 domains (stone variants, the
- *     kinetics/boiler/burning-box rows, machine tiers, attachments) are still pinned absent
- *     by the parity test's negative assertions.</li>
+ *     (p20-i18n-compose-wires/-rows); B1's face is {@link #addWireDomainUnits()} and B2's faces are
+     *     {@link #addStoneVariantUnits()} + {@link #addRowDomainUnits()} — with the
+     *     B-wave landed, the parity test's composed-domain negative assertions are
+     *     EMPTY (the closeout state).
  * </ol>
  *
  * <p>Rows with status {@code review} (pure-ASCII dump values, suspected untranslated, e.g.
@@ -97,6 +97,112 @@ public class GT6ZhCn extends LanguageProvider {
 		addMaterialNames();
 		addMiscUnits();
 		addWireDomainUnits();
+		addStoneVariantUnits(); // task p20-i18n-compose-rows
+		addRowDomainUnits();    // task p20-i18n-compose-rows
+	}
+
+	/**
+	 * The B2 stone-variant composed-display units (task p20-i18n-compose-rows): the 16
+	 * {@code gt6.stone.variant.<snake>} position-param templates the
+	 * {@code GTStoneBlock.getName} compose fills (the stone-name slot rides the
+	 * gt6.material.* small units, zero new material debt). Wording = the dump's
+	 * gt.stone.andesite.N family split (tmp/gregtech.lang:15246-15262).
+	 */
+	private void addStoneVariantUnits() {
+		for (gregtech6.block.stone.StoneVariant tVariant : gregtech6.block.stone.StoneVariant.VALUES) {
+			addDirect(tVariant.key());
+		}
+	}
+
+	/**
+	 * The B2 rows composed-display units (task p20-i18n-compose-rows): every family template
+	 * + small unit the rows composes consume, walked from the SAME row tables and key
+	 * derivations the en walk uses (the mirrors cannot drift on the KEY face; the VALUE face
+	 * is the hand layer in the reference table). The atomic rows (brick burning box, heat
+	 * transmitter, the two wood gearboxes) ride the same hand rows as their en literals.
+	 */
+	private void addRowDomainUnits() {
+		// a word shared by several families is ONE unit key — dedup like the en walk's
+		// addRowMatUnit (duplicate add would be a hard failure on the recording face)
+		java.util.Set<String> tEmitted = new java.util.HashSet<>();
+		
+		addDirect(gregtech6.registry.GT6Kinetics.AXLE_DISPLAY_KEY);
+		for (int tSize = 0; tSize < gregtech6.registry.GT6Kinetics.AXLE_SIZE_NAMES.length; tSize++) {
+			addRowUnit(tEmitted, gregtech6.registry.GT6Kinetics.axleSizeUnitKey(tSize));
+		}
+		for (gregtech6.registry.GT6Kinetics.AxleSpec tSpec : gregtech6.registry.GT6Kinetics.AXLE_SPECS) {
+			addRowUnit(tEmitted, gregtech6.registry.GT6Kinetics.axleMatUnitKey(tSpec));
+		}
+		// steam engines: the two templates + the row-material units
+		addDirect(gregtech6.registry.GT6Kinetics.STEAM_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6Kinetics.STEAM_DISPLAY_STRONG_KEY);
+		for (gregtech6.registry.GT6Kinetics.SteamEngineRow tRow : gregtech6.registry.GT6Kinetics.STEAM_ENGINES) {
+			addRowUnit(tEmitted, gregtech6.registry.GT6Kinetics.steamMatUnitKey(tRow));
+		}
+		// diesel: the template + the row-material units
+		addDirect(gregtech6.registry.GT6Kinetics.DIESEL_DISPLAY_KEY);
+		for (gregtech6.registry.GT6Kinetics.DieselSpec tSpec : gregtech6.registry.GT6Kinetics.DIESEL_SPECS) {
+			addRowUnit(tEmitted, gregtech6.registry.GT6Kinetics.dieselMatUnitKey(tSpec));
+		}
+		// burning boxes: the four templates + three family words + the row-material units
+		addDirect(gregtech6.registry.GT6BurningBoxes.DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6BurningBoxes.DISPLAY_DENSE_KEY);
+		addDirect(gregtech6.registry.GT6BurningBoxes.DISPLAY_FLUIDBED_KEY);
+		addDirect(gregtech6.registry.GT6BurningBoxes.DISPLAY_FLUIDBED_DENSE_KEY);
+		addDirect(gregtech6.registry.GT6BurningBoxes.FAMILY_SOLID_UNIT_KEY);
+		addDirect(gregtech6.registry.GT6BurningBoxes.FAMILY_LIQUID_UNIT_KEY);
+		addDirect(gregtech6.registry.GT6BurningBoxes.FAMILY_GAS_UNIT_KEY);
+		for (gregtech6.registry.GT6BurningBoxes.BurningBoxRow tRow : gregtech6.registry.GT6BurningBoxes.allRows()) {
+			addRowUnit(tEmitted, gregtech6.registry.GT6BurningBoxes.matUnitKeyOf(tRow));
+		}
+		addDirect("block.gt6.brick_burning_box"); // the atomic Brick row (the whole-string key on both faces)
+		// boilers: the two templates + the row-material units
+		addDirect(gregtech6.registry.GT6Boilers.DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6Boilers.DISPLAY_STRONG_KEY);
+		for (gregtech6.registry.GT6Boilers.BoilerRow tRow : gregtech6.registry.GT6Boilers.allRows()) {
+			addRowUnit(tEmitted, gregtech6.registry.GT6Boilers.matUnitKeyOf(tRow));
+		}
+		// machine tiers: the template + three machine words + three ordinal units
+		addDirect(gregtech6.registry.GTMachines.MACHINE_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_SHREDDER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_CRUSHER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_LATHE_UNIT_KEY);
+		for (int tTier = 2; tTier <= 4; tTier++) {
+			addDirect(gregtech6.registry.GTMachines.machineTierUnitKey(tTier));
+		}
+		// dryer/distillery: the two family templates + their row-material units
+		addDirect(gregtech6.registry.GTMachines.DRYER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.DISTILLERY_DISPLAY_KEY);
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tRows
+				: java.util.List.of(gregtech6.registry.GTMachines.DRYER_ROWS, gregtech6.registry.GTMachines.DISTILLERY_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tRows) {
+				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
+			}
+		}
+		// large boiler + dense wall: the templates + the row-material units
+		addDirect(gregtech6.registry.GTMultiBlocks.LARGE_BOILER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMultiBlocks.DENSE_WALL_DISPLAY_KEY);
+		for (gregtech6.registry.GTMultiBlocks.LargeBoilerRow tRow : gregtech6.registry.GTMultiBlocks.LARGE_BOILER_ROWS) {
+			addRowUnit(tEmitted, gregtech6.registry.GTMultiBlocks.boilerMatUnitKeyOf(tRow));
+		}
+		for (gregtech6.registry.GTMultiBlocks.MultiblockPartRow tRow : gregtech6.registry.GTMultiBlocks.WALL_ROWS) {
+			addRowUnit(tEmitted, gregtech6.registry.GTMultiBlocks.wallMatUnitKeyOf(tRow));
+		}
+		addDirect("block.gt6.heat_transmitter"); // the atomic transmitter (the whole-string key)
+		// attachments: the two family templates + the attachment material words
+		addDirect(gregtech6.registry.GT6Attachments.TAP_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6Attachments.FUNNEL_DISPLAY_KEY);
+		for (gregtech6.registry.GT6Attachments.AttachmentRow tRow : gregtech6.registry.GT6Attachments.ROWS) {
+			addRowUnit(tEmitted, gregtech6.registry.GT6Attachments.matUnitKeyOf(tRow));
+		}
+		// the two wood gearboxes (the atomic attachment extras, the Loader :1668/:1669 rows)
+		addDirect("block.gt6.gearbox");
+		addDirect("block.gt6.transformer_rotation");
+	}
+
+	/** Dedup across the row-family walks (the en addRowMatUnit mirror). */
+	private void addRowUnit(java.util.Set<String> aEmitted, String aKey) {
+		if (aEmitted.add(aKey)) addDirect(aKey);
 	}
 
 	/**
