@@ -53,6 +53,7 @@ class GT6RecipeGenerationGuardTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesCokeOven",
 			"gregtech6.recipes.GT6RecipesOreChain",
 			"gregtech6.recipes.GT6RecipesShCL",
+			"gregtech6.recipes.GT6RecipesStoneChisel",
 	};
 
 	private static Function<String, Fluid> sDefaultFluidResolver;

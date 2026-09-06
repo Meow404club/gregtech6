@@ -4,15 +4,23 @@ import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.InteractionResult;
 import net.minecraftforge.common.ToolAction;
 
+import gregtech6.block.stone.GTStoneBlock;
+import gregtech6.block.stone.StoneVariant;
+import gregtech6.recipes.GT6RecipeMaps;
+import gregtech6.recipes.GT6RecipesStoneChisel;
+import gregtech6.recipes.Recipe;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 
@@ -29,6 +37,18 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  * server semantics are the pinned GTBoilerTankBlockEntityTest ones (theChiselDetonates*
  * tests, :386/:415) — this item adds NO boiler logic, it only aims the tool.
  *
+ * <p>Task p19-chisel-recipes adds the <b>universal gate arm</b> — the ToolCompat.java:224-229
+ * transcription, the upstream total entry point for the TOOL_chisel click: for every
+ * non-boiler target, the clicked BlockState becomes its item form (GT stone families carry
+ * the {@code StoneVariant} stack tag, see {@link GT6RecipesStoneChisel#withVariant}),
+ * {@code RM.Chisel.findRecipe} probes it, and on a {@code blockINblockOUT} hit whose input
+ * matches the target exactly, the output block is written back ({@code WD.set} →
+ * {@code setBlock(pos, state, 3)}) for the upstream 10000 return — converted to 25 vanilla
+ * points by the same {@link #durabilityPoints} mapping as the decalcify arm (the two arms
+ * COEXIST exactly as upstream: the TE-face onToolClick2 chain answers first, the
+ * ToolCompat gate second; a sneaking click never reaches this arm — the :224
+ * {@code !aSneaking} gate — and stays PASS).
+ *
  * <p>The durability payment is the upstream {@code Behavior_Tool} conversion verbatim
  * (Behavior_Tool.java:63 {@code doDamage(units(tDamage, 10000, mDamage, T))}): the chisel
  * behaviour carries {@code mDamage = 25} (GT_Tool_Chisel.java:98 third argument), so every
@@ -42,13 +62,20 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  *     interaction result; the explosion is the feedback (Behavior_Tool.java:62 pays only
  *     when {@code tDamage > 0}).</li>
  * <li>the client leg is the same-side claim pattern the cutter uses: claim SUCCESS on the
- *     client, the server decides CONSUME/PASS.</li>
+ *     client, the server decides CONSUME/PASS — but only when the gate could actually fire
+ *     (non-sneaking and the target resolves to a Chisel recipe), so a chisel click never
+ *     swallows a vanilla block use.</li>
  * <li>the mining face (GT_Tool_Chisel.java:80-87 — the stone/silverfish harvest heuristic)
  *     is CUT: this repo has no harvest layer (the cutter cut precedent, pooled with the
- *     tool-family card) and the stone-variant chiseling ({@code stoneChiseled}) is the
- *     card's pool item.</li>
+ *     tool-family card); the mining-drop chisel conversion (GT_Tool_Chisel.java:57-79)
+ *     stays pooled too — 1.20.1 has no HarvestDropsEvent (p19 architect ruling). The
+ *     stone-variant chiseling itself, CUT at p16, is LANDED by p19 through the universal
+ *     gate arm above.</li>
  * <li>the other {@code TOOL_chisel} consumers (Basin/Mold/RailRoad/ButtonAdvanced/
- *     CoverTextureMulti/... family) are NOT ported — card cut "other TOOL_* family".</li>
+ *     CoverTextureMulti/... family) are NOT ported — card cut "other TOOL_* family";
+ *     the BlockStones TE-face chisel arm (BlockStones.java:573-576, the CHISEL_MAPPINGS
+ *     direct-meta write paying 1250/octant) stays pooled with them — the port routes every
+ *     stone target through the findRecipe gate instead (the p19 architect ruling).</li>
  * <li>the attack face, the material ladder and the runtime tint are the crowbar/cutter
  *     declared deviations: single steel tier 512, the grayscale HANDLE_CHISEL borrow
  *     rendered un-tinted (assets/README.md — the runtime-tint pool; spec ③ resolves to
@@ -77,20 +104,28 @@ public class GTChiselItem extends Item {
 	}
 
 	/**
-	 * The flattened onToolClick2 — direct dispatch into the decalcify arm. PASS on
-	 * everything that is not a boiler tank; claims on the client only when it is (the
-	 * server side executes and decides CONSUME/PASS).
+	 * The flattened onToolClick2 — the two arms in the upstream order (the TE face answers
+	 * first, the ToolCompat gate second): the decalcify arm on a boiler tank, the universal
+	 * gate arm on everything else. PASS on anything neither arm answers; claims on the
+	 * client only when an arm could fire (the server side executes and decides
+	 * CONSUME/PASS).
 	 */
 	@Override
 	public InteractionResult useOn(UseOnContext aContext) {
 		BlockEntity tBE = aContext.getLevel().getBlockEntity(aContext.getClickedPos());
-		if (!(tBE instanceof GTBoilerTankBlockEntity)) {
-			return InteractionResult.PASS;
+		if (tBE instanceof GTBoilerTankBlockEntity) {
+			if (aContext.getLevel().isClientSide) {
+				return InteractionResult.SUCCESS; // claim, the server side executes
+			}
+			return chiselToolClick(aContext) > 0 ? InteractionResult.CONSUME : InteractionResult.PASS;
 		}
+		// the ToolCompat.java:224-229 universal gate — no TE face answered, the recipe
+		// book decides; the client claims only when the gate could actually fire so a
+		// chisel click never swallows a vanilla block use
 		if (aContext.getLevel().isClientSide) {
-			return InteractionResult.SUCCESS; // claim, the server side executes
+			return gateCouldFire(aContext) ? InteractionResult.SUCCESS : InteractionResult.PASS;
 		}
-		return chiselToolClick(aContext) > 0 ? InteractionResult.CONSUME : InteractionResult.PASS;
+		return stoneToolClick(aContext) > 0 ? InteractionResult.CONSUME : InteractionResult.PASS;
 	}
 
 	/**
@@ -126,6 +161,140 @@ public class GTChiselItem extends Item {
 	 */
 	public static long chiselToolClick(GTBoilerTankBlockEntity aBoiler, @Nullable Player aPlayer) {
 		return aBoiler.chisel(aPlayer);
+	}
+
+	// ------------------------------------------------------- the universal gate arm (p19)
+
+	/**
+	 * The ToolCompat.java:224-229 transcription — the universal chisel gate over the
+	 * {@code GT6RecipeMaps.CHISEL} book:
+	 *
+	 * <pre>
+	 * if (aTool.equals(TOOL_chisel) && !aSneaking) {
+	 *     ItemStack tChiseledBlock = WD.stack(aWorld, aX, aY, aZ);
+	 *     if (tChiseledBlock != null) {
+	 *         Recipe tRecipe = RM.Chisel.findRecipe(null, null, T, Integer.MAX_VALUE, null, ZL_FS, tChiseledBlock);
+	 *         if (tRecipe != null && tRecipe.blockINblockOUT() && ST.equal(tRecipe.mInputs[0], tChiseledBlock)
+	 *                 && WD.set(aWorld, aX, aY, aZ, tRecipe.mOutputs[0])) return 10000;
+	 *     }
+	 * }
+	 * </pre>
+	 *
+	 * The variant domain rides the {@link GT6RecipesStoneChisel#VARIANT_TAG} stack tag (the
+	 * pour writes it on both legs of every GT stone row; the clicked BlockState encodes into
+	 * a tagged probe stack and the matched output decodes back into a BlockState). The
+	 * payment is the SAME {@link #payPerPoint} conversion as the decalcify arm: the :228
+	 * {@code return 10000} costs {@link #durabilityPoints}(10000) = 25 vanilla points — the
+	 * two arms coexist on the two separate payment faces exactly as upstream. A null player
+	 * (the RCON/acceptance channel) still converts the block and returns 10000 but pays
+	 * nothing (the cutter/crowbar ruling).
+	 *
+	 * @return the upstream tool damage — {@link #TOOL_DAMAGE_UNIT} (10000) on a conversion,
+	 *         0 when any gate leg declines (sneaking, no item form, no recipe, non
+	 *         block-in/block-out, input mismatch, setBlock failure).
+	 */
+	public static long stoneToolClick(UseOnContext aContext) {
+		Player tPlayer = aContext.getPlayer();
+		return stoneToolClick(aContext, tPlayer != null && tPlayer.isShiftKeyDown());
+	}
+
+	/**
+	 * The sneak-injected gate core — the offline test seam for the :224 gate (a live Player
+	 * instance is not constructible offline: the Forge fluid-type lazy registry dies in the
+	 * Entity ctor; the live sneak arm is the RCON fake player's setShiftKeyDown, and the
+	 * production overload reads the bit exactly once and lands here).
+	 */
+	static long stoneToolClick(UseOnContext aContext, boolean aSneaking) {
+		if (aSneaking) return 0; // :224 !aSneaking
+		Player tPlayer = aContext.getPlayer();
+		Level tLevel = aContext.getLevel();
+		BlockPos tPos = aContext.getClickedPos();
+		BlockState tState = tLevel.getBlockState(tPos);
+		ItemStack tProbe = stackFromState(tState);
+		if (tProbe == null) return 0; // :225 WD.stack null — the block has no item form
+		Recipe tRecipe = findChiselRecipe(tProbe);
+		if (tRecipe == null || !blockInBlockOut(tRecipe)) return 0;
+		if (!stackEquals(tRecipe.mInputs[0], tProbe)) return 0; // :228 ST.equal — the defensive re-check
+		BlockState tOutput = stateFromStack(tRecipe.mOutputs[0]);
+		if (tOutput == null || !tLevel.setBlock(tPos, tOutput, 3)) return 0; // :228 WD.set
+		long tDamage = TOOL_DAMAGE_UNIT; // :228 return 10000
+		payPerPoint(aContext.getItemInHand(), tPlayer, tDamage);
+		return tDamage;
+	}
+
+	/**
+	 * The client-side claim guard: SUCCESS only when the gate could actually fire (the
+	 * :224 sneak gate plus a live recipe behind the target), so a chisel click never
+	 * swallows a vanilla block use.
+	 */
+	private static boolean gateCouldFire(UseOnContext aContext) {
+		Player tPlayer = aContext.getPlayer();
+		if (tPlayer != null && tPlayer.isShiftKeyDown()) return false; // :224 !aSneaking
+		return findChiselRecipe(stackFromState(aContext.getLevel().getBlockState(aContext.getClickedPos()))) != null;
+	}
+
+	/** The :227 probe — the CHISEL map lookup with the upstream no-voltage/whole-book shape. */
+	@Nullable
+	private static Recipe findChiselRecipe(@Nullable ItemStack aProbe) {
+		if (aProbe == null || GT6RecipeMaps.CHISEL == null) return null;
+		return GT6RecipeMaps.CHISEL.findRecipe(null, Long.MAX_VALUE, null, new net.minecraftforge.fluids.FluidStack[0], aProbe);
+	}
+
+	/**
+	 * The upstream Recipe.blockINblockOUT() (Recipe.java:719-721) transcription: one item
+	 * leg in, one out, no fluid legs, both stacks single, both items carrying a block form
+	 * (the upstream {@code ST.block(stack) != NB} — the 1.20.1 block-form test is the
+	 * BlockItem type). Lives here (not on {@link Recipe}) because this item is its only
+	 * consumer and the recipe record stays a minimal port.
+	 */
+	public static boolean blockInBlockOut(Recipe aRecipe) {
+		return aRecipe.mInputs.length == 1 && aRecipe.mOutputs.length == 1
+				&& aRecipe.mFluidInputs.length == 0 && aRecipe.mFluidOutputs.length == 0
+				&& aRecipe.mInputs[0].getCount() == 1 && aRecipe.mOutputs[0].getCount() == 1
+				&& aRecipe.mInputs[0].getItem() instanceof BlockItem
+				&& aRecipe.mOutputs[0].getItem() instanceof BlockItem;
+	}
+
+	/** The :228 {@code ST.equal} re-check through the Recipe's own item+tag equality. */
+	private static boolean stackEquals(ItemStack aRecipeInput, ItemStack aProbe) {
+		//? if forge {
+		return ItemStack.isSameItemSameTags(aRecipeInput, aProbe);
+		//?} else {
+		/*return ItemStack.isSameItemSameComponents(aRecipeInput, aProbe);
+		*///?}
+	}
+
+	/**
+	 * The :225 {@code WD.stack(world, x, y, z)} — the clicked block's item form; a GT stone
+	 * family encodes its BlockState variant into the stack tag, other blocks stay plain.
+	 * Null when the block has no item form (the :226 gate).
+	 */
+	@Nullable
+	public static ItemStack stackFromState(@Nullable BlockState aState) {
+		if (aState == null) return null;
+		Item tItem = aState.getBlock().asItem();
+		if (tItem == net.minecraft.world.item.Items.AIR) return null;
+		ItemStack tStack = new ItemStack(tItem, 1);
+		if (aState.getBlock() instanceof GTStoneBlock) {
+			GT6RecipesStoneChisel.withVariant(tStack, aState.getValue(GTStoneBlock.VARIANT));
+		}
+		return tStack;
+	}
+
+	/**
+	 * The :228 {@code WD.set} decode half — the recipe output stack back into a BlockState:
+	 * the BlockItem's block, default state, upgraded with the carried variant when the
+	 * block carries the stone variant property. Null when the stack has no block form.
+	 */
+	@Nullable
+	public static BlockState stateFromStack(@Nullable ItemStack aStack) {
+		if (aStack == null || !(aStack.getItem() instanceof BlockItem tBlockItem)) return null;
+		BlockState tState = tBlockItem.getBlock().defaultBlockState();
+		StoneVariant tVariant = GT6RecipesStoneChisel.variantOf(aStack);
+		if (tVariant != null && tState.hasProperty(GTStoneBlock.VARIANT)) {
+			tState = tState.setValue(GTStoneBlock.VARIANT, tVariant);
+		}
+		return tState;
 	}
 
 	/**
