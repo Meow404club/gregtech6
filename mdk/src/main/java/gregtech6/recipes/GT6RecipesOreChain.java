@@ -147,6 +147,11 @@ public final class GT6RecipesOreChain {
 	/** Poured flag — one generation, one pour (upstream loaders run once per JVM). */
 	private static boolean sLoaded = false;
 
+	// ADR-P18: the pour-flag joins the GT6RecipeMaps generation — a bare GT6RecipeMaps.reset()
+	// (a dozen unpaired test call sites) must retire the flag WITH the maps, or load() silently
+	// early-returns on the "maps cleared × flag set" poison state.
+	static {GT6RecipeMaps.registerGenerationResetHook(GT6RecipesOreChain::resetForTest);}
+
 	/** FMLCommonSetup.enqueueWork — items are registered by this point (unlike ConstructMod). */
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
@@ -155,7 +160,7 @@ public final class GT6RecipesOreChain {
 
 	/** Pours the ore-chain expansion into the CRUSHER map. Idempotent; unresolvable rows skip with a count. */
 	public static synchronized void load() {
-		if (sLoaded) return;
+		if (sLoaded) {LOGGER.debug("load() skipped: already poured (generation flag set)"); return;}
 		GT6RecipeMaps.init(); // defensive + idempotent: the maps exist from ConstructMod (GTMachines), tests may race it
 		if (GT6RecipeMaps.CRUSHER == null) return; // reset() between init and load — a broken lifecycle
 		int tPoured = 0, tSkipped = 0;

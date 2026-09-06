@@ -144,6 +144,11 @@ public final class GT6RecipesDistillery {
 	/** Poured flag — one generation, one pour (upstream loaders run once per JVM). */
 	private static boolean sLoaded = false;
 
+	// ADR-P18: the pour-flag joins the GT6RecipeMaps generation — a bare GT6RecipeMaps.reset()
+	// (a dozen unpaired test call sites) must retire the flag WITH the maps, or load() silently
+	// early-returns on the "maps cleared × flag set" poison state.
+	static {GT6RecipeMaps.registerGenerationResetHook(GT6RecipesDistillery::resetForTest);}
+
 	/** FMLCommonSetup.enqueueWork — the fluid/item DeferredRegisters have fired by this point. */
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
@@ -156,7 +161,7 @@ public final class GT6RecipesDistillery {
 	 * drop).
 	 */
 	public static synchronized void load() {
-		if (sLoaded) return;
+		if (sLoaded) {LOGGER.debug("load() skipped: already poured (generation flag set)"); return;}
 		GT6RecipeMaps.init(); // defensive + idempotent: the map exists from ConstructMod (GTMachines.java), tests may race it
 		RecipeMap tMap = GT6RecipeMaps.DISTILLERY;
 		if (tMap == null) return; // reset() between init and load — a broken lifecycle, nothing to pour into

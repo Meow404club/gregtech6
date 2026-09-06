@@ -266,6 +266,11 @@ public final class GT6RecipesShCL {
 	/** Poured flag — one generation, one pour (upstream loaders run once per JVM). */
 	private static boolean sLoaded = false;
 
+	// ADR-P18: the pour-flag joins the GT6RecipeMaps generation — a bare GT6RecipeMaps.reset()
+	// (a dozen unpaired test call sites) must retire the flag WITH the maps, or load() silently
+	// early-returns on the "maps cleared × flag set" poison state.
+	static {GT6RecipeMaps.registerGenerationResetHook(GT6RecipesShCL::resetForTest);}
+
 	/** FMLCommonSetup.enqueueWork — items are registered by this point (unlike ConstructMod). */
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
@@ -274,7 +279,7 @@ public final class GT6RecipesShCL {
 
 	/** Pours the tables into the SHREDDER/CRUSHER/LATHE maps. Idempotent; unresolvable rows skip with a count. */
 	public static synchronized void load() {
-		if (sLoaded) return;
+		if (sLoaded) {LOGGER.debug("load() skipped: already poured (generation flag set)"); return;}
 		GT6RecipeMaps.init(); // defensive + idempotent: the maps exist from ConstructMod (GTMachines), tests may race it
 		if (GT6RecipeMaps.SHREDDER == null || GT6RecipeMaps.CRUSHER == null || GT6RecipeMaps.LATHE == null) return; // reset() between init and load — a broken lifecycle
 		pourFixed(GT6RecipeMaps.SHREDDER, "Shredder", shredderTable());
