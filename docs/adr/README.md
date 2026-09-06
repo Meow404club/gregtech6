@@ -40,6 +40,9 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-05 | [2026-09-05-p16-closeout-gate-ledger.md](2026-09-05-p16-closeout-gate-ledger.md) | P16 收口数据文档：四判据门禁总账 + 11 卡表 + 21.1 运行时 delta 三案 + P17 池移交 |
 | 2026-09-05 | [2026-09-05-p17-datagen-tree.md](2026-09-05-p17-datagen-tree.md) | ADR-P17-1：datagen 共享树跨节点裁决 = 输出目录按节点参数化（正典节点共享 tracked 树不变；21.1 输出节点本地 build/；五步门禁取代六步） |
 | 2026-09-05 | [2026-09-05-p17-machine-io-adjudication.md](2026-09-05-p17-machine-io-adjudication.md) | P17①：21.1 机器 IO 两 delta 单根因（wiring 漏注册 DRYER/DISTILLERY_BE）+ IDENTICAL-22 逐条裁决（19 fix/1 permanent/2 defer，残集 IDENTICAL-3） |
+| 2026-09-06 | [2026-09-06-p18-keepfilter-ruling.md](2026-09-06-p18-keepfilter-ruling.md) | ADR-P18 keepFilter 读侧重建：写侧双腿同上游合同键不丢，21.1 腿 parseOptional MAP_CODEC POSITIVE_INT 拒 0 量 orElse(EMPTY) 静默吞——裁读侧 FluidName 反查重建（permanent-delta 撤销，IDENTICAL-3→2） |
+| 2026-09-06 | [2026-09-06-p18-staticinit-poison-fix.md](2026-09-06-p18-staticinit-poison-fix.md) | ADR-P18 staticinit 毒态：junit-fml boot 真跑 load() × reset() 不清旗标——裁世代化重置钩子注册制（7 loader 全集+守卫测试先红后绿；否 load() 自愈重灌）（IDENTICAL-2→0） |
+| 2026-09-06 | [2026-09-06-p18-beload-provider.md](2026-09-06-p18-beload-provider.md) | ADR-P18 多方块机 21.1 BE load NPE（P1 数据丢失）：裁 A 先落（:808/:830 换 NBT_ACCESS，等价性读码证实）+ B 根治登池（W4 provider 沿 Root:140 穿透） |
 
 ## 占位（历史 ADR，未回填，权威原文在 state `decisions` 账本与 docs/PROJECT_STATE.md）
 
