@@ -192,10 +192,25 @@ class GTMaterialBlocksRegistrationTest {
         assertEquals(UPSTREAM_BLOCK_PATH, tNames, "7 tabs, one per non-empty non-HIDDEN block prefix (PrefixBlockItem.java:65-67)");
     }
 
-    /** Offline (registries never fire) the get seam returns null — the resolver fallback treats that as absent. */
+    /**
+     * The get seam, per leg (GTOfflineTestBase javadoc :25-33 — the 21.1 test JVM boots through
+     * FML itself, so registration has really fired there): on 1.20.1 offline the RegistryObject
+     * index is never populated, so the seam returns null (the resolver fallback treats that as
+     * absent); on 21.1 that premise is unreachable and the seam hands out the live deferred
+     * holder — pinned as the positive proposition (constructed with its id, getId pinned to the
+     * GTMaterialItems.itemIdOf composition rule).
+     */
     @org.junit.jupiter.api.Test
     void getSeamIsNullBeforeRegistration() {
+        //? if forge {
         org.junit.jupiter.api.Assertions.assertNull(GTMaterialBlocks.get(OP.blockIngot, MT.Coal),
                 "no RegisterEvent has fired offline — the seam must be null, not a dangling handle");
+        //?} else {
+        /*var tHandle = GTMaterialBlocks.get(OP.blockIngot, MT.Coal);
+        org.junit.jupiter.api.Assertions.assertNotNull(tHandle, "the FML-booted 21.1 JVM registered for real — the seam returns the live deferred holder, not null");
+        org.junit.jupiter.api.Assertions.assertEquals(
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block_ingot_coal"), tHandle.getId(),
+                "the deferred holder id follows the GTMaterialItems.itemIdOf rule (gt6:block_ingot_coal)");
+        *///?}
     }
 }

@@ -9,9 +9,10 @@ import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
  * FluidBridge skeleton offline tests (task p4-fluid-pipes spec ⑥): the empty-bridge
- * semantics. The seeded "iron" entry resolves only against a live registry (runServer
- * smoke evidence, acceptance ④) — offline the RegistryObject is unregistered, which the
- * null-path assertions exercise on purpose.
+ * semantics. The null-path assertions exercise the MAP-MISS path (materials the bridge
+ * never seeded): leg-neutral by construction — on the 21.1 leg the test JVM boots through
+ * FML (GTOfflineTestBase javadoc :25-33), so the seeded "iron" holder is really bound and
+ * the old "seeded entry unregistered offline" premise is unreachable there.
  */
 public class FluidBridgeTest extends GTOfflineTestBase {
 
@@ -20,7 +21,7 @@ public class FluidBridgeTest extends GTOfflineTestBase {
 		assertNull(FluidBridge.moltenFluidForMaterial("cobalt"), "empty-table entries stay null");
 		assertNull(FluidBridge.moltenFluidForMaterial(null));
 		assertNull(FluidBridge.moltenStack("cobalt", 2), "no stack for unknown materials");
-		assertNull(FluidBridge.moltenStack("iron", 2, 144), "the seeded entry is unregistered offline");
+		assertNull(FluidBridge.moltenStack("copper", 2, 144), "a never-seeded material is a map miss on both legs — null regardless of registry state");
 	}
 
 	@Test

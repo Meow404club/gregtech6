@@ -34,9 +34,18 @@ import net.minecraft.world.level.material.Fluids;
  */
 class RecipeMapFurnaceBridgeTest extends GTRecipesOfflineTestBase {
 
+	//? if forge {
 	/** The genuine vanilla data/minecraft/recipes/glass.json (1.20.1). */
 	private static final String VANILLA_GLASS_RECIPE_JSON =
 			"{\"type\":\"minecraft:smelting\",\"ingredient\":{\"item\":\"minecraft:sand\"},\"result\":\"minecraft:glass\",\"experience\":0.1,\"cookingtime\":200}";
+	//?} else {
+	/*// The genuine vanilla data/minecraft/recipes/glass.json (1.21.1): the result carries the
+	// 1.20.5+ ItemStack.CODEC object form (SimpleCookingSerializer.java:23 result=ItemStack.CODEC;
+	// RecipeManager.apply :60 routes through Recipe.CONDITIONAL_CODEC) — the 1.20.1 string form
+	// dies with "Not a JSON object" and the whole load comes up empty.
+	private static final String VANILLA_GLASS_RECIPE_JSON =
+			"{\"type\":\"minecraft:smelting\",\"ingredient\":{\"item\":\"minecraft:sand\"},\"result\":{\"id\":\"minecraft:glass\"},\"experience\":0.1,\"cookingtime\":200}";
+	*///?}
 
 	private static final ResourceLocation GLASS_RECIPE_ID = new ResourceLocation("minecraft:glass");
 

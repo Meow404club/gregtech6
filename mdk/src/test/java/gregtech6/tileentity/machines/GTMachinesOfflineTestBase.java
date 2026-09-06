@@ -38,9 +38,18 @@ public abstract class GTMachinesOfflineTestBase extends GTRecipesOfflineTestBase
 	static final BlockPos POS = new BlockPos(1, 2, 3);
 	static final BlockPos POS2 = new BlockPos(4, 2, 3);
 
+	//? if forge {
 	/** The genuine vanilla data/minecraft/recipes/glass.json (1.20.1) — the W1-proven smelting fixture. */
 	private static final String VANILLA_GLASS_RECIPE_JSON =
 			"{\"type\":\"minecraft:smelting\",\"ingredient\":{\"item\":\"minecraft:sand\"},\"result\":\"minecraft:glass\",\"experience\":0.1,\"cookingtime\":200}";
+	//?} else {
+	/*// The genuine vanilla data/minecraft/recipes/glass.json (1.21.1) — the result carries the
+	// 1.20.5+ ItemStack.CODEC object form (SimpleCookingSerializer.java:23; RecipeManager.apply
+	// :60 Recipe.CONDITIONAL_CODEC): the 1.20.1 string form dies with "Not a JSON object" and
+	// every smeltingLevel() query comes up empty.
+	private static final String VANILLA_GLASS_RECIPE_JSON =
+			"{\"type\":\"minecraft:smelting\",\"ingredient\":{\"item\":\"minecraft:sand\"},\"result\":{\"id\":\"minecraft:glass\"},\"experience\":0.1,\"cookingtime\":200}";
+	*///?}
 
 	static BlockEntityType<TileEntityOven> sOvenType;
 
