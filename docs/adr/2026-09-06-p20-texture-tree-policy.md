@@ -10,8 +10,9 @@
 
 P20 sprint 本质 = 占位图换上游真图（id333 勘误：无缺模 bug）。占位 PNG 现居两群：
 
-1. **item material_sets 2785 张**：gen_textures.py 写入 `mdk/src/generated/resources/assets/gt6/textures/item/material_sets/`
-   （gen_textures.py:23 `DIR = mdk/src/generated/resources`、:33 TEXTURES_REL），git 跟踪（.gitignore:24 仅忽略 .cache/）。
+1. **item material_sets 2785 张**：**恒在静态树** `mdk/src/main/resources/assets/gt6/textures/item/material_sets/`
+   （git 跟踪，7c98d2ac 起；gen_textures.py:23 `DIR = mdk/src/generated/resources` 仅是 --scan/--verify
+   的模型读面参数非输出树——初稿误读，2026-09-06 W1 审查实证勘误：main 现态=静态 2785/generated 0）。
 2. **block/机器占位**：静态树 `mdk/src/main/resources/assets/gt6/textures/block/*.png`（脚本生成已提交，
    assets/README.md 逐条溯源）。
 
@@ -27,18 +28,21 @@ assets/README.md+路径小写化（P8 :52-59、P19 bake_distillery_fronts.py:34,
 
 ### 1.2 同路径跨树共存 = 禁止（核心裁决）
 
-processResources 默认 `DuplicatesStrategy.INCLUDE` = 后拷覆盖先拷；srcDir 顺序 = 默认 srcDir 在前、
-:151/:158 追加在后 ⇒ **若真图与占位同相对路径分居两树，generated 占位后拷遮蔽静态树真图**（静默降级，
-无构建错误）。因此：
+机制勘误（2026-09-06 W1 审查实证，merged 0ddd034c）：Gradle 8.14 无显式 duplicatesStrategy 下，跨树同
+相对路径重复条目使 processResources **直接 fail-fast**（"Entry ... is a duplicate but no duplicate
+handling strategy has been set"），非静默遮蔽——构建面本身即红线，「同路径跨树共存=禁止」裁决维持并
+加固；census 碰撞钉（GT6TextureCensusTest）保留作不依赖构建配置的兜底。因此：
 
-- 借图卡必须**同 commit**：静态树加真图 + `git rm` generated 树同相对路径占位 PNG（item 卡）/原地替换（机器卡，占位本在静态树）。
+- 借图卡必须**同 commit**：静态树**原地替换**占位 PNG + assets/README.md sha256 行（占位与真图同路径
+  同居静态树；`git rm` generated 不需要——generated 无同路径 PNG）。
 - **否决**备选方案「调整 srcDir 挂载顺序让静态树赢」：依赖 Gradle 复制顺序语义、双腿两处维护、
   jar 重复条目风险——脆弱，不采纳。
 
 ### 1.3 gen_textures.py 让位 = skip-if-real
 
-写 `generated/<rel>` 前先查静态树 `mdk/src/main/resources/<rel>`，在场即跳过并计数上报；`--verify`
-把静态树在场计入覆盖。**不建第二张排除表——静态树即排除表**（单一事实源，防未来回写覆盖真图）。
+输出=静态树原地替换。写前 classify() 三态：byte-identical 于脚本占位输出→占位（可覆写）；非
+identical→真图（**永不覆写，--force 亦然**，跳过并计数上报）；`--verify` 覆盖面=静态∪generated union。
+**不建第二张排除表——静态树即排除表**（单一事实源，防未来回写覆盖真图）。
 
 ### 1.4 runData written:0 门禁不破
 
@@ -62,3 +66,13 @@ datagen 只写 JSON，PNG 增删不在 HashCache 面（P17 ADR 机制节 + P2→
 - census 测试把 1.2 碰撞不变量钉成回归测试，遮蔽事故在 CI 面即红。
 - P20 sprint 与 i18n A 波零 Java 文件冲突（P20 不触 GT6DataGenerators/GT6EnUs；唯一共享面
   assets/README.md append-only，合并序 W1→W2→W3 吸收）。
+
+## 4. 勘误记录（2026-09-06，W1 审查 0ddd034c 三纠偏全部实证）
+
+1. §0 第 1 条/§1.3：item material_sets 占位恒在静态树（初稿误读 gen_textures.py docstring 的 DIR
+   参数）——W2 借图=静态树原地替换+README sha256 同 commit，无 git rm generated。
+2. §1.2 机制句：Gradle 8.14 processResources 跨树重复条目 fail-fast 非静默遮蔽（负向注入实证）；
+   政策不变并加固。
+3. 集合数：COMBOS=2785 对/**40 集合**（上游 TextureSet.java 41 集合减未用 PLASMA；"37" 为 P3 期
+   陈旧口径）。doc-only 遗留（W2 触碰时顺手修）：gen_textures.py docstring 与 GT6TextureCensusTest
+   javadoc（:8/:134）残留"37 集合"文本、测试注释 ：67-68 "misc" 实为 PLASMA。
