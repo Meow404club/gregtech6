@@ -20,6 +20,8 @@ import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.energy.GTDieselEngineBlock;
 import gregtech6.block.energy.GTTransformerRotationBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
+import gregtech6.block.stone.GTStoneBlock;
+import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTBlockEntities;
@@ -28,6 +30,7 @@ import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialBlocks;
+import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GTMultiBlocks;
@@ -109,6 +112,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBoilers(); // task p13-boiler-tank
         addGearBoxTransformer(); // task p12-gearbox-transformer
         addLargeBoiler(); // task p13-large-boiler
+        addStoneBlocks(); // task p19-stoneblocks-render — the 17-stone x 16-variant family
     }
 
     /**
@@ -788,5 +792,53 @@ public final class GT6BlockStates extends BlockStateProvider {
                 : gregtech6.registry.GTMultiBlocks.HEAT_TRANSMITTER.get();
         simpleBlock(tBlock, models().cubeAll(aPath, modLoc(aTexture)));
         itemModels().withExistingParent(aPath, modLoc("block/" + aPath));
+    }
+
+    /**
+     * Task p19-stoneblocks-render — the 17 GT6 stone families ({@link GTStoneBlocks#blockArray()},
+     * the CS.java:1668 order the registry card landed): each block gets a 16-row blockstate
+     * (one variant per {@link StoneVariant}, the upstream 16-meta universe of the single
+     * BlockStones family) and each (stone, variant) pair gets its OWN cube_all model over its
+     * own dedicated borrowed PNG {@code gt6:block/stones/<stone>/<variant>} (upstream
+     * BlockStones.java:93-108 icon table {@code stones/<aName>/<ICON>}; assets/README.md
+     * attribution, census 17x16 = 272 files, zero gaps).
+     *
+     * <p><b>Model merge rule (the addPrefixBlocks shape, degenerate)</b>: models merge along
+     * texture identity — and here every pair owns a DISTINCT texture path (the upstream
+     * dedicated per-variant color PNGs), so the merge deduplicates nothing: 272 models, no
+     * tint. Unlike the P8 grayscale+fRGBa route there is deliberately NO {@code tintindex}
+     * (the borrowed PNGs are the final colored art, the research card's finding), and the
+     * upstream per-material {@code mTextureSolid}/{@code mTextureSmooth} copies
+     * (BlockStones.java:198-199) are exactly the render plumbing this datagen replaces.
+     *
+     * <p>Blockstate = one JSON per stone, 16 {@code variant=<snake>} rows (the P6
+     * 16-variant shape over {@link GTStoneBlock#VARIANT}); item model = one JSON per stone,
+     * {@code withExistingParent} onto the variant-0 (STONE) block model — same provider, same
+     * pass, so the parent resolves in the ExistingFileHelper (the GT6BlockStates.java:29-33
+     * BlockStateProvider.run ordering precedent). Declared deviation: the inventory shows the
+     * STONE look for every state — upstream 1.7.10 ItemBlocks display the per-meta icon
+     * (16 item looks per stone); per-state item models need the 1.21.4+ item-model definition
+     * split, so the single-parent form is the port's working state.
+     */
+    private void addStoneBlocks() {
+        for (Block tBlock : GTStoneBlocks.blockArray()) {
+            GTStoneBlock tStone = (GTStoneBlock)tBlock;
+            for (StoneVariant tVariant : StoneVariant.VALUES) {
+                // Full "block/..." model path: getBuilder skips the folder prefix for
+                // "/"-bearing names (ModelProvider.extendWithFolder), so the block/ segment
+                // must be explicit — the addPrefixBlocks pin, same builder mechanics here.
+                String tModelName = "block/stones/" + tStone.stoneSnake + "/" + tVariant.snake;
+                ModelFile tModel = models().cubeAll(tModelName,
+                        modLoc("block/stones/" + tStone.stoneSnake + "/" + tVariant.snake));
+                getVariantBuilder(tBlock).partialState()
+                        .with(GTStoneBlock.VARIANT, tVariant)
+                        .setModels(new ConfiguredModel(tModel));
+                if (tVariant == StoneVariant.STONE) { // the item parent = the variant-0 model (spec ①)
+                    itemModels().withExistingParent(tStone.stoneSnake, modLoc(tModelName));
+                }
+            }
+        }
+        LOGGER.info("GT6 stone blocks: {} blockstates x 16 variants over {} models",
+                GTStoneBlocks.STONES.size(), GTStoneBlocks.STONES.size() * StoneVariant.VALUES.length);
     }
 }
