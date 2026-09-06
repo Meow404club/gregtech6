@@ -38,7 +38,7 @@
   形成 split-package 双装（FML module 冲突）。落选。
 - **普通子项目（无 stonecutter）**：无 `//?`/swap 消化机制，只能双份源树 = fork 失去单树语义。落选。
 
-probe 成本：settings.gradle.kts +14 行（第二 `create()`）；任务路径
+probe 成本：settings.gradle.kts +22 行（第二 `create()` 段含注释头；卡① 审查勘误，原记 +14）；任务路径
 `:third-party:modularui:1.20.1-forge:compileJava` / `:third-party:modularui:1.21.1-neoforge:compileJava`。
 
 ## 4. 编译门禁（铁律 id327：双腿分开命令，严禁同一调用混跑）

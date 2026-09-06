@@ -120,6 +120,13 @@ dependencies {
     // FML 自动订阅扫描反射 GT6Mod 方法签名时 NoClassDefFoundError: gregapi/oredict/OreDictPrefix
     // → mod loading crash（/tmp/gt6_rs_p15boot1211.log:91）。
     "additionalRuntimeClasspath"(project(path = ":", configuration = "runtimeElements"))
+    // P20④ ModularUI vendored fork jarJar 嵌装（ADR 2026-09-06-p20-modularui-fork-ruling §4，
+    // GTCEu 量产姿势 dependencies.gradle:14 对齐：顶层只 jarJar(mui)，EvalEx 由 modularui 自己
+    // 嵌装携带；mixinextras 由 NeoForge 加载器自带，vendored 腿不嵌）。MDG JarJarPlugin 把
+    // jarJar 配置解析产物经 jarJar 任务写 META-INF/jarjar/ 并入 jar 任务产物（JarJarPlugin.java:22）。
+    // 本节点无重映射步（NeoForge 1.20.5+ 生产即 official 命名），嵌装 jar 原样进入分发形态。
+    // 依赖面说明：modularui 不进编译/运行类路径（纯嵌装分发；mdk 源码零引用，GUI 采纳另卡）。
+    "jarJar"(project(":third-party:modularui:1.21.1-neoforge"))
     // JEI 1.21.1（task p15-jei-dual-wiring；ADR 2026-09-02-p12-jei-dependency 的跨版本延续）：
     // 坐标三件 mezz.jei:jei-${mcVer}-{common-api,neoforge-api,neoforge}:19.52.0.422——
     // blamejared maven-metadata <latest>（2026-09-03）+ Modrinth "19.52.0.422 for NeoForge 1.21.1"

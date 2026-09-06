@@ -25,7 +25,10 @@ stonecutter parameters {
     // 常量：forge 节点 `//? if forge` 真，neoforge 节点 `//? if neoforge` 真（mdk 同构）。
     constants.match(node.metadata.project.substringAfterLast('-'), "forge", "neoforge")
 
-    val forgeSide = node.metadata.project.endsWith("forge")
+    // 卡① 审查遗留修正（2026-09-07）：原形 endsWith("forge") 对 "1.21.1-neoforge" 亦真——
+    // 当时靠 neoforge=活动节点原位编译豁免无害；改 !endsWith("neoforge") 精确形，
+    // 防 forge 侧预处理规则误命中 neoforge 节点（第三节点或主树方向翻转时即爆雷）。
+    val forgeSide = !node.metadata.project.endsWith("neoforge")
 
     // ---- swap 表：仅 forge 节点正向执行 neoforge→forge（regex + reverse 永不匹配哨兵）----
     // 纪律同 mdk/stonecutter.gradle.kts：regex 一律字面量转义；哨兵 \u0000 使 forge 节点

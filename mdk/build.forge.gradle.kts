@@ -89,6 +89,16 @@ dependencies {
     // 2026-08-29 :mdk:runServer 实证 gregapi NoClassDefFoundError，按 MDG 官方机制补挂。
     // （插件自建配置用字符串 invoke 形式，不赌 kts accessor 生成）
     "additionalRuntimeClasspath"(project(path = ":", configuration = "runtimeElements"))
+    // P20④ ModularUI vendored fork jarJar 嵌装（ADR 2026-09-06-p20-modularui-fork-ruling §4，
+    // GTCEu 量产姿势 dependencies.gradle:14 对齐：顶层只 jarJar(mui)，EvalEx/mixinextras 由
+    // modularui 自己嵌装携带）。MDG JarJarPlugin 把 jarJar 配置解析产物经 jarJar 任务写
+    // META-INF/jarjar/ 并入 jar 任务产物（JarJarPlugin.java:22）。
+    // legacyforge 消费者对 jarJar 内 ProjectDependency 自动加 MinecraftMappings=SRG 属性
+    // （LegacyForgeModDevPlugin.configureDependencyRemapping:215-229），vendored 项目经
+    // obf.reobfuscate 发布的 reobfRuntimeElements（SRG）变体被选中——嵌装的 modularui jar
+    // 已是生产 SRG 形（含 refmap 重映射），无需再重映射。
+    // 依赖面说明：modularui 不进编译/运行类路径（纯嵌装分发；mdk 源码零引用，GUI 采纳另卡）。
+    "jarJar"(project(":third-party:modularui:1.20.1-forge"))
     // JEI（本仓首个第三方 mod 依赖，ADR 2026-09-02-p12-jei-dependency）：坐标三件。
     // MDG legacyforge mod* 配置自动 SRG→official 重映射且非传递（LEGACY.md:68-92）：
     // API 两件 compileOnly（编译面，不进 jar/run）；impl 一件 runtimeOnly —— LEGACY.md L74

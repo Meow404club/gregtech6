@@ -79,12 +79,25 @@ neoForge {
 }
 
 dependencies {
-    // 唯一硬 runtime 依赖（ADR-P20 §5：EvalEx 3.6.0；嵌套/jarJar 存活归卡②，此处只声明编译面）
+    // 唯一硬 runtime 依赖（ADR-P20 §5：EvalEx 3.6.0）
     implementation("com.ezylang:EvalEx:${evalExVer}")
     compileOnly("org.jetbrains:annotations:${jetbrainsVer}")
     // 上游源码用 lombok（@Setter/@Getter/@Cleanup 等，lombok.config 随仓）
     compileOnly("org.projectlombok:lombok:${lombokVer}")
     annotationProcessor("org.projectlombok:lombok:${lombokVer}")
+
+    // ---- jarJar 嵌装（卡② packaging 域，上游 1.21.1 dependencies.gradle:9-10 原形）----
+    // 本 mod jar 被 mdk neoforge 腿 jarJar 嵌套时需自带 EvalEx（GTCEu 量产对齐：GTCEu 顶层只
+    // jarJar(mui)，EvalEx 由 modularui 自己携带——ADR-P20 §4 引证）。
+    //
+    // 版本区间策略（minimum/maximum）：**裸依赖原形，禁 require() 区间**——嵌入 jar=编译钉版
+    // 3.6.0（与 implementation 同钉，嵌装与编译面零漂移；require("[x,y)") 会让 jarJar 配置独立
+    // 解析区间内最高版，实测漂移到 EvalEx 3.7.0，2026-09-07 首编即证——弃用）；metadata.json
+    // 区间由 MDG 自动生成开区间 [3.6.0,)（min=钉版，max=开放=上游量姿势，闭区间上界易造跨 mod
+    // JarJar 运行时选版不可满足）。
+    // mixinextras 不嵌：NeoForge 1.21.1 加载器自带（上游 1.21.1 dependencies.gradle 无
+    // mixinextras jarJar 声明，与 1.20.1 腿的显式携带不同——跟随上游分腿姿势）。
+    "jarJar"("com.ezylang:EvalEx:${evalExVer}")
 
     // Recipe viewers / 可选集成（全 compileOnly，ADR-P20 §5；版本=上游 1.21.1 catalog 钉值）
     // impl 一并 compileOnly：上游 bundles.jei = common-api+neoforge-api+impl 三件——
@@ -101,9 +114,64 @@ dependencies {
     // MouseTweaks：上游声明 compileOnly 但源码零引用（grep 实证 2026-09-06）——不声明，偏离见 DIVERGE.md。
 }
 
-// zip64：datagen 资产树并入后条目量级与 mdk 同（卡②打包域先占位，mdk 先例 65535 上限）。
+// ---- packaging 段（卡②；上游 jars.gradle + resources.gradle 的本仓等价迁移）----
+// 工件名对齐上游发布坐标 brachy.modularui:modularui-mc<mc>（GTCEu catalog 消费名）：
+// 上游 jars.gradle base.archivesName = "${project.name}-mc${mc}"，project.name 上游=modularui；
+// 本仓节点 project.name=节点名（1.21.1-neoforge），显式钉同值工件名——jar 文件名与
+// jarJar 嵌入名（brachy.modularui.modularui-mc1.21.1-<v>.jar）随之确定。
+base {
+    archivesName = "modularui-mc${mcVer}"
+}
+
+// neoforge.mods.toml 模板展开（上游 1.21.1 resources.gradle 同构；模板=上游
+// src/main/templates 原文字节拷贝到 sharedDir/templates，sha256 对账见 DIVERGE.md §1.7）。
+// 属性名沿上游 1211：forge_version=neoforge 版本去 patch 位（21.1）；loader_version=上游
+// catalog libs.versions.loader="4"（FML 大版本，模板 loaderVersion 消费）。
+// 双模板互斥（mdk W2 同构）：本节点 exclude mods.toml。
+val replaceProperties = mapOf(
+    "version" to project.version.toString(),
+    "mod_id" to modId,
+    "minecraft_version" to mcVer,
+    "loader_version" to "4",
+    "forge_version" to property("deps.neoforge").toString().substringBeforeLast("."),
+    "jei_version" to jeiVer,
+    "emi_version" to emiVer,
+    "rei_version" to reiVer,
+    "curios_version" to curiosVer,
+    "mod_license" to property("mod_license").toString(),
+    "mod_name" to property("mod_name").toString(),
+    "mod_description" to property("mod_description").toString(),
+    "mod_url" to property("mod_url").toString(),
+    "mod_issue_tracker" to property("mod_issue_tracker").toString(),
+)
+
+val generateModMetadata = tasks.register("generateModMetadata", ProcessResources::class) {
+    inputs.properties(replaceProperties)
+    expand(replaceProperties)
+    exclude("META-INF/mods.toml") // forge 专有元数据不进 neoforge 产物
+    from(sharedDir.resolve("templates"))
+    into(layout.buildDirectory.dir("generated/sources/modMetadata"))
+}
+sourceSets["main"].resources.srcDir(generateModMetadata)
+neoForge.ideSyncTask(generateModMetadata)
+
 tasks.named<Jar>("jar") {
+    // zip64 保留（卡① 占位转正）：嵌装 jarJar 后条目面随依赖增长，跟随 mdk 先例
+    // （65535 上限条目；zip64 头对 java.util.zip/SecureJar 均可读，mdk 2026-09-03 实证）。
     setZip64(true)
+    // jar manifest（上游 1.21.1 jars.gradle 逐键同款；无 MixinConfigs——1.21.1 mixin 配置
+    // 经 neoforge.mods.toml [[mixins]] 表发现，模板已携带）。
+    // Specification-Title 上游=project.name(=modularui)，本仓节点名不同显式用 mod_id 等值。
+    manifest {
+        attributes(
+            "Specification-Title" to modId,
+            "Specification-Version" to project.version.toString(),
+            "Specification-Vendor" to "brachy",
+            "Implementation-Title" to base.archivesName.get(),
+            "Implementation-Version" to project.version.toString(),
+            "Implementation-Vendor" to "brachy",
+        )
+    }
 }
 
 // chisel 生成源接线（mdk 同构）：非活动节点工件任务先于 stonecutterGenerate；
