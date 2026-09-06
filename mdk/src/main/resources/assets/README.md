@@ -2893,11 +2893,18 @@ upstream wood fluid pipes render through the material icon system, not a dedicat
 block tile: `TileEntityBase10ConnectorRendered.getIconIndexConnected` (:265) picks
 `OP.pipe{Tiny,Small,Medium,...}.mIconIndexBlock` and `getTextureSide` (:522) resolves
 it against `mMaterial` with the mRGBa tint — i.e. the grayscale
-`blocks/materialicons/WOOD/pipe{Small,Medium}.png` slices, which are TRANSPARENT
-RGBA cross-sections drawn by the dedicated pipe renderer. Those bytes do not
-correspond to the repo's opaque `cube_all` tile (GT6BlockStates `addFluidPipe`, the
-p4 shape): borrowing them would punch see-through holes in a solid-layer cube.
-Borrow-or-declare therefore declares the gap; the faithful pipe cross-render family
+`blocks/materialicons/WOOD/pipe{Small,Medium}.png` slices drawn by the dedicated
+pipe renderer. REVIEW CORRECTION (merge audit 2026-09-06, d40d2dd8 follow-up):
+those bytes are RGBA but FULLY OPAQUE (alpha=255 on all 256 px, avg RGB
+136/136/136 — a mini pipe-segment sprite on a plank-textured background), so the
+original "transparent cross-section / see-through holes" wording was wrong. The
+gap ruling itself stands on the two verified facts: (a) the renderer applies the
+mRGBa tint at runtime (`BlockTextureDefault.get(mMaterial, …, mRGBa)`), the icon
+is grayscale, and the repo `cube_all` model has no tint path — a borrow renders
+gray; (b) the sprite is a diameter-scaled renderer piece, not a per-face block
+tile — on every `cube_all` face it would show the same miniature pipe-on-planks
+drawing, which corresponds to no face of the p4 solid shape. Borrow-or-declare
+therefore declares the gap; the faithful pipe cross-render family
 is the render pool card.
 
 Copied on 2026-09-06. Upstream license: **CC0 1.0 Universal Public Domain
