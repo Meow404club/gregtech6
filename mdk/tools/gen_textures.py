@@ -11,16 +11,27 @@ modulation (PrefixItem.java:136-138 renders from the material's texture set).
 Iconset semantics: the texture set is a property of the MATERIAL
 (OreDictMaterial.mTextureSetsItems, filled by MT.setTextures, MT.java:210-215);
 names are lower-snaked MT SET_* constants (METALLIC -> metallic). The table below
-is the census over the registered item set (37 distinct sets, 103 combos; no
-"none" fallback hit). Pure standard library (hand-rolled PNG: zlib+struct), idempotent
-(skips existing files unless --force), deterministic output bytes.
+is the census over the registered item set (37 distinct sets, 2785 combos; no
+"none" fallback hit). Pure standard library (hand-rolled PNG: zlib+struct),
+deterministic output bytes.
+
+Skip-if-real (ADR-P20 §1.3): the static tree mdk/src/main/resources is the
+canonical home of real (borrowed upstream) textures and doubles as the exclusion
+table — no second exclusion list is kept. A PNG that is NOT byte-identical to
+the placeholder this script would emit is a real texture and is never
+overwritten, not even by --force (regenerating a placeholder means deleting the
+file first). --verify counts a texture present in either the static or the
+generated tree as covered (union face), so W2 borrow waves stay green while a
+combo migrates between trees.
 
 Usage:
   python3 gen_textures.py                 # generate missing PNGs from the table
-  python3 gen_textures.py --force         # regenerate all table PNGs
+  python3 gen_textures.py --force         # regenerate all table placeholders (real textures still yield)
   python3 gen_textures.py --scan DIR      # derive combos from generated models, fill gaps
-  python3 gen_textures.py --verify DIR    # assert model coverage, write nothing
-DIR = mdk/src/generated/resources.
+  python3 gen_textures.py --verify DIR    # assert model coverage over the static∪generated union, write nothing
+DIR (for --scan/--verify) = mdk/src/generated/resources — the model tree the
+combos are derived from; the PNGs themselves are written to (and read from) the
+static tree mdk/src/main/resources.
 """
 import argparse
 import json
@@ -2850,45 +2861,83 @@ def parse_layer0(value: str):
 
 
 def combos_from_models(generated: Path):
-    """Every (iconset, prefix) referenced by a generated item model."""
+    """Every (iconset, prefix) referenced by a generated item model's layer0.
+
+    Models without a material_sets layer0 (parent-model items, hand-authored
+    domains) are out of this script's scope and skipped — resolution of ALL
+    texture references is the census test's job (GT6TextureCensusTest).
+    """
     found = set()
     for model in sorted((generated / MODELS_REL).glob("*.json")):
         layer0 = json.loads(model.read_text(encoding="utf-8")).get("textures", {}).get("layer0")
         combo = parse_layer0(layer0) if layer0 else None
         if combo is None:
-            sys.exit(f"error: {model}: layer0 {layer0!r} is not a material_sets path")
+            continue
         found.add(combo)
     return found
 
 
-def generate(combos, textures_root: Path, force: bool) -> int:
-    written = 0
+def classify(target: Path, iconset: str, prefix: str) -> str:
+    """'missing' | 'placeholder' (byte-identical to this script's output) | 'real'.
+
+    ADR-P20 §1.3 skip-if-real, with the static tree as the single exclusion
+    table: whatever this script would not have produced is a real (borrowed
+    upstream) texture and must never be clobbered by a placeholder rewrite.
+    """
+    if not target.exists():
+        return "missing"
+    if target.read_bytes() == png_bytes(SIZE, shade(iconset, prefix)):
+        return "placeholder"
+    return "real"
+
+
+def generate(combos, textures_root: Path, force: bool):
+    """Write missing placeholders; yield to anything already present.
+
+    Returns (written, placeholders_skipped, reals_yielded). Real textures are
+    skipped unconditionally (skip-if-real); byte-identical placeholders are
+    skipped unless --force re-derives them (identical bytes, no-op on disk).
+    """
+    written = placeholders = reals = 0
     for iconset, prefix in sorted(combos):
         target = textures_root / iconset / f"{prefix}.png"
-        if target.exists() and not force:
+        state = classify(target, iconset, prefix)
+        if state == "real":
+            reals += 1  # ADR-P20 §1.3: the static tree is the exclusion table
             continue
+        if state == "placeholder":
+            placeholders += 1
+            if not force:
+                continue
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(png_bytes(SIZE, shade(iconset, prefix)))
         written += 1
-    return written
+    return written, placeholders, reals
 
 
 def main() -> None:
     tools = Path(__file__).resolve().parent
-    textures_root = tools.parent / "src" / "main" / "resources" / TEXTURES_REL
+    static_root = tools.parent / "src" / "main" / "resources"
+    textures_root = static_root / TEXTURES_REL
 
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--scan", metavar="DIR", help="derive combos from generated models under DIR and fill gaps")
-    parser.add_argument("--verify", metavar="DIR", help="assert every model layer0 has a PNG; write nothing")
-    parser.add_argument("--force", action="store_true", help="rewrite existing PNGs")
+    parser.add_argument("--verify", metavar="DIR",
+                        help="assert every model layer0 has a PNG in the static∪generated union; write nothing")
+    parser.add_argument("--force", action="store_true", help="rewrite existing placeholder PNGs (real textures still yield)")
     args = parser.parse_args()
 
     if args.verify:
-        combos = combos_from_models(Path(args.verify))
-        missing = sorted(c for c in combos if not (textures_root / c[0] / f"{c[1]}.png").exists())
+        generated = Path(args.verify)
+        combos = combos_from_models(generated)
+        missing = sorted(
+            c for c in combos
+            if not any((root / TEXTURES_REL / c[0] / f"{c[1]}.png").exists()
+                       for root in (static_root, generated)))
         if missing:
             sys.exit("error: missing textures: " + ", ".join(f"{i}/{p}" for i, p in missing))
-        print(f"verify ok: {len(combos)} referenced combos all present under {textures_root}")
+        print(f"verify ok: {len(combos)} referenced combos present in the static∪generated union "
+              f"({static_root} ∪ {generated})")
         return
 
     combos = set(COMBOS)
@@ -2899,8 +2948,10 @@ def main() -> None:
             print(f"scan: {len(unknown)} combos beyond the committed table: "
                   + ", ".join(f"{i}/{p}" for i, p in sorted(unknown)))
         combos |= referenced
-    written = generate(combos, textures_root, args.force)
+    written, placeholders, reals = generate(combos, textures_root, args.force)
     print(f"{len(combos)} combos, {written} PNG written to {textures_root}")
+    print(f"skip-if-real: {placeholders} placeholder(s) already present, "
+          f"{reals} real texture(s) yielded to (static tree is the exclusion table)")
 
 
 if __name__ == "__main__":
