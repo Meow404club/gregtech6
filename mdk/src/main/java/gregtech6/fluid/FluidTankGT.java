@@ -97,18 +97,35 @@ public class FluidTankGT implements IFluidTank {
 				}
 				//?} else {
 				/*// 21.1 leg: parseOptional rides the codec face; a degraded payload lands EMPTY.
-				//KNOWN 21.1 DELTA (scope corrected, p15-prod-fix-fluidstack-save): ONLY the 0-amount
-				//keepFilter payload is lost — it carries no codec keys ("FluidName"/"Amount" are the
-				//forge shapes), so parseOptional fails it to EMPTY (javap 21.1.249:
-				//parse(...).orElse(EMPTY), never throws) and the kept identity does not survive a
-				//21.1 save/load; the forge leg's raw-fluid rebuild has no public API to feed it.
-				//NON-ZERO roundtrips are lossless now that writeToNBT keeps the save() return tag —
-				//the earlier "3 red FluidTankGTTest roundtrips" were that discarded-return bug, not
-				//this delta.
+				//keepFilter READ-SIDE REBUILD (ADR-P18, task p18-keepfilter-2111-readback — replaces
+				//the former KNOWN 21.1 DELTA of p15-prod-fix-fluidstack-save): the 0-amount keepFilter
+				//payload {FluidName: REAL, Amount: 0} carries no codec keys, and the codec amount is
+				//POSITIVE_INT (NeoForge FluidStack MAP_CODEC :65-73/:70 — 0 is unrepresentable), so
+				//parseOptional fails it to EMPTY (parse(...).orElse(EMPTY), never throws). Before
+				//folding to a null tank the identity is read back from the "FluidName" key and
+				//re-queried against BuiltInRegistries.FLUID, rebuilding the forge leg's :87-94 state
+				//verbatim: a unit-amount carrier with mAmount staying the authoritative 0 (upstream
+				//FL.load_ :1035-1045 reads the same key unfiltered). The lookup is guarded twice —
+				//tryParse nulls an illegal name, Registry.get nulls an unknown one, and Fluids.EMPTY
+				//is rejected — so corrupt NBT degrades to an empty tank exactly like a codec
+				//failure, never a throw. NON-ZERO roundtrips stay lossless via the save() return
+				//tag (p15-prod-fix-fluidstack-save). Residual deltas: a 0-amount payload persists
+				//neither components nor tag (both legs' pool debt), and a fluid removed from the
+				//registry since the save still folds to an empty tank.
 				mFluid = FluidStack.parseOptional(nbtAccess(), tNBT);
 				if (mFluid.getFluid() == Fluids.EMPTY) {
-					mFluid = null; // a legacy degraded payload or a codec-collapsed 0-amount: a truly empty tank
-					mAmount = 0;
+					net.minecraft.world.level.material.Fluid tFluid = null;
+					if (tNBT.contains("FluidName", Tag.TAG_STRING)) {
+						net.minecraft.resources.ResourceLocation tName = net.minecraft.resources.ResourceLocation.tryParse(tNBT.getString("FluidName"));
+						tFluid = tName == null ? null : net.minecraft.core.registries.BuiltInRegistries.FLUID.get(tName);
+					}
+					if (tFluid != null && tFluid != Fluids.EMPTY) {
+						mFluid = new FluidStack(tFluid, 1); // the unit-amount carrier — mAmount stays the authoritative 0
+						mAmount = 0;
+					} else {
+						mFluid = null; // a bare key, an illegal/unknown FluidName, or a payload without one: a truly empty tank
+						mAmount = 0;
+					}
 				} else {
 					mAmount = (isEmpty() ? 0 : tNBT.contains(NBT_L_AMOUNT, Tag.TAG_ANY_NUMERIC) ? tNBT.getLong(NBT_L_AMOUNT) : mFluid.getAmount());
 				}
