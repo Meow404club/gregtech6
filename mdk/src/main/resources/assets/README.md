@@ -644,15 +644,35 @@ Distillery family + Integrated Circuit textures, task p16-distillery-family:
   "Configuration: N" tooltip; the config-0 icon is the one the creative surface and the
   acceptance feed ever show.
 
-- `gt6/textures/block/distillery_front{,_active,_running}.png` — generated 16x16
-  grayscale placeholders (the p14 dryer-front idiom: inactive light / active mid /
-  running darker; nothing to sha256 — deterministic generator in the card's tooling).
-  The upstream Distillery iconset
-  (`textures/blocks/machines/basicmachines/distillery/{colored,overlay,overlay_active,overlay_running}`)
-  is present in the snapshot but is a MULTI-LAYER per-face stack (the
-  MultiTileEntityBasicMachine getTexture2 pass system); the port machine-model shape is
-  the shared single-cube + front-state form, so the borrow-or-declare rule keeps the
-  placeholders and the layered/tinted faithful pass system stays the render pool card.
+- `gt6/textures/block/distillery_front{,_active,_running}.png` — BAKED from the
+  upstream Distillery iconset
+  (`src/main/resources/assets/gregtech/textures/blocks/machines/basicmachines/distillery/`,
+  CC0 1.0 per the upstream `README.md` block above), task p19-distillery-front-canonical.
+  Upstream is a MULTI-LAYER per-face stack (the MultiTileEntityBasicMachine getTexture2
+  pass system): an opaque grayscale `colored/` material base with transparent-bearing
+  `overlay*` decals drawn on top at runtime — borrowing an overlay alone would leave the
+  hollow background pixels see-through, so each front is baked with the standard
+  src-over operator (what GL_SRC_ALPHA / ONE_MINUS_SRC_ALPHA does when the engine stacks
+  the passes; overlay on top, output alpha = 255):
+  `front = colored + overlay`, `front_active = colored + overlay_active`,
+  `front_running = colored + overlay_running`. Baking is reproducible via
+  `mdk/tools/bake_distillery_fronts.py` (pure stdlib, deterministic bytes, prints every
+  sha256). Source and product digests:
+
+  - `colored/front.png`         `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  - `overlay/front.png`         `a36ecca013dbd36ddc02f10d2ce0ec640030147ddb3c180c299fac67ad57e4d3`
+  - `overlay_active/front.png`  `822b52fc5f647891438ad6467c58f05135946e6272b4e3826ccd9ffa7ce07ab6` (16x64 four-frame strip)
+  - `overlay_running/front.png` `88b5c302301a4773e5b880878f9423a79d3e12c2ac05dbb2a3c31dd84c961a57`
+  - `distillery_front.png`         `8a6ac14f9b121618afff00b3bf7372484adbe7a0307848ee9f96188536b3ce45`
+  - `distillery_front_active.png`  `6fc656f9cd0a57f4023da022bb7056a6e05c93ac61f4369e7e785360ce5e7a4b`
+  - `distillery_front_running.png` `f91ced667197de43286fee72872c960ef044defaffc1ed27acac70bb2f738e64`
+
+  Declared deviations: (1) `overlay_active/front.png` is a 16x64 four-frame animation
+  strip (1.7.10 auto-slices square frames) and the bake takes FRAME 0 as the static
+  representative frame — the faithful four-frame animation stays in the render pool;
+  (2) the colored base keeps its neutral grayscale, the per-material tint is not baked;
+  (3) this bake is the canonical flat look, not the render end-state — the faithful
+  multi-layer per-face pass system stays the render pool card.
 
 Copied / generated on 2026-09-05. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
