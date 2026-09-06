@@ -18,13 +18,15 @@
 
 ## §1 构建级偏离（非上游文件，全部为本仓原创或声明改动）
 
-1. **构建脚本替换**：上游 gradle 多脚本（moddevgradle/jars/resources/publishing/docs/formatting）→ 本仓 stonecutter 双节点 buildscript；runs/jar/mods.toml 生成不在本卡（卡② packaging 域）。
-2. **swap 表**（stonecutter.gradle.kts，仅 forge 节点正向）：五缝包名带 distmarker/bus/items(+wrapper)/fluids + chunk.status 包移位 + isSameItemSameComponents 改名；regex + reverse 永不匹配哨兵。
+1. **构建脚本替换**：上游 gradle 多脚本（moddevgradle/jars/resources/publishing/docs/formatting）→ 本仓 stonecutter 双节点 buildscript；runs 不引入（modularui 是被 jarJar 嵌套的库 mod，运行面归 mdk——卡② packaging 段接管 jar/mods.toml 生成）。
+2. **swap 表**（stonecutter.gradle.kts，仅 forge 节点正向）：五缝包名带 distmarker/bus/items(+wrapper)/fluids + chunk.status 包移位 + isSameItemSameComponents 改名；regex + reverse 永不匹配哨兵。卡② rider 修正：forgeSide 谓词 `!endsWith("neoforge")`（原 endsWith("forge") 对 neoforge 节点亦真）。
 3. **依赖声明差异**：JEI impl 进编译类路径（上游 bundles.jei 三件，modularui 引 JEI 内部包）；`me.shedaniel.cloth:basic-math:0.6.1` 补 REI 的 me.shedaniel.math 包（上游 catalog clothmath="+"，钉 latest）；MouseTweaks 上游声明 compileOnly 但源码零引用（grep 实证）→ 不声明。
 4. **资源树拆分**：modularui.mixins.json 双腿各自成 json（src/{forge,neoforge}Main/resources）；atlas gui.json per-leg；injected_interfaces 按腿拆分（forge 侧仅 Component 注入）。
 5. **mixin AP**：forge 腿显式 mixin{} 块 + mixin:processor + mixinextras-common（上游同款）；neoforge 腿由 moddev 自带。
 6. **上游 dev-test 源集**（src/test）不 vendored（无测试面，任务卡验收=compileJava）。
-7. **parchment 不引入**（上游编译用官方 mojmap 面，与本仓双腿一致）。
+7. **parchment 不引入**（上游编译用官方 mojmap 面，与本仓双腿一致）。**mod 元数据模板落位**：上游 `src/main/templates/META-INF/{mods,neoforge.mods}.toml` 字节拷贝（sha256 逐一对账）至本目录 `templates/META-INF/`（避开 src/ 保零源改动），双腿 generateModMetadata 展开（上游 resources.gradle 同构，forge 节点 exclude neoforge.mods.toml / neoforge 节点 exclude mods.toml）。
+8. **jarJar 版本区间策略**（卡②）：裸依赖原形（嵌装=编译钉版，禁 require()——require 区间使 jarJar 配置独立解析，实测漂移 EvalEx 3.7.0≠编译面 3.6.0 弃用）；metadata.json 区间=MDG 对裸版本自动生成开区间（min=钉版/max=开放=上游量姿势）；mixinextras-forge 仅 forge 腿携带（上游 1.20.1 dependencies.gradle:15，1.21.1 无此声明=NeoForge 加载器自带，分腿跟随上游）。
+9. **工件名/manifest 适配**（卡②）：`base.archivesName = "modularui-mc<mc>"` 显式钉值（上游 = project.name+"-mc"+mc，本仓节点 project.name=节点名不可用）；jar manifest 逐键同上游 jars.gradle（MixinConfigs 仅 forge 腿，1.21.1 走 neoforge.mods.toml [[mixins]] 表）；Specification-Title 用 mod_id 等值替换（上游 project.name）。
 
 ## §2 `//?` hunk 分叉文件（132）
 
