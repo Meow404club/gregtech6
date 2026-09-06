@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "variant=bricks": {
+      "model": "gt6:block/stones/granite_black/bricks"
+    },
+    "variant=bricks_chiseled": {
+      "model": "gt6:block/stones/granite_black/bricks_chiseled"
+    },
+    "variant=bricks_cracked": {
+      "model": "gt6:block/stones/granite_black/bricks_cracked"
+    },
+    "variant=bricks_mossy": {
+      "model": "gt6:block/stones/granite_black/bricks_mossy"
+    },
+    "variant=bricks_redstone": {
+      "model": "gt6:block/stones/granite_black/bricks_redstone"
+    },
+    "variant=bricks_reinforced": {
+      "model": "gt6:block/stones/granite_black/bricks_reinforced"
+    },
+    "variant=cobble": {
+      "model": "gt6:block/stones/granite_black/cobble"
+    },
+    "variant=cobble_mossy": {
+      "model": "gt6:block/stones/granite_black/cobble_mossy"
+    },
+    "variant=small_bricks": {
+      "model": "gt6:block/stones/granite_black/small_bricks"
+    },
+    "variant=small_tiles": {
+      "model": "gt6:block/stones/granite_black/small_tiles"
+    },
+    "variant=smooth": {
+      "model": "gt6:block/stones/granite_black/smooth"
+    },
+    "variant=square_bricks": {
+      "model": "gt6:block/stones/granite_black/square_bricks"
+    },
+    "variant=stone": {
+      "model": "gt6:block/stones/granite_black/stone"
+    },
+    "variant=tiles": {
+      "model": "gt6:block/stones/granite_black/tiles"
+    },
+    "variant=windmill_tiles_a": {
+      "model": "gt6:block/stones/granite_black/windmill_tiles_a"
+    },
+    "variant=windmill_tiles_b": {
+      "model": "gt6:block/stones/granite_black/windmill_tiles_b"
+    }
+  }
+}

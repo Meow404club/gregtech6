@@ -68,7 +68,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task p13-burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
-                new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK)), // task p16-distillery-family
+                new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
+                new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK)), // task p19-stoneblocks-render
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -80,7 +81,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task p13-burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
-                new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK))); // task p16-distillery-family
+                new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
+                new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK))); // task p19-stoneblocks-render
         //?}
     }
 
@@ -431,6 +433,50 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : distilleryLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The stone-family block list (task p19-stoneblocks-render): the 17 GTStoneBlock
+     * registrations ({@link gregtech6.registry.GTStoneBlocks#blockArray()}, the CS.java:1668
+     * order). Upstream drops come from the BlockStones.getDrops override
+     * (BlockStones.java:731): {@code ST.make(this, 1, aMeta == STONE ? COBBL : aMeta)} — the
+     * classic stone-yields-cobble rule for variant 0, self for the other 15 variants. In
+     * THIS port's registration shape (one BlockItem per stone, no per-variant item ids) the
+     * two outcomes are the SAME ItemStack — the "COBBL variant item" does not exist as a
+     * distinct id, so the meta distinction collapses and the faithful equivalent is
+     * {@code dropSelf} for every block. Declared collapse (not a silent cut): the
+     * stone-yields-cobble behaviour is unrecoverable without splitting 16 items per stone —
+     * a registry-shape change outside this card's FILES_SCOPE, pool item. The table is per
+     * BLOCK (all 16 states share it, the vanilla default {@code gt6:blocks/<path>} location),
+     * mirroring upstream where one BlockStones serves all 16 metas.
+     */
+    public static List<Block> stoneLootBlocks() {
+        return gregtech6.registry.GTStoneBlocks.blockArray();
+    }
+
+    /** The stone-family self-drop provider (task p19-stoneblocks-render). */
+    public static final class GT6StoneBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6StoneBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6StoneBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return stoneLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : stoneLootBlocks()) dropSelf(tBlock); // the P8 self-drop direct translation
         }
     }
 }

@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "variant=bricks": {
+      "model": "gt6:block/stones/greenschist/bricks"
+    },
+    "variant=bricks_chiseled": {
+      "model": "gt6:block/stones/greenschist/bricks_chiseled"
+    },
+    "variant=bricks_cracked": {
+      "model": "gt6:block/stones/greenschist/bricks_cracked"
+    },
+    "variant=bricks_mossy": {
+      "model": "gt6:block/stones/greenschist/bricks_mossy"
+    },
+    "variant=bricks_redstone": {
+      "model": "gt6:block/stones/greenschist/bricks_redstone"
+    },
+    "variant=bricks_reinforced": {
+      "model": "gt6:block/stones/greenschist/bricks_reinforced"
+    },
+    "variant=cobble": {
+      "model": "gt6:block/stones/greenschist/cobble"
+    },
+    "variant=cobble_mossy": {
+      "model": "gt6:block/stones/greenschist/cobble_mossy"
+    },
+    "variant=small_bricks": {
+      "model": "gt6:block/stones/greenschist/small_bricks"
+    },
+    "variant=small_tiles": {
+      "model": "gt6:block/stones/greenschist/small_tiles"
+    },
+    "variant=smooth": {
+      "model": "gt6:block/stones/greenschist/smooth"
+    },
+    "variant=square_bricks": {
+      "model": "gt6:block/stones/greenschist/square_bricks"
+    },
+    "variant=stone": {
+      "model": "gt6:block/stones/greenschist/stone"
+    },
+    "variant=tiles": {
+      "model": "gt6:block/stones/greenschist/tiles"
+    },
+    "variant=windmill_tiles_a": {
+      "model": "gt6:block/stones/greenschist/windmill_tiles_a"
+    },
+    "variant=windmill_tiles_b": {
+      "model": "gt6:block/stones/greenschist/windmill_tiles_b"
+    }
+  }
+}

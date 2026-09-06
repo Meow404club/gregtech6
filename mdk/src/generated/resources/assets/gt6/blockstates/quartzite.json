@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "variant=bricks": {
+      "model": "gt6:block/stones/quartzite/bricks"
+    },
+    "variant=bricks_chiseled": {
+      "model": "gt6:block/stones/quartzite/bricks_chiseled"
+    },
+    "variant=bricks_cracked": {
+      "model": "gt6:block/stones/quartzite/bricks_cracked"
+    },
+    "variant=bricks_mossy": {
+      "model": "gt6:block/stones/quartzite/bricks_mossy"
+    },
+    "variant=bricks_redstone": {
+      "model": "gt6:block/stones/quartzite/bricks_redstone"
+    },
+    "variant=bricks_reinforced": {
+      "model": "gt6:block/stones/quartzite/bricks_reinforced"
+    },
+    "variant=cobble": {
+      "model": "gt6:block/stones/quartzite/cobble"
+    },
+    "variant=cobble_mossy": {
+      "model": "gt6:block/stones/quartzite/cobble_mossy"
+    },
+    "variant=small_bricks": {
+      "model": "gt6:block/stones/quartzite/small_bricks"
+    },
+    "variant=small_tiles": {
+      "model": "gt6:block/stones/quartzite/small_tiles"
+    },
+    "variant=smooth": {
+      "model": "gt6:block/stones/quartzite/smooth"
+    },
+    "variant=square_bricks": {
+      "model": "gt6:block/stones/quartzite/square_bricks"
+    },
+    "variant=stone": {
+      "model": "gt6:block/stones/quartzite/stone"
+    },
+    "variant=tiles": {
+      "model": "gt6:block/stones/quartzite/tiles"
+    },
+    "variant=windmill_tiles_a": {
+      "model": "gt6:block/stones/quartzite/windmill_tiles_a"
+    },
+    "variant=windmill_tiles_b": {
+      "model": "gt6:block/stones/quartzite/windmill_tiles_b"
+    }
+  }
+}
