@@ -20,6 +20,11 @@
 package gregtech6.recipes;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.slf4j.Logger;
+import com.mojang.logging.LogUtils;
 
 /**
  * Static GT6 RecipeMap registry, port counterpart of the Furnace line in
@@ -100,7 +105,38 @@ import java.util.HashSet;
  * cleanly. W2 (p4-machine-oven) wires {@code init()} into the mod lifecycle.
  */
 public class GT6RecipeMaps {
+
+	private static final Logger LOGGER = LogUtils.getLogger();
+
+	/**
+	 * The generation-reset hooks: every loader that owns a private static "poured" flag
+	 * registers its resetForTest here from its static initializer, so {@link #reset()}
+	 * retires the WHOLE generation. One generation = the 11 map fields + RecipeMap.RECIPE_MAPS
+	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
+	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
+	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
+	 * reset via hook registration, no reverse maps→loader class dependency; the registration
+	 * direction loader→maps is the same direction as the existing pour dependency, no clinit
+	 * cycle — this class's static state is the empty hook list plus the null map fields).
+	 */
+	private static final CopyOnWriteArrayList<Runnable> sGenerationResetHooks = new CopyOnWriteArrayList<>();
+
+	/**
+	 * Registers a generation-reset hook (idempotent). Package-private by design — the
+	 * recipe loaders' static initializers are the only intended callers, keeping this off
+	 * the public API surface.
+	 */
+	static void registerGenerationResetHook(Runnable aHook) {
+		sGenerationResetHooks.addIfAbsent(aHook);
+	}
+
+	/** Test seam (package-private, read-only copy): the registered hooks — the guard test's structural pin, i.e. the poison-capable loader ledger. */
+	static List<Runnable> generationResetHooks() {
+		return List.copyOf(sGenerationResetHooks);
+	}
+
 	/** RM.java:103 — the Oven/Furnace map backed by the vanilla smelting recipes. */
+
 	public static volatile RecipeMapFurnace FURNACE;
 
 	/** RM.java:78 — the Coke Oven map (1 in / 9 out items, 0 in / 1 out fluids). */
@@ -233,7 +269,12 @@ public class GT6RecipeMaps {
 		FURNACE_FUEL = new RecipeMapFurnaceFuel();
 	}
 
-	/** Port-only: drops the whole generation (RecipeMap.RECIPE_MAPS included) for a clean re-init. */
+	/**
+	 * Port-only: drops the whole generation (RecipeMap.RECIPE_MAPS included) for a clean
+	 * re-init. The whole generation includes every registered loader pour-flag: each hook
+	 * runs after the map teardown, isolated per hook (one failing hook must not orphan the
+	 * cleanup of the rest — a half-cleared generation is the poison state in a variant form).
+	 */
 	public static synchronized void reset() {
 		FURNACE = null;
 		COKE_OVEN = null;
@@ -247,5 +288,9 @@ public class GT6RecipeMaps {
 		DRYING = null;
 		FURNACE_FUEL = null;
 		RecipeMap.reset();
+		for (Runnable tHook : sGenerationResetHooks) {
+			try {tHook.run();}
+			catch (Throwable tThrowable) {LOGGER.warn("GT6 RecipeMaps: a generation-reset hook failed — continuing with the remaining hooks", tThrowable);}
+		}
 	}
 }

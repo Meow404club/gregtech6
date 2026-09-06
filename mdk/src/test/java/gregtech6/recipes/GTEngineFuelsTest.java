@@ -148,6 +148,10 @@ class GTEngineFuelsTest extends GTRecipesOfflineTestBase {
 	/** load() is idempotent per generation; a reset re-pours cleanly. */
 	@Test
 	void loadIsIdempotentPerGeneration() {
+		// self-grounding (ADR-P18): boot leftovers (21.1 junit-fml) or a prior class's unpaired
+		// reset() never feed this test — the first load() below pours THIS method's generation.
+		GT6RecipeMaps.reset();
+		GT6RecipesEngineFuels.resetForTest();
 		GT6RecipesEngineFuels.sFluidResolver = WATER_FIXTURE;
 		GT6RecipesEngineFuels.load();
 		GT6RecipesEngineFuels.load();
