@@ -285,8 +285,9 @@ class TileEntityBase10MultiBlockMachineTest extends GTMultiBlocksOfflineTestBase
 		CompoundTag tTag = tOven.saveWithoutMetadata();
 
 		TestProcessingOven tRestored = new TestProcessingOven(sCokeOvenType, P1, Blocks.BRICKS.defaultBlockState());
-		// the load face reads level.registryAccess() for the provider-based inventory/fluid
-		// legs (21.1) — the fixture level supplies it (task p15-m4-test-infra-2)
+		// the load face rides the frozen NBT_ACCESS builtin view for the provider-based
+		// inventory/fluid legs (21.1) — no level needed on the load path (ADR-P18);
+		// the saveWithoutMetadata face still rides the level'd fixture (task p15-m4-test-infra-2)
 		tRestored.setLevel(tLevel);
 		tRestored.load(tTag);
 
@@ -299,6 +300,48 @@ class TileEntityBase10MultiBlockMachineTest extends GTMultiBlocksOfflineTestBase
 		assertEquals(3, tRestored.slot(0).getCount());
 		assertEquals(2, tRestored.slot(1).getCount());
 		assertEquals(750, tRestored.mTanksOutput[0].amount());
+		assertEquals(1, tRestored.mOutputItems.length);
+		assertEquals(5, tRestored.mOutputItems[0].getCount());
+		assertEquals(1, tRestored.mOutputFluids.length);
+		assertEquals(500, tRestored.mOutputFluids[0].getAmount());
+	}
+
+	/**
+	 * The level-less load contract (ADR-P18): vanilla 1.21.1 loads a BE off the chunk via
+	 * BlockEntity.loadStatic BEFORE setLevel — the load face must restore the machine state
+	 * off the frozen NBT_ACCESS view without a level and without throwing (the 1.21.1
+	 * dead-controller bug: a level-sourced provider NPEs here and vanilla drops the BE).
+	 * Green on the forge leg by construction (no registry access on that load path); pins
+	 * the 21.1 leg should its tests ever enter CI.
+	 */
+	@Test
+	void loadWithoutLevelRestoresMachineState() {
+		GT6RecipeMaps.init();
+		GT6RecipeMaps.COKE_OVEN.addRecipe(standardRecipe());
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TestProcessingOven tOven = newOven(tLevel);
+
+		tOven.mInventory.insertItem(0, new ItemStack(Items.COAL, 3), false);
+		tOven.mEnergy = 42;
+		tOven.mProgress = 777;
+		tOven.mMaxProgress = 3600;
+		tOven.mIgnited = 33;
+		tOven.mStopped = true;
+		tOven.mOutputItems = new ItemStack[] {new ItemStack(Items.DIAMOND, 5)};
+		tOven.mOutputFluids = new FluidStack[] {new FluidStack(Fluids.WATER, 500)};
+
+		CompoundTag tTag = tOven.saveWithoutMetadata();
+
+		// the BE comes off the chunk bare (no level) — exactly the loadStatic shape
+		TestProcessingOven tRestored = new TestProcessingOven(sCokeOvenType, P1, Blocks.BRICKS.defaultBlockState());
+		tRestored.load(tTag); // must not throw
+
+		assertEquals(42, tRestored.mEnergy);
+		assertEquals(777, tRestored.mProgress);
+		assertEquals(3600, tRestored.mMaxProgress);
+		assertEquals(33, tRestored.mIgnited);
+		assertTrue(tRestored.mStopped);
+		assertEquals(3, tRestored.slot(0).getCount());
 		assertEquals(1, tRestored.mOutputItems.length);
 		assertEquals(5, tRestored.mOutputItems[0].getCount());
 		assertEquals(1, tRestored.mOutputFluids.length);
