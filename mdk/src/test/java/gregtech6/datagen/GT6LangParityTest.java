@@ -34,7 +34,9 @@ import net.minecraft.SharedConstants;
 import net.minecraft.data.PackOutput;
 import net.minecraft.server.Bootstrap;
 
+import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GTWireSpecs;
 
 public class GT6LangParityTest {
 
@@ -251,6 +253,36 @@ public class GT6LangParityTest {
 		// the covers: the template carries the parens, the tier rides a literal
 		assertEquals("Compact Electric Conveyor (LV)", substitute(en().get("gt6.cover.conveyor.display"), "LV"));
 		assertEquals("Compact Robot Arm (PUV1)", substitute(en().get("gt6.cover.robot_arm.display"), "PUV1"));
+	}
+
+	/**
+	 * The compose material-slot presence pin (review R2 finding): the compose references
+	 * {@code gt6.material.<snake>} UNCONDITIONALLY, but tier materials are created with
+	 * {@code mID -1} (Superconductor, MT.java:986 {@code tier()}) and never reach the
+	 * registration-face material walk (GT6EnUs.addMaterialNames {@code mID < 0} continue) —
+	 * the 16 superconductor variants composed the RAW key while every slot-structure and
+	 * expansion pin stayed green, because none checked the material KEY FACE. This walks the
+	 * whole 626-variant compose domain (620 electric + 6 redstone) against the en recording
+	 * face, so a keyface/compose-domain mismatch of this class is structurally red — the B2
+	 * rows domain reuses the shape.
+	 */
+	@Test
+	public void everyComposedVariantMaterialKeyIsOnTheEnFace() {
+		List<String> tMissing = new ArrayList<>();
+		int tChecked = 0;
+		for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) {
+			tChecked++;
+			String tKey = "gt6.material." + MaterialPrefixItem.snakeCase(tVariant.row().material().get().mNameInternal);
+			if (!en().containsKey(tKey)) tMissing.add(GTWireSpecs.registryName(tVariant) + " -> " + tKey);
+		}
+		for (GTWireSpecs.Variant tVariant : GTWireSpecs.redstoneVariants()) {
+			tChecked++;
+			String tKey = "gt6.material." + MaterialPrefixItem.snakeCase(tVariant.row().material().get().mNameInternal);
+			if (!en().containsKey(tKey)) tMissing.add(GTWireSpecs.registryName(tVariant) + " -> " + tKey);
+		}
+		assertEquals(626, tChecked, "the compose domain census (the atomic laser/legacy forms are NOT in scope)");
+		assertTrue(tMissing.isEmpty(), "every composed variant's material key must exist on the en face"
+			+ " (a missing face renders the RAW key at runtime): " + tMissing);
 	}
 
 	/** The wire-name expansion over the en face: aSize 0 = the size-less plain template. */

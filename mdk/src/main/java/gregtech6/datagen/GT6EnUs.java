@@ -1,6 +1,7 @@
 package gregtech6.datagen;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import gregapi.data.OP;
@@ -19,6 +20,7 @@ import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTStoneBlocks;
+import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
 import gregtech6.covers.GT6Covers;
 import net.minecraft.data.PackOutput;
@@ -375,6 +377,8 @@ public class GT6EnUs extends LanguageProvider {
         // task p10-wire-laser-placeholder — the laser stays ATOMIC (the row is material-less,
         // Loader:1815 verbatim — no composition applies)
         add("block.gt6.wire_laser", "Laser Fiber Wire");
+        // review R2: the tier-material backfill so every compose material slot resolves
+        addWireRowMaterialNames();
         // task p11-flat-redstone-tab — the two new tab titles, the upstream MTE category
         // strings verbatim: "Redstone Wires" (every Loader:1895-1902 row, tab id 27050) and
         // "Laser Wires" (Loader:1815, tab id 24900) — upstream registers the display via
@@ -382,6 +386,39 @@ public class GT6EnUs extends LanguageProvider {
         // MultiTileEntityRegistry.java:191), so the value is the registration literal.
         add(GTWires.REDSTONE_TAB_TITLE_KEY, "Redstone Wires");
         add(GTWires.LASER_TAB_TITLE_KEY, "Laser Wires");
+    }
+
+    /**
+     * The wire-row material small-unit backfill (review R2): the compose material slot
+     * references {@code gt6.material.<snake>} UNCONDITIONALLY, but {@link #addMaterialNames}
+     * walks the REGISTRATION face ({@code mID >= 0} only) — tier materials are created with
+     * {@code mID -1} (Superconductor, MT.java:986 {@code tier()}), never reach that walk, and
+     * the 16 superconductor variants composed the RAW key ("1x gt6.material.superconductor
+     * Wire"). The guard ladder of the material walk is replayed over the same registration
+     * source, then every compose-domain row material (the 30 electric + 3 redstone rows,
+     * deliberately NOT the material-less laser row) that missed the walk gets its face —
+     * currently exactly one data point ("Superconductor", the MT.java:986 local verbatim).
+     * The parity test pins ALL 626 variant material keys on the en face, so a future row
+     * missing BOTH walks is structurally red instead of a silent raw-key render.
+     */
+    private void addWireRowMaterialNames() {
+        Set<String> tEmitted = new HashSet<>();
+        // (a) replay the addMaterialNames guard ladder: which keys did the material walk emit?
+        for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+            if (tMaterial == null || tMaterial.mID < 0) continue;
+            tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias merge, MaterialRegistry.java:182-185
+            if (tMaterial == null || tMaterial.mID < 0 || tMaterial.mNameLocal == null) continue;
+            tEmitted.add("gt6.material." + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal));
+        }
+        // (b) backfill exactly the compose-domain misses (Set.add == was absent)
+        for (List<GTWireSpecs.Row> tRows : List.of(GTWireSpecs.ROWS, GTWireSpecs.REDSTONE_ROWS)) {
+            for (GTWireSpecs.Row tRow : tRows) {
+                OreDictMaterial tMaterial = tRow.material().get();
+                if (tMaterial == null || tMaterial.mNameLocal == null) continue;
+                String tKey = "gt6.material." + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal);
+                if (tEmitted.add(tKey)) add(tKey, tMaterial.mNameLocal);
+            }
+        }
     }
 
     /**

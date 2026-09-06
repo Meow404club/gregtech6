@@ -213,6 +213,11 @@ HAND_TRANSLATIONS = {
     #   conveyor/robot arm = dump-verbatim nouns (gt.multiitem.technological.12040=
     #   "输送机模块 (ULV)" / :12080="机械臂 (ULV)", tmp/gregtech.lang);
     #   the laser atomic key = dump-verbatim "光纤" (gt.multitileentity.24900).
+    #   NOTE (review R2): gt6.material.superconductor is DELIBERATELY absent here —
+    #   Superconductor is a tier material (mID -1, MT.java:986) with no dump zh face and
+    #   an en proper noun identical in both locales; the composed slot falls back to the
+    #   English "Superconductor" per-key at runtime (the declared state). A hand row is
+    #   a one-line TSV PR for the translation layer, NOT a datagen concern.
     "gt6.wire.display": ("%s×%s%s", "hand"),
     "gt6.wire.display.plain": ("%s%s", "hand"),
     "gt6.wire.form.wire": ("导线", "hand"),
