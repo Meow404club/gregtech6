@@ -314,6 +314,18 @@ def run_and_record(args):
     else:
         result = run_session_recorded(stems, node, args.concurrency)
     result["wall_s"] = round(time.monotonic() - started, 1)
+    # The top-level exit key the --dual reader consumes (run_dual's
+    # mine_json["exit"] | other_res.get("exit", 1)): run_perboot's shape
+    # ({mode, node, wall_s, boots, chains} — sweep.py run_perboot) carries no
+    # such key, only the per-chain records do, so a perboot --dual leg died
+    # with a KeyError at the very end of a full sweep. run_session_recorded
+    # (framework.py:689) computes its own {"exit": overall}; aggregate the
+    # same _failed semantics main() uses for the non-dual exit code and let
+    # setdefault keep the session model's framework-computed value untouched
+    # (tmp.p18.pool: sweep-run-dual-perboot-exit-keyerror).
+    result.setdefault("exit",
+                      1 if any(_failed(res) for res in result["chains"].values())
+                      else 0)
     path = result_path(args.mode, node, args.concurrency)
     path.write_text(json.dumps(result, indent=1), encoding="utf-8")
     failures = [name for name, res in result["chains"].items() if _failed(res)]

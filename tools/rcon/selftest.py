@@ -29,6 +29,10 @@ p17-rcon-framework-fixes):
   7 adaptive quiet window (P18, same card) — the pure convergence logic:
     single-frame decay to a hard floor, reset on ANY second frame, silence
     keeps the window, and the GT6_RCON_ADAPTIVE_QUIET off-switch parses.
+  8 perboot exit aggregate (P18, this card) — run_and_record's result carries
+    the top-level "exit" key the --dual reader consumes, the _failed
+    aggregation matches main()'s non-dual exit code, and the session model's
+    framework-computed exit survives the setdefault untouched.
 """
 
 import os
@@ -293,6 +297,70 @@ def check_7_adaptive_quiet_window():
           disabled is False and enabled is True)
 
 
+def check_8_perboot_exit_aggregate():
+    """The --dual reader's top-level exit key on the perboot shape (P18).
+
+    run_dual consumed mine_json["exit"], but run_perboot's result carries only
+    per-chain exits — a perboot --dual leg KeyError'd at the very end of a
+    full sweep (tmp.p18.pool: sweep-run-dual-perboot-exit-keyerror). The fix
+    aggregates the exit in run_and_record via setdefault, so the session
+    model's framework-computed exit (framework.run_session_recorded) stays
+    untouched and perboot records gain the same _failed semantics main() uses
+    for the non-dual exit code.
+    """
+    print("\n--- 8: perboot result carries the --dual exit key (P18)")
+    import argparse
+    import sweep
+    real_sleep = _install_fakes()
+    gt6server.assert_ports_free = lambda *a, **k: True
+    ok_roster = [framework.Chain(
+        name="selftest-ok", slug="p18sok",
+        sites=gt6world.declare_sites(gt6world.Site(0, 64, 0)),
+        steps=[framework.Step("say hi", expect="ok")])]
+    bad_roster = ok_roster + [framework.Chain(
+        name="selftest-bad", slug="p18sbad",
+        sites=gt6world.declare_sites(gt6world.Site(0, 64, 0)),
+        steps=[framework.Step("say boom", expect="NOPE")])]
+    real_select, real_load_chain, real_path = \
+        sweep.select, sweep.load_chain, sweep.result_path
+    scratch = Path(tempfile.mkdtemp())
+    ok_chain, bad_chain = ok_roster[0], bad_roster[1]
+    fake_chains = {"selftest-ok": ok_chain, "selftest-bad": bad_chain}
+    sweep.select = lambda stems, only: ["selftest-ok"]
+    sweep.load_chain = lambda stem: fake_chains[stem]
+    sweep.result_path = lambda mode, node, concurrency=1, tag=None: \
+        scratch / f"selftest_sweep_{mode}.json"
+    try:
+        args = argparse.Namespace(mode="perboot", node="1.20.1-forge",
+                                  concurrency=1, only=None)
+        green = sweep.run_and_record(args)
+        check("8a green perboot run: top-level exit key present and 0",
+              green.get("exit") == 0, f"exit={green.get('exit')!r}")
+        check("8b the recorded JSON carries the exit key (--dual's other_res read)",
+              '"exit": 0' in (scratch / "selftest_sweep_perboot.json")
+              .read_text(encoding="utf-8"))
+        sweep.select = lambda stems, only: ["selftest-ok", "selftest-bad"]
+        red = sweep.run_and_record(args)
+        check("8c red perboot run: top-level exit key present and 1",
+              red.get("exit") == 1, f"exit={red.get('exit')!r}")
+        try:
+            code = red["exit"] | green.get("exit", 1)
+            check("8d run_dual's reader expression evaluates on the perboot shape",
+                  code == 1)
+        except KeyError as exc:
+            check("8d run_dual's reader expression evaluates on the perboot shape",
+                  False, f"KeyError {exc}")
+        sess_args = argparse.Namespace(mode="session", node="1.20.1-forge",
+                                       concurrency=1, only=None)
+        sess = sweep.run_and_record(sess_args)
+        check("8e session model keeps its framework-computed exit (setdefault no-op)",
+              sess.get("exit") == 1, f"exit={sess.get('exit')!r}")
+    finally:
+        sweep.select, sweep.load_chain, sweep.result_path = \
+            real_select, real_load_chain, real_path
+        time.sleep = real_sleep
+
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
@@ -301,6 +369,7 @@ def main():
     check_5_ownership_gates()
     check_6_sweep_result_isolation()
     check_7_adaptive_quiet_window()
+    check_8_perboot_exit_aggregate()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 
