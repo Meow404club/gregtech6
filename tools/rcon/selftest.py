@@ -33,12 +33,23 @@ p17-rcon-framework-fixes):
     the top-level "exit" key the --dual reader consumes, the _failed
     aggregation matches main()'s non-dual exit code, and the session model's
     framework-computed exit survives the setdefault untouched.
+  9 wait_done monotonic window (P19, card p19-rcon-waitdone-8kb) — the old
+    last-8-KiB tail poll faked a boot timeout once >8 KiB scrolled past the
+    `Done (` marker, and the dead-pid diagnostic lost the crash ERROR line to
+    the same window. Real temp-file logs pin the old-code failure shapes (the
+    marker / the ERROR line verifiably absent from log_tail) next to the new
+    behaviour: monotonic delta scan finds the beyond-window marker, a marker
+    split across read boundaries still matches, a marker landing between
+    polls ends the wait early, the dead-pid error attributes from the whole
+    log, and "no marker anywhere" still times out False.
 """
 
 import os
 import socket
+import subprocess
 import sys
 import tempfile
+import threading
 import time
 from pathlib import Path
 
@@ -51,6 +62,11 @@ import framework
 import gt6server
 import gt6rcon
 import gt6world
+
+# The real wait_done, captured BEFORE any _install_fakes() swap (the fakes are
+# process-global and restored by design "never") — section 9 exercises the
+# genuine polling loop, not the lambda-True stand-in sections 1/8 run on.
+REAL_WAIT_DONE = gt6server.wait_done
 
 P16_STEMS = ("p16_pattern_checker", "p16_aqua_fluids", "p16_side_io",
              "p16_machine_fluid_gui", "p16_drying_rows", "p16_form_scaffold",
@@ -361,6 +377,104 @@ def check_8_perboot_exit_aggregate():
         time.sleep = real_sleep
 
 
+def _reaped_pid():
+    """A pid that is genuinely gone: spawn + reap a trivial child (the selftest
+    runs no servers and kills nothing — the child exits and is waited on)."""
+    child = subprocess.Popen(["true"])
+    child.wait()
+    return child.pid
+
+
+def _scroll_spam(count, tag):
+    """Fast-scrolling boot filler: ~56 B lines, none of them error-ish."""
+    base = f"[Server thread/INFO]: scroll padding {tag} "
+    return "".join(f"{base}{index:05d} 0123456789abcdef\n" for index in range(count))
+
+
+def check_9_waitdone_monotonic_window():
+    """P19: wait_done's old fixed 8 KiB tail window on a sick boot.
+
+    Two failure forms, both pinned against the real old-code primitive
+    (`DONE_MARKER in log_tail(...)` / the log_tail-built diagnostic) on real
+    temp-file logs, then proven fixed: ① a `Done (` printed and scrolled
+    beyond the last 8 KiB by later output faked a timeout ("never printed
+    Done" about a server that was up); ② a crash ERROR line beyond the same
+    window vanished from the dead-pid ServerStartError diagnostic.
+    """
+    print("\n--- 9: wait_done monotonic window (P19, sick-boot forms)")
+    scratch = Path(tempfile.mkdtemp())
+    marker_line = "Done (3.596s)! For help, type \"help\"\n"
+
+    # form 1: the marker, then >8 KiB of post-Done scroll (sick-but-alive boot)
+    done_log = scratch / "done_beyond_window.log"
+    done_log.write_text("[main/INFO]: starting\n" + marker_line
+                        + _scroll_spam(600, "post"), encoding="utf-8")
+    check("9a pin (old code): marker in the log but beyond the 8 KiB tail window",
+          gt6server.DONE_MARKER in done_log.read_text(encoding="utf-8")
+          and gt6server.DONE_MARKER not in gt6server.log_tail(done_log))
+    check("9b fix: wait_done finds the beyond-window marker",
+          REAL_WAIT_DONE(done_log, timeout=5.0, poll=0.05) is True)
+
+    # the carry: a marker split across two reads must still match
+    split_log = scratch / "split_marker.log"
+    split_log.write_text("[main/INFO]: boot Don", encoding="utf-8")
+    chunk1, offset1, carry1 = gt6server._new_log_bytes(split_log, 0)
+    check("9c split marker: first read lacks it and the carry keeps its bytes",
+          gt6server.DONE_MARKER not in chunk1 and carry1.endswith(b" Don"),
+          f"carry={carry1!r}")
+    with split_log.open("a", encoding="utf-8") as handle:
+        handle.write("e (2.1s)! For help\n")
+    chunk2, _, _ = gt6server._new_log_bytes(split_log, offset1, carry1)
+    check("9d split marker: the carried delta completes the match",
+          gt6server.DONE_MARKER in chunk2)
+
+    # a marker landing BETWEEN polls ends the wait early (the loop iterates
+    # and accumulates; it must not judge the log once and give up)
+    late_log = scratch / "late_marker.log"
+    late_log.write_text(_scroll_spam(10, "early"), encoding="utf-8")
+
+    def _append_marker_late():
+        time.sleep(0.2)
+        with late_log.open("a", encoding="utf-8") as handle:
+            handle.write(marker_line)
+
+    appending = threading.Thread(target=_append_marker_late, daemon=True)
+    appending.start()
+    started = time.monotonic()
+    found = REAL_WAIT_DONE(late_log, timeout=5.0, poll=0.05)
+    elapsed = time.monotonic() - started
+    check("9e marker landing between polls is caught by the delta loop",
+          found is True and elapsed < 2.5, f"elapsed {elapsed:.2f}s of 5s")
+    appending.join(timeout=1.0)
+
+    # form 2: a crash ERROR line, then >8 KiB of post-crash scroll (gradle
+    # epilogue) — the old diagnostic's log_tail lost the attribution
+    crash_log = scratch / "error_beyond_window.log"
+    crash_line = ("[main/ERROR] Failed to start the minecraft server "
+                  "GT6RCONCRASH42\n")
+    crash_log.write_text("[main/INFO]: booting\n" + crash_line
+                         + _scroll_spam(600, "epilogue"), encoding="utf-8")
+    check("9f pin (old code): crash ERROR line beyond the 8 KiB tail window",
+          "GT6RCONCRASH42" in crash_log.read_text(encoding="utf-8")
+          and "GT6RCONCRASH42" not in gt6server.log_tail(crash_log))
+    try:
+        REAL_WAIT_DONE(crash_log, timeout=5.0, poll=0.05,
+                            pid=_reaped_pid())
+        check("9g dead pid before Done raises ServerStartError", False)
+    except gt6server.ServerStartError as exc:
+        message = str(exc)
+        check("9g dead pid before Done raises ServerStartError", True)
+        check("9h fix: attribution names the beyond-window ERROR line "
+              "(whole-log error_tail, tail kept for the death scene)",
+              "GT6RCONCRASH42" in message and "--- plain tail:" in message,
+              message[:90])
+
+    # the contract keeps its negative: no marker anywhere + live pid -> False
+    check("9i genuinely markerless log still times out False (contract kept)",
+          REAL_WAIT_DONE(scratch / "absent.log", timeout=0.2, poll=0.05,
+                              pid=os.getpid()) is False)
+
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
@@ -370,6 +484,7 @@ def main():
     check_6_sweep_result_isolation()
     check_7_adaptive_quiet_window()
     check_8_perboot_exit_aggregate()
+    check_9_waitdone_monotonic_window()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 
