@@ -190,7 +190,7 @@ public class GTWireSpecsCensusTest {
     @Test
     public void displayNamesComposeTheWireTemplates() {
         // task p20-i18n-compose-wires: the pre-installed full strings ("1x Tin Wire" &co)
-        // became the GTWireBlock.displayNameOf composition — "%sx %s%s" over (size,
+        // became the GTWireBlock.displayNameOf composition — "%sx %s %s" over (size,
         // material small unit, form unit). The REGISTRY names above stay untouched; the
         // en template wording lives in the provider, here the slot structure is the pin.
         TranslatableContents tName = contents(GTWireBlock.displayNameOf(GTWireSpecs.find("tin", 1, false)));

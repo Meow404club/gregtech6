@@ -367,8 +367,8 @@ public class GT6EnUs extends LanguageProvider {
         add("itemGroup.gt6.electric_wires", "Electric Wires");
         // the five position-param templates the runtime composes (electric takes the size
         // slot, redstone is the size-less variant, the form units close every template)
-        add(GTWireBlock.DISPLAY_KEY, "%sx %s%s");
-        add(GTWireBlock.DISPLAY_PLAIN_KEY, "%s%s");
+        add(GTWireBlock.DISPLAY_KEY, "%sx %s %s");
+        add(GTWireBlock.DISPLAY_PLAIN_KEY, "%s %s");
         add(GTWireBlock.FORM_WIRE_KEY, "Wire");
         add(GTWireBlock.FORM_CABLE_KEY, "Cable");
         add(GTWireBlock.FORM_WIRELAMP_KEY, "Wirelamp");

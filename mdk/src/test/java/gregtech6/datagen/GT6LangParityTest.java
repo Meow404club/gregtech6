@@ -230,6 +230,55 @@ public class GT6LangParityTest {
 		}));
 	}
 
+	/**
+	 * The FULL-EXPANSION pin (the review round 1 finding: the slot structure alone let the
+	 * en template ship as {@code "%sx %s%s"} with bare-noun form units — every composed name
+	 * rendered "1x TinWire" and no test noticed). The template + small-unit faces recorded
+	 * above are substituted slot-by-slot (the reviewer's programmatic comparison posture) and
+	 * pinned EQUAL to the upstream row strings word for word — the space between the material
+	 * and the form RIDES THE EN TEMPLATE ({@code "%sx %s %s"}); zh stays the no-space CJK
+	 * shape. The B2 rows domain must repeat this pin shape.
+	 */
+	@Test
+	public void wireTemplatesExpandToTheUpstreamStrings() {
+		// electric: "%sx %s %s" over (size, gt6.material.<snake>, form unit)
+		assertEquals("1x Tin Wire", expandWire(1, "tin", "gt6.wire.form.wire"));
+		assertEquals("12x Tin Cable", expandWire(12, "tin", "gt6.wire.form.cable"));
+		assertEquals("16x Tungsten Wire", expandWire(16, "tungsten", "gt6.wire.form.wire"));
+		// redstone: the size-less plain template, bare Lumium wire = the Wirelamp unit
+		assertEquals("Red Alloy Wire", expandWire(0, "red_alloy", "gt6.wire.form.wire"));
+		assertEquals("Lumium Wirelamp", expandWire(0, "lumium", "gt6.wire.form.wirelamp"));
+		// the covers: the template carries the parens, the tier rides a literal
+		assertEquals("Compact Electric Conveyor (LV)", substitute(en().get("gt6.cover.conveyor.display"), "LV"));
+		assertEquals("Compact Robot Arm (PUV1)", substitute(en().get("gt6.cover.robot_arm.display"), "PUV1"));
+	}
+
+	/** The wire-name expansion over the en face: aSize 0 = the size-less plain template. */
+	private static String expandWire(int aSize, String aMaterialSnake, String aFormKey) {
+		String tTemplate = en().get(aSize > 0 ? "gt6.wire.display" : "gt6.wire.display.plain");
+		String tMaterial = en().get("gt6.material." + aMaterialSnake);
+		assertTrue(tTemplate != null && tMaterial != null, "the expansion face must be recorded");
+		return substitute(tTemplate, aSize > 0 ? new String[] {String.valueOf(aSize), tMaterial, en().get(aFormKey)}
+			: new String[] {tMaterial, en().get(aFormKey)});
+	}
+
+	/** Substitutes the {@code %s} slots in order — the game-side rendering of a fully-translated template face. */
+	private static String substitute(String aTemplate, String... aArgs) {
+		StringBuilder rBuilder = new StringBuilder();
+		int tArg = 0;
+		for (int i = 0; i < aTemplate.length(); i++) {
+			if (aTemplate.charAt(i) == '%' && i + 1 < aTemplate.length() && aTemplate.charAt(i + 1) == 's') {
+				assertTrue(tArg < aArgs.length, "template " + aTemplate + " consumed more slots than provided");
+				rBuilder.append(aArgs[tArg++]);
+				i++;
+			} else {
+				rBuilder.append(aTemplate.charAt(i));
+			}
+		}
+		assertTrue(tArg == aArgs.length, "template " + aTemplate + " left " + (aArgs.length - tArg) + " slots unfilled");
+		return rBuilder.toString();
+	}
+
 	@Test
 	public void zhCoverageMeetsTheRatchetFloor() {
 		int tSize = zh().size();

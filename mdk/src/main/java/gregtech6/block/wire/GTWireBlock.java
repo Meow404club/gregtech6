@@ -207,10 +207,10 @@ public class GTWireBlock extends GTEntityBlock {
 	// (ADR 2026-09-06-p20-i18n-zhcn-pipeline §1.4).
 	// ---------------------------------------------------------------------------
 
-	/** The electric display template "{@code %sx %s%s}" — size, material, form slots. */
+	/** The electric display template "{@code %sx %s %s}" — size, material, form slots (the material/form SPACE rides the template: the form units are bare nouns). */
 	public static final String DISPLAY_KEY = "gt6.wire.display";
 
-	/** The redstone display template "{@code %s%s}" — material + form, NO size slot (upstream shows no multiplier on the family, Loader:1893-1902). */
+	/** The redstone display template "{@code %s %s}" — material + form, NO size slot (upstream shows no multiplier on the family, Loader:1893-1902; the space rides the template). */
 	public static final String DISPLAY_PLAIN_KEY = "gt6.wire.display.plain";
 
 	/** The bare-wire form unit ("Wire", the upstream form literal). */
@@ -224,7 +224,7 @@ public class GTWireBlock extends GTEntityBlock {
 
 	/**
 	 * The composed display name — the pure compose seam (the GTWireTint posture: no block
-	 * instance, the tests walk it directly). ELECTRIC composes {@code "%sx %s%s"} over
+	 * instance, the tests walk it directly). ELECTRIC composes {@code "%sx %s %s"} over
 	 * (size, material, form); REDSTONE composes the same shape WITHOUT the size slot (the
 	 * old GTWireSpecs redstone branch: no multiplier in the upstream registration name);
 	 * the form slot picks Cable on the insulated form, else Wirelamp on a luminous row,
