@@ -23,6 +23,9 @@ p17-rcon-framework-fixes):
   4 sweep registry — the eight p16 chains are registered as one cluster.
   5 boot-ownership gates — ports-free trips on a real LISTEN socket; the
     pid-file gate accepts only THIS boot's pid.
+  6 sweep result worktree isolation (P18, card p18-rcon-sweep-quietwin) —
+    result_path names carry this worktree's tag by default and diverge under
+    a foreign tag (the --dual reader's other-side lookup).
 """
 
 import socket
@@ -236,12 +239,29 @@ def check_5_ownership_gates():
         check("5e pid gate rejects garbage", True)
 
 
+def check_6_sweep_result_isolation():
+    print("\n--- 6: sweep result JSON worktree isolation (P18)")
+    import sweep
+    mine = sweep.result_path("session", "1.20.1-forge", 2)
+    check("6a default result_path carries THIS worktree's tag",
+          mine.name.endswith(f"_{framework.worktree_tag()}.json"), mine.name)
+    check("6b perboot label keeps the node-suffix shape",
+          sweep.result_path("perboot", "1.20.1-forge").name
+          == f"gt6_rs_sweep_perboot_1201-forge_{framework.worktree_tag()}.json")
+    foreign = sweep.result_path("session", "1.20.1-forge", 2, tag="0123abcd")
+    check("6c foreign-tag name differs (parallel worktrees / dual legs never collide)",
+          foreign != mine and "0123abcd" in foreign.name, foreign.name)
+    check("6d local tag helper == framework.worktree_tag() on this root",
+          sweep._worktree_tag(framework.WORKTREE_ROOT) == framework.worktree_tag())
+
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
     check_3_session_ports()
     check_4_sweep_registry()
     check_5_ownership_gates()
+    check_6_sweep_result_isolation()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 

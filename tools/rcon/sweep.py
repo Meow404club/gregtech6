@@ -20,11 +20,14 @@ GT6_SESSION=off fallback path (decision 2026-09-04-rcon-gate-split ④).
 
 Wall is max(nodes), not sum(nodes): --dual runs the other node's sweep in its
 own worktree (gradle runServer holds a per-project lock, so same-worktree
-dual boots would serialize — ADR-P15-4) and reports both walls. The artifact
-slug carries the node suffix, so the two nodes' /tmp artifacts never collide.
+dual boots would serialize — ADR-P15-4) and reports both walls. Every /tmp
+artifact name carries the node suffix AND the worktree tag (P18, the P17
+session_slug mechanism), so parallel worktrees sweeping the identical roster
+never overwrite one another's ledgers or logs.
 """
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import subprocess
@@ -106,12 +109,33 @@ def select(stems, only):
     return [stem for stem in stems if stem in set(picked)]
 
 
-def result_path(mode, node, concurrency=1):
-    """Per-run result JSON. Session runs are namespaced by concurrency degree,
-    so the concurrency-time curve's points never overwrite one another."""
+def _worktree_tag(root):
+    """framework.worktree_tag()'s formula, for an arbitrary root.
+
+    The --dual reader must address the OTHER worktree's artifacts, but
+    framework pins WORKTREE_ROOT at import time (this worktree) — so the hash
+    formula (md5 of the root path, first 8 hex; card 6a0958a2) is reproduced
+    here for the peer root. /tmp is global: the directory is the same, only
+    the name separates the legs.
+    """
+    return hashlib.md5(str(root).encode("utf-8")).hexdigest()[:8]
+
+
+def result_path(mode, node, concurrency=1, tag=None):
+    """Per-run result JSON, namespaced by worktree tag; session runs are
+    further namespaced by concurrency degree, so the concurrency-time curve's
+    points never overwrite one another.
+
+    The worktree tag (P18, `framework.worktree_tag()`) keeps parallel
+    worktrees' ledgers disjoint in the shared /tmp — two same-roster sweeps
+    used to overwrite each other's JSON mid-run. `tag` overrides for --dual:
+    the spawned leg writes under ITS OWN worktree's tag, so the reader must
+    pass the OTHER root's hash (run_dual).
+    """
     suffix = framework.node_suffix(node)
-    tag = f"{mode}_c{concurrency}" if mode == "session" else mode
-    return gt6server.ARTIFACT_DIR / f"gt6_rs_sweep_{tag}_{suffix}.json"
+    label = f"{mode}_c{concurrency}" if mode == "session" else mode
+    worktree = framework.worktree_tag() if tag is None else tag
+    return gt6server.ARTIFACT_DIR / f"gt6_rs_sweep_{label}_{suffix}_{worktree}.json"
 
 
 def _failed(res):
@@ -251,11 +275,13 @@ def run_dual(args):
         raise SystemExit(f"--dual: commit mismatch: {other} at {head[:12]}, "
                          f"here {mine[:12]} — same-commit discipline (ADR-P15-4)")
     other_node = args.other_node
+    other_tag = _worktree_tag(other)   # the leg writes under its OWN tag
     cmd = [sys.executable, "tools/rcon/sweep.py", "--mode", args.mode,
            "--node", other_node, "--concurrency", str(args.concurrency)]
     if args.only:
         cmd += ["--only", args.only]
-    other_log = gt6server.ARTIFACT_DIR / f"gt6_rs_sweep_{other_node}.log"
+    other_log = gt6server.ARTIFACT_DIR / \
+        f"gt6_rs_sweep_dual_{framework.node_suffix(other_node)}_{other_tag}.log"
     print(f"[sweep] dual: spawning {other_node} in {other} "
           f"(log {other_log}, same commit {mine[:12]})")
     with other_log.open("w") as log:
@@ -266,7 +292,8 @@ def run_dual(args):
         finally:
             print(f"[sweep] dual: waiting for {other_node} (pid {proc.pid}) ...")
             proc.wait()
-    other_json = result_path(args.mode, other_node, args.concurrency)
+    other_json = result_path(args.mode, other_node, args.concurrency,
+                             tag=other_tag)
     if not other_json.exists():
         print(f"[sweep] dual: {other_node} produced no result json — see {other_log}")
         return 1

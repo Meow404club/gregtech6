@@ -357,14 +357,22 @@ python3 tools/rcon/sweep.py --mode session --dual ../MGT6GA-trees/<另一节点w
 ```
 
 结果（逐 step PASS/FAIL/ALLOWED 账本 + 每链/总 wall）落
-`/tmp/gt6_rs_sweep_<mode>_c<N>_<节点后缀>.json`。`--dual` 强制两 worktree 同 commit
-（gradle runServer 持项目锁，同 worktree 双 boot 会被串行化——ADR-P15-4 双节点正典形态）。
+`/tmp/gt6_rs_sweep_<mode>[_c<N>]_<节点后缀>_<worktree 哈希>.json`。`--dual` 强制两
+worktree 同 commit（gradle runServer 持项目锁，同 worktree 双 boot 会被串行化——
+ADR-P15-4 双节点正典形态）。
 
 **session artifact 命名（P17）**：session boot 的 log/pid 落
 `/tmp/gt6_rs_session_<节点后缀>_<链 slug 名册>-<worktree 哈希>.{log,pid}`——名册
 （排序去重的链 slug，超长折叠稳定哈希）标识本 boot 跑了什么，worktree 哈希隔离并行
 worktree 的同名 boot。旧裸名 `session_<节点后缀>` 已废（同节点段并行 session 曾互踩
 pid，P16 首跑被外部 SIGTERM 实证；无代码读取方，干净改名）。
+
+**sweep 结果 JSON worktree 隔离（P18）**：结果账本名掺 `framework.worktree_tag()`
+（md5(worktree 根)[:8]，与 session slug 同源机制）——并行 worktree 跑同一名册的
+sweep 不再互踩全局 /tmp 账本。`--dual` 对侧回读按**对侧** worktree 的哈希取文件
+（对侧子进程以它自己的 tag 写 /tmp；/tmp 全局共享，目录相同、全靠名字分流，对侧
+spawn 日志同样按对侧 tag 命名）。旧裸名 JSON 无活代码读者；`--diff` 走显式路径，
+任意两份历史账本（含旧名）仍可比。
 
 **session 端口策略（P17）**：一次 session 只绑一个 (rcon, query, game) 三元组，链经
 session 的 rcon 端口连接（链自己的 `preferred_ports` 是 per-boot 语义）。裁决
