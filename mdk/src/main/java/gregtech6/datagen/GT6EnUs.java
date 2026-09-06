@@ -67,6 +67,7 @@ public class GT6EnUs extends LanguageProvider {
         addFluidPipes();
         addEngineFluids();
         addAquaFluids();
+        addSimpleLiquidFluids(); // task p19-drying-rows-backfill-2
         addElectricWires();
         addMachines();
         addMultiBlocks();
@@ -120,6 +121,19 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addAquaFluids() {
         for (GTFluids.AquaFluidSpec tSpec : GTFluids.AQUA_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
+
+    /**
+     * Simple-liquid family keys (task p19-drying-rows-backfill-2 spec ③): the second loop
+     * over {@link GTFluids#SIMPLE_LIQUID_SPECS} — the exact addAquaFluids shape, walked
+     * from the SECOND table so the lang face cannot drift from the registered fluids
+     * (gt6:seawater "Seawater" / gt6:waterdirty "Dirty Water", the common-name spellings
+     * per the water_boiling "Boiling Water" precedent). Table-tail append, append-only.
+     */
+    private void addSimpleLiquidFluids() {
+        for (GTFluids.AquaFluidSpec tSpec : GTFluids.SIMPLE_LIQUID_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
     }
