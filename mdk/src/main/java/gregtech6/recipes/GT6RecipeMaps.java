@@ -99,6 +99,20 @@ import com.mojang.logging.LogUtils;
  * unregistered fluids/items, the class doc carries the census). Both maps have live
  * findRecipe consumers since the dryer/distillery family BETs.
  *
+ * <p>{@code CHISEL} mirrors the RM.java:138 base-map row (task p19-chisel-recipes):
+ * "gt.recipe.chisel" / "Chisel" (item 1/1/1, fluid 0/0/0, minimal inputs 0, power 1), GUI
+ * machines/Chisel lowercased per the Shredder-line convention. The rows pour in via
+ * {@link GT6RecipesStoneChisel} (FMLCommonSetup — the RM.java:470/:508/:514 stonetypes
+ * + bricks lines and the Loader_Recipes_Vanilla.java:772-773 vanilla pair). Upstream the
+ * field is a {@code RecipeMapChisel} subclass whose {@code findRecipe} override
+ * (RecipeMapChisel.java:47-64) synthesizes oredict ring-composition rows at lookup time —
+ * an OM runtime feature ({@code OreDictManager.getOres} + {@code GAPI_POST
+ * .mFinishedServerStarted}) with no port counterpart; the port carries the base
+ * {@link RecipeMap} with the identical constants (the RecipeMapShredder deviation form,
+ * documented deviation). The map's live findRecipe consumer is the
+ * {@code GTChiselItem} right-click gate (the ToolCompat.java:224-229 transcription) —
+ * there is no machine behind this map (upstream likewise).
+ *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
@@ -150,6 +164,9 @@ public class GT6RecipeMaps {
 
 	/** RM.java:97 — the Lathe map (1 in / 2 out items, 0 in / 0 out fluids). */
 	public static volatile RecipeMap LATHE;
+
+	/** RM.java:138 — the Chisel map (1 in / 1 out items, 0 in / 0 out fluids). Base-class form; see the class doc for the RecipeMapChisel subclass deviation. */
+	public static volatile RecipeMap CHISEL;
 
 	/** FM.java:45 — the Engine Fuels map (1 in / 2 out items, 1 in / 2 out fluids; the fuel rows are fluid-only). */
 	public static volatile RecipeMap ENGINE_FUELS;
@@ -219,6 +236,16 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		// the RM.java:138 row verbatim: items 1/1/1, fluids 0/0/0, MIN 0, AMP 1 (the
+		// trailing NEI booleans fold away in the 15-arg port ctor, like every other map)
+		CHISEL = new RecipeMap(new HashSet<>(),
+				"gt.recipe.chisel", "Chisel", null,
+				0, 1,
+				"gt6:textures/gui/machines/chisel",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 		ENGINE_FUELS = new RecipeMap(new HashSet<>(),
 				"gt.recipe.fuels.engine", "Engine Fuels", null,
 				0, 1,
@@ -281,6 +308,7 @@ public class GT6RecipeMaps {
 		SHREDDER = null;
 		CRUSHER = null;
 		LATHE = null;
+		CHISEL = null;
 		ENGINE_FUELS = null;
 		FLUIDBED = null;
 		BURN = null;
