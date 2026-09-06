@@ -314,6 +314,10 @@ class GT6RecipesOreChainTest extends GTRecipesOfflineTestBase {
 			if (aPrefix == OP.blockRaw) return null;
 			return SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
 		};
+		// self-grounding (ADR-P18): boot leftovers (21.1 junit-fml pours the live registry rows)
+		// or a prior class's unpaired reset() never feed this test — the pour below must be THIS
+		// resolver's generation, and the generation reset retires the pour-flag with the maps.
+		GT6RecipeMaps.reset();
 		GT6RecipesOreChain.load();
 
 		Map<Item, Integer> tInputUses = new HashMap<>();
