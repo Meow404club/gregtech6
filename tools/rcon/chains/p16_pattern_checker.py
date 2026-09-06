@@ -14,8 +14,23 @@ Chain semantics (task p16-pattern-checker ACCEPTANCE):
     (block_formed → linked_parts → first_failed_cell), so one Step pins all
     three report fields byte-exactly.
 
-  B the /gt6oven regression arm (the machine face the switch must not touch):
-    place → input 8 → run 200 (progress=true done=true) → check.
+  B the /gt6oven regression arm (the machine face the switch must not touch),
+    grid-fed since p8-d3 (ENERGY_FAKE_SOURCE defaults false) — the p8 e2e
+    gen->wire->oven idiom, all through the existing command faces:
+    place -> input 8 -> check energy=0 (the no-fake-source regime nail) ->
+    gen place/volt -> 2x wire (placed LAST: GTWireBlock has no retro-scan,
+    so the energy neighbours must exist first) -> neighbors asserts BOTH
+    sides connected -> mode on -> poll check until output=stonex8. The poll
+    is THE hard assertion: the continuous source must finish all eight
+    smelts on natural ticks or the chain is RED (the diagnostic's 8x stone
+    discriminator, no NBT priming). The old `run 200` trio assertion
+    (progress=true done=true idle=true) was a fake-source-era artifact and
+    is unsatisfiable on grid-fed: `run` drives ONLY the oven's own
+    dispatcher (GTOvenCommand.java:143), the gen/wire pumps ride the real
+    ticker, and done (mSuccessful) is a completion instant that cannot
+    co-occur with idle (input exhausted, mMaxProgress cleared) inside one
+    run loop — probed live both ways (mode-on-immediate and post-smelt run,
+    both FAILED while the same feed completes 8/8 stone on natural ticks).
 
 Run:  python3 tools/rcon/chains/p16_pattern_checker.py
 """
@@ -36,9 +51,13 @@ F = gt6world.fmt
 # The sites.
 #   MB   — the multiblock checker pilot at (420,64,420) facing north
 #          (structure centre (420,64,421), the 3x3x3 shell around it).
-#   OVEN — the gt6oven regression arm at (400,64,400).
+#   OVEN — the gt6oven regression arm at (400,64,400); the feed rig fills
+#          the arm's own footprint (wire 401, gen 402 — both inside the
+#          oven's declared dx=2 bounds, declared explicitly anyway).
 MB = gt6world.Site(420, 64, 420, dx=3, dy=3, dz=3)
 OVEN = gt6world.Site(400, 64, 400, dx=2, dy=2, dz=2)
+WIRE = gt6world.Site(401, 64, 400)
+GEN = gt6world.Site(402, 64, 400)
 
 HOLE = "421 64 421"  # the shell cell centre+(1,0,0) — declaration index #21
 
@@ -66,23 +85,32 @@ steps += [
 
 # ------------------------------------------------- B: the gt6oven regression
 steps += [
-    phase("B: the /gt6oven machine face regression (untouched by the switch)"),
+    phase("B: the /gt6oven machine face regression (grid-fed, the p8 e2e idiom)"),
     Step(f"gt6oven place {F(OVEN)}", expect="GT6 oven placed"),
     Step(f"gt6oven input 8 {F(OVEN)}", expect="8 cobblestone into slot 0"),
-    # the run step is RED ON THE BASELINE TOO (main 599d6c80 probe: progress=0/0,
-    # no recipe match — the machine/recipe domain is NOT this card's scope; the oven
-    # files carry zero diff on this branch). Kept as an observable, allowed failure:
-    # a FUTURE green here would mean the machine face changed, which is the signal.
-    Step(f"gt6oven run 200 {F(OVEN)}",
-         expect="ContainerData states progress=true done=true",
-         allow_failed=True),
-    Step(f"gt6oven check {F(OVEN)}", expect="GT6 oven at"),
+    # the regime nail: before ANY feed exists the oven reports energy=0 —
+    # the ENERGY_FAKE_SOURCE=false default is what makes this chain honest.
+    Step(f"gt6oven check {F(OVEN)}",
+         expect="progress=0/0 energy=0 minenergy=0"),
+    # the feed rig: energy neighbours BEFORE the wire (no retro-scan), and
+    # the neighbors report proves the chain is wired, not NBT-primed.
+    Step(f"gt6energy place {F(GEN)}", expect="GT6 energy source placed"),
+    Step(f"gt6energy volt {F(GEN)} 32", expect="voltage 32"),
+    Step(f"gt6wire place 2x {F(WIRE)}", expect="GT6 wire placed"),
+    Step(f"gt6wire neighbors {F(WIRE)}",
+         expect="west=TileEntityOven(connected) east=GTEnergySourceBlockEntity(connected)"),
+    Step(f"gt6energy mode {F(GEN)} on", expect="emitting true"),
+    # THE hard assertion: the continuous source must finish all eight smelts
+    # (32 EU x 1 A through the 2x wire = 32 progress/tick, 8 x 256 = 2048
+    # progress = ~64 ticks). Poll-to-expect, chain RED on timeout.
+    Step(f"gt6oven check {F(OVEN)}",
+         expect="input=airx0 output=stonex8", poll=30.0),
 ]
 
 CHAIN = Chain(
     name="p16-pattern-checker",
     slug="p16pchk",
-    sites=gt6world.declare_sites(MB, OVEN),
+    sites=gt6world.declare_sites(MB, OVEN, WIRE, GEN),
     preferred_ports=(25771, 25781),      # this card's pinned rcon/query pair
     steps=steps,
 )

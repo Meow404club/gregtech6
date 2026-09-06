@@ -179,19 +179,31 @@ R "gt6tank melt 21 64 20" \
 R "gt6tank stat 20 64 20" --expect 1:melting\ point\ 340          # stat 熔点
 ```
 
-### 机器 /gt6oven（place|input|run|check）
+### 机器 /gt6oven（place|input|run|check；grid-fed，p8-d3 起 ENERGY_FAKE_SOURCE 缺省 false）
+
+炉子纯电网供电：先摆供能 rig（p8 e2e 正典 idiom——能量邻居**先于**线缆摆放，
+GTWireBlock 无 retro-scan），再 poll 冶炼产出。`/gt6energy` 与 `/gt6wire` 命令面见
+p8-d3/d4 卡。
 
 ```bash
 R "gt6oven place 30 64 30"     --expect 1:"GT6 oven placed"
 R "gt6oven input 8 30 64 30"   --expect 1:"8 cobblestone"        # 圆石入料
-R "gt6oven run 200 30 64 30" \
-  --expect 1:"GT6 oven run check OK" \
-  --expect 1:"progress=true done=true idle=true"                 # ContainerData 三态
+R "gt6oven check 30 64 30"     --expect 1:"energy=0"             # 无假电源体制钉子
+R "gt6energy place 32 64 30"   --expect 1:"GT6 energy source placed"
+R "gt6energy volt 32 64 30 32" --expect 1:"voltage 32"
+R "gt6wire place 2x 31 64 30"  --expect 1:"GT6 wire placed"      # 最后放，双侧已存在
+R "gt6wire neighbors 31 64 30" \
+  --expect 1:"west=TileEntityOven(connected) east=GTEnergySourceBlockEntity(connected)"
+R "gt6energy mode 32 64 30 on" --expect 1:"emitting true"
+# 硬断言：连续源自然 tick 完成全部 8 冶炼（32EU/t → ~64 ticks），超时链红
+R "gt6oven check 30 64 30"     --expect 1:"output=stonex8" --poll 30
 R "gt6oven check 30 64 30"     --expect 1:"GT6 oven at"          # 槽位/能量/朝向报告
 ```
 
-（假电源 mInputMax=64、配方 mDuration=16 → 全程数十 tick，200 充裕；不足则 run 自报
-FAILED，调大重跑。产出核对走 run/check 报告的 output 段。）
+（`run <ticks>` 只驱动 oven 自身 dispatcher tick——gen/wire 泵送走真实 ticker，
+故 run 循环内拿不到连续能量；其 `progress=true done=true idle=true` 三态断言是
+fake-source 时代的产物，grid-fed 下结构性不可满足（done=mSuccessful 完成瞬态与
+idle=input 耗尽态在循环内不可同框），验收链一律走上面的 poll 产出形态。）
 
 ### cover /gt6cover（install|dismantle|check；宿主=oven，side 词 down|up|north|south|west|east）
 
@@ -368,7 +380,10 @@ python3 tools/rcon/sweep.py --mode session --dual ../MGT6GA-trees/<另一节点w
 结果（逐 step PASS/FAIL/ALLOWED 账本 + 每链/总 wall）落
 `/tmp/gt6_rs_sweep_<mode>[_c<N>]_<节点后缀>_<worktree 哈希>.json`。`--dual` 强制两
 worktree 同 commit（gradle runServer 持项目锁，同 worktree 双 boot 会被串行化——
-ADR-P15-4 双节点正典形态）。
+ADR-P15-4 双节点正典形态）。结果 JSON 顶层带 `exit` 聚合键（两执行模型一致，
+`_failed` 语义 = main 非 dual 退出码；session 模型沿用 framework 自算值）——
+`--dual` 末端 `mine_json["exit"] | other_res.get("exit", 1)` 对 perboot 腿不再
+KeyError（P18 修复：run_perboot 形状原无顶层 exit）。
 
 **session artifact 命名（P17）**：session boot 的 log/pid 落
 `/tmp/gt6_rs_session_<节点后缀>_<链 slug 名册>-<worktree 哈希>.{log,pid}`——名册
@@ -397,9 +412,12 @@ p15_runtime_smoke（fresh_boot 单例）。注册序 = perboot 顺序 + --plan �
 session 跑法把全集摊平成一池（`run_session_recorded`）。
 
 **框架自检（无服干跑，~1s）**：`python3 tools/rcon/selftest.py`——以假 boot 面
-验证七项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
+验证八项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
 名册化、session 端口策略、p16 簇注册、boot 归属门、sweep 结果 JSON worktree 隔离
-（P18）、quiet_window 自适应收敛纯逻辑（P18）。退出码 0 = 全绿（34 检）。
+（P18）、quiet_window 自适应收敛纯逻辑（P18）、perboot 结果的顶层 exit 聚合键
+（P18：`--dual` 读侧 `mine_json["exit"]` 曾对 perboot 形状 KeyError——run_perboot
+只有链级 exit，run_and_record 出口以 `setdefault` 补 `_failed` 聚合键，session 模型
+framework 自算的顶层 exit 不被踩）。退出码 0 = 全绿（39 检）。
 
 ### 并发波执行（用户校准 2026-09-04：并发是主杠杆）
 
