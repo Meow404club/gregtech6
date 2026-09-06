@@ -43,6 +43,8 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-06 | [2026-09-06-p18-keepfilter-ruling.md](2026-09-06-p18-keepfilter-ruling.md) | ADR-P18 keepFilter 读侧重建：写侧双腿同上游合同键不丢，21.1 腿 parseOptional MAP_CODEC POSITIVE_INT 拒 0 量 orElse(EMPTY) 静默吞——裁读侧 FluidName 反查重建（permanent-delta 撤销，IDENTICAL-3→2） |
 | 2026-09-06 | [2026-09-06-p18-staticinit-poison-fix.md](2026-09-06-p18-staticinit-poison-fix.md) | ADR-P18 staticinit 毒态：junit-fml boot 真跑 load() × reset() 不清旗标——裁世代化重置钩子注册制（7 loader 全集+守卫测试先红后绿；否 load() 自愈重灌）（IDENTICAL-2→0） |
 | 2026-09-06 | [2026-09-06-p18-beload-provider.md](2026-09-06-p18-beload-provider.md) | ADR-P18 多方块机 21.1 BE load NPE（P1 数据丢失）：裁 A 先落（:808/:830 换 NBT_ACCESS，等价性读码证实）+ B 根治登池（W4 provider 沿 Root:140 穿透） |
+| 2026-09-06 | [2026-09-06-p19-w4-nbt-provider-ruling.md](2026-09-06-p19-w4-nbt-provider-ruling.md) | ADR-P19 W4 NBT provider 穿透池项裁决：本体缓做（条件触发池化，P18 后全树 21.1 NBT 面 level 依赖=0+saveToItem 0 调用）；注册表覆盖缺口（1.21 一切附魔数据驱动，frozen 视图 parse 静默剥附魔）由 B' 研究卡钉证可行→1 文件小卡（AtomicReference 委托+AboutToStart 复合重绑，b2e16830 落地） |
+| 2026-09-06 | [2026-09-06-p19-porting-split.md](2026-09-06-p19-porting-split.md) | ADR-P19 移植批拆卡：5 卡 2 波（stoneblocks registry/render∥drying∥front∥chisel）+三研究卡复核裁决（否决 GTMaterialBlocks 扩展/盐流体走 SIMPLE_LIQUID_SPECS/circuit 行整面裁池随工具卡）+共享 append-only 面合并序 |
 
 ## 占位（历史 ADR，未回填，权威原文在 state `decisions` 账本与 docs/PROJECT_STATE.md）
 
