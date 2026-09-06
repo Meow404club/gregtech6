@@ -10,7 +10,9 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+//? if neoforge {
 import com.mojang.blaze3d.vertex.BufferUploader;
+//?}
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -137,15 +139,28 @@ public class Stencil {
         Matrix4f pose = graphics.pose().last().pose();
 
         Tesselator tesselator = Tesselator.getInstance();
+        //? if neoforge {
         BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
 
+        //?} else {
+        /*        BufferBuilder bufferbuilder = tesselator.getBuilder();
+        *///?}
         float x0 = x, x1 = x + w, y0 = y, y1 = y + h;
+        //? if neoforge {
         bufferbuilder.addVertex(pose, x0, y0, 0.0f);
         bufferbuilder.addVertex(pose, x0, y1, 0.0f);
         bufferbuilder.addVertex(pose, x1, y1, 0.0f);
         bufferbuilder.addVertex(pose, x1, y0, 0.0f);
 
         BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+        //?} else {
+        /*        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+                bufferbuilder.vertex(pose, x0, y0, 0.0f).endVertex();
+                bufferbuilder.vertex(pose, x0, y1, 0.0f).endVertex();
+                bufferbuilder.vertex(pose, x1, y1, 0.0f).endVertex();
+                bufferbuilder.vertex(pose, x1, y0, 0.0f).endVertex();
+                tesselator.end();
+        *///?}
         RenderSystem.setShader(() -> lastShader);
     }
 

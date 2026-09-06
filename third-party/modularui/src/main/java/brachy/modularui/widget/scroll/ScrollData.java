@@ -9,8 +9,13 @@ import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.utils.Interpolation;
 
 import net.minecraft.util.Mth;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import lombok.Getter;
 import lombok.Setter;

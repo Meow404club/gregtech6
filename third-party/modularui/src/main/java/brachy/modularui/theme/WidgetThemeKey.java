@@ -18,7 +18,11 @@ import java.util.Objects;
 public class WidgetThemeKey<T extends WidgetTheme> implements Comparable<WidgetThemeKey<?>> {
 
     private static final Map<String, WidgetThemeKey<?>> KEYS = new Object2ReferenceOpenHashMap<>();
+    //? if neoforge {
     public static final Codec<WidgetThemeKey<?>> CODEC = CodecUtil.chainedCodec(CodecUtil.nullCodec(), Codec.stringResolver(WidgetThemeKey::getFullName, KEYS::get));
+    //?} else {
+    /*    public static final Codec<WidgetThemeKey<?>> CODEC = CodecUtil.chainedCodec(CodecUtil.nullCodec(), ExtraCodecs.stringResolverCodec(WidgetThemeKey::getFullName, KEYS::get));
+    *///?}
 
     @Nullable
     public static WidgetThemeKey<?> getFromFullName(String key) {
@@ -81,11 +85,19 @@ public class WidgetThemeKey<T extends WidgetTheme> implements Comparable<WidgetT
     }
 
     public T parseJson(JsonObject json) {
+        //? if neoforge {
         return getCodec().codec().parse(JsonOps.INSTANCE, json).getOrThrow();
+        //?} else {
+        /*        return getCodec().codec().parse(JsonOps.INSTANCE, json).getOrThrow(false, s -> {});
+        *///?}
     }
 
     public JsonObject encodeJson(T theme) {
+        //? if neoforge {
         return getCodec().codec().encodeStart(JsonOps.INSTANCE, theme).getOrThrow().getAsJsonObject();
+        //?} else {
+        /*        return getCodec().codec().encodeStart(JsonOps.INSTANCE, theme).getOrThrow(false, s -> {}).getAsJsonObject();
+        *///?}
     }
 
     public Class<T> getWidgetThemeType() {

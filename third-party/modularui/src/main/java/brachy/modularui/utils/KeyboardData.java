@@ -1,8 +1,13 @@
 package brachy.modularui.utils;
 
 import net.minecraft.network.FriendlyByteBuf;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import org.lwjgl.glfw.GLFW;
 

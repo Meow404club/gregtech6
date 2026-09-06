@@ -32,6 +32,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class MatrixUtils {
 
+    //? if forge {
+    /*    @SuppressWarnings("UnstableApiUsage")
+    *///?}
     private static final ImmutableMap<Direction, Vector3fc> directionAxises = Util.make(() -> {
         ImmutableMap.Builder<Direction, Vector3fc> map = ImmutableMap.builderWithExpectedSize(6);
         for (Direction dir : Direction.values()) {
@@ -203,8 +206,13 @@ public class MatrixUtils {
      * @param target the point to look at
      */
     public static void lookAt(PoseStack.Pose pose, Vector3fc eyePos, Vector3fc target) {
+        //? if neoforge {
         lookAt(pose.pose(), eyePos, target);
+        //?} else {
+        /*        pose.pose().lookAt(eyePos, target, MathUtils.UNIT_Y);
+        *///?}
         pose.normal().lookAlong(target.sub(eyePos, new Vector3f()), MathUtils.UNIT_Y);
+    //? if neoforge {
     }
 
     /**
@@ -216,6 +224,7 @@ public class MatrixUtils {
      */
     public static void lookAt(Matrix4f matrix, Vector3fc eyePos, Vector3fc target) {
         matrix.lookAt(eyePos, target, MathUtils.UNIT_Y);
+    //?}
     }
 
     /**

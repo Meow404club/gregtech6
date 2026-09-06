@@ -101,7 +101,11 @@ public class ModularGuiContext extends GuiContext {
     }
 
     public @Nullable IWidget getTopHovered() {
+        //? if neoforge {
         return this.hovered.isEmpty() ? null : this.hovered.getFirst().getElement();
+        //?} else {
+        /*        return this.hovered.isEmpty() ? null : this.hovered.get(0).getElement();
+        *///?}
     }
 
     @UnmodifiableView

@@ -41,7 +41,11 @@ public class FlowDrawable implements IDrawable {
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
         if (this.icons.isEmpty()) return;
         if (this.icons.size() == 1) {
+            //? if neoforge {
             this.icons.getFirst().draw(context, x, y, width, height, widgetTheme);
+            //?} else {
+            /*            this.icons.get(0).draw(context, x, y, width, height, widgetTheme);
+            *///?}
             return;
         }
 

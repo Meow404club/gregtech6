@@ -6,11 +6,16 @@ import brachy.modularui.api.widget.IValueWidget;
 import brachy.modularui.api.widget.IWidget;
 import brachy.modularui.drawable.GuiTextures;
 import brachy.modularui.screen.viewport.LocatedWidget;
+//? if forge {
+/*import brachy.modularui.utils.ObjectList;
+*///?}
 import brachy.modularui.widget.DraggableWidget;
 import brachy.modularui.widget.sizer.Area;
 
+//? if neoforge {
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+//?}
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,8 +33,13 @@ public class SortableListWidget<T> extends ListValueWidget<T, SortableListWidget
     private Consumer<Item<T>> onRemove;
     private int timeSinceLastMove = 0;
     private boolean scheduleAnimation = false;
+    //? if neoforge {
     private final ObjectList<Area> widgetAreaSnapshots = new ObjectArrayList<>();
     private final ObjectList<Animator> animators = new ObjectArrayList<>();
+    //?} else {
+    /*    private final ObjectList<Area> widgetAreaSnapshots = ObjectList.create();
+        private final ObjectList<Animator> animators = ObjectList.create();
+    *///?}
 
     public SortableListWidget() {
         super(Item::getWidgetValue);
@@ -100,8 +110,13 @@ public class SortableListWidget<T> extends ListValueWidget<T, SortableListWidget
             ModularUI.LOGGER.error("Failed to move element from {} to {}", from, to);
             return;
         }
+        //? if neoforge {
         Item<T> child = getTypeChildren().remove(from);
         getTypeChildren().add(to, child);
+        //?} else {
+        /*        Item<?> child = getTypeChildren().remove(from);
+                getChildren().add(to, child);
+        *///?}
         assignIndexes();
         if (isValid()) {
             assignIndexes();

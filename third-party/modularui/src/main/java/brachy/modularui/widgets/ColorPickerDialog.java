@@ -15,10 +15,12 @@ import brachy.modularui.value.StringValue;
 import brachy.modularui.widgets.layout.Flow;
 import brachy.modularui.widgets.textfield.TextFieldWidget;
 
+//? if neoforge {
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+//?}
 import lombok.Getter;
 
 public class ColorPickerDialog extends Dialog<Integer, ColorPickerDialog> {
@@ -107,7 +109,11 @@ public class ColorPickerDialog extends Dialog<Integer, ColorPickerDialog> {
                                 }))));
     }
 
+    //? if neoforge {
     private IWidget createRGBPage(@Nullable Supplier<IWidget> alphaSlider) {
+    //?} else {
+    /*    private IWidget createRGBPage(IWidget alphaSlider) {
+    *///?}
         return Flow.col()
                 .sizeRel(1f, 1f)
                 .child(Flow.row()
@@ -131,10 +137,18 @@ public class ColorPickerDialog extends Dialog<Integer, ColorPickerDialog> {
                                 .name("blue")
                                 .bounds(0, 255)
                                 .value(new DoubleValue.Dynamic(() -> this.blue, this::updateBlue))))
+                //? if neoforge {
                 .childIf(alphaSlider != null, alphaSlider);
+                //?} else {
+                /*                .childIf(alphaSlider != null, () -> alphaSlider);
+                *///?}
     }
 
+    //? if neoforge {
     private IWidget createHSVPage(@Nullable Supplier<IWidget> alphaSlider) {
+    //?} else {
+    /*    private IWidget createHSVPage(IWidget alphaSlider) {
+    *///?}
         return Flow.col()
                 .sizeRel(1f, 1f)
                 .child(Flow.row()
@@ -158,7 +172,11 @@ public class ColorPickerDialog extends Dialog<Integer, ColorPickerDialog> {
                                 .name("value")
                                 .bounds(0, 1)
                                 .value(new DoubleValue.Dynamic(() -> this.value, this::updateValue))))
+                //? if neoforge {
                 .childIf(alphaSlider != null, alphaSlider);
+                //?} else {
+                /*                .childIf(alphaSlider != null, () -> alphaSlider);
+                *///?}
     }
 
     private static SliderWidget createSlider(IDrawable background) {
@@ -170,17 +188,27 @@ public class ColorPickerDialog extends Dialog<Integer, ColorPickerDialog> {
                 .sliderSize(2, 8);
     }
 
+    //? if neoforge {
     private @Nullable Supplier<IWidget> createAlphaSlider(String s) {
         if (!controlAlpha) {
             return null;
         }
         return () -> Flow.row()
+    //?} else {
+    /*    private IWidget createAlphaSlider(String s) {
+            return controlAlpha ? Flow.row()
+    *///?}
                 .widthRel(1f).height(12)
                 .child(Text.str("A: ").asWidget().heightRel(1f))
                 .child(createSlider(this.sliderBackgroundA)
                         .name("alpha " + s)
                         .bounds(0, 255)
+                        //? if neoforge {
                         .value(new DoubleValue.Dynamic(() -> this.alpha, this::updateAlpha)));
+                        //?} else {
+                        /*                        .value(new DoubleValue.Dynamic(() -> this.alpha, this::updateAlpha))) :
+                                        null;
+                        *///?}
     }
 
     private String validateRawColor(String raw) {

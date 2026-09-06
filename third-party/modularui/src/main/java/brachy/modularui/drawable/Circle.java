@@ -9,8 +9,13 @@ import brachy.modularui.utils.Interpolations;
 import brachy.modularui.utils.serialization.codec.MutableObjectCodec;
 
 import com.mojang.serialization.Codec;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import lombok.Getter;
 import lombok.Setter;

@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import com.mojang.datafixers.util.Pair;
+//? if neoforge {
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.SlotItemHandler;
@@ -17,6 +18,15 @@ import net.neoforged.neoforge.items.wrapper.PlayerArmorInvWrapper;
 import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
 import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
 import net.neoforged.neoforge.items.wrapper.PlayerOffhandInvWrapper;
+//?} else {
+/*import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
+*///?}
 
 import lombok.Getter;
 import lombok.Setter;
@@ -297,15 +307,24 @@ public class ModularSlot extends SlotItemHandler {
 
     public static boolean isPlayerSlot(SlotItemHandler slot) {
         return slot.getItemHandler() instanceof PlayerInvWrapper ||
+                //? if neoforge {
                 slot.getItemHandler() instanceof PlayerMainInvWrapper ||
                 slot.getItemHandler() instanceof PlayerArmorInvWrapper ||
                 slot.getItemHandler() instanceof PlayerOffhandInvWrapper;
+                //?} else {
+                /*                slot.getItemHandler() instanceof PlayerMainInvWrapper;
+                *///?}
     }
 
+    //? if neoforge {
     public static Player getPlayerFromInventorySlot(Slot slot) {
+    //?} else {
+    /*    public static Player getPlayerSlotPlayer(Slot slot) {
+    *///?}
         return slot.container instanceof Inventory inv ? inv.player : null;
     }
 
+    //? if neoforge {
     public static Player getPlayerFromInventorySlot(SlotItemHandler slot) {
         switch (slot.getItemHandler()) {
             case PlayerInvWrapper inv -> {
@@ -313,9 +332,19 @@ public class ModularSlot extends SlotItemHandler {
                     if (ih instanceof PlayerMainInvWrapper mainInv) {
                         return mainInv.getInventoryPlayer().player;
                     }
+    //?} else {
+    /*    public static Player getPlayerSlotPlayer(SlotItemHandler slot) {
+            if (slot.getItemHandler() instanceof PlayerInvWrapper inv) {
+                for (IItemHandlerModifiable ih : ((CombinedInvWrapperAccessor) inv).getItemHandler()) {
+                    if (ih instanceof PlayerMainInvWrapper mainInv) {
+                        return mainInv.getInventoryPlayer().player;
+    *///?}
                 }
+                //? if neoforge {
                 return null;
+                //?}
             }
+            //? if neoforge {
             case PlayerMainInvWrapper wrapper -> {
                 return wrapper.getInventoryPlayer().player;
             }
@@ -324,6 +353,15 @@ public class ModularSlot extends SlotItemHandler {
             }
             default -> {
             }
+            //?} else {
+            /*            return null;
+                    }
+                    if (slot.getItemHandler() instanceof PlayerMainInvWrapper wrapper) {
+                        return wrapper.getInventoryPlayer().player;
+                    }
+                    if (slot.getItemHandler() instanceof PlayerArmorInvWrapper wrapper) {
+                        return wrapper.getInventoryPlayer().player;
+            *///?}
         }
         return null;
     }
@@ -341,6 +379,10 @@ public class ModularSlot extends SlotItemHandler {
     }
 
     public static boolean onlyAmountChanged(ItemStack a, ItemStack b) {
+        //? if neoforge {
         return ItemStack.isSameItemSameComponents(a, b) && a.getCount() != b.getCount();
+        //?} else {
+        /*        return ItemStack.isSameItemSameTags(a, b) && a.getCount() != b.getCount();
+        *///?}
     }
 }

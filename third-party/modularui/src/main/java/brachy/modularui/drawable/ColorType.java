@@ -14,7 +14,11 @@ import java.util.function.ToIntFunction;
 
 public class ColorType {
 
+    //? if neoforge {
     public static final Codec<ColorType> CODEC = Codec.stringResolver(ColorType::getName, ColorType::get);
+    //?} else {
+    /*    public static final Codec<ColorType> CODEC = ExtraCodecs.stringResolverCodec(ColorType::getName, ColorType::get);
+    *///?}
 
     private static final Map<String, ColorType> COLOR_TYPES = new Object2ObjectOpenHashMap<>();
 

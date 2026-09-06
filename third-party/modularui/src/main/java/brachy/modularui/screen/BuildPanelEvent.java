@@ -1,6 +1,10 @@
 package brachy.modularui.screen;
 
+//? if neoforge {
 import net.neoforged.bus.api.Event;
+//?} else {
+/*import net.minecraftforge.eventbus.api.Event;
+*///?}
 
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;

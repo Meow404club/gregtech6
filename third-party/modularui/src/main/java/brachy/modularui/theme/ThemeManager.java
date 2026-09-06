@@ -14,9 +14,15 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import com.mojang.serialization.JsonOps;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.NeoForge;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
+*///?}
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -43,8 +49,10 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public class ThemeManager extends SimplePreparableReloadListener<Map<String, List<ResourceLocation>>> {
 
+    //? if neoforge {
     public static final ThemeManager INSTANCE = new ThemeManager();
 
+    //?}
     public static final String THEMES_PATH = "themes.json";
     public static final FileToIdConverter THEME_LISTER = FileToIdConverter.json("themes");
     protected static final WidgetThemeEntry<WidgetTheme> defaultFallbackWidgetTheme = IThemeApi.get()
@@ -52,16 +60,28 @@ public class ThemeManager extends SimplePreparableReloadListener<Map<String, Lis
 
     private static JsonWidgetThemeStorage jsons;
 
+    //? if neoforge {
     private ThemeManager() {}
+    //?} else {
+    /*    public ThemeManager() {}
+    *///?}
 
     public static void reload() {
         // hackery to reload themes on this thread
         // usually resources are loaded off-thread to not block the main thread
         // but this should be fine since it is currently not expected to take longer than a second
+        //? if forge {
+        /*        ThemeManager themeManager = new ThemeManager();
+        *///?}
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
         ProfilerFiller profiler = Minecraft.getInstance().getProfiler();
+        //? if neoforge {
         NeoForge.EVENT_BUS.post(new ReloadThemeEvent());
         INSTANCE.apply(INSTANCE.prepare(resourceManager, profiler), resourceManager, profiler);
+        //?} else {
+        /*        MinecraftForge.EVENT_BUS.post(new ReloadThemeEvent());
+                themeManager.apply(themeManager.prepare(resourceManager, profiler), resourceManager, profiler);
+        *///?}
     }
 
     @Override
@@ -76,8 +96,12 @@ public class ThemeManager extends SimplePreparableReloadListener<Map<String, Lis
         for (String namespace : resourceManager.getNamespaces()) {
             profiler.push(namespace);
 
+            //? if neoforge {
             for (Resource resource : resourceManager
                     .getResourceStack(ResourceLocation.fromNamespaceAndPath(namespace, THEMES_PATH))) {
+            //?} else {
+            /*            for (Resource resource : resourceManager.getResourceStack(new ResourceLocation(namespace, THEMES_PATH))) {
+            *///?}
                 profiler.push(resource.sourcePackId());
                 themeJsonSources.add(resource.sourcePackId());
 
@@ -108,7 +132,11 @@ public class ThemeManager extends SimplePreparableReloadListener<Map<String, Lis
                         continue;
                     }
                     themes.computeIfAbsent(entry.getKey(), key -> new ArrayList<>())
+                            //? if neoforge {
                             .add(ResourceLocation.parse(entry.getValue().getAsString()));
+                            //?} else {
+                            /*                            .add(new ResourceLocation(entry.getValue().getAsString()));
+                            *///?}
                 }
                 profiler.pop();
             }
@@ -393,8 +421,13 @@ public class ThemeManager extends SimplePreparableReloadListener<Map<String, Lis
             JsonObject widgetThemeHover = merger.merge(widgetThemeHoverJson, parentWidgetHoverTheme, fallback);
             var immutableHoverWidgetTheme = ImmutableJson.of(widgetThemeHover);
 
+            //? if neoforge {
             T widgetThemeInstance = key.getCodec().codec().parse(JsonOps.INSTANCE, widgetThemeJson.toJson()).getOrThrow();
             T widgetThemeHoverInstance = key.getCodec().codec().parse(JsonOps.INSTANCE, immutableHoverWidgetTheme.toJson()).getOrThrow();
+            //?} else {
+            /*            T widgetThemeInstance = key.getCodec().codec().parse(JsonOps.INSTANCE, widgetThemeJson.toJson()).getOrThrow(false, s -> {});
+                        T widgetThemeHoverInstance = key.getCodec().codec().parse(JsonOps.INSTANCE, immutableHoverWidgetTheme.toJson()).getOrThrow(false, s -> {});
+            *///?}
 
             map.register(key, widgetThemeInstance, widgetThemeHoverInstance);
         }

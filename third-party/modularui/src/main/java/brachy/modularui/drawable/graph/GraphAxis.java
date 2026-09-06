@@ -54,8 +54,13 @@ public class GraphAxis {
                 this.min = 0;
                 this.max = 0;
             } else if (plots.size() == 1) {
+                //? if neoforge {
                 this.min = DAM.min(plots.getFirst().getData(this.axis));
                 this.max = DAM.max(plots.getFirst().getData(this.axis));
+                //?} else {
+                /*                this.min = DAM.min(plots.get(0).getData(this.axis));
+                                this.max = DAM.max(plots.get(0).getData(this.axis));
+                *///?}
             } else {
                 double min = Double.MAX_VALUE, max = -Double.MAX_VALUE;
                 for (Plot plot : plots) {

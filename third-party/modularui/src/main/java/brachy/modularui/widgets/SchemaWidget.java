@@ -52,9 +52,17 @@ public class SchemaWidget extends Widget<SchemaWidget> implements Interactable {
     }
 
     @Override
+    //? if neoforge {
     public boolean onMouseScrolled(double scrollX, double scrollY) {
+    //?} else {
+    /*    public boolean onMouseScrolled(double delta) {
+    *///?}
         if (this.enableScaling) {
+            //? if neoforge {
             incrementScale((float) (-scrollY / 12.0f));
+            //?} else {
+            /*            incrementScale((float) (-delta / 12.0f));
+            *///?}
             return true;
         }
         return false;

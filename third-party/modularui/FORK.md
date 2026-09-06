@@ -7,11 +7,13 @@
 
 ## 1. fork 形态（单树 + 双腿）
 
-- **主树（共享）** `src/main/` = 上游 1.21.1 分支源码原文（common 交集 + `//?` 分叉）。
+- **主树（共享）** `src/main/` = 上游 1.21.1 分支源码原文（common 交集 371 文件：232 零改 + 7 注释形 + 132 `//?` 分叉）。
   条件编译语法为 Stonecutter chisel（`//? if neoforge { ... //?} else { /*forge 形*/ //?}`），
   由本仓 Gradle 构建（root `settings.gradle.kts` P20④ 段 + `stonecutter.gradle.kts` swap 表）双腿消化。
-- **单腿专属** `src/neoforgeMain/`（仅 1.21.1 存在的 29 文件）/ `src/forgeMain/`（仅 1.20.1 存在的
-  33 文件 + 各自 mixin json / atlas / injected_interfaces），按节点并入 main sourceSet，零 chisel 语法。
+- **单腿专属** `src/neoforgeMain/`（141 java = 仅 1.21.1 存在的 29 + leg-split 112）/ `src/forgeMain/`
+  （145 java = 仅 1.20.1 存在的 33 + leg-split 112）+ 各自 mixin json / atlas / injected_interfaces，
+  按节点并入 main sourceSet，零 chisel 语法。leg-split = 结构性漂移文件（漂移率 ≥0.15 或 hunk ≥10）
+  整体按腿放原文，避免 hunk 分叉把方法体切成碎片。
 - 包名保持上游原样（`brachy.modularui.*`）——下游 API 兼容面（GT6 经 jarJar 消费，卡②）。
 
 ## 2. 主树方向实测反选（ADR §5 留白项的落地理由）
@@ -23,7 +25,8 @@
    实证 ADR §5「1.21.1 腿≈零移植」；
 3. 上游活跃分支 = 1.21.1（protected，最新提交）；跟随上游 = 重 vendored 1.21.1 + 重放 DIVERGE.md，
    主树与活跃分支同形使重放成本最小；
-4. 回向腿的机械缝（包名 swap）与 `//?` 分叉均为声明式，可由 `tools/gen-forks.py` 从双腿快照再生成。
+4. 回向腿的机械缝（包名 swap）与 `//?` 分叉均为声明式，可由 `tools/gen-forks.py` 从双腿快照再生成；
+   结构性漂移文件（112）leg-split 双树原文，跟随上游 = 整文件重拷。
 
 ## 3. 接线定形（ADR 裁决一留白项：stonecutter 多项目 vs mdk 第二 sourceSet）
 

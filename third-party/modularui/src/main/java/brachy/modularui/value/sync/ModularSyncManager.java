@@ -7,15 +7,26 @@ import brachy.modularui.screen.ModularContainerMenu;
 import brachy.modularui.widgets.slot.PlayerSlotGroup;
 import brachy.modularui.widgets.slot.SlotGroup;
 
+//? if neoforge {
 import net.minecraft.network.RegistryFriendlyByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+*///?}
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+//? if neoforge {
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
 import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
+//?} else {
+/*import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.wrapper.PlayerInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+*///?}
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -138,7 +149,11 @@ public class ModularSyncManager implements ISyncRegistrar<ModularSyncManager> {
     }
 
     @ApiStatus.Internal
+    //? if neoforge {
     public void receiveWidgetUpdate(String panelName, String mapKey, boolean action, int id, RegistryFriendlyByteBuf buf) {
+    //?} else {
+    /*    public void receiveWidgetUpdate(String panelName, String mapKey, boolean action, int id, FriendlyByteBuf buf) {
+    *///?}
         PanelSyncManager psm = this.panelSyncManagerMap.get(panelName);
         if (psm != null) {
             psm.receiveWidgetUpdate(mapKey, action, id, buf);

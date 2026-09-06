@@ -1,6 +1,10 @@
 package brachy.modularui.core.mixins.client;
 
+//? if neoforge {
 import brachy.modularui.client.ModularUIClient;
+//?} else {
+/*import brachy.modularui.ClientProxy;
+*///?}
 import brachy.modularui.screen.ClientScreenHandler;
 
 import net.minecraft.Util;
@@ -22,9 +26,17 @@ public class MinecraftMixin {
     public Screen screen;
 
     @Inject(method = "runTick",
+            //? if neoforge {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker$Timer;advanceTime(JZ)I", shift = At.Shift.AFTER))
+            //?} else {
+            /*            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Timer;advanceTime(J)I", shift = At.Shift.AFTER))
+            *///?}
     public void modularui$updateTimer(CallbackInfo ci) {
+        //? if neoforge {
         int ticks = ModularUIClient.getTimer60Fps().advanceTime(Util.getMillis(), true);
+        //?} else {
+        /*        int ticks = ClientProxy.getTimer60Fps().advanceTime(Util.getMillis());
+        *///?}
         for (int j = 0; j < Math.min(20, ticks); ++j) {
             ClientScreenHandler.onFrameUpdate();
         }

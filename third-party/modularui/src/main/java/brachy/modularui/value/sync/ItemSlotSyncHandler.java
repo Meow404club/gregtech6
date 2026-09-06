@@ -3,7 +3,11 @@ package brachy.modularui.value.sync;
 import brachy.modularui.widgets.slot.ModularSlot;
 import brachy.modularui.widgets.slot.PlayerSlotType;
 
+//? if neoforge {
 import net.minecraft.network.RegistryFriendlyByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+*///?}
 import net.minecraft.world.item.ItemStack;
 
 import lombok.Getter;
@@ -69,8 +73,13 @@ public class ItemSlotSyncHandler extends SyncHandler<ItemSlotSyncHandler> {
 
             final boolean forceSync = false;
             syncToClient(SYNC_ITEM, buffer -> {
+                //? if neoforge {
                 ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, oldStack);
                 ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, itemStack);
+                //?} else {
+                /*                buffer.writeItem(oldStack);
+                                buffer.writeItem(itemStack);
+                *///?}
                 buffer.writeBoolean(init);
                 buffer.writeBoolean(forceSync);
             });
@@ -78,10 +87,19 @@ public class ItemSlotSyncHandler extends SyncHandler<ItemSlotSyncHandler> {
     }
 
     @Override
+    //? if neoforge {
     public void readOnClient(int id, RegistryFriendlyByteBuf buf) {
+    //?} else {
+    /*    public void readOnClient(int id, FriendlyByteBuf buf) {
+    *///?}
         if (id == SYNC_ITEM) {
+            //? if neoforge {
             ItemStack oldStack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
             ItemStack newStack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
+            //?} else {
+            /*            ItemStack oldStack = buf.readItem();
+                        ItemStack newStack = buf.readItem();
+            *///?}
             this.lastStoredItem = newStack;
             onSlotUpdate(oldStack, newStack, true, buf.readBoolean());
             if (buf.readBoolean()) {
@@ -94,7 +112,11 @@ public class ItemSlotSyncHandler extends SyncHandler<ItemSlotSyncHandler> {
     }
 
     @Override
+    //? if neoforge {
     public void readOnServer(int id, RegistryFriendlyByteBuf buf) {
+    //?} else {
+    /*    public void readOnServer(int id, FriendlyByteBuf buf) {
+    *///?}
         if (id == SYNC_ENABLED) {
             setEnabled(buf.readBoolean(), false);
         }
@@ -119,8 +141,13 @@ public class ItemSlotSyncHandler extends SyncHandler<ItemSlotSyncHandler> {
         onSlotUpdate(oldStack, newStack, getSyncManager().isClient(), init);
         this.lastStoredItem = newStack.copy();
         syncToClient(SYNC_ITEM, buffer -> {
+            //? if neoforge {
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, oldStack);
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, newStack);
+            //?} else {
+            /*            buffer.writeItem(oldStack);
+                        buffer.writeItem(newStack);
+            *///?}
             buffer.writeBoolean(init);
             buffer.writeBoolean(forceSync);
         });

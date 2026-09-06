@@ -4,7 +4,12 @@ import brachy.modularui.ModularUI;
 import brachy.modularui.api.value.sync.IBoolSyncValue;
 import brachy.modularui.api.value.sync.IStringSyncValue;
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+
+*///?}
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +18,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
+//? if neoforge {
 public class BooleanSyncValue extends ValueSyncHandler<ByteBuf, Boolean, BooleanSyncValue>
         implements IBoolSyncValue<ByteBuf, Boolean>, IStringSyncValue<ByteBuf, Boolean> {
+//?} else {
+/*public class BooleanSyncValue extends ValueSyncHandler<Boolean, BooleanSyncValue> implements IBoolSyncValue<Boolean>, IStringSyncValue<Boolean> {
+*///?}
 
     private final BooleanSupplier getter;
     private final BooleanConsumer setter;
@@ -92,12 +101,20 @@ public class BooleanSyncValue extends ValueSyncHandler<ByteBuf, Boolean, Boolean
     }
 
     @Override
+    //? if neoforge {
     public void write(ByteBuf buffer) {
+    //?} else {
+    /*    public void write(FriendlyByteBuf buffer) {
+    *///?}
         buffer.writeBoolean(getBoolValue());
     }
 
     @Override
+    //? if neoforge {
     public void read(ByteBuf buffer) {
+    //?} else {
+    /*    public void read(FriendlyByteBuf buffer) {
+    *///?}
         setBoolValue(buffer.readBoolean(), true, false);
     }
 

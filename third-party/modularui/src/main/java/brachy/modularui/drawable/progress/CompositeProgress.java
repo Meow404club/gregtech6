@@ -1,6 +1,8 @@
 package brachy.modularui.drawable.progress;
+//? if neoforge {
 
 import net.minecraft.util.Mth;
+//?}
 
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.GuiContext;
@@ -76,7 +78,11 @@ public class CompositeProgress extends BaseProgressDrawable<CompositeProgress> {
         for (Part part : this.parts) {
             final float m = 1 / (part.until - last);
             float finalLast = last;
+            //? if neoforge {
             part.progress.progress(() -> Mth.clamp((getCurrentProgress(1, 1) - finalLast) * m, 0, 1));
+            //?} else {
+            /*            part.progress.progress(() -> MathUtils.clamp((getCurrentProgress(1, 1) - finalLast) * m, 0, 1));
+            *///?}
             last = part.until;
         }
     }

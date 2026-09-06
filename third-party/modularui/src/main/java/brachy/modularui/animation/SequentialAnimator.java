@@ -73,7 +73,11 @@ public class SequentialAnimator extends BaseAnimator<SequentialAnimator> impleme
 
     @Override
     public boolean hasProgressed() {
+        //? if neoforge {
         return !this.animators.isEmpty() && this.animators.getFirst().hasProgressed();
+        //?} else {
+        /*        return !this.animators.isEmpty() && this.animators.get(0).hasProgressed();
+        *///?}
     }
 
     @Override

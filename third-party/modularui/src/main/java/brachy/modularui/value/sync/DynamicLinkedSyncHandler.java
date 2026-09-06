@@ -5,9 +5,15 @@ import brachy.modularui.widget.WidgetTree;
 
 import brachy.modularui.widgets.dynamic.IDynamicHandler;
 
+//? if neoforge {
 import net.minecraft.network.RegistryFriendlyByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+*///?}
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?}
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,9 +27,17 @@ import java.util.function.Supplier;
  * To use it simply pass in a registered value sync handler into the constructor and link it to a
  * {@link brachy.modularui.widgets.dynamic.DynamicWidget DynamicWidget}.
  */
+//? if neoforge {
 public class DynamicLinkedSyncHandler<B extends ByteBuf, S extends ValueSyncHandler<B, ?, ?>> extends SyncHandler<DynamicLinkedSyncHandler<B, S>> implements IDynamicHandler {
+//?} else {
+/*public class DynamicLinkedSyncHandler<S extends ValueSyncHandler<?, ?>> extends SyncHandler<DynamicLinkedSyncHandler<S>> implements IDynamicHandler {
+*///?}
 
+    //? if neoforge {
     private IWidgetProvider<B, S> widgetProvider;
+    //?} else {
+    /*    private IWidgetProvider<S> widgetProvider;
+    *///?}
     private Consumer<IWidget> onWidgetUpdate;
 
     private IWidget lastRejectedWidget;
@@ -37,14 +51,22 @@ public class DynamicLinkedSyncHandler<B extends ByteBuf, S extends ValueSyncHand
     }
 
     @Override
+    //? if neoforge {
     public void readOnClient(int id, RegistryFriendlyByteBuf buf) {
+    //?} else {
+    /*    public void readOnClient(int id, FriendlyByteBuf buf) {
+    *///?}
         if (id == 0) {
             updateWidget(parseWidget());
         }
     }
 
     @Override
+    //? if neoforge {
     public void readOnServer(int id, RegistryFriendlyByteBuf buf) {
+    //?} else {
+    /*    public void readOnServer(int id, FriendlyByteBuf buf) {
+    *///?}
         if (id == 0) {
             // do nothing with the widget on server side
             parseWidget();
@@ -110,7 +132,11 @@ public class DynamicLinkedSyncHandler<B extends ByteBuf, S extends ValueSyncHand
      * @return this
      * @see IWidgetProvider
      */
+    //? if neoforge {
     public DynamicLinkedSyncHandler<B, S> widgetProvider(IWidgetProvider<B, S> widgetProvider) {
+    //?} else {
+    /*    public DynamicLinkedSyncHandler<S> widgetProvider(IWidgetProvider<S> widgetProvider) {
+    *///?}
         this.widgetProvider = widgetProvider;
         return this;
     }
@@ -128,7 +154,11 @@ public class DynamicLinkedSyncHandler<B extends ByteBuf, S extends ValueSyncHand
         }
     }
 
+    //? if neoforge {
     public interface IWidgetProvider<B extends ByteBuf, S extends ValueSyncHandler<B, ?, ?>> {
+    //?} else {
+    /*    public interface IWidgetProvider<S extends ValueSyncHandler<?, ?>> {
+    *///?}
 
         /**
          * This is the function which creates a widget on client and server.

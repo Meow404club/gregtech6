@@ -1,8 +1,14 @@
 package brachy.modularui.factory;
 
+//? if neoforge {
 import net.minecraft.resources.ResourceLocation;
 
+//?}
 import brachy.modularui.api.IUIHolder;
+//? if forge {
+/*
+import net.minecraft.resources.ResourceLocation;
+*///?}
 
 import org.jetbrains.annotations.ApiStatus;
 

@@ -2,14 +2,22 @@ package brachy.modularui.api.value.sync;
 
 import brachy.modularui.api.value.IValue;
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+*///?}
 
 /**
  * A helper interface for syncing an object value.
  *
  * @param <T> object value type
  */
+//? if neoforge {
 public interface IValueSyncHandler<B extends ByteBuf, T> extends IValue<T> {
+//?} else {
+/*public interface IValueSyncHandler<T> extends IValue<T> {
+*///?}
 
     /**
      * Updates the current value and the source and syncs it to client/server.
@@ -65,12 +73,20 @@ public interface IValueSyncHandler<B extends ByteBuf, T> extends IValue<T> {
      *
      * @param buffer buffer to write to
      */
+    //? if neoforge {
     void write(B buffer);
+    //?} else {
+    /*    void write(FriendlyByteBuf buffer);
+    *///?}
 
     /**
      * Reads a value from the buffer and sets the current value
      *
      * @param buffer buffer to read from
      */
+    //? if neoforge {
     void read(B buffer);
+    //?} else {
+    /*    void read(FriendlyByteBuf buffer);
+    *///?}
 }

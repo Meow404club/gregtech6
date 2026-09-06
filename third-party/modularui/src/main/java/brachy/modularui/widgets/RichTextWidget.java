@@ -101,9 +101,17 @@ public class RichTextWidget extends Widget<RichTextWidget> implements IRichTextB
     }
 
     @Override
+    //? if neoforge {
     public boolean onMouseScrolled(double scrollX, double scrollY) {
+    //?} else {
+    /*    public boolean onMouseScrolled(double delta) {
+    *///?}
         if (getHoveredElement() instanceof Interactable interactable) {
+            //? if neoforge {
             return interactable.onMouseScrolled(scrollX, scrollY);
+            //?} else {
+            /*            return interactable.onMouseScrolled(delta);
+            *///?}
         }
         return false;
     }

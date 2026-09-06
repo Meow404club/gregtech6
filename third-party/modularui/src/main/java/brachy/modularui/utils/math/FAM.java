@@ -2,8 +2,10 @@ package brachy.modularui.utils.math;
 
 import net.minecraft.util.Mth;
 
+//? if neoforge {
 import it.unimi.dsi.fastutil.floats.FloatBinaryOperator;
 import it.unimi.dsi.fastutil.floats.FloatUnaryOperator;
+//?}
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -223,14 +225,22 @@ public class FAM {
         return res;
     }
 
+    //? if neoforge {
     public static float[] applyEach(float[] src, FloatUnaryOperator op, float @Nullable [] res) {
+    //?} else {
+    /*    public static float[] applyEach(float[] src, UnaryFloatOperator op, float @Nullable [] res) {
+    *///?}
         if (res == null) res = new float[src.length];
         int n = Math.min(src.length, res.length);
         for (int i = 0; i < n; i++) res[i] = op.apply(src[i]);
         return res;
     }
 
+    //? if neoforge {
     public static float[] applyEach(float[] src, float[] operands, FloatBinaryOperator op, float @Nullable [] res) {
+    //?} else {
+    /*    public static float[] applyEach(float[] src, float[] operands, BinaryFloatOperator op, float @Nullable [] res) {
+    *///?}
         if (src.length != operands.length)
             throw new IllegalArgumentException("Can't apply operator to operands of different size.");
         if (res == null) res = new float[src.length];
@@ -239,7 +249,11 @@ public class FAM {
         return res;
     }
 
+    //? if neoforge {
     public static float[] applyEach(float[] src, float[] operands1, float[] operands2, FloatTernaryOperator op,
+    //?} else {
+    /*    public static float[] applyEach(float[] src, float[] operands1, float[] operands2, TernaryFloatOperator op,
+    *///?}
                                     float @Nullable [] res) {
         if (src.length != operands1.length || src.length != operands2.length) {
             throw new IllegalArgumentException("Can't apply operator to operands of different size.");
@@ -294,7 +308,21 @@ public class FAM {
         }, res);
     }
 
+    //? if neoforge {
     public interface FloatTernaryOperator {
+    //?} else {
+    /*    public interface UnaryFloatOperator {
+
+            float apply(float v);
+        }
+
+        public interface BinaryFloatOperator {
+
+            float apply(float v, float op);
+        }
+
+        public interface TernaryFloatOperator {
+    *///?}
 
         float apply(float v, float op1, float op2);
     }

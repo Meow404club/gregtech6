@@ -11,8 +11,15 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+*///?}
 
 import lombok.Getter;
 import lombok.Setter;
@@ -121,7 +128,11 @@ public class UISettings {
     }
 
     @ApiStatus.Internal
+    //? if neoforge {
     @OnlyIn(Dist.CLIENT)
+    //?} else {
+    /*    @SideOnly(Side.CLIENT)
+    *///?}
     public IMuiScreen createGui(ModularContainerMenu container, ModularScreen screen) {
         return guiSupplier.create(container, screen);
     }
@@ -130,7 +141,11 @@ public class UISettings {
         return containerCreator != null;
     }
 
+    //? if neoforge {
     @OnlyIn(Dist.CLIENT)
+    //?} else {
+    /*    @SideOnly(Side.CLIENT)
+    *///?}
     public boolean hasCustomGui() {
         return guiSupplier != null;
     }

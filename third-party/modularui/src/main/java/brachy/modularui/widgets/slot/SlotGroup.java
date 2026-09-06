@@ -124,10 +124,18 @@ public class SlotGroup {
     }
 
     public Slot getFirstSlotForSorting() {
+        //? if neoforge {
         return this.slots.isEmpty() ? null : this.slots.getFirst();
+        //?} else {
+        /*        return this.slots.isEmpty() ? null : this.slots.get(0);
+        *///?}
     }
 
+    //? if neoforge {
     public boolean allowsSorting() {
+    //?} else {
+    /*    public boolean isAllowSorting() {
+    *///?}
         return this.slots.size() > 1 && this.allowSorting;
     }
 }

@@ -7,8 +7,10 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.utils.Color;
 import brachy.modularui.utils.math.MathUtils;
+//? if neoforge {
 
 import net.minecraft.util.Mth;
+//?}
 
 public class VerticalScrollData extends ScrollData {
 
@@ -106,13 +108,21 @@ public class VerticalScrollData extends ScrollData {
         final int maxShadowSizeLimit = (area.h() - sp.verticalScrollPadding()) / 3;
 
         if (s > min) {
+            //? if neoforge {
             float prog = Mth.clamp(s / maxOpacityScroll, 0, 1);
+            //?} else {
+            /*            float prog = MathUtils.clamp(s / maxOpacityScroll, 0, 1);
+            *///?}
             int startColor = Color.withAlpha(startColorFull, prog * 0.8f);
             int size = Math.min((int) (prog * maxShadowSize), maxShadowSizeLimit);
             GuiDraw.drawVerticalGradientRect(context.getGraphics(), x, sp.getScrollPaddingTop(), w, size, startColor, endColor);
         }
         if (s < max) {
+            //? if neoforge {
             float prog = Mth.clamp((max - s) / maxOpacityScroll, 0, 1);
+            //?} else {
+            /*            float prog = MathUtils.clamp((max - s) / maxOpacityScroll, 0, 1);
+            *///?}
             int startColor = Color.withAlpha(startColorFull, prog * 0.8f);
             int size = Math.min((int) (prog * maxShadowSize), maxShadowSizeLimit);
             GuiDraw.drawVerticalGradientRect(context.getGraphics(), x, area.h() - size - sp.getScrollPaddingBottom(), w, size, endColor, startColor);

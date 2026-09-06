@@ -91,8 +91,13 @@ public class InteractableIcon extends DelegateIcon implements Interactable {
     }
 
     @Override
+    //? if neoforge {
     public boolean onMouseScrolled(double scrollX, double scrollY) {
         return this.mouseScroll != null && this.mouseScroll.scroll(getContext(), scrollX, scrollY);
+    //?} else {
+    /*    public boolean onMouseScrolled(double delta) {
+            return this.mouseScroll != null && this.mouseScroll.scroll(getContext(), delta);
+    *///?}
     }
 
     public InteractableIcon onMousePressed(IGuiAction.MousePressed mousePressed) {

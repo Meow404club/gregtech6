@@ -12,8 +12,13 @@ import brachy.modularui.utils.serialization.codec.MutableObjectCodec;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.serialization.Codec;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import lombok.Getter;
 import lombok.Setter;
@@ -144,7 +149,12 @@ public class Rectangle implements IDrawable, IAnimatable<Rectangle> {
     }
 
     private static void v(Matrix4f pose, VertexConsumer buffer, float x, float y, int c) {
+        //? if neoforge {
         buffer.addVertex(pose, x, y, 0).setColor(c);
+        //?} else {
+        /*        buffer.vertex(pose, x, y, 0).color(Color.getRed(c), Color.getGreen(c), Color.getBlue(c), Color.getAlpha(c))
+                        .endVertex();
+        *///?}
     }
 
     @Override

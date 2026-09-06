@@ -3,6 +3,9 @@ package brachy.modularui.integration.recipeviewer.handlers;
 import net.minecraft.network.chat.Component;
 
 import lombok.Getter;
+//? if forge {
+/*import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
+*///?}
 
 import java.util.List;
 

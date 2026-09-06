@@ -10,8 +10,13 @@ import brachy.modularui.utils.serialization.codec.MutableObjectCodec;
 import brachy.modularui.widget.sizer.Box;
 
 import com.mojang.serialization.Codec;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import lombok.Getter;
 

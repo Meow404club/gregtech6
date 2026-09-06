@@ -5,6 +5,9 @@ import brachy.modularui.utils.NetworkUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+//? if forge {
+/*import net.minecraftforge.items.ItemHandlerHelper;
+*///?}
 
 import lombok.Getter;
 
@@ -88,7 +91,11 @@ public abstract class InventoryType<T> {
     public boolean visitAllStackable(Player player, ItemStack stack, InventoryVisitor<T> visitor) {
         visitAll(player, (type, context, index, stackInSlot) -> {
             if ((stackInSlot.isEmpty() && stack.isEmpty()) ||
+                    //? if neoforge {
                     ItemStack.isSameItemSameComponents(stackInSlot, stack)) {
+                    //?} else {
+                    /*                    ItemHandlerHelper.canItemStacksStack(stackInSlot, stack)) {
+                    *///?}
                 return visitor.visit(type, context, index, stack);
             }
             return false;

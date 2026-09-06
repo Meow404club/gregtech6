@@ -3,7 +3,11 @@ package brachy.modularui.widgets.slot;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
+//? if neoforge {
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
+//?} else {
+/*import net.minecraftforge.items.IItemHandlerModifiable;
+*///?}
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;

@@ -5,7 +5,12 @@ import brachy.modularui.api.value.sync.IDoubleSyncValue;
 import brachy.modularui.api.value.sync.IFloatSyncValue;
 import brachy.modularui.api.value.sync.IStringSyncValue;
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+
+*///?}
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +19,11 @@ import java.util.Objects;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 
+//? if neoforge {
 public class DoubleSyncValue extends ValueSyncHandler<ByteBuf, Double, DoubleSyncValue> implements IDoubleSyncValue<ByteBuf, Double>, IFloatSyncValue<ByteBuf, Double>, IStringSyncValue<ByteBuf, Double> {
+//?} else {
+/*public class DoubleSyncValue extends ValueSyncHandler<Double, DoubleSyncValue> implements IDoubleSyncValue<Double>, IFloatSyncValue<Double>, IStringSyncValue<Double> {
+*///?}
 
     private final DoubleSupplier getter;
     private final DoubleConsumer setter;
@@ -92,12 +101,20 @@ public class DoubleSyncValue extends ValueSyncHandler<ByteBuf, Double, DoubleSyn
     }
 
     @Override
+    //? if neoforge {
     public void write(ByteBuf buffer) {
+    //?} else {
+    /*    public void write(FriendlyByteBuf buffer) {
+    *///?}
         buffer.writeDouble(getDoubleValue());
     }
 
     @Override
+    //? if neoforge {
     public void read(ByteBuf buffer) {
+    //?} else {
+    /*    public void read(FriendlyByteBuf buffer) {
+    *///?}
         setDoubleValue(buffer.readDouble(), true, false);
     }
 

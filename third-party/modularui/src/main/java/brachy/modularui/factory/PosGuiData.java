@@ -12,9 +12,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * See {@link GuiData} for an explanation for what this is for.
  */
+//? if forge {
+/*@Getter
+*///?}
 public class PosGuiData extends GuiData {
 
+    //? if neoforge {
     @Getter
+    //?}
     private final BlockPos blockPos;
 
     public PosGuiData(@NotNull Player player, BlockPos blockPos) {

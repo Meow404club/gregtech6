@@ -93,7 +93,11 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
     protected void setSyncOrValue(@NotNull ISyncOrValue syncOrValue) {
         super.setSyncOrValue(syncOrValue);
         this.stringValue = syncOrValue.castNullable(IStringValue.class);
+        //? if neoforge {
         if (syncOrValue instanceof ValueSyncHandler<?, ?, ?> valueSyncHandler) {
+        //?} else {
+        /*        if (syncOrValue instanceof ValueSyncHandler<?, ?> valueSyncHandler) {
+        *///?}
             valueSyncHandler.setChangeListener(() -> {
                 markTooltipDirty();
                 setText(this.stringValue.getValue().toString());
@@ -128,7 +132,11 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
         if (this.handler.getText().size() > 1) {
             throw new IllegalStateException("TextFieldWidget can only have one line!");
         }
+        //? if neoforge {
         return this.handler.getText().getFirst();
+        //?} else {
+        /*        return this.handler.getText().get(0);
+        *///?}
     }
 
     public void setText(@NotNull String text) {
@@ -145,7 +153,11 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
         if (this.handler.getText().isEmpty()) {
             this.handler.getText().add(this.validator.apply(""));
         } else if (this.handler.getText().size() == 1) {
+            //? if neoforge {
             this.handler.getText().set(0, this.validator.apply(this.handler.getText().getFirst()));
+            //?} else {
+            /*            this.handler.getText().set(0, this.validator.apply(this.handler.getText().get(0)));
+            *///?}
             markTooltipDirty();
         } else {
             throw new IllegalStateException("TextFieldWidget can only have one line!");
@@ -245,7 +257,11 @@ public class TextFieldWidget extends BaseTextFieldWidget<TextFieldWidget> {
     }
 
     public TextFieldWidget setNumbersLong(LongSupplier min, LongSupplier max) {
+        //? if neoforge {
         return setNumbersLong(val -> Mth.clamp(val, min.getAsLong(), max.getAsLong()));
+        //?} else {
+        /*        return setNumbersLong(val -> MathUtils.clamp(val, min.getAsLong(), max.getAsLong()));
+        *///?}
     }
 
     public TextFieldWidget setNumbersDouble(DoubleSupplier min, DoubleSupplier max) {

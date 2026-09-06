@@ -13,7 +13,11 @@ import brachy.modularui.screen.BuildPanelEvent;
 import brachy.modularui.screen.CustomModularScreen;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
+//? if neoforge {
 import brachy.modularui.screen.event.OpenScreenEvent;
+//?} else {
+/*import brachy.modularui.screen.OpenScreenEvent;
+*///?}
 import brachy.modularui.screen.event.RichTooltipEvent;
 import brachy.modularui.screen.viewport.GuiContext;
 import brachy.modularui.screen.viewport.ModularGuiContext;
@@ -26,25 +30,44 @@ import brachy.modularui.widget.WidgetTree;
 import brachy.modularui.widgets.layout.Flow;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+//? if neoforge {
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
+//?}
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import com.mojang.datafixers.util.Either;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
+*///?}
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+//? if forge {
+/*import java.util.Random;
+*///?}
 
+//? if neoforge {
 @EventBusSubscriber(modid = ModularUI.MOD_ID, value = Dist.CLIENT)
+//?} else {
+/*@Mod.EventBusSubscriber(modid = ModularUI.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+*///?}
 public class TestHandler {
 
     public static boolean enabledRichTooltipEventTest = false;
@@ -73,17 +96,27 @@ public class TestHandler {
     }.asIcon().height(3);
 
     private static List<ItemStack> allItems = null;
+    //? if neoforge {
     private static final RandomSource random = RandomSource.createThreadSafe();
+    //?}
 
     public static ItemStack getRandomItem() {
 
         if (allItems == null) {
             allItems = new ArrayList<>();
+            //? if neoforge {
             for (Item item : BuiltInRegistries.ITEM) {
+            //?} else {
+            /*            for (Item item : ForgeRegistries.ITEMS) {
+            *///?}
                 allItems.add(new ItemStack(item));
             }
         }
+        //? if neoforge {
         return allItems.get(random.nextInt(allItems.size())).copy();
+        //?} else {
+        /*        return allItems.get(new Random().nextInt(allItems.size())).copy();
+        *///?}
     }
 
     @OnlyIn(Dist.CLIENT)

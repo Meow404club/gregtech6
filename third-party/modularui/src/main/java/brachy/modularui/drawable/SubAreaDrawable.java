@@ -4,9 +4,14 @@ import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.GuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.utils.Interpolations;
+//? if forge {
+/*import brachy.modularui.utils.math.MathUtils;
+*///?}
 import brachy.modularui.utils.serialization.codec.MutableObjectCodec;
 
+//? if neoforge {
 import net.minecraft.util.Mth;
+//?}
 import com.mojang.serialization.Codec;
 
 import lombok.Getter;
@@ -54,22 +59,38 @@ public class SubAreaDrawable extends DelegateDrawable {
     }
 
     public SubAreaDrawable u0(float u) {
+        //? if neoforge {
         this.u0 = Mth.clamp(u, 0f, 1f);
+        //?} else {
+        /*        this.u0 = MathUtils.clamp(u, 0f, 1f);
+        *///?}
         return this;
     }
 
     public SubAreaDrawable u1(float u) {
+        //? if neoforge {
         this.u1 = Mth.clamp(u, 0f, 1f);
+        //?} else {
+        /*        this.u1 = MathUtils.clamp(u, 0f, 1f);
+        *///?}
         return this;
     }
 
     public SubAreaDrawable v0(float v) {
+        //? if neoforge {
         this.v0 = Mth.clamp(v, 0f, 1f);
+        //?} else {
+        /*        this.v0 = MathUtils.clamp(v, 0f, 1f);
+        *///?}
         return this;
     }
 
     public SubAreaDrawable v1(float v) {
+        //? if neoforge {
         this.v1 = Mth.clamp(v, 0f, 1f);
+        //?} else {
+        /*        this.v1 = MathUtils.clamp(v, 0f, 1f);
+        *///?}
         return this;
     }
 

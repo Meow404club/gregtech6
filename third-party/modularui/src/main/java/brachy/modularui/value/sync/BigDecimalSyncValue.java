@@ -4,7 +4,9 @@ import brachy.modularui.api.value.IStringValue;
 import brachy.modularui.utils.ICopy;
 import brachy.modularui.utils.serialization.network.ByteBufAdapters;
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?}
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +14,11 @@ import java.math.BigDecimal;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+//? if neoforge {
 public class BigDecimalSyncValue extends GenericSyncValue<ByteBuf, BigDecimal> implements IStringValue<BigDecimal> {
+//?} else {
+/*public class BigDecimalSyncValue extends GenericSyncValue<BigDecimal> implements IStringValue<BigDecimal> {
+*///?}
 
     public BigDecimalSyncValue(@NotNull Supplier<BigDecimal> getter, @Nullable Consumer<BigDecimal> setter) {
         this(getter, setter, false);

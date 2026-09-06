@@ -7,8 +7,13 @@ import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import brachy.modularui.widget.WidgetTree;
 
+//? if neoforge {
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.neoforge.common.NeoForge;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.common.MinecraftForge;
+*///?}
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +55,11 @@ public final class PanelSyncHandler extends SyncHandler<PanelSyncHandler> implem
         if (!client) return panel;
         ModularScreen screen = syncManager.getContainer().getScreen();
         BuildPanelEvent.SubPanel event = new BuildPanelEvent.SubPanel(screen, panel);
+        //? if neoforge {
         NeoForge.EVENT_BUS.post(event);
+        //?} else {
+        /*        MinecraftForge.EVENT_BUS.post(event);
+        *///?}
         if (event.getOpeningPanel() != null) {
             panel = event.getOpeningPanel();
         }
@@ -167,7 +176,11 @@ public final class PanelSyncHandler extends SyncHandler<PanelSyncHandler> implem
     }
 
     @Override
+    //? if neoforge {
     public void readOnClient(int i, RegistryFriendlyByteBuf packetBuffer) {
+    //?} else {
+    /*    public void readOnClient(int i, FriendlyByteBuf packetBuffer) {
+    *///?}
         if (i == SYNC_OPEN) {
             openPanel(false);
         } else if (i == SYNC_CLOSE) {
@@ -178,7 +191,11 @@ public final class PanelSyncHandler extends SyncHandler<PanelSyncHandler> implem
     }
 
     @Override
+    //? if neoforge {
     public void readOnServer(int i, RegistryFriendlyByteBuf packetBuffer) {
+    //?} else {
+    /*    public void readOnServer(int i, FriendlyByteBuf packetBuffer) {
+    *///?}
         if (i == SYNC_NOTIFY_OPEN) {
             openPanel(false);
             syncToClient(SYNC_OPEN);

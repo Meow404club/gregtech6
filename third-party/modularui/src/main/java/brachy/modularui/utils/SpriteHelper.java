@@ -10,7 +10,11 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+//? if neoforge {
 import net.neoforged.neoforge.client.model.data.ModelData;
+//?} else {
+/*import net.minecraftforge.client.model.data.ModelData;
+*///?}
 
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +39,11 @@ public class SpriteHelper {
             return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
                     .apply(MissingTextureAtlasSprite.getLocation());
         } else {
+            //? if neoforge {
             return quads.getFirst().getSprite();
+            //?} else {
+            /*            return quads.get(0).getSprite();
+            *///?}
         }
     }
 

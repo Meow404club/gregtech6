@@ -4,7 +4,11 @@ import brachy.modularui.integration.recipeviewer.entry.fluid.FluidEntryList;
 import brachy.modularui.integration.recipeviewer.entry.item.ItemEntryList;
 
 import net.minecraft.world.item.ItemStack;
+//? if neoforge {
 import net.neoforged.neoforge.fluids.FluidStack;
+//?} else {
+/*import net.minecraftforge.fluids.FluidStack;
+*///?}
 
 import mezz.jei.common.input.ClickableIngredient;
 import mezz.jei.common.util.ImmutableRect2i;

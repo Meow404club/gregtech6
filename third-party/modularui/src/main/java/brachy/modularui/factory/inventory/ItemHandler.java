@@ -3,7 +3,11 @@ package brachy.modularui.factory.inventory;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+//? if neoforge {
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
+//?} else {
+/*import net.minecraftforge.items.IItemHandlerModifiable;
+*///?}
 
 /**
  * A {@link InventoryType} implementation for {@link IItemHandlerModifiable}.

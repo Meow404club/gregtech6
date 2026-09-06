@@ -3,7 +3,11 @@ package brachy.modularui.utils.math;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+//? if neoforge {
 import net.neoforged.neoforge.fluids.FluidStack;
+//?} else {
+/*import net.minecraftforge.fluids.FluidStack;
+*///?}
 
 import com.ezylang.evalex.BaseException;
 import com.ezylang.evalex.Expression;
@@ -28,7 +32,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class MathUtils {
 
+    //? if neoforge {
     public static final float PI_QUART = Mth.PI / 4f;
+    //?} else {
+    /*    public static final float PI = (float) Math.PI;
+        public static final float PI2 = 2f * PI;
+        public static final float PI_HALF = PI / 2f;
+        public static final float PI_QUART = PI / 4f;
+    *///?}
 
     public static final ExpressionConfiguration MATH_CFG = ExpressionConfiguration.builder()
             .arraysAllowed(false)
@@ -37,19 +48,36 @@ public class MathUtils {
             .build()
             .withAdditionalOperators(Pair.of("%", new PostfixPercentOperator()));
 
+    //? if neoforge {
     public static ParseResult parseExpression(@Nullable String expression) {
         return parseExpression(expression, true);
+    //?} else {
+    /*    public static ParseResult parseExpression(String expression) {
+            return parseExpression(expression, Double.NaN, false);
+    *///?}
     }
 
+    //? if neoforge {
     public static ParseResult parseExpression(@Nullable String expression, boolean useSiPrefixes) {
+    //?} else {
+    /*    public static ParseResult parseExpression(String expression, boolean useSiPrefixes) {
+    *///?}
         return parseExpression(expression, Double.NaN, useSiPrefixes);
     }
 
+    //? if neoforge {
     public static ParseResult parseExpression(@Nullable String expression, double defaultValue) {
+    //?} else {
+    /*    public static ParseResult parseExpression(String expression, double defaultValue) {
+    *///?}
         return parseExpression(expression, defaultValue, true);
     }
 
+    //? if neoforge {
     public static ParseResult parseExpression(@Nullable String expression, double defaultValue, boolean useSiPrefixes) {
+    //?} else {
+    /*    public static ParseResult parseExpression(String expression, double defaultValue, boolean useSiPrefixes) {
+    *///?}
         if (expression == null || expression.isEmpty()) {
             return ParseResult.success(EvaluationValue.numberValue(new BigDecimal(defaultValue)));
         }
@@ -127,6 +155,25 @@ public class MathUtils {
 
     public static float ratio(BigInteger a, BigInteger b) {
         return new BigDecimal(a).divide(new BigDecimal(b), MathContext.DECIMAL32).floatValue();
+    //? if forge {
+    /*    }
+
+        public static int ceilDiv(int x, int y) {
+            final int q = x / y;
+            // if the signs are the same and modulo not zero, round up
+            if ((x ^ y) >= 0 && (q * y != x)) {
+                return q + 1;
+            }
+            return q;
+        }
+
+        public static long clamp(long v, long min, long max) {
+            return Math.max(min, Math.min(max, v));
+        }
+
+        public static float clamp(float v, float min, float max) {
+            return Math.max(min, Math.min(max, v));
+    *///?}
     }
 
     public static int cycler(int x, int min, int max) {

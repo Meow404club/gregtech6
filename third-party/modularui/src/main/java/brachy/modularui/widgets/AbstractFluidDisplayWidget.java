@@ -15,7 +15,11 @@ import brachy.modularui.utils.math.SIPrefix;
 import brachy.modularui.widget.Widget;
 import brachy.modularui.widget.sizer.Box;
 
+//? if neoforge {
 import net.neoforged.neoforge.fluids.FluidStack;
+//?} else {
+/*import net.minecraftforge.fluids.FluidStack;
+*///?}
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -141,11 +145,13 @@ public abstract class AbstractFluidDisplayWidget<W extends AbstractFluidDisplayW
         return getThis();
     }
 
+    //? if neoforge {
     public W recipeSlotRole(RecipeSlotRole recipeRole) {
         this.recipeRole = recipeRole;
         return getThis();
     }
 
+    //?}
     /**
      * Determines if a partially filled fluid should be drawn from the top instead of the bottom if the current fluid is
      * lighter than air.
@@ -157,11 +163,24 @@ public abstract class AbstractFluidDisplayWidget<W extends AbstractFluidDisplayW
     }
 
     @Override
+    //? if forge {
+    /*    public FluidStackList getIngredients() {
+            return FluidStackList.of(getFluidStack());
+        }
+
+        @Override
+    *///?}
     public @NotNull Class<FluidStack> ingredientClass() {
         return FluidStack.class;
     }
 
+    //? if neoforge {
     public EntryList<FluidStack> getIngredients() {
         return FluidStackList.of(getFluidStack());
+    //?} else {
+    /*    public W recipeRole(RecipeSlotRole recipeRole) {
+            this.recipeRole = recipeRole;
+            return getThis();
+    *///?}
     }
 }

@@ -14,7 +14,9 @@ import com.mojang.serialization.RecordBuilder;
 import com.google.common.base.CaseFormat;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceLinkedOpenHashMap;
+//? if neoforge {
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
+//?}
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
@@ -215,8 +217,14 @@ public class MutableObjectCodec<T> extends MapCodec<T> implements MutableMapDeco
             return builder;
         }
         if (this.wrapped != null) {
+            //? if neoforge {
             if (this.wrapped instanceof MapCodecCodec<T>(MapCodec<T> mapCodec)) {
                 builder = mapCodec.encode(input, ops, builder);
+            //?} else {
+            /*            if (this.wrapped instanceof MapCodec.MapCodecCodec<T> mcc) {
+                            var codec = mcc.codec();
+                            builder = codec.encode(input, ops, builder);
+            *///?}
             } else {
                 var prefix = builder.build(this.wrapped.encode(input, ops, ops.empty()));
                 var res = prefix.result();
@@ -242,8 +250,13 @@ public class MutableObjectCodec<T> extends MapCodec<T> implements MutableMapDeco
     @Override
     public <J> DataResult<T> decodeInstance(DynamicOps<J> ops, MapLike<J> input) {
         if (this.wrapped != null) {
+            //? if neoforge {
             if (this.wrapped instanceof MapCodecCodec<T>(MapCodec<T> mapCodec)) {
                 return mapCodec.decode(ops, input);
+            //?} else {
+            /*            if (this.wrapped instanceof MapCodec.MapCodecCodec<T> mcc) {
+                            return mcc.codec().decode(ops, input);
+            *///?}
             }
             return this.wrapped.parse(ops, ops.createMap(input.entries()));
         }
@@ -262,7 +275,11 @@ public class MutableObjectCodec<T> extends MapCodec<T> implements MutableMapDeco
                 .append(" {");
         if (indent >= 0) b.append("\n");
         forEachField(f -> {
+            //? if neoforge {
             if (indent >= 0) b.repeat("  ", indent + 1);
+            //?} else {
+            /*            if (indent >= 0) b.append("  ".repeat(indent + 1));
+            *///?}
             f.convertToString(instance, b, indent + 1);
             b.append(",");
             if (indent >= 0) b.append('\n');
@@ -272,7 +289,11 @@ public class MutableObjectCodec<T> extends MapCodec<T> implements MutableMapDeco
         if (indent < 0) {
             b.deleteCharAt(b.length() - 1);
         } else {
+            //? if neoforge {
             b.repeat("  ", indent);
+            //?} else {
+            /*            b.append("  ".repeat(indent));
+            *///?}
         }
         return b.append("}").toString();
     }
@@ -297,8 +318,12 @@ public class MutableObjectCodec<T> extends MapCodec<T> implements MutableMapDeco
 
     public static class Builder<T> {
 
+        //? if neoforge {
         // deduplicate field names by using a map to store them
         private final Object2ReferenceMap<String, Field<T, ?>> fields = new Object2ReferenceLinkedOpenHashMap<>();
+        //?} else {
+        /*        private final Object2ReferenceLinkedOpenHashMap<String, Field<T, ?>> fields = new Object2ReferenceLinkedOpenHashMap<>();
+        *///?}
         private InstanceMapDecoder<T> instanceDecoder;
         private UnaryOperator<T> baseCopy;
         private CodecRegistry<T> registry;

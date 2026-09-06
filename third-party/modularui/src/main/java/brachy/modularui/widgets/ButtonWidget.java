@@ -130,9 +130,15 @@ public class ButtonWidget<W extends ButtonWidget<W>> extends SingleChildWidget<W
     }
 
     @Override
+    //? if neoforge {
     public boolean onMouseScrolled(double scrollX, double scrollY) {
         return (this.mouseScroll != null && this.mouseScroll.scroll(getContext(), scrollX, scrollY)) ||
                 (this.syncHandler != null && this.syncHandler.onMouseScroll((int) scrollX, (int) scrollY));
+    //?} else {
+    /*    public boolean onMouseScrolled(double delta) {
+            return (this.mouseScroll != null && this.mouseScroll.scroll(getContext(), delta)) ||
+                    (this.syncHandler != null && this.syncHandler.onMouseScroll((int) delta));
+    *///?}
     }
 
     @Override

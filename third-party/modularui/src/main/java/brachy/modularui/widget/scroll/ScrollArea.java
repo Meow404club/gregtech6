@@ -11,13 +11,20 @@ import brachy.modularui.widget.sizer.Box;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+//? if neoforge {
 import org.jetbrains.annotations.ApiStatus;
+//?}
 
 /**
  * Scrollable area
@@ -90,14 +97,19 @@ public class ScrollArea extends Area {
 
     @OnlyIn(Dist.CLIENT)
     public boolean mouseScroll(GuiContext context) {
+        //? if neoforge {
         return this.mouseScroll(context.getMouseX(), context.getMouseY(),
                 context.getLastMouseScrollDeltaX(), context.getLastMouseScrollDeltaY(),
+        //?} else {
+        /*        return this.mouseScroll(context.getMouseX(), context.getMouseY(), context.getLastMouseScrollDelta(),
+        *///?}
                 Screen.hasShiftDown());
     }
 
     /**
      * This method should be invoked when mouse wheel is scrolling
      */
+    //? if neoforge {
     public boolean mouseScroll(int x, int y, double scrollX, double scrollY, boolean shift) {
         boolean yActive = this.scrollY != null && this.scrollY.isScrollBarActive(this);
         boolean xActive = this.scrollX != null && this.scrollX.isScrollBarActive(this, yActive);
@@ -107,16 +119,31 @@ public class ScrollArea extends Area {
             if (Math.abs(scrollY) > Math.abs(scroll)) scroll = scrollY;
             mouseScrollInternal(this.scrollX, scroll);
             didScroll = true;
+    //?} else {
+    /*    public boolean mouseScroll(int x, int y, double scroll, boolean shift) {
+            ScrollData data;
+            if (this.scrollX != null && this.scrollX.isScrollBarActive(this)) {
+                data = this.scrollY == null || !this.scrollY.isScrollBarActive(this) || shift ? this.scrollX : this.scrollY;
+            } else if (this.scrollY != null && this.scrollY.isScrollBarActive(this)) {
+                data = this.scrollY;
+            } else {
+                // no scroll data present -> cant be scrolled
+                return false;
+    *///?}
         }
+        //? if neoforge {
         if (yActive && scrollY != 0) {
             mouseScrollInternal(this.scrollY, scrollY);
             didScroll = true;
         }
         return didScroll;
     }
+        //?}
 
+    //? if neoforge {
     @ApiStatus.OverrideOnly
     protected boolean mouseScrollInternal(ScrollData data, double scroll) {
+    //?}
         int scrollAmount = (int) Math.copySign(data.getScrollSpeed(), scroll);
         int scrollTo;
         if (data.isAnimating()) {

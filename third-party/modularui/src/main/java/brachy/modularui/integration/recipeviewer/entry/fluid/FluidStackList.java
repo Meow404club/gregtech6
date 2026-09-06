@@ -1,6 +1,10 @@
 package brachy.modularui.integration.recipeviewer.entry.fluid;
 
+//? if neoforge {
 import net.neoforged.neoforge.fluids.FluidStack;
+//?} else {
+/*import net.minecraftforge.fluids.FluidStack;
+*///?}
 
 import java.util.ArrayList;
 import java.util.Collection;

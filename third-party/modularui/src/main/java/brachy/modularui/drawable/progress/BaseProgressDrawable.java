@@ -3,10 +3,15 @@ package brachy.modularui.drawable.progress;
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.GuiContext;
 import brachy.modularui.theme.WidgetTheme;
+//? if forge {
+/*import brachy.modularui.utils.math.MathUtils;
+*///?}
 import brachy.modularui.widgets.ProgressWidget;
 
 import net.minecraft.Util;
+//? if neoforge {
 import net.minecraft.util.Mth;
+//?}
 
 import lombok.Getter;
 
@@ -27,7 +32,11 @@ public abstract class BaseProgressDrawable<D extends BaseProgressDrawable<D>> im
 
     protected float getCurrentProgress(int width, int height) {
         float p = this.progress == null ? 1f : (float) this.progress.getAsDouble();
+        //? if neoforge {
         p = Mth.clamp(p, 0, 1);
+        //?} else {
+        /*        p = MathUtils.clamp(p, 0, 1);
+        *///?}
         float stepSize = getCurrentProgressStepSize(width, height);
         if (stepSize > 0) {
             int c = (int) (p / stepSize);

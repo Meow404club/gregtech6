@@ -3,7 +3,12 @@ package brachy.modularui.value.sync;
 import brachy.modularui.api.value.sync.IStringSyncValue;
 import brachy.modularui.utils.NetworkUtils;
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+
+*///?}
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +17,11 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+//? if neoforge {
 public class StringSyncValue extends AbstractGenericSyncValue<ByteBuf, String, StringSyncValue> implements IStringSyncValue<ByteBuf, String> {
+//?} else {
+/*public class StringSyncValue extends AbstractGenericSyncValue<String, StringSyncValue> implements IStringSyncValue<String> {
+*///?}
 
     public StringSyncValue(Supplier<String> getter, Consumer<String> setter) {
         super(String.class, getter, setter);
@@ -45,12 +54,20 @@ public class StringSyncValue extends AbstractGenericSyncValue<ByteBuf, String, S
     }
 
     @Override
+    //? if neoforge {
     protected void serialize(ByteBuf buffer, String value) {
+    //?} else {
+    /*    protected void serialize(FriendlyByteBuf buffer, String value) {
+    *///?}
         NetworkUtils.writeStringSafe(buffer, value, Short.MAX_VALUE - 74);
     }
 
     @Override
+    //? if neoforge {
     protected String deserialize(ByteBuf buffer) {
+    //?} else {
+    /*    protected String deserialize(FriendlyByteBuf buffer) {
+    *///?}
         return NetworkUtils.readStringSafe(buffer);
     }
 

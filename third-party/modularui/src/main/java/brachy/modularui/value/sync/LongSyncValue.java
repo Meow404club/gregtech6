@@ -5,9 +5,15 @@ import brachy.modularui.api.value.sync.IIntSyncValue;
 import brachy.modularui.api.value.sync.ILongSyncValue;
 import brachy.modularui.api.value.sync.IStringSyncValue;
 
+//? if neoforge {
 import net.minecraft.network.VarLong;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+*///?}
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?}
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +22,11 @@ import java.util.Objects;
 import java.util.function.LongConsumer;
 import java.util.function.LongSupplier;
 
+//? if neoforge {
 public class LongSyncValue extends ValueSyncHandler<ByteBuf, Long, LongSyncValue> implements ILongSyncValue<ByteBuf, Long>, IIntSyncValue<ByteBuf, Long>, IStringSyncValue<ByteBuf, Long> {
+//?} else {
+/*public class LongSyncValue extends ValueSyncHandler<Long, LongSyncValue> implements ILongSyncValue<Long>, IIntSyncValue<Long>, IStringSyncValue<Long> {
+*///?}
 
     private final LongSupplier getter;
     private final LongConsumer setter;
@@ -94,13 +104,23 @@ public class LongSyncValue extends ValueSyncHandler<ByteBuf, Long, LongSyncValue
     }
 
     @Override
+    //? if neoforge {
     public void write(ByteBuf buffer) {
         VarLong.write(buffer, getLongValue());
+    //?} else {
+    /*    public void write(FriendlyByteBuf buffer) {
+            buffer.writeVarLong(getLongValue());
+    *///?}
     }
 
     @Override
+    //? if neoforge {
     public void read(ByteBuf buffer) {
         setValue(VarLong.read(buffer), true, false);
+    //?} else {
+    /*    public void read(FriendlyByteBuf buffer) {
+            setValue(buffer.readVarLong(), true, false);
+    *///?}
     }
 
     @Override

@@ -57,6 +57,7 @@ public class PhantomItemSlot extends ItemSlot implements GhostIngredientSlot<Ite
     }
 
     @Override
+    //? if neoforge {
     public boolean onMouseScrolled(double scrollX, double scrollY) {
         MouseData mouseData = MouseData.create(-1);
         this.syncHandler.syncToServer(PhantomItemSlotSyncHandler.SYNC_SCROLL, buf -> {
@@ -64,6 +65,11 @@ public class PhantomItemSlot extends ItemSlot implements GhostIngredientSlot<Ite
             buf.writeDouble(scrollX);
             buf.writeDouble(scrollY);
         });
+    //?} else {
+    /*    public boolean onMouseScrolled(double delta) {
+            MouseData mouseData = MouseData.create((int) delta);
+            this.syncHandler.syncToServer(PhantomItemSlotSyncHandler.SYNC_SCROLL, mouseData::writeToPacket);
+    *///?}
         return true;
     }
 

@@ -2,7 +2,12 @@ package brachy.modularui.value.sync;
 
 import brachy.modularui.ModularUI;
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+
+*///?}
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,7 +15,11 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+//? if neoforge {
 public abstract class AbstractGenericSyncValue<B extends ByteBuf, T, S extends AbstractGenericSyncValue<B, T, S>> extends ValueSyncHandler<B, T, S> {
+//?} else {
+/*public abstract class AbstractGenericSyncValue<T, S extends AbstractGenericSyncValue<T, S>> extends ValueSyncHandler<T, S> {
+*///?}
 
     private final Class<T> type;
     private final Supplier<T> getter;
@@ -58,9 +67,17 @@ public abstract class AbstractGenericSyncValue<B extends ByteBuf, T, S extends A
 
     protected abstract boolean areEqual(T a, T b);
 
+    //? if neoforge {
     protected abstract void serialize(B buffer, T value);
+    //?} else {
+    /*    protected abstract void serialize(FriendlyByteBuf buffer, T value);
+    *///?}
 
+    //? if neoforge {
     protected abstract T deserialize(B buffer);
+    //?} else {
+    /*    protected abstract T deserialize(FriendlyByteBuf buffer);
+    *///?}
 
     @Override
     public T getValue() {
@@ -99,12 +116,20 @@ public abstract class AbstractGenericSyncValue<B extends ByteBuf, T, S extends A
     }
 
     @Override
+    //? if neoforge {
     public void write(B buffer) {
+    //?} else {
+    /*    public void write(FriendlyByteBuf buffer) {
+    *///?}
         serialize(buffer, this.cache);
     }
 
     @Override
+    //? if neoforge {
     public void read(B buffer) {
+    //?} else {
+    /*    public void read(FriendlyByteBuf buffer) {
+    *///?}
         setValue(deserialize(buffer), true, false);
     }
 
@@ -123,8 +148,13 @@ public abstract class AbstractGenericSyncValue<B extends ByteBuf, T, S extends A
     }
 
     @SuppressWarnings("unchecked")
+    //? if neoforge {
     public <V> AbstractGenericSyncValue<B, V, ?> cast() {
         return (AbstractGenericSyncValue<B, V, ?>) this;
+    //?} else {
+    /*    public <V> AbstractGenericSyncValue<V, ?> cast() {
+            return (AbstractGenericSyncValue<V, ?>) this;
+    *///?}
     }
 
     /**

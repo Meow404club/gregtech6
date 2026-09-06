@@ -215,9 +215,17 @@ public class Flow extends ParentWidget<Flow> implements ILayoutWidget {
         Box padding = parent.getArea().getPadding();
         if (!isWrapped) {
             // simplified logic for non-wrapped
+            //? if neoforge {
             flows.getFirst().calculateCrossAxisSize(axis);
+            //?} else {
+            /*            flows.get(0).calculateCrossAxisSize(axis);
+            *///?}
             // starting pos is 0 and use parents padding
+            //? if neoforge {
             return flows.getFirst().layoutCrossAxis(parent, axis, crossAxisAlignment, availableSize, 0, padding);
+            //?} else {
+            /*            return flows.get(0).layoutCrossAxis(parent, axis, crossAxisAlignment, availableSize, 0, padding);
+            *///?}
         }
         if (parent.resizer().dependsOnChildren(other)) {
             // when covering children we can assume START

@@ -5,12 +5,21 @@ import brachy.modularui.api.IUIHolder;
 import brachy.modularui.api.MCHelper;
 
 import net.minecraft.core.BlockPos;
+//? if neoforge {
 import net.minecraft.network.RegistryFriendlyByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+*///?}
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import org.jetbrains.annotations.NotNull;
 
@@ -64,12 +73,20 @@ public class BlockEntityUIFactory extends AbstractUIFactory<PosGuiData> {
     }
 
     @Override
+    //? if neoforge {
     public void writeGuiData(PosGuiData guiData, RegistryFriendlyByteBuf buffer) {
+    //?} else {
+    /*    public void writeGuiData(PosGuiData guiData, FriendlyByteBuf buffer) {
+    *///?}
         buffer.writeBlockPos(guiData.getBlockPos());
     }
 
     @Override
+    //? if neoforge {
     public @NotNull PosGuiData readGuiData(Player player, RegistryFriendlyByteBuf buffer) {
+    //?} else {
+    /*    public @NotNull PosGuiData readGuiData(Player player, FriendlyByteBuf buffer) {
+    *///?}
         return new PosGuiData(player, buffer.readBlockPos());
     }
 

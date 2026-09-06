@@ -13,8 +13,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import com.mojang.blaze3d.vertex.PoseStack;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import lombok.Getter;
 import lombok.Setter;
@@ -35,8 +40,12 @@ public class GuiContext extends GuiViewportStack {
         return ClientScreenHandler.getBestContext();
     }
 
+    //? if neoforge {
     @Getter
     private final UIType UItype;
+    //?} else {
+    /*    private final UIType uiType;
+    *///?}
 
     @Getter
     private final Area screenArea = new Area();
@@ -52,7 +61,11 @@ public class GuiContext extends GuiViewportStack {
     private int mouseY;
     @Getter private int lastMouseButton;
     @Getter private boolean lastButtonPress; // button pressed = true, button released = false
+    //? if neoforge {
     @Getter private double lastMouseScrollDeltaX, lastMouseScrollDeltaY;
+    //?} else {
+    /*    @Getter private double lastMouseScrollDelta;
+    *///?}
 
     /* Keyboard states */
     @Getter private int lastKeyCode;
@@ -66,8 +79,13 @@ public class GuiContext extends GuiViewportStack {
     @Getter private long tick = 0;
     @Getter private int currentDrawingZ = 0;
 
+    //? if neoforge {
     public GuiContext(UIType UItype) {
         this.UItype = UItype;
+    //?} else {
+    /*    public GuiContext(UIType uiType) {
+            this.uiType = uiType;
+    *///?}
     }
 
     public boolean isAbove(IWidget widget) {
@@ -102,9 +120,14 @@ public class GuiContext extends GuiViewportStack {
     }
 
     @ApiStatus.Internal
+    //? if neoforge {
     public void updateMouseWheel(double scrollDeltaX, double scrollDeltaY) {
         this.lastMouseScrollDeltaX = scrollDeltaX;
         this.lastMouseScrollDeltaY = scrollDeltaY;
+    //?} else {
+    /*    public void updateMouseWheel(double scrollDelta) {
+            this.lastMouseScrollDelta = scrollDelta;
+    *///?}
     }
 
     @ApiStatus.Internal
@@ -154,6 +177,12 @@ public class GuiContext extends GuiViewportStack {
 
     public void tick() {
         this.tick += 1;
+    //? if forge {
+    /*    }
+
+        public UIType getUIType() {
+            return this.uiType;
+    *///?}
     }
 
     /* Viewport */

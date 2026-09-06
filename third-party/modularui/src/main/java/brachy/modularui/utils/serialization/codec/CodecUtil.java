@@ -1,6 +1,8 @@
 package brachy.modularui.utils.serialization.codec;
 
+//? if neoforge {
 import com.mojang.datafixers.util.Either;
+//?}
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -25,10 +27,12 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class CodecUtil {
+    //? if neoforge {
 
     public static <T> T unboxEither(Either<? extends T, ? extends T> either) {
         return either.map(Function.identity(), Function.identity());
     }
+    //?}
 
     public static <A> Codec<A> nullDecoder() {
         return nullDecoder(() -> null);
@@ -201,7 +205,11 @@ public class CodecUtil {
     }
 
     public static <E, A> MapCodec<E> dispatchNullable(Codec<A> keyCodec, Function<? super E, ? extends
+            //? if neoforge {
             A> type, Function<? super A, ? extends MapCodec<? extends E>> codec) {
+            //?} else {
+            /*            A> type, Function<? super A, ? extends Codec<? extends E>> codec) {
+            *///?}
         return dispatchNullable("type", keyCodec, type, codec);
     }
 
@@ -211,19 +219,31 @@ public class CodecUtil {
      */
     public static <K, V> MapCodec<V> dispatchNullable(String key, Codec<K> keyCodec,
                                                       Function<? super V, ? extends K> type,
+                                                      //? if neoforge {
                                                       Function<? super K, ? extends MapCodec<? extends V>> codec) {
+                                                      //?} else {
+                                                      /*                                                      Function<? super K, ? extends Codec<? extends V>> codec) {
+                                                      *///?}
         return partialDispatchMap(key, keyCodec, v -> {
             K k = type.apply(v);
             return k == null ? DataResult.error(() -> "No key found") : DataResult.success(k);
         }, k -> {
+            //? if neoforge {
             MapCodec<? extends V> e = codec.apply(k);
+            //?} else {
+            /*            Codec<? extends V> e = codec.apply(k);
+            *///?}
             return e == null ? DataResult.error(() -> "No codec found for key " + k) : DataResult.success(e);
         });
     }
 
     public static <K, V> MapCodec<V> partialDispatchMap(String key, Codec<K> keyCodec,
                                                         Function<? super V, ? extends DataResult<? extends K>> type,
+                                                        //? if neoforge {
                                                         Function<? super K, ? extends DataResult<? extends MapCodec<? extends V>>> codec) {
+                                                        //?} else {
+                                                        /*                                                        Function<? super K, ? extends DataResult<? extends Codec<? extends V>>> codec) {
+                                                        *///?}
         return new KeyDispatchCodec<>(key, keyCodec, type, codec);
 
     }
@@ -266,7 +286,11 @@ public class CodecUtil {
     public static <A> Codec<List<A>> listLike(Codec<A> codec) {
         return chainedCodec(codec.flatComapMap(Collections::singletonList, list -> {
             if (list.size() != 1) return DataResult.error(() -> "List must contain exactly one element");
+            //? if neoforge {
             return DataResult.success(list.getFirst());
+            //?} else {
+            /*            return DataResult.success(list.get(0));
+            *///?}
         }), codec.listOf());
     }
 

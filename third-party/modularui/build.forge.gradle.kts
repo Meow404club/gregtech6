@@ -20,6 +20,7 @@ val forgeVer = property("deps.forge").toString()
 val jeiVer = property("jei_version").toString()
 val reiVer = property("rei_version").toString()
 val architecturyVer = property("architectury_version").toString()
+val clothmathVer = property("clothmath_version").toString()
 val curiosVer = property("curios_version").toString()
 val emiVer = property("emi_version").toString()
 val embeddiumVer = property("embeddium_version").toString()
@@ -76,6 +77,14 @@ legacyForge {
     }
 }
 
+// Mixin AP 接线（上游 1.20.1 moddevgradle.gradle 同款 mixin{} 块）：refmap 名 + mixin config 登记。
+// 缺此块 AP 拿不到 obfuscation 环境 → @Inject/@Redirect target 全红
+//（"Unable to locate obfuscation mapping"，2026-09-06 首编实证）。
+mixin {
+    add(sourceSets["main"], "modularui.refmap.json")
+    config("modularui.mixins.json")
+}
+
 dependencies {
     implementation("com.ezylang:EvalEx:${evalExVer}")
     compileOnly("org.jetbrains:annotations:${jetbrainsVer}")
@@ -97,6 +106,8 @@ dependencies {
     "modCompileOnly"("me.shedaniel:RoughlyEnoughItems-default-plugin-forge:${reiVer}")
     "modCompileOnly"("me.shedaniel:RoughlyEnoughItems-forge:${reiVer}")
     "modCompileOnly"("dev.architectury:architectury-forge:${architecturyVer}")
+    // REI 的 me.shedaniel.math 包在独立 cloth-basic-math 构件（上游 catalog clothmath；钉 shedaniel maven latest 0.6.1）
+    "modCompileOnly"("me.shedaniel.cloth:basic-math:${clothmathVer}")
     "modCompileOnly"("dev.emi:emi-forge:${emiVer}")
     "modCompileOnly"("top.theillusivec4.curios:curios-forge:${curiosVer}:api")
     "modCompileOnly"("maven.modrinth:embeddium:${embeddiumVer}")

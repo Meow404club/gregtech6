@@ -9,6 +9,9 @@ import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.drawable.GuiTextures;
 import brachy.modularui.drawable.Rectangle;
 import brachy.modularui.screen.viewport.ModularGuiContext;
+//? if forge {
+/*import brachy.modularui.theme.WidgetTheme;
+*///?}
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.utils.Color;
 import brachy.modularui.value.DoubleValue;
@@ -87,13 +90,21 @@ public class SliderWidget extends Widget<SliderWidget> implements Interactable {
                     int crossAxisPos = (int) (getArea().height / 2D - this.stopperHeight / 2D);
                     // is this supposed to use the passed widget theme or the default?
                     this.stopperDrawable.draw(context, pos, crossAxisPos, this.stopperWidth, this.stopperHeight,
+                            //? if neoforge {
                             widgetTheme.theme());
+                            //?} else {
+                            /*                            WidgetTheme.getDefault().theme());
+                            *///?}
                 } else {
                     pos -= this.stopperHeight / 2;
                     int crossAxisPos = (int) (getArea().width / 2D - this.stopperWidth / 2D);
                     // is this supposed to use the passed widget theme or the default?
                     this.stopperDrawable.draw(context, crossAxisPos, pos, this.stopperWidth, this.stopperHeight,
+                            //? if neoforge {
                             widgetTheme.theme());
+                            //?} else {
+                            /*                            WidgetTheme.getDefault().theme());
+                            *///?}
                 }
             }
         }

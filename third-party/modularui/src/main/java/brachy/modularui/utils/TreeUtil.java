@@ -7,7 +7,9 @@ import brachy.modularui.widget.sizer.ResizeNode;
 
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Streams;
+//? if neoforge {
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+//?}
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -193,7 +195,11 @@ public class TreeUtil {
     public static <T extends ITreeNode<T>> @UnmodifiableView Iterator<T> iteratorBFS(T parent) {
         return new AbstractIterator<>() {
 
+            //? if neoforge {
             private final List<T> queue = new ObjectArrayList<>();
+            //?} else {
+            /*            private final ObjectList<T> queue = ObjectList.create();
+            *///?}
             private Iterator<T> currentIt;
 
             @Override

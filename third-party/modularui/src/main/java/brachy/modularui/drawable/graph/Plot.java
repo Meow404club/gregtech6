@@ -27,13 +27,27 @@ public class Plot {
             Color.LIME.main
     };
 
+    //? if neoforge {
     protected double[] xs = DAM.EMPTY;
     protected double[] ys = DAM.EMPTY;
+    //?} else {
+    /*    double[] xs = DAM.EMPTY;
+        double[] ys = DAM.EMPTY;
+    *///?}
     @Getter
+    //? if neoforge {
     protected float thickness = 1f;
     protected boolean defaultColor = true;
+    //?} else {
+    /*    float thickness = 1f;
+        boolean defaultColor = true;
+    *///?}
     @Getter
+    //? if neoforge {
     protected int color;
+    //?} else {
+    /*    int color;
+    *///?}
 
     private float[] vertexBuffer; // screen coords need to be way less accurate than graph coords, so float is fine
     private boolean dirty = true;
@@ -174,7 +188,11 @@ public class Plot {
         var pose = graphics.pose().last().pose();
         var buffer = graphics.bufferSource().getBuffer(MUIRenderTypes.guiTriangleStrip());
         for (int i = 0; i < this.vertexBuffer.length; i += 2) {
+            //? if neoforge {
             buffer.addVertex(pose, this.vertexBuffer[i], this.vertexBuffer[i + 1], 0).setColor(r, g, b, a);
+            //?} else {
+            /*            buffer.vertex(pose, this.vertexBuffer[i], this.vertexBuffer[i + 1], 0).color(r, g, b, a).endVertex();
+            *///?}
         }
     }
 

@@ -30,7 +30,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+//? if neoforge {
 import java.util.Optional;
+//?}
 
 public class ArraySchema implements ISchema {
 
@@ -187,15 +189,24 @@ public class ArraySchema implements ISchema {
         }
 
         public Builder where(char c, String registryName) {
+            //? if neoforge {
             return where(c, ResourceLocation.tryParse(registryName));
+            //?} else {
+            /*            return where(c, new ResourceLocation(registryName));
+            *///?}
         }
 
         public Builder where(char c, ResourceLocation registryName) {
+            //? if neoforge {
             Optional<Block> block = BuiltInRegistries.BLOCK.getOptional(registryName);
             if (block.isEmpty()) {
                 throw new IllegalArgumentException(registryName + " isn't a valid block");
             }
             return where(c, block.get());
+            //?} else {
+            /*            return where(c, BuiltInRegistries.BLOCK.getOptional(registryName)
+                                .orElseThrow(() -> new IllegalArgumentException(registryName + " isn't a valid block")));
+            *///?}
         }
 
         private void validate() {
@@ -204,7 +215,11 @@ public class ArraySchema implements ISchema {
             }
             List<String> errors = new ArrayList<>();
             CharSet checkedChars = new CharArraySet();
+            //? if neoforge {
             int layerSize = this.tensor.getFirst().length;
+            //?} else {
+            /*            int layerSize = this.tensor.get(0).length;
+            *///?}
             for (int x = 0; x < this.tensor.size(); x++) {
                 String[] xLayer = this.tensor.get(x);
                 if (xLayer.length == 0) {
@@ -247,7 +262,11 @@ public class ArraySchema implements ISchema {
         public ArraySchema build() {
             validate();
             BlockState[][][] blocks = new BlockState[this.tensor
+                    //? if neoforge {
                     .size()][this.tensor.getFirst().length][this.tensor.getFirst()[0]
+                    //?} else {
+                    /*                    .size()][this.tensor.get(0).length][this.tensor.get(0)[0]
+                    *///?}
                     .length()];
             for (int x = 0; x < this.tensor.size(); x++) {
                 String[] xLayer = this.tensor.get(x);

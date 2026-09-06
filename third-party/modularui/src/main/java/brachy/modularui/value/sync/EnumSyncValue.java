@@ -4,9 +4,15 @@ import brachy.modularui.ModularUI;
 import brachy.modularui.api.value.IEnumValue;
 import brachy.modularui.api.value.sync.IIntSyncValue;
 
+//? if neoforge {
 import net.minecraft.network.VarInt;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+*///?}
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?}
 import lombok.Getter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +22,11 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+//? if neoforge {
 public class EnumSyncValue<T extends Enum<T>> extends ValueSyncHandler<ByteBuf, T, EnumSyncValue<T>> implements IEnumValue<T>, IIntSyncValue<ByteBuf, T> {
+//?} else {
+/*public class EnumSyncValue<T extends Enum<T>> extends ValueSyncHandler<T, EnumSyncValue<T>> implements IEnumValue<T>, IIntSyncValue<T> {
+*///?}
 
     @Getter
     protected final Class<T> enumClass;
@@ -89,13 +99,23 @@ public class EnumSyncValue<T extends Enum<T>> extends ValueSyncHandler<ByteBuf, 
     }
 
     @Override
+    //? if neoforge {
     public void write(ByteBuf buffer) {
         VarInt.write(buffer, getValue().ordinal());
+    //?} else {
+    /*    public void write(FriendlyByteBuf buffer) {
+            buffer.writeEnum(getValue());
+    *///?}
     }
 
     @Override
+    //? if neoforge {
     public void read(ByteBuf buffer) {
         setIntValue(VarInt.read(buffer), true, false);
+    //?} else {
+    /*    public void read(FriendlyByteBuf buffer) {
+            setValue(buffer.readEnum(this.enumClass), true, false);
+    *///?}
     }
 
     @Override

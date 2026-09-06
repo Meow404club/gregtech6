@@ -17,10 +17,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.FormattedCharSink;
+//? if neoforge {
 
 import net.neoforged.api.distmarker.Dist;
 
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableFloat;
@@ -164,9 +169,17 @@ public class FontRenderHelper {
         parts.removeIf(FontRenderHelper::isEmpty);
         // no need to join completely empty or single components
         if (parts.isEmpty()) return Component.empty();
+        //? if neoforge {
         else if (parts.size() == 1) return parts.getFirst();
+        //?} else {
+        /*        else if (parts.size() == 1) return parts.get(0);
+        *///?}
 
+        //? if neoforge {
         MutableComponent composite = parts.removeFirst();
+        //?} else {
+        /*        MutableComponent composite = parts.remove(0);
+        *///?}
         for (Component c : parts) {
             composite.append(c);
         }
@@ -183,7 +196,11 @@ public class FontRenderHelper {
         int size = chars.size();
         return switch (size) {
             case 0 -> FormattedCharSequence.EMPTY;
+            //? if neoforge {
             case 1 -> chars.getFirst().asSequence();
+            //?} else {
+            /*            case 1 -> chars.get(0).asSequence();
+            *///?}
             default -> (sink) -> {
                 for (int i = 0; i < size; i++) {
                     TextRenderer.FormattedChar ch = chars.get(i);

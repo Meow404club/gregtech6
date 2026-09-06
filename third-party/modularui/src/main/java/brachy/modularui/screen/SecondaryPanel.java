@@ -5,9 +5,15 @@ import brachy.modularui.api.MCHelper;
 import brachy.modularui.widget.WidgetTree;
 
 import net.minecraft.world.entity.player.Player;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.NeoForge;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
+*///?}
 
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
@@ -90,7 +96,11 @@ public class SecondaryPanel implements IPanelHandler {
                         "Panel has widgets with synced values, but the panel is not synced!");
             }
             BuildPanelEvent.SubPanel event = new BuildPanelEvent.SubPanel(this.screen, this.panel);
+            //? if neoforge {
             NeoForge.EVENT_BUS.post(event);
+            //?} else {
+            /*            MinecraftForge.EVENT_BUS.post(event);
+            *///?}
             if (event.getOpeningPanel() != null) {
                 this.panel = event.getOpeningPanel();
             }

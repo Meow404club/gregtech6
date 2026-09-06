@@ -5,13 +5,21 @@ import brachy.modularui.api.IMuiScreen;
 import brachy.modularui.api.widget.IWidget;
 import brachy.modularui.screen.ClientScreenHandler;
 import brachy.modularui.screen.ModularScreen;
+//? if neoforge {
 import brachy.modularui.screen.event.OpenScreenEvent;
+//?} else {
+/*import brachy.modularui.screen.OpenScreenEvent;
+*///?}
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
+//? if neoforge {
 import net.neoforged.neoforge.common.NeoForge;
+//?} else {
+/*import net.minecraftforge.common.MinecraftForge;
+*///?}
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -125,7 +133,11 @@ public class OverlayStack {
         closeAll();
         if (newScreen != null) {
             OpenScreenEvent event = new OpenScreenEvent(newScreen);
+            //? if neoforge {
             NeoForge.EVENT_BUS.post(event);
+            //?} else {
+            /*            MinecraftForge.EVENT_BUS.post(event);
+            *///?}
             for (ModularScreen overlay : event.getOverlays()) {
                 overlay.constructOverlay(newScreen);
                 open(overlay);

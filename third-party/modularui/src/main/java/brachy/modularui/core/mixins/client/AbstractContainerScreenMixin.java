@@ -31,7 +31,11 @@ public class AbstractContainerScreenMixin implements IClickableContainerScreen {
     public void modularui$getSlot(double mouseX, double mouseY, CallbackInfoReturnable<Slot> cir) {
         if (this.modularui$clickedSlot != null) {
             cir.setReturnValue(this.modularui$clickedSlot);
+        //? if neoforge {
         } else if (this instanceof IMuiScreen) {
+        //?} else {
+        /*        } else if (IMuiScreen.class.isAssignableFrom(this.getClass())) {
+        *///?}
             cir.setReturnValue(this.hoveredSlot);
         }
     }

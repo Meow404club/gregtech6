@@ -5,6 +5,9 @@ import brachy.modularui.api.widget.IWidget;
 import brachy.modularui.integration.recipeviewer.handlers.IngredientProvider;
 import brachy.modularui.integration.recipeviewer.handlers.RecipeViewerHandler;
 import brachy.modularui.integration.rei.REIStackConverter;
+//? if forge {
+/*import brachy.modularui.integration.rei.ReiRecipeViewerSlot;
+*///?}
 import brachy.modularui.utils.Rectangle;
 
 import net.minecraft.client.gui.screens.Screen;
@@ -18,7 +21,9 @@ import me.shedaniel.rei.api.client.gui.drag.DraggableStackVisitor;
 import me.shedaniel.rei.api.client.gui.drag.DraggedAcceptorResult;
 import me.shedaniel.rei.api.client.gui.drag.DraggingContext;
 import me.shedaniel.rei.api.client.gui.widgets.TextField;
+//? if neoforge {
 import me.shedaniel.rei.api.client.registry.screen.ExclusionZones;
+//?}
 import me.shedaniel.rei.api.client.registry.screen.ExclusionZonesProvider;
 import me.shedaniel.rei.api.client.registry.screen.OverlayDecider;
 import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry;
@@ -62,6 +67,7 @@ public class REIScreenHandler<T extends Screen & IMuiScreen> extends RecipeViewe
         of(clazz).register(registry);
     }
 
+    //? if neoforge {
     public void register(ExclusionZones registry) {
         registry.register(this.clazz, this);
     }
@@ -70,6 +76,7 @@ public class REIScreenHandler<T extends Screen & IMuiScreen> extends RecipeViewe
         of(clazz).register(registry);
     }
 
+    //?}
     @Override
     public @Nullable DraggableStack getHoveredStack(DraggingContext<T> context, double mouseX, double mouseY) {
         IWidget hovered = context.getScreen().screen().getContext().getTopHovered();
@@ -91,7 +98,11 @@ public class REIScreenHandler<T extends Screen & IMuiScreen> extends RecipeViewe
                 @Override
                 public EntryStack<?> getStack() {
                     if (converted.isEmpty()) return EntryStack.empty();
+                    //? if neoforge {
                     return converted.getFirst();
+                    //?} else {
+                    /*                    return converted.get(0);
+                    *///?}
                 }
 
                 @Override
@@ -144,7 +155,11 @@ public class REIScreenHandler<T extends Screen & IMuiScreen> extends RecipeViewe
     }
 
     @Override
+    //? if neoforge {
     public boolean isSearchFocused(){
+    //?} else {
+    /*    public boolean isSearchFocused() {
+    *///?}
         TextField searchField = REIRuntime.getInstance().getSearchTextField();
         if (searchField != null) return searchField.isFocused();
         return false;
@@ -155,4 +170,11 @@ public class REIScreenHandler<T extends Screen & IMuiScreen> extends RecipeViewe
         if (currentIngredient == null) return null;
         return currentIngredient.get().getValue();
     }
+    //? if forge {
+    /*
+        @Override
+        public <I> ReiRecipeViewerSlot<I> createRecipeViewerSlot(Class<I> ingredientClass) {
+            return new ReiRecipeViewerSlot<>(ingredientClass);
+        }
+    *///?}
 }

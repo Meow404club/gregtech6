@@ -99,7 +99,11 @@ public class SlotGroupWidget extends ParentWidget<SlotGroupWidget> {
         super.onChildAdd(child);
         if (child instanceof SortButtons sortButtons) {
             this.sortButtonsAdded = true;
+            //? if neoforge {
             if (sortButtons.slotGroup() == null && sortButtons.slotGroupName() == null) {
+            //?} else {
+            /*            if (sortButtons.getSlotGroup() == null && sortButtons.getSlotGroupName() == null) {
+            *///?}
                 if (this.slotGroup != null) {
                     sortButtons.slotGroup(this.slotGroup);
                 } else if (this.slotGroupName != null) {
@@ -174,7 +178,9 @@ public class SlotGroupWidget extends ParentWidget<SlotGroupWidget> {
         return new Builder();
     }
 
+    //? if neoforge {
     @FunctionalInterface
+    //?}
     public interface SlotConsumer {
 
         ItemSlot apply(int index, ItemSlot widgetSlot);

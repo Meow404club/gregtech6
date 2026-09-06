@@ -108,7 +108,11 @@ public abstract class AbstractScrollWidget<I extends IWidget, W extends Abstract
     }
 
     @Override
+    //? if neoforge {
     public boolean onMouseScrolled(double scrollX, double scrollY) {
+    //?} else {
+    /*    public boolean onMouseScrolled(double delta) {
+    *///?}
         return this.scroll.mouseScroll(getContext());
     }
 

@@ -300,7 +300,11 @@ public class TextFieldHandler {
             delete(false);
         }
         if (text.isEmpty()) {
+            //? if neoforge {
             if (insertion.size() == 1 && !test(insertion.getFirst())) {
+            //?} else {
+            /*            if (insertion.size() == 1 && !test(insertion.get(0))) {
+            *///?}
                 return null;
             }
             text.addAll(insertion);
@@ -308,16 +312,32 @@ public class TextFieldHandler {
         }
         String lineStart = text.get(this.cursor.y).substring(0, this.cursor.x);
         String lineEnd = text.get(this.cursor.y).substring(this.cursor.x);
+        //? if neoforge {
         if (insertion.size() == 1 && text.size() == 1 && !test(lineStart + insertion.getFirst() + lineEnd)) {
+        //?} else {
+        /*        if (insertion.size() == 1 && text.size() == 1 && !test(lineStart + insertion.get(0) + lineEnd)) {
+        *///?}
             return null;
         }
+        //? if neoforge {
         text.set(this.cursor.y, lineStart + insertion.getFirst());
+        //?} else {
+        /*        text.set(this.cursor.y, lineStart + insertion.get(0));
+        *///?}
         if (insertion.size() == 1) {
+            //? if neoforge {
             if (!test(insertion.getFirst())) {
+            //?} else {
+            /*            if (!test(insertion.get(0))) {
+            *///?}
                 return null;
             }
             text.set(this.cursor.y, text.get(this.cursor.y) + lineEnd);
+            //? if neoforge {
             return new Point(this.cursor.x + insertion.getFirst().length(), this.cursor.y);
+            //?} else {
+            /*            return new Point(this.cursor.x + insertion.get(0).length(), this.cursor.y);
+            *///?}
         } else {
             text.add(this.cursor.y + 1, insertion.get(insertion.size() - 1) + lineEnd);
             x = insertion.get(insertion.size() - 1).length();

@@ -4,14 +4,23 @@ import brachy.modularui.ModularUI;
 import brachy.modularui.api.value.sync.IByteSyncValue;
 import brachy.modularui.value.ByteValue;
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+
+*///?}
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+//? if neoforge {
 public class ByteSyncValue extends ValueSyncHandler<ByteBuf, Byte, ByteSyncValue> implements IByteSyncValue<ByteBuf, Byte> {
+//?} else {
+/*public class ByteSyncValue extends ValueSyncHandler<Byte, ByteSyncValue> implements IByteSyncValue<Byte> {
+*///?}
 
     private byte cache;
     private final ByteValue.Supplier getter;
@@ -68,12 +77,20 @@ public class ByteSyncValue extends ValueSyncHandler<ByteBuf, Byte, ByteSyncValue
     }
 
     @Override
+    //? if neoforge {
     public void write(ByteBuf buffer) {
+    //?} else {
+    /*    public void write(FriendlyByteBuf buffer) {
+    *///?}
         buffer.writeByte(getByteValue());
     }
 
     @Override
+    //? if neoforge {
     public void read(ByteBuf buffer) {
+    //?} else {
+    /*    public void read(FriendlyByteBuf buffer) {
+    *///?}
         setByteValue(buffer.readByte(), true, false);
     }
 

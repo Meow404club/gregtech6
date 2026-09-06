@@ -14,8 +14,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -119,9 +124,15 @@ public interface Text extends IDrawable {
         if (keys.length == 0) {
             return ModularComponent.empty();
         }
+        //? if neoforge {
         ModularComponent main = keys[0].asModular();
         for (int i = 1; i < keys.length; i++) {
             main.append(keys[i]);
+        //?} else {
+        /*        ModularComponent main = ModularComponent.empty();
+                for (Component key : keys) {
+                    main.append(key);
+        *///?}
         }
         return main;
     }
@@ -132,8 +143,13 @@ public interface Text extends IDrawable {
      * @param supplier string supplier
      * @return dynamic text key
      */
+    //? if neoforge {
     static DynamicComponent dynamic(@NotNull Supplier<@NotNull Component> supplier) {
         return new DynamicComponent(supplier);
+    //?} else {
+    /*    static DynamicComponent dynamic(@NotNull Supplier<@NotNull Component> supp) {
+            return new DynamicComponent(supp);
+    *///?}
     }
 
     /**

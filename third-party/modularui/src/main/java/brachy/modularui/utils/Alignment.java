@@ -25,7 +25,11 @@ public class Alignment {
             Codec.FLOAT.fieldOf("x").forGetter(Alignment::getX),
             Codec.FLOAT.fieldOf("y").forGetter(Alignment::getY)
     ).apply(instance, Alignment::new));
+    //? if neoforge {
     private static final Codec<Alignment> CODEC_OF_NAME = Codec.stringResolver(Alignment::getName, ALIGNMENT_MAP::get);
+    //?} else {
+    /*    private static final Codec<Alignment> CODEC_OF_NAME = ExtraCodecs.stringResolverCodec(Alignment::getName, ALIGNMENT_MAP::get);
+    *///?}
 
     public static final Codec<Alignment> CODEC = CodecUtil.chainedCodec(CODEC_OF_NAME, CODEC_OF_INSTANCE);
 

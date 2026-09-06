@@ -5,7 +5,11 @@ import brachy.modularui.api.value.IValue;
 import brachy.modularui.screen.RichTooltip;
 import brachy.modularui.value.ObjectValue;
 
+//? if neoforge {
 import net.neoforged.neoforge.fluids.FluidStack;
+//?} else {
+/*import net.minecraftforge.fluids.FluidStack;
+*///?}
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;

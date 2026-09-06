@@ -7,6 +7,9 @@ import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widgets.VoidWidget;
 
 import org.jetbrains.annotations.NotNull;
+//? if forge {
+/*import org.jetbrains.annotations.UnmodifiableView;
+*///?}
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,9 @@ public class AbstractParentWidget<I extends IWidget, W extends AbstractParentWid
      * @return a view of all children.
      */
     @SuppressWarnings("unchecked")
+    //? if forge {
+    /*    @UnmodifiableView
+    *///?}
     @NotNull
     @Override
     public List<IWidget> getChildren() {
@@ -47,6 +53,9 @@ public class AbstractParentWidget<I extends IWidget, W extends AbstractParentWid
      *
      * @return a view of all children.
      */
+    //? if forge {
+    /*    @UnmodifiableView
+    *///?}
     public List<I> getTypeChildren() {
         return children;
     }

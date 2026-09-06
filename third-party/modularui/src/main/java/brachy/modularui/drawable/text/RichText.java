@@ -17,7 +17,9 @@ import brachy.modularui.utils.serialization.codec.MutableObjectCodec;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
+//? if neoforge {
 import net.minecraft.network.chat.ComponentSerialization;
+//?}
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.ExtraCodecs;
 import com.mojang.serialization.Codec;
@@ -42,7 +44,11 @@ public class RichText implements IDrawable, IRichTextBuilder<RichText> {
     private static final TextRenderer renderer = new TextRenderer();
 
     private static final Decoder<Object> RICH_ELEMENT_DECODER = CodecUtil.optionsDecoder(
+            //? if neoforge {
             ModularComponent.CODEC.codec(), ComponentSerialization.CODEC,
+            //?} else {
+            /*            ModularComponent.CODEC.codec(), ExtraCodecs.COMPONENT,
+            *///?}
             Spacer.CODEC_MAP.codec(), Codec.STRING, IDrawable.CODEC);
     private static final Encoder<Object> RICH_ELEMENT_ENCODER = new Encoder<>() {
         @Override
@@ -54,7 +60,11 @@ public class RichText implements IDrawable, IRichTextBuilder<RichText> {
                 }
                 return Text.CODEC.codec().encode(v, ops, prefix);
             }
+            //? if neoforge {
             if (input instanceof Component v) return ComponentSerialization.CODEC.encode(v, ops, prefix);
+            //?} else {
+            /*            if (input instanceof Component v) return ExtraCodecs.COMPONENT.encode(v, ops, prefix);
+            *///?}
             if (input instanceof IDrawable v) return IDrawable.CODEC.encode(v, ops, prefix);
             if (input instanceof Spacer v) return Spacer.CODEC_MAP.codec().encode(v, ops, prefix);
             return DataResult.error(() -> "RichText is currently unable to encode objects of type " + input.getClass().getSimpleName());

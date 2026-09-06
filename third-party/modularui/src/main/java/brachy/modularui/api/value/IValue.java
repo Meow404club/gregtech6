@@ -32,7 +32,9 @@ public interface IValue<T> extends ISyncOrValue {
 
     Class<T> getValueType();
 
+    //? if neoforge {
     @Override
+    //?}
     default boolean isValueOfType(Class<?> type) {
         return type.isAssignableFrom(getValueType());
     }

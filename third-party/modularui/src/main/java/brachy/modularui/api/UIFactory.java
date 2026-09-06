@@ -8,12 +8,21 @@ import brachy.modularui.screen.ModularScreen;
 import brachy.modularui.screen.UISettings;
 import brachy.modularui.value.sync.PanelSyncManager;
 
+//? if neoforge {
 import net.minecraft.network.RegistryFriendlyByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+*///?}
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -103,7 +112,11 @@ public interface UIFactory<D extends GuiData> {
      * @param buffer  buffer
      */
     @ApiStatus.OverrideOnly
+    //? if neoforge {
     void writeGuiData(D guiData, RegistryFriendlyByteBuf buffer);
+    //?} else {
+    /*    void writeGuiData(D guiData, FriendlyByteBuf buffer);
+    *///?}
 
     /**
      * Reads and creates the gui data from the buffer.
@@ -114,5 +127,9 @@ public interface UIFactory<D extends GuiData> {
      */
     @NotNull
     @ApiStatus.OverrideOnly
+    //? if neoforge {
     D readGuiData(Player player, RegistryFriendlyByteBuf buffer);
+    //?} else {
+    /*    D readGuiData(Player player, FriendlyByteBuf buffer);
+    *///?}
 }

@@ -3,12 +3,21 @@ package brachy.modularui.factory;
 import brachy.modularui.api.IUIHolder;
 import brachy.modularui.api.MCHelper;
 
+//? if neoforge {
 import net.minecraft.network.RegistryFriendlyByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+*///?}
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import org.jetbrains.annotations.NotNull;
 
@@ -60,10 +69,18 @@ public class SimpleUIFactory extends AbstractUIFactory<GuiData> {
     }
 
     @Override
+    //? if neoforge {
     public void writeGuiData(GuiData guiData, RegistryFriendlyByteBuf buffer) {}
+    //?} else {
+    /*    public void writeGuiData(GuiData guiData, FriendlyByteBuf buffer) {}
+    *///?}
 
     @Override
+    //? if neoforge {
     public @NotNull GuiData readGuiData(Player player, RegistryFriendlyByteBuf buffer) {
+    //?} else {
+    /*    public @NotNull GuiData readGuiData(Player player, FriendlyByteBuf buffer) {
+    *///?}
         return new GuiData(player);
     }
 

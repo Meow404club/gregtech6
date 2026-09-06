@@ -8,6 +8,9 @@ import brachy.modularui.screen.ModularScreen;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.utils.FormattingUtil;
+//? if forge {
+/*import brachy.modularui.utils.ObjectList;
+*///?}
 import brachy.modularui.utils.Stencil;
 import brachy.modularui.utils.serialization.codec.CodecRegistry;
 import brachy.modularui.widget.sizer.Area;
@@ -16,8 +19,10 @@ import brachy.modularui.widget.sizer.StandardResizer;
 import com.mojang.serialization.Codec;
 
 import com.google.common.base.CharMatcher;
+//? if neoforge {
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+//?}
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +37,11 @@ import java.util.function.UnaryOperator;
 public interface IWidget extends ITreeNode<IWidget> {
 
     CodecRegistry<IWidget> CODECS = new CodecRegistry<>();
+    //? if neoforge {
     Codec<IWidget> CODEC = Codec.STRING.dispatch("widget", IWidget::getTypeName, CODECS::getNullable);
+    //?} else {
+    /*    Codec<IWidget> CODEC = Codec.STRING.dispatch("widget", IWidget::getTypeName, CODECS::getNullableCodec);
+    *///?}
 
     String WIDGET_TRANSLATION_KEY_FORMAT = "widget.%s.name";
     /**
@@ -316,7 +325,11 @@ public interface IWidget extends ITreeNode<IWidget> {
     default void visitTransformChildren(UnaryOperator<IWidget> op) {}
 
     default void visitTransformAllChildren(UnaryOperator<IWidget> op) {
+        //? if neoforge {
         ObjectList<IWidget> parents = new ObjectArrayList<>();
+        //?} else {
+        /*        ObjectList<IWidget> parents = ObjectList.create();
+        *///?}
         parents.add(this);
         while (!parents.isEmpty()) {
             parents.removeFirst().visitTransformChildren(child -> {

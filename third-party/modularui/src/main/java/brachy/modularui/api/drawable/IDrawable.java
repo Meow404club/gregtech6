@@ -18,8 +18,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import com.google.gson.JsonElement;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +73,11 @@ public interface IDrawable {
     };
 
     CodecRegistry<IDrawable> CODECS = new CodecRegistry<>();
+    //? if neoforge {
     MapCodec<IDrawable> CODEC_DISPATCH = CodecUtil.dispatchNullable(Codec.STRING, IDrawable::getTypeName, CODECS::getNullable);
+    //?} else {
+    /*    MapCodec<IDrawable> CODEC_DISPATCH = CodecUtil.dispatchNullable(Codec.STRING, IDrawable::getTypeName, CODECS::getNullableCodec);
+    *///?}
     Codec<IDrawable> CODEC_EMPTY_NONE = Codec.STRING.flatXmap(s -> {
         if (s == null || s.equals("empty") || s.equals("null")) return DataResult.success(EMPTY);
         if (s.equals("none")) return DataResult.success(NONE);
@@ -87,7 +96,11 @@ public interface IDrawable {
     }
 
     static JsonElement toJsonOrThrow(IDrawable drawable) {
+        //? if neoforge {
         return toJson(drawable).getOrThrow();
+        //?} else {
+        /*        return toJson(drawable).getOrThrow(false, s -> {});
+        *///?}
     }
 
     /**

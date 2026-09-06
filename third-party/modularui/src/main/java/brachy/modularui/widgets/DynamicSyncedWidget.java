@@ -64,7 +64,11 @@ public class DynamicSyncedWidget<W extends DynamicSyncedWidget<W>> extends Widge
         return getThis();
     }
 
+    //? if neoforge {
     public W syncHandler(DynamicLinkedSyncHandler<?, ?> syncHandler) {
+    //?} else {
+    /*    public W syncHandler(DynamicLinkedSyncHandler<?> syncHandler) {
+    *///?}
         setSyncOrValue(ISyncOrValue.orEmpty(syncHandler));
         return getThis();
     }

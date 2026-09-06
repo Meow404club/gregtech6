@@ -7,14 +7,23 @@ import brachy.modularui.api.value.sync.IStringSyncValue;
 import brachy.modularui.utils.FloatConsumer;
 import brachy.modularui.utils.FloatSupplier;
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+
+*///?}
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+//? if neoforge {
 public class FloatSyncValue extends ValueSyncHandler<ByteBuf, Float, FloatSyncValue> implements IFloatSyncValue<ByteBuf, Float>, IDoubleSyncValue<ByteBuf, Float>, IStringSyncValue<ByteBuf, Float> {
+//?} else {
+/*public class FloatSyncValue extends ValueSyncHandler<Float, FloatSyncValue> implements IFloatSyncValue<Float>, IDoubleSyncValue<Float>, IStringSyncValue<Float> {
+*///?}
 
     private final FloatSupplier getter;
     private final FloatConsumer setter;
@@ -92,12 +101,20 @@ public class FloatSyncValue extends ValueSyncHandler<ByteBuf, Float, FloatSyncVa
     }
 
     @Override
+    //? if neoforge {
     public void write(ByteBuf buffer) {
+    //?} else {
+    /*    public void write(FriendlyByteBuf buffer) {
+    *///?}
         buffer.writeFloat(getFloatValue());
     }
 
     @Override
+    //? if neoforge {
     public void read(ByteBuf buffer) {
+    //?} else {
+    /*    public void read(FriendlyByteBuf buffer) {
+    *///?}
         setFloatValue(buffer.readFloat(), true, false);
     }
 

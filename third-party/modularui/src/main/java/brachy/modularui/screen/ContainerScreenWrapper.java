@@ -7,8 +7,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
@@ -45,8 +50,13 @@ public class ContainerScreenWrapper extends AbstractContainerScreen<ModularConta
     }
 
     @Override
+    //? if neoforge {
     public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         handleDrawBackground(guiGraphics, mouseX, mouseY, partialTick, super::renderBackground);
+    //?} else {
+    /*    public void renderBackground(@NotNull GuiGraphics guiGraphics) {
+            handleDrawBackground(guiGraphics, super::renderBackground);
+    *///?}
     }
 
     @Override

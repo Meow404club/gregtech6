@@ -5,8 +5,13 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
 import com.mojang.blaze3d.platform.InputConstants;
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+*///?}
 
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -122,7 +127,11 @@ public interface Interactable {
      * @param scrollY amount scrolled by on the Y axis (usually irrelevant)
      * @return true if this widget can be scrolled at all
      */
+    //? if neoforge {
     default boolean onMouseScrolled(double scrollX, double scrollY) {
+    //?} else {
+    /*    default boolean onMouseScrolled(double delta) {
+    *///?}
         return false;
     }
 

@@ -5,9 +5,15 @@ import brachy.modularui.api.value.sync.IDoubleSyncValue;
 import brachy.modularui.api.value.sync.IIntSyncValue;
 import brachy.modularui.api.value.sync.IStringSyncValue;
 
+//? if neoforge {
 import net.minecraft.network.VarInt;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+*///?}
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?}
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +22,11 @@ import java.util.Objects;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 
+//? if neoforge {
 public class IntSyncValue extends ValueSyncHandler<ByteBuf, Integer, IntSyncValue> implements IIntSyncValue<ByteBuf, Integer>, IDoubleSyncValue<ByteBuf, Integer>, IStringSyncValue<ByteBuf, Integer> {
+//?} else {
+/*public class IntSyncValue extends ValueSyncHandler<Integer, IntSyncValue> implements IIntSyncValue<Integer>, IDoubleSyncValue<Integer>, IStringSyncValue<Integer> {
+*///?}
 
     private int cache;
     private final IntSupplier getter;
@@ -104,13 +114,23 @@ public class IntSyncValue extends ValueSyncHandler<ByteBuf, Integer, IntSyncValu
     }
 
     @Override
+    //? if neoforge {
     public void write(ByteBuf buffer) {
         VarInt.write(buffer, getIntValue());
+    //?} else {
+    /*    public void write(FriendlyByteBuf buffer) {
+            buffer.writeVarInt(this.cache);
+    *///?}
     }
 
     @Override
+    //? if neoforge {
     public void read(ByteBuf buffer) {
         setIntValue(VarInt.read(buffer), true, false);
+    //?} else {
+    /*    public void read(FriendlyByteBuf buffer) {
+            setIntValue(buffer.readVarInt(), true, false);
+    *///?}
     }
 
     @Override

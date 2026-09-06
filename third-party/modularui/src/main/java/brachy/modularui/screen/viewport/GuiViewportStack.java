@@ -20,8 +20,10 @@ import java.util.List;
  * This is mainly used, but not limited to, properly displacing widgets in a scroll area.
  */
 public class GuiViewportStack implements IViewportStack {
+    //? if neoforge {
 
     private static final Vector3f sharedVec = new Vector3f();
+    //?}
 
     private final ObjectArrayList<TransformationMatrix> matrixPool = new ObjectArrayList<>(256);
     private final ObjectArrayList<TransformationMatrix> viewportStack = new ObjectArrayList<>();
@@ -154,9 +156,13 @@ public class GuiViewportStack implements IViewportStack {
 
     @Override
     public void translate(float x, float y) {
+        //? if neoforge {
         checkViewport();
         this.top.getMatrix().translate(vec(x, y, 0));
         this.top.markDirty();
+        //?} else {
+        /*        this.translate(x, y, 0.0f);
+        *///?}
     }
 
     @Override
@@ -169,7 +175,11 @@ public class GuiViewportStack implements IViewportStack {
     @Override
     public void rotate(float angle, float x, float y, float z) {
         checkViewport();
+        //? if neoforge {
         this.top.getMatrix().rotate(angle, vec(x, y, z));
+        //?} else {
+        /*        this.top.getMatrix().rotate(angle, x, y, z);
+        *///?}
         this.top.markDirty();
     }
 
@@ -181,7 +191,11 @@ public class GuiViewportStack implements IViewportStack {
     @Override
     public void scale(float x, float y) {
         checkViewport();
+        //? if neoforge {
         this.top.getMatrix().scale(vec(x, y, 1f));
+        //?} else {
+        /*        this.top.getMatrix().scale(x, y, 1.0f);
+        *///?}
         this.top.markDirty();
     }
 
@@ -256,7 +270,11 @@ public class GuiViewportStack implements IViewportStack {
     @Override
     public void applyTo(PoseStack poseStack) {
         if (this.top == null) return;
+        //? if neoforge {
         poseStack.mulPose(this.top.getMatrix());
+        //?} else {
+        /*        poseStack.mulPoseMatrix(this.top.getMatrix());
+        *///?}
     }
 
     @Nullable
@@ -264,9 +282,11 @@ public class GuiViewportStack implements IViewportStack {
     public TransformationMatrix peek() {
         return this.top;
     }
+    //? if neoforge {
 
     private static Vector3f vec(float x, float y, float z) {
         sharedVec.set(x, y, z);
         return sharedVec;
     }
+    //?}
 }

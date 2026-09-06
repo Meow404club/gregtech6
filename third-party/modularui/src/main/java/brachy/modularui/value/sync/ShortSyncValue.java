@@ -6,14 +6,23 @@ import brachy.modularui.api.value.sync.IShortSyncValue;
 import brachy.modularui.api.value.sync.IStringSyncValue;
 import brachy.modularui.value.ShortValue;
 
+//? if neoforge {
 import io.netty.buffer.ByteBuf;
+//?} else {
+/*import net.minecraft.network.FriendlyByteBuf;
+
+*///?}
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+//? if neoforge {
 public class ShortSyncValue extends ValueSyncHandler<ByteBuf, Short, ShortSyncValue> implements IShortSyncValue<ByteBuf, Short>, IIntSyncValue<ByteBuf, Short>, IStringSyncValue<ByteBuf, Short> {
+//?} else {
+/*public class ShortSyncValue extends ValueSyncHandler<Short, ShortSyncValue> implements IShortSyncValue<Short>, IIntSyncValue<Short>, IStringSyncValue<Short> {
+*///?}
 
     private short cache;
     private final ShortValue.Supplier getter;
@@ -91,12 +100,20 @@ public class ShortSyncValue extends ValueSyncHandler<ByteBuf, Short, ShortSyncVa
     }
 
     @Override
+    //? if neoforge {
     public void write(ByteBuf buffer) {
+    //?} else {
+    /*    public void write(FriendlyByteBuf buffer) {
+    *///?}
         buffer.writeShort(this.cache);
     }
 
     @Override
+    //? if neoforge {
     public void read(ByteBuf buffer) {
+    //?} else {
+    /*    public void read(FriendlyByteBuf buffer) {
+    *///?}
         setShortValue(buffer.readShort(), true, false);
     }
 

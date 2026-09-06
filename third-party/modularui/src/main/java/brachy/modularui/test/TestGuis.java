@@ -61,13 +61,21 @@ import brachy.modularui.widgets.menu.DropdownWidget;
 import brachy.modularui.widgets.textfield.TextFieldWidget;
 
 import net.minecraft.Util;
+//? if neoforge {
 import net.minecraft.core.registries.BuiltInRegistries;
+//?}
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
+//? if neoforge {
 import net.neoforged.neoforge.fluids.FluidStack;
+//?}
 import com.mojang.blaze3d.vertex.VertexConsumer;
+//? if forge {
+/*import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
+*///?}
 
 import com.google.common.base.CaseFormat;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -323,10 +331,18 @@ public class TestGuis extends CustomModularScreen {
                         .sizeRel(1f).margin(7)
                         .autoUpdate(true)
                         .textBuilder(text -> text.add("Hello ")
+                                //? if neoforge {
                                 .addDrawable(new ItemDrawable(new ItemStack(Blocks.GRASS_BLOCK))
+                                //?} else {
+                                /*                                .addDrawable(new ItemDrawable(new ItemStack(Blocks.GRASS))
+                                *///?}
                                         .asIcon()
                                         .asHoverable()
+                                        //? if neoforge {
                                         .tooltip(richTooltip -> richTooltip.addFromItem(new ItemStack(Blocks.GRASS_BLOCK))
+                                        //?} else {
+                                        /*                                        .tooltip(richTooltip -> richTooltip.addFromItem(new ItemStack(Blocks.GRASS))
+                                        *///?}
                                                 .add(Text.GRAY + "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")))
                                 .add(", nice to ")
                                 .addDrawable(new ItemDrawable(new ItemStack(Items.PORKCHOP))
@@ -407,10 +423,17 @@ public class TestGuis extends CustomModularScreen {
                 .layer(" DDD ", "  E  ", "  G  ", "  B  ")
                 .layer(" DDD ", " E E ", "     ", "     ")
                 .layer("D   D", "     ", "     ", "     ")
+                //? if neoforge {
                 .where('D', Blocks.GOLD_BLOCK)
                 .where('E', Blocks.EMERALD_BLOCK)
                 .where('G', Blocks.DIAMOND_BLOCK)
                 .where('B', Blocks.BEACON)
+                //?} else {
+                /*                .where('D', "minecraft:gold_block")
+                                .where('E', "minecraft:emerald_block")
+                                .where('G', "minecraft:diamond_block")
+                                .where('B', "minecraft:beacon")
+                *///?}
                 .build();
         var renderer = schema.createRenderer()
                 .rayTracing(true)
@@ -461,7 +484,11 @@ public class TestGuis extends CustomModularScreen {
                                 .collapseDisabledChildren()
                                 .expanded()
                                 .widthRel(1f)
+                                //? if neoforge {
                                 .children(BuiltInRegistries.ITEM, item -> {
+                                //?} else {
+                                /*                                .children(ForgeRegistries.ITEMS, item -> {
+                                *///?}
                                     ItemStack stack = new ItemStack(item);
                                     String text = stack.getHoverName().getString();
                                     return Flow.row()
@@ -513,8 +540,13 @@ public class TestGuis extends CustomModularScreen {
             for (int i = 0; i < points; i++) {
                 int color = Color.lerp(color1.getColor(), color2.getColor(), (float) i / points);
                 int r = Color.getRed(color), g = Color.getGreen(color), b = Color.getBlue(color), a = 0xFF;
+                //? if neoforge {
                 buffer.addVertex(pose, x0, y, 0).setColor(r, g, b, a);
                 buffer.addVertex(pose, x0, y + height, 0).setColor(r, g, b, a);
+                //?} else {
+                /*                buffer.vertex(pose, x0, y, 0).color(r, g, b, a).endVertex();
+                                buffer.vertex(pose, x0, y + height, 0).color(r, g, b, a).endVertex();
+                *///?}
                 x0 += w;
             }
         };

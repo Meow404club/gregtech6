@@ -26,7 +26,11 @@ import brachy.modularui.widgets.ToggleButton;
 import brachy.modularui.widgets.menu.ContextMenuButton;
 import brachy.modularui.widgets.menu.Menu;
 
+//? if neoforge {
 import net.neoforged.neoforge.common.ModConfigSpec;
+//?} else {
+/*import net.minecraftforge.common.ForgeConfigSpec;
+*///?}
 
 import org.jetbrains.annotations.NotNull;
 
@@ -123,11 +127,19 @@ public class DebugOverlay extends CustomModularScreen {
 
     public static IWidget toggleOption(int i, String name, String field) {
         Object config = ModularUIConfig.CONFIG.getValues().get(List.of("dev", field));
+        //? if neoforge {
         if (!(config instanceof ModConfigSpec.ConfigValue<?> configValue) || !(configValue.get() instanceof Boolean)) {
+        //?} else {
+        /*        if (!(config instanceof ForgeConfigSpec.ConfigValue<?> configValue) || !(configValue.get() instanceof Boolean)) {
+        *///?}
             throw new IllegalArgumentException("Config field 'dev.%s' is not a boolean value!".formatted(field));
         }
         @SuppressWarnings("unchecked")
+        //? if neoforge {
         ModConfigSpec.ConfigValue<Boolean> configField = (ModConfigSpec.ConfigValue<Boolean>) config;
+        //?} else {
+        /*        ForgeConfigSpec.ConfigValue<Boolean> configField = (ForgeConfigSpec.ConfigValue<Boolean>) config;
+        *///?}
         IBoolValue<?> val = new BoolValue.Dynamic(configField::get, configField::set);
 
         return new ToggleButton()
