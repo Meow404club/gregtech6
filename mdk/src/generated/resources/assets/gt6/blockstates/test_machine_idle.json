@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "gt6:block/test_machine_idle"
+    }
+  }
+}

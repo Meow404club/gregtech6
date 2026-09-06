@@ -102,6 +102,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMultiBlocks();
         addBarrel();
         addEnergySource();
+        addTestMachines(); // task p20-testmachine-blockstates — the two dev BE-framework blocks
         addPrefixBlocks(); // task p8-prefixblock-render ①
         addCrank(); // task p12-engine-crank
         addAxles(); // task p12-axle-family
@@ -456,6 +457,30 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tSource = GTEnergySources.ENERGY_SOURCE.get();
         simpleBlock(tSource, models().cubeAll("energy_source", modLoc("block/energy_source")));
         itemModels().withExistingParent("energy_source", modLoc("block/energy_source"));
+    }
+
+    /**
+     * Task p20-testmachine-blockstates — the two dev BE-framework blocks (task p3-be-framework,
+     * {@link GTBlockEntities#TEST_MACHINE} / {@link GTBlockEntities#TEST_MACHINE_IDLE}): the last
+     * model-less blocks in the registry face (P20 texture census, research card
+     * tasks.p20-research-texture-census — every other registered blockstate+item model was
+     * already zero-gap). The addEnergySource shape verbatim: one cube_all per block over the
+     * SHARED placeholder {@code gt6:textures/block/example_chest.png} (no new PNG per the card
+     * scope — the placeholder-to-upstream art swap stays a P20 wave item; the census pin d
+     * resolves the layer0 against the static tree), plus the item model parenting the block
+     * model. Datagen-only JSON: the dev blocks register no BlockItem (the census "dev blocks
+     * have no item" note), the item model row merely closes the model-resolution loop the way
+     * TestMachineBlock.java:21-22 expected when it deferred this datagen to the example machine
+     * card. No properties, a single variant each — the ticking/idle split is the BE ticker
+     * (TestMachineBlock.java:44-60), not a blockstate.
+     */
+    private void addTestMachines() {
+        simpleBlock(GTBlockEntities.TEST_MACHINE.get(),
+                models().cubeAll("test_machine", modLoc("block/example_chest")));
+        itemModels().withExistingParent("test_machine", modLoc("block/test_machine"));
+        simpleBlock(GTBlockEntities.TEST_MACHINE_IDLE.get(),
+                models().cubeAll("test_machine_idle", modLoc("block/example_chest")));
+        itemModels().withExistingParent("test_machine_idle", modLoc("block/test_machine_idle"));
     }
 
     /**
