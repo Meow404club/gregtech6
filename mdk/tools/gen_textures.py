@@ -11,7 +11,7 @@ modulation (PrefixItem.java:136-138 renders from the material's texture set).
 Iconset semantics: the texture set is a property of the MATERIAL
 (OreDictMaterial.mTextureSetsItems, filled by MT.setTextures, MT.java:210-215);
 names are lower-snaked MT SET_* constants (METALLIC -> metallic). The table below
-is the census over the registered item set (37 distinct sets, 2785 combos; no
+is the census over the registered item set (40 distinct sets, 2785 combos; no
 "none" fallback hit). Pure standard library (hand-rolled PNG: zlib+struct),
 deterministic output bytes.
 
