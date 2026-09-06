@@ -224,6 +224,16 @@
 - [x] curator 补审：astchunk-src partial 入库（cAST 分块方法论对标，剔 12 噪声文件）/ts-official 整体 skip（tree-sitter 官网首页，目录名误导；354 实为 21 文件勘误入账）
 - [x] phase-closeout：root 205+mdk **1132**=**1337 全绿**；1.21.1 compile 0 红+test **1134/0/2skip=IDENTICAL-0 保持**；runData（render 波）二跑 written:0+datagen_tree_check byte-identical；RCON 新三链（p19_drying 四臂/p19_chisel 46 步/p19_nbt_rebind 双 boot）实弹 [0,0]；ADR 两篇=p19-{w4-nbt-provider-ruling,porting-split} 成文；**运维=GPG 口令缓存过期四卡连环签收停摆**：主会话代签收（drying 3 笔+front 1 笔按 coder 备好口径重写 message）+registry 后台重试循环自动落地+waitdone 挂起提交应答自落地——签名链单点依赖口令缓存的流程教训入账
 
+## 第 20 阶段（贴图上游填充 / 标准 i18n zh_cn+拼接化 / ModularUI fork+JarJar / 进度看板）——✅ 已完成（2026-09-07）
+
+- [x] wave1 研究收口（5 回+1 裁定终止）：贴图 census（模型零缺失/2785 占位/40 集合勘误/jar 资产在列勘误紫黑误记）∥ 双预览考古（GTCEu 页=ModularUI 活体 3D；按键投影=纯新设计）∥ i18n 方案（GT6ZhCn provider+拼接 B 波）∥ **移植进度看板**（常驻账本落 state）∥ kTFRU 二轮（KortexWorker/异步反面教材/FX 描边；机器池底不变）∥ ModularUI 审计终止（fork 定案）
+- [x] 贴图 sprint（ADR-P20 双树政策+勘误）：census 守卫 0ddd034c → W2 五卡全合（sets-a 1373+sets-b 1412=40 集合 2785 闭环/machine-fronts 21 张 distillery byte-identity/tank-barrel-pipe 借 10 declare 2/testmachine datagen 收官）→ W3 tint c 路线停手（上游未喷漆=灰图原样已保真；喷涂重拆功能池）
+- [x] i18n（ADR-P20 zh_cn 管线）：A 波 provider 1999 键 → B1 线缆拼接（R1 空格+R2 tier 裸键两轮打回→三层守卫钉沉淀）→ B2 石头+rows 收官（全量对照 513 零差零漏、负断言清空、en 3578→2505/zh 2089）
+- [x] ModularUI fork（ADR-P20 三裁决）：卡① vendored 657 java 双腿编译绿（48% 零改勘误+DIVERGE 401 行）→ 卡② jarJar 双腿生产分发+冒烟实测+40 项打包守卫
+- [x] phase-closeout：mdk 1152/0/0；分发 jar 双腿重编+jar_content_check GREEN；ADR 三篇+勘误两则
+
+新池移交：Jade 兼容（用户添加）；机器喷涂 Paintable 两卡（W3 census 重拆）；p20-modularui-smoke-gui+跟随上游重放（gen-forks.py）+jarJar identifier 对齐（需 maven 发布形态时再议）；materialWalkEmittedKeys Map 返回值缝归一（2-copy 残余）；多方块双预览（用户裁定低优先随集成波，池中原有仍有效）
+
 ## 遗留池
 
 - [x] **M2 哨兵产量翻案**：上游 HandlerCrushing 槽0=0 哨兵+槽1=10000 重复=每行 2 份主产出，port chance==0-null 后 oreRaw 1 份；翻案=buildRecipe base 改双 10000 槽（493 行不变）（merge 794bb1c，fix e31f48b；plain=2/blockRaw=9/dense 组合=11 对位上游）
