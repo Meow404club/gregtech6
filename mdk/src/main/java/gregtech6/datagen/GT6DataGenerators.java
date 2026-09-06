@@ -12,7 +12,8 @@ import net.minecraftforge.fml.common.Mod;
  * neither has Client/Server inner sub-events — providers are gated with
  * {@code event.includeClient()} only.
  *
- * <p>Client data this phase: item models (GT6ItemModels) + en_us lang (GT6EnUs), joined by
+ * <p>Client data this phase: item models (GT6ItemModels) + en_us lang (GT6EnUs) + zh_cn lang
+ * (GT6ZhCn, task p20-i18n-zhcn-provider), joined by
  * blockstates/block models (GT6BlockStates) with the p3-example-machine chest. Server providers:
  * the material prefix blocks' loot tables (GT6LootTables, task p8-prefixblock-render); recipes
  * and tags are still later phases. The registry lookup ({@code event.getLookupProvider()},
@@ -35,6 +36,10 @@ public final class GT6DataGenerators {
                 new GT6ItemModels(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
             event.getGenerator().addProvider(true,
                 new GT6EnUs(event.getGenerator().getPackOutput()));
+            // task p20-i18n-zhcn-provider: the zh_cn companion walks the same small-unit faces,
+            // values joined from the committed zh_cn_ref.tsv (ADR 2026-09-06-p20-i18n-zhcn-pipeline)
+            event.getGenerator().addProvider(true,
+                new GT6ZhCn(event.getGenerator().getPackOutput()));
             // task p3-example-machine: first blockstate/block model provider (chest)
             event.getGenerator().addProvider(true,
                 new GT6BlockStates(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
