@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -145,29 +147,61 @@ public final class GT6Covers {
 			() -> new Item(new Item.Properties()));
 
 	/**
+	 * The conveyor display template (task p20-i18n-compose-wires): "{@code Compact Electric
+	 * Conveyor (%s)}" — the former per-tier full-string keys became ONE position-param
+	 * template, the tier slot filled at getName time (zh rides the dump's own template
+	 * value, dump gt.multiitem.technological.12040 = "输送机模块 (ULV)").
+	 */
+	public static final String CONVEYOR_DISPLAY_KEY = "gt6.cover.conveyor.display";
+
+	/** The robot-arm display template (same card): "{@code Compact Robot Arm (%s)}" (dump :12080 = "机械臂 (ULV)"). */
+	public static final String ROBOT_ARM_DISPLAY_KEY = "gt6.cover.robot_arm.display";
+
+	/**
+	 * The tier names of both ladders — the CS.java:154 voltage numerals ULV..PUV1 (the
+	 * former GT6EnUs.addCovers literal array). Voltage-level proper nouns: they stay the
+	 * en literals in BOTH locales (the arch ruling), so a plain literal arg — no small-unit
+	 * keys, zero translation ceremony.
+	 */
+	public static final String[] TIER_NAMES = {"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "PUV1"};
+
+	/**
 	 * The p11 ten conveyor timing tiers — one item per tier, upstream
 	 * MultiItemTechnological.java:51 metas 12040+i ("Compact Electric Conveyor", each
 	 * carrying a {@link CoverConveyor} with the {@code 512>>i} tick PERIOD). Registered
-	 * through the same card-local ITEMS DeferredRegister as every own-item cover.
+	 * through the same card-local ITEMS DeferredRegister as every own-item cover. Task
+	 * p20-i18n-compose-wires: the display name composes the {@link #CONVEYOR_DISPLAY_KEY}
+	 * template with the tier literal instead of resolving a per-tier lang key.
 	 */
 	public static final List<RegistryObject<Item>> COVER_CONVEYORS = new ArrayList<>();
 	static {
 		for (int i = 0; i < CoverConveyor.TIMING_TIERS.length; i++) {
 			final int tTier = i;
-			COVER_CONVEYORS.add(ITEMS.register("cover_conveyor_" + tTier, () -> new Item(new Item.Properties())));
+			COVER_CONVEYORS.add(ITEMS.register("cover_conveyor_" + tTier, () -> new Item(new Item.Properties()) {
+				@Override
+				public Component getName(ItemStack aStack) {
+					return Component.translatable(CONVEYOR_DISPLAY_KEY, TIER_NAMES[tTier]);
+				}
+			}));
 		}
 	}
 
 	/**
 	 * The p11 ten robot arm timing tiers — upstream MultiItemTechnological.java:53 metas
 	 * 12080+i ("Compact Robot Arm", each carrying a {@link CoverRobotArm} with the same
-	 * {@code 512>>i} table).
+	 * {@code 512>>i} table). Same composed display face as the conveyors
+	 * (task p20-i18n-compose-wires).
 	 */
 	public static final List<RegistryObject<Item>> COVER_ROBOT_ARMS = new ArrayList<>();
 	static {
 		for (int i = 0; i < CoverConveyor.TIMING_TIERS.length; i++) {
 			final int tTier = i;
-			COVER_ROBOT_ARMS.add(ITEMS.register("cover_robot_arm_" + tTier, () -> new Item(new Item.Properties())));
+			COVER_ROBOT_ARMS.add(ITEMS.register("cover_robot_arm_" + tTier, () -> new Item(new Item.Properties()) {
+				@Override
+				public Component getName(ItemStack aStack) {
+					return Component.translatable(ROBOT_ARM_DISPLAY_KEY, TIER_NAMES[tTier]);
+				}
+			}));
 		}
 	}
 

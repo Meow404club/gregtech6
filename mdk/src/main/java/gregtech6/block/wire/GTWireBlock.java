@@ -2,6 +2,8 @@ package gregtech6.block.wire;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTBlockProperties;
 import gregtech6.block.GTEntityBlock;
+import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTWires;
 import gregtech6.registry.GTWireSpecs;
@@ -194,6 +197,79 @@ public class GTWireBlock extends GTEntityBlock {
 	/** The family column (task p10): ELECTRIC = the EU pump rows, REDSTONE = the push-BFS signal rows. */
 	public Family family() {
 		return mFamily;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the composed display name (task p20-i18n-compose-wires, the B-wave lang
+	// ruling): the ~626 per-variant pre-installed full-string keys became five
+	// position-param template keys the runtime fills at getName time — the
+	// MaterialPrefixItem.java:62-66 runtime-fill precedent on the block face
+	// (ADR 2026-09-06-p20-i18n-zhcn-pipeline §1.4).
+	// ---------------------------------------------------------------------------
+
+	/** The electric display template "{@code %sx %s%s}" — size, material, form slots. */
+	public static final String DISPLAY_KEY = "gt6.wire.display";
+
+	/** The redstone display template "{@code %s%s}" — material + form, NO size slot (upstream shows no multiplier on the family, Loader:1893-1902). */
+	public static final String DISPLAY_PLAIN_KEY = "gt6.wire.display.plain";
+
+	/** The bare-wire form unit ("Wire", the upstream form literal). */
+	public static final String FORM_WIRE_KEY = "gt6.wire.form.wire";
+
+	/** The insulated-cable form unit ("Cable", the upstream form literal). */
+	public static final String FORM_CABLE_KEY = "gt6.wire.form.cable";
+
+	/** The luminous wirelamp form unit ("Wirelamp", the Loader:1900 Lumium bare wire's form literal). */
+	public static final String FORM_WIRELAMP_KEY = "gt6.wire.form.wirelamp";
+
+	/**
+	 * The composed display name — the pure compose seam (the GTWireTint posture: no block
+	 * instance, the tests walk it directly). ELECTRIC composes {@code "%sx %s%s"} over
+	 * (size, material, form); REDSTONE composes the same shape WITHOUT the size slot (the
+	 * old GTWireSpecs redstone branch: no multiplier in the upstream registration name);
+	 * the form slot picks Cable on the insulated form, else Wirelamp on a luminous row,
+	 * else Wire — the exact old {@code displayName} branch ladder. The material slot is
+	 * the {@code gt6.material.<snake>} small-unit key (single
+	 * {@link MaterialPrefixItem#snakeCase} derivation, the A-wave zh face covers it — a
+	 * composed zh wire name costs zero new material translations). Returns NULL on the
+	 * NAMELESS forms — the two material-less p7 legacy blocks and the material-less laser
+	 * family — which stay ATOMIC descriptionId keys ({@code block.gt6.wire_electric_1x/2x},
+	 * {@code block.gt6.wire_laser}; the arch card's atomic-form ruling).
+	 */
+	@Nullable
+	public static MutableComponent displayNameOf(@Nullable OreDictMaterial aMaterial, Family aFamily,
+			int aSize, boolean aInsulated, boolean aLuminous) {
+		if (aMaterial == null || aFamily == Family.LASER) return null;
+		Component tForm = Component.translatable(
+				aInsulated ? FORM_CABLE_KEY : aLuminous ? FORM_WIRELAMP_KEY : FORM_WIRE_KEY);
+		Component tMaterial = Component.translatable(
+				"gt6.material." + MaterialPrefixItem.snakeCase(aMaterial.mNameInternal));
+		if (aFamily == Family.REDSTONE) return Component.translatable(DISPLAY_PLAIN_KEY, tMaterial, tForm);
+		return Component.translatable(DISPLAY_KEY, aSize, tMaterial, tForm);
+	}
+
+	/** The {@link GTWireSpecs.Variant}-shaped seam (the census/pin tests walk the table without instances). */
+	@Nullable
+	public static MutableComponent displayNameOf(GTWireSpecs.Variant aVariant) {
+		return displayNameOf(aVariant.row().material().get(), aVariant.row().family(),
+				aVariant.size(), aVariant.insulated(), aVariant.luminous());
+	}
+
+	/** The block's own composed name — the {@link #displayNameOf} carrier over the registration fields. */
+	public MutableComponent displayName() {
+		return displayNameOf(mMaterial, mFamily, mSize, mInsulated, mLuminous);
+	}
+
+	/**
+	 * The B-wave composed name (task p20-i18n-compose-wires): the template fill replaces
+	 * the retired per-variant lang key; the nameless forms (legacy pair, laser) fall back
+	 * to the vanilla descriptionId lookup (Block.java:359-361), whose keys stay in the
+	 * provider.
+	 */
+	@Override
+	public MutableComponent getName() {
+		MutableComponent tComposed = displayName();
+		return tComposed != null ? tComposed : super.getName();
 	}
 
 	/**

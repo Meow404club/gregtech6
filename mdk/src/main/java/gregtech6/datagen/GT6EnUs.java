@@ -9,6 +9,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.GT6Mod;
 import gregtech6.block.stone.StoneVariant;
+import gregtech6.block.wire.GTWireBlock;
 import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
@@ -18,8 +19,8 @@ import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTStoneBlocks;
-import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
+import gregtech6.covers.GT6Covers;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -199,11 +200,13 @@ public class GT6EnUs extends LanguageProvider {
      * MultiItemTechnological.java:65 — meta 1006, display name "Auto Redstone
      * Machine Switch" verbatim) and the cover controller (:84 — meta 1025,
      * "Cover Controller" verbatim); the tooltips ride the cut addToolTips channel.
-     * Task p11-cover-conveyor-robotarm: the conveyor + robot arm tier ladders (upstream
-     * MultiItemTechnological.java:51/:53 — metas 12040+i / 12080+i, display names
-     * "Compact Electric Conveyor (...)"/"Compact Robot Arm (...)" verbatim, the suffixes
-     * are VN[0..9] (CS.java:154 voltage numerals; tier i = the 512>>i period); the
-     * "Transfers a Stack every N Ticks" tooltips ride the cut addToolTips channel).
+     * Task p11-cover-conveyor-robotarm: the eight atomic cover names stay verbatim. The
+     * conveyor + robot arm tier ladders became COMPOSED (task p20-i18n-compose-wires, the
+     * B-wave lang ruling): the twenty per-tier full strings retired into the two
+     * position-param templates the item getName fills with the tier literal
+     * (GT6Covers.CONVEYOR_DISPLAY_KEY/ROBOT_ARM_DISPLAY_KEY — the tier names are the
+     * CS.java:154 voltage numerals, proper nouns that stay the en literals in both
+     * locales, so they ride as plain literal args, no small-unit keys).
      */
     private void addCovers() {
         add("item.gt6.cover_redstone_emitter", "Redstone Emitter");
@@ -214,11 +217,8 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_item_filter", "Item Filter");
         add("item.gt6.cover_auto_redstone_machine_switch", "Auto Redstone Machine Switch");
         add("item.gt6.cover_controller", "Cover Controller");
-        String[] tTiers = {"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "PUV1"};
-        for (int i = 0; i < tTiers.length; i++) {
-            add("item.gt6.cover_conveyor_" + i, "Compact Electric Conveyor (" + tTiers[i] + ")");
-            add("item.gt6.cover_robot_arm_" + i, "Compact Robot Arm (" + tTiers[i] + ")");
-        }
+        add(GT6Covers.CONVEYOR_DISPLAY_KEY, "Compact Electric Conveyor (%s)");
+        add(GT6Covers.ROBOT_ARM_DISPLAY_KEY, "Compact Robot Arm (%s)");
     }
 
     /**
@@ -349,29 +349,32 @@ public class GT6EnUs extends LanguageProvider {
      * Electric wire keys (task p7-d2-cable spec ⑥): the two W1 variants (the upstream row
      * names "1x &lt;material&gt; Wire" / "2x ...", MultiTileEntityWireElectric.java:72-73,
      * material-less here) and the "Electric Wires" category tab (the upstream MTE category
-     * name, addElectricWires :72). Task p9-wire-family-w1: the 620 family rows looped over
-     * {@link GTWireSpecs} — the upstream row string verbatim per variant
-     * ({@code "1x Tin Wire"}, {@code "12x Tin Cable"} = size + local name + form).
+     * name, addElectricWires :72).
+     *
+     * <p>Task p20-i18n-compose-wires (the B-wave lang ruling, ADR
+     * 2026-09-06-p20-i18n-zhcn-pipeline §1.4): the 626 per-variant full strings (620
+     * electric + 6 redstone, the old GTWireSpecs.displayName rows) RETIRED — the names
+     * compose at runtime from five template keys (GTWireBlock.displayNameOf fills
+     * {@code gt6.wire.display[.plain]} with the size numeral, the gt6.material.&lt;snake&gt;
+     * small unit and the gt6.wire.form.* unit). The ATOMIC forms stay: the two material-less
+     * legacy blocks and the material-less laser family ({@code block.gt6.wire_laser},
+     * "Laser Fiber Wire" verbatim, Loader:1815) — the arch card's non-composed-form ruling —
+     * plus the two tab titles.
      */
     private void addElectricWires() {
         add("block.gt6.wire_electric_1x", "1x Electric Wire");
         add("block.gt6.wire_electric_2x", "2x Electric Wire");
         add("itemGroup.gt6.electric_wires", "Electric Wires");
-        for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) {
-            add("block.gt6." + GTWireSpecs.registryName(tVariant), GTWireSpecs.displayName(tVariant));
-        }
-        // task p10-wire-redstone-family — the redstone family (Loader:1893-1902), table-tail
-        // append: "Red Alloy Wire"/"Red Alloy Cable"/"Lumium Wirelamp" (the upstream
-        // registration names, no size prefix, the GTWireSpecs.displayName redstone branch).
-        for (GTWireSpecs.Variant tVariant : GTWireSpecs.redstoneVariants()) {
-            add("block.gt6." + GTWireSpecs.registryName(tVariant), GTWireSpecs.displayName(tVariant));
-        }
-        // task p10-wire-laser-placeholder — the laser family (Loader:1814-1815), table-tail
-        // append: "Laser Fiber Wire" (the upstream registration name verbatim, no size
-        // prefix, the GTWireSpecs.displayName laser branch — the row is material-less).
-        for (GTWireSpecs.Variant tVariant : GTWireSpecs.laserVariants()) {
-            add("block.gt6." + GTWireSpecs.registryName(tVariant), GTWireSpecs.displayName(tVariant));
-        }
+        // the five position-param templates the runtime composes (electric takes the size
+        // slot, redstone is the size-less variant, the form units close every template)
+        add(GTWireBlock.DISPLAY_KEY, "%sx %s%s");
+        add(GTWireBlock.DISPLAY_PLAIN_KEY, "%s%s");
+        add(GTWireBlock.FORM_WIRE_KEY, "Wire");
+        add(GTWireBlock.FORM_CABLE_KEY, "Cable");
+        add(GTWireBlock.FORM_WIRELAMP_KEY, "Wirelamp");
+        // task p10-wire-laser-placeholder — the laser stays ATOMIC (the row is material-less,
+        // Loader:1815 verbatim — no composition applies)
+        add("block.gt6.wire_laser", "Laser Fiber Wire");
         // task p11-flat-redstone-tab — the two new tab titles, the upstream MTE category
         // strings verbatim: "Redstone Wires" (every Loader:1895-1902 row, tab id 27050) and
         // "Laser Wires" (Loader:1815, tab id 24900) — upstream registers the display via

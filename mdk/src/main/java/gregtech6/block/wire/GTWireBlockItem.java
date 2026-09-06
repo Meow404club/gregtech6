@@ -1,6 +1,8 @@
 package gregtech6.block.wire;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -22,6 +24,20 @@ public class GTWireBlockItem extends BlockItem {
 
 	public GTWireBlockItem(Block aBlock, Properties aProperties) {
 		super(aBlock, aProperties);
+	}
+
+	/**
+	 * The item face of the composed wire name (task p20-i18n-compose-wires): vanilla
+	 * BlockItem has NO getName override — it delegates only the descriptionId
+	 * (BlockItem.java:186-189) — so the stack display would resolve the raw per-variant
+	 * key the B-wave retired. Delegate to the block compose instead: the arch card's
+	 * "single compose point" splits across the two vanilla name hooks (Block.getName for
+	 * the block face, Item.getName(ItemStack) for the stack face), both landing on
+	 * {@link GTWireBlock#displayNameOf}.
+	 */
+	@Override
+	public Component getName(ItemStack aStack) {
+		return getBlock() instanceof GTWireBlock tWire ? tWire.getName() : super.getName(aStack);
 	}
 
 	@Override
