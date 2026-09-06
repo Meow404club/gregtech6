@@ -28,6 +28,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
+import gregapi.data.ANY;
 import gregapi.data.MT;
 import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
@@ -49,14 +50,28 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	private static Function<String, Fluid> sDefaultFluidResolver;
 
 	/**
-	 * The offline fixture: every REGISTERED fluid id — water, distw and the six
-	 * p16-aqua-fluids ids — resolves to the vanilla water fluid (the recipe mechanics
-	 * only compare identities — the GTEngineFuelsTest WATER_FIXTURE convention); the
-	 * deliberately unregistered water_hot alias (:530) alone stays null, mirroring the
-	 * live resolver's absent-fluid verdict.
+	 * The offline fixture: every REGISTERED fluid id — water, distw, the six
+	 * p16-aqua-fluids ids and the two p19 simple-liquid ids — resolves to the vanilla
+	 * water fluid (the recipe mechanics only compare identities — the GTEngineFuelsTest
+	 * WATER_FIXTURE convention); the deliberately unregistered water_hot alias (:530)
+	 * alone stays null, mirroring the live resolver's absent-fluid verdict.
 	 */
 	private static final Function<String, Fluid> CENSUS_FIXTURE = aId ->
 			GT6RecipesDrying.FLUID_HOT.equals(aId) ? null : Fluids.WATER;
+
+	/**
+	 * The water-family-only fixture: ONLY the water row's input and the DistW output
+	 * resolve (plus the six aqua ids, the p16 pour half) — the salt ids stay null so the
+	 * water-family lookup tests keep their exact census (the findRecipe probe skips the
+	 * stack-size check, aDontCheckStackSizes=true, so a fixture-collapsed 8000 L waterdirty
+	 * row WOULD answer a 1000 L water probe and blur the water-family assertion otherwise).
+	 */
+	private static final Function<String, Fluid> WATER_ONLY_FIXTURE = aId ->
+			(GT6RecipesDrying.FLUID_WATER.equals(aId) || GT6RecipesDrying.FLUID_DISTW.equals(aId)
+					|| GT6RecipesDrying.FLUID_SPDEW.equals(aId) || GT6RecipesDrying.FLUID_MNWTR.equals(aId)
+					|| GT6RecipesDrying.FLUID_GEOTHERMAL.equals(aId) || GT6RecipesDrying.FLUID_BOILING.equals(aId)
+					|| GT6RecipesDrying.FLUID_HOT_WATER.equals(aId) || GT6RecipesDrying.FLUID_COLD.equals(aId))
+					? Fluids.WATER : null;
 
 	@BeforeAll
 	static void captureDefaults() {
@@ -90,9 +105,13 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	 * The vanilla items the ice table's vanilla rows use as inputs — kept out of the
 	 * synthetic pool so a lookup with one of them can only ever match its own row (a
 	 * synthetic (prefix, material) pair must never alias onto a vanilla row input).
+	 * The p19 additions: the :73 clay input (plus the TERRACOTTA output and the :553
+	 * dirt output — outputs too, so a synthetic input can never collide with another
+	 * row's output identity either).
 	 */
 	private static final Set<Item> RESERVED_VANILLA_ITEMS = Set.of(
-			Items.SNOWBALL, Blocks.ICE.asItem(), Blocks.PACKED_ICE.asItem(), Blocks.SNOW_BLOCK.asItem());
+			Items.SNOWBALL, Blocks.ICE.asItem(), Blocks.PACKED_ICE.asItem(), Blocks.SNOW_BLOCK.asItem(),
+			Blocks.CLAY.asItem(), Blocks.TERRACOTTA.asItem(), Blocks.DIRT.asItem());
 
 	/** The transcription walk: eight rows, values per Loader_Recipes_Chem.java:525-532. */
 	@Test
@@ -163,7 +182,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	 */
 	@Test
 	void machineShapeFindRecipeHitsTheWaterRow() {
-		GT6RecipesDrying.sFluidResolver = CENSUS_FIXTURE;
+		GT6RecipesDrying.sFluidResolver = WATER_ONLY_FIXTURE;
 		GT6RecipesDrying.load();
 		ItemStack[] tSlots = new ItemStack[1]; // the empty input slot, the live :512 shape
 
@@ -193,7 +212,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	 */
 	@Test
 	void isRecipeInputEqualConsumesExactlyTheRowLitres() {
-		GT6RecipesDrying.sFluidResolver = CENSUS_FIXTURE;
+		GT6RecipesDrying.sFluidResolver = WATER_ONLY_FIXTURE;
 		GT6RecipesDrying.load();
 		ItemStack[] tSlots = new ItemStack[1];
 		Recipe tTen = GT6RecipeMaps.DRYING.mRecipeList.stream()
@@ -358,9 +377,10 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 		GT6RecipesDrying.load();
 
 		List<Recipe> tIceRecipes = GT6RecipeMaps.DRYING.mRecipeList.stream()
-				.filter(r -> r.mInputs.length == 1).toList();
+				.filter(r -> r.mInputs.length == 1 && r.mFluidOutputs.length == 1 && r.mOutputs.length == 0).toList();
 		assertEquals(11, tIceRecipes.size(), "7 water + 11 ice: the :513/:514 gem rows skip (no such items, upstream too)");
-		assertEquals(18, GT6RecipeMaps.DRYING.mRecipeList.size(), "7 water + 11 ice = the full poured census");
+		assertEquals(35, GT6RecipeMaps.DRYING.mRecipeList.size(),
+				"7 water + 11 ice + 2 salt (:548/:553) + 8 mineral (:559-566) + 6 clay loop (:567-568) + 1 BlockDiggable (:73) = the full poured census");
 		for (Recipe tRecipe : tIceRecipes) {
 			assertEquals(0, tRecipe.mFluidInputs.length, "an ice row has no fluid inputs (upstream NF)");
 			assertEquals(0, tRecipe.mOutputs.length, "an ice row has no item outputs (upstream NI)");
@@ -402,12 +422,191 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
-	/** The ice rows that resolve inside the port item universe: the vanilla rows plus the material rows in registrationOrder. */
+		/** The ice rows that resolve inside the port item universe: the vanilla rows plus the material rows in registrationOrder. */
 	private List<GT6RecipesDrying.IceRow> resolvableIceRows() {
 		GTMaterialItems.initMaterials();
 		Set<PrefixMaterial> tUniverse = Set.copyOf(GTMaterialItems.registrationOrder());
 		return GT6RecipesDrying.iceTable().stream()
 				.filter(r -> r.prefix() == null || tUniverse.contains(new PrefixMaterial(r.prefix(), r.material())))
 				.toList();
+	}
+
+	// ==================================================================
+	// the salt + mineral-dehydration + clay-loop + BlockDiggable families
+	// (Loader_Recipes_Chem.java:544-568 / BlockDiggable.java:73, task p19-drying-rows-backfill-2)
+	// ==================================================================
+
+	/** The transcription walk: two rows, values per Loader_Recipes_Chem.java:548/:553 verbatim. */
+	@Test
+	void saltTableTranscribesTheUpstreamSaltRows() {
+		List<GT6RecipesDrying.SaltRow> tTable = GT6RecipesDrying.saltTable();
+		assertEquals(2, tTable.size(), "the upstream census: :544-557 holds exactly two UNGUARDED rows");
+
+		GT6RecipesDrying.SaltRow tOcean = tTable.get(0);
+		assertEquals(":548", tOcean.note());
+		assertEquals(GT6RecipesDrying.FLUID_SEAWATER, tOcean.input(), "FL.Ocean = \"seawater\" (FL.java:125)");
+		assertEquals(7000, tOcean.inAmount(), "the verbatim FL.Ocean.make(7000)");
+		assertEquals(6750, tOcean.outAmount(), "the verbatim FL.DistW.make(6750)");
+		assertEquals(11200, tOcean.duration(), "the verbatim 11200 ticks");
+		assertSame(OP.dustSmall, tOcean.outPrefix(), "OM.dust(MT.NaCl, U4) → the dustSmall output (OM.java:460-467)");
+		assertSame(MT.NaCl, tOcean.outMaterial());
+		assertNull(tOcean.outVanilla(), "a material-output row");
+
+		GT6RecipesDrying.SaltRow tDirty = tTable.get(1);
+		assertEquals(":553", tDirty.note());
+		assertEquals(GT6RecipesDrying.FLUID_WATERDIRTY, tDirty.input(), "FL.Dirty_Water = \"waterdirty\" (FL.java:127)");
+		assertEquals(8000, tDirty.inAmount(), "the verbatim FL.Dirty_Water.make(8000)");
+		assertEquals(7000, tDirty.outAmount(), "the verbatim FL.DistW.make(7000)");
+		assertEquals(16000, tDirty.duration(), "the verbatim 16000 ticks");
+		assertSame(Blocks.DIRT.asItem(), tDirty.outVanilla().get(), "the vanilla dirt output, ST.make(Blocks.dirt, 1, 0)");
+		assertNull(tDirty.outPrefix(), "a vanilla-output row");
+	}
+
+	/** The transcription walk: eight mineral rows, values per Loader_Recipes_Chem.java:559-566 verbatim. */
+	@Test
+	void dehydrationTableTranscribesTheMineralRows() {
+		List<GT6RecipesDrying.DehydrationRow> tTable = GT6RecipesDrying.dehydrationTable();
+
+		assertDustRow(tTable, ":559", MT.OREMATS.Mirabilite ,  7, 30000, MT.Na2SO4  , 7, 60000);
+		assertDustRow(tTable, ":560", MT.FeO3H3             , 14,  9000, MT.Fe2O3   , 5, 18000);
+		assertDustRow(tTable, ":561", MT.AlO3H3             , 14,  9000, MT.Al2O3   , 5, 18000);
+		assertDustRow(tTable, ":562", MT.H2WO4              ,  7,  3000, MT.WO3     , 4,  6000);
+		assertDustRow(tTable, ":563", MT.OREMATS.Bischofite ,  1,  2000, MT.MgCl2   , 1,  4000);
+		assertDustRow(tTable, ":564", MT.OREMATS.Trona      ,  1,  1000, MT.Na2CO3  , 1,  2000);
+		assertDustRow(tTable, ":565", MT.Gypsum             ,  1,  1000, MT.CaSO4   , 1,  2000);
+		assertDustRow(tTable, ":566", MT.OREMATS.Perlite    ,  1,  1000, MT.Obsidian, 1,  2000);
+	}
+
+	private void assertDustRow(List<GT6RecipesDrying.DehydrationRow> aTable, String aNote,
+			OreDictMaterial aIn, int aInCount, long aOut, OreDictMaterial aOutMat, int aOutCount, long aDuration) {
+		GT6RecipesDrying.DehydrationRow tRow = aTable.stream().filter(r -> r.note().equals(aNote)).findFirst().orElse(null);
+		assertNotNull(tRow, "row " + aNote + " transcribed");
+		assertSame(OP.dust, tRow.inPrefix(), "row " + aNote + ": the dust input prefix");
+		assertSame(aIn, tRow.inMaterial(), "row " + aNote + ": the input material");
+		assertNull(tRow.inVanilla(), "row " + aNote + ": a material row");
+		assertEquals(aInCount, tRow.inCount(), "row " + aNote + ": the verbatim input stack");
+		assertEquals(aOut, tRow.outAmount(), "row " + aNote + ": the verbatim DistW litres");
+		assertSame(OP.dust, tRow.outPrefix(), "row " + aNote + ": the dust output prefix");
+		assertSame(aOutMat, tRow.outMaterial(), "row " + aNote + ": the output material");
+		assertEquals(aOutCount, tRow.outCount(), "row " + aNote + ": the verbatim output stack");
+		assertEquals(aDuration, tRow.duration(), "row " + aNote + ": the verbatim duration");
+	}
+
+	/**
+	 * The clay loop (:567-568) walks the LIVE ANY.Clay.mToThis family — the transcription
+	 * of the upstream loop itself. The membership is upstream-identical (Clay plus the
+	 * five clay() materials ClayBrown/ClayRed/Bentonite/Palygorskite/Kaolinite, each
+	 * .put(ANY.Clay) wiring mToThis, OreDictMaterial.java:262) — the task card's "Clay 2
+	 * rows" counts the two upstream source LINES, the expansion is material-count-driven.
+	 */
+	@Test
+	void clayLoopExpandsTheUpstreamFamily() {
+		GTMaterialItems.initMaterials();
+		Set<OreDictMaterial> tExpected = Set.of(MT.Clay, MT.ClayBrown, MT.ClayRed, MT.Bentonite, MT.Palygorskite, MT.Kaolinite);
+		assertEquals(tExpected, ANY.Clay.mToThis, "the port family membership is upstream-identical");
+		List<GT6RecipesDrying.DehydrationRow> tClayRows = GT6RecipesDrying.dehydrationTable().stream()
+				.filter(r -> r.note().equals(":567-568")).toList();
+		assertEquals(tExpected.size(), tClayRows.size(), "one row per family material");
+		Map<OreDictMaterial, GT6RecipesDrying.DehydrationRow> tByMat = new HashMap<>();
+		for (GT6RecipesDrying.DehydrationRow tRow : tClayRows) {
+			assertSame(OP.dust, tRow.inPrefix());
+			tByMat.put(tRow.inMaterial(), tRow);
+			assertEquals(1, tRow.inCount(), "the verbatim OP.dust.mat(tMat, 1)");
+			assertEquals(500, tRow.outAmount(), "the verbatim FL.DistW.make(500)");
+			assertSame(MT.Ceramic, tRow.outMaterial(), "the verbatim OP.dust.mat(MT.Ceramic, 1)");
+			assertEquals(1, tRow.outCount());
+			assertEquals(1000, tRow.duration(), "the verbatim 1000 ticks");
+		}
+		assertEquals(tExpected, tByMat.keySet(), "the rows cover exactly the family, no duplicates");
+	}
+
+	/** The BlockDiggable.java:73 row — the 1.20.1 vanilla identity CLAY → TERRACOTTA (1.7.10 hardened_clay). */
+	@Test
+	void blockDiggableRowCarriesTheVanillaIdentity() {
+		GTMaterialItems.initMaterials(); // the lazy table walks ANY.Clay.mToThis — materials must exist first
+		GT6RecipesDrying.DehydrationRow tRow = GT6RecipesDrying.dehydrationTable().stream()
+				.filter(r -> r.note().equals(":73")).findFirst().orElse(null);
+		assertNotNull(tRow, "the BlockDiggable.java:73 row is transcribed");
+		assertSame(Blocks.CLAY.asItem(), tRow.inVanilla().get(), "1.20.1 Blocks.CLAY (the ST.make(Blocks.clay, 1, 0) input)");
+		assertSame(Blocks.TERRACOTTA.asItem(), tRow.outVanilla().get(),
+				"1.20.1 Blocks.TERRACOTTA — 1.7.10 \"hardened_clay\" is the 1.13 flattening \"terracotta\" (Blocks.java:3565)");
+		assertEquals(1, tRow.inCount());
+		assertEquals(1, tRow.outCount());
+		assertEquals(0, tRow.outAmount(), "no fluid leg at all (upstream NF/NF)");
+		assertEquals(64, tRow.duration(), "the verbatim 64 ticks");
+	}
+
+	/** The live-universe census: every (dust, material) leg of the dehydration table resolves in the port item universe. */
+	@Test
+	void dehydrationLegsResolveInThePortItemUniverse() {
+		GTMaterialItems.initMaterials();
+		Set<PrefixMaterial> tUniverse = Set.copyOf(GTMaterialItems.registrationOrder());
+		Set<String> tUnresolvable = new java.util.HashSet<>();
+		for (GT6RecipesDrying.DehydrationRow tRow : GT6RecipesDrying.dehydrationTable()) {
+			if (tRow.inPrefix() != null && !tUniverse.contains(new PrefixMaterial(tRow.inPrefix(), tRow.inMaterial()))) tUnresolvable.add(tRow.note() + " in");
+			if (tRow.outPrefix() != null && !tUniverse.contains(new PrefixMaterial(tRow.outPrefix(), tRow.outMaterial()))) tUnresolvable.add(tRow.note() + " out");
+		}
+		assertEquals(Set.of(), tUnresolvable, "every mineral/clay/output dust pair resolves (= upstream live mat() semantics)");
+	}
+
+	/**
+	 * The backfill pour, end-to-end: with the fixture resolvers the salt rows pour their
+	 * fluid-in/fluid-out/item-out shape, the :73 row pours its fluid-less shape, and the
+	 * full map census is 7 water + 11 ice + 2 salt + 8 mineral + 6 clay + 1 = 35.
+	 */
+	@Test
+	void loadPoursTheSaltAndDehydrationFamilies() {
+		GTMaterialItems.initMaterials();
+		GT6RecipesDrying.sMaterialItemResolver = pairAssigningResolver();
+		GT6RecipesDrying.sFluidResolver = CENSUS_FIXTURE;
+		GT6RecipesDrying.load();
+
+		// the :548 seawater row shape: fluid 7000 in, DistW 6750 out, one NaCl dustSmall out
+		Recipe tOcean = GT6RecipeMaps.DRYING.mRecipeList.stream()
+				.filter(r -> r.mFluidInputs.length == 1 && r.mFluidInputs[0].getAmount() == 7000).findFirst().orElse(null);
+		assertNotNull(tOcean, "the :548 row is among the poured");
+		assertEquals(6750, tOcean.mFluidOutputs[0].getAmount(), "the verbatim 7000 → 6750 split");
+		assertEquals(11200, tOcean.mDuration, "the verbatim duration");
+		assertEquals(16, tOcean.mEUt, "the family EUt");
+		assertEquals(1, tOcean.mOutputs.length, "one item output: the NaCl dustSmall");
+		assertEquals(1, tOcean.mOutputs[0].getCount());
+		assertTrue(tOcean.mCanBeBuffered, "the addRecipe0(T, ...) buffered shape");
+
+		// the :553 waterdirty row shape: fluid 8000 in, DistW 7000 out, one vanilla dirt out
+		Recipe tDirty = GT6RecipeMaps.DRYING.mRecipeList.stream()
+				.filter(r -> r.mFluidInputs.length == 1 && r.mFluidInputs[0].getAmount() == 8000).findFirst().orElse(null);
+		assertNotNull(tDirty, "the :553 row is among the poured");
+		assertEquals(7000, tDirty.mFluidOutputs[0].getAmount(), "the verbatim 8000 → 7000 split");
+		assertEquals(16000, tDirty.mDuration, "the verbatim duration");
+		assertSame(Blocks.DIRT.asItem(), tDirty.mOutputs[0].getItem(), "the vanilla dirt output");
+
+		// the :73 row shape: one clay item in, one terracotta out, NO fluid legs
+		Recipe tClay = GT6RecipeMaps.DRYING.mRecipeList.stream()
+				.filter(r -> r.mInputs.length == 1 && r.mOutputs.length == 1
+						&& r.mFluidInputs.length == 0 && r.mFluidOutputs.length == 0
+						&& r.mInputs[0].getItem() == Blocks.CLAY.asItem()).findFirst().orElse(null);
+		assertNotNull(tClay, "the :73 row is among the poured");
+		assertSame(Blocks.TERRACOTTA.asItem(), tClay.mOutputs[0].getItem(), "the 1.20.1 terracotta output");
+		assertEquals(64, tClay.mDuration, "the verbatim duration");
+		assertEquals(16, tClay.mEUt, "the family EUt");
+	}
+
+	/**
+	 * The SKIPPED_UPSTREAM audit (spec ④): the pool pins the FULL dead-row census of the
+	 * Drying book outside the poured families — the guarded external-fluid rows, the
+	 * material liquids, the water_hot alias, and the food/crops/resin/ores/other pool
+	 * pointers (the census = tasks.p19-research-drying-rows, the full-file reads).
+	 */
+	@Test
+	void skippedUpstreamAuditPinsTheDeadRowCensus() {
+		assertEquals(8, GT6RecipesDrying.SKIPPED_UPSTREAM.size(), "the audit entry census (the architect card list)");
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(0).contains(":544-545 Tropics_Water"), "the guarded external-fluid rows");
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(1).contains("MT.SaltWater.liquid"), "the material-liquid rows");
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(2).contains("ic2hotwater"), "the water_hot ruling entry");
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(3).contains("Loader_Recipes_Food.java:654-658"), "the food-fluid pool");
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(4).contains("crop/bale listener family"), "the crop-bale pool");
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(5).contains("slimeball family"), "the resin pool");
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(6).contains("Sluice"), "the ores pool");
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(7).contains("dye-fluid rows"), "the BlocksGT/dye pool");
 	}
 }
