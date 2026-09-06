@@ -49,6 +49,15 @@ import 复用：`sys.path.insert(0, "tools/rcon"); import gt6rcon`，用
 `gt6rcon.RconClient(host, port, password)`（上下文管理器自动 connect+auth）或模块级
 `connect()/auth()/run_command()/run_chain()`。
 
+**quiet_window 自适应收敛（P18）**：`RconClient` 每 connection 维护自己的收集尾窗——
+单帧响应按 `QUIET_DECAY=0.7` 衰减（硬下限 `QUIET_FLOOR=0.05s`；配置已低于下限的
+窗口绝不回抬），见到**任何**第二帧立即重置回本 connection 配置的满窗（截断真多帧
+body 会伪造 FAIL，宁保守勿激进），零帧（沉默）不动。固定 0.5s 尾巴对占绝对多数的
+单帧命令是纯残差，全集 sweep 要付几百次。开关：`GT6_RCON_ADAPTIVE_QUIET=off`
+（或构造参数 `adaptive_quiet=False`）恢复固定 0.5s 历史行为；模块级 `run_command`
+签名与 `judge_output` 判定语义零变；并发波下每链独立 connection（framework 线程
+各持一个 client），per-connection 状态线程自洽。
+
 ## ① 帧协议与包类型
 
 ```
@@ -357,14 +366,22 @@ python3 tools/rcon/sweep.py --mode session --dual ../MGT6GA-trees/<另一节点w
 ```
 
 结果（逐 step PASS/FAIL/ALLOWED 账本 + 每链/总 wall）落
-`/tmp/gt6_rs_sweep_<mode>_c<N>_<节点后缀>.json`。`--dual` 强制两 worktree 同 commit
-（gradle runServer 持项目锁，同 worktree 双 boot 会被串行化——ADR-P15-4 双节点正典形态）。
+`/tmp/gt6_rs_sweep_<mode>[_c<N>]_<节点后缀>_<worktree 哈希>.json`。`--dual` 强制两
+worktree 同 commit（gradle runServer 持项目锁，同 worktree 双 boot 会被串行化——
+ADR-P15-4 双节点正典形态）。
 
 **session artifact 命名（P17）**：session boot 的 log/pid 落
 `/tmp/gt6_rs_session_<节点后缀>_<链 slug 名册>-<worktree 哈希>.{log,pid}`——名册
 （排序去重的链 slug，超长折叠稳定哈希）标识本 boot 跑了什么，worktree 哈希隔离并行
 worktree 的同名 boot。旧裸名 `session_<节点后缀>` 已废（同节点段并行 session 曾互踩
 pid，P16 首跑被外部 SIGTERM 实证；无代码读取方，干净改名）。
+
+**sweep 结果 JSON worktree 隔离（P18）**：结果账本名掺 `framework.worktree_tag()`
+（md5(worktree 根)[:8]，与 session slug 同源机制）——并行 worktree 跑同一名册的
+sweep 不再互踩全局 /tmp 账本。`--dual` 对侧回读按**对侧** worktree 的哈希取文件
+（对侧子进程以它自己的 tag 写 /tmp；/tmp 全局共享，目录相同、全靠名字分流，对侧
+spawn 日志同样按对侧 tag 命名）。旧裸名 JSON 无活代码读者；`--diff` 走显式路径，
+任意两份历史账本（含旧名）仍可比。
 
 **session 端口策略（P17）**：一次 session 只绑一个 (rcon, query, game) 三元组，链经
 session 的 rcon 端口连接（链自己的 `preferred_ports` 是 per-boot 语义）。裁决
@@ -380,8 +397,9 @@ p15_runtime_smoke（fresh_boot 单例）。注册序 = perboot 顺序 + --plan �
 session 跑法把全集摊平成一池（`run_session_recorded`）。
 
 **框架自检（无服干跑，~1s）**：`python3 tools/rcon/selftest.py`——以假 boot 面
-验证五项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
-名册化、session 端口策略、p16 簇注册、boot 归属门。退出码 0 = 全绿。
+验证七项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
+名册化、session 端口策略、p16 簇注册、boot 归属门、sweep 结果 JSON worktree 隔离
+（P18）、quiet_window 自适应收敛纯逻辑（P18）。退出码 0 = 全绿（34 检）。
 
 ### 并发波执行（用户校准 2026-09-04：并发是主杠杆）
 
