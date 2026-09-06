@@ -135,8 +135,11 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	 * The never-read backing container of the display slots: {@link FluidDisplaySlot#getItem()}
 	 * is overridden to EMPTY (the vanilla broadcastChanges poll, AbstractContainerMenu.java:168-170,
 	 * reads every slot every tick), so this container is only ever stored by the Slot supertype.
+	 * Per-menu on purpose: {@link FluidDisplaySlot} is static, so without the pass-through every
+	 * open menu's display slots would alias one shared dummy instance (a static is exactly what
+	 * this looked like before — one field, no per-menu state — it just was never necessary).
 	 */
-	private static final SimpleContainer DISPLAY_CONTAINER = new SimpleContainer(0);
+	private final SimpleContainer mDisplayContainer = new SimpleContainer(0);
 
 	public GTBasicMachineMenu(MenuType<?> aMenuType, int aContainerId, Inventory aPlayerInventory, TileEntityBasicMachine aTileEntity) {
 		this(aMenuType, aContainerId, aPlayerInventory, hostOf(aTileEntity), aTileEntity);
@@ -165,13 +168,13 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		// each paired 1:1 with its BE tank (task p16-machine-fluid-gui ②)
 		FluidTankGT[] tInTanks = aHost.getFluidInputTanks();
 		for (int i = 0; i < tInTanks.length; i++) {
-			FluidDisplaySlot tSlot = new FluidDisplaySlot(tInTanks[i], i, fluidDisplayPos(false, i));
+			FluidDisplaySlot tSlot = new FluidDisplaySlot(tInTanks[i], i, fluidDisplayPos(false, i), mDisplayContainer);
 			mFluidDisplaySlots.add(tSlot);
 			addSlot(tSlot);
 		}
 		FluidTankGT[] tOutTanks = aHost.getFluidOutputTanks();
 		for (int i = 0; i < tOutTanks.length; i++) {
-			FluidDisplaySlot tSlot = new FluidDisplaySlot(tOutTanks[i], i, fluidDisplayPos(true, i));
+			FluidDisplaySlot tSlot = new FluidDisplaySlot(tOutTanks[i], i, fluidDisplayPos(true, i), mDisplayContainer);
 			mFluidDisplaySlots.add(tSlot);
 			addSlot(tSlot);
 		}
@@ -356,15 +359,17 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	 * menu test asserts and the pooled fluid-content rendering would read). The slot itself
 	 * never holds live content: {@link #getItem()} reads EMPTY so the vanilla broadcastChanges
 	 * per-slot poll (AbstractContainerMenu.java:168-170) syncs nothing and never dereferences
-	 * the {@link #DISPLAY_CONTAINER} stand-in. Display-only — players cannot put anything in,
-	 * take anything out, or shift-click through it (hasItem()=false short-circuits quickMove).
+	 * the menu-owned {@code mDisplayContainer} stand-in passed in by
+	 * {@link #FluidDisplaySlot(FluidTankGT, int, int[], SimpleContainer)}. Display-only —
+	 * players cannot put anything in, take anything out, or shift-click through it
+	 * (hasItem()=false short-circuits quickMove).
 	 */
 	public static final class FluidDisplaySlot extends GTRenderSlot {
 		/** The tank this display is paired with (the Host bank element at this slot's bank index). */
 		public final FluidTankGT tank;
 
-		FluidDisplaySlot(FluidTankGT aTank, int aBankIndex, int[] aPos) {
-			super(DISPLAY_CONTAINER, aBankIndex, aPos[0], aPos[1]);
+		FluidDisplaySlot(FluidTankGT aTank, int aBankIndex, int[] aPos, SimpleContainer aDisplayContainer) {
+			super(aDisplayContainer, aBankIndex, aPos[0], aPos[1]);
 			this.tank = aTank;
 		}
 

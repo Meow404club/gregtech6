@@ -295,6 +295,52 @@ public class TileEntityBasicMachineSideIOTest extends TileEntityBasicMachineOffl
 	}
 
 	@Test
+	void outOfDomainAutoIOSidesFoldToUndefinedAndMergeAsNoOp() {
+		RecipeMap tMap = fluidMap();
+		TileEntityBasicMachine tSource = makeFluidMachine(tMap);
+		tSource.mTanksOutput[0].add(800, new FluidStack(Fluids.WATER, 800));
+
+		TileEntityBasicMachine tSink = new TileEntityBasicMachine(
+				machineType(tMap, 1, false), POS2, Blocks.BRICKS.defaultBlockState(), tMap, 1, false, null) {
+			@Override
+			protected IFluidHandler getFluidInputTarget(byte aWorldSide) {
+				return tSource.newFluidHandler(null); // the side-less all-open drain face (the P5 ruling)
+			}
+		};
+		tSink.setLevel(emptyLevel());
+		// the /data merge form with out-of-domain bytes: 99 would alias through the &7 lookup
+		// (99 & 7 = 3 = the relative front), 6 is already past the 0..5 relative face domain
+		CompoundTag tTag = new CompoundTag();
+		tTag.putByte(TileEntityBasicMachine.NBT_TANK_SIDE_AUTO_IN, (byte)99);
+		tTag.putByte(TileEntityBasicMachine.NBT_TANK_SIDE_AUTO_OUT, (byte)6);
+		tSink.load(tTag);
+		assertEquals(TileEntityBasicMachine.SIDE_UNDEFINED, tSink.mFluidAutoInput, ":145 — 99 folds to the off sentinel instead of a real face");
+		assertEquals(TileEntityBasicMachine.SIDE_UNDEFINED, tSink.mFluidAutoOutput, ":146 — 6 folds too (the relative domain is 0..5)");
+
+		// the merged no-op: the folded sides keep both arms shut — nothing pulls, nothing moves
+		drive(tSink, 3);
+		assertEquals(0, tSink.mTanksInput[0].amount(), "the folded auto-input side keeps the pull off (the unguarded value would have aliased onto front and drained)");
+		assertEquals(800, tSource.mTanksOutput[0].amount());
+	}
+
+	@Test
+	void inDomainAutoIOSidesLoadByteIdenticalToThePreGuardBehaviour() {
+		TileEntityBasicMachine tMachine = makeFluidMachine(fluidMap());
+		CompoundTag tTag = new CompoundTag();
+		tTag.putByte(TileEntityBasicMachine.NBT_TANK_SIDE_AUTO_IN, (byte)-1);
+		tTag.putByte(TileEntityBasicMachine.NBT_TANK_SIDE_AUTO_OUT, (byte)0);
+		tMachine.load(tTag);
+		assertEquals(TileEntityBasicMachine.SIDE_UNDEFINED, tMachine.mFluidAutoInput, "the off value -1 loads as-is");
+		assertEquals(0, tMachine.mFluidAutoOutput, "a valid relative face 0 loads as-is");
+
+		for (byte tSide = 1; tSide <= 5; tSide++) {
+			tTag.putByte(TileEntityBasicMachine.NBT_TANK_SIDE_AUTO_IN, tSide);
+			tMachine.load(tTag);
+			assertEquals(tSide, tMachine.mFluidAutoInput, "every valid relative face 0..5 loads byte-identical");
+		}
+	}
+
+	@Test
 	void loadKeepsTheConstructorInjectedConfigAndCapacitySurvivesARoundTrip() {
 		TileEntityBasicMachine tMachine = makeFluidMachine(fluidMap());
 		tMachine.mItemInputs = 8; // the applyRow/carrier injection

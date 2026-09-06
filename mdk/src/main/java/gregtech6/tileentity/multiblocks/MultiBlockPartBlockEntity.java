@@ -120,6 +120,11 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 	, ONLY_ITEM_ENERGY           = ~(NO_ITEM  | NO_ENERGY)
 	, ONLY_FLUID_ENERGY          = ~(NO_FLUID | NO_ENERGY)
 
+	// the all-deny sentinel: ~0 — every NO_* bit set, so no face admits anything (item,
+	// fluid, energy, logistics, crucible, in and out). Constraint: it is already the
+	// full-width complement, the terminal ~ form of this table — it must never be OR-combined
+	// with further NO_* bits or used as a base to derive new modes from (a mask that denies
+	// everything leaves no selectable bit to compose on); use it verbatim as a mode value.
 	, NOTHING                    = ~EVERYTHING
 	;
 

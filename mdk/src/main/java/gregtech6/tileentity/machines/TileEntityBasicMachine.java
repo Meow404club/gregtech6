@@ -1013,6 +1013,18 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		return FACING_TO_SIDE[mFacing & 7][aRelativeSide & 7];
 	}
 
+	/**
+	 * The load-leg domain normalizer for the auto-IO sides (upstream SIDES_VALID semantics,
+	 * CS.java:561-568): only a valid relative face 0..5 or the {@link #SIDE_UNDEFINED} off
+	 * value is accepted — any other byte folds to {@link #SIDE_UNDEFINED}. A raw out-of-domain
+	 * value (e.g. a {@code /data merge} 99) would otherwise pass the {@code != SIDE_UNDEFINED}
+	 * gates (:383/:577) and alias onto a real face through the {@code & 7} in
+	 * {@link #worldSideOfRelative} (99 &amp; 7 = 3 = front), turning the off state into live IO.
+	 */
+	private static byte normalizeAutoIOSide(byte aSide) {
+		return (aSide >= 0 && aSide <= 5) || aSide == SIDE_UNDEFINED ? aSide : SIDE_UNDEFINED;
+	}
+
 	/** The auto-input adjacency seam (upstream :974-976 getFluidInputTarget(byte)) — the neighbor FLUID_HANDLER on that world face. */
 	@Nullable
 	protected IFluidHandler getFluidInputTarget(byte aWorldSide) {
@@ -1548,8 +1560,8 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		if (aNBT.contains(NBT_ITEM_SIDE_OUT, Tag.TAG_ANY_NUMERIC)) mItemOutputs = (byte)(aNBT.getByte(NBT_ITEM_SIDE_OUT) | SBIT_A); // :138
 		if (aNBT.contains(NBT_TANK_SIDE_IN, Tag.TAG_ANY_NUMERIC)) mFluidInputs = (byte)(aNBT.getByte(NBT_TANK_SIDE_IN) | SBIT_A); // :143
 		if (aNBT.contains(NBT_TANK_SIDE_OUT, Tag.TAG_ANY_NUMERIC)) mFluidOutputs = (byte)(aNBT.getByte(NBT_TANK_SIDE_OUT) | SBIT_A); // :144
-		if (aNBT.contains(NBT_TANK_SIDE_AUTO_IN, Tag.TAG_ANY_NUMERIC)) mFluidAutoInput = aNBT.getByte(NBT_TANK_SIDE_AUTO_IN); // :145 (no SBIT_A OR)
-		if (aNBT.contains(NBT_TANK_SIDE_AUTO_OUT, Tag.TAG_ANY_NUMERIC)) mFluidAutoOutput = aNBT.getByte(NBT_TANK_SIDE_AUTO_OUT); // :146
+		if (aNBT.contains(NBT_TANK_SIDE_AUTO_IN, Tag.TAG_ANY_NUMERIC)) mFluidAutoInput = normalizeAutoIOSide(aNBT.getByte(NBT_TANK_SIDE_AUTO_IN)); // :145 (no SBIT_A OR; out-of-domain bytes fold to SIDE_UNDEFINED)
+		if (aNBT.contains(NBT_TANK_SIDE_AUTO_OUT, Tag.TAG_ANY_NUMERIC)) mFluidAutoOutput = normalizeAutoIOSide(aNBT.getByte(NBT_TANK_SIDE_AUTO_OUT)); // :146 (same domain guard)
 		if (aNBT.contains(NBT_USE_OUTPUT_TANK)) mCanUseOutputTanks = aNBT.getBoolean(NBT_USE_OUTPUT_TANK); // :132
 		if (aNBT.contains(NBT_TANK_CAPACITY, Tag.TAG_ANY_NUMERIC)) mTankCapacity = FluidTankGT.bindInt(aNBT.getLong(NBT_TANK_CAPACITY)); // :157-158 (UT.Code.bindInt form)
 		applyTankCapacity(); // :160 — the tanks are constructed AT capacity before the content read below
