@@ -217,6 +217,8 @@ tasks.withType(Test::class).configureEach {
 // 用显式 setter。与 forge 节点同构。
 tasks.named<Jar>("jar") {
     setZip64(true)
+    // gregapi 根项目类打进 mod jar（真机分发自包含）——与 forge 节点同构，2026-09-06 真机加载实测缺口。
+    from(project(":").sourceSets.main.get().output)
 }
 
 // chisel 生成源接线（模板 build.neoforge.gradle.kts.txt:53-55 同构）：

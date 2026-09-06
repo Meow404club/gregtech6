@@ -176,6 +176,10 @@ tasks.named<Jar>("jar") {
     // 注意：Gradle 8.14 kts 下 `zip64 = true` 不编译（isZip64/setZip64 分属 Zip/AbstractArchiveTask
     // 两级，Kotlin 属性合成失败，最小复现实证 2026-09-03）——用显式 setter。
     setZip64(true)
+    // gregapi 根项目类打进 mod jar（真机分发自包含）：runs 走 exploded classpath 双项目不受影响，
+    // 但玩家 mods/ 目录只有本 jar 一个类加载域——缺 gregapi 类即 NoClassDefFoundError
+    // （2026-09-06 真机加载实测）。取代 P2「mdk 不 shadow gregapi」开发期口径（仅分发形态，依赖仍 compileOnly 面）。
+    from(project(":").sourceSets.main.get().output)
 }
 
 // chisel 生成源接线（模板 build.forge.gradle.kts.txt:64-66 同构）：
