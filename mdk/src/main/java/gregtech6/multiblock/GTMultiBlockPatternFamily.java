@@ -1,7 +1,7 @@
 package gregtech6.multiblock;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -38,8 +38,14 @@ public final class GTMultiBlockPatternFamily {
 	/** The frozen declaration — replayed onto a fresh {@link GTMultiBlockPattern.Builder} per expansion. */
 	private final Consumer<GTMultiBlockPattern.Builder> mDeclaration;
 
-	/** The per-size expansion cache ({@link #forSize}); failures are never cached. */
-	private final Map<Integer, GTMultiBlockPattern> mExpansions = new HashMap<>();
+	/**
+	 * The per-size expansion cache ({@link #forSize}); failures are never cached. Concurrent
+	 * because a future size-parametrised machine's {@code getStructurePattern} is consumed on
+	 * worker threads: {@link ConcurrentHashMap#computeIfAbsent} is atomic per key, which keeps
+	 * the same-n-same-immutable-instance contract under racing first calls (the declaration
+	 * replay never recurses into this map, so no CHM self-deadlock).
+	 */
+	private final Map<Integer, GTMultiBlockPattern> mExpansions = new ConcurrentHashMap<>();
 
 	private GTMultiBlockPatternFamily(Consumer<GTMultiBlockPattern.Builder> aDeclaration) {
 		mDeclaration = aDeclaration;
