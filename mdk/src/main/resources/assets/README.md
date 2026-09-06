@@ -2805,3 +2805,100 @@ Dedication** (same upstream `README.md` block as above).
   - `screw.png` `94e94ed6ead3d8353caaa0c293ff3269213d677794c1b94c87f57f9dc119311d`
   - `stick.png` `ee2306110d3da12e5340607760cbefaf8d17b047a84d6202780c735dc74dc85d`
   - `stick_long.png` `44e5500af3a30267caeefa2109110687f9e051986b9d13f47542501bca923642`
+Steam Boiler Tank block textures, task p20-borrow-tank-barrel-pipe: the 3 PNGs
+under `gt6/textures/block/boiler_steam/` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/tanks/boiler_steam/colored/`
+(the `MultiTileEntityLargeBoiler.java:348-350` `sColoreds` icon stack — the same
+group the 26 Steam Boiler Tank rows render through), byte-identical to upstream,
+sha256 verified:
+
+- `boiler_steam/bottom.png` `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+  (upstream `boiler_steam/colored/bottom.png`)
+- `boiler_steam/top.png`    `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+  (upstream `boiler_steam/colored/top.png`)
+- `boiler_steam/side.png`   `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+  (upstream `boiler_steam/colored/side.png`)
+
+Upstream fact (the tap/funnel same-bytes precedent): the three colored faces are
+byte-identical to each other and to the `kinetic_steam/colored/side.png` bytes the
+p12-engine-steam entry already carries (`steam_engine_side.png` above). Declared
+gap: `boiler_steam/front.png` KEEPS its generated placeholder — upstream ships no
+`colored/front.png`; the front face renders the side sprite plus the `BI.BAROMETER`
+gauge overlay at runtime (`getTexture2`, MultiTileEntityLargeBoiler :358-361), an
+overlay pass that is NOT borrowed (the p8 single-pass ruling). The p13-era census
+note that this group had "no borrowable source" is superseded by this probe
+(the research-card id333 correction). The `overlay/{bottom,top,side}.png` group is
+NOT borrowed; the grayscale colored base renders un-tinted, the mRGBa tint and the
+barometer visual ride the render pool card.
+
+Barrel family block textures, task p20-borrow-tank-barrel-pipe: the 3 PNGs
+`gt6/textures/block/barrel_{wood,plastic,metal}.png` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/tanks/`, byte-identical
+to upstream, sha256 verified:
+
+- `barrel_wood.png`    `24c4d75618258809715e41527b5189351ef4870e0372a07463bfd266a883e6d0`
+  (upstream `machines/tanks/barrel/colored/side.png`, the
+  `MultiTileEntityBarrelWood.java:48-50` colored stack)
+- `barrel_plastic.png` `c696979c208e967f0fb43e2fc1d15d70209c4854b4b61aa3608eabf03f85c754`
+  (upstream `machines/tanks/plasticcan/colored/side.png`, the
+  `MultiTileEntityBarrelPlastic.java:46-48` colored stack)
+- `barrel_metal.png`   `deec36f927d4d298723212a1a70c6e465465e82ed07d522fbd6b41b186a59b4a`
+  (upstream `machines/tanks/drum/colored/side.png`, the
+  `MultiTileEntityBarrelMetal.java:43-45` colored stack)
+
+Path mapping (the barrel_logistics p12 precedent, unchanged): upstream
+`machines/tanks/<group>/colored/side` flattens to `barrel_<material>` per the
+one-PNG-per-row `cube_all` convention (GT6BlockStates `addBarrel`); the `side`
+sprite is the borrowed face because the cube_all key set has no top/bottom keys —
+upstream `colored/{bottom,top}.png` exist but have no repo counterpart (declared
+simplification, not a gap). The twelve high-tier metal drums keep sharing the one
+`barrel_metal.png` (the p7 ruling). `barrel_logistics.png` is NOT re-borrowed: the
+p12 entry stays byte-exact (sha256 re-verified `f348ace8e2d98ed701a060a87c4c66ec25b708449cd96611b66aa01cc9c595f1`).
+The `overlay/{bottom,top,side}.png` groups are NOT borrowed; the grayscale colored
+base renders un-tinted (the mRGBa material tint is the render pool card).
+
+Burning Box family block textures, task p20-borrow-tank-barrel-pipe: the 4 PNGs
+under `gt6/textures/block/burning_box_*.png` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/generators/`, byte-identical
+to upstream, sha256 verified:
+
+- `burning_box_solid.png`    `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+  (upstream `burning_solid/colored/front.png`)
+- `burning_box_liquid.png`   `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+  (upstream `burning_liquid/colored/front.png`)
+- `burning_box_gas.png`      `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+  (upstream `burning_gas/colored/front.png`)
+- `burning_box_fluidbed.png` `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+  (upstream `burning_fluidbed/colored/front.png`)
+
+This section SUPERSEDES the p13-burning-box-family declaration above (the
+"no borrowable source" claim): the probe found the five
+`machines/generators/burning_{solid,liquid,gas,fluidbed,brick}/` iconsets in the
+snapshot, each with a 6-face `colored` set plus `overlay`/`overlay_active`
+(consumed by `MultiTileEntityGeneratorMetal.java:40-59`, `...GeneratorGas.java:57-76`,
+`...GeneratorFluidBed.java:282-301`). Upstream fact: within every family all six
+colored faces are byte-identical, and all four families share the SAME grayscale
+bytes as the boiler_steam group above — the visual family differentiation lives
+entirely in the overlay/overlay_active passes and the mRGBa tint (the render pool
+card). The `front` face is the borrowed representative because the repo cube model
+applies one texture to all six faces (GT6BlockStates `addBurningBoxes`) and the
+FACING face carries the front semantics. The `burning_brick` group exists upstream
+but is NOT borrowed: the repo Brick row shares the SOLID model per the p13 ruling,
+so there is no brick key to fill. The `overlay`/`overlay_active` groups are NOT
+borrowed (the p8 single-pass ruling).
+
+Fluid pipe block texture — DECLARED GAP, task p20-borrow-tank-barrel-pipe:
+`gt6/textures/block/fluid_pipe_wood.png` KEEPS its generated placeholder. The
+upstream wood fluid pipes render through the material icon system, not a dedicated
+block tile: `TileEntityBase10ConnectorRendered.getIconIndexConnected` (:265) picks
+`OP.pipe{Tiny,Small,Medium,...}.mIconIndexBlock` and `getTextureSide` (:522) resolves
+it against `mMaterial` with the mRGBa tint — i.e. the grayscale
+`blocks/materialicons/WOOD/pipe{Small,Medium}.png` slices, which are TRANSPARENT
+RGBA cross-sections drawn by the dedicated pipe renderer. Those bytes do not
+correspond to the repo's opaque `cube_all` tile (GT6BlockStates `addFluidPipe`, the
+p4 shape): borrowing them would punch see-through holes in a solid-layer cube.
+Borrow-or-declare therefore declares the gap; the faithful pipe cross-render family
+is the render pool card.
+
+Copied on 2026-09-06. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
