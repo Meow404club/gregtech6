@@ -148,6 +148,27 @@ public class FluidTankGTTest extends GTOfflineTestBase {
 		assertEquals(0, tTo.add(1, new FluidStack(Fluids.LAVA, 1)));
 	}
 
+	@Test
+	public void unknownFluidNameDegradesToATrulyEmptyTank() {
+		// The keepFilter payload shape with a bogus identity: {FluidName, Amount: 0}. The codec
+		// face fails it to EMPTY and the read-side rebuild (ADR-P18) must fold an unregistered
+		// name to an empty tank — exactly the 1.20.1 degradation (loadFluidStackFromNBT hands
+		// back the EMPTY stack for an unknown name, the :84-86 arm folds it to null). Same
+		// assertions on both legs, zero chisel. NOTE: the name must stay syntactically VALID —
+		// a malformed one throws inside the frozen forge leg's own "new ResourceLocation"
+		// before our guard ever runs.
+		CompoundTag tGarbage = new CompoundTag();
+		tGarbage.putString("FluidName", "gt6:not_a_fluid");
+		tGarbage.putInt("Amount", 0);
+		CompoundTag tOuter = new CompoundTag();
+		tOuter.put("tank", tGarbage);
+
+		FluidTankGT tTank = new FluidTankGT(1000).readFromNBT(tOuter, "tank");
+		assertTrue(tTank.isEmpty(), "an unknown FluidName loads as a truly empty tank, never a crash");
+		assertEquals(0, tTank.amount(), "the degraded tank holds 0 L");
+		assertNull(tTank.getFluid(), "no identity is fabricated for an unknown name");
+	}
+
 	static int bindable(long aAmount) {
 		return FluidTankGT.bindInt(aAmount);
 	}
