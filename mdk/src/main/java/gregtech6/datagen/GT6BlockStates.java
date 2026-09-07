@@ -62,6 +62,9 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("gt6");
 
+    /** The runData-side tint census counter (machineModel invocations — the datagen-JVM half of the pinned 21x3 audit). */
+    private int mMachineTintModels;
+
     public GT6BlockStates(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, GT6DataGenerators.MOD_ID, existingFileHelper);
     }
@@ -99,6 +102,10 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMachine(GTMachines.LATHE_T4.get(), "lathe_t4", "lathe");
         addDryer(); // task p14-dryer-family
         addDistillery(); // task p16-distillery-family
+        // task p21-paintable-tint-render: the datagen-JVM census half — 21 machine blocks x
+        // 3 models, matching the paintableBlockArray() client registration census
+        // (the offline JUnit half walks the generated tree and pins the same 63).
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (21 blocks x 3, addOven/addMachine/addDryer/addDistillery)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -300,12 +307,35 @@ public final class GT6BlockStates extends BlockStateProvider {
         itemModels().withExistingParent(aBase, modLoc("block/" + aBase));
     }
 
-    /** One cube model over the four-texture key set: down/up/north(front)/south+east+west(side). */
+    /**
+     * One cube model over the four-texture key set: down/up/north(front)/south+east+west(side).
+     * Task p21-paintable-tint-render: the vanilla {@code block/cube} element is re-declared
+     * in the child with {@code tintindex 0} on EVERY face — the machine cube is six-texture,
+     * so the {@link #tintedCubeAll} {@code #all} shortcut does not apply and the per-face
+     * element form is required. Upstream canonical: every faced face multiplies the
+     * grayscale texture by mRGBa (MultiTileEntityBasicMachine.java:1014 getTexture2,
+     * white = unpainted = unchanged), so all three models (inactive/active/running — built
+     * from {@link #addMachine}) tint identically; the runtime consumer is the
+     * {@code GTMachinePaintTint} BlockColor. Output is otherwise equivalent to the former
+     * parent-only {@code models().cube} form (no explicit UVs — they default to the element
+     * bounds; the {@code block/cube} parent keeps the display transforms and its
+     * {@code particle = #down} binding).
+     */
     private ModelFile machineModel(String aName, String aFrontTexture) {
-        return models().cube(aName,
-                modLoc("block/oven_bottom"), modLoc("block/oven_top"),
-                modLoc("block/" + aFrontTexture), modLoc("block/oven_side"),
-                modLoc("block/oven_side"), modLoc("block/oven_side"));
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc("block/oven_bottom"))
+                .texture("up", modLoc("block/oven_top"))
+                .texture("north", modLoc("block/" + aFrontTexture))
+                .texture("south", modLoc("block/oven_side"))
+                .texture("west", modLoc("block/oven_side"))
+                .texture("east", modLoc("block/oven_side"));
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        mMachineTintModels++;
+        return tModel;
     }
 
     /**
