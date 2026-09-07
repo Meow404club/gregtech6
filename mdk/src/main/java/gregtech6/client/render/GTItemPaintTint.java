@@ -25,6 +25,14 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * hand-written forwards), the Forge-docs "a BlockColor does NOT colour its BlockItem"
  * caveat of the wire/prefix cards applies verbatim here.
  *
+ * <p>TWO-LEVEL READ (task p23-painted-item-tag-fix, kb-painted-item-tag-mismatch): the
+ * loot copy_nbt lands the paint pair under {@code BlockEntityTag} (GT6LootTables.paintCopyNbt —
+ * the vanilla placement read-back key, {@code BlockItem.BLOCK_ENTITY_TAG}), so the first-pass
+ * root-tag-only read missed the dropped stacks (no inventory tint). The lambda now probes the
+ * {@code BlockEntityTag} compound first and falls back to the root tag — the loot form and the
+ * root form are both tinted, the write side stays untouched ({@code BlockEntityTag} is the
+ * load-bearing placement key).
+ *
  * <p>The value math is NOT duplicated: the lambda wraps the NBT-read paint into a
  * {@link ModelData} snapshot and statically references
  * {@link GTMachinePaintTint#tintARGB(ModelData, int)} — the P21 pure seam stays the single
@@ -44,10 +52,12 @@ public final class GTItemPaintTint {
 
     /**
      * The inventory half: registered over the {@code BlockItems of
-     * GTMachines.paintableBlockArray()} (GTClientHandlers). Index 0 reads the stack NBT
-     * the loot copy_nbt wrote; the unpainted guards (no tag / no painted flag / no colour
-     * key) all return {@code -1} — no tint, no snapshot allocation. Index non-zero is the
-     * no-tint sentinel like every other GT6 tint seam.
+     * GTMachines.paintableBlockArray()} (GTClientHandlers). Index 0 reads the stack NBT in the
+     * two carried forms — the loot copy_nbt payload ({@code BlockEntityTag.gt.*}, preferred
+     * when its compound carries the painted flag) and the root-tag fallback —; the unpainted
+     * guards (no tag / no painted flag / no colour key, on the selected compound) all return
+     * {@code -1} — no tint, no snapshot allocation. Index non-zero is the no-tint sentinel
+     * like every other GT6 tint seam.
      */
     public static ItemColor itemColor() {
         return (@Nullable ItemStack aStack, int aTintIndex) -> {
@@ -58,10 +68,21 @@ public final class GTItemPaintTint {
             /*CompoundTag tTag = aStack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
                     net.minecraft.world.item.component.CustomData.EMPTY).copyTag(); // the 21.1 tag envelope (GT6Circuits read fork shape)
             *///?}
-            if (tTag == null || !tTag.getBoolean(TileEntityBase03TicksAndSync.NBT_PAINTED)) return -1;
-            if (!tTag.contains(TileEntityBase03TicksAndSync.NBT_COLOR, Tag.TAG_ANY_NUMERIC)) return -1;
+            if (tTag == null) return -1;
+            // The loot form first: copy_nbt writes the pair into BlockEntityTag (vanilla
+            // BlockItem.BLOCK_ENTITY_TAG, BlockItem.java:34 — same literal GT6LootTables
+            // .paintCopyNbt targets on both legs). getCompound is an empty compound when the
+            // key is absent, so the probe is null-safe; a payload WITHOUT the painted flag
+            // (absent payload, an unrelated BE compound, or an unpainted machine) falls back
+            // to the root form. The guards below apply to the selected compound only — no
+            // cross-compound mixing (a painted-flag-without-colour payload stays the -1
+            // malformed-copy arm).
+            CompoundTag tPaintTag = tTag.getCompound("BlockEntityTag");
+            if (!tPaintTag.contains(TileEntityBase03TicksAndSync.NBT_PAINTED, Tag.TAG_ANY_NUMERIC)) tPaintTag = tTag;
+            if (!tPaintTag.getBoolean(TileEntityBase03TicksAndSync.NBT_PAINTED)) return -1;
+            if (!tPaintTag.contains(TileEntityBase03TicksAndSync.NBT_COLOR, Tag.TAG_ANY_NUMERIC)) return -1;
             return GTMachinePaintTint.tintARGB(GTModelProperties.snapshot()
-                    .with(GTModelProperties.PAINT, Integer.valueOf(tTag.getInt(TileEntityBase03TicksAndSync.NBT_COLOR)))
+                    .with(GTModelProperties.PAINT, Integer.valueOf(tPaintTag.getInt(TileEntityBase03TicksAndSync.NBT_COLOR)))
                     .build(), 0);
         };
     }

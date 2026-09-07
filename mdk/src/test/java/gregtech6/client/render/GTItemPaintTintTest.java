@@ -1,9 +1,13 @@
 /*
- * Offline tests for task p22-painted-item-domain: the GTItemPaintTint inventory-half
- * mapping — the ItemColor over the stack NBT the loot copy_nbt function carries. The seam
- * reads the tag only (any item's stack works), so vanilla-registry stacks offline-booted
- * per GTOfflineRenderTestBase drive every arm; the value math rides the P21
- * GTMachinePaintTint.tintARGB seam (its own test pins the identity).
+ * Offline tests for task p22-painted-item-domain + the p23-painted-item-tag-fix two-level
+ * read: the GTItemPaintTint inventory-half mapping — the ItemColor over the stack NBT the
+ * loot copy_nbt function carries. The seam reads the tag only (any item's stack works), so
+ * vanilla-registry stacks offline-booted per GTOfflineRenderTestBase drive every arm; the
+ * value math rides the P21 GTMachinePaintTint.tintARGB seam (its own test pins the identity).
+ *
+ * <p>Both carried shapes are pinned: the REAL loot form (copy_nbt under BlockEntityTag,
+ * GT6LootTables.paintCopyNbt — the shape the p22 first-pass tests missed, which is why the
+ * kb-painted-item-tag-mismatch dead seam never went red) and the root-tag fallback form.
  */
 package gregtech6.client.render;
 
@@ -24,7 +28,13 @@ class GTItemPaintTintTest extends GTOfflineRenderTestBase {
     /** A painted colour as the 03 base stores it (0xRRGGBB, the direct-storage ruling). */
     private static final int PAINT_RED = 0xFF0000;
 
-    /** A stack in the exact shape the leg's loot copy function leaves it (tag / CUSTOM_DATA envelope). */
+    /** A paint the seam must NOT pick when the BlockEntityTag payload wins (the priority pin). */
+    private static final int PAINT_BLUE = 0x0000FF;
+
+    /** The vanilla placement payload key — BlockItem.BLOCK_ENTITY_TAG, BlockItem.java:34; the literal GT6LootTables.paintCopyNbt targets on both legs. */
+    private static final String BLOCK_ENTITY_TAG = "BlockEntityTag";
+
+    /** A stack in the ROOT-tag form (the p22 first-pass shape, kept as the fallback-arm regression). */
     private static ItemStack lootCarriedStack(@Nullable Integer aColor, boolean aPainted) {
         ItemStack tStack = new ItemStack(Items.BRICKS, 1); // the seam reads the tag, item type irrelevant
         //? if forge {
@@ -38,6 +48,25 @@ class GTItemPaintTintTest extends GTOfflineRenderTestBase {
         if (aColor != null) tTag.putInt(TileEntityBase03TicksAndSync.NBT_COLOR, aColor);
         //? if neoforge {
         /*tStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.of(tTag)); // the 21.1 copy_custom_data carrier
+        *///?}
+        return tStack;
+    }
+
+    /** A stack in the REAL loot form (kb-painted-item-tag-mismatch): copy_nbt lands the paint pair under BlockEntityTag, the root tag itself stays bare. */
+    private static ItemStack beTaggedPaintStack(@Nullable Integer aColor, boolean aPainted) {
+        CompoundTag tBeTag = new CompoundTag();
+        tBeTag.putBoolean(TileEntityBase03TicksAndSync.NBT_PAINTED, aPainted);
+        if (aColor != null) tBeTag.putInt(TileEntityBase03TicksAndSync.NBT_COLOR, aColor);
+        ItemStack tStack = new ItemStack(Items.BRICKS, 1);
+        //? if forge {
+        tStack.getOrCreateTag().put(BLOCK_ENTITY_TAG, tBeTag);
+        //?} else {
+        /*net.minecraft.nbt.CompoundTag tTag = tStack.getOrDefault(
+                net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        tTag.put(BLOCK_ENTITY_TAG, tBeTag);
+        tStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
                 net.minecraft.world.item.component.CustomData.of(tTag)); // the 21.1 copy_custom_data carrier
         *///?}
         return tStack;
@@ -75,5 +104,54 @@ class GTItemPaintTintTest extends GTOfflineRenderTestBase {
     void storedColourIsMaskedTo24Bit() {
         assertEquals(0xFFFF0000, GTItemPaintTint.itemColor().getColor(lootCarriedStack(0x1FF0000, true), 0),
                 "the alpha/overflow bits of the stored int are masked away");
+    }
+
+    /** p23 acceptance: the REAL loot form (paint pair under BlockEntityTag) tints — the dead-seam shape, now the primary arm. */
+    @Test
+    void lootBlockEntityTagFormTints() {
+        assertEquals(0xFFFF0000, GTItemPaintTint.itemColor().getColor(beTaggedPaintStack(PAINT_RED, true), 0),
+                "the BlockEntityTag form GT6LootTables.paintCopyNbt actually leaves tints at index 0");
+        assertEquals(0xFF202020, GTItemPaintTint.itemColor().getColor(beTaggedPaintStack(0x202020, true), 0),
+                "the BE form rides the same tintARGB value math");
+        assertEquals(-1, GTItemPaintTint.itemColor().getColor(beTaggedPaintStack(PAINT_RED, false), 0),
+                "an unpainted BE payload is no tint (copy_nbt only writes the pair while painted)");
+        assertEquals(-1, GTItemPaintTint.itemColor().getColor(beTaggedPaintStack(null, true), 0),
+                "a malformed BE payload (painted flag without a colour key) is no tint — no cross-compound mixing");
+    }
+
+    /** The BlockEntityTag payload is authoritative: when both forms are present the root colour must NOT leak through. */
+    @Test
+    void blockEntityTagFormWinsOverRootForm() {
+        ItemStack tStack = beTaggedPaintStack(PAINT_RED, true);
+        //? if forge {
+        tStack.getOrCreateTag().putInt(TileEntityBase03TicksAndSync.NBT_COLOR, PAINT_BLUE);
+        //?} else {
+        /*net.minecraft.nbt.CompoundTag tTag = tStack.getOrDefault(
+                net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        tTag.putInt(TileEntityBase03TicksAndSync.NBT_COLOR, PAINT_BLUE);
+        tStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.of(tTag));
+        *///?}
+        assertEquals(0xFFFF0000, GTItemPaintTint.itemColor().getColor(tStack, 0),
+                "the BlockEntityTag payload wins over a root-tag colour (the placement key is authoritative)");
+    }
+
+    /** A BlockEntityTag compound WITHOUT the paint keys (e.g. chest-style payload) must not mask the root form. */
+    @Test
+    void paintlessBlockEntityTagFallsBackToRoot() {
+        ItemStack tStack = lootCarriedStack(PAINT_RED, true);
+        //? if forge {
+        tStack.getOrCreateTag().put(BLOCK_ENTITY_TAG, new CompoundTag());
+        //?} else {
+        /*net.minecraft.nbt.CompoundTag tTag = tStack.getOrDefault(
+                net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        tTag.put(BLOCK_ENTITY_TAG, new net.minecraft.nbt.CompoundTag());
+        tStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.of(tTag));
+        *///?}
+        assertEquals(0xFFFF0000, GTItemPaintTint.itemColor().getColor(tStack, 0),
+                "an empty BlockEntityTag compound falls back to the root-tag form (the payload probe is key-gated)");
     }
 }
