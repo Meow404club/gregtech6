@@ -246,6 +246,19 @@
 
 新池移交：colored/ 灰轨借入+已漆换轨渲染（喷漆显色度保真）；Jade 流体显示 capability 探针；Jade tooltip runClient 目视核验；stonecutter.gradle.kts .color( 正则收窄；喷漆罐/除漆剂物品+物品域带漆 ItemColor+管线桶连接器 tint 扩展（随工具物品卡）；drying 树脂/生物族=上游即死封存；多方块双预览与版本扩展仍压后
 
+## 第 22 阶段（喷漆显色度修正+工具物品域 / Jade 流体段 / 整备批 / oven 复验实测）——✅ 已完成（2026-09-07）
+
+- [x] 研究三张：paint-grayscale（**翻案**：colored/ 即灰度待染轨 repo 内已在+P20 已借，机身显色零差；真实偏差=front overlay 连带染）∥ jade-fluid（必须服务端推；C-1 单分支/C-2 amount() 已存在）∥ spraycan-toolitem（上游语义与 IPaintableTE 对位；circuit 不同车）
+- [x] front overlay 拆层 96f9d355：双 element（body 灰轨 tintindex0+decal 无 tintindex+epsilon 外浮）+24 PNG 台账+63 模型重生成
+- [x] painted-item-domain 7ba12b14：21 表 copy_nbt 携漆+GTItemPaintTint 显式注册+13 块 loot 缺失既有缺口修复；21.1 CopyCustomDataFunction 分叉
+- [x] spraycan-items cc21dd96：16 色罐+除漆剂+空罐（gt.remaining ×10；路由 04:227-235 逐字；白名单折叠；18 PNG 台账；三偏离）
+- [x] jade-fluid-tooltip b9b0b23f：GT6FluidProvider 单分支服务端推+v1 内嵌零新分叉+真 long 避 INT_MAX
+- [x] 整备批 3ae605aa+f58fb0a5：boiler form 拒绝臂（creative probe 撞 FluidType.SIZE 墙降级留痕）∥ stonecutter .color( 劈分（21.1 生成源码复核）
+- [x] oven 双腿复验：序列双腿全绿 stonex8；sweep --dual 27 链全集实测（forge 23/27+21.1 22/27；4 链确定性时序债+1 链 expect 串债立 known_bugs）
+- [x] phase-closeout：合并态 forge 1217/0+neo 1219/0/2skip（cleanTest 读 XML）；jar 双腿重编+jar_content_check GREEN；ADR 四篇正典
+
+新池移交：universal registerFluidStorage（Jade 升级路径）；桶漆域三件套；喷漆罐实体腿/泡沫族/灌装/空罐 crafting/白名单 grass·rockwool 无目标臂；RCON 四链时序红 poll 化修复+p16pchk expect 串 namespace 修复；runClient 首启双腿+目验三合一（Jade hover/喷漆显色/物品染色）；creative form 语义覆盖（canEdit 注入化或 RCON）；circuit crafting+cover 配方仍随工具物品另车；多方块双预览随集成波；kTFRU 池底；版本扩展最后
+
 ## 遗留池
 
 - [x] **M2 哨兵产量翻案**：上游 HandlerCrushing 槽0=0 哨兵+槽1=10000 重复=每行 2 份主产出，port chance==0-null 后 oreRaw 1 份；翻案=buildRecipe base 改双 10000 槽（493 行不变）（merge 794bb1c，fix e31f48b；plain=2/blockRaw=9/dense 组合=11 对位上游）

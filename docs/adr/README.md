@@ -53,6 +53,10 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-07 | [2026-09-07-p21-paintable-rulings.md](2026-09-07-p21-paintable-rulings.md) | P21 机器喷漆两卡裁定：存储直存免反码（DYES_INT_INVERTED 复合恒等）+已漆通道平均混色+NBT gt.color/gt.painted 键逐字+IPaintableTE 挂 03 基类全族+写入入口=离线测+RCON 臂（喷漆罐物品留池） |
 | 2026-09-07 | [2026-09-07-p21-jade-compat-card.md](2026-09-07-p21-jade-compat-card.md) | P21 Jade 兼容单卡：@WailaPlugin 零静态引用隔离（NCDFE 防线）+Modrinth maven compileOnly 双腿钉值+versionRange 硬编码声明偏离+tooltip v1 四段（流体/喷漆色/lang 键/runClient 目视入池） |
 | 2026-09-07 | [2026-09-07-p21-chisel-drop-conversion-ruling.md](2026-09-07-p21-chisel-drop-conversion-ruling.md) | P21 凿石掉落转换落点裁决：loot 逐表 alternatives[match_tool(gt6:chisel)→CHISEL_MAPPINGS item]（否 getDrops override 与 GLM）+170/102 两形态+21.1 items 序列化 delta=p17 单数化口径 |
+| 2026-09-07 | [2026-09-07-p22-front-overlay-split-ruling.md](2026-09-07-p22-front-overlay-split-ruling.md) | P22 front overlay 拆层裁决：P21 灰轨结论翻案（colored/ 即灰度待染轨且 P20 已 byte-identical 借入，机身显色零差）+C1 偏差声明（front overlay 连带染，known_bugs 在案）+C2 双 element 正典（body tintindex0+decal 无 tintindex 键+epsilon 外浮 cullface north，96f9d355）+C3 已漆切灰轨否决（前提不成立） |
+| 2026-09-07 | [2026-09-07-p22-jade-fluid-seam-ruling.md](2026-09-07-p22-jade-fluid-seam-ruling.md) | P22 Jade 流体缝裁决：罐同步触发面不含流体→必须服务端推 appendServerData+C-1 多块类零罐字段单分支+D-1 amount() 上游 :330 同形零触碰+形态=v1 内嵌（b9b0b23f）非 universal registerFluidStorage（入池升级无沉没成本）+载体 of(fluid,1000)+真 long 避 readDefault INT_MAX |
+| 2026-09-07 | [2026-09-07-p22-spraycan-toolitem-rulings.md](2026-09-07-p22-spraycan-toolitem-rulings.md) | P22 喷漆罐工具物品域裁定（并篇 painted-item-domain）：单物品/色+gt.remaining ×10 单位制+paintPaintableTE 路由逐字（04:227-235）+GT6 通道平均混色否覆盖式+三偏离（隐形罐裁/无目标臂池/占位音效）；21 表 copy_nbt 携漆+ItemColor 显式注册（ItemColors 无 BlockItem 委托铁证）+13 块 loot 缺口修复（7ba12b14/cc21dd96） |
+| 2026-09-07 | [2026-09-07-p22-stonecutter-regex-split.md](2026-09-07-p22-stonecutter-regex-split.md) | P22 stonecutter `.color(` swap 表劈分：4 参逗号形 lookahead 留表+单参删表改 //? 行内分叉（f58fb0a5）+双向编译红 fail-visible 口径+P21 空格锚归一+regex 不可分辨接收者时按实参形态劈分的维护启发 |
 
 ## 占位（历史 ADR，未回填，权威原文在 state `decisions` 账本与 docs/PROJECT_STATE.md）
 
