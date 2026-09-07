@@ -10,8 +10,27 @@
       ],
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "gt6:prismarine_light_cobble"
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "items": [
+                      "gt6:chisel"
+                    ]
+                  }
+                }
+              ],
+              "name": "gt6:prismarine_light_smooth"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "gt6:prismarine_light_cobble"
+            }
+          ]
         }
       ],
       "rolls": 1.0

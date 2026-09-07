@@ -1,8 +1,10 @@
 /**
  * Offline tests for task p21-stoneblocks-16item-registry-split (the p19-stoneblocks-render
  * pins re-keyed to the per-pair registry): the 272-PNG borrow census, the generated
- * blockstate/item-model/loot census (272 per-pair JSONs each), and the loot FORM pin
- * (variant-0 table drops the same stone's COBBL variant item, the other 271 dropSelf) —
+ * blockstate/item-model/loot census (272 per-pair JSONs each), and the loot FORM pin —
+ * the p21-chisel-drop-conversion two-form ruling (170 tables carry the
+ * alternatives[match_tool(gt6:chisel) -> CHISEL_MAPPINGS item, else :731 baseline]
+ * dispatch, 102 identity tables keep the bare dropSelf form) —
  * the {@link GT6PrefixBlockRenderDatagenTest} split verbatim (the enumeration side walks
  * {@link gregtech6.registry.GTStoneBlocks#registrationOrder()}, the generated-JSON side is
  * asserted against the committed src/generated tree; the write side is gated by runData:
@@ -183,14 +185,24 @@ class GT6StoneBlocksRenderDatagenTest {
 
     /**
      * The 272 generated loot tables exist at the vanilla default per-block location and pin
-     * the BlockStones.java:731 FORM (the p21 loot ruling): the variant-0 table's single pool
-     * entry is the SAME STONE's COBBL variant item ({@code gt6:<snake>_cobble} — the :731
-     * {@code aMeta == STONE ? COBBL : aMeta} swap, direct-translated now that the variant
-     * item ids exist), and every other table drops itself. The P19 declared collapse
-     * ("stone-yields-cobble unrecoverable without splitting 16 items per stone") closes here.
+     * the p21 two-form ruling (task p21-chisel-drop-conversion over the :731 baseline):
+     * <ul>
+     * <li>non-identity chisel mapping (10 variants x 17 stones = 170 tables): the pool's
+     *     lone entry is an {@code minecraft:alternatives} dispatch — child 0 armed with
+     *     {@code minecraft:match_tool} on the gt6:chisel item id and dropping the
+     *     CHISEL_MAPPINGS variant item, child 1 the unconditional :731 baseline item;</li>
+     * <li>identity mapping (6 variants x 17 stones = 102 tables): the landed baseline form
+     *     unchanged — a bare item entry dropping the pair itself (the variant-0 STONE
+     *     mapping 0→7 is non-identity, so the :731 cobble swap rides the dispatch's else
+     *     arm there).</li>
+     * </ul>
+     * The P19 declared collapse ("stone-yields-cobble unrecoverable without splitting 16
+     * items per stone") stays closed; the chisel face is the GT_Tool_Chisel.java:73-77 arm.
      */
     @Test
-    void generatedLootTablesPinTheCobbleSwapAndSelfDrops() throws Exception {
+    void generatedLootTablesPinTheChiselDispatchAndBaselineForms() throws Exception {
+        int tDispatch = 0;
+        int tPassThrough = 0;
         for (GTStoneBlocks.VariantKey tKey : GTStoneBlocks.registrationOrder()) {
             String tPath = GTStoneBlocks.path(tKey.stone().snake(), tKey.variant());
             try (InputStream tStream = GT6StoneBlocksRenderDatagenTest.class.getClassLoader()
@@ -200,16 +212,41 @@ class GT6StoneBlocksRenderDatagenTest {
                 assertEquals("minecraft:block", tLoot.get("type").getAsString(), tPath + ": the BLOCK param set");
                 assertEquals("gt6:blocks/" + tPath, tLoot.get("random_sequence").getAsString(),
                         tPath + ": the vanilla default table location, zero block code");
-                String tDropped = tLoot.getAsJsonArray("pools").get(0).getAsJsonObject()
-                        .getAsJsonArray("entries").get(0).getAsJsonObject().get("name").getAsString();
-                if (tKey.variant() == StoneVariant.STONE) {
-                    assertEquals("gt6:" + tKey.stone().snake() + "_" + StoneVariant.COBBL.snake, tDropped,
-                            tPath + ": the :731 swap — variant 0 yields the SAME STONE's COBBL variant item");
+                JsonObject tEntry = tLoot.getAsJsonArray("pools").get(0).getAsJsonObject()
+                        .getAsJsonArray("entries").get(0).getAsJsonObject();
+                gregtech6.block.stone.StoneVariant tTarget = GT6LootTables.GT6StoneBlockLoot.chiselTarget(tKey.variant());
+                if (tTarget == null) {
+                    // the pass-through baseline form: one bare item entry
+                    assertEquals("minecraft:item", tEntry.get("type").getAsString(), tPath + ": the baseline item form");
+                    assertEquals("gt6:" + tPath, tEntry.get("name").getAsString(), tPath + ": drops itself (the :731 self arm)");
+                    assertTrue(!tEntry.has("conditions"), tPath + ": the self drop is unconditional");
+                    tPassThrough++;
                 } else {
-                    assertEquals("gt6:" + tPath, tDropped, tPath + ": drops itself (the :731 self arm)");
+                    // the dispatch form: alternatives[match_tool(chisel) -> mapped item, else baseline]
+                    assertEquals("minecraft:alternatives", tEntry.get("type").getAsString(), tPath + ": the dispatch form");
+                    var tChildren = tEntry.getAsJsonArray("children");
+                    assertEquals(2, tChildren.size(), tPath + ": chisel arm + baseline arm");
+                    JsonObject tChisel = tChildren.get(0).getAsJsonObject();
+                    assertEquals("minecraft:item", tChisel.get("type").getAsString(), tPath + ": the chisel arm is an item entry");
+                    assertEquals("gt6:" + GTStoneBlocks.path(tKey.stone().snake(), tTarget), tChisel.get("name").getAsString(),
+                            tPath + ": the CHISEL_MAPPINGS variant item");
+                    JsonObject tCondition = tChisel.getAsJsonArray("conditions").get(0).getAsJsonObject();
+                    assertEquals("minecraft:match_tool", tCondition.get("condition").getAsString(),
+                            tPath + ": armed with match_tool");
+                    assertTrue(tCondition.getAsJsonObject("predicate").get("items").toString().contains("gt6:chisel"),
+                            tPath + ": the predicate pins the gt6:chisel item id");
+                    JsonObject tBaseline = tChildren.get(1).getAsJsonObject();
+                    assertEquals("minecraft:item", tBaseline.get("type").getAsString(), tPath + ": the baseline arm is an item entry");
+                    assertEquals("gt6:" + GTStoneBlocks.path(tKey.stone().snake(),
+                            tKey.variant() == StoneVariant.STONE ? StoneVariant.COBBL : tKey.variant()),
+                            tBaseline.get("name").getAsString(), tPath + ": the :731 baseline item");
+                    assertTrue(!tBaseline.has("conditions"), tPath + ": the baseline arm is unconditional");
+                    tDispatch++;
                 }
             }
         }
+        assertEquals(170, tDispatch, "10 non-identity mappings x 17 stones = the dispatch tables");
+        assertEquals(102, tPassThrough, "6 identity mappings x 17 stones = the pass-through tables");
     }
 
     /**

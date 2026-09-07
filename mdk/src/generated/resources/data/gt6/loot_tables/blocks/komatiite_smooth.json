@@ -10,8 +10,27 @@
       ],
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "gt6:komatiite_smooth"
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "items": [
+                      "gt6:chisel"
+                    ]
+                  }
+                }
+              ],
+              "name": "gt6:komatiite_bricks_chiseled"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "gt6:komatiite_smooth"
+            }
+          ]
         }
       ],
       "rolls": 1.0
