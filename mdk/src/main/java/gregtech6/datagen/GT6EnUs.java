@@ -538,9 +538,14 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.machineTierUnitKey(4), "Tier 4");
         add(gregtech6.registry.GTMachines.DRYER_DISPLAY_KEY, "Dryer (%s)");
         add(gregtech6.registry.GTMachines.DISTILLERY_DISPLAY_KEY, "Distillery (%s)");
+        // task p24-canner-machine — the Canner family template: the upstream name column
+        // "Canning Machine ("+VN[tier]+")" (Loader_MultiTileEntities.java:1379-1382;
+        // CS.java:154 the LV/MV/HV/EV voltage ladder — the row mat units are the VOLTAGE
+        // ids, not a material word like the Heat_T families below)
+        add(gregtech6.registry.GTMachines.CANNER_DISPLAY_KEY, "Canning Machine (%s)");
         for (String[] tMat : new String[][] {{"steel", "Steel"}, {"invar", "Invar"}, {"titanium", "Titanium"},
-                {"tungsten_carbide", "Tungsten Carbide"}}) {
-            addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the MT.DATA.Heat_T[1..4] locals (MT.java:3689)
+                {"tungsten_carbide", "Tungsten Carbide"}, {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"}}) {
+            addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the Heat_T[1..4] locals (MT.java:3689) + the VN[1..4] ids (CS.java:154)
         }
         // task p16-distillery-family ① — the Integrated Circuit ("Selector Tag", the upstream
         // registration name ItemIntegratedCircuit.java:50 verbatim) + the configuration

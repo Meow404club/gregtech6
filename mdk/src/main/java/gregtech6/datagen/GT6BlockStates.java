@@ -105,10 +105,11 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMachine(GTMachines.LATHE_T4.get(), "lathe_t4", "lathe");
         addDryer(); // task p14-dryer-family
         addDistillery(); // task p16-distillery-family
-        // task p21-paintable-tint-render: the datagen-JVM census half — 21 machine blocks x
+        addCanner(); // task p24-canner-machine
+        // task p21-paintable-tint-render: the datagen-JVM census half — 25 machine blocks x
         // 3 models, matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 63).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (21 blocks x 3, addOven/addMachine/addDryer/addDistillery)", mMachineTintModels);
+        // (the offline JUnit half walks the generated tree and pins the same 75).
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (25 blocks x 3, addOven/addMachine/addDryer/addDistillery/addCanner)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -149,6 +150,18 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addDistillery() {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.DISTILLERY_ROWS) {
             addMachine(GTMachines.DISTILLERY_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p24-canner-machine — the four Canner rows (Loader_MultiTileEntities.java
+     * :1379-1382, all four NBT_TEXTURE "canner"): the addDistillery shape verbatim —
+     * model names per path, the FRONT TEXTURES stay on the family "canner" set (the
+     * p22 split-front borrow: canner_colored_front + the three overlay decals).
+     */
+    private void addCanner() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CANNER_ROWS) {
+            addMachine(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

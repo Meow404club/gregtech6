@@ -111,6 +111,7 @@ direct	gt6.row.burning_box.display.fluidbed_dense	致密流化床燃烧室 (%s)	
 direct	gt6.row.burning_box.family.gas	气体	hand
 direct	gt6.row.burning_box.family.liquid	液体	hand
 direct	gt6.row.burning_box.family.solid	固体	hand
+direct	gt6.row.canner.display	罐装机 (%s)	hand
 direct	gt6.row.dense_wall.display	致密%s壁板	hand
 direct	gt6.row.diesel.display	燃油引擎 (%s)	hand
 direct	gt6.row.distillery.display	蒸馏器 (%s)	hand
@@ -129,11 +130,15 @@ direct	gt6.row.mat.brass	黄铜	hand
 direct	gt6.row.mat.brick	砖	hand
 direct	gt6.row.mat.bronze	青铜	hand
 direct	gt6.row.mat.chromium	铬	hand
+direct	gt6.row.mat.ev	EV	hand
 direct	gt6.row.mat.fiery_steel	炙热钢	hand
+direct	gt6.row.mat.hv	HV	hand
 direct	gt6.row.mat.invar	殷钢	hand
 direct	gt6.row.mat.iridium	铱	hand
 direct	gt6.row.mat.iron_wood	铁木	hand
 direct	gt6.row.mat.lead	铅	hand
+direct	gt6.row.mat.lv	LV	hand
+direct	gt6.row.mat.mv	MV	hand
 direct	gt6.row.mat.netherite	下界合金	hand
 direct	gt6.row.mat.stainless_steel	不锈钢	hand
 direct	gt6.row.mat.steel	钢	hand

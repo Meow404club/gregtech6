@@ -288,6 +288,11 @@ public class GT6ZhCn extends LanguageProvider {
 				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
 			}
 		}
+		// canner (task p24-canner-machine): the family template + the VN voltage-row units
+		addDirect(gregtech6.registry.GTMachines.CANNER_DISPLAY_KEY);
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.CANNER_ROWS) {
+			addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
+		}
 		// large boiler + dense wall: the templates + the row-material units
 		addDirect(gregtech6.registry.GTMultiBlocks.LARGE_BOILER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMultiBlocks.DENSE_WALL_DISPLAY_KEY);
