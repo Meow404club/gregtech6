@@ -7,10 +7,10 @@ exact GTChiselItem.stoneToolClick the item's useOn gate arm runs, with a fake pl
 holding a REAL gt6:chisel so the durability payment is observable):
 
   A the GT stone conversion arm (the RM.java:470 row, STONE -> CHISL): place
-    gt6:granite_black[variant=stone] -> click -> the report pins toolDamage=10000, the
-    state pair variant=stone -> variant=bricks_chiseled and chiselDamage=25/512 (the
-    Behavior_Tool :63 conversion of the 10000 return at mDamage=25), and the
-    execute-if-block predicate pins the blockstate on the world side.
+    gt6:granite_black (the per-pair variant-0 id, p21 re-key) -> click -> the report pins
+    toolDamage=10000, the block pair gt6:granite_black -> gt6:granite_black_bricks_chiseled
+    and chiselDamage=25/512 (the Behavior_Tool :63 conversion of the 10000 return at
+    mDamage=25), and the execute-if-block predicate pins the blockstate on the world side.
 
   B the vanilla arms (Loader_Recipes_Vanilla.java:772-773): minecraft:stone ->
     minecraft:chiseled_stone_bricks and minecraft:stone_bricks ->
@@ -59,14 +59,17 @@ N_POS = "376 64 124"
 steps = []
 
 # ------------------------------------------- A: the GT stone conversion arm (:470)
+# (ids re-keyed by p21-stoneblocks-16item-registry-split: the blockstate variant
+# property retired — one block+item id per (stone, variant), variant 0 keeps the
+# bare snake, CHISL is its own gt6:granite_black_bricks_chiseled)
 steps += [
-    phase("A: the GT stone arm — gt6:granite_black[variant=stone] chiseled to bricks_chiseled, 25 points paid"),
-    Step(f"setblock {G_POS} gt6:granite_black[variant=stone]", expect="Changed the block"),
-    Step(f"execute if block {G_POS} gt6:granite_black[variant=stone]", expect="Test passed"),
+    phase("A: the GT stone arm — gt6:granite_black chiseled to gt6:granite_black_bricks_chiseled, 25 points paid"),
+    Step(f"setblock {G_POS} gt6:granite_black", expect="Changed the block"),
+    Step(f"execute if block {G_POS} gt6:granite_black", expect="Test passed"),
     Step(f"gt6chisel click {G_POS}",
-         expect="toolDamage=10000, state Block{gt6:granite_black}[variant=stone] -> "
-                "Block{gt6:granite_black}[variant=bricks_chiseled], chiselDamage=25/512"),
-    Step(f"execute if block {G_POS} gt6:granite_black[variant=bricks_chiseled]", expect="Test passed"),
+         expect="toolDamage=10000, state Block{gt6:granite_black} -> "
+                "Block{gt6:granite_black_bricks_chiseled}, chiselDamage=25/512"),
+    Step(f"execute if block {G_POS} gt6:granite_black_bricks_chiseled", expect="Test passed"),
     # the CHISL target has no reverse row (the book is one-way; the TE-face CHISEL_MAPPINGS
     # self-map is the pooled BlockStones.java:573-576 face, not this gate)
     Step(f"gt6chisel click {G_POS}", expect="toolDamage=0"),
@@ -88,11 +91,11 @@ steps += [
 # ------------------------------------------- C: the sneak negative (:224 !aSneaking)
 steps += [
     phase("C: the sneak arm — a sneaking click declines, the blockstate stays, nothing is paid"),
-    Step(f"setblock {N_POS} gt6:granite_black[variant=stone]", expect="Changed the block"),
+    Step(f"setblock {N_POS} gt6:granite_black", expect="Changed the block"),
     Step(f"gt6chisel click {N_POS} sneak",
-         expect="toolDamage=0, state Block{gt6:granite_black}[variant=stone] -> "
-                "Block{gt6:granite_black}[variant=stone], chiselDamage=0/512"),
-    Step(f"execute if block {N_POS} gt6:granite_black[variant=stone]", expect="Test passed"),
+         expect="toolDamage=0, state Block{gt6:granite_black} -> "
+                "Block{gt6:granite_black}, chiselDamage=0/512"),
+    Step(f"execute if block {N_POS} gt6:granite_black", expect="Test passed"),
 ]
 
 # -------------------------------------------------- D: the no-recipe negatives
