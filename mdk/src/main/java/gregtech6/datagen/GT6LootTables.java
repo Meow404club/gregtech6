@@ -5,19 +5,27 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.predicates.MatchTool;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.wire.GTWireBlock;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GT6Kinetics;
+import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTWires;
 
 /**
@@ -446,14 +454,32 @@ public final class GT6LootTables extends LootTableProvider {
      * items per stone", GT6LootTables.java:439-456 as it stood) closes HERE: with one
      * BlockItem per (stone, variant), the variant-0 block's table drops the SAME STONE's
      * COBBL variant item (a single pool, {@code dropOther}) and the other 271 blocks
-     * {@code dropSelf} — the :731 line direct-translated, no collapse left. Each table lives
+     * {@code dropSelf} — the :731 line direct-translated, no collapse left. Task
+     * p21-chisel-drop-conversion adds the mining-tool face on top: the ten non-identity
+     * chisel mappings rewrite their table into the {@link GT6StoneBlockLoot#chiselDispatchTable}
+     * dispatch (the variant-0 baseline item stays the same stone's COBBL item), the six
+     * identity mappings stay pass-through on this form. Each table lives
      * at the vanilla default per-BLOCK location {@code gt6:blocks/<path>} (zero block code).
      */
     public static List<Block> stoneLootBlocks() {
         return gregtech6.registry.GTStoneBlocks.blockArray();
     }
 
-    /** The stone-family provider (task p19-stoneblocks-render, loot semantics completed by task p21). */
+    /**
+     * The stone-family provider (task p19-stoneblocks-render; the chisel mining-drop face =
+     * task p21-chisel-drop-conversion). Per block, one of two forms:
+     *
+     * <ul>
+     * <li>identity chisel mapping ({@link #chiselTarget} null, variants 1,2,6,8,9,11 — the
+     *     six pass-through stones x17 = 102 tables): the landed :731 baseline form unchanged
+     *     — variant 0 {@code dropOther} the SAME STONE's COBBL item (never identity, kept for
+     *     form completeness in {@link #baselineItem}), the rest {@code dropSelf};</li>
+     * <li>non-identity mapping (variants 0,3,4,5,7,10,12,13,14,15 — the ten dispatch stones
+     *     x17 = 170 tables): the GT_Tool_Chisel.java:73-77 arm as a dispatch pool —
+     *     {@code match_tool(gt6:chisel)} wins with the CHISEL_MAPPINGS variant item,
+     *     everything else falls to the :731 baseline item.</li>
+     * </ul>
+     */
     public static final class GT6StoneBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -472,20 +498,72 @@ public final class GT6LootTables extends LootTableProvider {
             return stoneLootBlocks(); // narrowed to exactly the 272 blocks this provider owns
         }
 
+        /**
+         * The chisel mapping arm of one variant (the GT_Tool_Chisel.java:73-77 BlockStones
+         * face): the CHISEL_MAPPINGS target variant (BlockStones.java:81, byte-table indexed
+         * by the meta declaration order = {@link StoneVariant} ordinal), or {@code null} when
+         * the mapping is identity — the chisel drop IS the loot baseline, nothing to convert.
+         * Static and registry-free so the offline census test and the live mine command share
+         * this single decision site.
+         */
+        public static gregtech6.block.stone.StoneVariant chiselTarget(gregtech6.block.stone.StoneVariant aVariant) {
+            byte tMapped = gregtech6.registry.GTStoneBlocks.CHISEL_MAPPINGS[aVariant.meta() & 15];
+            return tMapped == aVariant.meta() ? null : gregtech6.block.stone.StoneVariant.VALUES[tMapped];
+        }
+
+        /**
+         * The :731 loot baseline of one block ({@code ST.make(this, 1, aMeta == STONE ?
+         * COBBL : aMeta)}, BlockStones.java:731): variant 0 yields the SAME STONE's COBBL
+         * variant item (its registry id is gt6:&lt;snake&gt;, the cobble item's is
+         * gt6:&lt;snake&gt;_cobble), every other variant its own item.
+         */
+        public static Item baselineItem(Block aBlock, gregtech6.block.stone.GTStoneBlock aStone) {
+            return aStone.variant == gregtech6.block.stone.StoneVariant.STONE
+                    ? gregtech6.registry.GTStoneBlocks.item(aStone.stoneSnake, gregtech6.block.stone.StoneVariant.COBBL).get()
+                    : aBlock.asItem();
+        }
+
         @Override
         protected void generate() {
             for (Block tBlock : stoneLootBlocks()) {
                 gregtech6.block.stone.GTStoneBlock tStone = (gregtech6.block.stone.GTStoneBlock)tBlock;
-                if (tStone.variant == gregtech6.block.stone.StoneVariant.STONE) {
-                    // BlockStones.java:731 verbatim — variant 0 yields the SAME STONE's COBBL
-                    // variant item (its own registry id is gt6:<snake>, the cobble item's is
-                    // gt6:<snake>_cobble); dropOther = one unconditional single-item pool.
-                    dropOther(tBlock, gregtech6.registry.GTStoneBlocks
-                            .item(tStone.stoneSnake, gregtech6.block.stone.StoneVariant.COBBL).get());
+                gregtech6.block.stone.StoneVariant tTarget = chiselTarget(tStone.variant);
+                if (tTarget == null) {
+                    // identity mapping — the chisel arm changes nothing, the landed baseline
+                    // form stays (variant 0 never maps to itself, so this arm is always self)
+                    dropSelf(tBlock);
                 } else {
-                    dropSelf(tBlock); // the :731 self arm, one table per variant block
+                    add(tBlock, chiselDispatchTable(baselineItem(tBlock, tStone),
+                            gregtech6.registry.GTStoneBlocks.item(tStone.stoneSnake, tTarget).get()));
                 }
             }
+        }
+
+        /**
+         * The chisel dispatch pool — the vanilla BlockLootSubProvider tool-dispatch shape
+         * (createSelfDropDispatchTable, BlockLootSubProvider.java:113-116 of the vendored
+         * 1.20.1 tree: one entry armed with a tool condition, {@code otherwise} the else arm;
+         * {@code LootPoolEntryContainer.Builder.otherwise} builds an AlternativesEntry on
+         * BOTH legs, javap-verified 1.21.1): {@code match_tool} on the gt6:chisel item id
+         * (GT6Tools.java:88 — the single-steel-tier chisel; the upstream multi-material
+         * chisel family is a declared-deviation pool) wins with the mapped variant item;
+         * bare hands, other tools and the no-TOOL contexts (explosions — the upstream
+         * no-HarvestDropsEvent semantics) fall to the :731 baseline item. Pool-level
+         * survives_explosion + rolls=1 kept identical to createSingleItemTable, so the else
+         * arm is the pass-through form item-for-item. The upstream conversion economics ride
+         * along structurally: a loot-table arm pays zero extra durability (the :73-77 arm
+         * returns 0 at MultiItemTool.java:212) and ignores silk/fortune (:75 — the GT stone
+         * tables carry no silk/fortune arm either). Reachability: GTStoneBlock never calls
+         * requiresCorrectToolForDrops (GTStoneBlock.java:56-59), so any breaking tool sees
+         * drops and the match_tool predicate alone decides the arm.
+         */
+        private LootTable.Builder chiselDispatchTable(Item aBaseline, Item aChiselMapped) {
+            return LootTable.lootTable()
+                    .withPool(this.applyExplosionCondition(aBaseline, LootPool.lootPool()
+                            .setRolls(ConstantValue.exactly(1.0F))
+                            .add(LootItem.lootTableItem(aChiselMapped)
+                                    .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(GT6Tools.CHISEL.get())))
+                                    .otherwise(LootItem.lootTableItem(aBaseline)))));
         }
     }
 }

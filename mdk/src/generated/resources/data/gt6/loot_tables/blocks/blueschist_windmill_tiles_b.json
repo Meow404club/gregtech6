@@ -10,8 +10,27 @@
       ],
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "gt6:blueschist_windmill_tiles_b"
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "items": [
+                      "gt6:chisel"
+                    ]
+                  }
+                }
+              ],
+              "name": "gt6:blueschist_windmill_tiles_a"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "gt6:blueschist_windmill_tiles_b"
+            }
+          ]
         }
       ],
       "rolls": 1.0

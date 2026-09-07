@@ -10,8 +10,27 @@
       ],
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "gt6:shale_cobble"
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "items": [
+                      "gt6:chisel"
+                    ]
+                  }
+                }
+              ],
+              "name": "gt6:shale_smooth"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "gt6:shale_cobble"
+            }
+          ]
         }
       ],
       "rolls": 1.0
