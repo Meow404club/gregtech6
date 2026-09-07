@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.fluid.GTFluids;
 import gregtech6.item.GT6Circuits;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
@@ -166,6 +167,15 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("fluid.gt6.water_boiling");
 		addDirect("fluid.gt6.water_geothermal");
 		addDirect("fluid.gt6.waterdirty");
+		// task p24-dye-chemical-fluids: the 16 dye-chemical display names + chlorine — the
+		// dump carries all 17 faces (S:fluid.dye.chemical.* tmp/gregtech.lang:230-244,
+		// S:fluid.chlorine=氯 :168); the keys ride the SAME GTFluids.dyeChemicalName
+		// derivation the en walk and the FluidType descriptionIds use, so the two locale
+		// faces cannot drift on the key side. Values are hand rows in the reference table.
+		for (int i = 0; i < 16; i++) {
+			addDirect("fluid.gt6." + GTFluids.dyeChemicalName(i));
+		}
+		addDirect("fluid.gt6.chlorine");
 		// the P22 spray-can domain (no upstream face anywhere — all hand)
 		addDirect("item.gt6.spray_can_empty");
 		addDirect("item.gt6.spray_paint_black");

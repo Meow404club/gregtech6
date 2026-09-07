@@ -4451,3 +4451,18 @@ tones on 1030/1000). Upstream license CC0 (see above).
 - `empty.png` (999) `b2efa1cdc63efa06f3677bc165f1bb51774b262881e4170927d3df48f5efdbe1`
 
 Copied on 2026-09-07 (task p22-spraycan-items).
+
+Dye-chemical fluid carrier texture, task p24-dye-chemical-fluids: ONE grayscale
+tint-carrier borrowed from upstream
+`src/main/resources/assets/gregtech/textures/blocks/fluids/dyes.chemical.png`,
+byte-identical copy at `gt6/textures/block/fluids/dyes_chemical.png`, sha256
+`41deac6c1edb079155918ef549b44203a5c5520b3af2cd4d66c4bc11dd43d1fb`. Upstream is the
+single-texture shared still=flow form (Loader_Fluids.java:115-117, one
+`tDyeChemical` IIconContainer for all 16 `dye.chemical.*` rows); the 16x512 strip is
+the 32-frame animation (upstream `.mcmeta` frametime 2, borrowed byte-identical as
+`dyes_chemical.png.mcmeta`, sha256
+`20c309d9ff4175bf0f04b4c57efbd58fa1915f1c69907abd3bd91d6d01b70138`). The per-colour
+identity rides the runtime FluidType tint = `GTSprayCanItem.DYES_INT[i]` (CS.java:470)
+— zero new colour data, the same single-colour-source discipline as the spray-can
+items (P22) and the machine paint tints (P21). Chlorine borrows NOTHING (vanilla water
+textures + the MT.java:405 material colour tint, ruling R3). Copied on 2026-09-07.

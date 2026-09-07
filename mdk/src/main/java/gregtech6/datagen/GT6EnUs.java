@@ -82,6 +82,7 @@ public class GT6EnUs extends LanguageProvider {
         addAquaFluids();
         addSimpleLiquidFluids(); // task p19-drying-rows-backfill-2
         addFoodFluids(); // task p21-drying-food-fluids
+        addDyeChemicalFluids(); // task p24-dye-chemical-fluids — table-tail append
         addElectricWires();
         addMachines();
         addMultiBlocks();
@@ -171,6 +172,24 @@ public class GT6EnUs extends LanguageProvider {
         for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_FLUID_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
+    }
+
+    /**
+     * Dye-chemical family + chlorine keys (task p24-dye-chemical-fluids): one description
+     * entry per {@link GTFluids.DyeChemicalFluid} row — the exact descriptionId the FluidType
+     * is registered with, walked from {@link GTFluids#DYE_CHEMICALS} so the lang face cannot
+     * drift from the registered fluids. Values ride the row's displayName: the upstream
+     * Loader_Fluids.java:123 {@code FL.create} local-name compose verbatim
+     * ({@code "Chemical " + DYE_NAMES[i] + " Dye"}); chlorine is the MT.Cl material local
+     * name (MT.java:405, the createGas naming face). Unlike the three earlier fluid
+     * families the dump DOES carry all 17 zh faces (tmp/gregtech.lang:230-244/:168), so
+     * the zh side rides the reference table's hand layer (the GT6ZhCn mirror walk).
+     */
+    private void addDyeChemicalFluids() {
+        for (GTFluids.DyeChemicalFluid tFamily : GTFluids.DYE_CHEMICALS) {
+            add(tFamily.descriptionId(), tFamily.displayName());
+        }
+        add("fluid.gt6.chlorine", "Chlorine");
     }
 
     /**
