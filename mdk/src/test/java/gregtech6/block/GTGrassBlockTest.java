@@ -276,8 +276,12 @@ class GTGrassBlockTest {
 	/**
 	 * The 12 recipe snapshots: 6 forward (8 vanilla grass + 1 dye TAG -> 8 variants, zero
 	 * bare dye items) + 6 reverse (1 variant -> 1 vanilla grass, the BlockGrass.java:72-73
-	 * shape). The dye tag namespace is the leg face ({@code forge:} / {@code c:}) — the
-	 * //? fork below is the ONLY leg-dependent assertion.
+	 * shape). The dye-tag namespace inside the JSON body is the CANONICAL tracked-tree
+	 * face ({@code forge:} on BOTH legs — the shared classpath tree is the forge-leg
+	 * --output, the GT6TagsDatagenTest.java:180 {@code "forge/tags/items/..."} face); the
+	 * LIVE per-leg namespace is pinned separately by {@link #dyeNamespaceIsTheLegFork},
+	 * and the 21.1 leg's node-local {@code data/c} output is gated 1:1 against this tree
+	 * by the datagen_tree_check c-to-forge SEGMENT_MAP band.
 	 */
 	@Test
 	void recipesAreTheSixForwardSixReverseBand() throws Exception {
@@ -306,7 +310,7 @@ class GTGrassBlockTest {
 			}
 			assertEquals(8, tGrassCount, "exactly eight vanilla grass blocks: " + tPath);
 			assertEquals(1, tDyeCount, "exactly one dye TAG (never a bare item): " + tPath);
-			assertEquals(dyeTag(i), tTagBodies.get(0), "the dye tag of variant " + i);
+			assertEquals(canonicalDyeTag(i), tTagBodies.get(0), "the dye tag of variant " + i);
 			// reverse
 			JsonObject tReverse = generated("data/gt6/recipes/" + tPath + "_reverse.json");
 			assertEquals("minecraft:crafting_shapeless", tReverse.get("type").getAsString(), tPath);
@@ -319,13 +323,30 @@ class GTGrassBlockTest {
 		}
 	}
 
-	/** The platform dye-tag id of variant i — forge {@code forge:dyes/<color>} vs neo {@code c:dyes/<color>}. */
-	private static String dyeTag(int aVariant) {
+	/**
+	 * The canonical tracked-tree dye-tag id of variant i — ALWAYS the forge namespace on
+	 * BOTH legs: the shared classpath tree is the forge-leg --output (the canonical
+	 * tracked tree, the GT6TagsDatagenTest.java:180 {@code "forge/tags/items/..."} face);
+	 * asserting the swapped per-leg constant here was the 21.1 red that motivated this
+	 * helper. The live leg namespace rides {@link #dyeNamespaceIsTheLegFork}.
+	 */
+	private static String canonicalDyeTag(int aVariant) {
 		String[] tColors = {"green", "lime", "black", "light_gray", "yellow", "brown"};
-		//? if forge {
 		return "forge:dyes/" + tColors[aVariant];
+	}
+
+	/**
+	 * The live leg namespace pin — read off the very {@code Tags.Items.DYES_*} constant
+	 * the recipe band consumes ({@code GT6CraftingRecipes.dyeTagOf}): forge "forge" /
+	 * 21.1 "c" (the GT6TagsDatagenTest.namespaceSplitIsTheLegFork shape over the live
+	 * constant — no parallel string constant to drift from the production import fork).
+	 */
+	@Test
+	void dyeNamespaceIsTheLegFork() {
+		//? if forge {
+		assertEquals("forge", net.minecraftforge.common.Tags.Items.DYES_GREEN.location().getNamespace());
 		//?} else {
-		/*return "c:dyes/" + tColors[aVariant];
+		/*assertEquals("c", net.neoforged.neoforge.common.Tags.Items.DYES_GREEN.location().getNamespace());
 		 *///?}
 	}
 }
