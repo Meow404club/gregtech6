@@ -4419,3 +4419,35 @@ Dedication** (same upstream `README.md` block as above).
   - `tool_head_universal_spade.png` `e6ba243503560723f026c846555f000d7341419a2e0bc175d38e918458f72724`
   - `tool_head_wrench.png` `8d5a94bccbdc5594c9a1b4bc85e276597a4899f3163580c9cb9867c5d8bfced7`
   - `wire_fine.png` `448903897a3949381b86f0887b65636cd4bfbb71ef76151d7ee7e0abc88b40cd`
+
+Spray-can item textures, task p22-spraycan-items: the 18 16x16 icons under
+`gt6/textures/item/spray/` come from upstream
+`src/main/resources/assets/gregtech/textures/items/gt.multiitem.randomtools/`
+(meta ids on the MultiItemRandomTools meta item, the MultiItemRandomTools.java:243
+`:243 "Spray Paint ("+DYE_NAMES[i]+")"` / `:269 "Paint Removal Spray"` / `:235 "Empty
+Spray Can"` rows), sha256 verified byte-identical, filenames re-derived per port item id
+(`spray_paint_<dye>` = meta `1000+2i` in DYE_NAMES order, `spray_paint_remover` = meta
+1096, `spray_can_empty` = meta 999). Pixel-verified: the meta `1000+2i` icon order
+matches `DYE_NAMES[i]` (red spot on 1002=Red, green on 1004=Green, ... white/black body
+tones on 1030/1000). Upstream license CC0 (see above).
+
+- `paint_black.png` (1000) `288fb7cac6003aa9a9ba089d904799d294bdc19c940dce7f2e4d60975ff5e641`
+- `paint_red.png` (1002) `7e66ca032500cfecc7ce3218b61653bca824b8fa1669a3aa2a3413dd4d823d84`
+- `paint_green.png` (1004) `733f04e4eacd196ee863bb8842bbe9bb04df3801abe8831c3f862b58449d0cc5`
+- `paint_brown.png` (1006) `235677b37d420ed909f35add97ff5689a91750430150d612ab805b5dbd0f841d`
+- `paint_blue.png` (1008) `e95bbc146c1ab03968155c1e095e991909933f378f97e093c7e13da874b23243`
+- `paint_purple.png` (1010) `6e5a2c001370abe1a8ac618cba835f55a1bf70e9e2ea3ee49c0515a36fdb645b`
+- `paint_cyan.png` (1012) `1a4fa0663f77ab26f11f408b25df0d7409b26bb5c9237107115c6d96e709352d`
+- `paint_light_gray.png` (1014) `145308c38d63ffb2ec30edda782f5caac5de2e26579ffca5bcdee25899fab979`
+- `paint_gray.png` (1016) `1b3c0c8800e102655fa08ffb1d05a4976a226fca9d515ba379a89e3a87ed94d5`
+- `paint_pink.png` (1018) `4a661d2f8dcf8b34a349e56106aa45e4d3fa8f86b791e38915f5e6c759f56e97`
+- `paint_lime.png` (1020) `f554198029fb201e9b4ad9d844c9427fcb005a5911111d1f48d3884518e516b0`
+- `paint_yellow.png` (1022) `f032f8f9d0d143bd6fd69830bc9469f32b70178112af3354d713d7f783969183`
+- `paint_light_blue.png` (1024) `19596f95b110f1da3bf98f85efcaa0e89b764f1088c72c918182d67f9235716e`
+- `paint_magenta.png` (1026) `5a11c6b9f294863336ea1849c6db2ec7148a3c08334faf55fb7a398d324976c1`
+- `paint_orange.png` (1028) `9dd0a74dd85fb6d29dfea91dcf2d8a7cf58682592a7109d2c52bebb69fb390e4`
+- `paint_white.png` (1030) `679dc1a016ca7d9aed9c31e30035f6ac8d1162e54aeda566c25467cd98814a8a`
+- `remover.png` (1096) `e7abadec9a0165a34204abbc6d16654ad93bdb48d6552d990280bd40a686f9a3`
+- `empty.png` (999) `b2efa1cdc63efa06f3677bc165f1bb51774b262881e4170927d3df48f5efdbe1`
+
+Copied on 2026-09-07 (task p22-spraycan-items).
