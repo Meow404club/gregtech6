@@ -124,6 +124,14 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tDistillery,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p24-canner-machine — the Canner ladder joins the family: the same BE class,
+		// the same item + fluid faces (the tileentity class is shared, so the forge leg's
+		// override is already correct; this row is the 21.1 registration only)
+		BlockEntityType<TileEntityBasicMachine> tCanner = GTMachines.CANNER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCanner,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCanner,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,
