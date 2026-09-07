@@ -107,12 +107,18 @@ public final class GT6FluidProvider implements IServerExtensionProvider<TileEnti
 	 * 抢跑裁定（双腿同形）：Jade universal 链服务端是「按 priority 升序逐 provider 试、
 	 * 首个非 null 赢并短路」（jade-1201 addon/universal/FluidStorageProvider.java:81-88、
 	 * jade-1211 util/CommonProxy.java:589-599；COMPARATOR=paringInt(priority) 稳定排序，
-	 * jade-1211 impl/lookup/IHierarchyLookup.java:24）。Jade 自家 capability 面 provider
-	 * 默认 priority=BODY（1211 Extension 未覆写）或 BODY+1000（1201 enum），且 1211 的
-	 * wrappedGet 插入序恒在其 Block/target 注册桶先（jade-1211 impl/lookup/WrappedHierarchyLookup.java:45-55）
-	 * ——GT6 机器挂了 FLUID_HANDLER capability（TileEntityBasicMachine.java:1387），同 priority
-	 * 下 1211 会被 Jade 默认面抢先：其量走 IFluidHandler int 面（bindInt 钳位，正是本 provider
-	 * 要绕的）。BODY-1 双腿显式插队最前。
+	 * jade-1211 impl/lookup/IHierarchyLookup.java:24，wrappedGet 合桶后按它排序返回
+	 * jade-1211 impl/lookup/WrappedHierarchyLookup.java:45-54）。Jade 自家流体 capability
+	 * 面不落 IJadeProvider 的 BODY 默认层（jade-1211 api/IJadeProvider.java:18-20）——双腿
+	 * 都覆写且都在 BODY 之上，数值是 Jade 默认层而非 BODY 派生（钉版 jar javap 实测，P23 S2
+	 * 复核）：forge 腿 11.13.3 的 FluidStorageProvider enum（即 IServerExtensionProvider
+	 * 本尊，capability int 面）= BODY+1000（=1000，字节码 sipush 1000）；1211 线（钉版
+	 * 15.10.6）capability Extension 枚举覆写 = 9999（jade-1211
+	 * addon/universal/FluidStorageProvider.java:203-205），tooltip 载体 ForBlock 继承基类
+	 * = BODY+1000（:156-158）。GT6 机器挂了 FLUID_HANDLER capability
+	 * （TileEntityBasicMachine.java:1387），若让 Jade 默认面先赢，其量走 IFluidHandler
+	 * int 面（bindInt 钳位，正是本 provider 要绕的）——BODY-1 双腿显式插队 universal
+	 * 流体链最前，long 量原值过缝。
 	 */
 	@Override
 	public int getDefaultPriority() {
