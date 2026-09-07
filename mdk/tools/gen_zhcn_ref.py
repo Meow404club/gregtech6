@@ -656,6 +656,32 @@ FLUID_BACKFILL = {
     "fluid.gt6.waterdirty": "污水",        # en semantics: Dirty Water
 }
 
+# ---- dye-chemical fluids + chlorine (17): hand translations with dump anchors — the
+# dump carries the whole family (S:fluid.dye.chemical.* tmp/gregtech.lang:230-244,
+# S:fluid.chlorine=氯 :168). Keys are the port snake ids (dye_chemical_<DYE_IDS[i]>,
+# GTFluids.dyeChemicalName — the upstream 1.7.10 keys fold "Light Gray" to "lightgray",
+# the port stays the spray-can snake); values are the dump faces verbatim, keyed by
+# colour (the DYE_NAMES order, same index the port ids walk).
+DYE_CHEMICAL_BACKFILL = {
+    "fluid.gt6.dye_chemical_black": "黑色化学染料",       # dump S:fluid.dye.chemical.black
+    "fluid.gt6.dye_chemical_red": "红色化学染料",         # dump S:fluid.dye.chemical.red
+    "fluid.gt6.dye_chemical_green": "绿色化学染料",       # dump S:fluid.dye.chemical.green
+    "fluid.gt6.dye_chemical_brown": "褐色化学染料",       # dump S:fluid.dye.chemical.brown
+    "fluid.gt6.dye_chemical_blue": "蓝色化学染料",        # dump S:fluid.dye.chemical.blue
+    "fluid.gt6.dye_chemical_purple": "紫色化学染料",      # dump S:fluid.dye.chemical.purple
+    "fluid.gt6.dye_chemical_cyan": "青色化学染料",        # dump S:fluid.dye.chemical.cyan
+    "fluid.gt6.dye_chemical_light_gray": "淡灰色化学染料", # dump S:fluid.dye.chemical.lightgray
+    "fluid.gt6.dye_chemical_gray": "灰色化学染料",        # dump S:fluid.dye.chemical.gray
+    "fluid.gt6.dye_chemical_pink": "粉色化学染料",        # dump S:fluid.dye.chemical.pink
+    "fluid.gt6.dye_chemical_lime": "黄绿色化学染料",      # dump S:fluid.dye.chemical.lime
+    "fluid.gt6.dye_chemical_yellow": "黄色化学染料",      # dump S:fluid.dye.chemical.yellow
+    "fluid.gt6.dye_chemical_light_blue": "淡蓝色化学染料", # dump S:fluid.dye.chemical.lightblue
+    "fluid.gt6.dye_chemical_magenta": "品红化学染料",     # dump S:fluid.dye.chemical.magenta
+    "fluid.gt6.dye_chemical_orange": "橙色化学染料",      # dump S:fluid.dye.chemical.orange
+    "fluid.gt6.dye_chemical_white": "白色化学染料",       # dump S:fluid.dye.chemical.white
+    "fluid.gt6.chlorine": "氯",                           # dump S:fluid.chlorine :168
+}
+
 # ---- spray domain (18 items + 3 tooltips) + 2 tabs: ALL hand (P22 keys, no upstream
 # face anywhere). Color names = the vanilla zh_cn dye words; the tooltip template keeps
 # the en "%s.%s" remaining-uses shape verbatim.
@@ -702,7 +728,7 @@ TAB_BACKFILL = {
     "itemGroup.gt6.spray_cans": "喷漆罐",
 }
 
-for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL):
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL):
     for _key, _value in _backfill.items():
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")
