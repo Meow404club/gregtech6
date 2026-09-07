@@ -259,6 +259,20 @@
 
 新池移交：universal registerFluidStorage（Jade 升级路径）；桶漆域三件套；喷漆罐实体腿/泡沫族/灌装/空罐 crafting/白名单 grass·rockwool 无目标臂；RCON 四链时序红 poll 化修复+p16pchk expect 串 namespace 修复；runClient 首启双腿+目验三合一（Jade hover/喷漆显色/物品染色）；creative form 语义覆盖（canEdit 注入化或 RCON）；circuit crafting+cover 配方仍随工具物品另车；多方块双预览随集成波；kTFRU 池底；版本扩展最后
 
+## 第 23 阶段（jar 正典名 / ModularUI 独立子仓库 / 材料汉化 / 桶漆域 / 实体腿 / Jade universal / RCON 五债）——✅ 已完成（2026-09-07）
+
+- [x] jar 改名 32cb832d：gt6-<节点>-<mod_version>.jar（archivesName；jar_content_check/jarjar_smoke glob 优先防旧名字母序遮蔽）
+- [x] modularui 拆仓 66ba69db：submodule 原路径挂回+subtree split 全史（MGT6GA-repos/modularui.git）；worktree protocol.file.allow init 纪律入 ops.discipline
+- [x] i18n C1 76946849：materialFill 嵌套 translatable 根修（1769 zh 材料键运行时零消费根因，「Bronze锭」→「青铜锭」；60026 注册对裸键哨兵）
+- [x] i18n C2 0528b1b8：442 键回填（zh=en=2531 集合相等零债；dump 主投+TeamNED 复投；36 行社区复核清单在档；floor 2531）
+- [x] 桶漆域 7200f5a0（A 物品携漆）→44bc6d81（B tint 16 块）+6e617047（C 掉落已漆机器显色 bug，读侧两级）：known_bugs kb-painted-item-tag-mismatch 关
+- [x] 实体腿 3d502bac：羊/狼染色（DyeColor.byId(~mColor&15)；-50/击；21.1 反射桥裁定正解）
+- [x] jade universal 6d431bb4：registerFluidStorage 正字标（priority BODY-1 双腿 javap 抢跑实锤；FluidTextHelper 分叉钉死）
+- [x] RCON 五债 0f26c825（重交）：四链 poll 化+node_expects 整行双钉+s17 forge 逐字节=原串（P18 quiet 窗 on/off 归因实锤；selftest 51 检含错腿红；README 裸名禁令）；known_bugs 三条 RCON 债关
+- [x] phase-closeout：S2 证书 forge cleanTest 1242/0/0/0（逐卡吻合）；jar 双腿重编+jar_content_check GREEN 40 PASS；ADR 两篇正典
+
+新池移交：runClient 首启双腿+目验三合一（Jade hover/喷漆显色/物品染色/桶漆显色+p23_barrel_paint 链活跑同窗）；creative form 语义覆盖（Util.canEdit 注入化或 RCON）；喷漆罐泡沫族（待管线+owner）/Canner 灌装（待 Canner 机器+配方图+16 染料液流体）/空罐 crafting（待 file/saw 工具系统卡）/grass 臂（待 GT 草方块卡，6 色限量）；微项两笔（GT6FluidProvider priority 注释勘误 9999 非 BODY+GT6EnUs javadoc :41-43 机制描述滞后）；circuit crafting+cover 配方仍随工具物品另车；GT6RecipeMaps reset 复核/物品掩码臂/变长机消费者/chisel vanilla stone/多方块双预览随集成波/kTFRU 池底/版本扩展最后
+
 ## 遗留池
 
 - [x] **M2 哨兵产量翻案**：上游 HandlerCrushing 槽0=0 哨兵+槽1=10000 重复=每行 2 份主产出，port chance==0-null 后 oreRaw 1 份；翻案=buildRecipe base 改双 10000 槽（493 行不变）（merge 794bb1c，fix e31f48b；plain=2/blockRaw=9/dense 组合=11 对位上游）
