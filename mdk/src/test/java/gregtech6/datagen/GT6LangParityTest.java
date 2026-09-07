@@ -12,6 +12,14 @@
  * key survives on en or zh outside the three atomic exemptions, and the template keys exist
  * with their argument slots in both locales) — the A-wave "absent from zh" form is gone for
  * that domain, the B2 assertions remain.
+ *
+ * <p>Task p23-i18n-material-fill-fix: the two {@code %s} fill points (MaterialPrefixItem /
+ * GTMaterialPrefixBlockItem getName) fill the gt6.tagprefix.* templates with the
+ * {@code gt6.material.<snake>} translatable small unit instead of the raw mNameLocal English
+ * literal — the root fix that lets the 1769 gt6.material.* zh keys get consumed at runtime
+ * (「青铜锭」 instead of "Bronze锭"). The pins below guard the fill seam: key construction,
+ * single-slug consistency with the en walk, en-face equivalence (en display unchanged) and
+ * the registry-pair keyface guard (both registration universes vs the en recording face).
  */
 package gregtech6.datagen;
 
@@ -32,8 +40,12 @@ import org.junit.jupiter.api.Test;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.data.PackOutput;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.Bootstrap;
 
+import gregapi.data.MT;
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GT6Attachments;
@@ -506,6 +518,85 @@ public class GT6LangParityTest {
             + " — bump this pin ONLY with a real row-table change");
 		assertTrue(tMissing.isEmpty(), "every composed row/stone unit key must exist on the en face"
 			+ " (a missing face renders the RAW key at runtime): " + tMissing);
+	}
+
+	/**
+	 * The p23-i18n-material-fill-fix pin set ① — key construction + single-slug consistency.
+	 * Both {@code %s} fill points share the {@link MaterialPrefixItem#materialFill} seam, and
+	 * the seam derives its slug with the SAME {@code snakeCase} the en lang walk uses
+	 * (GT6EnUs.addMaterialNames / addWireRowMaterialNames) — a second case/underscore rule set
+	 * anywhere on the fill path would break the en walk consistency loop below. Offline pure
+	 * seam: no Item instance is constructed (the GTWireDisplayNameTest posture).
+	 */
+	@Test
+	public void materialFillPinsTheEnWalkSlugs() {
+		// the key construction pins: bronze/steel -> gt6.material.bronze/steel
+		assertEquals("gt6.material.bronze", materialFillKey(MT.Bronze));
+		assertEquals("gt6.material.steel", materialFillKey(MT.Steel));
+		// consistency with the en walk: every key the registration-face material walk emits is
+		// EXACTLY the key the fill seam composes for the same (merged) material
+		List<String> tDrift = new ArrayList<>();
+		for (Map.Entry<String, OreDictMaterial> tEmitted : GT6EnUs.materialWalkEmittedKeys().entrySet()) {
+			String tFillKey = materialFillKey(tEmitted.getValue());
+			if (!tFillKey.equals(tEmitted.getKey())) tDrift.add(tEmitted.getKey() + " != fill " + tFillKey);
+		}
+		assertTrue(tDrift.isEmpty(),
+			"the material fill must ride the en walk's single snakeCase derivation: " + tDrift);
+	}
+
+	/**
+	 * The p23-i18n-material-fill-fix pin set ② — display-name Component content + en equivalence.
+	 * The fill is a NESTED slot-less translatable unit (each locale resolves the material word in
+	 * its own language); on the en face the unit resolves to the EXACT word the old raw mNameLocal
+	 * literal carried (the en key values ARE the mNameLocal faces), so en display behavior is
+	 * unchanged — pinned by the full-template expansions in the game render posture
+	 * (en "Bronze Ingot"; zh finally renders 青铜锭 from the consumed zh keys).
+	 */
+	@Test
+	public void materialFillIsANestedTranslatableResolvingToTheSameEnWord() {
+		Component tBronze = MaterialPrefixItem.materialFill(MT.Bronze);
+		assertTrue(tBronze.getContents() instanceof TranslatableContents, "the fill must be a nested translatable unit");
+		assertEquals("gt6.material.bronze", ((TranslatableContents)tBronze.getContents()).getKey());
+		assertEquals(0, ((TranslatableContents)tBronze.getContents()).getArgs().length, "the unit is a slot-less noun");
+		// en equivalence: the unit's en face == the raw literal the old fill carried
+		assertEquals(MT.Bronze.mNameLocal, en().get("gt6.material.bronze"));
+		// the full template, expanded the way the game renders it
+		assertEquals("Bronze Ingot", substitute(en().get("gt6.tagprefix.ingot"), en().get("gt6.material.bronze")));
+		assertEquals("青铜锭", substitute(zh().get("gt6.tagprefix.ingot"), zh().get("gt6.material.bronze")));
+	}
+
+	/**
+	 * The p23-i18n-material-fill-fix registry-pair guard: EVERY registered (prefix, material)
+	 * pair — the 105-prefix item universe AND the 7-prefix storage-block universe — now fills
+	 * its {@code gt6.tagprefix.*} template with the {@code gt6.material.<snake>} key
+	 * UNCONDITIONALLY, so a pair whose material key missed both the registration walk
+	 * (GT6EnUs.addMaterialNames, {@code mID >= 0} + mNameLocal guard) and the wire-row backfill
+	 * would render the RAW key in game. Walks both registration faces against the en recording
+	 * face (the everyComposedVariantMaterialKeyIsOnTheEnFace shape, registry-pair edition).
+	 */
+	@Test
+	public void everyRegisteredPairMaterialKeyIsOnTheEnFace() {
+		List<String> tMissing = new ArrayList<>();
+		int tChecked = 0;
+		for (List<GTMaterialItems.PrefixMaterial> tUniverse
+				: List.of(GTMaterialItems.registrationOrder(), GTMaterialBlocks.registrationOrder())) {
+			for (GTMaterialItems.PrefixMaterial tPair : tUniverse) {
+				tChecked++;
+				String tKey = materialFillKey(tPair.material());
+				if (!en().containsKey(tKey)) {
+					tMissing.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()) + " -> " + tKey);
+				}
+			}
+		}
+		assertEquals(60026, tChecked, "the registry-pair compose domain census: the item universe (56253)"
+			+ " + the storage-block universe (3773) — bump this pin ONLY with a real registration change");
+		assertTrue(tMissing.isEmpty(), "every registered pair's material key must exist on the en face"
+			+ " (a missing face renders the RAW key at runtime): " + tMissing);
+	}
+
+	/** The material fill seam's key (the p23 shared derivation, pinned by materialFillPinsTheEnWalkSlugs). */
+	private static String materialFillKey(OreDictMaterial aMaterial) {
+		return ((TranslatableContents)MaterialPrefixItem.materialFill(aMaterial).getContents()).getKey();
 	}
 
 	/** The wire-name expansion over the en face: aSize 0 = the size-less plain template. */

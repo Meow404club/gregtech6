@@ -20,8 +20,14 @@ import gregapi.oredict.OreDictPrefix;
  * <p>Naming (GTCEu TagPrefixItem.java:68-86 + TagPrefix.java:1306-1333, simplified to two levels):
  * <ul>
  * <li>template key {@code gt6.tagprefix.<prefix_snake>} — "%s"-templated, filled at
- * {@link #getName(ItemStack)} time with the material name (a plain descriptionId is translated
- * without arguments, so the fill has to happen on the returned Component, TagPrefix.java:1314-1316);</li>
+ * {@link #getName(ItemStack)} time with the material's {@code gt6.material.<material_snake>}
+ * translatable small unit (a plain descriptionId is translated without arguments, so the fill
+ * has to happen on the returned Component, TagPrefix.java:1314-1316); the slot is a NESTED
+ * translatable (the {@link gregtech6.block.wire.GTWireBlock#displayNameOf} material-slot shape),
+ * so each locale resolves the material word in its OWN language — en resolves to mNameLocal
+ * (the {@code gt6.material.*} en values ARE the mNameLocal faces, GT6EnUs.addMaterialNames),
+ * zh resolves to the localized word (task p23-i18n-material-fill-fix: the raw mNameLocal
+ * literal rendered "Bronze锭" mixed-script names on a zh client);</li>
  * <li>special-case override key {@code gt6.<prefix_snake>_<material_snake>} — used only when a
  * translation actually exists (existence check mirrored from TagPrefix.java:1321).</li>
  * </ul>
@@ -33,7 +39,7 @@ public class MaterialPrefixItem extends Item {
 
     public final OreDictPrefix prefix;
     public final OreDictMaterial material;
-    /** "%s"-templated display key, filled with the material name. */
+    /** "%s"-templated display key, filled with the material small unit ({@link #materialFill}). */
     public final String templateKey;
     /** Hand-localisable override key, preferred over the template when a translation exists. */
     public final String specialKey;
@@ -58,11 +64,25 @@ public class MaterialPrefixItem extends Item {
         return rBuilder.toString();
     }
 
+    /**
+     * The material word the {@code gt6.tagprefix.*} templates fill their {@code %s} slot with:
+     * the {@code gt6.material.<snake>} translatable SMALL UNIT (GTWireBlock.displayNameOf
+     * material-slot shape), derived with the same {@link #snakeCase} the en lang walk uses
+     * (GT6EnUs.addMaterialNames / addWireRowMaterialNames — one derivation, the task's
+     * consistency mandate). Nesting lets each locale resolve the slot itself: en renders the
+     * mNameLocal word exactly as before (the en key face IS mNameLocal), zh renders the localized
+     * word. Public static seam: the lang parity test pins the fill shape offline (no Item
+     * instance — the GTWireDisplayNameTest posture).
+     */
+    public static Component materialFill(OreDictMaterial aMaterial) {
+        return Component.translatable("gt6.material." + snakeCase(aMaterial.mNameInternal));
+    }
+
     @Override
     public Component getName(ItemStack stack) {
         // The %s fill only works on the returned Component (Card R3); TagPrefix.java:1314-1316 isomorph.
         if (hasTranslation(specialKey)) return Component.translatable(specialKey);
-        return Component.translatable(templateKey, material.mNameLocal);
+        return Component.translatable(templateKey, materialFill(material));
     }
 
     @Override

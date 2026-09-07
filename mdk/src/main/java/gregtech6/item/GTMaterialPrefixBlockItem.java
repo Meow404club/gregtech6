@@ -21,8 +21,11 @@ import gregtech6.registry.GTMaterialItems;
  * The BlockItem of a {@link GTMaterialPrefixBlock}, carrying its (prefix, material) pair
  * (task p8-prefixblock-registry). Naming mirrors {@link MaterialPrefixItem} with ZERO
  * per-pair lang: the composed template key {@code gt6.tagprefix.<prefix_snake>} — already
- * generated for every OP prefix (GT6EnUs.addPrefixTemplates) — is filled with the material
- * name at getName time, so "Block of %s Ingots" style names come for free (the block*
+ * generated for every OP prefix (GT6EnUs.addPrefixTemplates) — is filled with the material's
+ * {@code gt6.material.<snake>} translatable small unit at getName time
+ * ({@link MaterialPrefixItem#materialFill}, the task p23-i18n-material-fill-fix shared seam:
+ * each locale resolves the slot in its own language, en = mNameLocal verbatim, zh = the
+ * localized word), so "Block of %s Ingots" style names come for free (the block*
  * prefixes carry mMaterialPre/mMaterialPost exactly like the item prefixes, upstream
  * OP.java:345-351). The special-case key {@code gt6.<prefix_snake>_<material_snake>} stays
  * the hand-translation layer, preferred only when a translation exists.
@@ -36,7 +39,7 @@ public class GTMaterialPrefixBlockItem extends BlockItem {
 
     public final OreDictPrefix prefix;
     public final OreDictMaterial material;
-    /** "%s"-templated display key, filled with the material name. */
+    /** "%s"-templated display key, filled with the material small unit ({@link MaterialPrefixItem#materialFill}). */
     public final String templateKey;
     /** Hand-localisable override key, preferred over the template when a translation exists. */
     public final String specialKey;
@@ -52,9 +55,10 @@ public class GTMaterialPrefixBlockItem extends BlockItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        // The %s fill only works on the returned Component (the MaterialPrefixItem/Card R3 form).
+        // The %s fill only works on the returned Component (the MaterialPrefixItem/Card R3 form);
+        // the slot is the shared gt6.material.<snake> translatable unit (p23-i18n-material-fill-fix).
         if (hasTranslation(specialKey)) return Component.translatable(specialKey);
-        return Component.translatable(templateKey, material.mNameLocal);
+        return Component.translatable(templateKey, MaterialPrefixItem.materialFill(material));
     }
 
     @Override
