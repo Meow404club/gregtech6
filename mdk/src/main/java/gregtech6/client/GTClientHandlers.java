@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.locale.Language;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
@@ -13,6 +14,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.block.material.GTMaterialPrefixBlock;
+import gregtech6.client.render.GTItemPaintTint;
 import gregtech6.client.render.GTMachinePaintTint;
 import gregtech6.client.wire.GTWireTint;
 import gregtech6.item.GTMaterialPrefixBlockItem;
@@ -47,6 +49,7 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterWireBlockColors); // task p16-clienthandlers-2111: wire tints, world half (p9-wire-family-w2 semantics)
         modBus.addListener(GTClientHandlers::onRegisterWireItemColors); // task p16-clienthandlers-2111: wire tints, inventory half
         modBus.addListener(GTClientHandlers::onRegisterMachinePaintBlockColors); // task p21-paintable-tint-render: machine paint tint, world half
+        modBus.addListener(GTClientHandlers::onRegisterMachinePaintItemColors); // task p22-painted-item-domain: machine paint tint, inventory half
     }
 
     /** Material tint for every registered material prefix item (GTCEu TagPrefixItem.java:55-57 isomorph). */
@@ -105,6 +108,22 @@ public final class GTClientHandlers {
      */
     private static void onRegisterMachinePaintBlockColors(RegisterColorHandlersEvent.Block event) {
         event.getBlockColors().register(GTMachinePaintTint.blockColor(), GTMachines.paintableBlockArray());
+    }
+
+    /**
+     * Task p22-painted-item-domain: the machine paint tint, the INVENTORY half over the
+     * 21 machine-domain blocks' items ({@code GTMachines.paintableBlockArray()} BlockItems).
+     * Explicit registration is mandatory — a BlockColor does NOT colour its BlockItem AND
+     * vanilla {@code ItemColors.createDefault} has no BlockItem delegation either
+     * (ItemColors.java:25-93; the grass/leaves rows :72-88 are hand-written forwards).
+     * {@link GTItemPaintTint} resolves tint index 0 from the stack NBT the loot copy_nbt
+     * function wrote ({@code gt.color}/{@code gt.painted} under {@code BlockEntityTag});
+     * unpainted stacks return the {@code -1} no-tint sentinel.
+     */
+    private static void onRegisterMachinePaintItemColors(RegisterColorHandlersEvent.Item event) {
+        List<Item> tPaintItems = new ArrayList<>();
+        for (Block tBlock : GTMachines.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+        event.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
     }
 
     /** Translation key existence check (Language.getInstance Language.java:83, has :97). */

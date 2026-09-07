@@ -11,6 +11,24 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "ops": [
+                {
+                  "op": "replace",
+                  "source": "gt.color",
+                  "target": "BlockEntityTag.gt.color"
+                },
+                {
+                  "op": "replace",
+                  "source": "gt.painted",
+                  "target": "BlockEntityTag.gt.painted"
+                }
+              ],
+              "source": "block_entity"
+            }
+          ],
           "name": "gt6:distillery"
         }
       ],

@@ -29,11 +29,11 @@
               "source": "block_entity"
             }
           ],
-          "name": "gt6:dryer_t3"
+          "name": "gt6:oven"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "gt6:blocks/dryer_t3"
+  "random_sequence": "gt6:blocks/oven"
 }
