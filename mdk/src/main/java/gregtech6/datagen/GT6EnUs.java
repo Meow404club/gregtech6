@@ -36,11 +36,17 @@ import net.minecraftforge.common.data.LanguageProvider;
  * <ul>
  * <li>{@code gt6.tagprefix.<prefix_snake>} = "{pre}%s{post}" for every OP prefix — the template
  *     the runtime fills via {@code Component.translatable} at {@code getName} time, composed from
- *     the prefix's mMaterialPre/mMaterialPost (OreDictPrefix.java:108, set at :338-339), which is
- *     upstream GT6's item name composition (mMaterialPre + material name + mMaterialPost);</li>
- * <li>{@code gt6.material.<material_snake>} = the English local name — exactly the field
- *     {@code MaterialPrefixItem.getName} fills the template with
- *     (MaterialPrefixItem.java:65, mNameLocal);</li>
+ *     the prefix's mMaterialPre/mMaterialPost (OreDictPrefix.java:108, set by setLocalItemName
+ *     :258-262), which is upstream GT6's item name composition (mMaterialPre + material name +
+ *     mMaterialPost);</li>
+ * <li>{@code gt6.material.<material_snake>} = the English local name (mNameLocal) — since task
+ *     p23-i18n-material-fill-fix the runtime does NOT pass a mNameLocal literal: the outer
+ *     tagprefix template's %s slot is filled with this key as a NESTED translatable unit
+ *     ({@link MaterialPrefixItem#materialFill}, MaterialPrefixItem.java:77-79, applied at
+ *     {@code getName} :85; {@code GTMaterialPrefixBlockItem.getName} :57-62 shares the same
+ *     seam), so each locale resolves the material word in its OWN language — en renders
+ *     mNameLocal verbatim (these en values ARE the mNameLocal faces, {@link #addMaterialNames}),
+ *     zh renders the localized word;</li>
  * <li>{@code itemGroup.gt6.<prefix_snake>} = one per creative-visible prefix tab, valued with the
  *     prefix's mNameCategory — upstream registers the tab with
  *     {@code LH.add("itemGroup." + mNameInternal, mNameCategory)} (CreativeTab.java:32, created at
@@ -50,9 +56,9 @@ import net.minecraftforge.common.data.LanguageProvider;
  *
  * <p>The per-item override keys {@code gt6.<prefix>_<material>} are intentionally NOT generated:
  * they are the hand-translation layer, and their absence makes the runtime
- * {@code Language.has(specialKey)} check (MaterialPrefixItem.java:64) fall through to the
- * template. LanguageProvider sorts keys (TreeMap) and writes via DataProvider.saveStable, so the
- * output is deterministic across runs.
+ * {@code Language.has(specialKey)} check (MaterialPrefixItem.java:84, the dist-guarded
+ * hasTranslation seam :112-116) fall through to the template. LanguageProvider sorts keys
+ * (TreeMap) and writes via DataProvider.saveStable, so the output is deterministic across runs.
  *
  * <p>Non-final on purpose: the offline lang-key reconciliation test (GT6EnUsJeiInfoTest,
  * task p12-jei-integration) records {@code add()} through a same-package subclass — the only
