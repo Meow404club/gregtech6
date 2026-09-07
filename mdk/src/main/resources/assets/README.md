@@ -49,6 +49,20 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   grayscale handle silhouette un-tinted — declared deviation, same runtime-tint pool
   (spec ③ resolves to no-tint, no client listener row).
 
+- `gt6/textures/item/file.png` — file item texture (upstream
+  `textures/items/iconsets/HANDLE_FILE.png`, task p24-tool-system; sha256
+  `fef0d79fe8722697dae9175426db103b29478be033ed06a186f65fddc6e5bd2e`).
+  Same single-steel-tier story as the chisel: upstream composes the material
+  head layer (`toolHeadFile`) over this handle icon and tints both with the tool
+  material colour (GT_Tool_File.getIcon :91-92, the material pool); the port shows the
+  grayscale handle silhouette un-tinted — declared deviation, same runtime-tint pool.
+- `gt6/textures/item/saw.png` — saw item texture (upstream
+  `textures/items/iconsets/HANDLE_SAW.png`, task p24-tool-system; sha256
+  `3ab930729112f139863462767c026f4e327a62b23e81bf3ae7b60d57e6dbe952`).
+  Same story as the file: the upstream head layer (`toolHeadSaw`) rides the material
+  pool (GT_Tool_Saw.getIcon :186-187); the port shows the grayscale handle silhouette
+  un-tinted — declared deviation, same runtime-tint pool.
+
 Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
 base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from
 upstream `src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/<Prefix>.png`

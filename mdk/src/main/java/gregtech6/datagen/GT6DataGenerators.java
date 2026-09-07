@@ -15,8 +15,10 @@ import net.minecraftforge.fml.common.Mod;
  * <p>Client data this phase: item models (GT6ItemModels) + en_us lang (GT6EnUs) + zh_cn lang
  * (GT6ZhCn, task p20-i18n-zhcn-provider), joined by
  * blockstates/block models (GT6BlockStates) with the p3-example-machine chest. Server providers:
- * the material prefix blocks' loot tables (GT6LootTables, task p8-prefixblock-render); recipes
- * and tags are still later phases. The registry lookup ({@code event.getLookupProvider()},
+ * the material prefix blocks' loot tables (GT6LootTables, task p8-prefixblock-render) and, since
+ * task p24-tool-system, the first tags provider (GT6ItemTags — registered BEFORE the recipes so
+ * the tag band keeps precedence as the recipe band grows) and the first recipe provider
+ * (GT6CraftingRecipes). The registry lookup ({@code event.getLookupProvider()},
  * present on both legs) is handed to the 1.21-shaped providers (GT6LootTables/GT6Atlases);
  * the 1.20.1 LootTableProvider/SpriteSourceProvider signatures simply ignore it — see those
  * classes for the leg-specific {@code super} wiring.
@@ -51,5 +53,14 @@ public final class GT6DataGenerators {
         // task p8-prefixblock-render ④: the material prefix blocks' self-drop loot tables (server data)
         event.getGenerator().addProvider(true,
             new GT6LootTables(event.getGenerator().getPackOutput(), event.getLookupProvider()));
+        // task p24-tool-system ④: the first tags provider — BEFORE the recipes so the tag
+        // band keeps precedence (the takeover card appends its bands inside GT6ItemTags)
+        event.getGenerator().addProvider(true,
+            new GT6ItemTags(event.getGenerator().getPackOutput(), event.getLookupProvider(),
+                event.getExistingFileHelper()));
+        // task p24-tool-system ③: the first recipe provider — the empty spray can crafting
+        // (both legs construct through the two-arg form; the forge leg ignores the lookup)
+        event.getGenerator().addProvider(true,
+            new GT6CraftingRecipes(event.getGenerator().getPackOutput(), event.getLookupProvider()));
     }
 }

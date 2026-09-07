@@ -393,6 +393,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.crowbar");
 		addDirect("item.gt6.cutter");
 		addDirect("item.gt6.chisel");
+		addDirect("item.gt6.file"); // task p24-tool-system — the zh face rides the hand rows
+		addDirect("item.gt6.saw");
 		addDirect("item.gt6.cover_redstone_emitter");
 		addDirect("item.gt6.cover_redstone_conductor_in");
 		addDirect("item.gt6.cover_redstone_conductor_out");

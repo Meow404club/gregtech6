@@ -18,6 +18,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.GT6Mod;
+import gregtech6.items.tools.GT6FileItem;
+import gregtech6.items.tools.GTSawItem;
 import gregtech6.items.tools.GTChiselItem;
 import gregtech6.items.tools.GTCrowbarItem;
 import gregtech6.items.tools.GTCutterItem;
@@ -89,15 +91,39 @@ public final class GT6Tools {
 			() -> new GTChiselItem(new Item.Properties().durability(GTChiselItem.DURABILITY_POINTS)));
 
 	/**
+	 * The formal file — item id {@code gt6:file} (task p24-tool-system spec ①/⑤). Single
+	 * steel tier, durability 512 (the crowbar/cutter/chisel pinned family value; upstream
+	 * scales per material, the ladder is the same pool cut). Upstream display name "File"
+	 * (CS.java:1095); the crafting-loss face rides
+	 * {@link GT6FileItem#getCraftingRemainingItem} (one point per craft, the
+	 * damage-mapping decision); the crafting INGREDIENT face is the {@code #gt6:tools/file}
+	 * item tag (GT6ItemTags, the craftingToolFile oredict translation).
+	 */
+	public static final RegistryObject<Item> FILE = ITEMS.register("file",
+			() -> new GT6FileItem(new Item.Properties().durability(GT6FileItem.DURABILITY_POINTS)));
+
+	/**
+	 * The formal saw — item id {@code gt6:saw} (task p24-tool-system spec ①/⑤). Single
+	 * steel tier, durability 512 (the family value; upstream scales per material, the
+	 * same pool cut). Upstream display name "Saw" (CS.java:1094); the crafting-loss face
+	 * rides {@link GTSawItem#getCraftingRemainingItem} (the shared one-point mapping);
+	 * the crafting INGREDIENT face is the {@code #gt6:tools/saw} item tag (GT6ItemTags,
+	 * the craftingToolSaw oredict translation). The world arms (bark strip, sapling/
+	 * workbench placement) stay pooled with the interaction card.
+	 */
+	public static final RegistryObject<Item> SAW = ITEMS.register("saw",
+			() -> new GTSawItem(new Item.Properties().durability(GTSawItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
 	 * (RegistryObject.java:287) and nothing here resolves {@code get()} — the offline test
 	 * asserts the table shape and the ITEMS parity without touching the frozen registry;
 	 * the displayItems generator below does the runtime resolution (the
-	 * GTWires.ELECTRIC_WIRES_TAB form).
+	 * GTWires.ELECTRIC_WIRES_TAB form). Task p24-tool-system appends rows 3/4 (file, saw).
 	 */
-	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL);
+	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -150,6 +176,10 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.CUTTER.get()), GTCutterItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.CHISEL.get()), GTChiselItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.FILE.get()), GT6FileItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.SAW.get()), GTSawItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

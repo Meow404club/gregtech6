@@ -61,6 +61,14 @@ public final class GT6ItemModels extends ItemModelProvider {
         // borrow (assets/README.md attribution)
         withExistingParent("chisel", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/chisel"));
+        // the formal file + saw items (task p24-tool-system): handheld parent = the vanilla
+        // tool shape (the chisel row shape, the two-layer head-over-handle upstream icon
+        // resolved to the handle silhouette borrow — the chisel ruling), textures = the
+        // upstream HANDLE_FILE.png / HANDLE_SAW.png borrows (assets/README.md attribution)
+        withExistingParent("file", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/file"));
+        withExistingParent("saw", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/saw"));
         // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)

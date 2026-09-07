@@ -53,6 +53,45 @@ public final class GT6ToolActions {
 	public static final ToolAction CHISEL = ToolAction.get("gt6_chisel");
 
 	/**
+	 * The file stack-classification action ("gt6_file" — task p24-tool-system spec ①, the
+	 * crowbar/cutter/chisel entry shape). Upstream rides the {@code TOOL_file} behaviour
+	 * string (CS.java:1050, the GT_Tool_File tool row) and the {@code craftingToolFile}
+	 * oredict key (CS.java:1867) as the crafting-tool ingredient face; the port flattens
+	 * the classification onto this Forge {@link ToolAction} and keeps the string for the
+	 * dispatch seam as {@link #FILE_ID}. Consumers: {@link GT6FileItem} (and the crafting
+	 * ingredient route rides the {@code #gt6:tools/file} item tag, GT6ItemTags — the
+	 * oredict-name snake translation ruling).
+	 */
+	public static final ToolAction FILE = ToolAction.get("gt6_file");
+
+	/**
+	 * The saw stack-classification action ("gt6_saw" — task p24-tool-system spec ①, the
+	 * FILE entry shape). Upstream rides the {@code TOOL_saw} behaviour string
+	 * (CS.java:1049, GT_Tool_Saw.java:197 {@code Behavior_Tool(TOOL_saw, …)}) and the
+	 * {@code craftingToolSaw} oredict key (CS.java:1864); the port flattens the
+	 * classification onto this Forge {@link ToolAction} and keeps the string for the
+	 * dispatch seam as {@link #SAW_ID}. Consumer: {@link GTSawItem}. The upstream world
+	 * arms (iron-bar mining / sapling-workbench placement, GT_Tool_Saw.java:184-186 and
+	 * the isMinableBlock :135-144 surface) stay the interaction card's pool — zero
+	 * {@code useOn} here by card cut.
+	 */
+	public static final ToolAction SAW = ToolAction.get("gt6_saw");
+
+	/**
+	 * The upstream {@code CS.TOOL_file} dispatch id ("file", CS.java:1050) — the reserved
+	 * Behaviour_Tool tool-name string beside {@link #FILE} (the CHISEL_ID/CUTTER_ID
+	 * shape), so a future IBlockToolable-style relay cannot drift from the upstream
+	 * constant.
+	 */
+	public static final String FILE_ID = "file";
+
+	/**
+	 * The upstream {@code CS.TOOL_saw} dispatch id ("saw", CS.java:1049) — the reserved
+	 * Behaviour_Tool tool-name string beside {@link #SAW} (the FILE_ID shape).
+	 */
+	public static final String SAW_ID = "saw";
+
+	/**
 	 * The upstream {@code CS.TOOL_chisel} dispatch id ("chisel", CS.java:1060) — the
 	 * Behaviour_Tool tool-name string the boiler's onToolClick2 arm keys on (:165); the
 	 * port keeps it as the reserved dispatch id beside {@link #CHISEL} (the CUTTER_ID
