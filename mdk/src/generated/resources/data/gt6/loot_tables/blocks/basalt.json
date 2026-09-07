@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:basalt"
+          "name": "gt6:basalt_cobble"
         }
       ],
       "rolls": 1.0

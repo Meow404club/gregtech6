@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:prismarine_light"
+          "name": "gt6:prismarine_light_cobble"
         }
       ],
       "rolls": 1.0

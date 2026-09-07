@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:shale"
+          "name": "gt6:shale_cobble"
         }
       ],
       "rolls": 1.0

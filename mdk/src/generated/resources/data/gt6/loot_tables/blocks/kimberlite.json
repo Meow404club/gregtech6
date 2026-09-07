@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:kimberlite"
+          "name": "gt6:kimberlite_cobble"
         }
       ],
       "rolls": 1.0

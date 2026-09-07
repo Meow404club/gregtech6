@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:blueschist"
+          "name": "gt6:blueschist_cobble"
         }
       ],
       "rolls": 1.0

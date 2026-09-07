@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:komatiite"
+          "name": "gt6:komatiite_cobble"
         }
       ],
       "rolls": 1.0

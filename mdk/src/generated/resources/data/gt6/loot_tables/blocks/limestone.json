@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:limestone"
+          "name": "gt6:limestone_cobble"
         }
       ],
       "rolls": 1.0
