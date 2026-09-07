@@ -623,6 +623,7 @@ BLOCK_BACKFILL = {
     "block.gt6.barrel_tungsten_alloy": "钨合金鼓",
     "block.gt6.barrel_tungstensteel": "钨钢鼓",
     "block.gt6.barrel_void_metal": "虚空金属鼓",
+    "block.gt6.advanced_crafting_table": "高级合成台",  # task p24-act-machine — the GT6 community zh name (no upstream zh_CN.lang dump anchor)
     "block.gt6.barrel_wood": "木制储物桶",           # dump join: gt.multitileentity.6990 木制储物桶
     "block.gt6.crank": "手摇曲柄",
     "block.gt6.crusher": "破碎机",                   # = the TSV gt6.row.machine.crusher unit verbatim

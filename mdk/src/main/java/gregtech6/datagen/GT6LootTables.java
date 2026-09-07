@@ -89,6 +89,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
+                new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK)), // task p24-grass-block
@@ -106,6 +107,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
+                new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK))); // task p24-grass-block
@@ -526,6 +528,24 @@ public final class GT6LootTables extends LootTableProvider {
         }
          *///?} else {
         public GT6LightningRodBlockLoot() {
+     * The Advanced Crafting Table block list (task p24-act-machine): the single-variant
+     * row (Loader_MultiTileEntities.java:136) — the cannerLootBlocks shape over one
+     * block, the MTE default self-drop.
+     */
+    public static List<Block> advancedCraftingTableLootBlocks() {
+        return List.of(gregtech6.registry.GTMachines.ADVANCED_CRAFTING_TABLE.get());
+    }
+
+    /** The ACT self-drop provider (task p24-act-machine; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6AdvancedCraftingTableBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6AdvancedCraftingTableBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6AdvancedCraftingTableBlockLoot() {
             super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         }
         //?}
@@ -533,11 +553,13 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected Iterable<Block> getKnownBlocks() {
             return lightningRodLootBlocks();
+            return advancedCraftingTableLootBlocks();
         }
 
         @Override
         protected void generate() {
             for (Block tBlock : lightningRodLootBlocks()) dropSelf(tBlock);
+            for (Block tBlock : advancedCraftingTableLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 

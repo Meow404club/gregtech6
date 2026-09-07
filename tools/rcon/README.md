@@ -242,6 +242,21 @@ R "gt6multiblock check 50 64 50"  --expect 1:block_formed=true    # 恢复成型
 （FACING north → 结构核在南侧一格：controller (50,64,50) 的核为 (50,64,51)，壳=核 ±1
 立方 26 格，其中一格是 controller 本体。）
 
+### ACT /gt6act（place|fill|selector|clear|compute|craft|sort|mode|stat；p24-act-machine）
+
+```bash
+R "gt6act place 412 64 20" --expect 1:"advanced_crafting_table placed"
+R "gt6act fill 24 minecraft:oak_planks 8 412 64 20" --expect 1:"fill slot 24: 8x"   # 格内实料
+R "gt6act selector 5 412 64 20" --expect 1:"config 5 into slot 30"                  # Selector Tag 入 30 槽
+R "gt6act compute 412 64 20" --expect 1:"grid=[...R..G..]" --expect 1:canDo=true    # 铺料+配方（config 2 竖2=木棍）
+R "gt6act craft once 412 64 20" --expect 1:"crafted=true, hold=[4x"                 # 四式点击之左键
+R "gt6act mode belt16 on 412 64 20" --expect 1:"mode belt16=true"                   # mBlocked16 开关臂
+```
+
+链：`chains/p24_act.py`（slug p24act，端口对 26109/26119；selector payload 双腿
+node_cmds 分叉=1.20.1 `{Damage:5}` NBT vs 21.1 `[minecraft:custom_data={Damage:5}]`
+组件信封，GT6Circuits 载体裁定）。
+
 ## ⑤ 三层框架用法（新卡 RCON 链的正典姿势）
 
 ### 生命周期层 gt6server（ops 纪律的模块化落地）

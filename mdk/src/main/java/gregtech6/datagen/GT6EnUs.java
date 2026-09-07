@@ -552,6 +552,9 @@ public class GT6EnUs extends LanguageProvider {
         // CS.java:154 the LV/MV/HV/EV voltage ladder — the row mat units are the VOLTAGE
         // ids, not a material word like the Heat_T families below)
         add(gregtech6.registry.GTMachines.CANNER_DISPLAY_KEY, "Canning Machine (%s)");
+        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
+        // Loader_MultiTileEntities.java:136 name column)
+        add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
         for (String[] tMat : new String[][] {{"steel", "Steel"}, {"invar", "Invar"}, {"titanium", "Titanium"},
                 {"tungsten_carbide", "Tungsten Carbide"}, {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"}}) {
             addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the Heat_T[1..4] locals (MT.java:3689) + the VN[1..4] ids (CS.java:154)

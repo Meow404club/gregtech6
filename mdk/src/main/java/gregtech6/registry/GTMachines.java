@@ -27,6 +27,7 @@ import gregtech6.gui.machines.GTBasicMachineMenu;
 import gregtech6.gui.machines.GTBasicMachinesMenus;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.RecipeMap;
+import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.machines.TileEntityOven;
 
@@ -435,6 +436,29 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
+	// the Advanced Crafting Table (task p24-act-machine) — the SINGLE-VARIANT machine
+	// (decisions.p24-act-be-form: the upstream MTE extends TileEntityBase09FacingSingle,
+	// NOT the TileEntityBasicMachine energy family — zero energy, zero tick auto-craft —
+	// so the registration is the OVEN three-row shape, not a MachineRow ladder): one
+	// block + one BET + one item, id gt6:advanced_crafting_table (upstream
+	// "gt.multitileentity.crafting.advanced", Loader_MultiTileEntities.java:136
+	// metalset id 5000+aID — the 1.7.10 numeric id axis is dead on the string axis, the
+	// variant ladder consciously unpinned, the deviation ⑥ ruling). Hardness 6.0F
+	// (the oven tier-1 row shape, GTMachines:58-59).
+	// ---------------------------------------------------------------------------
+
+	public static final RegistryObject<Block> ADVANCED_CRAFTING_TABLE = BLOCKS.register("advanced_crafting_table",
+			() -> new gregtech6.block.GTAdvancedCraftingTableBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL)));
+
+	public static final RegistryObject<BlockEntityType<TileEntityAdvancedCraftingTable>> ADVANCED_CRAFTING_TABLE_BE =
+			BLOCK_ENTITY_TYPES.register("advanced_crafting_table", () -> BlockEntityType.Builder.of(
+					TileEntityAdvancedCraftingTable::new, ADVANCED_CRAFTING_TABLE.get()).build(null));
+
+	public static final RegistryObject<Item> ADVANCED_CRAFTING_TABLE_ITEM = ITEMS.register("advanced_crafting_table",
+			() -> new gregtech6.block.GTComposedNameItem(ADVANCED_CRAFTING_TABLE.get(), new Item.Properties()));
+
+
+	// ---------------------------------------------------------------------------
 	// the Distillery family (task p16-distillery-family ②) — the four rows
 	// Loader_MultiTileEntities.java:1398-1401 (aClass = MultiTileEntityBasicMachine,
 	// NBT_TEXTURE "distillery", TD.Energy.HU, RM.Distillery, NBT_CHEAP_OVERCLOCKING T,
@@ -619,6 +643,8 @@ public final class GTMachines {
 								for (GTBasicMachineBlock.MachineRow tRow : CANNER_ROWS) {
 									aOutput.accept(new ItemStack(CANNER_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
+								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
+								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));
 								// task p16-distillery-family ①: the Integrated Circuit ("Selector Tag") —
 								// the recipe-slot selector feeds these machines, the machines tab is the
 								// nearest live category (the gregapi items tab is not ported, declared)

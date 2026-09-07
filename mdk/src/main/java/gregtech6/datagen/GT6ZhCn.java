@@ -134,6 +134,7 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addBackfillUnits() {
 		// blocks: barrels (Drum = 鼓), the wood barrel (dump MTE 6990 join), the machines,
 		// the coke-oven multiblock pair, the two atomic legacy electric wires, the pipes
+		addDirect("block.gt6.advanced_crafting_table"); // task p24-act-machine
 		addDirect("block.gt6.barrel_adamantium");
 		addDirect("block.gt6.barrel_awakened_draconium");
 		addDirect("block.gt6.barrel_draconium");

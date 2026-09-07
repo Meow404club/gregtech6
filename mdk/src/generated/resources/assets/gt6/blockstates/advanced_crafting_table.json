@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gt6:block/advanced_crafting_table",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/advanced_crafting_table"
+    },
+    "facing=south": {
+      "model": "gt6:block/advanced_crafting_table",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gt6:block/advanced_crafting_table",
+      "y": 270
+    }
+  }
+}

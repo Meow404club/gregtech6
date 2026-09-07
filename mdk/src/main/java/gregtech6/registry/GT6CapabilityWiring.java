@@ -18,6 +18,7 @@ import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
+import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 import gregtech6.tileentity.machines.TileEntityOven;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
@@ -135,6 +136,11 @@ public final class GT6CapabilityWiring {
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		// task p24-act-machine — the ACT joins as the SECOND item-only face (zero fluid
+		// tanks; the base getCapability serves the 71-slot handler through the gated face)
+		BlockEntityType<TileEntityAdvancedCraftingTable> tAct = GTMachines.ADVANCED_CRAFTING_TABLE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tAct,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		// the fluid-only faces (p13 boiler family, p12 steam engine, p8 large boiler, p4 pipe)
 		BlockEntityType<GTBoilerTankBlockEntity> tBoilerTank = GTBlockEntities.BOILER_TANK_BE.get();

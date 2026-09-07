@@ -88,6 +88,18 @@ class GTStoneBlocksRegistrationTest {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {
         }
+        // the fixture GTStoneBlock ctors create their intrusive holder past the bootstrap
+        // freeze (Block.<init> — the GTWireBlockUseLockTest:43 bracket). The class relied
+        // IMPLICITLY on another test class unfreezing the block registry first in the
+        // shared JVM; a new test class anywhere shifts the discovery order and exposes
+        // the coupling (task p24-act-machine full-suite finding) — self-sufficient now.
+        try {
+            java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass().getMethod("unfreeze");
+            tUnfreeze.setAccessible(true);
+            tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+        } catch (Throwable aE) {
+            throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+        }
     }
 
     /** The census: 17 stones, CS.java:1668 order, each carrying exactly the 16 variants in meta order. */
