@@ -2,6 +2,7 @@ package gregtech6.tileentity.connectors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -59,7 +60,10 @@ import gregtech6.util.UT6;
  *     {@link TD.Connectors#PIPE_FLUID} types (:528) and the fluid-handler canConnect hook
  *     (:493-508, minus the extenders/cauldron branches);</li>
  * <li>capability — the side-wrapped {@link SideFluidHandler} via
- *     {@code getCapability(FLUID_HANDLER, Direction)} (spec ⑤).</li>
+ *     {@code getCapability(FLUID_HANDLER, Direction)} (spec ⑤);</li>
+ * <li>ownership — the {@code mOwnable}/{@code mOwner} pair + {@link #allowInteraction(UUID)}
+ *     and the three live gates (break/use/connect-neighbour; task p24-pipe-owner), the
+ *     foam-free simplification of the upstream 10ConnectorRendered lock.</li>
  * </ul>
  *
  * <p>Cuts (pool, per the card): corrosion leaks, over-temperature ignition and the entity
@@ -91,6 +95,61 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 
 	/** Upstream :77. */
 	public FluidTankGT[] mTanks = new FluidTankGT[0];
+
+	// ---------------------------------------------------------------------------
+	// ownership (task p24-pipe-owner — upstream TileEntityBase10ConnectorRendered:57 +
+	// TileEntityBase03TicksAndSync:40/:106-108, foam-free simplification)
+	// ---------------------------------------------------------------------------
+
+	/** Upstream NBT_OWNABLE = "gt.ownable" (CS.java:1167, Boolean) — the key name is verbatim upstream (the gt.color/gt.painted literal-key precedent, 03 port :78-82). */
+	public static final String NBT_OWNABLE = "gt.ownable";
+
+	/** Upstream NBT_OWNER = "gt.owner" (CS.java:1168) — the VALUE form is the vanilla CompoundTag.putUUID/getUUID/hasUUID pair (the int-array UUID form, both legs NbtUtils.createUUID = IntArrayTag; declared deviation from the upstream String form, no 1.7.10-world migration exists). */
+	public static final String NBT_OWNER = "gt.owner";
+
+	/**
+	 * Upstream TileEntityBase10ConnectorRendered.java:57 ({@code mOwnable = F}). False by
+	 * default: a freshly placed pipe NEVER locks (upstream activation is the dried-foam
+	 * pair, :154-156 — the port has no foam write point, P10_Foam_NotPorted pool), so the
+	 * live behaviour stays byte-for-byte the upstream plain pipe.
+	 */
+	public boolean mOwnable = false;
+
+	/** Upstream TileEntityBase03TicksAndSync.java:40 — null = unowned. */
+	@Nullable
+	public UUID mOwner = null;
+
+	/**
+	 * Upstream TileEntityBase03TicksAndSync.java:106-108
+	 * ({@code mOwner == null || (aEntity != null && mOwner.equals(aEntity.getUniqueID()))})
+	 * with the Entity unwrapped to its UUID (the offline-test discipline forbids
+	 * constructing Players/Entities). The upstream 10ConnectorRendered.java:154-156
+	 * override adds the {@code !mFoamDried} clause — with no foam world that constant
+	 * clause folds to true, so THIS is the equivalence simplification (the C-Foam revival
+	 * card refills the third clause + the applyFoam write point).
+	 *
+	 * <p>Null owner = everyone passes (upstream :107 arm 1); a null aUUID against a set
+	 * owner denies (the :107 {@code aEntity != null} arm — the console is nobody).
+	 */
+	public boolean allowInteraction(@Nullable UUID aUUID) {
+		return !mOwnable || mOwner == null || (aUUID != null && mOwner.equals(aUUID));
+	}
+
+	/**
+	 * The break-gate decision seam (task p24-pipe-owner, the creative-form-seam precedent):
+	 * a denied breaker gets 0.0F — progress never accrues, the upstream
+	 * TileEntityBase01Root.java:943 {@code getPlayerRelativeBlockHardness} deny-to-0
+	 * counterpart — an allowed one gets the caller's super progress unchanged. Static and
+	 * Player-free so the offline tests drive it directly. Public (the ruling's
+	 * "package-private" narrows here): its two consumers live in different packages — the
+	 * gregtech6.block.pipe Block override AND this offline test package — and the single
+	 * decision body must serve both (the creative-form-seam could stay package-private
+	 * only because its seam and test shared one package).
+	 */
+	public static float ownerDestroyProgress(@Nullable GTFluidPipeBlockEntity aPipe, float aSuperProgress, @Nullable UUID aUUID) {
+		if (aPipe == null || aPipe.allowInteraction(aUUID)) return aSuperProgress;
+		return 0.0F;
+	}
 
 	/** The random phase offset within {@link #DISTRIBUTION_PERIOD} (assigned on the first server tick, GTCEu offset :75). */
 	private int mPhaseOffset = 0;
@@ -330,17 +389,37 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	 * opposite — the upstream OPOS flip (:84). A support block that is not a pipe/fluid
 	 * container fails the connect → all six sides stay unconnected (upstream :87).
 	 *
-	 * <p>The upstream :86 allowInteraction ownership gate is cut (no ownership chain in
-	 * this port, deviation recorded on the card). /setblock placement never reaches here —
-	 * the seam is accepted on the card (GT6 does not auto-connect anyway); headless
-	 * acceptance drives this method explicitly via /gt6pipe place.
+	 * <p>Console/legacy entry: a null owner (the console is nobody — the /gt6pipe place
+	 * driver passes null through {@link #onPlaced(byte, UUID)}).
 	 */
 	public void onPlaced(byte aSide) {
+		onPlaced(aSide, null);
+	}
+
+	/**
+	 * The owner-carrying placement (task p24-pipe-owner). Order follows upstream: the
+	 * owner is recorded FIRST (TileEntityBase10ConnectorRendered.java:148-150 verbatim
+	 * {@code if (mOwnable && aPlayer != null) mOwner = aPlayer.getUniqueID()} — the
+	 * OWNERSHIP_RESET clause of CS.java:866 defaults false and is not ported, the
+	 * constant-fold is the recorded deviation), THEN the support-side neighbour's
+	 * ownership gates the connect (upstream 09Connector.java:85-86 — a locked support
+	 * pipe {@code return T}s the whole placement, so the :88-93 back-connect loop is
+	 * skipped with it).
+	 */
+	public void onPlaced(byte aSide, @Nullable UUID aOwner) {
 		if (aSide < 0 || aSide >= 6 || !hasLevel() || !isServerSide()) return;
+		// upstream 10ConnectorRendered:148-150 — a not-ownable pipe never records (default
+		// mOwnable=false keeps the live behaviour the upstream plain pipe)
+		if (mOwnable && aOwner != null) mOwner = aOwner;
+		// upstream 09Connector:86 — the support-side neighbour's allowInteraction before the
+		// first connect; the rejection skips the whole placement (return T there)
+		BlockEntity tSupport = getLevel().getBlockEntity(getBlockPos().relative(Direction.from3DDataValue(UT6.OPOS[aSide])));
+		if (tSupport instanceof GTFluidPipeBlockEntity tPipe && !tPipe.allowInteraction(aOwner)) return;
 		connect(UT6.OPOS[aSide], true); // upstream :84/:87
 		// upstream :88-93 — symmetric back-connect to neighbouring connectors that already
 		// connect towards this pipe (the Delegator mSideOfTileEntity validity check is the
-		// opposite-side tautology and folds away with the direct BE access)
+		// opposite-side tautology and folds away with the direct BE access). Upstream has NO
+		// allowInteraction gate on this loop — none is added (card ruling).
 		for (byte tSide = 0; tSide < 6; tSide++) {
 			BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(Direction.from3DDataValue(tSide)));
 			if (tNeighbor instanceof TileEntityBase09Connector tConnector) {
@@ -419,9 +498,33 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	 * (TileEntityBase09Connector.java:70-79): connected → disconnect, else connect. The
 	 * air/liquid branch of connect (upstream :141, mdk isAirOrLiquid) stays the open-end
 	 * "manual pipe mouth" semantics. /gt6pipe toggle shares this entry.
+	 *
+	 * <p>Console/legacy entry: a null owner (the console is nobody).
 	 */
 	public boolean toggleConnection(byte aSide) {
+		return toggleConnection(aSide, null);
+	}
+
+	/**
+	 * The owner-carrying toggle (task p24-pipe-owner). Two gates, both upstream:
+	 * <ul>
+	 * <li>SELF — upstream TileEntityBase06Covers.java:141 kills every tool on a locked
+	 *     host before the tool click even dispatches; the port has no cover layer, so the
+	 *     toggle entry carries the counterpart (this is the arm that makes a locked pipe
+	 *     reject the /gt6pipe console toggle — the RCON verify arm);</li>
+	 * <li>TARGET-SIDE NEIGHBOUR — upstream TileEntityBase09Connector.java:75 checks the
+	 *     neighbour on the toggled side before the connect/disconnect (both arms, :76).</li>
+	 * </ul>
+	 * A rejection flips nothing and returns false (the upstream :75 {@code return 0}).
+	 */
+	public boolean toggleConnection(byte aSide, @Nullable UUID aOwner) {
 		if (aSide < 0 || aSide >= 6) return false;
+		if (!allowInteraction(aOwner)) return false; // upstream 06Covers:141 host-tool kill
+		if (hasLevel()) {
+			BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(Direction.from3DDataValue(aSide)));
+			// upstream 09Connector:75 — the neighbour's ownership gates the whole toggle
+			if (tNeighbor instanceof GTFluidPipeBlockEntity tPipe && !tPipe.allowInteraction(aOwner)) return false;
+		}
 		if (connected(aSide)) return disconnect(aSide, true);
 		return connect(aSide, true);
 	}
@@ -528,6 +631,10 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		}
 		aNBT.putLong(NBT_TRANSFERRED, mTransferredAmount);
 		aNBT.putByte(NBT_IO_MASK, mIoMask); // spec ⑤ — the plain-key byte (bit0-5)
+		// upstream TileEntityBase10ConnectorRendered:77-78 (UT.NBT.setBoolean + the non-null
+		// owner guard) — the value forms are the vanilla putBoolean/putUUID pair
+		aNBT.putBoolean(NBT_OWNABLE, mOwnable);
+		if (mOwner != null) aNBT.putUUID(NBT_OWNER, mOwner);
 	}
 
 	@Override
@@ -544,6 +651,15 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		}
 		if (aNBT.contains(NBT_IO_MASK, Tag.TAG_ANY_NUMERIC)) {
 			mIoMask = (byte)(aNBT.getByte(NBT_IO_MASK) & 63); // bit0-5 clamp, the mConnections form
+		}
+		// upstream TileEntityBase10ConnectorRendered:67-68 hasKey-guarded pair; the
+		// OWNERSHIP_RESET clause (CS.java:866, default F) is not ported — the constant-fold
+		// drops it (recorded deviation). The UUID reads back hasUUID-guarded.
+		if (aNBT.contains(NBT_OWNABLE, Tag.TAG_ANY_NUMERIC)) {
+			mOwnable = aNBT.getBoolean(NBT_OWNABLE);
+		}
+		if (aNBT.hasUUID(NBT_OWNER)) {
+			mOwner = aNBT.getUUID(NBT_OWNER);
 		}
 	}
 }

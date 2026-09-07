@@ -2,8 +2,13 @@ package gregtech6.tileentity.connectors;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.logging.LogUtils;
+
+import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -45,18 +50,28 @@ import gregtech6.registry.GTFluidPipes;
  *     marker toward B still clear (no ping-pong), and the injection-side marker on A.
  *     Two further passes on B prove the equilibrium is stable (B skips the masked side
  *     :378 and clears its mask :331).</li>
- * <li>{@code stat <pos>} — dump capacity/content/connections/ioMask/received-masks.</li>
+ * <li>{@code stat <pos>} — dump capacity/content/connections/ioMask/received-masks
+ *     (p24 adds the ownable/owner pair).</li>
  * <li>{@code place <pos> <againstFace>} — the headless placement driver: setBlock a
- *     wood small pipe at pos and call {@link GTFluidPipeBlockEntity#onPlaced(byte)} with
- *     the given CLICKED face (0..5 — the face of the neighbour that was "clicked"; the
- *     neighbour must sit at pos.relative(OPOS[face])). The BlockItem.placeBlock chain
- *     equivalent for /setblock, which never reaches the placement hook.</li>
+ *     wood small pipe at pos and call {@link GTFluidPipeBlockEntity#onPlaced(byte, UUID)}
+ *     with the given CLICKED face (0..5 — the face of the neighbour that was "clicked";
+ *     the neighbour must sit at pos.relative(OPOS[face])). The BlockItem.placeBlock chain
+ *     equivalent for /setblock, which never reaches the placement hook. Console = null
+ *     identity (a locked support pipe denies the connect, upstream 09Connector:86).</li>
  * <li>{@code toggle <pos> <side>} — the hoe right-click connection toggle
- *     ({@link GTFluidPipeBlockEntity#toggleConnection(byte)}, upstream onToolClick2
- *     :70-79).</li>
+ *     ({@link GTFluidPipeBlockEntity#toggleConnection(byte, UUID)}, upstream onToolClick2
+ *     :70-79). Console = null identity: a locked pipe rejects (the RCON verify arm,
+ *     upstream 06Covers:141 counterpart) and a locked neighbour rejects the target side
+ *     (upstream :75).</li>
  * <li>{@code output <pos> <side>} — the shift-right-click arrow toggle
  *     ({@link GTFluidPipeBlockEntity#toggleOutput(byte)}); {@code clear <pos>} drops
  *     every arrow ({@link GTFluidPipeBlockEntity#clearOutputs()}).</li>
+ * <li>{@code ownable <pos> <0|1> [ownerUuid]} — the foam applyFoam stand-in (task
+ *     p24-pipe-owner, upstream 10ConnectorRendered:159-166): the only live forced write
+ *     point while the foam card sleeps in the P10 pool. 1 records ownable (with the
+ *     owner UUID when given, null owner = everyone passes — the upstream :107 arm);
+ *     0 resets both fields (the removeFoam :177-183 reset form). Console OP force write —
+ *     the /setblock-style seam the card accepts.</li>
  * </ul>
  *
  * <p>The command runs inside one server tick, so the manual dispatcher passes are not
@@ -109,9 +124,18 @@ public final class GTFluidPipeCommand {
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.then(Commands.argument("side", IntegerArgumentType.integer(0, 5))
 							.then(Commands.argument("amount", IntegerArgumentType.integer(1, 1000000))
-									.executes(aContext -> inject(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-										(byte)IntegerArgumentType.getInteger(aContext, "side"), IntegerArgumentType.getInteger(aContext, "amount"))))))));
-		LOGGER.info("Registered GT6 fluid pipe command /gt6pipe (accept|stat|place|toggle|output|clear|inject)");
+								.executes(aContext -> inject(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									(byte)IntegerArgumentType.getInteger(aContext, "side"), IntegerArgumentType.getInteger(aContext, "amount")))))))
+					.then(Commands.literal("ownable")
+						.then(Commands.argument("pos", BlockPosArgument.blockPos())
+							.then(Commands.argument("value", IntegerArgumentType.integer(0, 1))
+								.executes(aContext -> ownable(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+										IntegerArgumentType.getInteger(aContext, "value") != 0, null))
+									.then(Commands.argument("owner", StringArgumentType.word())
+										.executes(aContext -> ownableArg(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+												IntegerArgumentType.getInteger(aContext, "value") != 0,
+												StringArgumentType.getString(aContext, "owner"))))))));
+		LOGGER.info("Registered GT6 fluid pipe command /gt6pipe (accept|stat|place|toggle|output|clear|inject|ownable)");
 	}
 
 	private static int stat(CommandSourceStack aSource, BlockPos aPos) {
@@ -125,7 +149,8 @@ public final class GTFluidPipeCommand {
 					.append(" L, received-from mask ").append(aPipe.mLastReceivedFrom[tTank.mIndex]).append("] ");
 		}
 		String tLine = "GT6 pipe stat at " + aPos.toShortString() + ": connections " + aPipe.getConnections()
-				+ " ioMask " + aPipe.getIoMask() + " " + tTanks;
+				+ " ioMask " + aPipe.getIoMask() + " ownable " + aPipe.mOwnable
+				+ " owner " + (aPipe.mOwner != null ? aPipe.mOwner : "none") + " " + tTanks;
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
@@ -142,7 +167,9 @@ public final class GTFluidPipeCommand {
 			aSource.sendFailure(Component.literal("PLACE FAILED: no pipe BE at " + aPos.toShortString()));
 			return 0;
 		}
-		tPipe.onPlaced(aAgainstFace);
+		// console = null identity: a locked support-side neighbour denies the first connect
+		// (upstream 09Connector:86) — the p24 placement-gate arm drives exactly this
+		tPipe.onPlaced(aAgainstFace, null);
 		String tLine = "GT6 pipe placed at " + aPos.toShortString() + " against face " + aAgainstFace
 				+ " (support side " + gregtech6.util.UT6.OPOS[aAgainstFace] + "): connections " + tPipe.getConnections();
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
@@ -156,7 +183,9 @@ public final class GTFluidPipeCommand {
 			aSource.sendFailure(Component.literal("No GTFluidPipeBlockEntity at " + aPos.toShortString()));
 			return 0;
 		}
-		boolean tResult = tPipe.toggleConnection(aSide);
+		// console = null identity (nobody): a locked pipe rejects the toggle itself and a
+		// locked neighbour rejects the target side — the p24 RCON verify arms drive this
+		boolean tResult = tPipe.toggleConnection(aSide, null);
 		String tLine = "GT6 pipe toggle at " + aPos.toShortString() + " side " + aSide + ": "
 				+ (tResult ? "ok" : "FAILED") + ", connections " + tPipe.getConnections();
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
@@ -208,6 +237,41 @@ public final class GTFluidPipeCommand {
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The foam applyFoam stand-in (task p24-pipe-owner — upstream 10ConnectorRendered:159-166
+	 * is the only runtime owner write point, and the foam family sleeps in the P10 pool):
+	 * a FORCED console write, no allowInteraction gate (the console OP is the accepted
+	 * /setblock-style seam). {@code value=0} resets both fields — the removeFoam :177-183
+	 * reset form; {@code value=1} with a null owner keeps everyone-pass (the upstream
+	 * 03TicksAndSync:107 {@code mOwner == null} arm, ownable persisted).
+	 */
+	private static int ownable(CommandSourceStack aSource, BlockPos aPos, boolean aValue, @Nullable UUID aOwner) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTFluidPipeBlockEntity tPipe)) {
+			aSource.sendFailure(Component.literal("No GTFluidPipeBlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		tPipe.mOwnable = aValue;
+		tPipe.mOwner = aValue ? aOwner : null;
+		tPipe.setChanged();
+		tPipe.updateClientData(); // the two sync channels carry the pair on the next window
+		String tLine = "GT6 pipe ownable at " + aPos.toShortString() + ": ownable " + tPipe.mOwnable
+				+ ", owner " + (tPipe.mOwner != null ? tPipe.mOwner : "none")
+				+ (aValue ? " (FORCED write — the applyFoam stand-in)" : " (reset, the removeFoam form)");
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The {@code [ownerUuid]} arm — a malformed word is a command failure, not a crash. */
+	private static int ownableArg(CommandSourceStack aSource, BlockPos aPos, boolean aValue, String aOwner) {
+		try {
+			return ownable(aSource, aPos, aValue, UUID.fromString(aOwner));
+		} catch (IllegalArgumentException tException) {
+			aSource.sendFailure(Component.literal("Not a UUID: " + aOwner));
+			return 0;
+		}
 	}
 
 	/** The acceptance scenario; every failure names the broken invariant. */

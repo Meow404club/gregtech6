@@ -5,6 +5,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -54,6 +55,15 @@ import gregtech6.util.UT6;
  * <li>everything else passes through. The BE runs server-side only; the client returns
  *     CONSUME to claim the interaction.</li>
  * </ul>
+ *
+ * <p>Ownership face (task p24-pipe-owner): a locked pipe ({@code mOwnable} with a set
+ * {@code mOwner}) drops its own tools — the hoe use returns PASS before any mutation
+ * (the upstream TileEntityBase06Covers.java:141 host-tool-kill counterpart) and the
+ * vanilla break progress is denied to 0.0F through the
+ * {@link GTFluidPipeBlockEntity#ownerDestroyProgress} seam (the upstream
+ * TileEntityBase01Root.java:941-943 getPlayerRelativeBlockHardness counterpart; creative
+ * bypasses, upstream-consistent). Default {@code mOwnable=false} keeps the plain pipe
+ * byte-for-byte.</p>
  *
  * <p>{@link #triggerEvent} is the consumer-side wiring of the C-grade render-update
  * pair (GTRenderUpdates.java:31-46 template): the server-side
@@ -107,6 +117,33 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	}
 
 	// ---------------------------------------------------------------------------
+	// break gate (task p24-pipe-owner — the vanilla BlockBehaviour.getDestroyProgress
+	// 1.20.1:319-327 public / 1.21.1:343 protected override, the BambooStalkBlock
+	// 1.20.1:184 precedent; the upstream break-gate counterpart is
+	// TileEntityBase01Root.java:941-943 getPlayerRelativeBlockHardness deny-to-0)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The break-ownership gate: the override body is only the BE lookup + the
+	 * Player-to-UUID unwrap; the deny/super decision delegates to the static seam
+	 * {@link GTFluidPipeBlockEntity#ownerDestroyProgress} — deny = 0.0F (progress never
+	 * accrues, the upstream :943 {@code : 0} counterpart), allow = the super value
+	 * unchanged. Creative bypasses this whole path (ServerPlayerGameMode :241 isCreative
+	 * destroys immediately — the upstream creative behaviour, not a defect). The 1.20.1
+	 * parent marks the method @Deprecated (the vanilla-idiomatic direct-call note); the
+	 * override IS the intended consumption (the card risk note, BambooStalkBlock precedent),
+	 * and the public widening over the 1.21.1 protected form is the legal both-legs shape.
+	 */
+	@Override
+	public float getDestroyProgress(BlockState aState, Player aPlayer, BlockGetter aLevel, BlockPos aPos) {
+		BlockEntity tTile = aLevel.getBlockEntity(aPos);
+		return GTFluidPipeBlockEntity.ownerDestroyProgress(
+				tTile instanceof GTFluidPipeBlockEntity tPipe ? tPipe : null,
+				super.getDestroyProgress(aState, aPlayer, aLevel, aPos),
+				aPlayer.getUUID());
+	}
+
+	// ---------------------------------------------------------------------------
 	// flow-control interaction (spec ①)
 	// ---------------------------------------------------------------------------
 
@@ -125,6 +162,12 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 
 		BlockEntity tTile = aLevel.getBlockEntity(aPos);
 		if (!(tTile instanceof GTFluidPipeBlockEntity tPipe)) return InteractionResult.PASS;
+		// the ownership gate (task p24-pipe-owner): upstream TileEntityBase06Covers.java:141
+		// kills every tool on a locked host before dispatch — here the locked pipe simply
+		// stops treating the wrench as a tool: PASS, no CONSUME, zero mutation (the upstream
+		// tool-unhandled semantics). Ownable=false short-circuits allowInteraction, so the
+		// plain-pipe path is untouched.
+		if (!tPipe.allowInteraction(aPlayer.getUUID())) return InteractionResult.PASS;
 		byte tClickedSide = (byte)aHit.getDirection().get3DDataValue();
 		// the 0..1 in-face offsets — upstream passes the raw hit fractions of the clicked face
 		float tHitX = (float)(aHit.getLocation().x - aPos.getX());
