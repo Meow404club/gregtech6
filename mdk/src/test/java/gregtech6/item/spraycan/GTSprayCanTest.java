@@ -1,0 +1,394 @@
+package gregtech6.item.spraycan;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import net.minecraft.SharedConstants;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.Bootstrap;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import gregtech6.registry.GT6SprayCans;
+import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import gregtech6.tileentity.machines.TileEntityOven;
+
+/**
+ * The spray-can offline acceptance (task p22-spraycan-items): the {@link GTSprayCanItem}
+ * pure seams — the upstream DYES_INT census, the {@code ~mColor&15} vanilla-Dye fold, the
+ * colorize/decolorize whitelist tables (upstream Behavior_Spray_Color.java:144-167 / Remover
+ * :96-106 minus the two target-less arms), the gt.remaining uses ledger (:68/:78/:83/:85-92),
+ * the durability-bar rule (the GTCEu :126-145 face) and the TE routing (the 04:227-235 shape
+ * over the oven fixture, the GTPaintableTest shape) — plus the registry face (GT6SprayCans
+ * 18 items + tab, the GT6ToolsCreativeTabTest form).
+ *
+ * <p>The mod-Item wall (CrowbarTest.bootStrap NOTE) bars constructing GTSprayCanItem here,
+ * so the ItemStack seams run on vanilla stand-ins and the live {@code useOn} half rides the
+ * runServer smoke line. The sticky-clinit guard: bootstrap BEFORE the first
+ * GTSprayCanItem/GT6SprayCans touch — their static init resolves vanilla blocks (the
+ * GT6ToolsCreativeTabTest.boot shape; the NetworkHooks failure is offline-expected).
+ */
+public class GTSprayCanTest {
+
+	static BlockEntityType<TileEntityOven> sOvenType;
+
+	static final BlockPos POS = new BlockPos(1, 2, 3);
+
+	@BeforeAll
+	static void boot() {
+		SharedConstants.tryDetectVersion();
+		try {
+			Bootstrap.bootStrap();
+		} catch (Throwable ignored) {
+			// NetworkHooks.init() failure is expected offline; registries are ready by now.
+		}
+		@SuppressWarnings("unchecked")
+		BlockEntityType<TileEntityOven>[] tHolder = (BlockEntityType<TileEntityOven>[]) new BlockEntityType<?>[1];
+		tHolder[0] = BlockEntityType.Builder.of(
+				(aPos, aState) -> new TileEntityOven(tHolder[0], aPos, aState),
+				Blocks.BRICKS).build(null);
+		sOvenType = tHolder[0];
+	}
+
+	static TileEntityOven oven() {
+		return new TileEntityOven(sOvenType, POS, Blocks.BRICKS.defaultBlockState());
+	}
+
+	private static ResourceLocation rl(String aPath) {
+		return new ResourceLocation("gt6", aPath);
+	}
+
+	/** The stack carrier read — 1.20.1 freeform NBT, 21.1 the opaque CUSTOM_DATA envelope (the item's own fork shape); a payload-less stack reads as the empty tag. */
+	private static CompoundTag carrierOf(ItemStack aStack) {
+		//? if forge {
+		return aStack.hasTag() ? aStack.getTag() : new CompoundTag();
+		//?} else {
+		/*return aStack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+				net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+		*///?}
+	}
+
+	/** The stack carrier write — the mirror of {@link #carrierOf} (the envelope is set, not mutated, on 21.1). */
+	private static void writeCarrier(ItemStack aStack, String aKey, long aValue) {
+		//? if forge {
+		aStack.getOrCreateTag().putLong(aKey, aValue);
+		//?} else {
+		/*net.minecraft.nbt.CompoundTag tTag = aStack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+				net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+		tTag.putLong(aKey, aValue);
+		aStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+				net.minecraft.world.item.component.CustomData.of(tTag));
+		*///?}
+	}
+
+	// ---------------------------------------------------------------------------
+	// the upstream DYES_INT census (CS.java:470 — GTMachineCommand.DYES_INT mirrors it)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void dyesIntIsTheUpstreamTable() {
+		int[] tExpected = {0x202020, 0xFF0000, 0x00FF00, 0x604000, 0x0000FF, 0x800080, 0x00FFFF,
+				0xC0C0C0, 0x808080, 0xFFC0C0, 0x80FF80, 0xFFFF00, 0x8080FF, 0xFF00FF, 0xFF8000, 0xFFFFFF};
+		assertEquals(16, GTSprayCanItem.DYES_INT.length);
+		for (int i = 0; i < 16; i++) assertEquals(tExpected[i], GTSprayCanItem.DYES_INT[i], "DYES_INT[" + i + "]");
+		// the GTPaintableTest pins (three-point cross-check against the CS.DYE_* rows)
+		assertEquals(0xFF0000, GTSprayCanItem.DYES_INT[1]);
+		assertEquals(0xFF8000, GTSprayCanItem.DYES_INT[14]);
+		assertEquals(0x202020, GTSprayCanItem.DYES_INT[0]);
+	}
+
+	@Test
+	public void nameTablesAreAlignedSixteenWays() {
+		assertEquals(16, GTSprayCanItem.DYE_NAMES.length);
+		assertEquals(16, GTSprayCanItem.DYE_IDS.length);
+		Set<String> tIds = new HashSet<>();
+		for (String tId : GTSprayCanItem.DYE_IDS) assertTrue(tIds.add(tId), "distinct id " + tId);
+		assertEquals("Black", GTSprayCanItem.DYE_NAMES[0]);
+		assertEquals("White", GTSprayCanItem.DYE_NAMES[15]);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the ~mColor&15 fold (P21 ADR ruling 3) + the whitelist tables
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void vanillaDyeFoldIsTheComplementBijection() {
+		Set<DyeColor> tSeen = new HashSet<>();
+		for (byte i = 0; i < 16; i++) {
+			DyeColor tDye = GTSprayCanItem.vanillaDye(i);
+			assertNotNull(tDye);
+			assertTrue(tSeen.add(tDye), "bijective at " + i);
+			assertEquals(15 - i, tDye.getId(), "the ~i&15 fold at " + i);
+		}
+		assertEquals(16, tSeen.size(), "every vanilla dye reachable");
+		assertEquals(DyeColor.BLACK, GTSprayCanItem.vanillaDye((byte) 0));
+		assertEquals(DyeColor.WHITE, GTSprayCanItem.vanillaDye((byte) 15));
+		assertEquals(DyeColor.GREEN, GTSprayCanItem.vanillaDye((byte) 2));
+	}
+
+	/** The four recolourable families resolve 16 distinct targets each (the upstream :149-151/:164 faces). */
+	@Test
+	public void colorTargetsAreCompleteOverAllSixteenDyes() {
+		Set<Block> tWoolSeen = new LinkedHashSet<>(), tCarpetSeen = new LinkedHashSet<>(),
+				tGlassSeen = new LinkedHashSet<>(), tPaneSeen = new LinkedHashSet<>(), tTerracottaSeen = new LinkedHashSet<>();
+		// the white-dye spray on a WHITE block is the :164 same-colour no-op (pinned in
+		// colorTargetSameColourIsTheNoOp) — walk the 15 changing dyes for the white bases
+		for (byte i = 0; i < 15; i++) {
+			assertNotNull(GTSprayCanItem.colorTarget(Blocks.WHITE_WOOL, i));
+			assertNotNull(GTSprayCanItem.colorTarget(Blocks.WHITE_CARPET, i));
+			assertNotNull(GTSprayCanItem.colorTarget(Blocks.GLASS, i));
+			assertNotNull(GTSprayCanItem.colorTarget(Blocks.GLASS_PANE, i));
+			assertNotNull(GTSprayCanItem.colorTarget(Blocks.TERRACOTTA, i));
+			tWoolSeen.add(GTSprayCanItem.colorTarget(Blocks.WHITE_WOOL, i));
+			tCarpetSeen.add(GTSprayCanItem.colorTarget(Blocks.WHITE_CARPET, i));
+			tGlassSeen.add(GTSprayCanItem.colorTarget(Blocks.GLASS, i));
+			tPaneSeen.add(GTSprayCanItem.colorTarget(Blocks.GLASS_PANE, i));
+			tTerracottaSeen.add(GTSprayCanItem.colorTarget(Blocks.TERRACOTTA, i));
+		}
+		// the white spray completes every family over a non-white base (white wool → white wool)
+		assertNotNull(GTSprayCanItem.colorTarget(Blocks.BLACK_WOOL, (byte) 15));
+		assertNotNull(GTSprayCanItem.colorTarget(Blocks.BLACK_CARPET, (byte) 15));
+		assertNotNull(GTSprayCanItem.colorTarget(Blocks.BLACK_TERRACOTTA, (byte) 15));
+		tWoolSeen.add(GTSprayCanItem.colorTarget(Blocks.BLACK_WOOL, (byte) 15));
+		tCarpetSeen.add(GTSprayCanItem.colorTarget(Blocks.BLACK_CARPET, (byte) 15));
+		tGlassSeen.add(GTSprayCanItem.colorTarget(Blocks.GLASS, (byte) 15));
+		tPaneSeen.add(GTSprayCanItem.colorTarget(Blocks.GLASS_PANE, (byte) 15));
+		tTerracottaSeen.add(GTSprayCanItem.colorTarget(Blocks.TERRACOTTA, (byte) 15));
+		assertEquals(16, tWoolSeen.size(), "16 distinct wool targets");
+		assertEquals(16, tCarpetSeen.size(), "16 distinct carpet targets");
+		assertEquals(16, tGlassSeen.size(), "16 distinct stained-glass targets");
+		assertEquals(16, tPaneSeen.size(), "16 distinct stained-pane targets");
+		assertEquals(16, tTerracottaSeen.size(), "16 distinct stained-terracotta targets");
+	}
+
+	/** Spot rows against the vanilla registry names (upstream :149-151 colour code folded). */
+	@Test
+	public void colorTargetSpots() {
+		// GT6 index 1 = Red → vanilla RED (the fold), the upstream :248 fake-recipe rows
+		assertEquals(Blocks.RED_STAINED_GLASS, GTSprayCanItem.colorTarget(Blocks.GLASS, (byte) 1));
+		assertEquals(Blocks.RED_STAINED_GLASS_PANE, GTSprayCanItem.colorTarget(Blocks.GLASS_PANE, (byte) 1));
+		assertEquals(Blocks.RED_TERRACOTTA, GTSprayCanItem.colorTarget(Blocks.TERRACOTTA, (byte) 1));
+		// index 0 = Black → black wool (the upstream :248 ST.make(Blocks.wool, 1, 15-i) row)
+		assertEquals(Blocks.BLACK_WOOL, GTSprayCanItem.colorTarget(Blocks.WHITE_WOOL, (byte) 0));
+		// index 10 = Lime → lime carpet
+		assertEquals(Blocks.LIME_CARPET, GTSprayCanItem.colorTarget(Blocks.WHITE_CARPET, (byte) 10));
+		// family recolour of an already-coloured block (the upstream :164 setBlockMetadata arm)
+		assertEquals(Blocks.BLACK_WOOL, GTSprayCanItem.colorTarget(Blocks.RED_WOOL, (byte) 0));
+		assertEquals(Blocks.BLACK_STAINED_GLASS, GTSprayCanItem.colorTarget(Blocks.RED_STAINED_GLASS, (byte) 0));
+	}
+
+	/** The same-colour spray is the no-op (upstream :164 guards metadata != target). */
+	@Test
+	public void colorTargetSameColourIsTheNoOp() {
+		assertNull(GTSprayCanItem.colorTarget(Blocks.BLACK_WOOL, (byte) 0));
+		assertNull(GTSprayCanItem.colorTarget(Blocks.WHITE_WOOL, (byte) 15));
+		assertNull(GTSprayCanItem.colorTarget(Blocks.LIME_CARPET, (byte) 10));
+		assertNull(GTSprayCanItem.colorTarget(Blocks.BLACK_STAINED_GLASS, (byte) 0));
+		assertNull(GTSprayCanItem.colorTarget(Blocks.BLACK_STAINED_GLASS_PANE, (byte) 0));
+		assertNull(GTSprayCanItem.colorTarget(Blocks.BLACK_TERRACOTTA, (byte) 0));
+		// but the plain families always change
+		assertNotNull(GTSprayCanItem.colorTarget(Blocks.GLASS, (byte) 0));
+		assertNotNull(GTSprayCanItem.colorTarget(Blocks.TERRACOTTA, (byte) 0));
+	}
+
+	/**
+	 * The declared target-less arms: grass_block (upstream :153-163 converts into BlocksGT.Grass
+	 * — the family is not ported) and everything outside the whitelist (:146-148 stone/bricks).
+	 */
+	@Test
+	public void colorTargetTargetlessArms() {
+		assertNull(GTSprayCanItem.colorTarget(Blocks.GRASS_BLOCK, (byte) 10), "the GT6-grass arm is the declared pool cut");
+		assertNull(GTSprayCanItem.colorTarget(Blocks.STONE, (byte) 1));
+		assertNull(GTSprayCanItem.colorTarget(Blocks.BRICKS, (byte) 1));
+		assertNull(GTSprayCanItem.colorTarget(Blocks.DIRT, (byte) 1));
+		assertNull(GTSprayCanItem.colorTarget(null, (byte) 1));
+	}
+
+	/** The remover reverse rows (upstream Remover :101-103 verbatim; wool/carpet have no plain variant). */
+	@Test
+	public void decolorTargetsAreTheReverseRows() {
+		for (byte i = 0; i < 16; i++) {
+			assertEquals(Blocks.GLASS, GTSprayCanItem.decolorTarget(GTSprayCanItem.colorTarget(Blocks.GLASS, i)),
+					":103 at dye " + i);
+			assertEquals(Blocks.GLASS_PANE, GTSprayCanItem.decolorTarget(GTSprayCanItem.colorTarget(Blocks.GLASS_PANE, i)),
+					":102 at dye " + i);
+			assertEquals(Blocks.TERRACOTTA, GTSprayCanItem.decolorTarget(GTSprayCanItem.colorTarget(Blocks.TERRACOTTA, i)),
+					":101 at dye " + i);
+		}
+		assertNull(GTSprayCanItem.decolorTarget(Blocks.WHITE_WOOL), "no uncoloured wool (upstream has no wool arm)");
+		assertNull(GTSprayCanItem.decolorTarget(Blocks.WHITE_CARPET), "no uncoloured carpet");
+		assertNull(GTSprayCanItem.decolorTarget(Blocks.GLASS), "plain glass is not removable");
+		assertNull(GTSprayCanItem.decolorTarget(Blocks.TERRACOTTA));
+		assertNull(GTSprayCanItem.decolorTarget(Blocks.STONE));
+		assertNull(GTSprayCanItem.decolorTarget(Blocks.GRASS_BLOCK));
+		assertNull(GTSprayCanItem.decolorTarget(null));
+	}
+
+	// ---------------------------------------------------------------------------
+	// the TE routing (the 04:227-235 shape over the oven fixture)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void teRoutingPaintsAnUnpaintedMachineDirectly() {
+		TileEntityOven tOven = oven();
+		assertFalse(tOven.isPainted());
+		assertTrue(GTSprayCanItem.paintPaintableTE(tOven, (byte) 1), "upstream :85 — the colour change reports true");
+		assertTrue(tOven.isPainted());
+		assertEquals(0xFF0000, tOven.getPaint(), "unpainted takes the colour as-is (the 04:229 half)");
+	}
+
+	@Test
+	public void teRoutingMixesAnAlreadyPaintedMachine() {
+		TileEntityOven tOven = oven();
+		assertTrue(GTSprayCanItem.paintPaintableTE(tOven, (byte) 1)); // Red
+		assertTrue(GTSprayCanItem.paintPaintableTE(tOven, (byte) 14)); // Orange
+		assertEquals(0xFF4000, tOven.getPaint(), "painted MIXES by channel average (the UT :1576-1578 math)");
+	}
+
+	@Test
+	public void teRoutingRemoverUnpaintsAndNoOpsClean() {
+		TileEntityOven tOven = oven();
+		assertTrue(GTSprayCanItem.paintPaintableTE(tOven, (byte) 1));
+		assertTrue(GTSprayCanItem.paintPaintableTE(tOven, GTSprayCanItem.REMOVER), "the Remover :98 decolorable arm");
+		assertFalse(tOven.isPainted());
+		assertEquals(TileEntityBase03TicksAndSync.UNCOLORED, tOven.getPaint());
+		assertFalse(GTSprayCanItem.paintPaintableTE(tOven, GTSprayCanItem.REMOVER), "unpainted remover spray is the no-op — no use paid");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the gt.remaining uses ledger
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void remainingOfDefaultsToFull() {
+		assertEquals(5120, GTSprayCanItem.remainingOf(null, 5120), "a tag-less stack is a full can");
+		assertEquals(5120, GTSprayCanItem.remainingOf(new CompoundTag(), 5120), "an empty tag is a full can");
+		CompoundTag tTag = new CompoundTag();
+		tTag.putLong(GTSprayCanItem.NBT_REMAINING, 100);
+		assertEquals(100, GTSprayCanItem.remainingOf(tTag, 5120));
+	}
+
+	@Test
+	public void remainingAfterHitPaysTenOrNothing() {
+		assertEquals(5110, GTSprayCanItem.remainingAfterHit(5120, false), "upstream :78 — one hit = 10 internal units");
+		assertEquals(5120, GTSprayCanItem.remainingAfterHit(5120, true), "creative (hasInfiniteItems) pays nothing");
+		assertEquals(0, GTSprayCanItem.remainingAfterHit(5, false), "floored at 0");
+		assertFalse(GTSprayCanItem.depleted(10));
+		assertTrue(GTSprayCanItem.depleted(0), "upstream :85 tUses <= 0");
+	}
+
+	/**
+	 * The payment face on a real stack — vanilla stand-ins (mod Items are not constructible
+	 * here): 512 paid hits (5120 internal units) end in the empty-can swap (upstream :85-92).
+	 */
+	@Test
+	public void payUsesDecrementsThenSwapsToTheEmptyCan() {
+		Item tEmpty = Items.GOLD_INGOT; // the empty-can stand-in
+		ItemStack tCan = new ItemStack(Items.IRON_INGOT); // the can stand-in
+		assertNull(GTSprayCanItem.payUses(tCan, 5120, tEmpty), "a paid hit returns no replacement");
+		assertEquals(5110, carrierOf(tCan).getLong(GTSprayCanItem.NBT_REMAINING), "the gt.remaining write (upstream :83)");
+
+		// hits #2..#511 keep the can alive (5110 - 510*10 = 10 left after the loop)
+		for (int i = 0; i < 510; i++) {
+			assertNull(GTSprayCanItem.payUses(tCan, 5120, tEmpty), "hit #" + (i + 2) + " must not deplete yet");
+		}
+		assertEquals(10, carrierOf(tCan).getLong(GTSprayCanItem.NBT_REMAINING));
+
+		// hit #512 depletes and swaps (upstream :85-92)
+		ItemStack tSwap = GTSprayCanItem.payUses(tCan, 5120, tEmpty);
+		assertNotNull(tSwap, "the 512th hit depletes the can");
+		assertEquals(tEmpty, tSwap.getItem(), "the empty-can swap target");
+		assertEquals(1, tSwap.getCount());
+		assertFalse(carrierOf(tSwap).contains(GTSprayCanItem.NBT_REMAINING), "the empty can carries no gt.remaining");
+		assertEquals(5120, GTSprayCanItem.remainingOf(carrierOf(tSwap), 5120), "tag-less = full semantics for the NEXT can");
+	}
+
+	@Test
+	public void payUsesOnTheLastHitSwapsImmediately() {
+		ItemStack tCan = new ItemStack(Items.IRON_INGOT);
+		writeCarrier(tCan, GTSprayCanItem.NBT_REMAINING, 10); // one hit left
+		ItemStack tSwap = GTSprayCanItem.payUses(tCan, 5120, Items.GOLD_INGOT);
+		assertNotNull(tSwap);
+		assertEquals(Items.GOLD_INGOT, tSwap.getItem());
+	}
+
+	// ---------------------------------------------------------------------------
+	// the durability bar (the GTCEu :126-145 face)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void durabilityBarLogic() {
+		assertFalse(GTSprayCanItem.barVisible(5120, 5120), "a fresh can hides the bar");
+		assertTrue(GTSprayCanItem.barVisible(5110, 5120), "a sprayed can shows the bar");
+		assertTrue(GTSprayCanItem.barVisible(0, 5120), "the depleted counter shows it too (transient pre-swap)");
+		assertEquals(13, GTSprayCanItem.barWidth(5120, 5120), "full = the vanilla 13-pixel width");
+		assertEquals(0, GTSprayCanItem.barWidth(0, 5120));
+		assertEquals(7, GTSprayCanItem.barWidth(2560, 5120), "half = round(6.5) = 7");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the registry face (the GT6ToolsCreativeTabTest form over GT6SprayCans)
+	// ---------------------------------------------------------------------------
+
+	/** The 18-row display table in dye order + remover + empty (the registration wiring face). */
+	@Test
+	public void tabTableIsEighteenRowsInOrder() {
+		assertEquals(18, GT6SprayCans.TAB_TABLE.size());
+		for (int i = 0; i < 16; i++) {
+			assertEquals(rl("spray_paint_" + GTSprayCanItem.DYE_IDS[i]), GT6SprayCans.SPRAY_PAINTS.get(i).getId(),
+					"the colour rows follow DYE_IDS order");
+			assertSame(GT6SprayCans.TAB_TABLE.get(i), GT6SprayCans.SPRAY_PAINTS.get(i));
+		}
+		assertEquals(rl("spray_paint_remover"), GT6SprayCans.SPRAY_PAINT_REMOVER.getId());
+		assertEquals(rl("spray_can_empty"), GT6SprayCans.SPRAY_CAN_EMPTY.getId());
+		assertSame(GT6SprayCans.TAB_TABLE.get(16), GT6SprayCans.SPRAY_PAINT_REMOVER);
+		assertSame(GT6SprayCans.TAB_TABLE.get(17), GT6SprayCans.SPRAY_CAN_EMPTY);
+	}
+
+	/** Registration smoke + bidirectional parity (no orphan items, no unregistered table rows). */
+	@Test
+	public void tableAndItemsRegistryAreInParity() {
+		Set<ResourceLocation> tTableIds = new LinkedHashSet<>();
+		//? if forge {
+		for (net.minecraftforge.registries.RegistryObject<Item> tRow : GT6SprayCans.TAB_TABLE) {
+			tTableIds.add(tRow.getId());
+		}
+		Set<ResourceLocation> tRegisteredIds = new LinkedHashSet<>();
+		for (net.minecraftforge.registries.RegistryObject<Item> tEntry : GT6SprayCans.ITEMS.getEntries()) {
+			tRegisteredIds.add(tEntry.getId());
+		}
+		//?} else {
+		/*for (net.neoforged.neoforge.registries.DeferredHolder<Item, Item> tRow : GT6SprayCans.TAB_TABLE) { // 21.1: the table stores the concrete holder
+			tTableIds.add(tRow.getId());
+		}
+		Set<ResourceLocation> tRegisteredIds = new LinkedHashSet<>();
+		for (net.neoforged.neoforge.registries.DeferredHolder<Item, ? extends Item> tEntry : GT6SprayCans.ITEMS.getEntries()) {
+			tRegisteredIds.add(tEntry.getId());
+		}
+		*///?}
+		assertEquals(18, tTableIds.size());
+		assertTrue(tRegisteredIds.containsAll(tTableIds), "every table row must be a registered item");
+		assertTrue(tTableIds.containsAll(tRegisteredIds), "every registered spray item must be displayed (no orphans)");
+		assertEquals(Registries.ITEM, GT6SprayCans.ITEMS.getRegistryKey());
+		assertEquals("itemGroup.gt6.spray_cans", GT6SprayCans.TAB_TITLE_KEY);
+	}
+}

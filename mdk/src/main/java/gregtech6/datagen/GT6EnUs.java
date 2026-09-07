@@ -19,6 +19,7 @@ import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Kinetics;
+import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
@@ -86,6 +87,7 @@ public class GT6EnUs extends LanguageProvider {
         addCovers();
         addJeiInfo();
         addStoneBlocks(); // task p19-stoneblocks-registry — table-tail append (the drying card appends after this)
+        addSprayCans(); // task p22-spraycan-items — table-tail append
     }
 
     /**
@@ -665,4 +667,28 @@ public class GT6EnUs extends LanguageProvider {
             "%s Windmill Tiles B",             // 14 WINDB   ".14"
             "%s Square Bricks"                 // 15 QBRIK   ".15"
     };
+
+    /**
+     * Spray-can family keys (task p22-spraycan-items): the 18 item display names + the family
+     * tab title + the three tooltip templates. The item names are the upstream registration
+     * rows verbatim — "Spray Paint (Black)".."Spray Paint (White)"
+     * (MultiItemRandomTools.java:243), "Paint Removal Spray" (:269), "Empty Spray Can" (:235)
+     * — walked from the {@link GT6SprayCans} registry face (the RegistryObject id is the lang
+     * key path) so the two faces cannot drift. The tooltip templates ride the item constants
+     * (GTSprayCanItem.PAINT_TOOLTIP_KEY/DECOLOR_TOOLTIP_KEY/REMAINING_TOOLTIP_KEY) with the
+     * upstream LH wordings (:56 "Can Color things in ", Remover :109 "Can Decolor things",
+     * :170 + the :179 "X.Y" format "Remaining Uses: ").
+     */
+    private void addSprayCans() {
+        for (int i = 0; i < 16; i++) {
+            add("item.gt6." + GT6SprayCans.SPRAY_PAINTS.get(i).getId().getPath(),
+                "Spray Paint (" + gregtech6.item.spraycan.GTSprayCanItem.DYE_NAMES[i] + ")");
+        }
+        add("item.gt6." + GT6SprayCans.SPRAY_PAINT_REMOVER.getId().getPath(), "Paint Removal Spray");
+        add("item.gt6." + GT6SprayCans.SPRAY_CAN_EMPTY.getId().getPath(), "Empty Spray Can");
+        add(GT6SprayCans.TAB_TITLE_KEY, "Spray Cans");
+        add(gregtech6.item.spraycan.GTSprayCanItem.PAINT_TOOLTIP_KEY, "Can Color things in %s");
+        add(gregtech6.item.spraycan.GTSprayCanItem.DECOLOR_TOOLTIP_KEY, "Can Decolor things");
+        add(gregtech6.item.spraycan.GTSprayCanItem.REMAINING_TOOLTIP_KEY, "Remaining Uses: %s.%s");
+    }
 }

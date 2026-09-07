@@ -110,6 +110,20 @@ public final class GT6ItemModels extends ItemModelProvider {
         // attribution)
         withExistingParent("integrated_circuit", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/integrated_circuit"));
+        // the spray-can family (task p22-spraycan-items) — 18 item/generated models over the
+        // byte-identical upstream icon borrows (gt.multiitem.randomtools metas
+        // 1000+2i/1096/999, assets/README.md attribution): one model per colour + the remover
+        // + the empty can, walked over the DYE_IDS snake table so the model ids cannot drift
+        // from the registered item ids (registry "spray_paint_" + id / "spray_paint_remover" /
+        // "spray_can_empty")
+        for (String tDye : gregtech6.item.spraycan.GTSprayCanItem.DYE_IDS) {
+            withExistingParent("spray_paint_" + tDye, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/spray/paint_" + tDye));
+        }
+        withExistingParent("spray_paint_remover", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/spray/remover"));
+        withExistingParent("spray_can_empty", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/spray/empty"));
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */
