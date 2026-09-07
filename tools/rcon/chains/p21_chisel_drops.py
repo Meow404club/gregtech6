@@ -90,6 +90,7 @@ steps += [
     phase("C: the no-TOOL context — loot spawn consults the table without a TOOL param, the baseline answers"),
     Step(f"loot spawn {L_POS} loot gt6:blocks/marble_bricks", expect="Dropped 1 [Marble Bricks]"),
     Step(f"loot spawn {L_POS} loot gt6:blocks/marble", expect="Dropped 1 [Marble Cobblestone]"),
+    Step(f"kill {ITEMS}", expect="Killed"),  # the two spawned stacks — the mine arms discard their own
 ]
 
 # ---------------------------------------------------------------- T: teardown
