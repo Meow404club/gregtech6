@@ -4,13 +4,19 @@
  * face the recipe provider consumes.
  *
  * <p>Assertion surface notes (the CutterTest/GT6ToolsCreativeTabTest constraints):
- * a mod Item cannot be constructed in this bootstrapped-and-frozen JVM (the
- * Item.java:61 intrusive-holder wall), so the classification and loss faces pin
- * through the STATIC seams ({@link GT6FileItem#classifies},
- * {@link GT6FileItem#craftRemaining}) and the live getCraftingRemainingItem override
- * rides the runServer/runData gates. The loss-seam behaviour is exercised over a
- * VANILLA damageable stack (Items.IRON_PICKAXE) — the seam is item-agnostic on
- * purpose so the boundary is offline-provable without the registry.
+ * a mod Item cannot normally be constructed in this bootstrapped-and-frozen JVM
+ * (the Item.java:61 intrusive-holder wall) — the classification and static-seam
+ * faces therefore pin through the STATIC seams ({@link GT6FileItem#classifies},
+ * {@link GT6FileItem#craftRemaining}) over VANILLA damageable stacks, while the
+ * REAL crafting channel gets its own probe: the intrusive-holder wall is opened
+ * for the construction with the GTWireBlockUseLockTest reflection bracket (the
+ * Forge-internal {@code ForgeRegistry.unfreeze()} — a test-JVM-local write
+ * window, the wire lock test's exact precedent), after which the probe calls
+ * {@code Recipe.getRemainingItems} DIRECTLY — the vanilla crafting loop's own
+ * dispatch (Recipe.java:26 {@code item.hasCraftingRemainingItem()} gate THEN
+ * {@code getCraftingRemainingItem()}). This is the S1-review anti-regression
+ * probe (id410): the dead-gate shape — overriding get without has — leaves the
+ * gate false and the probe sees EMPTY instead of the worn tool, so it goes red.
  */
 package gregtech6.items.tools;
 
@@ -21,10 +27,16 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Recipe;
 
 import net.minecraftforge.common.ToolActions;
 
@@ -181,4 +193,265 @@ public class FileSawTest {
 		assertEquals(rl("saw"), GT6Tools.SAW.getId());
 		assertEquals(rl("tools/file"), GT6ItemTags.gt6("tools/file").location());
 	}
+
+	// --------------------------------------------- the REAL crafting-channel probe (id410)
+
+	/**
+	 * The S1-review anti-regression probe (id410): the vanilla crafting loop's own
+	 * dispatch — {@code Recipe.getRemainingItems}, the Recipe.java:26 gate-then-get
+	 * shape the server runs — called DIRECTLY over a 3x3 grid holding the tool. The
+	 * dead-gate regression (get overridden without the hasCraftingRemainingItem gate)
+	 * fails the FIRST assertion with EMPTY instead of the worn tool. Also pins the
+	 * full loss semantics on the live items: same item comes back, exactly
+	 * {@link GT6FileItem#DAMAGE_PER_CRAFT} wearier, the grid input untouched, every
+	 * other cell stays empty.
+	 */
+	@Test
+	public void realCraftingChannelKeepsTheFileAndPaysOnePoint() {
+		GT6FileItem tFile = probeItem("crafting_probe_file", GT6FileItem::new);
+		ItemStack tInput = new ItemStack(tFile);
+		tInput.setDamageValue(3);
+		ItemStack tRemaining = craftingChannel(tInput);
+		assertFalse(tRemaining.isEmpty(), "the gate must be OPEN (has overridden) — EMPTY here is the id410 dead-gate shape");
+		assertSame(tFile, tRemaining.getItem(), "the tool follows the craft on the live dispatch");
+		assertEquals(3 + GT6FileItem.DAMAGE_PER_CRAFT, tRemaining.getDamageValue(), "exactly one point paid on the live dispatch");
+		assertEquals(3, tInput.getDamageValue(), "the grid input is never mutated");
+	}
+
+	/** The saw rides the same live channel (its own has/get pair — no delegation shortcut). */
+	@Test
+	public void realCraftingChannelKeepsTheSawAndPaysOnePoint() {
+		GTSawItem tSaw = probeItem("crafting_probe_saw", GTSawItem::new);
+		ItemStack tInput = new ItemStack(tSaw);
+		tInput.setDamageValue(tSaw.DURABILITY_POINTS - 2);
+		ItemStack tRemaining = craftingChannel(tInput);
+		assertFalse(tRemaining.isEmpty(), "the saw gate must be open at one-below-max (strictly-greater consumes)");
+		assertEquals(tSaw.DURABILITY_POINTS - 2 + GT6FileItem.DAMAGE_PER_CRAFT, tRemaining.getDamageValue());
+	}
+
+	/**
+	 * The GTWireBlockUseLockTest:43 reflection bracket, item flavor. THREE locks guard
+	 * the offline item registry (namespaced-wrapper shape — runtime class of
+	 * {@code BuiltInRegistries.ITEM} is a {@code NamespacedWrapper} over a ForgeRegistry
+	 * delegate):
+	 * <ol>
+	 * <li>the vanilla {@code frozen} flag — the Item constructor's intrusive-holder gate
+	 * (Item.java:61); {@code NamespacedWrapper.unfreeze()} clears it;</li>
+	 * <li>the Forge wrapper register lock ({@code NamespacedWrapper.locked}, the
+	 * "Modder should use Forge Register methods" gate);</li>
+	 * <li>the {@code ForgeRegistry.isFrozen} delegate flag — its own {@code unfreeze()}
+	 * clears this one AND mirrors to the wrapper lock (ForgeRegistry.java:693-698).</li>
+	 * </ol>
+	 * Test-JVM-local; the probe item is registered under a dedicated probe id (an
+	 * ItemStack constructor resolves the registry delegate eagerly, so an unregistered
+	 * item cannot ride the channel) and never reaches any committed data.
+	 */
+	private static <I extends Item> I probeItem(String aProbeId, java.util.function.Function<Item.Properties, I> aCreator) {
+		var tRegistry = BuiltInRegistries.ITEM;
+		//? if forge {
+		try {
+			// the Forge runtime shape: BuiltInRegistries.ITEM is a NamespacedWrapper over a
+			// ForgeRegistry delegate — THREE locks must open (the defaulted wrapper hides
+			// the lock field on the parent, hence the class-chain walk):
+			// 1. the vanilla frozen flag — the Item constructor's intrusive-holder gate
+			//    (Item.java:61), cleared by NamespacedWrapper.unfreeze();
+			// 2. the delegate ForgeRegistry.isFrozen — its own unfreeze() clears this one
+			//    AND mirrors the wrapper register lock off (ForgeRegistry.java:693-698);
+			// 3. the NamespacedWrapper.locked register gate ("Modder should use Forge
+			//    Register methods").
+			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
+			tUnfreeze.setAccessible(true);
+			tUnfreeze.invoke(tRegistry);
+			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
+			tDelegate.setAccessible(true);
+			Object tForgeRegistry = tDelegate.get(tRegistry);
+			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
+			tForgeUnfreeze.setAccessible(true);
+			tForgeUnfreeze.invoke(tForgeRegistry);
+			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
+			tLocked.setBoolean(tRegistry, false);
+		} catch (Exception aE) {
+			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
+		}
+		//?} else {
+		/*try {
+			// the 21.1 runtime shape: the plain vanilla DefaultedMappedRegistry (no Forge
+			// wrapper) — a single frozen flag guards both the intrusive-holder construction
+			// and Registry.register
+			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
+			tUnfreeze.setAccessible(true);
+			tUnfreeze.invoke(tRegistry);
+		} catch (Exception aE) {
+			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
+		}
+		*///?}
+		I rItem = aCreator.apply(new Item.Properties().durability(512));
+		net.minecraft.core.Registry.register(tRegistry, aProbeId, rItem);
+		return rItem;
+	}
+
+	/** getDeclaredField along the superclass chain (the defaulted wrapper hides the lock one level up). */
+	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
+		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
+			try {
+				java.lang.reflect.Field rField = c.getDeclaredField(aName);
+				rField.setAccessible(true);
+				return rField;
+			} catch (NoSuchFieldException ignored) {
+				// keep walking up
+			}
+		}
+		throw new NoSuchFieldException(aName);
+	}
+
+	/**
+	 * The vanilla crafting loop over a 3x3 grid: slot 0 = the tool, everything else
+	 * empty. The channel is the Recipe.getRemainingItems DEFAULT the real ResultSlot.onTake
+	 * path runs — the ItemStack-sensitive shape (gate has, then get). The grid face is
+	 * the one leg split the probe cannot paper over: 1.20.1 walks a Container, 1.21
+	 * re-typed Recipe to {@code <T extends RecipeInput>} and the crafting grid became a
+	 * CraftingInput record (Recipe.java:30-40 — the gate-then-get loop is verbatim).
+	 */
+	//? if forge {
+	private static ItemStack craftingChannel(ItemStack aTool) {
+		Container tGrid = new Container() {
+			private final NonNullList<ItemStack> mCells = NonNullList.withSize(9, ItemStack.EMPTY);
+
+			@Override
+			public int getContainerSize() {
+				return this.mCells.size();
+			}
+
+			@Override
+			public boolean isEmpty() {
+				return this.mCells.stream().allMatch(ItemStack::isEmpty);
+			}
+
+			@Override
+			public ItemStack getItem(int aIndex) {
+				return this.mCells.get(aIndex);
+			}
+
+			@Override
+			public ItemStack removeItem(int aIndex, int aCount) {
+				ItemStack tCell = this.mCells.get(aIndex);
+				ItemStack rTake = tCell.split(aCount);
+				return rTake;
+			}
+
+			@Override
+			public ItemStack removeItemNoUpdate(int aIndex) {
+				return this.mCells.set(aIndex, ItemStack.EMPTY);
+			}
+
+			@Override
+			public void setItem(int aIndex, ItemStack aStack) {
+				this.mCells.set(aIndex, aStack);
+			}
+
+			@Override
+			public void clearContent() {
+				this.mCells.clear();
+			}
+
+			@Override
+			public void setChanged() {
+			}
+
+			@Override
+			public boolean stillValid(Player aPlayer) {
+				return true;
+			}
+		};
+		tGrid.setItem(0, aTool);
+		Recipe<Container> tChannel = new Recipe<>() {
+			@Override
+			public boolean matches(Container aInv, net.minecraft.world.level.Level aLevel) {
+				return false;
+			}
+
+			@Override
+			public net.minecraft.world.item.ItemStack assemble(Container aInv, net.minecraft.core.RegistryAccess aRegistry) {
+				return ItemStack.EMPTY;
+			}
+
+			@Override
+			public boolean canCraftInDimensions(int aWidth, int aHeight) {
+				return true;
+			}
+
+			@Override
+			public net.minecraft.world.item.ItemStack getResultItem(net.minecraft.core.RegistryAccess aRegistry) {
+				return ItemStack.EMPTY;
+			}
+
+			@Override
+			public net.minecraft.world.item.crafting.RecipeSerializer<?> getSerializer() {
+				return net.minecraft.world.item.crafting.RecipeSerializer.SHAPELESS_RECIPE;
+			}
+
+			@Override
+			public net.minecraft.world.item.crafting.RecipeType<?> getType() {
+				return net.minecraft.world.item.crafting.RecipeType.CRAFTING;
+			}
+
+			@Override
+			public ResourceLocation getId() {
+				return rl("crafting_channel_probe");
+			}
+		};
+		NonNullList<ItemStack> tRemainders = tChannel.getRemainingItems(tGrid);
+		for (int i = 1; i < tRemainders.size(); i++) {
+			assertTrue(tRemainders.get(i).isEmpty(), "no side cells may produce remainders, saw one at " + i);
+		}
+		return tRemainders.get(0);
+	}
+	//?} else {
+	/*private static ItemStack craftingChannel(ItemStack aTool) {
+		java.util.ArrayList<ItemStack> tCells = new java.util.ArrayList<>(java.util.Collections.nCopies(9, ItemStack.EMPTY));
+		tCells.set(0, aTool);
+		net.minecraft.world.item.crafting.CraftingInput tGrid = net.minecraft.world.item.crafting.CraftingInput.of(3, 3, tCells);
+		net.minecraft.world.item.crafting.Recipe<net.minecraft.world.item.crafting.CraftingInput> tChannel = new net.minecraft.world.item.crafting.Recipe<>() {
+			@Override
+			public boolean matches(net.minecraft.world.item.crafting.CraftingInput aInv, net.minecraft.world.level.Level aLevel) {
+				return false;
+			}
+
+			@Override
+			public net.minecraft.world.item.ItemStack assemble(net.minecraft.world.item.crafting.CraftingInput aInv, net.minecraft.core.HolderLookup.Provider aRegistries) {
+				return net.minecraft.world.item.ItemStack.EMPTY;
+			}
+
+			@Override
+			public boolean canCraftInDimensions(int aWidth, int aHeight) {
+				return true;
+			}
+
+			@Override
+			public net.minecraft.world.item.ItemStack getResultItem(net.minecraft.core.HolderLookup.Provider aRegistries) {
+				return net.minecraft.world.item.ItemStack.EMPTY;
+			}
+
+			@Override
+			public net.minecraft.world.item.crafting.RecipeSerializer<?> getSerializer() {
+				return net.minecraft.world.item.crafting.RecipeSerializer.SHAPELESS_RECIPE;
+			}
+
+			@Override
+			public net.minecraft.world.item.crafting.RecipeType<?> getType() {
+				return net.minecraft.world.item.crafting.RecipeType.CRAFTING;
+			}
+
+			// 21.1: Recipe.getId() moved to RecipeHolder — no id override on this leg
+
+			// the probe id face (forge leg rides Recipe.getId) is not part of the 1.21
+			// interface — the channel identity lives on the RecipeHolder wrapper there
+		};
+		NonNullList<ItemStack> tRemainders = tChannel.getRemainingItems(tGrid);
+		for (int i = 1; i < tRemainders.size(); i++) {
+			assertTrue(tRemainders.get(i).isEmpty(), "no side cells may produce remainders, saw one at " + i);
+		}
+		return tRemainders.get(0);
+	}
+	*///?}
 }

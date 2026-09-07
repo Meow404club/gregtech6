@@ -33,6 +33,16 @@ public class GTSawItem extends Item {
 	}
 
 	/**
+	 * The dispatch GATE — the review-mandated has/get pairing (S1 review id410), same
+	 * shape and rationale as {@link GT6FileItem#hasCraftingRemainingItem}: without it the
+	 * vanilla field test short-circuits the channel and every craft swallows the saw.
+	 */
+	@Override
+	public boolean hasCraftingRemainingItem(ItemStack aStack) {
+		return true;
+	}
+
+	/**
 	 * The container-item channel (upstream GT_Tool_Saw.java:65-67 via the :197 behavior
 	 * row) — the file's seam at the shared one-point mapping, see
 	 * {@link GT6FileItem#craftRemaining}.

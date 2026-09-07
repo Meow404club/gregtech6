@@ -58,6 +58,24 @@ public class GT6FileItem extends Item {
 	}
 
 	/**
+	 * The dispatch GATE for the container-item channel — the review-mandated twin of
+	 * {@link #getCraftingRemainingItem} (S1 review id410, the dead-gate fix): the real
+	 * crafting loop keys on {@code stack.hasCraftingRemainingItem()} first
+	 * (Recipe.getRemainingItems, the forge patch's ItemStack-sensitive shape), whose
+	 * extension default funnels to the vanilla {@code Item.craftingRemainingItem} FIELD
+	 * test (IForgeItem:253-256 → Item.java:244-246) — and the registration row
+	 * {@code Properties().durability(512)} leaves that field null, so an un-paired get
+	 * override would NEVER run and the tool would be swallowed whole by every craft.
+	 * Constant {@code true} keeps the gate open for the whole tool life; the wear-out
+	 * consumption lives in the GET face ({@link ItemStack#EMPTY} return = consumed),
+	 * exactly the GTCEu IGTTool.java:530-549 has+get pairing.
+	 */
+	@Override
+	public boolean hasCraftingRemainingItem(ItemStack aStack) {
+		return true;
+	}
+
+	/**
 	 * The container-item channel (upstream MultiItemTool.getContainerItem :532-540, the
 	 * GT_Tool_File :47-49 400-unit row) — the tool follows the crafted stack, one point
 	 * wearier, until a craft would push it past {@code maxDamage}, which consumes it.
