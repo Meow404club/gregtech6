@@ -24,12 +24,22 @@ class GTItemPaintTintTest extends GTOfflineRenderTestBase {
     /** A painted colour as the 03 base stores it (0xRRGGBB, the direct-storage ruling). */
     private static final int PAINT_RED = 0xFF0000;
 
-    /** A stack in the exact shape the loot copy_nbt leaves it: BlockEntityTag paint keys. */
+    /** A stack in the exact shape the leg's loot copy function leaves it (tag / CUSTOM_DATA envelope). */
     private static ItemStack lootCarriedStack(@Nullable Integer aColor, boolean aPainted) {
         ItemStack tStack = new ItemStack(Items.BRICKS, 1); // the seam reads the tag, item type irrelevant
+        //? if forge {
         CompoundTag tTag = tStack.getOrCreateTag();
+        //?} else {
+        /*net.minecraft.nbt.CompoundTag tTag = tStack.getOrDefault(
+                net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        *///?}
         tTag.putBoolean(TileEntityBase03TicksAndSync.NBT_PAINTED, aPainted);
         if (aColor != null) tTag.putInt(TileEntityBase03TicksAndSync.NBT_COLOR, aColor);
+        //? if neoforge {
+        /*tStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.of(tTag)); // the 21.1 copy_custom_data carrier
+        *///?}
         return tStack;
     }
 
