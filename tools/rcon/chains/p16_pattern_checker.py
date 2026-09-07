@@ -103,8 +103,16 @@ steps += [
     # THE hard assertion: the continuous source must finish all eight smelts
     # (32 EU x 1 A through the 2x wire = 32 progress/tick, 8 x 256 = 2048
     # progress = ~64 ticks). Poll-to-expect, chain RED on timeout.
-    Step(f"gt6oven check {F(OVEN)}",
-         expect="input=airx0 output=stonex8", poll=30.0),
+    # The out column renders via ItemStack.toString: plain on 1.20.1
+    # ("output=stonex8"), namespaced on 21.1 ("output=minecraft:stonex8") — the
+    # spanning two-field expect only matched the 1.20.1 form (the p23 s17
+    # 21.1-only format red; same drift as the p15 smoke M-phase out[0], whose
+    # bare-name substring is the precedent). The poll pins the product, the
+    # follow-up single shot pins the consumed input — both bare names match
+    # either rendering, so the forge leg's assertion is byte-identical in
+    # strength.
+    Step(f"gt6oven check {F(OVEN)}", expect="stonex8", poll=30.0),
+    Step(f"gt6oven check {F(OVEN)}", expect="airx0"),
 ]
 
 CHAIN = Chain(
