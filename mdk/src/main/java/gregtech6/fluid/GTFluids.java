@@ -26,6 +26,7 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 
 import gregtech6.GT6Mod;
+import gregtech6.item.spraycan.GTSprayCanItem;
 import gregtech6.registry.GTFluidPipes;
 
 /**
@@ -100,6 +101,14 @@ import gregtech6.registry.GTFluidPipes;
  * precedent), so its declared values are the honest FluidType defaults. The port
  * registers all four and pours all four Drying rows — the upstream
  * {@code FL.Sap.exists()} guard (:654) is live semantics over a registered fluid.
+ *
+ * <p>Dye-chemical family + chlorine (task p24-dye-chemical-fluids): sixteen WITH-BLOCK
+ * families {@code dye_chemical_<GTSprayCanItem.DYE_IDS[i]>} — the Canner refill input
+ * domain (Loader_Fluids.java:120-126), every tint the shared
+ * {@link GTSprayCanItem#DYES_INT}[i] table, one borrowed grayscale carrier PNG tinted per
+ * family — plus the standalone {@code chlorine} row (the material-gas-loop fluid the
+ * port's logic-only material system has no bridge for, ruling R3). See the
+ * {@link DyeChemicalFluid} block below for the full ruling map (R3/R4/R6).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTFluids {
@@ -448,6 +457,8 @@ public final class GTFluids {
 
 	private static final Map<String, RegistryObject<FlowingFluid>> SOURCE_SEAM = new LinkedHashMap<>();
 	private static final Map<String, RegistryObject<Fluid>> FLOWING_SEAM = new LinkedHashMap<>();
+	/** The block leg of the same seam (the dye-chemical rows carry a LiquidBlock; same registry-event-time discipline). */
+	private static final Map<String, RegistryObject<LiquidBlock>> BLOCK_SEAM = new LinkedHashMap<>();
 
 	/**
 	 * The nine engine-family registrations — one line per fluid family, data from
@@ -752,6 +763,219 @@ public final class GTFluids {
 		return List.of(SAP, MAPLESAP, REEDWATER, CACTUSWATER);
 	}
 
+	/**
+	 * {@code gt6:dye_chemical_<colour>} + {@code gt6:chlorine} — the Canner refill input
+	 * domain (task p24-dye-chemical-fluids, the ruling R3/R4/R6 of
+	 * decisions.p24-canner-dyes-rulings). Upstream the 16 chemical dyes ride the
+	 * {@code FL.create("dye.chemical." + colour, tDyeChemical, "Chemical " + DYE_NAMES[i]
+	 * + " Dye", null, DYES[i], 1, L, 300, ...)} loop (Loader_Fluids.java:120-126, the
+	 * DYE_FLUIDS_CHEMICAL[i] canonical = 144 mB per CS.java:129 L — R4: 1.7.10
+	 * FluidStack.amount IS mB, the port translates 1:1), and chlorine rides the material
+	 * gas loop (MT.Cl, MT.java:405 CONTAINERS_FLUID, boiling point 239 K) — a material
+	 * bridge the port's logic-only material system has no fluid side for, so chlorine is
+	 * registered here as the creosote-style standalone row (ruling R3).
+	 *
+	 * <p>Shape (ruling R6): the four-DR template WITH a LiquidBlock per family (the
+	 * iron_molten/natural_gas hand shape, table-driven over the shared seam maps) — 16
+	 * dye families + chlorine, no bucket item anywhere (the :161-163/:212-213 "No bucket
+	 * item" precedent, GTFluids registers no items at all — R6 census: zero bucket, so
+	 * zero item-tag face; the vanilla/forge fluid-tag surface has no dye/chlorine opt-in
+	 * either, and the repo carries no FluidTagsProvider — the tag ruling's "无则声明无"
+	 * arm, census 2026-09-07).
+	 *
+	 * <p>Colour source: the tint is EXACTLY {@link GTSprayCanItem#DYES_INT}[i] (CS.java:470
+	 * DYES_INT, the upstream FL.create aRGBa of the same loop) — zero new colour data, the
+	 * fluid index i is the same GT6 dye index the spray-can items are built from (ruling
+	 * R5: the three-way i ↔ DYES_INT[i] ↔ spray_paint_&lt;DYE_IDS[i]&gt; is the Canner
+	 * refill's correctness root, pinned by GTFluidsDyeChemicalFamilyTest). The still/flow
+	 * layers borrow the upstream grayscale carrier
+	 * {@code gt6:textures/block/fluids/dyes_chemical.png} (assets/gregtech/textures/blocks/
+	 * fluids/dyes.chemical.png byte-identical, the :115-117 single-texture shared still=flow
+	 * form, sha256 in assets/README.md) tinted per family; chlorine reuses the vanilla water
+	 * textures over the 0xF0FFFF tint (the RGB(0,240,255) upstream material colour, the
+	 * natural_gas :171-186 initializeClient shape).
+	 *
+	 * <p>Carrier values: the dyes ride 300 K (the FL.create temperature literal) with the
+	 * honest FluidType defaults density 1000 / viscosity 1000 (the water_boiling/food
+	 * precedent); chlorine carries temperature 239 K (MT.java:405 boiling point) and
+	 * density −100 (the natural_gas lightweight carrier, NOT an upstream measurement — the
+	 * creosote :206 port-owned carrier discipline). Both sit far under the wood-barrel
+	 * 340 K ceiling, so the RCON tank chain carries them.
+	 */
+	public static final class DyeChemicalFluid {
+		/** The GT6 dye index this family is ({@code 0..15}, the {@link GTSprayCanItem#DYE_IDS} row). */
+		public final int dyeIndex;
+		public final RegistryObject<FluidType> type;
+		public final RegistryObject<FlowingFluid> source;
+		public final RegistryObject<Fluid> flowing;
+		public final RegistryObject<LiquidBlock> block;
+
+		DyeChemicalFluid(int aDyeIndex, RegistryObject<FluidType> aType, RegistryObject<FlowingFluid> aSource,
+				RegistryObject<Fluid> aFlowing, RegistryObject<LiquidBlock> aBlock) {
+			dyeIndex = aDyeIndex; type = aType; source = aSource; flowing = aFlowing; block = aBlock;
+		}
+
+		/** The gt6 registry path — {@code dye_chemical_} + the {@link GTSprayCanItem#DYE_IDS}[i] snake id. */
+		public String name() {return dyeChemicalName(dyeIndex);}
+
+		/** The tint over the grayscale carrier — {@link GTSprayCanItem#DYES_INT}[i], the single colour source. */
+		public int tint() {return GTSprayCanItem.DYES_INT[dyeIndex];}
+
+		/** The en_us display — the upstream :123 compose verbatim, {@code "Chemical " + DYE_NAMES[i] + " Dye"}. */
+		public String displayName() {return "Chemical " + GTSprayCanItem.DYE_NAMES[dyeIndex] + " Dye";}
+
+		/** The lang/description key, the descriptionId the FluidType is registered with. */
+		public String descriptionId() {return "fluid.gt6." + name();}
+	}
+
+	/** The gt6 registry path of the dye index — {@code dye_chemical_} + the {@link GTSprayCanItem#DYE_IDS}[i] snake id (the port snake convention; the upstream 1.7.10 id folds "Light Gray" to "lightgray", the port ids stay the spray-can snake, the declared deviation). */
+	public static String dyeChemicalName(int aIndex) {
+		return "dye_chemical_" + GTSprayCanItem.DYE_IDS[aIndex];
+	}
+
+	/** The dye index of a gt6 registry path, or −1 (the inverse of {@link #dyeChemicalName}, the Canner seam). */
+	public static int dyeIndexOf(String aName) {
+		for (int i = 0; i < 16; i++) if (dyeChemicalName(i).equals(aName)) return i;
+		return -1;
+	}
+
+	/** The Loader_Fluids.java:123 FL.create temperature literal (300 K) — the declared carrier the FluidType registers with (the offline-readable test face). */
+	public static final int DYE_CHEMICAL_TEMPERATURE = 300;
+
+	/** The honest FluidType default density, declared explicitly (the water_boiling/food precedent). */
+	public static final int DYE_CHEMICAL_DENSITY = 1000;
+
+	/**
+	 * The shared per-family Properties for the dye-chemical rows — called at registry-event
+	 * time only (the engineFluid seam-map shape; the block handle rides {@link #BLOCK_SEAM},
+	 * populated before the registry event fires).
+	 */
+	private static ForgeFlowingFluid.Properties dyeChemicalProperties(RegistryObject<FluidType> aType, String aName) {
+		return new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aName), FLOWING_SEAM.get(aName))
+				.block(BLOCK_SEAM.get(aName));
+	}
+
+	/** The table-driven registration helper for one dye row: FluidType + Source/Flowing + LiquidBlock (the four-DR-with-block template). */
+	private static DyeChemicalFluid dyeChemicalFluid(int aIndex) {
+		String tName = dyeChemicalName(aIndex);
+		int tTint = GTSprayCanItem.DYES_INT[aIndex]; // the single colour source, captured once
+		RegistryObject<FluidType> tType = FLUID_TYPES.register(tName, () -> new FluidType(FluidType.Properties.create()
+				.descriptionId("fluid.gt6." + tName)
+				.temperature(DYE_CHEMICAL_TEMPERATURE) // the Loader_Fluids.java:123 FL.create literal
+				.density(DYE_CHEMICAL_DENSITY)         // the honest FluidType default, declared explicitly
+				.viscosity(1000)) {
+			@Override
+			public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+				aConsumer.accept(new IClientFluidTypeExtensions() {
+					// the upstream single grayscale carrier, still = flow (Loader_Fluids.java:115-117
+					// tDyeChemical shared by both layers; the PNG is the byte-identical borrow)
+					private static final ResourceLocation STILL =
+							ResourceLocation.fromNamespaceAndPath("gt6", "block/fluids/dyes_chemical");
+					private static final ResourceLocation FLOW = STILL;
+
+					@Override
+					public ResourceLocation getStillTexture() {return STILL;}
+
+					@Override
+					public ResourceLocation getFlowingTexture() {return FLOW;}
+
+					@Override
+					public int getTintColor() {return tTint;} // GTSprayCanItem.DYES_INT[aIndex] — zero new colour data
+				});
+			}
+		});
+		RegistryObject<FlowingFluid> tSource = FLUIDS.register(tName,
+				() -> new ForgeFlowingFluid.Source(dyeChemicalProperties(tType, tName)));
+		RegistryObject<Fluid> tFlowing = FLUIDS.register(tName + "_flowing",
+				() -> new ForgeFlowingFluid.Flowing(dyeChemicalProperties(tType, tName)));
+		RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
+				() -> new LiquidBlock(tSource, BlockBehaviour.Properties.of()
+						.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
+		SOURCE_SEAM.put(tName, tSource);
+		FLOWING_SEAM.put(tName, tFlowing);
+		BLOCK_SEAM.put(tName, tBlock);
+		return new DyeChemicalFluid(aIndex, tType, tSource, tFlowing, tBlock);
+	}
+
+	/**
+	 * MT.java:405 — chlorine's boiling point, the FluidType temperature carrier (the one
+	 * upstream-anchored chlorine value: {@code Cl 沸点 239K RGB(0,240,255)}).
+	 */
+	public static final int CHLORINE_TEMPERATURE = 239;
+
+	/** The lightweight-gas carrier (the natural_gas :169 precedent, port-owned — NOT an upstream measurement; sign-only consumers put it strictly above air). */
+	public static final int CHLORINE_DENSITY = -100;
+
+	/** The MT.java:405 material colour RGB(0,240,255) over the vanilla water textures (ruling R3). */
+	public static final int CHLORINE_TINT = 0xF0FFFF;
+
+	private static ForgeFlowingFluid.Properties chlorineProperties() {
+		// the four-DR template again (natural_gas :152-156 shape)
+		return new ForgeFlowingFluid.Properties(CHLORINE_TYPE, CHLORINE, CHLORINE_FLOWING)
+				.block(CHLORINE_BLOCK);
+	}
+
+	/**
+	 * {@code gt6:chlorine} — the standalone carrier row of ruling R3: upstream it is born
+	 * inside the material gas loop (Loader_Fluids.java:657-663 createGas over MT.Cl,
+	 * MT.java:405 CONTAINERS_FLUID) which the port's logic-only material system has no
+	 * fluid bridge for, so it rides the creosote independent-registration precedent. The
+	 * near-consumer (the remover refill, MultiItemRandomTools.java:272
+	 * {@code MT.Cl.fluid(16*U)} = 2304 mB) stays on the Canner machine card; until that
+	 * lands chlorine is a dead end — zero recipe rows consume it (the family test's
+	 * GT6RecipeMaps walk). Vanilla water textures + the 0xF0FFFF tint (the natural_gas
+	 * initializeClient shape); no bucket item.
+	 */
+	public static final RegistryObject<FluidType> CHLORINE_TYPE = FLUID_TYPES.register("chlorine",
+			() -> new FluidType(FluidType.Properties.create()
+					.descriptionId("fluid.gt6.chlorine")
+					.temperature(CHLORINE_TEMPERATURE)
+					.density(CHLORINE_DENSITY)) {
+				@Override
+				public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+					aConsumer.accept(new IClientFluidTypeExtensions() {
+						private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
+						private static final ResourceLocation FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
+
+						@Override
+						public ResourceLocation getStillTexture() {return STILL;}
+
+						@Override
+						public ResourceLocation getFlowingTexture() {return FLOW;}
+
+						@Override
+						public int getTintColor() {return CHLORINE_TINT;} // the MT.Cl material colour
+					});
+				}
+			});
+
+	public static final RegistryObject<FlowingFluid> CHLORINE = FLUIDS.register("chlorine",
+			() -> new ForgeFlowingFluid.Source(chlorineProperties()));
+
+	public static final RegistryObject<Fluid> CHLORINE_FLOWING = FLUIDS.register("chlorine_flowing",
+			() -> new ForgeFlowingFluid.Flowing(chlorineProperties()));
+
+	public static final RegistryObject<LiquidBlock> CHLORINE_BLOCK = BLOCKS.register("chlorine_block",
+			() -> new LiquidBlock(CHLORINE, BlockBehaviour.Properties.of()
+					.noCollission().noLootTable())); // a gas block: the natural_gas shape
+
+	/**
+	 * The 16 dye-chemical registrations — one line per dye index, tint from
+	 * {@link GTSprayCanItem#DYES_INT}, appended after the food block in the static-init
+	 * order (the DeferredRegister fields accumulate, the entries fire with the existing
+	 * {@link #onModConstruct}, types before fluids).
+	 */
+	public static final List<DyeChemicalFluid> DYE_CHEMICALS = List.of(
+			dyeChemicalFluid(0), dyeChemicalFluid(1), dyeChemicalFluid(2), dyeChemicalFluid(3),
+			dyeChemicalFluid(4), dyeChemicalFluid(5), dyeChemicalFluid(6), dyeChemicalFluid(7),
+			dyeChemicalFluid(8), dyeChemicalFluid(9), dyeChemicalFluid(10), dyeChemicalFluid(11),
+			dyeChemicalFluid(12), dyeChemicalFluid(13), dyeChemicalFluid(14), dyeChemicalFluid(15));
+
+	/** The family row of a dye index (the Canner refill seam, order = {@link GTSprayCanItem#DYE_IDS}). */
+	public static DyeChemicalFluid dyeChemical(int aIndex) {
+		return DYE_CHEMICALS.get(aIndex);
+	}
+
 	private GTFluids() {}
 
 	@SubscribeEvent
@@ -839,6 +1063,23 @@ public final class GTFluids {
 						tFamily.spec.density(),
 						tFamily.spec.displayName());
 			}
+			// task p24-dye-chemical-fluids — the dye-chemical family (with-block rows), the same
+			// smoke line shape plus the block key and the DYES_INT tint index face
+			for (DyeChemicalFluid tFamily : DYE_CHEMICALS) {
+				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (dye-chemical family, {}, dye index {})",
+						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
+						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
+						DYE_CHEMICAL_TEMPERATURE,
+						DYE_CHEMICAL_DENSITY,
+						ForgeRegistries.BLOCKS.getKey(tFamily.block.get()),
+						tFamily.displayName(),
+						tFamily.dyeIndex);
+			}
+			GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (chlorine — the p24 carrier, zero consumers until the Canner card)",
+					ForgeRegistries.FLUIDS.getKey(CHLORINE.get()),
+					ForgeRegistries.FLUIDS.getKey(CHLORINE_FLOWING.get()),
+					CHLORINE_TEMPERATURE,
+					CHLORINE_DENSITY);
 		});
 	}
 }
