@@ -12,13 +12,22 @@ import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
+import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraftforge.registries.RegistryObject;
+
+//? if forge {
+import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
+//?}
 
 import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
@@ -27,6 +36,7 @@ import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTWires;
+import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
  * Loot tables of the material prefix blocks (task p8-prefixblock-render spec ④). One
@@ -77,6 +87,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
+                new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK)), // task p19-stoneblocks-render
             lookupProvider);
          *///?} else {
@@ -90,6 +101,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
+                new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK))); // task p19-stoneblocks-render
         //?}
     }
@@ -381,7 +393,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The dryer-family self-drop provider (task p14-dryer-family). */
+    /** The dryer-family self-drop provider (task p14-dryer-family; the paint carry = task p22-painted-item-domain). */
     public static final class GT6DryerBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -402,7 +414,7 @@ public final class GT6LootTables extends LootTableProvider {
 
         @Override
         protected void generate() {
-            for (Block tBlock : dryerLootBlocks()) dropSelf(tBlock);
+            for (Block tBlock : dryerLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 
@@ -419,7 +431,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The distillery-family self-drop provider (task p16-distillery-family). */
+    /** The distillery-family self-drop provider (task p16-distillery-family; the paint carry = task p22-painted-item-domain). */
     public static final class GT6DistilleryBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -440,7 +452,122 @@ public final class GT6LootTables extends LootTableProvider {
 
         @Override
         protected void generate() {
-            for (Block tBlock : distilleryLootBlocks()) dropSelf(tBlock);
+            for (Block tBlock : distilleryLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The paint-carrying self-drop table — the machine-domain drop form (task
+     * p22-painted-item-domain): the vanilla {@code createSingleItemTable} shape verbatim
+     * (BlockLootSubProvider.java:108-111 — one pool, rolls 1, the {@code survives_explosion}
+     * condition, one item entry) plus ONE entry-level function carrying the placed-paint
+     * round trip: {@code copy_nbt} from the block entity into the dropped stack's
+     * {@code BlockEntityTag} compound, two REPLACE ops, exactly the paint keys
+     * {@code gt.color}/{@code gt.painted} (the CS.java:1161-1162 pair the 03 base writes
+     * while painted, TileEntityBase03TicksAndSync.saveAdditional). The op set is keyed
+     * off the BE's own constants (single decision site — the BE save and the loot copy can
+     * never drift). NOT the full BE NBT: upstream's getDrops writeItemNBT carries more
+     * (TileEntityBase04MultiTileEntities), but the paint domain is this card's only scope.
+     *
+     * <p>Placement read-back needs ZERO BlockItem code: vanilla
+     * {@code BlockItem.updateCustomBlockEntityTag(Level, Player, BlockPos, ItemStack)}
+     * (BlockItem.java:158-184) merges {@code BlockEntityTag} into the fresh BE, whose
+     * {@code load} rehydrates the two paint keys (TileEntityBase03TicksAndSync.load) — the
+     * GTBarrelBlockItem.placeBlock override shape becomes unnecessary here (the machine
+     * items are plain GTComposedNameItem extends BlockItem, no override).
+     *
+     * <p>Dual leg: 1.20.1 serializes the function as {@code minecraft:copy_nbt}; 1.20.5+
+     * renamed it to {@code CopyCustomDataFunction} ({@code minecraft:copy_custom_data},
+     * javap neoforge-21.1.249) — the node-forked {@link #paintCopyNbt()} keeps the same
+     * builder shape over the same ContextNbtProvider.BLOCK_ENTITY source. The canonical
+     * tracked tree is the 1.20.1-forge runData output (ADR-P17-1), the 1.21.1 leg's
+     * node-local output is validation-only, and 21.1 loot-runtime fidelity rides the
+     * declared loot deviation (build.neoforge.gradle.kts:218-221).
+     */
+    static LootTable.Builder paintSelfTable(ItemLike aItem) {
+        return LootTable.lootTable()
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .when(ExplosionCondition.survivesExplosion())
+                        .add(LootItem.lootTableItem(aItem).apply(paintCopyNbt())));
+    }
+
+    /**
+     * The paint carry function builder — the {@code copy_nbt} two-op form: REPLACE
+     * {@code gt.color} and {@code gt.painted} from the block-entity NBT into the item's
+     * {@code BlockEntityTag} compound (the vanilla chest/shulker placement convention —
+     * {@code BlockItem.getBlockEntityData} reads that key). The generated JSON shape:
+     * {@code {"function": "minecraft:copy_nbt", "source": "block_entity", "ops":
+     * [{"source": "gt.color", "target": "BlockEntityTag.gt.color", "op": "replace"}, ...]}}.
+     */
+    private static LootItemFunction.Builder paintCopyNbt() {
+        //? if neoforge {
+        /*return net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction
+                .copyData(ContextNbtProvider.BLOCK_ENTITY)
+                .copy(TileEntityBase03TicksAndSync.NBT_COLOR, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_COLOR,
+                        net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
+                .copy(TileEntityBase03TicksAndSync.NBT_PAINTED, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_PAINTED,
+                        net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE);
+         *///?} else {
+        return CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+                .copy(TileEntityBase03TicksAndSync.NBT_COLOR, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_COLOR,
+                        CopyNbtFunction.MergeStrategy.REPLACE)
+                .copy(TileEntityBase03TicksAndSync.NBT_PAINTED, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_PAINTED,
+                        CopyNbtFunction.MergeStrategy.REPLACE);
+        //?}
+    }
+
+    /**
+     * The machine-family block list (task p22-painted-item-domain): the 13 machine-domain
+     * blocks whose loot this NEW provider owns — the oven (1) + the shredder/crusher/lathe
+     * ladders (4 each = 12), the {@code GTMachines.paintableBlockArray()} census rows the
+     * dryer/distillery providers do NOT cover. Pre-existing state: these 13 shipped
+     * table-less (breaking dropped nothing — the default loot path {@code gt6:blocks/<path>}
+     * resolved to nothing); this card gives them the upstream MTE default self-drop
+     * (canDrop(0) == T) WITH the paint carry, completing the 21-table paint census with the
+     * dryer (4) + distillery (4) tables converted in place.
+     */
+    public static List<Block> machineLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        rBlocks.add(gregtech6.registry.GTMachines.OVEN.get());
+        for (RegistryObject<Block> tBlock : java.util.List.of(
+                gregtech6.registry.GTMachines.SHREDDER, gregtech6.registry.GTMachines.SHREDDER_T2,
+                gregtech6.registry.GTMachines.SHREDDER_T3, gregtech6.registry.GTMachines.SHREDDER_T4,
+                gregtech6.registry.GTMachines.CRUSHER, gregtech6.registry.GTMachines.CRUSHER_T2,
+                gregtech6.registry.GTMachines.CRUSHER_T3, gregtech6.registry.GTMachines.CRUSHER_T4,
+                gregtech6.registry.GTMachines.LATHE, gregtech6.registry.GTMachines.LATHE_T2,
+                gregtech6.registry.GTMachines.LATHE_T3, gregtech6.registry.GTMachines.LATHE_T4)) {
+            rBlocks.add(tBlock.get());
+        }
+        return rBlocks;
+    }
+
+    /**
+     * The machine-family provider (task p22-painted-item-domain): every block in
+     * {@link #machineLootBlocks()} drops its own item carrying the paint round-trip
+     * function ({@link #paintSelfTable}).
+     */
+    public static final class GT6MachineBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6MachineBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6MachineBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return machineLootBlocks(); // narrowed to exactly the 13 blocks this provider owns
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : machineLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 
