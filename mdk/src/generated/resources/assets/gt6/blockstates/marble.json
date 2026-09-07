@@ -1,52 +1,7 @@
 {
   "variants": {
-    "variant=bricks": {
-      "model": "gt6:block/stones/marble/bricks"
-    },
-    "variant=bricks_chiseled": {
-      "model": "gt6:block/stones/marble/bricks_chiseled"
-    },
-    "variant=bricks_cracked": {
-      "model": "gt6:block/stones/marble/bricks_cracked"
-    },
-    "variant=bricks_mossy": {
-      "model": "gt6:block/stones/marble/bricks_mossy"
-    },
-    "variant=bricks_redstone": {
-      "model": "gt6:block/stones/marble/bricks_redstone"
-    },
-    "variant=bricks_reinforced": {
-      "model": "gt6:block/stones/marble/bricks_reinforced"
-    },
-    "variant=cobble": {
-      "model": "gt6:block/stones/marble/cobble"
-    },
-    "variant=cobble_mossy": {
-      "model": "gt6:block/stones/marble/cobble_mossy"
-    },
-    "variant=small_bricks": {
-      "model": "gt6:block/stones/marble/small_bricks"
-    },
-    "variant=small_tiles": {
-      "model": "gt6:block/stones/marble/small_tiles"
-    },
-    "variant=smooth": {
-      "model": "gt6:block/stones/marble/smooth"
-    },
-    "variant=square_bricks": {
-      "model": "gt6:block/stones/marble/square_bricks"
-    },
-    "variant=stone": {
+    "": {
       "model": "gt6:block/stones/marble/stone"
-    },
-    "variant=tiles": {
-      "model": "gt6:block/stones/marble/tiles"
-    },
-    "variant=windmill_tiles_a": {
-      "model": "gt6:block/stones/marble/windmill_tiles_a"
-    },
-    "variant=windmill_tiles_b": {
-      "model": "gt6:block/stones/marble/windmill_tiles_b"
     }
   }
 }

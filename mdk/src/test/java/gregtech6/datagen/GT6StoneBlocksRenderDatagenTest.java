@@ -1,7 +1,9 @@
 /**
- * Offline tests for task p19-stoneblocks-render: the 272-PNG borrow census, the generated
- * model-key census (17x16), and the generated loot-table existence — the
- * {@link GT6PrefixBlockRenderDatagenTest} split verbatim (the enumeration side walks
+ * Offline tests for task p21-stoneblocks-16item-registry-split (the p19-stoneblocks-render
+ * pins re-keyed to the per-pair registry): the 272-PNG borrow census, the generated
+ * blockstate/item-model/loot census (272 per-pair JSONs each), and the loot FORM pin
+ * (variant-0 table drops the same stone's COBBL variant item, the other 271 dropSelf) —
+ * the {@link GT6PrefixBlockRenderDatagenTest} split verbatim (the enumeration side walks
  * {@link gregtech6.registry.GTStoneBlocks#registrationOrder()}, the generated-JSON side is
  * asserted against the committed src/generated tree; the write side is gated by runData:
  * first run written&gt;0, second run written:0).
@@ -101,42 +103,39 @@ class GT6StoneBlocksRenderDatagenTest {
         assertEquals(tReferenced, tFound, "the borrow is 1:1 with the walk — zero strays, zero gaps");
     }
 
-    /** The generated blockstate JSON of one stone (committed tree, test classpath). */
-    private static JsonObject blockstate(String aSnake) throws Exception {
+    /** The generated blockstate JSON of one composite path (committed tree, test classpath). */
+    private static JsonObject blockstate(String aPath) throws Exception {
         try (InputStream tStream = GT6StoneBlocksRenderDatagenTest.class.getClassLoader()
-                .getResourceAsStream("assets/gt6/blockstates/" + aSnake + ".json")) {
-            assertNotNull(tStream, "the generated blockstate must be on the classpath: " + aSnake);
+                .getResourceAsStream("assets/gt6/blockstates/" + aPath + ".json")) {
+            assertNotNull(tStream, "the generated blockstate must be on the classpath: " + aPath);
             return JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
         }
     }
 
     /**
-     * The generated MODEL-KEY census (17x16): every stone's blockstate carries exactly the 16
-     * {@code variant=<snake>} rows in meta order, and every row's model key is the dedicated
-     * {@code gt6:block/stones/<stone>/<variant>} (one model per texture — the merge rule is
-     * degenerate here, the textures are per-pair dedicated color PNGs, NO tintindex).
+     * The generated BLOCKSTATE census (272, the per-pair split): every (stone, variant) pair
+     * has its OWN property-free single-state blockstate at the composite id path (variant 0
+     * keeps the bare snake, the other 15 suffix the variant segment — {@code path()}), whose
+     * lone {@code ""} row points at the pair's dedicated
+     * {@code gt6:block/stones/<stone>/<variant>} model. The P19 16-row
+     * {@code variant=<snake>} form is retired with the EnumProperty.
      */
     @Test
-    void generatedBlockstatesCarryAllSixteenVariantModelKeys() throws Exception {
+    void generatedBlockstatesArePerPairSingleState() throws Exception {
         assertEquals(GTStoneBlocks.STONES.size() * VARIANTS_PER_STONE, PINNED_PNG_TOTAL,
-                "the model-key census equals the PNG census (one texture per key)");
-        for (GTStoneBlocks.StoneSpec tStone : GTStoneBlocks.STONES) {
-            JsonObject tState = blockstate(tStone.snake());
-            assertTrue(tState.has("variants"), tStone.snake() + ": the plain-variants form (no multipart)");
+                "the blockstate census equals the PNG census (one state per borrowed texture)");
+        for (GTStoneBlocks.VariantKey tKey : GTStoneBlocks.registrationOrder()) {
+            String tPath = GTStoneBlocks.path(tKey.stone().snake(), tKey.variant());
+            JsonObject tState = blockstate(tPath);
+            assertTrue(tState.has("variants"), tPath + ": the plain-variants form (no multipart)");
             var tVariants = tState.getAsJsonObject("variants");
-            assertEquals(VARIANTS_PER_STONE, tVariants.size(), tStone.snake() + ": 16 variant rows");
-            int tIndex = 0;
-            for (StoneVariant tVariant : StoneVariant.VALUES) {
-                String tKey = "variant=" + tVariant.snake;
-                assertTrue(tVariants.has(tKey), tStone.snake() + " missing row " + tKey);
-                JsonObject tModel = tVariants.getAsJsonObject(tKey); // single-model rows serialize as an object (the vanilla VariantSelector form)
-                assertEquals("gt6:block/stones/" + tStone.snake() + "/" + tVariant.snake,
-                        tModel.get("model").getAsString(), tStone.snake() + " row " + tKey + " model key");
-                assertTrue(!tModel.has("x") && !tModel.has("y") && !tModel.has("uvlock"),
-                        tStone.snake() + " row " + tKey + ": a plain cube_all, no rotation");
-                assertEquals(tIndex, tVariant.meta(), "walk order == meta order");
-                tIndex++;
-            }
+            assertEquals(1, tVariants.size(), tPath + ": exactly the default \"\" row (property-free block)");
+            assertTrue(tVariants.has(""), tPath + ": the row key is the default state");
+            JsonObject tModel = tVariants.getAsJsonObject(""); // single-model rows serialize as an object
+            assertEquals("gt6:block/stones/" + tKey.stone().snake() + "/" + tKey.variant().snake,
+                    tModel.get("model").getAsString(), tPath + " row \"\" model key");
+            assertTrue(!tModel.has("x") && !tModel.has("y") && !tModel.has("uvlock"),
+                    tPath + ": a plain cube_all, no rotation");
         }
     }
 
@@ -164,56 +163,64 @@ class GT6StoneBlocksRenderDatagenTest {
     }
 
     /**
-     * The 17 generated item models parent the variant-0 (STONE) block model — the spec ①
-     * single-parent form; per-state item looks stay the declared deviation.
+     * The 272 generated item models each parent their OWN block model — the per-pair face
+     * (the P19 "inventory shows the STONE look for every state" single-parent deviation is
+     * RETIRED: one item id per variant shows its own variant's look, the upstream 1.7.10
+     * ItemBlock per-meta icon face).
      */
     @Test
-    void generatedItemModelsParentTheStoneVariantModel() throws Exception {
-        for (GTStoneBlocks.StoneSpec tStone : GTStoneBlocks.STONES) {
-            String tPath = "assets/gt6/models/item/" + tStone.snake() + ".json";
+    void generatedItemModelsParentTheirOwnPairModel() throws Exception {
+        for (GTStoneBlocks.VariantKey tKey : GTStoneBlocks.registrationOrder()) {
+            String tPath = "assets/gt6/models/item/" + GTStoneBlocks.path(tKey.stone().snake(), tKey.variant()) + ".json";
             try (InputStream tStream = GT6StoneBlocksRenderDatagenTest.class.getClassLoader().getResourceAsStream(tPath)) {
                 assertNotNull(tStream, "the generated item model must be on the classpath: " + tPath);
                 JsonObject tModel = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
-                assertEquals("gt6:block/stones/" + tStone.snake() + "/" + StoneVariant.STONE.snake,
-                        tModel.get("parent").getAsString(), tStone.snake() + ": item parents the STONE block model");
+                assertEquals("gt6:block/stones/" + tKey.stone().snake() + "/" + tKey.variant().snake,
+                        tModel.get("parent").getAsString(), tKey + ": item parents its OWN pair block model");
             }
         }
     }
 
     /**
-     * The 17 generated loot tables exist at the vanilla default location and are the dropSelf
-     * shape (the GT6WireLootLaserTest yardstick). Declared collapse pinned here: the table is
-     * per BLOCK and self-dropping — upstream BlockStones.java:731 swaps variant STONE's drop
-     * to COBBL, but this port has ONE item id per stone, so both outcomes are the same
-     * ItemStack and dropSelf is the collapsed equivalent (GT6LootTables.stoneLootBlocks doc).
+     * The 272 generated loot tables exist at the vanilla default per-block location and pin
+     * the BlockStones.java:731 FORM (the p21 loot ruling): the variant-0 table's single pool
+     * entry is the SAME STONE's COBBL variant item ({@code gt6:<snake>_cobble} — the :731
+     * {@code aMeta == STONE ? COBBL : aMeta} swap, direct-translated now that the variant
+     * item ids exist), and every other table drops itself. The P19 declared collapse
+     * ("stone-yields-cobble unrecoverable without splitting 16 items per stone") closes here.
      */
     @Test
-    void generatedLootTablesAreSelfDropPerStone() throws Exception {
-        for (GTStoneBlocks.StoneSpec tStone : GTStoneBlocks.STONES) {
-            String tPath = "data/gt6/loot_tables/blocks/" + tStone.snake() + ".json";
-            try (InputStream tStream = GT6StoneBlocksRenderDatagenTest.class.getClassLoader().getResourceAsStream(tPath)) {
+    void generatedLootTablesPinTheCobbleSwapAndSelfDrops() throws Exception {
+        for (GTStoneBlocks.VariantKey tKey : GTStoneBlocks.registrationOrder()) {
+            String tPath = GTStoneBlocks.path(tKey.stone().snake(), tKey.variant());
+            try (InputStream tStream = GT6StoneBlocksRenderDatagenTest.class.getClassLoader()
+                    .getResourceAsStream("data/gt6/loot_tables/blocks/" + tPath + ".json")) {
                 assertNotNull(tStream, "the generated loot table must be on the classpath: " + tPath);
                 JsonObject tLoot = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
-                assertEquals("minecraft:block", tLoot.get("type").getAsString(), tStone.snake() + ": the BLOCK param set");
-                assertEquals("gt6:blocks/" + tStone.snake(), tLoot.get("random_sequence").getAsString(),
-                        tStone.snake() + ": the vanilla default table location, zero block code");
-                var tPool = tLoot.getAsJsonArray("pools").get(0).getAsJsonObject();
-                assertEquals("gt6:" + tStone.snake(),
-                        tPool.getAsJsonArray("entries").get(0).getAsJsonObject().get("name").getAsString(),
-                        tStone.snake() + ": drops itself (the :731 meta swap collapses to the same item id)");
+                assertEquals("minecraft:block", tLoot.get("type").getAsString(), tPath + ": the BLOCK param set");
+                assertEquals("gt6:blocks/" + tPath, tLoot.get("random_sequence").getAsString(),
+                        tPath + ": the vanilla default table location, zero block code");
+                String tDropped = tLoot.getAsJsonArray("pools").get(0).getAsJsonObject()
+                        .getAsJsonArray("entries").get(0).getAsJsonObject().get("name").getAsString();
+                if (tKey.variant() == StoneVariant.STONE) {
+                    assertEquals("gt6:" + tKey.stone().snake() + "_" + StoneVariant.COBBL.snake, tDropped,
+                            tPath + ": the :731 swap — variant 0 yields the SAME STONE's COBBL variant item");
+                } else {
+                    assertEquals("gt6:" + tPath, tDropped, tPath + ": drops itself (the :731 self arm)");
+                }
             }
         }
     }
 
     /**
      * The offline side of the loot 1:1 rule (the p8 form): {@link GT6LootTables#stoneLootBlocks()}
-     * snapshots {@link GTStoneBlocks#blockArray()} — both empty in this headless JVM, both 17
-     * in the datagen JVM.
+     * snapshots {@link GTStoneBlocks#blockArray()} — both empty in this headless JVM, both
+     * 272 in the datagen JVM.
      */
     @Test
     void stoneLootBlocksMirrorTheBlockArray() {
         assertEquals(GTStoneBlocks.STONES.size(), 17, "the 17-stone CS.java:1668 census");
         assertEquals(GTStoneBlocks.blockArray().size(), GT6LootTables.stoneLootBlocks().size(),
-                "stoneLootBlocks is a snapshot of the block array (both empty offline, both 17 in the datagen JVM)");
+                "stoneLootBlocks is a snapshot of the block array (both empty offline, both 272 in the datagen JVM)");
     }
 }

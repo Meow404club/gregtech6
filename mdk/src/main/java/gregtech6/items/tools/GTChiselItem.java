@@ -17,7 +17,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraftforge.common.ToolAction;
 
 import gregtech6.block.stone.GTStoneBlock;
-import gregtech6.block.stone.StoneVariant;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.GT6RecipesStoneChisel;
 import gregtech6.recipes.Recipe;
@@ -180,9 +179,12 @@ public class GTChiselItem extends Item {
 	 * }
 	 * </pre>
 	 *
-	 * The variant domain rides the {@link GT6RecipesStoneChisel#VARIANT_TAG} stack tag (the
-	 * pour writes it on both legs of every GT stone row; the clicked BlockState encodes into
-	 * a tagged probe stack and the matched output decodes back into a BlockState). The
+	 * The variant domain rides the item identity since task p21 (one block+item per
+	 * (stone, variant) pair), with the {@link GT6RecipesStoneChisel#VARIANT_TAG} stack tag
+	 * kept as the offline synthetic-item separator (the pour writes it on both legs of
+	 * every GT stone row; the clicked BlockState encodes into a tagged probe stack via the
+	 * block's fixed variant, and the matched output decodes back through its own
+	 * BlockItem's block). The
 	 * payment is the SAME {@link #payPerPoint} conversion as the decalcify arm: the :228
 	 * {@code return 10000} costs {@link #durabilityPoints}(10000) = 25 vanilla points — the
 	 * two arms coexist on the two separate payment faces exactly as upstream. A null player
@@ -266,8 +268,12 @@ public class GTChiselItem extends Item {
 
 	/**
 	 * The :225 {@code WD.stack(world, x, y, z)} — the clicked block's item form; a GT stone
-	 * family encodes its BlockState variant into the stack tag, other blocks stay plain.
-	 * Null when the block has no item form (the :226 gate).
+	 * block IS one (stone, variant) pair since task p21-stoneblocks-16item-registry-split,
+	 * so the item identity already separates the variants — the stack tag still rides along
+	 * (written from the block's fixed variant) to keep the offline synthetic-item universe
+	 * (one item standing for every GT stone leg) exactly-tag-separated as the p19 card
+	 * landed it. Other blocks stay plain. Null when the block has no item form (the :226
+	 * gate).
 	 */
 	@Nullable
 	public static ItemStack stackFromState(@Nullable BlockState aState) {
@@ -275,26 +281,23 @@ public class GTChiselItem extends Item {
 		Item tItem = aState.getBlock().asItem();
 		if (tItem == net.minecraft.world.item.Items.AIR) return null;
 		ItemStack tStack = new ItemStack(tItem, 1);
-		if (aState.getBlock() instanceof GTStoneBlock) {
-			GT6RecipesStoneChisel.withVariant(tStack, aState.getValue(GTStoneBlock.VARIANT));
+		if (aState.getBlock() instanceof GTStoneBlock tStone) {
+			GT6RecipesStoneChisel.withVariant(tStack, tStone.variant);
 		}
 		return tStack;
 	}
 
 	/**
 	 * The :228 {@code WD.set} decode half — the recipe output stack back into a BlockState:
-	 * the BlockItem's block, default state, upgraded with the carried variant when the
-	 * block carries the stone variant property. Null when the stack has no block form.
+	 * the BlockItem's block, whose default state IS the variant since task p21 (one block
+	 * per (stone, variant) pair — the p19 property-upgrade arm retired with the
+	 * EnumProperty; the carried tag needs no decode, the item identity decides). Null when
+	 * the stack has no block form.
 	 */
 	@Nullable
 	public static BlockState stateFromStack(@Nullable ItemStack aStack) {
 		if (aStack == null || !(aStack.getItem() instanceof BlockItem tBlockItem)) return null;
-		BlockState tState = tBlockItem.getBlock().defaultBlockState();
-		StoneVariant tVariant = GT6RecipesStoneChisel.variantOf(aStack);
-		if (tVariant != null && tState.hasProperty(GTStoneBlock.VARIANT)) {
-			tState = tState.setValue(GTStoneBlock.VARIANT, tVariant);
-		}
-		return tState;
+		return tBlockItem.getBlock().defaultBlockState();
 	}
 
 	/**

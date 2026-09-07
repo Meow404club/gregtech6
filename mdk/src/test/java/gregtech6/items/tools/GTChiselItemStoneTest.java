@@ -266,9 +266,11 @@ class GTChiselItemStoneTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The GT stone variant domain: the tag roundtrip pins the carrier, and the probe block's
-	 * state plane proves the VARIANT property decode the gate lands after {@code stateFromStack}
-	 * (the offline wall above keeps the full block path to the RCON live arm).
+	 * The GT stone variant domain: the tag roundtrip pins the carrier, and the probe block
+	 * pins the p21 per-pair plane — one block per (stone, variant), NO blockstate property
+	 * any more (the P19 EnumProperty retired), the variant riding the block instance
+	 * (stackFromState writes it into the tag; stateFromStack decodes through the BlockItem's
+	 * own block — the full block path stays with the RCON live arm, the offline wall above).
 	 */
 	@Test
 	void gtStoneVariantCarrierAndStatePlane() {
@@ -278,9 +280,9 @@ class GTChiselItemStoneTest extends GTRecipesOfflineTestBase {
 		assertEquals(StoneVariant.CHISL, GT6RecipesStoneChisel.variantByName("bricks_chiseled"),
 				"the serialized name decodes through the same table");
 
-		GTStoneBlock tProbe = new GTStoneBlock("granite_black", null, 1.0F, 1.0F, 0, false); // the W1 offline probe shape
-		BlockState tChisl = tProbe.defaultBlockState().setValue(GTStoneBlock.VARIANT, StoneVariant.CHISL);
-		assertEquals(StoneVariant.CHISL, tChisl.getValue(GTStoneBlock.VARIANT), "the state plane carries the variant");
-		assertTrue(tChisl != tProbe.defaultBlockState(), "the variant state differs from the default");
+		GTStoneBlock tProbe = new GTStoneBlock("granite_black", StoneVariant.CHISL, null, 1.0F, 1.0F, 0, false); // the p21 per-pair probe shape
+		assertEquals(StoneVariant.CHISL, tProbe.variant, "the block carries its FIXED variant");
+		assertTrue(tProbe.defaultBlockState().getProperties().isEmpty(),
+				"the p21 block is a pure block — the P19 variant property is retired");
 	}
 }

@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:andesite"
+          "name": "gt6:andesite_cobble"
         }
       ],
       "rolls": 1.0

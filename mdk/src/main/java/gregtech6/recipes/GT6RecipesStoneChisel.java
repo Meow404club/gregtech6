@@ -67,17 +67,18 @@ import gregtech6.registry.GTStoneBlocks;
  * {@code Blocks.STONE_BRICKS → Blocks.CRACKED_STONE_BRICKS}.</li>
  * </ul>
  *
- * <p><b>The variant carrier</b> (the declared port-ism): upstream the rows live in the
- * 1.7.10 item-damage domain ({@code ST.make(block, 1, meta)}); 1.20.1 has no metadata, and
- * one GT stone family is ONE registered Block with 16 {@link StoneVariant} states behind an
- * EnumProperty — a plain {@code new ItemStack(blockItem)} cannot tell the variants apart,
- * and {@link RecipeMap#findRecipe} matches through {@link Recipe}'s item+tag equality. The
- * port therefore encodes the variant in a stack tag ({@link #VARIANT_TAG}): the pour writes
- * it on both legs of every GT stone row ({@link #withVariant}), and the sole findRecipe
- * consumer — the {@code GTChiselItem} right-click gate (the ToolCompat.java:224-229
- * transcription) — reads it back from the clicked BlockState and from the matched recipe's
- * output ({@link #variantOf}). Vanilla rows carry no tag: the recipe inputs' tags are empty
- * so the equality falls back to plain item identity, the upstream damage-0 behaviour.
+ * <p><b>The variant carrier</b> (the declared port-ism, evolved by task
+ * p21-stoneblocks-16item-registry-split): upstream the rows live in the 1.7.10 item-damage
+ * domain ({@code ST.make(block, 1, meta)}). At the p19 landing one GT stone family was ONE
+ * registered Block, so the port encoded the variant in a stack tag ({@link #VARIANT_TAG}).
+ * Task p21 split the registry per-pair — one Block+BlockItem per (stone, variant), the id
+ * scheme riding {@link GTStoneBlocks#path} — so LIVE, each row leg now resolves its own
+ * variant item and the item identity alone separates the domain. The tag STILL rides on
+ * both legs of every GT stone row ({@link #withVariant}): it is the offline domain
+ * separator (the synthetic-item test universe stands ONE item in for every GT stone leg,
+ * only the tag tells the rows apart) and a defensive decode face. Vanilla rows carry no
+ * tag: the recipe inputs' tags are empty so the equality falls back to plain item
+ * identity, the upstream damage-0 behaviour.
  * The encoders live here (the pour is the writer side of the contract); the gate consumes
  * them so the tag key has exactly one definition site.
  *
@@ -165,14 +166,19 @@ public final class GT6RecipesStoneChisel {
 	 * The resolution seam: the live registry lookups by default (the GTStoneBlocks.get seam
 	 * shape), fixtures injected offline (no registry access offline — the GT6RecipesShCL
 	 * synthetic-item convention). Public as the cross-package offline test seam (the
-	 * GTChiselItem.sPayPerPointCalls one-notch visibility precedent).
+	 * GTChiselItem.sPayPerPointCalls one-notch visibility precedent). The argument is the
+	 * <b>composite id path</b> ({@link GTStoneBlocks#path}: variant 0 = the bare snake,
+	 * the other 15 = {@code snake_<variant>}) — task p21 splits one item per variant, so
+	 * each row leg resolves its OWN variant item (live); offline both legs of a row collapse
+	 * onto the injected item and only the variant tag separates them (the declared port-ism
+	 * below).
 	 */
 	public static Function<String, Item> sStoneItemResolver = GT6RecipesStoneChisel::resolveStoneItem;
 
-	/** The live item lookup of a stone snake id — null before registration. */
+	/** The live item lookup of a composite stone path ({@link GTStoneBlocks#path} form) — null before registration. */
 	@Nullable
-	private static Item resolveStoneItem(String aSnake) {
-		RegistryObject<Item> tHandle = GTStoneBlocks.item(aSnake);
+	private static Item resolveStoneItem(String aPath) {
+		RegistryObject<Item> tHandle = GTStoneBlocks.item(aPath);
 		return tHandle == null ? null : tHandle.get();
 	}
 
@@ -302,7 +308,8 @@ public final class GT6RecipesStoneChisel {
 	/** StackSpec → ItemStack (variant-tagged for GT stone legs), or null when the item fails to resolve. */
 	@Nullable
 	static ItemStack buildStack(StackSpec aSpec) {
-		Item tItem = aSpec.vanilla() != null ? aSpec.vanilla().get() : sStoneItemResolver.apply(aSpec.stoneSnake());
+		Item tItem = aSpec.vanilla() != null ? aSpec.vanilla().get()
+				: sStoneItemResolver.apply(GTStoneBlocks.path(aSpec.stoneSnake(), aSpec.variant()));
 		if (tItem == null) return null;
 		ItemStack tStack = new ItemStack(tItem, 1);
 		if (aSpec.variant() != null) withVariant(tStack, aSpec.variant());

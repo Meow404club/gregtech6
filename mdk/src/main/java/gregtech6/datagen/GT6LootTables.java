@@ -437,25 +437,23 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The stone-family block list (task p19-stoneblocks-render): the 17 GTStoneBlock
-     * registrations ({@link gregtech6.registry.GTStoneBlocks#blockArray()}, the CS.java:1668
-     * order). Upstream drops come from the BlockStones.getDrops override
-     * (BlockStones.java:731): {@code ST.make(this, 1, aMeta == STONE ? COBBL : aMeta)} — the
-     * classic stone-yields-cobble rule for variant 0, self for the other 15 variants. In
-     * THIS port's registration shape (one BlockItem per stone, no per-variant item ids) the
-     * two outcomes are the SAME ItemStack — the "COBBL variant item" does not exist as a
-     * distinct id, so the meta distinction collapses and the faithful equivalent is
-     * {@code dropSelf} for every block. Declared collapse (not a silent cut): the
-     * stone-yields-cobble behaviour is unrecoverable without splitting 16 items per stone —
-     * a registry-shape change outside this card's FILES_SCOPE, pool item. The table is per
-     * BLOCK (all 16 states share it, the vanilla default {@code gt6:blocks/<path>} location),
-     * mirroring upstream where one BlockStones serves all 16 metas.
+     * The stone-family block list (task p21-stoneblocks-16item-registry-split): the 272
+     * per-pair GTStoneBlock registrations ({@link gregtech6.registry.GTStoneBlocks#blockArray()},
+     * stone-major in CS.java:1668 order, variant-major in meta order). Upstream drops come
+     * from the BlockStones.getDrops override (BlockStones.java:731): {@code ST.make(this, 1,
+     * aMeta == STONE ? COBBL : aMeta)} — the classic stone-yields-cobble rule for variant 0,
+     * self for the other 15 variants. The P19 pool item ("unrecoverable without splitting 16
+     * items per stone", GT6LootTables.java:439-456 as it stood) closes HERE: with one
+     * BlockItem per (stone, variant), the variant-0 block's table drops the SAME STONE's
+     * COBBL variant item (a single pool, {@code dropOther}) and the other 271 blocks
+     * {@code dropSelf} — the :731 line direct-translated, no collapse left. Each table lives
+     * at the vanilla default per-BLOCK location {@code gt6:blocks/<path>} (zero block code).
      */
     public static List<Block> stoneLootBlocks() {
         return gregtech6.registry.GTStoneBlocks.blockArray();
     }
 
-    /** The stone-family self-drop provider (task p19-stoneblocks-render). */
+    /** The stone-family provider (task p19-stoneblocks-render, loot semantics completed by task p21). */
     public static final class GT6StoneBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -471,12 +469,23 @@ public final class GT6LootTables extends LootTableProvider {
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return stoneLootBlocks();
+            return stoneLootBlocks(); // narrowed to exactly the 272 blocks this provider owns
         }
 
         @Override
         protected void generate() {
-            for (Block tBlock : stoneLootBlocks()) dropSelf(tBlock); // the P8 self-drop direct translation
+            for (Block tBlock : stoneLootBlocks()) {
+                gregtech6.block.stone.GTStoneBlock tStone = (gregtech6.block.stone.GTStoneBlock)tBlock;
+                if (tStone.variant == gregtech6.block.stone.StoneVariant.STONE) {
+                    // BlockStones.java:731 verbatim — variant 0 yields the SAME STONE's COBBL
+                    // variant item (its own registry id is gt6:<snake>, the cobble item's is
+                    // gt6:<snake>_cobble); dropOther = one unconditional single-item pool.
+                    dropOther(tBlock, gregtech6.registry.GTStoneBlocks
+                            .item(tStone.stoneSnake, gregtech6.block.stone.StoneVariant.COBBL).get());
+                } else {
+                    dropSelf(tBlock); // the :731 self arm, one table per variant block
+                }
+            }
         }
     }
 }

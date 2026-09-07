@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:quartzite"
+          "name": "gt6:quartzite_cobble"
         }
       ],
       "rolls": 1.0
