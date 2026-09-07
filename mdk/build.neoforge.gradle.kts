@@ -17,6 +17,7 @@ version = property("mod_version").toString()
 val modId = property("mod_id").toString()
 val mcVer = property("deps.minecraft").toString()
 val jeiVer = property("jei_version").toString()
+val jadeVer = property("jade_version").toString()
 
 // 共享锚点：控制器项目目录（mdk/），即节点共享资源/模板/datagen 产物的真实位置。
 val sharedDir = parent!!.projectDir
@@ -27,6 +28,11 @@ repositories {
     maven {
         name = "blamejared"
         url = uri("https://maven.blamejared.com/")
+    }
+    // Jade（task p21-jade-compat）：Modrinth maven，jade 双腿唯一分发渠道。
+    maven {
+        name = "Modrinth"
+        url = uri("https://api.modrinth.com/maven")
     }
 }
 
@@ -152,6 +158,12 @@ dependencies {
     compileOnly("mezz.jei:jei-${mcVer}-common-api:${jeiVer}")
     compileOnly("mezz.jei:jei-${mcVer}-neoforge-api:${jeiVer}")
     runtimeOnly("mezz.jei:jei-${mcVer}-neoforge:${jeiVer}")
+    // Jade（WAILA 后继，task p21-jade-compat）：与本节点 JEI 段同构——NeoForge 1.20.5+ 发行 mod
+    // 本就以 official（mojmap）命名运行、无重映射步，compileOnly（编译面）+ runtimeOnly（run
+    // 类路径，专用服务端冒烟依赖它）。版本钉值 mdk/versions/1.21.1-neoforge/gradle.properties
+    // jade_version（15.10.6+neoforge，节点遮蔽根钉值，同 jei_version 先例）。
+    compileOnly("maven.modrinth:jade:${jadeVer}")
+    runtimeOnly("maven.modrinth:jade:${jadeVer}")
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

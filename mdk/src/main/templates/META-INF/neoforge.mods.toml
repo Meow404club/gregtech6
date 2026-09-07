@@ -26,3 +26,15 @@ type = "required"
 versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "BOTH"
+
+# Jade（task p21-jade-compat）：optional 运行时兼容。NeoForge 1.20.5+ 键形 type="optional"
+# （本模板 mandatory=true→type="required" 的镜像）；ordering=NONE/side=BOTH 照抄 GTCEu Modern。
+# 声明偏离 GTCEu：versionRange 硬编码 [15,) 不走 jade_version 属性插值（generateModMetadata
+# 对注释内占位符也会展开，见 p21 冒烟实证）——钉值带 +neoforge 后缀进 TOML Maven 区间
+# 是未测边界；15 = Jade 1.21.1 NeoForge 大线地板。
+[[dependencies.${mod_id}]]
+modId = "jade"
+type = "optional"
+versionRange = "[15,)"
+ordering = "NONE"
+side = "BOTH"

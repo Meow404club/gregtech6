@@ -22,3 +22,15 @@ mandatory = true
 versionRange = "${minecraft_version}"
 ordering = "NONE"
 side = "BOTH"
+
+# Jade（task p21-jade-compat）：optional 运行时兼容，条目形照抄 GTCEu Modern
+# templates/META-INF/mods.toml:68-72（mandatory=false/ordering=NONE/side=BOTH）。
+# 声明偏离 GTCEu：versionRange 硬编码 [11,) 不走 jade_version 属性插值（generateModMetadata
+# 对注释内占位符也会展开，见 p21 冒烟实证）——模板每腿一份，且钉值带 +forge 后缀进
+# TOML Maven 区间是未测边界；11 = Jade 1.20.1 Forge 大线地板。
+[[dependencies.${mod_id}]]
+modId = "jade"
+mandatory = false
+versionRange = "[11,)"
+ordering = "NONE"
+side = "BOTH"
