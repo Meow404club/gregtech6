@@ -50,14 +50,21 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	private static Function<String, Fluid> sDefaultFluidResolver;
 
 	/**
-	 * The offline fixture: every REGISTERED fluid id — water, distw, the six
-	 * p16-aqua-fluids ids and the two p19 simple-liquid ids — resolves to the vanilla
-	 * water fluid (the recipe mechanics only compare identities — the GTEngineFuelsTest
-	 * WATER_FIXTURE convention); the deliberately unregistered water_hot alias (:530)
-	 * alone stays null, mirroring the live resolver's absent-fluid verdict.
+	 * The offline fixture: every REGISTERED fluid id of the water and salt families —
+	 * water, distw, the six p16-aqua-fluids ids and the two p19 simple-liquid ids —
+	 * resolves to the vanilla water fluid (the recipe mechanics only compare identities —
+	 * the GTEngineFuelsTest WATER_FIXTURE convention); the deliberately unregistered
+	 * water_hot alias (:530) AND the four p21 food ids stay null, mirroring the
+	 * absent-fluid verdict and keeping the per-family censuses exact (the food family
+	 * pours under its own FOOD_ONLY_FIXTURE below).
 	 */
 	private static final Function<String, Fluid> CENSUS_FIXTURE = aId ->
-			GT6RecipesDrying.FLUID_HOT.equals(aId) ? null : Fluids.WATER;
+		(GT6RecipesDrying.FLUID_WATER.equals(aId) || GT6RecipesDrying.FLUID_DISTW.equals(aId)
+				|| GT6RecipesDrying.FLUID_SPDEW.equals(aId) || GT6RecipesDrying.FLUID_MNWTR.equals(aId)
+				|| GT6RecipesDrying.FLUID_GEOTHERMAL.equals(aId) || GT6RecipesDrying.FLUID_BOILING.equals(aId)
+				|| GT6RecipesDrying.FLUID_HOT_WATER.equals(aId) || GT6RecipesDrying.FLUID_COLD.equals(aId)
+				|| GT6RecipesDrying.FLUID_SEAWATER.equals(aId) || GT6RecipesDrying.FLUID_WATERDIRTY.equals(aId))
+				? Fluids.WATER : null;
 
 	/**
 	 * The water-family-only fixture: ONLY the water row's input and the DistW output
@@ -591,10 +598,147 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 		assertEquals(16, tClay.mEUt, "the family EUt");
 	}
 
+	// ==================================================================
+	// the food family (Loader_Recipes_Food.java:654-658, task p21-drying-food-fluids)
+	// ==================================================================
+
+	/** The transcription walk: four rows, values per Loader_Recipes_Food.java:655-658 verbatim. */
+	@Test
+	void foodTableTranscribesTheUpstreamFoodRows() {
+		List<GT6RecipesDrying.FoodRow> tTable = GT6RecipesDrying.foodTable();
+		assertEquals(4, tTable.size(), "the upstream census: :654-658 holds exactly four rows");
+
+		assertFoodRow(tTable.get(0), ":655", GT6RecipesDrying.FLUID_SAP        , 250, 100, 1, 200,
+				"FL.Sap.make(250) — the :654 FL.Sap.exists() guard row");
+		assertFoodRow(tTable.get(1), ":656", GT6RecipesDrying.FLUID_MAPLESAP   , 250, 100, 1, 200,
+				"FL.Sap_Maple.make(250), unguarded upstream");
+		assertFoodRow(tTable.get(2), ":657", GT6RecipesDrying.FLUID_REEDWATER  , 200,  50, 1, 100,
+				"FL.Juice_Reed.make(200), unguarded upstream");
+		assertFoodRow(tTable.get(3), ":658", GT6RecipesDrying.FLUID_CACTUSWATER, 200,  50, 0, 100,
+				"FL.Juice_Cactus.make(200), ZL_IS: no item output");
+	}
+
+	private void assertFoodRow(GT6RecipesDrying.FoodRow aRow, String aNote, String aFluid,
+			long aIn, long aDist, int aSugar, long aDuration, String aAnchor) {
+		assertEquals(aNote, aRow.note(), "row order: " + aAnchor);
+		assertEquals(aFluid, aRow.input(), "row " + aNote + ": the input fluid id");
+		assertEquals(aIn, aRow.inAmount(), "row " + aNote + ": the verbatim input litres");
+		assertEquals(aDist, aRow.distAmount(), "row " + aNote + ": the verbatim DistW litres");
+		assertEquals(aSugar, aRow.sugarAmount(), "row " + aNote + ": the OM.dust(MT.Sugar) / ZL_IS leg");
+		assertEquals(aDuration, aRow.duration(), "row " + aNote + ": the verbatim duration");
+	}
+
+	/**
+	 * The food fixture: ONLY the four food ids and the DistW output resolve — the water
+	 * family ids stay null so the earlier families keep their exact census (the
+	 * WATER_ONLY_FIXTURE isolation convention).
+	 */
+	private static final Function<String, Fluid> FOOD_ONLY_FIXTURE = aId ->
+			(GT6RecipesDrying.FLUID_DISTW.equals(aId) || GT6RecipesDrying.FLUID_SAP.equals(aId)
+					|| GT6RecipesDrying.FLUID_MAPLESAP.equals(aId) || GT6RecipesDrying.FLUID_REEDWATER.equals(aId)
+					|| GT6RecipesDrying.FLUID_CACTUSWATER.equals(aId)) ? Fluids.WATER : null;
+
+	/**
+	 * The end-to-end pour: EXACTLY the four food rows land, each in its verbatim shape —
+	 * the sugar rows carry one dust output (the (OP.dust, MT.Sugar) seam resolving onto
+	 * Items.SUGAR), the :658 cactus row is the ZL_IS fluid-only shape.
+	 */
+	@Test
+	void loadPoursExactlyTheFourFoodRows() {
+		GTMaterialItems.initMaterials(); // load() walks dehydrationTable -> ANY.Clay.mToThis — materials must exist first
+		GT6RecipesDrying.sFluidResolver = FOOD_ONLY_FIXTURE;
+		GT6RecipesDrying.sMaterialItemResolver = (aPrefix, aMaterial) ->
+				aPrefix == OP.dust && aMaterial == MT.Sugar ? Items.SUGAR : null; // the sugar leg alone
+		GT6RecipesDrying.sVanillaItemResolver = s -> null;
+		GT6RecipesDrying.load();
+		assertEquals(4, GT6RecipeMaps.DRYING.mRecipeList.size(), "the four food rows resolve; every other family stays pooled under the fixture");
+
+		// the :655 Sap row: 250 in, DistW 100 out, one Sugar dust, dur 200, EUt 16
+		Recipe tSap = GT6RecipeMaps.DRYING.mRecipeList.stream()
+				.filter(r -> r.mFluidInputs.length == 1 && r.mFluidInputs[0].getAmount() == 250
+						&& r.mOutputs.length == 1).findFirst().orElse(null);
+		assertNotNull(tSap, "a 250 L sugar row (:655/:656) is among the poured");
+		assertEquals(100, tSap.mFluidOutputs[0].getAmount(), "the verbatim 250 → 100 split");
+		assertSame(Items.SUGAR, tSap.mOutputs[0].getItem(), "the sugar dust output (the (OP.dust, MT.Sugar) seam fixture)");
+		assertEquals(1, tSap.mOutputs[0].getCount(), "OM.dust(MT.Sugar) = one full dust");
+		assertEquals(200, tSap.mDuration, "the verbatim duration");
+		assertEquals(16, tSap.mEUt, "the family EUt");
+		assertTrue(tSap.mCanBeBuffered, "the addRecipe0(T, ...) buffered shape");
+		assertEquals(0, tSap.mInputs.length, "fluid-in only: no item inputs");
+		assertEquals(3200, tSap.getAbsoluteTotalPower(), "|16 x 200| (Recipe.java:723-725 semantics)");
+
+		// the :658 cactus row: 200 in, DistW 50 out, NO item output (ZL_IS), dur 100
+		Recipe tCactus = GT6RecipeMaps.DRYING.mRecipeList.stream()
+				.filter(r -> r.mFluidInputs.length == 1 && r.mFluidInputs[0].getAmount() == 200
+						&& r.mOutputs.length == 0).findFirst().orElse(null);
+		assertNotNull(tCactus, "the :658 ZL_IS row is among the poured");
+		assertEquals(50, tCactus.mFluidOutputs[0].getAmount(), "the verbatim 200 → 50 split");
+		assertEquals(0, tCactus.mOutputs.length, "ZL_IS: no item output");
+		assertEquals(100, tCactus.mDuration, "the verbatim duration");
+		assertEquals(16, tCactus.mEUt, "the family EUt");
+
+		// the sugar rows are two (:655/:656), the ZL_IS row one (:658), the third sugar row :657
+		assertEquals(3, GT6RecipeMaps.DRYING.mRecipeList.stream().filter(r -> r.mOutputs.length == 1).count(),
+				":655/:656/:657 carry the Sugar leg; :658 alone does not");
+
+		GT6RecipesDrying.load(); // idempotent: the second load is a no-op
+		assertEquals(4, GT6RecipeMaps.DRYING.mRecipeList.size(), "load() is one pour per generation");
+	}
+
+	/**
+	 * The machine-shape lookup over a poured food row: the Dryer's real input-tank probe
+	 * (the length-1 slot array) finds the 250 L rows, the found recipe carries the verbatim
+	 * litres/duration, and the applied consume drains exactly the row's litres.
+	 */
+	@Test
+	void foodRowsFindAndConsumeThroughTheMachineShape() {
+		GTMaterialItems.initMaterials(); // load() walks dehydrationTable -> ANY.Clay.mToThis — materials must exist first
+		GT6RecipesDrying.sFluidResolver = FOOD_ONLY_FIXTURE;
+		GT6RecipesDrying.sMaterialItemResolver = (aPrefix, aMaterial) ->
+				aPrefix == OP.dust && aMaterial == MT.Sugar ? Items.SUGAR : null;
+		GT6RecipesDrying.load();
+		ItemStack[] tSlots = new ItemStack[1]; // the empty input slot, the live :512 shape
+
+		// mRecipeList is a HashSet — the assertion is "a 250 L food row answers the tank"
+		// (the two 250 rows :655/:656), the amounts being exactly the registered {250, 200}
+		Recipe tFound = GT6RecipeMaps.DRYING.findRecipe(null, 64, ItemStack.EMPTY,
+				new FluidStack[] {new FluidStack(Fluids.WATER, 1000)}, tSlots);
+		assertNotNull(tFound, "the Dryer T1 voltage (64) covers the rows' EUt 16");
+		assertTrue(tFound.mFluidInputs[0].getAmount() == 250 || tFound.mFluidInputs[0].getAmount() == 200,
+				"the answering row is one of the registered food splits (250 or 200 L)");
+
+		// an explicit 250 L row: the probe leaves the tank untouched, the consume drains 250
+		Recipe tQuarter = GT6RecipeMaps.DRYING.mRecipeList.stream()
+				.filter(r -> r.mFluidInputs.length == 1 && r.mFluidInputs[0].getAmount() == 250).findFirst().orElse(null);
+		assertNotNull(tQuarter);
+		FluidStack[] tProbe = {new FluidStack(Fluids.WATER, 1000)};
+		assertTrue(tQuarter.isRecipeInputEqual(false, true, tProbe, tSlots), "the probe matches");
+		assertEquals(1000, tProbe[0].getAmount(), "the probe never consumes");
+		FluidStack[] tConsume = {new FluidStack(Fluids.WATER, 1000)};
+		assertTrue(tQuarter.isRecipeInputEqual(true, false, tConsume, tSlots), "the applied consume succeeds");
+		assertEquals(750, tConsume[0].getAmount(), "exactly the row's 250 L are drained");
+	}
+
+	/**
+	 * The audit walk update (task p21-drying-food-fluids): the food family entry stands as
+	 * the POURED annotation — the pool pointer retired, the anchor kept. (The live sap
+	 * resolution itself is never probed offline — RegistryObject.get() needs the registry —
+	 * it is the RCON chain's proof; here the pour tests carry the rows through fixtures.)
+	 */
+	@Test
+	void theFoodFamilyEntryIsThePouredAnnotation() {
+		GT6RecipesDrying.FoodRow tSap = GT6RecipesDrying.foodTable().stream()
+				.filter(r -> r.note().equals(":655")).findFirst().orElse(null);
+		assertNotNull(tSap, "the :655 row is transcribed");
+		assertEquals(GT6RecipesDrying.FLUID_SAP, tSap.input(), "the guard row's input is the sap id");
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(3).contains("POURED by task p21-drying-food-fluids"),
+				"the food entry is the poured annotation, not a pool pointer");
+	}
+
 	/**
 	 * The SKIPPED_UPSTREAM audit (spec ④): the pool pins the FULL dead-row census of the
 	 * Drying book outside the poured families — the guarded external-fluid rows, the
-	 * material liquids, the water_hot alias, and the food/crops/resin/ores/other pool
+	 * material liquids, the water_hot alias, and the crops/resin/ores/other pool
 	 * pointers (the census = tasks.p19-research-drying-rows, the full-file reads).
 	 */
 	@Test
@@ -603,7 +747,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(0).contains(":544-545 Tropics_Water"), "the guarded external-fluid rows");
 		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(1).contains("MT.SaltWater.liquid"), "the material-liquid rows");
 		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(2).contains("ic2hotwater"), "the water_hot ruling entry");
-		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(3).contains("Loader_Recipes_Food.java:654-658"), "the food-fluid pool");
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(3).contains("Loader_Recipes_Food.java:654-658"), "the food entry (poured annotation since p21)");
 		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(4).contains("crop/bale listener family"), "the crop-bale pool");
 		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(5).contains("slimeball family"), "the resin pool");
 		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(6).contains("Sluice"), "the ores pool");
