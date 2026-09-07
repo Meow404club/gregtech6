@@ -58,6 +58,16 @@ public final class GT6DataGenerators {
         event.getGenerator().addProvider(true,
             new GT6ItemTags(event.getGenerator().getPackOutput(), event.getLookupProvider(),
                 event.getExistingFileHelper()));
+        // task p24-tags-provider-skeleton ④: the block tags provider — the mining-tool bands
+        // (pickaxe over the stone/machine/prefix-block universe, axe over the wood barrel).
+        // The four-argument BlockTagsProvider ctor is shape-identical on both legs (forge
+        // BlockTagsProvider.java:19 / NeoForge 21.1 :18 — the research card's "3-param Neo"
+        // form is void), so only the import forks inside GT6BlockTags; the item provider
+        // above needs no contentsGetter() wiring (its first-batch members are plain
+        // registry elements, no block-tag copying).
+        event.getGenerator().addProvider(true,
+            new GT6BlockTags(event.getGenerator().getPackOutput(), event.getLookupProvider(),
+                event.getExistingFileHelper()));
         // task p24-tool-system ③: the first recipe provider — the empty spray can crafting
         // (both legs construct through the two-arg form; the forge leg ignores the lookup)
         event.getGenerator().addProvider(true,
