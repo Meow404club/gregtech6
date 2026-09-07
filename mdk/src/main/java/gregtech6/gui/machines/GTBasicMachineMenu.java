@@ -227,6 +227,10 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	 * The upstream input-slot geometry (ContainerCommonBasicMachine.java:51-60, the
 	 * mInputItemsCount switch, y = mInputFluidCount&gt;6?7:25 pinned to the 25 arm): count 1
 	 * = the single (53,25) slot; count 2 = the (35,25)+(53,25) pair (the RM.Canner 2/2 arm).
+	 * WARNING: the count&gt;=2 arm generalizes as {@code 35 + 18*i}, which does NOT reproduce
+	 * the upstream case-3 layout (x 17/35/53 — ContainerCommonBasicMachine.java:61-65) or
+	 * beyond: a 3-input RecipeMap landing here must transcribe its own case from the
+	 * upstream switch instead of trusting this extrapolation (no such map is served today).
 	 * Static for the offline menu test (the outputGridPos/fluidDisplayPos precedent).
 	 *
 	 * @param aIndex the input slot within the input bank

@@ -179,6 +179,31 @@ class GT6RecipeMapCannerTest extends GTRecipesOfflineTestBase {
 		assertNull(tRecipe, "an empty container with no tank fluid matches nothing");
 	}
 
+	/**
+	 * The S2 review follow-up: a STACKED container slot triggers the dynamic arm but the
+	 * recipe is the upstream {@code ST.amount(1, tInput)} normalization — the input leg is
+	 * ONE container, so the two-stage consume removes exactly ONE item per process (the
+	 * old live-reference shape would have consumed the whole stack).
+	 */
+	@Test
+	void stackedSlotConsumesOnePerProcess() {
+		ItemStack tStacked = new ItemStack(Items.PAPER, 4);
+		GT6RecipeMapCanner.sContainerResolver = aStack -> {
+			assertEquals(1, aStack.getCount(), "the resolver contract: the probe copy is a single item (stackSize of 1)");
+			return new FixtureFluidHandler(aStack, new FluidStack(Fluids.WATER, 640));
+		};
+		Recipe tRecipe = GT6RecipeMaps.CANNER.findRecipe(null, Long.MAX_VALUE, ItemStack.EMPTY, new FluidStack[0], tStacked);
+		assertNotNull(tRecipe, "the emptying arm fires on a stacked container slot");
+		assertEquals(1, tRecipe.mInputs[0].getCount(), "the input leg is ONE container (upstream ST.amount(1, tInput))");
+		assertEquals(1, tRecipe.mOutputs[0].getCount(), "the output container is ONE drained can");
+		assertEquals(640, tRecipe.mFluidOutputs[0].getAmount(), "the content leg is unaffected by the stack");
+		assertEquals(4, tStacked.getCount(), "findRecipe is lookup-only — the caller's stack keeps its count");
+		// the machine consume face: one pass removes exactly one item from the slot snapshot
+		ItemStack[] tConsume = {tStacked.copy()};
+		assertTrue(tRecipe.isRecipeInputEqual(true, false, new FluidStack[0], tConsume), "the consume runs");
+		assertEquals(3, tConsume[0].getCount(), "exactly ONE container consumed per process (not the whole stack)");
+	}
+
 	// ---------------------------------------------------------------------------
 	// the FILL arm (:65-67)
 	// ---------------------------------------------------------------------------

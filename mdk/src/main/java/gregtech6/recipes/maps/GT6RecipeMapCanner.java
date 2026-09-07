@@ -87,7 +87,10 @@ public class GT6RecipeMapCanner extends RecipeMap {
 	 * COPY (the live default = {@code FluidUtil.getFluidHandler}; fixtures injected offline —
 	 * the lesson-id224 rule forbids probing live-registered container items offline, so the
 	 * tests swap in synthetic handlers). The handler mutates the copy in place; callers
-	 * always pass {@code aStack.copy()} and read {@link IFluidHandlerItem#getContainer()}.
+	 * always pass a SINGLE-ITEM copy ({@code copy() + setCount(1)} — the upstream
+	 * {@code ST.amount(1, tInput)} per-process normalization and the
+	 * {@code FluidUtil.getFluidHandler} "stackSize of 1" contract, see findRecipe) and read
+	 * {@link IFluidHandlerItem#getContainer()}.
 	 * The LazyOptional (forge 1.20.1) vs Optional (neoforge 21.1) return split forks here.
 	 */
 	public static java.util.function.Function<ItemStack, IFluidHandlerItem> sContainerResolver =
@@ -117,18 +120,26 @@ public class GT6RecipeMapCanner extends RecipeMap {
 			// the 1.20.1 slot census: an EMPTY-looking but non-empty-count stack (the in-place
 			// consumption leftover) is not a canning input
 			if (tInput.getCount() <= 0) continue;
+			// upstream :55 ST.amount(1, tInput) — the dynamic arms process ONE container per
+			// recipe. The SINGLE copy is also the resolver's contract face (FluidUtil
+			// .getFluidHandler: "the itemStack MUST have a stackSize of 1 if you want to fill
+			// or drain it") — a stacked-slot probe would multiply or destroy liquid. The
+			// consume semantics ride the recipe's mInputs count 1 (isRecipeInputEqual removes
+			// exactly one item per process), so a stacked slot only ever loses one container.
+			ItemStack tSingle = tInput.copy();
+			tSingle.setCount(1);
 			// the resolver works on a COPY — findRecipe is lookup-only (the two-stage
 			// isRecipeInputEqual consume in the machine does the real consumption)
-			IFluidHandlerItem tHandler = sContainerResolver.apply(tInput.copy());
+			IFluidHandlerItem tHandler = sContainerResolver.apply(tSingle.copy());
 			if (tHandler == null) continue;
 
 			// :52-55 — the emptying arm: a container HOLDING fluid drains onto the output leg
 			FluidStack tDrained = tHandler.drain(Integer.MAX_VALUE, net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
 			if (tDrained != null && !tDrained.isEmpty() && tDrained.getAmount() > 0) {
 				tHandler.drain(Integer.MAX_VALUE, net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE); // the copy only
-				ItemStack tEmptyContainer = tHandler.getContainer(); // ST.container(tInput, T) — the drained shape
+				ItemStack tEmptyContainer = tHandler.getContainer(); // ST.container(ST.amount(1, tInput), T) — the drained shape, count 1
 				return new Recipe(false, // aCanBeBuffered F — upstream :55 (one-time recipes never cache)
-						new ItemStack[] {tInput}, new ItemStack[] {tEmptyContainer},
+						new ItemStack[] {tSingle}, new ItemStack[] {tEmptyContainer},
 						null, new FluidStack[] {tDrained},
 						Math.max(tDrained.getAmount() / 64, 16), 16, 0);
 			}
@@ -137,7 +148,7 @@ public class GT6RecipeMapCanner extends RecipeMap {
 			// the first input-tank fluid fills the container copy; the whole post-fill content
 			// counts as the fluid-input leg (upstream tFluid = FL.getFluid(tOutput, T))
 			if (aFluids != null && aFluids.length > 0 && aFluids[0] != null && !aFluids[0].isEmpty()) {
-				IFluidHandlerItem tFiller = sContainerResolver.apply(tInput.copy());
+				IFluidHandlerItem tFiller = sContainerResolver.apply(tSingle.copy());
 				if (tFiller == null) continue;
 				//? if forge {
 				int tFilled = tFiller.fill(new FluidStack(aFluids[0], aFluids[0].getAmount()), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE); // FL.fill(..., aRemoveFluidDirectly=F, ...) — the source is NOT debited here
@@ -149,7 +160,7 @@ public class GT6RecipeMapCanner extends RecipeMap {
 				FluidStack tContent = tFiller.drain(Integer.MAX_VALUE, net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE); // FL.getFluid(tOutput, T) — the whole content
 				if (tContent == null || tContent.isEmpty()) continue;
 				return new Recipe(false, // aCanBeBuffered F — upstream :67
-						new ItemStack[] {tInput}, new ItemStack[] {tFilledContainer},
+						new ItemStack[] {tSingle}, new ItemStack[] {tFilledContainer},
 						new FluidStack[] {tContent}, null,
 						Math.max(tContent.getAmount() / 64, 16), 16, 0);
 			}
@@ -171,7 +182,9 @@ public class GT6RecipeMapCanner extends RecipeMap {
 		for (Recipe tRecipe : mRecipeList) for (ItemStack tInput : tRecipe.mInputs) {
 			if (tInput != null && !tInput.isEmpty() && ItemStack.isSameItemSameTags(tInput, aStack)) return true;
 		}
-		IFluidHandlerItem tHandler = sContainerResolver.apply(aStack.copy());
+		ItemStack tSingle = aStack.copy();
+		tSingle.setCount(1); // the resolver's stackSize-of-1 contract (see findRecipe)
+		IFluidHandlerItem tHandler = sContainerResolver.apply(tSingle);
 		return tHandler != null && tHandler.getTanks() > 0 && tHandler.getTankCapacity(0) > 0;
 	}
 

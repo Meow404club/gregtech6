@@ -35,9 +35,11 @@ Chain semantics (task p24-canner-machine ACCEPTANCE 3 — "place canner→注染
 
 The inventory merges ride the loader-versioned key shapes (the p19_nbt_rebind ruling):
 1.20.1 item tag `tag:{tank:{FluidName,Amount}}` vs 1.21.1 the gt6:barrel_content
-component payload. The judged expects stay byte-identical. NOTE the port Item.toString
-renders the registry PATH only (no gt6: prefix) — the outputs=[1x spray_paint_red; ]
-marker shape (the D2 report is the ground truth).
+component payload. The 8 item-naming expects (4x input + 4x outputs) are PER-LEG via
+Step.node_expects (the p16_pattern_checker.py:114 precedent): the 1.20.1
+ItemStack.toString renders the bare registry path ("spray_can_empty") while the 21.1
+rendering is NAMESPACED ("gt6:spray_can_empty") — the S2 review's live [8,8] finding,
+the server behaviour itself is identical on both legs.
 
 passes=2 is the idempotency proof (the [0,0] of this chain).
 
@@ -90,11 +92,13 @@ steps += [
     phase("A: the R4 refill unit (T1) — red 2304 mB, the full can lands with ZERO NBT"),
     Step(f"gt6machine canner place {A}", expect="GT6 canner placed"),
     Step(f"gt6machine canner input 8 {A}",
-         expect="GT6 canner input: 8x spray_can_empty into slot 0"),
+         expect="GT6 canner input: 8x spray_can_empty into slot 0",
+         node_expects={"1.21.1": "GT6 canner input: 8x gt6:spray_can_empty into slot 0"}),
     Step(f"gt6machine canner fluid fill up gt6:dye_chemical_red 2304 {A}",
          expect="filled 2304/2304 L of gt6:dye_chemical_red (ACCEPTED), input tanks hold 2304 L"),
     Step(f"gt6machine canner inject 70 64 {A}",
-         expect="outputs=[1x spray_paint_red; ]"),
+         expect="outputs=[1x spray_paint_red; ]",
+         node_expects={"1.21.1": "outputs=[1x gt6:spray_paint_red; ]"}),
     Step(f"gt6machine canner fluid stat {A}", expect="in[0]=0 L of nothing"),
 ]
 
@@ -103,11 +107,13 @@ steps += [
     phase("B: the second pinned colour (T2) — white 2304 mB → spray_paint_white"),
     Step(f"gt6machine canner_t2 place {B}", expect="GT6 canner_t2 placed"),
     Step(f"gt6machine canner_t2 input 8 {B}",
-         expect="GT6 canner input: 8x spray_can_empty into slot 0"),
+         expect="GT6 canner input: 8x spray_can_empty into slot 0",
+         node_expects={"1.21.1": "GT6 canner input: 8x gt6:spray_can_empty into slot 0"}),
     Step(f"gt6machine canner_t2 fluid fill up gt6:dye_chemical_white 2304 {B}",
          expect="filled 2304/2304 L of gt6:dye_chemical_white (ACCEPTED), input tanks hold 2304 L"),
     Step(f"gt6machine canner_t2 inject 70 256 {B}",
-         expect="outputs=[1x spray_paint_white; ]"),
+         expect="outputs=[1x spray_paint_white; ]",
+         node_expects={"1.21.1": "outputs=[1x gt6:spray_paint_white; ]"}),
 ]
 
 # ------------------------------------------------- C: the chlorine remover row (T3)
@@ -115,11 +121,13 @@ steps += [
     phase("C: the remover row (T3) — chlorine 2304 mB → spray_paint_remover (the R3 consumer)"),
     Step(f"gt6machine canner_t3 place {C}", expect="GT6 canner_t3 placed"),
     Step(f"gt6machine canner_t3 input 8 {C}",
-         expect="GT6 canner input: 8x spray_can_empty into slot 0"),
+         expect="GT6 canner input: 8x spray_can_empty into slot 0",
+         node_expects={"1.21.1": "GT6 canner input: 8x gt6:spray_can_empty into slot 0"}),
     Step(f"gt6machine canner_t3 fluid fill up gt6:chlorine 2304 {C}",
          expect="filled 2304/2304 L of gt6:chlorine (ACCEPTED), input tanks hold 2304 L"),
     Step(f"gt6machine canner_t3 inject 70 1024 {C}",
-         expect="outputs=[1x spray_paint_remover; ]"),
+         expect="outputs=[1x spray_paint_remover; ]",
+         node_expects={"1.21.1": "outputs=[1x gt6:spray_paint_remover; ]"}),
 ]
 
 # ------------------------------------------------- D: the dynamic arms (T4 x2)
@@ -131,7 +139,8 @@ steps += [
     Step(f"gt6machine canner_t4 fluid fill up minecraft:water 1000 {D1}",
          expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),
     Step(f"gt6machine canner_t4 inject 8 4096 {D1}",
-         expect="outputs=[1x barrel_wood; ]"),
+         expect="outputs=[1x barrel_wood; ]",
+         node_expects={"1.21.1": "outputs=[1x gt6:barrel_wood; ]"}),
     Step(f"gt6machine canner_t4 fluid stat {D1}", expect="in[0]=0 L of nothing"),
 
     phase("D2: the EMPTY arm (T4) — a FILLED barrel item drains onto the output tank"),
@@ -139,7 +148,8 @@ steps += [
     Step(FILLED_CAN_MERGE["1.20.1"].format(p=D2), expect="Modified block data",
          node_cmds={"1.21.1": FILLED_CAN_MERGE["1.21.1"].format(p=D2)}),
     Step(f"gt6machine canner_t4 inject 8 4096 {D2}",
-         expect="outputs=[1x barrel_wood; ]"),
+         expect="outputs=[1x barrel_wood; ]",
+         node_expects={"1.21.1": "outputs=[1x gt6:barrel_wood; ]"}),
     Step(f"gt6machine canner_t4 fluid stat {D2}", expect="out[0]=1000 L of minecraft:water"),
 ]
 
