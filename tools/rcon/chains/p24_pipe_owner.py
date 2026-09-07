@@ -63,12 +63,16 @@ PA, PB = F(A), F(B)
 steps = []
 
 # ------------------------------------------------- A: the baseline (ownable=false)
+# The placement itself opens one end: place against face 1 connects the support
+# side OPOS[1]=0 (DOWN) into the bbox-cleaned air below — the upstream :141
+# open-end "manual pipe mouth" succeeds into air, so the fresh pipe sits at
+# connections 1 (SBIT[0]) BEFORE any toggle (live-run evidence, pass 1).
 steps += [
     phase("A: baseline — the default pipe is unlocked and toggles both ways"),
     Step(f"gt6pipe place {PA} 1", expect="GT6 pipe placed at"),
-    Step(f"gt6pipe stat {PA}", expect="ownable false owner none"),
-    Step(f"gt6pipe toggle {PA} 1", expect="ok, connections 2"),   # open end UP (SBIT[1]=2)
-    Step(f"gt6pipe toggle {PA} 1", expect="ok, connections 0"),   # ...and back down — zero regression
+    Step(f"gt6pipe stat {PA}", expect="connections 1 ioMask 0 ownable false owner none"),
+    Step(f"gt6pipe toggle {PA} 1", expect="ok, connections 3"),   # 1|2 — the UP open end joins the placement's DOWN one
+    Step(f"gt6pipe toggle {PA} 1", expect="ok, connections 1"),   # ...and back down — zero regression
 ]
 
 # ------------------------------------------------- B: the lock arm (the applyFoam stand-in)
@@ -76,18 +80,18 @@ steps += [
     phase("B: ownable 1 <uuid> — the forced write; the console toggle is REJECTED (self gate)"),
     Step(f"gt6pipe ownable {PA} 1 {UUID_A}", expect=f"ownable true, owner {UUID_A} (FORCED write"),
     Step(f"gt6pipe stat {PA}", expect=f"ownable true owner {UUID_A}"),
-    Step(f"gt6pipe toggle {PA} 1", expect="FAILED, connections 0", allow_failed=True),
+    Step(f"gt6pipe toggle {PA} 1", expect="FAILED, connections 1", allow_failed=True),
 ]
 
 # ------------------------------------------------- C: the predicate arms + the 复原 arm
 steps += [
     phase("C: null-owner passes everyone; re-lock re-denies; ownable 0 resets (removeFoam form)"),
     Step(f"gt6pipe ownable {PA} 1", expect="ownable true, owner none"),
-    Step(f"gt6pipe toggle {PA} 2", expect="ok, connections 4"),   # NORTH open end (SBIT[2]=4)
+    Step(f"gt6pipe toggle {PA} 2", expect="ok, connections 5"),   # 1|4 — the NORTH open end (SBIT[2]=4)
     Step(f"gt6pipe ownable {PA} 1 {UUID_A}", expect=f"ownable true, owner {UUID_A}"),
-    Step(f"gt6pipe toggle {PA} 3", expect="FAILED, connections 4", allow_failed=True),
+    Step(f"gt6pipe toggle {PA} 3", expect="FAILED, connections 5", allow_failed=True),
     Step(f"gt6pipe ownable {PA} 0", expect="ownable false, owner none (reset, the removeFoam form)"),
-    Step(f"gt6pipe toggle {PA} 3", expect="ok, connections 12"),  # 4|8 — the 复原 arm
+    Step(f"gt6pipe toggle {PA} 3", expect="ok, connections 13"),  # 1|4|8 — the 复原 arm
 ]
 
 # ------------------------------------------------- D: the placement neighbour gate
