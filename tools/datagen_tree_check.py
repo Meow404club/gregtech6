@@ -48,9 +48,23 @@ import sys
 from pathlib import Path, PurePosixPath
 
 # 1.21.x 数据包目录单数化（snapshot 24w21a）：node(1.21.1) 侧目录段 → canonical(1.20.1) 侧目录段。
-# 当前双侧唯一形态差 = loot 带；新注册表目录改名出现时在此追加（例：advancements→advancement）。
+# 映射对两侧对称施用（canon_norm 与 node_norm 都过 normalize），故仅两侧「形态不同」的段
+# 需要入表；同段同名（如 assets 的 models/item 双侧同形）入表也只是对称重写、不影响等价性。
+# p24-tool-system 起三带新增（首例 tags/recipe datagen 入双树）：
+#   recipe → recipes   data/*/recipe(s)（1.21 单数化）
+#   item       → items         data/*/tags/item(s)（1.21 单数化；assets models/item 双侧
+#                              同名段对称重写，无影响）
+#   advancement→ advancements data/*/advancement(s)（1.21 单数化；p24 空罐配方的解锁
+#                              advancement 首次把该带带进双树）
+#   c          → forge         NeoForge 生态 tag 命名空间 data/c ↔ data/forge（#c:tools
+#                              ↔ #forge:tools 是同一逻辑产物的双腿形态）
+# 新注册表目录改名出现时在此追加（例：advancements→advancement）。
 SEGMENT_MAP = {
     "loot_table": "loot_tables",
+    "recipe": "recipes",
+    "item": "items",
+    "advancement": "advancements",
+    "c": "forge",
 }
 
 CACHE_DIR_NAME = ".cache"          # HashCache 账本（输出根内，gitignore :24，非产物）
