@@ -244,6 +244,22 @@ public final class GTMultiBlockStructureChecker {
 	 */
 	public static FormedVerdict form(ITileEntityMultiBlockController aController, byte aFacing,
 			@Nullable Player aPlayer, @Nullable Container aInventory) {
+		boolean tMayEdit = aPlayer == null || aPlayer.isCreative() || aPlayer.hasPermissions(2); // the Util.canEdit ruling
+		boolean tInfiniteItems = aPlayer != null && aPlayer.isCreative(); // the Util.hasInfiniteItems ruling
+		return form(aController, aFacing, aPlayer, aInventory, tMayEdit, tInfiniteItems);
+	}
+
+	/**
+	 * The permission seam (task p24-creative-form-seam): the identical SET walk with the two
+	 * rulings pre-resolved by the caller — a real Player is not constructible offline (the
+	 * Forge-patched Entity ctor forces {@code FluidType.SIZE}), so the boolean pair IS the
+	 * testable form of the chain: (true, true) = creative free scaffolding, (true, false) =
+	 * the OP(2) consume arm, (false, *) = the "no permission to scaffold" hard class. The
+	 * public wrapper above is the production entry — it only parses and delegates; the
+	 * beat-4 execution keeps passing {@code aPlayer} through to {@link #check} verbatim.
+	 */
+	static FormedVerdict form(ITileEntityMultiBlockController aController, byte aFacing,
+			@Nullable Player aPlayer, @Nullable Container aInventory, boolean aMayEdit, boolean aInfiniteItems) {
 		GTMultiBlockPattern tPattern = aController.getStructurePattern();
 		if (tPattern == null) return new FormedVerdict(true, false, new ArrayList<>());
 
@@ -256,8 +272,6 @@ public final class GTMultiBlockStructureChecker {
 		if (tDiagnosis.formed || tDiagnosis.unloaded) return tDiagnosis;
 
 		// beat 2 — the plan: scaffoldable cells collect demand, everything else is a hard failure
-		boolean tMayEdit = aPlayer == null || aPlayer.isCreative() || aPlayer.hasPermissions(2); // the Util.canEdit ruling
-		boolean tInfiniteItems = aPlayer != null && aPlayer.isCreative(); // the Util.hasInfiniteItems ruling
 		List<FailedCell> tHard = new ArrayList<>();
 		Map<Block, Integer> tDemand = new LinkedHashMap<>(); // declaration order — the first planned cell per block fronts the stock failure
 		Map<Block, FailedCell> tFront = new LinkedHashMap<>();
@@ -266,7 +280,7 @@ public final class GTMultiBlockStructureChecker {
 			if (tCell.forms()) {
 				BlockState tState = tLevel.getBlockState(tFailure.pos);
 				if (tState.isAir() || tState.canBeReplaced()) { // the Util.easyRep ruling
-					if (!tMayEdit) {
+					if (!aMayEdit) {
 						tHard.add(new FailedCell(tFailure.index, tCell, tFailure.pos, "no permission to scaffold"));
 						continue;
 					}
@@ -285,7 +299,7 @@ public final class GTMultiBlockStructureChecker {
 		}
 
 		// beat 3 — the stock check: short stock is a hard failure BEFORE anything is placed or consumed
-		if (aInventory != null && !tInfiniteItems) {
+		if (aInventory != null && !aInfiniteItems) {
 			for (Map.Entry<Block, Integer> tEntry : tDemand.entrySet()) {
 				int tHave = countMatching(aInventory, tEntry.getKey());
 				if (tHave < tEntry.getValue()) {
