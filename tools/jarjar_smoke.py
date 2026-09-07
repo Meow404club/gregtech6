@@ -105,8 +105,17 @@ def check(name, condition, detail=""):
 
 
 def default_jar(leg):
+    """Canonical distribution jar gt6-<leg>-<mod_version>.jar first (task
+    p23-jar-naming, base.archivesName = <mod_id>-<node>); bare *.jar fallback
+    only serves pre-rename worktrees (a stale pre-rename jar would sort first
+    and shadow the renamed artifact). Same policy as jar_content_check.py."""
     libs = REPO / "mdk" / "versions" / leg / "build" / "libs"
-    jars = sorted(libs.glob("*.jar")) if libs.is_dir() else []
+    if not libs.is_dir():
+        return None
+    canonical = sorted(libs.glob(f"gt6-{leg}-*.jar"))
+    if canonical:
+        return canonical[0]
+    jars = sorted(libs.glob("*.jar"))
     return jars[0] if jars else None
 
 
