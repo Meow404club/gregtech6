@@ -32,10 +32,52 @@ import gregtech6.multiblock.GTMultiBlockStructureChecker.FormedVerdict;
  * hollow never scaffolded — plus the inventory-free regressions: form(null, null) classifies
  * exactly like the pure check and writes nothing (the 600-tick poll and the onTickFirst
  * forced check keep their three-null arm), and a formed structure consumes nothing.
+ *
+ * <p>Task p22-boiler-form-reject-creative-fixture adds the refusal calibres: a
+ * declaration-only {@code part()} mismatch is a HARD failure — never scaffolded, never
+ * consumed, zero world writes (the :226-227 classification, arms 5 and 6, the boiler
+ * carrying the whole-shell arm). The creative Player arm was PROBED and cut
+ * (probe-first task ruling, both outcomes close): the vanilla ctor chain is pure
+ * (Player.java:180-188 — bootstrapped EntityType, EMPTY-list Inventory, null-MenuType
+ * InventoryMenu), but the FORGE PATCH layer blocks structurally — the patched Entity
+ * ctor (Entity.java:3464) forces {@code FluidType.SIZE} (FluidType.java:71:
+ * {@code ForgeRegistries.FLUID_TYPES.get().getKeys()}), and that registry supplier is
+ * null offline (created only by ForgeMod's NewRegistryEvent — the NetworkHooks lesson
+ * layer). No production signature was touched; the :259-260 creative consumption
+ * stays covered by the Util rulings instead.
  */
 public class GTMultiBlockStructureCheckerFormTest extends GTMultiBlocksOfflineTestBase {
 
 	static BlockEntityType<FormController> sFormControllerType;
+	static BlockEntityType<FormBoiler> sFormBoilerType;
+
+	/**
+	 * The boiler fixture — the declaration-only calibre (the TileEntityCokeOvenCheckerTest
+	 * CheckerBoiler recipe): fixture blocks bound on the wall/transmitter hooks, the lazy
+	 * pattern is the real {@link TileEntityLargeBoiler} declaration (34 part cells + the
+	 * hollow, zero forming expectations — the ADR scoping).
+	 */
+	public static final class FormBoiler extends TileEntityLargeBoiler {
+		FormBoiler(BlockPos aPos, BlockState aState) {
+			super(sFormBoilerType, aPos, aState);
+		}
+		@Override
+		protected net.minecraft.world.level.block.Block getWallBlock() {
+			return Blocks.BRICKS;
+		}
+		@Override
+		protected net.minecraft.world.level.block.Block getTransmitterBlock() {
+			return Blocks.STONE;
+		}
+	}
+
+	// The offline creative probe RESULT (recorded in place of the cut fixture): the vanilla
+	// ctor chain is pure (Player.java:180-188 — bootstrapped EntityType, EMPTY-list
+	// Inventory, null-MenuType InventoryMenu, the two abstract seams Player.java:1845/:1857
+	// plus the protected Entity.getPermissionLevel() hook Entity.java:2978-2982), but the
+	// FORGE PATCH layer blocks structurally: the patched Entity ctor (Entity.java:3464)
+	// forces FluidType.SIZE (FluidType.java:71), whose registry supplier is null offline.
+	// The arm was cut per the task card; no production signature was touched.
 
 	/** A controller whose whole structure face is a settable pattern (null = unbound). */
 	static class FormController extends TileEntityBase10MultiBlockBase {
@@ -69,6 +111,9 @@ public class GTMultiBlockStructureCheckerFormTest extends GTMultiBlocksOfflineTe
 		BlockEntityType<FormController>[] tHolder = (BlockEntityType<FormController>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of((aPos, aState) -> new FormController(tHolder[0], aPos, aState), Blocks.BRICKS).build(null);
 		sFormControllerType = tHolder[0];
+		BlockEntityType<FormBoiler>[] tBoilerHolder = (BlockEntityType<FormBoiler>[]) new BlockEntityType<?>[1];
+		tBoilerHolder[0] = BlockEntityType.Builder.of(FormBoiler::new, Blocks.BRICKS, Blocks.STONE).build(null);
+		sFormBoilerType = tBoilerHolder[0];
 	}
 
 	// The layout, controller (100,64,100) facing north (2):
@@ -249,5 +294,93 @@ public class GTMultiBlockStructureCheckerFormTest extends GTMultiBlocksOfflineTe
 		FormedVerdict tVerdict = GTMultiBlockStructureChecker.form(tController, tController.mFacing, null, tRestock);
 		assertTrue(tVerdict.formed, "the formed structure answers formed");
 		assertEquals(4, tRestock.getItem(0).getCount(), "the early return consumes nothing");
+	}
+
+	// ------------------------------------------------------------------
+	// arm 5 — a declaration-only part() mismatch is a HARD failure (never
+	// scaffolded, never consumed, zero writes) — the :226-227 classification
+	// ------------------------------------------------------------------
+
+	// the layout, controller (100,64,100) facing north (2):
+	//   cell A formingPart      (0,0,1) -> world (100,64,102) = CELL_A, standing AIR
+	//   cell B formingPart      (0,0,-1) -> the controller's own cell (the self-cell pass)
+	//   cell D declaration-only (1,0,0) -> world (101,64,101) = CELL_D, standing the WRONG block
+	private static final BlockPos CELL_D = new BlockPos(101, 64, 101);
+
+	@Test
+	public void declarationOnlyMismatchHardRejectsFormWithZeroWritesAndZeroConsumption() {
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		mountPartFactory(tLevel);
+		FormController tController = placeController(tLevel, sFormControllerType, C1, (byte)2);
+		tController.mPattern = GTMultiBlockPattern.builder()
+				.formingPart(0, 0, 1, Blocks.BRICKS, MultiBlockPartBlockEntity.ONLY_ITEM_FLUID_ENERGY, 0)
+				.formingPart(0, 0, -1, Blocks.BRICKS, MultiBlockPartBlockEntity.ONLY_ITEM_FLUID_ENERGY, 0)
+				.part(1, 0, 0, aState -> aState.is(Blocks.BRICKS))
+				.build();
+		tLevel.setBlock(CELL_D, Blocks.STONE.defaultBlockState(), 3); // the wrong block in the declaration-only cell
+		SimpleContainer tStock = brickStock(2); // plenty for the missing forming cell — irrelevant to a hard failure
+		Map<BlockPos, BlockState> tStatesBefore = new HashMap<>(tLevel.mStates);
+
+		// the diagnosis beat: the walk classifies cell D with the raw reason (:191)
+		FormedVerdict tCheck = GTMultiBlockStructureChecker.check(tController, tController.mFacing, null, null, null);
+		assertFalse(tCheck.formed, "the walk fails both cells");
+		assertEquals(2, tCheck.failedCells().size(), "the missing part and the declaration-only mismatch");
+		assertEquals("declaration-only cell does not match", tCheck.failedCells().get(1).reason,
+				"the declaration-only walk reason (GTMultiBlockStructureChecker :191)");
+		assertEquals(CELL_D, tCheck.failedCells().get(1).pos, "the wrong cell is the report");
+
+		// form() reclassifies it as the never-scaffolded hard class (:283) — the scaffoldable
+		// forming cell was PLANNED (beat 2 demand), but one hard failure refuses the whole form
+		FormedVerdict tVerdict = GTMultiBlockStructureChecker.form(tController, tController.mFacing, null, tStock);
+		assertFalse(tVerdict.formed, "the declaration-only mismatch refuses the form");
+		assertEquals(1, tVerdict.failedCells().size(),
+				"only the hard cell fronts the refusal — the scaffoldable cell is not a failure");
+		assertNotNull(tVerdict.firstFailedCell());
+		assertEquals("declaration-only cell does not match (never scaffolded)", tVerdict.firstFailedCell().reason,
+				"the form classification (GTMultiBlockStructureChecker :283)");
+		assertEquals(CELL_D, tVerdict.firstFailedCell().pos, "the wrong cell fronts the refusal");
+		assertEquals(tStatesBefore, tLevel.mStates, "zero world writes (the hard failure pre-empts execution)");
+		assertEquals(2, tStock.getItem(0).getCount(), "zero consumption (the transactional contract)");
+		assertFalse(tLevel.mBlockEntities.containsKey(CELL_A), "nothing was placed");
+	}
+
+	// ------------------------------------------------------------------
+	// arm 6 — the boiler calibre: the whole declaration-only shell refuses
+	// (the TileEntityCokeOvenCheckerTest boiler arm 1 context, now through form)
+	// ------------------------------------------------------------------
+
+	@Test
+	public void boilerDeclarationOnlyShellRefusesTheWholeScaffold() {
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		FormBoiler tBoiler = placeController(tLevel, sFormBoilerType, C1, (byte)2);
+		// the whole shell WRONG: every part cell of the bound pattern stands DIRT; the hollow
+		// and the controller's own cell stay as the pattern expects them
+		for (GTMultiBlockPattern.Cell tCell : tBoiler.getStructurePattern().cells()) {
+			if (tCell.isHollow()) continue;
+			BlockPos tCellPos = C1.offset(tCell.x, tCell.y, tCell.z + 1); // anchor-relative, facing north
+			if (tCellPos.equals(C1)) continue; // the self-cell holds the controller BE
+			tLevel.setBlock(tCellPos, Blocks.DIRT.defaultBlockState(), 3);
+		}
+		SimpleContainer tStock = brickStock(64); // a full stack — nothing is scaffoldable from a declaration-only miss
+		Map<BlockPos, BlockState> tStatesBefore = new HashMap<>(tLevel.mStates);
+
+		// the diagnosis beat: the boiler pattern carries no forming expectation (the ADR
+		// scoping) — the walk sees every shell cell as a declaration-only miss
+		FormedVerdict tCheck = GTMultiBlockStructureChecker.check(tBoiler, tBoiler.mFacing, null, null, null);
+		assertFalse(tCheck.formed, "the wrong shell fails the walk");
+		assertEquals(34, tCheck.failedCells().size(), "all 34 part cells miss (the TileEntityCokeOvenCheckerTest arm 1 count)");
+		assertEquals("declaration-only cell does not match", tCheck.firstFailedCell().reason,
+				"the declaration-only reason (the boiler pattern carries no forming expectation)");
+
+		// form(): every miss is the never-scaffolded hard class — the whole form refuses
+		FormedVerdict tVerdict = GTMultiBlockStructureChecker.form(tBoiler, tBoiler.mFacing, null, tStock);
+		assertFalse(tVerdict.formed, "the declaration-only shell refuses the whole form");
+		assertEquals(34, tVerdict.failedCells().size(), "the WHOLE shell fronts the refusal");
+		assertTrue(tVerdict.failedCells().stream().allMatch(tCell ->
+						"declaration-only cell does not match (never scaffolded)".equals(tCell.reason)),
+				"every refusal is the hard class, zero scaffold targets");
+		assertEquals(tStatesBefore, tLevel.mStates, "zero world writes (the DIRT shell still stands)");
+		assertEquals(64, tStock.getItem(0).getCount(), "zero consumption (the transactional contract)");
+		assertEquals(1, tLevel.mBlockEntities.size(), "nothing was placed (the refusal happened in the plan beat)");
 	}
 }
