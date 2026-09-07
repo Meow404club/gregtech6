@@ -16,14 +16,18 @@ import net.minecraftforge.common.data.BlockTagsProvider;
 *///?}
 
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.data.OP;
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTGrassBlocks;
+import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTStoneBlocks;
+import gregtech6.registry.GTWires;
 
 /**
  * The GT6 block-tag datagen home — task p24-tags-provider-skeleton, the first
@@ -46,10 +50,20 @@ import gregtech6.registry.GTStoneBlocks;
  * prefix storage blocks of the metal/gem/raw-ore families (GTCEu pins exactly this on its
  * block prefix: TagPrefix.java:734 {@code .miningToolTag(BlockTags.MINEABLE_WITH_PICKAXE)});
  * and {@code minecraft:mineable/axe} over the wood fluid barrel ({@link GTBarrels#BARREL},
- * the GTCEu wood-drum-to-axe precedent, BlockTagLoader:69-71). The {@code blockDust}
- * prefix stays OUT (the shovel band is P1, a later batch); the plastic/metal barrels stay
- * OUT (P2); {@code requires_correct_tool_for_drops} and the {@code needs_*} gates stay
- * OUT (coupled to the chisel loot chain + harvestLevel wiring — the tool-system card).
+ * the GTCEu wood-drum-to-axe precedent, BlockTagLoader:69-71).
+ *
+ * <p><b>Rolling batch 1</b> (task p24-tags-prefix-materials, the census matrix P1 rows):
+ * {@code mineable/pickaxe} extends over the wire universe ({@link GTWires#BLOCKS}
+ * whole-class enumeration — a future wire row auto-joins, the machine-walk discipline),
+ * the fluid-pipe universe ({@link GTFluidPipes#BLOCKS} whole-class — the task card names
+ * GTFluidPipeBlock into pickaxe explicitly: the functional-connector ruling; the two pipe
+ * rows' WOOD sound is the vanilla stand-in, not a material ruling) and the barrel family
+ * closure (plastic canister + bronze drum + logistics tank + twelve high-tier drums — the
+ * census axe/pickaxe/pickaxe mapping over wood/plastic/metal). {@code mineable/shovel}
+ * lands the {@code blockDust} prefix family (the sand-analog powdery storage blocks).
+ * Still OUT by the standing card boundaries: {@code requires_correct_tool_for_drops} and
+ * the {@code needs_*} gates (coupled to the chisel loot chain + harvestLevel wiring — the
+ * tool-system card); the leaf/log families (the future leaf card).
  *
  * <p><b>Strictness is the acceptance asset</b>: vanilla TagsProvider throws
  * IllegalArgumentException for any reference that fails
@@ -78,6 +92,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addPickaxeBand();
 		addAxeBand();
 		addGrassBand(); // task p24-grass-block — the grass family band
+		addShovelBand();
 		// the takeover seam: later cards tail-append their own add*Band() here
 		// (p24-tags-prefix-materials: rolling batches).
 	}
@@ -111,6 +126,23 @@ public final class GT6BlockTags extends BlockTagsProvider {
 			tPickaxe.add(((BlockItem) tEntry.getValue().get()).getBlock());
 		}
 		tPickaxe.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("lightning_rod").get()); // the p24 +1
+		// Rolling batch 1 (task p24-tags-prefix-materials, census matrix P1 rows): the wire
+		// universe (GTWires.BLOCKS whole-class enumeration — the legacy 1x/2x pair + the 620
+		// electric family + 6 redstone + 1 laser, all GTWireBlock metal rows; a future wire row
+		// auto-joins the band) and the fluid-pipe universe (GTFluidPipes.BLOCKS whole-class —
+		// the task card names GTFluidPipeBlock explicitly into pickaxe, the functional-connector
+		// ruling; the wood sound of the two pipe rows is the vanilla stand-in, NOT a material
+		// ruling, so the GTCEu wood-to-axe mapping does NOT apply here). The barrel family
+		// closes the same batch on the census material mapping (axe/pickaxe/pickaxe over
+		// wood/plastic/metal, the BlockTagLoader:69-71 precedent).
+		GTWires.BLOCKS.getEntries().forEach(tHandle -> tPickaxe.add(tHandle.get()));
+		GTFluidPipes.BLOCKS.getEntries().forEach(tHandle -> tPickaxe.add(tHandle.get()));
+		tPickaxe.add(GTBarrels.BARREL_PLASTIC.get());
+		tPickaxe.add(GTBarrels.BARREL_METAL.get());
+		tPickaxe.add(GTBarrels.BARREL_LOGISTICS.get());
+		for (RegistryObject<GTBarrelBlock> tDrum : GTBarrels.METAL_DRUM_BLOCKS.values()) {
+			tPickaxe.add(tDrum.get());
+		}
 	}
 
 	/** The mineable/axe band — the wood fluid barrel (first batch: no plastic/metal rows, P2). */
@@ -148,5 +180,20 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		java.util.List<Block> rBlocks = new java.util.ArrayList<>();
 		for (var tHandle : GTGrassBlocks.BLOCKS) rBlocks.add(tHandle.get());
 		return rBlocks;
+	}
+	 * The mineable/shovel band, rolling batch 1 (task p24-tags-prefix-materials, census
+	 * matrix P1 row): the {@code blockDust} prefix family — the powdery storage blocks ride
+	 * the shovel exactly like the vanilla SAND family the census pinned as the evidence
+	 * (GTCEu pins the dust-storage twin to the same face through its {@code block} prefix's
+	 * miningToolTag being the only pickaxe face — the dust block's 9-Dust composition is the
+	 * sand-analog). Strictness unchanged: every member is a live-registered block item from
+	 * the registration walk.
+	 */
+	private void addShovelBand() {
+		var tShovel = tag(BlockTags.MINEABLE_WITH_SHOVEL);
+		for (var tEntry : GTMaterialBlocks.items().entrySet()) {
+			if (tEntry.getKey().prefix() != OP.blockDust) continue;
+			tShovel.add(((BlockItem) tEntry.getValue().get()).getBlock());
+		}
 	}
 }
