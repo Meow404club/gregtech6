@@ -128,10 +128,17 @@ public final class GTGrassBlocks {
 
 	/** The live variant resolver (the mod-load face — RegistryObjects must be fired). */
 	private static final java.util.function.IntFunction<Block> LIVE_RESOLVER = aIndex -> {
-		RegistryObject<Block> tHandle = BLOCKS.get(aIndex);
 		// the pre-registration face (the offline test JVM, the spray-can clinit path): no
-		// GT grass exists yet — a null verdict instead of the RegistryObject IllegalStateException
+		// GT grass exists yet — a null verdict instead of the unresolved-handle exception.
+		// The bound-check face differs per leg: RegistryObject.isPresent vs the 21.1
+		// DeferredHolder.isBound (Holder face, javap-verified 21.1.249).
+		//? if forge {
+		RegistryObject<Block> tHandle = BLOCKS.get(aIndex);
 		return tHandle.isPresent() ? tHandle.get() : null;
+		//?} else {
+		/*DeferredHolder<Block, Block> tHandle = BLOCKS.get(aIndex);
+		return tHandle.isBound() ? tHandle.get() : null;
+		 *///?}
 	};
 
 	/** The swappable resolver (the GTFluids.sFluidResolver seam shape — tests inject stand-ins). */

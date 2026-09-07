@@ -105,7 +105,7 @@ class GTGrassBlockTest {
 		for (var tMethod : GTGrassBlock.class.getDeclaredMethods()) {
 			assertFalse(tMethod.getName().equals("randomTick"), "no randomTick override — the upstream empty stub face");
 		}
-		Object tProps = GTGrassBlock.properties();
+		Object tProps = GTGrassBlock.grassProperties();
 		assertFalse(readBoolean(tProps, "isRandomlyTicking"), "randomTicks() deliberately unset");
 		// the vanilla control, by CLASS SHAPE (the flag face is registry-timing-sensitive
 		// in the test JVM): vanilla grass spreads THROUGH SpreadingSnowyDirtBlock.randomTick,
@@ -151,7 +151,7 @@ class GTGrassBlockTest {
 	 */
 	@Test
 	void numbersMatchTheVanillaRegistrationRow() throws Exception {
-		Object tProps = GTGrassBlock.properties();
+		Object tProps = GTGrassBlock.grassProperties();
 		float tStrength = readFloat(tProps, "destroyTime");
 		assertEquals(0.6F, tStrength, "the vanilla 0.6 hardness");
 		assertEquals(Blocks.GRASS_BLOCK.defaultBlockState().getDestroySpeed(null, null), tStrength,

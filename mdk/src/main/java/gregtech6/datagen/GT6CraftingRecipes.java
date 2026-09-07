@@ -91,12 +91,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
 	/** The forward recipe id of variant i — the result path (the vanilla naming convention). */
 	public static ResourceLocation grassRecipeId(int aVariant) {
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, GTGrassBlocks.PATHS.get(aVariant));
+		String tPath = GTGrassBlocks.PATHS.get(aVariant); // a local so the two-arg RL ctor args stay bare identifiers (the swap-table regex note)
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/** The reverse recipe id of variant i — the variant path + the {@code _reverse} suffix. */
 	public static ResourceLocation grassReverseRecipeId(int aVariant) {
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, GTGrassBlocks.PATHS.get(aVariant) + "_reverse");
+		String tPath = GTGrassBlocks.PATHS.get(aVariant) + "_reverse"; // the same bare-identifier discipline
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**

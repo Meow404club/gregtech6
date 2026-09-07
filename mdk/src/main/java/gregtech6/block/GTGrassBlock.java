@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
@@ -82,7 +83,7 @@ public class GTGrassBlock extends Block {
 		// the vanilla grass registration row (Blocks.java:89) MINUS randomTicks() — the
 		// no-spread cut; strength(0.6F) = hardness AND blast resistance 0.6 (upstream
 		// copies both from the vanilla block at runtime, BlockGrass.java:111-112)
-		super(properties());
+		super(grassProperties());
 	}
 
 	/**
@@ -90,9 +91,10 @@ public class GTGrassBlock extends Block {
 	 * (the block ITSELF is unconstructible in the frozen-registry test JVM — the mod-Item
 	 * wall's block face, CrowbarTest.bootStrap NOTE — but a {@code Properties} object
 	 * carries no registry state). The pinned numbers: the vanilla grass row
-	 * (Blocks.java:89) MINUS {@code randomTicks()}.
+	 * (Blocks.java:89) MINUS {@code randomTicks()}. Named {@code grassProperties} — 21.1's
+	 * {@code BlockBehaviour.properties()} accessor clashes with a bare {@code properties}.
 	 */
-	static BlockBehaviour.Properties properties() {
+	static BlockBehaviour.Properties grassProperties() {
 		return BlockBehaviour.Properties.of()
 				.mapColor(MapColor.GRASS)
 				.strength(0.6F)
