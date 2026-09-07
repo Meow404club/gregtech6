@@ -233,6 +233,39 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 		}
 	}
 
+	/**
+	 * The builder-wand relay target (task p24-builder-wand — the minimal faithful face of
+	 * the upstream tool-relay, MultiTileEntityMultiBlockPart.java:251-266). The wand
+	 * clicks THIS part, the CONTROLLER does the work: {@code getTarget(false)} resolves
+	 * the owner with the lazy {@code isInsideStructure} rebuild (:199-214), the explicit
+	 * :261 ownership re-check guards the stale-cache case the lazy rebuild cannot see,
+	 * and only a controller whose structure still contains this cell is returned
+	 * (upstream :262-263 drops the claim on the mismatch — the drop itself stays in the
+	 * lazy rebuild, the relay just refuses to fire).
+	 *
+	 * <p>Declared deviation: the upstream no-controller arm answered the wand with the
+	 * chat line "There is no Multiblock Controller for this Block." (:256-258) — the
+	 * {@code aChatReturn} mechanism has no port counterpart, so the unlinked-part click
+	 * is a silent no-op (the caller {@code PASS}es).
+	 *
+	 * <p>Builder-wand exclusive: the only upstream part-relay tools are the wand and the
+	 * magnifying glass (:256); the magnifier face is not ported, so this relay has no
+	 * generic {@code IBlockToolable} broadcast layer (research gap ③, the future
+	 * tool-system domain) — the wand item resolves this method directly.
+	 *
+	 * @return the owning {@link TileEntityBase10MultiBlockBase} (the only port
+	 *         controller population answering the upstream
+	 *         {@code onToolClickMultiBlock} wand arm), or null = no scaffold target.
+	 */
+	@Nullable
+	public TileEntityBase10MultiBlockBase wandTarget() {
+		if (getTarget(false) instanceof TileEntityBase10MultiBlockBase tController
+				&& tController.isInsideStructure(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ())) {
+			return tController;
+		}
+		return null;
+	}
+
 	// ---------------------------------------------------------------------------
 	// the capability relay (the 698-line interface face → 3 capabilities)
 	// ---------------------------------------------------------------------------
