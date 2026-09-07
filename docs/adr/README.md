@@ -48,6 +48,11 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-06 | [2026-09-06-p20-texture-tree-policy.md](2026-09-06-p20-texture-tree-policy.md) | ADR-P20 贴图真图/占位双树政策：真图正典位=静态树+同路径跨树共存禁止（generated srcDir 后拷遮蔽静态树实证）+gen_textures.py skip-if-real 让位（静态树即排除表）+census 纯 JUnit 禁做 datagen provider+overlay_active 烘焙泛化+机器机身键集钉定 |
 | 2026-09-06 | [2026-09-06-p20-i18n-zhcn-pipeline.md](2026-09-06-p20-i18n-zhcn-pipeline.md) | ADR-P20 i18n zh_cn 管线：GT6ZhCn datagen provider+TSV 翻译数据源注入（非 datagen 推导，zh_cn.json 不手写）+GT6LangParityTest zh⊆en 守卫+ZH_KEY_FLOOR 棘轮+tagprefix 手译在用 105 条（否决词缀推导值源）+B 波拼接改造组合域（改造前 zh 回退英文=声明工作状态） |
 | 2026-09-06 | [2026-09-06-p20-modularui-fork-ruling.md](2026-09-06-p20-modularui-fork-ruling.md) | ADR-P20 ModularUI fork 三裁决：上游=brachy84/ModularUI-Modern per-MC 分支（1.20.1@909cda2/1.21.1@c13e141 双腿收割）+落点=仓内 vendored third-party/modularui（否独立仓：fork 期 publish 税）+LGPL-3.0 义务三件套+jarJar 双腿各嵌本腿 jar（EvalEx 嵌套存活卡②实测） |
+| 2026-09-07 | [2026-09-07-p21-smoke-gui-headless-ruling.md](2026-09-07-p21-smoke-gui-headless-ruling.md) | P21 smoke-gui 范围裁决：离线 headless JUnit（四维否 runClient 自动化；unit.testing=true 上游钩子+Bootstrap 双闸实证；与 jarjar_smoke 互补合成端到端；runClient 视觉池项保留） |
+| 2026-09-07 | [2026-09-07-p21-stoneblocks-16item-registry-split.md](2026-09-07-p21-stoneblocks-16item-registry-split.md) | P21 stoneblocks 16-item registry 拆分：17×1 property 形→272 per-pair Block+BlockItem（P8 先例）+272 loot 独立表（variant0=dropOther 同石 COBBL）+id 方案 variant0 保裸 snake；旧世界 property 迁移损失声明 |
+| 2026-09-07 | [2026-09-07-p21-paintable-rulings.md](2026-09-07-p21-paintable-rulings.md) | P21 机器喷漆两卡裁定：存储直存免反码（DYES_INT_INVERTED 复合恒等）+已漆通道平均混色+NBT gt.color/gt.painted 键逐字+IPaintableTE 挂 03 基类全族+写入入口=离线测+RCON 臂（喷漆罐物品留池） |
+| 2026-09-07 | [2026-09-07-p21-jade-compat-card.md](2026-09-07-p21-jade-compat-card.md) | P21 Jade 兼容单卡：@WailaPlugin 零静态引用隔离（NCDFE 防线）+Modrinth maven compileOnly 双腿钉值+versionRange 硬编码声明偏离+tooltip v1 四段（流体/喷漆色/lang 键/runClient 目视入池） |
+| 2026-09-07 | [2026-09-07-p21-chisel-drop-conversion-ruling.md](2026-09-07-p21-chisel-drop-conversion-ruling.md) | P21 凿石掉落转换落点裁决：loot 逐表 alternatives[match_tool(gt6:chisel)→CHISEL_MAPPINGS item]（否 getDrops override 与 GLM）+170/102 两形态+21.1 items 序列化 delta=p17 单数化口径 |
 
 ## 占位（历史 ADR，未回填，权威原文在 state `decisions` 账本与 docs/PROJECT_STATE.md）
 

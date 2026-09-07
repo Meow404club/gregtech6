@@ -234,6 +234,18 @@
 
 新池移交：Jade 兼容（用户添加）；机器喷涂 Paintable 两卡（W3 census 重拆）；p20-modularui-smoke-gui+跟随上游重放（gen-forks.py）+jarJar identifier 对齐（需 maven 发布形态时再议）；materialWalkEmittedKeys Map 返回值缝归一（2-copy 残余）；多方块双预览（用户裁定低优先随集成波，池中原有仍有效）
 
+## 第 21 阶段（Jade 兼容 / 机器喷涂 Paintable / 整备批 / drying 食物族 / 凿石掉落转换）——✅ 已完成（2026-09-07）
+
+- [x] 研究三张：paintable（07Paintable 考古：存储/混色反码恒等可直存/NBT 键/双腿 ModelData 宿主接口名唯一分叉；范围=07 全族）∥ jade（双腿 harvest jade-{1201,1211}+Modrinth maven+GTCEu 参照+上游无 WAILA 面）∥ drying 三主体（食物族可活/树脂·生物族上游即死/GTCEu 无 Dryer）
+- [x] Jade 兼容（用户添加）a7da6593：gregtech6.jade 零静态引用+GT6MachineProvider 四段 tooltip+Modrinth maven compileOnly 双腿钉值；编译实证三分叉补录；流体显示/runClient 目视入池
+- [x] 机器喷涂 7a19b191+f910bde8：IPaintableTE（03 全族）+gt.color/gt.painted 逐字+直存免反码+通道平均混色+PAINT ModelProperty+GTMachinePaintTint 21 块 63 模型 tintindex 0+RCON paint|unpaint；未漆零回归实证；colored/ 灰轨=池
+- [x] 整备批 cbe37e2e+0e3f8524+40949bdc：materialWalk seam Set→Map（2-copy 消除 byte-identical）∥ 石块 272 per-pair+272 loot 独立表 ∥ ModularUI headless 冒烟（离线 JUnit 双腿 18+18；EvalEx "2M"=0.002 哨兵）
+- [x] drying 食物族 a623e78d：4 流体 fluid-only+4 行逐字（39 loaded 3 skipped；Maple Sap 瓶面=MultiItemBottles 域池）
+- [x] 凿石掉落转换 5660874e：170 表 match_tool alternatives+102 直通（21.1 序列化 delta=p17 口径；vanilla stone 臂留池）
+- [x] phase-closeout：合并态 forge cleanTest 1187/0；分发 jar 双腿重编+jar_content_check GREEN；ADR 五篇正典；RCON 新链三条 [0,0]
+
+新池移交：colored/ 灰轨借入+已漆换轨渲染（喷漆显色度保真）；Jade 流体显示 capability 探针；Jade tooltip runClient 目视核验；stonecutter.gradle.kts .color( 正则收窄；喷漆罐/除漆剂物品+物品域带漆 ItemColor+管线桶连接器 tint 扩展（随工具物品卡）；drying 树脂/生物族=上游即死封存；多方块双预览与版本扩展仍压后
+
 ## 遗留池
 
 - [x] **M2 哨兵产量翻案**：上游 HandlerCrushing 槽0=0 哨兵+槽1=10000 重复=每行 2 份主产出，port chance==0-null 后 oreRaw 1 份；翻案=buildRecipe base 改双 10000 槽（493 行不变）（merge 794bb1c，fix e31f48b；plain=2/blockRaw=9/dense 组合=11 对位上游）
