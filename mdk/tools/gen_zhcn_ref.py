@@ -361,6 +361,353 @@ HAND_TRANSLATIONS = {
     ),
 }
 
+# ---------------------------------------------------------------------------
+# The 442-key zh backfill (task p23-i18n-zh-442-backfill). Every missing zh key
+# (en_us.json 2531 − zh_cn.json 2089, main census 2026-09-07) gets a hand-layer row:
+#   365 gt6.tagprefix.*  = 213 identity (en template == "%s" -> zh keeps "%s", the
+#                          TSV gem precedent) + 152 affixed templates;
+#   28 block.gt6.* + 21 fluid.gt6.* + 18 item.gt6.spray* + 3 gt6.spraycan.* tooltips
+#     + 5 gt6.material.* + 2 itemGroup.gt6.* tabs.
+# Affix arbitration posture (the research card's voting aid): PRIMARY vote = the
+# tmp/gregtech.lang dump's oredict.<camelPrefix><Material> composed rows (run
+# gen_zhcn_ref.py --vote to replay it); RE-VOTE = the TeamNED package's oredict rows
+# (tmp/harvest/p23-i18n-zh-teamned, --teamned). A prefix whose two votes agree or whose
+# dump plurality is unambiguous (>=5 rows) is recorded below as status=hand with the
+# winning form; the rulings flagged for human re-check are listed in the TAGPREFIX_RECHECK
+# comment. Dump-verbatim wins are marked inline with the vote count.
+# ---------------------------------------------------------------------------
+IDENTITY_TAGPREFIXES = (
+    # en template is exactly "%s" — zh keeps "%s" (the word IS the material name; the
+    # TSV:135 gem precedent). Verified against en_us.json, census 2026-09-07.
+    "alloy", "armor", "armor_boots", "armor_chestplate", "armor_helmet", "armor_leggings", "arrow", "bamboo",
+    "bar", "bars", "battery", "battery_singleuse", "bauble", "beach", "beam", "beans",
+    "bee", "berrybush", "bit", "blade", "block", "block_", "block_bamboo", "block_glass",
+    "block_ore", "block_wool", "book", "boule", "bowl", "brick", "bud", "cable",
+    "cactus", "chest", "chipset", "chunk", "circuit", "clean_gravel", "cloth", "clump",
+    "cobblestone", "coin", "component", "compressed_cobblestone", "compressed_dirt", "compressed_gravel", "compressed_sand", "compressed_stone",
+    "computer", "cones", "consumable", "cooking", "coral", "craft", "crafting", "crafting_tool",
+    "crate_gt64_ore", "crate_gt_ore", "crop", "crystalline", "denseore", "desert", "dinosaur", "dirt",
+    "dirty_gravel", "door", "drop", "dust_dirty", "dye", "dye_ceramic", "dye_mixable", "element",
+    "elven", "epiphyte", "essence", "fabric", "fence", "fern", "fertilizer", "floating",
+    "flower", "food", "forest", "frame", "frame_gt", "fuel", "fungus", "ganys",
+    "gate", "gear", "glass", "glowstone", "grafter", "grass", "gravel", "ground",
+    "handle", "hanging", "head", "immersed", "ingot_quad", "item", "item_", "item_dust",
+    "jungle", "junk", "ladder", "lamp", "leaf", "leafy", "leaves", "liquid",
+    "list", "log", "lumar", "lump", "mana", "material", "mffs", "molecule",
+    "motor", "mountain", "mushroom", "mystic", "obsidian", "ocean", "orb", "ore_gem",
+    "pane_glass", "panel", "paper", "part", "pearl", "pebbles", "pellet", "petal",
+    "plains", "plank", "plant", "plasma", "plate_quad", "plating", "pole", "powder",
+    "projred", "pulp", "quartz", "raw", "reactor", "record", "reduced", "reed",
+    "river", "rock", "rod", "rubble", "rune", "sand", "sapling", "savanna",
+    "scoop", "scrap", "scraps", "seed", "shard", "shears", "sheet", "sheet_double",
+    "shrub", "skull", "slab", "soulsand", "stained_clay", "stained_glass", "stair", "stone",
+    "stone_brick", "stone_bricks", "stone_bricks_mossy", "stone_chiseled", "stone_cobble", "stone_cracked", "stone_mossy", "stone_mossy_bricks",
+    "stone_polished", "stone_smooth", "stonebrick", "storage", "tiny", "tome", "tool", "tool_axe",
+    "tool_hoe", "tool_pickaxe", "tool_shears", "tool_shovel", "tool_sword", "torch", "trapdoor", "travelgear",
+    "tree", "tree_leaves", "tree_sapling", "tube", "turbine", "vine", "wafer", "wall",
+    "water", "wax", "wetlands", "wire", "wood",
+)
+
+VOTED_TAGPREFIXES = {
+    # ---- dump-primary vote wins (composed oredict rows, plurality form cited) ----
+    "boule_gt": "单晶%s",                       # dump 单晶铝 etc., 148 rows
+    "bullet_gt_medium": "中号%s子弹",            # 850 rows (dump 中号..子弹)
+    "casing_machine": "%s机器外壳",              # 209 rows
+    "casing_machine_dense": "致密%s机器外壳",     # 209 rows
+    "casing_machine_double": "强化%s机器外壳",    # 209 rows
+    "casing_machine_quadruple": "高强%s机器外壳",  # 209 rows
+    "crate_gt64_dust": "箱装%s粉",               # 1164 rows
+    "crate_gt64_gem": "箱装%s晶体",              # 217 rows
+    "crate_gt64_ingot": "箱装%s锭",              # 488 rows
+    "crate_gt64_plate": "箱装%s板",              # 678 rows (the 335 副票 = plate_gem rows)
+    "crate_gt64_plate_gem": "箱装%s结晶板",       # 335 rows
+    "crate_gt64_raw": "箱装%s矿",                # 615 rows
+    "crate_gt_dust": "小箱装%s粉",               # 1164 rows
+    "crate_gt_gem": "小箱装%s",                  # 219 rows (dump verbatim: the gem rows carry no tail)
+    "crate_gt_ingot": "小箱装%s锭",              # 488 rows
+    "crate_gt_plate": "小箱装%s板",              # 678 rows
+    "crate_gt_plate_gem": "小箱装%s结晶板",       # 335 rows
+    "crate_gt_raw": "小箱装%s矿",                # 615 rows
+    "ingot_hot": "热%s锭",                      # 275 rows
+    "ore": "%s矿",                              # the family tail shared by every ore<Stone> row
+    "ore_andesite": "安山岩%s矿",                # 301 rows
+    "ore_basalt": "玄武岩%s矿",                  # 316 rows
+    "ore_bedrock": "基岩%s矿",                   # 418 rows
+    "ore_blackgranite": "黑花岗岩%s矿",           # 351 rows
+    "ore_blueschist": "蓝片岩%s矿",              # 320 rows
+    "ore_darkprismarine": "暗海晶石%s矿",         # 305 rows
+    "ore_deadrock": "死石%s矿",                  # 615 rows
+    "ore_deepslate": "深板岩%s矿",               # 336 rows
+    "ore_diorite": "闪长岩%s矿",                 # 338 rows
+    "ore_endstone": "末地石%s矿",                # 443 rows
+    "ore_gravel": "砾石%s矿",                    # 615 rows
+    "ore_greenschist": "绿片岩%s矿",             # 352 rows
+    "ore_holystone": "圣石%s矿",                 # 453 rows
+    "ore_kimberlite": "金伯利岩%s矿",            # 252 rows
+    "ore_komatiite": "科马提岩%s矿",             # 252 rows
+    "ore_lightprismarine": "亮海晶石%s矿",        # 305 rows
+    "ore_limestone": "石灰岩%s矿",               # 612 rows
+    "ore_livingrock": "活石%s矿",                # 459 rows
+    "ore_marble": "大理石%s矿",                  # 363 rows
+    "ore_mud": "淤泥%s矿",                      # 467 rows
+    "ore_netherrack": "下界岩%s矿",              # 465 rows
+    "ore_quartzite": "石英岩%s矿",               # 381 rows
+    "ore_red_sand": "红沙%s矿",                  # 479 rows
+    "ore_redgranite": "红花岗岩%s矿",            # 351 rows
+    "ore_sand": "沙%s矿",                       # 515 rows
+    "ore_sandstone": "砂岩%s矿",                 # 612 rows
+    "ore_shale": "页岩%s矿",                     # 481 rows
+    "ore_slate": "板岩%s矿",                     # 481 rows
+    "ore_small": "贫瘠%s矿",                     # 615 rows — the dump's Small Ore word
+    "ore_vanillagranite": "花岗岩%s矿",           # 351 rows
+    "ore_vanillastone": "石头%s矿",              # 413 rows
+    "plant_gt_berry": "%s莓",                   # 1175 rows (plantGtBerry=%s莓)
+    "plant_gt_blossom": "%s花",                  # 1175 rows
+    "plant_gt_fiber": "%s线",                    # 1175 rows (dump verbatim)
+    "plant_gt_twig": "%s枝",                     # 1175 rows
+    "plant_gt_wart": "%s疣",                     # 1175 rows
+    "scrap_gt": "%s废料",                        # 1176 rows
+}
+
+# The rulings below were authored by hand where BOTH votes fell empty (the dump has no
+# composed row for the prefix). Anchors: the dump's established word roots (致密/下界/
+# 岩石词根/管道, the TSV rows-size words 小型/中型/大型/巨型) and en semantics. The
+# "×" glue follows the TSV gt6.wire.display convention; wire=线 vs cable=线缆 keeps the
+# B1 form split. Proper-noun stone/planet heads (Callisto, Eris, ...) keep their ASCII
+# form — the superconductor bilingual proper-noun precedent (research card).
+HAND_TAGPREFIXES = {
+    "bottle": "%s瓶",
+    "bucket": "%s桶",
+    "capcellcon": "%s胶囊电池容器",      # Capsule Cell Container
+    "capsule": "%s胶囊",
+    "cell": "%s电池单元",                # RECHECK: Cell noun (GT fluid cell)
+    "cluster": "天然%s晶簇",             # Native %s Cluster
+    "compressed": "压缩%s",
+    "crystal": "%s晶体",                 # the dump gem/crate word (gemAlexandrite=紫翠玉晶体)
+    "crystal_pure": "纯净%s晶体",
+    "dust_impure": "杂质%s粉",           # RECHECK: Impure Pile of %s Dust
+    "dust_pure": "纯净%s粉",
+    "dust_refined": "精炼%s粉",
+    "gem_ore": "%s矿石",
+    "gem_polished": "抛光%s",
+    "gem_raw": "生%s",
+    "gem_uncut": "未切割%s",
+    # ore_<stone> faces with NO dump row: vanilla/geology words translated, proper nouns kept
+    "ore_betweenstone": "Betweenstone%s矿",  # RECHECK: Betweenlands proper noun
+    "ore_blackstone": "黑石%s矿",
+    "ore_callisto": "Callisto%s矿",          # RECHECK: moon of Jupiter, kept ASCII
+    "ore_ceres": "Ceres%s矿",                # RECHECK
+    "ore_deimos": "Deimos%s矿",              # RECHECK
+    "ore_dense": "致密%s矿",                 # the dump 致密 word root
+    "ore_end": "末地%s矿",
+    "ore_eris": "Eris%s矿",                  # RECHECK
+    "ore_europa": "Europa%s矿",              # RECHECK
+    "ore_ganymede": "Ganymede%s矿",          # RECHECK
+    "ore_gneiss": "片麻岩%s矿",
+    "ore_grayschist": "灰片岩%s矿",          # RECHECK: en says "Schist %s Ore"; dump colors 蓝片岩/绿片岩 extended
+    "ore_iapetus": "Iapetus%s矿",            # RECHECK
+    "ore_io": "Io%s矿",                      # RECHECK
+    "ore_jupiter": "Jupiter%s矿",            # RECHECK
+    "ore_kepler22b": "Kepler22b%s矿",        # RECHECK
+    "ore_mars": "Mars%s矿",                  # RECHECK
+    "ore_mercury": "Mercury%s矿",            # RECHECK
+    "ore_moon": "Moon%s矿",                  # RECHECK
+    "ore_nether": "下界%s矿",
+    "ore_normal": "普通%s矿",
+    "ore_neptune": "Neptune%s矿",            # RECHECK
+    "ore_oberon": "Oberon%s矿",              # RECHECK
+    "ore_phobos": "Phobos%s矿",              # RECHECK
+    "ore_pinkschist": "粉片岩%s矿",          # RECHECK: dump naming-pattern extension
+    "ore_pitstone": "Pitstone%s矿",          # RECHECK: Aether proper noun
+    "ore_pluto": "Pluto%s矿",                # RECHECK
+    "ore_poor": "劣质%s矿",                  # RECHECK: Poor Ore (ore_small already owns 贫瘠 per the dump)
+    "ore_rich": "富集%s矿",
+    "ore_rhea": "Rhea%s矿",                  # RECHECK
+    "ore_saturn": "Saturn%s矿",              # RECHECK
+    "ore_siltstone": "粉砂岩%s矿",
+    "ore_space": "太空%s矿",
+    "ore_strangesand": "异沙%s矿",
+    "ore_titan": "Titan%s矿",                # RECHECK
+    "ore_titania": "Titania%s矿",            # RECHECK
+    "ore_triton": "Triton%s矿",              # RECHECK
+    "ore_umberstone": "Umberstone%s矿",      # RECHECK: fictional stone, kept ASCII
+    "ore_uranus": "Uranus%s矿",              # RECHECK
+    "ore_venus": "Venus%s矿",                # RECHECK
+    "oreberry": "%s莓",                      # the plant_gt_berry dump word
+    "orebush": "%s灌木",
+    # pipes: dump MTE 26060-26066 word set (微型/小型/裸/大型/巨型 + 四合一/九合一...流体管道)
+    "pipe": "%s管道",
+    "pipe_huge": "巨型%s管道",
+    "pipe_large": "大型%s管道",
+    "pipe_medium": "中型%s管道",
+    "pipe_nonuple": "九合一%s管道",
+    "pipe_quadruple": "四合一%s管道",
+    "pipe_restrictive_huge": "巨型限流%s管道",
+    "pipe_restrictive_large": "大型限流%s管道",
+    "pipe_restrictive_medium": "中型限流%s管道",
+    "pipe_restrictive_small": "小型限流%s管道",
+    "pipe_restrictive_tiny": "微型限流%s管道",
+    "pipe_small": "小型%s管道",
+    "pipe_tiny": "微型%s管道",
+    "plate_steamcraft": "薄%s板",
+    "raw_ore_chunk": "生%s矿石块",           # RECHECK: Raw Chunk of %s Ore
+    "sheet_gt": "%s薄板",                    # RECHECK: Sheet vs the existing %s板 plate
+    # wire_gt/cable_gt: BOTH votes empty (the 1.7.10 dump's oredict section has no wireGt
+    # rows) — the task-card ruling applies: "%s×%s线" with the × sign (the TSV
+    # gt6.wire.display convention), the numeral literal riding the template like the en;
+    # cable keeps the B1 wire=线 / cable=线缆 split.
+    "wire_gt01": "1×%s线",
+    "wire_gt02": "2×%s线",
+    "wire_gt03": "3×%s线",
+    "wire_gt04": "4×%s线",
+    "wire_gt05": "5×%s线",
+    "wire_gt06": "6×%s线",
+    "wire_gt07": "7×%s线",
+    "wire_gt08": "8×%s线",
+    "wire_gt09": "9×%s线",
+    "wire_gt10": "10×%s线",
+    "wire_gt11": "11×%s线",
+    "wire_gt12": "12×%s线",
+    "wire_gt13": "13×%s线",
+    "wire_gt14": "14×%s线",
+    "wire_gt15": "15×%s线",
+    "wire_gt16": "16×%s线",
+    "cable_gt01": "1×%s线缆",
+    "cable_gt02": "2×%s线缆",
+    "cable_gt04": "4×%s线缆",
+    "cable_gt08": "8×%s线缆",
+    "cable_gt12": "12×%s线缆",
+}
+
+for _snake in IDENTITY_TAGPREFIXES:
+    _key = "gt6.tagprefix." + _snake
+    if _key in HAND_TRANSLATIONS:
+        sys.exit(f"identity prefix {_key} already in the hand layer")
+    HAND_TRANSLATIONS[_key] = ("%s", "hand")
+for _table in (VOTED_TAGPREFIXES, HAND_TAGPREFIXES):
+    for _snake, _value in _table.items():
+        _key = "gt6.tagprefix." + _snake
+        if _key in HAND_TRANSLATIONS:
+            sys.exit(f"voted/hand prefix {_key} already in the hand layer")
+        HAND_TRANSLATIONS[_key] = (_value, "hand")
+
+# ---- block.gt6.* (28): the barrel/fluid-pipe rows join the dump MTE face where one
+# exists ( Wooden Barrel -> gt.multitileentity.6990 木制储物桶); the rest follow en
+# semantics over the dump's established material words (钨钢/碳化钽铪/艾德曼合金/下界合金
+# ...). Drum = 鼓 per the task-card ruling (Adamantium Drum = 艾德曼合金鼓); Draconium
+# rides the dump's own word (bouleGtDraconiumAwakened = 单晶觉醒龙 -> 龙). The machine
+# words reuse the committed TSV rows units (粉碎机/破碎机/车床) verbatim; 烤箱 per the
+# task-card spot-check. wire_electric = the × convention on the atomic legacy keys.
+BLOCK_BACKFILL = {
+    "block.gt6.barrel_adamantium": "艾德曼合金鼓",
+    "block.gt6.barrel_awakened_draconium": "觉醒龙合金鼓",
+    "block.gt6.barrel_draconium": "龙合金鼓",        # RECHECK: dump 龙 word root (单晶觉醒龙)
+    "block.gt6.barrel_gaia_spirit": "盖亚鼓",
+    "block.gt6.barrel_infinity": "无限鼓",
+    "block.gt6.barrel_logistics": "物流储罐",
+    "block.gt6.barrel_metal": "青铜鼓",              # the row material word (TSV gt6.row.mat.bronze)
+    "block.gt6.barrel_netherite": "下界合金鼓",
+    "block.gt6.barrel_plastic": "塑料罐",            # Canister = 罐
+    "block.gt6.barrel_tantalum_hafnium_carbide": "碳化钽铪鼓",
+    "block.gt6.barrel_titanium": "钛鼓",
+    "block.gt6.barrel_tungsten": "钨鼓",
+    "block.gt6.barrel_tungsten_alloy": "钨合金鼓",
+    "block.gt6.barrel_tungstensteel": "钨钢鼓",
+    "block.gt6.barrel_void_metal": "虚空金属鼓",
+    "block.gt6.barrel_wood": "木制储物桶",           # dump join: gt.multitileentity.6990 木制储物桶
+    "block.gt6.crank": "手摇曲柄",
+    "block.gt6.crusher": "破碎机",                   # = the TSV gt6.row.machine.crusher unit verbatim
+    "block.gt6.energy_source": "测试能源",
+    "block.gt6.lathe": "车床",                       # = the TSV gt6.row.machine.lathe unit verbatim
+    "block.gt6.multiblock_coke_oven": "焦炉",        # = the JEI info page word (gt6.jei.info row)
+    "block.gt6.multiblock_coke_oven_bricks": "焦炉砖",
+    "block.gt6.oven": "烤箱",
+    "block.gt6.shredder": "粉碎机",                  # = the TSV gt6.row.machine.shredder unit verbatim
+    "block.gt6.wire_electric_1x": "1×电线",
+    "block.gt6.wire_electric_2x": "2×电线",
+    "block.gt6.wood_fluid_pipe_medium": "木制流体管道",  # dump 26xxx ...流体管道 word set
+    "block.gt6.wood_fluid_pipe_small": "小型木制流体管道",
+}
+
+# ---- fluid.gt6.* (21): hand translations with dump anchors (蒸馏水/柴油/幻露 per the
+# research card; the lowercase code keys (mnwtr/spdew/waterdirty) follow their en
+# semantics per the task-card ruling).
+FLUID_BACKFILL = {
+    "fluid.gt6.cactuswater": "仙人掌汁",
+    "fluid.gt6.cold_water": "冷水",
+    "fluid.gt6.diesel": "柴油",
+    "fluid.gt6.distilled_water": "蒸馏水",
+    "fluid.gt6.ethanol": "乙醇",
+    "fluid.gt6.fuel": "燃料",
+    "fluid.gt6.hot_water": "热水",
+    "fluid.gt6.jetfuel": "喷气燃料",
+    "fluid.gt6.kerosine": "煤油",
+    "fluid.gt6.maplesap": "枫糖树液",
+    "fluid.gt6.mnwtr": "矿物水",           # en semantics: Mineral Water
+    "fluid.gt6.nitrofuel": "硝基燃料",
+    "fluid.gt6.petrol": "汽油",
+    "fluid.gt6.reedwater": "芦苇水",
+    "fluid.gt6.sap": "树液",
+    "fluid.gt6.seawater": "海水",
+    "fluid.gt6.spdew": "幻露",             # en semantics: Spectral Dew (research-card anchor)
+    "fluid.gt6.steam": "蒸汽",
+    "fluid.gt6.water_boiling": "沸水",
+    "fluid.gt6.water_geothermal": "温泉水",
+    "fluid.gt6.waterdirty": "污水",        # en semantics: Dirty Water
+}
+
+# ---- spray domain (18 items + 3 tooltips) + 2 tabs: ALL hand (P22 keys, no upstream
+# face anywhere). Color names = the vanilla zh_cn dye words; the tooltip template keeps
+# the en "%s.%s" remaining-uses shape verbatim.
+SPRAY_BACKFILL = {
+    "item.gt6.spray_can_empty": "空喷罐",
+    "item.gt6.spray_paint_black": "喷漆（黑）",
+    "item.gt6.spray_paint_blue": "喷漆（蓝）",
+    "item.gt6.spray_paint_brown": "喷漆（棕）",
+    "item.gt6.spray_paint_cyan": "喷漆（青）",
+    "item.gt6.spray_paint_gray": "喷漆（灰）",
+    "item.gt6.spray_paint_green": "喷漆（绿）",
+    "item.gt6.spray_paint_light_blue": "喷漆（淡蓝）",
+    "item.gt6.spray_paint_light_gray": "喷漆（淡灰）",
+    "item.gt6.spray_paint_lime": "喷漆（黄绿）",
+    "item.gt6.spray_paint_magenta": "喷漆（品红）",
+    "item.gt6.spray_paint_orange": "喷漆（橙）",
+    "item.gt6.spray_paint_pink": "喷漆（粉）",
+    "item.gt6.spray_paint_purple": "喷漆（紫）",
+    "item.gt6.spray_paint_red": "喷漆（红）",
+    "item.gt6.spray_paint_remover": "除漆喷剂",
+    "item.gt6.spray_paint_white": "喷漆（白）",
+    "item.gt6.spray_paint_yellow": "喷漆（黄）",
+    "gt6.spraycan.decolor": "可为物品除色",
+    "gt6.spraycan.paint": "可将物品喷成%s",
+    "gt6.spraycan.remaining": "剩余使用次数：%s.%s",
+}
+
+# ---- gt6.material.* (5): the dump rows are pure ASCII (review) or absent — Breeze/
+# Carminite/Fireleaf/Golden Amber per the research-card rulings (marked for re-check);
+# Superconductor = the TeamNED double-source cross (lang/gt_material/zh_cn.lang:1705 +
+# source/translated/GregTech.lang:5889).
+MATERIAL_BACKFILL = {
+    "gt6.material.breeze": "微风",            # RECHECK
+    "gt6.material.carminite": "胭脂石",        # RECHECK
+    "gt6.material.fireleaf": "火叶",           # RECHECK
+    "gt6.material.golden_amber": "金琥珀",     # RECHECK
+    "gt6.material.superconductor": "超导体",   # TeamNED double-source cross
+}
+
+# ---- itemGroup.gt6.* (2): the P22 spray-can tab + the billet prefix tab (the billet
+# word = the existing %s坯料 template's noun).
+TAB_BACKFILL = {
+    "itemGroup.gt6.billet": "坯料",
+    "itemGroup.gt6.spray_cans": "喷漆罐",
+}
+
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL):
+    for _key, _value in _backfill.items():
+        if _key in HAND_TRANSLATIONS:
+            sys.exit(f"backfill row {_key} already in the hand layer")
+        HAND_TRANSLATIONS[_key] = (_value, "hand")
+
 
 def dump_rows(dump_path: Path):
     """Collect the three families from the dump. First occurrence wins; returns {kind: {source: value}}."""
@@ -395,6 +742,80 @@ def ascii_review(value: str) -> bool:
     return value.isascii()
 
 
+# ---------------------------------------------------------------------------
+# Affix voting aid (task p23-i18n-zh-442-backfill): replays the evidence behind the
+# tagprefix hand layer. For every gt6.tagprefix.* hand row, collect composed-name
+# votes for the zh template shape (head + %s + tail) from oredict.<camelPrefix><Pascal>
+# rows: the dump is the PRIMARY vote, each --teamned file a RE-VOTE. The material zh
+# names come from the dump's gt.material.<Pascal> family; the LONGEST name occurring
+# inside a composed value determines the (head, tail) split; the plurality across rows
+# is the prefix's template. Purely advisory: the TSV remains a function of the dump +
+# HAND_TRANSLATIONS only (ADR §1.1 — zero key logic enters the generation path).
+# ---------------------------------------------------------------------------
+DUMP_MATERIAL_LINE = re.compile(r"^    S:gt\.material\.([^=]+)=(.*)$")
+OREDICT_COMPOSED = re.compile(r"^oredict\.([^.=]+)$")
+
+
+def _snake_to_camel(snake: str) -> tuple:
+    parts = snake.split("_")
+    camel = "".join(p[:1].upper() + p[1:] for p in parts)
+    return camel, camel[:1].lower() + camel[1:]
+
+
+def load_votes(dump_path: Path, teamned_paths=()):
+    """Parse the dump (gt.material + oredict faces) and the optional TeamNED files."""
+    zh_names: list[str] = []
+    faces: list[dict[str, dict[str, str]]] = []
+    for source in (dump_path, *teamned_paths):
+        oredict: dict[str, str] = {}
+        with source.open("r", encoding="utf-8", errors="replace") as handle:
+            for raw in handle:
+                match = DUMP_LINE.match(raw.rstrip("\n"))
+                if not match:
+                    continue
+                key, value = match.group(1), match.group(2).strip()
+                material = DUMP_MATERIAL_LINE.match(raw.rstrip("\n"))
+                if material and source == dump_path:
+                    if value and not value.isascii() and value not in zh_names:
+                        zh_names.append(value)
+                    continue
+                composed = OREDICT_COMPOSED.match(key)
+                if composed:
+                    oredict[composed.group(1)] = value
+        faces.append(oredict)
+    zh_names.sort(key=len, reverse=True)
+    return faces, zh_names
+
+
+def vote_tagprefixes(faces, zh_names):
+    """Vote every tagprefix hand row; returns {snake: [per-face [(template_str, count)]]}."""
+    rVotes: dict[str, list] = {}
+    for key, (value, status) in HAND_TRANSLATIONS.items():
+        if not key.startswith("gt6.tagprefix.") or status != "hand":
+            continue
+        snake = key[len("gt6.tagprefix."):]
+        per_face = []
+        for oredict in faces:
+            votes: dict[tuple, int] = {}
+            for camel_form in _snake_to_camel(snake):
+                for okey, oval in oredict.items():
+                    if not okey.startswith(camel_form):
+                        continue
+                    rest = okey[len(camel_form):]
+                    if not rest or rest[0].islower() or oval.isascii():
+                        continue
+                    for name in zh_names:
+                        idx = oval.find(name)
+                        if idx >= 0:
+                            slot = (oval[:idx], oval[idx + len(name):])
+                            votes[slot] = votes.get(slot, 0) + 1
+                            break
+            ranked = sorted(votes.items(), key=lambda kv: -kv[1])[:2]
+            per_face.append([(h + "{%s}" + t, n) for (h, t), n in ranked])
+        rVotes[snake] = per_face
+    return rVotes
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--dump", required=True, type=Path,
@@ -402,10 +823,28 @@ def main(argv=None) -> int:
     parser.add_argument("--out", type=Path,
                         default=Path(__file__).resolve().parent.parent / "src/main/resources/gregtech6/lang/zh_cn_ref.tsv",
                         help="output TSV path (default: the shared resources tree)")
+    parser.add_argument("--vote", action="store_true",
+                        help="print the tagprefix affix votes (primary dump + re-votes) instead of writing the TSV")
+    parser.add_argument("--teamned", type=Path, action="append", default=[],
+                        help="extra TeamNED oredict lang file for the affix re-vote (repeatable)")
     args = parser.parse_args(argv)
 
     if not args.dump.is_file():
         parser.error(f"dump not found: {args.dump}")
+    for teamned in args.teamned:
+        if not teamned.is_file():
+            parser.error(f"teamned re-vote file not found: {teamned}")
+
+    if args.vote:
+        faces, zh_names = load_votes(args.dump, args.teamned)
+        votes = vote_tagprefixes(faces, zh_names)
+        face_names = ["dump(primary)"] + [f"teamned{i + 1}(re-vote)" for i in range(len(faces) - 1)]
+        for snake in sorted(votes):
+            cell = " | ".join(
+                f"{name}:{rows}" for name, rows in zip(face_names, votes[snake])
+            )
+            print(f"{snake}\t{cell}")
+        return 0
 
     collected, dropped, duplicates = dump_rows(args.dump)
 
