@@ -68,9 +68,17 @@ public class GTLightningRodBlock extends GTMultiBlockControllerBlock {
 			super(aBlock, aProperties);
 		}
 
+		//? if forge {
 		@Override
 		public void appendHoverText(ItemStack aStack, @Nullable Level aLevel, List<Component> aTooltip, TooltipFlag aFlag) {
 			super.appendHoverText(aStack, aLevel, aTooltip, aFlag);
+		//?} else {
+		/*// 21.1: the Level second parameter became Item.TooltipContext (vanilla 1.21.1
+		//Item.java:292 — the same four-argument shape, a different carrier type).
+		@Override
+		public void appendHoverText(ItemStack aStack, Item.TooltipContext aContext, List<Component> aTooltip, TooltipFlag aFlag) {
+			super.appendHoverText(aStack, aContext, aTooltip, aFlag);
+		*///?}
 			aTooltip.add(Component.translatable(KEY_STRUCTURE).withStyle(ChatFormatting.AQUA)); // the LH.STRUCTURE header, Chat.CYAN
 			for (int i = 1; i <= 7; i++) {
 				aTooltip.add(Component.translatable(String.format(KEY_LINE, i)).withStyle(ChatFormatting.WHITE)); // :103-109
