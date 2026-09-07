@@ -1,68 +1,61 @@
 #!/usr/bin/env python3
-"""bake_machine_fronts.py -- generalized machine front baker + oven body borrower
-(task p20-borrow-machine-fronts, the p19-distillery-front-canonical generalization).
+"""bake_machine_fronts.py -- machine front splitter (p22-paint-front-overlay-split),
+with the p20 baked-front compositor kept as a RETIRED audit mode.
 
 The upstream GT6 (1.7.10) machine texture system is a MULTI-LAYER per-face stack
 (MultiTileEntityBasicMachine getTexture2 passes): the `colored/` layer is the
-opaque grayscale material base and the `overlay*` layers are transparent-bearing
-decals drawn on top at runtime. Borrowing an overlay layer alone would leave the
-hollow background pixels see-through, so the borrowed layers must be BAKED into
-single-layer opaque fronts for this port's single-cube + front-state machine
-model (GT6BlockStates.addMachine, zero code change). Per machine family
-GROUP/NAME (e.g. basicmachines/oven) three products are baked into the static
-tree, one per front state the model enumeration carries (GT6BlockStates.java
-:283-300, the base/_active/_running triple; the T2-T4 ladder rows share the T1
-set, zero extra PNGs):
+opaque grayscale material base (tinted by mRGBa at runtime) and the `overlay*`
+layers are transparent-bearing decals drawn on top UNTINTED
+(BlockTextureDefault(IIcon, boolean) = UNCOLOURED, :179-180).
 
-    <name>_front.png         = colored/front + overlay/front
-    <name>_front_active.png  = colored/front + overlay_active/front (strip FRAME 0)
-    <name>_front_running.png = colored/front + overlay_running/front (strip FRAME 0)
+--split-fronts (the p22 ACTIVE mode, task p22-paint-front-overlay-split): the
+port's machine model became a TWO-ELEMENT model (the full tinted body cube +
+a thin untinted front overlay quad), so the borrow now lands the layers SEPARATELY
+instead of compositing them. Per machine family GROUP/NAME four products:
 
-Compositing is the standard src-over operator (what GL_SRC_ALPHA /
-ONE_MINUS_SRC_ALPHA blending does when the engine stacks the passes):
-    out.rgb = src.rgb * (src.a/255) + dst.rgb * (1 - src.a/255);  out.a = 255
-The colored base stays its neutral grayscale — the per-material tint is a
-render-pool concern, NOT baked here (declared deviation in assets/README.md,
-the P19 ruling; the runtime tint is the W3 card).
+    <name>_colored_front.png         = colored/front.png          (byte copy)
+    <name>_overlay_front.png         = overlay/front.png          (FRAME 0 if a strip)
+    <name>_overlay_front_active.png  = overlay_active/front.png   (FRAME 0)
+    <name>_overlay_front_running.png = overlay_running/front.png  (FRAME 0)
 
-Upstream `overlay_active`/`overlay_running` fronts are animation STRIPS: 16xN
-where N is a multiple of the 16px frame edge (1.7.10 auto-slices square frames;
-census 2026-09-06 over the six ported families found N/16 = 1, 4, 6 and 8 —
-the "16x64 four-frame" figure of the P19 card is the distillery case, not the
-family maximum). The port has no .mcmeta animation carrier in the static cube
-model, so the bake takes FRAME 0 (top 16x16) as the static representative
-frame; the faithful animation stays in the render pool. The strip check is the
-P19 shape: width == 16 and height % 16 == 0, any frame count.
+The `colored` body face keeps its neutral grayscale (the runtime paint tint is
+the GTMachinePaintTint tintindex-0 seat); the overlay faces carry NO tintindex,
+so a painted machine no longer re-tints the state decal (the upstream two-layer
+semantics). Animation stays retired: a 16xN strip is cropped to its FRAME 0
+16x16 representative and re-encoded (filter 0, deterministic); a plain 16x16
+source is copied BYTE-IDENTICAL (sha256 == upstream). The P20 declared deviation
+"animation strips baked at FRAME 0" carries over verbatim. NOTE: the P9
+GTOvenOverlayModel strip borrows (oven_overlay_active_front.png /
+oven_overlay_running_front.png, full 16xN strips) are a DIFFERENT namespace and
+are not touched by this mode.
 
---body (valid only alongside --machine basicmachines/oven) additionally borrows
-the SHARED machine body key set the models hard-code (GT6BlockStates.java
-:303-308, machineModel: down/up/north(front)/south+east+west(side)):
+--machine (no --split-fronts): the RETIRED P20 bake mode, kept verbatim as the
+audit path — it still composites <name>_front{,_active,_running}.png into
+single-layer opaque fronts (byte-for-byte reproducible), but those products are
+no longer referenced by any model (the P22 two-element model replaced them; the
+retirement is recorded in assets/README.md). Do not land its output.
+
+--body (valid only alongside --machine basicmachines/oven, also retired with the
+bake wave) borrows the SHARED body key set:
     oven_bottom.png = colored/bottom.png   (byte-identical copy)
     oven_top.png    = colored/top.png      (byte-identical copy)
     oven_side.png   = colored/left.png     (byte-identical copy)
-The body needs no bake (single opaque layer, no overlay pass in the landed
-single-cube model), so these are byte copies of the upstream grayscale PNGs —
-the README sha256 equals the upstream sha256 (the P9 oven-overlay precedent).
-Upstream left/right/back body faces that DIFFER from the borrowed one are
-reported so the declared deviation can be recorded.
 
-Borrow-or-declare: a missing upstream layer keeps the on-d placeholder PNG and
-prints a DECLARE line — nothing is ever redrawn or faked.
+Borrow-or-declare: a missing upstream layer keeps the on-disk file and prints a
+DECLARE line — nothing is ever redrawn or faked.
 
 Pure standard library (zlib+struct, the gen_textures.py idiom), deterministic
-bytes, idempotent (a re-run over baked products reproduces identical bytes).
-decode_png/encode_png/src_over are the p19 bake_distillery_fronts.py functions
-VERBATIM — the same deterministic pipeline must yield the same bytes, which is
-the new-vs-old acceptance gate: re-running this script for distillery must
-reproduce the committed P19 products byte-for-byte (sha256-verified).
+bytes, idempotent. decode_png/encode_png/src_over are the p19
+bake_distillery_fronts.py functions VERBATIM.
 
 Usage (repo root or worktree root):
   python3 mdk/tools/bake_machine_fronts.py \
       --src tmp/gt6-1.7.10            # upstream snapshot (absolute path from a worktree)
-      --machine basicmachines/oven --machine basicmachines/shredder ... [--body]
+      --split-fronts                  # p22 mode: four separate-layer products per family
+      --machine basicmachines/oven --machine basicmachines/shredder ...
       [--dst mdk/src/main/resources/assets/gt6/textures/block]
-      [--frame N]                     # overlay strip frame, default 0
-      [--check]                       # bake and verify, write nothing
+      [--frame N]                     # overlay strip frame (legacy bake mode), default 0
+      [--check]                       # verify, write nothing
 """
 import argparse
 import hashlib
@@ -80,6 +73,18 @@ STATES = (
 )
 BASE_LAYER = "colored"
 UPSTREAM_REL = "src/main/resources/assets/gregtech/textures/blocks/machines"
+
+# The p22 split-front products (one family row = four separate-layer borrows):
+# (upstream layer/front file, output name infix). The infix joins the family
+# name into <name><infix>.png; the overlay infixes keep the retired bake
+# products' front/front_active/front_running state tail so the model texture
+# names read as "the overlay for that state".
+SPLIT_PRODUCTS = (
+    ("colored/front.png", "_colored_front"),
+    ("overlay/front.png", "_overlay_front"),
+    ("overlay_active/front.png", "_overlay_front_active"),
+    ("overlay_running/front.png", "_overlay_front_running"),
+)
 
 # The shared body key set (GT6BlockStates.java:303-308 machineModel cube keys):
 # (upstream colored face, output file name, model face role)
@@ -268,6 +273,51 @@ def bake_machine(args: argparse.Namespace, group: str, name: str) -> tuple[list[
     return baked, declared
 
 
+def split_fronts(args: argparse.Namespace, group: str, name: str) -> tuple[list[str], list[str]]:
+    """The p22 mode: land the colored/ + overlay*/ front layers SEPARATELY.
+
+    A plain 16x16 source is a byte-identical copy (sha256 == upstream); a 16xN
+    strip is cropped to FRAME 0 and re-encoded deterministically. Returns
+    (borrowed, declared) file names.
+    """
+    dist = args.src / UPSTREAM_REL / group / name
+    borrowed: list[str] = []
+    declared: list[str] = []
+    for rel, infix in SPLIT_PRODUCTS:
+        out_name = f"{name}{infix}.png"
+        src_path = dist / rel
+        if not src_path.is_file():
+            declared.append(out_name)
+            print(f"DECLARE {group}/{name}: {rel} missing — "
+                  f"{out_name} keeps its on-disk file (borrow-or-declare)")
+            continue
+        w, h, _ = decode_png(src_path.read_bytes())
+        if w != SIZE or h % SIZE != 0:
+            raise ValueError(f"{group}/{name} {rel} is {w}x{h}, expected {SIZE}xN")
+        frames = h // SIZE
+        if frames > 1:
+            print(f"  strip has {frames} frames -> cropping FRAME {args.frame} "
+                  f"(static representative; animation stays retired)")
+            if not (0 <= args.frame < frames):
+                raise ValueError(f"frame {args.frame} out of range 0..{frames - 1}")
+            _, _, px = decode_png(src_path.read_bytes())
+            data = encode_png(SIZE, SIZE, px[args.frame * SIZE * 4 * SIZE:(args.frame + 1) * SIZE * 4 * SIZE])
+            action = f"cropped {out_name}"
+        else:
+            data = src_path.read_bytes()  # byte-identical copy — no re-encode
+            action = f"borrowed {out_name}"
+        assert decode_png(data)[:2] == (SIZE, SIZE)
+        if not args.check:
+            out_path = args.dst / out_name
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            out_path.write_bytes(data)
+            print(action.ljust(56) + f"{SIZE}x{SIZE}  sha256={hashlib.sha256(data).hexdigest()}  -> {out_path}")
+        else:
+            print(action.ljust(56) + f"{SIZE}x{SIZE}  sha256={hashlib.sha256(data).hexdigest()}  (check-only)")
+        borrowed.append(out_name)
+    return borrowed, declared
+
+
 def borrow_body(args: argparse.Namespace, group: str, name: str) -> tuple[list[str], list[str]]:
     """Byte-copy the shared body faces from one family's colored layer."""
     dist = args.src / UPSTREAM_REL / group / name
@@ -315,7 +365,11 @@ def main(argv: list[str]) -> int:
                     help="upstream GT6 snapshot root (default: tmp/gt6-1.7.10; pass an absolute path from a worktree)")
     ap.add_argument("--machine", action="append", required=True, metavar="GROUP/NAME",
                     help="upstream family iconset machines/GROUP/NAME (repeatable); "
-                         "bakes <name>_front{,_active,_running}.png")
+                         "split mode lands four separate-layer products, bake mode "
+                         "composites <name>_front{,_active,_running}.png (retired)")
+    ap.add_argument("--split-fronts", action="store_true",
+                    help="p22 mode: borrow colored/front + overlay*/front SEPARATELY "
+                         "(byte-copy, strips cropped to FRAME 0) instead of baking")
     ap.add_argument("--body", action="store_true",
                     help="also borrow the shared body key set (oven_bottom/top/side) — "
                          "valid only when basicmachines/oven is among --machine machines")
@@ -345,7 +399,10 @@ def main(argv: list[str]) -> int:
     total_baked: list[str] = []
     total_declared: list[str] = []
     for group, name in machines:
-        baked, declared = bake_machine(args, group, name)
+        if args.split_fronts:
+            baked, declared = split_fronts(args, group, name)
+        else:
+            baked, declared = bake_machine(args, group, name)
         total_baked += baked
         total_declared += declared
         if args.body and (group, name) == ("basicmachines", "oven"):
