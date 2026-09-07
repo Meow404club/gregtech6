@@ -98,19 +98,24 @@ public interface ITileEntityMultiBlockController {
 		 * {@link TileEntityBase10MultiBlockBase#checkStructure} pass) — exactly the upstream
 		 * onToolClick2 sequence :132-133/:143-144 relies on.
 		 *
-		 * <p>Permission chain (task card ③ declared simplification): upstream
-		 * {@code WD.easyRep} (WD.java:688 — air/replaceable-plant family) is the vanilla
-		 * {@code isAir() || canBeReplaced()} pair; upstream {@code UT.Entities.canEdit}
-		 * (UT.java:3159 — non-players auto-approve, players canPlayerEdit) is ruled as
-		 * creative-or-OP(2) (the first-generation tool-less world only reaches this path
-		 * with a null player or a creative one). The itemized builder wand itself stays in
-		 * the pool; this method IS the wand semantics.
+		 * <p>Permission chain: upstream {@code WD.easyRep} (WD.java:688 —
+		 * air/replaceable-plant family) is the vanilla {@code isAir() || canBeReplaced()}
+		 * pair; upstream {@code UT.Entities.canEdit} (UT.java:3159 — non-players
+		 * auto-approve, players canPlayerEdit) rides the vanilla {@code mayBuild} ability
+		 * (survival and creative pass, adventure is refused — the OP(2) narrowing of task
+		 * p24-creative-form-seam was reopened when the itemized builder wand landed, the
+		 * decisions.p24-builder-wand-op2-reform ruling: the survival (T,F) consume arm is
+		 * the upstream-practiced path, double-proven through the upstream inventory-scan
+		 * scaffold :58-66 and the Behavior_Builderwand canPlayerEdit surface :94-95).
+		 * This method IS the wand placement semantics.
 		 */
 		public static boolean checkAndSetTarget(ITileEntityMultiBlockController aController, int aX, int aY, int aZ,
 				Block aPartBlock, int aDesign, int aMode,
 				@Nullable BlockPos aClickedAt, @Nullable Player aPlayer, @Nullable Container aInventory) {
-			// UT.Entities.canEdit (UT.java:3159) ruled creative-or-OP(2); non-players auto-approve (null).
-			boolean tMayEdit = aPlayer == null || aPlayer.isCreative() || aPlayer.hasPermissions(2);
+			// UT.Entities.canEdit (UT.java:3159) = the vanilla canPlayerEdit equivalent:
+			// aPlayer == null || mayBuild. OP(2) reform of decisions.p24-builder-wand-op2-reform —
+			// MUST stay identical to the GTMultiBlockStructureChecker.form wrapper feed.
+			boolean tMayEdit = aPlayer == null || aPlayer.getAbilities().mayBuild;
 			// UT.Entities.hasInfiniteItems (UT.java:3187).
 			boolean tInfiniteItems = aPlayer != null && aPlayer.isCreative();
 			return checkAndSetTarget(aController, aX, aY, aZ, aPartBlock, aDesign, aMode, aClickedAt, aPlayer, aInventory, tMayEdit, tInfiniteItems);
@@ -121,8 +126,10 @@ public interface ITileEntityMultiBlockController {
 		 * rulings pre-resolved by the caller. A real Player is not constructible offline (the
 		 * Forge-patched Entity ctor forces {@code FluidType.SIZE}), so the boolean pair IS the
 		 * testable form of the chain: (true, true) = creative free placement, (true, false) =
-		 * the consume-from-inventory OP(2) arm, (false, *) = the scaffold gate stays shut.
-		 * The public wrapper above is the production entry — it only parses and delegates.
+		 * the consume-from-inventory survival arm (the OP(2) reform of
+		 * decisions.p24-builder-wand-op2-reform — mayBuild passes for survival), (false, *) =
+		 * the scaffold gate stays shut. The public wrapper above is the production entry —
+		 * it only parses and delegates.
 		 */
 		static boolean checkAndSetTarget(ITileEntityMultiBlockController aController, int aX, int aY, int aZ,
 				Block aPartBlock, int aDesign, int aMode,
