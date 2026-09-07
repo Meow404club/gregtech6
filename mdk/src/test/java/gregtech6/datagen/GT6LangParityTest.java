@@ -68,8 +68,13 @@ public class GT6LangParityTest {
 	 * Task p20-i18n-compose-rows (the B2 closeout): raised to the measured 2089 — the zh
 	 * face now carries the B2 template/unit faces (16 stone variants + 62 rows units + the
 	 * four atomic rows) on top of the A/B1 waves.
+	 *
+	 * <p>Task p24-micro-fixes-2 (the P24 micro card): raised to the measured 2550 — P23 left
+	 * it at 2531 while the dye-chemical (+17, p24-dye-chemical-fluids) and empty-can/tool
+	 * (+2, 3870458a) lang rows landed on main. Both committed generated faces count exactly
+	 * 2550 keys with zero set difference (zh=en zero-debt contract holds).
 	 */
-	private static final int ZH_KEY_FLOOR = 2531;
+	private static final int ZH_KEY_FLOOR = 2550;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
