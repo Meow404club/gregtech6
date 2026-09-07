@@ -20,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,6 +33,8 @@ import gregtech6.gui.machines.GTBasicMachineMenu;
 import gregtech6.gui.machines.GTBasicMachinesMenus;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
+import gregtech6.tileentity.IPaintableTE;
+import gregtech6.tileentity.TileEntityBase01Root;
 
 /**
  * {@code /gt6machine} — the machine-family acceptance command (task p7-basicmachine-family
@@ -71,6 +74,15 @@ import gregtech6.registry.GTMachines;
  *     side-gated FLUID_HANDLER driver over the p14-machine-fluid-face carriers: the
  *     rotated row masks answer fill/draw (0 = REJECTED is a legitimate verdict) and stat
  *     dumps the tank census plus the live fluid/energy face lists (task p14-dryer-family).</li>
+ * <li>{@code paint <pos> <dye0-15|none>} / {@code unpaint <pos>} (task
+ *     p21-paintable-storage-sync, ADR 2026-09-07-p21-paintable-rulings ruling 1) — the
+ *     spray write-point arm over the SAME server {@link IPaintableTE} API the offline
+ *     tests drive: {@code <dye>} is the GT6 dye index 0=Black..15=White (the upstream
+ *     CS.DYES_INT table values) routed through {@link IPaintableTE#mixPaint} (the
+ *     recolourBlock routing of TileEntityBase04MultiTileEntities.java:227-235, so an
+ *     already-painted machine MIXES by channel average), {@code none} /
+ *     {@code unpaint} clear the paint. The report reads the colour back
+ *     ({@code RGB #old->#new painted=..}) — the RCON chain pins it.</li>
  * </ul>
  *
  * <p>Plus the regime switch {@code /gt6machine fakesource on|off|stat} — flips
@@ -90,6 +102,35 @@ public final class GTMachineCommand {
 	/** The GT6 side the rig injects through (doInject ignores the side — the :511 mask is the side-gated IO pool item). */
 	private static final byte INJECT_SIDE = 2;
 
+	/**
+	 * The upstream CS.DYES_INT dye table (CS.java:441-457 DYE_* short[] through
+	 * UT.Code.getRGBInt :1580-1582), index = the GT6 DYE_INDEX (CS.java:443-458,
+	 * 0=Black..15=White). The direct-store equivalent of the upstream spray route:
+	 * {@code ~mColor&15} + DYES_INT_INVERTED composes to exactly this value
+	 * (ADR ruling 3 — "the colour you spray is the colour you get").
+	 */
+	private static final int[] DYES_INT = {
+			0x202020, // Black
+			0xFF0000, // Red
+			0x00FF00, // Green
+			0x604000, // Brown
+			0x0000FF, // Blue
+			0x800080, // Purple
+			0x00FFFF, // Cyan
+			0xC0C0C0, // Light Gray
+			0x808080, // Gray
+			0xFFC0C0, // Pink
+			0x80FF80, // Lime
+			0xFFFF00, // Yellow
+			0x8080FF, // Light Blue
+			0xFF00FF, // Magenta
+			0xFF8000, // Orange
+			0xFFFFFF, // White
+	};
+
+	/** The upstream DYE_NAMES (CS.java:459), same index order as {@link #DYES_INT}. */
+	private static final String[] DYE_NAMES = {"Black", "Red", "Green", "Brown", "Blue", "Purple", "Cyan", "Light Gray", "Gray", "Pink", "Lime", "Yellow", "Light Blue", "Magenta", "Orange", "White"};
+
 	private GTMachineCommand() {
 	}
 
@@ -97,7 +138,9 @@ public final class GTMachineCommand {
 	public static void onRegisterCommands(RegisterCommandsEvent event) {
 		LiteralArgumentBuilder<CommandSourceStack> tMachine = Commands.literal("gt6machine")
 			.requires(source -> source.hasPermission(2))
-			.then(fakesource());
+			.then(fakesource())
+			.then(paintArm())
+			.then(unpaintArm());
 		// task p8-machine-tiers-doinject ⑤(a): the t2/t3/t4 selector variants — one literal
 		// per registered block, the T1 feeds reused per family (same recipe chains).
 		tMachine.then(machine("shredder", GTMachines.SHREDDER, () -> Items.COBBLESTONE)) // Loader_Recipes_Vanilla.java:692
@@ -128,7 +171,7 @@ public final class GTMachineCommand {
 			.then(machine("distillery_t3", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t3"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
 			.then(machine("distillery_t4", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t4"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()));
 		event.getDispatcher().register(tMachine);
-		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery x t1..t4 | fakesource x place|input|run|inject|check|fluid)");
+		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
 		// the p8 ladder registration line (the runServer gate asserts it): the three family
 		// BETs resolve — proof the RegistryObjects bound.
 		LOGGER.info("GT6 machine ladder registered: 12 blocks / 3 family BETs (T1-T4 validBlocks multi-attach), tiers "
@@ -579,6 +622,89 @@ public final class GTMachineCommand {
 		source.sendSuccess(() -> Component.literal(tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the paint arm (task p21-paintable-storage-sync, ADR ruling 1: the spray write-point
+	// rides the SAME IPaintableTE API the offline tests drive — the p19 chisel precedent)
+	// ---------------------------------------------------------------------------
+
+	/** The {@code paint <pos> <dye0-15|none>} arm — the recolourBlock routing live face. */
+	private static LiteralArgumentBuilder<CommandSourceStack> paintArm() {
+		return Commands.literal("paint")
+			.then(Commands.argument("pos", BlockPosArgument.blockPos())
+				.then(Commands.argument("dye", com.mojang.brigadier.arguments.StringArgumentType.word())
+					.executes(context -> paint(context.getSource(),
+							BlockPosArgument.getLoadedBlockPos(context, "pos"),
+							com.mojang.brigadier.arguments.StringArgumentType.getString(context, "dye")))));
+	}
+
+	/** The {@code unpaint <pos>} arm — the same face without the dye argument. */
+	private static LiteralArgumentBuilder<CommandSourceStack> unpaintArm() {
+		return Commands.literal("unpaint")
+			.then(Commands.argument("pos", BlockPosArgument.blockPos())
+				.executes(context -> unpaint(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"))));
+	}
+
+	/**
+	 * The paintable probe (ADR ruling 2): ANY BlockEntity implementing {@link IPaintableTE}
+	 * — today the whole 03 family (machines, and the future connector/barrel rides), not
+	 * just the TileEntityBasicMachine rows — null when the target is not paintable.
+	 */
+	@javax.annotation.Nullable
+	private static BlockEntity paintableAt(CommandSourceStack source, BlockPos pos) {
+		ServerLevel tLevel = source.getLevel();
+		BlockEntity tBE = tLevel.getBlockEntity(pos);
+		return tBE instanceof IPaintableTE ? tBE : null;
+	}
+
+	/**
+	 * {@code paint <pos> <dye0-15|none>}: a dye index routes through {@link IPaintableTE#mixPaint}
+	 * (the upstream TileEntityBase04MultiTileEntities.java:227-235 recolourBlock shape —
+	 * an already-painted machine MIXES by channel average), {@code none} is
+	 * {@link IPaintableTE#unpaint}. The report always reads the colour back — the RCON
+	 * chain pins {@code RGB #old->#new} and the painted flag.
+	 */
+	private static int paint(CommandSourceStack source, BlockPos aPos, String aDyeWord) {
+		BlockEntity tBE = paintableAt(source, aPos);
+		if (tBE == null) {
+			source.sendFailure(Component.literal("No paintable GT6 TileEntity (IPaintableTE) at " + aPos.toShortString()));
+			return 0;
+		}
+		IPaintableTE tTarget = (IPaintableTE) tBE;
+		int tBefore = tTarget.getPaint();
+		boolean tChanged;
+		String tDyeDesc;
+		if ("none".equalsIgnoreCase(aDyeWord)) {
+			tChanged = tTarget.unpaint();
+			tDyeDesc = "none (unpaint)";
+		} else {
+			int tDye;
+			try {
+				tDye = Integer.parseInt(aDyeWord);
+			} catch (NumberFormatException tNotANumber) {
+				source.sendFailure(Component.literal("Unknown dye '" + aDyeWord + "': use 0-15 (GT6 DYE_INDEX) or none"));
+				return 0;
+			}
+			if (tDye < 0 || tDye >= DYES_INT.length) {
+				source.sendFailure(Component.literal("Dye index out of range: " + tDye + " (0-15, 0=Black..15=White)"));
+				return 0;
+			}
+			tChanged = tTarget.mixPaint(DYES_INT[tDye]);
+			tDyeDesc = tDye + " (" + DYE_NAMES[tDye] + " #" + String.format("%06X", DYES_INT[tDye]) + ")";
+		}
+		String tName = tBE instanceof TileEntityBase01Root tRoot ? tRoot.getTileEntityName() : tBE.getClass().getSimpleName();
+		String tLine = String.format("GT6 paint %s at %s: dye %s, RGB #%06X->#%06X painted=%s%s",
+				tName, aPos.toShortString(), tDyeDesc, tBefore, tTarget.getPaint(), tTarget.isPainted(),
+				tChanged ? " (APPLIED)" : " (NO-OP)");
+		source.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The {@code unpaint <pos>} driver (see {@link #paint}). */
+	private static int unpaint(CommandSourceStack source, BlockPos aPos) {
+		return paint(source, aPos, "none");
 	}
 
 	private static int check(CommandSourceStack source, BlockPos pos) {
