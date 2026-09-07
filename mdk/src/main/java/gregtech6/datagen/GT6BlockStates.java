@@ -65,6 +65,9 @@ public final class GT6BlockStates extends BlockStateProvider {
     /** The runData-side tint census counter (machineModel invocations — the datagen-JVM half of the pinned 21x3 audit). */
     private int mMachineTintModels;
 
+    /** The runData-side barrel tint census counter (task p23-barrel-paint-render — the datagen-JVM half of the pinned 16 audit). */
+    private int mBarrelTintModels;
+
     public GT6BlockStates(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, GT6DataGenerators.MOD_ID, existingFileHelper);
     }
@@ -212,16 +215,30 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * Task p4-fluid-barrel (W3 provider addition, merge order multiblock→barrel→cover),
      * extended by task p6-barrel-metal-plastic: the three-barrel family (wood/plastic/
-     * metal) each as a cube_all placeholder over its
-     * {@code gt6:textures/block/barrel_<material>.png} (the barrel TESR/lid is a
-     * feature-layer omission, MultiTileEntityBarrelWood.java:44-54) plus the BlockItem
-     * model parenting the block model. The textures are script-generated placeholder
-     * PNGs, not JSON.
+     * metal) over their {@code gt6:textures/block/barrel_<material>.png} (the barrel
+     * TESR/lid is a feature-layer omission, MultiTileEntityBarrelWood.java:44-54) plus
+     * the BlockItem model parenting the block model. The textures are script-generated
+     * placeholder PNGs, not JSON.
      *
      * <p>Task p7-barrel-high-tier-melt-bridge spec ④: the twelve high-tier metal drums
      * (Loader_MultiTileEntities.java:2159-2170) share the ONE {@code barrel_metal.png} —
      * every model JSON references the same PNG, so the model count grows with the rows
      * and the PNG count does not.
+     *
+     * <p>Task p23-barrel-paint-render: the former plain {@code cube_all} placeholder
+     * becomes the {@link #tintedCubeAll} single-element form (tintindex 0 on every face,
+     * the p21 machine-model grammar over the barrel's ONE-texture shortcut) — the
+     * upstream barrel renders its {@code colored/} texture multiplied by mRGBa
+     * (MultiTileEntityBarrelWood.java:42-55 {@code new BlockTextureDefault(tTex, mRGBa)};
+     * Plastic:42 / Metal:39 / Logistics:45 isomorphic), and the port's placeholder PNGs
+     * are full-grayscale (verified), so whole-barrel single-element tinting IS the
+     * colored/ layer equivalence. Unpainted barrels ride the {@code -1} white-multiply
+     * identity sentinel exactly like the machine face (P21: 0xFFFFFFFF ≡ vanilla no-tint).
+     * DECLARED DEVIATION (pool): upstream is TWO-layer — the {@code overlay/} decal
+     * texture renders UNCOLOURED on top (BlockTextureMulti); the port borrows a single
+     * texture per barrel and has no overlay decal pool yet, so v1 tints the whole
+     * barrel with no decal layer (the p22 front-overlay-split precedent for the
+     * two-layer follow-up).
      */
     private void addBarrel() {
         addBarrel(GTBarrels.BARREL.get());
@@ -230,9 +247,13 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBarrel(GTBarrels.BARREL_LOGISTICS.get()); // task p12-barrel-keepfilter-logistics — the :2171 row, own PNG
         for (var tDrum : GTBarrels.METAL_DRUM_BLOCKS.values())
             addBarrel(tDrum.get(), "barrel_metal");
+        // task p23-barrel-paint-render: the datagen-JVM census half — 16 barrel blocks,
+        // matching the GTBarrels.paintableBlockArray() client registration census (the
+        // offline JUnit half walks the generated tree and pins the same 16).
+        LOGGER.info("GT6 barrel paint tint: {} barrel models tinted (4 rows + 12 high-tier drums, addBarrel)", mBarrelTintModels);
     }
 
-    /** One cube_all barrel + its BlockItem parent (the p4 wood barrel shape, reused per material row). */
+    /** One tinted cube_all barrel + its BlockItem parent (the p4 wood barrel shape, reused per material row). */
     private void addBarrel(Block aBarrel) {
         addBarrel(aBarrel, aBarrel.getDescriptionId().replace("block.gt6.", ""));
     }
@@ -240,8 +261,11 @@ public final class GT6BlockStates extends BlockStateProvider {
     /** The same shape over an explicit texture tail (the p7 shared-PNG drum family form). */
     private void addBarrel(Block aBarrel, String aTexture) {
         String tName = aBarrel.getDescriptionId().replace("block.gt6.", "");
-        simpleBlock(aBarrel, models().cubeAll(tName, modLoc("block/" + aTexture)));
+        // the full "block/..." model path: getBuilder skips the folder prefix for
+        // "/"-bearing names (ModelProvider.extendWithFolder — the addPrefixBlocks note).
+        simpleBlock(aBarrel, tintedCubeAll("block/" + tName, modLoc("block/" + aTexture)));
         itemModels().withExistingParent(tName, modLoc("block/" + tName));
+        mBarrelTintModels++;
     }
 
     /**
