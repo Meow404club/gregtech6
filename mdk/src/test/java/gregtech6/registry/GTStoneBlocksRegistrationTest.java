@@ -1,7 +1,8 @@
 /**
- * Tests for task p19-stoneblocks-registry: the GT6 stone universe census + the four
+ * Tests for task p21-stoneblocks-16item-registry-split (superseding the p19 registration
+ * pins it keeps): the GT6 stone universe census (272 per-pair ids) + the four
  * mapping-table transcriptions + the Loader_Rocks parameter rows + the oredict
- * equivalence face.
+ * equivalence face + the id-scheme ruling.
  *
  * <p>Compile anchors (transcribed independently here, production and test must agree
  * or a conscious decision is forced):
@@ -16,6 +17,8 @@
  *     (BlockStonesGT.java:37).</li>
  * <li>BlockStones.java:117-132 — the 16 lang suffix patterns.</li>
  * <li>BlockStones.java:135-194 — the OM.reg_ face captured by oreDictMappings().</li>
+ * <li>BlockStones.java:731 — the getDrops per-meta item face the per-pair split
+ *     restores ({@code ST.make(this, 1, aMeta == STONE ? COBBL : aMeta)}).</li>
  * </ul>
  *
  * <p>Offline-safe by construction (the GTMaterialBlocksRegistrationTest lesson): the
@@ -70,7 +73,7 @@ class GTStoneBlocksRegistrationTest {
     /** BlockStones.java:84 — MOSS_MAPPINGS literal. */
     private static final byte[] UPSTREAM_MOSS = {0, 2, 2, 5, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
-    /** The 272-pair census (17 x 16) — this card's and the render card's yardstick. */
+    /** The 272-pair census (17 x 16) — the registration walk AND the 272-item id yardstick. */
     private static final int PINNED_TOTAL = 272;
 
     @BeforeAll
@@ -97,6 +100,33 @@ class GTStoneBlocksRegistrationTest {
         Set<String> tSeen = new HashSet<>();
         for (GTStoneBlocks.StoneSpec tStone : GTStoneBlocks.STONES) {
             assertTrue(tSeen.add(tStone.snake()), "stone ids must be unique: " + tStone.snake());
+        }
+    }
+
+    /**
+     * The id scheme (the p21 ADR ruling ②): variant 0 keeps the bare {@code gt6:<snake>} id
+     * (the P19 reference face diffs minimally), the other 15 variants suffix the variant's
+     * serialized name — exactly the model/texture path segment the render card landed — and
+     * the 272 composite paths are pairwise distinct.
+     */
+    @Test
+    void perPairIdSchemeIsPinned() {
+        assertEquals("marble", GTStoneBlocks.path("marble", StoneVariant.STONE), "variant 0 keeps the bare P19 id");
+        assertEquals("marble_bricks_chiseled", GTStoneBlocks.path("marble", StoneVariant.CHISL));
+        assertEquals("granite_black_small_bricks", GTStoneBlocks.path("granite_black", StoneVariant.SBRIK));
+        assertEquals("prismarine_light_windmill_tiles_a", GTStoneBlocks.path("prismarine_light", StoneVariant.WINDA));
+        Set<String> tPaths = new HashSet<>();
+        for (GTStoneBlocks.VariantKey tKey : GTStoneBlocks.registrationOrder()) {
+            assertTrue(tPaths.add(GTStoneBlocks.path(tKey.stone().snake(), tKey.variant())),
+                    "composite ids must be unique: " + tKey);
+        }
+        assertEquals(PINNED_TOTAL, tPaths.size(), "272 distinct composite ids");
+        // the model-path correspondence: every composite suffix IS the texture segment
+        for (GTStoneBlocks.VariantKey tKey : GTStoneBlocks.registrationOrder()) {
+            if (tKey.variant() == StoneVariant.STONE) continue;
+            assertTrue(GTStoneBlocks.path(tKey.stone().snake(), tKey.variant())
+                            .endsWith("_" + tKey.variant().snake),
+                    "the id suffix is the stones/<stone>/<variant> path segment: " + tKey);
         }
     }
 
@@ -190,25 +220,30 @@ class GTStoneBlocksRegistrationTest {
         }
     }
 
-    /** The block: 16-state property, default STONE, the BlockMetaType.java:61-62 strength conversion. */
+    /**
+     * The block: a degenerate pure block carrying its FIXED variant (the p21 per-pair
+     * shape), NO blockstate property any more (the P19 EnumProperty retired — the declared
+     * placement-state migration loss), and the BlockMetaType.java:61-62 strength conversion.
+     */
     @Test
-    void blockCarriesThe16VariantPropertyAndUpstreamStrength() {
-        assertEquals(16, GTStoneBlock.VARIANT.getPossibleValues().size());
-        assertSame(StoneVariant.STONE, GTStoneBlock.VARIANT.getValue("stone").orElse(null),
-                "the serialized name round-trips to the plain stone variant");
-        GTStoneBlock tBlock = new GTStoneBlock("granite_black", MT.STONES.GraniteBlack, 3.00F, 6.00F, 3, true);
-        assertSame(StoneVariant.STONE, tBlock.defaultBlockState().getValue(GTStoneBlock.VARIANT),
-                "the default state is the plain stone variant");
-        // the shared-instance discipline (ADR-P16-2) holds by construction — VARIANT is the
-        // single static constant the whole family reads; every block defaults to the plain stone
-        GTStoneBlock tShale = new GTStoneBlock("shale", MT.STONES.Shale, 0.50F, 0.75F, 0, false);
-        assertSame(StoneVariant.STONE, tShale.defaultBlockState().getValue(GTStoneBlock.VARIANT));
+    void blockCarriesItsFixedVariantAndUpstreamStrength() {
+        GTStoneBlock tBlock = new GTStoneBlock("granite_black", StoneVariant.SMOTH, MT.STONES.GraniteBlack,
+                3.00F, 6.00F, 3, true);
+        assertSame(StoneVariant.SMOTH, tBlock.variant, "the block's variant is fixed at construction");
+        assertTrue(tBlock.defaultBlockState().getProperties().isEmpty(),
+                "the p21 block is a pure block — the P19 variant property is retired");
+        assertSame(tBlock, tBlock.defaultBlockState().getBlock());
         // the impl ignores both args (BlockBehaviour.java:566-568 returns the field) — nulls are the offline form
         assertEquals(4.5F, tBlock.defaultBlockState().getDestroySpeed(null, null), 1.0e-6F,
                 "hardness = 3.00 * 1.5 (BlockMetaType.java:61)");
         assertEquals(60.0F, tBlock.getExplosionResistance(), 1.0e-6F,
                 "resistance = 6.00 * 10 (BlockMetaType.java:62, Block.java:331)");
         assertTrue(tBlock.witherProof && tBlock.harvestLevel == 3, "the granite row data rides the block");
+        // every pair of the walk yields an independent block face
+        GTStoneBlock tCobble = new GTStoneBlock("granite_black", StoneVariant.COBBL, MT.STONES.GraniteBlack,
+                3.00F, 6.00F, 3, true);
+        assertTrue(tBlock != tCobble && tCobble.variant == StoneVariant.COBBL,
+                "two variants of one stone are two distinct block instances");
     }
 
     /** The oredict equivalence face: the merged OM.reg_ sets (BlockStones.java:135-194), OP-order keys. */
@@ -235,10 +270,11 @@ class GTStoneBlocksRegistrationTest {
     }
 
     /**
-     * The composed-name face (task p20-i18n-compose-rows): the 16 variant template keys
-     * (one per StoneVariant, the stone name riding the %s slot as the gt6.material small
-     * unit), and the block's own name composes the VARIANT-0 template — expansion-pinned
-     * against the old full strings (the upstream "Black Granite" column).
+     * The composed-name face (task p20-i18n-compose-rows, unchanged by p21): the 16 variant
+     * template keys (one per StoneVariant, the stone name riding the %s slot as the
+     * gt6.material small unit), and each block composes ITS OWN variant's template —
+     * variant-0 blocks compose the exact same template the P19 single-block form composed
+     * (zero lang keys added or retired).
      */
     @Test
     void variantTemplatesCoverTheComposedNameFace() {
@@ -251,20 +287,27 @@ class GTStoneBlocksRegistrationTest {
             assertTrue(tVariant.key().startsWith("gt6.stone.variant."),
                     "the template-key namespace is uniform: " + tVariant.key());
         }
-        // the block face composes the variant-0 template over the gt6.material small unit;
+        // the block face composes its OWN variant template over the gt6.material small unit;
         // the compose CONTRACT is pinned on the contents (a bare JVM has no lang tables —
         // the full-expansion pin lives in GT6LangParityTest over the recorded faces)
-        GTStoneBlock tGranite = new GTStoneBlock("granite_black", MT.STONES.GraniteBlack, 3.00F, 6.00F, 3, true);
+        GTStoneBlock tGranite = new GTStoneBlock("granite_black", StoneVariant.STONE, MT.STONES.GraniteBlack,
+                3.00F, 6.00F, 3, true);
         net.minecraft.network.chat.contents.TranslatableContents tContents =
                 (net.minecraft.network.chat.contents.TranslatableContents) tGranite.getName().getContents();
         assertEquals(StoneVariant.STONE.key(), tContents.getKey(),
-                "the block name fills the variant-0 template");
+                "the variant-0 block composes the variant-0 template (the P19 name face, unchanged)");
         assertEquals(1, tContents.getArgs().length, "one slot: the gt6.material small unit");
         net.minecraft.network.chat.contents.TranslatableContents tStoneSlot =
                 (net.minecraft.network.chat.contents.TranslatableContents)
                         ((net.minecraft.network.chat.Component) tContents.getArgs()[0]).getContents();
         assertEquals("gt6.material.granite_black", tStoneSlot.getKey(),
                 "the stone-name slot is the material small-unit component");
+        // a non-zero variant block composes its own template — the per-pair name identity
+        GTStoneBlock tChiseled = new GTStoneBlock("granite_black", StoneVariant.CHISL, MT.STONES.GraniteBlack,
+                3.00F, 6.00F, 3, true);
+        assertEquals(StoneVariant.CHISL.key(),
+                ((net.minecraft.network.chat.contents.TranslatableContents) tChiseled.getName().getContents()).getKey(),
+                "the chiseled block composes the chiseled template — same 16 keys, no new lang face");
     }
 
     /** The texture segments recover the upstream icon names (the render card's PNG borrow paths). */

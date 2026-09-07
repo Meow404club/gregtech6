@@ -25,18 +25,32 @@ import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
 
 /**
- * Registration home of the GT6 stone universe (task p19-stoneblocks-registry): the 17
- * upstream BlockStones families (CS.java:1668 declaration order —
- * GraniteBlack..Shale), each ONE Block carrying 16 {@link StoneVariant} states, in one
- * self-contained {@code @EventBusSubscriber(MOD)} listener (the GTMaterialBlocks.java:59
- * shape; {@code @SubscribeEvent} on the method is load-bearing, GTMaterialBlocks.java:75-77).
- * The stone set is the literal CS.java:1668 array — NOT all of MT.STONES (the 85xx
- * mod-stone tail of the class is upstream-excluded), the research card's census ruling.
+ * Registration home of the GT6 stone universe (task p21-stoneblocks-16item-registry-split,
+ * superseding the P19 single-block-per-stone shape): the 17 upstream BlockStones families
+ * (CS.java:1668 declaration order — GraniteBlack..Shale) x the 16 {@link StoneVariant}
+ * metas = <b>272 per-pair Block+BlockItem registrations</b>, in one self-contained
+ * {@code @EventBusSubscriber(MOD)} listener (the GTMaterialBlocks.java:59 shape;
+ * {@code @SubscribeEvent} on the method is load-bearing, GTMaterialBlocks.java:75-77).
+ * The per-pair granularity is the P8 ADR ④ precedent (GTMaterialBlocks/
+ * GTMaterialPrefixBlock): the upstream universe is per-meta item ids ({@code
+ * ST.make(this, 1, aMeta)} — the :731 getDrops swap, the GT_Tool_Chisel.java:73-77
+ * CHISEL_MAPPINGS drop conversion), which the P19 EnumProperty form could not express.
+ *
+ * <p><b>id scheme</b> (the ADR ruling ②): variant 0 (STONE) keeps the P19 id
+ * {@code gt6:<snake>} (the pre-existing references and generated-JSON keys see a minimal
+ * diff); the other 15 variants register {@code gt6:<snake>_<variant snake>}, the suffix
+ * segment exactly the model/texture path segment the P19 render card landed
+ * ({@code stones/<stone>/<variant>}, BlockStones.java:93-108 icon names lower-cased).
+ * {@link #path} is the single definition site of that composition.
  *
  * <p>The four mapping tables (CHISEL/FILE/HAMMER/MOSS, BlockStones.java:81-84) are
- * transcribed 1:1, indexed by the {@link StoneVariant} declaration order; they are the
- * seams the chisel/file/hammer tool cards and the recipes card (p19-chisel-recipes)
- * consume — upstream BlockStones.onToolClick :573-584 reads exactly these.
+ * transcribed 1:1 exactly as the P19 card landed them — byte arrays indexed by the
+ * {@link StoneVariant} declaration (= meta) order, so a consumer maps (stone, variantFrom)
+ * -> (stone, StoneVariant.VALUES[table[variantFrom.meta()]]); the tables are stone-blind
+ * (the same 16 entries serve every stone, upstream included). CHISEL_MAPPINGS[6]==[7]==CHISL
+ * is the self-mapping pin. They are the seams the chisel/file/hammer tool cards and the
+ * recipes card (p19-chisel-recipes) consume — upstream BlockStones.onToolClick :573-584
+ * reads exactly these.
  *
  * <p>Upstream oredict face (BlockStones.java:135-194 {@code OM.reg_}/registerOre_
  * equivalents) is captured as the {@link #oreDictMappings()} equivalence table: this port
@@ -48,12 +62,9 @@ import gregtech6.block.stone.StoneVariant;
  * port counterpart; the mTextureSolid/Smooth icon copies (:198-199) are render plumbing
  * (the render card's datagen replaces them).
  *
- * <p>Intermediate state (ADR-P8 ④ precedent, mirrored from GTMaterialBlocks.java:53-57):
- * between this card and the render card the blocks exist WITHOUT blockstate/model/loot
- * JSONs — a declared working state; dedicated servers never bake models, so runServer
- * stays zero-ERROR. No creative tab: the upstream meta type joined the vanilla blocks tab
- * (BlockMetaType.java:63) and this port declares NO tab wiring this card (the machine
- * family precedent).
+ * <p>No creative tab: the upstream meta type joined the vanilla blocks tab
+ * (BlockMetaType.java:63) and this port declares NO tab wiring (the machine family
+ * precedent; task p21 keeps the P19 no-tab status quo, the tab ruling stays pooled).
  */
 @net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid = "gt6", bus = net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD)
 public final class GTStoneBlocks {
@@ -125,15 +136,25 @@ public final class GTStoneBlocks {
         StoneVariant.RNFBR.meta(), StoneVariant.RSTBR.meta(), StoneVariant.TILES.meta(), StoneVariant.STILE.meta(),
         StoneVariant.SBRIK.meta(), StoneVariant.WINDA.meta(), StoneVariant.WINDB.meta(), StoneVariant.QBRIK.meta()};
 
-    /** Runtime index snake -> block handle (registration order). */
+    /** Runtime index composite-path -> block handle (registration order, stone-major variant-major). */
     private static final Map<String, RegistryObject<Block>> BLOCKS = new LinkedHashMap<>();
-    /** Runtime index snake -> block-item handle (registration order). */
+    /** Runtime index composite-path -> block-item handle (registration order, stone-major variant-major). */
     private static final Map<String, RegistryObject<Item>> ITEMS = new LinkedHashMap<>();
     /** Defensive dedup across re-fired RegisterEvents (the GTMaterialBlocks.java:67 ADR-P2-2 fix 1 shape), per registry. */
     private static final Set<ResourceLocation> REGISTERED_BLOCK_IDS = new HashSet<>();
     private static final Set<ResourceLocation> REGISTERED_ITEM_IDS = new HashSet<>();
 
     private GTStoneBlocks() {
+    }
+
+    /**
+     * The single definition site of the per-pair id scheme (ADR ruling ②): variant 0 keeps
+     * the bare P19 id {@code gt6:<snake>}, the other 15 variants suffix the variant's
+     * serialized name — exactly the model/texture path segment the render card landed
+     * ({@code stones/<stone>/<variant>}, so the JSON key face diffs minimally).
+     */
+    public static String path(String aStoneSnake, StoneVariant aVariant) {
+        return aVariant == StoneVariant.STONE ? aStoneSnake : aStoneSnake + "_" + aVariant.snake;
     }
 
     /** RegisterEvent, LOW priority: BLOCK segment -> ITEM segment (GTMaterialBlocks.java:79-88 shape; no tab). */
@@ -148,8 +169,9 @@ public final class GTStoneBlocks {
 
     private static void registerBlocks(RegisterEvent event) {
         long tStart = System.nanoTime();
-        for (StoneSpec tStone : STONES) {
-            ResourceLocation tLoc = gtId(tStone.snake());
+        for (VariantKey tKey : registrationOrder()) { // stone-major, variant-major
+            String tPath = path(tKey.stone().snake(), tKey.variant());
+            ResourceLocation tLoc = gtId(tPath);
             if (!REGISTERED_BLOCK_IDS.add(tLoc)) { // defensive dedup, ADR-P2-2 fix 1
                 GT6Mod.LOGGER.warn("GT6 skipped duplicate stone block id {}", tLoc);
                 continue;
@@ -161,24 +183,26 @@ public final class GTStoneBlocks {
                 net.neoforged.neoforge.registries.DeferredHolder.create(Registries.BLOCK, tLoc);
             //21.1: RegistryObject died with the class; DeferredHolder.create(key, id) is the same lazy handle.
             *///?}
-            event.register(Registries.BLOCK, tLoc, () -> newBlock(tStone));
-            BLOCKS.put(tStone.snake(), tHandle);
+            event.register(Registries.BLOCK, tLoc, () -> newBlock(tKey));
+            BLOCKS.put(tPath, tHandle);
         }
-        GT6Mod.LOGGER.info("GT6 registered {} GT6 stone blocks (16 variants each)", BLOCKS.size());
+        GT6Mod.LOGGER.info("GT6 registered {} GT6 stone blocks (17 stones x 16 variants, per-pair)", BLOCKS.size());
         LOGGER.info("stone block registration took {} ms", (System.nanoTime() - tStart) / 1_000_000);
     }
 
-    /** One block instance per stone spec (fields verbatim from the Loader_Rocks row). */
-    private static GTStoneBlock newBlock(StoneSpec aStone) {
-        return new GTStoneBlock(aStone.snake(), aStone.material().get(), aStone.hardnessMultiplier(),
-                aStone.resistanceMultiplier(), aStone.harvestLevel(), aStone.witherProof());
+    /** One block instance per (stone, variant) pair (fields verbatim from the Loader_Rocks row). */
+    private static GTStoneBlock newBlock(VariantKey aKey) {
+        return new GTStoneBlock(aKey.stone().snake(), aKey.variant(), aKey.stone().material().get(),
+                aKey.stone().hardnessMultiplier(), aKey.stone().resistanceMultiplier(),
+                aKey.stone().harvestLevel(), aKey.stone().witherProof());
     }
 
     private static void registerItems(RegisterEvent event) {
         long tStart = System.nanoTime();
-        for (StoneSpec tStone : STONES) { // same walk, same order
-            ResourceLocation tLoc = gtId(tStone.snake());
-            if (BLOCKS.get(tStone.snake()) == null || !REGISTERED_ITEM_IDS.add(tLoc)) { // per-registry dedup
+        for (VariantKey tKey : registrationOrder()) { // same walk, same order
+            String tPath = path(tKey.stone().snake(), tKey.variant());
+            ResourceLocation tLoc = gtId(tPath);
+            if (BLOCKS.get(tPath) == null || !REGISTERED_ITEM_IDS.add(tLoc)) { // per-registry dedup
                 continue;
             }
             //? if forge {
@@ -190,12 +214,12 @@ public final class GTStoneBlocks {
             // The composed-name BlockItem (task p20-i18n-compose-rows): the stack name
             // delegates to the block compose (vanilla BlockItem only delegates the
             // descriptionId — BlockItem.java:186-189 — whose lang keys retired with the
-            // B2 shrink).
+            // B2 shrink). Per-pair, each block composes its OWN variant template.
             event.register(Registries.ITEM, tLoc, () ->
-                    new gregtech6.block.GTComposedNameItem(BLOCKS.get(tStone.snake()).get(), new Item.Properties()));
-            ITEMS.put(tStone.snake(), tHandle);
+                    new gregtech6.block.GTComposedNameItem(BLOCKS.get(tPath).get(), new Item.Properties()));
+            ITEMS.put(tPath, tHandle);
         }
-        GT6Mod.LOGGER.info("GT6 registered {} GT6 stone block items", ITEMS.size());
+        GT6Mod.LOGGER.info("GT6 registered {} GT6 stone block items (one per variant block)", ITEMS.size());
         LOGGER.info("stone block item registration took {} ms", (System.nanoTime() - tStart) / 1_000_000);
     }
 
@@ -208,17 +232,27 @@ public final class GTStoneBlocks {
         *///?}
     }
 
-    /** The block handle of a stone snake id, or null before registration (the GTMaterialBlocks.get seam shape). */
-    public static RegistryObject<Block> block(String aSnake) {
-        return BLOCKS.get(aSnake);
+    /** The block handle of a composite path ({@link #path} form; variant 0 accepts the bare snake), or null before registration. */
+    public static RegistryObject<Block> block(String aPath) {
+        return BLOCKS.get(aPath);
     }
 
-    /** The block-item handle of a stone snake id, or null before registration. */
-    public static RegistryObject<Item> item(String aSnake) {
-        return ITEMS.get(aSnake);
+    /** The block handle of a (stone, variant) pair, or null before registration. */
+    public static RegistryObject<Block> block(String aStoneSnake, StoneVariant aVariant) {
+        return BLOCKS.get(path(aStoneSnake, aVariant));
     }
 
-    /** All 17 registered blocks, registration order — the render card's datagen walk (p19-stoneblocks-render). */
+    /** The block-item handle of a composite path ({@link #path} form; variant 0 accepts the bare snake), or null before registration. */
+    public static RegistryObject<Item> item(String aPath) {
+        return ITEMS.get(aPath);
+    }
+
+    /** The block-item handle of a (stone, variant) pair, or null before registration. */
+    public static RegistryObject<Item> item(String aStoneSnake, StoneVariant aVariant) {
+        return ITEMS.get(path(aStoneSnake, aVariant));
+    }
+
+    /** All 272 registered blocks, registration order — the datagen walk (the render card's consumer shape). */
     public static List<Block> blockArray() {
         List<Block> rBlocks = new ArrayList<>();
         for (RegistryObject<Block> tHandle : BLOCKS.values()) rBlocks.add(tHandle.get());
@@ -227,8 +261,8 @@ public final class GTStoneBlocks {
 
     /**
      * The 272 (stone, variant) pairs, stone-major in CS.java:1668 order and variant-major in
-     * meta order — the offline-safe census/walk unit for this card's test and the render
-     * card's 272 blockstate rows. No registry access: computable before any RegisterEvent.
+     * meta order — the offline-safe census/walk unit for this card's test, the registration
+     * walk and the datagen. No registry access: computable before any RegisterEvent.
      */
     public static List<VariantKey> registrationOrder() {
         List<VariantKey> rOrder = new ArrayList<>(STONES.size() * StoneVariant.VALUES.length);
