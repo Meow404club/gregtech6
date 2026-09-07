@@ -125,6 +125,45 @@ dependencies {
     "modCompileOnly"("dev.emi:emi-forge:${emiVer}")
     "modCompileOnly"("top.theillusivec4.curios:curios-forge:${curiosVer}:api")
     "modCompileOnly"("maven.modrinth:embeddium:${embeddiumVer}")
+
+    // 测试 JVM 基建（P21 smoke-gui-headless 卡，mdk 同款三件）：
+    // 离线 headless JUnit 冒烟（ADR 2026-09-07-p21-smoke-gui-headless-ruling 路线 b）。
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+// ---- test sourceSet 接线（P21 卡；与 mdk/build.forge.gradle.kts 同构）----
+// MDG legacyforge 只把游戏库配置（modDevCompileDependencies/modDevRuntimeDependencies，主工程
+// probeConfigs 实测 extendsFrom 列表）挂到 main 的 compile/runtime classpath，test sourceSet
+// 需自行 extendsFrom——testRuntimeClasspath 由此携带 MC+forge loader 类，裸 JVM 可实例化
+// ModularScreen（其构造仅 :162 MinecraftForge.EVENT_BUS.post 单点 loader 依赖）。
+configurations.named("testCompileClasspath") {
+    extendsFrom(configurations.named("modDevCompileDependencies").get())
+}
+configurations.named("testRuntimeClasspath") {
+    extendsFrom(configurations.named("modDevRuntimeDependencies").get())
+}
+
+// main 的 output 与 classpath 追加进 test——测试类路径专属，runs/jar 不受影响
+//（mdk p3-fullprefix-creativetab 先例）。测试源在共享 src/test/java（零 chisel 语法，
+// 双节点同源同断言；vendored src/main 零触碰，gen-forks.py 重放安全不受影响）。
+sourceSets["test"].compileClasspath += sourceSets["main"].output
+sourceSets["test"].runtimeClasspath += sourceSets["main"].output
+sourceSets["test"].compileClasspath += sourceSets["main"].compileClasspath
+sourceSets["test"].runtimeClasspath += sourceSets["main"].runtimeClasspath
+
+tasks.withType(Test::class).configureEach {
+    useJUnitPlatform()
+    // 上游自带裸 JVM 测试钩子（1.12.2 系 FormatTest 血统）：ModularUI.isClientThread/isClientSide
+    // 在 isTestEnv() 下短路（neoforgeMain ModularUI.java:116-131），绕开 FMLEnvironment.dist——
+    // 否则 widget 类静态链（Widget→RichTooltip→RichText→Spacer:LINE_SPACER）在裸 JVM 必炸
+    //（2026-09-07 首跑实证）。
+    systemProperty("unit.testing", "true")
+    testLogging {
+        events("passed", "skipped", "failed")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
 }
 
 // ---- packaging 段（卡②；上游 jars.gradle + resources.gradle 的本仓等价迁移）----
