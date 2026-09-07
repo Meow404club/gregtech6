@@ -62,6 +62,16 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   Same story as the file: the upstream head layer (`toolHeadSaw`) rides the material
   pool (GT_Tool_Saw.getIcon :186-187); the port shows the grayscale handle silhouette
   un-tinted — declared deviation, same runtime-tint pool.
+- `gt6/textures/item/builder_wand.png` — builder wand item texture (upstream
+  `textures/items/materialicons/EMERALD/toolHeadBuilderwand.png`, task
+  p24-builder-wand; sha256
+  `4f3d7f68653d508e974da81beb1bd499d5c3ba0f0a588c4e4ddcddcdf6181c18`).
+  Upstream has no iconsets face for this tool: GT_Tool_Builderwand.getIcon :52 renders
+  the primary material's texture-set `toolHeadBuilderwand` icon, the default primary
+  being MT.Heliodor (the :52 fallback) = the emerald factory (MT.java:210,
+  SET_EMERALD) — hence the EMERALD set borrow. Upstream tints it with the tool
+  material colour (getRGBa :56-58); the port shows the grayscale head un-tinted at
+  the single tier — declared deviation, the family runtime-tint pool.
 
 Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
 base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from

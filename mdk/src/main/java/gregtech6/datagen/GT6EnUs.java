@@ -232,6 +232,10 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.chisel", "Chisel");
         add("item.gt6.file", "File");
         add("item.gt6.saw", "Saw");
+        // task p24-builder-wand: the builder wand display name (the upstream
+        // registration row wording "Builder Wand", Loader_Tools.java:153 verbatim,
+        // matching the TOOL_LOCALISER face CS.java:1112)
+        add("item.gt6.builder_wand", "Builder Wand");
         add(GT6Tools.TAB_TITLE_KEY, "Tools");
     }
 

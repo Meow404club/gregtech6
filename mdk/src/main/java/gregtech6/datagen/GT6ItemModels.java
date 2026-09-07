@@ -69,6 +69,14 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/file"));
         withExistingParent("saw", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/saw"));
+        // the formal builder wand item (task p24-builder-wand): handheld parent = the vanilla
+        // tool shape (the crowbar row shape), texture = the upstream EMERALD-set
+        // toolHeadBuilderwand borrow (GT_Tool_Builderwand.getIcon :52 — the default primary
+        // material Heliodor = the emerald factory, MT.java:210 SET_EMERALD; assets/README.md
+        // attribution). Upstream tints it with the tool material colour — the port shows the
+        // grayscale head un-tinted at the single tier (the family declared deviation)
+        withExistingParent("builder_wand", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/builder_wand"));
         // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)
