@@ -184,6 +184,22 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap DRYING;
 
 	/**
+	 * RM.java:148 — the Canner map (task p24-canner-machine): the
+	 * {@link gregtech6.recipes.maps.GT6RecipeMapCanner} subclass (the dynamic fill/empty
+	 * semantics, ruling R1), transcribed parameter-for-parameter over the 15-arg port ctor:
+	 * "gt.recipe.canner", "Canning Machine", NEI name null → the internal name, progress 0/1,
+	 * GUI machines/Canner (lowercased, the Shredder-line convention), item slots 2/2/1,
+	 * fluid slots 1/1/0, minimal inputs 1, power 1. The upstream ctor's
+	 * {@code mMaxFluid*Size = 128000} cap folds into the T1 registration-row tank capacity
+	 * (the R6 ruling, the GTGeneratorFluidBedBlockEntity:54-55 fold precedent). The 17
+	 * refill rows pour via {@link GT6RecipesCanner} (FMLCommonSetup); the EMPTY and FILL
+	 * dynamic arms ride the map's own findRecipe override
+	 * (RecipeMapFluidCanner.java:48-71, minus the GC dead branch and the GAPI_POST guard,
+	 * the two R1 declared deviations).
+	 */
+	public static volatile gregtech6.recipes.maps.GT6RecipeMapCanner CANNER;
+
+	/**
 	 * FM.java:38 — the Furnace Fuels map (task p13-burning-box-family spec ①): the
 	 * Solid Burning Box fuel face. Upstream this map is a static-row-EMPTY on-demand
 	 * synthesizer (RecipeMapFurnaceFuel.findRecipe builds fuel rows from the vanilla
@@ -294,6 +310,15 @@ public class GT6RecipeMaps {
 		// FM.java:38 — the Solid Burning Box fuel face: an on-demand synthesizer over the
 		// ForgeHooks.getBurnTime bridge, no static rows (RecipeMapFurnaceFuel class doc)
 		FURNACE_FUEL = new RecipeMapFurnaceFuel();
+		// RM.java:148 — the Canner map, the subclass ctor with the identical constants row
+		CANNER = new gregtech6.recipes.maps.GT6RecipeMapCanner(new HashSet<>(),
+				"gt.recipe.canner", "Canning Machine", null,
+				0, 1,
+				"gt6:textures/gui/machines/canner",
+				/*IN-OUT-MIN-ITEM=*/ 2, 2, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -314,6 +339,7 @@ public class GT6RecipeMaps {
 		BURN = null;
 		DISTILLERY = null;
 		DRYING = null;
+		CANNER = null;
 		FURNACE_FUEL = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
