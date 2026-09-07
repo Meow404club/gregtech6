@@ -77,6 +77,13 @@ public final class GT6ItemModels extends ItemModelProvider {
         // grayscale head un-tinted at the single tier (the family declared deviation)
         withExistingParent("builder_wand", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/builder_wand"));
+        // the formal screwdriver item (task p24-screwdriver-item): handheld parent = the
+        // vanilla tool shape (the file/saw row shape), texture = the single composed flat
+        // icon — the upstream four-layer render (head base/overlay + handle base/overlay,
+        // ToolStats.getIcon pass order) flattened offline untinted (assets/README.md
+        // attribution, the composition ruling)
+        withExistingParent("screwdriver", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/screwdriver"));
         // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)

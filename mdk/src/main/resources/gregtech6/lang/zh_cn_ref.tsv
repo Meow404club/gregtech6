@@ -657,6 +657,7 @@ direct	item.gt6.chisel	凿子	hand
 direct	item.gt6.file	锉刀	hand
 direct	item.gt6.saw	锯	hand
 direct	item.gt6.builder_wand	建筑之杖	hand
+direct	item.gt6.screwdriver	螺丝刀	hand
 direct	item.gt6.cover_auto_redstone_machine_switch	自动红石机器开关	hand
 direct	item.gt6.cover_controller	面板控制器	hand
 direct	item.gt6.cover_item_filter	物品过滤器	hand

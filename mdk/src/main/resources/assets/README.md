@@ -72,6 +72,27 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   SET_EMERALD) — hence the EMERALD set borrow. Upstream tints it with the tool
   material colour (getRGBa :56-58); the port shows the grayscale head un-tinted at
   the single tier — declared deviation, the family runtime-tint pool.
+- `gt6/textures/item/screwdriver.png` — screwdriver item texture, task
+  p24-screwdriver-item. NOT a byte-identical borrow: the card ruling composes the
+  upstream four icon layers into ONE flat 16x16 RGBA (the card "single flat texture,
+  head+handle in one" ruling; the two-layer runtime tint stays the pool cut). Sources
+  (sha256 verified at compose time, composited in the upstream render-pass order —
+  ToolStats.getIcon :268-273, pass 0/1 = head base/overlay then pass 2/3 = handle
+  base/overlay, later passes over earlier, alpha-over):
+  1. `textures/items/materialicons/METALLIC/toolHeadScrewdriver.png`
+     (`4dbe6513b63bc6442307d632b288985b0be2d6be3799d4573d0c7b820a32634a`)
+  2. `textures/items/materialicons/METALLIC/toolHeadScrewdriver_OVERLAY.png`
+     (`6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`)
+  3. `textures/items/iconsets/HANDLE_SCREWDRIVER.png`
+     (`fef0d79fe8722697dae9175426db103b29478be033ed06a186f65fddc6e5bd2e` — the shared
+     handle sprite, byte-identical to the HANDLE_CHISEL/HANDLE_FILE borrows above)
+  4. `textures/items/iconsets/HANDLE_SCREWDRIVER_OVERLAY.png`
+     (`6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510` — the same
+     overlay bytes as the METALLIC head overlay).
+  Same single-steel-tier story as the family: upstream tints both layers with the tool
+  material colour (GT_Tool_Screwdriver.getIcon :115-117 + getRGBa, the material pool);
+  the port shows the grayscale composite un-tinted — declared deviation, same
+  runtime-tint pool.
 
 Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
 base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from

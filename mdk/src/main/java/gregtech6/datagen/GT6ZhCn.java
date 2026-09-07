@@ -418,6 +418,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.file"); // task p24-tool-system — the zh face rides the hand rows
 		addDirect("item.gt6.saw");
 		addDirect("item.gt6.builder_wand"); // task p24-builder-wand — the dump tool.name face is untranslated ASCII, the hand row composes from 建筑之杖 (itemGroup.toolHeadBuilderwand :18079 / oredict suffix :91577)
+		addDirect("item.gt6.screwdriver"); // task p24-screwdriver-item — same hand-row face
 		addDirect("item.gt6.cover_redstone_emitter");
 		addDirect("item.gt6.cover_redstone_conductor_in");
 		addDirect("item.gt6.cover_redstone_conductor_out");
