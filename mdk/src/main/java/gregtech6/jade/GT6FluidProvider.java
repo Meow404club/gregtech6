@@ -106,7 +106,7 @@ public final class GT6FluidProvider implements IServerExtensionProvider<TileEnti
 	/**
 	 * 抢跑裁定（双腿同形）：Jade universal 链服务端是「按 priority 升序逐 provider 试、
 	 * 首个非 null 赢并短路」（jade-1201 addon/universal/FluidStorageProvider.java:81-88、
-	 * jade-1211 util/CommonProxy.java:589-599；COMPARATOR=paringInt(priority) 稳定排序，
+	 * jade-1211 util/CommonProxy.java:589-599；COMPARATOR=comparingInt(priority) 稳定排序，
 	 * jade-1211 impl/lookup/IHierarchyLookup.java:24，wrappedGet 合桶后按它排序返回
 	 * jade-1211 impl/lookup/WrappedHierarchyLookup.java:45-54）。Jade 自家流体 capability
 	 * 面不落 IJadeProvider 的 BODY 默认层（jade-1211 api/IJadeProvider.java:18-20）——双腿
