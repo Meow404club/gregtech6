@@ -60,14 +60,15 @@ public class GTCommandTreeLiteralTest {
 	/**
 	 * The machine-family root's exact subtree (p7 12 machine literals + p8 fakesource;
 	 * the p14 dryer ladder grew it to 16 — the census follows the tree, task
-	 * p14-dryer-family).
+	 * p14-dryer-family; p21 grew it again with the paint write-point arm).
 	 */
 	private static final Set<String> MACHINE_ROOT_CHILDREN = Set.of("fakesource",
 		"shredder", "shredder_t2", "shredder_t3", "shredder_t4",
 		"crusher", "crusher_t2", "crusher_t3", "crusher_t4",
 		"lathe", "lathe_t2", "lathe_t3", "lathe_t4",
 		"dryer", "dryer_t2", "dryer_t3", "dryer_t4",
-		"distillery", "distillery_t2", "distillery_t3", "distillery_t4"); // task p16-distillery-family
+		"distillery", "distillery_t2", "distillery_t3", "distillery_t4", // task p16-distillery-family
+		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 
 	private static CommandSourceStack stack() {
 		// permission level 2 satisfies both commands' requires(...) gate; level/server are

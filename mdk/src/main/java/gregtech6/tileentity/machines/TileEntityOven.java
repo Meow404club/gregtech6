@@ -840,6 +840,13 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	 * The {@link GTOvenOverlayModel} keys on the oven property, the cover plate model on
 	 * the cover property — the second ModelProperty exists precisely because
 	 * RENDER_SNAPSHOT is single-valued and the cover value must not be overwritten.
+	 *
+	 * <p>Task p21-paintable-storage-sync: {@code super.getModelData()} (the 03 paintable
+	 * base) now carries {@link GTModelProperties#PAINT} while the machine is painted, and
+	 * every branch below derives from it — PAINT/OVEN_SNAPSHOT/RENDER_SNAPSHOT coexist on
+	 * the same snapshot, each single-valued property on its own key (unpainted uncovered
+	 * = OVEN_SNAPSHOT only, painted uncovered = PAINT+OVEN_SNAPSHOT, painted covered =
+	 * all three; the existing derive-from-super shape needed no code change).
 	 */
 	@Override
 	public net.minecraftforge.client.model.data.ModelData getModelData() {
