@@ -13,11 +13,13 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.block.material.GTMaterialPrefixBlock;
+import gregtech6.client.render.GTMachinePaintTint;
 import gregtech6.client.wire.GTWireTint;
 import gregtech6.item.GTMaterialPrefixBlockItem;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTWires;
 
 /**
@@ -44,6 +46,7 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterBlockColors); // task p8-prefixblock-render ③: world-side tint
         modBus.addListener(GTClientHandlers::onRegisterWireBlockColors); // task p16-clienthandlers-2111: wire tints, world half (p9-wire-family-w2 semantics)
         modBus.addListener(GTClientHandlers::onRegisterWireItemColors); // task p16-clienthandlers-2111: wire tints, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterMachinePaintBlockColors); // task p21-paintable-tint-render: machine paint tint, world half
     }
 
     /** Material tint for every registered material prefix item (GTCEu TagPrefixItem.java:55-57 isomorph). */
@@ -89,6 +92,19 @@ public final class GTClientHandlers {
         tWireItems.add(GTWires.WIRE_ELECTRIC_2X_ITEM.get());
         for (RegistryObject<Item> tFamilyItem : GTWires.FAMILY_ITEMS) tWireItems.add(tFamilyItem.get());
         event.getItemColors().register(GTWireTint.itemColor(), tWireItems.toArray(Item[]::new));
+    }
+
+    /**
+     * Task p21-paintable-tint-render: the machine paint tint, the world half over the pinned
+     * 21 machine-domain blocks ({@code GTMachines.paintableBlockArray()}) —
+     * {@link GTMachinePaintTint} resolves tint index 0 from the
+     * {@code GTModelProperties.PAINT} model data the 03 base supplies (the card_A storage
+     * half), white = unpainted = no visual change. NO inventory half: per the Forge docs a
+     * BlockColor does NOT colour its BlockItem (the GTMaterialPrefixBlockItem comment
+     * above) — the painted-look item form is the pooled item-domain card.
+     */
+    private static void onRegisterMachinePaintBlockColors(RegisterColorHandlersEvent.Block event) {
+        event.getBlockColors().register(GTMachinePaintTint.blockColor(), GTMachines.paintableBlockArray());
     }
 
     /** Translation key existence check (Language.getInstance Language.java:83, has :97). */

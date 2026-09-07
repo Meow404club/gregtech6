@@ -392,6 +392,30 @@ public final class GTMachines {
 		return rBlocks;
 	}
 
+	/**
+	 * The paint-tint walker (task p21-paintable-tint-render): the pinned 21 machine-domain
+	 * blocks the client paint BlockColor registers over — the oven (1) + the
+	 * shredder/crusher/lathe ladders (4 each = 12) + the dryer (4) + the distillery (4),
+	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
+	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
+	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
+	 * v1 registers the tint over exactly this machine array; the family-wide extension
+	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
+	 */
+	public static Block[] paintableBlockArray() {
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(21);
+		rBlocks.add(OVEN.get());
+		for (RegistryObject<Block> tBlock : java.util.List.of(
+				SHREDDER, SHREDDER_T2, SHREDDER_T3, SHREDDER_T4,
+				CRUSHER, CRUSHER_T2, CRUSHER_T3, CRUSHER_T4,
+				LATHE, LATHE_T2, LATHE_T3, LATHE_T4)) {
+			rBlocks.add(tBlock.get());
+		}
+		java.util.Collections.addAll(rBlocks, dryerBlockArray());
+		java.util.Collections.addAll(rBlocks, distilleryBlockArray());
+		return rBlocks.toArray(new Block[0]);
+	}
+
 	/** The lookup for /gt6machine distillery — null for an unknown path. */
 	@javax.annotation.Nullable
 	public static Block distilleryBlockByPath(String aPath) {
