@@ -226,7 +226,14 @@ stonecutter parameters {
         // · ToolActions 简单名换 ItemAbilities：左边界 (?<![A-Za-z0-9_]) 挡自研
         //   GT6ToolActions（GTCutterItem/CoverControllerCoversTest 域）子串自撞。
         "\\.vertex\\(" to ".addVertex(",
-        "\\.color\\(" to ".setColor(",
+        // color 收窄为 4 参逗号形（p22-stonecutter-color-narrow）：裸 \.color\( 结构上无法
+        // 区分 VertexConsumer 单参 packed 色（唯一真阳性 GTWrenchGridRenderer:215，随卡改
+        // //? if forge 行内分叉）与 Jade ProgressStyle.color(int)（GT6MachineProvider:127，
+        // 双腿同名同形，误改即编译红）——两者接收者同为 ')' 结尾的链式结果、变量同为
+        // t 前缀。lookahead 零宽不吞实参。census 残差：ARGB32.color( 等 4 参静态工具形
+        // 仍会被本条目命中→21.1 编译红=fail-visible 非静默；真链漏改 .color( 在 21.1
+        // 亦编译红——双向编译红兜底，无静默错改通道。
+        "\\.color\\((?=[^)]*,)" to ".setColor(",
         // normal 长锚 + 实参换型：1.20.1 Forge 的 normal(Matrix3f, x, y, z) 重载（实参
         // Pose.normal() 取法线矩阵）21.1 删除，setNormal(Pose, x, y, z) 直接收 Pose 本体
         // （javap IBakedModelExtension 同 jar：VertexConsumer default setNormal(Pose,float,

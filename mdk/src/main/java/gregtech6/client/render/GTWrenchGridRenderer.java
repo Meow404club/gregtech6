@@ -211,8 +211,15 @@ public final class GTWrenchGridRenderer {
 				RenderType.text(new ResourceLocation(GTRenderModelListener.MOD_ID, aIcon.texturePath)));
 		for (int tCorner = 0; tCorner < 4; tCorner++) {
 			float[] tP = tQuads[tCorner];
+			// single-arg .color(int) is NOT in the swap table (p22 narrowing): regex cannot
+			// tell the VertexConsumer packed-colour form from Jade's ProgressStyle.color(int),
+			// so this one true positive forks inline — canonical shape GT6CircuitsTest:57
 			tBuffer.vertex(tPose.pose(), tP[0], tP[1], tP[2])
+					//? if forge {
 					.color(tColor)
+					//?} else {
+					/*.setColor(tColor)
+					*///?}
 					.uv(tUVs[tCorner][0], tUVs[tCorner][1])
 					.uv2(LightTexture.FULL_BRIGHT)
 					.endVertex();
