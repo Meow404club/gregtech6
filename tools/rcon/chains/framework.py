@@ -254,6 +254,16 @@ class Step:
                  swaps the key shape and ONLY the key shape: the judged expect,
                  the verified target and the step order stay byte-identical
                  (task p15-dual-gate-closure, the p12fic key-shape ruling).
+    node_expects — per-node expect overrides keyed by node_key(node); the twin
+                 of node_cmds for ASSERTION-shape drift. Where a REPORT's
+                 rendering is loader-versioned — the 21.1 ItemStack.toString
+                 namespaces the item names the 1.20.1 leg renders plain — a
+                 single spanning expect cannot be substring-exact on both
+                 legs, so each leg pins its own exact line. The cmd, the
+                 target, the step order and the judged-once poll contract stay
+                 byte-identical. Resolved from chain.node at judge time (the
+                 same write-back step_cmd reads), so a sweep-level --node
+                 override forks exactly like a per-chain boot.
     """
     cmd: str = None
     expect: str = None
@@ -262,6 +272,7 @@ class Step:
     poll: float = 0.0
     label: str = None
     node_cmds: dict = None
+    node_expects: dict = None
 
 
 def step_cmd(step, node=None):
@@ -272,6 +283,20 @@ def step_cmd(step, node=None):
         if override is not None:
             return override
     return step.cmd
+
+
+def step_expect(step, node=None):
+    """The expect this step is judged with on `node`: the node_expects override
+    when the node has one, the plain expect otherwise (the default-node shape).
+
+    The twin of step_cmd; see Step.node_expects. Resolved per JUDGEMENT (not at
+    module import) from the same chain.node the run paths write back — a
+    sweep-level --node override forks here exactly as it does in step_cmd."""
+    if step.node_expects and node is not None:
+        override = step.node_expects.get(node_key(node))
+        if override is not None:
+            return override
+    return step.expect
 
 
 def phase(label):
@@ -305,22 +330,22 @@ class Chain:
 POLL_INTERVAL = 1.0      # seconds between poll resends (server ticks pace the state)
 
 
-def _step_matches(step, body):
+def _step_matches(step, body, expect):
     """The single-shot judge's pass condition, without printing — the poll gate."""
     if "FAILED" in body and not step.allow_failed:
         return False
-    return step.expect is None or step.expect in body
+    return expect is None or expect in body
 
 
-def _step_verdict(step, body):
+def _step_verdict(step, body, expect):
     """The verdict string for the record: the same two conditions judge_output scores."""
-    missed = "FAILED" in body or (step.expect is not None and step.expect not in body)
+    missed = "FAILED" in body or (expect is not None and expect not in body)
     if missed and not step.allow_failed:
         return "FAIL"
     return "ALLOWED" if missed else "PASS"
 
 
-def _poll_step(client, step, cmd):
+def _poll_step(client, step, cmd, expect):
     """Resend the command until it matches or the poll deadline; return the final body.
 
     run_command never raises on a silent server (it returns []), so a resend is
@@ -334,7 +359,7 @@ def _poll_step(client, step, cmd):
         attempts += 1
         outs = client.run_command(cmd)
         body = "\n".join(outs) if isinstance(outs, list) else str(outs)
-        if _step_matches(step, body):
+        if _step_matches(step, body, expect):
             return body
         if time.monotonic() >= deadline:
             print(f"  [poll: giving up after {step.poll:g}s, {attempts} attempts]")
@@ -351,8 +376,8 @@ def run_steps(client, steps, verdicts=None, node=None):
     `verdicts`, when given a list, receives one {"index", "cmd", "verdict"}
     record per command step — the per-step ledger the sweep runner diffs
     between execution models (session vs per-chain boot). `node` resolves the
-    per-node command override (Step.node_cmds); the recorded cmd is the one
-    actually sent.
+    per-node command override (Step.node_cmds) AND the per-node expect
+    override (Step.node_expects); the recorded cmd is the one actually sent.
     """
     failure = 0
     index = 0
@@ -362,17 +387,18 @@ def run_steps(client, steps, verdicts=None, node=None):
             continue
         index += 1
         cmd = step_cmd(step, node)
+        expect = step_expect(step, node)
         if step.poll:
-            body = _poll_step(client, step, cmd)
+            body = _poll_step(client, step, cmd, expect)
             print(body if body else "<no response>")
         else:
             outs = client.run_command(cmd)
             body = "\n".join(outs) if isinstance(outs, list) else str(outs)
             print(f"$ {cmd}\n{body if body else '<no response>'}")
-        failure += gt6rcon.judge_output(index, body, step.expect, step.allow_failed)
+        failure += gt6rcon.judge_output(index, body, expect, step.allow_failed)
         if verdicts is not None:
             verdicts.append({"index": index, "cmd": cmd,
-                             "verdict": _step_verdict(step, body)})
+                             "verdict": _step_verdict(step, body, expect)})
         if step.sleep:
             time.sleep(step.sleep)
     return failure
