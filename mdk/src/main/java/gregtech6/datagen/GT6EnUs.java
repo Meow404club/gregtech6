@@ -590,6 +590,26 @@ public class GT6EnUs extends LanguageProvider {
         }
         add("block.gt6." + gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.path(),
                 gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.matDisplay());
+        // task p24-lightning-rod — the controller + the three atomic part names (the Loader
+        // :1282/:1151/:1168/:1179 name column verbatim) and the addToolTips replay keys (the
+        // upstream :88-115 LH rows verbatim; the zh wording rides the dump
+        // tmp/gregtech.lang :17758-17766 via the reference table)
+        add("block.gt6.multiblock_lightning_rod", "Lightning Rod Electric Output");
+        add("block.gt6.machine_wall_tungsten", "Tungsten Wall");
+        add("block.gt6.niobium_titanium_coil", "Large Niobium-Titanium Coil");
+        add("block.gt6.lightning_rod", "Lightning Rod");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_STRUCTURE, "Structure:");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(1), "Bottom: 3x3 of Tungsten Walls with Main at Center");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(2), "Then: Full 3x3 of Large Niobium-Titanium Coils");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(3), "Then: Full 3x3 of Tungsten Walls");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(4), "Then: Full 3x3 of Large Niobium-Titanium Coils");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(5), "Top: 3x3 of Tungsten Walls");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(6), "Centered Above: 1x1 Pillar of simple Lightning Rod Blocks");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(7), "The Tip of the Rod has to be at Y = 100 or above");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(8), "Optimum Efficiency at a Rod Length of 100m");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(9), "Reduced Efficiency if too close to another Lightning Rod (256m)");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_ENERGY, "%s EU/p (up to 16 Amps)");
+        add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_CAPACITY, "%s EU per Lightning Strike");
     }
 
     /**

@@ -4576,3 +4576,32 @@ The bottom face borrows NOTHING (the models reference the vanilla
 `minecraft:block/dirt` texture directly — the upstream
 `IconContainerCopied(Blocks.dirt, 0, SIDE_BOTTOM)` semantics, BlockGrass.java:102-104).
 The PNGs are pre-coloured (zero biome tint, zero tintindex). Copied on 2026-09-07.
+
+Lightning Rod family block textures, task p24-lightning-rod: the four faces
+borrowed from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/`, snapshot
+`v6.17.06-22-g3703e4030`, copied on 2026-09-08:
+
+- `gt6/textures/block/lightningrod/wall.png` — the Tungsten Wall part (upstream
+  `multiblockparts/metalwall/0/colored/side.png`, the Loader :1151 texture key
+  "metalwall"; sha256
+  `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`)
+- `gt6/textures/block/lightningrod/coil.png` — the Large Niobium-Titanium Coil part
+  (upstream `multiblockparts/coil/0/colored/side.png`, the :1168 texture key "coil";
+  sha256
+  `6e4ab5f32dc13a15c65c700bbeafaa683927b587c4c9bfc772d49b79cf7021cb`)
+- `gt6/textures/block/lightningrod/rod.png` — the Lightning Rod pillar part (upstream
+  `multiblockparts/lightningrod/0/colored/side.png`, the :1179 texture key
+  "lightningrod"; sha256
+  `a6b988c32e964fcafeb425c3f4a409f028102d7b75597f62bc97de166dd3cb54`)
+- `gt6/textures/block/lightningrod/main.png` — the controller face (upstream
+  `multiblockmains/lightningrod/colored/*` alpha-over `overlay_front/*`, composited at
+  borrow time; all three upstream faces composite to the SAME visible pixels so one
+  texture serves all six cube faces; the overlay decal is what visually separates the
+  controller from the plain tungsten wall — the two colored layers are byte-identical
+  37dab1b9; composited sha256
+  `08391c4ebde4d220ec35774751a496475ac02b1b117b0e22f19bffa316acac39`).
+
+The "colored" groups are grayscale tint-carriers (the ANY.W tungsten tint is the gray
+itself); the port shows them un-tinted — the same declared deviation as the crank
+(task p12-engine-crank) and the tool family.

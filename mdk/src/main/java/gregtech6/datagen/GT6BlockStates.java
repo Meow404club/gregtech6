@@ -125,6 +125,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBoilers(); // task p13-boiler-tank
         addGearBoxTransformer(); // task p12-gearbox-transformer
         addLargeBoiler(); // task p13-large-boiler
+        addLightningRod(); // task p24-lightning-rod
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
     }
@@ -907,6 +908,36 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tBlock = gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(aPath) != null
                 ? gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(aPath).get()
                 : gregtech6.registry.GTMultiBlocks.HEAT_TRANSMITTER.get();
+        simpleBlock(tBlock, models().cubeAll(aPath, modLoc(aTexture)));
+        itemModels().withExistingParent(aPath, modLoc("block/" + aPath));
+    }
+
+    /**
+     * Task p24-lightning-rod — the Lightning Rod family (Loader_MultiTileEntities.java
+     * :1151/:1168/:1179/:1282): the three part blocks as plain cube_all over the borrowed
+     * upstream textures (the multiblockparts metalwall/coil/lightningrod colored faces, the
+     * P20 ruling ①), and the single controller over ONE cube model (the borrowed
+     * multiblockmains lightningrod group — the colored base alpha-over the overlay_front
+     * decal, composited at borrow time; all three upstream faces composite to the SAME
+     * visible pixels, so one texture serves all six faces, the large_boiler/main.png form).
+     * The facing is structurally meaningless (the rod is vertical), so every state maps to
+     * the same model with no rotation; the FORMED variants map to the same model (the
+     * formed-look visual is the p9 pool). The four BlockItem models parent their block
+     * models.
+     */
+    private void addLightningRod() {
+        ModelFile tMain = models().cubeAll("multiblock_lightning_rod", modLoc("block/lightningrod/main"));
+        Block tController = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get();
+        getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
+        itemModels().withExistingParent("multiblock_lightning_rod", tMain.getLocation());
+        addLightningRodPart("machine_wall_tungsten", "block/lightningrod/wall");
+        addLightningRodPart("niobium_titanium_coil", "block/lightningrod/coil");
+        addLightningRodPart("lightning_rod", "block/lightningrod/rod");
+    }
+
+    /** One cube_all Lightning Rod part block + its BlockItem parent (the addLargeBoilerPart shape). */
+    private void addLightningRodPart(String aPath, String aTexture) {
+        Block tBlock = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(aPath).get();
         simpleBlock(tBlock, models().cubeAll(aPath, modLoc(aTexture)));
         itemModels().withExistingParent(aPath, modLoc("block/" + aPath));
     }

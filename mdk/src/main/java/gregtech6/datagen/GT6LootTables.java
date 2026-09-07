@@ -88,6 +88,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
+                new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK)), // task p24-grass-block
@@ -104,6 +105,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
+                new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK))); // task p24-grass-block
@@ -495,6 +497,47 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : cannerLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The Lightning Rod family block list (task p24-lightning-rod): the controller plus the
+     * three part blocks (Loader :1282/:1151/:1168/:1179) — the canner shape verbatim. The
+     * upstream part MTEs and the controller all self-drop (the MTE default); NOTE this is
+     * the FIRST loot-tabled multiblock family — the older coke-oven/boiler/wall blocks
+     * still ship table-less (their cards' pre-existing gap, not this card's delta).
+     */
+    public static List<Block> lightningRodLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        rBlocks.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get());
+        for (var tRow : gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_ROWS) {
+            rBlocks.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The Lightning Rod family self-drop provider (task p24-lightning-rod; plain dropSelf, no paint on the part BEs). */
+    public static final class GT6LightningRodBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6LightningRodBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6LightningRodBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return lightningRodLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : lightningRodLootBlocks()) dropSelf(tBlock);
         }
     }
 

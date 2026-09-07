@@ -320,6 +320,19 @@ public class GT6ZhCn extends LanguageProvider {
 			addRowUnit(tEmitted, gregtech6.registry.GTMultiBlocks.wallMatUnitKeyOf(tRow));
 		}
 		addDirect("block.gt6.heat_transmitter"); // the atomic transmitter (the whole-string key)
+		// lightning rod (task p24-lightning-rod): the controller + the three atomic parts +
+		// the addToolTips replay keys (the dump rows :15141/:11359/:11380/:11389/:17758-17766,
+		// the hand layer in the reference table; the KEY face mirrors the en addMultiBlocks tail)
+		addDirect("block.gt6.multiblock_lightning_rod");
+		addDirect("block.gt6.machine_wall_tungsten");
+		addDirect("block.gt6.niobium_titanium_coil");
+		addDirect("block.gt6.lightning_rod");
+		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_STRUCTURE);
+		for (int i = 1; i <= 9; i++) {
+			addDirect(String.format(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE, i));
+		}
+		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_ENERGY);
+		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_CAPACITY);
 		// attachments: the two family templates + the attachment material words
 		addDirect(gregtech6.registry.GT6Attachments.TAP_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GT6Attachments.FUNNEL_DISPLAY_KEY);
