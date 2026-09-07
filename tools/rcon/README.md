@@ -289,7 +289,12 @@ teardown 断言：`store_null_command(pos)` + `STORE_NULL_EXPECT="store=null"`�
 `Chain.node`（模块内钉死）或运行面 `--node <name>`（双节点横扫同一链不碰模块）决定，
 缺省 `1.20.1-forge`。**节点会回写进 `chain.node`（P17）**——`Step.node_cmds` 的
 键形分叉按 `chain.node` 取值（session/perboot 两路都回写；P16 曾因 `run()` 不回写，
-side_io 的 21.1 腿 merge 误用 forge `{FluidName,Amount}` 形）。节点决定两件事：
+side_io 的 21.1 腿 merge 误用 forge `{FluidName,Amount}` 形）。`Step.node_expects`
+（P23）是它在**断言形态 drift** 上的孪生：报文渲染带版本差时（21.1
+ItemStack.toString 给物品名带命名空间，1.20.1 plain），单一 spanning expect 无法
+双腿逐字节精确——按 `node_key` 各腿钉各自整行（p16pchk s17 正典例）；裸名单 token
+expect 在 input 字段同名值前禁止（`stonex8` ⊂ `cobblestonex8`，零秒假绿）。
+节点决定两件事：
 gradle 任务 `:mdk:<node>:runServer`（裸
 `:mdk:runServer` 已随石匠骨架消亡）与节点本地 run 目录 `mdk/versions/<node>/run`
 （eula/server.properties 各节点独立，世界存档互不污染）。双节点门禁（ADR-P15-4）
@@ -420,7 +425,8 @@ session 跑法把全集摊平成一池（`run_session_recorded`）。
 framework 自算的顶层 exit 不被踩）、wait_done 单调扫描窗（P19：带病 boot 日志高速
 滚动会把 `Done (` 标记或崩溃 ERROR 行推出旧 8KB 尾窗，前者假超时报"never printed
 Done"、后者丢归因——改为字节偏移增量扫描（见过的标记永记、跨读边界 carry 拼接），
-死亡归因走全日志 error_tail，正常路径总读取量不升）。退出码 0 = 全绿（48 检）。
+死亡归因走全日志 error_tail，正常路径总读取量不升）。退出码 0 = 全绿（51 检，
+P23 增 node_expects 分叉三检）。
 
 ### 并发波执行（用户校准 2026-09-04：并发是主杠杆）
 

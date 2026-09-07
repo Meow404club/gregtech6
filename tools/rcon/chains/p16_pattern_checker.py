@@ -103,8 +103,16 @@ steps += [
     # THE hard assertion: the continuous source must finish all eight smelts
     # (32 EU x 1 A through the 2x wire = 32 progress/tick, 8 x 256 = 2048
     # progress = ~64 ticks). Poll-to-expect, chain RED on timeout.
+    # The spanning expect pins input exhausted AND output full in one substring,
+    # so the mid-run line (input=cobblestoneNx ...) cannot shadow it. The out
+    # column renders via ItemStack.toString — plain on 1.20.1, namespaced on
+    # 21.1 — so the full line is per-leg (Step.node_expects, the p23 s17
+    # 21.1-only rendering red; a bare-name expect is banned here: "stonex8" is
+    # a substring of input=cobblestonex8 and hits at zero seconds).
     Step(f"gt6oven check {F(OVEN)}",
-         expect="input=airx0 output=stonex8", poll=30.0),
+         expect="input=airx0 output=stonex8",
+         node_expects={"1.21.1": "input=minecraft:airx0 output=minecraft:stonex8"},
+         poll=30.0),
 ]
 
 CHAIN = Chain(

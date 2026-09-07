@@ -118,7 +118,14 @@ steps += [
     # windows (~245k L steam per 3 s), carrying the tank past the 40.96M half gate where
     # the five holes open and feed the collectors (the collectors HOLD — no drain face is
     # attached yet); the tank then oscillates around half, far from the blast band.
-    Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)"),
+    # poll-to-expect (p23, the s22 deterministic red): under the adaptive quiet
+    # window two adjacent fills land ~0.05s apart and the previous fill's water has
+    # only partly boiled off ('filled 32000/128000', stat 96000/128000 self-
+    # consistent) — the full-accept expect leaned on the old 0.5s window as its
+    # drain budget. Resend the continuous top-up: a partial accept just tops the
+    # tank, and the conversion drain empties it within seconds, so a single fill
+    # soon accepts the whole 128000.
+    Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)", poll=15.0),
     # the push runs on CONVERSION ticks: keep water on the tank through the reads (the
     # 21.1 node's instant inject-burn otherwise drains the tank dry and parks the push
     # before the collectors are sampled — observed 2026-09-04)

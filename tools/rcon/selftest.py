@@ -475,6 +475,66 @@ def check_9_waitdone_monotonic_window():
                               pid=os.getpid()) is False)
 
 
+def check_10_node_expects_fork():
+    """The node_expects per-node expect fork (the p23 p16pchk rendering drift).
+
+    The 21.1 oven report namespaces the item names the 1.20.1 leg renders
+    plain, so the spanning terminal expect is per-leg (Step.node_expects).
+    Pinned twice: step_expect resolves the override by node_key exactly like
+    step_cmd does, and the judged run actually forks — the RIGHT leg's expect
+    passes the 21.1-rendered body while the WRONG leg's expect goes red (the
+    fork is not a no-op). The mid-run shadow probe ('stonex8' is a substring
+    of input=cobblestonex8 and hits at zero seconds) stays out by construction:
+    both full lines name the input field.
+    """
+    print("\n--- 10: node_expects per-node expect fork (p23 p16pchk rendering drift)")
+    forge_line = "input=airx0 output=stonex8"
+    neo_line = "input=minecraft:airx0 output=minecraft:stonex8"
+    step = framework.Step("gt6oven check 400 64 400", expect=forge_line,
+                          node_expects={"1.21.1": neo_line})
+    check("10a resolution: override on 1.21.1, plain expect elsewhere",
+          framework.step_expect(step, "1.21.1-neoforge") == neo_line
+          and framework.step_expect(step, "1.20.1-forge") == forge_line
+          and framework.step_expect(step, None) == forge_line)
+
+    class _OvenFake:
+        """Answers every command with the 21.1-rendered terminal oven report."""
+
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def run_command(self, cmd):
+            return [f"GT6 oven at 400, 64, 400: {neo_line} "
+                    "data=20480 progress=0/0 energy=0 minenergy=0"]
+
+    real_sleep = _install_fakes()
+    gt6rcon.RconClient = _OvenFake
+    chain = framework.Chain(
+        name="selftest-nodeexp", slug="selftestnodeexp",
+        sites=gt6world.declare_sites(gt6world.Site(400, 64, 400)),
+        passes=1, steps=[step])
+    old_argv, sys.argv = sys.argv, ["selftest"]
+    results = {}
+    try:
+        for node in ("1.21.1-neoforge", "1.20.1-forge"):
+            sys.argv = ["selftest", "--node", node]
+            chain.node = None   # run_session write-backs it; reset per leg
+            results[node] = framework.run_session([chain])
+    finally:
+        sys.argv = old_argv
+        time.sleep = real_sleep
+    check("10b right leg's expect passes the 21.1-rendered report",
+          results["1.21.1-neoforge"] == 0)
+    check("10c wrong leg's expect goes red (the fork actually swaps the judge)",
+          results["1.20.1-forge"] == 1)
+
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
@@ -485,6 +545,7 @@ def main():
     check_7_adaptive_quiet_window()
     check_8_perboot_exit_aggregate()
     check_9_waitdone_monotonic_window()
+    check_10_node_expects_fork()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 

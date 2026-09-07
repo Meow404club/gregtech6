@@ -131,7 +131,10 @@ steps += [
          expect="filled 300/300 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),
     Step(f"gt6burner fuel {BURNER} minecraft:coal 6", expect="minecraft:coal x6"),
     Step(f"gt6burner ignite {BURNER}", expect="burning=true"),
-    Step(f"gt6machine dryer check {DRYER}", expect="running=true", sleep=2.0),
+    # poll-to-expect (p23, the s35 deterministic red): the old trailing sleep=2.0 ran
+    # AFTER the judge — the check's real budget was the previous command's quiet
+    # window, and the P18 adaptive decay shrank it below the running-latch flip.
+    Step(f"gt6machine dryer check {DRYER}", expect="running=true", poll=10.0),
     # 25600 HU / 16 per tick = 1600 ticks ≈ 84 s. poll-to-expect (the p14_loop_closure
     # conversion): resend the read-only stat until out[0]=800 lands; the verdict steps
     # below re-assert the exact same strings, verbatim
@@ -142,7 +145,10 @@ steps += [
     Step(f"gt6machine dryer fluid draw up 800 {DRYER}",
          expect="drawn 800/800 L of gt6:distilled_water (ACCEPTED), output tanks hold 0 L"),
     Step(f"gt6burner extinguish {BURNER}", expect="burning=false"),
-    Step(f"gt6machine dryer check {DRYER}", expect="running=false", sleep=2.0),
+    # poll-to-expect (p23, the s41 deterministic red): the drain takes a tick or two
+    # past the extinguish, the single shot fired before the latch fell (running=true).
+    # Terminal state; resend until it lands.
+    Step(f"gt6machine dryer check {DRYER}", expect="running=false", poll=10.0),
     Step(f"execute if block {DRYER} gt6:dryer", expect="Test passed"),
     Step(f"execute if block {BURNER} gt6:brick_burning_box", expect="Test passed"),
     Step(f"execute if block {BOIL} gt6:steam_boiler_tank_lead", expect="Test passed"),

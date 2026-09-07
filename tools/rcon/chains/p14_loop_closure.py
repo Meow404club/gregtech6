@@ -95,8 +95,12 @@ steps += [
     Step(f"gt6burner fuel {BURNER} minecraft:coal 6", expect="minecraft:coal x6"),
     Step(f"gt6burner ignite {BURNER}", expect="burning=true"),
     # the flip up: the burner feeds 16 HU/t over the top face, doWork :791 drains it —
-    # the machine runs (energy VALUES are never asserted; they drain every tick)
-    Step(f"gt6machine dryer check {DRYER}", expect="running=true", sleep=2.0),
+    # the machine runs (energy VALUES are never asserted; they drain every tick).
+    # poll-to-expect (p23, the s14 deterministic red): the old trailing sleep=2.0 ran
+    # AFTER the judge — the check's real budget was the previous command's quiet
+    # window, and the P18 adaptive decay shrank it below the running-latch flip.
+    # The flip is the waited-for condition; resend until it lands.
+    Step(f"gt6machine dryer check {DRYER}", expect="running=true", poll=10.0),
     Step(f"gt6machine dryer check {DRYER}", expect="active=true"),
     # the production window: 25600 HU / 16 per tick = 1600 ticks ≈ 84 s at the measured
     # ~19 tps (the tail batch burns the last 40 L at 4-parallel). poll-to-expect: the
@@ -136,7 +140,10 @@ steps += [
 steps += [
     phase("D: the flip down — no HU, doWork drains, running=false; the loop rig survived"),
     Step(f"gt6burner extinguish {BURNER}", expect="burning=false"),
-    Step(f"gt6machine dryer check {DRYER}", expect="running=false", sleep=2.0),
+    # poll-to-expect (p23, the s29 deterministic red): same shape as the flip up —
+    # the drain takes a tick or two past the extinguish, the single shot fired before
+    # the latch fell (running=true). Terminal state; resend until it lands.
+    Step(f"gt6machine dryer check {DRYER}", expect="running=false", poll=10.0),
     Step(f"execute if block {DRYER} gt6:dryer", expect="Test passed"),
     Step(f"execute if block {BURNER} gt6:brick_burning_box", expect="Test passed"),
     Step(f"execute if block {BOIL} gt6:steam_boiler_tank_lead", expect="Test passed"),
