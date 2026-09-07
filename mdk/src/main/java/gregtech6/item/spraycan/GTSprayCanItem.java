@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import gregtech6.registry.GTGrassBlocks;
 import gregtech6.tileentity.IPaintableTE;
 
 /**
@@ -55,14 +56,17 @@ import gregtech6.tileentity.IPaintableTE;
  *     colour whose tag simply counts down (the GTCEu :2212 single-item precedent) — 17 fewer
  *     items and no HIDDEN meta ladders.</li>
  * <li><b>the vanilla whitelist is the upstream {@code mAllowedVanillaBlocks} + the
- *     {@code BlockColored} family (:144) minus two arms with no port target:</b> the
- *     grass_block arm converts into the GT6 grass family (BlocksGT.Grass :153-163 — the
- *     family is not ported) and the Thermal-Expansion rockwool arm (IL.TE_Rockwool :148 —
- *     no TE on this port). Both stay pooled; glass/pane/stained glass/stained pane/wool/
- *     carpet/terracotta/stained terracotta are the live table (upstream colour code
- *     {@code ~mColor&15} folded to {@link #vanillaDye} — P21 ADR ruling 3, the complement
- *     detour is provably identity). The recolourBlock hook (:166, a 1.7.10 Forge block
- *     extension) does not exist on 1.20.1 — only the whitelist table sprays.</li>
+ *     {@code BlockColored} family (:144) minus one arm with no port target:</b> the
+ *     Thermal-Expansion rockwool arm (IL.TE_Rockwool :148 — no TE on this port; it stays
+ *     pooled). The GRASS arm is LIVE since task p24-grass-block: the vanilla grass block
+ *     and the six GT grass variants route through the upstream six-dye switch (:153-162
+ *     — six dyes recolour, ten are the :161 no-op non-payment) and the remover unpaints
+ *     any GT variant back to the vanilla grass block (Remover :104). Glass/pane/stained
+ *     glass/stained pane/wool/carpet/terracotta/stained terracotta are the other live
+ *     table (upstream colour code {@code ~mColor&15} folded to {@link #vanillaDye} — P21
+ *     ADR ruling 3, the complement detour is provably identity). The recolourBlock hook
+ *     (:166, a 1.7.10 Forge block extension) does not exist on 1.20.1 — only the
+ *     whitelist table sprays.</li>
  * <li><b>the remover reverse face</b> covers the families with a vanilla uncoloured variant
  *     (stained terracotta/glass/pane → plain, upstream Remover :101-103 verbatim); wool and
  *     carpet have no uncoloured variant and upstream does not revert them either (:96-106
@@ -479,6 +483,17 @@ public class GTSprayCanItem extends Item {
 	private static final byte FAM_GLASS = 0, FAM_PANE = 1, FAM_TERRACOTTA = 2, FAM_STAINED_GLASS = 3,
 			FAM_STAINED_PANE = 4, FAM_STAINED_TERRACOTTA = 5, FAM_WOOL = 6, FAM_CARPET = 7;
 
+	/**
+	 * The grass family (task p24-grass-block, the P22 pool row's backfill): NOT a
+	 * {@link #FAMILY_OF} entry — the classification is computed lazily in
+	 * {@link #colorTarget}/{@link #decolorTarget} via {@link GTGrassBlocks#isGrass},
+	 * because the six GT grass blocks register AFTER this class's static init (the
+	 * RegistryObject dereference must stay off the clinit path), and the arm ALSO covers
+	 * the vanilla grass block (the upstream mAllowedVanillaBlocks member,
+	 * Behavior_Spray_Color.java:144).
+	 */
+	private static final byte FAM_GRASS = 8;
+
 	/** dye-index → block tables (the GTCEu :77-108 map form, array-indexed by the GT6 index). */
 	private static final Block[] TERRACOTTA = new Block[16], STAINED_GLASS = new Block[16],
 			STAINED_PANE = new Block[16], WOOL = new Block[16], CARPET = new Block[16];
@@ -516,14 +531,24 @@ public class GTSprayCanItem extends Item {
 	}
 
 	/**
-	 * The colour target — the upstream :146-167 table minus the two target-less arms (the
-	 * class javadoc deviations). {@code null} = not sprayable, or the already-that-colour
-	 * no-op (upstream :164 guards {@code metadata != target}).
+	 * The colour target — the upstream :146-167 table over the {@link #FAMILY_OF} families,
+	 * PLUS the grass arm (task p24-grass-block, the upstream :153-162 route the P22 card
+	 * pooled): the vanilla grass block AND any GT grass variant map through the six-dye
+	 * table — Green→variant 0, Lime→1, Black→2, LightGray→3, Yellow→4, Brown→5 (the
+	 * Behavior_Spray_Color.java:154-160 switch order); the other TEN dyes return
+	 * {@code null} (the upstream :161 {@code return F} — no change, no durability, no
+	 * sound: the {@code useOn} :216-217 precheck only passes on a non-null target). The
+	 * already-that-variant spray is the same no-op (the upstream :164
+	 * {@code metadata != target} guard).
 	 */
 	@Nullable
 	public static Block colorTarget(@Nullable Block aBlock, byte aDyeIndex) {
 		Byte tFamily = aBlock == null ? null : FAMILY_OF.get(aBlock);
-		if (tFamily == null) return null;
+		if (tFamily == null) {
+			if (aBlock == null || !grassFamily(aBlock)) return null;
+			Block tTarget = grassColorTarget(aDyeIndex);
+			return tTarget == null || tTarget == aBlock ? null : tTarget;
+		}
 		Block tTarget = switch (tFamily) {
 			case FAM_GLASS -> STAINED_GLASS[aDyeIndex]; // :151
 			case FAM_PANE -> STAINED_PANE[aDyeIndex]; // :150
@@ -539,13 +564,39 @@ public class GTSprayCanItem extends Item {
 	}
 
 	/**
+	 * The grass-arm classification (the upstream :153 {@code aBlock == Blocks.grass ||
+	 * aBlock == BlocksGT.Grass} disjunction): the vanilla grass block OR any of the 6 GT
+	 * variants ({@link GTGrassBlocks#isGrass} — lazily resolved, never on the clinit path).
+	 */
+	private static boolean grassFamily(@Nullable Block aBlock) {
+		return aBlock == net.minecraft.world.level.block.Blocks.GRASS_BLOCK || GTGrassBlocks.isGrass(aBlock);
+	}
+
+	/**
+	 * The six-dye grass switch (Behavior_Spray_Color.java:154-160): the GT6 dye index of
+	 * the variant in {@link GTGrassBlocks#VARIANTS} order; {@code null} for the other TEN
+	 * dyes (the upstream :161 return F).
+	 */
+	@Nullable
+	private static Block grassColorTarget(byte aDyeIndex) {
+		for (int i = 0; i < GTGrassBlocks.VARIANTS.size(); i++) {
+			if (GTGrassBlocks.VARIANTS.get(i).dyeIndex() == aDyeIndex) return GTGrassBlocks.variant(i);
+		}
+		return null;
+	}
+
+	/**
 	 * The decolour target — the upstream Remover :101-103 reverse rows verbatim (stained
 	 * terracotta/glass/pane → plain); wool/carpet have no uncoloured vanilla variant and the
-	 * upstream remover has no wool arm either. {@code null} = not removable.
+	 * upstream remover has no wool arm either. Task p24-grass-block prepends the grass arm
+	 * (the Remover :104 block swap): ANY GT grass variant → the VANILLA grass block, the
+	 * colour lost with the variant; the vanilla grass block itself is NOT removable (it is
+	 * the arm's target, upstream has no reverse row for it).
 	 */
 	@Nullable
 	public static Block decolorTarget(@Nullable Block aBlock) {
 		if (aBlock == null) return null;
+		if (GTGrassBlocks.isGrass(aBlock)) return net.minecraft.world.level.block.Blocks.GRASS_BLOCK; // Remover :104
 		Byte tFamily = FAMILY_OF.get(aBlock);
 		if (tFamily == null) return null;
 		return switch (tFamily) {

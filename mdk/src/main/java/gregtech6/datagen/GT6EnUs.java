@@ -95,6 +95,7 @@ public class GT6EnUs extends LanguageProvider {
         addJeiInfo();
         addStoneBlocks(); // task p19-stoneblocks-registry — table-tail append (the drying card appends after this)
         addSprayCans(); // task p22-spraycan-items — table-tail append
+        addGrassBlocks(); // task p24-grass-block — table-tail append
     }
 
     /**
@@ -728,5 +729,26 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.item.spraycan.GTSprayCanItem.PAINT_TOOLTIP_KEY, "Can Color things in %s");
         add(gregtech6.item.spraycan.GTSprayCanItem.DECOLOR_TOOLTIP_KEY, "Can Decolor things");
         add(gregtech6.item.spraycan.GTSprayCanItem.REMAINING_TOOLTIP_KEY, "Remaining Uses: %s.%s");
+    }
+
+    /**
+     * Grass family keys (task p24-grass-block): 8 rows — the 6 variant display names and
+     * the 2 tooltip lines. The 6 block items resolve the VANILLA BlockItem descriptionId
+     * face ({@code block.gt6.<registry-path>}); all six names are the SAME word — the
+     * upstream 16 meta keys are all named "Grass" (BlockGrass.java:49-64, no colour
+     * prefix; the SPEC parity ruling keeps it: "Grass"/zh "草方块", the usable-name
+     * question stays a later i18n card). The tooltips ride the upstream LH keys verbatim
+     * (the GTGrassBlock.TOOLTIP_KEY/TOOLTIP_SPRAY_KEY constants, BlockGrass.java
+     * :86-87 — the :92-93 CYAN/GRAY colours live in the BLOCK class, not the lang).
+     * Table-tail append, append-only.
+     */
+    private void addGrassBlocks() {
+        for (String tPath : gregtech6.registry.GTGrassBlocks.PATHS) {
+            add("block.gt6." + tPath, "Grass");
+        }
+        add(gregtech6.block.GTGrassBlock.TOOLTIP_KEY,
+            "Does not spread, get eaten, change color nor need light");
+        add(gregtech6.block.GTGrassBlock.TOOLTIP_SPRAY_KEY,
+            "Spray Paint can also be used to dye Grass!");
     }
 }

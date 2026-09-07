@@ -1,5 +1,7 @@
 package gregtech6.datagen;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -8,9 +10,20 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+
+//? if forge {
+import net.minecraftforge.common.Tags;
+//?} else {
+/*import net.neoforged.neoforge.common.Tags;
+*///?}
 
 import gregtech6.registry.GT6SprayCans;
+import gregtech6.registry.GTGrassBlocks;
 
 /**
  * The GT6 vanilla-crafting datagen home — task p24-tool-system spec ③, the FIRST
@@ -59,13 +72,92 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	@Override
 	protected void buildRecipes(Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
 		sprayCanEmptyBuilder().save(aConsumer, SPRAY_CAN_EMPTY_ID);
+		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 	}
 	//?} else {
 	/*@Override
 	protected void buildRecipes(net.minecraft.data.recipes.RecipeOutput aOutput) {
 		sprayCanEmptyBuilder().save(aOutput, SPRAY_CAN_EMPTY_ID);
+		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
 	}
 	*///?}
+
+	/** One staged recipe: the shared builder + the id its save face writes (the save type is the one leg split). */
+	private record GrassRecipeRow(ShapelessRecipeBuilder builder, ResourceLocation id) {}
+
+	/** The forward recipe id of variant i — the result path (the vanilla naming convention). */
+	public static ResourceLocation grassRecipeId(int aVariant) {
+		String tPath = GTGrassBlocks.PATHS.get(aVariant); // a local so the two-arg RL ctor args stay bare identifiers (the swap-table regex note)
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/** The reverse recipe id of variant i — the variant path + the {@code _reverse} suffix. */
+	public static ResourceLocation grassReverseRecipeId(int aVariant) {
+		String tPath = GTGrassBlocks.PATHS.get(aVariant) + "_reverse"; // the same bare-identifier discipline
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/**
+	 * The grass dye band (task p24-grass-block) — the upstream BlockGrass.java:72-80
+	 * registrations as 12 shapeless rows, ONLY the save face forked (the ctor rule):
+	 * <ul>
+	 * <li><b>forward ×6</b>: 8 vanilla grass BLOCKS (the literal {@code Items.GRASS_BLOCK}
+	 * — the 1.20.1 name of what 1.7.10 called {@code Blocks.grass}; no generic grass tag
+	 * exists, the census verdict) + 1 dye → 8 of the variant item (BlockGrass.java:75-80,
+	 * count 8 on the result). The dye input is the PLATFORM dye tag per variant colour —
+	 * {@code Tags.Items.DYES_<COLOR>} (forge Tags.java:226-241 {@code DyeColor.getTag()}
+	 * face; the NeoForge constant is the same name over the {@code c:} namespace, the
+	 * import fork above carries the whole fork surface). No bare dye item anywhere.</li>
+	 * <li><b>reverse ×6</b>: 1 variant item → 1 vanilla grass block (the upstream
+	 * {@code RM.generify} + {@code CR.shapeless(ST.make(Blocks.grass, 1, 0), new
+	 * Object[] {this})} pair, :72-73 — the generify face has no modern equivalent, the
+	 * shapeless row IS the portable half, the shapeless id notes it).</li>
+	 * </ul>
+	 * Row order = the {@link GTGrassBlocks#VARIANTS} order (forward, reverse alternating
+	 * would be fine — each row saves under its own id; the appender order is variant-major
+	 * forward-first, deterministic output).
+	 *
+	 * <p>NOT this card: the Bath dye-fluid rows (Loader_Recipes_Other.java:467-472 — the
+	 * Canner/fluid domain) and the Sifting table (Loader_Recipes_Ores.java:225 — pooled,
+	 * coarse_dirt conversion + cross-mod bait cut).
+	 */
+	private List<GrassRecipeRow> grassRecipeBuilders() {
+		List<GrassRecipeRow> rRows = new ArrayList<>(GTGrassBlocks.VARIANTS.size() * 2);
+		for (int i = 0; i < GTGrassBlocks.VARIANTS.size(); i++) {
+			Item tVariantItem = GTGrassBlocks.ITEMS.get(i).get();
+			// forward: 8 vanilla grass + 1 dye → 8 variant items (BlockGrass.java:75-80)
+			rRows.add(new GrassRecipeRow(ShapelessRecipeBuilder
+					.shapeless(RecipeCategory.DECORATIONS, tVariantItem, 8)
+					.requires(Items.GRASS_BLOCK, 8)
+					.requires(dyeTagOf(GTGrassBlocks.VARIANTS.get(i).dyeIndex()))
+					.unlockedBy("has_grass_block", has(Items.GRASS_BLOCK)),
+					grassRecipeId(i)));
+			// reverse: 1 variant item → 1 vanilla grass block (BlockGrass.java:72-73)
+			rRows.add(new GrassRecipeRow(ShapelessRecipeBuilder
+					.shapeless(RecipeCategory.DECORATIONS, Items.GRASS_BLOCK)
+					.requires(tVariantItem)
+					.unlockedBy("has_gt6_grass", has(tVariantItem)),
+					grassReverseRecipeId(i)));
+		}
+		return rRows;
+	}
+
+	/** The platform dye tag of a GT6 spray dye index (the six grass-effective colours). */
+	private static TagKey<Item> dyeTagOf(byte aDyeIndex) {
+		return switch (aDyeIndex) {
+			case 2 -> Tags.Items.DYES_GREEN; // variant 0 (Behavior_Spray_Color.java:154)
+			case 10 -> Tags.Items.DYES_LIME; // variant 1 (:155)
+			case 0 -> Tags.Items.DYES_BLACK; // variant 2 (:156)
+			case 7 -> Tags.Items.DYES_LIGHT_GRAY; // variant 3 (:157)
+			case 11 -> Tags.Items.DYES_YELLOW; // variant 4 (:158)
+			case 3 -> Tags.Items.DYES_BROWN; // variant 5 (:159)
+			default -> throw new IllegalArgumentException("not a grass dye: " + aDyeIndex);
+		};
+	}
 
 	/**
 	 * The shared builder chain — the upstream MultiItemRandomTools.java:240 shape with

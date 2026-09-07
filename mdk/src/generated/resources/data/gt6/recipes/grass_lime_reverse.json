@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:grass_lime"
+    }
+  ],
+  "result": {
+    "item": "minecraft:grass_block"
+  }
+}

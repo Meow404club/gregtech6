@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import gregtech6.registry.GT6SprayCans;
+import gregtech6.registry.GTGrassBlocks;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityOven;
 
@@ -211,12 +212,14 @@ public class GTSprayCanTest {
 	}
 
 	/**
-	 * The declared target-less arms: grass_block (upstream :153-163 converts into BlocksGT.Grass
-	 * — the family is not ported) and everything outside the whitelist (:146-148 stone/bricks).
+	 * The declared target-less arms: everything outside the whitelist (:146-148
+	 * stone/bricks/dirt) and the vanilla grass block under a NON-grass dye (the p24 grass
+	 * arm is LIVE — its six-dye table covers Green/Lime/Black/LightGray/Yellow/Brown, and
+	 * dye 1 Red is one of the ten no-op dyes, the :161 return F face).
 	 */
 	@Test
 	public void colorTargetTargetlessArms() {
-		assertNull(GTSprayCanItem.colorTarget(Blocks.GRASS_BLOCK, (byte) 10), "the GT6-grass arm is the declared pool cut");
+		assertNull(GTSprayCanItem.colorTarget(Blocks.GRASS_BLOCK, (byte) 1), "Red on grass = one of the ten no-op dyes");
 		assertNull(GTSprayCanItem.colorTarget(Blocks.STONE, (byte) 1));
 		assertNull(GTSprayCanItem.colorTarget(Blocks.BRICKS, (byte) 1));
 		assertNull(GTSprayCanItem.colorTarget(Blocks.DIRT, (byte) 1));
@@ -241,6 +244,90 @@ public class GTSprayCanTest {
 		assertNull(GTSprayCanItem.decolorTarget(Blocks.STONE));
 		assertNull(GTSprayCanItem.decolorTarget(Blocks.GRASS_BLOCK));
 		assertNull(GTSprayCanItem.decolorTarget(null));
+	}
+
+	// ---------------------------------------------------------------------------
+	// the grass arm (task p24-grass-block, the upstream :153-162 route + Remover :104)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The six variant stand-ins (the GTGrassBlocks offline seam — the mod blocks never
+	 * register here). Deliberately NOT wool/carpet/terracotta/glass members: those live in
+	 * the FAMILY_OF whitelist and would route the recolour through the WOOL arm before the
+	 * grass arm is ever consulted — these six are family-less vanilla blocks.
+	 */
+	private static final Block[] GRASS_STANDINS = {
+			Blocks.SANDSTONE, Blocks.GRAVEL, Blocks.ANDESITE,
+			Blocks.DRIPSTONE_BLOCK, Blocks.CALCITE, Blocks.TUFF};
+
+	/** The six dye indexes the grass arm answers, variant order (Behavior_Spray_Color.java:154-160). */
+	private static final byte[] GRASS_DYES = {2, 10, 0, 7, 11, 3};
+
+	/**
+	 * The six effective dyes map the vanilla grass block AND every already-coloured GT
+	 * variant onto the right variant (the upstream :154-160 switch, family recolour
+	 * included); a variant sprayed with its own dye is the :164 no-op.
+	 */
+	@Test
+	public void grassSprayMapsTheSixDyes() {
+		GTGrassBlocks.useTestStandins(java.util.List.of(GRASS_STANDINS));
+		try {
+			// vanilla grass block → the dye's variant (all six, in :154-160 order)
+			for (int i = 0; i < 6; i++) {
+				assertSame(GRASS_STANDINS[i], GTSprayCanItem.colorTarget(Blocks.GRASS_BLOCK, GRASS_DYES[i]),
+						"vanilla grass + dye " + GRASS_DYES[i] + " -> variant " + i);
+			}
+			// family recolour: any variant + any effective dye -> that dye's variant
+			for (int from = 0; from < 6; from++) {
+				for (int to = 0; to < 6; to++) {
+					Block tExpected = GRASS_STANDINS[to];
+					Block tActual = GTSprayCanItem.colorTarget(GRASS_STANDINS[from], GRASS_DYES[to]);
+					if (from == to) assertNull(tActual, "same-variant spray is the :164 no-op");
+					else assertSame(tExpected, tActual, "variant " + from + " + dye " + GRASS_DYES[to]);
+				}
+			}
+		} finally {
+			GTGrassBlocks.resetResolver();
+		}
+	}
+
+	/**
+	 * The other TEN dyes are the upstream :161 return F on the vanilla grass block AND on
+	 * every GT variant — the useOn :216-217 precheck sees a null target and never pays
+	 * (no durability, no sound, the task-card no-op semantics).
+	 */
+	@Test
+	public void grassSprayIgnoresTheOtherTenDyes() {
+		GTGrassBlocks.useTestStandins(java.util.List.of(GRASS_STANDINS));
+		try {
+			for (byte tDye = 0; tDye < 16; tDye++) {
+				boolean tGrassDye = false;
+				for (byte tEffective : GRASS_DYES) tGrassDye |= tEffective == tDye;
+				if (tGrassDye) continue;
+				assertNull(GTSprayCanItem.colorTarget(Blocks.GRASS_BLOCK, tDye),
+						"dye " + tDye + " must no-op on the vanilla grass block");
+				for (Block tVariant : GRASS_STANDINS) {
+					assertNull(GTSprayCanItem.colorTarget(tVariant, tDye),
+							"dye " + tDye + " must no-op on a GT variant");
+				}
+			}
+		} finally {
+			GTGrassBlocks.resetResolver();
+		}
+	}
+
+	/** The remover unpaints ANY GT variant to the vanilla grass block (the Remover :104 swap); the vanilla block itself is not removable. */
+	@Test
+	public void grassRemoverUnpaintsToTheVanillaBlock() {
+		GTGrassBlocks.useTestStandins(java.util.List.of(GRASS_STANDINS));
+		try {
+			for (Block tVariant : GRASS_STANDINS) {
+				assertSame(Blocks.GRASS_BLOCK, GTSprayCanItem.decolorTarget(tVariant), "Remover :104");
+			}
+			assertNull(GTSprayCanItem.decolorTarget(Blocks.GRASS_BLOCK), "the target itself has no reverse row");
+		} finally {
+			GTGrassBlocks.resetResolver();
+		}
 	}
 
 	// ---------------------------------------------------------------------------

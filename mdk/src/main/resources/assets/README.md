@@ -4523,3 +4523,35 @@ identity rides the runtime FluidType tint = `GTSprayCanItem.DYES_INT[i]` (CS.jav
 — zero new colour data, the same single-colour-source discipline as the spray-can
 items (P22) and the machine paint tints (P21). Chlorine borrows NOTHING (vanilla water
 textures + the MT.java:405 material colour tint, ruling R3). Copied on 2026-09-07.
+
+GT grass block family textures, task p24-grass-block: TWELVE 16x16 RGBA PNGs borrowed
+byte-identical from upstream
+`src/main/resources/assets/gregtech/textures/blocks/iconsets/`, renamed to the
+VARIANT-SEMANTICS tail. The upstream FILE names are the trap (research pin: meta 3
+"LightGray" renders the NORMAL PNG, meta 0 "Green" the MEDIUM PNG, Textures.java
+:530-565) — the borrow followed the CODE mapping, so each pair below is named for the
+variant it actually serves:
+
+- `gt6/textures/block/grass/top_green.png` (upstream `GRASSBLOCK_TOP_MEDIUM.png`, meta 0
+  Green) sha256 `ca41b36c194284e765d5ee74e3fa49a4e64d919dd231b0aadc87481346713d44`
+- `gt6/textures/block/grass/side_green.png` (upstream `GRASSBLOCK_SIDE_MEDIUM.png`) sha256 `9fac0d91238732fb9fa34bae2ea401546a4a8aba6fe267f00812f11e10617e0c`
+- `gt6/textures/block/grass/top_lime.png` (upstream `GRASSBLOCK_TOP_LIGHT.png`, meta 1
+  Lime) sha256 `fc0acede35295b3e304814dedae7faad948d218adb16a4a88c31bd64d7516ed7`
+- `gt6/textures/block/grass/side_lime.png` (upstream `GRASSBLOCK_SIDE_LIGHT.png`) sha256 `8262c70dfe9685682ce2e51890b960528b504cd7447c105bbacc5b4df9246f2a`
+- `gt6/textures/block/grass/top_black.png` (upstream `GRASSBLOCK_TOP_DARK.png`, meta 2
+  Black) sha256 `477608e080f2da52680ba9a0479519af7541500bfb79c5600d066057793a5e2a`
+- `gt6/textures/block/grass/side_black.png` (upstream `GRASSBLOCK_SIDE_DARK.png`) sha256 `76d54b8cd36effb5e57f2bb9be067e2b64622dc542b170fc205811ee146ed2b8`
+- `gt6/textures/block/grass/top_light_gray.png` (upstream `GRASSBLOCK_TOP_NORMAL.png`,
+  meta 3 LightGray — the misnomer pair) sha256 `51f405ddedd1d4d73a43f75690ca8b151c2dd4a680bcf9774fe8656d194066be`
+- `gt6/textures/block/grass/side_light_gray.png` (upstream `GRASSBLOCK_SIDE_NORMAL.png`) sha256 `2c9436e8152ccf2902ec72cbefae73720c9360c09591c9e6218adf30d2709167`
+- `gt6/textures/block/grass/top_yellow.png` (upstream `GRASSBLOCK_TOP_YELLOW.png`, meta 4
+  Yellow) sha256 `438e35fd72e0882beb17fb79e85bc5413ecfc19e469627574aa23fa723252762`
+- `gt6/textures/block/grass/side_yellow.png` (upstream `GRASSBLOCK_SIDE_YELLOW.png`) sha256 `634158d62e035b39de0dad8ec8867e55e12a335bcd07b978a71a4e239f23a191`
+- `gt6/textures/block/grass/top_brown.png` (upstream `GRASSBLOCK_TOP_BROWN.png`, meta 5
+  Brown) sha256 `63368030541c97bf7cc00dee716f21487600dacfe427d930655a534841186577`
+- `gt6/textures/block/grass/side_brown.png` (upstream `GRASSBLOCK_SIDE_BROWN.png`) sha256 `3c785319e73d56cb3b0fec7b24eb74d835eb8b7d16860f99abb10340797b252a`
+
+The bottom face borrows NOTHING (the models reference the vanilla
+`minecraft:block/dirt` texture directly — the upstream
+`IconContainerCopied(Blocks.dirt, 0, SIDE_BOTTOM)` semantics, BlockGrass.java:102-104).
+The PNGs are pre-coloured (zero biome tint, zero tintindex). Copied on 2026-09-07.

@@ -20,6 +20,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import gregapi.data.OP;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.registry.GTBarrels;
+import gregtech6.registry.GTGrassBlocks;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTStoneBlocks;
@@ -76,8 +77,9 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	protected void addTags(HolderLookup.Provider aProvider) {
 		addPickaxeBand();
 		addAxeBand();
+		addGrassBand(); // task p24-grass-block — the grass family band
 		// the takeover seam: later cards tail-append their own add*Band() here
-		// (p24-grass-block: grass/shovel band; p24-tags-prefix-materials: rolling batches).
+		// (p24-tags-prefix-materials: rolling batches).
 	}
 
 	/**
@@ -105,5 +107,37 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	/** The mineable/axe band — the wood fluid barrel (first batch: no plastic/metal rows, P2). */
 	private void addAxeBand() {
 		tag(BlockTags.MINEABLE_WITH_AXE).add(GTBarrels.BARREL.get());
+	}
+
+	/**
+	 * The grass-family band (task p24-grass-block, the user tag-paradigm first case — every
+	 * row lands in the TagsProvider, ZERO block-code workarounds): each of the 6 GT grass
+	 * variants joins {@code minecraft:dirt} (the BushBlock.java:19 planting face, which the
+	 * canSustainPlant default rides), {@code minecraft:mineable/shovel} (the upstream
+	 * TOOL_shovel level 0, BlockGrass.java:109-110) and {@code minecraft:
+	 * sniffer_diggable_block} (the vanilla grass_block membership, Sniffer.java:260).
+	 *
+	 * <p>Deliberate ABSENCES (the canCreatureSpawn = F equivalence face, decisions
+	 * .p24-grass-behavior-trim ①/②): the six animal spawnable tags
+	 * ({@code animals/wolves/foxes/rabbits/parrots/frogs_spawnable_on}) stay UNJOINED — the
+	 * 1.20.1 animal spawn surface is tag-driven (Animal.java:109), absence = no spawning,
+	 * the upstream BlockGrass.java:107 semantics; {@code valid_spawn} stays unjoined
+	 * (decision ②: no worldgen on this card, the consumer is unreachable). The
+	 * enderman/bamboo/big-dripleaf/azalea/sculk set arrives by TRANSMISSION through
+	 * {@code #dirt} — endermen may pick up GT grass, the declared accepted externality.
+	 */
+	private void addGrassBand() {
+		for (Block tBlock : grassLootBandBlocks()) {
+			tag(BlockTags.DIRT).add(tBlock);
+			tag(BlockTags.MINEABLE_WITH_SHOVEL).add(tBlock);
+			tag(BlockTags.SNIFFER_DIGGABLE_BLOCK).add(tBlock);
+		}
+	}
+
+	/** The 6 grass blocks in variant order (the registration walk, live handles — datagen runs after registration). */
+	private java.util.List<Block> grassLootBandBlocks() {
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>();
+		for (var tHandle : GTGrassBlocks.BLOCKS) rBlocks.add(tHandle.get());
+		return rBlocks;
 	}
 }
