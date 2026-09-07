@@ -4,7 +4,9 @@
 Extends the 50843dff ruling (mod jar must be self-contained: players' mods/ holds
 ONE jar = ONE classloading domain) to the P20 ModularUI jarJar shape:
 
-  level 0  mod jar (mdk/versions/<node>/build/libs, the distribution artifact)
+  level 0  mod jar (mdk/versions/<node>/build/libs, the distribution artifact;
+           canonical name gt6-<node>-<mod_version>.jar via base.archivesName =
+           <mod_id>-<stonecutter node>, task p23-jar-naming)
   level 1  embedded META-INF/jarjar/brachy.modularui.modularui-mc<mc>-*.jar
   level 2  nested META-INF/jarjar/ inside level 1 — EvalEx both legs;
            mixinextras-forge on the forge leg only
@@ -248,9 +250,17 @@ def guard_mod_jar(path):
 
 
 def default_jar(leg):
+    """Distribution jar for `leg`. Canonical name (task p23-jar-naming):
+    gt6-<leg>-<mod_version>.jar (base.archivesName = <mod_id>-<node>). The bare
+    *.jar fallback only serves pre-rename worktrees — a stale pre-rename jar
+    sorts alphabetically before the renamed one and would shadow it, so the
+    canonical glob wins whenever it matches."""
     libs = REPO / "mdk" / "versions" / leg / "build" / "libs"
     if not libs.is_dir():
         return None
+    canonical = sorted(libs.glob(f"gt6-{leg}-*.jar"))
+    if canonical:
+        return canonical[0]
     jars = sorted(libs.glob("*.jar"))
     return jars[0] if jars else None
 

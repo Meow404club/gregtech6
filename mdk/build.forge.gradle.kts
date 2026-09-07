@@ -19,6 +19,19 @@ val forgeMajor = forgeVer.split(".")[0]
 val jeiVer = property("jei_version").toString()
 val jadeVer = property("jade_version").toString()
 
+// 分发 jar 可辨识名（task p23-jar-naming）：archivesName = <mod_id>-<stonecutter 节点名>，
+// jar 任务再追加 project.version（= mod_version）→ gt6-1.20.1-forge-0.1.0.jar。
+// 旧默认 archivesName = project 名 = 节点目录名，产物 1.20.1-forge-0.1.0.jar 认不出是哪个 mod。
+// Knob 求证：org.gradle.api.plugins.BasePluginExtension.getArchivesName(): Property<String>
+// （javap gradle-api-8.14.jar，2026-09-07；wrapper = gradle-8.14-bin）；`base` 扩展由 java 插件
+// 贡献（本脚本 java{}/sourceSets 在位即证 java 插件经 legacyforge 传递应用）。
+// 节点名 = project.name：stonecutter 0.7 建节点 project ":mdk:<node>"（projectDir =
+// versions/<node>）——TreeBuilderImpl.kt:123-131（tmp/harvest/stonecutter-src-07 收割源，
+// createNode 用 "${parent.path}:${data.project}"，data.project 即 match() 的 "1.20.1-forge"）。
+base {
+    archivesName.set("${modId}-${project.name}")
+}
+
 // 共享锚点：控制器项目目录（mdk/），即节点共享资源/模板/datagen 产物的真实位置。
 val sharedDir = parent!!.projectDir
 

@@ -19,6 +19,16 @@ val mcVer = property("deps.minecraft").toString()
 val jeiVer = property("jei_version").toString()
 val jadeVer = property("jade_version").toString()
 
+// 分发 jar 可辨识名（task p23-jar-naming）：archivesName = <mod_id>-<stonecutter 节点名>，
+// jar 任务再追加 project.version（= mod_version）→ gt6-1.21.1-neoforge-0.1.0.jar。
+// 旧默认 archivesName = project 名 = 节点目录名，产物 1.21.1-neoforge-0.1.0.jar 认不出是哪个 mod。
+// Knob/节点名求证与 forge 节点同源（mdk/build.forge.gradle.kts archivesName 段）：
+// BasePluginExtension.getArchivesName（javap gradle-api-8.14.jar，2026-09-07）+
+// stonecutter 0.7 TreeBuilderImpl.kt:123-131（节点 project.name = "1.21.1-neoforge"）。
+base {
+    archivesName.set("${modId}-${project.name}")
+}
+
 // 共享锚点：控制器项目目录（mdk/），即节点共享资源/模板/datagen 产物的真实位置。
 val sharedDir = parent!!.projectDir
 
