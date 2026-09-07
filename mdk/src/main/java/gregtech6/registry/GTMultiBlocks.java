@@ -24,12 +24,14 @@ import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.multiblock.GTCokeOvenBlock;
 import gregtech6.block.multiblock.GTHeatTransmitterBlock;
 import gregtech6.block.multiblock.GTLargeBoilerBlock;
+import gregtech6.block.multiblock.GTLightningRodBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.fluid.GTFluids;
 import gregtech6.tileentity.multiblocks.HeatTransmitterBlockEntity;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
+import gregtech6.tileentity.multiblocks.TileEntityLightningRod;
 
 /**
  * Multiblock domain registration, card-owned (ADR-P3-4 self-contained listener form, the
@@ -103,6 +105,9 @@ public final class GTMultiBlocks {
 						// task p13-large-boiler — the wall/transmitter parts then the five boiler mains
 						for (RegistryObject<Item> tItem : GTMultiBlocks.PART_ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
 						for (RegistryObject<Item> tItem : GTMultiBlocks.LARGE_BOILER_ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
+						// task p24-lightning-rod — the controller (the addToolTips item) then the three parts
+						aOutput.accept(new ItemStack(GTMultiBlocks.LIGHTNING_ROD_ITEM.get()));
+						for (RegistryObject<Item> tItem : GTMultiBlocks.LIGHTNING_ROD_PART_ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
 					})
 					.build());
 
@@ -266,12 +271,13 @@ public final class GTMultiBlocks {
 			BLOCK_ENTITY_TYPES.register("multiblock_large_boiler", () -> BlockEntityType.Builder.of(
 					TileEntityLargeBoiler::new, boilerBlockArray()).build(null));
 
-	/** The shared part-BET block array: the coke oven bricks then the five Dense Walls (the card's valid-list append). */
+	/** The shared part-BET block array: coke oven bricks, the five Dense Walls, then the three Lightning Rod parts (the card's valid-list append). */
 	private static net.minecraft.world.level.block.Block[] sharedPartBlockArray() {
-		net.minecraft.world.level.block.Block[] rBlocks = new net.minecraft.world.level.block.Block[1 + GTMultiBlocks.WALL_BLOCKS_BY_PATH.size()];
+		net.minecraft.world.level.block.Block[] rBlocks = new net.minecraft.world.level.block.Block[1 + GTMultiBlocks.WALL_BLOCKS_BY_PATH.size() + GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.size()];
 		rBlocks[0] = COKE_OVEN_BRICKS.get();
 		int i = 1;
 		for (RegistryObject<GTMultiBlockPartBlock> tHandle : GTMultiBlocks.WALL_BLOCKS_BY_PATH.values()) rBlocks[i++] = tHandle.get();
+		for (RegistryObject<GTMultiBlockPartBlock> tHandle : GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.values()) rBlocks[i++] = tHandle.get();
 		return rBlocks;
 	}
 
@@ -285,5 +291,72 @@ public final class GTMultiBlocks {
 	public static net.minecraft.world.level.block.Block boilerBlockByPath(String aPath) {
 		RegistryObject<GTLargeBoilerBlock> tHandle = LARGE_BOILER_BLOCKS_BY_PATH.get(aPath);
 		return tHandle == null ? null : tHandle.get();
+	}
+
+	// ===========================================================================
+	// task p24-lightning-rod — the Lightning Rod family section (append-only per the
+	// card EDIT ruling). Rows re-read VERBATIM from Loader_MultiTileEntities.java at
+	// implementation time:
+	//   :1151 — the Tungsten Wall (part id 18004, ANY.W, hardness == resistance 10.0,
+	//     texture "metalwall", NBT_DESIGNS 7 — the plain machine-wall family, NOT the
+	//     dense-wall family, the card's census correction);
+	//   :1168 — the Large Niobium-Titanium Coil (part id 18041, hardness == resistance
+	//     6.0, texture "coil", NBT_DESIGNS 1);
+	//   :1179 — the Lightning Rod (part id 18104, hardness == resistance 8.0, texture
+	//     "lightningrod", NBT_DESIGNS 0);
+	//   :1282 — the controller "Lightning Rod Electric Output" (MTE 17998, hardness ==
+	//     resistance 10.0, texture "lightningrod", NBT_CAPACITY 18000 * VREC[6] — the
+	//     compile-time CAPACITY constant, TileEntityLightningRod).
+	// All three part names are ATOMIC (bare nouns, nothing to compose — the TRANSMITTER_ROW
+	// form), so the blocks ride the ROW-LESS GTMultiBlockPartBlock constructor (the
+	// row-carrying one composes the Dense Wall template and would slice these paths wrong);
+	// the display names land on the vanilla block.gt6.&lt;path&gt; keys (the coke-oven-bricks
+	// shape).
+	// ===========================================================================
+
+	/** The three Lightning Rod part rows (Loader :1151/:1168/:1179, the registration order). */
+	public static final java.util.List<MultiblockPartRow> LIGHTNING_ROD_PART_ROWS = java.util.List.of(
+			new MultiblockPartRow("machine_wall_tungsten", "Tungsten Wall", 18004, 10.0F),
+			new MultiblockPartRow("niobium_titanium_coil", "Large Niobium-Titanium Coil", 18041, 6.0F),
+			new MultiblockPartRow("lightning_rod", "Lightning Rod", 18104, 8.0F));
+
+	/** The three Lightning Rod part blocks by path (the BET valid list + the BE part resolution + datagen). */
+	public static final java.util.Map<String, RegistryObject<GTMultiBlockPartBlock>> LIGHTNING_ROD_PART_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The three Lightning Rod part items, same keys (the tab walk + the wand stock). */
+	public static final java.util.Map<String, RegistryObject<Item>> LIGHTNING_ROD_PART_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The Lightning Rod controller block (FACING + FORMED from the base; the facing is structurally meaningless). */
+	public static final RegistryObject<GTLightningRodBlock> LIGHTNING_ROD = BLOCKS.register("multiblock_lightning_rod",
+			() -> new GTLightningRodBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(10.0F, 10.0F).sound(SoundType.METAL)));
+
+	/** The Lightning Rod controller item — the addToolTips replay (the :101-115 face). */
+	public static final RegistryObject<Item> LIGHTNING_ROD_ITEM = ITEMS.register("multiblock_lightning_rod",
+			() -> new GTLightningRodBlock.Item(LIGHTNING_ROD.get(), new Item.Properties()));
+
+	/**
+	 * The Lightning Rod BET: one controller class over its one block (the CokeOven BET
+	 * degenerate shape). Registry path mirrors {@link TileEntityLightningRod#getTileEntityName()}.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityLightningRod>> LIGHTNING_ROD_BE =
+			BLOCK_ENTITY_TYPES.register("multiblock_lightning_rod", () -> BlockEntityType.Builder.of(
+					TileEntityLightningRod::new, LIGHTNING_ROD.get()).build(null));
+
+	static {
+		// the three Lightning Rod part blocks + items (the shared part BET mounts them; the
+		// forward-reference lambda form — the BET builder resolves these handles at REGISTER
+		// time, after every static field is initialized, the WALL_ROWS lesson comment above)
+		for (MultiblockPartRow tRow : LIGHTNING_ROD_PART_ROWS) {
+			LIGHTNING_ROD_PART_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTMultiBlockPartBlock(partProperties(tRow.hardness()))));
+			LIGHTNING_ROD_PART_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new GTComposedNameItem(LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Lightning Rod part block by path — the coke-oven-bricks defensive default for an unknown path (unreachable in production). */
+	public static net.minecraft.world.level.block.Block lightningRodPartBlock(String aPath) {
+		RegistryObject<GTMultiBlockPartBlock> tHandle = LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? COKE_OVEN_BRICKS.get() : tHandle.get();
 	}
 }
