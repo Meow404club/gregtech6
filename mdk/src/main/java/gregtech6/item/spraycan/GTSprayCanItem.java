@@ -14,8 +14,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -65,8 +70,9 @@ import gregtech6.tileentity.IPaintableTE;
  * <li><b>SFX.IC_SPRAY</b> upstream resolves to the IC2 {@code tools.Painter} sound
  *     (CS.java:2249) — no IC2 audio on this port; {@link SoundEvents#FIRE_EXTINGUISH} is the
  *     declared placeholder hiss (the GTCEu custom {@code spray_can} sound entry is pooled).</li>
- * <li>the sheep/wolf entity leg (:97-142), the C-Foam family, the Canner refill and the
- *     empty-can crafting are card-pool cuts.</li>
+ * <li>the C-Foam family, the Canner refill and the empty-can crafting are card-pool cuts;
+ *     the sheep/wolf entity leg is LIVE (the {@link #interactLivingEntity} arm, task
+ *     p23-spraycan-entity-leg).</li>
  * </ul>
  *
  * <p>Routing (the upstream :60-94 order): server side only, an {@link IPaintableTE} target
@@ -77,9 +83,23 @@ import gregtech6.tileentity.IPaintableTE;
  * free, upstream :78 {@code hasInfiniteItems}) and a depleted can swaps to the empty can
  * (:85-92).
  *
+ * <p>The entity leg (upstream {@code onRightClickEntity} :97-142): a live unsheared sheep
+ * dyes its wool and a live tamed wolf dyes its collar to the complement colour
+ * ({@code ~mColor&15} = the vanilla {@code DyeColor.getId()} — the {@link #vanillaDye}
+ * fold); the same colour and every other entity are the vanilla DyeItem :37 PASS with no
+ * payment. A hit plays no sound (the upstream entity leg is silent — only the block arm
+ * sprays audibly :77) and pays {@link #ENTITY_HIT_COST} 50 internal units (upstream :126,
+ * five {@link #HIT_COST} block hits), creative free. The gate follows the vanilla DyeItem
+ * :27 face ({@code isAlive} + {@code !isSheared} + a different colour); one upstream delta
+ * is kept verbatim — the wolf needs {@code isTame} but not {@code isOwnedBy} (upstream
+ * :109). The remover has no entity arm at all (the Remover :46-123 has no
+ * {@code onRightClickEntity} override — a sheep never sprays back white); the cat's collar
+ * stays undyeable (upstream has no cat arm either).
+ *
  * <p>Offline-test surface: the pure seams ({@link #DYES_INT}, {@link #remainingOf}, {@link
  * #remainingAfterHit}, {@link #payUses}, {@link #barVisible}, {@link #barWidth}, {@link
- * #paintPaintableTE}, {@link #colorTarget}, {@link #decolorTarget}) — the mod-Item wall
+ * #paintPaintableTE}, {@link #colorTarget}, {@link #decolorTarget}, {@link #entityDyeId}
+ * over the primitive {@link EntityFacts} rows) — the mod-Item wall
  * (CrowbarTest.bootStrap NOTE) bars constructing this item in the bootstrapped test JVM, so
  * the ItemStack seams take vanilla stand-ins and the live {@link #useOn} half rides the
  * registration smoke + the RCON chain.
@@ -91,6 +111,12 @@ public class GTSprayCanItem extends Item {
 
 	/** The internal-units cost per successful hit (upstream :78 — a hit spends mUses/10 of a "use"). */
 	public static final long HIT_COST = 10;
+
+	/**
+	 * The internal-units cost per successful ENTITY hit (upstream :126 {@code tUses-=50} —
+	 * five {@link #HIT_COST} block hits per sheep/wolf dye).
+	 */
+	public static final long ENTITY_HIT_COST = 50;
 
 	/** The 16-colour can capacity (MultiItemRandomTools.java:245 {@code 512}); internal units ×10. */
 	public static final int SPRAY_USES = 512;
@@ -253,11 +279,17 @@ public class GTSprayCanItem extends Item {
 	}
 
 	/**
-	 * The post-hit counter (upstream :78): creative players are free, everyone else pays
-	 * {@link #HIT_COST}, floored at 0.
+	 * The post-hit counter (upstream :78/:126): creative players are free, everyone else pays
+	 * {@code aCost} ({@link #HIT_COST} per block hit, {@link #ENTITY_HIT_COST} per entity
+	 * hit), floored at 0.
 	 */
+	public static long remainingAfterHit(long aRemaining, long aCost, boolean aCreative) {
+		return aCreative ? aRemaining : Math.max(0, aRemaining - aCost);
+	}
+
+	/** The block-arm hit ({@link #HIT_COST}); the entity arm passes {@link #ENTITY_HIT_COST}. */
 	public static long remainingAfterHit(long aRemaining, boolean aCreative) {
-		return aCreative ? aRemaining : Math.max(0, aRemaining - HIT_COST);
+		return remainingAfterHit(aRemaining, HIT_COST, aCreative);
 	}
 
 	/** The depletion verdict (upstream :85 {@code tUses <= 0}). */
@@ -275,7 +307,13 @@ public class GTSprayCanItem extends Item {
 	 */
 	@Nullable
 	public static ItemStack payUses(ItemStack aStack, long aMaxUses, Item aEmptyCan) {
-		long tRemaining = remainingAfterHit(remainingOf(carrierTagOf(aStack), aMaxUses), false);
+		return payUses(aStack, aMaxUses, HIT_COST, aEmptyCan);
+	}
+
+	/** The cost-parameterized payment face — the entity arm pays {@link #ENTITY_HIT_COST}. */
+	@Nullable
+	public static ItemStack payUses(ItemStack aStack, long aMaxUses, long aCost, Item aEmptyCan) {
+		long tRemaining = remainingAfterHit(remainingOf(carrierTagOf(aStack), aMaxUses), aCost, false);
 		if (depleted(tRemaining)) return new ItemStack(aEmptyCan);
 		//? if forge {
 		aStack.getOrCreateTag().putLong(NBT_REMAINING, tRemaining);
@@ -303,6 +341,107 @@ public class GTSprayCanItem extends Item {
 				net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
 		*///?}
 	}
+
+	// ---------------------------------------------------------------------------
+	// the entity leg (upstream onRightClickEntity :97-142, the vanilla DyeItem :26-38 shape)
+	// ---------------------------------------------------------------------------
+
+	/** The no-hit verdict of {@link #entityDyeId} (the vanilla :37 PASS). */
+	public static final int NO_ENTITY_HIT = -1;
+
+	/**
+	 * The primitive entity facts the leg decides over — {@code null} from {@link #of} when the
+	 * target is neither sheep- nor wolf-shaped (the vanilla DyeItem :27 {@code instanceof
+	 * Sheep} arm and the vanilla Wolf.java:351 collar arm). This record is the offline seam:
+	 * the tests build fact rows directly and no Entity/Player is ever constructed (the p22
+	 * creative-probe FluidType.SIZE wall); the {@code of} projection is the live thin shell.
+	 *
+	 * @param alive   {@code LivingEntity#isAlive} (the vanilla DyeItem :27 gate)
+	 * @param sheep   the target is a {@code Sheep}
+	 * @param sheared {@code Sheep#isSheared} (the vanilla :27 gate; a wolf is never sheared)
+	 * @param wolf    the target is a {@code Wolf}
+	 * @param tamed   {@code TamableAnimal#isTame} (the upstream :109 gate — vanilla additionally
+	 *                wants {@code isOwnedBy}, Wolf.java:351, and the upstream keeps tamed-only)
+	 * @param dyeId   the current wool ({@code Sheep#getColor}) or collar ({@code Wolf#
+	 *                getCollarColor}) {@code DyeColor.getId()} — WHITE=0..BLACK=15
+	 */
+	public record EntityFacts(boolean alive, boolean sheep, boolean sheared, boolean wolf, boolean tamed, int dyeId) {
+
+		/** The {@code LivingEntity} projection — {@code null} off the sheep/wolf shapes. */
+		@Nullable
+		public static EntityFacts of(LivingEntity aEntity) {
+			if (aEntity instanceof Sheep tSheep) return new EntityFacts(aEntity.isAlive(), true, tSheep.isSheared(), false, false, tSheep.getColor().getId());
+			if (aEntity instanceof Wolf tWolf) return new EntityFacts(aEntity.isAlive(), false, false, true, tWolf.isTame(), tWolf.getCollarColor().getId());
+			return null;
+		}
+	}
+
+	/**
+	 * The colour verdict (the upstream :102-115 arms under the vanilla DyeItem :27 gate): a
+	 * live unsheared sheep or a live tamed wolf takes the complement colour
+	 * ({@code ~mColor&15} = the {@code DyeColor.getId()}, the {@link #vanillaDye} fold); the
+	 * same colour is the no-dye no-pay no-op (the upstream :103/:110 guards, the vanilla :27
+	 * {@code getColor() != dyeColor}). {@link #NO_ENTITY_HIT} = the vanilla :37 PASS.
+	 */
+	public static int entityDyeId(@Nullable EntityFacts aFacts, byte aDyeIndex) {
+		int tTarget = ~aDyeIndex & 15;
+		boolean tDyeable = aFacts != null && aFacts.alive()
+				&& ((aFacts.sheep() && !aFacts.sheared()) || (aFacts.wolf() && aFacts.tamed()))
+				&& aFacts.dyeId() != tTarget;
+		return tDyeable ? tTarget : NO_ENTITY_HIT;
+	}
+
+	/**
+	 * The entity arm itself (the vanilla {@code Item#interactLivingEntity} signature, both
+	 * legs): the remover passes (no upstream entity arm), the verdict comes first so a miss
+	 * costs nothing, the client claims with the vanilla :34 arm swing (the upstream
+	 * :105/:112 {@code isRemote→true}) and the server mutates + pays — no sound (the upstream
+	 * entity leg is silent), {@link #ENTITY_HIT_COST} or free (creative), the depleted can
+	 * swaps to the empty can (upstream :130-137). Return shape = the vanilla :34
+	 * {@code sidedSuccess}: SUCCESS client / CONSUME server on a hit, PASS otherwise.
+	 */
+	@Override
+	public InteractionResult interactLivingEntity(ItemStack aStack, Player aPlayer, LivingEntity aEntity, InteractionHand aHand) {
+		if (remover()) return InteractionResult.PASS; // the Remover :46-123 has no entity arm
+		EntityFacts tFacts = EntityFacts.of(aEntity);
+		int tDyeId = entityDyeId(tFacts, dyeIndex);
+		if (tDyeId == NO_ENTITY_HIT) return InteractionResult.PASS;
+		if (aEntity.level().isClientSide) return InteractionResult.SUCCESS; // the vanilla :34 client half
+		DyeColor tColor = DyeColor.byId(tDyeId);
+		if (tFacts.sheep()) ((Sheep) aEntity).setColor(tColor); // the vanilla DyeItem :30 half
+		else applyCollar((Wolf) aEntity, tColor); // the vanilla Wolf.java:354 half
+		if (!aPlayer.getAbilities().instabuild) { // upstream :126 hasInfiniteItems
+			ItemStack tSwap = payUses(aStack, maxUses, ENTITY_HIT_COST, emptyCan.get());
+			if (tSwap != null) aPlayer.setItemInHand(aHand, tSwap); // depleted → the empty can (upstream :130-137)
+		}
+		return InteractionResult.CONSUME; // the vanilla :34 sidedSuccess server half
+	}
+
+	/**
+	 * The collar write. 1.20.1: {@code Wolf#setCollarColor} is public (vanilla Wolf.java:459).
+	 * 21.1: it turned private (vanilla 1.21.1 Wolf.java:572 and the NeoForge patch does not
+	 * widen it) — a lazy reflective bridge, first touched on a live wolf hit only, so the
+	 * offline test JVM never resolves it.
+	 */
+	private static void applyCollar(Wolf aWolf, DyeColor aColor) {
+		//? if forge {
+		aWolf.setCollarColor(aColor);
+		//?} else {
+		/*try {
+			if (sWolfCollar == null) {
+				sWolfCollar = Wolf.class.getDeclaredMethod("setCollarColor", DyeColor.class);
+				sWolfCollar.setAccessible(true);
+			}
+			sWolfCollar.invoke(aWolf, aColor);
+		} catch (ReflectiveOperationException tE) {
+			throw new IllegalStateException("the 21.1 Wolf.setCollarColor bridge failed", tE);
+		}
+		*///?}
+	}
+
+	//? if neoforge {
+	/*private static java.lang.reflect.Method sWolfCollar;
+	*///?}
 
 	// ---------------------------------------------------------------------------
 	// the durability bar (the GTCEu :126-145 face over the NBT counter)
