@@ -62,6 +62,14 @@ class TileEntityLightningRodTest extends GTMultiBlocksOfflineTestBase {
 	/** The fixture BET (the offline selfHolder form — the frozen registry keeps .get() out of reach). */
 	static BlockEntityType<TestLightningRod> sRodType;
 
+	/**
+	 * The rod-local part BET over ALL THREE fixture blocks — the base {@code sPartType}
+	 * mounts BRICKS only, and 1.21.1 {@code BlockEntity.setBlockState} VALIDATES the state
+	 * against the type ("Invalid block entity ..." IllegalStateException), so placing an
+	 * IRON_BLOCK/STONE_BRICKS cell through it dies on the neo leg.
+	 */
+	static BlockEntityType<MultiBlockPartBlockEntity> sRodPartType;
+
 	@BeforeAll
 	static void buildRodFixture() {
 		// the base's selfHolder is private — the same recipe, local (the GTMachinesOfflineTestBase form)
@@ -70,6 +78,14 @@ class TileEntityLightningRodTest extends GTMultiBlocksOfflineTestBase {
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TestLightningRod(tHolder[0], aPos, aState), Blocks.BRICKS).build(null);
 		sRodType = tHolder[0];
+		// the explicit test-seam ctor: the bare (pos, state) lambda would bind the
+		// registry-path constructor and resolve gt6:multiblock_part offline (NPE)
+		@SuppressWarnings("unchecked")
+		BlockEntityType<MultiBlockPartBlockEntity>[] tPartHolder = (BlockEntityType<MultiBlockPartBlockEntity>[]) new BlockEntityType<?>[1];
+		tPartHolder[0] = BlockEntityType.Builder.of(
+				(aPos, aState) -> new MultiBlockPartBlockEntity(tPartHolder[0], aPos, aState),
+				Blocks.BRICKS, Blocks.IRON_BLOCK, Blocks.STONE_BRICKS).build(null);
+		sRodPartType = tPartHolder[0];
 	}
 
 	@BeforeEach
@@ -196,9 +212,9 @@ class TileEntityLightningRodTest extends GTMultiBlocksOfflineTestBase {
 		return tRod;
 	}
 
-	/** Places a part BE of the given block straight into the stub world. */
+	/** Places a part BE of the given block straight into the stub world (the rod-local three-block part BET). */
 	static MultiBlockPartBlockEntity placePartAt(RodLevel aLevel, BlockPos aPos, Block aBlock) {
-		MultiBlockPartBlockEntity tPart = sPartType.create(aPos, aBlock.defaultBlockState());
+		MultiBlockPartBlockEntity tPart = sRodPartType.create(aPos, aBlock.defaultBlockState());
 		tPart.setLevel(aLevel);
 		aLevel.mStates.put(aPos, aBlock.defaultBlockState());
 		aLevel.mBlockEntities.put(aPos, tPart);
@@ -310,7 +326,7 @@ class TileEntityLightningRodTest extends GTMultiBlocksOfflineTestBase {
 		BlockPos tCenter = new BlockPos(100, 64, 100);
 		TestLightningRod tRod = placeRod(tLevel, tCenter);
 		tLevel.mBeFactory = (aPos, aState) -> { // wand placements land part BEs (the stub BE-creation step)
-			MultiBlockPartBlockEntity tPart = sPartType.create(aPos, aState);
+			MultiBlockPartBlockEntity tPart = sRodPartType.create(aPos, aState);
 			tPart.setLevel(tLevel);
 			return tPart;
 		};
@@ -342,7 +358,7 @@ class TileEntityLightningRodTest extends GTMultiBlocksOfflineTestBase {
 		BlockPos tCenter = new BlockPos(100, 64, 100);
 		TestLightningRod tRod = placeRod(tLevel, tCenter);
 		tLevel.mBeFactory = (aPos, aState) -> {
-			MultiBlockPartBlockEntity tPart = sPartType.create(aPos, aState);
+			MultiBlockPartBlockEntity tPart = sRodPartType.create(aPos, aState);
 			tPart.setLevel(tLevel);
 			return tPart;
 		};
