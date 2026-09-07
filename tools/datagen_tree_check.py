@@ -58,13 +58,16 @@ from pathlib import Path, PurePosixPath
 #                              advancement 首次把该带带进双树）
 #   c          → forge         NeoForge 生态 tag 命名空间 data/c ↔ data/forge（#c:tools
 #                              ↔ #forge:tools 是同一逻辑产物的双腿形态）
-# 新注册表目录改名出现时在此追加（例：advancements→advancement）。
+# p24-tags-provider-skeleton 一带新增：block → blocks  data/*/tags/block(s)（1.21 单数化；
+#                              mineable/pickaxe|axe 首次把 block tag 带带进双树；对称施用，
+#                              textures/block 等双侧同名段不受影响）
 SEGMENT_MAP = {
     "loot_table": "loot_tables",
     "recipe": "recipes",
     "item": "items",
     "advancement": "advancements",
     "c": "forge",
+    "block": "blocks",
 }
 
 CACHE_DIR_NAME = ".cache"          # HashCache 账本（输出根内，gitignore :24，非产物）
