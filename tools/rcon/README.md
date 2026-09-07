@@ -142,9 +142,17 @@ GT6 指令需权限 2，RCON 即 console（权限拉满）直接可用。RCON �
 （TileEntityBase09Connector.java:173）；`place <pos> <face>` 实际连接面是
 OPOS[face]=face^1（GTFluidPipeBlockEntity.java:325）。
 
-### 管道 /gt6pipe（accept|stat|place|toggle|output|clear|inject）
+### 管道 /gt6pipe（accept|stat|place|toggle|output|clear|inject|ownable）
 
 前置：起服+RCON 通；木小管容量 1000 L（GTFluidPipeBlockEntity.java:85）。
+
+ownable 面（p24-pipe-owner）：`ownable <pos> <0|1> [ownerUuid]` 是泡沫 applyFoam 的
+替身（上游 10ConnectorRendered:159-166 唯一活体写点，泡沫族睡 P10 池）——控制台 OP
+强制写点，无 allowInteraction 门；`ownable 0` 双字段复位（removeFoam 形）。stat 增
+`ownable/owner` 两字段。锁管语义：默认 ownable=false 零保护（活体等价上游普通管，
+既有链零回归）；上锁后 console（null=非 owner）toggle 被拒（06Covers:141 对位 +
+09Connector:75 邻居门，同门覆 connect/disconnect 两臂），贴靠锁管 place 得
+connections 0（上游 :86 return T 对位）。活链 = `chains/p24_pipe_owner.py`。
 
 ```bash
 R() { python3 tools/rcon/gt6rcon.py --password <pw> "$@"; }
