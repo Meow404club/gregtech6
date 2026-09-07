@@ -44,12 +44,16 @@ import gregtech6.registry.GTStoneBlocks;
 class GT6TagsDatagenTest {
 
     /**
-     * The pickaxe-file member total: 272 stone pairs + 21 machine blocks (oven +
-     * shredder/crusher/lathe ladders + 4 dryers + 4 distilleries — GTMachines.java:58/:118-151/
-     * :233-237/:347-351) + the 6 metal/gem/raw prefixes' live pairs (3773 - 1096 blockDust
-     * = 2677). Pinned so any band change is a conscious constant update.
+     * The pickaxe-file member total: 272 stone pairs + 25 machine blocks (oven +
+     * shredder/crusher/lathe ladders + 4 dryers + 4 distilleries + the 4 Canner rows —
+     * GTMachines.java:58/:118-151/:233-237/:347-351/:328-359, the whole-class
+     * {@code GTMachines.BLOCKS} walk means every landed machine row joins the band) +
+     * the 6 metal/gem/raw prefixes' live pairs (3773 - 1096 blockDust = 2677). Pinned so
+     * any band change is a conscious constant update — the maintenance duty the tags
+     * card declared for every future machine card (this update rides the p24-canner-machine
+     * rebase reconciliation, the four Canner rows 2970 → 2974).
      */
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 21 + 2677;
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 25 + 2677;
 
     /** The 13 tier-ladder machine ids of the first machines card (the dryer/distillery rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
