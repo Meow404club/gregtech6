@@ -22,6 +22,7 @@ import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
+import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTWires;
 
 /**
@@ -50,6 +51,8 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterWireItemColors); // task p16-clienthandlers-2111: wire tints, inventory half
         modBus.addListener(GTClientHandlers::onRegisterMachinePaintBlockColors); // task p21-paintable-tint-render: machine paint tint, world half
         modBus.addListener(GTClientHandlers::onRegisterMachinePaintItemColors); // task p22-painted-item-domain: machine paint tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterBarrelPaintBlockColors); // task p23-barrel-paint-render: barrel paint tint, world half
+        modBus.addListener(GTClientHandlers::onRegisterBarrelPaintItemColors); // task p23-barrel-paint-render: barrel paint tint, inventory half
     }
 
     /** Material tint for every registered material prefix item (GTCEu TagPrefixItem.java:55-57 isomorph). */
@@ -124,6 +127,35 @@ public final class GTClientHandlers {
         List<Item> tPaintItems = new ArrayList<>();
         for (Block tBlock : GTMachines.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
         event.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
+    }
+
+    /**
+     * Task p23-barrel-paint-render: the BARREL paint tint, the world half over the pinned
+     * 16 barrel-domain blocks ({@code GTBarrels.paintableBlockArray()}). The SAME
+     * {@link GTMachinePaintTint#blockColor()} lambda as the machine registration — the
+     * lambda is block-type-free (the PAINT model-data lookup is the gate) and every barrel
+     * BE supplies it through the 03 base, so the two domains share one decision site and
+     * the tint classes stay untouched (this card extends the registration face only).
+     * Unpainted = the {@code -1} white-multiply identity, zero visual change.
+     */
+    private static void onRegisterBarrelPaintBlockColors(RegisterColorHandlersEvent.Block event) {
+        event.getBlockColors().register(GTMachinePaintTint.blockColor(), GTBarrels.paintableBlockArray());
+    }
+
+    /**
+     * Task p23-barrel-paint-render: the BARREL paint tint, the INVENTORY half over the 16
+     * barrel blocks' BlockItems ({@code GTBarrels.paintableBlockArray()}) — the explicit
+     * registration is mandatory for the same no-delegation reason as the machine half
+     * above (a BlockColor does not colour its BlockItem; ItemColors.java:25-93). The SAME
+     * {@link GTItemPaintTint#itemColor()} lambda; the stack keys it reads
+     * ({@code gt.color}/{@code gt.painted}) are written by the barrel item-NBT carrier
+     * (task p23-barrel-paint-item-seam, merge order A→B — the barrel stacks stay the
+     * {@code -1} sentinel until that carrier lands).
+     */
+    private static void onRegisterBarrelPaintItemColors(RegisterColorHandlersEvent.Item event) {
+        List<Item> tBarrelPaintItems = new ArrayList<>();
+        for (Block tBlock : GTBarrels.paintableBlockArray()) tBarrelPaintItems.add(tBlock.asItem());
+        event.getItemColors().register(GTItemPaintTint.itemColor(), tBarrelPaintItems.toArray(Item[]::new));
     }
 
     /** Translation key existence check (Language.getInstance Language.java:83, has :97). */
