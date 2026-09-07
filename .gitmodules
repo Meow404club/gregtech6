@@ -1,0 +1,8 @@
+# P23 拆仓（2026-09-07）：modularui 已拆为独立 git 仓库（git submodule 按原路径挂回，
+# Gradle/工具链接线零改动——settings include + jarJar(project) + jar_content_check 全路径型）。
+# URL 说明：主仓暂无 default remote，故用绝对本地路径（bare 仓）。
+# 将来推远程后：git config -f .gitmodules submodule.third-party/modularui.url <远程URL>
+#              并 git submodule sync（相对 URL ../modularui.git 亦可）。
+[submodule "third-party/modularui"]
+	path = third-party/modularui
+	url = /home/brokestar/workspace/MGT6GA/MGT6GA-repos/modularui.git

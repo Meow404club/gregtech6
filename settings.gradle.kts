@@ -23,10 +23,11 @@ rootProject.name = "gregtech6"
 // 节点经 `implementation(project(":"))` 消费——禁 includeBuild 自指（复合构建指向本仓自身）。
 include("mdk")
 
-// P20④ vendored ModularUI fork（ADR 2026-09-06-p20-modularui-fork-ruling 裁决 a）：
-// 仓内 third-party/modularui/ 独立 stonecutter 项目（多项目接线 probe 定形，见 FORK.md）。
-// 与 mdk 双节点同名不同树：节点参数在 third-party/modularui/versions/<node>/gradle.properties，
-// 节点 buildscript = third-party/modularui/build.<loader>.gradle.kts（各项目 buildscript 相对自身控制器目录）。
+// ModularUI fork（P23 2026-09-07 拆独立仓，推翻 ADR-P20 §2 裁决一的 vendored 落点）：
+// third-party/modularui/ 是 git submodule（独立仓，历史经 subtree split 保留，见 .gitmodules）；
+// 接线零改动——本 include 与下行 stonecutter create 均路径型，gitlink 下照常解析。
+// 纪律：每个 worktree 首次需 git -c protocol.file.allow=always submodule update --init
+// （CVE-2022-39253 后本地路径协议默认拒）。
 include("third-party:modularui")
 
 stonecutter {
