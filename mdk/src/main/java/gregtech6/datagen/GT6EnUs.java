@@ -1,7 +1,10 @@
 package gregtech6.datagen;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import gregapi.data.OP;
@@ -443,18 +446,17 @@ public class GT6EnUs extends LanguageProvider {
      * missing BOTH walks is structurally red instead of a silent raw-key render.
      */
     private void addWireRowMaterialNames() {
-        // (a) replay the addMaterialNames guard ladder: which keys did the material walk emit?
-        // (the shared seam, task p20-i18n-compose-rows — the B1-review suggestion: one walk
-        // implementation, consumed by this backfill AND by the parity keyface pin, kills the
-        // double-copy drift the review flagged)
-        Set<String> tEmitted = materialWalkEmittedKeys();
-        // (b) backfill exactly the compose-domain misses (Set.add == was absent)
+        // (a) the shared seam's emitted face (task p20-i18n-compose-rows; Map form since task
+        // p21-i18n-walk-seam-normalize — the seam carries the merged material per key, so this
+        // backfill membership-checks the walk result instead of keeping its own mutable copy)
+        Map<String, OreDictMaterial> tEmitted = materialWalkEmittedKeys();
+        // (b) backfill exactly the compose-domain misses (containsKey == was absent from the walk)
         for (List<GTWireSpecs.Row> tRows : List.of(GTWireSpecs.ROWS, GTWireSpecs.REDSTONE_ROWS)) {
             for (GTWireSpecs.Row tRow : tRows) {
                 OreDictMaterial tMaterial = tRow.material().get();
                 if (tMaterial == null || tMaterial.mNameLocal == null) continue;
                 String tKey = "gt6.material." + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal);
-                if (tEmitted.add(tKey)) add(tKey, tMaterial.mNameLocal);
+                if (!tEmitted.containsKey(tKey)) add(tKey, tMaterial.mNameLocal);
             }
         }
     }
@@ -579,34 +581,31 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The replay of the {@link #addMaterialNames} guard ladder — the set of
-     * {@code gt6.material.<snake>} keys the registration-face walk emits (alias merge,
-     * {@code mID >= 0} only, MaterialRegistry.java:182-185). Single implementation shared by
-     * the wire-row backfill ({@link #addWireRowMaterialNames}) and the parity keyface pin
-     * (GT6LangParityTest), per the B1-review dedup suggestion (task p20-i18n-compose-rows).
+     * The replay of the {@link #addMaterialNames} guard ladder — one entry per
+     * {@code gt6.material.<snake>} key the registration-face walk emits, valued with the merged
+     * material (alias merge, {@code mID >= 0} only, MaterialRegistry.java:182-185;
+     * putIfAbsent = the first (lowest mID) definition wins, the walk's dedup semantics
+     * verbatim). Single implementation shared by the en table walk ({@link #addMaterialNames}),
+     * the wire-row backfill ({@link #addWireRowMaterialNames}) and the zh family join
+     * (GT6ZhCn.addMaterialNames — zh needs the material identity for its TSV family lookup,
+     * which the old Set form could not carry; task p21-i18n-walk-seam-normalize). The parity
+     * test does NOT consume this seam: its keyface guards replay the compose domains against
+     * the recording face (the recorded entries), covering this walk indirectly.
      */
-    static Set<String> materialWalkEmittedKeys() {
-        Set<String> tEmitted = new HashSet<>();
+    static Map<String, OreDictMaterial> materialWalkEmittedKeys() {
+        Map<String, OreDictMaterial> tEmitted = new LinkedHashMap<>();
         for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
             if (tMaterial == null || tMaterial.mID < 0) continue;
             tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias merge, MaterialRegistry.java:182-185
             if (tMaterial == null || tMaterial.mID < 0 || tMaterial.mNameLocal == null) continue;
-            tEmitted.add("gt6.material." + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal));
+            tEmitted.putIfAbsent("gt6.material." + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal), tMaterial);
         }
-        return tEmitted;
+        return Collections.unmodifiableMap(tEmitted);
     }
 
     /** Table b: one entry per registration-target material (alias slots merged like the bridge). */
     private void addMaterialNames() {
-        Set<String> tSeen = new HashSet<>();
-        for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
-            if (tMaterial == null || tMaterial.mID < 0) continue;
-            tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias merge, MaterialRegistry.java:182-185
-            if (tMaterial == null || tMaterial.mID < 0 || tMaterial.mNameLocal == null) continue;
-            String tKey = "gt6.material." + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal);
-            if (!tSeen.add(tKey)) continue; // first (lowest mID) definition wins
-            add(tKey, tMaterial.mNameLocal);
-        }
+        materialWalkEmittedKeys().forEach((tKey, tMaterial) -> add(tKey, tMaterial.mNameLocal));
     }
 
     /**

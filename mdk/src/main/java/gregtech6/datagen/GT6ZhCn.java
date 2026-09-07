@@ -10,8 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import gregapi.oredict.MaterialRegistry;
-import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.item.GT6Circuits;
 import gregtech6.item.MaterialPrefixItem;
@@ -34,10 +32,10 @@ import net.minecraftforge.common.data.LanguageProvider;
  * snake_case algorithm exists (the Python side of the pipeline deliberately carries zero key
  * logic, ADR §1.1).
  *
- * <p>Four small-unit walks, each mirroring the exact {@link GT6EnUs} walk over the same
- * registry sources (per-key English fallback for skipped rows is vanilla's built-in
- * bilingual chain — LanguageManager.java:50-52 + ClientLanguage.java:29-46 — so zero
- * fallback code lives here):
+ * <p>Four small-unit walks over the same registry sources as {@link GT6EnUs} — three mirror the
+ * en walk, the material walk consumes GT6EnUs's shared seam directly (per-key English fallback
+ * for skipped rows is vanilla's built-in bilingual chain — LanguageManager.java:50-52 +
+ * ClientLanguage.java:29-46 — so zero fallback code lives here):
  * <ol>
  * <li>{@link #addTabTitles()} — the creative tab titles: item prefix tabs
  *     ({@code itemGroup.gt6.<snake>} over {@link GTMaterialItems#tabPrefixes()}), block prefix
@@ -48,9 +46,10 @@ import net.minecraftforge.common.data.LanguageProvider;
  *     (status=hand direct rows, ADR §1.2 — the dump has no authoritative template face, and
  *     affix stripping would be statistical generalisation multiplied by 1273 materials). The
  *     parity test (GT6LangParityTest) structurally guarantees zh ⊆ en;</li>
- * <li>{@link #addMaterialNames()} — the {@code gt6.material.<snake>} small units, the exact
- *     {@link GT6EnUs#addMaterialNames()} walk (alias merge, first mID wins) joined against the
- *     dump's {@code gt.material.<Pascal>} family;</li>
+ * <li>{@link #addMaterialNames()} — the {@code gt6.material.<snake>} small units, the shared
+ *     {@link GT6EnUs#materialWalkEmittedKeys} seam (alias merge, first mID wins) joined against
+ *     the dump's {@code gt.material.<Pascal>} family (the Map form carries the merged material
+ *     identity the TSV family join needs — task p21-i18n-walk-seam-normalize);</li>
  * <li>{@link #addMiscUnits()} — the atomic misc keys (tools, the eight atomic covers, the
  *     circuit selector tag + its configuration tooltip, the JEI coke-oven info page, the
  *     example chest, the two port fluids). The COMPOSED domains became B-wave template keys
@@ -263,17 +262,15 @@ public class GT6ZhCn extends LanguageProvider {
 		}
 	}
 
-	/** The material small units, the exact GT6EnUs.addMaterialNames walk (alias merge, first mID wins). */
+	/**
+	 * The material small units: the shared {@link GT6EnUs#materialWalkEmittedKeys} seam (alias
+	 * merge, first mID wins) joined against the dump family — the seam's Map form carries the
+	 * merged material identity the mNameInternal family lookup needs (task
+	 * p21-i18n-walk-seam-normalize; no zh-side walk copy remains).
+	 */
 	private void addMaterialNames() {
-		Set<String> tSeen = new HashSet<>();
-		for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
-			if (tMaterial == null || tMaterial.mID < 0) continue;
-			tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias merge, MaterialRegistry.java:182-185
-			if (tMaterial == null || tMaterial.mID < 0 || tMaterial.mNameLocal == null) continue;
-			String tKey = "gt6.material." + MaterialPrefixItem.snakeCase(tMaterial.mNameInternal);
-			if (!tSeen.add(tKey)) continue; // first (lowest mID) definition wins
-			addFromFamily("material", tMaterial.mNameInternal, tKey);
-		}
+		GT6EnUs.materialWalkEmittedKeys().forEach((tKey, tMaterial) ->
+			addFromFamily("material", tMaterial.mNameInternal, tKey));
 	}
 
 	/**
