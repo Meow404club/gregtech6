@@ -74,6 +74,7 @@ public class GT6EnUs extends LanguageProvider {
         addEngineFluids();
         addAquaFluids();
         addSimpleLiquidFluids(); // task p19-drying-rows-backfill-2
+        addFoodFluids(); // task p21-drying-food-fluids
         addElectricWires();
         addMachines();
         addMultiBlocks();
@@ -140,6 +141,26 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addSimpleLiquidFluids() {
         for (GTFluids.AquaFluidSpec tSpec : GTFluids.SIMPLE_LIQUID_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
+
+    /**
+     * Food family keys (task p21-drying-food-fluids): the third loop over
+     * {@link GTFluids#FOOD_FLUID_SPECS} — the addSimpleLiquidFluids shape, walked from the
+     * THIRD table so the lang face cannot drift from the registered fluids. Values ride
+     * the row's displayName: "Maple Sap" / "Reedwater" / "Cactuswater" verbatim from the
+     * Loader_Fluids.java:461-463 {@code FL.create} rows, and "Sap" the FL.java:250
+     * shorthand spelled out for the external-name fluid (no {@code FL.create}, the
+     * water_boiling "Boiling Water" precedent). The upstream 1.7.10 lang key
+     * {@code potion.reedwater} (FL.java:233) is NOT transcribed — the port
+     * descriptionId convention (the declared deviation). No zh_cn rows: the reference
+     * table's hand layer carries no food-fluid entries yet (the aqua/simple-liquid
+     * precedent — the runtime falls back to English per key), so the zh provider walk
+     * would emit nothing.
+     */
+    private void addFoodFluids() {
+        for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_FLUID_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
     }
