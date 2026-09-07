@@ -888,9 +888,18 @@ public final class GTFluids {
 				() -> new ForgeFlowingFluid.Source(dyeChemicalProperties(tType, tName)));
 		RegistryObject<Fluid> tFlowing = FLUIDS.register(tName + "_flowing",
 				() -> new ForgeFlowingFluid.Flowing(dyeChemicalProperties(tType, tName)));
+		// the block leg: 1.20.1 Forge takes the supplier handle; 21.1 vanilla takes the
+		// resolved fluid (the IRON_MOLTEN_BLOCK .get() shape — the stonecutter LiquidBlock
+		// rewrite only matches UPPER_CASE fields, a camelCase local must fork explicitly)
+		//? if forge {
 		RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
 				() -> new LiquidBlock(tSource, BlockBehaviour.Properties.of()
 						.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
+		//?} else {
+		/*RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
+				() -> new LiquidBlock(tSource.get(), BlockBehaviour.Properties.of()
+						.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp (FLUID before BLOCK, the resolved .get() is live)
+		*///?}
 		SOURCE_SEAM.put(tName, tSource);
 		FLOWING_SEAM.put(tName, tFlowing);
 		BLOCK_SEAM.put(tName, tBlock);
