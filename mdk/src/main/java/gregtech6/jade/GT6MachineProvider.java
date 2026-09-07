@@ -121,10 +121,10 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 			aTooltip.add(tHelper.progress(
 					tRatio,
 					tText,
-					// "color" 后的空格 = 刻意锚：chisel 表有 VertexConsumer 1.21 改名条目
-					// （stonecutter.gradle.kts:229，color→setColor 裸正则，不在本卡 FILES_SCOPE），
-					// 对 Jade 双腿同名同形的 style color(int) 属误改写——空格分隔即不命中。
-					tHelper.progressStyle().color (tColor).textColor(-1),
+					// style color(int) 双腿同名同形（Jade 侧 API）——p22 收窄后 swap 表单参
+					// .color( 条目已删（stonecutter.gradle.kts 只剩 4 参逗号形），裸写双腿编译
+					// 绿；P21 的 ".color (tColor)" 空格锚随收窄归一，本行即收窄生效的活体证明。
+					tHelper.progressStyle().color(tColor).textColor(-1),
 					jadeBox(),
 					true));
 		}
