@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 //?}
 
+import gregtech6.items.tools.GT6BuilderWandItem;
 import gregtech6.tileentity.GTItemStackHandler;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -127,5 +128,55 @@ public class MultiBlockPartBlockEntityTest extends GTMultiBlocksOfflineTestBase 
 		assertFalse(tPart.setDesign(255), "no change, no dirty");
 		tPart.setDesign(-5);
 		assertEquals(0, tPart.mDesign);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the builder-wand relay (task p24-builder-wand — the upstream part :251-266
+	// minimal faithful face, builder-wand exclusive)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	void wandRelayResolvesTheLinkedController() {
+		// the happy relay: a linked part re-resolves its controller through the lazy
+		// rebuild (cache gone = the world-reload shape) and stands inside the structure
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TestController tController = placeController(tLevel, sTestControllerType, C1, (byte) 2);
+		MultiBlockPartBlockEntity tPart = placePart(tLevel, PART_CELL);
+		tPart.setTarget(tController, 0, 0);
+		tPart.mTarget = null; // simulate a world reload (NBT present, cache gone)
+
+		assertSame(tController, tPart.wandTarget(), "the relay rides the lazy rebuild + ownership check");
+		assertSame(tController, GT6BuilderWandItem.scaffoldTarget(tLevel, PART_CELL),
+				"the wand target resolution rides the relay (the upstream :261 arm)");
+		assertSame(tController, GT6BuilderWandItem.scaffoldTarget(tLevel, C1),
+				"the controller itself is the direct target (the upstream :143 arm)");
+	}
+
+	@Test
+	void wandRelayRefusesTheUnlinkedPart() {
+		// the no-controller arm: the upstream :256-258 chat line is the declared silent
+		// cut — the relay answers null and the wand PASSes
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		placeController(tLevel, sTestControllerType, C1, (byte) 2);
+		MultiBlockPartBlockEntity tOrphan = placePart(tLevel, PART_CELL);
+		assertNull(tOrphan.wandTarget(), "an unlinked part has no relay target");
+		assertNull(GT6BuilderWandItem.scaffoldTarget(tLevel, PART_CELL), "the wand finds no scaffold target");
+		assertNull(GT6BuilderWandItem.scaffoldTarget(tLevel, new BlockPos(0, 1, 0)),
+				"a plain block cell (no BE) is no scaffold target either");
+	}
+
+	@Test
+	void wandRelayRefusesTheStaleOwnership() {
+		// the upstream :261 re-check face — the cached controller no longer contains this
+		// cell, and the lazy rebuild cannot see it (the cache is non-null and the BE is
+		// not removed): the relay refuses to fire
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TestController tController = placeController(tLevel, sTestControllerType, C1, (byte) 2);
+		MultiBlockPartBlockEntity tPart = placePart(tLevel, PART_CELL);
+		tPart.setTarget(tController, 0, 0);
+		tController.mInside = false; // the ownership lapsed under a live cache
+
+		assertNull(tPart.wandTarget(), "the relay refuses the stale ownership");
+		assertNull(GT6BuilderWandItem.scaffoldTarget(tLevel, PART_CELL), "the wand has no target through the stale part");
 	}
 }
