@@ -81,16 +81,16 @@ steps += [
 # ------------------------------------------------- C: the same-variant no-op (unpaid)
 steps += [
     phase("C: the same-variant no-op — LightGray again, remaining stays 5120 (unpaid)"),
-    Step(f"gt6grass spray {GP} 7", expect="dye 7 NO-OP at 393 64 124 remaining=5120 (unpaid)"),
+    Step(f"gt6grass spray {GP} 7", expect="NO-OP at 393, 64, 124: dye 7 remaining=5120 (unpaid)"),
 ]
 
 # ------------------------------------------------- D: the ten no-op dyes (spot: Red 1, White 15)
 steps += [
     phase("D: the no-op dyes — Red and White on a GT variant and on the vanilla block, all unpaid"),
-    Step(f"gt6grass spray {GP} 1", expect="dye 1 NO-OP at 393 64 124 remaining=5120 (unpaid)"),
-    Step(f"gt6grass spray {GP} 15", expect="dye 15 NO-OP at 393 64 124 remaining=5120 (unpaid)"),
+    Step(f"gt6grass spray {GP} 1", expect="NO-OP at 393, 64, 124: dye 1 remaining=5120 (unpaid)"),
+    Step(f"gt6grass spray {GP} 15", expect="NO-OP at 393, 64, 124: dye 15 remaining=5120 (unpaid)"),
     Step(f"setblock {VP} minecraft:grass_block", expect="Changed the block"),
-    Step(f"gt6grass spray {VP} 1", expect="dye 1 NO-OP at 392 64 124 remaining=5120 (unpaid)"),
+    Step(f"gt6grass spray {VP} 1", expect="NO-OP at 392, 64, 124: dye 1 remaining=5120 (unpaid)"),
 ]
 
 # ------------------------------------------------- E: the remover (the Remover :104 swap)
@@ -98,14 +98,14 @@ steps += [
     phase("E: the remover — a GT variant unpaints to the vanilla grass block; the vanilla block itself is not removable"),
     Step(f"setblock {GP} gt6:grass_yellow", expect="Changed the block"),
     Step(f"gt6grass unpaint {GP}", expect="hit=true landed=minecraft:grass_block"),
-    Step(f"gt6grass unpaint {GP}", expect="NO-OP at 393 64 124: not removable"),
+    Step(f"gt6grass unpaint {GP}", expect="NO-OP at 393, 64, 124: not removable remaining=2560 (unpaid)"),
 ]
 
 # ------------------------------------------------- F: the negative — stone never routes
 steps += [
     phase("F: the negative — stone is outside the whitelist"),
     Step(f"setblock {XP} minecraft:stone", expect="Changed the block"),
-    Step(f"gt6grass spray {XP} 2", expect="dye 2 NO-OP at 394 64 124 remaining=5120 (unpaid)"),
+    Step(f"gt6grass spray {XP} 2", expect="NO-OP at 394, 64, 124: dye 2 remaining=5120 (unpaid)"),
 ]
 
 # --------------------------------------------------------------------- T: teardown
