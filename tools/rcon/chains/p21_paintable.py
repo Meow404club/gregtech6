@@ -53,7 +53,7 @@ steps = []
 # --------------------------------- A: the direct store + the same-colour no-op (:85)
 steps += [
     phase("A: the direct store — dye 1 (Red #FF0000) lands verbatim, the same spray is the :85 no-op"),
-    Step(f"gt6machine shredder place {P}", expect="placed at 382 64 124"),
+    Step(f"gt6machine shredder place {P}", expect="placed at 382, 64, 124"),
     Step(f"gt6machine paint {P} 1",
          expect="dye 1 (Red #FF0000), RGB #FFFFFF->#FF0000 painted=true (APPLIED)"),
     Step(f"gt6machine paint {P} 1",
