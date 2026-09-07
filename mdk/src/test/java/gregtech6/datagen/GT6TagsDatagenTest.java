@@ -184,9 +184,11 @@ class GT6TagsDatagenTest {
     }
 
     /**
-     * The shovel band, rolling batch 1: exactly the blockDust prefix family — walk-exact
+     * The shovel band, rolling batch 1: the blockDust prefix family — walk-exact
      * membership (mirror of the provider's filtered walk), the 3773-2677=1096 census count,
-     * all gt6.
+     * all gt6. PIN recomputed at merge order (the conscious-update duty, S3 2045c78d):
+     * p24-grass-block landed first and its addGrassBand rides the SAME shovel face — the
+     * band is now the blockDust family PLUS the 6 GT grass variants (1096+6=1102).
      */
     @Test
     void shovelBandIsExactlyTheDustPrefixFamily() throws Exception {
@@ -200,7 +202,8 @@ class GT6TagsDatagenTest {
             tDustPairs++;
         }
         assertEquals(1096, tDustPairs, "3773 storage pairs - 2677 pickaxe-band pairs");
-        assertEquals(tDustPairs, tValues.size(), "the shovel band is exactly the blockDust family");
+        assertEquals(tDustPairs + 6, tValues.size(),
+                "the shovel band = the blockDust family + the 6 GT grass variants (p24-grass-block merged first)");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 
