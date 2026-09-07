@@ -217,10 +217,11 @@ public final class GTMultiBlockStructureChecker {
 	 *     with zero side effects (idempotent). Unloaded ⇒ return the guard verdict and the
 	 *     caller keeps its last verdict — nothing is scaffolded through an unloaded
 	 *     neighbourhood;</li>
-	 * <li>the plan classifies every failed cell. Scaffoldable = a FORMING cell standing in an
-	 *     {@code easyRep} world cell (the Util :160-163 ruling: air or replaceable) while the
-	 *     permission chain is open (the Util :166-168 ruling: null auto-approves, creative or
-	 *     OP(2) may edit). HARD failures — never scaffolded, never consumed: a wrong block
+ * <li>the plan classifies every failed cell. Scaffoldable = a FORMING cell standing in an
+ *     {@code easyRep} world cell (the Util :160-163 ruling: air or replaceable) while the
+ *     permission chain is open (the Util ruling post-reform: null auto-approves, mayBuild
+ *     — survival and creative — may edit, the decisions.p24-builder-wand-op2-reform
+ *     ruling). HARD failures — never scaffolded, never consumed: a wrong block
 	 *     standing in a forming cell, a part block present but foreign-claimed (the :70-75
 	 *     arbitration cannot be scaffolded away), a non-air hollow (fail-not-clear, and the
 	 *     scaffold must not clear what CHECK would not), a declaration-only mismatch (no
@@ -244,7 +245,11 @@ public final class GTMultiBlockStructureChecker {
 	 */
 	public static FormedVerdict form(ITileEntityMultiBlockController aController, byte aFacing,
 			@Nullable Player aPlayer, @Nullable Container aInventory) {
-		boolean tMayEdit = aPlayer == null || aPlayer.isCreative() || aPlayer.hasPermissions(2); // the Util.canEdit ruling
+		// the Util wrapper feed, identically: UT.Entities.canEdit (UT.java:3159) = the vanilla
+		// canPlayerEdit equivalent — aPlayer == null || mayBuild. OP(2) reform of
+		// decisions.p24-builder-wand-op2-reform — MUST stay identical to the
+		// ITileEntityMultiBlockController.Util.checkAndSetTarget wrapper feed.
+		boolean tMayEdit = aPlayer == null || aPlayer.getAbilities().mayBuild;
 		boolean tInfiniteItems = aPlayer != null && aPlayer.isCreative(); // the Util.hasInfiniteItems ruling
 		return form(aController, aFacing, aPlayer, aInventory, tMayEdit, tInfiniteItems);
 	}
@@ -254,7 +259,9 @@ public final class GTMultiBlockStructureChecker {
 	 * rulings pre-resolved by the caller — a real Player is not constructible offline (the
 	 * Forge-patched Entity ctor forces {@code FluidType.SIZE}), so the boolean pair IS the
 	 * testable form of the chain: (true, true) = creative free scaffolding, (true, false) =
-	 * the OP(2) consume arm, (false, *) = the "no permission to scaffold" hard class. The
+	 * the consume-from-inventory survival arm (the OP(2) reform of
+	 * decisions.p24-builder-wand-op2-reform — mayBuild passes for survival), (false, *) =
+	 * the "no permission to scaffold" hard class. The
 	 * public wrapper above is the production entry — it only parses and delegates; the
 	 * beat-4 execution keeps passing {@code aPlayer} through to {@link #check} verbatim.
 	 */

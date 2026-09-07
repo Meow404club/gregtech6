@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregtech6.items.tools.GT6BuilderWandItem;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.multiblock.GTMultiBlockStructureChecker.FormedVerdict;
@@ -485,5 +486,62 @@ public class GTMultiBlockStructureCheckerFormTest extends GTMultiBlocksOfflineTe
 		assertEquals(tWrapperLevel.mBlockEntities.containsKey(tWrapperCell), tSeamLevel.mBlockEntities.containsKey(tSeamCell),
 				"the placement agrees");
 		assertEquals(4, tWrapperStock.getItem(0).getCount(), "the wrapper(null) IS the OP(2) consume arm");
+	}
+
+	// ------------------------------------------------------------------
+	// arm 7 — the builder-wand click chain (task p24-builder-wand): the
+	// per-click neighbourhood walk through the wand dispatch seam
+	// ------------------------------------------------------------------
+
+	/**
+	 * The wand wiring arm — the null-player (T,F) path through the production dispatch
+	 * ({@code GT6BuilderWandItem.builderWandScaffold}): the wrapper feed resolves
+	 * mayEdit=true (null auto-approves) and infinite=false — the survival consume arm,
+	 * the post-reform (T,F) face a real mayBuild player feeds. Upstream the wand is
+	 * INHERENTLY multi-click: the placement beat gates to the ±1 neighbourhood of the
+	 * clicked cell (Util :51), so a fresh oven takes four clicks (the "repeated clicks
+	 * expand outward" UX), each paying one stock per placed cell and returning the
+	 * UNCONDITIONAL 10 units (Base10 :145 — the wear is per click, not per formation).
+	 */
+	@Test
+	public void wandClicksScaffoldTheOvenNeighbourhoodByNeighbourhood() {
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		mountPartFactory(tLevel);
+		TestCokeOven tOven = placeController(tLevel, sCokeOvenType, C1, (byte) 2);
+		SimpleContainer tStock = brickStock(25); // the full shell (26 cells - the self cell)
+
+		// click 1 — on the controller itself: the neighbourhood covers the two near layers
+		long tClick = GT6BuilderWandItem.builderWandScaffold(tOven, C1, null, tStock, ItemStack.EMPTY);
+		assertEquals(GT6BuilderWandItem.SCAFFOLD_TOOL_DAMAGE, tClick, "the dispatch returns the unconditional 10 units");
+		assertEquals(9, tStock.getItem(0).getCount(), "16 near cells placed and paid (25 - 16)");
+		assertFalse(tOven.checkStructure(false), "the far layer is still missing");
+
+		// click 2 — on a LINKED part: the part relay resolves the same controller (the
+		// upstream part :261 face) and the clicked cell shifts the neighbourhood window
+		BlockPos tRelayCell = new BlockPos(101, 64, 101);
+		assertSame(tOven, GT6BuilderWandItem.scaffoldTarget(tLevel, tRelayCell), "the linked part resolves its controller");
+		tClick = GT6BuilderWandItem.builderWandScaffold(tOven, tRelayCell, null, tStock, ItemStack.EMPTY);
+		assertEquals(GT6BuilderWandItem.SCAFFOLD_TOOL_DAMAGE, tClick, "every dispatched click returns 10");
+		assertEquals(3, tStock.getItem(0).getCount(), "6 more cells through the shifted window");
+
+		// click 3 — another linked part, covering (99,63,102) and (99,64,102)
+		tClick = GT6BuilderWandItem.builderWandScaffold(tOven, new BlockPos(99, 63, 101), null, tStock, ItemStack.EMPTY);
+		assertEquals(GT6BuilderWandItem.SCAFFOLD_TOOL_DAMAGE, tClick, "every dispatched click returns 10");
+		assertEquals(1, tStock.getItem(0).getCount(), "2 more cells");
+
+		// click 4 — the last linked part covers (99,65,102) and completes the shell
+		tClick = GT6BuilderWandItem.builderWandScaffold(tOven, new BlockPos(99, 65, 101), null, tStock, ItemStack.EMPTY);
+		assertEquals(GT6BuilderWandItem.SCAFFOLD_TOOL_DAMAGE, tClick, "every dispatched click returns 10");
+		assertEquals(0, tStock.getItem(0).getCount(), "every shell cell was paid for: 25 stock, 25 cells");
+
+		// the shell stands and every part links to THIS oven (the linking pass ran per click)
+		assertTrue(tOven.checkStructure(true), "the four clicks completed the structure");
+		int tLinked = 0;
+		for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) for (int k = -1; k <= 1; k++) {
+			if (i == 0 && j == 0 && k == 0) continue; // the hollow centre
+			BlockPos tCell = ovenCell(C1, i, j, k);
+			if (tLevel.getBlockEntity(tCell) instanceof MultiBlockPartBlockEntity tPart && tPart.mTarget == tOven) tLinked++;
+		}
+		assertEquals(25, tLinked, "every scaffolded brick linked (25 cells minus the controller's own)");
 	}
 }

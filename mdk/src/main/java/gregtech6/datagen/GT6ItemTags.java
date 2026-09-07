@@ -60,6 +60,14 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/** The craftingToolSaw oredient translation — #gt6:tools/saw (CS.java:1864 snake). */
 	public static final TagKey<Item> TOOLS_SAW = gt6("tools/saw");
 
+	/**
+	 * The builder-wand tool tag — #gt6:tools/builder_wand (task p24-builder-wand, the
+	 * TOOLS_FILE/TOOLS_SAW snake shape). Upstream carries NO oredict crafting key for the
+	 * wand (id402 proven, the research card) — the tag exists so future relay code and
+	 * the tool-family recipe card key on the TAG, not the item.
+	 */
+	public static final TagKey<Item> TOOLS_BUILDER_WAND = gt6("tools/builder_wand");
+
 	/** The dustRedstone recipe-material translation — #gt6:redstone (snake ruling). */
 	public static final TagKey<Item> REDSTONE_DUSTS = gt6("redstone");
 
@@ -122,18 +130,20 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/**
 	 * The p24 tool band: the two crafting-tool tags (one member each — the tag exists so
 	 * recipes and future relay code key on the TAG, not the item), the two recipe-material
-	 * tags, and the ecosystem append (the five formal tools into the platform tools tag —
+	 * tags, and the ecosystem append (the six formal tools into the platform tools tag —
 	 * the user ruling's bidirectional face; the platform constant resolves to
 	 * {@code forge:tools} on 1.20.1 and {@code c:tools} on 1.21.1).
 	 */
 	private void addToolTags(HolderLookup.Provider aProvider) {
 		tag(TOOLS_FILE).add(item(GT6Tools.FILE.getId()));
 		tag(TOOLS_SAW).add(item(GT6Tools.SAW.getId()));
+		tag(TOOLS_BUILDER_WAND).add(item(GT6Tools.BUILDER_WAND.getId()));
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
 		tag(Tags.Items.TOOLS).add(
 				item(GT6Tools.FILE.getId()), item(GT6Tools.SAW.getId()),
-				item(GT6Tools.CROWBAR.getId()), item(GT6Tools.CUTTER.getId()), item(GT6Tools.CHISEL.getId()));
+				item(GT6Tools.CROWBAR.getId()), item(GT6Tools.CUTTER.getId()), item(GT6Tools.CHISEL.getId()),
+				item(GT6Tools.BUILDER_WAND.getId()));
 	}
 
 	/**

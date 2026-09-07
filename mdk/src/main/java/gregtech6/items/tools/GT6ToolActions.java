@@ -78,6 +78,30 @@ public final class GT6ToolActions {
 	public static final ToolAction SAW = ToolAction.get("gt6_saw");
 
 	/**
+	 * The builder-wand stack-classification action ("gt6_builderwand" — task
+	 * p24-builder-wand, the FILE/SAW entry shape). Upstream rides the
+	 * {@code TOOL_builderwand} behaviour string (CS.java:1068, mounted by
+	 * GT_Tool_Builderwand.onStatsAddedToTool :63 as
+	 * {@code Behavior_Tool(TOOL_builderwand, SFX.MC_XP, 100, ...)}) and the
+	 * {@code TOOL_builderwand} dispatch arm on the multiblock controllers
+	 * (TileEntityBase10MultiBlockBase.java:130/:141); the port flattens the
+	 * classification onto this Forge {@link ToolAction} and keeps the string for the
+	 * dispatch seam as {@link #BUILDER_WAND_ID}. Consumers: {@link GT6BuilderWandItem}
+	 * (and the tag face {@code #gt6:tools/builder_wand}, GT6ItemTags — the snake ruling;
+	 * upstream carries no oredict crafting key, id402 proven, so the tag exists for the
+	 * relay/code keying only).
+	 */
+	public static final ToolAction BUILDER_WAND = ToolAction.get("gt6_builderwand");
+
+	/**
+	 * The upstream {@code CS.TOOL_builderwand} dispatch id ("builderwand", CS.java:1068)
+	 * — the reserved Behaviour_Tool tool-name string beside {@link #BUILDER_WAND} (the
+	 * FILE_ID/SAW_ID shape), so a future IBlockToolable-style relay cannot drift from
+	 * the upstream constant.
+	 */
+	public static final String BUILDER_WAND_ID = "builderwand";
+
+	/**
 	 * The upstream {@code CS.TOOL_file} dispatch id ("file", CS.java:1050) — the reserved
 	 * Behaviour_Tool tool-name string beside {@link #FILE} (the CHISEL_ID/CUTTER_ID
 	 * shape), so a future IBlockToolable-style relay cannot drift from the upstream

@@ -18,6 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.GT6Mod;
+import gregtech6.items.tools.GT6BuilderWandItem;
 import gregtech6.items.tools.GT6FileItem;
 import gregtech6.items.tools.GTSawItem;
 import gregtech6.items.tools.GTChiselItem;
@@ -115,15 +116,30 @@ public final class GT6Tools {
 			() -> new GTSawItem(new Item.Properties().durability(GTSawItem.DURABILITY_POINTS)));
 
 	/**
+	 * The formal builder's wand — item id {@code gt6:builder_wand} (task
+	 * p24-builder-wand). Single tier, durability 512 (the family value; upstream scales
+	 * per material with the ×0.1 multiplier, GT_Tool_Builderwand :42 — the ladder is the
+	 * same pool cut, the declared single-tier ruling: radius 2 ≈ the mid-gem
+	 * quality+1). Upstream display name "Builder Wand" (the :153 registration row and
+	 * the TOOL_LOCALISER row CS.java:1112 verbatim); the scaffold click pays one point
+	 * PER CLICK — the upstream 10-unit return folded through Behavior_Tool :63, with the
+	 * no-creative-exemption ruling ({@link GT6BuilderWandItem#payClick}). The crafting
+	 * recipe stays pooled (the upstream tool-head rows, Loader_Tools.java:293/:336).
+	 */
+	public static final RegistryObject<Item> BUILDER_WAND = ITEMS.register("builder_wand",
+			() -> new GT6BuilderWandItem(new Item.Properties().durability(GT6BuilderWandItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
 	 * (RegistryObject.java:287) and nothing here resolves {@code get()} — the offline test
 	 * asserts the table shape and the ITEMS parity without touching the frozen registry;
 	 * the displayItems generator below does the runtime resolution (the
-	 * GTWires.ELECTRIC_WIRES_TAB form). Task p24-tool-system appends rows 3/4 (file, saw).
+	 * GTWires.ELECTRIC_WIRES_TAB form). Task p24-tool-system appended rows 3/4 (file,
+	 * saw); task p24-builder-wand appends row 5 (the builder wand).
 	 */
-	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW);
+	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -180,6 +196,8 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.FILE.get()), GT6FileItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.SAW.get()), GTSawItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.BUILDER_WAND.get()), GT6BuilderWandItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",
