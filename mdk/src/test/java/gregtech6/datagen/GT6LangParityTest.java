@@ -69,7 +69,7 @@ public class GT6LangParityTest {
 	 * face now carries the B2 template/unit faces (16 stone variants + 62 rows units + the
 	 * four atomic rows) on top of the A/B1 waves.
 	 */
-	private static final int ZH_KEY_FLOOR = 2089;
+	private static final int ZH_KEY_FLOOR = 2531;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
