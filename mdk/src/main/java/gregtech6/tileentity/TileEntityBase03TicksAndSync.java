@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -40,8 +41,17 @@ import gregtech6.GT6Mod;
  * 02:41-49/:138-155) are folded in here so the dispatcher keeps upstream timing:
  * mTimer == 0 fires onTickFirst on the very first tick, the client sync gate opens
  * at mTimer &gt; 2 (upstream :123).
+ *
+ * <p>Paintable stratum (task p21-paintable-storage-sync): this class also carries the
+ * upstream TileEntityBase07Paintable paint layer (the family-wide inheritance stratum,
+ * upstream 07Paintable.java:49-52) folded into the 01-07 chain collapse point — the
+ * {@link IPaintableTE} face ({@code paint/mixPaint/unpaint/isPainted/getPaint}, upstream
+ * Paintable:83-86 + the 04:227-235 recolour routing), the {@code mRGBa}/{@code mIsPainted}
+ * storage (direct 0xRRGGBB, ruling 3 of ADR 2026-09-07-p21-paintable-rulings), the NBT
+ * keys {@code gt.color}/{@code gt.painted} (upstream CS.java:1161-1162, read from
+ * readFromNBT2:57-58) and the {@code getModelData()} PAINT property supply.
  */
-public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root {
+public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root implements IPaintableTE {
 
 	/** Variable for seeing if the Tick Function is called right now (upstream :43). */
 	public boolean mIsRunningTick = false;
@@ -57,6 +67,118 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 
 	/** Old Coordinates during the previous Tick (upstream TileEntityBase02AdjacentTEBuffer.java:43). */
 	protected int oX = 0, oY = 0, oZ = 0;
+
+	// ---------------------------------------------------------------------------
+	// paint layer (upstream TileEntityBase07Paintable.java:49-52, task p21-paintable-storage-sync)
+	// ---------------------------------------------------------------------------
+
+	/** Upstream CS.UNCOLORED = 0x00FFFFFF (CS.java:327) — the unpainted colour, white = "no tint" (GTWireTint/GTMaterialPrefixBlock precedent). */
+	public static final int UNCOLORED = 0xFFFFFF;
+
+	/** Upstream NBT_COLOR = "gt.color" (CS.java:1161) — the key names are verbatim upstream (ADR ruling 4; no 1.7.10-world migration exists to preserve). */
+	public static final String NBT_COLOR = "gt.color";
+
+	/** Upstream NBT_PAINTED = "gt.painted" (CS.java:1162). */
+	public static final String NBT_PAINTED = "gt.painted";
+
+	/** The current paint colour, 0xRRGGBB (upstream :50 {@code mRGBa = UNCOLORED}; direct storage, ADR ruling 3). */
+	protected int mRGBa = UNCOLORED;
+
+	/** Upstream :49 {@code mIsPainted = F}. */
+	protected boolean mIsPainted = false;
+
+	/** Upstream Paintable:85 verbatim — direct store + painted flag; the same-colour spray is the no-op. */
+	@Override
+	public boolean paint(int aRGB) {
+		if (aRGB != mRGBa) {
+			mRGBa = aRGB;
+			mIsPainted = true;
+			markPaintChanged();
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * The recolour routing of upstream TileEntityBase04MultiTileEntities.java:227-235,
+	 * {@code (isPainted ? mixRGBInt(color, getPaint()) : color) & ALL_NON_ALPHA_COLOR},
+	 * with the dye-index complement folded away: the upstream caller sprayed
+	 * {@code ~mColor&15} through the DYES_INT_INVERTED table, whose composition is
+	 * identical to {@code DYES_INT[mColor]} — the port takes the final colour directly
+	 * (ADR ruling 3, declared equivalence simplification).
+	 */
+	@Override
+	public boolean mixPaint(int aRGB) {
+		return paint((isPainted() ? mixRGBInt(aRGB, getPaint()) : aRGB) & 0xFFFFFF);
+	}
+
+	/**
+	 * Upstream Paintable:83 shape ({@code if (mIsPainted) {mIsPainted=F; mRGBa=<colour>; ...}}).
+	 * Declared deviation: upstream restores {@code mMaterial.fRGBaSolid} — the port's
+	 * machines carry no material field (trimmed set), so unpaint returns UNCOLORED white,
+	 * which renders as "no tint" (ADR ruling, IPaintableTE doc).
+	 */
+	@Override
+	public boolean unpaint() {
+		if (mIsPainted) {
+			mIsPainted = false;
+			mRGBa = UNCOLORED;
+			markPaintChanged();
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Upstream Paintable:84 server half verbatim. Declared deviation: the client-side
+	 * material-colour inference ({@code worldObj != null && isClientSide() && materialColor != mRGBa})
+	 * is cut with the {@code mMaterial} field — the client knows {@code mIsPainted}
+	 * through {@code gt.painted} riding the vanilla two-channel sync instead.
+	 */
+	@Override
+	public boolean isPainted() {
+		return mIsPainted;
+	}
+
+	/** Upstream Paintable:86. */
+	@Override
+	public int getPaint() {
+		return mRGBa;
+	}
+
+	/**
+	 * The paint write-point triple (ADR ruling 4): {@code setChanged()} (the chunk-dirty
+	 * flag — the cover-chain resurrect lesson) + {@link #sendClientData()} (upstream
+	 * :161-165 sendBlockUpdated chain, the immediate broadcast of the two sync channels)
+	 * + {@code requestModelDataUpdate()} (the {@code getModelData()} refresh; Forge
+	 * IForgeBlockEntity:153 / Neo IBlockEntityExtension:76 — both default methods,
+	 * client-side-only and self-guarding, so the server-side write-point call is a no-op).
+	 */
+	private void markPaintChanged() {
+		setChanged();
+		sendClientData();
+		requestModelDataUpdate();
+	}
+
+	/** Upstream UT.Code.mixRGBInt (UT.java:1576-1578) verbatim — the per-channel average. */
+	private static int mixRGBInt(int aRGB1, int aRGB2) {
+		return ((getR(aRGB1) + getR(aRGB2)) >> 1) << 16 | ((getG(aRGB1) + getG(aRGB2)) >> 1) << 8 | ((getB(aRGB1) + getB(aRGB2)) >> 1); // UT.Code.getRGBInt shape :1580-1582
+	}
+
+	/** Upstream UT.Code.getR (UT.java:1600). */
+	private static int getR(int aRGB) {
+		return (aRGB >>> 16) & 255;
+	}
+
+	/** Upstream UT.Code.getG (UT.java:1601). */
+	private static int getG(int aRGB) {
+		return (aRGB >>> 8) & 255;
+	}
+
+	/** Upstream UT.Code.getB (UT.java:1602). */
+	private static int getB(int aRGB) {
+		return aRGB & 255;
+	}
 
 	protected TileEntityBase03TicksAndSync(boolean aIsTicking, BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 		super(aIsTicking, aType, aPos, aState);
@@ -181,6 +303,63 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 		return saveWithoutMetadata(aProvider);
 	}
 	*///?}
+
+	// ---------------------------------------------------------------------------
+	// paint NBT + ModelData supply (task p21-paintable-storage-sync)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The paint keys ride the persistence NBT (upstream readFromNBT2 :57-58 read /
+	 * 04:120 write-back): {@code gt.color} (Integer) + {@code gt.painted} (Boolean),
+	 * written only while painted so an unpainted BE carries no paint keys. Because
+	 * {@link #getUpdateTag()} = {@code saveWithoutMetadata()}, both sync channels
+	 * (chunk data + block update) carry the two keys for free — the client
+	 * {@link #load} rehydrates them.
+	 */
+	@Override
+	protected void saveAdditional(CompoundTag aNBT) {
+		super.saveAdditional(aNBT);
+		if (mIsPainted) {
+			aNBT.putInt(NBT_COLOR, mRGBa); // upstream CS.NBT_COLOR :1161
+			aNBT.putBoolean(NBT_PAINTED, true); // upstream CS.NBT_PAINTED :1162
+		}
+	}
+
+	/**
+	 * The upstream readFromNBT2 :57-58 hasKey-guarded pair. The client arm: a paint
+	 * change arriving through either sync channel refreshes the ModelDataManager
+	 * (dirty-gated like the oven's mOvenVisualDirty — requestModelDataUpdate alone is
+	 * client-side-only, IForgeBlockEntity:153 / IBlockEntityExtension:76).
+	 */
+	@Override
+	public void load(CompoundTag aNBT) {
+		boolean tWasPainted = mIsPainted;
+		int tWasRGBa = mRGBa;
+		super.load(aNBT);
+		if (aNBT.contains(NBT_COLOR, Tag.TAG_ANY_NUMERIC)) mRGBa = aNBT.getInt(NBT_COLOR); // upstream :57
+		if (aNBT.contains(NBT_PAINTED)) mIsPainted = aNBT.getBoolean(NBT_PAINTED); // upstream :58
+		if (hasLevel() && isClientSide() && (mIsPainted != tWasPainted || mRGBa != tWasRGBa)) {
+			requestModelDataUpdate();
+		}
+	}
+
+	/**
+	 * The PAINT supply (Forge IForgeBlockEntity:174 / Neo IBlockEntityExtension:96 — the
+	 * dual-leg host-interface names differ, the member shape does not): unpainted = the
+	 * super default ({@code ModelData.EMPTY} semantics — absent property, no tint);
+	 * painted = the derived snapshot carrying {@link gregtech6.client.render.GTModelProperties#PAINT}
+	 * with the immutable Integer colour (the ModelData iron law, GTModelProperties:21-28).
+	 * Subclasses derive from THIS ({@code GTModelProperties.derive(super.getModelData())}),
+	 * so the oven's OVEN_SNAPSHOT/RENDER_SNAPSHOT keys coexist with PAINT on the same
+	 * snapshot (single-valued properties each on their own key).
+	 */
+	@Override
+	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		if (!mIsPainted) return super.getModelData();
+		return gregtech6.client.render.GTModelProperties.derive(super.getModelData())
+				.with(gregtech6.client.render.GTModelProperties.PAINT, Integer.valueOf(mRGBa))
+				.build();
+	}
 
 	//? if neoforge {
 	/*// 21.1: the ItemStackHandler NBT face (serializeNBT/deserializeNBT) and the ItemStack

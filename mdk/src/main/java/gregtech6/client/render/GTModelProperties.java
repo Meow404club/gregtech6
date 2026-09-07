@@ -54,6 +54,19 @@ public final class GTModelProperties {
 	 */
 	public static final ModelProperty<GTOvenRenderSnapshot> OVEN_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
 
+	/**
+	 * The machine paint property (task p21-paintable-storage-sync, ADR ruling 5): the
+	 * painted 0xRRGGBB colour the paintable BE carries ({@link Integer}, immutable — the
+	 * ModelData iron law above applies trivially). Present exactly while the machine is
+	 * painted (an unpainted machine keeps the absent-property = no-tint contract, the
+	 * {@code ModelData.EMPTY} semantics of the 03 base {@code getModelData()}); the
+	 * consumer (the card_B BlockColor tint, {@code tintIndex == 0}) reads the value and
+	 * falls back to white 0xFFFFFF when absent. Single-valued like its siblings — a
+	 * covered+oven+painted BE carries all three keys on one derived snapshot
+	 * (the GTModelProperties:46-55 coexistence ruling shape).
+	 */
+	public static final ModelProperty<Integer> PAINT = new ModelProperty<>(Objects::nonNull);
+
 	private GTModelProperties() {
 	}
 
