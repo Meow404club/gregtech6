@@ -17,6 +17,7 @@ val mcVer = property("deps.minecraft").toString()
 val forgeVer = property("deps.forge").toString()
 val forgeMajor = forgeVer.split(".")[0]
 val jeiVer = property("jei_version").toString()
+val jadeVer = property("jade_version").toString()
 
 // 共享锚点：控制器项目目录（mdk/），即节点共享资源/模板/datagen 产物的真实位置。
 val sharedDir = parent!!.projectDir
@@ -26,6 +27,12 @@ repositories {
     maven {
         name = "blamejared"
         url = uri("https://maven.blamejared.com/")
+    }
+    // Jade（task p21-jade-compat）：Modrinth maven，jade 双腿唯一分发渠道（GTCEu 1.20.1
+    // gradle/forge.versions.toml:90 同源先例 maven.modrinth:jade）。
+    maven {
+        name = "Modrinth"
+        url = uri("https://api.modrinth.com/maven")
     }
 }
 
@@ -107,6 +114,13 @@ dependencies {
     "modCompileOnly"("mezz.jei:jei-${mcVer}-common-api:${jeiVer}")
     "modCompileOnly"("mezz.jei:jei-${mcVer}-forge-api:${jeiVer}")
     "modRuntimeOnly"("mezz.jei:jei-${mcVer}-forge:${jeiVer}")
+    // Jade（WAILA 后继，task p21-jade-compat）：与 JEI mod* 同机制——MDG legacyforge mod*
+    // 配置自动 SRG→official 重映射且非传递（LEGACY.md:68-92），同件挂 compileOnly（编译面）
+    // + runtimeOnly（run 类路径，专用服务端冒烟依赖它）。版本钉值 root gradle.properties
+    // jade_version（1.20.1 = 11.13.3+forge）；GTCEu 1.20.1 先例 dependencies.gradle:29
+    // modCompileOnly(forge.jade)。SRG 泄漏预案：降级 fg.deobf 形（arch 卡 build_wiring.fallback）。
+    "modCompileOnly"("maven.modrinth:jade:${jadeVer}")
+    "modRuntimeOnly"("maven.modrinth:jade:${jadeVer}")
     // mdk 单测（p3-be-framework + p3-fullprefix-creativetab 归一）：BE NBT round-trip /
     // onTick 分发 / 材料适配器 / 注册判定与 first-wins 断言；junit-bom 全模块一份。
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
