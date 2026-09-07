@@ -1,5 +1,0 @@
-{
-    "net/minecraft/network/chat/Component": [
-        "brachy/modularui/drawable/text/ToModularComponent"
-    ]
-}
