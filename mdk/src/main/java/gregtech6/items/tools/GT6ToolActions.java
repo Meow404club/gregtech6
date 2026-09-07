@@ -102,6 +102,26 @@ public final class GT6ToolActions {
 	public static final String BUILDER_WAND_ID = "builderwand";
 
 	/**
+	 * The screwdriver stack-classification action ("gt6_screwdriver" — task
+	 * p24-screwdriver-item spec ①, the FILE/SAW entry shape). Upstream rides the
+	 * {@code TOOL_screwdriver} behaviour string (CS.java:1057, the Loader_Tools.java:129
+	 * registration row {@code new GT_Tool_Screwdriver() … , TOOL_screwdriver}) and the
+	 * {@code craftingToolScrewdriver} oredict key (CS.java:1895) as the crafting-tool
+	 * ingredient face; the port flattens the classification onto this Forge
+	 * {@link ToolAction} and keeps the string for the dispatch seam as
+	 * {@link #SCREWDRIVER_ID} (the {@code ICover.TOOL_SCREWDRIVER} reservation — the
+	 * pump-cover direction toggle keys on the exact string, so the constant parity there
+	 * is the zero-drift face; the item-to-id dispatch seam itself rides the machine
+	 * interaction card). Consumer: {@link GT6ScrewdriverItem} (the crafting ingredient
+	 * route rides the {@code #gt6:tools/screwdriver} item tag, GT6ItemTags — the
+	 * oredict-name snake translation ruling). The upstream world arms (the
+	 * {@code TOOL_screwdriver}-harvestable + Material.circuits surface,
+	 * GT_Tool_Screwdriver.java:105-112) stay the machine interaction card's pool — zero
+	 * {@code useOn} here by card cut.
+	 */
+	public static final ToolAction SCREWDRIVER = ToolAction.get("gt6_screwdriver");
+
+	/**
 	 * The upstream {@code CS.TOOL_file} dispatch id ("file", CS.java:1050) — the reserved
 	 * Behaviour_Tool tool-name string beside {@link #FILE} (the CHISEL_ID/CUTTER_ID
 	 * shape), so a future IBlockToolable-style relay cannot drift from the upstream
@@ -132,6 +152,16 @@ public final class GT6ToolActions {
 	 * offline test while the emitter file itself stays zero-diff (card spec ①).
 	 */
 	public static final String CUTTER_ID = "cutter";
+
+	/**
+	 * The upstream {@code CS.TOOL_screwdriver} dispatch id ("screwdriver", CS.java:1057)
+	 * — the reserved Behaviour_Tool tool-name string beside {@link #SCREWDRIVER} (the
+	 * FILE_ID shape). MUST stay identical to {@code ICover.TOOL_SCREWDRIVER}
+	 * (ICover.java:70 — the pre-existing reservation; the pump cover's direction toggle
+	 * keys on this exact string), which is why this card touches the constant only and
+	 * leaves ICover.java at zero diff; the parity is pinned by the offline test.
+	 */
+	public static final String SCREWDRIVER_ID = "screwdriver";
 
 	private GT6ToolActions() {
 	}
