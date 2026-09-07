@@ -80,7 +80,13 @@ CHAIN = Chain(
         phase("B: the DC drive — 448 power/L into +16 RU/t packets through three axles"),
         # poll-to-expect (the old sleep=4): the fuelled engine flips active within ticks
         Step(f"gt6engine stat {F(ENGINE)}", expect="active=true", poll=10.0),
-        Step(f"gt6machine shredder check {F(SHREDDER)}", expect="out[0]="),
+        # poll-to-expect (p23, the s13 deterministic red): the RU packets still have to
+        # travel the three axles and the first recipe has to land before out[0] exists —
+        # the single shot leaned on the old 0.5s quiet window for that budget, and the
+        # P18 adaptive decay shrank it to the 0.05s floor (progress=0/0 energy=0 at
+        # check time, transferred=16 one step later). Resend the read-only check until
+        # the first dust lands.
+        Step(f"gt6machine shredder check {F(SHREDDER)}", expect="out[0]=", poll=15.0),
         Step(f"gt6engine stat {F(AXLE3)}", expect="transferred=16 RU/t"),
         Step(f"gt6engine stat {F(AXLE3)}", expect="break pending=false"),
 
