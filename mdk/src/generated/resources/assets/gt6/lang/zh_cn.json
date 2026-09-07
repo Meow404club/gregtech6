@@ -2408,6 +2408,7 @@
   "gt6.wire.form.cable": "线缆",
   "gt6.wire.form.wire": "导线",
   "gt6.wire.form.wirelamp": "灯导线",
+  "item.gt6.builder_wand": "建筑之杖",
   "item.gt6.chisel": "凿子",
   "item.gt6.cover_auto_redstone_machine_switch": "自动红石机器开关",
   "item.gt6.cover_controller": "面板控制器",
