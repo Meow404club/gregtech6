@@ -55,6 +55,36 @@ public class ScrewdriverTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
+		prebuildSyntheticUniverse();
+	}
+
+	/**
+	 * THE PROBE-LEAK INVARIANT (the p24-screwdriver-item takeover lesson, found by the
+	 * full-suite gate): the probe items this class registers are REAL registry entries
+	 * (the ItemStack ctor resolves the registry delegate eagerly — an unregistered item
+	 * cannot ride the channel), and the machine suite's
+	 * {@code TileEntityBasicMachineOfflineTestBase.buildSyntheticUniverse} walks
+	 * {@code BuiltInRegistries.ITEM.stream()} ONCE per JVM to alias the synthetic
+	 * (prefix, material) universe onto existing items. Any probe present at THAT build
+	 * time shifts the aliasing wholesale — two extra probe entries deterministically
+	 * broke the gem-chain parallel/consume semantics seven tests downstream (the
+	 * full-suite 7-red repro; the isolated classes stayed green). So the universe MUST
+	 * be built before the FIRST screwdriver probe exists: this reflection pre-build
+	 * (the package-private static {@code @BeforeAll}, shared source on both legs) locks
+	 * the snapshot to whichever historically-verified state precedes this class
+	 * (FileSawTest's two probes, the main-verified mapping, when the alphabetical order
+	 * holds; the pristine pool otherwise). The probes themselves stay the verbatim
+	 * FileSawTest shape — the fix is ordering of the BUILD, not the channel.
+	 */
+	private static void prebuildSyntheticUniverse() {
+		try {
+			Class<?> tBase = Class.forName("gregtech6.tileentity.machines.TileEntityBasicMachineOfflineTestBase");
+			java.lang.reflect.Method tBuild = tBase.getDeclaredMethod("buildSyntheticUniverse");
+			tBuild.setAccessible(true);
+			tBuild.invoke(null);
+		} catch (Throwable aE) {
+			throw new IllegalStateException("could not pre-build the machine synthetic universe before the screwdriver probes exist", aE);
+		}
 	}
 
 	private static ResourceLocation rl(String aPath) {
