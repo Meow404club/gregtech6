@@ -4,6 +4,7 @@ import brachy.modularui.utils.math.MathUtils;
 import brachy.modularui.utils.math.ParseResult;
 import brachy.modularui.widgets.textfield.TextFieldWidget;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +26,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * （EvalEx 3.6.0 jar 直跑实证 2026-09-07），非文档推断。</p>
  */
 class ExpressionMathSmokeTest {
+
+    @BeforeAll
+    static void boot() {
+        // TextFieldWidget.parse 失败路径引 ModularUI.LOGGER（forge 版 ModularUI clinit
+        // 触 BuiltInRegistries）——bootStrap 见 HeadlessBootstrap 注释
+        HeadlessBootstrap.bootStrapVanilla();
+    }
 
     private static double eval(String expression) {
         ParseResult result = MathUtils.parseExpression(expression, 0, true);

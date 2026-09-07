@@ -7,6 +7,7 @@ import brachy.modularui.widgets.ButtonWidget;
 import brachy.modularui.widgets.layout.Grid;
 import brachy.modularui.widgets.textfield.TextFieldWidget;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * （接线见 TestRuntimeClasspathProbeTest 注释）。不调 onResize/open（那才进主题与渲染面）。</p>
  */
 class HeadlessGuiSmokeTest {
+
+    @BeforeAll
+    static void boot() {
+        HeadlessBootstrap.bootStrapVanilla();
+    }
 
     @Test
     public void minimalPanelTreeConstructsAndWiresHeadlessly() {

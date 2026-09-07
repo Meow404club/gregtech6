@@ -1,5 +1,6 @@
 package brachy.modularui.test;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 无 chisel 语法，腿无关。</p>
  */
 class TestRuntimeClasspathProbeTest {
+
+    @BeforeAll
+    static void boot() {
+        HeadlessBootstrap.bootStrapVanilla();
+    }
 
     @Test
     public void minecraftClassesAreOnTheTestClasspath() {
@@ -56,8 +62,10 @@ class TestRuntimeClasspathProbeTest {
 
     @Test
     public void sharedTestSourcesCompileAgainstTheVendoredMainOutput() {
-        // 共享 src/test 直接引用 vendored main 类型——test sourceSet 与 main output 同类路径的活证
-        assertEquals("modularui", brachy.modularui.ModularUI.MOD_ID);
+        // 共享 src/test 直接引用 vendored main 类型——test sourceSet 与 main output 同类路径的活证。
+        // 注意静态常量（MOD_ID）会被 javac 内联而不触发类加载，改调静态方法强制加载
+        // （forge 版 ModularUI clinit 触 BuiltInRegistries，已由 @BeforeAll bootStrap 兜住）。
+        assertEquals("modularui", brachy.modularui.ModularUI.id("modularui").getNamespace());
     }
 
     private static boolean isPresent(String className) {
