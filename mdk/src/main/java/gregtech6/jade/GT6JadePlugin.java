@@ -36,12 +36,17 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 服务端数据源 = 全 GT6 BE 基类：ERROR_MESSAGE 在 Root（TileEntityBase01Root.java:88），
 		// 机器字段在 BasicMachine，成形态在 MultiBlockBase——provider 体内 instanceof 分发。
 		aRegistration.registerBlockDataProvider(GT6MachineProvider.INSTANCE, TileEntityBase01Root.class);
+		// 流体段（task p22-jade-fluid-tooltip）：数据源单分支 TileEntityBasicMachine
+		// （复核 C-1：多方块类零罐字段）——GT6FluidProvider 体内自检。
+		aRegistration.registerBlockDataProvider(GT6FluidProvider.INSTANCE, TileEntityBase01Root.class);
 	}
 
 	@Override
 	public void registerClient(IWailaClientRegistration aRegistration) {
 		// tooltip 挂全 GT6 承 BE 方块基类（GTEntityBlock.java:37 所有机器/多方块方块都经它）。
 		aRegistration.registerBlockComponent(GT6MachineProvider.INSTANCE, GTEntityBlock.class);
+		// 流体段同行形（GT6FluidProvider 类 doc）：图标+量行，排在机器四段之后。
+		aRegistration.registerBlockComponent(GT6FluidProvider.INSTANCE, GTEntityBlock.class);
 	}
 
 }
