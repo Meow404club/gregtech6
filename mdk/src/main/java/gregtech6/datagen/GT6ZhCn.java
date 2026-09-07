@@ -95,9 +95,109 @@ public class GT6ZhCn extends LanguageProvider {
 		addPrefixTemplates();
 		addMaterialNames();
 		addMiscUnits();
+		addBackfillUnits();     // task p23-i18n-zh-442-backfill
 		addWireDomainUnits();
 		addStoneVariantUnits(); // task p20-i18n-compose-rows
 		addRowDomainUnits();    // task p20-i18n-compose-rows
+	}
+
+	/**
+	 * The 442-key zh backfill (task p23-i18n-zh-442-backfill), non-tagprefix face: the 77
+	 * atomic keys whose en counterpart is a whole-string {@code add} in {@link GT6EnUs} —
+	 * the barrel/fluid-pipe/machine blocks, the fluid display names, the P22 spray-can
+	 * items + tooltips, the five backfill materials (the dump rows are review/absent, so
+	 * they cannot ride the {@link #addMaterialNames()} family join) and the two new tabs.
+	 * (The 365 {@code gt6.tagprefix.*} keys need NO new walk here —
+	 * {@link #addPrefixTemplates()} already walks every {@link OreDictPrefix#VALUES} key and
+	 * only the reference-table hand rows were missing.) Every key mirrors an en literal and
+	 * carries a hand row in the reference table; the wording evidence lives in the gen
+	 * script's backfill tables.
+	 */
+	private void addBackfillUnits() {
+		// blocks: barrels (Drum = 鼓), the wood barrel (dump MTE 6990 join), the machines,
+		// the coke-oven multiblock pair, the two atomic legacy electric wires, the pipes
+		addDirect("block.gt6.barrel_adamantium");
+		addDirect("block.gt6.barrel_awakened_draconium");
+		addDirect("block.gt6.barrel_draconium");
+		addDirect("block.gt6.barrel_gaia_spirit");
+		addDirect("block.gt6.barrel_infinity");
+		addDirect("block.gt6.barrel_logistics");
+		addDirect("block.gt6.barrel_metal");
+		addDirect("block.gt6.barrel_netherite");
+		addDirect("block.gt6.barrel_plastic");
+		addDirect("block.gt6.barrel_tantalum_hafnium_carbide");
+		addDirect("block.gt6.barrel_titanium");
+		addDirect("block.gt6.barrel_tungsten");
+		addDirect("block.gt6.barrel_tungsten_alloy");
+		addDirect("block.gt6.barrel_tungstensteel");
+		addDirect("block.gt6.barrel_void_metal");
+		addDirect("block.gt6.barrel_wood");
+		addDirect("block.gt6.crank");
+		addDirect("block.gt6.crusher");
+		addDirect("block.gt6.energy_source");
+		addDirect("block.gt6.lathe");
+		addDirect("block.gt6.multiblock_coke_oven");
+		addDirect("block.gt6.multiblock_coke_oven_bricks");
+		addDirect("block.gt6.oven");
+		addDirect("block.gt6.shredder");
+		addDirect("block.gt6.wire_electric_1x");
+		addDirect("block.gt6.wire_electric_2x");
+		addDirect("block.gt6.wood_fluid_pipe_medium");
+		addDirect("block.gt6.wood_fluid_pipe_small");
+		// fluids: the 21 remaining display names (dump anchors 柴油/蒸馏水/幻露 per the research card)
+		addDirect("fluid.gt6.cactuswater");
+		addDirect("fluid.gt6.cold_water");
+		addDirect("fluid.gt6.diesel");
+		addDirect("fluid.gt6.distilled_water");
+		addDirect("fluid.gt6.ethanol");
+		addDirect("fluid.gt6.fuel");
+		addDirect("fluid.gt6.hot_water");
+		addDirect("fluid.gt6.jetfuel");
+		addDirect("fluid.gt6.kerosine");
+		addDirect("fluid.gt6.maplesap");
+		addDirect("fluid.gt6.mnwtr");
+		addDirect("fluid.gt6.nitrofuel");
+		addDirect("fluid.gt6.petrol");
+		addDirect("fluid.gt6.reedwater");
+		addDirect("fluid.gt6.sap");
+		addDirect("fluid.gt6.seawater");
+		addDirect("fluid.gt6.spdew");
+		addDirect("fluid.gt6.steam");
+		addDirect("fluid.gt6.water_boiling");
+		addDirect("fluid.gt6.water_geothermal");
+		addDirect("fluid.gt6.waterdirty");
+		// the P22 spray-can domain (no upstream face anywhere — all hand)
+		addDirect("item.gt6.spray_can_empty");
+		addDirect("item.gt6.spray_paint_black");
+		addDirect("item.gt6.spray_paint_blue");
+		addDirect("item.gt6.spray_paint_brown");
+		addDirect("item.gt6.spray_paint_cyan");
+		addDirect("item.gt6.spray_paint_gray");
+		addDirect("item.gt6.spray_paint_green");
+		addDirect("item.gt6.spray_paint_light_blue");
+		addDirect("item.gt6.spray_paint_light_gray");
+		addDirect("item.gt6.spray_paint_lime");
+		addDirect("item.gt6.spray_paint_magenta");
+		addDirect("item.gt6.spray_paint_orange");
+		addDirect("item.gt6.spray_paint_pink");
+		addDirect("item.gt6.spray_paint_purple");
+		addDirect("item.gt6.spray_paint_red");
+		addDirect("item.gt6.spray_paint_remover");
+		addDirect("item.gt6.spray_paint_white");
+		addDirect("item.gt6.spray_paint_yellow");
+		addDirect("gt6.spraycan.decolor");
+		addDirect("gt6.spraycan.paint");
+		addDirect("gt6.spraycan.remaining");
+		// the five backfill materials (review/absent dump rows cannot ride the family join;
+		// superconductor = the TeamNED double-source cross)
+		addDirect("gt6.material.breeze");
+		addDirect("gt6.material.carminite");
+		addDirect("gt6.material.fireleaf");
+		addDirect("gt6.material.golden_amber");
+		addDirect("gt6.material.superconductor");
+		// the two new tabs
+		addDirect("itemGroup.gt6.billet");
+		addDirect("itemGroup.gt6.spray_cans");
 	}
 
 	/**
