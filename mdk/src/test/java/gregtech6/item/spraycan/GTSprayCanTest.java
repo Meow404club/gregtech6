@@ -332,6 +332,110 @@ public class GTSprayCanTest {
 	}
 
 	// ---------------------------------------------------------------------------
+	// the entity leg (upstream onRightClickEntity :97-142 — primitive fact rows, no Entity probes)
+	// ---------------------------------------------------------------------------
+
+	/** A live, unsheared, white-wool sheep fact row (the classic first spray target). */
+	private static GTSprayCanItem.EntityFacts whiteSheep() {
+		return new GTSprayCanItem.EntityFacts(true, true, false, false, false, DyeColor.WHITE.getId());
+	}
+
+	/** The colour code pins: {@code ~mColor&15} = the vanilla {@code DyeColor.getId()}. */
+	@Test
+	public void entityDyeIdIsTheComplementFold() {
+		for (byte i = 0; i < 16; i++) {
+			GTSprayCanItem.EntityFacts tSheep = new GTSprayCanItem.EntityFacts(true, true, false, false, false, i);
+			assertEquals(15 - i, GTSprayCanItem.entityDyeId(tSheep, i), "the ~i&15 fold at dye " + i);
+			assertEquals(GTSprayCanItem.vanillaDye(i).getId(), GTSprayCanItem.entityDyeId(tSheep, i),
+					"the fold composes to vanillaDye(i) at dye " + i);
+		}
+		// the pinned ends (Sheep.java:279-286 reads/writes the wool by DyeColor.getId())
+		assertEquals(DyeColor.BLACK.getId(), GTSprayCanItem.entityDyeId(whiteSheep(), (byte) 0),
+				"the black can (index 0) dyes a white sheep black");
+		assertEquals(DyeColor.WHITE.getId(), GTSprayCanItem.entityDyeId(
+				new GTSprayCanItem.EntityFacts(true, true, false, false, false, DyeColor.BLACK.getId()), (byte) 15),
+				"the white can (index 15) dyes a black sheep white");
+		assertEquals(GTSprayCanItem.NO_ENTITY_HIT, GTSprayCanItem.entityDyeId(
+				new GTSprayCanItem.EntityFacts(true, true, false, false, false, DyeColor.BLACK.getId()), (byte) 0),
+				"the black can on an already-black sheep is the same-colour no-op");
+	}
+
+	/** The gate = the vanilla DyeItem.java:27 face; the wolf arm keeps the upstream :109 tamed-only shape. */
+	@Test
+	public void entityLegGatesFollowTheVanillaDyeItemFace() {
+		assertEquals(DyeColor.BROWN.getId(), GTSprayCanItem.entityDyeId(whiteSheep(), (byte) 3),
+				"a live unsheared sheep takes the dye (the brown can → brown wool)");
+		assertEquals(GTSprayCanItem.NO_ENTITY_HIT, GTSprayCanItem.entityDyeId(
+				new GTSprayCanItem.EntityFacts(true, true, true, false, false, DyeColor.WHITE.getId()), (byte) 3),
+				"a sheared sheep is the vanilla :27 !isSheared miss");
+		assertEquals(GTSprayCanItem.NO_ENTITY_HIT, GTSprayCanItem.entityDyeId(
+				new GTSprayCanItem.EntityFacts(false, true, false, false, false, DyeColor.WHITE.getId()), (byte) 3),
+				"a dead sheep is the vanilla :27 isAlive miss");
+		assertEquals(GTSprayCanItem.NO_ENTITY_HIT, GTSprayCanItem.entityDyeId(
+				new GTSprayCanItem.EntityFacts(true, true, false, false, false, DyeColor.BROWN.getId()), (byte) 3),
+				"the same colour is the no-dye no-pay no-op (vanilla :27, upstream :103)");
+
+		// the wolf arm (upstream :109 isTamed; vanilla Wolf.java:351 also wants isOwnedBy — upstream keeps tamed-only)
+		assertEquals(DyeColor.BROWN.getId(), GTSprayCanItem.entityDyeId(
+				new GTSprayCanItem.EntityFacts(true, false, false, true, true, DyeColor.WHITE.getId()), (byte) 3),
+				"a live tamed wolf takes the collar dye");
+		assertEquals(GTSprayCanItem.NO_ENTITY_HIT, GTSprayCanItem.entityDyeId(
+				new GTSprayCanItem.EntityFacts(true, false, false, true, false, DyeColor.WHITE.getId()), (byte) 3),
+				"an untamed wolf is the upstream :109 isTamed miss");
+		assertEquals(GTSprayCanItem.NO_ENTITY_HIT, GTSprayCanItem.entityDyeId(
+				new GTSprayCanItem.EntityFacts(false, false, false, true, true, DyeColor.WHITE.getId()), (byte) 3),
+				"a dead wolf is the isAlive miss");
+		assertEquals(GTSprayCanItem.NO_ENTITY_HIT, GTSprayCanItem.entityDyeId(
+				new GTSprayCanItem.EntityFacts(true, false, false, true, true, DyeColor.BROWN.getId()), (byte) 3),
+				"the same collar is the no-op (upstream :110, vanilla Wolf.java:353)");
+
+		// everything else is the vanilla :37 PASS
+		assertEquals(GTSprayCanItem.NO_ENTITY_HIT, GTSprayCanItem.entityDyeId(null, (byte) 3),
+				"a non-sheep non-wolf target");
+		assertEquals(GTSprayCanItem.NO_ENTITY_HIT, GTSprayCanItem.entityDyeId(
+				new GTSprayCanItem.EntityFacts(true, false, false, false, true, DyeColor.WHITE.getId()), (byte) 3),
+				"a tamed neither-sheep-nor-wolf (e.g. the cat collar — the upstream-absent declared cut)");
+	}
+
+	/** The entity ledger: -50 per hit (upstream :126), creative free, the block arm's -10 untouched. */
+	@Test
+	public void entityHitPaysFiftyNotTen() {
+		assertEquals(50, GTSprayCanItem.ENTITY_HIT_COST, "upstream :126 tUses-=50 — five block hits");
+		assertEquals(5070, GTSprayCanItem.remainingAfterHit(5120, GTSprayCanItem.ENTITY_HIT_COST, false),
+				"an entity hit on a full can pays 50 internal units");
+		assertEquals(5120, GTSprayCanItem.remainingAfterHit(5120, GTSprayCanItem.ENTITY_HIT_COST, true),
+				"creative (hasInfiniteItems) pays nothing, upstream :126");
+		assertEquals(0, GTSprayCanItem.remainingAfterHit(20, GTSprayCanItem.ENTITY_HIT_COST, false), "floored at 0");
+		assertEquals(5110, GTSprayCanItem.remainingAfterHit(5120, false), "the block arm keeps its -10 (upstream :78)");
+	}
+
+	/**
+	 * The full→countdown conversion for a fresh can's first entity hit (the upstream :121-125
+	 * full→used reset, in the port's single-item ledger — the used item is the declared cut).
+	 */
+	@Test
+	public void freshCanFirstEntityHitStartsTheCountdown() {
+		ItemStack tCan = new ItemStack(Items.IRON_INGOT); // tag-less = a full can
+		assertNull(GTSprayCanItem.payUses(tCan, 5120, GTSprayCanItem.ENTITY_HIT_COST, Items.GOLD_INGOT));
+		assertEquals(5070, carrierOf(tCan).getLong(GTSprayCanItem.NBT_REMAINING),
+				"the first entity hit writes 5120-50, not 5120-10");
+	}
+
+	/** 103 entity sprays empty a full can (102×50 leaves 20; the 103rd floors and swaps). */
+	@Test
+	public void entityHitsDepleteToTheEmptyCanSwap() {
+		ItemStack tCan = new ItemStack(Items.IRON_INGOT);
+		for (int i = 0; i < 102; i++) {
+			assertNull(GTSprayCanItem.payUses(tCan, 5120, GTSprayCanItem.ENTITY_HIT_COST, Items.GOLD_INGOT),
+					"entity hit #" + (i + 1) + " must not deplete yet");
+		}
+		assertEquals(20, carrierOf(tCan).getLong(GTSprayCanItem.NBT_REMAINING), "5120 - 102*50");
+		ItemStack tSwap = GTSprayCanItem.payUses(tCan, 5120, GTSprayCanItem.ENTITY_HIT_COST, Items.GOLD_INGOT);
+		assertNotNull(tSwap, "the 103rd entity hit depletes the can");
+		assertEquals(Items.GOLD_INGOT, tSwap.getItem(), "the empty-can swap (upstream :130-137)");
+	}
+
+	// ---------------------------------------------------------------------------
 	// the durability bar (the GTCEu :126-145 face)
 	// ---------------------------------------------------------------------------
 
