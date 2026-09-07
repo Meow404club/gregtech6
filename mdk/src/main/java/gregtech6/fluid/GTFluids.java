@@ -85,6 +85,21 @@ import gregtech6.registry.GTFluidPipes;
  * riding the same shared registration body; the consumers are the two unguarded salt rows
  * of the Drying backfill (Loader_Recipes_Chem.java:548/:553, behind the
  * GT6RecipesDrying resolver seam).
+ *
+ * <p>Food family (task p21-drying-food-fluids): four further fluid-only rows —
+ * {@code sap}, {@code maplesap}, {@code reedwater}, {@code cactuswater} — on the THIRD
+ * AquaFluidSpec table ({@link #FOOD_FLUID_SPECS}, its own table again: the rows carry the
+ * FOOD tag upstream, FL.java:250/:252/:233-234, and the two earlier tables are
+ * exactly-order-pinned by their tests), riding the same shared registration body. The
+ * consumers are the four food rows of the Drying backfill (Loader_Recipes_Food.java:654-658,
+ * behind the GT6RecipesDrying resolver seam). Three of the four have the GT6
+ * {@code FL.create} definition (Loader_Fluids.java:461-463, texture parameter = null —
+ * no dedicated fluid texture exists to borrow, the vanilla-water layers take a tint, the
+ * ADR-P20 dual-tree policy never triggers); {@code sap} alone is an external-name fluid
+ * (FL.java:250 shorthand, no {@code FL.create} anywhere — the same seawater/waterdirty
+ * precedent), so its declared values are the honest FluidType defaults. The port
+ * registers all four and pours all four Drying rows — the upstream
+ * {@code FL.Sap.exists()} guard (:654) is live semantics over a registered fluid.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTFluids {
@@ -666,6 +681,77 @@ public final class GTFluids {
 		return List.of(SEAWATER, WATERDIRTY);
 	}
 
+	/**
+	 * The food family (task p21-drying-food-fluids): the THIRD AquaFluidSpec table — the
+	 * {@link #SIMPLE_LIQUID_SPECS} shape verbatim (its own table, not an append: the
+	 * upstream rows carry the FOOD tag, FL.java:250/:252/:233-234, and the two earlier
+	 * families are exactly-order-pinned by their tests). Every value census-anchored:
+	 * <ul>
+	 * <li>{@code reedwater} — FL.java:233 "reedwater" (the Juice_Reed shorthand; the
+	 *     upstream 1.7.10 display key {@code potion.reedwater} is NOT transcribed — the
+	 *     port descriptionId convention is the declared deviation); Loader_Fluids.java:461
+	 *     {@code FL.create(..., null, 1, 1000, 300)} — 300 K, display "Reedwater" verbatim;</li>
+	 * <li>{@code cactuswater} — FL.java:234 "cactuswater"; Loader_Fluids.java:462 — 300 K,
+	 *     display "Cactuswater" verbatim;</li>
+	 * <li>{@code maplesap} — FL.java:252 "maplesap" (the Sap_Maple shorthand);
+	 *     Loader_Fluids.java:463 — 300 K, display "Maple Sap" verbatim;</li>
+	 * <li>{@code sap} — FL.java:250 "sap" (the Sap shorthand) has NO GT6
+	 *     {@code FL.create} registration upstream (an external-mod fluid name, exactly the
+	 *     seawater/waterdirty precedent): the HONEST DEFAULT stands, not fabricated — the
+	 *     FluidType.Properties defaults (FluidType.java:924-926, 300 K / 1000 / 1000)
+	 *     declared explicitly, display "Sap" the FL shorthand spelled out (the
+	 *     water_boiling "Boiling Water" precedent).</li>
+	 * </ul>
+	 *
+	 * <p>Density 1000 / viscosity 1000 on every row are the STATE_LIQUID semantics
+	 * (FL.java:1104; the three FL.create rows carry the 1000 carrier literally). The tints
+	 * are PORT-OWNED DECLARED VALUES (the JetFuel/aqua precedent): the upstream FL.create
+	 * texture parameter is null (Loader_Fluids.java:461-463) — no dedicated fluid texture
+	 * exists to borrow, the vanilla-water layers take a row tint (ADR-P20 never triggers).
+	 * All four sit at 300 K — under the wood-barrel 340 K melting point
+	 * (GTBarrelCommand.WOOD_MELTING_POINT) — so the RCON chain carries them in wood
+	 * barrels. The v1 declaration is FLUID-ONLY: no LiquidBlock, no bucket, no bottle —
+	 * the upstream bottle/container faces (MultiItemBottles.java:265 Maple Sap bottle +
+	 * the OD.container250/1000maplesap candle recipes, Loader_Recipes_Vanilla.java:256-267)
+	 * stay in the MultiItemBottles domain pool. The four Drying rows that consume the ids
+	 * live behind the GT6RecipesDrying resolver seam (Loader_Recipes_Food.java:654-658;
+	 * the :654 {@code FL.Sap.exists()} guard is live semantics over a registered fluid).
+	 */
+	public static final List<AquaFluidSpec> FOOD_FLUID_SPECS = List.of(
+		new AquaFluidSpec("sap"        , "Sap"         , 300, 1000, 1000, 0xFFE8C87A), // FL.java:250 "sap", no FL.create — honest defaults; pale amber (declared)
+		new AquaFluidSpec("maplesap"   , "Maple Sap"   , 300, 1000, 1000, 0xFFD28C3A), // FL.java:252 / Loader_Fluids.java:463 — amber (declared)
+		new AquaFluidSpec("reedwater"  , "Reedwater"   , 300, 1000, 1000, 0xFFB8D89A), // FL.java:233 / Loader_Fluids.java:461 — pale reed green (declared)
+		new AquaFluidSpec("cactuswater", "Cactuswater" , 300, 1000, 1000, 0xFF6FA84A));// FL.java:234 / Loader_Fluids.java:462 — cactus green (declared)
+
+	/** The food row for a gt6 id path, or null (the {@link #simpleLiquidSpec} lookup shape, its own table). */
+	public static AquaFluidSpec foodSpec(String aName) {
+		for (AquaFluidSpec tSpec : FOOD_FLUID_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/** The registration helper for one food row (the {@link #simpleLiquidFluid} shape over the third table). */
+	private static AquaFluid foodFluid(String aName) {
+		AquaFluidSpec tSpec = foodSpec(aName);
+		if (tSpec == null) throw new IllegalArgumentException("no food fluid spec: " + aName);
+		return registerFluidFamily(tSpec);
+	}
+
+	/**
+	 * The four food registrations — one line per fluid family, data from
+	 * {@link #FOOD_FLUID_SPECS}, appended after the simple-liquid block in the static-init
+	 * order (the DeferredRegister fields accumulate, the entries fire with the existing
+	 * {@link #onModConstruct}, types before fluids).
+	 */
+	public static final AquaFluid SAP         = foodFluid("sap");
+	public static final AquaFluid MAPLESAP    = foodFluid("maplesap");
+	public static final AquaFluid REEDWATER   = foodFluid("reedwater");
+	public static final AquaFluid CACTUSWATER = foodFluid("cactuswater");
+
+	/** The four registered food families in {@link #FOOD_FLUID_SPECS} declaration order (the lang/table walkers). */
+	public static List<AquaFluid> foodFluids() {
+		return List.of(SAP, MAPLESAP, REEDWATER, CACTUSWATER);
+	}
+
 	private GTFluids() {}
 
 	@SubscribeEvent
@@ -738,6 +824,15 @@ public final class GTFluids {
 			// task p19-drying-rows-backfill-2 — the simple-liquid family, the same smoke line shape
 			for (AquaFluid tFamily : simpleLiquids()) {
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (simple liquid, {})",
+						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
+						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
+						tFamily.spec.temperature(),
+						tFamily.spec.density(),
+						tFamily.spec.displayName());
+			}
+			// task p21-drying-food-fluids — the food family, the same smoke line shape
+			for (AquaFluid tFamily : foodFluids()) {
+				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (food family, {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
 						tFamily.spec.temperature(),
