@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.multiblock.GTMultiBlockStructureChecker.FormedVerdict;
+import gregtech6.tileentity.multiblocks.ITileEntityMultiBlockController.Util;
 
 /**
  * The SET scaffold walk (task p16-form-scaffold — the ADR 2026-09-05-p16-formation-scoping
@@ -382,5 +383,107 @@ public class GTMultiBlockStructureCheckerFormTest extends GTMultiBlocksOfflineTe
 		assertEquals(tStatesBefore, tLevel.mStates, "zero world writes (the DIRT shell still stands)");
 		assertEquals(64, tStock.getItem(0).getCount(), "zero consumption (the transactional contract)");
 		assertEquals(1, tLevel.mBlockEntities.size(), "nothing was placed (the refusal happened in the plan beat)");
+	}
+
+	// ------------------------------------------------------------------
+	// task p24-creative-form-seam — the Util.checkAndSetTarget boolean seam:
+	// the creative/OP(2) rulings injected as a boolean pair (no Player is
+	// constructible offline — the Forge FluidType.SIZE wall, the probe record
+	// above), so the permission chain becomes directly drivable
+	// ------------------------------------------------------------------
+
+	/** A C1 shell cell (air, within the null-clickedAt scope) — the CheckAndSetTargetTest partCell recipe. */
+	private static BlockPos seamCell(int aI, int aJ, int aK) {
+		return new BlockPos(100 + aI, 64 + aJ, 101 + aK);
+	}
+
+	@Test
+	public void utilSeamCreativePairPlacesForFreeAndConsumesNothing() {
+		// (T, T) — the creative calibre: the free-placement branch opens even with a stocked
+		// inventory present, so the stock pays nothing
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		mountPartFactory(tLevel);
+		TestCokeOven tOven = placeController(tLevel, sCokeOvenType, C1, (byte) 2);
+		BlockPos tCell = seamCell(0, -1, -1);
+		SimpleContainer tStock = new SimpleContainer(new ItemStack(Blocks.BRICKS, 4));
+
+		// pass 1 places (free) and fails on the stale reference — the two-pass quirk
+		assertFalse(Util.checkAndSetTarget(tOven, tCell.getX(), tCell.getY(), tCell.getZ(),
+				Blocks.BRICKS, 0, MultiBlockPartBlockEntity.ONLY_ITEM_FLUID_ENERGY, null, null, tStock, true, true),
+				"pass 1 fails on the stale pre-placement reference");
+		assertEquals(4, tStock.getItem(0).getCount(), "creative consumes NOTHING (the free branch)");
+		assertNotNull(tLevel.getBlockEntity(tCell), "the cell was scaffolded anyway");
+
+		// pass 2 links the fresh part
+		assertTrue(Util.checkAndSetTarget(tOven, tCell.getX(), tCell.getY(), tCell.getZ(),
+				Blocks.BRICKS, 0, MultiBlockPartBlockEntity.ONLY_ITEM_FLUID_ENERGY, null, null, tStock, true, true),
+				"pass 2 binds the placed part");
+		assertEquals(4, tStock.getItem(0).getCount(), "still nothing consumed");
+	}
+
+	@Test
+	public void utilSeamMayEditWithoutInfiniteItemsConsumesExactlyOne() {
+		// (T, F) — the OP(2) calibre, the survivalConsumeWithNullPlayerTakesExactlyOne mirror:
+		// the free branch is shut, the inventory scan shrinks exactly one
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		mountPartFactory(tLevel);
+		TestCokeOven tOven = placeController(tLevel, sCokeOvenType, C1, (byte) 2);
+		BlockPos tCell = seamCell(-1, -1, -1);
+		SimpleContainer tStock = new SimpleContainer(new ItemStack(Blocks.BRICKS, 5));
+
+		assertFalse(Util.checkAndSetTarget(tOven, tCell.getX(), tCell.getY(), tCell.getZ(),
+				Blocks.BRICKS, 0, 0, null, null, tStock, true, false),
+				"pass 1 fails on the stale pre-placement reference");
+		assertEquals(4, tStock.getItem(0).getCount(), "the consume path shrank exactly one");
+		assertNotNull(tLevel.getBlockEntity(tCell), "the cell was scaffolded");
+	}
+
+	@Test
+	public void utilSeamPermissionDeniedBlocksPlacementEvenWithInfiniteItems() {
+		// (F, *) — the scaffold gate stays shut even when easyRep is satisfied (the cell IS
+		// air); the star instance even carries infinite items: zero writes, zero consumption
+		for (boolean tInfinite : new boolean[] {true, false}) {
+			MultiBlockLevel tLevel = new MultiBlockLevel();
+			mountPartFactory(tLevel);
+			TestCokeOven tOven = placeController(tLevel, sCokeOvenType, C1, (byte) 2);
+			BlockPos tCell = seamCell(1, -1, -1);
+			SimpleContainer tStock = new SimpleContainer(new ItemStack(Blocks.BRICKS, 4));
+
+			assertFalse(Util.checkAndSetTarget(tOven, tCell.getX(), tCell.getY(), tCell.getZ(),
+					Blocks.BRICKS, 0, 0, null, null, tStock, false, tInfinite),
+					"nothing was placed, so the arbitration finds no part");
+			assertTrue(tLevel.getBlockState(tCell).isAir(), "the easyRep cell was NOT written (mayEdit=false)");
+			assertFalse(tLevel.mBlockEntities.containsKey(tCell), "no part BE appeared");
+			assertEquals(4, tStock.getItem(0).getCount(), "nothing consumed");
+		}
+	}
+
+	@Test
+	public void utilWrapperNullPlayerMatchesSeamTrueFalse() {
+		// the wrapper(null, inv) parse: canEdit(null) = T, hasInfiniteItems(null) = F — the
+		// public wrapper over a fresh fixture must be indistinguishable from the seam fed
+		// (T, F) directly over an identical one
+		MultiBlockLevel tWrapperLevel = new MultiBlockLevel();
+		mountPartFactory(tWrapperLevel);
+		TestCokeOven tWrapperOven = placeController(tWrapperLevel, sCokeOvenType, C1, (byte) 2);
+		BlockPos tWrapperCell = seamCell(0, -1, 1);
+		SimpleContainer tWrapperStock = new SimpleContainer(new ItemStack(Blocks.BRICKS, 5));
+
+		MultiBlockLevel tSeamLevel = new MultiBlockLevel();
+		mountPartFactory(tSeamLevel);
+		TestCokeOven tSeamOven = placeController(tSeamLevel, sCokeOvenType, C1, (byte) 2);
+		BlockPos tSeamCell = seamCell(0, -1, 1);
+		SimpleContainer tSeamStock = new SimpleContainer(new ItemStack(Blocks.BRICKS, 5));
+
+		boolean tWrapper = Util.checkAndSetTarget(tWrapperOven, tWrapperCell.getX(), tWrapperCell.getY(), tWrapperCell.getZ(),
+				Blocks.BRICKS, 0, 0, null, null, tWrapperStock);
+		boolean tSeam = Util.checkAndSetTarget(tSeamOven, tSeamCell.getX(), tSeamCell.getY(), tSeamCell.getZ(),
+				Blocks.BRICKS, 0, 0, null, null, tSeamStock, true, false);
+
+		assertEquals(tSeam, tWrapper, "the verdicts agree (both the stale first pass)");
+		assertEquals(tSeamStock.getItem(0).getCount(), tWrapperStock.getItem(0).getCount(), "the consumption agrees");
+		assertEquals(tWrapperLevel.mBlockEntities.containsKey(tWrapperCell), tSeamLevel.mBlockEntities.containsKey(tSeamCell),
+				"the placement agrees");
+		assertEquals(4, tWrapperStock.getItem(0).getCount(), "the wrapper(null) IS the OP(2) consume arm");
 	}
 }

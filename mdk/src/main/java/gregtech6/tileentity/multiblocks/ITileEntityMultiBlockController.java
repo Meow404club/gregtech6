@@ -109,6 +109,25 @@ public interface ITileEntityMultiBlockController {
 		public static boolean checkAndSetTarget(ITileEntityMultiBlockController aController, int aX, int aY, int aZ,
 				Block aPartBlock, int aDesign, int aMode,
 				@Nullable BlockPos aClickedAt, @Nullable Player aPlayer, @Nullable Container aInventory) {
+			// UT.Entities.canEdit (UT.java:3159) ruled creative-or-OP(2); non-players auto-approve (null).
+			boolean tMayEdit = aPlayer == null || aPlayer.isCreative() || aPlayer.hasPermissions(2);
+			// UT.Entities.hasInfiniteItems (UT.java:3187).
+			boolean tInfiniteItems = aPlayer != null && aPlayer.isCreative();
+			return checkAndSetTarget(aController, aX, aY, aZ, aPartBlock, aDesign, aMode, aClickedAt, aPlayer, aInventory, tMayEdit, tInfiniteItems);
+		}
+
+		/**
+		 * The permission seam (task p24-creative-form-seam): the identical walk with the two
+		 * rulings pre-resolved by the caller. A real Player is not constructible offline (the
+		 * Forge-patched Entity ctor forces {@code FluidType.SIZE}), so the boolean pair IS the
+		 * testable form of the chain: (true, true) = creative free placement, (true, false) =
+		 * the consume-from-inventory OP(2) arm, (false, *) = the scaffold gate stays shut.
+		 * The public wrapper above is the production entry — it only parses and delegates.
+		 */
+		static boolean checkAndSetTarget(ITileEntityMultiBlockController aController, int aX, int aY, int aZ,
+				Block aPartBlock, int aDesign, int aMode,
+				@Nullable BlockPos aClickedAt, @Nullable Player aPlayer, @Nullable Container aInventory,
+				boolean aMayEdit, boolean aInfiniteItems) {
 			Level tLevel = ((BlockEntity) aController).getLevel();
 			if (tLevel == null) return false;
 
@@ -119,15 +138,15 @@ public interface ITileEntityMultiBlockController {
 			if ((aInventory != null || aPlayer != null)
 					&& (aClickedAt == null || (Math.abs(aX - aClickedAt.getX()) < 2 && Math.abs(aY - aClickedAt.getY()) < 2 && Math.abs(aZ - aClickedAt.getZ()) < 2))) {
 				ItemStack aStack = new ItemStack(aPartBlock); // ST.make(registry, 1, meta) :52
-				if (easyRep(tLevel, aX, aY, aZ) && canEdit(aPlayer)) {
-					if (aInventory == null || hasInfiniteItems(aPlayer)) {
+				if (easyRep(tLevel, aX, aY, aZ) && aMayEdit) {
+					if (aInventory == null || aInfiniteItems) {
 						if (tLevel.setBlock(new BlockPos(aX, aY, aZ), aPartBlock.defaultBlockState(), 3)) {
 							// UT.Sounds SFX.MC_XP :56 — no sound surface yet, cut
 						}
 					} else {
 						for (int i = aInventory.getContainerSize() - 1; i >= 0; i--) { // :58 back-to-front scan
 							ItemStack tStack = aInventory.getItem(i);
-							if (ItemStack.isSameItemSameTags(aStack, tStack) && useOne(aPlayer, tStack)) {
+							if (ItemStack.isSameItemSameTags(aStack, tStack) && useOne(aInfiniteItems, tStack)) {
 								tLevel.setBlock(new BlockPos(aX, aY, aZ), aPartBlock.defaultBlockState(), 3); // WD.set :61
 								break;
 							}
@@ -162,23 +181,13 @@ public interface ITileEntityMultiBlockController {
 			return tState.isAir() || tState.canBeReplaced();
 		}
 
-		/** UT.Entities.canEdit (UT.java:3159) ruled creative-or-OP(2); non-players auto-approve (null). */
-		private static boolean canEdit(@Nullable Player aPlayer) {
-			return aPlayer == null || aPlayer.isCreative() || aPlayer.hasPermissions(2);
-		}
-
-		/** UT.Entities.hasInfiniteItems (UT.java:3187). */
-		private static boolean hasInfiniteItems(@Nullable Player aPlayer) {
-			return aPlayer != null && aPlayer.isCreative();
-		}
-
 		/**
-		 * ST.use(player, T, T, stack, 1) (ST.java:304-319): infinite-items players consume
+		 * ST.use(player, T, T, stack, 1) (ST.java:304-319): infinite-items callers consume
 		 * nothing, everyone else shrinks the stack in place; the container-item handout and the
 		 * PlayerDestroyItemEvent (players branch :315-318) are cut with the tool surface.
 		 */
-		private static boolean useOne(@Nullable Player aPlayer, ItemStack aStack) {
-			if (hasInfiniteItems(aPlayer)) return true;
+		private static boolean useOne(boolean aInfiniteItems, ItemStack aStack) {
+			if (aInfiniteItems) return true;
 			if (aStack.isEmpty() || aStack.getCount() < 1) return false;
 			aStack.shrink(1);
 			return true;
