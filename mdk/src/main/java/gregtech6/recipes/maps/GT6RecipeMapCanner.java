@@ -90,7 +90,7 @@ public class GT6RecipeMapCanner extends RecipeMap {
 	 * always pass {@code aStack.copy()} and read {@link IFluidHandlerItem#getContainer()}.
 	 * The LazyOptional (forge 1.20.1) vs Optional (neoforge 21.1) return split forks here.
 	 */
-	public static final java.util.function.Function<ItemStack, IFluidHandlerItem> sContainerResolver =
+	public static java.util.function.Function<ItemStack, IFluidHandlerItem> sContainerResolver =
 			//? if forge {
 			aStack -> net.minecraftforge.fluids.FluidUtil.getFluidHandler(aStack).resolve().orElse(null);
 			//?} else {
