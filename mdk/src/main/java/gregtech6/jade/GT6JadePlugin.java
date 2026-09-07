@@ -17,16 +17,17 @@ import snownee.jade.api.WailaPlugin;
  * 对本类零静态引用——Jade 缺席时本类永不 classload，运行时可选天然安全（NCDFE 防线）。
  *
  * <p>register() 在专用服务端无条件调用（双腿都在 isPhysicallyClient 分支之前：
- * jade-1201 CommonProxy.java:230 / jade-1211 :516）→ 服务端同步 provider 挂这里；
- * registerClient() 仅物理客户端 → tooltip provider 挂这里。
+ * jade-1201 CommonProxy.java:230 / jade-1211 :516）→ 服务端 provider 挂这里；
+ * registerClient() 仅物理客户端 → 客户端 provider 挂这里。
  *
- * <p>零 chisel 声明（双腿逐字同源）：注册面 1.20.1 registerBlockComponent(IBlockComponentProvider,
- * Class&lt;? extends Block&gt;)（IWailaClientRegistration.java:71）/ 1.21.1 registerBlockComponent(
- * IComponentProvider&lt;BlockAccessor&gt;, Class&lt;? extends Block&gt;)（:80）——provider 实例实现
- * IBlockComponentProvider，在 1.21.1 经 IBlockComponentProvider extends IComponentProvider&lt;BlockAccessor&gt;
- * （IBlockComponentProvider.java:11）自动满足；registerBlockDataProvider 1.20.1
- * Class&lt;? extends BlockEntity&gt;（IWailaCommonRegistration.java:20）/ 1.21.1 Class&lt;?&gt;（:19）——
- * 传 BE 基类两腿皆合法。唯一已证分叉（BoxStyle 构形）收敛在 {@link GT6MachineProvider#jadeBox()}。
+ * <p>流体段（task p23-jade-universal-fluid，v1 b9b0b23f 的 block-component 自渲染对升级为
+ * universal registerFluidStorage 正字标——GTCEu GTJadePlugin.java:56/:93 同款调用形）：
+ * 注册行只有两行（GTCEu 同姿势），服务端取数与客户端 parse 都在 {@link GT6FluidProvider}
+ * 单体内，行渲染归 Jade 自家 universal append。 clazz 挂 BE 全族根
+ * {@link TileEntityBase01Root}（双腿 registerFluidStorage 的 Class&lt;? extends T&gt; 同形——
+ * 1201 IWailaCommonRegistration.java:32 / 1211 :31；客户端注册双腿逐字同形
+ * 1201 IWailaClientRegistration.java:164 / 1211 :173），machines 内部再 instanceof 分发。
+ * 机器四段 tooltip（{@link GT6MachineProvider}）不变，仍是 block-component 对。
  */
 @WailaPlugin
 public class GT6JadePlugin implements IWailaPlugin {
@@ -36,17 +37,18 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 服务端数据源 = 全 GT6 BE 基类：ERROR_MESSAGE 在 Root（TileEntityBase01Root.java:88），
 		// 机器字段在 BasicMachine，成形态在 MultiBlockBase——provider 体内 instanceof 分发。
 		aRegistration.registerBlockDataProvider(GT6MachineProvider.INSTANCE, TileEntityBase01Root.class);
-		// 流体段（task p22-jade-fluid-tooltip）：数据源单分支 TileEntityBasicMachine
-		// （复核 C-1：多方块类零罐字段）——GT6FluidProvider 体内自检。
-		aRegistration.registerBlockDataProvider(GT6FluidProvider.INSTANCE, TileEntityBase01Root.class);
+		// 流体段 universal 服务端腿（数据载体=Jade 自家 universal FluidStorageProvider，
+		// 本 provider 按 priority 抢跑取数——GT6FluidProvider#getDefaultPriority 的裁定）。
+		aRegistration.registerFluidStorage(GT6FluidProvider.INSTANCE, TileEntityBase01Root.class);
 	}
 
 	@Override
 	public void registerClient(IWailaClientRegistration aRegistration) {
 		// tooltip 挂全 GT6 承 BE 方块基类（GTEntityBlock.java:37 所有机器/多方块方块都经它）。
 		aRegistration.registerBlockComponent(GT6MachineProvider.INSTANCE, GTEntityBlock.class);
-		// 流体段同行形（GT6FluidProvider 类 doc）：图标+量行，排在机器四段之后。
-		aRegistration.registerBlockComponent(GT6FluidProvider.INSTANCE, GTEntityBlock.class);
+		// 流体段 universal 客户端腿：Jade 按 JadeFluidStorageUid 从 uid map 找回本 provider
+		// （jade-1201 addon/universal/FluidStorageProvider.java:44 / jade-1211 :67-68）。
+		aRegistration.registerFluidStorageClient(GT6FluidProvider.INSTANCE);
 	}
 
 }

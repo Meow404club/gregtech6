@@ -1,84 +1,99 @@
 package gregtech6.jade;
 
-import net.minecraft.ChatFormatting;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+
+import net.minecraft.network.chat.Component;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
+import snownee.jade.api.Accessor;
 import snownee.jade.api.BlockAccessor;
-import snownee.jade.api.IBlockComponentProvider;
-import snownee.jade.api.IServerDataProvider;
-import snownee.jade.api.ITooltip;
-import snownee.jade.api.config.IPluginConfig;
+import snownee.jade.api.TooltipPosition;
 import snownee.jade.api.fluid.JadeFluidObject;
-import snownee.jade.api.ui.IElement;
 import snownee.jade.api.ui.IElementHelper;
+import snownee.jade.api.view.ClientViewGroup;
+import snownee.jade.api.view.FluidView;
+import snownee.jade.api.view.IClientExtensionProvider;
+import snownee.jade.api.view.IServerExtensionProvider;
+import snownee.jade.api.view.ViewGroup;
 import snownee.jade.util.CommonProxy;
 import snownee.jade.util.FluidTextHelper;
 
 import net.minecraftforge.fluids.FluidStack;
 
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.tileentity.TileEntityBase01Root;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
- * GT6 机器流体段 Jade provider（task p22-jade-fluid-tooltip）：与 {@link GT6MachineProvider}
- * 同构的双腿对（client {@link IBlockComponentProvider} + server {@link IServerDataProvider}
- * &lt;BlockAccessor&gt;），渲染机器输入/输出罐的图标+量行。
+ * GT6 机器流体段 Jade universal provider（task p23-jade-universal-fluid，升级 P22 v1 b9b0b23f）：
+ * GTCEu {@code GTFluidStorageProvider} 全例姿势（gtceu-modern .../jade/provider/GTFluidStorageProvider.java:40-101）
+ * ——一个单例对象双腿同体实现 {@code IServerExtensionProvider<...CompoundTag>}（服务端取数，
+ * {@code registerFluidStorage} 注册；Jade 自家 universal {@code FluidStorageProvider} 是数据载体，
+ * 服务端 hover 时按 priority 顺序逐 provider 试、首个非 null 赢并写
+ * {@code JadeFluidStorage/JadeFluidStorageUid}——jade-1201 addon/universal/FluidStorageProvider.java:81-88
+ * / jade-1211 util/CommonProxy.java:586-602）+ {@code IClientExtensionProvider<CompoundTag, FluidView>}
+ * （客户端手工 parse，{@code registerFluidStorageClient} 注册，Jade 按 uid 从 client map 找回——
+ * jade-1201 :44-46 / jade-1211 :67-68）。自写 tooltip 渲染面整体退役：行渲染（图标+文本+进度条
+ * 样式）由 Jade 自家 append 消化（jade-1201 :53-71 / jade-1211 :87-135），P21 的
+ * BoxStyle/progressStyle swap 不再需要。
  *
- * <p>数据缝 = Jade 服务端推（研究卡裁定）：机器罐内容不进 vanilla 同步——onFluidIO→
- * onInventoryChanged 只 setChanged+mInventoryChanged（TileEntityBasicMachine.java:422-425），
- * onTickCheck 只查 ACTIVE/RUNNING 视觉位（:402-405），fill/drain 均不触发客户端数据→
- * 客户端 BE 罐内容陈旧；Jade appendServerData 每 hover 请求新鲜（jade-1201 ClientProxy.java:218 /
- * jade-1211 :253 RequestBlockPacket）。数据源 = {@code mTanksInput}/{@code mTanksOutput}
- * public final（TileEntityBasicMachine.java:285/:287）。只读公开字段，禁改 BE（铁律）。
- *
- * <p>单分支 = 架构复核 C-1（tasks.p22-arch-feature-wave）：多方块
- * TileEntityBase10MultiBlockMachine 全文 168 行零罐字段，罐面唯一 public 声明就是
- * BasicMachine 本类——不做两分支。
- *
- * <p>载荷 = 自描述键 {@code GT6FluidsIn/GT6FluidsOut}（ListTag of CompoundTag）：
- * {@code FluidName}（注册表名）+ {@code Amount}（<b>真 long</b>，走 {@link FluidTankGT#amount()}
- * ——port 公开 IFluidTank 面是 bindInt 钳位（:256/:261），内部量才是 63 位）+ {@code Capacity}
- * （真 long）。空罐（无流体身份）不写条目。GT6* 前缀键空间隔离，形同
- * {@link GT6MachineProvider} 的同步契约。
- *
- * <p>客户端 = v1 内嵌形态（架构裁定，universal registerFluidStorage 入池——IServerExtensionProvider
- * 是双腿唯一大叉）：每罐 {@link IElementHelper#fluid(JadeFluidObject)} 图元 + 同行文本
- * （GTCEu RecipeOutputProvider.java:228-229 add+append 同行形）。overlay 载体钉
- * {@code JadeFluidObject.of(fluid, 1000)}——FluidView#readDefault 吃不下 &gt;INT_MAX 量
- * （GTCEu GTFluidStorageProvider.java:84-85 先例同姿势），真实 long 量只走文本行：
- * {@link FluidTextHelper#getUnicodeMillibuckets(long, boolean)}（jade-1201 :9 / jade-1211 :7
- * 双腿同形）+ {@link CommonProxy#getFluidName(JadeFluidObject)}（:451/:470 双腿同形），
- * 名字括号包 = vanilla ComponentUtils.wrapInSquareBrackets（GTCEu 同款）。
- *
- * <p>双腿零 chisel（除 {@link #rawFluid} 四行）：IElementHelper.fluid（1201:29/1211:30）、
- * JadeFluidObject.of(Fluid,long)（1201:30-32/1211:37-39）逐字同形。
+ * <p>分叉声明（双腿唯一）：{@code IServerExtensionProvider} 泛型与方法签名——1201 双泛型
+ * {@code <IN,OUT>} + {@code getGroups(ServerPlayer,ServerLevel,IN,boolean)}
+ * （jade-1201 api/view/IServerExtensionProvider.java:11-14）vs 1211 单泛型 {@code <T>} +
+ * {@code getGroups(Accessor)} + default shouldRequestData（jade-1211 :10-17）。类头 implements
+ * 子句与 getGroups 随分叉（类声明分叉形 = GTBarrelItemFluidHandler.java:54-58 先例）。
+ * 其余 API 双腿逐字同形零分叉：IClientExtensionProvider（两腿 :8-11 同文）、
+ * ViewGroup/ClientViewGroup.map、FluidView（public ctor+字段）、JadeFluidObject.of(Fluid,long)
+ * （1201 :30-32 / 1211 :37-39）、CommonProxy.getFluidName（:451/:470）、
+ * FluidTextHelper.getUnicodeMillibuckets（:9/:7）。
  */
-public final class GT6FluidProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
+//? if forge {
+public final class GT6FluidProvider implements IServerExtensionProvider<TileEntityBase01Root, CompoundTag>, IClientExtensionProvider<CompoundTag, FluidView> {
+//?} else {
+/*public final class GT6FluidProvider implements IServerExtensionProvider<CompoundTag>, IClientExtensionProvider<CompoundTag, FluidView> {
+*///?}
 
 	public static final GT6FluidProvider INSTANCE = new GT6FluidProvider();
 
-	/** 同步键——GT6 前缀命名空间（与 {@link GT6MachineProvider} 同理：tag 可能已被其他 provider 处理过）。 */
-	public static final String KEY_FLUIDS_IN = "GT6FluidsIn";
-	public static final String KEY_FLUIDS_OUT = "GT6FluidsOut";
-
-	/** 罐条目自描述键（FluidTankGT 合同键形 FluidName/Amount 同名；Amount/Capacity 恒 long）。 */
+	/**
+	 * 罐条目自描述键（P22 v1 合同键沿用——FluidTankGT 合同键形 FluidName/Amount 同名；
+	 * Amount/Capacity 恒 long）。载荷由 Jade universal 链搬运：服务端
+	 * {@code ViewGroup.saveList(tag,"JadeFluidStorage",groups,identity())}（jade-1201
+	 * addon/universal/FluidStorageProvider.java:84 / jade-1211 :146），键空间归 Jade。
+	 */
 	public static final String KEY_FLUID_NAME = "FluidName";
 	public static final String KEY_AMOUNT = "Amount";
 	public static final String KEY_CAPACITY = "Capacity";
 
+	/** 组 id（进 {@link ViewGroup#id}，客户端 decorator 转 {@code ClientViewGroup.title}——Jade 自家例同款 j-1201 test/ExampleFluidStorageProvider.java:31-36）。 */
+	public static final String GROUP_IN = "Fluid In";
+	public static final String GROUP_OUT = "Fluid Out";
+
 	/** overlay 载体量 = 一桶（GTCEu GTFluidStorageProvider.java:96 同字面 1000）。 */
 	private static final long CARRIER_MILLIBUCKETS = 1000;
 
-	/** Provider uid（IJadeProvider.java:10 双腿抽象 getUid）——与 {@link GT6MachineProvider#UID} 异值。 */
-	private static final ResourceLocation UID = new ResourceLocation("gt6", "fluid_provider");
+	/**
+	 * Provider uid。v1（block component 面）沿用过的 gt6:fluid_provider 语义已随 v1 退役；
+	 * universal 链下它 = 服务端写的 {@code JadeFluidStorageUid} 与客户端 provider map 的对合键。
+	 */
+	private static final ResourceLocation UID = new ResourceLocation("gt6", "fluid_storage");
+
+	/**
+	 * 客户端 decorator：ViewGroup.id → 组标题（双腿 ClientViewGroup.map 第三参同形；
+	 * Jade 自家渲染 renderGroup 时才画标题/盒——组空 views 在服务端 saveList 已被 skip
+	 * （jade-1201 api/view/ViewGroup.java:66-68 / jade-1211 :97-99），过缝的组恒非空）。
+	 */
+	private static final BiConsumer<ViewGroup<CompoundTag>, ClientViewGroup<FluidView>> GROUP_DECORATOR = (aGroup, aClientGroup) -> {
+		if (aGroup.id != null) {
+			aClientGroup.title = Component.literal(aGroup.id);
+		}
+	};
 
 	private GT6FluidProvider() {
 	}
@@ -88,23 +103,62 @@ public final class GT6FluidProvider implements IBlockComponentProvider, IServerD
 		return UID;
 	}
 
+	/**
+	 * 抢跑裁定（双腿同形）：Jade universal 链服务端是「按 priority 升序逐 provider 试、
+	 * 首个非 null 赢并短路」（jade-1201 addon/universal/FluidStorageProvider.java:81-88、
+	 * jade-1211 util/CommonProxy.java:589-599；COMPARATOR=paringInt(priority) 稳定排序，
+	 * jade-1211 impl/lookup/IHierarchyLookup.java:24）。Jade 自家 capability 面 provider
+	 * 默认 priority=BODY（1211 Extension 未覆写）或 BODY+1000（1201 enum），且 1211 的
+	 * wrappedGet 插入序恒在其 Block/target 注册桶先（jade-1211 impl/lookup/WrappedHierarchyLookup.java:45-55）
+	 * ——GT6 机器挂了 FLUID_HANDLER capability（TileEntityBasicMachine.java:1387），同 priority
+	 * 下 1211 会被 Jade 默认面抢先：其量走 IFluidHandler int 面（bindInt 钳位，正是本 provider
+	 * 要绕的）。BODY-1 双腿显式插队最前。
+	 */
 	@Override
-	public void appendServerData(CompoundTag aData, BlockAccessor aAccessor) {
-		// 单分支（类 doc C-1）：只有 TileEntityBasicMachine 带罐面。
-		if (!(aAccessor.getBlockEntity() instanceof TileEntityBasicMachine aMachine)) {
-			return;
+	public int getDefaultPriority() {
+		return TooltipPosition.BODY - 1;
+	}
+
+	//? if forge {
+	@Override
+	public List<ViewGroup<CompoundTag>> getGroups(net.minecraft.server.level.ServerPlayer aPlayer, net.minecraft.server.level.ServerLevel aLevel,
+			TileEntityBase01Root aTarget, boolean aShowDetails) {
+		return groupsOfTarget(aTarget);
+	}
+	//?} else {
+	/*// 1211 分叉腿：target 语义并入 accessor（wrappedGet 已按 accessor.getTarget() 匹配过注册类，
+	// 非方块 accessor 的 target 不在 TileEntityBase01Root 层级，instanceof 是第二道保险）。
+	@Override
+	public List<ViewGroup<CompoundTag>> getGroups(Accessor<?> aAccessor) {
+		return aAccessor instanceof BlockAccessor aBlock ? groupsOfTarget(aBlock.getBlockEntity()) : null;
+	}
+	*///?}
+
+	/**
+	 * 服务端取数语义（与 v1 共用，离线单测面）：单分支（类 doc C-1，tasks.p22-arch-feature-wave——
+	 * 多方块 TileEntityBase10MultiBlockMachine 全文 168 行零罐字段）——只有
+	 * {@link TileEntityBasicMachine} 带罐面；非机器返回 null（不短路 Jade 默认 provider）。
+	 * 数据源 = {@code mTanksInput}/{@code mTanksOutput} public final
+	 * （TileEntityBasicMachine.java:285/:287），只读公开字段，禁改 BE（铁律）。
+	 */
+	public static List<ViewGroup<CompoundTag>> groupsOfTarget(Object aTarget) {
+		if (!(aTarget instanceof TileEntityBasicMachine aMachine)) {
+			return null;
 		}
-		aData.put(KEY_FLUIDS_IN, tanksTag(aMachine.mTanksInput));
-		aData.put(KEY_FLUIDS_OUT, tanksTag(aMachine.mTanksOutput));
+		ViewGroup<CompoundTag> tIn = new ViewGroup<>(tankViews(aMachine.mTanksInput));
+		tIn.id = GROUP_IN;
+		ViewGroup<CompoundTag> tOut = new ViewGroup<>(tankViews(aMachine.mTanksOutput));
+		tOut.id = GROUP_OUT;
+		return List.of(tIn, tOut);
 	}
 
 	/**
-	 * 罐组 → 自描述 ListTag。空罐（{@link FluidTankGT#fluid()} == null）不产条目；
+	 * 罐组 → 自描述 CompoundTag 视图列表。空罐（{@link FluidTankGT#fluid()} == null）不产条目；
 	 * Amount/Capacity 走 long 面（{@link FluidTankGT#amount()}/{@link FluidTankGT#capacity()}），
-	 * 绕开 IFluidTank 的 bindInt 钳位——GT6 长量（&gt;Integer.MAX_VALUE）原值过缝。
+	 * 绕开 IFluidTank 的 bindInt 钳位（:256/:261）——GT6 长量（&gt;Integer.MAX_VALUE）原值过缝。
 	 */
-	public static ListTag tanksTag(FluidTankGT[] aTanks) {
-		ListTag tList = new ListTag();
+	public static List<CompoundTag> tankViews(FluidTankGT[] aTanks) {
+		ArrayList<CompoundTag> tViews = new ArrayList<>();
 		for (FluidTankGT tTank : aTanks) {
 			FluidStack tStack = tTank.fluid();
 			if (tStack == null) continue;
@@ -116,56 +170,53 @@ public final class GT6FluidProvider implements IBlockComponentProvider, IServerD
 			tTag.putString(KEY_FLUID_NAME, tName.toString());
 			tTag.putLong(KEY_AMOUNT, tTank.amount()); // upstream FluidTankGT:330 形（port :399）
 			tTag.putLong(KEY_CAPACITY, tTank.capacity());
-			tList.add(tTag);
+			tViews.add(tTag);
 		}
-		return tList;
+		return tViews;
 	}
 
 	@Override
-	public void appendTooltip(ITooltip aTooltip, BlockAccessor aAccessor, IPluginConfig aConfig) {
-		CompoundTag aData = aAccessor.getServerData();
-		tankGroup(aTooltip, aData, KEY_FLUIDS_IN, "Fluid In");
-		tankGroup(aTooltip, aData, KEY_FLUIDS_OUT, "Fluid Out");
+	public List<ClientViewGroup<FluidView>> getClientGroups(Accessor<?> aAccessor, List<ViewGroup<CompoundTag>> aGroups) {
+		// 手工 parse（绕 FluidView.readDefault：其 fluid/capacity 键与本合同不同，且 GTCEu
+		// GTFluidStorageProvider.java:84-85 实证 readDefault 吃不下 >INT_MAX 量）——
+		// GTCEu readFluid 同姿势（:85-101）。
+		return ClientViewGroup.map(aGroups, GT6FluidProvider::readFluid, GROUP_DECORATOR);
 	}
 
 	/**
-	 * 一组罐的渲染：组标签行（仅组非空）+ 每罐「图标+量行」同行
-	 * （GTCEu RecipeOutputProvider.java:228-229 的 add+append 形）。
+	 * 载荷 → FluidView（客户端面，依赖 IElementHelper 活体——离线不可构造，故文本/比值拆
+	 * 纯函数 {@link #currentText}/{@link #maxText}/{@link #ratioOf} 供单测钉合同）。
+	 * 双值策略（P22 D2 语义不变）：overlay 载体钉一桶量（{@link JadeFluidObject#of(Fluid, long)}
+	 * 1000——readDefault 的 INT_MAX 坑），current/max 文本用真实 long 量。
 	 */
-	private static void tankGroup(ITooltip aTooltip, CompoundTag aData, String aKey, String aLabel) {
-		if (!aData.contains(aKey, Tag.TAG_LIST)) return;
-		ListTag tList = aData.getList(aKey, Tag.TAG_COMPOUND);
-		if (tList.isEmpty()) return;
-		aTooltip.add(Component.literal(aLabel + ":").withStyle(ChatFormatting.GRAY));
-		IElementHelper tHelper = IElementHelper.get();
-		for (int i = 0; i < tList.size(); i++) {
-			CompoundTag tTag = tList.getCompound(i);
-			Fluid tFluid = resolveFluid(tTag.getString(KEY_FLUID_NAME));
-			if (tFluid == null) continue;
-			long tAmount = tTag.getLong(KEY_AMOUNT), tCapacity = tTag.getLong(KEY_CAPACITY);
-			// overlay 载体钉一桶量——readDefault 的 INT_MAX 坑（类 doc），真实 long 只走文本。
-			JadeFluidObject tCarrier = JadeFluidObject.of(tFluid, CARRIER_MILLIBUCKETS);
-			Component tText = tankText(lineText(tAmount, tCapacity), CommonProxy.getFluidName(tCarrier));
-			IElement tIcon = tHelper.fluid(tCarrier);
-			aTooltip.add(tIcon);
-			aTooltip.append(tText);
-		}
+	private static FluidView readFluid(CompoundTag aTag) {
+		long tCapacity = aTag.getLong(KEY_CAPACITY);
+		if (tCapacity <= 0) return null;
+		Fluid tFluid = resolveFluid(aTag.getString(KEY_FLUID_NAME));
+		if (tFluid == null) return null;
+		long tAmount = aTag.getLong(KEY_AMOUNT);
+		JadeFluidObject tCarrier = JadeFluidObject.of(tFluid, CARRIER_MILLIBUCKETS);
+		FluidView tView = new FluidView(IElementHelper.get().fluid(tCarrier));
+		tView.fluidName = CommonProxy.getFluidName(tCarrier);
+		tView.current = currentText(tAmount);
+		tView.max = maxText(tCapacity);
+		tView.ratio = ratioOf(tAmount, tCapacity);
+		return tView;
 	}
 
-	/** 真实 long 量行文本——Jade 自家的 mB unicode 面（FluidTextHelper 双腿 :9/:7 同形）。 */
-	static String lineText(long aAmount, long aCapacity) {
-		return FluidTextHelper.getUnicodeMillibuckets(aAmount, true) + " / " + FluidTextHelper.getUnicodeMillibuckets(aCapacity, true);
+	/** 真实 long 量文本（Jade 自家 mB unicode 面，FluidTextHelper 双腿 :9/:7 同形）。 */
+	static String currentText(long aAmount) {
+		return FluidTextHelper.getUnicodeMillibuckets(aAmount, true);
 	}
 
-	/**
-	 * v1 行形 = 「量 名字（方括号）」——纯函数（离线单测面）：两段 Jade 活体件
-	 * （{@link #lineText(long, long)} 的量串 + {@link CommonProxy#getFluidName} 的名字）在此定型。
-	 */
-	static Component tankText(String aAmounts, Component aName) {
-		return Component.empty()
-				.append(aAmounts)
-				.append(" ")
-				.append(ComponentUtils.wrapInSquareBrackets(aName));
+	/** 真实 long 容量文本（同上）。 */
+	static String maxText(long aCapacity) {
+		return FluidTextHelper.getUnicodeMillibuckets(aCapacity, true);
+	}
+
+	/** 填充比（GTCEu GTFluidStorageProvider.java:98 的 min 1f 钳制同形——long 商走 double 再落 float）。 */
+	static float ratioOf(long aAmount, long aCapacity) {
+		return Math.min(1.0F, (float) ((double) aAmount / aCapacity));
 	}
 
 	/** FluidName 反查注册表（形同 FluidTankGT 21.1 keepFilter 读侧：tryParse null / 未知名 / EMPTY 全拒）。 */
