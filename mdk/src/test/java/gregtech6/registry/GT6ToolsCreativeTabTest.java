@@ -94,24 +94,26 @@ public class GT6ToolsCreativeTabTest {
 	}
 
 	/**
-	 * The display table: exactly five rows (the crowbar, the cutter, the chisel, the
-	 * file, the saw) in display order — the p10-tool-cutter card appended row 2, the
-	 * p16-chisel-decalcify card appended row 3, the p24-tool-system card appended rows
-	 * 3/4 (task p10-tool-creative-tab pinned the cutter-free state before that).
+	 * The display table: exactly six rows (the crowbar, the cutter, the chisel, the
+	 * file, the saw, the builder wand) in display order — the p10-tool-cutter card
+	 * appended row 2, the p16-chisel-decalcify card appended row 3, the p24-tool-system
+	 * card appended rows 3/4, the p24-builder-wand card appended row 5.
 	 */
 	@Test
-	public void displayTableIsExactlyTheFiveToolRows() {
-		assertEquals(5, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the crowbar, the cutter, the chisel, the file and the saw");
+	public void displayTableIsExactlyTheSixToolRows() {
+		assertEquals(6, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the crowbar, the cutter, the chisel, the file, the saw and the builder wand");
 		assertSame(GT6Tools.CROWBAR, GT6Tools.TAB_TABLE.get(0), "row 0 is the registered crowbar item, not a parallel supplier");
 		assertSame(GT6Tools.CUTTER, GT6Tools.TAB_TABLE.get(1), "row 1 is the registered cutter item, not a parallel supplier");
 		assertSame(GT6Tools.CHISEL, GT6Tools.TAB_TABLE.get(2), "row 2 is the registered chisel item, not a parallel supplier");
 		assertSame(GT6Tools.FILE, GT6Tools.TAB_TABLE.get(3), "row 3 is the registered file item, not a parallel supplier");
 		assertSame(GT6Tools.SAW, GT6Tools.TAB_TABLE.get(4), "row 4 is the registered saw item, not a parallel supplier");
+		assertSame(GT6Tools.BUILDER_WAND, GT6Tools.TAB_TABLE.get(5), "row 5 is the registered builder wand item, not a parallel supplier");
 		assertEquals(rl("crowbar"), GT6Tools.TAB_TABLE.get(0).getId());
 		assertEquals(rl("cutter"), GT6Tools.TAB_TABLE.get(1).getId());
 		assertEquals(rl("chisel"), GT6Tools.TAB_TABLE.get(2).getId());
 		assertEquals(rl("file"), GT6Tools.TAB_TABLE.get(3).getId());
 		assertEquals(rl("saw"), GT6Tools.TAB_TABLE.get(4).getId());
+		assertEquals(rl("builder_wand"), GT6Tools.TAB_TABLE.get(5).getId());
 	}
 
 	/**
