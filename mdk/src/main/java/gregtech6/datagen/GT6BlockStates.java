@@ -27,6 +27,7 @@ import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTEnergySources;
 import gregtech6.registry.GTFluidPipes;
+import gregtech6.registry.GTGrassBlocks;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialBlocks;
@@ -125,6 +126,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addGearBoxTransformer(); // task p12-gearbox-transformer
         addLargeBoiler(); // task p13-large-boiler
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
+        addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
     }
 
     /**
@@ -944,5 +946,40 @@ public final class GT6BlockStates extends BlockStateProvider {
         LOGGER.info("GT6 stone blocks: {} per-pair blockstates over {} models (one item model each)",
                 GTStoneBlocks.STONES.size() * StoneVariant.VALUES.length,
                 GTStoneBlocks.STONES.size() * StoneVariant.VALUES.length);
+    }
+
+    /**
+     * Task p24-grass-block — the 6 GT grass VARIANT blocks ({@link GTGrassBlocks#BLOCKS},
+     * upstream meta order): one single-state blockstate per pair (the addStoneBlocks
+     * degenerate-pure-block form) over a {@code cube_bottom_top} model — top/side ride the
+     * BORROWED pre-coloured PNGs ({@code gt6:block/grass/top_<colour>}/
+     * {@code side_<colour>}, byte-identical per the assets/README.md ledger) and the
+     * BOTTOM face references the VANILLA {@code minecraft:block/dirt} model texture
+     * directly (the upstream {@code IconContainerCopied(Blocks.dirt, 0, SIDE_BOTTOM)}
+     * semantics, BlockGrass.java:102-104 — no PNG is copied). ZERO tintindex anywhere:
+     * the colour is baked into the PNGs (Textures.java:530-565 pre-coloured sets) and a
+     * GrassBlock-style biome tint is forbidden (decisions.p24-grass-behavior-trim).
+     * Each pair gets its own item model parenting the block model. Same provider, same
+     * pass, so the parent resolves in the ExistingFileHelper (the :29-33 precedent).
+     *
+     * <p>NAMING TRAP (the research card pin): the borrow is by CODE mapping, not by file
+     * name — upstream meta 3 "LightGray" renders the {@code NORMAL} PNG and meta 0
+     * "Green" the {@code MEDIUM} PNG (Textures.java:530-565). The borrowed files already
+     * carry the VARIANT-semantics names ({@code top_green.png} et al), so this walk is
+     * blind to the trap.
+     */
+    private void addGrassBlocks() {
+        for (int i = 0; i < GTGrassBlocks.PATHS.size(); i++) {
+            String tPath = GTGrassBlocks.PATHS.get(i);
+            String tColour = GTGrassBlocks.textureOf(tPath);
+            ModelFile tModel = models().cubeBottomTop(tPath,
+                    modLoc("block/grass/side_" + tColour), // the forge (name, side, bottom, top) parameter order
+                    mcLoc("block/dirt"), // the vanilla dirt bottom, the upstream copied-icon face
+                    modLoc("block/grass/top_" + tColour));
+            simpleBlock(GTGrassBlocks.BLOCKS.get(i).get(), tModel);
+            itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
+        }
+        LOGGER.info("GT6 grass blocks: {} per-pair blockstates over {} cube_bottom_top models (no tint)",
+                GTGrassBlocks.PATHS.size(), GTGrassBlocks.PATHS.size());
     }
 }

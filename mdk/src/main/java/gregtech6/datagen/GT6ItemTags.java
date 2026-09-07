@@ -125,6 +125,23 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		// append convention), and hoists shared helpers if a second caller appears.
 		addToolTags(aProvider);
 		addMaterialTags(aProvider);
+		addGrassTags(aProvider); // task p24-grass-block
+	}
+
+	/**
+	 * The grass-family item band (task p24-grass-block): the 6 grass BLOCK ITEMS join the
+	 * vanilla {@code minecraft:dirt} ITEM tag ({@link net.minecraft.tags.ItemTags#DIRT};
+	 * the vanilla tag file carries exactly the nine dirt-family block items —
+	 * vanilla-1.20.1 data/minecraft/tags/items/dirt.json). This is the item-identity half
+	 * of the per-pair split: dye recipes keying the block tag would be meaningless without
+	 * the item face. The six animal spawnable block tags and valid_spawn have no item-side
+	 * counterpart and stay unjoined on the block face too (the GT6BlockTags.addGrassBand
+	 * absence ruling).
+	 */
+	private void addGrassTags(HolderLookup.Provider aProvider) {
+		for (String tPath : gregtech6.registry.GTGrassBlocks.PATHS) {
+			tag(net.minecraft.tags.ItemTags.DIRT).add(item(gt6Rl(tPath)));
+		}
 	}
 
 	/**

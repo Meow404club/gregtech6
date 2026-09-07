@@ -100,6 +100,23 @@ public class GT6ZhCn extends LanguageProvider {
 		addWireDomainUnits();
 		addStoneVariantUnits(); // task p20-i18n-compose-rows
 		addRowDomainUnits();    // task p20-i18n-compose-rows
+		addGrassUnits();        // task p24-grass-block
+	}
+
+	/**
+	 * The grass family zh faces (task p24-grass-block, the GT6EnUs.addGrassBlocks mirror):
+	 * the 6 variant display names (all "草方块" — the en "Grass" parity ruling, no colour
+	 * prefix) + the 2 tooltip lines. All 8 ride the reference table's hand layer (direct
+	 * rows; the tooltip zh face is the dump's {@code gt.grass.tooltip} wording,
+	 * tmp/gregtech.lang:3228, plus a hand translation for the :3229 row the dump never
+	 * translated).
+	 */
+	private void addGrassUnits() {
+		for (String tPath : gregtech6.registry.GTGrassBlocks.PATHS) {
+			addDirect("block.gt6." + tPath);
+		}
+		addDirect(gregtech6.block.GTGrassBlock.TOOLTIP_KEY);
+		addDirect(gregtech6.block.GTGrassBlock.TOOLTIP_SPRAY_KEY);
 	}
 
 	/**

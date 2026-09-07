@@ -89,7 +89,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
-                new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK)), // task p19-stoneblocks-render
+                new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
+                new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK)), // task p24-grass-block
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -104,7 +105,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
-                new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK))); // task p19-stoneblocks-render
+                new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
+                new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK))); // task p24-grass-block
         //?}
     }
 
@@ -731,6 +733,59 @@ public final class GT6LootTables extends LootTableProvider {
                             .add(LootItem.lootTableItem(aChiselMapped)
                                     .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(GT6Tools.CHISEL.get())))
                                     .otherwise(LootItem.lootTableItem(aBaseline)))));
+        }
+    }
+
+    /**
+     * The grass-family block list (task p24-grass-block): the 6 GT grass variants, the
+     * registration walk order.
+     */
+    public static List<Block> grassLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (var tHandle : gregtech6.registry.GTGrassBlocks.BLOCKS) rBlocks.add(tHandle.get());
+        return rBlocks;
+    }
+
+    /**
+     * The grass-family loot provider (task p24-grass-block) — the upstream
+     * {@code BlockGrass.getDrops} shape (BlockGrass.java:105 returns vanilla dirt x1 with
+     * the fortune parameter IGNORED) plus the silk-touch self-drop (upstream
+     * canSilkHarvest = T, BlockBase.java:109, {@code createStackedBlock} = self with its
+     * meta, :82-84). One table per variant at the vanilla default
+     * {@code gt6:blocks/<registry-path>} location (zero block code), each the vanilla
+     * grass_block.json alternatives face: {@link BlockLootSubProvider
+     * #createSilkTouchDispatchTable(Block, LootPoolEntryContainer.Builder)} = self under
+     * {@code match_tool silk_touch}, {@code otherwise} DIRT under {@code
+     * survives_explosion} ({@code applyExplosionCondition}, the vanilla
+     * {@code createSingleItemTableWithSilkTouch} :130-132 composition). No fortune arm —
+     * the dirt is fortune-immune by construction (the upstream :105 ignore); the GT spade
+     * convertBlockDrops self-drop arm stays in the tool-system pool (GT_Tool_Spade.java
+     * :81-89); {@code requires_correct_tool_for_drops} is NOT set (the card red line).
+     */
+    public static final class GT6GrassBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6GrassBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6GrassBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return grassLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : grassLootBlocks()) {
+                add(tBlock, createSilkTouchDispatchTable(tBlock,
+                        this.applyExplosionCondition(tBlock, LootItem.lootTableItem(net.minecraft.world.item.Items.DIRT))));
+            }
         }
     }
 }
