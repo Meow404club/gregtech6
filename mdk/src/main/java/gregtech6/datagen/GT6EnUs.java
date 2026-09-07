@@ -219,6 +219,8 @@ public class GT6EnUs extends LanguageProvider {
      * upstream WIRECUTTER registration row wording, Loader_Tools.java:131 verbatim).
      * Task p16-chisel-decalcify spec ①: the chisel display name ("Chisel", the upstream
      * CHISEL registration row wording, Loader_Tools.java:142 verbatim).
+     * Task p24-tool-system: the file + saw display names ("File"/"Saw", the upstream
+     * TOOL_LOCALISER rows CS.java:1095/:1094 verbatim).
      * Task p10-tool-creative-tab: the "Tools" creative tab title (the upstream ToolsGT
      * meta-tool category, Loader_Tools.java:114-145 registration rows; the key comes from
      * GT6Tools.TAB_TITLE_KEY so the lang face cannot drift from the registered tab —
@@ -228,6 +230,8 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.crowbar", "Crowbar");
         add("item.gt6.cutter", "Wire Cutter");
         add("item.gt6.chisel", "Chisel");
+        add("item.gt6.file", "File");
+        add("item.gt6.saw", "Saw");
         add(GT6Tools.TAB_TITLE_KEY, "Tools");
     }
 
