@@ -304,6 +304,15 @@ HAND_TRANSLATIONS = {
     "gt6.row.boiler.display.strong": ("强化蒸汽锅炉 (%s)", "hand"),
     "gt6.row.dryer.display": ("干燥器 (%s)", "hand"),
     "gt6.row.distillery.display": ("蒸馏器 (%s)", "hand"),
+    # task p24-canner-machine — the Canner family: the upstream display is the VN voltage
+    # ladder (Loader_MultiTileEntities.java:1379-1382 "Canning Machine ("+VN[tier]+")",
+    # CS.java:154) — the voltage numerals stay Latin in zh (the wire-domain proper-noun
+    # ruling), the machine word is the 罐装机 community form.
+    "gt6.row.canner.display": ("罐装机 (%s)", "hand"),
+    "gt6.row.mat.lv": ("LV", "hand"),
+    "gt6.row.mat.mv": ("MV", "hand"),
+    "gt6.row.mat.hv": ("HV", "hand"),
+    "gt6.row.mat.ev": ("EV", "hand"),
     "gt6.row.large_boiler.display": ("%s锅炉气压计核心", "hand"),
     "gt6.row.dense_wall.display": ("致密%s壁板", "hand"),
     "gt6.row.machine.display": ("%s (%s)", "hand"),

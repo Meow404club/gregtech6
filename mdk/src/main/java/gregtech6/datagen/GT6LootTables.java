@@ -87,6 +87,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
+                new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK)), // task p19-stoneblocks-render
             lookupProvider);
@@ -101,6 +102,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
+                new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK))); // task p19-stoneblocks-render
         //?}
@@ -453,6 +455,44 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : distilleryLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The canner-family block list (task p24-canner-machine): the four Canner rows
+     * (Loader_MultiTileEntities.java:1379-1382) — the distilleryLootBlocks shape verbatim,
+     * the MTE default self-drop (the same Drops==null default).
+     */
+    public static List<Block> cannerLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.CANNER_ROWS) {
+            rBlocks.add(gregtech6.registry.GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The canner-family self-drop provider (task p24-canner-machine; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6CannerBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6CannerBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6CannerBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return cannerLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : cannerLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 

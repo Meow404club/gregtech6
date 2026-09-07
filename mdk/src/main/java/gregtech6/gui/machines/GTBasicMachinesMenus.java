@@ -39,6 +39,8 @@ public final class GTBasicMachinesMenus {
 	public static final String COKE_OVEN_MENU_ID = "cokeoven";
 	/** Registry path of the Dryer GUI (task p16-machine-fluid-gui ① — the p14-dryer-family row.menu pool promise redeemed). */
 	public static final String DRYER_MENU_ID = "dryer";
+	/** Registry path of the Canner GUI (task p24-canner-machine — upstream machines/Canner.png lowercased). */
+	public static final String CANNER_MENU_ID = "canner";
 
 	public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MOD_ID);
 
@@ -57,6 +59,9 @@ public final class GTBasicMachinesMenus {
 
 	public static final RegistryObject<MenuType<GTBasicMachineMenu>> DRYER_MENU =
 		MENUS.register(DRYER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.DRYER_MENU.get(), aId, aInv, aData)));
+
+	public static final RegistryObject<MenuType<GTBasicMachineMenu>> CANNER_MENU =
+		MENUS.register(CANNER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.CANNER_MENU.get(), aId, aInv, aData)));
 	//?} else {
 	/*public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> SHREDDER_MENU =
 		MENUS.register(SHREDDER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.SHREDDER_MENU.get(), aId, aInv, aData)));
@@ -72,6 +77,9 @@ public final class GTBasicMachinesMenus {
 
 	public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> DRYER_MENU =
 		MENUS.register(DRYER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.DRYER_MENU.get(), aId, aInv, aData)));
+
+	public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> CANNER_MENU =
+		MENUS.register(CANNER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.CANNER_MENU.get(), aId, aInv, aData)));
 	 *///?}
 
 	private GTBasicMachinesMenus() {
@@ -102,6 +110,11 @@ public final class GTBasicMachinesMenus {
 		return DRYER_MENU.get();
 	}
 
+	/** The {@code gt6:canner} menu type (task p24-canner-machine, the single-block network path — the 2-input GTBasicMachineMenu shape). */
+	public static MenuType<GTBasicMachineMenu> canner() {
+		return CANNER_MENU.get();
+	}
+
 	/** FMLConstructModEvent = first mod-bus lifecycle stage, strictly before any RegisterEvent (GTMenuTypes.java:76-80 precedent). */
 	@SubscribeEvent
 	public static void onModConstruct(FMLConstructModEvent aEvent) {
@@ -114,5 +127,6 @@ public final class GTBasicMachinesMenus {
 		 *///?}
 		LOGGER.info("GT6 machine menu 'cokeoven' registered (gt6:cokeoven — the TileEntityBase10MultiBlockMachine GUI path, task p8-cokeoven-gui-menu)");
 		LOGGER.info("GT6 machine menu 'dryer' registered (gt6:dryer — the four-tier Dryer family GUI path, task p16-machine-fluid-gui)");
+		LOGGER.info("GT6 machine menu 'canner' registered (gt6:canner — the four-tier Canner family GUI path, the 2-input menu shape, task p24-canner-machine)");
 	}
 }

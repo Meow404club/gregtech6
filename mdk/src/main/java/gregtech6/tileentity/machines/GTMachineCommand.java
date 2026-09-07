@@ -33,6 +33,7 @@ import gregtech6.gui.machines.GTBasicMachineMenu;
 import gregtech6.gui.machines.GTBasicMachinesMenus;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
+import gregtech6.registry.GT6SprayCans;
 import gregtech6.tileentity.IPaintableTE;
 import gregtech6.tileentity.TileEntityBase01Root;
 
@@ -169,9 +170,16 @@ public final class GTMachineCommand {
 			.then(machine("distillery", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
 			.then(machine("distillery_t2", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t2"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
 			.then(machine("distillery_t3", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t3"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
-			.then(machine("distillery_t4", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t4"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()));
+			.then(machine("distillery_t4", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t4"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
+			// task p24-canner-machine: the canner ladder — the input feed is the empty spray
+			// can (gt6:spray_can_empty, the MultiItemRandomTools.java:246 refill row's item
+			// input; the fluid half rides the /gt6machine fluid fill arm + the p24 RCON chain)
+			.then(machine("canner", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
+			.then(machine("canner_t2", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t2"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
+			.then(machine("canner_t3", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t3"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
+			.then(machine("canner_t4", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t4"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()));
 		event.getDispatcher().register(tMachine);
-		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
+		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
 		// the p8 ladder registration line (the runServer gate asserts it): the three family
 		// BETs resolve — proof the RegistryObjects bound.
 		LOGGER.info("GT6 machine ladder registered: 12 blocks / 3 family BETs (T1-T4 validBlocks multi-attach), tiers "
@@ -184,6 +192,11 @@ public final class GTMachineCommand {
 		// family BET resolves, the row config is the upstream :1398-1401 columns.
 		LOGGER.info("GT6 distillery family registered: 4 blocks / 1 family BET (T1-T4 validBlocks multi-attach), HU bottom-face energy, "
 			+ "RM.Distillery (gt.recipe.distillery) row map, parallel 8/16/32/64 + parallelDuration, hardness 6/4/9/12.5");
+		// the p24 canner registration smoke line (the runServer gate asserts it): the family
+		// BET resolves, the row config is the upstream :1379-1382 columns.
+		LOGGER.info("GT6 canner family registered: 4 blocks / 1 family BET (T1-T4 validBlocks multi-attach), EU energy, "
+			+ "RM.Canner (gt.recipe.canner) 2/2 row map, tank capacity " + java.util.Arrays.toString(GTMachines.CANNER_TANK_CAPACITY)
+			+ ", use-output-tank T, hardness 4.0");
 	}
 
 	/** One machine literal with its four subcommands (the oven command shape, parameterised). */

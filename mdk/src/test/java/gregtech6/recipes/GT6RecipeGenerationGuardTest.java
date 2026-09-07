@@ -54,6 +54,7 @@ class GT6RecipeGenerationGuardTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesOreChain",
 			"gregtech6.recipes.GT6RecipesShCL",
 			"gregtech6.recipes.GT6RecipesStoneChisel",
+			"gregtech6.recipes.GT6RecipesCanner", // task p24-canner-machine — the refill pour joins the ledger
 	};
 
 	private static Function<String, Fluid> sDefaultFluidResolver;

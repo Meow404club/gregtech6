@@ -325,6 +325,116 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
+	// the Canner family (task p24-canner-machine) — the four rows
+	// Loader_MultiTileEntities.java:1379-1382 (aClass = MultiTileEntityBasicMachineElectric,
+	// NBT_TEXTURE "canner", TD.Energy.EU, RM.Canner, NBT_USE_OUTPUT_TANK T, NBT_TANK_CAPACITY
+	// 128000/512000/2048000/8192000, no NBT_PARALLEL → 1, no NBT_PARALLEL_DURATION → F).
+	// ONE family BET over the four tier blocks — the DRYER_ROWS MachineRow shape, with the
+	// tank-capacity and use-output-tank columns riding the {@link #cannerMachine} factory
+	// (the row record is out of this card's FILES_SCOPE, so the two extra columns are
+	// tier-indexed constants here, the TIER_INPUTS carrier form). The T5 row (:1383,
+	// NBT_INPUT 8192 / 32768000) STAYS POOLED — the R2 ruling: this repo has no 5-tier
+	// MachineRow precedent, the 5th tier unlocks with the first 5-tier family.
+	//
+	// The connectivity masks (:1379 verbatim): energy = SBIT_B (the :151 read ORs SBIT_A),
+	// item+tank in = SBIT_U|SBIT_L (NBT_INV_SIDE_IN == NBT_TANK_SIDE_IN SBIT_U|SBIT_L, the
+	// :137/:143 reads), item+tank out = SBIT_R|SBIT_D (the :138/:144 reads), tank auto in =
+	// SIDE_TOP(1), tank auto out = SIDE_BOTTOM(0), item auto in = SIDE_LEFT(2), item auto
+	// out = SIDE_RIGHT(4) (the auto-IO pool, data-only). Display name = the VN voltage
+	// ladder (upstream "Canning Machine ("+VN[tier]+")", CS.java:154 LV/MV/HV/EV) — NOT a
+	// material name like the Heat_T families, so the row mat slugs ARE the voltage ids.
+	// ---------------------------------------------------------------------------
+
+	/** The Canner family display template key ({@code gt6.row.canner.display}). */
+	public static final String CANNER_DISPLAY_KEY = "gt6.row.canner.display";
+
+	/** The registration-row tank capacities (NBT_TANK_CAPACITY :1379-1382, mB — the mMaxFluid*Size 128000 map ceiling folded into T1, the R6 ruling). */
+	public static final long[] CANNER_TANK_CAPACITY = {128000L, 512000L, 2048000L, 8192000L};
+
+	/** The four Canner rows, upstream line order :1379-1382 (T1-T4, the VN ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> CANNER_ROWS = java.util.List.of(
+			canner("canner"   , "lv", "LV", 20161,  4.0F, 0),
+			canner("canner_t2", "mv", "MV", 20162,  4.0F, 1),
+			canner("canner_t3", "hv", "HV", 20163,  4.0F, 2),
+			canner("canner_t4", "ev", "EV", 20164,  4.0F, 3));
+
+	/**
+	 * One row factory — the Canner columns that differ (path/name/id/metaId/hardness/tier)
+	 * plus the family constants: EU (NBT_ENERGY_ACCEPTED), the "canner" texture, the :1379
+	 * masks and auto sides, parallel 1 / parallelDuration F (no NBT keys), cheap
+	 * overclocking T (the :773 loop runs unconditionally in the port) and the
+	 * {@code gt6:canner} menu supplier.
+	 */
+	private static GTBasicMachineBlock.MachineRow canner(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, CANNER_DISPLAY_KEY, aMetaId, aHardness, aTier, 1, false,
+				() -> GT6RecipeMaps.CANNER, TD.Energy.EU, "canner",
+				(byte)(GTBasicMachineBlock.SBIT_B) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				GTBasicMachinesMenus.CANNER_MENU::get /*gt6:canner*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/);
+	}
+
+	/** The registered Canner blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> CANNER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Canner items, same keys as {@link #CANNER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> CANNER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : CANNER_ROWS) {
+			CANNER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CANNER_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			CANNER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Canner block list in registration order (the loot/datagen walkers). */
+	public static Block[] cannerBlockArray() {
+		Block[] rBlocks = new Block[CANNER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : CANNER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine canner — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block cannerBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = CANNER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The ONE Canner family BET: the Dryer shape verbatim — the shared factory, the four
+	 * tier blocks multi-attached, the row read off the placed block.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> CANNER_BE =
+			BLOCK_ENTITY_TYPES.register("canner", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> cannerMachine(GTMachines.CANNER_BE.get(), aPos, aState),
+					cannerBlockArray()).build(null));
+
+	/**
+	 * The Canner BET factory body — the dryerMachine body plus the two extra registration
+	 * columns the MachineRow record does not carry: NBT_USE_OUTPUT_TANK T (the mCanUseOutputTanks
+	 * fallback, upstream :132) and NBT_TANK_CAPACITY (:1379-1382, the tier-indexed
+	 * {@link #CANNER_TANK_CAPACITY} through {@link TileEntityBasicMachine#applyTankCapacity}).
+	 */
+	private static TileEntityBasicMachine cannerMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), tRow.menu());
+		applyRow(tMachine, tRow);
+		tMachine.mCanUseOutputTanks = true; // NBT_USE_OUTPUT_TANK T (:1379)
+		tMachine.mTankCapacity = CANNER_TANK_CAPACITY[tRow.tier()]; // NBT_TANK_CAPACITY (:1379-1382)
+		tMachine.applyTankCapacity(); // :157-160 — the tanks are re-armed AT the row capacity
+		return tMachine;
+	}
+
+	// ---------------------------------------------------------------------------
 	// the Distillery family (task p16-distillery-family ②) — the four rows
 	// Loader_MultiTileEntities.java:1398-1401 (aClass = MultiTileEntityBasicMachine,
 	// NBT_TEXTURE "distillery", TD.Energy.HU, RM.Distillery, NBT_CHEAP_OVERCLOCKING T,
@@ -393,9 +503,10 @@ public final class GTMachines {
 	}
 
 	/**
-	 * The paint-tint walker (task p21-paintable-tint-render): the pinned 21 machine-domain
-	 * blocks the client paint BlockColor registers over — the oven (1) + the
-	 * shredder/crusher/lathe ladders (4 each = 12) + the dryer (4) + the distillery (4),
+	 * The paint-tint walker (task p21-paintable-tint-render; the Canner ladder joins in task
+	 * p24-canner-machine): the pinned 25 machine-domain blocks the client paint BlockColor
+	 * registers over — the oven (1) + the shredder/crusher/lathe ladders (4 each = 12) + the
+	 * dryer (4) + the distillery (4) + the canner (4),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -403,7 +514,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(21);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(25);
 		rBlocks.add(OVEN.get());
 		for (RegistryObject<Block> tBlock : java.util.List.of(
 				SHREDDER, SHREDDER_T2, SHREDDER_T3, SHREDDER_T4,
@@ -413,6 +524,7 @@ public final class GTMachines {
 		}
 		java.util.Collections.addAll(rBlocks, dryerBlockArray());
 		java.util.Collections.addAll(rBlocks, distilleryBlockArray());
+		java.util.Collections.addAll(rBlocks, cannerBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -502,6 +614,10 @@ public final class GTMachines {
 								// task p16-distillery-family: the Distillery ladder, +4 rows
 								for (GTBasicMachineBlock.MachineRow tRow : DISTILLERY_ROWS) {
 									aOutput.accept(new ItemStack(DISTILLERY_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
+								// task p24-canner-machine: the Canner ladder, +4 rows
+								for (GTBasicMachineBlock.MachineRow tRow : CANNER_ROWS) {
+									aOutput.accept(new ItemStack(CANNER_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
 								// task p16-distillery-family ①: the Integrated Circuit ("Selector Tag") —
 								// the recipe-slot selector feeds these machines, the machines tab is the

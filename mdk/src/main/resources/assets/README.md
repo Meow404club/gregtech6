@@ -644,6 +644,39 @@ the borrowed canvas and the port slot geometry align by construction.
 Copied on 2026-09-05. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
+Canner family textures, task p24-canner-machine (5 PNGs, CC0 from the upstream
+canner iconset, sha256 verified):
+
+- `gt6/textures/gui/machines/canner.png` — the GUI background, upstream
+  `src/main/resources/assets/gregtech/textures/gui/machines/Canner.png`
+  (256x256 panel canvas), byte-identical, sha256
+  `1b3fb6a8a3500fcca8880852c766d7946988e7fad0c63fa4fd56c87b29c33a28`.
+  Path mapping: `machines/Canner` → `machines/canner` (the lowercase
+  ResourceLocation convention, the dryer.png entry above); the declared path is
+  exactly what the CANNER RecipeMap carries (`gt6:textures/gui/machines/canner`,
+  the RM.java:148 RES_PATH_GUI+"machines/Canner" row). The upstream canvas
+  paints its slot frames at the same coordinates the port menu uses — the
+  2-input case-2 pair (35,25)+(53,25) and the 2-output arm (107/125,25), the
+  :267-268 fluid display banks below — so the borrowed canvas and the port
+  slot geometry align by construction (the dryer.png rationale, the 2-input
+  ContainerCommonBasicMachine.java:57-60 case).
+
+- `gt6/textures/block/canner_{colored,overlay,overlay_active,overlay_running}_front.png`
+  — the p22 split-front four-layer borrow from upstream
+  `src/main/resources/assets/gregtech/textures/blocks/machines/basicmachines/canner/`,
+  produced by `mdk/tools/bake_machine_fronts.py --split-fronts
+  --machine basicmachines/canner` (the p22 ACTIVE mode; single-frame sources
+  byte-identical, the 16x64 `overlay_active` strip cropped to FRAME 0 and
+  re-encoded — the P20 "animation stays retired" deviation):
+
+  - `canner_colored_front.png`          `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (byte-identical to the six-family generic plate above)
+  - `canner_overlay_front.png`          `c022d8c0cdfa583c643aa6e74cbd8f226961f73b3e6c0fde1117e7ae27c769c6` (byte copy)
+  - `canner_overlay_front_active.png`   `2371d923ca5a3ec8b74a2b98e2d394ecfc5d167f258dd42ffeda3a08b6bdfb62` (FRAME 0 of 8 frames)
+  - `canner_overlay_front_running.png`  `9adee5ae99074244c0fb95455d21fc5aac473154e0d969960c6dc0515e67c30f` (byte copy)
+
+Copied on 2026-09-07. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
 Distillery family + Integrated Circuit textures, task p16-distillery-family:
 
 - `gt6/textures/item/integrated_circuit.png` — the Integrated Circuit item icon
