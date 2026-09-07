@@ -151,14 +151,38 @@ public class GTBarrelBlock extends GTEntityBlock {
 	 * The upstream {@code writeItemNBT2} :81-85 trimmed to what the port carries — the
 	 * tank (mode/sealed progress ride the cut sealed-fermentation pool) plus the covers
 	 * (upstream {@code 06Covers.writeItemNBT} :82, the in-repo
-	 * {@code ICoverableTE.writeCoversToNBT} pair). An empty, cover-less barrel keeps a
-	 * null tag: the drop is byte-identical to the pre-card behaviour.
+	 * {@code ICoverableTE.writeCoversToNBT} pair) plus the paint root-key pair (task
+	 * p23-barrel-paint-item-seam): a painted barrel's drop carries {@code gt.color} +
+	 * {@code gt.painted} so the picked-up stack renders tinted (GTItemPaintTint) and
+	 * placement rehydrates the colour ({@code GTBarrelBlockItem.applyItemNBT}).
+	 *
+	 * <p>The paint gate mirrors {@code TileEntityBase03TicksAndSync.saveAdditional}
+	 * (:322-325): {@code gt.painted} is written only while painted, {@code gt.color}
+	 * only beside it — an unpainted barrel carries no paint keys, so an empty,
+	 * cover-less, unpainted barrel keeps its null tag (byte-identical to the pre-card
+	 * behaviour). The root-key shape is the upstream item seam itself ({@code 07Paintable
+	 * .recolorItem} :89 {@code UT.NBT.set(stack, writeItemNBT(...))} — 1.7.10 had no
+	 * loot tables, the drop carried the keys at the root); the barrel family stays
+	 * table-less (the P12 ruling), so the machine-side {@code BlockEntityTag} loot route
+	 * (GT6LootTables.copy_nbt) is deliberately NOT copied here. The reads ride the
+	 * public {@code IPaintableTE} face — {@code isPainted()}/{@code getPaint()} are the
+	 * exact {@code mIsPainted}/{@code mRGBa} mirrors server-side (the 07Paintable :84
+	 * client material-colour inference needs a level, which a drop never has).
+	 *
+	 * <p>1.21.1 leg: there is no root tag — the closest envelope is the vanilla
+	 * {@code CUSTOM_DATA} component, and {@code GTItemPaintTint.itemColor} reads the
+	 * paint keys back out of exactly that envelope (the merge form: the existing
+	 * envelope tag is extended, never replaced).
 	 */
 	public static ItemStack writeItemNBT(TileEntityBase08Barrel aBarrel, ItemStack aStack) {
 		//? if forge {
 		CompoundTag tTag = aStack.hasTag() ? aStack.getTag() : new CompoundTag();
 		aBarrel.mTank.writeToNBT(tTag, TileEntityBase08Barrel.NBT_TANK); // upstream :84
 		aBarrel.writeCoversToNBT(tTag); // upstream 06Covers :82
+		if (aBarrel.isPainted()) { // the 03 saveAdditional :322-325 gate shape
+			tTag.putInt(TileEntityBase03TicksAndSync.NBT_COLOR, aBarrel.getPaint());
+			tTag.putBoolean(TileEntityBase03TicksAndSync.NBT_PAINTED, true);
+		}
 		aStack.setTag(tTag.isEmpty() ? null : tTag); // an empty barrel keeps the tag-less pre-card drop shape
 		//?} else {
 		/*CompoundTag tTank = new CompoundTag();
@@ -169,6 +193,13 @@ public class GTBarrelBlock extends GTEntityBlock {
 		aBarrel.writeCoversToNBT(tCovers); // upstream 06Covers :82 — the 's'..'x' lane keys ride COVER_PAYLOAD
 		if (tCovers.isEmpty()) aStack.remove(GT6DataComponents.COVER_PAYLOAD);
 		else CustomData.set(GT6DataComponents.COVER_PAYLOAD, aStack, tCovers);
+		if (aBarrel.isPainted()) { // the 03 saveAdditional :322-325 gate shape — merged into the CUSTOM_DATA envelope
+			CompoundTag tPaint = aStack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+					CustomData.EMPTY).copyTag();
+			tPaint.putInt(TileEntityBase03TicksAndSync.NBT_COLOR, aBarrel.getPaint());
+			tPaint.putBoolean(TileEntityBase03TicksAndSync.NBT_PAINTED, true);
+			CustomData.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, aStack, tPaint);
+		}
 		 *///?}
 		return aStack;
 	}
