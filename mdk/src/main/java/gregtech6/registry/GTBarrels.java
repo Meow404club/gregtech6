@@ -262,6 +262,29 @@ public final class GTBarrels {
 	private GTBarrels() {}
 
 	/**
+	 * The barrel-family paint-tint walker (task p23-barrel-paint-render): the pinned 16
+	 * barrel-domain blocks the client paint Block/Item colors register over — the wood
+	 * barrel + plastic canister + bronze drum + logistics tank (4 standalone rows) plus the
+	 * twelve high-tier metal drums (the :2159-2170 ladder, {@link #METAL_DRUM_BLOCKS} in
+	 * registration order). The paint CAPABILITY itself predates this card: every barrel BE
+	 * rides {@code TileEntityBase08Barrel extends TileEntityBase03TicksAndSync}
+	 * (IPaintableTE), so {@code /gt6machine paint} and the spray can already write the NBT —
+	 * this walker only exposes the render consumer face (the {@code GTMachinePaintTint}/
+	 * {@code GTItemPaintTint} registration census, the GTMachines.paintableBlockArray 21
+	 * precedent). Client-side call time only.
+	 */
+	public static Block[] paintableBlockArray() {
+		Block[] rBlocks = new Block[4 + METAL_DRUM_BLOCKS.size()];
+		rBlocks[0] = BARREL.get();
+		rBlocks[1] = BARREL_PLASTIC.get();
+		rBlocks[2] = BARREL_METAL.get();
+		rBlocks[3] = BARREL_LOGISTICS.get();
+		int i = 4;
+		for (RegistryObject<GTBarrelBlock> tBlock : METAL_DRUM_BLOCKS.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/**
 	 * The material melting-point bridge (task p7 spec ①) — the verbatim
 	 * {@code TileEntityBase08Barrel.readFromNBT2} :66 pair of branches split over two
 	 * overloads: the row NBT home is the block carrier, so the explicit-HU branch lives
