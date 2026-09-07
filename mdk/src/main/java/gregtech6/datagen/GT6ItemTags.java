@@ -18,6 +18,11 @@ import net.minecraftforge.common.Tags;
 /*import net.neoforged.neoforge.common.Tags;
 *///?}
 
+import gregapi.data.OP;
+import gregapi.oredict.OreDictMaterial;
+import gregapi.oredict.OreDictPrefix;
+import gregtech6.registry.GTMaterialBlocks;
+import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GT6Tools;
 
 /**
@@ -61,6 +66,45 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/** The plateCurvedSn recipe-material translation — #gt6:plate_curved_tin (snake ruling). */
 	public static final TagKey<Item> PLATE_CURVED_TIN = gt6("plate_curved_tin");
 
+	/**
+	 * The platform material-tag namespace (task p24-tags-provider-skeleton, the
+	 * decisions.p24-tool-system-tag-strategy namespace face): {@code forge} on 1.20.1 (the
+	 * Tags.Items constants — Tags.java:310-312/:220/:256) and {@code c} on NeoForge 21.1
+	 * (Tags.java:799/:923). The emitted JSON location follows the tag id's namespace
+	 * automatically — {@code data/forge/tags/items/**} vs {@code data/c/tags/items/**} —
+	 * which is the whole fork surface: the family paths below are namespace-free.
+	 */
+	//? if forge {
+	public static final String MATERIALS_NAMESPACE = "forge";
+	//?} else {
+	/*public static final String MATERIALS_NAMESPACE = "c";
+	*///?}
+
+	/** The ingot family — GTCEu TagPrefix.java:279 {@code defaultTagPath("ingots/%s")}. */
+	public static final String INGOTS_FAMILY = "ingots/%s";
+
+	/** The dust family — GTCEu TagPrefix.java:405 {@code defaultTagPath("dusts/%s")}. */
+	public static final String DUSTS_FAMILY = "dusts/%s";
+
+	/** The gem family — GTCEu TagPrefix.java:290 {@code defaultTagPath("gems/%s")}. */
+	public static final String GEMS_FAMILY = "gems/%s";
+
+	/** The nugget family — GTCEu TagPrefix.java:416 {@code defaultTagPath("nuggets/%s")}. */
+	public static final String NUGGETS_FAMILY = "nuggets/%s";
+
+	/**
+	 * The storage-block family — GTCEu TagPrefix.java:727-729, the "Block of %s" prefix
+	 * ("consisting out of 9 Ingots/Gems/Dusts") over the GT6 {@code blockIngot}/{@code
+	 * blockGem}/{@code blockDust} block items.
+	 */
+	public static final String STORAGE_BLOCKS_FAMILY = "storage_blocks/%s";
+
+	/**
+	 * The raw-storage-block family — GTCEu TagPrefix.java:223, the rawOreBlock prefix
+	 * {@code defaultTagPath("storage_blocks/raw_%s")} over the GT6 {@code blockRaw} items.
+	 */
+	public static final String STORAGE_BLOCKS_RAW_FAMILY = "storage_blocks/raw_%s";
+
 	public GT6ItemTags(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider,
 			ExistingFileHelper aExistingFileHelper) {
 		super(aOutput, Registries.ITEM, aLookupProvider, GT6DataGenerators.MOD_ID, aExistingFileHelper);
@@ -72,6 +116,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		// bands AFTER the tool band, one band per logical family (the GT6EnUs table-tail
 		// append convention), and hoists shared helpers if a second caller appears.
 		addToolTags(aProvider);
+		addMaterialTags(aProvider);
 	}
 
 	/**
@@ -89,6 +134,68 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(Tags.Items.TOOLS).add(
 				item(GT6Tools.FILE.getId()), item(GT6Tools.SAW.getId()),
 				item(GT6Tools.CROWBAR.getId()), item(GT6Tools.CUTTER.getId()), item(GT6Tools.CHISEL.getId()));
+	}
+
+	/**
+	 * The p24 tags-foundation material band: the first P0 platform item tags — one
+	 * {@code <platform>:<family>/<material>} tag per (family, material) that actually has
+	 * a registered item, strictly NO {@code addOptional} (TagsProvider.java:85-94 throws on
+	 * a missing reference, and every id below is a live-registered item at datagen time —
+	 * both walks are the registration walks, so a gap fails runData loudly). Family paths
+	 * are the GTCEu {@code defaultTagPath} precedents (the constants above); the material
+	 * segment is the GT {@code mNameInternal} snake — the same composition as the item ids
+	 * ({@link GTMaterialItems#itemIdOf}), keeping tag and member derivable from one rule
+	 * (cross-mod name normalization is a declared later-card open item). The namespace is
+	 * {@link #MATERIALS_NAMESPACE}; a future band that needs to COPY block tags migrates to
+	 * the {@code contentsGetter()} ItemTagsProvider shape (vanilla TagsProvider.java:119-121,
+	 * RemoveTagDatagenTest.java:58) — this batch has only element members, so the plain
+	 * TagsProvider surface stays.
+	 */
+	private void addMaterialTags(HolderLookup.Provider aProvider) {
+		// item-path families: the ingot/dust/gem/nugget items over the material universe
+		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+			String tFamily = itemTagFamily(tPair.prefix());
+			if (tFamily != null) {
+				tag(materialTag(tFamily, tPair.material()))
+						.add(item(gt6Rl(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()))));
+			}
+		}
+		// storage-block families: the blockPath prefixes' block ITEMS (the registered truth,
+		// not the offline walk — a defensively-deduped id has no item and must not dangle)
+		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.items().keySet()) {
+			String tFamily = storageTagFamily(tPair.prefix());
+			if (tFamily != null) {
+				tag(materialTag(tFamily, tPair.material()))
+						.add(item(gt6Rl(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()))));
+			}
+		}
+	}
+
+	/** The platform tag key of one (family, material) face — {@code <namespace>:<family>/<materialSnake>}. */
+	public static TagKey<Item> materialTag(String aFamilyPath, OreDictMaterial aMaterial) {
+		// the composed path lives in a local so both ctor args are bare identifiers — the
+		// stonecutter two-arg-ctor shift deliberately skips parenthesized argument
+		// expressions (mdk/stonecutter.gradle.kts regex note), so an inline
+		// formatted(...) argument would stay un-shifted and break the 21.1 leg compile
+		String tPath = aFamilyPath.formatted(GTMaterialItems.snakeCase(aMaterial.mNameInternal));
+		// the 1.20.1 two-arg ctor form; shifted to fromNamespaceAndPath on the 21.1 leg
+		return TagKey.create(Registries.ITEM, new ResourceLocation(MATERIALS_NAMESPACE, tPath));
+	}
+
+	/** The item-path family path of a prefix, or null when the prefix carries no P0 platform tag. */
+	private static String itemTagFamily(OreDictPrefix aPrefix) {
+		if (aPrefix == OP.ingot) return INGOTS_FAMILY;
+		if (aPrefix == OP.dust) return DUSTS_FAMILY;
+		if (aPrefix == OP.gem) return GEMS_FAMILY;
+		if (aPrefix == OP.nugget) return NUGGETS_FAMILY;
+		return null;
+	}
+
+	/** The storage-block family path of a prefix, or null when the prefix is not a storage block (plate/solid). */
+	private static String storageTagFamily(OreDictPrefix aPrefix) {
+		if (aPrefix == OP.blockIngot || aPrefix == OP.blockGem || aPrefix == OP.blockDust) return STORAGE_BLOCKS_FAMILY;
+		if (aPrefix == OP.blockRaw) return STORAGE_BLOCKS_RAW_FAMILY;
+		return null;
 	}
 
 	// ------------------------------------------------------------------ shared helpers
