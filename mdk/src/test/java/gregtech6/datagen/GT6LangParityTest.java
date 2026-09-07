@@ -76,8 +76,14 @@ public class GT6LangParityTest {
 	 * reconciliation (the S2 merge session): the p24-canner-machine landing added the +5
 	 * Canner keys (the family template + the four VN row units), so the measured total on
 	 * the merged main is 2555 — the ratchet follows the measurement.
+	 *
+	 * <p>Task p24-lightning-rod: raised to the measured 2571 — the Lightning Rod family
+	 * added the +16 keys (the controller + the three atomic part names + the nine
+	 * structure/efficiency tooltip lines + the two composed energy lines, both locales,
+	 * zh values from the reference table's hand rows). Both committed generated faces
+	 * count exactly 2571 keys with zero set difference.
 	 */
-	private static final int ZH_KEY_FLOOR = 2555;
+	private static final int ZH_KEY_FLOOR = 2571;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
