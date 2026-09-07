@@ -1,10 +1,18 @@
 /*
  * Offline pinned-count tests for task p21-paintable-tint-render: the generated machine
- * blockstate/model JSONs carry tintindex 0 on every face of all three models per machine —
- * the generated-JSON half of the 21x3 census, asserted against the committed src/generated
- * tree (the GT6StoneBlocksRenderDatagenTest split: the write side is gated by runData,
- * first run written>0, second run written:0; the datagen-JVM counter half is the
- * GT6BlockStates runData log line).
+ * blockstate/model JSONs carry tintindex 0 on every BODY face of all three models per
+ * machine — the generated-JSON half of the 21x3 census, asserted against the committed
+ * src/generated tree (the GT6StoneBlocksRenderDatagenTest split: the write side is gated
+ * by runData, first run written>0, second run written:0; the datagen-JVM counter half is
+ * the GT6BlockStates runData log line).
+ *
+ * <p>Task p22-paint-front-overlay-split extends the shape: each model is TWO elements —
+ * the tinted body cube (p21, unchanged) plus a thin front decal with NO tintindex
+ * (the upstream two-layer getTexture2 form: the state overlay layer is UNCOLOURED,
+ * MultiTileEntityBasicMachine.java:1014 + BlockTextureDefault.java:179-180), so a painted
+ * machine no longer re-tints its active/running state decal. The p20 baked-front
+ * composites are retired for the separate colored/_colored_front + _overlay_front*
+ * borrows (assets/README.md).
  *
  * <p>Census ground truth: the machine domain is oven (1) + shredder/crusher/lathe T1-T4
  * (12) + dryer (4) + distillery (4) = 21 blocks (the GTMachines.paintableBlockArray
@@ -21,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -44,8 +53,9 @@ class GT6MachinePaintRenderDatagenTest {
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
 
-    /** The front-texture state suffix per model (the addMachine texture carriers). */
-    private static final List<String> FRONT_SUFFIXES = List.of("_front", "_front_active", "_front_running");
+    /** The overlay-texture state suffix per model (the p22 split-front decal carriers). */
+    private static final List<String> OVERLAY_SUFFIXES =
+            List.of("_overlay_front", "_overlay_front_active", "_overlay_front_running");
 
     private static final List<String> FACE_KEYS = List.of("down", "up", "north", "south", "west", "east");
 
@@ -73,7 +83,7 @@ class GT6MachinePaintRenderDatagenTest {
                 "21 blocks x 3 models — the pinned tinted-model total");
     }
 
-    /** Every machine block model: the block/cube parent, six textures, one element whose six faces all carry tintindex 0. */
+    /** Every machine block model: the block/cube parent, the seven-texture key set, the full tinted body cube + the thin untinted front decal (task p22-paint-front-overlay-split). */
     @Test
     void everyMachineModelCarriesTintIndexZeroOnAllSixFaces() throws Exception {
         for (String tBase : MACHINE_BASES) {
@@ -84,20 +94,27 @@ class GT6MachinePaintRenderDatagenTest {
                 assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(),
                         tModelName + ": the block/cube parent (display transforms + particle binding kept)");
                 var tTextures = tModel.getAsJsonObject("textures");
-                assertEquals("gt6:block/" + tFamily + FRONT_SUFFIXES.get(tSuffix),
+                assertEquals("gt6:block/" + tFamily + "_colored_front",
                         tTextures.get("north").getAsString(),
-                        tModelName + ": the family front texture for this state");
-                assertEquals(Set.copyOf(FACE_KEYS), tTextures.keySet(),
-                        tModelName + ": the six-texture key set");
+                        tModelName + ": the plain grayscale family front (the P22 colored/ borrow)");
+                assertEquals("gt6:block/" + tFamily + OVERLAY_SUFFIXES.get(tSuffix),
+                        tTextures.get("overlay").getAsString(),
+                        tModelName + ": the family state decal for this state");
+                Set<String> tExpectedKeys = new HashSet<>(FACE_KEYS); // the six body keys…
+                tExpectedKeys.add("overlay"); // …plus the decal key
+                assertEquals(tExpectedKeys, tTextures.keySet(),
+                        tModelName + ": the seven-texture key set (six body keys + the decal)");
                 var tElements = tModel.getAsJsonArray("elements");
-                assertEquals(1, tElements.size(), tModelName + ": one element");
-                JsonObject tElement = tElements.get(0).getAsJsonObject();
-                assertEquals(0.0, tElement.getAsJsonArray("from").get(0).getAsDouble(),
-                        tModelName + ": element from = the full 0..16 cube");
-                assertEquals(16.0, tElement.getAsJsonArray("to").get(0).getAsDouble(),
-                        tModelName + ": element to = the full 0..16 cube");
-                var tFaces = tElement.getAsJsonObject("faces");
-                assertEquals(6, tFaces.size(), tModelName + ": six faces");
+                assertEquals(2, tElements.size(), tModelName + ": body cube + front decal (the p22 split)");
+
+                // element 0 — the body cube, unchanged from p21: full 0..16, six faces, tintindex 0 each.
+                JsonObject tBody = tElements.get(0).getAsJsonObject();
+                assertEquals(0.0, tBody.getAsJsonArray("from").get(0).getAsDouble(),
+                        tModelName + ": body from = the full 0..16 cube");
+                assertEquals(16.0, tBody.getAsJsonArray("to").get(0).getAsDouble(),
+                        tModelName + ": body to = the full 0..16 cube");
+                var tFaces = tBody.getAsJsonObject("faces");
+                assertEquals(6, tFaces.size(), tModelName + ": six body faces");
                 for (String tFaceKey : FACE_KEYS) {
                     JsonObject tFace = tFaces.getAsJsonObject(tFaceKey);
                     assertEquals("#" + tFaceKey, tFace.get("texture").getAsString(),
@@ -107,6 +124,29 @@ class GT6MachinePaintRenderDatagenTest {
                     assertEquals(tFaceKey, tFace.get("cullface").getAsString(),
                             tModelName + " face " + tFaceKey + ": the vanilla cube cullface");
                 }
+
+                // element 1 — the front decal: 16x16x0.01 floating 0.01 north of the body
+                // plane, one north face, NO tintindex (the upstream UNCOLOURED overlay layer),
+                // cullface north syncing its cull with the body's own north face.
+                JsonObject tDecal = tElements.get(1).getAsJsonObject();
+                assertEquals(0.0, tDecal.getAsJsonArray("from").get(0).getAsDouble(),
+                        tModelName + ": decal from x = full width");
+                assertEquals(-0.01, tDecal.getAsJsonArray("from").get(2).getAsDouble(),
+                        tModelName + ": decal from z = 0.01 north of the body plane (anti z-fight)");
+                assertEquals(16.0, tDecal.getAsJsonArray("to").get(0).getAsDouble(),
+                        tModelName + ": decal to x = full width");
+                assertEquals(0.0, tDecal.getAsJsonArray("to").get(2).getAsDouble(),
+                        tModelName + ": decal to z = flush with the body plane");
+                var tDecalFaces = tDecal.getAsJsonObject("faces");
+                assertEquals(1, tDecalFaces.size(), tModelName + ": the decal is a single north quad");
+                JsonObject tDecalNorth = tDecalFaces.getAsJsonObject("north");
+                assertEquals("#overlay", tDecalNorth.get("texture").getAsString(),
+                        tModelName + ": decal face texture = the state decal");
+                assertTrue(!tDecalNorth.has("tintindex"),
+                        tModelName + ": decal face has NO tintindex — the untinted overlay layer "
+                                + "(BlockTextureDefault(IIcon,boolean) = UNCOLOURED)");
+                assertEquals("north", tDecalNorth.get("cullface").getAsString(),
+                        tModelName + ": decal face cullface north — syncs its cull with the body");
             }
         }
     }

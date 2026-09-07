@@ -285,13 +285,15 @@ public final class GT6BlockStates extends BlockStateProvider {
      * The texture-base overload (task p8-machine-tiers-doinject ⑧): the model names derive
      * from {@code aBase} (so shredder_t2 gets shredder_t2/_active/_running models + its own
      * 16-variant blockstate + the item parent) while the FRONT TEXTURES stay on the family's
-     * T1 set ({@code aTextureBase_front*}) — the tier is not a visual state upstream (the
-     * rows :1294-1309 share the NBT_TEXTURE per family), so the ladder adds zero PNGs.
+     * T1 set ({@code aTextureBase_colored_front} + the {@code aTextureBase_overlay_front*}
+     * state trio, task p22-paint-front-overlay-split) — the tier is not a visual state
+     * upstream (the rows :1294-1309 share the NBT_TEXTURE per family), so the ladder adds
+     * zero PNGs.
      */
     private void addMachine(Block aBlock, String aBase, String aTextureBase) {
-        ModelFile tInactive = machineModel(aBase, aTextureBase + "_front");
-        ModelFile tActive = machineModel(aBase + "_active", aTextureBase + "_front_active");
-        ModelFile tRunning = machineModel(aBase + "_running", aTextureBase + "_front_running");
+        ModelFile tInactive = machineModel(aBase, aTextureBase + "_colored_front", aTextureBase + "_overlay_front");
+        ModelFile tActive = machineModel(aBase + "_active", aTextureBase + "_colored_front", aTextureBase + "_overlay_front_active");
+        ModelFile tRunning = machineModel(aBase + "_running", aTextureBase + "_colored_front", aTextureBase + "_overlay_front_running");
         getVariantBuilder(aBlock).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(GTOvenBlock.FACING)) {
@@ -320,8 +322,24 @@ public final class GT6BlockStates extends BlockStateProvider {
      * parent-only {@code models().cube} form (no explicit UVs — they default to the element
      * bounds; the {@code block/cube} parent keeps the display transforms and its
      * {@code particle = #down} binding).
+     *
+     * <p>Task p22-paint-front-overlay-split: the former single BAKED front composite
+     * (colored base + state overlay flattened, the P20 bake) is retired for the upstream
+     * TWO-LAYER form (:1014 = BlockTextureMulti(BlockTextureDefault(colored, mRGBa),
+     * BlockTextureDefault(state overlay)) with the second layer UNCOLOURED,
+     * BlockTextureDefault.java:179-180 — the state decal is never tinted by the paint).
+     * The north body face now carries the plain grayscale {@code aFrontTexture}
+     * ({@code <family>_colored_front}), and a second thin element — 16x16x0.01 floating
+     * 0.01 north of the body plane (inside the vanilla [-16,32] element tolerance) —
+     * carries the state decal {@code aOverlayTexture} with NO tintindex (FaceBuilder's
+     * default -1 omits the key), so {@code GTMachinePaintTint} (which only maps
+     * tintindex 0) cannot re-tint it. The decal's single north face keeps
+     * {@code cullface north}, mirroring the body cube's own north cullface: a solid
+     * neighbor to the north hides body face and decal together (no decal floating
+     * behind a wall), and the 0.01 offset keeps the decal off the body plane (no
+     * coplanar z-fighting). The old baked fronts are retired in assets/README.md.
      */
-    private ModelFile machineModel(String aName, String aFrontTexture) {
+    private ModelFile machineModel(String aName, String aFrontTexture, String aOverlayTexture) {
         BlockModelBuilder tModel = models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/cube")))
                 .texture("down", modLoc("block/oven_bottom"))
@@ -329,10 +347,15 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("north", modLoc("block/" + aFrontTexture))
                 .texture("south", modLoc("block/oven_side"))
                 .texture("west", modLoc("block/oven_side"))
-                .texture("east", modLoc("block/oven_side"));
+                .texture("east", modLoc("block/oven_side"))
+                .texture("overlay", modLoc("block/" + aOverlayTexture));
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
                 .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        tModel.element()
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay").cullface(Direction.NORTH)
                 .end();
         mMachineTintModels++;
         return tModel;

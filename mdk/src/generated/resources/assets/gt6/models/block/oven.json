@@ -44,12 +44,31 @@
         16,
         16
       ]
+    },
+    {
+      "faces": {
+        "north": {
+          "cullface": "north",
+          "texture": "#overlay"
+        }
+      },
+      "from": [
+        0,
+        0,
+        -0.01
+      ],
+      "to": [
+        16,
+        16,
+        0
+      ]
     }
   ],
   "textures": {
     "down": "gt6:block/oven_bottom",
     "east": "gt6:block/oven_side",
-    "north": "gt6:block/oven_front",
+    "north": "gt6:block/oven_colored_front",
+    "overlay": "gt6:block/oven_overlay_front",
     "south": "gt6:block/oven_side",
     "up": "gt6:block/oven_top",
     "west": "gt6:block/oven_side"

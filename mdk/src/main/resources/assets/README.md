@@ -1296,7 +1296,10 @@ Dedication** (same upstream `README.md` block as above).
   - `WINDMILL_TILES_B.PNG` `7bc82814a3fb35982779453555799daa7f7f46a930abb46fd6a133e58c6faf58`
   - `SQUARE_BRICKS.PNG` `b7cfff5afad72b0359bd810564bf876f5930b3c525bfab5b6e2367640c858dc0`
 
-Machine front + shared body textures, task p20-borrow-machine-fronts: the 21
+Machine front + shared body textures, task p20-borrow-machine-fronts (the
+`<family>_front{,_active,_running}.png` COMPOSITES are RETIRED by task
+p22-paint-front-overlay-split — see the split-borrow section below; the
+`oven_{bottom,top,side}.png` body borrows remain ACTIVE): the 21
 PNGs under `gt6/textures/block/` (`<family>_front{,_active,_running}.png` for
 the six families the model enumeration carries — oven, shredder, crusher,
 lathe, dryer, distillery (GT6BlockStates.java:85-140; the T2-T4 ladder rows
@@ -1348,7 +1351,9 @@ Overlay source digests per family (`overlay/front`, `overlay_active/front`,
               `822b52fc5f647891438ad6467c58f05135946e6272b4e3826ccd9ffa7ce07ab6` (16x64, 4 frames)
               `88b5c302301a4773e5b880878f9423a79d3e12c2ac05dbb2a3c31dd84c961a57`
 
-Baked product digests (16x16, fully opaque):
+Baked product digests (16x16, fully opaque) — RETIRED products, REMOVED from
+the tree by task p22-paint-front-overlay-split (kept as the historical audit
+trail of the P19/P20 bake; no model references them any more):
 
 - `oven_front.png`         `a7e6ff28615bd73a017a9e59518023b80e823a6178117d58fecfc606053d5ee6`
 - `oven_front_active.png`  `6af996a09c044b943dc6d0fc69cbe7ac74340e860b952c10429cff28426a5675`
@@ -1392,6 +1397,58 @@ per-face pass system stays the render pool card.
 
 Baked / copied on 2026-09-06. Upstream license: **CC0 1.0 Universal Public
 Domain Dedication** (same upstream `README.md` block as above).
+
+Split machine front layers, task p22-paint-front-overlay-split (2026-09-07):
+the baked composites above are RETIRED — the machine model is now the upstream
+TWO-LAYER form (datagen TWO elements per model: the tinted body cube keeps the
+plain grayscale `colored/front` north face; the state decal is a separate thin
+untinted front quad, mirroring MultiTileEntityBasicMachine.java:1014 +
+BlockTextureDefault.java:179-180 where the overlay layer is UNCOLOURED and is
+never multiplied by mRGBa — a painted machine no longer re-tints its
+active/running decal). All 18 `<family>_front{,_active,_running}.png`
+composites were REMOVED (their digests above stay as the retired bake's audit
+trail); the bake mode of `mdk/tools/bake_machine_fronts.py` is kept only as the
+byte-reproducible audit path, its ACTIVE mode is `--split-fronts`.
+
+The split borrows (24 PNGs under `gt6/textures/block/`, CC0 from the same
+upstream family iconsets; single-frame sources are byte-identical copies,
+16xN strips are cropped to FRAME 0 and re-encoded — the P20 "animation stays
+retired" deviation carries over verbatim):
+
+- `<family>_colored_front.png` — the generic machine plate, byte-identical
+  across all six families AND to the oven body faces (upstream
+  `colored/front.png` per family):
+  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `<family>_overlay_front.png` (inactive decal), byte-identical copies of
+  upstream `overlay/front.png`:
+  - oven        `3da4d0f7d578f6e08102a0b7615160035997d58affc26c7d13813b678c4bd7fd`
+  - shredder    `92aba8f65d8955a5eddb687e3852d68457409be2d540983903fe8f17ef6708c8`
+  - crusher     `8306618d4de778652178fb8761174baeebbefb8bae4c80b61598618af6ae7fd0`
+  - lathe       `71134a5929e77c46002534aed767578e250381c981454583759a4ba1e57f9132`
+  - dryer       `5b17e8425cccdec0932990c7a31db6ef1a7d4ae96b6905ed1ca268d2cfb54a5f`
+  - distillery  `a36ecca013dbd36ddc02f10d2ce0ec640030147ddb3c180c299fac67ad57e4d3`
+- `<family>_overlay_front_active.png` (active decal, FRAME 0 of the 16xN
+  strips — 8/4/8/6/8/4 frames respectively; cropped products, NOT byte copies):
+  - oven        `f5d2e58d185c1f4abcf65b7fa8bfcc3267d0c09c9a08b1a8c17916d1dba82209`
+  - shredder    `9cb70f16c77d6d24ad7f9f286a1ad08d35046a30a820ef914df8e45f9baeba82`
+  - crusher     `7edf49a0e0546f3014fb614311f1b2502138cdc541d6d5e11365073d5005a260`
+  - lathe       `5a227c7e98ca34ad5be4964f433ae0229e4ee63ba60d5a5829bf39a8bfeab88a`
+  - dryer       `5147699d6c5e1dead58a7c5a389f53fa18fde768de2e0e9489903b2bc5ea5f60`
+  - distillery  `50813e576e4ac5be015283b7dcd57c5dc667ffa0b2acc8b2d6899ae2bea70883`
+- `<family>_overlay_front_running.png` (running decal; oven/dryer/distillery
+  are single-frame byte copies, shredder/crusher/lathe are FRAME-0 crops of
+  4/8/6-frame strips):
+  - oven        `cd5857690ac01a9fc10e3aadd4fe3afe3c2372d685ef0bcf14b680756b92b85e`
+  - shredder    `8807bef2098c6fb163431c0c59f8c2d67a045fa68e5d53bf102c5c2c789809a4`
+  - crusher     `0e90f0c0dbc13b7ca66224eaa213deda4abfd26930f2fa7287c03a902b0bcb0a`
+  - lathe       `9758ec8e367e2fbc12e6cec3e1f03f77f358226eaeaae3155981f64ff47a22c2`
+  - dryer       `b37a675b2e2ed105118a1b3de15332dc92459da03084b2310ce5d7efc7b049a0`
+  - distillery  `88b5c302301a4773e5b880878f9423a79d3e12c2ac05dbb2a3c31dd84c961a57`
+
+The P9 GTOvenOverlayModel strip borrows (`oven_overlay_active_front.png`,
+`oven_overlay_running_front.png`, full 16xN strips, digests in the P20 overlay
+source table above) are a DIFFERENT namespace consumed by the oven render
+snapshot system and are untouched by this split.
 GT6 item materialicon textures, task p20-borrow-item-material-sets-a: the 1373
 PNGs under `gt6/textures/item/material_sets/<set>/<prefix>.png` — the
 alphabetical first half of the 40-set census (`brick`..`lignite`; the second
