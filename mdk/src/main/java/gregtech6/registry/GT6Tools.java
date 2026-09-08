@@ -18,6 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.GT6Mod;
+import gregtech6.items.tools.GT6BendingCylinderSmallItem;
 import gregtech6.items.tools.GT6BuilderWandItem;
 import gregtech6.items.tools.GT6FileItem;
 import gregtech6.items.tools.GT6ScrewdriverItem;
@@ -177,6 +178,23 @@ public final class GT6Tools {
 			() -> new GTWrenchItem(new Item.Properties().durability(GTWrenchItem.DURABILITY_POINTS)));
 
 	/**
+	 * The formal small bending cylinder — item id {@code gt6:bending_cylinder_small} (task
+	 * p25-food-can-row0 spec ②, the GT6FileItem form with the census OFF). Single steel
+	 * tier, durability 512 (the family value; upstream scales per material via
+	 * {@code setMaterialAmount(3*U)}, Loader_Tools.java:146 — the same pool cut). Upstream
+	 * display name "Small Bending Cylinder" (the same :146 registration row); the
+	 * crafting-loss face rides {@link GT6BendingCylinderSmallItem#getCraftingRemainingItem}
+	 * (the shared one-point mapping, the upstream 25-unit row folded); the crafting
+	 * INGREDIENT face is the {@code #gt6:tools/bending_cylinder_small} item tag (GT6ItemTags,
+	 * the craftingToolBendingCylinderSmall snake, CS.java:1903). RED LINE: zero ToolAction
+	 * surface — the upstream cylinder isMinableBlock returns false verbatim
+	 * (GT_Tool_BendingCylinderSmall.java:59-60) and carries no Behavior_Tool machine face,
+	 * so the census is structurally empty; no {@code canPerformAction} override exists.
+	 */
+	public static final RegistryObject<Item> BENDING_CYLINDER_SMALL = ITEMS.register("bending_cylinder_small",
+			() -> new GT6BendingCylinderSmallItem(new Item.Properties().durability(GT6BendingCylinderSmallItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -186,9 +204,10 @@ public final class GT6Tools {
 	 * GTWires.ELECTRIC_WIRES_TAB form). Task p24-tool-system appended rows 3/4 (file,
 	 * saw); task p24-builder-wand appended row 5 (the builder wand); task
 	 * p24-screwdriver-item appends row 6 (the screwdriver); task p25-tool-hammer-wrench
-	 * appends rows 7/8 (the hammer, the wrench).
+	 * appends rows 7/8 (the hammer, the wrench); task p25-food-can-row0 appends row 9
+	 * (the small bending cylinder).
 	 */
-	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH);
+	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -253,6 +272,8 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.HAMMER.get()), GTHammerItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.WRENCH.get()), GTWrenchItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.BENDING_CYLINDER_SMALL.get()), GT6BendingCylinderSmallItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",
