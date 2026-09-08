@@ -21,6 +21,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictMaterialStack;
 import gregapi.tileentity.machines.ITileEntityCrucible;
 import gregapi.tileentity.machines.ITileEntityMold;
+import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregapi.tileentity.temperature.ITileEntityTemperature;
 import gregapi.util.CruciblePhysics;
 import gregtech6.multiblock.GTMultiBlockPattern;
@@ -85,7 +86,7 @@ import gregtech6.tileentity.MaterialStackNBT;
  * counts on the controller's own tick cycle (mTimer % 10) — no global-clock face is
  * ported and the decay semantics (rate, floor) are identical.
  */
-public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implements ITileEntityCrucible, ITileEntityTemperature {
+public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implements ITileEntityCrucible, ITileEntityTemperature, ITileEntityEnergy {
 
 	// ---------------------------------------------------------------------------
 	// the constants (upstream :78-80, consuming the A-card LARGE parameter face)
@@ -137,8 +138,14 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	/** The molten content (upstream :86 mContent — the List of material stacks). */
 	public final List<OreDictMaterialStack> mContent = new ArrayList<>();
 
-	protected TileEntityCrucible(BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
-		super(aType, aPos, aState);
+	/** The registry-path constructor (the BlockEntityType.Builder.of factory form, the oven precedent). */
+	public TileEntityCrucible(BlockPos aPos, BlockState aState) {
+		this(null, aPos, aState);
+	}
+
+	/** The test seam: offline fixtures build their own BET (the frozen registry keeps .get() out of reach). */
+	protected TileEntityCrucible(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
+		super(aType != null ? aType : gregtech6.registry.GT6Crucibles.MULTIBLOCK_CRUCIBLE_BE.get(), aPos, aState);
 		// the crucible has NO facing semantics upstream (getDefaultSide SIDE_UP :689, the
 		// structure fully symmetric around the controller cell). The shared checker's cell
 		// arithmetic ("the structure core sits BEHIND the facing", cellOffset = p - OFF)
@@ -190,6 +197,9 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	 * here is the offline-test binding only.
 	 */
 	protected Block getWallBlock() {
+		if (getLevel() != null && getBlockState().getBlock() instanceof gregtech6.block.multiblock.GTCrucibleControllerBlock tBlock) {
+			return gregtech6.registry.GT6Crucibles.wallBlockOf(tBlock.row()); // the row's NBT_DESIGN wall identity
+		}
 		return Blocks.BRICKS;
 	}
 
@@ -284,6 +294,58 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		OreDictMaterial tShell = getShellMaterial();
 		if (tShell == null) return Long.MAX_VALUE; // the offline no-material form never melts
 		return CruciblePhysics.temperatureMax(tShell, HEAT_RESISTANCE_BONUS); // :416-418
+	}
+
+	// ---------------------------------------------------------------------------
+	// the energy face (upstream :699-709, ITileEntityEnergy — the y+0 HU intake)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream :701 — accepting, never emitting. The HU arm is the burning-box feed the
+	 * y+0 ONLY_ENERGY_IN ring exists for; the KU (oxygen steel-making), CU (cooling) and
+	 * VIS_IGNIS arms of the upstream ENERGYTYPES list are the declared defer pool
+	 * (SPEC ⑥), so this face answers HU only.
+	 */
+	@Override
+	public boolean isEnergyType(gregapi.code.TagData aEnergyType, byte aSide, boolean aEmitting) {
+		return !aEmitting && aEnergyType == gregapi.data.TD.Energy.HU;
+	}
+
+	/**
+	 * Upstream :704 doInject, the HU arm verbatim — the buffer charge the :353-365 heat
+	 * step consumes (the KU Air-injection branch and the CU drain branch defer with the
+	 * energy-type list). The packet size bookkeeping is upstream-exact.
+	 */
+	@Override
+	public long doInject(gregapi.code.TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
+		if (aDoInject) mEnergy += Math.abs(aAmount * aSize);
+		return aAmount;
+	}
+
+	/** Upstream :705 — the crucible always demands more (the melt is unbounded until the ceiling). */
+	@Override
+	public long getEnergyDemanded(gregapi.code.TagData aEnergyType, byte aSide, long aSize) {
+		return Long.MAX_VALUE - mEnergy;
+	}
+
+	@Override
+	public long getEnergySizeInputMin(gregapi.code.TagData aEnergyType, byte aSide) {
+		return 1; // :706
+	}
+
+	@Override
+	public long getEnergySizeInputRecommended(gregapi.code.TagData aEnergyType, byte aSide) {
+		return 2048; // :707
+	}
+
+	@Override
+	public long getEnergySizeInputMax(gregapi.code.TagData aEnergyType, byte aSide) {
+		return Long.MAX_VALUE; // :708
+	}
+
+	@Override
+	public java.util.Collection<gregapi.code.TagData> getEnergyTypes(byte aSide) {
+		return gregapi.data.TD.Energy.HU.AS_LIST; // :709
 	}
 
 	// ---------------------------------------------------------------------------
