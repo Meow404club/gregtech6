@@ -759,7 +759,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	public net.minecraftforge.client.model.data.ModelData getModelData() {
 		byte tMask = getIoMask();
 		if (!mFoam && tMask == 0) return super.getModelData();
-		net.minecraftforge.client.model.data.ModelData.Builder tBuilder =
+		gregtech6.client.render.GTModelProperties.SnapshotBuilder tBuilder =
 				gregtech6.client.render.GTModelProperties.derive(super.getModelData());
 		if (tMask != 0) {
 			tBuilder.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask));
