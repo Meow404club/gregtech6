@@ -91,7 +91,9 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
 ①内容走 datapack 原生形（配方 JSON/tag/loot=KubeJS 天然可改，优先）；
 ②注册面（物品/方块/流体）声明可脚本化缝（KubeJS addon plugin 或事件暴露，至少留声明）；
 ③运行时配方图（RM）类内容须给绑定方案或显式 defer 决定（GTCEu kubejs 模块为参考实现）。
-「不考虑」也算一种声明，禁止无声缺失。
+「不考虑」也算一种声明，禁止无声缺失。SPEC 填写模板（p25-r-kubejs-adaptation-seam 正典化）：
+`KJS面声明：本卡产出=〈datapack域|注册面|RM运行时配方图|无KubeJS面〉；datapack域=天然可改零适配；注册面/RM=〈defer至kjs绑定卡|已由tier-b-datapack-RM缝覆盖〉`。
+分档路线：tier-a=坚持 datapack 原生（现状，零成本）；tier-b=RM 配方图 datapack JSON 直灌（P26 候选，SimpleJsonResourceReloadListener+TagsUpdatedEvent 缝）；tier-c=GTCEu 式 kjs 绑定模块（10-15 文件，1.21 腿优先=KubeJS 7 json schema；modCompileOnly 零传染）。
 
 ## 五、铁律（对全局生效，传达给每个 subagent）
 
