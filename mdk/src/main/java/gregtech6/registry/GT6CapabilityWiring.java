@@ -15,6 +15,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.item.GTBarrelBlockItem;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
+import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
@@ -155,6 +156,14 @@ public final class GT6CapabilityWiring {
 		BlockEntityType<GTFluidPipeBlockEntity> tPipe = GTFluidPipes.FLUID_PIPE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPipe,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p26-pipe-item — the item pipe family joins (ADR-P15-4 census discipline):
+		// the forge getCapability serves the gated SideItemHandler item face alone (zero
+		// fluid tanks on the class). Without this row every external hopper push/pull on
+		// this node lands capability-blind while the 1.20.1 BE override hides the gap —
+		// GT6CapabilityWiringSeamTest pins the registry row against exactly that.
+		BlockEntityType<GTItemPipeBlockEntity> tItemPipe = GTItemPipes.ITEM_PIPE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tItemPipe,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		// the multiblock PART relay (the pipe-hole family: the collector attach on
 		// GTFluidPipeBlockEntity.canConnect + the boiler push face) — the forge face is
 		// MultiBlockPartBlockEntity.getCapability relaying ITEM/FLUID to the target
