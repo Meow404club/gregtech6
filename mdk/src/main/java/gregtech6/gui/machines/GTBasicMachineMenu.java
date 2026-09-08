@@ -247,9 +247,12 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	 * mMaxProgress :107-113 / public final mRecipes :161 (mGUIPath) — so the machine domain
 	 * needs no gui knowledge (no implements, the file stays frozen for D3/M1). The p16 ②
 	 * overrides read the W1a public final tank arrays LIVE (same identity the fluid face
-	 * gates answer through), no snapshot.
+	 * gates answer through), no snapshot. Public since task p26-mui-a-open-chain: the
+	 * machine-domain {@code buildUI} delegation (TileEntityBasicMachine →
+	 * GTBasicMachineMUI.buildPanel) adapts through it — the Host projection IS the
+	 * gui/machine seam, zero body change.
 	 */
-	static Host hostOf(TileEntityBasicMachine aMachine) {
+	public static Host hostOf(TileEntityBasicMachine aMachine) {
 		return new Host() {
 		@Override public GTItemStackHandler getInventory() { return aMachine.getInventory(); }
 		@Override public int getOutputSlotCount() { return aMachine.getOutputSlotCount(); }
