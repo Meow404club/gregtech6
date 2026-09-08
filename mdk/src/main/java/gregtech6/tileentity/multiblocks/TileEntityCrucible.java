@@ -25,6 +25,7 @@ import gregapi.tileentity.temperature.ITileEntityTemperature;
 import gregapi.util.CruciblePhysics;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
+import gregtech6.tileentity.MaterialStackNBT;
 
 /**
  * 1.20.1 counterpart of gregtech/tileentity/multiblocks/MultiTileEntityCrucible.java
@@ -105,10 +106,11 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	/** The default environment temperature (upstream CS.DEF_ENV_TEMP = C + 20 = 293). */
 	public static final long DEF_ENV_TEMP = 293;
 
-	/** The NBT keys (upstream NBT_TEMPERATURE / NBT_ENERGY / NBT_ACIDPROOF). */
+	/** The NBT keys (upstream NBT_TEMPERATURE / NBT_ENERGY / NBT_ACIDPROOF / NBT_MATERIALS). */
 	public static final String NBT_TEMPERATURE = "temperature";
 	public static final String NBT_ENERGY = "energy";
 	public static final String NBT_ACIDPROOF = "acidproof";
+	public static final String NBT_MATERIALS = "materials";
 
 	// ---------------------------------------------------------------------------
 	// the state (upstream :82-86)
@@ -162,8 +164,8 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		if (aNBT.contains(NBT_TEMPERATURE + ".old", Tag.TAG_ANY_NUMERIC)) oTemperature = aNBT.getLong(NBT_TEMPERATURE + ".old");
 		if (aNBT.contains(NBT_ENERGY, Tag.TAG_ANY_NUMERIC)) mEnergy = aNBT.getLong(NBT_ENERGY);
 		if (aNBT.contains(NBT_ACIDPROOF, Tag.TAG_ANY_NUMERIC)) mAcidProof = aNBT.getBoolean(NBT_ACIDPROOF);
-		// the mContent list persistence rides the A-card MaterialStackNBT list adapter
-		// (OreDictMaterialStack.saveList/loadList, upstream :98/:108) — the rebase commit.
+		mContent.clear();
+		mContent.addAll(MaterialStackNBT.loadList(NBT_MATERIALS, aNBT)); // :98 OreDictMaterialStack.loadList
 		mMeltDown = CruciblePhysics.isMeltDownWarning(mTemperature, getTemperatureMax((byte)0)); // :99 re-derived, never stored
 	}
 
@@ -173,6 +175,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		aNBT.putLong(NBT_TEMPERATURE, mTemperature);              // UT.NBT.setNumber :106
 		aNBT.putLong(NBT_TEMPERATURE + ".old", oTemperature);     // :107
 		aNBT.putLong(NBT_ENERGY, mEnergy);                        // :105
+		MaterialStackNBT.saveList(mContent, NBT_MATERIALS, aNBT); // :108 OreDictMaterialStack.saveList
 	}
 
 	// ---------------------------------------------------------------------------

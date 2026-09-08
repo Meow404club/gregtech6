@@ -260,6 +260,25 @@ public class GTMultiBlockCruciblePhysicsTest extends GTMultiBlocksOfflineTestBas
 	}
 
 	// ------------------------------------------------------------------
+	// the content NBT round-trip (upstream :98/:108 via MaterialStackNBT)
+	// ------------------------------------------------------------------
+
+	@Test
+	public void contentListRoundTripsThroughNBT() {
+		Formed tF = formedCrucible();
+		List<OreDictMaterialStack> tIron = new ArrayList<>();
+		tIron.add(new OreDictMaterialStack(MT.Fe, 10 * gregapi.data.CS.U));
+		tF.crucible().addMaterialStacks(tIron, 300);
+
+		net.minecraft.nbt.CompoundTag tTag = tF.crucible().saveWithoutMetadata();
+		TestCrucible tRestored = sCrucibleType.create(new BlockPos(100, 64, 100), Blocks.BRICKS.defaultBlockState());
+		tRestored.load(tTag);
+		assertEquals(10 * gregapi.data.CS.U, totalOf(tRestored.mContent), "the content list survives save/load (:98/:108)");
+		assertEquals(1, tRestored.mContent.size(), "exactly one stack");
+		assertSame(MT.Fe, tRestored.mContent.get(0).mMaterial, "the material identity rides the 'i' key");
+	}
+
+	// ------------------------------------------------------------------
 	// the meltdown path (upstream :367-378 — acceptance ④)
 	// ------------------------------------------------------------------
 
