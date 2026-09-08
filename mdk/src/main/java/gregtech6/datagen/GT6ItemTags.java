@@ -180,7 +180,8 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	protected void addTags(HolderLookup.Provider aProvider) {
 		// The takeover seam: the tags-foundation card appends its own add*Tags(aProvider)
 		// bands AFTER the tool band, one band per logical family (the GT6EnUs table-tail
-		// append convention), and hoists shared helpers if a second caller appears.
+		// append convention); the hoist clause has fired — itemTagFamily is the shared
+		// static (task p25-tag-input-machine-fallback, the second caller is Recipe).
 		addToolTags(aProvider);
 		addMaterialTags(aProvider);
 		addGrassTags(aProvider); // task p24-grass-block
@@ -300,8 +301,14 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		return TagKey.create(Registries.ITEM, new ResourceLocation(MATERIALS_NAMESPACE, tPath));
 	}
 
-	/** The item-path family path of a prefix, or null when the prefix carries no P0 platform tag. */
-	private static String itemTagFamily(OreDictPrefix aPrefix) {
+	/**
+	 * The item-path family path of a prefix, or null when the prefix carries no P0 platform
+	 * tag. SHARED static (the :159-161 takeover hoist, task p25-tag-input-machine-fallback —
+	 * the second caller is the machine-side tag fallback in {@code gregtech6.recipes.Recipe}):
+	 * the family list itself stays a datagen-side census ("this card writes no family list",
+	 * the rolling prefix cards grow it and the fallback inherits automatically).
+	 */
+	public static String itemTagFamily(OreDictPrefix aPrefix) {
 		if (aPrefix == OP.ingot) return INGOTS_FAMILY;
 		if (aPrefix == OP.dust) return DUSTS_FAMILY;
 		if (aPrefix == OP.gem) return GEMS_FAMILY;
