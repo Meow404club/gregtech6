@@ -13,6 +13,7 @@
 # filters: dropped ktfru/written.book/enchantment keys; duplicate keys: first occurrence wins.
 #   mte rows are inert census data until the MTE ID-join subface lands (arch tasks.p20-arch-i18n).
 #
+direct	block.gt6.advanced_crafting_table	高级合成台	hand
 direct	block.gt6.barrel_adamantium	艾德曼合金鼓	hand
 direct	block.gt6.barrel_awakened_draconium	觉醒龙合金鼓	hand
 direct	block.gt6.barrel_draconium	龙合金鼓	hand

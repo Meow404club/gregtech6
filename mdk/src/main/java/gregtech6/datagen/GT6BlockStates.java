@@ -107,10 +107,14 @@ public final class GT6BlockStates extends BlockStateProvider {
         addDryer(); // task p14-dryer-family
         addDistillery(); // task p16-distillery-family
         addCanner(); // task p24-canner-machine
+        addAdvancedCraftingTable(); // task p24-act-machine
         // task p21-paintable-tint-render: the datagen-JVM census half — 25 machine blocks x
         // 3 models, matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 75).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (25 blocks x 3, addOven/addMachine/addDryer/addDistillery/addCanner)", mMachineTintModels);
+        // (the offline JUnit half walks the generated tree and pins the same 75; the ACT
+        // rides its own single-state model OUTSIDE the paint-array census — the
+        // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
+        // family-wide paint extension stays pooled).
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (25 blocks x 3, addOven/addMachine/addDryer/addDistillery/addCanner) + the ACT single-state model", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -166,6 +170,33 @@ public final class GT6BlockStates extends BlockStateProvider {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CANNER_ROWS) {
             addMachine(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
+    }
+
+    /**
+     * Task p24-act-machine — the Advanced Crafting Table (Loader_MultiTileEntities.java
+     * :136, the single-variant row): FACING-ONLY blockstate (the upstream machine has no
+     * ACTIVE/RUNNING visual payload — the craftingtables/advanced texture group ships no
+     * overlay_active/overlay_running layers, the borrow-or-declare rule landed exactly
+     * the two borrowable fronts), 4 facing variants over ONE tinted machine model
+     * (machineModel = the shared oven body + the advanced_colored/overlay fronts), and
+     * the BlockItem parent. The model joins the tint census count but NOT the
+     * paintableBlockArray (the family-wide paint extension stays pooled, the class doc
+     * of the block).
+     */
+    private void addAdvancedCraftingTable() {
+        Block tBlock = GTMachines.ADVANCED_CRAFTING_TABLE.get();
+        ModelFile tModel = machineModel("advanced_crafting_table", "advanced_colored_front", "advanced_overlay_front");
+        getVariantBuilder(tBlock).forAllStates(aState -> {
+            int tY;
+            switch (aState.getValue(GTOvenBlock.FACING)) {
+                case SOUTH -> tY = 180;
+                case WEST -> tY = 270;
+                case EAST -> tY = 90;
+                default -> tY = 0; // NORTH
+            }
+            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+        });
+        itemModels().withExistingParent("advanced_crafting_table", modLoc("block/advanced_crafting_table"));
     }
 
     /**

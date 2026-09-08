@@ -50,11 +50,11 @@ import gregtech6.registry.GTWireSpecs;
 class GT6TagsDatagenTest {
 
     /**
-     * The pickaxe-file member total: 272 stone pairs + 25 machine blocks (oven +
-     * shredder/crusher/lathe ladders + 4 dryers + 4 distilleries + the 4 Canner rows —
-     * GTMachines.java:58/:118-151/:233-237/:347-351/:328-359, the whole-class
-     * {@code GTMachines.BLOCKS} walk means every landed machine row joins the band) +
-     * the 1 conscious multiblock join (the Lightning Rod pillar block, task
+     * The pickaxe-file member total: 272 stone pairs + 26 machine blocks (oven +
+     * shredder/crusher/lathe ladders + 4 dryers + 4 distilleries + the 4 Canner rows +
+     * the Advanced Crafting Table — GTMachines.java:58/:118-151/:233-237/:347-351/:415-435,
+     * the whole-class {@code GTMachines.BLOCKS} walk means every landed machine row joins
+     * the band) + the 1 conscious multiblock join (the Lightning Rod pillar block, task
      * p24-lightning-rod — the wall/coil/controller follow the multiblock-family
      * non-membership convention, the provider javadoc) +
      * the 6 metal/gem/raw prefixes' live pairs (3773 - 1096 blockDust = 2677) + the
@@ -65,16 +65,19 @@ class GT6TagsDatagenTest {
      * high-tier drums; the wood barrel stays axe-only). Pinned so any band change is a
      * conscious constant update — the maintenance duty the tags card declared for every
      * future machine card (the four Canner rows 2970 → 2974, the rod block 2974 → 2975,
-     * then this batch 2975 → 3621).
+     * the tags batch 2975 → 3621, then the single-variant ACT row 3621 → 3622, task
+     * p24-act-machine — the S4 merge-order reconciliation).
      */
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 25 + 1 + 2677 + 629 + 2 + 15;
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 26 + 1 + 2677 + 629 + 2 + 15;
 
-    /** The 13 tier-ladder machine ids of the first machines card (the dryer/distillery rows ride the total pin). */
+
+    /** The 13 tier-ladder machine ids of the first machines card + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
             "gt6:oven",
             "gt6:shredder", "gt6:shredder_t2", "gt6:shredder_t3", "gt6:shredder_t4",
             "gt6:crusher", "gt6:crusher_t2", "gt6:crusher_t3", "gt6:crusher_t4",
-            "gt6:lathe", "gt6:lathe_t2", "gt6:lathe_t3", "gt6:lathe_t4");
+            "gt6:lathe", "gt6:lathe_t2", "gt6:lathe_t3", "gt6:lathe_t4",
+            "gt6:advanced_crafting_table");
 
     /**
      * The pickaxe-band prefixes — the GT6BlockTags band set mirrored (blockDust excluded).
@@ -150,7 +153,7 @@ class GT6TagsDatagenTest {
         assertEquals(2677, tPrefixPairs, "3773 storage pairs - 1096 blockDust pairs");
         // exact product shape: no member outside the census families
         assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(),
-                "272 stones + 25 machines + 2677 prefix blocks + 629 wires + 2 pipes + 15 barrels");
+                "272 stones + 26 machines + 2677 prefix blocks + 629 wires + 2 pipes + 15 barrels");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 

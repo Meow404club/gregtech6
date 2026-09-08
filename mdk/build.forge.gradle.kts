@@ -119,6 +119,16 @@ dependencies {
     // 已是生产 SRG 形（含 refmap 重映射），无需再重映射。
     // 依赖面说明：modularui 不进编译/运行类路径（纯嵌装分发；mdk 源码零引用，GUI 采纳另卡）。
     "jarJar"(project(":third-party:modularui:1.20.1-forge"))
+    // task p24-act-machine C2 前置门：mdk 主树首消费 ModularUI（decisions.p24-act-be-form）。
+    // modCompileOnly = MDG legacyforge 重映射 child 配置（SRG→official，LEGACY.md:68-92）——
+    // vendored 项目发布 reobfRuntimeElements（SRG）变体，编译面重映射回 official 供 mdk 源码
+    // import brachy.modularui.*；运行面类仍由上方 jarJar 嵌装产物承载（dev run 经 jarJar
+    // 嵌套发现，零双装）。
+    "modCompileOnly"(project(":third-party:modularui:1.20.1-forge"))
+    // 运行面：modRuntimeOnly = 重映射 child of runtimeOnly，产物并入 run 类路径（JEI impl
+    // 同机制）——dev run 的 mod 发现走类路径上的 modularui mod 本体；jarJar 嵌装仅在发布
+    // jar 中存在，dev run 零双装。
+    "modRuntimeOnly"(project(":third-party:modularui:1.20.1-forge"))
     // JEI（本仓首个第三方 mod 依赖，ADR 2026-09-02-p12-jei-dependency）：坐标三件。
     // MDG legacyforge mod* 配置自动 SRG→official 重映射且非传递（LEGACY.md:68-92）：
     // API 两件 compileOnly（编译面，不进 jar/run）；impl 一件 runtimeOnly —— LEGACY.md L74
