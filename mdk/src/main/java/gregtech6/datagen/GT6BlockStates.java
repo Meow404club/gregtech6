@@ -33,6 +33,7 @@ import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTStoneBlocks;
+import gregtech6.registry.GT6FeBatteries; // p26 tail-append
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GTMultiBlocks;
@@ -125,6 +126,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMultiBlocks();
         addBarrel();
         addEnergySource();
+        addFeBattery(); // task p26-eu-bridge-outbound (tail-append; shared serial file)
         addTestMachines(); // task p20-testmachine-blockstates — the two dev BE-framework blocks
         addPrefixBlocks(); // task p8-prefixblock-render ①
         addCrank(); // task p12-engine-crank
@@ -600,6 +602,19 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tSource = GTEnergySources.ENERGY_SOURCE.get();
         simpleBlock(tSource, models().cubeAll("energy_source", modLoc("block/energy_source")));
         itemModels().withExistingParent("energy_source", modLoc("block/energy_source"));
+    }
+
+    /**
+     * Task p26-eu-bridge-outbound (TAIL-APPENDED row, the shared serial file) — the FE
+     * battery fixture: the addEnergySource shape verbatim, one cube_all over the SHARED
+     * placeholder {@code gt6:textures/block/energy_source.png} (no new PNG — the borrow
+     * posture the p20 testmachine rows pinned), plus the BlockItem model parenting the block
+     * model. No properties, a single variant.
+     */
+    private void addFeBattery() {
+        Block tBattery = GT6FeBatteries.FE_BATTERY.get();
+        simpleBlock(tBattery, models().cubeAll("fe_battery", modLoc("block/energy_source")));
+        itemModels().withExistingParent("fe_battery", modLoc("block/fe_battery"));
     }
 
     /**
