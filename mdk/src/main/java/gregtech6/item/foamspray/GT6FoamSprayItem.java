@@ -208,7 +208,7 @@ public class GT6FoamSprayItem extends Item {
 	/** The shared tooltip body: what the can places (+ the owned warning) + the remaining uses. */
 	private void tooltipLines(ItemStack aStack, List<Component> aTooltip) {
 		aTooltip.add(Component.translatable(FOAM_TOOLTIP_KEY, GTSprayCanItem.DYE_NAMES[dyeIndex]).withStyle(ChatFormatting.BLUE));
-		if (owned) aTooltip.add(Component.translatable(OWNED_TOOLTIP_KEY).withStyle(ChatFormatting.ORANGE)); // upstream :259 wording
+		if (owned) aTooltip.add(Component.translatable(OWNED_TOOLTIP_KEY).withStyle(ChatFormatting.GOLD)); // upstream :259 wording
 		long tRemaining = remainingOf(aStack, maxUses);
 		aTooltip.add(Component.translatable(GTSprayCanItem.REMAINING_TOOLTIP_KEY, tRemaining / GTSprayCanItem.HIT_COST, tRemaining % GTSprayCanItem.HIT_COST)
 				.withStyle(ChatFormatting.GRAY));
