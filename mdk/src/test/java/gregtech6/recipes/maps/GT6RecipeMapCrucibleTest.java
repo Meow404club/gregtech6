@@ -241,7 +241,7 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 				tUnfreeze.setAccessible(true);
 				tUnfreeze.invoke(tRegistry);
 			} catch (Exception aE) {
-				throw new IllegalStateException("could not open the offline item registry", aE);
+				throw new IllegalStateException("could not clear the offline registry lock", aE);
 			}
 			*///?}
 			MaterialPrefixItem rItem = aCreator.get();
