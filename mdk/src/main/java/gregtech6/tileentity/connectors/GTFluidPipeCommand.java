@@ -72,6 +72,13 @@ import gregtech6.registry.GTFluidPipes;
  *     owner UUID when given, null owner = everyone passes — the upstream :107 arm);
  *     0 resets both fields (the removeFoam :177-183 reset form). Console OP force write —
  *     the /setblock-style seam the card accepts.</li>
+ * <li>{@code spray <pos> <owned> [dye] [ownerUuid]} / {@code dry <pos>} /
+ *     {@code removefoam <pos> [ownerUuid]} — the foam trio (task p25-c-foam-pipe-spray
+ *     spec ⑧): the SAME GATED BE method faces the item's useOn path calls —
+ *     {@link GTFluidPipeBlockEntity#applyFoam} (upstream 10ConnectorRendered:159-166),
+ *     {@link GTFluidPipeBlockEntity#dryFoam} (:169-174, the no-gate asymmetry) and
+ *     {@link GTFluidPipeBlockEntity#removeFoam} (:177-183). {@code stat} gains the
+ *     {@code foam/dried/foamOwned} triple.</li>
  * </ul>
  *
  * <p>The command runs inside one server tick, so the manual dispatcher passes are not
@@ -134,8 +141,33 @@ public final class GTFluidPipeCommand {
 									.then(Commands.argument("owner", StringArgumentType.word())
 										.executes(aContext -> ownableArg(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
 												IntegerArgumentType.getInteger(aContext, "value") != 0,
-												StringArgumentType.getString(aContext, "owner"))))))));
-		LOGGER.info("Registered GT6 fluid pipe command /gt6pipe (accept|stat|place|toggle|output|clear|inject|ownable)");
+												StringArgumentType.getString(aContext, "owner")))))))
+				// task p25-c-foam-pipe-spray spec ⑧ — the foam trio over the SAME BE method
+				// faces the item's useOn path calls (GATED faces, unlike the ownable stand-in)
+				.then(Commands.literal("spray")
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.then(Commands.argument("owned", IntegerArgumentType.integer(0, 1))
+							.executes(aContext -> spray(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									IntegerArgumentType.getInteger(aContext, "owned") != 0, (byte)0, null))
+								.then(Commands.argument("dye", IntegerArgumentType.integer(0, 15))
+									.executes(aContext -> spray(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+											IntegerArgumentType.getInteger(aContext, "owned") != 0,
+											(byte)IntegerArgumentType.getInteger(aContext, "dye"), null))
+										.then(Commands.argument("owner", StringArgumentType.word())
+											.executes(aContext -> sprayArg(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+													IntegerArgumentType.getInteger(aContext, "owned") != 0,
+													(byte)IntegerArgumentType.getInteger(aContext, "dye"),
+													StringArgumentType.getString(aContext, "owner"))))))))
+				.then(Commands.literal("dry")
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(aContext -> dry(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+				.then(Commands.literal("removefoam")
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(aContext -> removefoam(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), null))
+							.then(Commands.argument("owner", StringArgumentType.word())
+								.executes(aContext -> removefoamArg(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+										StringArgumentType.getString(aContext, "owner")))))));
+		LOGGER.info("Registered GT6 fluid pipe command /gt6pipe (accept|stat|place|toggle|output|clear|inject|ownable|spray|dry|removefoam)");
 	}
 
 	private static int stat(CommandSourceStack aSource, BlockPos aPos) {
@@ -150,7 +182,10 @@ public final class GTFluidPipeCommand {
 		}
 		String tLine = "GT6 pipe stat at " + aPos.toShortString() + ": connections " + aPipe.getConnections()
 				+ " ioMask " + aPipe.getIoMask() + " ownable " + aPipe.mOwnable
-				+ " owner " + (aPipe.mOwner != null ? aPipe.mOwner : "none") + " " + tTanks;
+				+ " owner " + (aPipe.mOwner != null ? aPipe.mOwner : "none")
+				// task p25-c-foam-pipe-spray — the foam triple rides the stat line
+				+ " foam " + aPipe.mFoam + " dried " + aPipe.mFoamDried + " foamOwned " + aPipe.ownedFoam((byte)0)
+				+ " " + tTanks;
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
@@ -270,6 +305,84 @@ public final class GTFluidPipeCommand {
 			return ownable(aSource, aPos, aValue, UUID.fromString(aOwner));
 		} catch (IllegalArgumentException tException) {
 			aSource.sendFailure(Component.literal("Not a UUID: " + aOwner));
+			return 0;
+		}
+	}
+
+	/**
+	 * The foam spray driver (task p25-c-foam-pipe-spray spec ⑧) — the SAME gated
+	 * {@link GTFluidPipeBlockEntity#applyFoam} face the item's useOn calls (upstream
+	 * 10ConnectorRendered:159-166; Behavior_Spray_Foam.java:113-114 arm (1)), so the RCON
+	 * chain exercises the real gates: a wet/dried pipe rejects, a locked pipe rejects a
+	 * non-owner. The colour is the DYES_INT dye-index slot (default 0 = black).
+	 */
+	private static int spray(CommandSourceStack aSource, BlockPos aPos, boolean aOwned, byte aDye, @Nullable UUID aSprayer) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTFluidPipeBlockEntity tPipe)) {
+			aSource.sendFailure(Component.literal("No GTFluidPipeBlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		int tRGB = gregtech6.item.spraycan.GTSprayCanItem.DYES_INT[aDye & 15];
+		boolean tApplied = tPipe.applyFoam((byte)2, aSprayer, tRGB, aOwned);
+		String tLine = "GT6 pipe spray at " + aPos.toShortString() + ": "
+				+ (tApplied ? "foam applied" : "REJECTED") + ", foam " + tPipe.mFoam + " dried " + tPipe.mFoamDried
+				+ " foamOwned " + tPipe.ownedFoam((byte)0) + " rgb " + String.format("%06x", tPipe.getPaint());
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return tApplied ? Command.SINGLE_SUCCESS : 0;
+	}
+
+	/** The {@code [owner]} arm of spray — a malformed word is a command failure. */
+	private static int sprayArg(CommandSourceStack aSource, BlockPos aPos, boolean aOwned, byte aDye, String aSprayer) {
+		try {
+			return spray(aSource, aPos, aOwned, aDye, UUID.fromString(aSprayer));
+		} catch (IllegalArgumentException tException) {
+			aSource.sendFailure(Component.literal("Not a UUID: " + aSprayer));
+			return 0;
+		}
+	}
+
+	/**
+	 * The dry driver — the SAME no-gate {@link GTFluidPipeBlockEntity#dryFoam} face
+	 * (upstream :169-174; the Hardening-Spray pool row's live seam). Console = null identity.
+	 */
+	private static int dry(CommandSourceStack aSource, BlockPos aPos) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTFluidPipeBlockEntity tPipe)) {
+			aSource.sendFailure(Component.literal("No GTFluidPipeBlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		boolean tDried = tPipe.dryFoam((byte)2, null);
+		String tLine = "GT6 pipe dry at " + aPos.toShortString() + ": "
+				+ (tDried ? "ok" : "FAILED") + ", foam " + tPipe.mFoam + " dried " + tPipe.mFoamDried;
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return tDried ? Command.SINGLE_SUCCESS : 0;
+	}
+
+	/**
+	 * The foam-removal driver — the SAME gated {@link GTFluidPipeBlockEntity#removeFoam}
+	 * face (upstream :177-183): only a DRIED foam removes, only through allowInteraction
+	 * (console = null identity = non-owner on a locked pipe, the RCON verify arm).
+	 */
+	private static int removefoam(CommandSourceStack aSource, BlockPos aPos, @Nullable UUID aRemover) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTFluidPipeBlockEntity tPipe)) {
+			aSource.sendFailure(Component.literal("No GTFluidPipeBlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		boolean tRemoved = tPipe.removeFoam((byte)2, aRemover);
+		String tLine = "GT6 pipe removefoam at " + aPos.toShortString() + ": "
+				+ (tRemoved ? "ok" : "REJECTED") + ", foam " + tPipe.mFoam + " dried " + tPipe.mFoamDried
+				+ " ownable " + tPipe.mOwnable + " owner " + (tPipe.mOwner != null ? tPipe.mOwner : "none");
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return tRemoved ? Command.SINGLE_SUCCESS : 0;
+	}
+
+	/** The {@code [owner]} arm of removefoam — a malformed word is a command failure. */
+	private static int removefoamArg(CommandSourceStack aSource, BlockPos aPos, String aRemover) {
+		try {
+			return removefoam(aSource, aPos, UUID.fromString(aRemover));
+		} catch (IllegalArgumentException tException) {
+			aSource.sendFailure(Component.literal("Not a UUID: " + aRemover));
 			return 0;
 		}
 	}

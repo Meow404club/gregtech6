@@ -483,3 +483,19 @@ P23 增 node_expects 分叉三检）。
   服务端命令串行、客户端 quiet_window 重叠=吞吐来源）。
 - 并发组的逐 step verdict 必须与 per-chain-boot 基线 diff 一致；不一致的组
   用 `--concurrency 1` 重跑该组降级串行并记录。
+
+### 管道 /gt6pipe 泡沫三子命令（p25-c-foam-pipe-spray，README tail-append）
+
+`spray <pos> <owned> [dye] [ownerUuid]` / `dry <pos>` / `removefoam <pos> [ownerUuid]`
+（spec ⑧）走与物品 useOn 相同的受门 BE 面：applyFoam（上游
+TileEntityBase10ConnectorRendered:159-166——湿/干拒+allowInteraction 门，喷=同染管）、
+dryFoam（:169-174 无门不对称）、removeFoam（:177-183 干+门+四字段复位）。stat 行增
+`foam/dried/foamOwned` 三字段（p24 既有 expect 串均为子串，零回归）。注册行
+`(accept|stat|place|toggle|output|clear|inject|ownable|spray|dry|removefoam)`。
+回流面（spec ⑦）：管 loot 表（GT6PipeBlockLoot）copy_nbt 五键入 BlockEntityTag——
+拆管掉落物经 `data get entity Item.tag.BlockEntityTag` 断言 gt.foamed/gt.foamdried/
+gt.ownable 三键在物；gt.owner 不入物（再置由 onPlaced 记新放置者，离线腿
+GTPipeFoamTest.foamNbtRoundTripsAndOwnerDoesNotRideItems 钉死）。活链 =
+`chains/p25_cfoam_spray.py`（place→spray owned→stat→dry→锁 toggle 拒→removefoam
+非 owner 拒→owner ok→spray+dry→拆管→掉落物 NBT 断言；双腿 [0,0]；日志路径
+/tmp/gt6_rs_p25cfoamspray.*，节点名后缀随 --node）。
