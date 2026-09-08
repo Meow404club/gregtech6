@@ -291,6 +291,7 @@
 - [x] act 9938a4d4：71 槽+图案铺料+ModularUI 首消费接线成功+phantom 混合形态
 - [x] micro ×2：59e50805（priority 注释+javadoc）4300889c（paringInt+floor 棘轮 2550）
 - [x] phase-closeout：证书 forge 1392/0+neo 1394/0/2skip+jar GREEN+p24 五链 10/10；ADR 三篇正典；三教训入模板；KG 变体合并 -21
+- [x] datagen-tree-check 恒红收账 p25-datagen-tree-check-unify：tools 层 2 值形归一器 VALUE_NORMALIZERS 三带九变换（loot/advancement/recipe，方向恒 node→canonical，正典树不改写），census 实测 228 恒红全归一 exit 0（170 loot items 形+26 copy_custom_data 改名+12 配方 advancement 三合一+6 ench predicate 重构+12 配方 result/tag 形+1 spray #tag 形+1 shaped show_notification），byte 快路径主判定不动+normalized 清单必印+未注册形差负例仍 FAIL（fail-visible 不放松）
 
 新池移交：C-Foam（消费 pipe-owner owner 面）/lightning-rod-size-seam-pilot/selector-cover（三重阻断存档：宿主机器缺+OD_CIRCUITS[1] 替代未决+Cover_Blank 缺材料）/食品罐+row0（缺锤扳手）/runClient 首启双腿+目验四合一（ACT GUI 目视新增）/RCON 全集 27+5 链复验/36 行 i18n 社区复核/配方输入 tag 匹配研究卡（消费 tag 宇宙）/树叶原木 tag 卡/kg RAPTOR Class·Concept 域聚类（锚点蒸馏后仍余 ~900 超线）
 
