@@ -234,8 +234,10 @@ public class GTMultiBlockCrucibleStructureTest extends GTMultiBlocksOfflineTestB
 			tCrucible.onStructureChange();
 			assertTrue(tCrucible.checkStructure(false));
 			tCrucible.mTemperature = 5000;
-			for (long t = 1; t <= 100; t++) tCrucible.onTick(t, true);
-			assertEquals(5000, tCrucible.mTemperature, "the formed structure does not cool (the physics tick lands with the A rebase)");
+			// the formed structure skips the :187-195 loss arm; the IN-TICK supply cooldown
+			// (the :353-365 grace) still owns the temperature — 100 ticks of grace, no decay
+			for (long t = 1; t <= 99; t++) tCrucible.onTick(t, true);
+			assertEquals(5000, tCrucible.mTemperature, "the formed structure holds its heat through the grace window");
 		} finally {
 			sEnvTemp = DEF_ENV_TEMP;
 		}

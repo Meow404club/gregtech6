@@ -1,5 +1,8 @@
 package gregtech6.tileentity.multiblocks;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -13,6 +16,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import gregapi.data.CS;
+import gregapi.data.MT;
+import gregapi.oredict.OreDictMaterial;
+import gregapi.oredict.OreDictMaterialStack;
+import gregapi.tileentity.machines.ITileEntityCrucible;
+import gregapi.tileentity.machines.ITileEntityMold;
+import gregapi.tileentity.temperature.ITileEntityTemperature;
+import gregapi.util.CruciblePhysics;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
 
@@ -37,11 +47,35 @@ import gregtech6.multiblock.GTMultiBlockStructureChecker;
  * CokeOven production pilot) — one judgement source for the server check and the
  * ghost preview.
  *
- * <p><b>The constants (upstream :78-80, verbatim)</b>: {@link #MAX_AMOUNT} = 432U
- * (= 16*3*3*3*U), {@link #KG_PER_ENERGY} = 100, {@link #HEAT_RESISTANCE_BONUS} =
- * 1.10 (the LARGE-crucible wall bonus; the small Smeltery carries 1.25 — the two
- * shapes are the same physics consumed at different parameters, the A-card
- * CruciblePhysics parameter face), {@link #GAS_RANGE} = {@link #FLAME_RANGE} = 5.
+ * <p><b>The physics tick (upstream onServerTickPost :184-384) consumes the A-card
+ * CruciblePhysics parameter face</b> — the LARGE parameter set
+ * ({@link CruciblePhysics.Params#LARGE}: 432U / 1.10 / 8 / 5 / 100) drives the same
+ * functions the small Smeltery runs at SMALL, exactly the shared-thermodynamics
+ * arch ruling (tasks.p26-arch-crucible-chain ②). Per tick, upstream order:
+ * <ol>
+ * <li>the alloy scan + consumption (:236-294 → {@link CruciblePhysics#alloyScan} +
+ *     {@link CruciblePhysics#applyAlloy});</li>
+ * <li>the evaporation/acid/phase-gate loop (:296-334 →
+ *     {@link CruciblePhysics#phaseGates}) with the world effects applied BE-side
+ *     (the explosion via the Root {@code explode(strength)} :312-313, the acid
+ *     destruction via {@code setToAir} :319, the gas/fire surfaces deferred — no
+ *     entity-damage or WD.fire face is ported);</li>
+ * <li>the weight census (:336-344) and the {@code oTemperature} latch (:346);</li>
+ * <li>the HU heating step (:353-365 → {@link CruciblePhysics#tickHeat});</li>
+ * <li>the meltdown gate (:367-378): over the ceiling the content is trashed and the
+ *     3x3x3 cavity becomes lava (the core cell included — the controller dies in the
+ *     flow);</li>
+ * <li>the melt-down WARNING latch (:380-383 → {@link CruciblePhysics#isMeltDownWarning}).</li>
+ * </ol>
+ *
+ * <p><b>The through-wall mold proxy</b>: the controller implements
+ * {@link ITileEntityCrucible} with the upstream fillMoldAtSide (:547-556) verbatim —
+ * the wall part answers the pour (the part-side relay is the B-card mold walking
+ * onto the wall, the upstream MultiBlockPart :687-690 consumer). The wall parts
+ * themselves need NO extra forwarding: the B-card mold already walks
+ * controller-ward through the part's target resolution, so the controller-side
+ * method IS the whole proxy (the card C ruling: controller-side implementation
+ * preferred, the {@code MultiBlockPartBlockEntity implements} arm stays unused).
  *
  * <p><b>Structure loss = the slow cool-down (upstream :187-195)</b>: while the
  * structure check fails, the stored temperature decays toward the environment at
@@ -49,49 +83,58 @@ import gregtech6.multiblock.GTMultiBlockStructureChecker;
  * upstream gates the decay on the GLOBAL server time (SERVER_TIME % 10); the port
  * counts on the controller's own tick cycle (mTimer % 10) — no global-clock face is
  * ported and the decay semantics (rate, floor) are identical.
- *
- * <p>The smelting physics tick (the material content, the alloy scan, the meltdown,
- * the HU consumption), the {@code ITileEntityCrucible} mold proxy and the
- * registration land with the A-card rebase commits — this file's structure half is
- * A-independent.
  */
-public class TileEntityCrucible extends TileEntityBase10MultiBlockBase {
+public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implements ITileEntityCrucible, ITileEntityTemperature {
 
 	// ---------------------------------------------------------------------------
-	// the constants (upstream :78-80 verbatim)
+	// the constants (upstream :78-80, consuming the A-card LARGE parameter face)
 	// ---------------------------------------------------------------------------
 
 	/** Upstream :78 — the boiling vent radius (gas damage) and the fire spread radius. */
-	public static long GAS_RANGE = 5, FLAME_RANGE = 5;
+	public static long GAS_RANGE = CruciblePhysics.Params.LARGE.gasRange(), FLAME_RANGE = 5;
 
 	/** Upstream :79 — 16 * 3 * 3 * 3 * U: the content capacity of the 3x3x3 cavity. */
-	public static long MAX_AMOUNT = 16*3*3*3*CS.U;
+	public static long MAX_AMOUNT = CruciblePhysics.Params.LARGE.maxAmount();
 
 	/** Upstream :79 — the heat-mass divisor: 1 HU heats the wall material mass by 1 K per 100 kg. */
-	public static long KG_PER_ENERGY = 100;
+	public static long KG_PER_ENERGY = CruciblePhysics.Params.LARGE.kgPerEnergy();
 
 	/** Upstream :80 — the LARGE-crucible wall heat bonus (the small Smeltery carries 1.25). */
-	public static double HEAT_RESISTANCE_BONUS = 1.10;
+	public static double HEAT_RESISTANCE_BONUS = CruciblePhysics.Params.LARGE.heatResistanceBonus();
 
 	/** The default environment temperature (upstream CS.DEF_ENV_TEMP = C + 20 = 293). */
 	public static final long DEF_ENV_TEMP = 293;
 
-	/** The temperature NBT key (upstream NBT_TEMPERATURE). */
+	/** The NBT keys (upstream NBT_TEMPERATURE / NBT_ENERGY / NBT_ACIDPROOF). */
 	public static final String NBT_TEMPERATURE = "temperature";
+	public static final String NBT_ENERGY = "energy";
+	public static final String NBT_ACIDPROOF = "acidproof";
 
 	// ---------------------------------------------------------------------------
-	// the state (upstream :85)
+	// the state (upstream :82-86)
 	// ---------------------------------------------------------------------------
 
 	/** The stored heat, in K (upstream :85 mTemperature — the physical state the tick drives). */
 	public long mTemperature = DEF_ENV_TEMP;
 
-	/**
-	 * The BET-injected constructor — the production registration (the GT6Crucibles
-	 * wall-variant rows) and the offline fixtures (the selfHolder recipe) both pass
-	 * their own type, so the class stays decoupled from the registry (the
-	 * {@code TileEntityLargeBoiler} constructor shape).
-	 */
+	/** The previous tick's pre-heat temperature, the phase-crossing latch (upstream :85 oTemperature). */
+	public long oTemperature = 0;
+
+	/** The HU buffer (upstream :85 mEnergy — the burning-box feed pays into this). */
+	public long mEnergy = 0;
+
+	/** The heat countdown (upstream :83 mCooldown — 100 ticks of grace after the last charge). */
+	public int mCooldown = 100;
+
+	/** The melt-down WARNING latch (upstream :82 mMeltDown — the visual alarm state). */
+	public boolean mMeltDown = false;
+
+	/** The acidproofing (upstream :82 mAcidProof — a row property of the wall material). */
+	public boolean mAcidProof = false;
+
+	/** The molten content (upstream :86 mContent — the List of material stacks). */
+	public final List<OreDictMaterialStack> mContent = new ArrayList<>();
+
 	protected TileEntityCrucible(BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 		super(aType, aPos, aState);
 		// the crucible has NO facing semantics upstream (getDefaultSide SIDE_UP :689, the
@@ -109,19 +152,27 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// NBT (upstream :91-109, the temperature half)
+	// NBT (upstream :91-109)
 	// ---------------------------------------------------------------------------
 
 	@Override
 	public void load(CompoundTag aNBT) {
 		super.load(aNBT);
 		if (aNBT.contains(NBT_TEMPERATURE, Tag.TAG_ANY_NUMERIC)) mTemperature = aNBT.getLong(NBT_TEMPERATURE);
+		if (aNBT.contains(NBT_TEMPERATURE + ".old", Tag.TAG_ANY_NUMERIC)) oTemperature = aNBT.getLong(NBT_TEMPERATURE + ".old");
+		if (aNBT.contains(NBT_ENERGY, Tag.TAG_ANY_NUMERIC)) mEnergy = aNBT.getLong(NBT_ENERGY);
+		if (aNBT.contains(NBT_ACIDPROOF, Tag.TAG_ANY_NUMERIC)) mAcidProof = aNBT.getBoolean(NBT_ACIDPROOF);
+		// the mContent list persistence rides the A-card MaterialStackNBT list adapter
+		// (OreDictMaterialStack.saveList/loadList, upstream :98/:108) — the rebase commit.
+		mMeltDown = CruciblePhysics.isMeltDownWarning(mTemperature, getTemperatureMax((byte)0)); // :99 re-derived, never stored
 	}
 
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
-		aNBT.putLong(NBT_TEMPERATURE, mTemperature); // UT.NBT.setNumber :106
+		aNBT.putLong(NBT_TEMPERATURE, mTemperature);              // UT.NBT.setNumber :106
+		aNBT.putLong(NBT_TEMPERATURE + ".old", oTemperature);     // :107
+		aNBT.putLong(NBT_ENERGY, mEnergy);                        // :105
 	}
 
 	// ---------------------------------------------------------------------------
@@ -140,6 +191,22 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase {
 	}
 
 	/**
+	 * The shell material — the wall material the physics ride (upstream mMaterial, the
+	 * MTE registration row material; :336 the shell weight, :416-418 the temperature
+	 * ceiling). Steel is the single-rung material ladder (the card C spec ⑤ ruling);
+	 * the production override binds the registered wall row.
+	 */
+	@Nullable
+	protected OreDictMaterial getShellMaterial() {
+		return MT.Steel;
+	}
+
+	/** The physics parameter face this form consumes ({@link CruciblePhysics.Params#LARGE}). */
+	protected CruciblePhysics.Params params() {
+		return CruciblePhysics.Params.LARGE;
+	}
+
+	/**
 	 * Upstream :112-131, walked from the declared pattern (the p16-pattern-checker seam):
 	 * the three wall rings carry their per-layer usage masks, the centre column at
 	 * y+1/y+2 is the fail-not-clear hollow pair (upstream :115-116), and the controller's
@@ -149,7 +216,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase {
 	 */
 	@Override
 	public boolean checkStructure2(@Nullable BlockPos aCoordinates, @Nullable Player aPlayer, @Nullable Container aInventory) {
-		if (!hasLevel()) return mStructureOkay; // the :133 no-level form
+		if (!hasLevel()) return mStructureOkay; // :133
 		GTMultiBlockStructureChecker.FormedVerdict tVerdict = GTMultiBlockStructureChecker.check(
 				this, mFacing, aCoordinates, aPlayer, aInventory);
 		if (tVerdict.unloaded) return mStructureOkay; // unloaded cells keep the last verdict
@@ -201,7 +268,55 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the tick (:184-195 — the structure-loss slow cool-down)
+	// the temperature interface (upstream :410-418, ITileEntityTemperature)
+	// ---------------------------------------------------------------------------
+
+	@Override
+	public long getTemperatureValue(byte aSide) {
+		return mTemperature;
+	}
+
+	@Override
+	public long getTemperatureMax(byte aSide) {
+		OreDictMaterial tShell = getShellMaterial();
+		if (tShell == null) return Long.MAX_VALUE; // the offline no-material form never melts
+		return CruciblePhysics.temperatureMax(tShell, HEAT_RESISTANCE_BONUS); // :416-418
+	}
+
+	// ---------------------------------------------------------------------------
+	// the content admission (upstream addMaterialStacks :386-408)
+	// ---------------------------------------------------------------------------
+
+	/** The shell weight the thermal blend rides (upstream :336/:388 mMaterial.getWeight(U*100)). */
+	protected double shellWeight() {
+		OreDictMaterial tShell = getShellMaterial();
+		return tShell == null ? 0 : tShell.getWeight(CS.U * 100); // upstream :336 verbatim
+	}
+
+	/**
+	 * Upstream addMaterialStacks (:386-408) via the shared physics: the capacity gate
+	 * and the thermal blend live in {@link CruciblePhysics#addStacks}; the structure
+	 * check stays here (the BE side owns the world question).
+	 *
+	 * @return if the material fit (and only then was blended in)
+	 */
+	public boolean addMaterialStacks(List<OreDictMaterialStack> aList, long aTemperature) {
+		if (!checkStructure(false)) return false; // :387 the structure gate
+		CruciblePhysics.AddResult tResult = CruciblePhysics.addStacks(mContent, aList, aTemperature, mTemperature, shellWeight(), params());
+		if (tResult.added()) {
+			mTemperature = tResult.temperature(); // :389 the blend
+			setChanged();
+		}
+		return tResult.added();
+	}
+
+	/** The content census (upstream OM.total). */
+	public long totalContent() {
+		return CruciblePhysics.total(mContent);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the tick (:184-384)
 	// ---------------------------------------------------------------------------
 
 	@Override
@@ -214,7 +329,63 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase {
 			coolStep(aTimer);
 			return;
 		}
-		// the smelting physics tick lands with the A-card rebase (the CruciblePhysics consumption)
+		tickPhysics();
+	}
+
+	/**
+	 * The formed-structure physics tick, upstream :236-383 order verbatim (the feed
+	 * :204-234 and the rain :197-202 ride the slot/suck commit — no suck face yet).
+	 */
+	private void tickPhysics() {
+		int tHashBefore = mContent.hashCode(); // :185 tHash
+
+		// :236-294 — the alloy scan + the consumption half
+		CruciblePhysics.AlloyResult tAlloy = CruciblePhysics.alloyScan(mContent, mTemperature);
+		CruciblePhysics.applyAlloy(mContent, tAlloy.alloy(), tAlloy.conversions());
+
+		// :296-334 — the evaporation/acid/phase-gate loop, world effects BE-side
+		boolean tNewContent = (tHashBefore != mContent.hashCode()); // :241
+		CruciblePhysics.PhaseOutcome tOutcome = CruciblePhysics.phaseGates(mContent, mTemperature, oTemperature, tNewContent, mAcidProof, params());
+		if (tOutcome.fizz()) { /* SFX.MC_FIZZ :303/:306/:318 — no sound face ported */ }
+
+		// :336-344 — the weight census (the lightest-stack display work is the render defer)
+		double tWeight = shellWeight() + CruciblePhysics.weight(mContent);
+		if (tWeight < 0) tWeight = 0;
+
+		// :346 — the crossing latch BEFORE the heat step (the next tick's gates read this)
+		oTemperature = mTemperature;
+
+		// the destruction arms (:309-320) — content already cleared by the physics
+		if (tOutcome.explosionStrength() > 0) {
+			explode(tOutcome.explosionStrength()); // :312-313 the Root blast
+			return;
+		}
+		if (tOutcome.acidDestroyed()) {
+			setToAir(); // :319 — the acid melt-through kills the controller block
+			return;
+		}
+		// the :307/:370 gas-damage and :308/:371 fire surfaces defer (no entity/fire face)
+
+		// :353-365 — the HU heating step
+		CruciblePhysics.TickResult tHeat = CruciblePhysics.tickHeat(mTemperature, mEnergy, envTemperature(), tWeight, mCooldown, KG_PER_ENERGY);
+		mTemperature = tHeat.temperature();
+		mEnergy = tHeat.energy();
+		mCooldown = tHeat.cooldown();
+
+		// :367-378 — the meltdown gate
+		long tMax = getTemperatureMax((byte)0);
+		if (mTemperature > tMax) {
+			meltdown(tMax);
+			return;
+		}
+
+		// :380-383 — the melt-down WARNING latch
+		boolean tWarning = CruciblePhysics.isMeltDownWarning(mTemperature, tMax);
+		if (mMeltDown != tWarning) {
+			mMeltDown = tWarning;
+			updateClientData();
+		}
+		setChanged();
 	}
 
 	/**
@@ -245,5 +416,58 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase {
 	public void onTickFirst(boolean aIsServerSide) {
 		super.onTickFirst(aIsServerSide);
 		if (aIsServerSide && mTimer == 0) mTemperature = envTemperature();
+	}
+
+	/**
+	 * Upstream :367-377 — the meltdown: the content is trashed and the 3x3x3 cavity
+	 * becomes flowing lava (the controller's own cell included, so the multiblock dies
+	 * in the flow). The gas-damage and fire-spread arms (:370-371) defer with the other
+	 * world-effect surfaces. Package-visible for the offline tests.
+	 */
+	void meltdown(long aTemperatureMax) {
+		mContent.clear(); // :369 GarbageGT.trash(mContent)
+		if (hasLevel() && isServerSide()) {
+			int tX = getBlockPos().getX(), tY = getBlockPos().getY(), tZ = getBlockPos().getZ();
+			for (int i = -1; i < 2; i++) for (int j = -1; j < 2; j++) { // :372-376
+				getLevel().setBlock(new BlockPos(tX + i, tY    , tZ + j), Blocks.LAVA.defaultBlockState(), 3);
+				getLevel().setBlock(new BlockPos(tX + i, tY + 1, tZ + j), Blocks.LAVA.defaultBlockState(), 3);
+				getLevel().setBlock(new BlockPos(tX + i, tY + 2, tZ + j), Blocks.LAVA.defaultBlockState(), 3);
+			}
+		}
+		setChanged();
+	}
+
+	/** Upstream :319 setToAir — the acid melt-through. */
+	private void setToAir() {
+		if (hasLevel() && isServerSide()) {
+			getLevel().setBlock(getBlockPos(), Blocks.AIR.defaultBlockState(), 3);
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// the through-wall mold proxy (upstream :547-556, ITileEntityCrucible)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream fillMoldAtSide (:547-556) verbatim: a formed structure pours its
+	 * molten, self-smelted stacks (the mTargetSmelting identity gate — the molten
+	 * metal proper, not an intermediate) into the adjacent Mold, one stack per call,
+	 * the pour amount subtracted from the content. The wall part relays here through
+	 * its target resolution (the upstream MultiBlockPart :687-690 walk).
+	 */
+	@Override
+	public boolean fillMoldAtSide(ITileEntityMold aMold, byte aSide, byte aSideOfMold) {
+		if (checkStructure(false)) for (OreDictMaterialStack tContent : mContent) {
+			if (tContent != null && mTemperature >= tContent.mMaterial.mMeltingPoint
+					&& tContent.mMaterial.mTargetSmelting.mMaterial == tContent.mMaterial) {
+				long tAmount = aMold.fillMold(tContent, mTemperature, aSideOfMold);
+				if (tAmount > 0) {
+					tContent.mAmount -= tAmount;
+					setChanged();
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
