@@ -40,10 +40,14 @@ public final class GTPipeFlowClientListener {
 	/** Idempotent registration (also the test hook — the listener class never loads in tests implicitly). */
 	public static void register() {
 		// String-key form (toString) — the 1.21.1 event map keys by the ModelResourceLocation
-		// record, so the factory table is keyed leg-neutrally by the id string
+		// record, so the factory table is keyed leg-neutrally by the id string.
+		// Task p25-c-foam-pipe-spray: the factory is the COMPOSED chain — foam(outer) →
+		// flow(inner) → baked blockstate model (GTFluidPipeFoamModel.chain()). One
+		// registration per per-state key (GTRenderModelListener last-wins), so the foam
+		// wrapper rides HERE instead of a second competing registration of the same keys.
 		for (String tModel : TARGET_MODELS) {
 			GTRenderModelListener.registerDynamicModel(
-					new ResourceLocation(GTRenderModelListener.MOD_ID, tModel).toString(), GTFluidPipeFlowModel::new);
+					new ResourceLocation(GTRenderModelListener.MOD_ID, tModel).toString(), GTFluidPipeFoamModel.chain());
 		}
 	}
 }
