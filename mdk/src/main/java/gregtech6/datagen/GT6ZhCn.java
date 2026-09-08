@@ -433,6 +433,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.saw");
 		addDirect("item.gt6.builder_wand"); // task p24-builder-wand — the dump tool.name face is untranslated ASCII, the hand row composes from 建筑之杖 (itemGroup.toolHeadBuilderwand :18079 / oredict suffix :91577)
 		addDirect("item.gt6.screwdriver"); // task p24-screwdriver-item — same hand-row face
+		addDirect("item.gt6.hammer"); // task p25-tool-hammer-wrench — the hand row composes from 锤 (toolHeadHammer dump face 锤头 :3290, head-word first)
+		addDirect("item.gt6.wrench"); // task p25-tool-hammer-wrench — the hand row composes from 扳手 (toolHeadWrench dump face 扳手头 :3319)
 		addDirect("item.gt6.cover_redstone_emitter");
 		addDirect("item.gt6.cover_redstone_conductor_in");
 		addDirect("item.gt6.cover_redstone_conductor_out");

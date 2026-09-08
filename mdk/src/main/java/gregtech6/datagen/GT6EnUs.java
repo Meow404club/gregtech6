@@ -241,6 +241,11 @@ public class GT6EnUs extends LanguageProvider {
         // matching the TOOL_LOCALISER face CS.java:1112)
         add("item.gt6.builder_wand", "Builder Wand");
         add("item.gt6.screwdriver", "Screwdriver");
+        // task p25-tool-hammer-wrench: the hammer + wrench display names (the upstream
+        // registration-row wordings "Hammer"/"Wrench", Loader_Tools.java:124/:126
+        // verbatim, matching the TOOL_LOCALISER faces CS.java:1096/:1083)
+        add("item.gt6.hammer", "Hammer");
+        add("item.gt6.wrench", "Wrench");
         add(GT6Tools.TAB_TITLE_KEY, "Tools");
     }
 
