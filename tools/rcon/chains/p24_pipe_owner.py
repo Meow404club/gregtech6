@@ -76,9 +76,15 @@ steps += [
 ]
 
 # ------------------------------------------------- B: the lock arm (the applyFoam stand-in)
+# Task p25-c-foam-pipe-spray: the lock arms through the DRIED foam (the restored third
+# clause !mFoamDried of 10ConnectorRendered:153-156 — an undried owned pipe passes
+# everyone). The forced ownable write alone is no longer a lock, so the dried bit rides
+# in via a /data merge (the console's /setblock-style seam; the p25 chain arms it through
+# the real spray+dry pair instead).
 steps += [
     phase("B: ownable 1 <uuid> — the forced write; the console toggle is REJECTED (self gate)"),
     Step(f"gt6pipe ownable {PA} 1 {UUID_A}", expect=f"ownable true, owner {UUID_A} (FORCED write"),
+    Step(f"data merge block {PA} {{gt.foamdried:1b}}", expect="Modified block data"),
     Step(f"gt6pipe stat {PA}", expect=f"ownable true owner {UUID_A}"),
     Step(f"gt6pipe toggle {PA} 1", expect="FAILED, connections 1", allow_failed=True),
 ]

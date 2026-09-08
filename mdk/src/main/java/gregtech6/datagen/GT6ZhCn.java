@@ -101,6 +101,26 @@ public class GT6ZhCn extends LanguageProvider {
 		addStoneVariantUnits(); // task p20-i18n-compose-rows
 		addRowDomainUnits();    // task p20-i18n-compose-rows
 		addGrassUnits();        // task p24-grass-block
+		addFoamSprayUnits();    // task p25-c-foam-pipe-spray
+	}
+
+	/**
+	 * The C-Foam spray family zh faces (task p25-c-foam-pipe-spray, the addGrassUnits
+	 * shape): the 32 item display names (16 C-Foam + 16 Advanced owned) + the family tab +
+	 * the 2 tooltip lines. All 35 ride the reference table's hand layer — the 32 item names
+	 * are the DUMP faces verbatim (metas 1100+2i/1132+2i, tmp/gregtech.lang:9350-9431),
+	 * the tooltip template splits the dump's gt.behaviour.foamspray.N tooltip at the colour
+	 * word (the %s slot rides the untranslated DYE_NAMES arg, the p22 spraycan.paint form)
+	 * and the owned warning is hand (upstream :259 en only).
+	 */
+	private void addFoamSprayUnits() {
+		for (String tDye : gregtech6.item.spraycan.GTSprayCanItem.DYE_IDS) {
+			addDirect("item.gt6.foam_spray_" + tDye);
+			addDirect("item.gt6.foam_spray_owned_" + tDye);
+		}
+		addDirect(gregtech6.registry.GT6FoamSprays.TAB_TITLE_KEY);
+		addDirect(gregtech6.item.foamspray.GT6FoamSprayItem.FOAM_TOOLTIP_KEY);
+		addDirect(gregtech6.item.foamspray.GT6FoamSprayItem.OWNED_TOOLTIP_KEY);
 	}
 
 	/**

@@ -4625,3 +4625,45 @@ borrowed from upstream
 The "colored" groups are grayscale tint-carriers (the ANY.W tungsten tint is the gray
 itself); the port shows them un-tinted — the same declared deviation as the crank
 (task p12-engine-crank) and the tool family.
+
+C-Foam spray item textures, task p25-c-foam-pipe-spray: the 32 16x16 icons under
+`gt6/textures/item/spray/` (`foam_<dye>.png` / `foam_owned_<dye>.png`) come from the same
+upstream `gt.multiitem.randomtools/` directory (the MultiItemRandomTools.java:251-264
+"C-Foam Spray"/"Advanced C-Foam Spray" rows: `foam_<dye>` = meta `1100+2i`, `foam_owned_<dye>`
+= meta `1132+2i`, both in DYE_NAMES order). Pixel-verified: the colour tints follow
+DYE_NAMES[i] on both ladders (red spot on 1102/1134, green on 1104/1136, blue on
+1108/1140, white brightest on 1130; the owned ladder is the darker blue-bodied can).
+Upstream license CC0 (see above).
+
+- `foam_black.png` (1100) `00229a94769e646f763449be382fcf4ef106426bac56fff121bfa8cb06ce8859`
+- `foam_owned_black.png` (1132) `32ab61ad28f0948132d2ac1b5cc685b6e7dc8bed988d0284a59d7e05e2d89868`
+- `foam_red.png` (1102) `5139fcf8b217758dc9fb19d304fe65b13d633d8cc7a1d1ff092068f23f177600`
+- `foam_owned_red.png` (1134) `10807c357f9196efd94b51969d2e12c8e5156501583042fca594c5a32f813771`
+- `foam_green.png` (1104) `bd384054abe96fad3c43c58607fbcaebb9a4ade65b74e4f3cc7b916595110c8b`
+- `foam_owned_green.png` (1136) `24ded1a7f5614a8052afb948eeb761110e3d259fee014f989afda1766e344c7f`
+- `foam_brown.png` (1106) `3bc1b6191ed002896dfa2784c2a95d4430ad2d6fd97e6d5bdb3e4e68107d22e4`
+- `foam_owned_brown.png` (1138) `359635c717ece2008310967600425ffcdb95850d89c0e6d88f872a563ba739d2`
+- `foam_blue.png` (1108) `a513f0c366d96c873f00a72954f7cfb5654f3f2f9a9f602c7d9896888e7acdb7`
+- `foam_owned_blue.png` (1140) `c4c62c4735a636001c3fdc9bcc81d368fc5317c39fc83f7b37cfb4179461cd3a`
+- `foam_purple.png` (1110) `8f1379e822af9de50d99d06093ed9eda1ad6a717bdb65571b20c7e2a3311ab90`
+- `foam_owned_purple.png` (1142) `e3e62ff8fa52fa756c8df1ac9b1a0d0d4c8a003bfa7af8c4eeca5c5bfd31f41e`
+- `foam_cyan.png` (1112) `a8dff4a4166ecb508dee4b2be0ad92605a7ddafbc4aa467367dc52d2fdd2ace3`
+- `foam_owned_cyan.png` (1144) `b979127c3cd87aa404a96ac629a72607d5477ce6b0d0acca87226df927ea1e9b`
+- `foam_light_gray.png` (1114) `b5d3be331f3cecbe42a5839d8fe2a3ada717bc7c8c555e55d0753acd30b79407`
+- `foam_owned_light_gray.png` (1146) `a60fc8d102f86c02f8727f473fa87ab4fbffc7e90667acb651a3097a867e0088`
+- `foam_gray.png` (1116) `e45f87a9338245fcd1dfcfcc0c4c0b68fb6cd6798547c0e7ca598d849eef49cf`
+- `foam_owned_gray.png` (1148) `a37d8255f182999031cc73b2ecd084c7421c541778631491e092c33665e2f4ce`
+- `foam_pink.png` (1118) `74a3d93d7d6a37824077a80aec2aa2afb068ef9b1a227eaa472828ca4a979613`
+- `foam_owned_pink.png` (1150) `1a70348ad8d2301cd64df8a0ef283022df236172624a2caa6e80db4ef9b3aa35`
+- `foam_lime.png` (1120) `00fbaccfa2a106b9685934dea715d0647b06eea85fd7437813209c438c368928`
+- `foam_owned_lime.png` (1152) `1fa164f7fa1356ed22012e7bc08b2031f80d06bd1a449221c2481a983990da86`
+- `foam_yellow.png` (1122) `0bbfeca0886ca497e471581245c0ece0cc589a60a8babd4424b2b547e9b318cd`
+- `foam_owned_yellow.png` (1154) `aa60b805619d3ba9eb4b5b7cc8fa8adfce22cf1c6a2989a73db0092577123df3`
+- `foam_light_blue.png` (1124) `aa87552d12d3124c13151064afae3ff702b4c48a5a6f14c51ad2ff17bbc43904`
+- `foam_owned_light_blue.png` (1156) `331595e0b8756eee648e1ea8ca9461150db4cf766a86265493079b7913689693`
+- `foam_magenta.png` (1126) `8f740064c38edec17a7bdc6d9aed88a30ca7630453f4f9f4614065989148d504`
+- `foam_owned_magenta.png` (1158) `533cd05e1c8c62e000742938618f7f51eab4d27183e4c4ececded3c7f4eb2d10`
+- `foam_orange.png` (1128) `aab83686ab63b4103cc8a4cbc25ccc270d7d034cf2a365de6a664e0397d3883d`
+- `foam_owned_orange.png` (1160) `098f00e92ba293728a041b4ca48264d7772ca6e4a28daf784d7b2efd628df88d`
+- `foam_white.png` (1130) `15fe6c3e22d845a3e41f622e5b18c2ec87354484243f3b1a26caec0104256cb3`
+- `foam_owned_white.png` (1162) `29f55f0e2b67541b1f8d25289573484a34ddcf64e4449bba468f7d67c89c6006`

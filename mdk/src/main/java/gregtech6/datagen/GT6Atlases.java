@@ -81,5 +81,11 @@ public final class GT6Atlases extends SpriteSourceProvider {
         // renderer stitches whichever the visual lane currently encodes (0 = out, 1 = in)
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.covers.covers.CoverPump.PUMP_OUT_SPRITE, Optional.empty()));
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.covers.covers.CoverPump.PUMP_IN_SPRITE, Optional.empty()));
+        // the four grayscale C-Foam sprites (task p25-c-foam-pipe-spray spec ⑤) — stitched by
+        // the runtime-built GTFluidPipeFoamModel quads (FRESH/HARDENED x normal/owned)
+        atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.FRESH_SPRITE, Optional.empty()));
+        atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.FRESH_OWNED_SPRITE, Optional.empty()));
+        atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.HARDENED_SPRITE, Optional.empty()));
+        atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.HARDENED_OWNED_SPRITE, Optional.empty()));
     }
 }

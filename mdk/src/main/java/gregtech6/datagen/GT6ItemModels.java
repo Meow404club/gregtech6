@@ -158,6 +158,17 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/spray/remover"));
         withExistingParent("spray_can_empty", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/spray/empty"));
+        // the C-Foam spray family (task p25-c-foam-pipe-spray spec ①) — 32 item/generated
+        // models over the byte-identical upstream icon borrows (gt.multiitem.randomtools
+        // metas 1100+2i / 1132+2i, assets/README.md attribution), walked over the DYE_IDS
+        // snake table so the model ids cannot drift from the registered item ids
+        // (registry "foam_spray_<id>" / "foam_spray_owned_<id>")
+        for (String tDye : gregtech6.item.spraycan.GTSprayCanItem.DYE_IDS) {
+            withExistingParent("foam_spray_" + tDye, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/spray/foam_" + tDye));
+            withExistingParent("foam_spray_owned_" + tDye, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/spray/foam_owned_" + tDye));
+        }
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

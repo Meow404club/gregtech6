@@ -37,6 +37,7 @@ import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTWires;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 
 /**
  * Loot tables of the material prefix blocks (task p8-prefixblock-render spec ④). One
@@ -92,7 +93,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
-                new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK)), // task p24-grass-block
+                new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
+                new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK)), // task p25-c-foam-pipe-spray
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -110,7 +112,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
-                new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK))); // task p24-grass-block
+                new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
+                new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK))); // task p25-c-foam-pipe-spray
         //?}
     }
 
@@ -866,5 +869,117 @@ public final class GT6LootTables extends LootTableProvider {
                         this.applyExplosionCondition(tBlock, LootItem.lootTableItem(net.minecraft.world.item.Items.DIRT))));
             }
         }
+    }
+
+    /**
+     * The fluid-pipe family block list (task p25-c-foam-pipe-spray spec ⑦): the two wood
+     * tiers. Pre-existing state: the pipes shipped TABLE-LESS (breaking dropped nothing —
+     * the same gap the p22 machine census closed for its 13); the foam NBT round-trip
+     * needs a real drop, so this card gives them the upstream MTE default self-drop WITH
+     * the foam carry (upstream writeItemNBT2, TileEntityBase10ConnectorRendered.java:82-87 —
+     * the port's writeItemNBT2 counterpart is the loot copy_nbt, the p22 painted-item form).
+     */
+    public static List<Block> pipeLootBlocks() {
+        return List.of(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get(),
+                gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
+    }
+
+    /**
+     * The pipe-family self-drop provider (task p25-c-foam-pipe-spray; the paint carry = the
+     * p22 painted-item-domain form — the pipe BE rides the 03 base IPaintableTE stratum, so
+     * a paint-less drop would reintroduce the exact regression p22 closed).
+     */
+    public static final class GT6PipeBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6PipeBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6PipeBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return pipeLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : pipeLootBlocks()) add(tBlock, foamPaintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The foam+paint carrying self-drop table — the {@link #paintSelfTable} shape extended
+     * by the three foam keys: the vanilla createSingleItemTable form (one pool, rolls 1,
+     * {@code survives_explosion}) plus ONE entry-level {@code copy_nbt} from the block
+     * entity into the dropped stack's {@code BlockEntityTag}, five REPLACE ops keyed off the
+     * BE's own constants (single decision site — the BE save and the loot copy can never
+     * drift): the upstream writeItemNBT2 trio {@code gt.foamed}/{@code gt.foamdried}/
+     * {@code gt.ownable} (TileEntityBase10ConnectorRendered.java:82-87) plus the 03 base
+     * paint pair {@code gt.color}/{@code gt.painted}. NOTE what is deliberately NOT copied:
+     * {@code gt.owner} — the owner does NOT ride the item (upstream :82-87 has no owner op;
+     * the re-placed pipe records the NEW placer through onPlaced, the :148-150 form).
+     */
+    static LootTable.Builder foamPaintSelfTable(ItemLike aItem) {
+        return LootTable.lootTable()
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .when(ExplosionCondition.survivesExplosion())
+                        .add(LootItem.lootTableItem(aItem).apply(foamPaintCopyNbt())));
+    }
+
+    /**
+     * The foam+paint carry function builder — the {@code copy_nbt} five-op form over the
+     * same ContextNbtProvider.BLOCK_ENTITY source (the generated JSON shape:
+     * {@code {"function": "minecraft:copy_nbt", "source": "block_entity", "ops":
+     * [{"source": "'gt.foamed'", "target": "BlockEntityTag.'gt.foamed'", "op": "replace"}, ...]}}).
+     *
+     * <p>QUOTED SEGMENTS (the live-chain finding of this card): NbtPathArgument splits
+     * paths on {@code '.'} (vanilla 1.20.1 NbtPathArgument.java:70-71 {@code expect('.')}
+     * / :140 — a dot is not a name character), so the raw dotted key {@code gt.foamed}
+     * parses as the compound traversal root→gt→foamed and NEVER matches the flat key the
+     * BE writes — the op silently no-ops. The literal key rides as a quoted segment
+     * {@code 'gt.foamed'} (parseNode :81-82 — a quote-opening node reads a full string).
+     * NOTE: the p22 {@link #paintSelfTable} ops share this defect (dotted, unquoted) —
+     * out of this card's files scope, flagged to review (the machines' paint carry never
+     * landed and the target traversal fabricated a junk gt compound).
+     */
+    private static LootItemFunction.Builder foamPaintCopyNbt() {
+        //? if neoforge {
+        /*return net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction
+                .copyData(ContextNbtProvider.BLOCK_ENTITY)
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_FOAMED), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_FOAMED),
+                        net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_FOAMDRIED), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_FOAMDRIED),
+                        net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_OWNABLE), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_OWNABLE),
+                        net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_COLOR), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_COLOR),
+                        net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_PAINTED), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_PAINTED),
+                        net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE);
+         *///?} else {
+        return CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_FOAMED), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_FOAMED),
+                        CopyNbtFunction.MergeStrategy.REPLACE)
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_FOAMDRIED), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_FOAMDRIED),
+                        CopyNbtFunction.MergeStrategy.REPLACE)
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_OWNABLE), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_OWNABLE),
+                        CopyNbtFunction.MergeStrategy.REPLACE)
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_COLOR), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_COLOR),
+                        CopyNbtFunction.MergeStrategy.REPLACE)
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_PAINTED), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_PAINTED),
+                        CopyNbtFunction.MergeStrategy.REPLACE);
+        //?}
+    }
+
+    /** The single-quote NBT-path segment for a flat dotted key (the quoted-node form). */
+    private static String quoted(String aKey) {
+        return "'" + aKey + "'";
     }
 }

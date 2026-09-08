@@ -117,6 +117,43 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	}
 
 	// ---------------------------------------------------------------------------
+	// dried-foam physical face (task p25-c-foam-pipe-spray spec ⑥ — the block-level
+	// counterparts of the upstream 10ConnectorRendered dried swaps: collision :218
+	// addDefaultCollisionBoxToList / light :144 getLightOpacity → LIGHT_OPACITY_MAX;
+	// both overrides are BE lookup + unwrap only, the decision lives in the static
+	// seams the offline tests drive)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Dried foam collides as a FULL block (the hardened-foam walk-on surface; upstream
+	 * :218 with the diameter arm cut — deviation A). 1.20.1 BlockBehaviour.java:290 public /
+	 * 1.21.1:321 protected — the public widening is the legal both-legs shape (the
+	 * getDestroyProgress override below, same treatment).
+	 */
+	@Override
+	public net.minecraft.world.phys.shapes.VoxelShape getCollisionShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel,
+			BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+		BlockEntity tTile = aLevel.getBlockEntity(aPos);
+		return GTFluidPipeBlockEntity.foamCollisionShape(
+				tTile instanceof GTFluidPipeBlockEntity tPipe ? tPipe : null,
+				super.getCollisionShape(aState, aLevel, aPos, aContext));
+	}
+
+	/**
+	 * Dried foam blocks ALL light (upstream :144 LIGHT_OPACITY_MAX). 1.20.1
+	 * BlockBehaviour.java:255 public (the TintedGlassBlock.java:19 override precedent) /
+	 * 1.21.1:292 protected, same params — the public widening is the legal both-legs shape
+	 * (deviation C, verified against tmp/vanilla-1.20.1 + tmp/refs/vanilla-mc/1.21.1).
+	 */
+	@Override
+	public int getLightBlock(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
+		BlockEntity tTile = aLevel.getBlockEntity(aPos);
+		return GTFluidPipeBlockEntity.foamLightBlock(
+				tTile instanceof GTFluidPipeBlockEntity tPipe ? tPipe : null,
+				super.getLightBlock(aState, aLevel, aPos));
+	}
+
+	// ---------------------------------------------------------------------------
 	// break gate (task p24-pipe-owner — the vanilla BlockBehaviour.getDestroyProgress
 	// 1.20.1:319-327 public / 1.21.1:343 protected override, the BambooStalkBlock
 	// 1.20.1:184 precedent; the upstream break-gate counterpart is
