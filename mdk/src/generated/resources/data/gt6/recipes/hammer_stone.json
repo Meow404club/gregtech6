@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "X": {
+      "tag": "minecraft:stone_tool_materials"
+    }
+  },
+  "pattern": [
+    "XX ",
+    "XXS",
+    "XX "
+  ],
+  "result": {
+    "item": "gt6:hammer"
+  },
+  "show_notification": true
+}

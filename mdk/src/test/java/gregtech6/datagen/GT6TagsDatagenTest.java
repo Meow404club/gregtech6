@@ -359,6 +359,22 @@ class GT6TagsDatagenTest {
     }
 
     /**
+     * The p25 tool face (task p25-tool-hammer-wrench, the PIN evolution duty): the two
+     * new self-owned crafting-tool tags carry EXACTLY their one registered member each,
+     * and the ecosystem tools band grew 7 → 9 (the hammer + wrench pair appended in the
+     * band order). Pinned so any band change is a conscious constant update.
+     */
+    @Test
+    void p25ToolFacesAreTheExactMembers() throws Exception {
+        assertEquals(List.of("gt6:hammer"), tagValues("gt6/tags/items/tools/hard_hammer.json"));
+        assertEquals(List.of("gt6:wrench"), tagValues("gt6/tags/items/tools/wrench.json"));
+        assertEquals(List.of(
+                "gt6:file", "gt6:saw", "gt6:crowbar", "gt6:cutter", "gt6:chisel",
+                "gt6:builder_wand", "gt6:screwdriver", "gt6:hammer", "gt6:wrench"),
+                tagValues("forge/tags/items/tools.json"));
+    }
+
+    /**
      * The namespace split pin: the family faces above read the CANONICAL tracked tree
      * (the forge-leg --output, shared by both legs' classpaths); the namespace itself is
      * the leg fork — forge "forge" / 21.1 "c" (Tags.java:310-312 vs :799/:923) — and the
