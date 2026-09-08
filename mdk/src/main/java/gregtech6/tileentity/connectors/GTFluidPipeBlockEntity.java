@@ -15,6 +15,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
 //? if forge {
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -62,8 +65,10 @@ import gregtech6.util.UT6;
  * <li>capability — the side-wrapped {@link SideFluidHandler} via
  *     {@code getCapability(FLUID_HANDLER, Direction)} (spec ⑤);</li>
  * <li>ownership — the {@code mOwnable}/{@code mOwner} pair + {@link #allowInteraction(UUID)}
- *     and the three live gates (break/use/connect-neighbour; task p24-pipe-owner), the
- *     foam-free simplification of the upstream 10ConnectorRendered lock.</li>
+ *     and the live gates (break/use/connect-neighbour; task p24-pipe-owner);</li>
+ * <li>C-Foam — the {@code mFoam}/{@code mFoamDried} pair with the applyFoam/dryFoam/
+ *     removeFoam write points and the drying ticker (task p25-c-foam-pipe-spray, the
+ *     upstream TileEntityBase10ConnectorRendered foam stratum :57/:99-102/:153-183).</li>
  * </ul>
  *
  * <p>Cuts (pool, per the card): corrosion leaks, over-temperature ignition and the entity
@@ -107,11 +112,16 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	/** Upstream NBT_OWNER = "gt.owner" (CS.java:1168) — the VALUE form is the vanilla CompoundTag.putUUID/getUUID/hasUUID pair (the int-array UUID form, both legs NbtUtils.createUUID = IntArrayTag; declared deviation from the upstream String form, no 1.7.10-world migration exists). */
 	public static final String NBT_OWNER = "gt.owner";
 
+	/** Upstream NBT_FOAMED = "gt.foamed" (CS.java:1214, Boolean). */
+	public static final String NBT_FOAMED = "gt.foamed";
+
+	/** Upstream NBT_FOAMDRIED = "gt.foamdried" (CS.java:1215, Boolean). */
+	public static final String NBT_FOAMDRIED = "gt.foamdried";
+
 	/**
 	 * Upstream TileEntityBase10ConnectorRendered.java:57 ({@code mOwnable = F}). False by
-	 * default: a freshly placed pipe NEVER locks (upstream activation is the dried-foam
-	 * pair, :154-156 — the port has no foam write point, P10_Foam_NotPorted pool), so the
-	 * live behaviour stays byte-for-byte the upstream plain pipe.
+	 * default: a freshly placed pipe NEVER locks — the ONLY runtime activation is a dried
+	 * owned foam (the applyFoam write point below, task p25-c-foam-pipe-spray).
 	 */
 	public boolean mOwnable = false;
 
@@ -120,19 +130,20 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	public UUID mOwner = null;
 
 	/**
-	 * Upstream TileEntityBase03TicksAndSync.java:106-108
-	 * ({@code mOwner == null || (aEntity != null && mOwner.equals(aEntity.getUniqueID()))})
-	 * with the Entity unwrapped to its UUID (the offline-test discipline forbids
-	 * constructing Players/Entities). The upstream 10ConnectorRendered.java:154-156
-	 * override adds the {@code !mFoamDried} clause — with no foam world that constant
-	 * clause folds to true, so THIS is the equivalence simplification (the C-Foam revival
-	 * card refills the third clause + the applyFoam write point).
+	 * The upstream three-clause predicate verbatim, TileEntityBase10ConnectorRendered
+	 * .java:153-156 ({@code !mOwnable || !mFoamDried || super}) over the 03 base
+	 * :106-108 core ({@code mOwner == null || (aEntity != null && mOwner.equals(...))}
+	 * with the Entity unwrapped to its UUID — the offline-test discipline forbids
+	 * constructing Players/Entities). The {@code !mFoamDried} third clause (task
+	 * p25-c-foam-pipe-spray, the javadoc obligation of the p24 fold): UNLESS the foam has
+	 * dried, the ownership half is bypassed entirely — an undried (or unfoamed) pipe
+	 * passes everyone, and only a dried foam arms the lock.
 	 *
 	 * <p>Null owner = everyone passes (upstream :107 arm 1); a null aUUID against a set
 	 * owner denies (the :107 {@code aEntity != null} arm — the console is nobody).
 	 */
 	public boolean allowInteraction(@Nullable UUID aUUID) {
-		return !mOwnable || mOwner == null || (aUUID != null && mOwner.equals(aUUID));
+		return !mOwnable || !mFoamDried || mOwner == null || (aUUID != null && mOwner.equals(aUUID));
 	}
 
 	/**
@@ -149,6 +160,162 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	public static float ownerDestroyProgress(@Nullable GTFluidPipeBlockEntity aPipe, float aSuperProgress, @Nullable UUID aUUID) {
 		if (aPipe == null || aPipe.allowInteraction(aUUID)) return aSuperProgress;
 		return 0.0F;
+	}
+
+	// ---------------------------------------------------------------------------
+	// C-Foam (task p25-c-foam-pipe-spray — the upstream TileEntityBase10ConnectorRendered
+	// foam stratum: fields :57, write points :159-183, drying :99-102, queries :215-217)
+	// ---------------------------------------------------------------------------
+
+	/** Upstream :57 {@code mFoam = F} — the pipe currently carries wet or dried C-Foam. */
+	public boolean mFoam = false;
+
+	/** Upstream :57 {@code mFoamDried = F} — the foam has hardened (arms the lock, the full-block collision/light swap). */
+	public boolean mFoamDried = false;
+
+	/** The drying gate's minimum age (upstream :99 {@code aTimer >= 100}). */
+	public static final int DRY_MIN_AGE = 100;
+
+	/** The drying roll bound (upstream :99 {@code rng(5900) == 0} — mean ~5900 ticks ≈ 295 s). */
+	public static final int DRY_RNG_BOUND = 5900;
+
+	/** Upstream :144 {@code LIGHT_OPACITY_MAX} — the dried-foam light block (the vanilla max, 15). */
+	public static final int FOAM_LIGHT_OPACITY = 15;
+
+	/**
+	 * The upstream applyFoam verbatim (:159-166), with two recorded folds:
+	 * <ul>
+	 * <li>the {@code mDiameter >= 1.0F} arm is CUT (declared deviation A — the port pipe
+	 *     has no diameter field, the clause is the constant false);</li>
+	 * <li>the {@code short[] aCFoamRGB + UT.Code.getRGBInt} colour walk folds to the final
+	 *     0xRRGGBB int — the spray can carries the {@code DYES_INT} table value directly
+	 *     (the p22 GTSprayCanItem colour form; {@code getRGBInt} is identity over it).</li>
+	 * </ul>
+	 * The OWNERSHIP_RESET clause of upstream :162 folds away (the p24 recorded deviation,
+	 * CS.java:866 defaults false). Spraying PAINTS the pipe the foam colour (upstream :161
+	 * {@code mIsPainted = T} + :163 mRGBa — the IPaintableTE stratum of the 03 base).
+	 *
+	 * <p>Gates: already foamed (wet OR dried) refuses, client side refuses, and the
+	 * allowInteraction gate refuses a locked pipe's non-owner RE-spray (upstream :160
+	 * last arm). The side parameter is interface-uniform (the upstream body ignores it).
+	 *
+	 * @return true when the foam landed (the caller pays its 10 internal units, upstream
+	 *         Behavior_Spray_Foam.java:114)
+	 */
+	public boolean applyFoam(byte aSide, @Nullable UUID aSprayer, int aRGB, boolean aOwned) {
+		if (mFoam || mFoamDried || isClientSide() || !allowInteraction(aSprayer)) return false; // upstream :160, mDiameter arm cut (deviation A)
+		mFoam = true; mFoamDried = false; mIsPainted = true; mOwnable = aOwned; // upstream :161
+		if (mOwnable && aSprayer != null) mOwner = aSprayer; // upstream :162, OWNERSHIP_RESET folded (p24 deviation)
+		mRGBa = aRGB; // upstream :163 UT.Code.getRGBInt over the spray colour
+		foamChanged(); // upstream :164 updateClientData + the port's chunk-dirty/render-update pair
+		return true;
+	}
+
+	/**
+	 * The upstream dryFoam verbatim (:169-174) — NO allowInteraction gate (the upstream
+	 * asymmetry: anyone may harden a wet foam, only the owner may remove a dried one).
+	 * The dead {@code mFoam = T} store is kept verbatim (the card's "无门逐字保留").
+	 *
+	 * @return true when a wet foam got hardened
+	 */
+	public boolean dryFoam(byte aSide, @Nullable UUID aPlayer) {
+		if (!mFoam || mFoamDried || isClientSide()) return false; // upstream :170
+		mFoam = true; mFoamDried = true; // upstream :171 verbatim
+		foamChanged(); // upstream :172
+		return true;
+	}
+
+	/**
+	 * The upstream removeFoam verbatim (:177-183): only a DRIED foam removes, and only
+	 * through the allowInteraction gate (a locked pipe keeps every non-owner out). The
+	 * reset form clears all four foam-ownership fields and UNPAINTS (upstream :180 — the
+	 * applyFoam paint write-point's symmetric revert; live because the pipe BE rides the
+	 * IPaintableTE stratum of the 03 base, the deviation-D verification).
+	 *
+	 * @return true when the foam got removed
+	 */
+	public boolean removeFoam(byte aSide, @Nullable UUID aPlayer) {
+		if (!mFoam || !mFoamDried || isClientSide() || !allowInteraction(aPlayer)) return false; // upstream :178
+		mFoam = false; mFoamDried = false; mOwnable = false; mOwner = null; // upstream :179
+		unpaint(); // upstream :180
+		foamChanged(); // upstream :181
+		return true;
+	}
+
+	/** Upstream :215 — foamed on any face (the pipe carries one foam state across all faces). */
+	public boolean hasFoam(byte aSide) {
+		return mFoam;
+	}
+
+	/** Upstream :216. */
+	public boolean driedFoam(byte aSide) {
+		return mFoam && mFoamDried;
+	}
+
+	/** Upstream :217. */
+	public boolean ownedFoam(byte aSide) {
+		return mFoam && mOwnable;
+	}
+
+	/**
+	 * The upstream drying ticker verbatim (:99-102): a matured wet foam hardens on a
+	 * 1/{@link #DRY_RNG_BOUND} per-tick roll. Ungated by the distribution phase — upstream
+	 * runs it in onTick2, every server tick. The roll rides {@link #rng(int)} — the
+	 * injection seam the deterministic tests override.
+	 */
+	private void tickFoamDrying(long aTimer, boolean aIsServerSide) {
+		if (aIsServerSide && aTimer >= DRY_MIN_AGE && mFoam && !mFoamDried && rng(DRY_RNG_BOUND) == 0) {
+			mFoamDried = true;
+			foamChanged(); // upstream :101 updateClientData + the port sync pair
+		}
+	}
+
+	/**
+	 * The uniform random roll (the upstream 01Root rng face over the vanilla level random)
+	 * — {@code protected} so the offline tests inject a deterministic roll (the
+	 * creative-form-seam precedent). Level-less BEs roll 0 (a fresh offline BE dries on its
+	 * first matured tick unless the test overrides — deterministic either way).
+	 */
+	protected int rng(int aBound) {
+		return hasLevel() ? getLevel().random.nextInt(aBound) : 0;
+	}
+
+	/**
+	 * Every foam state change: {@code setChanged()} (the chunk-dirty flag, the
+	 * onFilledFrom port precedent) + {@code updateClientData()} (the upstream :101/:164/:181
+	 * call — both sync channels carry the foam/paint keys on the next window) + the
+	 * C-grade render-update pair (the snapshot the dynamic foam model reads must refresh).
+	 */
+	private void foamChanged() {
+		setChanged();
+		updateClientData();
+		GTRenderUpdates.scheduleRenderUpdate(this);
+	}
+
+	// ---------------------------------------------------------------------------
+	// dried-foam static seams (task p25-c-foam-pipe-spray spec ⑥ — the
+	// ownerDestroyProgress shape: the block overrides stay BE-lookup + unwrap only)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The dried light-block seam (the vanilla TintedGlassBlock.java:19 precedent): dried
+	 * foam blocks ALL light (upstream :144 {@code getLightOpacity() → LIGHT_OPACITY_MAX}
+	 * when dried), everything else passes the super value. Static and Player-free for the
+	 * offline tests; the Block override is the only live caller.
+	 */
+	public static int foamLightBlock(@Nullable GTFluidPipeBlockEntity aPipe, int aSuperLight) {
+		return aPipe != null && aPipe.mFoamDried ? FOAM_LIGHT_OPACITY : aSuperLight;
+	}
+
+	/**
+	 * The dried collision seam (upstream :218 {@code addDefaultCollisionBoxToList() =
+	 * mDiameter >= 1.0F || mFoamDried} with the diameter arm cut — deviation A): dried
+	 * foam collides as a FULL block (walk-on surface, the hardened-foam floor), everything
+	 * else keeps the super shape. Static for the offline tests; the Block override is the
+	 * only live caller.
+	 */
+	public static VoxelShape foamCollisionShape(@Nullable GTFluidPipeBlockEntity aPipe, VoxelShape aSuperShape) {
+		return aPipe != null && aPipe.mFoamDried ? Shapes.block() : aSuperShape;
 	}
 
 	/** The random phase offset within {@link #DISTRIBUTION_PERIOD} (assigned on the first server tick, GTCEu offset :75). */
@@ -199,6 +366,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 
 	@Override
 	public void onTick(long aTimer, boolean aIsServerSide) {
+		tickFoamDrying(aTimer, aIsServerSide); // upstream 10ConnectorRendered:99-102 — ungated by the distribution phase
 		if (aIsServerSide && mPhaseAssigned && (aTimer + mPhaseOffset) % DISTRIBUTION_PERIOD == 0) {
 			mTransferredAmount = 0; // upstream :258
 			for (FluidTankGT tTank : mTanks) {
@@ -575,22 +743,31 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	*///?}
 
 	private void scheduleFlowRenderRefresh() {
-		if (mIoMask != 0 && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
+		if ((mIoMask != 0 || mFoam) && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
 	}
 
 	/**
-	 * The C-grade render hook (IForgeBlockEntity.java:174): a pipe with output arrows
-	 * hands the render thread the immutable {@link gregtech6.client.render.PipeFlowSnapshot};
-	 * unmarked pipes keep {@code ModelData.EMPTY} and render through the plain blockstate
-	 * model (spec ④ — the zero-blockstate overlay, the oven cover snapshot form).
+	 * The C-grade render hook (IForgeBlockEntity.java:174): a pipe with output arrows AND/OR
+	 * C-Foam hands the render thread its immutable snapshots — the {@link
+	 * gregtech6.client.render.PipeFlowSnapshot} arrows on the flow key and the {@link
+	 * gregtech6.client.render.PipeFoamSnapshot} foam state on its own key (the
+	 * GTModelProperties single-valued-property coexistence ruling). A plain pipe keeps
+	 * {@code ModelData.EMPTY} semantics and renders through the plain blockstate model;
+	 * the paint colour rides the 03 base's PAINT supply through the same derived snapshot.
 	 */
 	@Override
 	public net.minecraftforge.client.model.data.ModelData getModelData() {
 		byte tMask = getIoMask();
-		if (tMask == 0) return super.getModelData();
-		return gregtech6.client.render.GTModelProperties.derive(super.getModelData())
-				.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask))
-				.build();
+		if (!mFoam && tMask == 0) return super.getModelData();
+		net.minecraftforge.client.model.data.ModelData.Builder tBuilder =
+				gregtech6.client.render.GTModelProperties.derive(super.getModelData());
+		if (tMask != 0) {
+			tBuilder.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask));
+		}
+		if (mFoam) {
+			tBuilder.with(gregtech6.client.render.GTModelProperties.FOAM_SNAPSHOT, new gregtech6.client.render.PipeFoamSnapshot(mFoamDried, mOwnable));
+		}
+		return tBuilder.build();
 	}
 
 	// ---------------------------------------------------------------------------
@@ -631,8 +808,11 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		}
 		aNBT.putLong(NBT_TRANSFERRED, mTransferredAmount);
 		aNBT.putByte(NBT_IO_MASK, mIoMask); // spec ⑤ — the plain-key byte (bit0-5)
-		// upstream TileEntityBase10ConnectorRendered:77-78 (UT.NBT.setBoolean + the non-null
-		// owner guard) — the value forms are the vanilla putBoolean/putUUID pair
+		// upstream TileEntityBase10ConnectorRendered:75-76 (UT.NBT.setBoolean, written
+		// unconditionally so the loot copy_nbt always sees the keys) + :77-78 (ownable +
+		// the non-null owner guard) — the value forms are the vanilla putBoolean/putUUID pair
+		aNBT.putBoolean(NBT_FOAMED, mFoam);
+		aNBT.putBoolean(NBT_FOAMDRIED, mFoamDried);
 		aNBT.putBoolean(NBT_OWNABLE, mOwnable);
 		if (mOwner != null) aNBT.putUUID(NBT_OWNER, mOwner);
 	}
@@ -652,9 +832,16 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		if (aNBT.contains(NBT_IO_MASK, Tag.TAG_ANY_NUMERIC)) {
 			mIoMask = (byte)(aNBT.getByte(NBT_IO_MASK) & 63); // bit0-5 clamp, the mConnections form
 		}
-		// upstream TileEntityBase10ConnectorRendered:67-68 hasKey-guarded pair; the
+		// upstream TileEntityBase10ConnectorRendered readFromNBT2 :65-66 (FOAMDRIED first,
+		// then FOAMED — the order kept) and :67-68 hasKey-guarded ownable/owner pair; the
 		// OWNERSHIP_RESET clause (CS.java:866, default F) is not ported — the constant-fold
 		// drops it (recorded deviation). The UUID reads back hasUUID-guarded.
+		if (aNBT.contains(NBT_FOAMDRIED, Tag.TAG_ANY_NUMERIC)) {
+			mFoamDried = aNBT.getBoolean(NBT_FOAMDRIED);
+		}
+		if (aNBT.contains(NBT_FOAMED, Tag.TAG_ANY_NUMERIC)) {
+			mFoam = aNBT.getBoolean(NBT_FOAMED);
+		}
 		if (aNBT.contains(NBT_OWNABLE, Tag.TAG_ANY_NUMERIC)) {
 			mOwnable = aNBT.getBoolean(NBT_OWNABLE);
 		}

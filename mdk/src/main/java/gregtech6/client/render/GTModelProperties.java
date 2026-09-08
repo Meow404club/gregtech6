@@ -55,6 +55,16 @@ public final class GTModelProperties {
 	public static final ModelProperty<GTOvenRenderSnapshot> OVEN_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
 
 	/**
+	 * The pipe foam snapshot property (task p25-c-foam-pipe-spray spec ⑤): the C-Foam state
+	 * the foamed pipe BE carries ({@link PipeFoamSnapshot}, immutable record). Present
+	 * exactly while the pipe carries foam — fresh overlay or dried full-block swap, the
+	 * consumer ({@code GTFluidPipeFoamModel}) keys on THIS property while the flow-arrow
+	 * chain keys on {@link #RENDER_SNAPSHOT} (single-valued properties each on their own
+	 * key, the :46-55 coexistence ruling — an arrowed+foamed pipe carries both at once).
+	 */
+	public static final ModelProperty<PipeFoamSnapshot> FOAM_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
+
+	/**
 	 * The machine paint property (task p21-paintable-storage-sync, ADR ruling 5): the
 	 * painted 0xRRGGBB colour the paintable BE carries ({@link Integer}, immutable — the
 	 * ModelData iron law above applies trivially). Present exactly while the machine is
