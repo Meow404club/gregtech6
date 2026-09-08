@@ -257,6 +257,24 @@ R "gt6act mode belt16 on 412 64 20" --expect 1:"mode belt16=true"               
 node_cmds 分叉=1.20.1 `{Damage:5}` NBT vs 21.1 `[minecraft:custom_data={Damage:5}]`
 组件信封，GT6Circuits 载体裁定）。
 
+### 工具 give 冒烟 /item replace + /data get（p25-tool-hammer-wrench）
+
+```bash
+R "item replace block 416 64 124 container.0 with gt6:hammer 1" --expect 1:"Replaced"   # 注册行活体（未注册 id 此处即红）
+R "item replace block 416 64 124 container.1 with gt6:wrench 1" --expect 1:"Replaced"   # 同上，扳手行
+R "data get block 416 64 124 Items[0]" --expect 1:"gt6:hammer"                          # 槽位实锚（不是裸名单 token）
+R "item replace block 416 64 124 container.2 with gt6:hammer{Damage:22} 1" --expect 1:"Replaced"  # 1.20.1 耐久轴 NBT 形
+R "data get block 416 64 124 Items[2]" --expect 1:"Damage: 22"
+```
+
+链：`chains/p25_tool_hammer_wrench.py`（slug p25toolhammerwrench，端口对
+26108/26118；RCON 无玩家——give 臂按 p24_act 先例走 chest `item replace`+`data get`
+探针，/recipe give 不可 headless 寻址，配方装载证据=runServer 零 ERROR 行+入库
+JSON 形检；耐久 payload 双腿 node_cmds 分叉=1.20.1 `{Damage:22}` NBT vs 21.1
+`[minecraft:damage=22]` 组件信封（GT6Circuits 载体裁定同源），data get 渲染漂移
+双腿 node_expects 分叉=1.20.1 `Damage: 22`/`Count: 1b` vs 21.1
+`"minecraft:damage": 22`/`count: 1`）。
+
 ## ⑤ 三层框架用法（新卡 RCON 链的正典姿势）
 
 ### 生命周期层 gt6server（ops 纪律的模块化落地）
