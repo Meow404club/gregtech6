@@ -428,6 +428,45 @@ HAND_TRANSLATIONS = {
     "item.gt6.screwdriver": ("螺丝刀", "hand"),
     "item.gt6.wrench": ("扳手", "hand"),
     "itemGroup.gt6.food_cans": ("格雷科技: 罐头", "hand"),
+
+    # ---- rebase write-back (review session 2026-09-09): the 33 direct rows the merged
+    # p26-c-foam-fluid-refill card authored straight into the TSV (its 2ab32e16 fluid
+    # family) without a py write-back — the same tsv-orphan drift class b91f65c3 fixed.
+    # Surfaced by the p26-pipe-item rebase onto main: a faithful rerun over the merged
+    # TSV silently wiped them. Re-entered VERBATIM from the merged TSV rows.
+    "fluid.gt6.cfoam": ("建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_black": ("黑色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_red": ("红色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_green": ("绿色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_brown": ("褐色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_blue": ("蓝色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_purple": ("紫色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_cyan": ("青色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_light_gray": ("淡灰色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_gray": ("灰色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_pink": ("粉色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_lime": ("黄绿色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_yellow": ("黄色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_light_blue": ("淡蓝色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_magenta": ("品红建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_orange": ("橙色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_white": ("白色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_black": ("高级黑色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_red": ("高级红色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_green": ("高级绿色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_brown": ("高级褐色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_blue": ("高级蓝色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_purple": ("高级紫色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_cyan": ("高级青色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_light_gray": ("高级淡灰色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_gray": ("高级灰色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_pink": ("高级粉色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_lime": ("高级黄绿色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_yellow": ("高级黄色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_light_blue": ("高级淡蓝色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_magenta": ("高级品红建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_orange": ("高级橙色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_white": ("高级白色建筑泡沫", "hand"),
 }
 
 # ---------------------------------------------------------------------------
