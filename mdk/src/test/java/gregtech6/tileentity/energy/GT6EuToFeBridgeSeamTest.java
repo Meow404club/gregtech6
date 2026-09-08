@@ -92,11 +92,22 @@ public class GT6EuToFeBridgeSeamTest extends GTOfflineTestBase {
 		GT6FeBatteryBlockEntity tBattery = new GT6FeBatteryBlockEntity(sType, POS, stoneState());
 		EnergyBridge.insertFe(tBattery.energyStorage()::receiveEnergy, 32, 3); // 384 FE
 		CompoundTag tNBT = new CompoundTag();
+		// the vanilla save/load hook signatures diverged (1.21.1: saveAdditional/
+		// loadAdditional + HolderLookup.Provider, which the fixture's implementation
+		// never reads — null is safe there)
+		//? if forge {
 		tBattery.saveAdditional(tNBT);
+		//?} else {
+		/*tBattery.saveAdditional(tNBT, null);
+		 *///?}
 		assertTrue(tNBT.contains(GT6FeBatteryBlockEntity.NBT_ENERGY), "the stored-FE key persists");
 		GT6FeBatteryBlockEntity tRestored = new GT6FeBatteryBlockEntity(sType, POS, stoneState());
+		//? if forge {
 		tRestored.load(tNBT.copy());
-		assertEquals(384, tRestored.storedFe(), "the INBTSerializable restore face round-trips");
+		//?} else {
+		/*tRestored.loadAdditional(tNBT.copy(), null);
+		 *///?}
+		assertEquals(384, tRestored.storedFe(), "the stored-FE restore face round-trips");
 	}
 
 	@Test

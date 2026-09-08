@@ -75,10 +75,12 @@ public final class GT6FeBatteryCommand {
 			aSource.sendFailure(Component.literal("STAT FAILED: no FE battery BE at " + aPos.toShortString()));
 			return 0;
 		}
-		// the implied EU face: stored FE / 4 (the CS.RF_PER_EU ratio) — the RCON chain's
-		// acceptance assertion reads this against the emitted EU
-		String tLine = "GT6 FE battery stat at " + aPos.toShortString() + ": stored " + tBattery.storedFe()
-				+ " FE, capacity " + GT6FeBatteryBlockEntity.CAPACITY + " FE, implied EU " + (tBattery.storedFe() / 4);
+		int tStored = tBattery.storedFe();
+		// the implied EU face: stored FE / 4 (the CS.RF_PER_EU ratio); "charged" is the
+		// substring-stable state word the RCON chain judges (empty vs bridged-into)
+		String tLine = "GT6 FE battery stat at " + aPos.toShortString() + ": stored " + tStored
+				+ " FE, capacity " + GT6FeBatteryBlockEntity.CAPACITY + " FE, implied EU " + (tStored / 4)
+				+ ", charged " + (tStored > 0);
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;

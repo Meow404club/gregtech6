@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 //? if forge {
@@ -16,15 +17,26 @@ import net.minecraftforge.common.util.LazyOptional;
 //?}
 
 import gregtech6.registry.GT6FeBatteries;
-import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
  * The FE battery test fixture BE (task p26-eu-bridge-outbound): a platform
- * {@code EnergyStorage} reference implementation inside a plain BE. Both legs ship the same
- * reference class shape — javap-verified constructor twins
+ * {@code EnergyStorage} reference implementation inside a plain BlockEntity. Both legs ship
+ * the same reference class shape — javap-verified constructor twins
  * {@code (int capacity, int maxReceive, int maxExtract)} and the same six IEnergyStorage
  * methods — differing only in package ({@code net.minecraftforge.energy} vs
  * {@code net.neoforged.neoforge.energy}), which is what the //? forks below carry.
+ *
+ * <p><b>Deliberately NOT a TileEntityBase01Root subclass — the fixture plays the FOREIGN
+ * receiver.</b> The root dispatch (ITileEntityEnergy.Util.insertEnergyInto, the
+ * EnergyCompat.insertEnergyInto:140 counterpart) routes GT-family receivers (everything
+ * under 01Root, which implements ITileEntityEnergy) to doEnergyInjection and ONLY
+ * non-GT receivers to the EnergyBridge — exactly like upstream, whose EnergyCompat:143
+ * comment excludes the GT6 Root blocks from compat ("Obvious GT6 Blocks should not be
+ * eligible for Compat"). A fixture that subclassed the Root family would be a GT receiver
+ * by identity and the bridge would never fire; the first RCON pass proved exactly that
+ * (three phases, stored 0, zero errors). A foreign FE machine is not a GT BE — so the
+ * fixture extends BlockEntity directly, the same identity the CountingSink test double
+ * uses (GTEnergySourceBlockEntityTest).
  *
  * <p>Capacity = maxReceive, maxExtract = 0: a pure sink, because the bridge is outbound-only
  * (the research.p26-r-eu-bridge ruling; the GTCEu nativeEUToFE path is strictly one-way the
@@ -54,9 +66,10 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * through the LEVEL QUERY — the same face every foreign FE machine answers — and bills the
  * packet math in root {@code EnergyBridge.insertFe} (4 FE per 1 EU, packet-aligned).
  *
- * <p>Persistence: the stored FE rides "energy"; the te_name key is the 01Root base.
+ * <p>Persistence: the stored FE rides "energy"; no tile-name lane (the fixture is not on
+ * the 01Root NBT schema).
  */
-public class GT6FeBatteryBlockEntity extends TileEntityBase03TicksAndSync {
+public class GT6FeBatteryBlockEntity extends BlockEntity {
 
 	/** The stored-FE NBT key. */
 	public static final String NBT_ENERGY = "energy";
@@ -101,12 +114,7 @@ public class GT6FeBatteryBlockEntity extends TileEntityBase03TicksAndSync {
 	 * GTEnergySourceBlockEntity dual-constructor precedent).
 	 */
 	public GT6FeBatteryBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
-		super(false, aType != null ? aType : GT6FeBatteries.FE_BATTERY_BE.get(), aPos, aState);
-	}
-
-	@Override
-	public String getTileEntityName() {
-		return "fe_battery"; // BET registry path mirrors it (GT6FeBatteries.FE_BATTERY_BE)
+		super(aType != null ? aType : GT6FeBatteries.FE_BATTERY_BE.get(), aPos, aState);
 	}
 
 	/** The stored FE, straight from the reference implementation (the /gt6febattery stat face). */
@@ -152,8 +160,12 @@ public class GT6FeBatteryBlockEntity extends TileEntityBase03TicksAndSync {
 
 	// ---------------------------------------------------------------------------
 	// NBT (the stored FE; the 100k capacity and the 0 maxExtract are compile-time constants)
+	// The vanilla hook signatures diverged across the legs (1.21.1 carries the
+	// HolderLookup.Provider pair and no load(CompoundTag) — the 01Root:131 fork record);
+	// the fixture forks the same way the whole 01Root tree does.
 	// ---------------------------------------------------------------------------
 
+	//? if forge {
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
@@ -168,4 +180,19 @@ public class GT6FeBatteryBlockEntity extends TileEntityBase03TicksAndSync {
 			mStorage.setStoredFe(aNBT.getInt(NBT_ENERGY));
 		}
 	}
+	//?} else {
+	/* @Override
+	protected void saveAdditional(CompoundTag aNBT, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.saveAdditional(aNBT, aProvider);
+		aNBT.putInt(NBT_ENERGY, mStorage.getEnergyStored());
+	}
+
+	@Override
+	protected void loadAdditional(CompoundTag aNBT, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.loadAdditional(aNBT, aProvider);
+		if (aNBT.contains(NBT_ENERGY, Tag.TAG_ANY_NUMERIC)) {
+			mStorage.setStoredFe(aNBT.getInt(NBT_ENERGY));
+		}
+	}
+	 *///?}
 }
