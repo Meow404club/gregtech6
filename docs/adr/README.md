@@ -82,6 +82,9 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 - 2026-09-08-p24-tags-provider-paradigm（P24 tag 双向范式：TagsProvider 立项+takeover 共写链+材料名归一）
 - 2026-09-08-p24-tool-seams（P24 工具三缝：首例 Recipe/TagsProvider+container-item 死门方法学）
 - 2026-09-08-p24-op2-reform-modularui-first-consumer（P24 OP(2) 重裁放开+ModularUI 首消费接线）
+- 2026-09-08-p25-tag-input-machine-fallback（P25 配方输入 tag fallback：unification 语义原语化+方向铁律+谓词注入缝）
+- 2026-09-08-p25-kubejs-adaptation-tiers（P25 KubeJS 适配三档路线：tier-a/b/c+SPEC 强制声明+1.21 腿优先）
+- 2026-09-08-p25-datagen-tree-value-normalizers（P25 datagen 双树两层归一：VALUE_NORMALIZERS 值形层+fail-visible 不放松）
 
 后续卡若需引用某条历史 ADR 的完整原文，以 `state_read("decisions")` 与
 `docs/PROJECT_STATE.md` 对应阶段段为源，按本 README 四节约定转正成文。
