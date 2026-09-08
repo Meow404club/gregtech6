@@ -39,7 +39,9 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -396,7 +398,11 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			return badRow(aFileId, aIndex, "malformed item id \"" + tText + "\": " + e.getMessage());
 		}
 		Item tItem = sItemResolver.apply(tKey);
-		if (tItem == null) return badRow(aFileId, aIndex, "unregistered item id \"" + tText + "\"");
+		// the live registry lookup answers the MISSING-ENTRY placeholder (vanilla air), not
+		// null, for an unregistered id — an air stand-in would silently collapse the slot and
+		// drop the row at the ghost guard with a misleading reason, so it is a bad row HERE
+		// (the GT6RecipesCokeOven mat()→null drop precedent, made visible)
+		if (tItem == null || tItem == Items.AIR) return badRow(aFileId, aIndex, "unregistered item id \"" + tText + "\"");
 		return tItem;
 	}
 
@@ -413,7 +419,8 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			return badRow(aFileId, aIndex, "malformed fluid id \"" + tText + "\": " + e.getMessage());
 		}
 		Fluid tFluid = sFluidResolver.apply(tKey);
-		if (tFluid == null) return badRow(aFileId, aIndex, "unregistered fluid id \"" + tText + "\"");
+		// the missing-entry placeholder (the empty fluid), same contract as resolveItem
+		if (tFluid == null || tFluid == Fluids.EMPTY) return badRow(aFileId, aIndex, "unregistered fluid id \"" + tText + "\"");
 		return tFluid;
 	}
 

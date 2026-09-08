@@ -332,12 +332,22 @@ class GT6RecipeMapJsonLoaderTest extends GTRecipesOfflineTestBase {
 		assertNull(GT6RecipeMapJsonLoader.mapFor("unknown"), "unknown keys do not resolve");
 	}
 
-	/** The live-lookup default bindings resolve vanilla ids offline (the fixture seam restores them). */
+	/** The live-lookup default bindings resolve vanilla ids offline, and the missing-entry placeholder is a bad row (the live face). */
 	@Test
 	void defaultResolversAnswerVanillaIdsOffline() {
 		assertEquals(Items.STONE, GT6RecipeMapJsonLoader.sItemResolver.apply(rl("minecraft:stone")),
 				"the default item seam is the live registry lookup (ForgeRegistries/BuiltInRegistries per leg)");
 		assertNotNull(GT6RecipeMapJsonLoader.sFluidResolver.apply(rl("minecraft:water")),
 				"the default fluid seam answers vanilla water offline");
+
+		// the live registry lookup answers the MISSING-ENTRY placeholders (air / the empty
+		// fluid), not null — the loader must turn them into bad rows (the runServer live face)
+		assertEquals(Items.AIR, GT6RecipeMapJsonLoader.sItemResolver.apply(rl("minecraft:gt6_does_not_exist")));
+		GT6RecipeMapJsonLoader.pour(Map.of(rl("gt6:shredder"), json("""
+				{"recipes": [
+				 {"inputs":[{"item":"minecraft:gt6_does_not_exist"}],"outputs":[{"item":"minecraft:stick"}],"duration":16},
+				 {"inputs":[{"item":"minecraft:stone"}],"outputs":[{"item":"minecraft:stick"}],"duration":16}
+				]}""")));
+		assertEquals(1, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "the placeholder-id row skipped as a bad row, the good row poured");
 	}
 }
