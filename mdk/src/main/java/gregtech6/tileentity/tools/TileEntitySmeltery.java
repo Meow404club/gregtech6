@@ -380,45 +380,64 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 			return true;
 		}
 
-		// :450-468 — a fluid container DRAINS molten material (the bucket arm)
+		// :450-468 + :469-490 — the fluid-container arm (drain molten out / pour back), playerless
 		if (!tHeld.isEmpty()) {
-			IFluidHandlerItem tHandler = GT6RecipeMapCanner.sContainerResolver.apply(tHeld.copy());
-			if (tHandler != null) {
-				FluidStack tHeldFluid = tHandler.getFluidInTank(0);
-				if (tHeldFluid == null || tHeldFluid.isEmpty()) {
-					if (tLightest != null && mTemperature >= tLightest.mMaterial.mMeltingPoint && FluidBridge.moltenFluidForMaterial(tLightest.mMaterial.mNameInternal) != null) {
-						long tLiters = Math.min(1000, Math.max(1, CruciblePhysics.units(tLightest.mAmount, CS.U, FluidBridge.L_PER_MOLTEN_UNIT, false)));
-						FluidStack tFill = new FluidStack(FluidBridge.moltenFluidForMaterial(tLightest.mMaterial.mNameInternal), (int)tLiters);
-						// the :455 gate — the fluid must not be hotter than the crucible unless cold
-						int tFluidTemp = tFill.getFluid().getFluidType().getTemperature();
-						if (tFluidTemp < 320 || mTemperature >= tFluidTemp) {
-							int tFilled = tHandler.fill(tFill, IFluidHandler.FluidAction.EXECUTE);
-							if (tFilled > 0) {
-								ItemStack tContainer = tHandler.getContainer();
-								tLightest.mAmount -= CruciblePhysics.units(tFilled, FluidBridge.L_PER_MOLTEN_UNIT, CS.U, true); // :461 back-conversion
-								tHeld.shrink(1);
-								if (!aPlayer.getInventory().add(tContainer)) aPlayer.drop(tContainer, false);
-								return true;
-							}
-						}
-					}
-				} else {
-					// :469-490 — POUR the molten fluid back in (the bind(melting+25, boiling-1) temperature gate)
-					OreDictMaterial tFluidMaterial = materialOfFluid(tHeldFluid.getFluid());
-					if (tFluidMaterial != null) {
-						long tUnits = CruciblePhysics.units(tHeldFluid.getAmount(), FluidBridge.L_PER_MOLTEN_UNIT, CS.U, false);
-						long tPourTemperature = UT.Code.bind(tFluidMaterial.mMeltingPoint + 25, tFluidMaterial.mBoilingPoint - 1, tHeldFluid.getFluid().getFluidType().getTemperature());
-						if (addStacks(new ArrayList<>(List.of(new OreDictMaterialStack(tFluidMaterial, tUnits))), tPourTemperature)) {
-							tHeld.shrink(1);
-							ItemStack tEmpty = tHandler.getContainer();
-							if (!aPlayer.getInventory().add(tEmpty)) aPlayer.drop(tEmpty, false);
-							return true;
-						}
-					}
-				}
+			ContainerArm tArm = fluidContainerArm(tHeld);
+			if (tArm != null) {
+				aPlayer.setItemInHand(aHand, tArm.heldAfter());
+				if (!aPlayer.getInventory().add(tArm.containerOut())) aPlayer.drop(tArm.containerOut(), false);
+				return true;
 			}
 		}
 		return true; // :492 — the top click is always consumed
+	}
+
+	/** The two-slot outcome of the container arm: the held stack after the shrink and the swapped-out container. */
+	public record ContainerArm(ItemStack heldAfter, ItemStack containerOut) {}
+
+	/**
+	 * The :450-468 (an empty container DRAINS the lightest molten content) + :469-490 (a molten
+	 * container POURS back through the bind(melting+25, boiling-1) gate) arm, playerless — the
+	 * useTop bucket face and the /gt6crucible bucket driver share it. Shrinks {@code aHeld} on
+	 * success and answers the swapped-out container; null = the arm falls through (no handler,
+	 * nothing molten, one of the gates refused).
+	 */
+	@Nullable
+	public ContainerArm fluidContainerArm(ItemStack aHeld) {
+		IFluidHandlerItem tHandler = GT6RecipeMapCanner.sContainerResolver.apply(aHeld.copy());
+		if (tHandler == null) return null;
+		FluidStack tHeldFluid = tHandler.getFluidInTank(0);
+		if (tHeldFluid == null || tHeldFluid.isEmpty()) {
+			OreDictMaterialStack tLightest = lightest();
+			if (tLightest == null || mTemperature < tLightest.mMaterial.mMeltingPoint) return null;
+			net.minecraft.world.level.material.Fluid tMolten = FluidBridge.moltenFluidForMaterial(tLightest.mMaterial.mNameInternal);
+			if (tMolten == null) return null;
+			long tLiters = Math.min(1000, Math.max(1, CruciblePhysics.units(tLightest.mAmount, CS.U, FluidBridge.L_PER_MOLTEN_UNIT, false)));
+			FluidStack tFill = new FluidStack(tMolten, (int)tLiters);
+			// the :455 gate — the fluid must not be hotter than the crucible unless cold
+			int tFluidTemp = tFill.getFluid().getFluidType().getTemperature();
+			if (tFluidTemp >= 320 && mTemperature < tFluidTemp) return null;
+			int tFilled = tHandler.fill(tFill, IFluidHandler.FluidAction.EXECUTE);
+			if (tFilled <= 0) return null;
+			ItemStack tContainer = tHandler.getContainer();
+			tLightest.mAmount -= CruciblePhysics.units(tFilled, FluidBridge.L_PER_MOLTEN_UNIT, CS.U, true); // :461 back-conversion
+			aHeld.shrink(1);
+			return new ContainerArm(aHeld, tContainer);
+		}
+		// :469-490 — POUR the molten fluid back in (the bind(melting+25, boiling-1) temperature gate)
+		OreDictMaterial tFluidMaterial = materialOfFluid(tHeldFluid.getFluid());
+		if (tFluidMaterial == null) return null;
+		long tUnits = CruciblePhysics.units(tHeldFluid.getAmount(), FluidBridge.L_PER_MOLTEN_UNIT, CS.U, false);
+		long tPourTemperature = UT.Code.bind(tFluidMaterial.mMeltingPoint + 25, tFluidMaterial.mBoilingPoint - 1, tHeldFluid.getFluid().getFluidType().getTemperature());
+		if (!addStacks(new ArrayList<>(List.of(new OreDictMaterialStack(tFluidMaterial, tUnits))), tPourTemperature)) return null;
+		// the container must leave EMPTY: drain before getContainer — the wrappers answer their
+		// internal stack verbatim (FluidBucketWrapper.getContainer → the container field), so an
+		// undrained handler would hand the FILLED container back and dupe the molten charge
+		// (upstream :471 ST.container — the item's own emptied container)
+		tHandler.drain(tHeldFluid, IFluidHandler.FluidAction.EXECUTE);
+		ItemStack tEmpty = tHandler.getContainer();
+		aHeld.shrink(1);
+		return new ContainerArm(aHeld, tEmpty);
 	}
 
 	/** The :416-417 lightest-content census (the same walk feeds scrap and the bucket arm). */

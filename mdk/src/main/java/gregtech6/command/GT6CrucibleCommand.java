@@ -41,7 +41,9 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  * <li>{@code mold <pos>} — the mold readback: shape, the mapped prefix, required units,
  *     content and temperature.</li>
  * <li>{@code pour <moldPos>} — the mold right-click counterpart: drives
- *     {@code useTop} on the mold BE (the :271-289 adjacent-crucible pull).</li>
+ *     {@code pourFromAdjacentCrucible} on the mold BE (the :271-289 adjacent-crucible pull).</li>
+ * <li>{@code bucket <pos> <item>} — the 桶装熔液 face: one drain + pour-back round trip with
+ *     a fresh container of the given item over the playerless {@code fluidContainerArm}.</li>
  * <li>{@code inject-hu <pos> <hu>} — the doInject face (the burning-box packet stream
  *     compresses into one call for the RCON window).</li>
  * <li>{@code drop <pos> <prefix> <material> <count>} — spawns ONE item entity above the
@@ -60,6 +62,7 @@ public final class GT6CrucibleCommand {
 
 	@SubscribeEvent
 	public static void onRegisterCommands(RegisterCommandsEvent aEvent) {
+		net.minecraft.commands.CommandBuildContext tBuildContext = aEvent.getBuildContext(); // RegisterCommandsEvent.java:56 (the GTBurnerCommand form)
 		LiteralArgumentBuilder<CommandSourceStack> tCrucible = Commands.literal("gt6crucible")
 			.requires(aSource -> aSource.hasPermission(2))
 			.then(Commands.literal("place")
@@ -81,6 +84,11 @@ public final class GT6CrucibleCommand {
 			.then(Commands.literal("pour")
 				.then(Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
 					.executes(aContext -> pour(aContext.getSource(), net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+			.then(Commands.literal("bucket")
+				.then(Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
+					.then(Commands.argument("item", net.minecraft.commands.arguments.item.ItemArgument.item(tBuildContext))
+						.executes(aContext -> bucket(aContext.getSource(), net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+								net.minecraft.commands.arguments.item.ItemArgument.getItem(aContext, "item").createItemStack(1, false))))))
 			.then(Commands.literal("inject-hu")
 				.then(Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
 					.then(Commands.argument("hu", IntegerArgumentType.integer(1, 1000000000))
@@ -98,7 +106,7 @@ public final class GT6CrucibleCommand {
 										StringArgumentType.getString(aContext, "prefix"), StringArgumentType.getString(aContext, "material"),
 										IntegerArgumentType.getInteger(aContext, "count"))))))));
 		aEvent.getDispatcher().register(tCrucible);
-		LOGGER.info("Registered GT6 crucible command /gt6crucible (place | place-mold | stat | mold | pour | inject-hu | cool | drop) — the crucible-chain acceptance home");
+		LOGGER.info("Registered GT6 crucible command /gt6crucible (place | place-mold | stat | mold | pour | bucket | inject-hu | cool | drop) — the crucible-chain acceptance home");
 	}
 
 	/** The place arm over the GT6Crucibles/GT6Molds row paths. */
@@ -152,16 +160,49 @@ public final class GT6CrucibleCommand {
 		return Command.SINGLE_SUCCESS;
 	}
 
-	/** The mold right-click counterpart: the useTop pour. */
+	/** The mold right-click counterpart: the useTop pour (the playerless shared seam). */
 	private static int pour(CommandSourceStack aSource, BlockPos aPos) {
 		BlockEntity tBE = aSource.getLevel().getBlockEntity(aPos);
 		if (!(tBE instanceof TileEntityMold tMold)) {
 			aSource.sendFailure(Component.literal("GT6 POUR FAILED: no mold at " + aPos.toShortString()));
 			return 0;
 		}
-		tMold.useTop(null, net.minecraft.world.InteractionHand.MAIN_HAND);
+		tMold.pourFromAdjacentCrucible();
 		aSource.sendSuccess(() -> Component.literal("GT6 mold pour triggered at " + aPos.toShortString()
 				+ (tMold.mContent == null ? " (content empty)" : " content=" + tMold.mContent.mMaterial.mNameInternal + " x " + tMold.mContent.mAmount + "u")), false);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The bucket arm (the 桶装熔液 face): ONE round trip with a fresh container of the given
+	 * item — drain the lightest molten content into it, then pour it back — reporting both
+	 * halves and the pile census after each (the :450-468/:469-490 playerless seam).
+	 */
+	private static int bucket(CommandSourceStack aSource, BlockPos aPos, ItemStack aContainer) {
+		BlockEntity tBE = aSource.getLevel().getBlockEntity(aPos);
+		if (!(tBE instanceof TileEntitySmeltery tCrucible)) {
+			aSource.sendFailure(Component.literal("GT6 BUCKET FAILED: no crucible at " + aPos.toShortString()));
+			return 0;
+		}
+		String tContainerId = String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(aContainer.getItem()));
+		TileEntitySmeltery.ContainerArm tDrain = tCrucible.fluidContainerArm(aContainer.copy());
+		if (tDrain == null) {
+			aSource.sendFailure(Component.literal("GT6 BUCKET FAILED: " + tContainerId + " drained nothing at " + aPos.toShortString()));
+			return 0;
+		}
+		ItemStack tFilled = tDrain.containerOut();
+		String tFilledId = tFilled.isEmpty() ? "empty" : String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(tFilled.getItem()));
+		String tDrainLine = "GT6 crucible drained into " + tContainerId + " -> " + tFilledId
+				+ ", pile=" + gregapi.util.CruciblePhysics.total(tCrucible.mContent) + "u";
+		TileEntitySmeltery.ContainerArm tPour = tCrucible.fluidContainerArm(tFilled);
+		if (tPour == null) {
+			aSource.sendFailure(Component.literal("GT6 BUCKET FAILED: the pour-back refused at " + aPos.toShortString()));
+			return 0;
+		}
+		ItemStack tEmptied = tPour.containerOut();
+		String tEmptiedId = tEmptied.isEmpty() ? "empty" : String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(tEmptied.getItem()));
+		aSource.sendSuccess(() -> Component.literal(tDrainLine + " | poured back from " + tFilledId + " -> " + tEmptiedId
+				+ ", pile=" + gregapi.util.CruciblePhysics.total(tCrucible.mContent) + "u temp=" + tCrucible.mTemperature + "K"), false);
 		return Command.SINGLE_SUCCESS;
 	}
 

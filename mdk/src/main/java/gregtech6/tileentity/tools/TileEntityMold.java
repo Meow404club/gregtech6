@@ -679,6 +679,17 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 		}
 
 		// :271-289 — the pour: scan the mold's input sides for a crucible and pull from it
+		pourFromAdjacentCrucible();
+		return true; // :291 — the top click is always consumed
+	}
+
+	/**
+	 * The :271-289 adjacent-crucible pull, playerless — the useTop pour arm and the
+	 * /gt6crucible pour driver share it (the useTop player guard bails RCON out, the
+	 * p26 row0 live chain needs the pour without a player in the loop).
+	 */
+	public boolean pourFromAdjacentCrucible() {
+		if (!hasLevel()) return true;
 		BlockPos tPos = getBlockPos();
 		for (Direction tSide : Direction.values()) {
 			if (tSide == Direction.DOWN) continue; // SIDES_TOP_HORIZONTAL: up + 4 horizontals
