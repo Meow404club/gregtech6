@@ -62,7 +62,7 @@ import gregtech6.registry.GT6FeBatteries;
  *     {@link #energyStorage()}.</li>
  * </ul>
  *
- * <p>The bridge handler (GT6EuToFeBridgeForge / GT6EuToFeBridgeNeoforge) finds this storage
+ * <p>The bridge handler arm (GT6FeBatteries.onForeignEnergy, per-leg hunks) finds this storage
  * through the LEVEL QUERY — the same face every foreign FE machine answers — and bills the
  * packet math in root {@code EnergyBridge.insertFe} (4 FE per 1 EU, packet-aligned).
  *

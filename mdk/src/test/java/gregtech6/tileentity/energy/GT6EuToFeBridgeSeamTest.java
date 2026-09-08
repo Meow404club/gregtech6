@@ -25,10 +25,11 @@ import gregtech6.tileentity.GTOfflineTestBase;
  *
  * <p>Offline-harness boundary (the TileEntityBase01Root:457 record): ForgeCapabilities
  * cannot class-init offline (CapabilityToken.getType needs the runtime transformer), so the
- * handler's capability-query arm is NOT exercised here — the per-leg handler classes live
- * behind the //? wrappers and their storage-resolution face is proven by the live RCON
- * chain on both legs (the dual-leg runServer acceptance). What THIS class pins is the
- * everything-after-the-query half: fixture storage semantics + the root math, integrated.
+ * handler's capability-query arm is NOT exercised here — the per-leg handler arms live
+ * behind the //? hunks in GT6FeBatteries and their storage-resolution face is proven by
+ * the live RCON chain on both legs (the dual-leg runServer acceptance). What THIS class
+ * pins is the everything-after-the-query half: fixture storage semantics + the root math,
+ * integrated.
  */
 public class GT6EuToFeBridgeSeamTest extends GTOfflineTestBase {
 

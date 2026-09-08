@@ -256,8 +256,8 @@ public final class GT6CapabilityWiring {
 	// GT6FeBatteryBlockEntity.getCapability override (the 01Root:439 shape) and cannot see
 	// this file. Capabilities.EnergyStorage.BLOCK = BlockCapability<IEnergyStorage,
 	// Direction> (javap 21.1.249); the receiver of this face is the EU->FE outbound bridge
-	// (GT6EuToFeBridgeNeoforge), which queries the storage through the LEVEL face exactly
-	// like any foreign FE consumer would.
+	// (the EU->FE bridge's neo arm in GT6FeBatteries.onForeignEnergy), which queries the
+	// storage through the LEVEL face exactly like any foreign FE consumer would.
 
 	private static void registerFeBattery(RegisterCapabilitiesEvent aEvent) {
 		BlockEntityType<GT6FeBatteryBlockEntity> tBattery = GT6FeBatteries.FE_BATTERY_BE.get();
