@@ -233,11 +233,15 @@ public class GTMultiBlockCrucibleStructureTest extends GTMultiBlocksOfflineTestB
 			placeFullWalls(tLevel);
 			tCrucible.onStructureChange();
 			assertTrue(tCrucible.checkStructure(false));
-			tCrucible.mTemperature = 5000;
+			// BELOW the Steel ceiling (the :416-418 material graph derivation) — the test
+			// isolates the grace-vs-decay question; a 5000 K soak would meltdown on the
+			// first tick instead (the :367 gate, and the lava write would re-fire every
+			// tick while the walls stand — the upstream semantics, not this test's subject)
+			tCrucible.mTemperature = 1000;
 			// the formed structure skips the :187-195 loss arm; the IN-TICK supply cooldown
 			// (the :353-365 grace) still owns the temperature — 100 ticks of grace, no decay
 			for (long t = 1; t <= 99; t++) tCrucible.onTick(t, true);
-			assertEquals(5000, tCrucible.mTemperature, "the formed structure holds its heat through the grace window");
+			assertEquals(1000, tCrucible.mTemperature, "the formed structure holds its heat through the grace window");
 		} finally {
 			sEnvTemp = DEF_ENV_TEMP;
 		}

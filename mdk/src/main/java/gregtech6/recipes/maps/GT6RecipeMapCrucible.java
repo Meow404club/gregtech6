@@ -287,9 +287,17 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 	/** The live {@code prefix.mat} resolution (the GTMaterialItems index + the block universe). */
 	@Nullable
 	static ItemStack matStackLive(MatRequest aRequest) {
+		//? if forge {
 		net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tHandle = GTMaterialItems.get(aRequest.prefix(), aRequest.material());
 		if (tHandle == null) tHandle = GTMaterialBlocks.get(aRequest.prefix(), aRequest.material());
 		if (tHandle == null || !tHandle.isPresent()) return null;
+		//?} else {
+		/*net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.Item> tHandle = GTMaterialItems.get(aRequest.prefix(), aRequest.material());
+		if (tHandle == null) tHandle = GTMaterialBlocks.get(aRequest.prefix(), aRequest.material());
+		if (tHandle == null || !tHandle.isBound()) return null;
+		//21.1: the GTMaterialItems.get swap returns DeferredHolder on this leg (the
+		//GTMultiBlockCommand input-arm idiom; isBound is the 21.1 bound probe).
+		*///?}
 		return new ItemStack(tHandle.get(), (int)gregapi.util.UT.Code.bind(1, 64, aRequest.count())); // UT.Code.bindStack
 	}
 

@@ -202,7 +202,11 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 
 		static MaterialPrefixItem probePrefix(String aProbeId, java.util.function.Supplier<MaterialPrefixItem> aCreator) {
 			var tRegistry = BuiltInRegistries.ITEM;
+			//? if forge {
 			try {
+				// the Forge runtime shape: THREE locks must open (the GT6RecipeTagFallbackTest
+				// walk — the vanilla frozen flag, the delegate ForgeRegistry.isFrozen, the
+				// NamespacedWrapper.locked register gate)
 				java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
 				tUnfreeze.setAccessible(true);
 				tUnfreeze.invoke(tRegistry);
@@ -217,6 +221,17 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 			} catch (Exception aE) {
 				throw new IllegalStateException("could not open the offline item registry", aE);
 			}
+			//?} else {
+			/*try {
+				// the 21.1 runtime shape: the plain vanilla DefaultedMappedRegistry — a single
+				// frozen flag guards both the intrusive-holder construction and Registry.register
+				java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
+				tUnfreeze.setAccessible(true);
+				tUnfreeze.invoke(tRegistry);
+			} catch (Exception aE) {
+				throw new IllegalStateException("could not open the offline item registry", aE);
+			}
+			*///?}
 			MaterialPrefixItem rItem = aCreator.get();
 			net.minecraft.core.Registry.register(tRegistry, new ResourceLocation("gt6", aProbeId), rItem);
 			return rItem;
