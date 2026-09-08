@@ -160,18 +160,24 @@ public final class GT6CrucibleDatagen {
 	/**
 	 * The two handcrafts: 8 cobblestone → Stone Smeltery (the upstream opening row), 7 →
 	 * Stone Mold. Implements DataProvider DIRECTLY instead of extending RecipeProvider:
-	 * 1.20.1 pins {@code RecipeProvider.getName() final} (sources jar :461), so a second
-	 * recipe provider would trip the vanilla "Duplicate provider" check against
-	 * GT6CraftingRecipes and files_scope keeps that file untouched. The run() body is the
-	 * vanilla RecipeProvider.run shape (sources jar :82-102): serializeRecipe() +
-	 * saveStable through the DATA_PACK path providers, the advancement JSON alongside.
+	 * {@code RecipeProvider.getName() final} on BOTH legs (1.20.1 sources jar :461, the
+	 * 21.1 neoforge-21.1.249 sources RecipeProvider.java:747), so a second recipe provider
+	 * would trip the vanilla "Duplicate provider" check against GT6CraftingRecipes and
+	 * files_scope keeps that file untouched. Each leg's run() mirrors its vanilla
+	 * RecipeProvider.run shape: 1.20.1 = serializeRecipe() + saveStable through the
+	 * DATA_PACK path providers; 1.21.1 = the RecipeOutput accept face (RecipeProvider.java
+	 * :81-113 of the 21.1 sources — CONDITIONAL_CODEC + WithConditions over the
+	 * createRegistryElementsPathProvider paths).
 	 */
 	public static final class Recipes implements net.minecraft.data.DataProvider {
 
 		private final PackOutput mOutput;
+		/** The 21.1 run feeds saveStable the registries lookup; the 1.20.1 leg ignores it. */
+		private final CompletableFuture<net.minecraft.core.HolderLookup.Provider> mLookup;
 
 		public Recipes(PackOutput aOutput, CompletableFuture<net.minecraft.core.HolderLookup.Provider> aLookup) {
 			mOutput = aOutput;
+			mLookup = aLookup;
 		}
 
 		/** Unique provider name (see {@link Provider#getName}). */
@@ -180,6 +186,7 @@ public final class GT6CrucibleDatagen {
 			return "Recipes: gt6:crucible";
 		}
 
+		//? if forge {
 		@Override
 		public java.util.concurrent.CompletableFuture<?> run(net.minecraft.data.CachedOutput aCache) {
 			PackOutput.PathProvider tRecipePaths = mOutput.createPathProvider(PackOutput.Target.DATA_PACK, "recipes");
@@ -196,16 +203,71 @@ public final class GT6CrucibleDatagen {
 			});
 			return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture[0]));
 		}
+		//?} else {
+		/*@Override
+		public java.util.concurrent.CompletableFuture<?> run(net.minecraft.data.CachedOutput aCache) {
+			PackOutput.PathProvider tRecipePaths = mOutput.createRegistryElementsPathProvider(net.minecraft.core.registries.Registries.RECIPE);
+			PackOutput.PathProvider tAdvancementPaths = mOutput.createRegistryElementsPathProvider(net.minecraft.core.registries.Registries.ADVANCEMENT);
+			return mLookup.thenCompose(tRegistries -> {
+				java.util.List<java.util.concurrent.CompletableFuture<?>> tFutures = new java.util.ArrayList<>();
+				java.util.Set<ResourceLocation> tSeen = new java.util.HashSet<>();
+				build(new net.minecraft.data.recipes.RecipeOutput() {
+					@Override
+					public void accept(ResourceLocation aId, net.minecraft.world.item.crafting.Recipe<?> aRecipe,
+							net.minecraft.advancements.AdvancementHolder aAdvancement,
+							net.neoforged.neoforge.common.conditions.ICondition... aConditions) {
+						if (!tSeen.add(aId)) throw new IllegalStateException("Duplicate recipe " + aId);
+						tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tRegistries,
+								net.minecraft.world.item.crafting.Recipe.CONDITIONAL_CODEC,
+								java.util.Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(aRecipe, aConditions)),
+								tRecipePaths.json(aId)));
+						if (aAdvancement != null) {
+							tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tRegistries,
+									net.minecraft.advancements.Advancement.CONDITIONAL_CODEC,
+									java.util.Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(aAdvancement.value(), aConditions)),
+									tAdvancementPaths.json(aAdvancement.id())));
+						}
+					}
 
-		/** The two shaped rows (the forge-leg builder chain; the 21.1 leg rides its own buildRecipes shape when this card's surface lands there). */
+					@Override
+					public net.minecraft.advancements.Advancement.Builder advancement() {
+						return net.minecraft.advancements.Advancement.Builder.recipeAdvancement()
+								.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
+					}
+				});
+				return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture[0]));
+			});
+		}
+		*///?}
+
+		/** The has() helper — the one criterion shape is leg-split (1.20.1 unlockedBy takes the bare TriggerInstance, 1.21.1 a Criterion wrapper). */
+		//? if forge {
+		private static net.minecraft.advancements.CriterionTriggerInstance has(net.minecraft.world.level.ItemLike aItem) {
+			return net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(aItem);
+		}
+		//?} else {
+		/*private static net.minecraft.advancements.Criterion<?> has(net.minecraft.world.level.ItemLike aItem) {
+			return net.minecraft.advancements.CriteriaTriggers.INVENTORY_CHANGED.createCriterion(
+					new net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance(
+							java.util.Optional.empty(),
+							net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.Slots.ANY,
+							java.util.List.of(net.minecraft.advancements.critereon.ItemPredicate.Builder.item().of(aItem).build())));
+		}
+		*///?}
+
+		/** The two shaped rows (the leg-neutral builder chain over the forked save consumer). */
+		//? if forge {
 		private void build(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aOutput) {
+		//?} else {
+		/*private void build(net.minecraft.data.recipes.RecipeOutput aOutput) {
+		 *///?}
 			Item tStoneSmeltery = GT6Crucibles.ITEMS_BY_PATH.get("smeltery_stone").get();
 			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tStoneSmeltery)
 					.pattern("BBB")
 					.pattern("B B")
 					.pattern("BBB")
 					.define('B', Items.COBBLESTONE)
-					.unlockedBy("has_cobblestone", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
+					.unlockedBy("has_cobblestone", has(Items.COBBLESTONE))
 					.save(aOutput, id("smeltery_stone"));
 			Item tStoneMold = GT6Molds.ITEMS_BY_PATH.get("mold_stone").get();
 			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tStoneMold)
@@ -213,7 +275,7 @@ public final class GT6CrucibleDatagen {
 					.pattern("B B")
 					.pattern("BBB")
 					.define('B', Items.COBBLESTONE)
-					.unlockedBy("has_cobblestone", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
+					.unlockedBy("has_cobblestone", has(Items.COBBLESTONE))
 					.save(aOutput, id("mold_stone"));
 		}
 

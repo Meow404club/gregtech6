@@ -289,7 +289,14 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 	static ItemStack matStackLive(MatRequest aRequest) {
 		net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tHandle = GTMaterialItems.get(aRequest.prefix(), aRequest.material());
 		if (tHandle == null) tHandle = GTMaterialBlocks.get(aRequest.prefix(), aRequest.material());
+		// the resolvable-now guard — RegistryObject.isPresent (forge) vs DeferredHolder/Holder.isBound
+		// (21.1) have no shared boolean face (javap both jars); the holder type itself is the
+		// stonecutter swap's business, only this line is leg-split
+		//? if forge {
 		if (tHandle == null || !tHandle.isPresent()) return null;
+		//?} else {
+		/*if (tHandle == null || !tHandle.isBound()) return null;
+		 *///?}
 		return new ItemStack(tHandle.get(), (int)gregapi.util.UT.Code.bind(1, 64, aRequest.count())); // UT.Code.bindStack
 	}
 
