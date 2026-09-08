@@ -20,6 +20,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.GT6Mod;
 import gregtech6.items.tools.GT6BuilderWandItem;
 import gregtech6.items.tools.GT6FileItem;
+import gregtech6.items.tools.GT6ScrewdriverItem;
 import gregtech6.items.tools.GTSawItem;
 import gregtech6.items.tools.GTChiselItem;
 import gregtech6.items.tools.GTCrowbarItem;
@@ -130,6 +131,22 @@ public final class GT6Tools {
 			() -> new GT6BuilderWandItem(new Item.Properties().durability(GT6BuilderWandItem.DURABILITY_POINTS)));
 
 	/**
+	 * The formal screwdriver — item id {@code gt6:screwdriver} (task p24-screwdriver-item
+	 * spec ①/③). Single steel tier, durability 512 (the family value; upstream scales per
+	 * material via {@code setMaterialAmount(toolHeadScrewdriver.mAmount)},
+	 * Loader_Tools.java:129 — the same pool cut). Upstream display name "Screwdriver"
+	 * (CS.java:1102); the crafting-loss face rides
+	 * {@link GT6ScrewdriverItem#getCraftingRemainingItem} (the shared one-point mapping,
+	 * the upstream :70-72 400-unit row folded); the crafting INGREDIENT face is the
+	 * {@code #gt6:tools/screwdriver} item tag (GT6ItemTags, the craftingToolScrewdriver
+	 * oredict translation). The world arms (the TOOL_screwdriver-harvestable +
+	 * Material.circuits surface, GT_Tool_Screwdriver.java:105-112) stay pooled with the
+	 * machine interaction card.
+	 */
+	public static final RegistryObject<Item> SCREWDRIVER = ITEMS.register("screwdriver",
+			() -> new GT6ScrewdriverItem(new Item.Properties().durability(GT6ScrewdriverItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -137,9 +154,10 @@ public final class GT6Tools {
 	 * asserts the table shape and the ITEMS parity without touching the frozen registry;
 	 * the displayItems generator below does the runtime resolution (the
 	 * GTWires.ELECTRIC_WIRES_TAB form). Task p24-tool-system appended rows 3/4 (file,
-	 * saw); task p24-builder-wand appends row 5 (the builder wand).
+	 * saw); task p24-builder-wand appended row 5 (the builder wand); task
+	 * p24-screwdriver-item appends row 6 (the screwdriver).
 	 */
-	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND);
+	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -198,6 +216,8 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.SAW.get()), GTSawItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.BUILDER_WAND.get()), GT6BuilderWandItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.SCREWDRIVER.get()), GT6ScrewdriverItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",
