@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -82,8 +83,14 @@ public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 	//(the GTOvenBlock fork shape).
 	InteractionHand aHand = InteractionHand.MAIN_HAND;
 	*///?}
-		// C1: the GUI open chain lands with the C2 ModularUI menu (the phase ruling — the
-		// BE is the independently-verifiable C1 unit, the RCON chain drives /gt6act).
+		// C2: the ModularUI open chain (decisions.p24-act-be-form — the mdk-first-consumer
+		// wiring gate PASSED on both legs; BlockEntityUIFactory carries its own network,
+		// no NetworkHooks/MenuType face). The BE must implement IUIHolder<PosGuiData>.
+		BlockEntity tBlockEntity = aLevel.getBlockEntity(aPos);
+		if (tBlockEntity instanceof TileEntityAdvancedCraftingTable tTable && aPlayer instanceof net.minecraft.server.level.ServerPlayer tServerPlayer) {
+			brachy.modularui.factory.BlockEntityUIFactory.INSTANCE.open(tServerPlayer, tTable);
+			return InteractionResult.CONSUME; // upstream openGUI :115 (top face) / :116 (along-axis)
+		}
 		return InteractionResult.CONSUME;
 	}
 

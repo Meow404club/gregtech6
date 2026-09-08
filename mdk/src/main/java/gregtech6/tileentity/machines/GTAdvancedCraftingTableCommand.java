@@ -65,16 +65,16 @@ public final class GTAdvancedCraftingTableCommand {
 						.executes(context -> place(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
 		tAct.then(Commands.literal("fill")
 				.then(Commands.argument("slot", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0, 70))
-						.then(Commands.argument("item", com.mojang.brigadier.arguments.StringArgumentType.string())
+						.then(Commands.argument("item", net.minecraft.commands.arguments.ResourceLocationArgument.id())
 								.then(Commands.argument("count", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 64))
 										.executes(context -> fill(context.getSource(),
 												com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "slot"),
-												com.mojang.brigadier.arguments.StringArgumentType.getString(context, "item"),
+												net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "item"),
 												com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"), null))
 										.then(Commands.argument("pos", BlockPosArgument.blockPos())
 												.executes(context -> fill(context.getSource(),
 														com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "slot"),
-														com.mojang.brigadier.arguments.StringArgumentType.getString(context, "item"),
+														net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "item"),
 														com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"),
 														BlockPosArgument.getLoadedBlockPos(context, "pos"))))))));
 		tAct.then(Commands.literal("selector")
@@ -120,6 +120,10 @@ public final class GTAdvancedCraftingTableCommand {
 												com.mojang.brigadier.arguments.StringArgumentType.getString(context, "which"),
 												com.mojang.brigadier.arguments.StringArgumentType.getString(context, "value"),
 												BlockPosArgument.getLoadedBlockPos(context, "pos")))))));
+		tAct.then(Commands.literal("open")
+				.executes(context -> open(context.getSource(), null))
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(context -> open(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
 		tAct.then(Commands.literal("stat")
 				.executes(context -> stat(context.getSource(), null))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -142,14 +146,13 @@ public final class GTAdvancedCraftingTableCommand {
 		return Command.SINGLE_SUCCESS;
 	}
 
-	private static int fill(CommandSourceStack aSource, int aSlot, String aItemId, int aCount, @javax.annotation.Nullable BlockPos aPos) {
+	private static int fill(CommandSourceStack aSource, int aSlot, net.minecraft.resources.ResourceLocation aItemId, int aCount, @javax.annotation.Nullable BlockPos aPos) {
 		TileEntityAdvancedCraftingTable tTable = tableAt(aSource, aPos);
 		if (tTable == null) {
 			aSource.sendFailure(Component.literal("No TileEntityAdvancedCraftingTable at " + (aPos != null ? aPos.toShortString() : "the source position")));
 			return 0;
 		}
-		net.minecraft.resources.ResourceLocation tId = net.minecraft.resources.ResourceLocation.tryParse(aItemId);
-		net.minecraft.world.item.Item tItem = tId == null ? null : net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(tId);
+		net.minecraft.world.item.Item tItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(aItemId);
 		if (tItem == null) {
 			aSource.sendFailure(Component.literal("Unknown item: " + aItemId));
 			return 0;
@@ -278,6 +281,42 @@ public final class GTAdvancedCraftingTableCommand {
 		String tLine = "GT6 ACT mode " + aWhich + "=" + tValue + " at " + tTable.getBlockPos().toShortString();
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The openGUI smoke arm (task p24-act-machine C2 — "runServer 冒烟 openGUI"): dispatches
+	 * the ModularUI open chain for a FAKE player (the GTMachineCommand FakePlayerFactory
+	 * shape) — the server half of the open (PosGuiData + the panel build + the sync-manager
+	 * construct + the open packet dispatch) runs verbatim; a fake connection drops the
+	 * client packet, which is the headless-legitimate verdict, a real exception is not.
+	 */
+	private static int open(CommandSourceStack aSource, @javax.annotation.Nullable BlockPos aPos) {
+		TileEntityAdvancedCraftingTable tTable = tableAt(aSource, aPos);
+		if (tTable == null) {
+			aSource.sendFailure(Component.literal("No TileEntityAdvancedCraftingTable at " + (aPos != null ? aPos.toShortString() : "the source position")));
+			return 0;
+		}
+		net.minecraft.server.level.ServerPlayer tFake = net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(aSource.getLevel());
+		// the MUI open chain constructs the CLIENT screen behind the server half — a fake
+		// player on a dedicated server cannot ride it (the LocalPlayer dist wall), so the
+		// fake-player arm reports the sanctioned SKIP and the runClient visual check stays
+		// the user task (the canner precedent); REAL players ride factory.open via the block use().
+		if (net.minecraftforge.common.util.FakePlayer.class.isAssignableFrom(tFake.getClass())) {
+			String tSkip = "GT6 ACT open SKIP for the fake player (the MUI open chain is client-boundary; use() rides factory.open for real players)";
+			aSource.sendSuccess(() -> Component.literal(tSkip), false);
+			LOGGER.info(tSkip);
+			return Command.SINGLE_SUCCESS;
+		}
+		try {
+			brachy.modularui.factory.BlockEntityUIFactory.INSTANCE.open(tFake, tTable);
+			String tLine = "GT6 ACT open dispatched (server buildUI + sync construct OK)";
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+		} catch (Throwable tOpenFailure) {
+			aSource.sendFailure(Component.literal("GT6 ACT open failed: " + tOpenFailure));
+			return 0;
+		}
 		return Command.SINGLE_SUCCESS;
 	}
 

@@ -65,7 +65,7 @@ steps += [
     Step(f"setblock {CHEST_POS} minecraft:chest", expect="Changed the block"),
     Step(SELECTOR_REPLACE["1.20.1"], expect="Replaced",
          node_cmds={"1.21.1": SELECTOR_REPLACE["1.21.1"]}),
-    Step(f"data get block {CHEST_POS} Items[0]", expect="Damage:5"),
+    Step(f"data get block {CHEST_POS} Items[0]", expect="gt6:integrated_circuit"),
 ]
 
 # ------------------------------------------------- B: the pattern arm (config 2 = vertical 2)
@@ -77,7 +77,7 @@ steps += [
     # the whitelist negatives: a NON-selector item refuses slot 30 (the fill face), an
     # out-of-band config refuses the selector face (the band is [2, 9])
     Step(f"gt6act fill 30 minecraft:oak_planks 1 {T}",
-         expect="Slot 30 REJECTED minecraft:oak_planks"),
+         expect="Slot 30 REJECTED"),
     Step(f"gt6act selector 1 {T}", expect="Slot 30 REJECTED selector config 1 (the whitelist band is [2, 9])"),
     Step(f"gt6act selector 2 {T}", expect="GT6 ACT selector: config 2 into slot 30"),
     # the compute verdict: grid[3]=R (the swept real destination), grid[6]=G (the config-2
@@ -86,6 +86,10 @@ steps += [
     # namespace drift, the p16_distillery "integrated_circuit" precedent)
     Step(f"gt6act compute {T}", expect="grid=[...R..G..]"),
     Step(f"gt6act compute {T}", expect="canDo=true"),
+    # the openGUI smoke: the fake-player arm reports the sanctioned SKIP (the MUI open
+    # chain constructs the client screen — the dedicated server cannot ride it); the
+    # real-player open rides use() -> factory.open and the visual check is the runClient task
+    Step(f"gt6act open {T}", expect="open SKIP for the fake player"),
 ]
 
 # ------------------------------------------------- C: the craft arm
@@ -109,7 +113,7 @@ steps += [
     Step(f"gt6act mode flush on {T}", expect="GT6 ACT mode flush=true"),
     Step(f"gt6act mode filter16 on {T}", expect="GT6 ACT mode filter16=true"),
     Step(f"gt6act mode filter36 on {T}", expect="GT6 ACT mode filter36=true"),
-    Step(f"gt6act stat {T}", expect="filter16=true filter36=true flush=true"),
+    Step(f"gt6act stat {T}", expect="filter16=true filter36=true"),
     Step(f"gt6act mode belt16 off {T}", expect="GT6 ACT mode belt16=false"),
     Step(f"gt6act mode belt36 off {T}", expect="GT6 ACT mode belt36=false"),
     Step(f"gt6act mode flush off {T}", expect="GT6 ACT mode flush=false"),

@@ -32,13 +32,24 @@ import org.junit.jupiter.api.Test;
  */
 public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 
-	/** The genuine vanilla data/minecraft/recipes/stick.json (1.20.1) — the config-2 vertical-2 consumer. */
+	/** The genuine vanilla data/minecraft/recipes/stick.json — the config-2 vertical-2 consumer
+	 * (the 1.21.1 result carries the id key, the GTMachinesOfflineTestBase glass fork shape). */
+	//? if forge {
 	private static final String VANILLA_STICK_RECIPE_JSON =
 			"{\"type\":\"minecraft:crafting_shaped\",\"pattern\":[\"P\",\"P\"],\"key\":{\"P\":{\"item\":\"minecraft:oak_planks\"}},\"result\":{\"item\":\"minecraft:stick\",\"count\":4}}";
+	//?} else {
+	/*private static final String VANILLA_STICK_RECIPE_JSON =
+			"{\"type\":\"minecraft:crafting_shaped\",\"pattern\":[\"P\",\"P\"],\"key\":{\"P\":{\"item\":\"minecraft:oak_planks\"}},\"result\":{\"id\":\"minecraft:stick\",\"count\":4}}";
+	*///?}
 
-	/** The genuine vanilla data/minecraft/recipes/chest.json (1.20.1) — the config-8 ring-8 consumer. */
+	/** The genuine vanilla data/minecraft/recipes/chest.json — the config-8 ring-8 consumer. */
+	//? if forge {
 	private static final String VANILLA_CHEST_RECIPE_JSON =
 			"{\"type\":\"minecraft:crafting_shaped\",\"pattern\":[\"PPP\",\"P P\",\"PPP\"],\"key\":{\"P\":{\"item\":\"minecraft:oak_planks\"}},\"result\":{\"item\":\"minecraft:chest\"}}";
+	//?} else {
+	/*private static final String VANILLA_CHEST_RECIPE_JSON =
+			"{\"type\":\"minecraft:crafting_shaped\",\"pattern\":[\"PPP\",\"P P\",\"PPP\"],\"key\":{\"P\":{\"item\":\"minecraft:oak_planks\"}},\"result\":{\"id\":\"minecraft:chest\"}}";
+	*///?}
 
 	static BlockEntityType<TileEntityAdvancedCraftingTable> sActType;
 
@@ -52,6 +63,15 @@ public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 	 * vanilla Damage key, both legs encapsulated in GT6Circuits). */
 	static ItemStack selector(int aConfig) {
 		return gregtech6.item.GT6Circuits.selector(sCircuitItem, aConfig);
+	}
+
+	static {
+		// the 21.1 FML boot freezes the BET registry — the INHERITED
+		// GTMachinesOfflineTestBase.buildOvenFixtures @BeforeAll builds BET fixtures and runs
+		// BEFORE this class's own @BeforeAll, so the write window must open at CLASS LOAD
+		// (the provided GTOfflineTestBase reflection helper; this class sorts FIRST in the
+		// package, task p24-act-machine order finding)
+		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 	}
 
 	@BeforeAll
@@ -406,7 +426,7 @@ public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 		assertFalse(tTable.getInventory().isItemValid(32, new ItemStack(Items.OAK_PLANKS)), "the virtual holo rejects");
 		// the slot-30 limit is 1 (upstream getInventoryStackLimitGUI :513)
 		assertEquals(1, tTable.getInventory().getSlotLimit(30), "slot 30 stack limit 1");
-		assertEquals(64, tTable.getInventory().getSlotLimit(0), "the belts keep the vanilla 64");
+		assertTrue(tTable.getInventory().getSlotLimit(0) >= 64, "the belts keep the leg default limit (64 vanilla / 99 neoforge)");
 	}
 
 	// ------------------------------------------------------------------ the four click modes (:599-656)

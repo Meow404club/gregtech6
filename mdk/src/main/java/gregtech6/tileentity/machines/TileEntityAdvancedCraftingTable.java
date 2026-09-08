@@ -95,7 +95,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * preserved verbatim — it orders automation access only, SLOTS_CONSUMPTION (:499) is
  * its own explicit 70→0 list.
  */
-public class TileEntityAdvancedCraftingTable extends TileEntityBase03TicksAndSync implements MenuProvider {
+public class TileEntityAdvancedCraftingTable extends TileEntityBase03TicksAndSync implements MenuProvider, brachy.modularui.api.IUIHolder<brachy.modularui.factory.PosGuiData> {
 
 	// ---------------------------------------------------------------------------
 	// constants (upstream :490-503 verbatim — the 71-slot map and walk orders)
@@ -772,6 +772,19 @@ public class TileEntityAdvancedCraftingTable extends TileEntityBase03TicksAndSyn
 		return aInventorySlot < 31 || aInventorySlot > 32;
 	}
 
+	//? if neoforge {
+	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — this member
+	// is the provider seam; the GT6CapabilityWiring registerBlockEntity row delegates to it.
+	// No @Override: the parent method does not exist on 21.1. The item-only face — the ACT
+	// has no tanks (the TileEntityBasicMachine :1413 shape, the oven row's second instance).
+	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
+		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
+			return (T) mInv;
+		}
+		return null;
+	}
+	 *///?}
+
 	// ---------------------------------------------------------------------------
 	// facing (the oven precedent — NBT authority + BlockState re-application)
 	// ---------------------------------------------------------------------------
@@ -809,10 +822,28 @@ public class TileEntityAdvancedCraftingTable extends TileEntityBase03TicksAndSyn
 	// is a vanilla MenuType, reported to the architect if the wiring fails)
 	// ---------------------------------------------------------------------------
 
+	// C2: the ModularUI open chain replaced the vanilla MenuProvider face (decisions
+	// .p24-act-be-form — the wiring gate PASSED on both legs, the vanilla-MenuType
+	// fallback arm stayed unused). createMenu remains as the declared MenuProvider face
+	// and is never called by the open chain below.
 	@Override
 	@Nullable
 	public AbstractContainerMenu createMenu(int aContainerId, Inventory aPlayerInventory, Player aPlayer) {
-		return null; // task p24-act-machine C2 — the ModularUI menu (menu/act/*) lands here
+		return null;
+	}
+
+	/** Server+CLIENT panel build (the sync handlers register here) — the GTActMenu delegation. */
+	@Override
+	public brachy.modularui.screen.ModularPanel<?> buildUI(brachy.modularui.factory.PosGuiData aData,
+			brachy.modularui.value.sync.PanelSyncManager aSyncManager, brachy.modularui.screen.UISettings aSettings) {
+		return gregtech6.menu.act.GTActMenu.buildPanel(this, aSyncManager);
+	}
+
+	/** Client-only screen wrapper (the TestBlockEntity :100 shape). */
+	@Override
+	public brachy.modularui.screen.ModularScreen createScreen(brachy.modularui.factory.PosGuiData aData,
+			brachy.modularui.screen.ModularPanel<?> aMainPanel) {
+		return gregtech6.menu.act.GTActMenu.createScreen(aData, aMainPanel);
 	}
 
 	@Override
@@ -841,7 +872,7 @@ public class TileEntityAdvancedCraftingTable extends TileEntityBase03TicksAndSyn
 				//? if forge {
 				CompoundTag tEntry = tStack.save(new CompoundTag());
 				//?} else {
-				/*CompoundTag tEntry = tStack.save(TileEntityBase03TicksAndSync.NBT_ACCESS, new CompoundTag());
+				/*CompoundTag tEntry = (CompoundTag) tStack.save(TileEntityBase03TicksAndSync.NBT_ACCESS, new CompoundTag()); // 21.1 save returns Tag
 				*///?}
 				tEntry.putByte("Slot", (byte) i); // the slot-marked list form — the ItemStackHandler serialize shape
 				tPattern.add(tEntry);

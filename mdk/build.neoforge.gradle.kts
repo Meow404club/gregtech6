@@ -143,6 +143,13 @@ dependencies {
     // 本节点无重映射步（NeoForge 1.20.5+ 生产即 official 命名），嵌装 jar 原样进入分发形态。
     // 依赖面说明：modularui 不进编译/运行类路径（纯嵌装分发；mdk 源码零引用，GUI 采纳另卡）。
     "jarJar"(project(":third-party:modularui:1.21.1-neoforge"))
+    // task p24-act-machine C2 前置门：mdk 主树首消费 ModularUI（decisions.p24-act-be-form）。
+    // NeoForge 1.20.5+ 发行即 official 映射、无 mod* 重映射配置（JEI 段同论证）——plain
+    // compileOnly 即编译面；运行面类由上方 jarJar 嵌装产物承载。
+    compileOnly(project(":third-party:modularui:1.21.1-neoforge"))
+    // 运行面：runtimeOnly 并入 run 类路径（JEI impl 同论证）——dev run 的 mod 发现走
+    // 类路径上的 modularui mod 本体，jarJar 嵌装仅在发布 jar 中存在，dev run 零双装。
+    runtimeOnly(project(":third-party:modularui:1.21.1-neoforge"))
     // JEI 1.21.1（task p15-jei-dual-wiring；ADR 2026-09-02-p12-jei-dependency 的跨版本延续）：
     // 坐标三件 mezz.jei:jei-${mcVer}-{common-api,neoforge-api,neoforge}:19.52.0.422——
     // blamejared maven-metadata <latest>（2026-09-03）+ Modrinth "19.52.0.422 for NeoForge 1.21.1"
