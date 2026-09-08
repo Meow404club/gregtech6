@@ -55,6 +55,8 @@ class GT6RecipeGenerationGuardTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesShCL",
 			"gregtech6.recipes.GT6RecipesStoneChisel",
 			"gregtech6.recipes.GT6RecipesCanner", // task p24-canner-machine — the refill pour joins the ledger
+			"gregtech6.recipes.GT6RecipesExtruder", // task p26-w1-press-extruder-molds — the plate/rod pour joins the ledger
+			"gregtech6.recipes.GT6RecipesPress", // task p26-w1-press-extruder-molds — the declared-empty pour joins the ledger
 	};
 
 	private static Function<String, Fluid> sDefaultFluidResolver;

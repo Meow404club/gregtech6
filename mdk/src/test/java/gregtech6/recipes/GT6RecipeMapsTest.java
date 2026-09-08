@@ -195,7 +195,48 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
 		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
-		assertEquals(13, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append)");
+		assertEquals(15, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + press + extruder (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-w1-press-extruder-molds RM.java:99/:136 pair)");
+	}
+
+	/** The RM.java:99 Forming Press map constants (task p26-w1-press-extruder-molds). */
+	@Test
+	void initRegistersPressMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		assertNotNull(GT6RecipeMaps.PRESS);
+		assertSame(GT6RecipeMaps.PRESS, RecipeMap.RECIPE_MAPS.get("gt.recipe.press"));
+		assertEquals("Press", GT6RecipeMaps.PRESS.mNameLocal);
+		assertEquals("gt.recipe.press", GT6RecipeMaps.PRESS.mNameNEI, "RM.java:99 passes null → the internal name");
+		assertEquals(3, GT6RecipeMaps.PRESS.mInputItemsCount, "RM.java:99 IN-OUT-MIN-ITEM 3/1/2");
+		assertEquals(1, GT6RecipeMaps.PRESS.mOutputItemsCount);
+		assertEquals(2, GT6RecipeMaps.PRESS.mMinimalInputItems, "RM.java:99 MIN-ITEM 2");
+		assertEquals(0, GT6RecipeMaps.PRESS.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.PRESS.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.PRESS.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.PRESS.mMinimalInputs);
+		assertEquals(1, GT6RecipeMaps.PRESS.mPower);
+		assertEquals("gt6:textures/gui/machines/press.png", GT6RecipeMaps.PRESS.mGUIPath, "the RM.java:99 machines/Press row, lowercased");
+		assertTrue(GT6RecipeMaps.PRESS instanceof gregtech6.recipes.maps.GT6RecipeMapFormingPress, "RM.Press is the RecipeMapFormingPress subclass upstream");
+		assertTrue(GT6RecipeMaps.PRESS.mRecipeList.isEmpty(), "DECLARED-empty static rows: the census pools (food-mold/electrode/compat), the rows ride the dynamic arm");
+	}
+
+	/** The RM.java:136 Extruder map constants (task p26-w1-press-extruder-molds). */
+	@Test
+	void initRegistersExtruderMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		assertNotNull(GT6RecipeMaps.EXTRUDER);
+		assertSame(GT6RecipeMaps.EXTRUDER, RecipeMap.RECIPE_MAPS.get("gt.recipe.extruder"));
+		assertEquals("Extruder", GT6RecipeMaps.EXTRUDER.mNameLocal);
+		assertEquals("gt.recipe.extruder", GT6RecipeMaps.EXTRUDER.mNameNEI, "RM.java:136 passes null → the internal name");
+		assertEquals(2, GT6RecipeMaps.EXTRUDER.mInputItemsCount, "RM.java:136 IN-OUT-MIN-ITEM 2/2/2");
+		assertEquals(2, GT6RecipeMaps.EXTRUDER.mOutputItemsCount);
+		assertEquals(2, GT6RecipeMaps.EXTRUDER.mMinimalInputItems, "RM.java:136 MIN-ITEM 2");
+		assertEquals(0, GT6RecipeMaps.EXTRUDER.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.EXTRUDER.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.EXTRUDER.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.EXTRUDER.mMinimalInputs);
+		assertEquals(1, GT6RecipeMaps.EXTRUDER.mPower);
+		assertEquals("gt6:textures/gui/machines/extruder.png", GT6RecipeMaps.EXTRUDER.mGUIPath, "the RM.java:136 machines/Extruder row, lowercased");
+		assertFalse(GT6RecipeMaps.EXTRUDER instanceof gregtech6.recipes.maps.GT6RecipeMapFormingPress, "RM.Extruder is the BASE map upstream — no subclass");
 	}
 
 	@Test
@@ -217,6 +258,8 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertNull(GT6RecipeMaps.BURN, "reset drops the burn entry too");
 		assertNull(GT6RecipeMaps.DISTILLERY, "reset drops the distillery entry too");
 		assertNull(GT6RecipeMaps.DRYING, "reset drops the drying entry too");
+		assertNull(GT6RecipeMaps.PRESS, "reset drops the press entry too (task p26-w1-press-extruder-molds)");
+		assertNull(GT6RecipeMaps.EXTRUDER, "reset drops the extruder entry too (task p26-w1-press-extruder-molds)");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("mc.recipe.furnace"), "reset drops the registry entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.cokeoven"), "reset drops the coke oven entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.fuels.engine"), "reset drops the engine fuels entry");
@@ -224,6 +267,8 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.fuels.burn"), "reset drops the burn entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.distillery"), "reset drops the distillery entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.drying"), "reset drops the drying entry");
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.press"), "reset drops the press entry");
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.extruder"), "reset drops the extruder entry");
 
 		GT6RecipeMaps.init();
 		assertNotNull(GT6RecipeMaps.FURNACE);
@@ -233,6 +278,8 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertNotNull(GT6RecipeMaps.BURN);
 		assertNotNull(GT6RecipeMaps.DISTILLERY);
 		assertNotNull(GT6RecipeMaps.DRYING);
+		assertNotNull(GT6RecipeMaps.PRESS);
+		assertNotNull(GT6RecipeMaps.EXTRUDER);
 		assertNotSame(tFirst, GT6RecipeMaps.FURNACE, "re-init after reset creates a fresh generation");
 		assertNotSame(tFirstCoke, GT6RecipeMaps.COKE_OVEN);
 		assertNotSame(tFirstEngine, GT6RecipeMaps.ENGINE_FUELS);
@@ -247,6 +294,8 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(GT6RecipeMaps.BURN, RecipeMap.RECIPE_MAPS.get("gt.recipe.fuels.burn"));
 		assertSame(GT6RecipeMaps.DISTILLERY, RecipeMap.RECIPE_MAPS.get("gt.recipe.distillery"));
 		assertSame(GT6RecipeMaps.DRYING, RecipeMap.RECIPE_MAPS.get("gt.recipe.drying"));
+		assertSame(GT6RecipeMaps.PRESS, RecipeMap.RECIPE_MAPS.get("gt.recipe.press"));
+		assertSame(GT6RecipeMaps.EXTRUDER, RecipeMap.RECIPE_MAPS.get("gt.recipe.extruder"));
 	}
 
 	/** The duplicate-name guard fires when a second generation is created without a reset (upstream Recipe.java:139). */
