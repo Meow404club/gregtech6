@@ -630,7 +630,7 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
 		//? if forge {
 		return mInventory.serializeNBT();
 		//?} else {
-		/*return mInventory.serializeNBT(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS);
+		/*return mInventory.serializeNBT(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS); // 21.1: the registries ride along
 		 *///?}
 	}
 
@@ -638,7 +638,7 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
 		//? if forge {
 		mInventory.deserializeNBT(aTag);
 		//?} else {
-		/*mInventory.deserializeNBT(aTag, gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS);
+		/*mInventory.deserializeNBT(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS, aTag); // 21.1: provider-first
 		 *///?}
 	}
 }
