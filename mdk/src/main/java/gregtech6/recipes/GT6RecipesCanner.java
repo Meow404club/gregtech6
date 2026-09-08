@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -38,6 +39,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import gregtech6.fluid.GTFluids;
+import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6SprayCans;
 
 /**
@@ -101,6 +103,26 @@ public final class GT6RecipesCanner {
 	/** The remover seam ({@code gt6:spray_paint_remover}, upstream IL.Spray_Color_Remover :269), fixtures injected offline. */
 	public static Supplier<ItemStack> sRemoverResolver = () -> new ItemStack(GT6SprayCans.SPRAY_PAINT_REMOVER.get());
 
+	/** The food-can empty seam ({@code gt6:food_can_empty}, upstream IL.Food_Can_Empty meta 998, MultiItemRandomTools.java:234), fixtures injected offline. */
+	public static Supplier<ItemStack> sFoodCanEmptyResolver = () -> new ItemStack(GT6FoodCans.FOOD_CAN_EMPTY.get());
+
+	/** The CANS_ROTTEN family seam: tier 0..5 → the {@code gt6:food_can_rotten_<size>} can (upstream IL.CANS_ROTTEN, IL.java:508), fixtures injected offline. */
+	public static IntFunction<ItemStack> sRottenCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_ROTTEN.get(aTier).get());
+
+	/** The Cookie Tin seam (the tier-6 cookies can, upstream IL.CANS_COOKIES[5] meta 86, MultiItemCans.java:107), fixtures injected offline. */
+	public static Supplier<ItemStack> sCookiesCanResolver = () -> new ItemStack(GT6FoodCans.FOOD_CAN_COOKIES_HUGE.get());
+
+	/** The EUt column of every food-can row (RM.java:743-753, the addRecipe2 second argument). */
+	public static final long FOOD_EUT = 16;
+
+	/** The duration column of every food-can row (RM.java:743-753, the addRecipe2 first argument) — CONSTANT 16t, no food-value scaling. */
+	public static final long FOOD_DURATION = 16;
+
+	/** The explicit food values of the three row0 registrations (Loader_Recipes_Food.java:41/:42, MultiItemFood.java:600 — literal upstream arguments). */
+	public static final int FOOD_VALUE_ROTTEN_FLESH = 4;
+	public static final int FOOD_VALUE_SPIDER_EYE = 2;
+	public static final int FOOD_VALUE_COOKIE = 12;
+
 	/** The dye indices the 16 refill rows walk (0..15, the :242 loop). */
 	public static final List<Integer> DYE_INDICES = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
 
@@ -117,8 +139,10 @@ public final class GT6RecipesCanner {
 	}
 
 	/**
-	 * Pours the 17 refill rows into {@link GT6RecipeMaps#CANNER}. Idempotent; an
-	 * unresolvable row skips with a count (the upstream FL.exists drops).
+	 * Pours the 20 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
+	 * colour refills + the chlorine remover, p24) + the 3 food-can rows of task
+	 * p25-food-can-row0 (rotten_flesh/spider_eye/cookie). Idempotent; an unresolvable
+	 * row skips with a count (the upstream FL.exists drops).
 	 */
 	public static synchronized void load() {
 		if (sLoaded) {LOGGER.debug("load() skipped: already poured (generation flag set)"); return;}
@@ -136,6 +160,26 @@ public final class GT6RecipesCanner {
 		Recipe tRemover = removerRecipe();
 		if (tRemover == null) tSkipped++;
 		else {tMap.addRecipe(tRemover); tPoured++;}
+
+		// the p25-food-can-row0 trio — Canner rows carry ZERO tools (the research card's
+		// correction: the blocked face was only the empty-can CRAFTING row, not these):
+		// upstream RM.food_can(ST.make(Items.rotten_flesh, 1, W), 4, "Canned Meat", IL.CANS_ROTTEN) — Loader_Recipes_Food.java:41
+		// upstream RM.food_can(ST.make(Items.spider_eye , 1, W), 2, "Canned Meat", IL.CANS_ROTTEN) — :42
+		// upstream RM.food_can(ST.make(Items.cookie, 6, W), 12, "Cookie Tin", IL.CANS_COOKIES) — MultiItemFood.java:600
+		// (the WiMo row :40 and the GT-material dust rows :44-51 stay POOLED — non-vanilla items)
+		ItemStack tFoodCanEmpty = sFoodCanEmptyResolver.get();
+		if (tFoodCanEmpty == null || tFoodCanEmpty.isEmpty()) {tSkipped += 3;}
+		else {
+			Recipe tRottenFlesh = foodCanRow(new ItemStack(Items.ROTTEN_FLESH, 1), FOOD_VALUE_ROTTEN_FLESH, sRottenCansResolver, tFoodCanEmpty);
+			if (tRottenFlesh == null) tSkipped++;
+			else {tMap.addRecipe(tRottenFlesh); tPoured++;}
+			Recipe tSpiderEye = foodCanRow(new ItemStack(Items.SPIDER_EYE, 1), FOOD_VALUE_SPIDER_EYE, sRottenCansResolver, tFoodCanEmpty);
+			if (tSpiderEye == null) tSkipped++;
+			else {tMap.addRecipe(tSpiderEye); tPoured++;}
+			Recipe tCookie = foodCanRow(new ItemStack(Items.COOKIE, 6), FOOD_VALUE_COOKIE, aTier -> sCookiesCanResolver.get(), tFoodCanEmpty);
+			if (tCookie == null) tSkipped++;
+			else {tMap.addRecipe(tCookie); tPoured++;}
+		}
 		sLoaded = true;
 		LOGGER.info("GT6 Canner poured: {} loaded, {} skipped (unregistered dye/chlorine/can ids, = upstream FL.exists drops)", tPoured, tSkipped);
 	}
@@ -180,6 +224,64 @@ public final class GT6RecipesCanner {
 				new FluidStack[] {new FluidStack(tChlorine, REFILL_MB)},
 				null,
 				REFILL_DURATION, REFILL_EUT, 0);
+	}
+
+	/**
+	 * The RM.food_can row for ONE food — the port of the upstream
+	 * {@code Canner.addRecipe2(T, 16, 16, aStack, IL.Food_Can_Empty.get(N),
+	 * aCans[tier].getWithName(N, aCannedName), ST.container(aStack, T))} rows (RM.java:743-753):
+	 * buffered T, EUt {@link #FOOD_EUT}, duration {@link #FOOD_DURATION} (CONSTANT — no
+	 * food-value scaling), inputs [the food stack AS REGISTERED (count carries, the cookie
+	 * row eats 6), the empty can x N], outputs [the tier can x N]. The fourth upstream
+	 * output {@code ST.container(aStack, T)} is EMPTY for all three row0 foods (no vanilla
+	 * container item), so the output leg is the can alone. The canned display NAME
+	 * ("Canned Meat"/"Cookie Tin", the getWithName face) has no port Recipe surface — the
+	 * row identity IS the item, the name stays pooled with the NEI-info card.
+	 *
+	 * @param aFood the food input stack (count = the registered amount)
+	 * @param aFoodValue the EXPLICIT upstream food-value argument (NOT derived from the stack)
+	 * @param aCans the family resolver: tier 0..5 → the can stack (the aCans[tier] dispatch)
+	 * @param aEmptyCan the empty-can stack (its count is overridden by the dispatch)
+	 * @return the row, or null when any leg is missing (the silent skip)
+	 */
+	@Nullable
+	static Recipe foodCanRow(ItemStack aFood, int aFoodValue, IntFunction<ItemStack> aCans, ItemStack aEmptyCan) {
+		if (aFood == null || aFood.isEmpty() || aFoodValue <= 0) return null;
+		if (aEmptyCan == null || aEmptyCan.isEmpty()) return null;
+		int[] tDispatch = foodCanTier(aFoodValue);
+		ItemStack tCan = aCans.apply(tDispatch[1]);
+		if (tCan == null || tCan.isEmpty()) return null;
+		ItemStack tEmpty = aEmptyCan.copy();
+		tEmpty.setCount(tDispatch[0]);
+		ItemStack tOutput = tCan.copy();
+		tOutput.setCount(tDispatch[0]);
+		return new Recipe(true,
+				new ItemStack[] {aFood.copy(), tEmpty}, new ItemStack[] {tOutput},
+				null, null,
+				FOOD_DURATION, FOOD_EUT, 0);
+	}
+
+	/**
+	 * The RM.food_can tier dispatch — switch(aFoodValue / 2) VERBATIM (RM.java:742-753):
+	 * returns {canCount, familyTier}. Cases 0-5 pick tiers 0-4 at count 1 (the tiny..
+	 * large ladder), the doubled/tripled/quadrupled/quintupled bands reuse tiers 3/4 at
+	 * counts 2/3/4/5, and the DEFAULT branch (cookie = foodValue 12 falls here: 12/2 = 6
+	 * hits no case) is {@code count = aFoodValue / 12, tier = 5} — the huge-can tier.
+	 */
+	static int[] foodCanTier(int aFoodValue) {
+		switch (aFoodValue / 2) {
+		case 0: case 1: return new int[] {1, 0};
+		case 2:         return new int[] {1, 1};
+		case 3:         return new int[] {1, 2};
+		case 4:         return new int[] {1, 3};
+		case 5:         return new int[] {1, 4};
+		case 8: case 9: return new int[] {2, 3};
+		case 10: case 11: return new int[] {2, 4};
+		case 15: case 16: case 17: return new int[] {3, 4};
+		case 20: case 21: case 22: case 23: return new int[] {4, 4};
+		case 25: case 26: case 27: case 28: case 29: return new int[] {5, 4};
+		default:        return new int[] {aFoodValue / 12, 5};
+		}
 	}
 
 	/** Test seam: clears the poured flag so a fresh generation can re-pour (public — the cross-domain e2e drives it). */
