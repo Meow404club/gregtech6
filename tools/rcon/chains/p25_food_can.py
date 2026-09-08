@@ -82,7 +82,7 @@ steps += [
     Step(f"gt6machine canner place {A}", expect="GT6 canner placed"),
     Step(ROTTEN_FLESH_MERGE["1.20.1"].format(p=A), expect="Modified block data",
          node_cmds={"1.21.1": ROTTEN_FLESH_MERGE["1.21.1"].format(p=A)}),
-    Step(f"gt6machine canner inject 40 16 {A}",
+    Step(f"gt6machine canner inject 40 64 {A}",
          expect="outputs=[1x food_can_rotten_small; ]",
          node_expects={"1.21.1": "outputs=[1x gt6:food_can_rotten_small; ]"}),
 ]
@@ -93,7 +93,7 @@ steps += [
     Step(f"gt6machine canner_t2 place {B}", expect="GT6 canner_t2 placed"),
     Step(SPIDER_EYE_MERGE["1.20.1"].format(p=B), expect="Modified block data",
          node_cmds={"1.21.1": SPIDER_EYE_MERGE["1.21.1"].format(p=B)}),
-    Step(f"gt6machine canner_t2 inject 40 16 {B}",
+    Step(f"gt6machine canner_t2 inject 40 256 {B}",
          expect="outputs=[1x food_can_rotten_tiny; ]",
          node_expects={"1.21.1": "outputs=[1x gt6:food_can_rotten_tiny; ]"}),
 ]
@@ -104,7 +104,7 @@ steps += [
     Step(f"gt6machine canner_t3 place {C}", expect="GT6 canner_t3 placed"),
     Step(COOKIE_MERGE["1.20.1"].format(p=C), expect="Modified block data",
          node_cmds={"1.21.1": COOKIE_MERGE["1.21.1"].format(p=C)}),
-    Step(f"gt6machine canner_t3 inject 40 16 {C}",
+    Step(f"gt6machine canner_t3 inject 40 1024 {C}",
          expect="outputs=[1x food_can_cookies_huge; ]",
          node_expects={"1.21.1": "outputs=[1x gt6:food_can_cookies_huge; ]"}),
 ]
