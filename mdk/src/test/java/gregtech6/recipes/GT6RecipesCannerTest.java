@@ -1,5 +1,6 @@
 package gregtech6.recipes;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import gregtech6.item.spraycan.GTSprayCanItem;
+import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6SprayCans;
 
 /**
@@ -47,6 +49,10 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 			Items.COCOA_BEANS, Items.LILY_PAD, Items.SPIDER_EYE, Items.SLIME_BALL,
 			Items.EGG, Items.PAPER, Items.STICK, Items.BRICK};
 
+	/** The offline rotten-family universe: one distinct existing item per tier 0..5 (the same convention). */
+	private static final net.minecraft.world.item.Item[] SYNTHETIC_ROTTEN = {
+			Items.REDSTONE, Items.GUNPOWDER, Items.BONE_MEAL, Items.CLAY_BALL, Items.FLINT, Items.SLIME_BALL};
+
 	/** The recording dye resolver — captures the indices the pour walks (the four-way pin's row leg). */
 	private static final List<Integer> sResolvedIndices = new ArrayList<>();
 
@@ -64,6 +70,9 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sEmptyCanResolver = () -> new ItemStack(Items.PAPER, 1);
 		GT6RecipesCanner.sSprayPaintResolver = aIndex -> new ItemStack(SYNTHETIC_PAINTS[aIndex], 1);
 		GT6RecipesCanner.sRemoverResolver = () -> new ItemStack(Items.CLAY_BALL, 1);
+		GT6RecipesCanner.sFoodCanEmptyResolver = () -> new ItemStack(Items.PAPER, 1);
+		GT6RecipesCanner.sRottenCansResolver = aTier -> new ItemStack(SYNTHETIC_ROTTEN[aTier], 1);
+		GT6RecipesCanner.sCookiesCanResolver = () -> new ItemStack(Items.BRICK, 1);
 		GT6RecipesCanner.resetForTest();
 	}
 
@@ -76,6 +85,9 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sEmptyCanResolver = () -> new ItemStack(GT6SprayCans.SPRAY_CAN_EMPTY.get());
 		GT6RecipesCanner.sSprayPaintResolver = aIndex -> new ItemStack(GT6SprayCans.SPRAY_PAINTS.get(aIndex).get());
 		GT6RecipesCanner.sRemoverResolver = () -> new ItemStack(GT6SprayCans.SPRAY_PAINT_REMOVER.get());
+		GT6RecipesCanner.sFoodCanEmptyResolver = () -> new ItemStack(GT6FoodCans.FOOD_CAN_EMPTY.get());
+		GT6RecipesCanner.sRottenCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_ROTTEN.get(aTier).get());
+		GT6RecipesCanner.sCookiesCanResolver = () -> new ItemStack(GT6FoodCans.FOOD_CAN_COOKIES_HUGE.get());
 		GT6RecipeMaps.reset();
 	}
 
@@ -84,9 +96,9 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	// ---------------------------------------------------------------------------
 
 	@Test
-	void pourLandSeventeenRows() {
+	void pourLandTwentyRows() {
 		GT6RecipesCanner.load();
-		assertEquals(17, GT6RecipeMaps.CANNER.mRecipeList.size(), "16 colour refills + the chlorine remover row");
+		assertEquals(20, GT6RecipeMaps.CANNER.mRecipeList.size(), "16 colour refills + the chlorine remover + the 3 food-can rows (p25-food-can-row0)");
 		assertEquals(16, sResolvedIndices.size(), "the dye resolver saw exactly the 16 walk indices (the chlorine row rides its own seam)");
 		assertEquals(16, sResolvedIndices.stream().distinct().count(), "each dye index resolved exactly once");
 	}
@@ -95,7 +107,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	void pourIsIdempotentPerGeneration() {
 		GT6RecipesCanner.load();
 		GT6RecipesCanner.load();
-		assertEquals(17, GT6RecipeMaps.CANNER.mRecipeList.size(), "the second load() is a no-op (the generation flag)");
+		assertEquals(20, GT6RecipeMaps.CANNER.mRecipeList.size(), "the second load() is a no-op (the generation flag)");
 	}
 
 	/** The row shape verbatim (MultiItemRandomTools.java:246 — EUt 16, duration 256, 2304 mB, zero fluid output). */
@@ -137,7 +149,94 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	void unresolvableLegSkipsSilently() {
 		GT6RecipesCanner.sRemoverResolver = () -> null; // the remover leg fails to resolve
 		GT6RecipesCanner.load();
-		assertEquals(16, GT6RecipeMaps.CANNER.mRecipeList.size(), "the chlorine row drops, the 16 refills pour");
+		assertEquals(19, GT6RecipeMaps.CANNER.mRecipeList.size(), "the chlorine row drops, the 16 refills + 3 food rows pour");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the p25-food-can-row0 trio (RM.food_can over Loader_Recipes_Food.java:41-42 + MultiItemFood.java:600)
+	// ---------------------------------------------------------------------------
+
+	/** The rotten_flesh row: foodValue 4 → the dispatch tier 1 → the SMALL rotten can, EUt 16 / duration 16 CONSTANT. */
+	@Test
+	void rottenFleshRowIsTheTierOneDispatch() {
+		GT6RecipesCanner.load();
+		Recipe tRow = GT6RecipeMaps.CANNER.findRecipe(null, Long.MAX_VALUE, ItemStack.EMPTY, null,
+				new ItemStack(Items.ROTTEN_FLESH, 1), new ItemStack(Items.PAPER, 1));
+		assertNotNull(tRow, "the rotten_flesh row resolves for (rotten_flesh, empty can)");
+		assertTrue(tRow.mCanBeBuffered, "addRecipe2(T, ...) — buffered");
+		assertEquals(16, tRow.mEUt, "EUt 16 — CONSTANT (RM.java:744)");
+		assertEquals(16, tRow.mDuration, "duration 16 — CONSTANT (RM.java:744)");
+		assertEquals(0, tRow.mFluidInputs.length, "no fluid leg");
+		assertEquals(2, tRow.mInputs.length, "two item inputs: the food + the empty can");
+		assertSame(Items.ROTTEN_FLESH, tRow.mInputs[0].getItem(), "the food input rides the registered count");
+		assertEquals(1, tRow.mInputs[1].getCount(), "ONE empty can consumed (Food_Can_Empty.get(1))");
+		assertEquals(1, tRow.mOutputs.length, "the container leg is empty for vanilla foods — the can alone");
+		assertSame(SYNTHETIC_ROTTEN[1], tRow.mOutputs[0].getItem(), "foodValue 4 → switch(2) → aCans[1] — the SMALL rotten can");
+		assertEquals(1, tRow.mOutputs[0].getCount(), "one can out");
+	}
+
+	/** The spider_eye row: foodValue 2 → the dispatch tier 0 → the TINY rotten can. */
+	@Test
+	void spiderEyeRowIsTheTierZeroDispatch() {
+		GT6RecipesCanner.load();
+		Recipe tRow = GT6RecipeMaps.CANNER.findRecipe(null, Long.MAX_VALUE, ItemStack.EMPTY, null,
+				new ItemStack(Items.SPIDER_EYE, 1), new ItemStack(Items.PAPER, 1));
+		assertNotNull(tRow, "the spider_eye row resolves for (spider_eye, empty can)");
+		assertEquals(16, tRow.mEUt, "EUt 16 — CONSTANT");
+		assertEquals(16, tRow.mDuration, "duration 16 — CONSTANT");
+		assertSame(SYNTHETIC_ROTTEN[0], tRow.mOutputs[0].getItem(), "foodValue 2 → switch(1) → aCans[0] — the TINY rotten can");
+		assertEquals(1, tRow.mOutputs[0].getCount(), "one can out");
+	}
+
+	/**
+	 * The cookie x6 row: foodValue 12 → switch(6) hits NO case → the DEFAULT branch
+	 * (RM.java:753) — count = 12/12 = 1, tier 5 = the huge-can tier. THE Cookie Tin row.
+	 */
+	@Test
+	void cookieRowIsTheDefaultBranchCookieTin() {
+		GT6RecipesCanner.load();
+		Recipe tRow = GT6RecipeMaps.CANNER.findRecipe(null, Long.MAX_VALUE, ItemStack.EMPTY, null,
+				new ItemStack(Items.COOKIE, 6), new ItemStack(Items.PAPER, 1));
+		assertNotNull(tRow, "the cookie row resolves for (6 cookies, empty can)");
+		assertEquals(6, tRow.mInputs[0].getCount(), "the food input carries its registered count (6 cookies)");
+		assertEquals(1, tRow.mInputs[1].getCount(), "ONE empty can (12/12)");
+		assertSame(Items.BRICK, tRow.mOutputs[0].getItem(), "the DEFAULT branch tier 5 → the Cookie Tin (the tier-6 cookies can)");
+		assertEquals(1, tRow.mOutputs[0].getCount(), "one huge can out");
+		assertEquals(16, tRow.mEUt, "EUt 16 — CONSTANT");
+		assertEquals(16, tRow.mDuration, "duration 16 — CONSTANT");
+	}
+
+	/**
+	 * The dispatch itself is the RM.java:742-753 switch VERBATIM — the case boundaries
+	 * pinned over the full ladder (the tiers 0-4 singles, the 2x/3x/4x/5x bands on
+	 * tiers 3/4, and the default fall-through at count = aFoodValue/12, tier 5).
+	 */
+	@Test
+	void foodCanTierDispatchIsTheVerbatimSwitch() {
+		assertArrayEquals(new int[] {1, 0}, GT6RecipesCanner.foodCanTier(0), "foodValue 0 → switch(0)");
+		assertArrayEquals(new int[] {1, 0}, GT6RecipesCanner.foodCanTier(2), "spider_eye: foodValue 2 → switch(1) → case 0/1");
+		assertArrayEquals(new int[] {1, 1}, GT6RecipesCanner.foodCanTier(4), "rotten_flesh: foodValue 4 → switch(2)");
+		assertArrayEquals(new int[] {1, 2}, GT6RecipesCanner.foodCanTier(6), "foodValue 6 → switch(3)");
+		assertArrayEquals(new int[] {1, 3}, GT6RecipesCanner.foodCanTier(8), "foodValue 8 → switch(4)");
+		assertArrayEquals(new int[] {1, 4}, GT6RecipesCanner.foodCanTier(10), "foodValue 10 → switch(5)");
+		assertArrayEquals(new int[] {2, 3}, GT6RecipesCanner.foodCanTier(16), "foodValue 16 → switch(8) — two cans of tier 3");
+		assertArrayEquals(new int[] {2, 4}, GT6RecipesCanner.foodCanTier(20), "foodValue 20 → switch(10) — two cans of tier 4");
+		assertArrayEquals(new int[] {3, 4}, GT6RecipesCanner.foodCanTier(30), "foodValue 30 → switch(15) — three cans of tier 4");
+		assertArrayEquals(new int[] {4, 4}, GT6RecipesCanner.foodCanTier(40), "foodValue 40 → switch(20) — four cans of tier 4");
+		assertArrayEquals(new int[] {5, 4}, GT6RecipesCanner.foodCanTier(50), "foodValue 50 → switch(25) — five cans of tier 4");
+		assertArrayEquals(new int[] {1, 5}, GT6RecipesCanner.foodCanTier(12), "cookie: foodValue 12 → switch(6) → DEFAULT — 12/12=1 can of tier 5");
+		assertArrayEquals(new int[] {2, 5}, GT6RecipesCanner.foodCanTier(24), "foodValue 24 → switch(12) → DEFAULT — 24/12=2 cans of tier 5");
+	}
+
+	/** The dispatch shape guard: a non-positive foodValue makes NO row (the upstream {@code if (aFoodValue > 0)} gate, RM.java:742). */
+	@Test
+	void nonPositiveFoodValueMakesNoRow() {
+		assertNull(GT6RecipesCanner.foodCanRow(new ItemStack(Items.ROTTEN_FLESH, 1), 0,
+				aTier -> new ItemStack(SYNTHETIC_ROTTEN[aTier]), new ItemStack(Items.PAPER, 1)), "foodValue 0 → no row");
+		assertNull(GT6RecipesCanner.foodCanRow(ItemStack.EMPTY, 4,
+				aTier -> new ItemStack(SYNTHETIC_ROTTEN[aTier]), new ItemStack(Items.PAPER, 1)), "an empty food → no row");
+		assertNull(GT6RecipesCanner.foodCanRow(new ItemStack(Items.ROTTEN_FLESH, 1), 4,
+				aTier -> null, new ItemStack(Items.PAPER, 1)), "an unresolvable can tier → the silent skip");
 	}
 
 	// ---------------------------------------------------------------------------

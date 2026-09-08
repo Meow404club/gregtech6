@@ -23,6 +23,7 @@ import net.minecraftforge.common.Tags;
 /*import net.neoforged.neoforge.common.Tags;
 *///?}
 
+import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTGrassBlocks;
@@ -39,9 +40,11 @@ import gregtech6.registry.GTGrassBlocks;
  * tags of {@link GT6ItemTags} (the tag-strategy ruling — four keys, zero bare items),
  * result {@code gt6:spray_can_empty} ({@link GT6SprayCans#SPRAY_CAN_EMPTY}, the p22
  * depletion-swap target — the crafted can is what the colour cans deplete INTO, so
- * this recipe closes the p22 "v1 acquisition" note's crafting cut). The food-can
- * second row ({@code "fh"}/{@code "oP"}, :239) stays POOLED — it needs hammer +
- * bendingcylinder_small, neither item exists in this port yet.
+ * this recipe closes the p22 "v1 acquisition" note's crafting cut). Task
+ * p25-food-can-row0 appends the food-can second row itself ({@code "fh"}/{@code "oP"},
+ * :239 — {@link #foodCanEmptyBuilder}) plus the bending-cylinder self-craft
+ * ({@code "sfh"}/{@code "III"}, Loader_Tools.java:313 — {@link #bendingCylinderSmallBuilder}),
+ * the row that consumes the hammer/file/saw trio through its own tool letters.
  *
  * <p>Leg split (the decision's pinned lines): 1.20.1 —
  * {@code RecipeProvider(PackOutput)} (RecipeProvider.java:81) + abstract
@@ -70,6 +73,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation HAMMER_STONE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hammer_stone");
 	public static final ResourceLocation HAMMER_INGOTS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hammer_ingots");
 	public static final ResourceLocation WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "wrench");
+	/** The bending-cylinder self-craft row (task p25-food-can-row0 spec ②) — the result-path convention. */
+	public static final ResourceLocation BENDING_CYLINDER_SMALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bending_cylinder_small");
+	/** The empty-food-can crafting row (task p25-food-can-row0 spec ③, MultiItemRandomTools.java:239). */
+	public static final ResourceLocation FOOD_CAN_EMPTY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "food_can_empty");
 
 	public GT6CraftingRecipes(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider) {
 		//? if forge {
@@ -86,6 +93,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		hammerFromStoneBuilder().save(aConsumer, HAMMER_STONE_ID);
 		hammerFromIngotsBuilder().save(aConsumer, HAMMER_INGOTS_ID);
 		wrenchBuilder().save(aConsumer, WRENCH_ID);
+		bendingCylinderSmallBuilder().save(aConsumer, BENDING_CYLINDER_SMALL_ID);
+		foodCanEmptyBuilder().save(aConsumer, FOOD_CAN_EMPTY_ID);
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -97,6 +106,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		hammerFromStoneBuilder().save(aOutput, HAMMER_STONE_ID);
 		hammerFromIngotsBuilder().save(aOutput, HAMMER_INGOTS_ID);
 		wrenchBuilder().save(aOutput, WRENCH_ID);
+		bendingCylinderSmallBuilder().save(aOutput, BENDING_CYLINDER_SMALL_ID);
+		foodCanEmptyBuilder().save(aOutput, FOOD_CAN_EMPTY_ID);
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
@@ -260,5 +271,51 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('P', tSteelPlates)
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 				.unlockedBy("has_steel_plate", has(tSteelPlates));
+	}
+
+	/**
+	 * The bending-cylinder SELF-CRAFT row (task p25-food-can-row0 spec ②) — the upstream
+	 * {"sfh", "III"} row (Loader_Tools.java:313, the OreProcessing_Tool material loop
+	 * flattened to ONE tag-keyed row, the hammer-ingots-route precedent; the per-material
+	 * {@code typemin(2)} gate folds onto the whole INGOTS tag): 's' = #gt6:tools/saw,
+	 * 'f' = #gt6:tools/file, 'h' = #gt6:tools/hard_hammer (the CR.java:200/201/211 tool
+	 * alphabet — the three p25 tools this row CONSUMES in-grid, the live consumption
+	 * chain), 'I' = the ecosystem generic ingots tag ({@code Tags.Items.INGOTS}; upstream
+	 * walks {@code ingot.dat(tMat)} per metal — {@code setMaterialAmount(3*U)} = the
+	 * 3-ingot row). Each tool pays one durability point per craft and rides along (the
+	 * container-item channel via Recipe.getRemainingItems). Result 1x
+	 * {@code gt6:bending_cylinder_small}.
+	 */
+	private ShapedRecipeBuilder bendingCylinderSmallBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.BENDING_CYLINDER_SMALL.get())
+				.pattern("sfh")
+				.pattern("III")
+				.define('s', GT6ItemTags.TOOLS_SAW)
+				.define('f', GT6ItemTags.TOOLS_FILE)
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.define('I', Tags.Items.INGOTS)
+				.unlockedBy("has_ingot", has(Tags.Items.INGOTS));
+	}
+
+	/**
+	 * The empty-food-can crafting row (task p25-food-can-row0 spec ③) — the upstream
+	 * {"fh", "oP"} row VERBATIM (MultiItemRandomTools.java:239, CR.DEF_NCC): 'f' =
+	 * {@code #gt6:tools/file} (the CR.java:200 craftingToolFile letter), 'h' =
+	 * {@code #gt6:tools/hard_hammer} (:201), 'o' = {@code #gt6:tools/bending_cylinder_small}
+	 * (:207 — the OreDictToolNames.bendingcylindersmall letter, the bending cylinder IS a
+	 * crafting ingredient here exactly like upstream), 'P' = {@code OP.plateCurved.dat(
+	 * MT.TinAlloy)} → the existing {@code #gt6:plate_curved_tin} material tag (the
+	 * GTMaterialItems plate_curved_tin item, the spray-can row's 'C' key precedent).
+	 * Result 1x {@code gt6:food_can_empty} — the canning machine's consumable input.
+	 */
+	private ShapedRecipeBuilder foodCanEmptyBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6FoodCans.FOOD_CAN_EMPTY.get())
+				.pattern("fh")
+				.pattern("oP")
+				.define('f', GT6ItemTags.TOOLS_FILE)
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.define('o', GT6ItemTags.TOOLS_BENDING_CYLINDER_SMALL)
+				.define('P', GT6ItemTags.PLATE_CURVED_TIN)
+				.unlockedBy("has_plate_curved_tin", has(GT6ItemTags.PLATE_CURVED_TIN));
 	}
 }

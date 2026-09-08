@@ -113,6 +113,36 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   Same single-steel-tier story as the family: upstream tints both layers with the tool
   material colours (getRGBa :127-129, the material pool); the port shows the grayscale
   composite un-tinted — declared deviation, same runtime-tint pool.
+- `gt6/textures/item/bending_cylinder_small.png` — small bending cylinder item texture
+  (upstream `textures/items/iconsets/BENDING_CYLINDER_SMALL.png`, task
+  p25-food-can-row0; sha256
+  `686b961d1477d133a1a16abc8c292f9648f3c3d92e3fa1b32ae725b7132ea570`).
+  Byte-identical borrow, filename lowercased on borrow. The upstream tool head icon
+  (GT_Tool_BendingCylinderSmall.getIcon — the head half; the handle half is
+  `Textures.ItemIcons.VOID`, i.e. NOTHING to compose — a single-layer icon); the port
+  shows the grayscale icon un-tinted at the single steel tier — declared deviation,
+  the family runtime-tint pool.
+- `gt6/textures/item/food_can/*.png` — the food-can row0 subset (8 textures, task
+  p25-food-can-row0), byte-identical borrows renamed to the registered item ids:
+  - `empty.png`            `textures/items/gt.multiitem.randomtools/998.png`
+    (`3d9075d45ec657759fedfc71a95a03a85fe399ba3537d04e8daec0172f18c63e` — the empty
+    can lives on the RANDOMTOOLS multiitem upstream, MultiItemRandomTools.java:234)
+  - `rotten_tiny.png`      `textures/items/gt.multiitem.cans/11.png`
+    (`93ad271d40903b016710e9c68f7c5afc276cde7175a91c936008a415a645a788`)
+  - `rotten_small.png`     `textures/items/gt.multiitem.cans/12.png`
+    (`86a2397da14f7fc57dea5793b91cb3eb36e904159a90e017144d1c3183d95a34`)
+  - `rotten_tall.png`      `textures/items/gt.multiitem.cans/13.png`
+    (`0b4e13e051fb55149c86ad9596b5bccb8b975b5e6055af1b7a273567dd87abee`)
+  - `rotten_wide.png`      `textures/items/gt.multiitem.cans/14.png`
+    (`f083ee50be1d1ec2712ccb14239f7e2505010c805b8973020ae84715f23bb282`)
+  - `rotten_large.png`     `textures/items/gt.multiitem.cans/15.png`
+    (`be159c3caeb62c43a469bc82b1f5fedadcf9bef0ea44f9296145185f6295b562`)
+  - `rotten_huge.png`      `textures/items/gt.multiitem.cans/16.png`
+    (`1daa9b014ce22c4c24562f654b903df3c4b8b3039c67c4ffce6a87867c7ea2f0`)
+  - `cookies_huge.png`     `textures/items/gt.multiitem.cans/86.png`
+    (`667ceb61f34ab0ad82bf1536aa0771b90158323883ca448a0af96336fa644531` — the Cookie
+    Tin output; the other five Cookies tiers stay pooled)
+  All 16x16 RGBA, CC0 1.0 per the upstream README block.
 
 Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
 base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from

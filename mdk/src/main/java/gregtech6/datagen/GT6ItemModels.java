@@ -95,6 +95,24 @@ public final class GT6ItemModels extends ItemModelProvider {
         // (assets/README.md attribution)
         withExistingParent("wrench", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/wrench"));
+        // the formal small bending cylinder item (task p25-food-can-row0): handheld parent
+        // = the vanilla tool shape (the wrench row shape), texture = the byte-identical
+        // BENDING_CYLINDER_SMALL.png iconset borrow (assets/README.md attribution)
+        withExistingParent("bending_cylinder_small", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/bending_cylinder_small"));
+        // the food-can row0 subset (task p25-food-can-row0) — 8 item/generated models over
+        // the byte-identical upstream icon borrows (gt.multiitem.randomtools/998 for the
+        // empty can, gt.multiitem.cans/11-16 for the rotten family, :86 for the cookies
+        // tin — assets/README.md attribution), walked over the registered ids so the model
+        // ids cannot drift (the spray-can band convention)
+        withExistingParent("food_can_empty", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/food_can/empty"));
+        for (String tSize : new String[] {"tiny", "small", "tall", "wide", "large", "huge"}) {
+            withExistingParent("food_can_rotten_" + tSize, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/food_can/rotten_" + tSize));
+        }
+        withExistingParent("food_can_cookies_huge", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/food_can/cookies_huge"));
         // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)

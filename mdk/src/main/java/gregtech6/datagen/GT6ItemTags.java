@@ -85,6 +85,15 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/** The craftingToolWrench oredient translation — #gt6:tools/wrench (CS.java:1876 snake). */
 	public static final TagKey<Item> TOOLS_WRENCH = gt6("tools/wrench");
 
+	/**
+	 * The craftingToolBendingCylinderSmall oredient translation —
+	 * #gt6:tools/bending_cylinder_small (task p25-food-can-row0 spec ②, the TOOLS_FILE
+	 * snake shape). Upstream key {@code OreDictToolNames.bendingcylindersmall =
+	 * "craftingToolBendingCylinderSmall"} (CS.java:1903); the empty-can crafting row's
+	 * 'o' letter (CR.java:207 alphabet) keys on THIS tag.
+	 */
+	public static final TagKey<Item> TOOLS_BENDING_CYLINDER_SMALL = gt6("tools/bending_cylinder_small");
+
 	/** The dustRedstone recipe-material translation — #gt6:redstone (snake ruling). */
 	public static final TagKey<Item> REDSTONE_DUSTS = gt6("redstone");
 
@@ -197,10 +206,10 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	 * The p24 tool band: the crafting-tool tags (one member each — the tag exists so
 	 * recipes and future relay code key on the TAG, not the item; the file/saw pair from
 	 * p24-tool-system, the screwdriver from p24-screwdriver-item, the hard-hammer/wrench
-	 * pair from p25-tool-hammer-wrench), the two recipe-material tags, and the ecosystem
-	 * append (the nine formal tools into the platform tools tag — the user ruling's
-	 * bidirectional face; the platform constant resolves to {@code forge:tools} on 1.20.1
-	 * and {@code c:tools} on 1.21.1).
+	 * pair from p25-tool-hammer-wrench, the bending cylinder from p25-food-can-row0),
+	 * the two recipe-material tags, and the ecosystem append (the ten formal tools into
+	 * the platform tools tag — the user ruling's bidirectional face; the platform
+	 * constant resolves to {@code forge:tools} on 1.20.1 and {@code c:tools} on 1.21.1).
 	 */
 	private void addToolTags(HolderLookup.Provider aProvider) {
 		tag(TOOLS_FILE).add(item(GT6Tools.FILE.getId()));
@@ -209,13 +218,15 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_SCREWDRIVER).add(item(GT6Tools.SCREWDRIVER.getId())); // task p24-screwdriver-item — the craftingToolScrewdriver snake
 		tag(TOOLS_HARD_HAMMER).add(item(GT6Tools.HAMMER.getId())); // task p25-tool-hammer-wrench — the craftingToolHardHammer snake
 		tag(TOOLS_WRENCH).add(item(GT6Tools.WRENCH.getId())); // task p25-tool-hammer-wrench — the craftingToolWrench snake
+		tag(TOOLS_BENDING_CYLINDER_SMALL).add(item(GT6Tools.BENDING_CYLINDER_SMALL.getId())); // task p25-food-can-row0 — the craftingToolBendingCylinderSmall snake
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
 		tag(Tags.Items.TOOLS).add(
 				item(GT6Tools.FILE.getId()), item(GT6Tools.SAW.getId()),
 				item(GT6Tools.CROWBAR.getId()), item(GT6Tools.CUTTER.getId()), item(GT6Tools.CHISEL.getId()),
 				item(GT6Tools.BUILDER_WAND.getId()), item(GT6Tools.SCREWDRIVER.getId()),
-				item(GT6Tools.HAMMER.getId()), item(GT6Tools.WRENCH.getId())); // task p25-tool-hammer-wrench — the family band 7 → 9
+				item(GT6Tools.HAMMER.getId()), item(GT6Tools.WRENCH.getId()), // task p25-tool-hammer-wrench — the family band 7 → 9
+				item(GT6Tools.BENDING_CYLINDER_SMALL.getId())); // task p25-food-can-row0 — the family band 9 → 10
 	}
 
 	/**

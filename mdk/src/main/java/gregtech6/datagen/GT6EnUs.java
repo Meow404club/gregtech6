@@ -18,6 +18,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GT6Attachments;
+import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6SprayCans;
@@ -98,6 +99,7 @@ public class GT6EnUs extends LanguageProvider {
         addSprayCans(); // task p22-spraycan-items — table-tail append
         addGrassBlocks(); // task p24-grass-block — table-tail append
         addFoamSprays(); // task p25-c-foam-pipe-spray — table-tail append
+        addFoodCans(); // task p25-food-can-row0 — table-tail append
     }
 
     /**
@@ -763,6 +765,35 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.item.spraycan.GTSprayCanItem.PAINT_TOOLTIP_KEY, "Can Color things in %s");
         add(gregtech6.item.spraycan.GTSprayCanItem.DECOLOR_TOOLTIP_KEY, "Can Decolor things");
         add(gregtech6.item.spraycan.GTSprayCanItem.REMAINING_TOOLTIP_KEY, "Remaining Uses: %s.%s");
+    }
+
+    /**
+     * Food-can family keys (task p25-food-can-row0): the row0 MINIMAL subset's display
+     * names, walked over the {@link GT6FoodCans} registry constants so the lang face
+     * cannot drift from the registered ids (the addSprayCans form). Values are the
+     * upstream registration-row wordings verbatim: "Empty Food Can"
+     * (MultiItemRandomTools.java:234), the six rotten tiers "Tiny/Small/Tall/Wide/Large/
+     * Huge Food Can (Rotten)" (MultiItemCans.java:53-58), the cookies tin "Huge Food Can
+     * (Cookies)" (:107) and the bending cylinder "Small Bending Cylinder"
+     * (Loader_Tools.java:146), plus the tab title ("GregTech: Cans", the upstream
+     * MultiItemCans.java:41 category label; the key comes from
+     * {@link GT6FoodCans#TAB_TITLE_KEY} so the lang face cannot drift from the
+     * registered tab).
+     */
+    private void addFoodCans() {
+        add("item.gt6." + GT6FoodCans.FOOD_CAN_EMPTY.getId().getPath(), "Empty Food Can");
+        String[] tSizes = {"tiny", "small", "tall", "wide", "large", "huge"};
+        String[] tNames = {"Tiny", "Small", "Tall", "Wide", "Large", "Huge"};
+        for (int i = 0; i < 6; i++) {
+            add("item.gt6." + GT6FoodCans.FOOD_CAN_ROTTEN.get(i).getId().getPath(),
+                tNames[i] + " Food Can (Rotten)");
+            if (!GT6FoodCans.FOOD_CAN_ROTTEN.get(i).getId().getPath().equals("food_can_rotten_" + tSizes[i])) {
+                throw new IllegalStateException("rotten can id drifted: " + GT6FoodCans.FOOD_CAN_ROTTEN.get(i).getId().getPath());
+            }
+        }
+        add("item.gt6." + GT6FoodCans.FOOD_CAN_COOKIES_HUGE.getId().getPath(), "Huge Food Can (Cookies)");
+        add("item.gt6.bending_cylinder_small", "Small Bending Cylinder");
+        add(GT6FoodCans.TAB_TITLE_KEY, "GregTech: Cans");
     }
 
     /**

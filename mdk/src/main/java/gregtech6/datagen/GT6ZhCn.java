@@ -416,6 +416,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GTWires.REDSTONE_TAB_TITLE_KEY);
 		addDirect(GTWires.LASER_TAB_TITLE_KEY);
 		addDirect(GT6Tools.TAB_TITLE_KEY);
+		addDirect("itemGroup.gt6.food_cans"); // task p25-food-can-row0 — dump itemgroup gt.multiitem.cans 格雷科技: 罐头 (MultiItemCans.java:41 category label)
 	}
 
 	/** Only the hand-translated in-use prefix templates (mirror of GT6EnUs.addPrefixTemplates over OP.VALUES). */
@@ -455,6 +456,15 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.screwdriver"); // task p24-screwdriver-item — same hand-row face
 		addDirect("item.gt6.hammer"); // task p25-tool-hammer-wrench — the hand row composes from 锤 (toolHeadHammer dump face 锤头 :3290, head-word first)
 		addDirect("item.gt6.wrench"); // task p25-tool-hammer-wrench — the hand row composes from 扳手 (toolHeadWrench dump face 扳手头 :3319)
+		addDirect("item.gt6.food_can_empty"); // task p25-food-can-row0 — 空食物罐头 (the dump has no cans.998 face; the 罐头 family word, MultiItemRandomTools.java:234 "Empty Food Can")
+		addDirect("item.gt6.food_can_rotten_tiny"); // task p25-food-can-row0 — dump gt.multiitem.cans.11 迷你食物罐头 (腐肉)
+		addDirect("item.gt6.food_can_rotten_small"); // dump :12
+		addDirect("item.gt6.food_can_rotten_tall"); // dump :13
+		addDirect("item.gt6.food_can_rotten_wide"); // dump :14
+		addDirect("item.gt6.food_can_rotten_large"); // dump :15
+		addDirect("item.gt6.food_can_rotten_huge"); // dump :16
+		addDirect("item.gt6.food_can_cookies_huge"); // task p25-food-can-row0 — 超大食物罐头 (饼干) (dump cans.86 untranslated; 饼干 = the vanilla cookie face)
+		addDirect("item.gt6.bending_cylinder_small"); // task p25-food-can-row0 — dump gt.metatool.01.56 小型弯曲绕筒 (Loader_Tools.java:146 "Small Bending Cylinder")
 		addDirect("item.gt6.cover_redstone_emitter");
 		addDirect("item.gt6.cover_redstone_conductor_in");
 		addDirect("item.gt6.cover_redstone_conductor_out");
