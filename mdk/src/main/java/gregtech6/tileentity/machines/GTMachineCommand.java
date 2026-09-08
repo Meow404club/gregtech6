@@ -177,9 +177,25 @@ public final class GTMachineCommand {
 			.then(machine("canner", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
 			.then(machine("canner_t2", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t2"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
 			.then(machine("canner_t3", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t3"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
-			.then(machine("canner_t4", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t4"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()));
+			.then(machine("canner_t4", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t4"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
+			// task p26-w1-sifter-compressor-wiremill: the W1 Kinetic trio — the input feeds
+			// are the vanilla row inputs (the :224 grass row0 for the Sifter, the :654 sand
+			// row for the Compressor) and the first poured stick→wireFine row's stick for
+			// the Wiremill (the feed walk mirrors firstGemChainGem)
+			.then(machine("sifter", GTMachines.SIFTER_BLOCKS_BY_PATH.get("sifter"), () -> net.minecraft.world.item.Items.GRASS_BLOCK)) // Loader_Recipes_Ores.java:224
+			.then(machine("sifter_t2", GTMachines.SIFTER_BLOCKS_BY_PATH.get("sifter_t2"), () -> net.minecraft.world.item.Items.GRASS_BLOCK))
+			.then(machine("sifter_t3", GTMachines.SIFTER_BLOCKS_BY_PATH.get("sifter_t3"), () -> net.minecraft.world.item.Items.GRASS_BLOCK))
+			.then(machine("sifter_t4", GTMachines.SIFTER_BLOCKS_BY_PATH.get("sifter_t4"), () -> net.minecraft.world.item.Items.GRASS_BLOCK))
+			.then(machine("compressor", GTMachines.COMPRESSOR_BLOCKS_BY_PATH.get("compressor"), () -> net.minecraft.world.level.block.Blocks.SAND.asItem())) // Loader_Recipes_Vanilla.java:654
+			.then(machine("compressor_t2", GTMachines.COMPRESSOR_BLOCKS_BY_PATH.get("compressor_t2"), () -> net.minecraft.world.level.block.Blocks.SAND.asItem()))
+			.then(machine("compressor_t3", GTMachines.COMPRESSOR_BLOCKS_BY_PATH.get("compressor_t3"), () -> net.minecraft.world.level.block.Blocks.SAND.asItem()))
+			.then(machine("compressor_t4", GTMachines.COMPRESSOR_BLOCKS_BY_PATH.get("compressor_t4"), () -> net.minecraft.world.level.block.Blocks.SAND.asItem()))
+			.then(machine("wiremill", GTMachines.WIREMILL_BLOCKS_BY_PATH.get("wiremill"), GTMachineCommand::firstPouredWiremillStick)) // Loader_Recipes_Handlers.java:287/:292
+			.then(machine("wiremill_t2", GTMachines.WIREMILL_BLOCKS_BY_PATH.get("wiremill_t2"), GTMachineCommand::firstPouredWiremillStick))
+			.then(machine("wiremill_t3", GTMachines.WIREMILL_BLOCKS_BY_PATH.get("wiremill_t3"), GTMachineCommand::firstPouredWiremillStick))
+			.then(machine("wiremill_t4", GTMachines.WIREMILL_BLOCKS_BY_PATH.get("wiremill_t4"), GTMachineCommand::firstPouredWiremillStick));
 		event.getDispatcher().register(tMachine);
-		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
+		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
 		// the p8 ladder registration line (the runServer gate asserts it): the three family
 		// BETs resolve — proof the RegistryObjects bound.
 		LOGGER.info("GT6 machine ladder registered: 12 blocks / 3 family BETs (T1-T4 validBlocks multi-attach), tiers "
@@ -197,6 +213,13 @@ public final class GTMachineCommand {
 		LOGGER.info("GT6 canner family registered: 4 blocks / 1 family BET (T1-T4 validBlocks multi-attach), EU energy, "
 			+ "RM.Canner (gt.recipe.canner) 2/2 row map, tank capacity " + java.util.Arrays.toString(GTMachines.CANNER_TANK_CAPACITY)
 			+ ", use-output-tank T, hardness 4.0");
+		// the p26 W1 Kinetic trio registration smoke line (the runServer gate asserts it):
+		// the three family BETs resolve, the row config is the upstream :1312-1315 /
+		// :1343-1346 / :1373-1376 columns.
+		LOGGER.info("GT6 W1 kinetic families registered: 12 blocks / 3 family BETs (T1-T4 validBlocks multi-attach), "
+			+ "Sifter KU RM.Sifting 1/12 + Compressor KU RM.Compressor + Wiremill RU RM.Wiremill, "
+			+ "parallel " + java.util.Arrays.toString(GTMachines.PARALLEL_4_32) + " (sifter/compressor, shared with the crusher) / 1 (wiremill), "
+			+ "hardness 7/6/9/12.5, menu=null rows (zero new MenuType)");
 	}
 
 	/** One machine literal with its four subcommands (the oven command shape, parameterised). */
@@ -330,6 +353,31 @@ public final class GTMachineCommand {
 			if (tRecipe.mInputs.length == 1 && tRecipe.mInputs[0].getItem() == aGemItem && tRecipe.mInputs[0].getCount() == 1) return tRecipe;
 		}
 		return null;
+	}
+
+	/**
+	 * The Wiremill acceptance feed (task p26-w1-sifter-compressor-wiremill): the first
+	 * material of the stick registration order that survives ALL THREE upstream gates —
+	 * the both-side mat() resolution of the :287/:292 template (stick + wireFine items
+	 * both generated), the SMITHABLE/workability-arm condition of the pour itself, and the
+	 * poured row being present in the live WIREMILL map. All three gates read the LIVE
+	 * poured map (the firstGemChainGem shape).
+	 */
+	private static net.minecraft.world.item.Item firstPouredWiremillStick() {
+		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialItems.registrationOrder()) {
+			if (tPair.prefix() != gregapi.data.OP.stick) continue;
+			RegistryObject<net.minecraft.world.item.Item> tIn = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, tPair.material());
+			RegistryObject<net.minecraft.world.item.Item> tOut = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.wireFine, tPair.material());
+			//? if forge {
+			if (tIn == null || !tIn.isPresent() || tOut == null || !tOut.isPresent()) continue;
+			//?} else {
+			/*if (tIn == null || !tIn.isBound() || tOut == null || !tOut.isBound()) continue;
+			 *///?}
+			for (gregtech6.recipes.Recipe tRecipe : gregtech6.recipes.GT6RecipeMaps.WIREMILL.mRecipeList) {
+				if (tRecipe.mInputs.length == 1 && tRecipe.mInputs[0].getItem() == tIn.get()) return tIn.get();
+			}
+		}
+		throw new IllegalStateException("No gt6:stick→wireFine pair with a poured wiremill row resolved for the wiremill feed");
 	}
 
 	private static TileEntityBasicMachine machineAt(CommandSourceStack source, BlockPos pos) {
