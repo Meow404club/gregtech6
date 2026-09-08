@@ -1,5 +1,6 @@
 package gregtech6.datagen;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.core.HolderLookup;
@@ -116,6 +117,38 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	 */
 	public static final String STORAGE_BLOCKS_RAW_FAMILY = "storage_blocks/raw_%s";
 
+	/** The plate family — GTCEu TagPrefix.java:456 {@code defaultTagPath("plates/%s")} (rolling batch 2). */
+	public static final String PLATES_FAMILY = "plates/%s";
+
+	/**
+	 * The rod family — GTCEu TagPrefix.java:502 {@code defaultTagPath("rods/%s")} over the
+	 * GT6 {@code stick} prefix (the GT6 rod naming; the GTCEu RODS_WOODEN special case —
+	 * ItemTagLoader:87-88, treated-wood-rod-to-forge-rods/wooden — is a recipe-INPUT face
+	 * and stays with the recipe-consumer card).
+	 */
+	public static final String RODS_FAMILY = "rods/%s";
+
+	/** The hot-ingot family — GTCEu TagPrefix.java:267 {@code defaultTagPath("hot_ingots/%s")} (rolling batch 2). */
+	public static final String HOT_INGOTS_FAMILY = "hot_ingots/%s";
+
+	/**
+	 * The cross-mod material-name normalization map (task p24-tags-prefix-materials, the
+	 * decisions.p24-material-name-normalization ruling): GT {@code mNameInternal} snake →
+	 * the ecosystem-conventional alias snake. Each entry is backed by the upstream
+	 * identical-name alias (OreDictMaterial.put(String) → addIdenticalNames): MT.java:970
+	 * Aluminium→"Aluminum", MT.java:2517 AluminiumBrass→"AluminumBrass". The ecosystem face
+	 * is NOT platform-maintained (forge 1.20.1 / NeoForge 21.1 Tags.java carry zero aluminum
+	 * constants; the c:ingots official generated tree lists only iron/gold/copper/netherite),
+	 * so this map is the conservative census-backed MINIMUM; the GTCEu Modern precedent
+	 * generates the GT main name only (zero "aluminum" strings in its source tree) — the
+	 * alias twin tags below ADD the second convention so both consumer faces meet the GT6
+	 * items. Every remaining oredict synonym alias (Co60, Gibbsite, SulphurDioxide, ...) has
+	 * no ecosystem tag convention and stays single-named.
+	 */
+	private static final Map<String, String> ECOSYSTEM_ALIASES = Map.of(
+			"aluminium", "aluminum",
+			"aluminium_brass", "aluminum_brass");
+
 	public GT6ItemTags(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider,
 			ExistingFileHelper aExistingFileHelper) {
 		super(aOutput, Registries.ITEM, aLookupProvider, GT6DataGenerators.MOD_ID, aExistingFileHelper);
@@ -169,47 +202,72 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	}
 
 	/**
-	 * The p24 tags-foundation material band: the first P0 platform item tags — one
-	 * {@code <platform>:<family>/<material>} tag per (family, material) that actually has
+	 * The p24 tags-foundation material band + the p24-tags-prefix-materials rolling batch 2:
+	 * one {@code <platform>:<family>/<material>} tag per (family, material) that actually has
 	 * a registered item, strictly NO {@code addOptional} (TagsProvider.java:85-94 throws on
 	 * a missing reference, and every id below is a live-registered item at datagen time —
 	 * both walks are the registration walks, so a gap fails runData loudly). Family paths
 	 * are the GTCEu {@code defaultTagPath} precedents (the constants above); the material
 	 * segment is the GT {@code mNameInternal} snake — the same composition as the item ids
-	 * ({@link GTMaterialItems#itemIdOf}), keeping tag and member derivable from one rule
-	 * (cross-mod name normalization is a declared later-card open item). The namespace is
-	 * {@link #MATERIALS_NAMESPACE}; a future band that needs to COPY block tags migrates to
-	 * the {@code contentsGetter()} ItemTagsProvider shape (vanilla TagsProvider.java:119-121,
-	 * RemoveTagDatagenTest.java:58) — this batch has only element members, so the plain
-	 * TagsProvider surface stays.
+	 * ({@link GTMaterialItems#itemIdOf}), keeping tag and member derivable from one rule;
+	 * cross-mod name normalization rides {@link #ECOSYSTEM_ALIASES} (the alias twin tags).
+	 * The namespace is {@link #MATERIALS_NAMESPACE}; a future band that needs to COPY block
+	 * tags migrates to the {@code contentsGetter()} ItemTagsProvider shape (vanilla
+	 * TagsProvider.java:119-121, RemoveTagDatagenTest.java:58) — this batch has only element
+	 * members, so the plain TagsProvider surface stays.
+	 *
+	 * <p>storage_blocks union closure (the census open_items item 4, the
+	 * decisions.p24-material-name-normalization text): the multi-prefix union
+	 * (blockIngot/blockGem/blockDust → one storage_blocks/&lt;mat&gt; tag) is the skeleton
+	 * ruling kept verbatim; the MATERIAL-GROUP mapping closes as — alias slots
+	 * (addIdenticalNames, ID=-1, mTargetRegistration-merged) produce NO second tag name and
+	 * NO second member (the walk's {@code MaterialRegistry.get} merge already guarantees
+	 * it), and ANY.* group materials produce no items and stay out (the isGeneratingItem
+	 * gate), so the per-concrete-material face IS the whole strategy.
 	 */
 	private void addMaterialTags(HolderLookup.Provider aProvider) {
-		// item-path families: the ingot/dust/gem/nugget items over the material universe
+		// item-path families: the ingot/dust/gem/nugget/plate/rod/hot-ingot items over the
+		// material universe
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
-			String tFamily = itemTagFamily(tPair.prefix());
-			if (tFamily != null) {
-				tag(materialTag(tFamily, tPair.material()))
-						.add(item(gt6Rl(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()))));
-			}
+			addFamilyFace(itemTagFamily(tPair.prefix()), tPair);
 		}
 		// storage-block families: the blockPath prefixes' block ITEMS (the registered truth,
 		// not the offline walk — a defensively-deduped id has no item and must not dangle)
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.items().keySet()) {
-			String tFamily = storageTagFamily(tPair.prefix());
-			if (tFamily != null) {
-				tag(materialTag(tFamily, tPair.material()))
-						.add(item(gt6Rl(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()))));
-			}
+			addFamilyFace(storageTagFamily(tPair.prefix()), tPair);
+		}
+	}
+
+	/**
+	 * One (family, pair) face: the main-name platform tag, plus the ecosystem-alias twin
+	 * tag when the material has one ({@link #ECOSYSTEM_ALIASES}) — both tags hold the same
+	 * live-registered item element (the storage_blocks union form: direct members, no
+	 * tag-to-tag references, values stay all-primitives).
+	 */
+	private void addFamilyFace(String aFamilyPath, GTMaterialItems.PrefixMaterial aPair) {
+		if (aFamilyPath == null) return;
+		ResourceKey<Item> tMember = item(gt6Rl(GTMaterialItems.itemIdOf(aPair.prefix(), aPair.material())));
+		tag(materialTag(aFamilyPath, aPair.material())).add(tMember);
+		String tAlias = ECOSYSTEM_ALIASES.get(GTMaterialItems.snakeCase(aPair.material().mNameInternal));
+		if (tAlias != null) {
+			tag(materialTag(aFamilyPath, tAlias)).add(tMember);
 		}
 	}
 
 	/** The platform tag key of one (family, material) face — {@code <namespace>:<family>/<materialSnake>}. */
 	public static TagKey<Item> materialTag(String aFamilyPath, OreDictMaterial aMaterial) {
-		// the composed path lives in a local so both ctor args are bare identifiers — the
-		// stonecutter two-arg-ctor shift deliberately skips parenthesized argument
-		// expressions (mdk/stonecutter.gradle.kts regex note), so an inline
-		// formatted(...) argument would stay un-shifted and break the 21.1 leg compile
-		String tPath = aFamilyPath.formatted(GTMaterialItems.snakeCase(aMaterial.mNameInternal));
+		return materialTag(aFamilyPath, GTMaterialItems.snakeCase(aMaterial.mNameInternal));
+	}
+
+	/**
+	 * The snake-parameter form — the overload the alias twins ride. The composed path lives
+	 * in a local so both ctor args are bare identifiers — the stonecutter two-arg-ctor shift
+	 * deliberately skips parenthesized argument expressions (mdk/stonecutter.gradle.kts regex
+	 * note), so an inline formatted(...) argument would stay un-shifted and break the 21.1
+	 * leg compile.
+	 */
+	public static TagKey<Item> materialTag(String aFamilyPath, String aMaterialSnake) {
+		String tPath = aFamilyPath.formatted(aMaterialSnake);
 		// the 1.20.1 two-arg ctor form; shifted to fromNamespaceAndPath on the 21.1 leg
 		return TagKey.create(Registries.ITEM, new ResourceLocation(MATERIALS_NAMESPACE, tPath));
 	}
@@ -220,10 +278,18 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		if (aPrefix == OP.dust) return DUSTS_FAMILY;
 		if (aPrefix == OP.gem) return GEMS_FAMILY;
 		if (aPrefix == OP.nugget) return NUGGETS_FAMILY;
+		// rolling batch 2 (p24-tags-prefix-materials)
+		if (aPrefix == OP.plate) return PLATES_FAMILY;
+		if (aPrefix == OP.stick) return RODS_FAMILY;
+		if (aPrefix == OP.ingotHot) return HOT_INGOTS_FAMILY;
 		return null;
 	}
 
-	/** The storage-block family path of a prefix, or null when the prefix is not a storage block (plate/solid). */
+	/**
+	 * The storage-block family path of a prefix, or null when the prefix is not a storage
+	 * block (plate/solid). The union itself (three prefixes → one storage_blocks/%s tag) is
+	 * the skeleton ruling; the material-GROUP closure text lives on {@link #addMaterialTags}.
+	 */
 	private static String storageTagFamily(OreDictPrefix aPrefix) {
 		if (aPrefix == OP.blockIngot || aPrefix == OP.blockGem || aPrefix == OP.blockDust) return STORAGE_BLOCKS_FAMILY;
 		if (aPrefix == OP.blockRaw) return STORAGE_BLOCKS_RAW_FAMILY;

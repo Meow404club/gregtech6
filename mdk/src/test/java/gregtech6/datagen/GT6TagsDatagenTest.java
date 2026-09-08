@@ -1,15 +1,19 @@
 /**
- * Offline JSON-snapshot tests for task p24-tags-provider-skeleton: the first tag batch is
- * pinned against the committed generated tree so a future provider refactor cannot drift
- * the product silently. The block face — mineable/pickaxe over stone272 + the whole
- * {@link GTMachines} register + the metal/gem/raw-ore prefix blocks (blockDust excluded,
- * the P1 shovel band), mineable/axe over exactly the wood barrel; the item face — the
- * GTCEu {@code defaultTagPath} families (TagPrefix.java:279/:290/:405/:416/:729/:223)
- * sampled per material with EXACT expected member lists recomputed from the same
- * registration walks the provider uses (the GT6StoneBlocksRenderDatagenTest mirror
- * discipline: enumeration side walks the offline order, generated side is asserted from
- * the classpath tree; the write side is gated by runData: first run written>0, second
- * written:0).
+ * Offline JSON-snapshot tests for task p24-tags-provider-skeleton, extended band by band:
+ * the tag batches are pinned against the committed generated tree so a future provider
+ * refactor cannot drift the product silently. The block face — mineable/pickaxe over stone272
+ * + the whole {@link GTMachines} register + the metal/gem/raw-ore prefix blocks, mineable/axe
+ * over exactly the wood barrel, and the p24-tags-prefix-materials rolling batch 1 (the shovel
+ * band exactly the blockDust family; the wire universe walk-computed from GTWireSpecs; the
+ * barrel closure + the fluid pipes into pickaxe); the item face — the GTCEu
+ * {@code defaultTagPath} families (TagPrefix.java:279/:290/:405/:416/:729/:223 plus the
+ * rolling batch 2 :456/:502/:267) sampled per material with EXACT expected member lists
+ * recomputed from the same registration walks the provider uses (the
+ * GT6StoneBlocksRenderDatagenTest mirror discipline: enumeration side walks the offline
+ * order, generated side is asserted from the classpath tree; the write side is gated by
+ * runData: first run written>0, second written:0), plus the ecosystem-alias twins of the
+ * decisions.p24-material-name-normalization ruling (aluminium→aluminum,
+ * aluminium_brass→aluminum_brass, direct-member mirrors).
  *
  * <p>Strictness pin: zero {@code optional()} members anywhere — a TagEntry with
  * {@code required:false} serializes as a JSON object, so "values contain only strings"
@@ -37,9 +41,11 @@ import com.google.gson.JsonParser;
 
 import gregapi.data.OP;
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTStoneBlocks;
+import gregtech6.registry.GTWireSpecs;
 
 class GT6TagsDatagenTest {
 
@@ -51,12 +57,17 @@ class GT6TagsDatagenTest {
      * the 1 conscious multiblock join (the Lightning Rod pillar block, task
      * p24-lightning-rod — the wall/coil/controller follow the multiblock-family
      * non-membership convention, the provider javadoc) +
-     * the 6 metal/gem/raw prefixes' live pairs (3773 - 1096 blockDust = 2677). Pinned so
-     * any band change is a conscious constant update — the maintenance duty the tags
-     * card declared for every future machine card (this update rides p24-lightning-rod,
-     * the four Canner rows 2970 → 2974 then the rod block 2974 → 2975).
+     * the 6 metal/gem/raw prefixes' live pairs (3773 - 1096 blockDust = 2677) + the
+     * rolling batch 1 faces (task p24-tags-prefix-materials): 629 wires (the legacy
+     * 1x/2x pair + 620 electric + 6 redstone + 1 laser — the whole-class
+     * {@code GTWires.BLOCKS} walk) + 2 fluid pipes (the task card names GTFluidPipeBlock
+     * into pickaxe) + 15 barrels (plastic canister + bronze drum + logistics tank + 12
+     * high-tier drums; the wood barrel stays axe-only). Pinned so any band change is a
+     * conscious constant update — the maintenance duty the tags card declared for every
+     * future machine card (the four Canner rows 2970 → 2974, the rod block 2974 → 2975,
+     * then this batch 2975 → 3621).
      */
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 25 + 1 + 2677;
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 25 + 1 + 2677 + 629 + 2 + 15;
 
     /** The 13 tier-ladder machine ids of the first machines card (the dryer/distillery rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
@@ -65,9 +76,13 @@ class GT6TagsDatagenTest {
             "gt6:crusher", "gt6:crusher_t2", "gt6:crusher_t3", "gt6:crusher_t4",
             "gt6:lathe", "gt6:lathe_t2", "gt6:lathe_t3", "gt6:lathe_t4");
 
-    /** The pickaxe-band prefixes — the GT6BlockTags band set mirrored (blockDust excluded). */
-    private static final Set<OreDictPrefix> PICKAXE_BLOCK_PREFIXES = Set.of(OP.blockRaw, OP.blockGem,
-            OP.blockIngot, OP.blockPlate, OP.blockPlateGem, OP.blockSolid);
+    /**
+     * The pickaxe-band prefixes — the GT6BlockTags band set mirrored (blockDust excluded).
+     * Filled in {@link #initMaterialSystem}: the OP prefix fields are registered by OP.init
+     * (a static-field initializer here would read nulls on a solo class run — the whole-suite
+     * order only masked it with a preceding test's init).
+     */
+    private static Set<OreDictPrefix> gPickaxeBlockPrefixes;
 
     /** The item-path family walks, computed once (mirror of the provider's two walks). */
     private static List<GTMaterialItems.PrefixMaterial> gItemWalk;
@@ -85,6 +100,8 @@ class GT6TagsDatagenTest {
         GTMaterialItems.initMaterials();
         gItemWalk = GTMaterialItems.registrationOrder();
         gStorageWalk = GTMaterialBlocks.registrationOrder();
+        gPickaxeBlockPrefixes = Set.of(OP.blockRaw, OP.blockGem,
+                OP.blockIngot, OP.blockPlate, OP.blockPlateGem, OP.blockSolid);
     }
 
     // ------------------------------------------------------------------ the block face
@@ -103,13 +120,6 @@ class GT6TagsDatagenTest {
             }
             return rValues;
         }
-    }
-
-    /** The strictness face of the acceptance: no member is optional in either mining tag. */
-    @Test
-    void noOptionalEntriesInTheMiningTags() throws Exception {
-        tagValues("minecraft/tags/blocks/mineable/pickaxe.json"); // the reader itself asserts primitive-only
-        tagValues("minecraft/tags/blocks/mineable/axe.json");
     }
 
     /** The pickaxe band: stone272 full, the ladder machines, the 6-prefix walk — exact total, all gt6. */
@@ -132,30 +142,109 @@ class GT6TagsDatagenTest {
         // the metal/gem/raw prefix walk, member-exact
         int tPrefixPairs = 0;
         for (GTMaterialItems.PrefixMaterial tPair : gStorageWalk) {
-            if (!PICKAXE_BLOCK_PREFIXES.contains(tPair.prefix())) continue;
+            if (!gPickaxeBlockPrefixes.contains(tPair.prefix())) continue;
             assertTrue(tMembers.contains("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material())),
                     "prefix block must ride the pickaxe band: " + tPair);
             tPrefixPairs++;
         }
         assertEquals(2677, tPrefixPairs, "3773 storage pairs - 1096 blockDust pairs");
-        // exact product shape: no member outside the three census families
-        assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(), "272 stones + 21 machines + 2677 prefix blocks");
+        // exact product shape: no member outside the census families
+        assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(),
+                "272 stones + 25 machines + 2677 prefix blocks + 629 wires + 2 pipes + 15 barrels");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 
-    /** The exclusions: blockDust is the P1 shovel band, the wood barrel rides axe, not pickaxe. */
+    /**
+     * The strictness face of the acceptance: no member is optional in any mining tag
+     * (rolling batch 1 adds the shovel file to the pin).
+     */
     @Test
-    void pickaxeBandExcludesTheDustPrefixAndTheBarrel() throws Exception {
+    void noOptionalEntriesInTheMiningTags() throws Exception {
+        tagValues("minecraft/tags/blocks/mineable/pickaxe.json"); // the reader itself asserts primitive-only
+        tagValues("minecraft/tags/blocks/mineable/axe.json");
+        tagValues("minecraft/tags/blocks/mineable/shovel.json");
+    }
+
+    /**
+     * The exclusions: blockDust belongs to the shovel band (rolling batch 1), the wood
+     * barrel rides axe — while the plastic/metal barrel closure joins pickaxe.
+     */
+    @Test
+    void pickaxeBandExcludesTheDustPrefixAndTheWoodBarrel() throws Exception {
         List<String> tValues = tagValues("minecraft/tags/blocks/mineable/pickaxe.json");
         assertTrue(tValues.stream().noneMatch(v -> v.startsWith("gt6:block_dust_")),
-                "blockDust is the P1 shovel band, not this batch");
+                "blockDust is the shovel band, not the pickaxe band");
         assertTrue(!tValues.contains("gt6:barrel_wood"), "the wood barrel belongs to the axe band");
     }
 
-    /** The axe band: exactly the wood fluid barrel (first batch — plastic/metal rows are P2). */
+    /** The axe band: exactly the wood fluid barrel (the census material mapping keeps wood out of pickaxe). */
     @Test
     void axeBandIsExactlyTheWoodBarrel() throws Exception {
         assertEquals(List.of("gt6:barrel_wood"), tagValues("minecraft/tags/blocks/mineable/axe.json"));
+    }
+
+    /**
+     * The shovel band, rolling batch 1: the blockDust prefix family — walk-exact
+     * membership (mirror of the provider's filtered walk), the 3773-2677=1096 census count,
+     * all gt6. PIN recomputed at merge order (the conscious-update duty, S3 2045c78d):
+     * p24-grass-block landed first and its addGrassBand rides the SAME shovel face — the
+     * band is now the blockDust family PLUS the 6 GT grass variants (1096+6=1102).
+     */
+    @Test
+    void shovelBandIsExactlyTheDustPrefixFamily() throws Exception {
+        List<String> tValues = tagValues("minecraft/tags/blocks/mineable/shovel.json");
+        Set<String> tMembers = Set.copyOf(tValues);
+        int tDustPairs = 0;
+        for (GTMaterialItems.PrefixMaterial tPair : gStorageWalk) {
+            if (tPair.prefix() != OP.blockDust) continue;
+            assertTrue(tMembers.contains("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material())),
+                    "blockDust pair must ride the shovel band: " + tPair);
+            tDustPairs++;
+        }
+        assertEquals(1096, tDustPairs, "3773 storage pairs - 2677 pickaxe-band pairs");
+        assertEquals(tDustPairs + 6, tValues.size(),
+                "the shovel band = the blockDust family + the 6 GT grass variants (p24-grass-block merged first)");
+        assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
+    }
+
+    /**
+     * The wire universe, rolling batch 1: every GTWires registry path rides pickaxe —
+     * walk-computed from the GTWireSpecs tables (the offline face of the provider's
+     * whole-class GTWires.BLOCKS enumeration: legacy pair + electric + redstone + laser).
+     */
+    @Test
+    void pickaxeBandCoversTheWireUniverse() throws Exception {
+        List<String> tValues = tagValues("minecraft/tags/blocks/mineable/pickaxe.json");
+        Set<String> tMembers = Set.copyOf(tValues);
+        List<String> tExpected = new ArrayList<>();
+        tExpected.add("wire_electric_1x");
+        tExpected.add("wire_electric_2x");
+        for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) tExpected.add(GTWireSpecs.registryName(tVariant));
+        for (GTWireSpecs.Variant tVariant : GTWireSpecs.redstoneVariants()) tExpected.add(GTWireSpecs.registryName(tVariant));
+        for (GTWireSpecs.Variant tVariant : GTWireSpecs.laserVariants()) tExpected.add(GTWireSpecs.registryName(tVariant));
+        assertEquals(629, tExpected.size(), "2 legacy + 620 electric + 6 redstone + 1 laser");
+        for (String tPath : tExpected) {
+            assertTrue(tMembers.contains("gt6:" + tPath), "wire must ride the pickaxe band: " + tPath);
+        }
+    }
+
+    /**
+     * The barrel closure + the pipes, rolling batch 1: the plastic/metal/logistics barrels
+     * and the twelve high-tier drums ride pickaxe (the census axe/pickaxe/pickaxe material
+     * mapping), the two fluid pipes ride the task card's explicit GTFluidPipeBlock ruling.
+     */
+    @Test
+    void pickaxeBandCoversTheBarrelClosureAndThePipes() throws Exception {
+        List<String> tValues = tagValues("minecraft/tags/blocks/mineable/pickaxe.json");
+        Set<String> tMembers = Set.copyOf(tValues);
+        List<String> tBarrels = new ArrayList<>(List.of("barrel_plastic", "barrel_metal", "barrel_logistics"));
+        for (GTBarrels.MetalDrumRow tRow : GTBarrels.HIGH_TIER_METAL_DRUMS) tBarrels.add(tRow.path());
+        assertEquals(15, tBarrels.size(), "3 standalone rows + 12 high-tier drums");
+        for (String tPath : tBarrels) {
+            assertTrue(tMembers.contains("gt6:" + tPath), "barrel must ride the pickaxe band: " + tPath);
+        }
+        assertTrue(tMembers.contains("gt6:wood_fluid_pipe_small"), "the fluid pipes ride the task card's pickaxe ruling");
+        assertTrue(tMembers.contains("gt6:wood_fluid_pipe_medium"), "the fluid pipes ride the task card's pickaxe ruling");
     }
 
     // ------------------------------------------------------------------ the item face
@@ -170,6 +259,31 @@ class GT6TagsDatagenTest {
             rMembers.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
         }
         return rMembers;
+    }
+
+    /** The classpath stream of one generated tag file, or null when it does not exist. */
+    private static InputStream classpathTag(String aDataPath) {
+        return GT6TagsDatagenTest.class.getClassLoader().getResourceAsStream("data/" + aDataPath);
+    }
+
+    /**
+     * The alias-twin face (rolling batch 2): the alias tag exists iff the main-name face
+     * does (the same pair gates both), and carries EXACTLY the main-name walk members —
+     * the direct-member twin form, so alias and main faces stay walk-derivable from one rule.
+     */
+    private static void assertAliasFace(String aFamily, Set<OreDictPrefix> aPrefixes, String aMainSnake,
+            String aAliasSnake, List<GTMaterialItems.PrefixMaterial> aWalk) throws Exception {
+        String tAliasPath = "forge/tags/items/" + aFamily + "/" + aAliasSnake + ".json";
+        List<String> tExpected = expectedMembers(aPrefixes, aMainSnake, aWalk);
+        try (InputStream tStream = classpathTag(tAliasPath)) {
+            if (tExpected.isEmpty()) {
+                assertNull(tStream, "no alias face may exist without a main-name face: " + tAliasPath);
+                return;
+            }
+            assertNotNull(tStream, "the alias twin face must exist: " + tAliasPath);
+            assertEquals(tExpected, tagValues(tAliasPath),
+                    "alias twin must mirror the main-name members: " + tAliasPath);
+        }
     }
 
     /** One family/material face asserted EXACT against the walk-computed members (order included). */
@@ -193,7 +307,7 @@ class GT6TagsDatagenTest {
         }
     }
 
-    /** The item families over sample materials — ingots/nuggets/dusts/gems, exact per the GTCEu paths. */
+    /** The item families over sample materials — ingots/nuggets/dusts/gems + the rolling batch 2 plates/rods/hot ingots. */
     @Test
     void itemFamiliesFollowTheGtceuPaths() throws Exception {
         assertFamilyFace(GT6ItemTags.INGOTS_FAMILY, Set.of(OP.ingot), "iron", gItemWalk);
@@ -204,6 +318,30 @@ class GT6TagsDatagenTest {
         assertFamilyFace(GT6ItemTags.DUSTS_FAMILY, Set.of(OP.dust), "redstone", gItemWalk);
         assertFamilyFace(GT6ItemTags.GEMS_FAMILY, Set.of(OP.gem), "diamond", gItemWalk);
         assertFamilyFace(GT6ItemTags.GEMS_FAMILY, Set.of(OP.gem), "coal", gItemWalk);
+        // rolling batch 2 (p24-tags-prefix-materials): TagPrefix.java:456/:502/:267 paths
+        assertFamilyFace(GT6ItemTags.PLATES_FAMILY, Set.of(OP.plate), "iron", gItemWalk);
+        assertFamilyFace(GT6ItemTags.RODS_FAMILY, Set.of(OP.stick), "iron", gItemWalk);
+        assertFamilyFace(GT6ItemTags.HOT_INGOTS_FAMILY, Set.of(OP.ingotHot), "iron", gItemWalk);
+        assertFamilyFace(GT6ItemTags.HOT_INGOTS_FAMILY, Set.of(OP.ingotHot), "copper", gItemWalk);
+    }
+
+    /**
+     * The ecosystem-alias twins (rolling batch 2, the decisions.p24-material-name-normalization
+     * ruling): every alias face carries EXACTLY the main-name walk members — the direct-member
+     * twin form, and the alias face exists iff the main-name face does (same pair gate).
+     */
+    @Test
+    void ecosystemAliasTwinsCarryTheMainNameMembers() throws Exception {
+        // the census-backed double-mount list: aluminium→aluminum, aluminium_brass→aluminum_brass
+        assertAliasFace("ingots", Set.of(OP.ingot), "aluminium", "aluminum", gItemWalk);
+        assertAliasFace("dusts", Set.of(OP.dust), "aluminium", "aluminum", gItemWalk);
+        assertAliasFace("plates", Set.of(OP.plate), "aluminium", "aluminum", gItemWalk);
+        assertAliasFace("plates", Set.of(OP.plate), "aluminium_brass", "aluminum_brass", gItemWalk);
+        assertAliasFace("storage_blocks", Set.of(OP.blockIngot, OP.blockGem, OP.blockDust),
+                "aluminium", "aluminum", gStorageWalk);
+        // the oredict synonym aliases stay single-named (no ecosystem tag convention)
+        assertNull(classpathTag("forge/tags/items/ingots/gibbsite.json"));
+        assertNull(classpathTag("forge/tags/items/ingots/co60.json"));
     }
 
     /** The storage-block union: blockIngot/blockGem/blockDust share storage_blocks/%s, blockRaw rides raw_%s. */
@@ -238,5 +376,9 @@ class GT6TagsDatagenTest {
         assertEquals("nuggets/%s", GT6ItemTags.NUGGETS_FAMILY);
         assertEquals("storage_blocks/%s", GT6ItemTags.STORAGE_BLOCKS_FAMILY);
         assertEquals("storage_blocks/raw_%s", GT6ItemTags.STORAGE_BLOCKS_RAW_FAMILY);
+        // rolling batch 2 (TagPrefix.java:456/:502/:267)
+        assertEquals("plates/%s", GT6ItemTags.PLATES_FAMILY);
+        assertEquals("rods/%s", GT6ItemTags.RODS_FAMILY);
+        assertEquals("hot_ingots/%s", GT6ItemTags.HOT_INGOTS_FAMILY);
     }
 }
