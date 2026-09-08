@@ -15,8 +15,10 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 //? if forge {
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.RegistryObject;
 //?} else {
 /*import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.registries.DeferredHolder;
 *///?}
 
 import gregapi.data.OP;
@@ -244,8 +246,10 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
 		// task p26-w1-press-extruder-molds — the mold-family membership face (the row0 pair,
-		// upstream meta 10001/:212; the not-consumable predicate's read side)
-		for (net.minecraftforge.registries.RegistryObject<Item> tMold : gregtech6.registry.GT6ExtruderMolds.MOLDS) {
+		// upstream meta 10001/:212; the not-consumable predicate's read side). The entry
+		// handle rides the SIMPLE-NAME import (the stonecutter rewrite touches imports, not
+		// inline qualified names — the neo-leg compile break lesson, the GT6BlockTags form).
+		for (RegistryObject<Item> tMold : gregtech6.registry.GT6ExtruderMolds.MOLDS) {
 			tag(EXTRUDER_SHAPES).add(item(tMold.getId()));
 		}
 		tag(Tags.Items.TOOLS).add(
