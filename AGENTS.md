@@ -87,6 +87,12 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
 ```
 测试验收链优先复用 tools/rcon/gt6rcon.py（协议与服务端开启、nohup 短轮询纪律、各机器标准链目录见 tools/rcon/README.md），不要每任务重写 RCON 脚本。
 
+**KubeJS 魔改适配（2026-09-08 用户裁定，常设）**：每张移植卡的 SPEC 必须声明 KubeJS 适配考虑面——
+①内容走 datapack 原生形（配方 JSON/tag/loot=KubeJS 天然可改，优先）；
+②注册面（物品/方块/流体）声明可脚本化缝（KubeJS addon plugin 或事件暴露，至少留声明）；
+③运行时配方图（RM）类内容须给绑定方案或显式 defer 决定（GTCEu kubejs 模块为参考实现）。
+「不考虑」也算一种声明，禁止无声缺失。
+
 ## 五、铁律（对全局生效，传达给每个 subagent）
 
 1. **绝不猜测 API**：现代 API 一律检索求证——不知道确切名字/按概念查用
