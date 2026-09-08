@@ -25,8 +25,13 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
+import gregtech6.datagen.GT6ItemTags;
+import gregtech6.item.MaterialPrefixItem;
 
 /**
  * GT6 Recipe record, minimal Furnace-level port of upstream
@@ -35,9 +40,12 @@ import net.minecraftforge.fluids.FluidStack;
  *
  * <p>Porting layer decision (ADR-P4 recipe layering): this record lives on the
  * mdk side because mInputs/mFluidInputs are ItemStack/FluidStack (MC types).
- * The upstream OreDict unification inside {@code checkStacksEqual} is replaced
- * by plain item + tag equality ({@link #isSameItemAndTag}); NBT-lenient matching
- * keeps the upstream {@code mNoNBTChecks || !recipeInput.hasTagCompound()} rule.
+ * The upstream OreDict unification inside {@code checkStacksEqual} is ported as a
+ * two-stage equality — exact item + tag equality first (the {@link #isSameItemAndTag}
+ * shape), then the material-family tag fallback ({@link #matchesByMaterialTag}, the
+ * p25-tag-input-machine-fallback primitive of the unification semantics); NBT-lenient
+ * matching keeps the upstream {@code mNoNBTChecks || !recipeInput.hasTagCompound()}
+ * rule on the exact branch while the tag branch ignores NBT by ruling.
  * Output chances are carried since p8-recipe-chances-orechain: {@link #mChances} is a
  * 10000-based per-output-slot chance array aligned to {@link #mOutputs} (upstream
  * Recipe.java:666 carries {@code mChances, mMaxChances}; {@code mMaxChances} is NOT
@@ -86,6 +94,24 @@ public class Recipe {
 	 * in for the circuit identity (the GT6RecipesShCLTest synthetic-item convention).
 	 */
 	public static java.util.function.Predicate<ItemStack> sNotConsumable = gregtech6.item.GT6Circuits::isSelector;
+
+	/**
+	 * The tag-membership seam of the material-tag fallback (task
+	 * p25-tag-input-machine-fallback, decisions.p25-tag-input-fallback-rulings ②): the
+	 * PRODUCTION binding is {@code ItemStack::is} — the real registry tag path. The static
+	 * seam exists because {@code ItemStack.is(TagKey)} does not resolve offline (the tag
+	 * manager never boots in the test JVM — every tag reads empty), so the offline tests
+	 * override it with a membership stub (the creative-form-seam / ownerDestroyProgress
+	 * static-seam precedent); the RCON runServer live chain is the second, real-registry
+	 * proof of the same production binding. The test contract: the stub answers the
+	 * negatives exactly as production does (a non-member is a non-member under both), and
+	 * the positives the stub grants are exactly the ones the RCON chain re-proves live.
+	 * Same shape as {@link #sNotConsumable}: public static, test-swappable, restored after.
+	 */
+	public static final java.util.function.BiPredicate<ItemStack, TagKey<Item>> VANILLA_TAG_TEST = ItemStack::is;
+
+	/** The swappable binding (production default: {@link #VANILLA_TAG_TEST}). */
+	public static java.util.function.BiPredicate<ItemStack, TagKey<Item>> sTagTest = VANILLA_TAG_TEST;
 
 	/** Use this to just disable a specific Recipe. */
 	public boolean mEnabled = true;
@@ -278,6 +304,31 @@ public class Recipe {
 	 * equality is replaced by item + tag equality; NBT is skipped when the recipe
 	 * input carries no tag (upstream {@code mNoNBTChecks || !tInput.hasTag()}).
 	 *
+	 * <p><b>The material-tag fallback (task p25-tag-input-machine-fallback)</b>: a
+	 * failed EXACT match retries once, tag-driven — the modern primitive of the
+	 * upstream unification semantics (upstream OreDictManager.equal_ :628-634 resolves
+	 * the machine input's oredict association to its unification target and compares
+	 * canonically; here the recipe input's material-family tag stands in for the
+	 * canonical class and the machine input's tag membership for the association).
+	 * Three gates, all derived from the RECIPE-INPUT side only: the recipe input must
+	 * be a {@link MaterialPrefixItem} (its {@code prefix}/{@code material} public
+	 * finals are the zero-new-index association datum, MaterialPrefixItem.java:40-41),
+	 * its prefix must carry a platform family ({@link GT6ItemTags#itemTagFamily}),
+	 * and the MACHINE input must be a member of that family's
+	 * {@code <platform>:<family>/<material>} tag ({@link #sTagTest}, production-bound
+	 * to {@code ItemStack::is}). DIRECTION RULE: the TagKey is derived from the recipe
+	 * input and tested against the machine input — never the reverse (a reversed
+	 * derivation would let a plateIron recipe swallow every ingots/iron member).
+	 *
+	 * <p><b>Declared NBT deviation</b>: the tag branch ignores NBT unconditionally —
+	 * upstream unification normalizes both stacks to the GT canonical stack before
+	 * comparing (OreDictManager.equal_ → ST.equal), so a machine input carrying
+	 * unrelated NBT must not block the match. The exact branch keeps its own
+	 * {@code tIgnoreNBT} rule below; the two rules coexist without overriding each
+	 * other (the circuit {@code Damage} configuration tag keeps routing exactly
+	 * through the exact branch — circuits are not MaterialPrefixItems, so the
+	 * fallback never fires for them).
+	 *
 	 * <p><b>The circuit identity-skip (task p16-distillery-family ①)</b>: the consume
 	 * pass never shrinks a matched INTEGRATED CIRCUIT input — the upstream ST.tag(n)
 	 * marker is a STACK-SIZE-0 input whose consume decrements by zero
@@ -302,7 +353,10 @@ public class Recipe {
 			for (int i = 0; i < aInputs.length; i++) if (!tChecked[i]) {
 				ItemStack aInput = aInputs[i];
 				if (aInput != null && !aInput.isEmpty()) {
-					if ((aDontCheckStackSizes || aInput.getCount() >= tInput.getCount()) && isSameItemAndTag(aInput, tInput, tIgnoreNBT)) {
+					// two-stage equality: exact first (semantics unchanged), then the
+					// material-tag fallback; the count gate guards BOTH stages as before
+					if ((aDontCheckStackSizes || aInput.getCount() >= tInput.getCount())
+							&& (isSameItemAndTag(aInput, tInput, tIgnoreNBT) || matchesByMaterialTag(aInput, tInput))) {
 						if (aDecreaseStacksizeBySuccess && !sNotConsumable.test(tInput)) aInput.shrink(tInput.getCount());
 						tChecked[i] = true;
 						temp = false;
@@ -326,6 +380,21 @@ public class Recipe {
 		//?} else {
 		/*return ItemStack.isSameItemSameComponents(aInput, tInput);
 		 *///?}
+	}
+
+	/**
+	 * The second stage of the two-stage equality (see {@link #checkStacksEqual}): the
+	 * unification tag fallback. DIRECTION RULE enforcement — the TagKey derives from
+	 * the recipe input {@code tInput} alone; the machine input {@code aInput} is only
+	 * ever TESTED against it ({@link #sTagTest}), never parsed for a prefix item
+	 * (a reversed derivation would match any same-family item on the recipe side).
+	 * The tag branch ignores NBT by ruling (decisions.p25-tag-input-fallback-rulings ①).
+	 */
+	private static boolean matchesByMaterialTag(ItemStack aInput, ItemStack tInput) {
+		if (!(tInput.getItem() instanceof MaterialPrefixItem tPrefixItem)) return false;
+		String tFamily = GT6ItemTags.itemTagFamily(tPrefixItem.prefix);
+		if (tFamily == null) return false;
+		return sTagTest.test(aInput, GT6ItemTags.materialTag(tFamily, tPrefixItem.material));
 	}
 
 	private static ItemStack[] withoutTrailingNulls(@Nullable ItemStack[] aArray) {
