@@ -606,6 +606,11 @@ public class GT6EnUs extends LanguageProvider {
         // :1282/:1151/:1168/:1179 name column verbatim) and the addToolTips replay keys (the
         // upstream :88-115 LH rows verbatim; the zh wording rides the dump
         // tmp/gregtech.lang :17758-17766 via the reference table)
+        // task p26-crucible-multiblock — the LARGE crucible family (the Loader :1145/:1270
+        // name column verbatim; the single-rung Steel ladder, the composed-row template
+        // defers with the 8-material pool)
+        add("block.gt6.crucible_steel_wall", "Steel Wall");
+        add("block.gt6.crucible_steel", "Large Steel Crucible");
         add("block.gt6.multiblock_lightning_rod", "Lightning Rod Electric Output");
         add("block.gt6.machine_wall_tungsten", "Tungsten Wall");
         add("block.gt6.niobium_titanium_coil", "Large Niobium-Titanium Coil");

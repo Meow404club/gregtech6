@@ -171,6 +171,10 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.barrel_tungstensteel");
 		addDirect("block.gt6.barrel_void_metal");
 		addDirect("block.gt6.barrel_wood");
+		// task p26-crucible-multiblock — the LARGE crucible family (the dump :11294/:11364
+		// rows: 17309=大型钢坩埚, 18009=钢壁板)
+		addDirect("block.gt6.crucible_steel");
+		addDirect("block.gt6.crucible_steel_wall");
 		addDirect("block.gt6.crank");
 		addDirect("block.gt6.crusher");
 		addDirect("block.gt6.energy_source");

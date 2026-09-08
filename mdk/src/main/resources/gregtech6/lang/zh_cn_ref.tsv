@@ -40,6 +40,8 @@ direct	block.gt6.heat_transmitter	热吸收装置	hand
 direct	block.gt6.lathe	车床	hand
 direct	block.gt6.lightning_rod	避雷针	hand
 direct	block.gt6.machine_wall_tungsten	钨壁板	hand
+direct	block.gt6.crucible_steel	大型钢坩埚	hand
+direct	block.gt6.crucible_steel_wall	钢壁板	hand
 direct	block.gt6.multiblock_coke_oven	焦炉	hand
 direct	block.gt6.multiblock_coke_oven_bricks	焦炉砖	hand
 direct	block.gt6.multiblock_lightning_rod	避雷针	hand

@@ -77,6 +77,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation BENDING_CYLINDER_SMALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bending_cylinder_small");
 	/** The empty-food-can crafting row (task p25-food-can-row0 spec ③, MultiItemRandomTools.java:239). */
 	public static final ResourceLocation FOOD_CAN_EMPTY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "food_can_empty");
+	/** The LARGE Steel Crucible crafting row (task p26-crucible-multiblock SPEC ⑦). */
+	public static final ResourceLocation LARGE_STEEL_CRUCIBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "large_steel_crucible");
 
 	public GT6CraftingRecipes(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider) {
 		//? if forge {
@@ -95,6 +97,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		wrenchBuilder().save(aConsumer, WRENCH_ID);
 		bendingCylinderSmallBuilder().save(aConsumer, BENDING_CYLINDER_SMALL_ID);
 		foodCanEmptyBuilder().save(aConsumer, FOOD_CAN_EMPTY_ID);
+		largeSteelCrucibleBuilder().save(aConsumer, LARGE_STEEL_CRUCIBLE_ID);
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -108,6 +111,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		wrenchBuilder().save(aOutput, WRENCH_ID);
 		bendingCylinderSmallBuilder().save(aOutput, BENDING_CYLINDER_SMALL_ID);
 		foodCanEmptyBuilder().save(aOutput, FOOD_CAN_EMPTY_ID);
+		largeSteelCrucibleBuilder().save(aOutput, LARGE_STEEL_CRUCIBLE_ID);
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
@@ -308,6 +312,23 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * GTMaterialItems plate_curved_tin item, the spray-can row's 'C' key precedent).
 	 * Result 1x {@code gt6:food_can_empty} — the canning machine's consumable input.
 	 */
+	/**
+	 * The LARGE Steel Crucible crafting row (task p26-crucible-multiblock SPEC ⑦) — the
+	 * upstream "hMy" row (Loader_MultiTileEntities.java:1270, 'M' = the wall item 18009
+	 * 对位) with the declared port deviation that the soldering-tool family is not ported
+	 * yet: the row runs "hM" ('h' = the hard-hammer tool tag, the hammerFromIngotsBuilder
+	 * key; 'M' = gt6:crucible_steel_wall). The in-grid hammer pays one durability point
+	 * and rides along (the container-item channel). Result 1x the controller block item.
+	 */
+	private ShapedRecipeBuilder largeSteelCrucibleBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
+				gregtech6.registry.GT6Crucibles.CRUCIBLE_ITEMS_BY_PATH.get("crucible_steel").get())
+				.pattern("hM")
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.define('M', gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL_ITEM.get())
+				.unlockedBy("has_crucible_wall", has(gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL_ITEM.get()));
+	}
+
 	private ShapedRecipeBuilder foodCanEmptyBuilder() {
 		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6FoodCans.FOOD_CAN_EMPTY.get())
 				.pattern("fh")
