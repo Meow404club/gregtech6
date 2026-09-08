@@ -356,14 +356,21 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The Wiremill acceptance feed (task p26-w1-sifter-compressor-wiremill): the first
-	 * material of the stick registration order that survives ALL THREE upstream gates —
-	 * the both-side mat() resolution of the :287/:292 template (stick + wireFine items
-	 * both generated), the SMITHABLE/workability-arm condition of the pour itself, and the
-	 * poured row being present in the live WIREMILL map. All three gates read the LIVE
-	 * poured map (the firstGemChainGem shape).
+	 * The Wiremill acceptance feed (task p26-w1-sifter-compressor-wiremill): the IRON
+	 * stick when its row is poured (the RCON chain pins the item identity), else the
+	 * first material of the stick registration order that survives ALL THREE upstream
+	 * gates — the both-side mat() resolution of the :287/:292 template (stick + wireFine
+	 * items both generated), the SMITHABLE/workability-arm condition of the pour itself,
+	 * and the poured row being present in the live WIREMILL map. All three gates read the
+	 * LIVE poured map (the firstGemChainGem shape).
 	 */
 	private static net.minecraft.world.item.Item firstPouredWiremillStick() {
+		RegistryObject<net.minecraft.world.item.Item> tIron = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, gregapi.data.MT.Iron);
+		//? if forge {
+		if (tIron != null && tIron.isPresent() && wiremillRowFor(tIron.get()) != null) return tIron.get();
+		//?} else {
+		/*if (tIron != null && tIron.isBound() && wiremillRowFor(tIron.get()) != null) return tIron.get();
+		 *///?}
 		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialItems.registrationOrder()) {
 			if (tPair.prefix() != gregapi.data.OP.stick) continue;
 			RegistryObject<net.minecraft.world.item.Item> tIn = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, tPair.material());
@@ -373,11 +380,17 @@ public final class GTMachineCommand {
 			//?} else {
 			/*if (tIn == null || !tIn.isBound() || tOut == null || !tOut.isBound()) continue;
 			 *///?}
-			for (gregtech6.recipes.Recipe tRecipe : gregtech6.recipes.GT6RecipeMaps.WIREMILL.mRecipeList) {
-				if (tRecipe.mInputs.length == 1 && tRecipe.mInputs[0].getItem() == tIn.get()) return tIn.get();
-			}
+			if (wiremillRowFor(tIn.get()) != null) return tIn.get();
 		}
 		throw new IllegalStateException("No gt6:stick→wireFine pair with a poured wiremill row resolved for the wiremill feed");
+	}
+
+	/** The poured stick-input row for a stick item, or null (the row carries input stick x1). */
+	private static gregtech6.recipes.Recipe wiremillRowFor(net.minecraft.world.item.Item aStickItem) {
+		for (gregtech6.recipes.Recipe tRecipe : gregtech6.recipes.GT6RecipeMaps.WIREMILL.mRecipeList) {
+			if (tRecipe.mInputs.length == 1 && tRecipe.mInputs[0].getItem() == aStickItem && tRecipe.mInputs[0].getCount() == 1) return tRecipe;
+		}
+		return null;
 	}
 
 	private static TileEntityBasicMachine machineAt(CommandSourceStack source, BlockPos pos) {
