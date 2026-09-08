@@ -110,9 +110,11 @@ public class GT6LangParityTest {
 	 *
 	 * <p>Rebase reconciliation (the S2 merge session): the C-Foam +35 rows landed first
 	 * (dd259287/41e5049f), so the merged faces measure 2619 + 10 = 2629 — the ratchet
-	 * follows the measurement.
+	 * follows the measurement. Task p26-c-foam-fluid-refill adds 33 hand rows (the
+	 * gt6:cfoam base + the 32 C-Foam fluid display names, tmp/gregtech.lang:130-161/:361),
+	 * measuring 2629 + 33 = 2662.
 	 */
-	private static final int ZH_KEY_FLOOR = 2629;
+	private static final int ZH_KEY_FLOOR = 2662;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
