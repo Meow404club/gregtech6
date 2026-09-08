@@ -122,6 +122,38 @@ public final class GT6ToolActions {
 	public static final ToolAction SCREWDRIVER = ToolAction.get("gt6_screwdriver");
 
 	/**
+	 * The hard-hammer stack-classification action ("gt6_hammer" — task
+	 * p25-tool-hammer-wrench spec ②, the FILE/SAW entry shape). Upstream rides the
+	 * {@code TOOL_hammer} behaviour string (CS.java:1051, the Loader_Tools.java:124
+	 * registration row {@code new GT_Tool_HardHammer() … , TOOL_hammer}) and the
+	 * {@code craftingToolHardHammer} oredict key (CS.java:1890) as the crafting-tool
+	 * ingredient face; the port flattens the classification onto this Forge
+	 * {@link ToolAction} and keeps the string for the dispatch seam as
+	 * {@link #HAMMER_ID}. Consumer: {@link GTHammerItem} (the crafting ingredient route
+	 * rides the {@code #gt6:tools/hard_hammer} item tag, GT6ItemTags — the hard_hammer
+	 * naming ruling, decisions.p25-tool-hammer-wrench-rulings). The world arms (the
+	 * ore-crush drop conversion + the mining surface, GT_Tool_HardHammer.java:83-119)
+	 * stay the world-interaction card's pool — zero {@code useOn} here by card cut.
+	 */
+	public static final ToolAction HAMMER = ToolAction.get("gt6_hammer");
+
+	/**
+	 * The wrench stack-classification action ("gt6_wrench" — task p25-tool-hammer-wrench
+	 * spec ②, the FILE/SAW entry shape). Upstream rides the {@code TOOL_wrench} behaviour
+	 * string (CS.java:1038, the Loader_Tools.java:126 registration row
+	 * {@code new GT_Tool_Wrench() … , TOOL_wrench}) and the {@code craftingToolWrench}
+	 * oredict key (CS.java:1876) as the crafting-tool ingredient face; the port flattens
+	 * the classification onto this Forge {@link ToolAction} and keeps the string for the
+	 * dispatch seam as {@link #WRENCH_ID}. Consumer: {@link GTWrenchItem}. RED LINE
+	 * (decisions.p25-tool-hammer-wrench-rulings ②): the item classifies on THIS action
+	 * and NEVER on {@code ToolActions.HOE_DIG} — the three wrench-substitute predicates
+	 * (GTOvenBlock.use:109 / GTFluidPipeBlock.use:104 / GTWrenchHighlightListener:85)
+	 * stay HOE_DIG-keyed untouched, the whole {@code Behavior_Tool(TOOL_wrench, …)}
+	 * interaction face (GT_Tool_Wrench.java:95) is the machine-interaction pool.
+	 */
+	public static final ToolAction WRENCH = ToolAction.get("gt6_wrench");
+
+	/**
 	 * The upstream {@code CS.TOOL_file} dispatch id ("file", CS.java:1050) — the reserved
 	 * Behaviour_Tool tool-name string beside {@link #FILE} (the CHISEL_ID/CUTTER_ID
 	 * shape), so a future IBlockToolable-style relay cannot drift from the upstream
@@ -162,6 +194,21 @@ public final class GT6ToolActions {
 	 * leaves ICover.java at zero diff; the parity is pinned by the offline test.
 	 */
 	public static final String SCREWDRIVER_ID = "screwdriver";
+
+	/**
+	 * The upstream {@code CS.TOOL_hammer} dispatch id ("hammer", CS.java:1051) — the
+	 * reserved Behaviour_Tool tool-name string beside {@link #HAMMER} (the FILE_ID/SAW_ID
+	 * shape), so a future IBlockToolable-style relay cannot drift from the upstream
+	 * constant.
+	 */
+	public static final String HAMMER_ID = "hammer";
+
+	/**
+	 * The upstream {@code CS.TOOL_wrench} dispatch id ("wrench", CS.java:1038) — the
+	 * reserved Behaviour_Tool tool-name string beside {@link #WRENCH} (the HAMMER_ID
+	 * shape).
+	 */
+	public static final String WRENCH_ID = "wrench";
 
 	private GT6ToolActions() {
 	}

@@ -55,7 +55,14 @@ class GT6RecipesOreChainTest extends GTRecipesOfflineTestBase {
 	@BeforeAll
 	static void buildSyntheticUniverse() {
 		GTMaterialItems.initMaterials(); // the offline material universe (MT.init + OP.init)
-		List<Item> tPool = BuiltInRegistries.ITEM.stream().toList();
+		// VANILLA-NAMESPACE ITEMS ONLY — the wrap-around aliasing is sensitive to the pool
+		// SIZE, so a probe-registering test class (FileSawTest p24 / HammerWrenchTest p25)
+		// would silently re-alias the universe; the minecraft-namespace filter pins the
+		// pool to the frozen vanilla item set (the ShCL stabilization comment).
+		List<Item> tPool = BuiltInRegistries.ITEM.stream()
+				.filter(t -> "minecraft".equals(BuiltInRegistries.ITEM.getKey(t).getNamespace()))
+				.filter(t -> new ItemStack(t, 1).getMaxStackSize() == 64) // 64-stack only: new ItemStack(item, N>max) silently clamps and breaks the parallel/count math (the ItemStack no-arg form is leg-agnostic; Item.getMaxStackSize takes a stack on 21.1)
+				.toList();
 		int tNext = 0;
 		for (PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
 			Item tItem;

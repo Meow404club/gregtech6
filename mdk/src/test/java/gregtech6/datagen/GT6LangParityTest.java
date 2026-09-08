@@ -86,8 +86,13 @@ public class GT6LangParityTest {
 	 * <p>Rebase reconciliation (the S4 merge session): the p24-screwdriver-item landing
 	 * (01a1096e) added the +1 item.gt6.screwdriver row, so the measured total on the
 	 * merged main is 2581 — the ratchet follows the measurement.
+	 *
+	 * <p>Task p25-tool-hammer-wrench: raised to the measured 2583 — the hammer + wrench
+	 * pair added the +2 item.gt6.hammer/item.gt6.wrench rows (both locales, the zh
+	 * values from the reference table's hand rows). Both committed generated faces count
+	 * exactly 2583 keys with zero set difference.
 	 */
-	private static final int ZH_KEY_FLOOR = 2581;
+	private static final int ZH_KEY_FLOOR = 2583;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those

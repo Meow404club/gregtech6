@@ -72,6 +72,19 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/** The craftingToolScrewdriver oredient translation — #gt6:tools/screwdriver (CS.java:1895 snake). */
 	public static final TagKey<Item> TOOLS_SCREWDRIVER = gt6("tools/screwdriver");
 
+	/**
+	 * The craftingToolHardHammer oredient translation — #gt6:tools/hard_hammer (task
+	 * p25-tool-hammer-wrench spec ④, the TOOLS_FILE/TOOLS_SAW snake shape). Upstream key
+	 * {@code OreDictToolNames.hammer = "craftingToolHardHammer"} (CS.java:1890); the
+	 * naming ruling (decisions.p25-tool-hammer-wrench-rulings ①) keeps the HARD semantic
+	 * — "craftingTool" strips and snakes, "Hammer" hard-hammer precision preserved against
+	 * the soft-hammer/electric-hammer ambiguity (display names are not tag evidence).
+	 */
+	public static final TagKey<Item> TOOLS_HARD_HAMMER = gt6("tools/hard_hammer");
+
+	/** The craftingToolWrench oredient translation — #gt6:tools/wrench (CS.java:1876 snake). */
+	public static final TagKey<Item> TOOLS_WRENCH = gt6("tools/wrench");
+
 	/** The dustRedstone recipe-material translation — #gt6:redstone (snake ruling). */
 	public static final TagKey<Item> REDSTONE_DUSTS = gt6("redstone");
 
@@ -183,22 +196,26 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/**
 	 * The p24 tool band: the crafting-tool tags (one member each — the tag exists so
 	 * recipes and future relay code key on the TAG, not the item; the file/saw pair from
-	 * p24-tool-system, the screwdriver from p24-screwdriver-item), the two recipe-material
-	 * tags, and the ecosystem append (the seven formal tools into the platform tools tag —
-	 * the user ruling's bidirectional face; the platform constant resolves to
-	 * {@code forge:tools} on 1.20.1 and {@code c:tools} on 1.21.1).
+	 * p24-tool-system, the screwdriver from p24-screwdriver-item, the hard-hammer/wrench
+	 * pair from p25-tool-hammer-wrench), the two recipe-material tags, and the ecosystem
+	 * append (the nine formal tools into the platform tools tag — the user ruling's
+	 * bidirectional face; the platform constant resolves to {@code forge:tools} on 1.20.1
+	 * and {@code c:tools} on 1.21.1).
 	 */
 	private void addToolTags(HolderLookup.Provider aProvider) {
 		tag(TOOLS_FILE).add(item(GT6Tools.FILE.getId()));
 		tag(TOOLS_SAW).add(item(GT6Tools.SAW.getId()));
 		tag(TOOLS_BUILDER_WAND).add(item(GT6Tools.BUILDER_WAND.getId()));
 		tag(TOOLS_SCREWDRIVER).add(item(GT6Tools.SCREWDRIVER.getId())); // task p24-screwdriver-item — the craftingToolScrewdriver snake
+		tag(TOOLS_HARD_HAMMER).add(item(GT6Tools.HAMMER.getId())); // task p25-tool-hammer-wrench — the craftingToolHardHammer snake
+		tag(TOOLS_WRENCH).add(item(GT6Tools.WRENCH.getId())); // task p25-tool-hammer-wrench — the craftingToolWrench snake
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
 		tag(Tags.Items.TOOLS).add(
 				item(GT6Tools.FILE.getId()), item(GT6Tools.SAW.getId()),
 				item(GT6Tools.CROWBAR.getId()), item(GT6Tools.CUTTER.getId()), item(GT6Tools.CHISEL.getId()),
-				item(GT6Tools.BUILDER_WAND.getId()), item(GT6Tools.SCREWDRIVER.getId()));
+				item(GT6Tools.BUILDER_WAND.getId()), item(GT6Tools.SCREWDRIVER.getId()),
+				item(GT6Tools.HAMMER.getId()), item(GT6Tools.WRENCH.getId())); // task p25-tool-hammer-wrench — the family band 7 → 9
 	}
 
 	/**

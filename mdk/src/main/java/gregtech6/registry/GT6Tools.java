@@ -21,10 +21,12 @@ import gregtech6.GT6Mod;
 import gregtech6.items.tools.GT6BuilderWandItem;
 import gregtech6.items.tools.GT6FileItem;
 import gregtech6.items.tools.GT6ScrewdriverItem;
+import gregtech6.items.tools.GTHammerItem;
 import gregtech6.items.tools.GTSawItem;
 import gregtech6.items.tools.GTChiselItem;
 import gregtech6.items.tools.GTCrowbarItem;
 import gregtech6.items.tools.GTCutterItem;
+import gregtech6.items.tools.GTWrenchItem;
 
 /**
  * The GT6 tool registration home — task p9-tool-crowbar spec ③, the ADR
@@ -147,6 +149,34 @@ public final class GT6Tools {
 			() -> new GT6ScrewdriverItem(new Item.Properties().durability(GT6ScrewdriverItem.DURABILITY_POINTS)));
 
 	/**
+	 * The formal hard hammer — item id {@code gt6:hammer} (task p25-tool-hammer-wrench
+	 * spec ③). Single steel tier, durability 512 (the family value; upstream scales per
+	 * material via {@code toolHeadHammer.mAmount}, Loader_Tools.java:124 — the same pool
+	 * cut). Upstream display name "Hammer" (CS.java:1096, the same :124 registration row);
+	 * the crafting-loss face rides {@link GTHammerItem#getCraftingRemainingItem} (the
+	 * shared one-point mapping, the upstream :70 400-unit row folded); the crafting
+	 * INGREDIENT face is the {@code #gt6:tools/hard_hammer} item tag (GT6ItemTags, the
+	 * craftingToolHardHammer snake, the naming ruling). The world arms (ore-crush drop
+	 * conversion + the mining surface) stay pooled with the world-interaction card.
+	 */
+	public static final RegistryObject<Item> HAMMER = ITEMS.register("hammer",
+			() -> new GTHammerItem(new Item.Properties().durability(GTHammerItem.DURABILITY_POINTS)));
+
+	/**
+	 * The formal wrench — item id {@code gt6:wrench} (task p25-tool-hammer-wrench spec
+	 * ③). Single steel tier, durability 512 (the family value; upstream scales per
+	 * material via {@code 4*U}, Loader_Tools.java:126 — the same pool cut). Upstream
+	 * display name "Wrench" (CS.java:1083, the same :126 registration row); the
+	 * crafting-loss face rides {@link GTWrenchItem#getCraftingRemainingItem} (the shared
+	 * one-point mapping, the upstream :59 800-unit row folded); the crafting INGREDIENT
+	 * face is the {@code #gt6:tools/wrench} item tag (GT6ItemTags, the craftingToolWrench
+	 * snake). RED LINE: zero world-interaction surface — the machine-dismantle/rotation
+	 * pool (the three HOE_DIG predicates) stays untouched.
+	 */
+	public static final RegistryObject<Item> WRENCH = ITEMS.register("wrench",
+			() -> new GTWrenchItem(new Item.Properties().durability(GTWrenchItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -155,9 +185,10 @@ public final class GT6Tools {
 	 * the displayItems generator below does the runtime resolution (the
 	 * GTWires.ELECTRIC_WIRES_TAB form). Task p24-tool-system appended rows 3/4 (file,
 	 * saw); task p24-builder-wand appended row 5 (the builder wand); task
-	 * p24-screwdriver-item appends row 6 (the screwdriver).
+	 * p24-screwdriver-item appends row 6 (the screwdriver); task p25-tool-hammer-wrench
+	 * appends rows 7/8 (the hammer, the wrench).
 	 */
-	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER);
+	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -218,6 +249,10 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.BUILDER_WAND.get()), GT6BuilderWandItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.SCREWDRIVER.get()), GT6ScrewdriverItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.HAMMER.get()), GTHammerItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.WRENCH.get()), GTWrenchItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

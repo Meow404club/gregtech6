@@ -84,6 +84,17 @@ public final class GT6ItemModels extends ItemModelProvider {
         // attribution, the composition ruling)
         withExistingParent("screwdriver", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/screwdriver"));
+        // the formal hard hammer item (task p25-tool-hammer-wrench): handheld parent = the
+        // vanilla tool shape (the file/saw row shape), texture = the offline-composed flat
+        // icon (upstream head OVER handle alpha-over, GT_Tool_HardHammer.getIcon :123 —
+        // assets/README.md attribution, the screwdriver composition ruling)
+        withExistingParent("hammer", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/hammer"));
+        // the formal wrench item (task p25-tool-hammer-wrench): handheld parent = the
+        // vanilla tool shape, texture = the byte-identical WRENCH.png iconset borrow
+        // (assets/README.md attribution)
+        withExistingParent("wrench", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/wrench"));
         // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)

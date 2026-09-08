@@ -93,6 +93,26 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   material colour (GT_Tool_Screwdriver.getIcon :115-117 + getRGBa, the material pool);
   the port shows the grayscale composite un-tinted — declared deviation, same
   runtime-tint pool.
+- `gt6/textures/item/wrench.png` — wrench item texture (upstream
+  `textures/items/iconsets/WRENCH.png`, task p25-tool-hammer-wrench; sha256
+  `7c5b36f19b5607c9cc122f72b5796512db091e5baa2d815ef649d1761d9351cc`).
+  Byte-identical borrow, filename lowercased on borrow. The standalone full-silhouette
+  wrench face (upstream's per-material render composes `toolHeadWrench` head over a
+  stick handle — GT_Tool_Wrench.getIcon, the material pool); the port shows the
+  grayscale silhouette un-tinted at the single steel tier — declared deviation, the
+  family runtime-tint pool.
+- `gt6/textures/item/hammer.png` — hard-hammer item texture, task
+  p25-tool-hammer-wrench. NOT a byte-identical borrow: composed from the upstream
+  layers in the render-pass order (head OVER handle, alpha-over; the screwdriver
+  composition ruling), sources sha256 verified at compose time:
+  1. `textures/items/materialicons/WOOD/stick.png` (the handle base — the secondary
+     material MT.WOODS.Spruce rides the WOOD set, GT_Tool_HardHammer.getIcon :123
+     handle half)
+  2. `textures/items/materialicons/METALLIC/toolHeadHammer.png` (the head layer —
+     the primary material defaults MT.Steel, the same :123 head half)
+  Same single-steel-tier story as the family: upstream tints both layers with the tool
+  material colours (getRGBa :127-129, the material pool); the port shows the grayscale
+  composite un-tinted — declared deviation, same runtime-tint pool.
 
 Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
 base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from

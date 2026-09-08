@@ -12,6 +12,7 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -23,6 +24,7 @@ import net.minecraftforge.common.Tags;
 *///?}
 
 import gregtech6.registry.GT6SprayCans;
+import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTGrassBlocks;
 
 /**
@@ -60,6 +62,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The recipe id — the result path, the vanilla naming convention (gt6:spray_can_empty). */
 	public static final ResourceLocation SPRAY_CAN_EMPTY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "spray_can_empty");
 
+	/**
+	 * The tool-family recipe ids (task p25-tool-hammer-wrench spec ⑤) — the result-path
+	 * vanilla naming convention; the two hammer routes cannot share the result's own id,
+	 * so the route names the suffix (the vanilla two-recipe-per-result precedent shape).
+	 */
+	public static final ResourceLocation HAMMER_STONE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hammer_stone");
+	public static final ResourceLocation HAMMER_INGOTS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hammer_ingots");
+	public static final ResourceLocation WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "wrench");
+
 	public GT6CraftingRecipes(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider) {
 		//? if forge {
 		super(aOutput);
@@ -72,6 +83,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	@Override
 	protected void buildRecipes(Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
 		sprayCanEmptyBuilder().save(aConsumer, SPRAY_CAN_EMPTY_ID);
+		hammerFromStoneBuilder().save(aConsumer, HAMMER_STONE_ID);
+		hammerFromIngotsBuilder().save(aConsumer, HAMMER_INGOTS_ID);
+		wrenchBuilder().save(aConsumer, WRENCH_ID);
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -80,6 +94,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/*@Override
 	protected void buildRecipes(net.minecraft.data.recipes.RecipeOutput aOutput) {
 		sprayCanEmptyBuilder().save(aOutput, SPRAY_CAN_EMPTY_ID);
+		hammerFromStoneBuilder().save(aOutput, HAMMER_STONE_ID);
+		hammerFromIngotsBuilder().save(aOutput, HAMMER_INGOTS_ID);
+		wrenchBuilder().save(aOutput, WRENCH_ID);
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
@@ -174,5 +191,74 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('C', GT6ItemTags.PLATE_CURVED_TIN)
 				.define('s', GT6ItemTags.TOOLS_SAW)
 				.unlockedBy("has_redstone_dust", has(GT6ItemTags.REDSTONE_DUSTS));
+	}
+
+	/**
+	 * The hammer STONE route (task p25-tool-hammer-wrench spec ⑤α) — the upstream
+	 * {@code "XX "}/{@code "XXS"}/{@code "XX "} row (Loader_Tools.java:277/:285,
+	 * {@code CR.DEF_MIR}) with the input translated: upstream 'X' walks
+	 * {@code rockGt.dat(tRock)} over the stone/pebble material universe, the port keys
+	 * the WHOLE input face on the vanilla {@code #minecraft:stone_tool_materials} tag
+	 * ({@link ItemTags#STONE_TOOL_MATERIALS}) — the cobblestone/blackstone/
+	 * cobbled_deepslate trio IS the portable form of the rockGt early-game face.
+	 * Double-source probe (the card's不许猜 duty): 1.20.1 decompile ItemTags.java:83;
+	 * 1.21.1 client jar {@code data/minecraft/tags/item/stone_tool_materials.json} +
+	 * mojmap VanillaRecipeProvider usage — single-source, ZERO leg fork. 'S' stays the
+	 * vanilla stick (upstream {@code tHandle[1]}, the handle-family pool cut). Vanilla
+	 * shaped recipes auto-match the horizontal mirror, which IS the {@code CR.DEF_MIR}
+	 * semantics. Result 1x {@code gt6:hammer}.
+	 */
+	private ShapedRecipeBuilder hammerFromStoneBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.HAMMER.get())
+				.pattern("XX ")
+				.pattern("XXS")
+				.pattern("XX ")
+				.define('X', ItemTags.STONE_TOOL_MATERIALS)
+				.define('S', Items.STICK)
+				.unlockedBy("has_stone_tool_materials", has(ItemTags.STONE_TOOL_MATERIALS));
+	}
+
+	/**
+	 * The hammer METAL route (task p25-tool-hammer-wrench spec ⑤β) — the upstream
+	 * {@code "II "}/{@code "IIh"}/{@code "II "} row (Loader_Tools.java:327, the
+	 * OreProcessing_Tool material loop flattened to ONE tag-keyed row): 'I' = the
+	 * ecosystem generic ingots tag ({@code Tags.Items.INGOTS} — forge:ingots on 1.20.1,
+	 * c:ingots on 21.1; the per-material loop folds onto the whole tag), 'h' =
+	 * {@code #gt6:tools/hard_hammer} (the craftingToolHardHammer snake). The in-grid
+	 * hammer pays one durability point per craft and rides along (the container-item
+	 * channel, GT6FileItem.craftRemaining via GTHammerItem). Result 1x
+	 * {@code gt6:hammer} — zero dead items (the hammer is consumed by its own making
+	 * route's h-key just as upstream intended).
+	 */
+	private ShapedRecipeBuilder hammerFromIngotsBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.HAMMER.get())
+				.pattern("II ")
+				.pattern("IIh")
+				.pattern("II ")
+				.define('I', Tags.Items.INGOTS)
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.unlockedBy("has_ingot", has(Tags.Items.INGOTS));
+	}
+
+	/**
+	 * The wrench self-craft row (task p25-tool-hammer-wrench spec ⑤γ) — the upstream
+	 * {@code "PhP"}/{@code " P "}/{@code " P "} row (Loader_Tools.java:310): 'P' =
+	 * the steel plate platform tag ({@code GT6ItemTags.materialTag(PLATES_FAMILY,
+	 * "steel")} — the forge:plates/steel form the plate family band already emits),
+	 * 'h' = {@code #gt6:tools/hard_hammer} (the hammer MUST exist first — the
+	 * dependency direction the card's merge order pins). The in-grid hammer pays one
+	 * point and rides along. Result 1x {@code gt6:wrench} — the wrench's ONLY crafting
+	 * row (the upstream consumption face is ≈zero, the research card's ripgrep verdict;
+	 * the machine-dismantle interaction pool stays out of this card).
+	 */
+	private ShapedRecipeBuilder wrenchBuilder() {
+		TagKey<Item> tSteelPlates = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "steel");
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.WRENCH.get())
+				.pattern("PhP")
+				.pattern(" P ")
+				.pattern(" P ")
+				.define('P', tSteelPlates)
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.unlockedBy("has_steel_plate", has(tSteelPlates));
 	}
 }
