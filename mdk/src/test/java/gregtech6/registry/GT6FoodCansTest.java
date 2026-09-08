@@ -116,11 +116,21 @@ public class GT6FoodCansTest {
 	@Test
 	public void tableAndItemsRegistryAreInParity() {
 		Set<ResourceLocation> tTableIds = new LinkedHashSet<>();
+		//? if forge {
 		for (RegistryObject<Item> tRow : GT6FoodCans.TAB_TABLE) {
 			tTableIds.add(tRow.getId());
 		}
+		//?} else {
+		/*for (net.neoforged.neoforge.registries.DeferredHolder<Item, ? extends Item> tRow : GT6FoodCans.TAB_TABLE) { // 21.1: the table stores the wildcard holder
+			tTableIds.add(tRow.getId());
+		}
+		*///?}
 		Set<ResourceLocation> tRegisteredIds = new LinkedHashSet<>();
+		//? if forge {
 		for (RegistryObject<Item> tEntry : GT6FoodCans.ITEMS.getEntries()) {
+		//?} else {
+		/*for (net.neoforged.neoforge.registries.DeferredHolder<Item, ? extends Item> tEntry : GT6FoodCans.ITEMS.getEntries()) { // 21.1: wildcard holder
+		*///?}
 			tRegisteredIds.add(tEntry.getId());
 		}
 		assertTrue(tRegisteredIds.containsAll(tTableIds), "every table row must be a registered item");
@@ -131,7 +141,11 @@ public class GT6FoodCansTest {
 	@Test
 	public void tabsRegistryHoldsExactlyTheFoodCansTab() {
 		Set<ResourceLocation> tIds = new LinkedHashSet<>();
+		//? if forge {
 		for (RegistryObject<CreativeModeTab> tTab : GT6FoodCans.CREATIVE_MODE_TABS.getEntries()) {
+		//?} else {
+		/*for (net.neoforged.neoforge.registries.DeferredHolder<CreativeModeTab, ? extends CreativeModeTab> tTab : GT6FoodCans.CREATIVE_MODE_TABS.getEntries()) { // 21.1: wildcard holder
+		*///?}
 			tIds.add(tTab.getId());
 		}
 		assertEquals(Set.of(rl("food_cans")), tIds);
