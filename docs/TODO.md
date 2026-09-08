@@ -293,7 +293,81 @@
 - [x] phase-closeout：证书 forge 1392/0+neo 1394/0/2skip+jar GREEN+p24 五链 10/10；ADR 三篇正典；三教训入模板；KG 变体合并 -21
 - [x] datagen-tree-check 恒红收账 p25-datagen-tree-check-unify：tools 层 2 值形归一器 VALUE_NORMALIZERS 三带九变换（loot/advancement/recipe，方向恒 node→canonical，正典树不改写），census 实测 228 恒红全归一 exit 0（170 loot items 形+26 copy_custom_data 改名+12 配方 advancement 三合一+6 ench predicate 重构+12 配方 result/tag 形+1 spray #tag 形+1 shaped show_notification），byte 快路径主判定不动+normalized 清单必印+未注册形差负例仍 FAIL（fail-visible 不放松）
 
-新池移交：C-Foam（消费 pipe-owner owner 面）/lightning-rod-size-seam-pilot/selector-cover（三重阻断存档：宿主机器缺+OD_CIRCUITS[1] 替代未决+Cover_Blank 缺材料）/食品罐+row0（缺锤扳手）/runClient 首启双腿+目验四合一（ACT GUI 目视新增）/RCON 全集 27+5 链复验/36 行 i18n 社区复核/配方输入 tag 匹配研究卡（消费 tag 宇宙）/树叶原木 tag 卡/kg RAPTOR Class·Concept 域聚类（锚点蒸馏后仍余 ~900 超线）
+## 第 25 阶段（tag 双向范式②配方输入 / C-Foam 管泡沫 / 锤扳手工具+食品罐 row0 / 测试卫生批 / 四向调研）——🚧 进行中（2026-09-08 开段）
+
+- [x] p25-datagen-tree-check-unify 合入 b17a7a66：VALUE_NORMALIZERS 三带九变换，228 恒红全归一 exit 0（fail-visible 负例自证）
+- [x] p25-tool-hammer-wrench 合入 aa77b20e：锤/扳手+ToolAction×2+tag×2+三合成行（craftRemaining 静态缝复用+id413 探针；21.1 门禁缺口由 S1 补跑 1411/0 补齐；五处夹具双过滤偏离裁决接受）
+- [x] p25-chisel-test-resolver-hygiene 合入 41810d14：sStoneItemResolver 污染链修复（solo 11/2→11/0+9/0），类序彩票消灭
+- [ ] p25-c-foam-pipe-spray 交卡审中（S1 5/5）：喷剂 32+applyFoam+第三条款+干燥 ticker+渲染快照+NBT 回流
+- [ ] p25-food-can-row0 / p25-paint-loot-dotkey-fix 在飞
+- [ ] p25-tag-input-machine-fallback approve 押后（方向铁律+谓词注入缝；等前置全合后 rebase 重签重验最后合）
+- [x] 否定性裁定：树叶/原木 tag 搁置（mdk 零 leaf/log/plank 注册对象，解锁=相应移植卡立项）；size-seam keep-deferred（int 变体零消费面实锤）
+- [x] 四向调研回卡：未移植全景普查（见下节 32 条）/GTCEu 表现层三态目录/mod 适配面批次/ModularUI 复用面迁移批次 A·B·C（结论摘记见 research.p25-r-* 四键）
+
+P24 移交余项（在账未派）：selector-cover（三重阻断存档：宿主机器缺+OD_CIRCUITS[1] 替代未决+Cover_Blank 缺材料）/RCON 全集 27+5 链复验（wave 合并后）/runClient 首启双腿+目验五合一（目验留用户）/36 行 i18n 社区复核（非阻塞渐进）/KG Class·Concept 域聚类（收官整理）
+
+## 移植池·全景普查 32 条（2026-09-08 p25-r-port-coverage-census：上游 Loader_MultiTileEntities 15 节 vs 本仓 13 注册类差集）
+
+### 基础机器域（缺 46/53 族；MachineRow 行制成熟，每族 ≈1 表+1 图+1 menu）
+- [ ] basic-sifter-family：Sifter 4 梯（碎石/沙/矿渣分选）+RM.Sifting｜Loader_MultiTileEntities.java:1312-1315
+- [ ] basic-compressor-family：Compressor 4 梯（块化/板化）+RM.Compressor｜:1343-1346
+- [ ] basic-press-family：Press 4 梯（成型/压模）+RM.Press｜:1425-1428
+- [ ] basic-mixer-electric-pair：Mixer(KU 4 梯)+ElectricMixer(EU 5 梯)共 RM.Mixer｜:1392-1395/:1504-1508
+- [ ] basic-smelter-melter-pair：Smelter+Melter（HU）+RM.Smelter/Melter；依赖坩埚温度语义｜:1431-1434/:1657
+- [ ] basic-extruder-family：Extruder 4 梯+RM.Extruder｜:1406-1409
+- [ ] basic-wiremill-rollingmill-pair：Wiremill+RollingMill+RollBender/RollFormer/ClusterMill 五图一波（金属成型链）｜:1373-1376/:1349-1352
+- [ ] basic-late-family-batch：Laser×2/Laminator/Injector/Printer/Slicer/Cracker×2/LightningProcessor/Freezer/CryoMixer 精加工 11 族｜:1483-1535/:1570-1632
+- [ ] basic-processing-batch2：Boxinator/Unboxinator/Coagulator/Generifier/Bath/Fermenter/Autoclave/Sluice/SandingMachine/PressureWasher/Scanner/MagneticSeparator/Squeezer/Buzzsaw/Centrifuge/RoastingOven/CrystallisationCrucible/Autocrafter 剩余 18 族｜:1464-1671
+
+### 多方块域
+- [ ] mb-tank-valves：储罐主阀 26 台（3³×12+5³×12+密集）——仓储刚需；缺 NBT_DESIGNS 多设计机制｜:1195-1222
+- [ ] mb-steam-turbine-dynamo：SteamTurbine 4+Dynamo 4（蒸汽→RU→EU 发电收口）｜:1254-1262
+- [ ] mb-distillation-tower：DistillationTower+Cryo+DistillPart｜:1226-1227/:1177
+- [ ] mb-large-crucible：8 材质大型坩埚（复用 Tank 主阀容器机制）｜:1270-1277
+- [ ] mb-part-family-expand：金属墙 11/DenseWall 补 6/Coil 补 5/各 Part 件/Wheels/Blades/Ventilation/ProcessorUnits 5 纯部件铺开｜:1143-1189
+- [ ] mb-large-processors：12 台大型化基础机（依赖对应基础机先落）｜:1229-1240
+- [ ] mb-pool-bottom：Implosion/MassFab/Fusion/VonDaGraagg/BedrockDrill（QU/TU 高能域池底）｜:1228-1283
+
+### 管道与流体域
+- [ ] pipes-fluid-materials：流体管材质阶梯（42 材质×5 尺寸，先铜/钢/不锈钢/钛×3 尺寸）｜:1846-1885
+- [ ] pipes-item：物品管 23 材质（先黄铜/钢）｜:1822-1843
+- [ ] pipes-long-distance：长距离管 item+fluid（跨 chunk 免 tick）｜tanks 包
+- [ ] fluid-lubricant-chain：润滑油流体+制作链（kinetic 前置）
+- [ ] fluid-containers-small：Thermos/Jug/Cup/MeasuringPot/CapsuleCell 37 行小容器族｜:1770-1809
+
+### 储能与能量转换域
+- [ ] energy-electric-engine-motor：ElectricEngine/Motor/Heater EU 桥三件套各 5 梯｜:817-860
+- [ ] energy-battery-family：RE-Battery/Li/ZPM 电池族+BatteryBox/CrystalCharger（EU 储能缺口）
+- [ ] kinetic-material-ladder：Axle/GearBox/TransformerRotation 11 材质铺开+RotationEngine｜:1661-1766
+- [ ] energy-transformer-electric：TransformerElectric+LongDistanceTransformer
+
+### 仓储域（玩家早期接触面）
+- [ ] storage-hopper-family：Hopper/QueueHopper（先铁/青铜）｜:145-146
+- [ ] storage-massstorage：MassStorageStandard/Box 大容量单物品仓储｜:141-172
+- [ ] storage-locker-drawer-safe：Locker/DrawerQuad/Safe/Bookshelf/BottleCrate/Scaffold 一批｜:134-147
+- [ ] storage-metal-chests：metalset Chest 60 材质+StorageInserter｜:132/:153
+
+### 坩埚链域（GT6 开局冶铁链，第一优先）
+- [ ] crucible-single-block：SmeltingCrucible（先 Stone/Bronze/Steel）+Faucet+Mold 三件套+RM.CrucibleAlloying/Smelting+温度系统消费｜:251-514
+
+### 厨具/工具/传感器/杂项域
+- [ ] kitchen-bathing-mixing：BathingPot/MixingBowl/Juicer/GrindStone/Mortar/SiftingTable｜tools 包 :516 节
+- [ ] tool-anvil-coinage：Anvil+MoldCoinage
+- [ ] tools-remainder：SoftHammer/File/Saw/Knife/Scissors/Plunger/Magnifier（Saw/Knife 先）｜Loader_Tools.java:64
+- [ ] sensors-family：19 种 SensorTE 一批（纯读表面）｜:1978-2001
+- [ ] misc-panels：Panels 4 族（Concrete/CFoam/Asphalt 16 色+Wooden 200）+CoverAsphalt｜:2043-2071
+- [ ] misc-placeables：Rock/Stick/Ingot/Plate/Scrap 摆放物+GregOLantern+Sandwich+LootCrate 等｜:2030-2041
+- [ ] misc-portals：Miniature Portal 20 种（通用 2 先行，维度联动 18 池底）｜:2003-2021
+
+### 世界生成域（用户裁定可评估；大拆逐卡）
+- [ ] worldgen-ore-rocks：矿石生成（ore rock+小矿+layer 分布；前置 GTMaterialPrefixBlock+BiomeModifier datagen）——最大内容解锁域｜Loader_Worldgen.java:52
+- [ ] worldgen-stone-layers：石层 68 种岩石替换（GTStoneBlocks 挂载）
+- [ ] worldgen-trees：树 15+种（先 Rubber/Maple/BlueMahoe；树叶原木方块落地即解锁 p25-leaves-logs-tags）
+- [ ] worldgen-surface：表面 Rock/Stick/Log 变体/Pits/BlackSand/Glowtus/FluidSpring（Hives/Bushes 除封存）
+- [ ] worldgen-nether-end：Nether/End/星球面（池底）
+- [ ] recipe-maps-followup：每台新机对应 RM 图（~40 张缺），跟随机器不独立排
+
+封存不进池：drying 树脂/生物族（P21）、IC2 面、RGB 直喷、桶 GUI、kTFRU（池底）、MolecularScanner T1/T2/T4/T5（上游注释死码）、Amplifab（上游 TODO）。
 
 ## 遗留池
 
