@@ -293,18 +293,18 @@
 - [x] phase-closeout：证书 forge 1392/0+neo 1394/0/2skip+jar GREEN+p24 五链 10/10；ADR 三篇正典；三教训入模板；KG 变体合并 -21
 - [x] datagen-tree-check 恒红收账 p25-datagen-tree-check-unify：tools 层 2 值形归一器 VALUE_NORMALIZERS 三带九变换（loot/advancement/recipe，方向恒 node→canonical，正典树不改写），census 实测 228 恒红全归一 exit 0（170 loot items 形+26 copy_custom_data 改名+12 配方 advancement 三合一+6 ench predicate 重构+12 配方 result/tag 形+1 spray #tag 形+1 shaped show_notification），byte 快路径主判定不动+normalized 清单必印+未注册形差负例仍 FAIL（fail-visible 不放松）
 
-## 第 25 阶段（tag 双向范式②配方输入 / C-Foam 管泡沫 / 锤扳手工具+食品罐 row0 / 测试卫生批 / 四向调研）——🚧 进行中（2026-09-08 开段）
+## 第 25 阶段（tag 双向范式②配方输入 / C-Foam 管泡沫 / 锤扳手工具+食品罐 row0 / 测试卫生批 / 四向调研）——✅ 已完成（2026-09-08）
 
 - [x] p25-datagen-tree-check-unify 合入 b17a7a66：VALUE_NORMALIZERS 三带九变换，228 恒红全归一 exit 0（fail-visible 负例自证）
 - [x] p25-tool-hammer-wrench 合入 aa77b20e：锤/扳手+ToolAction×2+tag×2+三合成行（craftRemaining 静态缝复用+id413 探针；21.1 门禁缺口由 S1 补跑 1411/0 补齐；五处夹具双过滤偏离裁决接受）
 - [x] p25-chisel-test-resolver-hygiene 合入 41810d14：sStoneItemResolver 污染链修复（solo 11/2→11/0+9/0），类序彩票消灭
-- [ ] p25-c-foam-pipe-spray 交卡审中（S1 5/5）：喷剂 32+applyFoam+第三条款+干燥 ticker+渲染快照+NBT 回流
-- [ ] p25-food-can-row0 / p25-paint-loot-dotkey-fix 在飞
-- [ ] p25-tag-input-machine-fallback approve 押后（方向铁律+谓词注入缝；等前置全合后 rebase 重签重验最后合）
+- [x] p25-c-foam-pipe-spray 合入 dd259287：喷剂 32+applyFoam+第三条款+干燥 ticker+渲染快照+NBT 回流
+- [x] p25-food-can-row0 合入 3267e4ba / p25-paint-loot-dotkey-fix 合入 41e5049f
+- [x] p25-tag-input-machine-fallback 放行合入 71bd4286（方向铁律+谓词注入缝；rebase 重签重验 forge 1454/neo 1456）
 - [x] 否定性裁定：树叶/原木 tag 搁置（mdk 零 leaf/log/plank 注册对象，解锁=相应移植卡立项）；size-seam keep-deferred（int 变体零消费面实锤）
 - [x] 四向调研回卡：未移植全景普查（见下节 32 条）/GTCEu 表现层三态目录/mod 适配面批次/ModularUI 复用面迁移批次 A·B·C（结论摘记见 research.p25-r-* 四键）
 
-P24 移交余项（在账未派）：selector-cover（三重阻断存档：宿主机器缺+OD_CIRCUITS[1] 替代未决+Cover_Blank 缺材料）/RCON 全集 27+5 链复验（wave 合并后）/runClient 首启双腿+目验五合一（目验留用户）/36 行 i18n 社区复核（非阻塞渐进）/KG Class·Concept 域聚类（收官整理）
+P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成（sweep 27 链+九链双腿）；selector-cover（三重阻断存档：宿主机器缺+OD_CIRCUITS[1] 替代未决+Cover_Blank 缺材料）/RCON 全集 27+5 链复验（wave 合并后）/runClient 首启双腿+目验五合一（目验留用户）/36 行 i18n 社区复核（非阻塞渐进）/KG Class·Concept 域聚类（收官整理）
 
 ## 移植池·全景普查 32 条（2026-09-08 p25-r-port-coverage-census：上游 Loader_MultiTileEntities 15 节 vs 本仓 13 注册类差集）
 
