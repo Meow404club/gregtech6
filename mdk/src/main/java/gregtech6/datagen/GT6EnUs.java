@@ -18,6 +18,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GT6Attachments;
+import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
@@ -96,6 +97,7 @@ public class GT6EnUs extends LanguageProvider {
         addStoneBlocks(); // task p19-stoneblocks-registry — table-tail append (the drying card appends after this)
         addSprayCans(); // task p22-spraycan-items — table-tail append
         addGrassBlocks(); // task p24-grass-block — table-tail append
+        addFoamSprays(); // task p25-c-foam-pipe-spray — table-tail append
     }
 
     /**
@@ -782,5 +784,29 @@ public class GT6EnUs extends LanguageProvider {
             "Does not spread, get eaten, change color nor need light");
         add(gregtech6.block.GTGrassBlock.TOOLTIP_SPRAY_KEY,
             "Spray Paint can also be used to dye Grass!");
+    }
+
+    /**
+     * C-Foam spray family keys (task p25-c-foam-pipe-spray spec ①): 35 rows — the 32 item
+     * display names (16 C-Foam Sprays + 16 Advanced owned variants), the family tab and the
+     * two tooltip templates. The item names are the upstream registration rows verbatim —
+     * "C-Foam Spray (Black)".."C-Foam Spray (White)" (MultiItemRandomTools.java:251) and
+     * "Advanced C-Foam Spray (...)" (:259) — walked from the {@link GT6FoamSprays} registry
+     * face (the RegistryObject id is the lang key path, the addSprayCans shape). The
+     * tooltips ride the item constants with the upstream wordings (Behavior_Spray_Foam ctor
+     * :59 "Can place " + DYE_NAMES + " C-Foam"; the :259 "C-Foam only breakable by Owner
+     * once dry"); the remaining-uses line reuses the p22 REMAINING_TOOLTIP_KEY. Table-tail
+     * append, append-only.
+     */
+    private void addFoamSprays() {
+        for (int i = 0; i < 16; i++) {
+            add("item.gt6." + GT6FoamSprays.FOAM_SPRAYS.get(i).getId().getPath(),
+                "C-Foam Spray (" + gregtech6.item.spraycan.GTSprayCanItem.DYE_NAMES[i] + ")");
+            add("item.gt6." + GT6FoamSprays.FOAM_SPRAYS_OWNED.get(i).getId().getPath(),
+                "Advanced C-Foam Spray (" + gregtech6.item.spraycan.GTSprayCanItem.DYE_NAMES[i] + ")");
+        }
+        add(GT6FoamSprays.TAB_TITLE_KEY, "C-Foam Sprays");
+        add(gregtech6.item.foamspray.GT6FoamSprayItem.FOAM_TOOLTIP_KEY, "Can place %s C-Foam");
+        add(gregtech6.item.foamspray.GT6FoamSprayItem.OWNED_TOOLTIP_KEY, "C-Foam only breakable by Owner once dry");
     }
 }

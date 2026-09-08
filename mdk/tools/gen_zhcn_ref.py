@@ -719,6 +719,50 @@ SPRAY_BACKFILL = {
     "gt6.spraycan.remaining": "剩余使用次数：%s.%s",
 }
 
+# ---- C-Foam spray domain (35 rows: 32 items + tab + 2 tooltips) — task
+# p25-c-foam-pipe-spray. The 32 item names are the DUMP faces verbatim (metas 1100+2i
+# "建筑泡沫喷罐" / 1132+2i "加强建筑泡沫喷罐", tmp/gregtech.lang:9350-9431); the tooltip
+# template splits the dump's gt.behaviour.foamspray.N.tooltip rows (:992-1007) at the
+# colour word (the %s slot rides the untranslated DYE_NAMES arg, the p22 spraycan.paint
+# form); the owned warning has no dump face (upstream :259 en only) — hand.
+FOAM_SPRAY_BACKFILL = {
+    "item.gt6.foam_spray_black": "建筑泡沫喷罐 (黑色)",            # dump S:gt.multiitem.randomtools.1100
+    "item.gt6.foam_spray_red": "建筑泡沫喷罐 (红色)",              # :1102
+    "item.gt6.foam_spray_green": "建筑泡沫喷罐 (绿色)",            # :1104
+    "item.gt6.foam_spray_brown": "建筑泡沫喷罐 (褐色)",            # :1106
+    "item.gt6.foam_spray_blue": "建筑泡沫喷罐 (蓝色)",             # :1108
+    "item.gt6.foam_spray_purple": "建筑泡沫喷罐 (紫色)",           # :1110
+    "item.gt6.foam_spray_cyan": "建筑泡沫喷罐 (青色)",             # :1112
+    "item.gt6.foam_spray_light_gray": "建筑泡沫喷罐 (淡灰色)",     # :1114
+    "item.gt6.foam_spray_gray": "建筑泡沫喷罐 (灰色)",             # :1116
+    "item.gt6.foam_spray_pink": "建筑泡沫喷罐 (粉色)",             # :1118
+    "item.gt6.foam_spray_lime": "建筑泡沫喷罐 (黄绿色)",           # :1120
+    "item.gt6.foam_spray_yellow": "建筑泡沫喷罐 (黄色)",           # :1122
+    "item.gt6.foam_spray_light_blue": "建筑泡沫喷罐 (淡蓝色)",     # :1124
+    "item.gt6.foam_spray_magenta": "建筑泡沫喷罐 (品红)",          # :1126
+    "item.gt6.foam_spray_orange": "建筑泡沫喷罐 (橙色)",           # :1128
+    "item.gt6.foam_spray_white": "建筑泡沫喷罐 (白色)",            # :1130
+    "item.gt6.foam_spray_owned_black": "加强建筑泡沫喷罐 (黑色)",  # dump S:gt.multiitem.randomtools.1132
+    "item.gt6.foam_spray_owned_red": "加强建筑泡沫喷罐 (红色)",    # :1134
+    "item.gt6.foam_spray_owned_green": "加强建筑泡沫喷罐 (绿色)",  # :1136
+    "item.gt6.foam_spray_owned_brown": "加强建筑泡沫喷罐 (褐色)",  # :1138
+    "item.gt6.foam_spray_owned_blue": "加强建筑泡沫喷罐 (蓝色)",   # :1140
+    "item.gt6.foam_spray_owned_purple": "加强建筑泡沫喷罐 (紫色)", # :1142
+    "item.gt6.foam_spray_owned_cyan": "加强建筑泡沫喷罐 (青色)",   # :1144
+    "item.gt6.foam_spray_owned_light_gray": "加强建筑泡沫喷罐 (淡灰色)", # :1146
+    "item.gt6.foam_spray_owned_gray": "加强建筑泡沫喷罐 (灰色)",   # :1148
+    "item.gt6.foam_spray_owned_pink": "加强建筑泡沫喷罐 (粉色)",   # :1150
+    "item.gt6.foam_spray_owned_lime": "加强建筑泡沫喷罐 (黄绿色)", # :1152
+    "item.gt6.foam_spray_owned_yellow": "加强建筑泡沫喷罐 (黄色)", # :1154
+    "item.gt6.foam_spray_owned_light_blue": "加强建筑泡沫喷罐 (淡蓝色)", # :1156
+    "item.gt6.foam_spray_owned_magenta": "加强建筑泡沫喷罐 (品红)", # :1158
+    "item.gt6.foam_spray_owned_orange": "加强建筑泡沫喷罐 (橙色)", # :1160
+    "item.gt6.foam_spray_owned_white": "加强建筑泡沫喷罐 (白色)",  # :1162
+    "itemGroup.gt6.foam_sprays": "建筑泡沫喷罐",
+    "gt6.foamspray.paint": "可以喷射%s泡沫",                       # dump S:gt.behaviour.foamspray.N.tooltip :992-1007 split
+    "gt6.foamspray.owned": "干燥后仅所有者可破坏",                 # hand — upstream :259 en has no dump face
+}
+
 # ---- gt6.material.* (5): the dump rows are pure ASCII (review) or absent — Breeze/
 # Carminite/Fireleaf/Golden Amber per the research-card rulings (marked for re-check);
 # Superconductor = the TeamNED double-source cross (lang/gt_material/zh_cn.lang:1705 +
@@ -738,7 +782,7 @@ TAB_BACKFILL = {
     "itemGroup.gt6.spray_cans": "喷漆罐",
 }
 
-for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL):
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL):
     for _key, _value in _backfill.items():
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")

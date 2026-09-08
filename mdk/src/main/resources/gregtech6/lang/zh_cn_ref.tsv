@@ -94,6 +94,8 @@ direct	fluid.gt6.water_geothermal	温泉水	hand
 direct	fluid.gt6.waterdirty	污水	hand
 direct	gt6.cover.conveyor.display	输送机模块 (%s)	hand
 direct	gt6.cover.robot_arm.display	机械臂 (%s)	hand
+direct	gt6.foamspray.owned	干燥后仅所有者可破坏	hand
+direct	gt6.foamspray.paint	可以喷射%s泡沫	hand
 direct	gt6.jei.info.multiblock_coke_oven	焦炉是一个 3x3x3 的立方体：将焦炉控制器放在其中一面的中央并朝外，保持立方体中心格为空，其余 25 格全部放满焦炉砖。点燃控制器即可启动——它自行积攒热量，结构下方一层的储罐会收集杂酚油。	hand
 direct	gt6.material.breeze	微风	hand
 direct	gt6.material.carminite	胭脂石	hand
@@ -672,6 +674,38 @@ direct	gt6.wire.form.wire	导线	hand
 direct	gt6.wire.form.wirelamp	灯导线	hand
 direct	item.gt6.chisel	凿子	hand
 direct	item.gt6.file	锉刀	hand
+direct	item.gt6.foam_spray_black	建筑泡沫喷罐 (黑色)	hand
+direct	item.gt6.foam_spray_blue	建筑泡沫喷罐 (蓝色)	hand
+direct	item.gt6.foam_spray_brown	建筑泡沫喷罐 (褐色)	hand
+direct	item.gt6.foam_spray_cyan	建筑泡沫喷罐 (青色)	hand
+direct	item.gt6.foam_spray_gray	建筑泡沫喷罐 (灰色)	hand
+direct	item.gt6.foam_spray_green	建筑泡沫喷罐 (绿色)	hand
+direct	item.gt6.foam_spray_light_blue	建筑泡沫喷罐 (淡蓝色)	hand
+direct	item.gt6.foam_spray_light_gray	建筑泡沫喷罐 (淡灰色)	hand
+direct	item.gt6.foam_spray_lime	建筑泡沫喷罐 (黄绿色)	hand
+direct	item.gt6.foam_spray_magenta	建筑泡沫喷罐 (品红)	hand
+direct	item.gt6.foam_spray_orange	建筑泡沫喷罐 (橙色)	hand
+direct	item.gt6.foam_spray_owned_black	加强建筑泡沫喷罐 (黑色)	hand
+direct	item.gt6.foam_spray_owned_blue	加强建筑泡沫喷罐 (蓝色)	hand
+direct	item.gt6.foam_spray_owned_brown	加强建筑泡沫喷罐 (褐色)	hand
+direct	item.gt6.foam_spray_owned_cyan	加强建筑泡沫喷罐 (青色)	hand
+direct	item.gt6.foam_spray_owned_gray	加强建筑泡沫喷罐 (灰色)	hand
+direct	item.gt6.foam_spray_owned_green	加强建筑泡沫喷罐 (绿色)	hand
+direct	item.gt6.foam_spray_owned_light_blue	加强建筑泡沫喷罐 (淡蓝色)	hand
+direct	item.gt6.foam_spray_owned_light_gray	加强建筑泡沫喷罐 (淡灰色)	hand
+direct	item.gt6.foam_spray_owned_lime	加强建筑泡沫喷罐 (黄绿色)	hand
+direct	item.gt6.foam_spray_owned_magenta	加强建筑泡沫喷罐 (品红)	hand
+direct	item.gt6.foam_spray_owned_orange	加强建筑泡沫喷罐 (橙色)	hand
+direct	item.gt6.foam_spray_owned_pink	加强建筑泡沫喷罐 (粉色)	hand
+direct	item.gt6.foam_spray_owned_purple	加强建筑泡沫喷罐 (紫色)	hand
+direct	item.gt6.foam_spray_owned_red	加强建筑泡沫喷罐 (红色)	hand
+direct	item.gt6.foam_spray_owned_white	加强建筑泡沫喷罐 (白色)	hand
+direct	item.gt6.foam_spray_owned_yellow	加强建筑泡沫喷罐 (黄色)	hand
+direct	item.gt6.foam_spray_pink	建筑泡沫喷罐 (粉色)	hand
+direct	item.gt6.foam_spray_purple	建筑泡沫喷罐 (紫色)	hand
+direct	item.gt6.foam_spray_red	建筑泡沫喷罐 (红色)	hand
+direct	item.gt6.foam_spray_white	建筑泡沫喷罐 (白色)	hand
+direct	item.gt6.foam_spray_yellow	建筑泡沫喷罐 (黄色)	hand
 direct	item.gt6.saw	锯	hand
 direct	item.gt6.builder_wand	建筑之杖	hand
 direct	item.gt6.screwdriver	螺丝刀	hand
@@ -712,6 +746,7 @@ direct	itemGroup.gt6.chests	箱子	hand
 direct	itemGroup.gt6.electric_wires	电线	hand
 direct	itemGroup.gt6.fluid_containers	流体容器	hand
 direct	itemGroup.gt6.fluid_pipes	流体管道	hand
+direct	itemGroup.gt6.foam_sprays	建筑泡沫喷罐	hand
 direct	itemGroup.gt6.laser_wires	激光导线	hand
 direct	itemGroup.gt6.machines	机器	hand
 direct	itemGroup.gt6.multiblocks	多方块	hand

@@ -91,8 +91,16 @@ public class GT6LangParityTest {
 	 * pair added the +2 item.gt6.hammer/item.gt6.wrench rows (both locales, the zh
 	 * values from the reference table's hand rows). Both committed generated faces count
 	 * exactly 2583 keys with zero set difference.
+	 *
+	 * <p>Task p25-c-foam-pipe-spray: raised to the measured 2616 — the C-Foam spray family
+	 * added the +35 keys (32 item names + the foam_sprays tab + the 2 tooltip templates,
+	 * both locales, zh values from the dump rows tmp/gregtech.lang:9350-9431 + hand).
+	 *
+	 * <p>Rebase reconciliation (the S1 merge session): the hammer +2 rows and the C-Foam
+	 * +35 rows both ride the 38365b89 baseline (measured 2582), so the measured total on
+	 * the merged main is 2584 + 35 = 2619 — the ratchet follows the measurement.
 	 */
-	private static final int ZH_KEY_FLOOR = 2583;
+	private static final int ZH_KEY_FLOOR = 2619;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
