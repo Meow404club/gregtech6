@@ -101,8 +101,18 @@ public class GT6LangParityTest {
 	 * <p>Rebase reconciliation (the S1 merge session): the hammer +2 rows and the C-Foam
 	 * +35 rows both ride the 38365b89 baseline (measured 2582), so the measured total on
 	 * the merged main is 2584 + 35 = 2619 — the ratchet follows the measurement.
+	 *
+	 * <p>Task p25-food-can-row0: raised to the measured 2594 on its own branch — the row0
+	 * food-can subset added the +10 rows (item.gt6.food_can_empty + the six
+	 * item.gt6.food_can_rotten_* tiers + item.gt6.food_can_cookies_huge +
+	 * item.gt6.bending_cylinder_small + the itemGroup.gt6.food_cans tab title; both
+	 * locales, the zh values from the reference table's hand rows).
+	 *
+	 * <p>Rebase reconciliation (the S2 merge session): the C-Foam +35 rows landed first
+	 * (dd259287/41e5049f), so the merged faces measure 2619 + 10 = 2629 — the ratchet
+	 * follows the measurement.
 	 */
-	private static final int ZH_KEY_FLOOR = 2619;
+	private static final int ZH_KEY_FLOOR = 2629;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those

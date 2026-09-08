@@ -359,18 +359,21 @@ class GT6TagsDatagenTest {
     }
 
     /**
-     * The p25 tool face (task p25-tool-hammer-wrench, the PIN evolution duty): the two
-     * new self-owned crafting-tool tags carry EXACTLY their one registered member each,
-     * and the ecosystem tools band grew 7 → 9 (the hammer + wrench pair appended in the
-     * band order). Pinned so any band change is a conscious constant update.
+     * The p25 tool face (task p25-tool-hammer-wrench + p25-food-can-row0, the PIN
+     * evolution duty): the three new self-owned crafting-tool tags carry EXACTLY their
+     * one registered member each, and the ecosystem tools band grew 7 → 9 → 10 (the
+     * hammer + wrench pair, then the bending cylinder, appended in the band order).
+     * Pinned so any band change is a conscious constant update.
      */
     @Test
     void p25ToolFacesAreTheExactMembers() throws Exception {
         assertEquals(List.of("gt6:hammer"), tagValues("gt6/tags/items/tools/hard_hammer.json"));
         assertEquals(List.of("gt6:wrench"), tagValues("gt6/tags/items/tools/wrench.json"));
+        assertEquals(List.of("gt6:bending_cylinder_small"), tagValues("gt6/tags/items/tools/bending_cylinder_small.json"));
         assertEquals(List.of(
                 "gt6:file", "gt6:saw", "gt6:crowbar", "gt6:cutter", "gt6:chisel",
-                "gt6:builder_wand", "gt6:screwdriver", "gt6:hammer", "gt6:wrench"),
+                "gt6:builder_wand", "gt6:screwdriver", "gt6:hammer", "gt6:wrench",
+                "gt6:bending_cylinder_small"),
                 tagValues("forge/tags/items/tools.json"));
     }
 
