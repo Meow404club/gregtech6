@@ -275,6 +275,22 @@ JSON 形检；耐久 payload 双腿 node_cmds 分叉=1.20.1 `{Damage:22}` NBT vs
 双腿 node_expects 分叉=1.20.1 `Damage: 22`/`Count: 1b` vs 21.1
 `"minecraft:damage": 22`/`count: 1`）。
 
+### 食品罐 row0 Canner 冒烟 /gt6machine + /data merge（p25-food-can-row0）
+
+```bash
+R "setblock 420 65 125 gt6:canner" --expect 1:"GT6 canner placed"                       # T1 落机（place 臂实锚）
+R "data merge block 420 65 125 {inventory:{Size:4,Items:[{Slot:0b,id:\"minecraft:rotten_flesh\",Count:1b},{Slot:1b,id:\"gt6:food_can_empty\",Count:1b}]}}" --expect 1:"Modified block data"  # 双物品输入面（addRecipe2 形）
+R "gt6machine canner inject 40 16 420 65 125" --expect 1:"outputs=[1x food_can_rotten_small; ]"  # foodValue 4 → tier 1
+```
+
+链：`chains/p25_food_can.py`（slug p25foodcan，端口对 26110/26120；三单元
+rotten_flesh/spider_eye/cookie x6 全走 p24_canner_refill 的 inventory data-merge
+双物品输入形——1.20.1 `Count:1b/6b` NBT vs 21.1 `count:1/6` 键形分叉；输出 expect
+双腿 node_expects 分叉=1.20.1 裸 path `food_can_rotten_small` vs 21.1 前缀
+`gt6:food_can_rotten_small`（Step.node_expects，非裸名单 token）；cookie 行 6×
+Count 吃满 MultiItemFood.java:600 的注册计数，DEFAULT 分档 12/12=1 → tier 5 超大
+罐=Cookie Tin；p24 canner 链回归随跑 [0,0]）。
+
 ## ⑤ 三层框架用法（新卡 RCON 链的正典姿势）
 
 ### 生命周期层 gt6server（ops 纪律的模块化落地）
