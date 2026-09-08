@@ -36,6 +36,12 @@ direct	block.gt6.crusher	破碎机	hand
 direct	block.gt6.energy_source	测试能源	hand
 direct	block.gt6.example_chest	GT 示例箱子	hand
 direct	block.gt6.gearbox	木制可调变速箱	hand
+direct	block.gt6.grass	草方块	hand
+direct	block.gt6.grass_black	草方块	hand
+direct	block.gt6.grass_brown	草方块	hand
+direct	block.gt6.grass_light_gray	草方块	hand
+direct	block.gt6.grass_lime	草方块	hand
+direct	block.gt6.grass_yellow	草方块	hand
 direct	block.gt6.heat_transmitter	热吸收装置	hand
 direct	block.gt6.lathe	车床	hand
 direct	block.gt6.lightning_rod	避雷针	hand
@@ -125,6 +131,8 @@ direct	fluid.gt6.steam	蒸汽	hand
 direct	fluid.gt6.water_boiling	沸水	hand
 direct	fluid.gt6.water_geothermal	温泉水	hand
 direct	fluid.gt6.waterdirty	污水	hand
+direct	gt.grass.tooltip	不会传播、被吃、改变颜色, 也不需要光照	hand
+direct	gt.grass.tooltip.spray	喷漆罐也可以用来给草染色！	hand
 direct	gt6.cover.conveyor.display	输送机模块 (%s)	hand
 direct	gt6.cover.robot_arm.display	机械臂 (%s)	hand
 direct	gt6.foamspray.owned	干燥后仅所有者可破坏	hand
@@ -157,6 +165,12 @@ direct	gt6.row.diesel.display	燃油引擎 (%s)	hand
 direct	gt6.row.distillery.display	蒸馏器 (%s)	hand
 direct	gt6.row.dryer.display	干燥器 (%s)	hand
 direct	gt6.row.funnel.display	%s漏斗	hand
+direct	gt6.row.item_pipe.display.huge	巨型%s物流管道	hand
+direct	gt6.row.item_pipe.display.large	大型%s物流管道	hand
+direct	gt6.row.item_pipe.display.medium	%s物流管道	hand
+direct	gt6.row.item_pipe.display.restrictive_huge	限制巨型%s物流管道	hand
+direct	gt6.row.item_pipe.display.restrictive_large	限制大型%s物流管道	hand
+direct	gt6.row.item_pipe.display.restrictive_medium	限制%s物流管道	hand
 direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
 direct	gt6.row.machine.crusher	破碎机	hand
 direct	gt6.row.machine.display	%s (%s)	hand
@@ -170,6 +184,8 @@ direct	gt6.row.mat.brass	黄铜	hand
 direct	gt6.row.mat.brick	砖	hand
 direct	gt6.row.mat.bronze	青铜	hand
 direct	gt6.row.mat.chromium	铬	hand
+direct	gt6.row.mat.cobalt_brass	钴黄铜	hand
+direct	gt6.row.mat.constantan	康铜	hand
 direct	gt6.row.mat.ev	EV	hand
 direct	gt6.row.mat.fiery_steel	炙热钢	hand
 direct	gt6.row.mat.hv	HV	hand
@@ -688,7 +704,6 @@ direct	gt6.tagprefix.wire_gt14	14×%s线	hand
 direct	gt6.tagprefix.wire_gt15	15×%s线	hand
 direct	gt6.tagprefix.wire_gt16	16×%s线	hand
 direct	gt6.tagprefix.wood	%s	hand
-direct	gt6.tooltip.lightningrod.structure	结构：	hand
 direct	gt6.tooltip.lightningrod.1	最底层是3x3的钨壁板, 中间是避雷针电力输出口	hand
 direct	gt6.tooltip.lightningrod.2	第二层是3x3的大型铌钛合金线圈	hand
 direct	gt6.tooltip.lightningrod.3	第三层是3x3的钨壁板	hand
@@ -698,14 +713,27 @@ direct	gt6.tooltip.lightningrod.6	最后在中心一格造一根避雷针柱	han
 direct	gt6.tooltip.lightningrod.7	最高的避雷针的Y轴高度需要大于100	hand
 direct	gt6.tooltip.lightningrod.8	避雷针柱长度达到100m时达到最大效率	hand
 direct	gt6.tooltip.lightningrod.9	256m内存在别的避雷针会降低效率	hand
-direct	gt6.tooltip.lightningrod.energy	能量输出: %s EU/p（至多16安）	hand
 direct	gt6.tooltip.lightningrod.capacity	%s EU 每次雷击	hand
+direct	gt6.tooltip.lightningrod.energy	能量输出: %s EU/p（至多16安）	hand
+direct	gt6.tooltip.lightningrod.structure	结构：	hand
 direct	gt6.wire.display	%s×%s%s	hand
 direct	gt6.wire.display.plain	%s%s	hand
 direct	gt6.wire.form.cable	线缆	hand
 direct	gt6.wire.form.wire	导线	hand
 direct	gt6.wire.form.wirelamp	灯导线	hand
+direct	item.gt6.bending_cylinder_small	小型弯曲绕筒	hand
+direct	item.gt6.builder_wand	建筑之杖	hand
 direct	item.gt6.chisel	凿子	hand
+direct	item.gt6.cover_auto_redstone_machine_switch	自动红石机器开关	hand
+direct	item.gt6.cover_controller	面板控制器	hand
+direct	item.gt6.cover_item_filter	物品过滤器	hand
+direct	item.gt6.cover_redstone_conductor_in	红石导线面板（接收）	hand
+direct	item.gt6.cover_redstone_conductor_out	红石导线面板（发出）	hand
+direct	item.gt6.cover_redstone_emitter	红石发射器	hand
+direct	item.gt6.cover_redstone_machine_switch	红石机器开关	hand
+direct	item.gt6.cover_shutter	挡板面板	hand
+direct	item.gt6.crowbar	撬棍	hand
+direct	item.gt6.cutter	线缆剪	hand
 direct	item.gt6.file	锉刀	hand
 direct	item.gt6.foam_spray_black	建筑泡沫喷罐 (黑色)	hand
 direct	item.gt6.foam_spray_blue	建筑泡沫喷罐 (蓝色)	hand
@@ -739,23 +767,19 @@ direct	item.gt6.foam_spray_purple	建筑泡沫喷罐 (紫色)	hand
 direct	item.gt6.foam_spray_red	建筑泡沫喷罐 (红色)	hand
 direct	item.gt6.foam_spray_white	建筑泡沫喷罐 (白色)	hand
 direct	item.gt6.foam_spray_yellow	建筑泡沫喷罐 (黄色)	hand
-direct	item.gt6.saw	锯	hand
-direct	item.gt6.builder_wand	建筑之杖	hand
-direct	item.gt6.screwdriver	螺丝刀	hand
+direct	item.gt6.food_can_cookies_huge	超大食物罐头 (饼干)	hand
+direct	item.gt6.food_can_empty	空食物罐头	hand
+direct	item.gt6.food_can_rotten_huge	超大食物罐头 (腐肉)	hand
+direct	item.gt6.food_can_rotten_large	大食物罐头 (腐肉)	hand
+direct	item.gt6.food_can_rotten_small	小食物罐头 (腐肉)	hand
+direct	item.gt6.food_can_rotten_tall	高食物罐头 (腐肉)	hand
+direct	item.gt6.food_can_rotten_tiny	迷你食物罐头 (腐肉)	hand
+direct	item.gt6.food_can_rotten_wide	宽食物罐头 (腐肉)	hand
 direct	item.gt6.hammer	锤	hand
-direct	item.gt6.wrench	扳手	hand
-direct	item.gt6.cover_auto_redstone_machine_switch	自动红石机器开关	hand
-direct	item.gt6.cover_controller	面板控制器	hand
-direct	item.gt6.cover_item_filter	物品过滤器	hand
-direct	item.gt6.cover_redstone_conductor_in	红石导线面板（接收）	hand
-direct	item.gt6.cover_redstone_conductor_out	红石导线面板（发出）	hand
-direct	item.gt6.cover_redstone_emitter	红石发射器	hand
-direct	item.gt6.cover_redstone_machine_switch	红石机器开关	hand
-direct	item.gt6.cover_shutter	挡板面板	hand
-direct	item.gt6.crowbar	撬棍	hand
-direct	item.gt6.cutter	线缆剪	hand
 direct	item.gt6.integrated_circuit	选择器标签	hand
 direct	item.gt6.integrated_circuit.configuration	配置：%s	hand
+direct	item.gt6.saw	锯	hand
+direct	item.gt6.screwdriver	螺丝刀	hand
 direct	item.gt6.spray_can_empty	空喷罐	hand
 direct	item.gt6.spray_paint_black	喷漆（黑）	hand
 direct	item.gt6.spray_paint_blue	喷漆（蓝）	hand
@@ -774,12 +798,15 @@ direct	item.gt6.spray_paint_red	喷漆（红）	hand
 direct	item.gt6.spray_paint_remover	除漆喷剂	hand
 direct	item.gt6.spray_paint_white	喷漆（白）	hand
 direct	item.gt6.spray_paint_yellow	喷漆（黄）	hand
+direct	item.gt6.wrench	扳手	hand
 direct	itemGroup.gt6.billet	坯料	hand
 direct	itemGroup.gt6.chests	箱子	hand
 direct	itemGroup.gt6.electric_wires	电线	hand
 direct	itemGroup.gt6.fluid_containers	流体容器	hand
 direct	itemGroup.gt6.fluid_pipes	流体管道	hand
 direct	itemGroup.gt6.foam_sprays	建筑泡沫喷罐	hand
+direct	itemGroup.gt6.food_cans	格雷科技: 罐头	hand
+direct	itemGroup.gt6.item_pipes	物品管道	hand
 direct	itemGroup.gt6.laser_wires	激光导线	hand
 direct	itemGroup.gt6.machines	机器	hand
 direct	itemGroup.gt6.multiblocks	多方块	hand
@@ -7779,21 +7806,3 @@ mte	multiblock.tank.wooden	小型木质储罐	auto
 mte	multiblock.tank555.metal	大型储罐	auto
 mte	plantpot.tooltip.1	上面能种植任意植物!	auto
 mte	usb.switch.tooltip	使用选择面板在16个USB之间切换	auto
-direct	block.gt6.grass	草方块	hand
-direct	block.gt6.grass_black	草方块	hand
-direct	block.gt6.grass_brown	草方块	hand
-direct	block.gt6.grass_lime	草方块	hand
-direct	block.gt6.grass_light_gray	草方块	hand
-direct	block.gt6.grass_yellow	草方块	hand
-direct	gt.grass.tooltip	不会传播、被吃、改变颜色, 也不需要光照	hand
-direct	gt.grass.tooltip.spray	喷漆罐也可以用来给草染色！	hand
-direct	item.gt6.bending_cylinder_small	小型弯曲绕筒	hand
-direct	item.gt6.food_can_cookies_huge	超大食物罐头 (饼干)	hand
-direct	item.gt6.food_can_empty	空食物罐头	hand
-direct	item.gt6.food_can_rotten_huge	超大食物罐头 (腐肉)	hand
-direct	item.gt6.food_can_rotten_large	大食物罐头 (腐肉)	hand
-direct	item.gt6.food_can_rotten_small	小食物罐头 (腐肉)	hand
-direct	item.gt6.food_can_rotten_tall	高食物罐头 (腐肉)	hand
-direct	item.gt6.food_can_rotten_tiny	迷你食物罐头 (腐肉)	hand
-direct	item.gt6.food_can_rotten_wide	宽食物罐头 (腐肉)	hand
-direct	itemGroup.gt6.food_cans	格雷科技: 罐头	hand
