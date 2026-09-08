@@ -42,6 +42,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class GTMultiBlockCruciblePhysicsTest extends GTMultiBlocksOfflineTestBase {
 
 	static BlockEntityType<TestCrucible> sCrucibleType;
+	static BlockEntityType<CrucibleWallBlockEntity> sWallType;
 
 	/** The concrete test BE — the crucible over a vanilla-block BET, wall and env bound. */
 	public static final class TestCrucible extends TileEntityCrucible {
@@ -90,6 +91,9 @@ public class GTMultiBlockCruciblePhysicsTest extends GTMultiBlocksOfflineTestBas
 		BlockEntityType<TestCrucible>[] tHolder = (BlockEntityType<TestCrucible>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(TestCrucible::new, Blocks.BRICKS).build(null);
 		sCrucibleType = tHolder[0];
+		BlockEntityType<CrucibleWallBlockEntity>[] tWallHolder = (BlockEntityType<CrucibleWallBlockEntity>[]) new BlockEntityType<?>[1];
+		tWallHolder[0] = BlockEntityType.Builder.of(CrucibleWallBlockEntity::new, Blocks.BRICKS).build(null);
+		sWallType = tWallHolder[0];
 		// the real MT dataset (the CruciblePhysicsTest posture) — the physics and the
 		// alloy graph must be live before any stack is built
 		MaterialRegistry.INSTANCE.open();
@@ -117,6 +121,108 @@ public class GTMultiBlockCruciblePhysicsTest extends GTMultiBlocksOfflineTestBas
 
 	private static long totalOf(List<OreDictMaterialStack> aList) {
 		return CruciblePhysics.total(aList);
+	}
+
+	// ------------------------------------------------------------------
+	// the wall-relay fixture: every ring cell carries the relaying wall BE —
+	// the checker's binding then writes the per-layer usage mode into each
+	// (y+0 ONLY_ENERGY_IN / y+1 ONLY_CRUCIBLE / y+2 ONLY_ITEM_FLUID)
+	// ------------------------------------------------------------------
+
+	private static CrucibleWallBlockEntity placeCrucibleWall(MultiBlockLevel aLevel, BlockPos aPos) {
+		CrucibleWallBlockEntity tPart = new CrucibleWallBlockEntity(sWallType, aPos, Blocks.BRICKS.defaultBlockState());
+		tPart.setLevel(aLevel);
+		aLevel.mStates.put(aPos, Blocks.BRICKS.defaultBlockState());
+		aLevel.mBlockEntities.put(aPos, tPart);
+		return tPart;
+	}
+
+	private record RelayFormed(MultiBlockLevel level, TestCrucible crucible) {}
+
+	private static RelayFormed formedCrucibleWithRelayWalls() {
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TestCrucible tCrucible = placeController(tLevel, sCrucibleType, new BlockPos(100, 64, 100), (byte)0);
+		java.util.Map<BlockPos, CrucibleWallBlockEntity> tWalls = new java.util.HashMap<>();
+		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
+			if (tDX == 0 && tDZ == 0) continue;
+			for (int tY = 0; tY <= 2; tY++) {
+				tWalls.put(new BlockPos(100 + tDX, 64 + tY, 100 + tDZ),
+						placeCrucibleWall(tLevel, new BlockPos(100 + tDX, 64 + tY, 100 + tDZ)));
+			}
+		}
+		tCrucible.onStructureChange();
+		assertTrue(tCrucible.checkStructure(false), "the relay-wall fixture structure forms");
+		// the binding wrote the usage modes (the checkAndSetTarget setTarget write)
+		assertEquals(MultiBlockPartBlockEntity.ONLY_CRUCIBLE, tWalls.get(new BlockPos(101, 65, 100)).mMode,
+				"the y+1 ring carries ONLY_CRUCIBLE after the bind");
+		assertEquals(MultiBlockPartBlockEntity.ONLY_ENERGY_IN, tWalls.get(new BlockPos(101, 64, 100)).mMode,
+				"the y+0 ring carries ONLY_ENERGY_IN after the bind");
+		return new RelayFormed(tLevel, tCrucible);
+	}
+
+	// ------------------------------------------------------------------
+	// the through-wall crucible relay (upstream MultiBlockPart :686-692)
+	// ------------------------------------------------------------------
+
+	@Test
+	public void wallRelayPoursThroughTheY1Ring() {
+		RelayFormed tF = formedCrucibleWithRelayWalls();
+		tF.crucible().mTemperature = 2000;
+		List<OreDictMaterialStack> tIron = new ArrayList<>();
+		tIron.add(new OreDictMaterialStack(MT.Fe, 2 * gregapi.data.CS.U));
+		assertTrue(tF.crucible().addMaterialStacks(tIron, 2000));
+
+		RecordingMold tMold = new RecordingMold();
+		tMold.mDemand = gregapi.data.CS.U;
+		CrucibleWallBlockEntity tWall = (CrucibleWallBlockEntity) tF.level().getBlockEntity(new BlockPos(101, 65, 100));
+		// the mold clicks the WALL; the wall forwards controller-ward
+		assertTrue(tWall.fillMoldAtSide(tMold, (byte)2, (byte)3), "the y+1 wall relays the pour");
+		assertSame(MT.Fe, tMold.mPoured.mMaterial, "the Fe stack reached the mold through the wall");
+		assertEquals(gregapi.data.CS.U, totalOf(tF.crucible().mContent), "the pour subtracted one unit");
+	}
+
+	@Test
+	public void wallRelayRefusesThePourOnTheWrongRings() {
+		RelayFormed tF = formedCrucibleWithRelayWalls();
+		tF.crucible().mTemperature = 2000;
+		List<OreDictMaterialStack> tIron = new ArrayList<>();
+		tIron.add(new OreDictMaterialStack(MT.Fe, gregapi.data.CS.U));
+		assertTrue(tF.crucible().addMaterialStacks(tIron, 2000));
+
+		RecordingMold tMold = new RecordingMold();
+		tMold.mDemand = gregapi.data.CS.U;
+		// the y+2 ring is ONLY_ITEM_FLUID — the NO_CRUCIBLE bit kills the relay first (:688)
+		CrucibleWallBlockEntity tFeedWall = (CrucibleWallBlockEntity) tF.level().getBlockEntity(new BlockPos(101, 66, 100));
+		assertTrue((tFeedWall.mMode & MultiBlockPartBlockEntity.NO_CRUCIBLE) != 0,
+				"the y+2 mode carries NO_CRUCIBLE");
+		assertFalse(tFeedWall.fillMoldAtSide(tMold, (byte)2, (byte)3), "the feed-layer wall refuses the pour");
+		assertNull(tMold.mPoured, "the mold was never contacted through the wrong ring");
+	}
+
+	// ------------------------------------------------------------------
+	// the energy relay through the y+0 ring (the burning-box HU intake; the
+	// inherited HeatTransmitterBlockEntity face, mode-gated NO_ENERGY_IN)
+	// ------------------------------------------------------------------
+
+	@Test
+	public void wallRelayInjectsHUThroughTheY0Ring() {
+		RelayFormed tF = formedCrucibleWithRelayWalls();
+		assertEquals(0, tF.crucible().mEnergy, "the buffer starts empty");
+		// the burning box's emit walk lands on the wall's ITileEntityEnergy face
+		CrucibleWallBlockEntity tWall = (CrucibleWallBlockEntity) tF.level().getBlockEntity(new BlockPos(101, 64, 100));
+		long tBooked = tWall.doEnergyInjection(gregapi.data.TD.Energy.HU, (byte)0, (byte)1, 100, true);
+		assertEquals(100, tBooked, "the HU packet books through the wall");
+		assertEquals(100, tF.crucible().mEnergy, "the controller buffer received the charge (the :704 doInject arm)");
+	}
+
+	@Test
+	public void wallRelayRefusesEnergyOnTheY1Ring() {
+		RelayFormed tF = formedCrucibleWithRelayWalls();
+		// ONLY_CRUCIBLE carries NO_ENERGY_IN — the mold layer is not an intake layer
+		CrucibleWallBlockEntity tWall = (CrucibleWallBlockEntity) tF.level().getBlockEntity(new BlockPos(101, 65, 100));
+		long tBooked = tWall.doEnergyInjection(gregapi.data.TD.Energy.HU, (byte)0, (byte)1, 100, true);
+		assertEquals(0, tBooked, "the mold-layer wall refuses the energy packet");
+		assertEquals(0, tF.crucible().mEnergy, "nothing reached the buffer");
 	}
 
 	// ------------------------------------------------------------------
