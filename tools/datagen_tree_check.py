@@ -376,6 +376,18 @@ CACHE_DIR_NAME = ".cache"          # HashCache 账本（输出根内，gitignore
 ROOT_VERSION_FILE = "version.json"  # 1.21.x FileCache 输出根版本头（运行时戳记，非产物）
 DEFAULT_MAX_LIST = 100
 
+# ── 声明偏离表（forge-gated 仅 canonical 面，p26-crucible-physics-smeltery 引入）──────
+# 出处：b8a58a0a——crafting provider（RecipeProvider/FinishedRecipe 流）骑 1.20.1-forge
+# stonecutter 块：21.1 删除 FinishedRecipe，RecipeOutput 流是卡 B 的 21.1 datagen 面；
+# 故下列 canonical 产物在 21.1 节点结构性无输出（非漂移）。逐路径显式白名单、
+# 摘要独立计数打印（绝不静默吞差）；表外仅 canonical 条目照旧 FAIL。
+FORGE_GATED_ONLY_CANONICAL = frozenset({
+    "data/gt6/recipes/mold_stone.json",
+    "data/gt6/recipes/smeltery_stone.json",
+    "data/gt6/advancements/recipes/misc/mold_stone.json",
+    "data/gt6/advancements/recipes/misc/smeltery_stone.json",
+})
+
 
 def collect_files(root: Path) -> dict[PurePosixPath, Path]:
     """递归收集 root 下全部产物文件：相对路径(POSIX 形) → 绝对路径。
@@ -470,6 +482,13 @@ def main() -> int:
         if len(normalized) > args.max_list:
             print(f"NORMALIZED ... and {len(normalized) - args.max_list} more")
 
+    # the forge-gated declared deviations (the FORGE_GATED_ONLY_CANONICAL table): printed,
+    # never silently swallowed, but excluded from the fail count (b8a58a0a citation)
+    gated = sorted(r for r in only_canon if str(r) in FORGE_GATED_ONLY_CANONICAL)
+    only_canon = [r for r in only_canon if str(r) not in FORGE_GATED_ONLY_CANONICAL]
+    for rel in gated:
+        print(f"DECLARED [forge-gated, b8a58a0a] {rel}")
+
     fail = bool(only_canon or only_node or diff_content)
     if fail:
         def emit(kind: str, lines: list[str]) -> None:
@@ -485,12 +504,14 @@ def main() -> int:
         print(f"RESULT: FAIL — {len(only_canon) + len(only_node) + len(diff_content)} "
               f"path(s) differ (content:{len(diff_content)}, "
               f"only-canonical:{len(only_canon)}, only-node:{len(only_node)}, "
+              f"forge-gated declared:{len(gated)}, "
               f"normalized:{len(normalized)} accepted)")
         return 1
 
     print(f"RESULT: OK — {len(common) - len(normalized)} files byte-identical + "
           f"{len(normalized)} value-shape normalized after path mapping + "
-          f"registered value normalizers (normalized:{len(normalized)})")
+          f"registered value normalizers (normalized:{len(normalized)}, "
+          f"forge-gated declared:{len(gated)})")
     return 0
 
 
