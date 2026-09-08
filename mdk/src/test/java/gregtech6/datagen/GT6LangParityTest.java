@@ -92,9 +92,11 @@ public class GT6LangParityTest {
 	 * values from the reference table's hand rows). Both committed generated faces count
 	 * exactly 2583 keys with zero set difference.
 	 *
-	 * <p>Task p25-c-foam-pipe-spray: raised to the measured 2616 — the C-Foam spray family
+	 * <p>Task p25-c-foam-pipe-spray: raised to the measured 2617 — the C-Foam spray family
 	 * added the +35 keys (32 item names + the foam_sprays tab + the 2 tooltip templates,
 	 * both locales, zh values from the dump rows tmp/gregtech.lang:9350-9431 + hand).
+	 * (Main's committed faces measured 2582 — one above the S4 note's 2581; the ratchet
+	 * follows the measurement: 2582 + 35 = 2617.)
 	 *
 	 * <p>Rebase reconciliation (the S1 merge session): the hammer +2 rows and the C-Foam
 	 * +35 rows both ride the 38365b89 baseline (measured 2582), so the measured total on

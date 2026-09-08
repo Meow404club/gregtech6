@@ -15,6 +15,22 @@
     {
       "type": "minecraft:single",
       "resource": "gt6:block/cover_pump_in"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/cfoam_fresh"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/cfoam_fresh_owned"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/cfoam_hardened"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/cfoam_hardened_owned"
     }
   ]
 }

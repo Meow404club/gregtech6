@@ -1,0 +1,54 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "ops": [
+                {
+                  "op": "replace",
+                  "source": "gt.foamed",
+                  "target": "BlockEntityTag.gt.foamed"
+                },
+                {
+                  "op": "replace",
+                  "source": "gt.foamdried",
+                  "target": "BlockEntityTag.gt.foamdried"
+                },
+                {
+                  "op": "replace",
+                  "source": "gt.ownable",
+                  "target": "BlockEntityTag.gt.ownable"
+                },
+                {
+                  "op": "replace",
+                  "source": "gt.color",
+                  "target": "BlockEntityTag.gt.color"
+                },
+                {
+                  "op": "replace",
+                  "source": "gt.painted",
+                  "target": "BlockEntityTag.gt.painted"
+                }
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "gt6:wood_fluid_pipe_small"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "gt6:blocks/wood_fluid_pipe_small"
+}
