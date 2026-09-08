@@ -79,5 +79,9 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 - 渲染路线 ADR（BakedModel 快照制 / BEWLR-TESR 全仓禁令，散见于 P4/P5 卡面与
   javadoc 引用）
 
+- 2026-09-08-p24-tags-provider-paradigm（P24 tag 双向范式：TagsProvider 立项+takeover 共写链+材料名归一）
+- 2026-09-08-p24-tool-seams（P24 工具三缝：首例 Recipe/TagsProvider+container-item 死门方法学）
+- 2026-09-08-p24-op2-reform-modularui-first-consumer（P24 OP(2) 重裁放开+ModularUI 首消费接线）
+
 后续卡若需引用某条历史 ADR 的完整原文，以 `state_read("decisions")` 与
 `docs/PROJECT_STATE.md` 对应阶段段为源，按本 README 四节约定转正成文。
