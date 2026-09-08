@@ -67,7 +67,7 @@ B = gt6world.Site(397, 64, 20)
 PA, PB = F(A), F(B)
 
 # the item-entity selector around A (the drop lands inside the block)
-ITEMS_NEAR_A = f"@e[type=item,distance=..6,x={A.x},y={A.y},z={A.z}]"
+ITEMS_NEAR_A = f"@e[type=item,limit=1,sort=nearest,distance=..6,x={A.x},y={A.y},z={A.z}]"
 steps = []
 
 # ------------------------------------------------- A: the baseline (no foam)
@@ -80,7 +80,7 @@ steps += [
 # ------------------------------------------------- B: the spray arm (owned)
 steps += [
     phase("B: spray owned — the applyFoam write point sets foam/ownable/owner; re-spray rejected while wet"),
-    Step(f"gt6pipe spray {PA} 1 {UUID_A}", expect=f"foam applied, foam true dried false foamOwned true"),
+    Step(f"gt6pipe spray {PA} 1 0 {UUID_A}", expect="foam applied, foam true dried false foamOwned true"),
     Step(f"gt6pipe stat {PA}", expect=f"ownable true owner {UUID_A} foam true dried false foamOwned true"),
     Step(f"gt6pipe spray {PA} 1", expect="REJECTED", allow_failed=True),  # the :160 mFoam arm — wet refuses everyone
 ]
@@ -105,14 +105,14 @@ steps += [
 # ------------------------------------------------- E: the round-trip (world NBT + the dropped item)
 steps += [
     phase("E: round-trip — spray+dry, the world keys, 拆管, the item carries the three keys"),
-    Step(f"kill {ITEMS_NEAR_A}", expect="Killed", allow_failed=True),  # clear stale drops first
-    Step(f"gt6pipe spray {PA} 1 {UUID_A}", expect="foam applied"),
+    Step(f"kill {ITEMS_NEAR_A}", expect="Killed", allow_failed=True),  # clear stale drops first (limit=1 also keeps the kill narrow)
+    Step(f"gt6pipe spray {PA} 1 0 {UUID_A}", expect="foam applied"),
     Step(f"gt6pipe dry {PA}", expect="ok, foam true dried true"),
-    Step(f"data get block {PA} gt.foamed", expect="gt.foamed: 1"),
-    Step(f"setblock {PA} air", expect="Changed the block"),  # console destroy (the /setblock seam)
-    Step(f"data get entity {ITEMS_NEAR_A} Item.tag.BlockEntityTag", expect='"gt.foamed": 1'),
-    Step(f"data get entity {ITEMS_NEAR_A} Item.tag.BlockEntityTag", expect='"gt.foamdried": 1'),
-    Step(f"data get entity {ITEMS_NEAR_A} Item.tag.BlockEntityTag", expect='"gt.ownable": 1'),
+    Step(f"data get block {PA}", expect="gt.foamed: 1b"),  # the whole-BE dump (the dotted keys ride unquoted)
+    Step(f"setblock {PA} air destroy", expect="Changed the block"),  # console destroy — the destroy mode drops loot (the /setblock seam)
+    Step(f"data get entity {ITEMS_NEAR_A} Item.tag.BlockEntityTag", expect="gt.foamed: 1"),
+    Step(f"data get entity {ITEMS_NEAR_A} Item.tag.BlockEntityTag", expect="gt.foamdried: 1"),
+    Step(f"data get entity {ITEMS_NEAR_A} Item.tag.BlockEntityTag", expect="gt.ownable: 1"),
     # gt.owner does NOT ride the item — the absence is pinned offline
     # (GTPipeFoamTest.foamNbtRoundTripsAndOwnerDoesNotRideItems), a data-get of an absent
     # path is not a stable cross-leg assertion shape.

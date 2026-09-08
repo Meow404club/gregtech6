@@ -937,34 +937,49 @@ public final class GT6LootTables extends LootTableProvider {
      * The foam+paint carry function builder — the {@code copy_nbt} five-op form over the
      * same ContextNbtProvider.BLOCK_ENTITY source (the generated JSON shape:
      * {@code {"function": "minecraft:copy_nbt", "source": "block_entity", "ops":
-     * [{"source": "gt.foamed", "target": "BlockEntityTag.gt.foamed", "op": "replace"}, ...]}}).
+     * [{"source": "'gt.foamed'", "target": "BlockEntityTag.'gt.foamed'", "op": "replace"}, ...]}}).
+     *
+     * <p>QUOTED SEGMENTS (the live-chain finding of this card): NbtPathArgument splits
+     * paths on {@code '.'} (vanilla 1.20.1 NbtPathArgument.java:70-71 {@code expect('.')}
+     * / :140 — a dot is not a name character), so the raw dotted key {@code gt.foamed}
+     * parses as the compound traversal root→gt→foamed and NEVER matches the flat key the
+     * BE writes — the op silently no-ops. The literal key rides as a quoted segment
+     * {@code 'gt.foamed'} (parseNode :81-82 — a quote-opening node reads a full string).
+     * NOTE: the p22 {@link #paintSelfTable} ops share this defect (dotted, unquoted) —
+     * out of this card's files scope, flagged to review (the machines' paint carry never
+     * landed and the target traversal fabricated a junk gt compound).
      */
     private static LootItemFunction.Builder foamPaintCopyNbt() {
         //? if neoforge {
         /*return net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction
                 .copyData(ContextNbtProvider.BLOCK_ENTITY)
-                .copy(GTFluidPipeBlockEntity.NBT_FOAMED, "BlockEntityTag." + GTFluidPipeBlockEntity.NBT_FOAMED,
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_FOAMED), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_FOAMED),
                         net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
-                .copy(GTFluidPipeBlockEntity.NBT_FOAMDRIED, "BlockEntityTag." + GTFluidPipeBlockEntity.NBT_FOAMDRIED,
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_FOAMDRIED), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_FOAMDRIED),
                         net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
-                .copy(GTFluidPipeBlockEntity.NBT_OWNABLE, "BlockEntityTag." + GTFluidPipeBlockEntity.NBT_OWNABLE,
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_OWNABLE), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_OWNABLE),
                         net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
-                .copy(TileEntityBase03TicksAndSync.NBT_COLOR, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_COLOR,
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_COLOR), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_COLOR),
                         net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
-                .copy(TileEntityBase03TicksAndSync.NBT_PAINTED, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_PAINTED,
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_PAINTED), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_PAINTED),
                         net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE);
          *///?} else {
         return CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                .copy(GTFluidPipeBlockEntity.NBT_FOAMED, "BlockEntityTag." + GTFluidPipeBlockEntity.NBT_FOAMED,
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_FOAMED), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_FOAMED),
                         CopyNbtFunction.MergeStrategy.REPLACE)
-                .copy(GTFluidPipeBlockEntity.NBT_FOAMDRIED, "BlockEntityTag." + GTFluidPipeBlockEntity.NBT_FOAMDRIED,
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_FOAMDRIED), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_FOAMDRIED),
                         CopyNbtFunction.MergeStrategy.REPLACE)
-                .copy(GTFluidPipeBlockEntity.NBT_OWNABLE, "BlockEntityTag." + GTFluidPipeBlockEntity.NBT_OWNABLE,
+                .copy(quoted(GTFluidPipeBlockEntity.NBT_OWNABLE), "BlockEntityTag." + quoted(GTFluidPipeBlockEntity.NBT_OWNABLE),
                         CopyNbtFunction.MergeStrategy.REPLACE)
-                .copy(TileEntityBase03TicksAndSync.NBT_COLOR, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_COLOR,
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_COLOR), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_COLOR),
                         CopyNbtFunction.MergeStrategy.REPLACE)
-                .copy(TileEntityBase03TicksAndSync.NBT_PAINTED, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_PAINTED,
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_PAINTED), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_PAINTED),
                         CopyNbtFunction.MergeStrategy.REPLACE);
         //?}
+    }
+
+    /** The single-quote NBT-path segment for a flat dotted key (the quoted-node form). */
+    private static String quoted(String aKey) {
+        return "'" + aKey + "'";
     }
 }

@@ -17,28 +17,28 @@
               "ops": [
                 {
                   "op": "replace",
-                  "source": "gt.foamed",
-                  "target": "BlockEntityTag.gt.foamed"
+                  "source": "'gt.foamed'",
+                  "target": "BlockEntityTag.'gt.foamed'"
                 },
                 {
                   "op": "replace",
-                  "source": "gt.foamdried",
-                  "target": "BlockEntityTag.gt.foamdried"
+                  "source": "'gt.foamdried'",
+                  "target": "BlockEntityTag.'gt.foamdried'"
                 },
                 {
                   "op": "replace",
-                  "source": "gt.ownable",
-                  "target": "BlockEntityTag.gt.ownable"
+                  "source": "'gt.ownable'",
+                  "target": "BlockEntityTag.'gt.ownable'"
                 },
                 {
                   "op": "replace",
-                  "source": "gt.color",
-                  "target": "BlockEntityTag.gt.color"
+                  "source": "'gt.color'",
+                  "target": "BlockEntityTag.'gt.color'"
                 },
                 {
                   "op": "replace",
-                  "source": "gt.painted",
-                  "target": "BlockEntityTag.gt.painted"
+                  "source": "'gt.painted'",
+                  "target": "BlockEntityTag.'gt.painted'"
                 }
               ],
               "source": "block_entity"
