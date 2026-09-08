@@ -107,10 +107,13 @@ public final class GT6BlockStates extends BlockStateProvider {
         addDryer(); // task p14-dryer-family
         addDistillery(); // task p16-distillery-family
         addCanner(); // task p24-canner-machine
+        addPress(); // task p26-w1-press-extruder-molds
+        addExtruder(); // task p26-w1-press-extruder-molds
         addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 25 machine blocks x
-        // 3 models, matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 75; the ACT
+        // task p21-paintable-tint-render: the datagen-JVM census half — 33 machine blocks x
+        // 3 models (the press/extruder rows joined at task p26-w1-press-extruder-molds),
+        // matching the paintableBlockArray() client registration census
+        // (the offline JUnit half walks the generated tree and pins the same 99; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
@@ -169,6 +172,29 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addCanner() {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CANNER_ROWS) {
             addMachine(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p26-w1-press-extruder-molds — the four Press rows (Loader_MultiTileEntities.java
+     * :1425-1428, all four NBT_TEXTURE "press"): the addCanner shape verbatim — model names
+     * per path, the FRONT TEXTURES stay on the family "press" set (the borrowed upstream
+     * basicmachines/press fronts, the p22 split-front borrow).
+     */
+    private void addPress() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.PRESS_ROWS) {
+            addMachine(GTMachines.PRESS_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p26-w1-press-extruder-molds — the four Extruder rows (Loader_MultiTileEntities
+     * .java:1406-1409, all four NBT_TEXTURE "extruder"): the addPress shape verbatim (the
+     * borrowed upstream basicmachines/extruder fronts).
+     */
+    private void addExtruder() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.EXTRUDER_ROWS) {
+            addMachine(GTMachines.EXTRUDER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

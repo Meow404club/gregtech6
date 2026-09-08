@@ -7764,3 +7764,11 @@ direct	item.gt6.food_can_rotten_tall	高食物罐头 (腐肉)	hand
 direct	item.gt6.food_can_rotten_tiny	迷你食物罐头 (腐肉)	hand
 direct	item.gt6.food_can_rotten_wide	宽食物罐头 (腐肉)	hand
 direct	itemGroup.gt6.food_cans	格雷科技: 罐头	hand
+direct	item.gt6.shape_extruder_plate	模具 (板)	hand
+direct	item.gt6.shape_extruder_rod	模具 (杆)	hand
+direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
+direct	gt6.row.machine.extruder.display	压模器 (%s)	hand
+direct	gt6.row.machine.extruder.low_heat.display	压模器 (%s)	hand
+direct	gt6.row.machine.press	压力成型机	hand
+direct	gt6.row.machine.extruder	压模器	hand
+direct	gt6.row.machine.extruder_low_heat	压模器	hand

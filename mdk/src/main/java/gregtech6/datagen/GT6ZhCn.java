@@ -331,6 +331,21 @@ public class GT6ZhCn extends LanguageProvider {
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.CANNER_ROWS) {
 			addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
 		}
+		// press + extruder (task p26-w1-press-extruder-molds): the family templates + the
+		// :101-104 unit words (the T1 Low Heat face rides the same 压模器 word, the dump
+		// :11543 row — the upstream zh column does not distinguish T1)
+		addDirect(gregtech6.registry.GTMachines.PRESS_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.EXTRUDER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.EXTRUDER_LOW_HEAT_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_PRESS_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_EXTRUDER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_EXTRUDER_LOW_HEAT_UNIT_KEY);
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tRows
+				: java.util.List.of(gregtech6.registry.GTMachines.PRESS_ROWS, gregtech6.registry.GTMachines.EXTRUDER_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tRows) {
+				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
+			}
+		}
 		// large boiler + dense wall: the templates + the row-material units
 		addDirect(gregtech6.registry.GTMultiBlocks.LARGE_BOILER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMultiBlocks.DENSE_WALL_DISPLAY_KEY);
@@ -465,6 +480,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.food_can_rotten_huge"); // dump :16
 		addDirect("item.gt6.food_can_cookies_huge"); // task p25-food-can-row0 — 超大食物罐头 (饼干) (dump cans.86 untranslated; 饼干 = the vanilla cookie face)
 		addDirect("item.gt6.bending_cylinder_small"); // task p25-food-can-row0 — dump gt.metatool.01.56 小型弯曲绕筒 (Loader_Tools.java:146 "Small Bending Cylinder")
+		addDirect("item.gt6.shape_extruder_plate"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10001 模具 (板) (:10129)
+		addDirect("item.gt6.shape_extruder_rod"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10027 模具 (杆) (:10185)
 		addDirect("item.gt6.cover_redstone_emitter");
 		addDirect("item.gt6.cover_redstone_conductor_in");
 		addDirect("item.gt6.cover_redstone_conductor_out");

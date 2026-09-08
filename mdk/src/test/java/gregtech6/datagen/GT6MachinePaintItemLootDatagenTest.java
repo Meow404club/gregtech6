@@ -47,10 +47,11 @@ import net.minecraft.server.Bootstrap;
 class GT6MachinePaintItemLootDatagenTest {
 
     /**
-     * The 26 paint-carry bases, in the census order: the p22 painted-item domain
+     * The 34 paint-carry bases, in the census order: the p22 painted-item domain
      * ({@code paintableBlockArray}: oven, shredder/crusher/lathe, dryer, distillery) plus
-     * the p24 canner rows and the ACT controller — every consumer of the shared
-     * {@code paintSelfTable} builder, so the pinned shape covers the full regen surface.
+     * the p24 canner rows and the ACT controller plus the p26 press/extruder rows — every
+     * consumer of the shared {@code paintSelfTable} builder, so the pinned shape covers the
+     * full regen surface.
      */
     private static final List<String> PAINT_BASES = List.of(
             "oven",
@@ -60,6 +61,8 @@ class GT6MachinePaintItemLootDatagenTest {
             "dryer", "dryer_t2", "dryer_t3", "dryer_t4",
             "distillery", "distillery_t2", "distillery_t3", "distillery_t4",
             "canner", "canner_t2", "canner_t3", "canner_t4",
+            "press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds
+            "extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds
             "advanced_crafting_table");
 
     /** The paint keys the 03 base writes while painted (CS.java:1161-1162, verbatim upstream). */
@@ -85,10 +88,10 @@ class GT6MachinePaintItemLootDatagenTest {
         }
     }
 
-    /** The census shape: all 26 paintSelfTable tables carry the (quoted) paint carry function. */
+    /** The census shape: all 34 paintSelfTable tables carry the (quoted) paint carry function. */
     @Test
     void pinnedMachinePaintLootCensus() throws Exception {
-        assertEquals(26, PAINT_BASES.size(), "the paintSelfTable census (21 p22 rows + canner 4 + ACT 1)");
+        assertEquals(34, PAINT_BASES.size(), "the paintSelfTable census (21 p22 rows + canner 4 + ACT 1 + press/extruder 8)");
         for (String tBase : PAINT_BASES) assertPaintSelfTable(tBase);
     }
 

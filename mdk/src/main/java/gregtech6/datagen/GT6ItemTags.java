@@ -101,6 +101,16 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> PLATE_CURVED_TIN = gt6("plate_curved_tin");
 
 	/**
+	 * The extruder-mold family tag — #gt6:extruder_shapes (task p26-w1-press-extruder-molds).
+	 * The upstream census has no oredict key for the Shape_Extruder_* items (they match
+	 * recipes by exact item), so the tag is the port's family face — the bidirectional
+	 * paradigm: this provider fills the MEMBERSHIP (both row0 molds) and the runtime
+	 * not-consumable predicate READS it ({@code GT6ExtruderMolds.isMold}, the
+	 * TOOLS_BUILDER_WAND tag-face ruling).
+	 */
+	public static final TagKey<Item> EXTRUDER_SHAPES = gt6("extruder_shapes");
+
+	/**
 	 * The platform material-tag namespace (task p24-tags-provider-skeleton, the
 	 * decisions.p24-tool-system-tag-strategy namespace face): {@code forge} on 1.20.1 (the
 	 * Tags.Items constants — Tags.java:310-312/:220/:256) and {@code c} on NeoForge 21.1
@@ -141,6 +151,17 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/** The plate family — GTCEu TagPrefix.java:456 {@code defaultTagPath("plates/%s")} (rolling batch 2). */
 	public static final String PLATES_FAMILY = "plates/%s";
+
+	/**
+	 * The mold crafting base ingredient — {@code forge:plates/tungsten_carbide} (task
+	 * p26-w1-press-extruder-molds): the row0 flattening of the upstream crafting chain
+	 * Empty(:182, plateDouble WC) → Rod(:221)/Foil(:222) → Plate(:247) — the Empty/Foil
+	 * intermediates are POOLED (not row0 items), so the two row0 molds key their 'P'
+	 * ingredient on the upstream chain ROOT's material face (the GT6FoodCans
+	 * plate_curved_tin precedent: the upstream OreDict ingredient → the existing platform
+	 * material tag, single-sourced here).
+	 */
+	public static final TagKey<Item> EXTRUDER_SHAPE_BASE = materialTag(PLATES_FAMILY, "tungsten_carbide");
 
 	/**
 	 * The rod family — GTCEu TagPrefix.java:502 {@code defaultTagPath("rods/%s")} over the
@@ -222,6 +243,11 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_BENDING_CYLINDER_SMALL).add(item(GT6Tools.BENDING_CYLINDER_SMALL.getId())); // task p25-food-can-row0 — the craftingToolBendingCylinderSmall snake
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
+		// task p26-w1-press-extruder-molds — the mold-family membership face (the row0 pair,
+		// upstream meta 10001/:212; the not-consumable predicate's read side)
+		for (net.minecraftforge.registries.RegistryObject<Item> tMold : gregtech6.registry.GT6ExtruderMolds.MOLDS) {
+			tag(EXTRUDER_SHAPES).add(item(tMold.getId()));
+		}
 		tag(Tags.Items.TOOLS).add(
 				item(GT6Tools.FILE.getId()), item(GT6Tools.SAW.getId()),
 				item(GT6Tools.CROWBAR.getId()), item(GT6Tools.CUTTER.getId()), item(GT6Tools.CHISEL.getId()),
