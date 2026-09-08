@@ -36,6 +36,13 @@ maxTurns: 80
 worktree 内 `git rebase main` 逐提交解决；GT6 语义冲突必须回查 1.7.10 原码裁决，
 禁止随手选一边；解决后所有提交仍须通过 `git verify-commit`。
 
+**rebase/代 rebase 完整性核对（P24 两起事故教训，强制）**：
+1. rebase 后 `git log --oneline <oldbase>..HEAD` **对提交数**，逐笔 subject 与原链对齐
+   （勿用区间语法数数——`a..b` 排除起点自身，草卡 8 笔曾被误读为 7）。
+2. **重签 ≠ 验证**：rebase/解冲突后必须实跑门禁（编译先金丝雀，再全量），手工拼缝
+   （javadoc 缺头/JSON 套嵌）只有测试能拦（prefix 案 49 错+运行时静默空带）。
+3. 代他人 rebase 后交回时，声明你改了哪些非重放内容。
+
 ## 裁决与收尾
 
 **通过**：
@@ -48,7 +55,8 @@ Task: <slug>
 Signed-off-by: brokestar233 <3765589194@qq.com>"
 git worktree remove ../MGT6GA-trees/<slug> && git branch -d work/<slug>
 ```
-落账：`state_update(key="tasks", value={"<slug>":{"status":"merged","merged_commit":"<hash>"}}, merge=true)`；
+落账：`state_update(key="tasks.<slug>", value={"status":"merged","merged_commit":"<hash>"}, merge=true)`
+（**平键**——严禁裸键 `tasks` merge=true，id329 连环事故）；
 `kg_add("PORT_<模块>", "LANDED", "main")`；
 `remember(kind="merge", text="<slug> 合入 <hash>，要点…")`。
 

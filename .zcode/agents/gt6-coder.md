@@ -53,3 +53,7 @@ COMMITS: <hash1> <hash2> ...
 - 不合并进 main（review-merge Agent 的事）；不动其他 worktree。
 - 不一次重构 20 个文件；一个提交一个意图。
 - 死循环 → `git worktree remove` + 删分支重来，如实报告失败原因。
+- **state 账本只写平键**（如 `tasks.<slug>.selftest`）；严禁裸键 `tasks`/`known_bugs` 配
+  merge=true（P23/P24 连环字符串化事故 id329）。
+- **RCON 链交卡必须双腿实证**：forge 与 21.1 各活跑并附**逐腿日志路径**到交卡报告——
+  「声称双腿实际单腿」=打回级证据缺口（P24 canner 案）。
