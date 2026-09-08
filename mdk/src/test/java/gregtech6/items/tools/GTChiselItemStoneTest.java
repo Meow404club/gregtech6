@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 import java.lang.reflect.Method;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
@@ -58,6 +60,9 @@ import gregtech6.tileentity.machines.GTMachinesOfflineTestBase;
 class GTChiselItemStoneTest extends GTRecipesOfflineTestBase {
 
 	private static final BlockPos POS = new BlockPos(1, 64, 1);
+
+	/** The incoming (production) binding of the sStoneItemResolver seam — saved per-method in @BeforeEach, restored in @AfterEach (the GT6RecipesStoneChiselTest.captureDefault pairing). */
+	private static Function<String, Item> sIncomingResolver;
 
 	/** The level double: a map-backed blockstate store, no block entities (the gate arm runs). */
 	public static final class StoneLevel extends GTMachinesOfflineTestBase.MachineLevel {
@@ -117,6 +122,7 @@ class GTChiselItemStoneTest extends GTRecipesOfflineTestBase {
 
 	@BeforeEach
 	void pourBookAndResetCounter() {
+		sIncomingResolver = GT6RecipesStoneChisel.sStoneItemResolver; // save the incoming binding BEFORE overwriting it
 		GT6RecipesStoneChisel.sStoneItemResolver = aSnake -> Items.BRICKS; // synthetic stand-in for every GT stone item
 		GT6RecipesStoneChisel.load();
 		GTChiselItem.sPayPerPointCalls = 0;
@@ -124,7 +130,7 @@ class GTChiselItemStoneTest extends GTRecipesOfflineTestBase {
 
 	@AfterEach
 	void resetGeneration() {
-		GT6RecipesStoneChisel.sStoneItemResolver = aSnake -> Items.BRICKS;
+		GT6RecipesStoneChisel.sStoneItemResolver = sIncomingResolver; // restore the production binding — the former hardcoded BRICKS stub leaked into later classes (the class-order lottery)
 		GT6RecipeMaps.reset();
 		GT6RecipesStoneChisel.resetForTest();
 	}
