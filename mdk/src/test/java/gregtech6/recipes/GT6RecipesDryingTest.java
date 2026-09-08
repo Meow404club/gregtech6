@@ -357,7 +357,14 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	private static BiFunction<OreDictPrefix, OreDictMaterial, Item> pairAssigningResolver() {
 		GTMaterialItems.initMaterials();
 		Set<PrefixMaterial> tUniverse = Set.copyOf(GTMaterialItems.registrationOrder());
-		List<Item> tPool = BuiltInRegistries.ITEM.stream().toList();
+		// VANILLA-NAMESPACE ITEMS ONLY — the wrap-around aliasing is sensitive to the pool
+		// SIZE, so a probe-registering test class (FileSawTest p24 / HammerWrenchTest p25)
+		// would silently re-alias the assignments; the minecraft-namespace filter pins the
+		// pool to the frozen vanilla item set (the ShCL stabilization comment).
+		List<Item> tPool = BuiltInRegistries.ITEM.stream()
+				.filter(t -> "minecraft".equals(BuiltInRegistries.ITEM.getKey(t).getNamespace()))
+				.filter(t -> t.getMaxStackSize() == 64) // 64-stack only: new ItemStack(item, N>max) silently clamps and breaks the parallel/count math
+				.toList();
 		int[] tNext = {0};
 		Map<OreDictPrefix, Map<OreDictMaterial, Item>> tAssigned = new HashMap<>();
 		return (aPrefix, aMaterial) -> {

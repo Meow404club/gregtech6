@@ -69,7 +69,18 @@ public abstract class TileEntityBasicMachineOfflineTestBase extends GTMachinesOf
 	static void buildSyntheticUniverse() {
 		if (sUniverseBuilt) return;
 		GTMaterialItems.initMaterials(); // the offline material universe (MT.init + OP.init)
-		List<Item> tPool = BuiltInRegistries.ITEM.stream().toList();
+		// VANILLA-NAMESPACE ITEMS ONLY (task p25-tool-hammer-wrench stabilization): the
+		// wrap-around aliasing (tNext % tPool.size()) makes every pair assignment sensitive
+		// to the POOL SIZE — a probe-registering test class (the FileSawTest reflection
+		// bracket, p24; the HammerWrenchTest pair, p25) shifts the size and silently
+		// re-aliases the whole universe (the gem chain landed on colliding identities and
+		// the tier-ladder/parallel machine math went order-dependent). Filtering to the
+		// minecraft namespace pins the pool to the frozen vanilla item set, so any number
+		// of registered test probes is inert.
+		List<Item> tPool = BuiltInRegistries.ITEM.stream()
+				.filter(t -> "minecraft".equals(BuiltInRegistries.ITEM.getKey(t).getNamespace()))
+				.filter(t -> t.getMaxStackSize() == 64) // 64-stack only: new ItemStack(item, N>max) silently clamps and breaks the parallel/count math
+				.toList();
 		int tNext = 0;
 		for (PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
 			Item tItem;
