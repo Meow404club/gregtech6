@@ -434,6 +434,8 @@ boot 是全集 wall 的第一大头（52-59s/次）。两条正典路径，`GT6_
 python3 tools/rcon/sweep.py --plan                    # 看坐标簇分组
 python3 tools/rcon/sweep.py --mode session            # 会话模型全集
 python3 tools/rcon/sweep.py --mode perboot            # 基线模型全集
+python3 tools/rcon/sweep.py --only p14loop,p13bb      # 收窄到指定链
+python3 tools/rcon/sweep.py --group p24_dye           # 收窄到指定簇（整带入选）
 python3 tools/rcon/sweep.py --diff old.json new.json  # 逐 step verdict diff
 python3 tools/rcon/sweep.py --mode session --dual ../MGT6GA-trees/<另一节点wt> \
     --other-node 1.21.1-neoforge                      # 双 worktree 双节点，wall=max
@@ -470,8 +472,45 @@ session 的 rcon 端口连接（链自己的 `preferred_ports` 是 per-boot 语�
 **全集簇（`--plan` 可视）**：p11/p12 带 → p13/p12 带 → p14 带 → p14 锅炉 →
 **p16 簇（P17 注册：pattern_checker / aqua_fluids / side_io / machine_fluid_gui /
 drying_rows / form_scaffold / chisel / distillery 八链，站点两两不相交）** →
+**p24/p25 两带（P26 注册，见下节）** →
 p15_runtime_smoke（fresh_boot 单例）。注册序 = perboot 顺序 + --plan 文档；
 session 跑法把全集摊平成一池（`run_session_recorded`）。
+
+**名册扩容：p24/p25 九链入册（P26 wave1，卡 p26-rcon-sweep-roster）**。名册自
+27 链（p11-p16）扩到 **36 链 8 簇**，既有 27 链配置逐字节零改动。九条新链按
+**bbox 坐标带准入**（沿用 p16 簇形态）分两簇：
+
+- **z=20 带（x384..414，六链）**：`p24_dye_chemical_fluids` → `p24_pipe_owner` →
+  `p25_tag_input_machine_fallback` → `p25_cfoam_spray` → `p24_canner_refill` →
+  `p24_act`（带序 = bbox min-x 升序；相邻成员 bbox 交叠，一带之内前链残留面对
+  后链的边界清场）。
+- **z=124 带（x390..426，三链）**：`p24_grass_block` → `p25_tool_hammer_wrench` →
+  `p25_food_can`。grass 与后两者 x 向分离（389..397 vs 414+）；hammer 与
+  food_can 仅在 MARGIN 边界 x=418 相触——同簇（清场带局部化），并发波下
+  `plan_waves` 的 bbox-disjoint 准入自动不许二者同波。
+
+准入规则（与 p16 簇同构）：链必须已注册 sites（bbox 清场结构性强制）；九链均无
+`fresh_boot`/`mutates` 声明，可入共享 session；各链 `preferred_ports`（26106..26110
+对）是 per-boot 语义，共享 boot 编址走 `framework.session_ports` 节点段回退；
+资源占用形态与既有带一致（单带 ≤6 链、一次 session 一 boot、默认串行，
+`--concurrency N` 波交织仍由 plan_waves 结构把关）。
+
+**单簇冒烟/增量复验入口 `--group`（P26）**：`--group <逗号键>` 按「成员 stem /
+slug / 链名子串」匹配簇，**命中簇整带入选**（准入单位是坐标带不是单链；
+`--only` 再在带内收窄）。缺席 = 全名册，行为逐字节不变。例：
+`--group p24_dye`（z=20 带六链）、`--group p25foodcan`（z=124 带三链）、
+`--group p24`（两新簇共九链）。冒烟实绩（2026-09-08，本卡）：z=124 带
+`--group p24_grass_block` forge 腿（1.20.1-forge）session 一 boot 143.4s 三链
+**exit=0 failures none**（grass/hammer/foodcan pass_failures 全 [0,0]，boot 69s）；
+runner 日志 `/tmp/gt6_rs_sweep_p26smoke_z124_forge.log`，boot 日志
+`/tmp/gt6_rs_session_1201-forge_p24grassblock+p25foodcan-72d4029d-b416fe1f.log`，
+账本 `/tmp/gt6_rs_sweep_session_c1_1201-forge_b416fe1f.json`。
+
+**偏离注记（复验时如实记账，不算失败）**：九链双腿复验（2026-09-08，P25 收官
+证书）唯一红 = **p25cfoam 21.1 腿 [3,3]**，属**已裁定的显式声明偏离**（P25 卡
+p25-c-foam-pipe-spray 审查裁定入档），后续 sweep 复验该腿仍会出现此红并照账本
+记录——判定口径以裁定为准，不作为名册/链体缺陷重开。36 链全集 sweep 留阶段
+收官门禁由主会话执行（本卡只做单簇冒烟，不跑全量）。
 
 **框架自检（无服干跑，~1s）**：`python3 tools/rcon/selftest.py`——以假 boot 面
 验证九项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
