@@ -2973,6 +2973,7 @@
     "gt6:block_solid_cheese",
     "gt6:block_solid_chocolate",
     "gt6:block_solid_butter",
-    "gt6:block_solid_salted_butter"
+    "gt6:block_solid_salted_butter",
+    "gt6:lightning_rod"
   ]
 }

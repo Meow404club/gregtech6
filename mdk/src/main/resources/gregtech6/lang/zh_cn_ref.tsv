@@ -37,8 +37,12 @@ direct	block.gt6.example_chest	GT 示例箱子	hand
 direct	block.gt6.gearbox	木制可调变速箱	hand
 direct	block.gt6.heat_transmitter	热吸收装置	hand
 direct	block.gt6.lathe	车床	hand
+direct	block.gt6.lightning_rod	避雷针	hand
+direct	block.gt6.machine_wall_tungsten	钨壁板	hand
 direct	block.gt6.multiblock_coke_oven	焦炉	hand
 direct	block.gt6.multiblock_coke_oven_bricks	焦炉砖	hand
+direct	block.gt6.multiblock_lightning_rod	避雷针	hand
+direct	block.gt6.niobium_titanium_coil	大型铌钛合金线圈	hand
 direct	block.gt6.oven	烤箱	hand
 direct	block.gt6.shredder	粉碎机	hand
 direct	block.gt6.transformer_rotation	木制变速箱	hand
@@ -648,6 +652,18 @@ direct	gt6.tagprefix.wire_gt14	14×%s线	hand
 direct	gt6.tagprefix.wire_gt15	15×%s线	hand
 direct	gt6.tagprefix.wire_gt16	16×%s线	hand
 direct	gt6.tagprefix.wood	%s	hand
+direct	gt6.tooltip.lightningrod.structure	结构：	hand
+direct	gt6.tooltip.lightningrod.1	最底层是3x3的钨壁板, 中间是避雷针电力输出口	hand
+direct	gt6.tooltip.lightningrod.2	第二层是3x3的大型铌钛合金线圈	hand
+direct	gt6.tooltip.lightningrod.3	第三层是3x3的钨壁板	hand
+direct	gt6.tooltip.lightningrod.4	第四层是3x3的大型铌钛合金线圈	hand
+direct	gt6.tooltip.lightningrod.5	第五层是3x3的钨壁板	hand
+direct	gt6.tooltip.lightningrod.6	最后在中心一格造一根避雷针柱	hand
+direct	gt6.tooltip.lightningrod.7	最高的避雷针的Y轴高度需要大于100	hand
+direct	gt6.tooltip.lightningrod.8	避雷针柱长度达到100m时达到最大效率	hand
+direct	gt6.tooltip.lightningrod.9	256m内存在别的避雷针会降低效率	hand
+direct	gt6.tooltip.lightningrod.energy	能量输出: %s EU/p（至多16安）	hand
+direct	gt6.tooltip.lightningrod.capacity	%s EU 每次雷击	hand
 direct	gt6.wire.display	%s×%s%s	hand
 direct	gt6.wire.display.plain	%s%s	hand
 direct	gt6.wire.form.cable	线缆	hand

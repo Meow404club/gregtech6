@@ -55,6 +55,12 @@ public abstract class GTMultiBlocksOfflineTestBase extends GTRecipesOfflineTestB
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
+		// task p24-lightning-rod — on the 1.21.1 leg the bootstrap freeze lands MID-SUITE
+		// (class-order lottery: whichever multiblock class first runs this @BeforeAll after
+		// the freeze dies at BlockEntityType's intrusive-holder init, "Registry is already
+		// frozen"). The GTOfflineTestBase p15-m4-test-infra remedy, verbatim: reopen the
+		// write window so the fixture BETs stay constructible regardless of scheduling.
+		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 		sCokeOvenType = selfHolder(TestCokeOven::new);
 		sPartType = selfHolder(MultiBlockPartBlockEntity::new);
 		sTestControllerType = selfHolder(TestController::new);

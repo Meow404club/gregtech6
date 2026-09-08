@@ -48,12 +48,15 @@ class GT6TagsDatagenTest {
      * shredder/crusher/lathe ladders + 4 dryers + 4 distilleries + the 4 Canner rows —
      * GTMachines.java:58/:118-151/:233-237/:347-351/:328-359, the whole-class
      * {@code GTMachines.BLOCKS} walk means every landed machine row joins the band) +
+     * the 1 conscious multiblock join (the Lightning Rod pillar block, task
+     * p24-lightning-rod — the wall/coil/controller follow the multiblock-family
+     * non-membership convention, the provider javadoc) +
      * the 6 metal/gem/raw prefixes' live pairs (3773 - 1096 blockDust = 2677). Pinned so
      * any band change is a conscious constant update — the maintenance duty the tags
-     * card declared for every future machine card (this update rides the p24-canner-machine
-     * rebase reconciliation, the four Canner rows 2970 → 2974).
+     * card declared for every future machine card (this update rides p24-lightning-rod,
+     * the four Canner rows 2970 → 2974 then the rod block 2974 → 2975).
      */
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 25 + 2677;
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 25 + 1 + 2677;
 
     /** The 13 tier-ladder machine ids of the first machines card (the dryer/distillery rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(

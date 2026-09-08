@@ -89,6 +89,14 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	 * enumeration means a future machine row cannot silently miss the band; the lambda body
 	 * compiles against both legs' entry handles ({@code RegistryObject} /
 	 * {@code DeferredHolder}) without a fork.
+	 *
+	 * <p>Task p24-lightning-rod — the conscious +1: the Lightning Rod pillar block
+	 * (upstream part id 18104, Loader :1179, "Multiblock Machines", pickaxe-mined) joins
+	 * the band. The OTHER three new blocks stay OUT, the multiblock-family convention: the
+	 * tungsten wall / coil are part-family blocks like the five Dense Walls and the coke
+	 * oven bricks (all outside the band, the p4/p13 cards' pre-existing state), and the
+	 * controller follows the boiler mains (machine mains registered in GTMultiBlocks sit
+	 * outside the GTMachines whole-class walk). A family-wide multiblock tag sweep is pool.
 	 */
 	private void addPickaxeBand() {
 		var tPickaxe = tag(BlockTags.MINEABLE_WITH_PICKAXE);
@@ -102,6 +110,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 			}
 			tPickaxe.add(((BlockItem) tEntry.getValue().get()).getBlock());
 		}
+		tPickaxe.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("lightning_rod").get()); // the p24 +1
 	}
 
 	/** The mineable/axe band — the wood fluid barrel (first batch: no plastic/metal rows, P2). */
