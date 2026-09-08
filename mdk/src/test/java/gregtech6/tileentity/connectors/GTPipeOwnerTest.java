@@ -61,11 +61,15 @@ public class GTPipeOwnerTest extends GTOfflineTestBase {
 		return tPipe;
 	}
 
-	/** The locked form: ownable + owner set in one step. */
+	/** The locked form: ownable + owner set in one step. Task p25-c-foam-pipe-spray: a
+	 * locked pipe IS a dried owned foam — the third clause {@code !mFoamDried} of upstream
+	 * 10ConnectorRendered:153-156 is the ONLY lock arming (an undried owned pipe passes
+	 * everyone), so the fixture sets the dried foam too. */
 	private static GTFluidPipeBlockEntity locked(MultiBlockLevel aLevel, BlockPos aPos, UUID aOwner) {
 		GTFluidPipeBlockEntity tPipe = place(aLevel, aPos);
 		tPipe.mOwnable = true;
 		tPipe.mOwner = aOwner;
+		tPipe.mFoamDried = true; // the p25 third clause — the dried foam arms the lock
 		return tPipe;
 	}
 
@@ -85,11 +89,16 @@ public class GTPipeOwnerTest extends GTOfflineTestBase {
 		assertTrue(tPipe.allowInteraction(FOREIGN));
 		assertTrue(tPipe.allowInteraction(OWNER));
 
-		// arm 2: ownable=true, owner set, null identity → deny (the console is nobody —
-		// the upstream :107 `aEntity != null` arm)
+		// arm 2: ownable=true, owner set, foam DRIED, null identity → deny (the console is
+		// nobody — the upstream :107 `aEntity != null` arm). Task p25-c-foam-pipe-spray:
+		// the lock arms only through the dried foam (the third clause) — an undried owned
+		// pipe passes everyone (see GTPipeFoamTest.thirdClauseFlipsOnDrying).
 		tPipe.mOwnable = true;
 		tPipe.mOwner = OWNER;
+		tPipe.mFoamDried = true;
 		assertFalse(tPipe.allowInteraction(null));
+		tPipe.mFoamDried = false;
+		assertTrue(tPipe.allowInteraction(null), "undried owned foam: the third clause bypasses the owner half (p25)");
 
 		// arm 3: ownable=true, owner=null → everyone passes (upstream :107 arm 1 — the
 		// null-owner pipe is unowned even while ownable is persisted)
@@ -97,11 +106,12 @@ public class GTPipeOwnerTest extends GTOfflineTestBase {
 		assertTrue(tPipe.allowInteraction(null));
 		assertTrue(tPipe.allowInteraction(FOREIGN));
 
-		// arm 4: ownable=true, owner match → allow
+		// arm 4: ownable=true, owner match → allow (the dried form of the locked pipe)
 		tPipe.mOwner = OWNER;
+		tPipe.mFoamDried = true;
 		assertTrue(tPipe.allowInteraction(OWNER));
 
-		// arm 5: ownable=true, foreign identity → deny
+		// arm 5: ownable=true, dried, foreign identity → deny
 		assertFalse(tPipe.allowInteraction(FOREIGN));
 
 		// the defaults of a fresh BE are the unlocked plain pipe
@@ -313,9 +323,11 @@ public class GTPipeOwnerTest extends GTOfflineTestBase {
 		assertEquals(tSuper, GTFluidPipeBlockEntity.ownerDestroyProgress(tPipe, tSuper, null), 1e-9F);
 		assertEquals(tSuper, GTFluidPipeBlockEntity.ownerDestroyProgress(tPipe, tSuper, FOREIGN), 1e-9F);
 
-		// locked: deny = 0.0F (progress never accrues — the upstream :943 `: 0` arm)
+		// locked: deny = 0.0F (progress never accrues — the upstream :943 `: 0` arm).
+		// Task p25-c-foam-pipe-spray: the lock arms through the dried foam (the third clause).
 		tPipe.mOwnable = true;
 		tPipe.mOwner = OWNER;
+		tPipe.mFoamDried = true;
 		assertEquals(0.0F, GTFluidPipeBlockEntity.ownerDestroyProgress(tPipe, tSuper, null), 1e-9F,
 				"locked × null identity → 0.0F");
 		assertEquals(0.0F, GTFluidPipeBlockEntity.ownerDestroyProgress(tPipe, tSuper, FOREIGN), 1e-9F,
