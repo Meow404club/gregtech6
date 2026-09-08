@@ -343,6 +343,18 @@ public class GT6ZhCn extends LanguageProvider {
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.CANNER_ROWS) {
 			addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
 		}
+		// item pipes (task p26-pipe-item): the six variant templates + the row-material
+		// units (brass exists; constantan/cobalt_brass join) + the category tab (dump :17993)
+		addDirect(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "medium");
+		addDirect(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "large");
+		addDirect(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "huge");
+		addDirect(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "restrictive_medium");
+		addDirect(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "restrictive_large");
+		addDirect(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "restrictive_huge");
+		for (gregtech6.registry.GTItemPipes.ItemPipeMaterial tPipeMat : gregtech6.registry.GTItemPipes.MATERIALS) {
+			addRowUnit(tEmitted, tPipeMat.unitKey());
+		}
+		addDirect("itemGroup.gt6.item_pipes");
 		// large boiler + dense wall: the templates + the row-material units
 		addDirect(gregtech6.registry.GTMultiBlocks.LARGE_BOILER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMultiBlocks.DENSE_WALL_DISPLAY_KEY);

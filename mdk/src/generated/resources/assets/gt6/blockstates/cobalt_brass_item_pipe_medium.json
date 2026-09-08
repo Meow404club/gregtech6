@@ -1,0 +1,196 @@
+{
+  "variants": {
+    "connections=0": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=1": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=10": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=11": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=12": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=13": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=14": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=15": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=16": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=17": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=18": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=19": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=2": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=20": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=21": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=22": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=23": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=24": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=25": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=26": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=27": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=28": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=29": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=3": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=30": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=31": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=32": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=33": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=34": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=35": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=36": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=37": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=38": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=39": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=4": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=40": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=41": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=42": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=43": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=44": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=45": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=46": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=47": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=48": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=49": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=5": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=50": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=51": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=52": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=53": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=54": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=55": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=56": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=57": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=58": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=59": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=6": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=60": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=61": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=62": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=63": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=7": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=8": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    },
+    "connections=9": {
+      "model": "gt6:block/cobalt_brass_item_pipe_medium"
+    }
+  }
+}

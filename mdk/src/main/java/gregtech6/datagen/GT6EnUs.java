@@ -80,6 +80,7 @@ public class GT6EnUs extends LanguageProvider {
         addMaterialNames();
         addExampleMachine();
         addFluidPipes();
+        addItemPipes(); // task p26-pipe-item — the item pipe family
         addEngineFluids();
         addAquaFluids();
         addSimpleLiquidFluids(); // task p19-drying-rows-backfill-2
@@ -671,6 +672,26 @@ public class GT6EnUs extends LanguageProvider {
         add("itemGroup.gt6.fluid_pipes", "Fluid Pipes");
         add("fluid.gt6.iron_molten", "Molten Iron");
         add("fluid.gt6.natural_gas", "Natural Gas"); // task p5-barrel-side-rules spec ⑤ — the lighter-fluid acceptance carrier
+    }
+
+    /**
+     * Item pipe keys (task p26-pipe-item): the six variant templates over the three
+     * material words (the composed display — the upstream name columns
+     * Loader_MultiTileEntities.java:1823-1843 + MultiTileEntityPipeItem.java:77-82; the
+     * dump word set tmp/gregtech.lang:11849-11866 keeps 物流管道 for the zh face) and the
+     * "Item Pipes" category tab (itemGroup.gt.multitileentity.25202).
+     */
+    private void addItemPipes() {
+        add(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "medium", "%s Item Pipe");
+        add(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "large", "Large %s Item Pipe");
+        add(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "huge", "Huge %s Item Pipe");
+        add(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "restrictive_medium", "Restrictive %s Item Pipe");
+        add(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "restrictive_large", "Restrictive Large %s Item Pipe");
+        add(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "restrictive_huge", "Restrictive Huge %s Item Pipe");
+        addRowMatUnit(gregtech6.registry.GTItemPipes.MAT_BRASS.unitKey(), "Brass");
+        addRowMatUnit(gregtech6.registry.GTItemPipes.MAT_CONSTANTAN.unitKey(), "Constantan");
+        addRowMatUnit(gregtech6.registry.GTItemPipes.MAT_COBALT_BRASS.unitKey(), "Cobalt Brass");
+        add("itemGroup.gt6.item_pipes", "Item Pipes");
     }
 
     /** One title key per creative-visible prefix tab (CreativeTab.java:32 shape, upstream mNameCategory). */
