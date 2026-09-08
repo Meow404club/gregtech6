@@ -7,6 +7,7 @@ and records a per-step verdict ledger + wall-clock timings to /tmp JSON:
   python3 tools/rcon/sweep.py --mode session            # one boot per group
   python3 tools/rcon/sweep.py --mode perboot            # the GT6_SESSION=off model
   python3 tools/rcon/sweep.py --mode session --only p14loop,p13bb
+  python3 tools/rcon/sweep.py --mode session --group p24_dye   # whole cluster(s)
   python3 tools/rcon/sweep.py --mode perboot --probe    # + keepfilter reboot probe
   python3 tools/rcon/sweep.py --diff a.json b.json      # per-step verdict diff
   python3 tools/rcon/sweep.py --dual ../MGT6GA-trees/<other> --other-node 1.21.1-neoforge
@@ -62,6 +63,20 @@ SESSION_GROUPS = (
     ("p16_pattern_checker", "p16_aqua_fluids", "p16_side_io",
      "p16_machine_fluid_gui", "p16_drying_rows", "p16_form_scaffold",
      "p16_chisel", "p16_distillery"),
+    # P26 wave1 roster expansion (card p26-rcon-sweep-roster): the nine
+    # P24/P25-card chains join in two coordinate bands, admission mirroring
+    # the p16 cluster form (bbox-registered, no fresh_boot / mutates member,
+    # per-boot port pins yield to framework.session_ports in shared boots).
+    # z=20 strip x384..414 (six chains): adjacent band members' bboxes overlap
+    # (dye|pipe|taginput|cfoam|canner|act), so one cluster's boundary cleanup
+    # covers the neighbours' leftovers — band order = ascending bbox min-x.
+    # z=124 strip x390..426 (three chains): grass | hammer | food_can; the
+    # grass band is x-disjoint from the hammer+food pair, which touch only at
+    # their MARGIN boundary (x418) — same cluster, plan_waves keeps them out
+    # of one concurrent wave while session cleanup stays band-local.
+    ("p24_dye_chemical_fluids", "p24_pipe_owner", "p25_tag_input_machine_fallback",
+     "p25_cfoam_spray", "p24_canner_refill", "p24_act"),
+    ("p24_grass_block", "p25_tool_hammer_wrench", "p25_food_can"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
@@ -77,14 +92,39 @@ def load_chain(stem):
     return module.CHAIN
 
 
-def ordered_stems():
+def ordered_stems(groups=None):
+    if groups is None:
+        groups = SESSION_GROUPS
     seen, stems = set(), []
-    for group in SESSION_GROUPS:
+    for group in groups:
         for stem in group:
             if stem not in seen:
                 seen.add(stem)
                 stems.append(stem)
     return stems
+
+
+def select_groups(groups, only_groups):
+    """Filter SESSION_GROUPS clusters by comma keys — the single-group smoke
+    / incremental re-verification entry (P26). A key matches a cluster when it
+    is a substring of any member's module stem, slug or chain name; a matched
+    cluster joins WHOLE, because the unit of admission is the coordinate band
+    (boundary cleanup + wave packing), not the single chain — narrow within a
+    band with --only. Absent flag = the full roster, byte for byte."""
+    if not only_groups:
+        return list(groups)
+    keys = [part.strip() for part in only_groups.split(",") if part.strip()]
+    picked = []
+    for group in groups:
+        hay = list(group)
+        for stem in group:
+            chain = load_chain(stem)
+            hay += [chain.slug, chain.name]
+        if any(key in part for key in keys for part in hay):
+            picked.append(group)
+    if not picked:
+        raise SystemExit(f"sweep: no group matches: {keys}")
+    return picked
 
 
 def select(stems, only):
@@ -194,10 +234,12 @@ def run_session_recorded(stems, node, concurrency):
     return result
 
 
-def show_plan():
+def show_plan(groups=None):
+    if groups is None:
+        groups = SESSION_GROUPS
     print(f"worktree {framework.WORKTREE_ROOT}")
-    print(f"{len(ordered_stems())} chains in {len(SESSION_GROUPS)} cluster(s)\n")
-    for group in SESSION_GROUPS:
+    print(f"{len(ordered_stems(groups))} chains in {len(groups)} cluster(s)\n")
+    for group in groups:
         print(f"  cluster ({len(group)}): {', '.join(group)}")
         boxes = {}
         for stem in group:
@@ -280,6 +322,8 @@ def run_dual(args):
            "--node", other_node, "--concurrency", str(args.concurrency)]
     if args.only:
         cmd += ["--only", args.only]
+    if args.group:
+        cmd += ["--group", args.group]
     other_log = gt6server.ARTIFACT_DIR / \
         f"gt6_rs_sweep_dual_{framework.node_suffix(other_node)}_{other_tag}.log"
     print(f"[sweep] dual: spawning {other_node} in {other} "
@@ -307,7 +351,11 @@ def run_dual(args):
 def run_and_record(args):
     """Run the sweep for this node and write the result JSON; return it."""
     node = args.node or framework.DEFAULT_NODE
-    stems = select(ordered_stems(), args.only)
+    # getattr, not args.group: selftest check 8 hands run_and_record a
+    # hand-built Namespace predating --group — absent key = full roster.
+    stems = select(ordered_stems(select_groups(SESSION_GROUPS,
+                                               getattr(args, "group", None))),
+                   args.only)
     started = time.monotonic()
     if args.mode == "perboot":
         result = run_perboot(stems, node)
@@ -342,6 +390,11 @@ def main(argv=None):
                         help="stonecutter node (default 1.20.1-forge)")
     parser.add_argument("--only", default=None,
                         help="comma list of module stem / slug / chain name")
+    parser.add_argument("--group", default=None,
+                        help="comma list of cluster keys (substring on any member "
+                             "stem / slug / chain name); matched SESSION_GROUPS "
+                             "clusters join whole — single-band smoke / incremental "
+                             "re-verification; --only narrows within")
     parser.add_argument("--concurrency", type=int, default=None,
                         help="session wave width (default GT6_CONCURRENCY or 1 = serial; "
                              "N>=2 interleaves site-disjoint chains on one boot)")
@@ -361,7 +414,7 @@ def main(argv=None):
     if args.diff:
         return diff_results(*args.diff)
     if args.plan:
-        show_plan()
+        show_plan(select_groups(SESSION_GROUPS, args.group))
         return 0
 
     if args.dual:
