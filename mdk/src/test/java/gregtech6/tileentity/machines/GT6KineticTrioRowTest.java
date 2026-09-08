@@ -1,5 +1,6 @@
 package gregtech6.tileentity.machines;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -73,7 +74,7 @@ public class GT6KineticTrioRowTest extends TileEntityBasicMachineOfflineTestBase
 					assertEquals(1, tRow.parallel(), "NO NBT_PARALLEL on the :1373 wiremill rows → 1");
 					assertFalse(tRow.parallelDuration(), "NO NBT_PARALLEL_DURATION on the :1373 wiremill rows → F");
 				} else {
-					assertEquals(4 * (i + 1), tRow.parallel(), "NBT_PARALLEL of " + tPath + " (:1312/:1343)");
+					assertEquals(GTMachines.PARALLEL_4_32[i], tRow.parallel(), "NBT_PARALLEL of " + tPath + " (:1312/:1343 — the {4,8,16,32} table, NOT 4*(i+1))");
 					assertTrue(tRow.parallelDuration(), "NBT_PARALLEL_DURATION T on " + tPath);
 				}
 				// the connectivity columns: top-in/bottom-out on sifter+compressor, left-in/right-out on wiremill;
@@ -127,10 +128,12 @@ public class GT6KineticTrioRowTest extends TileEntityBasicMachineOfflineTestBase
 		assertEquals(ENERGY_B, tMachine.mEnergyInputs, "the energy mask via applyRow");
 		assertEquals(TANK_DEFAULT, tMachine.mFluidInputs, "the 127 tank-in default via applyRow");
 		assertEquals(TANK_DEFAULT, tMachine.mFluidOutputs, "the 127 tank-out default via applyRow");
-		// the TIER_INPUTS half (the shared machine() helper form): T2 = {64, 128, 256}
-		assertEquals(64, tMachine.mInputMin, "TIER_INPUTS[1][0]");
-		assertEquals(128, tMachine.mInput, "TIER_INPUTS[1][1]");
-		assertEquals(256, tMachine.mInputMax, "TIER_INPUTS[1][2]");
+		// the TIER_INPUTS half: the row's tier index selects the table column — the T2 row
+		// {64, 128, 256}. The min=in/2 max=in*2 APPLICATION rides the private machine()
+		// factory (upstream :126 conversion) and is pinned by the shared-helper ladder test;
+		// the makeMachine fixture is the T1 carrier — the Canner mask-only shape.
+		assertEquals(1, tRow.tier(), "the sifter_t2 tier index");
+		assertArrayEquals(new long[] {64, 128, 256}, GTMachines.TIER_INPUTS[tRow.tier()], "TIER_INPUTS[1] — the T2 column the sifter_t2 rows select");
 		// the SIFTING slot shape (RM.java:83: items 1,12,1) — the Shredder 1+12 topology
 		assertEquals(13, tMachine.getInventory().getSlots(), "the 1+12 slot shape (the Shredder outputGridPos topology)");
 		assertEquals(1, tMachine.getInputSlotCount(), "the data-driven input count");

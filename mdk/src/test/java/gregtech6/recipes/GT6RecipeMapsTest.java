@@ -326,16 +326,18 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 	 * The p26 trio joins the generation lifecycle: reset nulls the fields, drops the
 	 * registry names, and the three loader pour flags retire WITH the generation (the
 	 * ADR-P18 hook ledger — the loaders' static initializers registered their reset hooks).
+	 * The retirement is observed BEHAVIORALLY (a post-reset load() must re-pour, the
+	 * {@code oreChainLoadRepoursAfterABareMapReset} shape) — NOT by hook-count growth,
+	 * which is order-dependent: a sibling test class in the same JVM may have class-loaded
+	 * the trio first, so the sampled baseline would already carry the three hooks.
 	 */
 	@Test
 	void resetRetiresTheKineticTrioGeneration() throws Exception {
-		int tHooksBefore = GT6RecipeMaps.generationResetHooks().size();
 		// class-load the three loaders so their static-initializer hooks join the ledger
+		// (idempotent; the structural membership pin lives in GT6RecipeGenerationGuardTest)
 		Class.forName("gregtech6.recipes.GT6RecipesSifter");
 		Class.forName("gregtech6.recipes.GT6RecipesCompressor");
 		Class.forName("gregtech6.recipes.GT6RecipesWiremill");
-		assertTrue(GT6RecipeMaps.generationResetHooks().size() >= tHooksBefore + 3,
-				"the three W1 loader pour-flags join the generation-reset ledger (the ADR-P18 poison-state guard)");
 		GT6RecipeMaps.init();
 		RecipeMap tFirstSifting = GT6RecipeMaps.SIFTING;
 		RecipeMap tFirstCompressor = GT6RecipeMaps.COMPRESSOR;
@@ -350,6 +352,18 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.sifter"));
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.compressor"));
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.wiremill"));
+		// the poison-state discriminator: a stuck (non-retired) flag makes load() early-return
+		// BEFORE init() — the maps would stay null. The sifter additionally re-pours the
+		// :224 grass row0 over the vanilla resolver (the GT6KineticRecipesPourTest pour).
+		GT6RecipesSifter.load();
+		assertNotNull(GT6RecipeMaps.SIFTING,
+				"the sifter pour-flag retired WITH the generation — load() re-inits after a bare reset (ADR-P18)");
+		assertTrue(GT6RecipeMaps.SIFTING.mRecipeList.size() >= 1,
+				"the :224 grass row0 re-pours after the bare reset");
+		GT6RecipesCompressor.load();
+		assertNotNull(GT6RecipeMaps.COMPRESSOR, "the compressor pour-flag retired WITH the generation (ADR-P18)");
+		GT6RecipesWiremill.load();
+		assertNotNull(GT6RecipeMaps.WIREMILL, "the wiremill pour-flag retired WITH the generation (ADR-P18)");
 		GT6RecipeMaps.init();
 		assertNotSame(tFirstSifting, GT6RecipeMaps.SIFTING, "re-init after reset creates a fresh generation");
 		assertNotSame(tFirstCompressor, GT6RecipeMaps.COMPRESSOR);
