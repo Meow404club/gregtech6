@@ -77,6 +77,11 @@ SESSION_GROUPS = (
     ("p24_dye_chemical_fluids", "p24_pipe_owner", "p25_tag_input_machine_fallback",
      "p25_cfoam_spray", "p24_canner_refill", "p24_act"),
     ("p24_grass_block", "p25_tool_hammer_wrench", "p25_food_can"),
+    # P26 W1 card B (p26-w1-press-extruder-molds): the press + extruder ladders —
+    # one coordinate band (z=20 strip x429..437, the fresh 430 band clear of the
+    # canner 400 strip), both chains bbox-adjacent so one cluster's boundary
+    # cleanup covers the other's leftovers (the p24 z=20 cluster form).
+    ("p26_w1_press", "p26_w1_extruder"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
