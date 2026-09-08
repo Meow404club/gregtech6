@@ -27,6 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 //?}
 
+import gregtech6.gui.machines.GT6MuiMachine;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
@@ -46,7 +47,9 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * block may carry a {@link MachineRow} — the block-carrier projection of one upstream
  * aRegistry.add line (the GT6Boilers BoilerRow shape): the tier ladder is then data on the
  * placed BlockState's block (the factory reads {@link #row()}), not a tierOf dispatch. The
- * legacy three families stay row-less (the 2-arg constructor) with byte-identical behaviour.
+ * legacy three families stay row-less (the 2-arg constructor); since task
+ * p26-mui-a-open-chain their use() dispatches the ModularUI chain
+ * ({@link GT6MuiMachine#tryOpen}) while the row families keep the vanilla menu path.
  */
 public class GTBasicMachineBlock extends GTEntityBlock {
 
@@ -230,21 +233,31 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 			return InteractionResult.SUCCESS;
 		}
 		BlockEntity tBlockEntity = aLevel.getBlockEntity(aPos);
-		if (tBlockEntity instanceof TileEntityBasicMachine tMachine && aPlayer instanceof ServerPlayer tServerPlayer && menuBound()) {
-			//? if forge {
-			NetworkHooks.openScreen(tServerPlayer, tMachine, aPos); // upstream openGUI
-			//?} else {
-			/*tServerPlayer.openMenu(tMachine, tBuf -> tBuf.writeBlockPos(aPos)); // 21.1: NetworkHooks deleted — ServerPlayer.openMenu(MenuProvider, buf) carries the pos payload (the command-file precedent)
-			*///?}
+		if (tBlockEntity instanceof TileEntityBasicMachine tMachine && aPlayer instanceof ServerPlayer tServerPlayer) {
+			if (mRow == null) {
+				// the row-less families (Shredder/Crusher/Lathe — the :49 note, all four tiers
+				// of each) open the ModularUI chain since task p26-mui-a-open-chain: the ACT
+				// :91 shape, the BlockEntityUIFactory's own network, no vanilla MenuType
+				GT6MuiMachine.tryOpen(tServerPlayer, tMachine);
+				return InteractionResult.CONSUME;
+			}
+			if (menuBound()) {
+				//? if forge {
+				NetworkHooks.openScreen(tServerPlayer, tMachine, aPos); // upstream openGUI
+				//?} else {
+				/*tServerPlayer.openMenu(tMachine, tBuf -> tBuf.writeBlockPos(aPos)); // 21.1: NetworkHooks deleted — ServerPlayer.openMenu(MenuProvider, buf) carries the pos payload (the command-file precedent)
+				*///?}
+			}
 		}
 		return InteractionResult.CONSUME;
 	}
 
 	/**
-	 * The open-GUI gate: the legacy row-less families keep the always-open behaviour; a
-	 * row carrier with no MenuType supplier (the dryer until the GUI pool card registers
-	 * its {@code gt6:dryer} menu) stays INERT — createMenu would throw the documented
-	 * "no MenuType bound" IllegalStateException on every right-click.
+	 * The open-GUI gate of the ROW path (the row-less families left it at task
+	 * p26-mui-a-open-chain — they dispatch {@link GT6MuiMachine#tryOpen} before this is
+	 * consulted): a row carrier with no MenuType supplier (the dryer until the GUI pool
+	 * card registers its {@code gt6:dryer} menu) stays INERT — createMenu would throw the
+	 * documented "no MenuType bound" IllegalStateException on every right-click.
 	 */
 	private boolean menuBound() {
 		return mRow == null || mRow.menu() != null;
