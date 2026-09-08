@@ -1,7 +1,5 @@
 {
   "values": [
-{
-  "values": [
     "gt6:grass",
     "gt6:grass_lime",
     "gt6:grass_black",
@@ -1105,5 +1103,4 @@
     "gt6:block_dust_oil_shale",
     "gt6:block_dust_construction_foam"
   ]
-}  ]
 }
