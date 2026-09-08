@@ -4,6 +4,11 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import brachy.modularui.factory.PosGuiData;
+import brachy.modularui.screen.ModularPanel;
+import brachy.modularui.screen.UISettings;
+import brachy.modularui.value.sync.PanelSyncManager;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -38,7 +43,9 @@ import gregapi.data.TD;
 import gregapi.util.UT;
 import gregtech6.block.GTBasicMachineBlock;
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.gui.machines.GTBasicMachineMUI;
 import gregtech6.gui.machines.GTBasicMachineMenu;
+import gregtech6.gui.machines.GT6MuiMachine;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.GTItemStackHandler;
@@ -154,8 +161,14 @@ import gregtech6.util.GTSideTables;
  * two-bit payload), applied in {@link #onTickChecked(long)} through the vanilla furnace
  * idiom (setBlock(state, 3) — same-block state changes keep the BE). Facing is
  * double-written NBT + BlockState (P4 spec 7): NBT is the persistent authority.
+ *
+ * <p>GUI: the row-less families (Shredder/Crusher/Lathe) open the ModularUI chain since
+ * task p26-mui-a-open-chain — the BE implements {@link GT6MuiMachine} and
+ * {@link #buildUI} delegates to the {@link GTBasicMachineMUI} panel factory over the
+ * {@link GTBasicMachineMenu#hostOf} projection; the row families (dryer/canner/
+ * distillery) keep the vanilla MenuProvider path ({@link #createMenu}) byte-identical.
  */
-public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync implements MenuProvider {
+public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync implements MenuProvider, GT6MuiMachine {
 
 	// checkRecipe result codes (upstream :672-675 verbatim).
 	public static final int DID_NOT_FIND_RECIPE = 0;
@@ -292,7 +305,14 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	protected byte mFacing = 2;
 	protected boolean oActive = false, oRunning = false; // :92
 
-	/** Port-owned: which MenuType opens this machine's GUI (one per registered machine). */
+	/**
+	 * Port-owned: which MenuType opens this machine's GUI (one per registered machine).
+	 * Null semantics (task p26-mui-a-open-chain): an offline test fixture, OR a
+	 * ModularUI-family machine — the row-less families open through
+	 * {@link GT6MuiMachine#tryOpen} (the BlockEntityUIFactory chain), so their vanilla
+	 * menu is unreachable and {@link #createMenu} keeps its documented throw; the row
+	 * families (dryer/canner/distillery) keep their live supplier path unchanged.
+	 */
 	private final Supplier<MenuType<GTBasicMachineMenu>> mMenuType;
 
 	// capability handle (P6 gated-item-handler precedent)
@@ -305,7 +325,9 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	/**
 	 * Full constructor — the BET factory entry (Builder.of(...).build(null) works without a
 	 * registry, the oven test-fixture precedent). {@code aMenuType} may be null for offline
-	 * fixtures (createMenu then throws — menus are a live-server surface).
+	 * fixtures (createMenu then throws — menus are a live-server surface) and for
+	 * ModularUI-family machines (the open chain rides {@link GT6MuiMachine#tryOpen},
+	 * createMenu unreachable — the field doc's null semantics).
 	 */
 	public TileEntityBasicMachine(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState,
 			RecipeMap aRecipes, int aParallel, boolean aParallelDuration, @Nullable Supplier<MenuType<GTBasicMachineMenu>> aMenuType) {
@@ -1477,8 +1499,21 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	}
 
 	// ---------------------------------------------------------------------------
-	// GUI (upstream getGUIClient2/getGUIServer2 :1007-1008 → MenuProvider)
+	// GUI (upstream getGUIClient2/getGUIServer2 :1007-1008 → MenuProvider; the
+	// ModularUI chain since task p26-mui-a-open-chain)
 	// ---------------------------------------------------------------------------
+
+	/**
+	 * Server+CLIENT panel build — the GTBasicMachineMUI delegation (the ACT buildUI shape,
+	 * TileEntityAdvancedCraftingTable :836-840): the gui-domain {@link GTBasicMachineMenu#hostOf}
+	 * adapter projects this BE onto the panel factory, which runs on both sides (the sync
+	 * handlers register there). The client screen is the inherited {@link GT6MuiMachine}
+	 * default — no override needed.
+	 */
+	@Override
+	public ModularPanel<?> buildUI(PosGuiData aData, PanelSyncManager aSyncManager, UISettings aSettings) {
+		return GTBasicMachineMUI.buildPanel(GTBasicMachineMenu.hostOf(this), aSyncManager);
+	}
 
 	@Override
 	public AbstractContainerMenu createMenu(int aContainerId, Inventory aPlayerInventory, Player aPlayer) {
