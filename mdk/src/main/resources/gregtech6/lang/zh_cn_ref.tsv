@@ -7754,3 +7754,13 @@ direct	block.gt6.grass_light_gray	草方块	hand
 direct	block.gt6.grass_yellow	草方块	hand
 direct	gt.grass.tooltip	不会传播、被吃、改变颜色, 也不需要光照	hand
 direct	gt.grass.tooltip.spray	喷漆罐也可以用来给草染色！	hand
+direct	item.gt6.bending_cylinder_small	小型弯曲绕筒	hand
+direct	item.gt6.food_can_cookies_huge	超大食物罐头 (饼干)	hand
+direct	item.gt6.food_can_empty	空食物罐头	hand
+direct	item.gt6.food_can_rotten_huge	超大食物罐头 (腐肉)	hand
+direct	item.gt6.food_can_rotten_large	大食物罐头 (腐肉)	hand
+direct	item.gt6.food_can_rotten_small	小食物罐头 (腐肉)	hand
+direct	item.gt6.food_can_rotten_tall	高食物罐头 (腐肉)	hand
+direct	item.gt6.food_can_rotten_tiny	迷你食物罐头 (腐肉)	hand
+direct	item.gt6.food_can_rotten_wide	宽食物罐头 (腐肉)	hand
+direct	itemGroup.gt6.food_cans	格雷科技: 罐头	hand
