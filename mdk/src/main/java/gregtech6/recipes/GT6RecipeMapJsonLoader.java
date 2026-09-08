@@ -89,8 +89,9 @@ import com.mojang.logging.LogUtils;
  * {@code findRecipe} answers with the first scan hit (an undefined-order face, the
  * documented v1 limitation — row deletion needs the tier-c script tier).
  *
- * <p><b>MAP KEYS</b> = the 12 pourable maps ({@link #POURABLE}, the census minus the
- * furnace pair; MIXER joined at the p26-c-foam-fluid-refill review ruling). A file named
+ * <p><b>MAP KEYS</b> = the 13 pourable maps ({@link #POURABLE}, the census minus the
+ * furnace pair; MIXER joined at the p26-c-foam-fluid-refill review ruling, BATH joins
+ * with its own map declaration — task p26-kitchen-pot-bowl). A file named
  * {@code furnace.json} or {@code furnace_fuel.json} is REJECTED with an ERROR log and
  * the whole file is skipped: {@code FURNACE} proxies the vanilla RecipeManager and
  * {@code FURNACE_FUEL} synthesizes rows on demand — neither ever reads its row stock,
@@ -159,14 +160,15 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 	public static final String DATA_NAMESPACE = "gt6";
 
 	/**
-	 * The 12 pourable map keys (the registered {@link GT6RecipeMaps} census minus
+	 * The 13 pourable map keys (the registered {@link GT6RecipeMaps} census minus
 	 * FURNACE/FURNACE_FUEL — 11 at the tier-b landing, the 12th is the MIXER append of
-	 * task p26-c-foam-fluid-refill, whose review ruling joins it here so the whitelist
-	 * stays "census minus the furnace pair").
+	 * task p26-c-foam-fluid-refill (whose review ruling joins it here) and the 13th the
+	 * BATH append of task p26-kitchen-pot-bowl, so the whitelist stays "census minus the
+	 * furnace pair").
 	 */
 	private static final Set<String> POURABLE = Set.of(
 			"coke_oven", "shredder", "crusher", "lathe", "chisel", "engine_fuels",
-			"fluidbed", "burn", "distillery", "drying", "canner", "mixer");
+			"fluidbed", "burn", "distillery", "drying", "canner", "mixer", "bath");
 
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
@@ -498,6 +500,7 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "drying" -> GT6RecipeMaps.DRYING;
 			case "canner" -> GT6RecipeMaps.CANNER;
 			case "mixer" -> GT6RecipeMaps.MIXER;
+			case "bath" -> GT6RecipeMaps.BATH;
 			default -> null;
 		};
 	}
