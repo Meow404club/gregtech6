@@ -80,7 +80,7 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 		// to the frozen vanilla item set, so any number of registered test probes is inert.
 		List<Item> tPool = BuiltInRegistries.ITEM.stream()
 				.filter(t -> "minecraft".equals(BuiltInRegistries.ITEM.getKey(t).getNamespace()))
-				.filter(t -> t.getMaxStackSize() == 64) // 64-stack only: new ItemStack(item, N>max) silently clamps and breaks the parallel/count math
+				.filter(t -> new ItemStack(t, 1).getMaxStackSize() == 64) // 64-stack only: new ItemStack(item, N>max) silently clamps and breaks the parallel/count math (the ItemStack no-arg form is leg-agnostic; Item.getMaxStackSize takes a stack on 21.1)
 				.toList();
 		int tNext = 0;
 		for (PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {

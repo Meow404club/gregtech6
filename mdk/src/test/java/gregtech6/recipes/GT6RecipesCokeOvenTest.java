@@ -72,7 +72,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		// pool to the frozen vanilla item set (the ShCL stabilization comment).
 		java.util.List<Item> tPool = net.minecraft.core.registries.BuiltInRegistries.ITEM.stream()
 				.filter(t -> "minecraft".equals(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(t).getNamespace()))
-				.filter(t -> t.getMaxStackSize() == 64) // 64-stack only: new ItemStack(item, N>max) silently clamps and breaks the parallel/count math
+				.filter(t -> new ItemStack(t, 1).getMaxStackSize() == 64) // 64-stack only: new ItemStack(item, N>max) silently clamps and breaks the parallel/count math (the ItemStack no-arg form is leg-agnostic; Item.getMaxStackSize takes a stack on 21.1)
 				.toList();
 		int tNext = 0;
 		for (PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
