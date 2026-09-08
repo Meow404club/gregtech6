@@ -53,6 +53,18 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	private static final net.minecraft.world.item.Item[] SYNTHETIC_ROTTEN = {
 			Items.REDSTONE, Items.GUNPOWDER, Items.BONE_MEAL, Items.CLAY_BALL, Items.FLINT, Items.SLIME_BALL};
 
+	/** The offline C-Foam universes (p26): distinct existing items per dye index for the dyed and the owned spray ladders. */
+	private static final net.minecraft.world.item.Item[] SYNTHETIC_FOAM = {
+			Items.REDSTONE, Items.GLOWSTONE_DUST, Items.GUNPOWDER, Items.BONE_MEAL,
+			Items.CLAY_BALL, Items.FLINT, Items.WHEAT_SEEDS, Items.SUGAR,
+			Items.COCOA_BEANS, Items.LILY_PAD, Items.SPIDER_EYE, Items.SLIME_BALL,
+			Items.EGG, Items.PAPER, Items.STICK, Items.BRICK};
+	private static final net.minecraft.world.item.Item[] SYNTHETIC_FOAM_OWNED = {
+			Items.GLOWSTONE_DUST, Items.REDSTONE, Items.BONE_MEAL, Items.GUNPOWDER,
+			Items.FLINT, Items.CLAY_BALL, Items.SUGAR, Items.WHEAT_SEEDS,
+			Items.LILY_PAD, Items.COCOA_BEANS, Items.SLIME_BALL, Items.SPIDER_EYE,
+			Items.PAPER, Items.EGG, Items.BRICK, Items.STICK};
+
 	/** The recording dye resolver — captures the indices the pour walks (the four-way pin's row leg). */
 	private static final List<Integer> sResolvedIndices = new ArrayList<>();
 
@@ -73,6 +85,12 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sFoodCanEmptyResolver = () -> new ItemStack(Items.PAPER, 1);
 		GT6RecipesCanner.sRottenCansResolver = aTier -> new ItemStack(SYNTHETIC_ROTTEN[aTier], 1);
 		GT6RecipesCanner.sCookiesCanResolver = () -> new ItemStack(Items.BRICK, 1);
+		// p26: DISTINCT fixture fluids — the foam rows must never collide with the dye rows
+		// (WATER) or the chlorine remover (LAVA) in findRecipe lookups
+		GT6RecipesCanner.sCfoamFluidResolver = aIndex -> Fluids.FLOWING_LAVA;
+		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> Fluids.FLOWING_WATER;
+		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(SYNTHETIC_FOAM[aIndex], 1);
+		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new ItemStack(SYNTHETIC_FOAM_OWNED[aIndex], 1);
 		GT6RecipesCanner.resetForTest();
 	}
 
@@ -88,6 +106,10 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sFoodCanEmptyResolver = () -> new ItemStack(GT6FoodCans.FOOD_CAN_EMPTY.get());
 		GT6RecipesCanner.sRottenCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_ROTTEN.get(aTier).get());
 		GT6RecipesCanner.sCookiesCanResolver = () -> new ItemStack(GT6FoodCans.FOOD_CAN_COOKIES_HUGE.get());
+		GT6RecipesCanner.sCfoamFluidResolver = aIndex -> gregtech6.fluid.GTFluids.cfoam(aIndex, false).source.get();
+		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> gregtech6.fluid.GTFluids.cfoam(aIndex, true).source.get();
+		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(gregtech6.registry.GT6FoamSprays.FOAM_SPRAYS.get(aIndex).get());
+		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new ItemStack(gregtech6.registry.GT6FoamSprays.FOAM_SPRAYS_OWNED.get(aIndex).get());
 		GT6RecipeMaps.reset();
 	}
 
@@ -96,9 +118,10 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	// ---------------------------------------------------------------------------
 
 	@Test
-	void pourLandTwentyRows() {
+	void pourLandFiftyTwoRows() {
 		GT6RecipesCanner.load();
-		assertEquals(20, GT6RecipeMaps.CANNER.mRecipeList.size(), "16 colour refills + the chlorine remover + the 3 food-can rows (p25-food-can-row0)");
+		assertEquals(52, GT6RecipeMaps.CANNER.mRecipeList.size(),
+				"16 colour refills + the chlorine remover + the 3 food-can rows (p25-food-can-row0) + the 32 C-Foam refills (p26, :254/:262)");
 		assertEquals(16, sResolvedIndices.size(), "the dye resolver saw exactly the 16 walk indices (the chlorine row rides its own seam)");
 		assertEquals(16, sResolvedIndices.stream().distinct().count(), "each dye index resolved exactly once");
 	}
@@ -107,7 +130,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	void pourIsIdempotentPerGeneration() {
 		GT6RecipesCanner.load();
 		GT6RecipesCanner.load();
-		assertEquals(20, GT6RecipeMaps.CANNER.mRecipeList.size(), "the second load() is a no-op (the generation flag)");
+		assertEquals(52, GT6RecipeMaps.CANNER.mRecipeList.size(), "the second load() is a no-op (the generation flag)");
 	}
 
 	/** The row shape verbatim (MultiItemRandomTools.java:246 — EUt 16, duration 256, 2304 mB, zero fluid output). */
@@ -144,12 +167,44 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		assertEquals(2304, tRow.mFluidInputs[0].getAmount(), "MT.Cl.fluid(16*U) = 2304 mB (the R3/R4 rulings)");
 	}
 
+	// ---------------------------------------------------------------------------
+	// the p26-c-foam-fluid-refill 32 (MultiItemRandomTools.java:254/:262)
+	// ---------------------------------------------------------------------------
+
+	/** The C-Foam refill census: 32 poured rows (16 dyed + 16 owned), 25600 mB each. */
+	@Test
+	void foamRefillRowsPourAllThirtyTwo() {
+		GT6RecipesCanner.load();
+		long tFoamRows = GT6RecipeMaps.CANNER.mRecipeList.stream()
+				.filter(r -> r.mFluidInputs.length == 1 && r.mFluidInputs[0].getAmount() == GT6RecipesCanner.FOAM_REFILL_MB)
+				.count();
+		assertEquals(32, tFoamRows, "the :254 dyed ladder + the :262 owned ladder = 32 rows");
+		// the fluid legs carry the 25600 mB = 256 × the 100-unit bucket (FL.java:432)
+		assertEquals(25600, GT6RecipesCanner.FOAM_REFILL_MB, "256 x CFOAM_BUCKET_UNITS(100) — the FL.mul(DYED_C_FOAMS[i], 256) translation");
+	}
+
+	/** The row shape verbatim (:254 — EUt 16, duration 256, 25600 mB, one can in/out, no fluid output). */
+	@Test
+	void foamRefillRowShapeIsTheUpstreamLine() {
+		GT6RecipesCanner.load();
+		Recipe tRow = GT6RecipeMaps.CANNER.findRecipe(null, Long.MAX_VALUE, ItemStack.EMPTY,
+				new FluidStack[] {new FluidStack(Fluids.FLOWING_LAVA, 25600)}, new ItemStack(Items.PAPER, 1));
+		assertNotNull(tRow, "the foam refill row resolves for (empty can, 25600 mB cfoam fixture)");
+		assertTrue(tRow.mCanBeBuffered, "addRecipe1(T, ...) — buffered");
+		assertEquals(16, tRow.mEUt, "EUt 16 (:254)");
+		assertEquals(256, tRow.mDuration, "duration 256 (:254)");
+		assertEquals(25600, tRow.mFluidInputs[0].getAmount(), "256 x 100 = 25600 mB (the FL.java:432 bucket root)");
+		assertEquals(1, tRow.mInputs[0].getCount(), "one empty can (the count-1 normalization, the P24 refill shape)");
+		assertEquals(1, tRow.mOutputs[0].getCount(), "one full can");
+		assertEquals(0, tRow.mFluidOutputs.length, "NF — no fluid output");
+	}
+
 	/** A row with an unregistered leg skips silently (the upstream FL.exists drop). */
 	@Test
 	void unresolvableLegSkipsSilently() {
 		GT6RecipesCanner.sRemoverResolver = () -> null; // the remover leg fails to resolve
 		GT6RecipesCanner.load();
-		assertEquals(19, GT6RecipeMaps.CANNER.mRecipeList.size(), "the chlorine row drops, the 16 refills + 3 food rows pour");
+		assertEquals(51, GT6RecipeMaps.CANNER.mRecipeList.size(), "the chlorine row drops, the 16 refills + 3 food rows + 32 foam rows pour");
 	}
 
 	// ---------------------------------------------------------------------------

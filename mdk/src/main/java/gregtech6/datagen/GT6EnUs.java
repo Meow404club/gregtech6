@@ -85,6 +85,7 @@ public class GT6EnUs extends LanguageProvider {
         addSimpleLiquidFluids(); // task p19-drying-rows-backfill-2
         addFoodFluids(); // task p21-drying-food-fluids
         addDyeChemicalFluids(); // task p24-dye-chemical-fluids — table-tail append
+        addCFoamFluids(); // task p26-c-foam-fluid-refill — table-tail append
         addElectricWires();
         addMachines();
         addMultiBlocks();
@@ -195,6 +196,28 @@ public class GT6EnUs extends LanguageProvider {
             add(tFamily.descriptionId(), tFamily.displayName());
         }
         add("fluid.gt6.chlorine", "Chlorine");
+    }
+
+    /**
+     * C-Foam family keys (task p26-c-foam-fluid-refill): the base + one description entry
+     * per {@link GTFluids.CFoamFluid} row — the exact descriptionIds the FluidTypes are
+     * registered with, walked from {@link GTFluids#CFOAMS}/{@link GTFluids#CFOAMS_OWNED}
+     * so the lang face cannot drift from the registered fluids. Values ride the row's
+     * displayName: the upstream Loader_Fluids.java:124/:125 compose verbatim
+     * ({@code ["Advanced "] + DYE_NAMES[i] + " C-Foam"}); the base is the FL.java:432
+     * material local name "Construction Foam" (the dump's zh face 建筑泡沫, the
+     * decisions.p26-cfoam-fluid-naming naming ruling). Unlike the dye-chemical family the
+     * dump carries all 33 zh faces (tmp/gregtech.lang:130-161/:361), so the zh side rides
+     * the reference table's hand layer (the GT6ZhCn mirror walk).
+     */
+    private void addCFoamFluids() {
+        add("fluid.gt6.cfoam", "Construction Foam");
+        for (GTFluids.CFoamFluid tFamily : GTFluids.CFOAMS) {
+            add(tFamily.descriptionId(), tFamily.displayName());
+        }
+        for (GTFluids.CFoamFluid tFamily : GTFluids.CFOAMS_OWNED) {
+            add(tFamily.descriptionId(), tFamily.displayName());
+        }
     }
 
     /**

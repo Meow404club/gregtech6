@@ -4595,6 +4595,20 @@ identity rides the runtime FluidType tint = `GTSprayCanItem.DYES_INT[i]` (CS.jav
 items (P22) and the machine paint tints (P21). Chlorine borrows NOTHING (vanilla water
 textures + the MT.java:405 material colour tint, ruling R3). Copied on 2026-09-07.
 
+C-Foam fluid carrier texture, task p26-c-foam-fluid-refill: ONE grayscale tint-carrier
+borrowed from upstream
+`src/main/resources/assets/gregtech/textures/blocks/fluids/cfoam.png`, byte-identical
+copy at `gt6/textures/block/fluids/cfoam.png`, sha256
+`05c5eacf3a77dbbc69853fdf528bb39d7ed1fc79116bd959f8d4935590429257`. Upstream is the
+single-texture shared still=flow form (Loader_Fluids.java:118, one `tDyedCFoam`
+IIconContainer for all 32 `cfoam.*` rows); the 16x512 strip is the 32-frame animation
+(upstream `.mcmeta` frametime 2, borrowed byte-identical as `cfoam.png.mcmeta`, sha256
+`20c309d9ff4175bf0f04b4c57efbd58fa1915f1c69907abd3bd91d6d01b70138`). The per-colour
+identity rides the runtime FluidType tint = `GTSprayCanItem.DYES_INT[i]` (CS.java:470)
+for the 32 family rows; the base `gt6:cfoam` row rides the carrier untinted (the
+construction-foam grey IS the base look, the decisions.p26-cfoam-fluid-naming ruling).
+Copied on 2026-09-08.
+
 GT grass block family textures, task p24-grass-block: TWELVE 16x16 RGBA PNGs borrowed
 byte-identical from upstream
 `src/main/resources/assets/gregtech/textures/blocks/iconsets/`, renamed to the

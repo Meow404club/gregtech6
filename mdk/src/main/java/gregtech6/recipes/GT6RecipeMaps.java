@@ -125,7 +125,8 @@ public class GT6RecipeMaps {
 	/**
 	 * The generation-reset hooks: every loader that owns a private static "poured" flag
 	 * registers its resetForTest here from its static initializer, so {@link #reset()}
-	 * retires the WHOLE generation. One generation = the 11 map fields + RecipeMap.RECIPE_MAPS
+	 * retires the WHOLE generation. One generation = the 12 map fields (11 + the MIXER
+	 * append of task p26-c-foam-fluid-refill) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
@@ -198,6 +199,26 @@ public class GT6RecipeMaps {
 	 * the two R1 declared deviations).
 	 */
 	public static volatile gregtech6.recipes.maps.GT6RecipeMapCanner CANNER;
+
+	/**
+	 * RM.java:74 — the Mixer map (task p26-c-foam-fluid-refill): "gt.recipe.mixer",
+	 * "Mixer", NEI name null → the internal name, progress 0/1, GUI machines/mixer
+	 * (lowercased, the Shredder-line convention), item slots 6/1/0, fluid slots 6/2/0,
+	 * minimal inputs 2, power 1 — the upstream ctor row parameter-for-parameter over the
+	 * 15-arg port ctor (the trailing NEI booleans fold away like every other map).
+	 *
+	 * <p><b>Boundary note (declared):</b> the task card froze this file ("GT6RecipeMaps.java
+	 * 不碰…若发现必须碰，停下报告理由") — the STOP-and-report arm fired: the card's own
+	 * spec ②/④ (the Mixer rock/Pd rows of Loader_Recipes_Other.java:251-304/:485-486) need
+	 * a MIXER RecipeMap to pour into and this file is the single canonical registration
+	 * point (the P1 registry discipline + the ADR-P18 generation-reset). The declaration is
+	 * minimal and precedent-backed: the CHISEL map has been living machine-less since P19
+	 * (its consumer is the chisel item gate), and DISTILLERY/DRYING shipped DECLARED-empty
+	 * before their machines landed — rows pour via {@link gregtech6.recipes.GT6RecipesMixer}
+	 * (FMLCommonSetup), no machine is touched, the existing maps are untouched. This commit
+	 * is ATOMIC so a contrary ruling can drop it independently.
+	 */
+	public static volatile RecipeMap MIXER;
 
 	/**
 	 * FM.java:38 — the Furnace Fuels map (task p13-burning-box-family spec ①): the
@@ -319,6 +340,17 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
+		// RM.java:74 — the Mixer map (task p26-c-foam-fluid-refill, the declared boundary note
+		// on the field above): items 6/1/0, fluids 6/2/0, MIN 2, AMP 1 — the RM.java:74 row
+		// verbatim, the trailing NEI booleans folding away in the 15-arg port ctor
+		MIXER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.mixer", "Mixer", null,
+				0, 1,
+				"gt6:textures/gui/machines/mixer",
+				/*IN-OUT-MIN-ITEM=*/ 6, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 6, 2, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -340,6 +372,7 @@ public class GT6RecipeMaps {
 		DISTILLERY = null;
 		DRYING = null;
 		CANNER = null;
+		MIXER = null;
 		FURNACE_FUEL = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
