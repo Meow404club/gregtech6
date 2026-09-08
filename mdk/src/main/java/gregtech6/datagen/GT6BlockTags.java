@@ -181,6 +181,8 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		for (var tHandle : GTGrassBlocks.BLOCKS) rBlocks.add(tHandle.get());
 		return rBlocks;
 	}
+
+	/**
 	 * The mineable/shovel band, rolling batch 1 (task p24-tags-prefix-materials, census
 	 * matrix P1 row): the {@code blockDust} prefix family — the powdery storage blocks ride
 	 * the shovel exactly like the vanilla SAND family the census pinned as the evidence
