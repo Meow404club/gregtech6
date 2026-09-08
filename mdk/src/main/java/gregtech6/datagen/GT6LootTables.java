@@ -622,23 +622,47 @@ public final class GT6LootTables extends LootTableProvider {
      * {@code BlockEntityTag} compound (the vanilla chest/shulker placement convention —
      * {@code BlockItem.getBlockEntityData} reads that key). The generated JSON shape:
      * {@code {"function": "minecraft:copy_nbt", "source": "block_entity", "ops":
-     * [{"source": "gt.color", "target": "BlockEntityTag.gt.color", "op": "replace"}, ...]}}.
+     * [{"source": "'gt.color'", "target": "BlockEntityTag.'gt.color'", "op": "replace"}, ...]}}.
+     *
+     * <p>QUOTED DOT KEYS (task p25-paint-loot-dotkey-fix): NbtPathArgument splits a path
+     * on {@code '.'} (vanilla 1.20.1 NbtPathArgument.java:70-73 {@code expect('.')} between
+     * nodes; :140 {@code isAllowedInUnquotedName} — a dot is NOT a name character), so the
+     * raw dotted key {@code gt.color} parsed as the compound traversal root→gt→color and
+     * NEVER matched the flat key the BE writes (TileEntityBase03TicksAndSync.java:323-324)
+     * — both ops silently no-oped since P22 (CopyNbtFunction.CopyOperation.apply swallows
+     * the miss, CopyNbtFunction.java:143-150), the paint round-trip never landed, and the
+     * P23 item-side two-level read (6e617047) was starving on an empty payload. A
+     * quote-opening node reads a FULL string including dots (:81-83), so
+     * {@link #quoted} wraps each dotted key as the one-node SNBT quoted form.
      */
     private static LootItemFunction.Builder paintCopyNbt() {
         //? if neoforge {
         /*return net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction
                 .copyData(ContextNbtProvider.BLOCK_ENTITY)
-                .copy(TileEntityBase03TicksAndSync.NBT_COLOR, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_COLOR,
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_COLOR), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_COLOR),
                         net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
-                .copy(TileEntityBase03TicksAndSync.NBT_PAINTED, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_PAINTED,
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_PAINTED), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_PAINTED),
                         net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE);
          *///?} else {
         return CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                .copy(TileEntityBase03TicksAndSync.NBT_COLOR, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_COLOR,
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_COLOR), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_COLOR),
                         CopyNbtFunction.MergeStrategy.REPLACE)
-                .copy(TileEntityBase03TicksAndSync.NBT_PAINTED, "BlockEntityTag." + TileEntityBase03TicksAndSync.NBT_PAINTED,
+                .copy(quoted(TileEntityBase03TicksAndSync.NBT_PAINTED), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_PAINTED),
                         CopyNbtFunction.MergeStrategy.REPLACE);
         //?}
+    }
+
+    /**
+     * The single-quote SNBT-path segment wrap for a flat dotted key: NbtPathArgument's
+     * parseNode routes a {@code '} / {@code "} opening node through {@code readString()}
+     * (vanilla 1.20.1 NbtPathArgument.java:81-83), which consumes the whole quoted literal
+     * — dots included — as ONE compound child name. The quoted segments live in the
+     * generated JSON verbatim (CopyNbtFunction.CopyOperation.toJson writes the raw
+     * path texts), and the loot runtime re-parses them through the same argument type
+     * (CopyNbtFunction.compileNbtPath), so builder-time and runtime shapes stay identical.
+     */
+    private static String quoted(String aKey) {
+        return "'" + aKey + "'";
     }
 
     /**
@@ -945,9 +969,9 @@ public final class GT6LootTables extends LootTableProvider {
      * parses as the compound traversal root→gt→foamed and NEVER matches the flat key the
      * BE writes — the op silently no-ops. The literal key rides as a quoted segment
      * {@code 'gt.foamed'} (parseNode :81-82 — a quote-opening node reads a full string).
-     * NOTE: the p22 {@link #paintSelfTable} ops share this defect (dotted, unquoted) —
-     * out of this card's files scope, flagged to review (the machines' paint carry never
-     * landed and the target traversal fabricated a junk gt compound).
+     * The p22 {@link #paintSelfTable} ops shared this defect (dotted, unquoted) — fixed
+     * in the same rebase window by task p25-paint-loot-dotkey-fix (this file's
+     * {@link #paintCopyNbt} + the shared {@link #quoted} helper).
      */
     private static LootItemFunction.Builder foamPaintCopyNbt() {
         //? if neoforge {
@@ -976,10 +1000,5 @@ public final class GT6LootTables extends LootTableProvider {
                 .copy(quoted(TileEntityBase03TicksAndSync.NBT_PAINTED), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_PAINTED),
                         CopyNbtFunction.MergeStrategy.REPLACE);
         //?}
-    }
-
-    /** The single-quote NBT-path segment for a flat dotted key (the quoted-node form). */
-    private static String quoted(String aKey) {
-        return "'" + aKey + "'";
     }
 }

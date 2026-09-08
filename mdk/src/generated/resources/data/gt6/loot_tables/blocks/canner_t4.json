@@ -17,13 +17,13 @@
               "ops": [
                 {
                   "op": "replace",
-                  "source": "gt.color",
-                  "target": "BlockEntityTag.gt.color"
+                  "source": "'gt.color'",
+                  "target": "BlockEntityTag.'gt.color'"
                 },
                 {
                   "op": "replace",
-                  "source": "gt.painted",
-                  "target": "BlockEntityTag.gt.painted"
+                  "source": "'gt.painted'",
+                  "target": "BlockEntityTag.'gt.painted'"
                 }
               ],
               "source": "block_entity"
