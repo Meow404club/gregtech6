@@ -164,6 +164,22 @@ public final class GTMultiBlockCommand {
 						.executes(aContext -> tick(aContext.getSource(),
 								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "ticks"),
 								BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))))
+			.then(Commands.literal("crucible")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.literal("check")
+						.executes(aContext -> crucibleCheck(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))
+					.then(Commands.literal("stat")
+						.executes(aContext -> crucibleStat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))
+					.then(Commands.literal("feed")
+						.then(Commands.argument("material", com.mojang.brigadier.arguments.StringArgumentType.word())
+							.then(Commands.argument("units", com.mojang.brigadier.arguments.LongArgumentType.longArg(1))
+								.executes(aContext -> crucibleFeed(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+										com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "material"),
+										com.mojang.brigadier.arguments.LongArgumentType.getLong(aContext, "units"))))))
+					.then(Commands.literal("heat")
+						.then(Commands.argument("hu", com.mojang.brigadier.arguments.LongArgumentType.longArg(1))
+							.executes(aContext -> crucibleHeat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									com.mojang.brigadier.arguments.LongArgumentType.getLong(aContext, "hu")))))))
 			.then(Commands.literal("menu")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> menu(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
@@ -574,6 +590,118 @@ public final class GTMultiBlockCommand {
 			}
 		}
 		return null;
+	}
+
+	// ------------------------- the crucible chain (task p26-crucible-multiblock) -------------------------
+
+	/** The crucible resolution arm of the acceptance chain — null with a failure message when absent. */
+	@Nullable
+	private static TileEntityCrucible crucibleAt(CommandSourceStack aSource, @Nullable BlockPos aPos) {
+		if (aPos == null) return null;
+		if (aSource.getLevel().getBlockEntity(aPos) instanceof TileEntityCrucible tCrucible) return tCrucible;
+		return null;
+	}
+
+	/** {@code crucible <pos> check} — the structure verdict + the linked-part census over the 3x3x3 box. */
+	private static int crucibleCheck(CommandSourceStack aSource, BlockPos aPos) {
+		TileEntityCrucible tCrucible = crucibleAt(aSource, aPos);
+		if (tCrucible == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCrucible at " + aPos.toShortString()));
+			return 0;
+		}
+		String tVerdict;
+		if (tCrucible.checkStructure(false)) {
+			tVerdict = "Structure is formed already!";
+		} else {
+			tVerdict = tCrucible.checkStructure(true) ? "Structure did form just now!" : "Structure did not form!";
+		}
+		int tLinked = 0;
+		ServerLevel tLevel = aSource.getLevel();
+		BlockPos tBase = tCrucible.getBlockPos();
+		for (int i = -1; i <= 1; i++) for (int j = 0; j <= 2; j++) for (int k = -1; k <= 1; k++) {
+			BlockPos tCell = tBase.offset(i, j, k);
+			if (tLevel.getBlockEntity(tCell) instanceof MultiBlockPartBlockEntity tPart && tPart.getTarget(false) == tCrucible) tLinked++;
+		}
+		String tReport = String.format("GT6 crucible at %s: %s okay=%s linked_parts=%d/24",
+				tBase.toShortString(), tVerdict, tCrucible.mStructureOkay, tLinked);
+		if (!tCrucible.mStructureOkay) {
+			aSource.sendFailure(Component.literal(tReport));
+			return 0;
+		}
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * {@code crucible <pos> feed <material> <units>} — the top-feed entry. Declared RCON
+	 * equivalent of the upstream top-opening feed (the :204-234 slot/suck arm): the item
+	 * → material-stack resolution (OM.anydata) has no port counterpart yet, so the RCON
+	 * feeds raw material stacks (the chain's "top-feed ore" step at material granularity).
+	 */
+	private static int crucibleFeed(CommandSourceStack aSource, BlockPos aPos, String aMaterialName, long aUnits) {
+		TileEntityCrucible tCrucible = crucibleAt(aSource, aPos);
+		if (tCrucible == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCrucible at " + aPos.toShortString()));
+			return 0;
+		}
+		gregapi.oredict.OreDictMaterial tMaterial = findMaterial(aMaterialName);
+		if (tMaterial == null) {
+			aSource.sendFailure(Component.literal("Cannot resolve GT material: " + aMaterialName));
+			return 0;
+		}
+		java.util.List<gregapi.oredict.OreDictMaterialStack> tFeed = new java.util.ArrayList<>();
+		tFeed.add(new gregapi.oredict.OreDictMaterialStack(tMaterial, aUnits));
+		boolean tFed = tCrucible.addMaterialStacks(tFeed, tCrucible.envTemperature());
+		String tReport = String.format("GT6 crucible feed %d %s at %s: fed=%s total=%d temp=%dK",
+				aUnits, tMaterial.mNameInternal, tCrucible.getBlockPos().toShortString(), tFed,
+				tCrucible.totalContent(), tCrucible.mTemperature);
+		if (!tFed) {
+			aSource.sendFailure(Component.literal(tReport));
+			return 0;
+		}
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** {@code crucible <pos> heat <hu>} — the HU buffer charge entry (the burning-box feed probe). */
+	private static int crucibleHeat(CommandSourceStack aSource, BlockPos aPos, long aHU) {
+		TileEntityCrucible tCrucible = crucibleAt(aSource, aPos);
+		if (tCrucible == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCrucible at " + aPos.toShortString()));
+			return 0;
+		}
+		tCrucible.mEnergy += aHU;
+		tCrucible.setChanged();
+		String tReport = String.format("GT6 crucible heat +%d HU at %s: buffer=%d temp=%dK max=%dK",
+				aHU, tCrucible.getBlockPos().toShortString(), tCrucible.mEnergy,
+				tCrucible.mTemperature, tCrucible.getTemperatureMax((byte)0));
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** {@code crucible <pos> stat} — the thermometer + content census. */
+	private static int crucibleStat(CommandSourceStack aSource, BlockPos aPos) {
+		TileEntityCrucible tCrucible = crucibleAt(aSource, aPos);
+		if (tCrucible == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCrucible at " + aPos.toShortString()));
+			return 0;
+		}
+		StringBuilder tContent = new StringBuilder();
+		for (gregapi.oredict.OreDictMaterialStack tStack : tCrucible.mContent) {
+			if (tStack != null && tStack.mAmount > 0) {
+				if (tContent.length() > 0) tContent.append(", ");
+				tContent.append(tStack.mMaterial.mNameInternal).append(" ").append(tStack.mAmount / gregapi.data.CS.U100 / 100.0).append("U");
+			}
+		}
+		String tReport = String.format("GT6 crucible at %s: temp=%dK max=%dK energy=%dHUs total=%d meltdown_warning=%s content=[%s]",
+				tCrucible.getBlockPos().toShortString(), tCrucible.mTemperature, tCrucible.getTemperatureMax((byte)0),
+				tCrucible.mEnergy, tCrucible.totalContent(), tCrucible.mMeltDown, tContent);
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
 	}
 
 	/** {@code ignite [pos]} — the TOOL_igniter branch (:373-379), the acceptance-chain ignition entry. */
