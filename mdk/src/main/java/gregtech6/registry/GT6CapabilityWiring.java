@@ -13,6 +13,9 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 import gregtech6.block.tank.GTBarrelBlock;
+import gregtech6.registry.GT6Kitchen;
+import gregtech6.tileentity.tools.GT6BathingPotBlockEntity;
+import gregtech6.tileentity.tools.GT6MixingBowlBlockEntity;
 import gregtech6.item.GTBarrelBlockItem;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
@@ -85,6 +88,7 @@ public final class GT6CapabilityWiring {
 		registerCokeOvenFaces(aEvent);
 		registerBarrelBlockFluidHandler(aEvent);
 		registerBarrelItemHandlers(aEvent);
+		registerKitchenFaces(aEvent);
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -173,6 +177,23 @@ public final class GT6CapabilityWiring {
 					return tTarget.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,
 							tTarget.getBlockPos(), aSide);
 				});
+	}
+
+	// -- the kitchen family (task p26-kitchen-pot-bowl): the pot pair (one shared BET,
+	// ADR-P3-1) and the bowl — item + fluid faces both, the machine-family shape; the
+	// forge leg answers from the GT6ManualKitchenBlockEntity override (the fresh
+	// wrapper-per-call fluid face, the cached side-less item face)
+	private static void registerKitchenFaces(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6BathingPotBlockEntity> tPot = GT6Kitchen.BATHING_POT_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tPot,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPot,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<GT6MixingBowlBlockEntity> tBowl = GT6Kitchen.MIXING_BOWL_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tBowl,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBowl,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
 	// -- the coke oven (p8 multiblock controller; the commands-card handoff) --

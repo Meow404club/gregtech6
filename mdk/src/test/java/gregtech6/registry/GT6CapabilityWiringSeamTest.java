@@ -45,6 +45,34 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		assertEquals("multiblock_large_boiler", GTMultiBlocks.LARGE_BOILER_BE.getId().getPath());
 		assertEquals("fluid_pipe", GTFluidPipes.FLUID_PIPE_BE.getId().getPath());
 		assertEquals("multiblock_part", GTMultiBlocks.MULTIBLOCK_PART_BE.getId().getPath());
+		// task p26-kitchen-pot-bowl — the kitchen family joins (the pot pair's shared BET
+		// + the bowl BET, item + fluid faces both, the machine-family shape)
+		assertEquals("bathing_pot", GT6Kitchen.BATHING_POT_BE.getId().getPath());
+		assertEquals("mixing_bowl", GT6Kitchen.MIXING_BOWL_BE.getId().getPath());
+	}
+
+	/**
+	 * The kitchen family's 21.1 capability registration surface (task
+	 * p26-kitchen-pot-bowl, the BASIC_MACHINE_FAMILY_FACES shape): every
+	 * {@code *_BE} field GT6Kitchen declares must serve item + fluid — the manual family
+	 * has the full IInventory exposure upstream and both tank banks gated by the :302/
+	 * :310 doors, so a missing 21.1 row would blind hopper pushes AND tank IO while the
+	 * forge leg's override hides the gap (the ADR-P15-4 guard form).
+	 */
+	@Test
+	public void kitchenFamilyBetsAllDeclareTheirWiringSurface() throws Exception {
+		Set<String> tLive = new LinkedHashSet<>();
+		for (Field tField : GT6Kitchen.class.getDeclaredFields()) {
+			if (!tField.getName().endsWith("_BE")) continue;
+			Object tHolder = tField.get(null);
+			assertTrue(tHolder != null, tField.getName() + " must hold its eagerly built registry handle");
+			Object tId = tHolder.getClass().getMethod("getId").invoke(tHolder);
+			String tPath = (String) tId.getClass().getMethod("getPath").invoke(tId);
+			tLive.add(tPath);
+		}
+		assertEquals(new LinkedHashSet<>(java.util.List.of("bathing_pot", "mixing_bowl")), tLive,
+				"the kitchen BET census drifted — declare the new family's item + fluid rows in "
+				+ "GT6CapabilityWiring.registerKitchenFaces in the same change");
 	}
 
 	/**
