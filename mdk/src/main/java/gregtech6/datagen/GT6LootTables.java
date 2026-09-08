@@ -528,6 +528,22 @@ public final class GT6LootTables extends LootTableProvider {
         }
          *///?} else {
         public GT6LightningRodBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return lightningRodLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : lightningRodLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
      * The Advanced Crafting Table block list (task p24-act-machine): the single-variant
      * row (Loader_MultiTileEntities.java:136) — the cannerLootBlocks shape over one
      * block, the MTE default self-drop.
@@ -552,13 +568,11 @@ public final class GT6LootTables extends LootTableProvider {
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return lightningRodLootBlocks();
             return advancedCraftingTableLootBlocks();
         }
 
         @Override
         protected void generate() {
-            for (Block tBlock : lightningRodLootBlocks()) dropSelf(tBlock);
             for (Block tBlock : advancedCraftingTableLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
