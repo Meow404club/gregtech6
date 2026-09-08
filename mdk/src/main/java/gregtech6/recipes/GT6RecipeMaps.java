@@ -209,6 +209,27 @@ public class GT6RecipeMaps {
 	 */
 	public static volatile RecipeMapFurnaceFuel FURNACE_FUEL;
 
+	/**
+	 * RM.java:129 — the Crucible Smelting map (task p26-crucible-physics-smeltery): the
+	 * {@link gregtech6.recipes.maps.GT6RecipeMapCrucible} subclass with the on-demand
+	 * material-graph derivation (RecipeMapCrucible.java:82-97), transcribed over the
+	 * 15-arg port ctor: "gt.recipe.cruciblesmelting", "Crucible Smelting", NEI name null,
+	 * progress 0/1, GUI machines/default (lowercased, the Shredder-line convention; the
+	 * upstream machines/Default string ships no asset), item slots 6/6/1, fluid slots
+	 * 0/0/0, minimal inputs 0, power 1. ZERO static rows by design — the row derives at
+	 * lookup time from the input's material data.
+	 */
+	public static volatile gregtech6.recipes.maps.GT6RecipeMapCrucible CRUCIBLE_SMELTING;
+
+	/**
+	 * RM.java:128 — the Combination Smelting (Crucible Alloying) map (task
+	 * p26-crucible-physics-smeltery), the base-{@link RecipeMap} row verbatim: items
+	 * 12/12/1, fluids 0/0/0, minimal inputs 0, power 1, GUI machines/alloying (lowercased).
+	 * ZERO static rows — the display rows synthesize off the material graph via
+	 * {@link gregtech6.recipes.maps.GT6RecipeMapCrucible#alloyingDisplayRows}.
+	 */
+	public static volatile RecipeMap CRUCIBLE_ALLOYING;
+
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
 		if (FURNACE != null) return;
@@ -319,6 +340,24 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
+		// RM.java:129 — the Crucible Smelting map: the on-demand subclass, zero static rows
+		CRUCIBLE_SMELTING = new gregtech6.recipes.maps.GT6RecipeMapCrucible(new HashSet<>(),
+				"gt.recipe.cruciblesmelting", "Crucible Smelting", null,
+				0, 1,
+				"gt6:textures/gui/machines/default",
+				/*IN-OUT-MIN-ITEM=*/ 6, 6, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:128 — the Combination Smelting map: base class, zero static rows
+		CRUCIBLE_ALLOYING = new RecipeMap(new HashSet<>(),
+				"gt.recipe.cruciblealloying", "Combination Smelting", null,
+				0, 1,
+				"gt6:textures/gui/machines/alloying",
+				/*IN-OUT-MIN-ITEM=*/ 12, 12, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -341,6 +380,8 @@ public class GT6RecipeMaps {
 		DRYING = null;
 		CANNER = null;
 		FURNACE_FUEL = null;
+		CRUCIBLE_SMELTING = null;
+		CRUCIBLE_ALLOYING = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}
