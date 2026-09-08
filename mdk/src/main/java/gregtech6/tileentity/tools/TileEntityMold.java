@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregapi.data.CS;
 import gregapi.data.MT;
 import gregapi.data.OP;
+import gregapi.data.TD;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictMaterialStack;
 import gregapi.oredict.OreDictPrefix;
@@ -61,6 +62,23 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * required amount (units(requiredUnits, U, mTargetSolidifying.mAmount, T)); the mold
  * right-click drives the adjacent {@link ITileEntityCrucible#fillMoldAtSide} (:267-294)
  * and the output hand-take (:296-322). The wrench auto-pull arm (:170-176) is card B.
+ *
+ * <p><b>Card B append (p26-crucible-mold-faucet)</b>: the FULL shape universe —
+ * {@link #MOLD_RECIPES} filled by the literal port of the :628-921 static block (the
+ * base shapes, the three per-entry bijections :849-877 and the two round-two
+ * bijections :889-917 over the merged map; java.util.HashMap keeps the upstream
+ * last-write-wins collision order, 549 final rows); the {@code COOL2CRYSTAL}
+ * plate→plateGem / plateTiny→plateGemTiny swap (:194-197 in the tick, :250-253 in
+ * {@link #fillMold}); the monkey-wrench auto-pull — {@link #mAutoPullDirections} set
+ * from the top-face horizontal sub-sides (:343-355), the {@code SERVER_TIME % 20 == 5}
+ * cadence pull (:169-176, the per-BE {@code aTimer % 20} port cadence) and the soft
+ * hammer reset (:337-342). The chisel carving face (:328-336) stays out (no chisel
+ * seam on the ported tools; the ceramic molds ship pre-carved, the stone ships
+ * pre-carved ingot). The upstream {@code mUseRedstone} mode (:96/:351) ports as
+ * {@link #mUseRedstone} with the vanilla all-sides signal check standing in for
+ * {@code hasRedstoneIncoming()}; the physical monkey wrench item is the tool-system
+ * card's to wire — the state machine and the RCON arm ({@link #toolMonkeyWrench} /
+ * {@link #toolSoftHammer}) land here.
  */
 public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITileEntityTemperature, ITileEntityMold {
 
@@ -68,6 +86,16 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 	public static final String NBT_MOLD = "gt.mold";
 	/** The temperature NBT key (the Smeltery spelling). */
 	public static final String NBT_TEMPERATURE = "gt.temperature";
+
+	/** The card-B NBT keys (upstream NBT_CONNECTION/NBT_MODE, the trimmed port spelling). */
+	public static final String NBT_CONNECTION = "connection";
+	public static final String NBT_MODE = "mode";
+
+	/** The upstream :87 auto-pull side mask (the SBIT set from the monkey wrench, :347). */
+	public byte mAutoPullDirections = 0;
+
+	/** The upstream :85 redstone mode (:351 toggle — pull only while a signal comes in). */
+	public boolean mUseRedstone = false;
 
 	/** The upstream :75 form bonus over the shell material. */
 	public static final double HEAT_RESISTANCE_BONUS = 1.25;
@@ -97,6 +125,293 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 
 	static {
 		for (int i = 0; i < 3; i++) MOLD_RECIPES.put(ingotShape(i), OP.ingot);
+	}
+
+	// ------------------------------------------------------------------------------------
+	// card B: the full shape universe (the literal port of MultiTileEntityMold.java:628-921)
+	// ------------------------------------------------------------------------------------
+
+	/** The upstream {@code B[i]} bit — CS.B is not ported, the local helper stands in. */
+	private static int bit(int i) {
+		return 1 << i;
+	}
+
+	/**
+	 * The :628-921 static block, verbatim: the base shapes into a TEMP map, the first
+	 * round — every TEMP entry plus its three per-entry bijections (:849-877) into
+	 * {@link #MOLD_RECIPES} — then the merged map re-iterated through the two round-two
+	 * bijections (:889-917). java.util.HashMap reproduces the upstream last-write-wins
+	 * collision order (549 final rows; the mdk test pins the 30 ceramic shapes 30/30).
+	 * Runs as a SECOND static block (declaration order = after the ingot bars above).
+	 */
+	static {
+		Map<Integer, OreDictPrefix> tTemp = new HashMap<>();
+
+		tTemp.put(0b0_00100_11111_01110_01010_00000, OP.toolHeadBuilderwand);
+		tTemp.put(0b0_00000_00100_11111_01110_01010, OP.toolHeadBuilderwand);
+
+		tTemp.put(0b0_00000_00110_01111_01111_00110, OP.billet);
+		tTemp.put(0b0_00000_01100_11110_11110_01100, OP.billet);
+		tTemp.put(0b0_00110_01111_01111_00110_00000, OP.billet);
+		tTemp.put(0b0_01100_11110_11110_01100_00000, OP.billet);
+
+		tTemp.put(bit( 0)|bit( 1)|bit( 2)|bit( 3)|
+				bit( 5)|bit( 6)|bit( 7)|bit( 8)|
+				bit(10)|bit(11)|bit(12)|bit(13)|bit(14)|
+				bit(15)|bit(16)|bit(17)|bit(18)|
+				bit(20)|bit(21)|bit(22)|bit(23)
+				, OP.toolHeadRawPlow);
+
+		tTemp.put(bit( 4)|
+				bit( 8)|
+				bit(12)|
+				bit(16)|
+				bit(20)
+				, OP.stickLong);
+
+		tTemp.put(bit( 0)|bit( 1)|bit( 2)|bit( 3)|bit( 4)|
+				bit( 5)|bit( 6)|bit( 7)|bit( 8)|bit( 9)|
+				bit(10)|bit(11)|bit(12)|bit(13)|bit(14)|
+				bit(15)|bit(16)|bit(17)|bit(18)|bit(19)|
+				bit(20)|bit(21)|bit(22)|bit(23)|bit(24)
+				, OP.plate);
+
+		tTemp.put(bit( 0)|bit( 1)|bit( 2)|    bit( 4)|
+				bit( 5)|bit( 6)|bit( 7)|    bit( 9)|
+				bit(10)|bit(11)|bit(12)|    bit(14)|
+								bit(19)|
+				bit(20)|bit(21)|bit(22)
+				, OP.casingSmall);
+
+		tTemp.put(bit( 0)|    bit( 2)|    bit( 4)|
+					bit( 6)|bit( 7)|bit( 8)|
+				bit(10)|bit(11)|    bit(13)|bit(14)|
+					bit(16)|bit(17)|bit(18)|
+				bit(20)|    bit(22)|    bit(24)
+				, OP.gearGt);
+
+		tTemp.put(        bit( 1)|    bit( 3)|
+				bit( 5)|bit( 6)|bit( 7)|bit( 8)|bit( 9)|
+						bit(11)|    bit(13)|
+				bit(15)|bit(16)|bit(17)|bit(18)|bit(19)|
+						bit(21)|    bit(23)
+				, OP.gearGtSmall);
+
+		for (int i = 0; i < 3; i++) {
+			tTemp.put(bit(i  + 0)|bit(i  + 1)|bit(i  + 2)|
+					bit(i  + 5)|bit(i  + 6)|bit(i  + 7)|
+					bit(i +10)|bit(i +11)|bit(i +12)|
+					bit(i +15)|bit(i +16)|bit(i +17)|
+					bit(i +20)|bit(i +21)|bit(i +22)
+					, OP.ingot);
+
+			tTemp.put(bit(i  + 0)|bit(i  + 1)|bit(i  + 2)|
+					bit(i  + 5)|bit(i  + 6)|
+					bit(i +10)|bit(i +11)|
+					bit(i +15)|bit(i +16)|
+					bit(i +20)|bit(i +21)|bit(i +22)
+					, OP.toolHeadRawAxeDouble);
+
+			tTemp.put(bit(i  + 0)|bit(i  + 1)|bit(i  + 2)|
+					bit(i  + 5)|bit(i  + 6)|bit(i  + 7)|
+					bit(i +10)|        bit(i +12)|
+					bit(i +15)|bit(i +16)|bit(i +17)|
+					bit(i +20)|bit(i +21)|bit(i +22)
+					, OP.toolHeadHammer);
+
+			tTemp.put(bit(i  + 0)|
+					bit(i  + 5)|
+					bit(i +10)|
+					bit(i +15)|
+					bit(i +20)
+					, OP.stick);
+
+			tTemp.put(bit(i  + 0)|bit(i  + 1)|bit(i  + 2)|
+								bit(i  + 6)|
+								bit(i +11)|
+								bit(i +16)|
+								bit(i +21)
+					, OP.toolHeadRawChisel);
+
+			tTemp.put(bit(i  + 0)|bit(i  + 1)|bit(i  + 2)|
+					bit(i  + 5)|bit(i  + 6)|bit(i  + 7)|
+					bit(i +10)|bit(i +11)|bit(i +12)|
+								bit(i +16)|
+								bit(i +21)
+					, OP.toolHeadFile);
+
+			tTemp.put(        bit(i  + 1)|
+					bit(i  + 5)|bit(i  + 6)|bit(i  + 7)|
+					bit(i +10)|bit(i +11)|bit(i +12)|
+					bit(i +15)|bit(i +16)|bit(i +17)|
+					bit(i +20)|bit(i +21)|bit(i +22)
+					, OP.toolHeadRawSword);
+
+			for (int j = 0; j < 4; j++) {
+				tTemp.put(        bit(i +j*5+ 1)|bit(i +j*5+ 2)|
+						bit(i +j*5+ 5)|bit(i +j*5+ 6)|bit(i +j*5+ 7)
+						, OP.toolHeadRawHoe);
+			}
+
+			for (int j = 0; j < 3; j++) {
+				tTemp.put(        bit(i +j*5+ 1)|
+								bit(i +j*5+ 6)|
+						bit(i +j*5+10)|bit(i +j*5+11)|bit(i +j*5+12)
+						, OP.toolHeadRawArrow);
+
+				tTemp.put(bit(i +j*5+ 0)|bit(i +j*5+ 1)|bit(i +j*5+ 2)|
+						bit(i +j*5+ 5)|bit(i +j*5+ 6)|bit(i +j*5+ 7)|
+						bit(i +j*5+10)
+						, OP.toolHeadRawAxe);
+
+				tTemp.put(bit(i +j*5+ 0)|bit(i +j*5+ 1)|
+						bit(i +j*5+ 5)|bit(i +j*5+ 6)
+						, OP.chunkGt);
+
+				tTemp.put(bit(i +j*5+ 0)|bit(i +j*5+ 1)|bit(i +j*5+ 2)|
+						bit(i +j*5+ 5)|            bit(i +j*5+ 7)|
+						bit(i +j*5+10)|bit(i +j*5+11)|bit(i +j*5+12)
+						, OP.ring);
+
+				tTemp.put(bit(i +j*5+ 0)|bit(i +j*5+ 1)|bit(i +j*5+ 2)|
+						bit(i +j*5+ 5)|bit(i +j*5+ 6)|bit(i +j*5+ 7)|
+						bit(i +j*5+10)|bit(i +j*5+11)|bit(i +j*5+12)
+						, OP.plateTiny);
+
+				tTemp.put(bit(i +j*5+ 0)|
+						bit(i +j*5+ 5)
+						, OP.bolt);
+			}
+
+			for (int j = 0; j < 2; j++) {
+				tTemp.put(        bit(i +j*5+ 1)|
+						bit(i +j*5+ 5)|bit(i +j*5+ 6)|bit(i +j*5+ 7)|
+						bit(i +j*5+10)|bit(i +j*5+11)|bit(i +j*5+12)|
+						bit(i +j*5+15)|bit(i +j*5+16)|bit(i +j*5+17)
+						, OP.toolHeadRawShovel);
+
+				tTemp.put(bit(i +j*5+ 0)|bit(i +j*5+ 1)|bit(i +j*5+ 2)|
+						bit(i +j*5+ 5)|bit(i +j*5+ 6)|bit(i +j*5+ 7)|
+						bit(i +j*5+10)|bit(i +j*5+11)|bit(i +j*5+12)|
+						bit(i +j*5+15)|            bit(i +j*5+17)
+						, OP.toolHeadRawSpade);
+
+				tTemp.put(        bit(i +j*5+ 1)|
+						bit(i +j*5+ 5)|bit(i +j*5+ 6)|bit(i +j*5+ 7)|
+						bit(i +j*5+10)|bit(i +j*5+11)|
+						bit(i +j*5+15)|bit(i +j*5+16)|bit(i +j*5+17)
+						, OP.toolHeadRawUniversalSpade);
+
+				tTemp.put(bit(i +j*5+ 0)|
+						bit(i +j*5+ 5)|
+						bit(i +j*5+10)|
+						bit(i +j*5+15)
+						, OP.toolHeadScrewdriver);
+			}
+		}
+
+		for (int i = 0; i < 4; i++) {
+			tTemp.put(        bit(i  + 1)|
+					bit(i  + 5)|
+					bit(i +10)|
+					bit(i +15)|
+							bit(i +21)
+					, OP.toolHeadRawPickaxe);
+
+			tTemp.put(bit(i  + 0)|bit(i  + 1)|
+					bit(i  + 5)|bit(i  + 6)|
+					bit(i +10)|bit(i +11)|
+					bit(i +15)|bit(i +16)|
+					bit(i +20)|bit(i +21)
+					, OP.toolHeadRawSaw);
+
+			tTemp.put(bit(i  + 0)|bit(i  + 1)|
+					bit(i  + 5)|bit(i  + 6)|
+					bit(i +10)|bit(i +11)|
+					bit(i +15)|bit(i +16)|
+							bit(i +21)
+					, OP.toolHeadRawSense);
+		}
+
+		// the first permutation round (:845-882) — every entry plus its three bijections
+		for (Map.Entry<Integer, OreDictPrefix> tEntry : tTemp.entrySet()) {
+			int tKey = tEntry.getKey(), tResult1 = 0, tResult2 = 0, tResult3 = 0;
+			MOLD_RECIPES.put(tKey, tEntry.getValue());
+
+			if ((tKey & bit( 0)) != 0) {tResult1 |= bit( 4); tResult2 |= bit(24); tResult3 |= bit(20);}
+			if ((tKey & bit( 1)) != 0) {tResult1 |= bit( 9); tResult2 |= bit(23); tResult3 |= bit(15);}
+			if ((tKey & bit( 2)) != 0) {tResult1 |= bit(14); tResult2 |= bit(22); tResult3 |= bit(10);}
+			if ((tKey & bit( 3)) != 0) {tResult1 |= bit(19); tResult2 |= bit(21); tResult3 |= bit( 5);}
+			if ((tKey & bit( 4)) != 0) {tResult1 |= bit(24); tResult2 |= bit(20); tResult3 |= bit( 0);}
+
+			if ((tKey & bit( 5)) != 0) {tResult1 |= bit( 3); tResult2 |= bit(19); tResult3 |= bit(21);}
+			if ((tKey & bit( 6)) != 0) {tResult1 |= bit( 8); tResult2 |= bit(18); tResult3 |= bit(16);}
+			if ((tKey & bit( 7)) != 0) {tResult1 |= bit(13); tResult2 |= bit(17); tResult3 |= bit(11);}
+			if ((tKey & bit( 8)) != 0) {tResult1 |= bit(18); tResult2 |= bit(16); tResult3 |= bit( 6);}
+			if ((tKey & bit( 9)) != 0) {tResult1 |= bit(23); tResult2 |= bit(15); tResult3 |= bit( 1);}
+
+			if ((tKey & bit(10)) != 0) {tResult1 |= bit( 2); tResult2 |= bit(14); tResult3 |= bit(22);}
+			if ((tKey & bit(11)) != 0) {tResult1 |= bit( 7); tResult2 |= bit(13); tResult3 |= bit(17);}
+			if ((tKey & bit(12)) != 0) {tResult1 |= bit(12); tResult2 |= bit(12); tResult3 |= bit(12);}
+			if ((tKey & bit(13)) != 0) {tResult1 |= bit(17); tResult2 |= bit(11); tResult3 |= bit( 7);}
+			if ((tKey & bit(14)) != 0) {tResult1 |= bit(22); tResult2 |= bit(10); tResult3 |= bit( 2);}
+
+			if ((tKey & bit(15)) != 0) {tResult1 |= bit( 1); tResult2 |= bit( 9); tResult3 |= bit(23);}
+			if ((tKey & bit(16)) != 0) {tResult1 |= bit( 6); tResult2 |= bit( 8); tResult3 |= bit(18);}
+			if ((tKey & bit(17)) != 0) {tResult1 |= bit(11); tResult2 |= bit( 7); tResult3 |= bit(13);}
+			if ((tKey & bit(18)) != 0) {tResult1 |= bit(16); tResult2 |= bit( 6); tResult3 |= bit( 8);}
+			if ((tKey & bit(19)) != 0) {tResult1 |= bit(21); tResult2 |= bit( 5); tResult3 |= bit( 3);}
+
+			if ((tKey & bit(20)) != 0) {tResult1 |= bit( 0); tResult2 |= bit( 4); tResult3 |= bit(24);}
+			if ((tKey & bit(21)) != 0) {tResult1 |= bit( 5); tResult2 |= bit( 3); tResult3 |= bit(19);}
+			if ((tKey & bit(22)) != 0) {tResult1 |= bit(10); tResult2 |= bit( 2); tResult3 |= bit(14);}
+			if ((tKey & bit(23)) != 0) {tResult1 |= bit(15); tResult2 |= bit( 1); tResult3 |= bit( 9);}
+			if ((tKey & bit(24)) != 0) {tResult1 |= bit(20); tResult2 |= bit( 0); tResult3 |= bit( 4);}
+
+			MOLD_RECIPES.put(tResult1, tEntry.getValue());
+			MOLD_RECIPES.put(tResult2, tEntry.getValue());
+			MOLD_RECIPES.put(tResult3, tEntry.getValue());
+		}
+
+		tTemp.putAll(MOLD_RECIPES);
+
+		// the second permutation round (:886-921) — two bijections over the merged map
+		for (Map.Entry<Integer, OreDictPrefix> tEntry : tTemp.entrySet()) {
+			int tKey = tEntry.getKey(), tResult1 = 0, tResult2 = 0;
+
+			if ((tKey & bit( 0)) != 0) {tResult1 |= bit( 4); tResult2 |= bit(20);}
+			if ((tKey & bit( 1)) != 0) {tResult1 |= bit( 3); tResult2 |= bit(21);}
+			if ((tKey & bit( 2)) != 0) {tResult1 |= bit( 2); tResult2 |= bit(22);}
+			if ((tKey & bit( 3)) != 0) {tResult1 |= bit( 1); tResult2 |= bit(23);}
+			if ((tKey & bit( 4)) != 0) {tResult1 |= bit( 0); tResult2 |= bit(24);}
+
+			if ((tKey & bit( 5)) != 0) {tResult1 |= bit( 9); tResult2 |= bit(15);}
+			if ((tKey & bit( 6)) != 0) {tResult1 |= bit( 8); tResult2 |= bit(16);}
+			if ((tKey & bit( 7)) != 0) {tResult1 |= bit( 7); tResult2 |= bit(17);}
+			if ((tKey & bit( 8)) != 0) {tResult1 |= bit( 6); tResult2 |= bit(18);}
+			if ((tKey & bit( 9)) != 0) {tResult1 |= bit( 5); tResult2 |= bit(19);}
+
+			if ((tKey & bit(10)) != 0) {tResult1 |= bit(14); tResult2 |= bit(10);}
+			if ((tKey & bit(11)) != 0) {tResult1 |= bit(13); tResult2 |= bit(11);}
+			if ((tKey & bit(12)) != 0) {tResult1 |= bit(12); tResult2 |= bit(12);}
+			if ((tKey & bit(13)) != 0) {tResult1 |= bit(11); tResult2 |= bit(13);}
+			if ((tKey & bit(14)) != 0) {tResult1 |= bit(10); tResult2 |= bit(14);}
+
+			if ((tKey & bit(15)) != 0) {tResult1 |= bit(19); tResult2 |= bit( 5);}
+			if ((tKey & bit(16)) != 0) {tResult1 |= bit(18); tResult2 |= bit( 6);}
+			if ((tKey & bit(17)) != 0) {tResult1 |= bit(17); tResult2 |= bit( 7);}
+			if ((tKey & bit(18)) != 0) {tResult1 |= bit(16); tResult2 |= bit( 8);}
+			if ((tKey & bit(19)) != 0) {tResult1 |= bit(15); tResult2 |= bit( 9);}
+
+			if ((tKey & bit(20)) != 0) {tResult1 |= bit(24); tResult2 |= bit( 0);}
+			if ((tKey & bit(21)) != 0) {tResult1 |= bit(23); tResult2 |= bit( 1);}
+			if ((tKey & bit(22)) != 0) {tResult1 |= bit(22); tResult2 |= bit( 2);}
+			if ((tKey & bit(23)) != 0) {tResult1 |= bit(21); tResult2 |= bit( 3);}
+			if ((tKey & bit(24)) != 0) {tResult1 |= bit(20); tResult2 |= bit( 4);}
+
+			MOLD_RECIPES.put(tResult1, tEntry.getValue());
+			MOLD_RECIPES.put(tResult2, tEntry.getValue());
+		}
 	}
 
 	/** The upstream :79-83 lookup — the nugget fallback answers every unknown non-zero shape. */
@@ -171,6 +486,20 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 			mContent = null;
 		}
 
+		// :169-176 — the auto-pull: wrench-set sides ask the adjacent crucible every 20 ticks
+		if (mContent == null && mAutoPullDirections != 0 && aTimer % 20 == 5 && (!mUseRedstone || redstoneIncoming())) {
+			for (Direction tSide : Direction.values()) {
+				byte tSideByte = (byte)tSide.get3DDataValue();
+				if ((mAutoPullDirections & (1 << tSideByte)) != 0) { // the FACE_CONNECTED[tSide][mAutoPullDirections] gate
+					BlockEntity tNeighbor = hasLevel() ? getLevel().getBlockEntity(getBlockPos().relative(tSide)) : null;
+					if (tNeighbor instanceof ITileEntityCrucible tCrucible) {
+						byte tSideOfCrucible = (byte)tSide.getOpposite().get3DDataValue();
+						if (tCrucible.fillMoldAtSide(this, tSideOfCrucible, tSideByte)) break; // :173
+					}
+				}
+			}
+		}
+
 		if (mContent != null) {
 			// :179-186 — the over-heat destruction (boiling content or shell ceiling) → lava
 			if (mTemperature > mContent.mMaterial.mBoilingPoint || mTemperature > getMoldMaxTemperature()) {
@@ -185,6 +514,8 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 				mContent.mMaterial = mContent.mMaterial.mTargetSolidifying.mMaterial;
 				if (mContent.mAmount > 0 && mInventory.isEmpty()) {
 					OreDictPrefix tPrefix = getMoldRecipe(mShape);
+					// :194-197 — the COOL2CRYSTAL crystalline swap
+					tPrefix = cool2CrystalSwap(tPrefix, mContent.mMaterial);
 					if (tPrefix != null) {
 						ItemStack tOutput = GT6RecipeMapCrucible.matStack(tPrefix, mContent.mMaterial, mContent.mAmount / tPrefix.mAmount); // :199
 						if (tOutput != null) {
@@ -227,6 +558,7 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 	public long fillMold(OreDictMaterialStack aMaterial, long aTemperature, byte aSide) {
 		if (aMaterial == null || aMaterial.mMaterial == null || aMaterial.mMaterial.contains(gregapi.data.TD.Properties.ACID)) return 0; // :247
 		OreDictPrefix tPrefix = getMoldRecipe(mShape);
+		tPrefix = cool2CrystalSwap(tPrefix, aMaterial.mMaterial.mTargetSolidifying.mMaterial); // :250-253 — before the representable gate
 		if (tPrefix != null && mContent == null && mInventory.isEmpty() && isMoldInputSide(aSide) && aMaterial.mAmount > 0) { // :249
 			if (GT6RecipeMapCrucible.matStack(tPrefix, aMaterial.mMaterial.mTargetSolidifying.mMaterial, 1) == null) return 0; // :254 the representable-output gate
 			long tRequiredAmount = getMoldRequiredMaterialUnits();
@@ -238,6 +570,57 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 			}
 		}
 		return 0;
+	}
+
+	// ------------------------------------------------------------------------------------
+	// card B: the COOL2CRYSTAL swap + the wrench state machine (upstream :194-197/:250-253/:337-355)
+	// ------------------------------------------------------------------------------------
+
+	/**
+	 * The :250-253 swap — a {@code COOL2CRYSTAL} material cools into its crystalline
+	 * form: the plate shape answers the gem plate, the tiny plate the tiny gem plate.
+	 * Null passes through (the callers re-check).
+	 */
+	@Nullable
+	public static OreDictPrefix cool2CrystalSwap(@Nullable OreDictPrefix aPrefix, OreDictMaterial aSolidifying) {
+		if (aPrefix != null && aSolidifying.contains(TD.Processing.COOL2CRYSTAL)) {
+			if (aPrefix == OP.plate    ) return OP.plateGem;
+			if (aPrefix == OP.plateTiny) return OP.plateGemTiny;
+		}
+		return aPrefix;
+	}
+
+	/** Upstream {@code hasRedstoneIncoming()} — the vanilla all-sides signal check. */
+	public boolean redstoneIncoming() {
+		return hasLevel() && getLevel().hasNeighborSignal(getBlockPos());
+	}
+
+	/**
+	 * The monkey wrench (:343-355) — the top face splits into sub-sides: a HORIZONTAL
+	 * sub-side toggles that auto-pull direction ({@code mAutoPullDirections ^= SBIT}),
+	 * a vertical (UP/DOWN) sub-side toggles the redstone mode. Returns the chat report.
+	 *
+	 * @param aSubSide the GT6 side byte of the clicked sub-area (0-5, the port side order)
+	 */
+	public String toolMonkeyWrench(byte aSubSide) {
+		Direction tSub = Direction.from3DDataValue(aSubSide);
+		if (tSub.getAxis() != Direction.Axis.Y) { // SIDES_HORIZONTAL
+			mAutoPullDirections ^= (1 << aSubSide);
+			setChanged();
+			return (mAutoPullDirections & (1 << aSubSide)) != 0 ? "Crucible Auto-Input: ON" : "Crucible Auto-Input: OFF";
+		}
+		mUseRedstone = !mUseRedstone;
+		setChanged();
+		return mUseRedstone ? "Crucible Auto-Input: REDSTONE" + (mAutoPullDirections == 0 ? " (WARNING: No Direction Selected!)" : "")
+				: "Crucible Auto-Input: NO REDSTONE";
+	}
+
+	/** The soft hammer (:337-342) — auto-pull and redstone mode reset. Returns the chat report. */
+	public String toolSoftHammer() {
+		mUseRedstone = false;
+		mAutoPullDirections = 0;
+		setChanged();
+		return "Crucible Auto-Input: OFF & NO REDSTONE";
 	}
 
 	// ------------------------------------------------------------------------------------
@@ -304,6 +687,8 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 		super.saveAdditional(aNBT);
 		aNBT.putInt(NBT_MOLD, mShape); // :109
 		aNBT.putLong(NBT_TEMPERATURE, mTemperature); // :108 (UT.NBT.setNumber — the long form)
+		aNBT.putByte(NBT_CONNECTION, mAutoPullDirections); // :106
+		aNBT.putBoolean(NBT_MODE, mUseRedstone); // :107
 		if (mContent != null) MaterialStackNBT.save(mContent, aNBT); // :110 NBT_MATERIALS
 		//? if forge {
 		aNBT.put("gt.inv", mInventory.serializeNBT());
@@ -317,6 +702,8 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 		super.load(aNBT);
 		if (aNBT.contains(NBT_MOLD, Tag.TAG_ANY_NUMERIC)) mShape = aNBT.getInt(NBT_MOLD); // :95
 		if (aNBT.contains(NBT_TEMPERATURE, Tag.TAG_ANY_NUMERIC)) mTemperature = aNBT.getLong(NBT_TEMPERATURE); // :99
+		if (aNBT.contains(NBT_CONNECTION, Tag.TAG_ANY_NUMERIC)) mAutoPullDirections = aNBT.getByte(NBT_CONNECTION); // :98
+		if (aNBT.contains(NBT_MODE, Tag.TAG_ANY_NUMERIC)) mUseRedstone = aNBT.getBoolean(NBT_MODE); // :96
 		mContent = MaterialStackNBT.load(aNBT); // :100
 		if (mContent != null && mContent.mAmount <= 0) mContent = null;
 		//? if forge {
