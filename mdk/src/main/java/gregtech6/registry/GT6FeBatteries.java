@@ -129,6 +129,9 @@ public final class GT6FeBatteries {
 		// handler classes used, from the listener the runtime proves fires on both legs
 		// (the fixture blocks below register from it). See the class doc for the wiring.
 		EnergyBridge.register(GT6FeBatteries::onForeignEnergy);
+		// the theoretical connect probe for the conductor handshakes (GTWireBlockEntity
+		// .canConnect -> EnergyBridge.bridgesForeign): same query minus the insert.
+		EnergyBridge.registerForeignConnectProbe(GT6FeBatteries::isForeignFeReceiver);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -154,6 +157,14 @@ public final class GT6FeBatteries {
 		if (!EnergyBridge.gateFE(true)) return 0;
 		return EnergyBridge.insertFe(tStorage::receiveEnergy, aSize, aAmount);
 	}
+
+	// The theoretical probe behind EnergyBridge.bridgesForeign — side-less (the handshake
+	// asks whether the receiver is bridgeable AT ALL; the packet faces are resolved later).
+	static boolean isForeignFeReceiver(Object aReceiver) {
+		if (!(aReceiver instanceof BlockEntity tReceiver) || !tReceiver.hasLevel()) return false;
+		IEnergyStorage tStorage = tReceiver.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
+		return tStorage != null && tStorage.canReceive();
+	}
 	//?} else {
 	/*// The 1.21.1 face: 21.1 deleted BlockEntity#getCapability (21.1.249 javap) — the query
 	// rides the LEVEL BlockCapability (Capabilities.EnergyStorage.BLOCK =
@@ -169,6 +180,15 @@ public final class GT6FeBatteries {
 		if (tStorage == null || !tStorage.canReceive()) return 0;
 		if (!EnergyBridge.gateFE(true)) return 0;
 		return EnergyBridge.insertFe(tStorage::receiveEnergy, aSize, aAmount);
+	}
+
+	// The theoretical probe behind EnergyBridge.bridgesForeign — side-less (the handshake
+	// asks whether the receiver is bridgeable AT ALL; the packet faces are resolved later).
+	static boolean isForeignFeReceiver(Object aReceiver) {
+		if (!(aReceiver instanceof BlockEntity tReceiver) || !tReceiver.hasLevel()) return false;
+		IEnergyStorage tStorage = tReceiver.getLevel().getCapability(
+				Capabilities.EnergyStorage.BLOCK, tReceiver.getBlockPos(), null);
+		return tStorage != null && tStorage.canReceive();
 	}
 	 *///?}
 }

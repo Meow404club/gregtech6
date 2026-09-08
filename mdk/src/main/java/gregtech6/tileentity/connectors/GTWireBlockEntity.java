@@ -23,6 +23,7 @@ import net.minecraft.world.level.material.FluidState;
 import gregapi.code.HashSetNoNulls;
 import gregapi.code.TagData;
 import gregapi.data.TD;
+import gregapi.tileentity.energy.EnergyBridge;
 import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregtech6.block.wire.GTWireBlock;
 import gregtech6.registry.GTBlockEntities;
@@ -764,7 +765,14 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	public boolean canConnect(byte aSide, @Nullable BlockEntity aNeighbor) {
 		if (isRedstone()) return true; // upstream :172 verbatim
 		if (isLaser()) return false; // upstream :89-92 — the LU probe, permanently false on this port (no LU carrier mounted)
-		if (!(aNeighbor instanceof ITileEntityEnergy tEnergy)) return false;
+		if (!(aNeighbor instanceof ITileEntityEnergy tEnergy)) {
+			// the RF connection arm, upstream EnergyCompat.canConnectElectricity :124 — the
+			// wire attaches to foreign receivers the EnergyBridge would bridge (capability
+			// presence = the modern isElectricRFReceiver whitelist); the transfer itself
+			// still ends in the root Util dispatch (:184). No bridge armed -> no foreign
+			// connections, the behaviour this port shipped with before the p26 bridge.
+			return EnergyBridge.bridgesForeign(aNeighbor);
+		}
 		byte tOpposite = (byte)Direction.from3DDataValue(aSide).getOpposite().get3DDataValue();
 		return tEnergy.isEnergyAcceptingFrom(TD.Energy.EU, tOpposite, true)
 				|| tEnergy.isEnergyEmittingTo(TD.Energy.EU, tOpposite, true);

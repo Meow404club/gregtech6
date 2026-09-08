@@ -42,6 +42,7 @@ public class EnergyBridgeTest {
 	@AfterEach
 	public void restoreDefaultSeam() {
 		EnergyBridge.register(null); // the ITileEntityEnergyTest.restoreDefaultEnergyBridge discipline
+		EnergyBridge.registerForeignConnectProbe(null);
 	}
 
 	/** A recording FE sink: accepts up to aCapacity, remembers every (amount, simulate) call. */
@@ -197,6 +198,42 @@ public class EnergyBridgeTest {
 		assertFalse(EnergyBridge.EMIT_EU_AS_RF, "the shipped default keeps the upstream config F");
 		assertTrue(EnergyBridge.gateFE(true), "a receiver exposing FE (the modern whitelist) is bridged");
 		assertFalse(EnergyBridge.gateFE(false), "a receiver without FE is not");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the theoretical foreign-connect probe (upstream EnergyCompat.canConnectElectricity
+	// :124 RF arm, capability presence modernized) — the conductor handshake face
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void withoutAProbeNoForeignReceiverIsBridgeable() {
+		// the shipped pre-bridge state: null probe -> no foreign connections at all
+		assertFalse(EnergyBridge.bridgesForeign("fe-machine"));
+		assertFalse(EnergyBridge.bridgesForeign(null), "a null receiver is never a connection target");
+	}
+
+	@Test
+	public void theProbeMirrorsTheHandlerGate() {
+		EnergyBridge.registerForeignConnectProbe(aReceiver -> aReceiver instanceof String s && !s.isEmpty());
+		assertTrue(EnergyBridge.bridgesForeign("fe-machine"), "an FE-flavoured receiver is a connection target");
+		assertFalse(EnergyBridge.bridgesForeign(""), "a gate-blind receiver is not");
+		// the gate rides the SAME gateFE as the handler: EMIT_EU_AS_RF = F inverts only on
+		// the capability answer, never on the receiver identity
+		assertFalse(EnergyBridge.bridgesForeign(null));
+	}
+
+	@Test
+	public void theMdkProbeAndHandlerComposeIntoTheWirePath() {
+		// the exact composition the wire handshake + dispatch perform: canConnect probes,
+		// the transfer bills through the handler — a probe-positive receiver is also one
+		// the handler accepts, the invariant the GTWireBlockEntity canConnect arm relies on
+		EnergyBridge.registerForeignConnectProbe(aReceiver -> aReceiver instanceof String);
+		EnergyBridge.register((aType, aSide, aSize, aAmount, aEmitter, aReceiver) -> {
+			if (aType != gregapi.data.TD.Energy.EU || !(aReceiver instanceof String)) return 0;
+			return EnergyBridge.insertFe((aAmount2, aSimulate2) -> aAmount2, aSize, aAmount);
+		});
+		assertTrue(EnergyBridge.bridgesForeign("fe-machine"));
+		assertEquals(1, EnergyBridge.insertEnergyInto(gregapi.data.TD.Energy.EU, (byte)3, 32, 1, null, "fe-machine"));
 	}
 
 	// ---------------------------------------------------------------------------

@@ -19,6 +19,8 @@
 
 package gregapi.tileentity.energy;
 
+import java.util.function.Predicate;
+
 import gregapi.code.TagData;
 import gregapi.data.CS;
 import gregapi.util.UT;
@@ -113,6 +115,13 @@ public final class EnergyBridge {
 	private static volatile IEnergyBridgeHandler mHandler = null;
 
 	/**
+	 * The theoretical connect probe (see {@link #bridgesForeign}): volatile for the same
+	 * reason as the handler. Both arms are installed together by the mod init; a null
+	 * probe (the shipped state) means "no foreign connections are bridgeable".
+	 */
+	private static volatile Predicate<Object> mForeignConnectProbe = null;
+
+	/**
 	 * Installs the bridge implementation. Pass null to restore the default
 	 * "nothing accepts energy" behavior (used by tests and mod shutdown).
 	 */
@@ -120,10 +129,35 @@ public final class EnergyBridge {
 		mHandler = aHandler;
 	}
 
+	/**
+	 * Installs the foreign-connect probe the conductor handshakes consult (the wire
+	 * {@code canConnect} of the p7-d2 port): a platform-side test of whether a NON-GT
+	 * receiver exposes a bridgeable FE face. Runs with no packet in flight — capability
+	 * presence only, no energy moved.
+	 */
+	public static void registerForeignConnectProbe(Predicate<Object> aProbe) {
+		mForeignConnectProbe = aProbe;
+	}
+
 	public static long insertEnergyInto(TagData aEnergyType, byte aSide, long aSize, long aAmount, Object aEmitter, Object aReceiver) {
 		if (aAmount <= 0 || aSize == 0 || aReceiver == null) return 0; // upstream EnergyCompat.java:141
 		IEnergyBridgeHandler tHandler = mHandler;
 		return tHandler == null ? 0 : tHandler.insertEnergyInto(aEnergyType, aSide, aSize, aAmount, aEmitter, aReceiver);
+	}
+
+	/**
+	 * The theoretical half of the RF connection, upstream EnergyCompat.canConnectElectricity
+	 * :124 — {@code (EMIT_EU_AS_RF || isElectricRFReceiver(aTarget)) && IEnergyHandler/Receiver}.
+	 * The class-name whitelist became capability presence (the handler's gate), which only the
+	 * platform can answer, so the probe rides the seam next to the handler and this wrapper
+	 * applies the same {@link #gateFE}: a foreign receiver IS a connection target exactly when
+	 * the bridge would attempt it. No probe installed (the shipped pre-bridge state) → false,
+	 * the conductor behaviour the port shipped with before this card.
+	 */
+	public static boolean bridgesForeign(Object aReceiver) {
+		if (aReceiver == null) return false;
+		Predicate<Object> tProbe = mForeignConnectProbe;
+		return tProbe != null && gateFE(tProbe.test(aReceiver));
 	}
 
 	// ---------------------------------------------------------------------------
