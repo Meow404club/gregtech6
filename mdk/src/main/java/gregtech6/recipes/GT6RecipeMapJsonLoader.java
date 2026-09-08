@@ -388,14 +388,15 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 	private static Item resolveItem(JsonObject aSlot, ResourceLocation aFileId, int aIndex) {
 		JsonElement tId = aSlot.get("item");
 		if (tId == null || !tId.isJsonPrimitive()) {badRow(aFileId, aIndex, "item slot needs a string \"item\" id"); return null;}
+		String tText = tId.getAsString(); // hoisted: the 1.21.1 parse swap's regex takes no nested-call args
 		ResourceLocation tKey;
 		try {
-			tKey = new ResourceLocation(tId.getAsString());
+			tKey = new ResourceLocation(tText);
 		} catch (IllegalArgumentException e) {
-			return badRow(aFileId, aIndex, "malformed item id \"" + tId.getAsString() + "\": " + e.getMessage());
+			return badRow(aFileId, aIndex, "malformed item id \"" + tText + "\": " + e.getMessage());
 		}
 		Item tItem = sItemResolver.apply(tKey);
-		if (tItem == null) return badRow(aFileId, aIndex, "unregistered item id \"" + tId.getAsString() + "\"");
+		if (tItem == null) return badRow(aFileId, aIndex, "unregistered item id \"" + tText + "\"");
 		return tItem;
 	}
 
@@ -404,14 +405,15 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 	private static Fluid resolveFluid(JsonObject aSlot, ResourceLocation aFileId, int aIndex) {
 		JsonElement tId = aSlot.get("fluid");
 		if (tId == null || !tId.isJsonPrimitive()) {badRow(aFileId, aIndex, "fluid slot needs a string \"fluid\" id"); return null;}
+		String tText = tId.getAsString();
 		ResourceLocation tKey;
 		try {
-			tKey = new ResourceLocation(tId.getAsString());
+			tKey = new ResourceLocation(tText);
 		} catch (IllegalArgumentException e) {
-			return badRow(aFileId, aIndex, "malformed fluid id \"" + tId.getAsString() + "\": " + e.getMessage());
+			return badRow(aFileId, aIndex, "malformed fluid id \"" + tText + "\": " + e.getMessage());
 		}
 		Fluid tFluid = sFluidResolver.apply(tKey);
-		if (tFluid == null) return badRow(aFileId, aIndex, "unregistered fluid id \"" + tId.getAsString() + "\"");
+		if (tFluid == null) return badRow(aFileId, aIndex, "unregistered fluid id \"" + tText + "\"");
 		return tFluid;
 	}
 
