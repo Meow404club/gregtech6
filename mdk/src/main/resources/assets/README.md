@@ -4711,3 +4711,34 @@ Upstream license CC0 (see above).
 - `foam_owned_orange.png` (1160) `098f00e92ba293728a041b4ca48264d7772ca6e4a28daf784d7b2efd628df88d`
 - `foam_white.png` (1130) `15fe6c3e22d845a3e41f622e5b18c2ec87354484243f3b1a26caec0104256cb3`
 - `foam_owned_white.png` (1162) `29f55f0e2b67541b1f8d25289573484a34ddcf64e4449bba468f7d67c89c6006`
+
+W1 Kinetic trio machine textures, task p26-w1-sifter-compressor-wiremill: the
+Sifter / Compressor / Wiremill family sets (15 PNG). The block fronts land via
+`mdk/tools/bake_machine_fronts.py --split-fronts --machine basicmachines/{sifter,
+compressor,wiremill}` over the same upstream snapshot (`v6.17.06-22-g3703e4030`,
+upstream `textures/blocks/machines/basicmachines/<machine>/`): `{machine}_colored_
+front` / `{machine}_overlay_front` / `{machine}_overlay_front_running` are byte
+copies of the upstream `colored|overlay|overlay_running/front.png`; the
+`overlay_active` strips (sifter 4 frames, compressor 9, wiremill 10/2) are cropped
+to their FRAME 0 16x16 representative and re-encoded — the P20 "animation retired"
+declared deviation carried over verbatim. The three GUI backgrounds are byte
+copies of the upstream `gui/machines/` files, lowercased (the 1.20.1
+ResourceLocation charset convention); no GUI ships them while the rows carry
+menu=null — they serve the recipe-map `mGUIPath` string and the future GUI pool
+card. Upstream license CC0 (see above).
+
+- `gui/machines/sifter.png` (upstream `Sifter.png`) `742981361d6ecead6306dfcf457a3f139961b3da2ef538cd2d06384c38bab44a`
+- `gui/machines/compressor.png` (upstream `Compressor.png`) `cb5c612a308385724ea8724419e9eeae4105744c7b06fae6b1deb53ffe86a80a`
+- `gui/machines/wiremill.png` (upstream `Wiremill.png`) `a0108deb57cb5da42b9fa1f3e9104cd41744dfcebde8ea928001f1f7ad249581`
+- `block/sifter_colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `block/sifter_overlay_front.png` `f736601956519d68b411807353cb25a200db9a190a45e9f5c6c920191f9743bc`
+- `block/sifter_overlay_front_active.png` (FRAME 0 of 4) `1a0a8dee55f0fe6e20432affc75b82892270c4f0a7b08dcdf39bf71fea10f315`
+- `block/sifter_overlay_front_running.png` (FRAME 0 of 4) `097a175a6e3de977218a128683fe99be7695f82ffccd3cb31b03b735173c79f5`
+- `block/compressor_colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `block/compressor_overlay_front.png` `9b0af1a60316b9b150a2c793bd3a942674cecfd86ee1ce60d58a81c5af6ae1d6`
+- `block/compressor_overlay_front_active.png` (FRAME 0 of 9) `a16f79ca4ef725116fac391ab7ff41532cec77510ee05a6cd540214f8e601fe9`
+- `block/compressor_overlay_front_running.png` (FRAME 0 of 9) `be94d0bd1de231456ec56eb57f9586325cd0bc69d4e8b8f928f039dcb423569c`
+- `block/wiremill_colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `block/wiremill_overlay_front.png` `12172025f9f74ef92ac3de2b46af0bdfb60024700ad3fe55602ceb1b85e8ca25`
+- `block/wiremill_overlay_front_active.png` (FRAME 0 of 10) `f69cdb02d3fdc1d8a7ea11d678964b42e6d6436e6d076c08852fef06811f3b8d`
+- `block/wiremill_overlay_front_running.png` (FRAME 0 of 2) `88be632c759d7cfee9a881d6efdaca871a58351ba6407e4c2f3d4e9dc7964453`

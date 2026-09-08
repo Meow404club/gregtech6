@@ -161,6 +161,9 @@ direct	gt6.row.burning_box.family.gas	气体	hand
 direct	gt6.row.burning_box.family.liquid	液体	hand
 direct	gt6.row.burning_box.family.solid	固体	hand
 direct	gt6.row.canner.display	罐装机 (%s)	hand
+direct	gt6.row.machine.compressor	压缩机 (%s)	hand
+direct	gt6.row.machine.sifter	筛选机 (%s)	hand
+direct	gt6.row.machine.wiremill	线材机 (%s)	hand
 direct	gt6.row.dense_wall.display	致密%s壁板	hand
 direct	gt6.row.diesel.display	燃油引擎 (%s)	hand
 direct	gt6.row.distillery.display	蒸馏器 (%s)	hand

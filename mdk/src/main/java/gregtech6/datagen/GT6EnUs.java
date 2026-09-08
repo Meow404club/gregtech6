@@ -594,12 +594,21 @@ public class GT6EnUs extends LanguageProvider {
         // CS.java:154 the LV/MV/HV/EV voltage ladder — the row mat units are the VOLTAGE
         // ids, not a material word like the Heat_T families below)
         add(gregtech6.registry.GTMachines.CANNER_DISPLAY_KEY, "Canning Machine (%s)");
+        // task p26-w1-sifter-compressor-wiremill — the W1 Kinetic trio: the MACHINE_DISPLAY_KEY
+        // template face of the card spec lands as the three unit keys in the :101-104 shape;
+        // the MachineRow carrier fills exactly ONE slot (the tier rides the Kinetic_T material
+        // word), so each unit key's value carries the family template (the one-slot
+        // CANNER_DISPLAY_KEY contract, not the two-slot MACHINE_DISPLAY_KEY form)
+        add(gregtech6.registry.GTMachines.MACHINE_SIFTER_UNIT_KEY, "Sifter (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_COMPRESSOR_UNIT_KEY, "Compressor (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_WIREMILL_UNIT_KEY, "Wiremill (%s)");
         // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
         for (String[] tMat : new String[][] {{"steel", "Steel"}, {"invar", "Invar"}, {"titanium", "Titanium"},
-                {"tungsten_carbide", "Tungsten Carbide"}, {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"}}) {
-            addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the Heat_T[1..4] locals (MT.java:3689) + the VN[1..4] ids (CS.java:154)
+                {"tungsten_carbide", "Tungsten Carbide"}, {"bronze", "Bronze"}, {"tungstensteel", "Tungstensteel"},
+                {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"}}) {
+            addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the Heat_T[1..4] locals (MT.java:3689) + the VN[1..4] ids (CS.java:154) + the Kinetic_T[1..4] locals (the W1 trio)
         }
         // task p16-distillery-family ① — the Integrated Circuit ("Selector Tag", the upstream
         // registration name ItemIntegratedCircuit.java:50 verbatim) + the configuration

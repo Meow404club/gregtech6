@@ -89,6 +89,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
+                new SubProviderEntry(GT6KineticMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-sifter-compressor-wiremill
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -108,6 +109,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
+                new SubProviderEntry(GT6KineticMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-sifter-compressor-wiremill
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -502,6 +504,45 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : cannerLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The W1 Kinetic trio block list (task p26-w1-sifter-compressor-wiremill): the twelve
+     * Sifter/Compressor/Wiremill rows (Loader_MultiTileEntities.java :1312-1315/
+     * :1343-1346/:1373-1376) — the cannerLootBlocks shape verbatim, the MTE default
+     * self-drop.
+     */
+    public static List<Block> kineticLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.sifterBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.compressorBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.wiremillBlockArray());
+        return rBlocks;
+    }
+
+    /** The W1 Kinetic trio self-drop provider (task p26-w1-sifter-compressor-wiremill; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6KineticMachineBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6KineticMachineBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6KineticMachineBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return kineticLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : kineticLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 
