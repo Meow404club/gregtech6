@@ -168,7 +168,7 @@ public final class GTMachines {
 			BLOCK_ENTITY_TYPES.register("shredder", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> machine(GTMachines.SHREDDER_BE.get(), aPos, aState, GT6RecipeMaps.SHREDDER, 1, false,
 							TD.Energy.RU, tierOf(aState.getBlock(), GTMachines.SHREDDER, GTMachines.SHREDDER_T2, GTMachines.SHREDDER_T3, GTMachines.SHREDDER_T4),
-							GTBasicMachinesMenus.SHREDDER_MENU::get),
+							null /*ModularUI family — no vanilla MenuType (p26-mui-a-menu-deregistration)*/),
 					SHREDDER.get(), SHREDDER_T2.get(), SHREDDER_T3.get(), SHREDDER_T4.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> CRUSHER_BE =
@@ -176,14 +176,14 @@ public final class GTMachines {
 					(aPos, aState) -> machine(GTMachines.CRUSHER_BE.get(), aPos, aState, GT6RecipeMaps.CRUSHER,
 							CRUSHER_PARALLEL[tierOf(aState.getBlock(), GTMachines.CRUSHER, GTMachines.CRUSHER_T2, GTMachines.CRUSHER_T3, GTMachines.CRUSHER_T4)], true,
 							TD.Energy.KU, tierOf(aState.getBlock(), GTMachines.CRUSHER, GTMachines.CRUSHER_T2, GTMachines.CRUSHER_T3, GTMachines.CRUSHER_T4),
-							GTBasicMachinesMenus.CRUSHER_MENU::get),
+							null /*ModularUI family — no vanilla MenuType (p26-mui-a-menu-deregistration)*/),
 					CRUSHER.get(), CRUSHER_T2.get(), CRUSHER_T3.get(), CRUSHER_T4.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> LATHE_BE =
 			BLOCK_ENTITY_TYPES.register("lathe", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> machine(GTMachines.LATHE_BE.get(), aPos, aState, GT6RecipeMaps.LATHE, 1, false,
 							TD.Energy.RU, tierOf(aState.getBlock(), GTMachines.LATHE, GTMachines.LATHE_T2, GTMachines.LATHE_T3, GTMachines.LATHE_T4),
-							GTBasicMachinesMenus.LATHE_MENU::get),
+							null /*ModularUI family — no vanilla MenuType (p26-mui-a-menu-deregistration)*/),
 					LATHE.get(), LATHE_T2.get(), LATHE_T3.get(), LATHE_T4.get()).build(null));
 
 	public static final RegistryObject<Item> SHREDDER_ITEM = ITEMS.register("shredder",

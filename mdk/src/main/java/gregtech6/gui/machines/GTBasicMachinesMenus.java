@@ -19,11 +19,18 @@ import net.minecraftforge.registries.RegistryObject;
 /**
  * Machine {@link MenuType} registration, card-owned (ADR-P3-4): the machine family gets its
  * own self-contained DeferredRegister listener (GTOvenMenus :21 shape — GTMenuTypes stays
- * frozen). One MenuType per registered machine ({@code gt6:shredder|crusher|lathe|cokeoven|dryer});
- * each factory closes over its own RegistryObject so the shared {@link GTBasicMachineMenu}
+ * frozen). One MenuType per legacy-row machine ({@code gt6:cokeoven|dryer|canner}); each
+ * factory closes over its own RegistryObject so the shared {@link GTBasicMachineMenu}
  * network constructor binds the type it was opened with. The cokeoven entry is the first
  * multiblock consumer — its factory takes the
  * {@link GTBasicMachineMenu#networkMultiBlock} path (task p8-cokeoven-gui-menu ③).
+ *
+ * <p>The shredder/crusher/lathe trio has NO vanilla MenuType since task
+ * p26-mui-a-menu-deregistration: the GUI opens through ModularUI (the
+ * {@code GT6MuiMachine} open chain, task p26-mui-a-open-chain), and the family marks that
+ * with a null menu supplier (TileEntityBasicMachine mMenuType semantics). Per the
+ * {@code gt6:*} MenuType freeze ruling, no new machine-family MenuType gets registered —
+ * a ported machine without legacy rows is ModularUI-only.
  */
 @Mod.EventBusSubscriber(modid = GTBasicMachinesMenus.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTBasicMachinesMenus {
@@ -33,9 +40,6 @@ public final class GTBasicMachinesMenus {
 	private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
 
 	/** Registry paths of the machine GUIs (MenuType ids, lowercase — Loader_MultiTileEntities :1193/:1294-1309/:1477-1480). */
-	public static final String SHREDDER_MENU_ID = "shredder";
-	public static final String CRUSHER_MENU_ID = "crusher";
-	public static final String LATHE_MENU_ID = "lathe";
 	public static final String COKE_OVEN_MENU_ID = "cokeoven";
 	/** Registry path of the Dryer GUI (task p16-machine-fluid-gui ① — the p14-dryer-family row.menu pool promise redeemed). */
 	public static final String DRYER_MENU_ID = "dryer";
@@ -45,15 +49,6 @@ public final class GTBasicMachinesMenus {
 	public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MOD_ID);
 
 	//? if forge {
-	public static final RegistryObject<MenuType<GTBasicMachineMenu>> SHREDDER_MENU =
-		MENUS.register(SHREDDER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.SHREDDER_MENU.get(), aId, aInv, aData)));
-
-	public static final RegistryObject<MenuType<GTBasicMachineMenu>> CRUSHER_MENU =
-		MENUS.register(CRUSHER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.CRUSHER_MENU.get(), aId, aInv, aData)));
-
-	public static final RegistryObject<MenuType<GTBasicMachineMenu>> LATHE_MENU =
-		MENUS.register(LATHE_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.LATHE_MENU.get(), aId, aInv, aData)));
-
 	public static final RegistryObject<MenuType<GTBasicMachineMenu>> COKE_OVEN_MENU =
 		MENUS.register(COKE_OVEN_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.networkMultiBlock(GTBasicMachinesMenus.COKE_OVEN_MENU.get(), aId, aInv, aData)));
 
@@ -63,16 +58,7 @@ public final class GTBasicMachinesMenus {
 	public static final RegistryObject<MenuType<GTBasicMachineMenu>> CANNER_MENU =
 		MENUS.register(CANNER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.CANNER_MENU.get(), aId, aInv, aData)));
 	//?} else {
-	/*public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> SHREDDER_MENU =
-		MENUS.register(SHREDDER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.SHREDDER_MENU.get(), aId, aInv, aData)));
-
-	public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> CRUSHER_MENU =
-		MENUS.register(CRUSHER_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.CRUSHER_MENU.get(), aId, aInv, aData)));
-
-	public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> LATHE_MENU =
-		MENUS.register(LATHE_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.network(GTBasicMachinesMenus.LATHE_MENU.get(), aId, aInv, aData)));
-
-	public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> COKE_OVEN_MENU =
+	/*public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> COKE_OVEN_MENU =
 		MENUS.register(COKE_OVEN_MENU_ID, () -> IForgeMenuType.create((aId, aInv, aData) -> GTBasicMachineMenu.networkMultiBlock(GTBasicMachinesMenus.COKE_OVEN_MENU.get(), aId, aInv, aData)));
 
 	public static final DeferredHolder<MenuType<?>, MenuType<GTBasicMachineMenu>> DRYER_MENU =
@@ -83,21 +69,6 @@ public final class GTBasicMachinesMenus {
 	 *///?}
 
 	private GTBasicMachinesMenus() {
-	}
-
-	/** The {@code gt6:shredder} menu type (RegistryObject.get fails fast when unbound). */
-	public static MenuType<GTBasicMachineMenu> shredder() {
-		return SHREDDER_MENU.get();
-	}
-
-	/** The {@code gt6:crusher} menu type. */
-	public static MenuType<GTBasicMachineMenu> crusher() {
-		return CRUSHER_MENU.get();
-	}
-
-	/** The {@code gt6:lathe} menu type. */
-	public static MenuType<GTBasicMachineMenu> lathe() {
-		return LATHE_MENU.get();
 	}
 
 	/** The {@code gt6:cokeoven} menu type (the multiblock machine GUI). */
