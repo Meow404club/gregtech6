@@ -133,6 +133,19 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCanner,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p26-w1-press-extruder-molds — the Press + Extruder ladders join the family:
+		// the same BE class, the same item + fluid faces (zero-fluid RECIPE maps, but the
+		// fluid FACE stays — the seam-② hard constraint: zero fluid recipes ≠ zero fluid face)
+		BlockEntityType<TileEntityBasicMachine> tPress = GTMachines.PRESS_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tPress,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPress,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tExtruder = GTMachines.EXTRUDER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tExtruder,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tExtruder,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,

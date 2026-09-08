@@ -177,12 +177,24 @@ public final class GTMachineCommand {
 			.then(machine("canner", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
 			.then(machine("canner_t2", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t2"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
 			.then(machine("canner_t3", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t3"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
-			.then(machine("canner_t4", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t4"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()));
+			.then(machine("canner_t4", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t4"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
+			// task p26-w1-press-extruder-molds: the press + extruder ladders — the input feed
+			// is the mold-class item (the forming rows take [block + mold]; the chain's `input`
+			// step supplies the block face separately, the mold is the family stub face)
+			.then(machine("press", GTMachines.PRESS_BLOCKS_BY_PATH.get("press"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.get()))
+			.then(machine("press_t2", GTMachines.PRESS_BLOCKS_BY_PATH.get("press_t2"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.get()))
+			.then(machine("press_t3", GTMachines.PRESS_BLOCKS_BY_PATH.get("press_t3"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.get()))
+			.then(machine("press_t4", GTMachines.PRESS_BLOCKS_BY_PATH.get("press_t4"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.get()))
+			.then(machine("extruder", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
+			.then(machine("extruder_t2", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t2"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
+			.then(machine("extruder_t3", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t3"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
+			.then(machine("extruder_t4", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t4"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()));
 		event.getDispatcher().register(tMachine);
-		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
-		// the p8 ladder registration line (the runServer gate asserts it): the three family
-		// BETs resolve — proof the RegistryObjects bound.
-		LOGGER.info("GT6 machine ladder registered: 12 blocks / 3 family BETs (T1-T4 validBlocks multi-attach), tiers "
+		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|press|extruder x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
+		// the p8 ladder registration line (the runServer gate asserts it): the five family
+		// BETs resolve — proof the RegistryObjects bound (press + extruder join = task
+		// p26-w1-press-extruder-molds: 12 + 8 blocks, 3 + 2 family BETs).
+		LOGGER.info("GT6 machine ladder registered: 20 blocks / 5 family BETs (T1-T4 validBlocks multi-attach), tiers "
 			+ java.util.Arrays.deepToString(GTMachines.TIER_INPUTS) + " crusher parallel " + java.util.Arrays.toString(GTMachines.CRUSHER_PARALLEL));
 		// the p14 dryer registration smoke line (the runServer gate asserts it): the family
 		// BET resolves, the row config is the upstream :1477-1480 columns.
