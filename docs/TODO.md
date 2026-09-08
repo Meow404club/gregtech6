@@ -273,6 +273,27 @@
 
 新池移交：runClient 首启双腿+目验三合一（Jade hover/喷漆显色/物品染色/桶漆显色+p23_barrel_paint 链活跑同窗）；creative form 语义覆盖（Util.canEdit 注入化或 RCON）；喷漆罐泡沫族（待管线+owner）/Canner 灌装（待 Canner 机器+配方图+16 染料液流体）/空罐 crafting（待 file/saw 工具系统卡）/grass 臂（待 GT 草方块卡，6 色限量）；微项两笔（GT6FluidProvider priority 注释勘误 9999 非 BODY+GT6EnUs javadoc :41-43 机制描述滞后）；circuit crafting+cover 配方仍随工具物品另车；GT6RecipeMaps reset 复核/物品掩码臂/变长机消费者/chisel vanilla stone/多方块双预览随集成波/kTFRU 池底/版本扩展最后
 
+## 第 24 阶段（工具系统三缝 / tag 双向范式基建 / canner+染料液 refill / creative-form+OP(2) 放开 / pipe-owner / lightning-rod / ACT=ModularUI 首消费）——✅ 已完成（2026-09-08）
+
+- [x] 研究六张全回收：草方块考古（6 变体染料色+完全静态）/tag census（权威数据在反编译树+消费方 file:line）/工具系统（container-item 通道）/creative form（上游语义存在=免材料凭空放置）/Canner（BasicMachine+RM 纯数据驱动）/变长机（唯一=LightningRod）/pipe-owner（锁仅泡沫固化后）/ACT（=Advanced Crafting Table 铺料非世界铺设）/螺丝刀（三卡拆分+selector cover 三重阻断）/builder-wand（缝先行重裁）
+- [x] 池拉齐并发入宪法（AGENTS.md）：coder 池未满即从池拉活，峰值 7 coder 并飞
+- [x] tool-system a95d9573：File/Saw+损耗缝（has 死门打回→id413 探针方法学）+空罐 crafting+生态 tag 双腿 forge:tools/c:tools
+- [x] tags-skeleton 264169e2：GT6BlockTags/ItemTags 首例+首批 2970（272 石+21 机器+2677 前缀）+快照 7 测+零 optional
+- [x] grass a6a1a7f7：6 per-pair+tag 全落 provider（spawnable 不挂=canCreatureSpawn=F 等价面）+FAM_GRASS 回填+12 PNG
+- [x] pipe-owner 2045c78d：owner 最小面+三活门（getDestroyProgress 覆写）+ownable=false 忠实上游+RCON ownable 替身
+- [x] canner 6da16b6c：四档+RM.Canner 动态三臂+17 行 refill+双输入槽参数化（node_expects 打回重交+快照 2974→2974+4）
+- [x] dye-fluids dbd1b1f4：17 流体+DYES_INT 唯源 tint+氯载体值+RCON 链双腿
+- [x] creative-form d9d21eb9：布尔缝+FormSeamTest 四臂（beat4 语义边界钉死）
+- [x] builder-wand 5b03e100：wand+scaffold 臂+OP(2) 重裁放开（mayBuild 双证）
+- [x] screwdriver 01a1096e：512 单钢+探针+ICover parity
+- [x] lightning-rod b7d125da：唯一变长机+五决策+21 测七臂
+- [x] prefix f476ea90：滚动批 shovel 1102+pickaxe 3621+aluminium 双挂（S3 手工伤打回→重生成修复）
+- [x] act 9938a4d4：71 槽+图案铺料+ModularUI 首消费接线成功+phantom 混合形态
+- [x] micro ×2：59e50805（priority 注释+javadoc）4300889c（paringInt+floor 棘轮 2550）
+- [x] phase-closeout：证书 forge 1392/0+neo 1394/0/2skip+jar GREEN+p24 五链 10/10；ADR 三篇正典；三教训入模板；KG 变体合并 -21
+
+新池移交：C-Foam（消费 pipe-owner owner 面）/lightning-rod-size-seam-pilot/selector-cover（三重阻断存档：宿主机器缺+OD_CIRCUITS[1] 替代未决+Cover_Blank 缺材料）/食品罐+row0（缺锤扳手）/runClient 首启双腿+目验四合一（ACT GUI 目视新增）/RCON 全集 27+5 链复验/36 行 i18n 社区复核/配方输入 tag 匹配研究卡（消费 tag 宇宙）/树叶原木 tag 卡/kg RAPTOR Class·Concept 域聚类（锚点蒸馏后仍余 ~900 超线）
+
 ## 遗留池
 
 - [x] **M2 哨兵产量翻案**：上游 HandlerCrushing 槽0=0 哨兵+槽1=10000 重复=每行 2 份主产出，port chance==0-null 后 oreRaw 1 份；翻案=buildRecipe base 改双 10000 槽（493 行不变）（merge 794bb1c，fix e31f48b；plain=2/blockRaw=9/dense 组合=11 对位上游）
