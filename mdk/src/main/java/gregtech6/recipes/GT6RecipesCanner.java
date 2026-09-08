@@ -40,6 +40,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import gregtech6.fluid.GTFluids;
 import gregtech6.registry.GT6FoodCans;
+import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6SprayCans;
 
 /**
@@ -126,6 +127,27 @@ public final class GT6RecipesCanner {
 	/** The dye indices the 16 refill rows walk (0..15, the :242 loop). */
 	public static final List<Integer> DYE_INDICES = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
 
+	/**
+	 * The C-Foam refill row fluid amount (task p26-c-foam-fluid-refill): the
+	 * MultiItemRandomTools.java:254/:262 {@code FL.mul(DYED_C_FOAMS[i], 256)} /
+	 * {@code FL.mul(DYED_C_FOAMS_OWNED[i], 256)} = 256 × the 100-unit bucket
+	 * ({@link GTFluids#CFOAM_BUCKET_UNITS}, FL.java:432 "// 100 per Unit") = 25600 mB —
+	 * the R4 mB 1:1 ruling, the same translation the {@link #REFILL_MB} dyes ride.
+	 */
+	public static final int FOAM_REFILL_MB = 256 * 100;
+
+	/** The C-Foam fluid seam: dye index i → the {@code gt6:cfoam_<DYE_IDS[i]>} source fluid (the live default), fixtures injected offline. */
+	public static IntFunction<Fluid> sCfoamFluidResolver = aIndex -> GTFluids.cfoam(aIndex, false).source.get();
+
+	/** The owned C-Foam fluid seam: dye index i → the {@code gt6:cfoam_owned_<DYE_IDS[i]>} source fluid, fixtures injected offline. */
+	public static IntFunction<Fluid> sCfoamOwnedFluidResolver = aIndex -> GTFluids.cfoam(aIndex, true).source.get();
+
+	/** The full C-Foam spray seam: dye index i → the {@code gt6:foam_spray_<DYE_IDS[i]>} can (upstream IL.SPRAY_CAN_FOAM[i] :251, GT6FoamSprays.FOAM_SPRAYS), fixtures injected offline. */
+	public static IntFunction<ItemStack> sFoamSprayResolver = aIndex -> new ItemStack(GT6FoamSprays.FOAM_SPRAYS.get(aIndex).get());
+
+	/** The full Advanced spray seam: dye index i → the {@code gt6:foam_spray_owned_<DYE_IDS[i]>} can (upstream IL.SPRAY_CAN_FOAM_OWNED[i] :259, GT6FoamSprays.FOAM_SPRAYS_OWNED), fixtures injected offline. */
+	public static IntFunction<ItemStack> sFoamSprayOwnedResolver = aIndex -> new ItemStack(GT6FoamSprays.FOAM_SPRAYS_OWNED.get(aIndex).get());
+
 	/** Poured flag — one generation, one pour (upstream loaders run once per JVM). */
 	private static boolean sLoaded = false;
 
@@ -139,10 +161,11 @@ public final class GT6RecipesCanner {
 	}
 
 	/**
-	 * Pours the 20 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
-	 * colour refills + the chlorine remover, p24) + the 3 food-can rows of task
-	 * p25-food-can-row0 (rotten_flesh/spider_eye/cookie). Idempotent; an unresolvable
-	 * row skips with a count (the upstream FL.exists drops).
+	 * Pours the 52 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
+	 * colour refills + the chlorine remover, p24), the 3 food-can rows of task
+	 * p25-food-can-row0 (rotten_flesh/spider_eye/cookie) and the 32 C-Foam refills of task
+	 * p26-c-foam-fluid-refill (the :254 dyed + the :262 owned ladders). Idempotent; an
+	 * unresolvable row skips with a count (the upstream FL.exists drops).
 	 */
 	public static synchronized void load() {
 		if (sLoaded) {LOGGER.debug("load() skipped: already poured (generation flag set)"); return;}
@@ -179,6 +202,19 @@ public final class GT6RecipesCanner {
 			Recipe tCookie = foodCanRow(new ItemStack(Items.COOKIE, 6), FOOD_VALUE_COOKIE, aTier -> sCookiesCanResolver.get(), tFoodCanEmpty);
 			if (tCookie == null) tSkipped++;
 			else {tMap.addRecipe(tCookie); tPoured++;}
+		}
+
+		// the p26-c-foam-fluid-refill 32 — MultiItemRandomTools.java:254 (dyed) / :262 (owned),
+		// one row per colour per ladder: empty can + 256 buckets of C-Foam → the full spray
+		for (int i : DYE_INDICES) {
+			Recipe tFoam = foamRefillRecipe(i, false);
+			if (tFoam == null) {tSkipped++; continue;} // the absent-fluid/item silent skip
+			tMap.addRecipe(tFoam);
+			tPoured++;
+			Recipe tOwned = foamRefillRecipe(i, true);
+			if (tOwned == null) {tSkipped++; continue;}
+			tMap.addRecipe(tOwned);
+			tPoured++;
 		}
 		sLoaded = true;
 		LOGGER.info("GT6 Canner poured: {} loaded, {} skipped (unregistered dye/chlorine/can ids, = upstream FL.exists drops)", tPoured, tSkipped);
@@ -222,6 +258,30 @@ public final class GT6RecipesCanner {
 		return new Recipe(true,
 				new ItemStack[] {tEmpty}, new ItemStack[] {tRemover},
 				new FluidStack[] {new FluidStack(tChlorine, REFILL_MB)},
+				null,
+				REFILL_DURATION, REFILL_EUT, 0);
+	}
+
+	/**
+	 * The MultiItemRandomTools.java:254 (owned=F) / :262 (owned=T) row for dye index i —
+	 * buffered T, EUt 16, duration 256, empty can in, {@code cfoam[_owned]_<i>} × 25600 mB
+	 * in (256 × the 100-unit bucket, {@link #FOAM_REFILL_MB}), full can out (ZERO NBT — the
+	 * R5 colour-as-identity ruling, a fresh GT6FoamSprayItem is implicitly full). Null when
+	 * any leg fails to resolve (the silent skip).
+	 */
+	@Nullable
+	static Recipe foamRefillRecipe(int aIndex, boolean aOwned) {
+		Fluid tCfoam = aOwned ? sCfoamOwnedFluidResolver.apply(aIndex) : sCfoamFluidResolver.apply(aIndex);
+		if (tCfoam == null) return null;
+		ItemStack tEmpty = sEmptyCanResolver.get();
+		if (tEmpty == null || tEmpty.isEmpty()) return null;
+		ItemStack tFull = aOwned ? sFoamSprayOwnedResolver.apply(aIndex) : sFoamSprayResolver.apply(aIndex);
+		if (tFull == null || tFull.isEmpty()) return null;
+		// upstream :254 — RM.Canner.addRecipe1(T, 16, 256, IL.Spray_Empty.get(1), FL.mul(DYED_C_FOAMS[i], 256), NF, IL.SPRAY_CAN_FOAM[i].get(1))
+		// upstream :262 — RM.Canner.addRecipe1(T, 16, 256, IL.Spray_Empty.get(1), FL.mul(DYED_C_FOAMS_OWNED[i], 256), NF, IL.SPRAY_CAN_FOAM_OWNED[i].get(1))
+		return new Recipe(true,
+				new ItemStack[] {tEmpty}, new ItemStack[] {tFull},
+				new FluidStack[] {new FluidStack(tCfoam, FOAM_REFILL_MB)},
 				null,
 				REFILL_DURATION, REFILL_EUT, 0);
 	}
