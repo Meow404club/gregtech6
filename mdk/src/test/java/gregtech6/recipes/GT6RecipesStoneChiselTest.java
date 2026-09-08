@@ -94,6 +94,7 @@ class GT6RecipesStoneChiselTest extends GTRecipesOfflineTestBase {
 	/** The stonetypes line: 17 rows, one per GT stone, STONE → CHISL, eUt 16 duration 16 (RM.java:470). */
 	@Test
 	void stoneTypesTableCensusAndRowShape() {
+		injectSyntheticResolver(); // the GT stone legs resolve through the seam — the production default is null offline
 		var tRows = GT6RecipesStoneChisel.stoneTypesTable();
 		assertEquals(17, tRows.size(), "one row per CS.java:1668 stone");
 		for (int i = 0; i < tRows.size(); i++) {
@@ -118,6 +119,7 @@ class GT6RecipesStoneChiselTest extends GTRecipesOfflineTestBase {
 	/** The bricks line: 17 rows, all the :508 shape BRICK → CRACK; the :514 cobble else-branch is zero-hit. */
 	@Test
 	void bricksTablePoursTheCrackedBranch() {
+		injectSyntheticResolver(); // the GT stone legs resolve through the seam — the production default is null offline
 		var tRows = GT6RecipesStoneChisel.bricksTable();
 		assertEquals(17, tRows.size(), "one row per stone");
 		for (int i = 0; i < tRows.size(); i++) {
