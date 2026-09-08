@@ -985,6 +985,232 @@ public final class GTFluids {
 		return DYE_CHEMICALS.get(aIndex);
 	}
 
+	/**
+	 * {@code gt6:cfoam} + the 32-family C-Foam fluid domain (task p26-c-foam-fluid-refill).
+	 *
+	 * <p>The BASE fluid is the {@code FL.CFoam} counterpart — FL.java:432
+	 * {@code CFoam("ic2constructionfoam", LIQUID) // 100 per Unit}. Per the
+	 * decisions.p26-cfoam-fluid-naming ruling the port does NOT keep the IC2 compat
+	 * registry name (no modern IC2 exists; cross-mod compat rides the tag paradigm, the
+	 * P24 ruling) — the base registers as {@code gt6:cfoam}, the family name root.
+	 *
+	 * <p>The 32 FAMILY fluids are the Loader_Fluids.java:124-125 loop verbatim over the
+	 * port dye order: {@code gt6:cfoam_<DYE_IDS[i]>} (the :124 {@code "cfoam." + colour}
+	 * rows) and {@code gt6:cfoam_owned_<DYE_IDS[i]>} (the :125 {@code "cfoam.owned." +
+	 * colour} "Advanced" rows) — 16 + 16, every tint the shared
+	 * {@link GTSprayCanItem#DYES_INT}[i] table (zero new colour data, the P24 single
+	 * colour source), one borrowed grayscale carrier PNG tinted per family. The consumers
+	 * this card pours: the Canner refills (MultiItemRandomTools.java:254/:262, 256 x
+	 * {@link #CFOAM_BUCKET_UNITS} = 25600 mB per can) and the Mixer rock/Pd rows
+	 * (Loader_Recipes_Other.java:251-304/:485-486) via {@code GT6RecipesMixer}.
+	 *
+	 * <p>Shape: the four-DR-with-block template (the {@link DyeChemicalFluid} form
+	 * verbatim — the P24 precedent this family extends). Carrier values: temperature 300 K
+	 * (the :124-125 FL.create literal) with the honest FluidType defaults density 1000 /
+	 * viscosity 1000 (the dye-chemical precedent). {@link #CFOAM_BUCKET_UNITS} = 100 is
+	 * the FL.java:432 "// 100 per Unit" amount semantics — the upstream
+	 * {@code FL.create(..., 100, ...)} bucket amount and the multiplier root of the
+	 * refill rows ({@code FL.mul(DYED_C_FOAMS[i], 256)}); 1.7.10 FluidStack.amount IS mB
+	 * (the P24 R4 ruling), so the port amounts translate 1:1.
+	 */
+	public static final class CFoamFluid {
+		/** The GT6 dye index ({@code 0..15}, the {@link GTSprayCanItem#DYE_IDS} row). */
+		public final int dyeIndex;
+		/** The :125 "Advanced" owned variant flag — same tint/texture, distinct registry path. */
+		public final boolean owned;
+		public final RegistryObject<FluidType> type;
+		public final RegistryObject<FlowingFluid> source;
+		public final RegistryObject<Fluid> flowing;
+		public final RegistryObject<LiquidBlock> block;
+
+		CFoamFluid(int aDyeIndex, boolean aOwned, RegistryObject<FluidType> aType, RegistryObject<FlowingFluid> aSource,
+				RegistryObject<Fluid> aFlowing, RegistryObject<LiquidBlock> aBlock) {
+			dyeIndex = aDyeIndex; owned = aOwned; type = aType; source = aSource; flowing = aFlowing; block = aBlock;
+		}
+
+		/** The gt6 registry path — {@code cfoam[_owned]_} + the {@link GTSprayCanItem#DYE_IDS}[i] snake id. */
+		public String name() {return owned ? cfoamOwnedName(dyeIndex) : cfoamName(dyeIndex);}
+
+		/** The tint over the grayscale carrier — {@link GTSprayCanItem#DYES_INT}[i], the single colour source. */
+		public int tint() {return GTSprayCanItem.DYES_INT[dyeIndex];}
+
+		/** The en_us display — the upstream :124/:125 compose verbatim, {@code ["Advanced "] + DYE_NAMES[i] + " C-Foam"}. */
+		public String displayName() {return (owned ? "Advanced " : "") + GTSprayCanItem.DYE_NAMES[dyeIndex] + " C-Foam";}
+
+		/** The lang/description key, the descriptionId the FluidType is registered with. */
+		public String descriptionId() {return "fluid.gt6." + name();}
+	}
+
+	/** The gt6 registry path of the dye index — {@code cfoam_} + the {@link GTSprayCanItem#DYE_IDS}[i] snake id (the :124 {@code "cfoam." + colour} rows). */
+	public static String cfoamName(int aIndex) {
+		return "cfoam_" + GTSprayCanItem.DYE_IDS[aIndex];
+	}
+
+	/** The gt6 registry path of the owned dye index — {@code cfoam_owned_} + the snake id (the :125 {@code "cfoam.owned." + colour} rows). */
+	public static String cfoamOwnedName(int aIndex) {
+		return "cfoam_owned_" + GTSprayCanItem.DYE_IDS[aIndex];
+	}
+
+	/** The dye index of a dyed ({@code cfoam_<dye>}) registry path, or −1 (the inverse of {@link #cfoamName}). */
+	public static int cfoamIndexOf(String aName) {
+		for (int i = 0; i < 16; i++) if (cfoamName(i).equals(aName)) return i;
+		return -1;
+	}
+
+	/** The dye index of an owned ({@code cfoam_owned_<dye>}) registry path, or −1 (the inverse of {@link #cfoamOwnedName}). */
+	public static int cfoamOwnedIndexOf(String aName) {
+		for (int i = 0; i < 16; i++) if (cfoamOwnedName(i).equals(aName)) return i;
+		return -1;
+	}
+
+	/** The Loader_Fluids.java:124-125 FL.create temperature literal (300 K) — the declared carrier the FluidType registers with. */
+	public static final int CFOAM_TEMPERATURE = 300;
+
+	/** The honest FluidType default density, declared explicitly (the dye-chemical precedent). */
+	public static final int CFOAM_DENSITY = 1000;
+
+	/**
+	 * FL.java:432 {@code // 100 per Unit} — the :124-125 {@code FL.create(..., 100, ...)}
+	 * bucket amount. The multiplier root of the Canner refills: 256 units per can
+	 * (MultiItemRandomTools.java:254/:262 {@code FL.mul(DYED_C_FOAMS[i], 256)}) = 25600 mB.
+	 */
+	public static final int CFOAM_BUCKET_UNITS = 100;
+
+	private static ForgeFlowingFluid.Properties cfoamBaseProperties() {
+		// the four-DR template again (the chlorine hand-row shape)
+		return new ForgeFlowingFluid.Properties(CFOAM_TYPE, CFOAM, CFOAM_FLOWING)
+				.block(CFOAM_BLOCK);
+	}
+
+	/**
+	 * {@code gt6:cfoam} — the base fluid, the decisions.p26-cfoam-fluid-naming ruling row
+	 * (the FL.java:432 "ic2constructionfoam" counterpart under the port namespace; no IC2
+	 * compat name). The Mixer base rock-group rows (Loader_Recipes_Other.java:252-254)
+	 * produce this fluid; the untinted grayscale carrier IS the construction-foam grey the
+	 * IC2 base carries (the dyed rows tint the same PNG). No bucket item.
+	 */
+	public static final RegistryObject<FluidType> CFOAM_TYPE = FLUID_TYPES.register("cfoam",
+			() -> new FluidType(FluidType.Properties.create()
+					.descriptionId("fluid.gt6.cfoam")
+					.temperature(CFOAM_TEMPERATURE)
+					.density(CFOAM_DENSITY)
+					.viscosity(1000)) {
+				@Override
+				public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+					aConsumer.accept(new IClientFluidTypeExtensions() {
+						// the upstream single grayscale carrier, still = flow (Loader_Fluids.java:118
+						// tDyedCFoam shared by the whole family; the PNG is the byte-identical borrow)
+						private static final ResourceLocation STILL =
+								ResourceLocation.fromNamespaceAndPath("gt6", "block/fluids/cfoam");
+						private static final ResourceLocation FLOW = STILL;
+
+						@Override
+						public ResourceLocation getStillTexture() {return STILL;}
+
+						@Override
+						public ResourceLocation getFlowingTexture() {return FLOW;}
+
+						@Override
+						public int getTintColor() {return 0xFFFFFFFF;} // untinted: the carrier IS the base grey
+					});
+				}
+			});
+
+	public static final RegistryObject<FlowingFluid> CFOAM = FLUIDS.register("cfoam",
+			() -> new ForgeFlowingFluid.Source(cfoamBaseProperties()));
+
+	public static final RegistryObject<Fluid> CFOAM_FLOWING = FLUIDS.register("cfoam_flowing",
+			() -> new ForgeFlowingFluid.Flowing(cfoamBaseProperties()));
+
+	public static final RegistryObject<LiquidBlock> CFOAM_BLOCK = BLOCKS.register("cfoam_block",
+			() -> new LiquidBlock(CFOAM, BlockBehaviour.Properties.of()
+					.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
+
+	/** The shared per-family Properties for the C-Foam rows — registry-event time only (the dyeChemicalProperties seam shape). */
+	private static ForgeFlowingFluid.Properties cfoamProperties(RegistryObject<FluidType> aType, String aName) {
+		return new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aName), FLOWING_SEAM.get(aName))
+				.block(BLOCK_SEAM.get(aName));
+	}
+
+	/** The table-driven registration helper for one C-Foam row: FluidType + Source/Flowing + LiquidBlock (the four-DR-with-block template). */
+	private static CFoamFluid cfoamFluid(int aIndex, boolean aOwned) {
+		String tName = aOwned ? cfoamOwnedName(aIndex) : cfoamName(aIndex);
+		int tTint = GTSprayCanItem.DYES_INT[aIndex]; // the single colour source, captured once
+		RegistryObject<FluidType> tType = FLUID_TYPES.register(tName, () -> new FluidType(FluidType.Properties.create()
+				.descriptionId("fluid.gt6." + tName)
+				.temperature(CFOAM_TEMPERATURE) // the Loader_Fluids.java:124-125 FL.create literal
+				.density(CFOAM_DENSITY)         // the honest FluidType default, declared explicitly
+				.viscosity(1000)) {
+			@Override
+			public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+				aConsumer.accept(new IClientFluidTypeExtensions() {
+					// the upstream single grayscale carrier, still = flow (:118 tDyedCFoam shared
+					// by the whole family; the PNG is the byte-identical borrow)
+					private static final ResourceLocation STILL =
+							ResourceLocation.fromNamespaceAndPath("gt6", "block/fluids/cfoam");
+					private static final ResourceLocation FLOW = STILL;
+
+					@Override
+					public ResourceLocation getStillTexture() {return STILL;}
+
+					@Override
+					public ResourceLocation getFlowingTexture() {return FLOW;}
+
+					@Override
+					public int getTintColor() {return tTint;} // GTSprayCanItem.DYES_INT[aIndex] — zero new colour data
+				});
+			}
+		});
+		RegistryObject<FlowingFluid> tSource = FLUIDS.register(tName,
+				() -> new ForgeFlowingFluid.Source(cfoamProperties(tType, tName)));
+		RegistryObject<Fluid> tFlowing = FLUIDS.register(tName + "_flowing",
+				() -> new ForgeFlowingFluid.Flowing(cfoamProperties(tType, tName)));
+		// the block leg: 1.20.1 Forge takes the supplier handle; 21.1 vanilla takes the
+		// resolved fluid (the DYE_CHEMICALS stonecutter fork — a camelCase local needs the
+		// explicit fork, the rewrite only matches UPPER_CASE fields)
+		//? if forge {
+		RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
+				() -> new LiquidBlock(tSource, BlockBehaviour.Properties.of()
+						.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
+		//?} else {
+		/*RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
+				() -> new LiquidBlock(tSource.get(), BlockBehaviour.Properties.of()
+						.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp (FLUID before BLOCK, the resolved .get() is live)
+		*///?}
+		SOURCE_SEAM.put(tName, tSource);
+		FLOWING_SEAM.put(tName, tFlowing);
+		BLOCK_SEAM.put(tName, tBlock);
+		return new CFoamFluid(aIndex, aOwned, tType, tSource, tFlowing, tBlock);
+	}
+
+	/**
+	 * The 16 dyed C-Foam registrations — one line per dye index, the Loader_Fluids.java:124
+	 * {@code DYED_C_FOAMS[i]} loop, tint from {@link GTSprayCanItem#DYES_INT}, appended
+	 * after the dye-chemical block in the static-init order (the DeferredRegister fields
+	 * accumulate, the entries fire with the existing {@link #onModConstruct}).
+	 */
+	public static final List<CFoamFluid> CFOAMS = List.of(
+			cfoamFluid(0, false), cfoamFluid(1, false), cfoamFluid(2, false), cfoamFluid(3, false),
+			cfoamFluid(4, false), cfoamFluid(5, false), cfoamFluid(6, false), cfoamFluid(7, false),
+			cfoamFluid(8, false), cfoamFluid(9, false), cfoamFluid(10, false), cfoamFluid(11, false),
+			cfoamFluid(12, false), cfoamFluid(13, false), cfoamFluid(14, false), cfoamFluid(15, false));
+
+	/**
+	 * The 16 owned "Advanced" C-Foam registrations — the Loader_Fluids.java:125
+	 * {@code DYED_C_FOAMS_OWNED[i]} loop, the {@link #CFOAMS} shape over the
+	 * {@code cfoam_owned_} id ladder.
+	 */
+	public static final List<CFoamFluid> CFOAMS_OWNED = List.of(
+			cfoamFluid(0, true), cfoamFluid(1, true), cfoamFluid(2, true), cfoamFluid(3, true),
+			cfoamFluid(4, true), cfoamFluid(5, true), cfoamFluid(6, true), cfoamFluid(7, true),
+			cfoamFluid(8, true), cfoamFluid(9, true), cfoamFluid(10, true), cfoamFluid(11, true),
+			cfoamFluid(12, true), cfoamFluid(13, true), cfoamFluid(14, true), cfoamFluid(15, true));
+
+	/** The family row of a dye index (the Canner refill seam, order = {@link GTSprayCanItem#DYE_IDS}). */
+	public static CFoamFluid cfoam(int aIndex, boolean aOwned) {
+		return aOwned ? CFOAMS_OWNED.get(aIndex) : CFOAMS.get(aIndex);
+	}
+
 	private GTFluids() {}
 
 	@SubscribeEvent
@@ -1089,6 +1315,34 @@ public final class GTFluids {
 					ForgeRegistries.FLUIDS.getKey(CHLORINE_FLOWING.get()),
 					CHLORINE_TEMPERATURE,
 					CHLORINE_DENSITY);
+			// task p26-c-foam-fluid-refill — the C-Foam family: the base row + the 32 with-block
+			// rows (the dye-chemical smoke shape, one line per family + the base)
+			GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (c-foam base — the ic2constructionfoam counterpart, the naming ruling)",
+					ForgeRegistries.FLUIDS.getKey(CFOAM.get()),
+					ForgeRegistries.FLUIDS.getKey(CFOAM_FLOWING.get()),
+					CFOAM_TEMPERATURE,
+					CFOAM_DENSITY,
+					ForgeRegistries.BLOCKS.getKey(CFOAM_BLOCK.get()));
+			for (CFoamFluid tFamily : CFOAMS) {
+				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (c-foam family, {}, dye index {})",
+						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
+						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
+						CFOAM_TEMPERATURE,
+						CFOAM_DENSITY,
+						ForgeRegistries.BLOCKS.getKey(tFamily.block.get()),
+						tFamily.displayName(),
+						tFamily.dyeIndex);
+			}
+			for (CFoamFluid tFamily : CFOAMS_OWNED) {
+				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (c-foam owned family, {}, dye index {})",
+						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
+						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
+						CFOAM_TEMPERATURE,
+						CFOAM_DENSITY,
+						ForgeRegistries.BLOCKS.getKey(tFamily.block.get()),
+						tFamily.displayName(),
+						tFamily.dyeIndex);
+			}
 		});
 	}
 }

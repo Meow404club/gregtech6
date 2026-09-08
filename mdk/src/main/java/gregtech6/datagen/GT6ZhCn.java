@@ -214,6 +214,18 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("fluid.gt6." + GTFluids.dyeChemicalName(i));
 		}
 		addDirect("fluid.gt6.chlorine");
+		// task p26-c-foam-fluid-refill: the base + the 32 C-Foam display names — the dump
+		// carries all 33 faces (S:fluid.ic2constructionfoam=建筑泡沫 tmp/gregtech.lang:361,
+		// S:fluid.cfoam.* :130-161); the keys ride the SAME GTFluids.cfoamName/
+		// cfoamOwnedName derivation the en walk and the FluidType descriptionIds use.
+		// Values are hand rows in the reference table.
+		addDirect("fluid.gt6.cfoam");
+		for (int i = 0; i < 16; i++) {
+			addDirect("fluid.gt6." + GTFluids.cfoamName(i));
+		}
+		for (int i = 0; i < 16; i++) {
+			addDirect("fluid.gt6." + GTFluids.cfoamOwnedName(i));
+		}
 		// the P22 spray-can domain (no upstream face anywhere — all hand)
 		addDirect("item.gt6.spray_can_empty");
 		addDirect("item.gt6.spray_paint_black");
