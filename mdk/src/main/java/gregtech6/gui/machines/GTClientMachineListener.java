@@ -14,11 +14,14 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 /**
  * Client-side mod-bus wiring for the machine screens (the GTClientOvenListener shape):
- * self-contained {@code @Mod.EventBusSubscriber(Dist.CLIENT)} — all four MenuTypes mount
- * the shared {@link GTBasicMachineScreen} inside {@code FMLClientSetupEvent#enqueueWork}
+ * self-contained {@code @Mod.EventBusSubscriber(Dist.CLIENT)} — the legacy-row MenuTypes
+ * mount the shared {@link GTBasicMachineScreen} inside {@code FMLClientSetupEvent#enqueueWork}
  * (MenuScreens.register is not thread-safe, forge-docs 1.20.x gui/screens.md:314); the
  * explicitly-typed lambda drives the M/U inference of
  * {@code MenuScreens.register(MenuType<? extends M>, ScreenConstructor<M, U>)}.
+ *
+ * <p>The shredder/crusher/lathe trio has no entry since task p26-mui-a-menu-deregistration:
+ * their GUI is ModularUI (no vanilla MenuType, task p26-mui-a-open-chain open chain).
  *
  * <p>1.21.1: {@code MenuScreens#register} is private (javap universal 21.1.249) — the
  * sanctioned hook is the mod-bus {@code RegisterMenuScreensEvent} whose {@code register}
@@ -35,12 +38,6 @@ public final class GTClientMachineListener {
 	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent event) {
 		event.enqueueWork(() -> {
-			MenuScreens.register(GTBasicMachinesMenus.shredder(),
-				(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
-			MenuScreens.register(GTBasicMachinesMenus.crusher(),
-				(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
-			MenuScreens.register(GTBasicMachinesMenus.lathe(),
-				(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
 			MenuScreens.register(GTBasicMachinesMenus.cokeoven(),
 				(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
 			MenuScreens.register(GTBasicMachinesMenus.dryer(),
@@ -50,12 +47,6 @@ public final class GTClientMachineListener {
 	//?} else {
 	/*@SubscribeEvent
 	public static void onRegisterScreens(RegisterMenuScreensEvent event) {
-		event.register(GTBasicMachinesMenus.shredder(),
-			(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
-		event.register(GTBasicMachinesMenus.crusher(),
-			(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
-		event.register(GTBasicMachinesMenus.lathe(),
-			(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
 		event.register(GTBasicMachinesMenus.cokeoven(),
 			(GTBasicMachineMenu menu, Inventory playerInventory, Component title) -> new GTBasicMachineScreen(menu, playerInventory, title));
 		event.register(GTBasicMachinesMenus.dryer(),
