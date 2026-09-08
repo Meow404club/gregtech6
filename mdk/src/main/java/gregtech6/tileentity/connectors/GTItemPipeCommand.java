@@ -70,8 +70,15 @@ public final class GTItemPipeCommand {
 
 	private static final Logger LOGGER = LogUtils.getLogger();
 
-	/** The accept drive bound (the 10t cadence + the latch stability round need ~30 ticks; 200 is generous). */
-	private static final int ACCEPT_MAX_PASSES = 200;
+	/**
+	 * The accept drive bound (the 10t cadence + the latch stability round need ~30 ticks;
+	 * the BUDGET arithmetic needs far more: the invSize-per-20t window rates the flow, so
+	 * the 64-stack arms over a huge pipe (invSize 4) spend 64/4 = 16 windows to move and
+	 * 60/4 = 15 more to drain — 31 windows = ~620 ticks of pacing, hence 2000 (the fluid
+	 * accept shape's generous ceiling; the bound is fail-fast anyway — the loop stops the
+	 * moment the pipe empties).
+	 */
+	private static final int ACCEPT_MAX_PASSES = 2000;
 
 	private GTItemPipeCommand() {
 	}
