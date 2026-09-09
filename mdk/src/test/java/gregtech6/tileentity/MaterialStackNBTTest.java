@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
@@ -82,5 +85,66 @@ public class MaterialStackNBTTest extends GTOfflineTestBase {
 		OreDictMaterialStack tBack = MaterialStackNBT.load(tTag);
 		assertSame(MT.NULL, tBack.mMaterial);
 		assertEquals(25L, tBack.mAmount);
+	}
+
+	// ====================================================================================
+	// the list face (task p26-crucible-physics-smeltery): the crucible mContent
+	// List<OreDictMaterialStack> round trip — upstream OreDictMaterialStack.saveList/
+	// loadList (:129-160): a "0".."n"-indexed compound + "size", NOT a vanilla ListTag.
+	// ====================================================================================
+
+	@Test
+	public void crucibleContentListRoundTrips() {
+		MT.init();
+		assertTrue(MT.Iron.mID >= 0 && MT.Copper.mID >= 0, "precondition: registered materials");
+
+		List<OreDictMaterialStack> tContent = new ArrayList<>();
+		tContent.add(new OreDictMaterialStack(MT.Iron, 2 * 648648000L));
+		tContent.add(new OreDictMaterialStack(MT.Copper, 648648000L));
+
+		CompoundTag tNBT = new CompoundTag();
+		MaterialStackNBT.saveList(tContent, "gt.materials", tNBT);
+
+		// the upstream container shape: size marker + indexed sub-compounds
+		CompoundTag tList = tNBT.getCompound("gt.materials");
+		assertEquals(2, tList.getInt("size"));
+		assertTrue(tList.contains("0", Tag.TAG_COMPOUND));
+		assertTrue(tList.contains("1", Tag.TAG_COMPOUND));
+		// the 'i' short save-compat contract holds per ENTRY
+		assertEquals((short) MT.Iron.mID, tList.getCompound("0").getShort("i"));
+		assertEquals(2 * 648648000L, tList.getCompound("0").getLong("a"));
+
+		List<OreDictMaterialStack> tBack = MaterialStackNBT.loadList("gt.materials", tNBT);
+		assertEquals(2, tBack.size());
+		assertSame(MT.Iron, tBack.get(0).mMaterial);
+		assertEquals(2 * 648648000L, tBack.get(0).mAmount);
+		assertSame(MT.Copper, tBack.get(1).mMaterial);
+		assertEquals(648648000L, tBack.get(1).mAmount);
+	}
+
+	@Test
+	public void crucibleContentListDropsNullMaterialEntries() {
+		MT.init();
+		// upstream :136/:152 — MT.NULL entries are skipped on save and on load
+		List<OreDictMaterialStack> tContent = new ArrayList<>();
+		tContent.add(new OreDictMaterialStack(MT.NULL, 25L));
+		tContent.add(new OreDictMaterialStack(MT.Iron, 648648000L));
+
+		CompoundTag tNBT = new CompoundTag();
+		MaterialStackNBT.saveList(tContent, "gt.materials", tNBT);
+		assertEquals(1, tNBT.getCompound("gt.materials").getInt("size"), "the NULL entry never reaches the NBT");
+
+		List<OreDictMaterialStack> tBack = MaterialStackNBT.loadList("gt.materials", tNBT);
+		assertEquals(1, tBack.size());
+		assertSame(MT.Iron, tBack.get(0).mMaterial);
+	}
+
+	@Test
+	public void crucibleContentListEmptyAndMissingKeys() {
+		CompoundTag tNBT = new CompoundTag();
+		assertTrue(MaterialStackNBT.loadList("gt.materials", tNBT).isEmpty(), "a missing key yields the empty list");
+		MaterialStackNBT.saveList(new ArrayList<>(), "gt.materials", tNBT);
+		assertEquals(0, tNBT.getCompound("gt.materials").getInt("size"));
+		assertTrue(MaterialStackNBT.loadList("gt.materials", tNBT).isEmpty());
 	}
 }

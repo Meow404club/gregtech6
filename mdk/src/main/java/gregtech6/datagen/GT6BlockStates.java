@@ -143,6 +143,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addGearBoxTransformer(); // task p12-gearbox-transformer
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
+        addLargeCrucible(); // task p26-crucible-multiblock
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
     }
@@ -155,6 +156,25 @@ public final class GT6BlockStates extends BlockStateProvider {
      * a visual state upstream either, the p8 ruling — the ladder adds three PNGs total,
      * the placeholder fronts).
      */
+    /**
+     * Task p26-crucible-multiblock — the LARGE crucible family (the wall "Steel Wall"
+     * + the "Large Steel Crucible" controller): placeholder cube models over the boiler
+     * wall texture (the machine-wall placeholder convention — no crucible PNG exists;
+     * the formed/unformed and the molten-content faces are the declared render defer,
+     * the controller blockstate still carries the full 8 FACING×FORMED state coverage).
+     */
+    private void addLargeCrucible() {
+        Block tWall = gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL.get();
+        simpleBlock(tWall, models().cubeAll("crucible_steel_wall", modLoc("block/large_boiler/wall")));
+        itemModels().withExistingParent("crucible_steel_wall", modLoc("block/crucible_steel_wall"));
+        for (gregtech6.registry.GT6Crucibles.CrucibleRow tRow : gregtech6.registry.GT6Crucibles.CRUCIBLE_ROWS) {
+            Block tBlock = gregtech6.registry.GT6Crucibles.CRUCIBLE_BLOCKS_BY_PATH.get(tRow.path()).get();
+            ModelFile tModel = models().cubeAll(tRow.path(), modLoc("block/large_boiler/wall"));
+            getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
+    }
+
     private void addDryer() {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.DRYER_ROWS) {
             addMachine(GTMachines.DRYER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
