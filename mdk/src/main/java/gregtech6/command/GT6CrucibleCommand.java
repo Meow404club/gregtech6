@@ -109,9 +109,16 @@ public final class GT6CrucibleCommand {
 		LOGGER.info("Registered GT6 crucible command /gt6crucible (place | place-mold | stat | mold | pour | bucket | inject-hu | cool | drop) — the crucible-chain acceptance home");
 	}
 
-	/** The place arm over the GT6Crucibles/GT6Molds row paths. */
+	/** The place arm over the GT6Crucibles/GT6Molds row paths. The bare variant form
+	 * ("stone" / "steel") resolves through the row-path prefix ("smeltery_stone" /
+	 * "mold_stone" — the registered block paths, pinned by the datagen crafting rows);
+	 * a full row path is accepted verbatim. */
 	private static int place(CommandSourceStack aSource, BlockPos aPos, String aVariant, boolean aMold) {
 		net.minecraft.world.level.block.Block tBlock = aMold ? gregtech6.registry.GT6Molds.blockByPath(aVariant) : gregtech6.registry.GT6Crucibles.blockByPath(aVariant);
+		if (tBlock == null) {
+			String tPath = (aMold ? "mold_" : "smeltery_") + aVariant;
+			tBlock = aMold ? gregtech6.registry.GT6Molds.blockByPath(tPath) : gregtech6.registry.GT6Crucibles.blockByPath(tPath);
+		}
 		if (tBlock == null) {
 			aSource.sendFailure(Component.literal("PLACE FAILED: unknown " + (aMold ? "mold" : "crucible") + " variant " + aVariant));
 			return 0;
