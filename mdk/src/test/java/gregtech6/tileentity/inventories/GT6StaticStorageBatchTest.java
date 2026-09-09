@@ -304,6 +304,41 @@ public class GT6StaticStorageBatchTest extends GTOfflineTestBase {
 	}
 
 	@Test
+	public void safeExplosionDestroysContentsAndMarkerWithoutScatter() {
+		// the upstream onExploded :111 setToAir() semantic: contents DESTROYED, never
+		// scattered. The review leak: the carrier's air swap (setBlock flag 3) fires the
+		// onRemove break face, which re-rolls tryGenerateDungeonLoot — a surviving marker
+		// would refill the just-cleared 15 slots mid-remove and the pop walk would then
+		// ground-drop the whole pack. The explosion arm must kill the marker WITH the slots.
+		GT6SafeBlockEntity tSafe = new GT6SafeBlockEntity(sSafeType, POS, Blocks.STONE.defaultBlockState());
+		tSafe.mDungeonLootName = "gt6:chests/safe_dungeon";
+		for (int i = 0; i < 15; i++) {
+			tSafe.getInventory().setStackInSlot(i, new ItemStack(Items.GOLD_INGOT, 4));
+		}
+		tSafe.destroyForExplosion();
+		for (int i = 0; i < 15; i++) {
+			assertTrue(tSafe.getInventory().getStackInSlot(i).isEmpty(), "slot " + i + " destroyed, not dropped");
+		}
+		assertEquals("", tSafe.mDungeonLootName, "the marker dies with the contents");
+		// the onRemove face that follows the air swap can regenerate NOTHING (a roller call
+		// here would mean loot regrew after the blast) and the pop walk finds an empty
+		// inventory — zero scatter
+		tSafe.generateDungeonLootFrom(aName -> {
+			throw new AssertionError("loot regenerated after the explosion — the marker survived");
+		});
+		for (int i = 0; i < 15; i++) {
+			assertTrue(tSafe.getInventory().getStackInSlot(i).isEmpty());
+		}
+		// the KeyLocked personality shares the seam (the same block arm serves both kinds)
+		GT6SafeKeyLockedBlockEntity tKeySafe = new GT6SafeKeyLockedBlockEntity(sKeySafeType, POS, Blocks.STONE.defaultBlockState());
+		tKeySafe.mDungeonLootName = "gt6:chests/safe_dungeon";
+		tKeySafe.getInventory().setStackInSlot(3, new ItemStack(Items.GOLD_INGOT));
+		tKeySafe.destroyForExplosion();
+		assertTrue(tKeySafe.getInventory().getStackInSlot(3).isEmpty());
+		assertEquals("", tKeySafe.mDungeonLootName);
+	}
+
+	@Test
 	public void keyLockedSafeLatchFollowsTheUseKeySeam() {
 		GT6SafeKeyLockedBlockEntity tSafe = new GT6SafeKeyLockedBlockEntity(sKeySafeType, POS, Blocks.STONE.defaultBlockState());
 		assertFalse(tSafe.isOpen()); // upstream :53 mOpened = F

@@ -174,6 +174,29 @@ public class GT6SafeBlockEntity extends GT6StaticStorageBaseBlockEntity implemen
 		}
 	}
 
+	// ---------------------------------------------------------------------------
+	// the explosion face (the upstream onExploded :111 setToAir() semantic)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The explosion destroy arm on the BE seam (the {@code GTBoilerTankBlockEntity
+	 * .onExploded} shape — the block carrier's {@code onBlockExploded} calls this BEFORE
+	 * its air swap): the contents AND the {@link #mDungeonLootName} marker die together.
+	 * The marker half is the load-bearing one: the air swap (setBlock flag 3) fires the
+	 * carrier's onRemove, whose break face re-rolls {@code tryGenerateDungeonLoot} — a
+	 * surviving marker would refill the just-cleared 15 slots mid-remove and the pop walk
+	 * would then scatter the whole pack onto the ground, breaking the upstream
+	 * {@code setToAir()} contract (the contents are DESTROYED, never scattered; the
+	 * not-yet-generated dungeon loot is destroyed with them). Upstream never hit this
+	 * because its {@code setToAir} bypasses breakBlock entirely.
+	 */
+	public void destroyForExplosion() {
+		for (int i = 0, l = getInventory().getSlots(); i < l; i++) {
+			getInventory().setStackInSlot(i, ItemStack.EMPTY); // destroyed, not dropped
+		}
+		mDungeonLootName = ""; // the marker dies with the contents — onRemove must not re-roll
+	}
+
 	/**
 	 * The ChestGenHooks.getOneItem equivalent over the modern roll: resolve the marker as a
 	 * loot table id, roll the CHEST context once, return ONE uniform pick of the rolled

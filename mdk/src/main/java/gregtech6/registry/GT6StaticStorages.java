@@ -515,16 +515,17 @@ public final class GT6StaticStorages {
 		 * The explosion face — the safe carries the upstream {@code onExploded :111
 		 * setToAir()} verbatim: the contents are DESTROYED, never scattered (the anti-theft
 		 * semantic; the blast-resistance column stands between the explosion and this arm).
+		 * The destroy rides the BE seam {@link GT6SafeBlockEntity#destroyForExplosion} —
+		 * slots AND the dungeon-loot marker, because the air swap below fires the onRemove
+		 * face whose break arm re-rolls the marker into the cleared slots (the leak the
+		 * review caught: a surviving marker = the whole pack regenerated and scattered).
 		 * Every other kind rides the vanilla pop path (the onRemove face above).
 		 */
 		@Override
 		public void onBlockExploded(BlockState aState, Level aLevel, BlockPos aPos, Explosion aExplosion) {
 			if (mRow.kind() == Kind.SAFE_MECHANICAL || mRow.kind() == Kind.SAFE_KEYLOCKED) {
-				BlockEntity tBE = aLevel.getBlockEntity(aPos);
-				if (tBE instanceof GT6SafeBlockEntity tSafe) {
-					for (int i = 0, l = tSafe.getInventory().getSlots(); i < l; i++) {
-						tSafe.getInventory().setStackInSlot(i, ItemStack.EMPTY); // destroyed, not dropped
-					}
+				if (aLevel.getBlockEntity(aPos) instanceof GT6SafeBlockEntity tSafe) {
+					tSafe.destroyForExplosion();
 				}
 			}
 			aLevel.setBlock(aPos, Blocks.AIR.defaultBlockState(), 3); // the IForgeBlock default body
