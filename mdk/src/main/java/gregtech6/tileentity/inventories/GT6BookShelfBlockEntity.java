@@ -178,7 +178,12 @@ public class GT6BookShelfBlockEntity extends GT6StaticStorageBaseBlockEntity {
 		if (!hasLevel() || isClientSide() || !(getLevel() instanceof net.minecraft.server.level.ServerLevel tLevel)) return ItemStack.EMPTY;
 		net.minecraft.resources.ResourceLocation tId = net.minecraft.resources.ResourceLocation.tryParse(aTableName);
 		if (tId == null) return ItemStack.EMPTY;
+		//? if forge {
 		net.minecraft.world.level.storage.loot.LootTable tTable = tLevel.getServer().getLootData().getLootTable(tId);
+		//?} else {
+		/*net.minecraft.world.level.storage.loot.LootTable tTable = tLevel.getServer().reloadableRegistries().getLootTable(
+				net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, tId)); // 21.1 resolver, ResourceKey keyed
+		*///?}
 		java.util.List<ItemStack> tRolls = new java.util.ArrayList<>();
 		net.minecraft.world.level.storage.loot.LootParams tParams = new net.minecraft.world.level.storage.loot.LootParams.Builder(tLevel)
 				.withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN,

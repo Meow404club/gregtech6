@@ -183,10 +183,18 @@ public class GT6SafeBlockEntity extends GT6StaticStorageBaseBlockEntity implemen
 		if (!hasLevel() || isClientSide() || !(getLevel() instanceof ServerLevel tLevel)) return ItemStack.EMPTY;
 		ResourceLocation tId = ResourceLocation.tryParse(aTableName);
 		if (tId == null) return ItemStack.EMPTY;
+		//? if forge {
 		// LootDataResolver.getLootTable(ResourceLocation) — the 1.20.1 resolver face (vanilla
 		// LootDataResolver.java:25; the absent id falls back to the EMPTY table, the roll
 		// below then yields nothing and the slot stays empty)
 		LootTable tTable = tLevel.getServer().getLootData().getLootTable(tId);
+		//?} else {
+		/*// 21.1: the resolver lives on ReloadableServerRegistries.Holder, ResourceKey keyed
+		// (ReloadableServerRegistries.java:145) — same fail-soft semantics, the absent id
+		// resolves to the EMPTY table.
+		LootTable tTable = tLevel.getServer().reloadableRegistries().getLootTable(
+				net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, tId));
+		*///?}
 		List<ItemStack> tRolls = new ArrayList<>();
 		LootParams tParams = new LootParams.Builder(tLevel)
 				.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(getBlockPos()))

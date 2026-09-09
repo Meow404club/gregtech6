@@ -488,7 +488,15 @@ public final class GT6StaticStorages {
 				if (tBE instanceof GT6BottleCrateBlockEntity tCrate) {
 					// the keepSlot fold: contents ride the dropped item (BE class doc)
 					ItemStack tDrop = new ItemStack(this);
-					tDrop.addTagElement("BlockEntityTag", tCrate.saveWithoutMetadata());
+					//? if forge {
+					tDrop.addTagElement("BlockEntityTag", tCrate.saveWithoutMetadata()); // the vanilla shulker convention
+					//?} else {
+					/*// 21.1: the same convention over the BLOCK_ENTITY_DATA component (BlockItem
+					//updateCustomBlockEntityTag reads the component and loadInto()s the BE)
+					tDrop.set(net.minecraft.core.component.DataComponents.BLOCK_ENTITY_DATA,
+							net.minecraft.world.item.component.CustomData.of(
+									tCrate.saveWithoutMetadata(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS)));
+					*///?}
 					Block.popResource(aLevel, aPos, tDrop);
 				} else if (tBE instanceof GT6StaticStorageBaseBlockEntity tStorage) {
 					for (int i = 0, l = tStorage.getInventory().getSlots(); i < l; i++) {

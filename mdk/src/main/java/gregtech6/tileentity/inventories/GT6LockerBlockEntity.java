@@ -76,7 +76,15 @@ public class GT6LockerBlockEntity extends GT6StaticStorageBaseBlockEntity {
 	/** The armor-piece gate of slot i — upstream :84 {@code isValidArmor(aStack, 3-aSlot)}. */
 	public static boolean isValidArmorForSlot(ItemStack aStack, int aSlot) {
 		if (aStack.isEmpty() || aSlot < 0 || aSlot >= INVENTORY_SIZE) return false;
-		return Mob.getEquipmentSlotForItem(aStack) == SLOT_PIECES[aSlot];
+		//? if forge {
+		return Mob.getEquipmentSlotForItem(aStack) == SLOT_PIECES[aSlot]; // the 1.20.1 static face
+		//?} else {
+		/*// 21.1: the resolver went instance-side (LivingEntity.getEquipmentSlotForItem) and the
+		//Equipable.get entry point is package-private — the ArmorItem face covers every armor
+		//piece (vanilla + modded ArmorItem armor), the declared fold.
+		return aStack.getItem() instanceof net.minecraft.world.item.ArmorItem tArmor
+				&& tArmor.getEquipmentSlot() == SLOT_PIECES[aSlot];
+		*///?}
 	}
 
 	@Override
