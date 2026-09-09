@@ -329,7 +329,10 @@ public final class GT6StaticStorages {
 				}
 				case DRAWER -> {
 					// the monkey-wrench sided toggle (upstream onToolClick2 :92-100) + the MUI
-					// open (the wave-4 one-page ruling; the click-a-quadrant window folds)
+					// open (the wave-4 one-page ruling; the click-a-quadrant window folds).
+					// DECLARED DEVIATION: the toggle answers the front face only (the use-arm
+					// routing below) — upstream onToolClick2 took a wrench on ANY face; the
+					// toggled state is identical (the BE class doc).
 					if (tFace != tFront) return InteractionResult.PASS;
 					if (tHand.is(gregtech6.datagen.GT6ItemTags.TOOLS_WRENCH)) {
 						if (tServer && tStorage instanceof GT6DrawerQuadBlockEntity tDrawer) {

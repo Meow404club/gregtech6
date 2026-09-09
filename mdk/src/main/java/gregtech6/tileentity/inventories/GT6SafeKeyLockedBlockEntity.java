@@ -29,7 +29,9 @@ import gregtech6.registry.GTBlockEntities;
  *     upstream caller is the GT6 key item through {@code ITileEntityKeyInteractable} —
  *     the key item family is not in this port universe yet, so the method is the public
  *     SEAM (the future key item, or a data-driven arm, calls it verbatim; RCON drives it
- *     through the latch NBT);</li>
+ *     through the latch NBT). The {@code :86 UT.Sounds.send(SFX.MC_CLICK, 1.0F, 0.25F)}
+ *     feedback rides the flip guarded server-side (the vanilla UI click placeholder, the
+ *     CoverFilterItem SFX precedent);</li>
  * <li>{@code canCloneKey :97-99} (clone only while open) folds with the key item family
  *     (declared defer);</li>
  * <li>the open/closed texture pair folds into the placeholder block art (render pool,
@@ -73,7 +75,10 @@ public class GT6SafeKeyLockedBlockEntity extends GT6SafeBlockEntity {
 
 	/**
 	 * Upstream {@code useKey :83-95} port: flip the latch on a matching key id, claim on
-	 * the first key while unclaimed; false when no key matches.
+	 * the first key while unclaimed; false when no key matches. The flip plays the
+	 * upstream :86 click feedback ({@code SFX.MC_CLICK} 1.0F volume, 0.25F pitch — the
+	 * vanilla UI click placeholder) guarded server-side like the flip itself, so the
+	 * offline seam stays silent.
 	 */
 	public boolean useKey(long... aKeys) {
 		for (long tID : aKeys) {
@@ -81,6 +86,11 @@ public class GT6SafeKeyLockedBlockEntity extends GT6SafeBlockEntity {
 			if (mID != 0 && tID == mID) {
 				mOpened = !mOpened;
 				updateInventory(); // the latch rides the inventory-change sync window
+				if (hasLevel() && !isClientSide()) { // upstream :86 UT.Sounds.send(SFX.MC_CLICK, 1.0F, 0.25F)
+					getLevel().playSound(null, getBlockPos(),
+							net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK.value(),
+							net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 0.25F);
+				}
 				return true;
 			}
 		}

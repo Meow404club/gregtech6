@@ -52,7 +52,11 @@ import gregtech6.registry.GTBlockEntities;
  * consume.
  *
  * <p>No tool arms beyond the monkey-wrench toggle (upstream :92-100 returns 10000
- * durability for it); insert/extract gates :120-121 = always true; stack limit 64.
+ * durability for it). DECLARED DEVIATION: the toggle is reachable from the FRONT face
+ * only — it rides the block use arm behind the front-face gate, while the upstream
+ * {@code onToolClick2} answered a monkey wrench on ANY face; the sided state itself is
+ * identical and the RCON chain drives it through the mode NBT.
+ * Insert/extract gates :120-121 = always true; stack limit 64.
  */
 public class GT6DrawerQuadBlockEntity extends GT6StaticStorageBaseBlockEntity implements gregtech6.gui.machines.GT6MuiMachine {
 
