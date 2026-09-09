@@ -119,7 +119,7 @@ public final class GT6Molds {
 	// ------------------------------------------------------------------------------------
 
 	/** The ceramic blank (Loader:352 — the one row without a crafting recipe, shape 0 until carved). */
-	public static final MoldRow CERAMIC_BLANK_ROW = new MoldRow("mold_ceramic", MT.Ceramic, 1.0F, 0);
+	public static final MoldRow CERAMIC_BLANK_ROW = new MoldRow("mold_ceramic", () -> MT.Ceramic, 1.0F, 0);
 
 	/**
 	 * The 30 pre-carved ceramic molds (Loader_MultiTileEntities.java:391-420, upstream
@@ -129,36 +129,36 @@ public final class GT6Molds {
 	 * #MOLD_RECIPES} — it answers through the {@code OP.nugget} fallback (:79-83).
 	 */
 	public static final List<MoldRow> CERAMIC_ROWS = List.of(
-			new MoldRow("mold_ceramic_ingot"          , MT.Ceramic, 1.0F, 0b0_01110_01110_01110_01110_01110), // -> ingot
-			new MoldRow("mold_ceramic_billet"         , MT.Ceramic, 1.0F, 0b0_01100_11110_11110_01100_00000), // -> billet
-			new MoldRow("mold_ceramic_chunk"          , MT.Ceramic, 1.0F, 0b0_11000_11000_00000_00000_00000), // -> chunkGt
-			new MoldRow("mold_ceramic_plate"          , MT.Ceramic, 1.0F, 0b0_11111_11111_11111_11111_11111), // -> plate
-			new MoldRow("mold_ceramic_tiny_plate"     , MT.Ceramic, 1.0F, 0b0_00000_01110_01110_01110_00000), // -> plateTiny
-			new MoldRow("mold_ceramic_bolt"           , MT.Ceramic, 1.0F, 0b0_00000_00000_00100_00100_00000), // -> bolt
-			new MoldRow("mold_ceramic_rod"            , MT.Ceramic, 1.0F, 0b0_00000_00000_11111_00000_00000), // -> stick
-			new MoldRow("mold_ceramic_long_rod"       , MT.Ceramic, 1.0F, 0b0_10000_01000_00100_00010_00001), // -> stickLong
-			new MoldRow("mold_ceramic_item_casing"    , MT.Ceramic, 1.0F, 0b0_11101_11101_11101_00001_11100), // -> casingSmall
-			new MoldRow("mold_ceramic_ring"           , MT.Ceramic, 1.0F, 0b0_00000_01110_01010_01110_00000), // -> ring
-			new MoldRow("mold_ceramic_gear"           , MT.Ceramic, 1.0F, 0b0_10101_01110_11011_01110_10101), // -> gearGt
-			new MoldRow("mold_ceramic_small_gear"     , MT.Ceramic, 1.0F, 0b0_01010_11111_01010_11111_01010), // -> gearGtSmall
-			new MoldRow("mold_ceramic_sword"          , MT.Ceramic, 1.0F, 0b0_00100_01110_01110_01110_01110), // -> toolHeadRawSword
-			new MoldRow("mold_ceramic_pickaxe"        , MT.Ceramic, 1.0F, 0b0_00000_01110_10001_00000_00000), // -> toolHeadRawPickaxe
-			new MoldRow("mold_ceramic_spade"          , MT.Ceramic, 1.0F, 0b0_01110_01110_01110_01010_00000), // -> toolHeadRawSpade
-			new MoldRow("mold_ceramic_shovel"         , MT.Ceramic, 1.0F, 0b0_00100_01110_01110_01110_00000), // -> toolHeadRawShovel
-			new MoldRow("mold_ceramic_universal_spade", MT.Ceramic, 1.0F, 0b0_00100_01110_01100_01110_00000), // -> toolHeadRawUniversalSpade
-			new MoldRow("mold_ceramic_axe"            , MT.Ceramic, 1.0F, 0b0_00000_01110_01110_01000_00000), // -> toolHeadRawAxe
-			new MoldRow("mold_ceramic_double_axe"     , MT.Ceramic, 1.0F, 0b0_00000_11111_11111_10001_00000), // -> toolHeadRawAxeDouble
-			new MoldRow("mold_ceramic_saw"            , MT.Ceramic, 1.0F, 0b0_00000_11111_11111_00000_00000), // -> toolHeadRawSaw
-			new MoldRow("mold_ceramic_hammer"         , MT.Ceramic, 1.0F, 0b0_01110_01110_01010_01110_01110), // -> toolHeadHammer
-			new MoldRow("mold_ceramic_file"           , MT.Ceramic, 1.0F, 0b0_01110_01110_01110_00100_00100), // -> toolHeadFile
-			new MoldRow("mold_ceramic_screwdriver"    , MT.Ceramic, 1.0F, 0b0_00000_00100_00100_00100_00100), // -> toolHeadScrewdriver
-			new MoldRow("mold_ceramic_chisel"         , MT.Ceramic, 1.0F, 0b0_01110_00100_00100_00100_00100), // -> toolHeadRawChisel
-			new MoldRow("mold_ceramic_arrow"          , MT.Ceramic, 1.0F, 0b0_00000_00100_00100_01110_00000), // -> toolHeadRawArrow
-			new MoldRow("mold_ceramic_hoe"            , MT.Ceramic, 1.0F, 0b0_00000_00110_01110_00000_00000), // -> toolHeadRawHoe
-			new MoldRow("mold_ceramic_sense"          , MT.Ceramic, 1.0F, 0b0_00000_01111_11111_00000_00000), // -> toolHeadRawSense
-			new MoldRow("mold_ceramic_plow"           , MT.Ceramic, 1.0F, 0b0_11111_11111_11111_11111_00100), // -> toolHeadRawPlow
-			new MoldRow("mold_ceramic_builderwand"    , MT.Ceramic, 1.0F, 0b0_00000_00100_11111_01110_01010), // -> toolHeadBuilderwand
-			new MoldRow("mold_ceramic_nugget"         , MT.Ceramic, 1.0F, 0b0_00000_00000_00100_00000_00000)  // -> nugget (the :82 fallback)
+			new MoldRow("mold_ceramic_ingot", () -> MT.Ceramic, 1.0F, 0b0_01110_01110_01110_01110_01110), // -> ingot
+			new MoldRow("mold_ceramic_billet", () -> MT.Ceramic, 1.0F, 0b0_01100_11110_11110_01100_00000), // -> billet
+			new MoldRow("mold_ceramic_chunk", () -> MT.Ceramic, 1.0F, 0b0_11000_11000_00000_00000_00000), // -> chunkGt
+			new MoldRow("mold_ceramic_plate", () -> MT.Ceramic, 1.0F, 0b0_11111_11111_11111_11111_11111), // -> plate
+			new MoldRow("mold_ceramic_tiny_plate", () -> MT.Ceramic, 1.0F, 0b0_00000_01110_01110_01110_00000), // -> plateTiny
+			new MoldRow("mold_ceramic_bolt", () -> MT.Ceramic, 1.0F, 0b0_00000_00000_00100_00100_00000), // -> bolt
+			new MoldRow("mold_ceramic_rod", () -> MT.Ceramic, 1.0F, 0b0_00000_00000_11111_00000_00000), // -> stick
+			new MoldRow("mold_ceramic_long_rod", () -> MT.Ceramic, 1.0F, 0b0_10000_01000_00100_00010_00001), // -> stickLong
+			new MoldRow("mold_ceramic_item_casing", () -> MT.Ceramic, 1.0F, 0b0_11101_11101_11101_00001_11100), // -> casingSmall
+			new MoldRow("mold_ceramic_ring", () -> MT.Ceramic, 1.0F, 0b0_00000_01110_01010_01110_00000), // -> ring
+			new MoldRow("mold_ceramic_gear", () -> MT.Ceramic, 1.0F, 0b0_10101_01110_11011_01110_10101), // -> gearGt
+			new MoldRow("mold_ceramic_small_gear", () -> MT.Ceramic, 1.0F, 0b0_01010_11111_01010_11111_01010), // -> gearGtSmall
+			new MoldRow("mold_ceramic_sword", () -> MT.Ceramic, 1.0F, 0b0_00100_01110_01110_01110_01110), // -> toolHeadRawSword
+			new MoldRow("mold_ceramic_pickaxe", () -> MT.Ceramic, 1.0F, 0b0_00000_01110_10001_00000_00000), // -> toolHeadRawPickaxe
+			new MoldRow("mold_ceramic_spade", () -> MT.Ceramic, 1.0F, 0b0_01110_01110_01110_01010_00000), // -> toolHeadRawSpade
+			new MoldRow("mold_ceramic_shovel", () -> MT.Ceramic, 1.0F, 0b0_00100_01110_01110_01110_00000), // -> toolHeadRawShovel
+			new MoldRow("mold_ceramic_universal_spade", () -> MT.Ceramic, 1.0F, 0b0_00100_01110_01100_01110_00000), // -> toolHeadRawUniversalSpade
+			new MoldRow("mold_ceramic_axe", () -> MT.Ceramic, 1.0F, 0b0_00000_01110_01110_01000_00000), // -> toolHeadRawAxe
+			new MoldRow("mold_ceramic_double_axe", () -> MT.Ceramic, 1.0F, 0b0_00000_11111_11111_10001_00000), // -> toolHeadRawAxeDouble
+			new MoldRow("mold_ceramic_saw", () -> MT.Ceramic, 1.0F, 0b0_00000_11111_11111_00000_00000), // -> toolHeadRawSaw
+			new MoldRow("mold_ceramic_hammer", () -> MT.Ceramic, 1.0F, 0b0_01110_01110_01010_01110_01110), // -> toolHeadHammer
+			new MoldRow("mold_ceramic_file", () -> MT.Ceramic, 1.0F, 0b0_01110_01110_01110_00100_00100), // -> toolHeadFile
+			new MoldRow("mold_ceramic_screwdriver", () -> MT.Ceramic, 1.0F, 0b0_00000_00100_00100_00100_00100), // -> toolHeadScrewdriver
+			new MoldRow("mold_ceramic_chisel", () -> MT.Ceramic, 1.0F, 0b0_01110_00100_00100_00100_00100), // -> toolHeadRawChisel
+			new MoldRow("mold_ceramic_arrow", () -> MT.Ceramic, 1.0F, 0b0_00000_00100_00100_01110_00000), // -> toolHeadRawArrow
+			new MoldRow("mold_ceramic_hoe", () -> MT.Ceramic, 1.0F, 0b0_00000_00110_01110_00000_00000), // -> toolHeadRawHoe
+			new MoldRow("mold_ceramic_sense", () -> MT.Ceramic, 1.0F, 0b0_00000_01111_11111_00000_00000), // -> toolHeadRawSense
+			new MoldRow("mold_ceramic_plow", () -> MT.Ceramic, 1.0F, 0b0_11111_11111_11111_11111_00100), // -> toolHeadRawPlow
+			new MoldRow("mold_ceramic_builderwand", () -> MT.Ceramic, 1.0F, 0b0_00000_00100_11111_01110_01010), // -> toolHeadBuilderwand
+			new MoldRow("mold_ceramic_nugget", () -> MT.Ceramic, 1.0F, 0b0_00000_00000_00100_00000_00000)  // -> nugget (the :82 fallback)
 			);
 
 	/** The raw clay items, one per ceramic row (the {@code *_raw} tail; the MultiItemRandomTools :127+ chain hardens in a vanilla furnace). */
@@ -176,12 +176,21 @@ public final class GT6Molds {
 	 * material drives the {@code getMoldMaxTemperature} heat verdict, the acid-proof
 	 * column rides the block carrier like every attachment).
 	 */
-	public record FaucetRow(String path, OreDictMaterial material, String matDisplay, boolean acidProof, SoundType sound) {}
+	/**
+	 * One faucet registration row (the Loader aRegistry.add projection :300/:305 — the
+	 * material drives the {@code getMoldMaxTemperature} heat verdict, the acid-proof
+	 * column rides the block carrier like every attachment). The material rides the same
+	 * {@link java.util.function.Supplier} as {@link MoldRow}: the class-load-time static
+	 * rows initialize before MT.init() (the P2 two-phase reset) — a direct MT.Ceramic
+	 * captured null and the faucet stat NPE'd at {@code material().mMeltingPoint}
+	 * (live-probed: "An unexpected error occurred trying to execute that command").
+	 */
+	public record FaucetRow(String path, java.util.function.Supplier<OreDictMaterial> material, String matDisplay, boolean acidProof, SoundType sound) {}
 
 	/** The two card-B faucet rungs: Stone (:300, the row0 craft) and Ceramic (:305, the raw→furnace pair). */
 	public static final List<FaucetRow> FAUCET_ROWS = List.of(
-			new FaucetRow("faucet_stone"  , MT.Stone  , "Stone"  , false, SoundType.STONE),
-			new FaucetRow("faucet_ceramic", MT.Ceramic, "Ceramic", false, SoundType.STONE));
+			new FaucetRow("faucet_stone"  , () -> MT.Stone  , "Stone"  , false, SoundType.STONE),
+			new FaucetRow("faucet_ceramic", () -> MT.Ceramic, "Ceramic", false, SoundType.STONE));
 
 	/**
 	 * The registered faucet blocks by path. The value type is the {@link java.util.function.Supplier}

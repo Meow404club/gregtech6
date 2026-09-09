@@ -112,7 +112,7 @@ public class TileEntityFaucet extends GTAttachmentSmallBlockEntity implements IT
 	/** The row material of this faucet (upstream the NBT_MATERIAL BE field). */
 	public OreDictMaterial material() {
 		BlockState tState = getBlockState();
-		if (tState.getBlock() instanceof FaucetBlock tBlock) return tBlock.faucetRow().material();
+		if (tState.getBlock() instanceof FaucetBlock tBlock) return tBlock.faucetRow().material().get();
 		return gregapi.data.MT.Stone; // the /setblock-without-row fallback: the entry material
 	}
 
