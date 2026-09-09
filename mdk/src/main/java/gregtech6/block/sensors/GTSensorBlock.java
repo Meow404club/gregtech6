@@ -46,7 +46,9 @@ import gregtech6.util.UT6;
  *     opposite (upstream :102);</li>
  * <li>screwdriver ({@link GT6ToolActions#SCREWDRIVER}) — display strip toggles the
  *     hexadecimal display, the keypad buttons resize the averaging window, anything else
- *     cycles the mode (upstream SensorTE:208-240);</li>
+ *     cycles the mode (upstream SensorTE:208-240; the hex toggle is kept tightened to the
+ *     display face — upstream hasHitDisplay fires from any face, the mis-touch-protection
+ *     deviation is declared at the arm below);</li>
  * <li>bare hand on the front face — the 3x3 keypad (threshold modes only, upstream
  *     :164-200). The monkey-wrench and soft-hammer items are not ported — their BE
  *     mutations are reachable through the /gt6sensor second|reset arms (the gearbox
@@ -142,7 +144,13 @@ public class GTSensorBlock extends GTEntityBlock {
 			return InteractionResult.CONSUME;
 		}
 
-		// the screwdriver arm (upstream SensorTE:208-240)
+		// the screwdriver arm (upstream SensorTE:208-240). DECLARED DEVIATION: the
+		// hex-display toggle additionally requires the hit on the display face — upstream
+		// hasHitDisplay (MultiTileEntitySensor.java:230-233) folds ANY clicked side into
+		// face coordinates and fires on the strip wherever it lands. Kept tightened: the
+		// strip region (x 2-14, y 2-4 of 16) recurs on all six faces once folded, so an
+		// upstream-mode toggle fires from accidental side/back hits; gate = mis-touch
+		// protection, the front face is the only face the model renders the strip on.
 		if (!tHeld.isEmpty() && tHeld.canPerformAction(GT6ToolActions.SCREWDRIVER)) {
 			float[] tCoords = GTSensorLogic.getFacingCoordsClicked(tSide, tHitX, tHitY, tHitZ);
 			if (tSide == tSensor.getFacing() && GTSensorLogic.hasHitDisplay(tCoords[0], tCoords[1])) {
