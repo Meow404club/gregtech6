@@ -5,7 +5,7 @@ The live half of task p26-storage-static-batch: the five no-tick storage contain
 (Loader_MultiTileEntities.java :134-144 metalset rows / :177-180 wooden ladders), the
 offline suite's complementary in-world face.
 
-Columns (z=230 band, x=460..478 — disjoint from every registered sweep band):
+Columns (z=230 band, x=460..486 — disjoint from every registered sweep band):
 
   A DRAWER THROUGH-FLOW (x=460): chest -> vanilla hopper -> gt6:drawer_bronze
     [facing=north, mode=Anywhere] -> vanilla hopper -> chest. The vanilla push lands in
@@ -18,6 +18,15 @@ Columns (z=230 band, x=460..478 — disjoint from every registered sweep band):
     (TOP_HALF), so the pull can no longer see it — the drawer RETAINS the stone where
     column A's Anywhere drawer drained. Judge: the mode NBT round trip + the retained
     stone after the drain window.
+  EW DRAWER E/W GEOMETRY (x=482, review-fix pin): gt6:drawer_bronze[facing=east] in Sided
+    mode, a vanilla hopper to its SOUTH pushing north. The hopper side = the touched face
+    (HopperBlockEntity.java:139 FACING.getOpposite()) = SOUTH; the fixed decode puts the
+    viewer-left column under the facing's SOUTH neighbour (FACING_ROTATIONS[5]: world
+    south -> left), so the stone lands in physical slot 0 (LEFT_HALF[0]). The pre-fix
+    compass flip landed it in slot 36 — the arm is discriminative for exactly that bug.
+  WE DRAWER W/E GEOMETRY (x=486, review-fix pin): the same shape with facing=west. The
+    fixed decode maps world north -> left (FACING_ROTATIONS[4]), so the SOUTH face reads
+    RIGHT_HALF and the stone lands in physical slot 36 (pre-fix: slot 0).
   C SAFE LOOT ARM (x=470): gt6:safe_mechanical_bronze over a vanilla hopper + chest. The
     gt.dungeonloot marker is set through /data, the block is destroyed — the onRemove
     fill (upstream breakBlock :89-92) rolls the marker table into the empty slots and
@@ -59,6 +68,8 @@ B = gt6world.Site(465, 63, 230, dy=4)
 C = gt6world.Site(470, 63, 230, dy=3)
 D = gt6world.Site(474, 63, 230, dy=4)
 E = gt6world.Site(478, 63, 230, dy=2)
+EW = gt6world.Site(482, 63, 230, dz=1)
+WE = gt6world.Site(486, 63, 230, dz=1)
 
 CHEST = "minecraft:chest"
 VHOP = "minecraft:hopper[facing=down]"
@@ -73,6 +84,10 @@ def _down(site, n=1):
     return gt6world.Site(site.x, site.y - n, site.z)
 
 
+def _south(site, n=1):
+    return gt6world.Site(site.x, site.y, site.z + n)
+
+
 def _feed(pos, slot, item, count=1):
     return Step(gt6world.feed_container_command(pos, slot, item, count),
                 expect="Replaced")
@@ -85,7 +100,7 @@ def _dump(pos, expect, poll=25.0, label=None):
 CHAIN = Chain(
     name="p26-static-storage",
     slug="p26statstor",
-    sites=gt6world.declare_sites(A, B, C, D, E),
+    sites=gt6world.declare_sites(A, B, C, D, E, EW, WE),
     preferred_ports=(25812, 25822),
     steps=[
         # ------------------------------------------------------------------
@@ -120,6 +135,23 @@ CHAIN = Chain(
     Step(f"data modify block {F(_up(B, 1))} mode set value 0b", expect="Modified", label="back to Anywhere"),
     _dump(B, 'id: "minecraft:stone"', poll=15.0,
           label="the bottom hopper immediately sees slot 0 again and takes the stack (retained in the hopper — its own push target is the stone floor)"),
+
+    phase("EW: drawer E/W geometry (facing=east + a south-side pusher — the touched face is SOUTH, and the fixed decode puts the viewer-left column {q0,q2} under the facing's south neighbour: the stone must land in physical slot 0; the pre-fix compass flip landed it in slot 36)"),
+    Step(f"setblock {F(EW)} gt6:drawer_bronze[facing=east]", expect="Changed the block"),
+    Step(f"data modify block {F(EW)} mode set value 1b", expect="Modified",
+         label="Sided mode (the monkey-wrench state, upstream :94-98 — the toggle this arm pins the geometry of)"),
+    Step(f"setblock {F(_south(EW))} minecraft:hopper[facing=north]", expect="Changed the block"),
+    _feed(_south(EW), 0, "stone", 4),
+    _dump(EW, "Slot: 0", poll=15.0,
+          label="the stone crossed the SOUTH face view = LEFT_HALF {0..35,72..107} — first exposed slot is physical slot 0 (FACING_ROTATIONS[5]: world south -> left; a flipped decode shows Slot: 36)"),
+
+    phase("WE: drawer W/E geometry (facing=west — the fixed decode maps world north -> left, so the SOUTH face reads RIGHT_HALF and the same push lands in physical slot 36; pre-fix it landed in slot 0)"),
+    Step(f"setblock {F(WE)} gt6:drawer_bronze[facing=west]", expect="Changed the block"),
+    Step(f"data modify block {F(WE)} mode set value 1b", expect="Modified"),
+    Step(f"setblock {F(_south(WE))} minecraft:hopper[facing=north]", expect="Changed the block"),
+    _feed(_south(WE), 0, "stone", 4),
+    _dump(WE, "Slot: 36", poll=15.0,
+          label="the stone crossed the SOUTH face view = RIGHT_HALF {36..71,108..143} — first exposed slot is physical slot 36 (FACING_ROTATIONS[4]: world north -> left)"),
 
     phase("C: safe loot arm (the gt.dungeonloot marker rolls the table on break — ChestGenHooks :68-76 -> LootDataManager, then the contents pop)"),
     Step(f"setblock {F(_up(C, 2))} gt6:safe_mechanical_bronze[facing=north]", expect="Changed the block"),
