@@ -22,9 +22,10 @@ import gregtech6.block.tools.GTKitchenBlock;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
-import gregtech6.registry.GT6Kitchen;
 import gregtech6.recipes.GT6RecipeMaps;
+import gregtech6.registry.GT6Kitchen;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import gregtech6.tileentity.attachment.GTTapBlockEntity;
 
 /**
  * The manual (no-energy) kitchen processing base — the port counterpart of the shared
@@ -85,7 +86,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * BE data the RCON channel reads is the live tank/inventory state, not the display
  * short).
  */
-public abstract class GT6ManualKitchenBlockEntity extends TileEntityBase03TicksAndSync {
+public abstract class GT6ManualKitchenBlockEntity extends TileEntityBase03TicksAndSync implements GTTapBlockEntity.TapFillable {
 
 	/** The input slot count (upstream slots 0-5, the :193 {@code ST.array(slot(0)..slot(5))} literal). */
 	public static final int INPUT_SLOTS = 6;
@@ -549,6 +550,16 @@ public abstract class GT6ManualKitchenBlockEntity extends TileEntityBase03TicksA
 //?} else {
 		/*if (aNBT.contains("inventory")) mInventory.deserializeNBT(NBT_ACCESS, aNBT.getCompound("inventory")); // 21.1: provider-first
 		 *///?}
+	}
+
+	/**
+	 * Upstream :327-330 — the ITileEntityTapFillable face (P12, GTTapBlockEntity.java:135):
+	 * the tap-to-tap chain pours straight through the :302 fill admission.
+	 */
+	@Override
+	public int tapFill(byte aSide, FluidStack aFluid, boolean aDoFill) {
+		FluidTankGT tTank = getFluidTankFillable(aFluid);
+		return tTank == null ? 0 : tTank.fill(aFluid, aDoFill ? IFluidHandler.FluidAction.EXECUTE : IFluidHandler.FluidAction.SIMULATE);
 	}
 
 	// ---------------------------------------------------------------------------
