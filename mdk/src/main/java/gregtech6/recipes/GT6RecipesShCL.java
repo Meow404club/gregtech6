@@ -60,7 +60,9 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * 5-map vanilla coverage gap of the compat research is closed), and by task
  * p26-rm-row-backfill (the registration-time expansion of the upstream prefix HANDLER
  * templates: the Lathe 22-template tEasyWorkable twin arms of Loader_Recipes_Handlers.java
- * :371-393 — the Shredder handler family and the RECYCLABLE ring join in the same task).
+ * :371-393, the Shredder 34-template MORTAR twin arms + crushed-array rows of :114-150, and
+ * the :152-155 RECYCLABLE ring — two rows per RECYCLABLE prefix material, output = the
+ * {@code OM.pulverize} remains transcription).
  *
  * <p><b>Upstream sources</b>: {@code RM.Shredder.addRecipe1} rows in
  * Loader_Recipes_Vanilla.java:688-693 + :697 + :707-708 (Shredder), :523-524 (Lathe), the
@@ -160,6 +162,24 @@ public final class GT6RecipesShCL {
 	 */
 	public record LatheTemplate(String note, OreDictPrefix inPrefix, OreDictPrefix outPrefix, int outCount,
 			long eUt, long duration, long multiplier, boolean easyArm, boolean layeredNot, boolean lensNot) {}
+
+	/**
+	 * One transcribed Shredder prefix-shredding template (task p26-rm-row-backfill) — the
+	 * upstream {@code RecipeMapHandlerPrefixShredding(...)} rows of
+	 * Loader_Recipes_Handlers.java:114-124/:126-136 (single-input, 1-2 outputs) and
+	 * :138-143/:145-150 (the crushed-array forms, 2-4 outputs), expanded per material at pour
+	 * time. {@code mortar} selects the condition twin ({@code MORTAR.NOT} rows run the
+	 * multiplier-256 getCosts arithmetic, {@code MORTAR} rows the multiplier-16 one — the two
+	 * arms are mutually exclusive per material). {@code bedrockNot} transcribes the extra
+	 * {@code MT.Bedrock.NOT} conjunct of the dust-impure family rows.
+	 *
+	 * <p><b>Output material</b>: unlike the Lathe/Crusher handler rows, the Shredding handler
+	 * overrides {@code getOutputMaterial} to {@code aMaterial.mTargetPulver.mMaterial}
+	 * (RecipeMapHandlerPrefixShredding.java:45-48) — every output resolves against the
+	 * PULVERIZE target of the input material.
+	 */
+	public record ShredTemplate(String note, OreDictPrefix inPrefix, OreDictPrefix[] outPrefixes, int[] outCounts,
+			long eUt, long multiplier, boolean mortar, boolean bedrockNot) {}
 
 	/** The resolution seam: the live registry lookups by default, fixtures injected offline. */
 	static BiFunction<OreDictPrefix, OreDictMaterial, Item> sMaterialItemResolver = GT6RecipesShCL::resolveItem;
@@ -402,12 +422,270 @@ public final class GT6RecipesShCL {
 	 * their duration through this (:218).
 	 */
 	static long handlerCosts(OreDictPrefix aInPrefix, int aInCount, OreDictPrefix aOutPrefix, int aOutCount, long aMultiplier, OreDictMaterial aMaterial) {
-		long tUnitsIn = aInPrefix.mAmount * aInCount;
-		long tUnitsOut = aOutPrefix.mAmount * aOutCount;
-		long tAmount = Math.max(tUnitsIn, tUnitsOut);
+		return handlerCosts(aInPrefix.mAmount * aInCount, aOutPrefix.mAmount * aOutCount, aMultiplier, aMaterial);
+	}
+
+	/** The unit-sums form of {@link #handlerCosts} (the multi-output rows sum their output units, :77). */
+	static long handlerCosts(long aUnitsIn, long aUnitsOut, long aMultiplier, OreDictMaterial aMaterial) {
+		long tAmount = Math.max(aUnitsIn, aUnitsOut);
 		long tTarget = aMultiplier + aMultiplier * aMaterial.mToolQuality;
 		if (tTarget == 0) return 0;
 		return Math.max(0, tAmount * tTarget / CS.U + ((tAmount * tTarget) % CS.U > 0 ? 1 : 0));
+	}
+
+	/**
+	 * The p26-rm-row-backfill Shredder prefix templates (Loader_Recipes_Handlers.java:114-124
+	 * + :126-136 single-prefix rows and :138-143 + :145-150 the crushed-array rows), in
+	 * upstream file order. eUt 16 throughout; duration is 0 (the getCosts arithmetic) on every
+	 * row — the twin MORTAR/MORTAR.NOT arms carry multiplier 16 / 256 respectively.
+	 *
+	 * <p><b>Item-universe note</b>: of these 34 templates only the dustImpure pair (:114/:126)
+	 * and the twelve crushed-family array rows (:138-150) have their input prefix in the port
+	 * item universe (GTMaterialItems.itemPathPrefixes — dustPure/dustRefined/chunk/rubble/
+	 * pebbles/clump/reduced/crystalline/cleanGravel/cluster have no port items), so the other
+	 * 20 templates expand to zero rows and are skip-counted, lighting up automatically if a
+	 * future item-universe card registers those prefixes.
+	 */
+	private static volatile List<ShredTemplate> sShredTemplates = null;
+
+	/** The transcribed Shredder templates, captured on first use (one material generation). */
+	public static List<ShredTemplate> shredTemplateTable() {
+		List<ShredTemplate> tTable = sShredTemplates;
+		if (tTable == null) sShredTemplates = tTable = List.of(
+		// Loader_Recipes_Handlers.java:114-124 — the MORTAR.NOT arm, multiplier 256
+		shred(":114", OP.dustImpure   , OP.dust, 1, OP.dustTiny, 1, 256, false, true ),
+		shred(":115", OP.dustPure     , OP.dust, 1, OP.dustTiny, 2, 256, false, true ),
+		shred(":116", OP.dustRefined  , OP.dust, 1, OP.dustTiny, 3, 256, false, true ),
+		shred(":117", OP.chunk        , OP.dust, 2, OP.dustTiny, 1, 256, false, false),
+		shred(":118", OP.rubble       , OP.dust, 2, OP.dustTiny, 1, 256, false, false),
+		shred(":119", OP.pebbles      , OP.dust, 3, OP.dustTiny, 1, 256, false, false),
+		shred(":120", OP.clump        , OP.dust, 1, 256, false, false),
+		shred(":121", OP.reduced      , OP.dust, 1, 256, false, false),
+		shred(":122", OP.crystalline  , OP.dust, 1, 256, false, false),
+		shred(":123", OP.cleanGravel  , OP.dust, 1, 256, false, false),
+		shred(":124", OP.cluster      , OP.dust, 3, 256, false, false),
+		// Loader_Recipes_Handlers.java:126-136 — the MORTAR arm, multiplier 16
+		shred(":126", OP.dustImpure   , OP.dust, 1, OP.dustTiny, 1, 16, true, true ),
+		shred(":127", OP.dustPure     , OP.dust, 1, OP.dustTiny, 2, 16, true, true ),
+		shred(":128", OP.dustRefined  , OP.dust, 1, OP.dustTiny, 3, 16, true, true ),
+		shred(":129", OP.chunk        , OP.dust, 2, OP.dustTiny, 1, 16, true, false),
+		shred(":130", OP.rubble       , OP.dust, 2, OP.dustTiny, 1, 16, true, false),
+		shred(":131", OP.pebbles      , OP.dust, 3, OP.dustTiny, 1, 16, true, false),
+		shred(":132", OP.clump        , OP.dust, 1, 16, true, false),
+		shred(":133", OP.reduced      , OP.dust, 1, 16, true, false),
+		shred(":134", OP.crystalline  , OP.dust, 1, 16, true, false),
+		shred(":135", OP.cleanGravel  , OP.dust, 1, 16, true, false),
+		shred(":136", OP.cluster      , OP.dust, 3, 16, true, false),
+		// Loader_Recipes_Handlers.java:138-143 — the crushed-array rows, MORTAR.NOT arm, multiplier 256
+		array(":138", OP.crushed                , OP.dust, OP.dustTiny, OP.dustDiv72, null        , 256, false),
+		array(":139", OP.crushedPurified        , OP.dust, OP.dustSmall, null        , null        , 256, false),
+		array(":140", OP.crushedCentrifuged     , OP.dust, OP.dustSmall, OP.dustTiny, OP.dustDiv72, 256, false),
+		array(":141", OP.crushedTiny            , OP.dustTiny, OP.dustDiv72, null   , null        , 256, false),
+		array(":142", OP.crushedPurifiedTiny    , OP.dustTiny, OP.dustDiv72, OP.dustDiv72, null   , 256, false),
+		array(":143", OP.crushedCentrifugedTiny , OP.dustTiny, OP.dustDiv72, OP.dustDiv72, OP.dustDiv72, 256, false),
+		// Loader_Recipes_Handlers.java:145-150 — the crushed-array rows, MORTAR arm, multiplier 16
+		array(":145", OP.crushed                , OP.dust, OP.dustTiny, null        , null        , 16, true),
+		array(":146", OP.crushedPurified        , OP.dust, OP.dustSmall, null        , null        , 16, true),
+		array(":147", OP.crushedCentrifuged     , OP.dust, OP.dustSmall, OP.dustTiny, OP.dustDiv72, 16, true),
+		array(":148", OP.crushedTiny            , OP.dustTiny, OP.dustDiv72, null   , null        , 16, true),
+		array(":149", OP.crushedPurifiedTiny    , OP.dustTiny, OP.dustDiv72, OP.dustDiv72, null   , 16, true),
+		array(":150", OP.crushedCentrifugedTiny , OP.dustTiny, OP.dustDiv72, OP.dustDiv72, OP.dustDiv72, 16, true));
+		return tTable;
+	}
+
+	/** Table-builder helper (the 1-2-output single-prefix rows) — amounts are the upstream L12_LONG_1 1s. */
+	private static ShredTemplate shred(String aNote, OreDictPrefix aIn, OreDictPrefix aOut1, int aCount1, OreDictPrefix aOut2, int aCount2, long aMultiplier, boolean aMortar, boolean aBedrockNot) {
+		return new ShredTemplate(aNote, aIn,
+				aOut2 == null ? new OreDictPrefix[] {aOut1} : new OreDictPrefix[] {aOut1, aOut2},
+				aOut2 == null ? new int[] {aCount1} : new int[] {aCount1, aCount2},
+				16, aMultiplier, aMortar, aBedrockNot);
+	}
+
+	/** Table-builder helper (the single-output rows, :120-124/:132-136). */
+	private static ShredTemplate shred(String aNote, OreDictPrefix aIn, OreDictPrefix aOut, int aCount, long aMultiplier, boolean aMortar, boolean aBedrockNot) {
+		return shred(aNote, aIn, aOut, aCount, null, 0, aMultiplier, aMortar, aBedrockNot);
+	}
+
+	/** Table-builder helper (the 2-4-output crushed-array rows). */
+	private static ShredTemplate array(String aNote, OreDictPrefix aIn, OreDictPrefix aOut1, OreDictPrefix aOut2, OreDictPrefix aOut3, OreDictPrefix aOut4, long aMultiplier, boolean aMortar) {
+		if (aOut4 != null) return new ShredTemplate(aNote, aIn, new OreDictPrefix[] {aOut1, aOut2, aOut3, aOut4}, new int[] {1, 1, 1, 1}, 16, aMultiplier, aMortar, false);
+		if (aOut3 != null) return new ShredTemplate(aNote, aIn, new OreDictPrefix[] {aOut1, aOut2, aOut3}, new int[] {1, 1, 1}, 16, aMultiplier, aMortar, false);
+		return new ShredTemplate(aNote, aIn, new OreDictPrefix[] {aOut1, aOut2}, new int[] {1, 1}, 16, aMultiplier, aMortar, false);
+	}
+
+	/**
+	 * The upstream :114-150 condition conjuncts as a boolean gate — the port counterpart of
+	 * {@code new And(ANTIMATTER.NOT, mortar? MORTAR : MORTAR.NOT [, MT.Bedrock.NOT])} plus the
+	 * INVALID_MATERIAL check of addRecipeForMaterial (:205). The Shredding output-material hop
+	 * ({@code mTargetPulver}) is applied by the caller.
+	 */
+	static boolean shredCondition(OreDictMaterial aMaterial, ShredTemplate aTemplate) {
+		if (aMaterial.contains(TD.Atomic.ANTIMATTER) || aMaterial.contains(TD.Properties.INVALID_MATERIAL)) return false;
+		if (aTemplate.mortar() != aMaterial.contains(TD.Processing.MORTAR)) return false;
+		if (aTemplate.bedrockNot() && aMaterial == MT.Bedrock) return false; // the MT.Bedrock.NOT conjunct
+		return true;
+	}
+
+	/**
+	 * Shred template x material → Recipe, or null (the upstream addRecipeForMaterial false
+	 * return): the {@link #shredCondition} gate, the input resolution (:209), the
+	 * mTargetPulver output-material hop (RecipeMapHandlerPrefixShredding.java:47), the
+	 * all-outputs resolution (:214 — ANY unresolvable output drops the row), and the
+	 * mDuration=0 → max(1, getCosts) split (:218, with the summed output units :77).
+	 */
+	static Recipe buildShredRecipe(ShredTemplate aTemplate, OreDictMaterial aMaterial) {
+		if (!shredCondition(aMaterial, aTemplate)) return null;
+		Item tInItem = sMaterialItemResolver.apply(aTemplate.inPrefix(), aMaterial);
+		if (tInItem == null) return null; // upstream :209 mat() → null
+		OreDictMaterial tOutMaterial = aMaterial.mTargetPulver.mMaterial; // the Shredding override :47
+		ItemStack[] tOutputs = new ItemStack[aTemplate.outPrefixes().length];
+		long tUnitsOut = 0;
+		for (int i = 0; i < tOutputs.length; i++) {
+			Item tOutItem = sMaterialItemResolver.apply(aTemplate.outPrefixes()[i], tOutMaterial);
+			if (tOutItem == null) return null; // upstream :214 — any invalid output drops the row
+			tOutputs[i] = new ItemStack(tOutItem, aTemplate.outCounts()[i]);
+			tUnitsOut += aTemplate.outPrefixes()[i].mAmount * aTemplate.outCounts()[i];
+		}
+		long tDuration = Math.max(1, handlerCosts(aTemplate.inPrefix().mAmount, tUnitsOut, aTemplate.multiplier(), aMaterial));
+		return new Recipe(true, new ItemStack[] {new ItemStack(tInItem, 1)}, tOutputs, new FluidStack[0], new FluidStack[0], tDuration, aTemplate.eUt(), 0);
+	}
+
+	/** The p26 Shredder template backfill pour (the pourLathe shape over the ShredTemplate walk). */
+	private static void pourShredderTemplates(RecipeMap aMap, List<ShredTemplate> aTemplates) {
+		Set<String> tSeen = seenRowKeys(aMap);
+		int tPoured = 0, tSkipped = 0, tDeduped = 0;
+		for (ShredTemplate tTemplate : aTemplates) {
+			for (OreDictMaterial tMaterial : expandCrusherMaterials(tTemplate.inPrefix())) {
+				Recipe tRecipe = buildShredRecipe(tTemplate, tMaterial);
+				if (tRecipe == null) {tSkipped++; continue;}
+				if (!tSeen.add(rowKey(tRecipe))) {tDeduped++; continue;}
+				aMap.addRecipe(tRecipe);
+				tPoured++;
+			}
+		}
+		LOGGER.info("GT6 Shredder backfill poured: {} loaded, {} skipped (condition gates + unresolvable items), {} deduped (exact rows already present)", tPoured, tSkipped, tDeduped);
+	}
+
+	/**
+	 * The prefixes upstream OP.java:639-738 gives a non-empty {@code mByProducts} list — the
+	 * {@code :152} filter leg that is VACUOUS in this port (the byproduct dataset block is not
+	 * ported, every {@code mPrefix.mByProducts} is empty — the GT6RecipesOreChain.java:66-69
+	 * self-evidence), transcribed as an explicit skip-set so the port does not over-generate
+	 * the RECYCLABLE ring rows upstream excludes through that leg (the card's verification
+	 * point). The ore* members would fail the ORE-tag conjunct anyway; the toolHead, bullet,
+	 * arrow and chemtube members are the real divergences this set closes.
+	 */
+	static final Set<String> UPSTREAM_BYPRODUCT_PREFIXES = Set.of(
+			"pipeRestrictiveTiny", "pipeRestrictiveSmall", "pipeRestrictiveMedium", "pipeRestrictiveLarge", "pipeRestrictiveHuge",
+			"cableGt12", "cableGt08", "cableGt04", "cableGt02", "cableGt01",
+			"cell", "bottle", "chemtube",
+			"oreAndesite", "oreDiorite", "oreBlackstone", "oreRedgranite", "oreBlackgranite", "oreVanillagranite", "oreVanillastone",
+			"oreDeepslate", "oreMoon", "oreMars", "oreSpace", "orePhobos", "oreDeimos", "oreMercury", "oreVenus", "oreCeres",
+			"oreJupiter", "oreIo", "oreGanymede", "oreCallisto", "oreSaturn", "oreRhea", "oreTitan", "oreOberon", "oreIapetus",
+			"oreUranus", "oreNeptune", "oreTriton", "orePluto", "oreEris", "oreKepler22b", "oreHolystone", "oreLivingrock",
+			"oreDeadrock", "oreBetweenstone", "orePitstone", "oreUmberstone", "oreKomatiite", "oreBasalt", "oreMarble",
+			"oreLimestone", "oreSiltstone", "oreShale", "oreSlate", "oreGreenschist", "oreBlueschist", "orePinkschist",
+			"oreGneiss", "oreLightprismarine", "oreDarkprismarine", "oreKimberlite", "oreQuartzite", "oreNetherrack",
+			"oreNether", "oreEndstone", "oreEnd", "orePoor", "oreSmall", "oreNormal", "oreRich",
+			"crushed",
+			"toolHeadPickaxeGem", "toolHeadDrill", "toolHeadChainsaw", "toolHeadWrench",
+			"crateGtGem", "crateGtDust", "crateGtIngot", "crateGtPlate", "crateGtPlateGem",
+			"crateGt64Gem", "crateGt64Dust", "crateGt64Ingot", "crateGt64Plate", "crateGt64PlateGem",
+			"plantGtTwig", "arrowGtWood", "arrowGtPlastic",
+			"bulletGtSmall", "bulletGtMedium", "bulletGtLarge");
+
+	/**
+	 * The p26 RECYCLABLE ring pour — the upstream :152-155 loop over OreDictPrefix.VALUES,
+	 * transcribed filter-for-filter: {@code mByProducts.isEmpty()} (vacuously true in this
+	 * port — replaced by the {@link #UPSTREAM_BYPRODUCT_PREFIXES} skip-set),
+	 * {@code contains(RECYCLABLE)}, {@code !containsAny(ORE, ORE_PROCESSING_BASED, DUST_BASED,
+	 * IS_CONTAINER)}, the cableGt/wireGt/pipe name-prefix exclusions. Two rows per material
+	 * (:153 the MORTAR.NOT arm multiplier 256, :154 the MORTAR arm multiplier 16), both with
+	 * NULL fixed outputs — the output is the {@code mOutputPulverizedRemains} stack alone
+	 * (RecipeMapHandlerPrefix.java:215 = {@code OM.pulverize(aMaterial, mUnitsInputted)}).
+	 */
+	private static void pourRecyclableRing(RecipeMap aMap) {
+		Set<String> tSeen = seenRowKeys(aMap);
+		int tPoured = 0, tSkipped = 0, tDeduped = 0, tPrefixes = 0, tByproductSkipped = 0;
+		for (OreDictPrefix tPrefix : OreDictPrefix.VALUES) {
+			if (!tPrefix.mByProducts.isEmpty()) continue; // upstream :152 leg 1 (live; vacuous in this port today)
+			if (UPSTREAM_BYPRODUCT_PREFIXES.contains(tPrefix.mNameInternal)) {tByproductSkipped++; continue;} // the port form of the same leg
+			if (!tPrefix.contains(TD.Prefix.RECYCLABLE)) continue; // :152 leg 2
+			if (tPrefix.containsAny(TD.Prefix.ORE, TD.Prefix.ORE_PROCESSING_BASED, TD.Prefix.DUST_BASED, TD.Prefix.IS_CONTAINER)) continue; // :152 leg 3
+			if (tPrefix.mNameInternal.startsWith("cableGt") || tPrefix.mNameInternal.startsWith("wireGt") || tPrefix.mNameInternal.startsWith("pipe")) continue; // :152 leg 4
+			tPrefixes++;
+			for (OreDictMaterial tMaterial : expandCrusherMaterials(tPrefix)) {
+				for (int tArm = 0; tArm < 2; tArm++) { // :153 (256, MORTAR.NOT) then :154 (16, MORTAR)
+					Recipe tRecipe = buildRingRecipe(tPrefix, tMaterial, tArm == 0 ? 256 : 16, tArm == 0);
+					if (tRecipe == null) {tSkipped++; continue;}
+					if (!tSeen.add(rowKey(tRecipe))) {tDeduped++; continue;}
+					aMap.addRecipe(tRecipe);
+					tPoured++;
+				}
+			}
+		}
+		LOGGER.info("GT6 Shredder RECYCLABLE ring poured: {} loaded, {} skipped, {} deduped, across {} qualifying prefixes ({} byproduct-carrier prefixes excluded per upstream OP.java:639-738)", tPoured, tSkipped, tDeduped, tPrefixes, tByproductSkipped);
+	}
+
+	/**
+	 * Ring prefix x material x arm → Recipe, or null (the upstream addRecipeForMaterial false
+	 * return): the And(ANTIMATTER.NOT, [MORTAR split]) condition + :205, the input resolution
+	 * (:209), and the :215 remains output — {@code OM.pulverize(aMaterial, unitsIn)} over the
+	 * :79 gate {@code unitsIn - unitsOut >= dustDiv72.mAmount} (unitsOut = 0 here — the null
+	 * output-prefix rows carry no fixed outputs). Output material SELF (the base handler).
+	 */
+	static Recipe buildRingRecipe(OreDictPrefix aPrefix, OreDictMaterial aMaterial, long aMultiplier, boolean aMortarNot) {
+		if (aMaterial.contains(TD.Atomic.ANTIMATTER) || aMaterial.contains(TD.Properties.INVALID_MATERIAL)) return null;
+		if (aMortarNot == aMaterial.contains(TD.Processing.MORTAR)) return null;
+		Item tInItem = sMaterialItemResolver.apply(aPrefix, aMaterial);
+		if (tInItem == null) return null; // upstream :209 mat() → null
+		long tUnitsIn = aPrefix.mAmount; // x1 — mUnitsInputted (:74) with mUnitsOutputted = 0
+		if (tUnitsIn < OP.dustDiv72.mAmount) return null; // the :79 mOutputPulverizedRemains gate — no output, row drops
+		ItemStack tOut = pulverizeOutput(aMaterial, tUnitsIn); // upstream :215 = OM.pulverize(aMaterial, unitsIn)
+		if (tOut == null) return null; // OM.dust amount/indent resolution failed (= upstream mat() → null)
+		long tDuration = Math.max(1, handlerCosts(tUnitsIn, 0, aMultiplier, aMaterial));
+		return new Recipe(true, new ItemStack[] {new ItemStack(tInItem, 1)}, new ItemStack[] {tOut}, new FluidStack[0], new FluidStack[0], tDuration, 16, 0);
+	}
+
+	/**
+	 * Upstream OM.pulverize(OreDictMaterial, long) (OM.java:370-372): the material's
+	 * mTargetPulver hop + the round-DOWN unit translation
+	 * {@code units(aMaterialAmount, U, mTargetPulver.mAmount, F)}, feeding the OM.dust
+	 * prefix-size cascade (OM.java:460-470) transcribed below.
+	 */
+	static ItemStack pulverizeOutput(OreDictMaterial aMaterial, long aMaterialAmount) {
+		if (aMaterialAmount <= 0 || aMaterial == null) return null;
+		return dustCascade(aMaterial.mTargetPulver.mMaterial, units(aMaterialAmount, CS.U, aMaterial.mTargetPulver.mAmount, false));
+	}
+
+	/** Upstream UT.Code.units (UT.java:1677-1683), the generic form (the crusherCosts inline is the specialization). */
+	static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
+		if (aTargetUnit == 0) return 0;
+		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
+		if (aOriginalUnit % aTargetUnit == 0) {aOriginalUnit /= aTargetUnit; aTargetUnit = 1;}
+		else if (aTargetUnit % aOriginalUnit == 0) {aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
+		return Math.max(0, (aAmount * aTargetUnit) / aOriginalUnit + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
+	}
+
+	/** Upstream UT.Code.bindStack (UT.java:1568). */
+	private static int bindStack(long aBoundValue) {
+		return (int)Math.max(1, Math.min(64, aBoundValue));
+	}
+
+	/**
+	 * Upstream OM.dust(OreDictMaterial, long) (OM.java:460-470): the dust prefix-size cascade
+	 * blockDust → dust → dustSmall → dustTiny → dustDiv72, each stage falling through to the
+	 * next when the prefix has no item for the material (= upstream mat() → null fallthrough).
+	 * The modulo comparisons pick the smallest faithful representation.
+	 */
+	static ItemStack dustCascade(OreDictMaterial aMaterial, long aAmount) {
+		if (aAmount < CS.U72 || aMaterial == null) return null;
+		if (aAmount >= CS.U * 72) {Item tItem = sMaterialItemResolver.apply(OP.blockDust, aMaterial); if (tItem != null) return new ItemStack(tItem, bindStack(aAmount / (CS.U * 9)));}
+		if (aAmount >= CS.U     ) if (aAmount >= CS.U * 16 || aAmount % CS.U == 0) {Item tItem = sMaterialItemResolver.apply(OP.dust, aMaterial); if (tItem != null) return new ItemStack(tItem, bindStack(aAmount / CS.U));}
+		if (aAmount >= CS.U4    ) if (aAmount >= CS.U *  8 || aAmount % CS.U4 <= aAmount % CS.U9) {Item tItem = sMaterialItemResolver.apply(OP.dustSmall, aMaterial); if (tItem != null) return new ItemStack(tItem, bindStack(aAmount * 4 / CS.U));}
+		if (aAmount >= CS.U9    ) if (aAmount >= CS.U      || aAmount % CS.U9 <= aAmount % CS.U72) {Item tItem = sMaterialItemResolver.apply(OP.dustTiny, aMaterial); if (tItem != null) return new ItemStack(tItem, bindStack(aAmount * 9 / CS.U));}
+		Item tItem = sMaterialItemResolver.apply(OP.dustDiv72, aMaterial);
+		return tItem == null ? null : new ItemStack(tItem, bindStack(aAmount * 72 / CS.U));
 	}
 
 	/**
@@ -422,8 +700,8 @@ public final class GT6RecipesShCL {
 		"Loader_Recipes_Vanilla.java:702-706 ANY.Blaze.mToThis group expansion + :709-712 compressor rows (only the MT.Blaze representative is transcribed; p7 pool)",
 		"Loader_Recipes_Handlers.java:64-67/:74 rockGt/rawOreChunk/chunk/rubble/gemChipped prefix rows with null outputs (mTargetCrushing pulverize-remains semantics; needs Recipe chances; ore-chain backfill pool)",
 		"Loader_Recipes_Handlers.java:77 RecipeMapHandlerCrushing — the crushed-family ore chain (Recipe chances + Cinnabar probability; ore-chain backfill pool)",
-		"RecipeMapShredder.getRecipeFor RECYCLABLE on-demand synthesis + WOOD duration factor (RecipeMapShredder.java:47-64/:56; recipe-POOL feature)",
-		"Loader_Recipes_Handlers.java:114-155/:152-155 dust-impure family + RECYCLABLE loop, OreDict:204 wood loop, Furnace:80 fallback bridge, Handlers:371-375 Lathe prefix rows, all compat (p7 pool)");
+		"RecipeMapShredder.getRecipeFor RECYCLABLE on-demand synthesis + WOOD duration factor (RecipeMapShredder.java:47-64/:56; the ON-DEMAND synthesis stays a recipe-POOL feature — the STATIC :152-155 RECYCLABLE ring rows are BACKFILLED by p26-rm-row-backfill, two rows per RECYCLABLE prefix material)",
+		"Loader_Recipes_Handlers.java:114-155 dust-impure family + crushed-array rows + the :152-155 RECYCLABLE ring, and Handlers:371-393 the Lathe prefix rows — BACKFILLED by p26-rm-row-backfill (the 20 templates whose input prefix has no port item skip-count and stay declared here until an item-universe card registers them); OreDict:204 wood loop, Furnace:80 fallback bridge, all compat remain pooled");
 
 	/** Poured flag — one generation, one pour (upstream loaders run once per JVM). */
 	private static boolean sLoaded = false;
@@ -449,6 +727,8 @@ public final class GT6RecipesShCL {
 		pourCrusher(GT6RecipeMaps.CRUSHER, crusherTable());
 		pourFixed(GT6RecipeMaps.CRUSHER, "Crusher vanilla", crusherVanillaTable()); // p10-compat-vanilla-rows
 		pourLathe(GT6RecipeMaps.LATHE, latheTemplateTable()); // p26-rm-row-backfill (Handlers:371-393)
+		pourShredderTemplates(GT6RecipeMaps.SHREDDER, shredTemplateTable()); // p26-rm-row-backfill (Handlers:114-150)
+		pourRecyclableRing(GT6RecipeMaps.SHREDDER); // p26-rm-row-backfill (Handlers:152-155)
 		sLoaded = true;
 	}
 
@@ -562,5 +842,6 @@ public final class GT6RecipesShCL {
 		sCrusherTemplates = null;
 		sCrusherVanillaRows = null;
 		sLatheTemplates = null;
+		sShredTemplates = null;
 	}
 }

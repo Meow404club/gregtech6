@@ -353,13 +353,42 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 		GT6RecipesShCL.load();
 
 		int tExpectedShredder = 0;
-		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.shredderTable()) if (fixedRowResolves(tRow)) tExpectedShredder++;
+		// p26: the reconciliation now mirrors the FULL pour order (fixed rows → shred templates →
+		// RECYCLABLE ring) including the exact-row dedup, via the package-private pour primitives.
+		Set<String> tShredderKeys = new HashSet<>();
+		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.shredderTable()) {
+			Recipe tRecipe = fixedRowResolves(tRow) ? GT6RecipesShCL.buildFixedRecipe(tRow) : null;
+			if (tRecipe != null && tShredderKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedShredder++;
+		}
+		for (GT6RecipesShCL.ShredTemplate tTpl : GT6RecipesShCL.shredTemplateTable()) {
+			for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(tTpl.inPrefix())) {
+				Recipe tRecipe = GT6RecipesShCL.buildShredRecipe(tTpl, tMaterial);
+				if (tRecipe != null && tShredderKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedShredder++;
+			}
+		}
+		for (OreDictPrefix tPrefix : OreDictPrefix.VALUES) {
+			if (!tPrefix.mByProducts.isEmpty() || GT6RecipesShCL.UPSTREAM_BYPRODUCT_PREFIXES.contains(tPrefix.mNameInternal)) continue;
+			if (!tPrefix.contains(TD.Prefix.RECYCLABLE)) continue;
+			if (tPrefix.containsAny(TD.Prefix.ORE, TD.Prefix.ORE_PROCESSING_BASED, TD.Prefix.DUST_BASED, TD.Prefix.IS_CONTAINER)) continue;
+			if (tPrefix.mNameInternal.startsWith("cableGt") || tPrefix.mNameInternal.startsWith("wireGt") || tPrefix.mNameInternal.startsWith("pipe")) continue;
+			for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(tPrefix)) {
+				for (int tArm = 0; tArm < 2; tArm++) {
+					Recipe tRecipe = GT6RecipesShCL.buildRingRecipe(tPrefix, tMaterial, tArm == 0 ? 256 : 16, tArm == 0);
+					if (tRecipe != null && tShredderKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedShredder++;
+				}
+			}
+		}
 		int tExpectedLathe = 0;
-		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.latheTable()) if (fixedRowResolves(tRow)) tExpectedLathe++;
+		Set<String> tLatheKeys = new HashSet<>();
+		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.latheTable()) {
+			Recipe tRecipe = fixedRowResolves(tRow) ? GT6RecipesShCL.buildFixedRecipe(tRow) : null;
+			if (tRecipe != null && tLatheKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedLathe++;
+		}
 		// p26-rm-row-backfill: the handler-template expansions join the reconciliation
 		for (GT6RecipesShCL.LatheTemplate tTpl : GT6RecipesShCL.latheTemplateTable()) {
 			for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(tTpl.inPrefix())) {
-				if (latheRowResolves(tTpl, tMaterial)) tExpectedLathe++;
+				Recipe tRecipe = latheRowResolves(tTpl, tMaterial) ? GT6RecipesShCL.buildLatheRecipe(tTpl, tMaterial) : null;
+				if (tRecipe != null && tLatheKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedLathe++;
 			}
 		}
 		int tExpectedCrusher = 0;
@@ -746,6 +775,113 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
+	// p26-rm-row-backfill — the Shredder handler templates + the RECYCLABLE ring (:114-155)
+	// ------------------------------------------------------------------
+
+	/** The :114-150 census: 34 templates, twin MORTAR arms, the crushed-array rows carry 2-4 outputs. */
+	@Test
+	void shredTemplateCensus() {
+		List<GT6RecipesShCL.ShredTemplate> tTable = GT6RecipesShCL.shredTemplateTable();
+		assertEquals(34, tTable.size(), ":114-124 (11) + :126-136 (11) + :138-143 (6) + :145-150 (6)");
+		for (GT6RecipesShCL.ShredTemplate tTpl : tTable) {
+			assertEquals(16, tTpl.eUt(), "row " + tTpl.note() + " eUt");
+			assertTrue(tTpl.outCounts().length == tTpl.outPrefixes().length, "row " + tTpl.note() + " shape");
+		}
+		GT6RecipesShCL.ShredTemplate tImpure = findShredTemplate(tTable, ":114");
+		assertNotNull(tImpure);
+		assertSame(OP.dustImpure, tImpure.inPrefix());
+		assertEquals(256, tImpure.multiplier());
+		assertFalse(tImpure.mortar(), ":114 is the MORTAR.NOT arm");
+		assertTrue(tImpure.bedrockNot(), ":114 carries MT.Bedrock.NOT");
+		assertEquals(2, tImpure.outPrefixes().length);
+		GT6RecipesShCL.ShredTemplate tCluster = findShredTemplate(tTable, ":124");
+		assertEquals(1, tCluster.outPrefixes().length, ":124 cluster → dust x3 single-output");
+		assertEquals(3, tCluster.outCounts()[0]);
+		GT6RecipesShCL.ShredTemplate tCentrifuged = findShredTemplate(tTable, ":140");
+		assertEquals(4, tCentrifuged.outPrefixes().length, ":140 carries the 4-output crushed array");
+		assertEquals(16, findShredTemplate(tTable, ":147").multiplier(), "the :145-150 arm runs multiplier 16");
+		assertTrue(findShredTemplate(tTable, ":147").mortar());
+	}
+
+	/**
+	 * The crushed-array rows pour with the mTargetPulver output-material hop
+	 * (RecipeMapHandlerPrefixShredding.java:47) and a positive summed-units duration.
+	 */
+	@Test
+	void shredCrushedRowPoursWithPulverHop() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		List<OreDictMaterial> tMaterials = GT6RecipesShCL.expandCrusherMaterials(OP.crushed);
+		assertFalse(tMaterials.isEmpty(), "the crushed prefix must have registered materials (it is an item-path prefix)");
+		GT6RecipesShCL.ShredTemplate tRow = findShredTemplate(GT6RecipesShCL.shredTemplateTable(), ":138");
+		OreDictMaterial tWithRow = null;
+		Recipe tPoured = null;
+		for (OreDictMaterial tMaterial : tMaterials) {
+			Recipe tRecipe = GT6RecipesShCL.buildShredRecipe(tRow, tMaterial);
+			if (tRecipe != null) {tWithRow = tMaterial; tPoured = tRecipe; break;}
+		}
+		assertNotNull(tPoured, "at least one :138 row must resolve in the synthetic universe");
+		OreDictMaterial tPulverTarget = tWithRow.mTargetPulver.mMaterial;
+		assertEquals(3, tPoured.mOutputs.length, ":138 outputs dust + dustTiny + dustDiv72");
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dust, tPulverTarget)), tPoured.mOutputs[0].getItem());
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustTiny, tPulverTarget)), tPoured.mOutputs[1].getItem());
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustDiv72, tPulverTarget)), tPoured.mOutputs[2].getItem());
+		assertTrue(tPoured.mDuration >= 1);
+		// the MORTAR twin arms are mutually exclusive: whatever :138 accepted, :145 must reject (and vice versa)
+		GT6RecipesShCL.ShredTemplate tRowMortar = findShredTemplate(GT6RecipesShCL.shredTemplateTable(), ":145");
+		if (tWithRow.contains(TD.Processing.MORTAR)) {
+			assertNull(GT6RecipesShCL.buildShredRecipe(tRow, tWithRow));
+			assertNotNull(GT6RecipesShCL.buildShredRecipe(tRowMortar, tWithRow));
+		} else {
+			assertNotNull(GT6RecipesShCL.buildShredRecipe(tRow, tWithRow));
+			assertNull(GT6RecipesShCL.buildShredRecipe(tRowMortar, tWithRow));
+		}
+	}
+
+	/**
+	 * The :152 filter: the upstream byproduct carriers are excluded (toolHeadDrill), stick
+	 * qualifies (RECYCLABLE, no exclusion tag, no byproduct upstream), and the ring row output
+	 * is the OM.pulverize transcription — for the U2 stick the dustSmall x2 shape.
+	 */
+	@Test
+	void recyclableRingFilterAndOutputShape() {
+		assertTrue(GT6RecipesShCL.UPSTREAM_BYPRODUCT_PREFIXES.contains("toolHeadDrill"),
+				"toolHeadDrill carries an upstream byproduct (OP.java:717) and must be excluded");
+		assertFalse(GT6RecipesShCL.UPSTREAM_BYPRODUCT_PREFIXES.contains("stick"));
+		assertTrue(OP.stick.contains(TD.Prefix.RECYCLABLE), "stick must carry RECYCLABLE for the ring");
+		assertFalse(OP.stick.containsAny(TD.Prefix.ORE, TD.Prefix.ORE_PROCESSING_BASED, TD.Prefix.DUST_BASED, TD.Prefix.IS_CONTAINER),
+				"stick must pass the :152 exclusion tags");
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		OreDictMaterial tStickMaterial = null;
+		for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(OP.stick)) {
+			if (!tMaterial.contains(TD.Atomic.ANTIMATTER) && !tMaterial.contains(TD.Properties.INVALID_MATERIAL) && !tMaterial.contains(TD.Processing.MORTAR)) {
+				tStickMaterial = tMaterial; break;
+			}
+		}
+		assertNotNull(tStickMaterial, "at least one non-mortar stick material must exist");
+		Recipe tRingRow = GT6RecipesShCL.buildRingRecipe(OP.stick, tStickMaterial, 256, true);
+		assertNotNull(tRingRow, "the :153 arm must resolve for a non-mortar stick material");
+		ItemStack tExpectedOutput = GT6RecipesShCL.pulverizeOutput(tStickMaterial, OP.stick.mAmount);
+		assertNotNull(tExpectedOutput);
+		assertEquals(1, tRingRow.mOutputs.length, "the ring rows carry the remains output alone");
+		assertEquals(tExpectedOutput.getItem(), tRingRow.mOutputs[0].getItem());
+		assertEquals(tExpectedOutput.getCount(), tRingRow.mOutputs[0].getCount());
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.stick, tStickMaterial)), tRingRow.mInputs[0].getItem());
+		// the twin arm is the MORTAR side — rejected for this material
+		assertNull(GT6RecipesShCL.buildRingRecipe(OP.stick, tStickMaterial, 16, false));
+		// dustCascade identity for the U2 stick (default pulver target): dustSmall x2
+		assertEquals(OP.dustSmall, dustCascadePrefixOf(OP.stick.mAmount), "stick (U2) pulverizes into the dustSmall branch");
+	}
+
+	/** The OM.dust cascade branch probe for a unit amount (the prefix the cascade resolves). */
+	private static OreDictPrefix dustCascadePrefixOf(long aUnits) {
+		if (aUnits < CS.U72) return null;
+		if (aUnits >= CS.U) return OP.dust;
+		if (aUnits >= CS.U4) return OP.dustSmall;
+		if (aUnits >= CS.U9) return OP.dustTiny;
+		return OP.dustDiv72;
+	}
+
+	// ------------------------------------------------------------------
 	// pooled surface
 	// ------------------------------------------------------------------
 
@@ -785,6 +921,11 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 
 	private static GT6RecipesShCL.LatheTemplate findLatheTemplate(List<GT6RecipesShCL.LatheTemplate> aTable, String aNote) {
 		for (GT6RecipesShCL.LatheTemplate tTemplate : aTable) if (tTemplate.note().equals(aNote)) return tTemplate;
+		return null;
+	}
+
+	private static GT6RecipesShCL.ShredTemplate findShredTemplate(List<GT6RecipesShCL.ShredTemplate> aTable, String aNote) {
+		for (GT6RecipesShCL.ShredTemplate tTemplate : aTable) if (tTemplate.note().equals(aNote)) return tTemplate;
 		return null;
 	}
 
