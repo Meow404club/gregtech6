@@ -102,6 +102,23 @@ public class GT6ZhCn extends LanguageProvider {
 		addRowDomainUnits();    // task p20-i18n-compose-rows
 		addGrassUnits();        // task p24-grass-block
 		addFoamSprayUnits();    // task p25-c-foam-pipe-spray
+		addKitchenUnits();      // task p26-kitchen-pot-bowl
+	}
+
+	/**
+	 * The kitchen family zh faces (task p26-kitchen-pot-bowl) — the upstream zh dump rows
+	 * VERBATIM (tmp/gregtech.lang: "木质浸洗盆" :13542 = meta 32721 Wooden Bathing Pot,
+	 * "浸洗盆" :13529 = meta 32708 Bathing Pot, "搅拌盆" :13527 = meta 32706 Ceramic Bowl,
+	 * "粘土碗" :10110 = meta 995 Clay Bowl). Hand rows (the reference dump keys are the
+	 * meta-keyed 1.7 forms, not these registry-path keys). The tab title is hand (no
+	 * upstream category zh row).
+	 */
+	private void addKitchenUnits() {
+		add("block.gt6.bathing_pot_wood", "木质浸洗盆");
+		add("block.gt6.bathing_pot_steel", "浸洗盆");
+		add("block.gt6.mixing_bowl", "搅拌盆");
+		add("item.gt6.clay_bowl", "粘土碗");
+		add("itemGroup.gt6.kitchen", "GT6 厨具");
 	}
 
 	/**

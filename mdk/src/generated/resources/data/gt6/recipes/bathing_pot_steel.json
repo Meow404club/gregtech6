@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "forge:plates/stainless_steel"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    " f ",
+    "PhP",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:bathing_pot_steel"
+  },
+  "show_notification": true
+}

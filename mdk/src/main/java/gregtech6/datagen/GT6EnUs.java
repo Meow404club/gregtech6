@@ -90,6 +90,7 @@ public class GT6EnUs extends LanguageProvider {
         addMachines();
         addMultiBlocks();
         addBarrels();
+        addKitchen(); // task p26-kitchen-pot-bowl
         addEnergySource();
         addKinetics(); // task p12-engine-crank
         addAttachments(); // task p12-tap-funnel-attachment
@@ -464,6 +465,21 @@ public class GT6EnUs extends LanguageProvider {
      * same rows). Task p7-barrel-high-tier-melt-bridge: the high-tier drum rows
      * :2159-2170, display names verbatim.
      */
+    /**
+     * The kitchen family keys (task p26-kitchen-pot-bowl): the three manual blocks and
+     * the raw bowl item, display names VERBATIM from the upstream registration rows
+     * ("Wooden Bathing Pot" :2173, "Bathing Pot" :2175, "Ceramic Bowl" :2177 — all
+     * "Misc Tool Blocks") plus the "Clay Bowl" raw item (MultiItemRandomTools.java:119)
+     * and the family creative tab (the upstream category of the kitchen rows).
+     */
+    private void addKitchen() {
+        add("block.gt6.bathing_pot_wood", "Wooden Bathing Pot");
+        add("block.gt6.bathing_pot_steel", "Bathing Pot");
+        add("block.gt6.mixing_bowl", "Ceramic Bowl");
+        add("item.gt6.clay_bowl", "Clay Bowl");
+        add("itemGroup.gt6.kitchen", "GT6 Kitchen");
+    }
+
     private void addBarrels() {
         add("block.gt6.barrel_wood", "Wooden Barrel");
         add("block.gt6.barrel_plastic", "Plastic Canister");
