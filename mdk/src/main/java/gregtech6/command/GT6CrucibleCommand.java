@@ -264,13 +264,14 @@ public final class GT6CrucibleCommand {
 			return 0;
 		}
 		ServerLevel tLevel = aSource.getLevel();
-		// Spawn INSIDE the suck box (the :154 box tops out at y+1.25, so its mid-cell is
-		// the dead center) with zeroed motion: the vanilla ItemEntity constructor hands
-		// out a random horizontal toss (probed: the entity landed 1.2 blocks off the
-		// crucible and the remaining 7 items were unrecoverable), and a thrown charge
-		// that escapes the crucible is the one failure the row0 band cannot tolerate.
-		// Dead-center + no drift = the suck drains it 1 item per tick.
-		ItemEntity tEntity = new ItemEntity(tLevel, aPos.getX() + 0.5, aPos.getY() + 0.6, aPos.getZ() + 0.5, tStack);
+		// Spawn just ABOVE the top face with zeroed motion: the vanilla ItemEntity
+		// constructor hands the charge a random horizontal toss (probed: the entity
+		// touched down 1.2 blocks off the crucible, 7 of 8 items unrecoverable), and
+		// spawning inside the block cell instead gets the entity evicted by collision
+		// resolution mid-drain (probed pass-2: 6 of 8 landed). y+1.05 clears the block
+		// collision entirely, falls straight onto the top face and rests inside the
+		// :154 suck box (y+0.125..y+1.25) until the one-per-tick drain empties it.
+		ItemEntity tEntity = new ItemEntity(tLevel, aPos.getX() + 0.5, aPos.getY() + 1.05, aPos.getZ() + 0.5, tStack);
 		tEntity.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
 		tEntity.setPickUpDelay(20);
 		tLevel.addFreshEntity(tEntity);
