@@ -80,22 +80,25 @@ steps += [
 ]
 
 # ------------------------------------------------- B: the crushed-array arm (:145)
-# NOTE on the expect strings: the gt6machine check ITEM reporter prints bare item ids
-# (no registry namespace: crushed_ironx1) and the empty input slot as airx0 — the
-# namespace-carrying form is the FLUID stat reporter only (p16 idiom). Measured live
-# on the forge leg, 2026-09-10.
+# NOTE on the expect strings: the gt6machine check ITEM reporter formats item ids
+# loader-versioned — bare on 1.20.1-forge (crushed_ironx1), registry-qualified on
+# 1.21.1-neoforge (gt6:crushed_ironx1; the empty slot airx0 vs minecraft:airx0).
+# The expects below pin the LOADER-NEUTRAL substring (id+count), measured live on
+# both legs 2026-09-10; the namespace-carrying form is the FLUID stat reporter (p16).
 steps += [
     phase("B: crushed_iron 1 -> dust + dustTiny — the :145 row, hopper-fed"),
     Step(f"item replace block {SHREDDER_HOPPER} container.0 with gt6:crushed_iron 1",
          expect="Replaced", sleep=4.0),
     # the hopper push cadence (8 game ticks) landed the crushed ore in the input slot
-    Step(f"gt6machine shredder check {SHREDDER}", expect="input=crushed_ironx1"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="crushed_ironx1"),
     # duration = getCosts(mult 16) ~= 55 t for iron (x16 EUt) — 4000 overshoots, the row
     # stalls honestly once the single item is consumed
     Step(f"gt6machine shredder inject 4000 64 {SHREDDER}", expect="used=4000"),
-    Step(f"gt6machine shredder check {SHREDDER}", expect="out[0]=1x dust_iron"),
-    Step(f"gt6machine shredder check {SHREDDER}", expect="out[1]=1x dust_tiny_iron"),
-    Step(f"gt6machine shredder check {SHREDDER}", expect="input=airx0"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="out[0]=1x"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="dust_iron"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="out[1]=1x"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="dust_tiny_iron"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="airx0"),
 ]
 
 # ------------------------------------------------- C: the lathe hard-arm ingot row (:377)
@@ -103,11 +106,12 @@ steps += [
     phase("C: ingot_iron 1 -> stick_iron — the :377 row (tEasyWorkable.NOT arm), hopper-fed"),
     Step(f"item replace block {LATHE_HOPPER} container.0 with gt6:ingot_iron 1",
          expect="Replaced", sleep=4.0),
-    Step(f"gt6machine lathe check {LATHE}", expect="input=ingot_ironx1"),
+    Step(f"gt6machine lathe check {LATHE}", expect="ingot_ironx1"),
     # duration = units(U, U, 64+64*q, T) — 192 t for iron (q=2), x16 EUt
     Step(f"gt6machine lathe inject 4000 64 {LATHE}", expect="used=4000"),
-    Step(f"gt6machine lathe check {LATHE}", expect="out[0]=1x stick_iron"),
-    Step(f"gt6machine lathe check {LATHE}", expect="input=airx0"),
+    Step(f"gt6machine lathe check {LATHE}", expect="out[0]=1x"),
+    Step(f"gt6machine lathe check {LATHE}", expect="stick_iron"),
+    Step(f"gt6machine lathe check {LATHE}", expect="airx0"),
 ]
 
 # ------------------------------------------------- D: the RECYCLABLE-ring arm (:154)
@@ -115,11 +119,12 @@ steps += [
     phase("D: stick_iron 1 -> 2x dust_small_iron — the :154 ring row, the OM.pulverize output"),
     Step(f"item replace block {RING_HOPPER} container.0 with gt6:stick_iron 1",
          expect="Replaced", sleep=4.0),
-    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="input=stick_ironx1"),
+    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="stick_ironx1"),
     # duration = units(U2, U, 16+16*q, T) = 24 t for iron, x16 EUt
     Step(f"gt6machine shredder inject 4000 64 {RING_SHREDDER}", expect="used=4000"),
-    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="out[0]=2x dust_small_iron"),
-    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="input=airx0"),
+    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="out[0]=2x"),
+    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="dust_small_iron"),
+    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="airx0"),
 ]
 
 # ------------------------------------------------- teardown
