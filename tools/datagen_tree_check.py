@@ -180,6 +180,28 @@ def _norm_enchant_pred(o: dict) -> bool:
     return True
 
 
+def _norm_smelt_result_str(o: dict) -> bool:
+    """熔炼配方 result 裸串形：1.21 {"count":N,"id":X} 对象 → 1.20.1 裸 id 串。
+
+    出处：1.20.1 SimpleCookingRecipe.Serializer 把 smelting result 序列化为纯
+    item id 字符串（Recipes: gt6:mold 双腿实测）；1.21.x 单物品 Result codec
+    恒写 {"count":N,"id":X} 对象（与 crafting 的 object 形不同键形，故
+    _norm_recipe_result 覆盖不到）。census 样本：recipes/smelt_mold_ceramic_sense.json
+    （本卡 p26 熔炼硬化带 32 文件）。count!=1 形态未注册——原样保留 → 字节比对
+    FAIL（fail-visible）。必须注册在 _norm_recipe_result 之前：本变换消费
+    {"id":X} 原形，后者会把同形改写成 {"item":X}。
+    """
+    if o.get("type") != "minecraft:smelting":
+        return False
+    r = o.get("result")
+    if not isinstance(r, dict) or "id" not in r:
+        return False
+    if r.get("count", 1) != 1:
+        return False
+    o["result"] = r["id"]
+    return True
+
+
 def _norm_recipe_result(o: dict) -> bool:
     """配方 result 形：1.21 {"count":N,"id":X} → 1.20.1 {"count":N,"item":X}，
     且 count==1 时 1.20.1 侧不写（1.21 侧恒写）。
@@ -287,11 +309,13 @@ VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]
     ]),
     ("data/*/advancements", "advancements", [
         ("items-#tag→tag", _norm_items_tag_hash),
+        ("tag-c:→forge:", _norm_tag_c_to_forge),
         ("items-str→array", _norm_items_wrap),
         ("requirements→criteria-order", _norm_requirements_order),
         ("sends_telemetry_event(1.20.1-only)", _norm_telemetry),
     ]),
     ("data/*/recipes", "recipes", [
+        ("smelt-result-obj→str", _norm_smelt_result_str),
         ("result-id→item(+drop count==1)", _norm_recipe_result),
         ("tag-c:→forge:", _norm_tag_c_to_forge),
         ("show_notification(1.20.1-shaped)", _norm_show_notification),

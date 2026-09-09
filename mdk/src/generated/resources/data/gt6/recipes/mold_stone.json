@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:cobblestone"
+    }
+  },
+  "pattern": [
+    "B B",
+    "B B",
+    "BBB"
+  ],
+  "result": {
+    "item": "gt6:mold_stone"
+  },
+  "show_notification": true
+}

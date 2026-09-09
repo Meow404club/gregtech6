@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:stone"
+    }
+  },
+  "pattern": [
+    "B B",
+    " B "
+  ],
+  "result": {
+    "item": "gt6:faucet_stone"
+  },
+  "show_notification": true
+}

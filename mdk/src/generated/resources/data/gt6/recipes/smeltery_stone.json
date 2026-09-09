@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:cobblestone"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "B B",
+    "BBB"
+  ],
+  "result": {
+    "item": "gt6:smeltery_stone"
+  },
+  "show_notification": true
+}

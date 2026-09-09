@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "gt_liquid_level=0": {
+      "model": "gt6:block/smeltery_bronze_empty"
+    },
+    "gt_liquid_level=1": {
+      "model": "gt6:block/smeltery_bronze_filled"
+    },
+    "gt_liquid_level=2": {
+      "model": "gt6:block/smeltery_bronze_filled"
+    },
+    "gt_liquid_level=3": {
+      "model": "gt6:block/smeltery_bronze_filled"
+    },
+    "gt_liquid_level=4": {
+      "model": "gt6:block/smeltery_bronze_filled"
+    },
+    "gt_liquid_level=5": {
+      "model": "gt6:block/smeltery_bronze_filled"
+    },
+    "gt_liquid_level=6": {
+      "model": "gt6:block/smeltery_bronze_filled"
+    },
+    "gt_liquid_level=7": {
+      "model": "gt6:block/smeltery_bronze_filled"
+    },
+    "gt_liquid_level=8": {
+      "model": "gt6:block/smeltery_bronze_filled"
+    }
+  }
+}

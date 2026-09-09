@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:mold_ceramic_raw"
+    },
+    {
+      "item": "minecraft:wooden_shovel"
+    }
+  ],
+  "result": {
+    "item": "gt6:mold_ceramic_shovel_raw"
+  }
+}
