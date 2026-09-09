@@ -9,6 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregtech6.registry.GTBlockEntities;
+
 /**
  * The Key Locked GT6 Safe — 1.20.1 counterpart of
  * {@code gregtech/tileentity/inventories/MultiTileEntitySafeKeyLocked.java:49-137} (the
@@ -47,6 +49,11 @@ public class GT6SafeKeyLockedBlockEntity extends GT6SafeBlockEntity {
 
 	/** Upstream :53 {@code mOpened = F} — closed by default. */
 	public boolean mOpened = false;
+
+	/** BET factory for BlockEntityType.Builder.of — resolves the shared type at runtime. */
+	public GT6SafeKeyLockedBlockEntity(BlockPos aPos, BlockState aState) {
+		this(GTBlockEntities.SAFE_KEYLOCKED_BE.get(), aPos, aState);
+	}
 
 	/** Full constructor — the offline (test) entry point. */
 	public GT6SafeKeyLockedBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {

@@ -17,6 +17,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 
+import gregtech6.registry.GTBlockEntities;
+
 /**
  * The GT6 Safe (the mechanical kind) — 1.20.1 counterpart of the abstract
  * {@code gregapi/tileentity/inventories/MultiTileEntitySafe.java:47-119} with the
@@ -56,7 +58,7 @@ import net.minecraft.world.phys.Vec3;
  * <p>The {@link #rollOne} seam is the offline test entry: tests override it with a canned
  * roller and drive {@link #generateDungeonLootFrom} directly.
  */
-public class GT6SafeBlockEntity extends GT6StaticStorageBaseBlockEntity {
+public class GT6SafeBlockEntity extends GT6StaticStorageBaseBlockEntity implements gregtech6.gui.machines.GT6MuiMachine {
 
 	/** The slot count (the metalset Safe rows :134-135 NBT_INV_SIZE = 15). */
 	public static final int INVENTORY_SIZE = 15;
@@ -66,6 +68,11 @@ public class GT6SafeBlockEntity extends GT6StaticStorageBaseBlockEntity {
 
 	/** The loot-table marker (the ChestGenHooks category name upstream, the table id here). */
 	public String mDungeonLootName = "";
+
+	/** BET factory for BlockEntityType.Builder.of — resolves the shared type at runtime. */
+	public GT6SafeBlockEntity(BlockPos aPos, BlockState aState) {
+		this(GTBlockEntities.SAFE_BE.get(), aPos, aState);
+	}
 
 	/** Full constructor — the offline (test) entry point. */
 	public GT6SafeBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
@@ -80,6 +87,17 @@ public class GT6SafeBlockEntity extends GT6StaticStorageBaseBlockEntity {
 	@Override
 	protected int inventorySize(BlockState aState) {
 		return INVENTORY_SIZE;
+	}
+
+	/**
+	 * The 15-slot MUI panel (the wave-4 menu=null ruling, zero MenuType) — the block's
+	 * front-face use arm opens it through {@link gregtech6.gui.machines.GT6MuiMachine#tryOpen}
+	 * once {@link #isOpen()} holds (the KeyLocked latch gates there).
+	 */
+	@Override
+	public brachy.modularui.screen.ModularPanel<?> buildUI(brachy.modularui.factory.PosGuiData aData,
+			brachy.modularui.value.sync.PanelSyncManager aSyncManager, brachy.modularui.screen.UISettings aSettings) {
+		return gregtech6.gui.machines.GT6StorageMUI.safePanel(this, aSyncManager);
 	}
 
 	/** The open gate of the GUI arm — the mechanical safe never locks (the mOwner fold, class doc). */

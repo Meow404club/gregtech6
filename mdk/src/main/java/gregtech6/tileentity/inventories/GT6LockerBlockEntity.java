@@ -9,6 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregtech6.registry.GTBlockEntities;
+
 
 /**
  * The GT6 Locker — 1.20.1 counterpart of
@@ -50,6 +52,11 @@ public class GT6LockerBlockEntity extends GT6StaticStorageBaseBlockEntity {
 	 */
 	public static final EquipmentSlot[] SLOT_PIECES = {
 			EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
+
+	/** BET factory for BlockEntityType.Builder.of — resolves the shared type at runtime. */
+	public GT6LockerBlockEntity(BlockPos aPos, BlockState aState) {
+		this(GTBlockEntities.LOCKER_BE.get(), aPos, aState);
+	}
 
 	/** Full constructor — the offline (test) entry point. */
 	public GT6LockerBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {

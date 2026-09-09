@@ -8,6 +8,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregtech6.registry.GTBlockEntities;
+
 /**
  * The GT6 Bottle Crate — 1.20.1 counterpart of
  * {@code gregtech/tileentity/inventories/MultiTileEntityBottleCrate.java:54-249}, the
@@ -46,6 +48,11 @@ public class GT6BottleCrateBlockEntity extends GT6StaticStorageBaseBlockEntity {
 
 	/** The slot count (upstream {@code mDisplay[9]} :56 — the 3x3 crate). */
 	public static final int INVENTORY_SIZE = 9;
+
+	/** BET factory for BlockEntityType.Builder.of — resolves the shared type at runtime. */
+	public GT6BottleCrateBlockEntity(BlockPos aPos, BlockState aState) {
+		this(GTBlockEntities.BOTTLECRATE_BE.get(), aPos, aState);
+	}
 
 	/** Full constructor — the offline (test) entry point. */
 	public GT6BottleCrateBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {

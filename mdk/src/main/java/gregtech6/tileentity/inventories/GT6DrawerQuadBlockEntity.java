@@ -12,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregtech6.registry.GTBlockEntities;
+
 /**
  * The GT6 Compartment Drawer (Quad) — 1.20.1 counterpart of
  * {@code gregtech/tileentity/inventories/MultiTileEntityDrawerQuad.java:54-146}, the
@@ -107,6 +109,11 @@ public class GT6DrawerQuadBlockEntity extends GT6StaticStorageBaseBlockEntity im
 
 	/** Upstream :55 — false = "Anywhere" (every side sees all), true = "Sided". */
 	public boolean mSidedAccess = false;
+
+	/** BET factory for BlockEntityType.Builder.of — resolves the shared type at runtime. */
+	public GT6DrawerQuadBlockEntity(BlockPos aPos, BlockState aState) {
+		this(GTBlockEntities.DRAWER_QUAD_BE.get(), aPos, aState);
+	}
 
 	/** Full constructor — the offline (test) entry point. */
 	public GT6DrawerQuadBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
