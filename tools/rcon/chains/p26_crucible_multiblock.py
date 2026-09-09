@@ -125,10 +125,12 @@ steps += [
 # ------------------------------------------------- B': the through-wall pour
 steps += [
     phase("B': the y+1 wall relays the pour, the y+0 wall refuses it (the layering live)"),
-    # the recording mold clicks the MOLD layer wall -> the controller pours 1U of Fe
-    Step(f"gt6multiblock crucible {B} pour 431 65 124", expect="poured=1.0U of Fe"),
+    # the recording mold clicks the MOLD layer wall -> the controller pours 1U of
+    # WroughtIron (the findMaterial("iron") resolution — GT6 iron IS WroughtIron;
+    # the live r1 readback pinned mNameInternal)
+    Step(f"gt6multiblock crucible {B} pour 431 65 124", expect="poured=1.0U of WroughtIron"),
     # the content dropped 4.0U -> 3.0U
-    Step(f"gt6multiblock crucible {B} stat", expect="Fe 3.0U"),
+    Step(f"gt6multiblock crucible {B} stat", expect="WroughtIron 3.0U"),
     # the energy-layer wall carries NO_CRUCIBLE — the same click is refused (the :688 gate)
     Step(f"gt6multiblock crucible {B} pour 431 64 124", expect="poured=0", allow_failed=True),
 ]
@@ -144,9 +146,11 @@ steps += [
     Step(f"gt6multiblock crucible {C} feed iron 4", expect="fed=true"),
     # one huge charge drives the tick past the Steel ceiling on the server tick
     Step(f"gt6multiblock crucible {C} heat 2200000", expect="buffer=", sleep=2.0),
-    # the cavity is lava — the centre column cell included (hard assert, no allow_failed)
-    Step(f"execute if block 440 65 124 minecraft:lava run say MELTDOWN-LAVA",
-         expect="MELTDOWN-LAVA"),
+    # the cavity is lava — the centre column cell included (hard assert, no allow_failed).
+    # `say` prints to the chat broadcast, NOT back to the RCON peer (the r1 readback:
+    # <no response>) — arm a feedback command behind `execute if block` instead.
+    Step(f"execute if block 440 65 124 minecraft:lava run time query daytime",
+         expect="The time is"),
 ]
 
 # ------------------------------------------------- D: teardown
