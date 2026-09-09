@@ -63,12 +63,16 @@ public final class GT6Molds {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 
-	/** One registration row — the Loader aRegistry.add projection (path + shell material + the pre-carved shape). */
-	public record MoldRow(String path, OreDictMaterial material, float hardness, int preCarvedShape) {}
+	/**
+	 * One registration row — the Loader aRegistry.add projection (path + shell material + the pre-carved shape).
+	 * The material rides a {@link java.util.function.Supplier} (the GTWireSpecs.Row:81 form — the
+	 * class-load-time static rows initialize before MT.init(); a direct MT.Stone captured null).
+	 */
+	public record MoldRow(String path, java.util.function.Supplier<OreDictMaterial> material, float hardness, int preCarvedShape) {}
 
 	/** The stone rung (the :347 NBT_HARDNESS 1.0 / NBT_RESISTANCE 5.0 pair, pre-carved with the ingot bar). */
 	public static final List<MoldRow> ROWS = List.of(
-			new MoldRow("mold_stone", MT.Stone, 1.0F, TileEntityMold.ingotShape(0)));
+			new MoldRow("mold_stone", () -> MT.Stone, 1.0F, TileEntityMold.ingotShape(0)));
 
 	/** The registered blocks by path. */
 	public static final Map<String, RegistryObject<MoldBlock>> BLOCKS_BY_PATH = new LinkedHashMap<>();

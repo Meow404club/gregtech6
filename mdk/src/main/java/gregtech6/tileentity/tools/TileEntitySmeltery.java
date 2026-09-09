@@ -142,7 +142,7 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	@Nullable
 	public OreDictMaterial material() {
 		BlockState tState = getBlockState();
-		if (tState.getBlock() instanceof GT6Crucibles.CrucibleBlock tBlock) return tBlock.row().material();
+		if (tState.getBlock() instanceof GT6Crucibles.CrucibleBlock tBlock) return tBlock.row().material().get();
 		return null;
 	}
 

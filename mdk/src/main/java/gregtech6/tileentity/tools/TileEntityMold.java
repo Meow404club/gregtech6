@@ -472,7 +472,7 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 	@Nullable
 	public OreDictMaterial material() {
 		BlockState tState = getBlockState();
-		if (tState.getBlock() instanceof GT6Molds.MoldBlock tBlock) return tBlock.row().material();
+		if (tState.getBlock() instanceof GT6Molds.MoldBlock tBlock) return tBlock.row().material().get();
 		return null;
 	}
 

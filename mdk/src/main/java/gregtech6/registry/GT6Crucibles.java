@@ -58,14 +58,21 @@ public final class GT6Crucibles {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 
-	/** One registration row — the Loader aRegistry.add projection (path + shell material + hardness pair). */
-	public record CrucibleRow(String path, OreDictMaterial material, String display, float hardness) {}
+	/**
+	 * One registration row — the Loader aRegistry.add projection (path + shell material + hardness pair).
+	 * The material rides a {@link java.util.function.Supplier} (the GTWireSpecs.Row:81 form): the
+	 * static ROWS initialize at class-load time, which on the mod bus runs before MT.init() assigns
+	 * the OreDictMaterial statics (the P2 two-phase material reset) — a direct MT.Steel reference
+	 * captured null and every shell read as the Stone fallback ceiling (live-probed: all three rungs
+	 * answered max=1375K with row.material()==NULL).
+	 */
+	public record CrucibleRow(String path, java.util.function.Supplier<OreDictMaterial> material, String display, float hardness) {}
 
 	/** The three rungs: Stone (the opening row, 6.0 hardness like the :250 NBT_HARDNESS family), Bronze (7.0), Steel (6.0). */
 	public static final List<CrucibleRow> ROWS = List.of(
-			new CrucibleRow("smeltery_stone", MT.Stone, "Smeltery (Stone)", 6.0F),
-			new CrucibleRow("smeltery_bronze", MT.Bronze, "Smeltery (Bronze)", 7.0F),
-			new CrucibleRow("smeltery_steel", MT.Steel, "Smeltery (Steel)", 6.0F));
+			new CrucibleRow("smeltery_stone", () -> MT.Stone, "Smeltery (Stone)", 6.0F),
+			new CrucibleRow("smeltery_bronze", () -> MT.Bronze, "Smeltery (Bronze)", 7.0F),
+			new CrucibleRow("smeltery_steel", () -> MT.Steel, "Smeltery (Steel)", 6.0F));
 
 	/** The registered blocks by path (the BET/datagen/command walkers iterate this). */
 	public static final Map<String, RegistryObject<CrucibleBlock>> BLOCKS_BY_PATH = new LinkedHashMap<>();
