@@ -193,6 +193,14 @@ public final class GT6CrucibleCommand {
 	/** The item-entity feed arm: ONE item of (prefix, material) dropped above the crucible. */
 	private static int drop(CommandSourceStack aSource, BlockPos aPos, String aPrefix, String aMaterial, int aCount) {
 		OreDictMaterial tMaterial = MaterialRegistry.INSTANCE.byName(aMaterial);
+		if (tMaterial == null) {
+			// the RCON word arrives lower-case ("iron") while the internal names are
+			// camel-case ("Iron") and MATERIAL_MAP is a case-sensitive HashMap — the same
+			// lenient scan the prefix arm below already uses
+			for (OreDictMaterial tScan : MaterialRegistry.INSTANCE.MATERIAL_MAP.values()) {
+				if (tScan.mNameInternal.equalsIgnoreCase(aMaterial)) {tMaterial = tScan; break;}
+			}
+		}
 		gregapi.oredict.OreDictPrefix tPrefix = null;
 		for (gregapi.oredict.OreDictPrefix tScan : gregapi.oredict.OreDictPrefix.VALUES) {
 			if (tScan.mNameInternal.equalsIgnoreCase(aPrefix)) {tPrefix = tScan; break;}
