@@ -387,6 +387,7 @@ public class GT6EnUs extends LanguageProvider {
         addDieselUnits();
         addBurningBoxUnits();
         addBoilerUnits();
+        addHopperUnits();
     }
 
     /** The axle template + the four size units + the eleven row-material units (the AXLE_SPECS walk). */
@@ -438,6 +439,15 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GT6Boilers.DISPLAY_STRONG_KEY, "Strong Steam Boiler Tank (%s)");
         for (gregtech6.registry.GT6Boilers.BoilerRow tRow : gregtech6.registry.GT6Boilers.allRows()) {
             addRowMatUnit(gregtech6.registry.GT6Boilers.matUnitKeyOf(tRow), tRow.material().display());
+        }
+    }
+
+    /** The two hopper templates (regular/queue) + the row-material units (the GT6Hoppers.ROWS walk; Bronze/Steel join the boiler words, Loader:191/:202). */
+    private void addHopperUnits() {
+        add(gregtech6.registry.GT6Hoppers.DISPLAY_KEY, "%s Hopper");
+        add(gregtech6.registry.GT6Hoppers.DISPLAY_QUEUE_KEY, "%s Queue Hopper");
+        for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
+            addRowMatUnit(gregtech6.registry.GT6Hoppers.matUnitKeyOf(tRow), tRow.material().display());
         }
     }
 
