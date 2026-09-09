@@ -148,6 +148,27 @@ public class GTSensorBlockEntityNbtTest extends GTOfflineTestBase {
 	}
 
 	@Test
+	public void averagingResizeDiscardsTheWindow() {
+		// the upstream :217-227 resize is mValues = new int[len] — the whole window is
+		// discarded, NOT a content-preserving copy (the takeover fix: the arraycopy the
+		// interim revision carried contradicted both the upstream and its own javadoc)
+		GT6ProgressmeterBlockEntity tBe = probe();
+		tBe.mValues = new int[] {10, 20, 30};
+		tBe.mIndex = 2;
+		tBe.screwdriverResizeAveraging(2, 1); // the +1 button → 4 slots
+		assertEquals(4, tBe.mValues.length);
+		for (int i = 0; i < tBe.mValues.length; i++) {
+			assertEquals(0, tBe.mValues[i], "slot " + i + " is a fresh zero — the mean drags until the window refills");
+		}
+		// the shrink arm discards the same way (the :225 -1 button)
+		tBe.mValues = new int[] {7, 8, 9};
+		tBe.screwdriverResizeAveraging(2, 0);
+		assertEquals(2, tBe.mValues.length);
+		assertEquals(0, tBe.mValues[0]);
+		assertEquals(0, tBe.mValues[1]);
+	}
+
+	@Test
 	public void loadToleratesABareTag() {
 		// a tag with none of the sensor keys (a foreign payload) — every read branches
 		// through contains/defaults and the BE survives with the placement defaults

@@ -355,15 +355,14 @@ public abstract class GTSensorBlockEntity extends TileEntityBase03TicksAndSync {
 	/**
 	 * Upstream SensorTE:217-227 — the screwdriver on the keypad buttons resizes the
 	 * sliding-average window (the keypad step table, clamped 1..MAX_AVERAGING_VALUES).
-	 * Enlarging clears stale tail slots implicitly (the fresh zeros drag the mean — the
-	 * upstream {@code new int[len]} semantics, NOT a content-preserving copy).
+	 * The resize is the upstream {@code mValues = new int[len]} verbatim: the whole
+	 * window is DISCARDED (the fresh zeros drag the mean until it refills), NOT a
+	 * content-preserving copy. {@code mIndex} is left alone exactly like upstream — the
+	 * next sample re-mods it against the new length (:126).
 	 */
 	public boolean screwdriverResizeAveraging(int aRow, int aCol) {
 		int tLength = GTSensorLogic.averagingStep(GTSensorLogic.isHexMode(mMode), aRow, aCol, mValues.length);
-		int[] tValues = new int[tLength];
-		System.arraycopy(mValues, 0, tValues, 0, Math.min(mValues.length, tLength));
-		mValues = tValues;
-		mIndex %= tLength;
+		mValues = new int[tLength]; // upstream :217-227 — a FRESH window, every prior sample discarded
 		return true;
 	}
 
