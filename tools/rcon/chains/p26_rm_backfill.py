@@ -9,9 +9,10 @@ reports data=-2 — the row family binds no MenuType, GTMachines null-menu rows)
 
   B the SHREDDER crushed-array arm (:145 — iron carries MORTAR, so the multiplier-16 arm;
     Loader_Recipes_Handlers.java:145 verbatim): a hopper above the shredder feeds ONE
-    gt6:crushed_iron, the row runs (crushed 9*U8 x1 -> dust U + dustTiny U9 + dustDiv72 U72
-    of the mTargetPulver target — RecipeMapHandlerPrefixShredding getOutputMaterial override)
-    -> the check pins all three output items.
+    gt6:crushed_iron, the row runs (crushed x1 -> dust + dustTiny of the mTargetPulver
+    target — RecipeMapHandlerPrefixShredding getOutputMaterial override) -> the check pins
+    BOTH output items (the :145 transcription is the two-output array [dust, dustTiny];
+    the dustDiv72 leg belongs to the :138/:147 rows, not this one).
 
   C the LATHE hard-arm ingot row (:377 — iron is NEVER_FURNACE and not SOFT, the
     tEasyWorkable.NOT arm; :377 verbatim): ONE gt6:ingot_iron through the hopper, the row
@@ -79,19 +80,22 @@ steps += [
 ]
 
 # ------------------------------------------------- B: the crushed-array arm (:145)
+# NOTE on the expect strings: the gt6machine check ITEM reporter prints bare item ids
+# (no registry namespace: crushed_ironx1) and the empty input slot as airx0 — the
+# namespace-carrying form is the FLUID stat reporter only (p16 idiom). Measured live
+# on the forge leg, 2026-09-10.
 steps += [
-    phase("B: crushed_iron 1 -> dust + dustTiny + dustDiv72 — the :145 row, hopper-fed"),
+    phase("B: crushed_iron 1 -> dust + dustTiny — the :145 row, hopper-fed"),
     Step(f"item replace block {SHREDDER_HOPPER} container.0 with gt6:crushed_iron 1",
          expect="Replaced", sleep=4.0),
     # the hopper push cadence (8 game ticks) landed the crushed ore in the input slot
-    Step(f"gt6machine shredder check {SHREDDER}", expect="input=gt6:crushed_ironx1"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="input=crushed_ironx1"),
     # duration = getCosts(mult 16) ~= 55 t for iron (x16 EUt) — 4000 overshoots, the row
     # stalls honestly once the single item is consumed
     Step(f"gt6machine shredder inject 4000 64 {SHREDDER}", expect="used=4000"),
-    Step(f"gt6machine shredder check {SHREDDER}", expect="out[0]=1x gt6:dust_iron"),
-    Step(f"gt6machine shredder check {SHREDDER}", expect="gt6:dust_tiny_iron"),
-    Step(f"gt6machine shredder check {SHREDDER}", expect="gt6:dust_div72_iron"),
-    Step(f"gt6machine shredder check {SHREDDER}", expect="input=minecraft:airx1"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="out[0]=1x dust_iron"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="out[1]=1x dust_tiny_iron"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="input=airx0"),
 ]
 
 # ------------------------------------------------- C: the lathe hard-arm ingot row (:377)
@@ -99,11 +103,11 @@ steps += [
     phase("C: ingot_iron 1 -> stick_iron — the :377 row (tEasyWorkable.NOT arm), hopper-fed"),
     Step(f"item replace block {LATHE_HOPPER} container.0 with gt6:ingot_iron 1",
          expect="Replaced", sleep=4.0),
-    Step(f"gt6machine lathe check {LATHE}", expect="input=gt6:ingot_ironx1"),
+    Step(f"gt6machine lathe check {LATHE}", expect="input=ingot_ironx1"),
     # duration = units(U, U, 64+64*q, T) — 192 t for iron (q=2), x16 EUt
     Step(f"gt6machine lathe inject 4000 64 {LATHE}", expect="used=4000"),
-    Step(f"gt6machine lathe check {LATHE}", expect="out[0]=1x gt6:stick_iron"),
-    Step(f"gt6machine lathe check {LATHE}", expect="input=minecraft:airx1"),
+    Step(f"gt6machine lathe check {LATHE}", expect="out[0]=1x stick_iron"),
+    Step(f"gt6machine lathe check {LATHE}", expect="input=airx0"),
 ]
 
 # ------------------------------------------------- D: the RECYCLABLE-ring arm (:154)
@@ -111,11 +115,11 @@ steps += [
     phase("D: stick_iron 1 -> 2x dust_small_iron — the :154 ring row, the OM.pulverize output"),
     Step(f"item replace block {RING_HOPPER} container.0 with gt6:stick_iron 1",
          expect="Replaced", sleep=4.0),
-    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="input=gt6:stick_ironx1"),
+    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="input=stick_ironx1"),
     # duration = units(U2, U, 16+16*q, T) = 24 t for iron, x16 EUt
     Step(f"gt6machine shredder inject 4000 64 {RING_SHREDDER}", expect="used=4000"),
-    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="out[0]=2x gt6:dust_small_iron"),
-    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="input=minecraft:airx1"),
+    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="out[0]=2x dust_small_iron"),
+    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="input=airx0"),
 ]
 
 # ------------------------------------------------- teardown
