@@ -7,16 +7,17 @@ Task p26-crucible-mold-faucet ACCEPTANCE (c), translated:
     the shell ladder IS the gate, temperatureMax = shell.melting x 1.25) + the
     CERAMIC faucet mounted on its east wall (facing west, the mount face toward the
     host) + the pre-carved ceramic PLATE mold under the faucet.
-  B the melt: iron dust dropped on top (the :154 suck arm), then TWO inject-hu shots.
-    r7 recalibration (the live-leg evidence, /tmp/p26mf-rcon-forge.log of the
-    pre-r7 run): the steel shell alone sets the heat mass — E/K = 1 + 7000/100 =
-    71 HU/K (the content is NOT yet in the mass when the shot lands), so shot 1
-    130000 HU lands 287 + 130000/71 ~= 2118 K and shot 2 +22000 HU ~= +310 K
-    into ~2400 K, both inside the [1811, 2557) pour window. The stat polls pin
-    the "temp=2" band (2.0-3.0 kK, ~900 K of headroom) instead of the stale
-    1.6/1.8 kK magic numbers; the WINDOW itself is proven by the pour arms —
-    fillMoldAtSide refuses outside it, so "poured into the mold" / "output=1x"
-    fail if the melt is cold. A meltdown prints the FAILED marker and auto-fails.
+  B the melt: ONE iron dust dropped on top (the :154 suck arm) — r7.3 made the
+    heat mass CERTAIN before shooting: the suck pace is not tick-deterministic
+    (the r7.1/r7.2 forge legs split 1U vs 4U fed at shot time — 2149 K vs
+    1598 K), and a fixed two-shot ladder cannot cover both masses (K = 71 vs
+    111 HU/K have no common pour window). So the rig drops exactly one dust
+    (= exactly one plate's worth, CS.U = 648648000u), the stat POLL waits for
+    "total=648648000u" to pin the mass, and the calibration rides K = 1 +
+    (7000+1000)/100 = 81 HU/K: shot 1 130000 HU -> ~1920 K ("temp=1"), shot 2
+    +22000 HU -> ~2190 K ("temp=2"), mid-[1811, 2557) with ~350 K margins on
+    both edges. The pour arms stay the window proof; a meltdown prints the
+    FAILED marker and auto-fails.
   C the cast: the faucet right-click (the :138-146 activation, the null-player RCON
     arm) polls until "poured into the mold" — the crucible pays one plate of molten
     iron through fillMoldAtSide -> fillMold (the DOWN walk) — then the mold stat
@@ -80,7 +81,7 @@ steps = []
 steps += [
     phase("A: the pour rig — steel crucible + ceramic faucet (east wall, facing west) + plate mold below"),
     Step(f"gt6crucible place {C} smeltery_steel", expect="GT6 smeltery placed"),
-    Step(f"gt6crucible drop {C} dust iron 4", expect="GT6 dropped"),
+    Step(f"gt6crucible drop {C} dust iron 1", expect="GT6 dropped"),
     Step(f"gt6faucet place {FA} faucet_ceramic west", expect="GT6 faucet placed"),
     Step(f"gt6crucible place-mold {M} mold_ceramic_plate", expect="GT6 mold placed"),
     Step(f"gt6faucet stat {FA}", expect="facing=west", sleep=1),
@@ -88,10 +89,11 @@ steps += [
 
 # ------------------------------------------------- B: the anchored melt
 steps += [
-    phase("B: the melt — shot 1 ~+1830 K (E/K = 71 HU/K, steel shell), lands ~2.1 kK"),
+    phase("B: the melt — wait for the dust to land (the mass must be certain), then two shots"),
+    Step(f"gt6crucible stat {C}", expect="total=648648000u", poll=30),
     Step(f"gt6crucible inject-hu {C} 130000", expect="GT6 crucible injected"),
-    Step(f"gt6crucible stat {C}", expect="temp=2", poll=20),
-    phase("B2: shot 2 ~+310 K deeper into the [1811, 2557) pour window, ~2.4 kK"),
+    Step(f"gt6crucible stat {C}", expect="temp=1", poll=20),
+    phase("B2: shot 2 ~+270 K, mid-window ~2.2 kK"),
     Step(f"gt6crucible inject-hu {C} 22000", expect="GT6 crucible injected"),
     Step(f"gt6crucible stat {C}", expect="temp=2", poll=20),
 ]
@@ -108,10 +110,11 @@ steps += [
 steps += [
     phase("D: rig B — the mold wrench-armed to auto-pull from its west neighbour every 20t"),
     Step(f"gt6crucible place {C2} smeltery_steel", expect="GT6 smeltery placed"),
-    Step(f"gt6crucible drop {C2} dust iron 4", expect="GT6 dropped"),
+    Step(f"gt6crucible drop {C2} dust iron 1", expect="GT6 dropped"),
     Step(f"gt6crucible place-mold {M2} mold_ceramic_plate", expect="GT6 mold placed"),
+    Step(f"gt6crucible stat {C2}", expect="total=648648000u", poll=30),
     Step(f"gt6crucible inject-hu {C2} 130000", expect="GT6 crucible injected"),
-    Step(f"gt6crucible stat {C2}", expect="temp=2", poll=20),
+    Step(f"gt6crucible stat {C2}", expect="temp=1", poll=20),
     Step(f"gt6crucible inject-hu {C2} 22000", expect="GT6 crucible injected"),
     Step(f"gt6crucible stat {C2}", expect="temp=2", poll=20),
     Step(f"gt6faucet wrench-mold {M2} west", expect="Crucible Auto-Input: ON"),
