@@ -20,7 +20,9 @@
 package gregtech6.recipes;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -55,7 +57,10 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * static batch for the basicmachine-family BE card), extended by task
  * p10-compat-vanilla-rows (the vanilla backfill of the machine-family compat research: the
  * SHREDDER bone row + the four CRUSHER {@code stone*} rows — after these, the in-port
- * 5-map vanilla coverage gap of the compat research is closed).
+ * 5-map vanilla coverage gap of the compat research is closed), and by task
+ * p26-rm-row-backfill (the registration-time expansion of the upstream prefix HANDLER
+ * templates: the Lathe 22-template tEasyWorkable twin arms of Loader_Recipes_Handlers.java
+ * :371-393 — the Shredder handler family and the RECYCLABLE ring join in the same task).
  *
  * <p><b>Upstream sources</b>: {@code RM.Shredder.addRecipe1} rows in
  * Loader_Recipes_Vanilla.java:688-693 + :697 + :707-708 (Shredder), :523-524 (Lathe), the
@@ -137,6 +142,24 @@ public final class GT6RecipesShCL {
 	 * per material at pour time.
 	 */
 	public record CrusherTemplate(String note, OreDictPrefix inPrefix, int inCount, OreDictPrefix outPrefix, int outCount, long eUt, long multiplier) {}
+
+	/**
+	 * One transcribed Lathe prefix-handler template (task p26-rm-row-backfill) — the upstream
+	 * {@code RecipeMapHandlerPrefix(inPrefix, 1, NF, eUt, duration, multiplier, NF, outPrefix,
+	 * outCount, NI, NI, T, T, F, cond)} 15-arg form (Loader_Recipes_Handlers.java:371-393,
+	 * the tEasyWorkable twin arms), expanded per material at pour time.
+	 *
+	 * <p>{@code easyArm} selects the condition arm: arm A rows (:371-381) carry
+	 * {@code tEasyWorkable.NOT} (hard materials) with {@code multiplier 64, duration 0} → the
+	 * getCosts arithmetic; arm B rows (:383-393) carry {@code tEasyWorkable} (FURNACE/SOFT
+	 * materials) with FIXED durations and {@code multiplier 0} (the upstream integer literals
+	 * {@code 16/8=2, 16/9=1, 16, 16*4=64, 16/4=4, 16/2=8}). {@code layeredNot}/{@code lensNot}
+	 * transcribe the trailing {@code LAYERED.NOT} / {@code lens.NOT} condition conjuncts
+	 * ({@code lens.NOT} is the port {@code OreDictPrefix.NOT} condition = the material has no
+	 * lens item generation, OreDictPrefix.java:570-573).
+	 */
+	public record LatheTemplate(String note, OreDictPrefix inPrefix, OreDictPrefix outPrefix, int outCount,
+			long eUt, long duration, long multiplier, boolean easyArm, boolean layeredNot, boolean lensNot) {}
 
 	/** The resolution seam: the live registry lookups by default, fixtures injected offline. */
 	static BiFunction<OreDictPrefix, OreDictMaterial, Item> sMaterialItemResolver = GT6RecipesShCL::resolveItem;
@@ -249,6 +272,145 @@ public final class GT6RecipesShCL {
 	}
 
 	/**
+	 * The p26-rm-row-backfill Lathe prefix templates (Loader_Recipes_Handlers.java:371-393,
+	 * the tEasyWorkable twin arms — arm A :371-381, arm B :383-393), in upstream file order.
+	 * eUt 16 throughout; inCount 1 throughout. Arm A: duration 0 → the getCosts arithmetic
+	 * with multiplier 64; arm B: the upstream fixed integer literals (16/8, 16/9, 16, 16*4,
+	 * 16/4, 16/2) with multiplier 0. The :374/:386 plateGem→ring rows carry the trailing
+	 * {@code lens.NOT} conjunct and :372/:384 the {@code LAYERED.NOT} conjunct — see
+	 * {@link LatheTemplate}. All in/out prefixes are port item-path prefixes
+	 * (GTMaterialItems.itemPathPrefixes), so these rows resolve against the live universe.
+	 *
+	 * <p><b>Lazily built</b> (the a9027ac lesson, same as every table above).
+	 */
+	private static volatile List<LatheTemplate> sLatheTemplates = null;
+
+	/** The transcribed Lathe templates, captured on first use (one material generation). */
+	public static List<LatheTemplate> latheTemplateTable() {
+		List<LatheTemplate> tTable = sLatheTemplates;
+		if (tTable == null) sLatheTemplates = tTable = List.of(
+		// Loader_Recipes_Handlers.java:371-381 — arm A, tEasyWorkable.NOT (hard materials), mult 64, duration 0 → getCosts
+		new LatheTemplate(":371", OP.bolt      , OP.screw    , 1, 16,  0, 64, false, false, false),
+		new LatheTemplate(":372", OP.nugget    , OP.round    , 1, 16,  0, 64, false, true , false),
+		new LatheTemplate(":373", OP.plateGem  , OP.lens     , 1, 16,  0, 64, false, false, false),
+		new LatheTemplate(":374", OP.plateGem  , OP.ring     , 1, 16,  0, 64, false, false, true ),
+		new LatheTemplate(":375", OP.lens      , OP.ring     , 1, 16,  0, 64, false, false, false),
+		new LatheTemplate(":376", OP.gem       , OP.stick    , 1, 16,  0, 64, false, true , false),
+		new LatheTemplate(":377", OP.ingot     , OP.stick    , 1, 16,  0, 64, false, true , false),
+		new LatheTemplate(":378", OP.billet    , OP.stick    , 1, 16,  0, 64, false, true , false),
+		new LatheTemplate(":379", OP.bouleGt   , OP.stickLong, 3, 16,  0, 64, false, true , false),
+		new LatheTemplate(":380", OP.gemChipped, OP.bolt     , 1, 16,  0, 64, false, true , false),
+		new LatheTemplate(":381", OP.gemFlawed , OP.bolt     , 3, 16,  0, 64, false, true , false),
+		// Loader_Recipes_Handlers.java:383-393 — arm B, tEasyWorkable (FURNACE/SOFT materials), fixed durations, mult 0
+		new LatheTemplate(":383", OP.bolt      , OP.screw    , 1, 16, 16/8,  0, true , false, false),
+		new LatheTemplate(":384", OP.nugget    , OP.round    , 1, 16, 16/9,  0, true , true , false),
+		new LatheTemplate(":385", OP.plateGem  , OP.lens     , 1, 16, 16  ,  0, true , false, false),
+		new LatheTemplate(":386", OP.plateGem  , OP.ring     , 1, 16, 16  ,  0, true , false, true ),
+		new LatheTemplate(":387", OP.lens      , OP.ring     , 1, 16, 16  ,  0, true , false, false),
+		new LatheTemplate(":388", OP.gem       , OP.stick    , 1, 16, 16  ,  0, true , true , false),
+		new LatheTemplate(":389", OP.ingot     , OP.stick    , 1, 16, 16  ,  0, true , true , false),
+		new LatheTemplate(":390", OP.billet    , OP.stick    , 1, 16, 16  ,  0, true , true , false),
+		new LatheTemplate(":391", OP.bouleGt   , OP.stickLong, 3, 16, 16*4,  0, true , true , false),
+		new LatheTemplate(":392", OP.gemChipped, OP.bolt     , 1, 16, 16/4,  0, true , true , false),
+		new LatheTemplate(":393", OP.gemFlawed , OP.bolt     , 3, 16, 16/2,  0, true , true , false));
+		return tTable;
+	}
+
+	/**
+	 * The upstream :371-393 condition conjuncts as a boolean gate — the port counterpart of
+	 * {@code new And(ANTIMATTER.NOT, COATED.NOT, [easyArm? tEasyWorkable : tEasyWorkable.NOT]
+	 * [, LAYERED.NOT] [, lens.NOT])} plus the INVALID_MATERIAL check of
+	 * addRecipeForMaterial (:205). tEasyWorkable = Or(FURNACE, SOFT) (Handlers:58) — the
+	 * port transcribes it as the two material-tag contains probes.
+	 */
+	static boolean latheCondition(OreDictMaterial aMaterial, LatheTemplate aTemplate) {
+		if (aMaterial.contains(TD.Atomic.ANTIMATTER) || aMaterial.contains(TD.Compounds.COATED)
+				|| aMaterial.contains(TD.Properties.INVALID_MATERIAL)) return false; // upstream :205 + the And() head
+		boolean tEasyWorkable = aMaterial.contains(TD.Processing.FURNACE) || aMaterial.contains(TD.Properties.SOFT);
+		if (aTemplate.easyArm() != tEasyWorkable) return false;
+		if (aTemplate.layeredNot() && aMaterial.contains(TD.Compounds.LAYERED)) return false;
+		if (aTemplate.lensNot() && OP.lens.canGenerateItem(aMaterial)) return false; // the lens.NOT conjunct (OreDictPrefix.NOT)
+		return true;
+	}
+
+	/**
+	 * Lathe template x material → Recipe, or null (the upstream addRecipeForMaterial false
+	 * return): the {@link #latheCondition} gate, both-side item resolution (:209/:214), and
+	 * the duration split — arm A mDuration=0 → max(1, getCosts) (:218, the multiplier-64
+	 * arithmetic); arm B the fixed duration literal. Output material = SELF (the base
+	 * RecipeMapHandlerPrefix.getOutputMaterial :221-223 — the Lathe rows are NOT Shredding
+	 * rows, no mTargetPulver hop).
+	 */
+	static Recipe buildLatheRecipe(LatheTemplate aTemplate, OreDictMaterial aMaterial) {
+		if (!latheCondition(aMaterial, aTemplate)) return null;
+		Item tInItem = sMaterialItemResolver.apply(aTemplate.inPrefix(), aMaterial);
+		if (tInItem == null) return null; // upstream :209 mat() → null
+		Item tOutItem = sMaterialItemResolver.apply(aTemplate.outPrefix(), aMaterial);
+		if (tOutItem == null) return null; // upstream :214 mat() → null
+		long tDuration = aTemplate.duration() > 0 ? aTemplate.duration()
+				: Math.max(1, handlerCosts(aTemplate.inPrefix(), 1, aTemplate.outPrefix(), aTemplate.outCount(), aTemplate.multiplier(), aMaterial));
+		return new Recipe(true,
+				new ItemStack[] {new ItemStack(tInItem, 1)},
+				new ItemStack[] {new ItemStack(tOutItem, aTemplate.outCount())},
+				new FluidStack[0], new FluidStack[0], tDuration, aTemplate.eUt(), 0);
+	}
+
+	/**
+	 * The p26 Lathe backfill pour: every template x its registered materials, with the
+	 * exact-row dedup (same input item+count, same outputs, same eUt and duration as a row
+	 * already in the map = skip, the W1-collision ruling).
+	 */
+	private static void pourLathe(RecipeMap aMap, List<LatheTemplate> aTemplates) {
+		Set<String> tSeen = seenRowKeys(aMap);
+		int tPoured = 0, tSkipped = 0, tDeduped = 0;
+		for (LatheTemplate tTemplate : aTemplates) {
+			for (OreDictMaterial tMaterial : expandCrusherMaterials(tTemplate.inPrefix())) {
+				Recipe tRecipe = buildLatheRecipe(tTemplate, tMaterial);
+				if (tRecipe == null) {tSkipped++; continue;} // upstream :205/:209/:214 false returns
+				if (!tSeen.add(rowKey(tRecipe))) {tDeduped++; continue;} // exact-row collision
+				aMap.addRecipe(tRecipe);
+				tPoured++;
+			}
+		}
+		LOGGER.info("GT6 Lathe backfill poured: {} loaded, {} skipped (condition gates + unresolvable items), {} deduped (exact rows already present)", tPoured, tSkipped, tDeduped);
+	}
+
+	/**
+	 * The exact-row dedup key: input item+count, output items+counts, eUt, duration. Two
+	 * rows differing in ANY of those are upstream-distinct (the RECYCLABLE ring's MORTAR
+	 * twin rows share input/output but differ in the getCosts multiplier — both survive).
+	 */
+	static String rowKey(Recipe aRecipe) {
+		StringBuilder rKey = new StringBuilder("e").append(aRecipe.mEUt).append("d").append(aRecipe.mDuration);
+		for (ItemStack tStack : aRecipe.mInputs) rKey.append('|').append(tStack.getItem()).append('x').append(tStack.getCount());
+		for (ItemStack tStack : aRecipe.mOutputs) rKey.append('|').append(tStack.getItem()).append('x').append(tStack.getCount());
+		return rKey.toString();
+	}
+
+	/** The dedup seed: the rows already poured into the map by the earlier pours (the fixed tables). */
+	private static Set<String> seenRowKeys(RecipeMap aMap) {
+		Set<String> rKeys = new HashSet<>();
+		for (Recipe tRecipe : aMap.mRecipeList) rKeys.add(rowKey(tRecipe));
+		return rKeys;
+	}
+
+	/**
+	 * Upstream RecipeMapHandlerPrefix.getCosts (:225-227) in its prefix-pair form —
+	 * {@code UT.Code.units(max(mUnitsInputted, mUnitsOutputted), U, mMultiplier +
+	 * mMultiplier*mToolQuality, T)} with unitsIn/Out = prefix.mAmount * stack count (:74/:77).
+	 * The crusherCosts twin (same arithmetic, template-shaped); mDuration=0 rows resolve
+	 * their duration through this (:218).
+	 */
+	static long handlerCosts(OreDictPrefix aInPrefix, int aInCount, OreDictPrefix aOutPrefix, int aOutCount, long aMultiplier, OreDictMaterial aMaterial) {
+		long tUnitsIn = aInPrefix.mAmount * aInCount;
+		long tUnitsOut = aOutPrefix.mAmount * aOutCount;
+		long tAmount = Math.max(tUnitsIn, tUnitsOut);
+		long tTarget = aMultiplier + aMultiplier * aMaterial.mToolQuality;
+		if (tTarget == 0) return 0;
+		return Math.max(0, tAmount * tTarget / CS.U + ((tAmount * tTarget) % CS.U > 0 ? 1 : 0));
+	}
+
+	/**
 	 * The skipped upstream surface, kept as DATA for the audit walk (see class doc). Everything
 	 * here is a POOL item of the machine-family wave, not a silent drop.
 	 */
@@ -286,6 +448,7 @@ public final class GT6RecipesShCL {
 		pourFixed(GT6RecipeMaps.LATHE, "Lathe", latheTable());
 		pourCrusher(GT6RecipeMaps.CRUSHER, crusherTable());
 		pourFixed(GT6RecipeMaps.CRUSHER, "Crusher vanilla", crusherVanillaTable()); // p10-compat-vanilla-rows
+		pourLathe(GT6RecipeMaps.LATHE, latheTemplateTable()); // p26-rm-row-backfill (Handlers:371-393)
 		sLoaded = true;
 	}
 
@@ -398,5 +561,6 @@ public final class GT6RecipesShCL {
 		sLatheRows = null;
 		sCrusherTemplates = null;
 		sCrusherVanillaRows = null;
+		sLatheTemplates = null;
 	}
 }

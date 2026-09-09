@@ -356,6 +356,12 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.shredderTable()) if (fixedRowResolves(tRow)) tExpectedShredder++;
 		int tExpectedLathe = 0;
 		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.latheTable()) if (fixedRowResolves(tRow)) tExpectedLathe++;
+		// p26-rm-row-backfill: the handler-template expansions join the reconciliation
+		for (GT6RecipesShCL.LatheTemplate tTpl : GT6RecipesShCL.latheTemplateTable()) {
+			for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(tTpl.inPrefix())) {
+				if (latheRowResolves(tTpl, tMaterial)) tExpectedLathe++;
+			}
+		}
 		int tExpectedCrusher = 0;
 		for (GT6RecipesShCL.CrusherTemplate tTpl : GT6RecipesShCL.crusherTable()) {
 			for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(tTpl.inPrefix())) {
@@ -639,6 +645,107 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
+	// p26-rm-row-backfill — the Lathe handler-template expansion (Handlers:371-393)
+	// ------------------------------------------------------------------
+
+	/** The :371-393 census: 22 templates, twin arms, and the conjunct flags land on the right rows. */
+	@Test
+	void latheTemplateCensus() {
+		List<GT6RecipesShCL.LatheTemplate> tTable = GT6RecipesShCL.latheTemplateTable();
+		assertEquals(22, tTable.size(), "the tEasyWorkable twin arms :371-381 + :383-393");
+		for (GT6RecipesShCL.LatheTemplate tTpl : tTable) {
+			assertEquals(16, tTpl.eUt(), "row " + tTpl.note() + " eUt");
+			assertTrue(tTpl.outCount() > 0, "row " + tTpl.note() + " well-formed");
+		}
+		// arm A: duration 0 (getCosts) with multiplier 64; arm B: fixed duration with multiplier 0
+		GT6RecipesShCL.LatheTemplate tIngotHard = findLatheTemplate(tTable, ":377");
+		assertNotNull(tIngotHard);
+		assertFalse(tIngotHard.easyArm());
+		assertEquals(0, tIngotHard.duration());
+		assertEquals(64, tIngotHard.multiplier());
+		assertSame(OP.ingot, tIngotHard.inPrefix());
+		assertSame(OP.stick, tIngotHard.outPrefix());
+		assertTrue(tIngotHard.layeredNot(), ":377 carries LAYERED.NOT");
+		GT6RecipesShCL.LatheTemplate tIngotEasy = findLatheTemplate(tTable, ":389");
+		assertNotNull(tIngotEasy);
+		assertTrue(tIngotEasy.easyArm());
+		assertEquals(16, tIngotEasy.duration(), "the :389 fixed literal 16");
+		assertEquals(0, tIngotEasy.multiplier());
+		// the lens.NOT conjunct rides :374/:386 only
+		assertTrue(findLatheTemplate(tTable, ":374").lensNot());
+		assertTrue(findLatheTemplate(tTable, ":386").lensNot());
+		assertFalse(findLatheTemplate(tTable, ":373").lensNot());
+		// the output-count rows
+		assertEquals(3, findLatheTemplate(tTable, ":379").outCount(), "bouleGt → stickLong x3");
+		assertEquals(3, findLatheTemplate(tTable, ":393").outCount(), "gemFlawed → bolt x3");
+	}
+
+	/**
+	 * The twin-arm split is the material's FURNACE/SOFT tag pair (tEasyWorkable, Handlers:58):
+	 * Iron is NEVER_FURNACE and not SOFT → arm A only; Tin carries SOFT → arm B only.
+	 */
+	@Test
+	void latheArmSplitFollowsTheMaterialTags() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		assertFalse(MT.Iron.contains(TD.Processing.FURNACE) || MT.Iron.contains(TD.Properties.SOFT),
+				"iron must be a hard (arm A) material for this test to mean anything");
+		assertTrue(MT.Sn.contains(TD.Processing.FURNACE) || MT.Sn.contains(TD.Properties.SOFT),
+				"tin must be an easy (arm B) material for this test to mean anything");
+		GT6RecipesShCL.LatheTemplate tHard = findLatheTemplate(GT6RecipesShCL.latheTemplateTable(), ":377");
+		GT6RecipesShCL.LatheTemplate tEasy = findLatheTemplate(GT6RecipesShCL.latheTemplateTable(), ":389");
+		assertNotNull(GT6RecipesShCL.buildLatheRecipe(tHard, MT.Iron), "iron takes the hard-arm ingot→stick row");
+		assertNull(GT6RecipesShCL.buildLatheRecipe(tEasy, MT.Iron), "iron never matches the easy arm");
+		assertNotNull(GT6RecipesShCL.buildLatheRecipe(tEasy, MT.Sn), "tin takes the easy-arm ingot→stick row");
+		assertNull(GT6RecipesShCL.buildLatheRecipe(tHard, MT.Sn), "tin never matches the hard arm");
+		// arm A duration = the getCosts arithmetic (mult 64); arm B = the fixed 16
+		Recipe tHardRow = GT6RecipesShCL.buildLatheRecipe(tHard, MT.Iron);
+		assertEquals(Math.max(1, tHardRowDuration(MT.Iron)), tHardRow.mDuration, "arm A :377 duration = getCosts");
+		Recipe tEasyRow = GT6RecipesShCL.buildLatheRecipe(tEasy, MT.Sn);
+		assertEquals(16, tEasyRow.mDuration, "arm B :389 duration = the fixed literal");
+	}
+
+	/** The getCosts mirror for the :377 row (ingot x1 → stick x1, mult 64). */
+	private static long tHardRowDuration(OreDictMaterial aMaterial) {
+		long tUnits = Math.max(OP.ingot.mAmount, OP.stick.mAmount);
+		long tTarget = 64 + 64 * aMaterial.mToolQuality;
+		return tUnits * tTarget / CS.U + (tUnits * tTarget % CS.U > 0 ? 1 : 0);
+	}
+
+	/**
+	 * The (ingot, Iron) → (stick, Iron) row poured with the getCosts shape and consumes. The
+	 * offline synthetic universe ALIASES pairs onto shared vanilla items, so the row is located
+	 * by identity in the map instead of an ambiguous findRecipe probe (the reserved-vanilla
+	 * findRecipe path is the flint/web/bone tests).
+	 */
+	@Test
+	void latheIngotRowRoundTripsThroughFindRecipe() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		GT6RecipesShCL.sVanillaItemResolver = Supplier::get;
+		GT6RecipesShCL.load();
+
+		Item tIngotIron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.ingot, MT.Iron));
+		Item tStickIron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.stick, MT.Iron));
+		assertNotNull(tIngotIron);
+		assertNotNull(tStickIron, "iron must generate sticks for this round-trip");
+		Recipe tIronRow = null;
+		for (Recipe tRecipe : GT6RecipeMaps.LATHE.mRecipeList) {
+			if (tRecipe.mInputs.length == 1 && tRecipe.mInputs[0].getItem() == tIngotIron && tRecipe.mInputs[0].getCount() == 1
+					&& tRecipe.mOutputs.length == 1 && tRecipe.mOutputs[0].getItem() == tStickIron && tRecipe.mOutputs[0].getCount() == 1) {
+				tIronRow = tRecipe;
+				break;
+			}
+		}
+		assertNotNull(tIronRow, "the :377 iron ingot→stick row must be poured");
+		assertEquals(Math.max(1, tHardRowDuration(MT.Iron)), tIronRow.mDuration, "arm A duration = the getCosts arithmetic");
+		assertEquals(16, tIronRow.mEUt);
+		ItemStack[] tInputs = {new ItemStack(tIngotIron, 2)};
+		assertTrue(tIronRow.isRecipeInputEqual(false, false, null, tInputs));
+		assertEquals(2, tInputs[0].getCount(), "the probe must not consume");
+		assertTrue(tIronRow.isRecipeInputEqual(true, false, null, tInputs));
+		assertEquals(1, tInputs[0].getCount(), "one pass consumes exactly one ingot");
+	}
+
+	// ------------------------------------------------------------------
 	// pooled surface
 	// ------------------------------------------------------------------
 
@@ -674,6 +781,18 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	private static GT6RecipesShCL.CrusherTemplate findCrusherTemplate(List<GT6RecipesShCL.CrusherTemplate> aTable, String aNote) {
 		for (GT6RecipesShCL.CrusherTemplate tTemplate : aTable) if (tTemplate.note().equals(aNote)) return tTemplate;
 		return null;
+	}
+
+	private static GT6RecipesShCL.LatheTemplate findLatheTemplate(List<GT6RecipesShCL.LatheTemplate> aTable, String aNote) {
+		for (GT6RecipesShCL.LatheTemplate tTemplate : aTable) if (tTemplate.note().equals(aNote)) return tTemplate;
+		return null;
+	}
+
+	/** The independent recomputation of the p26 Lathe backfill (condition gate + both-side resolution). */
+	private static boolean latheRowResolves(GT6RecipesShCL.LatheTemplate aTemplate, OreDictMaterial aMaterial) {
+		if (!GT6RecipesShCL.latheCondition(aMaterial, aTemplate)) return false;
+		return SYNTHETIC_ITEMS.containsKey(new PrefixMaterial(aTemplate.inPrefix(), aMaterial))
+				&& SYNTHETIC_ITEMS.containsKey(new PrefixMaterial(aTemplate.outPrefix(), aMaterial));
 	}
 
 	private static boolean fixedRowResolves(GT6RecipesShCL.FixedRow aRow) {
