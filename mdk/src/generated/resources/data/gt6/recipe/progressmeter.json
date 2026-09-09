@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "P": {
+      "tag": "forge:double_plates/tin_alloy"
+    },
+    "W": {
+      "tag": "forge:fine_wires/red_alloy"
+    },
+    "X": {
+      "tag": "forge:small_gears/brass"
+    }
+  },
+  "pattern": [
+    "WGW",
+    "CXC",
+    "WPW"
+  ],
+  "result": {
+    "item": "gt6:progressmeter"
+  },
+  "show_notification": true
+}

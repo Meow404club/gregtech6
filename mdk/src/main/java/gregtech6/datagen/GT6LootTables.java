@@ -99,7 +99,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
-                new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK)), // task p26-c-foam-block-family
+                new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
+                new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK)), // task p26-sensors-core
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -122,7 +123,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
-                new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK))); // task p26-c-foam-block-family
+                new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
+                new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK))); // task p26-sensors-core
         //?}
     }
 
@@ -1184,5 +1186,44 @@ public final class GT6LootTables extends LootTableProvider {
         List<Block> rBlocks = new ArrayList<>(cfoamDriedLootBlocks());
         rBlocks.addAll(cfoamNoDropLootBlocks());
         return rBlocks;
+    }
+
+    /**
+     * The sensor-family sub-provider (task p26-sensors-core): the three pioneer sensor
+     * blocks self-drop (the axle/wire family form — the upstream MTE default, the block
+     * itself drops; a sensor carries no item inventory, canDrop :291 answers F for the
+     * slots and the tile drops as its block).
+     */
+    public static final class GT6SensorBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6SensorBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6SensorBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        /** The three pioneer blocks (the GT6Sensors.ROWS walk, the registration order). */
+        public static List<Block> sensorLootBlocks() {
+            List<Block> rBlocks = new java.util.ArrayList<>();
+            for (gregtech6.registry.GT6Sensors.SensorRow tRow : gregtech6.registry.GT6Sensors.ROWS) {
+                rBlocks.add(gregtech6.registry.GT6Sensors.BLOCKS_BY_PATH.get(tRow.path()).get());
+            }
+            return rBlocks;
+        }
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return sensorLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : sensorLootBlocks()) dropSelf(tBlock);
+        }
     }
 }

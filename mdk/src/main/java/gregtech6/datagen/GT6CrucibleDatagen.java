@@ -131,7 +131,7 @@ public final class GT6CrucibleDatagen {
 	 * provider would wipe every GT6EnUs key), so this provider replays the full base
 	 * translation set plus the four crucible keys.
 	 */
-	public static final class Lang extends GT6EnUs {
+	public static class Lang extends GT6EnUs {
 
 		public Lang(PackOutput aOutput) {
 			super(aOutput);
@@ -149,9 +149,12 @@ public final class GT6CrucibleDatagen {
 			add("gt6.row.crucible.display.smeltery_stone", "Stone Smeltery");
 			add("gt6.row.crucible.display.smeltery_bronze", "Bronze Smeltery");
 			add("gt6.row.crucible.display.smeltery_steel", "Steel Smeltery");
-			for (GT6Molds.MoldRow tRow : GT6Molds.ROWS) {
-				add("gt6.row.mold.display." + tRow.path(), "Stone Mold");
-			}
+			// the stone rung this card registered (the loop over GT6Molds.ROWS degenerated when
+			// the mold card grew the 30 ceramic rows — their display keys belong to
+			// GT6MoldDatagen.Lang, which chains BELOW this provider and relabels them properly;
+			// labelling every ceramic row "Stone Mold" here would win whenever this listener
+			// registers last — the p26-sensors-core merge review)
+			add("gt6.row.mold.display.mold_stone", "Stone Mold");
 		}
 	}
 

@@ -32,6 +32,8 @@ import gregtech6.registry.GT6Kitchen;
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTGrassBlocks;
+import gregtech6.registry.GT6Sensors;
+import gregapi.data.MT;
 
 /**
  * The GT6 vanilla-crafting datagen home — task p24-tool-system spec ③, the FIRST
@@ -113,6 +115,16 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
 	}
 
+	/** The Progress Sensor crafting row (task p26-sensors-core, Loader_MultiTileEntities.java:1995) — the result-path convention. */
+	public static final ResourceLocation PROGRESSMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "progressmeter");
+	/** The Fluid-O-Meter Sensor crafting row (task p26-sensors-core, Loader :1986). */
+	public static final ResourceLocation FLUIDOMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "fluidometer");
+
+	/** The CR.shapeless self-recast row id of a sensor path (task p26-sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
+	public static ResourceLocation sensorRecastId(String aPath) {
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, aPath + "_recast");
+	}
+
 	public GT6CraftingRecipes(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider) {
 		//? if forge {
 		super(aOutput);
@@ -139,6 +151,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			hopperRecipeBuilder(tRow).save(aConsumer, hopperRecipeId(tRow));
 		}
+		progressmeterBuilder().save(aConsumer, PROGRESSMETER_ID);
+		fluidometerBuilder().save(aConsumer, FLUIDOMETER_ID);
+		for (SensorRecastRow tRow : sensorRecastBuilders()) {
+			tRow.builder().save(aConsumer, sensorRecastId(tRow.path()));
+		}
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -160,6 +177,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		clayBowlSmeltingBuilder().save(aOutput, CLAY_BOWL_SMELT_ID);
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			hopperRecipeBuilder(tRow).save(aOutput, hopperRecipeId(tRow));
+		}
+		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
+		fluidometerBuilder().save(aOutput, FLUIDOMETER_ID);
+		for (SensorRecastRow tRow : sensorRecastBuilders()) {
+			tRow.builder().save(aOutput, sensorRecastId(tRow.path()));
 		}
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
@@ -516,4 +538,91 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.unlockedBy("has_clay_bowl_raw", has(GT6Kitchen.CLAY_BOWL_RAW.get()));
 		*///?}
 	}
+
+	/**
+	 * The Progress Sensor crafting row (task p26-sensors-core) — the upstream
+	 * {@code "WGW"}/{"CXC"}/{"WPW"} row VERBATIM (Loader_MultiTileEntities.java:1995,
+	 * CR.DEF) with the keys translated onto the port faces: 'P' = {@code OP.plateDouble
+	 * .dat(MT.TinAlloy)} → the new {@code #forge:double_plates/tin_alloy} material tag
+	 * (the DOUBLE_PLATES family band, the GTCEu TagPrefix.java:442 path precedent), 'W' =
+	 * {@code OP.wireFine.dat(MT.RedAlloy)} → {@code #forge:fine_wires/red_alloy}
+	 * (TagPrefix.java:575), 'R' = {@code OD.itemRedstone} → {@code #gt6:redstone} (the
+	 * dust_redstone member, the spray-can 'R' precedent), 'G' = {@code
+	 * OD.blockGlassColorless} → vanilla {@code minecraft:glass} (vanilla glass IS the
+	 * colorless variant; no colourless-glass tag exists), 'B' = {@code OP.bolt.dat(
+	 * MT.TinAlloy)} → {@code #forge:bolts/tin_alloy} (TagPrefix.java:514), 'C' = the
+	 * vanilla comparator ({@code Items.comparator}), 'X' = {@code OP.gearGtSmall.dat(
+	 * MT.Brass)} → {@code #forge:small_gears/brass} (TagPrefix.java:599). The upstream key
+	 * map also binds 'R' (redstone) and 'B' (bolt) — UNUSED by the pattern; upstream CR
+	 * tolerated that, the vanilla builder throws ("Ingredients are defined but not used"),
+	 * so those two keys stay out. Result 1x {@code gt6:progressmeter}.
+	 */
+	private ShapedRecipeBuilder progressmeterBuilder() {
+		TagKey<Item> tDoublePlates = GT6ItemTags.materialTag(GT6ItemTags.DOUBLE_PLATES_FAMILY, MT.TinAlloy);
+		TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.RedAlloy);
+		TagKey<Item> tBolts = GT6ItemTags.materialTag(GT6ItemTags.BOLTS_FAMILY, MT.TinAlloy);
+		TagKey<Item> tSmallGears = GT6ItemTags.materialTag(GT6ItemTags.SMALL_GEARS_FAMILY, MT.Brass);
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Sensors.BLOCKS_BY_PATH.get("progressmeter").get())
+				.pattern("WGW")
+				.pattern("CXC")
+				.pattern("WPW")
+				.define('P', tDoublePlates)
+				.define('W', tFineWires)
+				.define('G', Items.GLASS)
+				.define('C', Items.COMPARATOR)
+				.define('X', tSmallGears)
+				.unlockedBy("has_fine_wire", has(tFineWires));
+	}
+
+	/**
+	 * The Fluid-O-Meter Sensor crafting row (task p26-sensors-core) — the upstream
+	 * {@code "WYW"}/{"BXB"}/{"WPW"} row VERBATIM (Loader_MultiTileEntities.java:1986):
+	 * the shared P/W/R/G/B/C alphabet as {@link #progressmeterBuilder}, plus 'X' = {@code
+	 * OD.pressurePlateStone} → vanilla {@code minecraft:stone_pressure_plate} and 'Y' =
+	 * {@code Items.bucket} → vanilla {@code minecraft:bucket}. Result 1x
+	 * {@code gt6:fluidometer}.
+	 */
+	private ShapedRecipeBuilder fluidometerBuilder() {
+		TagKey<Item> tDoublePlates = GT6ItemTags.materialTag(GT6ItemTags.DOUBLE_PLATES_FAMILY, MT.TinAlloy);
+		TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.RedAlloy);
+		TagKey<Item> tBolts = GT6ItemTags.materialTag(GT6ItemTags.BOLTS_FAMILY, MT.TinAlloy);
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Sensors.BLOCKS_BY_PATH.get("fluidometer").get())
+				.pattern("WYW")
+				.pattern("BXB")
+				.pattern("WPW")
+				.define('P', tDoublePlates)
+				.define('W', tFineWires)
+				.define('B', tBolts)
+				.define('X', Items.STONE_PRESSURE_PLATE)
+				.define('Y', Items.BUCKET)
+				.unlockedBy("has_fine_wire", has(tFineWires));
+	}
+
+	/**
+	 * The three CR.shapeless self-recast rows (task p26-sensors-core) — the upstream
+	 * {@code CR.shapeless(aRegistry.getItem(), CR.DEF_NCC, new Object[] {aRegistry.getItem()})}
+	 * per-row companion (Loader :1979-:1999 every row's tail): 1 sensor item → 1 clean
+	 * sensor item, the NBT-reset recast face (a configured sensor re-crafted back to the
+	 * clean item; the vanilla builder carries no NBT so the recast is structurally exact).
+	 * All three rows land even though the Electrometer SHAPED row does not — its 'X' key
+	 * is {@code IL.Electro_Meter} (a dedicated GT6 item, NOT on the port's item path) and
+	 * its 'Y' key is {@code OP.wireGt01.dat(ANY.Cu)} (the 1/8x wire prefix, not on the
+	 * port's itemPathPrefixes gate) — the shaped row is CUT declared and rides the
+	 * sensors-batch2 pool with the meter item.
+	 */
+	private List<SensorRecastRow> sensorRecastBuilders() {
+		List<SensorRecastRow> rRows = new ArrayList<>(gregtech6.registry.GT6Sensors.ROWS.size());
+		for (gregtech6.registry.GT6Sensors.SensorRow tRow : gregtech6.registry.GT6Sensors.ROWS) {
+			Item tItem = gregtech6.registry.GT6Sensors.ITEMS_BY_PATH.get(tRow.path()).get();
+			rRows.add(new SensorRecastRow(ShapelessRecipeBuilder
+					.shapeless(RecipeCategory.MISC, tItem)
+					.requires(tItem)
+					.unlockedBy("has_sensor", has(tItem)),
+					tRow.path()));
+		}
+		return rRows;
+	}
+
+	/** One staged sensor recast: the shared builder + the path its save face ids from (the GrassRecipeRow shape). */
+	private record SensorRecastRow(ShapelessRecipeBuilder builder, String path) {}
 }

@@ -22,6 +22,7 @@ import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6Kinetics;
+import gregtech6.registry.GT6Sensors;
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
@@ -109,6 +110,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoamSprays(); // task p25-c-foam-pipe-spray — table-tail append
         addFoodCans(); // task p25-food-can-row0 — table-tail append
         addExtruderMolds(); // task p26-w1-press-extruder-molds — table-tail append
+        addSensors(); // task p26-sensors-core — table-tail append
     }
 
     /**
@@ -983,5 +985,26 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6FoamSprays.TAB_TITLE_KEY, "C-Foam Sprays");
         add(gregtech6.item.foamspray.GT6FoamSprayItem.FOAM_TOOLTIP_KEY, "Can place %s C-Foam");
         add(gregtech6.item.foamspray.GT6FoamSprayItem.OWNED_TOOLTIP_KEY, "C-Foam only breakable by Owner once dry");
+    }
+
+    /**
+     * Sensor family keys (task p26-sensors-core): the three pioneer display names — the
+     * upstream registration rows verbatim (Loader_MultiTileEntities.java :1995 "Progress
+     * Sensor", :1986 "Fluid-O-Meter Sensor", :1997 "Electrometer Sensor"), walked from the
+     * {@link GT6Sensors#ROWS} face (the row path IS the lang key tail — the
+     * {@code SensorRow#displayKey} composition, the addSprayCans walk shape). The upstream
+     * tooltip stack (Sensor:89-97 — the NO_GUI / screwdriver / monkey-wrench lines) is the
+     * lang card's face and stays out of this card (the BE javadoc cut list).
+     * Table-tail append, append-only.
+     */
+    private void addSensors() {
+        for (GT6Sensors.SensorRow tRow : GT6Sensors.ROWS) {
+            add(tRow.displayKey(), switch (tRow.path()) {
+                case "progressmeter" -> "Progress Sensor";      // Loader :1995
+                case "fluidometer"   -> "Fluid-O-Meter Sensor"; // Loader :1986
+                case "electrometer"  -> "Electrometer Sensor";  // Loader :1997
+                default -> throw new IllegalArgumentException("untranslated sensor row: " + tRow.path());
+            });
+        }
     }
 }

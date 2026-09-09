@@ -44,6 +44,8 @@ direct	block.gt6.grass_light_gray	草方块	hand
 direct	block.gt6.grass_lime	草方块	hand
 direct	block.gt6.grass_yellow	草方块	hand
 direct	block.gt6.heat_transmitter	热吸收装置	hand
+direct	block.gt6.electrometer	电力传感器	hand
+direct	block.gt6.fluidometer	流体体积传感器(单位: 升)	hand
 direct	block.gt6.lathe	车床	hand
 direct	block.gt6.lightning_rod	避雷针	hand
 direct	block.gt6.machine_wall_tungsten	钨壁板	hand
@@ -54,6 +56,7 @@ direct	block.gt6.multiblock_coke_oven_bricks	焦炉砖	hand
 direct	block.gt6.multiblock_lightning_rod	避雷针	hand
 direct	block.gt6.niobium_titanium_coil	大型铌钛合金线圈	hand
 direct	block.gt6.oven	烤箱	hand
+direct	block.gt6.progressmeter	进度传感器	hand
 direct	block.gt6.shredder	粉碎机	hand
 direct	block.gt6.transformer_rotation	木制变速箱	hand
 direct	block.gt6.wire_electric_1x	1×电线	hand

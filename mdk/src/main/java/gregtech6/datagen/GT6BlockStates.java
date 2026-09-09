@@ -23,6 +23,7 @@ import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.energy.GTDieselEngineBlock;
 import gregtech6.block.energy.GTTransformerRotationBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
+import gregtech6.block.sensors.GTSensorBlock;
 import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.tank.GTBarrelBlock;
@@ -39,6 +40,7 @@ import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GT6FeBatteries; // p26 tail-append
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6FoamBlocks;
+import gregtech6.registry.GT6Sensors;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GTWireSpecs;
@@ -152,6 +154,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
         addFoamBlocks(); // task p26-c-foam-block-family — the C-Foam pair + slabs + the owned carrier
+        addSensors(); // task p26-sensors-core — the three pioneer sensor blocks
     }
 
     /**
@@ -1259,5 +1262,35 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .allFaces((aDir, aFace) -> aFace.texture("#all").tintindex(0).cullface(aDir))
                 .end();
         return tModel;
+    }
+
+    /**
+     * Task p26-sensors-core — the three pioneer sensor blocks ({@link GT6Sensors#ROWS},
+     * the Registration face): each one cube_all model over its OWN baked texture
+     * ({@code gt6:block/<path>}, the assets/README.md bake-ledger entries) and ONE
+     * 6-variant blockstate driving the full {@link GTSensorBlock#FACING} property — the
+     * vanilla dispenser/observer rotation map (y = 0/90/180/270 on the horizontal ring,
+     * x = 270/90 on up/down; the axle AXIS precedent for a property-driven variant
+     * blockstate without the vanilla block-type coupling). The FACING property IS the
+     * display/keypad face mirror (GTSensorBlockEntity#wrenchSetFacing writes it, the
+     * TileEntityOven.setFrontFacing shape), so the baked digit-strip face re-orients with
+     * the block exactly as the upstream thin-plate front icon did. Each BlockItem model
+     * parents its block model (the crank one-line-per-row precedent).
+     */
+    private void addSensors() {
+        for (GT6Sensors.SensorRow tRow : GT6Sensors.ROWS) {
+            Block tBlock = GT6Sensors.BLOCKS_BY_PATH.get(tRow.path()).get();
+            ModelFile tModel = models().cubeAll(tRow.path(), modLoc("block/" + tRow.path()));
+            getVariantBuilder(tBlock).forAllStates(aState -> switch (aState.getValue(GTSensorBlock.FACING)) {
+                case NORTH -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
+                case SOUTH -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 180, false)};
+                case WEST  -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 270, false)};
+                case EAST  -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 90, false)};
+                case UP    -> new ConfiguredModel[] {new ConfiguredModel(tModel, 270, 0, false)};
+                case DOWN  -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 0, false)};
+            });
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+        }
+        LOGGER.info("GT6 sensors: {} pioneer blockstates x 6 FACING variants (the oriented cube)", GT6Sensors.ROWS.size());
     }
 }
