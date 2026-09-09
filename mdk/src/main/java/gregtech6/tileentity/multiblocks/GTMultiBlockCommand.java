@@ -179,7 +179,11 @@ public final class GTMultiBlockCommand {
 					.then(Commands.literal("heat")
 						.then(Commands.argument("hu", com.mojang.brigadier.arguments.LongArgumentType.longArg(1))
 							.executes(aContext -> crucibleHeat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-									com.mojang.brigadier.arguments.LongArgumentType.getLong(aContext, "hu")))))))
+									com.mojang.brigadier.arguments.LongArgumentType.getLong(aContext, "hu")))))
+					.then(Commands.literal("pour")
+						.then(Commands.argument("wallPos", BlockPosArgument.blockPos())
+							.executes(aContext -> cruciblePour(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									BlockPosArgument.getLoadedBlockPos(aContext, "wallPos")))))))
 			.then(Commands.literal("menu")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> menu(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
@@ -247,7 +251,7 @@ public final class GTMultiBlockCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> boilerPlunge(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
 		aEvent.getDispatcher().register(tMulti);
-		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|form|check|tick|input|ignite|menu|fluid|boiler place|frame|wand|check|stat|fill|inject-hu|dismantle)");
+		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|form|check|tick|input|ignite|menu|fluid|boiler place|frame|wand|check|stat|fill|inject-hu|dismantle|crucible check|stat|feed|heat|pour)");
 	}
 
 	private static TileEntityCokeOven ovenAt(CommandSourceStack aSource, BlockPos aPos) {
@@ -699,6 +703,70 @@ public final class GTMultiBlockCommand {
 		String tReport = String.format("GT6 crucible at %s: temp=%dK max=%dK energy=%dHUs total=%d meltdown_warning=%s content=[%s]",
 				tCrucible.getBlockPos().toShortString(), tCrucible.mTemperature, tCrucible.getTemperatureMax((byte)0),
 				tCrucible.mEnergy, tCrucible.totalContent(), tCrucible.mMeltDown, tContent);
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the through-wall pour probe (task p26-crucible-multiblock acceptance ④)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The recording pour sink of the {@code pour} probe — the offline suite's
+	 * RecordingMold double, live-server form: takes at most one ingot ({@code U} units)
+	 * per pour, never more (the real Mold contract, so the controller's stack walk ends).
+	 * The physical Mold BE is the A-card min-face file — this probe proves the LIVE
+	 * through-wall half (the y+1 wall relay → the controller pour → the amount
+	 * subtraction); the block-level "click the mold, take the ingot" half composes at
+	 * the A→C merge (A's row0 chain pours gt6:ingot_tin through this same seam).
+	 */
+	private static final class ProbeMold implements gregapi.tileentity.machines.ITileEntityMold {
+		long mDemand = gregapi.data.CS.U;
+		gregapi.oredict.OreDictMaterial mMaterial;
+		long mTaken = -1;
+		@Override public boolean isMoldInputSide(byte aSide) { return true; }
+		@Override public long getMoldMaxTemperature() { return 3000; } // above the Steel ceiling — never refuses a pour
+		@Override public long getMoldRequiredMaterialUnits() { return gregapi.data.CS.U; }
+		@Override
+		public long fillMold(gregapi.oredict.OreDictMaterialStack aMaterial, long aTemperature, byte aSide) {
+			mMaterial = aMaterial.mMaterial;
+			mTaken = Math.min(mDemand, aMaterial.mAmount);
+			return mTaken;
+		}
+	}
+
+	/**
+	 * {@code crucible <pos> pour <wallPos>} — the through-wall mold-pour probe: the
+	 * recording mold clicks the WALL block entity (the ITileEntityCrucible relay face —
+	 * only the y+1 ONLY_CRUCIBLE ring answers, the NO_CRUCIBLE mode gate :688), the wall
+	 * forwards controller-ward (getTarget(true)) and the controller pours its molten
+	 * self-smelted content into the sink (TileEntityCrucible.fillMoldAtSide, upstream
+	 * :547-556). The report carries the poured amount in U and the content total — the
+	 * melt verdict (a cold or solid content answers poured=0, the RCON negative arm).
+	 */
+	private static int cruciblePour(CommandSourceStack aSource, BlockPos aPos, BlockPos aWallPos) {
+		TileEntityCrucible tCrucible = crucibleAt(aSource, aPos);
+		if (tCrucible == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCrucible at " + aPos.toShortString()));
+			return 0;
+		}
+		if (!(aSource.getLevel().getBlockEntity(aWallPos) instanceof gregapi.tileentity.machines.ITileEntityCrucible tWall)) {
+			aSource.sendFailure(Component.literal("No crucible-relay wall (ITileEntityCrucible) at " + aWallPos.toShortString()));
+			return 0;
+		}
+		ProbeMold tMold = new ProbeMold();
+		boolean tPoured = tWall.fillMoldAtSide(tMold, (byte)2, (byte)2);
+		String tReport = String.format("GT6 crucible pour at wall %s -> %s: poured=%s total=%d temp=%dK",
+				aWallPos.toShortString(), tCrucible.getBlockPos().toShortString(),
+				tPoured && tMold.mTaken > 0
+						? String.format("%.1fU of %s", tMold.mTaken / (double)gregapi.data.CS.U, tMold.mMaterial.mNameInternal)
+						: "0",
+				tCrucible.totalContent(), tCrucible.mTemperature);
+		if (!tPoured || tMold.mTaken <= 0) {
+			aSource.sendFailure(Component.literal(tReport + " poured=0"));
+			return 0;
+		}
 		aSource.sendSuccess(() -> Component.literal(tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
