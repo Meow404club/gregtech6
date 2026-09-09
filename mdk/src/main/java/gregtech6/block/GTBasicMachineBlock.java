@@ -49,7 +49,11 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * placed BlockState's block (the factory reads {@link #row()}), not a tierOf dispatch. The
  * legacy three families stay row-less (the 2-arg constructor); since task
  * p26-mui-a-open-chain their use() dispatches the ModularUI chain
- * ({@link GT6MuiMachine#tryOpen}) while the row families keep the vanilla menu path.
+ * ({@link GT6MuiMachine#tryOpen}) — since task p26-mui-row-menu-null-dispatch the dispatch
+ * key is the MenuType supplier itself ({@link #opensModularUi}): every machine WITHOUT a
+ * bound gt6:* menu opens ModularUI (the batch-A ruling "new machines default to
+ * ModularUI", the W1 row form menu = null), the machines WITH one keep the vanilla menu
+ * path (the dryer/canner chains, byte-identical).
  */
 public class GTBasicMachineBlock extends GTEntityBlock {
 
@@ -94,8 +98,12 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 * @param itemAutoIn         NBT_INV_SIDE_AUTO_IN (SIDE_LEFT); data-only, the auto-IO pool
 	 * @param itemAutoOut        NBT_INV_SIDE_AUTO_OUT (SIDE_RIGHT); data-only, the auto-IO pool
 	 * @param menu               the port-owned MenuType supplier (null = the menu-less
-	 *                           carrier: use() stays inert instead of constructing — the
-	 *                           dryer menu registration is the GUI pool card's surface)
+	 *                           carrier: use() dispatches the ModularUI chain instead of
+	 *                           constructing a vanilla menu — task
+	 *                           p26-mui-row-menu-null-dispatch generalized the
+	 *                           p26-mui-a-open-chain inert gate into the MUI dispatch; a
+	 *                           non-null supplier keeps the vanilla menu path, the
+	 *                           dryer/canner registration is the live example)
 	 * @param cheapOverclocking  the NBT_CHEAP_OVERCLOCKING column (T on all four rows — the
 	 *                           port overclock loop :773 runs unconditionally, "no config
 	 *                           source, always T")
@@ -126,7 +134,8 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	/**
 	 * The composed-name carrier of the row-less tier blocks (task p20-i18n-compose-rows):
 	 * a pre-composed name Component the tier registrations supply — the MachineRow carrier
-	 * would change the {@link #menuBound} semantics, so the tier ladders ride this instead.
+	 * would drag the MenuType-supplier dispatch semantics onto the tier ladders, so they
+	 * ride this instead (and keep the plain composed name).
 	 */
 	@Nullable
 	private final java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> mComposedName;
@@ -234,33 +243,37 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 		}
 		BlockEntity tBlockEntity = aLevel.getBlockEntity(aPos);
 		if (tBlockEntity instanceof TileEntityBasicMachine tMachine && aPlayer instanceof ServerPlayer tServerPlayer) {
-			if (mRow == null) {
-				// the row-less families (Shredder/Crusher/Lathe — the :49 note, all four tiers
-				// of each) open the ModularUI chain since task p26-mui-a-open-chain: the ACT
-				// :91 shape, the BlockEntityUIFactory's own network, no vanilla MenuType
+			if (opensModularUi(mRow)) {
+				// no gt6:* MenuType bound — the ModularUI chain (the ACT :91 shape, the
+				// BlockEntityUIFactory's own network): the row-less families since task
+				// p26-mui-a-open-chain, the menu-less row carriers since task
+				// p26-mui-row-menu-null-dispatch (the batch-A ruling "new machines default
+				// to ModularUI" — the W1 five families register MachineRow + menu = null)
 				GT6MuiMachine.tryOpen(tServerPlayer, tMachine);
 				return InteractionResult.CONSUME;
 			}
-			if (menuBound()) {
-				//? if forge {
-				NetworkHooks.openScreen(tServerPlayer, tMachine, aPos); // upstream openGUI
-				//?} else {
-				/*tServerPlayer.openMenu(tMachine, tBuf -> tBuf.writeBlockPos(aPos)); // 21.1: NetworkHooks deleted — ServerPlayer.openMenu(MenuProvider, buf) carries the pos payload (the command-file precedent)
-				*///?}
-			}
+			// the vanilla menu path (a bound supplier — the dryer/canner chains, unchanged):
+			//? if forge {
+			NetworkHooks.openScreen(tServerPlayer, tMachine, aPos); // upstream openGUI
+			//?} else {
+			/*tServerPlayer.openMenu(tMachine, tBuf -> tBuf.writeBlockPos(aPos)); // 21.1: NetworkHooks deleted — ServerPlayer.openMenu(MenuProvider, buf) carries the pos payload (the command-file precedent)
+			*///?}
 		}
 		return InteractionResult.CONSUME;
 	}
 
 	/**
-	 * The open-GUI gate of the ROW path (the row-less families left it at task
-	 * p26-mui-a-open-chain — they dispatch {@link GT6MuiMachine#tryOpen} before this is
-	 * consulted): a row carrier with no MenuType supplier (the dryer until the GUI pool
-	 * card registers its {@code gt6:dryer} menu) stays INERT — createMenu would throw the
-	 * documented "no MenuType bound" IllegalStateException on every right-click.
+	 * The MUI dispatch key of {@code use()} (task p26-mui-row-menu-null-dispatch — the
+	 * generalization of the p26-mui-a-open-chain {@code mRow == null} gate): a machine
+	 * with NO MenuType supplier opens the {@link GT6MuiMachine#tryOpen} chain. That is the
+	 * row-less families (null row) AND the menu-less row carriers (the batch-A machine
+	 * form: {@code MachineRow + menu = null}, the Distillery today, the W1 five families
+	 * the wave card registers next). A row WITH a supplier keeps the vanilla menu path —
+	 * the truth table is two nulls deep: (row null) → MUI, (menu null) → MUI, (menu
+	 * bound) → NetworkHooks/openMenu, byte-identical for the dryer/canner chains.
 	 */
-	private boolean menuBound() {
-		return mRow == null || mRow.menu() != null;
+	static boolean opensModularUi(@Nullable MachineRow aRow) {
+		return aRow == null || aRow.menu() == null;
 	}
 
 	@Override
