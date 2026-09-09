@@ -3,17 +3,15 @@ package gregtech6.tileentity.sensors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.Bootstrap;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import gregtech6.tileentity.machines.GTMachinesOfflineTestBase;
+import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
  * The sensor NBT round-trip (task p26-sensors-core offline acceptance — the "NBT 往返"
@@ -24,8 +22,14 @@ import gregtech6.tileentity.machines.GTMachinesOfflineTestBase;
  * ({@code unsignS}, UT.java:1228) and the two degenerate guards. The fixture is the
  * GTCoverTestBase offline-BET shape: a hand-built BlockEntityType over BRICKS so the
  * registry-backed fallback ctor never runs offline.
+ *
+ * <p>The base is {@link GTOfflineTestBase} — NOT the machines stratum: its boot carries
+ * the 1.21.1 {@code unfreezeBlockEntityTypeRegistry()} re-open, without which the FML
+ * pre-frozen BET registry rejects the fixture {@code build(null)} ("Registry is already
+ * frozen" — the machines-base order-lottery, first exposed by this class in isolation;
+ * the machines stratum relies on an earlier-in-suite unfreezer surviving).
  */
-public class GTSensorBlockEntityNbtTest extends GTMachinesOfflineTestBase {
+public class GTSensorBlockEntityNbtTest extends GTOfflineTestBase {
 
 	static final BlockPos SENSOR_POS = new BlockPos(3, 2, 1);
 
@@ -33,14 +37,9 @@ public class GTSensorBlockEntityNbtTest extends GTMachinesOfflineTestBase {
 
 	@BeforeAll
 	static void buildSensorFixture() {
-		SharedConstants.tryDetectVersion();
-		try {
-			Bootstrap.bootStrap();
-		} catch (Throwable ignored) {
-			// NetworkHooks.init() failure is expected offline; registries are ready by now.
-		}
-		// the self-referencing holder: the factory resolves the type after the assignment
-		// (the GTCoverTestBase.buildCoverOvenFixture shape verbatim)
+		// the boot (tryDetectVersion/bootStrap/unfreeze) rode the superclass @BeforeAll;
+		// only the fixture remains — the self-referencing holder lets the factory resolve
+		// the type after the assignment (the GTCoverTestBase.buildCoverOvenFixture shape)
 		@SuppressWarnings("unchecked")
 		BlockEntityType<GT6ProgressmeterBlockEntity>[] tHolder = (BlockEntityType<GT6ProgressmeterBlockEntity>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(
