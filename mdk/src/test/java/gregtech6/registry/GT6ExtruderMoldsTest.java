@@ -18,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -135,19 +133,28 @@ public class GT6ExtruderMoldsTest {
 				"the mold arm alone stays narrow (fixtures only, no vanilla-item bleed)");
 	}
 
-	/** The datagen JSON existence: the two crafting rows + the mold tag ship in the generated tree. */
+	/**
+	 * The datagen JSON existence: the two crafting rows + the mold tag ship in the generated
+	 * tree. Read off the CLASSPATH (the GT6MachinePaintRenderDatagenTest getResourceAsStream
+	 * form — src/generated/resources is a test resource dir, so the assertion is
+	 * working-directory independent; the stonecutter versioned nodes run from
+	 * mdk/versions/&lt;node&gt;/ where a relative src/ path would miss).
+	 */
 	@Test
 	public void craftingJsonAndTagJsonExistInTheGeneratedTree() throws Exception {
-		Path tGenerated = Path.of("src", "generated", "resources");
-		assertTrue(Files.exists(tGenerated.resolve("data").resolve("gt6").resolve("recipes").resolve("shape_extruder_plate.json")),
+		assertTrue(classpathHas("data/gt6/recipes/shape_extruder_plate.json"),
 				"the plate-mold crafting JSON must ship (the tier-a vanilla datagen row)");
-		assertTrue(Files.exists(tGenerated.resolve("data").resolve("gt6").resolve("recipes").resolve("shape_extruder_rod.json")),
+		assertTrue(classpathHas("data/gt6/recipes/shape_extruder_rod.json"),
 				"the rod-mold crafting JSON must ship (the tier-a vanilla datagen row)");
-		assertTrue(Files.exists(tGenerated.resolve("data").resolve("gt6").resolve("tags").resolve("items").resolve("extruder_shapes.json")),
+		assertTrue(classpathHas("data/gt6/tags/items/extruder_shapes.json"),
 				"the mold-family tag JSON must ship (the not-consumable predicate's read face)");
-		assertTrue(Files.exists(tGenerated.resolve("assets").resolve("gt6").resolve("models").resolve("item").resolve("shape_extruder_plate.json")),
+		assertTrue(classpathHas("assets/gt6/models/item/shape_extruder_plate.json"),
 				"the plate-mold item model JSON must ship");
-		assertTrue(Files.exists(tGenerated.resolve("assets").resolve("gt6").resolve("models").resolve("item").resolve("shape_extruder_rod.json")),
+		assertTrue(classpathHas("assets/gt6/models/item/shape_extruder_rod.json"),
 				"the rod-mold item model JSON must ship");
+	}
+
+	private static boolean classpathHas(String aResource) {
+		return GT6ExtruderMoldsTest.class.getClassLoader().getResourceAsStream(aResource) != null;
 	}
 }
