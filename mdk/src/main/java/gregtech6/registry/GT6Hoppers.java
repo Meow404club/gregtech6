@@ -86,7 +86,16 @@ public final class GT6Hoppers {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
 	/** One loader material anchor — slug + display word (the BoilerMaterial shape). */
-	public record HopperMaterial(String slug, String display, float hardness, int metaId) {}
+	public record HopperMaterial(String slug, String display, float hardness, int metaId) {
+		/** The loader material face (the recipe 'X' column = OP.plateCurved.dat(aMat), Loader:145-146). */
+		public gregapi.oredict.OreDictMaterial mt() {
+			return switch (slug) {
+				case "bronze" -> gregapi.data.MT.Bronze;
+				case "steel" -> gregapi.data.MT.Steel;
+				default -> throw new IllegalStateException("no loader material for hopper slug " + slug);
+			};
+		}
+	}
 
 	/** The two first-batch materials (Loader :191 Bronze / :202 Steel). */
 	public static final HopperMaterial MAT_BRONZE = new HopperMaterial("bronze", "Bronze", 7.0F, 9);

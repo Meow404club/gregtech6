@@ -144,6 +144,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addDieselEngines(); // task p12-engine-diesel
         addBurningBoxes(); // task p13-burning-box-family
         addBoilers(); // task p13-boiler-tank
+        addHoppers(); // task p26-storage-hopper-family
         addGearBoxTransformer(); // task p12-gearbox-transformer
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
@@ -963,6 +964,42 @@ public final class GT6BlockStates extends BlockStateProvider {
                     default -> 0; // NORTH
                 };
                 return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
+    }
+
+    /**
+     * Task p26-storage-hopper-family — the 4 storage-hopper rows (Loader_MultiTileEntities
+     * .java:145-146 over :191/:202, Bronze/Steel × hopper/queue): ONE oriented cube model
+     * over the two grayscale placeholders (the upstream machines/automation/hopper and
+     * queuehopper colored+overlay iconsets have no borrowable source in this repo — the
+     * boiler/burning-box assets precedent; the FRONT face carries the output-face texture,
+     * FACING drives the output semantics, the three-pass custom funnel shape of upstream
+     * :263-277 is the render pool). Both kinds share the model (the SAME shapes upstream
+     * :259-282/:241-264). The 4 BlockItem models parent it. The FACING is all-six (the
+     * vanilla Piston blockstate convention): down x=90, up x=270, the horizontals the
+     * boiler y-mapping.
+     */
+    private void addHoppers() {
+        String tTex = "block/hopper_";
+        ModelFile tModel = models().cube("gt6_hopper",
+                modLoc(tTex + "side"), modLoc(tTex + "side"),        // bottom/top
+                modLoc(tTex + "front"), modLoc(tTex + "side"),       // north(front = the output face)/south
+                modLoc(tTex + "side"), modLoc(tTex + "side"));       // west/east
+        for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
+            Block tBlock = gregtech6.registry.GT6Hoppers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tX = 0, tY = 0;
+                switch (aState.getValue(gregtech6.registry.GT6Hoppers.GT6HopperBlock.FACING)) {
+                    case DOWN -> tX = 90;   // the vanilla Piston blockstate convention
+                    case UP -> tX = 270;
+                    case SOUTH -> tY = 180;
+                    case WEST -> tY = 270;
+                    case EAST -> tY = 90;
+                    default -> {} // NORTH
+                }
+                return ConfiguredModel.builder().modelFile(tModel).rotationX(tX).rotationY(tY).build();
             });
             itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
