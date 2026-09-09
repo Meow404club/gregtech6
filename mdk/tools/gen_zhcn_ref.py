@@ -327,6 +327,19 @@ HAND_TRANSLATIONS = {
     "gt6.row.mat.wood_treated": ("木制", "hand"),
     "gt6.row.mat.bronze": ("青铜", "hand"),
     "gt6.row.mat.brass": ("黄铜", "hand"),
+    # task p26-pipe-item — the item pipe family: the six variant templates over the three
+    # material words. 物流管道 word set = the dump rows verbatim (tmp/gregtech.lang
+    # 25002..25007 黄铜物流管道 family / 25027..25032 康铜 / 25052..25057 钴黄铜; the 限制
+    # prefix rows :11852-11857); the tab = itemGroup.gt.multitileentity.25202 物品管道 :17993.
+    "gt6.row.item_pipe.display.medium": ("%s物流管道", "hand"),
+    "gt6.row.item_pipe.display.large": ("大型%s物流管道", "hand"),
+    "gt6.row.item_pipe.display.huge": ("巨型%s物流管道", "hand"),
+    "gt6.row.item_pipe.display.restrictive_medium": ("限制%s物流管道", "hand"),
+    "gt6.row.item_pipe.display.restrictive_large": ("限制大型%s物流管道", "hand"),
+    "gt6.row.item_pipe.display.restrictive_huge": ("限制巨型%s物流管道", "hand"),
+    "gt6.row.mat.constantan": ("康铜", "hand"),      # dump 25027 康铜物流管道 word root
+    "gt6.row.mat.cobalt_brass": ("钴黄铜", "hand"),  # dump 25052 钴黄铜物流管道 word root
+    "itemGroup.gt6.item_pipes": ("物品管道", "hand"),  # dump :17993 verbatim
     "gt6.row.mat.arsenic_copper": ("砷铜", "hand"),
     "gt6.row.mat.arsenic_bronze": ("砷青铜", "hand"),
     "gt6.row.mat.steel": ("钢", "hand"),
@@ -368,6 +381,92 @@ HAND_TRANSLATIONS = {
         "——它自行积攒热量，结构下方一层的储罐会收集杂酚油。",
         "hand",
     ),
+
+    # ---- restoration batch (task p26-pipe-item takeover salvage 2026-09-09): direct
+    # hand rows earlier cards authored straight into the TSV without writing back here —
+    # a faithful rerun (same dump + same hand table -> byte-identical TSV, the module
+    # docstring contract) wiped them from zh_cn_ref.tsv and the regenerated zh_cn.json.
+    # Re-entered VERBATIM from the pre-wipe TSV (git show cbd779bc:...zh_cn_ref.tsv):
+    # lightning rod (p10) / grass (p13 family) / tools (p24) / food cans (p25) / misc.
+    "block.gt6.grass": ("草方块", "hand"),
+    "block.gt6.grass_black": ("草方块", "hand"),
+    "block.gt6.grass_brown": ("草方块", "hand"),
+    "block.gt6.grass_light_gray": ("草方块", "hand"),
+    "block.gt6.grass_lime": ("草方块", "hand"),
+    "block.gt6.grass_yellow": ("草方块", "hand"),
+    "block.gt6.lightning_rod": ("避雷针", "hand"),
+    "block.gt6.machine_wall_tungsten": ("钨壁板", "hand"),
+    "block.gt6.multiblock_lightning_rod": ("避雷针", "hand"),
+    "block.gt6.niobium_titanium_coil": ("大型铌钛合金线圈", "hand"),
+    "gt.grass.tooltip": ("不会传播、被吃、改变颜色, 也不需要光照", "hand"),
+    "gt.grass.tooltip.spray": ("喷漆罐也可以用来给草染色！", "hand"),
+    "gt6.tooltip.lightningrod.1": ("最底层是3x3的钨壁板, 中间是避雷针电力输出口", "hand"),
+    "gt6.tooltip.lightningrod.2": ("第二层是3x3的大型铌钛合金线圈", "hand"),
+    "gt6.tooltip.lightningrod.3": ("第三层是3x3的钨壁板", "hand"),
+    "gt6.tooltip.lightningrod.4": ("第四层是3x3的大型铌钛合金线圈", "hand"),
+    "gt6.tooltip.lightningrod.5": ("第五层是3x3的钨壁板", "hand"),
+    "gt6.tooltip.lightningrod.6": ("最后在中心一格造一根避雷针柱", "hand"),
+    "gt6.tooltip.lightningrod.7": ("最高的避雷针的Y轴高度需要大于100", "hand"),
+    "gt6.tooltip.lightningrod.8": ("避雷针柱长度达到100m时达到最大效率", "hand"),
+    "gt6.tooltip.lightningrod.9": ("256m内存在别的避雷针会降低效率", "hand"),
+    "gt6.tooltip.lightningrod.capacity": ("%s EU 每次雷击", "hand"),
+    "gt6.tooltip.lightningrod.energy": ("能量输出: %s EU/p（至多16安）", "hand"),
+    "gt6.tooltip.lightningrod.structure": ("结构：", "hand"),
+    "item.gt6.bending_cylinder_small": ("小型弯曲绕筒", "hand"),
+    "item.gt6.builder_wand": ("建筑之杖", "hand"),
+    "item.gt6.file": ("锉刀", "hand"),
+    "item.gt6.food_can_cookies_huge": ("超大食物罐头 (饼干)", "hand"),
+    "item.gt6.food_can_empty": ("空食物罐头", "hand"),
+    "item.gt6.food_can_rotten_huge": ("超大食物罐头 (腐肉)", "hand"),
+    "item.gt6.food_can_rotten_large": ("大食物罐头 (腐肉)", "hand"),
+    "item.gt6.food_can_rotten_small": ("小食物罐头 (腐肉)", "hand"),
+    "item.gt6.food_can_rotten_tall": ("高食物罐头 (腐肉)", "hand"),
+    "item.gt6.food_can_rotten_tiny": ("迷你食物罐头 (腐肉)", "hand"),
+    "item.gt6.food_can_rotten_wide": ("宽食物罐头 (腐肉)", "hand"),
+    "item.gt6.hammer": ("锤", "hand"),
+    "item.gt6.saw": ("锯", "hand"),
+    "item.gt6.screwdriver": ("螺丝刀", "hand"),
+    "item.gt6.wrench": ("扳手", "hand"),
+    "itemGroup.gt6.food_cans": ("格雷科技: 罐头", "hand"),
+
+    # ---- rebase write-back (review session 2026-09-09): the 33 direct rows the merged
+    # p26-c-foam-fluid-refill card authored straight into the TSV (its 2ab32e16 fluid
+    # family) without a py write-back — the same tsv-orphan drift class b91f65c3 fixed.
+    # Surfaced by the p26-pipe-item rebase onto main: a faithful rerun over the merged
+    # TSV silently wiped them. Re-entered VERBATIM from the merged TSV rows.
+    "fluid.gt6.cfoam": ("建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_black": ("黑色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_red": ("红色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_green": ("绿色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_brown": ("褐色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_blue": ("蓝色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_purple": ("紫色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_cyan": ("青色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_light_gray": ("淡灰色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_gray": ("灰色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_pink": ("粉色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_lime": ("黄绿色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_yellow": ("黄色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_light_blue": ("淡蓝色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_magenta": ("品红建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_orange": ("橙色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_white": ("白色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_black": ("高级黑色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_red": ("高级红色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_green": ("高级绿色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_brown": ("高级褐色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_blue": ("高级蓝色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_purple": ("高级紫色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_cyan": ("高级青色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_light_gray": ("高级淡灰色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_gray": ("高级灰色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_pink": ("高级粉色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_lime": ("高级黄绿色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_yellow": ("高级黄色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_light_blue": ("高级淡蓝色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_magenta": ("高级品红建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_orange": ("高级橙色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_white": ("高级白色建筑泡沫", "hand"),
 }
 
 # ---------------------------------------------------------------------------

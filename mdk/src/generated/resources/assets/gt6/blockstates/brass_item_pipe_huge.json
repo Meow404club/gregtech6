@@ -1,0 +1,196 @@
+{
+  "variants": {
+    "connections=0": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=1": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=10": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=11": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=12": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=13": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=14": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=15": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=16": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=17": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=18": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=19": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=2": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=20": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=21": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=22": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=23": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=24": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=25": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=26": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=27": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=28": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=29": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=3": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=30": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=31": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=32": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=33": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=34": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=35": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=36": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=37": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=38": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=39": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=4": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=40": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=41": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=42": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=43": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=44": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=45": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=46": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=47": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=48": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=49": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=5": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=50": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=51": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=52": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=53": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=54": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=55": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=56": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=57": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=58": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=59": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=6": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=60": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=61": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=62": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=63": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=7": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=8": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    },
+    "connections=9": {
+      "model": "gt6:block/brass_item_pipe_huge"
+    }
+  }
+}

@@ -28,6 +28,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTEnergySources;
 import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTGrassBlocks;
+import gregtech6.registry.GTItemPipes;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialBlocks;
@@ -80,6 +81,12 @@ public final class GT6BlockStates extends BlockStateProvider {
         itemModels().withExistingParent("example_chest", modLoc("block/example_chest"));
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get());
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
+        // task p26-pipe-item — the item pipe family: one cube_all placeholder per row, the
+        // restrictive variants over their own PNG (the p20 placeholder ruling, no per-material art)
+        for (GTItemPipes.ItemPipeRow tItemRow : GTItemPipes.ROWS) {
+            addItemPipe(GTItemPipes.BLOCKS_BY_PATH.get(tItemRow.path()).get(),
+                    tItemRow.variant().suffix.startsWith("restrictive"));
+        }
         addWire(GTWires.WIRE_ELECTRIC_1X.get());
         addWire(GTWires.WIRE_ELECTRIC_2X.get());
         // task p10: the two wire loops SHARE one (set -> model) map — models().getBuilder
@@ -430,6 +437,18 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .end();
         mMachineTintModels++;
         return tModel;
+    }
+
+    /**
+     * One cube_all model per item pipe row (the blockstate name mirrors the block registry
+     * path), a variant per CONNECTIONS mask value (0..63), and the BlockItem model
+     * parenting the block model — the addFluidPipe shape over the two shared placeholders.
+     */
+    private void addItemPipe(Block aPipe, boolean aRestrictive) {
+        String tName = aPipe.getDescriptionId().replace("block.gt6.", "");
+        var tModel = models().cubeAll(tName, modLoc(aRestrictive ? "block/item_pipe_restrictive" : "block/item_pipe"));
+        getVariantBuilder(aPipe).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+        itemModels().withExistingParent(tName, modLoc("block/" + tName));
     }
 
     /**
