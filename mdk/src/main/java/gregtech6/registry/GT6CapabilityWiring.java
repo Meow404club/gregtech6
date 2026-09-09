@@ -95,6 +95,7 @@ public final class GT6CapabilityWiring {
 		registerFeBattery(aEvent); // task p26-eu-bridge-outbound (tail-append; shared serial file)
 		registerKitchenFaces(aEvent);
 		registerHopperFamily(aEvent); // task p26-storage-hopper-family (tail-append; shared serial file)
+		registerStaticStorages(aEvent); // task p26-storage-static-batch (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -338,6 +339,32 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		BlockEntityType<GT6QueueHopperBlockEntity> tQueue = GTBlockEntities.QUEUE_HOPPER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tQueue,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+	}
+
+	// -- the static storage batch (p26-storage-static-batch; TAIL-APPENDED ROW, the
+	// shared serial file: append-only discipline) --
+	// Six family BETs join as item-only faces (zero fluid tanks on the classes — the
+	// oven/ACT shape). The forge leg answers through the GT6StaticStorageBaseBlockEntity
+	// getCapability override (fresh per-call side view — the side view IS the upstream
+	// getAccessibleSlotsFromSide2/canInsertItem2/canExtractItem2 triple; the Safe answers
+	// a 0-slot view, upstream :105 ZL_INTEGER). Without these rows every external hopper
+	// push (the VanillaInventoryCodeHooks.insertHook level ItemHandler.BLOCK query) is
+	// capability-blind on this node while the 1.20.1 BE override hides the gap — the
+	// ADR-P15-4 census discipline, mechanized by GT6CapabilityWiringSeamTest.
+
+	private static void registerStaticStorages(RegisterCapabilitiesEvent aEvent) {
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GTBlockEntities.LOCKER_BE.get(),
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GTBlockEntities.DRAWER_QUAD_BE.get(),
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GTBlockEntities.SAFE_BE.get(),
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GTBlockEntities.SAFE_KEYLOCKED_BE.get(),
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GTBlockEntities.BOOKSHELF_BE.get(),
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GTBlockEntities.BOTTLECRATE_BE.get(),
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 	}
 

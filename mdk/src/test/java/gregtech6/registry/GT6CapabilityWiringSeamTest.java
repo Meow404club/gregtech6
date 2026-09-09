@@ -33,7 +33,10 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 	 * fluid faces, GT6CapabilityWiring DRYER_BE/DISTILLERY_BE rows; the twelfth is the
 	 * 2026-09-09 item pipe — the p26-pipe-item family's item face, the ITEM_PIPE_BE row;
 	 * the thirteenth and fourteenth are the 2026-09-09 storage hoppers — the
-	 * p26-storage-hopper-family's item-only faces, the HOPPER_BE/QUEUE_HOPPER_BE rows).
+	 * p26-storage-hopper-family's item-only faces, the HOPPER_BE/QUEUE_HOPPER_BE rows;
+	 * the fifteenth through twentieth are the 2026-09-10 static storage batch — the
+	 * p26-storage-static-batch's item-only faces, the LOCKER_BE/DRAWER_QUAD_BE/SAFE_BE/
+	 * SAFE_KEYLOCKED_BE/BOOKSHELF_BE/BOTTLECRATE_BE rows).
 	 */
 	@Test
 	public void beWiringPathsPinnedToRegistryRows() {
@@ -55,6 +58,13 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		assertEquals("mixing_bowl", GT6Kitchen.MIXING_BOWL_BE.getId().getPath());
 		assertEquals("hopper", GTBlockEntities.HOPPER_BE.getId().getPath());
 		assertEquals("queue_hopper", GTBlockEntities.QUEUE_HOPPER_BE.getId().getPath());
+		// task p26-storage-static-batch — the six item-only storage faces
+		assertEquals("locker", GTBlockEntities.LOCKER_BE.getId().getPath());
+		assertEquals("drawer_quad", GTBlockEntities.DRAWER_QUAD_BE.getId().getPath());
+		assertEquals("safe_mechanical", GTBlockEntities.SAFE_BE.getId().getPath());
+		assertEquals("safe_keylocked", GTBlockEntities.SAFE_KEYLOCKED_BE.getId().getPath());
+		assertEquals("bookshelf", GTBlockEntities.BOOKSHELF_BE.getId().getPath());
+		assertEquals("bottlecrate", GTBlockEntities.BOTTLECRATE_BE.getId().getPath());
 	}
 
 	/**
@@ -79,6 +89,24 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		assertEquals(new LinkedHashSet<>(java.util.List.of("bathing_pot", "mixing_bowl")), tLive,
 				"the kitchen BET census drifted — declare the new family's item + fluid rows in "
 				+ "GT6CapabilityWiring.registerKitchenFaces in the same change");
+	}
+
+	/**
+	 * Task p26-storage-static-batch: the six storage BETs must stay over the SAME valid
+	 * block set as their GT6StaticStorages kind rows (the ADR-P3-1 one-type-many-blocks
+	 * invariant — a block registered into a row but not its kind array would mount a
+	 * mismatched BE). Pinned off the row table, not the blocks: the row census keeps the
+	 * 28-block universe visible on this leg.
+	 */
+	@Test
+	public void staticStorageRowsMatchTheKindCensus() {
+		long tMetal = GT6StaticStorages.ROWS.stream().filter(r -> r.material() != null).count();
+		assertEquals(8, tMetal, "the Bronze/Steel metal ladder: locker/drawer/safe pair x2");
+		assertEquals(10, GT6StaticStorages.ROWS.stream().filter(r -> r.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF).count(),
+				"the vanilla-planks bookshelf subset (the 300-ladder fold)");
+		assertEquals(10, GT6StaticStorages.ROWS.stream().filter(r -> r.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE).count(),
+				"the vanilla-planks bottlecrate subset");
+		assertEquals(28, GT6StaticStorages.ROWS.size(), "8 metal + 10 bookshelf + 10 bottlecrate");
 	}
 
 	/**
