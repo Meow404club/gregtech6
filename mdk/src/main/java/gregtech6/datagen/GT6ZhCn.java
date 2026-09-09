@@ -174,6 +174,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.crank");
 		addDirect("block.gt6.crusher");
 		addDirect("block.gt6.energy_source");
+		addDirect("block.gt6.fe_battery"); // task p26-eu-bridge-outbound — tail-append
 		addDirect("block.gt6.lathe");
 		addDirect("block.gt6.multiblock_coke_oven");
 		addDirect("block.gt6.multiblock_coke_oven_bricks");

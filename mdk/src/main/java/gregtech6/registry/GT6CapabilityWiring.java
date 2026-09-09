@@ -17,6 +17,7 @@ import gregtech6.item.GTBarrelBlockItem;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
+import gregtech6.tileentity.energy.GT6FeBatteryBlockEntity; // p26 tail-append
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
@@ -86,6 +87,7 @@ public final class GT6CapabilityWiring {
 		registerCokeOvenFaces(aEvent);
 		registerBarrelBlockFluidHandler(aEvent);
 		registerBarrelItemHandlers(aEvent);
+		registerFeBattery(aEvent); // task p26-eu-bridge-outbound (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -244,6 +246,23 @@ public final class GT6CapabilityWiring {
 	private static GTBarrelItemFluidHandler barrelFluidHandler(ItemStack aStack) {
 		GTBarrelBlock tBlock = (GTBarrelBlock) ((GTBarrelBlockItem) aStack.getItem()).getBlock();
 		return new GTBarrelItemFluidHandler(aStack, tBlock.capacityL()).setGasProof(tBlock.gasProof());
+	}
+
+	// -- the p26 FE battery fixture (task p26-eu-bridge-outbound; TAIL-APPENDED ROW, the
+	// shared serial file: the W1 base-machines card also touches this file — append-only) --
+	// The fixture is a capability PROVIDER on this leg (21.1 BlockEntity has no
+	// getCapability override): registerBlockEntity hands the BET the same
+	// fresh-or-field provider shape as its siblings. The forge leg answers through the
+	// GT6FeBatteryBlockEntity.getCapability override (the 01Root:439 shape) and cannot see
+	// this file. Capabilities.EnergyStorage.BLOCK = BlockCapability<IEnergyStorage,
+	// Direction> (javap 21.1.249); the receiver of this face is the EU->FE outbound bridge
+	// (the EU->FE bridge's neo arm in GT6FeBatteries.onForeignEnergy), which queries the
+	// storage through the LEVEL face exactly like any foreign FE consumer would.
+
+	private static void registerFeBattery(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6FeBatteryBlockEntity> tBattery = GT6FeBatteries.FE_BATTERY_BE.get();
+		aEvent.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, tBattery,
+				(aBe, aSide) -> aBe.energyStorage());
 	}
 
 }

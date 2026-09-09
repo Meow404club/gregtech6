@@ -92,6 +92,7 @@ public class GT6EnUs extends LanguageProvider {
         addMultiBlocks();
         addBarrels();
         addEnergySource();
+        addFeBattery(); // task p26-eu-bridge-outbound — tail-append
         addKinetics(); // task p12-engine-crank
         addAttachments(); // task p12-tap-funnel-attachment
         addTools();
@@ -327,6 +328,14 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addEnergySource() {
         add("block.gt6.energy_source", "Test Energy Source");
+    }
+
+    /**
+     * FE battery fixture key (task p26-eu-bridge-outbound, tail-append): the block display
+     * name — the receiving end of the EU->FE outbound bridge acceptance chain.
+     */
+    private void addFeBattery() {
+        add("block.gt6.fe_battery", "FE Test Battery");
     }
 
     /**

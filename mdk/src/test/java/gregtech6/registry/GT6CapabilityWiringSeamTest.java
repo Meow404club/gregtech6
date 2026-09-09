@@ -125,4 +125,18 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 			assertTrue(tPath.startsWith("barrel_"), "drum row id " + tPath + " must stay in the barrel_* path family the wiring scan covers");
 		}
 	}
+
+	/**
+	 * Task p26-eu-bridge-outbound (tail-append): the FE battery fixture is a capability
+	 * PROVIDER on the 21.1 leg — the registerFeBattery row hands its BET to
+	 * Capabilities.EnergyStorage.BLOCK with a provider reading energyStorage(). On this
+	 * (1.20.1) leg the same BE answers through its getCapability override and cannot see
+	 * the 21.1-only wiring file, so the row's BET path is pinned here, the wiring-side
+	 * half of the two-seam model (the machines-family census above, same reason).
+	 */
+	@Test
+	public void feBatteryFixtureBETPathPinned() {
+		assertEquals("fe_battery", GT6FeBatteries.FE_BATTERY_BE.getId().getPath());
+		assertEquals("fe_battery", GT6FeBatteries.FE_BATTERY.getId().getPath(), "the BET and its block share the registry path");
+	}
 }
