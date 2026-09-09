@@ -22,7 +22,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import gregapi.data.ANY;
 import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.GT6Mod;
@@ -41,7 +40,7 @@ import gregtech6.tileentity.tools.GT6MixingBowlBlockEntity;
  *
  * <p>Rows (upstream NBT → the block carrier):
  * <ul>
- * <li>Wooden Bathing Pot (:2173) — ANY.Wood, RM.Bath, 4000 L, hardness 1.0 / resistance
+ * <li>Wooden Bathing Pot (:2173; carrier MT.WoodTreated, the deviation below) — RM.Bath, 4000 L, hardness 1.0 / resistance
  *     5.0, NBT_FLAMMABILITY 100 (recorded, no fire bridge — the pool);</li>
  * <li>Bathing Pot (:2175) — MT.StainlessSteel, RM.Bath, 8000 L, 1.0/6.0;</li>
  * <li>Ceramic Bowl (:2177) — MT.Ceramic, RM.Mixer, 8000 L, 1.0/5.0 — plus the
@@ -49,8 +48,10 @@ import gregtech6.tileentity.tools.GT6MixingBowlBlockEntity;
  *     the {@code RM.add_smelting(Raw → Bowl)} hardening line rides the smelting
  *     datagen).</li>
  * </ul>
- * The ANY.Wood material is kept as the group representative (the melt-door read — only
- * {@code mMeltingPoint} is consumed; the GTBarrels.ANY.W row precedent).
+ * The wood row rides {@code MT.WoodTreated} as the melt-door representative — the
+ * verbatim -100 K door reads ONLY {@code mMeltingPoint}, and the port's wood-family
+ * heat传导 leaves {@code ANY.Wood} at mp 400 (water, 300 K, would trip 300 &gt;= 400-100;
+ * the upstream ANY.Wood default 1000 passes) — the class-doc deviation on the row below.
  *
  * <p>GUI: none — the upstream tooltip is {@code LH.NO_GUI_CLICK_TO_INTERACT} and the
  * wave4 GUI ruling binds menu-less carriers (zero new MenuType). Rendering: no
@@ -65,9 +66,21 @@ public final class GT6Kitchen {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
 
-	/** The wood pot — RM.Bath, 4000 L (upstream :2173; flammability 100 recorded on the carrier javadoc). */
+	/**
+	 * The wood pot — RM.Bath, 4000 L (upstream :2173; flammability 100 recorded on the
+	 * carrier javadoc). DECLARED CARRIER DEVIATION: the upstream row's NBT_MATERIAL is
+	 * {@code ANY.Wood}, whose UPSTREAM default mMeltingPoint is the plain-material 1000 —
+	 * the -100 K melt-door read passes water (300 &lt; 900). In the PORT universe the
+	 * {@code ANY.Wood} representative carries the wood() factory heat传导 (mp 400, the
+	 * MT.java:809 {@code .heat(400, 500)} family row — live-proven: the RCON fill REJECTS
+	 * water through 300 &gt;= 400-100), and EVERY {@code wood()} family member shares that
+	 * 400. {@code MT.WoodTreated} (:2084, mp 500) is the only wood-family carrier where
+	 * the verbatim door admits water (300 &lt; 500-100) — so it rides as the melt-door
+	 * representative (the door reads ONLY mMeltingPoint; the pot is built from untreated
+	 * planks upstream, this is the melt-door equivalence, not a recipe/material claim).
+	 */
 	public static final RegistryObject<GTKitchenBlock> BATHING_POT_WOOD = BLOCKS.register("bathing_pot_wood",
-			() -> new GTKitchenBlock(4000, () -> ANY.Wood, () -> GT6Kitchen.BATHING_POT_BE.get(),
+			() -> new GTKitchenBlock(4000, () -> MT.WoodTreated, () -> GT6Kitchen.BATHING_POT_BE.get(),
 					BlockBehaviour.Properties.of().strength(1.0F, 5.0F).sound(SoundType.WOOD)));
 
 	/** The steel pot — MT.StainlessSteel, RM.Bath, 8000 L (upstream :2175). */
