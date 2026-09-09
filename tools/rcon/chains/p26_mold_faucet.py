@@ -7,17 +7,18 @@ Task p26-crucible-mold-faucet ACCEPTANCE (c), translated:
     the shell ladder IS the gate, temperatureMax = shell.melting x 1.25) + the
     CERAMIC faucet mounted on its east wall (facing west, the mount face toward the
     host) + the pre-carved ceramic PLATE mold under the faucet.
-  B the melt: ONE iron dust dropped on top (the :154 suck arm) — r7.3 made the
-    heat mass CERTAIN before shooting: the suck pace is not tick-deterministic
-    (the r7.1/r7.2 forge legs split 1U vs 4U fed at shot time — 2149 K vs
-    1598 K), and a fixed two-shot ladder cannot cover both masses (K = 71 vs
-    111 HU/K have no common pour window). So the rig drops exactly one dust
-    (= exactly one plate's worth, CS.U = 648648000u), the stat POLL waits for
-    "total=648648000u" to pin the mass, and the calibration rides K = 1 +
-    (7000+1000)/100 = 81 HU/K: shot 1 130000 HU -> ~1920 K ("temp=1"), shot 2
-    +22000 HU -> ~2190 K ("temp=2"), mid-[1811, 2557) with ~350 K margins on
-    both edges. The pour arms stay the window proof; a meltdown prints the
-    FAILED marker and auto-fails.
+  B the melt: ONE iron dust dropped on top (the :154 suck arm). The suck pace is
+    not tick-deterministic (1U vs 4U landed at shot time across the r7.1/r7.2
+    forge legs — 2149 K vs 1598 K), and no fixed two-shot ladder covers both
+    heat masses, so the rig drops exactly one dust (= exactly one plate's worth,
+    CS.U = 648648000u) and the stat POLL waits for "total=648648000u" — that
+    pins the POUR STOCK (the pour needs the dust in the crucible), and it also
+    makes the melt deterministic because the live legs prove the content does
+    NOT enter the heat mass: with 1U already in, shot 1 still lands exactly
+    287 + 130000/71 = 2118 K (K = 1 + shellWeight/100, steel shell 7u only).
+    Shot 2 +22000 HU -> +310 K -> 2432 K; both stats pin the "temp=2" band and
+    sit mid-[1811, 2557) (pour window proof stays on the pour arms; a meltdown
+    prints the FAILED marker and auto-fails).
   C the cast: the faucet right-click (the :138-146 activation, the null-player RCON
     arm) polls until "poured into the mold" — the crucible pays one plate of molten
     iron through fillMoldAtSide -> fillMold (the DOWN walk) — then the mold stat
@@ -89,11 +90,11 @@ steps += [
 
 # ------------------------------------------------- B: the anchored melt
 steps += [
-    phase("B: the melt — wait for the dust to land (the mass must be certain), then two shots"),
+    phase("B: the melt — wait for the dust (the pour stock), then two shots: ~2118 K, ~2432 K"),
     Step(f"gt6crucible stat {C}", expect="total=648648000u", poll=30),
     Step(f"gt6crucible inject-hu {C} 130000", expect="GT6 crucible injected"),
-    Step(f"gt6crucible stat {C}", expect="temp=1", poll=20),
-    phase("B2: shot 2 ~+270 K, mid-window ~2.2 kK"),
+    Step(f"gt6crucible stat {C}", expect="temp=2", poll=20),
+    phase("B2: shot 2 ~+310 K, ~2432 K mid-window"),
     Step(f"gt6crucible inject-hu {C} 22000", expect="GT6 crucible injected"),
     Step(f"gt6crucible stat {C}", expect="temp=2", poll=20),
 ]
@@ -114,7 +115,7 @@ steps += [
     Step(f"gt6crucible place-mold {M2} mold_ceramic_plate", expect="GT6 mold placed"),
     Step(f"gt6crucible stat {C2}", expect="total=648648000u", poll=30),
     Step(f"gt6crucible inject-hu {C2} 130000", expect="GT6 crucible injected"),
-    Step(f"gt6crucible stat {C2}", expect="temp=1", poll=20),
+    Step(f"gt6crucible stat {C2}", expect="temp=2", poll=20),
     Step(f"gt6crucible inject-hu {C2} 22000", expect="GT6 crucible injected"),
     Step(f"gt6crucible stat {C2}", expect="temp=2", poll=20),
     Step(f"gt6faucet wrench-mold {M2} west", expect="Crucible Auto-Input: ON"),
