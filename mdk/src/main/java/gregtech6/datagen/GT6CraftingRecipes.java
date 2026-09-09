@@ -31,6 +31,8 @@ import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6Kitchen;
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
+import gregtech6.registry.GT6StaticStorages;
+import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTGrassBlocks;
 import gregtech6.registry.GT6Sensors;
 import gregapi.data.MT;
@@ -159,6 +161,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+			staticStorageRecipeBuilder(tRow).save(aConsumer, staticStorageRecipeId(tRow));
+		}
 	}
 	//?} else {
 	/*@Override
@@ -186,8 +191,98 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
+		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+			staticStorageRecipeBuilder(tRow).save(aOutput, staticStorageRecipeId(tRow));
+		}
 	}
 	*///?}
+
+	/**
+	 * The id of one static storage row's recipe (the result-path convention, one per row —
+	 * the hopperRecipeId shape). The path rides a local so the two-arg RL ctor args stay
+	 * bare identifiers (the swap-table regex note).
+	 */
+	public static ResourceLocation staticStorageRecipeId(gregtech6.registry.GT6StaticStorages.StaticRow aRow) {
+		String tPath = aRow.path();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/**
+	 * The static storage crafting rows (task p26-storage-static-batch — one per row):
+	 * <ul>
+	 * <li>Locker (:138 "SdS","LCL","TMT"): 'T' = screw, 'M' = casing — the upstream
+	 *     casingMachine column folds to casingSmall (the prefix has no port item row, the
+	 *     declared deviation), 'L' = leather, 'C' = the chest tag — the upstream
+	 *     same-material metal chest center folds to the platform chest tag (the metal
+	 *     chest ladder is not in this port universe, the declared deviation);</li>
+	 * <li>Drawer (:140 "CTC","TdT","CTC"): 'd' = the screwdriver tool tag;</li>
+	 * <li>Safes (:134-135 "PGP","GOS"/"OGS","PGP"): 'P' = plateQuintuple, 'G' =
+	 *     gearGtSmall, 'O' = gearGt, 'S' = stick;</li>
+	 * <li>Wooden Bookshelf (:177-179 "PPP","sfr","PPP"): 'P' = THE ROW'S plank item, 's'
+	 *     = the hard hammer tag (the upstream soft-hammer letter folds — no soft-hammer
+	 *     tag in the port), 'f' = the file tag, 'r' = the screwdriver tag;</li>
+	 * <li>Wooden Bottlecrate (:180 "sfr","PGP","BPB"): 'B' = the wood bolt, 'G' = a slime
+	 *     ball (the upstream itemGlue column folds — no glue item in the port universe,
+	 *     the declared deviation).</li>
+	 * </ul>
+	 * Tool letters key on the gt6 tool tags (the p24/p25 tag rulings), material items
+	 * resolve through GTMaterialItems (the hopper plateCurved shape).
+	 */
+	private ShapedRecipeBuilder staticStorageRecipeBuilder(gregtech6.registry.GT6StaticStorages.StaticRow aRow) {
+		ShapedRecipeBuilder rBuilder = switch (aRow.kind()) {
+			case LOCKER -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
+					.pattern("SdS").pattern("LCL").pattern("TMT")
+					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+					.define('S', GTMaterialItems.get(gregapi.data.OP.stick, aRow.material().mt()).get())
+					.define('T', GTMaterialItems.get(gregapi.data.OP.screw, aRow.material().mt()).get())
+					.define('M', GTMaterialItems.get(gregapi.data.OP.casingSmall, aRow.material().mt()).get())
+					.define('L', Items.LEATHER)
+					.define('C', Tags.Items.CHESTS);
+			case DRAWER -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
+					.pattern("CTC").pattern("TdT").pattern("CTC")
+					.define('C', Tags.Items.CHESTS)
+					.define('T', GTMaterialItems.get(gregapi.data.OP.screw, aRow.material().mt()).get())
+					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER);
+			case SAFE_MECHANICAL -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
+					.pattern("PGP").pattern("GOS").pattern("PGP")
+					.define('P', GTMaterialItems.get(gregapi.data.OP.plateQuintuple, aRow.material().mt()).get())
+					.define('G', GTMaterialItems.get(gregapi.data.OP.gearGtSmall, aRow.material().mt()).get())
+					.define('O', GTMaterialItems.get(gregapi.data.OP.gearGt, aRow.material().mt()).get())
+					.define('S', GTMaterialItems.get(gregapi.data.OP.stick, aRow.material().mt()).get());
+			case SAFE_KEYLOCKED -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
+					.pattern("PGP").pattern("OGS").pattern("PGP")
+					.define('P', GTMaterialItems.get(gregapi.data.OP.plateQuintuple, aRow.material().mt()).get())
+					.define('G', GTMaterialItems.get(gregapi.data.OP.gearGtSmall, aRow.material().mt()).get())
+					.define('O', GTMaterialItems.get(gregapi.data.OP.gearGt, aRow.material().mt()).get())
+					.define('S', GTMaterialItems.get(gregapi.data.OP.stick, aRow.material().mt()).get());
+			case BOOKSHELF -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
+					.pattern("PPP").pattern("sfr").pattern("PPP")
+					.define('P', aRow.plank().item())
+					.define('s', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.define('f', GT6ItemTags.TOOLS_FILE)
+					.define('r', GT6ItemTags.TOOLS_SCREWDRIVER);
+			case BOTTLECRATE -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
+					.pattern("sfr").pattern("PGP").pattern("BPB")
+					.define('P', aRow.plank().item())
+					.define('B', GTMaterialItems.get(gregapi.data.OP.bolt, gregapi.data.MT.Wood).get())
+					.define('G', Items.SLIME_BALL)
+					.define('s', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.define('f', GT6ItemTags.TOOLS_FILE)
+					.define('r', GT6ItemTags.TOOLS_SCREWDRIVER);
+		};
+		// the unlock arms: the material plate column for the metal rows, the plank for the wooden
+		if (aRow.material() != null) {
+			rBuilder.unlockedBy("has_plate", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, aRow.material().slug())));
+		} else {
+			rBuilder.unlockedBy("has_plank", has(aRow.plank().item()));
+		}
+		return rBuilder;
+	}
+
+	/** The recipe result item of a row (the registered BlockItem). */
+	private static Item resultOf(gregtech6.registry.GT6StaticStorages.StaticRow aRow) {
+		return gregtech6.registry.GT6StaticStorages.ITEMS_BY_PATH.get(aRow.path()).get();
+	}
 
 	/** One staged recipe: the shared builder + the id its save face writes (the save type is the one leg split). */
 	private record GrassRecipeRow(ShapelessRecipeBuilder builder, ResourceLocation id) {}

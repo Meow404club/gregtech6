@@ -295,7 +295,7 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("boiler_tank", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity::new, GT6Boilers.blockArray()).build(null));
 
-	// -------------------------------------------------------------------------
+		// -------------------------------------------------------------------------
 	// the storage hoppers (task p26-storage-hopper-family) — the two family rows
 	// -------------------------------------------------------------------------
 
@@ -344,6 +344,71 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6ElectrometerBlockEntity>> ELECTROMETER_BE =
 			BLOCK_ENTITY_TYPES.register("electrometer", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.sensors.GT6ElectrometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("electrometer").get()).build(null));
+
+	// -------------------------------------------------------------------------
+	// the static storage batch (task p26-storage-static-batch) — the six family rows
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Locker BET (task p26-storage-static-batch — the BET type rows live here per the
+	 * card, the 2 blocks/items in GT6StaticStorages; the AXLE_BE one-type-many-blocks
+	 * multi-mount form over {@link GT6StaticStorages#blockArray}. ADR-P3-1: the metal
+	 * ladder (Bronze/Steel) is ONE BE class, the row config rides the block carrier.
+	 * Registry path "locker" mirrors GT6LockerBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.inventories.GT6LockerBlockEntity>> LOCKER_BE =
+			BLOCK_ENTITY_TYPES.register("locker", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.inventories.GT6LockerBlockEntity::new,
+					GT6StaticStorages.blockArray(gregtech6.registry.GT6StaticStorages.Kind.LOCKER)).build(null));
+
+	/**
+	 * The Compartment Drawer BET — the same shape over the two drawer rows (the 144-slot
+	 * four-quadrant class). Registry path "drawer_quad" mirrors
+	 * GT6DrawerQuadBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.inventories.GT6DrawerQuadBlockEntity>> DRAWER_QUAD_BE =
+			BLOCK_ENTITY_TYPES.register("drawer_quad", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.inventories.GT6DrawerQuadBlockEntity::new,
+					GT6StaticStorages.blockArray(gregtech6.registry.GT6StaticStorages.Kind.DRAWER)).build(null));
+
+	/**
+	 * The Mechanical Safe BET — the same shape over the two safe rows (the blast-resistant
+	 * 15-slot class with the dungeon-loot seam). Registry path "safe_mechanical" mirrors
+	 * GT6SafeBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.inventories.GT6SafeBlockEntity>> SAFE_BE =
+			BLOCK_ENTITY_TYPES.register("safe_mechanical", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.inventories.GT6SafeBlockEntity::new,
+					GT6StaticStorages.blockArray(gregtech6.registry.GT6StaticStorages.Kind.SAFE_MECHANICAL)).build(null));
+
+	/**
+	 * The Key Locked Safe BET — the KeyLocked personality over its two rows (the latch
+	 * subclass). Registry path "safe_keylocked" mirrors
+	 * GT6SafeKeyLockedBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.inventories.GT6SafeKeyLockedBlockEntity>> SAFE_KEYLOCKED_BE =
+			BLOCK_ENTITY_TYPES.register("safe_keylocked", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.inventories.GT6SafeKeyLockedBlockEntity::new,
+					GT6StaticStorages.blockArray(gregtech6.registry.GT6StaticStorages.Kind.SAFE_KEYLOCKED)).build(null));
+
+	/**
+	 * The Wooden Bookshelf BET — the vanilla-planks subset rows (the 300-ladder fold, the
+	 * declared wave-4 deviation). Registry path "bookshelf" mirrors
+	 * GT6BookShelfBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.inventories.GT6BookShelfBlockEntity>> BOOKSHELF_BE =
+			BLOCK_ENTITY_TYPES.register("bookshelf", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.inventories.GT6BookShelfBlockEntity::new,
+					GT6StaticStorages.blockArray(gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF)).build(null));
+
+	/**
+	 * The Wooden Bottlecrate BET — the same vanilla-planks subset over the crate class.
+	 * Registry path "bottlecrate" mirrors GT6BottleCrateBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.inventories.GT6BottleCrateBlockEntity>> BOTTLECRATE_BE =
+			BLOCK_ENTITY_TYPES.register("bottlecrate", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.inventories.GT6BottleCrateBlockEntity::new,
+					GT6StaticStorages.blockArray(gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE)).build(null));
 
 
 	/**

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "M": {
+      "item": "gt6:casing_small_bronze"
+    },
+    "S": {
+      "item": "gt6:stick_bronze"
+    },
+    "T": {
+      "item": "gt6:screw_bronze"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "SdS",
+    "LCL",
+    "TMT"
+  ],
+  "result": {
+    "item": "gt6:locker_bronze"
+  },
+  "show_notification": true
+}

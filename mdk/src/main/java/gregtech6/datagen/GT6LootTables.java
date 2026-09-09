@@ -100,7 +100,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
-                new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK)), // task p26-sensors-core
+                new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task p26-sensors-core
+                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK)), // task p26-storage-static-batch — the 28 self-drops
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -124,7 +125,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
-                new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK))); // task p26-sensors-core
+                new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task p26-sensors-core
+                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK))); // task p26-storage-static-batch — the 28 self-drops
         //?}
     }
 
@@ -1189,6 +1191,20 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
+     * The static storage batch block list (task p26-storage-static-batch): the 28
+     * GT6StaticStorages rows — the loader MTE default self-drop (Drops==null,
+     * PrefixBlock.java:227) over the locker/drawer/safe/bookshelf/bottlecrate ladders,
+     * the cannerLootBlocks shape verbatim.
+     */
+    public static List<Block> staticStorageLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /**
      * The sensor-family sub-provider (task p26-sensors-core): the three pioneer sensor
      * blocks self-drop (the axle/wire family form — the upstream MTE default, the block
      * itself drops; a sensor carries no item inventory, canDrop :291 answers F for the
@@ -1224,6 +1240,43 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : sensorLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The static storage self-drop provider (task p26-storage-static-batch): one
+     * unconditional self-drop per row (the vanilla survives_explosion condition, the
+     * GT6BlockLoot convention). NOTE the safe's dungeon-loot seam does NOT live here —
+     * the safe marker resolves ANY loot table id at runtime through the LootDataManager
+     * (LootDataResolver.getLootTable, vanilla LootDataResolver.java:25), so the gt6
+     * wrapper tables (data/gt6/loot_tables/chests/safe_*.json, static resources) are the
+     * tier-a injection seam pack authors touch — a datagen-written reference to a vanilla
+     * table would fail this provider's validation (LootTableProvider.run closes over only
+     * its own tables, LootTableProvider.java:63-71).
+     */
+    public static final class GT6StaticStorageBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6StaticStorageBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6StaticStorageBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return staticStorageLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            // dropSelf registers through the void add() face — the statement form, the
+            // wireLootBlocks/axleLootBlocks precedent (:176/:215)
+            for (Block tBlock : staticStorageLootBlocks()) dropSelf(tBlock);
         }
     }
 }

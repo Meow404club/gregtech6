@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_small_bronze"
+    },
+    "O": {
+      "item": "gt6:gear_gt_bronze"
+    },
+    "P": {
+      "item": "gt6:plate_quintuple_bronze"
+    },
+    "S": {
+      "item": "gt6:stick_bronze"
+    }
+  },
+  "pattern": [
+    "PGP",
+    "OGS",
+    "PGP"
+  ],
+  "result": {
+    "item": "gt6:safe_keylocked_bronze"
+  },
+  "show_notification": true
+}
