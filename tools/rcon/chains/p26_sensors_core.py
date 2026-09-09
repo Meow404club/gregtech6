@@ -80,9 +80,9 @@ steps += [
     Step("gt6machine fakesource on", expect="ENERGY_FAKE_SOURCE set true"),
     Step(f"gt6machine shredder place {M}", expect="GT6 shredder placed at"),
     Step(f"gt6sensor place progressmeter {S1}", expect="GT6 sensor placed at"),
-    Step(f"gt6sensor read {S1}", expect="facing 2 (north), probe 3 (south)"),
-    Step(f"gt6sensor mode {S1} 2", expect="mode 2"),          # GREATER
-    Step(f"gt6sensor set {S1} 0", expect="set 0"),
+    Step(f"gt6sensor read {S1}", expect="facing 2, probe 3"),
+    Step(f"gt6sensor mode {S1} 2", expect=": 2 (hex false)"),  # GREATER — the mode echo
+    Step(f"gt6sensor set {S1} 0", expect=": 0 (clamped 0..9999)"),
     Step(f"gt6sensor read {S1}", expect="redstone 0"),         # idle: progress 0 > 0 is false
     Step(f"gt6machine shredder input 16 {M}", expect="input: 16x"),  # 16 x 16t rows ≈ 13 s of progress > 0
     Step(f"gt6sensor read {S1}", expect="redstone 15", poll=10),     # the running flip (the :143 GREATER arm)
@@ -95,12 +95,12 @@ steps += [
     phase("B: the fluidometer arm — the barrel threshold flip + the PERCENT read"),
     Step(f"setblock {T} gt6:barrel_wood", expect="Changed the block"),
     Step(f"gt6sensor place fluidometer {S2}", expect="GT6 sensor placed at"),
-    Step(f"gt6sensor mode {S2} 6", expect="mode 6"),           # FULL
+    Step(f"gt6sensor mode {S2} 6", expect=": 6 (hex false)"),  # FULL — the mode echo
     Step(f"gt6sensor read {S2}", expect="redstone 0"),          # 0 >= 16000 false
     Step(f"gt6tank fill {T} minecraft:water 8000", expect="filled 8000/8000"),
-    Step(f"gt6sensor mode {S2} 1", expect="mode 1"),           # PERCENT
+    Step(f"gt6sensor mode {S2} 1", expect=": 1 (hex false)"),  # PERCENT — the mode echo
     Step(f"gt6sensor read {S2}", expect="displayed 50, redstone 8"),  # scale(50, 100, 15)
-    Step(f"gt6sensor mode {S2} 6", expect="mode 6"),           # FULL again
+    Step(f"gt6sensor mode {S2} 6", expect=": 6 (hex false)"),  # FULL again — the mode echo
     Step(f"gt6sensor read {S2}", expect="redstone 0"),          # 8000 >= 16000 false
     Step(f"gt6tank fill {T} minecraft:water 8000", expect="filled 8000/8000"),  # the barrel tops at 16000
     Step(f"gt6sensor read {S2}", expect="redstone 15", poll=8),      # the full-tank flip
@@ -120,11 +120,14 @@ steps += [
     Step(f"execute if block {S2} gt6:fluidometer[facing=west]", expect="Test passed"),  # the FACING mirror
     Step(f"gt6sensor second {S2} 2", expect=": 2 ok (monkey-wrench arm)"),  # north != facing → ok
     Step(f"gt6sensor second {S2} 4", expect="REFUSED"),               # == the facing side → the :103 refusal
-    Step(f"gt6sensor set {S1} 12345", expect="set 9999"),             # the decimal keypad clamp (bind 0..9999)
-    Step(f"gt6sensor hex {S1} 1", expect="hex true"),
-    Step(f"gt6sensor set {S1} 70000", expect="set 65535"),            # the bind16 ceiling clamp
-    Step(f"gt6sensor hex {S1} 0", expect="hex false"),
-    Step(f"gt6sensor window {S1} 40", expect="window 40"),            # the averaging-window resize
+    Step(f"gt6sensor set {S1} 12345", expect=": 9999 (clamped 0..9999)"),   # the decimal keypad clamp (bind 0..9999)
+    Step(f"gt6sensor hex {S1} 1", expect=": true (mode byte"),
+    # the hex ceiling: the command's own argument range (0..65535) IS the bind16 range —
+    # the above-range clamp is pinned offline (keypadStep bind16, the GTSensorLogicTest);
+    # here the boundary value pins the hex-mode acceptance through the command face
+    Step(f"gt6sensor set {S1} 65535", expect=": 65535 (clamped bind16)"),
+    Step(f"gt6sensor hex {S1} 0", expect=": false (mode byte"),
+    Step(f"gt6sensor window {S1} 40", expect="window at 434, 64, 127: 40"),  # the averaging-window resize
     Step(f"gt6sensor reset {S1}", expect="mode 0, redstone 0, window 1"),  # the soft-hammer full zeroing
 ]
 
