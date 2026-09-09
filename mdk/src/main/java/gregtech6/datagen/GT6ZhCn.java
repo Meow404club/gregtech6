@@ -411,6 +411,14 @@ public class GT6ZhCn extends LanguageProvider {
 				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
 			}
 		}
+		// storage hoppers (task p26-storage-hopper-family): the two kind templates over the
+		// bronze/steel row words (the boiler walk emits them; the tsv hand rows carry the
+		// 漏斗 family wording)
+		addDirect(gregtech6.registry.GT6Hoppers.DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6Hoppers.DISPLAY_QUEUE_KEY);
+		for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
+			addRowUnit(tEmitted, gregtech6.registry.GT6Hoppers.matUnitKeyOf(tRow));
+		}
 		// large boiler + dense wall: the templates + the row-material units
 		addDirect(gregtech6.registry.GTMultiBlocks.LARGE_BOILER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMultiBlocks.DENSE_WALL_DISPLAY_KEY);

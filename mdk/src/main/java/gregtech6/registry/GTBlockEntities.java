@@ -295,6 +295,30 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("boiler_tank", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity::new, GT6Boilers.blockArray()).build(null));
 
+	// -------------------------------------------------------------------------
+	// the storage hoppers (task p26-storage-hopper-family) — the two family rows
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The regular Hopper BET (task p26-storage-hopper-family — the BET type rows live here
+	 * per the card, the 4 blocks/items in GT6Hoppers; the BOILER_TANK_BE one-type-many-blocks
+	 * multi-mount form over {@link GT6Hoppers#hopperBlockArray()}). ADR-P3-1: both material
+	 * ladders (Bronze 3 / Steel 5) are ONE BE class, the row config rides the block carrier.
+	 * Registry path "hopper" mirrors GT6HopperBlockEntity#getTileEntityName like every row.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.inventories.GT6HopperBlockEntity>> HOPPER_BE =
+			BLOCK_ENTITY_TYPES.register("hopper", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.inventories.GT6HopperBlockEntity::new, GT6Hoppers.hopperBlockArray()).build(null));
+
+	/**
+	 * The Queue Hopper BET — the same shape over the queue-kind pair
+	 * ({@link GT6Hoppers#queueBlockArray()}; the FIFO compaction class). Registry path
+	 * "queue_hopper" mirrors GT6QueueHopperBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity>> QUEUE_HOPPER_BE =
+			BLOCK_ENTITY_TYPES.register("queue_hopper", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity::new, GT6Hoppers.queueBlockArray()).build(null));
+
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest
 	 * BlockItem. DeferredRegister form per the task card (Bus.MOD.bus().get() self-contained).

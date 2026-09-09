@@ -26,12 +26,14 @@ import gregtech6.tileentity.GTOfflineTestBase;
 public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 
 	/**
-	 * The twelve BlockEntityType handles the 21.1 wiring dereferences, per registry row
+	 * The BlockEntityType handles the 21.1 wiring dereferences, per registry row
 	 * (the ninth is the 2026-09-04 multiblock-part relay wiring — the pipe-hole family's
 	 * capability face, GT6CapabilityWiring MULTIBLOCK_PART_BE row; the tenth and eleventh
 	 * are the 2026-09-05 dryer/distillery registrations — the p14/p16 families' item +
 	 * fluid faces, GT6CapabilityWiring DRYER_BE/DISTILLERY_BE rows; the twelfth is the
-	 * 2026-09-09 item pipe — the p26-pipe-item family's item face, the ITEM_PIPE_BE row).
+	 * 2026-09-09 item pipe — the p26-pipe-item family's item face, the ITEM_PIPE_BE row;
+	 * the thirteenth and fourteenth are the 2026-09-09 storage hoppers — the
+	 * p26-storage-hopper-family's item-only faces, the HOPPER_BE/QUEUE_HOPPER_BE rows).
 	 */
 	@Test
 	public void beWiringPathsPinnedToRegistryRows() {
@@ -51,6 +53,8 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		// + the bowl BET, item + fluid faces both, the machine-family shape)
 		assertEquals("bathing_pot", GT6Kitchen.BATHING_POT_BE.getId().getPath());
 		assertEquals("mixing_bowl", GT6Kitchen.MIXING_BOWL_BE.getId().getPath());
+		assertEquals("hopper", GTBlockEntities.HOPPER_BE.getId().getPath());
+		assertEquals("queue_hopper", GTBlockEntities.QUEUE_HOPPER_BE.getId().getPath());
 	}
 
 	/**

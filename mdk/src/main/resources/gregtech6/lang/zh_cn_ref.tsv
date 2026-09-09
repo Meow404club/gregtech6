@@ -34,8 +34,8 @@ direct	block.gt6.brick_burning_box	砖块燃烧室 (固体)	hand
 direct	block.gt6.crank	手摇曲柄	hand
 direct	block.gt6.crusher	破碎机	hand
 direct	block.gt6.energy_source	测试能源	hand
-direct	block.gt6.fe_battery	FE测试电池	hand
 direct	block.gt6.example_chest	GT 示例箱子	hand
+direct	block.gt6.fe_battery	FE测试电池	hand
 direct	block.gt6.gearbox	木制可调变速箱	hand
 direct	block.gt6.grass	草方块	hand
 direct	block.gt6.grass_black	草方块	hand
@@ -175,6 +175,7 @@ direct	gt6.row.diesel.display	燃油引擎 (%s)	hand
 direct	gt6.row.distillery.display	蒸馏器 (%s)	hand
 direct	gt6.row.dryer.display	干燥器 (%s)	hand
 direct	gt6.row.funnel.display	%s漏斗	hand
+direct	gt6.row.hopper.display	%s漏斗	hand
 direct	gt6.row.item_pipe.display.huge	巨型%s物流管道	hand
 direct	gt6.row.item_pipe.display.large	大型%s物流管道	hand
 direct	gt6.row.item_pipe.display.medium	%s物流管道	hand
@@ -218,6 +219,7 @@ direct	gt6.row.mat.tungsten_carbide	碳化钨	hand
 direct	gt6.row.mat.tungstensteel	钨钢	hand
 direct	gt6.row.mat.ultimet	哈氏合金	hand
 direct	gt6.row.mat.wood_treated	木制	hand
+direct	gt6.row.queue_hopper.display	%s队列漏斗	hand
 direct	gt6.row.size.huge	巨型	hand
 direct	gt6.row.size.large	大型	hand
 direct	gt6.row.size.medium	中型	hand

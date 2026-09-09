@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/hopper_side",
+    "east": "gt6:block/hopper_side",
+    "north": "gt6:block/hopper_front",
+    "south": "gt6:block/hopper_side",
+    "up": "gt6:block/hopper_side",
+    "west": "gt6:block/hopper_side"
+  }
+}

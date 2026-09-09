@@ -331,6 +331,17 @@ HAND_TRANSLATIONS = {
     # material words. 物流管道 word set = the dump rows verbatim (tmp/gregtech.lang
     # 25002..25007 黄铜物流管道 family / 25027..25032 康铜 / 25052..25057 钴黄铜; the 限制
     # prefix rows :11852-11857); the tab = itemGroup.gt.multitileentity.25202 物品管道 :17993.
+    # task p26-storage-hopper-family — the storage hopper family: the two kind templates
+    # over the bronze/steel material words (already in the boiler walk). The 漏斗 wording =
+    # the dump's hopper-family style (tmp/gregtech.lang:13544 陶瓷漏斗 / :13546 不锈钢漏斗
+    # — no space, material word first); the queue kind is the literal 队列漏斗 (no dump row
+    # exists — the MTE names never entered the lang dump, the hand-layer ruling).
+    # tsv-orphan回写 (the item-pipe card's rule): the eu-bridge card added this row to the
+    # committed TSV without a HAND_TRANSLATIONS entry — a faithful rerun washed it out
+    # (2026-09-09, found by this card's regeneration)
+    "block.gt6.fe_battery": ("FE测试电池", "hand"),
+    "gt6.row.hopper.display": ("%s漏斗", "hand"),
+    "gt6.row.queue_hopper.display": ("%s队列漏斗", "hand"),
     "gt6.row.item_pipe.display.medium": ("%s物流管道", "hand"),
     "gt6.row.item_pipe.display.large": ("大型%s物流管道", "hand"),
     "gt6.row.item_pipe.display.huge": ("巨型%s物流管道", "hand"),

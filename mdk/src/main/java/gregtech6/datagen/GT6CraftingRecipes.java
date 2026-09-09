@@ -26,6 +26,7 @@ import net.minecraftforge.common.Tags;
 *///?}
 
 import gregtech6.registry.GT6ExtruderMolds;
+import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6Kitchen;
 import gregtech6.registry.GT6SprayCans;
@@ -96,6 +97,22 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation CLAY_BOWL_REVERSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_bowl_reverse");
 	public static final ResourceLocation CLAY_BOWL_SMELT_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mixing_bowl");
 
+	/** The storage-hopper crafting ids — the result-path convention, one per row (Loader :145-146). */
+	public static final java.util.List<ResourceLocation> HOPPER_RECIPE_IDS = gregtech6.registry.GT6Hoppers.ROWS.stream()
+			.map(GT6CraftingRecipes::hopperRecipeId)
+			.collect(java.util.stream.Collectors.toList());
+
+	/**
+	 * The id of one hopper row's recipe (the save calls' join seam). The path rides a
+	 * local so the two-arg RL ctor args stay bare identifiers — the swap-table regex
+	 * never matches parenthesized argument expressions (the grassRecipeId precedent,
+	 * {@code tRow.path()} was a 21.1 compile red through exactly that documented gap).
+	 */
+	public static ResourceLocation hopperRecipeId(GT6Hoppers.HopperRow aRow) {
+		String tPath = aRow.path();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
 	public GT6CraftingRecipes(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider) {
 		//? if forge {
 		super(aOutput);
@@ -119,6 +136,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		bathingPotSteelBuilder().save(aConsumer, BATHING_POT_STEEL_ID);
 		clayBowlReverseBuilder().save(aConsumer, CLAY_BOWL_REVERSE_ID);
 		clayBowlSmeltingBuilder().save(aConsumer, CLAY_BOWL_SMELT_ID);
+		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
+			hopperRecipeBuilder(tRow).save(aConsumer, hopperRecipeId(tRow));
+		}
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -138,6 +158,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		bathingPotSteelBuilder().save(aOutput, BATHING_POT_STEEL_ID);
 		clayBowlReverseBuilder().save(aOutput, CLAY_BOWL_REVERSE_ID);
 		clayBowlSmeltingBuilder().save(aOutput, CLAY_BOWL_SMELT_ID);
+		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
+			hopperRecipeBuilder(tRow).save(aOutput, hopperRecipeId(tRow));
+		}
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
@@ -284,7 +307,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/**
 	 * The wrench self-craft row (task p25-tool-hammer-wrench spec ⑤γ) — the upstream
 	 * {@code "PhP"}/{@code " P "}/{@code " P "} row (Loader_Tools.java:310): 'P' =
-	 * the steel plate platform tag ({@code GT6ItemTags.materialTag(PLATES_FAMILY,
+	 * the steel plate platform tag ({@code gregtech6.datagen.GT6ItemTags.materialTag(PLATES_FAMILY,
 	 * "steel")} — the forge:plates/steel form the plate family band already emits),
 	 * 'h' = {@code #gt6:tools/hard_hammer} (the hammer MUST exist first — the
 	 * dependency direction the card's merge order pins). The in-grid hammer pays one
@@ -293,7 +316,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * the machine-dismantle interaction pool stays out of this card).
 	 */
 	private ShapedRecipeBuilder wrenchBuilder() {
-		TagKey<Item> tSteelPlates = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "steel");
+		TagKey<Item> tSteelPlates = gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "steel");
 		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.WRENCH.get())
 				.pattern("PhP")
 				.pattern(" P ")
@@ -316,6 +339,28 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * container-item channel via Recipe.getRemainingItems). Result 1x
 	 * {@code gt6:bending_cylinder_small}.
 	 */
+	/**
+	 * The storage-hopper crafting rows (task p26-storage-hopper-family — the Loader
+	 * metalset :145-146 recipes, one per Bronze/Steel × hopper/queue row): the upstream
+	 * "PwP"/"XCX"/" Xh" (hopper) and "PCP"/"XCX"/"wXh" (queue) grids with 'P' =
+	 * {@code OP.plate.dat(aMat)} → the {@code #forge:plates/<mat>} platform tag, 'X' =
+	 * {@code OP.plateCurved.dat(aMat)} → the GTMaterialItems curved-plate item, 'C' =
+	 * {@code OD.craftingChest} → {@code Tags.Items.CHESTS}, 'w'/'h' = the wrench/hammer
+	 * tool tags (the bending-cylinder tool-letter mapping).
+	 */
+	private ShapedRecipeBuilder hopperRecipeBuilder(GT6Hoppers.HopperRow aRow) {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, GT6Hoppers.ITEMS_BY_PATH.get(aRow.path()).get())
+				.pattern(aRow.queue() ? "PCP" : "PwP")
+				.pattern("XCX")
+				.pattern(aRow.queue() ? "wXh" : " Xh")
+				.define('P', gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, aRow.material().slug()))
+				.define('X', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateCurved, aRow.material().mt()).get())
+				.define('C', Tags.Items.CHESTS)
+				.define('w', GT6ItemTags.TOOLS_WRENCH)
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.unlockedBy("has_chest", has(Tags.Items.CHESTS));
+	}
+
 	private ShapedRecipeBuilder bendingCylinderSmallBuilder() {
 		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.BENDING_CYLINDER_SMALL.get())
 				.pattern("sfh")

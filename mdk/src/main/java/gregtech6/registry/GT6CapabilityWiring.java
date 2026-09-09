@@ -22,6 +22,8 @@ import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.GT6FeBatteryBlockEntity; // p26 tail-append
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
+import gregtech6.tileentity.inventories.GT6HopperBlockEntity; // p26 tail-append
+import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity; // p26 tail-append
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 import gregtech6.tileentity.machines.TileEntityOven;
@@ -92,6 +94,7 @@ public final class GT6CapabilityWiring {
 		registerBarrelItemHandlers(aEvent);
 		registerFeBattery(aEvent); // task p26-eu-bridge-outbound (tail-append; shared serial file)
 		registerKitchenFaces(aEvent);
+		registerHopperFamily(aEvent); // task p26-storage-hopper-family (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -316,6 +319,26 @@ public final class GT6CapabilityWiring {
 		BlockEntityType<GT6FeBatteryBlockEntity> tBattery = GT6FeBatteries.FE_BATTERY_BE.get();
 		aEvent.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, tBattery,
 				(aBe, aSide) -> aBe.energyStorage());
+	}
+
+	// -- the storage hopper family (p26-storage-hopper-family; TAIL-APPENDED ROW, the
+	// shared serial file: append-only discipline) --
+	// The two family BETs join as item-only faces (zero fluid tanks on the classes, the
+	// oven/ACT shape). The forge leg answers through the GT6HopperBaseBlockEntity
+	// getCapability override (fresh per-call SideItemHandler — the side view IS the
+	// upstream getAccessibleSlotsFromSide2/canInsertItem2/canExtractItem2 triple); this
+	// row is the 21.1 registration only. Without it every external hopper push (the
+	// VanillaInventoryCodeHooks.insertHook level ItemHandler.BLOCK query) is
+	// capability-blind on this node while the 1.20.1 BE override hides the gap — the
+	// ADR-P15-4 census discipline, mechanized by GT6CapabilityWiringSeamTest.
+
+	private static void registerHopperFamily(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6HopperBlockEntity> tHopper = GTBlockEntities.HOPPER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tHopper,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		BlockEntityType<GT6QueueHopperBlockEntity> tQueue = GTBlockEntities.QUEUE_HOPPER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tQueue,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 	}
 
 }
