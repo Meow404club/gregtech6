@@ -109,8 +109,11 @@ CHAIN = Chain(
     Step(f"data get block {F(_up(B, 1))} mode", expect="0b", label="the upstream NBT_MODE default = Anywhere (:55 mSidedAccess = F)"),
     Step(f"data modify block {F(_up(B, 1))} mode set value 1b", expect="Modified", label="the monkey-wrench toggle state through /data (:94-98)"),
     Step(f"data get block {F(_up(B, 1))} mode", expect="1b"),
-    Step(f"item replace block {F(_up(B, 1))} container.0 with minecraft:stone 4", expect="Replaced",
-         label="slot 0 (TOP_HALF) written straight into the root inventory — nothing can pull it while the mode is Sided"),
+    Step(node_cmds={
+            "1.20.1": f'data merge block {F(_up(B, 1))} {{"inventory": {{"Size": 144, "Items": [{{Slot: 0b, id: "minecraft:stone", Count: 4b}}]}}}}',
+            "1.21.1": f'data merge block {F(_up(B, 1))} {{"inventory": {{"Size": 144, "Items": [{{Slot: 0, id: "minecraft:stone", count: 4}}]}}}}',
+        }, expect="Modified",
+        label="slot 0 (TOP_HALF) written straight into the root inventory through the ItemStackHandler NBT face (/item replace container does not answer a non-vanilla Container) — nothing can pull it while the mode is Sided"),
     _dump(_up(B, 1), 'id: "minecraft:stone"', poll=8.0,
           label="AFTER the drain window the drawer STILL holds the stone — the bottom view is BOTTOM_HALF {72..143}, slot 0 is invisible to the pull (column A drained the same shape in Anywhere mode)"),
     Step(f"data modify block {F(_up(B, 1))} mode set value 0b", expect="Modified", label="back to Anywhere"),
