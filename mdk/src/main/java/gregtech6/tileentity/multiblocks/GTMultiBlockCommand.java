@@ -655,7 +655,10 @@ public final class GTMultiBlockCommand {
 			return 0;
 		}
 		java.util.List<gregapi.oredict.OreDictMaterialStack> tFeed = new java.util.ArrayList<>();
-		tFeed.add(new gregapi.oredict.OreDictMaterialStack(tMaterial, aUnits));
+		// the argument counts MATERIAL UNITS — the stack mAmount rides the raw CS.U scale
+		// (upstream :218 mTargetCrushing.mAmount semantics; the offline fixtures build
+		// N * CS.U the same way). A bare aUnits would be ~4e-9 U of dust, not 4U of metal.
+		tFeed.add(new gregapi.oredict.OreDictMaterialStack(tMaterial, aUnits * gregapi.data.CS.U));
 		boolean tFed = tCrucible.addMaterialStacks(tFeed, tCrucible.envTemperature());
 		String tReport = String.format("GT6 crucible feed %d %s at %s: fed=%s total=%d temp=%dK",
 				aUnits, tMaterial.mNameInternal, tCrucible.getBlockPos().toShortString(), tFed,
