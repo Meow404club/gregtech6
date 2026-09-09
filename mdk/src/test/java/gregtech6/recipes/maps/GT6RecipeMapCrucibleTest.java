@@ -202,20 +202,37 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 
 		static MaterialPrefixItem probePrefix(String aProbeId, java.util.function.Supplier<MaterialPrefixItem> aCreator) {
 			var tRegistry = BuiltInRegistries.ITEM;
+			// the offline registry open is best-effort PER FACE: the forge leg backs the vanilla
+			// registry with a ForgeRegistry delegate and its own locked flag; the 21.1 leg has
+			// NEITHER (the delegate NoSuchFieldException is its baseline shape — the vanilla
+			// unfreeze() is the only gate there), so every face degrades to a no-op and the
+			// register call below is the real verdict
 			try {
 				java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
 				tUnfreeze.setAccessible(true);
 				tUnfreeze.invoke(tRegistry);
+			} catch (Exception aE) {
+				throw new IllegalStateException("could not unfreeze the offline item registry", aE);
+			}
+			try {
 				java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
 				tDelegate.setAccessible(true);
 				Object tForgeRegistry = tDelegate.get(tRegistry);
 				java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
 				tForgeUnfreeze.setAccessible(true);
 				tForgeUnfreeze.invoke(tForgeRegistry);
+			} catch (NoSuchFieldException | NoSuchMethodException ignored) {
+				// the 21.1 face: no forge delegate behind the vanilla registry
+			} catch (Exception aE) {
+				throw new IllegalStateException("could not open the offline forge registry", aE);
+			}
+			try {
 				java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
 				tLocked.setBoolean(tRegistry, false);
+			} catch (NoSuchFieldException ignored) {
+				// the 21.1 face: nothing but the vanilla frozen flag to unlock
 			} catch (Exception aE) {
-				throw new IllegalStateException("could not open the offline item registry", aE);
+				throw new IllegalStateException("could not clear the offline registry lock", aE);
 			}
 			MaterialPrefixItem rItem = aCreator.get();
 			net.minecraft.core.Registry.register(tRegistry, new ResourceLocation("gt6", aProbeId), rItem);

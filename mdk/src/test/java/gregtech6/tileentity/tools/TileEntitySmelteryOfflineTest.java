@@ -61,6 +61,9 @@ public class TileEntitySmelteryOfflineTest {
 		ProbeBoot.boot();
 		DUST_IRON = ProbeBoot.probePrefix("p26crucbe_probe_dust_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.dust, MT.Iron));
 		INGOT_IRON = ProbeBoot.probePrefix("p26crucbe_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Iron));
+		// the synthetic BlockEntityType needs its registry writable too (1.21.1: the
+		// intrusive-holder creation validates the write — MappedRegistry.createIntrusiveHolder)
+		ProbeBoot.openOffline(BuiltInRegistries.BLOCK_ENTITY_TYPE);
 		sSmelteryType = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TileEntitySmeltery(sSmelteryType, aPos, aState), Blocks.BRICKS).build(null);
 		sMoldType = BlockEntityType.Builder.of(
@@ -347,25 +350,48 @@ public class TileEntitySmelteryOfflineTest {
 		}
 
 		static MaterialPrefixItem probePrefix(String aProbeId, java.util.function.Supplier<MaterialPrefixItem> aCreator) {
-			var tRegistry = BuiltInRegistries.ITEM;
+			net.minecraft.core.Registry<Item> tRegistry = BuiltInRegistries.ITEM;
+			openOffline(tRegistry);
+			MaterialPrefixItem rItem = aCreator.get();
+			net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
+			return rItem;
+		}
+
+		/** The registry open, best-effort PER FACE, shared by every offline registration site. */
+		@SuppressWarnings("unchecked")
+		static void openOffline(net.minecraft.core.Registry<?> aRegistry) {
+			net.minecraft.core.Registry<Object> tRegistry = (net.minecraft.core.Registry<Object>)aRegistry;
+			// the forge leg backs the vanilla registry with a ForgeRegistry delegate and its own
+			// locked flag; the 21.1 leg has NEITHER (the delegate NoSuchFieldException is its
+			// baseline shape — the vanilla unfreeze() is the only gate there), so every face
+			// degrades to a no-op and the caller's register/build call is the real verdict
 			try {
 				Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
 				tUnfreeze.setAccessible(true);
 				tUnfreeze.invoke(tRegistry);
+			} catch (Exception aE) {
+				throw new IllegalStateException("could not unfreeze the offline registry", aE);
+			}
+			try {
 				Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
 				tDelegate.setAccessible(true);
 				Object tForgeRegistry = tDelegate.get(tRegistry);
 				Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
 				tForgeUnfreeze.setAccessible(true);
 				tForgeUnfreeze.invoke(tForgeRegistry);
+			} catch (NoSuchFieldException | NoSuchMethodException ignored) {
+				// the 21.1 face: no forge delegate behind the vanilla registry
+			} catch (Exception aE) {
+				throw new IllegalStateException("could not open the offline forge registry", aE);
+			}
+			try {
 				Field tLocked = inheritedField(tRegistry.getClass(), "locked");
 				tLocked.setBoolean(tRegistry, false);
+			} catch (NoSuchFieldException ignored) {
+				// the 21.1 face: nothing but the vanilla frozen flag to unlock
 			} catch (Exception aE) {
-				throw new IllegalStateException("could not open the offline item registry", aE);
+				throw new IllegalStateException("could not clear the offline registry lock", aE);
 			}
-			MaterialPrefixItem rItem = aCreator.get();
-			net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
-			return rItem;
 		}
 
 		private static Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {

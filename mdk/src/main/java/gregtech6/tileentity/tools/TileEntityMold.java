@@ -67,7 +67,10 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * {@link #MOLD_RECIPES} filled by the literal port of the :628-921 static block (the
  * base shapes, the three per-entry bijections :849-877 and the two round-two
  * bijections :889-917 over the merged map; java.util.HashMap keeps the upstream
- * last-write-wins collision order, 549 final rows); the {@code COOL2CRYSTAL}
+ * last-write-wins collision order, 549 final rows), LAZY on the first
+ * {@link #getMoldRecipe} lookup — the P6 lesson (a9027ac): the 21.1 mod-construct
+ * scan class-loads this BE before OP is initialized and an eager put would poison
+ * the table with null values forever; the {@code COOL2CRYSTAL}
  * plate→plateGem / plateTiny→plateGemTiny swap (:194-197 in the tick, :250-253 in
  * {@link #fillMold}); the monkey-wrench auto-pull — {@link #mAutoPullDirections} set
  * from the top-face horizontal sub-sides (:343-355), the {@code SERVER_TIME % 20 == 5}
@@ -112,7 +115,10 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 	/**
 	 * Upstream :77 — the shape→prefix map. The card face registers the three ingot-bar
 	 * shifts (MultiTileEntityMold.java:690-694); getMoldRecipe answers OP.nugget for any
-	 * other non-zero shape.
+	 * other non-zero shape. LAZY fill (the P6 lesson, a9027ac): the 21.1 mod-construct
+	 * @EventBusSubscriber scan class-loads this BE before OP is initialized, and an eager
+	 * put would poison the table with null values forever — the fill rides the first
+	 * lookup instead, when OP is guaranteed ready.
 	 */
 	public static final Map<Integer, OreDictPrefix> MOLD_RECIPES = new HashMap<>();
 
@@ -123,7 +129,15 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 		return rShape;
 	}
 
-	static {
+	// ------------------------------------------------------------------------------------
+	// the LAZY fill (the P6 lesson, a9027ac): the 21.1 mod-construct @EventBusSubscriber
+	// scan class-loads this BE before OP is initialized, and an eager static put would
+	// poison the table with null values forever — the fill rides the first getMoldRecipe
+	// lookup instead, when OP is guaranteed ready.
+	// ------------------------------------------------------------------------------------
+
+	/** The ingot bars ride first (the :690-694 loop form), the universe continues below. */
+	private static void fillMoldRecipes() {
 		for (int i = 0; i < 3; i++) MOLD_RECIPES.put(ingotShape(i), OP.ingot);
 	}
 
@@ -136,15 +150,15 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 		return 1 << i;
 	}
 
-	/**
+	/*
 	 * The :628-921 static block, verbatim: the base shapes into a TEMP map, the first
 	 * round — every TEMP entry plus its three per-entry bijections (:849-877) into
 	 * {@link #MOLD_RECIPES} — then the merged map re-iterated through the two round-two
 	 * bijections (:889-917). java.util.HashMap reproduces the upstream last-write-wins
 	 * collision order (549 final rows; the mdk test pins the 30 ceramic shapes 30/30).
-	 * Runs as a SECOND static block (declaration order = after the ingot bars above).
+	 * Runs after {@link #fillMoldRecipes()} in declaration order (after the ingot bars).
 	 */
-	static {
+	private static void fillMoldRecipesUniverse() {
 		Map<Integer, OreDictPrefix> tTemp = new HashMap<>();
 
 		tTemp.put(0b0_00100_11111_01110_01010_00000, OP.toolHeadBuilderwand);
@@ -418,6 +432,7 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 	@Nullable
 	public static OreDictPrefix getMoldRecipe(int aShape) {
 		if (aShape == 0) return null;
+		if (MOLD_RECIPES.isEmpty()) { fillMoldRecipes(); fillMoldRecipesUniverse(); }
 		OreDictPrefix rRecipe = MOLD_RECIPES.get(aShape & SHAPE_MASK);
 		return rRecipe == null ? OP.nugget : rRecipe;
 	}
