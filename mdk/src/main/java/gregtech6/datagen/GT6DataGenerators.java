@@ -72,5 +72,10 @@ public final class GT6DataGenerators {
         // (both legs construct through the two-arg form; the forge leg ignores the lookup)
         event.getGenerator().addProvider(true,
             new GT6CraftingRecipes(event.getGenerator().getPackOutput(), event.getLookupProvider()));
+        // task p26-w1-press-extruder-molds: the 1.21 singular-registry aliases — MUST stay
+        // LAST (the sequential per-provider join order is the contract: the mirror walks the
+        // earlier providers' on-disk output; see GT6DualDirectoryFaces)
+        event.getGenerator().addProvider(true,
+            new GT6DualDirectoryFaces(event.getGenerator().getPackOutput()));
     }
 }
