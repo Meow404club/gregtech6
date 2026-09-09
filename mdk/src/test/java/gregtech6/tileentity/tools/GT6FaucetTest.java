@@ -190,7 +190,9 @@ public class GT6FaucetTest extends GTOfflineTestBase {
 	static final class FakeCrucibleBE extends net.minecraft.world.level.block.entity.BlockEntity implements ITileEntityCrucible {
 		private final RecordingCrucible mCrucible;
 		FakeCrucibleBE(RecordingCrucible aCrucible) {
-			super(net.minecraft.world.level.block.entity.BlockEntityType.FURNACE, BlockPos.ZERO, Blocks.STONE.defaultBlockState());
+			// the FURNACE state (not stone): the 21.1 BlockEntity ctor validates
+			// type.isValid(state) — FURNACE is only valid for the furnace block
+			super(net.minecraft.world.level.block.entity.BlockEntityType.FURNACE, BlockPos.ZERO, Blocks.FURNACE.defaultBlockState());
 			mCrucible = aCrucible;
 		}
 		@Override
