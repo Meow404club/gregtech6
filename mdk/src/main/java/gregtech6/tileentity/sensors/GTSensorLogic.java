@@ -47,6 +47,14 @@ public final class GTSensorLogic {
 	 * rides the sync channel only when it moved by MORE than 49 since the last sync (or a
 	 * keypad/screwdriver arm forced it with the {@code oDisplayedNumber = Short.MIN_VALUE}
 	 * write, SensorTE:171-193 — the forced-diff arm is the BE's job, this is the gate).
+	 *
+	 * <p>DECLARED DEVIATION: 49 pins the upstream {@code SYNC_SECOND ? 0 : 49} FALSE branch
+	 * only. Upstream toggles {@code CS.SYNC_SECOND} to true once per second
+	 * (CS.java:316 default T; GT_API_Proxy.java:253 {@code SERVER_TIME % 20 == 0}), making
+	 * the second-tick sync threshold-0 (every changed value resyncs immediately, visible on
+	 * the in-world digital display strip); the port syncs solely on the 49 gate. Unobservable
+	 * for now — no digital display-strip render face exists yet, so the per-second cadence
+	 * has nothing to show itself on. Revisit at the sensor render pool card.
 	 */
 	public static final int SYNC_THRESHOLD = 49;
 
