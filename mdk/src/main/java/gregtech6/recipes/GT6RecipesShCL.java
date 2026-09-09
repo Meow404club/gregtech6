@@ -163,7 +163,8 @@ public final class GT6RecipesShCL {
 	 * {@code 16/8=2, 16/9=1, 16, 16*4=64, 16/4=4, 16/2=8}). {@code layeredNot}/{@code lensNot}
 	 * transcribe the trailing {@code LAYERED.NOT} / {@code lens.NOT} condition conjuncts
 	 * ({@code lens.NOT} is the port {@code OreDictPrefix.NOT} condition = the material has no
-	 * lens item generation, OreDictPrefix.java:570-573).
+	 * lens item generation — the port canGenerateItem lives at OreDictPrefix.java:290, the
+	 * upstream :368-371).
 	 *
 	 * <p>All 22 rows pass {@code T} for the ctor's {@code aOutputPulverizedRemains} (the 13th
 	 * arg — {@code NI, NI, T, T, F} on every :371-393 call), so {@link #buildLatheRecipe}
@@ -479,8 +480,10 @@ public final class GT6RecipesShCL {
 	 * and the twelve crushed-family array rows (:138-150) have their input prefix in the port
 	 * item universe (GTMaterialItems.itemPathPrefixes — dustPure/dustRefined/chunk/rubble/
 	 * pebbles/clump/reduced/crystalline/cleanGravel/cluster have no port items), so the other
-	 * 20 templates expand to zero rows and are skip-counted, lighting up automatically if a
-	 * future item-universe card registers those prefixes.
+	 * 20 templates expand to ZERO rows and carry the zero-expansion audit line of
+	 * {@link #pourShredderTemplates} — neither poured nor skip-counted, the material loop body
+	 * never executes — lighting up automatically if a future item-universe card registers
+	 * those prefixes.
 	 */
 	private static volatile List<ShredTemplate> sShredTemplates = null;
 
@@ -592,8 +595,11 @@ public final class GT6RecipesShCL {
 	private static void pourShredderTemplates(RecipeMap aMap, List<ShredTemplate> aTemplates) {
 		Set<String> tSeen = seenRowKeys(aMap);
 		int tPoured = 0, tSkipped = 0, tDeduped = 0;
+		List<String> tZeroExpansion = new ArrayList<>();
 		for (ShredTemplate tTemplate : aTemplates) {
-			for (OreDictMaterial tMaterial : expandCrusherMaterials(tTemplate.inPrefix())) {
+			List<OreDictMaterial> tMaterials = expandCrusherMaterials(tTemplate.inPrefix());
+			if (tMaterials.isEmpty()) {tZeroExpansion.add(tTemplate.note() + " (" + tTemplate.inPrefix().mNameInternal + ")"); continue;} // the material loop body never runs — neither poured nor skip-counted
+			for (OreDictMaterial tMaterial : tMaterials) {
 				Recipe tRecipe = buildShredRecipe(tTemplate, tMaterial);
 				if (tRecipe == null) {tSkipped++; continue;}
 				if (!tSeen.add(rowKey(tRecipe))) {tDeduped++; continue;}
@@ -601,6 +607,7 @@ public final class GT6RecipesShCL {
 				tPoured++;
 			}
 		}
+		if (!tZeroExpansion.isEmpty()) LOGGER.info("GT6 Shredder templates with ZERO material expansion (the input prefix has no registered port items — they light up when an item-universe card registers them): {}", tZeroExpansion);
 		LOGGER.info("GT6 Shredder backfill poured: {} loaded, {} skipped (condition gates + unresolvable items), {} deduped (exact rows already present)", tPoured, tSkipped, tDeduped);
 	}
 
