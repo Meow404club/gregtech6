@@ -18,7 +18,6 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -124,11 +123,20 @@ public final class GT6MoldDatagen {
 	// lang (en_us)
 	// ------------------------------------------------------------------------------------
 
-	/** The composed display keys. */
-	public static final class Lang extends LanguageProvider {
+	/**
+	 * The composed display keys. Chains BELOW {@link GT6CrucibleDatagen.Lang} (which chains
+	 * below {@link GT6EnUs}): every en_us writer replays the FULL base set through
+	 * {@code super.addTranslations()}, so the file stays complete under ANY
+	 * {@code @Mod.EventBusSubscriber} registration order — the standalone
+	 * {@code LanguageProvider} this class used before is the registration-order lottery the
+	 * p26-sensors-core merge gate caught (a bare provider's {@code finish} rewrites the
+	 * whole file; on the enumeration orders where this listener registered last it wiped
+	 * the 2701-key table down to this class's 66 keys).
+	 */
+	public static final class Lang extends GT6CrucibleDatagen.Lang {
 
 		public Lang(PackOutput aOutput) {
-			super(aOutput, GT6DataGenerators.MOD_ID, "en_us");
+			super(aOutput);
 		}
 
 		/** Unique provider name (the GT6EnUs collision; see {@link Provider#getName}). */
@@ -139,6 +147,7 @@ public final class GT6MoldDatagen {
 
 		@Override
 		protected void addTranslations() {
+			super.addTranslations(); // base + crucible + stone-mold set — the file must stay complete
 			add("gt6.row.mold.display.mold_ceramic", "Ceramic Mold");
 			add("item.gt6.mold_ceramic_raw", "Ceramic Mold (Raw)");
 			for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) {
