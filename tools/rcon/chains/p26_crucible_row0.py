@@ -130,8 +130,10 @@ steps += [
     # its required unit from the crucible on its own tick, racing the pour command)
     Step(f"gt6crucible stat {C}", expect="content: Tin x"),
     # the mold drifts -5 K/t toward the env; below 505 the shape pours out (:189-203).
-    # The mold stat prints Item.toString — plain "ingot_tin", no namespace (observed).
-    Step(f"gt6crucible mold {M}", expect="output=1x ingot_tin", poll=30.0),
+    # The mold stat prints Item.toString — plain "ingot_tin" on 1.20.1, namespaced
+    # "gt6:ingot_tin" on the 21.1 ItemStack.toString — per-leg exact lines.
+    Step(f"gt6crucible mold {M}", poll=30.0,
+         node_expects={"1.20.1": "output=1x ingot_tin", "1.21.1": "output=1x gt6:ingot_tin"}),
 ]
 
 # ------------------------------------------------- B: the steel rung (the iron face + the bucket path)
