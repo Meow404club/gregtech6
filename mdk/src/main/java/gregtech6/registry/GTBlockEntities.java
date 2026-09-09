@@ -319,6 +319,33 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("queue_hopper", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity::new, GT6Hoppers.queueBlockArray()).build(null));
 
+	// -------------------------------------------------------------------------
+	// the sensors (task p26-sensors-core) — the three pioneer BET rows
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Progressmeter BET (task p26-sensors-core — the BET type rows live here per the
+	 * card, the blocks/items in {@link GT6Sensors}; the CRANK_BE single-mount shape). One
+	 * BET per pioneer class: the three concrete sensors are unrelated subtypes of the
+	 * abstract {@code GTSensorBlockEntity} base, so the ADR-P3-1 one-type-many-blocks
+	 * degenerates per class (the family grows through the batch-2 card by appending rows).
+	 * Registry path "progressmeter" mirrors getTileEntityName like every other row.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6ProgressmeterBlockEntity>> PROGRESSMETER_BE =
+			BLOCK_ENTITY_TYPES.register("progressmeter", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6ProgressmeterBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("progressmeter").get()).build(null));
+
+	/** The Fluidometer BET — the Fluid-O-Meter row (Loader:1986). Registry path "fluidometer". */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6FluidometerBlockEntity>> FLUIDOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("fluidometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6FluidometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("fluidometer").get()).build(null));
+
+	/** The Electrometer BET — the Electrometer row (Loader:1997). Registry path "electrometer". */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6ElectrometerBlockEntity>> ELECTROMETER_BE =
+			BLOCK_ENTITY_TYPES.register("electrometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6ElectrometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("electrometer").get()).build(null));
+
+
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest
 	 * BlockItem. DeferredRegister form per the task card (Bus.MOD.bus().get() self-contained).
