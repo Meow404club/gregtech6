@@ -73,32 +73,52 @@ public final class GT6MoldDatagen {
 	private static final String FAUCET_TEXTURE = "block/stones/andesite/cobble";
 
 	/** The blockstate/item-model provider. */
-	public static final class Provider extends BlockStateProvider {
+		public static final class Provider extends BlockStateProvider {
 
-		public Provider(PackOutput aOutput, ExistingFileHelper aHelper) {
-			super(aOutput, GT6DataGenerators.MOD_ID, aHelper);
-		}
+			public Provider(PackOutput aOutput, ExistingFileHelper aHelper) {
+				super(aOutput, GT6DataGenerators.MOD_ID, aHelper);
+			}
 
-		@Override
-		protected void registerStatesAndModels() {
-			// the ceramic molds: blank + 30 shapes (the stone rung rides GT6CrucibleDatagen)
-			for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) {
+			/**
+			 * Unique provider name — the vanilla BlockStateProvider default is
+			 * {@code "Block States: gt6"} and the DataGenerator rejects a duplicate
+			 * ("Duplicate provider: Block States: gt6", the GT6CrucibleDatagen
+			 * Provider#getName precedent); this card's spec keeps
+			 * GT6DataGenerators/GT6BlockStates untouched.
+			 */
+			@Override
+			public String getName() {
+				return "Block States: gt6:mold";
+			}
+
+			@Override
+			protected void registerStatesAndModels() {
+				// the ceramic molds: the blank + 30 shapes (the stone rung rides GT6CrucibleDatagen)
+				registerMoldModels(GT6Molds.CERAMIC_BLANK_ROW);
+				for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) {
+					registerMoldModels(tRow);
+				}
+				// the faucets: cube_all placeholder over every FACING (the p12 addAttachments form)
+				for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
+					Block tBlock = GT6Molds.FAUCET_BLOCKS_BY_PATH.get(tRow.path()).get();
+					simpleBlock(tBlock, models().cubeAll(tRow.path(), modLoc(FAUCET_TEXTURE)));
+					itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+				}
+			}
+
+			/** One mold row: the placeholder cube blockstate + the formed item model + the raw clay sprite. */
+			private void registerMoldModels(GT6Molds.MoldRow tRow) {
 				Block tBlock = GT6Molds.BLOCKS_BY_PATH.get(tRow.path()).get();
 				ModelFile tModel = models().cubeAll("block/" + tRow.path(), modLoc(MOLD_TEXTURE));
 				simpleBlock(tBlock, tModel);
 				itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
-				// the paired raw clay item — a flat generated sprite over the vanilla clay texture
+				// the paired raw clay item — a flat generated sprite over the VANILLA clay
+				// texture (the explicit minecraft: namespace; ExistingFileHelper validates
+				// layer0 against the known packs and gt6:block/clay does not exist)
 				itemModels().withExistingParent(tRow.path() + "_raw", "item/generated")
-						.texture("layer0", "block/clay");
-			}
-			// the faucets: cube_all placeholder over every FACING (the p12 addAttachments form)
-			for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
-				Block tBlock = GT6Molds.FAUCET_BLOCKS_BY_PATH.get(tRow.path()).get();
-				simpleBlock(tBlock, models().cubeAll(tRow.path(), modLoc(FAUCET_TEXTURE)));
-				itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+						.texture("layer0", "minecraft:block/clay");
 			}
 		}
-	}
 
 	// ------------------------------------------------------------------------------------
 	// lang (en_us)
@@ -111,9 +131,16 @@ public final class GT6MoldDatagen {
 			super(aOutput, GT6DataGenerators.MOD_ID, "en_us");
 		}
 
+		/** Unique provider name (the GT6EnUs collision; see {@link Provider#getName}). */
+		@Override
+		public String getName() {
+			return "Language Provider: gt6:mold[en_us]";
+		}
+
 		@Override
 		protected void addTranslations() {
 			add("gt6.row.mold.display.mold_ceramic", "Ceramic Mold");
+			add("item.gt6.mold_ceramic_raw", "Ceramic Mold (Raw)");
 			for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) {
 				String tName = shapeName(tRow.path());
 				add("gt6.row.mold.display." + tRow.path(), "Ceramic " + tName + " Mold");
@@ -352,9 +379,12 @@ public final class GT6MoldDatagen {
 			aRows.add(shapelessRow(id("mold_" + aFormedPath.substring("mold_ceramic_".length()) + "_raw_" + aIdTail), tBuilder));
 		}
 
-		/** One furnace row builder: the raw clay item hardens into the formed block item (the RM.add_smelting family). */
+		/** One furnace row builder: the raw clay item hardens into the formed block item (the RM.add_smelting family).
+		 * The unlock criterion is mandatory — vanilla ensureValid rejects a recipe with no
+		 * advancement trigger ("No way of obtaining recipe", SimpleCookingRecipeBuilder:109). */
 		private static SimpleCookingRecipeBuilder smeltingBuilder(Item aRaw, Item aFormed) {
-			return SimpleCookingRecipeBuilder.smelting(net.minecraft.world.item.crafting.Ingredient.of(aRaw), RecipeCategory.MISC, aFormed, 0.0F, 200);
+			return SimpleCookingRecipeBuilder.smelting(net.minecraft.world.item.crafting.Ingredient.of(aRaw), RecipeCategory.MISC, aFormed, 0.0F, 200)
+					.unlockedBy("has_raw", has(aRaw));
 		}
 
 		private static ResourceLocation id(String aPath) {

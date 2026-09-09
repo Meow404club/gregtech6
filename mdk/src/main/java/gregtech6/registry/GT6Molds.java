@@ -230,7 +230,10 @@ public final class GT6Molds {
 	 * forward-reference form against the P6 lambda lesson.
 	 */
 	static {
-		for (MoldRow tRow : CERAMIC_ROWS) {
+		// the family walk: the carvable blank FIRST (Loader:352), then the 30 pre-carved
+		// rows — its block/item/raw trio backs the datagen band (the blank clay handcraft,
+		// the smelt_mold_ceramic hardening row) and the command walkers
+		for (MoldRow tRow : withBlank(CERAMIC_ROWS)) {
 			final MoldRow fRow = tRow;
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new MoldBlock(fRow, BlockBehaviour.Properties.of()
@@ -251,6 +254,14 @@ public final class GT6Molds {
 			FAUCET_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new GTComposedNameItem(GT6Molds.FAUCET_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
+	}
+
+	/** The family walk order: the carvable blank (Loader:352) leads, the 30 pre-carved rows follow. */
+	private static java.util.List<MoldRow> withBlank(java.util.List<MoldRow> aRows) {
+		java.util.List<MoldRow> rRows = new java.util.ArrayList<>(aRows.size() + 1);
+		rRows.add(CERAMIC_BLANK_ROW);
+		rRows.addAll(aRows);
+		return rRows;
 	}
 
 
