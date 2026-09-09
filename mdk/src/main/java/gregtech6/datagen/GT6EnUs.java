@@ -18,6 +18,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GT6Attachments;
+import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6Kinetics;
@@ -30,7 +31,9 @@ import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
 import gregtech6.covers.GT6Covers;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * en_us lang, two template tables with no per-item combination explosion (GTCEu data/lang/
@@ -103,6 +106,7 @@ public class GT6EnUs extends LanguageProvider {
         addGrassBlocks(); // task p24-grass-block — table-tail append
         addFoamSprays(); // task p25-c-foam-pipe-spray — table-tail append
         addFoodCans(); // task p25-food-can-row0 — table-tail append
+        addExtruderMolds(); // task p26-w1-press-extruder-molds — table-tail append
     }
 
     /**
@@ -602,6 +606,15 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_SIFTER_UNIT_KEY, "Sifter (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_COMPRESSOR_UNIT_KEY, "Compressor (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_WIREMILL_UNIT_KEY, "Wiremill (%s)");
+        // task p26-w1-press-extruder-molds — the Press + Extruder family templates and the
+        // :101-104 unit words (the T1 Extruder word differs upstream: "Low Heat Extruder",
+        // :1406, vs "Extruder" :1407-1409)
+        add(gregtech6.registry.GTMachines.PRESS_DISPLAY_KEY, "Press (%s)");
+        add(gregtech6.registry.GTMachines.EXTRUDER_DISPLAY_KEY, "Extruder (%s)");
+        add(gregtech6.registry.GTMachines.EXTRUDER_LOW_HEAT_DISPLAY_KEY, "Low Heat Extruder (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_PRESS_UNIT_KEY, "Press");
+        add(gregtech6.registry.GTMachines.MACHINE_EXTRUDER_UNIT_KEY, "Extruder");
+        add(gregtech6.registry.GTMachines.MACHINE_EXTRUDER_LOW_HEAT_UNIT_KEY, "Low Heat Extruder");
         // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
@@ -856,6 +869,27 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6." + GT6FoodCans.FOOD_CAN_COOKIES_HUGE.getId().getPath(), "Huge Food Can (Cookies)");
         add("item.gt6.bending_cylinder_small", "Small Bending Cylinder");
         add(GT6FoodCans.TAB_TITLE_KEY, "GregTech: Cans");
+    }
+
+    /**
+     * Extruder-mold family keys (task p26-w1-press-extruder-molds): the row0 MINIMAL
+     * subset's display names, walked over the {@link GT6ExtruderMolds} registry constants
+     * so the lang face cannot drift from the registered ids (the addFoodCans form).
+     * Values are the upstream registration-row wordings verbatim: "Extruder Shape (Plate)"
+     * (MultiItemTechnological.java:186) and "Extruder Shape (Rod)" (:212).
+     * Table-tail append, append-only.
+     */
+    private void addExtruderMolds() {
+        for (RegistryObject<Item> tMold : GT6ExtruderMolds.MOLDS) {
+            String tPath = tMold.getId().getPath();
+            if (tPath.equals("shape_extruder_plate")) {
+                add("item.gt6." + tPath, "Extruder Shape (Plate)");
+            } else if (tPath.equals("shape_extruder_rod")) {
+                add("item.gt6." + tPath, "Extruder Shape (Rod)");
+            } else {
+                throw new IllegalStateException("extruder mold id drifted: " + tPath);
+            }
+        }
     }
 
     /**

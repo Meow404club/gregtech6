@@ -83,6 +83,11 @@ SESSION_GROUPS = (
     # fills), admission mirroring the p16 cluster form (bbox-registered, no
     # fresh_boot / mutates member — the inject grid rig needs no fakesource).
     ("p26_w1_sifter", "p26_w1_compressor", "p26_w1_wiremill"),
+    # P26 W1 card B (p26-w1-press-extruder-molds): the press + extruder ladders —
+    # one coordinate band (z=20 strip x429..437, the fresh 430 band clear of the
+    # canner 400 strip), both chains bbox-adjacent so one cluster's boundary
+    # cleanup covers the other's leftovers (the p24 z=20 cluster form).
+    ("p26_w1_press", "p26_w1_extruder"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 

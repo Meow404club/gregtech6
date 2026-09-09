@@ -23,6 +23,7 @@ import net.minecraftforge.common.Tags;
 /*import net.neoforged.neoforge.common.Tags;
 *///?}
 
+import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
@@ -77,6 +78,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation BENDING_CYLINDER_SMALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bending_cylinder_small");
 	/** The empty-food-can crafting row (task p25-food-can-row0 spec ③, MultiItemRandomTools.java:239). */
 	public static final ResourceLocation FOOD_CAN_EMPTY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "food_can_empty");
+	/** The plate-mold crafting row (task p26-w1-press-extruder-molds, MultiItemTechnological.java:247 stroke). */
+	public static final ResourceLocation SHAPE_EXTRUDER_PLATE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_extruder_plate");
+	/** The rod-mold crafting row (task p26-w1-press-extruder-molds, MultiItemTechnological.java:221 stroke). */
+	public static final ResourceLocation SHAPE_EXTRUDER_ROD_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_extruder_rod");
 
 	public GT6CraftingRecipes(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider) {
 		//? if forge {
@@ -95,6 +100,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		wrenchBuilder().save(aConsumer, WRENCH_ID);
 		bendingCylinderSmallBuilder().save(aConsumer, BENDING_CYLINDER_SMALL_ID);
 		foodCanEmptyBuilder().save(aConsumer, FOOD_CAN_EMPTY_ID);
+		shapeExtruderPlateBuilder().save(aConsumer, SHAPE_EXTRUDER_PLATE_ID);
+		shapeExtruderRodBuilder().save(aConsumer, SHAPE_EXTRUDER_ROD_ID);
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -108,6 +115,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		wrenchBuilder().save(aOutput, WRENCH_ID);
 		bendingCylinderSmallBuilder().save(aOutput, BENDING_CYLINDER_SMALL_ID);
 		foodCanEmptyBuilder().save(aOutput, FOOD_CAN_EMPTY_ID);
+		shapeExtruderPlateBuilder().save(aOutput, SHAPE_EXTRUDER_PLATE_ID);
+		shapeExtruderRodBuilder().save(aOutput, SHAPE_EXTRUDER_ROD_ID);
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
@@ -317,5 +326,41 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('o', GT6ItemTags.TOOLS_BENDING_CYLINDER_SMALL)
 				.define('P', GT6ItemTags.PLATE_CURVED_TIN)
 				.unlockedBy("has_plate_curved_tin", has(GT6ItemTags.PLATE_CURVED_TIN));
+	}
+
+	/**
+	 * The plate-mold crafting row (task p26-w1-press-extruder-molds) — the upstream
+	 * {@code "x  ", " P ", "   "} stroke VERBATIM (MultiItemTechnological.java:247, the
+	 * plate-identity file position): 'x' = {@code #gt6:tools/file} (the CR.java:200
+	 * craftingToolFile letter), 'P' = {@link GT6ItemTags#EXTRUDER_SHAPE_BASE} (the declared
+	 * row0 flattening — upstream chains Plate←Foil+file through the pooled Empty/Foil
+	 * intermediates; the port keys both row0 molds on the chain root's tungsten-carbide
+	 * plate face, one file stroke per mold identity). Result 1x plate mold — the RM.Extruder
+	 * plate row's shaping tool (RM.java:405).
+	 */
+	private ShapedRecipeBuilder shapeExtruderPlateBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.get())
+				.pattern("x  ")
+				.pattern(" P ")
+				.pattern("   ")
+				.define('x', GT6ItemTags.TOOLS_FILE)
+				.define('P', GT6ItemTags.EXTRUDER_SHAPE_BASE)
+				.unlockedBy("has_shape_base", has(GT6ItemTags.EXTRUDER_SHAPE_BASE));
+	}
+
+	/**
+	 * The rod-mold crafting row (task p26-w1-press-extruder-molds) — the upstream
+	 * {@code "   ", " Px", "   "} stroke VERBATIM (MultiItemTechnological.java:221, the
+	 * rod-identity file position; the flattened base ingredient per the plate-mold doc).
+	 * Result 1x rod mold — the RM.Extruder rod row's shaping tool (RM.java:407).
+	 */
+	private ShapedRecipeBuilder shapeExtruderRodBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get())
+				.pattern("   ")
+				.pattern(" Px")
+				.pattern("   ")
+				.define('x', GT6ItemTags.TOOLS_FILE)
+				.define('P', GT6ItemTags.EXTRUDER_SHAPE_BASE)
+				.unlockedBy("has_shape_base", has(GT6ItemTags.EXTRUDER_SHAPE_BASE));
 	}
 }

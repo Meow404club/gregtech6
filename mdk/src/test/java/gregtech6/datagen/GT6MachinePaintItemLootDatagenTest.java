@@ -47,9 +47,10 @@ import net.minecraft.server.Bootstrap;
 class GT6MachinePaintItemLootDatagenTest {
 
     /**
-     * The 38 paint-carry bases, in the census order: the p22 painted-item domain
+     * The 46 paint-carry bases, in the census order: the p22 painted-item domain
      * ({@code paintableBlockArray}: oven, shredder/crusher/lathe, dryer, distillery) plus
-     * the p24 canner rows, the p26 W1 kinetic trio and the ACT controller — every consumer
+     * the p24 canner rows, the p26 W1 kinetic trio, the p26 press/extruder rows and the
+     * ACT controller — every consumer
      * of the shared {@code paintSelfTable} builder, so the pinned shape covers the full
      * regen surface.
      */
@@ -64,6 +65,8 @@ class GT6MachinePaintItemLootDatagenTest {
             "sifter", "sifter_t2", "sifter_t3", "sifter_t4",
             "compressor", "compressor_t2", "compressor_t3", "compressor_t4",
             "wiremill", "wiremill_t2", "wiremill_t3", "wiremill_t4",
+            "press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds
+            "extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds
             "advanced_crafting_table");
 
     /** The paint keys the 03 base writes while painted (CS.java:1161-1162, verbatim upstream). */
@@ -89,10 +92,10 @@ class GT6MachinePaintItemLootDatagenTest {
         }
     }
 
-    /** The census shape: all 38 paintSelfTable tables carry the (quoted) paint carry function. */
+    /** The census shape: all 46 paintSelfTable tables carry the (quoted) paint carry function. */
     @Test
     void pinnedMachinePaintLootCensus() throws Exception {
-        assertEquals(38, PAINT_BASES.size(), "the paintSelfTable census (21 p22 rows + canner 4 + kinetic trio 12 + ACT 1)");
+        assertEquals(46, PAINT_BASES.size(), "the paintSelfTable census (21 p22 rows + canner 4 + kinetic trio 12 + press/extruder 8 + ACT 1)");
         for (String tBase : PAINT_BASES) assertPaintSelfTable(tBase);
     }
 

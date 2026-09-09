@@ -72,6 +72,8 @@ public class GTCommandTreeLiteralTest {
 		"sifter", "sifter_t2", "sifter_t3", "sifter_t4", // task p26-w1-sifter-compressor-wiremill — the W1 Kinetic trio
 		"compressor", "compressor_t2", "compressor_t3", "compressor_t4",
 		"wiremill", "wiremill_t2", "wiremill_t3", "wiremill_t4",
+		"press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds — the Press ladder
+		"extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds — the Extruder ladder
 		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 
 	private static CommandSourceStack stack() {

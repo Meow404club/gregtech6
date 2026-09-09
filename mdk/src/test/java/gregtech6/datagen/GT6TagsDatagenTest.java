@@ -50,9 +50,10 @@ import gregtech6.registry.GTWireSpecs;
 class GT6TagsDatagenTest {
 
     /**
-     * The pickaxe-file member total: 272 stone pairs + 38 machine blocks (oven +
+     * The pickaxe-file member total: 272 stone pairs + 46 machine blocks (oven +
      * shredder/crusher/lathe ladders + 4 dryers + 4 distilleries + the 4 Canner rows +
-     * the W1 sifter/compressor/wiremill ladders + the Advanced Crafting Table —
+     * the W1 sifter/compressor/wiremill ladders + the 4 Press + 4 Extruder rows, task
+     * p26-w1-press-extruder-molds + the Advanced Crafting Table —
      * GTMachines.java:58/:118-151/:233-237/:347-351/:415-435 + the p26-w1 trio,
      * the whole-class {@code GTMachines.BLOCKS} walk means every landed machine row joins
      * the band) + the 1 conscious multiblock join (the Lightning Rod pillar block, task
@@ -68,9 +69,12 @@ class GT6TagsDatagenTest {
      * future machine card (the four Canner rows 2970 → 2974, the rod block 2974 → 2975,
      * the tags batch 2975 → 3621, the single-variant ACT row 3621 → 3622, task
      * p24-act-machine — the S4 merge-order reconciliation, then the W1 trio 3622 → 3634,
-     * task p26-w1-sifter-compressor-wiremill).
+     * task p26-w1-sifter-compressor-wiremill — then the press/extruder rows 3634 → 3642,
+     * task p26-w1-press-extruder-molds).
      */
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 38 + 1 + 2677 + 629 + 2 + 15;
+    // the 8 press/extruder rows joined the whole-class walk at task p26-w1-press-extruder-molds
+    // (38 -> 46 machines on the merged line, 3634 -> 3642)
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 46 + 1 + 2677 + 629 + 2 + 15;
 
 
     /** The 13 tier-ladder machine ids of the first machines card + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */

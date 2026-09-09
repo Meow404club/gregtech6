@@ -90,6 +90,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
                 new SubProviderEntry(GT6KineticMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-sifter-compressor-wiremill
+                new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
+                new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -110,6 +112,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
                 new SubProviderEntry(GT6KineticMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-sifter-compressor-wiremill
+                new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
+                new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -543,6 +547,82 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : kineticLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The press-family block list (task p26-w1-press-extruder-molds): the four Press rows
+     * (Loader_MultiTileEntities.java:1425-1428) — the cannerLootBlocks shape verbatim, the
+     * MTE default self-drop (the same Drops==null default).
+     */
+    public static List<Block> pressLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.PRESS_ROWS) {
+            rBlocks.add(gregtech6.registry.GTMachines.PRESS_BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The press-family self-drop provider (task p26-w1-press-extruder-molds; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6PressBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6PressBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6PressBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return pressLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : pressLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The extruder-family block list (task p26-w1-press-extruder-molds): the four Extruder
+     * rows (Loader_MultiTileEntities.java:1406-1409) — the pressLootBlocks shape verbatim,
+     * the MTE default self-drop (the same Drops==null default).
+     */
+    public static List<Block> extruderLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.EXTRUDER_ROWS) {
+            rBlocks.add(gregtech6.registry.GTMachines.EXTRUDER_BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The extruder-family self-drop provider (task p26-w1-press-extruder-molds; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6ExtruderBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6ExtruderBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6ExtruderBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return extruderLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : extruderLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 

@@ -90,5 +90,10 @@ public final class GT6DataGenerators {
         event.getGenerator().addProvider(true,
             new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(),
                 event.getLookupProvider(), GT6WorldgenDatagen.BUILDER, Set.of("gt6")));
+        // task p26-w1-press-extruder-molds: the 1.21 singular-registry aliases — MUST stay
+        // LAST (the sequential per-provider join order is the contract: the mirror walks the
+        // earlier providers' on-disk output; see GT6DualDirectoryFaces)
+        event.getGenerator().addProvider(true,
+            new GT6DualDirectoryFaces(event.getGenerator().getPackOutput()));
     }
 }

@@ -261,6 +261,32 @@ public class GT6RecipeMaps {
 	 */
 	public static volatile RecipeMapFurnaceFuel FURNACE_FUEL;
 
+	/**
+	 * RM.java:99 — the Forming Press map (task p26-w1-press-extruder-molds): the
+	 * {@link gregtech6.recipes.maps.GT6RecipeMapFormingPress} subclass, transcribed
+	 * parameter-for-parameter over the 15-arg port ctor: "gt.recipe.press", "Press",
+	 * NEI name null → the internal name, progress 0/1, GUI machines/press (lowercased, the
+	 * Shredder-line convention — no asset shipped, the Oven-line form), item slots 3/1/2,
+	 * fluid slots 0/0/0, minimal inputs 0, power 1. The row0 STATIC rows are DECLARED-empty
+	 * (every upstream RM.Press static row pools: the food-mold rows need the Shape_Foodmold_*
+	 * items, the electrode rows the Electrode_FR_* items, the rest live in the 59 compat
+	 * classes — the P10 not-ported ruling; the FLUIDBED declared-empty precedent); the map's
+	 * row0 rows come from its OWN findRecipe dynamic arm (the mold + block forming
+	 * synthesis, the class doc).
+	 */
+	public static volatile gregtech6.recipes.maps.GT6RecipeMapFormingPress PRESS;
+
+	/**
+	 * RM.java:136 — the Extruder map (task p26-w1-press-extruder-molds), the base-RecipeMap
+	 * row transcribed parameter-for-parameter: "gt.recipe.extruder", "Extruder", NEI name
+	 * null → the internal name, progress 0/1, GUI machines/extruder (lowercased), item
+	 * slots 2/2/2, fluid slots 0/0/0, minimal inputs 0, power 1. The :405/:407 material
+	 * rows pour statically via {@link GT6RecipesExtruder} (FMLCommonSetup); the molds ride
+	 * the rows at the port's count-1 carrier with the never-consumed net effect through
+	 * {@code Recipe.sNotConsumable} (the upstream size-0 marker, remember id478).
+	 */
+	public static volatile RecipeMap EXTRUDER;
+
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
 		if (FURNACE != null) return;
@@ -409,6 +435,27 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		// RM.java:99 — the Forming Press map, the subclass ctor with the identical constants
+		// row (the row0 static rows DECLARED-empty — the class doc; the rows ride the map's
+		// own findRecipe dynamic arm)
+		PRESS = new gregtech6.recipes.maps.GT6RecipeMapFormingPress(new HashSet<>(),
+				"gt.recipe.press", "Press", null,
+				0, 1,
+				"gt6:textures/gui/machines/press",
+				/*IN-OUT-MIN-ITEM=*/ 3, 1, 2,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:136 — the Extruder map, the base-map row verbatim (items 2/2/2, fluids
+		// 0/0/0, MIN 0, AMP 1); the :405/:407 rows pour via GT6RecipesExtruder
+		EXTRUDER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.extruder", "Extruder", null,
+				0, 1,
+				"gt6:textures/gui/machines/extruder",
+				/*IN-OUT-MIN-ITEM=*/ 2, 2, 2,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -435,6 +482,8 @@ public class GT6RecipeMaps {
 		COMPRESSOR = null;
 		WIREMILL = null;
 		FURNACE_FUEL = null;
+		PRESS = null;
+		EXTRUDER = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}

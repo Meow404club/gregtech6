@@ -84,16 +84,21 @@ public class Recipe {
 	/**
 	 * The never-consumed input predicate (task p16-distillery-family ①): the consume pass
 	 * ({@code checkStacksEqual(true, ...)}) skips every matched input the predicate claims —
-	 * the production default is the Integrated Circuit identity ({@code GT6Circuits::isSelector}),
-	 * the port of the upstream STACK-SIZE-0 marker ({@code ST.tag(n)} = circuit size 0, whose
-	 * consume decrements by zero, ST.java:779-781 + Recipe.java:780-781). Size-0 is not
+	 * the production default is the Integrated Circuit identity ({@code GT6Circuits::isSelector})
+	 * OR the extruder-mold identity (task p26-w1-press-extruder-molds), the port of the
+	 * upstream STACK-SIZE-0 marker ({@code ST.tag(n)} = circuit size 0, whose consume
+	 * decrements by zero, ST.java:779-781 + Recipe.java:780-781; the molds ride the same
+	 * marker — RM.java:405/:407 {@code IL.Shape_Extruder_*.get(0)}, the remember-id478
+	 * archaeology: the plate-row/rod-row fifth-boolean F/T axis is aLogErrors, the
+	 * never-consumed semantic is the size-0 input on BOTH rows). Size-0 is not
 	 * portable to 1.20.1, so the port carries the circuit at count 1 and reproduces the
 	 * never-consumed net effect here; the MATCH half is untouched (the {@code Damage} tag
 	 * routes the configuration number exactly). Public as the offline test seam (the machines-package row-test e2e swaps it) —
 	 * the vanilla item registry freezes at bootstrap, so the offline fixture predicate stands
 	 * in for the circuit identity (the GT6RecipesShCLTest synthetic-item convention).
 	 */
-	public static java.util.function.Predicate<ItemStack> sNotConsumable = gregtech6.item.GT6Circuits::isSelector;
+	public static java.util.function.Predicate<ItemStack> sNotConsumable =
+			aStack -> gregtech6.item.GT6Circuits.isSelector(aStack) || gregtech6.registry.GT6ExtruderMolds.isMold(aStack);
 
 	/**
 	 * The tag-membership seam of the material-tag fallback (task

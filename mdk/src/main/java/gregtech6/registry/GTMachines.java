@@ -94,11 +94,13 @@ public final class GTMachines {
 	public static final long[][] TIER_INPUTS = {{16, 32, 64}, {64, 128, 256}, {256, 512, 1024}, {1024, 2048, 4096}};
 
 	/**
-	 * The shared 4/8/16/32 parallel table (task p26-w1-sifter-compressor-wiremill): the
+	 * The shared 4/8/16/32 parallel table (the W1 合流互指 ruling, never re-defined): the
 	 * upstream NBT_PARALLEL {4, 8, 16, 32} + NBT_PARALLEL_DURATION T shape carried by the
-	 * Crusher rows (:1300-1303) AND the Sifter (:1312-1315) / Compressor (:1343-1346)
-	 * rows verbatim — one constant, cross-referenced by {@link #CRUSHER_PARALLEL} (the
-	 * W1 ruling: merged, never re-defined).
+	 * Crusher rows (:1300-1303), the Sifter (:1312-1315) / Compressor (:1343-1346) rows
+	 * (task p26-w1-sifter-compressor-wiremill) AND the Press rows (:1425-1428, task
+	 * p26-w1-press-extruder-molds) — one constant, every consumer references it. Declared
+	 * BEFORE its consumers (the static-initializer order — the illegal-forward-reference
+	 * lesson).
 	 */
 	public static final int[] PARALLEL_4_32 = {4, 8, 16, 32};
 
@@ -119,6 +121,18 @@ public final class GTMachines {
 	public static final String MACHINE_SIFTER_UNIT_KEY = "gt6.row.machine.sifter";
 	public static final String MACHINE_COMPRESSOR_UNIT_KEY = "gt6.row.machine.compressor";
 	public static final String MACHINE_WIREMILL_UNIT_KEY = "gt6.row.machine.wiremill";
+	/** The Press family unit word (task p26-w1-press-extruder-molds, the :101-104 key form). */
+	public static final String MACHINE_PRESS_UNIT_KEY = "gt6.row.machine.press";
+	/** The Extruder family unit word (task p26-w1-press-extruder-molds, T2-T4; the :101-104 key form). */
+	public static final String MACHINE_EXTRUDER_UNIT_KEY = "gt6.row.machine.extruder";
+	/** The T1 Extruder unit word — the upstream name column differs at T1: "Low Heat Extruder" (:1406) vs "Extruder" (:1407-1409). */
+	public static final String MACHINE_EXTRUDER_LOW_HEAT_UNIT_KEY = "gt6.row.machine.extruder_low_heat";
+	/** The Press family display template (the row displayKey face, the Dryer/Distillery convention). */
+	public static final String PRESS_DISPLAY_KEY = "gt6.row.machine.press.display";
+	/** The Extruder family display template (T2-T4 rows). */
+	public static final String EXTRUDER_DISPLAY_KEY = "gt6.row.machine.extruder.display";
+	/** The T1 Extruder display template ("Low Heat Extruder (Steel)", the :1406 name column). */
+	public static final String EXTRUDER_LOW_HEAT_DISPLAY_KEY = "gt6.row.machine.extruder.low_heat.display";
 
 	/** The tier ordinal unit key ({@code gt6.row.tier.<n>}). */
 	public static String machineTierUnitKey(int aTier) {
@@ -424,6 +438,182 @@ public final class GTMachines {
 	public static Block cannerBlockByPath(String aPath) {
 		RegistryObject<Block> tHandle = CANNER_BLOCKS_BY_PATH.get(aPath);
 		return tHandle == null ? null : tHandle.get();
+	}
+
+	// ---------------------------------------------------------------------------
+	// the Press family (task p26-w1-press-extruder-molds) — the four rows
+	// Loader_MultiTileEntities.java:1425-1428 (aClass = MultiTileEntityBasicMachine,
+	// NBT_TEXTURE "press", TD.Energy.KU, RM.Press, NBT_PARALLEL 4/8/16/32 +
+	// NBT_PARALLEL_DURATION T, no tank keys — the map is 0/0/0 fluids). ONE family BET
+	// over the four tier blocks — the CANNER_ROWS MachineRow shape. Connectivity masks
+	// (:1425 verbatim, the :137/:138/:151 reads OR SBIT_A): energy = SBIT_U|SBIT_A
+	// (NBT_ENERGY_ACCEPTED_SIDES SBIT_U), item in = SBIT_L|SBIT_A (NBT_INV_SIDE_IN
+	// SBIT_L), item out = SBIT_R|SBIT_A (NBT_INV_SIDE_OUT SBIT_R), item auto in =
+	// SIDE_LEFT(2), item auto out = SIDE_RIGHT(4); the fluid masks ride 0 (no NBT_TANK
+	// keys upstream — the zero-fluid face, data-only). The GUI clause: menu = null (the
+	// menu-less carrier, the Distillery precedent — zero new gt6:* MenuType, the use()
+	// gate stays inert until the seam-① micro card lands the MUI dispatch).
+	// ---------------------------------------------------------------------------
+
+	/** The four Press rows, upstream line order :1425-1428 (T1-T4, the Kinetic_T ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> PRESS_ROWS = java.util.List.of(
+			press("press"   , "steel"           , "Steel"           , 20231,  7.0F, 0),
+			press("press_t2", "invar"           , "Invar"           , 20232,  6.0F, 1),
+			press("press_t3", "titanium"        , "Titanium"        , 20233,  9.0F, 2),
+			press("press_t4", "tungsten_carbide", "Tungsten Carbide", 20234, 12.5F, 3));
+
+	/**
+	 * One row factory — the Canner shape: family constants KU / "press" texture /
+	 * PARALLEL_4_32 (the :1425-1428 NBT_PARALLEL column, the shared ladder) /
+	 * parallelDuration T / the SBIT_U|SBIT_A energy face / the :1425 item masks / zero
+	 * fluid masks / the null menu supplier (the GUI clause) / cheap overclocking T.
+	 */
+	private static GTBasicMachineBlock.MachineRow press(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, PRESS_DISPLAY_KEY, aMetaId, aHardness, aTier,
+				PARALLEL_4_32[aTier], true,
+				() -> GT6RecipeMaps.PRESS, TD.Energy.KU, "press",
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_U, the :151 OR*/,
+				(byte)0 /*no NBT_TANK_SIDE_IN — the zero-fluid face*/,
+				(byte)0 /*no NBT_TANK_SIDE_OUT*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L, the :137 OR*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R, the :138 OR*/,
+				(byte)0 /*no NBT_TANK_SIDE_AUTO_IN*/, (byte)0 /*no NBT_TANK_SIDE_AUTO_OUT*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — the GUI clause: zero new gt6:* MenuType*/, true);
+	}
+
+	/** The registered Press blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> PRESS_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Press items, same keys as {@link #PRESS_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> PRESS_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : PRESS_ROWS) {
+			PRESS_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.PRESS_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			PRESS_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.PRESS_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Press block list in registration order (the loot/datagen walkers). */
+	public static Block[] pressBlockArray() {
+		Block[] rBlocks = new Block[PRESS_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : PRESS_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine press — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block pressBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = PRESS_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The ONE Press family BET: the Canner shape verbatim — the shared factory, the four
+	 * tier blocks multi-attached, the row read off the placed block.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> PRESS_BE =
+			BLOCK_ENTITY_TYPES.register("press", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> pressMachine(GTMachines.PRESS_BE.get(), aPos, aState),
+					pressBlockArray()).build(null));
+
+	/** The Press BET factory body — the dryerMachine body verbatim over the Press rows. */
+	private static TileEntityBasicMachine pressMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), tRow.menu());
+		return applyRow(tMachine, tRow);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the Extruder family (task p26-w1-press-extruder-molds) — the four rows
+	// Loader_MultiTileEntities.java:1406-1409 (aClass = MultiTileEntityBasicMachine,
+	// NBT_TEXTURE "extruder", TD.Energy.HU, RM.Extruder, no parallel key → 1, no
+	// NBT_PARALLEL_DURATION → F, no tank keys). ONE family BET over the four tier
+	// blocks. Connectivity masks (:1406 verbatim, the :137/:138/:151 reads OR SBIT_A):
+	// energy = SBIT_D|SBIT_A (NBT_ENERGY_ACCEPTED_SIDES SBIT_D), item in = SBIT_L|SBIT_A,
+	// item out = SBIT_R|SBIT_A, item auto in = SIDE_LEFT(2), auto out = SIDE_RIGHT(4);
+	// the fluid masks ride 0 (the zero-fluid face). The T1 name column DIFFERS upstream
+	// ("Low Heat Extruder" :1406 vs "Extruder" :1407-1409) — the T1 row carries its own
+	// display template. menu = null (the GUI clause, the Press ruling).
+	// ---------------------------------------------------------------------------
+
+	/** The four Extruder rows, upstream line order :1406-1409 (T1-T4, the Heat_T ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> EXTRUDER_ROWS = java.util.List.of(
+			extruder("extruder"   , "steel"           , "Steel"           , 20201,  6.0F, 0, EXTRUDER_LOW_HEAT_DISPLAY_KEY),
+			extruder("extruder_t2", "invar"           , "Invar"           , 20202,  4.0F, 1, EXTRUDER_DISPLAY_KEY),
+			extruder("extruder_t3", "titanium"        , "Titanium"        , 20203,  9.0F, 2, EXTRUDER_DISPLAY_KEY),
+			extruder("extruder_t4", "tungsten_carbide", "Tungsten Carbide", 20204, 12.5F, 3, EXTRUDER_DISPLAY_KEY));
+
+	/**
+	 * One row factory — the Press shape with the extruder columns: HU / the "extruder"
+	 * texture / parallel 1 + duration F (no NBT keys) / the SBIT_D|SBIT_A energy face /
+	 * the :1406 item masks / zero fluid masks / the per-row display template (the T1
+	 * Low Heat face) / the null menu supplier (the GUI clause).
+	 */
+	private static GTBasicMachineBlock.MachineRow extruder(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, String aDisplayKey) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, aDisplayKey, aMetaId, aHardness, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1406-1409*/,
+				() -> GT6RecipeMaps.EXTRUDER, TD.Energy.HU, "extruder",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D, the :151 OR*/,
+				(byte)0 /*no NBT_TANK_SIDE_IN — the zero-fluid face*/,
+				(byte)0 /*no NBT_TANK_SIDE_OUT*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L, the :137 OR*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R, the :138 OR*/,
+				(byte)0 /*no NBT_TANK_SIDE_AUTO_IN*/, (byte)0 /*no NBT_TANK_SIDE_AUTO_OUT*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — the GUI clause: zero new gt6:* MenuType*/, true);
+	}
+
+	/** The registered Extruder blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> EXTRUDER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Extruder items, same keys as {@link #EXTRUDER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> EXTRUDER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : EXTRUDER_ROWS) {
+			EXTRUDER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.EXTRUDER_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			EXTRUDER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.EXTRUDER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Extruder block list in registration order (the loot/datagen walkers). */
+	public static Block[] extruderBlockArray() {
+		Block[] rBlocks = new Block[EXTRUDER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : EXTRUDER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine extruder — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block extruderBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = EXTRUDER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The ONE Extruder family BET: the Press shape verbatim — the shared factory, the four
+	 * tier blocks multi-attached, the row read off the placed block.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> EXTRUDER_BE =
+			BLOCK_ENTITY_TYPES.register("extruder", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> extruderMachine(GTMachines.EXTRUDER_BE.get(), aPos, aState),
+					extruderBlockArray()).build(null));
+
+	/** The Extruder BET factory body — the dryerMachine body verbatim over the Extruder rows. */
+	private static TileEntityBasicMachine extruderMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), tRow.menu());
+		return applyRow(tMachine, tRow);
 	}
 
 	/**
@@ -785,6 +975,8 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, sifterBlockArray());
 		java.util.Collections.addAll(rBlocks, compressorBlockArray());
 		java.util.Collections.addAll(rBlocks, wiremillBlockArray());
+		java.util.Collections.addAll(rBlocks, pressBlockArray()); // task p26-w1-press-extruder-molds
+		java.util.Collections.addAll(rBlocks, extruderBlockArray()); // task p26-w1-press-extruder-molds
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -889,12 +1081,24 @@ public final class GTMachines {
 								for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ROWS) {
 									aOutput.accept(new ItemStack(WIREMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
+								// task p26-w1-press-extruder-molds: the Press + Extruder ladders, +8 rows
+								for (GTBasicMachineBlock.MachineRow tRow : PRESS_ROWS) {
+									aOutput.accept(new ItemStack(PRESS_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
+								for (GTBasicMachineBlock.MachineRow tRow : EXTRUDER_ROWS) {
+									aOutput.accept(new ItemStack(EXTRUDER_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
 								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
 								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));
 								// task p16-distillery-family ①: the Integrated Circuit ("Selector Tag") —
 								// the recipe-slot selector feeds these machines, the machines tab is the
 								// nearest live category (the gregapi items tab is not ported, declared)
 								aOutput.accept(new ItemStack(gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()));
+								// task p26-w1-press-extruder-molds: the extruder-mold row0 pair — the
+								// shaping tools feed the press/extruder, the nearest live category (the
+								// circuit precedent; the upstream Technological items tab is not ported)
+								aOutput.accept(new ItemStack(gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.get()));
+								aOutput.accept(new ItemStack(gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()));
 						})
 					.build());
 

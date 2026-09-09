@@ -758,6 +758,36 @@ canner iconset, sha256 verified):
 Copied on 2026-09-07. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
+
+Press + Extruder family fronts, task p26-w1-press-extruder-molds:
+
+- `gt6/textures/block/press_{colored,overlay,overlay_active,overlay_running}_front.png`
+  and `gt6/textures/block/extruder_{colored,overlay,overlay_active,overlay_running}_front.png`
+  — the p22 split-front four-layer borrow from upstream
+  `src/main/resources/assets/gregtech/textures/blocks/machines/basicmachines/press/`
+  and `.../extruder/`, produced by `mdk/tools/bake_machine_fronts.py --split-fronts
+  --machine basicmachines/press --machine basicmachines/extruder` (single-frame
+  sources byte-identical; animation strips cropped to FRAME 0 — the P20 "animation
+  stays retired" deviation). Product digests (sha256):
+
+  - `press_colored_front.png`            `4d8ee0b3a3b6d5979caeecb74e7044d79f3e4b9abf3f19e0dc36ffe0ea2d0be2` (borrowed)
+  - `press_overlay_front.png`            `b6fd3ae7a44bb1b25a28f70b1ebba42625cda93e796d35ee5be6c8f18f753dd2` (borrowed)
+  - `press_overlay_front_active.png`     `236c0f2f57cf49b094a024a9c9c35e034fcb327863e87642da22b7d0267987be` (FRAME 0)
+  - `press_overlay_front_running.png`    `016292a072f18b7b9cb149c4a937835eeae980949b6986846835245d8247cb88` (FRAME 0)
+  - `extruder_colored_front.png`         `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (borrowed — the family-generic plate)
+  - `extruder_overlay_front.png`         `8e42c51db2a77fb0b88d3ca083ffe35b50d4ee9d3b5b947a69774a419e1dd927` (borrowed)
+  - `extruder_overlay_front_active.png`  `33bc918a0a541c8e42a3b82c32e8126ba22a80c4cc3785909499e7ad9f9167a2` (FRAME 0 of 6 frames)
+  - `extruder_overlay_front_running.png` `1aef3ed947ed362664674372b3ed0602da79dcf3303a4cadf40ba072dc182805` (borrowed)
+
+- `gt6/textures/item/shape_extruder/{plate,rod}.png` — COMPOSED placeholders (the P20
+  stdlib generator convention, 16x16 RGBA): the upstream Shape_Extruder_* icons are
+  meta-atlas tiles on the MultiItemTechnological spritesheet with no standalone sprite
+  file to borrow, so the two row0 mold icons are hand-rolled mold-blank pixels. NOT
+  byte-identical to upstream — declared placeholder.
+
+Copied on 2026-09-09. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
 Distillery family + Integrated Circuit textures, task p16-distillery-family:
 
 - `gt6/textures/item/integrated_circuit.png` — the Integrated Circuit item icon

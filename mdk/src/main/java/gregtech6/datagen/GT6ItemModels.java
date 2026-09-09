@@ -113,6 +113,14 @@ public final class GT6ItemModels extends ItemModelProvider {
         }
         withExistingParent("food_can_cookies_huge", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/food_can/cookies_huge"));
+        // the extruder-mold row0 subset (task p26-w1-press-extruder-molds) — 2 item/generated
+        // models over the composed placeholder icons (the mold-plate/mold-rod 16x16 stdlib
+        // generator, the P20 placeholder-PNG convention; the upstream multiitem icons are
+        // meta-atlas tiles with no standalone sprite file to borrow)
+        withExistingParent("shape_extruder_plate", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_extruder/plate"));
+        withExistingParent("shape_extruder_rod", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_extruder/rod"));
         // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)

@@ -60,6 +60,8 @@ class GT6RecipeGenerationGuardTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesSifter", // task p26-w1-sifter-compressor-wiremill — the W1 trio joins the ledger
 			"gregtech6.recipes.GT6RecipesCompressor",
 			"gregtech6.recipes.GT6RecipesWiremill",
+			"gregtech6.recipes.GT6RecipesExtruder", // task p26-w1-press-extruder-molds — the plate/rod pour joins the ledger
+			"gregtech6.recipes.GT6RecipesPress", // task p26-w1-press-extruder-molds — the declared-empty pour joins the ledger
 	};
 
 	private static Function<String, Fluid> sDefaultFluidResolver;

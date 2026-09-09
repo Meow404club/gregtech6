@@ -1,0 +1,76 @@
+{
+  "parent": "minecraft:block/cube",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#down",
+          "tintindex": 0
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#east",
+          "tintindex": 0
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#north",
+          "tintindex": 0
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#south",
+          "tintindex": 0
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#up",
+          "tintindex": 0
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#west",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "north": {
+          "cullface": "north",
+          "texture": "#overlay"
+        }
+      },
+      "from": [
+        0,
+        0,
+        -0.01
+      ],
+      "to": [
+        16,
+        16,
+        0
+      ]
+    }
+  ],
+  "textures": {
+    "down": "gt6:block/oven_bottom",
+    "east": "gt6:block/oven_side",
+    "north": "gt6:block/extruder_colored_front",
+    "overlay": "gt6:block/extruder_overlay_front",
+    "south": "gt6:block/oven_side",
+    "up": "gt6:block/oven_top",
+    "west": "gt6:block/oven_side"
+  }
+}

@@ -116,14 +116,17 @@ public final class GT6BlockStates extends BlockStateProvider {
         addDistillery(); // task p16-distillery-family
         addCanner(); // task p24-canner-machine
         addKineticTrio(); // task p26-w1-sifter-compressor-wiremill
+        addPress(); // task p26-w1-press-extruder-molds
+        addExtruder(); // task p26-w1-press-extruder-molds
         addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 37 machine blocks x
-        // 3 models, matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 111; the ACT
+        // task p21-paintable-tint-render: the datagen-JVM census half — 45 machine blocks x
+        // 3 models (the press/extruder rows joined at task p26-w1-press-extruder-molds),
+        // matching the paintableBlockArray() client registration census
+        // (the offline JUnit half walks the generated tree and pins the same 135; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (37 blocks x 3, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio) + the ACT single-state model", mMachineTintModels);
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (45 blocks x 3, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder) + the ACT single-state model", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -198,6 +201,29 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.WIREMILL_ROWS) {
             addMachine(GTMachines.WIREMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p26-w1-press-extruder-molds — the four Press rows (Loader_MultiTileEntities.java
+     * :1425-1428, all four NBT_TEXTURE "press"): the addCanner shape verbatim — model names
+     * per path, the FRONT TEXTURES stay on the family "press" set (the borrowed upstream
+     * basicmachines/press fronts, the p22 split-front borrow).
+     */
+    private void addPress() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.PRESS_ROWS) {
+            addMachine(GTMachines.PRESS_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p26-w1-press-extruder-molds — the four Extruder rows (Loader_MultiTileEntities
+     * .java:1406-1409, all four NBT_TEXTURE "extruder"): the addPress shape verbatim (the
+     * borrowed upstream basicmachines/extruder fronts).
+     */
+    private void addExtruder() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.EXTRUDER_ROWS) {
+            addMachine(GTMachines.EXTRUDER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 
