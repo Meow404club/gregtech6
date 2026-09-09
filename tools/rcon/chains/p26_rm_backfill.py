@@ -8,16 +8,20 @@ reports data=-2 — the row family binds no MenuType, GTMachines null-menu rows)
   A the rigs: one shredder + one lathe placed (fresh band x=360), both data=-2.
 
   B the SHREDDER crushed-array arm (:145 — iron carries MORTAR, so the multiplier-16 arm;
-    Loader_Recipes_Handlers.java:145 verbatim): a hopper above the shredder feeds ONE
-    gt6:crushed_iron, the row runs (crushed x1 -> dust + dustTiny of the mTargetPulver
-    target — RecipeMapHandlerPrefixShredding getOutputMaterial override) -> the check pins
-    BOTH output items (the :145 transcription is the two-output array [dust, dustTiny];
-    the dustDiv72 leg belongs to the :138/:147 rows, not this one).
+    Loader_Recipes_Handlers.java:145 verbatim with :138): a hopper above the shredder feeds
+    ONE gt6:crushed_iron, the row runs (crushed x1 -> dust + dustTiny + dustDiv72 of the
+    mTargetPulver target — RecipeMapHandlerPrefixShredding getOutputMaterial override) ->
+    the check pins ALL THREE output items (the :145 output array is IDENTICAL to :138's —
+    {dust, dustTiny, dustDiv72}; the earlier "two-output, dustDiv72 belongs to :138/:147"
+    claim here was the transcription error the S11' review rejected — 81c28e7f measured the
+    bug and changed the assertion to match it).
 
   C the LATHE hard-arm ingot row (:377 — iron is NEVER_FURNACE and not SOFT, the
     tEasyWorkable.NOT arm; :377 verbatim): ONE gt6:ingot_iron through the hopper, the row
-    runs (ingot U x1 -> stick U2 x1, duration = the getCosts multiplier-64 arithmetic)
-    -> the check pins gt6:stick_iron.
+    runs (ingot U x1 -> stick U2 x1 PLUS the mOutputPulverizedRemains — the 15-arg ctor
+    13th arg T; the :79 gate opens at U − U/2 = U/2 surplus, OM.pulverize = 2x dust_small;
+    duration = the getCosts multiplier-64 arithmetic) -> the check pins stick_iron and
+    2x dust_small_iron.
 
   D the SHREDDER RECYCLABLE-ring arm (:154 — the MORTAR twin of the :152-155 ring; stick is
     RECYCLABLE and passes the four exclusion tags): ONE gt6:stick_iron, the ring row runs
@@ -83,10 +87,11 @@ steps += [
 # NOTE on the expect strings: the gt6machine check ITEM reporter formats item ids
 # loader-versioned — bare on 1.20.1-forge (crushed_ironx1), registry-qualified on
 # 1.21.1-neoforge (gt6:crushed_ironx1; the empty slot airx0 vs minecraft:airx0).
-# The expects below pin the LOADER-NEUTRAL substring (id+count), measured live on
-# both legs 2026-09-10; the namespace-carrying form is the FLUID stat reporter (p16).
+# The expects below pin the LOADER-NEUTRAL substring (id+count), re-measured live on
+# both legs 2026-09-10 after the S11' review fixes; the namespace-carrying form is the
+# FLUID stat reporter (p16).
 steps += [
-    phase("B: crushed_iron 1 -> dust + dustTiny — the :145 row, hopper-fed"),
+    phase("B: crushed_iron 1 -> dust + dustTiny + dustDiv72 — the :145 row, hopper-fed"),
     Step(f"item replace block {SHREDDER_HOPPER} container.0 with gt6:crushed_iron 1",
          expect="Replaced", sleep=4.0),
     # the hopper push cadence (8 game ticks) landed the crushed ore in the input slot
@@ -98,12 +103,14 @@ steps += [
     Step(f"gt6machine shredder check {SHREDDER}", expect="dust_iron"),
     Step(f"gt6machine shredder check {SHREDDER}", expect="out[1]=1x"),
     Step(f"gt6machine shredder check {SHREDDER}", expect="dust_tiny_iron"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="out[2]=1x"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="dust_div72_iron"),
     Step(f"gt6machine shredder check {SHREDDER}", expect="airx0"),
 ]
 
 # ------------------------------------------------- C: the lathe hard-arm ingot row (:377)
 steps += [
-    phase("C: ingot_iron 1 -> stick_iron — the :377 row (tEasyWorkable.NOT arm), hopper-fed"),
+    phase("C: ingot_iron 1 -> stick_iron + 2x dust_small — the :377 row + remains, hopper-fed"),
     Step(f"item replace block {LATHE_HOPPER} container.0 with gt6:ingot_iron 1",
          expect="Replaced", sleep=4.0),
     Step(f"gt6machine lathe check {LATHE}", expect="ingot_ironx1"),
@@ -111,6 +118,9 @@ steps += [
     Step(f"gt6machine lathe inject 4000 64 {LATHE}", expect="used=4000"),
     Step(f"gt6machine lathe check {LATHE}", expect="out[0]=1x"),
     Step(f"gt6machine lathe check {LATHE}", expect="stick_iron"),
+    # the mOutputPulverizedRemains slot: U − U/2 = U/2 surplus → OM.pulverize = 2x dust_small
+    Step(f"gt6machine lathe check {LATHE}", expect="out[1]=2x"),
+    Step(f"gt6machine lathe check {LATHE}", expect="dust_small_iron"),
     Step(f"gt6machine lathe check {LATHE}", expect="airx0"),
 ]
 
