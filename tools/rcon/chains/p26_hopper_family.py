@@ -157,16 +157,16 @@ CHAIN = Chain(
         phase("E: top item suction (a dropped entity over the open top — the WD.suck port)"),
         Step(f"setblock {F(E)} gt6:hopper_steel[facing=north]", expect="Changed the block"),
         Step(f"summon minecraft:item {E.x + 0.5} {E.y + 1.3} {E.z + 0.5} "
-             '{Item:{id:"minecraft:dirt",Count:7b},PickupDelay:0s}', expect="summoned"),
+             '{Item:{id:"minecraft:dirt",Count:7b},PickupDelay:0s}', expect="Summoned"),
         _dump(E, "Count: 7b", poll=15.0, label="the whole entity stack lands in one slot"),
         _dump(E, 'id: "minecraft:dirt"', poll=5.0),
 
         # ------------------------------------------------------------------
         phase("F: minecart interception (rail over the hopper + chest minecart — the CONTAINER_ENTITY_SELECTOR arm)"),
         Step(f"setblock {F(_up(F_COL, 1))} minecraft:rail", expect="Changed the block"),
-        Step(f"setblock {F_COL} gt6:hopper_bronze[facing=north]", expect="Changed the block"),
+        Step(f"setblock {F(F_COL)} gt6:hopper_bronze[facing=north]", expect="Changed the block"),
         Step(f"summon minecraft:chest_minecart {F_COL.x + 0.5} {F_COL.y + 1.0} {F_COL.z + 0.5} "
-             '{Items:[{Slot:0b,id:"minecraft:iron_ingot",Count:8b}]}', expect="summoned"),
+             '{Items:[{Slot:0b,id:"minecraft:iron_ingot",Count:8b}]}', expect="Summoned"),
         _dump(F_COL, 'id: "minecraft:iron_ingot"', poll=15.0, label="the cart drains through the rail intercept"),
 
         # ------------------------------------------------------------------
