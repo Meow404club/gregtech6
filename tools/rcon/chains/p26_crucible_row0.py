@@ -15,6 +15,13 @@ pinned by upstream evidence AND by the probe boots, not by choice):
     six burned). So the charge is dropped BEFORE the box even exists, and the box is
     placed+lit only after the suck poll goes green. The stone rung therefore proves
     its heat flow with the box placed last; the steel rung has no box at all.
+  - DROP SEAM (r6 fix, probed with /data get entity): the vanilla ItemEntity
+    constructor hands the spawned charge a random horizontal toss — the r5 chain lost
+    7 of 8 items 1.2 blocks off-target, hot or cold (a 2493 K crucible sucked exactly
+    one unit and waited, which is what cooked the r5 iron pile into the anneal
+    disaster). The /gt6crucible drop arm now spawns dead-center inside the suck box
+    with zeroed motion; the summon-side control drained 8U in seconds on the same
+    cold crucible, pinning the seam as the one and only feed defect.
   - the shell heat mass is material-dependent: tRequiredEnergy = 1 + weight/100
     (upstream :301). Probed: the stone shell answers required=7 fresh; charged with
     8U Sn the box re-heat runs ~+0.21 K/t (~76 charged, probed r5) → 293→505 K in

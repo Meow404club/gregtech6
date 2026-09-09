@@ -264,7 +264,14 @@ public final class GT6CrucibleCommand {
 			return 0;
 		}
 		ServerLevel tLevel = aSource.getLevel();
-		ItemEntity tEntity = new ItemEntity(tLevel, aPos.getX() + 0.5, aPos.getY() + 1.05, aPos.getZ() + 0.5, tStack);
+		// Spawn INSIDE the suck box (the :154 box tops out at y+1.25, so its mid-cell is
+		// the dead center) with zeroed motion: the vanilla ItemEntity constructor hands
+		// out a random horizontal toss (probed: the entity landed 1.2 blocks off the
+		// crucible and the remaining 7 items were unrecoverable), and a thrown charge
+		// that escapes the crucible is the one failure the row0 band cannot tolerate.
+		// Dead-center + no drift = the suck drains it 1 item per tick.
+		ItemEntity tEntity = new ItemEntity(tLevel, aPos.getX() + 0.5, aPos.getY() + 0.6, aPos.getZ() + 0.5, tStack);
+		tEntity.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
 		tEntity.setPickUpDelay(20);
 		tLevel.addFreshEntity(tEntity);
 		aSource.sendSuccess(() -> Component.literal("GT6 dropped " + aCount + "x " + tResolvedPrefix.mNameInternal + " " + aMaterial + " above " + aPos.toShortString()), false);
