@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/cfoam_fresh_slab_bottom"
+    },
+    "type=double": {
+      "model": "gt6:block/cfoam_fresh_slab_double"
+    },
+    "type=top": {
+      "model": "gt6:block/cfoam_fresh_slab_top"
+    }
+  }
+}

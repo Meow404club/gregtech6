@@ -33,6 +33,7 @@ import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.wire.GTWireBlock;
 import gregtech6.registry.GTMaterialBlocks;
+import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTWires;
@@ -94,7 +95,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
-                new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK)), // task p25-c-foam-pipe-spray
+                new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
+                new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK)), // task p26-c-foam-block-family
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -113,7 +115,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
-                new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK))); // task p25-c-foam-pipe-spray
+                new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
+                new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK))); // task p26-c-foam-block-family
         //?}
     }
 
@@ -1000,5 +1003,65 @@ public final class GT6LootTables extends LootTableProvider {
                 .copy(quoted(TileEntityBase03TicksAndSync.NBT_PAINTED), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_PAINTED),
                         CopyNbtFunction.MergeStrategy.REPLACE);
         //?}
+    }
+
+    // -------------------------------------------------------------------------
+    // task p26-c-foam-block-family — the C-Foam block family band
+    // -------------------------------------------------------------------------
+
+    /**
+     * The DRIED self-drop pair (task p26-c-foam-block-family): upstream BlockCFoam has no
+     * getDrops override (BlockCFoam.java:37-76 — the vanilla default self-drop, the same
+     * Drops==null form as the wire/axle families). NO foam NBT carry: the dried block's
+     * item is the UNCOLOURED ladder collapse (the GT6FoamBlocks registry doc — the placed
+     * colour persists while standing via the tint, the re-placed item lands colour 0), and
+     * {@code gt.foamdried}/{@code gt.ownable} ride the BLOCKSTATE/BE, not the item.
+     */
+    public static List<Block> cfoamDriedLootBlocks() {
+        return List.of(GT6FoamBlocks.CFOAM.get(), GT6FoamBlocks.CFOAM_SLAB.get());
+    }
+
+    /**
+     * The drop-nothing trio: the two FRESH forms (upstream BlockCFoamFresh.getDrops
+     * returns the empty list, :70-72 verbatim) plus the owned carrier (upstream
+     * MultiTileEntityCFoam.canDrop false, :151 — and showInCreative false :152 means no
+     * BlockItem exists to drop at all). An EMPTY loot table is the exact form.
+     */
+    public static List<Block> cfoamNoDropLootBlocks() {
+        return List.of(GT6FoamBlocks.CFOAM_FRESH.get(), GT6FoamBlocks.CFOAM_FRESH_SLAB.get(),
+                GT6FoamBlocks.CFOAM_OWNED.get());
+    }
+
+    /** The C-Foam family loot provider: dried = self-drop, fresh/owned = the empty table. */
+    public static final class GT6CFoamBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6CFoamBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6CFoamBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return cfoamLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : cfoamDriedLootBlocks()) dropSelf(tBlock); // the void form (this mapping's dropSelf registers itself — the wire family :172 shape)
+            for (Block tBlock : cfoamNoDropLootBlocks()) add(tBlock, LootTable.lootTable());
+        }
+    }
+
+    /** The full family (the known-blocks narrowing — the missing-table validation covers exactly these five). */
+    public static List<Block> cfoamLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>(cfoamDriedLootBlocks());
+        rBlocks.addAll(cfoamNoDropLootBlocks());
+        return rBlocks;
     }
 }

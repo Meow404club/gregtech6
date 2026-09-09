@@ -86,6 +86,10 @@ direct	fluid.gt6.cfoam_owned_light_blue	高级淡蓝色建筑泡沫	hand
 direct	fluid.gt6.cfoam_owned_magenta	高级品红建筑泡沫	hand
 direct	fluid.gt6.cfoam_owned_orange	高级橙色建筑泡沫	hand
 direct	fluid.gt6.cfoam_owned_white	高级白色建筑泡沫	hand
+direct	block.gt6.cfoam_fresh	新鲜建筑泡沫	hand
+direct	block.gt6.cfoam	建筑泡沫	hand
+direct	block.gt6.cfoam_fresh_slab	新鲜建筑泡沫台阶	hand
+direct	block.gt6.cfoam_slab	建筑泡沫台阶	hand
 direct	fluid.gt6.chlorine	氯	hand
 direct	fluid.gt6.cold_water	冷水	hand
 direct	fluid.gt6.diesel	柴油	hand

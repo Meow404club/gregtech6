@@ -8,6 +8,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -16,6 +18,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
+import gregtech6.block.foam.GT6CFoamOwnedBlock;
 import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.energy.GTDieselEngineBlock;
 import gregtech6.block.energy.GTTransformerRotationBlock;
@@ -33,6 +36,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GT6Attachments;
+import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GTWireSpecs;
@@ -132,6 +136,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addLightningRod(); // task p24-lightning-rod
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
+        addFoamBlocks(); // task p26-c-foam-block-family — the C-Foam pair + slabs + the owned carrier
     }
 
     /**
@@ -1043,5 +1048,79 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         LOGGER.info("GT6 grass blocks: {} per-pair blockstates over {} cube_bottom_top models (no tint)",
                 GTGrassBlocks.PATHS.size(), GTGrassBlocks.PATHS.size());
+    }
+
+    /**
+     * Task p26-c-foam-block-family — the C-Foam block family band (upstream
+     * BlockCFoamFresh/BlockCFoam + the MTE 32765 carrier). The four-state texture set of
+     * upstream MultiTileEntityCFoam.getTexture2 (:132 — CFOAM_FRESH/CFOAM_FRESH_OWNED/
+     * CFOAM_HARDENED/CFOAM_HARDENED_OWNED) maps onto:
+     * <ul>
+     * <li>{@code cfoam_fresh}/{@code cfoam} — one tinted cube per state, the 16
+     *     {@code color} states SHARE the model (the colour rides the BlockState tint,
+     *     the {@link gregtech6.client.foam.GTCFoamTintListener} BlockColor, tintindex 0
+     *     — the ruling_color_dim form, NOT a 16-instance ladder);</li>
+     * <li>{@code cfoam_owned} — the DRIED property swaps the sprite pair (fresh_owned/
+     *     hardened_owned), the paint colour rides the BE tint (the same BlockColor);
+     *     no BlockItem exists (the upstream showInCreative false), so no item model;</li>
+     * <li>the two slabs — hand-built half-cube elements with tintindex 0 (the vanilla
+     *     slab parents carry NO tintindex, so the tinted family needs own models); the
+     *     DOUBLE variant shares the full-cube model (these slabs are spray-placed only,
+     *     the double form is unreachable but must not miss its variant). The fresh forms
+     *     have no BlockItem either (spray-only intermediate states).</li>
+     * </ul>
+     */
+    private void addFoamBlocks() {
+        // the two full blocks — 16 colour states over one tinted model each
+        ModelFile tFresh = tintedCubeAll("block/cfoam_fresh", modLoc("block/cfoam_fresh"));
+        getVariantBuilder(GT6FoamBlocks.CFOAM_FRESH.get())
+                .forAllStates(aState -> ConfiguredModel.builder().modelFile(tFresh).build());
+        ModelFile tHardened = tintedCubeAll("block/cfoam_hardened", modLoc("block/cfoam_hardened"));
+        getVariantBuilder(GT6FoamBlocks.CFOAM.get())
+                .forAllStates(aState -> ConfiguredModel.builder().modelFile(tHardened).build());
+        itemModels().withExistingParent("cfoam", modLoc("block/cfoam_hardened"));
+
+        // the owned carrier — the DRIED property over the owned sprite pair (upstream :132)
+        ModelFile tOwnedWet = tintedCubeAll("block/cfoam_fresh_owned", modLoc("block/cfoam_fresh_owned"));
+        ModelFile tOwnedDry = tintedCubeAll("block/cfoam_hardened_owned", modLoc("block/cfoam_hardened_owned"));
+        getVariantBuilder(GT6FoamBlocks.CFOAM_OWNED.get())
+                .partialState().with(GT6CFoamOwnedBlock.DRIED, false)
+                .setModels(ConfiguredModel.builder().modelFile(tOwnedWet).build())
+                .partialState().with(GT6CFoamOwnedBlock.DRIED, true)
+                .setModels(ConfiguredModel.builder().modelFile(tOwnedDry).build());
+
+        // the two slabs — half-cube tinted elements (BOTTOM/TOP/DOUBLE triads over the family
+        // textures); the DRIED item parents its bottom-slab model (the vanilla slab item form)
+        tintedSlabFamily("cfoam_fresh_slab", modLoc("block/cfoam_fresh"), GT6FoamBlocks.CFOAM_FRESH_SLAB.get());
+        tintedSlabFamily("cfoam_slab", modLoc("block/cfoam_hardened"), GT6FoamBlocks.CFOAM_SLAB.get());
+        itemModels().withExistingParent("cfoam_slab", modLoc("block/cfoam_slab_bottom"));
+        LOGGER.info("GT6 cfoam blocks: 5 blockstate bands (2 full + owned DRIED pair + 2 slab triads), 8 tinted models");
+    }
+
+    /** The three-variant slab band (BOTTOM/TOP/DOUBLE) over one texture — the half-cube elements carry tintindex 0. */
+    private void tintedSlabFamily(String aName, ResourceLocation aTexture, Block aSlab) {
+        ModelFile tBottom = tintedHalfSlab(aName + "_bottom", aTexture, false);
+        ModelFile tTop = tintedHalfSlab(aName + "_top", aTexture, true);
+        ModelFile tDouble = tintedCubeAll("block/" + aName + "_double", aTexture);
+        getVariantBuilder(aSlab)
+                .partialState().with(SlabBlock.TYPE, SlabType.BOTTOM)
+                .setModels(ConfiguredModel.builder().modelFile(tBottom).build())
+                .partialState().with(SlabBlock.TYPE, SlabType.TOP)
+                .setModels(ConfiguredModel.builder().modelFile(tTop).build())
+                .partialState().with(SlabBlock.TYPE, SlabType.DOUBLE)
+                .setModels(ConfiguredModel.builder().modelFile(tDouble).build());
+    }
+
+    /** One tinted half-cube slab model — the {@link #tintedCubeAll} shape cut to the lower/upper half. */
+    private ModelFile tintedHalfSlab(String aName, ResourceLocation aTexture, boolean aTop) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("all", aTexture)
+                .texture("particle", "#all");
+        tModel.element()
+                .from(0.0F, aTop ? 8.0F : 0.0F, 0.0F).to(16.0F, aTop ? 16.0F : 8.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#all").tintindex(0).cullface(aDir))
+                .end();
+        return tModel;
     }
 }
