@@ -7,19 +7,31 @@ Task p26-crucible-mold-faucet ACCEPTANCE (c), translated:
     the shell ladder IS the gate, temperatureMax = shell.melting x 1.25) + the
     CERAMIC faucet mounted on its east wall (facing west, the mount face toward the
     host) + the pre-carved ceramic PLATE mold under the faucet.
-  B the melt: iron dust dropped on top (the :154 suck arm), then TWO anchored
-    inject-hu shots (the requiredEnergy/K = 1 + weight/100 physics: ~96 HU/K with
-    the 7U steel shell + 4U iron content; shot 1 lands ~1.6 kK and the stat poll
-    ANCHORS the calibration, shot 2 ~+230 K into the [1811, 1935) pour window).
+  B the melt: iron dust dropped on top (the :154 suck arm), then TWO inject-hu shots.
+    r7 recalibration (the live-leg evidence, /tmp/p26mf-rcon-forge.log of the
+    pre-r7 run): the steel shell alone sets the heat mass — E/K = 1 + 7000/100 =
+    71 HU/K (the content is NOT yet in the mass when the shot lands), so shot 1
+    130000 HU lands 287 + 130000/71 ~= 2118 K and shot 2 +22000 HU ~= +310 K
+    into ~2400 K, both inside the [1811, 2557) pour window. The stat polls pin
+    the "temp=2" band (2.0-3.0 kK, ~900 K of headroom) instead of the stale
+    1.6/1.8 kK magic numbers; the WINDOW itself is proven by the pour arms —
+    fillMoldAtSide refuses outside it, so "poured into the mold" / "output=1x"
+    fail if the melt is cold. A meltdown prints the FAILED marker and auto-fails.
   C the cast: the faucet right-click (the :138-146 activation, the null-player RCON
     arm) polls until "poured into the mold" — the crucible pays one plate of molten
     iron through fillMoldAtSide -> fillMold (the DOWN walk) — then the mold stat
     polls until the solidified "output=1x" (the ±5 K/tick cooldown crosses the
     1811 K freeze in ~10 ticks; iron is NOT COOL2CRYSTAL so the prefix stays plate).
   D the monkey-wrench auto-pull rig: a second crucible + mold pair, NO faucet —
-    wrench-mold on the mold's WEST sub-side (the :347 SBIT toggle) arms the
-    :169-176 pull; the mold stat polls until the content arrives on the
-    aTimer % 20 == 5 cadence.
+    the crucible stands at the MOLD's own y, directly WEST of it (the auto-pull
+    queries getAdjacentTileEntity of the armed side — the pre-r7 rig had the
+    crucible one block UP, so the mold's west neighbour was air and the pull
+    never found a crucible), wrench-mold on the mold's WEST sub-side (the :347
+    SBIT toggle) arms the :170-176 pull; the mold stat polls until the
+    solidified "output=1x" — plate requires exactly CS.U = 648648000u and the
+    crucible holds exactly that, so the fill completes and freezes (5 K/tick
+    cooldown) within the poll window. output=1x on a faucet-less rig is only
+    reachable through fillMoldAtSide — the pull itself is the proven path.
   E the vanilla furnace: a furnace block data-merged with the RAW clay mold + coal
     and a 199/200 CookTime head start — the poll reads the FORMED mold out of slot
     2 (the vanilla-smelting JSON face; the raw item id in the merge is the
@@ -54,12 +66,12 @@ F = gt6world.fmt
 C  = F(gt6world.Site(431, 64, 134))   # the steel crucible (rig A)
 FA = F(gt6world.Site(432, 64, 134))   # the ceramic faucet on the east wall
 M  = F(gt6world.Site(432, 63, 134))   # the plate mold UNDER the faucet
-C2 = F(gt6world.Site(435, 64, 138))   # the auto-pull crucible (rig B)
+C2 = F(gt6world.Site(435, 63, 138))   # the auto-pull crucible (rig B) — the MOLD's y, west-adjacent
 M2 = F(gt6world.Site(436, 63, 138))   # the auto-pull mold EAST of its crucible
 FU = F(gt6world.Site(430, 64, 138))   # the vanilla furnace
 
 SITE_A = gt6world.Site(431, 64, 134, dx=1, dy=1)   # covers the crucible + faucet + mold
-SITE_B = gt6world.Site(435, 64, 138, dx=1, dy=1)   # covers crucible 2 + mold 2
+SITE_B = gt6world.Site(435, 63, 138, dx=1, dy=1)   # covers crucible 2 + mold 2 (both at y=63)
 SITE_F = gt6world.Site(430, 64, 138)               # the furnace
 
 steps = []
@@ -76,12 +88,12 @@ steps += [
 
 # ------------------------------------------------- B: the anchored melt
 steps += [
-    phase("B: the melt — shot 1 ~+1350 K, the stat anchors the calibration"),
+    phase("B: the melt — shot 1 ~+1830 K (E/K = 71 HU/K, steel shell), lands ~2.1 kK"),
     Step(f"gt6crucible inject-hu {C} 130000", expect="GT6 crucible injected"),
-    Step(f"gt6crucible stat {C}", expect="temp=16", poll=20),
-    phase("B2: shot 2 ~+230 K into the [1811, 1935) pour window"),
+    Step(f"gt6crucible stat {C}", expect="temp=2", poll=20),
+    phase("B2: shot 2 ~+310 K deeper into the [1811, 2557) pour window, ~2.4 kK"),
     Step(f"gt6crucible inject-hu {C} 22000", expect="GT6 crucible injected"),
-    Step(f"gt6crucible stat {C}", expect="temp=18", poll=20),
+    Step(f"gt6crucible stat {C}", expect="temp=2", poll=20),
 ]
 
 # ------------------------------------------------- C: the cast
@@ -99,11 +111,11 @@ steps += [
     Step(f"gt6crucible drop {C2} dust iron 4", expect="GT6 dropped"),
     Step(f"gt6crucible place-mold {M2} mold_ceramic_plate", expect="GT6 mold placed"),
     Step(f"gt6crucible inject-hu {C2} 130000", expect="GT6 crucible injected"),
-    Step(f"gt6crucible stat {C2}", expect="temp=16", poll=20),
+    Step(f"gt6crucible stat {C2}", expect="temp=2", poll=20),
     Step(f"gt6crucible inject-hu {C2} 22000", expect="GT6 crucible injected"),
-    Step(f"gt6crucible stat {C2}", expect="temp=18", poll=20),
+    Step(f"gt6crucible stat {C2}", expect="temp=2", poll=20),
     Step(f"gt6faucet wrench-mold {M2} west", expect="Crucible Auto-Input: ON"),
-    Step(f"gt6crucible mold {M2}", expect="content=Iron", poll=30),
+    Step(f"gt6crucible mold {M2}", expect="output=1x", poll=30),
     Step(f"gt6faucet softhammer-mold {M2}", expect="Crucible Auto-Input: OFF & NO REDSTONE"),
 ]
 
