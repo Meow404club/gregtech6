@@ -142,33 +142,80 @@ public class GT6StaticStorageBatchTest extends GTOfflineTestBase {
 		GT6DrawerQuadBlockEntity tDrawer = new GT6DrawerQuadBlockEntity(sDrawerType, POS, Blocks.STONE.defaultBlockState());
 		tDrawer.monkeyWrench();
 		assertTrue(tDrawer.sidedAccess());
-		// facing NORTH (the mFacing fallback = 2): FACING_ROTATIONS[2] = {0,1,3,5,4,2,6,6}
-		// (CS.java:528) — down->row0 (bottom half), up->row1 (top half), north(front)->ALL,
-		// south(back)->ALL, west->row4 (right column), east->row2 (left column)
+		// all four horizontal facings, every pin decoded row by row from the upstream
+		// byte table (CS.java:528-537; the left column = the SLOTS[2]-shaped {q0,q2}
+		// column, the right = SLOTS[4]-shaped {q1,q3}). The E/W rows were the review
+		// reject: FACING_ROTATIONS[4] (west) maps world north->left, [5] (east) maps
+		// world south->left — a flipped pair sidesteps every N/S-only pin, hence the
+		// four-orientation coverage.
+		for (Direction tFacing : new Direction[] {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST}) {
+			tDrawer.setFacingNbtFallback((byte) tFacing.get3DDataValue());
+			// the Y arms are facing-independent (the physical halves)
+			org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.TOP_HALF,
+					tDrawer.getAccessibleSlotsFromSide((byte) Direction.UP.get3DDataValue()));
+			org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.BOTTOM_HALF,
+					tDrawer.getAccessibleSlotsFromSide((byte) Direction.DOWN.get3DDataValue()));
+			// front and back keep the full set (the GUI face and its opposite)
+			org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.ALL,
+					tDrawer.getAccessibleSlotsFromSide((byte) tFacing.get3DDataValue()));
+			org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.ALL,
+					tDrawer.getAccessibleSlotsFromSide((byte) tFacing.getOpposite().get3DDataValue()));
+			// the columns: the viewer-left side sees {q0,q2}, the viewer-right {q1,q3}
+			org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.LEFT_HALF,
+					tDrawer.getAccessibleSlotsFromSide((byte) GT6DrawerQuadBlockEntity.viewerLeftOf(tFacing).get3DDataValue()));
+			org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.RIGHT_HALF,
+					tDrawer.getAccessibleSlotsFromSide((byte) GT6DrawerQuadBlockEntity.viewerLeftOf(tFacing).getOpposite().get3DDataValue()));
+		}
+		// the four rows spelled out against the literal FACING_ROTATIONS entries (the
+		// viewer-left side per compass: N-facing->east, S-facing->west, E-facing->south,
+		// W-facing->north):
+		// NORTH (2): {0,1,3,5,4,2,6,6} — east(5)->2 left, west(4)->4 right
 		tDrawer.setFacingNbtFallback((byte) Direction.NORTH.get3DDataValue());
-		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.TOP_HALF,
-				tDrawer.getAccessibleSlotsFromSide((byte) Direction.UP.get3DDataValue()));
-		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.BOTTOM_HALF,
-				tDrawer.getAccessibleSlotsFromSide((byte) Direction.DOWN.get3DDataValue()));
-		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.ALL,
-				tDrawer.getAccessibleSlotsFromSide((byte) Direction.NORTH.get3DDataValue()));
-		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.ALL,
-				tDrawer.getAccessibleSlotsFromSide((byte) Direction.SOUTH.get3DDataValue()));
+		assertEquals(Direction.EAST, GT6DrawerQuadBlockEntity.viewerLeftOf(Direction.NORTH));
 		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.LEFT_HALF,
 				tDrawer.getAccessibleSlotsFromSide((byte) Direction.EAST.get3DDataValue()));
 		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.RIGHT_HALF,
 				tDrawer.getAccessibleSlotsFromSide((byte) Direction.WEST.get3DDataValue()));
-		// facing SOUTH (3): FACING_ROTATIONS[3] = {0,1,5,3,2,4,6,6} — the columns mirror
+		// SOUTH (3): {0,1,5,3,2,4,6,6} — west(4)->2 left, east(5)->4 right
 		tDrawer.setFacingNbtFallback((byte) Direction.SOUTH.get3DDataValue());
+		assertEquals(Direction.WEST, GT6DrawerQuadBlockEntity.viewerLeftOf(Direction.SOUTH));
 		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.LEFT_HALF,
 				tDrawer.getAccessibleSlotsFromSide((byte) Direction.WEST.get3DDataValue()));
 		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.RIGHT_HALF,
 				tDrawer.getAccessibleSlotsFromSide((byte) Direction.EAST.get3DDataValue()));
-		// the side view rides the same table (the automation face)
+		// EAST (5): {0,1,4,2,5,3,6,6} — south(3)->2 left, north(2)->4 right
+		tDrawer.setFacingNbtFallback((byte) Direction.EAST.get3DDataValue());
+		assertEquals(Direction.SOUTH, GT6DrawerQuadBlockEntity.viewerLeftOf(Direction.EAST));
+		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.LEFT_HALF,
+				tDrawer.getAccessibleSlotsFromSide((byte) Direction.SOUTH.get3DDataValue()));
+		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.RIGHT_HALF,
+				tDrawer.getAccessibleSlotsFromSide((byte) Direction.NORTH.get3DDataValue()));
+		// WEST (4): {0,1,2,4,3,5,6,6} — north(2)->2 left, south(3)->4 right
+		tDrawer.setFacingNbtFallback((byte) Direction.WEST.get3DDataValue());
+		assertEquals(Direction.NORTH, GT6DrawerQuadBlockEntity.viewerLeftOf(Direction.WEST));
+		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.LEFT_HALF,
+				tDrawer.getAccessibleSlotsFromSide((byte) Direction.NORTH.get3DDataValue()));
+		org.junit.jupiter.api.Assertions.assertArrayEquals(GT6DrawerQuadBlockEntity.RIGHT_HALF,
+				tDrawer.getAccessibleSlotsFromSide((byte) Direction.SOUTH.get3DDataValue()));
+		// the side view rides the same table (the automation face): a perpendicular side
+		// sees one column, the side-any view sees all
+		tDrawer.setFacingNbtFallback((byte) Direction.NORTH.get3DDataValue());
 		assertEquals(72, tDrawer.sideView((byte) Direction.EAST.get3DDataValue()).getSlots());
 		assertEquals(144, tDrawer.sideView((byte) 6).getSlots());
 		// the chat line is the :96 feedback verbatim
 		assertEquals("Automation-Access: Sided", tDrawer.accessChatLine());
+	}
+
+	@Test
+	public void drawerFrontLocalUFollowsTheGetFacingCoordsClickedArms() {
+		// UT.Code.getFacingCoordsClicked (UT.java:1734-1743): the texture-left edge is the
+		// viewer's left on every horizontal face — north face u=1-x (:1737), south u=x
+		// (:1738), west face u=z (:1742), east face u=1-z (:1743). The E/W arms are the
+		// same compass flip the sided columns had.
+		assertEquals(0.75, GT6DrawerQuadBlockEntity.frontLocalU(Direction.NORTH, 0.25, 0.5), 1e-9);
+		assertEquals(0.25, GT6DrawerQuadBlockEntity.frontLocalU(Direction.SOUTH, 0.25, 0.5), 1e-9);
+		assertEquals(0.75, GT6DrawerQuadBlockEntity.frontLocalU(Direction.EAST, 0.5, 0.25), 1e-9);
+		assertEquals(0.25, GT6DrawerQuadBlockEntity.frontLocalU(Direction.WEST, 0.5, 0.25), 1e-9);
 	}
 
 	@Test

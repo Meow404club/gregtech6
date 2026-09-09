@@ -157,28 +157,34 @@ public class GT6DrawerQuadBlockEntity extends GT6StaticStorageBaseBlockEntity im
 
 	/**
 	 * The viewer-local left/right Directions of a horizontal facing (the geometric seam of
-	 * the class doc): left = the side on the VIEWER'S left when standing at the front face.
+	 * the class doc): left = the side on the VIEWER'S left when standing AT the front face,
+	 * looking at it (facing NORTH the viewer looks south, so their left is world EAST; the
+	 * upstream decode FACING_ROTATIONS[2] CS.java:531 maps side east->2 = left). The
+	 * compass arms anchor on the upstream rows: [3] (south, CS.java:532) world west->left,
+	 * [4] (west, CS.java:533) world north->left, [5] (east, CS.java:534) world south->left.
 	 */
 	public static Direction viewerLeftOf(Direction aFacing) {
 		return switch (aFacing) {
 			case NORTH -> Direction.EAST;
 			case SOUTH -> Direction.WEST;
-			case EAST -> Direction.NORTH;
-			case WEST -> Direction.SOUTH;
+			case EAST -> Direction.SOUTH; // FACING_ROTATIONS[5]: world south->left
+			case WEST -> Direction.NORTH; // FACING_ROTATIONS[4]: world north->left
 			default -> aFacing;
 		};
 	}
 
 	/**
 	 * The front-local u coordinate (viewer-left→right in [0,1]) of a hit on the front face
-	 * (the {@code UT.Code.getFacingCoordsClicked} counterpart for the horizontal face).
+	 * (the {@code UT.Code.getFacingCoordsClicked} counterpart for the horizontal face,
+	 * UT.java:1734-1743: north face u=1-hitX, south u=hitX, west u=hitZ, east u=1-hitZ —
+	 * the texture-left edge is the viewer's left on every horizontal face).
 	 */
 	public static double frontLocalU(Direction aFacing, double aHitX, double aHitZ) {
 		return switch (aFacing) {
 			case NORTH -> 1.0 - aHitX;
 			case SOUTH -> aHitX;
-			case EAST -> aHitZ;
-			case WEST -> 1.0 - aHitZ;
+			case EAST -> 1.0 - aHitZ; // upstream side-5 arm verbatim
+			case WEST -> aHitZ; // upstream side-4 arm verbatim
 			default -> aHitX;
 		};
 	}
