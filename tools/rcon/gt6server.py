@@ -42,6 +42,74 @@ ARTIFACT_DIR = Path("/tmp")
 DONE_MARKER = "Done ("
 GRADLE_TASK = ":mdk:runServer"   # pre-stonecutter legacy; unused by the node-aware path
 
+# --- global RCON concurrency gate ------------------------------------------
+# User ruling 2026-09-09: concurrent server boots OOM'd the box (five WSL kills
+# in one night — every coder running its dual-leg chains at once). The gate is
+# a /tmp slot namespace, so it binds across all worktrees; every boot path
+# goes through start_server/stop_server, so there is no side door.
+RCON_SLOT_DIR = Path("/tmp/gt6_rcon_slots")
+RCON_SLOT_STALE_SECONDS = 2 * 3600  # crashed agents leak slots; age reaps them
+
+
+def rcon_slot_limit():
+    """Max concurrent server boots across ALL worktrees (env-overridable)."""
+    try:
+        return max(1, int(os.environ.get("GT6_RCON_MAX_CONCURRENT", "4")))
+    except ValueError:
+        return 4
+
+
+def _reap_stale_slots(log=print):
+    now = time.time()
+    for slot in RCON_SLOT_DIR.glob("slot.*"):
+        try:
+            if now - slot.stat().st_mtime > RCON_SLOT_STALE_SECONDS:
+                slot.unlink()
+                log(f"[gt6server] reaped stale RCON slot {slot.name}")
+        except OSError:
+            pass  # raced with another reaper/owner
+
+
+def acquire_rcon_slot(poll=15.0, log=print):
+    """Claim one global boot slot, actively queueing while full.
+
+    Atomic O_EXCL create over a fixed /tmp namespace — cross-worktree by
+    construction. Stale slots (agent died mid-session, WSL crash) are reaped
+    by age so a leak cannot wedge the suite forever. Returns the slot path;
+    pair with :func:`release_rcon_slot` (stop_server does this via the
+    ``<pid_file>.slot`` marker start_server leaves behind).
+    """
+    RCON_SLOT_DIR.mkdir(exist_ok=True)
+    limit = rcon_slot_limit()
+    waited = False
+    while True:
+        _reap_stale_slots(log)
+        live = sorted(RCON_SLOT_DIR.glob("slot.*"))
+        if len(live) < limit:
+            for _ in range(limit):
+                candidate = RCON_SLOT_DIR / f"slot.{os.getpid()}.{time.monotonic_ns()}"
+                try:
+                    fd = os.open(candidate, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                    os.write(fd, str(time.time()).encode())
+                    os.close(fd)
+                    if waited:
+                        log(f"[gt6server] RCON slot acquired after queueing")
+                    return candidate
+                except FileExistsError:
+                    continue
+        if not waited:
+            waited = True
+            log(f"[gt6server] RCON slots full ({len(live)}/{limit} live) — queueing "
+                f"every {poll:.0f}s (cap: env GT6_RCON_MAX_CONCURRENT)")
+        time.sleep(poll)
+
+
+def release_rcon_slot(slot, log=print):
+    try:
+        Path(slot).unlink(missing_ok=True)
+    except OSError as exc:
+        log(f"[gt6server] slot release failed ({exc}) — stale reaper will collect it")
+
 
 def gradle_task(node=None):
     """The boot task for a stonecutter node: ``:mdk:<node>:runServer``.
@@ -388,7 +456,12 @@ def start_server(worktree, log_path, pid_path, gradle_task=GRADLE_TASK):
     Returns the recorded (gradle wrapper) pid — the one the phase-era segments
     wrote with `echo $! > $PIDF`. The wrapper is the tracked handle; the server
     JVM itself is reached through stop_server's RCON stop / port-owner lookup.
+    Boots are gated by the global RCON slot semaphore (OOM ruling 2026-09-09):
+    acquire before boot, leave a `<pid_file>.slot` marker for stop_server to
+    release.
     """
+    slot = acquire_rcon_slot()
+    slot_marker = Path(str(pid_path) + ".slot")
     log_path, pid_path = Path(log_path), Path(pid_path)
     log = log_path.open("w")  # truncates, like the segments' `: > "$LOG"`
     try:
@@ -399,13 +472,22 @@ def start_server(worktree, log_path, pid_path, gradle_task=GRADLE_TASK):
             stderr=subprocess.STDOUT,
             start_new_session=True,  # nohup: survives this shell, own process group
         )
+    except BaseException:
+        release_rcon_slot(slot)
+        raise
     finally:
         log.close()  # the child holds its own dup
     pid_path.write_text(f"{process.pid}\n", encoding="utf-8")
+    slot_marker.write_text(f"{slot}\n", encoding="utf-8")
     # post-boot ownership gate: read our own write back — a parallel boot
     # clobbering this exact artifact path fails HERE, not at stop time when
     # the recorded handle points at a foreign process (P17, P16 pid-stomp).
-    assert_pid_file(pid_path, process.pid, label=gradle_task)
+    try:
+        assert_pid_file(pid_path, process.pid, label=gradle_task)
+    except BaseException:
+        release_rcon_slot(slot)
+        slot_marker.unlink(missing_ok=True)
+        raise
     print(f"[gt6server] gradle pid {process.pid} -> {pid_path}, log -> {log_path}")
     return process.pid
 
@@ -427,7 +509,7 @@ def _terminate(pid, label):
         pass
 
 
-def stop_server(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grace=10.0):
+def _stop_server_impl(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grace=10.0):
     """Precise shutdown: RCON stop, then by-recorded-pid, then by-port-owner pid.
 
     `rcon` is (host, rcon_port, password). Escalation order, each scoped to
@@ -513,6 +595,20 @@ def stop_server(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grace=10.0
             report["leftover_ports"].append((rcon[1], leftover))
             print(f"[gt6server] WARNING: port {rcon[1]} still owned by pid {leftover}")
     return report
+
+
+def stop_server(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grace=10.0):
+    """:func:`_stop_server_impl` plus the boot-slot release (gate pairing:
+    start_server acquired a slot and left a ``<pid_file>.slot`` marker)."""
+    try:
+        return _stop_server_impl(pid_file, rcon, grace, jvm_grace, term_grace)
+    finally:
+        slot_marker = Path(str(pid_file) + ".slot")
+        if slot_marker.exists():
+            recorded = slot_marker.read_text(encoding="utf-8").strip()
+            if recorded:
+                release_rcon_slot(recorded)
+            slot_marker.unlink(missing_ok=True)
 
 
 def server_error_lines(log_path, start_byte=0):

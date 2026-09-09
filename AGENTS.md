@@ -86,6 +86,9 @@ ACCEPTANCE: 可验证的完成标准（编译通过 / 测试 / 具体行为）
 BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
 ```
 测试验收链优先复用 tools/rcon/gt6rcon.py（协议与服务端开启、nohup 短轮询纪律、各机器标准链目录见 tools/rcon/README.md），不要每任务重写 RCON 脚本。
+**RCON 并发纪律（2026-09-09 用户裁定，工具层硬闸已实现）**：服务器开启一律经 gt6server 全局槽信号量
+（默认并发 4，env `GT6_RCON_MAX_CONCURRENT` 可调；满载主动排队轮询，/tmp 槽 2h 陈旧自动回收；stop 配对释放）——
+严禁绕过框架自行 boot；主会话派发时预估 RCON 并发，恢复/重派禁止一次性齐发（先 2-4 个，回流再补），防内存挤爆。
 
 **KubeJS 魔改适配（2026-09-08 用户裁定，常设）**：每张移植卡的 SPEC 必须声明 KubeJS 适配考虑面——
 ①内容走 datapack 原生形（配方 JSON/tag/loot=KubeJS 天然可改，优先）；
