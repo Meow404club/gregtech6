@@ -868,6 +868,21 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 			assertNotNull(GT6RecipesShCL.buildShredRecipe(tRow, tWithRow));
 			assertNull(GT6RecipesShCL.buildShredRecipe(tRowMortar, tWithRow));
 		}
+		// :145 is verbatim with :138 upstream (Loader_Recipes_Handlers.java:145 = :138's output
+		// array {dust, dustTiny, dustDiv72} at multiplier 16) — the pour must be symmetric
+		OreDictMaterial tMortarWithRow = null;
+		Recipe tMortarPoured = null;
+		for (OreDictMaterial tMaterial : tMaterials) {
+			if (!tMaterial.contains(TD.Processing.MORTAR)) continue;
+			Recipe tRecipe = GT6RecipesShCL.buildShredRecipe(tRowMortar, tMaterial);
+			if (tRecipe != null) {tMortarWithRow = tMaterial; tMortarPoured = tRecipe; break;}
+		}
+		assertNotNull(tMortarPoured, "at least one :145 row must resolve in the synthetic universe");
+		assertEquals(3, tMortarPoured.mOutputs.length, ":145 outputs dust + dustTiny + dustDiv72 (verbatim with :138)");
+		OreDictMaterial tMortarTarget = tMortarWithRow.mTargetPulver.mMaterial;
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dust, tMortarTarget)), tMortarPoured.mOutputs[0].getItem());
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustTiny, tMortarTarget)), tMortarPoured.mOutputs[1].getItem());
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustDiv72, tMortarTarget)), tMortarPoured.mOutputs[2].getItem());
 	}
 
 	/**

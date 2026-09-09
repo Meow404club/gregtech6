@@ -520,7 +520,9 @@ public final class GT6RecipesShCL {
 		array(":142", OP.crushedPurifiedTiny    , OP.dustTiny, OP.dustDiv72, OP.dustDiv72, null   , 256, false),
 		array(":143", OP.crushedCentrifugedTiny , OP.dustTiny, OP.dustDiv72, OP.dustDiv72, OP.dustDiv72, 256, false),
 		// Loader_Recipes_Handlers.java:145-150 — the crushed-array rows, MORTAR arm, multiplier 16
-		array(":145", OP.crushed                , OP.dust, OP.dustTiny, null        , null        , 16, true),
+		// (:145's output array is verbatim with :138's — {dust, dustTiny, dustDiv72}; the S11'
+		// review caught the missing third leg)
+		array(":145", OP.crushed                , OP.dust, OP.dustTiny, OP.dustDiv72, null        , 16, true),
 		array(":146", OP.crushedPurified        , OP.dust, OP.dustSmall, null        , null        , 16, true),
 		array(":147", OP.crushedCentrifuged     , OP.dust, OP.dustSmall, OP.dustTiny, OP.dustDiv72, 16, true),
 		array(":148", OP.crushedTiny            , OP.dustTiny, OP.dustDiv72, null   , null        , 16, true),
