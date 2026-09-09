@@ -17,8 +17,12 @@ Chain semantics:
     topology), read back on stat, then extinguished to freeze the base. 4U iron feeds
     on top (feed-then-heat, the physical order), and the heat arm tops the buffer with
     one integer charge (the box packet stream compressed into one call — the A-card
-    row0 driver semantic) → `stat` pins temp=19xxK — past Fe.mMeltingPoint 1811
-    (MT.java:996), below the WARNING latch (ceiling-100 = 2150) with margin both ways.
+    row0 driver semantic) → `stat` pins temp=2106K — past Fe.mMeltingPoint 1811
+    (MT.java:996) AND past the WroughtIron alloy threshold 2011 (WroughtIron =
+    Fe.mMeltingPoint+200, MT.java:2394 uumAloy(0, Fe, 1U); the :195 alloy-scan gate
+    reads the ALLOY's melting point, not the component's), below the WARNING latch
+    (ceiling-100 = 2150) with margin both ways → the single-component alloy fires
+    live: Fe 4U → WroughtIron 4U.
 
   B' the through-wall pour: `crucible <pos> pour <wallPos>` clicks a y+1 wall with the
     recording mold probe (the offline RecordingMold double, live-server form): the
@@ -41,10 +45,12 @@ THE ARITHMETIC (deterministic integer math — envTemperature() is the flat
 DEF_ENV_TEMP 293 seam default, tickHeat converts the WHOLE buffer in one tick,
 requiredEnergy = 1 + floor(weight/100) HU per K): the Steel shell rides the
 Fe generify density 7.874 (Steel ← WroughtIron 1U ← Fe) → shell getWeight(U*100)
-≈ 87489 kg, 4U Fe ≈ 3500 kg → ≈ 90989 kg → ≈ 910 HU/K. Melt charge 1504000 →
-1652 K over the ~295 K post-burn base → ~1947 K, inside the asserted "temp=19"
-band for any requiredEnergy in [875..925] (the density derivation oracle — the
-band deliberately absorbs it). Meltdown charge 2200000 → ≈ 2710 K > 2250 on the
+≈ 87489 kg, 4U Fe ≈ 3499.6 kg → ≈ 90988.5 kg → ≈ 910 HU/K (the r2 live readback
+pinned it exactly: 1504000 → 1945 K with 680 HUs left over). Melt charge 1650000 →
+293 + floor(1650000/910) = 2106 K — past the 2011 K alloy threshold (the r1
+10^-9-scale feed accident proved the other side: at exactly 2011 K the dustpile
+alloyed, at 1945 K the 4U melt stayed Iron), under the 2150 K WARNING latch.
+Meltdown charge 2200000 → ≈ 2710 K > 2250 on the
 same spread. passes=2 is the idempotency proof.
 
 Run:  python3 tools/rcon/chains/p26_crucible_multiblock.py --node 1.20.1-forge
@@ -117,9 +123,16 @@ steps += [
     Step(f"gt6multiblock crucible {B} stat", expect="temp="),
     Step(f"gt6burner extinguish {BB}", expect="burning=false", sleep=0.5),
     Step(f"gt6multiblock crucible {B} feed iron 4", expect="fed=true"),
-    Step(f"gt6multiblock crucible {B} heat 1504000", expect="buffer=", sleep=1.5),
-    # the melt band: past Fe 1811, under the WARNING latch 2150, any density in [875..925]
-    Step(f"gt6multiblock crucible {B} stat", expect="temp=19"),
+    # the melt band: past Fe 1811 AND past the WroughtIron alloy threshold 2011
+    # (the :195 alloy-scan gate reads the ALLOY's melting point — WroughtIron =
+    # Fe.mMeltingPoint+200, MT.java:2394 uumAloy(0, Fe, 1U)), under the WARNING
+    # latch 2150. The r1/r2 live readback pinned the physics: 1945 K melts the
+    # iron but does NOT make wrought iron; 2106 K does.
+    Step(f"gt6multiblock crucible {B} heat 1650000", expect="buffer=", sleep=1.5),
+    # the melt: 293 + floor(1650000/910) = 2106 K (910 HU/K = shell 87489 + 4U Fe 3499.6 kg)
+    Step(f"gt6multiblock crucible {B} stat", expect="temp=2106"),
+    # the single-component alloy fired live: Fe 4U -> WroughtIron 4U (the uumAloy row)
+    Step(f"gt6multiblock crucible {B} stat", expect="WroughtIron 4.0U"),
 ]
 
 # ------------------------------------------------- B': the through-wall pour
