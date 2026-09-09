@@ -54,7 +54,7 @@ Meltdown charge 2200000 → ≈ 2710 K > 2250 on the
 same spread. passes=2 is the idempotency proof.
 
 Run:  python3 tools/rcon/chains/p26_crucible_multiblock.py --node 1.20.1-forge
-      python3 tools/rcon/chains/p26_crucible_multiblock.py --node 1.21.1-neo
+      python3 tools/rcon/chains/p26_crucible_multiblock.py --node 1.21.1-neoforge
 """
 
 import sys
