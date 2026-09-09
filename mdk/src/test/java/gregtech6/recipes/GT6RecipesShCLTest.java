@@ -302,7 +302,7 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	@Test
 	void crusherTemplateShapesAndQuantityConservation() {
 		List<GT6RecipesShCL.CrusherTemplate> tTable = GT6RecipesShCL.crusherTable();
-		assertEquals(6, tTable.size(), "the gem chain :69-73 + the boule row :75");
+		assertEquals(7, tTable.size(), "the gem chain :69-73 + the boule row :75 + the :65 rawOreChunk row");
 
 		GT6RecipesShCL.CrusherTemplate tLegendary = findCrusherTemplate(tTable, ":69");
 		assertNotNull(tLegendary);
@@ -353,9 +353,44 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 		GT6RecipesShCL.load();
 
 		int tExpectedShredder = 0;
-		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.shredderTable()) if (fixedRowResolves(tRow)) tExpectedShredder++;
+		// p26: the reconciliation now mirrors the FULL pour order (fixed rows → shred templates →
+		// RECYCLABLE ring) including the exact-row dedup, via the package-private pour primitives.
+		Set<String> tShredderKeys = new HashSet<>();
+		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.shredderTable()) {
+			Recipe tRecipe = fixedRowResolves(tRow) ? GT6RecipesShCL.buildFixedRecipe(tRow) : null;
+			if (tRecipe != null && tShredderKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedShredder++;
+		}
+		for (GT6RecipesShCL.ShredTemplate tTpl : GT6RecipesShCL.shredTemplateTable()) {
+			for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(tTpl.inPrefix())) {
+				Recipe tRecipe = GT6RecipesShCL.buildShredRecipe(tTpl, tMaterial);
+				if (tRecipe != null && tShredderKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedShredder++;
+			}
+		}
+		for (OreDictPrefix tPrefix : OreDictPrefix.VALUES) {
+			if (!tPrefix.mByProducts.isEmpty() || GT6RecipesShCL.UPSTREAM_BYPRODUCT_PREFIXES.contains(tPrefix.mNameInternal)) continue;
+			if (!tPrefix.contains(TD.Prefix.RECYCLABLE)) continue;
+			if (tPrefix.containsAny(TD.Prefix.ORE, TD.Prefix.ORE_PROCESSING_BASED, TD.Prefix.DUST_BASED, TD.Prefix.IS_CONTAINER)) continue;
+			if (tPrefix.mNameInternal.startsWith("cableGt") || tPrefix.mNameInternal.startsWith("wireGt") || tPrefix.mNameInternal.startsWith("pipe")) continue;
+			for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(tPrefix)) {
+				for (int tArm = 0; tArm < 2; tArm++) {
+					Recipe tRecipe = GT6RecipesShCL.buildRingRecipe(tPrefix, tMaterial, tArm == 0 ? 256 : 16, tArm == 0);
+					if (tRecipe != null && tShredderKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedShredder++;
+				}
+			}
+		}
 		int tExpectedLathe = 0;
-		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.latheTable()) if (fixedRowResolves(tRow)) tExpectedLathe++;
+		Set<String> tLatheKeys = new HashSet<>();
+		for (GT6RecipesShCL.FixedRow tRow : GT6RecipesShCL.latheTable()) {
+			Recipe tRecipe = fixedRowResolves(tRow) ? GT6RecipesShCL.buildFixedRecipe(tRow) : null;
+			if (tRecipe != null && tLatheKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedLathe++;
+		}
+		// p26-rm-row-backfill: the handler-template expansions join the reconciliation
+		for (GT6RecipesShCL.LatheTemplate tTpl : GT6RecipesShCL.latheTemplateTable()) {
+			for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(tTpl.inPrefix())) {
+				Recipe tRecipe = latheRowResolves(tTpl, tMaterial) ? GT6RecipesShCL.buildLatheRecipe(tTpl, tMaterial) : null;
+				if (tRecipe != null && tLatheKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedLathe++;
+			}
+		}
 		int tExpectedCrusher = 0;
 		for (GT6RecipesShCL.CrusherTemplate tTpl : GT6RecipesShCL.crusherTable()) {
 			for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(tTpl.inPrefix())) {
@@ -639,6 +674,262 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
+	// p26-rm-row-backfill — the Lathe handler-template expansion (Handlers:371-393)
+	// ------------------------------------------------------------------
+
+	/** The :371-393 census: 22 templates, twin arms, and the conjunct flags land on the right rows. */
+	@Test
+	void latheTemplateCensus() {
+		List<GT6RecipesShCL.LatheTemplate> tTable = GT6RecipesShCL.latheTemplateTable();
+		assertEquals(22, tTable.size(), "the tEasyWorkable twin arms :371-381 + :383-393");
+		for (GT6RecipesShCL.LatheTemplate tTpl : tTable) {
+			assertEquals(16, tTpl.eUt(), "row " + tTpl.note() + " eUt");
+			assertTrue(tTpl.outCount() > 0, "row " + tTpl.note() + " well-formed");
+		}
+		// arm A: duration 0 (getCosts) with multiplier 64; arm B: fixed duration with multiplier 0
+		GT6RecipesShCL.LatheTemplate tIngotHard = findLatheTemplate(tTable, ":377");
+		assertNotNull(tIngotHard);
+		assertFalse(tIngotHard.easyArm());
+		assertEquals(0, tIngotHard.duration());
+		assertEquals(64, tIngotHard.multiplier());
+		assertSame(OP.ingot, tIngotHard.inPrefix());
+		assertSame(OP.stick, tIngotHard.outPrefix());
+		assertTrue(tIngotHard.layeredNot(), ":377 carries LAYERED.NOT");
+		GT6RecipesShCL.LatheTemplate tIngotEasy = findLatheTemplate(tTable, ":389");
+		assertNotNull(tIngotEasy);
+		assertTrue(tIngotEasy.easyArm());
+		assertEquals(16, tIngotEasy.duration(), "the :389 fixed literal 16");
+		assertEquals(0, tIngotEasy.multiplier());
+		// the lens.NOT conjunct rides :374/:386 only
+		assertTrue(findLatheTemplate(tTable, ":374").lensNot());
+		assertTrue(findLatheTemplate(tTable, ":386").lensNot());
+		assertFalse(findLatheTemplate(tTable, ":373").lensNot());
+		// the output-count rows
+		assertEquals(3, findLatheTemplate(tTable, ":379").outCount(), "bouleGt → stickLong x3");
+		assertEquals(3, findLatheTemplate(tTable, ":393").outCount(), "gemFlawed → bolt x3");
+	}
+
+	/**
+	 * The twin-arm split is the material's FURNACE/SOFT tag pair (tEasyWorkable, Handlers:58):
+	 * Iron is NEVER_FURNACE and not SOFT → arm A only; Tin carries SOFT → arm B only.
+	 */
+	@Test
+	void latheArmSplitFollowsTheMaterialTags() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		assertFalse(MT.Iron.contains(TD.Processing.FURNACE) || MT.Iron.contains(TD.Properties.SOFT),
+				"iron must be a hard (arm A) material for this test to mean anything");
+		assertTrue(MT.Sn.contains(TD.Processing.FURNACE) || MT.Sn.contains(TD.Properties.SOFT),
+				"tin must be an easy (arm B) material for this test to mean anything");
+		GT6RecipesShCL.LatheTemplate tHard = findLatheTemplate(GT6RecipesShCL.latheTemplateTable(), ":377");
+		GT6RecipesShCL.LatheTemplate tEasy = findLatheTemplate(GT6RecipesShCL.latheTemplateTable(), ":389");
+		assertNotNull(GT6RecipesShCL.buildLatheRecipe(tHard, MT.Iron), "iron takes the hard-arm ingot→stick row");
+		assertNull(GT6RecipesShCL.buildLatheRecipe(tEasy, MT.Iron), "iron never matches the easy arm");
+		assertNotNull(GT6RecipesShCL.buildLatheRecipe(tEasy, MT.Sn), "tin takes the easy-arm ingot→stick row");
+		assertNull(GT6RecipesShCL.buildLatheRecipe(tHard, MT.Sn), "tin never matches the hard arm");
+		// arm A duration = the getCosts arithmetic (mult 64); arm B = the fixed 16
+		Recipe tHardRow = GT6RecipesShCL.buildLatheRecipe(tHard, MT.Iron);
+		assertEquals(Math.max(1, tHardRowDuration(MT.Iron)), tHardRow.mDuration, "arm A :377 duration = getCosts");
+		Recipe tEasyRow = GT6RecipesShCL.buildLatheRecipe(tEasy, MT.Sn);
+		assertEquals(16, tEasyRow.mDuration, "arm B :389 duration = the fixed literal");
+	}
+
+	/** The getCosts mirror for the :377 row (ingot x1 → stick x1, mult 64). */
+	private static long tHardRowDuration(OreDictMaterial aMaterial) {
+		long tUnits = Math.max(OP.ingot.mAmount, OP.stick.mAmount);
+		long tTarget = 64 + 64 * aMaterial.mToolQuality;
+		return tUnits * tTarget / CS.U + (tUnits * tTarget % CS.U > 0 ? 1 : 0);
+	}
+
+	/**
+	 * The mOutputPulverizedRemains transcription follows the unit surplus (the ctor :79 gate +
+	 * :215 append): the unit-flat nugget→round twin stays single-output (U9 − U9 = 0), the
+	 * bolt→screw row sits EXACTLY on the gate boundary (U8 − U9 = U72 → 1x dustDiv72 — the
+	 * gate is >=, not >), and the ingot→stick surplus U/2 → 2x dustSmall.
+	 */
+	@Test
+	void latheRemainsFollowTheUnitSurplus() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		Item tDiv72Iron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustDiv72, MT.Iron.mTargetPulver.mMaterial));
+		Item tDustSmallIron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustSmall, MT.Iron.mTargetPulver.mMaterial));
+		assertNotNull(tDiv72Iron);
+		assertNotNull(tDustSmallIron);
+		Recipe tFlat = GT6RecipesShCL.buildLatheRecipe(findLatheTemplate(GT6RecipesShCL.latheTemplateTable(), ":372"), MT.Iron);
+		assertNotNull(tFlat, "iron must take the :372 hard-arm nugget→round row");
+		assertEquals(1, tFlat.mOutputs.length, "U9 − U9 = 0: the nugget→round row stays single-output");
+		Recipe tBoundary = GT6RecipesShCL.buildLatheRecipe(findLatheTemplate(GT6RecipesShCL.latheTemplateTable(), ":371"), MT.Iron);
+		assertNotNull(tBoundary, "iron must take the :371 hard-arm bolt→screw row");
+		assertEquals(2, tBoundary.mOutputs.length, "U8 − U9 = U72 exactly: the >= gate opens, the remains rides");
+		assertEquals(tDiv72Iron, tBoundary.mOutputs[1].getItem());
+		assertEquals(1, tBoundary.mOutputs[1].getCount());
+		Recipe tIngotRow = GT6RecipesShCL.buildLatheRecipe(findLatheTemplate(GT6RecipesShCL.latheTemplateTable(), ":377"), MT.Iron);
+		assertNotNull(tIngotRow);
+		assertEquals(2, tIngotRow.mOutputs.length, "U − U/2 = U/2 surplus: [stick, 2x dustSmall]");
+		assertEquals(tDustSmallIron, tIngotRow.mOutputs[1].getItem());
+		assertEquals(2, tIngotRow.mOutputs[1].getCount());
+	}
+
+	/**
+	 * The (ingot, Iron) → (stick, Iron) row poured with the getCosts shape and consumes. The
+	 * offline synthetic universe ALIASES pairs onto shared vanilla items, so the row is located
+	 * by identity in the map instead of an ambiguous findRecipe probe (the reserved-vanilla
+	 * findRecipe path is the flint/web/bone tests).
+	 */
+	@Test
+	void latheIngotRowRoundTripsThroughFindRecipe() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		GT6RecipesShCL.sVanillaItemResolver = Supplier::get;
+		GT6RecipesShCL.load();
+
+		Item tIngotIron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.ingot, MT.Iron));
+		Item tStickIron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.stick, MT.Iron));
+		assertNotNull(tIngotIron);
+		assertNotNull(tStickIron, "iron must generate sticks for this round-trip");
+		// the :377 row carries the mOutputPulverizedRemains transcription (ctor :79 + :215):
+		// ingot U − stick U/2 = U/2 surplus → OM.pulverize = 2x dustSmall of the pulver target
+		Item tDustSmallIron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustSmall, MT.Iron.mTargetPulver.mMaterial));
+		assertNotNull(tDustSmallIron, "iron's pulver target must generate small dusts for this round-trip");
+		Recipe tIronRow = null;
+		for (Recipe tRecipe : GT6RecipeMaps.LATHE.mRecipeList) {
+			if (tRecipe.mInputs.length == 1 && tRecipe.mInputs[0].getItem() == tIngotIron && tRecipe.mInputs[0].getCount() == 1
+					&& tRecipe.mOutputs.length == 2 && tRecipe.mOutputs[0].getItem() == tStickIron && tRecipe.mOutputs[0].getCount() == 1
+					&& tRecipe.mOutputs[1].getItem() == tDustSmallIron && tRecipe.mOutputs[1].getCount() == 2) {
+				tIronRow = tRecipe;
+				break;
+			}
+		}
+		assertNotNull(tIronRow, "the :377 iron ingot→stick+remains row must be poured");
+		assertEquals(Math.max(1, tHardRowDuration(MT.Iron)), tIronRow.mDuration, "arm A duration = the getCosts arithmetic");
+		assertEquals(16, tIronRow.mEUt);
+		ItemStack[] tInputs = {new ItemStack(tIngotIron, 2)};
+		assertTrue(tIronRow.isRecipeInputEqual(false, false, null, tInputs));
+		assertEquals(2, tInputs[0].getCount(), "the probe must not consume");
+		assertTrue(tIronRow.isRecipeInputEqual(true, false, null, tInputs));
+		assertEquals(1, tInputs[0].getCount(), "one pass consumes exactly one ingot");
+	}
+
+	// ------------------------------------------------------------------
+	// p26-rm-row-backfill — the Shredder handler templates + the RECYCLABLE ring (:114-155)
+	// ------------------------------------------------------------------
+
+	/** The :114-150 census: 34 templates, twin MORTAR arms, the crushed-array rows carry 2-4 outputs. */
+	@Test
+	void shredTemplateCensus() {
+		List<GT6RecipesShCL.ShredTemplate> tTable = GT6RecipesShCL.shredTemplateTable();
+		assertEquals(34, tTable.size(), ":114-124 (11) + :126-136 (11) + :138-143 (6) + :145-150 (6)");
+		for (GT6RecipesShCL.ShredTemplate tTpl : tTable) {
+			assertEquals(16, tTpl.eUt(), "row " + tTpl.note() + " eUt");
+			assertTrue(tTpl.outCounts().length == tTpl.outPrefixes().length, "row " + tTpl.note() + " shape");
+		}
+		GT6RecipesShCL.ShredTemplate tImpure = findShredTemplate(tTable, ":114");
+		assertNotNull(tImpure);
+		assertSame(OP.dustImpure, tImpure.inPrefix());
+		assertEquals(256, tImpure.multiplier());
+		assertFalse(tImpure.mortar(), ":114 is the MORTAR.NOT arm");
+		assertTrue(tImpure.bedrockNot(), ":114 carries MT.Bedrock.NOT");
+		assertEquals(2, tImpure.outPrefixes().length);
+		GT6RecipesShCL.ShredTemplate tCluster = findShredTemplate(tTable, ":124");
+		assertEquals(1, tCluster.outPrefixes().length, ":124 cluster → dust x3 single-output");
+		assertEquals(3, tCluster.outCounts()[0]);
+		GT6RecipesShCL.ShredTemplate tCentrifuged = findShredTemplate(tTable, ":140");
+		assertEquals(4, tCentrifuged.outPrefixes().length, ":140 carries the 4-output crushed array");
+		assertEquals(16, findShredTemplate(tTable, ":147").multiplier(), "the :145-150 arm runs multiplier 16");
+		assertTrue(findShredTemplate(tTable, ":147").mortar());
+	}
+
+	/**
+	 * The crushed-array rows pour with the mTargetPulver output-material hop
+	 * (RecipeMapHandlerPrefixShredding.java:47) and a positive summed-units duration.
+	 */
+	@Test
+	void shredCrushedRowPoursWithPulverHop() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		List<OreDictMaterial> tMaterials = GT6RecipesShCL.expandCrusherMaterials(OP.crushed);
+		assertFalse(tMaterials.isEmpty(), "the crushed prefix must have registered materials (it is an item-path prefix)");
+		GT6RecipesShCL.ShredTemplate tRow = findShredTemplate(GT6RecipesShCL.shredTemplateTable(), ":138");
+		OreDictMaterial tWithRow = null;
+		Recipe tPoured = null;
+		for (OreDictMaterial tMaterial : tMaterials) {
+			Recipe tRecipe = GT6RecipesShCL.buildShredRecipe(tRow, tMaterial);
+			if (tRecipe != null) {tWithRow = tMaterial; tPoured = tRecipe; break;}
+		}
+		assertNotNull(tPoured, "at least one :138 row must resolve in the synthetic universe");
+		OreDictMaterial tPulverTarget = tWithRow.mTargetPulver.mMaterial;
+		assertEquals(3, tPoured.mOutputs.length, ":138 outputs dust + dustTiny + dustDiv72");
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dust, tPulverTarget)), tPoured.mOutputs[0].getItem());
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustTiny, tPulverTarget)), tPoured.mOutputs[1].getItem());
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustDiv72, tPulverTarget)), tPoured.mOutputs[2].getItem());
+		assertTrue(tPoured.mDuration >= 1);
+		// the MORTAR twin arms are mutually exclusive: whatever :138 accepted, :145 must reject (and vice versa)
+		GT6RecipesShCL.ShredTemplate tRowMortar = findShredTemplate(GT6RecipesShCL.shredTemplateTable(), ":145");
+		if (tWithRow.contains(TD.Processing.MORTAR)) {
+			assertNull(GT6RecipesShCL.buildShredRecipe(tRow, tWithRow));
+			assertNotNull(GT6RecipesShCL.buildShredRecipe(tRowMortar, tWithRow));
+		} else {
+			assertNotNull(GT6RecipesShCL.buildShredRecipe(tRow, tWithRow));
+			assertNull(GT6RecipesShCL.buildShredRecipe(tRowMortar, tWithRow));
+		}
+		// :145 is verbatim with :138 upstream (Loader_Recipes_Handlers.java:145 = :138's output
+		// array {dust, dustTiny, dustDiv72} at multiplier 16) — the pour must be symmetric
+		OreDictMaterial tMortarWithRow = null;
+		Recipe tMortarPoured = null;
+		for (OreDictMaterial tMaterial : tMaterials) {
+			if (!tMaterial.contains(TD.Processing.MORTAR)) continue;
+			Recipe tRecipe = GT6RecipesShCL.buildShredRecipe(tRowMortar, tMaterial);
+			if (tRecipe != null) {tMortarWithRow = tMaterial; tMortarPoured = tRecipe; break;}
+		}
+		assertNotNull(tMortarPoured, "at least one :145 row must resolve in the synthetic universe");
+		assertEquals(3, tMortarPoured.mOutputs.length, ":145 outputs dust + dustTiny + dustDiv72 (verbatim with :138)");
+		OreDictMaterial tMortarTarget = tMortarWithRow.mTargetPulver.mMaterial;
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dust, tMortarTarget)), tMortarPoured.mOutputs[0].getItem());
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustTiny, tMortarTarget)), tMortarPoured.mOutputs[1].getItem());
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustDiv72, tMortarTarget)), tMortarPoured.mOutputs[2].getItem());
+	}
+
+	/**
+	 * The :152 filter: the upstream byproduct carriers are excluded (toolHeadDrill), stick
+	 * qualifies (RECYCLABLE, no exclusion tag, no byproduct upstream), and the ring row output
+	 * is the OM.pulverize transcription — for the U2 stick the dustSmall x2 shape.
+	 */
+	@Test
+	void recyclableRingFilterAndOutputShape() {
+		assertTrue(GT6RecipesShCL.UPSTREAM_BYPRODUCT_PREFIXES.contains("toolHeadDrill"),
+				"toolHeadDrill carries an upstream byproduct (OP.java:717) and must be excluded");
+		assertFalse(GT6RecipesShCL.UPSTREAM_BYPRODUCT_PREFIXES.contains("stick"));
+		assertTrue(OP.stick.contains(TD.Prefix.RECYCLABLE), "stick must carry RECYCLABLE for the ring");
+		assertFalse(OP.stick.containsAny(TD.Prefix.ORE, TD.Prefix.ORE_PROCESSING_BASED, TD.Prefix.DUST_BASED, TD.Prefix.IS_CONTAINER),
+				"stick must pass the :152 exclusion tags");
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		OreDictMaterial tStickMaterial = null;
+		for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(OP.stick)) {
+			if (!tMaterial.contains(TD.Atomic.ANTIMATTER) && !tMaterial.contains(TD.Properties.INVALID_MATERIAL) && !tMaterial.contains(TD.Processing.MORTAR)) {
+				tStickMaterial = tMaterial; break;
+			}
+		}
+		assertNotNull(tStickMaterial, "at least one non-mortar stick material must exist");
+		Recipe tRingRow = GT6RecipesShCL.buildRingRecipe(OP.stick, tStickMaterial, 256, true);
+		assertNotNull(tRingRow, "the :153 arm must resolve for a non-mortar stick material");
+		ItemStack tExpectedOutput = GT6RecipesShCL.pulverizeOutput(tStickMaterial, OP.stick.mAmount);
+		assertNotNull(tExpectedOutput);
+		assertEquals(1, tRingRow.mOutputs.length, "the ring rows carry the remains output alone");
+		assertEquals(tExpectedOutput.getItem(), tRingRow.mOutputs[0].getItem());
+		assertEquals(tExpectedOutput.getCount(), tRingRow.mOutputs[0].getCount());
+		assertEquals(SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.stick, tStickMaterial)), tRingRow.mInputs[0].getItem());
+		// the twin arm is the MORTAR side — rejected for this material
+		assertNull(GT6RecipesShCL.buildRingRecipe(OP.stick, tStickMaterial, 16, false));
+		// dustCascade identity for the U2 stick (default pulver target): dustSmall x2
+		assertEquals(OP.dustSmall, dustCascadePrefixOf(OP.stick.mAmount), "stick (U2) pulverizes into the dustSmall branch");
+	}
+
+	/** The OM.dust cascade branch probe for a unit amount (the prefix the cascade resolves). */
+	private static OreDictPrefix dustCascadePrefixOf(long aUnits) {
+		if (aUnits < CS.U72) return null;
+		if (aUnits >= CS.U) return OP.dust;
+		if (aUnits >= CS.U4) return OP.dustSmall;
+		if (aUnits >= CS.U9) return OP.dustTiny;
+		return OP.dustDiv72;
+	}
+
+	// ------------------------------------------------------------------
 	// pooled surface
 	// ------------------------------------------------------------------
 
@@ -658,8 +949,27 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 		assertTrue(tSkipped.contains("blockSolid Obsidian"), "the :82 input deviation (vanilla obsidian) is declared");
 		assertEquals(8, GT6RecipesShCL.shredderTable().size());
 		assertEquals(2, GT6RecipesShCL.latheTable().size());
-		assertEquals(6, GT6RecipesShCL.crusherTable().size());
+		assertEquals(7, GT6RecipesShCL.crusherTable().size());
 		assertEquals(4, GT6RecipesShCL.crusherVanillaTable().size());
+		assertEquals(34, GT6RecipesShCL.shredTemplateTable().size());
+		assertEquals(22, GT6RecipesShCL.latheTemplateTable().size());
+	}
+
+	/**
+	 * The CRUSHER :65 rawOreChunk row: transcribed DATA (quantity-conserving 27*U72 → 3×9*U72)
+	 * whose walk expands to ZERO rows — OP.rawOreChunk exists as prefix data but has no port
+	 * item registrations (it is not in GTMaterialItems.itemPathPrefixes).
+	 */
+	@Test
+	void crusherRawOreChunkRowIsZeroExpansionData() {
+		GT6RecipesShCL.CrusherTemplate tRaw = findCrusherTemplate(GT6RecipesShCL.crusherTable(), ":65");
+		assertNotNull(tRaw);
+		assertSame(OP.rawOreChunk, tRaw.inPrefix());
+		assertSame(OP.crushedTiny, tRaw.outPrefix());
+		assertEquals(3, tRaw.outCount());
+		assertEquals(OP.rawOreChunk.mAmount * 1, OP.crushedTiny.mAmount * 3, "the :65 row is quantity-conserving");
+		assertTrue(GT6RecipesShCL.expandCrusherMaterials(OP.rawOreChunk).isEmpty(),
+				"rawOreChunk has no registered port items — the :65 walk must expand to zero rows");
 	}
 
 	// ------------------------------------------------------------------
@@ -674,6 +984,23 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	private static GT6RecipesShCL.CrusherTemplate findCrusherTemplate(List<GT6RecipesShCL.CrusherTemplate> aTable, String aNote) {
 		for (GT6RecipesShCL.CrusherTemplate tTemplate : aTable) if (tTemplate.note().equals(aNote)) return tTemplate;
 		return null;
+	}
+
+	private static GT6RecipesShCL.LatheTemplate findLatheTemplate(List<GT6RecipesShCL.LatheTemplate> aTable, String aNote) {
+		for (GT6RecipesShCL.LatheTemplate tTemplate : aTable) if (tTemplate.note().equals(aNote)) return tTemplate;
+		return null;
+	}
+
+	private static GT6RecipesShCL.ShredTemplate findShredTemplate(List<GT6RecipesShCL.ShredTemplate> aTable, String aNote) {
+		for (GT6RecipesShCL.ShredTemplate tTemplate : aTable) if (tTemplate.note().equals(aNote)) return tTemplate;
+		return null;
+	}
+
+	/** The independent recomputation of the p26 Lathe backfill (condition gate + both-side resolution). */
+	private static boolean latheRowResolves(GT6RecipesShCL.LatheTemplate aTemplate, OreDictMaterial aMaterial) {
+		if (!GT6RecipesShCL.latheCondition(aMaterial, aTemplate)) return false;
+		return SYNTHETIC_ITEMS.containsKey(new PrefixMaterial(aTemplate.inPrefix(), aMaterial))
+				&& SYNTHETIC_ITEMS.containsKey(new PrefixMaterial(aTemplate.outPrefix(), aMaterial));
 	}
 
 	private static boolean fixedRowResolves(GT6RecipesShCL.FixedRow aRow) {
