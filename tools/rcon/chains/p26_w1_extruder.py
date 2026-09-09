@@ -16,9 +16,11 @@ place→input（mold+block）→HU inject≥mInputMin→run→9 plate/rod 输出
     semantic through Recipe.sNotConsumable reading the live gt6:extruder_shapes tag —
     the offline stub's positives re-proven against the real registry).
 
-  B the plate static row (extruder T2): place → input 1 (the plate mold) → merge + block →
-    inject 40 x 256 (size >= mInputMin 64, TIER_INPUTS[1][0]) → 9x plate_iron out (the
-    :405 face) → check crown.
+  B the plate static row (extruder T2): place → input 1 (the FAMILY stub — the command
+    registers one literal per family, all four extruder tiers share the rod mold,
+    GTMachineCommand :188-191; the plate row arrives through the merge's slot-0 re-state)
+    → merge + block → inject 40 x 256 (size >= mInputMin 64, TIER_INPUTS[1][0]) →
+    9x plate_iron out (the :405 face) → check crown.
 
 The inventory merges ride the loader-versioned key shapes (the p19_nbt_rebind ruling);
 the name renderings are PER-LEG via Step.node_expects (the p24 ruling). The extruder
@@ -83,8 +85,8 @@ steps += [
     phase("B: the plate static row (extruder T2, HU) — [iron block, plate mold] -> 9 plates, mold stays"),
     Step(f"gt6machine extruder_t2 place {B}", expect="GT6 extruder_t2 placed"),
     Step(f"gt6machine extruder_t2 input 1 {B}",
-         expect="GT6 extruder input: 1x shape_extruder_plate into slot 0",
-         node_expects={"1.21.1": "GT6 extruder input: 1x gt6:shape_extruder_plate into slot 0"}),
+         expect="GT6 extruder input: 1x shape_extruder_rod into slot 0",
+         node_expects={"1.21.1": "GT6 extruder input: 1x gt6:shape_extruder_rod into slot 0"}),
     Step(PLATE_MOLD_MERGE["1.20.1"].format(p=B), expect="Modified block data",
          node_cmds={"1.21.1": PLATE_MOLD_MERGE["1.21.1"].format(p=B)}),
     Step(f"gt6machine extruder_t2 inject 40 256 {B}",
