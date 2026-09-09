@@ -69,6 +69,8 @@ public class GTCommandTreeLiteralTest {
 		"dryer", "dryer_t2", "dryer_t3", "dryer_t4",
 		"distillery", "distillery_t2", "distillery_t3", "distillery_t4", // task p16-distillery-family
 		"canner", "canner_t2", "canner_t3", "canner_t4", // task p24-canner-machine — the Canner ladder
+		"press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds — the Press ladder
+		"extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds — the Extruder ladder
 		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 
 	private static CommandSourceStack stack() {
