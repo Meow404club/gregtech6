@@ -53,10 +53,12 @@ public final class GT6CrucibleDatagen {
 				new Provider(aEvent.getGenerator().getPackOutput(), aEvent.getExistingFileHelper()));
 		aEvent.getGenerator().addProvider(true,
 				new Lang(aEvent.getGenerator().getPackOutput()));
-		// task p24-tool-system ③ posture: the recipes ride the two-arg RecipeProvider
-		// ctor on both legs (the forge leg ignores the lookup provider)
+		//? if forge {
+		// the crafting face is the 1.20.1-forge runData surface this card drives; the 21.1
+		// datagen flow (RecipeOutput) has no FinishedRecipe and stays the card-B future
 		aEvent.getGenerator().addProvider(true,
 				new Recipes(aEvent.getGenerator().getPackOutput(), aEvent.getLookupProvider()));
+		//?}
 	}
 
 	// ------------------------------------------------------------------------------------
@@ -156,6 +158,8 @@ public final class GT6CrucibleDatagen {
 	// ------------------------------------------------------------------------------------
 	// crafting (the tier-a JSON face)
 	// ------------------------------------------------------------------------------------
+
+	//? if forge {
 
 	/**
 	 * The two handcrafts: 8 cobblestone → Stone Smeltery (the upstream opening row), 7 →
@@ -283,5 +287,7 @@ public final class GT6CrucibleDatagen {
 			return new ResourceLocation("gt6", aPath);
 		}
 	}
+
+	//?}
 
 }
