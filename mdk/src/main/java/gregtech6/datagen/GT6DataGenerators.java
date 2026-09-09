@@ -1,8 +1,18 @@
 package gregtech6.datagen;
 
+import java.util.Set;
+
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+//? if forge {
+import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
+//?} else {
+/*import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
+//21.1: same simple name, neoforge.common.data package (the GT6WorldgenDatagen javadoc
+//carries the seam evidence; both legs share the 4-arg ctor shape).
+*///?}
 
 /**
  * DataGen entry (ADR-P2-4). Annotation-based mod-bus listener (GTCEu data/DataGenerators.java:25-31
@@ -72,5 +82,13 @@ public final class GT6DataGenerators {
         // (both legs construct through the two-arg form; the forge leg ignores the lookup)
         event.getGenerator().addProvider(true,
             new GT6CraftingRecipes(event.getGenerator().getPackOutput(), event.getLookupProvider()));
+        // task p26-worldgen-pipeline-skeleton: the first dynamic-registry provider — the 17
+        // stone blobs' configured/placed features + biome modifiers off ONE RegistrySetBuilder
+        // (three BootstapContexts, GT6WorldgenDatagen.BUILDER; GTCEu DataGenerators.java:40
+        // precedent). Biome-modifier JSONs land per leg at data/gt6/<loader>/biome_modifier/
+        // (the registry-key namespace drives the directory — no local wiring here).
+        event.getGenerator().addProvider(true,
+            new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(),
+                event.getLookupProvider(), GT6WorldgenDatagen.BUILDER, Set.of("gt6")));
     }
 }

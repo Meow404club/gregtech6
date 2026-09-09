@@ -1,0 +1,27 @@
+{
+  "feature": "gt6:overworld_stone_blueschist",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 100
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "max_inclusive": {
+          "absolute": 120
+        },
+        "min_inclusive": {
+          "absolute": 0
+        }
+      }
+    }
+  ]
+}
