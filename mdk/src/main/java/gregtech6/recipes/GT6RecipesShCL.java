@@ -84,8 +84,11 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * {@code units(max(unitsIn, unitsOut), U, multiplier + multiplier*mToolQuality, T)} — which is
  * quantity-conserving across the gem chain (gemLegendary 8U = 2x gemExquisite 4U, etc.), so
  * every row resolves to {@code units * 256 * (1+mToolQuality)} ticks. The
- * {@code mOutputPulverizedRemains} secondary output (upstream :215) is null for these rows:
- * mUnitsInputted - mUnitsOutputted = 0, and OM.pulverize(mat, 0) produces nothing.
+ * {@code mOutputPulverizedRemains} secondary output (upstream :215) is null for these Crusher
+ * rows: mUnitsInputted - mUnitsOutputted = 0, and OM.pulverize(mat, 0) produces nothing. The
+ * p26 Lathe template rows are the opposite case — their 15-arg calls all request the remains
+ * (the 13th ctor arg T, Handlers:371-393) and 20 of the 22 arms clear the ctor :79 gate, so
+ * {@link #buildLatheRecipe} appends the OM.pulverize transcription as the second output.
  *
  * <p><b>The upstream registration form silently drops a row when the (prefix, material) pair
  * has no item ({@code mat()} → null); the port keeps that shape: the tables below are DATA,
@@ -161,6 +164,11 @@ public final class GT6RecipesShCL {
 	 * transcribe the trailing {@code LAYERED.NOT} / {@code lens.NOT} condition conjuncts
 	 * ({@code lens.NOT} is the port {@code OreDictPrefix.NOT} condition = the material has no
 	 * lens item generation, OreDictPrefix.java:570-573).
+	 *
+	 * <p>All 22 rows pass {@code T} for the ctor's {@code aOutputPulverizedRemains} (the 13th
+	 * arg — {@code NI, NI, T, T, F} on every :371-393 call), so {@link #buildLatheRecipe}
+	 * appends the {@code OM.pulverize} remains transcription behind the fixed output wherever
+	 * the :79 gate opens (20 of the 22 arms; the nugget→round twins are unit-flat).
 	 */
 	public record LatheTemplate(String note, OreDictPrefix inPrefix, OreDictPrefix outPrefix, int outCount,
 			long eUt, long duration, long multiplier, boolean easyArm, boolean layeredNot, boolean lensNot) {}
@@ -307,6 +315,11 @@ public final class GT6RecipesShCL {
 	 * {@code lens.NOT} conjunct and :372/:384 the {@code LAYERED.NOT} conjunct — see
 	 * {@link LatheTemplate}. All in/out prefixes are port item-path prefixes
 	 * (GTMaterialItems.itemPathPrefixes), so these rows resolve against the live universe.
+	 * Every row requests the upstream {@code mOutputPulverizedRemains} (the 13th ctor arg T):
+	 * the poured rows are [fixed output, pulverize remains] dual-output wherever
+	 * {@code unitsIn − unitsOut >= OP.dustDiv72.mAmount} — e.g. :377/:389 ingot U → stick U/2
+	 * appends 2x dustSmall, :371/:383 bolt U8 → screw U9 appends 1x dustDiv72 — while the
+	 * unit-flat nugget→round twins (:372/:384) pour single-output.
 	 *
 	 * <p><b>Lazily built</b> (the a9027ac lesson, same as every table above).
 	 */
@@ -362,11 +375,18 @@ public final class GT6RecipesShCL {
 
 	/**
 	 * Lathe template x material → Recipe, or null (the upstream addRecipeForMaterial false
-	 * return): the {@link #latheCondition} gate, both-side item resolution (:209/:214), and
-	 * the duration split — arm A mDuration=0 → max(1, getCosts) (:218, the multiplier-64
-	 * arithmetic); arm B the fixed duration literal. Output material = SELF (the base
-	 * RecipeMapHandlerPrefix.getOutputMaterial :221-223 — the Lathe rows are NOT Shredding
-	 * rows, no mTargetPulver hop).
+	 * return): the {@link #latheCondition} gate, both-side item resolution (:209/:214), the
+	 * duration split — arm A mDuration=0 → max(1, getCosts) (:218, the multiplier-64
+	 * arithmetic); arm B the fixed duration literal — and the mOutputPulverizedRemains
+	 * transcription: every :371-393 row requests the remains (the 15-arg ctor 13th arg T), the
+	 * ctor gate :79 opens at {@code unitsIn − unitsOut >= OP.dustDiv72.mAmount}, and :215
+	 * appends {@code OM.pulverize(aMaterial, unitsIn − unitsOut)} after the fixed output —
+	 * 20 of the 22 arms clear it (the nugget→round twins are unit-flat, U9 − U9 = 0). An
+	 * unresolvable remains drops the WHOLE row, the buildShredRecipe :214 all-outputs
+	 * convention, declared here per the S11' review ruling (upstream :215 has no per-slot
+	 * check; the port does not pour a row with a null output slot). Output material = SELF
+	 * for the fixed output (the base getOutputMaterial :221-223 — the Lathe rows are NOT
+	 * Shredding rows); the remains carries its own mTargetPulver hop inside OM.pulverize.
 	 */
 	static Recipe buildLatheRecipe(LatheTemplate aTemplate, OreDictMaterial aMaterial) {
 		if (!latheCondition(aMaterial, aTemplate)) return null;
@@ -376,9 +396,18 @@ public final class GT6RecipesShCL {
 		if (tOutItem == null) return null; // upstream :214 mat() → null
 		long tDuration = aTemplate.duration() > 0 ? aTemplate.duration()
 				: Math.max(1, handlerCosts(aTemplate.inPrefix(), 1, aTemplate.outPrefix(), aTemplate.outCount(), aTemplate.multiplier(), aMaterial));
+		long tUnitsSurplus = aTemplate.inPrefix().mAmount * 1 /* inCount is 1 on every :371-393 row */
+				- aTemplate.outPrefix().mAmount * aTemplate.outCount();
+		List<ItemStack> tOutputs = new ArrayList<>(2);
+		tOutputs.add(new ItemStack(tOutItem, aTemplate.outCount()));
+		if (tUnitsSurplus >= OP.dustDiv72.mAmount) { // the ctor gate :79
+			ItemStack tRemains = pulverizeOutput(aMaterial, tUnitsSurplus); // upstream :215 = OM.pulverize(aMaterial, unitsIn − unitsOut)
+			if (tRemains == null) return null; // unresolvable remains → the whole row drops (the buildShredRecipe :214 convention)
+			tOutputs.add(tRemains);
+		}
 		return new Recipe(true,
 				new ItemStack[] {new ItemStack(tInItem, 1)},
-				new ItemStack[] {new ItemStack(tOutItem, aTemplate.outCount())},
+				tOutputs.toArray(new ItemStack[0]),
 				new FluidStack[0], new FluidStack[0], tDuration, aTemplate.eUt(), 0);
 	}
 

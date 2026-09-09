@@ -741,6 +741,34 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
+	 * The mOutputPulverizedRemains transcription follows the unit surplus (the ctor :79 gate +
+	 * :215 append): the unit-flat nugget→round twin stays single-output (U9 − U9 = 0), the
+	 * bolt→screw row sits EXACTLY on the gate boundary (U8 − U9 = U72 → 1x dustDiv72 — the
+	 * gate is >=, not >), and the ingot→stick surplus U/2 → 2x dustSmall.
+	 */
+	@Test
+	void latheRemainsFollowTheUnitSurplus() {
+		GT6RecipesShCL.sMaterialItemResolver = (aPrefix, aMaterial) -> SYNTHETIC_ITEMS.get(new PrefixMaterial(aPrefix, aMaterial));
+		Item tDiv72Iron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustDiv72, MT.Iron.mTargetPulver.mMaterial));
+		Item tDustSmallIron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustSmall, MT.Iron.mTargetPulver.mMaterial));
+		assertNotNull(tDiv72Iron);
+		assertNotNull(tDustSmallIron);
+		Recipe tFlat = GT6RecipesShCL.buildLatheRecipe(findLatheTemplate(GT6RecipesShCL.latheTemplateTable(), ":372"), MT.Iron);
+		assertNotNull(tFlat, "iron must take the :372 hard-arm nugget→round row");
+		assertEquals(1, tFlat.mOutputs.length, "U9 − U9 = 0: the nugget→round row stays single-output");
+		Recipe tBoundary = GT6RecipesShCL.buildLatheRecipe(findLatheTemplate(GT6RecipesShCL.latheTemplateTable(), ":371"), MT.Iron);
+		assertNotNull(tBoundary, "iron must take the :371 hard-arm bolt→screw row");
+		assertEquals(2, tBoundary.mOutputs.length, "U8 − U9 = U72 exactly: the >= gate opens, the remains rides");
+		assertEquals(tDiv72Iron, tBoundary.mOutputs[1].getItem());
+		assertEquals(1, tBoundary.mOutputs[1].getCount());
+		Recipe tIngotRow = GT6RecipesShCL.buildLatheRecipe(findLatheTemplate(GT6RecipesShCL.latheTemplateTable(), ":377"), MT.Iron);
+		assertNotNull(tIngotRow);
+		assertEquals(2, tIngotRow.mOutputs.length, "U − U/2 = U/2 surplus: [stick, 2x dustSmall]");
+		assertEquals(tDustSmallIron, tIngotRow.mOutputs[1].getItem());
+		assertEquals(2, tIngotRow.mOutputs[1].getCount());
+	}
+
+	/**
 	 * The (ingot, Iron) → (stick, Iron) row poured with the getCosts shape and consumes. The
 	 * offline synthetic universe ALIASES pairs onto shared vanilla items, so the row is located
 	 * by identity in the map instead of an ambiguous findRecipe probe (the reserved-vanilla
@@ -756,15 +784,20 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 		Item tStickIron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.stick, MT.Iron));
 		assertNotNull(tIngotIron);
 		assertNotNull(tStickIron, "iron must generate sticks for this round-trip");
+		// the :377 row carries the mOutputPulverizedRemains transcription (ctor :79 + :215):
+		// ingot U − stick U/2 = U/2 surplus → OM.pulverize = 2x dustSmall of the pulver target
+		Item tDustSmallIron = SYNTHETIC_ITEMS.get(new PrefixMaterial(OP.dustSmall, MT.Iron.mTargetPulver.mMaterial));
+		assertNotNull(tDustSmallIron, "iron's pulver target must generate small dusts for this round-trip");
 		Recipe tIronRow = null;
 		for (Recipe tRecipe : GT6RecipeMaps.LATHE.mRecipeList) {
 			if (tRecipe.mInputs.length == 1 && tRecipe.mInputs[0].getItem() == tIngotIron && tRecipe.mInputs[0].getCount() == 1
-					&& tRecipe.mOutputs.length == 1 && tRecipe.mOutputs[0].getItem() == tStickIron && tRecipe.mOutputs[0].getCount() == 1) {
+					&& tRecipe.mOutputs.length == 2 && tRecipe.mOutputs[0].getItem() == tStickIron && tRecipe.mOutputs[0].getCount() == 1
+					&& tRecipe.mOutputs[1].getItem() == tDustSmallIron && tRecipe.mOutputs[1].getCount() == 2) {
 				tIronRow = tRecipe;
 				break;
 			}
 		}
-		assertNotNull(tIronRow, "the :377 iron ingot→stick row must be poured");
+		assertNotNull(tIronRow, "the :377 iron ingot→stick+remains row must be poured");
 		assertEquals(Math.max(1, tHardRowDuration(MT.Iron)), tIronRow.mDuration, "arm A duration = the getCosts arithmetic");
 		assertEquals(16, tIronRow.mEUt);
 		ItemStack[] tInputs = {new ItemStack(tIngotIron, 2)};
