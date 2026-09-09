@@ -272,6 +272,13 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		for (RegistryObject<Item> tMold : gregtech6.registry.GT6ExtruderMolds.MOLDS) {
 			tag(EXTRUDER_SHAPES).add(item(tMold.getId()));
 		}
+		// task p26-storage-static-batch — the shelf-book band: the vanilla book family (the
+		// BooksGT.BOOK_REGISTER modern equivalent; pack authors extend the shelf universe)
+		tag(BOOKS).add(
+				item(net.minecraft.resources.ResourceLocation.withDefaultNamespace("book")),
+				item(net.minecraft.resources.ResourceLocation.withDefaultNamespace("writable_book")),
+				item(net.minecraft.resources.ResourceLocation.withDefaultNamespace("written_book")),
+				item(net.minecraft.resources.ResourceLocation.withDefaultNamespace("enchanted_book")));
 		tag(Tags.Items.TOOLS).add(
 				item(GT6Tools.FILE.getId()), item(GT6Tools.SAW.getId()),
 				item(GT6Tools.CROWBAR.getId()), item(GT6Tools.CUTTER.getId()), item(GT6Tools.CHISEL.getId()),

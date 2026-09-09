@@ -30,9 +30,31 @@ direct	block.gt6.barrel_tungsten_alloy	钨合金鼓	hand
 direct	block.gt6.barrel_tungstensteel	钨钢鼓	hand
 direct	block.gt6.barrel_void_metal	虚空金属鼓	hand
 direct	block.gt6.barrel_wood	木制储物桶	hand
+direct	block.gt6.bookshelf_acacia	金合欢木书架	hand
+direct	block.gt6.bookshelf_birch	白桦木书架	hand
+direct	block.gt6.bookshelf_cherry	樱花木书架	hand
+direct	block.gt6.bookshelf_crimson	绯红木书架	hand
+direct	block.gt6.bookshelf_dark_oak	深色橡木书架	hand
+direct	block.gt6.bookshelf_jungle	丛林木书架	hand
+direct	block.gt6.bookshelf_mangrove	红树木书架	hand
+direct	block.gt6.bookshelf_oak	橡木书架	hand
+direct	block.gt6.bookshelf_spruce	云杉木书架	hand
+direct	block.gt6.bookshelf_warped	诡异木书架	hand
+direct	block.gt6.bottlecrate_acacia	金合欢木瓶箱	hand
+direct	block.gt6.bottlecrate_birch	白桦木瓶箱	hand
+direct	block.gt6.bottlecrate_cherry	樱花木瓶箱	hand
+direct	block.gt6.bottlecrate_crimson	绯红木瓶箱	hand
+direct	block.gt6.bottlecrate_dark_oak	深色橡木瓶箱	hand
+direct	block.gt6.bottlecrate_jungle	丛林木瓶箱	hand
+direct	block.gt6.bottlecrate_mangrove	红树木瓶箱	hand
+direct	block.gt6.bottlecrate_oak	橡木瓶箱	hand
+direct	block.gt6.bottlecrate_spruce	云杉木瓶箱	hand
+direct	block.gt6.bottlecrate_warped	诡异木瓶箱	hand
 direct	block.gt6.brick_burning_box	砖块燃烧室 (固体)	hand
 direct	block.gt6.crank	手摇曲柄	hand
 direct	block.gt6.crusher	破碎机	hand
+direct	block.gt6.drawer_bronze	青铜四格抽屉	hand
+direct	block.gt6.drawer_steel	钢四格抽屉	hand
 direct	block.gt6.energy_source	测试能源	hand
 direct	block.gt6.example_chest	GT 示例箱子	hand
 direct	block.gt6.fe_battery	FE测试电池	hand
@@ -48,6 +70,8 @@ direct	block.gt6.electrometer	电力传感器	hand
 direct	block.gt6.fluidometer	流体体积传感器(单位: 升)	hand
 direct	block.gt6.lathe	车床	hand
 direct	block.gt6.lightning_rod	避雷针	hand
+direct	block.gt6.locker_bronze	青铜储物柜	hand
+direct	block.gt6.locker_steel	钢储物柜	hand
 direct	block.gt6.machine_wall_tungsten	钨壁板	hand
 direct	block.gt6.crucible_steel	大型钢坩埚	hand
 direct	block.gt6.crucible_steel_wall	钢壁板	hand
@@ -57,6 +81,10 @@ direct	block.gt6.multiblock_lightning_rod	避雷针	hand
 direct	block.gt6.niobium_titanium_coil	大型铌钛合金线圈	hand
 direct	block.gt6.oven	烤箱	hand
 direct	block.gt6.progressmeter	进度传感器	hand
+direct	block.gt6.safe_keylocked_bronze	钥匙锁定青铜保险箱	hand
+direct	block.gt6.safe_keylocked_steel	钥匙锁定钢保险箱	hand
+direct	block.gt6.safe_mechanical_bronze	机械青铜保险箱	hand
+direct	block.gt6.safe_mechanical_steel	机械钢保险箱	hand
 direct	block.gt6.shredder	粉碎机	hand
 direct	block.gt6.transformer_rotation	木制变速箱	hand
 direct	block.gt6.wire_electric_1x	1×电线	hand

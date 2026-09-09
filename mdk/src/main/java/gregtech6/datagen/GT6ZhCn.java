@@ -98,7 +98,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addMiscUnits();
 		addBackfillUnits();     // task p23-i18n-zh-442-backfill
 		addWireDomainUnits();
-		addStoneVariantUnits(); // task p20-i18n-compose-rows
+		addStoneVariantUnits();
+		addStaticStorageUnits(); // task p20-i18n-compose-rows
 		addRowDomainUnits();    // task p20-i18n-compose-rows
 		addGrassUnits();        // task p24-grass-block
 		addFoamSprayUnits();    // task p25-c-foam-pipe-spray
@@ -303,6 +304,17 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addStoneVariantUnits() {
 		for (gregtech6.block.stone.StoneVariant tVariant : gregtech6.block.stone.StoneVariant.VALUES) {
 			addDirect(tVariant.key());
+		}
+	}
+
+	/**
+	 * The static storage batch display rows (task p26-storage-static-batch): one hand row
+	 * per GT6StaticStorages row (the kind faces 柜/抽屉/保险箱/书架/瓶箱; the metal words
+	 * reuse the row.mat family, the plank words are hand rows of the vanilla-planks subset).
+	 */
+	private void addStaticStorageUnits() {
+		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+			addDirect("block.gt6." + tRow.path());
 		}
 	}
 

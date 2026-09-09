@@ -124,6 +124,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addKineticTrio(); // task p26-w1-sifter-compressor-wiremill
         addPress(); // task p26-w1-press-extruder-molds
         addExtruder(); // task p26-w1-press-extruder-molds
+        addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
         // task p21-paintable-tint-render: the datagen-JVM census half — 45 machine blocks x
         // 3 models (the press/extruder rows joined at task p26-w1-press-extruder-molds),
@@ -254,6 +255,52 @@ public final class GT6BlockStates extends BlockStateProvider {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.EXTRUDER_ROWS) {
             addMachine(GTMachines.EXTRUDER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
+    }
+
+    /**
+     * Task p26-storage-static-batch — the 28 static storage rows (GT6StaticStorages.ROWS):
+     * ONE oriented cube model per KIND over the placeholder front/side PNG pair (the
+     * script-generated placeholder ruling — no upstream borrowable iconset in this repo),
+     * the FRONT face carries the kind's front texture, the FACING (horizontal) drives the
+     * 4-variant y-rotation (the ACT single-state arm; north default, south 180, west 270,
+     * east 90). All six kinds share the model within the kind (the material/plank ladder
+     * folds to the row, the same placeholder per material — the p20 placeholder ruling).
+     * The 28 BlockItem models parent the kind model.
+     */
+    private void addStaticStorages() {
+        for (gregtech6.registry.GT6StaticStorages.Kind tKind : gregtech6.registry.GT6StaticStorages.Kind.values()) {
+            String tTex = "block/" + kindModelName(tKind) + "_";
+            ModelFile tModel = models().cube("gt6_" + kindModelName(tKind),
+                    modLoc(tTex + "side"), modLoc(tTex + "side"),        // bottom/top
+                    modLoc(tTex + "front"), modLoc(tTex + "side"),       // north(front)/south
+                    modLoc(tTex + "side"), modLoc(tTex + "side"));       // west/east
+            for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+                if (tRow.kind() != tKind) continue;
+                Block tBlock = gregtech6.registry.GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get();
+                getVariantBuilder(tBlock).forAllStates(aState -> {
+                    int tY;
+                    switch (aState.getValue(gregtech6.registry.GT6StaticStorages.GT6StorageBlock.FACING)) {
+                        case SOUTH -> tY = 180;
+                        case WEST -> tY = 270;
+                        case EAST -> tY = 90;
+                        default -> tY = 0; // NORTH
+                    }
+                    return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+                });
+                itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+            }
+        }
+    }
+
+    /** The texture/model stem of a storage kind (the PNG pair naming). */
+    private static String kindModelName(gregtech6.registry.GT6StaticStorages.Kind aKind) {
+        return switch (aKind) {
+            case LOCKER -> "locker";
+            case DRAWER -> "drawer";
+            case SAFE_MECHANICAL, SAFE_KEYLOCKED -> "safe";
+            case BOOKSHELF -> "bookshelf";
+            case BOTTLECRATE -> "bottlecrate";
+        };
     }
 
     /**

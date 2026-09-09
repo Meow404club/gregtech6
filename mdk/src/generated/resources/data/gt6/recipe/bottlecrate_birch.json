@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "gt6:bolt_wood"
+    },
+    "G": {
+      "item": "minecraft:slime_ball"
+    },
+    "P": {
+      "item": "minecraft:birch_planks"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "r": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "s": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "sfr",
+    "PGP",
+    "BPB"
+  ],
+  "result": {
+    "item": "gt6:bottlecrate_birch"
+  },
+  "show_notification": true
+}

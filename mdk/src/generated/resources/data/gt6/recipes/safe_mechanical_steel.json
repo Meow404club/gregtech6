@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_small_steel"
+    },
+    "O": {
+      "item": "gt6:gear_gt_steel"
+    },
+    "P": {
+      "item": "gt6:plate_quintuple_steel"
+    },
+    "S": {
+      "item": "gt6:stick_steel"
+    }
+  },
+  "pattern": [
+    "PGP",
+    "GOS",
+    "PGP"
+  ],
+  "result": {
+    "item": "gt6:safe_mechanical_steel"
+  },
+  "show_notification": true
+}

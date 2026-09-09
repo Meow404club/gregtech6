@@ -390,6 +390,27 @@ public class GT6EnUs extends LanguageProvider {
         addBurningBoxUnits();
         addBoilerUnits();
         addHopperUnits();
+        addStaticStorageUnits();
+    }
+
+    /**
+     * The static storage batch display rows (task p26-storage-static-batch): one full
+     * display per row over the vanilla description id — the metal names carry the loader
+     * display words verbatim ("Mechanical Bronze Safe", Loader :134-135), the wooden
+     * ladders the plank word (the 300-ladder fold, the wave-4 deviation).
+     */
+    private void addStaticStorageUnits() {
+        for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+            String tName = switch (tRow.kind()) {
+                case LOCKER -> tRow.material().display() + " Locker";
+                case DRAWER -> tRow.material().display() + " Compartment Drawer";
+                case SAFE_MECHANICAL -> "Mechanical " + tRow.material().display() + " Safe";
+                case SAFE_KEYLOCKED -> "Key Locked " + tRow.material().display() + " Safe";
+                case BOOKSHELF -> tRow.plank().display() + " Wooden Bookshelf";
+                case BOTTLECRATE -> tRow.plank().display() + " Wooden Bottlecrate";
+            };
+            add("block.gt6." + tRow.path(), tName);
+        }
     }
 
     /** The axle template + the four size units + the eleven row-material units (the AXLE_SPECS walk). */

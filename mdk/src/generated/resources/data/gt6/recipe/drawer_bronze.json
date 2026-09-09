@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "T": {
+      "item": "gt6:screw_bronze"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "CTC",
+    "TdT",
+    "CTC"
+  ],
+  "result": {
+    "item": "gt6:drawer_bronze"
+  },
+  "show_notification": true
+}

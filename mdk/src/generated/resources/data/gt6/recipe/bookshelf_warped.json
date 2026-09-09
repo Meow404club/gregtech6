@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "minecraft:warped_planks"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "r": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "s": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "sfr",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:bookshelf_warped"
+  },
+  "show_notification": true
+}

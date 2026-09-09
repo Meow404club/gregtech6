@@ -39,6 +39,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -87,7 +89,7 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  * SFX folds (click/collect/anvil place) defer with the cosmetic layer; no creative tab
  * row (the boiler/hopper precedent — a later append).
  */
-@net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid = "gt6", bus = net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6StaticStorages {
 
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "gt6");
@@ -542,4 +544,17 @@ public final class GT6StaticStorages {
 	}
 
 	private GT6StaticStorages() {}
+
+	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GT6Hoppers.onModConstruct doc). */
+	@SubscribeEvent
+	public static void onModConstruct(FMLConstructModEvent aEvent) {
+		//? if forge {
+		IEventBus tModBus = Mod.EventBusSubscriber.Bus.MOD.bus().get();
+		//?} else {
+		/*IEventBus tModBus = net.neoforged.fml.ModList.get().getModContainerById("gt6").orElseThrow().getEventBus();
+		//21.1: Mod.EventBusSubscriber.Bus died with the annotation rework (the GT6Hoppers fork verbatim)
+		*///?}
+		BLOCKS.register(tModBus);
+		ITEMS.register(tModBus);
+	}
 }
