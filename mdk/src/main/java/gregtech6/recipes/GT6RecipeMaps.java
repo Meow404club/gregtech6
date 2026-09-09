@@ -182,7 +182,7 @@ public class GT6RecipeMaps {
 	/** RM.java:70 — the Distillery map (1/2/1 items, 1/2/1 fluids, minimal inputs 2; the seven water-family rows pour via GT6RecipesDistillery, the rest of the census stays pooled). */
 	public static volatile RecipeMap DISTILLERY;
 
-	/** RM.java:71 — the Drying map (1/1/0 items, 1/3/0 fluids, minimal inputs 1; DECLARED-empty — the Water→DistW row pours with the W3 loop-closure card). */
+	/** RM.java:71 — the Drying map (1/1/0 items, 1/3/0 fluids, minimal inputs 1; the water-family + ice/snow rows pour via GT6RecipesDrying — task p16-drying-rows-backfill backfilled the 13 ice/snow rows of Loader_Recipes_Chem.java:510-522 on top of the :525-532 water family). */
 	public static volatile RecipeMap DRYING;
 
 	/**
