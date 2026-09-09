@@ -81,8 +81,9 @@ def _feed(pos, slot, item, count=1):
                 expect="Replaced")
 
 
-def _dump(pos, expect, poll=25.0, label=None):
-    return Step(f"data get block {F(pos)}", expect=expect, poll=poll, label=label)
+def _dump(pos, expect, poll=25.0, label=None, node_expects=None):
+    return Step(f"data get block {F(pos)}", expect=expect, poll=poll, label=label,
+                node_expects=node_expects)
 
 
 CHAIN = Chain(
@@ -156,9 +157,17 @@ CHAIN = Chain(
         # ------------------------------------------------------------------
         phase("E: top item suction (a dropped entity over the open top — the WD.suck port)"),
         Step(f"setblock {F(E)} gt6:hopper_steel[facing=north]", expect="Changed the block"),
+        # the item-entity stack NBT is loader-versioned (the 1.20.5+ ItemStack
+        # codec: inner Count:7b -> count:int; the outer Item entity key is NOT
+        # renamed — the lowercase `item` probe summoned Air, live /tmp/p26h_rcon_neo2.log)
+        # — the p12fic key-shape ruling: swap ONLY the key shape, the judged
+        # target (7 dirt in one slot) stays put.
         Step(f"summon minecraft:item {E.x + 0.5} {E.y + 1.3} {E.z + 0.5} "
-             '{Item:{id:"minecraft:dirt",Count:7b},PickupDelay:0s}', expect="Summoned"),
-        _dump(E, "Count: 7b", poll=15.0, label="the whole entity stack lands in one slot"),
+             '{Item:{id:"minecraft:dirt",Count:7b},PickupDelay:0s}', expect="Summoned",
+             node_cmds={"1.21.1": f"summon minecraft:item {E.x + 0.5} {E.y + 1.3} {E.z + 0.5} "
+                                  '{Item:{id:"minecraft:dirt",count:7},PickupDelay:0s}'}),
+        _dump(E, "Count: 7b", poll=15.0, node_expects={"1.21.1": "count: 7"},
+              label="the whole entity stack lands in one slot"),
         _dump(E, 'id: "minecraft:dirt"', poll=5.0),
 
         # ------------------------------------------------------------------
