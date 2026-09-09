@@ -4772,3 +4772,20 @@ card. Upstream license CC0 (see above).
 - `block/wiremill_overlay_front.png` `12172025f9f74ef92ac3de2b46af0bdfb60024700ad3fe55602ceb1b85e8ca25`
 - `block/wiremill_overlay_front_active.png` (FRAME 0 of 10) `f69cdb02d3fdc1d8a7ea11d678964b42e6d6436e6d076c08852fef06811f3b8d`
 - `block/wiremill_overlay_front_running.png` (FRAME 0 of 2) `88be632c759d7cfee9a881d6efdaca871a58351ba6407e4c2f3d4e9dc7964453`
+
+Sensor block textures borrowed from **GregTech 6**
+(https://github.com/GregTech6/gregtech6), snapshot
+`v6.17.06-22-g3703e4030`, files
+`src/main/resources/assets/gregtech/textures/blocks/machines/redstone/sensors/<name>/` —
+task p26-sensors-core. Each port texture is the upstream `colored/front.png`
+(16x16 plate) with the sensor's own `overlay/front.png` (64x64 digit-strip,
+box-downscaled 4x, straight-alpha) baked src-over into ONE 16x16 canonical PNG
+(the p19 distillery-front bake precedent); upstream renders the two layers
+separately and tints the colored layer with the material colour — the port
+renders the baked result un-tinted on all six faces of the oriented cube
+(declared deviation, the thin-plate + live-digit render stack
+(MultiTileEntitySensor.java:143-261) is the render pool):
+
+- `gt6/textures/block/progressmeter.png` `c11390a9093b09f43680ba324d18e97f0bc0925968ae921bb6a0e2b19c3e5a3f`
+- `gt6/textures/block/fluidometer.png` `521fe66700236205a9fa447283260992d2865e6cee7a8fbacbdb4d54c36f944c`
+- `gt6/textures/block/electrometer.png` `faf796a2de3d874b247ee98c585b1c881c97bf0a36f9bcd6b6797a0388725fd2`

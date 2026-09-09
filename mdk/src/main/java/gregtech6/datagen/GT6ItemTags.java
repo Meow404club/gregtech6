@@ -176,6 +176,18 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/** The hot-ingot family — GTCEu TagPrefix.java:267 {@code defaultTagPath("hot_ingots/%s")} (rolling batch 2). */
 	public static final String HOT_INGOTS_FAMILY = "hot_ingots/%s";
 
+	/** The double-plate family — GTCEu TagPrefix.java:442 {@code defaultTagPath("double_plates/%s")} (task p26-sensors-core). */
+	public static final String DOUBLE_PLATES_FAMILY = "double_plates/%s";
+
+	/** The fine-wire family — GTCEu TagPrefix.java:575 {@code defaultTagPath("fine_wires/%s")} (task p26-sensors-core). */
+	public static final String FINE_WIRES_FAMILY = "fine_wires/%s";
+
+	/** The bolt family — GTCEu TagPrefix.java:514 {@code defaultTagPath("bolts/%s")} (task p26-sensors-core). */
+	public static final String BOLTS_FAMILY = "bolts/%s";
+
+	/** The small-gear family — GTCEu TagPrefix.java:599 {@code defaultTagPath("small_gears/%s")} (task p26-sensors-core). */
+	public static final String SMALL_GEARS_FAMILY = "small_gears/%s";
+
 	/**
 	 * The cross-mod material-name normalization map (task p24-tags-prefix-materials, the
 	 * decisions.p24-material-name-normalization ruling): GT {@code mNameInternal} snake →
@@ -347,6 +359,11 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		if (aPrefix == OP.plate) return PLATES_FAMILY;
 		if (aPrefix == OP.stick) return RODS_FAMILY;
 		if (aPrefix == OP.ingotHot) return HOT_INGOTS_FAMILY;
+		// rolling batch 3 (p26-sensors-core — the three sensor crafting rows' shared keys)
+		if (aPrefix == OP.plateDouble) return DOUBLE_PLATES_FAMILY;
+		if (aPrefix == OP.wireFine) return FINE_WIRES_FAMILY;
+		if (aPrefix == OP.bolt) return BOLTS_FAMILY;
+		if (aPrefix == OP.gearGtSmall) return SMALL_GEARS_FAMILY;
 		return null;
 	}
 
