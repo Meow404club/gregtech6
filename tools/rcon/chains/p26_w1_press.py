@@ -24,6 +24,17 @@ The inventory merges ride the loader-versioned key shapes (the p19_nbt_rebind ru
 check/inject name renderings are PER-LEG via Step.node_expects (the 1.20.1 ItemStack
 renders the bare registry path, the 21.1 rendering is NAMESPACED — the p24 ruling).
 
+KU CADENCE (the r1 finding, 2026-09-09): both injects END on a NEGATIVE final packet.
+The press is the first KU RecipeMap machine on the rig — KU is the sole ALL_ALTERNATING
+member (root TD.java:216), and the :815 output gate
+(`mStateOld && !mStateNew || !ALL_ALTERNATING.contains(energyType)`) releases the
+completed recipe's outputs ONLY on the injection positive->non-positive transition.
+Positive-only packets (the r1 form, copied from the RU-era canner injects) accumulate
+progress past mMaxProgress (576/512) and park there with outputs=[] forever. The
+negative finalSize packet is free (doInject :760 abs()es the size before the :503
+charge math — it only latches mStateNew=false, the :504 energy add is unchanged), so
+`inject 40 64 -64` = 39 charging ticks + 1 transition tick that dumps the output.
+
 passes=2 is the idempotency proof (the [0,0] of this chain).
 
 Run:  GT6_SESSION=off python3 tools/rcon/chains/p26_w1_press.py
@@ -71,7 +82,12 @@ steps += [
     Step(f"gt6machine press check {A}",
          expect="input=shape_extruder_platex1",
          node_expects={"1.21.1": "input=gt6:shape_extruder_platex1"}),
-    Step(f"gt6machine press inject 40 64 {A}",
+    # the KU alternation (the r1 finding): the :815 gate releases the outputs ONLY on the
+    # positive->non-positive transition (TD.java:216 ALL_ALTERNATING = [KU]) — 40 positive
+    # packets park progress at 576/512 with outputs=[] forever. The final packet is NEGATIVE
+    # (finalSize, the p8 rig's "negative transition pair"): doInject :760 abs()es the size,
+    # so it costs no energy and only flips mStateNew.
+    Step(f"gt6machine press inject 40 64 -64 {A}",
          expect="outputs=[9x plate_iron; ]",
          node_expects={"1.21.1": "outputs=[9x gt6:plate_iron; ]"}),
     Step(f"gt6machine press check {A}",
@@ -86,7 +102,7 @@ steps += [
     Step(f"gt6machine press_t4 place {B}", expect="GT6 press_t4 placed"),
     Step(ROD_MOLD_MERGE["1.20.1"].format(p=B), expect="Modified block data",
          node_cmds={"1.21.1": ROD_MOLD_MERGE["1.21.1"].format(p=B)}),
-    Step(f"gt6machine press_t4 inject 40 4096 {B}",
+    Step(f"gt6machine press_t4 inject 40 4096 -4096 {B}",
          expect="outputs=[18x stick_iron; ]",
          node_expects={"1.21.1": "outputs=[18x gt6:stick_iron; ]"}),
     Step(f"gt6machine press_t4 check {B}",
