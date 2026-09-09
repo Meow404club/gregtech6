@@ -512,6 +512,18 @@ p25-c-foam-pipe-spray 审查裁定入档），后续 sweep 复验该腿仍会出
 记录——判定口径以裁定为准，不作为名册/链体缺陷重开。36 链全集 sweep 留阶段
 收官门禁由主会话执行（本卡只做单簇冒烟，不跑全量）。
 
+**名册扩容 II：p26 W1 三链入册（卡 p26-w1-sifter-compressor-wiremill）**。名册
+36 链 8 簇 → **39 链 9 簇**。新簇 **z=172 带（x383..411，三链）**：
+`p26_w1_sifter`（x384..391，Sifter 梯 T1-T4）→ `p26_w1_compressor`（x394..401）
+→ `p26_w1_wiremill`（x404..411）——三族各自带内 x 向分离、teardown fill 各自
+带局部化；准入与 p16 簇同构（sites bbox 已注册、无 `fresh_boot`/`mutates`
+成员——inject 电网 rig 不碰 fakesource 全局态，一 boot 伺候全簇）；
+`preferred_ports` 26150..26152 对为 per-boot 语义，共享 boot 走
+`framework.session_ports`。链形：place → input → inject（KU 脉冲
+`N size -size` 正负列车 / RU 纯正列车）→ 输出断言 → `check`（`data=-2`=
+menu-null GUI 条款活体）→ teardown；`run` 对 menu-less 载体按设计拒绝
+（GTMachineCommand「use inject+check instead」）。
+
 **框架自检（无服干跑，~1s）**：`python3 tools/rcon/selftest.py`——以假 boot 面
 验证九项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
 名册化、session 端口策略、p16 簇注册、boot 归属门、sweep 结果 JSON worktree 隔离

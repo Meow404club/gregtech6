@@ -77,6 +77,12 @@ SESSION_GROUPS = (
     ("p24_dye_chemical_fluids", "p24_pipe_owner", "p25_tag_input_machine_fallback",
      "p25_cfoam_spray", "p24_canner_refill", "p24_act"),
     ("p24_grass_block", "p25_tool_hammer_wrench", "p25_food_can"),
+    # P26 W1 kinetic trio (card p26-w1-sifter-compressor-wiremill): the three
+    # family chains share the fresh z=172 band (x383..411 — sifter 384..391 /
+    # compressor 394..401 / wiremill 404..411, per-family x-disjoint teardown
+    # fills), admission mirroring the p16 cluster form (bbox-registered, no
+    # fresh_boot / mutates member — the inject grid rig needs no fakesource).
+    ("p26_w1_sifter", "p26_w1_compressor", "p26_w1_wiremill"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
