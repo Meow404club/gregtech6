@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "dried=false": {
+      "model": "gt6:block/cfoam_fresh_owned"
+    },
+    "dried=true": {
+      "model": "gt6:block/cfoam_hardened_owned"
+    }
+  }
+}

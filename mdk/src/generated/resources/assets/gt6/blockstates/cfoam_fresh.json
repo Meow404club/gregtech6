@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "color=0": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=1": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=10": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=11": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=12": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=13": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=14": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=15": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=2": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=3": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=4": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=5": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=6": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=7": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=8": {
+      "model": "gt6:block/cfoam_fresh"
+    },
+    "color=9": {
+      "model": "gt6:block/cfoam_fresh"
+    }
+  }
+}

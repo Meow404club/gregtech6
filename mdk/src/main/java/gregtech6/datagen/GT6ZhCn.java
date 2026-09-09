@@ -248,6 +248,14 @@ public class GT6ZhCn extends LanguageProvider {
 		for (int i = 0; i < 16; i++) {
 			addDirect("fluid.gt6." + GTFluids.cfoamOwnedName(i));
 		}
+		// task p26-c-foam-block-family: the 4 C-Foam BLOCK display names — no upstream zh
+		// dump face exists for the modern block ids (the 1.7.10 block names rode the meta
+		// ladder); all four are hand rows in the reference table (the dried full block
+		// shares the fluid's 建筑泡沫 face, the fresh form prefixes 新鲜, the slabs append 台阶).
+		addDirect("block.gt6.cfoam_fresh");
+		addDirect("block.gt6.cfoam");
+		addDirect("block.gt6.cfoam_fresh_slab");
+		addDirect("block.gt6.cfoam_slab");
 		// the P22 spray-can domain (no upstream face anywhere — all hand)
 		addDirect("item.gt6.spray_can_empty");
 		addDirect("item.gt6.spray_paint_black");

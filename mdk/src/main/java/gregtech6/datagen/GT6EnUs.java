@@ -90,6 +90,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoodFluids(); // task p21-drying-food-fluids
         addDyeChemicalFluids(); // task p24-dye-chemical-fluids — table-tail append
         addCFoamFluids(); // task p26-c-foam-fluid-refill — table-tail append
+        addCFoamBlocks(); // task p26-c-foam-block-family — table-tail append
         addElectricWires();
         addMachines();
         addMultiBlocks();
@@ -225,6 +226,22 @@ public class GT6EnUs extends LanguageProvider {
         for (GTFluids.CFoamFluid tFamily : GTFluids.CFOAMS_OWNED) {
             add(tFamily.descriptionId(), tFamily.displayName());
         }
+    }
+
+    /**
+     * The C-Foam BLOCK family display names (task p26-c-foam-block-family): the two dried
+     * forms carry BlockItems, the two fresh forms + the owned carrier are item-less but
+     * keep their block keys (Jade/breaking overlays resolve block.gt6.* through
+     * getDescriptionId). Values are the upstream display names verbatim where they exist:
+     * "Fresh C-Foam" (BlockCFoamFresh.java:47) and "C-Foam" (BlockCFoam.java:38); the slab
+     * forms take the vanilla "&lt;name&gt; Slab" composition. zh values ride the reference
+     * table's hand layer (the GT6ZhCn mirror walk).
+     */
+    private void addCFoamBlocks() {
+        add("block.gt6.cfoam_fresh", "Fresh C-Foam");
+        add("block.gt6.cfoam", "C-Foam");
+        add("block.gt6.cfoam_fresh_slab", "Fresh C-Foam Slab");
+        add("block.gt6.cfoam_slab", "C-Foam Slab");
     }
 
     /**

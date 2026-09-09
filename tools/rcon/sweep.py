@@ -75,7 +75,10 @@ SESSION_GROUPS = (
     # their MARGIN boundary (x418) — same cluster, plan_waves keeps them out
     # of one concurrent wave while session cleanup stays band-local.
     ("p24_dye_chemical_fluids", "p24_pipe_owner", "p25_tag_input_machine_fallback",
-     "p25_cfoam_spray", "p24_canner_refill", "p24_act"),
+     "p25_cfoam_spray", "p26_cfoam_blocks", "p24_canner_refill", "p24_act"),
+    # task p26-c-foam-block-family joins the z=20 cfoam cluster at x452..458 (clear of the
+    # item-pipe band x434..443 claimed by its card state) — sweep --group cfoam picks the
+    # pipe face (p25 regression) + the block face (this card) together.
     ("p24_grass_block", "p25_tool_hammer_wrench", "p25_food_can"),
     # P26 W1 kinetic trio (card p26-w1-sifter-compressor-wiremill): the three
     # family chains share the fresh z=172 band (x383..411 — sifter 384..391 /

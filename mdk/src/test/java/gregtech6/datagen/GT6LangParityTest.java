@@ -113,8 +113,13 @@ public class GT6LangParityTest {
 	 * follows the measurement. Task p26-c-foam-fluid-refill adds 33 hand rows (the
 	 * gt6:cfoam base + the 32 C-Foam fluid display names, tmp/gregtech.lang:130-161/:361),
 	 * measuring 2629 + 33 = 2662.
+	 *
+	 * <p>Task p26-c-foam-block-family: raised to the measured 2666 — the C-Foam block
+	 * family added the +4 block.gt6 rows (cfoam/cfoam_fresh + the two slabs, both locales,
+	 * the zh values from the reference table's hand rows). Both committed generated faces
+	 * count exactly 2666 keys with zero set difference.
 	 */
-	private static final int ZH_KEY_FLOOR = 2662;
+	private static final int ZH_KEY_FLOOR = 2666;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those

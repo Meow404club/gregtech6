@@ -75,7 +75,6 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		assertEquals(new LinkedHashSet<>(java.util.List.of("bathing_pot", "mixing_bowl")), tLive,
 				"the kitchen BET census drifted — declare the new family's item + fluid rows in "
 				+ "GT6CapabilityWiring.registerKitchenFaces in the same change");
->>>>>>> work/p26-kitchen-pot-bowl
 	}
 
 	/**
