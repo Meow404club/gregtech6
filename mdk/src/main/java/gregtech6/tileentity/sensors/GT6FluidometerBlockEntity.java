@@ -19,8 +19,11 @@ import net.minecraftforge.fluids.capability.IFluidHandler; // the leg-native han
  * {@code Capabilities.FluidHandler.BLOCK} lookup; the capability dispatch itself is the
  * RCON gate, the offline suite pins the arithmetic on the pure {@link #sumContents(int[])}
  * / {@link #sumCapacity(int[])} helpers). The still-fluid arm (:55-58, the water/lava
- * source read 1000) rides the vanilla source-state check. Values are liters as upstream
- * ("Measures Fluids (In Liters)" :42 — 1 mB = 1 L, the whole port's unit convention).
+ * source read 1000) rides the vanilla source-state check and feeds {@link #getCurrentValue}
+ * ONLY — upstream {@code getCurrentMax} (:67-77) has no source arm and returns 0 for
+ * non-handlers verbatim, so a source block is the 1000/0 pair (PERCENT displays 0, never
+ * the 15-redstone full-scale). Values are liters as upstream ("Measures Fluids (In
+ * Liters)" :42 — 1 mB = 1 L, the whole port's unit convention).
  */
 public class GT6FluidometerBlockEntity extends GTSensorBlockEntity {
 
@@ -50,7 +53,8 @@ public class GT6FluidometerBlockEntity extends GTSensorBlockEntity {
 	public long getCurrentMax(@Nullable BlockEntity aTarget) {
 		long[] tTanks = tankCensus(aTarget);
 		if (tTanks != null) return sumCapacity(tTanks); // upstream :70-72 the capacity sum
-		return stillFluidValue(); // the source block's own 1000 scale
+		return 0; // upstream :76 verbatim — the source-block arm has NO max (a water/lava
+		          // source is 1000/0, so PERCENT reads 0 and scales 0 redstone, never 15)
 	}
 
 	/**
@@ -86,7 +90,11 @@ public class GT6FluidometerBlockEntity extends GTSensorBlockEntity {
 		return rCapacity;
 	}
 
-	/** The still-fluid arm (upstream :55-58): a water/lava SOURCE block reads 1000, everything else 0. */
+	/**
+	 * The still-fluid arm (upstream :55-58): a water/lava SOURCE block reads 1000,
+	 * everything else 0. Feeds {@link #getCurrentValue} only — {@link #getCurrentMax}
+	 * keeps the upstream :76 zero (no source arm on the max side).
+	 */
 	private long stillFluidValue() {
 		if (hasLevel()) {
 			BlockState tState = getLevel().getBlockState(getBlockPos().relative(Direction.from3DDataValue(mSecondFacing)));
