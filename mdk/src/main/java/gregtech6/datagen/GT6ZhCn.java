@@ -194,12 +194,15 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.crucible_steel_wall");
 		addDirect("block.gt6.crank");
 		addDirect("block.gt6.crusher");
+		addDirect("block.gt6.electrometer"); // task p26-sensors-core — the MTE 31015 dump row 电力传感器
 		addDirect("block.gt6.energy_source");
 		addDirect("block.gt6.fe_battery"); // task p26-eu-bridge-outbound — tail-append
+		addDirect("block.gt6.fluidometer"); // task p26-sensors-core — the MTE 31006 dump row 流体体积传感器(单位: 升)
 		addDirect("block.gt6.lathe");
 		addDirect("block.gt6.multiblock_coke_oven");
 		addDirect("block.gt6.multiblock_coke_oven_bricks");
 		addDirect("block.gt6.oven");
+		addDirect("block.gt6.progressmeter"); // task p26-sensors-core — the MTE 31018 dump row 进度传感器
 		addDirect("block.gt6.shredder");
 		addDirect("block.gt6.wire_electric_1x");
 		addDirect("block.gt6.wire_electric_2x");
