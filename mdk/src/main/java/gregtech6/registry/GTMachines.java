@@ -93,8 +93,17 @@ public final class GTMachines {
 	 */
 	public static final long[][] TIER_INPUTS = {{16, 32, 64}, {64, 128, 256}, {256, 512, 1024}, {1024, 2048, 4096}};
 
-	/** The Crusher parallel row (upstream NBT_PARALLEL 4/8/16/32, :1300-1303); Shredder/Lathe carry no key → 1. */
-	public static final int[] CRUSHER_PARALLEL = {4, 8, 16, 32};
+	/**
+	 * The shared 4/8/16/32 parallel table (task p26-w1-sifter-compressor-wiremill): the
+	 * upstream NBT_PARALLEL {4, 8, 16, 32} + NBT_PARALLEL_DURATION T shape carried by the
+	 * Crusher rows (:1300-1303) AND the Sifter (:1312-1315) / Compressor (:1343-1346)
+	 * rows verbatim — one constant, cross-referenced by {@link #CRUSHER_PARALLEL} (the
+	 * W1 ruling: merged, never re-defined).
+	 */
+	public static final int[] PARALLEL_4_32 = {4, 8, 16, 32};
+
+	/** The Crusher parallel row (upstream NBT_PARALLEL :1300-1303) — the SAME array as {@link #PARALLEL_4_32}, the W1 merge ruling. */
+	public static final int[] CRUSHER_PARALLEL = PARALLEL_4_32;
 
 	// the composed tier-ladder name face (task p20-i18n-compose-rows): the "{Machine} (Tier N)"
 	// rows compose from the machine word + the ordinal tier unit over one template
@@ -102,6 +111,14 @@ public final class GTMachines {
 	public static final String MACHINE_SHREDDER_UNIT_KEY = "gt6.row.machine.shredder";
 	public static final String MACHINE_CRUSHER_UNIT_KEY = "gt6.row.machine.crusher";
 	public static final String MACHINE_LATHE_UNIT_KEY = "gt6.row.machine.lathe";
+	// the W1 Kinetic trio unit keys (task p26-w1-sifter-compressor-wiremill, the :101-104
+	// shape): the MachineRow carrier fills exactly ONE format slot (the gt6.row.mat unit —
+	// the tier rides the material word, Kinetic_T[1..4] = Bronze/Steel/Titanium/
+	// Tungstensteel), so the family template rides its unit key's value ("Sifter (%s)" —
+	// the CANNER_DISPLAY_KEY one-slot contract, not the two-slot MACHINE_DISPLAY_KEY form).
+	public static final String MACHINE_SIFTER_UNIT_KEY = "gt6.row.machine.sifter";
+	public static final String MACHINE_COMPRESSOR_UNIT_KEY = "gt6.row.machine.compressor";
+	public static final String MACHINE_WIREMILL_UNIT_KEY = "gt6.row.machine.wiremill";
 
 	/** The tier ordinal unit key ({@code gt6.row.tier.<n>}). */
 	public static String machineTierUnitKey(int aTier) {
@@ -436,6 +453,220 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
+	// the W1 Kinetic trio — Sifter (KU, :1312-1315), Compressor (KU, :1343-1346), Wiremill
+	// (RU, :1373-1376), all MultiTileEntityBasicMachine with MT.DATA.Kinetic_T[1..4]
+	// (Bronze / ANY.Steel / Ti / TungstenSteel — the tier-material word; the port local
+	// "Tungstensteel" per the GT6Kinetics convention), NBT_INPUT 32/128/512/2048 through
+	// the TIER_INPUTS conversion, NBT_TEXTURE "sifter"/"compressor"/"wiremill", hardness
+	// 7.0/6.0/9.0/12.5 (NBT_RESISTANCE == hardness). Sifter and Compressor carry
+	// NBT_PARALLEL {4, 8, 16, 32} + NBT_PARALLEL_DURATION T — the PARALLEL_4_32 shared
+	// constant; the Wiremill rows carry no NBT_PARALLEL key → 1 (the :97 ruling shape).
+	// ONE family BET per family over the four tier blocks — the DRYER_ROWS MachineRow
+	// carrier shape (the block identity is the config carrier; the factory is the
+	// dryerMachine body verbatim). The connectivity masks, upstream-verbatim: Sifter and
+	// Compressor take item in over the top (NBT_INV_SIDE_IN SBIT_U, NBT_INV_SIDE_AUTO_IN
+	// SIDE_TOP) and emit over the bottom (NBT_INV_SIDE_OUT SBIT_D, AUTO_OUT SIDE_BOTTOM),
+	// the Wiremill takes left and emits right (SBIT_L / SIDE_LEFT / SBIT_R / SIDE_RIGHT,
+	// the :137/:138 column shape); energy = SBIT_B (Sifter/Wiremill) / SBIT_L (Compressor)
+	// through NBT_ENERGY_ACCEPTED_SIDES (the :151 read ORs SBIT_A onto every mask — the
+	// row bytes carry the post-read values, the dryer-row convention). No NBT_TANK_SIDE_*
+	// keys on any of the twelve rows → the upstream field defaults 127 (the all-sides
+	// zero-regression face, TileEntityBasicMachine :245/:786) with SIDE_UNDEFINED auto
+	// sides — zero fluid recipes are NOT a zero fluid face (the Shredder precedent).
+	// menu = null on every row: ZERO new gt6:* MenuType (the card GUI clause — use()
+	// stays inert until the menu==null dispatch seam goes live).
+	// ---------------------------------------------------------------------------
+
+	/** The four Sifter rows, upstream line order :1312-1315 (T1-T4, the Kinetic_T ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> SIFTER_ROWS = java.util.List.of(
+			sifter("sifter"   , "bronze"       , "Bronze"       , 20051,  7.0F, 0, PARALLEL_4_32[0]),
+			sifter("sifter_t2", "steel"        , "Steel"        , 20052,  6.0F, 1, PARALLEL_4_32[1]),
+			sifter("sifter_t3", "titanium"     , "Titanium"     , 20053,  9.0F, 2, PARALLEL_4_32[2]),
+			sifter("sifter_t4", "tungstensteel", "Tungstensteel", 20054, 12.5F, 3, PARALLEL_4_32[3]));
+
+	/** The four Compressor rows, upstream line order :1343-1346 (T1-T4, the Kinetic_T ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> COMPRESSOR_ROWS = java.util.List.of(
+			compressor("compressor"   , "bronze"       , "Bronze"       , 20101,  7.0F, 0, PARALLEL_4_32[0]),
+			compressor("compressor_t2", "steel"        , "Steel"        , 20102,  6.0F, 1, PARALLEL_4_32[1]),
+			compressor("compressor_t3", "titanium"     , "Titanium"     , 20103,  9.0F, 2, PARALLEL_4_32[2]),
+			compressor("compressor_t4", "tungstensteel", "Tungstensteel", 20104, 12.5F, 3, PARALLEL_4_32[3]));
+
+	/** The four Wiremill rows, upstream line order :1373-1376 (T1-T4, the Kinetic_T ladder; no NBT_PARALLEL → 1). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> WIREMILL_ROWS = java.util.List.of(
+			wiremill("wiremill"   , "bronze"       , "Bronze"       , 20151,  7.0F, 0),
+			wiremill("wiremill_t2", "steel"        , "Steel"        , 20152,  6.0F, 1),
+			wiremill("wiremill_t3", "titanium"     , "Titanium"     , 20153,  9.0F, 2),
+			wiremill("wiremill_t4", "tungstensteel", "Tungstensteel", 20154, 12.5F, 3));
+
+	/**
+	 * One Sifter row factory — the differing columns (path/name/id/material/hardness/tier/
+	 * parallel) plus the family constants: RM.Sifting through the supplier, KU, the
+	 * "sifter" texture, the :1312 masks and auto sides, parallelDuration T (NBT_PARALLEL_
+	 * DURATION), cheap overclocking T (the :773 loop runs unconditionally in the port) and
+	 * the null menu supplier (the zero-new-MenuType GUI clause).
+	 */
+	private static GTBasicMachineBlock.MachineRow sifter(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, MACHINE_SIFTER_UNIT_KEY, aMetaId, aHardness, aTier, aParallel, true,
+				() -> GT6RecipeMaps.SIFTING, TD.Energy.KU, "sifter",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B, the :151 read ORs SBIT_A*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U, the :137 read ORs SBIT_A*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D*/,
+				(byte)-1 /*no NBT_TANK_SIDE_AUTO_IN key → SIDE_UNDEFINED*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_INV_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType (the card GUI clause)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/);
+	}
+
+	/** One Compressor row factory — the sifter shape verbatim over the :1343 masks (energy SBIT_L) and RM.Compressor/KU. */
+	private static GTBasicMachineBlock.MachineRow compressor(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, MACHINE_COMPRESSOR_UNIT_KEY, aMetaId, aHardness, aTier, aParallel, true,
+				() -> GT6RecipeMaps.COMPRESSOR, TD.Energy.KU, "compressor",
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_L*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_INV_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/);
+	}
+
+	/** One Wiremill row factory — the :1373 masks (left in / right out, energy SBIT_B), RM.Wiremill/RU, NO parallel key → 1. */
+	private static GTBasicMachineBlock.MachineRow wiremill(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, MACHINE_WIREMILL_UNIT_KEY, aMetaId, aHardness, aTier, 1, false,
+				() -> GT6RecipeMaps.WIREMILL, TD.Energy.RU, "wiremill",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/);
+	}
+
+	/** The registered Sifter blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> SIFTER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Sifter items, same keys as {@link #SIFTER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> SIFTER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Compressor blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> COMPRESSOR_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Compressor items, same keys as {@link #COMPRESSOR_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> COMPRESSOR_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Wiremill blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> WIREMILL_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Wiremill items, same keys as {@link #WIREMILL_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> WIREMILL_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : SIFTER_ROWS) {
+			SIFTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SIFTER_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			SIFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : COMPRESSOR_ROWS) {
+			COMPRESSOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.COMPRESSOR_BE.get(), tRow)));
+			COMPRESSOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.COMPRESSOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ROWS) {
+			WIREMILL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.WIREMILL_BE.get(), tRow)));
+			WIREMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.WIREMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Sifter block list in registration order (the loot/datagen walkers). */
+	public static Block[] sifterBlockArray() {
+		Block[] rBlocks = new Block[SIFTER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : SIFTER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Compressor block list in registration order (the loot/datagen walkers). */
+	public static Block[] compressorBlockArray() {
+		Block[] rBlocks = new Block[COMPRESSOR_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : COMPRESSOR_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Wiremill block list in registration order (the loot/datagen walkers). */
+	public static Block[] wiremillBlockArray() {
+		Block[] rBlocks = new Block[WIREMILL_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : WIREMILL_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine sifter — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block sifterBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = SIFTER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine compressor — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block compressorBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = COMPRESSOR_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine wiremill — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block wiremillBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = WIREMILL_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The ONE Sifter family BET: the Dryer shape verbatim — the shared factory, the four
+	 * tier blocks multi-attached, the row read off the placed block.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> SIFTER_BE =
+			BLOCK_ENTITY_TYPES.register("sifter", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.SIFTER_BE.get(), aPos, aState),
+					sifterBlockArray()).build(null));
+
+	/**
+	 * The ONE Compressor family BET: the Dryer shape verbatim. The registry id
+	 * "compressor" is free — the legacy p7/p8 family is the CRUSHER (gt6:crusher), a
+	 * different machine with a different recipe map.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> COMPRESSOR_BE =
+			BLOCK_ENTITY_TYPES.register("compressor", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.COMPRESSOR_BE.get(), aPos, aState),
+					compressorBlockArray()).build(null));
+
+	/** The ONE Wiremill family BET: the Dryer shape verbatim. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> WIREMILL_BE =
+			BLOCK_ENTITY_TYPES.register("wiremill", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.WIREMILL_BE.get(), aPos, aState),
+					wiremillBlockArray()).build(null));
+
+	/**
+	 * The W1-trio BET factory body — the dryerMachine body verbatim (the row carries every
+	 * column the three families need; no extra registration columns, unlike the Canner).
+	 * Shared by all three BETs (the row drives the recipe map, energy type, parallel and
+	 * masks; only the BlockEntityType argument differs).
+	 */
+	private static TileEntityBasicMachine kineticMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), tRow.menu());
+		return applyRow(tMachine, tRow);
+	}
+
+	// ---------------------------------------------------------------------------
 	// the Advanced Crafting Table (task p24-act-machine) — the SINGLE-VARIANT machine
 	// (decisions.p24-act-be-form: the upstream MTE extends TileEntityBase09FacingSingle,
 	// NOT the TileEntityBasicMachine energy family — zero energy, zero tick auto-craft —
@@ -528,9 +759,11 @@ public final class GTMachines {
 
 	/**
 	 * The paint-tint walker (task p21-paintable-tint-render; the Canner ladder joins in task
-	 * p24-canner-machine): the pinned 25 machine-domain blocks the client paint BlockColor
+	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill):
+	 * the pinned 37 machine-domain blocks the client paint BlockColor
 	 * registers over — the oven (1) + the shredder/crusher/lathe ladders (4 each = 12) + the
-	 * dryer (4) + the distillery (4) + the canner (4),
+	 * dryer (4) + the distillery (4) + the canner (4) + the sifter/compressor/wiremill
+	 * ladders (4 each = 12),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -538,7 +771,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(25);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(37);
 		rBlocks.add(OVEN.get());
 		for (RegistryObject<Block> tBlock : java.util.List.of(
 				SHREDDER, SHREDDER_T2, SHREDDER_T3, SHREDDER_T4,
@@ -549,6 +782,9 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, dryerBlockArray());
 		java.util.Collections.addAll(rBlocks, distilleryBlockArray());
 		java.util.Collections.addAll(rBlocks, cannerBlockArray());
+		java.util.Collections.addAll(rBlocks, sifterBlockArray());
+		java.util.Collections.addAll(rBlocks, compressorBlockArray());
+		java.util.Collections.addAll(rBlocks, wiremillBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -642,6 +878,16 @@ public final class GTMachines {
 								// task p24-canner-machine: the Canner ladder, +4 rows
 								for (GTBasicMachineBlock.MachineRow tRow : CANNER_ROWS) {
 									aOutput.accept(new ItemStack(CANNER_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
+								// task p26-w1-sifter-compressor-wiremill: the Kinetic trio, +12 rows
+								for (GTBasicMachineBlock.MachineRow tRow : SIFTER_ROWS) {
+									aOutput.accept(new ItemStack(SIFTER_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
+								for (GTBasicMachineBlock.MachineRow tRow : COMPRESSOR_ROWS) {
+									aOutput.accept(new ItemStack(COMPRESSOR_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
+								for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ROWS) {
+									aOutput.accept(new ItemStack(WIREMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
 								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
 								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));

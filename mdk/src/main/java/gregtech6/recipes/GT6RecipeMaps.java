@@ -125,8 +125,8 @@ public class GT6RecipeMaps {
 	/**
 	 * The generation-reset hooks: every loader that owns a private static "poured" flag
 	 * registers its resetForTest here from its static initializer, so {@link #reset()}
-	 * retires the WHOLE generation. One generation = the 12 map fields (11 + the MIXER
-	 * append of task p26-c-foam-fluid-refill) + RecipeMap.RECIPE_MAPS
+	 * retires the WHOLE generation. One generation = the 15 map fields (12 + the
+	 * W1 trio append of task p26-w1-sifter-compressor-wiremill) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
@@ -219,6 +219,37 @@ public class GT6RecipeMaps {
 	 * is ATOMIC so a contrary ruling can drop it independently.
 	 */
 	public static volatile RecipeMap MIXER;
+
+	/**
+	 * RM.java:83 — the Sifting map (task p26-w1-sifter-compressor-wiremill), transcribed
+	 * parameter-for-parameter over the 15-arg port ctor: "gt.recipe.sifter", "Sifter", NEI
+	 * name null → the internal name, progress bar direction 2 / amount 1 (the RM.java:83
+	 * row is the ONLY map in the RM.java:60-115 block whose direction is not 0 — the two
+	 * progress bytes ride the port ctor verbatim), GUI machines/Sifter (lowercased, the
+	 * Shredder-line convention — a string only, no asset ships while the family carries a
+	 * null menu), item slots 1/12/1, fluid slots 0/0/0, minimal inputs 0, power 1. The
+	 * base-{@link RecipeMap} form (upstream RM.Sifting IS a plain RecipeMap — no subclass
+	 * deviation to declare). The rows pour via {@link GT6RecipesSifter} (FMLCommonSetup).
+	 */
+	public static volatile RecipeMap SIFTING;
+
+	/**
+	 * RM.java:87 — the Compressor map (task p26-w1-sifter-compressor-wiremill): "gt.recipe
+	 * .compressor", "Compressor", NEI name null → the internal name, progress 0/1, GUI
+	 * machines/Compressor (lowercased, string only — no asset while the menu stays null),
+	 * item slots 1/1/1, fluid slots 0/0/0, minimal inputs 0, power 1. Base-{@link RecipeMap}
+	 * (RM.java:87 is a plain RecipeMap). Rows pour via {@link GT6RecipesCompressor}.
+	 */
+	public static volatile RecipeMap COMPRESSOR;
+
+	/**
+	 * RM.java:111 — the Wiremill map (task p26-w1-sifter-compressor-wiremill): "gt.recipe
+	 * .wiremill", "Wiremill", NEI name null → the internal name, progress 0/1, GUI
+	 * machines/Wiremill (lowercased, string only — no asset while the menu stays null),
+	 * item slots 1/1/1, fluid slots 0/0/0, minimal inputs 0, power 1. Base-{@link
+	 * RecipeMap} (RM.java:111 is a plain RecipeMap). Rows pour via {@link GT6RecipesWiremill}.
+	 */
+	public static volatile RecipeMap WIREMILL;
 
 	/**
 	 * FM.java:38 — the Furnace Fuels map (task p13-burning-box-family spec ①): the
@@ -351,6 +382,33 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 6, 2, 0,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
+		// the RM.java:83/:87/:111 W1 trio (task p26-w1-sifter-compressor-wiremill), upstream
+		// declaration order — Sifting carries progress direction 2 (the one non-0 direction
+		// in the RM.java:60-115 block), Compressor/Wiremill the plain 0/1 row
+		SIFTING = new RecipeMap(new HashSet<>(),
+				"gt.recipe.sifter", "Sifter", null,
+				2, 1,
+				"gt6:textures/gui/machines/sifter",
+				/*IN-OUT-MIN-ITEM=*/ 1, 12, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		COMPRESSOR = new RecipeMap(new HashSet<>(),
+				"gt.recipe.compressor", "Compressor", null,
+				0, 1,
+				"gt6:textures/gui/machines/compressor",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		WIREMILL = new RecipeMap(new HashSet<>(),
+				"gt.recipe.wiremill", "Wiremill", null,
+				0, 1,
+				"gt6:textures/gui/machines/wiremill",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -373,6 +431,9 @@ public class GT6RecipeMaps {
 		DRYING = null;
 		CANNER = null;
 		MIXER = null;
+		SIFTING = null;
+		COMPRESSOR = null;
+		WIREMILL = null;
 		FURNACE_FUEL = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {

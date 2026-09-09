@@ -115,14 +115,15 @@ public final class GT6BlockStates extends BlockStateProvider {
         addDryer(); // task p14-dryer-family
         addDistillery(); // task p16-distillery-family
         addCanner(); // task p24-canner-machine
+        addKineticTrio(); // task p26-w1-sifter-compressor-wiremill
         addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 25 machine blocks x
+        // task p21-paintable-tint-render: the datagen-JVM census half — 37 machine blocks x
         // 3 models, matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 75; the ACT
+        // (the offline JUnit half walks the generated tree and pins the same 111; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (25 blocks x 3, addOven/addMachine/addDryer/addDistillery/addCanner) + the ACT single-state model", mMachineTintModels);
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (37 blocks x 3, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio) + the ACT single-state model", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -178,6 +179,25 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addCanner() {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CANNER_ROWS) {
             addMachine(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p26-w1-sifter-compressor-wiremill — the W1 Kinetic trio (Sifter/Compressor/
+     * Wiremill rows, Loader_MultiTileEntities.java :1312-1315/:1343-1346/:1373-1376, all
+     * rows NBT_TEXTURE "sifter"/"compressor"/"wiremill" per family): the addCanner shape
+     * verbatim — model names per path, the FRONT TEXTURES stay on the family set (the
+     * split-front borrow: {family}_colored_front + the three overlay decals each).
+     */
+    private void addKineticTrio() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SIFTER_ROWS) {
+            addMachine(GTMachines.SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.COMPRESSOR_ROWS) {
+            addMachine(GTMachines.COMPRESSOR_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.WIREMILL_ROWS) {
+            addMachine(GTMachines.WIREMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

@@ -69,6 +69,9 @@ public class GTCommandTreeLiteralTest {
 		"dryer", "dryer_t2", "dryer_t3", "dryer_t4",
 		"distillery", "distillery_t2", "distillery_t3", "distillery_t4", // task p16-distillery-family
 		"canner", "canner_t2", "canner_t3", "canner_t4", // task p24-canner-machine — the Canner ladder
+		"sifter", "sifter_t2", "sifter_t3", "sifter_t4", // task p26-w1-sifter-compressor-wiremill — the W1 Kinetic trio
+		"compressor", "compressor_t2", "compressor_t3", "compressor_t4",
+		"wiremill", "wiremill_t2", "wiremill_t3", "wiremill_t4",
 		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 
 	private static CommandSourceStack stack() {

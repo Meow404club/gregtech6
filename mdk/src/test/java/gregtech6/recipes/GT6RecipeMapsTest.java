@@ -195,7 +195,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
 		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
-		assertEquals(14, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append)");
+		assertEquals(17, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio)");
 	}
 
 	@Test
@@ -257,5 +257,117 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 				"gt.recipe.cokeoven", "Coke Oven", null,
 				0, 1, "gt6:textures/gui/machines/CokeOven",
 				1, 9, 1, 0, 1, 0, 1, 1));
+	}
+
+	/** The RM.java:83 Sifting map constants (task p26-w1-sifter-compressor-wiremill). */
+	@Test
+	void initRegistersSiftingMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		assertNotNull(GT6RecipeMaps.SIFTING);
+		assertSame(GT6RecipeMaps.SIFTING, RecipeMap.RECIPE_MAPS.get("gt.recipe.sifter"));
+		assertEquals("Sifter", GT6RecipeMaps.SIFTING.mNameLocal);
+		assertEquals("gt.recipe.sifter", GT6RecipeMaps.SIFTING.mNameNEI, "RM.java:83 passes null → the internal name");
+		assertEquals(1, GT6RecipeMaps.SIFTING.mInputItemsCount);
+		assertEquals(12, GT6RecipeMaps.SIFTING.mOutputItemsCount, "the RM.java:83 1/12 row — the Shredder topology");
+		assertEquals(1, GT6RecipeMaps.SIFTING.mMinimalInputItems);
+		assertEquals(0, GT6RecipeMaps.SIFTING.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.SIFTING.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.SIFTING.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.SIFTING.mMinimalInputs);
+		assertEquals(1, GT6RecipeMaps.SIFTING.mPower);
+		assertEquals(2, GT6RecipeMaps.SIFTING.mProgressBarDirection, "the RM.java:83 progress direction 2 — the one non-0 direction in the RM.java:60-115 block");
+		assertEquals(1, GT6RecipeMaps.SIFTING.mProgressBarAmount);
+		assertEquals("gt6:textures/gui/machines/sifter.png", GT6RecipeMaps.SIFTING.mGUIPath, "the RM.java:83 machines/Sifter row, lowercased");
+	}
+
+	/** The RM.java:87 Compressor map constants (task p26-w1-sifter-compressor-wiremill). */
+	@Test
+	void initRegistersCompressorMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		assertNotNull(GT6RecipeMaps.COMPRESSOR);
+		assertSame(GT6RecipeMaps.COMPRESSOR, RecipeMap.RECIPE_MAPS.get("gt.recipe.compressor"));
+		assertEquals("Compressor", GT6RecipeMaps.COMPRESSOR.mNameLocal);
+		assertEquals("gt.recipe.compressor", GT6RecipeMaps.COMPRESSOR.mNameNEI, "RM.java:87 passes null → the internal name");
+		assertEquals(1, GT6RecipeMaps.COMPRESSOR.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.COMPRESSOR.mOutputItemsCount, "the RM.java:87 1/1/1 row");
+		assertEquals(1, GT6RecipeMaps.COMPRESSOR.mMinimalInputItems);
+		assertEquals(0, GT6RecipeMaps.COMPRESSOR.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.COMPRESSOR.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.COMPRESSOR.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.COMPRESSOR.mMinimalInputs);
+		assertEquals(1, GT6RecipeMaps.COMPRESSOR.mPower);
+		assertEquals(0, GT6RecipeMaps.COMPRESSOR.mProgressBarDirection);
+		assertEquals(1, GT6RecipeMaps.COMPRESSOR.mProgressBarAmount);
+		assertEquals("gt6:textures/gui/machines/compressor.png", GT6RecipeMaps.COMPRESSOR.mGUIPath, "the RM.java:87 machines/Compressor row, lowercased");
+	}
+
+	/** The RM.java:111 Wiremill map constants (task p26-w1-sifter-compressor-wiremill). */
+	@Test
+	void initRegistersWiremillMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		assertNotNull(GT6RecipeMaps.WIREMILL);
+		assertSame(GT6RecipeMaps.WIREMILL, RecipeMap.RECIPE_MAPS.get("gt.recipe.wiremill"));
+		assertEquals("Wiremill", GT6RecipeMaps.WIREMILL.mNameLocal);
+		assertEquals("gt.recipe.wiremill", GT6RecipeMaps.WIREMILL.mNameNEI, "RM.java:111 passes null → the internal name");
+		assertEquals(1, GT6RecipeMaps.WIREMILL.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.WIREMILL.mOutputItemsCount, "the RM.java:111 1/1/1 row");
+		assertEquals(1, GT6RecipeMaps.WIREMILL.mMinimalInputItems);
+		assertEquals(0, GT6RecipeMaps.WIREMILL.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.WIREMILL.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.WIREMILL.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.WIREMILL.mMinimalInputs);
+		assertEquals(1, GT6RecipeMaps.WIREMILL.mPower);
+		assertEquals(0, GT6RecipeMaps.WIREMILL.mProgressBarDirection);
+		assertEquals(1, GT6RecipeMaps.WIREMILL.mProgressBarAmount);
+		assertEquals("gt6:textures/gui/machines/wiremill.png", GT6RecipeMaps.WIREMILL.mGUIPath, "the RM.java:111 machines/Wiremill row, lowercased");
+	}
+
+	/**
+	 * The p26 trio joins the generation lifecycle: reset nulls the fields, drops the
+	 * registry names, and the three loader pour flags retire WITH the generation (the
+	 * ADR-P18 hook ledger — the loaders' static initializers registered their reset hooks).
+	 * The retirement is observed BEHAVIORALLY (a post-reset load() must re-pour, the
+	 * {@code oreChainLoadRepoursAfterABareMapReset} shape) — NOT by hook-count growth,
+	 * which is order-dependent: a sibling test class in the same JVM may have class-loaded
+	 * the trio first, so the sampled baseline would already carry the three hooks.
+	 */
+	@Test
+	void resetRetiresTheKineticTrioGeneration() throws Exception {
+		// class-load the three loaders so their static-initializer hooks join the ledger
+		// (idempotent; the structural membership pin lives in GT6RecipeGenerationGuardTest)
+		Class.forName("gregtech6.recipes.GT6RecipesSifter");
+		Class.forName("gregtech6.recipes.GT6RecipesCompressor");
+		Class.forName("gregtech6.recipes.GT6RecipesWiremill");
+		GT6RecipeMaps.init();
+		RecipeMap tFirstSifting = GT6RecipeMaps.SIFTING;
+		RecipeMap tFirstCompressor = GT6RecipeMaps.COMPRESSOR;
+		RecipeMap tFirstWiremill = GT6RecipeMaps.WIREMILL;
+		assertNotNull(tFirstSifting);
+		assertNotNull(tFirstCompressor);
+		assertNotNull(tFirstWiremill);
+		GT6RecipeMaps.reset();
+		assertNull(GT6RecipeMaps.SIFTING, "reset drops the sifting entry too");
+		assertNull(GT6RecipeMaps.COMPRESSOR, "reset drops the compressor entry too");
+		assertNull(GT6RecipeMaps.WIREMILL, "reset drops the wiremill entry too");
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.sifter"));
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.compressor"));
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.wiremill"));
+		// the poison-state discriminator: a stuck (non-retired) flag makes load() early-return
+		// BEFORE init() — the maps would stay null. The sifter additionally re-pours the
+		// :224 grass row0 over the vanilla resolver (the GT6KineticRecipesPourTest pour).
+		GT6RecipesSifter.load();
+		assertNotNull(GT6RecipeMaps.SIFTING,
+				"the sifter pour-flag retired WITH the generation — load() re-inits after a bare reset (ADR-P18)");
+		assertTrue(GT6RecipeMaps.SIFTING.mRecipeList.size() >= 1,
+				"the :224 grass row0 re-pours after the bare reset");
+		GT6RecipesCompressor.load();
+		assertNotNull(GT6RecipeMaps.COMPRESSOR, "the compressor pour-flag retired WITH the generation (ADR-P18)");
+		GT6RecipesWiremill.load();
+		assertNotNull(GT6RecipeMaps.WIREMILL, "the wiremill pour-flag retired WITH the generation (ADR-P18)");
+		GT6RecipeMaps.init();
+		assertNotSame(tFirstSifting, GT6RecipeMaps.SIFTING, "re-init after reset creates a fresh generation");
+		assertNotSame(tFirstCompressor, GT6RecipeMaps.COMPRESSOR);
+		assertNotSame(tFirstWiremill, GT6RecipeMaps.WIREMILL);
+		GT6RecipeMaps.reset();
 	}
 }

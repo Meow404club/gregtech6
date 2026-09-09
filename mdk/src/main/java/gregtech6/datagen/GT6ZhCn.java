@@ -356,6 +356,17 @@ public class GT6ZhCn extends LanguageProvider {
 			addRowUnit(tEmitted, tPipeMat.unitKey());
 		}
 		addDirect("itemGroup.gt6.item_pipes");
+		// W1 Kinetic trio (task p26-w1-sifter-compressor-wiremill): the three family
+		// templates (the unit-key carrier) + the Kinetic_T row-material units
+		addDirect(gregtech6.registry.GTMachines.MACHINE_SIFTER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_COMPRESSOR_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_WIREMILL_UNIT_KEY);
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tKineticRows
+				: java.util.List.of(gregtech6.registry.GTMachines.SIFTER_ROWS, gregtech6.registry.GTMachines.COMPRESSOR_ROWS, gregtech6.registry.GTMachines.WIREMILL_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tKineticRows) {
+				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
+			}
+		}
 		// large boiler + dense wall: the templates + the row-material units
 		addDirect(gregtech6.registry.GTMultiBlocks.LARGE_BOILER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMultiBlocks.DENSE_WALL_DISPLAY_KEY);

@@ -136,6 +136,25 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCanner,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p26-w1-sifter-compressor-wiremill — the W1 Kinetic trio (Sifter/Compressor/
+		// Wiremill) joins the family: the same BE class, the same item + fluid faces — zero
+		// fluid recipes are NOT a zero fluid face (the Shredder precedent; the rows carry
+		// the 127 all-sides tank defaults)
+		BlockEntityType<TileEntityBasicMachine> tSifter = GTMachines.SIFTER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tSifter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tSifter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tCompressor = GTMachines.COMPRESSOR_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCompressor,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCompressor,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tWiremill = GTMachines.WIREMILL_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tWiremill,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tWiremill,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,
