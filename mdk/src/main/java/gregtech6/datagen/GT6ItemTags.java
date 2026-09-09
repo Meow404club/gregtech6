@@ -99,6 +99,14 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/** The dustRedstone recipe-material translation — #gt6:redstone (snake ruling). */
 	public static final TagKey<Item> REDSTONE_DUSTS = gt6("redstone");
 
+	/**
+	 * The shelf-book material translation — #gt6:books (task p26-storage-static-batch).
+	 * The {@code BooksGT.BOOK_REGISTER.containsKey} modern equivalent: the bookshelf
+	 * insert gate keys on THIS tag (datapack tier-a, pack authors extend the shelf's
+	 * book universe); the datagen band fills the vanilla book items.
+	 */
+	public static final TagKey<Item> BOOKS = gt6("books");
+
 	/** The plateCurvedSn recipe-material translation — #gt6:plate_curved_tin (snake ruling). */
 	public static final TagKey<Item> PLATE_CURVED_TIN = gt6("plate_curved_tin");
 
