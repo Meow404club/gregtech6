@@ -139,8 +139,10 @@ public final class GT6WorldgenDatagen {
 
     /**
      * 17 configured features: vanilla {@code Feature.ORE} with a single target
-     * {@code stone_ore_replaceables -> GTStoneBlocks.<snake>(STONE variant)} at blob size
-     * 200 (the GTCEu GTConfiguredFeatures blob form; the 2-arg ctor pins discard-chance 0
+     * {@code stone_ore_replaceables -> GTStoneBlocks.<snake>(STONE variant)} at the upstream
+     * blob size clamped to the vanilla codec cap ({@link GT6Worldgen#oreBlobSize()} — the
+     * raw 200 trips {@code Codec.intRange(0, 64)}, OreConfiguration.java:14/:15 both legs;
+     * the GTCEu GTConfiguredFeatures blob form; the 2-arg ctor pins discard-chance 0
      * — the stone blob never carries buried-ore logic).
      */
     public static void bootstrapConfigured(
@@ -156,7 +158,7 @@ public final class GT6WorldgenDatagen {
                     new OreConfiguration(
                             List.of(OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES),
                                     GTStoneBlocks.block(tSnake, StoneVariant.STONE).get().defaultBlockState())),
-                            GT6Worldgen.BLOB_SIZE));
+                            GT6Worldgen.oreBlobSize()));
         }
     }
 

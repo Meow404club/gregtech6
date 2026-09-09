@@ -8,7 +8,8 @@
  * <li>Loader_Worldgen.java:654-661 — the WorldgenStone loop; the overworld row binds
  *     (amount=1, size=200, probability=100, minY=0, maxY=120), WorldgenStone.java:41
  *     ctor order; upstream EXCLUDES the two prismarines — the card pins 17 anyway
- *     (GT6Worldgen javadoc "documented deviation").</li>
+ *     (GT6Worldgen javadoc "documented deviation"). The size 200 rides the vanilla
+ *     OreConfiguration codec cap (intRange(0,64)) through GT6Worldgen.oreBlobSize().</li>
  * <li>WorldgenBlob.java:55-57 — the probability/amount/size config binds.</li>
  * <li>GTStoneBlocksRegistrationTest.SNAKES — the 17-stone CS.java:1668 order (the
  *     key tables must align GTStoneBlocks.STONES 1:1).</li>
@@ -66,6 +67,10 @@ class GT6WorldgenDatagenTest {
     void blobConstantsArePinned() {
         assertEquals(1, GT6Worldgen.BLOB_AMOUNT, "amount=1 blob per probability hit (WorldgenBlob bind 1..16)");
         assertEquals(200, GT6Worldgen.BLOB_SIZE, "size=200 (WorldgenBlob bind 4..250)");
+        assertEquals(64, GT6Worldgen.ORE_SIZE_CODEC_CAP,
+                "the vanilla OreConfiguration size codec cap (Codec.intRange(0, 64), 1.20.1 :14 / 1.21.1 :15)");
+        assertEquals(64, GT6Worldgen.oreBlobSize(),
+                "the datagen size = min(upstream 200, codec cap 64) — the documented deviation; raw 200 fails encode AND datapack decode");
         assertEquals(100, GT6Worldgen.BLOB_PROBABILITY, "probability=100 -> 1/100 chunk attempts");
         assertEquals(0, GT6Worldgen.OVERWORLD_MIN_Y, "overworld MinHeight 0");
         assertEquals(120, GT6Worldgen.OVERWORLD_MAX_Y, "overworld MaxHeight 120");

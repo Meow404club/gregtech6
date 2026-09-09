@@ -43,6 +43,23 @@ public final class GT6Worldgen {
     public static final int BLOB_AMOUNT = 1;
     /** WorldgenBlob.java:57 bind(4, 250, config) default 200 — the blob size (OreConfiguration "size"). */
     public static final int BLOB_SIZE = 200;
+    /**
+     * The vanilla OreConfiguration "size" codec cap — {@code Codec.intRange(0, 64)} both legs
+     * (1.20.1 OreConfiguration.java:14, 1.21.1 :15). Documented deviation: the upstream 200
+     * block blob is NOT representable over the vanilla OreFeature (the datagen run errors
+     * "Value 200 outside of range [0:64]" and the JSON is undecodable at datapack load), so
+     * the L0 blob rides {@link #oreBlobSize()} = min(200, 64) = 64 — expected density drops
+     * from ~2.0 to ~0.64 blocks/chunk at the same 1/100 rarity. The full-200 blob needs the
+     * L1 custom Feature (the GTCEu production precedent: GTFeatures.STONE_BLOB +
+     * StoneBlobConfiguration UniformInt.of(20, 30), GTConfiguredFeatures.java:45-55) —
+     * deferred with the vein pipeline per the card's defer clause.
+     */
+    public static final int ORE_SIZE_CODEC_CAP = 64;
+
+    /** The effective OreConfiguration size: the upstream blob size clamped to the vanilla codec cap. */
+    public static int oreBlobSize() {
+        return Math.min(BLOB_SIZE, ORE_SIZE_CODEC_CAP);
+    }
     /** WorldgenBlob.java:55 max(1, config) default 100 — chunk-attempt chance 1/100 (RarityFilter). */
     public static final int BLOB_PROBABILITY = 100;
     /** Loader_Worldgen.java:655 overworld row MinHeight 0 (HeightRangePlacement uniform low anchor). */
