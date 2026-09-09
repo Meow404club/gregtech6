@@ -18,6 +18,7 @@ import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6Hoppers.HopperRow;
 import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.GTItemStackHandler;
+import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.util.GTItemMover;
 
 /**
@@ -486,5 +487,51 @@ public class GT6HopperFamilyTest extends GTOfflineTestBase {
 				instanceof GT6AdjacentInventoryUpdatable);
 		assertTrue(new GT6QueueHopperBlockEntity(sQueueType, POS, Blocks.STONE.defaultBlockState())
 				instanceof GT6AdjacentInventoryUpdatable);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the placement auto-connect arm (upstream onPlaced :114-122 / :104-116)
+	// ---------------------------------------------------------------------------
+
+	/** A pipe recording nothing — the shape is enough for the ignore gates. */
+	private GTItemPipeBlockEntity recordingPipe() {
+		return new GTItemPipeBlockEntity(sHopperType, POS, Blocks.STONE.defaultBlockState());
+	}
+
+	@Test
+	public void placedHopperAutoConnectsAnItemPipeAtItsOutputFace() {
+		// the UP face never fires (SIDES_BOTTOM_HORIZONTAL[mFacing] — upstream)
+		assertFalse(GT6Hoppers.GT6HopperBlock.autoConnectItemConnector(recordingPipe(), net.minecraft.core.Direction.UP));
+		// no neighbour / a non-connector neighbour is ignored
+		assertFalse(GT6Hoppers.GT6HopperBlock.autoConnectItemConnector(null, net.minecraft.core.Direction.DOWN));
+		assertFalse(GT6Hoppers.GT6HopperBlock.autoConnectItemConnector(
+				new GT6HopperBlockEntity(sHopperType, POS, Blocks.STONE.defaultBlockState()),
+				net.minecraft.core.Direction.DOWN));
+		// a connector whose types toward the hopper do not intersect ALL_ITEM_TRANSPORT is ignored
+		GTItemPipeBlockEntity tFluidFace = new GTItemPipeBlockEntity(sHopperType, POS, Blocks.STONE.defaultBlockState()) {
+			@Override
+			public java.util.List<gregapi.code.TagData> getConnectorTypes(byte aSide) {
+				return java.util.List.of(gregapi.data.TD.Connectors.PIPE_FLUID);
+			}
+		};
+		assertFalse(GT6Hoppers.GT6HopperBlock.autoConnectItemConnector(tFluidFace, net.minecraft.core.Direction.DOWN));
+		// the real pipe face (PNEUMATIC_ITEM toward the hopper) gets connect(mSideOfTileEntity, T)
+		byte[] tFiredSide = {-1};
+		boolean[] tFiredNotify = {false};
+		GTItemPipeBlockEntity tPipe = new GTItemPipeBlockEntity(sHopperType, POS, Blocks.STONE.defaultBlockState()) {
+			@Override
+			public boolean connect(byte aSide, boolean aNotify) {
+				tFiredSide[0] = aSide;
+				tFiredNotify[0] = aNotify;
+				return true;
+			}
+		};
+		assertTrue(GT6Hoppers.GT6HopperBlock.autoConnectItemConnector(tPipe, net.minecraft.core.Direction.DOWN));
+		// a hopper pointing DOWN at the pipe fires the pipe's UP side (the side facing back)
+		assertEquals(net.minecraft.core.Direction.UP.get3DDataValue(), tFiredSide[0]);
+		assertTrue(tFiredNotify[0]);
+		// a horizontal output face fires the mirrored side too
+		assertTrue(GT6Hoppers.GT6HopperBlock.autoConnectItemConnector(tPipe, net.minecraft.core.Direction.NORTH));
+		assertEquals(net.minecraft.core.Direction.SOUTH.get3DDataValue(), tFiredSide[0]);
 	}
 }

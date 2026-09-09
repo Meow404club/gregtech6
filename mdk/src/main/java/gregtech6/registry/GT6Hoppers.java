@@ -44,9 +44,11 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregapi.data.TD;
 import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.items.tools.GT6ToolActions;
+import gregtech6.tileentity.connectors.TileEntityBase09Connector;
 import gregtech6.tileentity.inventories.GT6HopperBaseBlockEntity;
 import gregtech6.tileentity.inventories.GT6HopperBlockEntity;
 import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity;
@@ -263,6 +265,31 @@ public final class GT6Hoppers {
 			if (aLevel.getBlockEntity(aPos) instanceof GT6HopperBaseBlockEntity tHopper) {
 				tHopper.setFacingNbtFallback((byte) aState.getValue(FACING).get3DDataValue());
 			}
+			// the item-connector auto-connect arm (upstream onPlaced :114-122 hopper / :104-116
+			// queue — identical bodies, server-side only)
+			if (!aLevel.isClientSide) {
+				Direction tFacing = aState.getValue(FACING);
+				autoConnectItemConnector(aLevel.getBlockEntity(aPos.relative(tFacing)), tFacing);
+			}
+		}
+
+		/**
+		 * The placement auto-connect (upstream onPlaced, both hopper kinds): a neighbour in the
+		 * output direction that is a connector whose types toward the hopper intersect
+		 * TD.Connectors.ALL_ITEM_TRANSPORT gets {@code connect(side, true)} fired on the side
+		 * facing back ({@code mSideOfTileEntity} — the upstream one-liner). The upstream
+		 * {@code SIDES_VALID} column is vacuous (0-5 always valid) and {@code allowInteraction}
+		 * is vacuously true in this port (the item pipe family carries no foam/ownable layer).
+		 * Upstream never fires it on the UP face ({@code SIDES_BOTTOM_HORIZONTAL[mFacing]}).
+		 *
+		 * @return whether the connect fired (the offline-test seam).
+		 */
+		public static boolean autoConnectItemConnector(@Nullable BlockEntity aNeighbor, Direction aOwnFacing) {
+			if (aOwnFacing == Direction.UP) return false; // SIDES_BOTTOM_HORIZONTAL — bottom or horizontal only
+			if (!(aNeighbor instanceof TileEntityBase09Connector tConnector)) return false;
+			byte tSideOfConnector = (byte) aOwnFacing.getOpposite().get3DDataValue(); // mSideOfTileEntity
+			if (!TileEntityBase09Connector.haveOneCommonElement(tConnector.getConnectorTypes(tSideOfConnector), TD.Connectors.ALL_ITEM_TRANSPORT)) return false;
+			return tConnector.connect(tSideOfConnector, true);
 		}
 
 		/**
