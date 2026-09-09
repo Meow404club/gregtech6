@@ -125,8 +125,9 @@ public class GT6RecipeMaps {
 	/**
 	 * The generation-reset hooks: every loader that owns a private static "poured" flag
 	 * registers its resetForTest here from its static initializer, so {@link #reset()}
-	 * retires the WHOLE generation. One generation = the 15 map fields (12 + the
-	 * W1 trio append of task p26-w1-sifter-compressor-wiremill) + RecipeMap.RECIPE_MAPS
+	 * retires the WHOLE generation. One generation = the 22 map fields (the 12 pre-W1
+	 * fields + the mixer/W1-trio/press-extruder/crucible-pair appends + the BATH append
+	 * of task p26-kitchen-pot-bowl) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
@@ -250,6 +251,31 @@ public class GT6RecipeMaps {
 	 * RecipeMap} (RM.java:111 is a plain RecipeMap). Rows pour via {@link GT6RecipesWiremill}.
 	 */
 	public static volatile RecipeMap WIREMILL;
+
+	/**
+	 * RM.java:80 — the Bath map (task p26-kitchen-pot-bowl): "gt.recipe.bath", "Bath",
+	 * NEI name null → the internal name, progress 0/1, GUI machines/bath (lowercased, the
+	 * Shredder-line convention), item slots 6/6/1, fluid slots 1/3/1, minimal inputs 2,
+	 * power 1 — the upstream ctor row parameter-for-parameter over the 15-arg port ctor
+	 * (the trailing NEI booleans fold away like every other map).
+	 *
+	 * <p><b>Base-class form (declared deviation, the CHISEL/SHREDDER precedent):</b>
+	 * upstream {@code RM.Bath} is a {@code RecipeMapBath} subclass whose {@code findRecipe}
+	 * override (RecipeMapBath.java:57-183) synthesizes rows ON DEMAND: the plank
+	 * oil-treatment ladder (:61-109) keyed through {@code WoodDictionary.PLANKS_ANY} and
+	 * mod-plank ILs (MaCu/IE/ERE), the Atum loot-wash (:111-118), the {@code ItemArmor}
+	 * dye/deco rows (:119-123), the {@code IItemColorableRGB} chlorine rows (:124-135), the
+	 * projectile-enchanting rows (:136-140) and the edible-potion rows (:141-180). That is
+	 * the handler layer the P8 port ruling does NOT carry (handler → registration-time
+	 * expansion), and every one of its legs sits on an unported universe face
+	 * (WoodDictionary/plank ILs/IItemColorableRGB/potion-effect NBT) — so the port carries
+	 * the base {@link RecipeMap} with the identical constants, and the vanilla-parsable
+	 * STATIC rows of the map pour in via {@link gregtech6.recipes.GT6RecipesBath}
+	 * (FMLCommonSetup, the Loader_Recipes_Vanilla.java:715-736 wool/carpet/terracotta/
+	 * glass band). The on-demand arms stay pooled, not dropped. The map's live findRecipe
+	 * consumer since this card is the BathingPot/MixingBowl manual block family.
+	 */
+	public static volatile RecipeMap BATH;
 
 	/**
 	 * FM.java:38 — the Furnace Fuels map (task p13-burning-box-family spec ①): the
@@ -495,6 +521,18 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		// RM.java:80 — the Bath map (task p26-kitchen-pot-bowl): items 6/6/1, fluids 1/3/1,
+		// MIN 2, AMP 1 — the RM.java:80 row verbatim over the 15-arg port ctor (the base-form
+		// deviation is documented on the field above); the upstream RecipeMapBath subclass
+		// stays pooled with the rest of the handler layer
+		BATH = new RecipeMap(new HashSet<>(),
+				"gt.recipe.bath", "Bath", null,
+				0, 1,
+				"gt6:textures/gui/machines/bath",
+				/*IN-OUT-MIN-ITEM=*/ 6, 6, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 3, 1,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -520,6 +558,7 @@ public class GT6RecipeMaps {
 		SIFTING = null;
 		COMPRESSOR = null;
 		WIREMILL = null;
+		BATH = null;
 		FURNACE_FUEL = null;
 		PRESS = null;
 		EXTRUDER = null;

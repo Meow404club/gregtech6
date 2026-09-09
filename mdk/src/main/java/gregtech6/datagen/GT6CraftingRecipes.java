@@ -11,10 +11,12 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 //? if forge {
@@ -25,6 +27,7 @@ import net.minecraftforge.common.Tags;
 
 import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6FoodCans;
+import gregtech6.registry.GT6Kitchen;
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTGrassBlocks;
@@ -84,6 +87,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation SHAPE_EXTRUDER_ROD_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_extruder_rod");
 	/** The LARGE Steel Crucible crafting row (task p26-crucible-multiblock SPEC ⑦). */
 	public static final ResourceLocation LARGE_STEEL_CRUCIBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "large_steel_crucible");
+	/**
+	 * The kitchen band (task p26-kitchen-pot-bowl): the steel pot's crafting row (the
+	 * result-path convention) + the clay-bowl reverse shapeless + the Raw-bowl hardening
+	 * smelt (the :2177 tail — the result path is the vanilla convention again).
+	 */
+	public static final ResourceLocation BATHING_POT_STEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bathing_pot_steel");
+	public static final ResourceLocation CLAY_BOWL_REVERSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_bowl_reverse");
+	public static final ResourceLocation CLAY_BOWL_SMELT_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mixing_bowl");
 
 	public GT6CraftingRecipes(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider) {
 		//? if forge {
@@ -105,6 +116,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		shapeExtruderPlateBuilder().save(aConsumer, SHAPE_EXTRUDER_PLATE_ID);
 		shapeExtruderRodBuilder().save(aConsumer, SHAPE_EXTRUDER_ROD_ID);
 		largeSteelCrucibleBuilder().save(aConsumer, LARGE_STEEL_CRUCIBLE_ID);
+		bathingPotSteelBuilder().save(aConsumer, BATHING_POT_STEEL_ID);
+		clayBowlReverseBuilder().save(aConsumer, CLAY_BOWL_REVERSE_ID);
+		clayBowlSmeltingBuilder().save(aConsumer, CLAY_BOWL_SMELT_ID);
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -121,6 +135,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		shapeExtruderPlateBuilder().save(aOutput, SHAPE_EXTRUDER_PLATE_ID);
 		shapeExtruderRodBuilder().save(aOutput, SHAPE_EXTRUDER_ROD_ID);
 		largeSteelCrucibleBuilder().save(aOutput, LARGE_STEEL_CRUCIBLE_ID);
+		bathingPotSteelBuilder().save(aOutput, BATHING_POT_STEEL_ID);
+		clayBowlReverseBuilder().save(aOutput, CLAY_BOWL_REVERSE_ID);
+		clayBowlSmeltingBuilder().save(aOutput, CLAY_BOWL_SMELT_ID);
 		for (GrassRecipeRow tRow : grassRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
@@ -383,5 +400,75 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('x', GT6ItemTags.TOOLS_FILE)
 				.define('P', GT6ItemTags.EXTRUDER_SHAPE_BASE)
 				.unlockedBy("has_shape_base", has(GT6ItemTags.EXTRUDER_SHAPE_BASE));
+	}
+
+	// -------------------------------------------------------------------------
+	// the kitchen band (task p26-kitchen-pot-bowl)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The steel Bathing Pot crafting row — the upstream registration-line pattern VERBATIM
+	 * (Loader_MultiTileEntities.java:2175 {@code " f ", "PhP", "PPP"}): 'P' =
+	 * {@code OP.plate.dat(MT.StainlessSteel)} → the plate material tag
+	 * ({@code #gt6:plates/stainless_steel}, the wrench row's steel-plates precedent),
+	 * 'f' = {@code #gt6:tools/file}, 'h' = {@code #gt6:tools/hard_hammer}. Result 1x
+	 * {@code gt6:bathing_pot_steel} (the 8000 L RM.Bath carrier).
+	 *
+	 * <p>DECLARED DORMANT sibling: the WOODEN pot row :2173 ({@code "sGh","PLP","PPP"}) —
+	 * its 'G' key is {@code OD.itemGlue}, an oredict SOFT key upstream satisfied by foreign
+	 * glue items (GT6 registers no glue item — Loader_OreDictionary has no itemGlue bind),
+	 * so the port universe has no resolvable carrier for the key. Pooled with the
+	 * wood-chemistry face, not dropped.
+	 */
+	private ShapedRecipeBuilder bathingPotSteelBuilder() {
+		TagKey<Item> tSteelPlates = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "stainless_steel");
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, GT6Kitchen.BATHING_POT_STEEL.get())
+				.pattern(" f ")
+				.pattern("PhP")
+				.pattern("PPP")
+				.define('P', tSteelPlates)
+				.define('f', GT6ItemTags.TOOLS_FILE)
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.unlockedBy("has_stainless_steel_plate", has(tSteelPlates));
+	}
+
+	/**
+	 * The Clay Bowl reverse shapeless — the upstream :119 tail VERBATIM
+	 * ({@code CR.shapeless(ST.make(Items.clay_ball, 5, 0), CR.DEF_NCC, new Object[] {last()})}):
+	 * 1 raw bowl back to its 5 clay balls (the {@code OreDictItemData(MT.Clay, U*5)} mass).
+	 * Result 5x {@code minecraft:clay_ball}. The FORWARD shaped row (:132, the rolling-pin
+	 * pattern {@code "k R","C C","CCC"}) is DECLARED DORMANT — its 'R' key is
+	 * {@code OreDictToolNames.rollingpin} and the port carries no rolling-pin tool (the
+	 * tools pool), so the Raw bowl has no crafting source yet; the smelt below stays the
+	 * live half of the hardening chain.
+	 */
+	private ShapelessRecipeBuilder clayBowlReverseBuilder() {
+		return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.CLAY_BALL, 5)
+				.requires(GT6Kitchen.CLAY_BOWL_RAW.get())
+				.unlockedBy("has_clay_bowl_raw", has(GT6Kitchen.CLAY_BOWL_RAW.get()));
+	}
+
+	/**
+	 * The Clay Bowl hardening smelt — the upstream :2177 registration-line tail VERBATIM
+	 * ({@code RM.add_smelting(IL.Ceramic_Bowl_Raw.get(1), IL.Ceramic_Bowl.get(1))}):
+	 * {@code gt6:clay_bowl} → {@code gt6:mixing_bowl}. The honest vanilla defaults carry
+	 * the unspecified upstream columns (xp 0, 200 ticks — the vanilla smelt constant).
+	 * The factory signature is the one leg split beyond the save face: 1.20.1
+	 * {@code smelting(Ingredient, RecipeCategory, ItemLike, float, int)} (vanilla
+	 * SimpleCookingRecipeBuilder.java:59), 21.1 takes the result as an
+	 * {@code ItemStack} (the neoforge-api-1211 patch :61).
+	 */
+	private SimpleCookingRecipeBuilder clayBowlSmeltingBuilder() {
+		//? if forge {
+		return SimpleCookingRecipeBuilder.smelting(
+						net.minecraft.world.item.crafting.Ingredient.of(GT6Kitchen.CLAY_BOWL_RAW.get()),
+						RecipeCategory.MISC, GT6Kitchen.MIXING_BOWL.get(), 0.0F, 200)
+				.unlockedBy("has_clay_bowl_raw", has(GT6Kitchen.CLAY_BOWL_RAW.get()));
+		//?} else {
+		/*return SimpleCookingRecipeBuilder.smelting(
+						net.minecraft.world.item.crafting.Ingredient.of(GT6Kitchen.CLAY_BOWL_RAW.get()),
+						RecipeCategory.MISC, new ItemStack(GT6Kitchen.MIXING_BOWL.get()), 0.0F, 200)
+				.unlockedBy("has_clay_bowl_raw", has(GT6Kitchen.CLAY_BOWL_RAW.get()));
+		*///?}
 	}
 }

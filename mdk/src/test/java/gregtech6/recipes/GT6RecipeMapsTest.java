@@ -195,7 +195,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
 		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
-		assertEquals(21, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + press + extruder + crucible smelting + crucible alloying (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair)");
+		assertEquals(22, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + press + extruder + crucible smelting + crucible alloying + bath (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair, the p26-kitchen-pot-bowl RM.java:80 append)");
 	}
 
 	/** The RM.java:99 Forming Press map constants (task p26-w1-press-extruder-molds). */
