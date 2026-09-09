@@ -136,7 +136,13 @@ steps += [
 
 # ------------------------------------------------- F: teardown
 steps += [
-    phase("F: teardown — the explicit band restore"),
+    phase("F: teardown — the entity sweep + the explicit band restore"),
+    # the item sweep is NOT cosmetic: the suck arm pulls 1 item per tick and the
+    # drop leaves unconsumed dust hovering over the rig; a pass-2 crucible then
+    # feeds the leftovers (4U content) and the heavier heat mass drops shot 2
+    # BELOW the 1811 K pour window (the pre-r7.2 pass-2 red, forge leg). The
+    # volume selector rides the same grammar on both legs.
+    Step(f"kill @e[type=minecraft:item,x=429,y=62,z=133,dx=9,dy=5,dz=7]"),
     Step("fill 429 62 133 438 66 139 air", expect="filled"),
     Step("time query daytime", expect="The time is"),
 ]
