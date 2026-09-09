@@ -180,8 +180,13 @@ public final class GT6RecipesBath {
 	/** The live oil lookup — creosote is the one Loader_Fluids oil the port carries (gt6:creosote, the Coke Oven by-product). */
 	@Nullable
 	static Fluid resolveOil(OilLeg aLeg) {
-		// the Loader_Fluids.java FL.Oil_* family (Seed/Lin/Hemp/Nut/Olive/Sunflower/Fish/Whale) is port-absent
-		return "creosote".equals(aLeg.name()) ? GTFluids.CREOSOTE.get() : null;
+		// the Loader_Fluids.java FL.Oil_* family (Seed/Lin/Hemp/Nut/Olive/Sunflower/Fish/Whale) is port-absent;
+		// the isPresent guard is the offline-test arm (no mod registry in the forge test JVM — the Mixer resolver shape)
+		//? if forge {
+		return "creosote".equals(aLeg.name()) && GTFluids.CREOSOTE.isPresent() ? GTFluids.CREOSOTE.get() : null;
+		//?} else {
+		/*return "creosote".equals(aLeg.name()) ? GTFluids.CREOSOTE.get() : null; // 21.1: the Supplier face, the FML test JVM binds it
+		*///?}
 	}
 
 	/** The last pour's poured count (the offline reconciliation face). */
