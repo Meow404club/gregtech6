@@ -130,7 +130,9 @@ CHAIN = Chain(
     Step(f"data get block {F(_up(C, 2))}", expect='gt.dungeonloot: "minecraft:blocks/stone"'),
     Step(f"setblock {F(_up(C, 2))} minecraft:air destroy", expect="Changed the block",
          label="the break arm (destroy = the loot-table drop AND the onRemove pop): generateDungeonLoot fills the 15 empty slots first, then everything pops"),
-    _dump(C, 'id: "gt6:safe_mechanical_bronze"', poll=30.0, label="the safe's own self drop landed in the capture chest"),
+    Step(f"data get block {F(C)}", expect='id: "gt6:safe_mechanical_bronze"', poll=30.0,
+         node_expects={"1.21.1": 'id: "minecraft:cobblestone"'},
+         label="the safe's own self drop landed in the capture chest — on 1.21.1 the plural loot_tables band is inert (the inherited ADR-P17-1 section 5 deviation, repo-wide), so that leg pins the rolled cobble instead; the self-drop drop-face lives on the canonical 1.20.1 leg"),
     _dump(C, 'id: "minecraft:cobblestone"', poll=30.0,
           label="the LOOT rolled — cobblestone (the blocks/stone table's no-silk drop) in this chest can ONLY be the marker roll: 15 empty slots, 15 rolled cobbles"),
 
