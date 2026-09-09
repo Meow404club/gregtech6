@@ -60,9 +60,11 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * 5-map vanilla coverage gap of the compat research is closed), and by task
  * p26-rm-row-backfill (the registration-time expansion of the upstream prefix HANDLER
  * templates: the Lathe 22-template tEasyWorkable twin arms of Loader_Recipes_Handlers.java
- * :371-393, the Shredder 34-template MORTAR twin arms + crushed-array rows of :114-150, and
- * the :152-155 RECYCLABLE ring — two rows per RECYCLABLE prefix material, output = the
- * {@code OM.pulverize} remains transcription).
+ * :371-393, the Shredder 34-template MORTAR twin arms + crushed-array rows of :114-150, the
+ * :152-155 RECYCLABLE ring — two rows per RECYCLABLE prefix material, output = the
+ * {@code OM.pulverize} remains transcription — and the CRUSHER :65 rawOreChunk→crushedTiny
+ * row, transcribed as DATA whose walk expands to zero rows until the port item universe
+ * registers the rawOreChunk prefix).
  *
  * <p><b>Upstream sources</b>: {@code RM.Shredder.addRecipe1} rows in
  * Loader_Recipes_Vanilla.java:688-693 + :697 + :707-708 (Shredder), :523-524 (Lathe), the
@@ -245,7 +247,12 @@ public final class GT6RecipesShCL {
 		new CrusherTemplate(":72", OP.gem          , 1, OP.gemFlawed   , 2, 16, 256),
 		new CrusherTemplate(":73", OP.gemFlawed    , 1, OP.gemChipped  , 2, 16, 256),
 		// :75 — the boule row (upstream OP.bouleGt is condition-FALSE, so the walk expands to zero materials; the row stays transcribed as DATA)
-		new CrusherTemplate(":75", OP.bouleGt      , 1, OP.gem         , 4, 16, 256));
+		new CrusherTemplate(":75", OP.bouleGt      , 1, OP.gem         , 4, 16, 256),
+		// :65 — the p26-rm-row-backfill raw-ore row (rawOreChunk 27*U72 → crushedTiny 9*U72 x3,
+		// quantity-conserving; OP.rawOreChunk exists as prefix DATA in the port but has NO item
+		// registrations — it is not in GTMaterialItems.itemPathPrefixes — so the walk expands to
+		// zero rows and the pour audit names it, lighting up when an item-universe card registers it)
+		new CrusherTemplate(":65", OP.rawOreChunk  , 1, OP.crushedTiny , 3, 16, 64));
 		return tTable;
 	}
 
@@ -745,14 +752,18 @@ public final class GT6RecipesShCL {
 
 	private static void pourCrusher(RecipeMap aMap, List<CrusherTemplate> aTemplates) {
 		int tPoured = 0, tSkipped = 0;
+		List<String> tZeroExpansion = new ArrayList<>();
 		for (CrusherTemplate tTemplate : aTemplates) {
+			int tTemplatePoured = 0;
 			for (OreDictMaterial tMaterial : expandCrusherMaterials(tTemplate.inPrefix())) {
 				Recipe tRecipe = buildCrusherRecipe(tTemplate, tMaterial);
 				if (tRecipe == null) {tSkipped++; continue;} // upstream :205 condition gate or :209/:214 mat() → null
 				aMap.addRecipe(tRecipe);
-				tPoured++;
+				tPoured++; tTemplatePoured++;
 			}
+			if (tTemplatePoured == 0) tZeroExpansion.add(tTemplate.note() + " (" + tTemplate.inPrefix().mNameInternal + ")");
 		}
+		if (!tZeroExpansion.isEmpty()) LOGGER.info("GT6 Crusher templates with ZERO material expansion (the input prefix has no registered port items — they light up when an item-universe card registers them): {}", tZeroExpansion);
 		LOGGER.info("GT6 Crusher recipes poured: {} loaded, {} skipped (ANTIMATTER/INVALID_MATERIAL condition-filtered materials + unresolvable prefix items, = upstream RecipeMapHandlerPrefix.addRecipeForMaterial false returns)", tPoured, tSkipped);
 	}
 

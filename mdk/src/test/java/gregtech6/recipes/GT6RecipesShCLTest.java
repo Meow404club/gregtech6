@@ -302,7 +302,7 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	@Test
 	void crusherTemplateShapesAndQuantityConservation() {
 		List<GT6RecipesShCL.CrusherTemplate> tTable = GT6RecipesShCL.crusherTable();
-		assertEquals(6, tTable.size(), "the gem chain :69-73 + the boule row :75");
+		assertEquals(7, tTable.size(), "the gem chain :69-73 + the boule row :75 + the :65 rawOreChunk row");
 
 		GT6RecipesShCL.CrusherTemplate tLegendary = findCrusherTemplate(tTable, ":69");
 		assertNotNull(tLegendary);
@@ -901,8 +901,27 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 		assertTrue(tSkipped.contains("blockSolid Obsidian"), "the :82 input deviation (vanilla obsidian) is declared");
 		assertEquals(8, GT6RecipesShCL.shredderTable().size());
 		assertEquals(2, GT6RecipesShCL.latheTable().size());
-		assertEquals(6, GT6RecipesShCL.crusherTable().size());
+		assertEquals(7, GT6RecipesShCL.crusherTable().size());
 		assertEquals(4, GT6RecipesShCL.crusherVanillaTable().size());
+		assertEquals(34, GT6RecipesShCL.shredTemplateTable().size());
+		assertEquals(22, GT6RecipesShCL.latheTemplateTable().size());
+	}
+
+	/**
+	 * The CRUSHER :65 rawOreChunk row: transcribed DATA (quantity-conserving 27*U72 → 3×9*U72)
+	 * whose walk expands to ZERO rows — OP.rawOreChunk exists as prefix data but has no port
+	 * item registrations (it is not in GTMaterialItems.itemPathPrefixes).
+	 */
+	@Test
+	void crusherRawOreChunkRowIsZeroExpansionData() {
+		GT6RecipesShCL.CrusherTemplate tRaw = findCrusherTemplate(GT6RecipesShCL.crusherTable(), ":65");
+		assertNotNull(tRaw);
+		assertSame(OP.rawOreChunk, tRaw.inPrefix());
+		assertSame(OP.crushedTiny, tRaw.outPrefix());
+		assertEquals(3, tRaw.outCount());
+		assertEquals(OP.rawOreChunk.mAmount * 1, OP.crushedTiny.mAmount * 3, "the :65 row is quantity-conserving");
+		assertTrue(GT6RecipesShCL.expandCrusherMaterials(OP.rawOreChunk).isEmpty(),
+				"rawOreChunk has no registered port items — the :65 walk must expand to zero rows");
 	}
 
 	// ------------------------------------------------------------------
