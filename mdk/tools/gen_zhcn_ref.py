@@ -319,9 +319,10 @@ HAND_TRANSLATIONS = {
     "gt6.row.machine.shredder": ("粉碎机", "hand"),
     "gt6.row.machine.crusher": ("破碎机", "hand"),
     "gt6.row.machine.lathe": ("车床", "hand"),
-    "gt6.row.tier.2": ("等级 2", "hand"),
-    "gt6.row.tier.3": ("等级 3", "hand"),
-    "gt6.row.tier.4": ("等级 4", "hand"),
+    # task p27-machine-energy-display-fix: the gt6.row.tier.2/3/4 ordinal units are RETIRED —
+    # the P7 tier slot rides the Kinetic_T material words (gt6.row.mat.bronze/steel/titanium/
+    # tungstensteel, already hand rows below; upstream "Shredder ("+aMat.getLocal()+")"
+    # Loader_MultiTileEntities.java:1294-1309, Kinetic_T[1..4] MT.java:3690)
     "gt6.row.tap.display": ("%s龙头", "hand"),
     "gt6.row.funnel.display": ("%s漏斗", "hand"),
     "gt6.row.mat.wood_treated": ("木制", "hand"),

@@ -366,14 +366,14 @@ public class GT6ZhCn extends LanguageProvider {
 		for (gregtech6.registry.GT6Boilers.BoilerRow tRow : gregtech6.registry.GT6Boilers.allRows()) {
 			addRowUnit(tEmitted, gregtech6.registry.GT6Boilers.matUnitKeyOf(tRow));
 		}
-		// machine tiers: the template + three machine words + three ordinal units
+		// machine tiers: the template + three machine words (task p27-machine-energy-display-fix:
+		// the tier slot rides the Kinetic_T material word — the bronze/steel/titanium/
+		// tungstensteel gt6.row.mat units are joined by the W1 Kinetic trio walk below,
+		// and the ordinal gt6.row.tier.* units are RETIRED)
 		addDirect(gregtech6.registry.GTMachines.MACHINE_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_SHREDDER_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_CRUSHER_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_LATHE_UNIT_KEY);
-		for (int tTier = 2; tTier <= 4; tTier++) {
-			addDirect(gregtech6.registry.GTMachines.machineTierUnitKey(tTier));
-		}
 		// dryer/distillery: the two family templates + their row-material units
 		addDirect(gregtech6.registry.GTMachines.DRYER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.DISTILLERY_DISPLAY_KEY);
