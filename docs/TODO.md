@@ -306,6 +306,22 @@
 
 P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成（sweep 27 链+九链双腿）；selector-cover（三重阻断存档：宿主机器缺+OD_CIRCUITS[1] 替代未决+Cover_Blank 缺材料）/RCON 全集 27+5 链复验（wave 合并后）/runClient 首启双腿+目验五合一（目验留用户）/36 行 i18n 社区复核（非阻塞渐进）/KG Class·Concept 域聚类（收官整理）
 
+## 第 26 阶段（坩埚链三件套 / tier-b RM JSON 直灌 / EU→FE 出向桥 / MUI 批 A + W1 五族 / 管道④ / 五家族波 / 行回填 / worldgen 骨架）——✅ 已完成（2026-09-10）
+
+- [x] 主线三件套：坩埚链三卡（A 物理核+Smeltery 4b7ad90f / B 陶瓷模 30 形+Faucet 876089af / C 大型 3x3x3 032238c8，row0 活证+石模浇铁不可行入账）；tier-b RM JSON 直灌（fbc08166，11 图白名单+/reload 幂等）；EU→FE 出向桥（e9483c1b，单令牌裁定+#4286 证伪）
+- [x] 家族波：MUI 批 A 三卡+分派键泛化（三机 MUI 化+GT6MuiMachine 新机器默认通道）；W1 五族 20 台（40d72c4d/8e7ea9e5）；管道④物品管（d9318b38）；foam refill+方块家族（9b34eba0/d9048f24）；漏斗家族（da9ddf3c）；静态仓储五件（ec4dccca）；传感器双基座（9e51d9a3）；厨具锅碗（e1975b14）；行回填 35301 行（5cd2d60e）；worldgen 骨架（a7dd28bf）
+- [x] 基建：RCON 全局槽信号量（4ea0fc43，并发 4 排队——WSL 六崩根因治理）+coder≤6（5b231a55）+en_us 双写者根治（b173ba79）+审查串行单线队列纪律（用户质询纠偏）
+- [x] 证书：39 链双腿全量 sweep（forge 2343s/neo 2340s）37 GREEN+2 红链过时在案；22 卡全合 main ec4dccca 零悬案
+
+## 第 27 阶段（入口，2026-09-10 用户收官裁定）——🚧 未开
+
+- [ ] **zh 参考 lang 全量审计（P27 首项，用户质量裁定）**：搅拌盆/浸洗盆是加工机器不是厨具（域分类勘误，kitchen-pot-bowl 叙事正名）；Drum 类译「鼓」错误应作「储罐」；全部既有键过一遍——机器翻译腔逐个清查（材料键/tagprefix 键/机器名/流体名/物品名）
+- [ ] ops 两红链现代化：p15-runtime-smoke（run 拒绝 menu-less 三机=批 A 设计行为，改 inject/check 形）；p25-tag-input（铁锭臂撞 RECYCLABLE 新行，期望更新+撞车策略裁定）
+- [ ] ops biome_modifier 双目录映射带+datagen_tree_check worldgen 带（decisions.p26-worldgen-biome-modifier-dual-dir，方案 a）
+- [ ] ops 直跑链名册补录（crucible×2/kitchen/static/sensors/行回填/mui_row_dispatch/eu_bridge/cfoam_refill 等 → sweep 名册 44+ 链）
+- [ ] 解冻实现池：管道①②③（门=坩埚 A 已合 ✅）/质量存储②/foam C/panels/sensors-batch2/mortar-juicer-grind W2（域勘误后随 machines 叙事）/EU 入向转换机（波次 2，push+extract 双支持）/行回填 b 类流体行/W2 成型链/plateCurved
+- [ ] 收官整理：KG 1567 节点（自环边/PIioneer 拼写/重复节点候选）/runClient 目验九项（三机 MUI/distillery/石头 blob/cfoam 方块/抽屉四朝向/Safe 爆炸）/B1 工具图标（待拍板）
+
 ## 移植池·全景普查 32 条（2026-09-08 p25-r-port-coverage-census：上游 Loader_MultiTileEntities 15 节 vs 本仓 13 注册类差集）
 
 ### 基础机器域（缺 46/53 族；MachineRow 行制成熟，每族 ≈1 表+1 图+1 menu）
