@@ -304,6 +304,11 @@ HAND_TRANSLATIONS = {
     "gt6.row.boiler.display.strong": ("强化蒸汽锅炉 (%s)", "hand"),
     "gt6.row.dryer.display": ("干燥器 (%s)", "hand"),
     "gt6.row.distillery.display": ("蒸馏器 (%s)", "hand"),
+    # task p27-oven-heat-t-ladder — the Oven Heat_T family (the :1288-1291 name column
+    # "Oven ("+Heat_T local+")"): the machine word = the dump row 烤箱 verbatim (the
+    # retired atomic block.gt6.oven backfill row joined the composed face); the
+    # steel/invar/titanium/tungsten_carbide mat units already exist in this table.
+    "gt6.row.oven.display": ("烤箱 (%s)", "hand"),
     # task p24-canner-machine — the Canner family: the upstream display is the VN voltage
     # ladder (Loader_MultiTileEntities.java:1379-1382 "Canning Machine ("+VN[tier]+")",
     # CS.java:154) — the voltage numerals stay Latin in zh (the wire-domain proper-noun
@@ -742,7 +747,6 @@ BLOCK_BACKFILL = {
     "block.gt6.lathe": "车床",                       # = the TSV gt6.row.machine.lathe unit verbatim
     "block.gt6.multiblock_coke_oven": "焦炉",        # = the JEI info page word (gt6.jei.info row)
     "block.gt6.multiblock_coke_oven_bricks": "焦炉砖",
-    "block.gt6.oven": "烤箱",
     "block.gt6.shredder": "粉碎机",                  # = the TSV gt6.row.machine.shredder unit verbatim
     "block.gt6.wire_electric_1x": "1×电线",
     "block.gt6.wire_electric_2x": "2×电线",
