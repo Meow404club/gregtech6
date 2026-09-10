@@ -321,6 +321,7 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 - [ ] ops 直跑链名册补录（crucible×2/kitchen/static/sensors/行回填/mui_row_dispatch/eu_bridge/cfoam_refill 等 → sweep 名册 44+ 链）
 - [ ] 解冻实现池：管道①②③（门=坩埚 A 已合 ✅）/质量存储②/foam C/panels/sensors-batch2/mortar-juicer-grind W2（域勘误后随 machines 叙事）/EU 入向转换机（波次 2，push+extract 双支持）/行回填 b 类流体行/W2 成型链/plateCurved
 - [ ] **视觉质量批（2026-09-10 用户实测六问题，decisions.p27-opener-visual-batch）**：①⑥「NBT 材质物品创造栏枚举」设计卡（机器/工具/镶钻镐头类材质在 NBT 的物品：无 NBT 基底形不该进创造栏，应枚举带 NBT 变体+JEI+tint——机器没上色同根）；②粉碎机能量面/材质梯考据卡（上游铁证：Shredder=RU 单能量 Loader:1294-1297、Crusher=KU 单能量 :1300-1303、4 变体=Kinetic_T 材质梯非电压档零 EU tier——考据扩围：P7 三机与 W1 五族本仓 wiring 声明核对+Jade RU/KU 并列显示纠错+TIER_INPUTS 语义修正为材质梯）；③含XX石块渲染只有纹路主体缺失（模型层叠）；④试管同③；⑤建筑泡沫可渲染、强化泡沫不渲染（foam B 渲染缺口）
+- [ ] **成型/朝向两 bug（2026-09-10 用户实测，decisions.p27-opener-gameplay-bugs）**：①建筑杖多方块成型只造一半（P24 wand-surface-arm 铺设循环早停或 form 校验采样不全）；②焦炉主方块朝向反 180°（正面摆放刚好反、要另一面放——BlockState facing 语义倒置，沿 P19 distillery-front-canonical 正典化先例修 controller）
 - [ ] 收官整理：KG 1567 节点（自环边/PIioneer 拼写/重复节点候选）/runClient 目验九项（三机 MUI/distillery/石头 blob/cfoam 方块/抽屉四朝向/Safe 爆炸）/B1 工具图标（待拍板）
 
 ## 移植池·全景普查 32 条（2026-09-08 p25-r-port-coverage-census：上游 Loader_MultiTileEntities 15 节 vs 本仓 13 注册类差集）
