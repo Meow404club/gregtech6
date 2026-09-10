@@ -43,8 +43,12 @@ public abstract class GTMultiBlockControllerBlock extends GTEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-		// the player's horizontal look direction — refined by setPlacedBy on the BE pair-write
-		return defaultBlockState().setValue(TileEntityBase10MultiBlockBase.FACING, aContext.getHorizontalDirection());
+		// the front TOWARDS the placer (task p27-cokeoven-facing-fix — the placementFacing
+		// table: the view OPPOSITE, the vanilla furnace idiom, GT6StaticStorages.java:265
+		// precedent) — the same side setPlacedBy/setFacingFromPlacement writes, so the
+		// client prediction and the server pair-write agree with no flicker.
+		return defaultBlockState().setValue(TileEntityBase10MultiBlockBase.FACING,
+				aContext.getHorizontalDirection().getOpposite());
 	}
 
 	@Override

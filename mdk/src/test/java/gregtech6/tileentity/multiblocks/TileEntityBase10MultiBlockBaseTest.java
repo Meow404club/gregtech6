@@ -102,4 +102,27 @@ public class TileEntityBase10MultiBlockBaseTest extends GTMultiBlocksOfflineTest
 		assertEquals(3, tController.mFacing);
 		assertTrue(tController.mStructureChanged, "the facing flip must arm the recheck");
 	}
+
+	@Test
+	void placementFacesThePlacerNotTheView() {
+		// task p27-cokeoven-facing-fix — the p27 user scene pin: the placement mapping is
+		// the VIEW OPPOSITE (the GT6 front towards the placer; upstream UT.java:1751 over
+		// CS.java:639 COMPASS_DIRECTIONS {NORTH,EAST,SOUTH,WEST}: yaw 180 (view north)
+		// yields SIDE_SOUTH; the vanilla furnace getHorizontalDirection().getOpposite()
+		// idiom). GT6 side order == Direction 3D data (2 north / 3 south / 4 west / 5 east).
+		assertEquals(3, TileEntityBase10MultiBlockBase.placementFacing(net.minecraft.core.Direction.NORTH), "view north (placer south) -> front south");
+		assertEquals(2, TileEntityBase10MultiBlockBase.placementFacing(net.minecraft.core.Direction.SOUTH), "view south (placer north) -> front north");
+		assertEquals(5, TileEntityBase10MultiBlockBase.placementFacing(net.minecraft.core.Direction.WEST),  "view west (placer east)  -> front east");
+		assertEquals(4, TileEntityBase10MultiBlockBase.placementFacing(net.minecraft.core.Direction.EAST),  "view east (placer west)  -> front west");
+
+		// the BE write path: the front lands OPPOSITE the view, and a front-facing placer
+		// gets the structure BEHIND the controller (away from them — centre = pos - OFF[front]).
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		BlockPos tPos = new BlockPos(200, 64, 200);
+		TestCokeOven tOven = placeController(tLevel, sCokeOvenType, tPos, (byte) 2);
+		tOven.setFacingFromView(net.minecraft.core.Direction.EAST); // the placer at west looking east
+		assertEquals(4, tOven.mFacing, "front west (towards the placer at west)");
+		assertTrue(tOven.isInsideStructure(201, 64, 200), "the core sits EAST — behind the front, away from the placer");
+		assertFalse(tOven.isInsideStructure(196, 64, 200), "nothing on the placer's side of the controller");
+	}
 }
