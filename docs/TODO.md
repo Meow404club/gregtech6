@@ -323,6 +323,7 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 - [ ] **视觉质量批（2026-09-10 用户实测六问题，decisions.p27-opener-visual-batch）**：①⑥「NBT 材质物品创造栏枚举」设计卡（机器/工具/镶钻镐头类材质在 NBT 的物品：无 NBT 基底形不该进创造栏，应枚举带 NBT 变体+JEI+tint——机器没上色同根）；②粉碎机能量面/材质梯考据卡（上游铁证：Shredder=RU 单能量 Loader:1294-1297、Crusher=KU 单能量 :1300-1303、4 变体=Kinetic_T 材质梯非电压档零 EU tier——考据扩围：P7 三机与 W1 五族本仓 wiring 声明核对+Jade RU/KU 并列显示纠错+TIER_INPUTS 语义修正为材质梯）；③含XX石块渲染只有纹路主体缺失（模型层叠）；④试管同③；⑤建筑泡沫可渲染、强化泡沫不渲染（foam B 渲染缺口）
 - [ ] **成型/朝向两 bug（2026-09-10 用户实测，decisions.p27-opener-gameplay-bugs）**：①建筑杖多方块成型只造一半（P24 wand-surface-arm 铺设循环早停或 form 校验采样不全）；②焦炉主方块朝向反 180°（正面摆放刚好反、要另一面放——BlockState facing 语义倒置，沿 P19 distillery-front-canonical 正典化先例修 controller）
 - [ ] **GUI 两缺陷（2026-09-10 用户截图，decisions.p27-opener-visual-batch issue7/8）**：⑦焦炉进度条应白色渐填箭头实为橙色块状扁平填充（progress 绘制路径 fill/UV 错）；⑧GT 示例箱子「物品栏」标签错位到箱格第 4 行（应在玩家背包区上方）+玩家背包槽位样式与机器区暗亮不一致
+- [ ] **原版统一化 tag 覆盖（2026-09-10 用户反馈，decisions.p27-opener-vanilla-unify）**：铁锭/铜锭等原版已有材料与原版统一化；低版本（1.16.5 无铜锭等）至少挂 forge:/c: 通用 tag 方便统一化 mod 合并——P24 aluminium 双挂最小实证铺开为全材料覆盖；research 后裁「完全统一化 vs 共存+tag」
 - [ ] 收官整理：KG 1567 节点（自环边/PIioneer 拼写/重复节点候选）/runClient 目验九项（三机 MUI/distillery/石头 blob/cfoam 方块/抽屉四朝向/Safe 爆炸）/B1 工具图标（待拍板）
 
 ## 移植池·全景普查 32 条（2026-09-08 p25-r-port-coverage-census：上游 Loader_MultiTileEntities 15 节 vs 本仓 13 注册类差集）
