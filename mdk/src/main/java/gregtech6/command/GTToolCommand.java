@@ -117,11 +117,15 @@ public final class GTToolCommand {
 	 * tag answers "0 members []" (getTagOrEmpty never throws).
 	 */
 	private static int dumpTag(CommandSourceStack aSource, String aTagSpec) {
+		// the trimmed spec in a LOCAL — the stonecutter two-arg/one-arg ctor shift only
+		// hits bare-identifier arguments (parenthesized expressions stay un-shifted and
+		// would break the 21.1 leg compile, the materialTag javadoc lesson)
+		String tSpec = aTagSpec.trim();
 		ResourceLocation tId;
 		try {
-			tId = new ResourceLocation(aTagSpec.trim());
+			tId = new ResourceLocation(tSpec);
 		} catch (RuntimeException tError) {
-			aSource.sendFailure(Component.literal("gt6tags: invalid tag id: " + aTagSpec));
+			aSource.sendFailure(Component.literal("gt6tags: invalid tag id: " + tSpec));
 			return 0;
 		}
 		TagKey<Item> tTag = TagKey.create(Registries.ITEM, tId);
