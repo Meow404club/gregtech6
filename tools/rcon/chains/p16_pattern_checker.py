@@ -32,6 +32,12 @@ Chain semantics (task p16-pattern-checker ACCEPTANCE):
     run loop — probed live both ways (mode-on-immediate and post-smelt run,
     both FAILED while the same feed completes 8/8 stone on natural ticks).
 
+  C the p27 facing regression arm (task p27-cokeoven-facing-fix): the placement-facing
+    semantics live — `place ... view <direction>` routes through the same
+    setFacingFromView mapping a real player placement runs (front OPPOSITE the view,
+    core BEHIND the front). view east → facing=west + formed from the front side + the
+    far wall east / the placer's side air; view north → facing=south.
+
 Run:  python3 tools/rcon/chains/p16_pattern_checker.py
 """
 
@@ -58,6 +64,10 @@ MB = gt6world.Site(420, 64, 420, dx=3, dy=3, dz=3)
 OVEN = gt6world.Site(400, 64, 400, dx=2, dy=2, dz=2)
 WIRE = gt6world.Site(401, 64, 400)
 GEN = gt6world.Site(402, 64, 400)
+# p27 facing pilots: FACE controller at (430,64,430), shell x 430..432 (front west →
+# centre x 431); FACE2 at (455,64,430), shell z 428..430 (front south → centre z 429).
+FACE = gt6world.Site(430, 64, 430, dx=5, dy=3, dz=3)
+FACE2 = gt6world.Site(455, 64, 430, dx=3, dy=3, dz=5)
 
 HOLE = "421 64 421"  # the shell cell centre+(1,0,0) — declaration index #21
 
@@ -115,10 +125,38 @@ steps += [
          poll=30.0),
 ]
 
+# ------------------------------------------------- C: the p27 facing regression
+steps += [
+    # task p27-cokeoven-facing-fix — the 2026-09-10 user scene, live: the placer looks at
+    # the controller from the front (VIEW = their look direction); the front must land
+    # OPPOSITE the view (towards the placer) and the 3x3x3 core BEHIND the front (away
+    # from the placer) — "facing outwards". The pre-fix inversion put the core on the
+    # placer's side and formation failed from the front.
+    # Geometry (view east = placer stands WEST looking east): front west → centre =
+    # pos − OFF[west] = pos + 1 = (431,64,430), the hollow AIR cell; the controller is
+    # the shell's FRONT (west) cell, the far wall lands at x 432, the placer's side
+    # (west of the controller, x 429) must stay air.
+    phase("C: p27 朝向回归 — 正面朝玩家，结构离玩家而去（view=放置者视线）"),
+    Step(f"gt6multiblock place {F(FACE)} view east", expect="facing=west (view east)"),
+    Step(f"execute if block {F(FACE)} gt6:multiblock_coke_oven[facing=west]", expect="Test passed"),
+    # frame the computed core (behind the front) → formed — THE user-scene assertion:
+    # building from the front side just forms.
+    Step(f"gt6multiblock frame {F(FACE)}", expect="25 bricks placed"),
+    Step(f"gt6multiblock check {F(FACE)}",
+         expect="block_formed=true linked_parts=25/25 first_failed_cell=none"),
+    # the structure sits EAST (behind the front), the placer's side stays clean.
+    Step(f"execute if block 432 64 430 gt6:multiblock_coke_oven_bricks", expect="Test passed"),
+    Step(f"execute if block 429 64 430 minecraft:air", expect="Test passed"),
+    # a second view pins the table's other half: view north (placer south) → front
+    # south, the core drifting north (pos − OFF[south] = z − 1).
+    Step(f"gt6multiblock place {F(FACE2)} view north", expect="facing=south (view north)"),
+    Step(f"execute if block {F(FACE2)} gt6:multiblock_coke_oven[facing=south]", expect="Test passed"),
+]
+
 CHAIN = Chain(
     name="p16-pattern-checker",
     slug="p16pchk",
-    sites=gt6world.declare_sites(MB, OVEN, WIRE, GEN),
+    sites=gt6world.declare_sites(MB, OVEN, WIRE, GEN, FACE, FACE2),
     preferred_ports=(25771, 25781),      # this card's pinned rcon/query pair
     steps=steps,
 )
