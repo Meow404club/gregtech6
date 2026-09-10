@@ -15,6 +15,14 @@ is the census over the registered item set (40 distinct sets, 2785 combos; no
 "none" fallback hit). Pure standard library (hand-rolled PNG: zlib+struct),
 deterministic output bytes.
 
+Overlay pass textures (p27-tool-overlay-assets): upstream registers every item
+icon as a base + "<NAME>_OVERLAY" pair (TextureSet.java:113-116 materialicons,
+Textures.java:856-859 iconsets) and draws the overlay as the un-tinted second
+pass (ToolStats.java:247-265 tool passes 1/3, PrefixItem.java:134-150 pass 1).
+The P20 waves borrowed only the base halves — --borrow completes the pairs.
+Overlays are borrow-only: no placeholder form exists for them, so the
+generate/scan/verify faces below never touch a *_overlay.png.
+
 Skip-if-real (ADR-P20 §1.3): the static tree mdk/src/main/resources is the
 canonical home of real (borrowed upstream) textures and doubles as the exclusion
 table — no second exclusion list is kept. A PNG that is NOT byte-identical to
@@ -29,11 +37,18 @@ Usage:
   python3 gen_textures.py --force         # regenerate all table placeholders (real textures still yield)
   python3 gen_textures.py --scan DIR      # derive combos from generated models, fill gaps
   python3 gen_textures.py --verify DIR    # assert model coverage over the static∪generated union, write nothing
+  python3 gen_textures.py --borrow DIR    # copy upstream <NAME>_OVERLAY pass textures next to
+                                          # their borrowed bases (byte-identical, sha256 manifest
+                                          # appended to assets/README.md once)
 DIR (for --scan/--verify) = mdk/src/generated/resources — the model tree the
-combos are derived from; the PNGs themselves are written to (and read from) the
-static tree mdk/src/main/resources.
+combos are derived from. DIR (for --borrow) = the upstream checkout's
+src/main/resources/assets/gregtech/textures/items directory; it defaults to the
+repo-root tmp/gt6-1.7.10 snapshot (gitignored), so a coder worktree must pass
+the main checkout's path. The PNGs themselves are written to (and read from)
+the static tree mdk/src/main/resources.
 """
 import argparse
+import hashlib
 import json
 import sys
 import zlib
@@ -42,6 +57,15 @@ from pathlib import Path
 SIZE = 16  # vanilla item texture edge, pixels
 MODELS_REL = Path("assets/gt6/models/item")
 TEXTURES_REL = Path("assets/gt6/textures/item/material_sets")
+ITEM_TEXTURES_REL = Path("assets/gt6/textures/item")
+
+# Provenance of the --borrow wave (assets/README.md header block format).
+UPSTREAM_REPO_URL = "https://github.com/GregTech6/gregtech6"
+UPSTREAM_SNAPSHOT = "v6.17.06-22-g3703e4030"
+# Default upstream items texture root = <repo root>/tmp/gt6-1.7.10/... (gitignored:
+# present in the main checkout, absent from coder worktrees — pass --borrow DIR there).
+UPSTREAM_ITEMS_DEFAULT = (Path(__file__).resolve().parents[2]
+                          / "tmp/gt6-1.7.10/src/main/resources/assets/gregtech/textures/items")
 
 # (iconset, prefix) referenced by the generated models; census 2026-08-30 (p3-fullprefix).
 COMBOS = {
@@ -2832,6 +2856,26 @@ COMBOS = {
     ("wood", "wire_fine"),
 }
 
+# iconset overlays paired with byte-identical port bases (gt6:textures/item/<stem>.png):
+# upstream Textures.ItemIcons registers "iconsets/<NAME>" + "<NAME>_OVERLAY"
+# (Textures.java:857/:859); the port base borrows serialized those names per
+# assets/README.md (p9 crowbar/p10 cutter/p16 chisel/p24 saw+file/p25 wrench+
+# bending_cylinder_small), and the overlay follows the same stem + "_overlay"
+# (HANDLE_SAW_OVERLAY.png -> saw_overlay.png). HANDLE_SCREWDRIVER is deliberately
+# absent: item/screwdriver.png is the p24 four-layer composite ("NOT a
+# byte-identical borrow", its overlay pass already baked in), so there is no base
+# here to pair with — the C2 model-migration card borrows the full handle pair if
+# it re-layers the screwdriver.
+ICONSET_OVERLAYS = {
+    "bending_cylinder_small": "BENDING_CYLINDER_SMALL",
+    "chisel": "HANDLE_CHISEL",
+    "crowbar": "CROWBAR",
+    "cutter": "WIRE_CUTTER",
+    "file": "HANDLE_FILE",
+    "saw": "HANDLE_SAW",
+    "wrench": "WRENCH",
+}
+
 
 def png_bytes(size: int, gray: int) -> bytes:
     """Minimal 8-bit grayscale PNG: signature + IHDR + IDAT + IEND, no interlace."""
@@ -2858,6 +2902,15 @@ def parse_layer0(value: str):
         return None
     parts = value[len(head):].split("/")
     return (parts[0], parts[1]) if len(parts) == 2 and all(parts) else None
+
+
+def snake_to_camel(snake: str) -> str:
+    """Inverse of MaterialPrefixItem.snakeCase (GTCEu toLowerCaseUnderscore
+    semantics): 'tool_head_pickaxe_gem' -> 'toolHeadPickaxeGem'. The --borrow
+    base census cross-checks the round trip: an upstream base PNG missing for
+    some combo would mean this conversion broke, not a borrowable gap."""
+    head, *rest = snake.split("_")
+    return head + "".join(part[:1].upper() + part[1:] for part in rest)
 
 
 def combos_from_models(generated: Path):
@@ -2915,6 +2968,157 @@ def generate(combos, textures_root: Path, force: bool):
     return written, placeholders, reals
 
 
+# ---- overlay pair borrow (p27-tool-overlay-assets) ---------------------------------
+
+BORROW_DATE = "2026-09-10"
+README_MARKER = "task p27-tool-overlay-assets"
+
+
+def sha256_hex(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def borrow_one(src: Path, dst: Path) -> str:
+    """Copy src bytes to dst unless dst already holds exactly them.
+
+    Returns 'borrowed' | 'present' | 'conflict'. A conflict (an existing file
+    that differs from upstream) aborts the run — the borrow never clobbers,
+    the write-side mirror of skip-if-real.
+    """
+    data = src.read_bytes()
+    if dst.exists():
+        return "present" if dst.read_bytes() == data else "conflict"
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_bytes(data)
+    return "borrowed"
+
+
+def borrow_overlays(upstream_items: Path, static_root: Path):
+    """Complete the base+OVERLAY icon pairs over the whole census.
+
+    material_sets pairs derive from COMBOS (upstream
+    materialicons/<SET>/<Prefix>_OVERLAY.png, TextureSet.java:113-116);
+    iconset pairs from ICONSET_OVERLAYS (upstream iconsets/<NAME>_OVERLAY.png,
+    Textures.java:856-859). A missing upstream overlay is a conditional
+    fallback (exists() semantics): listed, nothing written, nothing invented.
+    Returns (rows, fallbacks); rows are (kind, group, file, sha256) manifest
+    entries with kind in {'material_sets', 'iconsets'}.
+    """
+    rows, fallbacks = [], []
+    material_root = static_root / TEXTURES_REL
+    for iconset, prefix in sorted(COMBOS):
+        src = (upstream_items / "materialicons" / iconset.upper()
+               / f"{snake_to_camel(prefix)}_OVERLAY.png")
+        dst = material_root / iconset / f"{prefix}_overlay.png"
+        if not src.is_file():
+            fallbacks.append(("material_sets", f"{iconset}/{prefix}", str(src)))
+            continue
+        if borrow_one(src, dst) == "conflict":
+            sys.exit(f"error: {dst} differs from upstream {src} — refusing to clobber")
+        rows.append(("material_sets", iconset, f"{prefix}_overlay.png",
+                     sha256_hex(src.read_bytes())))
+    item_root = static_root / ITEM_TEXTURES_REL
+    for stem, name in sorted(ICONSET_OVERLAYS.items()):
+        src = upstream_items / "iconsets" / f"{name}_OVERLAY.png"
+        dst = item_root / f"{stem}_overlay.png"
+        if not src.is_file():
+            fallbacks.append(("iconsets", stem, str(src)))
+            continue
+        if borrow_one(src, dst) == "conflict":
+            sys.exit(f"error: {dst} differs from upstream {src} — refusing to clobber")
+        rows.append(("iconsets", "iconsets", f"{stem}_overlay.png",
+                     sha256_hex(src.read_bytes())))
+    return rows, fallbacks
+
+
+def append_readme_manifest(static_root: Path, rows, fallbacks) -> bool:
+    """Append the p27 sha256 attribution section to assets/README.md, once.
+
+    Same ledger discipline as the P20 waves: per-file digest, upstream
+    snapshot, naming-deviation notes, CC0 block. Idempotent via README_MARKER
+    (a re-run re-audits bytes in borrow_overlays but leaves the ledger alone).
+    """
+    readme = static_root / "assets" / "README.md"
+    if README_MARKER in readme.read_text(encoding="utf-8"):
+        return False
+    ms = [r for r in rows if r[0] == "material_sets"]
+    ic = [r for r in rows if r[0] == "iconsets"]
+    if fallbacks:
+        listed = ", ".join(f"{kind}:{key}" for kind, key, _ in fallbacks[:20])
+        more = "" if len(fallbacks) <= 20 else f" (+{len(fallbacks) - 20} more)"
+        fallback_note = (f"{len(fallbacks)} conditional fallback(s) — upstream overlay "
+                         f"missing, nothing written: {listed}{more}")
+    else:
+        fallback_note = "zero conditional fallbacks"
+    section = f"""
+GT6 item OVERLAY pass textures, task p27-tool-overlay-assets: the {len(ms)}
+`gt6/textures/item/material_sets/<set>/<prefix>_overlay.png` files and the
+{len(ic)} `gt6/textures/item/<stem>_overlay.png` iconset overlays come from
+upstream `{UPSTREAM_REPO_URL}` snapshot `{UPSTREAM_SNAPSHOT}`, files
+`src/main/resources/assets/gregtech/textures/items/materialicons/<SET>/<Prefix>_OVERLAY.png`
+and `.../iconsets/<NAME>_OVERLAY.png`, byte-identical to upstream, sha256
+verified per file (manifest below). This completes the base+overlay icon
+pairs: upstream registers every item icon as `<NAME>` + `<NAME>_OVERLAY`
+(TextureSet.java:113-116 materialicons, Textures.java:856-859 iconsets) and
+draws the overlay as the un-tinted second pass (ToolStats.java:247-265 tool
+passes 1/3, PrefixItem.java:134-150 pass 1). The P20 borrows took only the
+base halves and explicitly deferred the overlays (the "NOT borrowed" note in
+the materialicon section above) — superseded here for the item tree. Naming
+follows the P20 rules: set folder lowercased, icon segment camelCase ->
+snake_case (MaterialPrefixItem.snakeCase), `_OVERLAY` -> `_overlay`; iconset
+overlays take the port base stem + `_overlay` (`HANDLE_SAW_OVERLAY.png` ->
+`saw_overlay.png`, paired with the byte-identical `saw.png` base).
+Conditional fallback is exists() semantics: a combo whose upstream overlay is
+missing is listed by the script, nothing written, nothing invented — census
+{BORROW_DATE}: {len(ms)}/{len(COMBOS)} material_sets pairs and
+{len(ic)}/{len(ICONSET_OVERLAYS)} iconset pairs present upstream,
+{fallback_note}. `item/screwdriver.png` is deliberately un-paired: it is the
+p24 four-layer composite (its entry above; the HANDLE_SCREWDRIVER_OVERLAY
+pass already baked in), not a byte-identical base. Six of the seven iconset
+overlays are fully transparent upstream (WRENCH, BENDING_CYLINDER_SMALL,
+HANDLE_SAW, HANDLE_FILE, HANDLE_CHISEL — as is the un-borrowed
+HANDLE_SCREWDRIVER); CROWBAR and WIRE_CUTTER carry the real shadow layers.
+No `.mcmeta` animations exist in the borrowed folders. No generated model
+references these files yet — the C2/C3 datagen waves (tool + prefix item
+models gain the overlay layers) consume them. Copied on {BORROW_DATE}.
+Upstream license: **CC0 1.0 Universal Public Domain Dedication** (same
+upstream `README.md` block as above).
+"""
+    lines = [section.rstrip()]
+    by_group = {}
+    for kind, group, file, digest in rows:
+        by_group.setdefault((kind, group), []).append((file, digest))
+    for (kind, group), entries in sorted(by_group.items()):
+        if kind == "material_sets":
+            lines.append(f"- `{group.upper()}` -> `{TEXTURES_REL}/{group}/`:")
+        else:
+            lines.append(f"- iconset overlays -> `{ITEM_TEXTURES_REL}/`:")
+        for file, digest in entries:
+            lines.append(f"  - `{file}` `{digest}`")
+    with readme.open("a", encoding="utf-8") as handle:
+        handle.write("\n" + "\n".join(lines) + "\n")
+    return True
+
+
+def borrow_main(upstream_items: Path, static_root: Path) -> None:
+    """--borrow face: pair-complete the census against the upstream tree."""
+    if not upstream_items.is_dir():
+        sys.exit(f"error: upstream items tree not found: {upstream_items}")
+    rows, fallbacks = borrow_overlays(upstream_items, static_root)
+    ms = sum(1 for r in rows if r[0] == "material_sets")
+    ic = sum(1 for r in rows if r[0] == "iconsets")
+    print(f"overlay borrow vs {upstream_items} (snapshot {UPSTREAM_SNAPSHOT}):")
+    print(f"  material_sets: {ms}/{len(COMBOS)} pairs present in the static tree")
+    print(f"  iconsets:      {ic}/{len(ICONSET_OVERLAYS)} pairs present in the static tree")
+    print(f"  conditional fallbacks (upstream overlay missing, nothing written): {len(fallbacks)}")
+    for _, key, _ in fallbacks:
+        print(f"    - {key}")
+    if append_readme_manifest(static_root, rows, fallbacks):
+        print(f"  assets/README.md: p27 manifest appended ({len(rows)} sha256 entries)")
+    else:
+        print("  assets/README.md: p27 manifest already present, untouched")
+
+
 def main() -> None:
     tools = Path(__file__).resolve().parent
     static_root = tools.parent / "src" / "main" / "resources"
@@ -2925,7 +3129,15 @@ def main() -> None:
     parser.add_argument("--verify", metavar="DIR",
                         help="assert every model layer0 has a PNG in the static∪generated union; write nothing")
     parser.add_argument("--force", action="store_true", help="rewrite existing placeholder PNGs (real textures still yield)")
+    parser.add_argument("--borrow", metavar="DIR", nargs="?", default=None, const=str(UPSTREAM_ITEMS_DEFAULT),
+                        help="copy upstream <NAME>_OVERLAY pass textures next to their borrowed bases; "
+                             "DIR = the upstream checkout's .../textures/items (default: the repo-root "
+                             "tmp/gt6-1.7.10 snapshot; pass the main checkout's path from a worktree)")
     args = parser.parse_args()
+
+    if args.borrow is not None:
+        borrow_main(Path(args.borrow), static_root)
+        return
 
     if args.verify:
         generated = Path(args.verify)
