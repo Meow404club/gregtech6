@@ -109,9 +109,10 @@ public final class GTMultiBlockCommand {
 					// direction the (virtual) placer LOOKS, routed through the same
 					// setFacingFromView mapping the real placement runs (the front lands
 					// OPPOSITE the view, the structure behind it). The facing regression arm.
-					.then(Commands.argument("view", com.mojang.brigadier.arguments.StringArgumentType.word())
-						.executes(aContext -> place(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-								parseView(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "view")))))))
+					.then(Commands.literal("view")
+						.then(Commands.argument("view", com.mojang.brigadier.arguments.StringArgumentType.word())
+							.executes(aContext -> place(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									parseView(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "view"))))))))
 			.then(Commands.literal("frame")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> frame(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
