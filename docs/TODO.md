@@ -320,6 +320,7 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 - [ ] ops biome_modifier 双目录映射带+datagen_tree_check worldgen 带（decisions.p26-worldgen-biome-modifier-dual-dir，方案 a）
 - [ ] ops 直跑链名册补录（crucible×2/kitchen/static/sensors/行回填/mui_row_dispatch/eu_bridge/cfoam_refill 等 → sweep 名册 44+ 链）
 - [ ] 解冻实现池：管道①②③（门=坩埚 A 已合 ✅）/质量存储②/foam C/panels/sensors-batch2/mortar-juicer-grind W2（域勘误后随 machines 叙事）/EU 入向转换机（波次 2，push+extract 双支持）/行回填 b 类流体行/W2 成型链/plateCurved
+- [ ] **视觉质量批（2026-09-10 用户实测六问题，decisions.p27-opener-visual-batch）**：①⑥「NBT 材质物品创造栏枚举」设计卡（机器/工具/镶钻镐头类材质在 NBT 的物品：无 NBT 基底形不该进创造栏，应枚举带 NBT 变体+JEI+tint——机器没上色同根）；②粉碎机材质梯 vs 电压梯考据卡（上游 Loader:1312-1671 核证 Crusher 系真实结构再动）；③含XX石块渲染只有纹路主体缺失（模型层叠）；④试管同③；⑤建筑泡沫可渲染、强化泡沫不渲染（foam B 渲染缺口）
 - [ ] 收官整理：KG 1567 节点（自环边/PIioneer 拼写/重复节点候选）/runClient 目验九项（三机 MUI/distillery/石头 blob/cfoam 方块/抽屉四朝向/Safe 爆炸）/B1 工具图标（待拍板）
 
 ## 移植池·全景普查 32 条（2026-09-08 p25-r-port-coverage-census：上游 Loader_MultiTileEntities 15 节 vs 本仓 13 注册类差集）
