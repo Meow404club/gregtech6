@@ -60,16 +60,64 @@ public class GTOvenBlock extends GTEntityBlock {
 	/** Powered / has work (upstream mRunning, visual bit 1) — the GTBlockProperties single instance (ADR-P16-2). */
 	public static final BooleanProperty RUNNING = GTBlockProperties.RUNNING;
 
+	/**
+	 * The row index of this block in the Oven Heat_T ladder (task p27-oven-heat-t-ladder,
+	 * 0 = T1 .. 3 = T4): the tier rows are compile-time constants upstream
+	 * (NBT_INPUT/NBT_HARDNESS, Loader_MultiTileEntities.java:1288-1291), so the block
+	 * identity IS the config selector — the GTBasicMachineBlock tierOf ruling carried as
+	 * block data (the MachineRow "block-carrier projection" shape, minus the record: the
+	 * oven's menu/recipe/energy columns are family constants of {@code TileEntityOven}).
+	 */
+	private final int mTier;
+
+	/**
+	 * The composed-name carrier of the ladder rows (task p27-oven-heat-t-ladder): the
+	 * GTBasicMachineBlock tier-ladder form (:137-148) verbatim — a pre-composed
+	 * {@code "Oven (<material word>)"} supplier the registrations supply, resolved through
+	 * {@link #getName()} (the single compose point the GTComposedNameItem delegation and
+	 * the TileEntityOven GUI title both read).
+	 */
+	@javax.annotation.Nullable
+	private final java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> mComposedName;
+
 	public GTOvenBlock(Properties aProperties) {
+		this(aProperties, 0, null);
+	}
+
+	/** The tier-ladder form (task p27-oven-heat-t-ladder): a row index plus the composed name. */
+	public GTOvenBlock(Properties aProperties, int aTier,
+			@javax.annotation.Nullable java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> aComposedName) {
 		super(aProperties);
+		mTier = aTier;
+		mComposedName = aComposedName;
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, net.minecraft.core.Direction.NORTH).setValue(ACTIVE, false).setValue(RUNNING, false));
+	}
+
+	/**
+	 * The tier index of the ladder block in {@code aState} — 0 for a non-oven block (the
+	 * offline BRICKS-state fixtures keep the T1 field defaults, the zero-regression guard).
+	 */
+	public static int tier(BlockState aState) {
+		return aState.getBlock() instanceof GTOvenBlock tOven ? tOven.mTier : 0;
+	}
+
+	/**
+	 * The composed name (task p27-oven-heat-t-ladder): a ladder row hands back its
+	 * pre-composed {@code "Oven (<material word>)"} supplier, the legacy single-oven shape
+	 * keeps the vanilla atomic-key lookup.
+	 */
+	@Override
+	public net.minecraft.network.chat.MutableComponent getName() {
+		if (mComposedName != null) return mComposedName.get();
+		return super.getName();
 	}
 	//? if neoforge {
 	/*
 	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
 	// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
-	// precedent — a parse-time default carrying no live config; world save/load never
-	// runs through this codec (the registry-id + property mapper does).
+	// precedent — a parse-time default carrying no live config (tier 0, no composed
+	// name — the GTBasicMachineBlock codec note); world save/load never runs through
+	// this codec (the registry-id + property mapper does).
 	@Override
 	protected com.mojang.serialization.MapCodec<? extends GTOvenBlock> codec() {
 		return simpleCodec(aProperties -> new GTOvenBlock(aProperties));
