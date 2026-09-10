@@ -17,17 +17,29 @@ import gregtech6.gui.GTGuiScreen;
  * GT6RecipeMaps.java:97/:105/:113) parsed into a ResourceLocation per machine, so one screen
  * class serves the three backgrounds the gui-family card landed.
  *
- * <p>Progress bar (spec 6): the three-state ContainerData value drives a flat fill between
- * the input slot and the output column — the oven bar geometry (GTOvenScreen), the A-tier
- * stand-in for the upstream RecipeMap progress arrow.
+ * <p>Progress (p27-gui-render-fixes ①): the three-state ContainerData value drives the upstream
+ * RecipeMap progress-arrow overlay — the white arrow baked at UV (176,0) 20x18 on the same
+ * 256x256 canvas as the panel (every machine GUI texture ships it next to the 176x166 panel,
+ * cokeoven.png/shredder.png/... pixel-verified), width-clipped by the scaled progress. Upstream
+ * draw: ContainerClientBasicMachine.java:54-65, case 0 = drawTexturedModalRect(x+78, y+24,
+ * 176, 0, tProgress, 18) over the arrow outline the panel bakes at (78,24); the 0..20 step
+ * ladder is UT.Code.scale (UT.java:1534-1542) at tSize=20, aMin=0, aMax=Short.MAX_VALUE —
+ * 0 at &le;0, 20 at &ge;32767, else 1 + value*19/32767. The port pins the case-0 arm because
+ * both maps this screen serves carry direction 0 / amount 1 (COKE_OVEN GT6RecipeMaps.java:348,
+ * DRYING :427; GT6RecipeMapsTest:58/:166) — the SIFTING direction-2 map goes through the MUI
+ * panel (GTClientMachineListener registers only cokeoven + dryer here).
  */
 public class GTBasicMachineScreen extends GTGuiScreen<GTBasicMachineMenu> {
 
-	/** Bar geometry in panel coordinates: the 36px gap between the input slot (right edge 71) and the output column (107). */
-	private static final int BAR_X = 73, BAR_Y = 30, BAR_WIDTH = 32, BAR_HEIGHT = 4;
-
-	private static final int COLOR_TRACK = 0xFF373737;
-	private static final int COLOR_FILL = 0xFFFF8800;
+	/**
+	 * The arrow overlay draw cell (upstream ContainerClientBasicMachine.java:57 case 0): the
+	 * panel's arrow outline sits at (78,24), the white overlay is the 20x18 region at UV
+	 * (176,0) of the same texture, blitted left-to-right with the width clipped to the
+	 * progress step ({@link GuiGraphics#blit} 7-arg = drawTexturedModalRect semantics,
+	 * GuiGraphics.java:315-317 implicit 256x256 canvas).
+	 */
+	private static final int ARROW_X = 78, ARROW_Y = 24, ARROW_U = 176, ARROW_V = 0;
+	private static final int ARROW_WIDTH = 20, ARROW_HEIGHT = 18;
 
 	public GTBasicMachineScreen(GTBasicMachineMenu menu, Inventory playerInventory, Component title) {
 		super(menu, playerInventory, title, backgroundOf(menu.tileEntity));
@@ -55,12 +67,14 @@ public class GTBasicMachineScreen extends GTGuiScreen<GTBasicMachineMenu> {
 		int y = (this.height - this.imageHeight) / 2;
 		int tProgress = this.menu.getProgressBar();
 		if (tProgress >= 0) {
-			guiGraphics.fill(x + BAR_X, y + BAR_Y, x + BAR_X + BAR_WIDTH, y + BAR_Y + BAR_HEIGHT, COLOR_TRACK);
-			int tFill = tProgress >= GTBasicMachineMenu.PROGRESS_DONE
-					? BAR_WIDTH
-					: (int)((long)tProgress * BAR_WIDTH / GTBasicMachineMenu.PROGRESS_DONE);
+			// UT.Code.scale (UT.java:1534-1542) at tSize=20: 0 at <=0, 20 at >=PROGRESS_DONE,
+			// else 1 + progress*19/32767 — the upstream step ladder (the % (tSize+1) there is a
+			// no-op for in-range values). The clip width covers the arrow left-to-right.
+			int tFill = tProgress <= 0 ? 0
+					: tProgress >= GTBasicMachineMenu.PROGRESS_DONE ? ARROW_WIDTH
+					: 1 + (int)((long)tProgress * (ARROW_WIDTH - 1) / GTBasicMachineMenu.PROGRESS_DONE);
 			if (tFill > 0) {
-				guiGraphics.fill(x + BAR_X, y + BAR_Y, x + BAR_X + tFill, y + BAR_Y + BAR_HEIGHT, COLOR_FILL);
+				guiGraphics.blit(this.backgroundTexture, x + ARROW_X, y + ARROW_Y, ARROW_U, ARROW_V, tFill, ARROW_HEIGHT);
 			}
 		}
 	}
