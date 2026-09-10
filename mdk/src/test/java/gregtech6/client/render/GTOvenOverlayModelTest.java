@@ -185,14 +185,14 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the 16 per-state registrations
+	// the 64 per-state registrations (4 ladder rows x 16, task p27-oven-heat-t-ladder)
 	// ---------------------------------------------------------------------------
 
 	@Test
-	void listenerRegistersTheSixteenPerStateKeys() {
+	void listenerRegistersTheLadderPerStateKeys() {
 		List<ModelResourceLocation> tTargets = GTOvenClientListener.targetModelIds();
-		assertEquals(16, tTargets.size(), "2 active x 4 facing x 2 running");
-		assertEquals(16, new HashSet<>(tTargets).size(), "all keys distinct");
+		assertEquals(64, tTargets.size(), "4 ladder rows x 2 active x 4 facing x 2 running");
+		assertEquals(64, new HashSet<>(tTargets).size(), "all keys distinct");
 		// variant string = the StateDefinition name-sorted property order (active, facing, running)
 		assertTrue(tTargets.contains(new ModelResourceLocation("gt6", "oven", "active=false,facing=north,running=false")));
 		assertTrue(tTargets.contains(new ModelResourceLocation("gt6", "oven", "active=true,facing=east,running=true")));
@@ -201,10 +201,12 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 		for (ModelResourceLocation tTarget : tTargets) {
 			//? if forge {
 			assertEquals("gt6", tTarget.getNamespace());
-			assertEquals("oven", tTarget.getPath());
+			assertTrue(GTOvenClientListener.OVEN_BLOCK_PATHS.contains(tTarget.getPath()),
+					tTarget.getPath() + ": every ladder row path is a key");
 			//?} else {
 			/*assertEquals("gt6", tTarget.id().getNamespace()); // 21.1: MRL is a record over an RL id
-			assertEquals("oven", tTarget.id().getPath());
+			assertTrue(GTOvenClientListener.OVEN_BLOCK_PATHS.contains(tTarget.id().getPath()),
+					tTarget.id().getPath() + ": every ladder row path is a key");
 			*///?}
 		}
 	}
@@ -213,7 +215,7 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 	void registrationWrapsTheBakedPerStateModels() {
 		int tBefore = GTRenderModelListener.registeredCount();
 		GTOvenClientListener.register();
-		assertEquals(tBefore + 16, GTRenderModelListener.registeredCount(), "all 16 per-state keys registered");
+		assertEquals(tBefore + 64, GTRenderModelListener.registeredCount(), "all 64 per-state keys registered");
 
 		ModelResourceLocation tKey = new ModelResourceLocation("gt6", "oven", "active=true,facing=north,running=false");
 		StubFallback tBaked = new StubFallback();

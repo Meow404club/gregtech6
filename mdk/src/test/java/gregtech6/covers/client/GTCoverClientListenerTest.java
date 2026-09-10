@@ -45,14 +45,14 @@ public class GTCoverClientListenerTest {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the key set — read-only reuse of the oven listener's 16 per-state keys
+	// the key set — read-only reuse of the oven listener's 64 per-state keys (4 ladder rows x 16, task p27-oven-heat-t-ladder)
 	// ---------------------------------------------------------------------------
 
 	@Test
 	void targetsAreTheOvenPerStateKeys() {
 		List<ModelResourceLocation> tTargets = GTCoverClientListener.TARGET_MODELS;
-		assertEquals(16, tTargets.size(), "2 active x 4 facing x 2 running");
-		assertEquals(16, new HashSet<>(tTargets).size(), "all keys distinct");
+		assertEquals(64, tTargets.size(), "4 ladder rows x 2 active x 4 facing x 2 running");
+		assertEquals(64, new HashSet<>(tTargets).size(), "all keys distinct");
 		assertEquals(GTOvenClientListener.targetModelIds(), tTargets,
 				"the cover targets ARE the oven overlay's per-state keys (read-only reuse, zero drift)");
 		// variant string = the StateDefinition name-sorted property order (active, facing, running)
@@ -63,17 +63,17 @@ public class GTCoverClientListenerTest {
 		for (ModelResourceLocation tTarget : tTargets) {
 			//? if forge {
 			assertEquals("gt6", tTarget.getNamespace());
-			assertEquals("oven", tTarget.getPath(),
+			assertTrue(GTOvenClientListener.OVEN_BLOCK_PATHS.contains(tTarget.getPath()),
 			//?} else {
 			/*assertEquals("gt6", tTarget.id().getNamespace()); // 21.1: MRL is a record over an RL id
-			assertEquals("oven", tTarget.id().getPath(),
+			assertTrue(GTOvenClientListener.OVEN_BLOCK_PATHS.contains(tTarget.id().getPath()),
 			*///?}
-					"per-state keys address the BLOCK (gt6:oven#variants), not the blockstate JSON's model files (block/oven…)");
+					tTarget + ": per-state keys address the BLOCK (gt6:oven[_tN]#variants), not the blockstate JSON's model files (block/oven…)");
 		}
 	}
 
 	// ---------------------------------------------------------------------------
-	// the wrap — all 16 per-state keys wrap their baked model, dead keys stay vanilla
+	// the wrap — all 64 per-state keys wrap their baked model, dead keys stay vanilla
 	// ---------------------------------------------------------------------------
 
 	@Test
@@ -102,7 +102,7 @@ public class GTCoverClientListenerTest {
 			tModels.put(ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath("gt6", tDead)), tStub);
 			*///?}
 		}
-		assertEquals(19, tModels.size());
+		assertEquals(67, tModels.size()); // 64 ladder per-state keys + 3 dead file ids
 
 		//? if forge {
 		GTRenderModelListener.onModifyBakingResult(new ModelEvent.ModifyBakingResult(tModels, null));
@@ -133,11 +133,11 @@ public class GTCoverClientListenerTest {
 	void registeredCountHasParityWithTheOvenListener() {
 		GTOvenClientListener.register();
 		int tAfterOven = GTRenderModelListener.registeredCount();
-		assertEquals(16, tAfterOven, "the oven overlay's 16 per-state keys");
+		assertEquals(64, tAfterOven, "the oven overlay's 64 per-state keys");
 
 		GTCoverClientListener.register();
 		assertEquals(tAfterOven, GTRenderModelListener.registeredCount(),
-				"parity: the cover keys coincide with the oven's 16 per-state keys — no dead key survives on the shared table (the pre-p10 file-id ids would make this 19)");
+				"parity: the cover keys coincide with the oven's 64 per-state keys — no dead key survives on the shared table (the pre-p10 file-id ids would make this 67)");
 
 		// last-wins on the shared keys (GTCoverClientListener SHARED KEYS note): the
 		// cover registration replaced the oven factory per key — offline the call order
