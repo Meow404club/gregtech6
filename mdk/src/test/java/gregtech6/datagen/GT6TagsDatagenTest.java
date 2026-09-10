@@ -411,4 +411,87 @@ class GT6TagsDatagenTest {
         assertEquals("rods/%s", GT6ItemTags.RODS_FAMILY);
         assertEquals("hot_ingots/%s", GT6ItemTags.HOT_INGOTS_FAMILY);
     }
+
+    // ------------------------------------------------------------------ the p27 twin tree face
+
+    /**
+     * The 26 vanilla-intersection faces (task p27-vanilla-tag-dual-tree — the provider's
+     * VANILLA_INTERSECTION census mirrored here as literal paths, so a provider-side
+     * drift cannot self-confirm; ForgeItemTagsProvider.java:56-157 re-verified per entry).
+     */
+    private static final List<String> PINNED_VANILLA_INTERSECTION = List.of(
+            "ingots/iron", "ingots/copper", "ingots/gold", "ingots/netherite",
+            "nuggets/iron", "nuggets/gold",
+            "gems/diamond", "gems/emerald", "gems/lapis", "gems/amethyst", "gems/quartz",
+            "dusts/redstone", "dusts/glowstone", "dusts/prismarine",
+            "storage_blocks/iron", "storage_blocks/gold", "storage_blocks/copper",
+            "storage_blocks/netherite", "storage_blocks/amethyst", "storage_blocks/lapis",
+            "storage_blocks/coal", "storage_blocks/redstone", "storage_blocks/quartz",
+            "storage_blocks/raw_iron", "storage_blocks/raw_gold", "storage_blocks/raw_copper");
+
+    /**
+     * The p27 forward twin tree (spec ① + acceptance ③): the {@code data/c/tags/items}
+     * tree exists on the canonical tracked classpath with EXACTLY the 26 intersection
+     * faces, each carrying the same member list as its {@code forge:} twin (one
+     * addFamilyFace member emission feeds both namespaces). The exact-file-count pin
+     * makes any face beyond the census a conscious update.
+     */
+    @Test
+    void vanillaIntersectionTwinTreesCarryTheSameMembers() throws Exception {
+        assertEquals(26, PINNED_VANILLA_INTERSECTION.size(), "the research census count");
+        for (String tPath : PINNED_VANILLA_INTERSECTION) {
+            List<String> tForge = tagValues("forge/tags/items/" + tPath + ".json");
+            assertTrue(!tForge.isEmpty(), "the forge face must be non-empty: " + tPath);
+            assertEquals(tForge, tagValues("c/tags/items/" + tPath + ".json"),
+                    "the c twin must carry the exact forge members: " + tPath);
+        }
+        // no face outside the census: the c tree is exactly the 26 files
+        try (var tWalk = java.nio.file.Files.walk(java.nio.file.Paths.get(
+                GT6TagsDatagenTest.class.getResource("/data/c/tags/items").toURI()))) {
+            long tFiles = tWalk.filter(p -> p.toString().endsWith(".json")).count();
+            assertEquals(26, tFiles, "the c tree is exactly the intersection census");
+        }
+    }
+
+    /**
+     * The quartz canonical-name face (spec ② + acceptance ③): the platform-canonical
+     * {@code gems/quartz} + {@code storage_blocks/quartz} exist on BOTH namespaces and
+     * carry the walk-expected nether_quartz members (the FAMILY_MATERIAL_CANONICAL main
+     * name — ForgeItemTagsProvider.java:77/:152 ship the vanilla members under exactly
+     * these ids); the GT-internal {@code nether_quartz} files stay as the direct-member
+     * alias twins; the families WITHOUT an ecosystem quartz tag keep nether_quartz
+     * single-named (dusts sampled — rods/bolts/small_gears/raw share the same
+     * FAMILY_MATERIAL_CANONICAL keying-out, and the raw storage face never entered the
+     * intersection census).
+     */
+    @Test
+    void quartzCanonicalFacesCarryTheNetherQuartzMembers() throws Exception {
+        List<String> tGem = expectedMembers(Set.of(OP.gem), "nether_quartz", gItemWalk);
+        List<String> tBlock = expectedMembers(Set.of(OP.blockIngot, OP.blockGem, OP.blockDust),
+                "nether_quartz", gStorageWalk);
+        List<String> tRawBlock = expectedMembers(Set.of(OP.blockRaw), "nether_quartz", gStorageWalk);
+        assertTrue(!tGem.isEmpty(), "the census: nether_quartz carries a gem face");
+        assertTrue(!tBlock.isEmpty(), "the census: nether_quartz carries a storage face");
+        for (String tNamespace : List.of("forge", "c")) {
+            assertEquals(tGem, tagValues(tNamespace + "/tags/items/gems/quartz.json"),
+                    tNamespace + " gems/quartz canonical face");
+            assertEquals(tBlock, tagValues(tNamespace + "/tags/items/storage_blocks/quartz.json"),
+                    tNamespace + " storage_blocks/quartz canonical face");
+        }
+        // the GT-internal alias twins ride the canonical tracked tree only — the c twin
+        // tree is the MINIMAL canonical intersection face (26 files, the prior test's
+        // exact-count pin), no alias faces there
+        assertEquals(tGem, tagValues("forge/tags/items/gems/nether_quartz.json"),
+                "forge gems/nether_quartz alias twin");
+        assertEquals(tBlock, tagValues("forge/tags/items/storage_blocks/nether_quartz.json"),
+                "forge storage_blocks/nether_quartz alias twin");
+        assertNull(classpathTag("c/tags/items/gems/nether_quartz.json"));
+        // the keyed-out families stay single-named nether_quartz (no quartz main name)
+        assertEquals(expectedMembers(Set.of(OP.dust), "nether_quartz", gItemWalk),
+                tagValues("forge/tags/items/dusts/nether_quartz.json"));
+        assertNull(classpathTag("forge/tags/items/dusts/quartz.json"));
+        assertNull(classpathTag("forge/tags/items/rods/quartz.json"));
+        assertNull(classpathTag("forge/tags/items/storage_blocks/raw_quartz.json"));
+        assertEquals(tRawBlock, tagValues("forge/tags/items/storage_blocks/raw_nether_quartz.json"));
+    }
 }
