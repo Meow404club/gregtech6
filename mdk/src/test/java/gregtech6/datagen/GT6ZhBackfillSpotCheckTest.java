@@ -1,7 +1,8 @@
 /**
  * Spot-check pins for task p23-i18n-zh-442-backfill: the acceptance card names four
  * values that must land in the zh face (the oven word per the dump/hand terminal value,
- * a Draconium drum, the diesel dump anchor, and the ×-shaped wire_gt14 template), plus
+ * a Draconium tank — the drum noun re-ruled 储罐 by task p27-lang-fix P0, the diesel
+ * dump anchor, and the ×-shaped wire_gt14 template), plus
  * the full-closure count — every en key now has a zh entry (zero translation debt, the
  * parity subset reaching the en cardinality). Lives in its OWN file so the ratchet
  * constant and the material keyface assertions in GT6LangParityTest (task
@@ -63,7 +64,10 @@ public class GT6ZhBackfillSpotCheckTest {
 		// gt6.row.oven.display face (the upstream name column "Oven ("+Heat_T local+")") —
 		// the 烤箱 machine word is the same dump row, now the template's constant part
 		assertEquals("烤箱 (%s)", zh().get(gregtech6.registry.GTMachines.OVEN_DISPLAY_KEY), "the oven family display template");
-		assertEquals("龙合金鼓", zh().get("block.gt6.barrel_draconium"), "the Draconium drum (dump 龙 word root)");
+		// task p27-lang-fix P0 (ledger §1.1): the drum family are fluid tanks — the pin
+		// moved 龙合金鼓 → 龙合金储罐 (dump 龙 word root kept, the tank noun follows the
+		// dump's own 储罐 family tmp/gregtech.lang:13535-13540)
+		assertEquals("龙合金储罐", zh().get("block.gt6.barrel_draconium"), "the Draconium tank (dump 龙 word root + the 储罐 family)");
 		assertEquals("柴油", zh().get("fluid.gt6.diesel"), "the diesel dump anchor");
 		String tWire14 = zh().get("gt6.tagprefix.wire_gt14");
 		assertTrue(tWire14 != null && tWire14.contains("×%s"),
