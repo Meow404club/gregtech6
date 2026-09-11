@@ -51,13 +51,21 @@ direct	block.gt6.bottlecrate_oak	橡木瓶箱	hand
 direct	block.gt6.bottlecrate_spruce	云杉木瓶箱	hand
 direct	block.gt6.bottlecrate_warped	诡异木瓶箱	hand
 direct	block.gt6.brick_burning_box	砖块燃烧室 (固体)	hand
+direct	block.gt6.cfoam	建筑泡沫	hand
+direct	block.gt6.cfoam_fresh	新鲜建筑泡沫	hand
+direct	block.gt6.cfoam_fresh_slab	新鲜建筑泡沫台阶	hand
+direct	block.gt6.cfoam_slab	建筑泡沫台阶	hand
 direct	block.gt6.crank	手摇曲柄	hand
+direct	block.gt6.crucible_steel	大型钢坩埚	hand
+direct	block.gt6.crucible_steel_wall	钢壁板	hand
 direct	block.gt6.crusher	破碎机	hand
 direct	block.gt6.drawer_bronze	青铜四格抽屉	hand
 direct	block.gt6.drawer_steel	钢四格抽屉	hand
+direct	block.gt6.electrometer	电力传感器	hand
 direct	block.gt6.energy_source	测试能源	hand
 direct	block.gt6.example_chest	GT 示例箱子	hand
 direct	block.gt6.fe_battery	FE测试电池	hand
+direct	block.gt6.fluidometer	流体体积传感器(单位: 升)	hand
 direct	block.gt6.gearbox	木制可调变速箱	hand
 direct	block.gt6.grass	草方块	hand
 direct	block.gt6.grass_black	草方块	hand
@@ -66,15 +74,11 @@ direct	block.gt6.grass_light_gray	草方块	hand
 direct	block.gt6.grass_lime	草方块	hand
 direct	block.gt6.grass_yellow	草方块	hand
 direct	block.gt6.heat_transmitter	热吸收装置	hand
-direct	block.gt6.electrometer	电力传感器	hand
-direct	block.gt6.fluidometer	流体体积传感器(单位: 升)	hand
 direct	block.gt6.lathe	车床	hand
 direct	block.gt6.lightning_rod	避雷针	hand
 direct	block.gt6.locker_bronze	青铜储物柜	hand
 direct	block.gt6.locker_steel	钢储物柜	hand
 direct	block.gt6.machine_wall_tungsten	钨壁板	hand
-direct	block.gt6.crucible_steel	大型钢坩埚	hand
-direct	block.gt6.crucible_steel_wall	钢壁板	hand
 direct	block.gt6.multiblock_coke_oven	焦炉	hand
 direct	block.gt6.multiblock_coke_oven_bricks	焦炉砖	hand
 direct	block.gt6.multiblock_lightning_rod	避雷针	hand
@@ -125,10 +129,6 @@ direct	fluid.gt6.cfoam_purple	紫色建筑泡沫	hand
 direct	fluid.gt6.cfoam_red	红色建筑泡沫	hand
 direct	fluid.gt6.cfoam_white	白色建筑泡沫	hand
 direct	fluid.gt6.cfoam_yellow	黄色建筑泡沫	hand
-direct	block.gt6.cfoam_fresh	新鲜建筑泡沫	hand
-direct	block.gt6.cfoam	建筑泡沫	hand
-direct	block.gt6.cfoam_fresh_slab	新鲜建筑泡沫台阶	hand
-direct	block.gt6.cfoam_slab	建筑泡沫台阶	hand
 direct	fluid.gt6.chlorine	氯	hand
 direct	fluid.gt6.cold_water	冷水	hand
 direct	fluid.gt6.diesel	柴油	hand
@@ -197,9 +197,6 @@ direct	gt6.row.burning_box.family.gas	气体	hand
 direct	gt6.row.burning_box.family.liquid	液体	hand
 direct	gt6.row.burning_box.family.solid	固体	hand
 direct	gt6.row.canner.display	罐装机 (%s)	hand
-direct	gt6.row.machine.compressor	压缩机 (%s)	hand
-direct	gt6.row.machine.sifter	筛选机 (%s)	hand
-direct	gt6.row.machine.wiremill	线材机 (%s)	hand
 direct	gt6.row.dense_wall.display	致密%s壁板	hand
 direct	gt6.row.diesel.display	燃油引擎 (%s)	hand
 direct	gt6.row.distillery.display	蒸馏器 (%s)	hand
@@ -214,10 +211,19 @@ direct	gt6.row.item_pipe.display.restrictive_huge	限制巨型%s物流管道	han
 direct	gt6.row.item_pipe.display.restrictive_large	限制大型%s物流管道	hand
 direct	gt6.row.item_pipe.display.restrictive_medium	限制%s物流管道	hand
 direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
+direct	gt6.row.machine.compressor	压缩机 (%s)	hand
 direct	gt6.row.machine.crusher	破碎机	hand
 direct	gt6.row.machine.display	%s (%s)	hand
+direct	gt6.row.machine.extruder	压模器	hand
+direct	gt6.row.machine.extruder.display	压模器 (%s)	hand
+direct	gt6.row.machine.extruder.low_heat.display	压模器 (%s)	hand
+direct	gt6.row.machine.extruder_low_heat	压模器	hand
 direct	gt6.row.machine.lathe	车床	hand
+direct	gt6.row.machine.press	压力成型机	hand
+direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
 direct	gt6.row.machine.shredder	粉碎机	hand
+direct	gt6.row.machine.sifter	筛选机 (%s)	hand
+direct	gt6.row.machine.wiremill	线材机 (%s)	hand
 direct	gt6.row.mat.adamantium	艾德曼合金	hand
 direct	gt6.row.mat.arsenic_bronze	砷青铜	hand
 direct	gt6.row.mat.arsenic_copper	砷铜	hand
@@ -820,6 +826,8 @@ direct	item.gt6.integrated_circuit	选择器标签	hand
 direct	item.gt6.integrated_circuit.configuration	配置：%s	hand
 direct	item.gt6.saw	锯	hand
 direct	item.gt6.screwdriver	螺丝刀	hand
+direct	item.gt6.shape_extruder_plate	模具 (板)	hand
+direct	item.gt6.shape_extruder_rod	模具 (杆)	hand
 direct	item.gt6.spray_can_empty	空喷罐	hand
 direct	item.gt6.spray_paint_black	喷漆（黑）	hand
 direct	item.gt6.spray_paint_blue	喷漆（蓝）	hand
@@ -7846,29 +7854,3 @@ mte	multiblock.tank.wooden	小型木质储罐	auto
 mte	multiblock.tank555.metal	大型储罐	auto
 mte	plantpot.tooltip.1	上面能种植任意植物!	auto
 mte	usb.switch.tooltip	使用选择面板在16个USB之间切换	auto
-direct	block.gt6.grass	草方块	hand
-direct	block.gt6.grass_black	草方块	hand
-direct	block.gt6.grass_brown	草方块	hand
-direct	block.gt6.grass_lime	草方块	hand
-direct	block.gt6.grass_light_gray	草方块	hand
-direct	block.gt6.grass_yellow	草方块	hand
-direct	gt.grass.tooltip	不会传播、被吃、改变颜色, 也不需要光照	hand
-direct	gt.grass.tooltip.spray	喷漆罐也可以用来给草染色！	hand
-direct	item.gt6.bending_cylinder_small	小型弯曲绕筒	hand
-direct	item.gt6.food_can_cookies_huge	超大食物罐头 (饼干)	hand
-direct	item.gt6.food_can_empty	空食物罐头	hand
-direct	item.gt6.food_can_rotten_huge	超大食物罐头 (腐肉)	hand
-direct	item.gt6.food_can_rotten_large	大食物罐头 (腐肉)	hand
-direct	item.gt6.food_can_rotten_small	小食物罐头 (腐肉)	hand
-direct	item.gt6.food_can_rotten_tall	高食物罐头 (腐肉)	hand
-direct	item.gt6.food_can_rotten_tiny	迷你食物罐头 (腐肉)	hand
-direct	item.gt6.food_can_rotten_wide	宽食物罐头 (腐肉)	hand
-direct	itemGroup.gt6.food_cans	格雷科技: 罐头	hand
-direct	item.gt6.shape_extruder_plate	模具 (板)	hand
-direct	item.gt6.shape_extruder_rod	模具 (杆)	hand
-direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
-direct	gt6.row.machine.extruder.display	压模器 (%s)	hand
-direct	gt6.row.machine.extruder.low_heat.display	压模器 (%s)	hand
-direct	gt6.row.machine.press	压力成型机	hand
-direct	gt6.row.machine.extruder	压模器	hand
-direct	gt6.row.machine.extruder_low_heat	压模器	hand

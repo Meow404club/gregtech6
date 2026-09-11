@@ -484,6 +484,70 @@ HAND_TRANSLATIONS = {
     "fluid.gt6.cfoam_owned_magenta": ("高级品红建筑泡沫", "hand"),
     "fluid.gt6.cfoam_owned_orange": ("高级橙色建筑泡沫", "hand"),
     "fluid.gt6.cfoam_owned_white": ("高级白色建筑泡沫", "hand"),
+
+    # ---- rerun write-back (task p27-lang-fix 2026-09-11): 48 direct rows earlier cards
+    # authored straight into the committed TSV without a py write-back — the same
+    # tsv-orphan drift class the restoration/rebase batches fixed (a faithful rerun over
+    # the hand table silently wipes them; surfaced by this card's pre-edit reproduction
+    # run, which measured 48 truly-sourceless rows + 18 rows the committed TSV carries
+    # TWICE from git-merge stitching — the rerun canonicalizes those away). Re-entered
+    # VERBATIM from the committed TSV at main 28347d92:
+    #   static storage (p26-storage-static-batch): bookshelf x10 / bottlecrate x10 /
+    #     drawer x2 / locker x2 / safe x4;
+    #   sensors (p26-sensors-core): electrometer / fluidometer / progressmeter;
+    #   crucible (p26-crucible-multiblock): crucible_steel / crucible_steel_wall;
+    #   C-Foam blocks (p26-c-foam-block-family): the four block rows;
+    #   W1 trio (p26-w1-sifter-compressor-wiremill): compressor / sifter / wiremill;
+    #   press+extruder (p26-w1-press-extruder-molds): the press/extruder family rows +
+    #     the two shape_extruder molds.
+    "block.gt6.bookshelf_acacia": ("金合欢木书架", "hand"),
+    "block.gt6.bookshelf_birch": ("白桦木书架", "hand"),
+    "block.gt6.bookshelf_cherry": ("樱花木书架", "hand"),
+    "block.gt6.bookshelf_crimson": ("绯红木书架", "hand"),
+    "block.gt6.bookshelf_dark_oak": ("深色橡木书架", "hand"),
+    "block.gt6.bookshelf_jungle": ("丛林木书架", "hand"),
+    "block.gt6.bookshelf_mangrove": ("红树木书架", "hand"),
+    "block.gt6.bookshelf_oak": ("橡木书架", "hand"),
+    "block.gt6.bookshelf_spruce": ("云杉木书架", "hand"),
+    "block.gt6.bookshelf_warped": ("诡异木书架", "hand"),
+    "block.gt6.bottlecrate_acacia": ("金合欢木瓶箱", "hand"),
+    "block.gt6.bottlecrate_birch": ("白桦木瓶箱", "hand"),
+    "block.gt6.bottlecrate_cherry": ("樱花木瓶箱", "hand"),
+    "block.gt6.bottlecrate_crimson": ("绯红木瓶箱", "hand"),
+    "block.gt6.bottlecrate_dark_oak": ("深色橡木瓶箱", "hand"),
+    "block.gt6.bottlecrate_jungle": ("丛林木瓶箱", "hand"),
+    "block.gt6.bottlecrate_mangrove": ("红树木瓶箱", "hand"),
+    "block.gt6.bottlecrate_oak": ("橡木瓶箱", "hand"),
+    "block.gt6.bottlecrate_spruce": ("云杉木瓶箱", "hand"),
+    "block.gt6.bottlecrate_warped": ("诡异木瓶箱", "hand"),
+    "block.gt6.drawer_bronze": ("青铜四格抽屉", "hand"),
+    "block.gt6.drawer_steel": ("钢四格抽屉", "hand"),
+    "block.gt6.electrometer": ("电力传感器", "hand"),
+    "block.gt6.fluidometer": ("流体体积传感器(单位: 升)", "hand"),
+    "block.gt6.locker_bronze": ("青铜储物柜", "hand"),
+    "block.gt6.locker_steel": ("钢储物柜", "hand"),
+    "block.gt6.crucible_steel": ("大型钢坩埚", "hand"),
+    "block.gt6.crucible_steel_wall": ("钢壁板", "hand"),
+    "block.gt6.progressmeter": ("进度传感器", "hand"),
+    "block.gt6.safe_keylocked_bronze": ("钥匙锁定青铜保险箱", "hand"),
+    "block.gt6.safe_keylocked_steel": ("钥匙锁定钢保险箱", "hand"),
+    "block.gt6.safe_mechanical_bronze": ("机械青铜保险箱", "hand"),
+    "block.gt6.safe_mechanical_steel": ("机械钢保险箱", "hand"),
+    "block.gt6.cfoam_fresh": ("新鲜建筑泡沫", "hand"),
+    "block.gt6.cfoam": ("建筑泡沫", "hand"),
+    "block.gt6.cfoam_fresh_slab": ("新鲜建筑泡沫台阶", "hand"),
+    "block.gt6.cfoam_slab": ("建筑泡沫台阶", "hand"),
+    "gt6.row.machine.compressor": ("压缩机 (%s)", "hand"),
+    "gt6.row.machine.sifter": ("筛选机 (%s)", "hand"),
+    "gt6.row.machine.wiremill": ("线材机 (%s)", "hand"),
+    "gt6.row.machine.press.display": ("压力成型机 (%s)", "hand"),
+    "gt6.row.machine.extruder.display": ("压模器 (%s)", "hand"),
+    "gt6.row.machine.extruder.low_heat.display": ("压模器 (%s)", "hand"),
+    "gt6.row.machine.press": ("压力成型机", "hand"),
+    "gt6.row.machine.extruder": ("压模器", "hand"),
+    "gt6.row.machine.extruder_low_heat": ("压模器", "hand"),
+    "item.gt6.shape_extruder_plate": ("模具 (板)", "hand"),
+    "item.gt6.shape_extruder_rod": ("模具 (杆)", "hand"),
 }
 
 # ---------------------------------------------------------------------------
