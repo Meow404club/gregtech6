@@ -783,26 +783,34 @@ for _table in (VOTED_TAGPREFIXES, HAND_TAGPREFIXES):
 # ---- block.gt6.* (28): the barrel/fluid-pipe rows join the dump MTE face where one
 # exists ( Wooden Barrel -> gt.multitileentity.6990 木制储物桶); the rest follow en
 # semantics over the dump's established material words (钨钢/碳化钽铪/艾德曼合金/下界合金
-# ...). Drum = 鼓 per the task-card ruling (Adamantium Drum = 艾德曼合金鼓); Draconium
-# rides the dump's own word (bouleGtDraconiumAwakened = 单晶觉醒龙 -> 龙). The machine
-# words reuse the committed TSV rows units (粉碎机/破碎机/车床) verbatim; 烤箱 per the
-# task-card spot-check. wire_electric = the × convention on the atomic legacy keys.
+# ...). Drum = 储罐 per the P0 audit ruling (task p27-lang-fix, ledger §1.1): the drums
+# are FLUID TANKS, not drums-as-cylinders — three independent sources (the upstream
+# registration rides the "Fluid Containers" category with NBT_TANK_CAPACITY,
+# Loader_MultiTileEntities.java:2168-2171; the community dump itself renders the family
+# as 储罐, tmp/gregtech.lang:13535-13540 木制储罐/塑料储罐/不锈钢储罐/钨钢储罐/钨储罐/
+# 艾德曼合金储罐; and no dictionary supports 鼓 for a container). The 13 鼓 rows flip to
+# 储罐; the two already-correct faces stay (barrel_logistics 物流储罐 = the in-family
+# exemplar, barrel_plastic 塑料罐 = Canister); barrel_wood 木制储物桶 keeps its dump join
+# (item barrel, P2 ledger row, out of this card's scope). Draconium rides the dump's
+# own word (bouleGtDraconiumAwakened = 单晶觉醒龙 -> 龙). The machine words reuse the
+# committed TSV rows units (粉碎机/破碎机/车床) verbatim; 烤箱 per the task-card
+# spot-check. wire_electric = the × convention on the atomic legacy keys.
 BLOCK_BACKFILL = {
-    "block.gt6.barrel_adamantium": "艾德曼合金鼓",
-    "block.gt6.barrel_awakened_draconium": "觉醒龙合金鼓",
-    "block.gt6.barrel_draconium": "龙合金鼓",        # RECHECK: dump 龙 word root (单晶觉醒龙)
-    "block.gt6.barrel_gaia_spirit": "盖亚鼓",
-    "block.gt6.barrel_infinity": "无限鼓",
+    "block.gt6.barrel_adamantium": "艾德曼合金储罐",
+    "block.gt6.barrel_awakened_draconium": "觉醒龙合金储罐",
+    "block.gt6.barrel_draconium": "龙合金储罐",      # RECHECK: dump 龙 word root (单晶觉醒龙)
+    "block.gt6.barrel_gaia_spirit": "盖亚储罐",
+    "block.gt6.barrel_infinity": "无限储罐",
     "block.gt6.barrel_logistics": "物流储罐",
-    "block.gt6.barrel_metal": "青铜鼓",              # the row material word (TSV gt6.row.mat.bronze)
-    "block.gt6.barrel_netherite": "下界合金鼓",
+    "block.gt6.barrel_metal": "青铜储罐",            # the row material word (TSV gt6.row.mat.bronze)
+    "block.gt6.barrel_netherite": "下界合金储罐",
     "block.gt6.barrel_plastic": "塑料罐",            # Canister = 罐
-    "block.gt6.barrel_tantalum_hafnium_carbide": "碳化钽铪鼓",
-    "block.gt6.barrel_titanium": "钛鼓",
-    "block.gt6.barrel_tungsten": "钨鼓",
-    "block.gt6.barrel_tungsten_alloy": "钨合金鼓",
-    "block.gt6.barrel_tungstensteel": "钨钢鼓",
-    "block.gt6.barrel_void_metal": "虚空金属鼓",
+    "block.gt6.barrel_tantalum_hafnium_carbide": "碳化钽铪储罐",
+    "block.gt6.barrel_titanium": "钛储罐",
+    "block.gt6.barrel_tungsten": "钨储罐",
+    "block.gt6.barrel_tungsten_alloy": "钨合金储罐",
+    "block.gt6.barrel_tungstensteel": "钨钢储罐",
+    "block.gt6.barrel_void_metal": "虚空金属储罐",
     "block.gt6.advanced_crafting_table": "高级合成台",  # task p24-act-machine — the GT6 community zh name (no upstream zh_CN.lang dump anchor)
     "block.gt6.barrel_wood": "木制储物桶",           # dump join: gt.multitileentity.6990 木制储物桶
     "block.gt6.crank": "手摇曲柄",
