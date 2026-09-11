@@ -14,6 +14,10 @@ mdk/versions/1.21.1-neoforge/build/datagen-output（验证产物非入库面）�
   * 层 1 路径归一化：目录段（不含文件名）经 SEGMENT_MAP 映射——node 侧单数
     `loot_table` → canonical 侧复数 `loot_tables`（24w21a 数据包目录单数化改名，
     仅目录段参与映射，避免误伤同名文件名）。canonical 侧恒等映射（形态钉 1.20.1 形）。
+  * 层 1 补充（p27 品牌段带）：biome_modifier 产物带坐深一层，node 侧
+    `data/<ns>/neoforge/biome_modifier/` 经 brand_normalize 作用域折叠为 canonical
+    侧 `forge/` 形（刻意不入全局 SEGMENT_MAP，理由见其注释）；折叠由 _fold 施加，
+    同侧品牌折叠撞键 → 硬 ERROR（方案 a 双目录终态需显式 revisit，不许静默覆盖）。
   * 层 2 值形归一化（VALUE_NORMALIZERS）：字节不等且命中已注册产物带的文件，
     双侧解析 JSON → node 侧施用该带注册的值形变换（方向恒 node→canonical，
     正典树永不改写）→ 按双腿实测一致的 Gson 格式（indent=2 / 无尾换行 /
@@ -21,7 +25,9 @@ mdk/versions/1.21.1-neoforge/build/datagen-output（验证产物非入库面）�
     → 再做字节比对。归一成立 ≠ 静默放过：NORMALIZED 计数与文件清单必须打印；
     未命中带、解析失败、变换后仍不等 → 一律原样 FAIL（保留 first-diff offset）。
     变换必须保守：只对 census 实测钉死的形态施用，不适用形态原样保留，
-    由字节比对兜底 FAIL（绝不放宽为全局语义比较）。
+    由字节比对兜底 FAIL（绝不放宽为全局语义比较）。品牌段作用域带
+    （data/<ns>/forge/biome_modifier/，p27）另册 BRAND_VALUE_NORMALIZERS，
+    匹配发生在路径归一之后。
   * 归一化后做三查：仅 canonical 有 / 仅 node 有 / 双侧都有但字节不同。
     双侧文件计数（原始与归一化后）必须相等，否则非零退出。
   * 任何未归一差异 → exit 1 并打印差异文件清单；全等 → exit 0 并打印摘要
@@ -88,6 +94,22 @@ SEGMENT_MAP = {
     "c": "forge",
     "block": "blocks",
 }
+
+# p27-ops 一带新增（品牌段作用域折叠，刻意不入上表）：biome_modifier 产物带坐得更深
+# 一层——data/<ns>/<brand>/biome_modifier/（目录段[2]=加载器品牌、段[3]=带名）。forge 腿
+# 产 data/gt6/forge/biome_modifier/（注册键 forge:biome_modifier，ForgeRegistries
+# .java:195；GTCEu 1.20.1 生成树 data/gtceu/forge/biome_modifier/ 为量产实证）、21.1
+# 节点产 data/gt6/neoforge/biome_modifier/（注册键 neoforge:biome_modifier，
+# NeoForgeRegistries.java:61-66；目录跟随注册键命名空间，1.21 Registries
+# .elementsDirPath=CommonHooks.prefixNamespace, Registries.java:251-253）——同一逻辑
+# 产物的双腿目录形（decisions.p26-worldgen-biome-modifier-dual-dir 方案 a 的对账面，
+# 汇总出处 mdk GT6WorldgenDatagen.java:55-68）。不入 SEGMENT_MAP 的原因：该表对两侧
+# 全局对称施用，neoforge→forge 若全局生效，将来正典树按方案 a 并载双腿目录时
+# canonical 自己的 neoforge/ 副本也会被折到 forge/ 键上、同侧 dict 静默覆盖（即
+# FORWARD_TWIN_PREFIX 注释描述的事故形）。故走 brand_normalize 作用域折叠 +
+# _fold 折叠碰撞守卫（同侧品牌折叠撞键 → 硬 ERROR，逼出显式 revisit）。
+BRAND_BAND_DIR = "biome_modifier"
+BRAND_SEGMENT_MAP = {"neoforge": "forge"}
 
 # ── 层 2：值形归一器（VALUE_NORMALIZERS，p25-datagen-tree-check-unify 新增）────
 # 注册纪律（沿 SEGMENT_MAP 注释证据纪律）：每条变换必须带 ①版本差异出处（vanilla
@@ -323,6 +345,35 @@ VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]
 ]
 
 
+def _norm_add_features_brand(o: dict) -> bool:
+    """biome modifier "type" 键品牌前缀：neoforge:add_features → forge:add_features。
+
+    出处：双腿 biome modifier JSON 全文仅 "type" 一键差——canonical
+    data/gt6/forge/biome_modifier/overworld_stone_andesite.json 写
+    "forge:add_features"、节点 data/gt6/neoforge/biome_modifier/
+    overworld_stone_andesite.json 写 "neoforge:add_features"（2026-09-12 census：
+    17/17 对 sed 归一后逐字节相等，唯一差即该键）；注册表面 GT6WorldgenDatagen
+    .java:55-68（ForgeBiomeModifiers.java:46 record JSON type forge:add_features
+    vs BiomeModifiers.java:47 record JSON type neoforge:add_features）。
+    remove_features/conditional 等形未注册——原样保留 → 字节比对 FAIL（fail-visible）。
+    """
+    if o.get("type") == "neoforge:add_features":
+        o["type"] = "forge:add_features"
+        return True
+    return False
+
+
+# 品牌段作用域值形带（值坐得比 VALUE_NORMALIZERS 深一层：data/<ns>/<brand>/<band>/，
+# p27-ops）。匹配发生在路径归一之后——rel 已是 canonical 形（forge 段），故 brand
+# 键恒 "forge"、node 侧 neoforge 形文件经 brand_normalize 后同样命中本表。
+BRAND_VALUE_NORMALIZERS: list[
+    tuple[str, str, str, list[tuple[str, Callable[[dict], bool]]]]] = [
+    ("data/*/forge/biome_modifier", "forge", BRAND_BAND_DIR, [
+        ("add-features-neoforge→forge", _norm_add_features_brand),
+    ]),
+]
+
+
 def _walk_dicts(obj: object, fn: Callable[[dict], bool]) -> bool:
     """对解析树内每个 dict 施用 fn（fn 自判适用性，返回是否施用）。"""
     changed = False
@@ -343,6 +394,10 @@ def _registered_band(rel: PurePosixPath) -> list[tuple[str, Callable[[dict], boo
         return None
     for _, dir_name, regs in VALUE_NORMALIZERS:
         if _band(rel, dir_name):
+            return regs
+    for _, brand, dir_name, regs in BRAND_VALUE_NORMALIZERS:
+        if (len(rel.parts) >= 5 and rel.parts[0] == "data"
+                and rel.parts[2] == brand and rel.parts[3] == dir_name):
             return regs
     return None
 
@@ -421,17 +476,63 @@ def collect_files(root: Path) -> dict[PurePosixPath, Path]:
     return files
 
 
+def brand_normalize(rel: PurePosixPath) -> PurePosixPath:
+    """品牌段作用域折叠（仅 data/<ns>/<brand>/biome_modifier/ 带，p27-ops）。
+
+    node 侧 neoforge/biome_modifier → canonical 侧 forge/biome_modifier；
+    canonical 侧恒等（现树只有 forge/ 形）。带外路径一概原样返回。
+    """
+    parts = rel.parts
+    if (len(parts) >= 5 and parts[0] == "data" and parts[3] == BRAND_BAND_DIR
+            and parts[2] in BRAND_SEGMENT_MAP):
+        return PurePosixPath(parts[0], parts[1], BRAND_SEGMENT_MAP[parts[2]],
+                             *parts[3:])
+    return rel
+
+
 def normalize(rel: PurePosixPath) -> PurePosixPath:
     """目录段映射归一化（文件名段永不参与）。"""
     mapped = [SEGMENT_MAP.get(seg, seg) for seg in rel.parts[:-1]]
     mapped.append(rel.parts[-1])
-    return PurePosixPath(*mapped)
+    return brand_normalize(PurePosixPath(*mapped))
+
+
+def _fold(files: dict[PurePosixPath, Path]) -> dict[PurePosixPath, Path]:
+    """归一化折叠 + 品牌折叠碰撞守卫（p27-ops）。
+
+    品牌折叠（brand_normalize 改写了路径）的文件撞上同侧已占用键、或撞上已是品牌
+    折叠结果的键 → 硬 ERROR：那意味着单侧同时出现 forge/ 与 neoforge/ 双目录
+    （decisions.p26 方案 a 双腿并载终态）或其他品牌形交叉——折叠语义从此多解，
+    必须 fail-visible 显式 revisit，不许 dict 后写静默覆盖。
+    既有全局折叠（SEGMENT_MAP 层）的同键阴影维持现行为（后写覆盖——该债由
+    main() 的 FORWARD_TWIN_PREFIX 前置剔除处理，不在本守卫射程，行为不变）。
+    """
+    out: dict[PurePosixPath, Path] = {}
+    brand_folded: set[PurePosixPath] = set()
+    for rel, abs_path in files.items():
+        norm = normalize(rel)
+        if norm in out and (brand_normalize(rel) != rel or norm in brand_folded):
+            sys.exit(f"ERROR: biome_modifier brand-fold collision on {norm}: "
+                     f"{rel} vs {out[norm]} — dual-brand dirs on one side; "
+                     "revisit the band (decisions.p26-worldgen-biome-modifier-dual-dir)")
+        out[norm] = abs_path
+        if brand_normalize(rel) != rel:
+            brand_folded.add(norm)
+    return out
 
 
 def loot_band_count(files: dict[PurePosixPath, Path], dir_name: str) -> int:
     """统计 data/<ns>/<dir_name>/ 带内文件数（摘要用）。"""
     return sum(1 for rel in files if len(rel.parts) >= 3
                and rel.parts[0] == "data" and rel.parts[2] == dir_name)
+
+
+def brand_band_count(files: dict[PurePosixPath, Path], brand: str,
+                     dir_name: str) -> int:
+    """统计 data/<ns>/<brand>/<dir_name>/ 带内文件数（原始路径，摘要用）。"""
+    return sum(1 for rel in files if len(rel.parts) >= 5
+               and rel.parts[0] == "data" and rel.parts[2] == brand
+               and rel.parts[3] == dir_name)
 
 
 def main() -> int:
@@ -463,8 +564,8 @@ def main() -> int:
     # these onto the forge twins' keys, silently overwriting dict entries)
     forward_twin = sorted(rel for rel in canon if str(rel).startswith(FORWARD_TWIN_PREFIX))
     canon = {rel: p for rel, p in canon.items() if not str(rel).startswith(FORWARD_TWIN_PREFIX)}
-    canon_norm = {normalize(rel): abs_path for rel, abs_path in canon.items()}
-    node_norm = {normalize(rel): abs_path for rel, abs_path in node.items()}
+    canon_norm = _fold(canon)
+    node_norm = _fold(node)
 
     only_canon = sorted(canon_norm.keys() - node_norm.keys())
     only_node = sorted(node_norm.keys() - canon_norm.keys())
@@ -491,6 +592,10 @@ def main() -> int:
     print(f"loot band : canonical {loot_band_count(canon, 'loot_tables')} "
           f"(data/*/loot_tables)  node {loot_band_count(node, 'loot_table')} "
           f"(data/*/loot_table)")
+    print(f"biome band: canonical {brand_band_count(canon, 'forge', BRAND_BAND_DIR)} "
+          f"(data/*/forge/{BRAND_BAND_DIR})  node "
+          f"{brand_band_count(node, 'neoforge', BRAND_BAND_DIR)} "
+          f"(data/*/neoforge/{BRAND_BAND_DIR})")
 
     # normalized 清单必须打印（绝不明灭吞差）：条目=文件+施用的变换名
     if normalized:
