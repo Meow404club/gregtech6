@@ -118,8 +118,14 @@ public class GT6LangParityTest {
 	 * family added the +4 block.gt6 rows (cfoam/cfoam_fresh + the two slabs, both locales,
 	 * the zh values from the reference table's hand rows). Both committed generated faces
 	 * count exactly 2666 keys with zero set difference.
+	 *
+	 * <p>Task p27-machine-energy-display-fix: lowered to the measured 2663 — the SPEC retires
+	 * the three gt6.row.tier.2/3/4 ordinal units (both locales, the tier slot now rides the
+	 * Kinetic_T material words, already-present gt6.row.mat.* keys — a name-face correction
+	 * to the upstream "Shredder ("+aMat.getLocal()+")" caliber, not a coverage regression;
+	 * the only ratchet movement this task card will ever make downward).
 	 */
-	private static final int ZH_KEY_FLOOR = 2666;
+	private static final int ZH_KEY_FLOOR = 2663;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -359,7 +365,9 @@ public class GT6LangParityTest {
 		tUnits.add(GT6BurningBoxes.FAMILY_SOLID_UNIT_KEY);
 		tUnits.add(GT6BurningBoxes.FAMILY_LIQUID_UNIT_KEY);
 		tUnits.add(GT6BurningBoxes.FAMILY_GAS_UNIT_KEY);
-		for (int tTier = 2; tTier <= 4; tTier++) tUnits.add(GTMachines.machineTierUnitKey(tTier));
+		// task p27-machine-energy-display-fix: the P7 tier slot rides the Kinetic_T material
+		// words (gt6.row.mat.bronze/steel/titanium/tungstensteel — already walked below), the
+		// ordinal gt6.row.tier.* units are RETIRED
 		tUnits.add(GTMachines.MACHINE_SHREDDER_UNIT_KEY);
 		tUnits.add(GTMachines.MACHINE_CRUSHER_UNIT_KEY);
 		tUnits.add(GTMachines.MACHINE_LATHE_UNIT_KEY);
@@ -426,11 +434,22 @@ public class GT6LangParityTest {
 		// large boiler + dense wall
 		assertEquals("Invar Boiler Main Barometer", substitute(en().get("gt6.row.large_boiler.display"), en().get("gt6.row.mat.invar")));
 		assertEquals("Dense Invar Wall", substitute(en().get("gt6.row.dense_wall.display"), en().get("gt6.row.mat.invar")));
-		// machine tiers
-		assertEquals("Shredder (Tier 2)", substitute(en().get("gt6.row.machine.display"),
-				en().get(GTMachines.MACHINE_SHREDDER_UNIT_KEY), en().get(GTMachines.machineTierUnitKey(2))));
-		assertEquals("粉碎机 (等级 3)", substitute(zh().get("gt6.row.machine.display"),
-				zh().get(GTMachines.MACHINE_SHREDDER_UNIT_KEY), zh().get(GTMachines.machineTierUnitKey(3))));
+		// machine tiers (task p27-machine-energy-display-fix): the tier slot rides the
+		// Kinetic_T MATERIAL word (upstream "Shredder ("+aMat.getLocal()+")", :1294-1309,
+		// Kinetic_T[1..4] = Bronze/Steel/Titanium/Tungstensteel MT.java:3690) — the retired
+		// gt6.row.tier.* ordinals must stay gone on BOTH faces
+		assertEquals("Shredder (Steel)", substitute(en().get("gt6.row.machine.display"),
+				en().get(GTMachines.MACHINE_SHREDDER_UNIT_KEY), en().get("gt6.row.mat.steel")));
+		assertEquals("粉碎机 (钛)", substitute(zh().get("gt6.row.machine.display"),
+				zh().get(GTMachines.MACHINE_SHREDDER_UNIT_KEY), zh().get("gt6.row.mat.titanium")));
+		// the tier→material ladder caliber: the tierOf index + 1 selects the Kinetic_T word
+		// (T1 rides the atomic block.gt6.shredder name, T2-T4 compose)
+		for (int tTier = 1; tTier <= 4; tTier++) {
+			assertEquals(List.of("bronze", "steel", "titanium", "tungstensteel").get(tTier - 1),
+				GTMachines.KINETIC_TIER_MAT_SLUGS[tTier - 1], "Kinetic tier " + tTier + " material slug");
+			assertFalse(en().containsKey("gt6.row.tier." + tTier), "the ordinal tier unit must stay retired on en");
+			assertFalse(zh().containsKey("gt6.row.tier." + tTier), "the ordinal tier unit must stay retired on zh");
+		}
 		// attachments
 		assertEquals("Ceramic Tap", substitute(en().get("gt6.row.tap.display"), en().get("gt6.row.attachment.mat.ceramic")));
 		assertEquals("Tantalum Hafnium Carbide Funnel", substitute(en().get("gt6.row.funnel.display"), en().get("gt6.row.attachment.mat.tantalum_hafnium_carbide")));

@@ -1,6 +1,7 @@
 package gregtech6.jade;
 
 import java.util.Locale;
+import java.util.Map;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -15,6 +16,8 @@ import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.BoxStyle;
 import snownee.jade.api.ui.IElementHelper;
 
+import gregapi.code.TagData;
+import gregapi.data.TD;
 import gregtech6.tileentity.TileEntityBase01Root;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
@@ -32,7 +35,8 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  *
  * <p>v1 展示面（arch 卡四项）：进度条（mProgress/mMaxProgress，TileEntityBasicMachine.java:227，
  * &gt;20t 折秒仿 GTCEu :72-77；着色 mActive&amp;&amp;mRunning 绿/否则红，仿 :80，mSuccessful 随 tag
- * 出而暂不闸色）、能量行（mEnergy+输入带 mInputMin/mInput/mInputMax :226，RU/KU 载体注明）、
+ * 出而暂不闸色）、能量行（mEnergy+输入带 mInputMin/mInput/mInputMax :226，能量类型短码随
+ * KEY_ENERGY_TYPE 传真类型——p27-machine-energy-display-fix 起不再是 "RU/KU" 并列字面量）、
  * 错误行（ERROR_MESSAGE 非空才显示）、多方块成形态（mStructureOkay 文本行，
  * TileEntityBase10MultiBlockBase.java:72）。lang 键入池——v1 全 Component.literal。
  *
@@ -55,6 +59,8 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 	public static final String KEY_ACTIVE = "GT6Active";
 	public static final String KEY_RUNNING = "GT6Running";
 	public static final String KEY_ENERGY = "GT6Energy";
+	/** The accepted-energy type short code (task p27-machine-energy-display-fix)——值见 {@link #energyTypeShortCode}。 */
+	public static final String KEY_ENERGY_TYPE = "GT6EnergyType";
 	public static final String KEY_INPUT_MIN = "GT6InputMin";
 	public static final String KEY_INPUT = "GT6Input";
 	public static final String KEY_INPUT_MAX = "GT6InputMax";
@@ -64,6 +70,49 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 	/** 着色两值 = GTCEu WorkableBlockProvider.java:80 字面（绿 0xFF4CBB17 / 红 0xFFBB1C28）。 */
 	private static final int COLOR_OK = 0xFF4CBB17;
 	private static final int COLOR_STALLED = 0xFFBB1C28;
+
+	/**
+	 * 能量类型短码表（task p27-machine-energy-display-fix）：accepted-energy 载体在
+	 * {@code mEnergyTypeAccepted}（TileEntityBasicMachine.java:254，注册行 :1294-1309 择一），
+	 * 但 Jade 同步面只搬 NBT 标量，而 {@link TagData#mName} 不是显示名——移植把名字全大写折叠、
+	 * 丢弃 LH 短/长本地名（root TagData.java:68-71 createTagData 丢 aLocalShort/aLocalLong，
+	 * mName="ENERGY.RU" :88），短码按研究卡裁定落本 provider 侧映射（root 不动）。恒等查找安全：
+	 * createTagData 按名去重（TagData.java:77-81），TD.Energy 常量即单例。短码值 = 上游
+	 * aLocalShort 字面 verbatim（root TD.java:81/:88/:95/:102/:109/:116/:123/:130/:137/:144/
+	 * :151/:158/:165/:172/:175-185——被丢弃的实参仍原样在盘）。
+	 */
+	private static final Map<TagData, String> ENERGY_SHORT_CODES = Map.ofEntries(
+			Map.entry(TD.Energy.EU, "EU"),           // TD.java:81 ELECTRICITY（Canner 电机族）
+			Map.entry(TD.Energy.RU, "RU"),           // :88 KINETIC_ROTATION（Shredder/Lathe/Wiremill）
+			Map.entry(TD.Energy.KU, "KU"),           // :95 KINETIC_PUSH（Crusher/Sifter/Compressor/Press）
+			Map.entry(TD.Energy.HU, "HU"),           // :102 HEAT（Oven/Dryer/Extruder/Distillery）
+			Map.entry(TD.Energy.CU, "CU"),           // :109 CRYO
+			Map.entry(TD.Energy.LU, "LU"),           // :116 LIGHT
+			Map.entry(TD.Energy.MU, "MU"),           // :123 MAGNETIC
+			Map.entry(TD.Energy.NU, "NU"),           // :130 NEUTRON
+			Map.entry(TD.Energy.QU, "QU"),           // :137 QUANTUM
+			Map.entry(TD.Energy.TU, "TU"),           // :144 TIME（:254 字段默认）
+			Map.entry(TD.Energy.RF, "RF"),           // :151 REDSTONE_FLUX
+			Map.entry(TD.Energy.MJ, "MJ"),           // :158 MINECRAFT_JOULES
+			Map.entry(TD.Energy.STEAM, "Steam"),     // :165（上游短名是词不是字头）
+			Map.entry(TD.Energy.AU, "AU"),           // :172 AIR
+			Map.entry(TD.Energy.VIS_ORDO, "Ordo"),       // :175
+			Map.entry(TD.Energy.VIS_AER, "Aer"),         // :177
+			Map.entry(TD.Energy.VIS_AQUA, "Aqua"),       // :179
+			Map.entry(TD.Energy.VIS_TERRA, "Terra"),     // :181
+			Map.entry(TD.Energy.VIS_IGNIS, "Ignis"),     // :183
+			Map.entry(TD.Energy.VIS_PERDITIO, "Perditio")); // :185
+
+	/**
+	 * 能量载体的显示短码（{@link #ENERGY_SHORT_CODES} 查找；回退 = 折叠 mName 剥 "ENERGY."
+	 * 前缀——大写、无参数（TagData.java:69-71 折叠语义），兜住映射未及的未来载体。
+	 */
+	public static String energyTypeShortCode(TagData aType) {
+		String tCode = aType == null ? null : ENERGY_SHORT_CODES.get(aType);
+		if (tCode != null) return tCode;
+		String tName = aType == null ? "" : aType.mName;
+		return tName.startsWith("ENERGY.") ? tName.substring("ENERGY.".length()) : tName;
+	}
 
 	private GT6MachineProvider() {
 	}
@@ -83,15 +132,7 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 		}
 		if (aRoot instanceof TileEntityBasicMachine aMachine) {
 			// 机器族字段（TileEntityBasicMachine.java:226-227）：进度 + 运行态 + 能量/输入带。
-			aData.putLong(KEY_PROGRESS, aMachine.mProgress);
-			aData.putLong(KEY_MAX_PROGRESS, aMachine.mMaxProgress);
-			aData.putBoolean(KEY_SUCCESSFUL, aMachine.mSuccessful);
-			aData.putBoolean(KEY_ACTIVE, aMachine.mActive);
-			aData.putBoolean(KEY_RUNNING, aMachine.mRunning);
-			aData.putLong(KEY_ENERGY, aMachine.mEnergy);
-			aData.putLong(KEY_INPUT_MIN, aMachine.mInputMin);
-			aData.putLong(KEY_INPUT, aMachine.mInput);
-			aData.putLong(KEY_INPUT_MAX, aMachine.mInputMax);
+			appendMachineData(aData, aMachine);
 		}
 		if (aRoot instanceof TileEntityBase10MultiBlockBase aMulti) {
 			// 多方块成形态（TileEntityBase10MultiBlockBase.java:72，FORMED BlockState 的 BE 侧真源）。
@@ -101,6 +142,25 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 			// 错误行（TileEntityBase01Root.java:88）——任何 GT6 BE 都可能带，非空才写。
 			aData.putString(KEY_ERROR, aRoot.ERROR_MESSAGE);
 		}
+	}
+
+	/**
+	 * 机器族同步写（appendServerData 的 BasicMachine 分支体抽成静态缝——GT6FluidProvider
+	 * .groupsOfTarget 同 posture：accessor 薄壳 live-only，BE 读面离线可测）。p27 起能量类型
+	 * 短码随 {@link #KEY_ENERGY_TYPE} 上线——服务端读 {@code mEnergyTypeAccepted} 真源
+	 * （:254），客户端 tooltip 不再并列猜 "RU/KU"。
+	 */
+	static void appendMachineData(CompoundTag aData, TileEntityBasicMachine aMachine) {
+		aData.putLong(KEY_PROGRESS, aMachine.mProgress);
+		aData.putLong(KEY_MAX_PROGRESS, aMachine.mMaxProgress);
+		aData.putBoolean(KEY_SUCCESSFUL, aMachine.mSuccessful);
+		aData.putBoolean(KEY_ACTIVE, aMachine.mActive);
+		aData.putBoolean(KEY_RUNNING, aMachine.mRunning);
+		aData.putLong(KEY_ENERGY, aMachine.mEnergy);
+		aData.putString(KEY_ENERGY_TYPE, energyTypeShortCode(aMachine.mEnergyTypeAccepted));
+		aData.putLong(KEY_INPUT_MIN, aMachine.mInputMin);
+		aData.putLong(KEY_INPUT, aMachine.mInput);
+		aData.putLong(KEY_INPUT_MAX, aMachine.mInputMax);
 	}
 
 	@Override
@@ -128,9 +188,12 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 					jadeBox(),
 					true));
 		}
-		// ② 能量行 + 输入带：mEnergy 是 RU/KU 双载体（accepted-energy carrier，机器注册时择一），v1 注明不细分。
+		// ② 能量行 + 输入带：mEnergy 是 accepted-energy carrier（机器注册时择一），p27 起类型
+		// 短码随 KEY_ENERGY_TYPE 同步（缺键防御 "?"——旧缓存 tag 不渲染空括号）。
 		if (aData.contains(KEY_ENERGY)) {
-			aTooltip.add(Component.literal(String.format(Locale.ROOT, "Energy: %d (RU/KU)", aData.getLong(KEY_ENERGY))));
+			aTooltip.add(Component.literal(String.format(Locale.ROOT, "Energy: %d (%s)",
+					aData.getLong(KEY_ENERGY),
+					aData.contains(KEY_ENERGY_TYPE) ? aData.getString(KEY_ENERGY_TYPE) : "?")));
 			aTooltip.add(Component.literal(String.format(Locale.ROOT, "Input: %d / %d / %d (min/in/max)",
 					aData.getLong(KEY_INPUT_MIN), aData.getLong(KEY_INPUT), aData.getLong(KEY_INPUT_MAX))));
 		}

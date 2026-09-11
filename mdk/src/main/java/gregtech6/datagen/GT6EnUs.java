@@ -648,15 +648,15 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.lathe", "Lathe");
         // task p20-i18n-compose-rows: the nine tier rows (p8-machine-tiers-doinject ⑧) and
         // the dryer/distillery ladders compose at runtime — one machine template + the three
-        // machine words + the ordinal tier units, and one template per row family over the
-        // gt6.row.mat small units
+        // machine words, and one template per row family over the gt6.row.mat small units.
+        // task p27-machine-energy-display-fix: the tier slot rides the Kinetic_T MATERIAL
+        // word (upstream "Shredder ("+aMat.getLocal()+")" :1294-1309, Kinetic_T[1..4]
+        // MT.java:3690) — the ordinal gt6.row.tier.* units are RETIRED (the T2-T4 blocks
+        // fill the slot with the shared gt6.row.mat.* words below)
         add(gregtech6.registry.GTMachines.MACHINE_DISPLAY_KEY, "%s (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_SHREDDER_UNIT_KEY, "Shredder");
         add(gregtech6.registry.GTMachines.MACHINE_CRUSHER_UNIT_KEY, "Crusher");
         add(gregtech6.registry.GTMachines.MACHINE_LATHE_UNIT_KEY, "Lathe");
-        add(gregtech6.registry.GTMachines.machineTierUnitKey(2), "Tier 2");
-        add(gregtech6.registry.GTMachines.machineTierUnitKey(3), "Tier 3");
-        add(gregtech6.registry.GTMachines.machineTierUnitKey(4), "Tier 4");
         add(gregtech6.registry.GTMachines.DRYER_DISPLAY_KEY, "Dryer (%s)");
         add(gregtech6.registry.GTMachines.DISTILLERY_DISPLAY_KEY, "Distillery (%s)");
         // task p24-canner-machine — the Canner family template: the upstream name column

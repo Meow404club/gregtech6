@@ -90,6 +90,12 @@ public final class GTMachines {
 	 * The tier energy table (upstream NBT_INPUT 32/128/512/2048 through the :126 conversion
 	 * min = in/2 / max = in*2): TIER_INPUTS[tier] = {mInputMin, mInput, mInputMax} for
 	 * tier 0 (T1, the :98 field defaults) .. tier 3 (T4).
+	 *
+	 * <p>Naming semantics (task p27-machine-energy-display-fix, constant kept — the RCON/
+	 * command/test churn outweighs the rename): a MATERIAL tier ladder, not a voltage one —
+	 * the four tier variants ride the Kinetic/Heat_T material words ({@link
+	 * #KINETIC_TIER_MAT_SLUGS}, Kinetic_T[1..4] MT.java:3690); voltage names (LV/MV/HV/EV)
+	 * belong to the Electric_T motor classes only (the Canner family, :1379-1382).
 	 */
 	public static final long[][] TIER_INPUTS = {{16, 32, 64}, {64, 128, 256}, {256, 512, 1024}, {1024, 2048, 4096}};
 
@@ -107,8 +113,12 @@ public final class GTMachines {
 	/** The Crusher parallel row (upstream NBT_PARALLEL :1300-1303) — the SAME array as {@link #PARALLEL_4_32}, the W1 merge ruling. */
 	public static final int[] CRUSHER_PARALLEL = PARALLEL_4_32;
 
-	// the composed tier-ladder name face (task p20-i18n-compose-rows): the "{Machine} (Tier N)"
-	// rows compose from the machine word + the ordinal tier unit over one template
+	// the composed tier-ladder name face (task p20-i18n-compose-rows, materialized by task
+	// p27-machine-energy-display-fix): the "{Machine} (Material)" rows compose from the
+	// machine word + the Kinetic_T material word — the upstream name column is
+	// "Shredder ("+aMat.getLocal()+")" over Kinetic_T[1..4] (:1294-1309, MT.java:3690),
+	// NOT an ordinal tier (the voltage names ride the Electric_T motor classes only — the
+	// Canner family, :1379-1382)
 	public static final String MACHINE_DISPLAY_KEY = "gt6.row.machine.display";
 	public static final String MACHINE_SHREDDER_UNIT_KEY = "gt6.row.machine.shredder";
 	public static final String MACHINE_CRUSHER_UNIT_KEY = "gt6.row.machine.crusher";
@@ -134,17 +144,25 @@ public final class GTMachines {
 	/** The T1 Extruder display template ("Low Heat Extruder (Steel)", the :1406 name column). */
 	public static final String EXTRUDER_LOW_HEAT_DISPLAY_KEY = "gt6.row.machine.extruder.low_heat.display";
 
-	/** The tier ordinal unit key ({@code gt6.row.tier.<n>}). */
-	public static String machineTierUnitKey(int aTier) {
-		return "gt6.row.tier." + aTier;
-	}
+	/**
+	 * The Kinetic tier material ladder (upstream MT.java:3690 Kinetic_T[1..4] = Bronze/Steel/
+	 * Titanium/Tungstensteel — the name column "Shredder ("+aMat.getLocal()+")", :1294-1309):
+	 * the gt6.row.mat small-unit slugs, indexed tier 1..4 (the {@link #tierOf} index + 1).
+	 * MATERIAL tiers, not voltage tiers — the four variants pick the Kinetic/Heat_T material
+	 * words (this ladder and the Heat_T Dryer/Oven ladders alike); voltage names (LV/MV/HV/
+	 * EV) belong to the Electric_T motor classes only (the Canner family, :1379-1382).
+	 * T1 keeps the pre-ladder atomic name ("Shredder", block.gt6.shredder), T2-T4 compose
+	 * over {@code gt6.row.mat.<slug>} — task p27-machine-energy-display-fix retired the
+	 * ordinal gt6.row.tier.* units.
+	 */
+	public static final String[] KINETIC_TIER_MAT_SLUGS = {"bronze", "steel", "titanium", "tungstensteel"};
 
-	/** The pre-composed name supplier of a tier block (the 4-arg GTBasicMachineBlock carrier). */
+	/** The pre-composed name supplier of a tier block (the 4-arg GTBasicMachineBlock carrier): machine word + the tier's Kinetic material word. */
 	private static java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> tierName(
 			String aMachineUnitKey, int aTier) {
 		return () -> net.minecraft.network.chat.Component.translatable(MACHINE_DISPLAY_KEY,
 				net.minecraft.network.chat.Component.translatable(aMachineUnitKey),
-				net.minecraft.network.chat.Component.translatable(machineTierUnitKey(aTier)));
+				net.minecraft.network.chat.Component.translatable("gt6.row.mat." + KINETIC_TIER_MAT_SLUGS[aTier - 1]));
 	}
 
 	public static final RegistryObject<Block> SHREDDER = BLOCKS.register("shredder",

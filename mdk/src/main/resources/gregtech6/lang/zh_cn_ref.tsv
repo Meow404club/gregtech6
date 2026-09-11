@@ -258,9 +258,6 @@ direct	gt6.row.size.small	小型	hand
 direct	gt6.row.steam_engine.display	蒸汽引擎 (%s)	hand
 direct	gt6.row.steam_engine.display.strong	强化蒸汽引擎 (%s)	hand
 direct	gt6.row.tap.display	%s龙头	hand
-direct	gt6.row.tier.2	等级 2	hand
-direct	gt6.row.tier.3	等级 3	hand
-direct	gt6.row.tier.4	等级 4	hand
 direct	gt6.spraycan.decolor	可为物品除色	hand
 direct	gt6.spraycan.paint	可将物品喷成%s	hand
 direct	gt6.spraycan.remaining	剩余使用次数：%s.%s	hand

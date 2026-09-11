@@ -79,7 +79,11 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 * @param hardness           the NBT_HARDNESS column (6/4/9/12.5 — NBT_RESISTANCE == hardness)
 	 * @param tier               the tier index 0..3 (the TIER_INPUTS selector — the NBT_INPUT
 	 *                           column 32/128/512/2048 through the :126 conversion lives in
-	 *                           GTMachines.TIER_INPUTS)
+	 *                           GTMachines.TIER_INPUTS). MATERIAL tier, not voltage: the
+	 *                           four variants pick the Kinetic/Heat_T material words
+	 *                           (MT.DATA.Heat_T[1..4] here, MT.java:3689-3690); voltage
+	 *                           names (LV/MV/HV/EV) belong to the Electric_T motor classes
+	 *                           only (task p27-machine-energy-display-fix javadoc ruling)
 	 * @param parallel           the NBT_PARALLEL column (8/16/32/64 — clamped at :130)
 	 * @param parallelDuration   the NBT_PARALLEL_DURATION column (T on all four rows)
 	 * @param recipes            the NBT_RECIPEMAP column as a supplier — RM.Drying is the
