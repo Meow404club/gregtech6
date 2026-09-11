@@ -186,6 +186,34 @@ public abstract class TileEntityBase10MultiBlockBase extends TileEntityBase03Tic
 		return mFacing;
 	}
 
+	/**
+	 * The facing byte the DECLARED PATTERN walk resolves through — the feed every
+	 * {@link gregtech6.multiblock.GTMultiBlockPattern} consumer must use instead of the
+	 * raw {@link #mFacing}: the shared checker
+	 * ({@code gregtech6.multiblock.GTMultiBlockStructureChecker#check}/{@code #form}) and
+	 * the client ghost ({@code gregtech6.client.render.GTMultiBlockGhostMatcher#classify})
+	 * both resolve a declared cell as {@code controller + cellOffset(facing, cell)} where
+	 * {@code cellOffset} SUBTRACTS the side-offset table
+	 * ({@code GTMultiBlockPattern.OFF_X/Y/Z[facing]}) — the GT6 side-centred convention
+	 * "Main Block centered on Side and facing outwards": the structure centre sits at
+	 * {@code -OFF[facing]} behind the controller, and the declared cells are
+	 * CENTRE-relative (the Coke Oven family, upstream MultiTileEntityCokeOven).
+	 *
+	 * <p>Task p27-builder-wand-form-fix: a controller whose shape is anchored AT the
+	 * controller itself — the crucible "Main at Bottom-Center" (upstream
+	 * MultiTileEntityCrucible.java:118-122 walks the walls straight off xCoord/yCoord/zCoord
+	 * with no facing at all, and its :134-136 isInsideStructure is the controller box) —
+	 * overrides this to the ZERO-OFFSET facing ({@code 0}, OFF_X/Y/Z[0] all zero): its
+	 * declared cells are CONTROLLER-relative, and walking them through any horizontal
+	 * facing's table displaced the whole check one block off the machine, leaving the
+	 * builder wand to scaffold a half-box the part relay ({@code wandTarget} →
+	 * {@code isInsideStructure}) then refused to finish. Default = {@link #mFacing} —
+	 * every side-centred machine (Coke Oven, Large Boiler) is unchanged.
+	 */
+	public byte patternWalkFacing() {
+		return mFacing;
+	}
+
 	/** Runtime facing write: NBT field + onFacingChange hook; the BlockState mirror rides the caller's state write. */
 	public void setFacing(byte aFacing) {
 		if (aFacing != mFacing) {

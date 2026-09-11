@@ -425,7 +425,7 @@ public final class GTMultiBlockCommand {
 		int tBefore = countPartItems(tInventory, tPattern);
 
 		GTMultiBlockStructureChecker.FormedVerdict tVerdict =
-				GTMultiBlockStructureChecker.form(tController, tController.mFacing, tPlayer, tInventory); // the placing pass
+				GTMultiBlockStructureChecker.form(tController, tController.patternWalkFacing(), tPlayer, tInventory); // the placing pass — the declared-pattern feed (task p27-builder-wand-form-fix: NOT the raw mFacing, the controller-anchored crucible walks at 0)
 		boolean tOkay = tController.checkStructure(true);                                                    // the linking pass
 		int tAfter = countPartItems(tInventory, tPattern);
 

@@ -152,6 +152,12 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		// degenerates to the identity at facing 0 (OFF[0] = 0,0,0) — the canonical facing
 		// this controller is pinned to, so the pattern coordinates stay controller-relative
 		// exactly like the upstream checkAndSetTargetOffset loop (:119-121, pure xCoord math).
+		// NOTE this pin alone was NEVER a complete guard: the inherited
+		// setFacingFromPlacement (GTMultiBlockControllerBlock.setPlacedBy, every player
+		// placement) overwrites mFacing with the player's horizontal look direction 2..5
+		// — which is why the walk itself must read patternWalkFacing() (the
+		// p27-builder-wand-form-fix override below); the RCON chains never saw the
+		// displacement only because `setblock` has no placer and kept the pin.
 		mFacing = 0;
 	}
 
@@ -220,18 +226,40 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	}
 
 	/**
+	 * The crucible is CONTROLLER-ANCHORED and facing-independent — upstream
+	 * MultiTileEntityCrucible.java:118-122 walks the wall rings straight off
+	 * xCoord/yCoord/zCoord with no facing anywhere, and the :134-136 isInsideStructure is
+	 * the controller box ("Main at Bottom-Center", the upstream :140 tooltip line). The
+	 * declared pattern cells below are therefore CONTROLLER-relative, and the walk must
+	 * NOT pass them through a horizontal facing's side-offset table: task
+	 * p27-builder-wand-form-fix — feeding {@code mFacing} displaced the whole check (and
+	 * the builder-wand scaffold plus the {@code /gtmultiblock form} arm sharing the seam)
+	 * one block off the machine for EVERY live facing, so the wand scaffolded a half-box
+	 * and the part relay refused the far column ({@code wandTarget} →
+	 * {@code isInsideStructure} = false → the silent no-op PASS). The zero-offset facing
+	 * ({@code 0}: {@code OFF_X/Y/Z[0]} all zero, GTMultiBlockPattern.java:99-101)
+	 * resolves every cell relative to the controller itself — upstream-exact for all
+	 * facings.
+	 */
+	@Override
+	public byte patternWalkFacing() {
+		return 0;
+	}
+
+	/**
 	 * Upstream :112-131, walked from the declared pattern (the p16-pattern-checker seam):
 	 * the three wall rings carry their per-layer usage masks, the centre column at
 	 * y+1/y+2 is the fail-not-clear hollow pair (upstream :115-116), and the controller's
 	 * own cell (y+0 centre) passes via the checker's inherited self-cell arm. The
 	 * unloaded guard keeps the upstream semantics: an unloaded probe keeps the last
-	 * verdict (the boiler :289-290 form).
+	 * verdict (the boiler :289-290 form). The walk rides {@link #patternWalkFacing()} —
+	 * the controller-anchored feed, NOT {@code mFacing} (the displacement ruling above).
 	 */
 	@Override
 	public boolean checkStructure2(@Nullable BlockPos aCoordinates, @Nullable Player aPlayer, @Nullable Container aInventory) {
 		if (!hasLevel()) return mStructureOkay; // :133
 		GTMultiBlockStructureChecker.FormedVerdict tVerdict = GTMultiBlockStructureChecker.check(
-				this, mFacing, aCoordinates, aPlayer, aInventory);
+				this, patternWalkFacing(), aCoordinates, aPlayer, aInventory);
 		if (tVerdict.unloaded) return mStructureOkay; // unloaded cells keep the last verdict
 		return tVerdict.formed;
 	}
