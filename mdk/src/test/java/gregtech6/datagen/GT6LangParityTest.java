@@ -280,6 +280,16 @@ private static final int ZH_KEY_FLOOR = 2793;
 		return enEntries;
 	}
 
+	/**
+	 * The chained en face for sibling zh-face tests (task p27-lang-fix-batch2: the zh face
+	 * now covers the mold/crucible/faucet chain, so the spot-check cardinality pin compares
+	 * against THIS recording — a plain GT6EnUs face would measure the pre-gap 2723). Memoized
+	 * like {@link #en()}; the boot fixture is identical across the datagen test classes.
+	 */
+	static Map<String, String> chainedEnFace() {
+		return en();
+	}
+
 	private static Map<String, String> zh() {
 		if (zhEntries == null) zhEntries = collect(true);
 		return zhEntries;
