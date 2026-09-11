@@ -18,8 +18,10 @@ import contextlib
 import importlib.util
 import io
 import json
+import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path, PurePosixPath
 
@@ -222,6 +224,138 @@ class TestMainEndToEndBrand(unittest.TestCase):
             self.assertEqual(rc, 1, msg=out)
             self.assertIn("DIFF [content]", out)
             self.assertIn("RESULT: FAIL", out)
+
+
+class TestStaleGuardMarkers(unittest.TestCase):
+    """陈旧守卫的时戳标记面（p27-ops）。"""
+
+    def test_parse_cache_ledger_header(self):
+        # 实测样本形（main 节点输出 .cache/<sha1> 首行，纳秒精度）
+        line = ("// 1.21.1\t2026-09-12T00:57:47.204892185\t"
+                "Language Provider: gt6:mold[en_us]")
+        expected = (time.mktime(time.strptime("2026-09-12T00:57:47",
+                                              "%Y-%m-%dT%H:%M:%S")) + 0.204892)
+        self.assertAlmostEqual(mod._parse_cache_ts(line), expected, places=3)
+
+    def test_parse_cache_ledger_garbage(self):
+        self.assertIsNone(mod._parse_cache_ts("not a ledger line"))
+        self.assertIsNone(mod._parse_cache_ts("// 1.21.1\tnot-a-date\tprovider"))
+        self.assertIsNone(mod._parse_cache_ts(""))
+
+    def test_node_gen_epoch_prefers_ledger_over_mtime(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / ".cache").mkdir()
+            old = time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(10 ** 9)) + ".5"
+            (root / ".cache" / "aaa").write_text(f"// 1.21.1\t{old}\tProvider P\n")
+            prod = root / "assets" / "x.json"
+            prod.parent.mkdir(parents=True)
+            prod.write_text("{}")  # mtime = now >> 账本时戳(2001)
+            gen, marker = mod.node_gen_epoch(
+                root, {PurePosixPath("assets/x.json"): prod})
+            self.assertIsNotNone(gen)
+            self.assertLess(gen, time.time())  # 选了账本时戳而非 mtime
+            self.assertIn(".cache ledger", marker)
+
+    def test_node_gen_epoch_mtime_fallback_without_ledger(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prod = root / "x.json"
+            prod.write_text("{}")
+            gen, marker = mod.node_gen_epoch(root, {PurePosixPath("x.json"): prod})
+            self.assertIsNotNone(gen)
+            self.assertIn("mtime fallback", marker)
+            self.assertAlmostEqual(gen, prod.stat().st_mtime, places=6)
+
+    def test_node_gen_epoch_none_when_empty(self):
+        with tempfile.TemporaryDirectory() as td:
+            self.assertIsNone(mod.node_gen_epoch(Path(td), {}))
+
+
+class TestStaleGuardEndToEnd(unittest.TestCase):
+    """端到端：STALE FAIL（默认）→ --allow-stale 逃生 → fresh 快照放行。"""
+
+    @staticmethod
+    def _git(cwd: Path, *args: str) -> None:
+        subprocess.run(["git", "-C", str(cwd), *args],
+                       check=True, capture_output=True, text=True, timeout=60)
+
+    def _run_main(self, canon: Path, node: Path, extra: list[str]) -> tuple[int, str]:
+        argv = sys.argv
+        buf = io.StringIO()
+        try:
+            sys.argv = ["datagen_tree_check.py", "--canonical", str(canon),
+                        "--node-output", str(node), *extra]
+            with contextlib.redirect_stdout(buf):
+                rc = mod.main()
+        finally:
+            sys.argv = argv
+        return rc, buf.getvalue()
+
+    def test_stale_snapshot_fails_then_escape_allows(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            # git 仓库放上层、canonical 根是其子目录——collect_files 会把 .git/ 收进
+            # 产物集，故不能在 canonical 根内 init
+            repo = root / "repo"
+            canon = repo / "tree"
+            node = root / "node"
+            (canon / "data/gt6/forge/biome_modifier").mkdir(parents=True)
+            (node / "data/gt6/neoforge/biome_modifier").mkdir(parents=True)
+            (canon / "data/gt6/forge/biome_modifier/a.json"
+             ).write_bytes(_biome_json("forge"))
+            (node / "data/gt6/neoforge/biome_modifier/a.json"
+             ).write_bytes(_biome_json("neoforge"))
+            # canonical 侧：真 git 仓库，HEAD 提交时间 = now
+            self._git(repo, "init", "-q")
+            self._git(repo, "-c", "user.email=t@t", "-c", "user.name=t",
+                      "add", "-A")
+            self._git(repo, "-c", "user.email=t@t", "-c", "user.name=t",
+                      "commit", "-q", "-m", "canonical write")
+            # node 侧：账本时戳钉在 2001（<< HEAD）→ 陈旧
+            (node / ".cache").mkdir()
+            (node / ".cache" / "led").write_text(
+                "// 1.21.1\t2001-01-01T00:00:00.0\tProvider P\n")
+
+            rc, out = self._run_main(canon, node, [])
+            self.assertEqual(rc, 1, msg=out)
+            self.assertIn("RESULT: FAIL — STALE node snapshot", out)
+            self.assertIn("--allow-stale", out)
+
+            rc, out = self._run_main(canon, node, ["--allow-stale"])
+            self.assertEqual(rc, 0, msg=out)
+            self.assertIn("STALE-WARN (allowed by --allow-stale)", out)
+            self.assertIn("NORMALIZED [add-features-neoforge→forge] "
+                          "data/gt6/forge/biome_modifier/a.json", out)
+            self.assertIn("RESULT: OK", out)
+
+    def test_fresh_snapshot_passes_guard(self):
+        # 账本时戳 = 现在（>= HEAD 提交钟面）→ STALE-CHECK OK，无 WARN 无 FAIL
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            repo = root / "repo"
+            canon = repo / "tree"
+            node = root / "node"
+            (canon / "data/gt6/forge/biome_modifier").mkdir(parents=True)
+            (node / "data/gt6/neoforge/biome_modifier").mkdir(parents=True)
+            (canon / "data/gt6/forge/biome_modifier/a.json"
+             ).write_bytes(_biome_json("forge"))
+            (node / "data/gt6/neoforge/biome_modifier/a.json"
+             ).write_bytes(_biome_json("neoforge"))
+            self._git(repo, "init", "-q")
+            self._git(repo, "-c", "user.email=t@t", "-c", "user.name=t",
+                      "add", "-A")
+            self._git(repo, "-c", "user.email=t@t", "-c", "user.name=t",
+                      "commit", "-q", "-m", "canonical write")
+            now = time.time()
+            stamp = time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(now))
+            (node / ".cache").mkdir()
+            (node / ".cache" / "led").write_text(
+                f"// 1.21.1\t{stamp}.0\tProvider P\n")
+
+            rc, out = self._run_main(canon, node, [])
+            self.assertEqual(rc, 0, msg=out)
+            self.assertIn("STALE-CHECK OK", out)
 
 
 if __name__ == "__main__":

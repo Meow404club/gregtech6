@@ -30,11 +30,19 @@ mdk/versions/1.21.1-neoforge/build/datagen-output（验证产物非入库面）�
     匹配发生在路径归一之后。
   * 归一化后做三查：仅 canonical 有 / 仅 node 有 / 双侧都有但字节不同。
     双侧文件计数（原始与归一化后）必须相等，否则非零退出。
+  * 陈旧守卫（p27-ops，防复发，先于对账）：节点输出 = 非入库验证产物，可能落后于
+    正典树（research.p27-lang-legs-delta 实录：陈旧快照比出 66 键 4.4KB en_us 假
+    分叉）。开跑先比时戳——节点生成时戳（优先 .cache 账本头
+    「// <version>\t<ISO>\t<provider>」，退化产物 mtime）vs git HEAD 正典树最近
+    写入（git log -1 -- <canonical>）。快照更早 → STALE FAIL（对账基线不可信，
+    宁红勿哑）；--allow-stale 显式逃生（降级 WARN 继续，日志留痕）；git/标记不可得
+    → 打印 STALE-CHECK SKIPPED 继续（可见，不静默）。
   * 任何未归一差异 → exit 1 并打印差异文件清单；全等 → exit 0 并打印摘要
     （byte 相等数 / normalized 数 / loot 带数）。
 
 用法：
-  python3 tools/datagen_tree_check.py [--canonical DIR] [--node-output DIR] [--max-list N]
+  python3 tools/datagen_tree_check.py [--canonical DIR] [--node-output DIR] \
+      [--max-list N] [--allow-stale]
 
 正例（p25 两层归一后，exit 0）：
   $ python3 tools/datagen_tree_check.py
@@ -68,7 +76,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
+import time
 from pathlib import Path, PurePosixPath
 from typing import Callable
 
@@ -431,6 +441,99 @@ CACHE_DIR_NAME = ".cache"          # HashCache 账本（输出根内，gitignore
 ROOT_VERSION_FILE = "version.json"  # 1.21.x FileCache 输出根版本头（运行时戳记，非产物）
 DEFAULT_MAX_LIST = 100
 
+
+# ── 陈旧守卫（p27-ops-treecheck-stale-guard，防复发）────────────────────────────
+# 节点输出 = 非入库验证产物（ADR-P17-1），可能落后于正典树：research.p27-lang-legs-delta
+# 实录——main checkout 的节点快照停在 16925b38 之前，与再生后的正典树比出 66 键 4.4KB
+# en_us「假分叉」。守卫判据：节点快照生成时戳 < git HEAD 正典树最近写入 → 对账基线不可信。
+# 裁定 FAIL（fail-visible 纪律：陈旧基线上的「绿」不可信，宁红勿哑），--allow-stale 显式
+# 逃生（降级 WARN 继续跑，日志留痕）；git/标记不可得 → 打印 SKIPPED 继续（可见，不哑）。
+
+def _parse_cache_ts(line: str) -> float | None:
+    """解析 1.21.x FileCache 账本头时戳：「// <mc-version>\\t<ISO-local>\\t<provider>」。
+
+    实测样本（main 节点输出 .cache/<sha1> 首行）：
+    `// 1.21.1\t2026-09-12T00:57:47.204892185\tLanguage Provider: gt6:mold[en_us]`
+    ISO 带纳秒精度，fromisoformat 只吃 3/6 位小数——手工截到微秒；本地时区
+    （LocalDateTime 形，与 mtime 同钟）。不可解析返回 None（调用方计数跳过）。
+    """
+    head = line.split("\t")
+    if len(head) < 2 or not head[0].startswith("//"):
+        return None
+    iso = head[1].strip()
+    if "." in iso:
+        iso, _, frac = iso.partition(".")
+    else:
+        frac = ""
+    frac = "".join(ch for ch in frac if ch.isdigit())[:6]
+    try:
+        epoch = time.mktime(time.strptime(iso, "%Y-%m-%dT%H:%M:%S"))
+    except ValueError:
+        return None
+    if frac:
+        epoch += float(frac) / 10 ** len(frac)
+    return epoch
+
+
+def node_gen_epoch(node_root: Path,
+                   node_files: dict[PurePosixPath, Path]) -> tuple[float, str] | None:
+    """节点快照生成时戳（unix 秒）+ 标记说明；不可得返回 None。
+
+    优先 `.cache` 账本头（1.21.x FileCache 每 provider 一文件、首行自带当次生成
+    时戳——runData 写入的运行时标记，checkout/rebase 不重写）；无账本可读时退化为
+    产物文件最大 mtime（checkout 会重置 mtime，语义弱化但守卫方向不变：宁可误红
+    不可漏放，--allow-stale 可逃）。两标记都不可得 = None。
+    """
+    cache_dir = node_root / CACHE_DIR_NAME
+    best: float | None = None
+    counted = 0
+    if cache_dir.is_dir():
+        for f in sorted(cache_dir.iterdir()):
+            if not f.is_file():
+                continue
+            try:
+                with f.open("r", encoding="utf-8", errors="replace") as fh:
+                    ts = _parse_cache_ts(fh.readline())
+            except OSError:
+                continue
+            if ts is not None:
+                counted += 1
+                best = ts if best is None else max(best, ts)
+    if best is not None:
+        return best, f".cache ledger ({counted} provider entries)"
+    mtimes = [p.stat().st_mtime for p in node_files.values()]
+    if mtimes:
+        return max(mtimes), "product-file mtime fallback"
+    return None
+
+
+def canonical_head_epoch(canonical_root: Path) -> tuple[int, str] | None:
+    """正典树在 git HEAD 的最近一次写入：(unix 秒, "hash subject")；不可得返回 None。
+
+    `git log -1 -- <canonical 相对路径>`——按路径取最后一次触及提交（worktree 内
+    同样成立：rev-parse --show-toplevel 返回所在工作树根）。git 缺失/不在仓库内/
+    路径无历史 → None（调用方打印 SKIPPED，可见不哑）。
+    """
+    try:
+        top = subprocess.run(["git", "-C", str(canonical_root),
+                              "rev-parse", "--show-toplevel"],
+                             capture_output=True, text=True, timeout=30)
+        if top.returncode != 0:
+            return None
+        toplevel = Path(top.stdout.strip())
+        rel = canonical_root.resolve().relative_to(toplevel.resolve())
+        lg = subprocess.run(
+            ["git", "-C", str(toplevel), "log", "-1", "--format=%ct %h %s",
+             "--", rel.as_posix()],
+            capture_output=True, text=True, timeout=30)
+        out = lg.stdout.strip()
+        if lg.returncode != 0 or not out:
+            return None
+        ts, _, desc = out.partition(" ")
+        return int(ts), desc
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return None
+
 # ── 声明偏离表（forge-gated 仅 canonical 面，p26-crucible-physics-smeltery 引入）──────
 # 出处：b8a58a0a——crafting provider（RecipeProvider/FinishedRecipe 流）骑 1.20.1-forge
 # stonecutter 块：21.1 删除 FinishedRecipe，RecipeOutput 流是卡 B 的 21.1 datagen 面；
@@ -543,7 +646,8 @@ def main() -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="正例: python3 tools/datagen_tree_check.py            # exit 0\n"
                "负例: 对 node 输出任一文件追加一字节后再跑 → exit 1 并定位该文件\n"
-               "     （已注册带内未注册形差同样 FAIL——归一绝不静默吞差，详见模块 docstring）",
+               "     （已注册带内未注册形差同样 FAIL——归一绝不静默吞差，详见模块 docstring）\n"
+               "     节点快照早于正典树 HEAD 最近写入 → STALE FAIL（--allow-stale 显式逃生）",
     )
     parser.add_argument("--canonical", type=Path, default=None,
                         help=f"正典树根（默认 {repo_root / 'mdk/src/generated/resources'}）")
@@ -551,6 +655,9 @@ def main() -> int:
                         help=f"节点输出根（默认 {repo_root / 'mdk/versions/1.21.1-neoforge/build/datagen-output'}）")
     parser.add_argument("--max-list", type=int, default=DEFAULT_MAX_LIST,
                         help=f"差异/归一清单最多打印条数（默认 {DEFAULT_MAX_LIST}，超出只报计数）")
+    parser.add_argument("--allow-stale", action="store_true",
+                        help="陈旧守卫逃生阀：节点快照早于正典树 HEAD 最近写入时降级为"
+                             " STALE-WARN 继续对账（显式留痕；默认 STALE FAIL）")
     args = parser.parse_args()
 
     canonical_root: Path = args.canonical or (repo_root / "mdk/src/generated/resources")
@@ -559,6 +666,32 @@ def main() -> int:
 
     canon = collect_files(canonical_root)
     node = collect_files(node_root)
+
+    # ── 陈旧守卫（p27-ops）：对账前先验基线新鲜度，fail-visible ──────────────
+    gen = node_gen_epoch(node_root, node)
+    head = canonical_head_epoch(canonical_root)
+    if gen is None or head is None:
+        print(f"STALE-CHECK SKIPPED (node gen marker: "
+              f"{'ok' if gen else 'unavailable'}; "
+              f"git baseline: {'ok' if head else 'unavailable'})")
+    elif gen[0] < head[0]:
+        msg = (f"node snapshot [{gen[1]}] generated {gen[0]:.0f} is OLDER than the "
+               f"canonical tree's last HEAD write [{head[1]}] at {head[0]} "
+               f"(by {head[0] - gen[0]:.0f}s) — the reconciliation baseline is "
+               "untrustworthy (research.p27-lang-legs-delta: stale node snapshot "
+               "manufactured the phantom 4.4KB en_us lang delta)")
+        if args.allow_stale:
+            print(f"STALE-WARN (allowed by --allow-stale): {msg}")
+        else:
+            print(f"RESULT: FAIL — STALE node snapshot. {msg}")
+            print("  remedy : regenerate the node output in the same round "
+                  "(:mdk:1.21.1-neoforge:runData), then rerun")
+            print("  escape : rerun with --allow-stale (explicit, kept in the log)")
+            return 1
+    else:
+        print(f"STALE-CHECK OK (node {gen[1]} at {gen[0]:.0f} >= canonical HEAD "
+              f"write [{head[1]}] at {head[0]})")
+
     # the p27 forward-twin band: paired OUT of the canonical comparison set before
     # normalize — see FORWARD_TWIN_PREFIX (the symmetric c→forge mapping would fold
     # these onto the forge twins' keys, silently overwriting dict entries)
