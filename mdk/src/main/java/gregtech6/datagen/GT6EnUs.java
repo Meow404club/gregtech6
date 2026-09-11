@@ -533,15 +533,18 @@ public class GT6EnUs extends LanguageProvider {
      * The kitchen family keys (task p26-kitchen-pot-bowl): the three manual blocks and
      * the raw bowl item, display names VERBATIM from the upstream registration rows
      * ("Wooden Bathing Pot" :2173, "Bathing Pot" :2175, "Ceramic Bowl" :2177 — all
-     * "Misc Tool Blocks") plus the "Clay Bowl" raw item (MultiItemRandomTools.java:119)
-     * and the family creative tab (the upstream category of the kitchen rows).
+     * "Misc Tool Blocks") plus the "Clay Bowl" raw item (MultiItemRandomTools.java:119).
+     * Task p27-lang-fix — the TAB RETIREMENT: the "GT6 Kitchen" tab face
+     * (itemGroup.gt6.kitchen) is gone per the user ruling (the pot/bowl rows are
+     * processing machines, not cookware; no renamed successor) — the four items ride
+     * the machines tab through the GT6Kitchen BuildCreativeModeTabContentsEvent join,
+     * so this provider carries no tab key for the family anymore.
      */
     private void addKitchen() {
         add("block.gt6.bathing_pot_wood", "Wooden Bathing Pot");
         add("block.gt6.bathing_pot_steel", "Bathing Pot");
         add("block.gt6.mixing_bowl", "Ceramic Bowl");
         add("item.gt6.clay_bowl", "Clay Bowl");
-        add("itemGroup.gt6.kitchen", "GT6 Kitchen");
     }
 
     private void addBarrels() {

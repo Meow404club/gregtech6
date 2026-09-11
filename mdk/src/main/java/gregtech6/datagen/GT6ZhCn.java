@@ -111,15 +111,17 @@ public class GT6ZhCn extends LanguageProvider {
 	 * VERBATIM (tmp/gregtech.lang: "木质浸洗盆" :13542 = meta 32721 Wooden Bathing Pot,
 	 * "浸洗盆" :13529 = meta 32708 Bathing Pot, "搅拌盆" :13527 = meta 32706 Ceramic Bowl,
 	 * "粘土碗" :10110 = meta 995 Clay Bowl). Hand rows (the reference dump keys are the
-	 * meta-keyed 1.7 forms, not these registry-path keys). The tab title is hand (no
-	 * upstream category zh row).
+	 * meta-keyed 1.7 forms, not these registry-path keys). Task p27-lang-fix — the TAB
+	 * RETIREMENT: the former hand tab title ("itemGroup.gt6.kitchen" = "GT6 厨具") is
+	 * gone with the tab itself (the user ruling: the pot/bowl rows are processing
+	 * machines, not cookware — they ride the machines tab now); the four display names
+	 * KEEP their dump-verbatim faces (ledger §1.2).
 	 */
 	private void addKitchenUnits() {
 		add("block.gt6.bathing_pot_wood", "木质浸洗盆");
 		add("block.gt6.bathing_pot_steel", "浸洗盆");
 		add("block.gt6.mixing_bowl", "搅拌盆");
 		add("item.gt6.clay_bowl", "粘土碗");
-		add("itemGroup.gt6.kitchen", "GT6 厨具");
 	}
 
 	/**

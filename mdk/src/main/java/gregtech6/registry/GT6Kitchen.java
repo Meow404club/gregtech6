@@ -3,9 +3,7 @@ package gregtech6.registry;
 import java.util.function.Supplier;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -13,6 +11,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -57,6 +56,14 @@ import gregtech6.tileentity.tools.GT6MixingBowlBlockEntity;
  * wave4 GUI ruling binds menu-less carriers (zero new MenuType). Rendering: no
  * blockstate variants beyond the default (the mDisplay fluid-tint renderer is the pool
  * cut — the model is the plain cube placeholder like the barrel family rows).
+ *
+ * <p>Task p27-lang-fix — the CREATIVE-TAB RETIREMENT: the standalone "kitchen" tab
+ * ({@code gt6:kitchen}, the former "Misc Tool Blocks" category face) is retired per the
+ * user ruling — the pot/bowl rows are processing machines, not cookware, and NO renamed
+ * successor tab was kept; the four family items join {@code GTMachines.MACHINES_TAB}
+ * through {@link #onBuildTabContents} (the GTGrassBlocks event seam). The
+ * {@code itemGroup.gt6.kitchen} lang key retired with it on both locales; the block
+ * display names keep their dump-verbatim zh faces.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Kitchen {
@@ -64,7 +71,6 @@ public final class GT6Kitchen {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "gt6");
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
-	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
 
 	/**
 	 * The wood pot — RM.Bath, 4000 L (upstream :2173; flammability 100 recorded on the
@@ -126,18 +132,26 @@ public final class GT6Kitchen {
 	public static final RegistryObject<Item> CLAY_BOWL_RAW = ITEMS.register("clay_bowl",
 			() -> new Item(new Item.Properties()));
 
-	/** The "Misc Tool Blocks" category tab (upstream MTE category of the kitchen rows, :2173 column 2). */
-	public static final RegistryObject<CreativeModeTab> KITCHEN_TAB = CREATIVE_MODE_TABS.register("kitchen",
-			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
-					.title(Component.translatable("itemGroup.gt6.kitchen"))
-					.icon(() -> new ItemStack(MIXING_BOWL_ITEM.get()))
-					.displayItems((aParameters, aOutput) -> {
-						aOutput.accept(new ItemStack(BATHING_POT_WOOD_ITEM.get()));
-						aOutput.accept(new ItemStack(BATHING_POT_STEEL_ITEM.get()));
-						aOutput.accept(new ItemStack(MIXING_BOWL_ITEM.get()));
-						aOutput.accept(new ItemStack(CLAY_BOWL_RAW.get()));
-					})
-					.build());
+	/**
+	 * The MACHINES-TAB join (task p27-lang-fix — the kitchen-tab retirement): the user
+	 * ruling retired the standalone kitchen tab WITHOUT a renamed successor (the pot/bowl
+	 * rows are processing machines, not cookware — "no kitchen-machines tab"), so the four
+	 * family items ride the machines tab through the same event seam the grass family uses
+	 * for BUILDING_BLOCKS (GTGrassBlocks.onBuildTabContents, the BuildCreativeModeTabContents
+	 * fork form). Key-face comparison via location()/getId() — the two faces agree across
+	 * both registration universes without relying on ResourceKey interning. Zero edits
+	 * inside GTMachines.java (the tint-queue card owns that file; this join keeps the
+	 * card scopes disjoint).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			aEvent.accept(new ItemStack(BATHING_POT_WOOD_ITEM.get()));
+			aEvent.accept(new ItemStack(BATHING_POT_STEEL_ITEM.get()));
+			aEvent.accept(new ItemStack(MIXING_BOWL_ITEM.get()));
+			aEvent.accept(new ItemStack(CLAY_BOWL_RAW.get()));
+		}
+	}
 
 	private GT6Kitchen() {}
 
@@ -153,7 +167,8 @@ public final class GT6Kitchen {
 		BLOCKS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
 		ITEMS.register(tModBus);
-		CREATIVE_MODE_TABS.register(tModBus);
+		// task p27-lang-fix: the kitchen CREATIVE_MODE_TABS register retired with the tab —
+		// the family items join GTMachines.MACHINES_TAB via onBuildTabContents instead.
 	}
 
 	/** Registration smoke evidence (the GTBarrels.onCommonSetup log shape). */

@@ -124,8 +124,16 @@ public class GT6LangParityTest {
 	 * Kinetic_T material words, already-present gt6.row.mat.* keys — a name-face correction
 	 * to the upstream "Shredder ("+aMat.getLocal()+")" caliber, not a coverage regression;
 	 * the only ratchet movement this task card will ever make downward).
+	 *
+	 * <p>Task p27-lang-fix: lowered to the measured 2662 — the SPEC retires the kitchen
+	 * creative tab (itemGroup.gt6.kitchen, both locales, -1 key; the user ruling kept NO
+	 * renamed successor — the four pot/bowl/clay items ride the machines tab through the
+	 * GT6Kitchen BuildCreativeModeTabContentsEvent join). A registration/creative-tab
+	 * retirement, not a coverage regression — the display-name keys all stay. The zh VALUE
+	 * fixes of this card (the P0/P1 ledger rows + the B4/B5 rules) are value-only and
+	 * move no counts.
 	 */
-	private static final int ZH_KEY_FLOOR = 2663;
+	private static final int ZH_KEY_FLOOR = 2662;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
