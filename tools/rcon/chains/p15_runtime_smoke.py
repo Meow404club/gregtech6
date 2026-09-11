@@ -12,12 +12,20 @@ registration face (task p15-rcon-dual-gate spec ③).
     commands.help.failed instead); gt6gui (a bare literal) is probed by dispatch —
     the console run reaches its player-requirement rejection. 14 roots.
 
-  M basic machine: the shredder arm (GTMachineCommand canon) behind the
-    documented fakesource regime switch — place / input / run / check with the
-    ContainerData three-state verdict (progress=true done=true idle=true) and
-    dust_stone in the output; the flag is global, so it is turned OFF again
-    before the D phase (the self-feed would eat the loop arm's pre-ignition
-    running=false).
+  M basic machine: the shredder arm (GTMachineCommand canon) on the DATA PLANE
+    (the p27-red-chains-modernize reshape). The shredder is a menu-less carrier
+    (the MenuType registration is gone since the p26-mui-a-menu-deregistration
+    dereg), so P26 MUI batch A made run() refuse it BY DESIGN (GTMachineCommand
+    :609-614 — "use inject+check instead"): the refusal itself is pinned as the
+    design-behavior probe (allow_failed — the sendFailure text is the assertion,
+    "opening the GUI" is not RCON-observable and no fake arm is invented). The
+    row drive is inject/check: place / run refusal / input 1 cobblestone /
+    inject (16 ticks x 16 EU = the exact :692 budget: EUt 16 x 16 t) / check
+    (out[0]=9x dust_stone, the ShCL :692 shape; data=-2 is the menu-less live
+    proof — the ContainerData three-state verdict of the old run arm was a MENU
+    surface, the field report is not). No fakesource flip anymore: the inject
+    drive IS the shipped grid-fed doInject seam (GTMachineCommand :91 — off is
+    the shipped default), the global regime switch retired with the run arm.
 
   B boiler: the p13 deterministic immune arm — 800 L distw + 64000 HU →
     efficiency 10000/10000 (PRISTINE, the :119 distilled short-circuit) and
@@ -87,24 +95,30 @@ steps.append(Step(GT6GUI_DISPATCH, expect=GT6GUI_EXPECT))
 
 # ------------------------------------------------- M: the basic machine
 steps += [
-    phase("M: basic machine — the shredder arm (GTMachineCommand canon), fake source"),
-    # the p8-d3/p11-rotor-source-flip era ships grid-fed by default; the acceptance
-    # seam is the documented regime switch (the README §oven fake-power note is
-    # pre-p8 legacy — the bare oven arm it describes fails on BOTH nodes today).
-    Step("gt6machine fakesource on", expect="ENERGY_FAKE_SOURCE set true"),
+    phase("M: basic machine — the shredder arm (GTMachineCommand canon), the data plane"),
+    # the drive seam is the direct doInject (the shipped grid-fed regime, the same
+    # data plane the p25/p26-W1 chains drive) — no fakesource flip, the global
+    # regime switch retired with the run arm (see the docstring M section)
     Step(f"gt6machine shredder place {OV}", expect="GT6 shredder placed"),
-    Step(f"gt6machine shredder input 8 {OV}", expect="cobblestone into slot 0"),
-    # one Step = one expect (framework semantics); a failed run emits the FAILED
-    # literal, which the judge counts on its own — the ContainerData three-state
-    # line plus output are the sufficient assertions here.
-    Step(f"gt6machine shredder run 200 {OV}", expect="progress=true done=true idle=true"),
+    # P26 MUI batch A design behavior, re-pinned as the probe (the former red):
+    # the menu-less carrier's run is refused by design — GTMachineCommand :609-614
+    Step(f"gt6machine shredder run 200 {OV}",
+         expect="run refused: no MenuType bound", allow_failed=True),
+    Step(f"gt6machine shredder input 1 {OV}", expect="cobblestone into slot 0"),
+    # the :692 row (1 cobble -> 9x dust_stone, EUt 16, 16 t = 256 EU budget): 16
+    # inject ticks x 16 EU close the exact one-batch budget inside the command;
     # the out[0] column renders via ItemStack.toString: namespaced on 21.1
-    # ("63x gt6:dust_stone"), plain on 1.20.1 ("63x dust_stone") — the bare class
-    # name is the cross-version substring.
-    Step(f"gt6machine shredder check {OV}", expect="dust_stone"),
-    # the flag is GLOBAL: turn it off before the D phase — the loop arm's
-    # pre-ignition running=false must not be eaten by the self-feed
-    Step("gt6machine fakesource off", expect="ENERGY_FAKE_SOURCE set false"),
+    # ("9x gt6:dust_stone"), plain on 1.20.1 ("9x dust_stone")
+    Step(f"gt6machine shredder inject 16 16 {OV}", expect="outputs=[9x dust_stone; ]",
+         node_expects={"1.21.1": "outputs=[9x gt6:dust_stone; ]"}),
+    Step(f"gt6machine shredder check {OV}", expect="out[0]=9x dust_stone",
+         node_expects={"1.21.1": "out[0]=9x gt6:dust_stone"}),
+    # the menu-less live proof: the ContainerData trio is a menu surface, the field
+    # report is not — check answers data=-2 (GTMachineCommand :804-806). No
+    # running=false assert here: right after the inject window the running latch
+    # still reads true (every iteration carried energy, the machine has not seen
+    # its idle debounce yet) — live-verified 2026-09-11 forge leg
+    Step(f"gt6machine shredder check {OV}", expect="data=-2"),
 ]
 
 # ------------------------------------------------- B: the boiler arm
@@ -184,11 +198,11 @@ CHAIN = Chain(
     sites=gt6world.declare_sites(OVEN, RIG, BOILER, LOGI, METAL),
     preferred_ports=(25783, 25793),      # this card's pinned rcon/query pair; game = rcon-10
     # the boot-health smoke boots ALONE (framework.fresh_boot: the group boundary is
-    # a fresh boot — decision 2026-09-04-rcon-gate-split ③), and it flips the GLOBAL
-    # fakesource regime switch (on in M, off before D — self-cleaning, but declared
-    # so the session mutates-conflict detection sees it)
+    # a fresh boot — decision 2026-09-04-rcon-gate-split ③). No mutates since the
+    # p27 modernization: the fakesource global switch is retired with the run arm —
+    # the inject drive is the shipped grid-fed doInject seam, no regime flip, so the
+    # session mutates-conflict detection has nothing to see
     fresh_boot=True,
-    mutates=("fakesource",),
     steps=steps,
 )
 
