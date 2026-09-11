@@ -108,6 +108,34 @@ public class GT6CFoamFamilyTest extends GTOfflineTestBase {
 		assertTrue(sFreshSlab.defaultBlockState().hasProperty(net.minecraft.world.level.block.SlabBlock.TYPE));
 	}
 
+	/**
+	 * The owned foam renders BOTH states as the static model (task p27-cfoam-owned-render):
+	 * vanilla BaseEntityBlock.java:19-21 defaults getRenderShape to INVISIBLE (the BER
+	 * assumption) and the class chain GT6CFoamOwnedBlock → GTEntityBlock → BaseEntityBlock
+	 * inherited it — the owned foam (wet and dried alike) was skipped by the chunk renderer
+	 * client-side. The override rides the GTOvenBlock.java:97-98 / GTBasicMachineBlock.java:229-230
+	 * precedent form verbatim; this test pins the property so the third BE block cannot regress.
+	 */
+	@Test
+	void ownedBlockRendersBothStatesAsModel() {
+		// the wet state (the spray landing face, DRIED=false default)
+		assertEquals(net.minecraft.world.level.block.RenderShape.MODEL,
+				sOwned.getRenderShape(sOwned.defaultBlockState()),
+				"the wet owned foam is a MODEL render (the INVISIBLE default would skip the chunk render)");
+		// the dried state (the dry-transition face, DRIED=true — the same block instance renders on)
+		assertEquals(net.minecraft.world.level.block.RenderShape.MODEL,
+				sOwned.getRenderShape(sOwned.defaultBlockState().setValue(GT6CFoamOwnedBlock.DRIED, true)),
+				"the dried owned foam is a MODEL render too");
+		// the plain family sanity — the symptom mapping: only the owned carrier sat in the
+		// INVISIBLE-inheriting chain; the plain forms are vanilla Block/SlabBlock subclasses
+		// (structural isInstance form: their inherited getRenderShape is protected on 1.21.1,
+		// not callable, and a sibling instanceof is a compile error)
+		assertFalse(net.minecraft.world.level.block.BaseEntityBlock.class.isInstance(sFresh),
+				"the plain fresh block is not a BE carrier");
+		assertFalse(net.minecraft.world.level.block.BaseEntityBlock.class.isInstance(sDried),
+				"the plain dried block is not a BE carrier");
+	}
+
 	@Test
 	void freshPropertiesAreTheUpstreamNumbersVerbatim() throws Exception {
 		Object tProps = GT6CFoamFreshBlock.freshProperties();
