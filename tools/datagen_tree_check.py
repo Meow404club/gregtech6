@@ -388,6 +388,18 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/gt6/advancements/recipes/misc/smeltery_stone.json",
 })
 
+# ── 声明偏离带（canonical 前瞻孪生树，p27-vanilla-tag-dual-tree 引入）──────────────
+# 出处：3b7ada6c / f9dff2fb——forge 腿 runData 在正典树新产 data/c/tags/items/**（26 个
+# 原版交集面 c: 孪生，与 forge: 孪生同成员）。该带必须在对账配对前从 canonical 集剔出：
+# SEGMENT_MAP 的 c→forge 对两侧对称施用，canonical 的 data/c 文件若留在配对集会被归一
+# 折叠到 data/forge 同名键上、dict 后写静默覆盖（违反 fail-visible 纪律）。21.1 节点的
+# data/c 文件不受影响——它们是映射的目标侧（node c→forge→canonical forge 树）照常对账，
+# 其与 forge 孪生的内容等价正是映射要验证的东西；孪生树自身的成员正确性由离线测试
+# GT6TagsDatagenTest.vanillaIntersectionTwinTreesCarryTheSameMembers 钉死。
+# 逐文件显式打印、摘要独立计数（绝不静默吞差）；该带仅 canonical 有属结构性（节点侧
+# 自己的 c: 树是全家族+单数目录，经映射对 forge 树对账）。
+FORWARD_TWIN_PREFIX = "data/c/"
+
 
 def collect_files(root: Path) -> dict[PurePosixPath, Path]:
     """递归收集 root 下全部产物文件：相对路径(POSIX 形) → 绝对路径。
@@ -446,6 +458,11 @@ def main() -> int:
 
     canon = collect_files(canonical_root)
     node = collect_files(node_root)
+    # the p27 forward-twin band: paired OUT of the canonical comparison set before
+    # normalize — see FORWARD_TWIN_PREFIX (the symmetric c→forge mapping would fold
+    # these onto the forge twins' keys, silently overwriting dict entries)
+    forward_twin = sorted(rel for rel in canon if str(rel).startswith(FORWARD_TWIN_PREFIX))
+    canon = {rel: p for rel, p in canon.items() if not str(rel).startswith(FORWARD_TWIN_PREFIX)}
     canon_norm = {normalize(rel): abs_path for rel, abs_path in canon.items()}
     node_norm = {normalize(rel): abs_path for rel, abs_path in node.items()}
 
@@ -489,6 +506,13 @@ def main() -> int:
     for rel in gated:
         print(f"DECLARED [forge-gated, b8a58a0a] {rel}")
 
+    # the p27 forward-twin band: already paired out of `canon` pre-normalize (see
+    # FORWARD_TWIN_PREFIX) — printed with its own counter, never silent
+    for rel in forward_twin[:args.max_list]:
+        print(f"DECLARED [p27 forward-twin] {rel}")
+    if len(forward_twin) > args.max_list:
+        print(f"DECLARED [p27 forward-twin] ... and {len(forward_twin) - args.max_list} more")
+
     fail = bool(only_canon or only_node or diff_content)
     if fail:
         def emit(kind: str, lines: list[str]) -> None:
@@ -505,13 +529,15 @@ def main() -> int:
               f"path(s) differ (content:{len(diff_content)}, "
               f"only-canonical:{len(only_canon)}, only-node:{len(only_node)}, "
               f"forge-gated declared:{len(gated)}, "
+              f"p27 forward-twin declared:{len(forward_twin)}, "
               f"normalized:{len(normalized)} accepted)")
         return 1
 
     print(f"RESULT: OK — {len(common) - len(normalized)} files byte-identical + "
           f"{len(normalized)} value-shape normalized after path mapping + "
           f"registered value normalizers (normalized:{len(normalized)}, "
-          f"forge-gated declared:{len(gated)})")
+          f"forge-gated declared:{len(gated)}, "
+          f"p27 forward-twin declared:{len(forward_twin)})")
     return 0
 
 

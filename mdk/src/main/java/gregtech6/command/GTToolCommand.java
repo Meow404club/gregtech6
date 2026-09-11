@@ -1,18 +1,26 @@
 package gregtech6.command;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.logging.LogUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
@@ -81,6 +89,55 @@ public final class GTToolCommand {
 								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))));
 		event.getDispatcher().register(tTool);
 		LOGGER.info("Registered GT6 tool acceptance command /gt6tool (dismantle, cut)");
+		// task p27-vanilla-tag-dual-tree: the tag-membership debug command — the RCON
+		// face of the dual-tree acceptance (`/gt6tags dump <tag>` lists the bound
+		// runtime members of ANY item tag, so the forge:/c: twin faces are provable
+		// live on both legs). Greedy-string argument: the tag id carries ':' and '/'
+		// which the word() parser would reject.
+		event.getDispatcher().register(Commands.literal("gt6tags")
+			.requires(source -> source.hasPermission(2))
+			.then(Commands.literal("dump")
+				.then(Commands.argument("tag", StringArgumentType.greedyString())
+					.executes(context -> dumpTag(context.getSource(),
+							StringArgumentType.getString(context, "tag"))))));
+		LOGGER.info("Registered GT6 tags debug command /gt6tags (dump)");
+	}
+
+	/**
+	 * {@code /gt6tags dump <tag>} — list the bound runtime members of one item tag
+	 * (task p27-vanilla-tag-dual-tree). The spec string parses to a ResourceLocation
+	 * (bare-identifier ctor argument — the 1.20.1 form, shifted to
+	 * {@code ResourceLocation.parse} on the 21.1 leg by the stonecutter swap table),
+	 * the members read through {@code BuiltInRegistries.ITEM.getTagOrEmpty} (the
+	 * vanilla TagEntry.java:36 read shape, same-named on both legs) — the RUNTIME
+	 * merged set, i.e. the Forge-shipped default members and the mod-datatpack
+	 * members in one answer, which is exactly the unification-loop face the card
+	 * proves ({@code forge:ingots/iron} must answer BOTH minecraft:iron_ingot and
+	 * gt6:ingot_iron). Output is sorted-stable for the RCON assertions; an absent
+	 * tag answers "0 members []" (getTagOrEmpty never throws).
+	 */
+	private static int dumpTag(CommandSourceStack aSource, String aTagSpec) {
+		// the trimmed spec in a LOCAL — the stonecutter two-arg/one-arg ctor shift only
+		// hits bare-identifier arguments (parenthesized expressions stay un-shifted and
+		// would break the 21.1 leg compile, the materialTag javadoc lesson)
+		String tSpec = aTagSpec.trim();
+		ResourceLocation tId;
+		try {
+			tId = new ResourceLocation(tSpec);
+		} catch (RuntimeException tError) {
+			aSource.sendFailure(Component.literal("gt6tags: invalid tag id: " + tSpec));
+			return 0;
+		}
+		TagKey<Item> tTag = TagKey.create(Registries.ITEM, tId);
+		List<String> tMembers = new ArrayList<>();
+		for (var tHolder : BuiltInRegistries.ITEM.getTagOrEmpty(tTag)) {
+			tMembers.add(String.valueOf(BuiltInRegistries.ITEM.getKey(tHolder.value())));
+		}
+		Collections.sort(tMembers);
+		String tReport = "gt6tags dump " + tId + ": " + tMembers.size() + " members " + tMembers;
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
 	}
 
 	/** {@code down|up|north|south|west|east} → Direction (the GTCoverCommand parser shape). */

@@ -1,6 +1,7 @@
 package gregtech6.datagen;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.core.HolderLookup;
@@ -134,6 +135,19 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/*public static final String MATERIALS_NAMESPACE = "c";
 	*///?}
 
+	/**
+	 * The forward-twin common-tag namespace — {@code c} on BOTH legs (task
+	 * p27-vanilla-tag-dual-tree spec ①): the 1.21 canonical namespace (NeoForge docs
+	 * resources/server/tags.md:50 "would other mods want to use this tag as well? —
+	 * the c namespace"; the Mekanism 1.21.x generated tree is {@code data/c}-only)
+	 * produced ahead of time on the 1.20.1 leg for the {@link #VANILLA_INTERSECTION}
+	 * face only, while the neo leg's own {@link #MATERIALS_NAMESPACE} already IS c.
+	 * The emitted JSON location follows the tag id — {@code data/c/tags/items/**} on
+	 * the 1.20.1 leg (the plural directory form the 1.20.1 TagsProvider writes; the
+	 * neo leg's own c tree is the singular {@code tags/item} form, natively).
+	 */
+	public static final String COMMON_NAMESPACE = "c";
+
 	/** The ingot family — GTCEu TagPrefix.java:279 {@code defaultTagPath("ingots/%s")}. */
 	public static final String INGOTS_FAMILY = "ingots/%s";
 
@@ -213,6 +227,54 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	private static final Map<String, String> ECOSYSTEM_ALIASES = Map.of(
 			"aluminium", "aluminum",
 			"aluminium_brass", "aluminum_brass");
+
+	/**
+	 * The (family, material)-granularity canonical-name map (task p27-vanilla-tag-dual-tree
+	 * spec ③ — the ECOSYSTEM_ALIASES dimension lift, the research.p27-vanilla-unify gap ①):
+	 * key = the GT-internal formatted tag path ("&lt;familyBase&gt;&lt;materialSnake&gt;", e.g.
+	 * {@code gems/nether_quartz}), value = the ecosystem-CANONICAL material snake. Unlike
+	 * the name-level {@link #ECOSYSTEM_ALIASES} twins (where the ecosystem has NO enforced
+	 * convention, so the GT main name keeps the crown), these entries REPLACE the main tag
+	 * name with the platform-canonical one — Forge 1.20.1 ships
+	 * {@code Tags.Items.GEMS_QUARTZ = "gems/quartz"} with the vanilla member
+	 * (ForgeItemTagsProvider.java:77 {@code tag(Tags.Items.GEMS_QUARTZ).add(Items.QUARTZ)})
+	 * and {@code STORAGE_BLOCKS_QUARTZ} (:152) — while the GT-internal
+	 * {@code nether_quartz} face is KEPT as the compatibility twin (the grep-verified
+	 * reference surface: generated-tree-only, 7 JSON files, ZERO main/test readers —
+	 * pure datapack compat). Families WITHOUT an ecosystem quartz tag (dusts / rods /
+	 * bolts / small_gears / the raw storage) stay single-named {@code nether_quartz} —
+	 * this map keys them out.
+	 */
+	private static final Map<String, String> FAMILY_MATERIAL_CANONICAL = Map.of(
+			"gems/nether_quartz", "quartz",
+			"storage_blocks/nether_quartz", "quartz");
+
+	/**
+	 * The vanilla-intersection face of the forward twin tree (task
+	 * p27-vanilla-tag-dual-tree spec ① — the research.p27-vanilla-unify census, every
+	 * entry re-verified): the (family, material) tags where BOTH faces exist — this port
+	 * emits the material tag (the registration walk) AND the platform ships vanilla
+	 * members into the same tag id (ForgeItemTagsProvider.java:56-157 — ingots :89-:92,
+	 * nuggets :99-:100, gems :72-:77, dusts :56-:59 (the default dusts are EXACTLY
+	 * glowstone/prismarine/redstone — NO clay, the research census line over-listed),
+	 * storage_blocks :143-:157) — so the runtime merge closes the unification loop
+	 * ({@code #forge:ingots/iron = [minecraft:iron_ingot, gt6:ingot_iron]}, the
+	 * GT6RecipeTagFallbackTest.java:53 precedent). 26 paths, in CANONICAL names (quartz,
+	 * not nether_quartz). Deliberately NOT listed: gems/prismarine and the
+	 * storage_blocks/diamond|emerald faces (the task card's census list names five gems
+	 * and twelve storage blocks — the wider platform-shipped faces stay a future card),
+	 * the raw_materials / blaze|wooden rods (no GT item path), and every non-vanilla
+	 * material (the ruling: ONLY the vanilla intersection enters this card).
+	 */
+	private static final Set<String> VANILLA_INTERSECTION = Set.of(
+			"ingots/iron", "ingots/copper", "ingots/gold", "ingots/netherite",
+			"nuggets/iron", "nuggets/gold",
+			"gems/diamond", "gems/emerald", "gems/lapis", "gems/amethyst", "gems/quartz",
+			"dusts/redstone", "dusts/glowstone", "dusts/prismarine",
+			"storage_blocks/iron", "storage_blocks/gold", "storage_blocks/copper",
+			"storage_blocks/netherite", "storage_blocks/amethyst", "storage_blocks/lapis",
+			"storage_blocks/coal", "storage_blocks/redstone", "storage_blocks/quartz",
+			"storage_blocks/raw_iron", "storage_blocks/raw_gold", "storage_blocks/raw_copper");
 
 	public GT6ItemTags(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider,
 			ExistingFileHelper aExistingFileHelper) {
@@ -325,19 +387,47 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	}
 
 	/**
-	 * One (family, pair) face: the main-name platform tag, plus the ecosystem-alias twin
-	 * tag when the material has one ({@link #ECOSYSTEM_ALIASES}) — both tags hold the same
-	 * live-registered item element (the storage_blocks union form: direct members, no
-	 * tag-to-tag references, values stay all-primitives).
+	 * One (family, pair) face — the p27 dual-name closure: the CANONICAL-name platform tag
+	 * ({@link #FAMILY_MATERIAL_CANONICAL} overrides where the ecosystem enforces a name —
+	 * quartz, not nether_quartz), plus the compatibility twins — the GT-internal name when
+	 * the canonical differs, and the {@link #ECOSYSTEM_ALIASES} alias snake — all holding
+	 * the same live-registered item element (the storage_blocks union form: direct
+	 * members, no tag-to-tag references, values stay all-primitives). On the forge leg the
+	 * {@link #VANILLA_INTERSECTION} canonical face additionally emits the forward twin tag
+	 * in {@link #COMMON_NAMESPACE} (spec ①: the second {@code data/c/tags/items} tree, same
+	 * members) — the neo leg skips it: its own {@link #MATERIALS_NAMESPACE} already IS c,
+	 * the whole family walk there rides the c namespace natively.
 	 */
 	private void addFamilyFace(String aFamilyPath, GTMaterialItems.PrefixMaterial aPair) {
 		if (aFamilyPath == null) return;
 		ResourceKey<Item> tMember = item(gt6Rl(GTMaterialItems.itemIdOf(aPair.prefix(), aPair.material())));
-		tag(materialTag(aFamilyPath, aPair.material())).add(tMember);
-		String tAlias = ECOSYSTEM_ALIASES.get(GTMaterialItems.snakeCase(aPair.material().mNameInternal));
+		String tSnake = GTMaterialItems.snakeCase(aPair.material().mNameInternal);
+		String tCanonical = canonicalMaterialName(aFamilyPath, tSnake);
+		tag(materialTag(aFamilyPath, tCanonical)).add(tMember);
+		if (!tCanonical.equals(tSnake)) {
+			// the GT-internal-name twin — the generated-tree face carried over verbatim
+			// (zero code references, the p27 grep; pure datapack compat for existing packs)
+			tag(materialTag(aFamilyPath, tSnake)).add(tMember);
+		}
+		String tAlias = ECOSYSTEM_ALIASES.get(tSnake);
 		if (tAlias != null) {
 			tag(materialTag(aFamilyPath, tAlias)).add(tMember);
 		}
+		//? if forge {
+		String tMainPath = aFamilyPath.formatted(tCanonical);
+		if (VANILLA_INTERSECTION.contains(tMainPath)) {
+			tag(commonTag(aFamilyPath, tCanonical)).add(tMember);
+		}
+		//?}
+	}
+
+	/**
+	 * The (family, material)-granularity canonical-name lookup — the formatted GT-internal
+	 * path keys {@link #FAMILY_MATERIAL_CANONICAL}; families without an ecosystem-enforced
+	 * name keep the GT snake verbatim.
+	 */
+	private static String canonicalMaterialName(String aFamilyPath, String aMaterialSnake) {
+		return FAMILY_MATERIAL_CANONICAL.getOrDefault(aFamilyPath.formatted(aMaterialSnake), aMaterialSnake);
 	}
 
 	/** The platform tag key of one (family, material) face — {@code <namespace>:<family>/<materialSnake>}. */
@@ -356,6 +446,20 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		String tPath = aFamilyPath.formatted(aMaterialSnake);
 		// the 1.20.1 two-arg ctor form; shifted to fromNamespaceAndPath on the 21.1 leg
 		return TagKey.create(Registries.ITEM, new ResourceLocation(MATERIALS_NAMESPACE, tPath));
+	}
+
+	/**
+	 * The forward-twin tag key — same composition as {@link #materialTag(String, String)}
+	 * but in {@link #COMMON_NAMESPACE} (task p27-vanilla-tag-dual-tree spec ①). Consumed
+	 * on the forge leg only (the {@code //? if forge} band in {@link #addFamilyFace});
+	 * the path lives in a local so both ctor args are bare identifiers — the stonecutter
+	 * two-arg-ctor shift deliberately skips parenthesized argument expressions
+	 * (mdk/stonecutter.gradle.kts regex note).
+	 */
+	public static TagKey<Item> commonTag(String aFamilyPath, String aMaterialSnake) {
+		String tPath = aFamilyPath.formatted(aMaterialSnake);
+		// the 1.20.1 two-arg ctor form; shifted to fromNamespaceAndPath on the 21.1 leg
+		return TagKey.create(Registries.ITEM, new ResourceLocation(COMMON_NAMESPACE, tPath));
 	}
 
 	/**
