@@ -9,7 +9,8 @@
 #          direct rows: the FINAL gt6 lang key (hand-entered in the script's table).
 #   status auto   = dump copy with a translatable value;
 #          review = pure-ASCII dump value, suspected untranslated — provider skips;
-#          hand   = human translation (script HAND_TRANSLATIONS table).
+#          hand   = human translation (script HAND_TRANSLATIONS table + the
+#                   task p27-lang-fix FAMILY_OVERRIDES family-row layer).
 # filters: dropped ktfru/written.book/enchantment keys; duplicate keys: first occurrence wins.
 #   mte rows are inert census data until the MTE ID-join subface lands (arch tasks.p20-arch-i18n).
 #
@@ -73,7 +74,7 @@ direct	block.gt6.grass_brown	草方块	hand
 direct	block.gt6.grass_light_gray	草方块	hand
 direct	block.gt6.grass_lime	草方块	hand
 direct	block.gt6.grass_yellow	草方块	hand
-direct	block.gt6.heat_transmitter	热吸收装置	hand
+direct	block.gt6.heat_transmitter	传热装置	hand
 direct	block.gt6.lathe	车床	hand
 direct	block.gt6.lightning_rod	避雷针	hand
 direct	block.gt6.locker_bronze	青铜储物柜	hand
@@ -81,7 +82,7 @@ direct	block.gt6.locker_steel	钢储物柜	hand
 direct	block.gt6.machine_wall_tungsten	钨壁板	hand
 direct	block.gt6.multiblock_coke_oven	焦炉	hand
 direct	block.gt6.multiblock_coke_oven_bricks	焦炉砖	hand
-direct	block.gt6.multiblock_lightning_rod	避雷针	hand
+direct	block.gt6.multiblock_lightning_rod	避雷针电力输出口	hand
 direct	block.gt6.niobium_titanium_coil	大型铌钛合金线圈	hand
 direct	block.gt6.progressmeter	进度传感器	hand
 direct	block.gt6.safe_keylocked_bronze	钥匙锁定青铜保险箱	hand
@@ -204,12 +205,12 @@ direct	gt6.row.dryer.display	干燥器 (%s)	hand
 direct	gt6.row.oven.display	烤箱 (%s)	hand
 direct	gt6.row.funnel.display	%s漏斗	hand
 direct	gt6.row.hopper.display	%s漏斗	hand
-direct	gt6.row.item_pipe.display.huge	巨型%s物流管道	hand
-direct	gt6.row.item_pipe.display.large	大型%s物流管道	hand
-direct	gt6.row.item_pipe.display.medium	%s物流管道	hand
-direct	gt6.row.item_pipe.display.restrictive_huge	限制巨型%s物流管道	hand
-direct	gt6.row.item_pipe.display.restrictive_large	限制大型%s物流管道	hand
-direct	gt6.row.item_pipe.display.restrictive_medium	限制%s物流管道	hand
+direct	gt6.row.item_pipe.display.huge	巨型%s物品管道	hand
+direct	gt6.row.item_pipe.display.large	大型%s物品管道	hand
+direct	gt6.row.item_pipe.display.medium	%s物品管道	hand
+direct	gt6.row.item_pipe.display.restrictive_huge	限流巨型%s物品管道	hand
+direct	gt6.row.item_pipe.display.restrictive_large	限流大型%s物品管道	hand
+direct	gt6.row.item_pipe.display.restrictive_medium	限流%s物品管道	hand
 direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
 direct	gt6.row.machine.compressor	压缩机 (%s)	hand
 direct	gt6.row.machine.crusher	破碎机	hand
@@ -732,7 +733,7 @@ direct	gt6.tagprefix.water	%s	hand
 direct	gt6.tagprefix.wax	%s	hand
 direct	gt6.tagprefix.wetlands	%s	hand
 direct	gt6.tagprefix.wire	%s	hand
-direct	gt6.tagprefix.wire_fine	精细%s线缆	hand
+direct	gt6.tagprefix.wire_fine	细%s导线	hand
 direct	gt6.tagprefix.wire_gt01	1×%s线	hand
 direct	gt6.tagprefix.wire_gt02	2×%s线	hand
 direct	gt6.tagprefix.wire_gt03	3×%s线	hand
@@ -792,22 +793,22 @@ direct	item.gt6.foam_spray_light_gray	建筑泡沫喷罐 (淡灰色)	hand
 direct	item.gt6.foam_spray_lime	建筑泡沫喷罐 (黄绿色)	hand
 direct	item.gt6.foam_spray_magenta	建筑泡沫喷罐 (品红)	hand
 direct	item.gt6.foam_spray_orange	建筑泡沫喷罐 (橙色)	hand
-direct	item.gt6.foam_spray_owned_black	加强建筑泡沫喷罐 (黑色)	hand
-direct	item.gt6.foam_spray_owned_blue	加强建筑泡沫喷罐 (蓝色)	hand
-direct	item.gt6.foam_spray_owned_brown	加强建筑泡沫喷罐 (褐色)	hand
-direct	item.gt6.foam_spray_owned_cyan	加强建筑泡沫喷罐 (青色)	hand
-direct	item.gt6.foam_spray_owned_gray	加强建筑泡沫喷罐 (灰色)	hand
-direct	item.gt6.foam_spray_owned_green	加强建筑泡沫喷罐 (绿色)	hand
-direct	item.gt6.foam_spray_owned_light_blue	加强建筑泡沫喷罐 (淡蓝色)	hand
-direct	item.gt6.foam_spray_owned_light_gray	加强建筑泡沫喷罐 (淡灰色)	hand
-direct	item.gt6.foam_spray_owned_lime	加强建筑泡沫喷罐 (黄绿色)	hand
-direct	item.gt6.foam_spray_owned_magenta	加强建筑泡沫喷罐 (品红)	hand
-direct	item.gt6.foam_spray_owned_orange	加强建筑泡沫喷罐 (橙色)	hand
-direct	item.gt6.foam_spray_owned_pink	加强建筑泡沫喷罐 (粉色)	hand
-direct	item.gt6.foam_spray_owned_purple	加强建筑泡沫喷罐 (紫色)	hand
-direct	item.gt6.foam_spray_owned_red	加强建筑泡沫喷罐 (红色)	hand
-direct	item.gt6.foam_spray_owned_white	加强建筑泡沫喷罐 (白色)	hand
-direct	item.gt6.foam_spray_owned_yellow	加强建筑泡沫喷罐 (黄色)	hand
+direct	item.gt6.foam_spray_owned_black	高级建筑泡沫喷罐 (黑色)	hand
+direct	item.gt6.foam_spray_owned_blue	高级建筑泡沫喷罐 (蓝色)	hand
+direct	item.gt6.foam_spray_owned_brown	高级建筑泡沫喷罐 (褐色)	hand
+direct	item.gt6.foam_spray_owned_cyan	高级建筑泡沫喷罐 (青色)	hand
+direct	item.gt6.foam_spray_owned_gray	高级建筑泡沫喷罐 (灰色)	hand
+direct	item.gt6.foam_spray_owned_green	高级建筑泡沫喷罐 (绿色)	hand
+direct	item.gt6.foam_spray_owned_light_blue	高级建筑泡沫喷罐 (淡蓝色)	hand
+direct	item.gt6.foam_spray_owned_light_gray	高级建筑泡沫喷罐 (淡灰色)	hand
+direct	item.gt6.foam_spray_owned_lime	高级建筑泡沫喷罐 (黄绿色)	hand
+direct	item.gt6.foam_spray_owned_magenta	高级建筑泡沫喷罐 (品红)	hand
+direct	item.gt6.foam_spray_owned_orange	高级建筑泡沫喷罐 (橙色)	hand
+direct	item.gt6.foam_spray_owned_pink	高级建筑泡沫喷罐 (粉色)	hand
+direct	item.gt6.foam_spray_owned_purple	高级建筑泡沫喷罐 (紫色)	hand
+direct	item.gt6.foam_spray_owned_red	高级建筑泡沫喷罐 (红色)	hand
+direct	item.gt6.foam_spray_owned_white	高级建筑泡沫喷罐 (白色)	hand
+direct	item.gt6.foam_spray_owned_yellow	高级建筑泡沫喷罐 (黄色)	hand
 direct	item.gt6.foam_spray_pink	建筑泡沫喷罐 (粉色)	hand
 direct	item.gt6.foam_spray_purple	建筑泡沫喷罐 (紫色)	hand
 direct	item.gt6.foam_spray_red	建筑泡沫喷罐 (红色)	hand
@@ -872,7 +873,7 @@ material	Acetylene	乙炔	auto
 material	AcidPickledBauxide	酸洗铝土矿	auto
 material	Actinium	锕	auto
 material	Adamant	血石	auto
-material	Adamantine	血石	auto
+material	Adamantine	阿达曼金	hand
 material	Adamantite	精金	auto
 material	Adamantium	艾德曼合金	auto
 material	Adamite	水砷锌矿	auto
@@ -1751,7 +1752,7 @@ material	Chloromethane	一氯甲烷	auto
 material	ChloroplatinicAcid	氯铂酸	auto
 material	Chocolate	巧克力	auto
 material	Chrome	铬	auto
-material	Chromite	铬铁	auto
+material	Chromite	铬铁矿	hand
 material	Chromium	铬	auto
 material	ChromiumDioxide	二氧化铬	auto
 material	Chrysocolla	硅孔雀石	auto
@@ -1911,10 +1912,10 @@ material	Eden	伊甸	auto
 material	Efrine	绿晶	auto
 material	Einsteinium	锿	auto
 material	Elderwood	接骨木	auto
-material	ElectricalSteel	磁钢	auto
+material	ElectricalSteel	电工钢	hand
 material	Electron	电子	auto
 material	Electrotine	蓝石	auto
-material	ElectrotineAlloy	蓝石合金	auto
+material	ElectrotineAlloy	蓝石荧合金	hand
 material	Electrum	琥珀金	auto
 material	ElectrumFlux	通量琥珀金	auto
 material	Elementium	源质钢	auto
@@ -1936,7 +1937,7 @@ material	EnderPearl	末影珍珠	auto
 material	Enderium	末影	auto
 material	EnderiumBase	末影粗胚	auto
 material	Endium	末金	auto
-material	Endstone	末地	auto
+material	Endstone	末地石	hand
 material	EnergeticAlloy	充能合金	auto
 material	EnergeticSilver	充能银	auto
 material	EnergiumCyan	青色能量水晶	auto
@@ -1967,7 +1968,7 @@ material	Eximite	虚空石	auto
 material	FZDarkIron	FZ暗影铁	auto
 material	Fairy	精灵	auto
 material	Farnsium	钫	auto
-material	Ferberite	钨铁	auto
+material	Ferberite	钨铁矿	hand
 material	Fermium	镄	auto
 material	FerricChloride	氯化铁	auto
 material	FerricOxyhydroxide	氢氧化铁	auto
@@ -1981,10 +1982,10 @@ material	Figwood	无花果树木	auto
 material	Fir	冷杉木	auto
 material	Fireleaf	Fireleaf	review
 material	Firestone	火石	auto
-material	FishCooked	熟鱼肉	auto
+material	FishCooked	熟鱼粉	hand
 material	FishOil	鱼油	auto
-material	FishRaw	生鱼肉	auto
-material	FishRotten	烂鱼肉	auto
+material	FishRaw	生鱼粉	hand
+material	FishRotten	腐鱼粉	hand
 material	FlamascusSteel	炙热大马士革钢	auto
 material	Flerovium	鈇	auto
 material	Flerovium298	鈇-298	auto
@@ -1999,8 +2000,8 @@ material	Fluorite	氟石	auto
 material	Flux	助焊剂	auto
 material	FoolsRuby	伪·红宝石	auto
 material	Force	力量	auto
-material	Forcicium	力量	auto
-material	Forcillium	力量	auto
+material	Forcicium	力素	hand
+material	Forcillium	力晶	hand
 material	Formaldehyde	甲醛	auto
 material	Fossil	化石	auto
 material	Foxfirewood	狐火木	auto
@@ -2140,7 +2141,7 @@ material	Holystone	圣石	auto
 material	Honey	蜂蜜	auto
 material	Honeydew	蜂蜜滴	auto
 material	Hornbeam	鹅耳枥	auto
-material	Huebnerite	钨锰	auto
+material	Huebnerite	钨锰矿	hand
 material	HydratedCoal	水合煤	auto
 material	HydrobromicAcid	氢溴酸	auto
 material	HydrochloricAcid	盐酸	auto
@@ -2155,14 +2156,14 @@ material	Ice	冰	auto
 material	Iffesal	伊夫萨尔	auto
 material	Ignatius	伊格内修斯	auto
 material	Illmenite	钛铁矿	auto
-material	Ilmenite	钛铁	auto
+material	Ilmenite	钛铁矿	hand
 material	Indigo	靛蓝	auto
 material	Indium	铟	auto
 material	Infernal	地狱	auto
 material	Infinite	无尽	auto
 material	Infinity	无尽	auto
 material	Infitite	Infitite	review
-material	Infuscolium	精金	auto
+material	Infuscolium	因弗斯科姆	hand
 material	InfusedAir	风之碎片	auto
 material	InfusedBalance	平衡碎片	auto
 material	InfusedDull	枯竭碎片	auto
@@ -2232,7 +2233,7 @@ material	Lapis	青金石	auto
 material	Larch	落叶松	auto
 material	Latex	胶乳	auto
 material	Lava	岩浆	auto
-material	LavenderQuartz	熏香石英	auto
+material	LavenderQuartz	薰衣草石英	hand
 material	Lawrencium	铹	auto
 material	Lazurite	天蓝青金石	auto
 material	Lead	铅	auto
@@ -2286,7 +2287,7 @@ material	MagnesiumCarbonate	碳酸镁	auto
 material	MagnesiumChloride	氯化镁	auto
 material	MagnesiumDihydroxide	氢氧化镁	auto
 material	MagnesiumSilicide	硅化镁	auto
-material	Magnetite	磁铁	auto
+material	Magnetite	磁铁矿	hand
 material	MagnetizedTungsten	磁化钨	auto
 material	Magnite	Magnite	review
 material	Mahoe	高槿木	auto
@@ -2391,7 +2392,7 @@ material	NetherQuartz	下界石英	auto
 material	NetherStar	下界之星	auto
 material	Netherite	下界合金	auto
 material	NetherizedDiamond	下界钻石	auto
-material	Netherrack	下界	auto
+material	Netherrack	下界岩	hand
 material	Netheryte	下界合金	auto
 material	Neutrino	中微子	auto
 material	Neutron	中子	auto
@@ -2401,7 +2402,7 @@ material	Nickel	镍	auto
 material	NickelFlake	NickelFlake	review
 material	NiflheimPower	极寒魔灵	auto
 material	Nihonium	鉨	auto
-material	NikolineAlloy	蓝石合金	auto
+material	NikolineAlloy	蓝石镍合金	hand
 material	Nikolite	蓝石	auto
 material	Niobium	铌	auto
 material	NiobiumNitride	氮化铌	auto
@@ -2454,7 +2455,7 @@ material	OrangeCY11	橙色试剂Y-11	auto
 material	OrangeFluorite	橙色氟石	auto
 material	OrangeSapphire	橙色蓝宝石	auto
 material	Organic	有机	auto
-material	Orichalcum	自然之石	auto
+material	Orichalcum	奥利哈刚	hand
 material	Oriharukon	山铜	auto
 material	Osmiridium	铱锇合金	auto
 material	Osmium	锇	auto
@@ -2513,7 +2514,7 @@ material	Phosphate	磷酸盐	auto
 material	Phosphor	磷	auto
 material	Phosphorite	磷灰石	auto
 material	Phosphorous	磷	auto
-material	Phosphorus	磷酸钙	auto
+material	Phosphorus	磷	hand
 material	PhosphorusPentoxide	五氧化二磷	auto
 material	Photon	光子	auto
 material	PigIron	生铁	auto
@@ -2731,7 +2732,7 @@ material	SilverFlake	SilverFlake	review
 material	SilverIodide	碘化银	auto
 material	SilverPine	银松	auto
 material	Silverwood	银树	auto
-material	SkyStone	陨石	auto
+material	SkyStone	天空石	hand
 material	Skyroot	天根木	auto
 material	Skythern	空境	auto
 material	Slate	板岩	auto
@@ -2919,7 +2920,7 @@ material	Trihexseptium	367号元素(Ths)	auto
 material	Trihextrium	363号元素(Tht)	auto
 material	Trihexunium	361号元素(Thu)	auto
 material	Trimethylamine	三甲胺	auto
-material	Trinaquadalloy	碳化特林-钍瑞铌合金	auto
+material	Trinaquadalloy	特林-硅岩-钍瑞铌合金	hand
 material	Trinilbium	302号元素(Tnb)	auto
 material	Trinilennium	309号元素(Tne)	auto
 material	Trinilhexium	306号元素(Tnh)	auto
@@ -2972,7 +2973,7 @@ material	Triseptquadium	374号元素(Tsq)	auto
 material	Triseptseptium	377号元素(Tss)	auto
 material	Trisepttrium	373号元素(Tst)	auto
 material	Triseptunium	371号元素(Tsu)	auto
-material	Tritanium	钛金	auto
+material	Tritanium	三钛合金	hand
 material	TritaniumDioxide	二氧化三钛	auto
 material	TritaniumElemental	三钛	auto
 material	TritaniumHexaastatide	六砹化三钛	auto
@@ -3009,7 +3010,7 @@ material	Tungstate	钨酸盐	auto
 material	Tungsten	钨	auto
 material	TungstenCarbide	碳化钨	auto
 material	TungstenOxide	氧化钨	auto
-material	TungstenSintered	结晶钨	auto
+material	TungstenSintered	烧结钨	hand
 material	TungstenSteel	钨钢	auto
 material	TungstenTrioxide	三氧化钨	auto
 material	Tungstensteel	钨钢	auto
@@ -3021,7 +3022,7 @@ material	U238	U238	review
 material	UUAmplifier	UU增殖液	auto
 material	UUMatter	UU物质	auto
 material	Ultimate	极限	auto
-material	Ultimet	哈氏合金	auto
+material	Ultimet	钴铬钨合金	hand
 material	Umber	棕石	auto
 material	Unbibium	122号元素(Ubb)	auto
 material	Unbiennium	129号元素(Ube)	auto
@@ -3130,7 +3131,7 @@ material	Valerite	Valerite	review
 material	Valonite	法罗钠	auto
 material	Vanadium	钒	auto
 material	VanadiumGallium	钒镓合金	auto
-material	VanadiumMagnetite	钒磁铁	auto
+material	VanadiumMagnetite	钒磁铁矿	hand
 material	VanadiumPentoxide	五氧化二钒	auto
 material	VanadiumSteel	钒钢	auto
 material	Vanilla	香草	auto
@@ -3153,7 +3154,7 @@ material	Vis	魔力	auto
 material	VitriolOfClay	硫酸铝	auto
 material	VividAlloy	生动合金	auto
 material	Void	煤晶	auto
-material	VoidCrystal	煤晶	auto
+material	VoidCrystal	虚空	hand
 material	VoidMetal	虚空金属	auto
 material	VoidQuartz	虚空石英	auto
 material	Voidstone	虚空石	auto
@@ -3201,7 +3202,7 @@ material	Wolframium	耐蚀含钨铝合金	auto
 material	Wolframsteel	钨钢	auto
 material	Wollastonite	硅灰石	auto
 material	Wood	木	auto
-material	WoodBleached	星光木	auto
+material	WoodBleached	漂白木	hand
 material	WoodCompressed	压缩木	auto
 material	WoodDead	枯木	auto
 material	WoodFrozen	冻木	auto
@@ -3213,7 +3214,7 @@ material	WoodScorched	焦皮枯木	auto
 material	WoodSealed	防腐木	auto
 material	WoodTainted	腐化木	auto
 material	WoodTreated	防腐木	auto
-material	WoodVarnished	漆包木	auto
+material	WoodVarnished	上漆木	hand
 material	WorkersAlloy	工人合金	auto
 material	WroughtIron	锻铁	auto
 material	WrougtIron	熟铁	auto
@@ -3460,7 +3461,7 @@ itemgroup	toolHeadSense	镰刀片	auto
 itemgroup	toolHeadShovel	锹头	auto
 itemgroup	toolHeadSpade	铲头	auto
 itemgroup	toolHeadSword	剑身	auto
-itemgroup	toolHeadUniversalSpade	铲头毛坯	auto
+itemgroup	toolHeadUniversalSpade	万用铲头	hand
 itemgroup	toolHeadWrench	扳手头	auto
 itemgroup	turbineLargeGas	大型燃气涡轮	auto
 itemgroup	turbineLargeGasChecked	已检测大型燃气涡轮	auto
@@ -3468,7 +3469,7 @@ itemgroup	turbineLargeGasDamaged	受损大型燃气涡轮	auto
 itemgroup	turbineLargeSteam	大型蒸汽涡轮	auto
 itemgroup	turbineLargeSteamChecked	已检测大型蒸汽涡轮	auto
 itemgroup	turbineLargeSteamDamaged	受损大型蒸汽涡轮	auto
-itemgroup	wireFine	细线缆	auto
+itemgroup	wireFine	细导线	hand
 mte	0	铅箱子	auto
 mte	1	铝箱子	auto
 mte	10	钢箱子	auto

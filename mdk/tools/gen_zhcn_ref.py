@@ -131,7 +131,7 @@ HAND_TRANSLATIONS = {
     "gt6.tagprefix.chain": ("%s锁链", "hand"),
     "gt6.tagprefix.rail_gt": ("%s轨道", "hand"),
     "gt6.tagprefix.minecart_wheels": ("%s车轮", "hand"),
-    "gt6.tagprefix.wire_fine": ("精细%s线缆", "hand"),
+    "gt6.tagprefix.wire_fine": ("细%s导线", "hand"),  # task p27-lang-fix P1 §2.2: wire=导线 (gt6.wire.form.wire zh:2529), 线缆=cable already owns 线缆 — 精细 was unattested
     "gt6.tagprefix.casing_small": ("小%s外壳", "hand"),
     "gt6.tagprefix.chemtube": ("含%s试管", "hand"),
     "gt6.tagprefix.arrow_gt_wood": ("%s箭", "hand"),
@@ -267,8 +267,9 @@ HAND_TRANSLATIONS = {
     #     Ceramic :4428 陶瓷, Plastic :5245 塑料); the axle Wooden word = the dump AXLE
     #     rows (:24800 小型木制轴), NOT the WoodTreated material face (防腐木);
     #   atomic keys = brick_burning_box 砖块燃烧室 (固体) (:11023), heat_transmitter
-    #     热吸收装置 (:11386), gearbox 木制可调变速箱 (:24809), transformer_rotation
-    #     木制变速箱 (:24808).
+    #     传热装置 (task p27-lang-fix P1 §2.2 — the dump :11386 row 热吸收装置 mistranslates
+    #     transmit as 吸收; zh follows the en "Heat Transmitter" semantics), gearbox
+    #     木制可调变速箱 (:24809), transformer_rotation 木制变速箱 (:24808).
     "gt6.stone.variant.stone": ("%s", "hand"),
     "gt6.stone.variant.cobble": ("%s圆石", "hand"),
     "gt6.stone.variant.cobble_mossy": ("苔藓%s圆石", "hand"),
@@ -334,9 +335,12 @@ HAND_TRANSLATIONS = {
     "gt6.row.mat.bronze": ("青铜", "hand"),
     "gt6.row.mat.brass": ("黄铜", "hand"),
     # task p26-pipe-item — the item pipe family: the six variant templates over the three
-    # material words. 物流管道 word set = the dump rows verbatim (tmp/gregtech.lang
-    # 25002..25007 黄铜物流管道 family / 25027..25032 康铜 / 25052..25057 钴黄铜; the 限制
-    # prefix rows :11852-11857); the tab = itemGroup.gt.multitileentity.25202 物品管道 :17993.
+    # material words. task p27-lang-fix P1 §2.2 + batch rule B5: the dump's 物流管道 word
+    # set (tmp/gregtech.lang 25002..25007 黄铜物流管道 family / 25027..25032 康铜 /
+    # 25052..25057 钴黄铜) collides with Logistics (barrel_logistics 物流储罐) — the family
+    # word follows the tab face 物品管道 (itemGroup dump :17993) instead, and the dump's
+    # 限制 prefix rows (:11852-11857) unify on 限流 (the tagprefix pipe_restrictive lane
+    # already says 限流) — both DECLARED DEVIATIONS from the dump-verbatim rows.
     # task p26-storage-hopper-family — the storage hopper family: the two kind templates
     # over the bronze/steel material words (already in the boiler walk). The 漏斗 wording =
     # the dump's hopper-family style (tmp/gregtech.lang:13544 陶瓷漏斗 / :13546 不锈钢漏斗
@@ -348,12 +352,12 @@ HAND_TRANSLATIONS = {
     "block.gt6.fe_battery": ("FE测试电池", "hand"),
     "gt6.row.hopper.display": ("%s漏斗", "hand"),
     "gt6.row.queue_hopper.display": ("%s队列漏斗", "hand"),
-    "gt6.row.item_pipe.display.medium": ("%s物流管道", "hand"),
-    "gt6.row.item_pipe.display.large": ("大型%s物流管道", "hand"),
-    "gt6.row.item_pipe.display.huge": ("巨型%s物流管道", "hand"),
-    "gt6.row.item_pipe.display.restrictive_medium": ("限制%s物流管道", "hand"),
-    "gt6.row.item_pipe.display.restrictive_large": ("限制大型%s物流管道", "hand"),
-    "gt6.row.item_pipe.display.restrictive_huge": ("限制巨型%s物流管道", "hand"),
+    "gt6.row.item_pipe.display.medium": ("%s物品管道", "hand"),
+    "gt6.row.item_pipe.display.large": ("大型%s物品管道", "hand"),
+    "gt6.row.item_pipe.display.huge": ("巨型%s物品管道", "hand"),
+    "gt6.row.item_pipe.display.restrictive_medium": ("限流%s物品管道", "hand"),
+    "gt6.row.item_pipe.display.restrictive_large": ("限流大型%s物品管道", "hand"),
+    "gt6.row.item_pipe.display.restrictive_huge": ("限流巨型%s物品管道", "hand"),
     "gt6.row.mat.constantan": ("康铜", "hand"),      # dump 25027 康铜物流管道 word root
     "gt6.row.mat.cobalt_brass": ("钴黄铜", "hand"),  # dump 25052 钴黄铜物流管道 word root
     "itemGroup.gt6.item_pipes": ("物品管道", "hand"),  # dump :17993 verbatim
@@ -387,7 +391,7 @@ HAND_TRANSLATIONS = {
     "gt6.row.attachment.mat.adamantium": ("艾德曼合金", "hand"),
     "gt6.row.mat.brick": ("砖", "hand"),
     "block.gt6.brick_burning_box": ("砖块燃烧室 (固体)", "hand"),
-    "block.gt6.heat_transmitter": ("热吸收装置", "hand"),
+    "block.gt6.heat_transmitter": ("传热装置", "hand"),  # task p27-lang-fix P1 §2.2 (transmit≠absorb, ledger en_us.json:64)
     "block.gt6.gearbox": ("木制可调变速箱", "hand"),
     "block.gt6.transformer_rotation": ("木制变速箱", "hand"),
     "fluid.gt6.iron_molten": ("熔融铁", "hand"),
@@ -413,7 +417,7 @@ HAND_TRANSLATIONS = {
     "block.gt6.grass_yellow": ("草方块", "hand"),
     "block.gt6.lightning_rod": ("避雷针", "hand"),
     "block.gt6.machine_wall_tungsten": ("钨壁板", "hand"),
-    "block.gt6.multiblock_lightning_rod": ("避雷针", "hand"),
+    "block.gt6.multiblock_lightning_rod": ("避雷针电力输出口", "hand"),  # task p27-lang-fix P1 §2.2 — de-collides with the rod block 避雷针 (en "Lightning Rod Electric Output", en_us.json:73; the structure tooltip line 1 already used the long face)
     "block.gt6.niobium_titanium_coil": ("大型铌钛合金线圈", "hand"),
     "gt.grass.tooltip": ("不会传播、被吃、改变颜色, 也不需要光照", "hand"),
     "gt.grass.tooltip.spray": ("喷漆罐也可以用来给草染色！", "hand"),
@@ -908,11 +912,15 @@ SPRAY_BACKFILL = {
 
 # ---- C-Foam spray domain (35 rows: 32 items + tab + 2 tooltips) — task
 # p25-c-foam-pipe-spray. The 32 item names are the DUMP faces verbatim (metas 1100+2i
-# "建筑泡沫喷罐" / 1132+2i "加强建筑泡沫喷罐", tmp/gregtech.lang:9350-9431); the tooltip
-# template splits the dump's gt.behaviour.foamspray.N.tooltip rows (:992-1007) at the
-# colour word (the %s slot rides the untranslated DYE_NAMES arg, the p22 spraycan.paint
+# "建筑泡沫喷罐" / 1132+2i, tmp/gregtech.lang:9350-9431) with ONE declared deviation
+# (task p27-lang-fix batch rule B4): the dump's owned-spray rows read 加强建筑泡沫喷罐
+# while the owned-FLUID rows (and en, "Advanced") are 高级 — the 16 owned items unify on
+# 高级建筑泡沫喷罐 (the fluid face's 高级X建筑泡沫 word, already hand rows above); the
+# tooltip template splits the dump's gt.behaviour.foamspray.N.tooltip rows (:992-1007) at
+# the colour word (the %s slot rides the untranslated DYE_NAMES arg, the p22 spraycan.paint
 # form); the owned warning has no dump face (upstream :259 en only) — hand.
 FOAM_SPRAY_BACKFILL = {
+    "item.gt6.foam_spray_black": "建筑泡沫喷罐 (黑色)",            # dump S:gt.multiitem.randomtools.1100
     "item.gt6.foam_spray_black": "建筑泡沫喷罐 (黑色)",            # dump S:gt.multiitem.randomtools.1100
     "item.gt6.foam_spray_red": "建筑泡沫喷罐 (红色)",              # :1102
     "item.gt6.foam_spray_green": "建筑泡沫喷罐 (绿色)",            # :1104
@@ -929,22 +937,22 @@ FOAM_SPRAY_BACKFILL = {
     "item.gt6.foam_spray_magenta": "建筑泡沫喷罐 (品红)",          # :1126
     "item.gt6.foam_spray_orange": "建筑泡沫喷罐 (橙色)",           # :1128
     "item.gt6.foam_spray_white": "建筑泡沫喷罐 (白色)",            # :1130
-    "item.gt6.foam_spray_owned_black": "加强建筑泡沫喷罐 (黑色)",  # dump S:gt.multiitem.randomtools.1132
-    "item.gt6.foam_spray_owned_red": "加强建筑泡沫喷罐 (红色)",    # :1134
-    "item.gt6.foam_spray_owned_green": "加强建筑泡沫喷罐 (绿色)",  # :1136
-    "item.gt6.foam_spray_owned_brown": "加强建筑泡沫喷罐 (褐色)",  # :1138
-    "item.gt6.foam_spray_owned_blue": "加强建筑泡沫喷罐 (蓝色)",   # :1140
-    "item.gt6.foam_spray_owned_purple": "加强建筑泡沫喷罐 (紫色)", # :1142
-    "item.gt6.foam_spray_owned_cyan": "加强建筑泡沫喷罐 (青色)",   # :1144
-    "item.gt6.foam_spray_owned_light_gray": "加强建筑泡沫喷罐 (淡灰色)", # :1146
-    "item.gt6.foam_spray_owned_gray": "加强建筑泡沫喷罐 (灰色)",   # :1148
-    "item.gt6.foam_spray_owned_pink": "加强建筑泡沫喷罐 (粉色)",   # :1150
-    "item.gt6.foam_spray_owned_lime": "加强建筑泡沫喷罐 (黄绿色)", # :1152
-    "item.gt6.foam_spray_owned_yellow": "加强建筑泡沫喷罐 (黄色)", # :1154
-    "item.gt6.foam_spray_owned_light_blue": "加强建筑泡沫喷罐 (淡蓝色)", # :1156
-    "item.gt6.foam_spray_owned_magenta": "加强建筑泡沫喷罐 (品红)", # :1158
-    "item.gt6.foam_spray_owned_orange": "加强建筑泡沫喷罐 (橙色)", # :1160
-    "item.gt6.foam_spray_owned_white": "加强建筑泡沫喷罐 (白色)",  # :1162
+    "item.gt6.foam_spray_owned_black": "高级建筑泡沫喷罐 (黑色)",  # dump S:gt.multiitem.randomtools.1132
+    "item.gt6.foam_spray_owned_red": "高级建筑泡沫喷罐 (红色)",    # :1134
+    "item.gt6.foam_spray_owned_green": "高级建筑泡沫喷罐 (绿色)",  # :1136
+    "item.gt6.foam_spray_owned_brown": "高级建筑泡沫喷罐 (褐色)",  # :1138
+    "item.gt6.foam_spray_owned_blue": "高级建筑泡沫喷罐 (蓝色)",   # :1140
+    "item.gt6.foam_spray_owned_purple": "高级建筑泡沫喷罐 (紫色)", # :1142
+    "item.gt6.foam_spray_owned_cyan": "高级建筑泡沫喷罐 (青色)",   # :1144
+    "item.gt6.foam_spray_owned_light_gray": "高级建筑泡沫喷罐 (淡灰色)", # :1146
+    "item.gt6.foam_spray_owned_gray": "高级建筑泡沫喷罐 (灰色)",   # :1148
+    "item.gt6.foam_spray_owned_pink": "高级建筑泡沫喷罐 (粉色)",   # :1150
+    "item.gt6.foam_spray_owned_lime": "高级建筑泡沫喷罐 (黄绿色)", # :1152
+    "item.gt6.foam_spray_owned_yellow": "高级建筑泡沫喷罐 (黄色)", # :1154
+    "item.gt6.foam_spray_owned_light_blue": "高级建筑泡沫喷罐 (淡蓝色)", # :1156
+    "item.gt6.foam_spray_owned_magenta": "高级建筑泡沫喷罐 (品红)", # :1158
+    "item.gt6.foam_spray_owned_orange": "高级建筑泡沫喷罐 (橙色)", # :1160
+    "item.gt6.foam_spray_owned_white": "高级建筑泡沫喷罐 (白色)",  # :1162
     "itemGroup.gt6.foam_sprays": "建筑泡沫喷罐",
     "gt6.foamspray.paint": "可以喷射%s泡沫",                       # dump S:gt.behaviour.foamspray.N.tooltip :992-1007 split
     "gt6.foamspray.owned": "干燥后仅所有者可破坏",                 # hand — upstream :259 en has no dump face
@@ -974,6 +982,55 @@ for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_B
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")
         HAND_TRANSLATIONS[_key] = (_value, "hand")
+
+
+# ---------------------------------------------------------------------------
+# Family-row override layer (task p27-lang-fix P1, ledger tmp/p27-lang-audit/
+# ledger.md §2): dump family rows whose VALUE is wrong or misleading get a hand
+# value here — the TSV stays a function of dump + hand tables (ADR §1.1), and the
+# overridden rows carry status=hand so the review face shows they left the
+# dump-verbatim lane. Key = (kind, dump-source): material rows are the
+# gt.material.<Pascal> internal name, itemgroup rows the itemGroup.<camel> name.
+# The two ledger KEEP rows (force=力量, blue_alloy=蓝石合金) stay dump-verbatim,
+# and TritaniumElemental=三钛 already agrees with the fixed Tritanium=三钛合金
+# (element vs alloy faces) — neither gets a row. The two ledger-flagged
+# low-confidence rulings (ElectrotineAlloy / NikolineAlloy, no strong community
+# convention) are translated conservatively and declared in the card report.
+FAMILY_OVERRIDES = {
+    # -- §2.1 material names: 误译/撞名/语义丢失 (29 rows) --
+    ("material", "Adamantine"): "阿达曼金",                 # 血石 is a DIFFERENT stone (bloodstone); de-collides 精金/艾德曼合金
+    ("material", "Chromite"): "铬铁矿",                     # 铬铁 reads as the ferrochromium alloy
+    ("material", "Ferberite"): "钨铁矿",                    # 钨铁 reads as ferrotungsten
+    ("material", "Huebnerite"): "钨锰矿",                   # the same -ite mineral-family face
+    ("material", "Ilmenite"): "钛铁矿",                     # 钛铁 reads as the Fe-Ti alloy
+    ("material", "Magnetite"): "磁铁矿",                    # 磁铁 = magnet, the device
+    ("material", "VanadiumMagnetite"): "钒磁铁矿",
+    ("material", "Endstone"): "末地石",                     # 末地 is the dimension; vanilla zh 末地石
+    ("material", "Netherrack"): "下界岩",                   # 下界 is the dimension; vanilla zh 下界岩
+    ("material", "Phosphorus"): "磷",                       # 磷酸钙 = calcium phosphate (apatite component), not the element P
+    ("material", "Orichalcum"): "奥利哈刚",                 # 自然之石 unattested; oriharukon already owns 山铜
+    ("material", "SkyStone"): "天空石",                     # 陨石 collides with meteorite 陨石
+    ("material", "WoodBleached"): "漂白木",                 # 星光木 unattested (en "Bleached Wood")
+    ("material", "WoodVarnished"): "上漆木",                # 漆包 is the wire-enamel term (en "Varnished Wood")
+    ("material", "TungstenSintered"): "烧结钨",             # sintered = 烧结, not 结晶
+    ("material", "Tritanium"): "三钛合金",                  # en "Tritanium Alloy"; 钛金 collides with titanium_gold
+    ("material", "Trinaquadalloy"): "特林-硅岩-钍瑞铌合金",  # Tri-Naqua-Duranium split; en carries no carbon — 去「碳化」
+    ("material", "Ultimet"): "钴铬钨合金",                  # Ultimet = Co-Cr-W; Hastelloy = Ni family — misattributed
+    ("material", "VoidCrystal"): "虚空",                    # en "Void" — no coal; joins void_metal 虚空金属
+    ("material", "LavenderQuartz"): "薰衣草石英",           # 熏香 = incense
+    ("material", "ElectricalSteel"): "电工钢",              # 磁钢 = magnet steel
+    ("material", "FishCooked"): "熟鱼粉",                   # en Fishmeal = feed, not edible fish meat
+    ("material", "FishRaw"): "生鱼粉",
+    ("material", "FishRotten"): "腐鱼粉",
+    ("material", "Forcicium"): "力素",                      # the three-force family de-collision (force 力量 stays)
+    ("material", "Forcillium"): "力晶",
+    ("material", "ElectrotineAlloy"): "蓝石荧合金",         # 低置信待社区核 (ledger §2.1: community has no strong convention)
+    ("material", "NikolineAlloy"): "蓝石镍合金",            # 低置信待社区核 (ledger §2.1)
+    ("material", "Infuscolium"): "因弗斯科姆",              # 精金 collides with adamantite — phonetic
+    # -- §2.2 prefix-tab titles (itemgroup family, 2 rows) --
+    ("itemgroup", "toolHeadUniversalSpade"): "万用铲头",    # 铲头毛坯 pasted the RAW group's name onto the finished group (en "Universal Spade Heads"; the raw group owns 毛坯)
+    ("itemgroup", "wireFine"): "细导线",                    # 细线缆 mixed the cable word into the wire tab (en "Fine Wires")
+}
 
 
 def dump_rows(dump_path: Path):
@@ -1115,6 +1172,16 @@ def main(argv=None) -> int:
 
     collected, dropped, duplicates = dump_rows(args.dump)
 
+    # Family-override layer (task p27-lang-fix): applied AFTER dump collection so the
+    # TSV remains a function of dump + hand tables (ADR §1.1). A missing dump row is a
+    # hard error — the layer REFINES existing rows, it never invents keys.
+    for (_kind, _source), _value in FAMILY_OVERRIDES.items():
+        if _kind not in collected or _source not in collected[_kind]:
+            sys.exit(f"family override ({_kind}, {_source}): no dump row to override")
+        if "\t" in _value or "\n" in _value:
+            sys.exit(f"family override ({_kind}, {_source}): value contains tab/newline")
+        collected[_kind][_source] = _value
+
     # Validate the hand layer up front: one %s slot for template keys, no tabs/newlines anywhere.
     for key, (value, status) in HAND_TRANSLATIONS.items():
         if value is None:
@@ -1136,7 +1203,8 @@ def main(argv=None) -> int:
         "#          direct rows: the FINAL gt6 lang key (hand-entered in the script's table).",
         "#   status auto   = dump copy with a translatable value;",
         "#          review = pure-ASCII dump value, suspected untranslated — provider skips;",
-        "#          hand   = human translation (script HAND_TRANSLATIONS table).",
+        "#          hand   = human translation (script HAND_TRANSLATIONS table + the",
+        "#                   task p27-lang-fix FAMILY_OVERRIDES family-row layer).",
         f"# filters: dropped {'/'.join(p.rstrip('.') for p in DROP_KEY_PREFIXES)} keys; duplicate keys: first occurrence wins.",
         "#   mte rows are inert census data until the MTE ID-join subface lands (arch tasks.p20-arch-i18n).",
         "#",
@@ -1152,7 +1220,10 @@ def main(argv=None) -> int:
                 rows.append((key, value, status))
         else:
             for source, value in sorted(collected[kind].items()):
-                rows.append((source, value, "review" if ascii_review(value) else "auto"))
+                if (kind, source) in FAMILY_OVERRIDES:
+                    rows.append((source, value, "hand"))  # overridden value = human-authored (task p27-lang-fix)
+                else:
+                    rows.append((source, value, "review" if ascii_review(value) else "auto"))
         counts[kind] = len(rows)
         for source, value, status in rows:
             lines.append(f"{kind}\t{source}\t{value}\t{status}")
