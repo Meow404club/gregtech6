@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/cube/plant_gt_berry"
+    "layer0": "gt6:item/material_sets/cube/plant_gt_berry",
+    "layer1": "gt6:item/material_sets/cube/plant_gt_berry_overlay"
   }
 }

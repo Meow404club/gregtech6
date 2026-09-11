@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/lignite/plate_tiny"
+    "layer0": "gt6:item/material_sets/lignite/plate_tiny",
+    "layer1": "gt6:item/material_sets/lignite/plate_tiny_overlay"
   }
 }

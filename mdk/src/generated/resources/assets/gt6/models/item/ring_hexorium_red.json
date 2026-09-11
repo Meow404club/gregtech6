@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/hex/ring"
+    "layer0": "gt6:item/material_sets/hex/ring",
+    "layer1": "gt6:item/material_sets/hex/ring_overlay"
   }
 }

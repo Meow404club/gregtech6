@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/diamond/billet"
+    "layer0": "gt6:item/material_sets/diamond/billet",
+    "layer1": "gt6:item/material_sets/diamond/billet_overlay"
   }
 }

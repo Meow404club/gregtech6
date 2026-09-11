@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/rough/bullet_gt_medium"
+    "layer0": "gt6:item/material_sets/rough/bullet_gt_medium",
+    "layer1": "gt6:item/material_sets/rough/bullet_gt_medium_overlay"
   }
 }

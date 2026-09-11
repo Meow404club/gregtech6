@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/magnetic/tool_head_file"
+    "layer0": "gt6:item/material_sets/magnetic/tool_head_file",
+    "layer1": "gt6:item/material_sets/magnetic/tool_head_file_overlay"
   }
 }

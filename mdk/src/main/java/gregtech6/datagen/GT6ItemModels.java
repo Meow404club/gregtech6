@@ -15,6 +15,15 @@ import net.minecraftforge.common.data.ExistingFileHelper;
  * the material colour comes from the runtime ItemColor tint (MaterialPrefixItem.tintColor,
  * tintIndex 0), mirroring upstream's grayscale icon + colour modulation.
  *
+ * <p>Layer 2 (task p27-tool-model-layers): upstream pairs every materialicon with an
+ * un-tinted OVERLAY pass (TextureSet.java:113-126) — added as layer1 wherever the sprite
+ * file exists on the borrow face (never inferred; the sets disagree on what the overlay
+ * carries, research.p27-render-three-fixes F2). The vanilla layer number IS the tint
+ * index (ItemModelGenerator.java:15), and the shared ItemColor already returns -1 for
+ * tintIndex != 0, so the overlay face needs zero runtime code. The tool rows below use
+ * the same layer number = pass number mapping over the upstream four-pass icon
+ * (ToolStats.java:267-287).
+ *
  * <p>Iconset resolution archaeology (task card): upstream PrefixItem.java:136-138 resolves the
  * item icon as {@code material.mTextureSetsItems.get(prefix.mIconIndexItem)} — the TEXTURE SET is
  * a property of the MATERIAL (assigned via {@code .setTextures(SET_X)}, upstream
@@ -37,10 +46,27 @@ public final class GT6ItemModels extends ItemModelProvider {
     @Override
     protected void registerModels() {
         for (GT6DatagenItems.Entry tEntry : GT6DatagenItems.collect()) {
-            withExistingParent(tEntry.itemId(), mcLoc("item/generated"))
-                .texture("layer0", modLoc("item/material_sets/"
-                    + iconsetOf(tEntry.material())
-                    + "/" + MaterialPrefixItem.snakeCase(tEntry.prefix().mNameInternal)));
+            String tSet = iconsetOf(tEntry.material());
+            String tPrefix = MaterialPrefixItem.snakeCase(tEntry.prefix().mNameInternal);
+            // the OVERLAY second pass (task p27-tool-model-layers): upstream registers
+            // every materialicon as a base + "<NAME>_OVERLAY" pair and draws pass0 tinted
+            // with the material colour / pass1 un-tinted (TextureSet.java:113-116 and
+            // :124-126). The overlay is not always mere shading — the rockGt body
+            // (DULL/METALLIC sets) and the chemtube glass wall live entirely in the
+            // OVERLAY sprite, while BRICK's rockGt base is already the full cobble — so
+            // the layer is gated strictly on FILE EXISTENCE, never inferred from the
+            // prefix or set (research.p27-render-three-fixes F2 ruling). The layer is
+            // un-tinted for free: the shared ItemColor returns -1 for tintIndex != 0
+            // (MaterialPrefixItem.java:104).
+            String tOverlay = tPrefix + "_overlay";
+            if (existingFileHelper.exists(modLoc("item/material_sets/" + tSet + "/" + tOverlay), TEXTURE)) {
+                withExistingParent(tEntry.itemId(), mcLoc("item/generated"))
+                    .texture("layer0", modLoc("item/material_sets/" + tSet + "/" + tPrefix))
+                    .texture("layer1", modLoc("item/material_sets/" + tSet + "/" + tOverlay));
+            } else {
+                withExistingParent(tEntry.itemId(), mcLoc("item/generated"))
+                    .texture("layer0", modLoc("item/material_sets/" + tSet + "/" + tPrefix));
+            }
         }
         // the p5 pump cover item (task p5-barrel-side-rules ruling ⑥) — the item shows the
         // out-facing plate art; the direction sprites live in the block atlas via GT6Atlases

@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/gem_horizontal/round"
+    "layer0": "gt6:item/material_sets/gem_horizontal/round",
+    "layer1": "gt6:item/material_sets/gem_horizontal/round_overlay"
   }
 }
