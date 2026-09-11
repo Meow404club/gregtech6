@@ -14,12 +14,13 @@
  * composites are retired for the separate colored/_colored_front + _overlay_front*
  * borrows (assets/README.md).
  *
- * <p>Census ground truth: the machine domain is oven (1) + shredder/crusher/lathe T1-T4
+ * <p>Census ground truth: the machine domain is the oven Heat_T ladder (4, task
+ * p27-oven-heat-t-ladder) + shredder/crusher/lathe T1-T4
  * (12) + dryer (4) + distillery (4) + canner (4, task p24-canner-machine) + sifter/
  * compressor/wiremill (12, task p26-w1-sifter-compressor-wiremill) + press (4) +
- * extruder (4, both rows of the last task p26-w1-press-extruder-molds) = 45 blocks (the
+ * extruder (4, both rows of the last task p26-w1-press-extruder-molds) = 48 blocks (the
  * GTMachines.paintableBlockArray
- * registration census), three models each (inactive/active/running) = 135 block-model
+ * registration census), three models each (inactive/active/running) = 144 block-model
  * JSONs. Upstream canonical: every faced face multiplies the grayscale texture by mRGBa
  * (MultiTileEntityBasicMachine.java:1014), so all three models tint identically.
  */
@@ -44,9 +45,9 @@ import com.google.gson.JsonParser;
 
 class GT6MachinePaintRenderDatagenTest {
 
-    /** The 45 machine-domain bases, in registration order (the paintableBlockArray census). */
+    /** The 48 machine-domain bases, in registration order (the paintableBlockArray census). */
     private static final List<String> MACHINE_BASES = List.of(
-            "oven",
+            "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
             "crusher", "crusher_t2", "crusher_t3", "crusher_t4",
             "lathe", "lathe_t2", "lathe_t3", "lathe_t4",
@@ -84,12 +85,12 @@ class GT6MachinePaintRenderDatagenTest {
         return aBase;
     }
 
-    /** The census shape: 45 bases x 3 models = 135 tinted block models. */
+    /** The census shape: 48 bases x 3 models = 144 tinted block models. */
     @Test
     void pinnedMachinePaintCensus() {
-        assertEquals(45, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(45 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
-                "45 blocks x 3 models — the pinned tinted-model total");
+        assertEquals(48, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
+        assertEquals(48 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
+                "48 blocks x 3 models — the pinned tinted-model total");
     }
 
     /** Every machine block model: the block/cube parent, the seven-texture key set, the full tinted body cube + the thin untinted front decal (task p22-paint-front-overlay-split). */

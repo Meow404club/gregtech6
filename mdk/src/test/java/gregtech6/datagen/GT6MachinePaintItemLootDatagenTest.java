@@ -47,15 +47,16 @@ import net.minecraft.server.Bootstrap;
 class GT6MachinePaintItemLootDatagenTest {
 
     /**
-     * The 46 paint-carry bases, in the census order: the p22 painted-item domain
-     * ({@code paintableBlockArray}: oven, shredder/crusher/lathe, dryer, distillery) plus
+     * The 49 paint-carry bases, in the census order: the p22 painted-item domain
+     * ({@code paintableBlockArray}: the oven Heat_T ladder (4, task p27-oven-heat-t-ladder),
+     * shredder/crusher/lathe, dryer, distillery) plus
      * the p24 canner rows, the p26 W1 kinetic trio, the p26 press/extruder rows and the
      * ACT controller — every consumer
      * of the shared {@code paintSelfTable} builder, so the pinned shape covers the full
      * regen surface.
      */
     private static final List<String> PAINT_BASES = List.of(
-            "oven",
+            "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
             "crusher", "crusher_t2", "crusher_t3", "crusher_t4",
             "lathe", "lathe_t2", "lathe_t3", "lathe_t4",
@@ -92,10 +93,10 @@ class GT6MachinePaintItemLootDatagenTest {
         }
     }
 
-    /** The census shape: all 46 paintSelfTable tables carry the (quoted) paint carry function. */
+    /** The census shape: all 49 paintSelfTable tables carry the (quoted) paint carry function. */
     @Test
     void pinnedMachinePaintLootCensus() throws Exception {
-        assertEquals(46, PAINT_BASES.size(), "the paintSelfTable census (21 p22 rows + canner 4 + kinetic trio 12 + press/extruder 8 + ACT 1)");
+        assertEquals(49, PAINT_BASES.size(), "the paintSelfTable census (24 p22 rows incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + ACT 1)");
         for (String tBase : PAINT_BASES) assertPaintSelfTable(tBase);
     }
 

@@ -50,8 +50,9 @@ import gregtech6.registry.GTWireSpecs;
 class GT6TagsDatagenTest {
 
     /**
-     * The pickaxe-file member total: 272 stone pairs + 46 machine blocks (oven +
-     * shredder/crusher/lathe ladders + 4 dryers + 4 distilleries + the 4 Canner rows +
+     * The pickaxe-file member total: 272 stone pairs + 49 machine blocks (the oven Heat_T
+     * ladder 4, task p27-oven-heat-t-ladder + shredder/crusher/lathe ladders + 4 dryers +
+     * 4 distilleries + the 4 Canner rows +
      * the W1 sifter/compressor/wiremill ladders + the 4 Press + 4 Extruder rows, task
      * p26-w1-press-extruder-molds + the Advanced Crafting Table —
      * GTMachines.java:58/:118-151/:233-237/:347-351/:415-435 + the p26-w1 trio,
@@ -70,16 +71,17 @@ class GT6TagsDatagenTest {
      * the tags batch 2975 → 3621, the single-variant ACT row 3621 → 3622, task
      * p24-act-machine — the S4 merge-order reconciliation, then the W1 trio 3622 → 3634,
      * task p26-w1-sifter-compressor-wiremill — then the press/extruder rows 3634 → 3642,
-     * task p26-w1-press-extruder-molds).
+     * task p26-w1-press-extruder-molds — then the oven ladder rows 3642 → 3645, task
+     * p27-oven-heat-t-ladder).
      */
-    // the 8 press/extruder rows joined the whole-class walk at task p26-w1-press-extruder-molds
-    // (38 -> 46 machines on the merged line, 3634 -> 3642)
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 46 + 1 + 2677 + 629 + 2 + 15;
+    // the 3 oven ladder rows joined the whole-class walk at task p27-oven-heat-t-ladder
+    // (46 -> 49 machines on the merged line, 3642 -> 3645)
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 49 + 1 + 2677 + 629 + 2 + 15;
 
 
-    /** The 13 tier-ladder machine ids of the first machines card + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
+    /** The 16 tier-ladder machine ids of the first machines card + the oven ladder + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
-            "gt6:oven",
+            "gt6:oven", "gt6:oven_t2", "gt6:oven_t3", "gt6:oven_t4", // task p27-oven-heat-t-ladder
             "gt6:shredder", "gt6:shredder_t2", "gt6:shredder_t3", "gt6:shredder_t4",
             "gt6:crusher", "gt6:crusher_t2", "gt6:crusher_t3", "gt6:crusher_t4",
             "gt6:lathe", "gt6:lathe_t2", "gt6:lathe_t3", "gt6:lathe_t4",
