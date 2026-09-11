@@ -59,7 +59,10 @@ public class GT6ZhBackfillSpotCheckTest {
 
 	@Test
 	public void theFourCardNamedValuesLand() {
-		assertEquals("烤箱", zh().get("block.gt6.oven"), "the oven block display name");
+		// task p27-oven-heat-t-ladder: the retired atomic block.gt6.oven joined the composed
+		// gt6.row.oven.display face (the upstream name column "Oven ("+Heat_T local+")") —
+		// the 烤箱 machine word is the same dump row, now the template's constant part
+		assertEquals("烤箱 (%s)", zh().get(gregtech6.registry.GTMachines.OVEN_DISPLAY_KEY), "the oven family display template");
 		assertEquals("龙合金鼓", zh().get("block.gt6.barrel_draconium"), "the Draconium drum (dump 龙 word root)");
 		assertEquals("柴油", zh().get("fluid.gt6.diesel"), "the diesel dump anchor");
 		String tWire14 = zh().get("gt6.tagprefix.wire_gt14");

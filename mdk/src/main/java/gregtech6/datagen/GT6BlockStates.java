@@ -460,6 +460,13 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     private void addOven() {
         addMachine(GTMachines.OVEN.get(), "oven");
+        // task p27-oven-heat-t-ladder — the Heat_T ladder rows through the p8 texture-base
+        // overload: the tier models derive from aBase (oven_t2/_active/_running) while the
+        // FRONT TEXTURES stay on the family T1 "oven" set (upstream NBT_TEXTURE "oven" on
+        // all four rows :1288-1291) — the ladder adds zero PNGs.
+        addMachine(GTMachines.OVEN_T2.get(), "oven_t2", "oven");
+        addMachine(GTMachines.OVEN_T3.get(), "oven_t3", "oven");
+        addMachine(GTMachines.OVEN_T4.get(), "oven_t4", "oven");
     }
 
     /**

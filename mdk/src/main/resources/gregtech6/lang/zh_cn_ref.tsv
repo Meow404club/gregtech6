@@ -79,7 +79,6 @@ direct	block.gt6.multiblock_coke_oven	焦炉	hand
 direct	block.gt6.multiblock_coke_oven_bricks	焦炉砖	hand
 direct	block.gt6.multiblock_lightning_rod	避雷针	hand
 direct	block.gt6.niobium_titanium_coil	大型铌钛合金线圈	hand
-direct	block.gt6.oven	烤箱	hand
 direct	block.gt6.progressmeter	进度传感器	hand
 direct	block.gt6.safe_keylocked_bronze	钥匙锁定青铜保险箱	hand
 direct	block.gt6.safe_keylocked_steel	钥匙锁定钢保险箱	hand
@@ -205,6 +204,7 @@ direct	gt6.row.dense_wall.display	致密%s壁板	hand
 direct	gt6.row.diesel.display	燃油引擎 (%s)	hand
 direct	gt6.row.distillery.display	蒸馏器 (%s)	hand
 direct	gt6.row.dryer.display	干燥器 (%s)	hand
+direct	gt6.row.oven.display	烤箱 (%s)	hand
 direct	gt6.row.funnel.display	%s漏斗	hand
 direct	gt6.row.hopper.display	%s漏斗	hand
 direct	gt6.row.item_pipe.display.huge	巨型%s物流管道	hand

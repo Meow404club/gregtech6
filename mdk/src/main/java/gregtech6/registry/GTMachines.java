@@ -51,24 +51,91 @@ public final class GTMachines {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
-	/**
-	 * The Oven block — the "Basic Machines" MTE family (Loader_MultiTileEntities.java:1288-1291):
-	 * hardness/resistance 6.0/6.0 (tier-1 row :1288), metal sound like the upstream
-	 * MaterialMachines/soundTypeMetal machine block (Example_Mod.java:162).
-	 */
-	public static final RegistryObject<net.minecraft.world.level.block.Block> OVEN = BLOCKS.register("oven",
-			() -> new GTOvenBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL)));
+	// ---------------------------------------------------------------------------
+	// the Oven family (task p27-oven-heat-t-ladder) — the four Heat_T[1..4] rows
+	// Loader_MultiTileEntities.java:1288-1291 (aClass = MultiTileEntityBasicMachine,
+	// NBT_TEXTURE "oven" on every row, TD.Energy.HU upstream / the port EU carrier,
+	// RM.Furnace, no parallel keys): one class (GTOvenBlock), one BET (OVEN_BE — the
+	// ADR-P3-1 one-class-many-material-blocks counterpart), four material blocks in
+	// upstream row order. The NBT_HARDNESS column 6.0/4.0/9.0/12.5 (NBT_RESISTANCE ==
+	// hardness, T2 = the 4.0F special case); the NBT_INPUT column 32/128/512/2048 rides
+	// {@link #TIER_INPUTS} through the GTOvenBlock row index (the TileEntityOven
+	// constructor assignment); the display names compose over
+	// {@link #OVEN_DISPLAY_KEY} + the gt6.row.mat units (the W1 one-slot form — the
+	// upstream name column "Oven ("+aMat.getLocal()+")", the Dryer/Distillery/Extruder
+	// Heat_T word set). Zero-regression: the T1 id stays "oven".
+	// ---------------------------------------------------------------------------
+
+	/** The Oven family display template key ({@code gt6.row.oven.display} — the W1 one-slot material-word form). */
+	public static final String OVEN_DISPLAY_KEY = "gt6.row.oven.display";
+
+	/** One Oven ladder row — the upstream-parity columns of one aRegistry.add line (:1288-1291). */
+	public record OvenRow(String path, String matSlug, String matDisplay, int metaId, float hardness, int tier) {}
 
 	/**
-	 * The Oven BET: one class, its one block (ADR-P3-1 degenerate shape). Registry path mirrors
-	 * TileEntityOven#getTileEntityName like the chest/test-machine pairs.
+	 * The four Oven rows, upstream line order :1288-1291 (T1-T4, the Heat_T ladder — the
+	 * MT.java:3689 locals ANY.Steel/Invar/Ti/TungstenCarbide, the same Steel/Invar/
+	 * Titanium/Tungsten Carbide word set the Dryer/Distillery/Extruder Heat_T families
+	 * carry; the :1289 hardness 4.0F is the upstream T2 special case).
+	 */
+	public static final java.util.List<OvenRow> OVEN_ROWS = java.util.List.of(
+			new OvenRow("oven"   , "steel"           , "Steel"           , 20001,  6.0F, 0),
+			new OvenRow("oven_t2", "invar"           , "Invar"           , 20002,  4.0F, 1),
+			new OvenRow("oven_t3", "titanium"        , "Titanium"        , 20003,  9.0F, 2),
+			new OvenRow("oven_t4", "tungsten_carbide", "Tungsten Carbide", 20004, 12.5F, 3));
+
+	/**
+	 * The composed {@code "Oven (<material word>)"} supplier of one ladder row — the
+	 * GTBasicMachineBlock tierName shape re-based on the gt6.row.mat unit (the tier rides
+	 * the material word upstream, so the family template fills exactly ONE slot).
+	 */
+	private static java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> ovenName(String aMatSlug) {
+		return () -> net.minecraft.network.chat.Component.translatable(OVEN_DISPLAY_KEY,
+				net.minecraft.network.chat.Component.translatable("gt6.row.mat." + aMatSlug));
+	}
+
+	/** The Oven T1 block — the original "oven" id (the hardness/resistance 6.0/6.0 row :1288). */
+	public static final RegistryObject<net.minecraft.world.level.block.Block> OVEN = BLOCKS.register("oven",
+			() -> new GTOvenBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), 0, ovenName("steel")));
+
+	public static final RegistryObject<net.minecraft.world.level.block.Block> OVEN_T2 = BLOCKS.register("oven_t2",
+			() -> new GTOvenBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(4.0F, 4.0F).sound(SoundType.METAL), 1, ovenName("invar")));
+
+	public static final RegistryObject<net.minecraft.world.level.block.Block> OVEN_T3 = BLOCKS.register("oven_t3",
+			() -> new GTOvenBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), 2, ovenName("titanium")));
+
+	public static final RegistryObject<net.minecraft.world.level.block.Block> OVEN_T4 = BLOCKS.register("oven_t4",
+			() -> new GTOvenBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), 3, ovenName("tungsten_carbide")));
+
+	/**
+	 * The Oven BET: one class, the four ladder blocks multi-attached (the p8 family-BET
+	 * shape — Builder.of varargs). Registry path mirrors TileEntityOven#getTileEntityName
+	 * like the chest/test-machine pairs.
 	 */
 	public static final RegistryObject<BlockEntityType<TileEntityOven>> OVEN_BE =
 			BLOCK_ENTITY_TYPES.register("oven", () -> BlockEntityType.Builder.of(
-					TileEntityOven::new, OVEN.get()).build(null));
+					TileEntityOven::new, OVEN.get(), OVEN_T2.get(), OVEN_T3.get(), OVEN_T4.get()).build(null));
 
 	public static final RegistryObject<Item> OVEN_ITEM = ITEMS.register("oven",
 			() -> new gregtech6.block.GTComposedNameItem(OVEN.get(), new Item.Properties()));
+
+	public static final RegistryObject<Item> OVEN_T2_ITEM = ITEMS.register("oven_t2",
+			() -> new gregtech6.block.GTComposedNameItem(OVEN_T2.get(), new Item.Properties()));
+
+	public static final RegistryObject<Item> OVEN_T3_ITEM = ITEMS.register("oven_t3",
+			() -> new gregtech6.block.GTComposedNameItem(OVEN_T3.get(), new Item.Properties()));
+
+	public static final RegistryObject<Item> OVEN_T4_ITEM = ITEMS.register("oven_t4",
+			() -> new gregtech6.block.GTComposedNameItem(OVEN_T4.get(), new Item.Properties()));
+
+	/**
+	 * The Oven tab walk, in upstream row order (the GTWires/GT6Tools TAB_TABLE form): the
+	 * MACHINES_TAB displayItems and the offline parity test share this one table — a row
+	 * referencing an unregistered item would crash the displayItems generator at runtime,
+	 * a registered item missing here is invisible (no orphans).
+	 */
+	public static final java.util.List<RegistryObject<Item>> OVEN_TAB_ITEMS =
+			java.util.List.of(OVEN_ITEM, OVEN_T2_ITEM, OVEN_T3_ITEM, OVEN_T4_ITEM);
 
 	// ---------------------------------------------------------------------------
 	// the Shredder/Crusher/Lathe machine family (task p7-basicmachine-family ②/③, the
@@ -967,11 +1034,12 @@ public final class GTMachines {
 
 	/**
 	 * The paint-tint walker (task p21-paintable-tint-render; the Canner ladder joins in task
-	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill):
-	 * the pinned 37 machine-domain blocks the client paint BlockColor
-	 * registers over — the oven (1) + the shredder/crusher/lathe ladders (4 each = 12) + the
+	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill;
+	 * the Oven ladder joins in task p27-oven-heat-t-ladder):
+	 * the 48 machine-domain blocks the client paint BlockColor
+	 * registers over — the oven ladder (4) + the shredder/crusher/lathe ladders (4 each = 12) + the
 	 * dryer (4) + the distillery (4) + the canner (4) + the sifter/compressor/wiremill
-	 * ladders (4 each = 12),
+	 * ladders (4 each = 12) + press (4) + extruder (4),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -979,8 +1047,11 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(37);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(48);
 		rBlocks.add(OVEN.get());
+		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
+		rBlocks.add(OVEN_T3.get());
+		rBlocks.add(OVEN_T4.get());
 		for (RegistryObject<Block> tBlock : java.util.List.of(
 				SHREDDER, SHREDDER_T2, SHREDDER_T3, SHREDDER_T4,
 				CRUSHER, CRUSHER_T2, CRUSHER_T3, CRUSHER_T4,
@@ -1063,7 +1134,11 @@ public final class GTMachines {
 					.title(Component.translatable("itemGroup.gt6.machines"))
 					.icon(() -> new ItemStack(OVEN_ITEM.get()))
 						.displayItems((aParameters, aOutput) -> {
-							aOutput.accept(new ItemStack(OVEN_ITEM.get()));
+							// task p27-oven-heat-t-ladder: the Oven Heat_T ladder, +3 rows —
+							// the OVEN_TAB_ITEMS walk (upstream row order :1288-1291)
+							for (RegistryObject<Item> tOvenItem : OVEN_TAB_ITEMS) {
+								aOutput.accept(new ItemStack(tOvenItem.get()));
+							}
 							aOutput.accept(new ItemStack(SHREDDER_ITEM.get())); // task p7-basicmachine-family: +3 machine family rows
 							aOutput.accept(new ItemStack(CRUSHER_ITEM.get()));
 							aOutput.accept(new ItemStack(LATHE_ITEM.get()));

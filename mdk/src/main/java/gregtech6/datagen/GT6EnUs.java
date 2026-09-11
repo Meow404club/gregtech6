@@ -636,13 +636,14 @@ public class GT6EnUs extends LanguageProvider {
 
     /**
      * Machine family keys (task p4-machine-oven, W2-exclusive provider additions; extended
-     * by task p7-basicmachine-family): the oven block display name (upstream "Oven",
-     * Loader_MultiTileEntities.java:1288-1291), the machine family display names (upstream
+     * by task p7-basicmachine-family; the Oven ladder joins in task p27-oven-heat-t-ladder):
+     * the machine family display names (upstream
      * rows "Shredder"/"Crusher"/"Lathe", :1294/:1300/:1306) and the "Machines" creative tab
-     * (the upstream MTE-registry category of the same rows).
+     * (the upstream MTE-registry category of the same rows). The retired atomic
+     * "block.gt6.oven" joined the composed face (upstream name column
+     * "Oven ("+Heat_T local+")", :1288-1291 — the OVEN_DISPLAY_KEY template).
      */
     private void addMachines() {
-        add("block.gt6.oven", "Oven");
         add("block.gt6.shredder", "Shredder");
         add("block.gt6.crusher", "Crusher");
         add("block.gt6.lathe", "Lathe");
@@ -653,6 +654,7 @@ public class GT6EnUs extends LanguageProvider {
         // word (upstream "Shredder ("+aMat.getLocal()+")" :1294-1309, Kinetic_T[1..4]
         // MT.java:3690) — the ordinal gt6.row.tier.* units are RETIRED (the T2-T4 blocks
         // fill the slot with the shared gt6.row.mat.* words below)
+        add(gregtech6.registry.GTMachines.OVEN_DISPLAY_KEY, "Oven (%s)"); // task p27-oven-heat-t-ladder
         add(gregtech6.registry.GTMachines.MACHINE_DISPLAY_KEY, "%s (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_SHREDDER_UNIT_KEY, "Shredder");
         add(gregtech6.registry.GTMachines.MACHINE_CRUSHER_UNIT_KEY, "Crusher");

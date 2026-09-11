@@ -158,7 +158,7 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/**
-	 * The 442-key zh backfill (task p23-i18n-zh-442-backfill), non-tagprefix face: the 77
+	 * The 442-key zh backfill (task p23-i18n-zh-442-backfill), non-tagprefix face: the 76
 	 * atomic keys whose en counterpart is a whole-string {@code add} in {@link GT6EnUs} —
 	 * the barrel/fluid-pipe/machine blocks, the fluid display names, the P22 spray-can
 	 * items + tooltips, the five backfill materials (the dump rows are review/absent, so
@@ -202,7 +202,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.lathe");
 		addDirect("block.gt6.multiblock_coke_oven");
 		addDirect("block.gt6.multiblock_coke_oven_bricks");
-		addDirect("block.gt6.oven");
+		// (block.gt6.oven retired here — task p27-oven-heat-t-ladder moved the oven onto the
+		// composed gt6.row.oven.display face, the addRowDomainUnits walk carries the template)
 		addDirect("block.gt6.progressmeter"); // task p26-sensors-core — the MTE 31018 dump row 进度传感器
 		addDirect("block.gt6.shredder");
 		addDirect("block.gt6.wire_electric_1x");
@@ -374,6 +375,13 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.registry.GTMachines.MACHINE_SHREDDER_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_CRUSHER_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_LATHE_UNIT_KEY);
+		// oven (task p27-oven-heat-t-ladder, rebased over p27-machine-energy-display-fix —
+		// the ordinal gt6.row.tier.* walk is retired upstream-side): the family template over
+		// the Heat_T word set — the steel/invar/titanium/tungsten_carbide units already ride
+		// the dryer/distillery walk's dedup above, only the template is new (the retired
+		// atomic block.gt6.oven joined the composed face, the upstream name column
+		// "Oven ("+Heat_T local+")")
+		addDirect(gregtech6.registry.GTMachines.OVEN_DISPLAY_KEY);
 		// dryer/distillery: the two family templates + their row-material units
 		addDirect(gregtech6.registry.GTMachines.DRYER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.DISTILLERY_DISPLAY_KEY);

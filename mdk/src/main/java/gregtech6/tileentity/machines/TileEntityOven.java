@@ -228,6 +228,32 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		// the oven ticks: the upstream MTE sits on the 03 ticking chain (mIsTicking = true)
 		super(true, aType, aPos, aState);
 		setInventory(new GTItemStackHandler(INVENTORY_SIZE, this::onInventoryChanged));
+		// task p27-oven-heat-t-ladder — the Oven ladder's per-row energy three-value
+		// (upstream NBT_INPUT 32/128/512/2048, Loader_MultiTileEntities.java:1288-1291,
+		// through the GTMachines.TIER_INPUTS conversion): the block identity IS the config
+		// selector (the GTOvenBlock row index), the same tierOf dispatch shape the
+		// GTBasicMachine families run. Tier 0 re-writes the :98 field defaults verbatim
+		// ({16, 32, 64}) and a non-oven state (the offline BRICKS fixtures) resolves
+		// tier 0 — both zero-regression by construction.
+		applyTierInputs(this, GTOvenBlock.tier(aState));
+	}
+
+	/**
+	 * The tier-inputs assignment (task p27-oven-heat-t-ladder) — the upstream NBT_INPUT
+	 * column (:1288-1291) through the GTMachines.TIER_INPUTS conversion, as a static seam:
+	 * the constructor runs it with the block-identity tier ({@link GTOvenBlock#tier}), the
+	 * offline test drives it directly (a Block is unconstructible offline on both sides of
+	 * the bootstrap — the intrusive-holder wall, Block.java:66 → the frozen
+	 * NamespacedWrapper). Tier 0 is the :98 field defaults.
+	 *
+	 * @return the machine, for fluent use.
+	 */
+	public static TileEntityOven applyTierInputs(TileEntityOven aMachine, int aTier) {
+		long[] tInputs = GTMachines.TIER_INPUTS[aTier];
+		aMachine.mInputMin = tInputs[0];
+		aMachine.mInput = tInputs[1];
+		aMachine.mInputMax = tInputs[2];
+		return aMachine;
 	}
 
 	@Override

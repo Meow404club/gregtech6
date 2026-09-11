@@ -794,8 +794,9 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The machine-family block list (task p22-painted-item-domain): the 13 machine-domain
-     * blocks whose loot this NEW provider owns — the oven (1) + the shredder/crusher/lathe
+     * The machine-family block list (task p22-painted-item-domain; the Oven ladder joins in
+     * task p27-oven-heat-t-ladder): the 16 machine-domain
+     * blocks whose loot this NEW provider owns — the oven ladder (4) + the shredder/crusher/lathe
      * ladders (4 each = 12), the {@code GTMachines.paintableBlockArray()} census rows the
      * dryer/distillery providers do NOT cover. Pre-existing state: these 13 shipped
      * table-less (breaking dropped nothing — the default loot path {@code gt6:blocks/<path>}
@@ -806,6 +807,9 @@ public final class GT6LootTables extends LootTableProvider {
     public static List<Block> machineLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         rBlocks.add(gregtech6.registry.GTMachines.OVEN.get());
+        rBlocks.add(gregtech6.registry.GTMachines.OVEN_T2.get()); // task p27-oven-heat-t-ladder
+        rBlocks.add(gregtech6.registry.GTMachines.OVEN_T3.get());
+        rBlocks.add(gregtech6.registry.GTMachines.OVEN_T4.get());
         for (RegistryObject<Block> tBlock : java.util.List.of(
                 gregtech6.registry.GTMachines.SHREDDER, gregtech6.registry.GTMachines.SHREDDER_T2,
                 gregtech6.registry.GTMachines.SHREDDER_T3, gregtech6.registry.GTMachines.SHREDDER_T4,
