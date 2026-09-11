@@ -197,12 +197,33 @@ public abstract class TileEntityBase10MultiBlockBase extends TileEntityBase03Tic
 	}
 
 	/**
+	 * The placement facing table (task p27-cokeoven-facing-fix): the GT6 front TOWARDS the
+	 * placer — the OPPOSITE of the view direction. Upstream evidence chain:
+	 * {@code getSideForPlayerPlacing} → {@code getHorizontalForPlayerPlacing}
+	 * (UT.java:1751-1753) over {@code COMPASS_DIRECTIONS = {SIDE_NORTH, SIDE_EAST,
+	 * SIDE_SOUTH, SIDE_WEST}} (CS.java:639): yaw 180 (the view NORTH,
+	 * {@code Direction.fromYRot} Direction.java:285-287) yields SIDE_SOUTH — the front
+	 * faces the player standing south. The vanilla furnace idiom
+	 * ({@code getHorizontalDirection().getOpposite()}) is the same mapping. With "facing
+	 * outwards" (MultiTileEntityCokeOven.java:64) the structure core then sits BEHIND the
+	 * front (the getOffsetXN = pos − OFF[facing] arithmetic), AWAY from the placer —
+	 * standing in front and building behind just forms (the 2026-09-10 user report).
+	 */
+	public static byte placementFacing(Direction aViewDirection) {
+		return (byte) aViewDirection.getOpposite().get3DDataValue();
+	}
+
+	/**
 	 * Placement facing (the GTOvenBlock.setPlacedBy double-write pattern): NBT field is the
 	 * authority, the BlockState mirror is written immediately so the placement renders oriented.
 	 */
 	public void setFacingFromPlacement(Player aPlayer) {
-		mFacing = (byte) aPlayer.getDirection().get3DDataValue();
-		setChanged();
+		setFacingFromView(aPlayer.getDirection());
+	}
+
+	/** The player-free seam (the /gt6multiblock place view arm): the same mapping, no Player. */
+	public void setFacingFromView(Direction aViewDirection) {
+		setFacing(placementFacing(aViewDirection));
 		applyFacingBlockState();
 	}
 

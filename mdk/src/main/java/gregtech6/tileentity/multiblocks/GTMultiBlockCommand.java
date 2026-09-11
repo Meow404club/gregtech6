@@ -104,7 +104,15 @@ public final class GTMultiBlockCommand {
 			.requires(aSource -> aSource.hasPermission(2))
 			.then(Commands.literal("place")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
-					.executes(aContext -> place(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+					.executes(aContext -> place(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))
+					// task p27-cokeoven-facing-fix — the player-placement stand-in: VIEW is the
+					// direction the (virtual) placer LOOKS, routed through the same
+					// setFacingFromView mapping the real placement runs (the front lands
+					// OPPOSITE the view, the structure behind it). The facing regression arm.
+					.then(Commands.literal("view")
+						.then(Commands.argument("view", com.mojang.brigadier.arguments.StringArgumentType.word())
+							.executes(aContext -> place(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									parseView(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "view"))))))))
 			.then(Commands.literal("frame")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> frame(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
@@ -270,6 +278,34 @@ public final class GTMultiBlockCommand {
 		tLevel.setBlock(aPos, GTMultiBlocks.COKE_OVEN.get().defaultBlockState(), 3);
 		aSource.sendSuccess(() -> Component.literal("GT6 coke oven controller placed at " + aPos.toShortString()), false);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The p27-cokeoven-facing-fix placement arm: the VIEW argument is the direction the
+	 * (virtual) placer looks — the exact input {@link TileEntityBase10MultiBlockBase#setFacingFromPlacement}
+	 * consumes. Routing through {@link TileEntityBase10MultiBlockBase#setFacingFromView}
+	 * keeps the command byte-equivalent with a real player placement: the front lands
+	 * OPPOSITE the view, the structure core behind it (away from the placer).
+	 */
+	private static int place(CommandSourceStack aSource, BlockPos aPos, @Nullable Direction aView) {
+		ServerLevel tLevel = aSource.getLevel();
+		tLevel.setBlock(aPos, GTMultiBlocks.COKE_OVEN.get().defaultBlockState(), 3);
+		TileEntityCokeOven tOven = ovenAt(aSource, aPos);
+		if (tOven == null) {
+			aSource.sendFailure(Component.literal("No TileEntityCokeOven at " + aPos.toShortString()));
+			return 0;
+		}
+		tOven.setFacingFromView(aView);
+		aSource.sendSuccess(() -> Component.literal("GT6 coke oven controller placed at " + aPos.toShortString()
+				+ " facing=" + Direction.from3DDataValue(tOven.mFacing).getName() + " (view " + aView.getName() + ")"), false);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The view-direction word (the parseSide form; byName covers the horizontal set the mapping consumes). */
+	private static Direction parseView(String aWord) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		Direction tView = Direction.byName(aWord.toLowerCase());
+		if (tView == null) throw new com.mojang.brigadier.exceptions.SimpleCommandExceptionType(Component.literal("Unknown side: " + aWord)).create();
+		return tView;
 	}
 
 	/** Places the 25 brick cells of the 3x3x3 (the air centre and the controller cell excluded, occupied cells kept). */
