@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/cube_shiny/crushed"
+    "layer0": "gt6:item/material_sets/cube_shiny/crushed",
+    "layer1": "gt6:item/material_sets/cube_shiny/crushed_overlay"
   }
 }

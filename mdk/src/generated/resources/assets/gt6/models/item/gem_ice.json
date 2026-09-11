@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/cube_shiny/gem"
+    "layer0": "gt6:item/material_sets/cube_shiny/gem",
+    "layer1": "gt6:item/material_sets/cube_shiny/gem_overlay"
   }
 }

@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/stone/bullet_gt_large"
+    "layer0": "gt6:item/material_sets/stone/bullet_gt_large",
+    "layer1": "gt6:item/material_sets/stone/bullet_gt_large_overlay"
   }
 }

@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/diamond/tool_head_raw_saw"
+    "layer0": "gt6:item/material_sets/diamond/tool_head_raw_saw",
+    "layer1": "gt6:item/material_sets/diamond/tool_head_raw_saw_overlay"
   }
 }

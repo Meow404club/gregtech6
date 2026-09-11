@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/emerald/tool_head_raw_hoe"
+    "layer0": "gt6:item/material_sets/emerald/tool_head_raw_hoe",
+    "layer1": "gt6:item/material_sets/emerald/tool_head_raw_hoe_overlay"
   }
 }

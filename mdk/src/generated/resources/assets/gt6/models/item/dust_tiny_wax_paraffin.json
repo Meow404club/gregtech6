@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/food/dust_tiny"
+    "layer0": "gt6:item/material_sets/food/dust_tiny",
+    "layer1": "gt6:item/material_sets/food/dust_tiny_overlay"
   }
 }

@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/lapis/stick_long"
+    "layer0": "gt6:item/material_sets/lapis/stick_long",
+    "layer1": "gt6:item/material_sets/lapis/stick_long_overlay"
   }
 }

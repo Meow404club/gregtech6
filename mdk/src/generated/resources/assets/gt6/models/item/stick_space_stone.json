@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/space/stick"
+    "layer0": "gt6:item/material_sets/space/stick",
+    "layer1": "gt6:item/material_sets/space/stick_overlay"
   }
 }

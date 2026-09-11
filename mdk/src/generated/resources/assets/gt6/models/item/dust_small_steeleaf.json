@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/leaf/dust_small"
+    "layer0": "gt6:item/material_sets/leaf/dust_small",
+    "layer1": "gt6:item/material_sets/leaf/dust_small_overlay"
   }
 }

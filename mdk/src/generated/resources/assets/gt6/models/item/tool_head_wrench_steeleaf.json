@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/leaf/tool_head_wrench"
+    "layer0": "gt6:item/material_sets/leaf/tool_head_wrench",
+    "layer1": "gt6:item/material_sets/leaf/tool_head_wrench_overlay"
   }
 }

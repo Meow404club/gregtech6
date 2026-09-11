@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/opal/plant_gt_fiber"
+    "layer0": "gt6:item/material_sets/opal/plant_gt_fiber",
+    "layer1": "gt6:item/material_sets/opal/plant_gt_fiber_overlay"
   }
 }

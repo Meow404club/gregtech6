@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/gem_horizontal/chain"
+    "layer0": "gt6:item/material_sets/gem_horizontal/chain",
+    "layer1": "gt6:item/material_sets/gem_horizontal/chain_overlay"
   }
 }

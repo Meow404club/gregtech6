@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "gt6:item/crowbar"
+    "layer0": "gt6:item/crowbar",
+    "layer1": "gt6:item/crowbar_overlay"
   }
 }

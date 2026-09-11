@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "gt6:item/wrench"
+    "layer0": "gt6:item/wrench",
+    "layer1": "gt6:item/wrench_overlay"
   }
 }

@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/powder/rotor"
+    "layer0": "gt6:item/material_sets/powder/rotor",
+    "layer1": "gt6:item/material_sets/powder/rotor_overlay"
   }
 }

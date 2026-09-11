@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/hex/tool_head_drill"
+    "layer0": "gt6:item/material_sets/hex/tool_head_drill",
+    "layer1": "gt6:item/material_sets/hex/tool_head_drill_overlay"
   }
 }

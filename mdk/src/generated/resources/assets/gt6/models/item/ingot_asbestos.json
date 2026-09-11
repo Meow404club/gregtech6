@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/lapis/ingot"
+    "layer0": "gt6:item/material_sets/lapis/ingot",
+    "layer1": "gt6:item/material_sets/lapis/ingot_overlay"
   }
 }

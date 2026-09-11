@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:item/material_sets/rough/crushed_centrifuged_tiny"
+    "layer0": "gt6:item/material_sets/rough/crushed_centrifuged_tiny",
+    "layer1": "gt6:item/material_sets/rough/crushed_centrifuged_tiny_overlay"
   }
 }
