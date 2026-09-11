@@ -21,28 +21,37 @@ foreign 物品命中 tag fallback + 精确分支回归臂"):
     the GT datagen member of the SAME family tag. The row's recipe input is a
     MaterialPrefixItem -> itemTagFamily(ingot-band rod family) -> the real bound
     registry tag answers TRUE -> the row runs: out[0]=4x (2 accumulated + 2 new, the
-    stacking side-proof). This is the exact live analog of the spec's "vanilla
-    IRON_INGOT hits the GT iron ingot recipe" — the port carries NO (ingot, Iron)
-    machine row yet (the poured maps are ShCL/CokeOven/OreChain/Drying/Distillery/
-    Canner), so the twin-tag pair forge:rods/blaze stands in for forge:ingots/iron;
-    the offline suite proves the ingots/iron face through the injected stub
-    (GT6RecipeTagFallbackTest).
+    stacking side-proof). The offline suite proves the ingots/iron face through the
+    injected stub (GT6RecipeTagFallbackTest) — and since the p26 backfill the D arm
+    below drives that very face LIVE (see its note).
 
-  D the IRON_INGOT negative arm: 1x minecraft:iron_ingot — NOT a forge:rods/blaze
-    member (the real bound tag set answers false, the live mirror of the offline
-    production binding) -> the row must NOT run: input stays iron_ingotx1, out[0]
-    stays 4x, running=false.
+  D the IRON_INGOT ring arm (the p27-red-chains-modernize reshape — the former red,
+    re-pinned to the upstream semantics): 1x minecraft:iron_ingot — since the p26
+    row backfill (5cd2d60e) the SHREDDER map carries the RECYCLABLE ring (upstream
+    Loader_Recipes_Handlers.java:152-155: every RECYCLABLE prefix x material, two
+    MORTAR arms; the ingot prefix holds RECYCLABLE, OP.java:1214), so the port NOW
+    carries the (ingot, Iron) row and the spec's ORIGINAL example is live: the
+    foreign vanilla member matches gt6:ingot_iron through the forge:ingots/iron
+    family tag -> the row runs: out[0]=1x dust_iron (the :154 MORTAR arm — Fe holds
+    MORTAR, MT.java:996 — multiplier 16, EUt 16 x 48 t = 768 EU, the handlerCosts
+    16 + 16 x mToolQuality(Fe = 2) shape; the output is OM.pulverize(Fe, U) = the
+    dust cascade's 1x dust). The upstream order is the match order: the :688-708
+    rows pour first and the ring last — iron_ingot matches nothing earlier, the
+    ring row IS the first hit; the input is consumed, running=false after.
 
   E the direction-rule arm (card acceptance 5, live face): 1x gt6:dust_blaze — the
     SAME material, the SIBLING prefix (its family face is dusts/blaze, NOT
     rods/blaze) -> deriving the tag from the machine input side would match; the
     rule says the tag derives from the recipe input only -> the row must NOT run.
+    Still a true negative under the backfilled map: the dust prefix holds
+    DUST_BASED (OP.java:1199) and the ring's :152 leg 3 excludes DUST_BASED
+    prefixes, so no ring row's family face answers a dust input either.
 
 The item names in every /gt6machine report are PATH-ONLY (Item.toString() renders
 the registry path, no namespace) — the expects pin the path-only shape. The
 inject report itself lists the output slots, so each drive arm pins its verdict
-on the inject line's `outputs=[...]` (the strongest deterministic anchor):
-positive arms grow the dust count, the negative arms repeat the same count.
+on the inject line's `outputs=[...]` (the strongest deterministic anchor): the
+positive arms pin the grown count, the negative arm repeats the empty list.
 
 passes=2 is the idempotency proof; the pass-open bbox cleanup re-airs the rig.
 
@@ -62,18 +71,18 @@ from framework import Chain, Step, main, phase
 
 F = gt6world.fmt
 
-# The rig sites: the B/C shredder (394,64,20) plus one FRESH machine per negative
-# arm — a DECLINED item legitimately blocks the input slot (it is never consumed),
-# so the iron-ingot and the dust_blaze negatives cannot share a machine with each
-# other; each gets its own shredder + hopper. Band x=394..398, clear of every
-# earlier chain's bands (the neighbour is p24's 386).
+# The rig sites: the B/C shredder (394,64,20) plus one FRESH machine per
+# standalone arm — a DECLINED item legitimately blocks the input slot (it is never
+# consumed), so the dust_blaze negative cannot share a machine with the other arms;
+# each gets its own shredder + hopper. Band x=394..398, clear of every earlier
+# chain's bands (the neighbour is p24's 386).
 SHREDDER_SITE = gt6world.Site(394, 64, 20, dx=1, dy=2, dz=1)
-NEG_IRON_SITE = gt6world.Site(396, 64, 20, dx=1, dy=2, dz=1)
+RING_IRON_SITE = gt6world.Site(396, 64, 20, dx=1, dy=2, dz=1)
 NEG_DUST_SITE = gt6world.Site(398, 64, 20, dx=1, dy=2, dz=1)
 SHREDDER = F(SHREDDER_SITE)    # 394 64 20
 HOPPER = "394 65 20"           # stacked on the shredder, facing down into it
-NEG_IRON = F(NEG_IRON_SITE)    # 396 64 20
-NEG_IRON_HOPPER = "396 65 20"
+RING_IRON = F(RING_IRON_SITE)  # 396 64 20
+RING_IRON_HOPPER = "396 65 20"
 NEG_DUST = F(NEG_DUST_SITE)    # 398 64 20
 NEG_DUST_HOPPER = "398 65 20"
 
@@ -122,21 +131,28 @@ steps += [
     Step(f"gt6machine shredder check {SHREDDER}", expect="running=false"),
 ]
 
-# ------------------------------------------------- D: the IRON_INGOT negative arm
+# ------------------------------------------------- D: the IRON_INGOT ring arm
 steps += [
-    phase("D: negative arm — 1x minecraft:iron_ingot is NO rods/blaze member, the row must not run"),
-    Step(f"gt6machine shredder place {NEG_IRON}", expect="GT6 shredder placed"),
-    Step(f"setblock {NEG_IRON_HOPPER} hopper[facing=down]", expect="Changed the block"),
-    Step(f"item replace block {NEG_IRON_HOPPER} container.0 with minecraft:iron_ingot 1",
+    phase("D: ring arm — 1x minecraft:iron_ingot hits the RECYCLABLE ring's (ingot, Iron) "
+          "row through forge:ingots/iron (upstream :152-155 semantics, live since 5cd2d60e)"),
+    Step(f"gt6machine shredder place {RING_IRON}", expect="GT6 shredder placed"),
+    Step(f"setblock {RING_IRON_HOPPER} hopper[facing=down]", expect="Changed the block"),
+    Step(f"item replace block {RING_IRON_HOPPER} container.0 with minecraft:iron_ingot 1",
          expect="Replaced", sleep=4.0),
-    Step(f"gt6machine shredder check {NEG_IRON}", expect="input=iron_ingotx1",
+    Step(f"gt6machine shredder check {RING_IRON}", expect="input=iron_ingotx1",
          node_expects={"1.21.1": "input=minecraft:iron_ingotx1"}),
-    # the bound tag set answers false: the drive window produces NOTHING (outputs=[]),
-    # and the declined item BLOCKS the input slot — it is never consumed
-    Step(f"gt6machine shredder inject 32 16 {NEG_IRON}", expect="outputs=[]"),
-    Step(f"gt6machine shredder check {NEG_IRON}", expect="input=iron_ingotx1",
-         node_expects={"1.21.1": "input=minecraft:iron_ingotx1"}),
-    Step(f"gt6machine shredder check {NEG_IRON}", expect="running=false"),
+    # the ring row (the :154 MORTAR arm — Fe holds MORTAR): 1x gt6:ingot_iron ->
+    # 1x dust_iron, EUt 16 x 48 t = 768 EU; inject 48 x 16 closes the exact budget
+    # and the consumed slot reads air on both loaders (path-only vs full namespace)
+    Step(f"gt6machine shredder inject 48 16 {RING_IRON}", expect="outputs=[1x dust_iron; ]",
+         node_expects={"1.21.1": "outputs=[1x gt6:dust_iron; ]"}),
+    Step(f"gt6machine shredder check {RING_IRON}", expect="input=airx0",
+         node_expects={"1.21.1": "input=minecraft:airx0"}),
+    Step(f"gt6machine shredder check {RING_IRON}", expect="out[0]=1x dust_iron",
+         node_expects={"1.21.1": "out[0]=1x gt6:dust_iron"}),
+    # poll-to-expect (the p23 latch pattern): the inject window closes ON the
+    # completing iteration, the running latch falls a few quiet windows later
+    Step(f"gt6machine shredder check {RING_IRON}", expect="running=false", poll=10.0),
 ]
 
 # ------------------------------------------------- E: the direction-rule arm
@@ -165,7 +181,7 @@ steps += [
 CHAIN = Chain(
     name="p25-tag-input-machine-fallback",
     slug="p25taginput",
-    sites=gt6world.declare_sites(SHREDDER_SITE, NEG_IRON_SITE, NEG_DUST_SITE),
+    sites=gt6world.declare_sites(SHREDDER_SITE, RING_IRON_SITE, NEG_DUST_SITE),
     preferred_ports=(26108, 26118),      # this card's pinned rcon/query pair (after p24dyechemical 26106/26116)
     steps=steps,
 )
