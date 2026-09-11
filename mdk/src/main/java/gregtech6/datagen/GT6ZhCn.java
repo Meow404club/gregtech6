@@ -101,6 +101,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addStoneVariantUnits();
 		addStaticStorageUnits(); // task p20-i18n-compose-rows
 		addRowDomainUnits();    // task p20-i18n-compose-rows
+		addMoldCrucibleUnits(); // task p27-lang-fix-batch2 — the ledger §6 zh gap
 		addGrassUnits();        // task p24-grass-block
 		addFoamSprayUnits();    // task p25-c-foam-pipe-spray
 		addKitchenUnits();      // task p26-kitchen-pot-bowl
@@ -422,8 +423,9 @@ public class GT6ZhCn extends LanguageProvider {
 			}
 		}
 		// press + extruder (task p26-w1-press-extruder-molds): the family templates + the
-		// :101-104 unit words (the T1 Low Heat face rides the same 压模器 word, the dump
-		// :11543 row — the upstream zh column does not distinguish T1)
+		// :101-104 unit words (the T1 Low Heat face keeps the tier word — en "Low Heat
+		// Extruder (%s)"; task p27-lang-fix-batch2 P2 moved the machine words to the
+		// community 压板机/挤压机 forms, ledger §3 low-confidence rows)
 		addDirect(gregtech6.registry.GTMachines.PRESS_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.EXTRUDER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.EXTRUDER_LOW_HEAT_DISPLAY_KEY);
@@ -481,6 +483,49 @@ public class GT6ZhCn extends LanguageProvider {
 	/** Dedup across the row-family walks (the en addRowMatUnit mirror). */
 	private void addRowUnit(java.util.Set<String> aEmitted, String aKey) {
 		if (aEmitted.add(aKey)) addDirect(aKey);
+	}
+
+	/**
+	 * The p26 mold/crucible/faucet chain zh faces (task p27-lang-fix-batch2, the ledger §6
+	 * zh gap: the 70 keys the en chain — {@code GT6CrucibleDatagen.Lang} + the
+	 * {@code GT6MoldDatagen.Lang} tail — emits with no zh face). Every key mirrors the en
+	 * derivation from the SAME registry rows: the three smeltery display keys
+	 * ({@code gt6.row.crucible.display.<path>} over {@link gregtech6.registry.GT6Crucibles#ROWS}),
+	 * the mold display + raw-clay pairs ({@code gt6.row.mold.display.<path>} /
+	 * {@code item.gt6.<path>_raw} over {@link gregtech6.registry.GT6Molds#ROWS} + the ceramic
+	 * blank + {@link gregtech6.registry.GT6Molds#CERAMIC_ROWS}), the faucet template + material
+	 * words ({@link gregtech6.registry.GT6Molds#FAUCET_DISPLAY_KEY} +
+	 * {@link gregtech6.registry.GT6Molds#faucetMatUnitKeyOf} over {@link gregtech6.registry.GT6Molds#FAUCET_ROWS})
+	 * and the raw faucet item. Values are hand rows in the reference table — dump-verbatim
+	 * where the dump carries the face (粘土模具 (X) :10026-10092, 粘土模具 :10102,
+	 * 粘土浇铸口 :10104, 熔炼坩埚 (材料) :10772/:10893/:10895, 坩埚浇铸口 (材料) :11199/:11224);
+	 * the formed mold faces pair 粘土→陶瓷 on the dump's shape words (the upstream raw→fired
+	 * hardening pair; the fired dump faces 模具 (X) already belong to the shape_extruder items).
+	 */
+	private void addMoldCrucibleUnits() {
+		// the three smeltery rungs (the en GT6CrucibleDatagen.Lang:149-151 trio, walked)
+		for (gregtech6.registry.GT6Crucibles.SmelteryRow tRow : gregtech6.registry.GT6Crucibles.ROWS) {
+			addDirect("gt6.row.crucible.display." + tRow.path());
+		}
+		// the molds: the stone rung display, the ceramic blank display + raw, the 30
+		// pre-carved shape pairs (the en GT6MoldDatagen.Lang:151-156 derivation)
+		for (gregtech6.registry.GT6Molds.MoldRow tRow : gregtech6.registry.GT6Molds.ROWS) {
+			addDirect("gt6.row.mold.display." + tRow.path());
+		}
+		addDirect("gt6.row.mold.display." + gregtech6.registry.GT6Molds.CERAMIC_BLANK_ROW.path());
+		addDirect("item.gt6." + gregtech6.registry.GT6Molds.CERAMIC_BLANK_ROW.path() + "_raw");
+		for (gregtech6.registry.GT6Molds.MoldRow tRow : gregtech6.registry.GT6Molds.CERAMIC_ROWS) {
+			addDirect("gt6.row.mold.display." + tRow.path());
+			addDirect("item.gt6." + tRow.path() + "_raw");
+		}
+		// the crucible faucets: the composed template + the two material words + the raw
+		// clay faucet item (the en GT6MoldDatagen.Lang:158-161 faces; the raw key mirrors the
+		// en literal — FAUCET_CERAMIC_RAW's registry path)
+		addDirect(gregtech6.registry.GT6Molds.FAUCET_DISPLAY_KEY);
+		for (gregtech6.registry.GT6Molds.FaucetRow tRow : gregtech6.registry.GT6Molds.FAUCET_ROWS) {
+			addDirect(gregtech6.registry.GT6Molds.faucetMatUnitKeyOf(tRow));
+		}
+		addDirect("item.gt6.faucet_ceramic_raw");
 	}
 
 	/**

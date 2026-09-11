@@ -52,6 +52,7 @@ import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6BurningBoxes;
 import gregtech6.registry.GT6Boilers;
 import gregtech6.registry.GT6Kinetics;
+import gregtech6.registry.GT6Molds;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
@@ -125,15 +126,24 @@ public class GT6LangParityTest {
 	 * to the upstream "Shredder ("+aMat.getLocal()+")" caliber, not a coverage regression;
 	 * the only ratchet movement this task card will ever make downward).
 	 *
-	 * <p>Task p27-lang-fix: lowered to the measured 2662 — the SPEC retires the kitchen
-	 * creative tab (itemGroup.gt6.kitchen, both locales, -1 key; the user ruling kept NO
-	 * renamed successor — the four pot/bowl/clay items ride the machines tab through the
-	 * GT6Kitchen BuildCreativeModeTabContentsEvent join). A registration/creative-tab
-	 * retirement, not a coverage regression — the display-name keys all stay. The zh VALUE
-	 * fixes of this card (the P0/P1 ledger rows + the B4/B5 rules) are value-only and
-	 * move no counts.
-	 */
-	private static final int ZH_KEY_FLOOR = 2662;
+ * <p>Task p27-lang-fix: lowered to the measured 2662 — the SPEC retires the kitchen
+ * creative tab (itemGroup.gt6.kitchen, both locales, -1 key; the user ruling kept NO
+ * renamed successor — the four pot/bowl/clay items ride the machines tab through the
+ * GT6Kitchen BuildCreativeModeTabContentsEvent join). A registration/creative-tab
+ * retirement, not a coverage regression — the display-name keys all stay. The zh VALUE
+ * fixes of that card (the P0/P1 ledger rows + the B4/B5 rules) are value-only and
+ * move no counts.
+ *
+ * <p>Task p27-lang-fix-batch2: raised to the measured 2793 — the SPEC closes the ledger §6
+ * zh gap: the +70 p26 mold/crucible/faucet chain faces (32 mold displays + 31 raw clay
+ * molds + the raw faucet + the smeltery trio + the faucet template/mat words) ride the new
+ * addMoldCrucibleUnits walk with dump-verbatim values (tmp/gregtech.lang:10026-10092/
+ * :10102/:10104/:10772/:10893/:10895/:11199/:11224). zh == en, the zero-debt state. The en
+ * recording face now replays the mold chain (GT6MoldDatagen.Lang is final), so the zh ⊆ en
+ * subset assertion covers the chain too. The ~79 zh VALUE fixes of this card (the P2 ledger
+ * rows + the ultimet unification) are value-only and move no counts.
+ */
+private static final int ZH_KEY_FLOOR = 2793;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -214,14 +224,49 @@ public class GT6LangParityTest {
 				}
 			}.addTranslations();
 		} else {
-			new GT6EnUs(tOutput) {
+			// task p27-lang-fix-batch2: the en face rides the Lang CHAIN — GT6EnUs alone no
+			// longer covers the zh face now that the mold/crucible/faucet gap closed (the zh
+			// walk emits the 70 chain keys). GT6MoldDatagen.Lang is FINAL (its add() cannot be
+			// intercepted), so the recording subclass takes the GT6CrucibleDatagen.Lang rung
+			// (base + crucible + stone-mold via super) and REPLAYS the chain tail from the
+			// SAME registry rows the real tail walks (GT6MoldDatagen.Lang:151-161 derivation);
+			// the committed en_us.json face itself stays gated by runData two-pass + tree_check.
+			new GT6CrucibleDatagen.Lang(tOutput) {
 				@Override
 				public void add(String aKey, String aValue) {
 					recordNew(tEntries, aKey, aValue);
 				}
+
+				@Override
+				protected void addTranslations() {
+					super.addTranslations(); // the full base set + the smeltery trio + the stone mold
+					add("gt6.row.mold.display.mold_ceramic", "Ceramic Mold");
+					add("item.gt6.mold_ceramic_raw", "Ceramic Mold (Raw)");
+					for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) {
+						String tShape = moldShapeName(tRow.path());
+						add("gt6.row.mold.display." + tRow.path(), "Ceramic " + tShape + " Mold");
+						add("item.gt6." + tRow.path() + "_raw", "Ceramic " + tShape + " Mold (Raw)");
+					}
+					add("gt6.row.faucet.display", "%s Crucible Faucet");
+					add("gt6.row.faucet.mat.stone", "Stone");
+					add("gt6.row.faucet.mat.ceramic", "Ceramic");
+					add("item.gt6.faucet_ceramic_raw", "Ceramic Crucible Faucet (Raw)");
+				}
 			}.addTranslations();
 		}
 		return tEntries;
+	}
+
+	/** {@code mold_ceramic_tiny_plate} → {@code Tiny Plate} — the GT6MoldDatagen.shapeName mirror for the replayed en values. */
+	private static String moldShapeName(String aPath) {
+		String tTail = aPath.substring("mold_ceramic_".length());
+		String[] tWords = tTail.split("_");
+		StringBuilder r = new StringBuilder();
+		for (String tWord : tWords) {
+			if (r.length() > 0) r.append(' ');
+			r.append(Character.toUpperCase(tWord.charAt(0))).append(tWord.substring(1));
+		}
+		return r.toString();
 	}
 
 	private static void recordNew(Map<String, String> aEntries, String aKey, String aValue) {
@@ -233,6 +278,16 @@ public class GT6LangParityTest {
 	private static Map<String, String> en() {
 		if (enEntries == null) enEntries = collect(false);
 		return enEntries;
+	}
+
+	/**
+	 * The chained en face for sibling zh-face tests (task p27-lang-fix-batch2: the zh face
+	 * now covers the mold/crucible/faucet chain, so the spot-check cardinality pin compares
+	 * against THIS recording — a plain GT6EnUs face would measure the pre-gap 2723). Memoized
+	 * like {@link #en()}; the boot fixture is identical across the datagen test classes.
+	 */
+	static Map<String, String> chainedEnFace() {
+		return en();
 	}
 
 	private static Map<String, String> zh() {

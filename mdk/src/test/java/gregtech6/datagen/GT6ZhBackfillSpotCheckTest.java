@@ -76,17 +76,14 @@ public class GT6ZhBackfillSpotCheckTest {
 
 	@Test
 	public void theBackfillClosesTheGapExactly() {
-		Map<String, String> tEn = new HashMap<>();
-		PackOutput tOutput = new PackOutput(Path.of("build", "tmp", "gt6zhcn-spotcheck-en"));
-		new GT6EnUs(tOutput) {
-			@Override
-			public void add(String aKey, String aValue) {
-				tEn.put(aKey, aValue);
-			}
-		}.addTranslations();
+		// task p27-lang-fix-batch2: the zh face covers the mold/crucible/faucet chain now
+		// (the ledger §6 gap closed, en == zh == 2793), so the en face rides the CHAIN
+		// recording — the plain GT6EnUs face stopped being the whole en_us.json when the
+		// Lang chain (GT6CrucibleDatagen/GT6MoldDatagen) grew past the base walk.
+		Map<String, String> tEn = GT6LangParityTest.chainedEnFace();
 		long tStillMissing = tEn.keySet().stream().filter(tKey -> !zh().containsKey(tKey)).count();
 		assertEquals(0L, tStillMissing,
-			"the 442-key backfill must close the zh gap exactly — zero keys may stay missing");
+			"the backfill must close the zh gap exactly — zero keys may stay missing");
 		assertEquals(tEn.size(), zh().size(), "zh key cardinality must equal the en cardinality");
 	}
 }

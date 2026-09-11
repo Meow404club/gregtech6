@@ -101,12 +101,15 @@ HAND_TRANSLATIONS = {
     "gt6.tagprefix.block_raw": ("粗%s矿石块", "hand"),
     "gt6.tagprefix.block_gem": ("结晶%s块", "hand"),
     "gt6.tagprefix.block_dust": ("%s粉块", "hand"),
-    "gt6.tagprefix.block_ingot": ("%s锭块", "hand"),
+    # task p27-lang-fix-batch2 P2 (ledger §3): %s锭块 was clunky — %s块 is the community form
+    # (GTCEu "Block of %s"); the block family stays mutually distinct (%s块 / %s板块 / %s粉块 /
+    # 结晶%s块 / 实心%s块). block_plate/block_dust keep their faces (the ledger marks them 低优).
+    "gt6.tagprefix.block_ingot": ("%s块", "hand"),
     "gt6.tagprefix.block_plate": ("%s板块", "hand"),
     "gt6.tagprefix.block_plate_gem": ("%s结晶板块", "hand"),
-    "gt6.tagprefix.block_solid": ("铸造%s块", "hand"),
+    "gt6.tagprefix.block_solid": ("实心%s块", "hand"),  # task p27-lang-fix-batch2 P2: solid≠铸造 (en "Block of solid %s")
     "gt6.tagprefix.ore_raw": ("粗%s矿石", "hand"),
-    "gt6.tagprefix.rock_gt": ("含%s石块", "hand"),
+    "gt6.tagprefix.rock_gt": ("含%s岩石", "hand"),  # task p27-lang-fix-batch2 P2 (ledger §3): 石块→岩石 (en "%s bearing Rock")
     "gt6.tagprefix.chunk_gt": ("%s碎块", "hand"),
     "gt6.tagprefix.crushed": ("破碎%s矿", "hand"),
     "gt6.tagprefix.crushed_tiny": ("小撮破碎%s矿", "hand"),
@@ -159,7 +162,7 @@ HAND_TRANSLATIONS = {
     "gt6.tagprefix.tool_head_universal_spade": ("%s万用铲头", "hand"),
     "gt6.tagprefix.tool_head_builderwand": ("%s建筑之杖头", "hand"),
     "gt6.tagprefix.tool_head_construction_pickaxe": ("%s建筑镐头", "hand"),
-    "gt6.tagprefix.tool_head_pickaxe_gem": ("%s尖镐头", "hand"),
+    "gt6.tagprefix.tool_head_pickaxe_gem": ("%s镶尖镐头", "hand"),  # task p27-lang-fix-batch2 P2 (ledger §3): tipped=镶尖, unified with the tab face
     "gt6.tagprefix.tool_head_arrow": ("%s箭头", "hand"),
     "gt6.tagprefix.tool_head_raw_sword": ("%s剑刃毛坯", "hand"),
     "gt6.tagprefix.tool_head_raw_pickaxe": ("%s镐头毛坯", "hand"),
@@ -180,8 +183,10 @@ HAND_TRANSLATIONS = {
     "itemGroup.gt6.multiblocks": ("多方块", "hand"),
     "itemGroup.gt6.fluid_containers": ("流体容器", "hand"),
     "itemGroup.gt6.fluid_pipes": ("流体管道", "hand"),
-    "itemGroup.gt6.electric_wires": ("电线", "hand"),
-    "itemGroup.gt6.redstone_wires": ("红石线", "hand"),
+    # task p27-lang-fix-batch2 P2 (ledger §3): the three wire tabs said 电线/红石线/激光导线 —
+    # the wire noun unifies on 导线 (the gt6.wire.form.wire face); laser_wires already carried it.
+    "itemGroup.gt6.electric_wires": ("导线", "hand"),
+    "itemGroup.gt6.redstone_wires": ("红石导线", "hand"),
     "itemGroup.gt6.laser_wires": ("激光导线", "hand"),
     "itemGroup.gt6.tools": ("工具", "hand"),
     # ---- atomic misc keys (tools / covers / circuits / JEI info / example / fluids) ----
@@ -212,7 +217,8 @@ HAND_TRANSLATIONS = {
     #   head stays consistent with the wire unit);
     #   conveyor/robot arm = dump-verbatim nouns (gt.multiitem.technological.12040=
     #   "输送机模块 (ULV)" / :12080="机械臂 (ULV)", tmp/gregtech.lang);
-    #   the laser atomic key = dump-verbatim "光纤" (gt.multitileentity.24900).
+    #   the laser atomic key = the dump "光纤" (gt.multitileentity.24900) qualified with the
+    #     dropped Laser word (task p27-lang-fix-batch2 P2 — 激光光纤导线).
     #   NOTE (review R2): gt6.material.superconductor is DELIBERATELY absent here —
     #   Superconductor is a tier material (mID -1, MT.java:986) with no dump zh face and
     #   an en proper noun identical in both locales; the composed slot falls back to the
@@ -223,9 +229,15 @@ HAND_TRANSLATIONS = {
     "gt6.wire.form.wire": ("导线", "hand"),
     "gt6.wire.form.cable": ("线缆", "hand"),
     "gt6.wire.form.wirelamp": ("灯导线", "hand"),
-    "gt6.cover.conveyor.display": ("输送机模块 (%s)", "hand"),
-    "gt6.cover.robot_arm.display": ("机械臂 (%s)", "hand"),
-    "block.gt6.wire_laser": ("光纤", "hand"),
+    # task p27-lang-fix-batch2 P2 (ledger §3): the en "Compact" faces — the dump's tier-less
+    # 输送机模块/机械臂 words (gt.multiitem.technological.12040/:12080) dropped the Compact
+    # Electric qualifier; 小型电动/小型 restore it (declared deviation from the dump rows).
+    "gt6.cover.conveyor.display": ("小型电动输送机 (%s)", "hand"),
+    "gt6.cover.robot_arm.display": ("小型机械臂 (%s)", "hand"),
+    # task p27-lang-fix-batch2 P2 (ledger §3): the dump's bare 光纤 (gt.multitileentity.24900)
+    # drops the Laser word of en "Laser Fiber Wire"; 激光光纤导线 keeps all three words and the
+    # unified wire=导线 noun.
+    "block.gt6.wire_laser": ("激光光纤导线", "hand"),
     "block.gt6.example_chest": ("GT 示例箱子", "hand"),
     # ---- B2 stone + rows composed-display units (task p20-i18n-compose-rows) ----
     # The stone variants compose over gt6.stone.variant.<snake> (16 templates, the stone
@@ -240,10 +252,12 @@ HAND_TRANSLATIONS = {
     #     "小型木制轴" -> Wooden = 木制; the size words 小型/中型/大型/巨型 = :3343/:24781/
     #     :8790/:24783);
     #   steam engine = 蒸汽引擎 (%s) (:11052) / 强化蒸汽引擎 (%s) (:11066);
-    #   diesel = 燃油引擎 (%s) (:15048 "燃油引擎 (砷青铜)");
+    #   diesel = %s柴油引擎 (the dump :15048 face 燃油引擎 (砷青铜) reordered to the en
+    #     prefix form + the 柴油 material word — task p27-lang-fix-batch2 P2 deviation);
     #   burning box = 燃烧室 (%s, %s) (:10960) / 致密燃烧室 (:11010) / 流化床燃烧室 (:15018)
     #     / 致密流化床燃烧室 (:15031); family words 固体/液体/气体 = :10960/:11091/:11176;
-    #   boiler = 蒸汽锅炉 (%s) (:11025) / 强化蒸汽锅炉 (%s) (:11038);
+    #   boiler = 蒸汽锅炉箱 (%s) (the dump :11025/:11038 faces + the en "Tank" word —
+    #     task p27-lang-fix-batch2 P2 deviation);
     #   dryer = 干燥器 (%s) (:11603 "干燥器 (钢)");
     #   distillery = 蒸馏器 (%s) — NO dump face (the :1398-1401 rows are absent from the
     #     dump); DECLARED DEVIATION: hand translation, the GTCEu Modern community noun;
@@ -279,7 +293,9 @@ HAND_TRANSLATIONS = {
     "gt6.stone.variant.bricks_chiseled": ("錾制%s", "hand"),
     "gt6.stone.variant.smooth": ("平滑%s", "hand"),
     "gt6.stone.variant.bricks_reinforced": ("钢筋%s砖块", "hand"),
-    "gt6.stone.variant.bricks_redstone": ("红石化%s砖块", "hand"),
+    # task p27-lang-fix-batch2 P2 (ledger §3): 红石化 (dump :15254 verbatim) reads clunky —
+    # 红石浸染 follows the vanilla redstone-dye reading (declared deviation, low-stakes face).
+    "gt6.stone.variant.bricks_redstone": ("红石浸染%s砖块", "hand"),
     "gt6.stone.variant.tiles": ("%s方块", "hand"),
     "gt6.stone.variant.small_tiles": ("小型%s方块", "hand"),
     "gt6.stone.variant.small_bricks": ("小型%s砖块", "hand"),
@@ -293,7 +309,10 @@ HAND_TRANSLATIONS = {
     "gt6.row.size.huge": ("巨型", "hand"),
     "gt6.row.steam_engine.display": ("蒸汽引擎 (%s)", "hand"),
     "gt6.row.steam_engine.display.strong": ("强化蒸汽引擎 (%s)", "hand"),
-    "gt6.row.diesel.display": ("燃油引擎 (%s)", "hand"),
+    # task p27-lang-fix-batch2 P2 (ledger §3): en "%s Diesel Engine" prefixes the material;
+    # the dump's suffix form (燃油引擎 (砷青铜) :15048) becomes the prefix form and 燃油→柴油
+    # (the material face diesel=柴油) — declared deviation from the dump column.
+    "gt6.row.diesel.display": ("%s柴油引擎", "hand"),
     "gt6.row.burning_box.display": ("燃烧室 (%s, %s)", "hand"),
     "gt6.row.burning_box.display.dense": ("致密燃烧室 (%s, %s)", "hand"),
     "gt6.row.burning_box.display.fluidbed": ("流化床燃烧室 (%s)", "hand"),
@@ -301,8 +320,10 @@ HAND_TRANSLATIONS = {
     "gt6.row.burning_box.family.solid": ("固体", "hand"),
     "gt6.row.burning_box.family.liquid": ("液体", "hand"),
     "gt6.row.burning_box.family.gas": ("气体", "hand"),
-    "gt6.row.boiler.display": ("蒸汽锅炉 (%s)", "hand"),
-    "gt6.row.boiler.display.strong": ("强化蒸汽锅炉 (%s)", "hand"),
+    # task p27-lang-fix-batch2 P2 (ledger §3): en "Steam Boiler Tank" — the Tank word was
+    # dropped (蒸汽锅炉); 箱 restores it (declared deviation from the dump :11025/:11038 faces).
+    "gt6.row.boiler.display": ("蒸汽锅炉箱 (%s)", "hand"),
+    "gt6.row.boiler.display.strong": ("强化蒸汽锅炉箱 (%s)", "hand"),
     "gt6.row.dryer.display": ("干燥器 (%s)", "hand"),
     "gt6.row.distillery.display": ("蒸馏器 (%s)", "hand"),
     # task p27-oven-heat-t-ladder — the Oven Heat_T family (the :1288-1291 name column
@@ -349,7 +370,7 @@ HAND_TRANSLATIONS = {
     # tsv-orphan回写 (the item-pipe card's rule): the eu-bridge card added this row to the
     # committed TSV without a HAND_TRANSLATIONS entry — a faithful rerun washed it out
     # (2026-09-09, found by this card's regeneration)
-    "block.gt6.fe_battery": ("FE测试电池", "hand"),
+    "block.gt6.fe_battery": ("FE 测试电池", "hand"),  # task p27-lang-fix-batch2 P2 (ledger §3): the missing CJK-Latin space
     "gt6.row.hopper.display": ("%s漏斗", "hand"),
     "gt6.row.queue_hopper.display": ("%s队列漏斗", "hand"),
     "gt6.row.item_pipe.display.medium": ("%s物品管道", "hand"),
@@ -379,7 +400,14 @@ HAND_TRANSLATIONS = {
     "gt6.row.mat.bismuth": ("铋", "hand"),
     "gt6.row.mat.netherite": ("下界合金", "hand"),
     "gt6.row.mat.tantalum_hafnium_carbide": ("碳化钽铪", "hand"),
-    "gt6.row.mat.ultimet": ("哈氏合金", "hand"),
+    # task p27-lang-fix-batch2 ⑤ (the lang-fix residue): the two Ultimet faces UNIFY on
+    # 钴铬钨合金 (= gt6.material.ultimet, the batch1 P1 ruling). The dump's 哈氏合金
+    # (:5736, also GTCEu Modern zh_cn.json:5753 — the same mistaken lineage) misattributes a
+    # NICKEL-family name (Hastelloy) to a COBALT-based alloy: the upstream definition is
+    # Co-majority (54% Co, 26% Cr, 9% Ni, 5% Mo, 2% W — MT.java:1760 uumAloy + comment), and
+    # the real-world Ultimet (Haynes, UNS R31233) is Co-Cr-Ni-Mo-W. Two independent sources
+    # (upstream MT composition + real-world metallurgy) against the dump's single error face.
+    "gt6.row.mat.ultimet": ("钴铬钨合金", "hand"),
     "gt6.row.mat.tungsten_carbide": ("碳化钨", "hand"),
     "gt6.row.mat.stainless_steel": ("不锈钢", "hand"),
     "gt6.row.mat.adamantium": ("艾德曼合金", "hand"),
@@ -392,8 +420,10 @@ HAND_TRANSLATIONS = {
     "gt6.row.mat.brick": ("砖", "hand"),
     "block.gt6.brick_burning_box": ("砖块燃烧室 (固体)", "hand"),
     "block.gt6.heat_transmitter": ("传热装置", "hand"),  # task p27-lang-fix P1 §2.2 (transmit≠absorb, ledger en_us.json:64)
-    "block.gt6.gearbox": ("木制可调变速箱", "hand"),
-    "block.gt6.transformer_rotation": ("木制变速箱", "hand"),
+    # task p27-lang-fix-batch2 P2 (ledger §3): 可调≠Custom / the rotation gearbox de-collides
+    # from the adjustable one (en "Custom Wooden Gearbox" / "Wooden Transformer Gearbox").
+    "block.gt6.gearbox": ("定制木制齿轮箱", "hand"),
+    "block.gt6.transformer_rotation": ("木制转向齿轮箱", "hand"),
     "fluid.gt6.iron_molten": ("熔融铁", "hand"),
     "fluid.gt6.natural_gas": ("天然气", "hand"),
     "gt6.jei.info.multiblock_coke_oven": (
@@ -526,7 +556,7 @@ HAND_TRANSLATIONS = {
     "block.gt6.bottlecrate_warped": ("诡异木瓶箱", "hand"),
     "block.gt6.drawer_bronze": ("青铜四格抽屉", "hand"),
     "block.gt6.drawer_steel": ("钢四格抽屉", "hand"),
-    "block.gt6.electrometer": ("电力传感器", "hand"),
+    "block.gt6.electrometer": ("静电计传感器", "hand"),  # task p27-lang-fix-batch2 P2 (ledger §3): en "Electrometer Sensor" — 电力 reads power, the electrometer measures charge
     "block.gt6.fluidometer": ("流体体积传感器(单位: 升)", "hand"),
     "block.gt6.locker_bronze": ("青铜储物柜", "hand"),
     "block.gt6.locker_steel": ("钢储物柜", "hand"),
@@ -544,16 +574,20 @@ HAND_TRANSLATIONS = {
     "gt6.row.machine.compressor": ("压缩机 (%s)", "hand"),
     "gt6.row.machine.sifter": ("筛选机 (%s)", "hand"),
     "gt6.row.machine.wiremill": ("线材机 (%s)", "hand"),
-    "gt6.row.machine.press.display": ("压力成型机 (%s)", "hand"),
-    "gt6.row.machine.extruder.display": ("压模器 (%s)", "hand"),
-    # task p27-lang-fix P1 §2.2: the Low Heat tier display — the dump :11543 row (and the
-    # pre-writeback TSV value) flattened T1 into the plain 压模器 word (the GT6ZhCn walk
-    # comment self-attests the loss); en "Low Heat Extruder (%s)" (en_us.json) keeps the
-    # tier — DECLARED DEVIATION from the dump column, the ledger's 低温压模器 face.
-    "gt6.row.machine.extruder.low_heat.display": ("低温压模器 (%s)", "hand"),
-    "gt6.row.machine.press": ("压力成型机", "hand"),
-    "gt6.row.machine.extruder": ("压模器", "hand"),
-    "gt6.row.machine.extruder_low_heat": ("压模器", "hand"),
+    # task p27-lang-fix-batch2 P2 (ledger §3): the Press/Extruder machine words follow the
+    # community 通译 压板机/挤压机 (both flagged LOW-CONFIDENCE — the ledger's 保守译+列账 rows;
+    # declared deviation from the dump's 压力成型机/压模器 columns). The shape_extruder molds
+    # (item.gt6.shape_extruder_*) KEEP their dump-verbatim 模具 (板)/(杆) faces — the mold is
+    # a mold in the dump regardless of the machine word.
+    "gt6.row.machine.press.display": ("压板机 (%s)", "hand"),
+    "gt6.row.machine.extruder.display": ("挤压机 (%s)", "hand"),
+    # task p27-lang-fix P1 §2.2 + batch2: the Low Heat tier display — the dump :11543 row (and
+    # the pre-writeback TSV value) flattened T1 into the plain machine word; en "Low Heat
+    # Extruder (%s)" (en_us.json) keeps the tier — DECLARED DEVIATION from the dump column.
+    "gt6.row.machine.extruder.low_heat.display": ("低温挤压机 (%s)", "hand"),
+    "gt6.row.machine.press": ("压板机", "hand"),
+    "gt6.row.machine.extruder": ("挤压机", "hand"),
+    "gt6.row.machine.extruder_low_heat": ("挤压机", "hand"),
     "item.gt6.shape_extruder_plate": ("模具 (板)", "hand"),
     "item.gt6.shape_extruder_rod": ("模具 (杆)", "hand"),
 }
@@ -689,8 +723,12 @@ HAND_TAGPREFIXES = {
     "gem_polished": "抛光%s",
     "gem_raw": "生%s",
     "gem_uncut": "未切割%s",
-    # ore_<stone> faces with NO dump row: vanilla/geology words translated, proper nouns kept
-    "ore_betweenstone": "Betweenstone%s矿",  # RECHECK: Betweenlands proper noun
+    # ore_<stone> faces with NO dump row: vanilla/geology words translated, proper nouns kept.
+    # task p27-lang-fix-batch2 P2 (ledger §3): the three hosts whose materials already carry
+    # zh names backfill those words (betweenstone 交错石 / pitstone 麻纹石 / umberstone 棕石 =
+    # gt6.material.umber's en face "Umberstone"); the planets keep their ASCII proper-noun form
+    # (the ledger marks 汉化 optional — the declared convention here).
+    "ore_betweenstone": "交错石%s矿",
     "ore_blackstone": "黑石%s矿",
     "ore_callisto": "Callisto%s矿",          # RECHECK: moon of Jupiter, kept ASCII
     "ore_ceres": "Ceres%s矿",                # RECHECK
@@ -715,7 +753,7 @@ HAND_TAGPREFIXES = {
     "ore_oberon": "Oberon%s矿",              # RECHECK
     "ore_phobos": "Phobos%s矿",              # RECHECK
     "ore_pinkschist": "粉片岩%s矿",          # RECHECK: dump naming-pattern extension
-    "ore_pitstone": "Pitstone%s矿",          # RECHECK: Aether proper noun
+    "ore_pitstone": "麻纹石%s矿",
     "ore_pluto": "Pluto%s矿",                # RECHECK
     "ore_poor": "劣质%s矿",                  # RECHECK: Poor Ore (ore_small already owns 贫瘠 per the dump)
     "ore_rich": "富集%s矿",
@@ -727,7 +765,7 @@ HAND_TAGPREFIXES = {
     "ore_titan": "Titan%s矿",                # RECHECK
     "ore_titania": "Titania%s矿",            # RECHECK
     "ore_triton": "Triton%s矿",              # RECHECK
-    "ore_umberstone": "Umberstone%s矿",      # RECHECK: fictional stone, kept ASCII
+    "ore_umberstone": "棕石%s矿",            # the Umber material (en face "Umberstone", en_us.json:1764)
     "ore_uranus": "Uranus%s矿",              # RECHECK
     "ore_venus": "Venus%s矿",                # RECHECK
     "oreberry": "%s莓",                      # the plant_gt_berry dump word
@@ -828,8 +866,8 @@ BLOCK_BACKFILL = {
     "block.gt6.multiblock_coke_oven": "焦炉",        # = the JEI info page word (gt6.jei.info row)
     "block.gt6.multiblock_coke_oven_bricks": "焦炉砖",
     "block.gt6.shredder": "粉碎机",                  # = the TSV gt6.row.machine.shredder unit verbatim
-    "block.gt6.wire_electric_1x": "1×电线",
-    "block.gt6.wire_electric_2x": "2×电线",
+    "block.gt6.wire_electric_1x": "1×导线",  # task p27-lang-fix-batch2 P2 (ledger §3): wire=导线 unified
+    "block.gt6.wire_electric_2x": "2×导线",  # (en "1x/2x Electric Wire"; the × convention kept)
     "block.gt6.wood_fluid_pipe_medium": "木制流体管道",  # dump 26xxx ...流体管道 word set
     "block.gt6.wood_fluid_pipe_small": "小型木制流体管道",
 }
@@ -847,8 +885,8 @@ FLUID_BACKFILL = {
     "fluid.gt6.hot_water": "热水",
     "fluid.gt6.jetfuel": "喷气燃料",
     "fluid.gt6.kerosine": "煤油",
-    "fluid.gt6.maplesap": "枫糖树液",
-    "fluid.gt6.mnwtr": "矿物水",           # en semantics: Mineral Water
+    "fluid.gt6.maplesap": "枫树汁液",      # task p27-lang-fix-batch2 P2 (ledger §3): sap is the sap, not syrup
+    "fluid.gt6.mnwtr": "矿泉水",           # en semantics: Mineral Water (task p27-lang-fix-batch2 P2: the community face)
     "fluid.gt6.nitrofuel": "硝基燃料",
     "fluid.gt6.petrol": "汽油",
     "fluid.gt6.reedwater": "芦苇水",
@@ -981,7 +1019,55 @@ TAB_BACKFILL = {
     "itemGroup.gt6.spray_cans": "喷漆罐",
 }
 
-for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL):
+# ---------------------------------------------------------------------------
+# The p26 mold/crucible/faucet chain zh gap (task p27-lang-fix-batch2, ledger §6: en 2793 −
+# zh 2723 = 70 keys the MoldLang/CrucibleLang en faces carry with no zh face). Dump-verbatim
+# priority per the card:
+#   raw clay items  = tmp/gregtech.lang:10026-10092 (粘土模具 (X), the MultiItemRandomTools
+#                     900-929 chain) + :10102 blank (991 Clay Mold) + :10104 faucet (992);
+#   formed molds    = NO dump face (upstream had ONE mold item that hardens in place; the
+#                     port split raw→fired into block+raw pairs) — the raw face's 粘土→陶瓷
+#                     swap on the SAME dump shape words (the fired-mold dump faces 模具 (X)
+#                     :10127+ already belong to the shape_extruder items, so the 陶瓷 head
+#                     keeps the two families distinguishable);
+#   stone mold      = NO dump face — en "Stone Mold" semantics (石头模具);
+#   smelteries      = :10772/:10893/:10895 verbatim (熔炼坩埚 (石头)/(青铜)/(钢), MTE
+#                     1000/1020/1022; en renamed the rows "Smeltery", zh keeps the dump word);
+#   faucets         = the composed template over the dump faces :11199/:11224 (坩埚浇铸口
+#                     (石头)/(陶瓷)) — the template word order follows the dump column
+#                     (坩埚浇铸口 (%s), the CJK reorder precedent; NOT the attachment tap's
+#                     龙头 — the dump names the faucet family 浇铸口);
+#   the shape-word map is name-joined against the upstream en faces (MultiItemRandomTools
+#   913 "Clay Spade Mold"=铲 / 914 "Clay Shovel Mold"=锹 / 928 Nugget=粒 / 929 Billet=胚料 /
+#   901 Chunk=小块 — NOT the tagprefix faces 碎块/坯料).
+# ---------------------------------------------------------------------------
+MOLD_SHAPE_WORDS = {
+    "ingot": "锭", "billet": "胚料", "chunk": "小块", "plate": "板", "tiny_plate": "小块板",
+    "bolt": "螺栓", "rod": "杆", "long_rod": "长杆", "item_casing": "外壳", "ring": "环",
+    "gear": "齿轮", "small_gear": "小型齿轮", "sword": "剑", "pickaxe": "镐", "spade": "铲",
+    "shovel": "锹", "universal_spade": "万用铲", "axe": "斧", "double_axe": "双刃斧",
+    "saw": "锯", "hammer": "锤", "file": "锉刀", "screwdriver": "螺丝刀", "chisel": "凿子",
+    "arrow": "箭", "hoe": "锄", "sense": "镰刀", "plow": "犁", "builderwand": "建筑之杖",
+    "nugget": "粒",
+}
+
+MOLD_CRUCIBLE_GAP_BACKFILL = {
+    "gt6.row.crucible.display.smeltery_stone": "熔炼坩埚 (石头)",     # dump :10772 verbatim (MTE 1000)
+    "gt6.row.crucible.display.smeltery_bronze": "熔炼坩埚 (青铜)",    # dump :10893 verbatim (MTE 1020)
+    "gt6.row.crucible.display.smeltery_steel": "熔炼坩埚 (钢)",       # dump :10895 verbatim (MTE 1022)
+    "gt6.row.mold.display.mold_ceramic": "陶瓷模具",                  # the formed blank (raw = dump :10102)
+    "item.gt6.mold_ceramic_raw": "粘土模具",                          # dump :10102 verbatim (Clay Mold, 991)
+    "gt6.row.mold.display.mold_stone": "石头模具",                    # no dump face — en "Stone Mold" semantics
+    "gt6.row.faucet.display": "坩埚浇铸口 (%s)",                      # dump :11199 word order (坩埚浇铸口 (石头))
+    "gt6.row.faucet.mat.stone": "石头",                               # renders dump :11199 坩埚浇铸口 (石头)
+    "gt6.row.faucet.mat.ceramic": "陶瓷",                             # renders dump :11224 坩埚浇铸口 (陶瓷)
+    "item.gt6.faucet_ceramic_raw": "粘土浇铸口",                      # dump :10104 verbatim (Clay Faucet, 992)
+}
+for _shape, _word in MOLD_SHAPE_WORDS.items():
+    MOLD_CRUCIBLE_GAP_BACKFILL["gt6.row.mold.display.mold_ceramic_" + _shape] = "陶瓷模具 (%s)" % _word
+    MOLD_CRUCIBLE_GAP_BACKFILL["item.gt6.mold_ceramic_" + _shape + "_raw"] = "粘土模具 (%s)" % _word
+
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL):
     for _key, _value in _backfill.items():
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")
@@ -1034,6 +1120,62 @@ FAMILY_OVERRIDES = {
     # -- §2.2 prefix-tab titles (itemgroup family, 2 rows) --
     ("itemgroup", "toolHeadUniversalSpade"): "万用铲头",    # 铲头毛坯 pasted the RAW group's name onto the finished group (en "Universal Spade Heads"; the raw group owns 毛坯)
     ("itemgroup", "wireFine"): "细导线",                    # 细线缆 mixed the cable word into the wire tab (en "Fine Wires")
+    # -- §3 P2 rows (task p27-lang-fix-batch2, ledger §3) --
+    # prefix-tab titles (itemgroup family): the en-qualifier restores + the two unification
+    # rulings (洗净 for purified, 双重/三重/四重/五重 for the multiplicity ladder — the dump's
+    # 2x/3x faces split from the tagprefix's 双重%s锭 templates; the ledger's first-listed
+    # option wins). crushedCentrifuged(+Tiny) KEEP 离心 — in sync with the tagprefix rows,
+    # the en "Refined Ores" inconsistency is an en-side report (ledger §4 #4). toolHeadBuilderwand
+    # keeps 建筑之杖帽 (en "Caps" vs the tagprefix "Cap" — already faithful).
+    ("itemgroup", "casingSmall"): "物品外壳",               # en "Item Casings" — the missing qualifier
+    ("itemgroup", "chemtube"): "玻璃试管",                  # en "Glass Tubes" — the missing glass word
+    ("itemgroup", "rockGt"): "岩石",                        # en "Rocks" — 石头 collides with stone
+    ("itemgroup", "oreRaw"): "生矿石",                      # en "Raw Ores" — the missing raw word
+    ("itemgroup", "crushedPurified"): "洗净矿石",           # unified with tagprefix.crushed_purified 洗净%s矿
+    ("itemgroup", "crushedPurifiedTiny"): "小撮洗净矿石",   # unified with tagprefix.crushed_purified_tiny
+    ("itemgroup", "toolHeadSense"): "镰刀刃",               # 镰刀片 vs the tagprefix 刃 — unified on 刃 (en "Sense Blades")
+    ("itemgroup", "toolHeadPickaxeGem"): "镶尖镐头",        # unified tipped=镶尖 with the tagprefix %s镶尖镐头
+    ("itemgroup", "stick"): "杆",                           # 杆/棍 slash pair — 棍 dropped (the tagprefix is %s杆)
+    ("itemgroup", "stickLong"): "长杆",                     # same unification
+    ("itemgroup", "dustDiv72"): "1/72小撮粉末",             # the verbose 七十二分之一 spelling (the tagprefix is 1/72%s粉)
+    ("itemgroup", "ingotDouble"): "双重锭",                 # the 2x faces join the tagprefix number words
+    ("itemgroup", "ingotTriple"): "三重锭",
+    ("itemgroup", "ingotQuadruple"): "四重锭",
+    ("itemgroup", "ingotQuintuple"): "五重锭",
+    ("itemgroup", "plateDouble"): "双重板",
+    ("itemgroup", "plateTriple"): "三重板",
+    ("itemgroup", "plateQuadruple"): "四重板",
+    ("itemgroup", "plateQuintuple"): "五重板",
+    # -- §3 P2 material names (29 rows) --
+    ("material", "Basalz"): "岩石元素",                     # TE element family aligns on 元素 (岩石 collides with stone=石头)
+    ("material", "Aerotheum"): "气元素",                    # 和谐之空气 unattested machine-ese
+    ("material", "Petrotheum"): "地元素",                   # 构造之地岩 machine-ese
+    ("material", "Cryotheum"): "冰元素",                    # 凛冰 renamed for the family face (ledger: 同族一并对齐)
+    ("material", "Pyrotheum"): "炎元素",                    # same
+    ("material", "Chert"): "硅质岩",                        # de-collides with flint 燧石 (en Chert vs Flint are distinct)
+    ("material", "Dilithium"): "二锂",                      # the Star-Trek community word (双锂 unattested)
+    ("material", "Dolamide"): "多拉迈德",                   # the DS9 fictional mineral — phonetic, 酰胺 is a real chemistry suffix
+    ("material", "SoylentGreen"): "祖母绿",                 # en "Emerald Green" (the pigment face)
+    ("material", "Craponite"): "克拉邦石",                  # the joke name, phonetic over the vulgar literal
+    ("material", "Ectoplasm"): "灵外质",                    # 灵气 = aura collision
+    ("material", "Honeydew"): "蜜露",                       # the established word
+    ("material", "Licorice"): "甘草",                       # the generic word over the over-specific candy face
+    ("material", "Rye"): "黑麦",                            # the grain (en "Rye"); 面 = flour, not carried
+    ("material", "EnergiumRed"): "红色能量水晶",            # the colour restored (sibling energium_cyan 青色能量水晶)
+    ("material", "Prismarine"): "亮海晶石",                 # the vanilla word; 亮色 — (aligns ore_lightprismarine 亮海晶石%s矿)
+    ("material", "QuartzBlack"): "黑色石英",                # a gem, not a rock (en "Black Quartz")
+    ("material", "Maxixe"): "马克西绿柱石",                 # the colour word is uncarried in en ("Maxixe")
+    ("material", "Inolashite"): "影秘蓝金",                 # de-collides from ceruclase 暗影秘银
+    ("material", "Valonite"): "瓦罗奈特",                   # phonetic — 法罗钠 carried a stray 钠 element reading
+    ("material", "Octine"): "奥克廷",                       # phonetic — 炽炎铁 carried a false iron reading
+    ("material", "DeepIron"): "深层铁",                     # 深渊 collides with the abyssal family
+    ("material", "ElectrumFlux"): "充能琥珀金",             # the TE Fluxed Electrum community form (low-confidence, ledger-flagged)
+    ("material", "VibrantAlloy"): "脉动合金",               # the EIO community form (low-confidence)
+    ("material", "VividAlloy"): "鲜艳合金",                 # the EIO community form (low-confidence)
+    ("material", "Ludicrite"): "路德里特",                  # phonetic over the over-translated 滑稽
+    ("material", "Dreadium"): "恐惧素",                     # the bare abstract 恐惧 gains the substance suffix
+    ("material", "Continuum"): "连续体",                    # en "Continuum" (命运 was a pun reading)
+    ("material", "WoodScorched"): "烧焦木",                 # scorched = 烧焦 (焦皮枯木 stacked three morphemes)
 }
 
 
