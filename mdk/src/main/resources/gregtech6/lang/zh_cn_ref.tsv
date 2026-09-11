@@ -62,12 +62,12 @@ direct	block.gt6.crucible_steel_wall	钢壁板	hand
 direct	block.gt6.crusher	破碎机	hand
 direct	block.gt6.drawer_bronze	青铜四格抽屉	hand
 direct	block.gt6.drawer_steel	钢四格抽屉	hand
-direct	block.gt6.electrometer	电力传感器	hand
+direct	block.gt6.electrometer	静电计传感器	hand
 direct	block.gt6.energy_source	测试能源	hand
 direct	block.gt6.example_chest	GT 示例箱子	hand
-direct	block.gt6.fe_battery	FE测试电池	hand
+direct	block.gt6.fe_battery	FE 测试电池	hand
 direct	block.gt6.fluidometer	流体体积传感器(单位: 升)	hand
-direct	block.gt6.gearbox	木制可调变速箱	hand
+direct	block.gt6.gearbox	定制木制齿轮箱	hand
 direct	block.gt6.grass	草方块	hand
 direct	block.gt6.grass_black	草方块	hand
 direct	block.gt6.grass_brown	草方块	hand
@@ -90,10 +90,10 @@ direct	block.gt6.safe_keylocked_steel	钥匙锁定钢保险箱	hand
 direct	block.gt6.safe_mechanical_bronze	机械青铜保险箱	hand
 direct	block.gt6.safe_mechanical_steel	机械钢保险箱	hand
 direct	block.gt6.shredder	粉碎机	hand
-direct	block.gt6.transformer_rotation	木制变速箱	hand
-direct	block.gt6.wire_electric_1x	1×电线	hand
-direct	block.gt6.wire_electric_2x	2×电线	hand
-direct	block.gt6.wire_laser	光纤	hand
+direct	block.gt6.transformer_rotation	木制转向齿轮箱	hand
+direct	block.gt6.wire_electric_1x	1×导线	hand
+direct	block.gt6.wire_electric_2x	2×导线	hand
+direct	block.gt6.wire_laser	激光光纤导线	hand
 direct	block.gt6.wood_fluid_pipe_medium	木制流体管道	hand
 direct	block.gt6.wood_fluid_pipe_small	小型木制流体管道	hand
 direct	fluid.gt6.cactuswater	仙人掌汁	hand
@@ -156,8 +156,8 @@ direct	fluid.gt6.hot_water	热水	hand
 direct	fluid.gt6.iron_molten	熔融铁	hand
 direct	fluid.gt6.jetfuel	喷气燃料	hand
 direct	fluid.gt6.kerosine	煤油	hand
-direct	fluid.gt6.maplesap	枫糖树液	hand
-direct	fluid.gt6.mnwtr	矿物水	hand
+direct	fluid.gt6.maplesap	枫树汁液	hand
+direct	fluid.gt6.mnwtr	矿泉水	hand
 direct	fluid.gt6.natural_gas	天然气	hand
 direct	fluid.gt6.nitrofuel	硝基燃料	hand
 direct	fluid.gt6.petrol	汽油	hand
@@ -171,8 +171,8 @@ direct	fluid.gt6.water_geothermal	温泉水	hand
 direct	fluid.gt6.waterdirty	污水	hand
 direct	gt.grass.tooltip	不会传播、被吃、改变颜色, 也不需要光照	hand
 direct	gt.grass.tooltip.spray	喷漆罐也可以用来给草染色！	hand
-direct	gt6.cover.conveyor.display	输送机模块 (%s)	hand
-direct	gt6.cover.robot_arm.display	机械臂 (%s)	hand
+direct	gt6.cover.conveyor.display	小型电动输送机 (%s)	hand
+direct	gt6.cover.robot_arm.display	小型机械臂 (%s)	hand
 direct	gt6.foamspray.owned	干燥后仅所有者可破坏	hand
 direct	gt6.foamspray.paint	可以喷射%s泡沫	hand
 direct	gt6.jei.info.multiblock_coke_oven	焦炉是一个 3x3x3 的立方体：将焦炉控制器放在其中一面的中央并朝外，保持立方体中心格为空，其余 25 格全部放满焦炉砖。点燃控制器即可启动——它自行积攒热量，结构下方一层的储罐会收集杂酚油。	hand
@@ -188,8 +188,8 @@ direct	gt6.row.attachment.mat.stainless_steel	不锈钢	hand
 direct	gt6.row.attachment.mat.tantalum_hafnium_carbide	碳化钽铪	hand
 direct	gt6.row.attachment.mat.tungsten	钨	hand
 direct	gt6.row.axle.display	%s%s轴	hand
-direct	gt6.row.boiler.display	蒸汽锅炉 (%s)	hand
-direct	gt6.row.boiler.display.strong	强化蒸汽锅炉 (%s)	hand
+direct	gt6.row.boiler.display	蒸汽锅炉箱 (%s)	hand
+direct	gt6.row.boiler.display.strong	强化蒸汽锅炉箱 (%s)	hand
 direct	gt6.row.burning_box.display	燃烧室 (%s, %s)	hand
 direct	gt6.row.burning_box.display.dense	致密燃烧室 (%s, %s)	hand
 direct	gt6.row.burning_box.display.fluidbed	流化床燃烧室 (%s)	hand
@@ -198,10 +198,16 @@ direct	gt6.row.burning_box.family.gas	气体	hand
 direct	gt6.row.burning_box.family.liquid	液体	hand
 direct	gt6.row.burning_box.family.solid	固体	hand
 direct	gt6.row.canner.display	罐装机 (%s)	hand
+direct	gt6.row.crucible.display.smeltery_bronze	熔炼坩埚 (青铜)	hand
+direct	gt6.row.crucible.display.smeltery_steel	熔炼坩埚 (钢)	hand
+direct	gt6.row.crucible.display.smeltery_stone	熔炼坩埚 (石头)	hand
 direct	gt6.row.dense_wall.display	致密%s壁板	hand
-direct	gt6.row.diesel.display	燃油引擎 (%s)	hand
+direct	gt6.row.diesel.display	%s柴油引擎	hand
 direct	gt6.row.distillery.display	蒸馏器 (%s)	hand
 direct	gt6.row.dryer.display	干燥器 (%s)	hand
+direct	gt6.row.faucet.display	坩埚浇铸口 (%s)	hand
+direct	gt6.row.faucet.mat.ceramic	陶瓷	hand
+direct	gt6.row.faucet.mat.stone	石头	hand
 direct	gt6.row.funnel.display	%s漏斗	hand
 direct	gt6.row.hopper.display	%s漏斗	hand
 direct	gt6.row.item_pipe.display.huge	巨型%s物品管道	hand
@@ -214,13 +220,13 @@ direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
 direct	gt6.row.machine.compressor	压缩机 (%s)	hand
 direct	gt6.row.machine.crusher	破碎机	hand
 direct	gt6.row.machine.display	%s (%s)	hand
-direct	gt6.row.machine.extruder	压模器	hand
-direct	gt6.row.machine.extruder.display	压模器 (%s)	hand
-direct	gt6.row.machine.extruder.low_heat.display	低温压模器 (%s)	hand
-direct	gt6.row.machine.extruder_low_heat	压模器	hand
+direct	gt6.row.machine.extruder	挤压机	hand
+direct	gt6.row.machine.extruder.display	挤压机 (%s)	hand
+direct	gt6.row.machine.extruder.low_heat.display	低温挤压机 (%s)	hand
+direct	gt6.row.machine.extruder_low_heat	挤压机	hand
 direct	gt6.row.machine.lathe	车床	hand
-direct	gt6.row.machine.press	压力成型机	hand
-direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
+direct	gt6.row.machine.press	压板机	hand
+direct	gt6.row.machine.press.display	压板机 (%s)	hand
 direct	gt6.row.machine.shredder	粉碎机	hand
 direct	gt6.row.machine.sifter	筛选机 (%s)	hand
 direct	gt6.row.machine.wiremill	线材机 (%s)	hand
@@ -254,8 +260,40 @@ direct	gt6.row.mat.trinitanium	特林钛合金	hand
 direct	gt6.row.mat.tungsten	钨	hand
 direct	gt6.row.mat.tungsten_carbide	碳化钨	hand
 direct	gt6.row.mat.tungstensteel	钨钢	hand
-direct	gt6.row.mat.ultimet	哈氏合金	hand
+direct	gt6.row.mat.ultimet	钴铬钨合金	hand
 direct	gt6.row.mat.wood_treated	木制	hand
+direct	gt6.row.mold.display.mold_ceramic	陶瓷模具	hand
+direct	gt6.row.mold.display.mold_ceramic_arrow	陶瓷模具 (箭)	hand
+direct	gt6.row.mold.display.mold_ceramic_axe	陶瓷模具 (斧)	hand
+direct	gt6.row.mold.display.mold_ceramic_billet	陶瓷模具 (胚料)	hand
+direct	gt6.row.mold.display.mold_ceramic_bolt	陶瓷模具 (螺栓)	hand
+direct	gt6.row.mold.display.mold_ceramic_builderwand	陶瓷模具 (建筑之杖)	hand
+direct	gt6.row.mold.display.mold_ceramic_chisel	陶瓷模具 (凿子)	hand
+direct	gt6.row.mold.display.mold_ceramic_chunk	陶瓷模具 (小块)	hand
+direct	gt6.row.mold.display.mold_ceramic_double_axe	陶瓷模具 (双刃斧)	hand
+direct	gt6.row.mold.display.mold_ceramic_file	陶瓷模具 (锉刀)	hand
+direct	gt6.row.mold.display.mold_ceramic_gear	陶瓷模具 (齿轮)	hand
+direct	gt6.row.mold.display.mold_ceramic_hammer	陶瓷模具 (锤)	hand
+direct	gt6.row.mold.display.mold_ceramic_hoe	陶瓷模具 (锄)	hand
+direct	gt6.row.mold.display.mold_ceramic_ingot	陶瓷模具 (锭)	hand
+direct	gt6.row.mold.display.mold_ceramic_item_casing	陶瓷模具 (外壳)	hand
+direct	gt6.row.mold.display.mold_ceramic_long_rod	陶瓷模具 (长杆)	hand
+direct	gt6.row.mold.display.mold_ceramic_nugget	陶瓷模具 (粒)	hand
+direct	gt6.row.mold.display.mold_ceramic_pickaxe	陶瓷模具 (镐)	hand
+direct	gt6.row.mold.display.mold_ceramic_plate	陶瓷模具 (板)	hand
+direct	gt6.row.mold.display.mold_ceramic_plow	陶瓷模具 (犁)	hand
+direct	gt6.row.mold.display.mold_ceramic_ring	陶瓷模具 (环)	hand
+direct	gt6.row.mold.display.mold_ceramic_rod	陶瓷模具 (杆)	hand
+direct	gt6.row.mold.display.mold_ceramic_saw	陶瓷模具 (锯)	hand
+direct	gt6.row.mold.display.mold_ceramic_screwdriver	陶瓷模具 (螺丝刀)	hand
+direct	gt6.row.mold.display.mold_ceramic_sense	陶瓷模具 (镰刀)	hand
+direct	gt6.row.mold.display.mold_ceramic_shovel	陶瓷模具 (锹)	hand
+direct	gt6.row.mold.display.mold_ceramic_small_gear	陶瓷模具 (小型齿轮)	hand
+direct	gt6.row.mold.display.mold_ceramic_spade	陶瓷模具 (铲)	hand
+direct	gt6.row.mold.display.mold_ceramic_sword	陶瓷模具 (剑)	hand
+direct	gt6.row.mold.display.mold_ceramic_tiny_plate	陶瓷模具 (小块板)	hand
+direct	gt6.row.mold.display.mold_ceramic_universal_spade	陶瓷模具 (万用铲)	hand
+direct	gt6.row.mold.display.mold_stone	石头模具	hand
 direct	gt6.row.oven.display	烤箱 (%s)	hand
 direct	gt6.row.queue_hopper.display	%s队列漏斗	hand
 direct	gt6.row.size.huge	巨型	hand
@@ -272,7 +310,7 @@ direct	gt6.stone.variant.bricks	%s砖块	hand
 direct	gt6.stone.variant.bricks_chiseled	錾制%s	hand
 direct	gt6.stone.variant.bricks_cracked	裂纹%s砖块	hand
 direct	gt6.stone.variant.bricks_mossy	苔藓%s砖块	hand
-direct	gt6.stone.variant.bricks_redstone	红石化%s砖块	hand
+direct	gt6.stone.variant.bricks_redstone	红石浸染%s砖块	hand
 direct	gt6.stone.variant.bricks_reinforced	钢筋%s砖块	hand
 direct	gt6.stone.variant.cobble	%s圆石	hand
 direct	gt6.stone.variant.cobble_mossy	苔藓%s圆石	hand
@@ -313,12 +351,12 @@ direct	gt6.tagprefix.block_bamboo	%s	hand
 direct	gt6.tagprefix.block_dust	%s粉块	hand
 direct	gt6.tagprefix.block_gem	结晶%s块	hand
 direct	gt6.tagprefix.block_glass	%s	hand
-direct	gt6.tagprefix.block_ingot	%s锭块	hand
+direct	gt6.tagprefix.block_ingot	%s块	hand
 direct	gt6.tagprefix.block_ore	%s	hand
 direct	gt6.tagprefix.block_plate	%s板块	hand
 direct	gt6.tagprefix.block_plate_gem	%s结晶板块	hand
 direct	gt6.tagprefix.block_raw	粗%s矿石块	hand
-direct	gt6.tagprefix.block_solid	铸造%s块	hand
+direct	gt6.tagprefix.block_solid	实心%s块	hand
 direct	gt6.tagprefix.block_wool	%s	hand
 direct	gt6.tagprefix.bolt	%s螺栓	hand
 direct	gt6.tagprefix.book	%s	hand
@@ -499,7 +537,7 @@ direct	gt6.tagprefix.ore	%s矿	hand
 direct	gt6.tagprefix.ore_andesite	安山岩%s矿	hand
 direct	gt6.tagprefix.ore_basalt	玄武岩%s矿	hand
 direct	gt6.tagprefix.ore_bedrock	基岩%s矿	hand
-direct	gt6.tagprefix.ore_betweenstone	Betweenstone%s矿	hand
+direct	gt6.tagprefix.ore_betweenstone	交错石%s矿	hand
 direct	gt6.tagprefix.ore_blackgranite	黑花岗岩%s矿	hand
 direct	gt6.tagprefix.ore_blackstone	黑石%s矿	hand
 direct	gt6.tagprefix.ore_blueschist	蓝片岩%s矿	hand
@@ -543,7 +581,7 @@ direct	gt6.tagprefix.ore_normal	普通%s矿	hand
 direct	gt6.tagprefix.ore_oberon	Oberon%s矿	hand
 direct	gt6.tagprefix.ore_phobos	Phobos%s矿	hand
 direct	gt6.tagprefix.ore_pinkschist	粉片岩%s矿	hand
-direct	gt6.tagprefix.ore_pitstone	Pitstone%s矿	hand
+direct	gt6.tagprefix.ore_pitstone	麻纹石%s矿	hand
 direct	gt6.tagprefix.ore_pluto	Pluto%s矿	hand
 direct	gt6.tagprefix.ore_poor	劣质%s矿	hand
 direct	gt6.tagprefix.ore_quartzite	石英岩%s矿	hand
@@ -564,7 +602,7 @@ direct	gt6.tagprefix.ore_strangesand	异沙%s矿	hand
 direct	gt6.tagprefix.ore_titan	Titan%s矿	hand
 direct	gt6.tagprefix.ore_titania	Titania%s矿	hand
 direct	gt6.tagprefix.ore_triton	Triton%s矿	hand
-direct	gt6.tagprefix.ore_umberstone	Umberstone%s矿	hand
+direct	gt6.tagprefix.ore_umberstone	棕石%s矿	hand
 direct	gt6.tagprefix.ore_uranus	Uranus%s矿	hand
 direct	gt6.tagprefix.ore_vanillagranite	花岗岩%s矿	hand
 direct	gt6.tagprefix.ore_vanillastone	石头%s矿	hand
@@ -629,7 +667,7 @@ direct	gt6.tagprefix.reed	%s	hand
 direct	gt6.tagprefix.ring	%s环	hand
 direct	gt6.tagprefix.river	%s	hand
 direct	gt6.tagprefix.rock	%s	hand
-direct	gt6.tagprefix.rock_gt	含%s石块	hand
+direct	gt6.tagprefix.rock_gt	含%s岩石	hand
 direct	gt6.tagprefix.rod	%s	hand
 direct	gt6.tagprefix.rotor	%s转子	hand
 direct	gt6.tagprefix.round	%s垫片	hand
@@ -690,7 +728,7 @@ direct	gt6.tagprefix.tool_head_file	%s锉刀头	hand
 direct	gt6.tagprefix.tool_head_hammer	%s锤头	hand
 direct	gt6.tagprefix.tool_head_hoe	%s锄头	hand
 direct	gt6.tagprefix.tool_head_pickaxe	%s镐头	hand
-direct	gt6.tagprefix.tool_head_pickaxe_gem	%s尖镐头	hand
+direct	gt6.tagprefix.tool_head_pickaxe_gem	%s镶尖镐头	hand
 direct	gt6.tagprefix.tool_head_plow	%s犁头	hand
 direct	gt6.tagprefix.tool_head_raw_arrow	%s箭头毛坯	hand
 direct	gt6.tagprefix.tool_head_raw_axe	%s斧头毛坯	hand
@@ -781,6 +819,7 @@ direct	item.gt6.cover_redstone_machine_switch	红石机器开关	hand
 direct	item.gt6.cover_shutter	挡板面板	hand
 direct	item.gt6.crowbar	撬棍	hand
 direct	item.gt6.cutter	线缆剪	hand
+direct	item.gt6.faucet_ceramic_raw	粘土浇铸口	hand
 direct	item.gt6.file	锉刀	hand
 direct	item.gt6.foam_spray_black	建筑泡沫喷罐 (黑色)	hand
 direct	item.gt6.foam_spray_blue	建筑泡沫喷罐 (蓝色)	hand
@@ -825,6 +864,37 @@ direct	item.gt6.food_can_rotten_wide	宽食物罐头 (腐肉)	hand
 direct	item.gt6.hammer	锤	hand
 direct	item.gt6.integrated_circuit	选择器标签	hand
 direct	item.gt6.integrated_circuit.configuration	配置：%s	hand
+direct	item.gt6.mold_ceramic_arrow_raw	粘土模具 (箭)	hand
+direct	item.gt6.mold_ceramic_axe_raw	粘土模具 (斧)	hand
+direct	item.gt6.mold_ceramic_billet_raw	粘土模具 (胚料)	hand
+direct	item.gt6.mold_ceramic_bolt_raw	粘土模具 (螺栓)	hand
+direct	item.gt6.mold_ceramic_builderwand_raw	粘土模具 (建筑之杖)	hand
+direct	item.gt6.mold_ceramic_chisel_raw	粘土模具 (凿子)	hand
+direct	item.gt6.mold_ceramic_chunk_raw	粘土模具 (小块)	hand
+direct	item.gt6.mold_ceramic_double_axe_raw	粘土模具 (双刃斧)	hand
+direct	item.gt6.mold_ceramic_file_raw	粘土模具 (锉刀)	hand
+direct	item.gt6.mold_ceramic_gear_raw	粘土模具 (齿轮)	hand
+direct	item.gt6.mold_ceramic_hammer_raw	粘土模具 (锤)	hand
+direct	item.gt6.mold_ceramic_hoe_raw	粘土模具 (锄)	hand
+direct	item.gt6.mold_ceramic_ingot_raw	粘土模具 (锭)	hand
+direct	item.gt6.mold_ceramic_item_casing_raw	粘土模具 (外壳)	hand
+direct	item.gt6.mold_ceramic_long_rod_raw	粘土模具 (长杆)	hand
+direct	item.gt6.mold_ceramic_nugget_raw	粘土模具 (粒)	hand
+direct	item.gt6.mold_ceramic_pickaxe_raw	粘土模具 (镐)	hand
+direct	item.gt6.mold_ceramic_plate_raw	粘土模具 (板)	hand
+direct	item.gt6.mold_ceramic_plow_raw	粘土模具 (犁)	hand
+direct	item.gt6.mold_ceramic_raw	粘土模具	hand
+direct	item.gt6.mold_ceramic_ring_raw	粘土模具 (环)	hand
+direct	item.gt6.mold_ceramic_rod_raw	粘土模具 (杆)	hand
+direct	item.gt6.mold_ceramic_saw_raw	粘土模具 (锯)	hand
+direct	item.gt6.mold_ceramic_screwdriver_raw	粘土模具 (螺丝刀)	hand
+direct	item.gt6.mold_ceramic_sense_raw	粘土模具 (镰刀)	hand
+direct	item.gt6.mold_ceramic_shovel_raw	粘土模具 (锹)	hand
+direct	item.gt6.mold_ceramic_small_gear_raw	粘土模具 (小型齿轮)	hand
+direct	item.gt6.mold_ceramic_spade_raw	粘土模具 (铲)	hand
+direct	item.gt6.mold_ceramic_sword_raw	粘土模具 (剑)	hand
+direct	item.gt6.mold_ceramic_tiny_plate_raw	粘土模具 (小块板)	hand
+direct	item.gt6.mold_ceramic_universal_spade_raw	粘土模具 (万用铲)	hand
 direct	item.gt6.saw	锯	hand
 direct	item.gt6.screwdriver	螺丝刀	hand
 direct	item.gt6.shape_extruder_plate	模具 (板)	hand
@@ -850,7 +920,7 @@ direct	item.gt6.spray_paint_yellow	喷漆（黄）	hand
 direct	item.gt6.wrench	扳手	hand
 direct	itemGroup.gt6.billet	坯料	hand
 direct	itemGroup.gt6.chests	箱子	hand
-direct	itemGroup.gt6.electric_wires	电线	hand
+direct	itemGroup.gt6.electric_wires	导线	hand
 direct	itemGroup.gt6.fluid_containers	流体容器	hand
 direct	itemGroup.gt6.fluid_pipes	流体管道	hand
 direct	itemGroup.gt6.foam_sprays	建筑泡沫喷罐	hand
@@ -859,7 +929,7 @@ direct	itemGroup.gt6.item_pipes	物品管道	hand
 direct	itemGroup.gt6.laser_wires	激光导线	hand
 direct	itemGroup.gt6.machines	机器	hand
 direct	itemGroup.gt6.multiblocks	多方块	hand
-direct	itemGroup.gt6.redstone_wires	红石线	hand
+direct	itemGroup.gt6.redstone_wires	红石导线	hand
 direct	itemGroup.gt6.spray_cans	喷漆罐	hand
 direct	itemGroup.gt6.tools	工具	hand
 material	AbyssalOat	深渊燕麦	auto
@@ -880,7 +950,7 @@ material	Adamite	水砷锌矿	auto
 material	Adluorite	神秘蓝金	auto
 material	Advanced	进阶	auto
 material	AdvancedAlloy	高级合金	auto
-material	Aerotheum	和谐之空气	auto
+material	Aerotheum	气元素	hand
 material	Agate	玛瑙	auto
 material	Air	空气	auto
 material	AirSteel	Air Steel	review
@@ -1486,7 +1556,7 @@ material	BasaltBricks	BasaltBricks	review
 material	BasaltChiseled	BasaltChiseled	review
 material	BasaltPolished	BasaltPolished	review
 material	BasalticMineralSand	玄武岩砂	auto
-material	Basalz	岩石	auto
+material	Basalz	岩石元素	hand
 material	Basic	基础的	auto
 material	Bastnasite	氟碳铈	auto
 material	BatteryAlloy	电池合金	auto
@@ -1738,7 +1808,7 @@ material	ChemicalY8	试剂Y-8	auto
 material	ChemicalY9	试剂Y-9	auto
 material	ChemicalZ	试剂Z	auto
 material	Cherrywood	樱桃树木	auto
-material	Chert	燧石	auto
+material	Chert	硅质岩	hand
 material	Chestnutwood	栗树木	auto
 material	Chili	辣椒	auto
 material	Chimerite	精灵石	auto
@@ -1793,7 +1863,7 @@ material	Concrete	混凝土	auto
 material	ConductiveIron	导电铁	auto
 material	Constantan	康铜	auto
 material	ConstructionFoam	建筑泡沫	auto
-material	Continuum	命运	auto
+material	Continuum	连续体	hand
 material	CookedBauxide	已处理铝土矿	auto
 material	CookedLimonite	CookedLimonite	review
 material	Cooperite	硫砷铂	auto
@@ -1804,7 +1874,7 @@ material	Coralium	珊瑚	auto
 material	Corn	玉米	auto
 material	CosmicNeutronium	宇宙中子态素	auto
 material	Cragrock	峭壁岩	auto
-material	Craponite	焦屎石	auto
+material	Craponite	克拉邦石	hand
 material	Cream	Cream	review
 material	Creosote	杂酚油	auto
 material	CreosoteOil	杂酚油	auto
@@ -1813,7 +1883,7 @@ material	Crimsonwood	绯红木	auto
 material	CrudeOil	原油	auto
 material	CrudeSteel	粗钢	auto
 material	Cryolite	冰晶石	auto
-material	Cryotheum	凛冰	auto
+material	Cryotheum	冰元素	hand
 material	Crystal	水晶	auto
 material	CrystalFlux	变化水晶	auto
 material	CrystalMatrix	水晶矩阵	auto
@@ -1847,7 +1917,7 @@ material	Darmstadtium	鐽	auto
 material	Data	数据	auto
 material	Datolite	硅钙硼石	auto
 material	Deadrock	死岩	auto
-material	DeepIron	深渊铁	auto
+material	DeepIron	深层铁	hand
 material	Deepslate	深板岩	auto
 material	DeimosRock	火卫二	auto
 material	Demonite	暗影	auto
@@ -1868,7 +1938,7 @@ material	Dichloromethane	二氯甲烷	auto
 material	DiduraniumTrioxide	三氧化二钍瑞铌	auto
 material	Diesel	柴油	auto
 material	Diketene	双乙烯酮	auto
-material	Dilithium	双锂	auto
+material	Dilithium	二锂	hand
 material	Dimethylamine	二甲胺	auto
 material	DimethylaminomethylStyrene	二甲基-4-乙烯基苯甲胺	auto
 material	Dimethylglycine	二甲基乙酸胺	auto
@@ -1881,7 +1951,7 @@ material	DioriteChiseled	DioriteChiseled	review
 material	DioritePolished	DioritePolished	review
 material	DiphenylCarbonate	碳酸二苯酯	auto
 material	DisulfuricAcid	焦硫酸	auto
-material	Dolamide	酰胺	auto
+material	Dolamide	多拉迈德	hand
 material	Dolomite	白云岩	auto
 material	DominicanAmber	多米尼加蓝琥珀	auto
 material	DouglasFir	花旗松	auto
@@ -1889,7 +1959,7 @@ material	Draconic	龙矿	auto
 material	Draconium	龙	auto
 material	DraconiumAwakened	觉醒龙	auto
 material	DragonEye	龙眼石	auto
-material	Dreadium	恐惧	auto
+material	Dreadium	恐惧素	hand
 material	Dreamwood	梦之木	auto
 material	Dubnium	𬭊	auto
 material	Dull	枯竭碎片	auto
@@ -1907,7 +1977,7 @@ material	Dysprosium	镝	auto
 material	EarthSteel	Earth Steel	review
 material	Ebony	乌檀木	auto
 material	Eclogite	榴辉岩	auto
-material	Ectoplasm	灵气	auto
+material	Ectoplasm	灵外质	hand
 material	Eden	伊甸	auto
 material	Efrine	绿晶	auto
 material	Einsteinium	锿	auto
@@ -1917,7 +1987,7 @@ material	Electron	电子	auto
 material	Electrotine	蓝石	auto
 material	ElectrotineAlloy	蓝石荧合金	hand
 material	Electrum	琥珀金	auto
-material	ElectrumFlux	通量琥珀金	auto
+material	ElectrumFlux	充能琥珀金	hand
 material	Elementium	源质钢	auto
 material	Elite	精华	auto
 material	Elm	榆树	auto
@@ -1941,7 +2011,7 @@ material	Endstone	末地石	hand
 material	EnergeticAlloy	充能合金	auto
 material	EnergeticSilver	充能银	auto
 material	EnergiumCyan	青色能量水晶	auto
-material	EnergiumRed	能量水晶	auto
+material	EnergiumRed	红色能量水晶	hand
 material	Energized	充能	auto
 material	Enori	铁晶	auto
 material	EnrichedCopper	浓缩铜	auto
@@ -2139,7 +2209,7 @@ material	Holmium	钬	auto
 material	HolyWater	圣水	auto
 material	Holystone	圣石	auto
 material	Honey	蜂蜜	auto
-material	Honeydew	蜂蜜滴	auto
+material	Honeydew	蜜露	hand
 material	Hornbeam	鹅耳枥	auto
 material	Huebnerite	钨锰矿	hand
 material	HydratedCoal	水合煤	auto
@@ -2175,7 +2245,7 @@ material	InfusedOrder	秩序碎片	auto
 material	InfusedTeslatite	特斯拉金属	auto
 material	InfusedVis	魔力碎片	auto
 material	InfusedWater	水之碎片	auto
-material	Inolashite	暗影秘银蓝金	auto
+material	Inolashite	影秘蓝金	hand
 material	Intellite	智金	auto
 material	Invar	殷钢	auto
 material	Invisium	隐形	auto
@@ -2241,7 +2311,7 @@ material	Leather	皮革	auto
 material	Legendary	传奇的	auto
 material	Lemurite	利莫里亚	auto
 material	Lepidolite	锂云母	auto
-material	Licorice	盐甘草糖	auto
+material	Licorice	甘草	hand
 material	LightBlue	淡蓝色	auto
 material	LightGray	淡灰色	auto
 material	Lignite	褐煤	auto
@@ -2269,7 +2339,7 @@ material	Lodestone	天然磁石	auto
 material	Logwood	墨水树	auto
 material	Lonsdaleite	六方碳	auto
 material	Lubricant	润滑油	auto
-material	Ludicrite	滑稽	auto
+material	Ludicrite	路德里特	hand
 material	Luminite	流明	auto
 material	Lumium	流明	auto
 material	Lutetium	镥	auto
@@ -2310,7 +2380,7 @@ material	MartianVitriol	硫酸铁	auto
 material	Master	大师	auto
 material	Mauftrium	始源魂灵	auto
 material	Mawsitsit	钠长硬玉	auto
-material	Maxixe	马克西蓝色绿柱石	auto
+material	Maxixe	马克西绿柱石	hand
 material	Mazestone	遗迹石头	auto
 material	Meat	肉	auto
 material	MeatCooked	熟肉	auto
@@ -2433,7 +2503,7 @@ material	ObsidianFlux	黑曜石助焊剂	auto
 material	ObsidianRefined	精致黑曜石	auto
 material	ObsidianSteel	黑曜石钢	auto
 material	OceanJasper	海蓝色碧玉	auto
-material	Octine	炽炎铁	auto
+material	Octine	奥克廷	hand
 material	Oganesson	118号元素(Og)	auto
 material	Ogrewood	食人魔树木	auto
 material	Oil	油	auto
@@ -2503,7 +2573,7 @@ material	PetrifiedWood	石化木	auto
 material	Petrol	汽油	auto
 material	Petroleum	石油	auto
 material	PetroleumCoke	石油焦炭	auto
-material	Petrotheum	构造之地岩	auto
+material	Petrotheum	地元素	hand
 material	Pewter	白镴	auto
 material	PhasedGold	脉冲金	auto
 material	PhasedIron	脉冲铁	auto
@@ -2582,7 +2652,7 @@ material	Praseodymium	镨	auto
 material	PrecursorPSVE	全氟磺酸单体前体	auto
 material	Primitive	远古	auto
 material	Prismane	棱柱烷	auto
-material	Prismarine	亮色海晶石	auto
+material	Prismarine	亮海晶石	hand
 material	PrismarineDark	深色海晶石	auto
 material	Prometheum	幻金	auto
 material	Promethium	钷	auto
@@ -2608,10 +2678,10 @@ material	Purpleheart	紫心檀木	auto
 material	Pyrite	黄铁	auto
 material	Pyrolusite	软锰	auto
 material	Pyrope	镁铝榴石	auto
-material	Pyrotheum	炽焱	auto
+material	Pyrotheum	炎元素	hand
 material	Quantum	量子	auto
 material	Quartz	石英	auto
-material	QuartzBlack	黑色石英岩	auto
+material	QuartzBlack	黑色石英	hand
 material	QuartzSand	石英砂	auto
 material	QuartzSmoky	烟熏石英	auto
 material	Quartzite	石英岩	auto
@@ -2679,7 +2749,7 @@ material	Russellite	钨铋	auto
 material	Ruthenium	钌	auto
 material	Rutherfordium	鑪	auto
 material	Rutile	金红石	auto
-material	Rye	黑麦面	auto
+material	Rye	黑麦	hand
 material	Ryu	Ryu	review
 material	RyuDragonRyder	RyuDragonRyder	review
 material	SBR	丁苯橡胶	auto
@@ -2777,7 +2847,7 @@ material	Soularium	魂金	auto
 material	SouledAirBismuth	SouledAir Bismuth	review
 material	Soulium	灵魂	auto
 material	Soulsand	灵魂沙	auto
-material	SoylentGreen	绿色绿宝石	auto
+material	SoylentGreen	祖母绿	hand
 material	SpaceStone	太空	auto
 material	SpectreIron	灵魂之铁	auto
 material	Sperrylite	砷铂	auto
@@ -3128,7 +3198,7 @@ material	UranusRock	天王星	auto
 material	UranylCarbonateSolution	碳酸铀酰络合离子溶液	auto
 material	Uvarovite	钙铬榴石	auto
 material	Valerite	Valerite	review
-material	Valonite	法罗钠	auto
+material	Valonite	瓦罗奈特	hand
 material	Vanadium	钒	auto
 material	VanadiumGallium	钒镓合金	auto
 material	VanadiumMagnetite	钒磁铁矿	hand
@@ -3143,7 +3213,7 @@ material	Vibranium	振金	auto
 material	VibraniumSilver	银振金合金	auto
 material	VibraniumSteel	振金钢	auto
 material	Vibrant	Vibrant	review
-material	VibrantAlloy	脉冲合金	auto
+material	VibrantAlloy	脉动合金	hand
 material	Vile	邪恶	auto
 material	Vinteum	温特姆	auto
 material	VinteumPurified	纯净温特姆	auto
@@ -3152,7 +3222,7 @@ material	VinylChloride	氯乙烯	auto
 material	VinylbenzylChloride	对氯甲基苯乙烯	auto
 material	Vis	魔力	auto
 material	VitriolOfClay	硫酸铝	auto
-material	VividAlloy	生动合金	auto
+material	VividAlloy	鲜艳合金	hand
 material	Void	煤晶	auto
 material	VoidCrystal	虚空	hand
 material	VoidMetal	虚空金属	auto
@@ -3210,7 +3280,7 @@ material	WoodMossy	苔痕木	auto
 material	WoodPolished	抛光木	auto
 material	WoodRotten	腐木	auto
 material	WoodRubber	橡胶木	auto
-material	WoodScorched	焦皮枯木	auto
+material	WoodScorched	烧焦木	hand
 material	WoodSealed	防腐木	auto
 material	WoodTainted	腐化木	auto
 material	WoodTreated	防腐木	auto
@@ -3268,9 +3338,9 @@ itemgroup	casingMachine	机械外壳	auto
 itemgroup	casingMachineDense	致密机械外壳	auto
 itemgroup	casingMachineDouble	坚固机械外壳	auto
 itemgroup	casingMachineQuadruple	高强度机械外壳	auto
-itemgroup	casingSmall	外壳	auto
+itemgroup	casingSmall	物品外壳	hand
 itemgroup	chain	锁链	auto
-itemgroup	chemtube	试管	auto
+itemgroup	chemtube	玻璃试管	hand
 itemgroup	chunkGt	小块矿物	auto
 itemgroup	commercialPureDust	Commercial Pure Dust	review
 itemgroup	crateGt64Dust	板条箱: 粉末	auto
@@ -3282,11 +3352,11 @@ itemgroup	crateGt64Raw	板条箱: 矿石	auto
 itemgroup	crushed	粉碎矿石	auto
 itemgroup	crushedCentrifuged	离心矿石	auto
 itemgroup	crushedCentrifugedTiny	离心小撮矿石	auto
-itemgroup	crushedPurified	纯净矿石	auto
-itemgroup	crushedPurifiedTiny	纯净小撮矿石	auto
+itemgroup	crushedPurified	洗净矿石	hand
+itemgroup	crushedPurifiedTiny	小撮洗净矿石	hand
 itemgroup	crushedTiny	粉碎小撮矿石	auto
 itemgroup	dust	矿粉	auto
-itemgroup	dustDiv72	七十二分之一小撮粉末	auto
+itemgroup	dustDiv72	1/72小撮粉末	hand
 itemgroup	dustImpure	含杂粉末	auto
 itemgroup	dustSmall	小堆粉末	auto
 itemgroup	dustTiny	小撮粉末	auto
@@ -3369,10 +3439,10 @@ itemgroup	gtweaponsMagazineMC	中号子弹弹匣	auto
 itemgroup	gtww.multitiles.17101	多方块机器	auto
 itemgroup	gtww.multitiles.32719	液体储存器	auto
 itemgroup	ingot	锭	auto
-itemgroup	ingotDouble	2x锭	auto
-itemgroup	ingotQuadruple	4x锭	auto
-itemgroup	ingotQuintuple	5x锭	auto
-itemgroup	ingotTriple	3x锭	auto
+itemgroup	ingotDouble	双重锭	hand
+itemgroup	ingotQuadruple	四重锭	hand
+itemgroup	ingotQuintuple	五重锭	hand
+itemgroup	ingotTriple	三重锭	hand
 itemgroup	ktfru.item.battery.pole	kTFRUAddon: 电池电极	auto
 itemgroup	ktfru.item.chemistry	kTFRUAddon: 化学	auto
 itemgroup	ktfru.item.compact	kTFRUAddon: 兼容物品	auto
@@ -3395,18 +3465,18 @@ itemgroup	lens	透镜	auto
 itemgroup	link	链环	auto
 itemgroup	minecartWheels	车轮	auto
 itemgroup	nugget	粒	auto
-itemgroup	oreRaw	矿石	auto
+itemgroup	oreRaw	生矿石	hand
 itemgroup	oreVanillastone	矿石	auto
 itemgroup	plate	板	auto
 itemgroup	plateCurved	弯曲板	auto
 itemgroup	plateDense	致密板	auto
-itemgroup	plateDouble	2x板	auto
+itemgroup	plateDouble	双重板	hand
 itemgroup	plateGem	宝石板	auto
 itemgroup	plateGemTiny	小块宝石板	auto
-itemgroup	plateQuadruple	4x板	auto
-itemgroup	plateQuintuple	5x板	auto
+itemgroup	plateQuadruple	四重板	hand
+itemgroup	plateQuintuple	五重板	hand
 itemgroup	plateTiny	小块板	auto
-itemgroup	plateTriple	3x板	auto
+itemgroup	plateTriple	三重板	hand
 itemgroup	pu.item.it	Purification: IT	review
 itemgroup	pu.mte.1304	ktfruaddon: Energy	review
 itemgroup	pu.mte.17200	kTFRUAddon: Multiblock	review
@@ -3414,15 +3484,15 @@ itemgroup	qwertech.machines.-1	自然	auto
 itemgroup	qwertech.machines.0	合成站	auto
 itemgroup	railGt	单导轨	auto
 itemgroup	ring	环	auto
-itemgroup	rockGt	石头	auto
+itemgroup	rockGt	岩石	hand
 itemgroup	rotor	转子	auto
 itemgroup	round	垫片	auto
 itemgroup	screw	螺丝钉	auto
 itemgroup	shuriken	手里剑	auto
 itemgroup	spring	弹簧	auto
 itemgroup	springSmall	小型弹簧	auto
-itemgroup	stick	杆/棍	auto
-itemgroup	stickLong	长杆/长棍	auto
+itemgroup	stick	杆	hand
+itemgroup	stickLong	长杆	hand
 itemgroup	toolHeadArrow	箭头	auto
 itemgroup	toolHeadAxe	斧头	auto
 itemgroup	toolHeadAxeDouble	双刃斧头	auto
@@ -3438,7 +3508,7 @@ itemgroup	toolHeadHoe	锄头	auto
 itemgroup	toolHeadMace	狼牙棒槌头	auto
 itemgroup	toolHeadMattock	鹤嘴锄头	auto
 itemgroup	toolHeadPickaxe	镐头	auto
-itemgroup	toolHeadPickaxeGem	镶钻镐头	auto
+itemgroup	toolHeadPickaxeGem	镶尖镐头	hand
 itemgroup	toolHeadPlow	犁头	auto
 itemgroup	toolHeadRawArrow	箭头毛坯	auto
 itemgroup	toolHeadRawAxe	斧头毛坯	auto
@@ -3457,7 +3527,7 @@ itemgroup	toolHeadRawSword	剑身毛坯	auto
 itemgroup	toolHeadRawUniversalSpade	万用铲头毛坯	auto
 itemgroup	toolHeadSaw	锯片	auto
 itemgroup	toolHeadScrewdriver	螺丝刀头	auto
-itemgroup	toolHeadSense	镰刀片	auto
+itemgroup	toolHeadSense	镰刀刃	hand
 itemgroup	toolHeadShovel	锹头	auto
 itemgroup	toolHeadSpade	铲头	auto
 itemgroup	toolHeadSword	剑身	auto
