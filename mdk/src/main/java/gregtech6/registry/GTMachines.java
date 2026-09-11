@@ -21,6 +21,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.code.TagData;
 import gregapi.data.TD;
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTBasicMachineBlock;
 import gregtech6.block.GTOvenBlock;
 import gregtech6.gui.machines.GTBasicMachineMenu;
@@ -66,23 +67,49 @@ public final class GTMachines {
 	// Heat_T word set). Zero-regression: the T1 id stays "oven".
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * The three upstream tier ladders (task p27-machine-material-tint-fidelity) — the
+	 * lazy material suppliers behind every row's NBT_MATERIAL column. Upstream
+	 * MT.java:3689-3691 declares them as Java 0-based arrays the Loader rows index
+	 * {@code [1..4]} (Loader_MultiTileEntities.java:1288-1318/:1343/:1373/:1379/:1398/
+	 * :1406/:1425): Heat_T[1..4] = Steel/Invar/Ti/TungstenCarbide, Kinetic_T[1..4] =
+	 * Bronze/Steel/Ti/TungstenSteel, Electric_T[1..4] = SteelGalvanized/Al/
+	 * StainlessSteel/Cr (the Canner VN-name rows — the name column rides the voltage
+	 * word, the NBT_MATERIAL column the Electric_T material). The 1.7.10 registration
+	 * derives the render colour from exactly these (MultiTileEntityClassContainer.java:51,
+	 * {@code getRGBInt(material.fRGBaSolid)}). SUPPLIERS, not fields: the GTWireSpecs:35
+	 * ruling — the registry classes load before {@code MT.init()}, a direct {@code MT.X}
+	 * read in a row initializer would resolve null.
+	 */
+	public static final java.util.List<java.util.function.Supplier<OreDictMaterial>> HEAT_T_LADDER = java.util.List.of(
+			() -> gregapi.data.MT.Steel, () -> gregapi.data.MT.Invar, () -> gregapi.data.MT.Ti, () -> gregapi.data.MT.TungstenCarbide);
+
+	/** The Kinetic_T[1..4] ladder (upstream MT.java:3690) — the Shredder/Crusher/Lathe/Sifter/Compressor/Wiremill/Press rows. */
+	public static final java.util.List<java.util.function.Supplier<OreDictMaterial>> KINETIC_T_LADDER = java.util.List.of(
+			() -> gregapi.data.MT.Bronze, () -> gregapi.data.MT.Steel, () -> gregapi.data.MT.Ti, () -> gregapi.data.MT.TungstenSteel);
+
+	/** The Electric_T[1..4] ladder (upstream MT.java:3691) — the Canner rows (the VN display words stay LV/MV/HV/EV). */
+	public static final java.util.List<java.util.function.Supplier<OreDictMaterial>> ELECTRIC_T_LADDER = java.util.List.of(
+			() -> gregapi.data.MT.SteelGalvanized, () -> gregapi.data.MT.Al, () -> gregapi.data.MT.StainlessSteel, () -> gregapi.data.MT.Cr);
+
 	/** The Oven family display template key ({@code gt6.row.oven.display} — the W1 one-slot material-word form). */
 	public static final String OVEN_DISPLAY_KEY = "gt6.row.oven.display";
 
 	/** One Oven ladder row — the upstream-parity columns of one aRegistry.add line (:1288-1291). */
-	public record OvenRow(String path, String matSlug, String matDisplay, int metaId, float hardness, int tier) {}
+	public record OvenRow(String path, String matSlug, String matDisplay, java.util.function.Supplier<OreDictMaterial> material, int metaId, float hardness, int tier) {}
 
 	/**
 	 * The four Oven rows, upstream line order :1288-1291 (T1-T4, the Heat_T ladder — the
 	 * MT.java:3689 locals ANY.Steel/Invar/Ti/TungstenCarbide, the same Steel/Invar/
 	 * Titanium/Tungsten Carbide word set the Dryer/Distillery/Extruder Heat_T families
-	 * carry; the :1289 hardness 4.0F is the upstream T2 special case).
+	 * carry; the :1289 hardness 4.0F is the upstream T2 special case). The material
+	 * column is the task p27-machine-material-tint-fidelity NBT_MATERIAL mirror.
 	 */
 	public static final java.util.List<OvenRow> OVEN_ROWS = java.util.List.of(
-			new OvenRow("oven"   , "steel"           , "Steel"           , 20001,  6.0F, 0),
-			new OvenRow("oven_t2", "invar"           , "Invar"           , 20002,  4.0F, 1),
-			new OvenRow("oven_t3", "titanium"        , "Titanium"        , 20003,  9.0F, 2),
-			new OvenRow("oven_t4", "tungsten_carbide", "Tungsten Carbide", 20004, 12.5F, 3));
+			new OvenRow("oven"   , "steel"           , "Steel"           , HEAT_T_LADDER.get(0), 20001,  6.0F, 0),
+			new OvenRow("oven_t2", "invar"           , "Invar"           , HEAT_T_LADDER.get(1), 20002,  4.0F, 1),
+			new OvenRow("oven_t3", "titanium"        , "Titanium"        , HEAT_T_LADDER.get(2), 20003,  9.0F, 2),
+			new OvenRow("oven_t4", "tungsten_carbide", "Tungsten Carbide", HEAT_T_LADDER.get(3), 20004, 12.5F, 3));
 
 	/**
 	 * The composed {@code "Oven (<material word>)"} supplier of one ladder row — the
@@ -233,40 +260,40 @@ public final class GTMachines {
 	}
 
 	public static final RegistryObject<Block> SHREDDER = BLOCKS.register("shredder",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(7.0F, 7.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(7.0F, 7.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get(), null, null, KINETIC_T_LADDER.get(0)));
 
 	public static final RegistryObject<Block> SHREDDER_T2 = BLOCKS.register("shredder_t2",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get(), null, tierName(MACHINE_SHREDDER_UNIT_KEY, 2)));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get(), null, tierName(MACHINE_SHREDDER_UNIT_KEY, 2), KINETIC_T_LADDER.get(1)));
 
 	public static final RegistryObject<Block> SHREDDER_T3 = BLOCKS.register("shredder_t3",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get(), null, tierName(MACHINE_SHREDDER_UNIT_KEY, 3)));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get(), null, tierName(MACHINE_SHREDDER_UNIT_KEY, 3), KINETIC_T_LADDER.get(2)));
 
 	public static final RegistryObject<Block> SHREDDER_T4 = BLOCKS.register("shredder_t4",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get(), null, tierName(MACHINE_SHREDDER_UNIT_KEY, 4)));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.SHREDDER_BE.get(), null, tierName(MACHINE_SHREDDER_UNIT_KEY, 4), KINETIC_T_LADDER.get(3)));
 
 	public static final RegistryObject<Block> CRUSHER = BLOCKS.register("crusher",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(7.0F, 7.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(7.0F, 7.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get(), null, null, KINETIC_T_LADDER.get(0)));
 
 	public static final RegistryObject<Block> CRUSHER_T2 = BLOCKS.register("crusher_t2",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get(), null, tierName(MACHINE_CRUSHER_UNIT_KEY, 2)));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get(), null, tierName(MACHINE_CRUSHER_UNIT_KEY, 2), KINETIC_T_LADDER.get(1)));
 
 	public static final RegistryObject<Block> CRUSHER_T3 = BLOCKS.register("crusher_t3",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get(), null, tierName(MACHINE_CRUSHER_UNIT_KEY, 3)));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get(), null, tierName(MACHINE_CRUSHER_UNIT_KEY, 3), KINETIC_T_LADDER.get(2)));
 
 	public static final RegistryObject<Block> CRUSHER_T4 = BLOCKS.register("crusher_t4",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get(), null, tierName(MACHINE_CRUSHER_UNIT_KEY, 4)));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.CRUSHER_BE.get(), null, tierName(MACHINE_CRUSHER_UNIT_KEY, 4), KINETIC_T_LADDER.get(3)));
 
 	public static final RegistryObject<Block> LATHE = BLOCKS.register("lathe",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(7.0F, 7.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get()));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(7.0F, 7.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, null, KINETIC_T_LADDER.get(0)));
 
 	public static final RegistryObject<Block> LATHE_T2 = BLOCKS.register("lathe_t2",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, tierName(MACHINE_LATHE_UNIT_KEY, 2)));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, tierName(MACHINE_LATHE_UNIT_KEY, 2), KINETIC_T_LADDER.get(1)));
 
 	public static final RegistryObject<Block> LATHE_T3 = BLOCKS.register("lathe_t3",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, tierName(MACHINE_LATHE_UNIT_KEY, 3)));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, tierName(MACHINE_LATHE_UNIT_KEY, 3), KINETIC_T_LADDER.get(2)));
 
 	public static final RegistryObject<Block> LATHE_T4 = BLOCKS.register("lathe_t4",
-			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, tierName(MACHINE_LATHE_UNIT_KEY, 4)));
+			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, tierName(MACHINE_LATHE_UNIT_KEY, 4), KINETIC_T_LADDER.get(3)));
 
 	/**
 	 * One BET per machine FAMILY (task p8-machine-tiers-doinject ①, the P6 barrel-ladder
@@ -362,7 +389,7 @@ public final class GTMachines {
 	 * registration, the BE reads it lazily at createMenu time).
 	 */
 	private static GTBasicMachineBlock.MachineRow dryer(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
-		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, DRYER_DISPLAY_KEY, aMetaId, aHardness, aTier, aParallel, true,
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, HEAT_T_LADDER.get(aTier), DRYER_DISPLAY_KEY, aMetaId, aHardness, aTier, aParallel, true,
 				() -> GT6RecipeMaps.DRYING, TD.Energy.HU, "dryer",
 				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A),
 				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A),
@@ -483,7 +510,7 @@ public final class GTMachines {
 	 * {@code gt6:canner} menu supplier.
 	 */
 	private static GTBasicMachineBlock.MachineRow canner(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
-		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, CANNER_DISPLAY_KEY, aMetaId, aHardness, aTier, 1, false,
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, ELECTRIC_T_LADDER.get(aTier), CANNER_DISPLAY_KEY, aMetaId, aHardness, aTier, 1, false,
 				() -> GT6RecipeMaps.CANNER, TD.Energy.EU, "canner",
 				(byte)(GTBasicMachineBlock.SBIT_B) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
 				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L*/,
@@ -554,7 +581,7 @@ public final class GTMachines {
 	 * fluid masks / the null menu supplier (the GUI clause) / cheap overclocking T.
 	 */
 	private static GTBasicMachineBlock.MachineRow press(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
-		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, PRESS_DISPLAY_KEY, aMetaId, aHardness, aTier,
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), PRESS_DISPLAY_KEY, aMetaId, aHardness, aTier,
 				PARALLEL_4_32[aTier], true,
 				() -> GT6RecipeMaps.PRESS, TD.Energy.KU, "press",
 				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_U, the :151 OR*/,
@@ -641,7 +668,7 @@ public final class GTMachines {
 	 * Low Heat face) / the null menu supplier (the GUI clause).
 	 */
 	private static GTBasicMachineBlock.MachineRow extruder(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, String aDisplayKey) {
-		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, aDisplayKey, aMetaId, aHardness, aTier,
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, HEAT_T_LADDER.get(aTier), aDisplayKey, aMetaId, aHardness, aTier,
 				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1406-1409*/,
 				() -> GT6RecipeMaps.EXTRUDER, TD.Energy.HU, "extruder",
 				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D, the :151 OR*/,
@@ -781,7 +808,7 @@ public final class GTMachines {
 	 * the null menu supplier (the zero-new-MenuType GUI clause).
 	 */
 	private static GTBasicMachineBlock.MachineRow sifter(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
-		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, MACHINE_SIFTER_UNIT_KEY, aMetaId, aHardness, aTier, aParallel, true,
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_SIFTER_UNIT_KEY, aMetaId, aHardness, aTier, aParallel, true,
 				() -> GT6RecipeMaps.SIFTING, TD.Energy.KU, "sifter",
 				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B, the :151 read ORs SBIT_A*/,
 				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
@@ -795,7 +822,7 @@ public final class GTMachines {
 
 	/** One Compressor row factory — the sifter shape verbatim over the :1343 masks (energy SBIT_L) and RM.Compressor/KU. */
 	private static GTBasicMachineBlock.MachineRow compressor(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
-		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, MACHINE_COMPRESSOR_UNIT_KEY, aMetaId, aHardness, aTier, aParallel, true,
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_COMPRESSOR_UNIT_KEY, aMetaId, aHardness, aTier, aParallel, true,
 				() -> GT6RecipeMaps.COMPRESSOR, TD.Energy.KU, "compressor",
 				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_L*/,
 				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
@@ -809,7 +836,7 @@ public final class GTMachines {
 
 	/** One Wiremill row factory — the :1373 masks (left in / right out, energy SBIT_B), RM.Wiremill/RU, NO parallel key → 1. */
 	private static GTBasicMachineBlock.MachineRow wiremill(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
-		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, MACHINE_WIREMILL_UNIT_KEY, aMetaId, aHardness, aTier, 1, false,
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_WIREMILL_UNIT_KEY, aMetaId, aHardness, aTier, 1, false,
 				() -> GT6RecipeMaps.WIREMILL, TD.Energy.RU, "wiremill",
 				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
 				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
@@ -997,7 +1024,7 @@ public final class GTMachines {
 	 * overclocking T) and the null menu supplier (the menu-less carrier).
 	 */
 	private static GTBasicMachineBlock.MachineRow distillery(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
-		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, DISTILLERY_DISPLAY_KEY, aMetaId, aHardness, aTier, aParallel, true,
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, HEAT_T_LADDER.get(aTier), DISTILLERY_DISPLAY_KEY, aMetaId, aHardness, aTier, aParallel, true,
 				() -> GT6RecipeMaps.DISTILLERY, TD.Energy.HU, "distillery",
 				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A),
 				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A),
