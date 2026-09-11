@@ -474,7 +474,8 @@ session 的 rcon 端口连接（链自己的 `preferred_ports` 是 per-boot 语�
 drying_rows / form_scaffold / chisel / distillery 八链，站点两两不相交）** →
 **p24/p25 两带（P26 注册，见下节）** →
 p15_runtime_smoke（fresh_boot 单例）。注册序 = perboot 顺序 + --plan 文档；
-session 跑法把全集摊平成一池（`run_session_recorded`）。
+session 跑法把全集摊平成一池（`run_session_recorded`）。（P27 起全集扩至
+18 簇 62 链，逐簇清单见下文「名册补录 III」；`--plan` 打印实测 bbox。）
 
 **名册扩容：p24/p25 九链入册（P26 wave1，卡 p26-rcon-sweep-roster）**。名册自
 27 链（p11-p16）扩到 **36 链 8 簇**，既有 27 链配置逐字节零改动。九条新链按
@@ -523,6 +524,66 @@ p25-c-foam-pipe-spray 审查裁定入档），后续 sweep 复验该腿仍会出
 `N size -size` 正负列车 / RU 纯正列车）→ 输出断言 → `check`（`data=-2`=
 menu-null GUI 条款活体）→ teardown；`run` 对 menu-less 载体按设计拒绝
 （GTMachineCommand「use inject+check instead」）。
+
+**名册补录 III：直跑链全量对账入册（卡 p27-rcon-roster-backfill）**。扩容 II
+之后名册又经两笔未及 README 的卡内扩容（cfoam_blocks 入 z=20 带 x452..458、
+W1 card B 的 press/extruder 簇），实况 42 链 10 簇；本卡对账 `chains/` 全目录
+后一次补齐，现为 **62 链 18 簇**——双向对账（名册→文件在、文件→名册在册）
+零差集。补录三块，准入与既有簇同构（sites bbox 已注册、无 fresh_boot 成员，
+per-boot 端口钉让位 session_ports）：
+
+- **P19-P23 历史遗漏七链**（名册首次冻结时止步 p16，这七条卡链一直靠
+  `--only` 手工点名跑）：**z=20 西段行回填带**（x357..381 三链）`p19_drying` +
+  `p26_rm_backfill`（同址 x=360 列，bbox 交叠→带清场互覆）+ `p21_drying_food`
+  （桶列远伸 z=59，带内 x 向分离）；**z=124 西段石材/涂料带**（x369..397 五链）
+  `p19_chisel` → `p21_stoneblocks_split` → `p21_paintable` → `p23_barrel_paint`
+  → `p21_chisel_drops`（min-x 序；drops 与 barrel_paint 带擦 grass 带东缘
+  x389..397——跨带交叠由 `plan_waves` 拒同波 + 逐链站点清场兜底，结构性把关）。
+- **P26 直跑链十一链**：`p26_cfoam_refill`（x410..416，与 act 带尾交叠）与
+  `p26_kitchen_pot`（x418..426）入 z=20 主带带尾（act 之后，min-x 序保持）；
+  **坩埚带**（z121..140 三链，坩埚卡 A/B/C）`p26_crucible_multiblock` |
+  `p26_mold_faucet`（z132..140 带内 z 向分离）| `p26_crucible_row0`（与
+  multiblock 东缘交叠，带清场互覆；multiblock 西缘擦 food_can x426..427）；
+  **传感器带** `p26_sensors_core`（x432..436 z125..137）——名册唯一 session
+  mutates 成员（fakesource），plan_waves 独占波 + plan_groups 拆组
+  （p16_side_io 先例）；**静态仓储带**（z218..232 两链）`p26_hopper_family` |
+  `p26_static_storage`（z 向分离）；**MUI 行分派带** `p26_mui_row_dispatch`
+  （x477..531 z97..103，与 p16_distillery z 同带 x 离散）。
+- **P27 直跑链两链**：`p27_builder_wand_form_fix`（坩埚锚定成型回归，x456..464
+  自成带，双腿 GREEN 审查席实证）；`p27_vanilla_tag_dual_tree`（/gt6tags 双树
+  活体，slug p27tags——与 `p26_eu_bridge_outbound` 同 spawn 邻区成簇；p11/p12
+  带本就驻 spawn 邻区 x-2..60，跨簇交叠同上把关）。
+
+验证引用（创建/末次修正提交）：p26 十一链见各自任务卡交卡证书——
+cfoam_refill 21523df8（双腿 [0,0] /tmp/p26c-rcon-*.log）、crucible_row0
+6d9cb493（双腿幂等两遍 /tmp/p26_rcon_*5.log）、crucible_multiblock b986c975、
+mold_faucet cafd4dc5、kitchen_pot d4753ea2（[0,0] 双腿零 ERROR）、eu_bridge
+37de6542、mui_row_dispatch b5b254cf、rm_backfill a9b88479（双腿 [0,0]
+/tmp/p26rm-rcon-*.log）、sensors_core 902d04a6、hopper_family 4538efb8、
+static_storage 1b8d2022（双腿 [0,0] /tmp/p26stat_rcon-*.log）；历史七链
+p19_chisel 9fe6b166 / p19_drying 4beeb6b6 / p21_chisel_drops 14ade19d /
+p21_drying_food 74462118 / p21_paintable a4e154c7 / p21_stoneblocks_split
+9fe6b166 / p23_barrel_paint 14c34c4c；p27 两链 87716091 与 74b6e262。
+
+**无链清单（诚实对账，不发明）**：worldgen 卡（p26-worldgen-pipeline-skeleton）
+的活体验收是 runServer forceload 冒烟（17/17 石种，/tmp/gt6_rs_p26wgen_*.log）
+非声明式入库链；「p26staticstoragefix」并非独立链——p26-storage-static-batch
+卡的 RCON 活跑修正（9f4f7234..17d92253）全部折进 p26_static_storage.py 主链
+本体；p27_tags 无独立文件（tag 骨架的 RCON 面由 p27tags 的 /gt6tags dump
+承载）。不入册的 probe 形态两件：`p15_keepfilter_reboot_probe`（PROBE_MODULE，
+`--probe` 入口）与 `p19_nbt_rebind_reboot_probe`（自带 main 的两 boot verdict
+脚本，非声明式 CHAIN，`load_chain` 不兼容——保持手工点名形态）。
+
+**P27 红链现代化清账（卡 p27-red-chains-modernize）**：P26 收官证书「2 红=链
+过时非回归」的两链已重钉转绿——`p15_runtime_smoke` 的 M 臂改 inject 数据面
+（run 对 menu-less 载体拒绝=P26 批 A 设计行为，改断言之；fakesource 全局开关
+退役，mutates=()）、`p25_tag_input_machine_fallback` 的 D 臂由负臂翻
+RECYCLABLE 环行正臂（P26 行回填新行的匹配序演进）；两链双腿 [0,0]
+（/tmp/p27_p15_rcon_{forge,neo}.log、/tmp/p27_p25_rcon_{forge,neo}*.log），
+簇带归属零改动。
+
+**P27 朝向臂注记**：coke oven facing 回归臂落在既有 `p16_pattern_checker` 链
+（7e6c2edb，phase C），不另立链——p16 簇成员与带区间不变。
 
 **框架自检（无服干跑，~1s）**：`python3 tools/rcon/selftest.py`——以假 boot 面
 验证九项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact

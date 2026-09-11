@@ -63,6 +63,18 @@ SESSION_GROUPS = (
     ("p16_pattern_checker", "p16_aqua_fluids", "p16_side_io",
      "p16_machine_fluid_gui", "p16_drying_rows", "p16_form_scaffold",
      "p16_chisel", "p16_distillery"),
+    # Roster backfill (card p27-rcon-roster-backfill): the P19/P21/P23-card
+    # chains left out when the roster was first frozen (it stopped at p16) and
+    # the remaining P26/P27-card chains join — admission mirroring the
+    # established form (bbox-registered sites, no fresh_boot member; the one
+    # mutates member keeps its exclusive-wave downgrade). Full band census in
+    # README ⑥ "名册补录 III".
+    # z=20 west strip x357..381 (three chains): the row-backfill band —
+    # p19_drying and p26_rm_backfill share the x=360 column (overlapping
+    # bboxes, so one cluster's boundary cleanup covers both), and
+    # p21_drying_food sits x-adjacent with its barrel columns reaching z=59
+    # (x367..381, clear of the x384 main strip below).
+    ("p19_drying", "p26_rm_backfill", "p21_drying_food"),
     # P26 wave1 roster expansion (card p26-rcon-sweep-roster): the nine
     # P24/P25-card chains join in two coordinate bands, admission mirroring
     # the p16 cluster form (bbox-registered, no fresh_boot / mutates member,
@@ -75,11 +87,40 @@ SESSION_GROUPS = (
     # their MARGIN boundary (x418) — same cluster, plan_waves keeps them out
     # of one concurrent wave while session cleanup stays band-local.
     ("p24_dye_chemical_fluids", "p24_pipe_owner", "p25_tag_input_machine_fallback",
-     "p25_cfoam_spray", "p26_cfoam_blocks", "p24_canner_refill", "p24_act"),
+     "p25_cfoam_spray", "p26_cfoam_blocks", "p24_canner_refill", "p24_act",
+     "p26_cfoam_refill", "p26_kitchen_pot"),
     # task p26-c-foam-block-family joins the z=20 cfoam cluster at x452..458 (clear of the
     # item-pipe band x434..443 claimed by its card state) — sweep --group cfoam picks the
     # pipe face (p25 regression) + the block face (this card) together.
+    # task p27-rcon-roster-backfill: p26_cfoam_refill (x410..416, overlapping the
+    # act tail) and p26_kitchen_pot (x418..426, x-disjoint from act) join after
+    # act — ascending min-x order kept, the refill overlap rides band-local
+    # cleanup (the dye|pipe adjacency form).
+    # z=124 west strip x369..397 (five chains, roster backfill): the P19/P21/
+    # P23 stone/paint face — chisel | stoneblocks | paintable | barrel_paint |
+    # chisel_drops in ascending min-x; the drops and barrel_paint bands graze
+    # the grass band's x389..397 (the east strip below) — plan_waves refuses
+    # the overlap in one concurrent wave and per-chain site cleanup covers the
+    # leftovers.
+    ("p19_chisel", "p21_stoneblocks_split", "p21_paintable", "p23_barrel_paint",
+     "p21_chisel_drops"),
     ("p24_grass_block", "p25_tool_hammer_wrench", "p25_food_can"),
+    # Crucible band z=121..140 (three chains, the crucible-chain cards A/B/C,
+    # roster backfill): multiblock (x426..443, the wall box + meltdown box) |
+    # mold_faucet (x428..438, z-disjoint at z132..140) | row0 (x437..451,
+    # overlapping the multiblock east edge — band-local cleanup). The
+    # multiblock west edge grazes food_can's x426..427; plan_waves keeps them
+    # out of one wave.
+    ("p26_crucible_multiblock", "p26_mold_faucet", "p26_crucible_row0"),
+    # Sensor band x432..436 z125..137 (single chain, roster backfill):
+    # p26_sensors_core is the roster's only session mutates member (fakesource)
+    # — plan_waves gives it an exclusive wave and plan_groups splits it out of
+    # a shared group (the p16_side_io precedent).
+    ("p26_sensors_core",),
+    # P27 fix-chain band z=122..128 x456..464 (single chain, roster backfill):
+    # the crucible anchored-form regression face, x-disjoint from every other
+    # band.
+    ("p27_builder_wand_form_fix",),
     # P26 W1 kinetic trio (card p26-w1-sifter-compressor-wiremill): the three
     # family chains share the fresh z=172 band (x383..411 — sifter 384..391 /
     # compressor 394..401 / wiremill 404..411, per-family x-disjoint teardown
@@ -91,6 +132,21 @@ SESSION_GROUPS = (
     # canner 400 strip), both chains bbox-adjacent so one cluster's boundary
     # cleanup covers the other's leftovers (the p24 z=20 cluster form).
     ("p26_w1_press", "p26_w1_extruder"),
+    # Static-storage band z=218..232 (two chains, the storage-domain cards,
+    # roster backfill): hopper_family (z=220, x400..432) | static_storage
+    # (z=230, x458..488) — z-disjoint strips, one cluster keeps the domain's
+    # cleanup band-local.
+    ("p26_hopper_family", "p26_static_storage"),
+    # MUI dispatch band z=98..103 x478..531 (single chain, roster backfill):
+    # the four-family menu-dispatch face, disjoint from every other band.
+    ("p26_mui_row_dispatch",),
+    # Spawn-area band (two chains, roster backfill): the EU bridge rig
+    # (x-2..23, z-2..22) and the tag dual-tree /gt6tags face (x-2..2) reuse
+    # the spawn neighbourhood the p11/p12 band already occupies (x-2..60) —
+    # real cross-cluster overlap: plan_waves refuses it in one concurrent
+    # wave and per-chain site cleanup covers the leftovers (both faces ran
+    # narrow, non-roster legs here before registering).
+    ("p26_eu_bridge_outbound", "p27_vanilla_tag_dual_tree"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
