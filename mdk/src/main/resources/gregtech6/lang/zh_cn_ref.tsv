@@ -202,7 +202,6 @@ direct	gt6.row.dense_wall.display	致密%s壁板	hand
 direct	gt6.row.diesel.display	燃油引擎 (%s)	hand
 direct	gt6.row.distillery.display	蒸馏器 (%s)	hand
 direct	gt6.row.dryer.display	干燥器 (%s)	hand
-direct	gt6.row.oven.display	烤箱 (%s)	hand
 direct	gt6.row.funnel.display	%s漏斗	hand
 direct	gt6.row.hopper.display	%s漏斗	hand
 direct	gt6.row.item_pipe.display.huge	巨型%s物品管道	hand
@@ -257,6 +256,7 @@ direct	gt6.row.mat.tungsten_carbide	碳化钨	hand
 direct	gt6.row.mat.tungstensteel	钨钢	hand
 direct	gt6.row.mat.ultimet	哈氏合金	hand
 direct	gt6.row.mat.wood_treated	木制	hand
+direct	gt6.row.oven.display	烤箱 (%s)	hand
 direct	gt6.row.queue_hopper.display	%s队列漏斗	hand
 direct	gt6.row.size.huge	巨型	hand
 direct	gt6.row.size.large	大型	hand
