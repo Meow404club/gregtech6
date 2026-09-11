@@ -8,6 +8,14 @@
  * <p>Both carried shapes are pinned: the REAL loot form (copy_nbt under BlockEntityTag,
  * GT6LootTables.paintCopyNbt — the shape the p22 first-pass tests missed, which is why the
  * kb-painted-item-tag-mismatch dead seam never went red) and the root-tag fallback form.
+ *
+ * <p>task p27-machine-material-tint-fidelity re-based the unpainted arms on the row
+ * material (the upstream item colour is a registration-row function, not item NBT). The
+ * stacks below ride Items.BRICKS — a material-LESS block by the
+ * {@code GTBasicMachineBlock.materialOf} gate — so every {@code -1} assertion here pins
+ * the material-less arm, which stays byte-identical (full-alpha white == -1); the
+ * machine-item material arm shares the P21 seam pinned in GTMachinePaintTintTest
+ * (0xFFFF825A Cu / 0xFF828282 Steel) and the live items ride the runServer registration gate.
  */
 package gregtech6.client.render;
 
@@ -81,15 +89,15 @@ class GTItemPaintTintTest extends GTOfflineRenderTestBase {
                 "the CS DYE_Black row value tints dark gray");
     }
 
-    /** Acceptance 3b: unpainted stacks return the -1 no-tint sentinel (all guard arms). */
+    /** Acceptance 3b: unpainted MATERIAL-LESS stacks return the -1 no-tint sentinel (all guard arms). */
     @Test
     void unpaintedStackIsNoTint() {
         assertEquals(-1, GTItemPaintTint.itemColor().getColor(new ItemStack(Items.BRICKS, 1), 0),
-                "a bare stack (no tag) is no tint");
+                "a bare stack (no tag, no material) is no tint — the material-less arm of the fidelity fallback");
         assertEquals(-1, GTItemPaintTint.itemColor().getColor(lootCarriedStack(PAINT_RED, false), 0),
-                "a colour key without the painted flag is no tint (the BE writes the pair only while painted)");
+                "a colour key without the painted flag is no tint on a material-less block (the BE writes the pair only while painted)");
         assertEquals(-1, GTItemPaintTint.itemColor().getColor(lootCarriedStack(null, true), 0),
-                "a painted flag without a colour key is no tint (defensive against a malformed copy)");
+                "a painted flag without a colour key is no tint on a material-less block (defensive against a malformed copy)");
     }
 
     /** Acceptance 3c: a non-zero tint index is never tinted, even on a painted stack. */

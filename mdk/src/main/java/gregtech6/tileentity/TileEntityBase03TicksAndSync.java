@@ -113,16 +113,20 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 	}
 
 	/**
-	 * Upstream Paintable:83 shape ({@code if (mIsPainted) {mIsPainted=F; mRGBa=<colour>; ...}}).
-	 * Declared deviation: upstream restores {@code mMaterial.fRGBaSolid} — the port's
-	 * machines carry no material field (trimmed set), so unpaint returns UNCOLORED white,
-	 * which renders as "no tint" (ADR ruling, IPaintableTE doc).
+	 * Upstream Paintable:83 verbatim — the painted flag clears and the colour returns to
+	 * the MATERIAL default ({@code mMaterial.fRGBaSolid}, OreDictMaterial.java:111): the
+	 * row material resolves through the block carrier ({@code GTBasicMachineBlock.materialOf},
+	 * task p27-machine-material-tint-fidelity — the port machines carry their upstream
+	 * NBT_MATERIAL column again, so the former "no material reference" deviation is
+	 * REVERTED). A material-less block (barrels, the offline BRICKS fixtures) restores
+	 * UNCOLORED white — the {@code materialColor(null)} identity, rendering as "no tint".
 	 */
 	@Override
 	public boolean unpaint() {
 		if (mIsPainted) {
 			mIsPainted = false;
-			mRGBa = UNCOLORED;
+			mRGBa = gregtech6.block.GTBasicMachineBlock.materialColor(
+					gregtech6.block.GTBasicMachineBlock.materialOf(getBlockState().getBlock())); // upstream :83 fRGBaSolid
 			markPaintChanged();
 			return true;
 		}
