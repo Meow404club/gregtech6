@@ -217,7 +217,7 @@ direct	gt6.row.machine.crusher	破碎机	hand
 direct	gt6.row.machine.display	%s (%s)	hand
 direct	gt6.row.machine.extruder	压模器	hand
 direct	gt6.row.machine.extruder.display	压模器 (%s)	hand
-direct	gt6.row.machine.extruder.low_heat.display	压模器 (%s)	hand
+direct	gt6.row.machine.extruder.low_heat.display	低温压模器 (%s)	hand
 direct	gt6.row.machine.extruder_low_heat	压模器	hand
 direct	gt6.row.machine.lathe	车床	hand
 direct	gt6.row.machine.press	压力成型机	hand

@@ -546,7 +546,11 @@ HAND_TRANSLATIONS = {
     "gt6.row.machine.wiremill": ("线材机 (%s)", "hand"),
     "gt6.row.machine.press.display": ("压力成型机 (%s)", "hand"),
     "gt6.row.machine.extruder.display": ("压模器 (%s)", "hand"),
-    "gt6.row.machine.extruder.low_heat.display": ("压模器 (%s)", "hand"),
+    # task p27-lang-fix P1 §2.2: the Low Heat tier display — the dump :11543 row (and the
+    # pre-writeback TSV value) flattened T1 into the plain 压模器 word (the GT6ZhCn walk
+    # comment self-attests the loss); en "Low Heat Extruder (%s)" (en_us.json) keeps the
+    # tier — DECLARED DEVIATION from the dump column, the ledger's 低温压模器 face.
+    "gt6.row.machine.extruder.low_heat.display": ("低温压模器 (%s)", "hand"),
     "gt6.row.machine.press": ("压力成型机", "hand"),
     "gt6.row.machine.extruder": ("压模器", "hand"),
     "gt6.row.machine.extruder_low_heat": ("压模器", "hand"),
