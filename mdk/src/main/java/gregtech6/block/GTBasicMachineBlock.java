@@ -73,6 +73,16 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 * @param matSlug            the row material slug (the gt6.row.mat small-unit key tail)
 	 * @param matDisplay         the row material local name (MT.DATA.Heat_T[1..4] = Steel/Invar/
 	 *                           Titanium/Tungsten Carbide, MT.java:3689), verbatim
+	 * @param material           the row material — the upstream NBT_MATERIAL column (task
+	 *                           p27-machine-material-tint-fidelity): every upstream basic-machine
+	 *                           row carries it and the 1.7.10 registration derives the render
+	 *                           colour from it (MultiTileEntityClassContainer.java:51 —
+	 *                           {@code hasKey(NBT_MATERIAL) && !hasKey(NBT_COLOR) → NBT_COLOR =
+	 *                           getRGBInt(material.fRGBaSolid)}), so the port default colour of a
+	 *                           row IS {@code material.fRGBaSolid}. A LAZY supplier per the
+	 *                           GTBarrels MetalDrumRow convention (GTWireSpecs.java:35 ruling:
+	 *                           the registry classes load before {@code MT.init()}, a direct
+	 *                           {@code MT.X} field read in a row initializer would resolve null)
 	 * @param displayKey         the family display template key ({@code gt6.row.dryer.display} /
 	 *                           {@code gt6.row.distillery.display}) the composed name fills
 	 * @param metaId             the upstream MultiTileEntity id (20311-20314), the zero-diff yardstick
@@ -112,7 +122,9 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 *                           port overclock loop :773 runs unconditionally, "no config
 	 *                           source, always T")
 	 */
-	public record MachineRow(String path, String matSlug, String matDisplay, String displayKey, int metaId, float hardness,
+	public record MachineRow(String path, String matSlug, String matDisplay,
+			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material,
+			String displayKey, int metaId, float hardness,
 			int tier, int parallel, boolean parallelDuration,
 			java.util.function.Supplier<gregtech6.recipes.RecipeMap> recipes, gregapi.code.TagData energyType,
 			String texture,
@@ -144,8 +156,20 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	@Nullable
 	private final java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> mComposedName;
 
+	/**
+	 * The material carrier of the legacy row-less tier blocks (task
+	 * p27-machine-material-tint-fidelity): the Shredder/Crusher/Lathe ladders keep the
+	 * tierOf dispatch and the 4-arg constructor for their NAMES, but their upstream rows
+	 * carry NBT_MATERIAL like every other family (Loader_MultiTileEntities.java:1294-1309,
+	 * Kinetic_T[1..4]), so the tier registrations hand the row colour source through this
+	 * supplier. Null = genuinely material-less (no such registration today — the white
+	 * fallback of {@link #materialColor} stays the identity).
+	 */
+	@Nullable
+	private final java.util.function.Supplier<gregapi.oredict.OreDictMaterial> mMaterial;
+
 	public GTBasicMachineBlock(Properties aProperties, Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType) {
-		this(aProperties, aTickerType, null, null);
+		this(aProperties, aTickerType, null, null, null);
 	}
 	//? if neoforge {
 	/*
@@ -166,10 +190,23 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	/** The tier-ladder form (task p20-i18n-compose-rows): a row-less block whose name is the pre-composed supplier. */
 	public GTBasicMachineBlock(Properties aProperties, Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
 			@Nullable MachineRow aRow, @Nullable java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> aComposedName) {
+		this(aProperties, aTickerType, aRow, aComposedName, null);
+	}
+
+	/**
+	 * The material-carrying tier-ladder form (task p27-machine-material-tint-fidelity): the
+	 * legacy row-less ladders (Shredder/Crusher/Lathe) hand the tier's Kinetic_T material
+	 * through {@code aMaterial} — the block identity carries the render colour source the
+	 * same way the row carriers do through {@link MachineRow#material}.
+	 */
+	public GTBasicMachineBlock(Properties aProperties, Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
+			@Nullable MachineRow aRow, @Nullable java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> aComposedName,
+			@Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
 		super(aProperties);
 		mTickerType = aTickerType;
 		mRow = aRow;
 		mComposedName = aComposedName;
+		mMaterial = aMaterial;
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, net.minecraft.core.Direction.NORTH).setValue(ACTIVE, false).setValue(RUNNING, false));
 	}
 
@@ -192,6 +229,57 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	@Nullable
 	public MachineRow row() {
 		return mRow;
+	}
+
+	/**
+	 * The block's row material (task p27-machine-material-tint-fidelity) — the colour
+	 * source the paint tint falls back to while unpainted and the unpaint() write-back
+	 * restores: the block-side mirror of the upstream NBT_MATERIAL → NBT_COLOR derivation
+	 * (MultiTileEntityClassContainer.java:51). Row carriers read the row column, the
+	 * legacy tier ladders the constructor supplier. Null = material-less (the white
+	 * identity of {@link #materialColor}).
+	 */
+	@Nullable
+	public gregapi.oredict.OreDictMaterial material() {
+		if (mRow != null && mRow.material() != null) return mRow.material().get();
+		return mMaterial == null ? null : mMaterial.get();
+	}
+
+	/**
+	 * The machine-domain material dispatch (task p27-machine-material-tint-fidelity): the
+	 * ONE common-code seam the paint tint (world + inventory halves) and the 03 base
+	 * unpaint() consult, over the three block carriers that mirror upstream NBT_MATERIAL
+	 * rows — {@link GTBasicMachineBlock} (the MachineRow families + the Kinetic legacy
+	 * ladders), {@link GTOvenBlock} (the Heat_T Oven ladder) and the
+	 * {@code GT6BurningBoxes.BurningBoxBlock} rows (Loader :519-548/:619-704). Everything
+	 * else (barrels, pipes, vanilla states) is material-less: null → the white identity,
+	 * which keeps the P23 barrel registration byte-identical.
+	 */
+	@Nullable
+	public static gregapi.oredict.OreDictMaterial materialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		if (aBlock instanceof GTBasicMachineBlock tMachine) return tMachine.material();
+		if (aBlock instanceof GTOvenBlock tOven) return tOven.material();
+		if (aBlock instanceof gregtech6.registry.GT6BurningBoxes.BurningBoxBlock tBox) return tBox.material();
+		return null;
+	}
+
+	/**
+	 * The machine default colour of one material (task p27-machine-material-tint-fidelity):
+	 * {@code UT.Code.getRGBInt(mMaterial.fRGBaSolid)} (UT.java:1580-1582 over
+	 * OreDictMaterial.java:111) — the exact 1.7.10 registration expression
+	 * (MultiTileEntityClassContainer.java:51), the 0xRRGGBB form the {@code mRGBa} storage
+	 * keeps. Null material = upstream UNCOLORED 0xFFFFFF (CS.java:327, the Paintable:50
+	 * field default) — full-alpha bound that IS the vanilla {@code -1} no-tint sentinel.
+	 */
+	public static int materialColor(@Nullable gregapi.oredict.OreDictMaterial aMaterial) {
+		if (aMaterial == null) return 0xFFFFFF;
+		short[] tRGBa = aMaterial.fRGBaSolid;
+		return (bind8(tRGBa[0]) << 16) | (bind8(tRGBa[1]) << 8) | bind8(tRGBa[2]); // UT.Code.getRGBInt :1580-1582
+	}
+
+	/** Upstream UT.Code.bind8 semantics: clamp to 0-255. */
+	private static int bind8(long aValue) {
+		return (int) Math.max(0, Math.min(255, aValue));
 	}
 
 	/**

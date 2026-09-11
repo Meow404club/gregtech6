@@ -58,7 +58,9 @@ public class GTBasicMachineBlockDispatchTest {
 	 */
 	private static GTBasicMachineBlock.MachineRow row(
 			java.util.function.Supplier<MenuType<gregtech6.gui.machines.GTBasicMachineMenu>> aMenu) {
-		return new GTBasicMachineBlock.MachineRow("fixture", "steel", "Steel", "gt6.row.dryer.display", 20311, 6.0F,
+		return new GTBasicMachineBlock.MachineRow("fixture", "steel", "Steel",
+				() -> null /*NBT_MATERIAL — inert payload, the dispatch key never resolves it (task p27-machine-material-tint-fidelity column)*/,
+				"gt6.row.dryer.display", 20311, 6.0F,
 				0, 8, true,
 				() -> null /*NBT_RECIPEMAP — inert payload*/, TD.Energy.HU, "dryer",
 				(byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0,

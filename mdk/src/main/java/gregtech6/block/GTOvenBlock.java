@@ -102,6 +102,20 @@ public class GTOvenBlock extends GTEntityBlock {
 	}
 
 	/**
+	 * The ladder row material (task p27-machine-material-tint-fidelity): the Heat_T[1..4]
+	 * column of {@link GTMachines#OVEN_ROWS} at this block's tier — the upstream
+	 * NBT_MATERIAL (Loader_MultiTileEntities.java:1288-1291,
+	 * {@code aMat = MT.DATA.Heat_T[1..4]}) the 1.7.10 registration derives the render
+	 * colour from (MultiTileEntityClassContainer.java:51). The lazy row supplier resolves
+	 * against {@code MT.init()} at call time (render/unpaint — never class-load).
+	 */
+	@javax.annotation.Nullable
+	public gregapi.oredict.OreDictMaterial material() {
+		if (mTier < 0 || mTier >= GTMachines.OVEN_ROWS.size()) return null;
+		return GTMachines.OVEN_ROWS.get(mTier).material().get();
+	}
+
+	/**
 	 * The composed name (task p27-oven-heat-t-ladder): a ladder row hands back its
 	 * pre-composed {@code "Oven (<material word>)"} supplier, the legacy single-oven shape
 	 * keeps the vanilla atomic-key lookup.

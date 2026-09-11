@@ -39,10 +39,12 @@ public interface IPaintableTE {
 	boolean mixPaint(int aRGB);
 
 	/**
-	 * Upstream Paintable:83 shape — clears the painted flag and returns the colour to
-	 * UNCOLORED white. Declared deviation: upstream restores the machine's material colour
-	 * ({@code mMaterial.fRGBaSolid}); this port has no material reference on the machines
-	 * (the trimmed field set), so unpaint returns white, which renders as "no tint".
+	 * Upstream Paintable:83 shape — clears the painted flag and returns the colour to the
+	 * MATERIAL default ({@code mMaterial.fRGBaSolid}), resolved through the block carrier
+	 * ({@code GTBasicMachineBlock.materialOf}, task p27-machine-material-tint-fidelity —
+	 * the port rows mirror the upstream NBT_MATERIAL column again). A material-less block
+	 * restores UNCOLORED white, which renders as "no tint" (the P21 contract for the
+	 * domains that never carried NBT_MATERIAL).
 	 */
 	boolean unpaint();
 

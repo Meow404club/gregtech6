@@ -109,13 +109,21 @@ public class GTPaintableTest extends GTOfflineTestBase {
 	}
 
 	@Test
-	void unpaintReturnsToWhiteAndSecondUnpaintIsNoOp() {
+	void unpaintRestoresTheMaterialDefaultAndSecondUnpaintIsNoOp() {
 		TileEntityOven tOven = oven();
 		tOven.mixPaint(DYE_RED);
 
 		assertTrue(tOven.unpaint(), "upstream :83 — a painted machine unpaints true");
 		assertFalse(tOven.isPainted());
-		assertEquals(TileEntityBase03TicksAndSync.UNCOLORED, tOven.getPaint(), "declared deviation: white, not the upstream material colour");
+		// task p27-machine-material-tint-fidelity REVERTED the "no material reference"
+		// deviation: unpaint now restores the row material's fRGBaSolid through the block
+		// carrier (GTBasicMachineBlock.materialOf/materialColor) — the upstream Paintable:83
+		// mRGBa = mMaterial.fRGBaSolid form. THIS fixture rides a vanilla BRICKS state, the
+		// material-LESS arm: it restores UNCOLORED white (the materialColor(null) identity),
+		// numerically the P21 contract; the row-material arm is pinned in
+		// GTMachinePaintTintTest.unpaintedMachineTintsWithTheRowMaterial (0xFFFF825A Cu /
+		// 0xFF828282 Steel) and the live rows ride the runServer registration gate.
+		assertEquals(TileEntityBase03TicksAndSync.UNCOLORED, tOven.getPaint(), "the material-less arm restores UNCOLORED white");
 
 		assertFalse(tOven.unpaint(), "upstream :83 — the unpainted machine is the no-op");
 		assertEquals(TileEntityBase03TicksAndSync.UNCOLORED, tOven.getPaint());

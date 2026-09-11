@@ -151,24 +151,32 @@ public final class GT6BurningBoxes {
 				net.minecraft.network.chat.Component.translatable(familyUnitKeyOf(aRow)), tMat);
 	}
 
-	/** One Loader material — slug + display name + the NBT_HARDNESS (== NBT_RESISTANCE) pair. */
-	public record BoxMaterial(String slug, String display, float hardness) {}
+	/**
+	 * One Loader material — slug + display name + the NBT_HARDNESS (== NBT_RESISTANCE)
+	 * pair + the row's NBT_MATERIAL (task p27-machine-material-tint-fidelity): every
+	 * upstream burning-box row carries it (Loader_MultiTileEntities.java:519-548/:619-704)
+	 * and the 1.7.10 registration derives the render colour from it
+	 * (MultiTileEntityClassContainer.java:51, {@code getRGBInt(material.fRGBaSolid)}).
+	 * A LAZY supplier per the GTBarrels MetalDrumRow convention (GTWireSpecs.java:35
+	 * ruling — the registry classes load before {@code MT.init()}).
+	 */
+	public record BoxMaterial(String slug, String display, float hardness, java.util.function.Supplier<gregapi.oredict.OreDictMaterial> mat) {}
 
-	/** The 13 burning-box materials, the GTBarrels/GT6Kinetics slug conventions. */
+	/** The 13 burning-box materials, the GTBarrels/GT6Kinetics slug conventions (the mat column = the Loader {@code aMat} per row). */
 	public static final BoxMaterial
-			MAT_LEAD        = new BoxMaterial("lead"                   , "Lead"                  ,  4.0F),
-			MAT_BISMUTH     = new BoxMaterial("bismuth"                , "Bismuth"               ,  4.0F),
-			MAT_BRONZE      = new BoxMaterial("bronze"                 , "Bronze"                ,  7.0F),
-			MAT_ARSENIC_COPPER  = new BoxMaterial("arsenic_copper"     , "Arsenic Copper"        ,  7.0F),
-			MAT_ARSENIC_BRONZE  = new BoxMaterial("arsenic_bronze"     , "Arsenic Bronze"        ,  7.0F),
-			MAT_INVAR       = new BoxMaterial("invar"                  , "Invar"                 ,  4.0F),
-			MAT_STEEL       = new BoxMaterial("steel"                  , "Steel"                 ,  6.0F),
-			MAT_CHROMIUM    = new BoxMaterial("chromium"               , "Chromium"              ,  4.0F),
-			MAT_TITANIUM    = new BoxMaterial("titanium"               , "Titanium"              ,  9.0F),
-			MAT_NETHERITE   = new BoxMaterial("netherite"              , "Netherite"             ,  9.0F),
-			MAT_TUNGSTEN    = new BoxMaterial("tungsten"               , "Tungsten"              , 10.0F),
-			MAT_TUNGSTENSTEEL = new BoxMaterial("tungstensteel"        , "Tungstensteel"         , 12.5F),
-			MAT_TANTALUM_HAFNIUM_CARBIDE = new BoxMaterial("tantalum_hafnium_carbide", "Ta4HfC5", 12.5F);
+			MAT_LEAD        = new BoxMaterial("lead"                   , "Lead"                  ,  4.0F, () -> gregapi.data.MT.Pb),
+			MAT_BISMUTH     = new BoxMaterial("bismuth"                , "Bismuth"               ,  4.0F, () -> gregapi.data.MT.Bi),
+			MAT_BRONZE      = new BoxMaterial("bronze"                 , "Bronze"                ,  7.0F, () -> gregapi.data.MT.Bronze),
+			MAT_ARSENIC_COPPER  = new BoxMaterial("arsenic_copper"     , "Arsenic Copper"        ,  7.0F, () -> gregapi.data.MT.ArsenicCopper),
+			MAT_ARSENIC_BRONZE  = new BoxMaterial("arsenic_bronze"     , "Arsenic Bronze"        ,  7.0F, () -> gregapi.data.MT.ArsenicBronze),
+			MAT_INVAR       = new BoxMaterial("invar"                  , "Invar"                 ,  4.0F, () -> gregapi.data.MT.Invar),
+			MAT_STEEL       = new BoxMaterial("steel"                  , "Steel"                 ,  6.0F, () -> gregapi.data.MT.Steel),
+			MAT_CHROMIUM    = new BoxMaterial("chromium"               , "Chromium"              ,  4.0F, () -> gregapi.data.MT.Cr),
+			MAT_TITANIUM    = new BoxMaterial("titanium"               , "Titanium"              ,  9.0F, () -> gregapi.data.MT.Ti),
+			MAT_NETHERITE   = new BoxMaterial("netherite"              , "Netherite"             ,  9.0F, () -> gregapi.data.MT.Netherite),
+			MAT_TUNGSTEN    = new BoxMaterial("tungsten"               , "Tungsten"              , 10.0F, () -> gregapi.data.MT.W),
+			MAT_TUNGSTENSTEEL = new BoxMaterial("tungstensteel"        , "Tungstensteel"         , 12.5F, () -> gregapi.data.MT.TungstenSteel),
+			MAT_TANTALUM_HAFNIUM_CARBIDE = new BoxMaterial("tantalum_hafnium_carbide", "Ta4HfC5", 12.5F, () -> gregapi.data.MT.Ta4HfC5);
 
 	/** One registration row — the block-carrier projection of one upstream aRegistry.add line (the display column retired into the composed-name parameters, task p20-i18n-compose-rows). */
 	public record BurningBoxRow(String path, short efficiency, long rate, Family family, BoxMaterial material, boolean stone) {
@@ -182,9 +190,9 @@ public final class GT6BurningBoxes {
 
 	// the row ladders — the Loader file order, values verbatim (class doc)
 
-	/** The Brick row (:519, ID 1199) — eff 2500, out 16 HU/t, the aStone carrier. */
+	/** The Brick row (:519, ID 1199) — eff 2500, out 16 HU/t, the aStone carrier; NBT_MATERIAL = MT.Brick (:519). */
 	public static final BurningBoxRow BRICK_ROW = new BurningBoxRow("brick_burning_box", (short)2500, 16, Family.SOLID,
-			new BoxMaterial("brick", "Brick", 6.0F), true);
+			new BoxMaterial("brick", "Brick", 6.0F, () -> gregapi.data.MT.Brick), true);
 
 	/** The 13 Burning Box (Solid) rows (:522-534) + the 13 Dense rows (:536-548) — 27 with the Brick row. */
 	public static final List<BurningBoxRow> SOLID_ROWS = buildLadder(Family.SOLID,
@@ -404,6 +412,16 @@ public final class GT6BurningBoxes {
 		/** The registration row (the GTBarrelBlock.capacityL carrier read). */
 		public BurningBoxRow row() {
 			return mRow;
+		}
+
+		/**
+		 * The row material (task p27-machine-material-tint-fidelity) — the NBT_MATERIAL the
+		 * upstream burning-box rows carry (:519-548/:619-704); the colour source the common
+		 * {@code GTBasicMachineBlock.materialOf} dispatch hands the paint tint and the 03
+		 * base unpaint(). The lazy supplier resolves against {@code MT.init()} at call time.
+		 */
+		public gregapi.oredict.OreDictMaterial material() {
+			return mRow.material().mat().get();
 		}
 
 		/** The family (the BE selector + the use-face gate). */
