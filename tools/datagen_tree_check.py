@@ -14,6 +14,10 @@ mdk/versions/1.21.1-neoforge/build/datagen-output（验证产物非入库面）�
   * 层 1 路径归一化：目录段（不含文件名）经 SEGMENT_MAP 映射——node 侧单数
     `loot_table` → canonical 侧复数 `loot_tables`（24w21a 数据包目录单数化改名，
     仅目录段参与映射，避免误伤同名文件名）。canonical 侧恒等映射（形态钉 1.20.1 形）。
+  * 层 1 补充（p27 品牌段带）：biome_modifier 产物带坐深一层，node 侧
+    `data/<ns>/neoforge/biome_modifier/` 经 brand_normalize 作用域折叠为 canonical
+    侧 `forge/` 形（刻意不入全局 SEGMENT_MAP，理由见其注释）；折叠由 _fold 施加，
+    同侧品牌折叠撞键 → 硬 ERROR（方案 a 双目录终态需显式 revisit，不许静默覆盖）。
   * 层 2 值形归一化（VALUE_NORMALIZERS）：字节不等且命中已注册产物带的文件，
     双侧解析 JSON → node 侧施用该带注册的值形变换（方向恒 node→canonical，
     正典树永不改写）→ 按双腿实测一致的 Gson 格式（indent=2 / 无尾换行 /
@@ -21,14 +25,24 @@ mdk/versions/1.21.1-neoforge/build/datagen-output（验证产物非入库面）�
     → 再做字节比对。归一成立 ≠ 静默放过：NORMALIZED 计数与文件清单必须打印；
     未命中带、解析失败、变换后仍不等 → 一律原样 FAIL（保留 first-diff offset）。
     变换必须保守：只对 census 实测钉死的形态施用，不适用形态原样保留，
-    由字节比对兜底 FAIL（绝不放宽为全局语义比较）。
+    由字节比对兜底 FAIL（绝不放宽为全局语义比较）。品牌段作用域带
+    （data/<ns>/forge/biome_modifier/，p27）另册 BRAND_VALUE_NORMALIZERS，
+    匹配发生在路径归一之后。
   * 归一化后做三查：仅 canonical 有 / 仅 node 有 / 双侧都有但字节不同。
     双侧文件计数（原始与归一化后）必须相等，否则非零退出。
+  * 陈旧守卫（p27-ops，防复发，先于对账）：节点输出 = 非入库验证产物，可能落后于
+    正典树（research.p27-lang-legs-delta 实录：陈旧快照比出 66 键 4.4KB en_us 假
+    分叉）。开跑先比时戳——节点生成时戳（优先 .cache 账本头
+    「// <version>\t<ISO>\t<provider>」，退化产物 mtime）vs git HEAD 正典树最近
+    写入（git log -1 -- <canonical>）。快照更早 → STALE FAIL（对账基线不可信，
+    宁红勿哑）；--allow-stale 显式逃生（降级 WARN 继续，日志留痕）；git/标记不可得
+    → 打印 STALE-CHECK SKIPPED 继续（可见，不静默）。
   * 任何未归一差异 → exit 1 并打印差异文件清单；全等 → exit 0 并打印摘要
     （byte 相等数 / normalized 数 / loot 带数）。
 
 用法：
-  python3 tools/datagen_tree_check.py [--canonical DIR] [--node-output DIR] [--max-list N]
+  python3 tools/datagen_tree_check.py [--canonical DIR] [--node-output DIR] \
+      [--max-list N] [--allow-stale]
 
 正例（p25 两层归一后，exit 0）：
   $ python3 tools/datagen_tree_check.py
@@ -62,7 +76,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
+import time
 from pathlib import Path, PurePosixPath
 from typing import Callable
 
@@ -88,6 +104,22 @@ SEGMENT_MAP = {
     "c": "forge",
     "block": "blocks",
 }
+
+# p27-ops 一带新增（品牌段作用域折叠，刻意不入上表）：biome_modifier 产物带坐得更深
+# 一层——data/<ns>/<brand>/biome_modifier/（目录段[2]=加载器品牌、段[3]=带名）。forge 腿
+# 产 data/gt6/forge/biome_modifier/（注册键 forge:biome_modifier，ForgeRegistries
+# .java:195；GTCEu 1.20.1 生成树 data/gtceu/forge/biome_modifier/ 为量产实证）、21.1
+# 节点产 data/gt6/neoforge/biome_modifier/（注册键 neoforge:biome_modifier，
+# NeoForgeRegistries.java:61-66；目录跟随注册键命名空间，1.21 Registries
+# .elementsDirPath=CommonHooks.prefixNamespace, Registries.java:251-253）——同一逻辑
+# 产物的双腿目录形（decisions.p26-worldgen-biome-modifier-dual-dir 方案 a 的对账面，
+# 汇总出处 mdk GT6WorldgenDatagen.java:55-68）。不入 SEGMENT_MAP 的原因：该表对两侧
+# 全局对称施用，neoforge→forge 若全局生效，将来正典树按方案 a 并载双腿目录时
+# canonical 自己的 neoforge/ 副本也会被折到 forge/ 键上、同侧 dict 静默覆盖（即
+# FORWARD_TWIN_PREFIX 注释描述的事故形）。故走 brand_normalize 作用域折叠 +
+# _fold 折叠碰撞守卫（同侧品牌折叠撞键 → 硬 ERROR，逼出显式 revisit）。
+BRAND_BAND_DIR = "biome_modifier"
+BRAND_SEGMENT_MAP = {"neoforge": "forge"}
 
 # ── 层 2：值形归一器（VALUE_NORMALIZERS，p25-datagen-tree-check-unify 新增）────
 # 注册纪律（沿 SEGMENT_MAP 注释证据纪律）：每条变换必须带 ①版本差异出处（vanilla
@@ -323,6 +355,35 @@ VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]
 ]
 
 
+def _norm_add_features_brand(o: dict) -> bool:
+    """biome modifier "type" 键品牌前缀：neoforge:add_features → forge:add_features。
+
+    出处：双腿 biome modifier JSON 全文仅 "type" 一键差——canonical
+    data/gt6/forge/biome_modifier/overworld_stone_andesite.json 写
+    "forge:add_features"、节点 data/gt6/neoforge/biome_modifier/
+    overworld_stone_andesite.json 写 "neoforge:add_features"（2026-09-12 census：
+    17/17 对 sed 归一后逐字节相等，唯一差即该键）；注册表面 GT6WorldgenDatagen
+    .java:55-68（ForgeBiomeModifiers.java:46 record JSON type forge:add_features
+    vs BiomeModifiers.java:47 record JSON type neoforge:add_features）。
+    remove_features/conditional 等形未注册——原样保留 → 字节比对 FAIL（fail-visible）。
+    """
+    if o.get("type") == "neoforge:add_features":
+        o["type"] = "forge:add_features"
+        return True
+    return False
+
+
+# 品牌段作用域值形带（值坐得比 VALUE_NORMALIZERS 深一层：data/<ns>/<brand>/<band>/，
+# p27-ops）。匹配发生在路径归一之后——rel 已是 canonical 形（forge 段），故 brand
+# 键恒 "forge"、node 侧 neoforge 形文件经 brand_normalize 后同样命中本表。
+BRAND_VALUE_NORMALIZERS: list[
+    tuple[str, str, str, list[tuple[str, Callable[[dict], bool]]]]] = [
+    ("data/*/forge/biome_modifier", "forge", BRAND_BAND_DIR, [
+        ("add-features-neoforge→forge", _norm_add_features_brand),
+    ]),
+]
+
+
 def _walk_dicts(obj: object, fn: Callable[[dict], bool]) -> bool:
     """对解析树内每个 dict 施用 fn（fn 自判适用性，返回是否施用）。"""
     changed = False
@@ -343,6 +404,10 @@ def _registered_band(rel: PurePosixPath) -> list[tuple[str, Callable[[dict], boo
         return None
     for _, dir_name, regs in VALUE_NORMALIZERS:
         if _band(rel, dir_name):
+            return regs
+    for _, brand, dir_name, regs in BRAND_VALUE_NORMALIZERS:
+        if (len(rel.parts) >= 5 and rel.parts[0] == "data"
+                and rel.parts[2] == brand and rel.parts[3] == dir_name):
             return regs
     return None
 
@@ -375,6 +440,99 @@ def try_value_normalize(rel: PurePosixPath, c_bytes: bytes, n_bytes: bytes
 CACHE_DIR_NAME = ".cache"          # HashCache 账本（输出根内，gitignore :24，非产物）
 ROOT_VERSION_FILE = "version.json"  # 1.21.x FileCache 输出根版本头（运行时戳记，非产物）
 DEFAULT_MAX_LIST = 100
+
+
+# ── 陈旧守卫（p27-ops-treecheck-stale-guard，防复发）────────────────────────────
+# 节点输出 = 非入库验证产物（ADR-P17-1），可能落后于正典树：research.p27-lang-legs-delta
+# 实录——main checkout 的节点快照停在 16925b38 之前，与再生后的正典树比出 66 键 4.4KB
+# en_us「假分叉」。守卫判据：节点快照生成时戳 < git HEAD 正典树最近写入 → 对账基线不可信。
+# 裁定 FAIL（fail-visible 纪律：陈旧基线上的「绿」不可信，宁红勿哑），--allow-stale 显式
+# 逃生（降级 WARN 继续跑，日志留痕）；git/标记不可得 → 打印 SKIPPED 继续（可见，不哑）。
+
+def _parse_cache_ts(line: str) -> float | None:
+    """解析 1.21.x FileCache 账本头时戳：「// <mc-version>\\t<ISO-local>\\t<provider>」。
+
+    实测样本（main 节点输出 .cache/<sha1> 首行）：
+    `// 1.21.1\t2026-09-12T00:57:47.204892185\tLanguage Provider: gt6:mold[en_us]`
+    ISO 带纳秒精度，fromisoformat 只吃 3/6 位小数——手工截到微秒；本地时区
+    （LocalDateTime 形，与 mtime 同钟）。不可解析返回 None（调用方计数跳过）。
+    """
+    head = line.split("\t")
+    if len(head) < 2 or not head[0].startswith("//"):
+        return None
+    iso = head[1].strip()
+    if "." in iso:
+        iso, _, frac = iso.partition(".")
+    else:
+        frac = ""
+    frac = "".join(ch for ch in frac if ch.isdigit())[:6]
+    try:
+        epoch = time.mktime(time.strptime(iso, "%Y-%m-%dT%H:%M:%S"))
+    except ValueError:
+        return None
+    if frac:
+        epoch += float(frac) / 10 ** len(frac)
+    return epoch
+
+
+def node_gen_epoch(node_root: Path,
+                   node_files: dict[PurePosixPath, Path]) -> tuple[float, str] | None:
+    """节点快照生成时戳（unix 秒）+ 标记说明；不可得返回 None。
+
+    优先 `.cache` 账本头（1.21.x FileCache 每 provider 一文件、首行自带当次生成
+    时戳——runData 写入的运行时标记，checkout/rebase 不重写）；无账本可读时退化为
+    产物文件最大 mtime（checkout 会重置 mtime，语义弱化但守卫方向不变：宁可误红
+    不可漏放，--allow-stale 可逃）。两标记都不可得 = None。
+    """
+    cache_dir = node_root / CACHE_DIR_NAME
+    best: float | None = None
+    counted = 0
+    if cache_dir.is_dir():
+        for f in sorted(cache_dir.iterdir()):
+            if not f.is_file():
+                continue
+            try:
+                with f.open("r", encoding="utf-8", errors="replace") as fh:
+                    ts = _parse_cache_ts(fh.readline())
+            except OSError:
+                continue
+            if ts is not None:
+                counted += 1
+                best = ts if best is None else max(best, ts)
+    if best is not None:
+        return best, f".cache ledger ({counted} provider entries)"
+    mtimes = [p.stat().st_mtime for p in node_files.values()]
+    if mtimes:
+        return max(mtimes), "product-file mtime fallback"
+    return None
+
+
+def canonical_head_epoch(canonical_root: Path) -> tuple[int, str] | None:
+    """正典树在 git HEAD 的最近一次写入：(unix 秒, "hash subject")；不可得返回 None。
+
+    `git log -1 -- <canonical 相对路径>`——按路径取最后一次触及提交（worktree 内
+    同样成立：rev-parse --show-toplevel 返回所在工作树根）。git 缺失/不在仓库内/
+    路径无历史 → None（调用方打印 SKIPPED，可见不哑）。
+    """
+    try:
+        top = subprocess.run(["git", "-C", str(canonical_root),
+                              "rev-parse", "--show-toplevel"],
+                             capture_output=True, text=True, timeout=30)
+        if top.returncode != 0:
+            return None
+        toplevel = Path(top.stdout.strip())
+        rel = canonical_root.resolve().relative_to(toplevel.resolve())
+        lg = subprocess.run(
+            ["git", "-C", str(toplevel), "log", "-1", "--format=%ct %h %s",
+             "--", rel.as_posix()],
+            capture_output=True, text=True, timeout=30)
+        out = lg.stdout.strip()
+        if lg.returncode != 0 or not out:
+            return None
+        ts, _, desc = out.partition(" ")
+        return int(ts), desc
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return None
 
 # ── 声明偏离表（forge-gated 仅 canonical 面，p26-crucible-physics-smeltery 引入）──────
 # 出处：b8a58a0a——crafting provider（RecipeProvider/FinishedRecipe 流）骑 1.20.1-forge
@@ -421,17 +579,63 @@ def collect_files(root: Path) -> dict[PurePosixPath, Path]:
     return files
 
 
+def brand_normalize(rel: PurePosixPath) -> PurePosixPath:
+    """品牌段作用域折叠（仅 data/<ns>/<brand>/biome_modifier/ 带，p27-ops）。
+
+    node 侧 neoforge/biome_modifier → canonical 侧 forge/biome_modifier；
+    canonical 侧恒等（现树只有 forge/ 形）。带外路径一概原样返回。
+    """
+    parts = rel.parts
+    if (len(parts) >= 5 and parts[0] == "data" and parts[3] == BRAND_BAND_DIR
+            and parts[2] in BRAND_SEGMENT_MAP):
+        return PurePosixPath(parts[0], parts[1], BRAND_SEGMENT_MAP[parts[2]],
+                             *parts[3:])
+    return rel
+
+
 def normalize(rel: PurePosixPath) -> PurePosixPath:
     """目录段映射归一化（文件名段永不参与）。"""
     mapped = [SEGMENT_MAP.get(seg, seg) for seg in rel.parts[:-1]]
     mapped.append(rel.parts[-1])
-    return PurePosixPath(*mapped)
+    return brand_normalize(PurePosixPath(*mapped))
+
+
+def _fold(files: dict[PurePosixPath, Path]) -> dict[PurePosixPath, Path]:
+    """归一化折叠 + 品牌折叠碰撞守卫（p27-ops）。
+
+    品牌折叠（brand_normalize 改写了路径）的文件撞上同侧已占用键、或撞上已是品牌
+    折叠结果的键 → 硬 ERROR：那意味着单侧同时出现 forge/ 与 neoforge/ 双目录
+    （decisions.p26 方案 a 双腿并载终态）或其他品牌形交叉——折叠语义从此多解，
+    必须 fail-visible 显式 revisit，不许 dict 后写静默覆盖。
+    既有全局折叠（SEGMENT_MAP 层）的同键阴影维持现行为（后写覆盖——该债由
+    main() 的 FORWARD_TWIN_PREFIX 前置剔除处理，不在本守卫射程，行为不变）。
+    """
+    out: dict[PurePosixPath, Path] = {}
+    brand_folded: set[PurePosixPath] = set()
+    for rel, abs_path in files.items():
+        norm = normalize(rel)
+        if norm in out and (brand_normalize(rel) != rel or norm in brand_folded):
+            sys.exit(f"ERROR: biome_modifier brand-fold collision on {norm}: "
+                     f"{rel} vs {out[norm]} — dual-brand dirs on one side; "
+                     "revisit the band (decisions.p26-worldgen-biome-modifier-dual-dir)")
+        out[norm] = abs_path
+        if brand_normalize(rel) != rel:
+            brand_folded.add(norm)
+    return out
 
 
 def loot_band_count(files: dict[PurePosixPath, Path], dir_name: str) -> int:
     """统计 data/<ns>/<dir_name>/ 带内文件数（摘要用）。"""
     return sum(1 for rel in files if len(rel.parts) >= 3
                and rel.parts[0] == "data" and rel.parts[2] == dir_name)
+
+
+def brand_band_count(files: dict[PurePosixPath, Path], brand: str,
+                     dir_name: str) -> int:
+    """统计 data/<ns>/<brand>/<dir_name>/ 带内文件数（原始路径，摘要用）。"""
+    return sum(1 for rel in files if len(rel.parts) >= 5
+               and rel.parts[0] == "data" and rel.parts[2] == brand
+               and rel.parts[3] == dir_name)
 
 
 def main() -> int:
@@ -442,7 +646,8 @@ def main() -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="正例: python3 tools/datagen_tree_check.py            # exit 0\n"
                "负例: 对 node 输出任一文件追加一字节后再跑 → exit 1 并定位该文件\n"
-               "     （已注册带内未注册形差同样 FAIL——归一绝不静默吞差，详见模块 docstring）",
+               "     （已注册带内未注册形差同样 FAIL——归一绝不静默吞差，详见模块 docstring）\n"
+               "     节点快照早于正典树 HEAD 最近写入 → STALE FAIL（--allow-stale 显式逃生）",
     )
     parser.add_argument("--canonical", type=Path, default=None,
                         help=f"正典树根（默认 {repo_root / 'mdk/src/generated/resources'}）")
@@ -450,6 +655,9 @@ def main() -> int:
                         help=f"节点输出根（默认 {repo_root / 'mdk/versions/1.21.1-neoforge/build/datagen-output'}）")
     parser.add_argument("--max-list", type=int, default=DEFAULT_MAX_LIST,
                         help=f"差异/归一清单最多打印条数（默认 {DEFAULT_MAX_LIST}，超出只报计数）")
+    parser.add_argument("--allow-stale", action="store_true",
+                        help="陈旧守卫逃生阀：节点快照早于正典树 HEAD 最近写入时降级为"
+                             " STALE-WARN 继续对账（显式留痕；默认 STALE FAIL）")
     args = parser.parse_args()
 
     canonical_root: Path = args.canonical or (repo_root / "mdk/src/generated/resources")
@@ -458,13 +666,39 @@ def main() -> int:
 
     canon = collect_files(canonical_root)
     node = collect_files(node_root)
+
+    # ── 陈旧守卫（p27-ops）：对账前先验基线新鲜度，fail-visible ──────────────
+    gen = node_gen_epoch(node_root, node)
+    head = canonical_head_epoch(canonical_root)
+    if gen is None or head is None:
+        print(f"STALE-CHECK SKIPPED (node gen marker: "
+              f"{'ok' if gen else 'unavailable'}; "
+              f"git baseline: {'ok' if head else 'unavailable'})")
+    elif gen[0] < head[0]:
+        msg = (f"node snapshot [{gen[1]}] generated {gen[0]:.0f} is OLDER than the "
+               f"canonical tree's last HEAD write [{head[1]}] at {head[0]} "
+               f"(by {head[0] - gen[0]:.0f}s) — the reconciliation baseline is "
+               "untrustworthy (research.p27-lang-legs-delta: stale node snapshot "
+               "manufactured the phantom 4.4KB en_us lang delta)")
+        if args.allow_stale:
+            print(f"STALE-WARN (allowed by --allow-stale): {msg}")
+        else:
+            print(f"RESULT: FAIL — STALE node snapshot. {msg}")
+            print("  remedy : regenerate the node output in the same round "
+                  "(:mdk:1.21.1-neoforge:runData), then rerun")
+            print("  escape : rerun with --allow-stale (explicit, kept in the log)")
+            return 1
+    else:
+        print(f"STALE-CHECK OK (node {gen[1]} at {gen[0]:.0f} >= canonical HEAD "
+              f"write [{head[1]}] at {head[0]})")
+
     # the p27 forward-twin band: paired OUT of the canonical comparison set before
     # normalize — see FORWARD_TWIN_PREFIX (the symmetric c→forge mapping would fold
     # these onto the forge twins' keys, silently overwriting dict entries)
     forward_twin = sorted(rel for rel in canon if str(rel).startswith(FORWARD_TWIN_PREFIX))
     canon = {rel: p for rel, p in canon.items() if not str(rel).startswith(FORWARD_TWIN_PREFIX)}
-    canon_norm = {normalize(rel): abs_path for rel, abs_path in canon.items()}
-    node_norm = {normalize(rel): abs_path for rel, abs_path in node.items()}
+    canon_norm = _fold(canon)
+    node_norm = _fold(node)
 
     only_canon = sorted(canon_norm.keys() - node_norm.keys())
     only_node = sorted(node_norm.keys() - canon_norm.keys())
@@ -491,6 +725,10 @@ def main() -> int:
     print(f"loot band : canonical {loot_band_count(canon, 'loot_tables')} "
           f"(data/*/loot_tables)  node {loot_band_count(node, 'loot_table')} "
           f"(data/*/loot_table)")
+    print(f"biome band: canonical {brand_band_count(canon, 'forge', BRAND_BAND_DIR)} "
+          f"(data/*/forge/{BRAND_BAND_DIR})  node "
+          f"{brand_band_count(node, 'neoforge', BRAND_BAND_DIR)} "
+          f"(data/*/neoforge/{BRAND_BAND_DIR})")
 
     # normalized 清单必须打印（绝不明灭吞差）：条目=文件+施用的变换名
     if normalized:

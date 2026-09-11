@@ -138,6 +138,9 @@ vanilla 1.20.1 `net/minecraft/data/HashCache.java`（tmp/vanilla-1.20.1 反编�
 5. `python3 tools/datagen_tree_check.py` → 正典树 vs 21.1 输出树 1:1 byte-identical
    （忽略 `.cache/`、输出根 `version.json`（如现）；loot 带按 `loot_table`↔`loot_tables` 目录名映射后逐文件
    byte 比对，双侧文件计数相等）+ 终检 `git status --porcelain` 空。
+   **node 输出必须当次生成**：tree_check 开跑先比时戳——节点 `.cache` 账本头/产物 mtime
+   早于 git HEAD 正典树最近写入即 STALE FAIL（`--allow-stale` 显式逃生；p27-ops 防复发，
+   research.p27-lang-legs-delta 实录在案）。
 
 形态：五步全为正向判据，零恢复仪式（旧步 c/d/e 的污染→恢复→对齐压缩为步 3+5）。裸 `:mdk:runData`
 （未显式节点）= stonecutter 活动节点 = 1.20.1-forge = 正典生产者，语义不变；21.1 必须显式节点任务路径。
