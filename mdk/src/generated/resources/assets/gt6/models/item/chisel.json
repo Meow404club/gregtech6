@@ -1,6 +1,9 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "gt6:item/chisel"
+    "layer0": "gt6:item/material_sets/metallic/tool_head_chisel",
+    "layer1": "gt6:item/material_sets/metallic/tool_head_chisel_overlay",
+    "layer2": "gt6:item/chisel",
+    "layer3": "gt6:item/chisel_overlay"
   }
 }

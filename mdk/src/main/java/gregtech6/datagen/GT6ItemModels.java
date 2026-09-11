@@ -46,60 +46,102 @@ public final class GT6ItemModels extends ItemModelProvider {
         // out-facing plate art; the direction sprites live in the block atlas via GT6Atlases
         withExistingParent("cover_pump", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/cover_pump_out"));
+        // ─── the tool family multi-layer wave (task p27-tool-model-layers) ───
+        // Upstream renders every tool icon as FOUR passes (ToolStats.java:267-287):
+        // pass0 = head base (tinted with the primary material), pass1 = head OVERLAY
+        // (UNCOLOURED), pass2 = handle base (tinted with the secondary material),
+        // pass3 = handle OVERLAY (UNCOLOURED). The vanilla item-model layer number IS
+        // the tint index (ItemModelGenerator.java:15 LAYERS = layer0..layer4, the
+        // processFrames layer argument becomes the quad tint index), so the four passes
+        // map 1:1 onto layer0..layer3. The port stays un-tinted at the single steel tier
+        // (the family declared deviation, GT6Tools) — the layer STRUCTURE is what this
+        // wave restores; the tint ladder is a later card.
+
         // the formal crowbar item (task p9-tool-crowbar): handheld parent = the vanilla
-        // tool shape (the GTCEu tools/crowbar.json precedent), texture = the upstream
-        // CROWBAR.png borrow (assets/README.md attribution)
+        // tool shape; layer0 = the upstream CROWBAR.png iconset borrow + layer1 = the
+        // CROWBAR_OVERLAY.png shadow borrow (assets/README.md attribution). Upstream's
+        // handle is VOID (GT_Tool_Crowbar.getIcon :142-144), so passes 2/3 draw nothing
+        // and the model is two-layer.
         withExistingParent("crowbar", mcLoc("item/handheld"))
-            .texture("layer0", modLoc("item/crowbar"));
-        // the formal wire cutter item (task p10-tool-cutter): handheld parent = the vanilla
-        // tool shape (the crowbar row shape), texture = the upstream WIRE_CUTTER.png
-        // borrow (assets/README.md attribution)
+            .texture("layer0", modLoc("item/crowbar"))
+            .texture("layer1", modLoc("item/crowbar_overlay"));
+        // the formal wire cutter item (task p10-tool-cutter): the crowbar row shape;
+        // layer0 = the WIRE_CUTTER.png borrow + layer1 = the WIRE_CUTTER_OVERLAY.png
+        // shadow borrow (assets/README.md attribution); VOID handle = two-layer.
         withExistingParent("cutter", mcLoc("item/handheld"))
-            .texture("layer0", modLoc("item/cutter"));
-        // the formal chisel item (task p16-chisel-decalcify): handheld parent = the vanilla
-        // tool shape (the crowbar row shape), texture = the upstream HANDLE_CHISEL.png
-        // borrow (assets/README.md attribution)
+            .texture("layer0", modLoc("item/cutter"))
+            .texture("layer1", modLoc("item/cutter_overlay"));
+        // the formal chisel item (task p16-chisel-decalcify): FOUR layers. Head = the
+        // toolHeadChisel materialicon pair on the default primary Steel's texture set
+        // (GT_Tool_Chisel.getIcon :87-89 — MT.Steel, the alloymachore family's
+        // SET_METALLIC default, MT.java:247); handle = the HANDLE_CHISEL iconset pair
+        // borrow (item/chisel.png + chisel_overlay.png, assets/README.md attribution) —
+        // the old single-layer model borrowed only the handle silhouette, dropping the
+        // head entirely (the census structural-loss case).
         withExistingParent("chisel", mcLoc("item/handheld"))
-            .texture("layer0", modLoc("item/chisel"));
-        // the formal file + saw items (task p24-tool-system): handheld parent = the vanilla
-        // tool shape (the chisel row shape, the two-layer head-over-handle upstream icon
-        // resolved to the handle silhouette borrow — the chisel ruling), textures = the
-        // upstream HANDLE_FILE.png / HANDLE_SAW.png borrows (assets/README.md attribution)
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_chisel"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_chisel_overlay"))
+            .texture("layer2", modLoc("item/chisel"))
+            .texture("layer3", modLoc("item/chisel_overlay"));
+        // the formal file item (task p24-tool-system): FOUR layers, the chisel row
+        // shape — head = the toolHeadFile materialicon pair (Steel = metallic set,
+        // GT_Tool_File.getIcon :91-93), handle = the HANDLE_FILE iconset pair borrow
+        // (the old single layer carried only the handle; the head layer is the restore).
         withExistingParent("file", mcLoc("item/handheld"))
-            .texture("layer0", modLoc("item/file"));
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_file"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_file_overlay"))
+            .texture("layer2", modLoc("item/file"))
+            .texture("layer3", modLoc("item/file_overlay"));
+        // the formal saw item (task p24-tool-system): FOUR layers, the chisel row shape
+        // — head = the toolHeadSaw materialicon pair (Steel = metallic set,
+        // GT_Tool_Saw.getIcon :186-188), handle = the HANDLE_SAW iconset pair borrow.
         withExistingParent("saw", mcLoc("item/handheld"))
-            .texture("layer0", modLoc("item/saw"));
-        // the formal builder wand item (task p24-builder-wand): handheld parent = the vanilla
-        // tool shape (the crowbar row shape), texture = the upstream EMERALD-set
-        // toolHeadBuilderwand borrow (GT_Tool_Builderwand.getIcon :52 — the default primary
-        // material Heliodor = the emerald factory, MT.java:210 SET_EMERALD; assets/README.md
-        // attribution). Upstream tints it with the tool material colour — the port shows the
-        // grayscale head un-tinted at the single tier (the family declared deviation)
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_saw"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_saw_overlay"))
+            .texture("layer2", modLoc("item/saw"))
+            .texture("layer3", modLoc("item/saw_overlay"));
+        // the formal builder wand item (task p24-builder-wand): FOUR layers — head = the
+        // EMERALD-set toolHeadBuilderwand pair (default primary Heliodor = the emerald
+        // factory, MT.java:1374; layer0 keeps the existing item/builder_wand.png byte
+        // borrow, layer1 = the matching EMERALD OVERLAY pass), handle = the Scorched-wood
+        // stick pair (default secondary MT.WOODS.Scorched, GT_Tool_Builderwand.getIcon
+        // :51-53; woodnormal = SET_WOOD, MT.java:311-312). Upstream tints head/handle
+        // with their material colours — the port shows them un-tinted at the single tier
+        // (the family declared deviation).
         withExistingParent("builder_wand", mcLoc("item/handheld"))
-            .texture("layer0", modLoc("item/builder_wand"));
+            .texture("layer0", modLoc("item/builder_wand"))
+            .texture("layer1", modLoc("item/material_sets/emerald/tool_head_builderwand_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
         // the formal screwdriver item (task p24-screwdriver-item): handheld parent = the
-        // vanilla tool shape (the file/saw row shape), texture = the single composed flat
-        // icon — the upstream four-layer render (head base/overlay + handle base/overlay,
+        // vanilla tool shape, texture = the single composed flat icon — the upstream
+        // four-layer render (head base/overlay + handle base/overlay,
         // ToolStats.getIcon pass order) flattened offline untinted (assets/README.md
-        // attribution, the composition ruling)
+        // attribution, the composition ruling). Deliberately NOT migrated to layers
+        // (the census erratum keeps the composed singles — the offline composite is
+        // structurally complete; only the un-tinted deviation remains).
         withExistingParent("screwdriver", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/screwdriver"));
-        // the formal hard hammer item (task p25-tool-hammer-wrench): handheld parent = the
-        // vanilla tool shape (the file/saw row shape), texture = the offline-composed flat
-        // icon (upstream head OVER handle alpha-over, GT_Tool_HardHammer.getIcon :123 —
-        // assets/README.md attribution, the screwdriver composition ruling)
+        // the formal hard hammer item (task p25-tool-hammer-wrench): the screwdriver
+        // composition ruling applies — the offline-composed flat icon stays single-layer
+        // (upstream head OVER handle alpha-over, GT_Tool_HardHammer.getIcon :123 —
+        // assets/README.md attribution).
         withExistingParent("hammer", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/hammer"));
         // the formal wrench item (task p25-tool-hammer-wrench): handheld parent = the
-        // vanilla tool shape, texture = the byte-identical WRENCH.png iconset borrow
-        // (assets/README.md attribution)
+        // vanilla tool shape; layer0 = the byte-identical WRENCH.png iconset borrow +
+        // layer1 = the WRENCH_OVERLAY.png pass borrow (transparent upstream, borrowed for
+        // structure parity — assets/README.md attribution); VOID handle = two-layer.
         withExistingParent("wrench", mcLoc("item/handheld"))
-            .texture("layer0", modLoc("item/wrench"));
-        // the formal small bending cylinder item (task p25-food-can-row0): handheld parent
-        // = the vanilla tool shape (the wrench row shape), texture = the byte-identical
-        // BENDING_CYLINDER_SMALL.png iconset borrow (assets/README.md attribution)
+            .texture("layer0", modLoc("item/wrench"))
+            .texture("layer1", modLoc("item/wrench_overlay"));
+        // the formal small bending cylinder item (task p25-food-can-row0): the wrench
+        // row shape; layer0 = the BENDING_CYLINDER_SMALL.png borrow + layer1 = its
+        // OVERLAY pass borrow (transparent upstream — assets/README.md attribution);
+        // VOID handle = two-layer.
         withExistingParent("bending_cylinder_small", mcLoc("item/handheld"))
-            .texture("layer0", modLoc("item/bending_cylinder_small"));
+            .texture("layer0", modLoc("item/bending_cylinder_small"))
+            .texture("layer1", modLoc("item/bending_cylinder_small_overlay"));
         // the food-can row0 subset (task p25-food-can-row0) — 8 item/generated models over
         // the byte-identical upstream icon borrows (gt.multiitem.randomtools/998 for the
         // empty can, gt.multiitem.cans/11-16 for the rotten family, :86 for the cookies
