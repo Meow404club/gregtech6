@@ -79,6 +79,19 @@ import gregapi.util.UT;
  *     research card gtceu_reference.no_overcharge_foreign). GT-side machines keep their own
  *     overcharge path (Root :494-509) — only the FOREIGN side is affected.</li>
  * </ul>
+ *
+ * <h2>The FE->EU inbound math (task p28-a-fe-inbound-math, design = research.p28-r-eu-inbound)</h2>
+ *
+ * The dual face: an FE storage is PULLED into whole GT packet trains via {@link #extractFe},
+ * adapted from the platform {@code IEnergyStorage.extractEnergy} by {@link IFESource}. The
+ * direction split follows the research ruling: GT energy is purely passive push
+ * (doEnergyInjection — no GT machine ever pulls), FE is pull-first push-second, so the inbound
+ * face is the pull math the future converter machine (p28-b) drives per tick; the machine, its
+ * buffers and its overload explosion live behind this seam, not in it. Every step mirrors
+ * {@link #insertFe} — same 4:1 ratio, same whole-packet accounting unit, same {@link #bind31}
+ * request clamp, same FeCompat floor alignment. The one direction-mandated asymmetry is the
+ * bill: a pull over-bills nobody, so the result is the exact whole-packet count (floor
+ * division), never divup, and there is no overcharge concept on this face.
  */
 public final class EnergyBridge {
 	private EnergyBridge() {}
@@ -109,6 +122,16 @@ public final class EnergyBridge {
 	public interface IFEReceiver {
 		/** Same contract as the platform method: energy accepted (or would be, simulated). */
 		int receiveEnergy(int aAmount, boolean aSimulate);
+	}
+
+	/**
+	 * The MC-free FE face of the INBOUND bridge: the platform dual of {@link IFEReceiver}.
+	 * Both legs' {@code IEnergyStorage} adapt with the same two-argument lambda shape
+	 * ({@code storage::extractEnergy}).
+	 */
+	public interface IFESource {
+		/** Same contract as the platform method: energy extracted (or would be, simulated). */
+		int extractEnergy(int aAmount, boolean aSimulate);
 	}
 
 	/** volatile so a bridge registered from mod init is safely visible to the server tick thread. */
@@ -161,7 +184,8 @@ public final class EnergyBridge {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the EU->FE outbound math (MC-free, unit-tested in EnergyBridgeTest)
+	// the EU->FE outbound math and its FE->EU inbound dual
+	// (MC-free, unit-tested in EnergyBridgeTest)
 	// ---------------------------------------------------------------------------
 
 	/** Upstream UT.Code.bind31 (UT.java:1564 verbatim): clamp [0, Integer.MAX_VALUE] and narrow. */
@@ -195,5 +219,34 @@ public final class EnergyBridge {
 		long tAligned = tFeSimulated - tFeSimulated % tPacketFe; // GTCEu FeCompat.java:64, packet-unit form
 		int tFeSent = aStorage.receiveEnergy(bind31(tAligned), false);
 		return UT.Code.divup(tFeSent, tPacketFe); // upstream :212-213, exact for an aligned send
+	}
+
+	/**
+	 * The dual of {@link #insertFe}: pulls whole EU packets out of an FE storage — the
+	 * research.p28-r-eu-inbound pull-side math (FE is pull-first push-second, GT purely
+	 * passive push) the future converter machine (p28-b) drives per tick. Every step mirrors
+	 * insertFe — same 4:1 ratio, same whole-packet accounting unit, same {@link #bind31}
+	 * request clamp, same FeCompat floor alignment — with the two direction-mandated
+	 * differences: the FE side is pulled through {@link IFESource} (an FE source never pushes),
+	 * and the result is the EXACT whole-packet count (floor division), never divup — a pull
+	 * over-bills nobody, and a misbehaving source returning a non-aligned remainder simply
+	 * keeps that remainder in itself. No overcharge concept exists on this face.
+	 *
+	 * @param aStorage the foreign FE source (platform-adapted)
+	 * @param aSize the EU packet size (voltage) to rebuild; may be negative (the :147 magnitude form)
+	 * @param aAmount the maximum packet count to pull
+	 * @return the amount of EU packets actually obtained (times aSize = the EU; times
+	 *         aSize*RF_PER_EU = the FE taken)
+	 */
+	public static long extractFe(IFESource aStorage, long aSize, long aAmount) {
+		if (aStorage == null || aAmount <= 0 || aSize == 0) return 0; // the :141 guard family, handler-side (dual)
+		long tSize = Math.abs(aSize); // upstream EnergyCompat.java:147
+		long tPacketFe = tSize * CS.RF_PER_EU; // one EU packet in FE (the insertFe denominator)
+		int tWanted = bind31(aAmount * tPacketFe); // the long-domain request, clamped like :212
+		int tGot = aStorage.extractEnergy(tWanted, true);
+		if (tGot <= 0) return 0; // nothing to pull: the whole train stays unused
+		long tAligned = tGot - tGot % tPacketFe; // GTCEu FeCompat.java:64 form, floored to whole packets
+		int tExtracted = aStorage.extractEnergy(bind31(tAligned), false);
+		return tExtracted / tPacketFe; // exact whole packets; any misbehaving remainder stays in the source
 	}
 }
