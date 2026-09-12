@@ -1,7 +1,7 @@
 /**
- * Task p26-eu-bridge-outbound: the MC-free EU->FE outbound bridge math of
- * {@link EnergyBridge} (the root half of the bridge; the mdk per-leg handlers are
- * platform-wired and live in the mdk tree).
+ * Tasks p26-eu-bridge-outbound + p28-a-fe-inbound-math: the MC-free EU->FE outbound and
+ * FE->EU inbound bridge math of {@link EnergyBridge} (the root half of the bridge; the mdk
+ * per-leg handlers are platform-wired and live in the mdk tree).
  *
  * This file is part of GregTech.
  *
@@ -60,6 +60,23 @@ public class EnergyBridgeTest {
 			int tAccepted = Math.min(aAmount, aCapacity - mStored);
 			if (!aSimulate && tAccepted > 0) mStored += tAccepted;
 			return tAccepted;
+		}
+	}
+
+	/** A recording FE source: holds aStored FE, remembers every (amount, simulate) call. */
+	private static final class RecordingSource implements EnergyBridge.IFESource {
+		int mStored;
+		final List<long[]> mCalls = new ArrayList<>(); // {amount, simulate}
+
+		RecordingSource(int aStored) {this.mStored = aStored;}
+
+		@Override
+		public int extractEnergy(int aAmount, boolean aSimulate) {
+			mCalls.add(new long[] {aAmount, aSimulate ? 1 : 0});
+			if (aAmount <= 0) return 0;
+			int tGiven = Math.min(aAmount, mStored);
+			if (!aSimulate && tGiven > 0) mStored -= tGiven;
+			return tGiven;
 		}
 	}
 
@@ -259,5 +276,156 @@ public class EnergyBridgeTest {
 		assertEquals(0, EnergyBridge.insertEnergyInto(gregapi.data.TD.Energy.EU, (byte)2, 32, 5, null, ""));
 		assertTrue(tLog.contains("ENERGY.ELECTRICITY@2"), "the dispatch carries the EU TagData and the side");
 		EnergyBridge.register(null);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the FE->EU inbound face (task p28-a-fe-inbound-math): the dual of the outbound family,
+	// same ratio / same packet unit / same bind31 clamp, floor-exact bill, no overcharge
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void conversionTableFourFePerEuPulled() {
+		// 1 packet of v EU pulled as 1; the FE source parts with v*4.
+		RecordingSource tSrc = new RecordingSource(100000);
+		assertEquals(1, EnergyBridge.extractFe(tSrc, 32, 1));
+		assertEquals(99872, tSrc.mStored, "32 EU x 4 = 128 FE pulled");
+
+		// a multi-packet pull: amps x volts x 4
+		RecordingSource tSrc2 = new RecordingSource(100000);
+		assertEquals(5, EnergyBridge.extractFe(tSrc2, 32, 5));
+		assertEquals(99360, tSrc2.mStored, "5 amps x 32 EU x 4 = 640 FE pulled");
+
+		// upstream :147: a negative (directional) size pulls by its magnitude
+		RecordingSource tSrc3 = new RecordingSource(100000);
+		assertEquals(1, EnergyBridge.extractFe(tSrc3, -32, 1));
+		assertEquals(99872, tSrc3.mStored);
+
+		// the zero/no-op guards (the :141 family, dual)
+		assertEquals(0, EnergyBridge.extractFe(new RecordingSource(100), 32, 0));
+		assertEquals(0, EnergyBridge.extractFe(new RecordingSource(100), 0, 5));
+		assertEquals(0, EnergyBridge.extractFe(null, 32, 5));
+	}
+
+	@Test
+	public void thePullShapeIsSimulateThenAlignedRealExtract() {
+		RecordingSource tSrc = new RecordingSource(100000);
+		EnergyBridge.extractFe(tSrc, 32, 2); // wants 256 FE, gets it whole
+		assertEquals(2, tSrc.mCalls.size(), "exactly one simulate call and one real call");
+		assertEquals(256, tSrc.mCalls.get(0)[0], "the simulate call asks for the whole clamped train");
+		assertEquals(1, tSrc.mCalls.get(0)[1], "first call simulates");
+		assertEquals(256, tSrc.mCalls.get(1)[0], "the real call takes the packet-aligned amount");
+		assertEquals(0, tSrc.mCalls.get(1)[1], "second call is real");
+	}
+
+	@Test
+	public void partialSourceRoundsDownToWholePacketsBeforePulling() {
+		// 32 EU packets (128 FE each); only 200 FE available -> aligned pull is 128 FE (1 packet),
+		// NOT 200 FE counted as 2 packets — the partial packet's 72 FE stay IN the source.
+		RecordingSource tSrc = new RecordingSource(200);
+		assertEquals(1, EnergyBridge.extractFe(tSrc, 32, 4));
+		assertEquals(72, tSrc.mStored, "the partial packet's 72 FE are never taken from the source");
+	}
+
+	@Test
+	public void sourceWithLessThanOnePacketPullsNothing() {
+		// 100 FE < one 128 FE packet: aligned pull is 0, the source keeps everything (the real
+		// call still fires with 0, exactly as the outbound tiny-sink case does).
+		RecordingSource tSrc = new RecordingSource(100);
+		assertEquals(0, EnergyBridge.extractFe(tSrc, 32, 4));
+		assertEquals(2, tSrc.mCalls.size(), "the zero-aligned real call fires, mirroring insertFe");
+		assertEquals(100, tSrc.mStored);
+	}
+
+	@Test
+	public void anEmptySourceRejectsThePullWithZeroCallsAfterSimulate() {
+		RecordingSource tSrc = new RecordingSource(0);
+		assertEquals(0, EnergyBridge.extractFe(tSrc, 32, 4));
+		assertEquals(1, tSrc.mCalls.size(), "only the simulate call happens; no zero-amount real call");
+	}
+
+	@Test
+	public void overflowingPullIsClampedNotWrapped() {
+		// amps * volts * 4 far beyond int range: the request clamps to Integer.MAX_VALUE,
+		// the pull takes every WHOLE packet the source holds (never a wrapped negative).
+		// 2^20 EU packets = 4194304 FE each; the source holds 100000000 FE = 23 packets + 3531008.
+		RecordingSource tSrc = new RecordingSource(100000000);
+		long tGot = EnergyBridge.extractFe(tSrc, 1L << 20, 1L << 20);
+		assertTrue(tGot > 0, "the clamped pull still bridges");
+		assertEquals(3531008, tSrc.mStored, "the pull stops on the last whole packet");
+		assertEquals(23, tGot);
+	}
+
+	@Test
+	public void aPacketBiggerThanTheWholeSourcePullsNothing() {
+		// the alignment extreme: one packet (4M FE) exceeds the whole 1M FE source, so the
+		// aligned pull is zero and NOTHING is taken — all 1M FE stay with the source.
+		RecordingSource tSrc = new RecordingSource(1000000);
+		assertEquals(0, EnergyBridge.extractFe(tSrc, 1L << 20, 1L << 20));
+		assertEquals(1000000, tSrc.mStored);
+	}
+
+	@Test
+	public void exactDivisionFloorsWhenTheSourceMisbehaves() {
+		// a hostile source that returns a non-aligned amount on the real call (contract-breaking
+		// but legal interface): the exact-division count rounds DOWN to whole packets, the
+		// phantom remainder never becomes a packet (the floor mirror of the outbound divup bill).
+		EnergyBridge.IFESource tWeird = new EnergyBridge.IFESource() {
+			@Override
+			public int extractEnergy(int aAmount, boolean aSimulate) {
+				return aSimulate ? aAmount : aAmount - 3; // returns a non-multiple of the packet
+			}
+		};
+		// 2 packets of 32 EU = 256 FE; real call returns 253 -> 253 / 128 = 1
+		assertEquals(1, EnergyBridge.extractFe(tWeird, 32, 2));
+	}
+
+	// ---------------------------------------------------------------------------
+	// the round trip (insertFe o extractFe): conservation under the 4:1 ratio
+	// ---------------------------------------------------------------------------
+
+	/** A battery: sink and source in one object, the round-trip conservation fixture. */
+	private static final class Battery implements EnergyBridge.IFEReceiver, EnergyBridge.IFESource {
+		int mStored = 0;
+
+		@Override
+		public int receiveEnergy(int aAmount, boolean aSimulate) {
+			if (aAmount <= 0) return 0;
+			int tAccepted = Math.min(aAmount, Integer.MAX_VALUE - mStored);
+			if (!aSimulate) mStored += tAccepted;
+			return tAccepted;
+		}
+
+		@Override
+		public int extractEnergy(int aAmount, boolean aSimulate) {
+			if (aAmount <= 0) return 0;
+			int tGiven = Math.min(aAmount, mStored);
+			if (!aSimulate) mStored -= tGiven;
+			return tGiven;
+		}
+	}
+
+	@Test
+	public void extractThenInsertConservesFeAcrossTheRatio() {
+		// source holds 1000 FE (7 whole 128-FE packets + 104 remainder): the pull takes the 7
+		// whole packets, the sink receives exactly the FE the source lost, nothing is created
+		// or destroyed — the lossless round trip the converter machine's accounting relies on.
+		Battery tSink = new Battery();
+		RecordingSource tSrc = new RecordingSource(1000);
+		long tPackets = EnergyBridge.extractFe(tSrc, 32, 8);
+		assertEquals(7, tPackets, "8 requested, only 7 whole packets exist in 1000 FE");
+		assertEquals(7, EnergyBridge.insertFe(tSink, 32, tPackets));
+		assertEquals(896, tSink.mStored, "the sink gained exactly packets x size x 4");
+		assertEquals(104, tSrc.mStored, "the source lost exactly what the sink gained");
+	}
+
+	@Test
+	public void insertThenExtractIsLosslessOnWholePackets() {
+		// the exact chain the converter machine performs: charge FE in, pull EU packets back
+		// out — whole packets round-trip with zero loss under the 4:1 ratio.
+		Battery tBattery = new Battery();
+		assertEquals(3, EnergyBridge.insertFe(tBattery, 32, 3)); // 384 FE in
+		assertEquals(384, tBattery.mStored);
+		assertEquals(3, EnergyBridge.extractFe(tBattery, 32, 10)); // all 3 packets back out
+		assertEquals(0, tBattery.mStored, "whole packets round-trip with zero loss");
 	}
 }
