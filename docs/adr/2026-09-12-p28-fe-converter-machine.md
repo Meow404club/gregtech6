@@ -90,3 +90,59 @@ pull 相活证用它：130 FE 源被拉走 4 整包后 **2 FE 尾永远留在源
   （512 FE 进 → 512 FE 出）、B pull+零头留源（130→2）、C 吞吐天花板（6s 窗源侧
   96xxx 数字带，×2 回归即红）、D 超载爆炸（allow_failed absence 证明）。
 - 语义锚 file:line 全录于实现提交（6dc341ce）javadoc 与本篇。
+
+## 7. 兼容与生态位（追加于 2026-09-13，task p28-ulv-recipe-retune；考据 = research.p28-ulv-create-compat）
+
+### 7.1 生态位：ULV 前期 QoL，配方随之廉价化
+
+本机不是进阶节点，是**开局链的 QoL 件**：GT6 开局哲学 = 8 圆石石坩埚手工开局 →
+原版炉烧砖 → 燃烧箱 → 模浇锭；石坩埚耐热上限 = 材质熔点 ×1.25 = **1375 K**
+（P26 r6 RCON 实证）。原配方（§3 时的 4× `#forge:double_plates/tin_alloy`）的唯一
+中期门槛是 TinAlloy——上游 1 Fe + 1 Sn → 2 TinAlloy（Loader_Recipes_Alloys.java:57 /
+ArcFurnace Loader_Recipes_Foreign.java:115-117）需要熔铁 **1811 K > 1375 K**，
+等于强制玩家先跨过砖坩埚 tier 才能换 FE 电。
+
+**2026-09-13 配方重调（用户裁定候选 A 锡双板版）**：P 键材质 TinAlloy → 锡
+（MT.Sn），即 4× `#forge:double_plates/tin` + 2× `#forge:fine_wires/red_alloy` +
+1× `#forge:ingots/copper`，pattern 不变（PWP/PCP/PWP）。锡熔点 505 K、铜 1358 K、
+红合金（1 Cu + 4 红石）全部在石坩埚能力内 = **开局链 row0 即可全产**，砍掉唯一的
+铁+锡合金化砖 tier 门槛。`#forge:double_plates/tin` tag 真实性已证：生成树
+`data/forge/tags/items/double_plates/tin.json` = `[gt6:plate_double_tin]`（物品模型
+同在，OP.plateDouble 在 itemPathPrefixes），非空壳。三案择 A（B 纯铜兜底、C
+Create andesite_alloy 并列行 defer），理由：真降档 + 保 GT 材质词汇 + 一行 datagen。
+
+### 7.2 CC&A（Create Crafts & Additions）被动兼容：零代码结论
+
+Create 本体是纯旋转动能（SU×RPM），零原生 FE——能量互操作全靠 CC&A 桥
+（1.20.1 Forge 活跃维护，GitHub default branch 1.20.1 pushed 2026-09-09，Modrinth
+10.4M 下载）。源码实证：CC&A `InternalEnergyStorage extends
+net.minecraftforge.energy.EnergyStorage`，`BaseElectricBlockEntity.getCapability` 应答
+标准 `ForgeCapabilities.ENERGY`；`AlternatorBlockEntity.tick()` 逐侧查邻块 capability
+后 `receiveEnergy` 直推（isEnergyOutput 恒 true 全侧面）。本机 FE intake 面 = 全六侧
+`EnergyStorage.BLOCK` 接收面（GT6CapabilityWiring 注册 + getCapability 覆写，
+RCON p28_fe_inbound A 相 push 已活证）——**两者正面咬合，即插即用，零专属代码**。
+装了 Create+CC&A 的玩家：风车/蒸汽机 → Alternator → fe_converter → EU 全链开箱即
+用。intake 恒 8 EU × 1 A = 32 FE/t 涓流档，与 ULV QoL 定位自洽；链路 SU→FE(75%)
+→EU(4:1 无损) ≈ 75% 综合效率。此为**结论，不是待办**：不做任何 CC&A 专属代码。
+
+### 7.3 旋转对接（GT RU ↔ Create SU）：defer 声明
+
+**不设 RU↔SU 直桥。** 能量语义轴不同：SU 是「torque 的简化实现」×RPM 双轴
+（容量轴+速度轴，过载=停转非损毁，Create 官方 wiki），RU 是能量包/t 顺轴推送 +
+线性线损 + 烧毁语义——固定比率换算必错一个象限，可变比率 = 发明有状态耦合的新物
+理；GT6 上游（1.7.10）对 Create 式旋转无先例，无考古锚。若未来要做「GT 旋转直出」，
+正形是 Flux Dynamo 先例（RU→FE 比率桥，research.p28-r-flux-dynamo）而非 SU 耦合，
+挂点已备（axle 递归 + 柴油机 RU 源）。
+
+**砍桥后的诚实修正**：本节考据成文时的「FE 层经 CC&A Electric Motor 已构成全双工」
+表述以 p26 出向桥为前提；该桥已随 p28-cut-eu-fe-bridge（main 6d68dfd7/f04bbd99）
+整体拆除，EU→FE 出向现归属 Flux Dynamo（W1，经 `EnergyBridge.pushPacketTrain`
+泛化出射缝）。故现状是：**Create→GT 方向今日即通**（§7.2），**GT→Create 方向待
+Flux Dynamo 落地后经 FE 层组合可达**——这反而强化了 defer 立场：直桥冗余且语义
+失真，组合式桥才是正道。
+
+### 7.4 KJS 面
+
+本卡产出 = datapack 域：配方 JSON（`data/gt6/recipes/fe_converter.json` 与 1.21 形
+`recipe/` 双目录 face）天然可被 KubeJS/数据包改写，零适配层。机器行为与注册面无
+KJS 声明（注册面 defer 不变，见 §3）。

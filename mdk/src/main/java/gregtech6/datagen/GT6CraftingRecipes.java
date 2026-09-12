@@ -703,16 +703,22 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The ULV FE→EU converter crafting row (task p28-b-fe-converter-machine) — the
-	 * proven progressmeter vocabulary (TinAlloy double plates + RedAlloy fine wires)
-	 * plus copper ingots as the conductor core, over the single ULV machine (no ladder —
-	 * the balance ruling):
+	 * The ULV FE→EU converter crafting row (task p28-b-fe-converter-machine, retuned by
+	 * task p28-ulv-recipe-retune — the stone-crucible ruling): the progressmeter vocabulary
+	 * keeps its shape (double plates + RedAlloy fine wires) but the shell drops from
+	 * TinAlloy to plain Tin double plates, killing the row's only mid-game gate — TinAlloy
+	 * is 1 Fe + 1 Sn (Loader_Recipes_Alloys.java:57) and melting iron (1811 K) exceeds the
+	 * stone crucible's 1375 K ceiling, while tin (505 K) and copper (1358 K) both sit inside
+	 * the day-one stone-crucible chain (research.p28-ulv-create-compat). The pattern is
+	 * unchanged:
 	 * <pre>"PWP" / "PCP" / "PWP"</pre>
-	 * P = {@code #forge:double_plates/tin_alloy}, W = {@code #forge:fine_wires/red_alloy},
+	 * P = {@code #forge:double_plates/tin} (the tag is real on the item path — generated
+	 * {@code data/forge/tags/items/double_plates/tin.json} = {@code [gt6:plate_double_tin]},
+	 * OP.plateDouble is in {@code itemPathPrefixes}), W = {@code #forge:fine_wires/red_alloy},
 	 * C = {@code #forge:ingots/copper}. Result 1x {@code gt6:fe_converter}.
 	 */
 	private ShapedRecipeBuilder feConverterBuilder() {
-		TagKey<Item> tDoublePlates = GT6ItemTags.materialTag(GT6ItemTags.DOUBLE_PLATES_FAMILY, MT.TinAlloy);
+		TagKey<Item> tDoublePlates = GT6ItemTags.materialTag(GT6ItemTags.DOUBLE_PLATES_FAMILY, MT.Sn);
 		TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.RedAlloy);
 		TagKey<Item> tIngots = GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, MT.Copper);
 		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6FeConverters.FE_CONVERTER_ITEM.get())
