@@ -322,6 +322,7 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 - [ ] en 侧 3 条可疑上报（large_boiler barometer 文案等）另卡；mixing_bowl en 名漂移（Ceramic Bowl vs 搅拌盆）待用户终裁
 - [ ] runClient 目验清单（P27 全量）：机器材质色（铜橙红/钢灰白+喷漆覆盖卸漆回正）/工具多层（杖棍·锯刃·镐头杆·crowbar 阴影）/含XX石块主体/试管管壁/强化泡沫湿干可见/焦炉正面成型+白箭头/示例箱子标签/Oven 四梯创造栏/储罐译名/厨具页签退役
 - [ ] 单块机族 facing 同病正典化（cokeoven 卡偏离声明遗留：TileEntityBasicMachine/TileEntityOven setFacingFromPlacement 同写视线方向）
+- [ ] **用户 2026-09-12 实测三条（decisions.p28-opener-jade-wand）**：①强化泡沫语言键缺失 Jade 不显示（P27 宣告 cfoam 33 键闭合但实测仍缺——闭合键与 Jade tooltip 消费键可能不同源，重考）；②坩埚内容物与温度 Jade 不显示（P26 坩埚链无 Jade provider 面，集成卡缺失）；③建筑杖仍只造一半表现同前（宽高对、长 2 少 1——P27 修 patternWalkFacing 后 RCON GREEN 但玩家路径仍红，二次根因卡：玩家点击链路 vs RCON 链路差异+长度轴遍历审查，最高优先）
 - [ ] 解冻实现池照旧：管道①②③/质量存储②/foam C/panels/sensors-batch2/mortar-juicer-grind W2/EU 入向转换机/行回填 b 类流体行/W2 成型链/plateCurved/tool-metatool（门=P24 工具系统闭环）
 
 
