@@ -143,6 +143,11 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		for (RegistryObject<GTBarrelBlock> tDrum : GTBarrels.METAL_DRUM_BLOCKS.values()) {
 			tPickaxe.add(tDrum.get());
 		}
+		// task p28-c-anvil — the stone anvil pair joins the band: both rows are stone-carrier
+		// tool blocks (aUtilStone, the Loader :2185-2186 column; the vanilla
+		// mineable/pickaxe gate over hardness 1.0), the hopper/boiler family convention
+		tPickaxe.add(gregtech6.registry.GT6Anvils.STONE_ANVIL.get());
+		tPickaxe.add(gregtech6.registry.GT6Anvils.BLACKSTONE_ANVIL.get());
 	}
 
 	/** The mineable/axe band — the wood fluid barrel (first batch: no plastic/metal rows, P2). */

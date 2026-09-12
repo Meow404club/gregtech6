@@ -28,6 +28,7 @@ import net.minecraftforge.common.Tags;
 import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6FoodCans;
+import gregtech6.registry.GT6Anvils;
 import gregtech6.registry.GT6Kitchen;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6SprayCans;
@@ -102,6 +103,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation CLAY_BOWL_REVERSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_bowl_reverse");
 	public static final ResourceLocation CLAY_BOWL_SMELT_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mixing_bowl");
 
+	public static final ResourceLocation STONE_ANVIL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "stone_anvil");
+	public static final ResourceLocation BLACKSTONE_ANVIL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "blackstone_anvil");
+
 	/** The storage-hopper crafting ids — the result-path convention, one per row (Loader :145-146). */
 	public static final java.util.List<ResourceLocation> HOPPER_RECIPE_IDS = gregtech6.registry.GT6Hoppers.ROWS.stream()
 			.map(GT6CraftingRecipes::hopperRecipeId)
@@ -165,6 +169,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		bathingPotSteelBuilder().save(aConsumer, BATHING_POT_STEEL_ID);
 		clayBowlReverseBuilder().save(aConsumer, CLAY_BOWL_REVERSE_ID);
 		clayBowlSmeltingBuilder().save(aConsumer, CLAY_BOWL_SMELT_ID);
+		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aConsumer, STONE_ANVIL_ID);
+		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aConsumer, BLACKSTONE_ANVIL_ID);
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			hopperRecipeBuilder(tRow).save(aConsumer, hopperRecipeId(tRow));
 		}
@@ -197,6 +203,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		bathingPotSteelBuilder().save(aOutput, BATHING_POT_STEEL_ID);
 		clayBowlReverseBuilder().save(aOutput, CLAY_BOWL_REVERSE_ID);
 		clayBowlSmeltingBuilder().save(aOutput, CLAY_BOWL_SMELT_ID);
+		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aOutput, STONE_ANVIL_ID);
+		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aOutput, BLACKSTONE_ANVIL_ID);
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			hopperRecipeBuilder(tRow).save(aOutput, hopperRecipeId(tRow));
 		}
@@ -600,6 +608,25 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * so the port universe has no resolvable carrier for the key. Pooled with the
 	 * wood-chemistry face, not dropped.
 	 */
+	/**
+	 * The two stone anvil crafting rows (task p28-c-anvil) — the upstream registration
+	 * pattern VERBATIM (Loader_MultiTileEntities.java:2185-2186 {@code "RRR","hR ","RRR"}):
+	 * 'R' = the row's stone carrier ({@code Blocks.stone} for MT.Stone, the vanilla
+	 * blackstone item for OP.stone.dat(MT.STONES.Blackstone) — the OP.stone.dat 1.20.1
+	 * identity is the plain block item), 'h' = {@code #gt6:tools/hard_hammer} (the tool
+	 * letter, not consumed). Result 1x the anvil block. The vanilla shaped auto-mirror
+	 * carries CR.DEF_MIR (the bathing-pot note).
+	 */
+	private ShapedRecipeBuilder anvilBuilder(net.minecraft.world.level.block.Block aResult, net.minecraft.world.level.ItemLike aStone) {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, aResult)
+				.pattern("RRR")
+				.pattern("hR ")
+				.pattern("RRR")
+				.define('R', aStone)
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.unlockedBy("has_stone", has(aStone));
+	}
+
 	private ShapedRecipeBuilder bathingPotSteelBuilder() {
 		TagKey<Item> tSteelPlates = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "stainless_steel");
 		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, GT6Kitchen.BATHING_POT_STEEL.get())

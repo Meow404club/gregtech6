@@ -161,6 +161,37 @@ public final class GT6BlockStates extends BlockStateProvider {
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
         addFoamBlocks(); // task p26-c-foam-block-family — the C-Foam pair + slabs + the owned carrier
         addSensors(); // task p26-sensors-core — the three pioneer sensor blocks
+        addAnvils(); // task p28-c-anvil — the stone anvil pair
+    }
+
+    /**
+     * Task p28-c-anvil — the two stone anvil rows (Loader_MultiTileEntities.java
+     * :2185-2186): ONE oriented cube model over the two grayscale placeholders (the
+     * upstream stonetype texture has no borrowable source in this repo — the hopper
+     * no-borrow precedent; the top face carries the working-surface texture, FACING is
+     * HORIZONTAL only — the upstream SIDES_VALID :413 — so the y-mapping is the horizontal
+     * band of the boiler form). Both rows share the model. The 2 BlockItem models parent it.
+     */
+    private void addAnvils() {
+        ModelFile tModel = models().cube("gt6_anvil",
+                modLoc("block/anvil_top"), modLoc("block/anvil_top"), // bottom/top
+                modLoc("block/anvil_side"), modLoc("block/anvil_side"), // north/side rows (the FACING front is not a texture state)
+                modLoc("block/anvil_side"), modLoc("block/anvil_side"));
+        for (Block tBlock : new Block[] {
+                gregtech6.registry.GT6Anvils.STONE_ANVIL.get(),
+                gregtech6.registry.GT6Anvils.BLACKSTONE_ANVIL.get()}) {
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY = switch (aState.getValue(gregtech6.block.tools.GTAnvilBlock.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tModel).rotationX(0).rotationY(tY).build();
+            });
+        }
+        itemModels().withExistingParent("stone_anvil", tModel.getLocation());
+        itemModels().withExistingParent("blackstone_anvil", tModel.getLocation());
     }
 
     /**

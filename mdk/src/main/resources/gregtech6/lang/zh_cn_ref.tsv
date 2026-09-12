@@ -31,6 +31,7 @@ direct	block.gt6.barrel_tungsten_alloy	钨合金储罐	hand
 direct	block.gt6.barrel_tungstensteel	钨钢储罐	hand
 direct	block.gt6.barrel_void_metal	虚空金属储罐	hand
 direct	block.gt6.barrel_wood	木制储物桶	hand
+direct	block.gt6.blackstone_anvil	黑石砧	hand
 direct	block.gt6.bookshelf_acacia	金合欢木书架	hand
 direct	block.gt6.bookshelf_birch	白桦木书架	hand
 direct	block.gt6.bookshelf_cherry	樱花木书架	hand
@@ -93,6 +94,7 @@ direct	block.gt6.safe_keylocked_steel	钥匙锁定钢保险箱	hand
 direct	block.gt6.safe_mechanical_bronze	机械青铜保险箱	hand
 direct	block.gt6.safe_mechanical_steel	机械钢保险箱	hand
 direct	block.gt6.shredder	粉碎机	hand
+direct	block.gt6.stone_anvil	石头砧	hand
 direct	block.gt6.test_machine	测试机器	hand
 direct	block.gt6.test_machine_idle	测试机器 (被动)	hand
 direct	block.gt6.transformer_rotation	木制转向齿轮箱	hand

@@ -102,7 +102,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task p26-sensors-core
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
-                new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK)), // task p28-b-fe-converter-machine
+                new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task p28-b-fe-converter-machine
+                new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK)), // task p28-c-anvil — the stone anvil pair
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -128,7 +129,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task p26-sensors-core
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
-                new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK))); // task p28-b-fe-converter-machine
+                new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task p28-b-fe-converter-machine
+                new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK))); // task p28-c-anvil — the stone anvil pair
         //?}
     }
 
@@ -753,6 +755,42 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : feConverterLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The anvil block list (task p28-c-anvil): the two stone anvil rows — the FE
+     * converter list shape over two blocks, self-drop (the MTE Drops default; the
+     * working-surface content pop rides the block's onRemove face, not the loot table).
+     */
+    public static List<Block> anvilLootBlocks() {
+        return List.of(
+                gregtech6.registry.GT6Anvils.STONE_ANVIL.get(),
+                gregtech6.registry.GT6Anvils.BLACKSTONE_ANVIL.get());
+    }
+
+    /** The anvil self-drop provider (task p28-c-anvil, the GT6FeConverterBlockLoot form). */
+    public static final class GT6AnvilBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6AnvilBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6AnvilBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return anvilLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : anvilLootBlocks()) dropSelf(tBlock);
         }
     }
 
