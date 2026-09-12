@@ -64,6 +64,12 @@ direct	block.gt6.crucible_steel_wall	钢壁板	hand
 direct	block.gt6.crusher	破碎机	hand
 direct	block.gt6.drawer_bronze	青铜四格抽屉	hand
 direct	block.gt6.drawer_steel	钢四格抽屉	hand
+direct	block.gt6.electric_dynamo	发电机 (LV)	hand
+direct	block.gt6.electric_dynamo_t2	发电机 (MV)	hand
+direct	block.gt6.electric_dynamo_t3	发电机 (HV)	hand
+direct	block.gt6.electric_dynamo_t4	发电机 (EV)	hand
+direct	block.gt6.electric_dynamo_t5	发电机 (IV)	hand
+direct	block.gt6.electric_dynamo_ulv	发电机 (ULV)	hand
 direct	block.gt6.electrometer	静电计传感器	hand
 direct	block.gt6.electric_transformer	变压器 (ULV-LV)	hand
 direct	block.gt6.energy_source	测试能源	hand
@@ -72,6 +78,11 @@ direct	block.gt6.fe_battery	FE 测试电池	hand
 direct	block.gt6.fe_converter	FE 转换机	hand
 direct	block.gt6.fe_source	FE 测试源	hand
 direct	block.gt6.fluidometer	流体体积传感器(单位: 升)	hand
+direct	block.gt6.flux_dynamo	红石通量发电机 (铅)	hand
+direct	block.gt6.flux_dynamo_t2	红石通量发电机 (殷钢)	hand
+direct	block.gt6.flux_dynamo_t3	红石通量发电机 (琥珀金)	hand
+direct	block.gt6.flux_dynamo_t4	红石通量发电机 (末影粗胚)	hand
+direct	block.gt6.flux_dynamo_t5	红石通量发电机 (末影)	hand
 direct	block.gt6.gearbox	定制木制齿轮箱	hand
 direct	block.gt6.grass	草方块	hand
 direct	block.gt6.grass_black	草方块	hand

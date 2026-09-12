@@ -102,6 +102,7 @@ public class GT6EnUs extends LanguageProvider {
         addFeBattery(); // task p26-eu-bridge-outbound — tail-append
         addFeConverter(); // task p28-b-fe-converter-machine — tail-append
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
+        addDynamoFamily(); // task p28-c-ulv-dynamo-row — the W1 family's deferred name face + the T0 row
         addKinetics(); // task p12-engine-crank
         addAttachments(); // task p12-tap-funnel-attachment
         addTools();
@@ -388,6 +389,29 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addElectricTransformer() {
         add("block.gt6.electric_transformer", "Transformer (ULV-LV)");
+    }
+
+    /**
+     * The Dynamo family display rows (task p28-c-ulv-dynamo-row — the W1 name face the
+     * family card declared deferred, landed now that the registry-coverage gate walks both
+     * registration classes): the upstream registration names verbatim — "Electric Dynamo
+     * ("+VN[n]+")" over Loader_MultiTileEntities.java:946-950 and "Flux Dynamo
+     * ("+aMat.getLocal()+")" over :953-957, the local words Enderium Base / Enderium the
+     * MT.java:2541/:2544 mNameLocal faces. The T0 row is the declared "Electric Dynamo
+     * (ULV)" extension (VN[0], the invented id).
+     */
+    private void addDynamoFamily() {
+        add("block.gt6.electric_dynamo_ulv", "Electric Dynamo (ULV)");
+        add("block.gt6.electric_dynamo",    "Electric Dynamo (LV)");
+        add("block.gt6.electric_dynamo_t2", "Electric Dynamo (MV)");
+        add("block.gt6.electric_dynamo_t3", "Electric Dynamo (HV)");
+        add("block.gt6.electric_dynamo_t4", "Electric Dynamo (EV)");
+        add("block.gt6.electric_dynamo_t5", "Electric Dynamo (IV)");
+        add("block.gt6.flux_dynamo",        "Flux Dynamo (Lead)");
+        add("block.gt6.flux_dynamo_t2",     "Flux Dynamo (Invar)");
+        add("block.gt6.flux_dynamo_t3",     "Flux Dynamo (Electrum)");
+        add("block.gt6.flux_dynamo_t4",     "Flux Dynamo (Enderium Base)");
+        add("block.gt6.flux_dynamo_t5",     "Flux Dynamo (Enderium)");
     }
 
     /**

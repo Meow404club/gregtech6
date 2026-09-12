@@ -104,7 +104,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task p28-b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
-                new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK)), // task p28-c-ulv-lv-transformer
+                new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
+                new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK)), // task p28-c-ulv-dynamo-row — the T0 self-drop
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -132,7 +133,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task p28-b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
-                new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK))); // task p28-c-ulv-lv-transformer
+                new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
+                new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK))); // task p28-c-ulv-dynamo-row — the T0 self-drop
         //?}
     }
 
@@ -823,6 +825,45 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : anvilLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The Electric Dynamo T0 row block list (task p28-c-ulv-dynamo-row): the single ULV
+     * self-drop — the feConverterLootBlocks list shape over one block. The upstream dynamo
+     * rows carry the MTE default self-drop (canDrop = F with the Base10 default drop =
+     * the block item itself, TileEntityBase10EnergyConverter.java:161 — the
+     * kineticsLootBlocks ruling). CARD SCOPE: only the NEW tier — the W1 five LV..IV rows
+     * and the whole Flux family stay table-less (their pre-existing gap, the W2
+     * render-recipe card's declared surface); the plain dropSelf (NOT the paint carry —
+     * the dynamo family is outside the machine paint census, the FE converter precedent).
+     */
+    public static List<Block> dynamoUlvLootBlocks() {
+        return List.of(gregtech6.registry.GT6ElectricDynamos.ELECTRIC_DYNAMO_ULV.get());
+    }
+
+    /** The Electric Dynamo T0 self-drop provider (task p28-c-ulv-dynamo-row). */
+    public static final class GT6DynamoUlvBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6DynamoUlvBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6DynamoUlvBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return dynamoUlvLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : dynamoUlvLootBlocks()) dropSelf(tBlock);
         }
     }
 

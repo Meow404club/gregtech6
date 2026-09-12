@@ -228,6 +228,17 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.crucible_steel_wall");
 		addDirect("block.gt6.crank");
 		addDirect("block.gt6.crusher");
+		// task p28-c-ulv-dynamo-row — the dynamo family name face (the W1 classes' deferred
+		// lang, the ParityTest registry-coverage gate): the electric rows are the dump faces
+		// verbatim (gt.multitileentity.10111-10115 = 发电机 (LV..IV), tmp/gregtech.lang
+		// :10850-10854), the T0 ULV row hand (VN[0]; upstream ships no ULV dynamo), the flux
+		// rows the :10997-11001 faces verbatim
+		addDirect("block.gt6.electric_dynamo");
+		addDirect("block.gt6.electric_dynamo_t2");
+		addDirect("block.gt6.electric_dynamo_t3");
+		addDirect("block.gt6.electric_dynamo_t4");
+		addDirect("block.gt6.electric_dynamo_t5");
+		addDirect("block.gt6.electric_dynamo_ulv");
 		addDirect("block.gt6.electrometer"); // task p26-sensors-core — the MTE 31015 dump row 电力传感器
 		addDirect("block.gt6.electric_transformer"); // task p28-c-ulv-lv-transformer — hand row (no dump face in the port snapshot; the :881 registration wording + the standard zh machine word)
 		addDirect("block.gt6.energy_source");
@@ -235,6 +246,11 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.fe_converter"); // task p28-b-fe-converter-machine — tail-append
 		addDirect("block.gt6.fe_source"); // task p28-b-fe-converter-machine — tail-append
 		addDirect("block.gt6.fluidometer"); // task p26-sensors-core — the MTE 31006 dump row 流体体积传感器(单位: 升)
+		addDirect("block.gt6.flux_dynamo"); // task p28-c-ulv-dynamo-row — the W1 family's deferred name face
+		addDirect("block.gt6.flux_dynamo_t2");
+		addDirect("block.gt6.flux_dynamo_t3");
+		addDirect("block.gt6.flux_dynamo_t4");
+		addDirect("block.gt6.flux_dynamo_t5");
 		addDirect("block.gt6.lathe");
 		addDirect("block.gt6.multiblock_coke_oven");
 		addDirect("block.gt6.multiblock_coke_oven_bricks");

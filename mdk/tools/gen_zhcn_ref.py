@@ -925,6 +925,23 @@ BLOCK_BACKFILL = {
     "block.gt6.electric_transformer": "变压器 (ULV-LV)",  # task p28-c-ulv-lv-transformer — hand (the upstream registration wording "Transformer (ULV-LV)", Loader :881; the standard zh machine word + the VN pair kept latin)
     "block.gt6.water_wheel": "水车",           # task p28-c-water-wheel — hand (no dump face: the kTFRU rows are out-of-face by the ADR §1.1 filter; the standard zh machine word)
     "block.gt6.crusher": "破碎机",                   # = the TSV gt6.row.machine.crusher unit verbatim
+    # task p28-c-ulv-dynamo-row — the dynamo family name face (the W1 classes' deferred
+    # lang, the ParityTest registry-coverage gate): the electric rows are the dump faces
+    # verbatim (gt.multitileentity.10111-10115 = 发电机 (LV..IV), tmp/gregtech.lang
+    # :10850-10854), the T0 ULV row hand (VN[0]; upstream ships no ULV dynamo — the
+    # declared 1:1 tier-extension row), the flux rows the :10997-11001 faces verbatim
+    # (Flux_T[1..5] material words 铅/殷钢/琥珀金/末影粗胚/末影).
+    "block.gt6.electric_dynamo": "发电机 (LV)",
+    "block.gt6.electric_dynamo_t2": "发电机 (MV)",
+    "block.gt6.electric_dynamo_t3": "发电机 (HV)",
+    "block.gt6.electric_dynamo_t4": "发电机 (EV)",
+    "block.gt6.electric_dynamo_t5": "发电机 (IV)",
+    "block.gt6.electric_dynamo_ulv": "发电机 (ULV)",
+    "block.gt6.flux_dynamo": "红石通量发电机 (铅)",
+    "block.gt6.flux_dynamo_t2": "红石通量发电机 (殷钢)",
+    "block.gt6.flux_dynamo_t3": "红石通量发电机 (琥珀金)",
+    "block.gt6.flux_dynamo_t4": "红石通量发电机 (末影粗胚)",
+    "block.gt6.flux_dynamo_t5": "红石通量发电机 (末影)",
     "block.gt6.energy_source": "测试能源",
     "block.gt6.lathe": "车床",                       # = the TSV gt6.row.machine.lathe unit verbatim
     "block.gt6.multiblock_coke_oven": "焦炉",        # = the JEI info page word (gt6.jei.info row)

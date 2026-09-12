@@ -40,6 +40,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GT6FeBatteries; // p26 tail-append
+import gregtech6.registry.GT6ElectricDynamos; // p28 tail-append
 import gregtech6.registry.GT6FeConverters; // p28 tail-append
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6FoamBlocks;
@@ -157,6 +158,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addGearBoxTransformer(); // task p12-gearbox-transformer
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addWaterWheel(); // task p28-c-water-wheel
+        addElectricDynamoUlv(); // task p28-c-ulv-dynamo-row — the Electric Dynamo T0 row
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
         addLargeCrucible(); // task p26-crucible-multiblock
@@ -1083,6 +1085,23 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tWheel = GT6Kinetics.WATER_WHEEL.get();
         simpleBlock(tWheel, models().cubeAll("water_wheel", modLoc("block/water_wheel")));
         itemModels().withExistingParent("water_wheel", modLoc("block/water_wheel"));
+    }
+
+    /**
+     * Task p28-c-ulv-dynamo-row — the Electric Dynamo T0 ULV row: the addFeConverter
+     * shape (one cube_all over the SHARED placeholder {@code block/energy_source.png}, no
+     * new PNG — the p20 borrow posture) with the empty-partial wildcard variant covering
+     * the FACING property (the addAttachments convention — the partialState().setModels()
+     * empty key matches all four facings, the water wheel "static facing" precedent). The
+     * facing is a functional IO face (FRONT out EU / BACK in RU), not a visual state in
+     * this placeholder — the W2 render card upgrades the whole dynamo family to the
+     * borrowed upstream dynamos art (the family's five LV..IV rows stay the W2 surface;
+     * this card owns ONLY the new tier per its SPEC).
+     */
+    private void addElectricDynamoUlv() {
+        Block tBlock = GT6ElectricDynamos.ELECTRIC_DYNAMO_ULV.get();
+        simpleBlock(tBlock, models().cubeAll("electric_dynamo_ulv", modLoc("block/energy_source")));
+        itemModels().withExistingParent("electric_dynamo_ulv", modLoc("block/electric_dynamo_ulv"));
     }
 
     /**

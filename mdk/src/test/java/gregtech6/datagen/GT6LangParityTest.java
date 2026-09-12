@@ -53,9 +53,11 @@ import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Boilers;
 import gregtech6.registry.GT6BurningBoxes;
 import gregtech6.registry.GT6Crucibles;
+import gregtech6.registry.GT6ElectricDynamos;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GT6FeBatteries;
 import gregtech6.registry.GT6FeConverters;
+import gregtech6.registry.GT6FluxDynamos;
 import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6Kinetics;
@@ -179,8 +181,16 @@ public class GT6LangParityTest {
  * the any_wood/ulv row-mat units, both locales; the zh values ride the reference table's
  * hand rows — 辊压机 = the dump gt.multitileentity.20111 column, 木 = the dump
  * gt.material.AnyWood row, ULV = the VN[0] id). zh == en, the zero-debt state holds.
+ *
+ * <p>Task p28-c-ulv-dynamo-row: raised to the measured 2816 — the +11 dynamo block keys
+ * (the W1 flux/electric families' deferred name faces + the T0 ULV row, both locales;
+ * the electric values are the dump faces verbatim gt.multitileentity.10111-10115 =
+ * 发电机 (LV..IV), the flux the :10997-11001 红石通量发电机 faces, the T0 row the
+ * 发电机 (ULV) hand row). The same card walks BOTH dynamo registration classes into the
+ * registry-coverage gate (the W1 handoff's must-do leftover, the cfoam lesson): all
+ * eleven blocks resolve the vanilla descriptionId, so checked 90 → 101.
  */
-private static final int ZH_KEY_FLOOR = 2805;
+private static final int ZH_KEY_FLOOR = 2816;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -862,9 +872,10 @@ private static final int ZH_KEY_FLOOR = 2805;
 		List<Class<?>> tRegClasses = List.of(
 			GT6Anvils.class,
 			GT6Attachments.class, GT6Boilers.class, GT6BurningBoxes.class, GT6Crucibles.class,
-			GT6ElectricTransformers.class, GT6FeBatteries.class, GT6FeConverters.class, GT6FoamBlocks.class,
-			GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6Molds.class, GT6Sensors.class,
-			GT6StaticStorages.class,
+			GT6ElectricDynamos.class, // task p28-c-ulv-dynamo-row — the W1 leftover: the dynamo classes join the gate
+			GT6ElectricTransformers.class, GT6FeBatteries.class, GT6FeConverters.class, GT6FluxDynamos.class,
+			GT6FoamBlocks.class, GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6Molds.class,
+			GT6Sensors.class, GT6StaticStorages.class,
 			GTBarrels.class, GTBlockEntities.class, GTEnergySources.class, GTFluidPipes.class,
 			GTGrassBlocks.class, GTItemPipes.class, GTMachines.class, GTMultiBlocks.class,
 			GTWires.class);
@@ -976,7 +987,8 @@ private static final int ZH_KEY_FLOOR = 2805;
 			}
 		}
 		// the census pins: bump ONLY with a real registration change (the numbers are the
-		// p28 discovery-run measurements over the 21 DeferredRegisters). The exempt pin is
+		// p28 discovery-run measurements over the 21 DeferredRegisters, +2 the dynamo pair
+		// joined at p28-c-ulv-dynamo-row). The exempt pin is
 		// the DERIVED size (a new composed row grows it); the checked pin is every block NOT
 		// exempted (a new vanilla-default block grows it); the leftover must stay 0. All
 		// three are LEG-INVARIANT: the 21.1 leg carries the +52 construct-phase kinetics
@@ -985,8 +997,10 @@ private static final int ZH_KEY_FLOOR = 2805;
 			+ " exemption = a row table shrank or a path typo'd)");
 		assertEquals(909, tExemptTotal, "the derived composed-name exemption census"
 			+ " (the six p28 ULV row carriers joined at 903 + 6)");
-		assertEquals(93, tChecked, "the checked block census: every DeferredRegister block NOT"
-			+ " exempted as composed-name (seen = checked + exempt + construct-phase)"
+		assertEquals(104, tChecked, "the checked block census: every DeferredRegister block NOT"
+			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
+			+ " eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
+			+ " and the transformer joined at 323c4ae4/1e07061d)"
 			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"
