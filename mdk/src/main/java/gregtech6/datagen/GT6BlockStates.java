@@ -152,6 +152,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBoilers(); // task p13-boiler-tank
         addHoppers(); // task p26-storage-hopper-family
         addGearBoxTransformer(); // task p12-gearbox-transformer
+        addWaterWheel(); // task p28-c-water-wheel
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
         addLargeCrucible(); // task p26-crucible-multiblock
@@ -1002,6 +1003,22 @@ public final class GT6BlockStates extends BlockStateProvider {
             simpleBlock(tBlock.get(), models().cubeAll("diesel_engine", modLoc("block/diesel_engine")));
             itemModels().withExistingParent(tBlock.getId().getPath(), modLoc("block/diesel_engine"));
         }
+    }
+
+    /**
+     * Task p28-c-water-wheel — the Water Wheel: one cube_all over the ORIGINAL
+     * {@code gt6:block/water_wheel} texture (the kTFRUAddon PNG is NOT borrowed — the
+     * research-card license ruling: AGPL artwork never enters this repo, the wheel
+     * texture is drawn for the port). ONE model over every AXIS state (simpleBlock =
+     * partialState().setModels() matches all states, the diesel FACING precedent) — the
+     * blade spin visual is the declared defer (the GT6Kinetics.WATER_WHEEL doc; the
+     * functional ACTIVE output rides the BE). The BlockItem parents the shared block
+     * model (the crank form).
+     */
+    private void addWaterWheel() {
+        Block tWheel = GT6Kinetics.WATER_WHEEL.get();
+        simpleBlock(tWheel, models().cubeAll("water_wheel", modLoc("block/water_wheel")));
+        itemModels().withExistingParent("water_wheel", modLoc("block/water_wheel"));
     }
 
     /**

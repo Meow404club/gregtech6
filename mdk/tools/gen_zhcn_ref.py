@@ -906,6 +906,7 @@ BLOCK_BACKFILL = {
     "block.gt6.advanced_crafting_table": "高级合成台",  # task p24-act-machine — the GT6 community zh name (no upstream zh_CN.lang dump anchor)
     "block.gt6.barrel_wood": "木制储物桶",           # dump join: gt.multitileentity.6990 木制储物桶
     "block.gt6.crank": "手摇曲柄",
+    "block.gt6.water_wheel": "水车",           # task p28-c-water-wheel — hand (no dump face: the kTFRU rows are out-of-face by the ADR §1.1 filter; the standard zh machine word)
     "block.gt6.crusher": "破碎机",                   # = the TSV gt6.row.machine.crusher unit verbatim
     "block.gt6.energy_source": "测试能源",
     "block.gt6.lathe": "车床",                       # = the TSV gt6.row.machine.lathe unit verbatim

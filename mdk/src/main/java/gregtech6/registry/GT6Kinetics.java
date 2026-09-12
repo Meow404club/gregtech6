@@ -33,6 +33,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.block.energy.GTAxleBlock;
+import gregtech6.block.energy.GT6WaterWheelBlock;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.block.energy.GTCrankBlock;
 import gregtech6.block.energy.GTDieselEngineBlock;
@@ -517,6 +518,28 @@ public final class GT6Kinetics {
 			DIESEL_ITEMS.put(tName, ITEMS.register(tName, () -> new gregtech6.block.GTComposedNameItem(tBlock.get(), new Item.Properties())));
 		}
 	}
+
+	// -------------------------------------------------------------------------
+	// the water wheel (task p28-c-water-wheel) — the ULV chain's RU source
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Water Wheel (task p28-c-water-wheel) — the kinetics family's RU source: river
+	 * flow turns it, it pushes {@code ±8} RU × 1A packets out along its axis into the
+	 * axle faces (the kTFRUAddon WaterMill "Water Mill" registration-row semantics,
+	 * tileEntityInit0.java:112 WoodTreated hardness 1.5 — clean-room re-expression, the
+	 * AGPL behaviour contract only; the numbers are the p28 ULV-chain design ruling: 8 RU
+	 * = the GTWireSpecs.V[0] wire domain, the Electric Dynamo T0 row's input-window
+	 * centre [4,16], and below the LV machine input-min 16 — see
+	 * GT6WaterWheelBlockEntity class doc). The block carries the AXIS property (the
+	 * GTAxleBlock carrier form), the properties ride
+	 * {@link gregtech6.block.energy.GT6WaterWheelBlock#blockProperties()}.
+	 */
+	public static final RegistryObject<GT6WaterWheelBlock> WATER_WHEEL = BLOCKS.register("water_wheel",
+			() -> new GT6WaterWheelBlock(GT6WaterWheelBlock.blockProperties()));
+
+	public static final RegistryObject<Item> WATER_WHEEL_ITEM = ITEMS.register("water_wheel",
+			() -> new BlockItem(WATER_WHEEL.get(), new Item.Properties()));
 
 	private GT6Kinetics() {}
 

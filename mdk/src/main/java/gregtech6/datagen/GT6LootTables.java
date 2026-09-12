@@ -235,7 +235,10 @@ public final class GT6LootTables extends LootTableProvider {
      * 1.20.1 equivalent is exactly {@code dropSelf} like the axle/wire families.
      */
     public static List<Block> kineticsLootBlocks() {
-        return List.of(GT6Kinetics.GEARBOX.get(), GT6Kinetics.TRANSFORMER_ROTATION.get());
+        // the water wheel rides the kinetics family (task p28-c-water-wheel): the upstream
+        // wheel registers the MTE default self-drop (canDrop(0) == T, the axle/engine
+        // Drops==null semantics); the 1.20.1 equivalent is the same dropSelf
+        return List.of(GT6Kinetics.GEARBOX.get(), GT6Kinetics.TRANSFORMER_ROTATION.get(), GT6Kinetics.WATER_WHEEL.get());
     }
 
     /** The kinetics-machine self-drop provider (task p12-gearbox-transformer). */
