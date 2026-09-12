@@ -1,9 +1,12 @@
 # ADR-P17-1：mdk/src/generated 共享产物树跨双节点裁决（datagen 输出目录按节点参数化）
 
 - 日期：2026-09-05
-- 状态：Accepted（架构师裁决；docs/adr 落地与本卡实现走 coder 分支 `tasks.p17-datagen-node-local-output`）
+- 状态：Accepted（架构师裁决；docs/adr 落地与本卡实现走 coder 分支 `tasks.p17-datagen-node-local-output`）；
+  **2026-09-12 再裁决（P28）**：c: 物品 tag 运行时面按 §6 build 面嫁接扩展，Accepted，§0-§5 裁决一字不改
 - 关联：P16 收口门禁账 `docs/adr/2026-09-05-p16-closeout-gate-ledger.md` ②节 / Deviations 5 / Consequences 2；
-  id288 教训（1.21.1 污染后恢复正典树须再跑 1.20.1 对齐 .cache）；ADR-P2-4（runData 四参数先例）
+  id288 教训（1.21.1 污染后恢复正典树须再跑 1.20.1 对齐 .cache）；ADR-P2-4（runData 四参数先例）；
+  §6 再裁决关联：P27 双树统一（`tools/rcon/chains/p27_vanilla_tag_dual_tree.py`）、
+  `state=research.p28-r-neo-tag-wiring`
 - 基线：main `a6be2933`
 
 ## 0. 问题陈述
@@ -184,3 +187,68 @@ vanilla 1.20.1 `net/minecraft/data/HashCache.java`（tmp/vanilla-1.20.1 反编�
   与 P16 收口账中相关步骤由本 ADR §3 序列取代；`.cache` 不再承载任何跨节点语义。
 - **+1 归因（written:4586 = 4585 + 1）未钉**：裁决后无操作影响，不立项；实现卡执行中如顺手可见差异文件，
   允许记录但不阻塞。
+
+## 6. 再裁决（2026-09-12，P28）：1.21.1 腿 c: 物品 tag 运行时接线 = build 面嫁接
+
+### 6.0 缘起与问题陈述
+
+本 ADR 正文只裁了 loot 带的声明偏离（§5 继承偏离）；P27 起 mdk 出现第二类同构缺口：**物品 tag**。
+正典树由 1.20.1-forge runData 独写（build.forge.gradle.kts:97），物品 tag 全为 1.20.1 形复数带
+`data/forge/tags/items/**`（7901 文件，11 家族 + storage_blocks(/raw_) + tools.json）+ P27 前瞻孪生带
+`data/c/tags/items/**`（26 文件，与 forge 带同相对路径、内容字节同源，cmp 实证 diff=0）。
+1.21.1 腿**双重分叉同落**，复数带在 neo runtime 整体死亡：
+
+- **目录形**：1.20.1 数据包只读复数 `tags/items`（vanilla 1.20.1 TagManager.java:29-30）；1.21.1 只读
+  单数 `tags/item`（vanilla 1.21.1 Registries.java:255-257 `tagsDirPath = tags/ + registry path`；
+  mcmeta-1211 实物 `data/minecraft/tags/item/`）。24w21a 单数化**仅目录段**——家族名/文件名保持复数。
+- **命名空间**：本仓消费面已 fork MATERIALS_NAMESPACE forge(1.20.1)/c(1.21.1)
+  （GT6ItemTags.java:132-136；Forge 1.20.1 docs 正典=forge:，NeoForge 1.21.1 docs 正典=c:）。
+
+后果：forge: 全家族带与 c: 孪生带在 1.21.1 runtime 整体死亡（RCON 链 p27tags B 臂实测 neo 腿仅
+NeoForge default 注入 1 member/面）；P25 配方 tag 输入 fallback 骑 MATERIALS_NAMESPACE 同死。
+GT6DualDirectoryFaces（gt6/minecraft 单数镜像先例，GT6DualDirectoryFaces.java:45-53）刻意不镜像
+forge/c 两命名空间并把 forge→c remap 裁决声明 out of scope——本节即该悬置裁决的落纸。
+
+### 6.1 候选与裁决
+
+| 方案 | 内容 | 裁决 |
+| --- | --- | --- |
+| a build 面嫁接 | `mdk/build.neoforge.gradle.kts` 增 `neoforgeTagFaces` Copy 任务：正典树 `data/forge/tags/items/**` 与孪生带 `data/c/tags/items/**` 镜像为 `data/c/tags/item/**`（目录段 items→item、命名空间 forge→c、家族/文件名保持复数、内容字节零改写），以任务形挂 `sourceSets["main"].resources.srcDir`（generateModMetadata 同层同构先例） | **采纳** |
+| b 正典并载 | GT6DualDirectoryFaces 式 forge→c 单数镜像进 tracked 正典树 | 否——数千文件入 git 违 §2 候选2 否决先例：本带仅 storage 走查即 3773 对（GT6TagsDatagenTest.java:63），全量估 6-8k 文件（canonical 现 77573）；biome_modifier 并载先例仅 34 文件，规模差 200 倍不可平移；FORWARD_TWIN 剔除带/对称折叠需显式 revisit；未来每带双形维护税常驻 |
+| c datagen 分腿 | neo 节点 runData 原生产物入 run 资源 | 否——结构性双重否决：第二生产路径破坏本 ADR「正典不变量：所有 provider 的 JSON 仍零手写、由 1.20.1 runData 产出」红线（§2 裁决原文）；build 非密闭（assemble 依赖 runData 先跑，全 moddev data run） |
+| d 运行时 tag 桥 | TagsUpdatedEvent/reload 期把 c:/forge: 内容互挂进 TagManager | 否——vanilla tag 加载后无受支持注入面，反射进冻结结构 + 重载时序竞态；datapack 作者不可见不可扩展；GTCEu/生态零先例，违禁猜修纪律 |
+
+**采纳理由（a）**：衍生面 = **打包变换**，与 generateModMetadata 的 mods.toml 模板展开同层，**非第二
+生产者**——canonical 树与 `tools/datagen_tree_check.py` 输入零扰动（c: FORWARD_TWIN 前置剔除带 /
+SEGMENT_MAP c→forge 对称折叠语义不变），§0-§5 裁决一字不改；改动面最小（一个 Copy 任务 + 一行任务形
+srcDir 挂载），验证面完备（per-leg classpath 测试 + RCON 活体链钉合并面）。
+
+### 6.2 结构结论：完全 loader-neutral 不可达，属正确结构
+
+接线后双腿 c: 面成员集**不逐位相等，且不应相等**：neo 腿 `c:ingots/iron` = gt6:ingot_iron（本 port
+嫁接成员）+ minecraft:iron_ingot（NeoForge default 注入）共 2 members；forge 腿 `c:ingots/iron` =
+仅 gt6:ingot_iron 1 member——**1.20.1 Forge 无 c: default 注入**（forge 生态正典是 forge:，
+ForgeItemTagsProvider 只给 forge: 供原版默认成员，RCON 链 A 臂 forge 侧 2 members 实证）。即双腿
+**平台注入面本就不同**，「完全 loader-neutral 的 c: 面」结构性不可达；正确目标 = **gt6 成员面双腿
+统一**（coexist+tag 三方一致），平台注入差由各腿消费面语义消化。此为结构结论，非缺陷。
+
+### 6.3 实现与验证落点
+
+- **底层卡 p28-neotag-graft**：分支 `work/p28-neotag-graft` 提交 **9f119234**（仅
+  `mdk/build.neoforge.gradle.kts` +23 行）。自测：neo `:mdk:1.21.1-neoforge:processResources` 输出
+  `data/c/tags/item/` = 7901 文件全量 cmp byte_mismatch=0、零带外文件；forge 腿 processResources
+  输出零 `data/c/tags/item`（复数带 7901+26 原样）。
+- **顶层集成卡 p28-neo-tag-wiring**（本文件所在提交，分支 `work/p28-neo-tag-wiring`，基线 main
+  035d43de）：①测试扩展 GT6DualDirectoryFacesTest per-leg c: 面契约（相对路径 items→item 映射、
+  内容与 forge 正本字节同源、forge 腿零嫁接、canonical 零扰动）；②RCON 链 B 臂重钉
+  `tools/rcon/chains/p27_vanilla_tag_dual_tree.py`（neo 腿期望由「钉现实 1 member」回钉「合并面
+  2 members」，forge 腿期望不动）；③`tools/datagen_tree_check.py` 零扰动确认；④全门禁
+  （双腿 compileJava+compileTestJava 分命令、cleanTest 全量 XML 实数、RCON 双腿 p27tags GREEN）。
+
+### 6.4 后续可选（本卡不实施）
+
+- **neo jar exclude 死复数带**：嫁接后 `data/forge/tags/items/**`（7901 文件）与 `data/c/tags/items/**
+  （26 文件）在 1.21.1 jar 内是不可读死重（目录形不被 1.21.1 数据包面读取；zip64 已开无害，仅发布
+  体积卫生问题）。可选旋钮 = neo 打包期 exclude，属发布卫生非正确性，另卡裁决。
+- **loot 带同构嫁接**：重审触发器沿用 §5——出现 1.21.1 runtime loot 消费门禁时，按本节同构形态
+  （build 面衍生带）局部升级，不预建。
