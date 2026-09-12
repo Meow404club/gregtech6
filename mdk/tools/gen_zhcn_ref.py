@@ -967,15 +967,14 @@ SPRAY_BACKFILL = {
 
 # ---- C-Foam spray domain (35 rows: 32 items + tab + 2 tooltips) — task
 # p25-c-foam-pipe-spray. The 32 item names are the DUMP faces verbatim (metas 1100+2i
-# "建筑泡沫喷罐" / 1132+2i, tmp/gregtech.lang:9350-9431) with ONE declared deviation
-# (task p27-lang-fix batch rule B4): the dump's owned-spray rows read 加强建筑泡沫喷罐
-# while the owned-FLUID rows (and en, "Advanced") are 高级 — the 16 owned items unify on
-# 高级建筑泡沫喷罐 (the B4 unification of the dump's 加强/高级 pair). NOTE task
-# p28-cfoam-lang-key (user ruling 2026-09-12): the owned-FLUID faces became 强化X建筑泡沫
-# and the owned BLOCK face became 强化建筑泡沫 — the owned ITEM sprays KEEP their B4
-# 高级 faces (this dict is dump-verbatim + declared deviation; the ruling named only the
-# fluid family and the block key); the item/fluid word-root coupling this comment used to
-# declare is thereby severed — flag for a later card if the community re-unifies.
+# "建筑泡沫喷罐" / 1132+2i, tmp/gregtech.lang:9350-9431) with the owned-word evolution
+# trail: the dump's owned-spray rows read 加强建筑泡沫喷罐 — task p27-lang-fix batch
+# rule B4 unified the 16 owned items onto 高级 (then the fluid face's word); task
+# p28-cfoam-lang-key (user rulings 2026-09-12) renamed the owned-FLUID faces to
+# 强化X建筑泡沫 and the owned BLOCK face to 强化建筑泡沫, and the follow-up ruling the
+# same day unified the 16 owned ITEM sprays onto 强化建筑泡沫喷罐 (…) too — the dump's
+# 加强 and the B4 高级 interlude are both superseded; the whole owned cfoam family
+# (block + fluids + item sprays) now carries the single 强化 word root.
 # The tooltip template splits the dump's gt.behaviour.foamspray.N.tooltip rows (:992-1007)
 # at the colour word (the %s slot rides the untranslated DYE_NAMES arg, the p22
 # spraycan.paint form); the owned warning has no dump face (upstream :259 en only) — hand.
@@ -997,22 +996,22 @@ FOAM_SPRAY_BACKFILL = {
     "item.gt6.foam_spray_magenta": "建筑泡沫喷罐 (品红)",          # :1126
     "item.gt6.foam_spray_orange": "建筑泡沫喷罐 (橙色)",           # :1128
     "item.gt6.foam_spray_white": "建筑泡沫喷罐 (白色)",            # :1130
-    "item.gt6.foam_spray_owned_black": "高级建筑泡沫喷罐 (黑色)",  # dump S:gt.multiitem.randomtools.1132
-    "item.gt6.foam_spray_owned_red": "高级建筑泡沫喷罐 (红色)",    # :1134
-    "item.gt6.foam_spray_owned_green": "高级建筑泡沫喷罐 (绿色)",  # :1136
-    "item.gt6.foam_spray_owned_brown": "高级建筑泡沫喷罐 (褐色)",  # :1138
-    "item.gt6.foam_spray_owned_blue": "高级建筑泡沫喷罐 (蓝色)",   # :1140
-    "item.gt6.foam_spray_owned_purple": "高级建筑泡沫喷罐 (紫色)", # :1142
-    "item.gt6.foam_spray_owned_cyan": "高级建筑泡沫喷罐 (青色)",   # :1144
-    "item.gt6.foam_spray_owned_light_gray": "高级建筑泡沫喷罐 (淡灰色)", # :1146
-    "item.gt6.foam_spray_owned_gray": "高级建筑泡沫喷罐 (灰色)",   # :1148
-    "item.gt6.foam_spray_owned_pink": "高级建筑泡沫喷罐 (粉色)",   # :1150
-    "item.gt6.foam_spray_owned_lime": "高级建筑泡沫喷罐 (黄绿色)", # :1152
-    "item.gt6.foam_spray_owned_yellow": "高级建筑泡沫喷罐 (黄色)", # :1154
-    "item.gt6.foam_spray_owned_light_blue": "高级建筑泡沫喷罐 (淡蓝色)", # :1156
-    "item.gt6.foam_spray_owned_magenta": "高级建筑泡沫喷罐 (品红)", # :1158
-    "item.gt6.foam_spray_owned_orange": "高级建筑泡沫喷罐 (橙色)", # :1160
-    "item.gt6.foam_spray_owned_white": "高级建筑泡沫喷罐 (白色)",  # :1162
+    "item.gt6.foam_spray_owned_black": "强化建筑泡沫喷罐 (黑色)",  # dump S:gt.multiitem.randomtools.1132
+    "item.gt6.foam_spray_owned_red": "强化建筑泡沫喷罐 (红色)",    # :1134
+    "item.gt6.foam_spray_owned_green": "强化建筑泡沫喷罐 (绿色)",  # :1136
+    "item.gt6.foam_spray_owned_brown": "强化建筑泡沫喷罐 (褐色)",  # :1138
+    "item.gt6.foam_spray_owned_blue": "强化建筑泡沫喷罐 (蓝色)",   # :1140
+    "item.gt6.foam_spray_owned_purple": "强化建筑泡沫喷罐 (紫色)", # :1142
+    "item.gt6.foam_spray_owned_cyan": "强化建筑泡沫喷罐 (青色)",   # :1144
+    "item.gt6.foam_spray_owned_light_gray": "强化建筑泡沫喷罐 (淡灰色)", # :1146
+    "item.gt6.foam_spray_owned_gray": "强化建筑泡沫喷罐 (灰色)",   # :1148
+    "item.gt6.foam_spray_owned_pink": "强化建筑泡沫喷罐 (粉色)",   # :1150
+    "item.gt6.foam_spray_owned_lime": "强化建筑泡沫喷罐 (黄绿色)", # :1152
+    "item.gt6.foam_spray_owned_yellow": "强化建筑泡沫喷罐 (黄色)", # :1154
+    "item.gt6.foam_spray_owned_light_blue": "强化建筑泡沫喷罐 (淡蓝色)", # :1156
+    "item.gt6.foam_spray_owned_magenta": "强化建筑泡沫喷罐 (品红)", # :1158
+    "item.gt6.foam_spray_owned_orange": "强化建筑泡沫喷罐 (橙色)", # :1160
+    "item.gt6.foam_spray_owned_white": "强化建筑泡沫喷罐 (白色)",  # :1162
     "itemGroup.gt6.foam_sprays": "建筑泡沫喷罐",
     "gt6.foamspray.paint": "可以喷射%s泡沫",                       # dump S:gt.behaviour.foamspray.N.tooltip :992-1007 split
     "gt6.foamspray.owned": "干燥后仅所有者可破坏",                 # hand — upstream :259 en has no dump face
