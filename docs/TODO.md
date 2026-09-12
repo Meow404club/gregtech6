@@ -313,7 +313,17 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 - [x] 基建：RCON 全局槽信号量（4ea0fc43，并发 4 排队——WSL 六崩根因治理）+coder≤6（5b231a55）+en_us 双写者根治（b173ba79）+审查串行单线队列纪律（用户质询纠偏）
 - [x] 证书：39 链双腿全量 sweep（forge 2343s/neo 2340s）37 GREEN+2 红链过时在案；22 卡全合 main ec4dccca 零悬案
 
-## 第 27 阶段（质量与保真，2026-09-10 开局）——🚚 进行中（Wave1 已派：lang 审计研 + 粉碎机 wiring 考据研 + 原版统一化研 + NBT 创造栏枚举设计 + coder×3 焦炉朝向/建筑杖成型/GUI 两缺陷）
+## 第 27 阶段（质量与保真）——✅ 已完成（2026-09-12，18 卡全合 main 51a07784，sweep 62 链双腿 GREEN）
+
+## 第 28 阶段（入口，2026-09-12 P27 收官移交）——🚧 未开
+
+- [ ] p27-neo-tag-resource-wiring：c: 孪生树 1.21.1 腿运行时接线（datagen 产物双目录写候选，ADR-P17-1 再裁决，动 build 面）
+- [ ] 低置信译名社区核：压板机/挤压机、充能琥珀金、脉动/鲜艳合金、block_gem 结晶双词族、kalendrite 五兄弟/desichalkos/eximite、dark_thaumium（%s锭 叠字陷阱）、行星宿石 ASCII、funnel/hopper（需用户裁）
+- [ ] en 侧 3 条可疑上报（large_boiler barometer 文案等）另卡；mixing_bowl en 名漂移（Ceramic Bowl vs 搅拌盆）待用户终裁
+- [ ] runClient 目验清单（P27 全量）：机器材质色（铜橙红/钢灰白+喷漆覆盖卸漆回正）/工具多层（杖棍·锯刃·镐头杆·crowbar 阴影）/含XX石块主体/试管管壁/强化泡沫湿干可见/焦炉正面成型+白箭头/示例箱子标签/Oven 四梯创造栏/储罐译名/厨具页签退役
+- [ ] 单块机族 facing 同病正典化（cokeoven 卡偏离声明遗留：TileEntityBasicMachine/TileEntityOven setFacingFromPlacement 同写视线方向）
+- [ ] 解冻实现池照旧：管道①②③/质量存储②/foam C/panels/sensors-batch2/mortar-juicer-grind W2/EU 入向转换机/行回填 b 类流体行/W2 成型链/plateCurved/tool-metatool（门=P24 工具系统闭环）
+
 
 - [ ] **zh 参考 lang 全量审计（P27 首项，用户质量裁定）**：搅拌盆/浸洗盆是加工机器不是厨具（域分类勘误，kitchen-pot-bowl 叙事正名）；Drum 类译「鼓」错误应作「储罐」；全部既有键过一遍——机器翻译腔逐个清查（材料键/tagprefix 键/机器名/流体名/物品名）
 - [ ] ops 两红链现代化：p15-runtime-smoke（run 拒绝 menu-less 三机=批 A 设计行为，改 inject/check 形）；p25-tag-input（铁锭臂撞 RECYCLABLE 新行，期望更新+撞车策略裁定）

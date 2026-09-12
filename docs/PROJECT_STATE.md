@@ -5,7 +5,11 @@
 
 ## 当前阶段
 
-`第 27 阶段：质量与保真——zh lang 全量审计（首项）/ 视觉批八条（NBT 材质创造栏枚举·粉碎机能量面纠偏·渲染修复×3）/ 成型朝向两 bug / GUI 两缺陷 / 原版统一化 tag / ops 三项（两红链现代化·名册补录·biome 带）/ 解冻实现池`（**2026-09-10 开局**：Wave1 已派 7 agent 后台——研究×3（lang 审计/粉碎机 wiring 考据/原版统一化策略）+设计×1（NBT 材质物品创造栏枚举，视觉批①⑥同根）+coder×3（p27-cokeoven-facing-fix 焦炉朝向反 180°/p27-builder-wand-form-fix 建筑杖成型半途/p27-gui-render-fixes 进度条白箭头+示例箱子标签，render-only 与焦炉卡文件域隔离）；全量池=docs/TODO.md 第 27 阶段节+decisions.p27-opener-* 四键）
+`第 27 阶段：质量与保真——zh lang 全量审计与二批翻译 / 视觉批（机器材质色保真·工具 prefix 模型多层化·overlay 资产 2792 张·强化泡沫）/成型朝向（焦炉 180°·建筑杖 patternWalk）/ GUI 两缺陷 / 粉碎机能量显示 / 原版统一化 c: 孪生树 / ops 三项`（**2026-09-12 收官**：main ed892cda→51a07784，18 卡全合零悬案；用户八条实测反馈全落地。研究六轮两翻案：「机器默认灰=保真」被用户实测推翻→重考古 ClassContainer:51 注册期 NBT_MATERIAL→NBT_COLOR 材质色自动派生=保真缺口；「工具缺枚举」实为渲染缺层（上游双 PNG 基底+_OVERLAY 四 pass，本仓零借）。收官门禁=62 链 18 簇双腿 sweep（forge 3050s/neo 3031s）四红全数链侧定性→pins 卡转绿 GREEN。审查 S2-S6 五席 19 审 1 打回。treecheck 陈旧守卫合入首战生效（逮住快照滞后 869s）。WSL 崩溃#1 零损失恢复；GPG 弹窗阻塞用户解除。全量锚点=phase_anchors.p27）
+
+### 第 26 阶段详账（2026-09-10 收官）
+
+`第 26 阶段：质量与保真——zh lang 全量审计（首项）/ 视觉批八条（NBT 材质创造栏枚举·粉碎机能量面纠偏·渲染修复×3）/ 成型朝向两 bug / GUI 两缺陷 / 原版统一化 tag / ops 三项（两红链现代化·名册补录·biome 带）/ 解冻实现池`（**2026-09-10 开局**：Wave1 已派 7 agent 后台——研究×3（lang 审计/粉碎机 wiring 考据/原版统一化策略）+设计×1（NBT 材质物品创造栏枚举，视觉批①⑥同根）+coder×3（p27-cokeoven-facing-fix 焦炉朝向反 180°/p27-builder-wand-form-fix 建筑杖成型半途/p27-gui-render-fixes 进度条白箭头+示例箱子标签，render-only 与焦炉卡文件域隔离）；全量池=docs/TODO.md 第 27 阶段节+decisions.p27-opener-* 四键）
 
 ### 第 26 阶段详账（2026-09-10 收官）
 
@@ -42,6 +46,7 @@
 - [x] 第 24 阶段：工具系统三缝 / tag 双向范式基建四卡共写 / canner+染料液 refill / creative-form 缝+OP(2) 放开 / pipe-owner / lightning-rod / ACT=ModularUI 首消费——2026-09-08 收官（14 卡全合 main 9938a4d4；证书 forge 1392/0+neo 1394/0/2skip+jar GREEN+p24 五链 10/10；ADR 三篇；三教训入模板；池拉齐入宪法）
 - [x] 第 25 阶段：tag 双向范式②配方输入 fallback / C-Foam 管泡沫 / 锤扳手+食品罐 row0 / 漆回流点键修复 / 测试卫生 / datagen 形差归一 / KubeJS 裁定 / 四向调研——2026-09-08 收官（7 卡全合 main 71bd4286；sweep 27 链双腿全绿+九链 17/18（cfoam neo=声明偏离）；ADR 三篇；KubeJS 条款入宪法；全景普查 32 条新池）
 - [x] 第 26 阶段：坩埚链三件套 / tier-b RM JSON 直灌 / EU→FE 出向桥 / MUI 批 A + W1 五族 / 管道④ / 五家族波 / 行回填 / worldgen 骨架 / RCON 并发硬闸——2026-09-10 收官（22 卡全合 main ec4dccca；sweep 39 链双腿 37 GREEN+2 红链过时在案；P27 首项=zh lang 全量审计）
+- [x] 第 27 阶段：质量与保真（lang 审计二批 zh==en 零债 / 材质色保真 / 模型多层化 56261 / overlay 2792 / 焦炉朝向+建筑杖成型 / GUI 两缺陷 / 粉碎机显示 / c: 孪生树 / ops 三项 / sweep 62 链 GREEN）——2026-09-12 收官（18 卡 main 51a07784）
 
 ## 第 7 阶段收官记录（2026-08-31，主会话 phase-closeout）
 
