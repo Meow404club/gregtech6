@@ -22,12 +22,15 @@
  *     invariant the wand depends on);</li>
  * <li>the DISPLACED box is NOT the machine (pre-fix it formed — the RCON p26 chain's
  *     blind green: its stray true-box wall row was never declared, hence never judged);</li>
- * <li>the full builder-wand click story (controller click, then the linked-part relay
- *     clicks) scaffolds ALL 24 walls at the controller-anchored coordinates and forms,
- *     consuming exactly 24 stock, at every live facing — the GT6BuilderWandItemTest
- *     javadoc's "structure-click chain lives with the multiblock fixtures" home, twin of
- *     GTMultiBlockStructureCheckerFormTest.wandClicksScaffoldTheOvenNeighbourhoodByNeighbourhood
- *     (the coke oven, whose side-centred walk was already facing-correct).</li>
+ * <li>the P28 ONE-CLICK builder-wand story (the user ruling 2026-09-12 deviating from
+ *     the upstream nine-click window semantics — ADR 2026-09-12-p28-builder-wand-oneclick):
+ *     ONE click on the controller scaffolds ALL 24 walls at the controller-anchored
+ *     coordinates, forms, and consumes exactly 24 stock, at every live facing; a click on
+ *     an already-formed crucible is an idempotent no-op (zero consumption), and a click
+ *     with short stock leaves the world untouched and consumes nothing (the checker SET
+ *     walk's transactional failure semantics). The relay
+ *     ({@code GT6BuilderWandItem.scaffoldTarget} over a linked wall) stays pinned — the
+ *     resolution face is upstream-faithful even though the placement is not.</li>
  * </ol>
  */
 package gregtech6.tileentity.multiblocks;
@@ -195,44 +198,37 @@ public class GTMultiBlockFacingIntegrityTest extends GTMultiBlocksOfflineTestBas
 	}
 
 	// ------------------------------------------------------------------
-	// ③ the full builder-wand story at every live facing
+	// ③ the P28 ONE-CLICK builder-wand story at every live facing
 	// ------------------------------------------------------------------
 
 	/**
-	 * Click the controller, then every linked middle-ring wall — the wand scaffolds ALL
-	 * 24 walls at the controller-anchored coordinates (never displaced), consumes exactly
-	 * 24 stock, links every part and forms, at every live facing. Pre-fix this story
-	 * ended half-built: 12 walls in a displaced half-box after the controller click, the
-	 * far column unreachable through the relay.
+	 * ONE click on the controller — the wand scaffolds ALL 24 walls at the
+	 * controller-anchored coordinates (never displaced), forms, links every part and
+	 * consumes exactly 24 stock, at every live facing. This is the P28 user ruling
+	 * (2026-09-12): a single click forms the COMPLETE multiblock, replacing the upstream
+	 * nine-click semantics the pre-P28 pin nailed here (the ±1 click window covered the
+	 * y+0 and y+1 rings only and the y+2 ring took eight relay clicks — research
+	 * research.p28-r-builder-wand-second-root confirmed that window is upstream-faithful,
+	 * so the one-click form is a DECLARED deviation, ADR
+	 * 2026-09-12-p28-builder-wand-oneclick, riding the checker's SET walk).
 	 */
 	@Test
-	public void wandClicksFormTheWholeCrucibleAtEveryLiveFacing() {
+	public void wandClickFormsTheWholeCrucibleAtEveryLiveFacing() {
 		for (byte tFacing : LIVE_FACINGS) {
 			MultiBlockLevel tLevel = new MultiBlockLevel();
 			mountPartFactory(tLevel);
 			FacingCrucible tCrucible = placeController(tLevel, sFacingCrucibleType, CRUCIBLE_POS, tFacing);
 			SimpleContainer tStock = brickStock(24); // exactly the shell (no self cell for the crucible)
 
-			// click 1 — on the controller: the ±1 click window covers the y+0 and y+1 rings only
+			// THE one click — on the controller: the whole structure is the target (aClickedAt
+			// rides only the resolution and the sound; the placement no longer narrows to its
+			// ±1 neighbourhood)
 			long tClick = GT6BuilderWandItem.builderWandScaffold(tCrucible, CRUCIBLE_POS, null, tStock, ItemStack.EMPTY);
 			assertEquals(GT6BuilderWandItem.SCAFFOLD_TOOL_DAMAGE, tClick, "the dispatch returns the unconditional 10 units");
-			assertEquals(8, tStock.getItem(0).getCount(), "16 walls placed at facing " + tFacing + " (24 - 16)");
-			assertFalse(tCrucible.checkStructure(false), "the y+2 ring is still missing at facing " + tFacing);
+			assertEquals(0, tStock.getItem(0).getCount(), "every wall was paid for in ONE click at facing " + tFacing + " (24 stock, 24 cells)");
+			assertTrue(tCrucible.checkStructure(false), "one click formed the crucible at facing " + tFacing);
 
-			// clicks 2..9 — every middle-ring wall relays to THIS controller and its shifted
-			// window places the y+2 cell directly above it
-			for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
-				if (tDX == 0 && tDZ == 0) continue;
-				BlockPos tWall = anchoredCell(tDX, 1, tDZ);
-				assertSame(tCrucible, GT6BuilderWandItem.scaffoldTarget(tLevel, tWall),
-						"the linked middle-ring wall relays at facing " + tFacing);
-				tClick = GT6BuilderWandItem.builderWandScaffold(tCrucible, tWall, null, tStock, ItemStack.EMPTY);
-				assertEquals(GT6BuilderWandItem.SCAFFOLD_TOOL_DAMAGE, tClick, "every dispatched click returns 10");
-			}
-
-			// the shell stands COMPLETE at the controller-anchored coordinates, all paid for
-			assertTrue(tCrucible.checkStructure(false), "the wand completed the crucible at facing " + tFacing);
-			assertEquals(0, tStock.getItem(0).getCount(), "every wall was paid for: 24 stock, 24 cells");
+			// the shell stands COMPLETE at the controller-anchored coordinates
 			for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
 				if (tDX == 0 && tDZ == 0) continue;
 				for (int tY = 0; tY <= 2; tY++) {
@@ -243,6 +239,57 @@ public class GTMultiBlockFacingIntegrityTest extends GTMultiBlocksOfflineTestBas
 						assertSame(tCrucible, tPart.mTarget, "the wall linked to THIS controller");
 					}
 				}
+			}
+		}
+	}
+
+	/**
+	 * The idempotency pin: clicking an ALREADY-FORMED crucible is a no-op — the SET walk's
+	 * beat-1 diagnosis short-circuits (zero side effects), nothing is consumed, the
+	 * structure stays formed. Rides the relay face: the second click goes through a LINKED
+	 * wall ({@code scaffoldTarget} resolves the same controller — the upstream part :261
+	 * arm kept faithful by the P28 card).
+	 */
+	@Test
+	public void wandClickOnFormedCrucibleIsAnIdempotentNoOp() {
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		mountPartFactory(tLevel);
+		FacingCrucible tCrucible = placeController(tLevel, sFacingCrucibleType, CRUCIBLE_POS, (byte) 3);
+		SimpleContainer tStock = brickStock(24);
+		GT6BuilderWandItem.builderWandScaffold(tCrucible, CRUCIBLE_POS, null, tStock, ItemStack.EMPTY);
+		assertTrue(tCrucible.checkStructure(false), "the first click formed the crucible");
+		tStock.addItem(new ItemStack(Blocks.BRICKS, 2)); // spare stock the no-op must NOT touch
+
+		// the second click — through the linked-wall relay, the upstream-faithful resolution
+		BlockPos tWall = anchoredCell(1, 1, -1);
+		assertSame(tCrucible, GT6BuilderWandItem.scaffoldTarget(tLevel, tWall), "the linked wall relays to THIS controller");
+		long tClick = GT6BuilderWandItem.builderWandScaffold(tCrucible, tWall, null, tStock, ItemStack.EMPTY);
+		assertEquals(GT6BuilderWandItem.SCAFFOLD_TOOL_DAMAGE, tClick, "the dispatch still returns the unconditional 10 units");
+		assertEquals(2, tStock.getItem(0).getCount(), "the formed structure consumed NOTHING (the diagnosis short-circuit)");
+		assertTrue(tCrucible.checkStructure(false), "the crucible stays formed");
+	}
+
+	/**
+	 * The failure-semantics pin (the SPEC ruling: "沿用 checker.form 现行为"): short stock
+	 * is a hard failure BEFORE anything is placed or consumed — zero world writes, zero
+	 * consumption, the crucible stays unformed (the RCON contract "insufficient stock ⇒
+	 * not formed AND not consumed", inherited by the wand path verbatim).
+	 */
+	@Test
+	public void wandClickWithShortStockPlacesAndConsumesNothing() {
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		mountPartFactory(tLevel);
+		FacingCrucible tCrucible = placeController(tLevel, sFacingCrucibleType, CRUCIBLE_POS, (byte) 2);
+		SimpleContainer tStock = brickStock(10); // 10 of the 24 walls — short
+
+		GT6BuilderWandItem.builderWandScaffold(tCrucible, CRUCIBLE_POS, null, tStock, ItemStack.EMPTY);
+		assertEquals(10, tStock.getItem(0).getCount(), "nothing was consumed (the transactional refusal)");
+		assertFalse(tCrucible.checkStructure(false), "the crucible did not form");
+		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
+			if (tDX == 0 && tDZ == 0) continue;
+			for (int tY = 0; tY <= 2; tY++) {
+				assertTrue(tLevel.getBlockState(anchoredCell(tDX, tY, tDZ)).isAir(),
+						"no wall was placed at " + anchoredCell(tDX, tY, tDZ).toShortString() + " (zero world writes)");
 			}
 		}
 	}
