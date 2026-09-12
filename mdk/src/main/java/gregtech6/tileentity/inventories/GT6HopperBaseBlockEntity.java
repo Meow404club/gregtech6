@@ -70,10 +70,12 @@ import gregtech6.util.GTItemMover;
  *     inventory moves nothing — the flag ledger converges to the upstream state.</li>
  * <li>The anvil speciality of the top arm (upstream
  *     {@code !(tDelegator.mTileEntity instanceof MultiTileEntityAnvil)} — the GT6 anvil's
- *     suck-what-falls-on-it pairing) is DEFERRED with the anvil-suction easter egg (card
- *     spec ⑦): there is no GT6 anvil class to test against, so the arm keeps only the
- *     generic "no tile entity above → suck dropped items" shape (the vanilla-standard arm,
- *     and the exact form the upstream code runs for every non-anvil non-TE block).</li>
+ *     suck-what-falls-on-it pairing) is IMPLEMENTED as of task p28-c-anvil: the
+ *     {@link #topIsAnvil} gate rides the drain arm exactly like the upstream :191/:178
+ *     conjunct, so a hopper under a GT6 anvil skips the (NO_SLOTS-refusing) drain half
+ *     and sucks the item entities out of the anvil's block space — the anvil family card
+ *     lifted the former defer (the former "no GT6 anvil class to test against" no longer
+ *     holds).</li>
  * <li>The snowman walk-over easter egg (:156-159 / :143-147) is DEFERRED (card spec ⑦).</li>
  * </ul>
  */
@@ -331,14 +333,16 @@ public abstract class GT6HopperBaseBlockEntity extends TileEntityBase03TicksAndS
 	/**
 	 * The shared shape: a container above (with the rail-minecart interception, :187-190 /
 	 * :174-177) is drained into the own top side view with the ST.move defaults (:192/:179 =
-	 * GTItemMover.move(64, 1, 64)); no container and a see-through block space → the
-	 * {@link #findSuctionSlot} hook picks the slot and one dropped item entity is sucked
-	 * (:196-204 / :182-190, the WD.suck arm). The anvil speciality is deferred (class doc).
+	 * GTItemMover.move(64, 1, 64)); no container — OR an anvil above (the upstream
+	 * {@code !(tDelegator.mTileEntity instanceof MultiTileEntityAnvil)} conjunct :191/:178,
+	 * implemented by task p28-c-anvil after the former defer, the class doc) — and a
+	 * see-through block space → the {@link #findSuctionSlot} hook picks the slot and one
+	 * dropped item entity is sucked (:196-204 / :182-190, the WD.suck arm).
 	 */
 	protected int moveInPhase() {
 		int rMoved = 0;
 		IItemHandler tSource = topSource();
-		if (tSource != null) {
+		if (tSource != null && !topIsAnvil()) { // upstream :191/:178 — the anvil refuses the drain half
 			rMoved += GTItemMover.move(tSource, sideView(SIDE_TOP)); // upstream :192/:179 verbatim (the ST.move defaults)
 		} else if (!topVisiblyOpaque()) {
 			int tSlot = findSuctionSlot();
@@ -351,6 +355,17 @@ public abstract class GT6HopperBaseBlockEntity extends TileEntityBase03TicksAndS
 			}
 		}
 		return rMoved;
+	}
+
+	/**
+	 * The upstream :191/:178 anvil gate — the GT6 anvil's suck-what-falls-on-it pairing
+	 * (task p28-c-anvil): a hopper under a {@link gregtech6.tileentity.tools.GT6AnvilBlockEntity}
+	 * skips the drain half and sucks the item entities sitting in the anvil's block space
+	 * (outputs spawn at y + 1.2 and land back inside it), never its working slots.
+	 */
+	protected boolean topIsAnvil() {
+		return hasLevel() && !isClientSide()
+				&& getLevel().getBlockEntity(getBlockPos().above()) instanceof gregtech6.tileentity.tools.GT6AnvilBlockEntity;
 	}
 
 	// -----------------------------------------------------------------------
