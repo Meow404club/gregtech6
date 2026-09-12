@@ -40,6 +40,7 @@ import gregtech6.tileentity.inventories.GT6HopperBaseBlockEntity;
 public class GT6AnvilBlockEntityTest extends GTOfflineTestBase {
 
 	static BlockEntityType<GT6AnvilBlockEntity> sAnvilType;
+	static BlockEntityType<HopperFixture> sHopperType;
 	static final BlockPos POS = new BlockPos(2, 3, 4);
 
 	/** The fixture BET (the GT6HopperFamilyTest self-referencing form — the live BET is registration-bound). */
@@ -51,6 +52,12 @@ public class GT6AnvilBlockEntityTest extends GTOfflineTestBase {
 				(aPos, aState) -> new GT6AnvilBlockEntity(tAnvil[0], aPos, aState),
 				Blocks.STONE).build(null);
 		sAnvilType = tAnvil[0];
+		@SuppressWarnings("unchecked")
+		BlockEntityType<HopperFixture>[] tHopper = (BlockEntityType<HopperFixture>[]) new BlockEntityType<?>[1];
+		tHopper[0] = BlockEntityType.Builder.of(
+				(aPos, aState) -> new HopperFixture(tHopper[0], aPos, aState),
+				Blocks.STONE).build(null);
+		sHopperType = tHopper[0];
 	}
 
 	/** A fresh generation per test — the fixture rows below are the only writers. */
@@ -294,7 +301,17 @@ public class GT6AnvilBlockEntityTest extends GTOfflineTestBase {
 		final ItemStack mSucked;
 
 		HopperFixture(GTItemStackHandler aSource, boolean aAnvilAbove, ItemStack aSucked) {
-			super(null, POS, Blocks.STONE.defaultBlockState());
+			this(sHopperType, POS, Blocks.STONE.defaultBlockState(), aSource, aAnvilAbove, aSucked);
+		}
+
+		/** The BET-builder form (the factory lambda calls this with the live type). */
+		HopperFixture(BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
+			this(aType, aPos, aState, null, false, null);
+		}
+
+		HopperFixture(BlockEntityType<?> aType, BlockPos aPos, BlockState aState,
+				GTItemStackHandler aSource, boolean aAnvilAbove, ItemStack aSucked) {
+			super(aType, aPos, aState);
 			mSource = aSource;
 			mAnvilAbove = aAnvilAbove;
 			mSucked = aSucked;
