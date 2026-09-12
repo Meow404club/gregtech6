@@ -69,8 +69,9 @@ steps += [
     Step(f"setblock {C} {CONTROLLER_BLOCK}", expect="Changed the block"),
     # the production dispatch fed the REAL clicked coordinate (the useOn path) —
     # 24 walls placed, paid and bound, formed, from exactly 24 stock
+    # (the report's toShortString() form is "x, y, z" — commas)
     Step(f"gt6multiblock wandclick {C} 24",
-         expect=f"GT6 multiblock wandclick at {C} (controller {C}): formed=true okay=true stock 24 -> 0"),
+         expect=f"GT6 multiblock wandclick at {C_X}, {C_Y}, {C_Z} (controller {C_X}, {C_Y}, {C_Z}): formed=true okay=true stock 24 -> 0"),
     # the y+2 ring — AIR under the pre-P28 click window (the far ring was the
     # missing eighth), a WALL under the one-click ruling
     Step(f"execute if block {C_X + 1} {C_Y + 2} {C_Z - 1} {WALL_BLOCK} run time query daytime",
@@ -83,7 +84,7 @@ steps += [
     # idempotency: a click on the FORMED structure consumes nothing (spare stock 1
     # rides through untouched)
     Step(f"gt6multiblock wandclick {C} 1",
-         expect=f"GT6 multiblock wandclick at {C} (controller {C}): formed=true okay=true stock 1 -> 1"),
+         expect=f"GT6 multiblock wandclick at {C_X}, {C_Y}, {C_Z} (controller {C_X}, {C_Y}, {C_Z}): formed=true okay=true stock 1 -> 1"),
 ]
 
 # ------------------------------------------------- B: the form arm regression anchor
