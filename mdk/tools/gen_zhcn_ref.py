@@ -239,6 +239,12 @@ HAND_TRANSLATIONS = {
     # unified wire=导线 noun.
     "block.gt6.wire_laser": ("激光光纤导线", "hand"),
     "block.gt6.example_chest": ("GT 示例箱子", "hand"),
+    # task p28-cfoam-lang-key: the TestMachine framework blocks joined the registry-coverage
+    # gate — no getName override anywhere on them, so their Jade line resolves the vanilla
+    # block.gt6.test_machine[_idle] keys no provider face ever wrote. Faces follow the
+    # TestMachineBlock javadoc's ticking/passive vocabulary (en "Test Machine (Passive)").
+    "block.gt6.test_machine": ("测试机器", "hand"),
+    "block.gt6.test_machine_idle": ("测试机器 (被动)", "hand"),
     # ---- B2 stone + rows composed-display units (task p20-i18n-compose-rows) ----
     # The stone variants compose over gt6.stone.variant.<snake> (16 templates, the stone
     # name slot = the gt6.material.* small units); the rows families over gt6.row.*.
@@ -502,22 +508,22 @@ HAND_TRANSLATIONS = {
     "fluid.gt6.cfoam_magenta": ("品红建筑泡沫", "hand"),
     "fluid.gt6.cfoam_orange": ("橙色建筑泡沫", "hand"),
     "fluid.gt6.cfoam_white": ("白色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_black": ("高级黑色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_red": ("高级红色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_green": ("高级绿色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_brown": ("高级褐色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_blue": ("高级蓝色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_purple": ("高级紫色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_cyan": ("高级青色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_light_gray": ("高级淡灰色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_gray": ("高级灰色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_pink": ("高级粉色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_lime": ("高级黄绿色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_yellow": ("高级黄色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_light_blue": ("高级淡蓝色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_magenta": ("高级品红建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_orange": ("高级橙色建筑泡沫", "hand"),
-    "fluid.gt6.cfoam_owned_white": ("高级白色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_black": ("强化黑色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_red": ("强化红色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_green": ("强化绿色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_brown": ("强化褐色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_blue": ("强化蓝色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_purple": ("强化紫色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_cyan": ("强化青色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_light_gray": ("强化淡灰色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_gray": ("强化灰色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_pink": ("强化粉色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_lime": ("强化黄绿色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_yellow": ("强化黄色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_light_blue": ("强化淡蓝色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_magenta": ("强化品红建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_orange": ("强化橙色建筑泡沫", "hand"),
+    "fluid.gt6.cfoam_owned_white": ("强化白色建筑泡沫", "hand"),
 
     # ---- rerun write-back (task p27-lang-fix 2026-09-11): 48 direct rows earlier cards
     # authored straight into the committed TSV without a py write-back — the same
@@ -569,6 +575,13 @@ HAND_TRANSLATIONS = {
     "block.gt6.safe_mechanical_steel": ("机械钢保险箱", "hand"),
     "block.gt6.cfoam_fresh": ("新鲜建筑泡沫", "hand"),
     "block.gt6.cfoam": ("建筑泡沫", "hand"),
+    # task p28-cfoam-lang-key: the owned carrier's display key was never written by any
+    # provider face (the p26 card stopped at the 4 item-less-but-keyed forms above) — Jade
+    # resolved block.gt6.cfoam_owned on the foam a player sprayed and fell back to the raw
+    # key. Value = 强化建筑泡沫 (user ruling 2026-09-12: the strengthened-spray foam must
+    # carry 强化, matching the en "Advanced C-Foam" face — the upstream owned foam is
+    # exactly what the "Advanced C-Foam Spray" sprays, MultiItemRandomTools.java:259).
+    "block.gt6.cfoam_owned": ("强化建筑泡沫", "hand"),
     "block.gt6.cfoam_fresh_slab": ("新鲜建筑泡沫台阶", "hand"),
     "block.gt6.cfoam_slab": ("建筑泡沫台阶", "hand"),
     "gt6.row.machine.compressor": ("压缩机 (%s)", "hand"),
@@ -957,10 +970,15 @@ SPRAY_BACKFILL = {
 # "建筑泡沫喷罐" / 1132+2i, tmp/gregtech.lang:9350-9431) with ONE declared deviation
 # (task p27-lang-fix batch rule B4): the dump's owned-spray rows read 加强建筑泡沫喷罐
 # while the owned-FLUID rows (and en, "Advanced") are 高级 — the 16 owned items unify on
-# 高级建筑泡沫喷罐 (the fluid face's 高级X建筑泡沫 word, already hand rows above); the
-# tooltip template splits the dump's gt.behaviour.foamspray.N.tooltip rows (:992-1007) at
-# the colour word (the %s slot rides the untranslated DYE_NAMES arg, the p22 spraycan.paint
-# form); the owned warning has no dump face (upstream :259 en only) — hand.
+# 高级建筑泡沫喷罐 (the B4 unification of the dump's 加强/高级 pair). NOTE task
+# p28-cfoam-lang-key (user ruling 2026-09-12): the owned-FLUID faces became 强化X建筑泡沫
+# and the owned BLOCK face became 强化建筑泡沫 — the owned ITEM sprays KEEP their B4
+# 高级 faces (this dict is dump-verbatim + declared deviation; the ruling named only the
+# fluid family and the block key); the item/fluid word-root coupling this comment used to
+# declare is thereby severed — flag for a later card if the community re-unifies.
+# The tooltip template splits the dump's gt.behaviour.foamspray.N.tooltip rows (:992-1007)
+# at the colour word (the %s slot rides the untranslated DYE_NAMES arg, the p22
+# spraycan.paint form); the owned warning has no dump face (upstream :259 en only) — hand.
 FOAM_SPRAY_BACKFILL = {
     "item.gt6.foam_spray_black": "建筑泡沫喷罐 (黑色)",            # dump S:gt.multiitem.randomtools.1100
     "item.gt6.foam_spray_black": "建筑泡沫喷罐 (黑色)",            # dump S:gt.multiitem.randomtools.1100
