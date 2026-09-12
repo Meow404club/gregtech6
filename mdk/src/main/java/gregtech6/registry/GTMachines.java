@@ -92,6 +92,19 @@ public final class GTMachines {
 	public static final java.util.List<java.util.function.Supplier<OreDictMaterial>> ELECTRIC_T_LADDER = java.util.List.of(
 			() -> gregapi.data.MT.SteelGalvanized, () -> gregapi.data.MT.Al, () -> gregapi.data.MT.StainlessSteel, () -> gregapi.data.MT.Cr);
 
+	// the T0 housing materials (task p28-c-ulv-machine-ladder) — upstream MT.java:3690-3691
+	// index 0, the ladder rung BELOW the four [1..4] rows every existing family rides:
+	// Kinetic_T[0] = ANY.Wood ("Any Wood", ANY.java:77 createMaterial(-1, "Any Wood", ...);
+	// the port alias MT.AnyWood = ANY.Wood, MT.java:2801) and Electric_T[0] = TinAlloy
+	// (MT.java:2491, the same material the upstream ULV-LV Transformer :881 registers its
+	// housing with). The upstream rows themselves have NO ULV rung (research.p28-r-ulv-tier-
+	// design: VN[0] carries zero machines upstream) — these are the declared-deviation ULV
+	// rows' NBT_MATERIAL columns, the card's "T0 对应" arm.
+	/** The Kinetic_T[0] rung (ANY.Wood, upstream MT.java:3690 index 0) — the kinetic ULV rows' NBT_MATERIAL column. */
+	public static final java.util.function.Supplier<OreDictMaterial> KINETIC_T0 = () -> gregapi.data.ANY.Wood;
+	/** The Electric_T[0] rung (TinAlloy, upstream MT.java:3691 index 0) — the Canner ULV row's NBT_MATERIAL column. */
+	public static final java.util.function.Supplier<OreDictMaterial> ELECTRIC_T0 = () -> gregapi.data.MT.TinAlloy;
+
 	/** The Oven family display template key ({@code gt6.row.oven.display} — the W1 one-slot material-word form). */
 	public static final String OVEN_DISPLAY_KEY = "gt6.row.oven.display";
 
@@ -194,6 +207,24 @@ public final class GTMachines {
 	public static final long[][] TIER_INPUTS = {{16, 32, 64}, {64, 128, 256}, {256, 512, 1024}, {1024, 2048, 4096}};
 
 	/**
+	 * The ULV voltage window (task p28-c-ulv-machine-ladder) — V[0] = 8 EU × 1 A through the
+	 * same :126 conversion the TIER_INPUTS rows ride (min = in/2, max = in*2): mInputMin 4 /
+	 * mInput 8 / mInputMax 16. The packet-domain closure (research.p28-r-ulv-tier-design
+	 * chain_closure): the 8 EU packet of the FE converter / the ULV Electric Dynamo lands
+	 * MID-WINDOW (min 4 ≤ 8 ≤ max 16), while every TIER_INPUTS machine starts at min 16 —
+	 * an 8 EU packet is dead below LV, which IS the ULV wall the tier exists to make.
+	 * Consumed by the {@link #machineUlv} factory arm off the rows'
+	 * {@code ulvVoltage()} marker. Recipe side: the shared RM rows (Wiremill/Sifting/
+	 * RollingMill EUt ≤ 16, research.p28-r-ulv-tier-design recipe_eut) run un-overclocked
+	 * at the :773 loop (mMinEnergy ≥ mInputMin 4 → the 4x/2x fold never fires) — ULV saves
+	 * the operator, not the time.
+	 */
+	public static final long[] ULV_TIER_INPUTS = {4, 8, 16};
+
+	/** The ULV melting-gate ceiling every ULV row carries — the stone-crucible ceiling (GT6Crucibles.java:86, decisions.p28-ulv-tier-rulings). */
+	public static final long ULV_MELTING_GATE_K = 1375L;
+
+	/**
 	 * The shared 4/8/16/32 parallel table (the W1 合流互指 ruling, never re-defined): the
 	 * upstream NBT_PARALLEL {4, 8, 16, 32} + NBT_PARALLEL_DURATION T shape carried by the
 	 * Crusher rows (:1300-1303), the Sifter (:1312-1315) / Compressor (:1343-1346) rows
@@ -225,6 +256,18 @@ public final class GTMachines {
 	public static final String MACHINE_SIFTER_UNIT_KEY = "gt6.row.machine.sifter";
 	public static final String MACHINE_COMPRESSOR_UNIT_KEY = "gt6.row.machine.compressor";
 	public static final String MACHINE_WIREMILL_UNIT_KEY = "gt6.row.machine.wiremill";
+	// the p28-c-ulv-machine-ladder one-slot templates: the W1 trio unit-key shape extended
+	// to the three families whose legacy ladders have no row-carrier template face — the
+	// Shredder/Crusher ULV rows are row CARRIERS (their T1-T4 siblings stay tierOf), and
+	// the row getName() fills exactly ONE slot (the GTBasicMachineBlock :221 compose form),
+	// so each needs its own one-slot family template. RollingMill is a new family whose
+	// single row rides the trio form directly.
+	/** The Shredder family one-slot display template (the ULV row carrier's displayKey; zh 粉碎机, dump gt.multitileentity.20011 form). */
+	public static final String MACHINE_SHREDDER_DISPLAY_KEY = "gt6.row.machine.shredder.display";
+	/** The Crusher family one-slot display template (the ULV row carrier's displayKey). */
+	public static final String MACHINE_CRUSHER_DISPLAY_KEY = "gt6.row.machine.crusher.display";
+	/** The Rolling Mill family unit word (the W1 trio :101-104 key form; upstream name column "Rolling Mill ("+aMat.getLocal()+")", Loader:1349-1352). */
+	public static final String MACHINE_ROLLING_MILL_UNIT_KEY = "gt6.row.machine.rolling_mill";
 	/** The Press family unit word (task p26-w1-press-extruder-molds, the :101-104 key form). */
 	public static final String MACHINE_PRESS_UNIT_KEY = "gt6.row.machine.press";
 	/** The Extruder family unit word (task p26-w1-press-extruder-molds, T2-T4; the :101-104 key form). */
@@ -309,18 +352,32 @@ public final class GTMachines {
 	 */
 	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> SHREDDER_BE =
 			BLOCK_ENTITY_TYPES.register("shredder", () -> BlockEntityType.Builder.of(
-					(aPos, aState) -> machine(GTMachines.SHREDDER_BE.get(), aPos, aState, GT6RecipeMaps.SHREDDER, 1, false,
-							TD.Energy.RU, tierOf(aState.getBlock(), GTMachines.SHREDDER, GTMachines.SHREDDER_T2, GTMachines.SHREDDER_T3, GTMachines.SHREDDER_T4),
-							null /*ModularUI family — no vanilla MenuType (p26-mui-a-menu-deregistration)*/),
-					SHREDDER.get(), SHREDDER_T2.get(), SHREDDER_T3.get(), SHREDDER_T4.get()).build(null));
+					(aPos, aState) -> {
+						// task p28-c-ulv-machine-ladder: the ULV row carrier (the ONLY row
+						// this family carries) routes through the machineUlv arm — the
+						// T1-T4 tier blocks keep the tierOf dispatch below, byte-identical
+						GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+						if (tRow != null) return machineUlv(GTMachines.SHREDDER_BE.get(), aPos, aState, tRow);
+						return machine(GTMachines.SHREDDER_BE.get(), aPos, aState, GT6RecipeMaps.SHREDDER, 1, false,
+								TD.Energy.RU, tierOf(aState.getBlock(), GTMachines.SHREDDER, GTMachines.SHREDDER_T2, GTMachines.SHREDDER_T3, GTMachines.SHREDDER_T4),
+								null /*ModularUI family — no vanilla MenuType (p26-mui-a-menu-deregistration)*/);
+					},
+					SHREDDER.get(), SHREDDER_T2.get(), SHREDDER_T3.get(), SHREDDER_T4.get(),
+					GTMachines.SHREDDER_ULV.get() /*the p28 ULV row, the qualified forward-reference form (the P6 lambda lesson)*/).build(null));
 
 	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> CRUSHER_BE =
 			BLOCK_ENTITY_TYPES.register("crusher", () -> BlockEntityType.Builder.of(
-					(aPos, aState) -> machine(GTMachines.CRUSHER_BE.get(), aPos, aState, GT6RecipeMaps.CRUSHER,
-							CRUSHER_PARALLEL[tierOf(aState.getBlock(), GTMachines.CRUSHER, GTMachines.CRUSHER_T2, GTMachines.CRUSHER_T3, GTMachines.CRUSHER_T4)], true,
-							TD.Energy.KU, tierOf(aState.getBlock(), GTMachines.CRUSHER, GTMachines.CRUSHER_T2, GTMachines.CRUSHER_T3, GTMachines.CRUSHER_T4),
-							null /*ModularUI family — no vanilla MenuType (p26-mui-a-menu-deregistration)*/),
-					CRUSHER.get(), CRUSHER_T2.get(), CRUSHER_T3.get(), CRUSHER_T4.get()).build(null));
+					(aPos, aState) -> {
+						// the p28 ULV row carrier arm — the shredder branch shape verbatim
+						GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+						if (tRow != null) return machineUlv(GTMachines.CRUSHER_BE.get(), aPos, aState, tRow);
+						return machine(GTMachines.CRUSHER_BE.get(), aPos, aState, GT6RecipeMaps.CRUSHER,
+								CRUSHER_PARALLEL[tierOf(aState.getBlock(), GTMachines.CRUSHER, GTMachines.CRUSHER_T2, GTMachines.CRUSHER_T3, GTMachines.CRUSHER_T4)], true,
+								TD.Energy.KU, tierOf(aState.getBlock(), GTMachines.CRUSHER, GTMachines.CRUSHER_T2, GTMachines.CRUSHER_T3, GTMachines.CRUSHER_T4),
+								null /*ModularUI family — no vanilla MenuType (p26-mui-a-menu-deregistration)*/);
+					},
+					CRUSHER.get(), CRUSHER_T2.get(), CRUSHER_T3.get(), CRUSHER_T4.get(),
+					GTMachines.CRUSHER_ULV.get() /*the p28 ULV row*/).build(null));
 
 	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> LATHE_BE =
 			BLOCK_ENTITY_TYPES.register("lathe", () -> BlockEntityType.Builder.of(
@@ -750,6 +807,13 @@ public final class GTMachines {
 	private static TileEntityBasicMachine cannerMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
 			net.minecraft.world.level.block.state.BlockState aState) {
 		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		if (tRow.ulvVoltage()) { // the p28 ULV row — the voltage window arm, then the shared canner extras
+			TileEntityBasicMachine tUlv = machineUlv(aType, aPos, aState, tRow);
+			tUlv.mCanUseOutputTanks = true; // NBT_USE_OUTPUT_TANK T (:1379)
+			tUlv.mTankCapacity = CANNER_TANK_CAPACITY[tRow.tier()]; // the T0 rung rides the T1 column (128000 — the smallest tank)
+			tUlv.applyTankCapacity(); // :157-160 — the tanks are re-armed AT the row capacity
+			return tUlv;
+		}
 		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), tRow.menu());
 		applyRow(tMachine, tRow);
 		tMachine.mCanUseOutputTanks = true; // NBT_USE_OUTPUT_TANK T (:1379)
@@ -963,14 +1027,207 @@ public final class GTMachines {
 	 * The W1-trio BET factory body — the dryerMachine body verbatim (the row carries every
 	 * column the three families need; no extra registration columns, unlike the Canner).
 	 * Shared by all three BETs (the row drives the recipe map, energy type, parallel and
-	 * masks; only the BlockEntityType argument differs).
+	 * masks; only the BlockEntityType argument differs). Task p28-c-ulv-machine-ladder adds
+	 * the ULV arm: a row with the {@code ulvVoltage} marker routes through
+	 * {@link #machineUlv} (the {4, 8, 16} window), the T1-T4 rows keep the TIER_INPUTS
+	 * assignment byte-identical.
 	 */
 	private static TileEntityBasicMachine kineticMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
 			net.minecraft.world.level.block.state.BlockState aState) {
 		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		if (tRow.ulvVoltage()) return machineUlv(aType, aPos, aState, tRow); // the p28 ULV row
 		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), tRow.menu());
 		return applyRow(tMachine, tRow);
 	}
+
+	/**
+	 * The ULV row→BE factory arm (task p28-c-ulv-machine-ladder): the {@link #machine}
+	 * half verbatim, then the V[0] window {@link #ULV_TIER_INPUTS} = {4, 8, 16} overrides
+	 * the TIER_INPUTS[tier] assignment (the row's ulvVoltage marker is the selector — the
+	 * upstream NBT_INPUT column the port folds into tier cannot say "8" for a tier-0 row).
+	 * The melting-gate column rides applyRow like the masks.
+	 */
+	private static TileEntityBasicMachine machineUlv(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState, GTBasicMachineBlock.MachineRow aRow) {
+		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, aRow.recipes().get(), aRow.parallel(), aRow.parallelDuration(), aRow.energyType(), aRow.tier(), aRow.menu());
+		tMachine.mInputMin = ULV_TIER_INPUTS[0];
+		tMachine.mInput = ULV_TIER_INPUTS[1];
+		tMachine.mInputMax = ULV_TIER_INPUTS[2];
+		return applyRow(tMachine, aRow);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the p28-c-ulv-machine-ladder ULV machine ladder — the six V[0] = 8 EU x 1 A rows
+	// (min 4 / in 8 / max 16, every row gated at 1375 K). NO upstream VN[0] machine
+	// exists (research.p28-r-ulv-tier-design upstream_census: only the Transformer :881
+	// and the two Battery rows :1009/:1033) — the whole ladder is the declared-deviation
+	// tier extension, energy EU on every row (the EU-variant precedent: ElectricMixer
+	// :1504-1508 / ElectricLoom :1511-1515 / ElectricSifter :1518-1522 are the upstream
+	// EU-variant forms of KU/RU machines). The five extension rows ride the SAME family
+	// BETs as their T1-T4 siblings; RollingMill is the one NEW family. Material columns =
+	// the T0 rungs (KINETIC_T0 = ANY.Wood / ELECTRIC_T0 = TinAlloy, MT.java:3690-3691
+	// index 0 — the card's "T0 对应" arm; the T0 rung exists upstream but no row uses it).
+	// Connectivity masks = each family's upstream row verbatim + the ORed SBIT_A.
+	// metaIds: no upstream ULV row exists — family base + 5 (the free id after T4,
+	// data-only yardstick, the deviation documented on each row).
+	// ---------------------------------------------------------------------------
+
+	/** The Canner ULV row (Electric_T[0] = TinAlloy material, the VN[0] = "ULV" word — CS.java:154 — riding the Canner name column form). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> CANNER_ULV_ROWS = java.util.List.of(cannerUlv());
+
+	/** The Shredder ULV row (Kinetic_T[0] = ANY.Wood; masks = the :1294 row verbatim — item top-in/bottom-out, energy left). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> SHREDDER_ULV_ROWS = java.util.List.of(
+			ulvKinetic("shredder_ulv", 20015, 7.0F, KINETIC_T0, MACHINE_SHREDDER_DISPLAY_KEY,
+					() -> GT6RecipeMaps.SHREDDER, TD.Energy.EU, "shredder",
+					(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_L :1294*/,
+					(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A), (byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A),
+					(byte)1 /*SIDE_TOP*/, (byte)0 /*SIDE_BOTTOM*/, 1, false));
+
+	/** The Crusher ULV row (Kinetic_T[0]; masks = the :1300 row verbatim — item top-in/bottom-out, energy back; the :1300 NBT_PARALLEL 4 + DURATION T kept). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> CRUSHER_ULV_ROWS = java.util.List.of(
+			ulvKinetic("crusher_ulv", 20025, 7.0F, KINETIC_T0, MACHINE_CRUSHER_DISPLAY_KEY,
+					() -> GT6RecipeMaps.CRUSHER, TD.Energy.EU, "crusher",
+					(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B :1300*/,
+					(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A), (byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A),
+					(byte)1 /*SIDE_TOP*/, (byte)0 /*SIDE_BOTTOM*/, CRUSHER_PARALLEL[0], true)); /*NBT_PARALLEL_DURATION T :1300*/
+
+	/** The Sifter ULV row (Kinetic_T[0]; masks = the :1312 family verbatim; the PARALLEL_4_32[0] = 4 + DURATION T family shape kept). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> SIFTER_ULV_ROWS = java.util.List.of(
+			ulvKinetic("sifter_ulv", 20055, 7.0F, KINETIC_T0, MACHINE_SIFTER_UNIT_KEY,
+					() -> GT6RecipeMaps.SIFTING, TD.Energy.EU, "sifter",
+					(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B :1312*/,
+					(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A), (byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A),
+					(byte)1 /*SIDE_TOP*/, (byte)0 /*SIDE_BOTTOM*/, PARALLEL_4_32[0], true)); /*NBT_PARALLEL_DURATION T :1312*/
+
+	/** The Wiremill ULV row (Kinetic_T[0]; masks = the :1373 row verbatim — item left-in/right-out, energy back; NO parallel key → 1). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> WIREMILL_ULV_ROWS = java.util.List.of(
+			ulvKinetic("wiremill_ulv", 20155, 7.0F, KINETIC_T0, MACHINE_WIREMILL_UNIT_KEY,
+					() -> GT6RecipeMaps.WIREMILL, TD.Energy.EU, "wiremill",
+					(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B :1373*/,
+					(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A), (byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A),
+					(byte)2 /*SIDE_LEFT*/, (byte)4 /*SIDE_RIGHT*/, 1, false));
+
+	/** The one Rolling Mill row — the SINGLE ULV electric rung (the card scope: RU 4-ladder family defers to the P29 batch A). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> ROLLINGMILL_ROWS = java.util.List.of(
+			ulvKinetic("rollingmill", 20115, 7.0F, KINETIC_T0, MACHINE_ROLLING_MILL_UNIT_KEY,
+					() -> GT6RecipeMaps.ROLLING_MILL, TD.Energy.EU, "rollingmill",
+					(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B :1349*/,
+					(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A), (byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A),
+					(byte)2 /*SIDE_LEFT*/, (byte)4 /*SIDE_RIGHT*/, 1, false));
+
+	/**
+	 * One kinetic-family ULV row factory — the wiremill() row shape with the p28 columns:
+	 * EU on every row (the EU-variant precedent), the 1375 K gate, the ulvVoltage marker,
+	 * menu = null (zero new gt6:* MenuType), cheap overclocking T, the 127/-1 no-tank-key
+	 * faces (zero fluid recipes ≠ zero fluid face, the Shredder precedent).
+	 */
+	// (the aEnergyType → aTexture parameter order keeps the `TD.Energy.<KIND>, "<family>",`
+	// literal pair in every call site — the borrow_port_overlays.py family census parses
+	// exactly that face, so the rollingmill borrow set stays census-driven, no hand list)
+	private static GTBasicMachineBlock.MachineRow ulvKinetic(String aPath, int aMetaId, float aHardness,
+			java.util.function.Supplier<OreDictMaterial> aMaterial, String aDisplayKey,
+			java.util.function.Supplier<RecipeMap> aRecipes, TagData aEnergyType, String aTexture,
+			byte aEnergySides, byte aItemIn, byte aItemOut, byte aItemAutoIn, byte aItemAutoOut, int aParallel, boolean aParallelDuration) {
+		return new GTBasicMachineBlock.MachineRow(aPath, "any_wood", "Any Wood", aMaterial, aDisplayKey, aMetaId, aHardness,
+				0 /*tier — the material rung index; the voltage window rides ulvVoltage, NOT the tier table*/, aParallel, aParallelDuration,
+				aRecipes, aEnergyType /*the p28 V[0] carrier — every ULV row is electric EU*/, aTexture,
+				aEnergySides,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				aItemIn, aItemOut,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				aItemAutoIn, aItemAutoOut,
+				null /*the menu-less carrier — zero new gt6:* MenuType*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/,
+				ULV_MELTING_GATE_K /*the 1375 K stone-crucible ceiling*/, true /*ulvVoltage — the {4,8,16} window*/);
+	}
+
+	/** The Canner ULV row factory — the canner() row shape (tank keys + the live gt6:canner menu kept) with the p28 columns. */
+	private static GTBasicMachineBlock.MachineRow cannerUlv() {
+		return new GTBasicMachineBlock.MachineRow("canner_ulv", "ulv", "ULV", ELECTRIC_T0, CANNER_DISPLAY_KEY, 20166, 4.0F,
+				0, 1, false,
+				() -> GT6RecipeMaps.CANNER, TD.Energy.EU, "canner",
+				(byte)(GTBasicMachineBlock.SBIT_B) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L) /*NBT_TANK_SIDE_IN*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D) /*NBT_TANK_SIDE_OUT*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L) /*NBT_INV_SIDE_IN*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D) /*NBT_INV_SIDE_OUT*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				GTBasicMachinesMenus.CANNER_MENU::get /*gt6:canner — the family menu the ULV row shares*/,
+				true /*NBT_CHEAP_OVERCLOCKING*/,
+				ULV_MELTING_GATE_K /*the 1375 K stone-crucible ceiling*/, true /*ulvVoltage*/);
+	}
+
+	/** The registered Rolling Mill blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> ROLLINGMILL_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Rolling Mill items, same keys as {@link #ROLLINGMILL_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> ROLLINGMILL_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	// the ULV blocks join the FAMILY BY_PATH maps (the BET validBlocks ride the
+	// blockArray() walkers; loot/datagen/creative-tab walk the same tables) — the
+	// shredder/crusher ULV blocks are explicit ROs below (their families have no maps).
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : CANNER_ULV_ROWS) {
+			CANNER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CANNER_BE.get(), tRow)));
+			CANNER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : SIFTER_ULV_ROWS) {
+			SIFTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SIFTER_BE.get(), tRow)));
+			SIFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ULV_ROWS) {
+			WIREMILL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.WIREMILL_BE.get(), tRow)));
+			WIREMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.WIREMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_ROWS) {
+			ROLLINGMILL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ROLLINGMILL_BE.get(), tRow)));
+			ROLLINGMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The p28 ULV shredder row block (the explicit-RO form — the legacy family has no BY_PATH map). */
+	public static final RegistryObject<Block> SHREDDER_ULV = BLOCKS.register("shredder_ulv",
+			() -> new GTBasicMachineBlock(SHREDDER_ULV_ROWS.get(0).properties(), () -> GTMachines.SHREDDER_BE.get(), SHREDDER_ULV_ROWS.get(0)));
+
+	public static final RegistryObject<Item> SHREDDER_ULV_ITEM = ITEMS.register("shredder_ulv",
+			() -> new gregtech6.block.GTComposedNameItem(GTMachines.SHREDDER_ULV.get(), new Item.Properties()));
+
+	/** The p28 ULV crusher row block (the explicit-RO form). */
+	public static final RegistryObject<Block> CRUSHER_ULV = BLOCKS.register("crusher_ulv",
+			() -> new GTBasicMachineBlock(CRUSHER_ULV_ROWS.get(0).properties(), () -> GTMachines.CRUSHER_BE.get(), CRUSHER_ULV_ROWS.get(0)));
+
+	public static final RegistryObject<Item> CRUSHER_ULV_ITEM = ITEMS.register("crusher_ulv",
+			() -> new gregtech6.block.GTComposedNameItem(GTMachines.CRUSHER_ULV.get(), new Item.Properties()));
+
+	/** The Rolling Mill block list in registration order (the loot/datagen walkers). */
+	public static Block[] rollingmillBlockArray() {
+		Block[] rBlocks = new Block[ROLLINGMILL_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : ROLLINGMILL_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine rollingmill — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block rollingmillBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = ROLLINGMILL_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The ONE Rolling Mill family BET: the Dryer shape verbatim over the single ULV row
+	 * (the card scope — the RU 4-ladder family is the P29 batch A). The registry id
+	 * "rollingmill" is free (no legacy family).
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> ROLLINGMILL_BE =
+			BLOCK_ENTITY_TYPES.register("rollingmill", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.ROLLINGMILL_BE.get(), aPos, aState),
+					rollingmillBlockArray()).build(null));
 
 	// ---------------------------------------------------------------------------
 	// the Advanced Crafting Table (task p24-act-machine) — the SINGLE-VARIANT machine
@@ -1066,11 +1323,13 @@ public final class GTMachines {
 	/**
 	 * The paint-tint walker (task p21-paintable-tint-render; the Canner ladder joins in task
 	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill;
-	 * the Oven ladder joins in task p27-oven-heat-t-ladder):
-	 * the 48 machine-domain blocks the client paint BlockColor
+	 * the Oven ladder joins in task p27-oven-heat-t-ladder; the six ULV rows join in task
+	 * p28-c-ulv-machine-ladder):
+	 * the 54 machine-domain blocks the client paint BlockColor
 	 * registers over — the oven ladder (4) + the shredder/crusher/lathe ladders (4 each = 12) + the
 	 * dryer (4) + the distillery (4) + the canner (4) + the sifter/compressor/wiremill
-	 * ladders (4 each = 12) + press (4) + extruder (4),
+	 * ladders (4 each = 12) + press (4) + extruder (4) + the ULV rows (5 + the rollingmill
+	 * rung = 6),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -1078,7 +1337,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(48);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(54);
 		rBlocks.add(OVEN.get());
 		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
@@ -1091,12 +1350,15 @@ public final class GTMachines {
 		}
 		java.util.Collections.addAll(rBlocks, dryerBlockArray());
 		java.util.Collections.addAll(rBlocks, distilleryBlockArray());
-		java.util.Collections.addAll(rBlocks, cannerBlockArray());
-		java.util.Collections.addAll(rBlocks, sifterBlockArray());
+		java.util.Collections.addAll(rBlocks, cannerBlockArray()); // + the canner_ulv rung (the BY_PATH map walk carries the p28 ULV row)
+		java.util.Collections.addAll(rBlocks, sifterBlockArray()); // + sifter_ulv
 		java.util.Collections.addAll(rBlocks, compressorBlockArray());
-		java.util.Collections.addAll(rBlocks, wiremillBlockArray());
+		java.util.Collections.addAll(rBlocks, wiremillBlockArray()); // + wiremill_ulv
 		java.util.Collections.addAll(rBlocks, pressBlockArray()); // task p26-w1-press-extruder-molds
 		java.util.Collections.addAll(rBlocks, extruderBlockArray()); // task p26-w1-press-extruder-molds
+		rBlocks.add(SHREDDER_ULV.get()); // task p28-c-ulv-machine-ladder — the explicit-RO ULV rows + the new RollingMill family
+		rBlocks.add(CRUSHER_ULV.get());
+		java.util.Collections.addAll(rBlocks, rollingmillBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -1211,6 +1473,23 @@ public final class GTMachines {
 								}
 								for (GTBasicMachineBlock.MachineRow tRow : EXTRUDER_ROWS) {
 									aOutput.accept(new ItemStack(EXTRUDER_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
+								// task p28-c-ulv-machine-ladder: the six ULV rows, +6 (the
+								// shredder/crusher explicit ROs + the canner/sifter/wiremill/
+								// rollingmill ULV rungs — the V[0] = 8 EU tier face)
+								aOutput.accept(new ItemStack(SHREDDER_ULV_ITEM.get()));
+								aOutput.accept(new ItemStack(CRUSHER_ULV_ITEM.get()));
+								for (GTBasicMachineBlock.MachineRow tRow : CANNER_ULV_ROWS) {
+									aOutput.accept(new ItemStack(CANNER_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
+								for (GTBasicMachineBlock.MachineRow tRow : SIFTER_ULV_ROWS) {
+									aOutput.accept(new ItemStack(SIFTER_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
+								for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ULV_ROWS) {
+									aOutput.accept(new ItemStack(WIREMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
+								}
+								for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_ROWS) {
+									aOutput.accept(new ItemStack(ROLLINGMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
 								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
 								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));

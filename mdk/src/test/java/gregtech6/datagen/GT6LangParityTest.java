@@ -171,8 +171,14 @@ public class GT6LangParityTest {
  * the reference table's hand rows). Rebased onto the cfoam state the re-measured floor
  * is 2796 + 4 = 2800 (the branch-local 2793+4=2797 estimate preceded the merge; the
  * rebased re-measure is authoritative). zh == en, the zero-debt state holds.
+ *
+ * <p>Task p28-c-ulv-machine-ladder: raised to the measured 2805 — the +5 ULV ladder keys
+ * (the Shredder/Crusher one-slot display templates + the Rolling Mill family template +
+ * the any_wood/ulv row-mat units, both locales; the zh values ride the reference table's
+ * hand rows — 辊压机 = the dump gt.multitileentity.20111 column, 木 = the dump
+ * gt.material.AnyWood row, ULV = the VN[0] id). zh == en, the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2800;
+private static final int ZH_KEY_FLOOR = 2805;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -442,6 +448,9 @@ private static final int ZH_KEY_FLOOR = 2800;
 		tSlots.put("gt6.row.large_boiler.display", 1);
 		tSlots.put("gt6.row.dense_wall.display", 1);
 		tSlots.put("gt6.row.machine.display", 2);
+		tSlots.put("gt6.row.machine.shredder.display", 1); // task p28-c-ulv-machine-ladder — the ULV row-carrier templates
+		tSlots.put("gt6.row.machine.crusher.display", 1);
+		tSlots.put("gt6.row.machine.rolling_mill", 1);
 		tSlots.put("gt6.row.tap.display", 1);
 		tSlots.put("gt6.row.funnel.display", 1);
 		Map<String, Map<String, String>> tSides = Map.of("en_us", en(), "zh_cn", zh());
@@ -463,6 +472,7 @@ private static final int ZH_KEY_FLOOR = 2800;
 		tUnits.add(GTMachines.MACHINE_SHREDDER_UNIT_KEY);
 		tUnits.add(GTMachines.MACHINE_CRUSHER_UNIT_KEY);
 		tUnits.add(GTMachines.MACHINE_LATHE_UNIT_KEY);
+		tUnits.add(GTMachines.MACHINE_ROLLING_MILL_UNIT_KEY); // task p28-c-ulv-machine-ladder
 		for (GT6Kinetics.AxleSpec tSpec : GT6Kinetics.AXLE_SPECS) tUnits.add(GT6Kinetics.axleMatUnitKey(tSpec));
 		for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) tUnits.add(GT6Kinetics.steamMatUnitKey(tRow));
 		for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) tUnits.add(GT6Kinetics.dieselMatUnitKey(tSpec));
@@ -651,9 +661,11 @@ private static final int ZH_KEY_FLOOR = 2800;
 			tChecked++;
 			if (!en().containsKey(GT6Boilers.matUnitKeyOf(tRow))) tMissing.add("boiler:" + tRow.path());
 		}
-		// dryer + distillery
+		// dryer + distillery + the p28 ULV rows (the row-carrier compose domain)
 		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tRows
-				: java.util.List.of(GTMachines.DRYER_ROWS, GTMachines.DISTILLERY_ROWS)) {
+				: java.util.List.of(GTMachines.DRYER_ROWS, GTMachines.DISTILLERY_ROWS,
+						GTMachines.CANNER_ULV_ROWS, GTMachines.SIFTER_ULV_ROWS, GTMachines.WIREMILL_ULV_ROWS,
+						GTMachines.SHREDDER_ULV_ROWS, GTMachines.CRUSHER_ULV_ROWS, GTMachines.ROLLINGMILL_ROWS)) {
 			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tRows) {
 				tChecked++;
 				if (!en().containsKey("gt6.row.mat." + tRow.matSlug())) tMissing.add(tRow.path());
@@ -673,9 +685,9 @@ private static final int ZH_KEY_FLOOR = 2800;
 			tChecked++;
 			if (!en().containsKey(GT6Attachments.matUnitKeyOf(tRow))) tMissing.add("att:" + tRow.path());
 		}
-		assertEquals(249, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
+		assertEquals(255, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
             + " (44 axle + 28 steam + 8 diesel + 96 burning + 26 boiler + 4 dryer + 4 distillery"
-            + " + 5 large boiler + 5 wall + 12 attachments + 2 dry/dist shares not double-counted)"
+            + " + 6 p28 ULV rows + 5 large boiler + 5 wall + 12 attachments + 2 dry/dist shares not double-counted)"
             + " — bump this pin ONLY with a real row-table change");
 		assertTrue(tMissing.isEmpty(), "every composed row/stone unit key must exist on the en face"
 			+ " (a missing face renders the RAW key at runtime): " + tMissing);
@@ -878,6 +890,13 @@ private static final int ZH_KEY_FLOOR = 2800;
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.COMPRESSOR_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.WIREMILL_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.DISTILLERY_ROWS) tExempt.add(tRow.path());
+		// task p28-c-ulv-machine-ladder — the six ULV row carriers (GTBasicMachineBlock.getName)
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CANNER_ULV_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SIFTER_ULV_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.WIREMILL_ULV_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SHREDDER_ULV_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CRUSHER_ULV_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLLINGMILL_ROWS) tExempt.add(tRow.path());
 		for (GTMachines.OvenRow tRow : GTMachines.OVEN_ROWS) tExempt.add(tRow.path()); // GTOvenBlock.getName — the composed Heat_T ladder (p27-oven-heat-t-ladder)
 		// the Kinetic_T tier carriers T2-T4 (GTBasicMachineBlock mComposedName, p27-machine-
 		// energy-display-fix) — T1 keeps its vanilla atomic key (block.gt6.shredder/lathe/
@@ -960,7 +979,8 @@ private static final int ZH_KEY_FLOOR = 2800;
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(903, tExemptTotal, "the derived composed-name exemption census");
+		assertEquals(909, tExemptTotal, "the derived composed-name exemption census"
+			+ " (the six p28 ULV row carriers joined at 903 + 6)");
 		assertEquals(89, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase)"
 			+ " — per-class checked: " + tWalkedByClass);

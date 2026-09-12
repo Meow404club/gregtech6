@@ -125,16 +125,17 @@ public final class GT6BlockStates extends BlockStateProvider {
         addKineticTrio(); // task p26-w1-sifter-compressor-wiremill
         addPress(); // task p26-w1-press-extruder-molds
         addExtruder(); // task p26-w1-press-extruder-molds
+        addUlvLadder(); // task p28-c-ulv-machine-ladder — the six ULV rows (family textures, the addCanner shape)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 45 machine blocks x
-        // 3 models (the press/extruder rows joined at task p26-w1-press-extruder-molds),
+        // task p21-paintable-tint-render: the datagen-JVM census half — 54 machine blocks x
+        // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder),
         // matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 135; the ACT
+        // (the offline JUnit half walks the generated tree and pins the same 162; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (48 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addAdvancedCraftingTable)", mMachineTintModels);
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (54 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -257,6 +258,35 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addExtruder() {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.EXTRUDER_ROWS) {
             addMachine(GTMachines.EXTRUDER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p28-c-ulv-machine-ladder — the six ULV rows (the five family extension rows +
+     * the Rolling Mill rung, all NBT_TEXTURE riding their family/upstream tokens
+     * "shredder"/"crusher"/"canner"/"sifter"/"wiremill"/"rollingmill"): the addCanner
+     * shape verbatim — model names per path, the FRONT TEXTURES stay on the family sets
+     * (the rollingmill fronts are the borrowed upstream basicmachines/rollingmill split,
+     * the p22 borrow pipeline).
+     */
+    private void addUlvLadder() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SHREDDER_ULV_ROWS) {
+            addMachine(GTMachines.SHREDDER_ULV.get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CRUSHER_ULV_ROWS) {
+            addMachine(GTMachines.CRUSHER_ULV.get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CANNER_ULV_ROWS) {
+            addMachine(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SIFTER_ULV_ROWS) {
+            addMachine(GTMachines.SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.WIREMILL_ULV_ROWS) {
+            addMachine(GTMachines.WIREMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLLINGMILL_ROWS) {
+            addMachine(GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 
