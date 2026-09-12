@@ -389,6 +389,11 @@ HAND_TRANSLATIONS = {
     # committed TSV without a HAND_TRANSLATIONS entry — a faithful rerun washed it out
     # (2026-09-09, found by this card's regeneration)
     "block.gt6.fe_battery": ("FE 测试电池", "hand"),  # task p27-lang-fix-batch2 P2 (ledger §3): the missing CJK-Latin space
+    # task p28-b-fe-converter-machine: the ULV FE->EU machine + the extractable fixture
+    # (the CJK-Latin spacing style of the FE 测试电池 row; the converter is a real
+    # machine word 转换机, the source fixture keeps the 测试 prefix)
+    "block.gt6.fe_converter": ("FE 转换机", "hand"),
+    "block.gt6.fe_source": ("FE 测试源", "hand"),
     "gt6.row.hopper.display": ("%s料斗", "hand"),
     "gt6.row.queue_hopper.display": ("%s队列料斗", "hand"),
     "gt6.row.item_pipe.display.medium": ("%s物品管道", "hand"),

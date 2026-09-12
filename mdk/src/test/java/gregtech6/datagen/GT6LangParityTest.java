@@ -53,6 +53,7 @@ import gregtech6.registry.GT6Boilers;
 import gregtech6.registry.GT6BurningBoxes;
 import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6FeBatteries;
+import gregtech6.registry.GT6FeConverters;
 import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6Kinetics;
@@ -846,7 +847,7 @@ private static final int ZH_KEY_FLOOR = 2800;
 	public void everyRegisteredBlockDescriptionIdHasLangKeysOnBothFaces() {
 		List<Class<?>> tRegClasses = List.of(
 			GT6Attachments.class, GT6Boilers.class, GT6BurningBoxes.class, GT6Crucibles.class,
-			GT6FeBatteries.class, GT6FoamBlocks.class, GT6Hoppers.class, GT6Kinetics.class,
+			GT6FeBatteries.class, GT6FeConverters.class, GT6FoamBlocks.class, GT6Hoppers.class, GT6Kinetics.class,
 			GT6Kitchen.class, GT6Molds.class, GT6Sensors.class, GT6StaticStorages.class,
 			GTBarrels.class, GTBlockEntities.class, GTEnergySources.class, GTFluidPipes.class,
 			GTGrassBlocks.class, GTItemPipes.class, GTMachines.class, GTMultiBlocks.class,
@@ -960,7 +961,7 @@ private static final int ZH_KEY_FLOOR = 2800;
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
 		assertEquals(903, tExemptTotal, "the derived composed-name exemption census");
-		assertEquals(87, tChecked, "the checked block census: every DeferredRegister block NOT"
+		assertEquals(89, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase)"
 			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
