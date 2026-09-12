@@ -125,10 +125,10 @@ public class GT6RecipeMaps {
 	/**
 	 * The generation-reset hooks: every loader that owns a private static "poured" flag
 	 * registers its resetForTest here from its static initializer, so {@link #reset()}
-	 * retires the WHOLE generation. One generation = the 23 map fields (the 12 pre-W1
+	 * retires the WHOLE generation. One generation = the 25 map fields (the 12 pre-W1
 	 * fields + the mixer/W1-trio/press-extruder/crucible-pair appends + the BATH append
 	 * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
-	 * p28-c-ulv-machine-ladder) + RecipeMap.RECIPE_MAPS
+	 * p28-c-ulv-machine-ladder + the anvil pair of task p28-c-anvil) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
@@ -348,6 +348,36 @@ public class GT6RecipeMaps {
 	 */
 	public static volatile RecipeMap CRUCIBLE_ALLOYING;
 
+	/**
+	 * RM.java:118 — the Anvil map (task p28-c-anvil): the zero-energy manual grinding/
+	 * forging face of the stone anvil family, the base-{@link RecipeMap} row transcribed
+	 * parameter-for-parameter over the 15-arg port ctor: "gt.recipe.anvil", "Anvil", NEI
+	 * name null → the internal name, progress 0/1, GUI machines/anvil (lowercased, string
+	 * only — no asset ships, the Shredder-line convention), item slots 2/2/2 (the two
+	 * working halves), fluid slots 0/0/0, minimal inputs 0, power 1. Base form: RM.Anvil
+	 * upstream IS a plain RecipeMap. The rows pour via {@link GT6RecipesAnvil}
+	 * (FMLCommonSetup) — the Loader_Recipes_Handlers.java:157-205 handler templates; the
+	 * live findRecipe consumer is the {@link gregtech6.tileentity.tools.GT6AnvilBlockEntity}
+	 * top-face hammer strike.
+	 */
+	public static volatile RecipeMap ANVIL;
+
+	/**
+	 * The Anvil Bending map (task p28-c-anvil) — the side-strike face. DECLARED TWO-MAPS-
+	 * IN-THREE FOLD: upstream carries the pair RM.AnvilBendSmall / RM.AnvilBendBig
+	 * (RM.java:119-120, "gt.recipe.anvil.bend.small|big", items 2/2/2, fluids 0/0/0, MIN 0,
+	 * AMP 1 — identical constants rows), split only by WHERE on the anvil side the hammer
+	 * lands (MultiTileEntityAnvil.onToolClick2 :100-115). The task card froze TWO maps
+	 * ("RM.Anvil（顶面研磨类）+RM.AnvilBend（侧面弯折…）"), so the port carries ONE bend map
+	 * with the identical constants ("gt.recipe.anvil.bend", "Anvil Bending", GUI
+	 * machines/anvilbend lowercased) holding the UNION of the Small+Big handler rows
+	 * (Handlers:208-210 Big + :213-214 Small, per-row chances and scrap byproducts kept
+	 * verbatim); the hit-half aiming face folds away (any side strike bends) — the map
+	 * constants and rows are upstream-faithful, only the strike-point selector is gone.
+	 * The rows pour via {@link GT6RecipesAnvil} too.
+	 */
+	public static volatile RecipeMap ANVIL_BEND;
+
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
 		if (FURNACE != null) return;
@@ -546,6 +576,28 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		// RM.java:118 — the Anvil map (task p28-c-anvil): items 2/2/2, fluids 0/0/0, MIN 0,
+		// AMP 1 — the RM.java:118 row verbatim over the 15-arg port ctor; the zero-energy
+		// manual face, the consumer is the anvil BE's top-face hammer strike
+		ANVIL = new RecipeMap(new HashSet<>(),
+				"gt.recipe.anvil", "Anvil", null,
+				0, 1,
+				"gt6:textures/gui/machines/anvil",
+				/*IN-OUT-MIN-ITEM=*/ 2, 2, 2,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// the RM.java:119/:120 AnvilBendSmall|Big pair folded onto ONE map (task p28-c-anvil,
+		// the card's two-map freeze; identical constants rows upstream, the Small/Big split was
+		// pure strike-point aiming — the field doc carries the declared fold)
+		ANVIL_BEND = new RecipeMap(new HashSet<>(),
+				"gt.recipe.anvil.bend", "Anvil Bending", null,
+				0, 1,
+				"gt6:textures/gui/machines/anvilbend",
+				/*IN-OUT-MIN-ITEM=*/ 2, 2, 2,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 		// RM.java:80 — the Bath map (task p26-kitchen-pot-bowl): items 6/6/1, fluids 1/3/1,
 		// MIN 2, AMP 1 — the RM.java:80 row verbatim over the 15-arg port ctor (the base-form
 		// deviation is documented on the field above); the upstream RecipeMapBath subclass
@@ -588,8 +640,10 @@ public class GT6RecipeMaps {
 		FURNACE_FUEL = null;
 		PRESS = null;
 		EXTRUDER = null;
-		CRUCIBLE_SMELTING = null;
-		CRUCIBLE_ALLOYING = null;
+			CRUCIBLE_SMELTING = null;
+			CRUCIBLE_ALLOYING = null;
+			ANVIL = null;
+			ANVIL_BEND = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}
