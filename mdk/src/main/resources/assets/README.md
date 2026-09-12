@@ -7657,3 +7657,325 @@ upstream `README.md` block as above).
   - `tool_head_universal_spade_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `tool_head_wrench_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `wire_fine_overlay.png` `e7706aff0582ee538eb20996e3142e729d0512bdb2eb4ee6b2bbd0d17750c83a`
+
+
+Machine port side-face overlay borrows, task p28-a-port-overlay-assets
+(copied 2026-09-12). The port-face art set for the B render card: per
+basicmachines family the colored six-face body plus the five NON-front side
+faces of the three state overlay layers. The front face is the WORK face — its
+overlay fronts are the p22 split-front borrows, re-verified here byte-for-byte,
+not re-borrowed. Script: `mdk/tools/borrow_port_overlays.py` (pure stdlib, the
+`bake_machine_fronts.py` decode/encode idiom verbatim; plain 16x16 sources are
+byte-identical copies, 16xN strips are cropped to FRAME 0 and re-encoded
+filter-0 — the P20/P22 "animation stays retired" deviation; mcmeta files are
+not borrowed).
+
+Family census (script-parsed, nothing hand-picked): the borrow set is the
+intersection of the upstream `NBT_TEXTURE` registrations
+(`Loader_MultiTileEntities.java`, 122 texture literals) ∩ the locally
+registered texture families (the `TD.Energy.<KIND>, "<family>",` row-factory
+literals in `GTMachines.java` + the `addMachine(..., "<family>")` literals in
+`GT6BlockStates.java`, 12 families total) ∩ the upstream disk tree
+`basicmachines/<family>/` (79 groups). Result: all 12 local families are
+upstream-registered and disk-present:
+
+  canner, compressor, crusher, distillery, dryer, extruder, lathe, oven, press, shredder, sifter, wiremill
+
+Reconciliation grid: 12 families x (colored 6 faces + 3 states x 5 side
+faces) = 252 products = 243 new borrows + 12 in-place p22 re-verifications +
+0 declared (every expected upstream source exists in snapshot
+v6.17.06-22-g3703e4030). Output naming is the p22 split-front shape
+generalized to the side faces — `<family>_colored_<face>.png`,
+`<family>_overlay_<face>.png`, `<family>_overlay_<face>_active.png`,
+`<family>_overlay_<face>_running.png` (state tail LAST — distinct from the
+retired P9 full-strip namespace `oven_overlay_<state>_<face>.png`, whose 12
+16xN strips stay in place untouched). Eight side faces are strip sources
+cropped at FRAME 0: oven/lathe/compressor/press/extruder `overlay_active/back`
+and lathe/compressor/press `overlay_*` back variants — their upstream mcmeta
+carry sequential frames (frametime 2, no explicit reordering), so FRAME 0 is
+the first frame by construction.
+
+The 12 `in-place` entries (one `<family>_colored_front.png` per family) are
+the p22 borrow sha256 re-verifications, listed here so the census grid is
+complete in one place:
+
+  - `canner_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/canner/colored/front.png`)
+  - `compressor_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/compressor/colored/front.png`)
+  - `crusher_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/crusher/colored/front.png`)
+  - `distillery_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/distillery/colored/front.png`)
+  - `dryer_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/dryer/colored/front.png`)
+  - `extruder_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/extruder/colored/front.png`)
+  - `lathe_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/lathe/colored/front.png`)
+  - `oven_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/oven/colored/front.png`)
+  - `press_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/press/colored/front.png`)
+  - `shredder_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/shredder/colored/front.png`)
+  - `sifter_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/sifter/colored/front.png`)
+  - `wiremill_colored_front.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/wiremill/colored/front.png`)
+
+The 243 new borrows (byte copies unless noted FRAME 0):
+
+  - `canner_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/canner/colored/bottom.png`)
+  - `canner_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/canner/colored/top.png`)
+  - `canner_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/canner/colored/left.png`)
+  - `canner_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/canner/colored/right.png`)
+  - `canner_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/canner/colored/back.png`)
+  - `canner_overlay_bottom.png`  `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`  (byte copy; upstream `basicmachines/canner/overlay/bottom.png`)
+  - `canner_overlay_top.png`  `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`  (byte copy; upstream `basicmachines/canner/overlay/top.png`)
+  - `canner_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/canner/overlay/left.png`)
+  - `canner_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/canner/overlay/right.png`)
+  - `canner_overlay_back.png`  `a326d5e7732ed7297a4def6b1af9a7f5e2a6da035dab62d3a7e38b7c1a46a482`  (byte copy; upstream `basicmachines/canner/overlay/back.png`)
+  - `canner_overlay_bottom_active.png`  `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`  (byte copy; upstream `basicmachines/canner/overlay_active/bottom.png`)
+  - `canner_overlay_top_active.png`  `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`  (byte copy; upstream `basicmachines/canner/overlay_active/top.png`)
+  - `canner_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/canner/overlay_active/left.png`)
+  - `canner_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/canner/overlay_active/right.png`)
+  - `canner_overlay_back_active.png`  `eb0b3a8c6bae86e319d153af758c8094695dd63ed2d2991ca72920dab1d76428`  (byte copy; upstream `basicmachines/canner/overlay_active/back.png`)
+  - `canner_overlay_bottom_running.png`  `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`  (byte copy; upstream `basicmachines/canner/overlay_running/bottom.png`)
+  - `canner_overlay_top_running.png`  `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`  (byte copy; upstream `basicmachines/canner/overlay_running/top.png`)
+  - `canner_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/canner/overlay_running/left.png`)
+  - `canner_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/canner/overlay_running/right.png`)
+  - `canner_overlay_back_running.png`  `eb0b3a8c6bae86e319d153af758c8094695dd63ed2d2991ca72920dab1d76428`  (byte copy; upstream `basicmachines/canner/overlay_running/back.png`)
+  - `compressor_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/compressor/colored/bottom.png`)
+  - `compressor_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/compressor/colored/top.png`)
+  - `compressor_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/compressor/colored/left.png`)
+  - `compressor_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/compressor/colored/right.png`)
+  - `compressor_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/compressor/colored/back.png`)
+  - `compressor_overlay_bottom.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/compressor/overlay/bottom.png`)
+  - `compressor_overlay_top.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/compressor/overlay/top.png`)
+  - `compressor_overlay_left.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/compressor/overlay/left.png`)
+  - `compressor_overlay_right.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/compressor/overlay/right.png`)
+  - `compressor_overlay_back.png`  `0fea01697877dd0666a1e5a6a7f31292a3deedc41d9510b8dfdae8f7f8e243c1`  (byte copy; upstream `basicmachines/compressor/overlay/back.png`)
+  - `compressor_overlay_bottom_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/compressor/overlay_active/bottom.png`)
+  - `compressor_overlay_top_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/compressor/overlay_active/top.png`)
+  - `compressor_overlay_left_active.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/compressor/overlay_active/left.png`)
+  - `compressor_overlay_right_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/compressor/overlay_active/right.png`)
+  - `compressor_overlay_back_active.png`  `ec6f5d9a947ca0b94dcc356b808e30976577634f2d3f92aefa1de493fb7295f2`  (FRAME 0 of 9; upstream `basicmachines/compressor/overlay_active/back.png`)
+  - `compressor_overlay_bottom_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/compressor/overlay_running/bottom.png`)
+  - `compressor_overlay_top_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/compressor/overlay_running/top.png`)
+  - `compressor_overlay_left_running.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/compressor/overlay_running/left.png`)
+  - `compressor_overlay_right_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/compressor/overlay_running/right.png`)
+  - `compressor_overlay_back_running.png`  `644319970ea18872364826dbebaa1160eda0294cf5c880ba22d8d9624c591801`  (FRAME 0 of 9; upstream `basicmachines/compressor/overlay_running/back.png`)
+  - `crusher_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/crusher/colored/bottom.png`)
+  - `crusher_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/crusher/colored/top.png`)
+  - `crusher_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/crusher/colored/left.png`)
+  - `crusher_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/crusher/colored/right.png`)
+  - `crusher_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/crusher/colored/back.png`)
+  - `crusher_overlay_bottom.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/crusher/overlay/bottom.png`)
+  - `crusher_overlay_top.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/crusher/overlay/top.png`)
+  - `crusher_overlay_left.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay/left.png`)
+  - `crusher_overlay_right.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay/right.png`)
+  - `crusher_overlay_back.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/crusher/overlay/back.png`)
+  - `crusher_overlay_bottom_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/crusher/overlay_active/bottom.png`)
+  - `crusher_overlay_top_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/crusher/overlay_active/top.png`)
+  - `crusher_overlay_left_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay_active/left.png`)
+  - `crusher_overlay_right_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay_active/right.png`)
+  - `crusher_overlay_back_active.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/crusher/overlay_active/back.png`)
+  - `crusher_overlay_bottom_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/crusher/overlay_running/bottom.png`)
+  - `crusher_overlay_top_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/crusher/overlay_running/top.png`)
+  - `crusher_overlay_left_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay_running/left.png`)
+  - `crusher_overlay_right_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay_running/right.png`)
+  - `crusher_overlay_back_running.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/crusher/overlay_running/back.png`)
+  - `distillery_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/distillery/colored/bottom.png`)
+  - `distillery_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/distillery/colored/top.png`)
+  - `distillery_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/distillery/colored/left.png`)
+  - `distillery_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/distillery/colored/right.png`)
+  - `distillery_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/distillery/colored/back.png`)
+  - `distillery_overlay_bottom.png`  `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb`  (byte copy; upstream `basicmachines/distillery/overlay/bottom.png`)
+  - `distillery_overlay_top.png`  `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`  (byte copy; upstream `basicmachines/distillery/overlay/top.png`)
+  - `distillery_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/distillery/overlay/left.png`)
+  - `distillery_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/distillery/overlay/right.png`)
+  - `distillery_overlay_back.png`  `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`  (byte copy; upstream `basicmachines/distillery/overlay/back.png`)
+  - `distillery_overlay_bottom_active.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/distillery/overlay_active/bottom.png`)
+  - `distillery_overlay_top_active.png`  `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`  (byte copy; upstream `basicmachines/distillery/overlay_active/top.png`)
+  - `distillery_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/distillery/overlay_active/left.png`)
+  - `distillery_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/distillery/overlay_active/right.png`)
+  - `distillery_overlay_back_active.png`  `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`  (byte copy; upstream `basicmachines/distillery/overlay_active/back.png`)
+  - `distillery_overlay_bottom_running.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/distillery/overlay_running/bottom.png`)
+  - `distillery_overlay_top_running.png`  `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`  (byte copy; upstream `basicmachines/distillery/overlay_running/top.png`)
+  - `distillery_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/distillery/overlay_running/left.png`)
+  - `distillery_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/distillery/overlay_running/right.png`)
+  - `distillery_overlay_back_running.png`  `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`  (byte copy; upstream `basicmachines/distillery/overlay_running/back.png`)
+  - `dryer_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/dryer/colored/bottom.png`)
+  - `dryer_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/dryer/colored/top.png`)
+  - `dryer_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/dryer/colored/left.png`)
+  - `dryer_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/dryer/colored/right.png`)
+  - `dryer_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/dryer/colored/back.png`)
+  - `dryer_overlay_bottom.png`  `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb`  (byte copy; upstream `basicmachines/dryer/overlay/bottom.png`)
+  - `dryer_overlay_top.png`  `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`  (byte copy; upstream `basicmachines/dryer/overlay/top.png`)
+  - `dryer_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/dryer/overlay/left.png`)
+  - `dryer_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/dryer/overlay/right.png`)
+  - `dryer_overlay_back.png`  `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`  (byte copy; upstream `basicmachines/dryer/overlay/back.png`)
+  - `dryer_overlay_bottom_active.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/dryer/overlay_active/bottom.png`)
+  - `dryer_overlay_top_active.png`  `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`  (byte copy; upstream `basicmachines/dryer/overlay_active/top.png`)
+  - `dryer_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/dryer/overlay_active/left.png`)
+  - `dryer_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/dryer/overlay_active/right.png`)
+  - `dryer_overlay_back_active.png`  `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`  (byte copy; upstream `basicmachines/dryer/overlay_active/back.png`)
+  - `dryer_overlay_bottom_running.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/dryer/overlay_running/bottom.png`)
+  - `dryer_overlay_top_running.png`  `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`  (byte copy; upstream `basicmachines/dryer/overlay_running/top.png`)
+  - `dryer_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/dryer/overlay_running/left.png`)
+  - `dryer_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/dryer/overlay_running/right.png`)
+  - `dryer_overlay_back_running.png`  `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`  (byte copy; upstream `basicmachines/dryer/overlay_running/back.png`)
+  - `extruder_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/extruder/colored/bottom.png`)
+  - `extruder_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/extruder/colored/top.png`)
+  - `extruder_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/extruder/colored/left.png`)
+  - `extruder_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/extruder/colored/right.png`)
+  - `extruder_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/extruder/colored/back.png`)
+  - `extruder_overlay_bottom.png`  `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb`  (byte copy; upstream `basicmachines/extruder/overlay/bottom.png`)
+  - `extruder_overlay_top.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/extruder/overlay/top.png`)
+  - `extruder_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/extruder/overlay/left.png`)
+  - `extruder_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/extruder/overlay/right.png`)
+  - `extruder_overlay_back.png`  `97a428fc12cb31f4f18114567ec6ba06f33dd73813cbd2d2017b7b66b63a859f`  (byte copy; upstream `basicmachines/extruder/overlay/back.png`)
+  - `extruder_overlay_bottom_active.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/extruder/overlay_active/bottom.png`)
+  - `extruder_overlay_top_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/extruder/overlay_active/top.png`)
+  - `extruder_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/extruder/overlay_active/left.png`)
+  - `extruder_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/extruder/overlay_active/right.png`)
+  - `extruder_overlay_back_active.png`  `299a7f0616df27328cec4e71124aeee8040829aabd26e60e4ad208ec64d28b29`  (FRAME 0 of 6; upstream `basicmachines/extruder/overlay_active/back.png`)
+  - `extruder_overlay_bottom_running.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/extruder/overlay_running/bottom.png`)
+  - `extruder_overlay_top_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/extruder/overlay_running/top.png`)
+  - `extruder_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/extruder/overlay_running/left.png`)
+  - `extruder_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/extruder/overlay_running/right.png`)
+  - `extruder_overlay_back_running.png`  `fc56cfebfca63bb4f88e26be3d03bd57ed42b8d0e2d2bc6dd9f3f2263a09c99d`  (byte copy; upstream `basicmachines/extruder/overlay_running/back.png`)
+  - `lathe_colored_bottom.png`  `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`  (byte copy; upstream `basicmachines/lathe/colored/bottom.png`)
+  - `lathe_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/lathe/colored/top.png`)
+  - `lathe_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/lathe/colored/left.png`)
+  - `lathe_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/lathe/colored/right.png`)
+  - `lathe_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/lathe/colored/back.png`)
+  - `lathe_overlay_bottom.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/lathe/overlay/bottom.png`)
+  - `lathe_overlay_top.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/lathe/overlay/top.png`)
+  - `lathe_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/lathe/overlay/left.png`)
+  - `lathe_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/lathe/overlay/right.png`)
+  - `lathe_overlay_back.png`  `406b11e8a6e88d68f1d654c67f20311b5b6d74ce93940183309ca0e8ce0cd155`  (byte copy; upstream `basicmachines/lathe/overlay/back.png`)
+  - `lathe_overlay_bottom_active.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/lathe/overlay_active/bottom.png`)
+  - `lathe_overlay_top_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/lathe/overlay_active/top.png`)
+  - `lathe_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/lathe/overlay_active/left.png`)
+  - `lathe_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/lathe/overlay_active/right.png`)
+  - `lathe_overlay_back_active.png`  `a90fafa3c10cfb6eb532a0488fcc06adc73ea0295566559111e9549ef4b34289`  (FRAME 0 of 6; upstream `basicmachines/lathe/overlay_active/back.png`)
+  - `lathe_overlay_bottom_running.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/lathe/overlay_running/bottom.png`)
+  - `lathe_overlay_top_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/lathe/overlay_running/top.png`)
+  - `lathe_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/lathe/overlay_running/left.png`)
+  - `lathe_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/lathe/overlay_running/right.png`)
+  - `lathe_overlay_back_running.png`  `a07a82dc3e9f481e2ee8e14f03d7f6c8128fa36765250c81cbb483e3380dcef3`  (FRAME 0 of 6; upstream `basicmachines/lathe/overlay_running/back.png`)
+  - `oven_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/oven/colored/bottom.png`)
+  - `oven_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/oven/colored/top.png`)
+  - `oven_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/oven/colored/left.png`)
+  - `oven_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/oven/colored/right.png`)
+  - `oven_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/oven/colored/back.png`)
+  - `oven_overlay_bottom.png`  `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb`  (byte copy; upstream `basicmachines/oven/overlay/bottom.png`)
+  - `oven_overlay_top.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/oven/overlay/top.png`)
+  - `oven_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/oven/overlay/left.png`)
+  - `oven_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/oven/overlay/right.png`)
+  - `oven_overlay_back.png`  `3da4d0f7d578f6e08102a0b7615160035997d58affc26c7d13813b678c4bd7fd`  (byte copy; upstream `basicmachines/oven/overlay/back.png`)
+  - `oven_overlay_bottom_active.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/oven/overlay_active/bottom.png`)
+  - `oven_overlay_top_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/oven/overlay_active/top.png`)
+  - `oven_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/oven/overlay_active/left.png`)
+  - `oven_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/oven/overlay_active/right.png`)
+  - `oven_overlay_back_active.png`  `55ee0c7bd3a569150a80390a3e96c74b9993b2896161a0b46c9eef93daefa821`  (FRAME 0 of 8; upstream `basicmachines/oven/overlay_active/back.png`)
+  - `oven_overlay_bottom_running.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/oven/overlay_running/bottom.png`)
+  - `oven_overlay_top_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/oven/overlay_running/top.png`)
+  - `oven_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/oven/overlay_running/left.png`)
+  - `oven_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/oven/overlay_running/right.png`)
+  - `oven_overlay_back_running.png`  `cd5857690ac01a9fc10e3aadd4fe3afe3c2372d685ef0bcf14b680756b92b85e`  (byte copy; upstream `basicmachines/oven/overlay_running/back.png`)
+  - `press_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/press/colored/bottom.png`)
+  - `press_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/press/colored/top.png`)
+  - `press_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/press/colored/left.png`)
+  - `press_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/press/colored/right.png`)
+  - `press_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/press/colored/back.png`)
+  - `press_overlay_bottom.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/press/overlay/bottom.png`)
+  - `press_overlay_top.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/press/overlay/top.png`)
+  - `press_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/press/overlay/left.png`)
+  - `press_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/press/overlay/right.png`)
+  - `press_overlay_back.png`  `0f36acaa757a9c82b7960f88e7a905dc45364121959b44ffad534b8848fbccc5`  (byte copy; upstream `basicmachines/press/overlay/back.png`)
+  - `press_overlay_bottom_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/press/overlay_active/bottom.png`)
+  - `press_overlay_top_active.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/press/overlay_active/top.png`)
+  - `press_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/press/overlay_active/left.png`)
+  - `press_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/press/overlay_active/right.png`)
+  - `press_overlay_back_active.png`  `b56f809af495a9241d54ce6087cef250d405fbdb78ae33666655e611f0986b37`  (FRAME 0 of 16; upstream `basicmachines/press/overlay_active/back.png`)
+  - `press_overlay_bottom_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/press/overlay_running/bottom.png`)
+  - `press_overlay_top_running.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/press/overlay_running/top.png`)
+  - `press_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/press/overlay_running/left.png`)
+  - `press_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/press/overlay_running/right.png`)
+  - `press_overlay_back_running.png`  `016292a072f18b7b9cb149c4a937835eeae980949b6986846835245d8247cb88`  (FRAME 0 of 16; upstream `basicmachines/press/overlay_running/back.png`)
+  - `shredder_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/shredder/colored/bottom.png`)
+  - `shredder_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/shredder/colored/top.png`)
+  - `shredder_colored_left.png`  `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`  (byte copy; upstream `basicmachines/shredder/colored/left.png`)
+  - `shredder_colored_right.png`  `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`  (byte copy; upstream `basicmachines/shredder/colored/right.png`)
+  - `shredder_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/shredder/colored/back.png`)
+  - `shredder_overlay_bottom.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/shredder/overlay/bottom.png`)
+  - `shredder_overlay_top.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/shredder/overlay/top.png`)
+  - `shredder_overlay_left.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay/left.png`)
+  - `shredder_overlay_right.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay/right.png`)
+  - `shredder_overlay_back.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/shredder/overlay/back.png`)
+  - `shredder_overlay_bottom_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/shredder/overlay_active/bottom.png`)
+  - `shredder_overlay_top_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/shredder/overlay_active/top.png`)
+  - `shredder_overlay_left_active.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay_active/left.png`)
+  - `shredder_overlay_right_active.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay_active/right.png`)
+  - `shredder_overlay_back_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/shredder/overlay_active/back.png`)
+  - `shredder_overlay_bottom_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/shredder/overlay_running/bottom.png`)
+  - `shredder_overlay_top_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/shredder/overlay_running/top.png`)
+  - `shredder_overlay_left_running.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay_running/left.png`)
+  - `shredder_overlay_right_running.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay_running/right.png`)
+  - `shredder_overlay_back_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/shredder/overlay_running/back.png`)
+  - `sifter_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/sifter/colored/bottom.png`)
+  - `sifter_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/sifter/colored/top.png`)
+  - `sifter_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/sifter/colored/left.png`)
+  - `sifter_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/sifter/colored/right.png`)
+  - `sifter_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/sifter/colored/back.png`)
+  - `sifter_overlay_bottom.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/sifter/overlay/bottom.png`)
+  - `sifter_overlay_top.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/sifter/overlay/top.png`)
+  - `sifter_overlay_left.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay/left.png`)
+  - `sifter_overlay_right.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay/right.png`)
+  - `sifter_overlay_back.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/sifter/overlay/back.png`)
+  - `sifter_overlay_bottom_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/sifter/overlay_active/bottom.png`)
+  - `sifter_overlay_top_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/sifter/overlay_active/top.png`)
+  - `sifter_overlay_left_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay_active/left.png`)
+  - `sifter_overlay_right_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay_active/right.png`)
+  - `sifter_overlay_back_active.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/sifter/overlay_active/back.png`)
+  - `sifter_overlay_bottom_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/sifter/overlay_running/bottom.png`)
+  - `sifter_overlay_top_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/sifter/overlay_running/top.png`)
+  - `sifter_overlay_left_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay_running/left.png`)
+  - `sifter_overlay_right_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay_running/right.png`)
+  - `sifter_overlay_back_running.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/sifter/overlay_running/back.png`)
+  - `wiremill_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/wiremill/colored/bottom.png`)
+  - `wiremill_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/wiremill/colored/top.png`)
+  - `wiremill_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/wiremill/colored/left.png`)
+  - `wiremill_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/wiremill/colored/right.png`)
+  - `wiremill_colored_back.png`  `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`  (byte copy; upstream `basicmachines/wiremill/colored/back.png`)
+  - `wiremill_overlay_bottom.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay/bottom.png`)
+  - `wiremill_overlay_top.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay/top.png`)
+  - `wiremill_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/wiremill/overlay/left.png`)
+  - `wiremill_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/wiremill/overlay/right.png`)
+  - `wiremill_overlay_back.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/wiremill/overlay/back.png`)
+  - `wiremill_overlay_bottom_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay_active/bottom.png`)
+  - `wiremill_overlay_top_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay_active/top.png`)
+  - `wiremill_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/wiremill/overlay_active/left.png`)
+  - `wiremill_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/wiremill/overlay_active/right.png`)
+  - `wiremill_overlay_back_active.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/wiremill/overlay_active/back.png`)
+  - `wiremill_overlay_bottom_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay_running/bottom.png`)
+  - `wiremill_overlay_top_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay_running/top.png`)
+  - `wiremill_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/wiremill/overlay_running/left.png`)
+  - `wiremill_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/wiremill/overlay_running/right.png`)
+  - `wiremill_overlay_back_running.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/wiremill/overlay_running/back.png`)
+  - `transformer_rotation_overlay_front.png`  `d3e79dc81f8bd97609ad0e3dcda2656d4b0a085811466f46801db3e19e57f04a`  (byte copy [ART-DUBIOUS: all-black art, entity dubious]; upstream `transformers/transformer_rotation/overlay/front.png`)
+  - `transformer_rotation_overlay_back.png`  `d3e79dc81f8bd97609ad0e3dcda2656d4b0a085811466f46801db3e19e57f04a`  (byte copy [ART-DUBIOUS: all-black art, entity dubious]; upstream `transformers/transformer_rotation/overlay/back.png`)
+  - `transformer_rotation_overlay_side.png`  `d3e79dc81f8bd97609ad0e3dcda2656d4b0a085811466f46801db3e19e57f04a`  (byte copy [ART-DUBIOUS: all-black art, entity dubious]; upstream `transformers/transformer_rotation/overlay/side.png`)
+
+`transformer_rotation` flag — the three `overlay` PNGs are visually ALL-BLACK
+upstream; whether that is intentional port art or a dead layer is unproven
+(the art-entity question from the p28 census). Borrowed as-is per the card
+spec and flagged `[ART-DUBIOUS]` above; the B render card must not wire them
+into a live model without a runClient visual check first. The family's
+`colored_active`/`overlay_active` layers stay unborrowed (the port transformer
+model has no active-state visuals; outside the card scope).
+
+`engines/` domain — colored-only per the p28 census (the upstream code
+registers only the colored trio there, EngineSteam.java:277-279; the disk
+`overlay/` group is NOT borrowed — spec edge, "no guessing overlays"). The
+port's steam engine already carries those three bytes from p12 as
+`steam_engine_front/back/side.png`; the script re-verified all three
+byte-identical to upstream `engines/kinetic_steam/colored/` and borrowed
+nothing (CONFIRM lines in the script output).
+
+Idempotence: a second `--check` run over the landed tree reports
+borrowed=0 in-place=255 declared=0 errors=0.
+
+Copied on 2026-09-12. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
