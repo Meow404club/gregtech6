@@ -143,30 +143,40 @@ public class GT6DualDirectoryFacesTest {
 	 * contract), files with it differ in the one string. Zero {@code copy_nbt} may survive
 	 * anywhere in the singular band: one survivor is one boot-time {@code LootDataType}
 	 * parse death = zero drops for that block (the 51-table outage this card closes).
+	 *
+	 * <p>The sweep scopes to the {@code gt6} namespace — the provider's own produced band
+	 * and the only namespace the adapter contract governs. The {@code minecraft} namespace
+	 * is NOT walkable as a twin-mirror domain on the 21.1 leg: its classpath face is a
+	 * union that spans vanilla's own 1.21 data pack (natively singular, e.g.
+	 * {@code minecraft/loot_table/spawners/trial_chamber/key.json}), which never had a
+	 * plural twin and never rode this provider.
 	 */
 	@Test
 	public void everyLootAliasIsTheAdaptedPluralFace() throws Exception {
-		URL tData = GT6DualDirectoryFacesTest.class.getClassLoader().getResource("data");
-		assertNotNull(tData, "the generated data root ships on the classpath");
-		Path tDataRoot = Paths.get(tData.toURI());
+		ClassLoader tLoader = GT6DualDirectoryFacesTest.class.getClassLoader();
+		// both band roots resolve DIRECTLY — on the 21.1 leg the classpath face is a union
+		// filesystem, and only a top-level getResource lands on a concrete member entry
+		// (a manual sub-resolve off the data root throws NoSuchFile there).
+		URL tSingularBandUrl = tLoader.getResource("data/gt6/loot_table");
+		URL tPluralBandUrl = tLoader.getResource("data/gt6/loot_tables");
+		assertNotNull(tSingularBandUrl, "the singular loot band ships on the classpath");
+		assertNotNull(tPluralBandUrl, "the plural loot band ships on the classpath");
+		Path tSingularRoot = Paths.get(tSingularBandUrl.toURI());
+		Path tPluralRoot = Paths.get(tPluralBandUrl.toURI());
 		List<Path> tTables = new ArrayList<>(0);
-		for (String tNamespace : new String[] {"gt6", "minecraft"}) {
-			Path tSingularBand = tDataRoot.resolve(tNamespace + "/loot_table");
-			if (!Files.isDirectory(tSingularBand)) continue;
-			try (Stream<Path> tWalk = Files.walk(tSingularBand)) {
-				tWalk.filter(tPath -> tPath.toString().endsWith(".json")).forEach(tTables::add);
-			}
+		try (Stream<Path> tWalk = Files.walk(tSingularRoot)) {
+			tWalk.filter(tPath -> tPath.toString().endsWith(".json")).forEach(tTables::add);
 		}
 		assertFalse(tTables.isEmpty(), "the singular loot band ships");
 		int tAdapted = 0;
 		for (Path tSingular : tTables) {
 			String tSingularText = Files.readString(tSingular);
-			String tRelative = tDataRoot.relativize(tSingular).toString().replace("loot_table", "loot_tables");
-			String tPluralText = Files.readString(tDataRoot.resolve(tRelative));
+			String tPluralText = Files.readString(tPluralRoot.resolve(tSingularRoot.relativize(tSingular)));
 			String tExpected = tPluralText.replace("\"minecraft:copy_nbt\"", "\"minecraft:copy_custom_data\"");
-			assertEquals(tExpected, tSingularText, tRelative + " differs beyond the codec-verified rename");
+			assertEquals(tExpected, tSingularText,
+					"gt6/loot_table/" + tSingularRoot.relativize(tSingular) + " differs beyond the codec-verified rename");
 			assertFalse(tSingularText.contains("minecraft:copy_nbt"),
-					tRelative + " a survivor is a boot-time LootDataType parse death");
+					"gt6/loot_table/" + tSingularRoot.relativize(tSingular) + " a survivor is a boot-time LootDataType parse death");
 			if (!tExpected.equals(tPluralText)) tAdapted++;
 		}
 		assertTrue(tAdapted >= 51, "the 51-table paint/foam carry band rides the adapter (got " + tAdapted + ")");
