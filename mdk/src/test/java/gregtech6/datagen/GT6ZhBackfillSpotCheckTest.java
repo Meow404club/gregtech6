@@ -81,8 +81,11 @@ public class GT6ZhBackfillSpotCheckTest {
 		// GT6EnUs face stopped being the whole en_us.json when the Lang chain
 		// (GT6CrucibleDatagen/GT6MoldDatagen) grew past the base walk.
 		// Task p28-cfoam-lang-key: en == zh == 2796 (+1 block.gt6.cfoam_owned + the +2
-		// block.gt6.test_machine[_idle] rows the registry-coverage gate lit up); the +17
-		// owned-cfoam zh VALUE renames (高级→强化, user ruling 2026-09-12) move no counts.
+		// block.gt6.test_machine[_idle] rows the registry-coverage gate lit up); the +33
+		// owned-cfoam zh VALUE renames (16 fluids + the block row 高级→强化, c0f16149 +
+		// the 16 spray items 高级→强化建筑泡沫喷罐, d1f49d52 — user rulings 2026-09-12)
+		// move no counts.
+		// (the stale "+17" note predated the spray follow-up; fixed by task p28-lang-batch1-fix)
 		// Task p28-crucible-jade-face (rebased onto the cfoam state): en == zh == 2800
 		// (+4 gt6.jade.crucible.* keys, both locales, hand-row zh values) — value renames
 		// move no counts, only key adds move the floor.
