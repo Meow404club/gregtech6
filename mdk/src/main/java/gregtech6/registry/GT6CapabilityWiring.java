@@ -21,6 +21,8 @@ import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.GT6FeBatteryBlockEntity; // p26 tail-append
+import gregtech6.tileentity.energy.GT6FeConverterBlockEntity; // p28 tail-append
+import gregtech6.tileentity.energy.GT6FeSourceBlockEntity; // p28 tail-append
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.inventories.GT6HopperBlockEntity; // p26 tail-append
 import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity; // p26 tail-append
@@ -93,6 +95,8 @@ public final class GT6CapabilityWiring {
 		registerBarrelBlockFluidHandler(aEvent);
 		registerBarrelItemHandlers(aEvent);
 		registerFeBattery(aEvent); // task p26-eu-bridge-outbound (tail-append; shared serial file)
+		registerFeConverters(aEvent); // task p28-b-fe-converter-machine (tail-append; shared serial file)
+		registerFeSource(aEvent); // task p28-b-fe-converter-machine (tail-append; shared serial file)
 		registerKitchenFaces(aEvent);
 		registerHopperFamily(aEvent); // task p26-storage-hopper-family (tail-append; shared serial file)
 		registerStaticStorages(aEvent); // task p26-storage-static-batch (tail-append; shared serial file)
@@ -319,6 +323,30 @@ public final class GT6CapabilityWiring {
 	private static void registerFeBattery(RegisterCapabilitiesEvent aEvent) {
 		BlockEntityType<GT6FeBatteryBlockEntity> tBattery = GT6FeBatteries.FE_BATTERY_BE.get();
 		aEvent.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, tBattery,
+				(aBe, aSide) -> aBe.energyStorage());
+	}
+
+	// -- the p28 FE converter family (task p28-b-fe-converter-machine; TAIL-APPENDED ROW,
+	// the shared serial file: append-only discipline) --
+	// One shared BET over the ONE ULV block (the balance ruling: a single machine, no
+	// ladder); the intake face serves on EVERY side (the
+	// BE's declared all-sides simplification), so the provider ignores the side. The forge
+	// leg answers through the GT6FeConverterBlockEntity.getCapability override and cannot
+	// see this file.
+
+	private static void registerFeConverters(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6FeConverterBlockEntity> tConverter = GT6FeConverters.FE_CONVERTER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, tConverter,
+				(aBe, aSide) -> aBe.energyStorage());
+	}
+
+	// -- the p28 FE source fixture (task p28-b-fe-converter-machine; TAIL-APPENDED ROW) --
+	// The EXTRACTABLE twin of the sink battery above: the converter's pull face resolves
+	// this storage through the level query exactly like any foreign FE source.
+
+	private static void registerFeSource(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6FeSourceBlockEntity> tSource = GT6FeBatteries.FE_SOURCE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, tSource,
 				(aBe, aSide) -> aBe.energyStorage());
 	}
 

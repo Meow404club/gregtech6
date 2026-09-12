@@ -35,7 +35,9 @@ import gregapi.data.TD;
 import gregapi.tileentity.energy.EnergyBridge;
 
 import gregtech6.block.energy.GT6FeBatteryBlock;
+import gregtech6.block.energy.GT6FeSourceBlock;
 import gregtech6.tileentity.energy.GT6FeBatteryBlockEntity;
+import gregtech6.tileentity.energy.GT6FeSourceBlockEntity;
 
 /**
  * The FE battery test fixture registration, card-owned (ADR-P3-4): a self-contained
@@ -109,6 +111,28 @@ public final class GT6FeBatteries {
 	public static final RegistryObject<BlockEntityType<GT6FeBatteryBlockEntity>> FE_BATTERY_BE =
 			BLOCK_ENTITY_TYPES.register("fe_battery", () -> BlockEntityType.Builder.of(
 					GT6FeBatteryBlockEntity::new, FE_BATTERY.get()).build(null));
+
+	// -------------------------------------------------------------------------
+	// the FE source fixture (task p28-b-fe-converter-machine — TAIL-APPENDED, the
+	// fixture domain): the EXTRACTABLE twin of the sink battery above. The converter's
+	// pull face (EnergyBridge.extractFe over the adapted extractEnergy) needs a source
+	// that canExtract — the sink's maxExtract=0 is the outbound-correct form and
+	// inbound-blind. Not on any creative tab (the fixture rule, /gt6fesource drives it).
+	// -------------------------------------------------------------------------
+
+	/** The FE source fixture block (the p28 inbound pull-face acceptance source). */
+	public static final RegistryObject<GT6FeSourceBlock> FE_SOURCE = BLOCKS.register("fe_source",
+			() -> new GT6FeSourceBlock(BlockBehaviour.Properties.of()
+					.strength(1.0F, 2.0F).sound(SoundType.COPPER)));
+
+	/** The fixture item — registered for /give parity with the sink battery, NO creative tab. */
+	public static final RegistryObject<Item> FE_SOURCE_ITEM = ITEMS.register("fe_source",
+			() -> new BlockItem(FE_SOURCE.get(), new Item.Properties()));
+
+	/** BET registers after BLOCK (vanilla registry order, the FE_BATTERY_BE doc). */
+	public static final RegistryObject<BlockEntityType<GT6FeSourceBlockEntity>> FE_SOURCE_BE =
+			BLOCK_ENTITY_TYPES.register("fe_source", () -> BlockEntityType.Builder.of(
+					GT6FeSourceBlockEntity::new, FE_SOURCE.get()).build(null));
 
 	private GT6FeBatteries() {}
 
