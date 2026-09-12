@@ -49,15 +49,29 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GT6Attachments;
-import gregtech6.registry.GT6BurningBoxes;
 import gregtech6.registry.GT6Boilers;
+import gregtech6.registry.GT6BurningBoxes;
+import gregtech6.registry.GT6Crucibles;
+import gregtech6.registry.GT6FeBatteries;
+import gregtech6.registry.GT6FoamBlocks;
+import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6Kinetics;
+import gregtech6.registry.GT6Kitchen;
 import gregtech6.registry.GT6Molds;
+import gregtech6.registry.GT6Sensors;
+import gregtech6.registry.GT6StaticStorages;
+import gregtech6.registry.GTBarrels;
+import gregtech6.registry.GTBlockEntities;
+import gregtech6.registry.GTEnergySources;
+import gregtech6.registry.GTFluidPipes;
+import gregtech6.registry.GTGrassBlocks;
+import gregtech6.registry.GTItemPipes;
+import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
-import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GTStoneBlocks;
+import gregtech6.registry.GTWires;
 import gregtech6.registry.GTWireSpecs;
 
 public class GT6LangParityTest {
@@ -142,8 +156,16 @@ public class GT6LangParityTest {
  * recording face now replays the mold chain (GT6MoldDatagen.Lang is final), so the zh ⊆ en
  * subset assertion covers the chain too. The ~79 zh VALUE fixes of this card (the P2 ledger
  * rows + the ultimet unification) are value-only and move no counts.
+ *
+ * <p>Task p28-cfoam-lang-key: raised to the measured 2796 — the +1 block.gt6.cfoam_owned
+ * row (the SPEC target) PLUS the +2 block.gt6.test_machine[_idle] rows the new
+ * registry-coverage gate lit up (the same whole-string-key-block omission class, fixed
+ * same-shape per the SPEC's staged discipline — both locales, zh values from the reference
+ * table's hand rows). The 17 zh VALUE renames of this card (the owned cfoam block/fluid
+ * family 高级→强化, user ruling 2026-09-12) are value-only and move no counts. zh == en,
+ * the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2793;
+private static final int ZH_KEY_FLOOR = 2796;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -787,5 +809,156 @@ private static final int ZH_KEY_FLOOR = 2793;
 			}
 		}
 		assertTrue(tOrphans.isEmpty(), "hand rows never emitted by the zh walks: " + tOrphans);
+	}
+
+	/**
+	 * The registry-coverage gate (task p28-cfoam-lang-key): EVERY gt6 block registered
+	 * through the port's DeferredRegisters whose Jade name line resolves the VANILLA
+	 * descriptionId ({@code block.gt6.<path>}) must carry that key on BOTH lang faces —
+	 * Jade's name row walks Block.getName → getDescriptionId (vanilla Block.java:308-313),
+	 * so a missing key renders the raw key on hover. The gate exists because the parity
+	 * subset + floor can never catch an en/zh-symmetric omission (block.gt6.cfoam_owned was
+	 * missing from all four faces for two phases while every gate stayed green).
+	 *
+	 * <p>The walk is offline-safe: it reads the DeferredRegister ENTRIES (the
+	 * RegistryObjects' stored ids, DeferredRegister.getEntries + RegistryObject.getId), never
+	 * the registry itself — no supplier runs. Blocks whose class OVERRIDES getName() with a
+	 * composed face never resolve the vanilla key and are EXEMPT — the exemption is DERIVED
+	 * from the same row tables the registrations loop over (the P27 batch2 bounded-replay
+	 * posture: a new row lands in the table, the exemption follows it automatically), and
+	 * every family cites its overriding class. The two RegisterEvent families (GTStoneBlocks
+	 * 272 + GTMaterialBlocks 3773, dynamic loops not visible here) are composed-name
+	 * universes too (GTStoneBlock.getName; the material blocks' stack name rides
+	 * GTMaterialPrefixBlockItem.getName(ItemStack)) with their own template pins
+	 * (stoneAndRowsTemplates*, the registry-pair guard) — documented here, not walkable.
+	 *
+	 * <p>The census pins make every direction of drift loud: a NEW block with a lang key
+	 * breaks the walked pin, a NEW composed row breaks the exempt pin, and a NEW
+	 * vanilla-default block WITHOUT a key breaks the missing-key assertion itself.
+	 */
+	@Test
+	public void everyRegisteredBlockDescriptionIdHasLangKeysOnBothFaces() {
+		List<Class<?>> tRegClasses = List.of(
+			GT6Attachments.class, GT6Boilers.class, GT6BurningBoxes.class, GT6Crucibles.class,
+			GT6FeBatteries.class, GT6FoamBlocks.class, GT6Hoppers.class, GT6Kinetics.class,
+			GT6Kitchen.class, GT6Molds.class, GT6Sensors.class, GT6StaticStorages.class,
+			GTBarrels.class, GTBlockEntities.class, GTEnergySources.class, GTFluidPipes.class,
+			GTGrassBlocks.class, GTItemPipes.class, GTMachines.class, GTMultiBlocks.class,
+			GTWires.class);
+		// The composed-name exemption, derived per family. Each line cites the block class
+		// whose getName() override composes the name from template keys (so the vanilla
+		// descriptionId is deliberately NOT backed by a lang key for that family).
+		Set<String> tExempt = new java.util.HashSet<>();
+		for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) tExempt.add(tRow.path()); // GTAttachmentSmallBlock.getName
+		for (GT6Boilers.BoilerRow tRow : GT6Boilers.allRows()) tExempt.add(tRow.path()); // BoilerTankBlock.getName (GT6Boilers:273)
+		for (GT6BurningBoxes.BurningBoxRow tRow : GT6BurningBoxes.allRows()) { // BurningBoxBlock.getName (GT6BurningBoxes:434); the BRICK atom keeps its key checked (B2 atomic pin)
+			if (tRow != GT6BurningBoxes.BRICK_ROW) tExempt.add(tRow.path());
+		}
+		for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.ROWS) tExempt.add(tRow.path()); // CrucibleBlock.getName (GT6Crucibles:182)
+		for (GT6Crucibles.CrucibleRow tRow : GT6Crucibles.CRUCIBLE_ROWS) tExempt.add(tRow.path()); // GTCrucibleControllerBlock.getName
+		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) tExempt.add(tRow.path()); // GT6HopperBlock.getName -> displayOf (GT6Hoppers:235)
+		for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) tExempt.add(tRow.path()); // SteamEngineBlock.getName (GT6Kinetics:401)
+		for (GT6Molds.MoldRow tRow : GT6Molds.ROWS) tExempt.add(tRow.path()); // MoldBlock.getName (GT6Molds:316)
+		for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) tExempt.add(tRow.path()); // MoldBlock.getName — the pre-carved band
+		tExempt.add("mold_ceramic"); // the carvable blank the GT6Molds.withBlank(CERAMIC_ROWS) walk prepends (private helper, same MoldBlock class)
+		for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) tExempt.add(tRow.path()); // TileEntityFaucet.FaucetBlock.getName
+		for (GTItemPipes.ItemPipeRow tRow : GTItemPipes.ROWS) tExempt.add(tRow.path()); // GTItemPipeBlock.getName
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.DRYER_ROWS) tExempt.add(tRow.path()); // GTBasicMachineBlock.getName — the mRow carriers
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CANNER_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.PRESS_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.EXTRUDER_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SIFTER_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.COMPRESSOR_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.WIREMILL_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.DISTILLERY_ROWS) tExempt.add(tRow.path());
+		for (GTMachines.OvenRow tRow : GTMachines.OVEN_ROWS) tExempt.add(tRow.path()); // GTOvenBlock.getName — the composed Heat_T ladder (p27-oven-heat-t-ladder)
+		// the Kinetic_T tier carriers T2-T4 (GTBasicMachineBlock mComposedName, p27-machine-
+		// energy-display-fix) — T1 keeps its vanilla atomic key (block.gt6.shredder/lathe/
+		// crusher) and stays CHECKED; there is no row table for the ladder, so the paths
+		// replay explicitly
+		for (String tFamily : List.of("shredder", "lathe", "crusher")) {
+			for (int tTier = 2; tTier <= 4; tTier++) tExempt.add(tFamily + "_t" + tTier);
+		}
+		for (GTMultiBlocks.MultiblockPartRow tRow : GTMultiBlocks.WALL_ROWS) tExempt.add(tRow.path()); // GTMultiBlockPartBlock.getName
+		for (GTMultiBlocks.LargeBoilerRow tRow : GTMultiBlocks.LARGE_BOILER_ROWS) tExempt.add(tRow.path()); // GTLargeBoilerBlock.getName
+		for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) tExempt.add(GTWireSpecs.registryName(tVariant)); // GTWireBlock.getName (the WIRES_COMPOSED_PREFIXES negative pins)
+		for (GTWireSpecs.Variant tVariant : GTWireSpecs.redstoneVariants()) tExempt.add(GTWireSpecs.registryName(tVariant));
+		// The CONSTRUCT-PHASE composed blocks (GT6Kinetics.onModConstruct: 44 GTAxleBlock + 8
+		// GTDieselEngineBlock — both compose over gt6.row.* templates): the forge leg's bare
+		// JVM never fires the construct event, so its DeferredRegister never carries them and
+		// the walk below never sees them; the 21.1 leg runs tests inside the mod classloader
+		// (the construct event HAS fired), so its walk DOES see them. They ride a SEPARATE
+		// set OUTSIDE the stale-exemption accounting (a forge-leg walk would report them as
+		// stale) — skipped by name on whichever leg carries them.
+		Set<String> tPhaseExempt = new java.util.HashSet<>();
+		for (GT6Kinetics.AxleSpec tSpec : GT6Kinetics.AXLE_SPECS) {
+			for (int tSize = 0; tSize < GT6Kinetics.AXLE_DIAMETERS.length; tSize++) tPhaseExempt.add(GT6Kinetics.axleName(tSpec.material(), tSize));
+		}
+		for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) tPhaseExempt.add(GT6Kinetics.dieselName(tSpec.material()));
+		assertEquals(52, tPhaseExempt.size(), "the construct-phase composed census (44 axles + 8 diesels)");
+
+		List<String> tMissing = new ArrayList<>();
+		int tSeen = 0;
+		int tChecked = 0;
+		int tExemptTotal = tExempt.size();
+		Map<String, Integer> tWalkedByClass = new java.util.LinkedHashMap<>();
+		for (Class<?> tClass : tRegClasses) {
+			// The register and its entries are read via PURE REFLECTION: the Forge 1.20.1
+			// DeferredRegister/RegistryObject take ONE type parameter while the NeoForge 21.1
+			// forms take TWO (DeferredRegister<T, R extends T>) — no compile-time reference to
+			// either class compiles on both legs, but the METHOD faces (getEntries/getId) are
+			// identical, so the ids are read reflectively (the field lookup above is already
+			// reflective; this only extends it one call deeper).
+			Object tRegister = null;
+			for (String tFieldName : List.of("BLOCKS", "BLOCKS_REG")) {
+				try {
+					Object tField = tClass.getField(tFieldName).get(null);
+					// GTGrassBlocks spells the DeferredRegister BLOCKS_REG (its BLOCKS is a
+					// List<RegistryObject<Block>> convenience face) — dispatch on the VALUE type
+					if (tField != null && tField.getClass().getName().endsWith("DeferredRegister")) {
+						tRegister = tField;
+						break;
+					}
+				} catch (ReflectiveOperationException tDenied) {
+					// try the next field name, then fail below
+				}
+			}
+			if (tRegister == null) throw new IllegalStateException(tClass + " has no BLOCKS/BLOCKS_REG DeferredRegister");
+			try {
+				@SuppressWarnings("unchecked")
+				java.util.Collection<Object> tEntries = (java.util.Collection<Object>)tRegister.getClass().getMethod("getEntries").invoke(tRegister);
+				for (Object tEntry : tEntries) {
+					net.minecraft.resources.ResourceLocation tId =
+						(net.minecraft.resources.ResourceLocation)tEntry.getClass().getMethod("getId").invoke(tEntry);
+					assertEquals("gt6", tId.getNamespace(), tClass + " block namespace");
+					String tPath = tId.getPath();
+					tSeen++;
+					if (tExempt.contains(tPath)) { tExempt.remove(tPath); continue; }
+					if (tPhaseExempt.contains(tPath)) continue;
+					tChecked++;
+					tWalkedByClass.merge(tClass.getSimpleName(), 1, Integer::sum);
+					String tKey = "block.gt6." + tPath;
+					if (!en().containsKey(tKey)) tMissing.add("en:" + tKey + " (" + tClass.getSimpleName() + ")");
+					if (!zh().containsKey(tKey)) tMissing.add("zh:" + tKey + " (" + tClass.getSimpleName() + ")");
+				}
+			} catch (ReflectiveOperationException tDenied) {
+				throw new IllegalStateException(tClass + " register walk failed", tDenied);
+			}
+		}
+		// the census pins: bump ONLY with a real registration change (the numbers are the
+		// p28 discovery-run measurements over the 21 DeferredRegisters). The exempt pin is
+		// the DERIVED size (a new composed row grows it); the checked pin is every block NOT
+		// exempted (a new vanilla-default block grows it); the leftover must stay 0. All
+		// three are LEG-INVARIANT: the 21.1 leg carries the +52 construct-phase kinetics
+		// entries, but those are phase-exempted before the checked count.
+		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
+			+ " exemption = a row table shrank or a path typo'd)");
+		assertEquals(903, tExemptTotal, "the derived composed-name exemption census");
+		assertEquals(87, tChecked, "the checked block census: every DeferredRegister block NOT"
+			+ " exempted as composed-name (seen = checked + exempt + construct-phase)"
+			+ " — per-class checked: " + tWalkedByClass);
+		assertTrue(tMissing.isEmpty(),
+			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"
+			+ " (Jade resolves block.gt6.<path>; a missing key hovers the raw key): " + tMissing);
 	}
 }

@@ -77,9 +77,12 @@ public class GT6ZhBackfillSpotCheckTest {
 	@Test
 	public void theBackfillClosesTheGapExactly() {
 		// task p27-lang-fix-batch2: the zh face covers the mold/crucible/faucet chain now
-		// (the ledger §6 gap closed, en == zh == 2793), so the en face rides the CHAIN
-		// recording — the plain GT6EnUs face stopped being the whole en_us.json when the
-		// Lang chain (GT6CrucibleDatagen/GT6MoldDatagen) grew past the base walk.
+		// (the ledger §6 gap closed), so the en face rides the CHAIN recording — the plain
+		// GT6EnUs face stopped being the whole en_us.json when the Lang chain
+		// (GT6CrucibleDatagen/GT6MoldDatagen) grew past the base walk.
+		// Task p28-cfoam-lang-key: en == zh == 2796 (+1 block.gt6.cfoam_owned + the +2
+		// block.gt6.test_machine[_idle] rows the registry-coverage gate lit up); the +17
+		// owned-cfoam zh VALUE renames (高级→强化, user ruling 2026-09-12) move no counts.
 		Map<String, String> tEn = GT6LangParityTest.chainedEnFace();
 		long tStillMissing = tEn.keySet().stream().filter(tKey -> !zh().containsKey(tKey)).count();
 		assertEquals(0L, tStillMissing,
