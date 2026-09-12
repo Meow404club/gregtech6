@@ -121,6 +121,26 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 * @param cheapOverclocking  the NBT_CHEAP_OVERCLOCKING column (T on all four rows — the
 	 *                           port overclock loop :773 runs unconditionally, "no config
 	 *                           source, always T")
+	 * @param maxMeltingPointK   the port-owned melting-gate column (task
+	 *                           p28-c-ulv-machine-ladder, NO upstream NBT key — the ULV
+	 *                           tier extension is the declared-deviation face): non-null
+	 *                           arms the {@code TileEntityBasicMachine.checkRecipe} input
+	 *                           melting-point hook (any input material stack with
+	 *                           {@code mMeltingPoint} above the ceiling refuses the
+	 *                           recipe), null = no gate. Every ULV row carries 1375 K —
+	 *                           the stone-crucible ceiling (GT6Crucibles.java:86), the
+	 *                           Smeltery :194 / Mold :189 container semantics
+	 *                           re-expressed as a machine gate. Rides the BE through
+	 *                           {@code GTMachines.applyRow} (the mask-carrier seam).
+	 * @param ulvVoltage         the voltage-ladder marker (task p28-c-ulv-machine-ladder,
+	 *                           the row-level counterpart of the upstream NBT_INPUT
+	 *                           column — the port folds NBT_INPUT into {@code tier}
+	 *                           through TIER_INPUTS, so the ULV rows need the explicit
+	 *                           selector): true = the BET factory feeds the BE the ULV
+	 *                           window GTMachines.ULV_TIER_INPUTS = {4, 8, 16} (8 EU × 1 A,
+	 *                           the V[0] packet lands mid-window) instead of
+	 *                           TIER_INPUTS[tier]; false = the legacy material-ladder
+	 *                           behaviour, byte-identical.
 	 */
 	public record MachineRow(String path, String matSlug, String matDisplay,
 			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material,
@@ -131,7 +151,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 			byte energySides, byte fluidIn, byte fluidOut, byte itemIn, byte itemOut,
 			byte fluidAutoIn, byte fluidAutoOut, byte itemAutoIn, byte itemAutoOut,
 			@Nullable java.util.function.Supplier<net.minecraft.world.inventory.MenuType<gregtech6.gui.machines.GTBasicMachineMenu>> menu,
-			boolean cheapOverclocking) {
+			boolean cheapOverclocking, @Nullable Long maxMeltingPointK, boolean ulvVoltage) {
 
 		/** The block properties (hardness == resistance on every row; the METAL machine sound). */
 		public net.minecraft.world.level.block.state.BlockBehaviour.Properties properties() {

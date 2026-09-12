@@ -398,7 +398,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A),
 				(byte)5 /*NBT_TANK_SIDE_AUTO_IN SIDE_BACK*/, (byte)1 /*NBT_TANK_SIDE_AUTO_OUT SIDE_TOP*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.DRYER_MENU::get /*gt6:dryer — the GUI pool card redeemed (p16-machine-fluid-gui ①)*/, true /*NBT_CHEAP_OVERCLOCKING T*/);
+				GTBasicMachinesMenus.DRYER_MENU::get /*gt6:dryer — the GUI pool card redeemed (p16-machine-fluid-gui ①)*/, true /*NBT_CHEAP_OVERCLOCKING T*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
 	}
 
 	/** The registered Dryer blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -460,11 +460,15 @@ public final class GTMachines {
 	/**
 	 * The row→BE mask assignment (public — the offline row test drives it against the
 	 * fixture machine; the BET factory calls it right after the {@link #machine} half).
+	 * Task p28-c-ulv-machine-ladder adds the melting-gate column: the row's
+	 * {@code maxMeltingPointK} rides onto {@code mMaxMeltingPointK} with the masks
+	 * (null = no gate, the every-legacy-row shape — the gate arms only on the ULV rows).
 	 */
 	public static TileEntityBasicMachine applyRow(TileEntityBasicMachine aMachine, GTBasicMachineBlock.MachineRow aRow) {
 		aMachine.mEnergyInputs = aRow.energySides();
 		aMachine.mFluidInputs = aRow.fluidIn();
 		aMachine.mFluidOutputs = aRow.fluidOut();
+		aMachine.mMaxMeltingPointK = aRow.maxMeltingPointK();
 		return aMachine;
 	}
 
@@ -519,7 +523,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
 				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.CANNER_MENU::get /*gt6:canner*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/);
+				GTBasicMachinesMenus.CANNER_MENU::get /*gt6:canner*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
 	}
 
 	/** The registered Canner blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -591,7 +595,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R, the :138 OR*/,
 				(byte)0 /*no NBT_TANK_SIDE_AUTO_IN*/, (byte)0 /*no NBT_TANK_SIDE_AUTO_OUT*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				null /*the menu-less carrier — the GUI clause: zero new gt6:* MenuType*/, true);
+				null /*the menu-less carrier — the GUI clause: zero new gt6:* MenuType*/, true, null, false);
 	}
 
 	/** The registered Press blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -678,7 +682,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R, the :138 OR*/,
 				(byte)0 /*no NBT_TANK_SIDE_AUTO_IN*/, (byte)0 /*no NBT_TANK_SIDE_AUTO_OUT*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				null /*the menu-less carrier — the GUI clause: zero new gt6:* MenuType*/, true);
+				null /*the menu-less carrier — the GUI clause: zero new gt6:* MenuType*/, true, null, false);
 	}
 
 	/** The registered Extruder blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -817,7 +821,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D*/,
 				(byte)-1 /*no NBT_TANK_SIDE_AUTO_IN key → SIDE_UNDEFINED*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
 				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_INV_SIDE_AUTO_OUT SIDE_BOTTOM*/,
-				null /*the menu-less carrier — zero new gt6:* MenuType (the card GUI clause)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/);
+				null /*the menu-less carrier — zero new gt6:* MenuType (the card GUI clause)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
 	}
 
 	/** One Compressor row factory — the sifter shape verbatim over the :1343 masks (energy SBIT_L) and RM.Compressor/KU. */
@@ -831,7 +835,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D*/,
 				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
 				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_INV_SIDE_AUTO_OUT SIDE_BOTTOM*/,
-				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/);
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
 	}
 
 	/** One Wiremill row factory — the :1373 masks (left in / right out, energy SBIT_B), RM.Wiremill/RU, NO parallel key → 1. */
@@ -845,7 +849,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
 				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/);
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
 	}
 
 	/** The registered Sifter blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -1033,7 +1037,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A),
 				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)5 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BACK*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				null /*the menu-less carrier — the GUI pool precedent*/, true /*NBT_CHEAP_OVERCLOCKING T*/);
+				null /*the menu-less carrier — the GUI pool precedent*/, true /*NBT_CHEAP_OVERCLOCKING T*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
 	}
 
 	/** The registered Distillery blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */

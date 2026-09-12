@@ -64,7 +64,7 @@ public class GTBasicMachineBlockDispatchTest {
 				0, 8, true,
 				() -> null /*NBT_RECIPEMAP — inert payload*/, TD.Energy.HU, "dryer",
 				(byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0,
-				aMenu, true);
+				aMenu, true, null, false);
 	}
 
 	/** A live bound-menu sentinel (the ANVIL type under the offline bootstrap) — the supplier reference is all the key reads. */
