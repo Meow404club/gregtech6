@@ -244,7 +244,10 @@ public class GTFluidsCFoamFamilyTest extends GTOfflineTestBase {
 		assertEquals("Advanced White C-Foam", tEn.get("fluid.gt6.cfoam_owned_white"), "the :125 compose over DYE_NAMES[15]");
 		assertEquals("Construction Foam", tEn.get("fluid.gt6.cfoam"), "the FL.java:432 base local (the 建筑泡沫 face)");
 		assertEquals("红色建筑泡沫", tZh.get("fluid.gt6.cfoam_red"), "dump S:fluid.cfoam.red :159");
-		assertEquals("高级白色建筑泡沫", tZh.get("fluid.gt6.cfoam_owned_white"), "dump S:fluid.cfoam.owned.white :155");
+		// task p28-cfoam-lang-key (user ruling 2026-09-12): the owned zh word became 强化
+		// (was the B4-era 高级; the dump S:fluid.cfoam.owned.white :155 word root rides the
+		// hand row, renamed with the owned block key 强化建筑泡沫)
+		assertEquals("强化白色建筑泡沫", tZh.get("fluid.gt6.cfoam_owned_white"), "dump S:fluid.cfoam.owned.white :155 under the p28 ruling word");
 		assertEquals("淡灰色建筑泡沫", tZh.get("fluid.gt6.cfoam_light_gray"), "dump S:fluid.cfoam.lightgray :137 (the port snake id)");
 		assertEquals("建筑泡沫", tZh.get("fluid.gt6.cfoam"), "dump S:fluid.ic2constructionfoam :361 under the ruling name");
 	}

@@ -256,12 +256,16 @@ public class GT6ZhCn extends LanguageProvider {
 		for (int i = 0; i < 16; i++) {
 			addDirect("fluid.gt6." + GTFluids.cfoamOwnedName(i));
 		}
-		// task p26-c-foam-block-family: the 4 C-Foam BLOCK display names — no upstream zh
-		// dump face exists for the modern block ids (the 1.7.10 block names rode the meta
-		// ladder); all four are hand rows in the reference table (the dried full block
-		// shares the fluid's 建筑泡沫 face, the fresh form prefixes 新鲜, the slabs append 台阶).
+		// task p26-c-foam-block-family + p28-cfoam-lang-key: the 5 C-Foam BLOCK display names
+		// — no upstream zh dump face exists for the modern block ids (the 1.7.10 block names
+		// rode the meta ladder); all five are hand rows in the reference table (the dried
+		// full block shares the fluid's 建筑泡沫 face, the fresh form prefixes 新鲜, the
+		// slabs append 台阶; the owned carrier joins at p28 as 强化建筑泡沫 — the user
+		// ruling 2026-09-12: the strengthened-spray foam must carry 强化, matching the en
+		// "Advanced C-Foam" face).
 		addDirect("block.gt6.cfoam_fresh");
 		addDirect("block.gt6.cfoam");
+		addDirect("block.gt6.cfoam_owned");
 		addDirect("block.gt6.cfoam_fresh_slab");
 		addDirect("block.gt6.cfoam_slab");
 		// the P22 spray-can domain (no upstream face anywhere — all hand)
@@ -637,6 +641,11 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GT6Circuits.TOOLTIP_KEY);
 		addDirect(GT6JeiPlugin.INFO_KEY_COKE_OVEN);
 		addDirect("block.gt6.example_chest");
+		// task p28-cfoam-lang-key: the TestMachine framework blocks joined the coverage gate —
+		// no getName override, so their Jade line resolves the vanilla keys; faces follow the
+		// TestMachineBlock javadoc's ticking/passive vocabulary (en "Test Machine (Passive)")
+		addDirect("block.gt6.test_machine");
+		addDirect("block.gt6.test_machine_idle");
 		addDirect("fluid.gt6.iron_molten");
 		addDirect("fluid.gt6.natural_gas");
 	}

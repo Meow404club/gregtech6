@@ -231,17 +231,23 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The C-Foam BLOCK family display names (task p26-c-foam-block-family): the two dried
-     * forms carry BlockItems, the two fresh forms + the owned carrier are item-less but
-     * keep their block keys (Jade/breaking overlays resolve block.gt6.* through
-     * getDescriptionId). Values are the upstream display names verbatim where they exist:
-     * "Fresh C-Foam" (BlockCFoamFresh.java:47) and "C-Foam" (BlockCFoam.java:38); the slab
-     * forms take the vanilla "&lt;name&gt; Slab" composition. zh values ride the reference
-     * table's hand layer (the GT6ZhCn mirror walk).
+     * The C-Foam BLOCK family display names (task p26-c-foam-block-family; the owned row is
+     * task p28-cfoam-lang-key): the two dried forms carry BlockItems, the two fresh forms +
+     * the owned carrier are item-less and resolve their block keys (Jade/breaking overlays
+     * resolve block.gt6.* through getDescriptionId — the owned row was MISSING from this walk
+     * until p28, so Jade showed the raw key on the foam a player sprayed). Values are the
+     * upstream display names verbatim where they exist: "Fresh C-Foam"
+     * (BlockCFoamFresh.java:47) and "C-Foam" (BlockCFoam.java:38); the owned carrier takes
+     * "Advanced C-Foam" (user ruling 2026-09-12 — the upstream owned foam is exactly what
+     * the "Advanced C-Foam Spray" sprays, MultiItemRandomTools.java:259, matching the owned
+     * FLUID family's Advanced word); the slab forms take the vanilla "&lt;name&gt; Slab"
+     * composition. zh values ride the reference table's hand layer (the GT6ZhCn mirror
+     * walk; zh owned = 强化建筑泡沫 per the same ruling).
      */
     private void addCFoamBlocks() {
         add("block.gt6.cfoam_fresh", "Fresh C-Foam");
         add("block.gt6.cfoam", "C-Foam");
+        add("block.gt6.cfoam_owned", "Advanced C-Foam");
         add("block.gt6.cfoam_fresh_slab", "Fresh C-Foam Slab");
         add("block.gt6.cfoam_slab", "C-Foam Slab");
     }
@@ -760,9 +766,18 @@ public class GT6EnUs extends LanguageProvider {
      * "chests" creative tab title. The tab carries the upstream MTE-registry category name
      * ("Chests", Loader_MultiTileEntities.java:132 / MultiTileEntityRegistry.java:191); the
      * block name resolves through MenuProvider#getDisplayName (block.getName).
+     *
+     * <p>The two TestMachine framework blocks join here (task p28-cfoam-lang-key, the
+     * registry-coverage gate's discovery run): they have NO getName override, so their Jade
+     * name line resolves the vanilla {@code block.gt6.test_machine[_idle]} keys — which no
+     * provider face ever wrote (the same omission class as cfoam_owned). Faces are the
+     * TestMachineBlock javadoc's own vocabulary ("a ticking and a passive variant"); the
+     * idle id carries "(Passive)" (the no-tick chain equivalent, TestMachineBlock.java:17-19).
      */
     private void addExampleMachine() {
         add("block.gt6.example_chest", "GT Example Chest");
+        add("block.gt6.test_machine", "Test Machine");
+        add("block.gt6.test_machine_idle", "Test Machine (Passive)");
         add("itemGroup.gt6.chests", "Chests");
     }
 
