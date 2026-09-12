@@ -6,10 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import net.minecraft.data.CachedOutput;
@@ -42,6 +44,32 @@ import net.minecraft.data.PackOutput;
  * hash to unchanged mirrors). A later removed source purges its stale alias through the
  * normal {@code purgeStaleAndWrite} accounting.
  *
+ * <p><b>The loot face is an ADAPTER, not a byte mirror</b> (task p28-neo-loot-copy-custom-data):
+ * the 1.21.1 loot parser never shipped {@code minecraft:copy_nbt} — 1.21.1
+ * LootItemFunctions.java:49 registers {@code minecraft:copy_custom_data}
+ * ({@code CopyCustomDataFunction}, the 1.20.5+ components-era rename) and the whole
+ * registry walk holds no {@code copy_nbt} — so the byte-mirrored singular band shipped 51
+ * loot tables that FAILED {@code LootDataType} parsing at boot ({@code "Unknown registry
+ * key in loot_function_type: minecraft:copy_nbt"} = whole table dead = zero drops on every
+ * broken pipe/painted machine). The mirror therefore rewrites the function name through
+ * {@link #adaptLootFunctions21}, whose shape gate admits ONLY the codec-verified delta:
+ * source/ops/path JSON is IDENTICAL across the legs — {@code NbtProviders.CODEC} (1.21.1
+ * NbtProviders.java:14-20) is {@code Either(INLINE_CODEC, TYPED_CODEC)} with
+ * {@code INLINE_CODEC = Codec.STRING} over "block_entity" (ContextNbtProvider.java:38-49,
+ * the same bare-string form the 1.20.1 GsonAdapterFactory inline serializer wrote),
+ * {@code NbtPathArgument.NbtPath.CODEC = Codec.STRING.comapFlatMap} (NbtPathArgument.java:540,
+ * the path text verbatim), and the {@code MergeStrategy} names replace/append/merge are the
+ * same {@code StringRepresentable}s (CopyCustomDataFunction.java:144-178 vs CopyNbtFunction
+ * .java:142-192). The carrier moves underneath, invisibly to the JSON: 1.20.1 landed the ops
+ * in the item's {@code tag} NBT (CopyNbtFunction.run getOrCreateTag) while 1.21.1 lands them
+ * in the {@code minecraft:custom_data} COMPONENT compound (CopyCustomDataFunction.run:66-77
+ * DataComponents.CUSTOM_DATA) — the {@code BlockEntityTag.'gt.foamed'} op paths stay
+ * verbatim RELATIVE to that compound. Ground truth cross-check: the 1.21.1 node's own
+ * datagen output (GT6LootTables.paintCopyNbt:803-817 builds the CopyCustomDataFunction
+ * builder; its codec serialization) is byte-identical to the 1.20.1 table except the
+ * function name. Any OTHER source shape (the typed-object nbt provider forms) is NOT
+ * codec-verified and throws — a silent rename would re-create the dead-table bug class.
+ *
  * <p><b>Scope</b>: the {@code gt6} and {@code minecraft} namespaces — the machine port's
  * own faces (the mold tag, the gt6 crafting rows, the loot tables, the vanilla-tag joins
  * dirt + mineable). The {@code forge} namespace is deliberately NOT mirrored: the platform
@@ -65,6 +93,15 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	/** The mirrored namespaces (see the Scope paragraph). */
 	private static final String[] NAMESPACES = {"gt6", "minecraft"};
 
+	/** The 1.20.1 loot carry function (LootItemFunctions.COPY_NBT — the tag-NBT carrier). */
+	private static final String COPY_NBT = "minecraft:copy_nbt";
+
+	/** The 1.21 rename (1.21.1 LootItemFunctions.java:49 — the custom_data component carrier). */
+	private static final String COPY_CUSTOM_DATA = "minecraft:copy_custom_data";
+
+	/** The loot face directory alias (the RENAMES row the adapter rides on). */
+	private static final String LOOT_FACE_SINGULAR = "loot_table";
+
 	private final PackOutput mOutput;
 
 	public GT6DualDirectoryFaces(PackOutput aOutput) {
@@ -85,7 +122,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 					tWalk.filter(Files::isRegularFile).filter(tPath -> tPath.toString().endsWith(".json")).forEach(tFile -> {
 						Path tTarget = tData.resolve(tNamespace).resolve(tRename[1])
 								.resolve(tSource.relativize(tFile));
-						tSaves.add(saveMirror(aCache, tFile, tTarget));
+						tSaves.add(saveMirror(aCache, tFile, tTarget, tRename[1]));
 					});
 				} catch (IOException tError) {
 					throw new RuntimeException("the dual-directory walk failed under " + tSource, tError);
@@ -95,13 +132,55 @@ public class GT6DualDirectoryFaces implements DataProvider {
 		return CompletableFuture.allOf(tSaves.toArray(new CompletableFuture[0]));
 	}
 
-	/** Re-saves one produced JSON at the singular path — parse + saveStable, the canonical form both legs. */
-	private static CompletableFuture<?> saveMirror(CachedOutput aCache, Path aSource, Path aTarget) {
+	/**
+	 * Re-saves one produced JSON at the singular path — parse + saveStable, the canonical
+	 * form both legs; the loot face rides the 1.21.1 adapter first ({@link
+	 * #adaptLootFunctions21}), every other family stays the byte identity.
+	 */
+	private static CompletableFuture<?> saveMirror(CachedOutput aCache, Path aSource, Path aTarget, String aSingularFace) {
 		try (Reader tReader = Files.newBufferedReader(aSource)) {
 			JsonElement tJson = JsonParser.parseReader(tReader);
+			if (LOOT_FACE_SINGULAR.equals(aSingularFace)) adaptLootFunctions21(tJson, aSource);
 			return DataProvider.saveStable(aCache, tJson, aTarget);
 		} catch (IOException tError) {
 			throw new RuntimeException("the dual-directory mirror failed reading " + aSource, tError);
+		}
+	}
+
+	/**
+	 * The loot face 1.21.1 adapter — the ONE value-shape delta the legs' loot JSON has
+	 * (task p28-neo-loot-copy-custom-data; the full codec evidence trail lives in the class
+	 * javadoc). Recursive over pools/entries/functions: every {@code copy_nbt} function
+	 * object becomes {@code copy_custom_data}, the member order is preserved (the Gson map
+	 * keeps insertion order; an existing key's value swap is not a structural change), and
+	 * the op arrays pass through untouched — their JSON is codec-identical across the legs.
+	 *
+	 * <p>The shape gate is fail-visible: a {@code source} that is NOT the inline bare
+	 * string (the typed-object nbt-provider forms, 1.20.1 GsonAdapterFactory typed keys vs
+	 * 1.21.1 {@code NbtProviders.TYPED_CODEC} dispatch) has NO verified cross-leg mapping,
+	 * so the mirror throws instead of emitting a table the 1.21.1 parser may reject —
+	 * a silent rename would re-create the dead-table bug class this adapter closes.
+	 */
+	private static void adaptLootFunctions21(JsonElement aJson, Path aSource) {
+		if (aJson.isJsonObject()) {
+			JsonObject tObject = aJson.getAsJsonObject();
+			JsonElement tFunction = tObject.get("function");
+			if (tFunction != null && tFunction.isJsonPrimitive() && COPY_NBT.equals(tFunction.getAsString())) {
+				JsonElement tSource = tObject.get("source");
+				if (tSource == null || !tSource.isJsonPrimitive()) {
+					throw new IllegalArgumentException("the loot mirror's 1.21.1 adapter only verifies the "
+							+ "inline-string nbt source (got " + tSource + " in " + aSource
+							+ ") — extend adaptLootFunctions21 with the codec evidence before renaming this shape");
+				}
+				tObject.addProperty("function", COPY_CUSTOM_DATA);
+			}
+			for (Map.Entry<String, JsonElement> tMember : tObject.entrySet()) {
+				adaptLootFunctions21(tMember.getValue(), aSource);
+			}
+		} else if (aJson.isJsonArray()) {
+			for (JsonElement tElement : aJson.getAsJsonArray()) {
+				adaptLootFunctions21(tElement, aSource);
+			}
 		}
 	}
 
