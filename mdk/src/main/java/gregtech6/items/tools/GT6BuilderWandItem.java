@@ -16,6 +16,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.ToolAction;
 
+import gregtech6.multiblock.GTMultiBlockPattern;
+import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 
@@ -53,7 +55,20 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  * <li>the per-cell placement sound stays cut at the Util seam (Util :144 note) — the
  *     click sound lives HERE, mapped from the upstream SFX.MC_XP trio (GT_Tool_Builderwand
  *     :43-45) to vanilla {@link SoundEvents#EXPERIENCE_ORB_PICKUP} with the
- *     {@code SFX.RANDOM_PITCH} flag (:63) as a light pitch wobble.</li>
+ *     {@code SFX.RANDOM_PITCH} flag (:63) as a light pitch wobble;</li>
+ * <li><b>the P28 ONE-CLICK ruling (user 2026-09-12, the declared deviation from the
+ *     upstream nine-click semantics — ADR 2026-09-12-p28-builder-wand-oneclick)</b>:
+ *     upstream the scaffold click only places the Chebyshev ≤ 1 neighbourhood of the
+ *     clicked cell (the ±1 click window, Util :51), so a fresh multiblock takes many
+ *     clicks; HERE one click forms the COMPLETE structure (research
+ *     research.p28-r-builder-wand-second-root: the "wand builds half a multiblock"
+ *     report was this window, not a port bug). Forming-pattern controllers ride the
+ *     checker's transactional SET walk ({@link GTMultiBlockStructureChecker#form} —
+ *     short stock or a hard failure leaves the world untouched and consumes nothing);
+ *     hand-written machines (pattern-less, declaration-only) get the null clicked pos —
+ *     the same gate's own open arm ({@code aClickedAt == null} = the whole structure is
+ *     the target). The upstream per-click wear stays: one durability point per click,
+ *     even when the scaffold is refused (the upstream :135 unconditional return 10).</li>
  * </ul>
  *
  * <p>The creative ruling (decisions.p24-builder-wand-op2-reform consumed at the Util/checker
@@ -140,22 +155,73 @@ public class GT6BuilderWandItem extends Item {
 	/**
 	 * The single dispatch + payment surface, shared by {@link #useOn} and the offline
 	 * doubles (the crowbarToolClick single-source-semantics shape). Server-side gate,
-	 * the two-pass upstream arm, the click sound, then the wear — and the unconditional
-	 * upstream {@code return 10} (the formed verdict rides the controller's own
-	 * mStructureOkay state, not the click's return).
+	 * the P28 ONE-CLICK scaffold ({@link #scaffoldForm} — the user ruling 2026-09-12
+	 * deviating from the upstream multi-click window semantics, see the class javadoc),
+	 * the linking pass, the click sound, then the wear — and the unconditional upstream
+	 * {@code return 10} (the formed verdict rides the controller's own mStructureOkay
+	 * state, not the click's return; the wear stays per CLICK even on a refused scaffold).
+	 *
+	 * <p>{@code aClickedAt} keeps its upstream role in the RESOLUTION ({@link #scaffoldTarget}
+	 * finds the controller through it) and rides here for the sound position — the placement
+	 * no longer narrows to its neighbourhood (the declared deviation).
 	 *
 	 * @return the upstream tool damage ({@link #SCAFFOLD_TOOL_DAMAGE}) or 0 on the client.
 	 */
 	public static long builderWandScaffold(TileEntityBase10MultiBlockBase aController, BlockPos aClickedAt,
 			@Nullable Player aPlayer, @Nullable Container aInventory, ItemStack aStack) {
 		if (aController.isClientSide()) return 0; // upstream :131/:142
-		aController.checkStructure2(aClickedAt, aPlayer, aInventory); // the placing pass (:132/:143)
-		aController.checkStructure(true);                            // the linking pass (:133/:144)
+		scaffoldForm(aController, aPlayer, aInventory); // the P28 one-click scaffold (was: checkStructure2(clickedPos, ...) — the ±1 window)
+		aController.checkStructure(true);               // the linking pass (:133/:144)
 		scaffoldSound(aController.getLevel(), aClickedAt);
 		if (aPlayer != null) {
 			payClick(aStack, aPlayer); // 10 units → 1 point, per click, no creative exemption
 		}
 		return SCAFFOLD_TOOL_DAMAGE;
+	}
+
+	/**
+	 * The P28 one-click scaffold, two mechanisms over one semantics (a click = the complete
+	 * structure, the ADR 2026-09-12-p28-builder-wand-oneclick deviation):
+	 * <ul>
+	 * <li><b>a forming-pattern controller</b> (the Coke Oven family, the Crucible family —
+	 *     the pattern carries {@code formingPart} cells) rides the checker's transactional
+	 *     SET walk {@link GTMultiBlockStructureChecker#form} fed
+	 *     {@code aController.patternWalkFacing()} (the p27-builder-wand-form-fix seam, the
+	 *     same feed the /gt6multiblock form arm rides): aClickedAt = null opens the ±1 gate
+	 *     for the WHOLE structure, and the walk's own failure semantics hold — already formed
+	 *     ⇒ zero side effects (idempotent), short stock / hard failure ⇒ zero writes, zero
+	 *     consumption (the RCON contract "insufficient stock ⇒ not formed AND not consumed");</li>
+	 * <li><b>every other controller</b> (the pattern-less Lightning Rod, the declaration-only
+	 *     Large Boiler — their hand-written checkStructure2 IS the validation logic this card
+	 *     must not touch) gets the null clicked pos through its own walk: the upstream ±1
+	 *     gate's own open arm ({@code aClickedAt == null} = the whole structure is the
+	 *     target, the exact mechanism the SET walk's beat 4 rides) — same one-click result,
+	 *     with the upstream best-effort per-cell consumption semantics (NOT the transactional
+	 *     one; the declared difference between the two arms).</li>
+	 * </ul>
+	 *
+	 * <p>The ±1 window code itself ({@code ITileEntityMultiBlockController.Util}
+	 * {@code .checkAndSetTarget}) is untouched — its other consumers (the 600-tick poll,
+	 * the RCON form arm, the hand-written walks fed the poll's null triple) keep the
+	 * upstream behaviour; only the WAND feed changed.
+	 */
+	private static void scaffoldForm(TileEntityBase10MultiBlockBase aController, @Nullable Player aPlayer, @Nullable Container aInventory) {
+		GTMultiBlockPattern tPattern = aController.getStructurePattern();
+		if (tPattern != null && hasFormingCells(tPattern)) {
+			// the checker's SET walk — aClickedAt = null = the whole structure is the click target
+			GTMultiBlockStructureChecker.form(aController, aController.patternWalkFacing(), aPlayer, aInventory);
+		} else {
+			// the hand-written walk, gate open (the deviation rides the gate's own null arm)
+			aController.checkStructure2(null, aPlayer, aInventory);
+		}
+	}
+
+	/** Whether the pattern declares forming cells (the checker-scaffoldable calibre). */
+	private static boolean hasFormingCells(GTMultiBlockPattern aPattern) {
+		for (GTMultiBlockPattern.Cell tCell : aPattern.cells()) {
+			if (tCell.forms()) return true;
+		}
+		return false;
 	}
 
 	/**
