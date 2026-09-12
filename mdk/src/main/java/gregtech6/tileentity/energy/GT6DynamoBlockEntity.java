@@ -261,12 +261,17 @@ public abstract class GT6DynamoBlockEntity extends TileEntityBase03TicksAndSync 
 	}
 
 	// the size bands, type-guarded like the upstream Stats.sizeMin/Rec/Max (:46-48 — the
-	// wrong type answers 0). Input band (Base10:76): min = in/2 (tInput > 16 every row,
-	// takesAnyLowerSize() = F), rec = in, max = 2in. Output band (Base10:77): min = out/2.
+	// wrong type answers 0). Input band (Base10:76 VERBATIM: {@code takesAnyLowerSize() ||
+	// tInput <= 16 ? 1 : tInput / 2} — this family answers takesAnyLowerSize() = F; the
+	// Electric T0 ULV row (task p28-c-ulv-dynamo-row) rides tInput = 8 ≤ 16 onto the
+	// small-arms min 1, every other row (all > 16) keeps the in/2 door the W1 port
+	// hardwired), rec = in, max = 2in. Output band (Base10:77 — NO ≤16 arm there): min =
+	// out/2.
 
 	@Override
 	public long getEnergySizeInputMin(TagData aEnergyType, byte aSide) {
-		return aEnergyType == TD.Energy.RU ? mInput / 2 : 0;
+		if (aEnergyType != TD.Energy.RU) return 0;
+		return mInput <= 16 ? 1 : mInput / 2; // Base10:76, takesAnyLowerSize() = F
 	}
 
 	@Override
