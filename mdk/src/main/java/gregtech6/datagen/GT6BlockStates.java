@@ -134,7 +134,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (45 blocks x 3, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder) + the ACT single-state model", mMachineTintModels);
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (48 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -474,11 +474,12 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * The addOven generalization (task p7-basicmachine-family ④): one {@code aBase} machine
-     * = three models ({@code aBase}, {@code aBase_active}, {@code aBase_running}) with the
-     * front textures {@code aBase_front}/{@code _active}/{@code _running} and the shared
-     * oven body textures (the in-scope placeholder set is the per-machine fronts only), the
-     * 16-variant blockstate, and the BlockItem model parenting the block model. The oven
-     * output is byte-identical to the pre-generalization shape (base "oven").
+     * = three models ({@code aBase}, {@code aBase_active}, {@code aBase_running}), the
+     * 16-variant blockstate, and the BlockItem model parenting the block model. Since task
+     * p28-b-port-overlay-render the three models come from {@link #familyMachineModel} —
+     * the family colored six-face body plus the six static state decals (the upstream
+     * :1014 two-layer form over the full upstream texture arrays :176-203, not the
+     * front-only split the p22 borrow started from).
      *
      * <p>Property identity: both GTOvenBlock.FACING and GTBasicMachineBlock.FACING are the
      * BlockStateProperties.HORIZONTAL_FACING instance, and GTOvenBlock.ACTIVE/RUNNING and
@@ -496,16 +497,16 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * The texture-base overload (task p8-machine-tiers-doinject ⑧): the model names derive
      * from {@code aBase} (so shredder_t2 gets shredder_t2/_active/_running models + its own
-     * 16-variant blockstate + the item parent) while the FRONT TEXTURES stay on the family's
-     * T1 set ({@code aTextureBase_colored_front} + the {@code aTextureBase_overlay_front*}
-     * state trio, task p22-paint-front-overlay-split) — the tier is not a visual state
-     * upstream (the rows :1294-1309 share the NBT_TEXTURE per family), so the ladder adds
-     * zero PNGs.
+     * 16-variant blockstate + the item parent) while the TEXTURES stay on the family's
+     * T1 set ({@code aTextureBase_colored_*} + the {@code aTextureBase_overlay_*} state
+     * trio, task p22-paint-front-overlay-split extended to all six faces by task
+     * p28-b-port-overlay-render) — the tier is not a visual state upstream (the rows
+     * :1294-1309 share the NBT_TEXTURE per family), so the ladder adds zero PNGs.
      */
     private void addMachine(Block aBlock, String aBase, String aTextureBase) {
-        ModelFile tInactive = machineModel(aBase, aTextureBase + "_colored_front", aTextureBase + "_overlay_front");
-        ModelFile tActive = machineModel(aBase + "_active", aTextureBase + "_colored_front", aTextureBase + "_overlay_front_active");
-        ModelFile tRunning = machineModel(aBase + "_running", aTextureBase + "_colored_front", aTextureBase + "_overlay_front_running");
+        ModelFile tInactive = familyMachineModel(aBase, aTextureBase, "");
+        ModelFile tActive = familyMachineModel(aBase + "_active", aTextureBase, "_active");
+        ModelFile tRunning = familyMachineModel(aBase + "_running", aTextureBase, "_running");
         getVariantBuilder(aBlock).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(GTOvenBlock.FACING)) {
@@ -523,7 +524,13 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * One cube model over the four-texture key set: down/up/north(front)/south+east+west(side).
-     * Task p21-paintable-tint-render: the vanilla {@code block/cube} element is re-declared
+     * The p22 two-element form. ACT-only since task p28-b-port-overlay-render (the
+     * Advanced Crafting Table is the one machine family with no borrowed side art — the
+     * craftingtables/advanced upstream group ships fronts only — so it keeps the shared
+     * oven placeholder body and the single front decal; every addMachine family moved to
+     * {@link #familyMachineModel}).
+     *
+     * <p>Task p21-paintable-tint-render: the vanilla {@code block/cube} element is re-declared
      * in the child with {@code tintindex 0} on EVERY face — the machine cube is six-texture,
      * so the {@link #tintedCubeAll} {@code #all} shortcut does not apply and the per-face
      * element form is required. Upstream canonical: every faced face multiplies the
@@ -568,6 +575,96 @@ public final class GT6BlockStates extends BlockStateProvider {
         tModel.element()
                 .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
                 .face(Direction.NORTH).texture("#overlay").cullface(Direction.NORTH)
+                .end();
+        mMachineTintModels++;
+        return tModel;
+    }
+
+    /**
+     * Task p28-b-port-overlay-render — the full-family machine model over the borrowed
+     * upstream basicmachines texture arrays (MultiTileEntityBasicMachine.java:176-203:
+     * mTexturesMaterial + the mTexturesInactive/Active/Running trio, each the six-entry
+     * array [bottom, top, left, front, right, back]). The upstream :1014 two-layer form
+     * over ALL six faces, not the p22 front-only split:
+     * <ul>
+     * <li><b>body (element 0)</b> — the full 0..16 cube, every face tintindex 0 (the
+     *     mRGBa paint seat, unchanged from p21), bound to the family's OWN colored art
+     *     ({@code <family>_colored_bottom/top/front/back/left/right}) instead of the shared
+     *     oven placeholders. The side art is no longer the oven's: every family ships its
+     *     own colored six-set upstream (the A-card borrow, assets/README.md).</li>
+     * <li><b>six state decals (elements 1-6)</b> — thin 0.01 plates floating 0.01 outside
+     *     each face (the p22 front-decal geometry generalized), each a single face with NO
+     *     tintindex (the UNCOLOURED second layer, BlockTextureDefault.java:179-180) and
+     *     cullface synced with the body's own face (the p22 anti-z-fight + cull pairing).
+     *     The decal state trio is selected per model by {@code aStateSuffix} — "" /
+     *     {@code _active} / {@code _running} = the upstream :1014 pick
+     *     {@code (mActive ? mTexturesActive : mRunning ? mTexturesRunning : mTexturesInactive)}
+     *     — driven purely by the existing ACTIVE/RUNNING blockstate variants (no new
+     *     state, no BE read: the port art is statically baked, the census ruling).</li>
+     * </ul>
+     *
+     * <p>Face mapping: the texture keys are named by the UPSTREAM art token
+     * ({@code overlay_front/back/left/right/top/bottom}), the model faces map per the
+     * upstream FACING_ROTATIONS table (CS.java:528-537) with the model-space front at
+     * north: for a north-facing machine the table binds west→right and east→left, so the
+     * west face carries {@code #overlay_right}/{@code _colored_right} and the east face
+     * {@code #overlay_left}/{@code _colored_left}; the blockstate y rotations reproduce
+     * the remaining facings exactly (the same mapping the GTOvenOverlayModel
+     * textureFaceOf table mirrors at runtime). UVs stay the vanilla defaults (the p22
+     * precedent); the 1.7.10 "stupidly mirrored" north/east icon quirk (CS.java:516-518)
+     * is NOT compensated — the side-decal orientations join the P28 runClient目验池.
+     *
+     * <p>Oven interaction note: the P9 GTOvenOverlayModel wraps the oven ladder's baked
+     * models and stacks its own snapshot-driven cutout overlay quads on the solid layer —
+     * with these static decals the active/running oven draws the same upstream art twice
+     * (byte-same source PNGs, 0.002 vs 0.01 offsets). Declared overlap: retiring the P9
+     * dynamic layer is a separate card's call (render code, out of this card's scope).
+     */
+    private ModelFile familyMachineModel(String aName, String aTextureBase, String aStateSuffix) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc("block/" + aTextureBase + "_colored_bottom"))
+                .texture("up", modLoc("block/" + aTextureBase + "_colored_top"))
+                .texture("north", modLoc("block/" + aTextureBase + "_colored_front"))
+                .texture("south", modLoc("block/" + aTextureBase + "_colored_back"))
+                .texture("west", modLoc("block/" + aTextureBase + "_colored_right")) // FACING_ROTATIONS[north][west]=4=right
+                .texture("east", modLoc("block/" + aTextureBase + "_colored_left")) // FACING_ROTATIONS[north][east]=2=left
+                .texture("overlay_front", modLoc("block/" + aTextureBase + "_overlay_front" + aStateSuffix))
+                .texture("overlay_back", modLoc("block/" + aTextureBase + "_overlay_back" + aStateSuffix))
+                .texture("overlay_left", modLoc("block/" + aTextureBase + "_overlay_left" + aStateSuffix))
+                .texture("overlay_right", modLoc("block/" + aTextureBase + "_overlay_right" + aStateSuffix))
+                .texture("overlay_top", modLoc("block/" + aTextureBase + "_overlay_top" + aStateSuffix))
+                .texture("overlay_bottom", modLoc("block/" + aTextureBase + "_overlay_bottom" + aStateSuffix));
+        // element 0 — the tinted body cube (p21/p22 shape, only the texture bindings changed).
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        // elements 1-6 — the six state decals: one thin plate per face, the p22 front-decal
+        // form generalized (0.01 offset out, single face, no tintindex, cullface synced).
+        tModel.element() // front (north)
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_front").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // back (south)
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_back").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // left art (east face — FACING_ROTATIONS[north][east]=2=left)
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_left").cullface(Direction.EAST)
+                .end();
+        tModel.element() // right art (west face — FACING_ROTATIONS[north][west]=4=right)
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_right").cullface(Direction.WEST)
+                .end();
+        tModel.element() // bottom (down)
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_bottom").cullface(Direction.DOWN)
+                .end();
+        tModel.element() // top (up)
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_top").cullface(Direction.UP)
                 .end();
         mMachineTintModels++;
         return tModel;

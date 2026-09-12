@@ -14,6 +14,16 @@
  * composites are retired for the separate colored/_colored_front + _overlay_front*
  * borrows (assets/README.md).
  *
+ * <p>Task p28-b-port-overlay-render completes the six-face form: each model is SEVEN
+ * elements — the tinted body cube now bound to the family's OWN colored six-set
+ * ({@code <family>_colored_bottom/top/front/back/left/right}, the A-card borrow) plus six
+ * thin untinted state decals (the p22 front decal generalized to all six faces), one per
+ * face keyed by the upstream art token and mapped per the upstream FACING_ROTATIONS table
+ * (CS.java:528-537 — model-space front at north: west carries the RIGHT art, east the
+ * LEFT art; the blockstate y rotations reproduce the remaining facings). The decal state
+ * trio ("" / _active / _running) switches per blockstate variant exactly as the upstream
+ * :1014 pick — the p28 static-art ruling (no BE read).
+ *
  * <p>Census ground truth: the machine domain is the oven Heat_T ladder (4, task
  * p27-oven-heat-t-ladder) + shredder/crusher/lathe T1-T4
  * (12) + dryer (4) + distillery (4) + canner (4, task p24-canner-machine) + sifter/
@@ -35,6 +45,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -63,11 +74,45 @@ class GT6MachinePaintRenderDatagenTest {
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
 
-    /** The overlay-texture state suffix per model (the p22 split-front decal carriers). */
-    private static final List<String> OVERLAY_SUFFIXES =
-            List.of("_overlay_front", "_overlay_front_active", "_overlay_front_running");
+    /** The decal state suffix per model — the upstream :1014 pick (the p28 static-art ruling). */
+    private static final List<String> STATE_SUFFIXES = List.of("", "_active", "_running");
 
+    /** The six body face keys of the block/cube parent. */
     private static final List<String> FACE_KEYS = List.of("down", "up", "north", "south", "west", "east");
+
+    /**
+     * Body face → upstream colored art token — the FACING_ROTATIONS row for a north-facing
+     * machine (CS.java:528-537 row 2, [side]→index over [bottom,top,left,front,right,back]):
+     * west→4=right art, east→2=left art; the blockstate y rotations reproduce the rest.
+     */
+    private static final Map<String, String> BODY_FACE_ART = Map.of(
+            "down", "bottom", "up", "top",
+            "north", "front", "south", "back",
+            "west", "right", "east", "left");
+
+    /** The upstream overlay art tokens (the :176-203 six-entry array order). */
+    private static final List<String> OVERLAY_TOKENS = List.of("front", "back", "left", "right", "top", "bottom");
+
+    /** One expected decal element: the model face, the art-token texture key, the slab box. */
+    private record DecalSpec(String face, String key, double[] from, double[] to) {}
+
+    /**
+     * The six decals in model element order (1..6), the p22 front-decal geometry
+     * (16x16x0.01, floating 0.01 outside the body plane) generalized to every face.
+     */
+    private static final List<DecalSpec> DECALS = List.of(
+            new DecalSpec("north", "overlay_front",
+                    new double[] {0.0, 0.0, -0.01}, new double[] {16.0, 16.0, 0.0}),
+            new DecalSpec("south", "overlay_back",
+                    new double[] {0.0, 0.0, 16.0}, new double[] {16.0, 16.0, 16.01}),
+            new DecalSpec("east", "overlay_left", // FACING_ROTATIONS[north][east]=2=left
+                    new double[] {16.0, 0.0, 0.0}, new double[] {16.01, 16.0, 16.0}),
+            new DecalSpec("west", "overlay_right", // FACING_ROTATIONS[north][west]=4=right
+                    new double[] {-0.01, 0.0, 0.0}, new double[] {0.0, 16.0, 16.0}),
+            new DecalSpec("down", "overlay_bottom",
+                    new double[] {0.0, -0.01, 0.0}, new double[] {16.0, 0.0, 16.0}),
+            new DecalSpec("up", "overlay_top",
+                    new double[] {0.0, 16.0, 0.0}, new double[] {16.0, 16.01, 16.0}));
 
     private static JsonObject json(String aPath) throws Exception {
         try (InputStream tStream = GT6MachinePaintRenderDatagenTest.class.getClassLoader()
@@ -77,12 +122,20 @@ class GT6MachinePaintRenderDatagenTest {
         }
     }
 
-    /** The tier rows keep the family front textures (the p8 texture-base overload). */
+    /** The tier rows keep the family textures (the p8 texture-base overload). */
     private static String familyOf(String aBase) {
         for (String tTier : new String[] {"_t2", "_t3", "_t4"}) {
             if (aBase.endsWith(tTier)) return aBase.substring(0, aBase.length() - tTier.length());
         }
         return aBase;
+    }
+
+    private static void assertCoord(JsonObject aElement, String aKey, double[] aExpected, String aName) {
+        var tArray = aElement.getAsJsonArray(aKey);
+        for (int i = 0; i < aExpected.length; i++) {
+            assertEquals(aExpected[i], tArray.get(i).getAsDouble(),
+                    aName + " " + aKey + "[" + i + "]");
+        }
     }
 
     /** The census shape: 48 bases x 3 models = 144 tinted block models. */
@@ -93,36 +146,49 @@ class GT6MachinePaintRenderDatagenTest {
                 "48 blocks x 3 models — the pinned tinted-model total");
     }
 
-    /** Every machine block model: the block/cube parent, the seven-texture key set, the full tinted body cube + the thin untinted front decal (task p22-paint-front-overlay-split). */
+    /**
+     * Every machine block model: the block/cube parent, the twelve-texture key set (six
+     * body keys + the six overlay art tokens), the full tinted body cube over the family's
+     * own colored art, and the six thin untinted state decals (task p28-b-port-overlay-render).
+     */
     @Test
     void everyMachineModelCarriesTintIndexZeroOnAllSixFaces() throws Exception {
         for (String tBase : MACHINE_BASES) {
             String tFamily = familyOf(tBase);
             for (int tSuffix = 0; tSuffix < MODEL_SUFFIXES.size(); tSuffix++) {
                 String tModelName = tBase + MODEL_SUFFIXES.get(tSuffix);
+                String tStateSuffix = STATE_SUFFIXES.get(tSuffix);
                 JsonObject tModel = json("assets/gt6/models/block/" + tModelName + ".json");
                 assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(),
                         tModelName + ": the block/cube parent (display transforms + particle binding kept)");
                 var tTextures = tModel.getAsJsonObject("textures");
-                assertEquals("gt6:block/" + tFamily + "_colored_front",
-                        tTextures.get("north").getAsString(),
-                        tModelName + ": the plain grayscale family front (the P22 colored/ borrow)");
-                assertEquals("gt6:block/" + tFamily + OVERLAY_SUFFIXES.get(tSuffix),
-                        tTextures.get("overlay").getAsString(),
-                        tModelName + ": the family state decal for this state");
+
+                // the body keys — the family's OWN colored art, mapped per FACING_ROTATIONS
+                for (String tFaceKey : FACE_KEYS) {
+                    assertEquals("gt6:block/" + tFamily + "_colored_" + BODY_FACE_ART.get(tFaceKey),
+                            tTextures.get(tFaceKey).getAsString(),
+                            tModelName + " body face " + tFaceKey + ": the family colored "
+                                    + BODY_FACE_ART.get(tFaceKey) + " art (the FACING_ROTATIONS mapping)");
+                }
+                // the overlay keys — the family state decal trio for this state
+                for (String tToken : OVERLAY_TOKENS) {
+                    assertEquals("gt6:block/" + tFamily + "_overlay_" + tToken + tStateSuffix,
+                            tTextures.get("overlay_" + tToken).getAsString(),
+                            tModelName + ": the family " + tToken + " state decal for this state");
+                }
                 Set<String> tExpectedKeys = new HashSet<>(FACE_KEYS); // the six body keys…
-                tExpectedKeys.add("overlay"); // …plus the decal key
+                for (String tToken : OVERLAY_TOKENS) tExpectedKeys.add("overlay_" + tToken); // …plus the six decals
                 assertEquals(tExpectedKeys, tTextures.keySet(),
-                        tModelName + ": the seven-texture key set (six body keys + the decal)");
+                        tModelName + ": the twelve-texture key set (six body keys + the six art tokens)");
+
                 var tElements = tModel.getAsJsonArray("elements");
-                assertEquals(2, tElements.size(), tModelName + ": body cube + front decal (the p22 split)");
+                assertEquals(7, tElements.size(),
+                        tModelName + ": body cube + six state decals (the p28 six-face split)");
 
                 // element 0 — the body cube, unchanged from p21: full 0..16, six faces, tintindex 0 each.
                 JsonObject tBody = tElements.get(0).getAsJsonObject();
-                assertEquals(0.0, tBody.getAsJsonArray("from").get(0).getAsDouble(),
-                        tModelName + ": body from = the full 0..16 cube");
-                assertEquals(16.0, tBody.getAsJsonArray("to").get(0).getAsDouble(),
-                        tModelName + ": body to = the full 0..16 cube");
+                assertCoord(tBody, "from", new double[] {0.0, 0.0, 0.0}, tModelName + ": body");
+                assertCoord(tBody, "to", new double[] {16.0, 16.0, 16.0}, tModelName + ": body");
                 var tFaces = tBody.getAsJsonObject("faces");
                 assertEquals(6, tFaces.size(), tModelName + ": six body faces");
                 for (String tFaceKey : FACE_KEYS) {
@@ -135,33 +201,35 @@ class GT6MachinePaintRenderDatagenTest {
                             tModelName + " face " + tFaceKey + ": the vanilla cube cullface");
                 }
 
-                // element 1 — the front decal: 16x16x0.01 floating 0.01 north of the body
-                // plane, one north face, NO tintindex (the upstream UNCOLOURED overlay layer),
-                // cullface north syncing its cull with the body's own north face.
-                JsonObject tDecal = tElements.get(1).getAsJsonObject();
-                assertEquals(0.0, tDecal.getAsJsonArray("from").get(0).getAsDouble(),
-                        tModelName + ": decal from x = full width");
-                assertEquals(-0.01, tDecal.getAsJsonArray("from").get(2).getAsDouble(),
-                        tModelName + ": decal from z = 0.01 north of the body plane (anti z-fight)");
-                assertEquals(16.0, tDecal.getAsJsonArray("to").get(0).getAsDouble(),
-                        tModelName + ": decal to x = full width");
-                assertEquals(0.0, tDecal.getAsJsonArray("to").get(2).getAsDouble(),
-                        tModelName + ": decal to z = flush with the body plane");
-                var tDecalFaces = tDecal.getAsJsonObject("faces");
-                assertEquals(1, tDecalFaces.size(), tModelName + ": the decal is a single north quad");
-                JsonObject tDecalNorth = tDecalFaces.getAsJsonObject("north");
-                assertEquals("#overlay", tDecalNorth.get("texture").getAsString(),
-                        tModelName + ": decal face texture = the state decal");
-                assertTrue(!tDecalNorth.has("tintindex"),
-                        tModelName + ": decal face has NO tintindex — the untinted overlay layer "
-                                + "(BlockTextureDefault(IIcon,boolean) = UNCOLOURED)");
-                assertEquals("north", tDecalNorth.get("cullface").getAsString(),
-                        tModelName + ": decal face cullface north — syncs its cull with the body");
+                // elements 1-6 — the state decals: the p22 front-decal form on every face,
+                // each a single quad with NO tintindex (the upstream UNCOLOURED overlay
+                // layer) and the cullface synced with the body's own face.
+                for (int tDecal = 0; tDecal < DECALS.size(); tDecal++) {
+                    DecalSpec tSpec = DECALS.get(tDecal);
+                    JsonObject tElement = tElements.get(tDecal + 1).getAsJsonObject();
+                    String tName = tModelName + " decal " + tSpec.face();
+                    assertCoord(tElement, "from", tSpec.from(), tName);
+                    assertCoord(tElement, "to", tSpec.to(), tName);
+                    var tDecalFaces = tElement.getAsJsonObject("faces");
+                    assertEquals(1, tDecalFaces.size(), tName + ": the decal is a single quad");
+                    JsonObject tFace = tDecalFaces.getAsJsonObject(tSpec.face());
+                    assertEquals("#" + tSpec.key(), tFace.get("texture").getAsString(),
+                            tName + ": decal face texture = the " + tSpec.key() + " state art");
+                    assertTrue(!tFace.has("tintindex"),
+                            tName + ": decal face has NO tintindex — the untinted overlay layer "
+                                    + "(BlockTextureDefault(IIcon,boolean) = UNCOLOURED)");
+                    assertEquals(tSpec.face(), tFace.get("cullface").getAsString(),
+                            tName + ": decal face cullface — syncs its cull with the body");
+                }
             }
         }
     }
 
-    /** Every machine blockstate: 16 variants (4 facings x 2 active x 2 running) over exactly the three tinted models. */
+    /**
+     * Every machine blockstate: 16 variants (4 facings x 2 active x 2 running), each wired
+     * to exactly the state model the upstream :1014 pick demands and the y rotation the
+     * FACING property demands (north 0 = omitted, east 90, south 180, west 270).
+     */
     @Test
     void machineBlockstatesWireExactlyTheThreeTintedModels() throws Exception {
         for (String tBase : MACHINE_BASES) {
@@ -173,8 +241,34 @@ class GT6MachinePaintRenderDatagenTest {
             List<String> tModelKeys = new ArrayList<>();
             for (String tSuffix : MODEL_SUFFIXES) tModelKeys.add("gt6:block/" + tBase + tSuffix);
             for (var tEntry : tVariants.entrySet()) {
+                String tVariantKey = tEntry.getKey();
                 JsonObject tRow = tEntry.getValue().getAsJsonObject();
                 tReferenced.add(tRow.get("model").getAsString());
+                // the variant key: "active=<b>,facing=<dir>,running=<b>" (the name-sorted order)
+                String[] tParts = tVariantKey.split(",");
+                assertEquals(3, tParts.length, tBase + " variant " + tVariantKey + ": the three axes");
+                boolean tActive = Boolean.parseBoolean(tParts[0].substring("active=".length()));
+                String tFacing = tParts[1].substring("facing=".length());
+                boolean tRunning = Boolean.parseBoolean(tParts[2].substring("running=".length()));
+                // the :1014 state pick — active wins over running, inactive is the bare model
+                String tExpectedModel = "gt6:block/" + tBase
+                        + (tActive ? "_active" : tRunning ? "_running" : "");
+                assertEquals(tExpectedModel, tRow.get("model").getAsString(),
+                        tBase + " variant " + tVariantKey + ": the state model");
+                // the FACING rotation — the vanilla serializer omits y = 0
+                int tExpectedY = switch (tFacing) {
+                    case "east" -> 90;
+                    case "south" -> 180;
+                    case "west" -> 270;
+                    default -> 0; // north
+                };
+                if (tExpectedY == 0) {
+                    assertTrue(!tRow.has("y") || tRow.get("y").getAsInt() == 0,
+                            tBase + " variant " + tVariantKey + ": north needs no y rotation");
+                } else {
+                    assertEquals(tExpectedY, tRow.get("y").getAsInt(),
+                            tBase + " variant " + tVariantKey + ": the facing y rotation");
+                }
             }
             assertEquals(new TreeSet<>(tModelKeys), tReferenced,
                     tBase + ": the variant table wires exactly the three tinted models");
