@@ -48,6 +48,13 @@ import gregtech6.registry.GTMultiBlocks;
  *     {@code checkStructure2(controllerPos, player=null, fakeInventory)} (the consume path:
  *     null player auto-approves the canEdit chain and ST.use-equivalent shrinks the stock)
  *     followed by the linking {@code checkStructure(true)} pass;</li>
+ * <li>{@code wandclick <clickedPos> [stock]} — the PLAYER-FEED builder-wand arm (task
+ *     p28-builder-wand-oneclick): resolves the scaffold target from the CLICKED cell through
+ *     {@code GT6BuilderWandItem.scaffoldTarget} (the exact {@code useOn} resolution — a
+ *     controller or a linked part) and drives the production dispatch
+ *     {@code GT6BuilderWandItem.builderWandScaffold} with that real clicked coordinate (the
+ *     other arms feed the controller pos or null — this is the arm that covers the player
+ *     feed path); under the P28 one-click ruling one click forms the complete structure;</li>
  * <li>{@code form <pos> [stock]} — the SET scaffold trigger (task p16-form-scaffold): the
  *     source player (or the stocked fake player for console/RCON) completes a pattern-bound
  *     structure from inventory — the checker's SET walk places and consumes at the missing
@@ -122,6 +129,12 @@ public final class GTMultiBlockCommand {
 			.then(Commands.literal("wand")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> wand(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+			.then(Commands.literal("wandclick")
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(aContext -> wandclick(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), FORM_STOCK))
+					.then(Commands.argument("stock", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 999))
+						.executes(aContext -> wandclick(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "stock"))))))
 			.then(Commands.literal("form")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> form(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), FORM_STOCK))
@@ -259,7 +272,7 @@ public final class GTMultiBlockCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> boilerPlunge(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
 		aEvent.getDispatcher().register(tMulti);
-		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|form|check|tick|input|ignite|menu|fluid|boiler place|frame|wand|check|stat|fill|inject-hu|dismantle|crucible check|stat|feed|heat|pour)");
+		LOGGER.info("Registered GT6 multiblock acceptance command /gt6multiblock (place|frame|hole|wand|wandclick|form|check|tick|input|ignite|menu|fluid|boiler place|frame|wand|check|stat|fill|inject-hu|dismantle|crucible check|stat|feed|heat|pour)");
 	}
 
 	private static TileEntityCokeOven ovenAt(CommandSourceStack aSource, BlockPos aPos) {
@@ -377,6 +390,58 @@ public final class GTMultiBlockCommand {
 			return 0;
 		}
 		aSource.sendSuccess(() -> Component.literal("GT6 multiblock wand check OK: " + tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * {@code wandclick <clickedPos> [stock]} — the PLAYER-FEED builder-wand arm (task
+	 * p28-builder-wand-oneclick). The other arms never feed a real player click: the form
+	 * arm feeds the checker null (the whole structure in one shot by design), the wand arm
+	 * feeds the controller pos to the machine's own walk — the click coordinate the real
+	 * {@code GT6BuilderWandItem.useOn} resolves existed on no RCON path before this arm.
+	 * Here the scaffold target is resolved FROM the clicked cell through
+	 * {@code GT6BuilderWandItem.scaffoldTarget} (the useOn resolution: a controller, or a
+	 * linked part through the relay) and the production dispatch
+	 * {@code GT6BuilderWandItem.builderWandScaffold} gets that exact coordinate — the P28
+	 * one-click ruling makes it form the complete structure. The stocked-fake-player recipe
+	 * is the form arm's (one stack per distinct FORMING pattern block); the player argument
+	 * stays null (the canEdit chain auto-approves non-players, the consume arm shrinks the
+	 * stock). Hand-written machines keep their dedicated wand arms (the boiler's
+	 * transmitter+wall stock is machine knowledge this generic arm does not carry).
+	 */
+	private static int wandclick(CommandSourceStack aSource, BlockPos aClickedPos, int aStock) {
+		ServerLevel tLevel = aSource.getLevel();
+		TileEntityBase10MultiBlockBase tController = gregtech6.items.tools.GT6BuilderWandItem.scaffoldTarget(tLevel, aClickedPos);
+		if (tController == null) {
+			aSource.sendFailure(Component.literal("No builder-wand scaffold target at " + aClickedPos.toShortString()
+					+ " (neither a multiblock controller nor a linked part)"));
+			return 0;
+		}
+		GTMultiBlockPattern tPattern = tController.getStructurePattern();
+		net.minecraft.world.entity.player.Inventory tInventory = FakePlayerFactory.getMinecraft(tLevel).getInventory();
+		tInventory.clearContent(); // the fake player persists across passes — the stock is per-command
+		if (tPattern != null) {
+			java.util.LinkedHashSet<Block> tParts = new java.util.LinkedHashSet<>();
+			for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) if (tCell.forms()) tParts.add(tCell.partBlock);
+			int tSlot = 0;
+			for (Block tPart : tParts) tInventory.items.set(tSlot++, new ItemStack(tPart, aStock));
+		}
+		int tBefore = tPattern == null ? -1 : countPartItems(tInventory, tPattern);
+
+		gregtech6.items.tools.GT6BuilderWandItem.builderWandScaffold(tController, aClickedPos, null, tInventory,
+				ItemStack.EMPTY); // the dispatch, fed the REAL clicked coordinate (the player feed path)
+		boolean tFormed = tController.checkStructure(true); // the linking pass verdict
+		int tAfter = tPattern == null ? -1 : countPartItems(tInventory, tPattern);
+
+		String tReport = String.format("GT6 multiblock wandclick at %s (controller %s): formed=%s okay=%s stock %d -> %d",
+				aClickedPos.toShortString(), tController.getBlockPos().toShortString(), tFormed, tController.mStructureOkay,
+				tBefore, tAfter);
+		if (!tFormed) {
+			aSource.sendFailure(Component.literal(tReport));
+			return 0;
+		}
+		aSource.sendSuccess(() -> Component.literal(tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
 	}
