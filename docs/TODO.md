@@ -325,7 +325,7 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 - [x] **用户 2026-09-12 实测三条（decisions.p28-opener-jade-wand）**：①强化泡沫语言键缺失 Jade 不显示→已修 9041753d（根因=block.gt6.cfoam_owned 键从未写过，P27 销账的 33 键是流体族不同键集；补键 zh=强化建筑泡沫+owned 全族 33 值统一「强化」+注册表覆盖闸门防复发；Jade 悬停目验留上方清单）；②坩埚内容物与温度 Jade 不显示→已修 3ed3fd39（GT6CrucibleProvider 温度/总量/内容物面，TFRU 33c22beb Content 约定对位，熔毁 RED）；③建筑杖仍只造一半→研究证实=上游忠实 ±1 点击邻域门非移植 bug（RCON form 臂喂 null 一次铺满故链 GREEN 掩盖），用户裁定 B 一键成型→已合 b890c309（两机制分臂+wandclick 测试臂+九击钉重写+ADR-P28 首号偏离声明；目验留上方清单）
 - [ ] 解冻实现池照旧：管道①②③/质量存储②/foam C/panels/sensors-batch2/mortar-juicer-grind W2/行回填 b 类流体行/W2 成型链/plateCurved/tool-metatool（门=P24 工具系统闭环）〔EU 入向转换机已解冻完成→0c81d5eb〕
 - [x] **能量生态重构（2026-09-12 用户三裁定落地）**：①EU→FE 出向桥整体砍除→001b4cfa（insertFe EU 面/桥臂/外族 wiring 行/三相链全撤；pushPacketTrain 比率无关泛化缝留给 Dynamo；KG 演化链失效 4 边）；②FE→EU 入向转换机 ULV 锁档→0c81d5eb（单台 8EU×1A 无损 4:1+push/pull 双支持+超压爆炸+ADR 平衡节；研究=上游刻意缺席 RF→EU，GTCEu 形偏离声明）③出向 Dynamo=RU→FE 上游本命机移植（W1-W3 进行中：族 BE→渲染配方→RCON 链；Electric Dynamo 连带移植解锁配方中键）
-- [ ] 池：fe_inbound 链重写（W0 砍桥后三相死语义；ULV 输出无合法消费者——终点编排待用户裁）∥cfoam 喷管链 neo 红诊断（quarantine 实锤，诊断中）∥oven P9 动态 overlay 与静态 decal 共存退役∥side decal UV 镜像 quirk（目验池）
+- [ ] 池：fe_inbound 链重写（W0 砍桥后三相死语义；ULV 输出无合法消费者——终点编排待用户裁）∥cfoam 喷管链 neo 红诊断（quarantine 实锤，诊断中）∥oven P9 动态 overlay 与静态 decal 共存退役∥side decal UV 镜像 quirk（目验池）∥**砧 Anvil（用户点名：GT6 特色=坩埚+砧，未移植；石砧开局+锤击成型+漏斗吸附彩蛋随卡）**
 
 
 - [ ] **zh 参考 lang 全量审计（P27 首项，用户质量裁定）**：搅拌盆/浸洗盆是加工机器不是厨具（域分类勘误，kitchen-pot-bowl 叙事正名）；Drum 类译「鼓」错误应作「储罐」；全部既有键过一遍——机器翻译腔逐个清查（材料键/tagprefix 键/机器名/流体名/物品名）
