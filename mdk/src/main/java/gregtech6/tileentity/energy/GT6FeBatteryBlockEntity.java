@@ -62,9 +62,9 @@ import gregtech6.registry.GT6FeBatteries;
  *     {@link #energyStorage()}.</li>
  * </ul>
  *
- * <p>The bridge handler arm (GT6FeBatteries.onForeignEnergy, per-leg hunks) finds this storage
- * through the LEVEL QUERY — the same face every foreign FE machine answers — and bills the
- * packet math in root {@code EnergyBridge.insertFe} (4 FE per 1 EU, packet-aligned).
+ * <p>Foreign FE consumers find this storage through the LEVEL QUERY — the same face every
+ * foreign FE machine answers (the p26 bridge handler arm that also queried it here was cut
+ * by task p28-cut-eu-fe-bridge; the fixture stays as the W3 dynamo-chain measurement end).
  *
  * <p>Persistence: the stored FE rides "energy"; no tile-name lane (the fixture is not on
  * the 01Root NBT schema).
