@@ -19,7 +19,10 @@ maxTurns: 40
 2. `search_code(sources=["gt6"])` 确认子系统边界与耦合面；每个模块边界必须引用
    GT6 源码证据（文件:行号）。
 3. 产出**模块卡**（每张含：名称、GT6 原始类清单、依赖、风险等级、验收标准、
-   建议 files_scope）。
+   建议 files_scope）。大卡拆卡时**声明金字塔分层**：N 张底层实现小卡（文件域
+   互斥可并行、门禁=compileJava+compileTestJava 双腿编译确认）+ 1 张顶层集成卡
+   （全门禁 cleanTest+RCON 链+runData），并写明底层卡清单与集成卡 SPEC；
+   小修复/单文件卡注明"不分层"。
 4. 落账：`state_update(key="decisions", merge=true, value=[{"topic","decision",
    "alternatives","evidence","date"}])`；`kg_add("GT6_<系统>", "DOES"/"DEPENDS_ON", ...)`。
 
