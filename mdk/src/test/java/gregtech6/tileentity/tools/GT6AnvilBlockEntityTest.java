@@ -310,13 +310,14 @@ public class GT6AnvilBlockEntityTest extends GTOfflineTestBase {
 				java.lang.reflect.Field tFoodField = Player.class.getDeclaredField("foodData");
 				tFoodField.setAccessible(true);
 				tFoodField.set(tPlayer, new FoodData());
-				// the exhaustion seam reads abilities.instabuild (Player.causeFoodExhaustion)
-				// — instabuild TRUE = the vanilla creative no-exhaust form, and it keeps the
-				// strike path off the null level() read
+				// the exhaustion seam reads abilities.invulnerable FIRST, then level()
+				// .isClientSide (vanilla Player.java:1689-1694 — instabuild is NOT the
+				// gate): invulnerable TRUE keeps the strike path off the null level() read
+				// (the S5 gate rerun found the instabuild form NPE-ing at Player:1691)
 				java.lang.reflect.Field tAbilitiesField = Player.class.getDeclaredField("abilities");
 				tAbilitiesField.setAccessible(true);
 				net.minecraft.world.entity.player.Abilities tAbilities = new net.minecraft.world.entity.player.Abilities();
-				tAbilities.instabuild = true;
+				tAbilities.invulnerable = true;
 				tAbilitiesField.set(tPlayer, tAbilities);
 				return tPlayer;
 			} catch (ReflectiveOperationException aE) {

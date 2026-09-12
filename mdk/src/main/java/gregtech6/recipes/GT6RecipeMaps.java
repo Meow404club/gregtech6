@@ -576,12 +576,12 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
-		// RM.java:118 — the Anvil map (task p28-c-anvil): items 2/2/2, fluids 0/0/0, MIN 0,
-		// AMP 1 — the RM.java:118 row verbatim over the 15-arg port ctor; the zero-energy
-		// manual face, the consumer is the anvil BE's top-face hammer strike
+		// RM.java:118 — the Anvil map (task p28-c-anvil): progress 2/1, items 2/2/2, fluids
+		// 0/0/0, MIN 0, AMP 1 — the RM.java:118 row verbatim over the 15-arg port ctor; the
+		// zero-energy manual face, the consumer is the anvil BE's top-face hammer strike
 		ANVIL = new RecipeMap(new HashSet<>(),
 				"gt.recipe.anvil", "Anvil", null,
-				0, 1,
+				2, 1,
 				"gt6:textures/gui/machines/anvil",
 				/*IN-OUT-MIN-ITEM=*/ 2, 2, 2,
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
@@ -592,7 +592,7 @@ public class GT6RecipeMaps {
 		// pure strike-point aiming — the field doc carries the declared fold)
 		ANVIL_BEND = new RecipeMap(new HashSet<>(),
 				"gt.recipe.anvil.bend", "Anvil Bending", null,
-				0, 1,
+				2, 1,
 				"gt6:textures/gui/machines/anvilbend",
 				/*IN-OUT-MIN-ITEM=*/ 2, 2, 2,
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
@@ -640,10 +640,10 @@ public class GT6RecipeMaps {
 		FURNACE_FUEL = null;
 		PRESS = null;
 		EXTRUDER = null;
-			CRUCIBLE_SMELTING = null;
-			CRUCIBLE_ALLOYING = null;
-			ANVIL = null;
-			ANVIL_BEND = null;
+		CRUCIBLE_SMELTING = null;
+		CRUCIBLE_ALLOYING = null;
+		ANVIL = null;
+		ANVIL_BEND = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}
