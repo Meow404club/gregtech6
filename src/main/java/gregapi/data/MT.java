@@ -109,6 +109,21 @@ public class MT {
 	public static final OreDictMaterial[] ZL_MT = new OreDictMaterial[0];
 	/** Upstream CS.java:859. */
 	public static final double WEIGHT_AIR_G_PER_CUBIC_CENTIMETER = 0.0012;
+
+	/**
+	 * The Flux Dynamo material ladder, upstream MT.java:3692 {@code DATA.Flux_T} — the
+	 * modern gap the dynamo registration fills (task p28-c-dynamo-family-be; the port had
+	 * no {@code Flux_T} symbol before this card). Only the [0..5] prefix the dynamo family
+	 * consumes is materialized ([1..5] = Pb / Invar / Electrum / EnderiumBase / Enderium;
+	 * the upstream [6..15] TungstenCarbide padding has no consumer and is cropped with
+	 * declaration). NOT {@code final} and NOT field-initialized with the members: the
+	 * reg00xx() batches run inside {@link #init()} (upstream moved the initializations out
+	 * of the declaration order, header note), so a class-init capture would freeze nulls —
+	 * the array is (re-)bound at the END of {@link #init()} instead, the same late-binding
+	 * the TECH fields use (task p2-registry-reset-idempotency: a re-run generation re-binds
+	 * the row to the current material instances).
+	 */
+	public static OreDictMaterial[] FLUX_T = new OreDictMaterial[0];
 	/** Upstream CS.java:132 "C = 273"; MT has a material field named C (Carbon), so the constant hides behind a same-named nested type exactly like the upstream CS.C qualification. */
 	private static final class CS {
 		static final long C = 273;
@@ -2739,6 +2754,12 @@ public class MT {
 		STONES.init(); // port: the alias fields of upstream MT.java:1919-1945 load STONES right here; the ported aliases are reg0037/reg0038
 		reg0037();
 		reg0038();
+		// task p28-c-dynamo-family-be: the Flux_T ladder binding (upstream MT.java:3692
+		// DATA.Flux_T[0..5] prefix — Sn / Pb / Invar / Electrum / EnderiumBase / Enderium;
+		// all six members register in reg0000..reg0034, Electrum :2428, EnderiumBase :2526,
+		// Enderium :2529). Late-bound so a registry-reset re-run re-binds to the current
+		// generation's instances (the TECH fields ruling, p2-registry-reset-idempotency).
+		FLUX_T = new OreDictMaterial[] {Sn, Pb, Invar, Electrum, EnderiumBase, Enderium};
 		// Making sure shit is statically loaded, damn it. // upstream :1890-1900
 		H.getClass();
 		OREMATS.init(); // upstream OREMATS.Magnetite.getClass(); the port's re-runnable batch replaces the class-init
