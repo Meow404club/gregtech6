@@ -445,8 +445,8 @@ public class GT6ZhCn extends LanguageProvider {
 		}
 		// press + extruder (task p26-w1-press-extruder-molds): the family templates + the
 		// :101-104 unit words (the T1 Low Heat face keeps the tier word — en "Low Heat
-		// Extruder (%s)"; task p27-lang-fix-batch2 P2 moved the machine words to the
-		// community 压板机/挤压机 forms, ledger §3 low-confidence rows)
+		// Extruder (%s)"; task p28-lang-batch1-fix reverted the batch1 low-confidence words
+		// to the community 压力成型机/压模器 forms, with the low-heat rows as 低温压模器)
 		addDirect(gregtech6.registry.GTMachines.PRESS_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.EXTRUDER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.EXTRUDER_LOW_HEAT_DISPLAY_KEY);
@@ -461,7 +461,7 @@ public class GT6ZhCn extends LanguageProvider {
 		}
 		// storage hoppers (task p26-storage-hopper-family): the two kind templates over the
 		// bronze/steel row words (the boiler walk emits them; the tsv hand rows carry the
-		// 漏斗 family wording)
+		// 料斗/队列料斗 wording since task p28-lang-batch1-fix — funnel keeps 漏斗)
 		addDirect(gregtech6.registry.GT6Hoppers.DISPLAY_KEY);
 		addDirect(gregtech6.registry.GT6Hoppers.DISPLAY_QUEUE_KEY);
 		for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
