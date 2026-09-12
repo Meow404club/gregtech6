@@ -76,8 +76,17 @@ public class GT6DualDirectoryFacesTest {
 	 */
 	@Test
 	public void theCMaterialGraftFaceHoldsPerLeg() throws Exception {
-		//? if neoforge {
-		// the canonical plural faces stay on the classpath (the canonical tree is zero-disturbed)
+		//? if forge {
+		// the graft is the NEO leg's build face — the forge leg must NOT ship data/c/tags/item/**
+		assertNull(resourceOrNull("data/c/tags/item/ingots/iron.json"),
+				"the singular graft face must not ship on the forge leg");
+		assertNull(resourceOrNull("data/c/tags/item/gems/quartz.json"),
+				"the singular graft face must not ship on the forge leg");
+		// the canonical tree is zero-disturbed: both plural faces stay exactly as tracked
+		assertNotNull(resource("data/forge/tags/items/ingots/iron.json"));
+		assertNotNull(resource("data/c/tags/items/ingots/iron.json"));
+		//?} else {
+		/*// the canonical plural faces stay on the classpath (the canonical tree is zero-disturbed)
 		String tForgeIngots = resource("data/forge/tags/items/ingots/iron.json");
 		assertNotNull(resource("data/c/tags/items/ingots/iron.json"), "the p27 forward twin band stays");
 		// the graft lands at the mapped path — namespace forge→c, directory items→item, names plural
@@ -89,15 +98,6 @@ public class GT6DualDirectoryFacesTest {
 				resource("data/c/tags/item/storage_blocks/iron.json"), "nested storage_blocks maps 1:1");
 		assertEquals(resource("data/forge/tags/items/gems/quartz.json"),
 				resource("data/c/tags/item/gems/quartz.json"), "the quartz canonical-name face maps 1:1");
-		//?} else {
-		// the graft is the NEO leg's build face — the forge leg must NOT ship data/c/tags/item/**
-		assertNull(resourceOrNull("data/c/tags/item/ingots/iron.json"),
-				"the singular graft face must not ship on the forge leg");
-		assertNull(resourceOrNull("data/c/tags/item/gems/quartz.json"),
-				"the singular graft face must not ship on the forge leg");
-		// the canonical tree is zero-disturbed: both plural faces stay exactly as tracked
-		assertNotNull(resource("data/forge/tags/items/ingots/iron.json"));
-		assertNotNull(resource("data/c/tags/items/ingots/iron.json"));
-		//?}
+		*///?}
 	}
 }
