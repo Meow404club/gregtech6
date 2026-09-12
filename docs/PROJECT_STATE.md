@@ -5,7 +5,7 @@
 
 ## 当前阶段
 
-`第 28 阶段：用户实测批（建筑杖一键成型·强化泡沫 Jade 名·坩埚 Jade 内容物温度）/ neo 腿 tag 运行时接线 / runClient 目验清单 / 单块机族 facing 正典化 / 解冻池`（**2026-09-12 开局，调度换轨**：金字塔拆分当日即被滚动合并队列+分层门禁取代（7cf81ab0），全量 sweep 复由追加裁定移至阶段末恰好一次（19b6644c）。W1 四卡全 approve 合入 main 035d43de→3ed3fd39：p28-neo-tag-wiring 37c27c22（neo 腿 7927 tag 面嫁接复活+ADR-P17-1 §6 再裁决）/p28-builder-wand-oneclick b890c309（用户裁定 B 一键成型两机制分臂+wandclick 测试臂+ADR-P28 首号）/p28-cfoam-lang-key 9041753d（cfoam_owned 键补写+owned 全族 33 值统一「强化」+注册表覆盖闸门 452 点亮 450 豁免+floor 2796）/p28-crucible-jade-face 3ed3fd39（坩埚 Jade 内容物+温度，TFRU 33c22beb Content 约定对位，floor 2800）。方法论两沉淀：cleanTest 须 --no-build-cache 防 FROM-CACHE 伪造绿；runData 首跑 written 非零非红。S1 单席滚动四审零打回。用户三条实测 bug 全数销账（详见 docs/TODO.md 第 28 阶段节）。全量 sweep 留阶段末）
+`第 28 阶段：用户实测批（建筑杖一键成型·强化泡沫 Jade 名·坩埚 Jade 内容物温度）/ neo 腿 tag 运行时接线 / 能量生态重构（出向桥砍除·ULV 入向墙·Dynamo 出向）/ 单块机族 facing 正典化 / 机器端口 overlay / runClient 目验清单 / 解冻池`（**2026-09-12 开局，调度换轨**：金字塔拆分当日即被滚动合并队列+分层门禁取代（7cf81ab0），全量 sweep 复由追加裁定移至阶段末恰好一次（19b6644c）。W1+W2 共 11 卡全 approve 合入 main 035d43de→001b4cfa——W1 四卡：neo tag 接线 37c27c22（7927 面嫁接+ADR-P17-1 §6）/建筑杖一键成型 b890c309（用户 B 裁定+ADR-P28 首号）/强化泡沫语言键 9041753d（覆盖闸门+强化词根统一）/坩埚 Jade 面 3ed3fd39——W2 七卡：FE 入向数学 89d4cced（extractFe 对称+24 例）/译名修正 d5141eb4（用户三裁定 39 键）/overlay 资产 dc4ff37d（243 张 sha256 台账）/facing 正典化 641d269c（11 族 19 位点+GT6PlacementFacing）/ULV 转换机 0c81d5eb（8EU×1A 墙+push/pull 双支持）/overlay 渲染层 2ec0a0f4（144 模型+familyMachineModel）/EU→FE 桥砍除 001b4cfa（pushPacketTrain 泛化缝+KG 失效 4 边）。能量秩序三裁定：出向桥砍（EU 留 GT）·入向 ULV 锁档（8EU 墙）·出向 Dynamo 移植（RU→FE 2.75+Electric Dynamo 连带，W1-W3 进行中）。用户中断一次双席并行开席（review_session_serial 复发提醒入账）。方法论沉淀：cleanTest 须 --no-build-cache；runData 首跑 written 非零非红；quarantine p25cfoam neo 经纯基线复现实锤。用户实测三条 bug 全销账（详见 docs/TODO.md 第 28 阶段节）。全量 sweep 留阶段末）
 
 ### 第 27 阶段详账（2026-09-12 收官）
 
