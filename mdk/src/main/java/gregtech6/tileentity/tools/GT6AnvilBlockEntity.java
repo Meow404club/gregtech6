@@ -28,6 +28,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -276,11 +277,42 @@ public class GT6AnvilBlockEntity extends TileEntityBase03TicksAndSync {
 				? tAnvil.material().mTargetSmashing.mMaterial : null;
 	}
 
-	/** The output give-back (the kitchen giveToPlayer form). */
-	private boolean giveToPlayer(Player aPlayer, ItemStack aStack) {
+	/**
+	 * The :120 ST.add give-back — ALL-OR-NOTHING (upstream ST.java:1074-1093: the FULL
+	 * stack must fit or nothing moves, which is exactly what keeps the :120 ST.place
+	 * tail duplication-free). The vanilla {@code Inventory.add} is PARTIAL-fill (it
+	 * returns true on ANY progress, S5 review R1): a naive true/false gate over it would
+	 * let a nearly-full bag absorb part of the stack while the false-return tail spawns
+	 * the FULL copy above — bag + ground from one output. So the fit is decided FIRST by
+	 * {@link #freeCapacity}, and the real add only runs when the whole stack fits.
+	 * Package-private: the R1 boundary test walks it (same package).
+	 */
+	boolean giveToPlayer(Player aPlayer, ItemStack aStack) {
+		if (aStack.isEmpty()) return true;
+		Inventory tInventory = aPlayer.getInventory();
+		if (freeCapacity(tInventory, aStack) < aStack.getCount()) return false; // all-or-nothing
 		ItemStack tRemainder = aStack.copy();
-		boolean tAdded = aPlayer.getInventory().add(tRemainder);
-		return tAdded && tRemainder.isEmpty();
+		tInventory.add(tRemainder);
+		return tRemainder.isEmpty(); // belt-and-braces: the simulation above matches add()
+	}
+
+	/**
+	 * The total remaining capacity of the main inventory ({@code items}, the 36-slot band
+	 * Inventory.add fills) for {@code aStack}: empty slots take a full max stack, matching
+	 * non-full slots their headroom. The capacity math is add-order-independent, so one
+	 * pass reproduces the two-pass vanilla fill exactly.
+	 */
+	private static int freeCapacity(Inventory aInventory, ItemStack aStack) {
+		int rCapacity = 0;
+		for (int i = 0, n = aInventory.items.size(); i < n; i++) {
+			ItemStack tSlot = aInventory.items.get(i);
+			if (tSlot.isEmpty()) {
+				rCapacity += aStack.getMaxStackSize();
+			} else if (ItemStack.isSameItemSameTags(tSlot, aStack) && tSlot.getCount() < tSlot.getMaxStackSize()) {
+				rCapacity += tSlot.getMaxStackSize() - tSlot.getCount();
+			}
+		}
+		return rCapacity;
 	}
 
 	/** The :120 ST.place — outputs spawn above the anvil (y + 1.2), zero delta. */

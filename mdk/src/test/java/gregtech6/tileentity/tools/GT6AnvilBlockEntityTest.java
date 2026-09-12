@@ -11,6 +11,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.food.FoodData;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -200,6 +203,129 @@ public class GT6AnvilBlockEntityTest extends GTOfflineTestBase {
 		String tReport2 = tAnvil2.activateChain(null, (byte) 1, tHammer2, 0.7F, 0.5F, 0.5F);
 		assertTrue(tReport2.startsWith("placed"), tReport2);
 		assertTrue(GT6AnvilBlockEntity.isHammer(tAnvil2.inventory().getStackInSlot(1)), "hitX 0.7 = the far half");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the R1 all-or-nothing give-back (the S5 review: bag + ground from one output)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The near-full bag with a same-item partial stack: capacity 1, offer 5 — the
+	 * all-or-nothing give-back refuses WHOLESALE (upstream ST.add :1074-1093), so nothing
+	 * moves. The pre-fix partial-fill form put 1 into the bag AND dropped the full 5 —
+	 * this test walks that exact path and pins the fix.
+	 */
+	@Test
+	public void giveToPlayerRefusesThePartialFitAllOrNothing() {
+		Player tPlayer = bagPlayer(63);
+		ItemStack tFive = new ItemStack(Items.IRON_NUGGET, 5);
+		boolean tGiven = tAnvilRef().giveToPlayer(tPlayer, tFive);
+		assertFalse(tGiven, "capacity 1 < 5 — the whole offer is refused");
+		assertEquals(63, tPlayer.getInventory().items.get(0).getCount(), "nothing moved (the pre-fix form would show 64)");
+		assertEquals(63, countNuggets(tPlayer));
+	}
+
+	@Test
+	public void giveToPlayerTakesTheWholeStackWhenItFits() {
+		Player tPlayer = bagPlayer(59); // capacity 5 in slot 0
+		ItemStack tFive = new ItemStack(Items.IRON_NUGGET, 5);
+		assertTrue(tAnvilRef().giveToPlayer(tPlayer, tFive));
+		assertEquals(64, tPlayer.getInventory().items.get(0).getCount(), "the full stack lands in the partial stack");
+		assertEquals(64, countNuggets(tPlayer));
+	}
+
+	/**
+	 * The end-to-end strike into the near-full bag: the 5-nugget output goes to the GROUND
+	 * whole (spawnAbove), the bag keeps exactly its 63 — the duplication path (bag +1 AND
+	 * ground +5) is structurally gone.
+	 */
+	@Test
+	public void strikeIntoNearlyFullBagDropsTheWholeOutputWithoutDuplication() {
+		// a dedicated row with a 5-count output (a distinct input keeps findRecipe deterministic)
+		GT6RecipeMaps.ANVIL.addRecipe(new Recipe(true,
+				new ItemStack[] {new ItemStack(Items.APPLE, 1)},
+				new ItemStack[] {new ItemStack(Items.IRON_NUGGET, 5)},
+				new FluidStack[0], new FluidStack[0], 16, 16, 0));
+		GT6AnvilBlockEntity tAnvil = anvil(30000);
+		tAnvil.inventory().setStackInSlot(0, new ItemStack(Items.APPLE, 1));
+		Player tPlayer = bagPlayer(63);
+
+		String tReport = tAnvil.hammerStrike(tPlayer, (byte) 1);
+		assertTrue(tReport.startsWith("worked: 5"), tReport);
+		assertTrue(tAnvil.inventory().getStackInSlot(0).isEmpty(), "the input paid");
+		assertEquals(63, tPlayer.getInventory().items.get(0).getCount(),
+				"the partial-fit bag is untouched (the pre-fix form would show 64 = the duplication)");
+		assertEquals(63, countNuggets(tPlayer), "zero duplication: bag + ground = 5, never 6");
+		assertEquals(20000, tAnvil.mDurability, "the wear floor unchanged (one displayed point)");
+	}
+
+	/** The nugget total across the bag (the duplication counter). */
+	private static int countNuggets(Player aPlayer) {
+		int rTotal = 0;
+		for (int i = 0, n = aPlayer.getInventory().items.size(); i < n; i++) {
+			ItemStack tSlot = aPlayer.getInventory().items.get(i);
+			if (!tSlot.isEmpty() && tSlot.getItem() == Items.IRON_NUGGET) rTotal += tSlot.getCount();
+		}
+		return rTotal;
+	}
+
+	/** The give-back seam under test (package-private by the R1 ruling). */
+	private static GT6AnvilBlockEntity tAnvilRef() {
+		return new GT6AnvilBlockEntity(sAnvilType, POS, Blocks.STONE.defaultBlockState());
+	}
+
+	/**
+	 * A bag: slot 0 = {@code aSlot0Count} iron nuggets, slots 1-35 = full dirt (the
+	 * "nearly full but a same-item stack has headroom" scenario of the S5 review).
+	 */
+	private static Player bagPlayer(int aSlot0Count) {
+		ItemStack[] tSlots = new ItemStack[36];
+		tSlots[0] = new ItemStack(Items.IRON_NUGGET, aSlot0Count);
+		for (int i = 1; i < 36; i++) tSlots[i] = new ItemStack(Items.DIRT, 64);
+		return BagPlayer.withInventory(tSlots);
+	}
+
+	/**
+	 * The offline Player double (the GT6SingleBlockFacingIntegrityTest.ViewPlayer Unsafe-
+	 * allocation form) — plus a REAL {@link Inventory} and {@link FoodData} injected so
+	 * the give-back and the exhaustion seams run for real (both are plain in-memory
+	 * offline; the vanilla add() never touches the player back-ref for stackables).
+	 */
+	public static final class BagPlayer extends Player {
+		private BagPlayer() { super(null, null, 0.0F, null); } // never runs — the Unsafe allocation form
+
+		public static BagPlayer withInventory(ItemStack[] aSlots) {
+			try {
+				java.lang.reflect.Field tTheUnsafe = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+				tTheUnsafe.setAccessible(true);
+				sun.misc.Unsafe tUnsafe = (sun.misc.Unsafe) tTheUnsafe.get(null);
+				BagPlayer tPlayer = (BagPlayer) tUnsafe.allocateInstance(BagPlayer.class);
+				java.lang.reflect.Field tInventoryField = Player.class.getDeclaredField("inventory");
+				tInventoryField.setAccessible(true);
+				Inventory tInventory = new Inventory(null); // the GT6MachineFluidDisplayTest offline form
+				for (int i = 0, n = Math.min(aSlots.length, tInventory.items.size()); i < n; i++) {
+					if (aSlots[i] != null) tInventory.items.set(i, aSlots[i]);
+				}
+				tInventoryField.set(tPlayer, tInventory);
+				java.lang.reflect.Field tFoodField = Player.class.getDeclaredField("foodData");
+				tFoodField.setAccessible(true);
+				tFoodField.set(tPlayer, new FoodData());
+				// the exhaustion seam reads abilities.instabuild (Player.causeFoodExhaustion)
+				// — instabuild TRUE = the vanilla creative no-exhaust form, and it keeps the
+				// strike path off the null level() read
+				java.lang.reflect.Field tAbilitiesField = Player.class.getDeclaredField("abilities");
+				tAbilitiesField.setAccessible(true);
+				net.minecraft.world.entity.player.Abilities tAbilities = new net.minecraft.world.entity.player.Abilities();
+				tAbilities.instabuild = true;
+				tAbilitiesField.set(tPlayer, tAbilities);
+				return tPlayer;
+			} catch (ReflectiveOperationException aE) {
+				throw new IllegalStateException("the offline bag player failed", aE);
+			}
+		}
+
+		@Override public boolean isSpectator() { return false; }
+		@Override public boolean isCreative() { return false; }
 	}
 
 	// ---------------------------------------------------------------------------
