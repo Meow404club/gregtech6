@@ -124,11 +124,12 @@ class GT6MachinePaintRenderDatagenTest {
         }
     }
 
-    /** The tier rows keep the family textures (the p8 texture-base overload). */
+    /** The tier rows keep the family textures (the p8 texture-base overload); the p28 ULV rows likewise (the addUlvLadder family tokens). */
     private static String familyOf(String aBase) {
         for (String tTier : new String[] {"_t2", "_t3", "_t4"}) {
             if (aBase.endsWith(tTier)) return aBase.substring(0, aBase.length() - tTier.length());
         }
+        if (aBase.endsWith("_ulv")) return aBase.substring(0, aBase.length() - "_ulv".length()); // task p28-c-ulv-machine-ladder
         return aBase;
     }
 
