@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -343,7 +344,7 @@ public final class GT6RecipesAnvil {
 	/** The live item lookup (the GT6RecipesShCL.resolveItem form) — null when the pair has no item-path item. */
 	@Nullable
 	private static Item resolveItem(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
-		net.minecraftforge.registries.RegistryObject<Item> tHandle = GTMaterialItems.get(aPrefix, aMaterial);
+		RegistryObject<Item> tHandle = GTMaterialItems.get(aPrefix, aMaterial);
 		return tHandle == null ? null : tHandle.get();
 	}
 
