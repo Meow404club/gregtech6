@@ -27,7 +27,9 @@ import snownee.jade.api.WailaPlugin;
  * {@link TileEntityBase01Root}（双腿 registerFluidStorage 的 Class&lt;? extends T&gt; 同形——
  * 1201 IWailaCommonRegistration.java:32 / 1211 :31；客户端注册双腿逐字同形
  * 1201 IWailaClientRegistration.java:164 / 1211 :173），machines 内部再 instanceof 分发。
- * 机器四段 tooltip（{@link GT6MachineProvider}）不变，仍是 block-component 对。
+ * 机器四段 tooltip（{@link GT6MachineProvider}）不变，仍是 block-component 对。坩埚族
+ * （{@link GT6CrucibleProvider}，task p28-crucible-jade-face）同一注册形追加两行——
+ * GT6MachineProvider 零改动（不塞坩埚分支的裁定）。
  */
 @WailaPlugin
 public class GT6JadePlugin implements IWailaPlugin {
@@ -40,6 +42,9 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 流体段 universal 服务端腿（数据载体=Jade 自家 universal FluidStorageProvider，
 		// 本 provider 按 priority 抢跑取数——GT6FluidProvider#getDefaultPriority 的裁定）。
 		aRegistration.registerFluidStorage(GT6FluidProvider.INSTANCE, TileEntityBase01Root.class);
+		// 坩埚族服务端腿（task p28-crucible-jade-face）：小型 Smeltery + 大型 Crucible 同一
+		// provider 同一格式，体内双 concrete instanceof 分发（GT6CrucibleProvider 类 doc）。
+		aRegistration.registerBlockDataProvider(GT6CrucibleProvider.INSTANCE, TileEntityBase01Root.class);
 	}
 
 	@Override
@@ -49,6 +54,9 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 流体段 universal 客户端腿：Jade 按 JadeFluidStorageUid 从 uid map 找回本 provider
 		// （jade-1201 addon/universal/FluidStorageProvider.java:44 / jade-1211 :67-68）。
 		aRegistration.registerFluidStorageClient(GT6FluidProvider.INSTANCE);
+		// 坩埚族客户端腿（task p28-crucible-jade-face）：GTEntityBlock 全覆盖两坩埚方块
+		// （CrucibleBlock extends GTEntityBlock；GTMultiBlockControllerBlock 同），体内键门分发。
+		aRegistration.registerBlockComponent(GT6CrucibleProvider.INSTANCE, GTEntityBlock.class);
 	}
 
 }
