@@ -961,7 +961,7 @@ private static final int ZH_KEY_FLOOR = 2800;
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
 		assertEquals(903, tExemptTotal, "the derived composed-name exemption census");
-		assertEquals(89, tChecked, "the checked block census: every DeferredRegister block NOT"
+		assertEquals(90, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase)"
 			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),

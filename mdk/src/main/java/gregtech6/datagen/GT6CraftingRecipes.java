@@ -29,6 +29,7 @@ import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6Kitchen;
+import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GT6StaticStorages;
@@ -128,6 +129,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * ingots the conductor core; the result-path vanilla convention.
 	 */
 	public static final ResourceLocation FE_CONVERTER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "fe_converter");
+	/**
+	 * The Water Wheel crafting row (task p28-c-water-wheel) — the kTFRUAddon registration
+	 * row QUANTITIES (tileEntityInit0.java:112 "Water Mill": {@code "PPP","SRS","PPP"} =
+	 * 6 planks + 2 bronze rings + 1 axle part, the clean-room semantic anchor) over the
+	 * port carriers; the result-path vanilla convention.
+	 */
+	public static final ResourceLocation WATER_WHEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "water_wheel");
 
 	/** The CR.shapeless self-recast row id of a sensor path (task p26-sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
 	public static ResourceLocation sensorRecastId(String aPath) {
@@ -163,6 +171,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		progressmeterBuilder().save(aConsumer, PROGRESSMETER_ID);
 		fluidometerBuilder().save(aConsumer, FLUIDOMETER_ID);
 		feConverterBuilder().save(aConsumer, FE_CONVERTER_ID);
+		waterWheelBuilder().save(aConsumer, WATER_WHEEL_ID);
 		for (SensorRecastRow tRow : sensorRecastBuilders()) {
 			tRow.builder().save(aConsumer, sensorRecastId(tRow.path()));
 		}
@@ -723,6 +732,38 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('W', tFineWires)
 				.define('C', tIngots)
 				.unlockedBy("has_fine_wire", has(tFineWires));
+	}
+
+	/**
+	 * The Water Wheel crafting row (task p28-c-water-wheel) — the kTFRUAddon
+	 * "Water Mill" registration-row SHAPE + QUANTITIES over the port carriers
+	 * (tileEntityInit0.java:112, CR.DEF "PPP"/"SRS"/"PPP"): the grid carries the
+	 * research-card census 6 planks + 2 bronze rings + 1 axle part. Key translation (the
+	 * early-QoL ruling — every input pre-ULV reachable):
+	 * <ul>
+	 * <li>'P' = {@code #minecraft:planks} ({@code ItemTags.PLANKS}) — the upstream
+	 *     WoodTreated planks fold onto the whole plank tag (the vanilla-material tag
+	 *     precedent of the hammer-stone route);</li>
+	 * <li>'R' = the bronze ring — the kTFRU ring-bearing semantics, resolved through
+	 *     {@code GTMaterialItems.get(OP.ring, MT.Bronze)} (the BARE-item form is the
+	 *     hopper 'X' plateCurved precedent: no RINGS tag family exists in
+	 *     {@link GT6ItemTags}); bronze = the first machine-material tier, smeltable under
+	 *     the stone-crucible 1375 K ceiling (the ULV chain's own progress gate);</li>
+	 * <li>'A' = {@code gt6:axle_wood_treated_small} — the rotation core IS the kinetics
+	 *     family's own carrier part (the wheel is a kinetics machine; the upstream 轴件
+	 *     slot reads exactly this).</li>
+	 * </ul>
+	 * Result 1x {@code gt6:water_wheel}.
+	 */
+	private ShapedRecipeBuilder waterWheelBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6Kinetics.WATER_WHEEL_ITEM.get())
+				.pattern("PPP")
+				.pattern("RAR")
+				.pattern("PPP")
+				.define('P', ItemTags.PLANKS)
+				.define('R', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.ring, gregapi.data.MT.Bronze).get())
+				.define('A', GT6Kinetics.AXLE_ITEMS.get(GT6Kinetics.axleName("wood_treated", 0)).get())
+				.unlockedBy("has_planks", has(ItemTags.PLANKS));
 	}
 
 	/**

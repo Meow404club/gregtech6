@@ -96,6 +96,7 @@ direct	block.gt6.shredder	粉碎机	hand
 direct	block.gt6.test_machine	测试机器	hand
 direct	block.gt6.test_machine_idle	测试机器 (被动)	hand
 direct	block.gt6.transformer_rotation	木制转向齿轮箱	hand
+direct	block.gt6.water_wheel	水车	hand
 direct	block.gt6.wire_electric_1x	1×导线	hand
 direct	block.gt6.wire_electric_2x	2×导线	hand
 direct	block.gt6.wire_laser	激光光纤导线	hand

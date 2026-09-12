@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:axle_wood_treated_small"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "R": {
+      "item": "gt6:ring_bronze"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "RAR",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:water_wheel"
+  },
+  "show_notification": true
+}

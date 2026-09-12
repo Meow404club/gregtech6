@@ -224,6 +224,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.lathe");
 		addDirect("block.gt6.multiblock_coke_oven");
 		addDirect("block.gt6.multiblock_coke_oven_bricks");
+		addDirect("block.gt6.water_wheel"); // task p28-c-water-wheel — hand row (no dump face: upstream GT6 has no water wheel, the kTFRU rows are out-of-face by the ADR §1.1 filter)
 		// (block.gt6.oven retired here — task p27-oven-heat-t-ladder moved the oven onto the
 		// composed gt6.row.oven.display face, the addRowDomainUnits walk carries the template)
 		addDirect("block.gt6.progressmeter"); // task p26-sensors-core — the MTE 31018 dump row 进度传感器

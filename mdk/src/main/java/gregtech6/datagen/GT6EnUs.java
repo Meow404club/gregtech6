@@ -397,6 +397,10 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addKinetics() {
         add("block.gt6.crank", "Hand Crank");
+        // task p28-c-water-wheel — the kTFRUAddon registration wording ("Water Mill",
+        // tileEntityInit0.java:112) in its natural English noun form; the atomic key (the
+        // crank shape — a single block, no row template to compose)
+        add("block.gt6.water_wheel", "Water Wheel");
         // task p20-i18n-compose-rows — the axle/steam/diesel/burning-box/boiler families
         // compose at runtime (the family blocks' getName); the pre-installed full strings
         // retired into ONE family template + the row-material / size / family-word small
