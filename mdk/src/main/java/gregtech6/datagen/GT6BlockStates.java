@@ -38,6 +38,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GT6FeBatteries; // p26 tail-append
+import gregtech6.registry.GT6FeConverters; // p28 tail-append
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6Sensors;
@@ -138,6 +139,8 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBarrel();
         addEnergySource();
         addFeBattery(); // task p26-eu-bridge-outbound (tail-append; shared serial file)
+        addFeConverter(); // task p28-b-fe-converter-machine (tail-append; shared serial file)
+        addFeSource(); // task p28-b-fe-converter-machine (tail-append; shared serial file)
         addTestMachines(); // task p20-testmachine-blockstates — the two dev BE-framework blocks
         addPrefixBlocks(); // task p8-prefixblock-render ①
         addCrank(); // task p12-engine-crank
@@ -744,6 +747,30 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tBattery = GT6FeBatteries.FE_BATTERY.get();
         simpleBlock(tBattery, models().cubeAll("fe_battery", modLoc("block/energy_source")));
         itemModels().withExistingParent("fe_battery", modLoc("block/fe_battery"));
+    }
+
+    /**
+     * Task p28-b-fe-converter-machine (TAIL-APPENDED row, the shared serial file) — the
+     * ULV FE→EU converter: the addFeBattery shape verbatim, one cube_all over the SHARED
+     * placeholder {@code gt6:textures/block/energy_source.png} (no new PNG — the borrow
+     * posture), plus the BlockItem model parenting the block model. No properties, a
+     * single variant.
+     */
+    private void addFeConverter() {
+        Block tConverter = GT6FeConverters.FE_CONVERTER.get();
+        simpleBlock(tConverter, models().cubeAll("fe_converter", modLoc("block/energy_source")));
+        itemModels().withExistingParent("fe_converter", modLoc("block/fe_converter"));
+    }
+
+    /**
+     * Task p28-b-fe-converter-machine (TAIL-APPENDED row, the shared serial file) — the
+     * FE source fixture: the addFeBattery shape verbatim, one cube_all over the SHARED
+     * placeholder, plus the BlockItem model parenting the block model.
+     */
+    private void addFeSource() {
+        Block tSource = GT6FeBatteries.FE_SOURCE.get();
+        simpleBlock(tSource, models().cubeAll("fe_source", modLoc("block/energy_source")));
+        itemModels().withExistingParent("fe_source", modLoc("block/fe_source"));
     }
 
     /**

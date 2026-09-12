@@ -101,7 +101,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task p26-sensors-core
-                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK)), // task p26-storage-static-batch — the 28 self-drops
+                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
+                new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK)), // task p28-b-fe-converter-machine
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -126,7 +127,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task p26-sensors-core
-                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK))); // task p26-storage-static-batch — the 28 self-drops
+                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
+                new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK))); // task p28-b-fe-converter-machine
         //?}
     }
 
@@ -705,6 +707,41 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : advancedCraftingTableLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The FE converter block list (task p28-b-fe-converter-machine): the single ULV
+     * machine row — the ACT list shape over one block, self-drop (the MTE default). The
+     * fe_source fixture deliberately has NO loot row (the fixture rule, the fe_battery
+     * precedent — RCON-driven, not survival-obtainable).
+     */
+    public static List<Block> feConverterLootBlocks() {
+        return List.of(gregtech6.registry.GT6FeConverters.FE_CONVERTER.get());
+    }
+
+    /** The FE converter self-drop provider (task p28-b-fe-converter-machine). */
+    public static final class GT6FeConverterBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6FeConverterBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6FeConverterBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return feConverterLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : feConverterLootBlocks()) dropSelf(tBlock);
         }
     }
 

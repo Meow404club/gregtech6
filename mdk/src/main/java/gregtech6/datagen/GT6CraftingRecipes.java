@@ -121,6 +121,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation PROGRESSMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "progressmeter");
 	/** The Fluid-O-Meter Sensor crafting row (task p26-sensors-core, Loader :1986). */
 	public static final ResourceLocation FLUIDOMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "fluidometer");
+	/**
+	 * The ULV FE→EU converter crafting row (task p28-b-fe-converter-machine) — DECLARED
+	 * NEW DESIGN, no upstream recipe exists (the machine itself is the declared deviation):
+	 * the tin-alloy double plates + red-alloy fine wires carry the signal side, the copper
+	 * ingots the conductor core; the result-path vanilla convention.
+	 */
+	public static final ResourceLocation FE_CONVERTER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "fe_converter");
 
 	/** The CR.shapeless self-recast row id of a sensor path (task p26-sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
 	public static ResourceLocation sensorRecastId(String aPath) {
@@ -155,6 +162,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		progressmeterBuilder().save(aConsumer, PROGRESSMETER_ID);
 		fluidometerBuilder().save(aConsumer, FLUIDOMETER_ID);
+		feConverterBuilder().save(aConsumer, FE_CONVERTER_ID);
 		for (SensorRecastRow tRow : sensorRecastBuilders()) {
 			tRow.builder().save(aConsumer, sensorRecastId(tRow.path()));
 		}
@@ -185,6 +193,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
 		fluidometerBuilder().save(aOutput, FLUIDOMETER_ID);
+		feConverterBuilder().save(aOutput, FE_CONVERTER_ID);
 		for (SensorRecastRow tRow : sensorRecastBuilders()) {
 			tRow.builder().save(aOutput, sensorRecastId(tRow.path()));
 		}
@@ -690,6 +699,29 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('B', tBolts)
 				.define('X', Items.STONE_PRESSURE_PLATE)
 				.define('Y', Items.BUCKET)
+				.unlockedBy("has_fine_wire", has(tFineWires));
+	}
+
+	/**
+	 * The ULV FE→EU converter crafting row (task p28-b-fe-converter-machine) — the
+	 * proven progressmeter vocabulary (TinAlloy double plates + RedAlloy fine wires)
+	 * plus copper ingots as the conductor core, over the single ULV machine (no ladder —
+	 * the balance ruling):
+	 * <pre>"PWP" / "PCP" / "PWP"</pre>
+	 * P = {@code #forge:double_plates/tin_alloy}, W = {@code #forge:fine_wires/red_alloy},
+	 * C = {@code #forge:ingots/copper}. Result 1x {@code gt6:fe_converter}.
+	 */
+	private ShapedRecipeBuilder feConverterBuilder() {
+		TagKey<Item> tDoublePlates = GT6ItemTags.materialTag(GT6ItemTags.DOUBLE_PLATES_FAMILY, MT.TinAlloy);
+		TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.RedAlloy);
+		TagKey<Item> tIngots = GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, MT.Copper);
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6FeConverters.FE_CONVERTER_ITEM.get())
+				.pattern("PWP")
+				.pattern("PCP")
+				.pattern("PWP")
+				.define('P', tDoublePlates)
+				.define('W', tFineWires)
+				.define('C', tIngots)
 				.unlockedBy("has_fine_wire", has(tFineWires));
 	}
 

@@ -99,6 +99,7 @@ public class GT6EnUs extends LanguageProvider {
         addKitchen(); // task p26-kitchen-pot-bowl
         addEnergySource();
         addFeBattery(); // task p26-eu-bridge-outbound — tail-append
+        addFeConverter(); // task p28-b-fe-converter-machine — tail-append
         addKinetics(); // task p12-engine-crank
         addAttachments(); // task p12-tap-funnel-attachment
         addTools();
@@ -367,6 +368,15 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addFeBattery() {
         add("block.gt6.fe_battery", "FE Test Battery");
+    }
+
+    /**
+     * FE converter family keys (task p28-b-fe-converter-machine, tail-append): the ULV
+     * machine display name — the inbound FE→EU machine — and the fe_source fixture name.
+     */
+    private void addFeConverter() {
+        add("block.gt6.fe_converter", "FE Converter (ULV)");
+        add("block.gt6.fe_source", "FE Test Source");
     }
 
     /**
