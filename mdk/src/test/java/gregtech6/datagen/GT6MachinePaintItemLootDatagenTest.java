@@ -68,6 +68,7 @@ class GT6MachinePaintItemLootDatagenTest {
             "wiremill", "wiremill_t2", "wiremill_t3", "wiremill_t4",
             "press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds
             "extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds
+            "shredder_ulv", "crusher_ulv", "canner_ulv", "sifter_ulv", "wiremill_ulv", "rollingmill", // task p28-c-ulv-machine-ladder
             "advanced_crafting_table");
 
     /** The paint keys the 03 base writes while painted (CS.java:1161-1162, verbatim upstream). */
@@ -96,7 +97,7 @@ class GT6MachinePaintItemLootDatagenTest {
     /** The census shape: all 49 paintSelfTable tables carry the (quoted) paint carry function. */
     @Test
     void pinnedMachinePaintLootCensus() throws Exception {
-        assertEquals(49, PAINT_BASES.size(), "the paintSelfTable census (24 p22 rows incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + ACT 1)");
+        assertEquals(55, PAINT_BASES.size(), "the paintSelfTable census (24 p22 rows incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + the six p28 ULV rows + ACT 1)");
         for (String tBase : PAINT_BASES) assertPaintSelfTable(tBase);
     }
 

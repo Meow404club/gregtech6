@@ -495,6 +495,10 @@ public final class GT6LootTables extends LootTableProvider {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.CANNER_ROWS) {
             rBlocks.add(gregtech6.registry.GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get());
         }
+        // task p28-c-ulv-machine-ladder — the ULV Canner rung joins the family table
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.CANNER_ULV_ROWS) {
+            rBlocks.add(gregtech6.registry.GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
         return rBlocks;
     }
 
@@ -534,6 +538,10 @@ public final class GT6LootTables extends LootTableProvider {
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.sifterBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.compressorBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.wiremillBlockArray());
+        // task p28-c-ulv-machine-ladder — the sifter/wiremill ULV rungs ride the family
+        // map walks above (the BY_PATH tables carry them); the Rolling Mill family joins
+        // here (its single-row BET shares the TileEntityBasicMachine loot shape)
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.rollingmillBlockArray());
         return rBlocks;
     }
 
@@ -859,6 +867,11 @@ public final class GT6LootTables extends LootTableProvider {
                 gregtech6.registry.GTMachines.LATHE_T3, gregtech6.registry.GTMachines.LATHE_T4)) {
             rBlocks.add(tBlock.get());
         }
+        // task p28-c-ulv-machine-ladder — the shredder/crusher ULV rungs (the row-carrier
+        // blocks of the legacy tierOf families; the sifter/wiremill/canner/rollingmill ULV
+        // rungs ride their own family providers above)
+        rBlocks.add(gregtech6.registry.GTMachines.SHREDDER_ULV.get());
+        rBlocks.add(gregtech6.registry.GTMachines.CRUSHER_ULV.get());
         return rBlocks;
     }
 

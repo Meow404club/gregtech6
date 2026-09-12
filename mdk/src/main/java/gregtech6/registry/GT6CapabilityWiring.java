@@ -180,6 +180,15 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tExtruder,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p28-c-ulv-machine-ladder — the Rolling Mill family joins (tail-append;
+		// shared serial file): the new single-row family's BET, the same item + fluid
+		// faces as every TileEntityBasicMachine family above (the ULV rows of the five
+		// existing families need no row here — they ride their family BETs verbatim)
+		BlockEntityType<TileEntityBasicMachine> tRollingmill = GTMachines.ROLLINGMILL_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tRollingmill,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tRollingmill,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,

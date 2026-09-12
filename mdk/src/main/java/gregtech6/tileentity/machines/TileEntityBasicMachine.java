@@ -644,6 +644,16 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 		if (tRecipe == null) return DID_NOT_FIND_RECIPE; // :719/:719-shape
 
+		// the p28-c-ulv-machine-ladder melting gate (NO upstream :72x line — the container
+		// semantics of Smeltery :194 / Mold :189 re-expressed as a machine recipe gate; the
+		// research.p28-r-ulv-tier-design rejected-arms ledger covers the RM whitelist and
+		// the BE-subclass forms): findRecipe HIT but a consumed input material melts above
+		// the row ceiling → the recipe is refused BEFORE any consume (the probe arm
+		// aApplyRecipe=false refuses identically, so the machine never starts). Unresolvable
+		// inputs (vanilla items, non-GT stacks) pass — the "no material data = no gate" arm
+		// is what keeps the vanilla-compat recipes runnable.
+		if (mMaxMeltingPointK != null && meltingGateBlocks(mMaxMeltingPointK, tInputs)) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS; // :736/:723-shape
+
 		if (tRecipe.mCanBeBuffered) mLastRecipe = tRecipe; // :734/:721
 		tMaxProcessCount = canOutput(tRecipe); // :735/:722
 		if (tMaxProcessCount <= 0) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS; // :736/:723
@@ -696,6 +706,28 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 		removeEmptyInputStacks(); // :776 removeAllDroppableNullStacks shape
 		return FOUND_AND_SUCCESSFULLY_USED_RECIPE; // :777
+	}
+
+	/**
+	 * The p28-c-ulv-machine-ladder melting gate — the PURE decision function behind the
+	 * {@link #checkRecipe} hook (offline-testable: no world, no BE state). {@code true} =
+	 * BLOCKED. Any ONE input stack whose resolved material carries
+	 * {@code mMeltingPoint > aMaxMeltingPointK} blocks the recipe (the 任一超即拒 ruling);
+	 * stacks with NO material data (vanilla items, non-GT stacks, empty slots) pass. The
+	 * material resolution is the port's item→material seam — {@code
+	 * MaterialPrefixItem.material} (the same public field the tint/paint faces read); the
+	 * upstream OM.materialstack(ItemStack) walk has no wider port counterpart yet, so
+	 * non-{@code MaterialPrefixItem} stacks are unresolvable and pass.
+	 */
+	public static boolean meltingGateBlocks(long aMaxMeltingPointK, @Nullable ItemStack... aInputs) {
+		if (aInputs == null) return false;
+		for (ItemStack tStack : aInputs) {
+			if (tStack == null || tStack.isEmpty()) continue;
+			if (tStack.getItem() instanceof gregtech6.item.MaterialPrefixItem tMaterialItem
+					&& tMaterialItem.material != null
+					&& tMaterialItem.material.mMeltingPoint > aMaxMeltingPointK) return true;
+		}
+		return false;
 	}
 
 	/**
@@ -852,6 +884,23 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * with the RecipeMap mMinInputTankSizes omission (RecipeMap.java:38, the p14 ruling).
 	 */
 	public long mTankCapacity = 1000;
+	/**
+	 * Port-owned (task p28-c-ulv-machine-ladder, NO upstream counterpart — the ULV tier
+	 * extension is the declared-deviation new machine face): the row's
+	 * {@code maxMeltingPointK} gate column carried onto the BE by
+	 * {@link GTMachines#applyRow} the same way the side masks ride. {@code null} = the
+	 * machine sets no melting gate (every non-ULV row). A non-null value turns the
+	 * {@link #checkRecipe} hook on: a recipe whose INPUT material stacks carry an
+	 * {@code mMeltingPoint} above the threshold is refused
+	 * (FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS) before any consume — the GT6
+	 * container-by-melting-point semantics (MultiTileEntitySmeltery.java:194
+	 * {@code mTemperature >= mMeltingPoint} / MultiTileEntityMold.java:189 temperature
+	 * refusal) re-expressed as a machine recipe gate. Every ULV row carries 1375 K — the
+	 * stone-crucible ceiling (GT6Crucibles.java:86, TileEntitySmelteryOfflineTest :281):
+	 * "meltable in the stone crucible = processable in ULV". Registration-config carrier,
+	 * NOT persisted (the mEnergyInputs load-keeps-the-constructor-config contract).
+	 */
+	public Long mMaxMeltingPointK = null;
 	/**
 	 * Upstream :511 VERBATIM (task p14-machine-fluid-face ②): the receiving gate is the
 	 * rotated connectivity mask — {@code FACE_CONNECTED[FACING_ROTATIONS[mFacing][aSide]]

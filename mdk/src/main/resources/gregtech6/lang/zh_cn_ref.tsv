@@ -229,6 +229,7 @@ direct	gt6.row.item_pipe.display.restrictive_medium	限流%s物品管道	hand
 direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
 direct	gt6.row.machine.compressor	压缩机 (%s)	hand
 direct	gt6.row.machine.crusher	破碎机	hand
+direct	gt6.row.machine.crusher.display	破碎机 (%s)	hand
 direct	gt6.row.machine.display	%s (%s)	hand
 direct	gt6.row.machine.extruder	压模器	hand
 direct	gt6.row.machine.extruder.display	压模器 (%s)	hand
@@ -237,10 +238,13 @@ direct	gt6.row.machine.extruder_low_heat	低温压模器	hand
 direct	gt6.row.machine.lathe	车床	hand
 direct	gt6.row.machine.press	压力成型机	hand
 direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
+direct	gt6.row.machine.rolling_mill	辊压机 (%s)	hand
 direct	gt6.row.machine.shredder	粉碎机	hand
+direct	gt6.row.machine.shredder.display	粉碎机 (%s)	hand
 direct	gt6.row.machine.sifter	筛选机 (%s)	hand
 direct	gt6.row.machine.wiremill	线材机 (%s)	hand
 direct	gt6.row.mat.adamantium	艾德曼合金	hand
+direct	gt6.row.mat.any_wood	木	hand
 direct	gt6.row.mat.arsenic_bronze	砷青铜	hand
 direct	gt6.row.mat.arsenic_copper	砷铜	hand
 direct	gt6.row.mat.bismuth	铋	hand
@@ -271,6 +275,7 @@ direct	gt6.row.mat.tungsten	钨	hand
 direct	gt6.row.mat.tungsten_carbide	碳化钨	hand
 direct	gt6.row.mat.tungstensteel	钨钢	hand
 direct	gt6.row.mat.ultimet	钴铬钨合金	hand
+direct	gt6.row.mat.ulv	ULV	hand
 direct	gt6.row.mat.wood_treated	木制	hand
 direct	gt6.row.mold.display.mold_ceramic	陶瓷模具	hand
 direct	gt6.row.mold.display.mold_ceramic_arrow	陶瓷模具 (箭)	hand

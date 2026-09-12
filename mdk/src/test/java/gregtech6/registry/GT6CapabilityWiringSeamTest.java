@@ -134,6 +134,7 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("wiremill", "item+fluid"); // task p26-w1-sifter-compressor-wiremill — zero fluid recipes, NOT a zero fluid face
 		tFaces.put("press", "item+fluid"); // task p26-w1-press-extruder-molds — the Press ladder joins
 		tFaces.put("extruder", "item+fluid"); // task p26-w1-press-extruder-molds — the Extruder ladder joins
+		tFaces.put("rollingmill", "item+fluid"); // task p28-c-ulv-machine-ladder — the Rolling Mill family joins (the ULV rows of the five existing families ride their family BETs)
 		tFaces.put("oven", "item"); // the exception: the gated item handler alone
 		tFaces.put("advanced_crafting_table", "item"); // task p24-act-machine — the second item-only face (zero fluid tanks)
 		BASIC_MACHINE_FAMILY_FACES = Collections.unmodifiableMap(tFaces);

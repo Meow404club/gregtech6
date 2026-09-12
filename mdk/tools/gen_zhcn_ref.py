@@ -604,6 +604,17 @@ HAND_TRANSLATIONS = {
     "gt6.row.machine.compressor": ("压缩机 (%s)", "hand"),
     "gt6.row.machine.sifter": ("筛选机 (%s)", "hand"),
     "gt6.row.machine.wiremill": ("线材机 (%s)", "hand"),
+    # task p28-c-ulv-machine-ladder — the ULV ladder face: Rolling Mill = 辊压机 (dump
+    # evidence gt.multitileentity.20111-20114 "辊压机 (...)", tmp/gregtech.lang:11497-11500);
+    # the Shredder/Crusher one-slot templates mirror the port's already-ruling atomic words
+    # 粉碎机/破碎机; Any Wood = 木 (dump gt.material.AnyWood=木, tmp/gregtech.lang:4139 —
+    # the Kinetic_T[0] rung, MT.java:3690 index 0); ULV = the VN[0] voltage id (CS.java:154,
+    # the lv/mv/hv/ev rows keep their Latin ids the same way)
+    "gt6.row.machine.rolling_mill": ("辊压机 (%s)", "hand"),
+    "gt6.row.machine.shredder.display": ("粉碎机 (%s)", "hand"),
+    "gt6.row.machine.crusher.display": ("破碎机 (%s)", "hand"),
+    "gt6.row.mat.any_wood": ("木", "hand"),
+    "gt6.row.mat.ulv": ("ULV", "hand"),
     # task p28-lang-batch1-fix (user ruling 2026-09-12, research.p28-r-translation-community):
     # the batch1 压板机/挤压机 LOW-CONFIDENCE guesses are REVERTED to the community forms the
     # dump already carried — Press = 压力成型机 (mcmod GT6/GT6U 9 hits + TeamNED gt_recipe:69 +

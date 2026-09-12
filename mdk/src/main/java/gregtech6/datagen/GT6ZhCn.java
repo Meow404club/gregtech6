@@ -462,6 +462,21 @@ public class GT6ZhCn extends LanguageProvider {
 				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
 			}
 		}
+		// p28 ULV ladder (task p28-c-ulv-machine-ladder): the three new one-slot templates
+		// + the ULV row-material units (any_wood = the Kinetic_T[0] word 木, dump
+		// gt.material.AnyWood; ulv = the VN[0] id, CS.java:154 — the tsv hand rows carry
+		// both) + the rollingmill family template
+		addDirect(gregtech6.registry.GTMachines.MACHINE_SHREDDER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_CRUSHER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_ROLLING_MILL_UNIT_KEY);
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tUlvRows
+				: java.util.List.of(gregtech6.registry.GTMachines.CANNER_ULV_ROWS, gregtech6.registry.GTMachines.SIFTER_ULV_ROWS,
+						gregtech6.registry.GTMachines.WIREMILL_ULV_ROWS, gregtech6.registry.GTMachines.SHREDDER_ULV_ROWS,
+						gregtech6.registry.GTMachines.CRUSHER_ULV_ROWS, gregtech6.registry.GTMachines.ROLLINGMILL_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tUlvRows) {
+				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
+			}
+		}
 		// storage hoppers (task p26-storage-hopper-family): the two kind templates over the
 		// bronze/steel row words (the boiler walk emits them; the tsv hand rows carry the
 		// 料斗/队列料斗 wording since task p28-lang-batch1-fix — funnel keeps 漏斗)

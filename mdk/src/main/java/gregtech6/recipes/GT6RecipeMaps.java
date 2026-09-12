@@ -125,9 +125,10 @@ public class GT6RecipeMaps {
 	/**
 	 * The generation-reset hooks: every loader that owns a private static "poured" flag
 	 * registers its resetForTest here from its static initializer, so {@link #reset()}
-	 * retires the WHOLE generation. One generation = the 22 map fields (the 12 pre-W1
+	 * retires the WHOLE generation. One generation = the 23 map fields (the 12 pre-W1
 	 * fields + the mixer/W1-trio/press-extruder/crucible-pair appends + the BATH append
-	 * of task p26-kitchen-pot-bowl) + RecipeMap.RECIPE_MAPS
+	 * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
+	 * p28-c-ulv-machine-ladder) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
@@ -251,6 +252,19 @@ public class GT6RecipeMaps {
 	 * RecipeMap} (RM.java:111 is a plain RecipeMap). Rows pour via {@link GT6RecipesWiremill}.
 	 */
 	public static volatile RecipeMap WIREMILL;
+
+	/**
+	 * RM.java:113 — the Rolling Mill map (task p28-c-ulv-machine-ladder): "gt.recipe
+	 * .rollingmill", "Rolling Mill", NEI name null → the internal name, progress 0/1, GUI
+	 * machines/rollingmill (lowercased, string only — no asset while the menu stays null),
+	 * item slots 1/1/1, fluid slots 0/0/0, minimal inputs 0, power 1. Base-{@link
+	 * RecipeMap} (RM.java:113 is a plain RecipeMap, the Wiremill :111 shape two lines
+	 * below it). DECLARED-EMPTY row0: the upstream rows pour from the prefix material
+	 * handlers (Loader_Recipes_Handlers, the W1 trio pour layer) and ride the RU 4-ladder
+	 * family the P29 batch A owns — this card ships the map + the single ULV electric
+	 * machine rung (the DISTILLERY/PRESS declared-empty precedent).
+	 */
+	public static volatile RecipeMap ROLLING_MILL;
 
 	/**
 	 * RM.java:80 — the Bath map (task p26-kitchen-pot-bowl): "gt.recipe.bath", "Bath",
@@ -482,6 +496,17 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		// RM.java:113 — the Rolling Mill map, the base-map row verbatim (items 1/1/1,
+		// fluids 0/0/0, MIN 0, AMP 1); DECLARED-EMPTY row0 (the field doc — the P29 batch A
+		// owns the RU family and its pour layer)
+		ROLLING_MILL = new RecipeMap(new HashSet<>(),
+				"gt.recipe.rollingmill", "Rolling Mill", null,
+				0, 1,
+				"gt6:textures/gui/machines/rollingmill",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 		// RM.java:99 — the Forming Press map, the subclass ctor with the identical constants
 		// row (the row0 static rows DECLARED-empty — the class doc; the rows ride the map's
 		// own findRecipe dynamic arm)
@@ -558,6 +583,7 @@ public class GT6RecipeMaps {
 		SIFTING = null;
 		COMPRESSOR = null;
 		WIREMILL = null;
+		ROLLING_MILL = null;
 		BATH = null;
 		FURNACE_FUEL = null;
 		PRESS = null;

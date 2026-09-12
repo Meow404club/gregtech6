@@ -707,13 +707,21 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_PRESS_UNIT_KEY, "Press");
         add(gregtech6.registry.GTMachines.MACHINE_EXTRUDER_UNIT_KEY, "Extruder");
         add(gregtech6.registry.GTMachines.MACHINE_EXTRUDER_LOW_HEAT_UNIT_KEY, "Low Heat Extruder");
+        // task p28-c-ulv-machine-ladder — the ULV face: the one-slot templates the new row
+        // carriers compose with (Shredder/Crusher get their first row-carrier template —
+        // their T1-T4 siblings stay tierOf tierName; Rolling Mill is the new family, the
+        // upstream name column "Rolling Mill ("+aMat.getLocal()+")" Loader:1349-1352 form)
+        add(gregtech6.registry.GTMachines.MACHINE_SHREDDER_DISPLAY_KEY, "Shredder (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_CRUSHER_DISPLAY_KEY, "Crusher (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_ROLLING_MILL_UNIT_KEY, "Rolling Mill (%s)");
         // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
         for (String[] tMat : new String[][] {{"steel", "Steel"}, {"invar", "Invar"}, {"titanium", "Titanium"},
                 {"tungsten_carbide", "Tungsten Carbide"}, {"bronze", "Bronze"}, {"tungstensteel", "Tungstensteel"},
-                {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"}}) {
-            addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the Heat_T[1..4] locals (MT.java:3689) + the VN[1..4] ids (CS.java:154) + the Kinetic_T[1..4] locals (the W1 trio)
+                {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"},
+                {"any_wood", "Any Wood"}, {"ulv", "ULV"}}) {
+            addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the Heat_T[1..4] locals (MT.java:3689) + the VN[1..4] ids (CS.java:154) + the Kinetic_T[1..4] locals (the W1 trio) + the p28 ULV rungs (the T0 material word + VN[0])
         }
         // task p16-distillery-family ① — the Integrated Circuit ("Selector Tag", the upstream
         // registration name ItemIntegratedCircuit.java:50 verbatim) + the configuration

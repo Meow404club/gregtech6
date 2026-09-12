@@ -75,8 +75,9 @@ class GT6TagsDatagenTest {
      * p27-oven-heat-t-ladder).
      */
     // the 3 oven ladder rows joined the whole-class walk at task p27-oven-heat-t-ladder
-    // (46 -> 49 machines on the merged line, 3642 -> 3645)
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 49 + 1 + 2677 + 629 + 2 + 15;
+    // (46 -> 49 machines on the merged line, 3642 -> 3645); the six p28 ULV rows join the
+    // same whole-class walk (49 -> 55, 3645 -> 3651, task p28-c-ulv-machine-ladder)
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 55 + 1 + 2677 + 629 + 2 + 15;
 
 
     /** The 16 tier-ladder machine ids of the first machines card + the oven ladder + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
