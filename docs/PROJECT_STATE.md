@@ -5,9 +5,13 @@
 
 ## 当前阶段
 
+`第 28 阶段：用户实测批（建筑杖一键成型·强化泡沫 Jade 名·坩埚 Jade 内容物温度）/ neo 腿 tag 运行时接线 / runClient 目验清单 / 单块机族 facing 正典化 / 解冻池`（**2026-09-12 开局，调度换轨**：金字塔拆分当日即被滚动合并队列+分层门禁取代（7cf81ab0），全量 sweep 复由追加裁定移至阶段末恰好一次（19b6644c）。W1 四卡全 approve 合入 main 035d43de→3ed3fd39：p28-neo-tag-wiring 37c27c22（neo 腿 7927 tag 面嫁接复活+ADR-P17-1 §6 再裁决）/p28-builder-wand-oneclick b890c309（用户裁定 B 一键成型两机制分臂+wandclick 测试臂+ADR-P28 首号）/p28-cfoam-lang-key 9041753d（cfoam_owned 键补写+owned 全族 33 值统一「强化」+注册表覆盖闸门 452 点亮 450 豁免+floor 2796）/p28-crucible-jade-face 3ed3fd39（坩埚 Jade 内容物+温度，TFRU 33c22beb Content 约定对位，floor 2800）。方法论两沉淀：cleanTest 须 --no-build-cache 防 FROM-CACHE 伪造绿；runData 首跑 written 非零非红。S1 单席滚动四审零打回。用户三条实测 bug 全数销账（详见 docs/TODO.md 第 28 阶段节）。全量 sweep 留阶段末）
+
+### 第 27 阶段详账（2026-09-12 收官）
+
 `第 27 阶段：质量与保真——zh lang 全量审计与二批翻译 / 视觉批（机器材质色保真·工具 prefix 模型多层化·overlay 资产 2792 张·强化泡沫）/成型朝向（焦炉 180°·建筑杖 patternWalk）/ GUI 两缺陷 / 粉碎机能量显示 / 原版统一化 c: 孪生树 / ops 三项`（**2026-09-12 收官**：main ed892cda→51a07784，18 卡全合零悬案；用户八条实测反馈全落地。研究六轮两翻案：「机器默认灰=保真」被用户实测推翻→重考古 ClassContainer:51 注册期 NBT_MATERIAL→NBT_COLOR 材质色自动派生=保真缺口；「工具缺枚举」实为渲染缺层（上游双 PNG 基底+_OVERLAY 四 pass，本仓零借）。收官门禁=62 链 18 簇双腿 sweep（forge 3050s/neo 3031s）四红全数链侧定性→pins 卡转绿 GREEN。审查 S2-S6 五席 19 审 1 打回。treecheck 陈旧守卫合入首战生效（逮住快照滞后 869s）。WSL 崩溃#1 零损失恢复；GPG 弹窗阻塞用户解除。全量锚点=phase_anchors.p27）
 
-### 第 26 阶段详账（2026-09-10 收官）
+### 第 27 阶段详账（2026-09-12 开局）
 
 `第 26 阶段：质量与保真——zh lang 全量审计（首项）/ 视觉批八条（NBT 材质创造栏枚举·粉碎机能量面纠偏·渲染修复×3）/ 成型朝向两 bug / GUI 两缺陷 / 原版统一化 tag / ops 三项（两红链现代化·名册补录·biome 带）/ 解冻实现池`（**2026-09-10 开局**：Wave1 已派 7 agent 后台——研究×3（lang 审计/粉碎机 wiring 考据/原版统一化策略）+设计×1（NBT 材质物品创造栏枚举，视觉批①⑥同根）+coder×3（p27-cokeoven-facing-fix 焦炉朝向反 180°/p27-builder-wand-form-fix 建筑杖成型半途/p27-gui-render-fixes 进度条白箭头+示例箱子标签，render-only 与焦炉卡文件域隔离）；全量池=docs/TODO.md 第 27 阶段节+decisions.p27-opener-* 四键）
 

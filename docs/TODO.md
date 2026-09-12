@@ -315,14 +315,14 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 
 ## 第 27 阶段（质量与保真）——✅ 已完成（2026-09-12，18 卡全合 main 51a07784，sweep 62 链双腿 GREEN）
 
-## 第 28 阶段（入口，2026-09-12 P27 收官移交）——🚧 未开
+## 第 28 阶段（入口，2026-09-12 P27 收官移交）——🚧 进行中（W1 四卡已合，main 3ed3fd39；调度=滚动合并队列 7cf81ab0+阶段末 sweep 19b6644c）
 
-- [ ] p27-neo-tag-resource-wiring：c: 孪生树 1.21.1 腿运行时接线（datagen 产物双目录写候选，ADR-P17-1 再裁决，动 build 面）
+- [x] p27-neo-tag-resource-wiring：c: 孪生树 1.21.1 腿运行时接线→已合 37c27c22（build 面嫁接 forge:items→c:item 7927 面字节同源+per-leg 断言+p27tags 链 neo 臂重钉双腿 GREEN+ADR-P17-1 §6 再裁决；死复数带 jar exclude 留 §6.4 可选）
 - [ ] 低置信译名社区核：压板机/挤压机、充能琥珀金、脉动/鲜艳合金、block_gem 结晶双词族、kalendrite 五兄弟/desichalkos/eximite、dark_thaumium（%s锭 叠字陷阱）、行星宿石 ASCII、funnel/hopper（需用户裁）
 - [ ] en 侧 3 条可疑上报（large_boiler barometer 文案等）另卡；mixing_bowl en 名漂移（Ceramic Bowl vs 搅拌盆）待用户终裁
-- [ ] runClient 目验清单（P27 全量）：机器材质色（铜橙红/钢灰白+喷漆覆盖卸漆回正）/工具多层（杖棍·锯刃·镐头杆·crowbar 阴影）/含XX石块主体/试管管壁/强化泡沫湿干可见/焦炉正面成型+白箭头/示例箱子标签/Oven 四梯创造栏/储罐译名/厨具页签退役
+- [ ] runClient 目验清单（P27 全量+P28 追加）：机器材质色（铜橙红/钢灰白+喷漆覆盖卸漆回正）/工具多层（杖棍·锯刃·镐头杆·crowbar 阴影）/含XX石块主体/试管管壁/强化泡沫湿干可见/焦炉正面成型+白箭头/示例箱子标签/Oven 四梯创造栏/储罐译名/厨具页签退役//P28：强化泡沫 Jade 悬停名（RCON setblock 后悬停）/坩埚 Jade 内容物+温度行（熔毁 RED）/建筑杖单击成型（焦炉/坩埚/避雷针/大锅炉）
 - [ ] 单块机族 facing 同病正典化（cokeoven 卡偏离声明遗留：TileEntityBasicMachine/TileEntityOven setFacingFromPlacement 同写视线方向）
-- [ ] **用户 2026-09-12 实测三条（decisions.p28-opener-jade-wand）**：①强化泡沫语言键缺失 Jade 不显示（P27 宣告 cfoam 33 键闭合但实测仍缺——闭合键与 Jade tooltip 消费键可能不同源，重考）；②坩埚内容物与温度 Jade 不显示（P26 坩埚链无 Jade provider 面，集成卡缺失）；③建筑杖仍只造一半表现同前（宽高对、长 2 少 1——P27 修 patternWalkFacing 后 RCON GREEN 但玩家路径仍红，二次根因卡：玩家点击链路 vs RCON 链路差异+长度轴遍历审查，最高优先）
+- [x] **用户 2026-09-12 实测三条（decisions.p28-opener-jade-wand）**：①强化泡沫语言键缺失 Jade 不显示→已修 9041753d（根因=block.gt6.cfoam_owned 键从未写过，P27 销账的 33 键是流体族不同键集；补键 zh=强化建筑泡沫+owned 全族 33 值统一「强化」+注册表覆盖闸门防复发；Jade 悬停目验留上方清单）；②坩埚内容物与温度 Jade 不显示→已修 3ed3fd39（GT6CrucibleProvider 温度/总量/内容物面，TFRU 33c22beb Content 约定对位，熔毁 RED）；③建筑杖仍只造一半→研究证实=上游忠实 ±1 点击邻域门非移植 bug（RCON form 臂喂 null 一次铺满故链 GREEN 掩盖），用户裁定 B 一键成型→已合 b890c309（两机制分臂+wandclick 测试臂+九击钉重写+ADR-P28 首号偏离声明；目验留上方清单）
 - [ ] 解冻实现池照旧：管道①②③/质量存储②/foam C/panels/sensors-batch2/mortar-juicer-grind W2/EU 入向转换机/行回填 b 类流体行/W2 成型链/plateCurved/tool-metatool（门=P24 工具系统闭环）
 
 
