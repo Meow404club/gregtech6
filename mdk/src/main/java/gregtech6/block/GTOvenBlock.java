@@ -145,9 +145,10 @@ public class GTOvenBlock extends GTEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-		// the player's horizontal look direction — the same side setFacingFromPlacement writes
+		// the front TOWARDS the placer (the GT6PlacementFacing canon, task
+		// p28-singleblock-facing-canon) — the same side setFacingFromPlacement writes
 		// (chest precedent onPlaced :128-131, UT.Code.getSideForPlayerPlacing SIDES_HORIZONTAL)
-		return defaultBlockState().setValue(FACING, aContext.getHorizontalDirection());
+		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}
 
 	@Override

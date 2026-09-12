@@ -659,9 +659,13 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	// facing + visual state (BlockState double-write, spec 7)
 	// ---------------------------------------------------------------------------
 
-	/** Chest precedent onPlaced :128-131 — GT6 side order == Direction.getIndex() (get3DDataValue). */
+	/**
+	 * Chest precedent onPlaced :128-131 — GT6 side order == Direction.getIndex()
+	 * (get3DDataValue). Task p28-singleblock-facing-canon: the front TOWARDS the placer —
+	 * the GT6PlacementFacing canon (view OPPOSITE), not the raw view direction.
+	 */
 	public void setFacingFromPlacement(Player aPlayer) {
-		mFacing = (byte) aPlayer.getDirection().get3DDataValue();
+		mFacing = gregtech6.block.GT6PlacementFacing.placementFacing(aPlayer.getDirection());
 		applyVisualState(); // facing changes write NBT (persistence) + BlockState (visuals) immediately
 	}
 

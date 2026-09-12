@@ -304,8 +304,11 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-		// the player's horizontal look direction — the same side setFacingFromPlacement writes
-		return defaultBlockState().setValue(FACING, aContext.getHorizontalDirection());
+		// the front TOWARDS the placer (the GT6PlacementFacing canon, task
+		// p28-singleblock-facing-canon) — the same side setFacingFromPlacement writes,
+		// so the client prediction and the server pair-write agree (UseOnContext.java:70
+		// getHorizontalDirection = the VIEW direction; the canon is its opposite)
+		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}
 
 	@Override
