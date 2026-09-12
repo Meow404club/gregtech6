@@ -28,6 +28,7 @@ import gregtech6.tileentity.energy.GTCrankBlockEntity;
 import gregtech6.tileentity.energy.GTDieselEngineBlockEntity;
 import gregtech6.tileentity.energy.GTEnergySourceBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
+import gregtech6.tileentity.energy.GT6WaterWheelBlockEntity;
 import gregtech6.tileentity.energy.GTGearBoxBlockEntity;
 import gregtech6.tileentity.energy.GTTransformerRotationBlockEntity;
 import gregtech6.tileentity.example.GTExampleChestBlockEntity;
@@ -223,6 +224,18 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<GTTransformerRotationBlockEntity>> TRANSFORMER_BE =
 			BLOCK_ENTITY_TYPES.register("transformer_rotation", () -> BlockEntityType.Builder.of(
 					GTTransformerRotationBlockEntity::new, GT6Kinetics.TRANSFORMER_ROTATION.get()).build(null));
+
+	// water wheel (task p28-c-water-wheel) — the kinetics family's RU-source row
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Water Wheel BET (task p28-c-water-wheel — the CRANK_BE single-mount shape, the
+	 * block/item in GT6Kinetics). Registry path "water_wheel" mirrors
+	 * GT6WaterWheelBlockEntity#getTileEntityName like every other row.
+	 */
+	public static final RegistryObject<BlockEntityType<GT6WaterWheelBlockEntity>> WATER_WHEEL_BE =
+			BLOCK_ENTITY_TYPES.register("water_wheel", () -> BlockEntityType.Builder.of(
+					GT6WaterWheelBlockEntity::new, GT6Kinetics.WATER_WHEEL.get()).build(null));
 
 	// -------------------------------------------------------------------------
 	// the burning boxes (task p13-burning-box-family) — the four shared family rows
