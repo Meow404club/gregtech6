@@ -147,7 +147,12 @@ public class GTEntityBlockRenderShapeCensusTest {
 		}
 		try (var tWalk = Files.walk(tPackageRoot)) {
 			tWalk.filter(Files::isRegularFile)
-					.map(Path::toString)
+					// relativized against the CLASSES ROOT, never the absolute path: an
+					// absolute string carries an arbitrary checkout name — a repo cloned
+					// into a directory literally named "gregtech6" made indexOf(first marker)
+					// bind to the checkout name and every derived binary name CNF'd
+					// (checked=[] — the p28-c-ulv-machine-ladder merge-session finding)
+					.map(aPath -> aRoot.relativize(aPath).toString())
 					.filter(aName -> aName.endsWith(".class") && !aName.endsWith("module-info.class"))
 					.map(GTEntityBlockRenderShapeCensusTest::pathToBinaryName)
 					.filter(aName -> !aName.matches(".*\\$\\d.*")) // anonymous/synthetic classes are not block carriers
