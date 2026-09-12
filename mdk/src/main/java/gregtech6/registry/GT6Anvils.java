@@ -1,5 +1,6 @@
 package gregtech6.registry;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.core.registries.Registries;
@@ -41,9 +42,10 @@ import gregtech6.tileentity.tools.GT6AnvilBlockEntity;
  * </ul>
  * The other 14 material rows (:2187-2200+, GraniteBlack/GraniteRed/Pb/Bronze/... /
  * BlackSteel) are the material-ladder pool cut — the single-tier family ruling (the BE
- * reads BOTH carrier values, so a later ladder card appends block rows only). The
- * durability ladder IS the gameplay: the Stone anvil breaks after ONE displayed point
- * (the wear floor = one point per working hit), the Blackstone one survives ten.
+ * reads BOTH carrier values, so a later ladder card appends ROWS only). The durability
+ * ladder IS the gameplay: the Stone anvil breaks after ONE displayed point (the wear
+ * floor = one point per working hit, MultiTileEntityAnvil :124-126), the Blackstone one
+ * survives ten.
  *
  * <p>GUI: none — the upstream tooltip is {@code LH.NO_GUI_CLICK_TO_INTERACT}
  * (MultiTileEntityAnvil :91), the menu-less kitchen ruling. Creative tab: the
@@ -57,15 +59,41 @@ public final class GT6Anvils {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
-	/** The stone anvil — MT.Stone, 10000 durability units = ONE working point (:2185). */
-	public static final RegistryObject<GTAnvilBlock> STONE_ANVIL = BLOCKS.register("stone_anvil",
-			() -> new GTAnvilBlock(() -> MT.Stone, 10000, () -> GT6Anvils.ANVIL_BE.get(),
-					BlockBehaviour.Properties.of().strength(1.0F, 6.0F).sound(SoundType.STONE)));
+	/**
+	 * One registration row — the block-carrier projection of the Loader anvil line
+	 * (the GT6Hoppers.HopperRow form; a later ladder card appends rows, the pool cut).
+	 *
+	 * @param path        the gt6 registry path (the blockstate/model/lang key tail)
+	 * @param material    the upstream {@code NBT_MATERIAL} (the smash-target hop reads it)
+	 * @param durability  the upstream {@code NBT_DURABILITY} (10000 stone / 100000 blackstone)
+	 */
+	public record AnvilRow(String path, Supplier<OreDictMaterial> material, long durability) {}
 
-	/** The blackstone anvil — MT.STONES.Blackstone, 100000 durability units = TEN points (:2186). */
-	public static final RegistryObject<GTAnvilBlock> BLACKSTONE_ANVIL = BLOCKS.register("blackstone_anvil",
-			() -> new GTAnvilBlock(() -> MT.STONES.Blackstone, 100000, () -> GT6Anvils.ANVIL_BE.get(),
-					BlockBehaviour.Properties.of().strength(1.0F, 6.0F).sound(SoundType.STONE)));
+	/** The two rows in registration order (:2185 stone, :2186 blackstone). */
+	public static final List<AnvilRow> ROWS = List.of(
+			new AnvilRow("stone_anvil", () -> MT.Stone, 10000),
+			new AnvilRow("blackstone_anvil", () -> MT.STONES.Blackstone, 100000));
+
+	/** The registered blocks by path (the datagen walkers + the BET multi-mount array). */
+	public static final java.util.Map<String, RegistryObject<GTAnvilBlock>> BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered items, same keys as {@link #BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (AnvilRow tRow : ROWS) {
+			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTAnvilBlock(tRow.material(), tRow.durability(), () -> GT6Anvils.ANVIL_BE.get(),
+							BlockBehaviour.Properties.of().strength(1.0F, 6.0F).sound(SoundType.STONE))));
+			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new BlockItem(GT6Anvils.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The stone anvil handle (the :2185 row). */
+	public static final RegistryObject<GTAnvilBlock> STONE_ANVIL = BLOCKS_BY_PATH.get("stone_anvil");
+	/** The blackstone anvil handle (the :2186 row). */
+	public static final RegistryObject<GTAnvilBlock> BLACKSTONE_ANVIL = BLOCKS_BY_PATH.get("blackstone_anvil");
 
 	/**
 	 * The anvil BET — the shared-BET multi-mount (ADR-P3-1): one BE class over both rows
@@ -75,18 +103,13 @@ public final class GT6Anvils {
 			BLOCK_ENTITY_TYPES.register("anvil", () -> BlockEntityType.Builder.of(
 					GT6AnvilBlockEntity::new, STONE_ANVIL.get(), BLACKSTONE_ANVIL.get()).build(null));
 
-	/** The anvil items (plain BlockItems — no item-capability face, the kitchen ruling). */
-	public static final RegistryObject<Item> STONE_ANVIL_ITEM = ITEMS.register("stone_anvil",
-			() -> new BlockItem(STONE_ANVIL.get(), new Item.Properties()));
-	public static final RegistryObject<Item> BLACKSTONE_ANVIL_ITEM = ITEMS.register("blackstone_anvil",
-			() -> new BlockItem(BLACKSTONE_ANVIL.get(), new Item.Properties()));
-
 	/** The MACHINES-TAB join (the p27 kitchen retirement form — the anvil is a processing block). */
 	@SubscribeEvent
 	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
 		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
-			aEvent.accept(new ItemStack(STONE_ANVIL_ITEM.get()));
-			aEvent.accept(new ItemStack(BLACKSTONE_ANVIL_ITEM.get()));
+			for (AnvilRow tRow : ROWS) {
+				aEvent.accept(new ItemStack(ITEMS_BY_PATH.get(tRow.path()).get()));
+			}
 		}
 	}
 

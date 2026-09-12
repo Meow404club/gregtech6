@@ -48,6 +48,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.registry.GT6Anvils;
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Boilers;
 import gregtech6.registry.GT6BurningBoxes;
@@ -858,6 +859,7 @@ private static final int ZH_KEY_FLOOR = 2805;
 	@Test
 	public void everyRegisteredBlockDescriptionIdHasLangKeysOnBothFaces() {
 		List<Class<?>> tRegClasses = List.of(
+			GT6Anvils.class,
 			GT6Attachments.class, GT6Boilers.class, GT6BurningBoxes.class, GT6Crucibles.class,
 			GT6FeBatteries.class, GT6FeConverters.class, GT6FoamBlocks.class, GT6Hoppers.class, GT6Kinetics.class,
 			GT6Kitchen.class, GT6Molds.class, GT6Sensors.class, GT6StaticStorages.class,
@@ -981,7 +983,7 @@ private static final int ZH_KEY_FLOOR = 2805;
 			+ " exemption = a row table shrank or a path typo'd)");
 		assertEquals(909, tExemptTotal, "the derived composed-name exemption census"
 			+ " (the six p28 ULV row carriers joined at 903 + 6)");
-		assertEquals(90, tChecked, "the checked block census: every DeferredRegister block NOT"
+		assertEquals(92, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase)"
 			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
