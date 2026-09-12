@@ -94,7 +94,7 @@ public final class GT6CapabilityWiring {
 		registerCokeOvenFaces(aEvent);
 		registerBarrelBlockFluidHandler(aEvent);
 		registerBarrelItemHandlers(aEvent);
-		registerFeBattery(aEvent); // task p26-eu-bridge-outbound (tail-append; shared serial file)
+		registerFeBattery(aEvent); // the pure-sink fixture row, the W3 dynamo-chain measurement end (tail-append; shared serial file)
 		registerFeConverters(aEvent); // task p28-b-fe-converter-machine (tail-append; shared serial file)
 		registerFeSource(aEvent); // task p28-b-fe-converter-machine (tail-append; shared serial file)
 		registerKitchenFaces(aEvent);
@@ -309,16 +309,16 @@ public final class GT6CapabilityWiring {
 		return new GTBarrelItemFluidHandler(aStack, tBlock.capacityL()).setGasProof(tBlock.gasProof());
 	}
 
-	// -- the p26 FE battery fixture (task p26-eu-bridge-outbound; TAIL-APPENDED ROW, the
-	// shared serial file: the W1 base-machines card also touches this file — append-only) --
+	// -- the p26 FE battery fixture (TAIL-APPENDED ROW, the shared serial file: the W1
+	// base-machines card also touches this file — append-only) --
 	// The fixture is a capability PROVIDER on this leg (21.1 BlockEntity has no
 	// getCapability override): registerBlockEntity hands the BET the same
 	// fresh-or-field provider shape as its siblings. The forge leg answers through the
 	// GT6FeBatteryBlockEntity.getCapability override (the 01Root:439 shape) and cannot see
 	// this file. Capabilities.EnergyStorage.BLOCK = BlockCapability<IEnergyStorage,
-	// Direction> (javap 21.1.249); the receiver of this face is the EU->FE outbound bridge
-	// (the EU->FE bridge's neo arm in GT6FeBatteries.onForeignEnergy), which queries the
-	// storage through the LEVEL face exactly like any foreign FE consumer would.
+	// Direction> (javap 21.1.249); the receivers of this face are foreign FE consumers
+	// (and the W3 dynamo-chain measurement end), which query the storage through the
+	// LEVEL face.
 
 	private static void registerFeBattery(RegisterCapabilitiesEvent aEvent) {
 		BlockEntityType<GT6FeBatteryBlockEntity> tBattery = GT6FeBatteries.FE_BATTERY_BE.get();
