@@ -96,10 +96,16 @@ public class GTExampleChestBlockEntity extends TileEntityBase03TicksAndSync impl
 	// placement (upstream onPlaced :128-131)
 	// ---------------------------------------------------------------------------
 
-	/** Upstream mFacing = UT.Code.getSideForPlayerPlacing(aPlayer, mFacing, SIDES_HORIZONTAL), see class doc. */
+	/**
+	 * Upstream mFacing = UT.Code.getSideForPlayerPlacing(aPlayer, mFacing, SIDES_HORIZONTAL),
+	 * see class doc. Task p28-singleblock-facing-canon: the doc quoted the canon while the
+	 * code wrote the raw view direction (the same-disease self-witness that "teaches later
+	 * porters the wrong idiom"); now the front TOWARDS the placer via the GT6PlacementFacing
+	 * canon seam. The block's setPlacedBy delegates here, so this single seam fixes the pair.
+	 */
 	public void setFacingFromPlacement(Player aPlayer) {
 		// get3DDataValue = the GT6 side order 0..5 (Direction.java:119, TileEntityBase01Root port doc)
-		mFacing = (byte) aPlayer.getDirection().get3DDataValue();
+		mFacing = gregtech6.block.GT6PlacementFacing.placementFacing(aPlayer.getDirection());
 	}
 
 	public byte getFacing() {

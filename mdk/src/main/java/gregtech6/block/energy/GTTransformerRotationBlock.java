@@ -57,9 +57,11 @@ public class GTTransformerRotationBlock extends GTEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-		// the player's horizontal look direction — FRONT faces the player, the driven
-		// axle sits behind (the GTCrankBlock.getStateForPlacement precedent)
-		return defaultBlockState().setValue(FACING, aContext.getHorizontalDirection());
+		// the front TOWARDS the placer, the driven axle sits behind (the
+		// GT6PlacementFacing canon, task p28-singleblock-facing-canon — the old comment
+		// declared this intent while the code wrote the raw view direction, the same-disease
+		// self-witness; the BE follows via syncFacingFromState :164)
+		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}
 
 	@Override

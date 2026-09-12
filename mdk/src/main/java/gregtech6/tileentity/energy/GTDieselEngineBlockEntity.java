@@ -570,9 +570,13 @@ public class GTDieselEngineBlockEntity extends TileEntityBase03TicksAndSync impl
 		return mFacing;
 	}
 
-	/** The chest/oven placement mirror (the crank setFacingFromPlacement form). */
+	/**
+	 * The chest/oven placement mirror (the crank setFacingFromPlacement form). Task
+	 * p28-singleblock-facing-canon: the emit/front side TOWARDS the placer — the
+	 * GT6PlacementFacing canon (view OPPOSITE).
+	 */
 	public void setFacingFromPlacement(net.minecraft.world.entity.player.Player aPlayer) {
-		mFacing = (byte)aPlayer.getDirection().get3DDataValue();
+		mFacing = gregtech6.block.GT6PlacementFacing.placementFacing(aPlayer.getDirection());
 		setChanged();
 	}
 

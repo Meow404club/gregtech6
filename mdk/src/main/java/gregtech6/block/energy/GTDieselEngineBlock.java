@@ -74,9 +74,10 @@ public class GTDieselEngineBlock extends GTEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-		// the player's horizontal look direction — the emit/front side points away from the
-		// player (the crank getStateForPlacement precedent)
-		return defaultBlockState().setValue(FACING, aContext.getHorizontalDirection());
+		// the front TOWARDS the placer (the GT6PlacementFacing canon, task
+		// p28-singleblock-facing-canon) — the emit/front side points away from the
+		// machine, towards the player (the crank getStateForPlacement precedent)
+		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}
 
 	@Override

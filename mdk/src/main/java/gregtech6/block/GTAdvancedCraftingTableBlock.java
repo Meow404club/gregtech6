@@ -60,8 +60,9 @@ public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-		// the player's horizontal look direction — the setFacingFromPlacement twin (the oven :88 shape)
-		return defaultBlockState().setValue(FACING, aContext.getHorizontalDirection());
+		// the front TOWARDS the placer (the GT6PlacementFacing canon, task
+		// p28-singleblock-facing-canon) — the setFacingFromPlacement twin (the oven :88 shape)
+		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}
 
 	@Override

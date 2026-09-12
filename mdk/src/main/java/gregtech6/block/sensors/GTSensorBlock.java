@@ -94,9 +94,10 @@ public class GTSensorBlock extends GTEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-		// the player's horizontal look direction (the GTOvenBlock.setPlacedBy shape,
-		// upstream onPlaced :128-131 the SIDES_HORIZONTAL pick)
-		return defaultBlockState().setValue(FACING, aContext.getHorizontalDirection());
+		// the probe front TOWARDS the placer (the GT6PlacementFacing canon, task
+		// p28-singleblock-facing-canon) — the single seam: setPlacedBy mirrors the state
+		// into the BE wrenchSetFacing, so fixing the state fixes the pair
+		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}
 
 	@Override

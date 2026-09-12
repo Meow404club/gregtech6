@@ -789,8 +789,9 @@ public class TileEntityAdvancedCraftingTable extends TileEntityBase03TicksAndSyn
 	// facing (the oven precedent — NBT authority + BlockState re-application)
 	// ---------------------------------------------------------------------------
 
+	/** Task p28-singleblock-facing-canon: the front TOWARDS the placer — the GT6PlacementFacing canon (view OPPOSITE). */
 	public void setFacingFromPlacement(Player aPlayer) {
-		mFacing = (byte) aPlayer.getDirection().get3DDataValue();
+		mFacing = gregtech6.block.GT6PlacementFacing.placementFacing(aPlayer.getDirection());
 		applyVisualState();
 	}
 

@@ -236,9 +236,13 @@ public abstract class TileEntityBase10MultiBlockBase extends TileEntityBase03Tic
 	 * outwards" (MultiTileEntityCokeOven.java:64) the structure core then sits BEHIND the
 	 * front (the getOffsetXN = pos − OFF[facing] arithmetic), AWAY from the placer —
 	 * standing in front and building behind just forms (the 2026-09-10 user report).
+	 *
+	 * <p>Task p28-singleblock-facing-canon: the table now LIVES on the shared canon seam
+	 * {@link GT6PlacementFacing} (every singleblock family consumes the same mapping); this
+	 * multiblock form delegates — API and behaviour byte-identical.
 	 */
 	public static byte placementFacing(Direction aViewDirection) {
-		return (byte) aViewDirection.getOpposite().get3DDataValue();
+		return gregtech6.block.GT6PlacementFacing.placementFacing(aViewDirection);
 	}
 
 	/**
