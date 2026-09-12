@@ -35,9 +35,23 @@ import gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity;
  * {@code GTMachines.ELECTRIC_T_LADDER} carries only the [1..4] members the canner rows
  * consumed; the dynamo needs the [5] member too — upstream Electric_T[5] = Ti
  * (upstream MT.java:3691: {TinAlloy, SteelGalvanized, Al, StainlessSteel, Cr, Ti, …}).
- * This class carries its OWN five-supplier {@link #ELECTRIC_T_LADDER} (GTMachines stays
+ * This class carries its OWN six-supplier {@link #ELECTRIC_T_LADDER} (GTMachines stays
  * zero-edited, ADR-P3-4), and the row-table test pins
- * {@code ELECTRIC_T_LADDER.get(4).get() == MT.Ti}.
+ * {@code ELECTRIC_T_LADDER.get(5).get() == MT.Ti}.
+ *
+ * <p>THE T0 ULV ROW (task p28-c-ulv-dynamo-row — the water-wheel chain's last link,
+ * research.p28-r-ulv-tier-design): upstream GT6 ships NO VN[0] machine at all (only the
+ * Transformer :881 and the batteries :1009/:1033), so the T0 row is a DECLARED
+ * tier-extension deviation on three axes. (1) RATIO: in 8 RU / out 8 EU / 1 A — exactly
+ * 1:1, NOT the 0.6875 family ratio (0.6875 × 8 = 5.5, no integral packet exists below
+ * 22 EU; the rounded 1:1 makes the water wheel's 8 RU packet come out as ONE 8 EU packet,
+ * the exact V[0] the ULV machine window [4,16] — GTMachines.ULV_TIER_INPUTS — is centered
+ * on). (2) MATERIAL: Electric_T[0] = TinAlloy (upstream MT.java:3691 member [0]). (3)
+ * META ID: 10116 = the family base 10111 + 5, the p28-c-ulv-machine-ladder invented-id
+ * convention (upstream has no ULV dynamo id). The tier index PREPENDS (ULV = 0, LV..IV
+ * shift to 1..5) so the ladder index stays the VN ordinal; the input band rides the
+ * Base10:76 ≤16 arm (min = 1, the GT6DynamoBlockEntity fix commit) and the output band
+ * [4..16] IS the ULV machine input window.
  *
  * <p>The display-name face (the "Electric Dynamo (LV)" composed rows) and the creative
  * tab join are DECLARED DEFERRED to the W2 render card (lang datagen is a runData
@@ -54,33 +68,44 @@ public final class GT6ElectricDynamos {
 	/** One Electric ladder row — the upstream-parity columns of one Loader :946-950 aRegistry.add line. */
 	public record ElectricRow(String path, int metaId, int tier, String voltageWord) {}
 
-	/** The five rows, upstream line order :946-950 (T1-T5; metaId 10111-10115; the VN[1..5] display words, CS.java:154). */
+	/**
+	 * The six rows — the T0 ULV extension row (the task p28-c-ulv-dynamo-row declared
+	 * deviation, path suffix "_ulv" the p28 ULV ladder convention, invented id 族基+5)
+	 * PREPENDED to the five upstream lines in their line order :946-950 (LV..IV; metaId
+	 * 10111-10115; the VN[1..5] display words, CS.java:154; ULV = VN[0]). The tier field
+	 * is the family ladder index = the VN ordinal.
+	 */
 	public static final java.util.List<ElectricRow> ROWS = java.util.List.of(
-			new ElectricRow("electric_dynamo"   , 10111, 0, "LV"),
-			new ElectricRow("electric_dynamo_t2", 10112, 1, "MV"),
-			new ElectricRow("electric_dynamo_t3", 10113, 2, "HV"),
-			new ElectricRow("electric_dynamo_t4", 10114, 3, "EV"),
-			new ElectricRow("electric_dynamo_t5", 10115, 4, "IV"));
+			new ElectricRow("electric_dynamo_ulv", 10116, 0, "ULV"),
+			new ElectricRow("electric_dynamo"   , 10111, 1, "LV"),
+			new ElectricRow("electric_dynamo_t2", 10112, 2, "MV"),
+			new ElectricRow("electric_dynamo_t3", 10113, 3, "HV"),
+			new ElectricRow("electric_dynamo_t4", 10114, 4, "EV"),
+			new ElectricRow("electric_dynamo_t5", 10115, 5, "IV"));
 
 	/**
-	 * The Electric_T[1..5] ladder of THIS family (upstream MT.java:3691 members [1..5] =
-	 * SteelGalvanized / Al / StainlessSteel / Cr / Ti) — five suppliers, the [5] member
-	 * the wave-card existence assertion. Lazy read (the GTWireSpecs:35 ruling).
+	 * The Electric_T[0..5] ladder of THIS family (upstream MT.java:3691 members [0..5] =
+	 * TinAlloy / SteelGalvanized / Al / StainlessSteel / Cr / Ti) — six suppliers, the [5]
+	 * member the wave-card existence assertion, the [0] member the T0 row's declared
+	 * extension (the upstream [0] slot exists in the material array but carries no
+	 * machine). Lazy read (the GTWireSpecs:35 ruling).
 	 */
 	public static final java.util.List<java.util.function.Supplier<gregapi.oredict.OreDictMaterial>> ELECTRIC_T_LADDER = java.util.List.of(
-			() -> gregapi.data.MT.SteelGalvanized, () -> gregapi.data.MT.Al, () -> gregapi.data.MT.StainlessSteel,
-			() -> gregapi.data.MT.Cr, () -> gregapi.data.MT.Ti);
+			() -> gregapi.data.MT.TinAlloy, () -> gregapi.data.MT.SteelGalvanized, () -> gregapi.data.MT.Al,
+			() -> gregapi.data.MT.StainlessSteel, () -> gregapi.data.MT.Cr, () -> gregapi.data.MT.Ti);
 
-	public static final RegistryObject<Block> ELECTRIC_DYNAMO = BLOCKS.register("electric_dynamo",
+	public static final RegistryObject<Block> ELECTRIC_DYNAMO_ULV = BLOCKS.register("electric_dynamo_ulv",
 			() -> dynamo(0));
-	public static final RegistryObject<Block> ELECTRIC_DYNAMO_T2 = BLOCKS.register("electric_dynamo_t2",
+	public static final RegistryObject<Block> ELECTRIC_DYNAMO = BLOCKS.register("electric_dynamo",
 			() -> dynamo(1));
-	public static final RegistryObject<Block> ELECTRIC_DYNAMO_T3 = BLOCKS.register("electric_dynamo_t3",
+	public static final RegistryObject<Block> ELECTRIC_DYNAMO_T2 = BLOCKS.register("electric_dynamo_t2",
 			() -> dynamo(2));
-	public static final RegistryObject<Block> ELECTRIC_DYNAMO_T4 = BLOCKS.register("electric_dynamo_t4",
+	public static final RegistryObject<Block> ELECTRIC_DYNAMO_T3 = BLOCKS.register("electric_dynamo_t3",
 			() -> dynamo(3));
-	public static final RegistryObject<Block> ELECTRIC_DYNAMO_T5 = BLOCKS.register("electric_dynamo_t5",
+	public static final RegistryObject<Block> ELECTRIC_DYNAMO_T4 = BLOCKS.register("electric_dynamo_t4",
 			() -> dynamo(4));
+	public static final RegistryObject<Block> ELECTRIC_DYNAMO_T5 = BLOCKS.register("electric_dynamo_t5",
+			() -> dynamo(5));
 
 	/** The row block: hardness/resistance 4.0/4.0 (NBT_HARDNESS column), metal sounds, the family BET supplier. */
 	private static GT6DynamoBlock dynamo(int aTier) {
@@ -89,6 +114,8 @@ public final class GT6ElectricDynamos {
 	}
 
 	/** The tier items — plain BlockItems, stack 16 (the upstream stack column; the name face is W2). */
+	public static final RegistryObject<Item> ELECTRIC_DYNAMO_ULV_ITEM = ITEMS.register("electric_dynamo_ulv",
+			() -> new BlockItem(ELECTRIC_DYNAMO_ULV.get(), new Item.Properties().stacksTo(16)));
 	public static final RegistryObject<Item> ELECTRIC_DYNAMO_ITEM = ITEMS.register("electric_dynamo",
 			() -> new BlockItem(ELECTRIC_DYNAMO.get(), new Item.Properties().stacksTo(16)));
 	public static final RegistryObject<Item> ELECTRIC_DYNAMO_T2_ITEM = ITEMS.register("electric_dynamo_t2",
@@ -101,14 +128,14 @@ public final class GT6ElectricDynamos {
 			() -> new BlockItem(ELECTRIC_DYNAMO_T5.get(), new Item.Properties().stacksTo(16)));
 
 	/**
-	 * The BET — one BE class over the five ladder blocks (the p8 family-BET Builder.of
+	 * The BET — one BE class over the six ladder blocks (the p8 family-BET Builder.of
 	 * varargs shape). Registers AFTER the BLOCKS (vanilla registry order).
 	 */
 	public static final RegistryObject<BlockEntityType<GT6ElectricDynamoBlockEntity>> ELECTRIC_DYNAMO_BE =
 			BLOCK_ENTITY_TYPES.register("electric_dynamo", () -> BlockEntityType.Builder.of(
 					GT6ElectricDynamoBlockEntity::new,
-					ELECTRIC_DYNAMO.get(), ELECTRIC_DYNAMO_T2.get(), ELECTRIC_DYNAMO_T3.get(),
-					ELECTRIC_DYNAMO_T4.get(), ELECTRIC_DYNAMO_T5.get()).build(null));
+					ELECTRIC_DYNAMO_ULV.get(), ELECTRIC_DYNAMO.get(), ELECTRIC_DYNAMO_T2.get(),
+					ELECTRIC_DYNAMO_T3.get(), ELECTRIC_DYNAMO_T4.get(), ELECTRIC_DYNAMO_T5.get()).build(null));
 
 	private GT6ElectricDynamos() {}
 
@@ -130,7 +157,7 @@ public final class GT6ElectricDynamos {
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			gregtech6.GT6Mod.LOGGER.info("GT6 electric dynamos registered: 5 rows, 0.6875 EU/RU (ids 10111-10115, the p28 dynamo family)");
+			gregtech6.GT6Mod.LOGGER.info("GT6 electric dynamos registered: 6 rows (ULV 1:1 declared + LV..IV 0.6875, ids 10111-10116, the p28 dynamo family)");
 		});
 	}
 }

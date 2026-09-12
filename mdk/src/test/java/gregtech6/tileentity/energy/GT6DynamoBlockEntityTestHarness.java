@@ -18,8 +18,13 @@ public final class GT6DynamoBlockEntityTestHarness {
 	 */
 	public static final long[][] DYNAMO_ROWS = {{32, 88}, {128, 352}, {512, 1408}, {2048, 5632}, {8192, 22528}};
 
-	/** The five Electric rows {NBT_INPUT RU, NBT_OUTPUT EU} (Loader :946-950). */
-	public static final long[][] ELECTRIC_ROWS = {{32, 22}, {128, 88}, {512, 352}, {2048, 1408}, {8192, 5632}};
+	/**
+	 * The six Electric rows {NBT_INPUT RU, NBT_OUTPUT EU}, VN-ordinal order: the T0 ULV
+	 * extension {8, 8} (task p28-c-ulv-dynamo-row — the DECLARED 1:1 deviation, the
+	 * water-wheel chain's last link) then the five upstream rows {32, 22} .. {8192, 5632}
+	 * (Loader :946-950, each exactly 0.6875).
+	 */
+	public static final long[][] ELECTRIC_ROWS = {{8, 8}, {32, 22}, {128, 88}, {512, 352}, {2048, 1408}, {8192, 5632}};
 
 	/** The one-sided adjacency: only {@code aSide} resolves, to the sink's opposite face (the GTEnergySource fixture shape). */
 	public static IEnergyAdjacency adjacencyAt(gregapi.tileentity.energy.ITileEntityEnergy aSink, byte aSide) {

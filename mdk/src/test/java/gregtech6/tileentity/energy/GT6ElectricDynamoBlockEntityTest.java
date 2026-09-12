@@ -75,12 +75,58 @@ public class GT6ElectricDynamoBlockEntityTest extends GTOfflineTestBase {
 			tDynamo.setAdjacencyOverride(GT6DynamoBlockEntityTestHarness.adjacencyAt(tSink, FRONT));
 			assertEquals(1, inject(tDynamo, tRow[0], 1));
 			tDynamo.doConversion(100);
+			// the T0 row {8, 8} rides the DECLARED 1:1 deviation (task p28-c-ulv-dynamo-row);
+			// rows 1..5 are the Loader :946-950 pairs, exactly 0.6875
 			assertEquals(tRow[1], tSink.totalEu,
-					tRow[0] + " RU -> one " + tRow[1] + " EU packet (the Loader :946-950 pair, exactly 0.6875)");
+					tRow[0] + " RU -> one " + tRow[1] + " EU packet (the row pair: 1:1 declared at T0, 0.6875 above)");
 			assertEquals(tRow[1], tSink.lastSize, "the packet SIZE is the whole converted amount (Converter:85)");
 			assertEquals(0, tDynamo.mStorage, "the vent emptied the bucket");
 			assertTrue(tDynamo.mActive);
 		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// the T0 ULV row (task p28-c-ulv-dynamo-row): the water-wheel window + the ≤16 arm
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void ulvRowWindowPinsTheWaterWheelChain() {
+		// the Base10:76 ≤16 arm (the faithful fix): in 8 ≤ 16 → input min 1, NOT in/2 = 4 —
+		// the water wheel's 8 RU × 1A packet sits dead-center of [1..16]
+		GT6ElectricDynamoBlockEntity tDynamo = dynamo(8, 8);
+		assertEquals(1, tDynamo.getEnergySizeInputMin(TD.Energy.RU, BACK), "8 ≤ 16: the :76 small-arms min 1");
+		assertEquals(8, tDynamo.getEnergySizeInputRecommended(TD.Energy.RU, BACK), "inRec = the wheel packet");
+		assertEquals(16, tDynamo.getEnergySizeInputMax(TD.Energy.RU, BACK), "2×8 — a 17 packet strikes the ladder");
+		// the output band [4..16] IS the ULV machine input window (GTMachines.ULV_TIER_INPUTS)
+		assertEquals(4, tDynamo.getEnergySizeOutputMin(TD.Energy.EU, FRONT), "outMin 8/2 — the Converter:64 door, no ≤16 arm on :77");
+		assertEquals(8, tDynamo.getEnergySizeOutputRecommended(TD.Energy.EU, FRONT));
+		assertEquals(16, tDynamo.getEnergySizeOutputMax(TD.Energy.EU, FRONT), "outMax 16 = the ULV machine max — the band coincidence the design hangs on");
+		// the full chain packet: 8 RU in → ONE 8 EU packet (1:1 declared)
+		CountingEuSink tSink = new CountingEuSink(Long.MAX_VALUE);
+		tDynamo.setAdjacencyOverride(GT6DynamoBlockEntityTestHarness.adjacencyAt(tSink, FRONT));
+		assertEquals(1, inject(tDynamo, 8, 1), "the wheel packet enters (no overload, above min)");
+		tDynamo.doConversion(100);
+		assertEquals(8, tSink.totalEu, "8 RU -> one 8 EU packet, the V[0] the ULV machines eat");
+		assertEquals(8, tSink.lastSize);
+	}
+
+	@Test
+	public void ulvRowAcceptsSubHalfPacketsInsteadOfWhiteBurning() {
+		// the ≤16 arm's behavioral face: a 2 RU packet (below in/2 = 4) is NOT white-burned
+		// at the gate (the >16 rows' door) — doInject runs and the capacitor holds it; the
+		// emit door (tOutput ≥ 4) then stays shut and the VENT takes the trickle
+		GT6ElectricDynamoBlockEntity tDynamo = dynamo(8, 8);
+		CountingEuSink tSink = new CountingEuSink(Long.MAX_VALUE);
+		tDynamo.setAdjacencyOverride(GT6DynamoBlockEntityTestHarness.adjacencyAt(tSink, FRONT));
+		assertEquals(1, inject(tDynamo, 2, 1), "2 ≥ min 1: doInject runs, no gate white burn");
+		assertEquals(2, tDynamo.mStorage);
+		tDynamo.doConversion(100);
+		assertEquals(0, tSink.totalEu, "tOutput 2 < outMin 4: the door stays shut");
+		assertFalse(tDynamo.mActive);
+		assertEquals(0, tDynamo.mStorage, "the vent cleared the sub-door trickle");
+		// and the oversize leg on the T0 row: 17 > 2×8 strikes the ladder
+		assertEquals(3, inject(tDynamo, 17, 3), "17 > 16: consumed ALL, strike one");
+		assertEquals(1, tDynamo.mExplosionPrevention);
 	}
 
 	@Test

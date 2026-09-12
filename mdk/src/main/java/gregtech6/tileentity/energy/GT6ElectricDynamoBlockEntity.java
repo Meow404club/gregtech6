@@ -15,10 +15,12 @@ import gregtech6.registry.GT6ElectricDynamos;
  * The Electric Dynamo (task p28-c-dynamo-family-be) — the 1.20.1 counterpart of
  * {@code MultiTileEntityDynamoElectric} (DynamoElectric.java:34-63, the Flux twin minus
  * the CoFH flux face): back face in RU, front face out EU, over the shared
- * {@link GT6DynamoBlockEntity} core. 0.6875 EU per RU, the registration constants
- * NBT_OUTPUT/NBT_INPUT = 22/32 … 5632/8192 (Loader :946-950) — the machine whose item is
- * the Flux Dynamo recipe's middle key upstream (Loader :953-957 {@code getItem(10111..10115)}),
- * ported on the wave-card ruling c.
+ * {@link GT6DynamoBlockEntity} core. 0.6875 EU per RU on the five upstream rows, the
+ * registration constants NBT_OUTPUT/NBT_INPUT = 22/32 … 5632/8192 (Loader :946-950) — the
+ * machine whose item is the Flux Dynamo recipe's middle key upstream (Loader :953-957
+ * {@code getItem(10111..10115)}), ported on the wave-card ruling c. The T0 ULV row (task
+ * p28-c-ulv-dynamo-row, tier 0) rides the DECLARED 1:1 deviation — 8 RU in / 8 EU out,
+ * the water-wheel chain's last link (research.p28-r-ulv-tier-design chain_closure).
  *
  * <h2>The emit arm (the upstream size-carrying branch, Converter:85-89, verbatim)</h2>
  *
@@ -43,11 +45,23 @@ import gregtech6.registry.GT6ElectricDynamos;
  */
 public class GT6ElectricDynamoBlockEntity extends GT6DynamoBlockEntity {
 
-	/** The family NBT_OUTPUT column (EU): 22/88/352/1408/5632 — each exactly 0.6875× its row's NBT_INPUT (Loader :946-950). */
-	public static final long[] OUTPUTS = {22, 88, 352, 1408, 5632};
+	/**
+	 * The family NBT_OUTPUT column (EU), indexed by the VN-ordinal tier (0 = ULV .. 5 = IV):
+	 * 8 / 22 / 88 / 352 / 1408 / 5632. Rows 1..5 are exactly 0.6875× their row's NBT_INPUT
+	 * (Loader :946-950); the T0 row's 8 is the DECLARED 1:1 deviation (task
+	 * p28-c-ulv-dynamo-row: 0.6875 × 8 = 5.5 has no integral packet, the rounding makes the
+	 * water wheel's 8 RU packet emit as one 8 EU packet = V[0], the GTMachines.ULV_TIER_INPUTS
+	 * window center).
+	 */
+	public static final long[] OUTPUTS = {8, 22, 88, 352, 1408, 5632};
 
-	/** The family NBT_INPUT column (RU): 32/128/512/2048/8192 (Loader :946-950). */
-	public static final long[] INPUTS = {32, 128, 512, 2048, 8192};
+	/**
+	 * The family NBT_INPUT column (RU), same indexing: 8 / 32 / 128 / 512 / 2048 / 8192
+	 * (Loader :946-950 for rows 1..5; T0 = 8 RU declared). The T0 row rides the Base10:76
+	 * ≤16 input-min arm (min = 1) and its 8 RU packet window [1..16] takes the water
+	 * wheel's ±8 × 1A axle packet dead-center.
+	 */
+	public static final long[] INPUTS = {8, 32, 128, 512, 2048, 8192};
 
 	/** BET factory for BlockEntityType.Builder.of — resolves the shared type through the registry at runtime. */
 	public GT6ElectricDynamoBlockEntity(BlockPos aPos, BlockState aState) {
