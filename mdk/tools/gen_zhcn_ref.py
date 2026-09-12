@@ -645,6 +645,11 @@ HAND_TRANSLATIONS = {
     "gt6.jade.crucible.total": ("内容物: %s U", "hand"),
     "gt6.jade.crucible.empty": ("空", "hand"),
     "gt6.jade.crucible.more": ("+%s 种", "hand"),
+    # ---- task p28-c-anvil: the stone anvil pair (dump-verbatim faces; the reference dump
+    # keys are the meta-keyed 1.7 forms mte 32025/32095 = 石头砧/黑石砧, lifted onto the
+    # direct hand layer so the parity orphan gate walks them) ----
+    "block.gt6.stone_anvil": ("石头砧", "hand"),
+    "block.gt6.blackstone_anvil": ("黑石砧", "hand"),
 }
 
 # ---------------------------------------------------------------------------

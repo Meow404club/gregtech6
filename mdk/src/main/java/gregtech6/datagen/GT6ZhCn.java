@@ -106,6 +106,19 @@ public class GT6ZhCn extends LanguageProvider {
 		addFoamSprayUnits();    // task p25-c-foam-pipe-spray
 		addKitchenUnits();      // task p26-kitchen-pot-bowl
 		addCrucibleJadeUnits(); // task p28-crucible-jade-face
+		addAnvilUnits();        // task p28-c-anvil
+	}
+
+	/**
+	 * The anvil family zh faces (task p28-c-anvil) — the upstream zh dump rows VERBATIM
+	 * (tmp/gregtech.lang: "石头砧" = meta 32025 Stone Anvil, "黑石砧" = meta 32095
+	 * Blackstone Anvil). Hand rows (the reference dump keys are the meta-keyed 1.7 forms,
+	 * lifted onto the direct hand layer — the addDirect absent-row skip is why the TSV
+	 * regen and this walk land in the SAME commit, the noHandRowIsOrphaned pin).
+	 */
+	private void addAnvilUnits() {
+		addDirect("block.gt6.stone_anvil");
+		addDirect("block.gt6.blackstone_anvil");
 	}
 
 	/**

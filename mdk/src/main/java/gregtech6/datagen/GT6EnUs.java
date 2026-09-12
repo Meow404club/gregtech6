@@ -97,6 +97,7 @@ public class GT6EnUs extends LanguageProvider {
         addMultiBlocks();
         addBarrels();
         addKitchen(); // task p26-kitchen-pot-bowl
+        addAnvils(); // task p28-c-anvil
         addEnergySource();
         addFeBattery(); // task p26-eu-bridge-outbound — tail-append
         addFeConverter(); // task p28-b-fe-converter-machine — tail-append
@@ -566,6 +567,18 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.bathing_pot_steel", "Bathing Pot");
         add("block.gt6.mixing_bowl", "Ceramic Bowl");
         add("item.gt6.clay_bowl", "Clay Bowl");
+    }
+
+    /**
+     * The anvil family keys (task p28-c-anvil): the two stone anvil blocks, display
+     * names VERBATIM from the upstream registration rows (aMat.mNameLocal + " Anvil",
+     * Loader_MultiTileEntities.java:2185-2186 — "Stone Anvil" / "Blackstone Anvil",
+     * both "Misc Tool Blocks"). The items ride the machines tab (the kitchen join form),
+     * no tab key here.
+     */
+    private void addAnvils() {
+        add("block.gt6.stone_anvil", "Stone Anvil");
+        add("block.gt6.blackstone_anvil", "Blackstone Anvil");
     }
 
     private void addBarrels() {

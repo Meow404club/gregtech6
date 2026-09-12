@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "R": {
+      "item": "minecraft:blackstone"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "RRR",
+    "hR ",
+    "RRR"
+  ],
+  "result": {
+    "item": "gt6:blackstone_anvil"
+  },
+  "show_notification": true
+}
