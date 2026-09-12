@@ -65,6 +65,7 @@ direct	block.gt6.crusher	破碎机	hand
 direct	block.gt6.drawer_bronze	青铜四格抽屉	hand
 direct	block.gt6.drawer_steel	钢四格抽屉	hand
 direct	block.gt6.electrometer	静电计传感器	hand
+direct	block.gt6.electric_transformer	变压器 (ULV-LV)	hand
 direct	block.gt6.energy_source	测试能源	hand
 direct	block.gt6.example_chest	GT 示例箱子	hand
 direct	block.gt6.fe_battery	FE 测试电池	hand

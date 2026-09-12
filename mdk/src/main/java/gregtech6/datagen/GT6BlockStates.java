@@ -18,7 +18,9 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
+import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.block.foam.GT6CFoamOwnedBlock;
+import gregtech6.block.energy.GT6ElectricTransformerBlock;
 import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.energy.GTDieselEngineBlock;
 import gregtech6.block.energy.GTTransformerRotationBlock;
@@ -153,6 +155,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBoilers(); // task p13-boiler-tank
         addHoppers(); // task p26-storage-hopper-family
         addGearBoxTransformer(); // task p12-gearbox-transformer
+        addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addWaterWheel(); // task p28-c-water-wheel
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
@@ -1097,7 +1100,6 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tBox = GT6Kinetics.GEARBOX.get();
         simpleBlock(tBox, models().cubeAll("gearbox", modLoc("block/gearbox")));
         itemModels().withExistingParent("gearbox", modLoc("block/gearbox"));
-
         Block tTrans = GT6Kinetics.TRANSFORMER_ROTATION.get();
         ModelFile tTransModel = models().orientable("transformer_rotation",
                 modLoc("block/transformer_rotation_side"), modLoc("block/transformer_rotation_front"), modLoc("block/transformer_rotation_side"));
@@ -1110,6 +1112,31 @@ public final class GT6BlockStates extends BlockStateProvider {
                     .build();
         });
         itemModels().withExistingParent("transformer_rotation", modLoc("block/transformer_rotation"));
+    }
+
+    /**
+     * Task p28-c-ulv-lv-transformer — the Electric Transformer ULV-LV: the p12 rotation
+     * transformer's orientable facing-cube shape verbatim (the FRONT = INPUT face — the
+     * Base11 :63 convention; ALL-BUT-FRONT = output) over the BAKED upstream textures:
+     * colored/front + overlay/front and colored/side + overlay/side composited src-over
+     * into single-layer opaque PNGs (the p19 distillery bake treatment — the upstream
+     * two-layer colored+overlay stack with the mRGBa tint is the render pool card;
+     * assets/README.md carries the source + product sha256 attribution). The active
+     * overlay (MultiTileEntityTransformerElectric :50-57) is the render pool defer.
+     */
+    private void addElectricTransformer() {
+        Block tTrans = GT6ElectricTransformers.ELECTRIC_TRANSFORMER.get();
+        ModelFile tModel = models().orientable("electric_transformer",
+                modLoc("block/electric_transformer_side"), modLoc("block/electric_transformer_front"), modLoc("block/electric_transformer_side"));
+        getVariantBuilder(tTrans).forAllStates(aState -> {
+            // the vanilla horizontal-facing rotation map (the addGearBoxTransformer form)
+            Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
+            return ConfiguredModel.builder()
+                    .modelFile(tModel)
+                    .rotationY((int) (tFacing.toYRot() + 180) % 360)
+                    .build();
+        });
+        itemModels().withExistingParent("electric_transformer", modLoc("block/electric_transformer"));
     }
 
     /**

@@ -103,7 +103,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task p26-sensors-core
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task p28-b-fe-converter-machine
-                new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK)), // task p28-c-anvil — the stone anvil pair
+                new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
+                new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK)), // task p28-c-ulv-lv-transformer
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -130,7 +131,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task p26-sensors-core
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task p28-b-fe-converter-machine
-                new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK))); // task p28-c-anvil — the stone anvil pair
+                new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
+                new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK))); // task p28-c-ulv-lv-transformer
         //?}
     }
 
@@ -755,6 +757,36 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : feConverterLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /** The electric-transformer block list (task p28-c-ulv-lv-transformer): the MTE default self-drop (the :881 row, canDrop(0) == T — the Base10 :161 form), the 1.20.1 equivalent = dropSelf. */
+    public static List<Block> electricTransformerLootBlocks() {
+        return List.of(gregtech6.registry.GT6ElectricTransformers.ELECTRIC_TRANSFORMER.get());
+    }
+
+    /** The electric-transformer self-drop provider (task p28-c-ulv-lv-transformer, the FE-converter shape verbatim). */
+    public static final class GT6ElectricTransformerBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6ElectricTransformerBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6ElectricTransformerBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return electricTransformerLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : electricTransformerLootBlocks()) dropSelf(tBlock);
         }
     }
 

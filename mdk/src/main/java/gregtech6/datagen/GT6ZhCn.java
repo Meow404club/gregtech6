@@ -229,6 +229,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.crank");
 		addDirect("block.gt6.crusher");
 		addDirect("block.gt6.electrometer"); // task p26-sensors-core — the MTE 31015 dump row 电力传感器
+		addDirect("block.gt6.electric_transformer"); // task p28-c-ulv-lv-transformer — hand row (no dump face in the port snapshot; the :881 registration wording + the standard zh machine word)
 		addDirect("block.gt6.energy_source");
 		addDirect("block.gt6.fe_battery"); // task p26-eu-bridge-outbound — tail-append
 		addDirect("block.gt6.fe_converter"); // task p28-b-fe-converter-machine — tail-append
