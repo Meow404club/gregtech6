@@ -25,6 +25,8 @@ import net.minecraftforge.common.Tags;
 /*import net.neoforged.neoforge.common.Tags;
 *///?}
 
+import gregtech6.datagen.GT6ItemTags;
+import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6FoodCans;
@@ -140,6 +142,16 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * port carriers; the result-path vanilla convention.
 	 */
 	public static final ResourceLocation WATER_WHEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "water_wheel");
+	/**
+	 * The Electric Transformer (ULV-LV) crafting row (task p28-c-ulv-lv-transformer) —
+	 * the Loader_MultiTileEntities.java:881 row SHAPE ("WIW","XMx","WIW" — the unbound
+	 * 'm' dead cell folds to a space; CR has no 'm' tool letter) over the LV-era
+	 * MATERIAL-LOCK carriers (decisions.p28-ulv-tier-rulings transformer_ruling): the
+	 * casing key upgrades Electric_T[0] TinAlloy → Electric_T[1] galvanized steel (the
+	 * conditional entry — whoever crafts this already commands LV power), the wire keys
+	 * fold to the copper fine-wire tag, the 'I' plate key stays iron double plates.
+	 */
+	public static final ResourceLocation ELECTRIC_TRANSFORMER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "electric_transformer");
 
 	/** The CR.shapeless self-recast row id of a sensor path (task p26-sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
 	public static ResourceLocation sensorRecastId(String aPath) {
@@ -178,6 +190,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		fluidometerBuilder().save(aConsumer, FLUIDOMETER_ID);
 		feConverterBuilder().save(aConsumer, FE_CONVERTER_ID);
 		waterWheelBuilder().save(aConsumer, WATER_WHEEL_ID);
+		transformerBuilder().save(aConsumer, ELECTRIC_TRANSFORMER_ID);
 		for (SensorRecastRow tRow : sensorRecastBuilders()) {
 			tRow.builder().save(aConsumer, sensorRecastId(tRow.path()));
 		}
@@ -211,6 +224,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
 		fluidometerBuilder().save(aOutput, FLUIDOMETER_ID);
 		feConverterBuilder().save(aOutput, FE_CONVERTER_ID);
+		transformerBuilder().save(aOutput, ELECTRIC_TRANSFORMER_ID);
 		for (SensorRecastRow tRow : sensorRecastBuilders()) {
 			tRow.builder().save(aOutput, sensorRecastId(tRow.path()));
 		}
@@ -788,6 +802,32 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * </ul>
 	 * Result 1x {@code gt6:water_wheel}.
 	 */
+	/**
+	 * The Electric Transformer (ULV-LV) crafting row (task p28-c-ulv-lv-transformer) —
+	 * the :881 shape over the MATERIAL-LOCK carriers: 'M' =
+	 * {@code OP.casingSmall.dat(MT.SteelGalvanized)} (the Electric_T[1] LV-era rung —
+	 * the DECLARED DEVIATION from the :881 {@code casingMachine.dat(Electric_T[0])}
+	 * = TinAlloy lowest-price housing; the casingMachine → casingSmall prefix fold is
+	 * the static-storage 'M' precedent), 'W'/'X' = {@code #forge:fine_wires/copper}
+	 * (the :881 wireGt01/wireGt04 Cu columns fold — no 1x/4x wire item rows in the
+	 * port, the count differential folds into the 7 wire cells), 'I' =
+	 * {@code #forge:double_plates/iron} (the :881 column verbatim). Result 1x
+	 * {@code gt6:electric_transformer}.
+	 */
+	private ShapedRecipeBuilder transformerBuilder() {
+		TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.Copper);
+		TagKey<Item> tDoublePlates = GT6ItemTags.materialTag(GT6ItemTags.DOUBLE_PLATES_FAMILY, MT.Iron);
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6ElectricTransformers.ELECTRIC_TRANSFORMER_ITEM.get())
+				.pattern(GT6ElectricTransformers.RECIPE_PATTERN[0])
+				.pattern(GT6ElectricTransformers.RECIPE_PATTERN[1])
+				.pattern(GT6ElectricTransformers.RECIPE_PATTERN[2])
+				.define('W', tFineWires)
+				.define('X', tFineWires)
+				.define('I', tDoublePlates)
+				.define('M', GTMaterialItems.get(gregapi.data.OP.casingSmall, gregapi.data.MT.SteelGalvanized).get())
+				.unlockedBy("has_fine_wire", has(tFineWires));
+	}
+
 	private ShapedRecipeBuilder waterWheelBuilder() {
 		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6Kinetics.WATER_WHEEL_ITEM.get())
 				.pattern("PPP")

@@ -101,6 +101,7 @@ public class GT6EnUs extends LanguageProvider {
         addEnergySource();
         addFeBattery(); // task p26-eu-bridge-outbound — tail-append
         addFeConverter(); // task p28-b-fe-converter-machine — tail-append
+        addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addKinetics(); // task p12-engine-crank
         addAttachments(); // task p12-tap-funnel-attachment
         addTools();
@@ -378,6 +379,15 @@ public class GT6EnUs extends LanguageProvider {
     private void addFeConverter() {
         add("block.gt6.fe_converter", "FE Converter (ULV)");
         add("block.gt6.fe_source", "FE Test Source");
+    }
+
+    /**
+     * The Electric Transformer display key (task p28-c-ulv-lv-transformer): the :881
+     * registration wording "Transformer (ULV-LV)" verbatim — the atomic key (the
+     * fe_converter shape; a single block, no row template to compose).
+     */
+    private void addElectricTransformer() {
+        add("block.gt6.electric_transformer", "Transformer (ULV-LV)");
     }
 
     /**

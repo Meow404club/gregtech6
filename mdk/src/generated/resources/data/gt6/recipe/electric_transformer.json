@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "tag": "forge:double_plates/iron"
+    },
+    "M": {
+      "item": "gt6:casing_small_steel_galvanized"
+    },
+    "W": {
+      "tag": "forge:fine_wires/copper"
+    },
+    "X": {
+      "tag": "forge:fine_wires/copper"
+    }
+  },
+  "pattern": [
+    "WIW",
+    "XM ",
+    "WIW"
+  ],
+  "result": {
+    "item": "gt6:electric_transformer"
+  },
+  "show_notification": true
+}

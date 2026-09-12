@@ -7979,3 +7979,27 @@ borrowed=0 in-place=255 declared=0 errors=0.
 
 Copied on 2026-09-12. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+Electric Transformer family block textures, task p28-c-ulv-lv-transformer: the 2 PNGs
+under `gt6/textures/block/electric_transformer_{front,side}.png` are BAKED composites of
+the upstream transformer_electric iconset — `colored/front.png` (or `/side.png`, the
+colored trio is one byte-identical grayscale base) src-over `overlay/front.png` (or
+`/side.png`), the p19 distillery-front canonical treatment (colored+overlay bake into a
+single-layer opaque PNG; the upstream runtime mRGBa tint and the two-layer stack are the
+render pool card — the p12 rotation-transformer posture repeated). The upstream
+`overlay_active/` trio stays unborrowed (the port model has no active-state visuals;
+the W2 render card owns it).
+
+Source layers (borrowed bytes, NOT landed as files):
+- colored/front.png `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- colored/side.png  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (identical base)
+- overlay/front.png `5c728ec16e0f33fd41d656f32d8f697d9622e324666e909d37ed0af386530594`
+- overlay/side.png  `48b6811ef825b2be50dcbda29ef5e2a3f707708a499a2d3796561ddb29770185`
+
+Baked products (the landed files):
+- electric_transformer_front.png `97f5c41837e8c9f94bbaec4873d3d7f0529f1146974569d90d7fffecadc06503`
+- electric_transformer_side.png  `a982cea2f5d79df29801e1b21349e617488c324ea79a64b35712658bb60a4c9f`
+
+Baked on 2026-09-13 (bake_distillery_fronts.py src_over/encode_png functions verbatim,
+inline pass). Upstream license: **CC0 1.0 Universal Public Domain Dedication** (same
+upstream `README.md` block as above).

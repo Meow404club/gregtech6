@@ -51,6 +51,7 @@
   "block.gt6.crusher": "Crusher",
   "block.gt6.drawer_bronze": "Bronze Compartment Drawer",
   "block.gt6.drawer_steel": "Steel Compartment Drawer",
+  "block.gt6.electric_transformer": "Transformer (ULV-LV)",
   "block.gt6.electrometer": "Electrometer Sensor",
   "block.gt6.energy_source": "Test Energy Source",
   "block.gt6.example_chest": "GT Example Chest",
