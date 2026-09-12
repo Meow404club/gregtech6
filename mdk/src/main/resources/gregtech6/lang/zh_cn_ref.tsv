@@ -216,7 +216,7 @@ direct	gt6.row.faucet.display	坩埚浇铸口 (%s)	hand
 direct	gt6.row.faucet.mat.ceramic	陶瓷	hand
 direct	gt6.row.faucet.mat.stone	石头	hand
 direct	gt6.row.funnel.display	%s漏斗	hand
-direct	gt6.row.hopper.display	%s漏斗	hand
+direct	gt6.row.hopper.display	%s料斗	hand
 direct	gt6.row.item_pipe.display.huge	巨型%s物品管道	hand
 direct	gt6.row.item_pipe.display.large	大型%s物品管道	hand
 direct	gt6.row.item_pipe.display.medium	%s物品管道	hand
@@ -227,13 +227,13 @@ direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
 direct	gt6.row.machine.compressor	压缩机 (%s)	hand
 direct	gt6.row.machine.crusher	破碎机	hand
 direct	gt6.row.machine.display	%s (%s)	hand
-direct	gt6.row.machine.extruder	挤压机	hand
-direct	gt6.row.machine.extruder.display	挤压机 (%s)	hand
-direct	gt6.row.machine.extruder.low_heat.display	低温挤压机 (%s)	hand
-direct	gt6.row.machine.extruder_low_heat	挤压机	hand
+direct	gt6.row.machine.extruder	压模器	hand
+direct	gt6.row.machine.extruder.display	压模器 (%s)	hand
+direct	gt6.row.machine.extruder.low_heat.display	低温压模器 (%s)	hand
+direct	gt6.row.machine.extruder_low_heat	低温压模器	hand
 direct	gt6.row.machine.lathe	车床	hand
-direct	gt6.row.machine.press	压板机	hand
-direct	gt6.row.machine.press.display	压板机 (%s)	hand
+direct	gt6.row.machine.press	压力成型机	hand
+direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
 direct	gt6.row.machine.shredder	粉碎机	hand
 direct	gt6.row.machine.sifter	筛选机 (%s)	hand
 direct	gt6.row.machine.wiremill	线材机 (%s)	hand
@@ -302,7 +302,7 @@ direct	gt6.row.mold.display.mold_ceramic_tiny_plate	陶瓷模具 (小块板)	han
 direct	gt6.row.mold.display.mold_ceramic_universal_spade	陶瓷模具 (万用铲)	hand
 direct	gt6.row.mold.display.mold_stone	石头模具	hand
 direct	gt6.row.oven.display	烤箱 (%s)	hand
-direct	gt6.row.queue_hopper.display	%s队列漏斗	hand
+direct	gt6.row.queue_hopper.display	%s队列料斗	hand
 direct	gt6.row.size.huge	巨型	hand
 direct	gt6.row.size.large	大型	hand
 direct	gt6.row.size.medium	中型	hand
@@ -356,12 +356,12 @@ direct	gt6.tagprefix.block	%s	hand
 direct	gt6.tagprefix.block_	%s	hand
 direct	gt6.tagprefix.block_bamboo	%s	hand
 direct	gt6.tagprefix.block_dust	%s粉块	hand
-direct	gt6.tagprefix.block_gem	结晶%s块	hand
+direct	gt6.tagprefix.block_gem	%s块	hand
 direct	gt6.tagprefix.block_glass	%s	hand
 direct	gt6.tagprefix.block_ingot	%s块	hand
 direct	gt6.tagprefix.block_ore	%s	hand
 direct	gt6.tagprefix.block_plate	%s板块	hand
-direct	gt6.tagprefix.block_plate_gem	%s结晶板块	hand
+direct	gt6.tagprefix.block_plate_gem	结晶%s板块	hand
 direct	gt6.tagprefix.block_raw	粗%s矿石块	hand
 direct	gt6.tagprefix.block_solid	实心%s块	hand
 direct	gt6.tagprefix.block_wool	%s	hand
@@ -425,14 +425,14 @@ direct	gt6.tagprefix.crate_gt64_gem	箱装%s晶体	hand
 direct	gt6.tagprefix.crate_gt64_ingot	箱装%s锭	hand
 direct	gt6.tagprefix.crate_gt64_ore	%s	hand
 direct	gt6.tagprefix.crate_gt64_plate	箱装%s板	hand
-direct	gt6.tagprefix.crate_gt64_plate_gem	箱装%s结晶板	hand
+direct	gt6.tagprefix.crate_gt64_plate_gem	箱装结晶%s板	hand
 direct	gt6.tagprefix.crate_gt64_raw	箱装%s矿	hand
 direct	gt6.tagprefix.crate_gt_dust	小箱装%s粉	hand
 direct	gt6.tagprefix.crate_gt_gem	小箱装%s	hand
 direct	gt6.tagprefix.crate_gt_ingot	小箱装%s锭	hand
 direct	gt6.tagprefix.crate_gt_ore	%s	hand
 direct	gt6.tagprefix.crate_gt_plate	小箱装%s板	hand
-direct	gt6.tagprefix.crate_gt_plate_gem	小箱装%s结晶板	hand
+direct	gt6.tagprefix.crate_gt_plate_gem	小箱装结晶%s板	hand
 direct	gt6.tagprefix.crate_gt_raw	小箱装%s矿	hand
 direct	gt6.tagprefix.crop	%s	hand
 direct	gt6.tagprefix.crushed	破碎%s矿	hand
@@ -548,72 +548,72 @@ direct	gt6.tagprefix.ore_betweenstone	交错石%s矿	hand
 direct	gt6.tagprefix.ore_blackgranite	黑花岗岩%s矿	hand
 direct	gt6.tagprefix.ore_blackstone	黑石%s矿	hand
 direct	gt6.tagprefix.ore_blueschist	蓝片岩%s矿	hand
-direct	gt6.tagprefix.ore_callisto	Callisto%s矿	hand
-direct	gt6.tagprefix.ore_ceres	Ceres%s矿	hand
+direct	gt6.tagprefix.ore_callisto	木卫四%s矿	hand
+direct	gt6.tagprefix.ore_ceres	谷神星%s矿	hand
 direct	gt6.tagprefix.ore_darkprismarine	暗海晶石%s矿	hand
 direct	gt6.tagprefix.ore_deadrock	死石%s矿	hand
 direct	gt6.tagprefix.ore_deepslate	深板岩%s矿	hand
-direct	gt6.tagprefix.ore_deimos	Deimos%s矿	hand
+direct	gt6.tagprefix.ore_deimos	火卫二%s矿	hand
 direct	gt6.tagprefix.ore_dense	致密%s矿	hand
 direct	gt6.tagprefix.ore_diorite	闪长岩%s矿	hand
 direct	gt6.tagprefix.ore_end	末地%s矿	hand
 direct	gt6.tagprefix.ore_endstone	末地石%s矿	hand
-direct	gt6.tagprefix.ore_eris	Eris%s矿	hand
-direct	gt6.tagprefix.ore_europa	Europa%s矿	hand
-direct	gt6.tagprefix.ore_ganymede	Ganymede%s矿	hand
+direct	gt6.tagprefix.ore_eris	阋神星%s矿	hand
+direct	gt6.tagprefix.ore_europa	木卫二%s矿	hand
+direct	gt6.tagprefix.ore_ganymede	木卫三%s矿	hand
 direct	gt6.tagprefix.ore_gem	%s	hand
 direct	gt6.tagprefix.ore_gneiss	片麻岩%s矿	hand
 direct	gt6.tagprefix.ore_gravel	砾石%s矿	hand
 direct	gt6.tagprefix.ore_grayschist	灰片岩%s矿	hand
 direct	gt6.tagprefix.ore_greenschist	绿片岩%s矿	hand
 direct	gt6.tagprefix.ore_holystone	圣石%s矿	hand
-direct	gt6.tagprefix.ore_iapetus	Iapetus%s矿	hand
-direct	gt6.tagprefix.ore_io	Io%s矿	hand
-direct	gt6.tagprefix.ore_jupiter	Jupiter%s矿	hand
-direct	gt6.tagprefix.ore_kepler22b	Kepler22b%s矿	hand
+direct	gt6.tagprefix.ore_iapetus	土卫八%s矿	hand
+direct	gt6.tagprefix.ore_io	木卫一%s矿	hand
+direct	gt6.tagprefix.ore_jupiter	木星%s矿	hand
+direct	gt6.tagprefix.ore_kepler22b	开普勒22b%s矿	hand
 direct	gt6.tagprefix.ore_kimberlite	金伯利岩%s矿	hand
 direct	gt6.tagprefix.ore_komatiite	科马提岩%s矿	hand
 direct	gt6.tagprefix.ore_lightprismarine	亮海晶石%s矿	hand
 direct	gt6.tagprefix.ore_limestone	石灰岩%s矿	hand
 direct	gt6.tagprefix.ore_livingrock	活石%s矿	hand
 direct	gt6.tagprefix.ore_marble	大理石%s矿	hand
-direct	gt6.tagprefix.ore_mars	Mars%s矿	hand
-direct	gt6.tagprefix.ore_mercury	Mercury%s矿	hand
-direct	gt6.tagprefix.ore_moon	Moon%s矿	hand
+direct	gt6.tagprefix.ore_mars	火星%s矿	hand
+direct	gt6.tagprefix.ore_mercury	水星%s矿	hand
+direct	gt6.tagprefix.ore_moon	月球%s矿	hand
 direct	gt6.tagprefix.ore_mud	淤泥%s矿	hand
-direct	gt6.tagprefix.ore_neptune	Neptune%s矿	hand
+direct	gt6.tagprefix.ore_neptune	海王星%s矿	hand
 direct	gt6.tagprefix.ore_nether	下界%s矿	hand
 direct	gt6.tagprefix.ore_netherrack	下界岩%s矿	hand
 direct	gt6.tagprefix.ore_normal	普通%s矿	hand
-direct	gt6.tagprefix.ore_oberon	Oberon%s矿	hand
-direct	gt6.tagprefix.ore_phobos	Phobos%s矿	hand
+direct	gt6.tagprefix.ore_oberon	天卫四%s矿	hand
+direct	gt6.tagprefix.ore_phobos	火卫一%s矿	hand
 direct	gt6.tagprefix.ore_pinkschist	粉片岩%s矿	hand
 direct	gt6.tagprefix.ore_pitstone	麻纹石%s矿	hand
-direct	gt6.tagprefix.ore_pluto	Pluto%s矿	hand
+direct	gt6.tagprefix.ore_pluto	冥王星%s矿	hand
 direct	gt6.tagprefix.ore_poor	劣质%s矿	hand
 direct	gt6.tagprefix.ore_quartzite	石英岩%s矿	hand
 direct	gt6.tagprefix.ore_raw	粗%s矿石	hand
 direct	gt6.tagprefix.ore_red_sand	红沙%s矿	hand
 direct	gt6.tagprefix.ore_redgranite	红花岗岩%s矿	hand
-direct	gt6.tagprefix.ore_rhea	Rhea%s矿	hand
+direct	gt6.tagprefix.ore_rhea	土卫五%s矿	hand
 direct	gt6.tagprefix.ore_rich	富集%s矿	hand
 direct	gt6.tagprefix.ore_sand	沙%s矿	hand
 direct	gt6.tagprefix.ore_sandstone	砂岩%s矿	hand
-direct	gt6.tagprefix.ore_saturn	Saturn%s矿	hand
+direct	gt6.tagprefix.ore_saturn	土星%s矿	hand
 direct	gt6.tagprefix.ore_shale	页岩%s矿	hand
 direct	gt6.tagprefix.ore_siltstone	粉砂岩%s矿	hand
 direct	gt6.tagprefix.ore_slate	板岩%s矿	hand
 direct	gt6.tagprefix.ore_small	贫瘠%s矿	hand
 direct	gt6.tagprefix.ore_space	太空%s矿	hand
 direct	gt6.tagprefix.ore_strangesand	异沙%s矿	hand
-direct	gt6.tagprefix.ore_titan	Titan%s矿	hand
-direct	gt6.tagprefix.ore_titania	Titania%s矿	hand
-direct	gt6.tagprefix.ore_triton	Triton%s矿	hand
+direct	gt6.tagprefix.ore_titan	土卫六%s矿	hand
+direct	gt6.tagprefix.ore_titania	天卫三%s矿	hand
+direct	gt6.tagprefix.ore_triton	海卫一%s矿	hand
 direct	gt6.tagprefix.ore_umberstone	棕石%s矿	hand
-direct	gt6.tagprefix.ore_uranus	Uranus%s矿	hand
+direct	gt6.tagprefix.ore_uranus	天王星%s矿	hand
 direct	gt6.tagprefix.ore_vanillagranite	花岗岩%s矿	hand
 direct	gt6.tagprefix.ore_vanillastone	石头%s矿	hand
-direct	gt6.tagprefix.ore_venus	Venus%s矿	hand
+direct	gt6.tagprefix.ore_venus	金星%s矿	hand
 direct	gt6.tagprefix.oreberry	%s莓	hand
 direct	gt6.tagprefix.orebush	%s灌木	hand
 direct	gt6.tagprefix.pane_glass	%s	hand
@@ -1994,7 +1994,7 @@ material	Electron	电子	auto
 material	Electrotine	蓝石	auto
 material	ElectrotineAlloy	蓝石荧合金	hand
 material	Electrum	琥珀金	auto
-material	ElectrumFlux	充能琥珀金	hand
+material	ElectrumFlux	通量琥珀金	hand
 material	Elementium	源质钢	auto
 material	Elite	精华	auto
 material	Elm	榆树	auto
@@ -3220,7 +3220,7 @@ material	Vibranium	振金	auto
 material	VibraniumSilver	银振金合金	auto
 material	VibraniumSteel	振金钢	auto
 material	Vibrant	Vibrant	review
-material	VibrantAlloy	脉动合金	hand
+material	VibrantAlloy	脉冲合金	hand
 material	Vile	邪恶	auto
 material	Vinteum	温特姆	auto
 material	VinteumPurified	纯净温特姆	auto
@@ -3229,7 +3229,7 @@ material	VinylChloride	氯乙烯	auto
 material	VinylbenzylChloride	对氯甲基苯乙烯	auto
 material	Vis	魔力	auto
 material	VitriolOfClay	硫酸铝	auto
-material	VividAlloy	鲜艳合金	hand
+material	VividAlloy	生动合金	hand
 material	Void	煤晶	auto
 material	VoidCrystal	虚空	hand
 material	VoidMetal	虚空金属	auto
