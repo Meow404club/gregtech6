@@ -140,13 +140,14 @@ SESSION_GROUPS = (
     # MUI dispatch band z=98..103 x478..531 (single chain, roster backfill):
     # the four-family menu-dispatch face, disjoint from every other band.
     ("p26_mui_row_dispatch",),
-    # Spawn-area band (two chains, roster backfill): the EU bridge rig
-    # (x-2..23, z-2..22) and the tag dual-tree /gt6tags face (x-2..2) reuse
-    # the spawn neighbourhood the p11/p12 band already occupies (x-2..60) —
-    # real cross-cluster overlap: plan_waves refuses it in one concurrent
-    # wave and per-chain site cleanup covers the leftovers (both faces ran
-    # narrow, non-roster legs here before registering).
-    ("p26_eu_bridge_outbound", "p27_vanilla_tag_dual_tree"),
+    # Spawn-area band (one chain, roster backfill): the tag dual-tree
+    # /gt6tags face (x-2..2) reuses the spawn neighbourhood the p11/p12 band
+    # already occupies (x-2..60) — real cross-cluster overlap: plan_waves
+    # refuses it in one concurrent wave and per-chain site cleanup covers the
+    # leftovers (both faces ran narrow, non-roster legs here before
+    # registering). The former EU bridge rig chain was cut with the EU->FE
+    # outbound bridge, task p28-cut-eu-fe-bridge.
+    ("p27_vanilla_tag_dual_tree",),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 

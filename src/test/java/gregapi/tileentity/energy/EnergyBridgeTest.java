@@ -1,7 +1,10 @@
 /**
- * Tasks p26-eu-bridge-outbound + p28-a-fe-inbound-math: the MC-free EU->FE outbound and
- * FE->EU inbound bridge math of {@link EnergyBridge} (the root half of the bridge; the mdk
- * per-leg handlers are platform-wired and live in the mdk tree).
+ * Tasks p28-cut-eu-fe-bridge (the generalized outbound face) + p28-a-fe-inbound-math (the
+ * FE->EU inbound face): the MC-free FE packet math of {@link EnergyBridge}. The EU->FE
+ * outbound bridge itself was cut (decision decisions.p28-cut-eu-fe-bridge); what remains is
+ * the ratio-agnostic {@link EnergyBridge#pushPacketTrain} (the former outbound math family,
+ * the x4 factored out — the ratio lives in the callers' registration constants) and the
+ * inbound {@link EnergyBridge#extractFe} dual.
  *
  * This file is part of GregTech.
  *
@@ -22,28 +25,21 @@
 package gregapi.tileentity.energy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Evidence anchors: upstream EnergyCompat.java:210-216 (the RF branch), :212 UT.Code.bind31,
- * :212-213 divup(aSize*RF_PER_EU), :147 aSize abs; GTCEu FeCompat.java:61-65 (insertEu two-call
- * rounding alignment); this repo CS.java:54 RF_PER_EU = 4; the register/restore contract is
- * already pinned by ITileEntityEnergyTest — this class covers the NEW math only.
+ * Evidence anchors: the math family inherited from the former outbound face — upstream
+ * EnergyCompat.java:212 UT.Code.bind31, :212-213 divup bill, :147 aSize abs; GTCEu
+ * FeCompat.java:61-65 (two-call rounding alignment). The packet unit is FE-native on the
+ * push face (ratio-agnostic); the pull face keeps the FE->EU reconstruction ratio
+ * (CS.RF_PER_EU = 4, CS.java:54). pushPacketTrain has no static state — nothing to restore.
  */
 public class EnergyBridgeTest {
-
-	@AfterEach
-	public void restoreDefaultSeam() {
-		EnergyBridge.register(null); // the ITileEntityEnergyTest.restoreDefaultEnergyBridge discipline
-		EnergyBridge.registerForeignConnectProbe(null);
-	}
 
 	/** A recording FE sink: accepts up to aCapacity, remembers every (amount, simulate) call. */
 	private static final class RecordingSink implements EnergyBridge.IFEReceiver {
@@ -93,41 +89,19 @@ public class EnergyBridgeTest {
 		assertEquals(Integer.MAX_VALUE, EnergyBridge.bind31(Integer.MAX_VALUE));
 		assertEquals(Integer.MAX_VALUE, EnergyBridge.bind31((long)Integer.MAX_VALUE + 1));
 		assertEquals(Integer.MAX_VALUE, EnergyBridge.bind31(Long.MAX_VALUE));
-		// the research-card risk ② shape: VMAX-top EU times amps times 4 overflows int math
+		// the overflow shape that made the clamp mandatory: a top-tier ladder's packet count
+		// times packet size far exceeds int math
 		assertEquals(Integer.MAX_VALUE, EnergyBridge.bind31((1L << 34) * 4));
 	}
 
 	// ---------------------------------------------------------------------------
-	// the 4:1 conversion table (RF_PER_EU = 4, CS.java:54)
+	// the pushPacketTrain family (ratio-agnostic, FE-native packet unit)
 	// ---------------------------------------------------------------------------
-
-	@Test
-	public void conversionTableFourFePerEu() {
-		// 1 packet of v EU billed as 1 when fully accepted; the FE sink receives v*4.
-		RecordingSink tSink = new RecordingSink(100000);
-		assertEquals(1, EnergyBridge.insertFe(tSink, 32, 1));
-		assertEquals(128, tSink.mStored, "32 EU x 4 = 128 FE");
-
-		// a multi-packet train: amps x volts x 4
-		RecordingSink tSink2 = new RecordingSink(100000);
-		assertEquals(5, EnergyBridge.insertFe(tSink2, 32, 5));
-		assertEquals(640, tSink2.mStored, "5 amps x 32 EU x 4 = 640 FE");
-
-		// upstream :147: a negative (directional) size is bridged by its magnitude
-		RecordingSink tSink3 = new RecordingSink(100000);
-		assertEquals(1, EnergyBridge.insertFe(tSink3, -32, 1));
-		assertEquals(128, tSink3.mStored);
-
-		// the zero/no-op guards (the :141 family)
-		assertEquals(0, EnergyBridge.insertFe(new RecordingSink(100), 32, 0));
-		assertEquals(0, EnergyBridge.insertFe(new RecordingSink(100), 0, 5));
-		assertEquals(0, EnergyBridge.insertFe(null, 32, 5));
-	}
 
 	@Test
 	public void theTwoCallShapeIsSimulateThenAlignedRealInsert() {
 		RecordingSink tSink = new RecordingSink(100000);
-		EnergyBridge.insertFe(tSink, 32, 2); // wants 256 FE, gets it whole
+		EnergyBridge.pushPacketTrain(tSink, 128, 2); // wants 256 FE, gets it whole
 		assertEquals(2, tSink.mCalls.size(), "exactly one simulate call and one real call");
 		assertEquals(256, tSink.mCalls.get(0)[0], "the simulate call asks for the whole clamped train");
 		assertEquals(1, tSink.mCalls.get(0)[1], "first call simulates");
@@ -141,11 +115,11 @@ public class EnergyBridgeTest {
 
 	@Test
 	public void partialAcceptanceRoundsDownToWholePacketsBeforeSending() {
-		// 32 EU packets (128 FE each); only 200 FE fit -> aligned send is 128 FE (1 packet),
+		// 128 FE packets; only 200 FE fit -> aligned send is 128 FE (1 packet),
 		// NOT 200 FE billed as 2 packets (the divup over-bill the alignment removes).
 		RecordingSink tSink = new RecordingSink(200);
-		assertEquals(1, EnergyBridge.insertFe(tSink, 32, 4));
-		assertEquals(128, tSink.mStored, "the partial packet's 72 FE stay with GT, not gifted to FE");
+		assertEquals(1, EnergyBridge.pushPacketTrain(tSink, 128, 4));
+		assertEquals(128, tSink.mStored, "the partial packet's 72 FE stay with the sender, not gifted to FE");
 	}
 
 	@Test
@@ -153,7 +127,7 @@ public class EnergyBridgeTest {
 		// 100 FE room < one 128 FE packet: aligned send is 0, the real call never fires (wait —
 		// it does fire with 0; the contract return 0 bills no packets).
 		RecordingSink tSink = new RecordingSink(100);
-		assertEquals(0, EnergyBridge.insertFe(tSink, 32, 4));
+		assertEquals(0, EnergyBridge.pushPacketTrain(tSink, 128, 4));
 		assertEquals(0, tSink.mStored);
 	}
 
@@ -161,7 +135,7 @@ public class EnergyBridgeTest {
 	public void aFullSinkRejectsTheTrainWithZeroCallsAfterSimulate() {
 		RecordingSink tSink = new RecordingSink(5000);
 		tSink.mStored = 5000; // pre-fill
-		assertEquals(0, EnergyBridge.insertFe(tSink, 32, 4));
+		assertEquals(0, EnergyBridge.pushPacketTrain(tSink, 128, 4));
 		assertEquals(1, tSink.mCalls.size(), "only the simulate call happens; no zero-amount real call");
 	}
 
@@ -171,12 +145,13 @@ public class EnergyBridgeTest {
 
 	@Test
 	public void overflowingTrainIsClampedNotWrapped() {
-		// amps * volts * 4 far beyond int range: the request clamps to Integer.MAX_VALUE,
-		// the bill stays within what the sink accepted (never a wrapped negative).
-		// 2^20 EU packets = 4194304 FE each; the sink takes 96468992 FE = exactly 23 packets.
+		// packetCount * packetSize far beyond int range: the request clamps to
+		// Integer.MAX_VALUE, the bill stays within what the sink accepted (never a wrapped
+		// negative). 2^20 packets of 2^22 FE = 4194304 FE each; the sink takes 96468992 FE
+		// = exactly 23 packets.
 		RecordingSink tSink = new RecordingSink(100000000);
-		long tUsed = EnergyBridge.insertFe(tSink, 1L << 20, 1L << 20);
-		assertTrue(tUsed > 0, "the clamped train still bridges");
+		long tUsed = EnergyBridge.pushPacketTrain(tSink, 1L << 22, 1L << 20);
+		assertTrue(tUsed > 0, "the clamped train still pushes");
 		assertEquals(96468992, tSink.mStored, "the send stops on the last whole packet");
 		assertEquals(23, tUsed);
 	}
@@ -184,103 +159,30 @@ public class EnergyBridgeTest {
 	@Test
 	public void aPacketBiggerThanTheWholeSinkBridgesNothing() {
 		// the alignment extreme: one packet (4M FE) does not fit a 1M FE sink at all, so the
-		// aligned send is zero and NOTHING is sent — the upstream one-liner would have gifted
+		// aligned send is zero and NOTHING is sent — the bare-ratio form would have gifted
 		// the 1M FE while billing a full packet (the loss the alignment removes).
 		RecordingSink tSink = new RecordingSink(1000000);
-		assertEquals(0, EnergyBridge.insertFe(tSink, 1L << 20, 1L << 20));
+		assertEquals(0, EnergyBridge.pushPacketTrain(tSink, 1L << 22, 1L << 20));
 		assertEquals(0, tSink.mStored);
 	}
 
 	@Test
 	public void divupBillRoundsUpWhenTheSinkMisbehaves() {
 		// a hostile sink that accepts a non-aligned amount on the real call (contract-breaking
-		// but legal interface): the upstream divup bill still rounds up, never under-bills.
+		// but legal interface): the divup bill still rounds up, never under-bills.
 		EnergyBridge.IFEReceiver tWeird = new EnergyBridge.IFEReceiver() {
 			@Override
 			public int receiveEnergy(int aAmount, boolean aSimulate) {
 				return aSimulate ? aAmount : aAmount - 3; // returns a non-multiple of the packet
 			}
 		};
-		// 2 packets of 32 EU = 256 FE; real call returns 253 -> divup(253, 128) = 2
-		assertEquals(2, EnergyBridge.insertFe(tWeird, 32, 2));
+		// 2 packets of 128 FE = 256 FE; real call returns 253 -> divup(253, 128) = 2
+		assertEquals(2, EnergyBridge.pushPacketTrain(tWeird, 128, 2));
 	}
 
 	// ---------------------------------------------------------------------------
-	// the gate (upstream :210 with isElectricRFReceiver -> capability presence)
-	// ---------------------------------------------------------------------------
-
-	@Test
-	public void gateKeepsTheUpstreamStructureWithTheModernWhitelist() {
-		// shipped default EMIT_EU_AS_RF = F (GT_API.java:505): capability presence decides
-		assertFalse(EnergyBridge.EMIT_EU_AS_RF, "the shipped default keeps the upstream config F");
-		assertTrue(EnergyBridge.gateFE(true), "a receiver exposing FE (the modern whitelist) is bridged");
-		assertFalse(EnergyBridge.gateFE(false), "a receiver without FE is not");
-	}
-
-	// ---------------------------------------------------------------------------
-	// the theoretical foreign-connect probe (upstream EnergyCompat.canConnectElectricity
-	// :124 RF arm, capability presence modernized) — the conductor handshake face
-	// ---------------------------------------------------------------------------
-
-	@Test
-	public void withoutAProbeNoForeignReceiverIsBridgeable() {
-		// the shipped pre-bridge state: null probe -> no foreign connections at all
-		assertFalse(EnergyBridge.bridgesForeign("fe-machine"));
-		assertFalse(EnergyBridge.bridgesForeign(null), "a null receiver is never a connection target");
-	}
-
-	@Test
-	public void theProbeMirrorsTheHandlerGate() {
-		EnergyBridge.registerForeignConnectProbe(aReceiver -> aReceiver instanceof String s && !s.isEmpty());
-		assertTrue(EnergyBridge.bridgesForeign("fe-machine"), "an FE-flavoured receiver is a connection target");
-		assertFalse(EnergyBridge.bridgesForeign(""), "a gate-blind receiver is not");
-		// the gate rides the SAME gateFE as the handler: EMIT_EU_AS_RF = F inverts only on
-		// the capability answer, never on the receiver identity
-		assertFalse(EnergyBridge.bridgesForeign(null));
-	}
-
-	@Test
-	public void theMdkProbeAndHandlerComposeIntoTheWirePath() {
-		// the exact composition the wire handshake + dispatch perform: canConnect probes,
-		// the transfer bills through the handler — a probe-positive receiver is also one
-		// the handler accepts, the invariant the GTWireBlockEntity canConnect arm relies on
-		EnergyBridge.registerForeignConnectProbe(aReceiver -> aReceiver instanceof String);
-		EnergyBridge.register((aType, aSide, aSize, aAmount, aEmitter, aReceiver) -> {
-			if (aType != gregapi.data.TD.Energy.EU || !(aReceiver instanceof String)) return 0;
-			return EnergyBridge.insertFe((aAmount2, aSimulate2) -> aAmount2, aSize, aAmount);
-		});
-		assertTrue(EnergyBridge.bridgesForeign("fe-machine"));
-		assertEquals(1, EnergyBridge.insertEnergyInto(gregapi.data.TD.Energy.EU, (byte)3, 32, 1, null, "fe-machine"));
-	}
-
-	// ---------------------------------------------------------------------------
-	// the registered-handler path (only the EU type is bridged; others fall through)
-	// ---------------------------------------------------------------------------
-
-	@Test
-	public void theMdkHandlerContractBridgesEuAndBillsPackets() {
-		// the exact shape the mdk handlers install: resolve FE first, gate, then insertFe.
-		List<String> tLog = new ArrayList<>();
-		EnergyBridge.register((aType, aSide, aSize, aAmount, aEmitter, aReceiver) -> {
-			tLog.add(aType.mName + "@" + aSide);
-			if (aType != gregapi.data.TD.Energy.EU) return 0;
-			boolean tHasFe = (aReceiver instanceof String) && !((String)aReceiver).isEmpty(); // the capability-presence stand-in
-			if (!EnergyBridge.gateFE(tHasFe)) return 0;
-			return EnergyBridge.insertFe((aAmount2, aSimulate2) -> (int)Math.min(aAmount2, 700), aSize, aAmount);
-		});
-		// a 32 EU x 5 train into a sink capping at 700 FE: aligned send = 640 (5 packets), bill 5
-		assertEquals(5, EnergyBridge.insertEnergyInto(gregapi.data.TD.Energy.EU, (byte)2, 32, 5, null, "fe-machine"));
-		// a non-EU type never reaches the math
-		assertEquals(0, EnergyBridge.insertEnergyInto(gregapi.data.TD.Energy.RF, (byte)2, 32, 5, null, "fe-machine"));
-		// a gate-blind receiver bills nothing
-		assertEquals(0, EnergyBridge.insertEnergyInto(gregapi.data.TD.Energy.EU, (byte)2, 32, 5, null, ""));
-		assertTrue(tLog.contains("ENERGY.ELECTRICITY@2"), "the dispatch carries the EU TagData and the side");
-		EnergyBridge.register(null);
-	}
-
-	// ---------------------------------------------------------------------------
-	// the FE->EU inbound face (task p28-a-fe-inbound-math): the dual of the outbound family,
-	// same ratio / same packet unit / same bind31 clamp, floor-exact bill, no overcharge
+	// the FE->EU inbound face (task p28-a-fe-inbound-math): the dual of the push family,
+	// same packet unit / same bind31 clamp, floor-exact bill, no overcharge
 	// ---------------------------------------------------------------------------
 
 	@Test
@@ -329,10 +231,10 @@ public class EnergyBridgeTest {
 	@Test
 	public void sourceWithLessThanOnePacketPullsNothing() {
 		// 100 FE < one 128 FE packet: aligned pull is 0, the source keeps everything (the real
-		// call still fires with 0, exactly as the outbound tiny-sink case does).
+		// call still fires with 0, exactly as the push family's tiny-sink case does).
 		RecordingSource tSrc = new RecordingSource(100);
 		assertEquals(0, EnergyBridge.extractFe(tSrc, 32, 4));
-		assertEquals(2, tSrc.mCalls.size(), "the zero-aligned real call fires, mirroring insertFe");
+		assertEquals(2, tSrc.mCalls.size(), "the zero-aligned real call fires, mirroring the push face");
 		assertEquals(100, tSrc.mStored);
 	}
 
@@ -368,7 +270,7 @@ public class EnergyBridgeTest {
 	public void exactDivisionFloorsWhenTheSourceMisbehaves() {
 		// a hostile source that returns a non-aligned amount on the real call (contract-breaking
 		// but legal interface): the exact-division count rounds DOWN to whole packets, the
-		// phantom remainder never becomes a packet (the floor mirror of the outbound divup bill).
+		// phantom remainder never becomes a packet (the floor mirror of the push divup bill).
 		EnergyBridge.IFESource tWeird = new EnergyBridge.IFESource() {
 			@Override
 			public int extractEnergy(int aAmount, boolean aSimulate) {
@@ -380,7 +282,7 @@ public class EnergyBridgeTest {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the round trip (insertFe o extractFe): conservation under the 4:1 ratio
+	// the round trip (pushPacketTrain o extractFe): conservation through the 128-FE packet
 	// ---------------------------------------------------------------------------
 
 	/** A battery: sink and source in one object, the round-trip conservation fixture. */
@@ -413,17 +315,17 @@ public class EnergyBridgeTest {
 		RecordingSource tSrc = new RecordingSource(1000);
 		long tPackets = EnergyBridge.extractFe(tSrc, 32, 8);
 		assertEquals(7, tPackets, "8 requested, only 7 whole packets exist in 1000 FE");
-		assertEquals(7, EnergyBridge.insertFe(tSink, 32, tPackets));
-		assertEquals(896, tSink.mStored, "the sink gained exactly packets x size x 4");
+		assertEquals(7, EnergyBridge.pushPacketTrain(tSink, 128, tPackets));
+		assertEquals(896, tSink.mStored, "the sink gained exactly packets x packet size");
 		assertEquals(104, tSrc.mStored, "the source lost exactly what the sink gained");
 	}
 
 	@Test
 	public void insertThenExtractIsLosslessOnWholePackets() {
-		// the exact chain the converter machine performs: charge FE in, pull EU packets back
-		// out — whole packets round-trip with zero loss under the 4:1 ratio.
+		// the exact chain the converter machine performs: push FE packets in, pull EU packets
+		// back out — whole packets round-trip with zero loss under the 128-FE packet unit.
 		Battery tBattery = new Battery();
-		assertEquals(3, EnergyBridge.insertFe(tBattery, 32, 3)); // 384 FE in
+		assertEquals(3, EnergyBridge.pushPacketTrain(tBattery, 128, 3)); // 384 FE in
 		assertEquals(384, tBattery.mStored);
 		assertEquals(3, EnergyBridge.extractFe(tBattery, 32, 10)); // all 3 packets back out
 		assertEquals(0, tBattery.mStored, "whole packets round-trip with zero loss");

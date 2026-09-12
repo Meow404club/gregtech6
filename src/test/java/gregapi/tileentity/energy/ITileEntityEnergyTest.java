@@ -3,9 +3,9 @@
  * classpath). Covers:
  * (a) ITileEntityEnergy.Util.emitEnergyToNetwork six-side loop - dispatch order 0..5, decreasing
  *     aAmount, early break on exhausted amount, zero when nothing emits, null-adjacency skip;
- * (b) Util.insertEnergyInto dispatch - GT receivers go to doEnergyInjection, everything else to
- *     the EnergyBridge seam (register/forward/unregister restore, upstream EnergyCompat.java:141
- *     guards);
+ * (b) Util.insertEnergyInto dispatch - GT receivers go to doEnergyInjection, everything else
+ *     accepts nothing (the EU->FE outbound bridge was cut, task p28-cut-eu-fe-bridge;
+ *     upstream EnergyCompat.insertEnergyInto fell through its compat branches the same way);
  * (c) EnergyGate math - the pure part of upstream TileEntityBase01Root.java:716-717
  *     (ALL_SIZE_IRRELEVANT branch + |size| >= Min, swallowed aAmount on too-small injection);
  * (d) token/constant locks - TD.Energy.EU exists, is NOT in ALL_SIZE_IRRELEVANT (EU is
@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import gregapi.code.TagData;
@@ -35,11 +34,6 @@ import gregapi.data.CS;
 import gregapi.data.TD;
 
 public class ITileEntityEnergyTest {
-
-	@AfterEach
-	public void restoreDefaultEnergyBridge() {
-		EnergyBridge.register(null);
-	}
 
 	// ---------------------------------------------------------------------------
 	// Fixtures
@@ -195,11 +189,8 @@ public class ITileEntityEnergyTest {
 	// ---------------------------------------------------------------------------
 
 	@Test
-	public void insertEnergyIntoDispatchesGTReceiversToDoEnergyInjectionAndNeverToTheBridge() {
+	public void insertEnergyIntoDispatchesGTReceiversToDoEnergyInjection() {
 		SinkFixture sink = new SinkFixture(3);
-		EnergyBridge.register((aEnergyType, aSide, aSize, aAmount, aEmitter, aReceiver) -> {
-			throw new AssertionError("a GT receiver must be dispatched before the bridge is ever consulted");
-		});
 
 		long used = ITileEntityEnergy.Util.insertEnergyInto(TD.Energy.EU, (byte)2, 32, 5, "emitter", sink);
 
@@ -209,48 +200,12 @@ public class ITileEntityEnergyTest {
 	}
 
 	@Test
-	public void insertEnergyIntoDispatchesNonGTReceiversToARegisteredBridge() {
-		Object receiver = new Object();
-		Object emitter = new Object();
-		List<long[]> bridgeCalls = new ArrayList<>(); // {side, size, amount}
-
-		EnergyBridge.register((aEnergyType, aSide, aSize, aAmount, aE, aR) -> {
-			assertSame(TD.Energy.EU, aEnergyType);
-			assertSame(emitter, aE);
-			assertSame(receiver, aR);
-			bridgeCalls.add(new long[] {aSide, aSize, aAmount});
-			return 42;
-		});
-
-		assertEquals(42, ITileEntityEnergy.Util.insertEnergyInto(TD.Energy.EU, (byte)1, 32, 5, emitter, receiver));
-		assertEquals(1, bridgeCalls.size());
-		assertArrayEquals(new long[] {1, 32, 5}, bridgeCalls.get(0));
-	}
-
-	@Test
 	public void insertEnergyIntoWithoutABridgeReturnsZero() {
+		// the post-cut dispatch: a NON-ITileEntityEnergy receiver accepts nothing (upstream
+		// EnergyCompat.insertEnergyInto falling through its compat branches, task
+		// p28-cut-eu-fe-bridge).
 		assertEquals(0, ITileEntityEnergy.Util.insertEnergyInto(TD.Energy.EU, (byte)1, 32, 5, null, new Object()));
-		assertEquals(0, EnergyBridge.insertEnergyInto(TD.Energy.EU, (byte)1, 32, 5, null, new Object()));
-	}
-
-	@Test
-	public void energyBridgeGuardsMirrorUpstreamEnergyCompat() {
-		EnergyBridge.register((aEnergyType, aSide, aSize, aAmount, aEmitter, aReceiver) -> {
-			throw new AssertionError("upstream EnergyCompat.java:141 guards must reject degenerate input before any handler runs");
-		});
-		assertEquals(0, EnergyBridge.insertEnergyInto(TD.Energy.EU, (byte)1, 32, 0, null, new Object()));
-		assertEquals(0, EnergyBridge.insertEnergyInto(TD.Energy.EU, (byte)1, 32, -1, null, new Object()));
-		assertEquals(0, EnergyBridge.insertEnergyInto(TD.Energy.EU, (byte)1, 0, 5, null, new Object()));
-		assertEquals(0, EnergyBridge.insertEnergyInto(TD.Energy.EU, (byte)1, 32, 5, null, null));
-	}
-
-	@Test
-	public void energyBridgeRegistrationRestoresDefaultOnTeardown() {
-		assertEquals(0, EnergyBridge.insertEnergyInto(TD.Energy.EU, (byte)1, 32, 5, null, new Object()));
-		EnergyBridge.register((aEnergyType, aSide, aSize, aAmount, aEmitter, aReceiver) -> 99);
-		assertEquals(99, EnergyBridge.insertEnergyInto(TD.Energy.EU, (byte)1, 32, 5, null, new Object()));
-		EnergyBridge.register(null);
-		assertEquals(0, EnergyBridge.insertEnergyInto(TD.Energy.EU, (byte)1, 32, 5, null, new Object()));
+		assertEquals(0, ITileEntityEnergy.Util.insertEnergyInto(TD.Energy.EU, (byte)1, 32, 5, null, null));
 	}
 
 	// ---------------------------------------------------------------------------

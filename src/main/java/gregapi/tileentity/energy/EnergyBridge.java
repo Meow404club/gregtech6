@@ -19,65 +19,47 @@
 
 package gregapi.tileentity.energy;
 
-import java.util.function.Predicate;
-
-import gregapi.code.TagData;
 import gregapi.data.CS;
 import gregapi.util.UT;
 
 /**
- * Static seam for inserting energy into NON-GregTech receivers.
+ * Static seam for the MC-free FE packet math between GT emitters/consumers and foreign
+ * (non-GregTech) FE storages. Both faces adapt the platform {@code IEnergyStorage} (the
+ * same six-method twin on both legs) with a two-argument lambda.
  *
- * Counterpart of the upstream EnergyCompat.insertEnergyInto dispatch (EnergyCompat.java:140):
- * upstream routed receivers that are not ITileEntityEnergy to the IC2 (electric) and RF
- * (RedstoneFlux) compat bridges. This port has no IC2, and ADR 2026-08-31-p7-energy-network
- * ruling 5 ruled the EU<->FE bridge out of the first wave (zero FE consumers in this
- * codebase), so the default behavior is "nothing accepts energy" (returns 0, same as upstream
- * EnergyCompat falling through its compat branches). A bridge implementation (the FE/EU
- * outbound handler living in the mdk) registers via {@link #register} without touching this
- * dispatch chain.
+ * <h2>The generalized outbound face (task p28-cut-eu-fe-bridge)</h2>
  *
- * The guard aAmount <= 0 || aSize == 0 || aReceiver == null -> 0 is upstream
- * EnergyCompat.java:141 and applies before any registered handler runs.
- *
- * <h2>The EU->FE outbound math (task p26-eu-bridge-outbound, design = research.p26-r-eu-bridge)</h2>
- *
- * The MC-free half of the bridge lives here so it is unit-testable without a platform: the
- * mdk per-leg handler resolves the receiver's platform FE storage (an {@code IEnergyStorage}
- * on both legs) and adapts it to {@link IFEReceiver}, then calls {@link #insertFe}.
+ * {@link #pushPacketTrain} is the GENERALIZED outbound face: it pushes a train of whole FE
+ * packets into a foreign storage and is RATIO-AGNOSTIC — the packet-train primitive carries
+ * no unit conversion of its own, the ratio lives in the CALLER's registration constants
+ * (for the Flux Dynamo the RU->FE 2.75 is expressed by its NBT_OUTPUT/NBT_INPUT ladder
+ * computing the packet sizes; the bridge math never sees a ratio). It is the former EU->FE
+ * outbound face (task p26-eu-bridge-outbound, cut by ruling decisions.p28-cut-eu-fe-bridge)
+ * with the x4 EU conversion factored out: the simulate-the-whole-train / align-the-real-send
+ * / divup bill / bind31 clamp family is kept verbatim from that face, so the packet unit,
+ * the rounding alignment and the overflow guard stay pinned by the same unit tests that
+ * covered the old face.
  *
  * <ul>
- * <li><b>Ratio</b>: 1 EU = {@link CS#RF_PER_EU} FE (4, this repo CS.java:54 = upstream
- *     CS.java:207-208). One packet of aSize EU is therefore aSize*4 FE — the packet, not the
- *     bare ratio, is the accounting unit (upstream divides by aSize*RF_PER_EU,
- *     EnergyCompat.java:212-213).</li>
- * <li><b>Overflow</b>: aAmount*aSize*RF_PER_EU is computed in the long domain and clamped
+ * <li><b>Overflow</b>: aPacketCount*aPacketSizeFE is computed in the long domain and clamped
  *     into int range by {@link #bind31} (upstream UT.Code.bind31, UT.java:1564, called at
- *     EnergyCompat.java:212) — EU packs reach VMAX 2^34 where naive int math overflows
- *     (the research card risk ②). GTCEu saturatedCast (GTMath.java:125) is the same guard
- *     family.</li>
+ *     EnergyCompat.java:212 for the old EU face) — top-tier ladders reach products where
+ *     naive int math overflows (the research card risk ②). GTCEu saturatedCast
+ *     (GTMath.java:125) is the same guard family.</li>
  * <li><b>Rounding alignment</b>: the simulated acceptance is rounded DOWN to a whole packet
- *     before the real insert (GTCEu FeCompat.insertEu's {@code feSent - feSent % ratio}
- *     form, FeCompat.java:63-64, lifted from the bare ratio to the packet unit) — without it
- *     a partially-accepted packet would be billed as a full one via divup and the FE side
- *     would silently lose the remainder. The final bill stays upstream's
- *     {@code divup(sent, aSize*RF_PER_EU)} (EnergyCompat.java:212-213), which is exact when
- *     the send was packet-aligned.</li>
- * <li><b>Gate</b>: upstream EnergyCompat.java:210 {@code RF_ENERGY && (EMIT_EU_AS_RF ||
- *     isElectricRFReceiver(aReceiver))}. RF_ENERGY was a CoFH-API-on-classpath probe — always
- *     true in a modern platform where EnergyStorage ships with the loader. The class-name
- *     whitelist isElectricRFReceiver (:89-97, four hardcoded mod prefixes) has a strictly
- *     better modern equivalent: capability presence — a receiver IS an RF machine exactly
- *     when it exposes an FE EnergyStorage. {@link #gateFE} keeps the upstream structure with
- *     that substitution; {@link #EMIT_EU_AS_RF} keeps the upstream config's shipped default F
- *     (GT_API.java:505, CS.java:866), carried as a compile-time constant until the config
- *     system lands (research card pooling note).</li>
- * <li><b>DECLARED DEVIATION (deviation ledger)</b>: upstream's checkOverCharge
- *     (EnergyCompat.java:129-137) destroyed and exploded foreign receivers fed packets above
- *     VMAX[3] = 512. Cut, following the GTCEu native-outbound precedent (its EUToFEProvider
- *     path has no overcharge explosion either — modern FE has no voltage concept to violate;
- *     research card gtceu_reference.no_overcharge_foreign). GT-side machines keep their own
- *     overcharge path (Root :494-509) — only the FOREIGN side is affected.</li>
+ *     before the real send (GTCEu FeCompat.insertEu's {@code feSent - feSent % ratio} form,
+ *     FeCompat.java:63-64, at the packet unit) — without it a partially-accepted packet
+ *     would be billed as a full one via divup and the FE side would silently lose the
+ *     remainder. The final bill stays {@code divup(sent, aPacketSizeFE)}
+ *     (upstream EnergyCompat.java:212-213 form), which is exact when the send was
+ *     packet-aligned.</li>
+ * <li><b>No gate, no config</b>: the former outbound gate/config structure belonged to the
+ *     EU dispatch and went with it — a pushPacketTrain caller has
+ *     already resolved and adapted the receiver's FE storage before calling.</li>
+ * <li><b>DECLARED DEVIATION (deviation ledger, inherited)</b>: no overcharge concept on the
+ *     foreign side (upstream checkOverCharge destroyed foreign receivers above VMAX[3];
+ *     cut following the GTCEu native-outbound precedent — modern FE has no voltage concept
+ *     to violate). GT-side machines keep their own overcharge path (Root :494-509).</li>
  * </ul>
  *
  * <h2>The FE->EU inbound math (task p28-a-fe-inbound-math, design = research.p28-r-eu-inbound)</h2>
@@ -86,37 +68,21 @@ import gregapi.util.UT;
  * adapted from the platform {@code IEnergyStorage.extractEnergy} by {@link IFESource}. The
  * direction split follows the research ruling: GT energy is purely passive push
  * (doEnergyInjection — no GT machine ever pulls), FE is pull-first push-second, so the inbound
- * face is the pull math the future converter machine (p28-b) drives per tick; the machine, its
- * buffers and its overload explosion live behind this seam, not in it. Every step mirrors
- * {@link #insertFe} — same 4:1 ratio, same whole-packet accounting unit, same {@link #bind31}
- * request clamp, same FeCompat floor alignment. The one direction-mandated asymmetry is the
- * bill: a pull over-bills nobody, so the result is the exact whole-packet count (floor
- * division), never divup, and there is no overcharge concept on this face.
+ * face is the pull math the converter machine (p28-b) drives per tick; the machine, its
+ * buffers and its overload explosion live behind this seam, not in it. Every step mirrors the
+ * {@link #pushPacketTrain} family — same whole-packet accounting unit, same {@link #bind31}
+ * request clamp, same FeCompat floor alignment — plus the FE->EU rebuild ratio
+ * ({@link CS#RF_PER_EU}, which belongs to the INBOUND packet reconstruction only). The
+ * one direction-mandated asymmetry is the bill: a pull over-bills nobody, so the result is
+ * the exact whole-packet count (floor division), never divup, and there is no overcharge
+ * concept on this face.
  */
 public final class EnergyBridge {
 	private EnergyBridge() {}
 
 	/**
-	 * Upstream config "Emit_EU_as_RF_from_Blocks", shipped default F (GT_API.java:505,
-	 * CS.java:866). F = only receivers exposing an FE capability are bridged (the modern
-	 * isElectricRFReceiver whitelist); T = the gate is fully open and every dispatch attempts
-	 * the query. Carried as a compile-time constant; moves into the config system when it
-	 * lands (research.p26-r-eu-bridge phasing).
-	 */
-	public static final boolean EMIT_EU_AS_RF = CS.F;
-
-	/** Handler for foreign energy systems, installed via {@link #register}. */
-	public interface IEnergyBridgeHandler {
-		/**
-		 * @return the amount of used aAmount (same contract as
-		 *         {@link ITileEntityEnergy#doEnergyInjection}).
-		 */
-		long insertEnergyInto(TagData aEnergyType, byte aSide, long aSize, long aAmount, Object aEmitter, Object aReceiver);
-	}
-
-	/**
-	 * The MC-free FE face of the bridge: the only platform method the math needs. Both legs'
-	 * {@code IEnergyStorage} (forge-1.20.1 IEnergyStorage.java:31-64 and neoforge 21.1.249
+	 * The MC-free FE face of the outbound math: the only platform method the push needs. Both
+	 * legs' {@code IEnergyStorage} (forge-1.20.1 IEnergyStorage.java:31-64 and neoforge 21.1.249
 	 * IEnergyStorage, javap-verified six-method twins) adapt with a two-argument lambda.
 	 */
 	public interface IFEReceiver {
@@ -125,7 +91,7 @@ public final class EnergyBridge {
 	}
 
 	/**
-	 * The MC-free FE face of the INBOUND bridge: the platform dual of {@link IFEReceiver}.
+	 * The MC-free FE face of the INBOUND math: the platform dual of {@link IFEReceiver}.
 	 * Both legs' {@code IEnergyStorage} adapt with the same two-argument lambda shape
 	 * ({@code storage::extractEnergy}).
 	 */
@@ -134,103 +100,47 @@ public final class EnergyBridge {
 		int extractEnergy(int aAmount, boolean aSimulate);
 	}
 
-	/** volatile so a bridge registered from mod init is safely visible to the server tick thread. */
-	private static volatile IEnergyBridgeHandler mHandler = null;
-
-	/**
-	 * The theoretical connect probe (see {@link #bridgesForeign}): volatile for the same
-	 * reason as the handler. Both arms are installed together by the mod init; a null
-	 * probe (the shipped state) means "no foreign connections are bridgeable".
-	 */
-	private static volatile Predicate<Object> mForeignConnectProbe = null;
-
-	/**
-	 * Installs the bridge implementation. Pass null to restore the default
-	 * "nothing accepts energy" behavior (used by tests and mod shutdown).
-	 */
-	public static void register(IEnergyBridgeHandler aHandler) {
-		mHandler = aHandler;
-	}
-
-	/**
-	 * Installs the foreign-connect probe the conductor handshakes consult (the wire
-	 * {@code canConnect} of the p7-d2 port): a platform-side test of whether a NON-GT
-	 * receiver exposes a bridgeable FE face. Runs with no packet in flight — capability
-	 * presence only, no energy moved.
-	 */
-	public static void registerForeignConnectProbe(Predicate<Object> aProbe) {
-		mForeignConnectProbe = aProbe;
-	}
-
-	public static long insertEnergyInto(TagData aEnergyType, byte aSide, long aSize, long aAmount, Object aEmitter, Object aReceiver) {
-		if (aAmount <= 0 || aSize == 0 || aReceiver == null) return 0; // upstream EnergyCompat.java:141
-		IEnergyBridgeHandler tHandler = mHandler;
-		return tHandler == null ? 0 : tHandler.insertEnergyInto(aEnergyType, aSide, aSize, aAmount, aEmitter, aReceiver);
-	}
-
-	/**
-	 * The theoretical half of the RF connection, upstream EnergyCompat.canConnectElectricity
-	 * :124 — {@code (EMIT_EU_AS_RF || isElectricRFReceiver(aTarget)) && IEnergyHandler/Receiver}.
-	 * The class-name whitelist became capability presence (the handler's gate), which only the
-	 * platform can answer, so the probe rides the seam next to the handler and this wrapper
-	 * applies the same {@link #gateFE}: a foreign receiver IS a connection target exactly when
-	 * the bridge would attempt it. No probe installed (the shipped pre-bridge state) → false,
-	 * the conductor behaviour the port shipped with before this card.
-	 */
-	public static boolean bridgesForeign(Object aReceiver) {
-		if (aReceiver == null) return false;
-		Predicate<Object> tProbe = mForeignConnectProbe;
-		return tProbe != null && gateFE(tProbe.test(aReceiver));
-	}
-
-	// ---------------------------------------------------------------------------
-	// the EU->FE outbound math and its FE->EU inbound dual
-	// (MC-free, unit-tested in EnergyBridgeTest)
-	// ---------------------------------------------------------------------------
-
 	/** Upstream UT.Code.bind31 (UT.java:1564 verbatim): clamp [0, Integer.MAX_VALUE] and narrow. */
 	public static int bind31(long aBoundValue) {
 		return (int) Math.max(0, Math.min(2147483647, aBoundValue));
 	}
 
-	/** The modern whitelist gate: upstream EnergyCompat.java:210 with isElectricRFReceiver replaced by capability presence. */
-	public static boolean gateFE(boolean aCapabilityPresent) {
-		return EMIT_EU_AS_RF || aCapabilityPresent;
-	}
-
 	/**
-	 * Bridges one EU packet train into an FE storage: the upstream RF branch
-	 * (EnergyCompat.java:210-216, checkOverCharge arm cut per the ledger note) fused with the
-	 * GTCEu insertEu rounding alignment (FeCompat.java:61-65), the accounting unit being the
-	 * whole packet (aSize*RF_PER_EU FE), not the bare ratio.
+	 * The generalized outbound face: pushes a train of whole FE packets into a foreign FE
+	 * storage. Ratio-agnostic — the caller computes the packet size from its own registration
+	 * constants (the Flux Dynamo's NBT_OUTPUT/NBT_INPUT ladder, a future face's own ladder);
+	 * this math only knows packets. The guard/shape family is the former EU->FE outbound face
+	 * verbatim (EnergyCompat.java:141/147/212-213 + FeCompat.java:64), minus the x4.
 	 *
 	 * @param aStorage the receiver's FE storage (platform-adapted)
-	 * @param aSize the EU packet size (voltage); may be negative (signed upstream too, :147)
-	 * @param aAmount the packet count (amperage)
-	 * @return the amount of used EU packets (the upstream divup bill)
+	 * @param aPacketSizeFE the FE size of ONE packet; may be negative (bridged by its
+	 *        magnitude, the upstream :147 directional form)
+	 * @param aPacketCount the packet count
+	 * @return the amount of packets actually accepted (the divup bill, exact for an
+	 *         aligned send)
 	 */
-	public static long insertFe(IFEReceiver aStorage, long aSize, long aAmount) {
-		if (aStorage == null || aAmount <= 0 || aSize == 0) return 0; // the :141 guard family, handler-side
-		long tSize = Math.abs(aSize); // upstream EnergyCompat.java:147
-		long tPacketFe = tSize * CS.RF_PER_EU; // one EU packet in FE (upstream's divup denominator, :212-213)
-		int tFeWanted = bind31(aAmount * tPacketFe); // upstream :212 (long-domain product, clamped)
+	public static long pushPacketTrain(IFEReceiver aStorage, long aPacketSizeFE, long aPacketCount) {
+		if (aStorage == null || aPacketCount <= 0 || aPacketSizeFE == 0) return 0; // the :141 guard family
+		long tPacketFe = Math.abs(aPacketSizeFE); // upstream EnergyCompat.java:147
+		int tFeWanted = bind31(aPacketCount * tPacketFe); // the long-domain product, clamped
 		int tFeSimulated = aStorage.receiveEnergy(tFeWanted, true);
 		if (tFeSimulated <= 0) return 0; // nothing accepts: the whole train is unused
 		long tAligned = tFeSimulated - tFeSimulated % tPacketFe; // GTCEu FeCompat.java:64, packet-unit form
 		int tFeSent = aStorage.receiveEnergy(bind31(tAligned), false);
-		return UT.Code.divup(tFeSent, tPacketFe); // upstream :212-213, exact for an aligned send
+		return UT.Code.divup(tFeSent, tPacketFe); // the divup bill, exact for an aligned send
 	}
 
 	/**
-	 * The dual of {@link #insertFe}: pulls whole EU packets out of an FE storage — the
+	 * The pull face: extracts whole GT packets out of an FE storage — the
 	 * research.p28-r-eu-inbound pull-side math (FE is pull-first push-second, GT purely
-	 * passive push) the future converter machine (p28-b) drives per tick. Every step mirrors
-	 * insertFe — same 4:1 ratio, same whole-packet accounting unit, same {@link #bind31}
-	 * request clamp, same FeCompat floor alignment — with the two direction-mandated
-	 * differences: the FE side is pulled through {@link IFESource} (an FE source never pushes),
-	 * and the result is the EXACT whole-packet count (floor division), never divup — a pull
-	 * over-bills nobody, and a misbehaving source returning a non-aligned remainder simply
-	 * keeps that remainder in itself. No overcharge concept exists on this face.
+	 * passive push) the converter machine (p28-b) drives per tick. Every step mirrors the
+	 * {@link #pushPacketTrain} family — same whole-packet accounting unit, same
+	 * {@link #bind31} request clamp, same FeCompat floor alignment — with the two
+	 * direction-mandated differences: the FE side is pulled through {@link IFESource} (an FE
+	 * source never pushes), and the result is the EXACT whole-packet count (floor division),
+	 * never divup — a pull over-bills nobody, and a misbehaving source returning a
+	 * non-aligned remainder simply keeps that remainder in itself. No overcharge concept
+	 * exists on this face.
 	 *
 	 * @param aStorage the foreign FE source (platform-adapted)
 	 * @param aSize the EU packet size (voltage) to rebuild; may be negative (the :147 magnitude form)
@@ -239,10 +149,10 @@ public final class EnergyBridge {
 	 *         aSize*RF_PER_EU = the FE taken)
 	 */
 	public static long extractFe(IFESource aStorage, long aSize, long aAmount) {
-		if (aStorage == null || aAmount <= 0 || aSize == 0) return 0; // the :141 guard family, handler-side (dual)
+		if (aStorage == null || aAmount <= 0 || aSize == 0) return 0; // the :141 guard family, pull-side
 		long tSize = Math.abs(aSize); // upstream EnergyCompat.java:147
-		long tPacketFe = tSize * CS.RF_PER_EU; // one EU packet in FE (the insertFe denominator)
-		int tWanted = bind31(aAmount * tPacketFe); // the long-domain request, clamped like :212
+		long tPacketFe = tSize * CS.RF_PER_EU; // one EU packet in FE (the inbound reconstruction unit)
+		int tWanted = bind31(aAmount * tPacketFe); // the long-domain request, clamped
 		int tGot = aStorage.extractEnergy(tWanted, true);
 		if (tGot <= 0) return 0; // nothing to pull: the whole train stays unused
 		long tAligned = tGot - tGot % tPacketFe; // GTCEu FeCompat.java:64 form, floored to whole packets

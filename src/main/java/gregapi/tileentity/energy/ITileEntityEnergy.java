@@ -230,9 +230,10 @@ public interface ITileEntityEnergy {
 
 		/**
 		 * Emits Energy to all the Blocks adjacent to an Output Side.
-		 * Receivers that are not ITileEntityEnergy are routed through EnergyBridge, so a
-		 * registered bridge (upstream: the IC2/RF branches of EnergyCompat) keeps foreign
-		 * sinks reachable too.
+		 * Receivers that are not ITileEntityEnergy accept NOTHING: the EU->FE outbound
+		 * bridge was cut (task p28-cut-eu-fe-bridge, decision
+		 * decisions.p28-cut-eu-fe-bridge), so the dispatch falls through the way upstream
+		 * EnergyCompat.insertEnergyInto did when no compat branch matched.
 		 *
 		 * @param aEnergyType The Type of Energy to be emitted
 		 * @param aSize The Minimum Transfer Rate of Energy (like Voltage for example). This can be negative too in case it has a direction for example (clockwise/counterclockwise)
@@ -252,9 +253,10 @@ public interface ITileEntityEnergy {
 
 		/**
 		 * Emits Energy to the adjacent Block.
-		 * Receivers that are not ITileEntityEnergy are routed through EnergyBridge, so a
-		 * registered bridge (upstream: the IC2/RF branches of EnergyCompat) keeps foreign
-		 * sinks reachable too.
+		 * Receivers that are not ITileEntityEnergy accept NOTHING: the EU->FE outbound
+		 * bridge was cut (task p28-cut-eu-fe-bridge, decision
+		 * decisions.p28-cut-eu-fe-bridge), so the dispatch falls through the way upstream
+		 * EnergyCompat.insertEnergyInto did when no compat branch matched.
 		 *
 		 * @param aEnergyType The Type of Energy to be emitted
 		 * @param aSideOutOf The Side of the TileEntity to output Energy out of.
@@ -272,8 +274,11 @@ public interface ITileEntityEnergy {
 
 		/**
 		 * Inserts Energy into the receiver.
-		 * GregTech receivers get doEnergyInjection directly, everything else goes through the
-		 * EnergyBridge seam (upstream: EnergyCompat.insertEnergyInto with its IC2/RF branches).
+		 * GregTech receivers get doEnergyInjection directly, everything else accepts nothing
+		 * (upstream: EnergyCompat.insertEnergyInto falling through its compat branches; the
+		 * EnergyBridge seam that used to catch foreign receivers here was cut with the EU->FE
+		 * outbound bridge, task p28-cut-eu-fe-bridge — foreign pushes go through the
+		 * ratio-agnostic EnergyBridge.pushPacketTrain faces of their own machines instead).
 		 *
 		 * @param aEnergyType The Type of Energy to be emitted
 		 * @param aSideInto The Side of the receiving TileEntity to insert the Energy into.
@@ -284,7 +289,7 @@ public interface ITileEntityEnergy {
 		 * @return the amount of used Energy Packets.
 		 */
 		public static final long insertEnergyInto(TagData aEnergyType, byte aSideInto, long aSize, long aAmount, Object aEmitter, Object aReceiver) {
-			return aReceiver instanceof ITileEntityEnergy ? ((ITileEntityEnergy)aReceiver).doEnergyInjection(aEnergyType, aSideInto, aSize, aAmount, T) : EnergyBridge.insertEnergyInto(aEnergyType, aSideInto, aSize, aAmount, aEmitter, aReceiver);
+			return aReceiver instanceof ITileEntityEnergy ? ((ITileEntityEnergy)aReceiver).doEnergyInjection(aEnergyType, aSideInto, aSize, aAmount, T) : 0;
 		}
 	}
 }
