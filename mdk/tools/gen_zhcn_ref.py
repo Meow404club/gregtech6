@@ -603,6 +603,16 @@ HAND_TRANSLATIONS = {
     "gt6.row.machine.extruder_low_heat": ("挤压机", "hand"),
     "item.gt6.shape_extruder_plate": ("模具 (板)", "hand"),
     "item.gt6.shape_extruder_rod": ("模具 (杆)", "hand"),
+    # ---- crucible Jade face (task p28-crucible-jade-face, 4 keys — the final key set after
+    # the TFRU 33c22beb ruling): no dump face (upstream 1.7.10 has zero WAILA integration,
+    # research.p28-r-crucible-jade-face), so these are pure hand rows. The total line's
+    # 内容物 label IS the TFRU LH.CONTENT prefix form (first-row label shape); the K unit in
+    # the temperature template stays untranslated (the upstream thermometer face
+    # "Temperature: NK" MultiTileEntitySmeltery.java:512 carries it bare).
+    "gt6.jade.crucible.temperature": ("温度: %s K / %s K", "hand"),
+    "gt6.jade.crucible.total": ("内容物: %s U", "hand"),
+    "gt6.jade.crucible.empty": ("空", "hand"),
+    "gt6.jade.crucible.more": ("+%s 种", "hand"),
 }
 
 # ---------------------------------------------------------------------------

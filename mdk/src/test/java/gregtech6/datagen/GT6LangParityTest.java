@@ -161,11 +161,17 @@ public class GT6LangParityTest {
  * row (the SPEC target) PLUS the +2 block.gt6.test_machine[_idle] rows the new
  * registry-coverage gate lit up (the same whole-string-key-block omission class, fixed
  * same-shape per the SPEC's staged discipline — both locales, zh values from the reference
- * table's hand rows). The 17 zh VALUE renames of this card (the owned cfoam block/fluid
- * family 高级→强化, user ruling 2026-09-12) are value-only and move no counts. zh == en,
- * the zero-debt state holds.
+ * table's hand rows). The 17 zh VALUE renames of that card (the owned cfoam block/fluid
+ * family, user ruling 2026-09-12; the same-day follow-up ruling unified the 16 owned
+ * spray items onto the same word root) are value-only and move no counts.
+ *
+ * <p>Task p28-crucible-jade-face: +4 more — the crucible Jade face keys
+ * (gt6.jade.crucible.temperature/total/empty/more, both locales; the zh values ride
+ * the reference table's hand rows). Rebased onto the cfoam state the re-measured floor
+ * is 2796 + 4 = 2800 (the branch-local 2793+4=2797 estimate preceded the merge; the
+ * rebased re-measure is authoritative). zh == en, the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2796;
+private static final int ZH_KEY_FLOOR = 2800;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
