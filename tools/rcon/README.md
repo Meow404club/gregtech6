@@ -512,6 +512,14 @@ runner 日志 `/tmp/gt6_rs_sweep_p26smoke_z124_forge.log`，boot 日志
 p25-c-foam-pipe-spray 审查裁定入档），后续 sweep 复验该腿仍会出现此红并照账本
 记录——判定口径以裁定为准，不作为名册/链体缺陷重开。36 链全集 sweep 留阶段
 收官门禁由主会话执行（本卡只做单簇冒烟，不跑全量）。
+**[2026-09-13 已闭环]** 该偏离由 p28-neo-loot-copy-custom-data 收口：根因 =
+GT6DualDirectoryFaces 单数 loot_table 镜像带逐字节搬 1.20.1 正典输出，51 张表
+（2 木流体管 + 49 漆机器梯）带 `minecraft:copy_nbt` 在 1.21.1 未注册（已改名
+`copy_custom_data`，LootItemFunctions.java:49）→ boot LootDataType 解析死 → 拆管/
+拆机零掉落。镜像 loot face 现过 1.21.1 适配器（shape 门禁 + fail-visible），链
+E 臂 data get 路径双腿分叉（forge=`Item.tag.BlockEntityTag` /
+neo=`Item.components."minecraft:custom_data".BlockEntityTag`）且收尾 kill 探针
+双腿转正；复验该腿应为 **[0,0]**，再红按真回归重开。
 
 **名册扩容 II：p26 W1 三链入册（卡 p26-w1-sifter-compressor-wiremill）**。名册
 36 链 8 簇 → **39 链 9 簇**。新簇 **z=172 带（x383..411，三链）**：
@@ -622,9 +630,15 @@ TileEntityBase10ConnectorRendered:159-166——湿/干拒+allowInteraction 门�
 dryFoam（:169-174 无门不对称）、removeFoam（:177-183 干+门+四字段复位）。stat 行增
 `foam/dried/foamOwned` 三字段（p24 既有 expect 串均为子串，零回归）。注册行
 `(accept|stat|place|toggle|output|clear|inject|ownable|spray|dry|removefoam)`。
-回流面（spec ⑦）：管 loot 表（GT6PipeBlockLoot）copy_nbt 五键入 BlockEntityTag——
-拆管掉落物经 `data get entity Item.tag.BlockEntityTag` 断言 gt.foamed/gt.foamdried/
-gt.ownable 三键在物；gt.owner 不入物（再置由 onPlaced 记新放置者，离线腿
+回流面（spec ⑦）：管 loot 表（GT6PipeBlockLoot）携带函数五键入 BlockEntityTag——
+1.20.1 正典带 = `copy_nbt`（item tag 面），1.21.1 单数镜像带 = `copy_custom_data`
+（`minecraft:custom_data` 组件面，p28-neo-loot-copy-custom-data 适配器重写，.BlockEntityTag
+相对路径原样落组件内）。拆管掉落物断言双腿分叉（Step.node_cmds，p24_act 组件信封
+先例）：forge `data get entity … Item.tag.BlockEntityTag` / neo
+`data get entity … Item.components."minecraft:custom_data".BlockEntityTag`，断言
+gt.foamed/gt.foamdried/gt.ownable 三键在物；收尾 kill 探针双腿转正（无
+allow_failed——'No entity was found' 即拆管零掉落回归）；
+gt.owner 不入物（再置由 onPlaced 记新放置者，离线腿
 GTPipeFoamTest.foamNbtRoundTripsAndOwnerDoesNotRideItems 钉死）。活链 =
 `chains/p25_cfoam_spray.py`（place→spray owned→stat→dry→锁 toggle 拒→removefoam
 非 owner 拒→owner ok→spray+dry→拆管→掉落物 NBT 断言；双腿 [0,0]；日志路径

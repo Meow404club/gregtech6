@@ -1,13 +1,21 @@
 package gregtech6.datagen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
@@ -99,5 +107,78 @@ public class GT6DualDirectoryFacesTest {
 		assertEquals(resource("data/forge/tags/items/gems/quartz.json"),
 				resource("data/c/tags/item/gems/quartz.json"), "the quartz canonical-name face maps 1:1");
 		*///?}
+	}
+
+	/**
+	 * The loot face 1.21.1 adapter spot pin (task p28-neo-loot-copy-custom-data): the mirrored
+	 * singular loot JSON carries {@code minecraft:copy_custom_data} (the 1.21.1 registration,
+	 * LootItemFunctions.java:49) while the plural face stays the canonical {@code copy_nbt}
+	 * form, and the adapted mirror is the FUNCTION-NAME DELTA ALONE — the codec-verified full
+	 * form (source/ops/path identical across the legs; the carrier moves from the tag NBT to
+	 * the {@code minecraft:custom_data} component invisibly to the JSON). The tables sampled:
+	 * the two foam pipes (the RCON E-arm subjects, the 5-op form) and painted machine faces
+	 * (the 2-op form over every tier incl. T4 + the ACT row).
+	 */
+	@Test
+	public void theLootFaceAliasCarriesThe21FunctionForm() throws Exception {
+		String[] tTables = {"wood_fluid_pipe_small", "wood_fluid_pipe_medium",
+				"lathe", "lathe_t2", "lathe_t3", "lathe_t4", "canner", "press", "advanced_crafting_table"};
+		for (String tTable : tTables) {
+			String tPlural = resource("data/gt6/loot_tables/blocks/" + tTable + ".json");
+			String tSingular = resource("data/gt6/loot_table/blocks/" + tTable + ".json");
+			assertTrue(tPlural.contains("minecraft:copy_nbt"), tTable + " plural stays the canonical 1.20.1 form");
+			assertFalse(tPlural.contains("minecraft:copy_custom_data"), tTable + " plural must not carry the 21 form");
+			assertTrue(tSingular.contains("minecraft:copy_custom_data"), tTable + " mirror carries the 1.21.1 form");
+			assertFalse(tSingular.contains("minecraft:copy_nbt"), tTable + " mirror must not carry the dead 1.20 name");
+			assertEquals(tPlural.replace("\"minecraft:copy_nbt\"", "\"minecraft:copy_custom_data\""), tSingular,
+					tTable + " the adapted mirror is the function-name delta alone");
+			assertTrue(tSingular.contains("\"BlockEntityTag."), tTable + " the op target keeps the relative path");
+		}
+	}
+
+	/**
+	 * The full loot band sweep (task p28-neo-loot-copy-custom-data): EVERY mirrored singular
+	 * loot JSON equals its plural twin with EXACTLY the codec-verified function rename —
+	 * files without {@code copy_nbt} stay byte-identical (the pre-existing identity
+	 * contract), files with it differ in the one string. Zero {@code copy_nbt} may survive
+	 * anywhere in the singular band: one survivor is one boot-time {@code LootDataType}
+	 * parse death = zero drops for that block (the 51-table outage this card closes).
+	 *
+	 * <p>The sweep scopes to the {@code gt6} namespace — the provider's own produced band
+	 * and the only namespace the adapter contract governs. The {@code minecraft} namespace
+	 * is NOT walkable as a twin-mirror domain on the 21.1 leg: its classpath face is a
+	 * union that spans vanilla's own 1.21 data pack (natively singular, e.g.
+	 * {@code minecraft/loot_table/spawners/trial_chamber/key.json}), which never had a
+	 * plural twin and never rode this provider.
+	 */
+	@Test
+	public void everyLootAliasIsTheAdaptedPluralFace() throws Exception {
+		ClassLoader tLoader = GT6DualDirectoryFacesTest.class.getClassLoader();
+		// both band roots resolve DIRECTLY — on the 21.1 leg the classpath face is a union
+		// filesystem, and only a top-level getResource lands on a concrete member entry
+		// (a manual sub-resolve off the data root throws NoSuchFile there).
+		URL tSingularBandUrl = tLoader.getResource("data/gt6/loot_table");
+		URL tPluralBandUrl = tLoader.getResource("data/gt6/loot_tables");
+		assertNotNull(tSingularBandUrl, "the singular loot band ships on the classpath");
+		assertNotNull(tPluralBandUrl, "the plural loot band ships on the classpath");
+		Path tSingularRoot = Paths.get(tSingularBandUrl.toURI());
+		Path tPluralRoot = Paths.get(tPluralBandUrl.toURI());
+		List<Path> tTables = new ArrayList<>(0);
+		try (Stream<Path> tWalk = Files.walk(tSingularRoot)) {
+			tWalk.filter(tPath -> tPath.toString().endsWith(".json")).forEach(tTables::add);
+		}
+		assertFalse(tTables.isEmpty(), "the singular loot band ships");
+		int tAdapted = 0;
+		for (Path tSingular : tTables) {
+			String tSingularText = Files.readString(tSingular);
+			String tPluralText = Files.readString(tPluralRoot.resolve(tSingularRoot.relativize(tSingular)));
+			String tExpected = tPluralText.replace("\"minecraft:copy_nbt\"", "\"minecraft:copy_custom_data\"");
+			assertEquals(tExpected, tSingularText,
+					"gt6/loot_table/" + tSingularRoot.relativize(tSingular) + " differs beyond the codec-verified rename");
+			assertFalse(tSingularText.contains("minecraft:copy_nbt"),
+					"gt6/loot_table/" + tSingularRoot.relativize(tSingular) + " a survivor is a boot-time LootDataType parse death");
+			if (!tExpected.equals(tPluralText)) tAdapted++;
+		}
+		assertTrue(tAdapted >= 51, "the 51-table paint/foam carry band rides the adapter (got " + tAdapted + ")");
 	}
 }
