@@ -83,6 +83,9 @@ public class GT6ZhBackfillSpotCheckTest {
 		// Task p28-cfoam-lang-key: en == zh == 2796 (+1 block.gt6.cfoam_owned + the +2
 		// block.gt6.test_machine[_idle] rows the registry-coverage gate lit up); the +17
 		// owned-cfoam zh VALUE renames (高级→强化, user ruling 2026-09-12) move no counts.
+		// Task p28-crucible-jade-face (rebased onto the cfoam state): en == zh == 2800
+		// (+4 gt6.jade.crucible.* keys, both locales, hand-row zh values) — value renames
+		// move no counts, only key adds move the floor.
 		Map<String, String> tEn = GT6LangParityTest.chainedEnFace();
 		long tStillMissing = tEn.keySet().stream().filter(tKey -> !zh().containsKey(tKey)).count();
 		assertEquals(0L, tStillMissing,

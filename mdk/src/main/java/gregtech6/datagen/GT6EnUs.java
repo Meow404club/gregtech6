@@ -111,6 +111,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoodCans(); // task p25-food-can-row0 — table-tail append
         addExtruderMolds(); // task p26-w1-press-extruder-molds — table-tail append
         addSensors(); // task p26-sensors-core — table-tail append
+        addCrucibleJade(); // task p28-crucible-jade-face — table-tail append
     }
 
     /**
@@ -1047,5 +1048,22 @@ public class GT6EnUs extends LanguageProvider {
                 default -> throw new IllegalArgumentException("untranslated sensor row: " + tRow.path());
             });
         }
+    }
+
+    /**
+     * The crucible Jade face keys (task p28-crucible-jade-face, 4 keys — the final key set
+     * after the TFRU 33c22beb ruling): the temperature line (current/max K, the thermometer
+     * anchor MultiTileEntitySmeltery.java:512), the content total line (its "Content" label
+     * IS the TFRU LH.CONTENT prefix form — the total row is the label row, the item rows
+     * below are indented details), the empty state and the "+N more" truncation tail. The
+     * Formed line is NOT here — the large crucible's formed state already rides the
+     * GT6MachineProvider "Multiblock: formed/incomplete" row. Values are consumed by
+     * GT6CrucibleProvider (the lang constants live there).
+     */
+    private void addCrucibleJade() {
+        add("gt6.jade.crucible.temperature", "Temperature: %s K / %s K");
+        add("gt6.jade.crucible.total", "Content: %s U");
+        add("gt6.jade.crucible.empty", "Empty");
+        add("gt6.jade.crucible.more", "+%s more");
     }
 }

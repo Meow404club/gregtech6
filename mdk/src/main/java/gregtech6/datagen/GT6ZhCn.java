@@ -105,6 +105,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addGrassUnits();        // task p24-grass-block
 		addFoamSprayUnits();    // task p25-c-foam-pipe-spray
 		addKitchenUnits();      // task p26-kitchen-pot-bowl
+		addCrucibleJadeUnits(); // task p28-crucible-jade-face
 	}
 
 	/**
@@ -123,6 +124,22 @@ public class GT6ZhCn extends LanguageProvider {
 		add("block.gt6.bathing_pot_steel", "浸洗盆");
 		add("block.gt6.mixing_bowl", "搅拌盆");
 		add("item.gt6.clay_bowl", "粘土碗");
+	}
+
+	/**
+	 * The crucible Jade face zh units (task p28-crucible-jade-face, 4 hand rows — the final
+	 * key set after the TFRU 33c22beb ruling): no dump face exists (upstream 1.7.10 has zero
+	 * WAILA integration), so these ride the reference table's hand layer via
+	 * {@link #addDirect} — the addDirect absent-row skip is why the TSV regen and this walk
+	 * land in the SAME commit (the noHandRowIsOrphaned pin otherwise surfaces the gap).
+	 * The total line's 内容物 label IS the TFRU LH.CONTENT prefix form; the K unit stays
+	 * bare (the thermometer anchor MultiTileEntitySmeltery.java:512 carries it untranslated).
+	 */
+	private void addCrucibleJadeUnits() {
+		addDirect("gt6.jade.crucible.temperature");
+		addDirect("gt6.jade.crucible.total");
+		addDirect("gt6.jade.crucible.empty");
+		addDirect("gt6.jade.crucible.more");
 	}
 
 	/**
