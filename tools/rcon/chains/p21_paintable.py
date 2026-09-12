@@ -16,8 +16,14 @@ p19 chisel precedent):
     machine — mix(255,0,0, 255,128,0) = (255,64,0), pinned as
     RGB #FF0000->#FF4000 painted=true (APPLIED).
 
-  C the unpaint (Paintable:83 shape, the white-return deviation): dye none —
-    RGB #FF4000->#FFFFFF painted=false (APPLIED); the second unpaint is the no-op.
+  C the unpaint (Paintable:83 shape): dye none — unpaint restores the ROW MATERIAL
+    colour (p27-machine-material-tint-fidelity f9411efa reshaped unpaint to
+    materialColor(materialOf); the old white-return deviation is REVOKED, so the
+    former #FFFFFF pins here are obsolete). This chain's shredder is the Kinetic_T[1]
+    row (Bronze, MT.java:1705 (210,130,60) = #D2823C, fRGBaSolid via
+    GTBasicMachineBlock.materialColor UT.Code.getRGBInt): pinned as
+    RGB #FF4000->#D2823C painted=false (APPLIED); the second unpaint is the
+    #D2823C->#D2823C no-op.
 
   D the negative: a plain vanilla block (no IPaintableTE) refuses the spray —
     "No paintable GT6 TileEntity" (an expected-failure step, allow_failed).
@@ -69,11 +75,13 @@ steps += [
 
 # ------------------------------------------- C: the unpaint + the second-spray no-op
 steps += [
-    phase("C: the unpaint — back to UNCOLORED white, painted=false; the second call is the no-op"),
+    # unpaint restores the row material colour (Paintable:83 via materialColor, the
+    # f9411efa tint-fidelity reshape) — NOT white; the shredder row is Bronze #D2823C.
+    phase("C: the unpaint — back to the row material colour (Bronze #D2823C), painted=false; the second call is the no-op"),
     Step(f"gt6machine unpaint {P}",
-         expect="dye none (unpaint), RGB #FF4000->#FFFFFF painted=false (APPLIED)"),
+         expect="dye none (unpaint), RGB #FF4000->#D2823C painted=false (APPLIED)"),
     Step(f"gt6machine unpaint {P}",
-         expect="RGB #FFFFFF->#FFFFFF painted=false (NO-OP)"),
+         expect="RGB #D2823C->#D2823C painted=false (NO-OP)"),
 ]
 
 # -------------------------------------------------- D: the non-paintable negative
