@@ -74,22 +74,34 @@ public class GT6DynamoFamilyRowTest {
 
 	@Test
 	public void electricRowsCarryTheUpstreamIdsAndVoltageWords() {
-		assertEquals(5, GT6ElectricDynamos.ROWS.size());
+		// task p28-c-ulv-dynamo-row: the T0 ULV extension row PREPENDED (tier = VN ordinal);
+		// its id 10116 = the family base 10111 + 5, the p28-c-ulv-machine-ladder invented-id
+		// convention (upstream ships no ULV dynamo — the declared deviation, the class doc)
+		assertEquals(6, GT6ElectricDynamos.ROWS.size());
 		List<String> tWords = GT6ElectricDynamos.ROWS.stream().map(GT6ElectricDynamos.ElectricRow::voltageWord).toList();
-		assertEquals(List.of("LV", "MV", "HV", "EV", "IV"), tWords, "the VN[1..5] display words (upstream CS.java:154)");
-		for (int i = 0; i < 5; i++) {
-			assertEquals(10111 + i, GT6ElectricDynamos.ROWS.get(i).metaId(), "the upstream meta id of row " + i);
+		assertEquals(List.of("ULV", "LV", "MV", "HV", "EV", "IV"), tWords, "VN[0] + the VN[1..5] display words (upstream CS.java:154)");
+		assertEquals("electric_dynamo_ulv", GT6ElectricDynamos.ROWS.get(0).path(), "the T0 path (the _ulv ladder convention)");
+		assertEquals(10116, GT6ElectricDynamos.ROWS.get(0).metaId(), "the invented T0 id (族基+5)");
+		assertEquals(0, GT6ElectricDynamos.ROWS.get(0).tier());
+		for (int i = 1; i < 6; i++) {
+			assertEquals(10110 + i, GT6ElectricDynamos.ROWS.get(i).metaId(), "the upstream meta id of row " + i);
+			assertEquals(i, GT6ElectricDynamos.ROWS.get(i).tier(), "the VN-ordinal tier of row " + i);
 		}
 	}
 
 	@Test
 	public void electricRatioPairsAreExactlyZeroPointSixEightSevenFive() {
 		long[][] tRows = GT6DynamoBlockEntityTestHarness.ELECTRIC_ROWS;
-		assertEquals(5, tRows.length);
-		for (long[] tRow : tRows) {
-			assertEquals(tRow[1] * 32, tRow[0] * 22, tRow[0] + " RU: the pair must be the exact rational 22/32 = 0.6875");
+		assertEquals(6, tRows.length);
+		// row 0 — the T0 ULV extension: the DECLARED 1:1 deviation (0.6875 × 8 = 5.5 has no
+		// integral packet; the rounding emits the water wheel's 8 RU as ONE 8 EU packet)
+		assertEquals(8, tRows[0][0]);
+		assertEquals(8, tRows[0][1]);
+		// rows 1..5 — the upstream pairs, each the exact rational 22/32 = 0.6875
+		for (int i = 1; i < 6; i++) {
+			assertEquals(tRows[i][1] * 32, tRows[i][0] * 22, tRows[i][0] + " RU: the pair must be the exact rational 22/32 = 0.6875");
 		}
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 6; i++) {
 			assertEquals(tRows[i][0], gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity.INPUTS[i]);
 			assertEquals(tRows[i][1], gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity.OUTPUTS[i]);
 		}
@@ -99,13 +111,16 @@ public class GT6DynamoFamilyRowTest {
 	public void electricT5MemberExistsAndIsTitanium() {
 		// the wave-card W1 gate: upstream Electric_T[5] = Ti (upstream MT.java:3691 — the
 		// modern GTMachines.ELECTRIC_T_LADDER stopped at the canner rows' [1..4]); the
-		// dynamo family carries its own five-member ladder, [4] (0-based) = Electric_T[5]
-		assertEquals(5, GT6ElectricDynamos.ELECTRIC_T_LADDER.size());
-		OreDictMaterial tTier5 = GT6ElectricDynamos.ELECTRIC_T_LADDER.get(4).get();
+		// dynamo family carries its own six-member ladder, [5] (0-based) = Electric_T[5],
+		// and the [0] member (Electric_T[0] = TinAlloy, upstream MT.java:3691) is the T0
+		// row's declared extension (the upstream array slot exists, the machine does not)
+		assertEquals(6, GT6ElectricDynamos.ELECTRIC_T_LADDER.size());
+		OreDictMaterial tTier5 = GT6ElectricDynamos.ELECTRIC_T_LADDER.get(5).get();
 		assertNotNull(tTier5, "Electric_T[5] must resolve");
 		assertSame(MT.Ti, tTier5, "Electric_T[5] = Ti (upstream MT.java:3691)");
-		assertSame(MT.SteelGalvanized, GT6ElectricDynamos.ELECTRIC_T_LADDER.get(0).get());
-		assertSame(MT.Cr, GT6ElectricDynamos.ELECTRIC_T_LADDER.get(3).get());
+		assertSame(MT.TinAlloy, GT6ElectricDynamos.ELECTRIC_T_LADDER.get(0).get(), "Electric_T[0] = the T0 row's material");
+		assertSame(MT.SteelGalvanized, GT6ElectricDynamos.ELECTRIC_T_LADDER.get(1).get());
+		assertSame(MT.Cr, GT6ElectricDynamos.ELECTRIC_T_LADDER.get(4).get());
 	}
 
 	// ------------------------------------------------------------------
@@ -133,9 +148,42 @@ public class GT6DynamoFamilyRowTest {
 
 	@Test
 	public void allInputColumnsSitAboveTheSixteenLine() {
-		// the Base10:76 branch pin: tInput > 16 every row (and takesAnyLowerSize() = F), so
-		// the input minimum is always tInput/2 — the white-burn door the tests drive
+		// the Base10:76 branch pin: tInput > 16 every upstream row (and takesAnyLowerSize()
+		// = F), so the input minimum is always tInput/2 — the white-burn door the tests
+		// drive. THE EXCEPTION: the T0 ULV row's 8 rides the :76 ≤16 arm (min = 1, the
+		// GT6DynamoBlockEntity faithful-arm fix) — excluded here, pinned in the window test
 		for (long[] tRow : GT6DynamoBlockEntityTestHarness.DYNAMO_ROWS) assertTrue(tRow[0] > 16);
-		for (long[] tRow : GT6DynamoBlockEntityTestHarness.ELECTRIC_ROWS) assertTrue(tRow[0] > 16);
+		for (int i = 1; i < 6; i++) assertTrue(GT6DynamoBlockEntityTestHarness.ELECTRIC_ROWS[i][0] > 16);
+		assertEquals(8, GT6DynamoBlockEntityTestHarness.ELECTRIC_ROWS[0][0], "the T0 row stays ON the ≤16 arm");
+	}
+
+	/**
+	 * The water-wheel chain closure (task p28-c-ulv-dynamo-row — the research
+	 * chain_closure table, the packet-domain half): the wheel's ±8 RU × 1A packet sits
+	 * dead-center of the T0 dynamo's input band [1..16] (8 = inRec, min 1 by the ≤16 arm,
+	 * max 16 = no overload), converts 1:1 to ONE 8 EU packet, and that packet lands
+	 * MID-WINDOW of the ULV machine input band [4..16] (GTMachines.ULV_TIER_INPUTS) while
+	 * staying strictly below the T1 machine min (TIER_INPUTS[0][0] = 16) — the 8 EU packet
+	 * cannot drive any LV+ machine, which IS the ULV wall the tier exists to make.
+	 */
+	@Test
+	public void ulvRowClosesTheWaterWheelChainPacketDomain() {
+		long[] tUlvMachine = GTMachines.ULV_TIER_INPUTS; // {min 4, in 8, max 16}
+		assertEquals(4, tUlvMachine[0]);
+		assertEquals(8, tUlvMachine[1]);
+		assertEquals(16, tUlvMachine[2]);
+		// the wheel packet: inRec of the T0 dynamo row, no overload, above the ≤16-arm min
+		assertEquals(8, gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity.INPUTS[0], "the T0 inRec = the wheel packet size");
+		// the converted packet: exactly the ULV machine's inRec, inside [min..max]
+		assertEquals(tUlvMachine[1], gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity.OUTPUTS[0], "8 EU out = the ULV machine window center");
+		assertTrue(tUlvMachine[0] <= gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity.OUTPUTS[0]
+				&& gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity.OUTPUTS[0] <= tUlvMachine[2]);
+		// and strictly below every TIER_INPUTS machine min — the wall holds
+		assertTrue(gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity.OUTPUTS[0] < GTMachines.TIER_INPUTS[0][0], "8 < 16: an ULV packet is dead below LV");
+		// the capacitor self-consistency (the research generator table): capacity 16,
+		// tOutput = units(storage, 8, 8) = storage ∈ [0..16] — the emit band [4..16] is the
+		// ULV machine window itself, never an overflow (tOutput ≤ 2×outRec by construction)
+		assertEquals(16, gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity.INPUTS[0] * 2, "capacity = 2×inRec = 16");
+		assertEquals(16, gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity.OUTPUTS[0] * 2, "outMax = 16 = the ULV machine max — no unreachable band");
 	}
 }
