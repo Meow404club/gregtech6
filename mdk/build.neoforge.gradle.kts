@@ -238,6 +238,29 @@ sourceSets["main"].resources.srcDir(generateModMetadata)
 // ADR-P17-1 以节点本地 runData --output（见上 runs.data）方式解决，本挂载零改动。
 sourceSets["main"].resources.srcDir(sharedDir.resolve("src/generated/resources"))
 
+// tag 运行时面嫁接（task p28-neotag-graft，research.p28-r-neo-tag-wiring 方案 a）：
+// 正典树由 1.20.1-forge runData 独写（build.forge.gradle.kts:97），物品 tag 全为 1.20.1 复数形
+// data/forge/tags/items/**（7901 文件）+ p27 前瞻孪生 data/c/tags/items/**（26 文件，与 forge 带
+// 同相对路径字节同源，cmp 实证 diff=0）；而 1.21.1 数据包只读单数 tags/item（vanilla 1.21.1
+// Registries.java:255-257 tagsDirPath=tags/+registry path；mcmeta-1211 data/minecraft/tags/item
+// 实物）且消费面已 fork c:（GT6ItemTags.java:132-136）→ 复数带在 neo runtime 整体死亡。
+// 本任务把两带原样镜像为 data/c/tags/item/**：目录段 items→item、命名空间 forge→c（24w21a
+// 单数化仅目录段，家族名/文件名保持复数），内容字节零改写——与 datagen 侧 gt6/minecraft 单数
+// 镜像先例（GT6DualDirectoryFaces.java:45-53）同构，其刻意悬置的 forge→c remap 裁决由本
+// build 面闭环。正典树零改动、tree_check 输入零扰动（衍生面 = 打包变换，上方 generateModMetadata
+// 同层先例，非 ADR-P17-1 第二生产者）。
+val neoforgeTagFaces = tasks.register("neoforgeTagFaces", Copy::class) {
+    // 孪生带 26 文件与 forge 带同路径字节同源 → 同目标去重确定性取正本（EXCLUDE = 先到先得）
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(sharedDir.resolve("src/generated/resources/data/forge/tags/items")) { into("data/c/tags/item") }
+    from(sharedDir.resolve("src/generated/resources/data/c/tags/items")) { into("data/c/tags/item") }
+    into(layout.buildDirectory.dir("generated/neoforge-tag-faces"))
+}
+
+// 嫁接产物挂进 main resources（以任务为 srcDir 自动接线任务依赖，generateModMetadata 同构）：
+// 死的复数带 v1 照挂不 exclude（zip64 已开，死重另卡声明，research.p28 build_change_list knob）。
+sourceSets["main"].resources.srcDir(neoforgeTagFaces)
+
 tasks.withType(Test::class).configureEach {
     useJUnitPlatform()
     testLogging {
