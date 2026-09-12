@@ -99,14 +99,22 @@ HAND_TRANSLATIONS = {
     "gt6.tagprefix.gem_legendary": ("传奇%s", "hand"),
     "gt6.tagprefix.nugget": ("%s粒", "hand"),
     "gt6.tagprefix.block_raw": ("粗%s矿石块", "hand"),
-    "gt6.tagprefix.block_gem": ("结晶%s块", "hand"),
+    # task p28-lang-batch1-fix (user ruling 2026-09-12): the gem/crystalline split — gem =
+    # 宝石, crystalline = 结晶 (mcmod "Block of Ruby" = 红宝石块 across GT5/GTCE/GT6U/GT6;
+    # upstream OP.java:346 blockGem="Block of %s" has NO crystalline word either). The zh
+    # face now collides with block_ingot %s块 exactly like the en face does ("Block of %s"
+    # both) — disambiguation rides the material word, the community form wins.
+    "gt6.tagprefix.block_gem": ("%s块", "hand"),
     "gt6.tagprefix.block_dust": ("%s粉块", "hand"),
     # task p27-lang-fix-batch2 P2 (ledger §3): %s锭块 was clunky — %s块 is the community form
     # (GTCEu "Block of %s"); the block family stays mutually distinct (%s块 / %s板块 / %s粉块 /
-    # 结晶%s块 / 实心%s块). block_plate/block_dust keep their faces (the ledger marks them 低优).
+    # 实心%s块 — block_gem rejoined %s块 per the p28 gem/crystalline split). block_plate/block_dust
+    # keep their faces (the ledger marks them 低优).
     "gt6.tagprefix.block_ingot": ("%s块", "hand"),
     "gt6.tagprefix.block_plate": ("%s板块", "hand"),
-    "gt6.tagprefix.block_plate_gem": ("%s结晶板块", "hand"),
+    # task p28-lang-batch1-fix: crystalline word moves to the head — en "Crystalline %s Plate
+    # Block" (OP.java:197 plateGem) puts the adjective first, 结晶红宝石板块 per mcmod.
+    "gt6.tagprefix.block_plate_gem": ("结晶%s板块", "hand"),
     "gt6.tagprefix.block_solid": ("实心%s块", "hand"),  # task p27-lang-fix-batch2 P2: solid≠铸造 (en "Block of solid %s")
     "gt6.tagprefix.ore_raw": ("粗%s矿石", "hand"),
     "gt6.tagprefix.rock_gt": ("含%s岩石", "hand"),  # task p27-lang-fix-batch2 P2 (ledger §3): 石块→岩石 (en "%s bearing Rock")
@@ -369,16 +377,20 @@ HAND_TRANSLATIONS = {
     # 限制 prefix rows (:11852-11857) unify on 限流 (the tagprefix pipe_restrictive lane
     # already says 限流) — both DECLARED DEVIATIONS from the dump-verbatim rows.
     # task p26-storage-hopper-family — the storage hopper family: the two kind templates
-    # over the bronze/steel material words (already in the boiler walk). The 漏斗 wording =
-    # the dump's hopper-family style (tmp/gregtech.lang:13544 陶瓷漏斗 / :13546 不锈钢漏斗
-    # — no space, material word first); the queue kind is the literal 队列漏斗 (no dump row
-    # exists — the MTE names never entered the lang dump, the hand-layer ruling).
+    # over the bronze/steel material words (already in the boiler walk).
+    # task p28-lang-batch1-fix (user ruling 2026-09-12 = community option A): Funnel keeps
+    # 漏斗, Hopper splits to 料斗 / Queue Hopper = 队列料斗 — the TeamNED patterns.yml:876-890
+    # convention + the mcmod Funnel entry note ("Hopper 最新汉化已改料斗"). The batch1 漏斗
+    # wording had mis-anchored on the FUNNEL dump rows (tmp/gregtech.lang:13544 陶瓷漏斗 /
+    # :13546 不锈钢漏斗 are the funnel family, not the hoppers); the dump's own hopper MTE
+    # rows (gt.multitileentity.8000-8053) already say 料斗. The queue kind stays a hand-layer
+    # word (no dump row — the MTE names never entered the lang dump).
     # tsv-orphan回写 (the item-pipe card's rule): the eu-bridge card added this row to the
     # committed TSV without a HAND_TRANSLATIONS entry — a faithful rerun washed it out
     # (2026-09-09, found by this card's regeneration)
     "block.gt6.fe_battery": ("FE 测试电池", "hand"),  # task p27-lang-fix-batch2 P2 (ledger §3): the missing CJK-Latin space
-    "gt6.row.hopper.display": ("%s漏斗", "hand"),
-    "gt6.row.queue_hopper.display": ("%s队列漏斗", "hand"),
+    "gt6.row.hopper.display": ("%s料斗", "hand"),
+    "gt6.row.queue_hopper.display": ("%s队列料斗", "hand"),
     "gt6.row.item_pipe.display.medium": ("%s物品管道", "hand"),
     "gt6.row.item_pipe.display.large": ("大型%s物品管道", "hand"),
     "gt6.row.item_pipe.display.huge": ("巨型%s物品管道", "hand"),
@@ -587,20 +599,24 @@ HAND_TRANSLATIONS = {
     "gt6.row.machine.compressor": ("压缩机 (%s)", "hand"),
     "gt6.row.machine.sifter": ("筛选机 (%s)", "hand"),
     "gt6.row.machine.wiremill": ("线材机 (%s)", "hand"),
-    # task p27-lang-fix-batch2 P2 (ledger §3): the Press/Extruder machine words follow the
-    # community 通译 压板机/挤压机 (both flagged LOW-CONFIDENCE — the ledger's 保守译+列账 rows;
-    # declared deviation from the dump's 压力成型机/压模器 columns). The shape_extruder molds
-    # (item.gt6.shape_extruder_*) KEEP their dump-verbatim 模具 (板)/(杆) faces — the mold is
-    # a mold in the dump regardless of the machine word.
-    "gt6.row.machine.press.display": ("压板机 (%s)", "hand"),
-    "gt6.row.machine.extruder.display": ("挤压机 (%s)", "hand"),
+    # task p28-lang-batch1-fix (user ruling 2026-09-12, research.p28-r-translation-community):
+    # the batch1 压板机/挤压机 LOW-CONFIDENCE guesses are REVERTED to the community forms the
+    # dump already carried — Press = 压力成型机 (mcmod GT6/GT6U 9 hits + TeamNED gt_recipe:69 +
+    # the dump column; 压板机 0 hits) and Extruder = 压模器 (mcmod + TeamNED gt_recipe:38 +
+    # GTCEu Modern zh_cn.json:258 + the dump column, 4 sources). The Low Heat tier keeps its
+    # 低温 prefix over the new machine word (低温压模器 — the p27 P1 tier fix, preferred over
+    # mcmod's 低热容). The shape_extruder molds (item.gt6.shape_extruder_*) KEEP their
+    # dump-verbatim 模具 (板)/(杆) faces — the mold is a mold in the dump regardless of the
+    # machine word.
+    "gt6.row.machine.press.display": ("压力成型机 (%s)", "hand"),
+    "gt6.row.machine.extruder.display": ("压模器 (%s)", "hand"),
     # task p27-lang-fix P1 §2.2 + batch2: the Low Heat tier display — the dump :11543 row (and
     # the pre-writeback TSV value) flattened T1 into the plain machine word; en "Low Heat
     # Extruder (%s)" (en_us.json) keeps the tier — DECLARED DEVIATION from the dump column.
-    "gt6.row.machine.extruder.low_heat.display": ("低温挤压机 (%s)", "hand"),
-    "gt6.row.machine.press": ("压板机", "hand"),
-    "gt6.row.machine.extruder": ("挤压机", "hand"),
-    "gt6.row.machine.extruder_low_heat": ("挤压机", "hand"),
+    "gt6.row.machine.extruder.low_heat.display": ("低温压模器 (%s)", "hand"),
+    "gt6.row.machine.press": ("压力成型机", "hand"),
+    "gt6.row.machine.extruder": ("压模器", "hand"),
+    "gt6.row.machine.extruder_low_heat": ("低温压模器", "hand"),
     "item.gt6.shape_extruder_plate": ("模具 (板)", "hand"),
     "item.gt6.shape_extruder_rod": ("模具 (杆)", "hand"),
     # ---- crucible Jade face (task p28-crucible-jade-face, 4 keys — the final key set after
@@ -674,13 +690,13 @@ VOTED_TAGPREFIXES = {
     "crate_gt64_gem": "箱装%s晶体",              # 217 rows
     "crate_gt64_ingot": "箱装%s锭",              # 488 rows
     "crate_gt64_plate": "箱装%s板",              # 678 rows (the 335 副票 = plate_gem rows)
-    "crate_gt64_plate_gem": "箱装%s结晶板",       # 335 rows
+    "crate_gt64_plate_gem": "箱装结晶%s板",      # 335 rows — p28 gem/crystalline split: 结晶 heads the composed plate word (箱装结晶红宝石板), a declared re-order of the dump column
     "crate_gt64_raw": "箱装%s矿",                # 615 rows
     "crate_gt_dust": "小箱装%s粉",               # 1164 rows
     "crate_gt_gem": "小箱装%s",                  # 219 rows (dump verbatim: the gem rows carry no tail)
     "crate_gt_ingot": "小箱装%s锭",              # 488 rows
     "crate_gt_plate": "小箱装%s板",              # 678 rows
-    "crate_gt_plate_gem": "小箱装%s结晶板",       # 335 rows
+    "crate_gt_plate_gem": "小箱装结晶%s板",       # 335 rows — p28 split, same re-order as the gt64 row
     "crate_gt_raw": "小箱装%s矿",                # 615 rows
     "ingot_hot": "热%s锭",                      # 275 rows
     "ore": "%s矿",                              # the family tail shared by every ore<Stone> row
@@ -727,8 +743,12 @@ VOTED_TAGPREFIXES = {
 # composed row for the prefix). Anchors: the dump's established word roots (致密/下界/
 # 岩石词根/管道, the TSV rows-size words 小型/中型/大型/巨型) and en semantics. The
 # "×" glue follows the TSV gt6.wire.display convention; wire=线 vs cable=线缆 keeps the
-# B1 form split. Proper-noun stone/planet heads (Callisto, Eris, ...) keep their ASCII
-# form — the superconductor bilingual proper-noun precedent (research card).
+# B1 form split.
+# task p28-lang-batch1-fix (user ruling 2026-09-12): the 24 planet heads are LOCALIZED per
+# research.p28-r-translation-community — the cross-mod convention (火星 across GTOCore/
+# Galaxy Space/Ad Astra/Mekanism-AA) plus the in-package precedents (dump 谷神星 / 火星沙).
+# Watch the two collisions the research table flags: Mercury = 水星 (the planet) never
+# 水银 (the element), Titan = 土卫六 (the moon) never the 钛 material word.
 HAND_TAGPREFIXES = {
     "bottle": "%s瓶",
     "bucket": "%s桶",
@@ -746,51 +766,49 @@ HAND_TAGPREFIXES = {
     "gem_polished": "抛光%s",
     "gem_raw": "生%s",
     "gem_uncut": "未切割%s",
-    # ore_<stone> faces with NO dump row: vanilla/geology words translated, proper nouns kept.
-    # task p27-lang-fix-batch2 P2 (ledger §3): the three hosts whose materials already carry
-    # zh names backfill those words (betweenstone 交错石 / pitstone 麻纹石 / umberstone 棕石 =
-    # gt6.material.umber's en face "Umberstone"); the planets keep their ASCII proper-noun form
-    # (the ledger marks 汉化 optional — the declared convention here).
+    # ore_<stone> faces with NO dump row: vanilla/geology words translated; the 24 planet
+    # heads localized per the p28 ruling (the comment block above carries the evidence and
+    # the collision watches).
     "ore_betweenstone": "交错石%s矿",
     "ore_blackstone": "黑石%s矿",
-    "ore_callisto": "Callisto%s矿",          # RECHECK: moon of Jupiter, kept ASCII
-    "ore_ceres": "Ceres%s矿",                # RECHECK
-    "ore_deimos": "Deimos%s矿",              # RECHECK
+    "ore_callisto": "木卫四%s矿",
+    "ore_ceres": "谷神星%s矿",
+    "ore_deimos": "火卫二%s矿",
     "ore_dense": "致密%s矿",                 # the dump 致密 word root
     "ore_end": "末地%s矿",
-    "ore_eris": "Eris%s矿",                  # RECHECK
-    "ore_europa": "Europa%s矿",              # RECHECK
-    "ore_ganymede": "Ganymede%s矿",          # RECHECK
+    "ore_eris": "阋神星%s矿",
+    "ore_europa": "木卫二%s矿",
+    "ore_ganymede": "木卫三%s矿",
     "ore_gneiss": "片麻岩%s矿",
     "ore_grayschist": "灰片岩%s矿",          # RECHECK: en says "Schist %s Ore"; dump colors 蓝片岩/绿片岩 extended
-    "ore_iapetus": "Iapetus%s矿",            # RECHECK
-    "ore_io": "Io%s矿",                      # RECHECK
-    "ore_jupiter": "Jupiter%s矿",            # RECHECK
-    "ore_kepler22b": "Kepler22b%s矿",        # RECHECK
-    "ore_mars": "Mars%s矿",                  # RECHECK
-    "ore_mercury": "Mercury%s矿",            # RECHECK
-    "ore_moon": "Moon%s矿",                  # RECHECK
+    "ore_iapetus": "土卫八%s矿",
+    "ore_io": "木卫一%s矿",
+    "ore_jupiter": "木星%s矿",
+    "ore_kepler22b": "开普勒22b%s矿",
+    "ore_mars": "火星%s矿",
+    "ore_mercury": "水星%s矿",               # the planet 水星, never the element 水银
+    "ore_moon": "月球%s矿",
     "ore_nether": "下界%s矿",
     "ore_normal": "普通%s矿",
-    "ore_neptune": "Neptune%s矿",            # RECHECK
-    "ore_oberon": "Oberon%s矿",              # RECHECK
-    "ore_phobos": "Phobos%s矿",              # RECHECK
+    "ore_neptune": "海王星%s矿",
+    "ore_oberon": "天卫四%s矿",
+    "ore_phobos": "火卫一%s矿",
     "ore_pinkschist": "粉片岩%s矿",          # RECHECK: dump naming-pattern extension
     "ore_pitstone": "麻纹石%s矿",
-    "ore_pluto": "Pluto%s矿",                # RECHECK
+    "ore_pluto": "冥王星%s矿",
     "ore_poor": "劣质%s矿",                  # RECHECK: Poor Ore (ore_small already owns 贫瘠 per the dump)
     "ore_rich": "富集%s矿",
-    "ore_rhea": "Rhea%s矿",                  # RECHECK
-    "ore_saturn": "Saturn%s矿",              # RECHECK
+    "ore_rhea": "土卫五%s矿",
+    "ore_saturn": "土星%s矿",
     "ore_siltstone": "粉砂岩%s矿",
     "ore_space": "太空%s矿",
     "ore_strangesand": "异沙%s矿",
-    "ore_titan": "Titan%s矿",                # RECHECK
-    "ore_titania": "Titania%s矿",            # RECHECK
-    "ore_triton": "Triton%s矿",              # RECHECK
+    "ore_titan": "土卫六%s矿",               # the moon 土卫六, never the 钛 material word
+    "ore_titania": "天卫三%s矿",
+    "ore_triton": "海卫一%s矿",
     "ore_umberstone": "棕石%s矿",            # the Umber material (en face "Umberstone", en_us.json:1764)
-    "ore_uranus": "Uranus%s矿",              # RECHECK
-    "ore_venus": "Venus%s矿",                # RECHECK
+    "ore_uranus": "天王星%s矿",
+    "ore_venus": "金星%s矿",
     "oreberry": "%s莓",                      # the plant_gt_berry dump word
     "orebush": "%s灌木",
     # pipes: dump MTE 26060-26066 word set (微型/小型/裸/大型/巨型 + 四合一/九合一...流体管道)
@@ -1196,9 +1214,9 @@ FAMILY_OVERRIDES = {
     ("material", "Valonite"): "瓦罗奈特",                   # phonetic — 法罗钠 carried a stray 钠 element reading
     ("material", "Octine"): "奥克廷",                       # phonetic — 炽炎铁 carried a false iron reading
     ("material", "DeepIron"): "深层铁",                     # 深渊 collides with the abyssal family
-    ("material", "ElectrumFlux"): "充能琥珀金",             # the TE Fluxed Electrum community form (low-confidence, ledger-flagged)
-    ("material", "VibrantAlloy"): "脉动合金",               # the EIO community form (low-confidence)
-    ("material", "VividAlloy"): "鲜艳合金",                 # the EIO community form (low-confidence)
+    ("material", "ElectrumFlux"): "通量琥珀金",             # task p28-lang-batch1-fix: the TE Fluxed Electrum community form (TeamNED glossary:952 + mcmod GT6/GT6U 148 hits; batch1's 充能 was an Avaritia singularity single-point)
+    ("material", "VibrantAlloy"): "脉冲合金",               # task p28-lang-batch1-fix: the EIO community form (mcmod ~241 hits / 10 mods all 脉冲 + TeamNED gt_material:2004; 脉动 single-source unverified)
+    ("material", "VividAlloy"): "生动合金",                 # task p28-lang-batch1-fix: the Endergy community form (mcmod 19 hits / 5 mods + the dump column; 鲜艳 was self-coined)
     ("material", "Ludicrite"): "路德里特",                  # phonetic over the over-translated 滑稽
     ("material", "Dreadium"): "恐惧素",                     # the bare abstract 恐惧 gains the substance suffix
     ("material", "Continuum"): "连续体",                    # en "Continuum" (命运 was a pun reading)
