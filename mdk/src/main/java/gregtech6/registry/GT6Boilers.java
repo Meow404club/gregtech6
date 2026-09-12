@@ -281,7 +281,9 @@ public final class GT6Boilers {
 
 		@Override
 		public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-			return defaultBlockState().setValue(FACING, aContext.getHorizontalDirection());
+			// the front (barometer face) TOWARDS the placer — the GT6PlacementFacing canon
+			// (task p28-singleblock-facing-canon)
+			return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 		}
 
 		@Override

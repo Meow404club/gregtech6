@@ -589,9 +589,13 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 		mFluidAdjacency = aAdjacency;
 	}
 
-	/** The placement mirror (the engine setFacingFromPlacement form — the FRONT = barometer face, :246). */
+	/**
+	 * The placement mirror (the engine setFacingFromPlacement form — the FRONT = barometer
+	 * face, :246). Task p28-singleblock-facing-canon: the barometer face TOWARDS the placer
+	 * — the GT6PlacementFacing canon (view OPPOSITE).
+	 */
 	public void setFacingFromPlacement(Player aPlayer) {
-		mFacing = (byte)aPlayer.getDirection().get3DDataValue();
+		mFacing = gregtech6.block.GT6PlacementFacing.placementFacing(aPlayer.getDirection());
 		setChanged();
 	}
 

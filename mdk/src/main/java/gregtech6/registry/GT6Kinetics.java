@@ -409,8 +409,9 @@ public final class GT6Kinetics {
 
 		@Override
 		public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-			// the player's horizontal look direction — the KU emit side faces the machine
-			return defaultBlockState().setValue(FACING, aContext.getHorizontalDirection());
+			// the front TOWARDS the placer (the GT6PlacementFacing canon, task
+			// p28-singleblock-facing-canon) — the KU emit side faces the machine
+			return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 		}
 
 		@Override

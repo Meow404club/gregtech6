@@ -402,9 +402,13 @@ public class GTSteamEngineBlockEntity extends TileEntityBase03TicksAndSync imple
 		};
 	}
 
-	/** The placement mirror (the GTCrankBlockEntity.setFacingFromPlacement form). */
+	/**
+	 * The placement mirror (the GTCrankBlockEntity.setFacingFromPlacement form). Task
+	 * p28-singleblock-facing-canon: the KU-emit front TOWARDS the placer — the
+	 * GT6PlacementFacing canon (view OPPOSITE).
+	 */
 	public void setFacingFromPlacement(net.minecraft.world.entity.player.Player aPlayer) {
-		mFacing = (byte)aPlayer.getDirection().get3DDataValue();
+		mFacing = gregtech6.block.GT6PlacementFacing.placementFacing(aPlayer.getDirection());
 		setChanged();
 	}
 

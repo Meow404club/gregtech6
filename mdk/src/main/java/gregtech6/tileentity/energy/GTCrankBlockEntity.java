@@ -304,9 +304,11 @@ public class GTCrankBlockEntity extends TileEntityBase03TicksAndSync implements 
 	/**
 	 * Chest/oven precedent onPlaced :128-131 (TileEntityOven.setFacingFromPlacement :632-635
 	 * form) — the BE mirror of the placement-facing the BlockState already carries.
+	 * Task p28-singleblock-facing-canon: the front TOWARDS the placer — the
+	 * GT6PlacementFacing canon (view OPPOSITE), the same seam the BlockState writes.
 	 */
 	public void setFacingFromPlacement(Player aPlayer) {
-		mFacing = (byte)aPlayer.getDirection().get3DDataValue();
+		mFacing = gregtech6.block.GT6PlacementFacing.placementFacing(aPlayer.getDirection());
 		setChanged();
 	}
 
