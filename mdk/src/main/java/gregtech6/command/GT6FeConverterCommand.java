@@ -194,9 +194,11 @@ public final class GT6FeConverterCommand {
 			return 0;
 		}
 		int tStored = tSourceBe.storedFe();
+		// packets = the whole ULV packets left (8 EU x 4 = 32 FE — the machine-side packet,
+		// the value the converter's pull drains per tick)
 		String tLine = "GT6 FE source stat at " + aPos.toShortString() + ": stored " + tStored
 				+ " FE, capacity " + GT6FeSourceBlockEntity.CAPACITY + " FE, implied EU " + (tStored / 4)
-				+ ", packets " + (tStored / 128) + ", drained " + (tStored <= 0);
+				+ ", packets " + (tStored / 32) + ", drained " + (tStored <= 0);
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;

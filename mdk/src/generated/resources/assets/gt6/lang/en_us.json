@@ -54,6 +54,8 @@
   "block.gt6.energy_source": "Test Energy Source",
   "block.gt6.example_chest": "GT Example Chest",
   "block.gt6.fe_battery": "FE Test Battery",
+  "block.gt6.fe_converter": "FE Converter (ULV)",
+  "block.gt6.fe_source": "FE Test Source",
   "block.gt6.fluidometer": "Fluid-O-Meter Sensor",
   "block.gt6.gearbox": "Custom Wooden Gearbox",
   "block.gt6.grass": "Grass",
