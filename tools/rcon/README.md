@@ -551,14 +551,16 @@ per-boot 端口钉让位 session_ports）：
   （x477..531 z97..103，与 p16_distillery z 同带 x 离散）。
 - **P27 直跑链两链**：`p27_builder_wand_form_fix`（坩埚锚定成型回归，x456..464
   自成带，双腿 GREEN 审查席实证）；`p27_vanilla_tag_dual_tree`（/gt6tags 双树
-  活体，slug p27tags——与 `p26_eu_bridge_outbound` 同 spawn 邻区成簇；p11/p12
+  活体，slug p27tags——驻 spawn 邻区（原与 EU 出向桥链成簇，该链已随
+  EU->FE 出向桥砍除，task p28-cut-eu-fe-bridge）；p11/p12
   带本就驻 spawn 邻区 x-2..60，跨簇交叠同上把关）。
 
-验证引用（创建/末次修正提交）：p26 十一链见各自任务卡交卡证书——
+验证引用（创建/末次修正提交）：p26 十链见各自任务卡交卡证书（原十一链，
+eu_bridge 37de6542 已随 p28-cut-eu-fe-bridge 砍除）——
 cfoam_refill 21523df8（双腿 [0,0] /tmp/p26c-rcon-*.log）、crucible_row0
 6d9cb493（双腿幂等两遍 /tmp/p26_rcon_*5.log）、crucible_multiblock b986c975、
-mold_faucet cafd4dc5、kitchen_pot d4753ea2（[0,0] 双腿零 ERROR）、eu_bridge
-37de6542、mui_row_dispatch b5b254cf、rm_backfill a9b88479（双腿 [0,0]
+mold_faucet cafd4dc5、kitchen_pot d4753ea2（[0,0] 双腿零 ERROR）、
+mui_row_dispatch b5b254cf、rm_backfill a9b88479（双腿 [0,0]
 /tmp/p26rm-rcon-*.log）、sensors_core 902d04a6、hopper_family 4538efb8、
 static_storage 1b8d2022（双腿 [0,0] /tmp/p26stat_rcon-*.log）；历史七链
 p19_chisel 9fe6b166 / p19_drying 4beeb6b6 / p21_chisel_drops 14ade19d /
