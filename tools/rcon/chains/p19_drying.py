@@ -34,6 +34,14 @@ Chain semantics (task p19-drying-rows-backfill-2 ACCEPTANCE — "矿物行+盐�
     dur 64, EUt 16, NO fluid legs): a hopper feed of ONE minecraft:clay → inject → the
     below hopper pins the terracotta output (1.20.1 identity of 1.7.10 hardened_clay).
 
+  The C/D gt6machine check input-slot pins use the LOADER-NEUTRAL substring (id+count):
+  the check ITEM reporter is bare-id on 1.20.1-forge (input=dust_gypsumx1,
+  input=clayx1) but registry-qualified on 1.21.1-neoforge (input=gt6:dust_gypsumx1,
+  input=minecraft:clayx1) — the p26-rm-row-backfill loader-fork lesson, which this
+  chain predated; the neo-leg red of the p27-closeout sweep (2026-09-12) was exactly
+  that input= prefix mismatch, while the loader-neutral pins (calcium_sulfate,
+  minecraft:terracotta) passed both legs all along.
+
 The remaining rows are per-row pinned offline (GT6RecipesDryingTest: transcription walks +
 live-universe census + the 35-row pour census); the live pour census for ALL rows is the
 server log line "GT6 Drying poured: 35 loaded, 3 skipped" (:530 water_hot + the two
@@ -108,11 +116,18 @@ for _fluid, _inp, _out, _dur, _item in SALT_ARMS:
     ]
 
 # ------------------------------------------------- C: the mineral arm (:565 Gypsum)
+# NOTE on the expect strings: the gt6machine check ITEM reporter formats item ids
+# loader-versioned — bare on 1.20.1-forge (input=dust_gypsumx1), registry-qualified
+# on 1.21.1-neoforge (input=gt6:dust_gypsumx1; the p26-rm-row-backfill loader-fork
+# lesson). The C/D input-slot pins below use the LOADER-NEUTRAL substring (id+count,
+# no input= prefix): this chain predated that lesson and red on the neo leg of the
+# p27-closeout sweep (2026-09-12, state progress.p27_closeout_sweep) before being
+# re-pinned; the D-arm terracotta output pin was already namespace-neutral.
 steps += [
     phase("C: gypsum dust 1 -> 1000 L + ca_so4 — the :565 row, the hopper-fed item input"),
     Step(f"item replace block {HOPPER_TOP} container.0 with gt6:dust_gypsum 1",
          expect="Replaced", sleep=4.0),
-    Step(f"gt6machine dryer check {DRYER}", expect="input=dust_gypsumx1"),
+    Step(f"gt6machine dryer check {DRYER}", expect="dust_gypsumx1"),
     # dur 2000 x EUt 16 — 4000 driven ticks cover it with the stall backstop
     Step(f"gt6machine dryer inject 4000 64 {DRYER}", expect="used=4000"),
     Step(f"gt6machine dryer fluid stat {DRYER}",
@@ -127,7 +142,7 @@ steps += [
     phase("D: clay 1 -> terracotta — the BlockDiggable.java:73 row, no fluid legs"),
     Step(f"item replace block {HOPPER_TOP} container.0 with minecraft:clay 1",
          expect="Replaced", sleep=4.0),
-    Step(f"gt6machine dryer check {DRYER}", expect="input=clayx1"),
+    Step(f"gt6machine dryer check {DRYER}", expect="clayx1"),
     # dur 64 x EUt 16 — the first driven ticks complete it
     Step(f"gt6machine dryer inject 4000 64 {DRYER}", expect="used=4000"),
     Step(f"data get block {HOPPER_BOT} Items", expect="minecraft:terracotta", sleep=2.0),
