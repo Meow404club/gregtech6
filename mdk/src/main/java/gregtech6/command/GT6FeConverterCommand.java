@@ -36,8 +36,8 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
  * listener, self-contained per ADR-P3-4).
  *
  * <ul>
- * <li>{@code /gt6feconverter place <pos> <lv|mv|hv>} — headless placement of a tier
- *     block.</li>
+ * <li>{@code /gt6feconverter place <pos>} — headless placement of the ONE ULV converter
+ *     block (the balance ruling killed the tier-word argument along with the ladder).</li>
  * <li>{@code /gt6feconverter stat <pos>} — tier voltage, buffered FE, capacity, implied
  *     EU (the acceptance assertion face).</li>
  * <li>{@code /gt6feconverter push <pos> <fe>} — THE PUSH ARM: a foreign FE cable stand-in.

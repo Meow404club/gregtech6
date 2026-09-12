@@ -45,9 +45,9 @@ public class GT6FeSourceBlockEntity extends BlockEntity {
 	public static final String NBT_ENERGY = "energy";
 
 	/**
-	 * 100k FE at 4:1 = 25k EU of supply: the RCON pull rig draws whole 128 FE packets
-	 * (32 EU x 4), so the capacity covers any arm many times over while staying in the
-	 * linear region.
+	 * 100k FE at 4:1 = 25k EU of supply: the RCON pull rig drains whole 32 FE packets
+	 * (8 EU x 4, the ULV packet — the 128 FE wording was the pre-ruling ladder band), so
+	 * the capacity covers any arm many times over while staying in the linear region.
 	 */
 	public static final int CAPACITY = 100000;
 

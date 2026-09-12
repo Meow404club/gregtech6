@@ -328,7 +328,8 @@ public final class GT6CapabilityWiring {
 
 	// -- the p28 FE converter family (task p28-b-fe-converter-machine; TAIL-APPENDED ROW,
 	// the shared serial file: append-only discipline) --
-	// One shared BET over the three tier blocks; the intake face serves on EVERY side (the
+	// One shared BET over the ONE ULV block (the balance ruling: a single machine, no
+	// ladder); the intake face serves on EVERY side (the
 	// BE's declared all-sides simplification), so the provider ignores the side. The forge
 	// leg answers through the GT6FeConverterBlockEntity.getCapability override and cannot
 	// see this file.
