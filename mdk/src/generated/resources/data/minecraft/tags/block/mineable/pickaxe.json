@@ -3650,6 +3650,8 @@
     "gt6:barrel_adamantium",
     "gt6:barrel_draconium",
     "gt6:barrel_awakened_draconium",
-    "gt6:barrel_infinity"
+    "gt6:barrel_infinity",
+    "gt6:stone_anvil",
+    "gt6:blackstone_anvil"
   ]
 }

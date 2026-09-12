@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/anvil_top",
+    "east": "gt6:block/anvil_side",
+    "north": "gt6:block/anvil_side",
+    "south": "gt6:block/anvil_side",
+    "up": "gt6:block/anvil_top",
+    "west": "gt6:block/anvil_side"
+  }
+}
