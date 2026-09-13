@@ -226,6 +226,19 @@ SESSION_GROUPS = (
     # --group p29_w2_exotic matches through the chains' embedded name prefix.
     ("p29_w2_polarizer", "p29_w2_magnetic_separator", "p29_w2_laser_engraver",
      "p29_w2_laser_welder", "p29_w2_freezer", "p29_w2_cryo_mixer"),
+    # P29 W2 card ② (p29-w2-eu-core-5tier): the five eu-core family chains —
+    # electrolyzer | injector | printer | scanner_visuals | slicer, one fresh z=284
+    # band (the review-seat rebase re-band: the chain set was authored on z=276 before
+    # the card-③ eu-special chains landed on that band — moved to z=284 to keep the
+    # one-fresh-band-per-cluster discipline), per-family
+    # x-disjoint columns (electrolyzer x383..393 carries the /gt6energy type-gate rig
+    # under its T2; injector x395..405 / printer x407..417 / scanner x419..429 /
+    # slicer x431..441), admission mirroring the p29 W1 cluster form (bbox-registered,
+    # no fresh_boot / mutates member — the EU inject rig needs no fakesource; the
+    # electrolyzer rig is a band-local setblock). --group p29_w2_eu_core matches
+    # through the chains' embedded name prefix.
+    ("p29_w2_electrolyzer", "p29_w2_injector", "p29_w2_printer",
+     "p29_w2_scanner_visuals", "p29_w2_slicer"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
