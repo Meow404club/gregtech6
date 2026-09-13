@@ -189,8 +189,17 @@ public class GT6LangParityTest {
  * 发电机 (ULV) hand row). The same card walks BOTH dynamo registration classes into the
  * registry-coverage gate (the W1 handoff's must-do leftover, the cfoam lesson): all
  * eleven blocks resolve the vanilla descriptionId, so checked 90 → 101.
+ *
+ * <p>Task p29-w2-energy-types-5tier: raised to the measured 2839 — the +1 gt6.row.mat.iv
+ * voltage rung (VN[5] = "IV", CS.java:154; the card gloss said EV, refuted — ev is
+ * already T4's word; the GTMachines.EV_TIER_INPUTS doc carries the erratum), both
+ * locales. The re-measure also landed the en-side 71-key replay union (the mold/faucet/
+ * crucible display keys the GT6MoldDatagen.Lang chain below GT6EnUs emits whenever it
+ * registers last — the deterministic datagen output this card's runData stabilized; the
+ * previously committed en file lacked the replay keys while zh carried them, so en == zh
+ * 2839 = the first ZERO both-way delta state). zh == en, the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2816;
+private static final int ZH_KEY_FLOOR = 2839;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
