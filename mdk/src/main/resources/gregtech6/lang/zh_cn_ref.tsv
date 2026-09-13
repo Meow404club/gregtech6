@@ -211,9 +211,11 @@ direct	gt6.row.attachment.mat.plastic	塑料	hand
 direct	gt6.row.attachment.mat.stainless_steel	不锈钢	hand
 direct	gt6.row.attachment.mat.tantalum_hafnium_carbide	碳化钽铪	hand
 direct	gt6.row.attachment.mat.tungsten	钨	hand
+direct	gt6.row.autocrafter.display	自动工作台 (%s)	hand
 direct	gt6.row.axle.display	%s%s轴	hand
 direct	gt6.row.boiler.display	蒸汽锅炉箱 (%s)	hand
 direct	gt6.row.boiler.display.strong	强化蒸汽锅炉箱 (%s)	hand
+direct	gt6.row.boxinator.display	装箱机 (%s)	hand
 direct	gt6.row.burning_box.display	燃烧室 (%s, %s)	hand
 direct	gt6.row.burning_box.display.dense	致密燃烧室 (%s, %s)	hand
 direct	gt6.row.burning_box.display.fluidbed	流化床燃烧室 (%s)	hand
@@ -229,9 +231,13 @@ direct	gt6.row.dense_wall.display	致密%s壁板	hand
 direct	gt6.row.diesel.display	%s柴油引擎	hand
 direct	gt6.row.distillery.display	蒸馏器 (%s)	hand
 direct	gt6.row.dryer.display	干燥器 (%s)	hand
+direct	gt6.row.electricloom.display	电力织布机 (%s)	hand
+direct	gt6.row.electricmixer.display	电动搅拌机 (%s)	hand
+direct	gt6.row.electricsifter.display	电动筛矿机 (%s)	hand
 direct	gt6.row.faucet.display	坩埚浇铸口 (%s)	hand
 direct	gt6.row.faucet.mat.ceramic	陶瓷	hand
 direct	gt6.row.faucet.mat.stone	石头	hand
+direct	gt6.row.fermenter.display	发酵器	hand
 direct	gt6.row.funnel.display	%s漏斗	hand
 direct	gt6.row.hopper.display	%s料斗	hand
 direct	gt6.row.item_pipe.display.huge	巨型%s物品管道	hand
@@ -240,33 +246,43 @@ direct	gt6.row.item_pipe.display.medium	%s物品管道	hand
 direct	gt6.row.item_pipe.display.restrictive_huge	限流巨型%s物品管道	hand
 direct	gt6.row.item_pipe.display.restrictive_large	限流大型%s物品管道	hand
 direct	gt6.row.item_pipe.display.restrictive_medium	限流%s物品管道	hand
+direct	gt6.row.laminator.display	过胶机 (%s)	hand
 direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
+direct	gt6.row.lightningprocessor.display	闪电处理器 (%s)	hand
+direct	gt6.row.machine.buzzsaw	圆锯 (%s)	hand
+direct	gt6.row.machine.centrifuge	离心机 (%s)	hand
 direct	gt6.row.machine.cluster_mill	多辊式轧机 (%s)	hand
 direct	gt6.row.machine.compressor	压缩机 (%s)	hand
 direct	gt6.row.machine.crusher	破碎机	hand
 direct	gt6.row.machine.crusher.display	破碎机 (%s)	hand
+direct	gt6.row.machine.cryo_mixer	低温搅拌机 (%s)	hand
 direct	gt6.row.machine.display	%s (%s)	hand
 direct	gt6.row.machine.extruder	压模器	hand
 direct	gt6.row.machine.extruder.display	压模器 (%s)	hand
 direct	gt6.row.machine.extruder.low_heat.display	低温压模器 (%s)	hand
 direct	gt6.row.machine.extruder_low_heat	低温压模器	hand
+direct	gt6.row.machine.freezer	冷冻机 (%s)	hand
+direct	gt6.row.machine.laser_engraver	激光刻蚀机 (%s)	hand
+direct	gt6.row.machine.laser_welder	激光焊接器 (%s)	hand
 direct	gt6.row.machine.lathe	车床	hand
+direct	gt6.row.machine.magnetic_separator	磁选机 (%s)	hand
+direct	gt6.row.machine.mixer	搅拌机 (%s)	hand
+direct	gt6.row.machine.polarizer	电磁偏振器 (%s)	hand
 direct	gt6.row.machine.press	压力成型机	hand
 direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
+direct	gt6.row.machine.pressure_washer	水压清洗机 (%s)	hand
 direct	gt6.row.machine.roll_bender	辊弯机 (%s)	hand
 direct	gt6.row.machine.roll_former	辊压成型机 (%s)	hand
 direct	gt6.row.machine.rolling_mill	辊压机 (%s)	hand
-direct	gt6.row.machine.buzzsaw	圆锯 (%s)	hand
-direct	gt6.row.machine.squeezer	榨汁机 (%s)	hand
-direct	gt6.row.machine.centrifuge	离心机 (%s)	hand
-direct	gt6.row.machine.sluice	洗矿厂 (%s)	hand
 direct	gt6.row.machine.sanding_machine	砂轮 (%s)	hand
-direct	gt6.row.machine.pressure_washer	水压清洗机 (%s)	hand
 direct	gt6.row.machine.shredder	粉碎机	hand
 direct	gt6.row.machine.shredder.display	粉碎机 (%s)	hand
 direct	gt6.row.machine.sifter	筛选机 (%s)	hand
+direct	gt6.row.machine.sluice	洗矿厂 (%s)	hand
+direct	gt6.row.machine.squeezer	榨汁机 (%s)	hand
 direct	gt6.row.machine.wiremill	线材机 (%s)	hand
 direct	gt6.row.mat.adamantium	艾德曼合金	hand
+direct	gt6.row.mat.aluminium	铝	hand
 direct	gt6.row.mat.any_wood	木	hand
 direct	gt6.row.mat.arsenic_bronze	砷青铜	hand
 direct	gt6.row.mat.arsenic_copper	砷铜	hand
@@ -279,6 +295,7 @@ direct	gt6.row.mat.cobalt_brass	钴黄铜	hand
 direct	gt6.row.mat.constantan	康铜	hand
 direct	gt6.row.mat.ev	EV	hand
 direct	gt6.row.mat.fiery_steel	炙热钢	hand
+direct	gt6.row.mat.galvanized_steel	镀锌钢	hand
 direct	gt6.row.mat.hv	HV	hand
 direct	gt6.row.mat.invar	殷钢	hand
 direct	gt6.row.mat.iridium	铱	hand
@@ -290,6 +307,11 @@ direct	gt6.row.mat.mv	MV	hand
 direct	gt6.row.mat.netherite	下界合金	hand
 direct	gt6.row.mat.stainless_steel	不锈钢	hand
 direct	gt6.row.mat.steel	钢	hand
+direct	gt6.row.mat.t1	T1	hand
+direct	gt6.row.mat.t2	T2	hand
+direct	gt6.row.mat.t3	T3	hand
+direct	gt6.row.mat.t4	T4	hand
+direct	gt6.row.mat.t5	T5	hand
 direct	gt6.row.mat.tantalum_hafnium_carbide	碳化钽铪	hand
 direct	gt6.row.mat.tin_alloy	锡合金	hand
 direct	gt6.row.mat.titanium	钛	hand
@@ -342,6 +364,7 @@ direct	gt6.row.size.small	小型	hand
 direct	gt6.row.steam_engine.display	蒸汽引擎 (%s)	hand
 direct	gt6.row.steam_engine.display.strong	强化蒸汽引擎 (%s)	hand
 direct	gt6.row.tap.display	%s龙头	hand
+direct	gt6.row.unboxinator.display	拆箱机 (%s)	hand
 direct	gt6.spraycan.decolor	可为物品除色	hand
 direct	gt6.spraycan.paint	可将物品喷成%s	hand
 direct	gt6.spraycan.remaining	剩余使用次数：%s.%s	hand
@@ -7964,13 +7987,3 @@ mte	multiblock.tank.wooden	小型木质储罐	auto
 mte	multiblock.tank555.metal	大型储罐	auto
 mte	plantpot.tooltip.1	上面能种植任意植物!	auto
 mte	usb.switch.tooltip	使用选择面板在16个USB之间切换	auto
-direct	gt6.row.machine.mixer	搅拌机 (%s)	hand
-direct	gt6.row.electricmixer.display	电动搅拌机 (%s)	hand
-direct	gt6.row.electricloom.display	电力织布机 (%s)	hand
-direct	gt6.row.electricsifter.display	电动筛矿机 (%s)	hand
-direct	gt6.row.boxinator.display	装箱机 (%s)	hand
-direct	gt6.row.unboxinator.display	拆箱机 (%s)	hand
-direct	gt6.row.fermenter.display	发酵器	hand
-direct	gt6.row.autocrafter.display	自动工作台 (%s)	hand
-direct	gt6.row.lightningprocessor.display	闪电处理器 (%s)	hand
-direct	gt6.row.laminator.display	过胶机 (%s)	hand

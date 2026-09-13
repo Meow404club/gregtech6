@@ -203,7 +203,7 @@ public class GT6LangParityTest {
  * previously committed en file lacked the replay keys while zh carried them, so en == zh
  * 2839 = the first ZERO both-way delta state). zh == en, the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2842;
+private static final int ZH_KEY_FLOOR = 2855; // 2839 +3 (task p29-w2-eu-special: the three eu-special family templates) +13 (task p29-w2-exotic-energy: the 6 exotic family templates + the galvanized_steel/aluminium/t1..t5 units, both locales; chromium/stainless_steel/titanium ride the existing rows)
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -580,6 +580,24 @@ private static final int ZH_KEY_FLOOR = 2842;
 			assertFalse(en().containsKey("gt6.row.tier." + tTier), "the ordinal tier unit must stay retired on en");
 			assertFalse(zh().containsKey("gt6.row.tier." + tTier), "the ordinal tier unit must stay retired on zh");
 		}
+		// task p29-w2-exotic-energy — the six exotic-energy families: the Polarizer/
+		// Magnetic Separator ride the MATERIAL word (the Electric_T[1]/[3] locals), the
+		// Laser Engraver / Laser Welder / Freezer / Cryo Mixer the LITERAL "(T1)".."(T5)"
+		// tier words (the :1483/:1490/:1621/:1628 name columns — the declaration-fidelity
+		// acceptance pin, BOTH faces and BOTH ends of the five-rung ladder)
+		assertEquals("Polarizer (Galvanized Steel)", substitute(en().get(GTMachines.MACHINE_POLARIZER_UNIT_KEY), en().get("gt6.row.mat.galvanized_steel")));
+		assertEquals("电磁偏振器 (钛)", substitute(zh().get(GTMachines.MACHINE_POLARIZER_UNIT_KEY), zh().get("gt6.row.mat.titanium")));
+		assertEquals("Magnetic Separator (Stainless Steel)", substitute(en().get(GTMachines.MACHINE_MAGNETIC_SEPARATOR_UNIT_KEY), en().get("gt6.row.mat.stainless_steel")));
+		assertEquals("磁选机 (铝)", substitute(zh().get(GTMachines.MACHINE_MAGNETIC_SEPARATOR_UNIT_KEY), zh().get("gt6.row.mat.aluminium")));
+		assertEquals("Laser Engraver (T1)", substitute(en().get(GTMachines.MACHINE_LASER_ENGRAVER_UNIT_KEY), en().get("gt6.row.mat.t1")));
+		assertEquals("Laser Engraver (T5)", substitute(en().get(GTMachines.MACHINE_LASER_ENGRAVER_UNIT_KEY), en().get("gt6.row.mat.t5")));
+		assertEquals("激光刻蚀机 (T5)", substitute(zh().get(GTMachines.MACHINE_LASER_ENGRAVER_UNIT_KEY), zh().get("gt6.row.mat.t5")));
+		assertEquals("Laser Welder (T3)", substitute(en().get(GTMachines.MACHINE_LASER_WELDER_UNIT_KEY), en().get("gt6.row.mat.t3")));
+		assertEquals("激光焊接器 (T1)", substitute(zh().get(GTMachines.MACHINE_LASER_WELDER_UNIT_KEY), zh().get("gt6.row.mat.t1")));
+		assertEquals("Freezer (T4)", substitute(en().get(GTMachines.MACHINE_FREEZER_UNIT_KEY), en().get("gt6.row.mat.t4")));
+		assertEquals("冷冻机 (T1)", substitute(zh().get(GTMachines.MACHINE_FREEZER_UNIT_KEY), zh().get("gt6.row.mat.t1")));
+		assertEquals("Cryo Mixer (T5)", substitute(en().get(GTMachines.MACHINE_CRYO_MIXER_UNIT_KEY), en().get("gt6.row.mat.t5")));
+		assertEquals("低温搅拌机 (T2)", substitute(zh().get(GTMachines.MACHINE_CRYO_MIXER_UNIT_KEY), zh().get("gt6.row.mat.t2")));
 		// attachments
 		assertEquals("Ceramic Tap", substitute(en().get("gt6.row.tap.display"), en().get("gt6.row.attachment.mat.ceramic")));
 		assertEquals("Tantalum Hafnium Carbide Funnel", substitute(en().get("gt6.row.funnel.display"), en().get("gt6.row.attachment.mat.tantalum_hafnium_carbide")));
@@ -952,6 +970,12 @@ private static final int ZH_KEY_FLOOR = 2842;
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.AUTOCRAFTER_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LIGHTNING_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LAMINATOR_ROWS) tExempt.add(tRow.path());
+		// task p29-w2-exotic-energy — the 30 exotic-energy row carriers (GTBasicMachineBlock.getName)
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tExoticRows : java.util.List.of(
+				GTMachines.POLARIZER_ROWS, GTMachines.MAGNETIC_SEPARATOR_ROWS, GTMachines.LASER_ENGRAVER_ROWS,
+				GTMachines.LASER_WELDER_ROWS, GTMachines.FREEZER_ROWS, GTMachines.CRYO_MIXER_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tExoticRows) tExempt.add(tRow.path());
+		}
 		for (GTMachines.OvenRow tRow : GTMachines.OVEN_ROWS) tExempt.add(tRow.path()); // GTOvenBlock.getName — the composed Heat_T ladder (p27-oven-heat-t-ladder)
 		// the Kinetic_T tier carriers T2-T4 (GTBasicMachineBlock mComposedName, p27-machine-
 		// energy-display-fix) — T1 keeps its vanilla atomic key (block.gt6.shredder/lathe/
@@ -1035,12 +1059,13 @@ private static final int ZH_KEY_FLOOR = 2842;
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(988, tExemptTotal, "the derived composed-name exemption census"
+		assertEquals(1018, tExemptTotal, "the derived composed-name exemption census" 
 			+ " (the six p28 ULV row carriers joined at 903 + 6; the sixteen roll-ladder"
 			+ " row carriers joined at task p29-w1-kinetic-roll-ladder, 909 + 16; the six"
 			+ " p29 process families joined at 925 + 24, task p29-w1-kinetic-process-ladder;"
 			+ " the 25 eu-hu row carriers joined at 949 + 25, task p29-w1-eu-hu-families;"
-			+ " the 14 eu-special row carriers joined at 974 + 14, task p29-w2-eu-special)");
+			+ " the 14 eu-special row carriers joined at 974 + 14, task p29-w2-eu-special;"
+			+ " the 30 exotic-energy row carriers joined at 988 + 30, task p29-w2-exotic-energy)");
 		assertEquals(104, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"

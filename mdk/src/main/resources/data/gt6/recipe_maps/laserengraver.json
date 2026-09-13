@@ -1,0 +1,13 @@
+{
+  "recipes": [
+    {
+      "inputs": [
+        {"item": "minecraft:paper", "count": 1},
+        {"item": "minecraft:ink_sac", "count": 1}
+      ],
+      "outputs": [{"item": "minecraft:name_tag", "count": 1}],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

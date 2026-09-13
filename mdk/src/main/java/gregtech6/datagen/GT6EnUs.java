@@ -801,12 +801,30 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.AUTOCRAFTER_DISPLAY_KEY, "Autocrafter (%s)");
         add(gregtech6.registry.GTMachines.LIGHTNING_PROCESSOR_DISPLAY_KEY, "Lightning Processor (%s)");
         add(gregtech6.registry.GTMachines.LAMINATOR_DISPLAY_KEY, "Laminator (%s)");        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
+        // task p29-w2-exotic-energy — the six exotic-energy family templates: the
+        // Polarizer/Magnetic Separator ride the material-word slot (the upstream name
+        // columns "Polarizer ("+aMat+")" :1418-1422 / "Magnetic Separator ("+aMat+")"
+        // :1470-1474 over Electric_T[1..5]); the Laser Engraver / Laser Welder / Freezer /
+        // Cryo Mixer ride the LITERAL tier-word slot "(T1)".."(T5)" (:1483/:1490/:1621/
+        // :1628 — the declaration-fidelity column, no voltage word)
+        add(gregtech6.registry.GTMachines.MACHINE_POLARIZER_UNIT_KEY, "Polarizer (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_MAGNETIC_SEPARATOR_UNIT_KEY, "Magnetic Separator (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_LASER_ENGRAVER_UNIT_KEY, "Laser Engraver (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_LASER_WELDER_UNIT_KEY, "Laser Welder (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_FREEZER_UNIT_KEY, "Freezer (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_CRYO_MIXER_UNIT_KEY, "Cryo Mixer (%s)");        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
         for (String[] tMat : new String[][] {{"steel", "Steel"}, {"invar", "Invar"}, {"titanium", "Titanium"},
                 {"tungsten_carbide", "Tungsten Carbide"}, {"bronze", "Bronze"}, {"tungstensteel", "Tungstensteel"},
                 {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"}, {"iv", "IV"},
-                {"any_wood", "Any Wood"}, {"ulv", "ULV"}}) {
+                {"any_wood", "Any Wood"}, {"ulv", "ULV"},
+                // task p29-w2-exotic-energy — the Electric_T[1]/[2]/[4] locals (Galvanized
+                // Steel/Aluminium/Chromium, MT.java:1731/:401/:412 setLocal faces; the
+                // stainless_steel/titanium rungs ride the units above) + the LITERAL
+                // "(T1)".."(T5)" tier words of the four T-named exotic families
+                {"galvanized_steel", "Galvanized Steel"}, {"aluminium", "Aluminium"}, {"chromium", "Chromium"},
+                {"t1", "T1"}, {"t2", "T2"}, {"t3", "T3"}, {"t4", "T4"}, {"t5", "T5"}}) {
             addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the Heat_T[1..4] locals (MT.java:3689) + the VN[1..4] ids (CS.java:154) + the Kinetic_T[1..4] locals (the W1 trio) + the p28 ULV rungs (the T0 material word + VN[0]) + the p29 W2 5-tier rung (VN[5] = "IV" — the card gloss said EV, refuted by the CS.java:154 array and by ev already being T4's word; the GTMachines.EV_TIER_INPUTS doc carries the erratum)
         }
         // task p16-distillery-family ① — the Integrated Circuit ("Selector Tag", the upstream

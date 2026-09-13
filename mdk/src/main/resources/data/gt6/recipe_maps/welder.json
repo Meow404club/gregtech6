@@ -1,0 +1,13 @@
+{
+  "recipes": [
+    {
+      "inputs": [
+        {"item": "minecraft:iron_ingot", "count": 1},
+        {"item": "minecraft:gold_ingot", "count": 1}
+      ],
+      "outputs": [{"item": "minecraft:chain", "count": 1}],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

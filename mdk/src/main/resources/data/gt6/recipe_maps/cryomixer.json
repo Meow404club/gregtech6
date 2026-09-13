@@ -1,0 +1,14 @@
+{
+  "recipes": [
+    {
+      "inputs": [
+        {"item": "minecraft:snowball", "count": 1},
+        {"item": "minecraft:clay_ball", "count": 1}
+      ],
+      "fluidInputs": [{"fluid": "minecraft:water", "amount": 100}],
+      "outputs": [{"item": "minecraft:snow_block", "count": 1}],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

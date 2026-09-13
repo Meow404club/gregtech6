@@ -363,12 +363,54 @@ HAND_TRANSLATIONS = {
     # card gloss "第 5 词 EV" refuted by the array and by ev already being T4's word —
     # the GTMachines.EV_TIER_INPUTS doc carries the erratum), Latin per the numerals ruling.
     "gt6.row.mat.iv": ("IV", "hand"),
+    # task p29-w2-exotic-energy — the Electric_T[1]/[2] locals (Galvanized Steel /
+    # Aluminium, MT.java:1731/:401 setLocal faces; chromium/stainless_steel/titanium ride
+    # the rows above) + the LITERAL "(T1)".."(T5)" tier words of the four T-named exotic
+    # families (the Laser Engraver / Laser Welder / Freezer / Cryo Mixer name columns,
+    # tmp/gregtech.lang gt.multitileentity.20321-20325/20331-20335/20561-20565/20571-20575)
+    "gt6.row.mat.galvanized_steel": ("镀锌钢", "hand"),
+    "gt6.row.mat.aluminium": ("铝", "hand"),
+    "gt6.row.mat.t1": ("T1", "hand"),
+    "gt6.row.mat.t2": ("T2", "hand"),
+    "gt6.row.mat.t3": ("T3", "hand"),
+    "gt6.row.mat.t4": ("T4", "hand"),
+    "gt6.row.mat.t5": ("T5", "hand"),
     "gt6.row.large_boiler.display": ("%s锅炉气压计核心", "hand"),
     "gt6.row.dense_wall.display": ("致密%s壁板", "hand"),
     "gt6.row.machine.display": ("%s (%s)", "hand"),
     "gt6.row.machine.shredder": ("粉碎机", "hand"),
     "gt6.row.machine.crusher": ("破碎机", "hand"),
     "gt6.row.machine.lathe": ("车床", "hand"),
+    # task p29-w1-kinetic-process-ladder restoration (the module docstring contract): the
+    # six process-family hand rows were authored straight into the TSV without a
+    # HAND_TRANSLATIONS entry, so the faithful rerun above wiped them — re-entered
+    # VERBATIM from the pre-wipe TSV (git show e2eb082a:mdk/.../zh_cn_ref.tsv), the
+    # restoration-batch precedent
+    "gt6.row.machine.buzzsaw": ("圆锯 (%s)", "hand"),
+    "gt6.row.machine.squeezer": ("榨汁机 (%s)", "hand"),
+    "gt6.row.machine.centrifuge": ("离心机 (%s)", "hand"),
+    "gt6.row.machine.sluice": ("洗矿厂 (%s)", "hand"),
+    "gt6.row.machine.sanding_machine": ("砂轮 (%s)", "hand"),
+    "gt6.row.machine.pressure_washer": ("水压清洗机 (%s)", "hand"),
+    # task p29-w1-eu-hu-families restoration (the module docstring contract, the same
+    # straight-into-TSV wipe the process rows above hit): the seven eu-hu hand rows
+    # re-entered VERBATIM from the pre-wipe TSV
+    "gt6.row.machine.mixer": ("搅拌机 (%s)", "hand"),
+    "gt6.row.electricmixer.display": ("电动搅拌机 (%s)", "hand"),
+    "gt6.row.electricloom.display": ("电力织布机 (%s)", "hand"),
+    "gt6.row.electricsifter.display": ("电动筛矿机 (%s)", "hand"),
+    "gt6.row.boxinator.display": ("装箱机 (%s)", "hand"),
+    "gt6.row.unboxinator.display": ("拆箱机 (%s)", "hand"),
+    "gt6.row.fermenter.display": ("发酵器", "hand"),
+    # task p29-w2-exotic-energy — the six exotic-energy family templates (the dump mte
+    # words verbatim: 电磁偏振器/磁选机/激光刻蚀机/激光焊接器/冷冻机/低温搅拌机,
+    # tmp/gregtech.lang gt.multitileentity.20221/20301/20321/20331/20561/20571)
+    "gt6.row.machine.polarizer": ("电磁偏振器 (%s)", "hand"),
+    "gt6.row.machine.magnetic_separator": ("磁选机 (%s)", "hand"),
+    "gt6.row.machine.laser_engraver": ("激光刻蚀机 (%s)", "hand"),
+    "gt6.row.machine.laser_welder": ("激光焊接器 (%s)", "hand"),
+    "gt6.row.machine.freezer": ("冷冻机 (%s)", "hand"),
+    "gt6.row.machine.cryo_mixer": ("低温搅拌机 (%s)", "hand"),
     # task p27-machine-energy-display-fix: the gt6.row.tier.2/3/4 ordinal units are RETIRED —
     # the P7 tier slot rides the Kinetic_T material words (gt6.row.mat.bronze/steel/titanium/
     # tungstensteel, already hand rows below; upstream "Shredder ("+aMat.getLocal()+")"

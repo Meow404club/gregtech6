@@ -554,6 +554,27 @@ public class GT6ZhCn extends LanguageProvider {
 		// hand rows carry the dump-mte words 圆锯/榨汁机/离心机/洗矿厂/砂轮/水压清洗机
 		// from the :1318-1321/:1324-1327/:1330-1333/:1464-1467/:1589-1592/:1615-1618
 		// upstream name columns over the Kinetic_T locals)
+		// P29 W2 exotic-energy families (task p29-w2-exotic-energy): the six family
+		// templates — the Polarizer/Magnetic Separator ride the material-word slot (the
+		// Electric_T rung words; galvanized_steel/aluminium join the tsv hand rows, the
+		// stainless_steel/chromium/titanium words ride the existing rows), the Laser
+		// Engraver / Laser Welder / Freezer / Cryo Mixer the LITERAL tier-word slot
+		// (gt6.row.mat.t1..t5 — the dump words 电磁偏振器/磁选机/激光刻蚀机/激光焊接器/
+		// 冷冻机/低温搅拌机, gt.multitileentity.20221/20301/20321/20331/20561/20571)
+		addDirect(gregtech6.registry.GTMachines.MACHINE_POLARIZER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_MAGNETIC_SEPARATOR_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_LASER_ENGRAVER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_LASER_WELDER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_FREEZER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_CRYO_MIXER_UNIT_KEY);
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tExoticRows
+				: java.util.List.of(gregtech6.registry.GTMachines.POLARIZER_ROWS, gregtech6.registry.GTMachines.MAGNETIC_SEPARATOR_ROWS,
+						gregtech6.registry.GTMachines.LASER_ENGRAVER_ROWS, gregtech6.registry.GTMachines.LASER_WELDER_ROWS,
+						gregtech6.registry.GTMachines.FREEZER_ROWS, gregtech6.registry.GTMachines.CRYO_MIXER_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tExoticRows) {
+				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
+			}
+		}
 		addDirect(gregtech6.registry.GTMachines.MACHINE_BUZZSAW_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_SQUEEZER_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_CENTRIFUGE_UNIT_KEY);
