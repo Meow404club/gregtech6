@@ -184,7 +184,15 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// smoke-row map keys — the card-A constants the Sluice tail-append joins
 			"cutter", "squeezer", "centrifuge", "sluice", "sharpening", "pressurewasher",
 			// the P29 W1 card-D eu-hu four (task p29-w1-eu-hu-families)
-			"loom", "boxinator", "unboxinator", "fermenter");
+			"loom", "boxinator", "unboxinator", "fermenter",
+			// the P29 W2 nineteen (task p29-w2-energy-types-5tier — the shared-layer card
+			// expands ALL the keys so the consumer cards ②③④⑤ never touch this loader):
+			// the keys ARE the card-① GT6RecipeMaps field names in snake case; no datapack
+			// row data ships with the keys (the smoke rows are the consumer cards' content)
+			"autocrafter", "steamcracking", "catalyticcracking", "coagulator", "cryomixer",
+			"magneticseparator", "injector", "laminator", "autoclave", "freezer", "polarizer",
+			"lightning", "slicer", "laserengraver", "welder", "electrolyzer", "printer",
+			"scannervisuals", "generifier");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -533,6 +541,28 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "boxinator" -> GT6RecipeMaps.BOXINATOR;
 			case "unboxinator" -> GT6RecipeMaps.UNBOXINATOR;
 			case "fermenter" -> GT6RecipeMaps.FERMENTER;
+			// the P29 W2 nineteen (task p29-w2-energy-types-5tier — the key/field pairs are
+			// the card-① snake-case anchors; every target is a DECLARED-empty base map until
+			// its consumer card pours)
+			case "autocrafter" -> GT6RecipeMaps.AUTOCRAFTER;
+			case "steamcracking" -> GT6RecipeMaps.STEAM_CRACKING;
+			case "catalyticcracking" -> GT6RecipeMaps.CATALYTIC_CRACKING;
+			case "coagulator" -> GT6RecipeMaps.COAGULATOR;
+			case "cryomixer" -> GT6RecipeMaps.CRYO_MIXER;
+			case "magneticseparator" -> GT6RecipeMaps.MAGNETIC_SEPARATOR;
+			case "injector" -> GT6RecipeMaps.INJECTOR;
+			case "laminator" -> GT6RecipeMaps.LAMINATOR;
+			case "autoclave" -> GT6RecipeMaps.AUTOCLAVE;
+			case "freezer" -> GT6RecipeMaps.FREEZER;
+			case "polarizer" -> GT6RecipeMaps.POLARIZER;
+			case "lightning" -> GT6RecipeMaps.LIGHTNING;
+			case "slicer" -> GT6RecipeMaps.SLICER;
+			case "laserengraver" -> GT6RecipeMaps.LASER_ENGRAVER;
+			case "welder" -> GT6RecipeMaps.WELDER;
+			case "electrolyzer" -> GT6RecipeMaps.ELECTROLYZER;
+			case "printer" -> GT6RecipeMaps.PRINTER;
+			case "scannervisuals" -> GT6RecipeMaps.SCANNER_VISUALS;
+			case "generifier" -> GT6RecipeMaps.GENERIFIER;
 			default -> null;
 		};
 	}
