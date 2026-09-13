@@ -106,7 +106,9 @@ steps = [
 ]
 
 CHAIN = Chain(
-    name="p29-w1-mixer-pair",
+    # the name carries the band key: sweep --group p29_w1_eu_hu matches this member
+    # substring and joins the whole cluster (the select_groups member-substring form)
+    name="p29-w1-mixer-pair p29_w1_eu_hu",
     slug="p29w1mixerpair",
     sites=gt6world.declare_sites(SITE_MK, SITE_EM1, SITE_EM2),
     preferred_ports=(26220, 26230),      # the card-D pinned rcon/query pair (the fresh 2622x segment)
