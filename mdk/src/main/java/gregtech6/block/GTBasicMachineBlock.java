@@ -141,6 +141,21 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 *                           the V[0] packet lands mid-window) instead of
 	 *                           TIER_INPUTS[tier]; false = the legacy material-ladder
 	 *                           behaviour, byte-identical.
+	 * @param efficiency         the upstream NBT_EFFICIENCY column (task
+	 *                           p29-w1-rm-maps-scaffold; upstream default {@code short
+	 *                           mEfficiency = 10000}, MultiTileEntityBasicMachine.java:96,
+	 *                           the :125 read binds 0..10000): the progress-division
+	 *                           divisor — {@code mMaxProgress = max(1, units(minEnergy ×
+	 *                           duration [× parallelCount], mEfficiency, 10000, T))}
+	 *                           (:768/:771), where units(a, orig, targ) = a × targ/orig —
+	 *                           so 10000 = the identity (upstream speed) and 5000 = 2×
+	 *                           the REQUIRED progress per process (the Electric* rows
+	 *                           :1504-1522 — plug-in convenience at 2× energy-time; the
+	 *                           same wall-clock covers exactly half the bar). Null = the
+	 *                           row carries no NBT_EFFICIENCY key → the BE keeps its
+	 *                           10000 default (every legacy row, the zero-drift
+	 *                           regression face). Rides the BE through
+	 *                           {@code GTMachines.applyRow} (the mask-carrier seam).
 	 */
 	public record MachineRow(String path, String matSlug, String matDisplay,
 			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material,
@@ -151,7 +166,29 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 			byte energySides, byte fluidIn, byte fluidOut, byte itemIn, byte itemOut,
 			byte fluidAutoIn, byte fluidAutoOut, byte itemAutoIn, byte itemAutoOut,
 			@Nullable java.util.function.Supplier<net.minecraft.world.inventory.MenuType<gregtech6.gui.machines.GTBasicMachineMenu>> menu,
-			boolean cheapOverclocking, @Nullable Long maxMeltingPointK, boolean ulvVoltage) {
+			boolean cheapOverclocking, @Nullable Long maxMeltingPointK, boolean ulvVoltage,
+			@Nullable Integer efficiency) {
+
+		/**
+		 * The p28-shape 26-arg constructor (every row this wave inherited): null efficiency —
+		 * the row carries no NBT_EFFICIENCY key, the BE keeps the :96 default 10000 and the
+		 * progress math stays byte-identical (the zero-drift regression face).
+		 */
+		public MachineRow(String path, String matSlug, String matDisplay,
+				java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material,
+				String displayKey, int metaId, float hardness,
+				int tier, int parallel, boolean parallelDuration,
+				java.util.function.Supplier<gregtech6.recipes.RecipeMap> recipes, gregapi.code.TagData energyType,
+				String texture,
+				byte energySides, byte fluidIn, byte fluidOut, byte itemIn, byte itemOut,
+				byte fluidAutoIn, byte fluidAutoOut, byte itemAutoIn, byte itemAutoOut,
+				@Nullable java.util.function.Supplier<net.minecraft.world.inventory.MenuType<gregtech6.gui.machines.GTBasicMachineMenu>> menu,
+				boolean cheapOverclocking, @Nullable Long maxMeltingPointK, boolean ulvVoltage) {
+			this(path, matSlug, matDisplay, material, displayKey, metaId, hardness, tier, parallel, parallelDuration,
+					recipes, energyType, texture, energySides, fluidIn, fluidOut, itemIn, itemOut,
+					fluidAutoIn, fluidAutoOut, itemAutoIn, itemAutoOut, menu, cheapOverclocking, maxMeltingPointK,
+					ulvVoltage, null);
+		}
 
 		/** The block properties (hardness == resistance on every row; the METAL machine sound). */
 		public net.minecraft.world.level.block.state.BlockBehaviour.Properties properties() {

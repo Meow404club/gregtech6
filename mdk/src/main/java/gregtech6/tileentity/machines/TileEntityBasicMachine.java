@@ -695,10 +695,10 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		} else {
 			if (mParallelDuration) { // :766-768 — the duration scales linearly with the parallel count
 				mMinEnergy = Math.max(1, tRecipe.mEUt); // :767 (RF half cut)
-				mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, 10000, 10000, true)); // :768 (mEfficiency = 10000 → units() is the identity)
+				mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, mEfficiency, 10000, true)); // :768 (efficiency 10000 = the units() identity, the historical folded form)
 			} else { // :770-771 — the energy scales (the speedup); TU keeps its constant per-process energy
 				mMinEnergy = Math.max(1, (mEnergyTypeAccepted == TD.Energy.TU ? tRecipe.mEUt : tRecipe.mEUt * tMaxProcessCount));
-				mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration), 10000, 10000, true)); // :771
+				mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration), mEfficiency, 10000, true)); // :771
 			}
 			// :773 verbatim — 4x energy, 2x speed (mCheapOverclocking cut: no config source, always T)
 			while (mMinEnergy < mInputMin && mMinEnergy * 4 <= mInputMax) {mMinEnergy *= 4; mMaxProgress *= 2;}
@@ -901,6 +901,25 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * NOT persisted (the mEnergyInputs load-keeps-the-constructor-config contract).
 	 */
 	public Long mMaxMeltingPointK = null;
+	/**
+	 * Upstream :96 mEfficiency — the progress-division divisor of the :768/:771 rows
+	 * ({@code units(minEnergy × duration [× parallelCount], mEfficiency, 10000, T)};
+	 * upstream UT.Code.units(a, orig, targ) = a × targ/orig — the LH.java:334 efficiency
+	 * tooltip is the same direction): the FRACTION OF ENERGY-TIME THAT DOES WORK, scaled
+	 * against the 10000 perfection. 10000 = the identity (every unit of energy-time
+	 * counts — every row before task p29-w1-rm-maps-scaffold, which is why the port could
+	 * FOLD the divisor to the constant 10000 until this card); 5000 = 2× the REQUIRED
+	 * progress per process (the Electric* rows :1504-1522 NBT_EFFICIENCY 5000 — the
+	 * plug-in convenience burns 2× the energy-time; in the same wall-clock the bar sits
+	 * at exactly half). The registration-config carrier (the mMaxMeltingPointK shape):
+	 * {@code GTMachines.applyRow} writes the row's {@code efficiency} column through the
+	 * upstream :125 bind form {@code bind(0, 10000, value)} — NOT persisted (the
+	 * loadKeepsTheConstructorInjectedConfig contract). The upstream :125 bind floor of 0
+	 * is kept verbatim; efficiency 0 hits the UT.Code.units aOriginalUnit==0 arm
+	 * (UT.java:1679) which IS the identity, the same no-penalty net effect as 10000
+	 * (upstream quirk preserved).
+	 */
+	public short mEfficiency = 10000;
 	/**
 	 * Upstream :511 VERBATIM (task p14-machine-fluid-face ②): the receiving gate is the
 	 * rotated connectivity mask — {@code FACE_CONNECTED[FACING_ROTATIONS[mFacing][aSide]]

@@ -112,8 +112,26 @@ import com.mojang.logging.LogUtils;
  * documented deviation). The map's live findRecipe consumer is the
  * {@code GTChiselItem} right-click gate (the ToolCompat.java:224-229 transcription) —
  * there is no machine behind this map (upstream likewise).
- *
- * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
+	 *
+	 * <p>The P29 W1 twelve-map block (task p29-w1-rm-maps-scaffold): {@code FERMENTER}
+	 * (RM.java:69), {@code LOOM} (:89), {@code PRESSURE_WASHER} (:98), {@code SQUEEZER}
+	 * (:101), {@code CLUSTER_MILL} (:112), {@code ROLL_BENDER} (:114), {@code ROLL_FORMER}
+	 * (:115), {@code CENTRIFUGE} (:122), {@code SHARPENING} (:126), {@code CUTTER} (:130),
+	 * {@code BOXINATOR} (:149) and {@code UNBOXINATOR} (:150) — each the base-{@link
+	 * RecipeMap} row transcribed parameter-for-parameter over the 15-arg port ctor (the
+	 * trailing NEI booleans T,T,T,T,F,T,T fold away like every other map), the GUI paths the
+	 * upstream machines/&lt;Name&gt; strings lowercased (the Shredder-line convention; note
+	 * the upstream Sharpening row's GUI word is "Sharpener", :126). ALL TWELVE ship
+	 * DECLARED-empty row0 (empty maps are legal — the DISTILLERY/PRESS precedent): the row
+	 * pour is the B/C/D machine-card content, riding either the static loaders (the
+	 * GT6Recipes* FMLCommonSetup convention) or the tier-b RM JSON direct-pour seam — the
+	 * map names here ARE the {@code GT6RecipeMapJsonLoader} map-key anchors for that seam
+	 * (the KJS face of this card: RM runtime recipe maps + this registration seam, no
+	 * datapack row data, no KubeJS surface). No machine consumer lands with this card — a
+	 * map without a findRecipe consumer is the CHISEL judged form. {@code UNBOXINATOR}
+	 * carries the one subclass deviation of the block (documented on the field).
+	 *
+	 * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
  * cleanly. W2 (p4-machine-oven) wires {@code init()} into the mod lifecycle.
@@ -125,10 +143,11 @@ public class GT6RecipeMaps {
 	/**
 	 * The generation-reset hooks: every loader that owns a private static "poured" flag
 	 * registers its resetForTest here from its static initializer, so {@link #reset()}
-	 * retires the WHOLE generation. One generation = the 25 map fields (the 12 pre-W1
-	 * fields + the mixer/W1-trio/press-extruder/crucible-pair appends + the BATH append
-	 * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
-	 * p28-c-ulv-machine-ladder + the anvil pair of task p28-c-anvil) + RecipeMap.RECIPE_MAPS
+	 * retires the WHOLE generation. One generation = the 37 map fields (the 12 pre-W1
+		 * fields + the mixer/W1-trio/press-extruder/crucible-pair appends + the BATH append
+		 * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
+		 * p28-c-ulv-machine-ladder + the anvil pair of task p28-c-anvil + the twelve-map
+		 * P29 W1 block of task p29-w1-rm-maps-scaffold) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
@@ -378,6 +397,57 @@ public class GT6RecipeMaps {
 	 */
 	public static volatile RecipeMap ANVIL_BEND;
 
+	/** RM.java:69 — the Fermenter map (1/1/1 items, 1/1/0 fluids, minimal inputs 1). DECLARED-empty; the consumer is the P29 batch D Fermenter row. */
+	public static volatile RecipeMap FERMENTER;
+
+	/** RM.java:89 — the Loom map (6/1/1 items, 0/0/0 fluids, minimal inputs 0). DECLARED-empty; the P29 consumer is the ElectricLoom row (card D). */
+	public static volatile RecipeMap LOOM;
+
+	/** RM.java:98 — the Pressure Washer map (1/2/1 items, 1/0/1 fluids, minimal inputs 0; the Debarker alias folds into the same constants). DECLARED-empty; consumer = batch C. */
+	public static volatile RecipeMap PRESSURE_WASHER;
+
+	/** RM.java:101 — the Squeezer map (1/2/1 items, 0/1/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch C. */
+	public static volatile RecipeMap SQUEEZER;
+
+	/** RM.java:112 — the Cluster Mill map (1/1/1 items, 0/0/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch B. */
+	public static volatile RecipeMap CLUSTER_MILL;
+
+	/** RM.java:114 — the Roll Bender map (1/1/1 items, 0/0/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch B. */
+	public static volatile RecipeMap ROLL_BENDER;
+
+	/** RM.java:115 — the Roll Former map (1/1/1 items, 0/0/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch B. */
+	public static volatile RecipeMap ROLL_FORMER;
+
+	/** RM.java:122 — the Centrifuge map (1/6/0 items, 1/6/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch C. */
+	public static volatile RecipeMap CENTRIFUGE;
+
+	/** RM.java:126 — the Sharpening map (1/2/1 items, 0/0/0 fluids, minimal inputs 0; the upstream GUI word is "Sharpener"). DECLARED-empty; consumers = batch C Sander + the Grindstone pool. */
+	public static volatile RecipeMap SHARPENING;
+
+	/** RM.java:130 — the Cutter map (1/3/1 items, 1/0/1 fluids, minimal inputs 0). Base class: RM.Cutter IS a plain RecipeMap upstream (:130 — the gregapi RecipeMapCutter class is NOT this field's type). DECLARED-empty; consumer = batch C Buzzsaw. */
+	public static volatile RecipeMap CUTTER;
+
+	/** RM.java:149 — the Boxinator map (2/1/2 items, 0/0/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch D. */
+	public static volatile RecipeMap BOXINATOR;
+
+	/**
+	 * RM.java:150 — the Unboxinator map (1/12/1 items, 0/0/0 fluids, minimal inputs 0).
+	 *
+	 * <p><b>Base-class form (declared deviation, the SHREDDER/CHISEL judged precedent):</b>
+	 * upstream {@code RM.Unboxinator} is a {@code RecipeMapUnboxinator} subclass whose
+	 * {@code findRecipe} override (RecipeMapUnboxinator.java:43-89) synthesizes LOOT rows ON
+	 * DEMAND: the {@code IL.Crate_Loot} vanilla-loot arm (:51-54), the GT6 {@code MultiItem}
+	 * {@code Behavior_Drop_Loot} walk (:56-66), the IC2 Scrapbox arm (:67-73), the TC
+	 * lootbag arm (:74-80) and the LOOTBAGS reflection arm (:81-86). Every leg sits on the
+	 * 1.7.10 loot/runtime universe (ChestGenHooks, the IC2/TC compat bridges, reflection into
+	 * foreign item classes) — the pooled-handler layer the P8/P10 rulings do NOT carry, and
+	 * the static-row list of the map upstream is EMPTY (the card's ④ archaeology). The port
+	 * carries the base {@link RecipeMap} with the identical constants; the loot arms stay
+	 * POOLED, not dropped (the batch-D unboxinator consumer rejects a loot-box input — no
+	 * row matches — which IS the card's ⑤ acceptance shape "loot 臂=不存在即拒").
+	 */
+	public static volatile RecipeMap UNBOXINATOR;
+
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
 		if (FURNACE != null) return;
@@ -610,6 +680,120 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 3, 1,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
+		// --- the P29 W1 twelve-map block (task p29-w1-rm-maps-scaffold), upstream RM.java
+		// declaration order; every row verbatim over the 15-arg port ctor, all DECLARED-empty
+		// (the row pour is the B/C/D card content) ---
+		// RM.java:69 — items 1/1/1, fluids 1/1/0, MIN 1, AMP 1
+		FERMENTER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.fermenter", "Fermenter", null,
+				0, 1,
+				"gt6:textures/gui/machines/fermenter",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		// RM.java:89 — items 6/1/1, fluids 0/0/0, MIN 0, AMP 1
+		LOOM = new RecipeMap(new HashSet<>(),
+				"gt.recipe.loom", "Loom", null,
+				0, 1,
+				"gt6:textures/gui/machines/loom",
+				/*IN-OUT-MIN-ITEM=*/ 6, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:98 — items 1/2/1, fluids 1/0/1, MIN 0, AMP 1 (Debarker = PressureWasher alias upstream, same constants)
+		PRESSURE_WASHER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.pressurewasher", "Pressure Washer", null,
+				0, 1,
+				"gt6:textures/gui/machines/pressurewasher",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 0, 1,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:101 — items 1/2/1, fluids 0/1/0, MIN 0, AMP 1
+		SQUEEZER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.squeezer", "Squeezer", null,
+				0, 1,
+				"gt6:textures/gui/machines/squeezer",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 1, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:112 — items 1/1/1, fluids 0/0/0, MIN 0, AMP 1 (the RollingMill/Wiremill shape two/three lines up)
+		CLUSTER_MILL = new RecipeMap(new HashSet<>(),
+				"gt.recipe.clustermill", "Cluster Mill", null,
+				0, 1,
+				"gt6:textures/gui/machines/clustermill",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:114 — items 1/1/1, fluids 0/0/0, MIN 0, AMP 1
+		ROLL_BENDER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.rollbender", "Roll Bender", null,
+				0, 1,
+				"gt6:textures/gui/machines/rollbender",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:115 — items 1/1/1, fluids 0/0/0, MIN 0, AMP 1
+		ROLL_FORMER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.rollformer", "Roll Former", null,
+				0, 1,
+				"gt6:textures/gui/machines/rollformer",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:122 — items 1/6/0, fluids 1/6/0, MIN 0, AMP 1
+		CENTRIFUGE = new RecipeMap(new HashSet<>(),
+				"gt.recipe.centrifuge", "Centrifuge", null,
+				0, 1,
+				"gt6:textures/gui/machines/centrifuge",
+				/*IN-OUT-MIN-ITEM=*/ 1, 6, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 6, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:126 — items 1/2/1, fluids 0/0/0, MIN 0, AMP 1; the upstream GUI word is
+		// "Sharpener" (the machines/Sharpener row), lowercased per the Shredder-line convention
+		SHARPENING = new RecipeMap(new HashSet<>(),
+				"gt.recipe.sharpener", "Sharpener", null,
+				0, 1,
+				"gt6:textures/gui/machines/sharpener",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:130 — items 1/3/1, fluids 1/0/1, MIN 0, AMP 1 (base class: RM.Cutter IS a plain RecipeMap upstream)
+		CUTTER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.cutter", "Cutter", null,
+				0, 1,
+				"gt6:textures/gui/machines/cutter",
+				/*IN-OUT-MIN-ITEM=*/ 1, 3, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 0, 1,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:149 — items 2/1/2, fluids 0/0/0, MIN 0, AMP 1
+		BOXINATOR = new RecipeMap(new HashSet<>(),
+				"gt.recipe.boxinator", "Boxinator", null,
+				0, 1,
+				"gt6:textures/gui/machines/boxinator",
+				/*IN-OUT-MIN-ITEM=*/ 2, 1, 2,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:150 — items 1/12/1, fluids 0/0/0, MIN 0, AMP 1 (the base-form deviation of
+		// the upstream RecipeMapUnboxinator subclass is documented on the field above — the
+		// loot findRecipe arms stay pooled, RecipeMapUnboxinator.java:43-89)
+		UNBOXINATOR = new RecipeMap(new HashSet<>(),
+				"gt.recipe.unboxinator", "Unboxinator", null,
+				0, 1,
+				"gt6:textures/gui/machines/unboxinator",
+				/*IN-OUT-MIN-ITEM=*/ 1, 12, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -644,6 +828,18 @@ public class GT6RecipeMaps {
 		CRUCIBLE_ALLOYING = null;
 		ANVIL = null;
 		ANVIL_BEND = null;
+		FERMENTER = null;
+		LOOM = null;
+		PRESSURE_WASHER = null;
+		SQUEEZER = null;
+		CLUSTER_MILL = null;
+		ROLL_BENDER = null;
+		ROLL_FORMER = null;
+		CENTRIFUGE = null;
+		SHARPENING = null;
+		CUTTER = null;
+		BOXINATOR = null;
+		UNBOXINATOR = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}

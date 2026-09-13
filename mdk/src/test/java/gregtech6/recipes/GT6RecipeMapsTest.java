@@ -195,7 +195,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
 		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
-		assertEquals(25, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair, the p26-kitchen-pot-bowl RM.java:80 append, the p28-c-ulv-machine-ladder RM.java:113 append, the p28-c-anvil RM.java:118-120 pair with the Small/Big fold)");
+		assertEquals(37, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair, the p26-kitchen-pot-bowl RM.java:80 append, the p28-c-ulv-machine-ladder RM.java:113 append, the p28-c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the p29-w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150)");
 	}
 
 	/** The RM.java:99 Forming Press map constants (task p26-w1-press-extruder-molds). */
@@ -418,5 +418,208 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertNotSame(tFirstCompressor, GT6RecipeMaps.COMPRESSOR);
 		assertNotSame(tFirstWiremill, GT6RecipeMaps.WIREMILL);
 		GT6RecipeMaps.reset();
+	}
+
+	// -----------------------------------------------------------------------
+	// the P29 W1 twelve-map block (task p29-w1-rm-maps-scaffold) — the RM.java
+	// :69/:89/:98/:101/:112-115/:122/:126/:130/:149-150 transcription pins, all
+	// base-RecipeMap, all DECLARED-empty (the row pour is the B/C/D card content).
+	// -----------------------------------------------------------------------
+
+	/** The fluid-bearing six of the block: Fermenter :69, PressureWasher :98, Squeezer :101, Centrifuge :122, Cutter :130. */
+	@Test
+	void initRegistersP29FluidMapsWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+
+		assertNotNull(GT6RecipeMaps.FERMENTER);
+		assertSame(GT6RecipeMaps.FERMENTER, RecipeMap.RECIPE_MAPS.get("gt.recipe.fermenter"));
+		assertEquals("Fermenter", GT6RecipeMaps.FERMENTER.mNameLocal);
+		assertEquals(1, GT6RecipeMaps.FERMENTER.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.FERMENTER.mOutputItemsCount);
+		assertEquals(1, GT6RecipeMaps.FERMENTER.mMinimalInputItems, "RM.java:69 MIN-ITEM 1");
+		assertEquals(1, GT6RecipeMaps.FERMENTER.mInputFluidCount);
+		assertEquals(1, GT6RecipeMaps.FERMENTER.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.FERMENTER.mMinimalInputFluids, "RM.java:69 MIN-FLUID 0");
+		assertEquals(1, GT6RecipeMaps.FERMENTER.mMinimalInputs, "RM.java:69 MIN 1");
+		assertEquals(1, GT6RecipeMaps.FERMENTER.mPower);
+		assertEquals("gt6:textures/gui/machines/fermenter.png", GT6RecipeMaps.FERMENTER.mGUIPath);
+		assertTrue(GT6RecipeMaps.FERMENTER.mRecipeList.isEmpty(), "DECLARED-empty");
+
+		assertNotNull(GT6RecipeMaps.PRESSURE_WASHER);
+		assertSame(GT6RecipeMaps.PRESSURE_WASHER, RecipeMap.RECIPE_MAPS.get("gt.recipe.pressurewasher"));
+		assertEquals("Pressure Washer", GT6RecipeMaps.PRESSURE_WASHER.mNameLocal);
+		assertEquals(1, GT6RecipeMaps.PRESSURE_WASHER.mInputItemsCount);
+		assertEquals(2, GT6RecipeMaps.PRESSURE_WASHER.mOutputItemsCount);
+		assertEquals(1, GT6RecipeMaps.PRESSURE_WASHER.mMinimalInputItems, "RM.java:98 MIN-ITEM 1");
+		assertEquals(1, GT6RecipeMaps.PRESSURE_WASHER.mInputFluidCount, "RM.java:98 IN-FLUID 1 — the water-consumption leg (no output)");
+		assertEquals(0, GT6RecipeMaps.PRESSURE_WASHER.mOutputFluidCount);
+		assertEquals(1, GT6RecipeMaps.PRESSURE_WASHER.mMinimalInputFluids, "RM.java:98 MIN-FLUID 1");
+		assertEquals(0, GT6RecipeMaps.PRESSURE_WASHER.mMinimalInputs);
+		assertEquals("gt6:textures/gui/machines/pressurewasher.png", GT6RecipeMaps.PRESSURE_WASHER.mGUIPath);
+		assertTrue(GT6RecipeMaps.PRESSURE_WASHER.mRecipeList.isEmpty(), "DECLARED-empty");
+
+		assertNotNull(GT6RecipeMaps.SQUEEZER);
+		assertSame(GT6RecipeMaps.SQUEEZER, RecipeMap.RECIPE_MAPS.get("gt.recipe.squeezer"));
+		assertEquals("Squeezer", GT6RecipeMaps.SQUEEZER.mNameLocal);
+		assertEquals(1, GT6RecipeMaps.SQUEEZER.mInputItemsCount);
+		assertEquals(2, GT6RecipeMaps.SQUEEZER.mOutputItemsCount);
+		assertEquals(1, GT6RecipeMaps.SQUEEZER.mMinimalInputItems, "RM.java:101 MIN-ITEM 1");
+		assertEquals(0, GT6RecipeMaps.SQUEEZER.mInputFluidCount);
+		assertEquals(1, GT6RecipeMaps.SQUEEZER.mOutputFluidCount, "RM.java:101 OUT-FLUID 1 — the juice leg");
+		assertEquals(0, GT6RecipeMaps.SQUEEZER.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.SQUEEZER.mMinimalInputs);
+		assertEquals("gt6:textures/gui/machines/squeezer.png", GT6RecipeMaps.SQUEEZER.mGUIPath);
+		assertTrue(GT6RecipeMaps.SQUEEZER.mRecipeList.isEmpty(), "DECLARED-empty");
+
+		assertNotNull(GT6RecipeMaps.CENTRIFUGE);
+		assertSame(GT6RecipeMaps.CENTRIFUGE, RecipeMap.RECIPE_MAPS.get("gt.recipe.centrifuge"));
+		assertEquals("Centrifuge", GT6RecipeMaps.CENTRIFUGE.mNameLocal);
+		assertEquals(1, GT6RecipeMaps.CENTRIFUGE.mInputItemsCount);
+		assertEquals(6, GT6RecipeMaps.CENTRIFUGE.mOutputItemsCount, "RM.java:122 OUT-ITEM 6 — the six-output topology");
+		assertEquals(0, GT6RecipeMaps.CENTRIFUGE.mMinimalInputItems);
+		assertEquals(1, GT6RecipeMaps.CENTRIFUGE.mInputFluidCount);
+		assertEquals(6, GT6RecipeMaps.CENTRIFUGE.mOutputFluidCount, "RM.java:122 OUT-FLUID 6");
+		assertEquals(0, GT6RecipeMaps.CENTRIFUGE.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.CENTRIFUGE.mMinimalInputs);
+		assertEquals("gt6:textures/gui/machines/centrifuge.png", GT6RecipeMaps.CENTRIFUGE.mGUIPath);
+		assertTrue(GT6RecipeMaps.CENTRIFUGE.mRecipeList.isEmpty(), "DECLARED-empty");
+
+		assertNotNull(GT6RecipeMaps.CUTTER);
+		assertSame(GT6RecipeMaps.CUTTER, RecipeMap.RECIPE_MAPS.get("gt.recipe.cutter"));
+		assertEquals("Cutter", GT6RecipeMaps.CUTTER.mNameLocal);
+		assertEquals(1, GT6RecipeMaps.CUTTER.mInputItemsCount);
+		assertEquals(3, GT6RecipeMaps.CUTTER.mOutputItemsCount, "RM.java:130 OUT-ITEM 3");
+		assertEquals(1, GT6RecipeMaps.CUTTER.mMinimalInputItems, "RM.java:130 MIN-ITEM 1");
+		assertEquals(1, GT6RecipeMaps.CUTTER.mInputFluidCount, "RM.java:130 IN-FLUID 1 — the coolant leg");
+		assertEquals(0, GT6RecipeMaps.CUTTER.mOutputFluidCount);
+		assertEquals(1, GT6RecipeMaps.CUTTER.mMinimalInputFluids, "RM.java:130 MIN-FLUID 1");
+		assertEquals(0, GT6RecipeMaps.CUTTER.mMinimalInputs);
+		assertEquals("gt6:textures/gui/machines/cutter.png", GT6RecipeMaps.CUTTER.mGUIPath);
+		assertTrue(GT6RecipeMaps.CUTTER instanceof RecipeMap, "RM.Cutter IS the base RecipeMap upstream (:130 — the gregapi RecipeMapCutter class is not this field's type)");
+		assertTrue(GT6RecipeMaps.CUTTER.mRecipeList.isEmpty(), "DECLARED-empty");
+	}
+
+	/** The item-only five of the block: Loom :89, ClusterMill :112, RollBender :114, RollFormer :115, Sharpening :126. */
+	@Test
+	void initRegistersP29ItemOnlyMapsWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+
+		assertNotNull(GT6RecipeMaps.LOOM);
+		assertSame(GT6RecipeMaps.LOOM, RecipeMap.RECIPE_MAPS.get("gt.recipe.loom"));
+		assertEquals("Loom", GT6RecipeMaps.LOOM.mNameLocal);
+		assertEquals(6, GT6RecipeMaps.LOOM.mInputItemsCount, "RM.java:89 IN-ITEM 6 — the six-string topology");
+		assertEquals(1, GT6RecipeMaps.LOOM.mOutputItemsCount);
+		assertEquals(1, GT6RecipeMaps.LOOM.mMinimalInputItems, "RM.java:89 MIN-ITEM 1");
+		assertEquals(0, GT6RecipeMaps.LOOM.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.LOOM.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.LOOM.mMinimalInputs);
+		assertEquals("gt6:textures/gui/machines/loom.png", GT6RecipeMaps.LOOM.mGUIPath);
+		assertTrue(GT6RecipeMaps.LOOM.mRecipeList.isEmpty(), "DECLARED-empty");
+
+		// the mill trio — three RM.java rows with IDENTICAL constants (1/1/1, 0/0/0, MIN 0,
+		// AMP 1), split only by map name and GUI path (RollingMill :113 is the already-landed
+		// fourth of the shape)
+		String[][] tMills = {
+			{"CLUSTER_MILL", "gt.recipe.clustermill", "Cluster Mill", "clustermill", "RM.java:112"},
+			{"ROLL_BENDER", "gt.recipe.rollbender", "Roll Bender", "rollbender", "RM.java:114"},
+			{"ROLL_FORMER", "gt.recipe.rollformer", "Roll Former", "rollformer", "RM.java:115"}
+		};
+		for (String[] tMill : tMills) {
+			RecipeMap tMap = RecipeMap.RECIPE_MAPS.get(tMill[1]);
+			assertNotNull(tMap, tMill[4] + " registered");
+			assertSame(field(tMill[0]), tMap, tMill[4] + " field wiring");
+			assertEquals(tMill[2], tMap.mNameLocal, tMill[4] + " local name");
+			assertEquals(1, tMap.mInputItemsCount, tMill[4] + " IN-ITEM 1");
+			assertEquals(1, tMap.mOutputItemsCount, tMill[4] + " OUT-ITEM 1");
+			assertEquals(1, tMap.mMinimalInputItems, tMill[4] + " MIN-ITEM 1");
+			assertEquals(0, tMap.mInputFluidCount, tMill[4] + " fluids 0/0/0");
+			assertEquals(0, tMap.mOutputFluidCount, tMill[4] + " fluids 0/0/0");
+			assertEquals(0, tMap.mMinimalInputs, tMill[4] + " MIN 0");
+			assertEquals(1, tMap.mPower, tMill[4] + " AMP 1");
+			assertEquals("gt6:textures/gui/machines/" + tMill[3] + ".png", tMap.mGUIPath, tMill[4] + " GUI path lowercased");
+			assertTrue(tMap.mRecipeList.isEmpty(), tMill[4] + " DECLARED-empty");
+		}
+
+		assertNotNull(GT6RecipeMaps.SHARPENING);
+		assertSame(GT6RecipeMaps.SHARPENING, RecipeMap.RECIPE_MAPS.get("gt.recipe.sharpener"));
+		assertEquals("Sharpener", GT6RecipeMaps.SHARPENING.mNameLocal, "RM.java:126 — the upstream GUI/local word is Sharpener, NOT Sharpening");
+		assertEquals(1, GT6RecipeMaps.SHARPENING.mInputItemsCount);
+		assertEquals(2, GT6RecipeMaps.SHARPENING.mOutputItemsCount, "RM.java:126 OUT-ITEM 2");
+		assertEquals(1, GT6RecipeMaps.SHARPENING.mMinimalInputItems, "RM.java:126 MIN-ITEM 1");
+		assertEquals(0, GT6RecipeMaps.SHARPENING.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.SHARPENING.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.SHARPENING.mMinimalInputs);
+		assertEquals("gt6:textures/gui/machines/sharpener.png", GT6RecipeMaps.SHARPENING.mGUIPath, "the upstream machines/Sharpener row, lowercased");
+		assertTrue(GT6RecipeMaps.SHARPENING.mRecipeList.isEmpty(), "DECLARED-empty");
+	}
+
+	/** The boxinator pair: Boxinator :149 (base class) and Unboxinator :150 (the declared base-form deviation). */
+	@Test
+	void initRegistersP29BoxinatorPairWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+
+		assertNotNull(GT6RecipeMaps.BOXINATOR);
+		assertSame(GT6RecipeMaps.BOXINATOR, RecipeMap.RECIPE_MAPS.get("gt.recipe.boxinator"));
+		assertEquals("Boxinator", GT6RecipeMaps.BOXINATOR.mNameLocal);
+		assertEquals(2, GT6RecipeMaps.BOXINATOR.mInputItemsCount, "RM.java:149 IN-ITEM 2");
+		assertEquals(1, GT6RecipeMaps.BOXINATOR.mOutputItemsCount);
+		assertEquals(2, GT6RecipeMaps.BOXINATOR.mMinimalInputItems, "RM.java:149 MIN-ITEM 2");
+		assertEquals(0, GT6RecipeMaps.BOXINATOR.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.BOXINATOR.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.BOXINATOR.mMinimalInputs);
+		assertEquals("gt6:textures/gui/machines/boxinator.png", GT6RecipeMaps.BOXINATOR.mGUIPath);
+		assertTrue(GT6RecipeMaps.BOXINATOR.mRecipeList.isEmpty(), "DECLARED-empty");
+
+		assertNotNull(GT6RecipeMaps.UNBOXINATOR);
+		assertSame(GT6RecipeMaps.UNBOXINATOR, RecipeMap.RECIPE_MAPS.get("gt.recipe.unboxinator"));
+		assertEquals("Unboxinator", GT6RecipeMaps.UNBOXINATOR.mNameLocal);
+		assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mInputItemsCount);
+		assertEquals(12, GT6RecipeMaps.UNBOXINATOR.mOutputItemsCount, "RM.java:150 OUT-ITEM 12 — the Shredder/Sifting topology");
+		assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mMinimalInputItems, "RM.java:150 MIN-ITEM 1");
+		assertEquals(0, GT6RecipeMaps.UNBOXINATOR.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.UNBOXINATOR.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.UNBOXINATOR.mMinimalInputs);
+		assertEquals("gt6:textures/gui/machines/unboxinator.png", GT6RecipeMaps.UNBOXINATOR.mGUIPath);
+		assertTrue(GT6RecipeMaps.UNBOXINATOR instanceof RecipeMap && !(GT6RecipeMaps.UNBOXINATOR instanceof RecipeMapFurnace),
+				"the declared base-form deviation: the upstream RecipeMapUnboxinator loot arms (RecipeMapUnboxinator.java:43-89) stay POOLED");
+		assertTrue(GT6RecipeMaps.UNBOXINATOR.mRecipeList.isEmpty(), "DECLARED-empty — no static row upstream either; a loot-box input finds NO row (the batch-D rejection shape)");
+	}
+
+	/** The P29 block joins the generation lifecycle: reset nulls all twelve fields and drops the twelve registry names. */
+	@Test
+	void resetRetiresTheP29TwelveMapGeneration() {
+		String[] tNames = {"gt.recipe.fermenter", "gt.recipe.loom", "gt.recipe.pressurewasher", "gt.recipe.squeezer",
+				"gt.recipe.clustermill", "gt.recipe.rollbender", "gt.recipe.rollformer", "gt.recipe.centrifuge",
+				"gt.recipe.sharpener", "gt.recipe.cutter", "gt.recipe.boxinator", "gt.recipe.unboxinator"};
+		GT6RecipeMaps.init();
+		RecipeMap tFirstCutter = GT6RecipeMaps.CUTTER;
+		assertNotNull(tFirstCutter);
+		GT6RecipeMaps.reset();
+		assertNull(GT6RecipeMaps.FERMENTER, "reset drops the fermenter entry too");
+		assertNull(GT6RecipeMaps.LOOM);
+		assertNull(GT6RecipeMaps.PRESSURE_WASHER);
+		assertNull(GT6RecipeMaps.SQUEEZER);
+		assertNull(GT6RecipeMaps.CLUSTER_MILL);
+		assertNull(GT6RecipeMaps.ROLL_BENDER);
+		assertNull(GT6RecipeMaps.ROLL_FORMER);
+		assertNull(GT6RecipeMaps.CENTRIFUGE);
+		assertNull(GT6RecipeMaps.SHARPENING);
+		assertNull(GT6RecipeMaps.CUTTER);
+		assertNull(GT6RecipeMaps.BOXINATOR);
+		assertNull(GT6RecipeMaps.UNBOXINATOR);
+		for (String tName : tNames) assertFalse(RecipeMap.RECIPE_MAPS.containsKey(tName), "reset drops " + tName);
+		GT6RecipeMaps.init();
+		assertNotSame(tFirstCutter, GT6RecipeMaps.CUTTER, "re-init after reset creates a fresh generation");
+		for (String tName : tNames) assertTrue(RecipeMap.RECIPE_MAPS.containsKey(tName), "re-init re-registers " + tName);
+		GT6RecipeMaps.reset();
+	}
+
+	/** Reflection accessor for the twelve P29 fields (the mill-trio loop above). */
+	private static RecipeMap field(String aName) {
+		try {
+			return (RecipeMap)GT6RecipeMaps.class.getField(aName).get(null);
+		} catch (ReflectiveOperationException tError) {
+			throw new AssertionError(tError);
+		}
 	}
 }

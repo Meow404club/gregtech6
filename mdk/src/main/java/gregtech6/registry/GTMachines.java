@@ -238,6 +238,18 @@ public final class GTMachines {
 	/** The Crusher parallel row (upstream NBT_PARALLEL :1300-1303) — the SAME array as {@link #PARALLEL_4_32}, the W1 merge ruling. */
 	public static final int[] CRUSHER_PARALLEL = PARALLEL_4_32;
 
+	/**
+	 * The Centrifuge NON-standard parallel table (task p29-w1-rm-maps-scaffold ③): the
+	 * upstream NBT_PARALLEL {1, 2, 4, 8} + NBT_PARALLEL_DURATION T columns of the four
+	 * Centrifuge rows (Loader_MultiTileEntities.java:1330-1333) — the T1 = 1 arm is what
+	 * makes the ladder non-standard, unlike the 4/8/16/32 Crusher/Sifter/Compressor/Press
+	 * shape ({@link #PARALLEL_4_32}). NO consumer row yet (the batch C Centrifuge family,
+	 * card p29-w1-kinetic-process-ladder, consumes it); declared BEFORE its consumers per
+	 * the static-initializer order lesson, next to {@link #PARALLEL_4_32} as the card
+	 * ordered.
+	 */
+	public static final int[] CENTRIFUGE_PARALLEL = {1, 2, 4, 8};
+
 	// the composed tier-ladder name face (task p20-i18n-compose-rows, materialized by task
 	// p27-machine-energy-display-fix): the "{Machine} (Material)" rows compose from the
 	// machine word + the Kinetic_T material word — the upstream name column is
@@ -520,12 +532,17 @@ public final class GTMachines {
 	 * Task p28-c-ulv-machine-ladder adds the melting-gate column: the row's
 	 * {@code maxMeltingPointK} rides onto {@code mMaxMeltingPointK} with the masks
 	 * (null = no gate, the every-legacy-row shape — the gate arms only on the ULV rows).
+	 * Task p29-w1-rm-maps-scaffold adds the efficiency column: the row's
+	 * {@code efficiency} rides onto {@code mEfficiency} through the upstream :125 bind form
+	 * {@code bind(0, 10000, value)} — null = no NBT_EFFICIENCY key, the BE keeps its :96
+	 * default 10000 and the progress math stays byte-identical (the zero-drift face).
 	 */
 	public static TileEntityBasicMachine applyRow(TileEntityBasicMachine aMachine, GTBasicMachineBlock.MachineRow aRow) {
 		aMachine.mEnergyInputs = aRow.energySides();
 		aMachine.mFluidInputs = aRow.fluidIn();
 		aMachine.mFluidOutputs = aRow.fluidOut();
 		aMachine.mMaxMeltingPointK = aRow.maxMeltingPointK();
+		if (aRow.efficiency() != null) aMachine.mEfficiency = (short)gregapi.util.UT.Code.bind(0, 10000, aRow.efficiency());
 		return aMachine;
 	}
 
