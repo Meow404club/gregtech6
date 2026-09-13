@@ -19,6 +19,15 @@ progress = half speed / 2× the energy-time, NOT a 2× speed-up):
   progress parked 0/0) while electric sits at EXACTLY progress=2048/4096 —
   the same wall-clock covers half the bar (墙钟半程).
 
+  the retained-vs-reset asymmetry the live run pinned (the rcon-session-1201
+  960df463 red): the kinetic mixer KEEPS progress across the command-idle ticks
+  (RU machines ride mNoConstantEnergy, so doInactive's CONSTANT_ENERGY :894
+  reset does NOT apply) — its phase-A 16 ticks are still in the bar when phase
+  C re-injects, so the phase-C kinetic arm IS the completion tick (:539
+  mProgress -= mMaxProgress parks 0/0 in-report). the ELECTRIC machine does
+  idle-reset to 0 between commands (:894), which is exactly why its phase-D
+  32-tick arm lands on EXACTLY 2048/4096 regardless of idle-tick jitter.
+
   the 8 EU wall (the ULV regression face): 40× 8 EU packets into the electric T1
   (window {16,32,64}) never cross mInputMin — progress stays 0/0.
 
@@ -85,11 +94,17 @@ steps = [
     Step(f"gt6machine electricmixer check {EM1}", expect="progress=0/0"),
 
     phase("C: the 对拍 — 16 ticks each, verdicts IN-REPORT (the idle natural ticks "
-          "CONSTANT_ENERGY-reset the cross-command counter)"),
+          "CONSTANT_ENERGY-reset the ELECTRIC cross-command counter; the kinetic "
+          "RETAINS, so its arm here is the 32nd tick = the completion tick)"),
     Step(f"gt6machine electricmixer inject 16 64 {EM1}", expect="progress=1024/4096"),
-    Step(f"gt6machine mixer inject 16 64 {MK}", expect="progress=1024/2048"),
+    Step(f"gt6machine mixer inject 16 64 {MK}",
+         expect="used=16 progress=0/0"),  # 1024 held from phase A + 1024 = 2048/2048
+                                          # → completes in-command (:539 parks 0/0);
+                                          # the output lands in the tank (phase D stat)
 
-    phase("D: the same wall-clock the kinetic process COMPLETES in — electric parks at exactly half"),
+    phase("D: the completion proof + the exactly-half park — the kinetic arm is now "
+          "an inertness probe (inputs consumed, no recipe restart), the electric arm "
+          "parks at exactly half (idle reset to 0, then 32 ticks = 2048/4096)"),
     Step(f"gt6machine mixer inject 32 64 {MK}", expect="progress=0/0"),
     Step(f"gt6machine mixer fluid stat {MK}", expect="out[0]=1000 L of gt6:cfoam"),
     Step(f"gt6machine electricmixer inject 32 64 {EM1}", expect="progress=2048/4096"),
