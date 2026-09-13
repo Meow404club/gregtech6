@@ -920,6 +920,13 @@ private static final int ZH_KEY_FLOOR = 2816;
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLL_BENDER_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLL_FORMER_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CLUSTER_MILL_ROWS) tExempt.add(tRow.path());
+		// task p29-w1-kinetic-process-ladder — the six process-family row carriers (GTBasicMachineBlock.getName)
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.BUZZSAW_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SQUEEZER_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CENTRIFUGE_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SLUICE_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SANDING_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.PRESSURE_WASHER_ROWS) tExempt.add(tRow.path());
 		for (GTMachines.OvenRow tRow : GTMachines.OVEN_ROWS) tExempt.add(tRow.path()); // GTOvenBlock.getName — the composed Heat_T ladder (p27-oven-heat-t-ladder)
 		// the Kinetic_T tier carriers T2-T4 (GTBasicMachineBlock mComposedName, p27-machine-
 		// energy-display-fix) — T1 keeps its vanilla atomic key (block.gt6.shredder/lathe/

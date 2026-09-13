@@ -138,6 +138,12 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("rollbender", "item+fluid"); // task p29-w1-kinetic-roll-ladder — the roll ladders join
 		tFaces.put("rollformer", "item+fluid"); // task p29-w1-kinetic-roll-ladder
 		tFaces.put("clustermill", "item+fluid"); // task p29-w1-kinetic-roll-ladder
+		tFaces.put("buzzsaw", "item+fluid"); // task p29-w1-kinetic-process-ladder — the six process families join (the coolant/water/juice masks make the fluid faces load-bearing)
+		tFaces.put("squeezer", "item+fluid");
+		tFaces.put("centrifuge", "item+fluid");
+		tFaces.put("sluice", "item+fluid");
+		tFaces.put("sanding_machine", "item+fluid"); // zero-fluid MASKS stay a data-only face (the sander rows carry no tank keys)
+		tFaces.put("pressure_washer", "item+fluid");
 		tFaces.put("oven", "item"); // the exception: the gated item handler alone
 		tFaces.put("advanced_crafting_table", "item"); // task p24-act-machine — the second item-only face (zero fluid tanks)
 		BASIC_MACHINE_FAMILY_FACES = Collections.unmodifiableMap(tFaces);
