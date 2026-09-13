@@ -256,6 +256,12 @@ direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
 direct	gt6.row.machine.roll_bender	辊弯机 (%s)	hand
 direct	gt6.row.machine.roll_former	辊压成型机 (%s)	hand
 direct	gt6.row.machine.rolling_mill	辊压机 (%s)	hand
+direct	gt6.row.machine.buzzsaw	圆锯 (%s)	hand
+direct	gt6.row.machine.squeezer	榨汁机 (%s)	hand
+direct	gt6.row.machine.centrifuge	离心机 (%s)	hand
+direct	gt6.row.machine.sluice	洗矿厂 (%s)	hand
+direct	gt6.row.machine.sanding_machine	砂轮 (%s)	hand
+direct	gt6.row.machine.pressure_washer	水压清洗机 (%s)	hand
 direct	gt6.row.machine.shredder	粉碎机	hand
 direct	gt6.row.machine.shredder.display	粉碎机 (%s)	hand
 direct	gt6.row.machine.sifter	筛选机 (%s)	hand

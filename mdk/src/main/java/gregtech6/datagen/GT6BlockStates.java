@@ -130,16 +130,18 @@ public final class GT6BlockStates extends BlockStateProvider {
         addExtruder(); // task p26-w1-press-extruder-molds
         addUlvLadder(); // task p28-c-ulv-machine-ladder — the six ULV rows (family textures, the addCanner shape)
         addRollLadders(); // task p29-w1-kinetic-roll-ladder — the four roll-ladder RU families (family textures, the addCanner shape)
+        addProcessMachines(); // task p29-w1-kinetic-process-ladder — the six process families (family textures, the addCanner shape)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 54 machine blocks x
-        // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder),
+        // task p21-paintable-tint-render: the datagen-JVM census half — 78 machine blocks x
+        // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder; the six P29 W1
+        // process families joined at task p29-w1-kinetic-process-ladder),
         // matching the paintableBlockArray() client registration census
         // (the offline JUnit half walks the generated tree and pins the same 162; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (70 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addAdvancedCraftingTable)", mMachineTintModels);
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (94 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -351,6 +353,38 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CLUSTER_MILL_ROWS) {
             addMachine(GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p29-w1-kinetic-process-ladder — the six process families (Buzzsaw/Squeezer/
+     * Centrifuge/Sluice/Sanding Machine/Pressure Washer, Loader_MultiTileEntities.java
+     * :1318-1321/:1324-1327/:1330-1333/:1464-1467/:1589-1592/:1615-1618, the rows of each
+     * family sharing one NBT_TEXTURE): the addCanner shape verbatim — model names per
+     * path, the FRONT TEXTURES stay on the family set (the borrowed upstream
+     * basicmachines/{buzzsaw,squeezer,centrifuge,sluice,sander,debarker} split fronts).
+     * The Sanding Machine rows ride the upstream "sander" art token and the Pressure
+     * Washer rows the upstream "debarker" token (the NBT_TEXTURE fidelity over the
+     * registry path — the row.texture() column carries it).
+     */
+    private void addProcessMachines() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.BUZZSAW_ROWS) {
+            addMachine(GTMachines.BUZZSAW_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SQUEEZER_ROWS) {
+            addMachine(GTMachines.SQUEEZER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CENTRIFUGE_ROWS) {
+            addMachine(GTMachines.CENTRIFUGE_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SLUICE_ROWS) {
+            addMachine(GTMachines.SLUICE_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SANDING_ROWS) {
+            addMachine(GTMachines.SANDING_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.PRESSURE_WASHER_ROWS) {
+            addMachine(GTMachines.PRESSURE_WASHER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

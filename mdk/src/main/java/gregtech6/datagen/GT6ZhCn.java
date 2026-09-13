@@ -521,6 +521,25 @@ public class GT6ZhCn extends LanguageProvider {
 				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
 			}
 		}
+		// P29 W1 process families (task p29-w1-kinetic-process-ladder): the six family
+		// templates + the Kinetic_T row words (the trio walk above emits them; the tsv
+		// hand rows carry the dump-mte words 圆锯/榨汁机/离心机/洗矿厂/砂轮/水压清洗机
+		// from the :1318-1321/:1324-1327/:1330-1333/:1464-1467/:1589-1592/:1615-1618
+		// upstream name columns over the Kinetic_T locals)
+		addDirect(gregtech6.registry.GTMachines.MACHINE_BUZZSAW_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_SQUEEZER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_CENTRIFUGE_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_SLUICE_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_SANDING_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_PRESSURE_WASHER_UNIT_KEY);
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tProcessRows
+				: java.util.List.of(gregtech6.registry.GTMachines.BUZZSAW_ROWS, gregtech6.registry.GTMachines.SQUEEZER_ROWS,
+						gregtech6.registry.GTMachines.CENTRIFUGE_ROWS, gregtech6.registry.GTMachines.SLUICE_ROWS,
+						gregtech6.registry.GTMachines.SANDING_ROWS, gregtech6.registry.GTMachines.PRESSURE_WASHER_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tProcessRows) {
+				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
+			}
+		}
 		// storage hoppers (task p26-storage-hopper-family): the two kind templates over the
 		// bronze/steel row words (the boiler walk emits them; the tsv hand rows carry the
 		// 料斗/队列料斗 wording since task p28-lang-batch1-fix — funnel keeps 漏斗)
