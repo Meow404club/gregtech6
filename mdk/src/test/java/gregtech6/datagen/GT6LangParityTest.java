@@ -190,6 +190,10 @@ public class GT6LangParityTest {
  * registry-coverage gate (the W1 handoff's must-do leftover, the cfoam lesson): all
  * eleven blocks resolve the vanilla descriptionId, so checked 90 → 101.
  *
+ * <p>Task p29-w2-eu-special: raised to the measured 2842 — the +3 eu-special family
+ * templates (gt6.row.autocrafter.display / gt6.row.lightningprocessor.display /
+ * gt6.row.laminator.display, both locales, the en==zh==2842 zero-delta state).
+ *
  * <p>Task p29-w2-energy-types-5tier: raised to the measured 2839 — the +1 gt6.row.mat.iv
  * voltage rung (VN[5] = "IV", CS.java:154; the card gloss said EV, refuted — ev is
  * already T4's word; the GTMachines.EV_TIER_INPUTS doc carries the erratum), both
@@ -199,7 +203,7 @@ public class GT6LangParityTest {
  * previously committed en file lacked the replay keys while zh carried them, so en == zh
  * 2839 = the first ZERO both-way delta state). zh == en, the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2839;
+private static final int ZH_KEY_FLOOR = 2842;
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -943,7 +947,12 @@ private static final int ZH_KEY_FLOOR = 2839;
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ELECTRIC_SIFTER_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.BOXINATOR_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.UNBOXINATOR_ROWS) tExempt.add(tRow.path());
-		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.FERMENTER_ROWS) tExempt.add(tRow.path());		for (GTMachines.OvenRow tRow : GTMachines.OVEN_ROWS) tExempt.add(tRow.path()); // GTOvenBlock.getName — the composed Heat_T ladder (p27-oven-heat-t-ladder)
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.FERMENTER_ROWS) tExempt.add(tRow.path());
+		// task p29-w2-eu-special — the 14 eu-special row carriers (GTBasicMachineBlock.getName)
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.AUTOCRAFTER_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LIGHTNING_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LAMINATOR_ROWS) tExempt.add(tRow.path());
+		for (GTMachines.OvenRow tRow : GTMachines.OVEN_ROWS) tExempt.add(tRow.path()); // GTOvenBlock.getName — the composed Heat_T ladder (p27-oven-heat-t-ladder)
 		// the Kinetic_T tier carriers T2-T4 (GTBasicMachineBlock mComposedName, p27-machine-
 		// energy-display-fix) — T1 keeps its vanilla atomic key (block.gt6.shredder/lathe/
 		// crusher) and stays CHECKED; there is no row table for the ladder, so the paths
@@ -1026,11 +1035,13 @@ private static final int ZH_KEY_FLOOR = 2839;
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(974, tExemptTotal, "the derived composed-name exemption census"
+		assertEquals(988, tExemptTotal, "the derived composed-name exemption census"
 			+ " (the six p28 ULV row carriers joined at 903 + 6; the sixteen roll-ladder"
 			+ " row carriers joined at task p29-w1-kinetic-roll-ladder, 909 + 16; the six"
 			+ " p29 process families joined at 925 + 24, task p29-w1-kinetic-process-ladder;"
-			+ " the 25 eu-hu row carriers joined at 949 + 25, task p29-w1-eu-hu-families)");		assertEquals(104, tChecked, "the checked block census: every DeferredRegister block NOT"
+			+ " the 25 eu-hu row carriers joined at 949 + 25, task p29-w1-eu-hu-families;"
+			+ " the 14 eu-special row carriers joined at 974 + 14, task p29-w2-eu-special)");
+		assertEquals(104, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
 			+ " and the transformer joined at 323c4ae4/1e07061d)"

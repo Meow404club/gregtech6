@@ -61,7 +61,7 @@ import com.google.gson.JsonParser;
 
 class GT6MachinePaintRenderDatagenTest {
 
-    /** The 119 machine-domain bases (the paintableBlockArray census). */
+    /** The 133 machine-domain bases (the paintableBlockArray census). */
     private static final List<String> MACHINE_BASES = List.of(
             "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
@@ -92,7 +92,10 @@ class GT6MachinePaintRenderDatagenTest {
             "electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4", // task p29-w1-eu-hu-families
             "boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4", // task p29-w1-eu-hu-families
             "unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4", // task p29-w1-eu-hu-families
-            "fermenter"); // task p29-w1-eu-hu-families
+            "fermenter", // task p29-w1-eu-hu-families
+            "autocrafter", "autocrafter_t2", "autocrafter_t3", "autocrafter_t4", "autocrafter_t5", // task p29-w2-eu-special
+            "lightning", "lightning_t2", "lightning_t3", "lightning_t4", "lightning_t5", // task p29-w2-eu-special
+            "laminator", "laminator_t2", "laminator_t3", "laminator_t4"); // task p29-w2-eu-special
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
 
@@ -144,10 +147,10 @@ class GT6MachinePaintRenderDatagenTest {
         }
     }
 
-    /** The tier rows keep the family textures (the p8 texture-base overload); the p28 ULV rows likewise (the addUlvLadder family tokens). */
+    /** The tier rows keep the family textures (the p8 texture-base overload); the p28 ULV rows and the p29 W2 _t5 rungs likewise (the addUlvLadder/addEuSpecialFamilies family tokens). */
     private static String familyOf(String aBase) {
         if (aBase.startsWith("rollingmill_t")) return "rollingmill"; // task p29-w1-kinetic-roll-ladder — the RU rungs share the ULV rung's family set
-        for (String tTier : new String[] {"_t2", "_t3", "_t4"}) {
+        for (String tTier : new String[] {"_t2", "_t3", "_t4", "_t5"}) {
             if (aBase.endsWith(tTier)) return artTokenOf(aBase.substring(0, aBase.length() - tTier.length()));
         }
         if (aBase.endsWith("_ulv")) return aBase.substring(0, aBase.length() - "_ulv".length()); // task p28-c-ulv-machine-ladder
@@ -176,13 +179,12 @@ class GT6MachinePaintRenderDatagenTest {
         }
     }
 
-    /** The census shape: 119 bases x 3 models = 357 tinted block models. */
-    /** The census shape: 119 bases x 3 models = 357 tinted block models. */
+    /** The census shape: 133 bases x 3 models = 399 tinted block models. */
     @Test
     void pinnedMachinePaintCensus() {
-        assertEquals(119, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(119 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
-                "119 blocks x 3 models — the pinned tinted-model total");
+        assertEquals(133, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
+        assertEquals(133 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
+                "133 blocks x 3 models — the pinned tinted-model total");
     }
 
     /**
