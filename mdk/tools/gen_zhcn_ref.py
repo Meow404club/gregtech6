@@ -611,6 +611,13 @@ HAND_TRANSLATIONS = {
     # the Kinetic_T[0] rung, MT.java:3690 index 0); ULV = the VN[0] voltage id (CS.java:154,
     # the lv/mv/hv/ev rows keep their Latin ids the same way)
     "gt6.row.machine.rolling_mill": ("辊压机 (%s)", "hand"),
+    # task p29-w1-kinetic-roll-ladder — the roll-ladder RU families: the dump-verbatim
+    # words (tmp/gregtech.lang:11502-11505 "辊弯机 (...)" gt.multitileentity.20121-20124,
+    # :11507-11510 "辊压成型机 (...)" 20131-20134, :11512-11515 "多辊式轧机 (...)"
+    # 20141-20144); the RU RollingMill rows share the 辊压机 template above)
+    "gt6.row.machine.roll_bender": ("辊弯机 (%s)", "hand"),
+    "gt6.row.machine.roll_former": ("辊压成型机 (%s)", "hand"),
+    "gt6.row.machine.cluster_mill": ("多辊式轧机 (%s)", "hand"),
     "gt6.row.machine.shredder.display": ("粉碎机 (%s)", "hand"),
     "gt6.row.machine.crusher.display": ("破碎机 (%s)", "hand"),
     "gt6.row.mat.any_wood": ("木", "hand"),

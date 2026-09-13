@@ -204,13 +204,37 @@ public final class GTMachineCommand {
 		.then(machine("extruder", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
 		.then(machine("extruder_t2", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t2"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
 		.then(machine("extruder_t3", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t3"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
-		.then(machine("extruder_t4", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t4"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()));
+		.then(machine("extruder_t4", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t4"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
+		// task p29-w1-kinetic-roll-ladder: the roll ladders — the input feed is the iron
+		// pair item of each map's poured smoke row (data/gt6/recipe_maps: rollingmill
+		// ingot_iron / rollbender plate_iron / rollformer stick_iron (the port rod semantics) / clustermill
+		// plate_iron); the RU RollingMill ladder rides tier-suffixed literals (the p28
+		// ULV rung owns the bare "rollingmill" path, which registers NO command arm —
+		// the p28 chain reads it through the shared BET faces)
+		.then(machine("rollingmill_t1", GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get("rollingmill_t1"), rollFeed(gregapi.data.OP.ingot)))
+		.then(machine("rollingmill_t2", GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get("rollingmill_t2"), rollFeed(gregapi.data.OP.ingot)))
+		.then(machine("rollingmill_t3", GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get("rollingmill_t3"), rollFeed(gregapi.data.OP.ingot)))
+		.then(machine("rollingmill_t4", GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get("rollingmill_t4"), rollFeed(gregapi.data.OP.ingot)))
+		.then(machine("rollbender", GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get("rollbender"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("rollbender_t2", GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get("rollbender_t2"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("rollbender_t3", GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get("rollbender_t3"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("rollbender_t4", GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get("rollbender_t4"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("rollformer", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer"), rollFeed(gregapi.data.OP.stick)))
+		.then(machine("rollformer_t2", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t2"), rollFeed(gregapi.data.OP.stick)))
+		.then(machine("rollformer_t3", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t3"), rollFeed(gregapi.data.OP.stick)))
+		.then(machine("rollformer_t4", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t4"), rollFeed(gregapi.data.OP.stick)))
+		.then(machine("clustermill", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("clustermill_t2", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t2"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("clustermill_t3", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t3"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("clustermill_t4", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t4"), rollFeed(gregapi.data.OP.plate)));
 		event.getDispatcher().register(tMachine);
-		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
+		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder|rollingmill_t1..t4|rollbender|rollformer|clustermill x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
 		// the p8 ladder registration line (the runServer gate asserts it): every family BET
-		// resolves — proof the RegistryObjects bound (the merge totals: 36 + 8 blocks and
-		// 9 + 2 family BETs, the press/extruder join = task p26-w1-press-extruder-molds).
-		LOGGER.info("GT6 machine ladder registered: 44 blocks / 11 family BETs (T1-T4 validBlocks multi-attach), tiers "
+		// resolves — proof the RegistryObjects bound (the merge totals: 36 + 8 + 16 blocks
+		// and 9 + 2 + 3 family BETs — the press/extruder join = task p26-w1-press-extruder-
+		// molds, the roll-ladder join = task p29-w1-kinetic-roll-ladder; the RU RollingMill
+		// ladder shares the p28 ULV rung's rollingmill BET, so it adds blocks but no BET).
+		LOGGER.info("GT6 machine ladder registered: 60 blocks / 14 family BETs (T1-T4 validBlocks multi-attach), tiers "
 			+ java.util.Arrays.deepToString(GTMachines.TIER_INPUTS) + " crusher parallel " + java.util.Arrays.toString(GTMachines.CRUSHER_PARALLEL));
 		// the p14 dryer registration smoke line (the runServer gate asserts it): the family
 		// BET resolves, the row config is the upstream :1477-1480 columns.
@@ -395,6 +419,26 @@ public final class GTMachineCommand {
 			if (wiremillRowFor(tIn.get()) != null) return tIn.get();
 		}
 		throw new IllegalStateException("No gt6:stick→wireFine pair with a poured wiremill row resolved for the wiremill feed");
+	}
+
+	/**
+	 * The roll-ladder feed (task p29-w1-kinetic-roll-ladder): the IRON pair item of the
+	 * prefix, present-checked at feed time (the firstPouredWiremillStick posture,
+	 * simplified — the roll smoke rows are this card's own data/gt6/recipe_maps pours
+	 * pinned to the iron pair, so there is no per-material fallback walk; an unregistered
+	 * pair throws instead of silently feeding a wrong item).
+	 */
+	private static java.util.function.Supplier<net.minecraft.world.item.Item> rollFeed(gregapi.oredict.OreDictPrefix aPrefix) {
+		return () -> {
+			RegistryObject<net.minecraft.world.item.Item> tItem = gregtech6.registry.GTMaterialItems.get(aPrefix, gregapi.data.MT.Iron);
+			//? if forge {
+			if (tItem != null && tItem.isPresent()) return tItem.get();
+			//?} else {
+			/*if (tItem != null && tItem.isBound()) return tItem.get();
+			 *///?}
+			throw new IllegalStateException("the roll-ladder feed item gt6:"
+					+ gregtech6.registry.GTMaterialItems.itemIdOf(aPrefix, gregapi.data.MT.Iron) + " is not registered");
+		};
 	}
 
 	/** The poured stick-input row for a stick item, or null (the row carries input stick x1). */

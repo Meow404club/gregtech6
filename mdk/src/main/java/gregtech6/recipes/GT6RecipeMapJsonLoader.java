@@ -160,15 +160,18 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 	public static final String DATA_NAMESPACE = "gt6";
 
 	/**
-	 * The 13 pourable map keys (the registered {@link GT6RecipeMaps} census minus
+	 * The pourable map keys (the registered {@link GT6RecipeMaps} census minus
 	 * FURNACE/FURNACE_FUEL — 11 at the tier-b landing, the 12th is the MIXER append of
-	 * task p26-c-foam-fluid-refill (whose review ruling joins it here) and the 13th the
-	 * BATH append of task p26-kitchen-pot-bowl, so the whitelist stays "census minus the
-	 * furnace pair").
+	 * task p26-c-foam-fluid-refill (whose review ruling joins it here), the 13th the
+	 * BATH append of task p26-kitchen-pot-bowl, and the four roll-ladder keys the
+	 * p29-w1-kinetic-roll-ladder smoke rows pour through (rollingmill — the map the p28
+	 * ULV rung shares — rollbender, rollformer, clustermill; the card-B card-A map
+	 * constants, so the whitelist keeps growing with its census).
 	 */
 	private static final Set<String> POURABLE = Set.of(
 			"coke_oven", "shredder", "crusher", "lathe", "chisel", "engine_fuels",
-			"fluidbed", "burn", "distillery", "drying", "canner", "mixer", "bath");
+			"fluidbed", "burn", "distillery", "drying", "canner", "mixer", "bath",
+			"rollingmill", "rollbender", "rollformer", "clustermill");
 
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
@@ -501,6 +504,10 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "canner" -> GT6RecipeMaps.CANNER;
 			case "mixer" -> GT6RecipeMaps.MIXER;
 			case "bath" -> GT6RecipeMaps.BATH;
+			case "rollingmill" -> GT6RecipeMaps.ROLLING_MILL; // task p29-w1-kinetic-roll-ladder — the roll-ladder smoke rows
+			case "rollbender" -> GT6RecipeMaps.ROLL_BENDER;
+			case "rollformer" -> GT6RecipeMaps.ROLL_FORMER;
+			case "clustermill" -> GT6RecipeMaps.CLUSTER_MILL;
 			default -> null;
 		};
 	}

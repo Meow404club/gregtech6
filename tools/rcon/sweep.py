@@ -132,6 +132,13 @@ SESSION_GROUPS = (
     # canner 400 strip), both chains bbox-adjacent so one cluster's boundary
     # cleanup covers the other's leftovers (the p24 z=20 cluster form).
     ("p26_w1_press", "p26_w1_extruder"),
+    # P29 W1 card B (p29-w1-kinetic-roll-ladder): the four RU roll-ladder chains —
+    # one fresh z=180 band (rollingmill x380..394 carries the diesel/axle real-source
+    # rig + the p28 ULV rung same-map arm; rollbender x396..406 / rollformer
+    # x408..418 / clustermill x420..430, per-family x-disjoint teardown fills),
+    # admission mirroring the p26_w1 cluster form (bbox-registered, no fresh_boot /
+    # mutates member — the inject grid rig needs no fakesource).
+    ("p29_w1_rollingmill", "p29_w1_rollbender", "p29_w1_rollformer", "p29_w1_clustermill"),
     # Static-storage band z=218..232 (two chains, the storage-domain cards,
     # roster backfill): hopper_family (z=220, x400..432) | static_storage
     # (z=230, x458..488) — z-disjoint strips, one cluster keeps the domain's

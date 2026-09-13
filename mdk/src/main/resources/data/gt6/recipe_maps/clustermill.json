@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "comment": "task p29-w1-kinetic-roll-ladder smoke row — the plate->foil minimal row (the cluster mill rolls plate thinner: OP.foil, the FOILS-tagged iron material pair), eut 16 / duration 32 riding the RollingMill row shape",
+      "inputs": [{"item": "gt6:plate_iron", "count": 1}],
+      "outputs": [{"item": "gt6:foil_iron", "count": 2}],
+      "duration": 32,
+      "eut": 16
+    }
+  ]
+}

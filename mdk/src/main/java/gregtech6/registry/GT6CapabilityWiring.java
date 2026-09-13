@@ -189,6 +189,25 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tRollingmill,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p29-w1-kinetic-roll-ladder — the Roll Bender / Roll Former / Cluster Mill
+		// families join (tail-append; shared serial file): the same item + fluid faces as
+		// every TileEntityBasicMachine family above (the RU RollingMill ladder needs no
+		// row here — it rides the p28 rollingmill BET verbatim, the ULV-rows precedent)
+		BlockEntityType<TileEntityBasicMachine> tRollbender = GTMachines.ROLLBENDER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tRollbender,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tRollbender,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tRollformer = GTMachines.ROLLFORMER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tRollformer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tRollformer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tClustermill = GTMachines.CLUSTERMILL_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tClustermill,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tClustermill,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,

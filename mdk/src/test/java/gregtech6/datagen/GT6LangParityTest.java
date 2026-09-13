@@ -463,6 +463,9 @@ private static final int ZH_KEY_FLOOR = 2816;
 		tSlots.put("gt6.row.machine.shredder.display", 1); // task p28-c-ulv-machine-ladder — the ULV row-carrier templates
 		tSlots.put("gt6.row.machine.crusher.display", 1);
 		tSlots.put("gt6.row.machine.rolling_mill", 1);
+		tSlots.put("gt6.row.machine.roll_bender", 1); // task p29-w1-kinetic-roll-ladder — the roll-ladder one-slot templates
+		tSlots.put("gt6.row.machine.roll_former", 1);
+		tSlots.put("gt6.row.machine.cluster_mill", 1);
 		tSlots.put("gt6.row.tap.display", 1);
 		tSlots.put("gt6.row.funnel.display", 1);
 		Map<String, Map<String, String>> tSides = Map.of("en_us", en(), "zh_cn", zh());
@@ -912,6 +915,11 @@ private static final int ZH_KEY_FLOOR = 2816;
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SHREDDER_ULV_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CRUSHER_ULV_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLLINGMILL_ROWS) tExempt.add(tRow.path());
+		// task p29-w1-kinetic-roll-ladder — the sixteen roll-ladder row carriers (GTBasicMachineBlock.getName)
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLLINGMILL_RU_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLL_BENDER_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLL_FORMER_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CLUSTER_MILL_ROWS) tExempt.add(tRow.path());
 		for (GTMachines.OvenRow tRow : GTMachines.OVEN_ROWS) tExempt.add(tRow.path()); // GTOvenBlock.getName — the composed Heat_T ladder (p27-oven-heat-t-ladder)
 		// the Kinetic_T tier carriers T2-T4 (GTBasicMachineBlock mComposedName, p27-machine-
 		// energy-display-fix) — T1 keeps its vanilla atomic key (block.gt6.shredder/lathe/
@@ -995,8 +1003,9 @@ private static final int ZH_KEY_FLOOR = 2816;
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(909, tExemptTotal, "the derived composed-name exemption census"
-			+ " (the six p28 ULV row carriers joined at 903 + 6)");
+		assertEquals(925, tExemptTotal, "the derived composed-name exemption census"
+			+ " (the six p28 ULV row carriers joined at 903 + 6; the sixteen roll-ladder"
+			+ " row carriers joined at task p29-w1-kinetic-roll-ladder, 909 + 16)");
 		assertEquals(104, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
