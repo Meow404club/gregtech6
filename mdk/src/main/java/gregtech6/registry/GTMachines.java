@@ -1965,6 +1965,397 @@ public final class GTMachines {
 					fermenterBlockArray()).build(null));
 
 	// ---------------------------------------------------------------------------
+	// the P29 W2 exotic-energy families (task p29-w2-exotic-energy) — six machine families
+	// over the THREE exotic energy domains, the first machine consumers of MU/LU/CU in this
+	// repo (the supply side is the /gt6energy source-block dial, GTEnergySourceBlockEntity
+	// .resolveEnergyType :293-308 — the p29-w2-energy-types-5tier precedent chain; the
+	// generators stay deferred, no upstream source exists, the S9 ruling):
+	//
+	//   Polarizer         20221-20225  MU  RM.Polarizer          :1418-1422  parallel 1
+	//   MagneticSeparator 20301-20305  MU  RM.MagneticSeparator  :1470-1474  parallel 1
+	//   LaserEngraver     20321-20325  LU  RM.LaserEngraver      :1483-1487  parallel 1
+	//   LaserWelder       20331-20335  LU  RM.Welder             :1490-1494  parallel 1
+	//   Freezer           20561-20565  CU  RM.Freezer            :1621-1625  parallel 1
+	//   CryoMixer         20571-20575  CU  RM.CryoMixer          :1628-1632  CRYO_PARALLEL
+	//
+	// ALL rows are the plain MultiTileEntityBasicMachine base-class form (NOT the Electric
+	// subclass) riding the Electric_T material ladder — the decisions.p29-w2-split-rulings
+	// energy-domain/material-decoupling shape: NBT_INPUT 32/128/512/2048/8192 through the
+	// :126 conversion = TIER_INPUTS[0..3] for the T1-T4 rungs and EV_TIER_INPUTS
+	// {4096, 8192, 16384} for the T5 rung (the 5-tier 立行制 first CONSUMERS — card ①
+	// declared both constants ahead of this card). Hardness 4.0 on every row (the
+	// Electric_T column); cheap overclocking T (the :773 unconditional port face); menu =
+	// null on every row (the zero-new-MenuType GUI clause); no NBT_EFFICIENCY key (the
+	// plain base class carries none — the 26-arg MachineRow overload, the 10000 identity).
+	//
+	// The NAME columns split two ways (the upstream verbatim, the reason the row factories
+	// take the display word pair instead of riding one ladder):
+	//   Polarizer / Magnetic Separator ride the MATERIAL word
+	//   ("Polarizer ("+aMat.getLocal()+")" :1418 — Electric_T[1..5] = Galvanized Steel /
+	//   Aluminium / Stainless Steel / Chromium / Titanium, MT.java:3691 setLocal faces);
+	//   Laser Engraver / Laser Welder / Freezer / Cryo Mixer ride the LITERAL TIER WORD
+	//   "(T1)".."(T5)" (:1483/:1490/:1621/:1628 — NOT a voltage word; the declaration-
+	//   fidelity column, the gt6.row.mat.t1..t5 units are the bare ordinals).
+	//
+	// The registry paths keep the snake-case family names while the NBT_TEXTURE tokens
+	// stay the upstream camel-joined art tokens ("magneticseparator"/"laserengraver"/
+	// "laserwelder"/"cryomixer" — the pressure_washer/debarker art-token-fidelity form).
+	//
+	// The connectivity masks are the upstream rows verbatim (the row bytes carry the
+	// post-read values, the :137/:138/:143/:144/:151 reads OR SBIT_A onto every keyed
+	// mask; unkeyed masks ride the field default 127 / SIDE_UNDEFINED -1). The energy
+	// faces are the card's whole point: SBIT_U|SBIT_D (Polarizer), SBIT_U (Magnetic
+	// Separator / both Laser machines), SBIT_B (Freezer, the back face), SBIT_D (CryoMixer)
+	// — the LIVE :501 reference-equality type gate (isEnergyType, the :803 face) is what
+	// makes a MU row refuse an EU/RU packet, the acceptance-① arms drive exactly that.
+	//
+	// The crafting-table recipe tails (the TwT/PMP/... housing frames, the Laser Welder's
+	// DYE_OREDICTS_LENS[Yellow] lens, the Freezer/CryoMixer Si+StainlessSteel plate
+	// ladder) are the unported crafting domain — data-only, no row column (the Buzzsaw
+	// crafting-head precedent); the LENS ITEM FAMILY is pooled by the card ruling (the
+	// smoke rows carry no lens dependency, the recipe rows are declarations).
+	//
+	// KJS face of this card (the wave-plan declaration): REGISTRATION face only — six
+	// families, THIRTY MachineRow rows, the MU/LU/CU domains' first machine consumers —
+	// plus the datapack face (the six recipe-map smoke rows under data/gt6/recipe_maps/
+	// through the card-① POURABLE keys). No KubeJS surface. The low-temperature fluid
+	// dependency stays ROW-LEVEL (the smoke rows ride in-registry fluids; the chemical
+	// fluid batch F follows).
+	// ---------------------------------------------------------------------------
+
+	/** The Polarizer family unit word (the one-slot key form; the upstream name column "Polarizer ("+aMat.getLocal()+")", :1418-1422). */
+	public static final String MACHINE_POLARIZER_UNIT_KEY = "gt6.row.machine.polarizer";
+
+	/** The Magnetic Separator family unit word (the :1470-1474 name column "Magnetic Separator ("). */
+	public static final String MACHINE_MAGNETIC_SEPARATOR_UNIT_KEY = "gt6.row.machine.magnetic_separator";
+
+	/** The Laser Engraver family unit word (the :1483-1487 LITERAL tier-word column "Laser Engraver (T1..T5)" — declaration fidelity, no voltage word). */
+	public static final String MACHINE_LASER_ENGRAVER_UNIT_KEY = "gt6.row.machine.laser_engraver";
+
+	/** The Laser Welder family unit word (the :1490-1494 literal tier-word column "Laser Welder (T1..T5)"). */
+	public static final String MACHINE_LASER_WELDER_UNIT_KEY = "gt6.row.machine.laser_welder";
+
+	/** The Freezer family unit word (the :1621-1625 literal tier-word column "Freezer (T1..T5)"). */
+	public static final String MACHINE_FREEZER_UNIT_KEY = "gt6.row.machine.freezer";
+
+	/** The Cryo Mixer family unit word (the :1628-1632 literal tier-word column "Cryo Mixer (T1..T5)" — the two-word form verbatim). */
+	public static final String MACHINE_CRYO_MIXER_UNIT_KEY = "gt6.row.machine.cryo_mixer";
+
+	/** The literal tier-word rungs of the four T-named families (the "(T1)".."(T5)" name columns — the gt6.row.mat.t1..t5 units). */
+	public static final java.util.List<String> TIER_WORD_SLUGS = java.util.List.of("t1", "t2", "t3", "t4", "t5");
+
+	/** The display words of the {@link #TIER_WORD_SLUGS} rungs (the upstream "(T1)".."(T5)" verbatim). */
+	public static final java.util.List<String> TIER_WORD_DISPLAYS = java.util.List.of("T1", "T2", "T3", "T4", "T5");
+
+	/** The five Polarizer rows, upstream line order :1418-1422 (T1-T5, the Electric_T material word). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> POLARIZER_ROWS = java.util.List.of(
+			polarizer("polarizer"   , "galvanized_steel", "Galvanized Steel", 20221, 0),
+			polarizer("polarizer_t2", "aluminium"       , "Aluminium"       , 20222, 1),
+			polarizer("polarizer_t3", "stainless_steel" , "Stainless Steel" , 20223, 2),
+			polarizer("polarizer_t4", "chromium"        , "Chromium"        , 20224, 3),
+			polarizer("polarizer_t5", "titanium"        , "Titanium"        , 20225, 4));
+
+	/** The five Magnetic Separator rows, upstream line order :1470-1474 (T1-T5, the Electric_T material word). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> MAGNETIC_SEPARATOR_ROWS = java.util.List.of(
+			magneticSeparator("magnetic_separator"   , "galvanized_steel", "Galvanized Steel", 20301, 0),
+			magneticSeparator("magnetic_separator_t2", "aluminium"       , "Aluminium"       , 20302, 1),
+			magneticSeparator("magnetic_separator_t3", "stainless_steel" , "Stainless Steel" , 20303, 2),
+			magneticSeparator("magnetic_separator_t4", "chromium"        , "Chromium"        , 20304, 3),
+			magneticSeparator("magnetic_separator_t5", "titanium"        , "Titanium"        , 20305, 4));
+
+	/** The five Laser Engraver rows, upstream line order :1483-1487 (T1-T5, the LITERAL tier word; the Electric_T material stays the NBT_MATERIAL/tint column). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> LASER_ENGRAVER_ROWS = java.util.List.of(
+			laserEngraver("laser_engraver"   , 20321, 0),
+			laserEngraver("laser_engraver_t2", 20322, 1),
+			laserEngraver("laser_engraver_t3", 20323, 2),
+			laserEngraver("laser_engraver_t4", 20324, 3),
+			laserEngraver("laser_engraver_t5", 20325, 4));
+
+	/** The five Laser Welder rows, upstream line order :1490-1494 (T1-T5, the literal tier word; the RM.Welder map is the upstream recipe-map column verbatim). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> LASER_WELDER_ROWS = java.util.List.of(
+			laserWelder("laser_welder"   , 20331, 0),
+			laserWelder("laser_welder_t2", 20332, 1),
+			laserWelder("laser_welder_t3", 20333, 2),
+			laserWelder("laser_welder_t4", 20334, 3),
+			laserWelder("laser_welder_t5", 20335, 4));
+
+	/** The five Freezer rows, upstream line order :1621-1625 (T1-T5, the literal tier word). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> FREEZER_ROWS = java.util.List.of(
+			freezer("freezer"   , 20561, 0),
+			freezer("freezer_t2", 20562, 1),
+			freezer("freezer_t3", 20563, 2),
+			freezer("freezer_t4", 20564, 3),
+			freezer("freezer_t5", 20565, 4));
+
+	/** The five Cryo Mixer rows, upstream line order :1628-1632 (T1-T5; the CRYO_PARALLEL {4,8,16,32,64} + duration-T ladder, the card-① constant's first consumer). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> CRYO_MIXER_ROWS = java.util.List.of(
+			cryoMixer("cryo_mixer"   , 20571, 0),
+			cryoMixer("cryo_mixer_t2", 20572, 1),
+			cryoMixer("cryo_mixer_t3", 20573, 2),
+			cryoMixer("cryo_mixer_t4", 20574, 3),
+			cryoMixer("cryo_mixer_t5", 20575, 4));
+
+	/**
+	 * The material/word pair of one exotic row — the Electric_T rung by tier index (the
+	 * T1-T4 rungs ride {@link #ELECTRIC_T_LADDER}, the T5 rung {@link #ELECTRIC_T5}); the
+	 * material-word families pass the slug/display pair, the tier-word families the
+	 * {@link #TIER_WORD_SLUGS}/{@link #TIER_WORD_DISPLAYS} entry.
+	 */
+	private static java.util.function.Supplier<OreDictMaterial> electricTRung(int aTier) {
+		return aTier < ELECTRIC_T_LADDER.size() ? ELECTRIC_T_LADDER.get(aTier) : ELECTRIC_T5;
+	}
+
+	/**
+	 * One Polarizer row factory — the differing columns (path/id/tier) plus the family
+	 * constants: the material-word slot, MU (NBT_ENERGY_ACCEPTED :1418), the "polarizer"
+	 * texture, the :1418 masks (item left-in/right-out, energy top|bottom, NO tank keys —
+	 * the POLARIZER map is 0/0/0 fluids) and parallel 1 / duration F (no NBT keys).
+	 */
+	private static GTBasicMachineBlock.MachineRow polarizer(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, electricTRung(aTier), MACHINE_POLARIZER_UNIT_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1418-1422*/,
+				() -> GT6RecipeMaps.POLARIZER, TD.Energy.MU, "polarizer",
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_U|SBIT_D, the :151 OR*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/**
+	 * One Magnetic Separator row factory — the :1470 masks: item left-in/right|bottom-out,
+	 * tank in LEFT (auto left) / out right|bottom (auto bottom), energy TOP.
+	 */
+	private static GTBasicMachineBlock.MachineRow magneticSeparator(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, electricTRung(aTier), MACHINE_MAGNETIC_SEPARATOR_UNIT_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1470-1474*/,
+				() -> GT6RecipeMaps.MAGNETIC_SEPARATOR, TD.Energy.MU, "magneticseparator",
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)2 /*NBT_TANK_SIDE_AUTO_IN SIDE_LEFT*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/** One Laser Engraver row factory — the :1483 masks (item left-in/right-out, energy top, no tanks) over the LITERAL tier-word slot and the LU carrier. */
+	private static GTBasicMachineBlock.MachineRow laserEngraver(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, TIER_WORD_SLUGS.get(aTier), TIER_WORD_DISPLAYS.get(aTier), electricTRung(aTier), MACHINE_LASER_ENGRAVER_UNIT_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1483-1487*/,
+				() -> GT6RecipeMaps.LASER_ENGRAVER, TD.Energy.LU, "laserengraver",
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_U*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/** One Laser Welder row factory — the :1490 masks (tank in down|left auto BOTTOM, NO tank-out key — the WELDER map is 1/0/0 fluids) over the LU carrier and RM.Welder. */
+	private static GTBasicMachineBlock.MachineRow laserWelder(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, TIER_WORD_SLUGS.get(aTier), TIER_WORD_DISPLAYS.get(aTier), electricTRung(aTier), MACHINE_LASER_WELDER_UNIT_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1490-1494*/,
+				() -> GT6RecipeMaps.WELDER, TD.Energy.LU, "laserwelder",
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_D|SBIT_L*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)0 /*NBT_TANK_SIDE_AUTO_IN SIDE_BOTTOM*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/** One Freezer row factory — the :1621 masks (item+tank in up|left auto TOP, out right|bottom auto BOTTOM, energy BACK) over the CU carrier. */
+	private static GTBasicMachineBlock.MachineRow freezer(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, TIER_WORD_SLUGS.get(aTier), TIER_WORD_DISPLAYS.get(aTier), electricTRung(aTier), MACHINE_FREEZER_UNIT_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1621-1625*/,
+				() -> GT6RecipeMaps.FREEZER, TD.Energy.CU, "freezer",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B — the back face*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/** One Cryo Mixer row factory — the :1628 masks (item+tank in left|top auto LEFT/TOP, out right|bottom auto RIGHT/BACK, energy BOTTOM) over the CRYO_PARALLEL duration-T ladder. */
+	private static GTBasicMachineBlock.MachineRow cryoMixer(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, TIER_WORD_SLUGS.get(aTier), TIER_WORD_DISPLAYS.get(aTier), electricTRung(aTier), MACHINE_CRYO_MIXER_UNIT_KEY, aMetaId, 4.0F, aTier,
+				CRYO_PARALLEL[aTier], true /*NBT_PARALLEL_DURATION T :1628-1632*/,
+				() -> GT6RecipeMaps.CRYO_MIXER, TD.Energy.CU, "cryomixer",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_B*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)5 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BACK*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/** The registered Polarizer blocks by path (the BET/datagen/loot walkers). */
+	public static final java.util.Map<String, RegistryObject<Block>> POLARIZER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Polarizer items. */
+	public static final java.util.Map<String, RegistryObject<Item>> POLARIZER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Magnetic Separator blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> MAGNETIC_SEPARATOR_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Magnetic Separator items. */
+	public static final java.util.Map<String, RegistryObject<Item>> MAGNETIC_SEPARATOR_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Laser Engraver blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> LASER_ENGRAVER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Laser Engraver items. */
+	public static final java.util.Map<String, RegistryObject<Item>> LASER_ENGRAVER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Laser Welder blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> LASER_WELDER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Laser Welder items. */
+	public static final java.util.Map<String, RegistryObject<Item>> LASER_WELDER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Freezer blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> FREEZER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Freezer items. */
+	public static final java.util.Map<String, RegistryObject<Item>> FREEZER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Cryo Mixer blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> CRYO_MIXER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Cryo Mixer items. */
+	public static final java.util.Map<String, RegistryObject<Item>> CRYO_MIXER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		registerExoticFamily(POLARIZER_ROWS, POLARIZER_BLOCKS_BY_PATH, POLARIZER_ITEMS_BY_PATH, () -> GTMachines.POLARIZER_BE);
+		registerExoticFamily(MAGNETIC_SEPARATOR_ROWS, MAGNETIC_SEPARATOR_BLOCKS_BY_PATH, MAGNETIC_SEPARATOR_ITEMS_BY_PATH, () -> GTMachines.MAGNETIC_SEPARATOR_BE);
+		registerExoticFamily(LASER_ENGRAVER_ROWS, LASER_ENGRAVER_BLOCKS_BY_PATH, LASER_ENGRAVER_ITEMS_BY_PATH, () -> GTMachines.LASER_ENGRAVER_BE);
+		registerExoticFamily(LASER_WELDER_ROWS, LASER_WELDER_BLOCKS_BY_PATH, LASER_WELDER_ITEMS_BY_PATH, () -> GTMachines.LASER_WELDER_BE);
+		registerExoticFamily(FREEZER_ROWS, FREEZER_BLOCKS_BY_PATH, FREEZER_ITEMS_BY_PATH, () -> GTMachines.FREEZER_BE);
+		registerExoticFamily(CRYO_MIXER_ROWS, CRYO_MIXER_BLOCKS_BY_PATH, CRYO_MIXER_ITEMS_BY_PATH, () -> GTMachines.CRYO_MIXER_BE);
+	}
+
+	/**
+	 * One exotic family's block+item registration walk — the W1 BY_PATH form (the
+	 * qualified-read forward-reference lambda, the P6 lesson: the BET handle travels as a
+	 * DEFERRED supplier because the static block textually precedes the BET fields).
+	 */
+	private static void registerExoticFamily(java.util.List<GTBasicMachineBlock.MachineRow> aRows,
+			java.util.Map<String, RegistryObject<Block>> aBlocks, java.util.Map<String, RegistryObject<Item>> aItems,
+			java.util.function.Supplier<RegistryObject<BlockEntityType<TileEntityBasicMachine>>> aBe) {
+		for (GTBasicMachineBlock.MachineRow tRow : aRows) {
+			aBlocks.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> aBe.get().get(), tRow)));
+			aItems.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(aBlocks.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Polarizer block list in registration order (the loot/datagen walkers). */
+	public static Block[] polarizerBlockArray() {
+		return blockArrayOf(POLARIZER_BLOCKS_BY_PATH);
+	}
+
+	/** The Magnetic Separator block list in registration order. */
+	public static Block[] magneticSeparatorBlockArray() {
+		return blockArrayOf(MAGNETIC_SEPARATOR_BLOCKS_BY_PATH);
+	}
+
+	/** The Laser Engraver block list in registration order. */
+	public static Block[] laserEngraverBlockArray() {
+		return blockArrayOf(LASER_ENGRAVER_BLOCKS_BY_PATH);
+	}
+
+	/** The Laser Welder block list in registration order. */
+	public static Block[] laserWelderBlockArray() {
+		return blockArrayOf(LASER_WELDER_BLOCKS_BY_PATH);
+	}
+
+	/** The Freezer block list in registration order. */
+	public static Block[] freezerBlockArray() {
+		return blockArrayOf(FREEZER_BLOCKS_BY_PATH);
+	}
+
+	/** The Cryo Mixer block list in registration order. */
+	public static Block[] cryoMixerBlockArray() {
+		return blockArrayOf(CRYO_MIXER_BLOCKS_BY_PATH);
+	}
+
+	/** The BY_PATH walk behind every exotic block array. */
+	private static Block[] blockArrayOf(java.util.Map<String, RegistryObject<Block>> aBlocks) {
+		Block[] rBlocks = new Block[aBlocks.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : aBlocks.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	// the six exotic family BETs: the W1-trio shape over the ONE shared
+	// {@link #exoticMachine} factory body — the row carries every column, the only
+	// exotic-specific bit is the tier-4 window arm (EV_TIER_INPUTS).
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> POLARIZER_BE =
+			BLOCK_ENTITY_TYPES.register("polarizer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> exoticMachine(GTMachines.POLARIZER_BE.get(), aPos, aState),
+					polarizerBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> MAGNETIC_SEPARATOR_BE =
+			BLOCK_ENTITY_TYPES.register("magnetic_separator", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> exoticMachine(GTMachines.MAGNETIC_SEPARATOR_BE.get(), aPos, aState),
+					magneticSeparatorBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> LASER_ENGRAVER_BE =
+			BLOCK_ENTITY_TYPES.register("laser_engraver", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> exoticMachine(GTMachines.LASER_ENGRAVER_BE.get(), aPos, aState),
+					laserEngraverBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> LASER_WELDER_BE =
+			BLOCK_ENTITY_TYPES.register("laser_welder", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> exoticMachine(GTMachines.LASER_WELDER_BE.get(), aPos, aState),
+					laserWelderBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> FREEZER_BE =
+			BLOCK_ENTITY_TYPES.register("freezer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> exoticMachine(GTMachines.FREEZER_BE.get(), aPos, aState),
+					freezerBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> CRYO_MIXER_BE =
+			BLOCK_ENTITY_TYPES.register("cryo_mixer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> exoticMachine(GTMachines.CRYO_MIXER_BE.get(), aPos, aState),
+					cryoMixerBlockArray()).build(null));
+
+	/**
+	 * The exotic BET factory body — the kineticMachine body verbatim except the WINDOW
+	 * column: the 5-tier rows index BEYOND the 4-row {@link #TIER_INPUTS}, so the tier-4
+	 * rung rides {@link #EV_TIER_INPUTS} (the 5-tier 立行制 window {4096, 8192, 16384},
+	 * the :126 conversion over NBT_INPUT 8192). The static block above can reference the
+	 * BET fields only because this body reads the row off the placed block at BE
+	 * CREATION time (the DeferredRegister lazy-supplier order — the P6 lambda lesson).
+	 */
+	private static TileEntityBasicMachine exoticMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		TileEntityBasicMachine tMachine = new TileEntityBasicMachine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.menu());
+		tMachine.mEnergyTypeAccepted = tRow.energyType();
+		long[] tInputs = tRow.tier() < TIER_INPUTS.length ? TIER_INPUTS[tRow.tier()] : EV_TIER_INPUTS;
+		tMachine.mInputMin = tInputs[0];
+		tMachine.mInput = tInputs[1];
+		tMachine.mInputMax = tInputs[2];
+		return applyRow(tMachine, tRow);
+	}
+
+	// ---------------------------------------------------------------------------
 	// the Advanced Crafting Table (task p24-act-machine) — the SINGLE-VARIANT machine
 	// (decisions.p24-act-be-form: the upstream MTE extends TileEntityBase09FacingSingle,
 	// NOT the TileEntityBasicMachine energy family — zero energy, zero tick auto-craft —
@@ -2060,7 +2451,7 @@ public final class GTMachines {
 	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill;
 	 * the Oven ladder joins in task p27-oven-heat-t-ladder; the six ULV rows join in task
 	 * p28-c-ulv-machine-ladder):
-	 * the 133 machine-domain blocks the client paint BlockColor
+	 * the 163 machine-domain blocks the client paint BlockColor
 	 * registers over — the oven ladder (4) + the shredder/crusher/lathe ladders (4 each = 12) + the
 	 * dryer (4) + the distillery (4) + the canner (4) + the sifter/compressor/wiremill
 	 * ladders (4 each = 12) + press (4) + extruder (4) + the ULV rows (5 + the rollingmill
@@ -2070,7 +2461,9 @@ public final class GTMachines {
 	 * task p29-w1-kinetic-process-ladder) + the eu-hu families (mixer/electricmixer/
 	 * electricloom/electricsifter/boxinator/unboxinator 4 each = 24 + the fermenter rung
 	 * = 25, task p29-w1-eu-hu-families) + the eu-special families (autocrafter/lightning
-	 * 5 each + laminator 4 = 14, task p29-w2-eu-special),
+	 * 5 each + laminator 4 = 14, task p29-w2-eu-special) + the six exotic-energy families
+	 * (polarizer/magneticseparator/laserengraver/laserwelder/freezer/cryomixer 5 each
+	 * = 30, task p29-w2-exotic-energy),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -2078,7 +2471,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(133);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(163);
 		rBlocks.add(OVEN.get());
 		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
@@ -2128,6 +2521,19 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, autocrafterBlockArray());
 		java.util.Collections.addAll(rBlocks, lightningBlockArray());
 		java.util.Collections.addAll(rBlocks, laminatorBlockArray());
+		// task p29-w2-exotic-energy — the six exotic-energy families, +30 blocks (Polarizer/
+		// MagneticSeparator 5 each over MU + LaserEngraver/LaserWelder 5 each over LU +
+		// Freezer/CryoMixer 5 each over CU), the census walk order mirrors the section
+		// order. (Review-seat rebase fix: the polarizer addAll rode COMMENTED in the
+		// af52df9a original — a splice artifact that silently dropped the 5 polarizer
+		// blocks from the paint walk while the 149 census pins and this javadoc still
+		// count them; uncommented to restore the branch's own declared census.)
+		java.util.Collections.addAll(rBlocks, polarizerBlockArray());
+		java.util.Collections.addAll(rBlocks, magneticSeparatorBlockArray());
+		java.util.Collections.addAll(rBlocks, laserEngraverBlockArray());
+		java.util.Collections.addAll(rBlocks, laserWelderBlockArray());
+		java.util.Collections.addAll(rBlocks, freezerBlockArray());
+		java.util.Collections.addAll(rBlocks, cryoMixerBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -2964,6 +3370,27 @@ public final class GTMachines {
 							}
 							for (GTBasicMachineBlock.MachineRow tRow : FERMENTER_ROWS) {
 								aOutput.accept(new ItemStack(FERMENTER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							// task p29-w2-exotic-energy: the six exotic-energy families, +30 rows
+							// (Polarizer/MagneticSeparator/LaserEngraver/LaserWelder/Freezer/
+							// CryoMixer, upstream row order per family)
+							for (GTBasicMachineBlock.MachineRow tRow : POLARIZER_ROWS) {
+								aOutput.accept(new ItemStack(POLARIZER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : MAGNETIC_SEPARATOR_ROWS) {
+								aOutput.accept(new ItemStack(MAGNETIC_SEPARATOR_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : LASER_ENGRAVER_ROWS) {
+								aOutput.accept(new ItemStack(LASER_ENGRAVER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : LASER_WELDER_ROWS) {
+								aOutput.accept(new ItemStack(LASER_WELDER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : FREEZER_ROWS) {
+								aOutput.accept(new ItemStack(FREEZER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : CRYO_MIXER_ROWS) {
+								aOutput.accept(new ItemStack(CRYO_MIXER_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
 								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
 								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));
