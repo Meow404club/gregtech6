@@ -180,6 +180,15 @@ SESSION_GROUPS = (
     # session boot serves the cluster (per-chain port pins yield to
     # framework.session_ports).
     ("p28_ulv_chain", "p28_fe_inbound", "p28_builder_wand_oneclick"),
+    # P29 W1 card C (p29-w1-kinetic-process-ladder): the six process-family chains —
+    # buzzsaw | squeezer | centrifuge | sluice | sander | pressurewasher, one fresh
+    # z=252 band, per-family x-disjoint columns (x384..393 / x396..403 / x408..418 /
+    # x420..428 / x432..441 / x444..454), admission mirroring the p26 W1 cluster form
+    # (bbox-registered, no fresh_boot / mutates member — the inject grid rig needs no
+    # fakesource; the diesel rigs are per-site setblocks). --group p29_w1_process
+    # matches through the chains' embedded name prefix.
+    ("p29_w1_buzzsaw", "p29_w1_squeezer", "p29_w1_centrifuge", "p29_w1_sluice",
+     "p29_w1_sander", "p29_w1_pressurewasher"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
