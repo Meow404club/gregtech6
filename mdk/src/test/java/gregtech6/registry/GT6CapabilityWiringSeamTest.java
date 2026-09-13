@@ -150,7 +150,8 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("electricsifter", "item+fluid"); // task p29-w1-eu-hu-families
 		tFaces.put("boxinator", "item+fluid"); // task p29-w1-eu-hu-families
 		tFaces.put("unboxinator", "item+fluid"); // task p29-w1-eu-hu-families
-		tFaces.put("fermenter", "item+fluid"); // task p29-w1-eu-hu-families		tFaces.put("oven", "item"); // the exception: the gated item handler alone
+		tFaces.put("fermenter", "item+fluid"); // task p29-w1-eu-hu-families
+		tFaces.put("oven", "item"); // the exception: the gated item handler alone
 		tFaces.put("advanced_crafting_table", "item"); // task p24-act-machine — the second item-only face (zero fluid tanks)
 		BASIC_MACHINE_FAMILY_FACES = Collections.unmodifiableMap(tFaces);
 	}

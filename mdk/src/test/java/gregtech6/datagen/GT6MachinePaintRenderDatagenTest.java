@@ -85,7 +85,7 @@ class GT6MachinePaintRenderDatagenTest {
             "centrifuge", "centrifuge_t2", "centrifuge_t3", "centrifuge_t4",
             "sluice", "sluice_t2", "sluice_t3", "sluice_t4",
             "sanding_machine", "sanding_machine_t2", "sanding_machine_t3", "sanding_machine_t4",
-            "pressure_washer", "pressure_washer_t2", "pressure_washer_t3", "pressure_washer_t4");
+            "pressure_washer", "pressure_washer_t2", "pressure_washer_t3", "pressure_washer_t4",
             "mixer", "mixer_t2", "mixer_t3", "mixer_t4", // task p29-w1-eu-hu-families
             "electricmixer", "electricmixer_t2", "electricmixer_t3", "electricmixer_t4", // task p29-w1-eu-hu-families
             "electricloom", "electricloom_t2", "electricloom_t3", "electricloom_t4", // task p29-w1-eu-hu-families
@@ -177,17 +177,13 @@ class GT6MachinePaintRenderDatagenTest {
     }
 
     /** The census shape: 119 bases x 3 models = 357 tinted block models. */
+    /** The census shape: 119 bases x 3 models = 357 tinted block models. */
     @Test
     void pinnedMachinePaintCensus() {
         assertEquals(119, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
         assertEquals(119 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
                 "119 blocks x 3 models — the pinned tinted-model total");
-    /** The census shape: 79 bases x 3 models = 237 tinted block models. */
-    @Test
-    void pinnedMachinePaintCensus() {
-        assertEquals(79, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(79 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
-                "79 blocks x 3 models — the pinned tinted-model total");    }
+    }
 
     /**
      * Every machine block model: the block/cube parent, the twelve-texture key set (six

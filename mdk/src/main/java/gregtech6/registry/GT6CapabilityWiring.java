@@ -243,6 +243,7 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tPressurewasher,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPressurewasher,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// task p29-w1-eu-hu-families — the seven eu-hu families join (tail-append;
 		// shared serial file): the same BE class, the same item + fluid faces (the
 		// mixer/boxinator families' zero-or-fluid rows ride the 127 defaults — zero

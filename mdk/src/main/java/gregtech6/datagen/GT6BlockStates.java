@@ -131,18 +131,14 @@ public final class GT6BlockStates extends BlockStateProvider {
         addUlvLadder(); // task p28-c-ulv-machine-ladder — the six ULV rows (family textures, the addCanner shape)
         addRollLadders(); // task p29-w1-kinetic-roll-ladder — the four roll-ladder RU families (family textures, the addCanner shape)
         addProcessMachines(); // task p29-w1-kinetic-process-ladder — the six process families (family textures, the addCanner shape)
-        addStaticStorages(); // task p26-storage-static-batch
-        addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 78 machine blocks x
-        // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder; the six P29 W1
-        // process families joined at task p29-w1-kinetic-process-ladder),
         addEuHuFamilies(); // task p29-w1-eu-hu-families — the seven eu-hu families (family textures, the addCanner shape)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 79 machine blocks x
-        // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder, the seven
-        // eu-hu families at task p29-w1-eu-hu-families),        // matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 237; the ACT
+        // task p21-paintable-tint-render: the datagen-JVM census half — 119 machine blocks x
+        // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder; the roll ladders
+        // and the six P29 W1 process families joined at their owning cards; the seven eu-hu
+        // families at task p29-w1-eu-hu-families), // matching the paintableBlockArray() client registration census
+        // (the offline JUnit half walks the generated tree and pins the same 357; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
@@ -390,6 +386,10 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.PRESSURE_WASHER_ROWS) {
             addMachine(GTMachines.PRESSURE_WASHER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
      * Task p29-w1-eu-hu-families — the seven eu-hu families (the Mixer RU ladder :1392-1395
      * + the ElectricMixer/ElectricLoom/ElectricSifter/Boxinator/Unboxinator EU ladders
      * :1504-1522/:1635-1646 + the single-variant Fermenter :1654, every row NBT_TEXTURE

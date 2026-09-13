@@ -166,7 +166,7 @@ class GT6TagsDatagenTest {
         // exact product shape: no member outside the census families
         assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(),
                 "272 stones + 120 machines + 1 rod + 2677 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils");
-                "272 stones + 120 machines + 1 rod + 2677 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils");        assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
+        assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 
     /**

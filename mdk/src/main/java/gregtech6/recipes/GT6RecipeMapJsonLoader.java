@@ -182,7 +182,8 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			"rollingmill", "rollbender", "rollformer", "clustermill",
 			// the P29 W1 process-card six (task p29-w1-kinetic-process-ladder): the batch-C
 			// smoke-row map keys — the card-A constants the Sluice tail-append joins
-			"cutter", "squeezer", "centrifuge", "sluice", "sharpening", "pressurewasher");
+			"cutter", "squeezer", "centrifuge", "sluice", "sharpening", "pressurewasher",
+			// the P29 W1 card-D eu-hu four (task p29-w1-eu-hu-families)
 			"loom", "boxinator", "unboxinator", "fermenter");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");

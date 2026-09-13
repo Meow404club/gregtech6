@@ -226,7 +226,7 @@ public final class GTMachineCommand {
 		.then(machine("clustermill", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill_t2", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t2"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill_t3", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t3"), rollFeed(gregapi.data.OP.plate)))
-		.then(machine("clustermill_t4", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t4"), rollFeed(gregapi.data.OP.plate))),
+		.then(machine("clustermill_t4", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t4"), rollFeed(gregapi.data.OP.plate)))
 		// task p29-w1-eu-hu-families: the seven eu-hu families — the Mixer/ElectricMixer
 		// feeds walk the LIVE SHARED RM.Mixer map (the firstPouredWiremillStick shape: the
 		// first input item of the first poured row — a C-Foam rock dust), the ElectricLoom

@@ -82,7 +82,8 @@ class GT6MachinePaintItemLootDatagenTest {
             "electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4", // task p29-w1-eu-hu-families
             "boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4", // task p29-w1-eu-hu-families
             "unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4", // task p29-w1-eu-hu-families
-            "fermenter", // task p29-w1-eu-hu-families            "advanced_crafting_table");
+            "fermenter", // task p29-w1-eu-hu-families
+            "advanced_crafting_table");
 
     /** The paint keys the 03 base writes while painted (CS.java:1161-1162, verbatim upstream). */
     private static final String NBT_COLOR = "gt.color";

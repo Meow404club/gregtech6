@@ -84,7 +84,8 @@ public class GTCommandTreeLiteralTest {
 		"electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4",
 		"boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4",
 		"unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4",
-		"fermenter", // task p29-w1-eu-hu-families — the single-variant rung		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
+		"fermenter", // task p29-w1-eu-hu-families — the single-variant rung
+		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 
 	private static CommandSourceStack stack() {
 		// permission level 2 satisfies both commands' requires(...) gate; level/server are
