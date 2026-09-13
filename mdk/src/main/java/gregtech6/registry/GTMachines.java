@@ -2060,7 +2060,7 @@ public final class GTMachines {
 	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill;
 	 * the Oven ladder joins in task p27-oven-heat-t-ladder; the six ULV rows join in task
 	 * p28-c-ulv-machine-ladder):
-	 * the 119 machine-domain blocks the client paint BlockColor
+	 * the 133 machine-domain blocks the client paint BlockColor
 	 * registers over — the oven ladder (4) + the shredder/crusher/lathe ladders (4 each = 12) + the
 	 * dryer (4) + the distillery (4) + the canner (4) + the sifter/compressor/wiremill
 	 * ladders (4 each = 12) + press (4) + extruder (4) + the ULV rows (5 + the rollingmill
@@ -2069,7 +2069,8 @@ public final class GTMachines {
 	 * (buzzsaw/squeezer/centrifuge/sluice/sandingmachine/pressurewasher 4 each = 24,
 	 * task p29-w1-kinetic-process-ladder) + the eu-hu families (mixer/electricmixer/
 	 * electricloom/electricsifter/boxinator/unboxinator 4 each = 24 + the fermenter rung
-	 * = 25, task p29-w1-eu-hu-families),
+	 * = 25, task p29-w1-eu-hu-families) + the eu-special families (autocrafter/lightning
+	 * 5 each + laminator 4 = 14, task p29-w2-eu-special),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -2077,7 +2078,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(119);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(133);
 		rBlocks.add(OVEN.get());
 		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
@@ -2121,6 +2122,12 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, boxinatorBlockArray());
 		java.util.Collections.addAll(rBlocks, unboxinatorBlockArray());
 		java.util.Collections.addAll(rBlocks, fermenterBlockArray());
+		// task p29-w2-eu-special — the eu-special families, +14 blocks (autocrafter 5 +
+		// lightning 5 + laminator 4), the census comment and the datagen-JVM half move
+		// together (the 119 → 133 machine-domain re-pin)
+		java.util.Collections.addAll(rBlocks, autocrafterBlockArray());
+		java.util.Collections.addAll(rBlocks, lightningBlockArray());
+		java.util.Collections.addAll(rBlocks, laminatorBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -2495,6 +2502,289 @@ public final class GTMachines {
 					(aPos, aState) -> kineticMachine(GTMachines.PRESSURE_WASHER_BE.get(), aPos, aState),
 					pressurewasherBlockArray()).build(null));
 
+	// ---------------------------------------------------------------------------
+	// the P29 W2 eu-special families (task p29-w2-eu-special) — EU special 2 + HU 1,
+	// 14 rows: the Autocrafter ladder (Loader_MultiTileEntities.java:1497-1501, EU,
+	// VN[1..5] — the FIRST 5-tier family shape of the repo together with the W2 card-②
+	// eu-core families) / the Lightning Processor ladder (:1582-1586, EU, VN[1..5],
+	// NBT_USE_OUTPUT_TANK T — the first USE_OUTPUT_TANK-only consumer after the Canner,
+	// with NO NBT_TANK_CAPACITY column) / the Laminator ladder (:1532-1535, HU 4梯
+	// Heat_T[1..4]). All three maps are the card-① DECLARED-empty W2 maps, filled here
+	// with the smoke rows only (data/gt6/recipe_maps/{autocrafter,lightning,laminator}
+	// .json through the GT6RecipeMapJsonLoader direct-pour seam).
+	//
+	// KJS face of this card: the registration rows (3 families / 14 rows) + the datapack
+	// domain (the three smoke rows). NO KubeJS surface.
+	//
+	// Declared deviations (all three declared by the arch card / the card ① map block):
+	// - AUTOCRAFTER: upstream RM.Autocrafter is a RecipeMapAutocrafting subclass whose
+	//   lookup reads the vanilla crafting grid into rows at runtime — the crafting-grid
+	//   auto-fill arm STAYS POOLED (the UNBOXINATOR loot-arm judged form, card ① doc);
+	//   the map here is the base-RecipeMap DECLARED-empty form and the machine consumes
+	//   the smoke rows only. The upstream GUI word is "Crafting" (RM.java:63) — that is
+	//   the MAP's GUI path word, not the machine's name column ("Autocrafter ("+VN[tier]
+	//   +")", :1497-1501).
+	// - LIGHTNING: NO lightning-strike mechanism — upstream the lightning-into-network
+	//   face is the LightningRod MULTIBLOCK (18104, ported, task p24-lightning-rod);
+	//   the Lightning Processor is a plain EU consumer (:1582-1586 registers
+	//   MultiTileEntityBasicMachineElectric with NBT_ENERGY_ACCEPTED EU). Only the
+	//   NBT_USE_OUTPUT_TANK T key (the :716-732 recipe-fallback arm, the Canner
+	//   factory-column form WITHOUT the capacity column) is the porting point.
+	// - LAMINATOR: the upstream rows carry NBT_GUI = RES_PATH_GUI + "machines/Laminator
+	//   .png" (the custom GUI path) — the port's null-menu convention defers ALL machine
+	//   GUIs (the menu-less carrier), so the path is declared HERE only (fidelity
+	//   record); the HU energy face is the burning-box bottom-feed form (the Dryer/
+	//   Extruder/Fermenter SBIT_D shape).
+	// ---------------------------------------------------------------------------
+
+	/** The Autocrafter family display template (the voltage-word slot; upstream "Autocrafter ("+VN[tier]+")", :1497-1501). */
+	public static final String AUTOCRAFTER_DISPLAY_KEY = "gt6.row.autocrafter.display";
+	/** The Lightning Processor family display template (upstream "Lightning Processor ("+VN[tier]+")", :1582-1586). */
+	public static final String LIGHTNING_PROCESSOR_DISPLAY_KEY = "gt6.row.lightningprocessor.display";
+	/** The Laminator family display template (the Heat_T material-word slot; upstream "Laminator ("+aMat.getLocal()+")", :1532-1535). */
+	public static final String LAMINATOR_DISPLAY_KEY = "gt6.row.laminator.display";
+
+	/**
+	 * The 5-tier window resolver (the 立行制 carrier, task p29-w2-energy-types-5tier ②):
+	 * tier 0..3 ride the SHARED {@link #TIER_INPUTS} table, tier 4 (the T5/IV rung) rides
+	 * {@link #EV_TIER_INPUTS} — the :126 conversion over NBT_INPUT 8192 = min 4096 /
+	 * rec 8192 / max 16384. The two 5-tier eu-special ladders (Autocrafter :1497-1501,
+	 * Lightning :1582-1586, NBT_INPUT 32/128/512/2048/8192) consume this; the
+	 * {@link #machine} helper stays byte-identical on the 4-row TIER_INPUTS dispatch.
+	 */
+	private static long[] euFiveTierWindow(int aTier) {
+		return aTier < TIER_INPUTS.length ? TIER_INPUTS[aTier] : EV_TIER_INPUTS;
+	}
+
+	/**
+	 * The 5-tier BET factory body — the {@link #machine} body with the tier window read
+	 * through {@link #euFiveTierWindow} (tier 4 = the EV_TIER_INPUTS row). Card ②'s
+	 * eu-core families carry their own arm of the same shape; the merge dedup point is
+	 * THIS resolver (the card-② equivalent folds onto it).
+	 */
+	private static TileEntityBasicMachine euFiveTierMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		TileEntityBasicMachine tMachine = new TileEntityBasicMachine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.menu());
+		tMachine.mEnergyTypeAccepted = tRow.energyType();
+		long[] tInputs = euFiveTierWindow(tRow.tier());
+		tMachine.mInputMin = tInputs[0];
+		tMachine.mInput = tInputs[1];
+		tMachine.mInputMax = tInputs[2];
+		return applyRow(tMachine, tRow);
+	}
+
+	/** The five Autocrafter rows, upstream line order :1497-1501 (T1-T5, the Electric_T ladder + the T5 rung, EU, RM.AUTOCRAFTER). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> AUTOCRAFTER_ROWS = java.util.List.of(
+			autocrafter("autocrafter"   , "lv", "LV", 20341, 0),
+			autocrafter("autocrafter_t2", "mv", "MV", 20342, 1),
+			autocrafter("autocrafter_t3", "hv", "HV", 20343, 2),
+			autocrafter("autocrafter_t4", "ev", "EV", 20344, 3),
+			autocrafter("autocrafter_t5", "iv", "IV", 20345, 4));
+
+	/**
+	 * One Autocrafter row factory — the differing columns plus the family constants:
+	 * Electric_T material (tier 4 rides {@link #ELECTRIC_T5}), the voltage-word slot,
+	 * hardness 4.0 (the :1497 column on all five rows), the "autocrafter" texture,
+	 * RM.AUTOCRAFTER, EU, NO parallel/efficiency keys (the 26-arg overload), and the
+	 * :1497 masks VERBATIM — the WAVE'S ONLY DUAL ENERGY FACE: NBT_ENERGY_ACCEPTED_SIDES
+	 * SBIT_U|SBIT_D (item in U|L auto LEFT, out R|D auto RIGHT; NO tank keys — the map is
+	 * 9/12/1 items, 0/0/0 fluids, the zero-fluid 127/-1 face).
+	 */
+	private static GTBasicMachineBlock.MachineRow autocrafter(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, aTier < 4 ? ELECTRIC_T_LADDER.get(aTier) : ELECTRIC_T5, AUTOCRAFTER_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1497-1501*/,
+				() -> GT6RecipeMaps.AUTOCRAFTER, TD.Energy.EU, "autocrafter",
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_U|SBIT_D — the dual-face energy, :1497 verbatim + the :151 OR*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/** The five Lightning Processor rows, upstream line order :1582-1586 (T1-T5, EU, RM.LIGHTNING, NBT_USE_OUTPUT_TANK T). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> LIGHTNING_ROWS = java.util.List.of(
+			lightning("lightning"   , "lv", "LV", 20501, 0),
+			lightning("lightning_t2", "mv", "MV", 20502, 1),
+			lightning("lightning_t3", "hv", "HV", 20503, 2),
+			lightning("lightning_t4", "ev", "EV", 20504, 3),
+			lightning("lightning_t5", "iv", "IV", 20505, 4));
+
+	/**
+	 * One Lightning Processor row factory — the autocrafter shape over the :1582 masks:
+	 * the "lightning" texture (the upstream NBT_TEXTURE token verbatim — the family path
+	 * keeps the two-word display name), tank in U|L auto TOP / out R|D auto BOTTOM (the
+	 * map is 6/6/0 items + 6/6/0 fluids), energy SBIT_B (bottom, the single face), the
+	 * 26-arg overload. The NBT_USE_OUTPUT_TANK T column rides the {@link #lightningMachine}
+	 * factory arm (the Canner two-extra-columns form, capacity-free).
+	 */
+	private static GTBasicMachineBlock.MachineRow lightning(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, aTier < 4 ? ELECTRIC_T_LADDER.get(aTier) : ELECTRIC_T5, LIGHTNING_PROCESSOR_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1582-1586*/,
+				() -> GT6RecipeMaps.LIGHTNING, TD.Energy.EU, "lightning",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/** The four Laminator rows, upstream line order :1532-1535 (T1-T4, the Heat_T ladder, HU, RM.LAMINATOR). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> LAMINATOR_ROWS = java.util.List.of(
+			laminator("laminator"   , "steel"           , "Steel"           , 20391,  6.0F, 0),
+			laminator("laminator_t2", "invar"           , "Invar"           , 20392,  4.0F, 1),
+			laminator("laminator_t3", "titanium"        , "Titanium"        , 20393,  9.0F, 2),
+			laminator("laminator_t4", "tungsten_carbide", "Tungsten Carbide", 20394, 12.5F, 3));
+
+	/**
+	 * One Laminator row factory — the :1532 masks: item in L|U auto LEFT, out R auto
+	 * RIGHT, energy SBIT_D (the burning-box bottom-feed form), zero tank keys (the map is
+	 * 2/1/2 items, 0/0/0 fluids), the Heat_T material-word slot, hardness 6.0/4.0/9.0/12.5
+	 * (NBT_RESISTANCE == hardness), no parallel/efficiency keys, the 26-arg overload. The
+	 * upstream NBT_GUI "machines/Laminator.png" path is DECLARED on the section doc (the
+	 * null-menu convention defers the GUI, zero new MenuType).
+	 */
+	private static GTBasicMachineBlock.MachineRow laminator(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, HEAT_T_LADDER.get(aTier), LAMINATOR_DISPLAY_KEY, aMetaId, aHardness, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1532-1535*/,
+				() -> GT6RecipeMaps.LAMINATOR, TD.Energy.HU, "laminator",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D — the p13 bottom-feed form*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — the NBT_GUI path stays declared on the section doc*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/** The registered Autocrafter blocks by path (the BET/datagen/loot walkers). */
+	public static final java.util.Map<String, RegistryObject<Block>> AUTOCRAFTER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Autocrafter items, same keys as {@link #AUTOCRAFTER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> AUTOCRAFTER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : AUTOCRAFTER_ROWS) {
+			AUTOCRAFTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.AUTOCRAFTER_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			AUTOCRAFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.AUTOCRAFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Autocrafter block list in registration order (the loot/datagen walkers). */
+	public static Block[] autocrafterBlockArray() {
+		Block[] rBlocks = new Block[AUTOCRAFTER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : AUTOCRAFTER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for the placement/loot walkers — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block autocrafterBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = AUTOCRAFTER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The registered Lightning Processor blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> LIGHTNING_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Lightning Processor items, same keys as {@link #LIGHTNING_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> LIGHTNING_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : LIGHTNING_ROWS) {
+			LIGHTNING_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.LIGHTNING_BE.get(), tRow)));
+			LIGHTNING_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.LIGHTNING_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Lightning Processor block list in registration order. */
+	public static Block[] lightningBlockArray() {
+		Block[] rBlocks = new Block[LIGHTNING_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : LIGHTNING_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for the placement/loot walkers — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block lightningBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = LIGHTNING_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The registered Laminator blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> LAMINATOR_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Laminator items, same keys as {@link #LAMINATOR_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> LAMINATOR_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : LAMINATOR_ROWS) {
+			LAMINATOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.LAMINATOR_BE.get(), tRow)));
+			LAMINATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.LAMINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Laminator block list in registration order. */
+	public static Block[] laminatorBlockArray() {
+		Block[] rBlocks = new Block[LAMINATOR_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : LAMINATOR_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for the placement/loot walkers — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block laminatorBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = LAMINATOR_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The ONE Autocrafter family BET: the 5 validBlocks multi-attach (the first 5-block
+	 * family shape) over the {@link #euFiveTierMachine} factory (tier 4 = EV_TIER_INPUTS).
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> AUTOCRAFTER_BE =
+			BLOCK_ENTITY_TYPES.register("autocrafter", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> euFiveTierMachine(GTMachines.AUTOCRAFTER_BE.get(), aPos, aState),
+					autocrafterBlockArray()).build(null));
+
+	/**
+	 * The ONE Lightning Processor family BET — the euFiveTierMachine body plus the
+	 * NBT_USE_OUTPUT_TANK T column (the {@code cannerMachine} two-extra-columns form,
+	 * capacity-free: the :1582-1586 rows carry NO NBT_TANK_CAPACITY key).
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> LIGHTNING_BE =
+			BLOCK_ENTITY_TYPES.register("lightning", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> lightningMachine(GTMachines.LIGHTNING_BE.get(), aPos, aState),
+					lightningBlockArray()).build(null));
+
+	/** The Lightning BET factory body — the euFiveTierMachine body plus the output-tank flag. */
+	private static TileEntityBasicMachine lightningMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		TileEntityBasicMachine tMachine = euFiveTierMachine(aType, aPos, aState);
+		tMachine.mCanUseOutputTanks = true; // NBT_USE_OUTPUT_TANK T (:1582-1586, the :716-732 fallback arm)
+		return tMachine;
+	}
+
+	/** The ONE Laminator family BET — the HU family over the shared 4-row TIER_INPUTS dispatch. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> LAMINATOR_BE =
+			BLOCK_ENTITY_TYPES.register("laminator", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> euFiveTierMachine(GTMachines.LAMINATOR_BE.get(), aPos, aState),
+					laminatorBlockArray()).build(null));
+
 	/** The tier index of a family block (0=T1 .. 3=T4) — BE creation time, every RO is resolved. */
 	private static int tierOf(Block aBlock, RegistryObject<Block> aT1, RegistryObject<Block> aT2, RegistryObject<Block> aT3, RegistryObject<Block> aT4) {
 		if (aBlock == aT2.get()) return 1;
@@ -2635,6 +2925,18 @@ public final class GTMachines {
 							}
 							for (GTBasicMachineBlock.MachineRow tRow : PRESSURE_WASHER_ROWS) {
 								aOutput.accept(new ItemStack(PRESSURE_WASHER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							// task p29-w2-eu-special: the eu-special families, +14 rows (the
+							// Autocrafter/Lightning 5-tier EU ladders + the Laminator HU ladder,
+							// upstream row order per family)
+							for (GTBasicMachineBlock.MachineRow tRow : AUTOCRAFTER_ROWS) {
+								aOutput.accept(new ItemStack(AUTOCRAFTER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : LIGHTNING_ROWS) {
+								aOutput.accept(new ItemStack(LIGHTNING_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : LAMINATOR_ROWS) {
+								aOutput.accept(new ItemStack(LAMINATOR_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
 							for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_ROWS) {
 								aOutput.accept(new ItemStack(ROLLINGMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
