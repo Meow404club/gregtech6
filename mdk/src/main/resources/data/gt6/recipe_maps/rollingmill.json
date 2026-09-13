@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "comment": "task p29-w1-kinetic-roll-ladder smoke row — the ingot->plate minimal row, the upstream RollingMill row shape (MultiItemFood.java:167 addRecipe1(T, 16, 32, ...) = eut 16 / duration 32) over the iron pair",
+      "inputs": [{"item": "gt6:ingot_iron", "count": 1}],
+      "outputs": [{"item": "gt6:plate_iron", "count": 1}],
+      "duration": 32,
+      "eut": 16
+    }
+  ]
+}
