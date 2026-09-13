@@ -778,7 +778,20 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_SLUICE_UNIT_KEY, "Sluice (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_SANDING_UNIT_KEY, "Sanding Machine (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_PRESSURE_WASHER_UNIT_KEY, "Pressure Washer (%s)");
-        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
+        // task p29-w1-eu-hu-families — the eu-hu family templates: the Mixer rides the
+        // one-slot unit-key form (the Kinetic_T material word, the upstream name column
+        // "Mixer ("+aMat+")" :1392-1395); the five Electric* ladders ride the voltage-word
+        // slot (the CANNER_DISPLAY_KEY contract, the VN ladder — the upstream "Electric
+        // Mixer ("+VN[tier]+")" :1504-1508 name-column form); the Fermenter is the
+        // single-variant ATOMIC row (upstream name column "Fermenter", :1654 — the
+        // template carries no %s slot)
+        add(gregtech6.registry.GTMachines.MACHINE_MIXER_UNIT_KEY, "Mixer (%s)");
+        add(gregtech6.registry.GTMachines.ELECTRIC_MIXER_DISPLAY_KEY, "Electric Mixer (%s)");
+        add(gregtech6.registry.GTMachines.ELECTRIC_LOOM_DISPLAY_KEY, "Electric Loom (%s)");
+        add(gregtech6.registry.GTMachines.ELECTRIC_SIFTER_DISPLAY_KEY, "Electric Sifter (%s)");
+        add(gregtech6.registry.GTMachines.BOXINATOR_DISPLAY_KEY, "Boxinator (%s)");
+        add(gregtech6.registry.GTMachines.UNBOXINATOR_DISPLAY_KEY, "Unboxinator (%s)");
+        add(gregtech6.registry.GTMachines.FERMENTER_DISPLAY_KEY, "Fermenter");        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
         for (String[] tMat : new String[][] {{"steel", "Steel"}, {"invar", "Invar"}, {"titanium", "Titanium"},

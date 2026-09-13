@@ -1,0 +1,13 @@
+{
+  "recipes": [
+    {
+      "inputs": [{ "item": "minecraft:map", "count": 1 }],
+      "outputs": [
+        { "item": "minecraft:paper", "count": 8 },
+        { "item": "minecraft:compass", "count": 1 }
+      ],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "inputs": [{ "item": "minecraft:wheat", "count": 1 }],
+      "fluidInputs": [{ "fluid": "minecraft:water", "amount": 1000 }],
+      "outputs": [{ "item": "minecraft:sugar", "count": 1 }],
+      "duration": 128,
+      "eut": 16
+    }
+  ]
+}

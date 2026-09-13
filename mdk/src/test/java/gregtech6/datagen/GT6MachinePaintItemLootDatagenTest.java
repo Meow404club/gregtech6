@@ -76,7 +76,13 @@ class GT6MachinePaintItemLootDatagenTest {
             "sluice", "sluice_t2", "sluice_t3", "sluice_t4",
             "sanding_machine", "sanding_machine_t2", "sanding_machine_t3", "sanding_machine_t4",
             "pressure_washer", "pressure_washer_t2", "pressure_washer_t3", "pressure_washer_t4",
-            "advanced_crafting_table");
+            "mixer", "mixer_t2", "mixer_t3", "mixer_t4", // task p29-w1-eu-hu-families
+            "electricmixer", "electricmixer_t2", "electricmixer_t3", "electricmixer_t4", // task p29-w1-eu-hu-families
+            "electricloom", "electricloom_t2", "electricloom_t3", "electricloom_t4", // task p29-w1-eu-hu-families
+            "electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4", // task p29-w1-eu-hu-families
+            "boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4", // task p29-w1-eu-hu-families
+            "unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4", // task p29-w1-eu-hu-families
+            "fermenter", // task p29-w1-eu-hu-families            "advanced_crafting_table");
 
     /** The paint keys the 03 base writes while painted (CS.java:1161-1162, verbatim upstream). */
     private static final String NBT_COLOR = "gt.color";
@@ -104,7 +110,7 @@ class GT6MachinePaintItemLootDatagenTest {
     /** The census shape: all 49 paintSelfTable tables carry the (quoted) paint carry function. */
     @Test
     void pinnedMachinePaintLootCensus() throws Exception {
-        assertEquals(79, PAINT_BASES.size(), "the paintSelfTable census (24 p22 rows incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + the six p28 ULV rows + the six p29 process families 24 + ACT 1)");
+        assertEquals(104, PAINT_BASES.size(), "the paintSelfTable census (24 p22 rows incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + the six p28 ULV rows + the six p29 process families 24 + the 25 p29 eu-hu rows + ACT 1)");
         for (String tBase : PAINT_BASES) assertPaintSelfTable(tBase);
     }
 

@@ -513,7 +513,22 @@ public class GT6ZhCn extends LanguageProvider {
 				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
 			}
 		}
-		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tUlvRows
+		// eu-hu families (task p29-w1-eu-hu-families): the seven family templates — the
+		// Mixer rides the Kinetic_T material-word slot (the W1 trio walk above already
+		// emits bronze/steel/titanium/tungstensteel), the five Electric* ladders the VN
+		// voltage words (the canner walk emits lv/mv/hv/ev), the Fermenter the atomic
+		// single-variant row; the zh words are the upstream dump verbatim
+		// (gt.multitileentity.20181/20351/20361/20371/20581/20591/22003)
+		addDirect(gregtech6.registry.GTMachines.MACHINE_MIXER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.ELECTRIC_MIXER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.ELECTRIC_LOOM_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.ELECTRIC_SIFTER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.BOXINATOR_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.UNBOXINATOR_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.FERMENTER_DISPLAY_KEY);
+		// the fermenter's stainless_steel row word (the dump face the attachment walk
+		// already carries — emitted here so the row walk stays self-contained)
+		addRowUnit(tEmitted, "gt6.row.mat.stainless_steel");		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tUlvRows
 				: java.util.List.of(gregtech6.registry.GTMachines.CANNER_ULV_ROWS, gregtech6.registry.GTMachines.SIFTER_ULV_ROWS,
 						gregtech6.registry.GTMachines.WIREMILL_ULV_ROWS, gregtech6.registry.GTMachines.SHREDDER_ULV_ROWS,
 						gregtech6.registry.GTMachines.CRUSHER_ULV_ROWS, gregtech6.registry.GTMachines.ROLLINGMILL_ROWS)) {

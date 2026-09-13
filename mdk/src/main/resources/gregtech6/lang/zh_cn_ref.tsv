@@ -7963,3 +7963,10 @@ mte	multiblock.tank.wooden	小型木质储罐	auto
 mte	multiblock.tank555.metal	大型储罐	auto
 mte	plantpot.tooltip.1	上面能种植任意植物!	auto
 mte	usb.switch.tooltip	使用选择面板在16个USB之间切换	auto
+direct	gt6.row.machine.mixer	搅拌机 (%s)	hand
+direct	gt6.row.electricmixer.display	电动搅拌机 (%s)	hand
+direct	gt6.row.electricloom.display	电力织布机 (%s)	hand
+direct	gt6.row.electricsifter.display	电动筛矿机 (%s)	hand
+direct	gt6.row.boxinator.display	装箱机 (%s)	hand
+direct	gt6.row.unboxinator.display	拆箱机 (%s)	hand
+direct	gt6.row.fermenter.display	发酵器	hand
