@@ -1,0 +1,10 @@
+{
+  "recipes": [
+    {
+      "inputs": [{"item": "minecraft:redstone", "count": 1}],
+      "outputs": [{"item": "minecraft:glowstone_dust", "count": 1}],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

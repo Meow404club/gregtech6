@@ -215,6 +215,17 @@ SESSION_GROUPS = (
     # firebox form). --group p29_w2_eu_special matches through the chains' embedded
     # name prefix (the p29_w1_process form).
     ("p29_w2_autocrafter", "p29_w2_lightning", "p29_w2_laminator"),
+    # P29 W2 card ④ (p29-w2-exotic-energy): the six exotic-energy family chains — one
+    # fresh z=268 band, per-family x-disjoint columns (polarizer 384..390 (MU, rig under)
+    # / magneticseparator 394..400 (MU, rig above) / laserengraver 404..410 (LU, rig
+    # above) / laserwelder 414..420 (LU, rig above) / freezer 424..430 (CU, rig behind,
+    # the first back-face rig) / cryomixer 434..439 (CU, rig under + the five-column
+    # CRYO_PARALLEL ladder)), all band-local setblocks + gt6energy dial rigs (the card-①
+    # source-block precedent; no fresh_boot / mutates member). MU/LU/CU each carry one
+    # LIVE type-gate arm (refuse EU, accept own type — the acceptance-① trio).
+    # --group p29_w2_exotic matches through the chains' embedded name prefix.
+    ("p29_w2_polarizer", "p29_w2_magnetic_separator", "p29_w2_laser_engraver",
+     "p29_w2_laser_welder", "p29_w2_freezer", "p29_w2_cryo_mixer"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 

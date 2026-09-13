@@ -133,18 +133,20 @@ public final class GT6BlockStates extends BlockStateProvider {
         addProcessMachines(); // task p29-w1-kinetic-process-ladder — the six process families (family textures, the addCanner shape)
         addEuHuFamilies(); // task p29-w1-eu-hu-families — the seven eu-hu families (family textures, the addCanner shape)
         addEuSpecialFamilies(); // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families (family textures, the addCanner shape)
+        addExoticFamilies(); // task p29-w2-exotic-energy — the six exotic-energy families (family textures, the addCanner shape)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 133 machine blocks x
+        // task p21-paintable-tint-render: the datagen-JVM census half — 163 machine blocks x
         // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder; the roll ladders
         // and the six P29 W1 process families joined at their owning cards; the seven eu-hu
         // families at task p29-w1-eu-hu-families; the three eu-special families at task
-        // p29-w2-eu-special), // matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 399; the ACT
+        // p29-w2-eu-special; the six exotic-energy families at task
+        // p29-w2-exotic-energy), // matching the paintableBlockArray() client registration census
+        // (the offline JUnit half walks the generated tree and pins the same 489; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (133 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addAdvancedCraftingTable)", mMachineTintModels);
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (163 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addExoticFamilies/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -441,6 +443,37 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LAMINATOR_ROWS) {
             addMachine(GTMachines.LAMINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p29-w2-exotic-energy — the six exotic-energy families (Polarizer/MagneticSeparator/
+     * LaserEngraver/LaserWelder/Freezer/CryoMixer, Loader_MultiTileEntities.java :1418-1422/
+     * :1470-1474/:1483-1487/:1490-1494/:1621-1625/:1628-1632, the rows of each family sharing
+     * one NBT_TEXTURE): the addCanner shape verbatim — model names per path, the FRONT
+     * TEXTURES stay on the family set (the borrowed upstream basicmachines/{polarizer,
+     * magneticseparator,laserengraver,laserwelder,freezer,cryomixer} fronts). The registry
+     * paths keep the snake-case family names while the art tokens stay the upstream camel
+     * joins (the row.texture() column carries them — the pressure_washer/debarker form).
+     */
+    private void addExoticFamilies() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.POLARIZER_ROWS) {
+            addMachine(GTMachines.POLARIZER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.MAGNETIC_SEPARATOR_ROWS) {
+            addMachine(GTMachines.MAGNETIC_SEPARATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LASER_ENGRAVER_ROWS) {
+            addMachine(GTMachines.LASER_ENGRAVER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LASER_WELDER_ROWS) {
+            addMachine(GTMachines.LASER_WELDER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.FREEZER_ROWS) {
+            addMachine(GTMachines.FREEZER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CRYO_MIXER_ROWS) {
+            addMachine(GTMachines.CRYO_MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

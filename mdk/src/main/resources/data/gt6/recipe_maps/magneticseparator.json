@@ -1,0 +1,14 @@
+{
+  "recipes": [
+    {
+      "inputs": [{"item": "minecraft:gravel", "count": 1}],
+      "fluidInputs": [{"fluid": "minecraft:water", "amount": 100}],
+      "outputs": [
+        {"item": "minecraft:sand", "count": 1},
+        {"item": "minecraft:flint", "count": 1}
+      ],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

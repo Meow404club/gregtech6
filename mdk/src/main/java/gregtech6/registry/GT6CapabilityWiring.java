@@ -304,6 +304,45 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLaminator,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+
+		// task p29-w2-exotic-energy — the six exotic-energy families join (tail-append;
+		// shared serial file): the Polarizer/MagneticSeparator (MU) + LaserEngraver/
+		// LaserWelder (LU) + Freezer/CryoMixer (CU) BETs, the first machine consumers of
+		// the exotic energy domains — the same item + fluid faces as every
+		// TileEntityBasicMachine family above (the energy TYPE gate lives on the BE's
+		// isEnergyType reference-equality face, NOT on this registration; the Laser Welder's
+		// no-tank-out row keeps the fluid FACE like every zero-fluid-mask family — the
+		// seam-② hard constraint)
+		BlockEntityType<TileEntityBasicMachine> tPolarizer = GTMachines.POLARIZER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tPolarizer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPolarizer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tMagneticSeparator = GTMachines.MAGNETIC_SEPARATOR_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tMagneticSeparator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tMagneticSeparator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tLaserEngraver = GTMachines.LASER_ENGRAVER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLaserEngraver,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLaserEngraver,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tLaserWelder = GTMachines.LASER_WELDER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLaserWelder,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLaserWelder,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tFreezer = GTMachines.FREEZER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tFreezer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tFreezer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tCryoMixer = GTMachines.CRYO_MIXER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCryoMixer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCryoMixer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,

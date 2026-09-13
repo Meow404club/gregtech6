@@ -96,6 +96,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-eu-hu-families — the seven eu-hu families
                 new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families
+                new SubProviderEntry(GT6ExoticFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-exotic-energy — the six exotic-energy families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -128,6 +129,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-eu-hu-families — the seven eu-hu families
                 new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families
+                new SubProviderEntry(GT6ExoticFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-exotic-energy — the six exotic-energy families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -583,6 +585,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
+    /**
      * The eu-special families block list (task p29-w2-eu-special): the 14 blocks of the
      * three families (Autocrafter + Lightning Processor 5 tiers each — the first _t5
      * rungs — plus the Laminator 4 tiers) — the euHuFamiliesLootBlocks shape verbatim,
@@ -618,6 +621,49 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : euSpecialLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The exotic-energy families block list (task p29-w2-exotic-energy): the 30 blocks of
+     * the six families (Polarizer/MagneticSeparator/LaserEngraver/LaserWelder/Freezer/
+     * CryoMixer, 5 tiers each, Loader_MultiTileEntities.java :1418-1422/:1470-1474/
+     * :1483-1487/:1490-1494/:1621-1625/:1628-1632) — the euHuFamiliesLootBlocks shape
+     * verbatim, the MTE default self-drop.
+     */
+    public static List<Block> exoticFamiliesLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.polarizerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.magneticSeparatorBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.laserEngraverBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.laserWelderBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.freezerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.cryoMixerBlockArray());
+        return rBlocks;
+    }
+
+    /** The exotic-energy families self-drop provider (task p29-w2-exotic-energy; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6ExoticFamiliesBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6ExoticFamiliesBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6ExoticFamiliesBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return exoticFamiliesLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : exoticFamiliesLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 

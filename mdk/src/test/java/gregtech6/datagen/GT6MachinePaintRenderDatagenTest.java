@@ -33,9 +33,10 @@
  * p29-w1-kinetic-roll-ladder — the RU rollingmill rungs ride tier-suffixed bases while
  * sharing the ULV rung's family texture set) + the six P29 W1 process families (24,
  * task p29-w1-kinetic-process-ladder) + the seven eu-hu families (25, task
- * p29-w1-eu-hu-families) = 119 blocks (the
+ * p29-w1-eu-hu-families) + the six exotic-energy families (30, task
+ * p29-w2-exotic-energy) = 149 blocks (the
  * GTMachines.paintableBlockArray
- * registration census), three models each (inactive/active/running) = 357 block-model
+ * registration census), three models each (inactive/active/running) = 447 block-model
  * JSONs. Upstream canonical: every faced face multiplies the grayscale texture by mRGBa
  * (MultiTileEntityBasicMachine.java:1014), so all three models tint identically.
  */
@@ -61,7 +62,7 @@ import com.google.gson.JsonParser;
 
 class GT6MachinePaintRenderDatagenTest {
 
-    /** The 133 machine-domain bases (the paintableBlockArray census). */
+    /** The 163 machine-domain bases (the paintableBlockArray census). */
     private static final List<String> MACHINE_BASES = List.of(
             "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
@@ -95,7 +96,13 @@ class GT6MachinePaintRenderDatagenTest {
             "fermenter", // task p29-w1-eu-hu-families
             "autocrafter", "autocrafter_t2", "autocrafter_t3", "autocrafter_t4", "autocrafter_t5", // task p29-w2-eu-special
             "lightning", "lightning_t2", "lightning_t3", "lightning_t4", "lightning_t5", // task p29-w2-eu-special
-            "laminator", "laminator_t2", "laminator_t3", "laminator_t4"); // task p29-w2-eu-special
+            "laminator", "laminator_t2", "laminator_t3", "laminator_t4", // task p29-w2-eu-special
+            "polarizer", "polarizer_t2", "polarizer_t3", "polarizer_t4", "polarizer_t5", // task p29-w2-exotic-energy
+            "magnetic_separator", "magnetic_separator_t2", "magnetic_separator_t3", "magnetic_separator_t4", "magnetic_separator_t5", // task p29-w2-exotic-energy
+            "laser_engraver", "laser_engraver_t2", "laser_engraver_t3", "laser_engraver_t4", "laser_engraver_t5", // task p29-w2-exotic-energy
+            "laser_welder", "laser_welder_t2", "laser_welder_t3", "laser_welder_t4", "laser_welder_t5", // task p29-w2-exotic-energy
+            "freezer", "freezer_t2", "freezer_t3", "freezer_t4", "freezer_t5", // task p29-w2-exotic-energy
+            "cryo_mixer", "cryo_mixer_t2", "cryo_mixer_t3", "cryo_mixer_t4", "cryo_mixer_t5"); // task p29-w2-exotic-energy
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
 
@@ -150,7 +157,7 @@ class GT6MachinePaintRenderDatagenTest {
     /** The tier rows keep the family textures (the p8 texture-base overload); the p28 ULV rows and the p29 W2 _t5 rungs likewise (the addUlvLadder/addEuSpecialFamilies family tokens). */
     private static String familyOf(String aBase) {
         if (aBase.startsWith("rollingmill_t")) return "rollingmill"; // task p29-w1-kinetic-roll-ladder — the RU rungs share the ULV rung's family set
-        for (String tTier : new String[] {"_t2", "_t3", "_t4", "_t5"}) {
+        for (String tTier : new String[] {"_t2", "_t3", "_t4", "_t5"}) { // _t5 joins at task p29-w2-eu-special/p29-w2-exotic-energy (the first 5-tier families)
             if (aBase.endsWith(tTier)) return artTokenOf(aBase.substring(0, aBase.length() - tTier.length()));
         }
         if (aBase.endsWith("_ulv")) return aBase.substring(0, aBase.length() - "_ulv".length()); // task p28-c-ulv-machine-ladder
@@ -167,6 +174,12 @@ class GT6MachinePaintRenderDatagenTest {
         return switch (aBase) {
             case "sanding_machine" -> "sander";
             case "pressure_washer" -> "debarker";
+            // task p29-w2-exotic-energy — the snake-case registry paths over the upstream
+            // camel-joined NBT_TEXTURE art tokens (the row.texture() columns verbatim)
+            case "magnetic_separator" -> "magneticseparator";
+            case "laser_engraver" -> "laserengraver";
+            case "laser_welder" -> "laserwelder";
+            case "cryo_mixer" -> "cryomixer";
             default -> aBase;
         };
     }
@@ -179,12 +192,12 @@ class GT6MachinePaintRenderDatagenTest {
         }
     }
 
-    /** The census shape: 133 bases x 3 models = 399 tinted block models. */
+    /** The census shape: 163 bases x 3 models = 489 tinted block models. */
     @Test
     void pinnedMachinePaintCensus() {
-        assertEquals(133, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(133 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
-                "133 blocks x 3 models — the pinned tinted-model total");
+        assertEquals(163, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
+        assertEquals(163 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
+                "163 blocks x 3 models — the pinned tinted-model total");
     }
 
     /**
