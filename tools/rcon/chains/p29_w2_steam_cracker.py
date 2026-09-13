@@ -36,8 +36,8 @@ steps = [
     phase("A: the T1 cracker — the smoke row, the 8-HU wall, then the full 4096 bar in one command"),
     Step(f"gt6machine steamcracker place {F(SC1)}", expect="GT6 steamcracker placed at 384, 65, 280"),
     Step(f"gt6machine steamcracker input 1 {F(SC1)}",
-         expect="GT6 steamcracker input: 1x coal into slot 0",
-         node_expects={"1.21.1": "GT6 steamcracker input: 1x minecraft:coal into slot 0"}),
+         expect="GT6 steamcracking input: 1x coal into slot 0",  # the report name is the MAP local (getTileEntityName), not the block literal
+         node_expects={"1.21.1": "GT6 steamcracking input: 1x minecraft:coal into slot 0"}),
     Step(f"gt6machine steamcracker fluid fill up minecraft:water 1000 {F(SC1)}",
          expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),
     Step(f"gt6machine steamcracker check {F(SC1)}", expect="minIn=16 recIn=32 maxIn=64"),

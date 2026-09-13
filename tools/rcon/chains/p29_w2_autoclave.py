@@ -29,12 +29,27 @@ F = gt6world.fmt
 
 AUTO = gt6world.Site(426, 65, 280, dz=1)
 
+# the two-stack row feed (kelp + bone_meal), loader-versioned key shapes (the p19
+# ruling: 1.20.1 Count:1b vs 1.21.1 count:1)
+def auto_merge(pos):
+    return {
+        "1.20.1": ('data merge block ' + pos + ' {inventory:{Size:5,Items:['
+                   '{Slot:0b,id:"minecraft:kelp",Count:1b},'
+                   '{Slot:1b,id:"minecraft:bone_meal",Count:1b}]}}'),
+        "1.21.1": ('data merge block ' + pos + ' {inventory:{Size:5,Items:['
+                   '{Slot:0b,id:"minecraft:kelp",count:1},'
+                   '{Slot:1b,id:"minecraft:bone_meal",count:1}]}}'),
+    }
+
 steps = [
     phase("A: the TU autoclave — the bottom-face tank fill (the :1655 D|L mask), the full 2048 bar"),
     Step(f"gt6machine autoclave place {F(AUTO)}", expect="GT6 autoclave placed at 426, 65, 280"),
-    Step(f"gt6machine autoclave input 3 {F(AUTO)}",
-         expect="GT6 autoclave input: 3x kelp into slot 0",
-         node_expects={"1.21.1": "GT6 autoclave input: 3x minecraft:kelp into slot 0"}),
+    # the row is the TWO-ITEM form (RM.java:91 items 2/3/2 — MIN-ITEM 2, the map's own
+    # minimum the single-item smoke row violated, the first live run's red); the two
+    # input stacks ride the data-merge inventory form (the p29_w1_mixer_pair shape —
+    # the input command feeds slot 0 only; Size = input 2 + output 3 slots)
+    Step(auto_merge(F(AUTO))["1.20.1"], expect="Modified block data",
+         node_cmds={"1.21.1": auto_merge(F(AUTO))["1.21.1"]}),
     Step(f"gt6machine autoclave fluid fill down minecraft:water 500 {F(AUTO)}",
          expect="filled 500/500 L of minecraft:water (ACCEPTED), input tanks hold 500 L"),
     Step(f"gt6machine autoclave check {F(AUTO)}", expect="minIn=1 recIn=1 maxIn=16"),

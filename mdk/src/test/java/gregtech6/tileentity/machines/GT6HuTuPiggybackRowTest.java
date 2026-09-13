@@ -294,6 +294,32 @@ public class GT6HuTuPiggybackRowTest extends TileEntityBasicMachineOfflineTestBa
 	}
 
 	// ------------------------------------------------------------------
+	// the autoclave row is the TWO-ITEM form (the map's own MIN-ITEM 2) — the
+	// first live run's red (RM.java:91 items 2/3/2, the single-item smoke row
+	// violated the map minimum) pinned here as the offline twin
+	// ------------------------------------------------------------------
+
+	@Test
+	void autoclaveRowRunsInItsTwoItemForm() {
+		// autoclave.json: 1 kelp + 1 bone meal + water 500 → 2 kelp, eUt 16, duration 128
+		GT6RecipeMaps.AUTOCLAVE.addRecipe(new Recipe(true,
+				new ItemStack[] {new ItemStack(Items.KELP, 1), new ItemStack(Items.BONE_MEAL, 1)},
+				new ItemStack[] {new ItemStack(Items.KELP, 2)},
+				new FluidStack[] {new FluidStack(Fluids.WATER, 500)}, null, 128, 16, 0));
+		TileEntityBasicMachine.ENERGY_FAKE_SOURCE = false;
+		TileEntityBasicMachine tMachine = tuRowMachine(GTMachines.AUTOCLAVE_ROWS.get(0));
+		tMachine.getInventory().insertItem(TileEntityBasicMachine.SLOT_INPUT, new ItemStack(Items.KELP, 1), false);
+		tMachine.getInventory().insertItem(TileEntityBasicMachine.SLOT_INPUT + 1, new ItemStack(Items.BONE_MEAL, 1), false);
+		tMachine.mTanksInput[0].fill(new FluidStack(Fluids.WATER, 500), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+		assertEquals(TileEntityBasicMachine.FOUND_AND_SUCCESSFULLY_USED_RECIPE, tMachine.checkRecipe(true, true),
+				"the two-item row meets the map's MIN-ITEM 2 and binds");
+		assertEquals(2048L, tMachine.mMaxProgress, "units(16 × 128 × 1, 10000, 10000, T) = 2048");
+		inject(tMachine, 128, 16);
+		assertTrue(tMachine.getInventory().getStackInSlot(tMachine.getInputSlotCount()).getCount() >= 2,
+				"2x kelp out — the pressure-grow smoke row completed (128 ticks @ 16/tick)");
+	}
+
+	// ------------------------------------------------------------------
 	// the Generifier parallel 100 (ACCEPTANCE ③)
 	// ------------------------------------------------------------------
 

@@ -33,8 +33,8 @@ steps = [
     phase("A: the T1 catalytic cracker — the MIRROR smoke row, the 8-HU wall, the full 4096 bar"),
     Step(f"gt6machine catalyticcracker place {F(CC1)}", expect="GT6 catalyticcracker placed at 394, 65, 280"),
     Step(f"gt6machine catalyticcracker input 1 {F(CC1)}",
-         expect="GT6 catalyticcracker input: 1x charcoal into slot 0",
-         node_expects={"1.21.1": "GT6 catalyticcracker input: 1x minecraft:charcoal into slot 0"}),
+         expect="GT6 catalyticcracking input: 1x charcoal into slot 0",  # the report name is the MAP local (getTileEntityName), not the block literal
+         node_expects={"1.21.1": "GT6 catalyticcracking input: 1x minecraft:charcoal into slot 0"}),
     Step(f"gt6machine catalyticcracker fluid fill up minecraft:water 1000 {F(CC1)}",
          expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),
     Step(f"gt6machine catalyticcracker check {F(CC1)}", expect="minIn=16 recIn=32 maxIn=64"),
