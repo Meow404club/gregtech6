@@ -683,3 +683,72 @@ GTPipeFoamTest.foamNbtRoundTripsAndOwnerDoesNotRideItems 钉死）。活链 =
   对照活证。
 
 链级 [0,0]：负臂预期红全部转成显式断言步（无 allow_failed 逃逸）。
+
+### FE 入向转换四相链 /gt6feconverter + /gt6fesource + /gt6machine + /data（p28_fe_inbound 重写，README tail-append）
+
+四相一链 `chains/p28_fe_inbound.py`（slug p28fein，端口对 26166/26176；与
+p28_ulv_chain、p28_builder_wand_oneclick 同簇——P28 能量生态簇，新鲜带
+x548..555 z28..56，四站 z=30/38/46/54 两两 margin 离散）。**重写缘由**：
+p28-cut-eu-fe-bridge 砍掉 EU→fe_battery 出向桥后，本链 A/B/C 三相的收电
+对账终点语义消亡（双腿 RED [6,6]，红步集 {5,6,10,16,17,21} 全为死记账臂，
+server ERROR 0=结构性非回归）；ULV 机器梯（p28-c-ulv-machine-ladder）合入
+后 8EU 包有了合法消费者——wiremill_ulv 窗 min4/rec8/max16，`EnergyGate
+.gateInjection :49`（|8|≥min 4，doInject 真入账；烤箱 min16 的 :50 吞包臂
+是 W3 的负对照）。fe_battery 记账臂全删（夹具留世界、不入链）。四相：
+
+- **A push 接收活证 + 裸端负臂**（z=30）：wiremill_ulv `data merge
+  {facing:5}`（机器 BE 无视 blockstate facing，W3 驱动面）背面对 converter
+  直贴（刻意无 wire：线最小 loss=1 + doWork :465 每 tick 无条件排
+  mInputMax=16，任何穿线 hop 都饿死）；铜棒 merge 后双 converter 各 push
+  512 FE，共用一个 4s 窗（16 包 ÷ 1 包/t，5× 余量），然后：**被喂
+  converter `buffer 0 FE`**（16 包全被吃——只扣实收臂只记网络真用掉的包，
+  死 fe_battery 记账臂的收据如今落在 ULV 机端点）；mill `check` 一行钉全
+  `progress=0/128 energy=0 minenergy=16 minIn=4 recIn=8 maxIn=16`（forge/neo
+  同形零分叉）：铜棒行在第一个包的 tick **绑定并按绑即耗**吃掉棒料（上游
+  consume-on-bind，槽位读 air、产物滞留 mOutputItems 永不入槽），卡死在
+  0/128 = 8EU/t 永远再够不到已绑定的 16EU/t 启动门（doWork :455 门在
+  doInactive 的 CONSTANT_ENERGY 进度复位间振荡）——**1A 流接收≠完成**，
+  完成需要 ≥16EU 整包（W3 dynamo 形）或同 tick 双包；平衡裁定的活体注脚。
+  **裸 converter（隔 1 空气、零消费者）`buffer 512 FE` 原位不动**
+  ——显式负臂：证明上面的排水是消费不是泄漏，链内断言无 allow_failed。
+- **B pull + floor 尾差**（z=38）：fe_source 设 130 FE（4 整包 + 2 FE 零
+  头），converter 每 tick 拉 1 包（root EnergyBridge.extractFe，p28-a 缝），
+  排空后源保 `stored 2 FE`（敌意零头永不离开源）+ converter 自身电容
+  `buffer 128 FE`（整包量化收据——本相刻意无消费者，发射臂找不到邻接，
+  包滞留电容=死 battery 臂 128 FE 断言的语义镜像）。
+- **C 天花板**（z=46）：满源 100k FE 喂机器，**5s 窗**（~100 tick @20tps），
+  源保 `stored 96xxx`。带宽算术：有效流逝 [3.1..6.2s] 全落 96xxx（排水
+  [2000,4000) FE）；任何 2 包/tick 回归（整型安培 bug，16EU/t）排 6400+
+  落 92xxx/93xxx=红。`poll=6.0` 吸收慢侧滞后（滞后窗稍后重读仍 96xxx；
+  过排单调，真回归永不可能 poll 绿）。老链单发 6s 窗两侧各只剩 ~0.15s
+  有效期——「速率类断言加足窗口」教训的带宽化重推，算术留在链 docstring
+  可复查。
+- **D 超载爆炸**（z=54，远离 rig）：data merge `{fe:100000}`（双进料面都
+  钳不到、只有外来写手能产出的值）→ 2 tick 宽限后 overcharge 爆炸
+  （TileEntityBase10EnergyConverter :122-126 → Root :330）→ stat 行
+  `STAT FAILED` 判 allow_failed=方块已消失（absence 的诚实证明形，非负臂
+  逃逸）。
+
+### 方块随手成型一键链 /gt6multiblock（p28_builder_wand_oneclick，README tail-append）
+
+`chains/p28_builder_wand_oneclick.py`（slug p28wandclick，端口对
+26170/26180；站点带 x296..314 z95..105，与全名册零相交）。用户裁定
+2026-09-12：builder wand **一键成型整个多方块**（对上游 1.7.10 九击语义的
+声明偏离，ADR 2026-09-12-p28-builder-wand-oneclick）——考据
+（research.p28-r-builder-wand-second-root）实锤 P28 前「wand 只建半座多方
+块」的报告不是移植 bug：玩家进料（useOn→真实点击坐标）被上游 ±1 Chebyshev
+点击窗卡住（ITileEntityMultiBlockController.java:145-146 == 上游 :51），
+单击只脚手架了锚点邻域（坩埚 24 墙中的 16），而 RCON form 臂喂的是
+checker.form aClickedAt=null 一发全成——p27 链的绿灯盖住的是 form 臂，从
+未盖住玩家进料。本链的 `wandclick` 臂（GTMultiBlockCommand，本卡新增）就
+是玩家进料覆盖：从被点格解析脚手架目标（GT6BuilderWandItem.scaffoldTarget
+= useOn 的原样解析）再驱动生产派发：
+
+- **A 一键故事**：只放 controller（零墙）`gt6multiblock wandclick C 24` →
+  `formed=true okay=true stock 24 -> 0`；y+2 环格（C+1,y+2,C-1，前语义下
+  整环空气=缺失的第八环）与 y+0 环格均为 WALL；`crucible C check` →
+  `okay=true linked_parts=24/24`；幂等臂：已成型结构上二次 wandclick
+  （stock 1）**零消耗** `stock 1 -> 1`（SET 走查 beat-1 诊断短路）。
+- **B form 臂回归锚**（本卡未触碰）：`gt6multiblock form F 24` 照常一发
+  全成 + `linked_parts=24/24`。
+- **C 拆除**：显式 fill 归还（声明站点清理是结构兜底）。
