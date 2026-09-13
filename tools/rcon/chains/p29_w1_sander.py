@@ -72,7 +72,7 @@ steps = [
     phase("A: T1 — the /gt6energy source ABOVE the machine (the SBIT_U top energy face); one row one process"),
     Step(f"setblock {T1} gt6:sanding_machine", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T1)),
-    Step(f"gt6energy place {F(RIG)}", expect=f"GT6 energy source placed at {F(RIG)}"),
+    Step(f"gt6energy place {F(RIG)}", expect=f"GT6 energy source placed at {RIG.x}, {RIG.y}, {RIG.z}"),
     Step(f"gt6energy type {F(RIG)} RU", expect="type ENERGY.KINETIC_ROTATION"),
     Step(f"gt6energy volt {F(RIG)} 32", expect="voltage 32"),
     Step(f"gt6energy mode {F(RIG)} on", expect="emitting true", sleep=2.0),

@@ -79,7 +79,13 @@ steps = [
     Step(f"gt6machine wiremill check {T2}", expect="minIn=64 recIn=128 maxIn=256"),
     Step(feed_merge(T2, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T2, 1)),
     Step(f"gt6machine wiremill inject 6 256 {T2}", expect="progress=0/0"),
-    Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T2}", expect="filled 1000/1000"),
+    # sleep 2.5 AFTER the fill: the dry inject latched mRunning=true (doWork :457 sets
+    # it whenever the energy gate passes) and the fill's mInventoryChanged flag is
+    # cleared at the very next tick end (:440) — the :476 checkRecipe arm needs the
+    # !mRunning leg, which the idle branch (:459-461) only re-opens after 40+ ticks.
+    # Round-2 empirics: without the idle window the wet inject burst finds nothing
+    # (progress=0/0 twice); T3/T4 (no dry phase) pass identically.
+    Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T2}", expect="filled 1000/1000", sleep=2.5),
     Step(f"gt6machine wiremill inject 6 256 {T2}", expect=DIRT_INJ["1.20.1"], node_expects=DIRT_INJ),
     Step(f"setblock {T3} gt6:pressure_washer_t3", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T3, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T3, 1)),
