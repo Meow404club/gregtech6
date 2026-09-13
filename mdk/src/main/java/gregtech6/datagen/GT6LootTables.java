@@ -98,6 +98,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families
                 new SubProviderEntry(GT6ExoticFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-exotic-energy — the six exotic-energy families
                 new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-core-5tier — the five eu-core families
+                new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-hu-tu-piggyback — the seven hu-tu families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -132,6 +133,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families
                 new SubProviderEntry(GT6ExoticFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-exotic-energy — the six exotic-energy families
                 new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-core-5tier — the five eu-core families
+                new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-hu-tu-piggyback — the seven hu-tu families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -707,6 +709,49 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : exoticFamiliesLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The hu-tu piggyback block list (task p29-w2-hu-tu-piggyback): the 16 blocks of the
+     * seven families (SteamCracker/CatalyticCracker 4-ladders + the TU four singles +
+     * the Loom 4-ladder) — the euHuFamiliesLootBlocks shape verbatim, the MTE default
+     * self-drop.
+     */
+    public static List<Block> huTuPiggybackLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.steamcrackerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.catalyticcrackerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.coagulatorBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.generifierBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.bathBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.autoclaveBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.loomBlockArray());
+        return rBlocks;
+    }
+
+    /** The hu-tu piggyback self-drop provider (task p29-w2-hu-tu-piggyback; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6HuTuPiggybackBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6HuTuPiggybackBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6HuTuPiggybackBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return huTuPiggybackLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : huTuPiggybackLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 
