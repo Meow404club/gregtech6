@@ -528,6 +528,10 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "sluice" -> GT6RecipeMaps.SLUICE;
 			case "sharpening" -> GT6RecipeMaps.SHARPENING;
 			case "pressurewasher" -> GT6RecipeMaps.PRESSURE_WASHER;
+			case "loom" -> GT6RecipeMaps.LOOM;
+			case "boxinator" -> GT6RecipeMaps.BOXINATOR;
+			case "unboxinator" -> GT6RecipeMaps.UNBOXINATOR;
+			case "fermenter" -> GT6RecipeMaps.FERMENTER;
 			default -> null;
 		};
 	}
