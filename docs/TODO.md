@@ -317,7 +317,8 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 
 ## 第 28 阶段（入口，2026-09-12 P27 收官移交）——✅ 已完成（2026-09-13 收官：21 卡全合，main 6f193c1e；阶段末全量 sweep 双腿 64 链 19 簇 GREEN[forge 3247s/neo 3181s]，quarantine p25cfoam neo 转绿销账；全量锚点=phase_anchors.p28）
 
-## 第 29 阶段（P28 移交，2026-09-13）——🚧 未开（大批量剩余项补齐；主账本=research.p29-gap-census 八区+六波提案 W1 机器族A→W2 机器族B[能量类型卡]→W3 多方块→W4 流体储能→W5 工具杂项→W6 世界生成；开局项=KG RAPTOR 蒸馏[1868 节点超线]+普查脚本加固；池底=Fusion/Massfab/枪械/星球）
+## 第 29 阶段（P28 移交，2026-09-13）——🚧 进行中（大批量剩余项补齐；主账本=research.p29-gap-census 八区+六波提案 W1 机器族A→W2 机器族B[能量类型卡]→W3 多方块→W4 流体储能→W5 工具杂项→W6 世界生成；开局项 KG RAPTOR 蒸馏 ✅[-43 节点，tmp.kg29.raptor_exec]；池底=Fusion/Massfab/枪械/星球）
+- [x] **W1 机器族批量A（2026-09-14 收官，main 63acb6d7，S8' 四卡零打回）**：卡A 脚手架 32d10108（12 RM 图+MachineRow.efficiency 列+进度 units() 化+CENTRIFUGE_PARALLEL；efficiency 5000=2×进度=半速/2×能耗勘误钉死[UT.java:1677+LH.java:311 双证]）→卡B 轧机组 f73bcc2c（RollingMill/RollBender/RollFormer/ClusterMill RU 4梯 16 行）→卡C 加工组 7da90ccf（Buzzsaw/Squeezer[KU 首消费族]/Centrifuge[1-2-4-8 非标]/Sluice[无世界交互实证]/Sander/PressureWasher 24 行+SLUICE 图）→卡D EU/HU 组 63acb6d7（Mixer RU/EU 共图对 2:1+ElectricLoom/Sifter/Boxinator/Unboxinator/Fermenter HU 窗）。**结构性发现**：RU kinetic 跨命令保留进度 vs EU 类 idle 清零（TileEntityBasicMachine:562↔上游 :894，代码无能量类型判别=供能动态学表现）；GTMachineCommand inject 结构性只注自身能量类型（活体互拒断言=离线 doInject 直驱，p26 先例）；引擎 HORIZONTAL_FACING-only+直轴 axle 拒垂直面→T1 垂直面供能=/gt6energy 源块判例。W2 入口：EU 5梯 8 族+MU/LU/CU/TU 能量类型卡+Bath(TU)；5-tier 立行制随 Electrolyzer 首例。非阻塞池=mixer_pair 链注释归因修正/rollbender·rollformer smoke 行语义（配方批卡）/D 卡 3 提交 union 拼缝中间态编译破损（终树全门禁验证，已落账）
 
 - [x] p27-neo-tag-resource-wiring：c: 孪生树 1.21.1 腿运行时接线→已合 37c27c22（build 面嫁接 forge:items→c:item 7927 面字节同源+per-leg 断言+p27tags 链 neo 臂重钉双腿 GREEN+ADR-P17-1 §6 再裁决；死复数带 jar exclude 留 §6.4 可选）
 - [x] 低置信译名社区核→已合 d5141eb4（research.p28-r-translation-community 逐词 ≥2 源考据+用户三裁定：batch1 五回退[压力成型机/压模器/通量琥珀金/脉冲合金/生动合金]+gem/crystalline 拆分+社区定则 funnel=漏斗/hopper=料斗+行星 24 名汉化；kalendrite 族与 dark_thaumium 维持现译；39 键值变零增删）
