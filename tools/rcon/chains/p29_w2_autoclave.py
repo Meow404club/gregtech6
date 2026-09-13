@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """p29-w2-autoclave — the TU Autoclave chain (task p29-w2-hu-tu-piggyback, group
 p29_w2_hu_tu; the TU single :1655 over the JSON-poured autoclave.json smoke row —
-3 kelp + water 500 -> 3 dried kelp, eUt 16, duration 128):
+1 kelp + 1 bone meal + water 500 -> 2 kelp, eUt 16, duration 128 — the TWO-ITEM
+  row form the map MIN-ITEM 2 demands):
 
   budget units(16x128x1, 10000, 10000, T) = 2048 -> 128 ticks @ 16 EU/tick.
   the DISTINCTIVE :1655 masks pinned live through the fill faces: the tank-in face is
@@ -54,8 +55,8 @@ steps = [
          expect="filled 500/500 L of minecraft:water (ACCEPTED), input tanks hold 500 L"),
     Step(f"gt6machine autoclave check {F(AUTO)}", expect="minIn=1 recIn=1 maxIn=16"),
     Step(f"gt6machine autoclave inject 128 16 {F(AUTO)}",
-         expect="outputs=[3x dried_kelp; ]",
-         node_expects={"1.21.1": "outputs=[3x minecraft:dried_kelp; ]"}),
+         expect="outputs=[2x kelp; ]",
+         node_expects={"1.21.1": "outputs=[2x minecraft:kelp; ]"}),
 
     phase("B: teardown — the explicit band restore (no global state was touched)"),
     Step("fill 425 62 278 427 68 282 air", expect="filled"),
