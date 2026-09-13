@@ -1247,6 +1247,207 @@ public final class GTMachines {
 					rollingmillBlockArray()).build(null));
 
 	// ---------------------------------------------------------------------------
+	// the P29 W1 roll-ladder families (task p29-w1-kinetic-roll-ladder) — RollingMill
+	// (RU, :1349-1352), RollBender (RU, :1355-1358), RollFormer (RU, :1361-1364) and
+	// ClusterMill (RU, :1367-1370), all MultiTileEntityBasicMachine with
+	// MT.DATA.Kinetic_T[1..4] (Bronze / ANY.Steel / Ti / TungstenSteel), NBT_INPUT
+	// 32/128/512/2048 through the TIER_INPUTS conversion, NBT_TEXTURE
+	// "rollingmill"/"rollbender"/"rollformer"/"clustermill", hardness 7.0/6.0/9.0/12.5
+	// (NBT_RESISTANCE == hardness), NO NBT_PARALLEL key on any of the sixteen rows → 1
+	// (the :97 ruling shape, the Wiremill column set), and the :1349-1370 connectivity
+	// face ALL FOUR families share verbatim: item in over the left (NBT_INV_SIDE_IN
+	// SBIT_L, AUTO_IN SIDE_LEFT), out over the right (NBT_INV_SIDE_OUT SBIT_R, AUTO_OUT
+	// SIDE_RIGHT), energy over the back (NBT_ENERGY_ACCEPTED_SIDES SBIT_B, the :151 read
+	// ORs SBIT_A). No NBT_TANK_SIDE_* keys → the upstream field defaults 127 (the
+	// all-sides zero-regression face) with SIDE_UNDEFINED auto sides. menu = null on
+	// every row: ZERO new gt6:* MenuType (the p26 W1 GUI clause). Rows ride the 26-arg
+	// MachineRow constructor (efficiency = null — kinetic machines carry no
+	// NBT_EFFICIENCY key, the BE keeps the :96 default 10000; the card-A column is
+	// consumed by the Electric_* rows only).
+	//
+	// RollingMill path note: the p28 ULV rung owns the bare path "rollingmill" (20115,
+	// EU) — the RU ladder (:1349-1352, 20111-20114) registers as rollingmill_t1.._t4 in
+	// the SAME BY_PATH maps and the SAME family BET (the validBlocks walk is the map
+	// walk), so the ULV electric rung and the RU material ladder share the map and run
+	// their own rows (ULV window vs TIER_INPUTS), the same-map co-existence the card
+	// orders. The other three families are new registries, ids free.
+	//
+	// KJS surface declaration (the card contract): this section's product is the
+	// REGISTRATION face (4 families x 4 MachineRow rows) plus the datapack domain (the
+	// data/gt6/recipe_maps/<map>.json smoke rows poured through the GT6RecipeMapJsonLoader
+	// seam). The four recipe maps are the card-A GT6RecipeMaps constants REUSED verbatim —
+	// no KubeJS face, no new map constant, no new GUI MenuType lives here.
+	// ---------------------------------------------------------------------------
+	/** The Roll Bender family unit word (the W1 trio :101-104 key form; upstream name column "Roll Bender ("+aMat.getLocal()+")", Loader:1355-1358). */
+	public static final String MACHINE_ROLL_BENDER_UNIT_KEY = "gt6.row.machine.roll_bender";
+	/** The Roll Former family unit word (the same key form; "Roll Former (", Loader:1361-1364). */
+	public static final String MACHINE_ROLL_FORMER_UNIT_KEY = "gt6.row.machine.roll_former";
+	/** The Cluster Mill family unit word (the same key form; "Cluster Mill (", Loader:1367-1370). */
+	public static final String MACHINE_CLUSTER_MILL_UNIT_KEY = "gt6.row.machine.cluster_mill";
+
+	/** The four Rolling Mill RU rows, upstream line order :1349-1352 (T1-T4, the Kinetic_T ladder; the p28 ULV rung keeps the bare path + the EU row). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> ROLLINGMILL_RU_ROWS = java.util.List.of(
+			rollFamily(TD.Energy.RU, "rollingmill", () -> GT6RecipeMaps.ROLLING_MILL, MACHINE_ROLLING_MILL_UNIT_KEY, "rollingmill_t1", "bronze"       , "Bronze"       , 20111,  7.0F, 0),
+			rollFamily(TD.Energy.RU, "rollingmill", () -> GT6RecipeMaps.ROLLING_MILL, MACHINE_ROLLING_MILL_UNIT_KEY, "rollingmill_t2", "steel"        , "Steel"        , 20112,  6.0F, 1),
+			rollFamily(TD.Energy.RU, "rollingmill", () -> GT6RecipeMaps.ROLLING_MILL, MACHINE_ROLLING_MILL_UNIT_KEY, "rollingmill_t3", "titanium"     , "Titanium"     , 20113,  9.0F, 2),
+			rollFamily(TD.Energy.RU, "rollingmill", () -> GT6RecipeMaps.ROLLING_MILL, MACHINE_ROLLING_MILL_UNIT_KEY, "rollingmill_t4", "tungstensteel", "Tungstensteel", 20114, 12.5F, 3));
+
+	/** The four Roll Bender rows, upstream line order :1355-1358 (T1-T4, the Kinetic_T ladder; no NBT_PARALLEL → 1). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> ROLL_BENDER_ROWS = java.util.List.of(
+			rollFamily(TD.Energy.RU, "rollbender", () -> GT6RecipeMaps.ROLL_BENDER, MACHINE_ROLL_BENDER_UNIT_KEY, "rollbender"   , "bronze"       , "Bronze"       , 20121,  7.0F, 0),
+			rollFamily(TD.Energy.RU, "rollbender", () -> GT6RecipeMaps.ROLL_BENDER, MACHINE_ROLL_BENDER_UNIT_KEY, "rollbender_t2", "steel"        , "Steel"        , 20122,  6.0F, 1),
+			rollFamily(TD.Energy.RU, "rollbender", () -> GT6RecipeMaps.ROLL_BENDER, MACHINE_ROLL_BENDER_UNIT_KEY, "rollbender_t3", "titanium"     , "Titanium"     , 20123,  9.0F, 2),
+			rollFamily(TD.Energy.RU, "rollbender", () -> GT6RecipeMaps.ROLL_BENDER, MACHINE_ROLL_BENDER_UNIT_KEY, "rollbender_t4", "tungstensteel", "Tungstensteel", 20124, 12.5F, 3));
+
+	/** The four Roll Former rows, upstream line order :1361-1364 (T1-T4, the Kinetic_T ladder; no NBT_PARALLEL → 1). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> ROLL_FORMER_ROWS = java.util.List.of(
+			rollFamily(TD.Energy.RU, "rollformer", () -> GT6RecipeMaps.ROLL_FORMER, MACHINE_ROLL_FORMER_UNIT_KEY, "rollformer"   , "bronze"       , "Bronze"       , 20131,  7.0F, 0),
+			rollFamily(TD.Energy.RU, "rollformer", () -> GT6RecipeMaps.ROLL_FORMER, MACHINE_ROLL_FORMER_UNIT_KEY, "rollformer_t2", "steel"        , "Steel"        , 20132,  6.0F, 1),
+			rollFamily(TD.Energy.RU, "rollformer", () -> GT6RecipeMaps.ROLL_FORMER, MACHINE_ROLL_FORMER_UNIT_KEY, "rollformer_t3", "titanium"     , "Titanium"     , 20133,  9.0F, 2),
+			rollFamily(TD.Energy.RU, "rollformer", () -> GT6RecipeMaps.ROLL_FORMER, MACHINE_ROLL_FORMER_UNIT_KEY, "rollformer_t4", "tungstensteel", "Tungstensteel", 20134, 12.5F, 3));
+
+	/** The four Cluster Mill rows, upstream line order :1367-1370 (T1-T4, the Kinetic_T ladder; the casingMachineQuadruple recipe family — no NBT_PARALLEL → 1). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> CLUSTER_MILL_ROWS = java.util.List.of(
+			rollFamily(TD.Energy.RU, "clustermill", () -> GT6RecipeMaps.CLUSTER_MILL, MACHINE_CLUSTER_MILL_UNIT_KEY, "clustermill"   , "bronze"       , "Bronze"       , 20141,  7.0F, 0),
+			rollFamily(TD.Energy.RU, "clustermill", () -> GT6RecipeMaps.CLUSTER_MILL, MACHINE_CLUSTER_MILL_UNIT_KEY, "clustermill_t2", "steel"        , "Steel"        , 20142,  6.0F, 1),
+			rollFamily(TD.Energy.RU, "clustermill", () -> GT6RecipeMaps.CLUSTER_MILL, MACHINE_CLUSTER_MILL_UNIT_KEY, "clustermill_t3", "titanium"     , "Titanium"     , 20143,  9.0F, 2),
+			rollFamily(TD.Energy.RU, "clustermill", () -> GT6RecipeMaps.CLUSTER_MILL, MACHINE_CLUSTER_MILL_UNIT_KEY, "clustermill_t4", "tungstensteel", "Tungstensteel", 20144, 12.5F, 3));
+
+	/**
+	 * One roll-family row factory — the wiremill() row shape verbatim over the
+	 * :1349-1370 face (left in / right out, energy back, no tank keys, no parallel → 1,
+	 * RU), parameterised over the family energy/texture/map/unit-key; the differing
+	 * columns (path/id/material rung/hardness/tier) ride the arguments. The recipe map
+	 * rides the LAZY supplier (the ulvKinetic form — the offline test suite re-inits the
+	 * map registry per test, so a captured instance would go stale). The
+	 * {@code TD.Energy.RU, "<family>",} literal pair at the call sites is the
+	 * borrow_port_overlays.py census face (the family texture borrow set parses exactly
+	 * that face). The 26-arg MachineRow constructor — efficiency = null (the kinetic
+	 * no-NBT_EFFICIENCY ruling).
+	 */
+	private static GTBasicMachineBlock.MachineRow rollFamily(gregapi.code.TagData aEnergyType, String aTexture,
+			java.util.function.Supplier<gregtech6.recipes.RecipeMap> aMap, String aUnitKey,
+			String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), aUnitKey, aMetaId, aHardness, aTier, 1, false,
+				aMap, aEnergyType, aTexture,
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B, the :151 read ORs SBIT_A*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L, the :137 read ORs SBIT_A*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)-1 /*no NBT_TANK_SIDE_AUTO_IN key → SIDE_UNDEFINED*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType (the p26 W1 GUI clause)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows*/, false);
+	}
+
+	/** The registered Roll Bender blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> ROLLBENDER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Roll Bender items, same keys as {@link #ROLLBENDER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> ROLLBENDER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Roll Former blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> ROLLFORMER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Roll Former items, same keys as {@link #ROLLFORMER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> ROLLFORMER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Cluster Mill blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> CLUSTERMILL_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Cluster Mill items, same keys as {@link #CLUSTERMILL_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> CLUSTERMILL_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	// the roll-ladder blocks join the family BY_PATH maps (the BET validBlocks ride the
+	// blockArray() walkers; loot/datagen/creative-tab/paint walk the same tables) — the
+	// RollingMill RU rows join the p28 ULV rung's OWN maps (the shared-BET ruling above).
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_RU_ROWS) {
+			ROLLINGMILL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ROLLINGMILL_BE.get(), tRow)));
+			ROLLINGMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : ROLL_BENDER_ROWS) {
+			ROLLBENDER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ROLLBENDER_BE.get(), tRow)));
+			ROLLBENDER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : ROLL_FORMER_ROWS) {
+			ROLLFORMER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ROLLFORMER_BE.get(), tRow)));
+			ROLLFORMER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : CLUSTER_MILL_ROWS) {
+			CLUSTERMILL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CLUSTERMILL_BE.get(), tRow)));
+			CLUSTERMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Roll Bender block list in registration order (the loot/datagen walkers). */
+	public static Block[] rollbenderBlockArray() {
+		Block[] rBlocks = new Block[ROLLBENDER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : ROLLBENDER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Roll Former block list in registration order (the loot/datagen walkers). */
+	public static Block[] rollformerBlockArray() {
+		Block[] rBlocks = new Block[ROLLFORMER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : ROLLFORMER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Cluster Mill block list in registration order (the loot/datagen walkers). */
+	public static Block[] clustermillBlockArray() {
+		Block[] rBlocks = new Block[CLUSTERMILL_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : CLUSTERMILL_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine rollbender — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block rollbenderBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = ROLLBENDER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine rollformer — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block rollformerBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = ROLLFORMER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine clustermill — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block clustermillBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = CLUSTERMILL_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The Roll Bender family BET: the Wiremill shape verbatim — the shared kineticMachine factory, the four tier blocks multi-attached. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> ROLLBENDER_BE =
+			BLOCK_ENTITY_TYPES.register("rollbender", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.ROLLBENDER_BE.get(), aPos, aState),
+					rollbenderBlockArray()).build(null));
+
+	/** The Roll Former family BET: the Wiremill shape verbatim. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> ROLLFORMER_BE =
+			BLOCK_ENTITY_TYPES.register("rollformer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.ROLLFORMER_BE.get(), aPos, aState),
+					rollformerBlockArray()).build(null));
+
+	/** The Cluster Mill family BET: the Wiremill shape verbatim. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> CLUSTERMILL_BE =
+			BLOCK_ENTITY_TYPES.register("clustermill", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.CLUSTERMILL_BE.get(), aPos, aState),
+					clustermillBlockArray()).build(null));
+
+	// ---------------------------------------------------------------------------
 	// the Advanced Crafting Table (task p24-act-machine) — the SINGLE-VARIANT machine
 	// (decisions.p24-act-be-form: the upstream MTE extends TileEntityBase09FacingSingle,
 	// NOT the TileEntityBasicMachine energy family — zero energy, zero tick auto-craft —
@@ -1376,6 +1577,9 @@ public final class GTMachines {
 		rBlocks.add(SHREDDER_ULV.get()); // task p28-c-ulv-machine-ladder — the explicit-RO ULV rows + the new RollingMill family
 		rBlocks.add(CRUSHER_ULV.get());
 		java.util.Collections.addAll(rBlocks, rollingmillBlockArray());
+		java.util.Collections.addAll(rBlocks, rollbenderBlockArray()); // task p29-w1-kinetic-roll-ladder — the roll ladders join the paint census
+		java.util.Collections.addAll(rBlocks, rollformerBlockArray());
+		java.util.Collections.addAll(rBlocks, clustermillBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -1505,9 +1709,24 @@ public final class GTMachines {
 								for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ULV_ROWS) {
 									aOutput.accept(new ItemStack(WIREMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
-								for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_ROWS) {
-									aOutput.accept(new ItemStack(ROLLINGMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
-								}
+							for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_ROWS) {
+								aOutput.accept(new ItemStack(ROLLINGMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							// task p29-w1-kinetic-roll-ladder: the roll ladders, +16 rows (the
+							// RU RollingMill ladder joins its ULV sibling's map walk above — the
+							// ROLLINGMILL_ROWS walk covers the p28 ULV rung only)
+							for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_RU_ROWS) {
+								aOutput.accept(new ItemStack(ROLLINGMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : ROLL_BENDER_ROWS) {
+								aOutput.accept(new ItemStack(ROLLBENDER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : ROLL_FORMER_ROWS) {
+								aOutput.accept(new ItemStack(ROLLFORMER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : CLUSTER_MILL_ROWS) {
+								aOutput.accept(new ItemStack(CLUSTERMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
 								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
 								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));
 								// task p16-distillery-family ①: the Integrated Circuit ("Selector Tag") —

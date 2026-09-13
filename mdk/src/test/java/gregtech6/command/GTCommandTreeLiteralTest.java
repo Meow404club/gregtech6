@@ -74,6 +74,10 @@ public class GTCommandTreeLiteralTest {
 		"wiremill", "wiremill_t2", "wiremill_t3", "wiremill_t4",
 		"press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds — the Press ladder
 		"extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds — the Extruder ladder
+		"rollingmill_t1", "rollingmill_t2", "rollingmill_t3", "rollingmill_t4", // task p29-w1-kinetic-roll-ladder — the RU RollingMill ladder (the p28 ULV rung has no arm)
+		"rollbender", "rollbender_t2", "rollbender_t3", "rollbender_t4", // task p29-w1-kinetic-roll-ladder — the Roll Bender ladder
+		"rollformer", "rollformer_t2", "rollformer_t3", "rollformer_t4", // task p29-w1-kinetic-roll-ladder — the Roll Former ladder
+		"clustermill", "clustermill_t2", "clustermill_t3", "clustermill_t4", // task p29-w1-kinetic-roll-ladder — the Cluster Mill ladder
 		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 
 	private static CommandSourceStack stack() {
