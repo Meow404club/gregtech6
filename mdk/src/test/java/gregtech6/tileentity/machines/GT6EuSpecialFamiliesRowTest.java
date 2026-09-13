@@ -30,7 +30,8 @@ import gregtech6.registry.GTMachines;
  * The eu-special families row acceptance (task p29-w2-eu-special, the OFFLINE half —
  * the {@link GTCannerFamilyRowTest} shape): the fourteen row records pinned to the
  * upstream columns (Loader_MultiTileEntities.java:1497-1501 the Autocrafter EU 5-tier
- * ladder — the WAVE'S ONLY DUAL ENERGY FACE SBIT_U|SBIT_D / :1582-1586 the Lightning
+ * ladder — the WAVE'S FIRST DUAL ENERGY FACE SBIT_U|SBIT_D (the exotic Polarizer
+ * later joins with the same U|D face, task p29-w2-exotic-energy) / :1582-1586 the Lightning
  * Processor EU 5-tier ladder with NBT_USE_OUTPUT_TANK T / :1532-1535 the Laminator HU
  * 4-tier Heat_T ladder), the {@link GTMachines#euFiveTierWindow} 5-tier 立行制 resolver
  * (tier 4 = EV_TIER_INPUTS), the 5-row window arithmetic and the output-tank fallback
@@ -145,7 +146,7 @@ public class GT6EuSpecialFamiliesRowTest extends TileEntityBasicMachineOfflineTe
 			assertSame(i < 4 ? GTMachines.ELECTRIC_T_LADDER.get(i) : GTMachines.ELECTRIC_T5, tRow.material(),
 					"the Electric_T material ladder of tier " + tTier + " (MT.java:3691)");
 			// the connectivity + auto-side columns (:1497 verbatim)
-			assertEquals(AUTOCRAFTER_ENERGY_MASK, tRow.energySides(), "NBT_ENERGY_ACCEPTED_SIDES SBIT_U|SBIT_D — the WAVE'S ONLY DUAL ENERGY FACE");
+			assertEquals(AUTOCRAFTER_ENERGY_MASK, tRow.energySides(), "NBT_ENERGY_ACCEPTED_SIDES SBIT_U|SBIT_D — the WAVE'S FIRST DUAL ENERGY FACE");
 			assertEquals((byte)127, tRow.fluidIn(), "NO NBT_TANK_SIDE_IN key → the 127 default (the zero-fluid map)");
 			assertEquals((byte)127, tRow.fluidOut(), "NO NBT_TANK_SIDE_OUT key");
 			assertEquals((byte)-1, tRow.fluidAutoIn(), "SIDE_UNDEFINED tank auto in");

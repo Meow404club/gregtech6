@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """p29-w2-eu-special/autocrafter — the Autocrafter chain (task p29-w2-eu-special
-ACCEPTANCE ①+④: the WAVE'S ONLY DUAL ENERGY FACE U|D live proof + the smoke row run).
+ACCEPTANCE ①+④: the WAVE'S FIRST DUAL ENERGY FACE U|D live proof + the smoke row run).
 
 The machine is the EU 5-tier ladder's T1 row (Loader_MultiTileEntities.java:1497,
 NBT_ENERGY_ACCEPTED_SIDES SBIT_U|SBIT_D — every other machine of the wave carries a

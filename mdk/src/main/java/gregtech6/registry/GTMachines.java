@@ -2589,7 +2589,7 @@ public final class GTMachines {
 	 * Electric_T material (tier 4 rides {@link #ELECTRIC_T5}), the voltage-word slot,
 	 * hardness 4.0 (the :1497 column on all five rows), the "autocrafter" texture,
 	 * RM.AUTOCRAFTER, EU, NO parallel/efficiency keys (the 26-arg overload), and the
-	 * :1497 masks VERBATIM — the WAVE'S ONLY DUAL ENERGY FACE: NBT_ENERGY_ACCEPTED_SIDES
+	 * :1497 masks VERBATIM — the WAVE'S FIRST DUAL ENERGY FACE: NBT_ENERGY_ACCEPTED_SIDES
 	 * SBIT_U|SBIT_D (item in U|L auto LEFT, out R|D auto RIGHT; NO tank keys — the map is
 	 * 9/12/1 items, 0/0/0 fluids, the zero-fluid 127/-1 face).
 	 */
