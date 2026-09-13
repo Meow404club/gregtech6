@@ -148,6 +148,15 @@ SESSION_GROUPS = (
     # registering). The former EU bridge rig chain was cut with the EU->FE
     # outbound bridge, task p28-cut-eu-fe-bridge.
     ("p27_vanilla_tag_dual_tree",),
+    # P28 ULV-wave closure band (card p28-c-ulv-chain): the four-arm ULV chain
+    # — arm A diesel/axle/dynamo/wiremill_ulv direct closure (z=40), arm B the
+    # 8 EU white-burn wall vs the LV oven (z=48), arm C the 1375 K melting
+    # gate (z=56), arm D the FE converter -> gt.reversed step-up transformer
+    # -> LV oven trickle (z=64), all in the fresh x519..545 strip. Sites
+    # pairwise z-disjoint (margin 2 clear) so plan_waves may interleave the
+    # arms; no fresh_boot / mutates member — the inject and grid rigs touch no
+    # global state, one session boot serves the chain both passes.
+    ("p28_ulv_chain",),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
