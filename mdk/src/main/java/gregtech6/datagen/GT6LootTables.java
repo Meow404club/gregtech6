@@ -94,6 +94,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ProcessMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-kinetic-process-ladder
                 new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
+                new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-eu-hu-families — the seven eu-hu families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -124,6 +125,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ProcessMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-kinetic-process-ladder
                 new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
+                new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-eu-hu-families — the seven eu-hu families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -532,6 +534,49 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : cannerLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The eu-hu families block list (task p29-w1-eu-hu-families): the 25 blocks of the
+     * seven families (Mixer + ElectricMixer + ElectricLoom + ElectricSifter + Boxinator +
+     * Unboxinator 4 tiers each, plus the single-variant Fermenter) — the cannerLootBlocks
+     * shape verbatim, the MTE default self-drop.
+     */
+    public static List<Block> euHuFamiliesLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.mixerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.electricMixerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.electricLoomBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.electricSifterBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.boxinatorBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.unboxinatorBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.fermenterBlockArray());
+        return rBlocks;
+    }
+
+    /** The eu-hu families self-drop provider (task p29-w1-eu-hu-families; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6EuHuFamiliesBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6EuHuFamiliesBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6EuHuFamiliesBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return euHuFamiliesLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : euHuFamiliesLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 
