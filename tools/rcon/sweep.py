@@ -148,15 +148,31 @@ SESSION_GROUPS = (
     # registering). The former EU bridge rig chain was cut with the EU->FE
     # outbound bridge, task p28-cut-eu-fe-bridge.
     ("p27_vanilla_tag_dual_tree",),
-    # P28 ULV-wave closure band (card p28-c-ulv-chain): the four-arm ULV chain
-    # — arm A diesel/axle/dynamo/wiremill_ulv direct closure (z=40), arm B the
-    # 8 EU white-burn wall vs the LV oven (z=48), arm C the 1375 K melting
-    # gate (z=56), arm D the FE converter -> gt.reversed step-up transformer
-    # -> LV oven trickle (z=64), all in the fresh x519..545 strip. Sites
-    # pairwise z-disjoint (margin 2 clear) so plan_waves may interleave the
-    # arms; no fresh_boot / mutates member — the inject and grid rigs touch no
-    # global state, one session boot serves the chain both passes.
-    ("p28_ulv_chain",),
+    # P28 energy-ecosystem cluster (three chains: card p28-c-ulv-chain's band
+    # + the roster backfill of card p28-fe-inbound-chain-rewrite — the two
+    # P28-card chains left out when the p28 cut landed, plus the wand-click
+    # face): the gt6machine / gt6oven / gt6engine / gt6energy / gt6fe* /
+    # gt6multiblock acceptance faces share ONE session boot; every member
+    # bbox-disjoint so plan_waves may interleave them.
+    # - p28_ulv_chain: the four-arm ULV closure — arm A diesel/axle/dynamo/
+    #   wiremill_ulv direct closure (z=40), arm B the 8 EU white-burn wall vs
+    #   the LV oven (z=48), arm C the 1375 K melting gate (z=56), arm D the
+    #   FE converter -> gt.reversed step-up transformer -> LV oven trickle
+    #   (z=64), all in the fresh x519..545 strip; sites pairwise z-disjoint
+    #   (margin 2 clear).
+    # - p28_fe_inbound: the FE->EU converter chain REWROTE after the
+    #   EU->fe_battery bridge fell (task p28-cut-eu-fe-bridge, the old arms
+    #   RED [6,6] = dead booking semantics) — re-endpointed on wiremill_ulv:
+    #   A push acceptance + bare-consumer negative (z=30), B pull + the 2 FE
+    #   floor tail (z=38), C the 8 EU/t ceiling band (z=46), D the overload
+    #   explosion (z=54); fresh x548..555 strip, x-disjoint from the W3 band.
+    # - p28_builder_wand_oneclick: the one-click crucible form face, spawn-
+    #   adjacent x298..312 z97..103 — the grass|hammer split-band precedent:
+    #   one cluster, disjoint bands, band-local cleanup each.
+    # No fresh_boot / mutates member — no member touches global state; one
+    # session boot serves the cluster (per-chain port pins yield to
+    # framework.session_ports).
+    ("p28_ulv_chain", "p28_fe_inbound", "p28_builder_wand_oneclick"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
