@@ -1,7 +1,10 @@
 {
   "recipes": [
     {
-      "inputs": [{ "item": "minecraft:clay_ball", "count": 2 }],
+      "inputs": [
+        { "item": "minecraft:clay_ball", "count": 1 },
+        { "item": "minecraft:clay_ball", "count": 1 }
+      ],
       "outputs": [{ "item": "minecraft:brick", "count": 1 }],
       "duration": 16,
       "eut": 16

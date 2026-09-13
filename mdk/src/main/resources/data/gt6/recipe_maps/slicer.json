@@ -1,7 +1,10 @@
 {
   "recipes": [
     {
-      "inputs": [{ "item": "minecraft:stone", "count": 2 }],
+      "inputs": [
+        { "item": "minecraft:stone", "count": 1 },
+        { "item": "minecraft:stone", "count": 1 }
+      ],
       "outputs": [{ "item": "minecraft:stone_slab", "count": 2 }],
       "duration": 16,
       "eut": 16
