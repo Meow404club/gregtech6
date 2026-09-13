@@ -1,0 +1,171 @@
+{
+  "parent": "minecraft:block/cube",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#down",
+          "tintindex": 0
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#east",
+          "tintindex": 0
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#north",
+          "tintindex": 0
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#south",
+          "tintindex": 0
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#up",
+          "tintindex": 0
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#west",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "north": {
+          "cullface": "north",
+          "texture": "#overlay_front"
+        }
+      },
+      "from": [
+        0,
+        0,
+        -0.01
+      ],
+      "to": [
+        16,
+        16,
+        0
+      ]
+    },
+    {
+      "faces": {
+        "south": {
+          "cullface": "south",
+          "texture": "#overlay_back"
+        }
+      },
+      "from": [
+        0,
+        0,
+        16
+      ],
+      "to": [
+        16,
+        16,
+        16.01
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "cullface": "east",
+          "texture": "#overlay_left"
+        }
+      },
+      "from": [
+        16,
+        0,
+        0
+      ],
+      "to": [
+        16.01,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "west": {
+          "cullface": "west",
+          "texture": "#overlay_right"
+        }
+      },
+      "from": [
+        -0.01,
+        0,
+        0
+      ],
+      "to": [
+        0,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#overlay_bottom"
+        }
+      },
+      "from": [
+        0,
+        -0.01,
+        0
+      ],
+      "to": [
+        16,
+        0,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "up": {
+          "cullface": "up",
+          "texture": "#overlay_top"
+        }
+      },
+      "from": [
+        0,
+        16,
+        0
+      ],
+      "to": [
+        16,
+        16.01,
+        16
+      ]
+    }
+  ],
+  "textures": {
+    "down": "gt6:block/autocrafter_colored_bottom",
+    "east": "gt6:block/autocrafter_colored_left",
+    "north": "gt6:block/autocrafter_colored_front",
+    "overlay_back": "gt6:block/autocrafter_overlay_back",
+    "overlay_bottom": "gt6:block/autocrafter_overlay_bottom",
+    "overlay_front": "gt6:block/autocrafter_overlay_front",
+    "overlay_left": "gt6:block/autocrafter_overlay_left",
+    "overlay_right": "gt6:block/autocrafter_overlay_right",
+    "overlay_top": "gt6:block/autocrafter_overlay_top",
+    "south": "gt6:block/autocrafter_colored_back",
+    "up": "gt6:block/autocrafter_colored_top",
+    "west": "gt6:block/autocrafter_colored_right"
+  }
+}

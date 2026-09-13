@@ -95,6 +95,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-eu-hu-families — the seven eu-hu families
+                new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -126,6 +127,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-eu-hu-families — the seven eu-hu families
+                new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -577,6 +579,45 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : euHuFamiliesLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The eu-special families block list (task p29-w2-eu-special): the 14 blocks of the
+     * three families (Autocrafter + Lightning Processor 5 tiers each — the first _t5
+     * rungs — plus the Laminator 4 tiers) — the euHuFamiliesLootBlocks shape verbatim,
+     * the MTE default self-drop.
+     */
+    public static List<Block> euSpecialLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.autocrafterBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.lightningBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.laminatorBlockArray());
+        return rBlocks;
+    }
+
+    /** The eu-special families self-drop provider (task p29-w2-eu-special; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6EuSpecialMachineBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6EuSpecialMachineBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6EuSpecialMachineBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return euSpecialLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : euSpecialLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 

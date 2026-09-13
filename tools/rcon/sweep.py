@@ -206,6 +206,15 @@ SESSION_GROUPS = (
     # the rigs are band-local setblocks, the gate shredder a band-local machine).
     # --group p29_w2_energy matches through the chain's embedded name prefix.
     ("p29_w2_energy_types",),
+    # P29 W2 card ③ (p29-w2-eu-special): the Autocrafter/Lightning/Laminator chains —
+    # one fresh z=276 band, per-family x-disjoint columns (autocrafter x384..392 rigs
+    # and all / lightning x396..402 / laminator x408..429 with the throwaway + the
+    # firebox column), admission mirroring the p29 W1 cluster form (bbox-registered,
+    # no fresh_boot / mutates member — the EU/HU inject rigs need no fakesource; the
+    # laminator's brick burning box is a band-local setblock, the p29_w1_fermenter
+    # firebox form). --group p29_w2_eu_special matches through the chains' embedded
+    # name prefix (the p29_w1_process form).
+    ("p29_w2_autocrafter", "p29_w2_lightning", "p29_w2_laminator"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 

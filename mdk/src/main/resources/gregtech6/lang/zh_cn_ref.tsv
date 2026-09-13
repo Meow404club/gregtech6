@@ -7971,3 +7971,6 @@ direct	gt6.row.electricsifter.display	电动筛矿机 (%s)	hand
 direct	gt6.row.boxinator.display	装箱机 (%s)	hand
 direct	gt6.row.unboxinator.display	拆箱机 (%s)	hand
 direct	gt6.row.fermenter.display	发酵器	hand
+direct	gt6.row.autocrafter.display	自动工作台 (%s)	hand
+direct	gt6.row.lightningprocessor.display	闪电处理器 (%s)	hand
+direct	gt6.row.laminator.display	过胶机 (%s)	hand

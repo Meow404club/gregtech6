@@ -526,6 +526,14 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.registry.GTMachines.BOXINATOR_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.UNBOXINATOR_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.FERMENTER_DISPLAY_KEY);
+		// eu-special families (task p29-w2-eu-special): the three family templates — the
+		// Autocrafter/LightningProcessor ladders ride the VN voltage words (lv..iv all
+		// emitted: the canner walk + the standalone iv rung above), the Laminator the
+		// Heat_T material words (the oven/dryer walks emit them); the zh words are the
+		// upstream dump verbatim (gt.multitileentity.20341/20501/20391)
+		addDirect(gregtech6.registry.GTMachines.AUTOCRAFTER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.LIGHTNING_PROCESSOR_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.LAMINATOR_DISPLAY_KEY);
 		// the fermenter's stainless_steel row word (the dump face the attachment walk
 		// already carries — emitted here so the row walk stays self-contained)
 		addRowUnit(tEmitted, "gt6.row.mat.stainless_steel");		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tUlvRows

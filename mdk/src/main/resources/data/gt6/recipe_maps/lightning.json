@@ -1,0 +1,14 @@
+{
+  "recipes": [
+    {
+      "inputs": [
+        { "item": "minecraft:quartz", "count": 1 },
+        { "item": "minecraft:glowstone_dust", "count": 1 }
+      ],
+      "fluidInputs": [{ "fluid": "minecraft:water", "amount": 1000 }],
+      "outputs": [{ "item": "minecraft:prismarine_crystals", "count": 1 }],
+      "duration": 64,
+      "eut": 16
+    }
+  ]
+}
