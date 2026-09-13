@@ -1,47 +1,83 @@
 #!/usr/bin/env python3
-"""p28-b-fe-inbound — the FE->EU converter live acceptance chain (task p28-b-fe-converter-machine).
+"""p28_fe_inbound — the FE->EU converter live acceptance chain (REWRITE, task
+p28-fe-inbound-chain-rewrite).
 
-The ULV machine (8 EU x 1 A, buffer 512 FE, lossless 4:1) under push and pull, the
-throughput ceiling and the retained overload explosion. NOTE on the receipt receiver:
-NO ported EU consumer accepts an 8 EU packet (the oven T1 demands 16 minimum and the
-EnergyGate.gateInjection :50 small-packet arm SWALLOWS the offer), so the GT-side emit
-is made tangible through the p26 outbound bridge receiver — the fe_battery fixture —
-which books every 8 EU packet as exactly 32 FE at the same 4:1 (the emit face is a GT
-machine face; the bridge dispatch IS what a foreign sink receives).
+The p28-cut-eu-fe-bridge card felled the EU->fe_battery outbound bridge, and
+with it this chain's A/B/C receipt receiver died: the converter's emit face had
+NO legal consumer left (state tasks.p28-cut-eu-fe-bridge.p28fein-handover,
+RCON RED [6,6] both legs, steps {5,6,10,16,17,21} = the dead-booking arms).
+The ULV machine ladder (p28-c-ulv-machine-ladder, merged) fixes the endpoint:
+wiremill_ulv's window is minIn=4 / recIn=8 / maxIn=16, so the converter's
+8 EU x 1 A packet is ACCEPTED by EnergyGate.gateInjection :49 (|8| >= min 4,
+doInject fires — the oven T1 min 16 arm at :50 that SWALLOWS the same packet is
+the W3 negative control). The chain keeps the four-phase shape; every
+fe_battery booking arm is gone (the fixture stays in the world, out of here).
 
-Phases:
-  A PUSH ROUND TRIP (converter 0 64 0, battery 1 64 0): the /gt6feconverter push dial
-    plays the foreign cable — it resolves the block's platform FE capability through the
-    LEVEL query (the exact face an external cable calls) and pushes 512 FE in. The
-    machine's own tick converts and emits one 8 EU packet per tick; the battery books
-    16 x 32 = 512 FE — the push/consume/receive round trip closes LOSSLESSLY at 4:1
-    (zero-baseline asserted first, exact total asserted after the drain). A second dose
-    of 128 FE books exactly "implied EU 32".
-  B PULL + FLOOR ALIGNMENT (source 9 64 10, converter 10 64 10, battery 11 64 10):
-    the extractable fe_source fixture is set to 130 FE (4 packets + a 2 FE tail); the
-    converter PULLS one packet per tick through root EnergyBridge.extractFe (the
-    p28-a seam, the #2089 dual-support half GTCEu lacks) and emits the same rate. After
-    the drain the source keeps "stored 2 FE" — the sub-packet tail NEVER leaves the
-    source (the hostile-remainder semantics live) — and the battery holds exactly
-    128 FE.
-  C THROUGHPUT CEILING (source 19 64 20, converter 20 64 20, battery 21 64 20): a
-    full 100k FE source feeds the machine for a 6 s window (~120 server ticks at the
-    20 tps cap). The 1 A pull cap drains 3840 +- band FE, so the source renders
-    "stored 96xxx" — the judged band [94000..96999] maps to ticks [94..125] and ANY
-    two-packet-per-tick regression (the plausible integer-amps bug, 16 EU/t) drains
-    7680+ and lands "stored 92" or lower = RED. The ULV balance ruling
-    (decisions.p28-eu-inbound-converter, RF enters the energy chain at its bottom)
-    live.
-  D OVERLOAD EXPLOSION RETAINED (converter 110 64 110, far from the rigs): data merge
-    forces the persisted buffer to 100000 FE — a value both intake faces clamp, i.e.
-    only a foreign writer can produce (the upstream "Machine overloaded on Chunkload"
-    scenario). Past the 2-tick grace the upstream ladder overcharges
-    (TileEntityBase10EnergyConverter :122-126 -> Root :330): the machine dies with the
-    suspended explosion. The stat step afterwards carries the GT6 "STAT FAILED" marker
-    judged allow_failed -> ALLOWED = the block is GONE (allow_failed is the honest
-    absence proof; the failure marker text itself is the evidence).
+The live economics (the W3 calibration findings, load-bearing here): the
+machine's doWork drains mInputMax (16) UNCONDITIONALLY every tick
+(TileEntityBasicMachine :465), so a steady 1 A stream of 8 EU packets is
+gate-accepted into mEnergy, drained again the same tick, and NEVER banks the
+16 EU a shared RM row needs to start (mMinEnergy=16; doActive binds it on the
+first packet's tick, :476-488 — after that the :455 gate oscillates doInactive's
+CONSTANT_ENERGY progress reset). The acceptance living proof is therefore the
+CONVERTER-side accounting plus the machine-side bind:
 
-The pass-2 repeat is the idempotency proof (gt6world bbox cleanup between passes).
+  A PUSH ACCEPTANCE (z=30; converter 550, wiremill_ulv 551, bare converter 553):
+    the mill is data-merged facing 5 (east — the machine BE ignores the
+    blockstate facing, mFacing only moves via placement/NBT, the W3 driver
+    face) so its BACK (west) meets the converter's all-sides emit DIRECTLY (no
+    wire: min wire loss 1 + the :465 drain economics starve any wired hop).
+    Copper stick merged, both converters pushed 512 FE, ONE shared 4 s window
+    (the drain needs 16 ticks at 1 packet/tick — 5x headroom), then:
+    - the FED converter renders "buffer 0 FE" — all 16 packets TAKEN, the
+      只扣实收 arm (:87 shape) booked only packets the network actually used;
+    - the mill check pins the whole machine-side story in one line:
+      "progress=0/128 energy=0 minenergy=16 minIn=4 recIn=8 maxIn=16" — the
+      copper row BOUND on the eaten packets (minenergy=16, maxprogress
+      16x8=128) and the stick CONSUMED AT BIND (upstream consume-on-bind: the
+      slot reads air, the output stays pending in mOutputItems), jammed at
+      0/128 because the :455 gate (8 < the bound 16) oscillates doInactive's
+      CONSTANT_ENERGY progress reset — acceptance is NOT completion at 1 A,
+      the balance ruling live; completion needs a whole >=16 EU packet (the
+      W3 dynamo form) or two packets in one tick;
+    - the BARE converter (one air gap, no consumer) renders "buffer 512 FE" —
+      the explicit negative arm: nothing eats an emitter with no consumer, so
+      the fed converter's drain above is CONSUMPTION, not leakage. In-chain
+      assertion, no allow_failed.
+  B PULL + FLOOR ALIGNMENT (z=38; source 550, converter 551): the extractable
+    fe_source fixture is set to 130 FE (4 packets + a 2 FE tail); the
+    converter PULLS one packet per tick through root EnergyBridge.extractFe
+    (the p28-a seam, the #2089 dual-support half GTCEu lacks). After the drain
+    the source keeps "stored 2 FE" — the sub-packet tail NEVER leaves the
+    source (the hostile-remainder semantics live) — and the converter's own
+    capacitor books exactly "buffer 128 FE": the packet-quantised receipt the
+    dead fe_battery arm used to assert, now on the rig's designed dead-end (no
+    consumer: the emit arm finds no adjacency and the packets stay buffered).
+  C THROUGHPUT CEILING (z=46; source 550, converter 551, wiremill_ulv 552):
+    a full 100k FE source feeds the machine for a 5 s window (~100 server
+    ticks at the 20 tps cap). The 1 A pull cap drains 3200 +- band FE, so the
+    source renders "stored 96xxx" — valid elapsed [3.1..6.2 s] all lands
+    96xxx, and ANY two-packets-per-tick regression (the plausible integer-amps
+    bug, 16 EU/t) drains 6400+ and lands 92xxx/93xxx = RED. The poll absorbs
+    slow-side lag (a lagging window re-reads a moment later, still 96xxx);
+    over-drain is monotone, so a real regression can never poll GREEN. The
+    old chain's single-shot 6 s window had ~0.15 s of validity on each side —
+    the "速率类断言加足窗口" lesson, re-derived with the band arithmetic in
+    the docstring where it can be re-checked.
+  D OVERLOAD EXPLOSION RETAINED (z=54; converter 550, far from the rigs):
+    data merge forces the persisted buffer to 100000 FE — a value both intake
+    faces clamp, i.e. only a foreign writer can produce (the upstream "Machine
+    overloaded on Chunkload" scenario). Past the 2-tick grace the upstream
+    ladder overcharges (TileEntityBase10EnergyConverter :122-126 -> Root :330):
+    the machine dies with the suspended explosion. The stat step afterwards
+    carries the GT6 "STAT FAILED" marker judged allow_failed -> ALLOWED = the
+    block is GONE (allow_failed is the honest absence proof; the failure
+    marker text itself is the evidence — not a negative-arm escape).
+
+The pass-2 repeat is the idempotency proof (gt6world bbox cleanup between
+passes). Band: x548..555, z28..56 (sites x550..553, arms z-disjoint 30/38/46/
+54, margin 2 clear) — disjoint from the whole roster including the W3 band
+x518..545 (sweep --plan census).
 
 Run:  python3 tools/rcon/chains/p28_fe_inbound.py
       python3 tools/rcon/chains/p28_fe_inbound.py --node 1.21.1-neoforge
@@ -60,57 +96,110 @@ from framework import Chain, Step, main, phase
 
 F = gt6world.fmt
 
-CONV_A, BAT_A = gt6world.Site(0, 64, 0), gt6world.Site(1, 64, 0)
-SRC_B, CONV_B, BAT_B = gt6world.Site(9, 64, 10), gt6world.Site(10, 64, 10), gt6world.Site(11, 64, 10)
-SRC_C, CONV_C, BAT_C = gt6world.Site(19, 64, 20), gt6world.Site(20, 64, 20), gt6world.Site(21, 64, 20)
-CONV_D = gt6world.Site(110, 64, 110)
+# --- arm A: the push acceptance + the bare-consumer negative contrast (z=30)
+CONV_A = gt6world.Site(550, 64, 30)    # the FED converter, west of the mill
+MILL_A = gt6world.Site(551, 64, 30)    # wiremill_ulv, facing merged east (back = west)
+CONV_A2 = gt6world.Site(553, 64, 30)   # the BARE converter — one air gap, no consumer
 
+# --- arm B: pull + floor alignment, the tail stays in the source (z=38)
+SRC_B = gt6world.Site(550, 64, 38)
+CONV_B = gt6world.Site(551, 64, 38)
+
+# --- arm C: the throughput ceiling, steady 8 EU/t over the window (z=46)
+SRC_C = gt6world.Site(550, 64, 46)
+CONV_C = gt6world.Site(551, 64, 46)
+MILL_C = gt6world.Site(552, 64, 46)    # the sink, east of the converter
+
+# --- arm D: overload explosion, far from the rigs (z=54)
+CONV_D = gt6world.Site(550, 64, 54)
+
+CONV_A_P, CONV_A2_P, MILL_A_P = F(CONV_A), F(CONV_A2), F(MILL_A)
+SRC_B_P, CONV_B_P = F(SRC_B), F(CONV_B)
+SRC_C_P, CONV_C_P, MILL_C_P = F(SRC_C), F(CONV_C), F(MILL_C)
+CONV_D_P = F(CONV_D)
+
+MILL_BLOCK = "gt6:wiremill_ulv"
+
+# the inventory data-merge Count key fork (the p25_food_can precedent, W3 form):
+# 1.20.1 NBT `Count:1b` vs 21.1 component-era `count:1`.
+def feed_merge(pos, item_id):
+    return {
+        "1.20.1": f"data merge block {pos} {{inventory:{{Size:2,Items:[{{Slot:0b,id:\"{item_id}\",Count:1b}}]}}}}",
+        "1.21.1": f"data merge block {pos} {{inventory:{{Size:2,Items:[{{Slot:0b,id:\"{item_id}\",count:1}}]}}}}",
+    }
+
+CU_MERGE = feed_merge(MILL_A_P, "gt6:stick_copper")
 
 CHAIN = Chain(
-    name="p28-b-fe-inbound",
+    name="p28-fe-inbound",
     slug="p28fein",
     sites=gt6world.declare_sites(
-        CONV_A, BAT_A,
-        SRC_B, CONV_B, BAT_B,
-        SRC_C, CONV_C, BAT_C,
+        CONV_A, MILL_A, CONV_A2,
+        SRC_B, CONV_B,
+        SRC_C, CONV_C, MILL_C,
         CONV_D),
     preferred_ports=(26166, 26176),
     passes=2,
     steps=[
-        phase("A: push round trip (cable push 512 FE -> 16 x 8 EU packets -> battery books 512 FE at 4:1)"),
-        Step(f"gt6feconverter place {F(CONV_A)}", expect="voltage 8 EU x 1 A"),
-        Step(f"gt6febattery place {F(BAT_A)}", expect="placed at"),
-        Step(f"gt6febattery stat {F(BAT_A)}", expect="stored 0 FE"),
-        Step(f"gt6feconverter push {F(CONV_A)} 512", expect="pushed 512 FE, accepted 512 FE", sleep=4.0),
-        Step(f"gt6febattery stat {F(BAT_A)}", expect="stored 512 FE"),
-        Step(f"gt6feconverter stat {F(CONV_A)}", expect="buffer 0 FE"),
-        Step(f"gt6feconverter reset {F(CONV_A)}", expect="buffer 0 FE"),
-        Step(f"gt6febattery reset {F(BAT_A)}", expect="stored 0 FE"),
-        Step(f"gt6feconverter push {F(CONV_A)} 128", expect="pushed 128 FE, accepted 128 FE", sleep=3.0),
-        Step(f"gt6febattery stat {F(BAT_A)}", expect="implied EU 32"),
+        phase("A: push acceptance — the fed converter drains into the wiremill_ulv's back, the bare converter holds (explicit negative)"),
+        Step(f"setblock {MILL_A_P} {MILL_BLOCK}", expect="Changed the block"),
+        # the machine BE ignores the setblock blockstate facing (mFacing only
+        # moves via placement/NBT — the W3 calibration): facing 5 = east puts
+        # the SBIT_B back face (west) on the converter. NO WIRE on purpose
+        # (min wire loss 1 + the doWork :465 unconditional mInputMax drain
+        # starve any wired hop — the W3 finding).
+        Step(f"data merge block {MILL_A_P} {{facing:5}}", expect="Modified block data"),
+        Step(CU_MERGE["1.20.1"], expect="Modified block data", node_cmds=CU_MERGE),
+        Step(f"gt6feconverter place {CONV_A_P}", expect="voltage 8 EU x 1 A"),
+        Step(f"gt6feconverter stat {CONV_A_P}", expect="buffer 0 FE"),
+        Step(f"gt6feconverter place {CONV_A2_P}", expect="voltage 8 EU x 1 A"),
+        Step(f"gt6feconverter stat {CONV_A2_P}", expect="buffer 0 FE"),
+        Step(f"gt6feconverter push {CONV_A_P} 512", expect="pushed 512 FE, accepted 512 FE"),
+        # one shared window: the fed converter needs 16 ticks to emit its 16
+        # packets (1 packet/tick cap) — 4 s is 5x the headroom
+        Step(f"gt6feconverter push {CONV_A2_P} 512", expect="pushed 512 FE, accepted 512 FE", sleep=4.0),
+        # THE ACCEPTANCE LIVING PROOF: every packet TAKEN (the 只扣实收 arm
+        # books only what the network used) — the receipt the dead fe_battery
+        # arm used to assert, now on the ULV machine endpoint
+        Step(f"gt6feconverter stat {CONV_A_P}", expect="buffer 0 FE"),
+        # the machine side, ONE contiguous pin of the whole story (live
+        # calibrated): the row BOUND on the eaten packets and CONSUMED the
+        # stick at bind (upstream consume-on-bind — the slot reads air), the
+        # jam 0/128 = 8 EU/t can never re-meet the bound 16 EU/t start gate
+        # (the :455 gate oscillates doInactive's CONSTANT_ENERGY reset; the
+        # output stays pending in mOutputItems, never placed) — acceptance is
+        # not completion at 1 A, the balance ruling live — plus the ULV
+        # window verbatim and the stable bound gate (doInactive never resets
+        # mMinEnergy; post-feed mEnergy is a settled 0)
+        Step(f"gt6machine wiremill check {MILL_A_P}",
+             expect="progress=0/128 energy=0 minenergy=16 minIn=4 recIn=8 maxIn=16"),
+        # THE EXPLICIT NEGATIVE ARM: nothing eats an emitter with no consumer
+        # — the 512 FE ride in place, proving the drain above is consumption,
+        # not leakage. In-chain assertion, no allow_failed.
+        Step(f"gt6feconverter stat {CONV_A2_P}", expect="buffer 512 FE"),
 
         phase("B: pull + floor alignment (source 130 FE = 4 packets + 2 FE tail; the tail never leaves the source)"),
-        Step(f"gt6fesource place {F(SRC_B)}", expect="stored 100000 FE"),
-        Step(f"gt6fesource set {F(SRC_B)} 130", expect="stored 130 FE"),
-        Step(f"gt6febattery place {F(BAT_B)}", expect="placed at"),
-        Step(f"gt6feconverter place {F(CONV_B)}", expect="voltage 8 EU x 1 A", sleep=4.0),
-        Step(f"gt6fesource stat {F(SRC_B)}", expect="stored 2 FE"),
-        Step(f"gt6febattery stat {F(BAT_B)}", expect="stored 128 FE"),
-        Step(f"gt6feconverter stat {F(CONV_B)}", expect="buffer 0 FE"),
+        Step(f"gt6fesource place {SRC_B_P}", expect="stored 100000 FE"),
+        Step(f"gt6fesource set {SRC_B_P} 130", expect="stored 130 FE"),
+        Step(f"gt6feconverter place {CONV_B_P}", expect="voltage 8 EU x 1 A", sleep=4.0),
+        Step(f"gt6fesource stat {SRC_B_P}", expect="stored 2 FE"),
+        Step(f"gt6feconverter stat {CONV_B_P}", expect="buffer 128 FE"),
 
-        phase("C: throughput ceiling (full source, 6 s window at the 20 tps cap -> source keeps 96xxx FE; 2 packets/tick would land 92xxx or lower)"),
-        Step(f"gt6fesource place {F(SRC_C)}", expect="stored 100000 FE"),
-        Step(f"gt6feconverter place {F(CONV_C)}", expect="voltage 8 EU x 1 A"),
-        # the battery's own place line prints "stored 0 FE" at placement (the baseline);
-        # a separate baseline stat step would flake — the machine fills one packet within
-        # a single tick of the placement. The 6 s ceiling window rides this step's sleep.
-        Step(f"gt6febattery place {F(BAT_C)}", expect="placed at", sleep=6.0),
-        Step(f"gt6fesource stat {F(SRC_C)}", expect="stored 96"),
+        phase("C: throughput ceiling (full source, 5 s window at the 20 tps cap -> source keeps 96xxx FE; 2 packets/tick would land 92xxx)"),
+        Step(f"setblock {MILL_C_P} {MILL_BLOCK}", expect="Changed the block"),
+        Step(f"data merge block {MILL_C_P} {{facing:5}}", expect="Modified block data"),
+        Step(f"gt6fesource place {SRC_C_P}", expect="stored 100000 FE"),
+        Step(f"gt6feconverter place {CONV_C_P}", expect="voltage 8 EU x 1 A"),
+        # the ceiling window rides this step's sleep (the machine check is the
+        # double-duty rider: the ULV window pin re-read mid-drain). Valid
+        # elapsed [3.1..6.2 s] lands 96xxx; the poll below absorbs slow-side lag.
+        Step(f"gt6machine wiremill check {MILL_C_P}", expect="minIn=4 recIn=8 maxIn=16", sleep=5.0),
+        Step(f"gt6fesource stat {SRC_C_P}", expect="stored 96", poll=6.0),
 
         phase("D: overload explosion retained (data merge 100000 FE past the intake clamps -> the 2-tick grace -> overcharge -> gone)"),
-        Step(f"gt6feconverter place {F(CONV_D)}", expect="voltage 8 EU x 1 A"),
-        Step(f"data merge block {F(CONV_D)} {{fe: 100000}}", expect="Modified block data", sleep=2.0),
-        Step(f"gt6feconverter stat {F(CONV_D)}", expect="STAT FAILED", allow_failed=True),
+        Step(f"gt6feconverter place {CONV_D_P}", expect="voltage 8 EU x 1 A"),
+        Step(f"data merge block {CONV_D_P} {{fe: 100000}}", expect="Modified block data", sleep=2.0),
+        Step(f"gt6feconverter stat {CONV_D_P}", expect="STAT FAILED", allow_failed=True),
     ],
 )
 
