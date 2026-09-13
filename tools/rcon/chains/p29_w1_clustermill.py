@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""p29_w1_clustermill — the Cluster Mill RU ladder live acceptance chain (task
+"""p29_w1_p29_w1_clustermill — the Cluster Mill RU ladder live acceptance chain (task
 p29-w1-kinetic-roll-ladder, the p29_w1_rollingmill shape minus the diesel rig —
 the rollingmill chain carries the cluster's real RU source; the sibling ladders
 prove the same acceptance set through the /gt6machine inject driver, the same
@@ -76,8 +76,8 @@ for tPos, tPacket, tPath in [
     steps += [
         Step(f"setblock {tPos} gt6:{tPath}", expect="Changed the block", sleep=1.0),
         Step(f"gt6machine {tPath} input 1 {tPos}",
-             expect=f"GT6 {tPath} input: 1x plate_iron into slot 0",
-             node_expects={"1.21.1": f"GT6 {tPath} input: 1x gt6:plate_iron into slot 0"}),
+             expect="GT6 clustermill input: 1x plate_iron into slot 0",
+             node_expects={"1.21.1": "GT6 clustermill input: 1x gt6:plate_iron into slot 0"}),
         Step(f"gt6machine {tPath} inject 60 {tPacket} {tPos}", expect=OUT, node_expects=OUT),
     ]
 

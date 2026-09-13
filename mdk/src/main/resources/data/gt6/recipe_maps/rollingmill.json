@@ -6,6 +6,13 @@
       "outputs": [{"item": "gt6:plate_iron", "count": 1}],
       "duration": 32,
       "eut": 16
+    },
+    {
+      "comment": "the ULV-rung leg row — the upstream clay-ball row shape (MultiItemFood.java:167 verbatim, clay ball -> clay plate); clay's melting point sits BELOW the p28 1375 K ULV gate (iron 1811 K is gate-refused on the ULV rung), so the same-map ULV electric rung runs THIS row live",
+      "inputs": [{"item": "minecraft:clay_ball", "count": 1}],
+      "outputs": [{"item": "gt6:plate_clay", "count": 1}],
+      "duration": 32,
+      "eut": 16
     }
   ]
 }

@@ -30,25 +30,28 @@ import net.minecraft.world.level.material.Fluids;
  * onto distinct vanilla stand-ins (the synthetic-universe convention — identity is all
  * the recipe mechanics compare).
  */
-public class GT6RollSmokeRowsPourTest {
+public class GT6RollSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 
 	private static final Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
 	private static final Function<ResourceLocation, Fluid> sDefaultFluids = GT6RecipeMapJsonLoader.sFluidResolver;
 
-	/** The iron-pair stand-ins — distinct entries, one per shipped gt6: id (identity only). */
-	private static final Map<String, Item> IRON_PAIR = Map.of(
-			"gt6:ingot_iron", Items.IRON_INGOT,
-			"gt6:plate_iron", Items.IRON_TRAPDOOR,
-			"gt6:plate_curved_iron", Items.IRON_BARS,
-			"gt6:rod_iron", Items.IRON_SHOVEL,
-			"gt6:rail_gt_iron", Items.RAIL,
-			"gt6:foil_iron", Items.PAPER);
+	/** The iron-pair stand-ins, rebuilt per test — distinct entries, one per shipped gt6: id (identity only). The Items references stay OUT of class init (the fixture map is built inside the test lifecycle, after the JVM boot the suite's launcher listener runs). */
+	private Map<String, Item> mStandins;
 
 	@BeforeEach
 	void freshGeneration() {
+		mStandins = Map.of(
+				"gt6:ingot_iron", Items.IRON_INGOT,
+				"gt6:plate_iron", Items.IRON_TRAPDOOR,
+				"gt6:plate_curved_iron", Items.IRON_BARS,
+				"gt6:stick_iron", Items.IRON_SHOVEL,
+				"gt6:rail_gt_iron", Items.RAIL,
+				"gt6:foil_iron", Items.PAPER,
+				"minecraft:clay_ball", Items.CLAY_BALL,
+				"gt6:plate_clay", Items.BRICK);
 		GT6RecipeMaps.init();
 		GT6RecipeMapJsonLoader.resetForTest();
-		GT6RecipeMapJsonLoader.sItemResolver = aId -> IRON_PAIR.get(aId.toString());
+		GT6RecipeMapJsonLoader.sItemResolver = aId -> mStandins.get(aId.toString());
 		GT6RecipeMapJsonLoader.sFluidResolver = aId -> Fluids.EMPTY;
 	}
 
@@ -73,10 +76,11 @@ public class GT6RollSmokeRowsPourTest {
 	void theFourShippedSmokeFilesPourIntoTheirMaps() throws Exception {
 		for (String tKey : new String[] {"rollingmill", "rollbender", "rollformer", "clustermill"}) {
 			pourShipped(tKey);
-			assertEquals(1, GT6RecipeMapJsonLoader.pouredCount(tKey), tKey + ": exactly the one smoke row poured");
+			int tExpectedRows = "rollingmill".equals(tKey) ? 2 : 1; // the rollingmill map carries the ULV-rung clay leg too
+			assertEquals(tExpectedRows, GT6RecipeMapJsonLoader.pouredCount(tKey), tKey + ": the smoke rows poured");
 			assertNotNull(GT6RecipeMapJsonLoader.mapFor(tKey), tKey + ": the whitelist key resolves its map");
 		}
-		assertEquals(1, GT6RecipeMaps.ROLLING_MILL.mRecipeList.size(), "the rollingmill map holds the smoke row");
+		assertEquals(2, GT6RecipeMaps.ROLLING_MILL.mRecipeList.size(), "the rollingmill map holds the iron row + the ULV-rung clay row");
 		assertEquals(1, GT6RecipeMaps.ROLL_BENDER.mRecipeList.size(), "the rollbender map holds the smoke row");
 		assertEquals(1, GT6RecipeMaps.ROLL_FORMER.mRecipeList.size(), "the rollformer map holds the smoke row");
 		assertEquals(1, GT6RecipeMaps.CLUSTER_MILL.mRecipeList.size(), "the clustermill map holds the smoke row");
@@ -88,7 +92,9 @@ public class GT6RollSmokeRowsPourTest {
 		// electric rung consume ONE ROLLING_MILL map — the port pours the row, both
 		// machine domains find it through the same mRecipeList
 		pourShipped("rollingmill");
-		Recipe tRow = GT6RecipeMaps.ROLLING_MILL.mRecipeList.iterator().next();
+		Recipe tRow = GT6RecipeMaps.ROLLING_MILL.mRecipeList.stream()
+				.filter(r -> r.mInputs.length == 1 && r.mInputs[0].getItem() == mStandins.get("gt6:ingot_iron"))
+				.findFirst().orElseThrow();
 		assertEquals(16L, tRow.mEUt, "the smoke row's eut 16 (the upstream RollingMill row shape, MultiItemFood.java:167)");
 		assertEquals(32L, tRow.mDuration, "the smoke row's duration 32");
 		assertEquals(GT6RecipeMaps.ROLLING_MILL, GTMachinesSmokeMapAccess.rollingMillMap(),

@@ -1,8 +1,8 @@
 {
   "recipes": [
     {
-      "comment": "task p29-w1-kinetic-roll-ladder smoke row — the rod->rail minimal row (the upstream RollFormer product class, OP.railGt — the iron rail the RAILS-tagged iron material generates), eut 16 / duration 32 riding the RollingMill row shape",
-      "inputs": [{"item": "gt6:rod_iron", "count": 1}],
+      "comment": "task p29-w1-kinetic-roll-ladder smoke row — the stick->rail minimal row (the upstream RollFormer product class, OP.railGt — the iron rail the RAILS-tagged iron material generates; the port's rod semantics ride the OP.stick prefix, the port rod item id is gt6:stick_iron), eut 16 / duration 32 riding the RollingMill row shape",
+      "inputs": [{"item": "gt6:stick_iron", "count": 1}],
       "outputs": [{"item": "gt6:rail_gt_iron", "count": 1}],
       "duration": 32,
       "eut": 16

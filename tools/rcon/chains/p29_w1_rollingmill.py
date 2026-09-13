@@ -22,8 +22,9 @@ ULV row each run on their own window (TIER_INPUTS vs the {4,8,16} ULV one).
     plate_iron.
   D TIER_INPUTS WINDOW PINS + the same-map co-existence: the check report pins
     {16,32,64}/{64,128,256}/{256,512,1024}/{1024,2048,4096} across the four tiers, and
-    the p28 ULV rung (rollingmill, 20115) runs its own copper wireFine row on the SAME
-    map — the two domains share the map, not the window.
+    the p28 ULV rung (rollingmill, 20115) runs the CLAY row on the SAME
+    map (the clay-ball row is the ULV leg — iron 1811 K is gate-refused at the rung's
+    1375 K ceiling) — the two domains share the map, not the window.
 
 The item-name expects are PER-LEG via node_expects (the p26_w1 fork): bare registry
 path on 1.20.1, NAMESPACED on 21.1.
@@ -72,7 +73,9 @@ AXLE_B = "gt6:axle_wood_treated_small"
 # report out[0]=<count>x <item> — the 21.1 leg namespaces the item path (the p26_w1 fork)
 PLATE_OUT = {"1.20.1": "outputs=[1x plate_iron; ]", "1.21.1": "outputs=[1x gt6:plate_iron; ]"}
 PLATE_CHECK = {"1.20.1": "out[0]=1x plate_iron", "1.21.1": "out[0]=1x gt6:plate_iron"}
-ULV_OUT = {"1.20.1": "outputs=[4x wire_fine_copper; ]", "1.21.1": "outputs=[4x gt6:wire_fine_copper; ]"}
+# the ULV leg rides the CLAY row (the clay-ball -> clay-plate upstream row shape):
+# iron (1811 K) is gate-refused by the ULV rung's 1375 K ceiling, clay passes
+ULV_OUT = {"1.20.1": "outputs=[1x plate_clay; ]", "1.21.1": "outputs=[1x gt6:plate_clay; ]"}
 
 # the p28 feed_merge fork: 1.20.1 NBT Count:1b vs the 21.1 component-era count:1
 def feed_merge(pos, item_id):
@@ -81,7 +84,7 @@ def feed_merge(pos, item_id):
         "1.21.1": f"data merge block {pos} {{inventory:{{Size:2,Items:[{{Slot:0b,id:\"{item_id}\",count:1}}]}}}}",
     }
 
-ULV_MERGE = feed_merge(MILL_ULV_P, "gt6:stick_copper")
+ULV_MERGE = feed_merge(MILL_ULV_P, "minecraft:clay_ball")
 
 steps = [
     # ---------------------------------------------------------------- arm A
