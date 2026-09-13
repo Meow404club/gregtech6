@@ -791,7 +791,16 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.ELECTRIC_SIFTER_DISPLAY_KEY, "Electric Sifter (%s)");
         add(gregtech6.registry.GTMachines.BOXINATOR_DISPLAY_KEY, "Boxinator (%s)");
         add(gregtech6.registry.GTMachines.UNBOXINATOR_DISPLAY_KEY, "Unboxinator (%s)");
-        add(gregtech6.registry.GTMachines.FERMENTER_DISPLAY_KEY, "Fermenter");        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
+        add(gregtech6.registry.GTMachines.FERMENTER_DISPLAY_KEY, "Fermenter");
+        // task p29-w2-eu-special — the eu-special family templates: the two EU ladders ride
+        // the voltage-word slot (the CANNER_DISPLAY_KEY contract — the upstream name columns
+        // "Autocrafter ("+VN[tier]+")" :1497-1501 / "Lightning Processor ("+VN[tier]+")"
+        // :1582-1586; the T5 word is IV, VN[5], the card-① erratum face) and the Laminator
+        // rides the Heat_T material-word slot (upstream "Laminator ("+aMat.getLocal()+")",
+        // :1532-1535)
+        add(gregtech6.registry.GTMachines.AUTOCRAFTER_DISPLAY_KEY, "Autocrafter (%s)");
+        add(gregtech6.registry.GTMachines.LIGHTNING_PROCESSOR_DISPLAY_KEY, "Lightning Processor (%s)");
+        add(gregtech6.registry.GTMachines.LAMINATOR_DISPLAY_KEY, "Laminator (%s)");        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
         for (String[] tMat : new String[][] {{"steel", "Steel"}, {"invar", "Invar"}, {"titanium", "Titanium"},

@@ -132,17 +132,19 @@ public final class GT6BlockStates extends BlockStateProvider {
         addRollLadders(); // task p29-w1-kinetic-roll-ladder — the four roll-ladder RU families (family textures, the addCanner shape)
         addProcessMachines(); // task p29-w1-kinetic-process-ladder — the six process families (family textures, the addCanner shape)
         addEuHuFamilies(); // task p29-w1-eu-hu-families — the seven eu-hu families (family textures, the addCanner shape)
+        addEuSpecialFamilies(); // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families (family textures, the addCanner shape)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 119 machine blocks x
+        // task p21-paintable-tint-render: the datagen-JVM census half — 133 machine blocks x
         // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder; the roll ladders
         // and the six P29 W1 process families joined at their owning cards; the seven eu-hu
-        // families at task p29-w1-eu-hu-families), // matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 357; the ACT
+        // families at task p29-w1-eu-hu-families; the three eu-special families at task
+        // p29-w2-eu-special), // matching the paintableBlockArray() client registration census
+        // (the offline JUnit half walks the generated tree and pins the same 399; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (119 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addAdvancedCraftingTable)", mMachineTintModels);
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (133 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -419,6 +421,27 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.FERMENTER_ROWS) {
             addMachine(GTMachines.FERMENTER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());        }
+    }
+
+    /**
+     * Task p29-w2-eu-special — the three eu-special families (the Autocrafter EU 5-tier
+     * ladder :1497-1501 + the Lightning Processor EU 5-tier ladder :1582-1586 + the
+     * Laminator HU ladder :1532-1535, every row NBT_TEXTURE riding its family token
+     * "autocrafter"/"lightning"/"laminator"): the addEuHuFamilies shape verbatim — model
+     * names per path (the FIRST _t5 rungs in the census), the FRONT TEXTURES stay on the
+     * family sets (the borrowed upstream basicmachines/{autocrafter,lightning,laminator}
+     * six-face bodies + state trios, the borrow_port_overlays census lands them).
+     */
+    private void addEuSpecialFamilies() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.AUTOCRAFTER_ROWS) {
+            addMachine(GTMachines.AUTOCRAFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LIGHTNING_ROWS) {
+            addMachine(GTMachines.LIGHTNING_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LAMINATOR_ROWS) {
+            addMachine(GTMachines.LAMINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
     }
 
     /**

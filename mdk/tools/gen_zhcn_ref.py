@@ -338,6 +338,11 @@ HAND_TRANSLATIONS = {
     # dropped (蒸汽锅炉); 箱 restores it (declared deviation from the dump :11025/:11038 faces).
     "gt6.row.boiler.display": ("蒸汽锅炉箱 (%s)", "hand"),
     "gt6.row.boiler.display.strong": ("强化蒸汽锅炉箱 (%s)", "hand"),
+    # task p29-w2-eu-special — the three eu-special family templates (the dump mte
+    # rows :11620/:11689/:11650 自动工作台/闪电处理器/过胶机 verbatim)
+    "gt6.row.autocrafter.display": ("自动工作台 (%s)", "hand"),
+    "gt6.row.lightningprocessor.display": ("闪电处理器 (%s)", "hand"),
+    "gt6.row.laminator.display": ("过胶机 (%s)", "hand"),
     "gt6.row.dryer.display": ("干燥器 (%s)", "hand"),
     "gt6.row.distillery.display": ("蒸馏器 (%s)", "hand"),
     # task p27-oven-heat-t-ladder — the Oven Heat_T family (the :1288-1291 name column
