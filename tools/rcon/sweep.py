@@ -239,6 +239,17 @@ SESSION_GROUPS = (
     # through the chains' embedded name prefix.
     ("p29_w2_electrolyzer", "p29_w2_injector", "p29_w2_printer",
      "p29_w2_scanner_visuals", "p29_w2_slicer"),
+    # P29 W2 card ⑤ (p29-w2-hu-tu-piggyback): the seven hu-tu family chains — one fresh
+    # z=280 band, per-family x-disjoint columns (steam_cracker 384..390 / catalytic_cracker
+    # 394..400 / coagulator 404..408 + its north-face rig at z279 / generifier 414 /
+    # bath 420 / autoclave 426 / loom 434..440 with the diesel->axle real-source rig),
+    # admission mirroring the p29 W1 cluster form (bbox-registered, no fresh_boot /
+    # mutates member — the inject grid rig needs no fakesource; the coagulator north rig
+    # is band-local). --group p29_w2_hu_tu matches through the chains' embedded name
+    # prefix. The coagulator chain carries the card-① legacy obligation's LIVE half: the
+    # NO_CONSTANT_POWER power-gap retention arm on a real TU machine.
+    ("p29_w2_steam_cracker", "p29_w2_catalytic_cracker", "p29_w2_coagulator",
+     "p29_w2_generifier", "p29_w2_bath", "p29_w2_autoclave", "p29_w2_loom"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
