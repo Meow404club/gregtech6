@@ -158,9 +158,9 @@ public class GT6HuTuPiggybackRowTest extends TileEntityBasicMachineOfflineTestBa
 		assertEquals(TileEntityBasicMachine.FOUND_AND_SUCCESSFULLY_USED_RECIPE, tSteam.checkRecipe(true, true),
 				"the steam cracker finds ITS map's row");
 		assertEquals(4096L, tSteam.mMaxProgress, "units(32 × 128 × 1, 10000, 10000, T) = 4096");
-		inject(tSteam, 32, 32);
+		inject(tSteam, 128, 32);
 		assertTrue(tSteam.getInventory().getStackInSlot(tSteam.getInputSlotCount()).getCount() >= 1,
-				"the charcoal landed (32 ticks @ 32/tick)");
+				"the charcoal landed (128 ticks @ 32/tick)");
 
 		TileEntityBasicMachine tCat = rowMachine(GTMachines.CATALYTIC_CRACKER_ROWS.get(0));
 		tCat.getInventory().insertItem(TileEntityBasicMachine.SLOT_INPUT, new ItemStack(Items.CHARCOAL, 1), false);
@@ -168,7 +168,7 @@ public class GT6HuTuPiggybackRowTest extends TileEntityBasicMachineOfflineTestBa
 		assertEquals(TileEntityBasicMachine.FOUND_AND_SUCCESSFULLY_USED_RECIPE, tCat.checkRecipe(true, true),
 				"the catalytic cracker finds ITS map's row — NOT the steam row");
 		assertEquals(4096L, tCat.mMaxProgress, "the SAME budget — the identical parameters row");
-		inject(tCat, 32, 32);
+		inject(tCat, 128, 32);
 		assertTrue(tCat.getInventory().getStackInSlot(tCat.getInputSlotCount()).getCount() >= 1,
 				"the coal landed");
 	}
@@ -298,7 +298,7 @@ public class GT6HuTuPiggybackRowTest extends TileEntityBasicMachineOfflineTestBa
 	// ------------------------------------------------------------------
 
 	@Test
-	void generifierParallelHundredConsumesAHundredInputs() {
+	void generifierParallelBarConsumesAFullInputStack() {
 		// generifier.json: 1 sand + water 10 → 1 clay ball, eUt 16, duration 32
 		GT6RecipeMaps.GENERIFIER.addRecipe(new Recipe(true,
 				new ItemStack[] {new ItemStack(Items.SAND, 1)},
@@ -306,20 +306,19 @@ public class GT6HuTuPiggybackRowTest extends TileEntityBasicMachineOfflineTestBa
 				new FluidStack[] {new FluidStack(Fluids.WATER, 10)}, null, 32, 16, 0));
 		TileEntityBasicMachine.ENERGY_FAKE_SOURCE = false;
 		TileEntityBasicMachine tMachine = tuRowMachine(GTMachines.GENERIFIER_ROWS.get(0));
-		tMachine.getInventory().insertItem(TileEntityBasicMachine.SLOT_INPUT, new ItemStack(Items.SAND, 100), false);
+		// the parallel-100 face is the ROW column (assertTuSingle pins NBT_PARALLEL 100 and
+		// the BE mParallel); the BAR face: a FULL 64-stack in the one input slot drains to
+		// the 64-stack output cap in ONE bar — impossible below parallel 64 (a parallel-1
+		// machine banks exactly ONE output per bar)
+		tMachine.getInventory().insertItem(TileEntityBasicMachine.SLOT_INPUT, new ItemStack(Items.SAND, 64), false);
 		tMachine.mTanksInput[0].fill(new FluidStack(Fluids.WATER, 1000), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
 		assertEquals(TileEntityBasicMachine.FOUND_AND_SUCCESSFULLY_USED_RECIPE, tMachine.checkRecipe(true, true));
 		// the :770 TU arm: mMinEnergy = mEUt = 16 (the parallel count multiplies the
 		// OUTPUTS, not the energy), the bar = units(16 × 32) = 512, gain 16/tick → 32 ticks
 		assertEquals(512L, tMachine.mMaxProgress, "the TU parallel bar does NOT scale with the count (:770-771)");
 		inject(tMachine, 32, 16);
-		// the first bar completes 64 processes (the :647 output-slot stack cap 64/1), the
-		// restart covers the remaining 36 on the second bar
-		assertTrue(tMachine.getInventory().getStackInSlot(tMachine.getInputSlotCount()).getCount() >= 64,
-				"the first bar banked the 64-stack cap of clay balls");
-		inject(tMachine, 32, 16);
-		assertTrue(tMachine.getInventory().getStackInSlot(tMachine.getInputSlotCount()).getCount() >= 100,
-				"100 inputs → 100 outputs — the parallel-100 count consumed the whole stock");
+		assertEquals(64, tMachine.getInventory().getStackInSlot(tMachine.getInputSlotCount()).getCount(),
+				"ONE bar consumed the whole 64-stack to the output cap — the parallel-100 count at work");
 	}
 
 	// ------------------------------------------------------------------

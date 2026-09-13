@@ -135,7 +135,15 @@ public class RecipeMap {
 	 */
 	@Nullable
 	public Recipe findRecipe(@Nullable Recipe aLastRecipe, long aSize, @Nullable ItemStack aSpecialSlot, @Nullable FluidStack[] aFluids, ItemStack... aInputs) {
-		if (aInputs == null || aInputs.length <= 0) return null;
+		// upstream findRecipeInternal (Recipe.java:findRecipeInternal) gates on the MAP's
+		// minimal counts (mMinimalInputItems/mMinimalInputFluids/mMinimalInputs), NOT a hard
+		// empty-array null — the zero-item-slot machines (the Coagulator, task
+		// p29-w2-hu-tu-piggyback, the FIRST port carrier of an item-slot-free map) look up
+		// FLUID-ONLY rows through an empty item array. The per-recipe isRecipeInputEqual
+		// probe simply matches nothing for item-bearing rows (the mInputs.length > 0 guard),
+		// and the addRecipe ghost guard keeps empty-input rows out of the list — so the
+		// lookup stays safe to widen to the fluid-leg form.
+		if ((aInputs == null || aInputs.length <= 0) && (aFluids == null || aFluids.length <= 0)) return null;
 
 		// Check the Recipe which has been used last time in order to not have to search for it again, if possible. (upstream :487)
 		if (aLastRecipe != null && !aLastRecipe.mFakeRecipe && aLastRecipe.mCanBeBuffered && aLastRecipe.isRecipeInputEqual(false, true, aFluids, aInputs)) {

@@ -278,7 +278,8 @@ public final class GTMachineCommand {
 		.then(machine("loom", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom"), GTMachineCommand::firstPouredLoomInput)) // the W1 loom.json smoke row — the SAME-map kinetic rung
 		.then(machine("loom_t2", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t2"), GTMachineCommand::firstPouredLoomInput))
 		.then(machine("loom_t3", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t3"), GTMachineCommand::firstPouredLoomInput))
-		.then(machine("loom_t4", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t4"), GTMachineCommand::firstPouredLoomInput)); // fermenter.json smoke row (wheat + water → sugar)
+		.then(machine("loom_t4", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t4"), GTMachineCommand::firstPouredLoomInput))
+		.then(machine("fermenter", GTMachines.FERMENTER_BLOCKS_BY_PATH.get("fermenter"), () -> net.minecraft.world.item.Items.WHEAT)); // fermenter.json smoke row (wheat + water → sugar)
 		event.getDispatcher().register(tMachine);
 		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder|rollingmill_t1..t4|rollbender|rollformer|clustermill x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
 		// the p8 ladder registration line (the runServer gate asserts it): every family BET

@@ -165,6 +165,13 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("printer", "item+fluid"); // task p29-w2-eu-core-5tier — the tank-out 127 default stays a data-only face
 		tFaces.put("scannervisuals", "item+fluid"); // task p29-w2-eu-core-5tier — the zero-fluid masks stay a data-only face
 		tFaces.put("slicer", "item+fluid"); // task p29-w2-eu-core-5tier — the zero-fluid masks stay a data-only face
+		tFaces.put("steamcracker", "item+fluid"); // task p29-w2-hu-tu-piggyback — the seven hu-tu families join
+		tFaces.put("catalyticcracker", "item+fluid"); // task p29-w2-hu-tu-piggyback
+		tFaces.put("coagulator", "item+fluid"); // task p29-w2-hu-tu-piggyback — the FLUID-ONLY map stays a live item face (the zero-item RECIPE is not a zero-item FACE)
+		tFaces.put("generifier", "item+fluid"); // task p29-w2-hu-tu-piggyback
+		tFaces.put("bath", "item+fluid"); // task p29-w2-hu-tu-piggyback — the P26 in-catalog BATH map, reused
+		tFaces.put("autoclave", "item+fluid"); // task p29-w2-hu-tu-piggyback
+		tFaces.put("loom", "item+fluid"); // task p29-w2-hu-tu-piggyback — the W1 in-catalog LOOM map, the kinetic rung
 		tFaces.put("oven", "item"); // the exception: the gated item handler alone
 		tFaces.put("advanced_crafting_table", "item"); // task p24-act-machine — the second item-only face (zero fluid tanks)
 		BASIC_MACHINE_FAMILY_FACES = Collections.unmodifiableMap(tFaces);
