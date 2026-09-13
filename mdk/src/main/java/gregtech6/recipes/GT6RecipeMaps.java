@@ -112,26 +112,26 @@ import com.mojang.logging.LogUtils;
  * documented deviation). The map's live findRecipe consumer is the
  * {@code GTChiselItem} right-click gate (the ToolCompat.java:224-229 transcription) —
  * there is no machine behind this map (upstream likewise).
-	 *
-	 * <p>The P29 W1 twelve-map block (task p29-w1-rm-maps-scaffold): {@code FERMENTER}
-	 * (RM.java:69), {@code LOOM} (:89), {@code PRESSURE_WASHER} (:98), {@code SQUEEZER}
-	 * (:101), {@code CLUSTER_MILL} (:112), {@code ROLL_BENDER} (:114), {@code ROLL_FORMER}
-	 * (:115), {@code CENTRIFUGE} (:122), {@code SHARPENING} (:126), {@code CUTTER} (:130),
-	 * {@code BOXINATOR} (:149) and {@code UNBOXINATOR} (:150) — each the base-{@link
-	 * RecipeMap} row transcribed parameter-for-parameter over the 15-arg port ctor (the
-	 * trailing NEI booleans T,T,T,T,F,T,T fold away like every other map), the GUI paths the
-	 * upstream machines/&lt;Name&gt; strings lowercased (the Shredder-line convention; note
-	 * the upstream Sharpening row's GUI word is "Sharpener", :126). ALL TWELVE ship
-	 * DECLARED-empty row0 (empty maps are legal — the DISTILLERY/PRESS precedent): the row
-	 * pour is the B/C/D machine-card content, riding either the static loaders (the
-	 * GT6Recipes* FMLCommonSetup convention) or the tier-b RM JSON direct-pour seam — the
-	 * map names here ARE the {@code GT6RecipeMapJsonLoader} map-key anchors for that seam
-	 * (the KJS face of this card: RM runtime recipe maps + this registration seam, no
-	 * datapack row data, no KubeJS surface). No machine consumer lands with this card — a
-	 * map without a findRecipe consumer is the CHISEL judged form. {@code UNBOXINATOR}
-	 * carries the one subclass deviation of the block (documented on the field).
-	 *
-	 * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
+ *
+ * <p>The P29 W1 twelve-map block (task p29-w1-rm-maps-scaffold): {@code FERMENTER}
+ * (RM.java:69), {@code LOOM} (:89), {@code PRESSURE_WASHER} (:98), {@code SQUEEZER}
+ * (:101), {@code CLUSTER_MILL} (:112), {@code ROLL_BENDER} (:114), {@code ROLL_FORMER}
+ * (:115), {@code CENTRIFUGE} (:122), {@code SHARPENING} (:126), {@code CUTTER} (:130),
+ * {@code BOXINATOR} (:149) and {@code UNBOXINATOR} (:150) — each the base-{@link
+ * RecipeMap} row transcribed parameter-for-parameter over the 15-arg port ctor (the
+ * trailing NEI booleans T,T,T,T,F,T,T fold away like every other map), the GUI paths the
+ * upstream machines/&lt;Name&gt; strings lowercased (the Shredder-line convention; note
+ * the upstream Sharpening row's GUI word is "Sharpener", :126). ALL TWELVE ship
+ * DECLARED-empty row0 (empty maps are legal — the DISTILLERY/PRESS precedent): the row
+ * pour is the B/C/D machine-card content, riding either the static loaders (the
+ * GT6Recipes* FMLCommonSetup convention) or the tier-b RM JSON direct-pour seam — the
+ * map names here ARE the {@code GT6RecipeMapJsonLoader} map-key anchors for that seam
+ * (the KJS face of this card: RM runtime recipe maps + this registration seam, no
+ * datapack row data, no KubeJS surface). No machine consumer lands with this card — a
+ * map without a findRecipe consumer is the CHISEL judged form. {@code UNBOXINATOR}
+ * carries the one subclass deviation of the block (documented on the field).
+ *
+ * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
  * cleanly. W2 (p4-machine-oven) wires {@code init()} into the mod lifecycle.
@@ -144,10 +144,10 @@ public class GT6RecipeMaps {
 	 * The generation-reset hooks: every loader that owns a private static "poured" flag
 	 * registers its resetForTest here from its static initializer, so {@link #reset()}
 	 * retires the WHOLE generation. One generation = the 37 map fields (the 12 pre-W1
-		 * fields + the mixer/W1-trio/press-extruder/crucible-pair appends + the BATH append
-		 * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
-		 * p28-c-ulv-machine-ladder + the anvil pair of task p28-c-anvil + the twelve-map
-		 * P29 W1 block of task p29-w1-rm-maps-scaffold) + RecipeMap.RECIPE_MAPS
+ * fields + the mixer/W1-trio/press-extruder/crucible-pair appends + the BATH append
+ * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
+ * p28-c-ulv-machine-ladder + the anvil pair of task p28-c-anvil + the twelve-map
+ * P29 W1 block of task p29-w1-rm-maps-scaffold) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
