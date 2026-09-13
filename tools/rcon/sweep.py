@@ -189,6 +189,16 @@ SESSION_GROUPS = (
     # matches through the chains' embedded name prefix.
     ("p29_w1_buzzsaw", "p29_w1_squeezer", "p29_w1_centrifuge", "p29_w1_sluice",
      "p29_w1_sander", "p29_w1_pressurewasher"),
+    # P29 W1 card D (p29-w1-eu-hu-families): the six eu-hu family chains — one
+    # coordinate band, the fresh z=200 strip (x383..431, clear of the p26 W1 z=172
+    # band and every roster strip below): fermenter firebox 384 / mixer_pair
+    # 392..396 / electricloom 402..404 / electricsifter 410..412 / boxinator 418 /
+    # unboxinator 426, per-family x-disjoint teardown fills. The card-B roll band
+    # and card-C process band join as their own fresh strips (the tail-append form).
+    # No fresh_boot / mutates member — no member touches global state (the EU/HU
+    # inject rig needs no fakesource; the fermenter firebox is band-local).
+    ("p29_w1_mixer_pair", "p29_w1_electricloom", "p29_w1_electricsifter",
+     "p29_w1_boxinator", "p29_w1_unboxinator", "p29_w1_fermenter"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 

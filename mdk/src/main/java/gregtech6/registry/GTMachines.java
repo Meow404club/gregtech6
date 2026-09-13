@@ -1447,6 +1447,486 @@ public final class GTMachines {
 					(aPos, aState) -> kineticMachine(GTMachines.CLUSTERMILL_BE.get(), aPos, aState),
 					clustermillBlockArray()).build(null));
 
+	// the P29 W1 EU/HU families (task p29-w1-eu-hu-families) — six machine families
+	// plus the Mixer kinetic ladder, all MachineRow carriers over ONE family BET each
+	// (the W1-trio shape; the registration rows are the upstream lines verbatim):
+	//
+	// Mixer RU 20181-84 (Loader_MultiTileEntities.java:1392-1395, Kinetic_T[1..4],
+	//   NBT_TEXTURE "mixer", RM.Mixer, NBT_PARALLEL 4/8/16/32 + DURATION T) and
+	//   ElectricMixer EU 20351-54 (:1504-1508, MultiTileEntityBasicMachineElectric,
+	//   Electric_T[1..4], NBT_TEXTURE "electricmixer", RM.Mixer, NBT_EFFICIENCY 5000)
+	//   are the SHARED-MAP PAIR: both rows ride the ONE GT6RecipeMaps.MIXER map — the
+	//   kinetic row runs it at efficiency null (= the :96 default 10000, the units()
+	//   identity) while the electric row pays the :1504 plug-in convenience at 5000.
+	//   Efficiency direction (the card-A review erratum, UT.java:1677 + LH.java:311
+	//   double evidence): units(a, orig, targ) = a × targ/orig, so 5000 = 2× the
+	//   REQUIRED progress = HALF SPEED / 2× the energy consumption per process —
+	//   NOT a 2× speed-up; the same wall-clock sits at exactly half the bar.
+	//   IO masks (:1392 verbatim, the port bytes carry the post-read OR-SBIT_A form):
+	//   item+tank in = SBIT_L|SBIT_U, out = SBIT_R|SBIT_B, item auto left/right,
+	//   tank auto in top / out back, energy = SBIT_D.
+	// ElectricLoom 20361-64 (:1511-1515): EU, RM.Loom, efficiency 5000, no parallel,
+	//   item top-in/bottom-out (auto top/bottom), energy = SBIT_L|SBIT_R (BOTH side
+	//   faces, the only such row in the family), zero tank keys → the 127 default.
+	// ElectricSifter 20371-74 (:1518-1522): EU, the SHARED RM.Sifting map (the
+	//   kinetic sifter rows :1312-1315 and the p26-w1 trio pour feed the same map),
+	//   efficiency 5000, no parallel, loom masks but energy = SBIT_B.
+	// Boxinator 20581-84 (:1635-1639) / Unboxinator 20591-94 (:1642-1646): EU,
+	//   RM.Boxinator / RM.Unboxinator, NO NBT_EFFICIENCY key → the 10000 identity
+	//   (the 26-arg overload), item in = SBIT_L|SBIT_U, out = SBIT_R, auto left/
+	//   right, energy = SBIT_D, no parallel, no tanks. The Unboxinator map is the
+	//   base-RecipeMap form — the upstream RecipeMapUnboxinator.java:43-89 loot
+	//   runtime-synthesis arm is POOLED (the SHREDDER/CHISEL subclass-judgement
+	//   precedent, documented on the GT6RecipeMaps.UNBOXINATOR field).
+	// Fermenter 22003 (:1654): the SINGLE-VARIANT HU machine — StainlessSteel, NBT_
+	//   INPUT 32 / NBT_INPUT_MIN 16 / NBT_INPUT_MAX 64, which is EXACTLY
+	//   TIER_INPUTS[0] = {16, 32, 64} (the tier-0 row of the shared table, the
+	//   upstream explicit window folds into the tier-0 assignment), RM.Fermenter,
+	//   item+tank in = SBIT_B|SBIT_L, item out = SBIT_R, tank out = SBIT_U, item
+	//   auto left/right, tank auto in back / out top, energy = SBIT_D (the burning
+	//   box HU feed enters the bottom face — the p13 boiler adjacency form).
+	//
+	// DECLARED DEVIATION (decisions.p29-w1-split-rulings): the upstream Electric*
+	// ladders are FIVE tiers (VN[1..5], the :1508/:1515/:1522/:1639/:1646 T5 rows
+	// with NBT_INPUT 8192) — this repo runs the 4-ladder rule, so the five T5 rows
+	// STAY POOLED (the Canner T5 :1383 missing-row precedent, same ledger); the
+	// 5-tier MachineRow rollout rides the W2 Electrolyzer card.
+	//
+	// KJS face of this card: the registration rows (4 Mixer kinetic + 20 Electric
+	// rows + 1 Fermenter) plus the datapack domain — the LOOM/BOXINATOR/UNBOXINATOR/
+	// FERMENTER smoke rows ride the GT6RecipeMapJsonLoader direct-pour seam
+	// (data/gt6/recipe_maps/<map>.json); MIXER and SIFTING reuse their existing
+	// static rows (GT6RecipesMixer / GT6RecipesSifter). NO KubeJS surface.
+	// ---------------------------------------------------------------------------
+
+	/** The Mixer family unit word (the W1 trio one-slot key form; upstream "Mixer ("+aMat.getLocal()+")", Loader:1392-1395). */
+	public static final String MACHINE_MIXER_UNIT_KEY = "gt6.row.machine.mixer";
+	/** The Electric Mixer family display template (the voltage-word slot; upstream "Electric Mixer ("+VN[tier]+")", :1504-1508). */
+	public static final String ELECTRIC_MIXER_DISPLAY_KEY = "gt6.row.electricmixer.display";
+	/** The Electric Loom family display template (upstream "Electric Loom ("+VN[tier]+")", :1511-1515). */
+	public static final String ELECTRIC_LOOM_DISPLAY_KEY = "gt6.row.electricloom.display";
+	/** The Electric Sifter family display template (upstream "Electric Sifter ("+VN[tier]+")", :1518-1522). */
+	public static final String ELECTRIC_SIFTER_DISPLAY_KEY = "gt6.row.electricsifter.display";
+	/** The Boxinator family display template (upstream "Boxinator ("+VN[tier]+")", :1635-1639). */
+	public static final String BOXINATOR_DISPLAY_KEY = "gt6.row.boxinator.display";
+	/** The Unboxinator family display template (upstream "Unboxinator ("+VN[tier]+")", :1642-1646). */
+	public static final String UNBOXINATOR_DISPLAY_KEY = "gt6.row.unboxinator.display";
+	/** The Fermenter atomic display template — the single-variant row has NO slot (upstream name column "Fermenter", :1654). */
+	public static final String FERMENTER_DISPLAY_KEY = "gt6.row.fermenter.display";
+
+	/** The Fermenter housing material (upstream MT.StainlessSteel, :1654 — the lazy-supplier form, the GTWireSpecs:35 ruling). */
+	public static final java.util.function.Supplier<OreDictMaterial> FERMENTER_MATERIAL = () -> gregapi.data.MT.StainlessSteel;
+
+	/** The NBT_EFFICIENCY column of every Electric* row (:1504-1522) — the 5000 = half-speed/2×-energy face (the card-A erratum direction). */
+	public static final int ELECTRIC_EFFICIENCY = 5000;
+
+	/** The four Mixer rows, upstream line order :1392-1395 (T1-T4, the Kinetic_T ladder, RU). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> MIXER_ROWS = java.util.List.of(
+			mixer("mixer"   , "bronze"       , "Bronze"       , 20181,  7.0F, 0, PARALLEL_4_32[0]),
+			mixer("mixer_t2", "steel"        , "Steel"        , 20182,  6.0F, 1, PARALLEL_4_32[1]),
+			mixer("mixer_t3", "titanium"     , "Titanium"     , 20183,  9.0F, 2, PARALLEL_4_32[2]),
+			mixer("mixer_t4", "tungstensteel", "Tungstensteel", 20184, 12.5F, 3, PARALLEL_4_32[3]));
+
+	/** The four Electric Mixer rows, upstream line order :1504-1507 (T1-T4, the Electric_T ladder, EU, efficiency 5000, the SHARED RM.Mixer map). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> ELECTRIC_MIXER_ROWS = java.util.List.of(
+			electricMixer("electricmixer"   , "lv", "LV", 20351, 0),
+			electricMixer("electricmixer_t2", "mv", "MV", 20352, 1),
+			electricMixer("electricmixer_t3", "hv", "HV", 20353, 2),
+			electricMixer("electricmixer_t4", "ev", "EV", 20354, 3));
+
+	/** The four Electric Loom rows, upstream line order :1511-1514 (T1-T4, EU, RM.Loom, efficiency 5000, no parallel). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> ELECTRIC_LOOM_ROWS = java.util.List.of(
+			electricLoom("electricloom"   , "lv", "LV", 20361, 0),
+			electricLoom("electricloom_t2", "mv", "MV", 20362, 1),
+			electricLoom("electricloom_t3", "hv", "HV", 20363, 2),
+			electricLoom("electricloom_t4", "ev", "EV", 20364, 3));
+
+	/** The four Electric Sifter rows, upstream line order :1518-1521 (T1-T4, EU, the SHARED RM.Sifting map, efficiency 5000, no parallel). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> ELECTRIC_SIFTER_ROWS = java.util.List.of(
+			electricSifter("electricsifter"   , "lv", "LV", 20371, 0),
+			electricSifter("electricsifter_t2", "mv", "MV", 20372, 1),
+			electricSifter("electricsifter_t3", "hv", "HV", 20373, 2),
+			electricSifter("electricsifter_t4", "ev", "EV", 20374, 3));
+
+	/** The four Boxinator rows, upstream line order :1635-1638 (T1-T4, EU, RM.Boxinator, NO efficiency key → the 26-arg overload). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> BOXINATOR_ROWS = java.util.List.of(
+			boxinator("boxinator"   , "lv", "LV", 20581, 0),
+			boxinator("boxinator_t2", "mv", "MV", 20582, 1),
+			boxinator("boxinator_t3", "hv", "HV", 20583, 2),
+			boxinator("boxinator_t4", "ev", "EV", 20584, 3));
+
+	/** The four Unboxinator rows, upstream line order :1642-1645 (T1-T4, EU, RM.Unboxinator, NO efficiency key → the 26-arg overload). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> UNBOXINATOR_ROWS = java.util.List.of(
+			unboxinator("unboxinator"   , "lv", "LV", 20591, 0),
+			unboxinator("unboxinator_t2", "mv", "MV", 20592, 1),
+			unboxinator("unboxinator_t3", "hv", "HV", 20593, 2),
+			unboxinator("unboxinator_t4", "ev", "EV", 20594, 3));
+
+	/** The ONE Fermenter row (upstream :1654 — the single-variant HU machine, the window 16/32/64 = TIER_INPUTS[0]). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> FERMENTER_ROWS = java.util.List.of(fermenter());
+
+	/**
+	 * One Mixer row factory — the differing columns (path/name/id/material/hardness/tier/
+	 * parallel) plus the family constants: the SHARED RM.Mixer map, RU, the "mixer"
+	 * texture, the :1392 masks (item+tank in left|top, out right|bottom, energy bottom,
+	 * tank auto in top / out back), parallelDuration T (the NBT_PARALLEL_DURATION
+	 * column), the null efficiency column (the 26-arg overload — no NBT_EFFICIENCY key,
+	 * the :96 10000 identity) and the null menu supplier (zero new MenuType).
+	 */
+	private static GTBasicMachineBlock.MachineRow mixer(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_MIXER_UNIT_KEY, aMetaId, aHardness, aTier,
+				aParallel, true /*NBT_PARALLEL_DURATION T :1392*/,
+				() -> GT6RecipeMaps.MIXER, TD.Energy.RU, "mixer",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D, the :151 read ORs SBIT_A*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_B*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)5 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BACK*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/**
+	 * One Electric Mixer row factory — the mixer() masks verbatim over the EU family
+	 * constants: Electric_T material, the voltage-word slot, hardness 4.0 (the :1504
+	 * column on all four rows), the SHARED RM.Mixer map, the "electricmixer" texture and
+	 * the NBT_EFFICIENCY 5000 column (the 27-arg canonical form) — HALF SPEED, 2× the
+	 * energy-time per process (the units() direction, the card-A erratum).
+	 */
+	private static GTBasicMachineBlock.MachineRow electricMixer(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, ELECTRIC_T_LADDER.get(aTier), ELECTRIC_MIXER_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				PARALLEL_4_32[aTier], true /*NBT_PARALLEL_DURATION T :1504*/,
+				() -> GT6RecipeMaps.MIXER, TD.Energy.EU, "electricmixer",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_B*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)5 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BACK*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false,
+				ELECTRIC_EFFICIENCY /*NBT_EFFICIENCY 5000 :1504-1507 — half-speed face*/);
+	}
+
+	/**
+	 * One Electric Loom row factory — the :1511 masks: item top-in/bottom-out (auto
+	 * top/bottom), energy = SBIT_L|SBIT_R (BOTH side faces), ZERO tank keys → the
+	 * 127/-1 no-tank face (the zero-fluid map, the Shredder precedent), no parallel,
+	 * efficiency 5000, RM.Loom, the "electricloom" texture.
+	 */
+	private static GTBasicMachineBlock.MachineRow electricLoom(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, ELECTRIC_T_LADDER.get(aTier), ELECTRIC_LOOM_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1511-1514*/,
+				() -> GT6RecipeMaps.LOOM, TD.Energy.EU, "electricloom",
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_L|SBIT_R — both sides*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U — top in*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D — bottom out*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_INV_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				null /*the menu-less carrier*/, true, null, false,
+				ELECTRIC_EFFICIENCY /*NBT_EFFICIENCY 5000 :1511-1514*/);
+	}
+
+	/** One Electric Sifter row factory — the electricLoom shape over the :1518 masks (energy SBIT_B) and the SHARED RM.Sifting map. */
+	private static GTBasicMachineBlock.MachineRow electricSifter(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, ELECTRIC_T_LADDER.get(aTier), ELECTRIC_SIFTER_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1518-1521*/,
+				() -> GT6RecipeMaps.SIFTING, TD.Energy.EU, "electricsifter",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U — top in*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D — bottom out*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_INV_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				null /*the menu-less carrier*/, true, null, false,
+				ELECTRIC_EFFICIENCY /*NBT_EFFICIENCY 5000 :1518-1521*/);
+	}
+
+	/**
+	 * One Boxinator row factory — the :1635 masks: item in = left|top (auto left), out =
+	 * right (auto right), energy = bottom, zero tank keys, no parallel, NO
+	 * NBT_EFFICIENCY key → the 26-arg overload (the 10000 identity, the zero-drift face).
+	 */
+	private static GTBasicMachineBlock.MachineRow boxinator(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, ELECTRIC_T_LADDER.get(aTier), BOXINATOR_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1635-1638*/,
+				() -> GT6RecipeMaps.BOXINATOR, TD.Energy.EU, "boxinator",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/** One Unboxinator row factory — the boxinator shape verbatim over the :1642 masks and RM.Unboxinator. */
+	private static GTBasicMachineBlock.MachineRow unboxinator(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, ELECTRIC_T_LADDER.get(aTier), UNBOXINATOR_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1642-1645*/,
+				() -> GT6RecipeMaps.UNBOXINATOR, TD.Energy.EU, "unboxinator",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/**
+	 * The Fermenter row factory — the SINGLE-variant HU machine (:1654): StainlessSteel
+	 * housing, hardness 6.0, the tier-0 row of the SHARED TIER_INPUTS table (the upstream
+	 * explicit NBT_INPUT 32 / MIN 16 / MAX 64 window IS TIER_INPUTS[0] = {16, 32, 64}),
+	 * the :1654 masks (item+tank in back|left, item out right, tank out top, tank auto in
+	 * back / out top, energy bottom), no parallel, no efficiency key → the 26-arg overload.
+	 */
+	private static GTBasicMachineBlock.MachineRow fermenter() {
+		return new GTBasicMachineBlock.MachineRow("fermenter", "stainless_steel", "StainlessSteel", FERMENTER_MATERIAL, FERMENTER_DISPLAY_KEY, 22003, 6.0F,
+				0, 1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1654*/,
+				() -> GT6RecipeMaps.FERMENTER, TD.Energy.HU, "fermenter",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D — the burning box feeds the bottom face*/,
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_B|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_B|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)5 /*NBT_TANK_SIDE_AUTO_IN SIDE_BACK*/, (byte)1 /*NBT_TANK_SIDE_AUTO_OUT SIDE_TOP*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/** The registered Mixer blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> MIXER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Mixer items, same keys as {@link #MIXER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> MIXER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Electric Mixer blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> ELECTRIC_MIXER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Electric Mixer items. */
+	public static final java.util.Map<String, RegistryObject<Item>> ELECTRIC_MIXER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Electric Loom blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> ELECTRIC_LOOM_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Electric Loom items. */
+	public static final java.util.Map<String, RegistryObject<Item>> ELECTRIC_LOOM_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Electric Sifter blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> ELECTRIC_SIFTER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Electric Sifter items. */
+	public static final java.util.Map<String, RegistryObject<Item>> ELECTRIC_SIFTER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Boxinator blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> BOXINATOR_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Boxinator items. */
+	public static final java.util.Map<String, RegistryObject<Item>> BOXINATOR_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Unboxinator blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> UNBOXINATOR_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Unboxinator items. */
+	public static final java.util.Map<String, RegistryObject<Item>> UNBOXINATOR_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Fermenter blocks by path (the single-variant ladder). */
+	public static final java.util.Map<String, RegistryObject<Block>> FERMENTER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Fermenter items. */
+	public static final java.util.Map<String, RegistryObject<Item>> FERMENTER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : MIXER_ROWS) {
+			MIXER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.MIXER_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			MIXER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_MIXER_ROWS) {
+			ELECTRIC_MIXER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ELECTRIC_MIXER_BE.get(), tRow)));
+			ELECTRIC_MIXER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ELECTRIC_MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_LOOM_ROWS) {
+			ELECTRIC_LOOM_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ELECTRIC_LOOM_BE.get(), tRow)));
+			ELECTRIC_LOOM_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ELECTRIC_LOOM_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_SIFTER_ROWS) {
+			ELECTRIC_SIFTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ELECTRIC_SIFTER_BE.get(), tRow)));
+			ELECTRIC_SIFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ELECTRIC_SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : BOXINATOR_ROWS) {
+			BOXINATOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.BOXINATOR_BE.get(), tRow)));
+			BOXINATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.BOXINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : UNBOXINATOR_ROWS) {
+			UNBOXINATOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.UNBOXINATOR_BE.get(), tRow)));
+			UNBOXINATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : FERMENTER_ROWS) {
+			FERMENTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.FERMENTER_BE.get(), tRow)));
+			FERMENTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.FERMENTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Mixer block list in registration order (the loot/datagen walkers). */
+	public static Block[] mixerBlockArray() {
+		Block[] rBlocks = new Block[MIXER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : MIXER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Electric Mixer block list in registration order. */
+	public static Block[] electricMixerBlockArray() {
+		Block[] rBlocks = new Block[ELECTRIC_MIXER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : ELECTRIC_MIXER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Electric Loom block list in registration order. */
+	public static Block[] electricLoomBlockArray() {
+		Block[] rBlocks = new Block[ELECTRIC_LOOM_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : ELECTRIC_LOOM_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Electric Sifter block list in registration order. */
+	public static Block[] electricSifterBlockArray() {
+		Block[] rBlocks = new Block[ELECTRIC_SIFTER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : ELECTRIC_SIFTER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Boxinator block list in registration order. */
+	public static Block[] boxinatorBlockArray() {
+		Block[] rBlocks = new Block[BOXINATOR_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : BOXINATOR_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Unboxinator block list in registration order. */
+	public static Block[] unboxinatorBlockArray() {
+		Block[] rBlocks = new Block[UNBOXINATOR_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : UNBOXINATOR_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Fermenter block list in registration order (the single-variant ladder). */
+	public static Block[] fermenterBlockArray() {
+		Block[] rBlocks = new Block[FERMENTER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : FERMENTER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine mixer — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block mixerBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = MIXER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine electricmixer — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block electricMixerBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = ELECTRIC_MIXER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine electricloom — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block electricLoomBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = ELECTRIC_LOOM_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine electricsifter — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block electricSifterBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = ELECTRIC_SIFTER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine boxinator — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block boxinatorBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = BOXINATOR_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine unboxinator — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block unboxinatorBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = UNBOXINATOR_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine fermenter — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block fermenterBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = FERMENTER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	// the seven eu-hu family BETs: the W1-trio shape verbatim — ONE family BET, the four
+	// (or one) tier blocks multi-attached, the row read off the placed block by the
+	// SHARED kineticMachine factory body (the row carries every column these families
+	// need; applyRow inside lands the masks AND the efficiency column on the BE).
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> MIXER_BE =
+			BLOCK_ENTITY_TYPES.register("mixer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.MIXER_BE.get(), aPos, aState),
+					mixerBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> ELECTRIC_MIXER_BE =
+			BLOCK_ENTITY_TYPES.register("electricmixer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.ELECTRIC_MIXER_BE.get(), aPos, aState),
+					electricMixerBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> ELECTRIC_LOOM_BE =
+			BLOCK_ENTITY_TYPES.register("electricloom", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.ELECTRIC_LOOM_BE.get(), aPos, aState),
+					electricLoomBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> ELECTRIC_SIFTER_BE =
+			BLOCK_ENTITY_TYPES.register("electricsifter", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.ELECTRIC_SIFTER_BE.get(), aPos, aState),
+					electricSifterBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> BOXINATOR_BE =
+			BLOCK_ENTITY_TYPES.register("boxinator", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.BOXINATOR_BE.get(), aPos, aState),
+					boxinatorBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> UNBOXINATOR_BE =
+			BLOCK_ENTITY_TYPES.register("unboxinator", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.UNBOXINATOR_BE.get(), aPos, aState),
+					unboxinatorBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> FERMENTER_BE =
+			BLOCK_ENTITY_TYPES.register("fermenter", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.FERMENTER_BE.get(), aPos, aState),
+					fermenterBlockArray()).build(null));
+
 	// ---------------------------------------------------------------------------
 	// the Advanced Crafting Table (task p24-act-machine) — the SINGLE-VARIANT machine
 	// (decisions.p24-act-be-form: the upstream MTE extends TileEntityBase09FacingSingle,
@@ -1543,14 +2023,16 @@ public final class GTMachines {
 	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill;
 	 * the Oven ladder joins in task p27-oven-heat-t-ladder; the six ULV rows join in task
 	 * p28-c-ulv-machine-ladder):
-	 * the 94 machine-domain blocks the client paint BlockColor
+	 * the 119 machine-domain blocks the client paint BlockColor
 	 * registers over — the oven ladder (4) + the shredder/crusher/lathe ladders (4 each = 12) + the
 	 * dryer (4) + the distillery (4) + the canner (4) + the sifter/compressor/wiremill
 	 * ladders (4 each = 12) + press (4) + extruder (4) + the ULV rows (5 + the rollingmill
 	 * rung = 6) + the roll ladders (rollingmill RU t1-t4 + rollbender/rollformer/clustermill
 	 * 4 each = 16, task p29-w1-kinetic-roll-ladder) + the six process families
 	 * (buzzsaw/squeezer/centrifuge/sluice/sandingmachine/pressurewasher 4 each = 24,
-	 * task p29-w1-kinetic-process-ladder),
+	 * task p29-w1-kinetic-process-ladder) + the eu-hu families (mixer/electricmixer/
+	 * electricloom/electricsifter/boxinator/unboxinator 4 each = 24 + the fermenter rung
+	 * = 25, task p29-w1-eu-hu-families),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -1558,7 +2040,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(94);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(119);
 		rBlocks.add(OVEN.get());
 		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
@@ -1592,6 +2074,16 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, sluiceBlockArray());
 		java.util.Collections.addAll(rBlocks, sandingBlockArray());
 		java.util.Collections.addAll(rBlocks, pressurewasherBlockArray());
+		// task p29-w1-eu-hu-families — the seven eu-hu families, +25 blocks (mixer 4 +
+		// electricmixer 4 + electricloom 4 + electricsifter 4 + boxinator 4 + unboxinator
+		// 4 + fermenter 1), the census comment and the datagen-JVM half move together
+		java.util.Collections.addAll(rBlocks, mixerBlockArray());
+		java.util.Collections.addAll(rBlocks, electricMixerBlockArray());
+		java.util.Collections.addAll(rBlocks, electricLoomBlockArray());
+		java.util.Collections.addAll(rBlocks, electricSifterBlockArray());
+		java.util.Collections.addAll(rBlocks, boxinatorBlockArray());
+		java.util.Collections.addAll(rBlocks, unboxinatorBlockArray());
+		java.util.Collections.addAll(rBlocks, fermenterBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -2106,6 +2598,31 @@ public final class GTMachines {
 							}
 							for (GTBasicMachineBlock.MachineRow tRow : PRESSURE_WASHER_ROWS) {
 								aOutput.accept(new ItemStack(PRESSURE_WASHER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_ROWS) {
+								aOutput.accept(new ItemStack(ROLLINGMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							// task p29-w1-eu-hu-families: the seven eu-hu families, +25 rows
+							for (GTBasicMachineBlock.MachineRow tRow : MIXER_ROWS) {
+								aOutput.accept(new ItemStack(MIXER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_MIXER_ROWS) {
+								aOutput.accept(new ItemStack(ELECTRIC_MIXER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_LOOM_ROWS) {
+								aOutput.accept(new ItemStack(ELECTRIC_LOOM_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_SIFTER_ROWS) {
+								aOutput.accept(new ItemStack(ELECTRIC_SIFTER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : BOXINATOR_ROWS) {
+								aOutput.accept(new ItemStack(BOXINATOR_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : UNBOXINATOR_ROWS) {
+								aOutput.accept(new ItemStack(UNBOXINATOR_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : FERMENTER_ROWS) {
+								aOutput.accept(new ItemStack(FERMENTER_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
 								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
 								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));

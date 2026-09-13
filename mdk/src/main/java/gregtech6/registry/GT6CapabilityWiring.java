@@ -244,6 +244,45 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPressurewasher,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p29-w1-eu-hu-families — the seven eu-hu families join (tail-append;
+		// shared serial file): the same BE class, the same item + fluid faces (the
+		// mixer/boxinator families' zero-or-fluid rows ride the 127 defaults — zero
+		// fluid recipes are NOT a zero fluid face, the seam-② hard constraint)
+		BlockEntityType<TileEntityBasicMachine> tMixer = GTMachines.MIXER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tMixer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tMixer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tElectricMixer = GTMachines.ELECTRIC_MIXER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tElectricMixer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tElectricMixer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tElectricLoom = GTMachines.ELECTRIC_LOOM_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tElectricLoom,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tElectricLoom,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tElectricSifter = GTMachines.ELECTRIC_SIFTER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tElectricSifter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tElectricSifter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tBoxinator = GTMachines.BOXINATOR_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tBoxinator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBoxinator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tUnboxinator = GTMachines.UNBOXINATOR_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tUnboxinator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tUnboxinator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tFermenter = GTMachines.FERMENTER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tFermenter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tFermenter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,

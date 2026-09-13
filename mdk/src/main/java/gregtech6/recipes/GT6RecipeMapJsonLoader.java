@@ -169,7 +169,12 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 	 * clustermill) and the six batch-C process keys of task
 	 * p29-w1-kinetic-process-ladder (cutter, squeezer, centrifuge, sluice, sharpening,
 	 * pressurewasher) — the whitelist keeps growing with its census).
-	 */
+	 * The pourable map keys (the registered {@link GT6RecipeMaps} census minus
+	 * FURNACE/FURNACE_FUEL — 13 through the p26-kitchen-pot-bowl BATH append; the four
+	 * card-D datapack-domain maps of task p29-w1-eu-hu-families join at the p29 W1 wave:
+	 * {@code loom}, {@code boxinator}, {@code unboxinator}, {@code fermenter} — the map
+	 * names are the card-A twelve-map block's GT6RecipeMapJsonLoader anchors, now live
+	 * pour targets for the smoke rows the eu-hu machine chains drive).	 */
 	private static final Set<String> POURABLE = Set.of(
 			"coke_oven", "shredder", "crusher", "lathe", "chisel", "engine_fuels",
 			"fluidbed", "burn", "distillery", "drying", "canner", "mixer", "bath",
@@ -177,8 +182,9 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			"rollingmill", "rollbender", "rollformer", "clustermill",
 			// the P29 W1 process-card six (task p29-w1-kinetic-process-ladder): the batch-C
 			// smoke-row map keys — the card-A constants the Sluice tail-append joins
-			"cutter", "squeezer", "centrifuge", "sluice", "sharpening", "pressurewasher");
-
+			"cutter", "squeezer", "centrifuge", "sluice", "sharpening", "pressurewasher",
+			// the P29 W1 card-D eu-hu four (task p29-w1-eu-hu-families)
+			"loom", "boxinator", "unboxinator", "fermenter");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -523,6 +529,10 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "sluice" -> GT6RecipeMaps.SLUICE;
 			case "sharpening" -> GT6RecipeMaps.SHARPENING;
 			case "pressurewasher" -> GT6RecipeMaps.PRESSURE_WASHER;
+			case "loom" -> GT6RecipeMaps.LOOM;
+			case "boxinator" -> GT6RecipeMaps.BOXINATOR;
+			case "unboxinator" -> GT6RecipeMaps.UNBOXINATOR;
+			case "fermenter" -> GT6RecipeMaps.FERMENTER;
 			default -> null;
 		};
 	}

@@ -226,7 +226,39 @@ public final class GTMachineCommand {
 		.then(machine("clustermill", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill_t2", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t2"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill_t3", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t3"), rollFeed(gregapi.data.OP.plate)))
-		.then(machine("clustermill_t4", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t4"), rollFeed(gregapi.data.OP.plate)));
+		.then(machine("clustermill_t4", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t4"), rollFeed(gregapi.data.OP.plate)))
+		// task p29-w1-eu-hu-families: the seven eu-hu families — the Mixer/ElectricMixer
+		// feeds walk the LIVE SHARED RM.Mixer map (the firstPouredWiremillStick shape: the
+		// first input item of the first poured row — a C-Foam rock dust), the ElectricLoom
+		// feed walks the JSON-poured RM.Loom smoke row, the ElectricSifter reuses the
+		// :224 grass row0 of the SHARED RM.Sifting map (the kinetic sifter feed), and the
+		// boxinator/unboxinator/fermenter feeds are their smoke-row item inputs
+		// (paper / map / wheat — the data/gt6/recipe_maps rows' item faces).
+		.then(machine("mixer", GTMachines.MIXER_BLOCKS_BY_PATH.get("mixer"), GTMachineCommand::firstPouredMixerInput)) // GT6RecipesMixer C-Foam rock rows
+		.then(machine("mixer_t2", GTMachines.MIXER_BLOCKS_BY_PATH.get("mixer_t2"), GTMachineCommand::firstPouredMixerInput))
+		.then(machine("mixer_t3", GTMachines.MIXER_BLOCKS_BY_PATH.get("mixer_t3"), GTMachineCommand::firstPouredMixerInput))
+		.then(machine("mixer_t4", GTMachines.MIXER_BLOCKS_BY_PATH.get("mixer_t4"), GTMachineCommand::firstPouredMixerInput))
+		.then(machine("electricmixer", GTMachines.ELECTRIC_MIXER_BLOCKS_BY_PATH.get("electricmixer"), GTMachineCommand::firstPouredMixerInput))
+		.then(machine("electricmixer_t2", GTMachines.ELECTRIC_MIXER_BLOCKS_BY_PATH.get("electricmixer_t2"), GTMachineCommand::firstPouredMixerInput))
+		.then(machine("electricmixer_t3", GTMachines.ELECTRIC_MIXER_BLOCKS_BY_PATH.get("electricmixer_t3"), GTMachineCommand::firstPouredMixerInput))
+		.then(machine("electricmixer_t4", GTMachines.ELECTRIC_MIXER_BLOCKS_BY_PATH.get("electricmixer_t4"), GTMachineCommand::firstPouredMixerInput))
+		.then(machine("electricloom", GTMachines.ELECTRIC_LOOM_BLOCKS_BY_PATH.get("electricloom"), GTMachineCommand::firstPouredLoomInput)) // the loom.json smoke row
+		.then(machine("electricloom_t2", GTMachines.ELECTRIC_LOOM_BLOCKS_BY_PATH.get("electricloom_t2"), GTMachineCommand::firstPouredLoomInput))
+		.then(machine("electricloom_t3", GTMachines.ELECTRIC_LOOM_BLOCKS_BY_PATH.get("electricloom_t3"), GTMachineCommand::firstPouredLoomInput))
+		.then(machine("electricloom_t4", GTMachines.ELECTRIC_LOOM_BLOCKS_BY_PATH.get("electricloom_t4"), GTMachineCommand::firstPouredLoomInput))
+		.then(machine("electricsifter", GTMachines.ELECTRIC_SIFTER_BLOCKS_BY_PATH.get("electricsifter"), () -> net.minecraft.world.item.Items.GRASS_BLOCK)) // Loader_Recipes_Ores.java:224, the shared map
+		.then(machine("electricsifter_t2", GTMachines.ELECTRIC_SIFTER_BLOCKS_BY_PATH.get("electricsifter_t2"), () -> net.minecraft.world.item.Items.GRASS_BLOCK))
+		.then(machine("electricsifter_t3", GTMachines.ELECTRIC_SIFTER_BLOCKS_BY_PATH.get("electricsifter_t3"), () -> net.minecraft.world.item.Items.GRASS_BLOCK))
+		.then(machine("electricsifter_t4", GTMachines.ELECTRIC_SIFTER_BLOCKS_BY_PATH.get("electricsifter_t4"), () -> net.minecraft.world.item.Items.GRASS_BLOCK))
+		.then(machine("boxinator", GTMachines.BOXINATOR_BLOCKS_BY_PATH.get("boxinator"), () -> net.minecraft.world.item.Items.PAPER)) // boxinator.json smoke row (the GT6_Main.java:350 paper+compass→map form)
+		.then(machine("boxinator_t2", GTMachines.BOXINATOR_BLOCKS_BY_PATH.get("boxinator_t2"), () -> net.minecraft.world.item.Items.PAPER))
+		.then(machine("boxinator_t3", GTMachines.BOXINATOR_BLOCKS_BY_PATH.get("boxinator_t3"), () -> net.minecraft.world.item.Items.PAPER))
+		.then(machine("boxinator_t4", GTMachines.BOXINATOR_BLOCKS_BY_PATH.get("boxinator_t4"), () -> net.minecraft.world.item.Items.PAPER))
+		.then(machine("unboxinator", GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get("unboxinator"), () -> net.minecraft.world.item.Items.MAP)) // unboxinator.json smoke row (map → paper + compass)
+		.then(machine("unboxinator_t2", GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get("unboxinator_t2"), () -> net.minecraft.world.item.Items.MAP))
+		.then(machine("unboxinator_t3", GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get("unboxinator_t3"), () -> net.minecraft.world.item.Items.MAP))
+		.then(machine("unboxinator_t4", GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get("unboxinator_t4"), () -> net.minecraft.world.item.Items.MAP))
+		.then(machine("fermenter", GTMachines.FERMENTER_BLOCKS_BY_PATH.get("fermenter"), () -> net.minecraft.world.item.Items.WHEAT)); // fermenter.json smoke row (wheat + water → sugar)
 		event.getDispatcher().register(tMachine);
 		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder|rollingmill_t1..t4|rollbender|rollformer|clustermill x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
 		// the p8 ladder registration line (the runServer gate asserts it): every family BET
@@ -234,7 +266,7 @@ public final class GTMachineCommand {
 		// and 9 + 2 + 3 family BETs — the press/extruder join = task p26-w1-press-extruder-
 		// molds, the roll-ladder join = task p29-w1-kinetic-roll-ladder; the RU RollingMill
 		// ladder shares the p28 ULV rung's rollingmill BET, so it adds blocks but no BET).
-		LOGGER.info("GT6 machine ladder registered: 60 blocks / 14 family BETs (T1-T4 validBlocks multi-attach), tiers "
+		LOGGER.info("GT6 machine ladder registered: 109 blocks / 27 family BETs (T1-T4 validBlocks multi-attach), tiers "
 			+ java.util.Arrays.deepToString(GTMachines.TIER_INPUTS) + " crusher parallel " + java.util.Arrays.toString(GTMachines.CRUSHER_PARALLEL));
 		// the p14 dryer registration smoke line (the runServer gate asserts it): the family
 		// BET resolves, the row config is the upstream :1477-1480 columns.
@@ -256,6 +288,15 @@ public final class GTMachineCommand {
 			+ "Sifter KU RM.Sifting 1/12 + Compressor KU RM.Compressor + Wiremill RU RM.Wiremill, "
 			+ "parallel " + java.util.Arrays.toString(GTMachines.PARALLEL_4_32) + " (sifter/compressor, shared with the crusher) / 1 (wiremill), "
 			+ "hardness 7/6/9/12.5, menu=null rows (zero new MenuType)");
+		// the p29 W1 EU/HU registration smoke line: the seven family BETs resolve, the
+		// shared-map pair rides ONE RM.Mixer (kinetic efficiency null / electric 5000),
+		// the electric sifter rides the SHARED RM.Sifting, and the fermenter folds its
+		// upstream explicit window (16/32/64) into the tier-0 TIER_INPUTS row.
+		LOGGER.info("GT6 W1 eu-hu families registered: 25 blocks / 7 family BETs (T1-T4 validBlocks multi-attach), "
+			+ "Mixer RU RM.Mixer (efficiency 10000 identity, parallel " + java.util.Arrays.toString(GTMachines.PARALLEL_4_32) + " + duration T) + "
+			+ "ElectricMixer/Loom/Sifter EU efficiency " + GTMachines.ELECTRIC_EFFICIENCY + " (half-speed/2x-energy face, the shared Mixer+Sifting maps) + "
+			+ "Boxinator/Unboxinator EU (no efficiency key) + Fermenter HU TIER_INPUTS[0]={16,32,64}, "
+			+ "the T5(EV) rows of the upstream Electric* ladders stay pooled (the Canner T5 precedent)");
 	}
 
 	/** One machine literal with its four subcommands (the oven command shape, parameterised). */
@@ -447,6 +488,28 @@ public final class GTMachineCommand {
 			if (tRecipe.mInputs.length == 1 && tRecipe.mInputs[0].getItem() == aStickItem && tRecipe.mInputs[0].getCount() == 1) return tRecipe;
 		}
 		return null;
+	}
+
+	/**
+	 * The Mixer acceptance feed (task p29-w1-eu-hu-families): the FIRST input item of the
+	 * first poured row of the SHARED RM.Mixer map (the firstPouredWiremillStick shape) —
+	 * a C-Foam rock dust of the GT6RecipesMixer pour. Both the kinetic Mixer and the
+	 * Electric Mixer literals share it (ONE map); the chains fill the full multi-input
+	 * set through the inventory data merge (the p26_w1_press two-slot merge shape).
+	 */
+	private static net.minecraft.world.item.Item firstPouredMixerInput() {
+		for (gregtech6.recipes.Recipe tRecipe : gregtech6.recipes.GT6RecipeMaps.MIXER.mRecipeList) {
+			if (tRecipe.mInputs.length > 0 && !tRecipe.mInputs[0].isEmpty()) return tRecipe.mInputs[0].getItem();
+		}
+		throw new IllegalStateException("No poured RM.Mixer row resolved for the mixer feed (the GT6RecipesMixer FMLCommonSetup pour must run first)");
+	}
+
+	/** The ElectricLoom acceptance feed: the first input item of the JSON-poured RM.Loom subset (the loom.json smoke row's string face). */
+	private static net.minecraft.world.item.Item firstPouredLoomInput() {
+		for (gregtech6.recipes.Recipe tRecipe : gregtech6.recipes.GT6RecipeMaps.LOOM.mRecipeList) {
+			if (tRecipe.mInputs.length > 0 && !tRecipe.mInputs[0].isEmpty()) return tRecipe.mInputs[0].getItem();
+		}
+		throw new IllegalStateException("No poured RM.Loom row resolved for the electricloom feed (the recipe_maps JSON reload must run first)");
 	}
 
 	private static TileEntityBasicMachine machineAt(CommandSourceStack source, BlockPos pos) {
