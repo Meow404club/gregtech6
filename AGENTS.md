@@ -66,7 +66,9 @@
      a. 编译 + 离线测试套件（分钟级）；
      b. **本卡 RCON 组**：拆卡时 architect 声明的 `files_scope → sweep --group` 映射，
         命令 `tools/rcon/sweep.py --group <组>`；
-     c. 触碰共享层（gregapi/tools/框架代码）的卡 → 门禁升级为全量 sweep。
+     c. 触碰共享层（gregapi/tools/框架代码）的卡 → **不设独立全量点**（2026-09-13 用户
+        裁定：全量只在阶段末跑，不是波尾不是卡尾）：离线套件必须全绿，共享层回归由
+        ③阶段末全量兜底。
   ② **队列循环（主会话守门，绿才合）**：卡完成 → 入队（任务板 `tasks.merge_queue` 记
      队列序与状态）→ 出队派 review-merge 审查并重跑该卡门禁实证（“2-3 并发”仅指门禁内 RCON 链的执行并发，
      **绝不是并行派多个 review-merge 会话**——全系统审查会话恒为 1）→
