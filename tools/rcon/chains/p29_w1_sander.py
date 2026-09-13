@@ -7,10 +7,12 @@ zero fluid MASKS, data-only; the fluid face stays, the seam-② hard constraint)
 parallel key -> 1; energy rides the TOP face (the :1589 SBIT_U row).
 
 Rig split (the card RCON ruling):
-  T1 — the LIVE kinetic fixture: the diesel engine sits DIRECTLY ABOVE the machine
-    (the emitEnergyToNetwork adjacency covers the block below; the machine's SBIT_U
-    top face meets it — no facing merge needed, top stays top under a horizontal
-    facing).
+  T1 — the LIVE kinetic fixture: the /gt6energy source sits DIRECTLY ABOVE the
+    machine (the machine's SBIT_U top face meets it — no facing merge needed, top
+    stays top under a horizontal facing). The diesel->axle form is impossible for a
+    top-face machine: the engine is HORIZONTAL_FACING-only (GTDieselEngineBlock
+    :42) so it can never emit downward, and the straight axle refuses perpendicular
+    faces (GTAxleBlockEntity :72-74) — the p8-d4 source emits on all six sides.
   T2-T4 — the gt6machine inject rig.
 
 The sharpening row (data/gt6/recipe_maps/sharpening.json): 1 sandstone -> 2x sand,
@@ -39,7 +41,7 @@ from framework import Chain, Step, main, phase
 F = gt6world.fmt
 
 # the fresh z=252 band — the sander column x432..440 (family x-disjoint; T1 carries
-# the diesel rig ABOVE the machine: machine y64, engine y65)
+# the /gt6energy source rig ABOVE the machine: machine y64, source y65)
 ENGINE = gt6world.Site(432, 65, 252)
 MILL_T1 = gt6world.Site(432, 64, 252)
 MILL_T2 = gt6world.Site(435, 64, 252)
@@ -47,7 +49,13 @@ MILL_T3 = gt6world.Site(437, 64, 252)
 MILL_T4 = gt6world.Site(439, 64, 252)
 T1, T2, T3, T4 = F(MILL_T1), F(MILL_T2), F(MILL_T3), F(MILL_T4)
 
-DIESEL = "gt6:diesel_engine_bronze"
+# the T1 rig: the /gt6energy source (the p8-d4 command-driven test generator) sits at
+# ENGINE, directly ABOVE the machine, feeding the SBIT_U top energy face. The engine
+# block is HORIZONTAL_FACING-only (GTDieselEngineBlock.java:42) — it can never emit
+# downward, and the straight axle refuses perpendicular faces (GTAxleBlockEntity
+# :72-74), so a top-face machine cannot be engine-rigged. The source emits on all six
+# sides (GTEnergySourceBlockEntity :60) — the p12-gearbox-transformer chain form.
+RIG = ENGINE
 
 
 def feed_merge(pos, count=1):
@@ -61,11 +69,13 @@ def feed_merge(pos, count=1):
 SAND_INJ = {"1.20.1": "outputs=[2x sand; ]", "1.21.1": "outputs=[2x minecraft:sand; ]"}
 
 steps = [
-    phase("A: T1 — the diesel ABOVE the machine (the SBIT_U top energy face); one row one process"),
+    phase("A: T1 — the /gt6energy source ABOVE the machine (the SBIT_U top energy face); one row one process"),
     Step(f"setblock {T1} gt6:sanding_machine", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T1)),
-    Step(f"setblock {F(ENGINE)} {DIESEL}[facing=east]", expect="Changed the block"),
-    Step(f"gt6engine fuel {F(ENGINE)} gt6:diesel 2000", expect="filled"),
+    Step(f"gt6energy place {F(RIG)}", expect=f"GT6 energy source placed at {F(RIG)}"),
+    Step(f"gt6energy type {F(RIG)} RU", expect="type ENERGY.KINETIC_ROTATION"),
+    Step(f"gt6energy volt {F(RIG)} 32", expect="voltage 32"),
+    Step(f"gt6energy mode {F(RIG)} on", expect="emitting true", sleep=2.0),
     Step(f"gt6machine wiremill check {T1}", expect="out[0]=2x sand",
          node_expects={"1.21.1": "out[0]=2x minecraft:sand"}, poll=45.0),
     Step(f"gt6machine wiremill check {T1}", expect="parallel=1 parallelDuration=false"),

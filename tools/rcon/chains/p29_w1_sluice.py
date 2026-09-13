@@ -71,7 +71,7 @@ steps = [
     Step(f"setblock {T1} gt6:sluice", expect="Changed the block", sleep=1.0),
     Step(f"data merge block {T1} {{facing:5}}", expect="Modified block data"),  # back = west toward the axle
     # the fluid leg alone — the :708 MIN-ITEM gate refuses (no recipe ever binds)
-    Step(f"gt6machine wiremill fluid fill top minecraft:water 1000 {T1}", expect="filled 1000/1000"),
+    Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T1}", expect="filled 1000/1000"),
     Step(f"gt6machine wiremill inject 20 64 {T1}", expect="progress=0/0"),
     Step(f"gt6machine wiremill fluid stat {T1}", expect="in[0]=1000 L of minecraft:water"),
     # both minimum legs -> the row completes over the diesel
@@ -90,15 +90,15 @@ steps = [
     Step(f"setblock {T2} gt6:sluice_t2", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {T2}", expect="minIn=64 recIn=128 maxIn=256"),
     Step(feed_merge(T2, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T2, 1)),
-    Step(f"gt6machine wiremill fluid fill top minecraft:water 1000 {T2}", expect="filled 1000/1000"),
+    Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T2}", expect="filled 1000/1000"),
     Step(f"gt6machine wiremill inject 6 256 {T2}", expect=pair_report(1, 1)["1.20.1"], node_expects=pair_report(1, 1)),
     Step(f"setblock {T3} gt6:sluice_t3", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T3, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T3, 1)),
-    Step(f"gt6machine wiremill fluid fill top minecraft:water 1000 {T3}", expect="filled 1000/1000"),
+    Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T3}", expect="filled 1000/1000"),
     Step(f"gt6machine wiremill inject 6 1024 {T3}", expect=pair_report(1, 1)["1.20.1"], node_expects=pair_report(1, 1)),
     Step(f"setblock {T4} gt6:sluice_t4", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T4, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T4, 1)),
-    Step(f"gt6machine wiremill fluid fill top minecraft:water 1000 {T4}", expect="filled 1000/1000"),
+    Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T4}", expect="filled 1000/1000"),
     Step(f"gt6machine wiremill inject 6 4096 {T4}", expect=pair_report(1, 1)["1.20.1"], node_expects=pair_report(1, 1)),
 
     phase("C: the row-carrier pins — menu-less carriers everywhere"),

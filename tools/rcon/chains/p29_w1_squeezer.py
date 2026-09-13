@@ -61,9 +61,13 @@ def stick_out(n):
 # (tier, pos, path, apples, packet, parallel, ticks)
 TIERS = [
     (1, T1, "squeezer", 4, 64, 4, 24),
-    (2, T2, "squeezer_t2", 8, 256, 8, 14),
-    (3, T3, "squeezer_t3", 16, 1024, 16, 14),
-    (4, T4, "squeezer_t4", 32, 4096, 32, 14),
+    # ticks 24 (was 14): the round-1 live empirics — the completions land at exactly
+    # 16 positive packet-ticks (maxProgress = packet x16 at the maxIn packet:
+    # 3584/4096, 14336/16384, 57344/65536 after 14 ticks) + the negative close tick;
+    # the 24-tick T1 form is the proven margin (overshoot pairs are harmless).
+    (2, T2, "squeezer_t2", 8, 256, 8, 24),
+    (3, T3, "squeezer_t3", 16, 1024, 16, 24),
+    (4, T4, "squeezer_t4", 32, 4096, 32, 24),
 ]
 
 steps = [phase("A: the KU pulse-cycle ladder — the PARALLEL_4_32 columns live, outputs xN")]

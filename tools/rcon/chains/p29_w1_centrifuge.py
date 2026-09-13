@@ -5,9 +5,11 @@ the FULL ladder T1-T4 (task p29-w1-kinetic-process-ladder ACCEPTANCE ③: 并行
 the ladder non-standard; the offline contrast pins the Crusher 4/8/16/32 shape).
 
 Rig split (the card RCON ruling):
-  T1 — the LIVE kinetic fixture, diesel engine -> wood-small axle -> machine (the
-    machine's SBIT_D energy face = BOTTOM, so the machine sits ON the axle: the
-    engine emits 16 RU/t DC, the axle forwards into the machine's bottom face).
+  T1 — the LIVE kinetic fixture, the /gt6energy source UNDER the machine (the
+    machine's SBIT_D energy face = BOTTOM; the diesel->axle form is impossible for a
+    bottom-face machine — the engine is HORIZONTAL_FACING-only and the straight axle
+    refuses perpendicular faces, so no corner can turn the packet vertical; the
+    p8-d4 source emits on all six sides).
   T2-T4 — the gt6machine inject rig (the p26_w1_wiremill form; RU delivers on every
     completed tick of a plain positive train).
 
@@ -46,7 +48,7 @@ from framework import Chain, Step, main, phase
 F = gt6world.fmt
 
 # the fresh z=252 band — the centrifuge column x408..418 (family x-disjoint; T1
-# carries the diesel rig: engine 408, axle 409 under the machine 409 y65)
+# carries the /gt6energy source rig: source 409 under the machine 409 y65)
 ENGINE = gt6world.Site(408, 64, 252)
 AXLE1 = gt6world.Site(409, 64, 252)
 MILL_T1 = gt6world.Site(409, 65, 252)
@@ -55,8 +57,14 @@ MILL_T3 = gt6world.Site(414, 64, 252)
 MILL_T4 = gt6world.Site(416, 64, 252)
 T1, T2, T3, T4 = F(MILL_T1), F(MILL_T2), F(MILL_T3), F(MILL_T4)
 
-DIESEL = "gt6:diesel_engine_bronze"
-AXLE = "gt6:axle_wood_treated_small"
+# the T1 rig: the /gt6energy source (the p8-d4 command-driven test generator) sits at
+# AXLE1, directly UNDER the machine, feeding the SBIT_D bottom energy face. The
+# diesel->axle form is geometrically IMPOSSIBLE here: the engine block is
+# HORIZONTAL_FACING-only (GTDieselEngineBlock.java:42) so it can never emit upward,
+# and the straight axle accepts only its two axis faces (GTAxleBlockEntity :72-74),
+# so no engine->axle corner can turn the packet vertical. The source emits on all
+# six sides (GTEnergySourceBlockEntity :60) — the p12-gearbox-transformer chain form.
+RIG = AXLE1
 
 
 def feed_merge(pos, count):
@@ -76,12 +84,13 @@ def pair_report(clay, flint):
 
 
 steps = [
-    phase("A: T1 — the diesel -> axle rig under the machine (the SBIT_D bottom energy face); parallel 1 = ONE row per completion"),
-    Step(f"setblock {F(ENGINE)} {DIESEL}[facing=east]", expect="Changed the block"),
-    Step(f"setblock {F(AXLE1)} {AXLE}[axis=y]", expect="Changed the block"),
+    phase("A: T1 — the /gt6energy source UNDER the machine (the SBIT_D bottom energy face); parallel 1 = ONE row per completion"),
     Step(f"setblock {T1} gt6:centrifuge", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T1, 2)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T1, 2)),
-    Step(f"gt6engine fuel {F(ENGINE)} gt6:diesel 2000", expect="filled"),
+    Step(f"gt6energy place {F(RIG)}", expect=f"GT6 energy source placed at {F(RIG)}"),
+    Step(f"gt6energy type {F(RIG)} RU", expect="type ENERGY.KINETIC_ROTATION"),
+    Step(f"gt6energy volt {F(RIG)} 32", expect="voltage 32"),
+    Step(f"gt6energy mode {F(RIG)} on", expect="emitting true", sleep=2.0),
     Step(f"gt6machine wiremill check {T1}", expect="out[0]=1x clay_ball",
          node_expects={"1.21.1": "out[0]=1x minecraft:clay_ball"}, poll=45.0),
     Step(f"gt6machine wiremill check {T1}", expect="out[1]=1x flint",

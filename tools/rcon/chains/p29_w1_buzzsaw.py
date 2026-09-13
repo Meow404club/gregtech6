@@ -73,15 +73,15 @@ STICK_INJ = {"1.20.1": "outputs=[4x stick; ]", "1.21.1": "outputs=[4x minecraft:
 
 steps = [
     phase("A: T1 — the diesel -> axle live rig; the coolant-mandatory gate NEGATIVE then the wet completion"),
-    Step(f"gt6machine wiremill check {T1}", expect="progress=0/0"),  # the fresh BE idle
     Step(f'setblock {T1} gt6:buzzsaw', expect="Changed the block", sleep=1.0),
+    Step(f"gt6machine wiremill check {T1}", expect="progress=0/0"),  # the fresh BE idle (post-place: the BE must exist for the check)
     Step(f"data merge block {T1} {{facing:5}}", expect="Modified block data"),  # back = west toward the axle
     Step(feed_merge(T1, 4, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T1, 4, 1)),
     # the NEGATIVE: dry machine, coolant absent — the :709 MIN-FLUID gate refuses before any consume
     Step(f"gt6machine wiremill inject 20 64 {T1}", expect="progress=0/0"),
     Step(f"gt6machine wiremill check {T1}", expect="progress=0/0"),
     # the wet control: the coolant face fills from the world top (SBIT_U in the rotated :143 mask)
-    Step(f"gt6machine wiremill fluid fill top minecraft:water 1000 {T1}", expect="filled 1000/1000"),
+    Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T1}", expect="filled 1000/1000"),
     Step(f"setblock {F(ENGINE)} {DIESEL}[facing=east]", expect="Changed the block"),
     Step(f"setblock {F(AXLE1)} {AXLE}[axis=x]", expect="Changed the block"),
     Step(f"gt6engine fuel {F(ENGINE)} gt6:diesel 2000", expect="filled"),
@@ -93,17 +93,17 @@ steps = [
     Step(f'setblock {T2} gt6:buzzsaw_t2', expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {T2}", expect="minIn=64 recIn=128 maxIn=256"),
     Step(feed_merge(T2, 4, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T2, 4, 1)),
-    Step(f"gt6machine wiremill fluid fill top minecraft:water 1000 {T2}", expect="filled 1000/1000"),
+    Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T2}", expect="filled 1000/1000"),
     Step(f"gt6machine wiremill inject 6 256 {T2}", expect=STICK_INJ["1.20.1"], node_expects=STICK_INJ),
     Step(f'setblock {T3} gt6:buzzsaw_t3', expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {T3}", expect="minIn=256 recIn=512 maxIn=1024"),
     Step(feed_merge(T3, 4, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T3, 4, 1)),
-    Step(f"gt6machine wiremill fluid fill top minecraft:water 1000 {T3}", expect="filled 1000/1000"),
+    Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T3}", expect="filled 1000/1000"),
     Step(f"gt6machine wiremill inject 6 1024 {T3}", expect=STICK_INJ["1.20.1"], node_expects=STICK_INJ),
     Step(f'setblock {T4} gt6:buzzsaw_t4', expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {T4}", expect="minIn=1024 recIn=2048 maxIn=4096"),
     Step(feed_merge(T4, 4, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T4, 4, 1)),
-    Step(f"gt6machine wiremill fluid fill top minecraft:water 1000 {T4}", expect="filled 1000/1000"),
+    Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T4}", expect="filled 1000/1000"),
     Step(f"gt6machine wiremill inject 6 4096 {T4}", expect=STICK_INJ["1.20.1"], node_expects=STICK_INJ),
 
     phase("C: the row-carrier pins — menu-less carriers, parallel 1 (no NBT_PARALLEL keys)"),
