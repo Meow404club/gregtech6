@@ -84,17 +84,15 @@ steps = [
     Step(f"gt6machine electricmixer inject 40 8 {EM1}", expect="used=40 progress=0/0"),
     Step(f"gt6machine electricmixer check {EM1}", expect="progress=0/0"),
 
-    phase("C: the 对拍 — 16 ticks each: the raw maxProgress ratio 2:1"),
+    phase("C: the 对拍 — 16 ticks each, verdicts IN-REPORT (the idle natural ticks "
+          "CONSTANT_ENERGY-reset the cross-command counter)"),
     Step(f"gt6machine electricmixer inject 16 64 {EM1}", expect="progress=1024/4096"),
-    Step(f"gt6machine electricmixer check {EM1}", expect="progress=1024/4096"),
-    Step(f"gt6machine mixer check {MK}", expect="progress=1024/2048",
-         node_expects={"1.21.1": "progress=1024/2048"}),
+    Step(f"gt6machine mixer inject 16 64 {MK}", expect="progress=1024/2048"),
 
-    phase("D: the same wall-clock the kinetic process COMPLETES in — electric sits at exactly half"),
-    Step(f"gt6machine mixer inject 16 64 {MK}", expect="progress=0/0"),
+    phase("D: the same wall-clock the kinetic process COMPLETES in — electric parks at exactly half"),
+    Step(f"gt6machine mixer inject 32 64 {MK}", expect="progress=0/0"),
     Step(f"gt6machine mixer fluid stat {MK}", expect="out[0]=1000 L of gt6:cfoam"),
-    Step(f"gt6machine electricmixer inject 16 64 {EM1}", expect="progress=2048/4096"),
-    Step(f"gt6machine electricmixer check {EM1}", expect="progress=2048/4096"),
+    Step(f"gt6machine electricmixer inject 32 64 {EM1}", expect="progress=2048/4096"),
 
     phase("E: the T2 window pin (the {64,128,256} ramp)"),
     Step(f"gt6machine electricmixer_t2 place {EM2}", expect="GT6 electricmixer_t2 placed"),

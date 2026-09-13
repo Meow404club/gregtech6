@@ -37,15 +37,17 @@ L1, L2 = F(SITE_L1), F(SITE_L2)
 steps = [
     phase("A: the T1 loom — the JSON smoke row at efficiency 5000, budget 4096"),
     Step(f"gt6machine electricloom place {L1}", expect="GT6 electricloom placed"),
+    # the report name is the BET id "loom" (getTileEntityName), not the block literal
     Step(f"gt6machine electricloom input 4 {L1}",
-         expect="GT6 electricloom input: 4x string into slot 0",
-         node_expects={"1.21.1": "GT6 electricloom input: 4x minecraft:string into slot 0"}),
+         expect="GT6 loom input: 4x string into slot 0",
+         node_expects={"1.21.1": "GT6 loom input: 4x minecraft:string into slot 0"}),
     # the 8 EU wall: 8 EU packets below the LV min 16 are dead
     Step(f"gt6machine electricloom inject 8 8 {L1}", expect="progress=0/0"),
     Step(f"gt6machine electricloom check {L1}", expect="progress=0/0"),
-    # the control: the full 64-tick budget at the mInputMax packet
-    Step(f"gt6machine electricloom inject 63 64 {L1}", expect="progress=4032/4096"),
-    Step(f"gt6machine electricloom inject 1 64 {L1}", expect="progress=0/0"),
+    # the control: the full 64-tick budget in ONE command (the report reads the live
+    # progress; across commands the idle natural ticks CONSTANT_ENERGY-reset mProgress
+    # to 0 — the cross-command face is the PERSISTING output, not the counter)
+    Step(f"gt6machine electricloom inject 64 64 {L1}", expect="progress=0/0"),
     Step(f"gt6machine electricloom check {L1}",
          expect="out[0]=1x white_wool",
          node_expects={"1.21.1": "out[0]=1x minecraft:white_wool"}),

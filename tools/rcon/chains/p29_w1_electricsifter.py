@@ -46,15 +46,16 @@ d = dirt_expect(1)
 steps = [
     phase("A: the T1 electric sifter — the SHARED :224 grass row at efficiency 5000, budget 4608"),
     Step(f"gt6machine electricsifter place {S1}", expect="GT6 electricsifter placed"),
+    # the report name is the BET id "sifter" (getTileEntityName), not the block literal
     Step(f"gt6machine electricsifter input 1 {S1}",
-         expect="GT6 electricsifter input: 1x grass_block into slot 0",
-         node_expects={"1.21.1": "GT6 electricsifter input: 1x minecraft:grass_block into slot 0"}),
+         expect="GT6 sifter input: 1x grass_block into slot 0",
+         node_expects={"1.21.1": "GT6 sifter input: 1x minecraft:grass_block into slot 0"}),
     # the raw 5000 divisor: budget 4608 = units(16 × 144, 5000, 10000, T) — 2× the kinetic 2304
     Step(f"gt6machine electricsifter check {S1}", expect="parallel=1 parallelDuration=false"),
     Step(f"gt6machine electricsifter inject 1 64 {S1}", expect="progress=64/4608"),
-    # the deterministic completion at exactly 72 ticks (the remaining 71 + this poll tick)
-    Step(f"gt6machine electricsifter inject 70 64 {S1}", expect="progress=4544/4608"),
-    Step(f"gt6machine electricsifter inject 1 64 {S1}", expect="progress=0/0"),
+    # the deterministic completion at exactly 72 ticks, ONE command (the report reads the
+    # live progress; idle natural ticks CONSTANT_ENERGY-reset the counter between commands)
+    Step(f"gt6machine electricsifter inject 71 64 {S1}", expect="progress=0/0"),
     Step(f"gt6machine electricsifter check {S1}", expect=d["cmd_expect"], node_expects={"1.21.1": d["node_expect"]}),
 
     phase("B: the T2 window pin"),

@@ -51,7 +51,9 @@ steps = [
     Step(f"gt6machine fermenter input 1 {FER}",
          expect="GT6 fermenter input: 1x wheat into slot 0",
          node_expects={"1.21.1": "GT6 fermenter input: 1x minecraft:wheat into slot 0"}),
-    Step(f"gt6machine fermenter fluid fill up minecraft:water 1000 {FER}",
+    # the tank-in mask is the ROTATED SBIT_B|SBIT_L pair (the p14 dryer chain's east-form:
+    # "up" is the tank-OUT face and REJECTS -- the fill-side arm doubles as the mask check)
+    Step(f"gt6machine fermenter fluid fill east minecraft:water 1000 {FER}",
          expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),
     # <16 拒: 8 HU packets are dead below the window floor
     Step(f"gt6machine fermenter inject 40 8 {FER}", expect="progress=0/0"),
@@ -61,7 +63,9 @@ steps = [
 
     phase("B: >64 拒 — the overcharge arm on the throwaway (the :493 ceiling 64)"),
     Step(f"gt6machine fermenter place {FER2}", expect="GT6 fermenter placed"),
-    Step(f"gt6machine fermenter inject 1 80 {FER2}", expect="used=0 progress=0/0"),
+    # used=1: the :495 overcharge return convention (the packet counts consumed, the
+    # machine explodes) -- the honest face is the STAT FAILED absence below
+    Step(f"gt6machine fermenter inject 1 80 {FER2}", expect="used=1 progress=0/0"),
     Step(f"gt6machine fermenter check {FER2}", expect="STAT FAILED", allow_failed=True),
 
     phase("C: the burning-box 供热贯通 — the box is the ONLY energy for the full budget"),
