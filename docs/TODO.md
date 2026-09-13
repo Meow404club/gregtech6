@@ -315,7 +315,9 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 
 ## 第 27 阶段（质量与保真）——✅ 已完成（2026-09-12，18 卡全合 main 51a07784，sweep 62 链双腿 GREEN）
 
-## 第 28 阶段（入口，2026-09-12 P27 收官移交）——🚧 收尾（W1+W2+ULV 波共 19 卡已合，main 4860cfd3；调度=滚动合并队列 7cf81ab0+阶段末 sweep 19b6644c）
+## 第 28 阶段（入口，2026-09-12 P27 收官移交）——✅ 已完成（2026-09-13 收官：21 卡全合，main 6f193c1e；阶段末全量 sweep 双腿 64 链 19 簇 GREEN[forge 3247s/neo 3181s]，quarantine p25cfoam neo 转绿销账；全量锚点=phase_anchors.p28）
+
+## 第 29 阶段（P28 移交，2026-09-13）——🚧 未开（大批量剩余项补齐；主账本=research.p29-gap-census 八区+六波提案 W1 机器族A→W2 机器族B[能量类型卡]→W3 多方块→W4 流体储能→W5 工具杂项→W6 世界生成；开局项=KG RAPTOR 蒸馏[1868 节点超线]+普查脚本加固；池底=Fusion/Massfab/枪械/星球）
 
 - [x] p27-neo-tag-resource-wiring：c: 孪生树 1.21.1 腿运行时接线→已合 37c27c22（build 面嫁接 forge:items→c:item 7927 面字节同源+per-leg 断言+p27tags 链 neo 臂重钉双腿 GREEN+ADR-P17-1 §6 再裁决；死复数带 jar exclude 留 §6.4 可选）
 - [x] 低置信译名社区核→已合 d5141eb4（research.p28-r-translation-community 逐词 ≥2 源考据+用户三裁定：batch1 五回退[压力成型机/压模器/通量琥珀金/脉冲合金/生动合金]+gem/crystalline 拆分+社区定则 funnel=漏斗/hopper=料斗+行星 24 名汉化；kalendrite 族与 dark_thaumium 维持现译；39 键值变零增删）
