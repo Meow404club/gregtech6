@@ -354,6 +354,10 @@ HAND_TRANSLATIONS = {
     "gt6.row.mat.mv": ("MV", "hand"),
     "gt6.row.mat.hv": ("HV", "hand"),
     "gt6.row.mat.ev": ("EV", "hand"),
+    # task p29-w2-energy-types-5tier ② — the 5-tier rung VN[5] = "IV" (CS.java:154; the
+    # card gloss "第 5 词 EV" refuted by the array and by ev already being T4's word —
+    # the GTMachines.EV_TIER_INPUTS doc carries the erratum), Latin per the numerals ruling.
+    "gt6.row.mat.iv": ("IV", "hand"),
     "gt6.row.large_boiler.display": ("%s锅炉气压计核心", "hand"),
     "gt6.row.dense_wall.display": ("致密%s壁板", "hand"),
     "gt6.row.machine.display": ("%s (%s)", "hand"),

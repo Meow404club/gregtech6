@@ -796,9 +796,9 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
         for (String[] tMat : new String[][] {{"steel", "Steel"}, {"invar", "Invar"}, {"titanium", "Titanium"},
                 {"tungsten_carbide", "Tungsten Carbide"}, {"bronze", "Bronze"}, {"tungstensteel", "Tungstensteel"},
-                {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"},
+                {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"}, {"iv", "IV"},
                 {"any_wood", "Any Wood"}, {"ulv", "ULV"}}) {
-            addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the Heat_T[1..4] locals (MT.java:3689) + the VN[1..4] ids (CS.java:154) + the Kinetic_T[1..4] locals (the W1 trio) + the p28 ULV rungs (the T0 material word + VN[0])
+            addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the Heat_T[1..4] locals (MT.java:3689) + the VN[1..4] ids (CS.java:154) + the Kinetic_T[1..4] locals (the W1 trio) + the p28 ULV rungs (the T0 material word + VN[0]) + the p29 W2 5-tier rung (VN[5] = "IV" — the card gloss said EV, refuted by the CS.java:154 array and by ev already being T4's word; the GTMachines.EV_TIER_INPUTS doc carries the erratum)
         }
         // task p16-distillery-family ① — the Integrated Circuit ("Selector Tag", the upstream
         // registration name ItemIntegratedCircuit.java:50 verbatim) + the configuration
