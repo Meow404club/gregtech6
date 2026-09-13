@@ -81,7 +81,7 @@ class GT6TagsDatagenTest {
     // sixteen roll-ladder machines joined the whole-class walk (task
     // p29-w1-kinetic-roll-ladder, 55 -> 71, 3653 -> 3669); the six p29 process families
     // joined too (71 -> 95, 3669 -> 3693, task p29-w1-kinetic-process-ladder)
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 164 + 1 + 2677 + 629 + 2 + 15 + 2; // the +14 eu-special (task p29-w2-eu-special) and +30 exotic (task p29-w2-exotic-energy) machine blocks auto-ride the whole-class band (120 + 14 + 30)
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 189 + 1 + 2677 + 629 + 2 + 15 + 2; // the +14 eu-special (task p29-w2-eu-special), +30 exotic (task p29-w2-exotic-energy) and +25 eu-core (task p29-w2-eu-core-5tier) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25)
 
     /** The 16 tier-ladder machine ids of the first machines card + the oven ladder + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
@@ -165,8 +165,8 @@ class GT6TagsDatagenTest {
         assertEquals(2677, tPrefixPairs, "3773 storage pairs - 1096 blockDust pairs");
         // exact product shape: no member outside the census families
         assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(),
-                "272 stones + 164 machines + 1 rod + 2677 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils"
-                + " (the +14 eu-special machines of task p29-w2-eu-special and the +30 exotic machines of task p29-w2-exotic-energy joined the machine walk)");
+                "272 stones + 189 machines + 1 rod + 2677 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils"
+                + " (the +14 eu-special machines of task p29-w2-eu-special, the +30 exotic machines of task p29-w2-exotic-energy and the +25 eu-core machines of task p29-w2-eu-core-5tier joined the machine walk)");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 
