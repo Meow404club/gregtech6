@@ -78,7 +78,13 @@ public class GTCommandTreeLiteralTest {
 		"rollbender", "rollbender_t2", "rollbender_t3", "rollbender_t4", // task p29-w1-kinetic-roll-ladder — the Roll Bender ladder
 		"rollformer", "rollformer_t2", "rollformer_t3", "rollformer_t4", // task p29-w1-kinetic-roll-ladder — the Roll Former ladder
 		"clustermill", "clustermill_t2", "clustermill_t3", "clustermill_t4", // task p29-w1-kinetic-roll-ladder — the Cluster Mill ladder
-		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
+		"mixer", "mixer_t2", "mixer_t3", "mixer_t4", // task p29-w1-eu-hu-families — the eu-hu families
+		"electricmixer", "electricmixer_t2", "electricmixer_t3", "electricmixer_t4",
+		"electricloom", "electricloom_t2", "electricloom_t3", "electricloom_t4",
+		"electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4",
+		"boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4",
+		"unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4",
+		"fermenter", // task p29-w1-eu-hu-families — the single-variant rung		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 
 	private static CommandSourceStack stack() {
 		// permission level 2 satisfies both commands' requires(...) gate; level/server are

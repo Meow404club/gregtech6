@@ -144,7 +144,13 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("sluice", "item+fluid");
 		tFaces.put("sanding_machine", "item+fluid"); // zero-fluid MASKS stay a data-only face (the sander rows carry no tank keys)
 		tFaces.put("pressure_washer", "item+fluid");
-		tFaces.put("oven", "item"); // the exception: the gated item handler alone
+		tFaces.put("mixer", "item+fluid"); // task p29-w1-eu-hu-families — the seven eu-hu families join
+		tFaces.put("electricmixer", "item+fluid"); // task p29-w1-eu-hu-families
+		tFaces.put("electricloom", "item+fluid"); // task p29-w1-eu-hu-families
+		tFaces.put("electricsifter", "item+fluid"); // task p29-w1-eu-hu-families
+		tFaces.put("boxinator", "item+fluid"); // task p29-w1-eu-hu-families
+		tFaces.put("unboxinator", "item+fluid"); // task p29-w1-eu-hu-families
+		tFaces.put("fermenter", "item+fluid"); // task p29-w1-eu-hu-families		tFaces.put("oven", "item"); // the exception: the gated item handler alone
 		tFaces.put("advanced_crafting_table", "item"); // task p24-act-machine — the second item-only face (zero fluid tanks)
 		BASIC_MACHINE_FAMILY_FACES = Collections.unmodifiableMap(tFaces);
 	}
