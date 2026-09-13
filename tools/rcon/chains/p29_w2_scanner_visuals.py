@@ -69,14 +69,18 @@ steps = [
     Step(f"setblock {T5F} gt6:scannervisuals_t5", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {T5F}", expect="minIn=4096 recIn=8192 maxIn=16384"),
 
-    phase("B: the T1 smoke-row run — paper + compass -> map"),
+    phase("B: the T1 smoke-row run — paper + compass -> map (fire + read-only poll: the first completion after a fresh boot lags past the per-command deadline)"),
     Step(feed_merge(T1F)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T1F)),
-    Step(f"gt6machine wiremill inject 24 32 {T1F}", expect=out_report()["1.20.1"], node_expects=out_report()),
+    Step(f"gt6machine wiremill inject 24 32 {T1F}", expect=f"inject 24 32 {T1F}"),
+    Step(f"gt6machine wiremill check {T1F}", expect="out[0]=1x map",
+         node_expects={"1.21.1": "out[0]=1x minecraft:map"}, poll=60.0),
     Step(f"gt6machine wiremill check {T1F}", expect="progress=0/0"),
 
-    phase("C: the T5 mid-window run — the 8192 packet drives the same row"),
+    phase("C: the T5 mid-window run — the 4096 floor-edge packet drives the same row"),
     Step(feed_merge(T5F)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T5F)),
-    Step(f"gt6machine wiremill inject 8 8192 {T5F}", expect=out_report()["1.20.1"], node_expects=out_report()),
+    Step(f"gt6machine wiremill inject 8 4096 {T5F}", expect=f"inject 8 4096 {T5F}"),
+    Step(f"gt6machine wiremill check {T5F}", expect="out[0]=1x map",
+         node_expects={"1.21.1": "out[0]=1x minecraft:map"}, poll=60.0),
 
     phase("D: teardown — the explicit band restore (no global state was touched)"),
     Step("fill 419 62 275 429 68 277 air", expect="filled"),

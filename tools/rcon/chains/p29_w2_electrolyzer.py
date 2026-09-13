@@ -77,25 +77,41 @@ steps = [
     Step(feed_merge(T5F, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T5F, 1)),
     Step(f"gt6machine wiremill inject 40 4095 {T5F}", expect="progress=0/0"),
     Step(f"gt6machine wiremill check {T5F}", expect="energy=0"),
-    # the 8192 packet runs (跑通 arm) — one bind, the folded bar completes inside the train
+    # the 4096 packet runs (跑通 arm — the :493 argument ceiling is 4096, and 4096 is the
+    # T5 window MIN so the folded mMinEnergy bar completes inside the train). fire/check
+    # split: the first completion after a fresh boot lags past the per-command deadline
+    # (the p29 W2 live finding), so the fire step matches its echo and the read-only
+    # check polls for the output
     Step(feed_merge(T5F, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T5F, 1)),
-    Step(f"gt6machine wiremill inject 8 8192 {T5F}", expect=out_report(1)["1.20.1"], node_expects=out_report(1)),
+    Step(f"gt6machine wiremill inject 8 4096 {T5F}", expect=f"inject 8 4096 {T5F}"),
+    Step(f"gt6machine wiremill check {T5F}", expect="out[0]=1x brick",
+         node_expects={"1.21.1": "out[0]=1x minecraft:brick"}, poll=60.0),
 
     phase("B: the parallel ladder T1-T5 — Nx brick per completion, every tier a 16-tick folded bar"),
     Step(f"setblock {T1F} gt6:electrolyzer", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T1F, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T1F, 1)),
-    Step(f"gt6machine wiremill inject 24 32 {T1F}", expect=out_report(1)["1.20.1"], node_expects=out_report(1)),
+    Step(f"gt6machine wiremill inject 24 32 {T1F}", expect=f"inject 24 32 {T1F}"),
+    Step(f"gt6machine wiremill check {T1F}", expect="out[0]=1x brick",
+         node_expects={"1.21.1": "out[0]=1x minecraft:brick"}, poll=60.0),
     Step(f"setblock {T2F} gt6:electrolyzer_t2", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T2F, 2)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T2F, 2)),
-    Step(f"gt6machine wiremill inject 24 128 {T2F}", expect=out_report(2)["1.20.1"], node_expects=out_report(2)),
+    Step(f"gt6machine wiremill inject 24 128 {T2F}", expect=f"inject 24 128 {T2F}"),
+    Step(f"gt6machine wiremill check {T2F}", expect="out[0]=2x brick",
+         node_expects={"1.21.1": "out[0]=2x minecraft:brick"}, poll=60.0),
     Step(f"setblock {T3F} gt6:electrolyzer_t3", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T3F, 4)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T3F, 4)),
-    Step(f"gt6machine wiremill inject 24 512 {T3F}", expect=out_report(4)["1.20.1"], node_expects=out_report(4)),
+    Step(f"gt6machine wiremill inject 24 512 {T3F}", expect=f"inject 24 512 {T3F}"),
+    Step(f"gt6machine wiremill check {T3F}", expect="out[0]=4x brick",
+         node_expects={"1.21.1": "out[0]=4x minecraft:brick"}, poll=60.0),
     Step(f"setblock {T4F} gt6:electrolyzer_t4", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T4F, 8)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T4F, 8)),
-    Step(f"gt6machine wiremill inject 24 2048 {T4F}", expect=out_report(8)["1.20.1"], node_expects=out_report(8)),
+    Step(f"gt6machine wiremill inject 24 2048 {T4F}", expect=f"inject 24 2048 {T4F}"),
+    Step(f"gt6machine wiremill check {T4F}", expect="out[0]=8x brick",
+         node_expects={"1.21.1": "out[0]=8x minecraft:brick"}, poll=60.0),
     Step(feed_merge(T5F, 16)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T5F, 16)),
-    Step(f"gt6machine wiremill inject 24 8192 {T5F}", expect=out_report(16)["1.20.1"], node_expects=out_report(16)),
+    Step(f"gt6machine wiremill inject 24 4096 {T5F}", expect=f"inject 24 4096 {T5F}"),
+    Step(f"gt6machine wiremill check {T5F}", expect="out[0]=16x brick",
+         node_expects={"1.21.1": "out[0]=16x minecraft:brick"}, poll=60.0),
 
     phase("C: the type-gate LIVE arm — the MU dial refuses, the EU re-dial drives (cross-card-1 guard)"),
     Step(f"gt6energy place {RIG}", expect="GT6 energy source placed at 386, 63, 284"),
