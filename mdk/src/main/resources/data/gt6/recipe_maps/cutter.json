@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "inputs": [{"item": "minecraft:oak_planks", "count": 1}],
+      "fluidInputs": [{"fluid": "minecraft:water", "amount": 10}],
+      "outputs": [{"item": "minecraft:stick", "count": 4}],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

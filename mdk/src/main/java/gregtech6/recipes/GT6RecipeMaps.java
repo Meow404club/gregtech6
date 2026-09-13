@@ -448,6 +448,27 @@ public class GT6RecipeMaps {
 	 */
 	public static volatile RecipeMap UNBOXINATOR;
 
+	/**
+	 * RM.java:81 — the Sluice map (1/9/1 items, 1/1/1 fluids, minimal TOTAL inputs 2 — the
+	 * IN-OUT-MIN-ITEM min 1 AND the IN-OUT-MIN-FLUID min 1 together make every row carry
+	 * BOTH an item leg and a fluid leg, the :708/:709/:710 gates of
+	 * TileEntityBasicMachine.checkRecipe).
+	 *
+	 * <p><b>Provenance (declared deviation on the card-A-owned file):</b> the
+	 * p29-w1-rm-maps-scaffold twelve-map enumeration stopped at :149-150 and did not
+	 * include the :81 Sluice row, while the batch-C machine card (task
+	 * p29-w1-kinetic-process-ladder) registers the Sluice family against THIS map. The
+	 * card owns the family end-to-end and no other wave card consumes SLUICE, so the
+	 * constant lands as a tail-append here in the exact card-A transcription form (the
+	 * base-RecipeMap row transcribed parameter-for-parameter over the 15-arg port ctor,
+	 * the GUI path the upstream "machines/Sluice" string lowercased, the trailing NEI
+	 * booleans T,T,T,T,F,T,T folded away). DECLARED-empty at the scaffold; consumer =
+	 * the same batch-C Sluice machine family (the machine-domain "no flowing-water
+	 * dependency" ruling — the 流水 lives in the recipe domain: every row MUST bring its
+	 * own fluid input).
+	 */
+	public static volatile RecipeMap SLUICE;
+
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
 		if (FURNACE != null) return;
@@ -794,6 +815,16 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		// RM.java:81 — items 1/9/1, fluids 1/1/1, MIN 2, AMP 1 (the batch-C tail-append, the
+		// field doc above carries the provenance; the upstream GUI word IS "Sluice")
+		SLUICE = new RecipeMap(new HashSet<>(),
+				"gt.recipe.sluice", "Sluice", null,
+				0, 1,
+				"gt6:textures/gui/machines/sluice",
+				/*IN-OUT-MIN-ITEM=*/ 1, 9, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 1,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -840,6 +871,7 @@ public class GT6RecipeMaps {
 		CUTTER = null;
 		BOXINATOR = null;
 		UNBOXINATOR = null;
+		SLUICE = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}

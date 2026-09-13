@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "inputs": [{"item": "minecraft:apple", "count": 1}],
+      "outputs": [{"item": "minecraft:stick", "count": 1}],
+      "fluidOutputs": [{"fluid": "minecraft:water", "amount": 50}],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}
