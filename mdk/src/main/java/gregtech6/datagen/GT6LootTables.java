@@ -97,6 +97,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-eu-hu-families — the seven eu-hu families
                 new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families
                 new SubProviderEntry(GT6ExoticFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-exotic-energy — the six exotic-energy families
+                new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-core-5tier — the five eu-core families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -130,6 +131,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-eu-hu-families — the seven eu-hu families
                 new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families
                 new SubProviderEntry(GT6ExoticFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-exotic-energy — the six exotic-energy families
+                new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-core-5tier — the five eu-core families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
@@ -640,6 +642,47 @@ public final class GT6LootTables extends LootTableProvider {
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.freezerBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.cryoMixerBlockArray());
         return rBlocks;
+    }
+
+    /**
+     * The eu-core families block list (task p29-w2-eu-core-5tier): the 25 blocks of the
+     * five EU 5-tier families (Electrolyzer/Injector/Printer/ScannerVisuals/Slicer,
+     * Loader_MultiTileEntities.java :1336-1340/:1443-1447/:1450-1454/:1457-1461/
+     * :1525-1529) — the euHuFamiliesLootBlocks shape verbatim, the MTE default self-drop.
+     */
+    public static List<Block> euCoreLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.electrolyzerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.injectorBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.printerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.scannerVisualsBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.slicerBlockArray());
+        return rBlocks;
+    }
+
+    /** The eu-core families self-drop provider (task p29-w2-eu-core-5tier; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6EuCoreMachineBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6EuCoreMachineBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6EuCoreMachineBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return euCoreLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : euCoreLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
     }
 
     /** The exotic-energy families self-drop provider (task p29-w2-exotic-energy; the paint carry = task p22-painted-item-domain). */

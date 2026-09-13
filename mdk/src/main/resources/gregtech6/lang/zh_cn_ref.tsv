@@ -234,12 +234,14 @@ direct	gt6.row.dryer.display	干燥器 (%s)	hand
 direct	gt6.row.electricloom.display	电力织布机 (%s)	hand
 direct	gt6.row.electricmixer.display	电动搅拌机 (%s)	hand
 direct	gt6.row.electricsifter.display	电动筛矿机 (%s)	hand
+direct	gt6.row.electrolyzer.display	电解器 (%s)	hand
 direct	gt6.row.faucet.display	坩埚浇铸口 (%s)	hand
 direct	gt6.row.faucet.mat.ceramic	陶瓷	hand
 direct	gt6.row.faucet.mat.stone	石头	hand
 direct	gt6.row.fermenter.display	发酵器	hand
 direct	gt6.row.funnel.display	%s漏斗	hand
 direct	gt6.row.hopper.display	%s料斗	hand
+direct	gt6.row.injector.display	流体灌装机 (%s)	hand
 direct	gt6.row.item_pipe.display.huge	巨型%s物品管道	hand
 direct	gt6.row.item_pipe.display.large	大型%s物品管道	hand
 direct	gt6.row.item_pipe.display.medium	%s物品管道	hand
@@ -356,11 +358,14 @@ direct	gt6.row.mold.display.mold_ceramic_tiny_plate	陶瓷模具 (小块板)	han
 direct	gt6.row.mold.display.mold_ceramic_universal_spade	陶瓷模具 (万用铲)	hand
 direct	gt6.row.mold.display.mold_stone	石头模具	hand
 direct	gt6.row.oven.display	烤箱 (%s)	hand
+direct	gt6.row.printer.display	打印机 (%s)	hand
 direct	gt6.row.queue_hopper.display	%s队列料斗	hand
+direct	gt6.row.scannervisuals.display	扫描仪 (%s)	hand
 direct	gt6.row.size.huge	巨型	hand
 direct	gt6.row.size.large	大型	hand
 direct	gt6.row.size.medium	中型	hand
 direct	gt6.row.size.small	小型	hand
+direct	gt6.row.slicer.display	切片器 (%s)	hand
 direct	gt6.row.steam_engine.display	蒸汽引擎 (%s)	hand
 direct	gt6.row.steam_engine.display.strong	强化蒸汽引擎 (%s)	hand
 direct	gt6.row.tap.display	%s龙头	hand

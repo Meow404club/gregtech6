@@ -815,6 +815,17 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_CRYO_MIXER_UNIT_KEY, "Cryo Mixer (%s)");        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
+        // task p29-w2-eu-core-5tier — the eu-core family templates: the voltage-word slot
+        // (the CANNER_DISPLAY_KEY contract) over the FIVE-word VN ladder LV/MV/HV/EV/IV
+        // (the upstream name columns "Electrolyzer ("+VN[tier]+")" :1336-1340 / "Injector ("
+        // :1443-1447 / "Printer (" :1450-1454 / "Scanner (Visuals, " :1457-1461 — the comma
+        // form verbatim / "Slicer (" :1525-1529; VN[5] = "IV", CS.java:154 — the S9 ruling,
+        // NOT "EV": ev is T4's word since p24)
+        add(gregtech6.registry.GTMachines.ELECTROLYZER_DISPLAY_KEY, "Electrolyzer (%s)");
+        add(gregtech6.registry.GTMachines.INJECTOR_DISPLAY_KEY, "Injector (%s)");
+        add(gregtech6.registry.GTMachines.PRINTER_DISPLAY_KEY, "Printer (%s)");
+        add(gregtech6.registry.GTMachines.SCANNER_VISUALS_DISPLAY_KEY, "Scanner (Visuals, %s)");
+        add(gregtech6.registry.GTMachines.SLICER_DISPLAY_KEY, "Slicer (%s)");
         for (String[] tMat : new String[][] {{"steel", "Steel"}, {"invar", "Invar"}, {"titanium", "Titanium"},
                 {"tungsten_carbide", "Tungsten Carbide"}, {"bronze", "Bronze"}, {"tungstensteel", "Tungstensteel"},
                 {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"}, {"iv", "IV"},

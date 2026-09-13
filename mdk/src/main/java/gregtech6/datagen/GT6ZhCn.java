@@ -589,6 +589,26 @@ public class GT6ZhCn extends LanguageProvider {
 				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
 			}
 		}
+		// eu-core families (task p29-w2-eu-core-5tier): the five 5-tier templates — the
+		// voltage-word slot over the FULL VN[1..5] ladder (the row walk emits lv/mv/hv/ev
+		// already covered by the canner walk AND the fifth word iv, the standalone card-①
+		// emission above now riding its rows — duplicates are the set's idempotent face);
+		// the zh words are the upstream dump verbatim (电解器/流体灌装机/打印机/扫描仪/
+		// 切片器, gt.multitileentity.20091/20261/20271/20281/20381 — the Scanner (Visuals)
+		// en comma form carries no visuals word in the dump column)
+		addDirect(gregtech6.registry.GTMachines.ELECTROLYZER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.INJECTOR_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.PRINTER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.SCANNER_VISUALS_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.SLICER_DISPLAY_KEY);
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tEuCoreRows
+				: java.util.List.of(gregtech6.registry.GTMachines.ELECTROLYZER_ROWS, gregtech6.registry.GTMachines.INJECTOR_ROWS,
+						gregtech6.registry.GTMachines.PRINTER_ROWS, gregtech6.registry.GTMachines.SCANNER_VISUALS_ROWS,
+						gregtech6.registry.GTMachines.SLICER_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tEuCoreRows) {
+				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
+			}
+		}
 		// storage hoppers (task p26-storage-hopper-family): the two kind templates over the
 		// bronze/steel row words (the boiler walk emits them; the tsv hand rows carry the
 		// 料斗/队列料斗 wording since task p28-lang-batch1-fix — funnel keeps 漏斗)
