@@ -283,6 +283,27 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tFermenter,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p29-w2-eu-special — the three eu-special families join (tail-append;
+		// shared serial file): the Autocrafter/Lightning/Laminator BETs, the same
+		// item + fluid faces as every TileEntityBasicMachine family above — the
+		// Autocrafter/Laminator rows carry NO tank keys (the 127 all-sides defaults,
+		// zero fluid recipes are NOT a zero fluid face) and the Lightning rows the
+		// U|L / R|D tank masks the :716-732 output-tank fallback consumes through
+		BlockEntityType<TileEntityBasicMachine> tAutocrafter = GTMachines.AUTOCRAFTER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tAutocrafter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tAutocrafter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tLightning = GTMachines.LIGHTNING_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLightning,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLightning,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tLaminator = GTMachines.LAMINATOR_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLaminator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLaminator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,
