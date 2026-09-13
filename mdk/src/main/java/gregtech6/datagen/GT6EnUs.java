@@ -800,7 +800,7 @@ public class GT6EnUs extends LanguageProvider {
         // :1532-1535)
         add(gregtech6.registry.GTMachines.AUTOCRAFTER_DISPLAY_KEY, "Autocrafter (%s)");
         add(gregtech6.registry.GTMachines.LIGHTNING_PROCESSOR_DISPLAY_KEY, "Lightning Processor (%s)");
-        add(gregtech6.registry.GTMachines.LAMINATOR_DISPLAY_KEY, "Laminator (%s)");        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
+        add(gregtech6.registry.GTMachines.LAMINATOR_DISPLAY_KEY, "Laminator (%s)");
         // task p29-w2-exotic-energy — the six exotic-energy family templates: the
         // Polarizer/Magnetic Separator ride the material-word slot (the upstream name
         // columns "Polarizer ("+aMat+")" :1418-1422 / "Magnetic Separator ("+aMat+")"
@@ -812,7 +812,21 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_LASER_ENGRAVER_UNIT_KEY, "Laser Engraver (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_LASER_WELDER_UNIT_KEY, "Laser Welder (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_FREEZER_UNIT_KEY, "Freezer (%s)");
-        add(gregtech6.registry.GTMachines.MACHINE_CRYO_MIXER_UNIT_KEY, "Cryo Mixer (%s)");        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
+        add(gregtech6.registry.GTMachines.MACHINE_CRYO_MIXER_UNIT_KEY, "Cryo Mixer (%s)");
+        // task p29-w2-hu-tu-piggyback — the seven hu-tu family templates: the two Crackers
+        // and the Loom ride the one-slot unit-key form (the Kinetic/Heat_T material word,
+        // the upstream name columns "Steam Cracker (" :1576-1579 / "Catalytic Cracker ("
+        // :1570-1573 / "Loom (" :1412-1415); the TU four are the single-variant ATOMIC
+        // rows (upstream name columns "Coagulator" :1651 / "Generifier" :1652 / "Bath"
+        // :1653 / "Autoclave" :1655 — the FERMENTER_DISPLAY_KEY no-slot contract)
+        add(gregtech6.registry.GTMachines.MACHINE_STEAM_CRACKER_UNIT_KEY, "Steam Cracker (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_CATALYTIC_CRACKER_UNIT_KEY, "Catalytic Cracker (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_LOOM_UNIT_KEY, "Loom (%s)");
+        add(gregtech6.registry.GTMachines.COAGULATOR_DISPLAY_KEY, "Coagulator");
+        add(gregtech6.registry.GTMachines.GENERIFIER_DISPLAY_KEY, "Generifier");
+        add(gregtech6.registry.GTMachines.BATH_DISPLAY_KEY, "Bath");
+        add(gregtech6.registry.GTMachines.AUTOCLAVE_DISPLAY_KEY, "Autoclave");
+        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
         // task p29-w2-eu-core-5tier — the eu-core family templates: the voltage-word slot
@@ -820,6 +834,7 @@ public class GT6EnUs extends LanguageProvider {
         // (the upstream name columns "Electrolyzer ("+VN[tier]+")" :1336-1340 / "Injector ("
         // :1443-1447 / "Printer (" :1450-1454 / "Scanner (Visuals, " :1457-1461 — the comma
         // form verbatim / "Slicer (" :1525-1529; VN[5] = "IV", CS.java:154 — the S9 ruling,
+        // task p29-w2-eu-core-5tier — the eu-core family templates: the voltage-word slot
         // NOT "EV": ev is T4's word since p24)
         add(gregtech6.registry.GTMachines.ELECTROLYZER_DISPLAY_KEY, "Electrolyzer (%s)");
         add(gregtech6.registry.GTMachines.INJECTOR_DISPLAY_KEY, "Injector (%s)");

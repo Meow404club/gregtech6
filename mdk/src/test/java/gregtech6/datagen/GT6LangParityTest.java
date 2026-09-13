@@ -206,10 +206,15 @@ public class GT6LangParityTest {
  * <p>Task p29-w2-eu-core-5tier: raised to the measured 2844 — the +5 eu-core family
  * display templates (Electrolyzer/Injector/Printer/Scanner (Visuals)/Slicer over the
  * VN[1..5] = LV/MV/HV/EV/IV ladder, the dump words 电解器/流体灌装机/打印机/扫描仪/
- * 切片器, gt.multitileentity.20091/20261/20271/20281/20381), both locales; zh == en,
+ * 切片器, gt.multitileentity.20091/20261/20271/20281/20381), both locales.
+ *
+ * <p>Task p29-w2-hu-tu-piggyback: raised to the measured 2867 — the +7 hu-tu keys
+ * (gt6.row.machine.steam_cracker / catalytic_cracker / loom one-slot unit keys +
+ * gt6.row.coagulator / generifier / bath / autoclave atomic display keys, the dump
+ * words 蒸汽裂解器/催化裂解器/织布机/凝结器/转换器/浸洗器/高压釜), both locales; zh == en,
  * the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2860; // 2839 +3 (task p29-w2-eu-special: the three eu-special family templates) +13 (task p29-w2-exotic-energy: the 6 exotic family templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier: the five eu-core family templates; all both locales)
+private static final int ZH_KEY_FLOOR = 2867; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys; all both locales)
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -982,9 +987,6 @@ private static final int ZH_KEY_FLOOR = 2860; // 2839 +3 (task p29-w2-eu-special
 				GTMachines.LASER_WELDER_ROWS, GTMachines.FREEZER_ROWS, GTMachines.CRYO_MIXER_ROWS)) {
 			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tExoticRows) tExempt.add(tRow.path());
 		}
-
-// task p29-w2-eu-core-5tier — the 25 eu-core row carriers (GTBasicMachineBlock.getName,
-// the FIRST 5-tier ladders: 5 rows x 5 families)
 		// task p29-w2-eu-core-5tier — the 25 eu-core row carriers (GTBasicMachineBlock.getName,
 		// the FIRST 5-tier ladders: 5 rows x 5 families)
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ELECTROLYZER_ROWS) tExempt.add(tRow.path());
@@ -992,6 +994,12 @@ private static final int ZH_KEY_FLOOR = 2860; // 2839 +3 (task p29-w2-eu-special
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.PRINTER_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SCANNER_VISUALS_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SLICER_ROWS) tExempt.add(tRow.path());
+		// task p29-w2-hu-tu-piggyback — the 16 hu-tu row carriers (GTBasicMachineBlock.getName)
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tHuTuRows : java.util.List.of(
+				GTMachines.STEAM_CRACKER_ROWS, GTMachines.CATALYTIC_CRACKER_ROWS, GTMachines.COAGULATOR_ROWS,
+				GTMachines.GENERIFIER_ROWS, GTMachines.BATH_ROWS, GTMachines.AUTOCLAVE_ROWS, GTMachines.LOOM_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tHuTuRows) tExempt.add(tRow.path());
+		}
 		for (GTMachines.OvenRow tRow : GTMachines.OVEN_ROWS) tExempt.add(tRow.path()); // GTOvenBlock.getName — the composed Heat_T ladder (p27-oven-heat-t-ladder)
 		// the Kinetic_T tier carriers T2-T4 (GTBasicMachineBlock mComposedName, p27-machine-
 		// energy-display-fix) — T1 keeps its vanilla atomic key (block.gt6.shredder/lathe/
@@ -1075,14 +1083,15 @@ private static final int ZH_KEY_FLOOR = 2860; // 2839 +3 (task p29-w2-eu-special
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(1043, tExemptTotal, "the derived composed-name exemption census"
+		assertEquals(1059, tExemptTotal, "the derived composed-name exemption census"
 			+ " (the six p28 ULV row carriers joined at 903 + 6; the sixteen roll-ladder"
 			+ " row carriers joined at task p29-w1-kinetic-roll-ladder, 909 + 16; the six"
 			+ " p29 process families joined at 925 + 24, task p29-w1-kinetic-process-ladder;"
 			+ " the 25 eu-hu row carriers joined at 949 + 25, task p29-w1-eu-hu-families;"
 			+ " the 14 eu-special row carriers joined at 974 + 14, task p29-w2-eu-special;"
 			+ " the 30 exotic-energy row carriers joined at 988 + 30, task p29-w2-exotic-energy;"
-			+ " the 25 eu-core 5-tier row carriers joined at 1018 + 25, task p29-w2-eu-core-5tier)");
+			+ " the 25 eu-core 5-tier row carriers joined at 1018 + 25, task p29-w2-eu-core-5tier;"
+			+ " the 16 hu-tu row carriers joined at 1043 + 16, task p29-w2-hu-tu-piggyback)");
 		assertEquals(104, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
