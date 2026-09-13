@@ -761,6 +761,13 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_SHREDDER_DISPLAY_KEY, "Shredder (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_CRUSHER_DISPLAY_KEY, "Crusher (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_ROLLING_MILL_UNIT_KEY, "Rolling Mill (%s)");
+        // task p29-w1-kinetic-roll-ladder — the roll-ladder families: the one-slot
+        // templates the row carriers compose with (the upstream name columns
+        // "Roll Bender (" / "Roll Former (" / "Cluster Mill (" + aMat.getLocal(),
+        // Loader:1355-1358 / :1361-1364 / :1367-1370 form)
+        add(gregtech6.registry.GTMachines.MACHINE_ROLL_BENDER_UNIT_KEY, "Roll Bender (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_ROLL_FORMER_UNIT_KEY, "Roll Former (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_CLUSTER_MILL_UNIT_KEY, "Cluster Mill (%s)");
         // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");

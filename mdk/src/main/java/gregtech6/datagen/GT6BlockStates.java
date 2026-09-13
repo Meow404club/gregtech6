@@ -129,6 +129,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addPress(); // task p26-w1-press-extruder-molds
         addExtruder(); // task p26-w1-press-extruder-molds
         addUlvLadder(); // task p28-c-ulv-machine-ladder — the six ULV rows (family textures, the addCanner shape)
+        addRollLadders(); // task p29-w1-kinetic-roll-ladder — the four roll-ladder RU families (family textures, the addCanner shape)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
         // task p21-paintable-tint-render: the datagen-JVM census half — 54 machine blocks x
@@ -138,7 +139,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (54 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addAdvancedCraftingTable)", mMachineTintModels);
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (70 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -324,6 +325,32 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLLINGMILL_ROWS) {
             addMachine(GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p29-w1-kinetic-roll-ladder — the four roll-ladder RU families (the RollingMill
+     * RU ladder + RollBender + RollFormer + ClusterMill, upstream Loader_MultiTileEntities
+     * .java:1349-1370, all NBT_TEXTURE riding their family tokens "rollingmill"/
+     * "rollbender"/"rollformer"/"clustermill"): the addCanner shape verbatim — model
+     * names per path, the FRONT TEXTURES stay on the family sets (the rollingmill set is
+     * the borrowed upstream basicmachines/rollingmill split shared with the p28 ULV rung;
+     * the rollbender/rollformer/clustermill sets join via the same borrow pipeline). The
+     * RU RollingMill rows keep their tier-suffixed paths (the p28 ULV rung owns the bare
+     * "rollingmill" path/model) while sharing the family texture set.
+     */
+    private void addRollLadders() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLLINGMILL_RU_ROWS) {
+            addMachine(GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLL_BENDER_ROWS) {
+            addMachine(GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLL_FORMER_ROWS) {
+            addMachine(GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CLUSTER_MILL_ROWS) {
+            addMachine(GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

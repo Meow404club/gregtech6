@@ -29,9 +29,11 @@
  * (12) + dryer (4) + distillery (4) + canner (4, task p24-canner-machine) + sifter/
  * compressor/wiremill (12, task p26-w1-sifter-compressor-wiremill) + press (4) +
  * extruder (4, both rows of the last task p26-w1-press-extruder-molds) + the six ULV
- * rows (task p28-c-ulv-machine-ladder) = 54 blocks (the
+ * rows (task p28-c-ulv-machine-ladder) + the four roll-ladder RU families (16, task
+ * p29-w1-kinetic-roll-ladder — the RU rollingmill rungs ride tier-suffixed bases while
+ * sharing the ULV rung's family texture set) = 70 blocks (the
  * GTMachines.paintableBlockArray
- * registration census), three models each (inactive/active/running) = 162 block-model
+ * registration census), three models each (inactive/active/running) = 210 block-model
  * JSONs. Upstream canonical: every faced face multiplies the grayscale texture by mRGBa
  * (MultiTileEntityBasicMachine.java:1014), so all three models tint identically.
  */
@@ -57,7 +59,7 @@ import com.google.gson.JsonParser;
 
 class GT6MachinePaintRenderDatagenTest {
 
-    /** The 54 machine-domain bases (the paintableBlockArray census). */
+    /** The 70 machine-domain bases (the paintableBlockArray census). */
     private static final List<String> MACHINE_BASES = List.of(
             "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
@@ -71,7 +73,11 @@ class GT6MachinePaintRenderDatagenTest {
             "wiremill", "wiremill_t2", "wiremill_t3", "wiremill_t4",
             "press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds
             "extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds
-            "shredder_ulv", "crusher_ulv", "canner_ulv", "sifter_ulv", "wiremill_ulv", "rollingmill"); // task p28-c-ulv-machine-ladder
+            "shredder_ulv", "crusher_ulv", "canner_ulv", "sifter_ulv", "wiremill_ulv", "rollingmill", // task p28-c-ulv-machine-ladder
+            "rollingmill_t1", "rollingmill_t2", "rollingmill_t3", "rollingmill_t4", // task p29-w1-kinetic-roll-ladder — the RU rungs
+            "rollbender", "rollbender_t2", "rollbender_t3", "rollbender_t4",
+            "rollformer", "rollformer_t2", "rollformer_t3", "rollformer_t4",
+            "clustermill", "clustermill_t2", "clustermill_t3", "clustermill_t4");
 
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
@@ -126,6 +132,7 @@ class GT6MachinePaintRenderDatagenTest {
 
     /** The tier rows keep the family textures (the p8 texture-base overload); the p28 ULV rows likewise (the addUlvLadder family tokens). */
     private static String familyOf(String aBase) {
+        if (aBase.startsWith("rollingmill_t")) return "rollingmill"; // task p29-w1-kinetic-roll-ladder — the RU rungs share the ULV rung's family set
         for (String tTier : new String[] {"_t2", "_t3", "_t4"}) {
             if (aBase.endsWith(tTier)) return aBase.substring(0, aBase.length() - tTier.length());
         }
@@ -141,12 +148,12 @@ class GT6MachinePaintRenderDatagenTest {
         }
     }
 
-    /** The census shape: 54 bases x 3 models = 162 tinted block models. */
+    /** The census shape: 70 bases x 3 models = 210 tinted block models. */
     @Test
     void pinnedMachinePaintCensus() {
-        assertEquals(54, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(54 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
-                "48 blocks x 3 models — the pinned tinted-model total");
+        assertEquals(70, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
+        assertEquals(70 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
+                "70 blocks x 3 models — the pinned tinted-model total");
     }
 
     /**

@@ -77,8 +77,10 @@ class GT6TagsDatagenTest {
     // the 3 oven ladder rows joined the whole-class walk at task p27-oven-heat-t-ladder
     // (46 -> 49 machines on the merged line, 3642 -> 3645); the six p28 ULV rows join the
     // same whole-class walk (49 -> 55, 3645 -> 3651, task p28-c-ulv-machine-ladder); the
-    // stone anvil pair joined the explicit tail (task p28-c-anvil, 3651 -> 3653)
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 55 + 1 + 2677 + 629 + 2 + 15 + 2;
+    // stone anvil pair joined the explicit tail (task p28-c-anvil, 3651 -> 3653); the
+    // sixteen roll-ladder machines joined the whole-class walk (task
+    // p29-w1-kinetic-roll-ladder, 55 -> 71, 3653 -> 3669)
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 71 + 1 + 2677 + 629 + 2 + 15 + 2;
 
 
     /** The 16 tier-ladder machine ids of the first machines card + the oven ladder + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
@@ -163,7 +165,7 @@ class GT6TagsDatagenTest {
         assertEquals(2677, tPrefixPairs, "3773 storage pairs - 1096 blockDust pairs");
         // exact product shape: no member outside the census families
         assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(),
-                "272 stones + 49 machines + 1 rod + 2677 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils");
+                "272 stones + 71 machines + 1 rod + 2677 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 

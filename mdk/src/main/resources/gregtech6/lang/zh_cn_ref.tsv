@@ -70,8 +70,8 @@ direct	block.gt6.electric_dynamo_t3	发电机 (HV)	hand
 direct	block.gt6.electric_dynamo_t4	发电机 (EV)	hand
 direct	block.gt6.electric_dynamo_t5	发电机 (IV)	hand
 direct	block.gt6.electric_dynamo_ulv	发电机 (ULV)	hand
-direct	block.gt6.electrometer	静电计传感器	hand
 direct	block.gt6.electric_transformer	变压器 (ULV-LV)	hand
+direct	block.gt6.electrometer	静电计传感器	hand
 direct	block.gt6.energy_source	测试能源	hand
 direct	block.gt6.example_chest	GT 示例箱子	hand
 direct	block.gt6.fe_battery	FE 测试电池	hand
@@ -241,6 +241,7 @@ direct	gt6.row.item_pipe.display.restrictive_huge	限流巨型%s物品管道	han
 direct	gt6.row.item_pipe.display.restrictive_large	限流大型%s物品管道	hand
 direct	gt6.row.item_pipe.display.restrictive_medium	限流%s物品管道	hand
 direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
+direct	gt6.row.machine.cluster_mill	多辊式轧机 (%s)	hand
 direct	gt6.row.machine.compressor	压缩机 (%s)	hand
 direct	gt6.row.machine.crusher	破碎机	hand
 direct	gt6.row.machine.crusher.display	破碎机 (%s)	hand
@@ -252,6 +253,8 @@ direct	gt6.row.machine.extruder_low_heat	低温压模器	hand
 direct	gt6.row.machine.lathe	车床	hand
 direct	gt6.row.machine.press	压力成型机	hand
 direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
+direct	gt6.row.machine.roll_bender	辊弯机 (%s)	hand
+direct	gt6.row.machine.roll_former	辊压成型机 (%s)	hand
 direct	gt6.row.machine.rolling_mill	辊压机 (%s)	hand
 direct	gt6.row.machine.shredder	粉碎机	hand
 direct	gt6.row.machine.shredder.display	粉碎机 (%s)	hand

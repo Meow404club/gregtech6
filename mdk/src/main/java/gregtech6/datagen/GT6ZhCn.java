@@ -499,6 +499,20 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.registry.GTMachines.MACHINE_SHREDDER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_CRUSHER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_ROLLING_MILL_UNIT_KEY);
+		// the roll ladders (task p29-w1-kinetic-roll-ladder): the three new one-slot
+		// templates (the RU rollingmill rows share the rollingmill template above) —
+		// the dump-verbatim words 辊弯机/辊压成型机/多辊式轧机 (tmp/gregtech.lang:11502-11515,
+		// gt.multitileentity.20121-20124 / 20131-20134 / 20141-20144)
+		addDirect(gregtech6.registry.GTMachines.MACHINE_ROLL_BENDER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_ROLL_FORMER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_CLUSTER_MILL_UNIT_KEY);
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tRollRows
+				: java.util.List.of(gregtech6.registry.GTMachines.ROLLINGMILL_RU_ROWS, gregtech6.registry.GTMachines.ROLL_BENDER_ROWS,
+						gregtech6.registry.GTMachines.ROLL_FORMER_ROWS, gregtech6.registry.GTMachines.CLUSTER_MILL_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tRollRows) {
+				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
+			}
+		}
 		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tUlvRows
 				: java.util.List.of(gregtech6.registry.GTMachines.CANNER_ULV_ROWS, gregtech6.registry.GTMachines.SIFTER_ULV_ROWS,
 						gregtech6.registry.GTMachines.WIREMILL_ULV_ROWS, gregtech6.registry.GTMachines.SHREDDER_ULV_ROWS,

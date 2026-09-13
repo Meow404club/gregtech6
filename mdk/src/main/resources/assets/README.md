@@ -7681,6 +7681,16 @@ upstream-registered and disk-present:
 
   canner, compressor, crusher, distillery, dryer, extruder, lathe, oven, press, shredder, sifter, wiremill
 
+Roll-ladder append, task p29-w1-kinetic-roll-ladder (copied 2026-09-13): the
+same pipeline re-run after the four RU roll-ladder families joined the local
+registration face — `rollingmill` was already in the P28 set (the p28 ULV rung
+shares it), `rollbender` / `rollformer` / `clustermill` join here: 3 new
+families x (colored 6 + 3 states x 5 side faces) = 63 new borrows, byte
+copies of plain 16x16 sources (snapshot v6.17.06-22-g3703e4030, the same
+generic machine plate bases — `colored/front.png`
+`db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` and the
+rollingmill overlay set are byte-shared across the roll families).
+
 Reconciliation grid: 12 families x (colored 6 faces + 3 states x 5 side
 faces) = 252 products = 243 new borrows + 12 in-place p22 re-verifications +
 0 declared (every expected upstream source exists in snapshot
