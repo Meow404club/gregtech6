@@ -95,8 +95,8 @@ steps = [
     Step(f"data merge block {MILL_A_P} {{facing:5}}", expect="Modified block data"),
     Step(f"gt6machine rollingmill_t1 check {MILL_A_P}", expect="minIn=16 recIn=32 maxIn=64"),
     Step(f"gt6machine rollingmill_t1 input 1 {MILL_A_P}",
-         expect="GT6 rollingmill_t1 input: 1x ingot_iron into slot 0",
-         node_expects={"1.21.1": "GT6 rollingmill_t1 input: 1x gt6:ingot_iron into slot 0"}),
+         expect="GT6 rollingmill input: 1x ingot_iron into slot 0",
+         node_expects={"1.21.1": "GT6 rollingmill input: 1x gt6:ingot_iron into slot 0"}),
     Step(f"gt6engine fuel {ENGINE_P} gt6:diesel 2000", expect="filled 160 L"),
     # the grid-fed completion: the 16 RU/t train meets the row's 16/t drain 1:1, the
     # poured smoke row (ingot->plate, eUt 16 / duration 32) completes un-overclocked
@@ -107,8 +107,8 @@ steps = [
     phase("B: the 8 RU packet is dead below T1 (min 16) — inject 8 red, inject 64 on the SAME machine completes"),
     Step(f"setblock {MILL_T1_P} gt6:rollingmill_t1", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine rollingmill_t1 input 1 {MILL_T1_P}",
-         expect="GT6 rollingmill_t1 input: 1x ingot_iron into slot 0",
-         node_expects={"1.21.1": "GT6 rollingmill_t1 input: 1x gt6:ingot_iron into slot 0"}),
+         expect="GT6 rollingmill input: 1x ingot_iron into slot 0",
+         node_expects={"1.21.1": "GT6 rollingmill input: 1x gt6:ingot_iron into slot 0"}),
     # the wall: 8 < mInputMin 16 — no recipe ever binds
     Step(f"gt6machine rollingmill_t1 inject 60 8 {MILL_T1_P}", expect="progress=0/0"),
     Step(f"gt6machine rollingmill_t1 check {MILL_T1_P}", expect="progress=0/0"),
@@ -127,8 +127,8 @@ for tPos, tPacket, tPath in [
     steps += [
         Step(f"setblock {tPos} gt6:{tPath}", expect="Changed the block", sleep=1.0),
         Step(f"gt6machine {tPath} input 1 {tPos}",
-             expect=f"GT6 {tPath} input: 1x ingot_iron into slot 0",
-             node_expects={"1.21.1": f"GT6 {tPath} input: 1x gt6:ingot_iron into slot 0"}),
+             expect="GT6 rollingmill input: 1x ingot_iron into slot 0",
+             node_expects={"1.21.1": "GT6 rollingmill input: 1x gt6:ingot_iron into slot 0"}),
         Step(f"gt6machine {tPath} inject 60 {tPacket} {tPos}", expect=PLATE_OUT, node_expects=PLATE_OUT),
     ]
 
@@ -140,9 +140,11 @@ steps += [
     Step(f"gt6machine rollingmill_t4 check {MILL_T4_P}", expect="minIn=1024 recIn=2048 maxIn=4096"),
     Step(f"setblock {MILL_ULV_P} gt6:rollingmill", expect="Changed the block", sleep=1.0),
     Step(ULV_MERGE["1.20.1"], expect="Modified block data", node_cmds=ULV_MERGE),
-    # the ULV window pin — the SAME family BET, the {4,8,16} window (the p28 ruling)
-    Step(f"gt6machine rollingmill check {MILL_ULV_P}", expect="minIn=4 recIn=8 maxIn=16"),
-    Step(f"gt6machine rollingmill inject 300 16 {MILL_ULV_P}", expect=ULV_OUT, node_expects=ULV_OUT),
+    # the ULV window pin — the SAME family BET (driven through the rollingmill_t1
+    # arm — the ULV rung registers no command literal, the p28 chain posture), the
+    # {4,8,16} window
+    Step(f"gt6machine rollingmill_t1 check {MILL_ULV_P}", expect="minIn=4 recIn=8 maxIn=16"),
+    Step(f"gt6machine rollingmill_t1 inject 300 16 {MILL_ULV_P}", expect=ULV_OUT, node_expects=ULV_OUT),
 
     phase("D: teardown — the explicit band restore (no global state was touched)"),
     Step("fill 380 62 179 394 68 182 air", expect="filled"),

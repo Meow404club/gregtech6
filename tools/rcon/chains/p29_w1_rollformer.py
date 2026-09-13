@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""p29_w1_p29_w1_rollformer — the Roll Former RU ladder live acceptance chain (task
+"""p29_w1_rollformer — the Roll Former RU ladder live acceptance chain (task
 p29-w1-kinetic-roll-ladder, the p29_w1_rollingmill shape minus the diesel rig —
 the rollingmill chain carries the cluster's real RU source; the sibling ladders
 prove the same acceptance set through the /gt6machine inject driver, the same
@@ -54,15 +54,15 @@ OUT = {"1.20.1": "outputs=[1x rail_gt_iron; ]", "1.21.1": "outputs=[1x gt6:rail_
 steps = [
     # ---------------------------------------------------------------- arm A
     phase("A: the 8 RU packet is dead below T1 (min 16) — inject 8 red, inject 64 on the SAME machine completes"),
-    Step(f"setblock {MILL_T1_P} gt6:rollformer_t1", expect="Changed the block", sleep=1.0),
-    Step(f"gt6machine rollformer_t1 input 1 {MILL_T1_P}",
-         expect="GT6 rollformer_t1 input: 1x rod_iron into slot 0",
-         node_expects={"1.21.1": "GT6 rollformer_t1 input: 1x gt6:rod_iron into slot 0"}),
+    Step(f"setblock {MILL_T1_P} gt6:rollformer", expect="Changed the block", sleep=1.0),
+    Step(f"gt6machine rollformer input 1 {MILL_T1_P}",
+         expect="GT6 rollformer input: 1x rod_iron into slot 0",
+         node_expects={"1.21.1": "GT6 rollformer input: 1x gt6:rod_iron into slot 0"}),
     # the wall: 8 < mInputMin 16 — no recipe ever binds
-    Step(f"gt6machine rollformer_t1 inject 60 8 {MILL_T1_P}", expect="progress=0/0"),
-    Step(f"gt6machine rollformer_t1 check {MILL_T1_P}", expect="progress=0/0"),
+    Step(f"gt6machine rollformer inject 60 8 {MILL_T1_P}", expect="progress=0/0"),
+    Step(f"gt6machine rollformer check {MILL_T1_P}", expect="progress=0/0"),
     # the control leg: the packet size was the red, not the rig
-    Step(f"gt6machine rollformer_t1 inject 60 64 {MILL_T1_P}", expect=OUT, node_expects=OUT),
+    Step(f"gt6machine rollformer inject 60 64 {MILL_T1_P}", expect=OUT, node_expects=OUT),
 
     # ---------------------------------------------------------------- arm B
     phase("B: the T2-T4 inject ladder — one item, packet = the tier max, the smoke row completes on every tier"),
@@ -84,7 +84,7 @@ for tPos, tPacket, tPath in [
 steps += [
     # ---------------------------------------------------------------- arm C
     phase("C: the TIER_INPUTS window pins across the four tiers"),
-    Step(f"gt6machine rollformer_t1 check {MILL_T1_P}", expect="minIn=16 recIn=32 maxIn=64"),
+    Step(f"gt6machine rollformer check {MILL_T1_P}", expect="minIn=16 recIn=32 maxIn=64"),
     Step(f"gt6machine rollformer_t2 check {MILL_T2_P}", expect="minIn=64 recIn=128 maxIn=256"),
     Step(f"gt6machine rollformer_t3 check {MILL_T3_P}", expect="minIn=256 recIn=512 maxIn=1024"),
     Step(f"gt6machine rollformer_t4 check {MILL_T4_P}", expect="minIn=1024 recIn=2048 maxIn=4096"),
