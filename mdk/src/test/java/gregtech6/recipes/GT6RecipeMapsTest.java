@@ -195,7 +195,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
 		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
-		assertEquals(37, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair, the p26-kitchen-pot-bowl RM.java:80 append, the p28-c-ulv-machine-ladder RM.java:113 append, the p28-c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the p29-w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150)");
+		assertEquals(38, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair, the p26-kitchen-pot-bowl RM.java:80 append, the p28-c-ulv-machine-ladder RM.java:113 append, the p28-c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the p29-w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150) + sluice (the p29-w1-kinetic-process-ladder batch-C tail-append, RM.java:81 — the Sluice family's map, the card-A enumeration gap)");
 	}
 
 	/** The RM.java:99 Forming Press map constants (task p26-w1-press-extruder-molds). */
@@ -585,12 +585,13 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertTrue(GT6RecipeMaps.UNBOXINATOR.mRecipeList.isEmpty(), "DECLARED-empty — no static row upstream either; a loot-box input finds NO row (the batch-D rejection shape)");
 	}
 
-	/** The P29 block joins the generation lifecycle: reset nulls all twelve fields and drops the twelve registry names. */
+	/** The P29 block joins the generation lifecycle: reset nulls all twelve fields (+ the batch-C sluice tail) and drops the registry names. */
 	@Test
 	void resetRetiresTheP29TwelveMapGeneration() {
 		String[] tNames = {"gt.recipe.fermenter", "gt.recipe.loom", "gt.recipe.pressurewasher", "gt.recipe.squeezer",
 				"gt.recipe.clustermill", "gt.recipe.rollbender", "gt.recipe.rollformer", "gt.recipe.centrifuge",
-				"gt.recipe.sharpener", "gt.recipe.cutter", "gt.recipe.boxinator", "gt.recipe.unboxinator"};
+				"gt.recipe.sharpener", "gt.recipe.cutter", "gt.recipe.boxinator", "gt.recipe.unboxinator",
+				"gt.recipe.sluice"}; // the batch-C tail-append (task p29-w1-kinetic-process-ladder)
 		GT6RecipeMaps.init();
 		RecipeMap tFirstCutter = GT6RecipeMaps.CUTTER;
 		assertNotNull(tFirstCutter);
@@ -607,11 +608,33 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertNull(GT6RecipeMaps.CUTTER);
 		assertNull(GT6RecipeMaps.BOXINATOR);
 		assertNull(GT6RecipeMaps.UNBOXINATOR);
+		assertNull(GT6RecipeMaps.SLUICE);
 		for (String tName : tNames) assertFalse(RecipeMap.RECIPE_MAPS.containsKey(tName), "reset drops " + tName);
 		GT6RecipeMaps.init();
 		assertNotSame(tFirstCutter, GT6RecipeMaps.CUTTER, "re-init after reset creates a fresh generation");
 		for (String tName : tNames) assertTrue(RecipeMap.RECIPE_MAPS.containsKey(tName), "re-init re-registers " + tName);
 		GT6RecipeMaps.reset();
+	}
+
+	/** The batch-C tail-append: Sluice :81 (base class, the fluid-mandatory dual-leg gate). */
+	@Test
+	void initRegistersSluiceMapWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+
+		assertNotNull(GT6RecipeMaps.SLUICE);
+		assertSame(GT6RecipeMaps.SLUICE, RecipeMap.RECIPE_MAPS.get("gt.recipe.sluice"));
+		assertEquals("Sluice", GT6RecipeMaps.SLUICE.mNameLocal);
+		assertEquals(1, GT6RecipeMaps.SLUICE.mInputItemsCount);
+		assertEquals(9, GT6RecipeMaps.SLUICE.mOutputItemsCount, "RM.java:81 OUT-ITEM 9 — the Sluice topology");
+		assertEquals(1, GT6RecipeMaps.SLUICE.mMinimalInputItems, "RM.java:81 MIN-ITEM 1");
+		assertEquals(1, GT6RecipeMaps.SLUICE.mInputFluidCount, "RM.java:81 IN-FLUID 1 — the flowing-water leg lives in the RECIPE domain (the machine carries no world interaction)");
+		assertEquals(1, GT6RecipeMaps.SLUICE.mOutputFluidCount, "RM.java:81 OUT-FLUID 1");
+		assertEquals(1, GT6RecipeMaps.SLUICE.mMinimalInputFluids, "RM.java:81 MIN-FLUID 1");
+		assertEquals(2, GT6RecipeMaps.SLUICE.mMinimalInputs, "RM.java:81 MIN 2 — every row needs BOTH legs (the :708/:709/:710 gate trio)");
+		assertEquals(1, GT6RecipeMaps.SLUICE.mPower);
+		assertEquals("gt6:textures/gui/machines/sluice.png", GT6RecipeMaps.SLUICE.mGUIPath);
+		assertTrue(GT6RecipeMaps.SLUICE instanceof RecipeMap && !(GT6RecipeMaps.SLUICE instanceof RecipeMapFurnace), "the base RecipeMap form");
+		assertTrue(GT6RecipeMaps.SLUICE.mRecipeList.isEmpty(), "DECLARED-empty at the scaffold");
 	}
 
 	/** Reflection accessor for the twelve P29 fields (the mill-trio loop above). */

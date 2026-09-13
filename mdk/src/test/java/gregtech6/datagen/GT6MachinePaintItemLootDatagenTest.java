@@ -47,10 +47,11 @@ import net.minecraft.server.Bootstrap;
 class GT6MachinePaintItemLootDatagenTest {
 
     /**
-     * The 49 paint-carry bases, in the census order: the p22 painted-item domain
+     * The 79 paint-carry bases, in the census order: the p22 painted-item domain
      * ({@code paintableBlockArray}: the oven Heat_T ladder (4, task p27-oven-heat-t-ladder),
      * shredder/crusher/lathe, dryer, distillery) plus
-     * the p24 canner rows, the p26 W1 kinetic trio, the p26 press/extruder rows and the
+     * the p24 canner rows, the p26 W1 kinetic trio, the p26 press/extruder rows, the six
+     * P29 W1 process families (24, task p29-w1-kinetic-process-ladder) and the
      * ACT controller — every consumer
      * of the shared {@code paintSelfTable} builder, so the pinned shape covers the full
      * regen surface.
@@ -69,6 +70,12 @@ class GT6MachinePaintItemLootDatagenTest {
             "press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds
             "extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds
             "shredder_ulv", "crusher_ulv", "canner_ulv", "sifter_ulv", "wiremill_ulv", "rollingmill", // task p28-c-ulv-machine-ladder
+            "buzzsaw", "buzzsaw_t2", "buzzsaw_t3", "buzzsaw_t4", // task p29-w1-kinetic-process-ladder
+            "squeezer", "squeezer_t2", "squeezer_t3", "squeezer_t4",
+            "centrifuge", "centrifuge_t2", "centrifuge_t3", "centrifuge_t4",
+            "sluice", "sluice_t2", "sluice_t3", "sluice_t4",
+            "sanding_machine", "sanding_machine_t2", "sanding_machine_t3", "sanding_machine_t4",
+            "pressure_washer", "pressure_washer_t2", "pressure_washer_t3", "pressure_washer_t4",
             "advanced_crafting_table");
 
     /** The paint keys the 03 base writes while painted (CS.java:1161-1162, verbatim upstream). */
@@ -97,7 +104,7 @@ class GT6MachinePaintItemLootDatagenTest {
     /** The census shape: all 49 paintSelfTable tables carry the (quoted) paint carry function. */
     @Test
     void pinnedMachinePaintLootCensus() throws Exception {
-        assertEquals(55, PAINT_BASES.size(), "the paintSelfTable census (24 p22 rows incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + the six p28 ULV rows + ACT 1)");
+        assertEquals(79, PAINT_BASES.size(), "the paintSelfTable census (24 p22 rows incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + the six p28 ULV rows + the six p29 process families 24 + ACT 1)");
         for (String tBase : PAINT_BASES) assertPaintSelfTable(tBase);
     }
 

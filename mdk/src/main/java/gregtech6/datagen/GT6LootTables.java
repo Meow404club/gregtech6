@@ -91,6 +91,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
                 new SubProviderEntry(GT6KineticMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-sifter-compressor-wiremill
+                new SubProviderEntry(GT6ProcessMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-kinetic-process-ladder
                 new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
@@ -120,6 +121,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
                 new SubProviderEntry(GT6KineticMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-sifter-compressor-wiremill
+                new SubProviderEntry(GT6ProcessMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-kinetic-process-ladder
                 new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
@@ -573,6 +575,49 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : kineticLootBlocks()) add(tBlock, paintSelfTable(tBlock));
+        }
+    }
+
+    /**
+     * The P29 W1 process-family block list (task p29-w1-kinetic-process-ladder): the
+     * twenty-four Buzzsaw/Squeezer/Centrifuge/Sluice/Sanding Machine/Pressure Washer rows
+     * (Loader_MultiTileEntities.java :1318-1321/:1324-1327/:1330-1333/:1464-1467/
+     * :1589-1592/:1615-1618) — the kineticLootBlocks shape verbatim, the MTE default
+     * self-drop.
+     */
+    public static List<Block> processLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.buzzsawBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.squeezerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.centrifugeBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.sluiceBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.sandingBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.pressurewasherBlockArray());
+        return rBlocks;
+    }
+
+    /** The P29 W1 process-family self-drop provider (task p29-w1-kinetic-process-ladder; the paint carry = task p22-painted-item-domain). */
+    public static final class GT6ProcessMachineBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6ProcessMachineBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6ProcessMachineBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return processLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : processLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 

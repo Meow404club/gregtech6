@@ -920,6 +920,13 @@ private static final int ZH_KEY_FLOOR = 2816;
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLL_BENDER_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROLL_FORMER_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CLUSTER_MILL_ROWS) tExempt.add(tRow.path());
+		// task p29-w1-kinetic-process-ladder — the six process-family row carriers (GTBasicMachineBlock.getName)
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.BUZZSAW_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SQUEEZER_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CENTRIFUGE_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SLUICE_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SANDING_ROWS) tExempt.add(tRow.path());
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.PRESSURE_WASHER_ROWS) tExempt.add(tRow.path());
 		for (GTMachines.OvenRow tRow : GTMachines.OVEN_ROWS) tExempt.add(tRow.path()); // GTOvenBlock.getName — the composed Heat_T ladder (p27-oven-heat-t-ladder)
 		// the Kinetic_T tier carriers T2-T4 (GTBasicMachineBlock mComposedName, p27-machine-
 		// energy-display-fix) — T1 keeps its vanilla atomic key (block.gt6.shredder/lathe/
@@ -1003,9 +1010,10 @@ private static final int ZH_KEY_FLOOR = 2816;
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(925, tExemptTotal, "the derived composed-name exemption census"
+		assertEquals(949, tExemptTotal, "the derived composed-name exemption census"
 			+ " (the six p28 ULV row carriers joined at 903 + 6; the sixteen roll-ladder"
-			+ " row carriers joined at task p29-w1-kinetic-roll-ladder, 909 + 16)");
+			+ " row carriers joined at task p29-w1-kinetic-roll-ladder, 909 + 16; the six"
+			+ " p29 process families joined at 925 + 24, task p29-w1-kinetic-process-ladder)");
 		assertEquals(104, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"

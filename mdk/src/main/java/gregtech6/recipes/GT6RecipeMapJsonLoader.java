@@ -160,18 +160,24 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 	public static final String DATA_NAMESPACE = "gt6";
 
 	/**
-	 * The pourable map keys (the registered {@link GT6RecipeMaps} census minus
+	 * The 21 pourable map keys (the registered {@link GT6RecipeMaps} census minus
 	 * FURNACE/FURNACE_FUEL — 11 at the tier-b landing, the 12th is the MIXER append of
 	 * task p26-c-foam-fluid-refill (whose review ruling joins it here), the 13th the
-	 * BATH append of task p26-kitchen-pot-bowl, and the four roll-ladder keys the
-	 * p29-w1-kinetic-roll-ladder smoke rows pour through (rollingmill — the map the p28
-	 * ULV rung shares — rollbender, rollformer, clustermill; the card-B card-A map
-	 * constants, so the whitelist keeps growing with its census).
+	 * BATH append of task p26-kitchen-pot-bowl; the P29 W1 wave appends its owning
+	 * cards' keys: the four roll-ladder keys of task p29-w1-kinetic-roll-ladder
+	 * (rollingmill — the map the p28 ULV rung shares — rollbender, rollformer,
+	 * clustermill) and the six batch-C process keys of task
+	 * p29-w1-kinetic-process-ladder (cutter, squeezer, centrifuge, sluice, sharpening,
+	 * pressurewasher) — the whitelist keeps growing with its census).
 	 */
 	private static final Set<String> POURABLE = Set.of(
 			"coke_oven", "shredder", "crusher", "lathe", "chisel", "engine_fuels",
 			"fluidbed", "burn", "distillery", "drying", "canner", "mixer", "bath",
-			"rollingmill", "rollbender", "rollformer", "clustermill");
+			// the P29 W1 card-B roll-ladder four (task p29-w1-kinetic-roll-ladder)
+			"rollingmill", "rollbender", "rollformer", "clustermill",
+			// the P29 W1 process-card six (task p29-w1-kinetic-process-ladder): the batch-C
+			// smoke-row map keys — the card-A constants the Sluice tail-append joins
+			"cutter", "squeezer", "centrifuge", "sluice", "sharpening", "pressurewasher");
 
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
@@ -508,6 +514,15 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "rollbender" -> GT6RecipeMaps.ROLL_BENDER;
 			case "rollformer" -> GT6RecipeMaps.ROLL_FORMER;
 			case "clustermill" -> GT6RecipeMaps.CLUSTER_MILL;
+			// the P29 W1 process-card six (task p29-w1-kinetic-process-ladder; "sharpening"
+			// keys the SHARPENING field — the key form is the field-name snake case, the
+			// gt.recipe.sharpener LOCAL name is the upstream GUI word)
+			case "cutter" -> GT6RecipeMaps.CUTTER;
+			case "squeezer" -> GT6RecipeMaps.SQUEEZER;
+			case "centrifuge" -> GT6RecipeMaps.CENTRIFUGE;
+			case "sluice" -> GT6RecipeMaps.SLUICE;
+			case "sharpening" -> GT6RecipeMaps.SHARPENING;
+			case "pressurewasher" -> GT6RecipeMaps.PRESSURE_WASHER;
 			default -> null;
 		};
 	}

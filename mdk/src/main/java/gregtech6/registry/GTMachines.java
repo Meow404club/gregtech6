@@ -1543,11 +1543,14 @@ public final class GTMachines {
 	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill;
 	 * the Oven ladder joins in task p27-oven-heat-t-ladder; the six ULV rows join in task
 	 * p28-c-ulv-machine-ladder):
-	 * the 54 machine-domain blocks the client paint BlockColor
+	 * the 94 machine-domain blocks the client paint BlockColor
 	 * registers over — the oven ladder (4) + the shredder/crusher/lathe ladders (4 each = 12) + the
 	 * dryer (4) + the distillery (4) + the canner (4) + the sifter/compressor/wiremill
 	 * ladders (4 each = 12) + press (4) + extruder (4) + the ULV rows (5 + the rollingmill
-	 * rung = 6),
+	 * rung = 6) + the roll ladders (rollingmill RU t1-t4 + rollbender/rollformer/clustermill
+	 * 4 each = 16, task p29-w1-kinetic-roll-ladder) + the six process families
+	 * (buzzsaw/squeezer/centrifuge/sluice/sandingmachine/pressurewasher 4 each = 24,
+	 * task p29-w1-kinetic-process-ladder),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -1555,7 +1558,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(54);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(94);
 		rBlocks.add(OVEN.get());
 		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
@@ -1580,6 +1583,15 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, rollbenderBlockArray()); // task p29-w1-kinetic-roll-ladder — the roll ladders join the paint census
 		java.util.Collections.addAll(rBlocks, rollformerBlockArray());
 		java.util.Collections.addAll(rBlocks, clustermillBlockArray());
+		// task p29-w1-kinetic-process-ladder — the six process families, +24 (the
+		// Buzzsaw/Squeezer/Centrifuge/Sluice/SandingMachine/PressureWasher ladders; the
+		// census walks in the section order — the paint tint registration mirrors)
+		java.util.Collections.addAll(rBlocks, buzzsawBlockArray());
+		java.util.Collections.addAll(rBlocks, squeezerBlockArray());
+		java.util.Collections.addAll(rBlocks, centrifugeBlockArray());
+		java.util.Collections.addAll(rBlocks, sluiceBlockArray());
+		java.util.Collections.addAll(rBlocks, sandingBlockArray());
+		java.util.Collections.addAll(rBlocks, pressurewasherBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -1606,6 +1618,353 @@ public final class GTMachines {
 		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), tRow.menu());
 		return applyRow(tMachine, tRow);
 	}
+
+	// ---------------------------------------------------------------------------
+	// the P29 W1 process families (task p29-w1-kinetic-process-ladder) — six Kinetic_T
+	// 4-ladders over the CONSUMED card-A recipe maps, all MultiTileEntityBasicMachine
+	// rows with MT.DATA.Kinetic_T[1..4] (the KINETIC_T_LADDER word set Bronze/Steel/
+	// Titanium/Tungstensteel), NBT_INPUT 32/128/512/2048 through the TIER_INPUTS
+	// conversion, hardness 7.0/6.0/9.0/12.5 (NBT_RESISTANCE == hardness), NBT_PARALLEL
+	// absent unless named, cheap overclocking T (the :773 unconditional port face) and
+	// menu = null on every row (the zero-new-MenuType GUI clause — use() stays inert,
+	// the acceptance drives inject+check):
+	//
+	//   Buzzsaw        20061-20064  RU  RM.CUTTER          :1318-1321  parallel 1
+	//   Squeezer       20071-20074  KU  RM.SQUEEZER        :1324-1327  PARALLEL_4_32 + duration T
+	//   Centrifuge     20081-20084  RU  RM.CENTRIFUGE      :1330-1333  CENTRIFUGE_PARALLEL {1,2,4,8} + duration T (the NON-standard ladder)
+	//   Sluice         20291-20294  RU  RM.SLUICE          :1464-1467  parallel 1 — the plain BasicMachine (NO world interaction /
+	//                                                                    flowing-water dependency: the 流水 lives in the RECIPE domain,
+	//                                                                    RM.SLUICE MIN 2 = every row brings its own fluid input)
+	//   SandingMachine 20511-20514  RU  RM.SHARPENING      :1589-1592  parallel 1
+	//   PressureWasher 20551-20554  RU  RM.PRESSURE_WASHER :1615-1618  parallel 1 (water consumption = the fluid-in
+	//                                                                    mandatory leg; the NBT_TEXTURE "debarker" stays verbatim)
+	//
+	// ONE family BET per family over the four tier blocks — the DRYER_ROWS MachineRow
+	// carrier shape, the shared {@link #kineticMachine} factory body (the row drives the
+	// recipe map, energy type, parallel and masks; only the BlockEntityType argument
+	// differs). The connectivity masks are the upstream rows verbatim, the row bytes
+	// carrying the post-read values (the :137/:138/:143/:144/:151 reads OR SBIT_A onto
+	// every keyed mask; unkeyed masks ride the field default 127 / SIDE_UNDEFINED -1).
+	// The tier rides the displayKey unit word + the gt6.row.mat Kinetic material word
+	// (the upstream name column "<Family> ("+aMat.getLocal()+")" per row).
+	//
+	// KJS face of this card (the wave-plan declaration): REGISTRATION face only — six
+	// families, twenty-four MachineRow rows — plus the datapack face (the six recipe-map
+	// smoke rows under data/gt6/recipe_maps/ through the GT6RecipeMapJsonLoader seam).
+	// The recipe maps themselves are the card-A constants consumed verbatim (except the
+	// SLUICE tail-append documented on the GT6RecipeMaps.SLUICE field); no KubeJS surface.
+	// ---------------------------------------------------------------------------
+
+	/** The Buzzsaw family unit word (the W1 trio :101-104 one-slot key form; the upstream name column "Buzzsaw ("+aMat.getLocal()+")", :1318-1321). */
+	public static final String MACHINE_BUZZSAW_UNIT_KEY = "gt6.row.machine.buzzsaw";
+
+	/** The Squeezer family unit word (the :1324-1327 name column). */
+	public static final String MACHINE_SQUEEZER_UNIT_KEY = "gt6.row.machine.squeezer";
+
+	/** The Centrifuge family unit word (the :1330-1333 name column). */
+	public static final String MACHINE_CENTRIFUGE_UNIT_KEY = "gt6.row.machine.centrifuge";
+
+	/** The Sluice family unit word (the :1464-1467 name column). */
+	public static final String MACHINE_SLUICE_UNIT_KEY = "gt6.row.machine.sluice";
+
+	/** The Sanding Machine family unit word (the :1589-1592 name column — the two-word form verbatim). */
+	public static final String MACHINE_SANDING_UNIT_KEY = "gt6.row.machine.sanding_machine";
+
+	/** The Pressure Washer family unit word (the :1615-1618 name column). */
+	public static final String MACHINE_PRESSURE_WASHER_UNIT_KEY = "gt6.row.machine.pressure_washer";
+
+	/** The four Buzzsaw rows, upstream line order :1318-1321 (T1-T4, the Kinetic_T ladder; the recipe-head column T1 toolHeadBuzzSaw(Steel) / T2-4 CobaltBrass stays the unported crafting-table domain). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> BUZZSAW_ROWS = java.util.List.of(
+			buzzsaw("buzzsaw"   , "bronze"       , "Bronze"       , 20061,  7.0F, 0),
+			buzzsaw("buzzsaw_t2", "steel"        , "Steel"        , 20062,  6.0F, 1),
+			buzzsaw("buzzsaw_t3", "titanium"     , "Titanium"     , 20063,  9.0F, 2),
+			buzzsaw("buzzsaw_t4", "tungstensteel", "Tungstensteel", 20064, 12.5F, 3));
+
+	/** The four Squeezer rows, upstream line order :1324-1327 (T1-T4; the PARALLEL_4_32 + duration-T columns). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> SQUEEZER_ROWS = java.util.List.of(
+			squeezer("squeezer"   , "bronze"       , "Bronze"       , 20071,  7.0F, 0, PARALLEL_4_32[0]),
+			squeezer("squeezer_t2", "steel"        , "Steel"        , 20072,  6.0F, 1, PARALLEL_4_32[1]),
+			squeezer("squeezer_t3", "titanium"     , "Titanium"     , 20073,  9.0F, 2, PARALLEL_4_32[2]),
+			squeezer("squeezer_t4", "tungstensteel", "Tungstensteel", 20074, 12.5F, 3, PARALLEL_4_32[3]));
+
+	/** The four Centrifuge rows, upstream line order :1330-1333 (T1-T4; the NON-standard CENTRIFUGE_PARALLEL {1,2,4,8} + duration-T columns). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> CENTRIFUGE_ROWS = java.util.List.of(
+			centrifuge("centrifuge"   , "bronze"       , "Bronze"       , 20081,  7.0F, 0, CENTRIFUGE_PARALLEL[0]),
+			centrifuge("centrifuge_t2", "steel"        , "Steel"        , 20082,  6.0F, 1, CENTRIFUGE_PARALLEL[1]),
+			centrifuge("centrifuge_t3", "titanium"     , "Titanium"     , 20083,  9.0F, 2, CENTRIFUGE_PARALLEL[2]),
+			centrifuge("centrifuge_t4", "tungstensteel", "Tungstensteel", 20084, 12.5F, 3, CENTRIFUGE_PARALLEL[3]));
+
+	/** The four Sluice rows, upstream line order :1464-1467 (T1-T4; the plain-BasicMachine family — no world interaction, the fluid leg is the recipe's). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> SLUICE_ROWS = java.util.List.of(
+			sluice("sluice"   , "bronze"       , "Bronze"       , 20291,  7.0F, 0),
+			sluice("sluice_t2", "steel"        , "Steel"        , 20292,  6.0F, 1),
+			sluice("sluice_t3", "titanium"     , "Titanium"     , 20293,  9.0F, 2),
+			sluice("sluice_t4", "tungstensteel", "Tungstensteel", 20294, 12.5F, 3));
+
+	/** The four Sanding Machine rows, upstream line order :1589-1592 (T1-T4; no parallel key → 1). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> SANDING_ROWS = java.util.List.of(
+			sanding("sanding_machine"   , "bronze"       , "Bronze"       , 20511,  7.0F, 0),
+			sanding("sanding_machine_t2", "steel"        , "Steel"        , 20512,  6.0F, 1),
+			sanding("sanding_machine_t3", "titanium"     , "Titanium"     , 20513,  9.0F, 2),
+			sanding("sanding_machine_t4", "tungstensteel", "Tungstensteel", 20514, 12.5F, 3));
+
+	/** The four Pressure Washer rows, upstream line order :1615-1618 (T1-T4; the NBT_TEXTURE "debarker" verbatim — the art-token fidelity over the registry path). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> PRESSURE_WASHER_ROWS = java.util.List.of(
+			pressurewasher("pressure_washer"   , "bronze"       , "Bronze"       , 20551,  7.0F, 0),
+			pressurewasher("pressure_washer_t2", "steel"        , "Steel"        , 20552,  6.0F, 1),
+			pressurewasher("pressure_washer_t3", "titanium"     , "Titanium"     , 20553,  9.0F, 2),
+			pressurewasher("pressure_washer_t4", "tungstensteel", "Tungstensteel", 20554, 12.5F, 3));
+
+	/**
+	 * One Buzzsaw row factory — the differing columns (path/name/id/material/hardness/
+	 * tier) plus the family constants: RM.CUTTER through the supplier, RU, the "buzzsaw"
+	 * texture, the :1318 masks (item left-in/right-out, tank IN over top|bottom with the
+	 * SIDE_BOTTOM auto face, NO tank-out key → the 127 field default, energy back) and
+	 * parallel 1 / parallelDuration F (no NBT_PARALLEL keys). The crafting-head column
+	 * (T1 OP.toolHeadBuzzSaw.dat(ANY.Steel) vs T2-4 CobaltBrass, the :1318-1321 recipe
+	 * tails) is the unported crafting-table domain — data-only, the row carries no column
+	 * for it (the GTMachinesMaterialRowTest census form).
+	 */
+	private static GTBasicMachineBlock.MachineRow buzzsaw(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_BUZZSAW_UNIT_KEY, aMetaId, aHardness, aTier, 1, false,
+				() -> GT6RecipeMaps.CUTTER, TD.Energy.RU, "buzzsaw",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B, the :151 read ORs SBIT_A*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_D, the :143 read ORs SBIT_A — the coolant leg*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L, the :137 read ORs SBIT_A*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R, the :138 read*/,
+				(byte)0 /*NBT_TANK_SIDE_AUTO_IN SIDE_BOTTOM*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType (the card GUI clause)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
+	}
+
+	/** One Squeezer row factory — the buzzsaw shape over the :1324 masks (tank OUT bottom, NO tank-in key, energy top) and RM.Squeezer/KU + the PARALLEL_4_32 duration-T ladder. */
+	private static GTBasicMachineBlock.MachineRow squeezer(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_SQUEEZER_UNIT_KEY, aMetaId, aHardness, aTier, aParallel, true,
+				() -> GT6RecipeMaps.SQUEEZER, TD.Energy.KU, "squeezer",
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_U, the :151 read*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_D, the :144 read — the juice leg*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)-1 /*no NBT_TANK_SIDE_AUTO_IN key → SIDE_UNDEFINED*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING*/, null /*no melting gate*/, false);
+	}
+
+	/** One Centrifuge row factory — the :1330 masks (item top-in/right-out, fluid top-in/left-out, energy bottom) and RM.Centrifuge/RU + the NON-standard CENTRIFUGE_PARALLEL duration-T ladder. */
+	private static GTBasicMachineBlock.MachineRow centrifuge(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_CENTRIFUGE_UNIT_KEY, aMetaId, aHardness, aTier, aParallel, true,
+				() -> GT6RecipeMaps.CENTRIFUGE, TD.Energy.RU, "centrifuge",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)2 /*NBT_TANK_SIDE_AUTO_OUT SIDE_LEFT*/,
+				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING*/, null /*no melting gate*/, false);
+	}
+
+	/** One Sluice row factory — the :1464 masks (item+tank in left|top, item out right|bottom auto RIGHT, tank out right|bottom auto BOTTOM, energy back) and RM.Sluice/RU, parallel 1. */
+	private static GTBasicMachineBlock.MachineRow sluice(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_SLUICE_UNIT_KEY, aMetaId, aHardness, aTier, 1, false,
+				() -> GT6RecipeMaps.SLUICE, TD.Energy.RU, "sluice",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING*/, null /*no melting gate*/, false);
+	}
+
+	/** One Sanding Machine row factory — the wiremill shape over the :1589 masks (left-in/right-out, energy TOP, no tank keys at all) and RM.Sharpening/RU, parallel 1. */
+	private static GTBasicMachineBlock.MachineRow sanding(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_SANDING_UNIT_KEY, aMetaId, aHardness, aTier, 1, false,
+				() -> GT6RecipeMaps.SHARPENING, TD.Energy.RU, "sander",
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_U — the energy face rides the TOP*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING*/, null /*no melting gate*/, false);
+	}
+
+	/** One Pressure Washer row factory — the buzzsaw shape over the :1615 masks (tank IN top|bottom auto TOP, no tank-out key, energy back) and RM.PressureWasher/RU, parallel 1, the "debarker" texture verbatim. */
+	private static GTBasicMachineBlock.MachineRow pressurewasher(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_PRESSURE_WASHER_UNIT_KEY, aMetaId, aHardness, aTier, 1, false,
+				() -> GT6RecipeMaps.PRESSURE_WASHER, TD.Energy.RU, "debarker",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_D — the water-consumption leg*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key — the map is IN 1 / OUT 0 fluids*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING*/, null /*no melting gate*/, false);
+	}
+
+	/** The registered Buzzsaw blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> BUZZSAW_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Buzzsaw items, same keys as {@link #BUZZSAW_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> BUZZSAW_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Squeezer blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> SQUEEZER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Squeezer items, same keys as {@link #SQUEEZER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> SQUEEZER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Centrifuge blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> CENTRIFUGE_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Centrifuge items, same keys as {@link #CENTRIFUGE_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> CENTRIFUGE_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Sluice blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> SLUICE_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Sluice items, same keys as {@link #SLUICE_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> SLUICE_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Sanding Machine blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> SANDING_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Sanding Machine items, same keys as {@link #SANDING_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> SANDING_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Pressure Washer blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> PRESSURE_WASHER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Pressure Washer items, same keys as {@link #PRESSURE_WASHER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> PRESSURE_WASHER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : BUZZSAW_ROWS) {
+			BUZZSAW_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.BUZZSAW_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			BUZZSAW_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.BUZZSAW_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : SQUEEZER_ROWS) {
+			SQUEEZER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SQUEEZER_BE.get(), tRow)));
+			SQUEEZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SQUEEZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : CENTRIFUGE_ROWS) {
+			CENTRIFUGE_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CENTRIFUGE_BE.get(), tRow)));
+			CENTRIFUGE_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CENTRIFUGE_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : SLUICE_ROWS) {
+			SLUICE_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SLUICE_BE.get(), tRow)));
+			SLUICE_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SLUICE_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : SANDING_ROWS) {
+			SANDING_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SANDING_BE.get(), tRow)));
+			SANDING_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SANDING_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : PRESSURE_WASHER_ROWS) {
+			PRESSURE_WASHER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.PRESSURE_WASHER_BE.get(), tRow)));
+			PRESSURE_WASHER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.PRESSURE_WASHER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Buzzsaw block list in registration order (the loot/datagen walkers). */
+	public static Block[] buzzsawBlockArray() {
+		Block[] rBlocks = new Block[BUZZSAW_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : BUZZSAW_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Squeezer block list in registration order. */
+	public static Block[] squeezerBlockArray() {
+		Block[] rBlocks = new Block[SQUEEZER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : SQUEEZER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Centrifuge block list in registration order. */
+	public static Block[] centrifugeBlockArray() {
+		Block[] rBlocks = new Block[CENTRIFUGE_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : CENTRIFUGE_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Sluice block list in registration order. */
+	public static Block[] sluiceBlockArray() {
+		Block[] rBlocks = new Block[SLUICE_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : SLUICE_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Sanding Machine block list in registration order. */
+	public static Block[] sandingBlockArray() {
+		Block[] rBlocks = new Block[SANDING_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : SANDING_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Pressure Washer block list in registration order. */
+	public static Block[] pressurewasherBlockArray() {
+		Block[] rBlocks = new Block[PRESSURE_WASHER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : PRESSURE_WASHER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/**
+	 * The ONE Buzzsaw family BET: the Dryer shape verbatim over the shared
+	 * {@link #kineticMachine} factory (the row carries every column the family needs; no
+	 * extra registration columns).
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> BUZZSAW_BE =
+			BLOCK_ENTITY_TYPES.register("buzzsaw", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.BUZZSAW_BE.get(), aPos, aState),
+					buzzsawBlockArray()).build(null));
+
+	/** The ONE Squeezer family BET — the KU first-new-consumer family (the PARALLEL_4_32 + duration-T ladder). */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> SQUEEZER_BE =
+			BLOCK_ENTITY_TYPES.register("squeezer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.SQUEEZER_BE.get(), aPos, aState),
+					squeezerBlockArray()).build(null));
+
+	/** The ONE Centrifuge family BET — the CENTRIFUGE_PARALLEL {1,2,4,8} non-standard ladder's first consumer (the card-A constant lands here). */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> CENTRIFUGE_BE =
+			BLOCK_ENTITY_TYPES.register("centrifuge", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.CENTRIFUGE_BE.get(), aPos, aState),
+					centrifugeBlockArray()).build(null));
+
+	/** The ONE Sluice family BET — the plain-BasicMachine family over the batch-C SLUICE map tail-append. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> SLUICE_BE =
+			BLOCK_ENTITY_TYPES.register("sluice", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.SLUICE_BE.get(), aPos, aState),
+					sluiceBlockArray()).build(null));
+
+	/** The ONE Sanding Machine family BET — the SHARPENING map's first machine consumer. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> SANDING_BE =
+			BLOCK_ENTITY_TYPES.register("sanding_machine", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.SANDING_BE.get(), aPos, aState),
+					sandingBlockArray()).build(null));
+
+	/** The ONE Pressure Washer family BET — the PRESSURE_WASHER map's first machine consumer (the "debarker" art family). */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> PRESSURE_WASHER_BE =
+			BLOCK_ENTITY_TYPES.register("pressure_washer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.PRESSURE_WASHER_BE.get(), aPos, aState),
+					pressurewasherBlockArray()).build(null));
 
 	/** The tier index of a family block (0=T1 .. 3=T4) — BE creation time, every RO is resolved. */
 	private static int tierOf(Block aBlock, RegistryObject<Block> aT1, RegistryObject<Block> aT2, RegistryObject<Block> aT3, RegistryObject<Block> aT4) {
@@ -1726,6 +2085,27 @@ public final class GTMachines {
 							}
 							for (GTBasicMachineBlock.MachineRow tRow : CLUSTER_MILL_ROWS) {
 								aOutput.accept(new ItemStack(CLUSTERMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							// task p29-w1-kinetic-process-ladder: the six process families, +24 rows
+							// (Buzzsaw/Squeezer/Centrifuge/Sluice/SandingMachine/PressureWasher,
+							// upstream row order per family)
+							for (GTBasicMachineBlock.MachineRow tRow : BUZZSAW_ROWS) {
+								aOutput.accept(new ItemStack(BUZZSAW_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : SQUEEZER_ROWS) {
+								aOutput.accept(new ItemStack(SQUEEZER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : CENTRIFUGE_ROWS) {
+								aOutput.accept(new ItemStack(CENTRIFUGE_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : SLUICE_ROWS) {
+								aOutput.accept(new ItemStack(SLUICE_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : SANDING_ROWS) {
+								aOutput.accept(new ItemStack(SANDING_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : PRESSURE_WASHER_ROWS) {
+								aOutput.accept(new ItemStack(PRESSURE_WASHER_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
 								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
 								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));

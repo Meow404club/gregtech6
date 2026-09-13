@@ -768,6 +768,16 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_ROLL_BENDER_UNIT_KEY, "Roll Bender (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_ROLL_FORMER_UNIT_KEY, "Roll Former (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_CLUSTER_MILL_UNIT_KEY, "Cluster Mill (%s)");
+        // task p29-w1-kinetic-process-ladder — the six process-family templates (the
+        // :101-104 one-slot unit-key form; the upstream name columns verbatim: "Buzzsaw ("
+        // :1318-1321 / "Squeezer (" :1324-1327 / "Centrifuge (" :1330-1333 / "Sluice ("
+        // :1464-1467 / "Sanding Machine (" :1589-1592 / "Pressure Washer (" :1615-1618)
+        add(gregtech6.registry.GTMachines.MACHINE_BUZZSAW_UNIT_KEY, "Buzzsaw (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_SQUEEZER_UNIT_KEY, "Squeezer (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_CENTRIFUGE_UNIT_KEY, "Centrifuge (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_SLUICE_UNIT_KEY, "Sluice (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_SANDING_UNIT_KEY, "Sanding Machine (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_PRESSURE_WASHER_UNIT_KEY, "Pressure Washer (%s)");
         // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");

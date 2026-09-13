@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "inputs": [{"item": "minecraft:coarse_dirt", "count": 1}],
+      "fluidInputs": [{"fluid": "minecraft:water", "amount": 100}],
+      "outputs": [{"item": "minecraft:dirt", "count": 1}],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

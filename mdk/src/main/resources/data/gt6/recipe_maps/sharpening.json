@@ -1,0 +1,10 @@
+{
+  "recipes": [
+    {
+      "inputs": [{"item": "minecraft:sandstone", "count": 1}],
+      "outputs": [{"item": "minecraft:sand", "count": 2}],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

@@ -208,6 +208,42 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tClustermill,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+
+		// task p29-w1-kinetic-process-ladder — the six process families join (tail-append;
+		// shared serial file): the Buzzsaw/Squeezer/Centrifuge/Sluice/Sanding Machine/
+		// Pressure Washer BETs, the same item + fluid faces as every
+		// TileEntityBasicMachine family above (the zero-fluid masks of the sander rows
+		// stay a data-only face — the seam-② hard constraint)
+		BlockEntityType<TileEntityBasicMachine> tBuzzsaw = GTMachines.BUZZSAW_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tBuzzsaw,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBuzzsaw,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tSqueezer = GTMachines.SQUEEZER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tSqueezer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tSqueezer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tCentrifuge = GTMachines.CENTRIFUGE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCentrifuge,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCentrifuge,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tSluice = GTMachines.SLUICE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tSluice,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tSluice,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tSanding = GTMachines.SANDING_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tSanding,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tSanding,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tPressurewasher = GTMachines.PRESSURE_WASHER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tPressurewasher,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPressurewasher,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,

@@ -31,9 +31,10 @@
  * extruder (4, both rows of the last task p26-w1-press-extruder-molds) + the six ULV
  * rows (task p28-c-ulv-machine-ladder) + the four roll-ladder RU families (16, task
  * p29-w1-kinetic-roll-ladder — the RU rollingmill rungs ride tier-suffixed bases while
- * sharing the ULV rung's family texture set) = 70 blocks (the
+ * sharing the ULV rung's family texture set) + the six P29 W1 process families (24,
+ * task p29-w1-kinetic-process-ladder) = 94 blocks (the
  * GTMachines.paintableBlockArray
- * registration census), three models each (inactive/active/running) = 210 block-model
+ * registration census), three models each (inactive/active/running) = 282 block-model
  * JSONs. Upstream canonical: every faced face multiplies the grayscale texture by mRGBa
  * (MultiTileEntityBasicMachine.java:1014), so all three models tint identically.
  */
@@ -59,7 +60,7 @@ import com.google.gson.JsonParser;
 
 class GT6MachinePaintRenderDatagenTest {
 
-    /** The 70 machine-domain bases (the paintableBlockArray census). */
+    /** The 94 machine-domain bases (the paintableBlockArray census). */
     private static final List<String> MACHINE_BASES = List.of(
             "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
@@ -77,7 +78,13 @@ class GT6MachinePaintRenderDatagenTest {
             "rollingmill_t1", "rollingmill_t2", "rollingmill_t3", "rollingmill_t4", // task p29-w1-kinetic-roll-ladder — the RU rungs
             "rollbender", "rollbender_t2", "rollbender_t3", "rollbender_t4",
             "rollformer", "rollformer_t2", "rollformer_t3", "rollformer_t4",
-            "clustermill", "clustermill_t2", "clustermill_t3", "clustermill_t4");
+            "clustermill", "clustermill_t2", "clustermill_t3", "clustermill_t4",
+            "buzzsaw", "buzzsaw_t2", "buzzsaw_t3", "buzzsaw_t4", // task p29-w1-kinetic-process-ladder
+            "squeezer", "squeezer_t2", "squeezer_t3", "squeezer_t4",
+            "centrifuge", "centrifuge_t2", "centrifuge_t3", "centrifuge_t4",
+            "sluice", "sluice_t2", "sluice_t3", "sluice_t4",
+            "sanding_machine", "sanding_machine_t2", "sanding_machine_t3", "sanding_machine_t4",
+            "pressure_washer", "pressure_washer_t2", "pressure_washer_t3", "pressure_washer_t4");
 
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
@@ -134,10 +141,24 @@ class GT6MachinePaintRenderDatagenTest {
     private static String familyOf(String aBase) {
         if (aBase.startsWith("rollingmill_t")) return "rollingmill"; // task p29-w1-kinetic-roll-ladder — the RU rungs share the ULV rung's family set
         for (String tTier : new String[] {"_t2", "_t3", "_t4"}) {
-            if (aBase.endsWith(tTier)) return aBase.substring(0, aBase.length() - tTier.length());
+            if (aBase.endsWith(tTier)) return artTokenOf(aBase.substring(0, aBase.length() - tTier.length()));
         }
         if (aBase.endsWith("_ulv")) return aBase.substring(0, aBase.length() - "_ulv".length()); // task p28-c-ulv-machine-ladder
-        return aBase;
+        return artTokenOf(aBase);
+    }
+
+    /**
+     * The art token overrides: two p29 process families carry upstream NBT_TEXTURE
+     * tokens distinct from their registry path (task p29-w1-kinetic-process-ladder —
+     * the Sanding Machine rows ride "sander", the Pressure Washer rows "debarker",
+     * the row.texture() column verbatim).
+     */
+    private static String artTokenOf(String aBase) {
+        return switch (aBase) {
+            case "sanding_machine" -> "sander";
+            case "pressure_washer" -> "debarker";
+            default -> aBase;
+        };
     }
 
     private static void assertCoord(JsonObject aElement, String aKey, double[] aExpected, String aName) {
@@ -148,12 +169,12 @@ class GT6MachinePaintRenderDatagenTest {
         }
     }
 
-    /** The census shape: 70 bases x 3 models = 210 tinted block models. */
+    /** The census shape: 94 bases x 3 models = 282 tinted block models. */
     @Test
     void pinnedMachinePaintCensus() {
-        assertEquals(70, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(70 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
-                "70 blocks x 3 models — the pinned tinted-model total");
+        assertEquals(94, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
+        assertEquals(94 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
+                "94 blocks x 3 models — the pinned tinted-model total");
     }
 
     /**
