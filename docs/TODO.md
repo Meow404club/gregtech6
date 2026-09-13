@@ -315,7 +315,7 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 
 ## 第 27 阶段（质量与保真）——✅ 已完成（2026-09-12，18 卡全合 main 51a07784，sweep 62 链双腿 GREEN）
 
-## 第 28 阶段（入口，2026-09-12 P27 收官移交）——🚧 进行中（W1+W2 共 11 卡已合，main 001b4cfa；调度=滚动合并队列 7cf81ab0+阶段末 sweep 19b6644c）
+## 第 28 阶段（入口，2026-09-12 P27 收官移交）——🚧 收尾（W1+W2+ULV 波共 19 卡已合，main 4860cfd3；调度=滚动合并队列 7cf81ab0+阶段末 sweep 19b6644c）
 
 - [x] p27-neo-tag-resource-wiring：c: 孪生树 1.21.1 腿运行时接线→已合 37c27c22（build 面嫁接 forge:items→c:item 7927 面字节同源+per-leg 断言+p27tags 链 neo 臂重钉双腿 GREEN+ADR-P17-1 §6 再裁决；死复数带 jar exclude 留 §6.4 可选）
 - [x] 低置信译名社区核→已合 d5141eb4（research.p28-r-translation-community 逐词 ≥2 源考据+用户三裁定：batch1 五回退[压力成型机/压模器/通量琥珀金/脉冲合金/生动合金]+gem/crystalline 拆分+社区定则 funnel=漏斗/hopper=料斗+行星 24 名汉化；kalendrite 族与 dark_thaumium 维持现译；39 键值变零增删）
@@ -325,7 +325,9 @@ P24 移交余项（在账未派）：RCON 全集复验已由收官证书完成�
 - [x] **用户 2026-09-12 实测三条（decisions.p28-opener-jade-wand）**：①强化泡沫语言键缺失 Jade 不显示→已修 9041753d（根因=block.gt6.cfoam_owned 键从未写过，P27 销账的 33 键是流体族不同键集；补键 zh=强化建筑泡沫+owned 全族 33 值统一「强化」+注册表覆盖闸门防复发；Jade 悬停目验留上方清单）；②坩埚内容物与温度 Jade 不显示→已修 3ed3fd39（GT6CrucibleProvider 温度/总量/内容物面，TFRU 33c22beb Content 约定对位，熔毁 RED）；③建筑杖仍只造一半→研究证实=上游忠实 ±1 点击邻域门非移植 bug（RCON form 臂喂 null 一次铺满故链 GREEN 掩盖），用户裁定 B 一键成型→已合 b890c309（两机制分臂+wandclick 测试臂+九击钉重写+ADR-P28 首号偏离声明；目验留上方清单）
 - [ ] 解冻实现池照旧：管道①②③/质量存储②/foam C/panels/sensors-batch2/mortar-juicer-grind W2/行回填 b 类流体行/W2 成型链/plateCurved/tool-metatool（门=P24 工具系统闭环）〔EU 入向转换机已解冻完成→0c81d5eb〕
 - [x] **能量生态重构（2026-09-12 用户三裁定落地）**：①EU→FE 出向桥整体砍除→001b4cfa（insertFe EU 面/桥臂/外族 wiring 行/三相链全撤；pushPacketTrain 比率无关泛化缝留给 Dynamo；KG 演化链失效 4 边）；②FE→EU 入向转换机 ULV 锁档→0c81d5eb（单台 8EU×1A 无损 4:1+push/pull 双支持+超压爆炸+ADR 平衡节；研究=上游刻意缺席 RF→EU，GTCEu 形偏离声明）③出向 Dynamo=RU→FE 上游本命机移植（W1-W3 进行中：族 BE→渲染配方→RCON 链；Electric Dynamo 连带移植解锁配方中键）
-- [ ] 池：fe_inbound 链重写（W0 砍桥后三相死语义；ULV 输出无合法消费者——终点编排待用户裁）∥cfoam 喷管链 neo 红诊断（quarantine 实锤，诊断中）∥oven P9 动态 overlay 与静态 decal 共存退役∥side decal UV 镜像 quirk（目验池）∥**砧 Anvil（用户点名：GT6 特色=坩埚+砧，未移植；石砧开局+锤击成型+漏斗吸附彩蛋随卡）**
+- [ ] 池：oven P9 动态 overlay 与静态 decal 共存退役∥side decal UV 镜像 quirk（目验池）∥loot/fe/builder_wand 三链名册注册（fe 链重写卡在飞一并收）
+- [x] **ULV 前期 QoL 生态（2026-09-12 用户阵容裁定全落地）**：水车→axle→Electric Dynamo T0（1:1 偏离）→ULV 线→ULV 机链闭环；砧（石/黑石两档+锤击两图 45+5 行+漏斗彩蛋闭环）→323c4ae4；ULV 机器梯 63dcc906+07b61251（maxMeltingPointK 1375K 门六行全覆盖+新机 RollingMill+RM.ROLLING_MILL 第 23 图）；Dynamo T0 行 31bbea99（1:1 偏离+输入门 Base10:76 分支补齐+ParityTest 遗留收口）；变压器 1e07061d（TransformerElectric 首例+LV 材料锁条件进）；RCON 收口链 4860cfd3（正链/8EU→LV 白烧/铁锭 1375K 拒/变压器贯通臂四臂 46 步）。**结构性发现**：线缆 min loss=1+机器无条件排空⇒16EU 档穿线饿死，ULV 机只能直贴动力源（KG/README 已记）；**fe_inbound 链终点自解**（ULV 机=合法消费者），重写卡在飞
+- [x] **cfoam 喷管链 neo 红诊断+修复→c279ad3e**（定性 c 混合：主根因=镜像带 copy_nbt 进 1.21.1 解析死→51 张 loot 表全灭零掉落[玩法级缺口]；修复=GT6DualDirectoryFaces loot face 适配器 copy_custom_data+51 表重生成+E 臂双腿分叉；LootDataType ERROR 归零；quarantine 排除表销账待阶段末 sweep 复核）
 
 
 - [ ] **zh 参考 lang 全量审计（P27 首项，用户质量裁定）**：搅拌盆/浸洗盆是加工机器不是厨具（域分类勘误，kitchen-pot-bowl 叙事正名）；Drum 类译「鼓」错误应作「储罐」；全部既有键过一遍——机器翻译腔逐个清查（材料键/tagprefix 键/机器名/流体名/物品名）
