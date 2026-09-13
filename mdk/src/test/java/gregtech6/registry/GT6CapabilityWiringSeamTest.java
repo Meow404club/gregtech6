@@ -160,6 +160,11 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("laser_welder", "item+fluid"); // task p29-w2-exotic-energy — the no-tank-out row keeps the fluid FACE (the seam-② hard constraint)
 		tFaces.put("freezer", "item+fluid"); // task p29-w2-exotic-energy
 		tFaces.put("cryo_mixer", "item+fluid"); // task p29-w2-exotic-energy
+		tFaces.put("electrolyzer", "item+fluid"); // task p29-w2-eu-core-5tier — the five eu-core families join (the first 5-tier ladders)
+		tFaces.put("injector", "item+fluid"); // task p29-w2-eu-core-5tier
+		tFaces.put("printer", "item+fluid"); // task p29-w2-eu-core-5tier — the tank-out 127 default stays a data-only face
+		tFaces.put("scannervisuals", "item+fluid"); // task p29-w2-eu-core-5tier — the zero-fluid masks stay a data-only face
+		tFaces.put("slicer", "item+fluid"); // task p29-w2-eu-core-5tier — the zero-fluid masks stay a data-only face
 		tFaces.put("oven", "item"); // the exception: the gated item handler alone
 		tFaces.put("advanced_crafting_table", "item"); // task p24-act-machine — the second item-only face (zero fluid tanks)
 		BASIC_MACHINE_FAMILY_FACES = Collections.unmodifiableMap(tFaces);

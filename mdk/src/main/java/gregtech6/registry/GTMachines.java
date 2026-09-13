@@ -287,6 +287,17 @@ public final class GTMachines {
 	 */
 	public static final int[] CRYO_PARALLEL = {4, 8, 16, 32, 64};
 
+	/**
+	 * The Electrolyzer parallel table (task p29-w2-eu-core-5tier): the upstream NBT_PARALLEL
+	 * {1, 2, 4, 8, 16} + NBT_PARALLEL_DURATION T columns of the five EU Electrolyzer rows
+	 * (Loader_MultiTileEntities.java:1336-1340) — the FIRST FIVE-RUNG parallel table (the
+	 * T5 arm rides {@link #EV_TIER_INPUTS}), the T1 = 1 arm matching the NON-standard
+	 * {@link #CENTRIFUGE_PARALLEL} shape it sits beside (the card ordered the constant
+	 * next to it; the static-initializer order lesson). Consumed by the Electrolyzer rows
+	 * below; the other four eu-core families register no NBT_PARALLEL key → 1.
+	 */
+	public static final int[] ELECTROLYZER_PARALLEL = {1, 2, 4, 8, 16};
+
 	// the composed tier-ladder name face (task p20-i18n-compose-rows, materialized by task
 	// p27-machine-energy-display-fix): the "{Machine} (Material)" rows compose from the
 	// machine word + the Kinetic_T material word — the upstream name column is
@@ -2451,7 +2462,7 @@ public final class GTMachines {
 	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill;
 	 * the Oven ladder joins in task p27-oven-heat-t-ladder; the six ULV rows join in task
 	 * p28-c-ulv-machine-ladder):
-	 * the 163 machine-domain blocks the client paint BlockColor
+	 * the 188 machine-domain blocks the client paint BlockColor
 	 * registers over — the oven ladder (4) + the shredder/crusher/lathe ladders (4 each = 12) + the
 	 * dryer (4) + the distillery (4) + the canner (4) + the sifter/compressor/wiremill
 	 * ladders (4 each = 12) + press (4) + extruder (4) + the ULV rows (5 + the rollingmill
@@ -2463,7 +2474,8 @@ public final class GTMachines {
 	 * = 25, task p29-w1-eu-hu-families) + the eu-special families (autocrafter/lightning
 	 * 5 each + laminator 4 = 14, task p29-w2-eu-special) + the six exotic-energy families
 	 * (polarizer/magneticseparator/laserengraver/laserwelder/freezer/cryomixer 5 each
-	 * = 30, task p29-w2-exotic-energy),
+	 * = 30, task p29-w2-exotic-energy) + the five eu-core families (electrolyzer/injector/
+	 * printer/scannervisuals/slicer 5 each = 25, task p29-w2-eu-core-5tier),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -2471,7 +2483,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(163);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(188);
 		rBlocks.add(OVEN.get());
 		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
@@ -2534,6 +2546,15 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, laserWelderBlockArray());
 		java.util.Collections.addAll(rBlocks, freezerBlockArray());
 		java.util.Collections.addAll(rBlocks, cryoMixerBlockArray());
+		// task p29-w2-eu-core-5tier — the five eu-core families, +25 blocks (each the first
+		// FIVE-tier ladder: electrolyzer 5 + injector 5 + printer 5 + scannervisuals 5 +
+		// slicer 5), the census comment and the datagen-JVM half move together (119 → 133
+		// → 163 → 188)
+		java.util.Collections.addAll(rBlocks, electrolyzerBlockArray());
+		java.util.Collections.addAll(rBlocks, injectorBlockArray());
+		java.util.Collections.addAll(rBlocks, printerBlockArray());
+		java.util.Collections.addAll(rBlocks, scannerVisualsBlockArray());
+		java.util.Collections.addAll(rBlocks, slicerBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -3223,6 +3244,319 @@ public final class GTMachines {
 		return tMachine;
 	}
 
+	// ---------------------------------------------------------------------------
+	// the P29 W2 EU-core families (task p29-w2-eu-core-5tier) — the FIRST 5-TIER ladders
+	// of the port (the 立行制 first consumer set, five MultiTileEntityBasicMachineElectric
+	// families over MT.DATA.Electric_T[1..5] = SteelGalvanized/Al/StainlessSteel/Cr/Ti,
+	// MT.java:3691 — tiers 0-3 ride {@link #ELECTRIC_T_LADDER}, the T5 rung
+	// {@link #ELECTRIC_T_LADDER}'s {@link #ELECTRIC_T5} supplier), all TD.Energy.EU
+	// (MultiTileEntityBasicMachineElectric), all NBT_INPUT 32/128/512/2048/8192 through
+	// the :126 conversion ({@link #TIER_INPUTS}[0..3] + the tier-4 arm {@link
+	// #EV_TIER_INPUTS} = {4096, 8192, 16384}), hardness 4.0F on EVERY row (NBT_RESISTANCE
+	// == hardness), cheap overclocking T (the :773 unconditional port face), NO
+	// NBT_EFFICIENCY key (the 26-arg overload — the :96 10000 identity) and menu = null on
+	// every row (the zero-new-MenuType GUI clause):
+	//
+	//   Electrolyzer     20091-20095  EU  RM.ELECTROLYZER     :1336-1340  ELECTROLYZER_PARALLEL {1,2,4,8,16} + duration T
+	//   Injector         20261-20265  EU  RM.INJECTOR         :1443-1447  parallel 1
+	//   Printer          20271-20275  EU  RM.PRINTER          :1450-1454  parallel 1 (the base-form map — the NBT
+	//                                                                     blueprint-copy face stays pooled, the card-①
+	//                                                                     RecipeMapPrinter deviation)
+	//   ScannerVisuals   20281-20285  EU  RM.SCANNER_VISUALS  :1457-1461  parallel 1 (same base-form pool on the
+	//                                                                     RecipeMapScannerVisuals NBT scan face)
+	//   Slicer           20381-20385  EU  RM.SLICER           :1525-1529  parallel 1
+	//
+	// ONE family BET per family over the FIVE tier blocks — the DRYER_ROWS MachineRow
+	// carrier shape, the shared {@link #euFiveTierMachine} factory body (the card-③ landed resolver — the W2 single window source, the merge dedup point) (the row drives the
+	// recipe map, energy type, parallel and masks; only the BlockEntityType argument
+	// differs). The connectivity masks are the upstream rows verbatim, the row bytes
+	// carrying the post-read values (the :137/:138/:143/:144/:151 reads OR SBIT_A onto
+	// every keyed mask; unkeyed masks ride the field default 127 / SIDE_UNDEFINED -1).
+	// The display words ride the VN VOLTAGE ladder per row (the upstream name column
+	// "Electrolyzer ("+VN[tier]+")" form, CS.java:154) — LV/MV/HV/EV for tiers 1-4 and
+	// the FIFTH word VN[5] = "IV" for the T5 rung (the S9 ruling: NOT "EV" — ev is
+	// already T4's word since p24, the CS.java:154 array and the GTMachines.EV_TIER_INPUTS
+	// doc both carry the erratum; the "iv" mat unit landed with card ①).
+	//
+	// KJS face of this card (the wave-plan declaration): REGISTRATION face only — five
+	// families, twenty-five MachineRow rows over the 5-tier array TIER_INPUTS[0..3] +
+	// EV_TIER_INPUTS (the constant name kept as the consumers' API anchor, its real
+	// meaning VN[5] = IV) — plus the datapack face (the five recipe-map smoke rows under
+	// data/gt6/recipe_maps/ through the GT6RecipeMapJsonLoader seam). NO KubeJS surface.
+	// ---------------------------------------------------------------------------
+
+	/** The Electrolyzer family display template (the voltage-word slot; upstream "Electrolyzer ("+VN[tier]+")", :1336-1340). */
+	public static final String ELECTROLYZER_DISPLAY_KEY = "gt6.row.electrolyzer.display";
+	/** The Injector family display template (upstream "Injector ("+VN[tier]+")", :1443-1447). */
+	public static final String INJECTOR_DISPLAY_KEY = "gt6.row.injector.display";
+	/** The Printer family display template (upstream "Printer ("+VN[tier]+")", :1450-1454). */
+	public static final String PRINTER_DISPLAY_KEY = "gt6.row.printer.display";
+	/** The Scanner (Visuals) family display template (the upstream name column "Scanner (Visuals, "+VN[tier]+")", :1457-1461 — the comma form verbatim). */
+	public static final String SCANNER_VISUALS_DISPLAY_KEY = "gt6.row.scannervisuals.display";
+	/** The Slicer family display template (upstream "Slicer ("+VN[tier]+")", :1525-1529). */
+	public static final String SLICER_DISPLAY_KEY = "gt6.row.slicer.display";
+
+	/** The voltage-word columns of the 5-tier rows — slugs for the gt6.row.mat units, displays for the census forms (VN[1..5] = LV/MV/HV/EV/IV, CS.java:154). */
+	public static final String[][] VOLTAGE_WORDS = {{"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"}, {"iv", "IV"}};
+
+	/** The housing material of one eu-core row — Electric_T[1..4] through the ladder, the T5 rung through {@link #ELECTRIC_T5} (MT.java:3691). */
+	private static java.util.function.Supplier<OreDictMaterial> electricTier(int aTier) {
+		return aTier < ELECTRIC_T_LADDER.size() ? ELECTRIC_T_LADDER.get(aTier) : ELECTRIC_T5;
+	}
+
+	/** The five Electrolyzer rows, upstream line order :1336-1340 (T1-T5, the VN ladder; the ELECTROLYZER_PARALLEL + duration-T columns). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> ELECTROLYZER_ROWS = java.util.List.of(
+			electrolyzer("electrolyzer"   , 20091, 0),
+			electrolyzer("electrolyzer_t2", 20092, 1),
+			electrolyzer("electrolyzer_t3", 20093, 2),
+			electrolyzer("electrolyzer_t4", 20094, 3),
+			electrolyzer("electrolyzer_t5", 20095, 4));
+
+	/** The five Injector rows, upstream line order :1443-1447 (T1-T5; no NBT_PARALLEL → 1). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> INJECTOR_ROWS = java.util.List.of(
+			injector("injector"   , 20261, 0),
+			injector("injector_t2", 20262, 1),
+			injector("injector_t3", 20263, 2),
+			injector("injector_t4", 20264, 3),
+			injector("injector_t5", 20265, 4));
+
+	/** The five Printer rows, upstream line order :1450-1454 (T1-T5; the base-form PRINTER map — the NBT blueprint face pooled). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> PRINTER_ROWS = java.util.List.of(
+			printer("printer"   , 20271, 0),
+			printer("printer_t2", 20272, 1),
+			printer("printer_t3", 20273, 2),
+			printer("printer_t4", 20274, 3),
+			printer("printer_t5", 20275, 4));
+
+	/** The five Scanner (Visuals) rows, upstream line order :1457-1461 (T1-T5; the base-form SCANNER_VISUALS map — the NBT scan face pooled). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> SCANNER_VISUALS_ROWS = java.util.List.of(
+			scannerVisuals("scannervisuals"   , 20281, 0),
+			scannerVisuals("scannervisuals_t2", 20282, 1),
+			scannerVisuals("scannervisuals_t3", 20283, 2),
+			scannerVisuals("scannervisuals_t4", 20284, 3),
+			scannerVisuals("scannervisuals_t5", 20285, 4));
+
+	/** The five Slicer rows, upstream line order :1525-1529 (T1-T5; no tank keys — the zero-fluid face, data-only). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> SLICER_ROWS = java.util.List.of(
+			slicer("slicer"   , 20381, 0),
+			slicer("slicer_t2", 20382, 1),
+			slicer("slicer_t3", 20383, 2),
+			slicer("slicer_t4", 20384, 3),
+			slicer("slicer_t5", 20385, 4));
+
+	/**
+	 * One Electrolyzer row factory — the differing columns (path/id/tier) plus the family
+	 * constants: RM.ELECTROLYZER through the supplier, EU, the "electrolyzer" texture, the
+	 * :1336 masks (item+tank in U|F|B with the SIDE_TOP auto face, out R|L with the item
+	 * auto face SIDE_RIGHT and the tank auto face SIDE_LEFT — the tank-out auto face is
+	 * the ONE divergence from the Canner's SIDE_BOTTOM), energy back-bottom SBIT_D, the
+	 * ELECTROLYZER_PARALLEL {1,2,4,8,16} duration-T ladder, hardness 4.0 and the null
+	 * menu supplier.
+	 */
+	private static GTBasicMachineBlock.MachineRow electrolyzer(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, VOLTAGE_WORDS[aTier][0], VOLTAGE_WORDS[aTier][1], electricTier(aTier), ELECTROLYZER_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				ELECTROLYZER_PARALLEL[aTier], true /*NBT_PARALLEL_DURATION T :1336*/,
+				() -> GT6RecipeMaps.ELECTROLYZER, TD.Energy.EU, "electrolyzer",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D, the :151 read ORs SBIT_A*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_F | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_F|SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_F | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_F|SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_L*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)2 /*NBT_TANK_SIDE_AUTO_OUT SIDE_LEFT*/,
+				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/**
+	 * One Injector row factory — the :1443 masks (item+tank in U|L auto LEFT, out R|D with
+	 * the item auto face SIDE_RIGHT and the tank auto face SIDE_BOTTOM, energy back) and
+	 * RM.Injector/EU + parallel 1 / duration F (no NBT_PARALLEL keys).
+	 */
+	private static GTBasicMachineBlock.MachineRow injector(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, VOLTAGE_WORDS[aTier][0], VOLTAGE_WORDS[aTier][1], electricTier(aTier), INJECTOR_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1443-1447*/,
+				() -> GT6RecipeMaps.INJECTOR, TD.Energy.EU, "injector",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/**
+	 * One Printer row factory — the :1450 masks (item in U|L auto LEFT, out R|D auto
+	 * RIGHT, the tank IN over the same U|L with the SIDE_TOP auto face, NO tank-out key →
+	 * the 127/-1 field defaults, energy back) and RM.Printer/EU + parallel 1 (the
+	 * RecipeMapPrinter NBT blueprint face stays pooled, the card-① base-form deviation).
+	 */
+	private static GTBasicMachineBlock.MachineRow printer(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, VOLTAGE_WORDS[aTier][0], VOLTAGE_WORDS[aTier][1], electricTier(aTier), PRINTER_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL :1450-1454*/,
+				() -> GT6RecipeMaps.PRINTER, TD.Energy.EU, "printer",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/**
+	 * One Scanner (Visuals) row factory — the Printer shape minus every tank key (the
+	 * :1457 rows carry NO NBT_TANK keys → the 127/-1 no-tank face, the ElectricLoom
+	 * zero-fluid form) and RM.ScannerVisuals/EU + parallel 1.
+	 */
+	private static GTBasicMachineBlock.MachineRow scannerVisuals(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, VOLTAGE_WORDS[aTier][0], VOLTAGE_WORDS[aTier][1], electricTier(aTier), SCANNER_VISUALS_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL :1457-1461*/,
+				() -> GT6RecipeMaps.SCANNER_VISUALS, TD.Energy.EU, "scannervisuals",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)-1 /*no NBT_TANK_SIDE_AUTO_IN key → SIDE_UNDEFINED*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/**
+	 * One Slicer row factory — the :1525 masks (item in L|U auto LEFT, out R|D auto
+	 * RIGHT, NO tank keys — the zero-fluid face, data-only, energy back) and
+	 * RM.Slicer/EU + parallel 1.
+	 */
+	private static GTBasicMachineBlock.MachineRow slicer(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, VOLTAGE_WORDS[aTier][0], VOLTAGE_WORDS[aTier][1], electricTier(aTier), SLICER_DISPLAY_KEY, aMetaId, 4.0F, aTier,
+				1, false /*no NBT_PARALLEL :1525-1529*/,
+				() -> GT6RecipeMaps.SLICER, TD.Energy.EU, "slicer",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
+				(byte)-1 /*no NBT_TANK_SIDE_AUTO_IN key → SIDE_UNDEFINED*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false);
+	}
+
+	/** The registered eu-core blocks by path (the BET/datagen/loot walkers). */
+	public static final java.util.Map<String, RegistryObject<Block>> ELECTROLYZER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+	public static final java.util.Map<String, RegistryObject<Block>> INJECTOR_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+	public static final java.util.Map<String, RegistryObject<Block>> PRINTER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+	public static final java.util.Map<String, RegistryObject<Block>> SCANNER_VISUALS_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+	public static final java.util.Map<String, RegistryObject<Block>> SLICER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered eu-core items, same keys as the block maps. */
+	public static final java.util.Map<String, RegistryObject<Item>> ELECTROLYZER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+	public static final java.util.Map<String, RegistryObject<Item>> INJECTOR_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+	public static final java.util.Map<String, RegistryObject<Item>> PRINTER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+	public static final java.util.Map<String, RegistryObject<Item>> SCANNER_VISUALS_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+	public static final java.util.Map<String, RegistryObject<Item>> SLICER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : ELECTROLYZER_ROWS) {
+			ELECTROLYZER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ELECTROLYZER_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			ELECTROLYZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ELECTROLYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : INJECTOR_ROWS) {
+			INJECTOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.INJECTOR_BE.get(), tRow)));
+			INJECTOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.INJECTOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : PRINTER_ROWS) {
+			PRINTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.PRINTER_BE.get(), tRow)));
+			PRINTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.PRINTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : SCANNER_VISUALS_ROWS) {
+			SCANNER_VISUALS_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SCANNER_VISUALS_BE.get(), tRow)));
+			SCANNER_VISUALS_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SCANNER_VISUALS_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : SLICER_ROWS) {
+			SLICER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SLICER_BE.get(), tRow)));
+			SLICER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SLICER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Electrolyzer block list in registration order (the loot/datagen walkers). */
+	public static Block[] electrolyzerBlockArray() {
+		Block[] rBlocks = new Block[ELECTROLYZER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : ELECTROLYZER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Injector block list in registration order. */
+	public static Block[] injectorBlockArray() {
+		Block[] rBlocks = new Block[INJECTOR_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : INJECTOR_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Printer block list in registration order. */
+	public static Block[] printerBlockArray() {
+		Block[] rBlocks = new Block[PRINTER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : PRINTER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Scanner (Visuals) block list in registration order. */
+	public static Block[] scannerVisualsBlockArray() {
+		Block[] rBlocks = new Block[SCANNER_VISUALS_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : SCANNER_VISUALS_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Slicer block list in registration order. */
+	public static Block[] slicerBlockArray() {
+		Block[] rBlocks = new Block[SLICER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : SLICER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	// the five eu-core family BETs: the eu-hu shape verbatim — ONE family BET, the FIVE
+	// tier blocks multi-attached, the row read off the placed block by the SHARED
+	// euFiveTierMachine factory body (the card-③ landed 5-tier resolver, the merge dedup point).
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> ELECTROLYZER_BE =
+			BLOCK_ENTITY_TYPES.register("electrolyzer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> euFiveTierMachine(GTMachines.ELECTROLYZER_BE.get(), aPos, aState),
+					electrolyzerBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> INJECTOR_BE =
+			BLOCK_ENTITY_TYPES.register("injector", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> euFiveTierMachine(GTMachines.INJECTOR_BE.get(), aPos, aState),
+					injectorBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> PRINTER_BE =
+			BLOCK_ENTITY_TYPES.register("printer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> euFiveTierMachine(GTMachines.PRINTER_BE.get(), aPos, aState),
+					printerBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> SCANNER_VISUALS_BE =
+			BLOCK_ENTITY_TYPES.register("scannervisuals", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> euFiveTierMachine(GTMachines.SCANNER_VISUALS_BE.get(), aPos, aState),
+					scannerVisualsBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> SLICER_BE =
+			BLOCK_ENTITY_TYPES.register("slicer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> euFiveTierMachine(GTMachines.SLICER_BE.get(), aPos, aState),
+					slicerBlockArray()).build(null));
+
+
 	/**
 	 * Creative tab for the machine family — the upstream "Basic Machines" MTE-registry category
 	 * (Loader_MultiTileEntities.java:1288 aRegistry category column).
@@ -3391,6 +3725,24 @@ public final class GTMachines {
 							}
 							for (GTBasicMachineBlock.MachineRow tRow : CRYO_MIXER_ROWS) {
 								aOutput.accept(new ItemStack(CRYO_MIXER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							// task p29-w2-eu-core-5tier: the five eu-core families, +25 rows
+							// (Electrolyzer/Injector/Printer/ScannerVisuals/Slicer, the first
+							// 5-tier ladders — the T5 rung rides each family walk's tail)
+							for (GTBasicMachineBlock.MachineRow tRow : ELECTROLYZER_ROWS) {
+								aOutput.accept(new ItemStack(ELECTROLYZER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : INJECTOR_ROWS) {
+								aOutput.accept(new ItemStack(INJECTOR_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : PRINTER_ROWS) {
+								aOutput.accept(new ItemStack(PRINTER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : SCANNER_VISUALS_ROWS) {
+								aOutput.accept(new ItemStack(SCANNER_VISUALS_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : SLICER_ROWS) {
+								aOutput.accept(new ItemStack(SLICER_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
 								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
 								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));
