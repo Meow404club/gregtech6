@@ -56,7 +56,7 @@ steps = [
     phase("A: the MU arm — the dial round-trips the shared ENERGY.MAGNETIC instance"),
     Step(f"gt6energy place {F(RIG_MU)}", expect="GT6 energy source placed at 384, 64, 264"),
     Step(f"gt6energy type {F(RIG_MU)} MU", expect="type ENERGY.MAGNETIC"),
-    Step(f"gt6energy stat {F(RIG_MU)}", expect="emitting false, type ENERGY.MAGNETIC"),
+    Step(f"gt6energy stat {F(RIG_MU)}", expect="emitting false, wattage 32 EU/t, type ENERGY.MAGNETIC"),
     Step(f"gt6energy volt {F(RIG_MU)} 64", expect="voltage 64 EU"),
     Step(f"gt6energy mode {F(RIG_MU)} on", expect="emitting true", sleep=1.5),
     Step(f"gt6energy stat {F(RIG_MU)}", expect="voltage 64 EU"),
@@ -76,7 +76,7 @@ steps = [
     Step(f"gt6energy place {F(RIG_TU)}", expect="GT6 energy source placed at 402, 64, 264"),
     Step(f"gt6energy type {F(RIG_TU)} TU", expect="type ENERGY.TIME"),
     Step(f"gt6energy stat {F(RIG_TU)}", expect="type ENERGY.TIME"),
-    Step(f"gt6energy volt {F(RIG_TU)} 1", expect="voltage 1 EU", ),
+    Step(f"gt6energy volt {F(RIG_TU)} 1", expect="voltage 1 EU"),
     Step(f"gt6energy stat {F(RIG_TU)}", expect="voltage 1 EU"),
     Step(f"gt6energy volt {F(RIG_TU)} 16", expect="voltage 16 EU"),
     Step(f"gt6energy stat {F(RIG_TU)}", expect="voltage 16 EU"),
@@ -103,8 +103,11 @@ steps = [
     Step(f"gt6machine shredder check {F(SHREDDER)}", expect="active=false"),
 
     phase("F: the no-rogue-mint arm — an unknown name is refused, the type is kept"),
-    Step(f"gt6energy type {F(RIG_TU)} XY", expect="TYPE FAILED: unknown energy type 'XY'"),
-    Step(f"gt6energy stat {F(RIG_TU)}", expect="type ENERGY.TIME", ),
+    # the command's "TYPE FAILED" marker is the EXPECTED verdict — allow_failed keeps the
+    # framework's FAILED-marker judge from counting the refusal itself as a step failure
+    # (the p28_fe_inbound absence-proof form)
+    Step(f"gt6energy type {F(RIG_TU)} XY", expect="TYPE FAILED: unknown energy type 'XY'", allow_failed=True),
+    Step(f"gt6energy stat {F(RIG_TU)}", expect="type ENERGY.TIME"),
 
     phase("G: teardown — the explicit band restore (no global state was touched)"),
     Step("fill 383 62 263 411 67 265 air", expect="filled"),
