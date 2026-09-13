@@ -74,8 +74,8 @@ steps = [
     Step(f"gt6machine shredder fluid fill up minecraft:water 1000 {A}",
          expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),
     # budget 1024 = 16 ticks of mInputMax; the 20-train covers it
-    Step(f"gt6machine shredder inject 20 64 {A}", expect="out[0]=1x prismarine_crystals",
-         node_expects={"1.21.1": "out[0]=1x minecraft:prismarine_crystals"}),
+    Step(f"gt6machine shredder inject 20 64 {A}", expect="outputs=[1x prismarine_crystals",
+         node_expects={"1.21.1": "outputs=[1x minecraft:prismarine_crystals"}),
     Step(f"gt6machine shredder fluid stat {A}", expect="in[0]=0 L of nothing"),
     Step(f"gt6machine shredder fluid stat {A}", expect="out[0]=0 L of nothing"),
 
@@ -88,8 +88,8 @@ steps = [
     Step(f"gt6machine shredder fluid stat {B}", expect="in[0]=0 L of nothing"),
     Step(f"gt6machine shredder fluid stat {B}", expect="out[0]=1000 L of minecraft:water"),
     # the input-tank lookup FAILS (empty) — only the :717 flag-armed re-lookup can bind
-    Step(f"gt6machine shredder inject 20 64 {B}", expect="out[0]=1x prismarine_crystals",
-         node_expects={"1.21.1": "out[0]=1x minecraft:prismarine_crystals"}),
+    Step(f"gt6machine shredder inject 20 64 {B}", expect="outputs=[1x prismarine_crystals",
+         node_expects={"1.21.1": "outputs=[1x minecraft:prismarine_crystals"}),
     Step(f"gt6machine shredder fluid stat {B}", expect="out[0]=0 L of nothing"),
 
     phase("C: teardown"),

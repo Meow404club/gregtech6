@@ -74,8 +74,8 @@ steps = [
     Step(f"gt6machine shredder inject 40 8 {A}", expect="progress=0/0"),
     Step(f"gt6machine shredder check {A}", expect="progress=0/0"),
     # 64-train: budget 512 = 8 ticks of mInputMax, 10 iterations cover it
-    Step(f"gt6machine shredder inject 10 64 {A}", expect="out[0]=1x crafting_table",
-         node_expects={"1.21.1": "out[0]=1x minecraft:crafting_table"}),
+    Step(f"gt6machine shredder inject 10 64 {A}", expect="outputs=[1x crafting_table",
+         node_expects={"1.21.1": "outputs=[1x minecraft:crafting_table"}),
 
     phase("B: the TOP-face supply — the rig above is the ONLY energy, the poll carries the completion"),
     Step(f"setblock {B} gt6:autocrafter", expect="Changed the block"),
