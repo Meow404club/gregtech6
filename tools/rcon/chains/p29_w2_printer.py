@@ -74,7 +74,7 @@ steps = [
     Step(feed_merge(T1F)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T1F)),
     Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T1F}",
          expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),
-    Step(f"gt6machine wiremill inject 24 32 {T1F}", expect=f"inject 24 32 {T1F}"),
+    Step(f"gt6machine wiremill inject 24 32 {T1F}", expect=None),
     Step(f"gt6machine wiremill check {T1F}", expect="out[0]=1x paper",
          node_expects={"1.21.1": "out[0]=1x minecraft:paper"}, poll=60.0),
     Step(f"gt6machine wiremill check {T1F}", expect="progress=0/0"),
@@ -83,7 +83,7 @@ steps = [
     Step(feed_merge(T5F)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T5F)),
     Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T5F}",
          expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),
-    Step(f"gt6machine wiremill inject 8 4096 {T5F}", expect=f"inject 8 4096 {T5F}"),
+    Step(f"gt6machine wiremill inject 8 4096 {T5F}", expect=None),
     Step(f"gt6machine wiremill check {T5F}", expect="out[0]=1x paper",
          node_expects={"1.21.1": "out[0]=1x minecraft:paper"}, poll=60.0),
 

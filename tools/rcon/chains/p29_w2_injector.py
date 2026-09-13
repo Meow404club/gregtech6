@@ -70,7 +70,7 @@ steps = [
 
     phase("B: the T1 smoke-row run — stick + flint -> arrow (fire + read-only poll: the first completion after a fresh boot lags past the per-command deadline)"),
     Step(feed_merge(T1F)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T1F)),
-    Step(f"gt6machine wiremill inject 24 32 {T1F}", expect=f"inject 24 32 {T1F}"),
+    Step(f"gt6machine wiremill inject 24 32 {T1F}", expect=None),
     Step(f"gt6machine wiremill check {T1F}", expect="out[0]=1x arrow",
          node_expects={"1.21.1": "out[0]=1x minecraft:arrow"}, poll=60.0),
     Step(f"gt6machine wiremill check {T1F}", expect="progress=0/0"),
@@ -79,7 +79,7 @@ steps = [
     Step(feed_merge(T5F)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T5F)),
     Step(f"gt6machine wiremill inject 40 4095 {T5F}", expect="progress=0/0"),
     Step(feed_merge(T5F)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T5F)),
-    Step(f"gt6machine wiremill inject 8 4096 {T5F}", expect=f"inject 8 4096 {T5F}"),
+    Step(f"gt6machine wiremill inject 8 4096 {T5F}", expect=None),
     Step(f"gt6machine wiremill check {T5F}", expect="out[0]=1x arrow",
          node_expects={"1.21.1": "out[0]=1x minecraft:arrow"}, poll=60.0),
 
