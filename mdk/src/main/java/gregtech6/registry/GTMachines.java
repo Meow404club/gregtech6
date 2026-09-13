@@ -2551,8 +2551,10 @@ public final class GTMachines {
 	 * rec 8192 / max 16384. The two 5-tier eu-special ladders (Autocrafter :1497-1501,
 	 * Lightning :1582-1586, NBT_INPUT 32/128/512/2048/8192) consume this; the
 	 * {@link #machine} helper stays byte-identical on the 4-row TIER_INPUTS dispatch.
+	 * Public test seam (the {@link #applyRow} form): the offline row tests pin the
+	 * resolver's tier arithmetic directly.
 	 */
-	private static long[] euFiveTierWindow(int aTier) {
+	public static long[] euFiveTierWindow(int aTier) {
 		return aTier < TIER_INPUTS.length ? TIER_INPUTS[aTier] : EV_TIER_INPUTS;
 	}
 
