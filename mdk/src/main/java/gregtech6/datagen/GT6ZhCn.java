@@ -536,6 +536,11 @@ public class GT6ZhCn extends LanguageProvider {
 				addRowUnit(tEmitted, "gt6.row.mat." + tRow.matSlug());
 			}
 		}
+		// the p29 W2 5-tier voltage rung (task p29-w2-energy-types-5tier ②): the VN[5] word
+		// "IV" (CS.java:154 — the card gloss said EV, refuted by the array and by ev already
+		// being T4's word; the GTMachines.EV_TIER_INPUTS doc carries the erratum) — emitted
+		// standalone until the card-② 5-tier rows give it a row walk to ride
+		addRowUnit(tEmitted, "gt6.row.mat.iv");
 		// P29 W1 process families (task p29-w1-kinetic-process-ladder): the six family
 		// templates + the Kinetic_T row words (the trio walk above emits them; the tsv
 		// hand rows carry the dump-mte words 圆锯/榨汁机/离心机/洗矿厂/砂轮/水压清洗机

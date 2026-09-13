@@ -105,6 +105,14 @@ public final class GTMachines {
 	/** The Electric_T[0] rung (TinAlloy, upstream MT.java:3691 index 0) — the Canner ULV row's NBT_MATERIAL column. */
 	public static final java.util.function.Supplier<OreDictMaterial> ELECTRIC_T0 = () -> gregapi.data.MT.TinAlloy;
 
+	/**
+	 * The Electric_T[5] rung (Ti, upstream MT.java:3691 index 5) — the 5-tier 立行制's
+	 * material column (task p29-w2-energy-types-5tier ②, the Electrolyzer family the
+	 * first consumer, card ②). Same lazy-supplier form as the T0 rungs above (the
+	 * GTWireSpecs:35 ruling — the registry classes load before {@code MT.init()}).
+	 */
+	public static final java.util.function.Supplier<OreDictMaterial> ELECTRIC_T5 = () -> gregapi.data.MT.Ti;
+
 	/** The Oven family display template key ({@code gt6.row.oven.display} — the W1 one-slot material-word form). */
 	public static final String OVEN_DISPLAY_KEY = "gt6.row.oven.display";
 
@@ -221,6 +229,25 @@ public final class GTMachines {
 	 */
 	public static final long[] ULV_TIER_INPUTS = {4, 8, 16};
 
+	/**
+	 * The 5-tier voltage window (task p29-w2-energy-types-5tier ②) — the :126 conversion
+	 * (min = in/2, max = in*2) over NBT_INPUT 8192: mInputMin 4096 / mInput 8192 /
+	 * mInputMax 16384 (the T5 Electrolyzer row NBT_INPUT column, Loader_MultiTileEntities
+	 * .java:1340). A PARALLEL constant to {@link #TIER_INPUTS} by design: the 4-row table
+	 * stays byte-identical so every tier-indexed consumer (the GTOvenBlock row index, the
+	 * W1 four-tier rows) keeps addressing it without drift; card ② rides
+	 * {@code TIER_INPUTS[0..3] + EV_TIER_INPUTS}.
+	 *
+	 * <p>Naming erratum (declared, the W1 units()-direction erratum form): the constant
+	 * keeps the card's name as the consumers' API anchor, but the card gloss "电压词表第
+	 * 5 词 EV" is refuted by the evidence — upstream CS.java:154 VN[5] = "IV" (the
+	 * Loader:1340 T5 name column rides VN[5]), and "ev" is ALREADY T4's word in this repo
+	 * (the canner/Electric* rows :1379-1382/:1504-1522, the gt6.row.mat.ev unit since
+	 * p24). The lang face therefore carries gt6.row.mat.iv (VN[5], both locales).
+	 * NO consumer row yet (card ② owns the first 5-tier family).
+	 */
+	public static final long[] EV_TIER_INPUTS = {4096, 8192, 16384};
+
 	/** The ULV melting-gate ceiling every ULV row carries — the stone-crucible ceiling (GT6Crucibles.java:86, decisions.p28-ulv-tier-rulings). */
 	public static final long ULV_MELTING_GATE_K = 1375L;
 
@@ -249,6 +276,16 @@ public final class GTMachines {
 	 * ordered.
 	 */
 	public static final int[] CENTRIFUGE_PARALLEL = {1, 2, 4, 8};
+
+	/**
+	 * The CryoMixer parallel table (task p29-w2-energy-types-5tier ④): the upstream
+	 * NBT_PARALLEL {4, 8, 16, 32, 64} + NBT_PARALLEL_DURATION T columns of the five CU
+	 * CryoMixer rows (Loader_MultiTileEntities.java:1628-1632) — the T1 = 4 arm matches
+	 * the PARALLEL_4_32 shape extended one rung. Declared BEFORE its consumer (card ④
+	 * owns the CryoMixer rows), next to {@link #CENTRIFUGE_PARALLEL} as the card ordered
+	 * (the static-initializer order lesson).
+	 */
+	public static final int[] CRYO_PARALLEL = {4, 8, 16, 32, 64};
 
 	// the composed tier-ladder name face (task p20-i18n-compose-rows, materialized by task
 	// p27-machine-energy-display-fix): the "{Machine} (Material)" rows compose from the

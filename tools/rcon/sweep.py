@@ -199,6 +199,13 @@ SESSION_GROUPS = (
     # inject rig needs no fakesource; the fermenter firebox is band-local).
     ("p29_w1_mixer_pair", "p29_w1_electricloom", "p29_w1_electricsifter",
      "p29_w1_boxinator", "p29_w1_unboxinator", "p29_w1_fermenter"),
+    # P29 W2 card ① (p29-w2-energy-types-5tier): the MU/LU/CU/TU energy-type dial chain —
+    # one fresh z=264 band (x384..411: four per-type rigs 384/390/396/402 + the gate-arm
+    # rig-under-shredder at 410), single chain in its own cluster (the W2 consumer cards
+    # ②③④⑤ each hang their rig arms off this precedent; no fresh_boot / mutates member —
+    # the rigs are band-local setblocks, the gate shredder a band-local machine).
+    # --group p29_w2_energy matches through the chain's embedded name prefix.
+    ("p29_w2_energy_types",),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 

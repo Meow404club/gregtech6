@@ -131,6 +131,30 @@ import com.mojang.logging.LogUtils;
  * map without a findRecipe consumer is the CHISEL judged form. {@code UNBOXINATOR}
  * carries the one subclass deviation of the block (documented on the field).
  *
+ * <p>The P29 W2 nineteen-map block (task p29-w2-energy-types-5tier, the shared-layer
+ * card of the wave): {@code AUTOCRAFTER} (RM.java:63), {@code STEAM_CRACKING} (:67),
+ * {@code CATALYTIC_CRACKING} (:68), {@code COAGULATOR} (:72), {@code CRYO_MIXER} (:77),
+ * {@code MAGNETIC_SEPARATOR} (:82), {@code INJECTOR} (:88), {@code LAMINATOR} (:90),
+ * {@code AUTOCLAVE} (:91), {@code FREEZER} (:92), {@code POLARIZER} (:93),
+ * {@code LIGHTNING} (:94), {@code SLICER} (:96), {@code LASER_ENGRAVER} (:116),
+ * {@code WELDER} (:117), {@code ELECTROLYZER} (:123), {@code PRINTER} (:141),
+ * {@code SCANNER_VISUALS} (:142) and {@code GENERIFIER} (:151) — declared in the
+ * upstream order, each the base-{@link RecipeMap} row transcribed
+ * parameter-for-parameter over the 15-arg port ctor (the trailing NEI booleans fold
+ * away like every other map), the GUI paths the upstream machines/&lt;Name&gt; strings
+ * lowercased (the Shredder-line convention; the block's odd GUI words are verbatim:
+ * AUTOCRAFTER → "Crafting" :63). ALL NINETEEN ship DECLARED-empty row0 — the row
+ * pour is the W2 consumer cards' content (②③④⑤), riding the static loaders or the
+ * tier-b RM JSON direct-pour seam; the 19 map-key anchors are expanded in
+ * {@code GT6RecipeMapJsonLoader} BY THIS CARD so the consumer cards never touch the
+ * shared loader. No datapack row data ships here (the keys + the empty maps are the
+ * whole datapack face), no KubeJS surface. BATH and LOOM are reused, not rebuilt
+ * (both already in register). Three subclass deviations, all the UNBOXINATOR judged
+ * form: AUTOCRAFTER ({@code RecipeMapAutocrafting} — the crafting-grid runtime
+ * mining arm), PRINTER ({@code RecipeMapPrinter} — the NBT blueprint-copy face) and
+ * SCANNER_VISUALS ({@code RecipeMapScannerVisuals} — the NBT scan-data face) all
+ * stay POOLED (documented on their fields).
+ *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
@@ -143,11 +167,12 @@ public class GT6RecipeMaps {
 	/**
 	 * The generation-reset hooks: every loader that owns a private static "poured" flag
 	 * registers its resetForTest here from its static initializer, so {@link #reset()}
-	 * retires the WHOLE generation. One generation = the 37 map fields (the 12 pre-W1
+	 * retires the WHOLE generation. One generation = the 57 map fields (the 12 pre-W1
  * fields + the mixer/W1-trio/press-extruder/crucible-pair appends + the BATH append
  * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
  * p28-c-ulv-machine-ladder + the anvil pair of task p28-c-anvil + the twelve-map
- * P29 W1 block of task p29-w1-rm-maps-scaffold) + RecipeMap.RECIPE_MAPS
+ * P29 W1 block of task p29-w1-rm-maps-scaffold + the SLUICE batch-C tail-append
+ * + the nineteen-map P29 W2 block of task p29-w2-energy-types-5tier) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
@@ -468,6 +493,93 @@ public class GT6RecipeMaps {
 	 * own fluid input).
 	 */
 	public static volatile RecipeMap SLUICE;
+
+	// -----------------------------------------------------------------------
+	// the P29 W2 nineteen-map block (task p29-w2-energy-types-5tier) — the energy
+	// types + 5-tier shared-layer scaffold. Every field the base-{@link RecipeMap}
+	// row transcribed parameter-for-parameter over the 15-arg port ctor, upstream
+	// RM.java declaration order, ALL DECLARED-empty row0 (empty maps are legal —
+	// the DISTILLERY/PRESS precedent): the row pour is the W2 consumer cards'
+	// content (②③④⑤), riding either the static loaders or the tier-b RM JSON
+	// direct-pour seam — the map names ARE the {@code GT6RecipeMapJsonLoader}
+	// map-key anchors for that seam, all 19 keys expanded in this card (the
+	// shared-layer-first point: no consumer card touches the loader).
+	//
+	// KJS face of this card: RM runtime recipe maps (the 19 new = the consumer
+	// cards' JSON direct-pour anchors) + the registration seam (the GTMachines
+	// ELECTRIC_T5 / EV_TIER_INPUTS / CRYO_PARALLEL constants + the 5th voltage
+	// word) + the offline assertion domain (the type guard + the NO_CONSTANT_POWER
+	// dynamics). NO datapack row data ships here (only the pour-seam keys + the
+	// empty maps), NO KubeJS surface.
+	//
+	// Three subclass deviations, all the UNBOXINATOR judged form (base class +
+	// declared deviation, the runtime-synthesis arms stay POOLED):
+	// - AUTOCRAFTER: upstream {@code RecipeMapAutocrafting} reads the vanilla
+	//   crafting grid into rows at lookup time — the runtime recipe-mining arm the
+	//   P8 handler ruling does not carry. NOTE the upstream local/GUI word is
+	//   "Crafting" (RM.java:63), NOT "Autocrafter".
+	// - PRINTER: upstream {@code RecipeMapPrinter} carries the NBT blueprint-copy
+	//   face (deferred with the Replicator/Nanofab pool).
+	// - SCANNER_VISUALS: upstream {@code RecipeMapScannerVisuals} carries the NBT
+	//   scan-data face (same pool).
+	// -----------------------------------------------------------------------
+
+	/** RM.java:63 — the Autocrafter map (9/12/1 items, 0/0/0 fluids, MIN 1). Base-class form (the crafting-grid arm stays pooled); the upstream GUI word is "Crafting". DECLARED-empty; consumer = W2 card ③. */
+	public static volatile RecipeMap AUTOCRAFTER;
+
+	/** RM.java:67 — the Steam Cracking map (1/3/0 items, 2/9/1 fluids, MIN 2). DECLARED-empty; consumer = W2 card ⑤. */
+	public static volatile RecipeMap STEAM_CRACKING;
+
+	/** RM.java:68 — the Catalytic Cracking map (1/3/0 items, 2/9/1 fluids, MIN 2 — the SAME constants row as STEAM_CRACKING, split only by map name/GUI). DECLARED-empty; consumer = W2 card ⑤. */
+	public static volatile RecipeMap CATALYTIC_CRACKING;
+
+	/** RM.java:72 — the Coagulator map (0/1/0 items, 1/0/1 fluids, MIN 0). DECLARED-empty; consumer = the TU Coagulator (W2 card ⑤). */
+	public static volatile RecipeMap COAGULATOR;
+
+	/** RM.java:77 — the Cryo Mixer map (6/1/0 items, 6/2/0 fluids, MIN 2). DECLARED-empty; consumer = the CU CryoMixer (W2 card ④). */
+	public static volatile RecipeMap CRYO_MIXER;
+
+	/** RM.java:82 — the Magnetic Separator map (1/6/0 items, 1/6/0 fluids, MIN 1). DECLARED-empty; consumer = the MU MagneticSeparator (W2 card ④). */
+	public static volatile RecipeMap MAGNETIC_SEPARATOR;
+
+	/** RM.java:88 — the Injector map (2/1/0 items, 2/1/0 fluids, MIN 2). DECLARED-empty; consumer = W2 card ②. */
+	public static volatile RecipeMap INJECTOR;
+
+	/** RM.java:90 — the Laminator map (2/1/2 items, 0/0/0 fluids, MIN 2). DECLARED-empty; consumer = the HU Laminator (W2 card ③). */
+	public static volatile RecipeMap LAMINATOR;
+
+	/** RM.java:91 — the Autoclave map (2/3/2 items, 1/1/1 fluids, MIN 0). DECLARED-empty; consumer = the TU Autoclave (W2 card ⑤). */
+	public static volatile RecipeMap AUTOCLAVE;
+
+	/** RM.java:92 — the Freezer map (1/1/1 items, 1/1/0 fluids, MIN 1). DECLARED-empty; consumer = the CU Freezer (W2 card ④). */
+	public static volatile RecipeMap FREEZER;
+
+	/** RM.java:93 — the Polarizer map (1/1/1 items, 0/0/0 fluids, MIN 0). DECLARED-empty; consumer = the MU Polarizer (W2 card ④). */
+	public static volatile RecipeMap POLARIZER;
+
+	/** RM.java:94 — the Lightning map (6/6/0 items, 6/6/0 fluids, MIN 2; the local name is "Lightning Processor"). DECLARED-empty; consumer = the LightningProcessor (W2 card ③). */
+	public static volatile RecipeMap LIGHTNING;
+
+	/** RM.java:96 — the Slicer map (2/2/2 items, 0/0/0 fluids, MIN 2). DECLARED-empty; consumer = W2 card ②. */
+	public static volatile RecipeMap SLICER;
+
+	/** RM.java:116 — the Laser Engraver map (2/1/2 items, 0/0/0 fluids, MIN 2; the local name is "Precision Laser Engraver"). DECLARED-empty; consumer = the LU LaserEngraver (W2 card ④). */
+	public static volatile RecipeMap LASER_ENGRAVER;
+
+	/** RM.java:117 — the Welder map (9/1/2 items, 1/0/0 fluids, MIN 2; the local name is "Welding Machine"). DECLARED-empty; consumer = the LU LaserWelder (W2 card ④). */
+	public static volatile RecipeMap WELDER;
+
+	/** RM.java:123 — the Electrolyzer map (2/6/1 items, 2/6/0 fluids, MIN 2). DECLARED-empty; consumer = the 5-tier Electrolyzer family (W2 card ②, the 5-tier 立行制 first row set). */
+	public static volatile RecipeMap ELECTROLYZER;
+
+	/** RM.java:141 — the Printer map (2/1/1 items, 6/0/1 fluids, MIN 2). Base-class form (the NBT blueprint arm stays pooled). DECLARED-empty; consumer = W2 card ②. */
+	public static volatile RecipeMap PRINTER;
+
+	/** RM.java:142 — the Scanner (Visuals) map (2/2/2 items, 0/0/0 fluids, MIN 2). Base-class form (the NBT scan-data arm stays pooled). DECLARED-empty; consumer = W2 card ②. */
+	public static volatile RecipeMap SCANNER_VISUALS;
+
+	/** RM.java:151 — the Generifier map (1/1/0 items, 1/1/0 fluids, MIN 1). DECLARED-empty; consumer = the TU Generifier (W2 card ⑤). */
+	public static volatile RecipeMap GENERIFIER;
 
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
@@ -825,6 +937,190 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 1,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
+		// --- the P29 W2 nineteen-map block (task p29-w2-energy-types-5tier), upstream RM.java
+		// declaration order; every row verbatim over the 15-arg port ctor, all DECLARED-empty
+		// (the row pour is the W2 consumer cards' content; the three subclass deviations are
+		// documented on their fields above) ---
+		// RM.java:63 — items 9/12/1, fluids 0/0/0, MIN 1, AMP 1; the upstream GUI word is
+		// "Crafting" (the machines/Crafting row), NOT "Autocrafter" — the SHARPENING/Sharpener
+		// judged GUI-word convention (transcribe the upstream string, then lowercase)
+		AUTOCRAFTER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.autocrafting", "Crafting", null,
+				0, 1,
+				"gt6:textures/gui/machines/crafting",
+				/*IN-OUT-MIN-ITEM=*/ 9, 12, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		// RM.java:67 — items 1/3/0, fluids 2/9/1, MIN 2, AMP 1
+		STEAM_CRACKING = new RecipeMap(new HashSet<>(),
+				"gt.recipe.steamcracking", "Steam Cracking", null,
+				0, 1,
+				"gt6:textures/gui/machines/steamcracking",
+				/*IN-OUT-MIN-ITEM=*/ 1, 3, 0,
+				/*IN-OUT-MIN-FLUID=*/ 2, 9, 1,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:68 — items 1/3/0, fluids 2/9/1, MIN 2, AMP 1 (the STEAM_CRACKING constants row)
+		CATALYTIC_CRACKING = new RecipeMap(new HashSet<>(),
+				"gt.recipe.catalyticcracking", "Catalytic Cracking", null,
+				0, 1,
+				"gt6:textures/gui/machines/catalyticcracking",
+				/*IN-OUT-MIN-ITEM=*/ 1, 3, 0,
+				/*IN-OUT-MIN-FLUID=*/ 2, 9, 1,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:72 — items 0/1/0, fluids 1/0/1, MIN 0, AMP 1
+		COAGULATOR = new RecipeMap(new HashSet<>(),
+				"gt.recipe.coagulator", "Coagulator", null,
+				0, 1,
+				"gt6:textures/gui/machines/coagulator",
+				/*IN-OUT-MIN-ITEM=*/ 0, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 0, 1,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:77 — items 6/1/0, fluids 6/2/0, MIN 2, AMP 1 (the MIXER :74 shape two lines up)
+		CRYO_MIXER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.cryomixer", "Cryo Mixer", null,
+				0, 1,
+				"gt6:textures/gui/machines/cryomixer",
+				/*IN-OUT-MIN-ITEM=*/ 6, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 6, 2, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:82 — items 1/6/0, fluids 1/6/0, MIN 1, AMP 1
+		MAGNETIC_SEPARATOR = new RecipeMap(new HashSet<>(),
+				"gt.recipe.magneticseparator", "Magnetic Separator", null,
+				0, 1,
+				"gt6:textures/gui/machines/magneticseparator",
+				/*IN-OUT-MIN-ITEM=*/ 1, 6, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 6, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		// RM.java:88 — items 2/1/0, fluids 2/1/0, MIN 2, AMP 1
+		INJECTOR = new RecipeMap(new HashSet<>(),
+				"gt.recipe.injector", "Injector", null,
+				0, 1,
+				"gt6:textures/gui/machines/injector",
+				/*IN-OUT-MIN-ITEM=*/ 2, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 2, 1, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:90 — items 2/1/2, fluids 0/0/0, MIN 2, AMP 1
+		LAMINATOR = new RecipeMap(new HashSet<>(),
+				"gt.recipe.laminator", "Laminator", null,
+				0, 1,
+				"gt6:textures/gui/machines/laminator",
+				/*IN-OUT-MIN-ITEM=*/ 2, 1, 2,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:91 — items 2/3/2, fluids 1/1/1, MIN 0, AMP 1
+		AUTOCLAVE = new RecipeMap(new HashSet<>(),
+				"gt.recipe.autoclave", "Autoclave", null,
+				0, 1,
+				"gt6:textures/gui/machines/autoclave",
+				/*IN-OUT-MIN-ITEM=*/ 2, 3, 2,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 1,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:92 — items 1/1/1, fluids 1/1/0, MIN 1, AMP 1 (the FERMENTER :69 shape, MIN 1)
+		FREEZER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.freezer", "Freezer", null,
+				0, 1,
+				"gt6:textures/gui/machines/freezer",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		// RM.java:93 — items 1/1/1, fluids 0/0/0, MIN 0, AMP 1
+		POLARIZER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.polarizer", "Polarizer", null,
+				0, 1,
+				"gt6:textures/gui/machines/polarizer",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:94 — items 6/6/0, fluids 6/6/0, MIN 2, AMP 1; the local name column is
+		// "Lightning Processor" while the GUI word is "Lightning"
+		LIGHTNING = new RecipeMap(new HashSet<>(),
+				"gt.recipe.lightning", "Lightning Processor", null,
+				0, 1,
+				"gt6:textures/gui/machines/lightning",
+				/*IN-OUT-MIN-ITEM=*/ 6, 6, 0,
+				/*IN-OUT-MIN-FLUID=*/ 6, 6, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:96 — items 2/2/2, fluids 0/0/0, MIN 2, AMP 1 (the EXTRUDER :136 shape, MIN 2)
+		SLICER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.slicer", "Slicer", null,
+				0, 1,
+				"gt6:textures/gui/machines/slicer",
+				/*IN-OUT-MIN-ITEM=*/ 2, 2, 2,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:116 — items 2/1/2, fluids 0/0/0, MIN 2, AMP 1; the local name column is
+		// "Precision Laser Engraver"
+		LASER_ENGRAVER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.laserengraver", "Precision Laser Engraver", null,
+				0, 1,
+				"gt6:textures/gui/machines/laserengraver",
+				/*IN-OUT-MIN-ITEM=*/ 2, 1, 2,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:117 — items 9/1/2, fluids 1/0/0, MIN 2, AMP 1; the local name column is
+		// "Welding Machine" while the GUI word is "Welder"
+		WELDER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.welder", "Welding Machine", null,
+				0, 1,
+				"gt6:textures/gui/machines/welder",
+				/*IN-OUT-MIN-ITEM=*/ 9, 1, 2,
+				/*IN-OUT-MIN-FLUID=*/ 1, 0, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:123 — items 2/6/1, fluids 2/6/0, MIN 2, AMP 1 (the consumer card ② owns the
+		// 5-tier Electrolyzer family — the 5-tier 立行制 first row set)
+		ELECTROLYZER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.electrolyzer", "Electrolyzer", null,
+				0, 1,
+				"gt6:textures/gui/machines/electrolyzer",
+				/*IN-OUT-MIN-ITEM=*/ 2, 6, 1,
+				/*IN-OUT-MIN-FLUID=*/ 2, 6, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:141 — items 2/1/1, fluids 6/0/1, MIN 2, AMP 1 (the base-form deviation of the
+		// upstream RecipeMapPrinter subclass is documented on the field above — the NBT
+		// blueprint-copy face stays pooled with the Replicator/Nanofab domain)
+		PRINTER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.printer", "Printer", null,
+				0, 1,
+				"gt6:textures/gui/machines/printer",
+				/*IN-OUT-MIN-ITEM=*/ 2, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 6, 0, 1,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:142 — items 2/2/2, fluids 0/0/0, MIN 2, AMP 1 (the RecipeMapScannerVisuals
+		// NBT scan-data arm stays pooled, same declared deviation)
+		SCANNER_VISUALS = new RecipeMap(new HashSet<>(),
+				"gt.recipe.scannervisuals", "Scanner (Visuals)", null,
+				0, 1,
+				"gt6:textures/gui/machines/scannervisuals",
+				/*IN-OUT-MIN-ITEM=*/ 2, 2, 2,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:151 — items 1/1/0, fluids 1/1/0, MIN 1, AMP 1 (the FERMENTER :69 constants row)
+		GENERIFIER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.generifier", "Generifier", null,
+				0, 1,
+				"gt6:textures/gui/machines/generifier",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -872,6 +1168,25 @@ public class GT6RecipeMaps {
 		BOXINATOR = null;
 		UNBOXINATOR = null;
 		SLUICE = null;
+		AUTOCRAFTER = null;
+		STEAM_CRACKING = null;
+		CATALYTIC_CRACKING = null;
+		COAGULATOR = null;
+		CRYO_MIXER = null;
+		MAGNETIC_SEPARATOR = null;
+		INJECTOR = null;
+		LAMINATOR = null;
+		AUTOCLAVE = null;
+		FREEZER = null;
+		POLARIZER = null;
+		LIGHTNING = null;
+		SLICER = null;
+		LASER_ENGRAVER = null;
+		WELDER = null;
+		ELECTROLYZER = null;
+		PRINTER = null;
+		SCANNER_VISUALS = null;
+		GENERIFIER = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}

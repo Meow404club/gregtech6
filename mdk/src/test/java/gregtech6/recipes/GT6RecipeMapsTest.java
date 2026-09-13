@@ -195,7 +195,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
 		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
-		assertEquals(38, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair, the p26-kitchen-pot-bowl RM.java:80 append, the p28-c-ulv-machine-ladder RM.java:113 append, the p28-c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the p29-w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150) + sluice (the p29-w1-kinetic-process-ladder batch-C tail-append, RM.java:81 — the Sluice family's map, the card-A enumeration gap)");
+		assertEquals(57, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair, the p26-kitchen-pot-bowl RM.java:80 append, the p28-c-ulv-machine-ladder RM.java:113 append, the p28-c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the p29-w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150) + sluice (the p29-w1-kinetic-process-ladder batch-C tail-append, RM.java:81 — the Sluice family's map, the card-A enumeration gap) + autocrafter + steamcracking + catalyticcracking + coagulator + cryomixer + magneticseparator + injector + laminator + autoclave + freezer + polarizer + lightning + slicer + laserengraver + welder + electrolyzer + printer + scannervisuals + generifier (the p29-w2-energy-types-5tier nineteen-map block, RM.java:63/:67/:68/:72/:77/:82/:88/:90-94/:96/:116/:117/:123/:141/:142/:151 — the W2 shared-layer card)");
 	}
 
 	/** The RM.java:99 Forming Press map constants (task p26-w1-press-extruder-molds). */
@@ -635,6 +635,90 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:textures/gui/machines/sluice.png", GT6RecipeMaps.SLUICE.mGUIPath);
 		assertTrue(GT6RecipeMaps.SLUICE instanceof RecipeMap && !(GT6RecipeMaps.SLUICE instanceof RecipeMapFurnace), "the base RecipeMap form");
 		assertTrue(GT6RecipeMaps.SLUICE.mRecipeList.isEmpty(), "DECLARED-empty at the scaffold");
+	}
+
+	// -----------------------------------------------------------------------
+	// the P29 W2 nineteen-map block (task p29-w2-energy-types-5tier) — the RM.java
+	// :63/:67/:68/:72/:77/:82/:88/:90-94/:96/:116/:117/:123/:141/:142/:151 transcription
+	// pins, all base-RecipeMap, all DECLARED-empty. The table mirrors the upstream rows
+	// column-for-column: internal name, local name, GUI word (lowercased), items
+	// in/out/min, fluids in/out/min, MIN, and the upstream RM.java line for the message.
+	// -----------------------------------------------------------------------
+
+	/** The nineteen rows: {field, internal, local, gui, itemIn, itemOut, itemMin, fluidIn, fluidOut, fluidMin, MIN, rmLine}. */
+	private static final String[][] W2_MAPS = {
+		{"AUTOCRAFTER", "gt.recipe.autocrafting", "Crafting", "crafting", "9", "12", "1", "0", "0", "0", "1", "RM.java:63"},
+		{"STEAM_CRACKING", "gt.recipe.steamcracking", "Steam Cracking", "steamcracking", "1", "3", "0", "2", "9", "1", "2", "RM.java:67"},
+		{"CATALYTIC_CRACKING", "gt.recipe.catalyticcracking", "Catalytic Cracking", "catalyticcracking", "1", "3", "0", "2", "9", "1", "2", "RM.java:68"},
+		{"COAGULATOR", "gt.recipe.coagulator", "Coagulator", "coagulator", "0", "1", "0", "1", "0", "1", "0", "RM.java:72"},
+		{"CRYO_MIXER", "gt.recipe.cryomixer", "Cryo Mixer", "cryomixer", "6", "1", "0", "6", "2", "0", "2", "RM.java:77"},
+		{"MAGNETIC_SEPARATOR", "gt.recipe.magneticseparator", "Magnetic Separator", "magneticseparator", "1", "6", "0", "1", "6", "0", "1", "RM.java:82"},
+		{"INJECTOR", "gt.recipe.injector", "Injector", "injector", "2", "1", "0", "2", "1", "0", "2", "RM.java:88"},
+		{"LAMINATOR", "gt.recipe.laminator", "Laminator", "laminator", "2", "1", "2", "0", "0", "0", "2", "RM.java:90"},
+		{"AUTOCLAVE", "gt.recipe.autoclave", "Autoclave", "autoclave", "2", "3", "2", "1", "1", "1", "0", "RM.java:91"},
+		{"FREEZER", "gt.recipe.freezer", "Freezer", "freezer", "1", "1", "1", "1", "1", "0", "1", "RM.java:92"},
+		{"POLARIZER", "gt.recipe.polarizer", "Polarizer", "polarizer", "1", "1", "1", "0", "0", "0", "0", "RM.java:93"},
+		{"LIGHTNING", "gt.recipe.lightning", "Lightning Processor", "lightning", "6", "6", "0", "6", "6", "0", "2", "RM.java:94"},
+		{"SLICER", "gt.recipe.slicer", "Slicer", "slicer", "2", "2", "2", "0", "0", "0", "2", "RM.java:96"},
+		{"LASER_ENGRAVER", "gt.recipe.laserengraver", "Precision Laser Engraver", "laserengraver", "2", "1", "2", "0", "0", "0", "2", "RM.java:116"},
+		{"WELDER", "gt.recipe.welder", "Welding Machine", "welder", "9", "1", "2", "1", "0", "0", "2", "RM.java:117"},
+		{"ELECTROLYZER", "gt.recipe.electrolyzer", "Electrolyzer", "electrolyzer", "2", "6", "1", "2", "6", "0", "2", "RM.java:123"},
+		{"PRINTER", "gt.recipe.printer", "Printer", "printer", "2", "1", "1", "6", "0", "1", "2", "RM.java:141"},
+		{"SCANNER_VISUALS", "gt.recipe.scannervisuals", "Scanner (Visuals)", "scannervisuals", "2", "2", "2", "0", "0", "0", "2", "RM.java:142"},
+		{"GENERIFIER", "gt.recipe.generifier", "Generifier", "generifier", "1", "1", "0", "1", "1", "0", "1", "RM.java:151"}
+	};
+
+	/** The whole block: every row transcribed column-for-column over the 15-arg port ctor (progress 0/1, AMP 1 everywhere), every map DECLARED-empty, every map the BASE class. */
+	@Test
+	void initRegistersP29W2NineteenMapsWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		for (String[] tRow : W2_MAPS) {
+			RecipeMap tMap = field(tRow[0]);
+			assertNotNull(tMap, tRow[11] + " " + tRow[0] + " registered");
+			assertSame(tMap, RecipeMap.RECIPE_MAPS.get(tRow[1]), tRow[11] + " " + tRow[0] + " registry wiring");
+			assertEquals(tRow[2], tMap.mNameLocal, tRow[11] + " local name");
+			assertEquals(tRow[1], tMap.mNameNEI, tRow[11] + " NEI name null → the internal name");
+			assertEquals(0, tMap.mProgressBarDirection, tRow[11] + " progress direction 0");
+			assertEquals(1, tMap.mProgressBarAmount, tRow[11] + " progress amount 1");
+			assertEquals(Integer.parseInt(tRow[4]), tMap.mInputItemsCount, tRow[11] + " IN-ITEM");
+			assertEquals(Integer.parseInt(tRow[5]), tMap.mOutputItemsCount, tRow[11] + " OUT-ITEM");
+			assertEquals(Integer.parseInt(tRow[6]), tMap.mMinimalInputItems, tRow[11] + " MIN-ITEM");
+			assertEquals(Integer.parseInt(tRow[7]), tMap.mInputFluidCount, tRow[11] + " IN-FLUID");
+			assertEquals(Integer.parseInt(tRow[8]), tMap.mOutputFluidCount, tRow[11] + " OUT-FLUID");
+			assertEquals(Integer.parseInt(tRow[9]), tMap.mMinimalInputFluids, tRow[11] + " MIN-FLUID");
+			assertEquals(Integer.parseInt(tRow[10]), tMap.mMinimalInputs, tRow[11] + " MIN");
+			assertEquals(1, tMap.mPower, tRow[11] + " AMP 1");
+			assertEquals("gt6:textures/gui/machines/" + tRow[3] + ".png", tMap.mGUIPath, tRow[11] + " GUI path lowercased");
+			assertTrue(tMap.mRecipeList.isEmpty(), tRow[11] + " DECLARED-empty");
+			assertEquals(RecipeMap.class, tMap.getClass(), tRow[11] + " the base-RecipeMap form (the subclass arms stay pooled)");
+		}
+		// the one row where the base-form deviation is NAMED upstream — the AUTOCRAFTER
+		// local/GUI word "Crafting" pins the SHARPENING/Sharpener GUI-word convention
+		assertEquals("Crafting", GT6RecipeMaps.AUTOCRAFTER.mNameLocal, "RM.java:63 — the upstream word IS Crafting, not Autocrafter");
+		// the STEAM/CATALYTIC cracking pair: identical constants rows, split only by name/GUI
+		assertEquals(GT6RecipeMaps.STEAM_CRACKING.mInputItemsCount, GT6RecipeMaps.CATALYTIC_CRACKING.mInputItemsCount);
+		assertEquals(GT6RecipeMaps.STEAM_CRACKING.mOutputFluidCount, GT6RecipeMaps.CATALYTIC_CRACKING.mOutputFluidCount);
+		assertEquals(GT6RecipeMaps.STEAM_CRACKING.mMinimalInputs, GT6RecipeMaps.CATALYTIC_CRACKING.mMinimalInputs);
+		assertNotSame(GT6RecipeMaps.STEAM_CRACKING, GT6RecipeMaps.CATALYTIC_CRACKING);
+	}
+
+	/** The W2 block joins the generation lifecycle: reset nulls all nineteen fields and drops the registry names; a fresh init re-registers fresh instances. */
+	@Test
+	void resetRetiresTheP29W2NineteenMapGeneration() {
+		GT6RecipeMaps.init();
+		RecipeMap tFirstElectrolyzer = GT6RecipeMaps.ELECTROLYZER;
+		assertNotNull(tFirstElectrolyzer);
+		GT6RecipeMaps.reset();
+		for (String[] tRow : W2_MAPS) {
+			assertNull(field(tRow[0]), "reset drops " + tRow[0]);
+			assertFalse(RecipeMap.RECIPE_MAPS.containsKey(tRow[1]), "reset drops " + tRow[1]);
+		}
+		GT6RecipeMaps.init();
+		assertNotSame(tFirstElectrolyzer, GT6RecipeMaps.ELECTROLYZER, "re-init after reset creates a fresh generation");
+		for (String[] tRow : W2_MAPS) {
+			assertTrue(RecipeMap.RECIPE_MAPS.containsKey(tRow[1]), "re-init re-registers " + tRow[1]);
+		}
+		GT6RecipeMaps.reset();
 	}
 
 	/** Reflection accessor for the twelve P29 fields (the mill-trio loop above). */
