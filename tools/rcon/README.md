@@ -643,3 +643,43 @@ GTPipeFoamTest.foamNbtRoundTripsAndOwnerDoesNotRideItems 钉死）。活链 =
 `chains/p25_cfoam_spray.py`（place→spray owned→stat→dry→锁 toggle 拒→removefoam
 非 owner 拒→owner ok→spray+dry→拆管→掉落物 NBT 断言；双腿 [0,0]；日志路径
 /tmp/gt6_rs_p25cfoamspray.*，节点名后缀随 --node）。
+
+### ULV 波收口链 /gt6machine + /gt6oven + /gt6engine + /gt6fe* + /data（p28-c-ulv-chain，README tail-append）
+
+四臂一链 `chains/p28_ulv_chain.py`（slug p28ulv，端口对 26170/26180；新簇
+`p28_ulv_chain`，z=40/48/56/64 四站带 x519..545，站带两两 margin 离散可并发）。
+零新命令臂——全部读数走既有命令面 + 原版 /data get|merge NBT 探针：
+
+- **A 正链**（z=40）：`gt6:diesel_engine_bronze[facing=east]` 注油 16 RU/t →
+  双木轴 → `gt6:electric_dynamo_ulv[facing=east]`（背收 RU 窗 [1..16]，T0 声明
+  1:1）→ front **直贴** `gt6:wiremill_ulv`（SBIT_B 能量面，data merge
+  `{facing:5}` 旋到 west）。断言：`check` 报 `minIn=4 recIn=8 maxIn=16`
+  （ULV 窗钉）、data merge 铜棒后 poll `outputs=[4x wire_fine_copper; ]`、
+  引擎 `rate=16 RU/t (DC constant-sign)` + 轴 `break pending=false`。
+  **三个 live 校准教训**：①机器 BE 无视 setblock 的 blockstate facing
+  （mFacing 缺省 north，只有放置路径/NBT 写它）——`data merge block <pos>
+  {facing:5}` 才算数；②机器 doWork 每 tick 先排 mInputMax 再判进度，sub-16
+  包永远攒不进缓冲（doInactive 的 CONSTANT_ENERGY :894 再雪上加霜）——inject
+  臂包尺寸必须 ≥ 行 mMinEnergy 16；③线缆最小 loss=1、T0 dynamo 整电容包=16EU
+  ⇒ **任何穿线 hop 都喂不动 eUt16 行**（16-loss<16 被排空烧掉）——正链的机器
+  跳段只能直贴，V[0] 包的穿线载运由 B 臂 volt-8 铜线活证。
+- **B 负断言·8EU 白烧**（z=48）：p8 烤箱 rig（oven→copper 线→/gt6energy 源）
+  volt 8：`EnergyGate :50` 吞包——5s 窗口两侧双 `energy=0` + `input=cobblestonex8`
+  原封；同 rig volt 32 完成 `output=stonex8`（对照腿：红是包尺寸不是 rig）。
+- **C 负断言·1375K 熔点门**（z=56）：双 wiremill_ulv。铁棒
+  （GT6Fe 1811K > 1375K）`inject 60 8` 后 `progress=0/0`（配方从不绑定，
+  TileEntityBasicMachine :655 在任何消耗前拒）+ `data get` 槽 0 铁棒原封
+  （零消耗）；铜棒（1357K）`inject 300 16` 完成 `wire_fine_copper`（对照臂）。
+- **D 变压器贯通涓流**（z=64）：`gt6fesource`（预算 12288 FE=384 次整包抽取）
+  → `gt6feconverter`（auto-pull 1 包/t = 恒 8EU/t 发射，实测速率恰 8EU/t）→
+  `gt6:electric_transformer[facing=east]` **直贴烤箱**（无 wire，见下），
+  `/data merge {gt.reversed:1b}` 翻 step-up（②卡 W3 驱动面：NBT_REVERSED）。
+  断言：翻转前 `reversed: 0b`/后 `reversed: 1b`；翻转后立即
+  `input=cobblestonex2`（8EU/t 涓流首 tick 不可能够到 256EU 的第一熔——全速
+  旁路早吃掉一熔）；poll `input=airx0`（两熔全耗=贯通可达）；poll
+  `gt6fesource stat` → `stored 0 FE`（整包量化抽取零尾差=守恒钉）。
+  **本臂刻意无 wire**：实测 wire 会把 step-up 包回送进变压器 all-but-front
+  输入面（自反馈环），电容自锁涓流枯死；LV 线载 32EU 包的腿已由 B 臂 volt-32
+  对照活证。
+
+链级 [0,0]：负臂预期红全部转成显式断言步（无 allow_failed 逃逸）。
