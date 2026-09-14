@@ -569,6 +569,10 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "printer" -> GT6RecipeMaps.PRINTER;
 			case "scannervisuals" -> GT6RecipeMaps.SCANNER_VISUALS;
 			case "generifier" -> GT6RecipeMaps.GENERIFIER;
+			// the P29 W3 tower pair (task p29-w3-distill-crucible — the key/field pairs are the
+			// field-name snake case; both targets are the consumer card's live maps)
+			case "distillationtower" -> GT6RecipeMaps.DISTILLATION_TOWER;
+			case "cryodistillationtower" -> GT6RecipeMaps.CRYO_DISTILLATION_TOWER;
 			default -> null;
 		};
 	}

@@ -1,0 +1,10 @@
+{
+  "recipes": [
+    {
+      "fluidInputs": [{ "fluid": "gt6:oil", "amount": 1000 }],
+      "fluidOutputs": [{ "fluid": "gt6:creosote", "amount": 500 }],
+      "duration": 160,
+      "eut": 120
+    }
+  ]
+}

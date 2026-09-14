@@ -584,6 +584,27 @@ public class GT6RecipeMaps {
 	/** RM.java:151 — the Generifier map (1/1/0 items, 1/1/0 fluids, MIN 1). DECLARED-empty; consumer = the TU Generifier (W2 card ⑤). */
 	public static volatile RecipeMap GENERIFIER;
 
+	/**
+	 * RM.java:65 — the Distillation Tower map (task p29-w3-distill-crucible ①): items
+	 * 1/3/0, fluids 1/9/0, MIN 1, AMP 1 — the RM.java:65 row verbatim over the 15-arg port
+	 * ctor (the trailing NEI booleans fold away like every other map), the GUI path the
+	 * upstream "machines/DistillationTower" string lowercased. Base-{@link RecipeMap}
+	 * (RM.DistillationTower IS a plain RecipeMap upstream). The smoke row rides the tier-b
+	 * JSON direct-pour seam (key "distillationtower", {@code data/gt6/recipe_maps
+	 * /distillationtower.json}); the live findRecipe consumer is the Distillation Tower
+	 * controller (the same card, GT6Distillation).
+	 */
+	public static volatile RecipeMap DISTILLATION_TOWER;
+
+	/**
+	 * RM.java:66 — the Cryo Distillation Tower map (task p29-w3-distill-crucible ②): the
+	 * SAME constants row as DISTILLATION_TOWER (RM.java:66, the STEAM_CRACKING/its-twin
+	 * judged form — split only by map name/GUI), GUI "machines/CryoDistillationTower"
+	 * lowercased. The smoke row rides the JSON seam (key "cryodistillationtower"); the
+	 * Cryo chemical rows stay POOLED (the card boundary — batch F follows).
+	 */
+	public static volatile RecipeMap CRYO_DISTILLATION_TOWER;
+
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
 		if (FURNACE != null) return;
@@ -1136,6 +1157,27 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
+		// --- the P29 W3 tower pair (task p29-w3-distill-crucible), the RM.java:65/:66 rows
+		// verbatim over the 15-arg port ctor — the SAME constants split only by map name/GUI
+		// (the STEAM_CRACKING/its-twin judged form); the smoke rows ride the tier-b JSON seam ---
+		// RM.java:65 — items 1/3/0, fluids 1/9/0, MIN 1, AMP 1
+		DISTILLATION_TOWER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.distillationtower", "Distillation Tower", null,
+				0, 1,
+				"gt6:textures/gui/machines/distillationtower",
+				/*IN-OUT-MIN-ITEM=*/ 1, 3, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 9, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		// RM.java:66 — the DISTILLATION_TOWER constants row (items 1/3/0, fluids 1/9/0, MIN 1)
+		CRYO_DISTILLATION_TOWER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.cryodistillationtower", "Cryo Distillation Tower", null,
+				0, 1,
+				"gt6:textures/gui/machines/cryodistillationtower",
+				/*IN-OUT-MIN-ITEM=*/ 1, 3, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 9, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -1203,6 +1245,8 @@ public class GT6RecipeMaps {
 		PRINTER = null;
 		SCANNER_VISUALS = null;
 		GENERIFIER = null;
+		DISTILLATION_TOWER = null;
+		CRYO_DISTILLATION_TOWER = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}
