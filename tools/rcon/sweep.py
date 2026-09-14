@@ -257,6 +257,13 @@ SESSION_GROUPS = (
     # sites (band-local setblocks only — no fresh_boot / mutates member).
     # --group p29_w3_parts matches through the chain's embedded name prefix.
     ("p29_w3_parts",),
+    # P29 W3 card ② (p29-w3-tank-valves): the Tank Main Valve chain — a fresh z=294
+    # band, six x-disjoint tank rigs on x381..427 (the wood/SS 3x3x3s, the SS 5x5x5,
+    # the wrong-wall and meltdown arms; the auto-emit barrel rides the wood rig), the
+    # live form/fill/emit/destruction proofs through /gt6tankvalve + /gt6multiblock form.
+    # Band-local setblocks only — no fresh_boot / mutates member.
+    # --group p29_w3_tank matches through the chain's embedded name prefix.
+    ("p29_w3_tank",),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
