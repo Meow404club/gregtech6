@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:wood_wall"
+    },
+    "R": {
+      "item": "gt6:ring_lead"
+    },
+    "r": {
+      "item": "gt6:ring_lead"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    " R ",
+    "rMs",
+    " R "
+  ],
+  "result": {
+    "item": "gt6:tank_wood"
+  },
+  "show_notification": true
+}

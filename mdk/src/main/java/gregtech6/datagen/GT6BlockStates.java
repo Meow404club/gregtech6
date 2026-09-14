@@ -175,6 +175,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
         addParts(); // task p29-w3-nbtdesign-parts — the part-family expansion (per-design variants)
+        addTanks(); // task p29-w3-tank-valves — the 25 valve controllers
         addLargeCrucible(); // task p26-crucible-multiblock
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
@@ -1623,6 +1624,26 @@ public final class GT6BlockStates extends BlockStateProvider {
      * formed-look visual is the p9 pool). The four BlockItem models parent their block
      * models.
      */
+    /**
+     * Task p29-w3-tank-valves — the Tank Main Valve family (Loader_MultiTileEntities.java
+     * :1195-1222): the 25 variant controllers over ONE shared cube_all model per material
+     * family — the wood valve over the borrowed woodwall part texture, the 24 metal valves
+     * over the borrowed metalwall part texture (the port has no multiblockmains "tankwood"/
+     * "tankmetal" group in this snapshot — the large-boiler borrow ruling; the formed-look
+     * visual is the p9 pool). The FACING + FORMED variants map to the same model like every
+     * controller; the 25 BlockItem models parent their block models.
+     */
+    private void addTanks() {
+        ModelFile tWood = models().cubeAll("tank_wood", modLoc("block/parts/woodwall/0/colored/side"));
+        ModelFile tMetal = models().cubeAll("tank_metal", modLoc("block/parts/metalwall/0/colored/side"));
+        for (var tRow : gregtech6.registry.GT6Tanks.ROWS) {
+            Block tBlock = gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get();
+            ModelFile tModel = tRow.flammable() ? tWood : tMetal; // the wood valve is the flammable row
+            getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
+    }
+
     private void addLightningRod() {
         ModelFile tMain = models().cubeAll("multiblock_lightning_rod", modLoc("block/lightningrod/main"));
         Block tController = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get();

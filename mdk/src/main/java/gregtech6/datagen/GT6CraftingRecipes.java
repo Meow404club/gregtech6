@@ -203,6 +203,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : partFamilyRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		for (PartFamilyRecipeRow tRow : tankValveRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 	}
 	//?} else {
 	/*@Override
@@ -238,6 +241,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			staticStorageRecipeBuilder(tRow).save(aOutput, staticStorageRecipeId(tRow));
 		}
 		for (PartFamilyRecipeRow tRow : partFamilyRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		for (PartFamilyRecipeRow tRow : tankValveRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 	}
@@ -944,6 +950,81 @@ public class GT6CraftingRecipes extends RecipeProvider {
         coilBuilder("large_iridium_coil", gregapi.data.MT.Ir)
                 .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/large_iridium_coil"))));
         return rRows;
+    }
+
+    // -------------------------------------------------------------------------
+    // task p29-w3-tank-valves — the 25 Tank Main Valve rows (Loader :1195-1222 recipe
+    // strings: wood " R ","rMs"," R "; the small pair " R ","hMs"," R " over the ROW's
+    // wall; the large pair "PPP","hMs","PPP" over the SMALL valve + the material plate
+    // (plateDense on the dense larges); R/r = OP.ring of Pb (wood) or the row material,
+    // h = the hard-hammer tool tag, s = the saw tool tag — the lowercase r TOOL letter
+    // folds to the same ring item, the vanilla-JSON consume-all rule, the coil 'W' fold
+    // precedent). Declared CUTS: none — every input resolves (the ring/plate bare items
+    // null-guard to a silent row skip, the coilBuilder precedent).
+    // -------------------------------------------------------------------------
+    private static final String TANK_VALVE_RECIPE_PREFIX = "tank_valve/";
+
+    /** One tank row's recipe id: tank_valve/&lt;path&gt; (the part_family/&lt;path&gt; convention). */
+    private ResourceLocation tankValveRecipeId(String aPath) {
+        return new ResourceLocation(GT6DataGenerators.MOD_ID, TANK_VALVE_RECIPE_PREFIX + aPath);
+    }
+
+    private java.util.List<PartFamilyRecipeRow> tankValveRecipeBuilders() {
+        java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+        Item tLeadRing = itemOrNull(gregapi.data.OP.ring, gregapi.data.MT.Pb);
+        for (gregtech6.registry.GT6Tanks.TankValveRow tRow : gregtech6.registry.GT6Tanks.ROWS) {
+            String tWallPath = tRow.wallPath();
+            if (tRow.flammable()) {
+                // :1195 wood — " R ","rMs"," R " over the wood wall
+                if (tLeadRing == null) continue;
+                net.minecraft.world.level.block.Block tWoodWall = gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get(tWallPath).get();
+                rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get())
+                        .pattern(" R ").pattern("rMs").pattern(" R ")
+                        .define('R', tLeadRing)
+                        .define('r', tLeadRing)
+                        .define('M', tWoodWall)
+                        .define('s', GT6ItemTags.TOOLS_SAW)
+                        .unlockedBy("has_ring", has(tLeadRing)), tankValveRecipeId(tRow.path())));
+                continue;
+            }
+            net.minecraft.world.level.block.Block tWall = gregtech6.registry.GTMultiBlocks.anyPartBlock(tWallPath);
+            if (tWall == null) continue;
+            if (tRow.size() == 3) {
+                // :1196-1208 — the small pair: " R ","hMs"," R " over the row's wall
+                var tRing = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.ring, tRow.material().get()); // the bare-local form — the RegistryObject/DeferredHolder swap keeps the type arguments
+                if (tRing == null) continue;
+                rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get())
+                        .pattern(" R ").pattern("hMs").pattern(" R ")
+                        .define('R', tRing.get())
+                        .define('M', tWall)
+                        .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+                        .define('s', GT6ItemTags.TOOLS_SAW)
+                        .unlockedBy("has_ring", has(tRing.get())), tankValveRecipeId(tRow.path())));
+            } else {
+                // :1210-1222 — the large pair: "PPP","hMs","PPP" over the SMALL valve + plates
+                boolean tDense = tWallPath.startsWith("dense_wall_");
+                String tMatSlug = tRow.path().substring((tDense ? "tank_large_dense_" : "tank_large_").length());
+                String tSmallPath = (tDense ? "tank_small_dense_" : "tank_small_") + tMatSlug;
+                net.minecraft.world.level.block.Block tSmallValve = gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tSmallPath).get();
+                var tPlate = gregtech6.registry.GTMaterialItems.get(
+                        tDense ? gregapi.data.OP.plateDense : gregapi.data.OP.plate, tRow.material().get()); // the bare-local form (the swap note above)
+                if (tPlate == null) continue;
+                rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get())
+                        .pattern("PPP").pattern("hMs").pattern("PPP")
+                        .define('P', tPlate.get())
+                        .define('M', tSmallValve)
+                        .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+                        .define('s', GT6ItemTags.TOOLS_SAW)
+                        .unlockedBy("has_plate", has(tPlate.get())), tankValveRecipeId(tRow.path())));
+            }
+        }
+        return rRows;
+    }
+
+    /** A bare item by prefix+material — null when the flood has no row (the silent-skip guard). */
+    private Item itemOrNull(gregapi.oredict.OreDictPrefix aPrefix, gregapi.oredict.OreDictMaterial aMaterial) {
+        var tHandle = gregtech6.registry.GTMaterialItems.get(aPrefix, aMaterial); // the bare-local form (the swap note above)
+        return tHandle == null ? null : tHandle.get();
     }
 
     /** One coil row builder — empty when the material's fine-wire tag has no members (the silent skip). */

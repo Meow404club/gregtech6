@@ -377,6 +377,16 @@ HAND_TRANSLATIONS = {
     "gt6.row.mat.t5": ("T5", "hand"),
     "gt6.row.large_boiler.display": ("%s锅炉气压计核心", "hand"),
     "gt6.row.dense_wall.display": ("致密%s壁板", "hand"),
+    # task p29-w3-tank-valves — the 25 Tank Main Valve rows: the size+material templates
+    # (CJK 免空格 gluing) + the size words + the wood unit; the metal material words are
+    # the EXISTING dense-wall units (gt6.row.mat.stainless_steel and friends)
+    "gt6.row.tank_valve.display": ("%s%s储罐主阀", "hand"),
+    "gt6.row.tank_valve.wood.display": ("%s储罐主阀", "hand"),
+    "gt6.row.mat.wood": ("木", "hand"),
+    "gt6.row.tank_size.small": ("小型", "hand"),
+    "gt6.row.tank_size.small_dense": ("小型致密", "hand"),
+    "gt6.row.tank_size.large": ("大型", "hand"),
+    "gt6.row.tank_size.large_dense": ("大型致密", "hand"),
     "gt6.row.machine.display": ("%s (%s)", "hand"),
     "gt6.row.machine.shredder": ("粉碎机", "hand"),
     "gt6.row.machine.crusher": ("破碎机", "hand"),

@@ -463,6 +463,14 @@ public final class GT6CapabilityWiring {
 					return tTarget.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,
 							tTarget.getBlockPos(), aSide);
 				});
+		// task p29-w3-tank-valves — the Tank Main Valve fluid face (the large-boiler row
+		// shape): the forge getCapability serves the fresh wrapper-per-call TankValveFluid-
+		// Handler; without this row every wall-relayed fill and pipe draw on this node is
+		// capability-blind while the 1.20.1 BE override hides the gap (the p26-pipe-item
+		// census discipline).
+		BlockEntityType<gregtech6.tileentity.multiblocks.GTTankValveBlockEntity> tTankValve = GT6Tanks.TANK_VALVE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tTankValve,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
 	// -- the kitchen family (task p26-kitchen-pot-bowl): the pot pair (one shared BET,

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:tank_small_dense_tungstensteel"
+    },
+    "P": {
+      "item": "gt6:plate_dense_tungstensteel"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "hMs",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:tank_large_dense_tungstensteel"
+  },
+  "show_notification": true
+}

@@ -101,6 +101,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-hu-tu-piggyback — the seven hu-tu families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
+                new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -137,6 +138,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-hu-tu-piggyback — the seven hu-tu families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
+                new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -1754,6 +1756,40 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : partLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /** The Tank Main Valve block list (task p29-w3-tank-valves): the 25 valve blocks (the upstream MTE default self-drop). */
+    public static List<Block> tankLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (var tRow : gregtech6.registry.GT6Tanks.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The Tank Main Valve self-drop provider (task p29-w3-tank-valves; the part-family provider shape). */
+    public static final class GT6TankBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6TankBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6TankBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return tankLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : tankLootBlocks()) dropSelf(tBlock);
         }
     }
 }

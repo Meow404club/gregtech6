@@ -654,6 +654,16 @@ public class GT6ZhCn extends LanguageProvider {
 				addDirect("block.gt6." + tRow.path());
 			}
 		}
+		// task p29-w3-tank-valves — the 25 valve rows: the size+material compose templates
+		// (CJK 免空格 gluing, the dump word order 小型/大型 + 材质 + 储罐主阀) + the size
+		// words + the wood unit; the metal material words are the EXISTING dense-wall units
+		addDirect(gregtech6.registry.GT6Tanks.TANK_VALVE_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6Tanks.TANK_VALVE_WOOD_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6Tanks.WOOD_UNIT_KEY);
+		addDirect(gregtech6.registry.GT6Tanks.SIZE_SMALL);
+		addDirect(gregtech6.registry.GT6Tanks.SIZE_SMALL_DENSE);
+		addDirect(gregtech6.registry.GT6Tanks.SIZE_LARGE);
+		addDirect(gregtech6.registry.GT6Tanks.SIZE_LARGE_DENSE);
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_STRUCTURE);
 		for (int i = 1; i <= 9; i++) {
 			addDirect(String.format(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE, i));
