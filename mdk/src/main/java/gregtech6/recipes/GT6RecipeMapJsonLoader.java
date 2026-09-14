@@ -192,7 +192,12 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			"autocrafter", "steamcracking", "catalyticcracking", "coagulator", "cryomixer",
 			"magneticseparator", "injector", "laminator", "autoclave", "freezer", "polarizer",
 			"lightning", "slicer", "laserengraver", "welder", "electrolyzer", "printer",
-			"scannervisuals", "generifier");
+			"scannervisuals", "generifier",
+			// the P29 W3 card ③ (task p29-w3-turbine-dynamo): the Gas Turbine fuel face — the
+			// natural-gas row ships with the key (the direct-fill anchor; the byproduct CO2 of
+			// Loader_Fuels.java:169 is dropped with the unregistered-fluid ruling, the water
+			// leg rides the row verbatim)
+			"gas_fuels");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -519,6 +524,7 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "engine_fuels" -> GT6RecipeMaps.ENGINE_FUELS;
 			case "fluidbed" -> GT6RecipeMaps.FLUIDBED;
 			case "burn" -> GT6RecipeMaps.BURN;
+			case "gas_fuels" -> GT6RecipeMaps.GAS_FUELS; // task p29-w3-turbine-dynamo — the Gas Turbine fuel face
 			case "distillery" -> GT6RecipeMaps.DISTILLERY;
 			case "drying" -> GT6RecipeMaps.DRYING;
 			case "canner" -> GT6RecipeMaps.CANNER;

@@ -26,6 +26,7 @@ import gregtech6.tileentity.energy.GT6FeSourceBlockEntity; // p28 tail-append
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.inventories.GT6HopperBlockEntity; // p26 tail-append
 import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity; // p26 tail-append
+import gregtech6.tileentity.multiblocks.GTGasTurbineBlockEntity; // p29-w3 tail-append
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 import gregtech6.tileentity.machines.TileEntityOven;
@@ -100,6 +101,7 @@ public final class GT6CapabilityWiring {
 		registerKitchenFaces(aEvent);
 		registerHopperFamily(aEvent); // task p26-storage-hopper-family (tail-append; shared serial file)
 		registerStaticStorages(aEvent); // task p26-storage-static-batch (tail-append; shared serial file)
+		registerGasTurbine(aEvent); // task p29-w3-turbine-dynamo (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -637,6 +639,23 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GTBlockEntities.BOTTLECRATE_BE.get(),
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+	}
+
+	// -- the gas turbine (p29-w3-turbine-dynamo; TAIL-APPENDED ROW, the shared serial
+	// file: append-only discipline) --
+	// The Gas Turbine controller joins as a fluid-only face (the FM.Gas fill gate + the
+	// three exhaust tanks; the Large Boiler face shape). The forge leg answers through the
+	// GTGasTurbineBlockEntity getCapability override (fresh per-call GasFluidHandler — the
+	// :141 fill containment + the :147 rotating exhaust drain); this row is the 21.1
+	// registration only, delegating into the fluidCapability seam member. Without it every
+	// external fluid push on the gas turbine is capability-blind on this node while the
+	// 1.20.1 BE override hides the gap — the ADR-P15-4 census discipline, mechanized by
+	// GT6CapabilityWiringSeamTest.
+
+	private static void registerGasTurbine(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GTGasTurbineBlockEntity> tGasTurbine = GT6Turbines.GAS_TURBINE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tGasTurbine,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
 }

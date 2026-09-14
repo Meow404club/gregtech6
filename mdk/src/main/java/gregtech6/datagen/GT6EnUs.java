@@ -931,6 +931,17 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GT6Tanks.SIZE_SMALL_DENSE, "Small Dense");
         add(gregtech6.registry.GT6Tanks.SIZE_LARGE, "Large");
         add(gregtech6.registry.GT6Tanks.SIZE_LARGE_DENSE, "Large Dense");
+        // task p29-w3-turbine-dynamo — the twelve controller names (the Loader
+        // :1254-1257/:1259-1262/:1264-1267 name column verbatim, ATOMIC rows)
+        for (gregtech6.registry.GT6Turbines.SteamTurbineRow tRow : gregtech6.registry.GT6Turbines.STEAM_ROWS) {
+            add("block.gt6." + tRow.path(), tRow.display());
+        }
+        for (gregtech6.registry.GT6Turbines.GasTurbineRow tRow : gregtech6.registry.GT6Turbines.GAS_ROWS) {
+            add("block.gt6." + tRow.path(), tRow.display());
+        }
+        for (gregtech6.registry.GT6DynamoHousings.DynamoRow tRow : gregtech6.registry.GT6DynamoHousings.DYNAMO_ROWS) {
+            add("block.gt6." + tRow.path(), tRow.display());
+        }
     }
 
     /**

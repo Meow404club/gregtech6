@@ -102,6 +102,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
                 new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
+                new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-turbine-dynamo — the twelve turbine/dynamo controllers
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -139,6 +140,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
                 new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
                 new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
+                new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-turbine-dynamo — the twelve turbine/dynamo controllers
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -1732,6 +1734,52 @@ public final class GT6LootTables extends LootTableProvider {
             rBlocks.add(gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
+    }
+
+    /**
+     * The turbine/dynamo controller block list (task p29-w3-turbine-dynamo): the twelve
+     * Large Turbine + Large Dynamo mains (Loader_MultiTileEntities.java:1254-1257/
+     * :1259-1262/:1264-1267). The upstream machines carry the MTE default self-drop (the
+     * same Drops==null default as the boiler/burning-box families); the 1.20.1 equivalent
+     * is exactly {@code dropSelf}.
+     */
+    public static List<Block> turbineDynamoLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (var tRow : gregtech6.registry.GT6Turbines.STEAM_ROWS) {
+            rBlocks.add(gregtech6.registry.GT6Turbines.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        for (var tRow : gregtech6.registry.GT6Turbines.GAS_ROWS) {
+            rBlocks.add(gregtech6.registry.GT6Turbines.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        for (var tRow : gregtech6.registry.GT6DynamoHousings.DYNAMO_ROWS) {
+            rBlocks.add(gregtech6.registry.GT6DynamoHousings.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The turbine/dynamo controller self-drop provider (task p29-w3-turbine-dynamo; the part-family provider shape). */
+    public static final class GT6TurbineDynamoBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6TurbineDynamoBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6TurbineDynamoBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return turbineDynamoLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : turbineDynamoLootBlocks()) dropSelf(tBlock);
+        }
     }
 
     /** The part-family self-drop provider (task p29-w3-nbtdesign-parts; the lightning-rod provider shape). */

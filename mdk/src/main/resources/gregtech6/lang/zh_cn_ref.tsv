@@ -8025,3 +8025,15 @@ mte	multiblock.tank.wooden	小型木质储罐	auto
 mte	multiblock.tank555.metal	大型储罐	auto
 mte	plantpot.tooltip.1	上面能种植任意植物!	auto
 mte	usb.switch.tooltip	使用选择面板在16个USB之间切换	auto
+direct	block.gt6.steam_turbine_magnalium	镁铝合金蒸汽涡轮主外壳	hand
+direct	block.gt6.steam_turbine_trinitanium	特林钛合金蒸汽涡轮主外壳	hand
+direct	block.gt6.steam_turbine_graphene	石墨烯蒸汽涡轮主外壳	hand
+direct	block.gt6.steam_turbine_vibramantium	艾德曼振金蒸汽涡轮主外壳	hand
+direct	block.gt6.gas_turbine_magnalium	镁铝合金燃气涡轮主外壳	hand
+direct	block.gt6.gas_turbine_trinitanium	特林钛合金燃气涡轮主外壳	hand
+direct	block.gt6.gas_turbine_graphene	石墨烯燃气涡轮主外壳	hand
+direct	block.gt6.gas_turbine_vibramantium	艾德曼振金燃气涡轮主外壳	hand
+direct	block.gt6.large_dynamo_stainless_steel	不锈钢大型发电机主外壳	hand
+direct	block.gt6.large_dynamo_titanium	钛大型发电机主外壳	hand
+direct	block.gt6.large_dynamo_tungstensteel	钨钢大型发电机主外壳	hand
+direct	block.gt6.large_dynamo_adamantium	艾德曼合金大型发电机主外壳	hand

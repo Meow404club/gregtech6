@@ -664,6 +664,18 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.registry.GT6Tanks.SIZE_SMALL_DENSE);
 		addDirect(gregtech6.registry.GT6Tanks.SIZE_LARGE);
 		addDirect(gregtech6.registry.GT6Tanks.SIZE_LARGE_DENSE);
+		// task p29-w3-turbine-dynamo — the twelve turbine/dynamo controller names (the
+		// Loader :1254-1257/:1259-1262/:1264-1267 name column; the hand layer in the
+		// reference table — the material words reuse the dump mte translations)
+		for (gregtech6.registry.GT6Turbines.SteamTurbineRow tRow : gregtech6.registry.GT6Turbines.STEAM_ROWS) {
+			addDirect("block.gt6." + tRow.path());
+		}
+		for (gregtech6.registry.GT6Turbines.GasTurbineRow tRow : gregtech6.registry.GT6Turbines.GAS_ROWS) {
+			addDirect("block.gt6." + tRow.path());
+		}
+		for (gregtech6.registry.GT6DynamoHousings.DynamoRow tRow : gregtech6.registry.GT6DynamoHousings.DYNAMO_ROWS) {
+			addDirect("block.gt6." + tRow.path());
+		}
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_STRUCTURE);
 		for (int i = 1; i <= 9; i++) {
 			addDirect(String.format(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE, i));

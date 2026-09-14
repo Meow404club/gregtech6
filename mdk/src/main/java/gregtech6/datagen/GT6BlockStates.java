@@ -176,6 +176,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addLightningRod(); // task p24-lightning-rod
         addParts(); // task p29-w3-nbtdesign-parts — the part-family expansion (per-design variants)
         addTanks(); // task p29-w3-tank-valves — the 25 valve controllers
+        addTurbinesDynamo(); // task p29-w3-turbine-dynamo — the Large Turbine + Large Dynamo controllers
         addLargeCrucible(); // task p26-crucible-multiblock
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
@@ -1935,5 +1936,86 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .face(Direction.DOWN).texture("#overlay_bottom").cullface(Direction.DOWN)
                 .end();
         return tModel;
+    }
+
+    /**
+     * Task p29-w3-turbine-dynamo — the twelve Large Turbine + Large Dynamo controllers
+     * (Loader_MultiTileEntities.java:1254-1257/:1259-1262/:1264-1267). ONE oriented cube
+     * model per family over the borrowed multiblockmains groups (the front face composes
+     * colored_front + overlay_front, the other five faces the plain pair — the partModel
+     * two-layer form); the FACING states rotate (the addLargeBoiler table), the FORMED
+     * variants map to the same model (the formed-look visual is the p9 pool, the
+     * render-pass animation the render wave's). The BlockItem models parent their block
+     * model. The textures are the NBT_TEXTURE upstream borrow (assets/README.md
+     * attribution, the turbine_mains batch).
+     */
+    private void addTurbinesDynamo() {
+        addTurbineFamily("steam", "largeturbine", gregtech6.registry.GT6Turbines.STEAM_ROWS.stream()
+                .map(r -> Map.entry(r.path(), (net.minecraft.world.level.block.Block) gregtech6.registry.GT6Turbines.BLOCKS_BY_PATH.get(r.path()).get())).toList());
+        addTurbineFamily("gas", "gasturbine", gregtech6.registry.GT6Turbines.GAS_ROWS.stream()
+                .map(r -> Map.entry(r.path(), (net.minecraft.world.level.block.Block) gregtech6.registry.GT6Turbines.BLOCKS_BY_PATH.get(r.path()).get())).toList());
+        addTurbineFamily("dynamo", "largedynamo", gregtech6.registry.GT6DynamoHousings.DYNAMO_ROWS.stream()
+                .map(r -> Map.entry(r.path(), (net.minecraft.world.level.block.Block) gregtech6.registry.GT6DynamoHousings.BLOCKS_BY_PATH.get(r.path()).get())).toList());
+    }
+
+    /** One family walk — the shared model over the four variant blocks (the row paths name the item models). */
+    private void addTurbineFamily(String aFamily, String aTexture, java.util.List<Map.Entry<String, net.minecraft.world.level.block.Block>> aRows) {
+        String tBase = "block/turbine_mains/" + aTexture;
+        BlockModelBuilder tModel = models().getBuilder("turbine_main_" + aFamily)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc(tBase + "/colored/bottom"))
+                .texture("up", modLoc(tBase + "/colored/top"))
+                .texture("north", modLoc(tBase + "/colored_front/side"))
+                .texture("south", modLoc(tBase + "/colored/side"))
+                .texture("west", modLoc(tBase + "/colored/side"))
+                .texture("east", modLoc(tBase + "/colored/side"))
+                .texture("overlay_bottom", modLoc(tBase + "/overlay/bottom"))
+                .texture("overlay_top", modLoc(tBase + "/overlay/top"))
+                .texture("overlay_side", modLoc(tBase + "/overlay/side"))
+                .texture("overlay_front", modLoc(tBase + "/overlay_front/side"));
+        // element 0 — the body cube
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).cullface(aDir))
+                .end();
+        // elements 1-6 — the overlay decals (the partModel 0.01-offset form; the front decal
+        // rides the overlay_front group)
+        tModel.element() // north
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_front").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // south
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_side").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // east
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_side").cullface(Direction.EAST)
+                .end();
+        tModel.element() // west
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_side").cullface(Direction.WEST)
+                .end();
+        tModel.element() // top
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_top").cullface(Direction.UP)
+                .end();
+        tModel.element() // bottom
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_bottom").cullface(Direction.DOWN)
+                .end();
+        ModelFile tFile = new ModelFile.UncheckedModelFile(modLoc("block/turbine_main_" + aFamily));
+        for (Map.Entry<String, net.minecraft.world.level.block.Block> tRow : aRows) {
+            getVariantBuilder(tRow.getValue()).forAllStates(aState -> {
+                int tY = switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tFile).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.getKey(), modLoc("block/turbine_main_" + aFamily));
+        }
     }
 }

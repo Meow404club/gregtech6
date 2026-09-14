@@ -51,6 +51,8 @@ import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GT6Anvils;
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Boilers;
+import gregtech6.registry.GT6DynamoHousings;
+import gregtech6.registry.GT6Turbines;
 import gregtech6.registry.GT6BurningBoxes;
 import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6ElectricDynamos;
@@ -215,7 +217,7 @@ public class GT6LangParityTest {
  * words 蒸汽裂解器/催化裂解器/织布机/凝结器/转换器/浸洗器/高压釜), both locales; zh == en,
  * the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2893; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales)
+private static final int ZH_KEY_FLOOR = 2905; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales)
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -932,6 +934,9 @@ private static final int ZH_KEY_FLOOR = 2893; // 2839 +3 (task p29-w2-eu-special
 			GT6ElectricTransformers.class, GT6FeBatteries.class, GT6FeConverters.class, GT6FluxDynamos.class,
 			GT6FoamBlocks.class, GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6Molds.class,
 			GT6Sensors.class, GT6StaticStorages.class,
+			// task p29-w3-turbine-dynamo — the turbine + dynamo controller carriers (ATOMIC
+			// vanilla-key names, so they ride the CHECKED leg, no exemptions)
+			GT6Turbines.class, GT6DynamoHousings.class,
 			GTBarrels.class, GTBlockEntities.class, GTEnergySources.class, GTFluidPipes.class,
 			GTGrassBlocks.class, GTItemPipes.class, GTMachines.class, GTMultiBlocks.class,
 			GTWires.class);
@@ -1111,9 +1116,10 @@ private static final int ZH_KEY_FLOOR = 2893; // 2839 +3 (task p29-w2-eu-special
 			+ " the 30 exotic-energy row carriers joined at 988 + 30, task p29-w2-exotic-energy;"
 			+ " the 25 eu-core 5-tier row carriers joined at 1018 + 25, task p29-w2-eu-core-5tier;"
 			+ " the 16 hu-tu row carriers joined at 1043 + 16, task p29-w2-hu-tu-piggyback)");
-		assertEquals(122, tChecked, "the checked block census: every DeferredRegister block NOT"
+		assertEquals(134, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
-			+ " eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
+			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"
+			+ " the eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
 			+ " and the transformer joined at 323c4ae4/1e07061d; the 28 p29-w3 part blocks"
 			+ " joined at bff8400a — GTMultiBlocks 7 -> 25 checked (the ten composed metal"
 			+ " walls exempt) + the six dense additions)"

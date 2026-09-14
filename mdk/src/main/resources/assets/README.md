@@ -8024,3 +8024,13 @@ upstream `README.md` block as above).
   colored layer un-tinted and carries the overlay as a separate 0.01-offset decal element
   (the familyMachineModel two-layer form) — declared deviation, the material tint rides
   the render pool card.
+- `gt6/textures/block/turbine_mains/<family>/<group>/{bottom,top,side}.png` — the Large
+  Turbine / Large Dynamo controller main textures (36 files, task p29-w3-turbine-dynamo;
+  upstream `textures/blocks/machines/multiblockmains/{largeturbine,gasturbine,largedynamo}/
+  <group>/...` verbatim, groups: colored, colored_front, overlay, overlay_front). The
+  <family> dir holds the four upstream groups verbatim; the blockstate models compose the
+  front face from the *_front pair and the other five faces from the plain pair (the
+  familyMachineModel two-layer form, the card ① convention). Aggregate sha256 of the 36
+  files (find | sha256sum): `46b815afba72c38d...` — per-file hashes omitted per the
+  372-file parts precedent. Copied on 2026-09-14. Upstream license: **CC0 1.0 Universal
+  Public Domain Dedication** (same upstream `README.md` block as above).
