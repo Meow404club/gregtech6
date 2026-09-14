@@ -20,7 +20,9 @@ import com.google.gson.JsonParser;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
@@ -83,6 +85,21 @@ class GT6DistillTowerSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("distillationtower"), "one tower smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("cryodistillationtower"), "one cryo smoke row");
+	}
+
+	@Test
+	public void thePouredRowIsFindableThroughTheTowerLookup() throws Exception {
+		// the tower's own lookup shape (the checkRecipe override): one empty item slot, the
+		// input-tank snapshot, size mInputMax
+		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
+		tData.put(new ResourceLocation("gt6", "distillationtower"), resource("distillationtower.json"));
+		GT6RecipeMapJsonLoader.pour(tData);
+
+		Recipe tFound = GT6RecipeMaps.DISTILLATION_TOWER.findRecipe(null, 1024, ItemStack.EMPTY,
+				new FluidStack[]{new FluidStack(Fluids.WATER, 1000)}, ItemStack.EMPTY);
+		assertNotNull(tFound, "the pure-fluid row must be findable with an all-empty item array");
+		assertEquals(120, tFound.mEUt);
+		assertEquals(160, tFound.mDuration);
 	}
 
 	@Test
