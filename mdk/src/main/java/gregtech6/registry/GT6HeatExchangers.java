@@ -264,7 +264,8 @@ public final class GT6HeatExchangers {
 				// setblocks AFTER the controller's first-tick force check — the cached verdict
 				// would read false until the 600-tick poll)
 				"GT6 heat exchanger at " + aPos.toShortString() + ": formed=" + tHex.checkStructure(true)
-						+ " rate=" + tHex.mRate + " efficiency=" + tHex.mEfficiency + " active=" + tHex.mActive,
+						+ " rate=" + tHex.mRate + " efficiency=" + tHex.mEfficiency + " active=" + tHex.mActive
+						+ " diag=" + gregtech6.multiblock.GTMultiBlockStructureChecker.check(tHex, tHex.patternWalkFacing(), null, null, null).describeFirstFailure(),
 				"buffer=" + tHex.mEnergy + " HU offered=" + tHex.getEnergyOffered(tHex.mEnergyTypeEmitted, (byte)1, tHex.mRate)
 						+ " HU/t fuel=" + tHex.mTanks[0].amount() + "/" + tHex.mTanks[0].capacity() + " L overflow=" + tHex.mTanks[1].amount() + " L"}) {
 			aSource.sendSuccess(() -> Component.literal(tLine), false);

@@ -60,7 +60,7 @@ shell_steps = []
 for dx, dy, dz in RING_Y0:
     shell_steps.append(Step(f"setblock {430 + dx} {65 + dy} {306 + dz} {WALL}", expect="Changed the block"))
 for dx, dy, dz in RING_Y1:
-    shell_steps.append(Step(f"setblock {430 + dx} {66 + dy} {306 + dz} {TX}", expect="Changed the block"))
+    shell_steps.append(Step(f"setblock {430 + dx} {66} {306 + dz} {TX}", expect="Changed the block"))
 shell_steps.append(Step(f"setblock 430 66 306 {WALL}", expect="Changed the block"))  # :106 the centre wall
 
 steps = [
@@ -77,10 +77,7 @@ steps = [
 
     phase("C: the boiler stack — the 18101 proxy relay to the SS large boiler"),
     Step(f"gt6multiblock boiler place {LB_P} {VARIANT}", expect="GT6 large boiler placed"),
-    # the frame count reads 29/34 on the stacked band — five cells already hold the
-    # right block from the HEX shell pass (the wand's 9 tx + 25 walls formed verdict
-    # below is the completeness proof)
-    Step(f"gt6multiblock boiler frame {LB_P} {VARIANT}", expect="parts placed around"),
+    Step(f"gt6multiblock boiler frame {LB_P} {VARIANT}", expect="34 parts placed"),
     Step(f"gt6multiblock boiler wand {LB_P} {VARIANT}", expect="formed", sleep=1.0),
     Step(f"gt6multiblock boiler fill {LB_P} 128000", expect="ACCEPTED"),
     Step(f"gt6multiblock boiler stat {LB_P}", expect="formed=true", sleep=2.0),
