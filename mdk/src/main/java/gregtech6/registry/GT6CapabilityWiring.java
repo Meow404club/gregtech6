@@ -102,6 +102,7 @@ public final class GT6CapabilityWiring {
 		registerHopperFamily(aEvent); // task p26-storage-hopper-family (tail-append; shared serial file)
 		registerStaticStorages(aEvent); // task p26-storage-static-batch (tail-append; shared serial file)
 		registerGasTurbine(aEvent); // task p29-w3-turbine-dynamo (tail-append; shared serial file)
+		registerDistillationFaces(aEvent); // task p29-w3-distill-crucible (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -503,6 +504,19 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tOven,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+	}
+
+	// task p29-w3-distill-crucible — the distillation tower pair (tail-append; shared serial
+	// file): the item face rides the inherited machine seam, the FLUID face answers the
+	// tower's OWN handler (the input-tank fill + the output-tank drain, the
+	// TileEntityDistillationTower.TowerFluidHandler) — the getCapability seam override in
+	// the BE, delegated into here exactly like the coke-oven row above.
+	private static void registerDistillationFaces(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<gregtech6.registry.GT6Distillation.TileEntityDistillationTower> tTower = GT6Distillation.TOWER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tTower,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tTower,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 

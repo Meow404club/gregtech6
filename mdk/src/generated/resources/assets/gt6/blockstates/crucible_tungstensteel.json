@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=east,formed=false": {
+      "model": "gt6:block/crucible_tungstensteel"
+    },
+    "facing=east,formed=true": {
+      "model": "gt6:block/crucible_tungstensteel"
+    },
+    "facing=north,formed=false": {
+      "model": "gt6:block/crucible_tungstensteel"
+    },
+    "facing=north,formed=true": {
+      "model": "gt6:block/crucible_tungstensteel"
+    },
+    "facing=south,formed=false": {
+      "model": "gt6:block/crucible_tungstensteel"
+    },
+    "facing=south,formed=true": {
+      "model": "gt6:block/crucible_tungstensteel"
+    },
+    "facing=west,formed=false": {
+      "model": "gt6:block/crucible_tungstensteel"
+    },
+    "facing=west,formed=true": {
+      "model": "gt6:block/crucible_tungstensteel"
+    }
+  }
+}

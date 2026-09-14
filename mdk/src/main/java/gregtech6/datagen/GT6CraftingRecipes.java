@@ -206,6 +206,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : tankValveRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 	}
 	//?} else {
 	/*@Override
@@ -244,6 +247,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (PartFamilyRecipeRow tRow : tankValveRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 	}
@@ -560,6 +566,32 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * key; 'M' = gt6:crucible_steel_wall). The in-grid hammer pays one durability point
 	 * and rides along (the container-item channel). Result 1x the controller block item.
 	 */
+	/**
+	 * The crucible ladder crafting rows (task p29-w3-distill-crucible ③) — the
+	 * largeSteelCrucibleBuilder "hM" form (the upstream "hMy" row with the soldering-tool
+	 * family cut, the same declared deviation) over each of the seven ladder rungs:
+	 * 'M' = the rung's own wall item, result = the rung controller.
+	 */
+	private java.util.List<CrucibleLadderRecipeRow> crucibleLadderRecipeBuilders() {
+		java.util.List<CrucibleLadderRecipeRow> rRows = new java.util.ArrayList<>();
+		for (gregtech6.registry.GT6Crucibles.CrucibleRow tRow : gregtech6.registry.GT6Crucibles.CRUCIBLE_ROWS) {
+			if ("crucible_steel".equals(tRow.path())) continue; // the single-rung row above
+			Item tWall = gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_ITEMS_BY_PATH.get(tRow.wallPath()).get();
+			Item tController = gregtech6.registry.GT6Crucibles.CRUCIBLE_ITEMS_BY_PATH.get(tRow.path()).get();
+			String tIdPath = "crucible_ladder/" + tRow.path(); // the precomputed arg — the stonecutter ctor swap rewrites simple-arg calls only
+			rRows.add(new CrucibleLadderRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, tController)
+					.pattern("hM")
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.define('M', tWall)
+					.unlockedBy("has_crucible_wall", has(tWall)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+		}
+		return rRows;
+	}
+
+	/** One staged crucible-ladder row: the shared builder + the id its save face ids from. */
+	private record CrucibleLadderRecipeRow(ShapedRecipeBuilder builder, ResourceLocation id) {}
+
 	private ShapedRecipeBuilder largeSteelCrucibleBuilder() {
 		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
 				gregtech6.registry.GT6Crucibles.CRUCIBLE_ITEMS_BY_PATH.get("crucible_steel").get())

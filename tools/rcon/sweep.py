@@ -272,6 +272,14 @@ SESSION_GROUPS = (
     # legs (band-local setblocks only — no fresh_boot / mutates member).
     # --group p29_w3_turbine_dynamo matches through the chains' embedded name prefix.
     ("p29_w3_steam_turbine", "p29_w3_gas_turbine", "p29_w3_large_dynamo"),
+    # P29 W3 card 4 (p29-w3-distill-crucible): the twin distillation towers + the crucible
+    # 8-material ladder — one fresh z=300 band, per-family x-disjoint columns (the HU tower
+    # 384..390 / the cryo tower 398..406 / the crucible ladder 414..470: the SS 3x3x3 rig at
+    # 429..431 + the census columns 418..446 at z309), admission mirroring the p29 W1 cluster
+    # form (bbox-registered, no fresh_boot / mutates member — the gt6energy source-block rigs
+    # and the barrel/chest sinks are band-local setblocks). --group p29_w3_distill_crucible
+    # matches through the chains' embedded name prefix.
+    ("p29_w3_distillation_tower", "p29_w3_cryo_tower", "p29_w3_crucible_ladder"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 

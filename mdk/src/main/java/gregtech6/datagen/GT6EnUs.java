@@ -896,6 +896,18 @@ public class GT6EnUs extends LanguageProvider {
         // defers with the 8-material pool)
         add("block.gt6.crucible_steel_wall", "Steel Wall");
         add("block.gt6.crucible_steel", "Large Steel Crucible");
+        // task p29-w3-distill-crucible — the crucible ladder (the Loader :1271-1277 name
+        // column verbatim; the ladder walls compose "<mat> Wall" over the EXISTING
+        // gt6.row.mat words — zero new unit keys) and the twin towers (:1226-1227 verbatim)
+        add("block.gt6.crucible_stainless_steel", "Large Stainless Steel Crucible");
+        add("block.gt6.crucible_invar", "Large Invar Crucible");
+        add("block.gt6.crucible_titanium", "Large Titanium Crucible");
+        add("block.gt6.crucible_tungstensteel", "Large Tungstensteel Crucible");
+        add("block.gt6.crucible_tungsten", "Large Tungsten Crucible");
+        add("block.gt6.crucible_tantalum_hafnium_carbide", "Large Tantalum Hafnium Carbide Crucible");
+        add("block.gt6.crucible_adamantium", "Large Adamantium Crucible");
+        add("block.gt6.distillation_tower", "Distillation Tower");
+        add("block.gt6.cryo_distillation_tower", "Cryo Distillation Tower");
         add("block.gt6.multiblock_lightning_rod", "Lightning Rod Electric Output");
         add("block.gt6.machine_wall_tungsten", "Tungsten Wall");
         add("block.gt6.niobium_titanium_coil", "Large Niobium-Titanium Coil");

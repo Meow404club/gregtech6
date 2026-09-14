@@ -217,7 +217,7 @@ public class GT6LangParityTest {
  * words 蒸汽裂解器/催化裂解器/织布机/凝结器/转换器/浸洗器/高压釜), both locales; zh == en,
  * the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2905; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales)
+private static final int ZH_KEY_FLOOR = 2914; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales) +9 (task p29-w3-distill-crucible: the 7 crucible ladder rungs + the twin towers; both locales — the ladder walls compose over the EXISTING gt6.row.mat words, zero new keys)
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -951,6 +951,10 @@ private static final int ZH_KEY_FLOOR = 2905; // 2839 +3 (task p29-w2-eu-special
 		}
 		for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.ROWS) tExempt.add(tRow.path()); // CrucibleBlock.getName (GT6Crucibles:182)
 		for (GT6Crucibles.CrucibleRow tRow : GT6Crucibles.CRUCIBLE_ROWS) tExempt.add(tRow.path()); // GTCrucibleControllerBlock.getName
+		// task p29-w3-distill-crucible — the seven ladder wall carriers (GTCrucibleWallBlock
+		// getName -> the mComposedName metal-wall template over the EXISTING gt6.row.mat words;
+		// the Steel wall keeps its vanilla key — the p26 single-rung atomic pin)
+		for (var tWallEntry : GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.entrySet()) tExempt.add(tWallEntry.getKey());
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) tExempt.add(tRow.path()); // GT6HopperBlock.getName -> displayOf (GT6Hoppers:235)
 		for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) tExempt.add(tRow.path()); // SteamEngineBlock.getName (GT6Kinetics:401)
 		for (GT6Molds.MoldRow tRow : GT6Molds.ROWS) tExempt.add(tRow.path()); // MoldBlock.getName (GT6Molds:316)
@@ -1104,7 +1108,7 @@ private static final int ZH_KEY_FLOOR = 2905; // 2839 +3 (task p29-w2-eu-special
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(1075, tExemptTotal, "the derived composed-name exemption census"
+		assertEquals(1089, tExemptTotal, "the derived composed-name exemption census"
 			+ " (+16 task p29-w3-nbtdesign-parts: the ten composed metal-wall carriers"
 			+ " + the six dense-wall additions joined the carrier set — the five"
 			+ " pre-existing dense rows were already exempted)"
@@ -1115,7 +1119,10 @@ private static final int ZH_KEY_FLOOR = 2905; // 2839 +3 (task p29-w2-eu-special
 			+ " the 14 eu-special row carriers joined at 974 + 14, task p29-w2-eu-special;"
 			+ " the 30 exotic-energy row carriers joined at 988 + 30, task p29-w2-exotic-energy;"
 			+ " the 25 eu-core 5-tier row carriers joined at 1018 + 25, task p29-w2-eu-core-5tier;"
-			+ " the 16 hu-tu row carriers joined at 1043 + 16, task p29-w2-hu-tu-piggyback)");
+			+ " the 16 hu-tu row carriers joined at 1043 + 16, task p29-w2-hu-tu-piggyback)"
+			+ " (+14 task p29-w3-distill-crucible: the seven crucible ladder rung carriers"
+			+ " (the CRUCIBLE_ROWS walk grew 1 -> 8) + the seven dedicated GTCrucibleWallBlock"
+			+ " wall carriers over the metal-wall template))");
 		assertEquals(134, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"
