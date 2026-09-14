@@ -226,9 +226,13 @@ public final class GT6Distillation {
 		@Nullable
 		private GTMultiBlockPattern mStructurePattern = null;
 
-		/** The registry-path constructor (the BET factory form). */
+		/**
+		 * The registry-path constructor — the one the BET factory's method reference resolves
+		 * to, so it MUST carry the type (the CokeOven form: a null type here silently killed
+		 * the ticker pairing and the save mapping — the live r1-r6 debugging cycle).
+		 */
 		public TileEntityDistillationTower(BlockPos aPos, BlockState aState) {
-			this(null, aPos, aState);
+			this(TOWER_BE.get(), aPos, aState);
 		}
 
 		/** The test seam: offline fixtures build their own BET (the frozen-registry form). */
@@ -423,6 +427,7 @@ public final class GT6Distillation {
 
 			if (aApplyRecipe) aApplyRecipe = !mRequiresIgnition || mIgnited > 0 || mActive; // :737
 			if (!tRecipe.isRecipeInputEqual(aApplyRecipe, false, tankSnapshot(), tInputs)) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS; // :738
+			if (aApplyRecipe) drainTankFor(tRecipe); // the tank mirror — see tankSnapshot
 			mCouldUseRecipe = true; // :739
 			if (!aApplyRecipe) return FOUND_AND_COULD_HAVE_USED_RECIPE; // :740
 
@@ -432,7 +437,10 @@ public final class GT6Distillation {
 					tMaxProcessCount = (int) gregapi.util.UT.Code.bind(1, tMaxProcessCount, mInput / Math.max(1, tRecipe.mEUt));
 				}
 				int tExtra = 0;
-				while (tExtra < tMaxProcessCount - 1 && tRecipe.isRecipeInputEqual(true, false, tankSnapshot(), tInputs)) tExtra++;
+				while (tExtra < tMaxProcessCount - 1 && tRecipe.isRecipeInputEqual(true, false, tankSnapshot(), tInputs)) {
+					drainTankFor(tRecipe); // the per-extra-stage tank mirror
+					tExtra++;
+				}
 				tMaxProcessCount = 1 + tExtra;
 			}
 
@@ -464,12 +472,26 @@ public final class GT6Distillation {
 			return FOUND_AND_SUCCESSFULLY_USED_RECIPE; // :777
 		}
 
-		/** The input-tank snapshot for the recipe seams (null = empty). */
+		/**
+		 * The input-tank snapshot for the recipe seams (null = empty). COPIES, not the live
+		 * stack: the consume phase SHRINKS the passed stacks, and {@code FluidTankGT.getFluid()}
+		 * returns the internal carrier whose {@code setAmount(0)} would collapse the fluid
+		 * identity to EMPTY while the authoritative long amount stayed — the live r6 corruption
+		 * (in_tank=[1000mB minecraft:empty]). The tank itself is drained by
+		 * {@link #drainTankFor} after each successful apply-stage.
+		 */
 		@Nullable
 		private FluidStack[] tankSnapshot() {
 			FluidStack tContent = mTankInput.fluid();
 			if (tContent == null || tContent.getAmount() <= 0) return null;
-			return new FluidStack[] {tContent};
+			return new FluidStack[] {tContent.copy()};
+		}
+
+		/** One apply-stage's tank drain: the recipe's fluid-input amounts, mirrored off the COPIES. */
+		private void drainTankFor(Recipe aRecipe) {
+			for (FluidStack tFluid : aRecipe.mFluidInputs) {
+				if (tFluid != null && !tFluid.isEmpty()) mTankInput.remove(tFluid.getAmount());
+			}
 		}
 
 		// ---------------------------------------------------------------------------
@@ -484,7 +506,12 @@ public final class GT6Distillation {
 			for (int i = tRecipes.mInputItemsCount, n = tRecipes.mInputItemsCount + tRecipes.mOutputItemsCount; i < n; i++) {
 				ItemStack tStack = slot(i);
 				if (tStack == null || tStack.isEmpty()) continue;
-				ItemStack tRest = tTarget.insertItem(-1, tStack, false);
+				// the IItemHandler has NO insert-any-slot form — walk the slots (the -1 shortcut
+				// threw ArrayIndexOutOfBounds inside InvWrapper, the live r7 tick killer)
+				ItemStack tRest = tStack;
+				for (int tTargetSlot = 0; tTargetSlot < tTarget.getSlots() && !tRest.isEmpty(); tTargetSlot++) {
+					tRest = tTarget.insertItem(tTargetSlot, tRest, false);
+				}
 				if (tRest.isEmpty() || tRest.getCount() < tStack.getCount()) {
 					mInventory.setStackInSlot(i, tRest.isEmpty() ? ItemStack.EMPTY : tRest);
 					mInventoryChanged = true;
@@ -624,7 +651,12 @@ public final class GT6Distillation {
 				if (aResource == null || aResource.isEmpty()) return 0;
 				FluidStack tContent = mTower.mTankInput.fluid();
 				if (tContent != null && !tContent.isEmpty() && !mTower.mTankInput.contains(aResource)) return 0; // the contains gate
-				return (int) Math.min(Integer.MAX_VALUE, mTower.mTankInput.add(aResource.getAmount(), aResource)); // the long add → int contract
+				int rFilled = (int) Math.min(Integer.MAX_VALUE, mTower.mTankInput.add(aResource.getAmount(), aResource)); // the long add → int contract
+				if (rFilled > 0 && aAction.execute()) {
+					mTower.setChanged();
+					mTower.mInventoryChanged = true; // the recipe re-check window (the MultiBlockFluidHandler drain-side beat)
+				}
+				return rFilled;
 			}
 
 			@Override
@@ -718,15 +750,17 @@ public final class GT6Distillation {
 			tDist.then(net.minecraft.commands.Commands.literal("fluid")
 					.then(net.minecraft.commands.Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
 							.then(net.minecraft.commands.Commands.literal("fill")
-									.then(net.minecraft.commands.Commands.argument("fluid", com.mojang.brigadier.arguments.StringArgumentType.word())
+									// the ResourceLocation argument — the word()/string() readers stop at the
+									// ':' of a namespaced id (the live r1 parse error); the gt6machine form
+									.then(net.minecraft.commands.Commands.argument("fluid", net.minecraft.commands.arguments.ResourceLocationArgument.id())
 											.executes(aContext -> fill(aContext.getSource(),
 													net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-													com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "fluid"),
+													net.minecraft.commands.arguments.ResourceLocationArgument.getId(aContext, "fluid"),
 													1000))
 											.then(net.minecraft.commands.Commands.argument("mB", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
 													.executes(aContext -> fill(aContext.getSource(),
 															net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-															com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "fluid"),
+															net.minecraft.commands.arguments.ResourceLocationArgument.getId(aContext, "fluid"),
 															com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB"))))))
 							.then(net.minecraft.commands.Commands.literal("stat")
 									.executes(aContext -> fluidStat(aContext.getSource(),
@@ -760,8 +794,9 @@ public final class GT6Distillation {
 				if (aSource.getLevel().getBlockEntity(tCell) instanceof MultiBlockPartBlockEntity tPart && tPart.getTarget(false) == tTower) tLinked++;
 			}
 			boolean tBlockFormed = aSource.getLevel().getBlockState(tTower.getBlockPos()).getValue(TileEntityBase10MultiBlockBase.FORMED);
-			String tMachine = String.format("machine: progress=%d/%d energy=%d min_energy=%d active=%s stopped=%s in_tank=[%s] out_tank=[%s]",
+			String tMachine = String.format("machine: progress=%d/%d energy=%d min_energy=%d window=%d/%d/%d timer=%d active=%s stopped=%s in_tank=[%s] out_tank=[%s]",
 					tTower.mProgress, tTower.mMaxProgress, tTower.mEnergy, tTower.mMinEnergy,
+					tTower.mInputMin, tTower.mInput, tTower.mInputMax, tTower.getTimer(),
 					tTower.mActive, tTower.mStopped, tankText(tTower.mTankInput), tankText(tTower.mTanksOutput[0]));
 			String tReport = String.format("GT6 %s at %s: %s okay=%s block_formed=%s linked_parts=%d/81 | %s",
 					tTower.getTileEntityName(), tTower.getBlockPos().toShortString(), tVerdict, tTower.mStructureOkay,
@@ -776,23 +811,15 @@ public final class GT6Distillation {
 		}
 
 		/** Fills the input tank THROUGH the tower's own fluid capability (the fill face under test). */
-		private static int fill(net.minecraft.commands.CommandSourceStack aSource, BlockPos aPos, String aFluidWord, int aAmount) {
+		private static int fill(net.minecraft.commands.CommandSourceStack aSource, BlockPos aPos, net.minecraft.resources.ResourceLocation aFluidId, int aAmount) {
 			TileEntityDistillationTower tTower = towerAt(aSource, aPos);
 			if (tTower == null) {
 				aSource.sendFailure(Component.literal("No distillation tower at " + aPos.toShortString()));
 				return 0;
 			}
-			net.minecraft.resources.ResourceLocation tFluidId;
-			try {
-				String tLower = aFluidWord.toLowerCase(Locale.ROOT); // the precomputed arg — the stonecutter ctor swap rewrites simple-arg calls only
-				tFluidId = new net.minecraft.resources.ResourceLocation(tLower);
-			} catch (IllegalArgumentException e) {
-				aSource.sendFailure(Component.literal("Malformed fluid id: " + aFluidWord));
-				return 0;
-			}
-			Fluid tFluid = ForgeRegistries.FLUIDS.getValue(tFluidId);
+			Fluid tFluid = ForgeRegistries.FLUIDS.getValue(aFluidId);
 			if (tFluid == null || tFluid.defaultFluidState().isEmpty()) {
-				aSource.sendFailure(Component.literal("Unknown fluid: " + aFluidWord));
+				aSource.sendFailure(Component.literal("Unknown fluid: " + aFluidId));
 				return 0;
 			}
 			//? if forge {
@@ -806,7 +833,7 @@ public final class GT6Distillation {
 			}
 			int tAccepted = tHandler.fill(new FluidStack(tFluid, aAmount), FluidAction.EXECUTE);
 			String tLine = String.format("GT6 %s fluid fill at %s: accepted %d/%d mB of %s%s, in_tank=[%s]",
-					tTower.getTileEntityName(), tTower.getBlockPos().toShortString(), tAccepted, aAmount, tFluidId,
+					tTower.getTileEntityName(), tTower.getBlockPos().toShortString(), tAccepted, aAmount, aFluidId,
 					tAccepted == 0 ? " (REJECTED)" : " (ACCEPTED)", tankText(tTower.mTankInput));
 			if (tAccepted <= 0) {
 				aSource.sendFailure(Component.literal(tLine));
