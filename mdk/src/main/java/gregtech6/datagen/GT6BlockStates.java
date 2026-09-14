@@ -178,6 +178,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addTanks(); // task p29-w3-tank-valves — the 25 valve controllers
         addTurbinesDynamo(); // task p29-w3-turbine-dynamo — the Large Turbine + Large Dynamo controllers
         addLargeCrucible(); // task p26-crucible-multiblock
+        addDistillationTowers(); // task p29-w3-distill-crucible — the twin tower controllers
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
         addFoamBlocks(); // task p26-c-foam-block-family — the C-Foam pair + slabs + the owned carrier
@@ -234,9 +235,32 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tWall = gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL.get();
         simpleBlock(tWall, models().cubeAll("crucible_steel_wall", modLoc("block/large_boiler/wall")));
         itemModels().withExistingParent("crucible_steel_wall", modLoc("block/crucible_steel_wall"));
+        // task p29-w3-distill-crucible ③ — the seven ladder walls (the same machine-wall
+        // placeholder; the composed names ride the metal-wall template, zero new keys)
+        for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.values()) {
+            Block tLadderWall = tHandle.get();
+            simpleBlock(tLadderWall, models().cubeAll(tHandle.getId().getPath(), modLoc("block/large_boiler/wall")));
+            itemModels().withExistingParent(tHandle.getId().getPath(), modLoc("block/" + tHandle.getId().getPath()));
+        }
         for (gregtech6.registry.GT6Crucibles.CrucibleRow tRow : gregtech6.registry.GT6Crucibles.CRUCIBLE_ROWS) {
             Block tBlock = gregtech6.registry.GT6Crucibles.CRUCIBLE_BLOCKS_BY_PATH.get(tRow.path()).get();
             ModelFile tModel = models().cubeAll(tRow.path(), modLoc("block/large_boiler/wall"));
+            getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
+    }
+
+    /**
+     * Task p29-w3-distill-crucible ①② — the twin tower controllers (Loader:1226-1227,
+     * NBT_TEXTURE "distillationtower"/"cryodistillationtower"): placeholder cubes over the
+     * BORROWED distillation-tower-part texture (the card ① texture table carries no
+     * controller family — the machine-wall placeholder convention; the FACING×FORMED block
+     * state coverage rides forAllStates like the crucible controllers).
+     */
+    private void addDistillationTowers() {
+        for (gregtech6.registry.GT6Distillation.TowerRow tRow : gregtech6.registry.GT6Distillation.ROWS) {
+            Block tBlock = gregtech6.registry.GT6Distillation.TOWER_BLOCKS_BY_PATH.get(tRow.path()).get();
+            ModelFile tModel = models().cubeAll(tRow.path(), modLoc("block/parts/distillationtowerparts/0/colored/side"));
             getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
             itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }

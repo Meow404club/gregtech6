@@ -103,6 +103,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
                 new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
                 new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-turbine-dynamo — the twelve turbine/dynamo controllers
+                new SubProviderEntry(GT6DistillCrucibleLoot::new, LootContextParamSets.BLOCK), // task p29-w3-distill-crucible — the towers + the crucible ladder
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -141,6 +142,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
                 new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
                 new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-turbine-dynamo — the twelve turbine/dynamo controllers
+                new SubProviderEntry(GT6DistillCrucibleLoot::new, LootContextParamSets.BLOCK), // task p29-w3-distill-crucible — the towers + the crucible ladder
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -1812,6 +1814,23 @@ public final class GT6LootTables extends LootTableProvider {
         List<Block> rBlocks = new ArrayList<>();
         for (var tRow : gregtech6.registry.GT6Tanks.ROWS) {
             rBlocks.add(gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get());
+    /**
+     * The distill-crucible family block list (task p29-w3-distill-crucible): the two tower
+     * controllers + the SEVEN new crucible rungs and their walls (self-drops, the MTE
+     * default). The pre-existing crucible_steel lootless gap CARRIES (the P26 state — not
+     * this card's delta, the dense-wall gap precedent).
+     */
+    public static List<Block> distillCrucibleLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (var tRow : gregtech6.registry.GT6Distillation.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6Distillation.TOWER_BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.values()) {
+            rBlocks.add(tHandle.get());
+        }
+        for (var tRow : gregtech6.registry.GT6Crucibles.CRUCIBLE_ROWS) {
+            if ("crucible_steel".equals(tRow.path())) continue; // the pre-existing gap carries
+            rBlocks.add(gregtech6.registry.GT6Crucibles.CRUCIBLE_BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
     }
@@ -1826,6 +1845,16 @@ public final class GT6LootTables extends LootTableProvider {
         }
          *///?} else {
         public GT6TankBlockLoot() {
+    /** The distill-crucible self-drop provider (task p29-w3-distill-crucible; the part provider shape). */
+    public static final class GT6DistillCrucibleLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6DistillCrucibleLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6DistillCrucibleLoot() {
             super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         }
         //?}
@@ -1833,11 +1862,13 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected Iterable<Block> getKnownBlocks() {
             return tankLootBlocks();
+            return distillCrucibleLootBlocks();
         }
 
         @Override
         protected void generate() {
             for (Block tBlock : tankLootBlocks()) dropSelf(tBlock);
+            for (Block tBlock : distillCrucibleLootBlocks()) dropSelf(tBlock);
         }
     }
 }

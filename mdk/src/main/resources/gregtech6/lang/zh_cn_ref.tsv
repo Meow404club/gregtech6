@@ -60,11 +60,20 @@ direct	block.gt6.cfoam_fresh_slab	新鲜建筑泡沫台阶	hand
 direct	block.gt6.cfoam_owned	强化建筑泡沫	hand
 direct	block.gt6.cfoam_slab	建筑泡沫台阶	hand
 direct	block.gt6.crank	手摇曲柄	hand
+direct	block.gt6.crucible_adamantium	大型艾德曼合金坩埚	hand
+direct	block.gt6.crucible_invar	大型殷钢坩埚	hand
+direct	block.gt6.crucible_stainless_steel	大型不锈钢坩埚	hand
 direct	block.gt6.crucible_steel	大型钢坩埚	hand
 direct	block.gt6.crucible_steel_wall	钢壁板	hand
+direct	block.gt6.crucible_tantalum_hafnium_carbide	大型碳化钽铪坩埚	hand
+direct	block.gt6.crucible_titanium	大型钛坩埚	hand
+direct	block.gt6.crucible_tungsten	大型钨坩埚	hand
+direct	block.gt6.crucible_tungstensteel	大型钨钢坩埚	hand
 direct	block.gt6.crusher	破碎机	hand
 direct	block.gt6.crusher_wheels	破碎机辊轮	hand
+direct	block.gt6.cryo_distillation_tower	低温蒸馏塔	hand
 direct	block.gt6.distill_part	蒸馏塔壁	hand
+direct	block.gt6.distillation_tower	蒸馏塔	hand
 direct	block.gt6.drawer_bronze	青铜四格抽屉	hand
 direct	block.gt6.drawer_steel	钢四格抽屉	hand
 direct	block.gt6.electric_dynamo	发电机 (LV)	hand

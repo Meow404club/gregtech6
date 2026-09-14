@@ -217,7 +217,7 @@ public class GT6LangParityTest {
  * words 蒸汽裂解器/催化裂解器/织布机/凝结器/转换器/浸洗器/高压釜), both locales; zh == en,
  * the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2905; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales)
+private static final int ZH_KEY_FLOOR = 2914; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales) +9 (task p29-w3-distill-crucible: the 7 crucible ladder rungs + the twin towers; both locales — the ladder walls compose over the EXISTING gt6.row.mat words, zero new keys)
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those

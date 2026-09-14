@@ -685,6 +685,19 @@ HAND_TRANSLATIONS = {
     "block.gt6.locker_steel": ("钢储物柜", "hand"),
     "block.gt6.crucible_steel": ("大型钢坩埚", "hand"),
     "block.gt6.crucible_steel_wall": ("钢壁板", "hand"),
+    # task p29-w3-distill-crucible ③ — the crucible ladder + the twin towers (the dump
+    # faces verbatim: tmp/gregtech.lang :11288-11296 the 17302-17312 MTE rows, :15186/
+    # :11246 the tower recipe/MTE faces; the ladder walls compose over the EXISTING
+    # gt6.row.mat words — no wall rows here)
+    "block.gt6.crucible_stainless_steel": ("大型不锈钢坩埚", "hand"),
+    "block.gt6.crucible_invar": ("大型殷钢坩埚", "hand"),
+    "block.gt6.crucible_titanium": ("大型钛坩埚", "hand"),
+    "block.gt6.crucible_tungstensteel": ("大型钨钢坩埚", "hand"),
+    "block.gt6.crucible_tungsten": ("大型钨坩埚", "hand"),
+    "block.gt6.crucible_tantalum_hafnium_carbide": ("大型碳化钽铪坩埚", "hand"),
+    "block.gt6.crucible_adamantium": ("大型艾德曼合金坩埚", "hand"),
+    "block.gt6.distillation_tower": ("蒸馏塔", "hand"),
+    "block.gt6.cryo_distillation_tower": ("低温蒸馏塔", "hand"),
     "block.gt6.progressmeter": ("进度传感器", "hand"),
     "block.gt6.safe_keylocked_bronze": ("钥匙锁定青铜保险箱", "hand"),
     "block.gt6.safe_keylocked_steel": ("钥匙锁定钢保险箱", "hand"),

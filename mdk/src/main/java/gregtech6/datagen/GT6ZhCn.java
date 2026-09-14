@@ -226,6 +226,18 @@ public class GT6ZhCn extends LanguageProvider {
 		// rows: 17309=大型钢坩埚, 18009=钢壁板)
 		addDirect("block.gt6.crucible_steel");
 		addDirect("block.gt6.crucible_steel_wall");
+		// task p29-w3-distill-crucible — the crucible ladder + the twin towers (the dump
+		// :11288-11296/:15186/:11246 faces; the ladder walls compose over the EXISTING
+		// gt6.row.mat words — no wall rows here, the zh template rides the same key)
+		addDirect("block.gt6.crucible_stainless_steel");
+		addDirect("block.gt6.crucible_invar");
+		addDirect("block.gt6.crucible_titanium");
+		addDirect("block.gt6.crucible_tungstensteel");
+		addDirect("block.gt6.crucible_tungsten");
+		addDirect("block.gt6.crucible_tantalum_hafnium_carbide");
+		addDirect("block.gt6.crucible_adamantium");
+		addDirect("block.gt6.distillation_tower");
+		addDirect("block.gt6.cryo_distillation_tower");
 		addDirect("block.gt6.crank");
 		addDirect("block.gt6.crusher");
 		// task p28-c-ulv-dynamo-row — the dynamo family name face (the W1 classes' deferred
