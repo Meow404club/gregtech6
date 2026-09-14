@@ -151,6 +151,29 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	public boolean mStopped = false, mCouldUseRecipe = false, mInventoryChanged = false;
 	/** Upstream :1193 NBT_NO_CONSTANT_POWER = T for the Coke Oven — the :894 reset is skipped. */
 	public boolean mNoConstantEnergy = true;
+	/**
+	 * Upstream :92 mCheapOverclocking (task p29-w3-nbtdesign-parts ②) — the
+	 * NBT_CHEAP_OVERCLOCKING rows (the Distillation Tower, Loader:1226) gate the :773
+	 * overclock loop: T = the row refuses the forced 4x-energy/2x-speed fold, the recipe
+	 * runs at its natural eUt inside the window. Registration config (the single-block
+	 * carrier pattern: constructor/factory injected, NOT persisted —
+	 * loadKeepsTheConstructorInjectedConfig).
+	 */
+	public boolean mCheapOverclocking = false;
+	/**
+	 * Upstream :92 mParallelDuration (task p29-w3-nbtdesign-parts ②) — the
+	 * NBT_PARALLEL_DURATION rows: T = the duration carries the parallels
+	 * (the :766-768 linear-duration form + the :626-629 chain-processing cap), F = the
+	 * energy does (the :770-771 form + the :743 bind). Registration config, not persisted.
+	 */
+	public boolean mParallelDuration = false;
+	/**
+	 * Upstream :99 mEnergyTypeAccepted (task p29-w3-nbtdesign-parts ②) — the
+	 * NBT_ENERGY_ACCEPTED carrier driving the :743/:770 type gates; the base default TU is
+	 * the Coke Oven shape (the :770 TU half keeps a constant per-process energy and the
+	 * :743 bind folds away). Registration config, not persisted.
+	 */
+	public gregapi.code.TagData mEnergyTypeAccepted = gregapi.data.TD.Energy.TU;
 	/** The output-blockage counter (upstream :98, the canOutput diagnostic; the :867-884 reader is cut with auto-IO). */
 	public long mOutputBlocked = 0;
 
@@ -198,6 +221,57 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			mRecipes = tMap;
 		}
 		return tMap;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the row-side energy config (upstream readFromNBT2 :126-131, task p29-w3-nbtdesign-parts ②)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The carrier of the upstream per-row NBT energy keys (MultiTileEntityBasicMachine
+	 * readFromNBT2 :126-131) — the fixed-window forms the W3 rows ride:
+	 * <ul>
+	 * <li>the DERIVED form: {@code nbtInput} alone → {@code mInput = in, mInputMin = in/2,
+	 *     mInputMax = in*2} (:126) — the Coke Oven :1193 triple (in 1 → 1/1/16 with the
+	 *     upstream (1+1)/2 integer division) and the TIER_INPUTS ladders;</li>
+	 * <li>the EXPLICIT form: {@code nbtInputMin}/{@code nbtInputMax} override AFTER the
+	 *     derived form (:127-128) — the :1229 LargeCentrifuge shape (512/1/4096:
+	 *     NBT_INPUT 512, NBT_INPUT_MIN 1, NBT_INPUT_MAX 4096);</li>
+	 * <li>{@code nbtParallel} clamps to ≥ 1 (:130); the two booleans are the :122/:131
+	 *     flags.</li>
+	 * </ul>
+	 * {@code null} = the key absent (the upstream {@code hasKey} gate; the field keeps its
+	 * prior value). Registration config is compile-time here — {@link #applyEnergyRowSpec}
+	 * re-points the live fields, nothing is persisted (the single-block
+	 * loadKeepsTheConstructorInjectedConfig contract).
+	 */
+	public record EnergyRowSpec(Long nbtInput, Long nbtInputMin, Long nbtInputMax, Integer nbtParallel,
+			Boolean cheapOverclocking, Boolean parallelDuration) {
+
+		/** The pure derived-form factory (an NBT_INPUT-only row). */
+		public static EnergyRowSpec ofInput(long aInput) {
+			return new EnergyRowSpec(aInput, null, null, null, null, null);
+		}
+
+		/** All keys absent — the applier then changes nothing (the defaults stand). */
+		public static EnergyRowSpec none() {
+			return new EnergyRowSpec(null, null, null, null, null, null);
+		}
+	}
+
+	/**
+	 * Upstream :126-131 verbatim, application order included: NBT_INPUT derives
+	 * (min, in, max) FIRST, the MIN/MAX overrides land AFTER, the parallel clamps, the
+	 * two flags re-point. Returns the applied spec for chaining assertions.
+	 */
+	public EnergyRowSpec applyEnergyRowSpec(EnergyRowSpec aSpec) {
+		if (aSpec.nbtInput() != null) { mInput = aSpec.nbtInput(); mInputMin = aSpec.nbtInput() / 2; mInputMax = aSpec.nbtInput() * 2; } // :126
+		if (aSpec.nbtInputMin() != null) mInputMin = aSpec.nbtInputMin();                                                              // :127
+		if (aSpec.nbtInputMax() != null) mInputMax = aSpec.nbtInputMax();                                                              // :128
+		if (aSpec.nbtParallel() != null) mParallel = Math.max(1, aSpec.nbtParallel());                                                 // :130
+		if (aSpec.cheapOverclocking() != null) mCheapOverclocking = aSpec.cheapOverclocking();                                         // :122
+		if (aSpec.parallelDuration() != null) mParallelDuration = aSpec.parallelDuration();                                            // :131
+		return aSpec;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -392,9 +466,13 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		if (!aApplyRecipe) return FOUND_AND_COULD_HAVE_USED_RECIPE; // :740
 
 		if (tMaxProcessCount > 1) {
-			// :742-745 — the TU branch skips the energy bind (:743 guard mEnergyTypeAccepted != TU).
-			// The long-overload consume (1 + isRecipeInputEqual(n-1)) becomes the boolean
-			// two-stage loop — the P4 Recipe shell carries no long form and stays untouched.
+			// :742-745 — the TU branch skips the energy bind (:743 guard mEnergyTypeAccepted != TU;
+			// RF half cut with the single-block face). The long-overload consume
+			// (1 + isRecipeInputEqual(n-1)) becomes the boolean two-stage loop — the P4 Recipe
+			// shell carries no long form and stays untouched.
+			if (!mParallelDuration && mEnergyTypeAccepted != gregapi.data.TD.Energy.TU) {
+				tMaxProcessCount = (int) gregapi.util.UT.Code.bind(1, tMaxProcessCount, mInput / Math.max(1, tRecipe.mEUt)); // :743/:730
+			}
 			int tExtra = 0;
 			while (tExtra < tMaxProcessCount - 1 && tRecipe.isRecipeInputEqual(true, false, null, tInputs)) tExtra++;
 			tMaxProcessCount = 1 + tExtra;
@@ -410,14 +488,27 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			mMaxProgress = tRecipe.mDuration;
 			mMinEnergy = 0;
 		} else {
-			// :770-771 verbatim (the TU branch of :770, mEfficiency = 10000 → units() is the identity)
-			mMinEnergy = Math.max(1, tRecipe.mEUt);
-			mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration), 10000, 10000, true));
-			// :773 verbatim — overclocking: 4x energy, 2x speed. With mInputMin = 1 the loop
-			// condition mMinEnergy < 1 is never true → zero-overclock fidelity (the ADR ruling ⑤).
-			while (mMinEnergy < mInputMin && mMinEnergy * 4 <= mInputMax) {
-				mMinEnergy *= 4;
-				mMaxProgress *= 2;
+			if (mParallelDuration) {
+				// :766-768 — the duration carries the parallels: the energy stays at the
+				// recipe eUt, the max progress scales with the process count (linear time)
+				mMinEnergy = Math.max(1, tRecipe.mEUt);
+				mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, 10000, 10000, true));
+			} else {
+				// :770-771 — the energy carries the parallels; the TU half (:770 ternary)
+				// keeps a constant per-process energy (the Coke Oven shape), the RF half is
+				// cut with the single-block face; mEfficiency = 10000 → units() is the identity
+				mMinEnergy = Math.max(1, mEnergyTypeAccepted == gregapi.data.TD.Energy.TU ? tRecipe.mEUt : tRecipe.mEUt * tMaxProcessCount);
+				mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration), 10000, 10000, true));
+			}
+			// :773 — overclocking: 4x energy, 2x speed. mCheapOverclocking = T (the
+			// NBT_CHEAP_OVERCLOCKING rows) refuses the fold; with the Coke Oven window
+			// mInputMin = 1 the loop condition mMinEnergy < 1 is never true → zero-overclock
+			// fidelity (the ADR ruling ⑤).
+			if (!mCheapOverclocking) {
+				while (mMinEnergy < mInputMin && mMinEnergy * 4 <= mInputMax) {
+					mMinEnergy *= 4;
+					mMaxProgress *= 2;
+				}
 			}
 		}
 
@@ -428,11 +519,18 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	/**
 	 * Upstream :620-668 — the output-slot blockage semantics kept (equal item + capacity,
 	 * mNeedsEmptyOutput), returns the parallel count (mParallel = 16); the doOutputItems
-	 * pre-push (:623) is cut with the auto-IO surface; the mParallelDuration chain-limiting
-	 * loop (:626-629) is cut (mParallelDuration = false for the Coke Oven shape).
+	 * pre-push (:623) is cut with the auto-IO surface. The mParallelDuration chain-limiting
+	 * loop (:626-629) is LIVE since task p29-w3-nbtdesign-parts ② (the Coke Oven shape
+	 * keeps mParallelDuration = false, so the oven path is unchanged).
 	 */
 	public int canOutput(Recipe aRecipe) {
 		int rMaxTimes = (int)mParallel; // :621
+
+		if (mParallelDuration) {
+			// :626-629 verbatim — chain processing: don't take more than 30..120 seconds
+			// worth of input at a time (the total power must stay inside mInputMax * 600)
+			while (rMaxTimes > 1 && aRecipe.getAbsoluteTotalPower() * rMaxTimes > mInputMax * 600) rMaxTimes--;
+		}
 
 		for (int i = 0, j = SLOT_INPUT + 1; i < recipes().mOutputItemsCount && i < aRecipe.mOutputs.length; i++, j++) { // :631
 			ItemStack tOutput = aRecipe.mOutputs[i];
