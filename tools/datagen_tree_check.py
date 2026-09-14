@@ -544,6 +544,14 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/gt6/recipes/smeltery_stone.json",
     "data/gt6/advancements/recipes/misc/mold_stone.json",
     "data/gt6/advancements/recipes/misc/smeltery_stone.json",
+    # task p29-w2-eu-core-5tier 交卡门禁补录（2026-09-14，非本卡面——p28-c-water-wheel
+    # 遗留缺口由本卡新鲜 neo 节点快照首次显形：GT6CraftingRecipes.buildRecipes 的
+    # neoforge 分支漏了 waterWheelBuilder()（forge 分支 ：192 有），canonical 树的
+    # data/gt6/recipes/water_wheel.json(+advancement) 由 forge 腿独产，与 mold_stone
+    # 同构 forge-gated。runtime 不受影响（generated 树双腿打包共用）；neo 分支补行
+    # 归后续水车轮微卡。
+    "data/gt6/recipes/water_wheel.json",
+    "data/gt6/advancements/recipes/misc/water_wheel.json",
 })
 
 # ── 声明偏离带（canonical 前瞻孪生树，p27-vanilla-tag-dual-tree 引入）──────────────

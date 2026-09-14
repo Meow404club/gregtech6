@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "active=false,facing=east,running=false": {
+      "model": "gt6:block/scannervisuals",
+      "y": 90
+    },
+    "active=false,facing=east,running=true": {
+      "model": "gt6:block/scannervisuals_running",
+      "y": 90
+    },
+    "active=false,facing=north,running=false": {
+      "model": "gt6:block/scannervisuals"
+    },
+    "active=false,facing=north,running=true": {
+      "model": "gt6:block/scannervisuals_running"
+    },
+    "active=false,facing=south,running=false": {
+      "model": "gt6:block/scannervisuals",
+      "y": 180
+    },
+    "active=false,facing=south,running=true": {
+      "model": "gt6:block/scannervisuals_running",
+      "y": 180
+    },
+    "active=false,facing=west,running=false": {
+      "model": "gt6:block/scannervisuals",
+      "y": 270
+    },
+    "active=false,facing=west,running=true": {
+      "model": "gt6:block/scannervisuals_running",
+      "y": 270
+    },
+    "active=true,facing=east,running=false": {
+      "model": "gt6:block/scannervisuals_active",
+      "y": 90
+    },
+    "active=true,facing=east,running=true": {
+      "model": "gt6:block/scannervisuals_active",
+      "y": 90
+    },
+    "active=true,facing=north,running=false": {
+      "model": "gt6:block/scannervisuals_active"
+    },
+    "active=true,facing=north,running=true": {
+      "model": "gt6:block/scannervisuals_active"
+    },
+    "active=true,facing=south,running=false": {
+      "model": "gt6:block/scannervisuals_active",
+      "y": 180
+    },
+    "active=true,facing=south,running=true": {
+      "model": "gt6:block/scannervisuals_active",
+      "y": 180
+    },
+    "active=true,facing=west,running=false": {
+      "model": "gt6:block/scannervisuals_active",
+      "y": 270
+    },
+    "active=true,facing=west,running=true": {
+      "model": "gt6:block/scannervisuals_active",
+      "y": 270
+    }
+  }
+}

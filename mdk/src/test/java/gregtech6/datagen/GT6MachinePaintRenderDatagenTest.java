@@ -34,9 +34,10 @@
  * sharing the ULV rung's family texture set) + the six P29 W1 process families (24,
  * task p29-w1-kinetic-process-ladder) + the seven eu-hu families (25, task
  * p29-w1-eu-hu-families) + the six exotic-energy families (30, task
- * p29-w2-exotic-energy) = 149 blocks (the
+ * p29-w2-exotic-energy) + the five eu-core 5-tier families (25, task
+ * p29-w2-eu-core-5tier) = 188 blocks (the
  * GTMachines.paintableBlockArray
- * registration census), three models each (inactive/active/running) = 447 block-model
+ * registration census), three models each (inactive/active/running) = 564 block-model
  * JSONs. Upstream canonical: every faced face multiplies the grayscale texture by mRGBa
  * (MultiTileEntityBasicMachine.java:1014), so all three models tint identically.
  */
@@ -62,7 +63,7 @@ import com.google.gson.JsonParser;
 
 class GT6MachinePaintRenderDatagenTest {
 
-    /** The 163 machine-domain bases (the paintableBlockArray census). */
+    /** The 188 machine-domain bases (the paintableBlockArray census). */
     private static final List<String> MACHINE_BASES = List.of(
             "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
@@ -102,7 +103,12 @@ class GT6MachinePaintRenderDatagenTest {
             "laser_engraver", "laser_engraver_t2", "laser_engraver_t3", "laser_engraver_t4", "laser_engraver_t5", // task p29-w2-exotic-energy
             "laser_welder", "laser_welder_t2", "laser_welder_t3", "laser_welder_t4", "laser_welder_t5", // task p29-w2-exotic-energy
             "freezer", "freezer_t2", "freezer_t3", "freezer_t4", "freezer_t5", // task p29-w2-exotic-energy
-            "cryo_mixer", "cryo_mixer_t2", "cryo_mixer_t3", "cryo_mixer_t4", "cryo_mixer_t5"); // task p29-w2-exotic-energy
+            "cryo_mixer", "cryo_mixer_t2", "cryo_mixer_t3", "cryo_mixer_t4", "cryo_mixer_t5", // task p29-w2-exotic-energy
+            "electrolyzer", "electrolyzer_t2", "electrolyzer_t3", "electrolyzer_t4", "electrolyzer_t5", // task p29-w2-eu-core-5tier — the first 5-tier ladders
+            "injector", "injector_t2", "injector_t3", "injector_t4", "injector_t5", // task p29-w2-eu-core-5tier
+            "printer", "printer_t2", "printer_t3", "printer_t4", "printer_t5", // task p29-w2-eu-core-5tier
+            "scannervisuals", "scannervisuals_t2", "scannervisuals_t3", "scannervisuals_t4", "scannervisuals_t5", // task p29-w2-eu-core-5tier
+            "slicer", "slicer_t2", "slicer_t3", "slicer_t4", "slicer_t5"); // task p29-w2-eu-core-5tier
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
 
@@ -157,7 +163,7 @@ class GT6MachinePaintRenderDatagenTest {
     /** The tier rows keep the family textures (the p8 texture-base overload); the p28 ULV rows and the p29 W2 _t5 rungs likewise (the addUlvLadder/addEuSpecialFamilies family tokens). */
     private static String familyOf(String aBase) {
         if (aBase.startsWith("rollingmill_t")) return "rollingmill"; // task p29-w1-kinetic-roll-ladder — the RU rungs share the ULV rung's family set
-        for (String tTier : new String[] {"_t2", "_t3", "_t4", "_t5"}) { // _t5 joins at task p29-w2-eu-special/p29-w2-exotic-energy (the first 5-tier families)
+        for (String tTier : new String[] {"_t2", "_t3", "_t4", "_t5"}) { // _t5 joins at task p29-w2-eu-core-5tier (the first 5-tier ladders)
             if (aBase.endsWith(tTier)) return artTokenOf(aBase.substring(0, aBase.length() - tTier.length()));
         }
         if (aBase.endsWith("_ulv")) return aBase.substring(0, aBase.length() - "_ulv".length()); // task p28-c-ulv-machine-ladder
@@ -192,12 +198,12 @@ class GT6MachinePaintRenderDatagenTest {
         }
     }
 
-    /** The census shape: 163 bases x 3 models = 489 tinted block models. */
+    /** The census shape: 188 bases x 3 models = 489 tinted block models. */
     @Test
     void pinnedMachinePaintCensus() {
-        assertEquals(163, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(163 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
-                "163 blocks x 3 models — the pinned tinted-model total");
+        assertEquals(188, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
+        assertEquals(188 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
+                "188 blocks x 3 models — the pinned tinted-model total");
     }
 
     /**
