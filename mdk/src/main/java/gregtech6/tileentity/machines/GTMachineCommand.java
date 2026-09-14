@@ -258,6 +258,27 @@ public final class GTMachineCommand {
 		.then(machine("unboxinator_t2", GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get("unboxinator_t2"), () -> net.minecraft.world.item.Items.MAP))
 		.then(machine("unboxinator_t3", GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get("unboxinator_t3"), () -> net.minecraft.world.item.Items.MAP))
 		.then(machine("unboxinator_t4", GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get("unboxinator_t4"), () -> net.minecraft.world.item.Items.MAP))
+		// task p29-w2-hu-tu-piggyback: the seven hu-tu families — the cracker feeds are
+		// their smoke-row item inputs (coal / charcoal), the loom reuses the W1 loom.json
+		// walk (the SAME-map kinetic rung), the generifier/bath/autoclave feeds are their
+		// smoke rows' item faces (sand / wool / kelp), and the coagulator feed is a stub
+		// (the fluid-only map's zero-item row — the chain drives the tank face, never input)
+		.then(machine("steamcracker", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker"), () -> net.minecraft.world.item.Items.COAL)) // steamcracking.json smoke row (coal + water → charcoal)
+		.then(machine("steamcracker_t2", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t2"), () -> net.minecraft.world.item.Items.COAL))
+		.then(machine("steamcracker_t3", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t3"), () -> net.minecraft.world.item.Items.COAL))
+		.then(machine("steamcracker_t4", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t4"), () -> net.minecraft.world.item.Items.COAL))
+		.then(machine("catalyticcracker", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker"), () -> net.minecraft.world.item.Items.CHARCOAL)) // catalyticcracking.json smoke row (charcoal + water → coal)
+		.then(machine("catalyticcracker_t2", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t2"), () -> net.minecraft.world.item.Items.CHARCOAL))
+		.then(machine("catalyticcracker_t3", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t3"), () -> net.minecraft.world.item.Items.CHARCOAL))
+		.then(machine("catalyticcracker_t4", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t4"), () -> net.minecraft.world.item.Items.CHARCOAL))
+		.then(machine("coagulator", GTMachines.COAGULATOR_BLOCKS_BY_PATH.get("coagulator"), () -> net.minecraft.world.item.Items.SNOWBALL)) // coagulator.json is the FLUID-ONLY row (water → snowball); the stub feed is that row's OUTPUT
+		.then(machine("generifier", GTMachines.GENERIFIER_BLOCKS_BY_PATH.get("generifier"), () -> net.minecraft.world.item.Items.SAND)) // generifier.json smoke row (sand + water → clay ball, parallel 100)
+		.then(machine("bath", GTMachines.BATH_BLOCKS_BY_PATH.get("bath"), () -> net.minecraft.world.item.Items.WHITE_WOOL)) // bath.json smoke row (wool + water → string)
+		.then(machine("autoclave", GTMachines.AUTOCLAVE_BLOCKS_BY_PATH.get("autoclave"), () -> net.minecraft.world.item.Items.KELP)) // autoclave.json smoke row (kelp + water → dried kelp)
+		.then(machine("loom", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom"), GTMachineCommand::firstPouredLoomInput)) // the W1 loom.json smoke row — the SAME-map kinetic rung
+		.then(machine("loom_t2", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t2"), GTMachineCommand::firstPouredLoomInput))
+		.then(machine("loom_t3", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t3"), GTMachineCommand::firstPouredLoomInput))
+		.then(machine("loom_t4", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t4"), GTMachineCommand::firstPouredLoomInput))
 		.then(machine("fermenter", GTMachines.FERMENTER_BLOCKS_BY_PATH.get("fermenter"), () -> net.minecraft.world.item.Items.WHEAT)); // fermenter.json smoke row (wheat + water → sugar)
 		event.getDispatcher().register(tMachine);
 		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder|rollingmill_t1..t4|rollbender|rollformer|clustermill x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
@@ -266,8 +287,14 @@ public final class GTMachineCommand {
 		// and 9 + 2 + 3 family BETs — the press/extruder join = task p26-w1-press-extruder-
 		// molds, the roll-ladder join = task p29-w1-kinetic-roll-ladder; the RU RollingMill
 		// ladder shares the p28 ULV rung's rollingmill BET, so it adds blocks but no BET).
-		LOGGER.info("GT6 machine ladder registered: 109 blocks / 27 family BETs (T1-T4 validBlocks multi-attach), tiers "
+		LOGGER.info("GT6 machine ladder registered: 125 blocks / 34 family BETs (T1-T4 validBlocks multi-attach), tiers "
 			+ java.util.Arrays.deepToString(GTMachines.TIER_INPUTS) + " crusher parallel " + java.util.Arrays.toString(GTMachines.CRUSHER_PARALLEL));
+		// the p29-w2-hu-tu registration smoke line (the runServer gate asserts it): the
+		// seven family BETs resolve — the crackers/loom TIER_INPUTS ladders + the TU four
+		// with the {1, 1, 16} window, the six-face energy mask 63 and NO_CONSTANT_POWER.
+		LOGGER.info("GT6 hu-tu families registered: 16 blocks / 7 family BETs (steamcracker+catalyticcracker HU 4-ladders, "
+			+ "loom RU 4-ladder, coagulator/generifier/bath/autoclave TU singles), TU window " + java.util.Arrays.toString(GTMachines.TU_WINDOW)
+			+ ", energy sides 63 (all six faces), NO_CONSTANT_POWER T, generifier parallel " + GTMachines.GENERIFIER_PARALLEL);
 		// the p14 dryer registration smoke line (the runServer gate asserts it): the family
 		// BET resolves, the row config is the upstream :1477-1480 columns.
 		LOGGER.info("GT6 dryer family registered: 4 blocks / 1 family BET (T1-T4 validBlocks multi-attach), HU bottom-face energy, "

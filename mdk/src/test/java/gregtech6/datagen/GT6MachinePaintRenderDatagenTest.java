@@ -108,7 +108,11 @@ class GT6MachinePaintRenderDatagenTest {
             "injector", "injector_t2", "injector_t3", "injector_t4", "injector_t5", // task p29-w2-eu-core-5tier
             "printer", "printer_t2", "printer_t3", "printer_t4", "printer_t5", // task p29-w2-eu-core-5tier
             "scannervisuals", "scannervisuals_t2", "scannervisuals_t3", "scannervisuals_t4", "scannervisuals_t5", // task p29-w2-eu-core-5tier
-            "slicer", "slicer_t2", "slicer_t3", "slicer_t4", "slicer_t5"); // task p29-w2-eu-core-5tier
+            "slicer", "slicer_t2", "slicer_t3", "slicer_t4", "slicer_t5", // task p29-w2-eu-core-5tier
+            "steamcracker", "steamcracker_t2", "steamcracker_t3", "steamcracker_t4", // task p29-w2-hu-tu-piggyback
+            "catalyticcracker", "catalyticcracker_t2", "catalyticcracker_t3", "catalyticcracker_t4",
+            "coagulator", "generifier", "bath", "autoclave",
+            "loom", "loom_t2", "loom_t3", "loom_t4");
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
 
@@ -198,12 +202,11 @@ class GT6MachinePaintRenderDatagenTest {
         }
     }
 
-    /** The census shape: 188 bases x 3 models = 489 tinted block models. */
     @Test
     void pinnedMachinePaintCensus() {
-        assertEquals(188, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(188 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
-                "188 blocks x 3 models — the pinned tinted-model total");
+        assertEquals(204, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
+        assertEquals(204 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
+                "204 blocks x 3 models — the pinned tinted-model total");
     }
 
     /**

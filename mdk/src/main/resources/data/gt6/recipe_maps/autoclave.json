@@ -1,0 +1,14 @@
+{
+  "recipes": [
+    {
+      "inputs": [
+        { "item": "minecraft:kelp", "count": 1 },
+        { "item": "minecraft:bone_meal", "count": 1 }
+      ],
+      "fluidInputs": [{ "fluid": "minecraft:water", "amount": 500 }],
+      "outputs": [{ "item": "minecraft:kelp", "count": 2 }],
+      "duration": 128,
+      "eut": 16
+    }
+  ]
+}

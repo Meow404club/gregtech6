@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "inputs": [{ "item": "minecraft:white_wool", "count": 1 }],
+      "fluidInputs": [{ "fluid": "minecraft:water", "amount": 1000 }],
+      "outputs": [{ "item": "minecraft:string", "count": 4 }],
+      "duration": 128,
+      "eut": 16
+    }
+  ]
+}

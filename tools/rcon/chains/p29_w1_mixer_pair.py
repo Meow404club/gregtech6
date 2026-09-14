@@ -21,8 +21,12 @@ progress = half speed / 2× the energy-time, NOT a 2× speed-up):
 
   the retained-vs-reset asymmetry the live run pinned (the rcon-session-1201
   960df463 red): the kinetic mixer KEEPS progress across the command-idle ticks
-  (RU machines ride mNoConstantEnergy, so doInactive's CONSTANT_ENERGY :894
-  reset does NOT apply) — its phase-A 16 ticks are still in the bar when phase
+  (attribution CORRECTED by task p29-w2-hu-tu-piggyback — the original "RU machines
+  ride mNoConstantEnergy" was wrong: the :894 reset gate CONSTANT_ENERGY &&
+  !mNoConstantEnergy carries NO energy-type term, the
+  GT6EnergyDynamicsTest.theIdleResetGateIsTypeBlind face; the asymmetry is a
+  SUPPLY-DYNAMICS phenomenon, not a carrier clause) — its phase-A 16 ticks are
+  still in the bar when phase
   C re-injects, so the phase-C kinetic arm IS the completion tick (:539
   mProgress -= mMaxProgress parks 0/0 in-report). the ELECTRIC machine does
   idle-reset to 0 between commands (:894), which is exactly why its phase-D

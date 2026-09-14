@@ -374,6 +374,47 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tSlicer,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+
+		// task p29-w2-hu-tu-piggyback — the seven hu-tu families join (tail-append;
+		// shared serial file): the same BE class, the same item + fluid faces (the TU four
+		// carry tank faces — the coagulator zero-item row rides the 127 inv-in default,
+		// a zero-item RECIPE is not a zero-item FACE, the seam-② hard constraint; the
+		// ENERGY face rides the gregapi energy net, not these capabilities)
+		BlockEntityType<TileEntityBasicMachine> tSteamcracker = GTMachines.STEAM_CRACKER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tSteamcracker,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tSteamcracker,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tCatalyticcracker = GTMachines.CATALYTIC_CRACKER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCatalyticcracker,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCatalyticcracker,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tCoagulator = GTMachines.COAGULATOR_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCoagulator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCoagulator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tGenerifier = GTMachines.GENERIFIER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tGenerifier,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tGenerifier,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tBath = GTMachines.BATH_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tBath,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBath,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tAutoclave = GTMachines.AUTOCLAVE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tAutoclave,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tAutoclave,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tLoom = GTMachines.LOOM_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLoom,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLoom,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,

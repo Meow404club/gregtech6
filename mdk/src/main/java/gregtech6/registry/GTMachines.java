@@ -2462,7 +2462,7 @@ public final class GTMachines {
 	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill;
 	 * the Oven ladder joins in task p27-oven-heat-t-ladder; the six ULV rows join in task
 	 * p28-c-ulv-machine-ladder):
-	 * the 188 machine-domain blocks the client paint BlockColor
+	 * the 204 machine-domain blocks the client paint BlockColor
 	 * registers over — the oven ladder (4) + the shredder/crusher/lathe ladders (4 each = 12) + the
 	 * dryer (4) + the distillery (4) + the canner (4) + the sifter/compressor/wiremill
 	 * ladders (4 each = 12) + press (4) + extruder (4) + the ULV rows (5 + the rollingmill
@@ -2475,7 +2475,9 @@ public final class GTMachines {
 	 * 5 each + laminator 4 = 14, task p29-w2-eu-special) + the six exotic-energy families
 	 * (polarizer/magneticseparator/laserengraver/laserwelder/freezer/cryomixer 5 each
 	 * = 30, task p29-w2-exotic-energy) + the five eu-core families (electrolyzer/injector/
-	 * printer/scannervisuals/slicer 5 each = 25, task p29-w2-eu-core-5tier),
+	 * printer/scannervisuals/slicer 5 each = 25, task p29-w2-eu-core-5tier) + the hu-tu
+	 * piggyback (steamcracker/catalyticcracker 4 each = 8 + coagulator/generifier/bath/
+	 * autoclave 1 each = 4 + loom 4 = 16, task p29-w2-hu-tu-piggyback),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -2483,7 +2485,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(188);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(204);
 		rBlocks.add(OVEN.get());
 		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
@@ -2555,6 +2557,16 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, printerBlockArray());
 		java.util.Collections.addAll(rBlocks, scannerVisualsBlockArray());
 		java.util.Collections.addAll(rBlocks, slicerBlockArray());
+		// task p29-w2-hu-tu-piggyback — the seven hu-tu families, +16 blocks (steamcracker
+		// 4 + catalyticcracker 4 + coagulator 1 + generifier 1 + bath 1 + autoclave 1 +
+		// loom 4), the census comment and the datagen-JVM half move together
+		java.util.Collections.addAll(rBlocks, steamcrackerBlockArray());
+		java.util.Collections.addAll(rBlocks, catalyticcrackerBlockArray());
+		java.util.Collections.addAll(rBlocks, coagulatorBlockArray());
+		java.util.Collections.addAll(rBlocks, generifierBlockArray());
+		java.util.Collections.addAll(rBlocks, bathBlockArray());
+		java.util.Collections.addAll(rBlocks, autoclaveBlockArray());
+		java.util.Collections.addAll(rBlocks, loomBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -3702,8 +3714,34 @@ public final class GTMachines {
 							for (GTBasicMachineBlock.MachineRow tRow : UNBOXINATOR_ROWS) {
 								aOutput.accept(new ItemStack(UNBOXINATOR_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-							for (GTBasicMachineBlock.MachineRow tRow : FERMENTER_ROWS) {
-								aOutput.accept(new ItemStack(FERMENTER_ITEMS_BY_PATH.get(tRow.path()).get()));
+						for (GTBasicMachineBlock.MachineRow tRow : FERMENTER_ROWS) {
+							aOutput.accept(new ItemStack(FERMENTER_ITEMS_BY_PATH.get(tRow.path()).get()));
+						}
+							// task p29-w2-hu-tu-piggyback: the seven hu-tu families, +16 rows
+							// (SteamCracker/CatalyticCracker 4-ladders, the TU four singles,
+							// the kinetic Loom 4-ladder — upstream row order per family; the
+							// GTMachines. qualification dodges the simple-name forward-reference
+							// rule — the fields are declared in the tail section below)
+							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.STEAM_CRACKER_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.STEAM_CRACKER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.CATALYTIC_CRACKER_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.CATALYTIC_CRACKER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.COAGULATOR_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.COAGULATOR_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.GENERIFIER_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.GENERIFIER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.BATH_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.BATH_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.AUTOCLAVE_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.AUTOCLAVE_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.LOOM_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.LOOM_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
 							// task p29-w2-exotic-energy: the six exotic-energy families, +30 rows
 							// (Polarizer/MagneticSeparator/LaserEngraver/LaserWelder/Freezer/
@@ -3757,6 +3795,465 @@ public final class GTMachines {
 								aOutput.accept(new ItemStack(gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()));
 						})
 					.build());
+
+	// ---------------------------------------------------------------------------
+	// the P29 W2 hu-tu piggyback (task p29-w2-hu-tu-piggyback) — seven families, sixteen
+	// MachineRow rows, all MultiTileEntityBasicMachine carriers (the W1 eu-hu shape):
+	//
+	// SteamCracker 20491-94 (Loader_MultiTileEntities.java:1576-1579) and CatalyticCracker
+	//   20481-84 (:1570-1573) are the HU 4-ladder PAIR (Heat_T[1..4], the hardness ladder
+	//   6.0/4.0/9.0/12.5, NBT_INPUT 32/128/512/2048 through the TIER_INPUTS conversion,
+	//   NO NBT_PARALLEL → 1, RM.SteamCracking / RM.CatalyticCracking) — the DOUBLE-VARIANT
+	//   same-parameters pair: both maps carry the IDENTICAL RM.java constants row
+	//   (RM.java:67/:68 — 1/3/0 items, 2/9/1 fluids, MIN 2) and both registrations carry
+	//   the IDENTICAL masks (:1570 verbatim — item+tank in SBIT_U|SBIT_L auto TOP, out
+	//   SBIT_R|SBIT_B auto BACK, tank auto LEFT/RIGHT, energy SBIT_D), split only by map
+	//   and NBT_TEXTURE (the art tokens "steamcracker"/"catalyticcracker").
+	// Coagulator 22000 (:1651), Generifier 22001 (:1652), Bath 22002 (:1653) and Autoclave
+	//   22004 (:1655) are the TU FOUR SINGLES (StainlessSteel housing — the Fermenter
+	//   :1654 material word, hardness 6.0) sharing the card-① dynamics semantics:
+	//   NBT_INPUT 1 + NBT_INPUT_MIN 1 + NBT_INPUT_MAX 16 (the window {1, 1, 16} —
+	//   {@link #TU_WINDOW}, NOT the TIER_INPUTS[0] fold the Fermenter rides: the upstream
+	//   explicit MIN/MAX keys re-bind after the :126 conversion) + NBT_NO_CONSTANT_POWER T
+	//   (the :123 bind — the :894 idle reset gate is SKIPPED, the progress RETAINS across
+	//   a power gap) + NBT_ENERGY_ACCEPTED_SIDES 63 (the :151 read ORs SBIT_A → 127 = ALL
+	//   SIX faces, the machine-side first carrier of the card-① type-guard assertions).
+	//   Generifier carries NBT_PARALLEL 100 (NO NBT_PARALLEL_DURATION → the :770-771
+	//   energy-scaling arm — and as a TU carrier mMinEnergy stays mEUt, the :770 TU half).
+	//   Bath rides the P26 in-catalog RM.BATH map (only rows poured, never rebuilt — the
+	//   map's static wood-oil ladder pours ZERO rows live, so this card pours ONE bath.json
+	//   smoke row through the card-① POURABLE key); Loom rides the W1 in-catalog RM.LOOM
+	//   map (the loom.json smoke row the ElectricLoom chain already drives — the kinetic
+	//   rung is the SAME-map cross-proof).
+	// Loom 20211-14 (:1412-1415) is the RU kinetic 4-ladder (Kinetic_T[1..4], the
+	//   hardness ladder 7.0/6.0/9.0/12.5, TIER_INPUTS windows, NO parallel, RM.Loom,
+	//   item top-in/bottom-out auto TOP/BOTTOM, energy SBIT_L|SBIT_R BOTH sides — the
+	//   ElectricLoom face verbatim, zero tank keys).
+	//
+	// ONE family BET per family (the W1-trio shape): the crackers and the loom ride the
+	// SHARED kineticMachine factory body (the row drives everything); the TU four ride the
+	// {@link #tuMachine} body — the machine half + applyRow + the TU window override and
+	// the mNoConstantEnergy bind (the Canner card's tier-indexed-constants precedent: the
+	// row record stays OUT of this card's scope, the two TU-only columns are BET-factory
+	// locals). The crafting-table tails (IwI/PMP/ICI, IPI/ZMZ/ICI, T T/hMw/TdT, ChC/CMC/
+	// CwC, CwC/PMP/PPP, CwC/PMP/GPG, ShS/GMG/SwS) are the unported crafting-table domain —
+	// data-only, the rows carry no column for them (the buzzsaw toolHead precedent).
+	//
+	// KJS face of this card (the wave-plan declaration): REGISTRATION face — seven
+	// families, sixteen MachineRow rows (HU 8 + TU 4 + RU 4) — plus the datapack face
+	// (the STEAM_CRACKING/CATALYTIC_CRACKING/COAGULATOR/GENERIFIER/AUTOCLAVE smoke rows
+	// under data/gt6/recipe_maps/ through the card-① POURABLE keys, plus ONE bath.json
+	// smoke row — the BATH/LOOM maps themselves are the P26/W1 in-catalog constants,
+	// reused not rebuilt; the loom.json row is the W1 in-catalog row). NO KubeJS surface.
+	// The live NO_CONSTANT_POWER resume arm (the card-①遗留 obligation, double-recorded on
+	// the p29_w2_energy_types chain doc and the GT6EnergyDynamicsTest doc) rides the
+	// p29_w2_coagulator chain: a real TU machine RETAINS its mid-flight progress across a
+	// command-idle power gap, the constant-power shredder arm resets (the card-① live
+	// half's machine-side completion).
+	// ---------------------------------------------------------------------------
+
+	/** The Steam Cracker family unit word (the W1 one-slot key form; the upstream name column "Steam Cracker ("+aMat.getLocal()+")", :1576-1579). */
+	public static final String MACHINE_STEAM_CRACKER_UNIT_KEY = "gt6.row.machine.steam_cracker";
+
+	/** The Catalytic Cracker family unit word (the :1570-1573 name column). */
+	public static final String MACHINE_CATALYTIC_CRACKER_UNIT_KEY = "gt6.row.machine.catalytic_cracker";
+
+	/** The Loom family unit word (the :1412-1415 name column "Loom ("+aMat.getLocal()+")"). */
+	public static final String MACHINE_LOOM_UNIT_KEY = "gt6.row.machine.loom";
+
+	/** The Coagulator atomic display template — the single-variant row has NO slot (upstream name column "Coagulator", :1651). */
+	public static final String COAGULATOR_DISPLAY_KEY = "gt6.row.coagulator.display";
+
+	/** The Generifier atomic display template (upstream "Generifier", :1652). */
+	public static final String GENERIFIER_DISPLAY_KEY = "gt6.row.generifier.display";
+
+	/** The Bath atomic display template (upstream "Bath", :1653). */
+	public static final String BATH_DISPLAY_KEY = "gt6.row.bath.display";
+
+	/** The Autoclave atomic display template (upstream "Autoclave", :1655). */
+	public static final String AUTOCLAVE_DISPLAY_KEY = "gt6.row.autoclave.display";
+
+	/** The TU four housing material — the Fermenter StainlessSteel word (the :1651-1655 MT.StainlessSteel column, the same lazy supplier). */
+	public static final java.util.function.Supplier<OreDictMaterial> TU_FOUR_MATERIAL = FERMENTER_MATERIAL;
+
+	/**
+	 * The TU four explicit energy window (the :1651-1655 NBT_INPUT 1 / NBT_INPUT_MIN 1 /
+	 * NBT_INPUT_MAX 16 columns — the card-① chain dials both edges live). NOT a
+	 * TIER_INPUTS row: the upstream explicit MIN/MAX keys re-bind after the :126
+	 * conversion, so the port overrides the tier-0 assignment in the BET factory.
+	 */
+	public static final long[] TU_WINDOW = {1, 1, 16};
+
+	/** The Generifier NBT_PARALLEL column (:1652 — no NBT_PARALLEL_DURATION key, the :770-771 energy-scaling arm). */
+	public static final int GENERIFIER_PARALLEL = 100;
+
+	/** The four Steam Cracker rows, upstream line order :1576-1579 (T1-T4, the Heat_T ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> STEAM_CRACKER_ROWS = java.util.List.of(
+			steamcracker("steamcracker"   , "steel"           , "Steel"           , 20491,  6.0F, 0),
+			steamcracker("steamcracker_t2", "invar"           , "Invar"           , 20492,  4.0F, 1),
+			steamcracker("steamcracker_t3", "titanium"        , "Titanium"        , 20493,  9.0F, 2),
+			steamcracker("steamcracker_t4", "tungsten_carbide", "Tungsten Carbide", 20494, 12.5F, 3));
+
+	/** The four Catalytic Cracker rows, upstream line order :1570-1573 (T1-T4, the Heat_T ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> CATALYTIC_CRACKER_ROWS = java.util.List.of(
+			catalyticcracker("catalyticcracker"   , "steel"           , "Steel"           , 20481,  6.0F, 0),
+			catalyticcracker("catalyticcracker_t2", "invar"           , "Invar"           , 20482,  4.0F, 1),
+			catalyticcracker("catalyticcracker_t3", "titanium"        , "Titanium"        , 20483,  9.0F, 2),
+			catalyticcracker("catalyticcracker_t4", "tungsten_carbide", "Tungsten Carbide", 20484, 12.5F, 3));
+
+	/** The ONE Coagulator row (upstream :1651 — the TU single, NO NBT_INV_SIDE_IN key → the 127 field default). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> COAGULATOR_ROWS = java.util.List.of(coagulator());
+
+	/** The ONE Generifier row (upstream :1652 — the TU single with the NBT_PARALLEL 100 column). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> GENERIFIER_ROWS = java.util.List.of(generifier());
+
+	/** The ONE Bath row (upstream :1653 — the TU single over the P26 in-catalog RM.BATH map). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> BATH_ROWS = java.util.List.of(bath());
+
+	/** The ONE Autoclave row (upstream :1655 — the TU single, the tank-in face rides BOTTOM|LEFT). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> AUTOCLAVE_ROWS = java.util.List.of(autoclave());
+
+	/** The four Loom rows, upstream line order :1412-1415 (T1-T4, the Kinetic_T ladder, RU). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> LOOM_ROWS = java.util.List.of(
+			loom("loom"   , "bronze"       , "Bronze"       , 20211,  7.0F, 0),
+			loom("loom_t2", "steel"        , "Steel"        , 20212,  6.0F, 1),
+			loom("loom_t3", "titanium"     , "Titanium"     , 20213,  9.0F, 2),
+			loom("loom_t4", "tungstensteel", "Tungstensteel", 20214, 12.5F, 3));
+
+	/**
+	 * The :1570 masks — the DOUBLE-VARIANT pair shape shared by both crackers (item+tank
+	 * in SBIT_U|SBIT_L auto TOP, out SBIT_R|SBIT_B auto BACK, tank auto LEFT/RIGHT,
+	 * energy SBIT_D; the keyed masks carry the post-read OR-SBIT_A form).
+	 */
+	private static GTBasicMachineBlock.MachineRow crackerRow(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier,
+			java.util.function.Supplier<gregtech6.recipes.RecipeMap> aRecipes, String aTexture, String aUnitKey) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, HEAT_T_LADDER.get(aTier), aUnitKey, aMetaId, aHardness, aTier, 1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1570-1579*/,
+				aRecipes, TD.Energy.HU, aTexture,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D, the :151 read ORs SBIT_A*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L, the :143 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_B, the :144 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L, the :137 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_B, the :138 read*/,
+				(byte)2 /*NBT_TANK_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_TANK_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)5 /*NBT_INV_SIDE_AUTO_OUT SIDE_BACK*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/** One Steam Cracker row factory — the crackerRow shape over RM.STEAM_CRACKING and the "steamcracker" texture. */
+	private static GTBasicMachineBlock.MachineRow steamcracker(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return crackerRow(aPath, aMatSlug, aMatDisplay, aMetaId, aHardness, aTier, () -> GT6RecipeMaps.STEAM_CRACKING, "steamcracker", MACHINE_STEAM_CRACKER_UNIT_KEY);
+	}
+
+	/** One Catalytic Cracker row factory — the crackerRow shape over RM.CATALYTIC_CRACKING and the "catalyticcracker" texture. */
+	private static GTBasicMachineBlock.MachineRow catalyticcracker(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return crackerRow(aPath, aMatSlug, aMatDisplay, aMetaId, aHardness, aTier, () -> GT6RecipeMaps.CATALYTIC_CRACKING, "catalyticcracker", MACHINE_CATALYTIC_CRACKER_UNIT_KEY);
+	}
+
+	/** The :1651-1655 energy column — NBT_ENERGY_ACCEPTED_SIDES 63 through the :151 read (63 | SBIT_A = 127 = ALL SIX faces, the TU four's distinctive trait). */
+	private static final byte TU_ENERGY_SIDES = (byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L
+			| GTBasicMachineBlock.SBIT_F | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A);
+
+	/**
+	 * The ONE Coagulator row factory (upstream :1651): TU, the {1,1,16} window + the
+	 * NO_CONSTANT_POWER bind ride the BET factory (not the row), the :1651 masks —
+	 * NO NBT_INV_SIDE_IN key → the 127 field default, item out SBIT_D|SBIT_R auto BOTTOM,
+	 * tank in SBIT_U|SBIT_L auto TOP, NO NBT_TANK_SIDE_OUT key → 127, NO parallel.
+	 */
+	private static GTBasicMachineBlock.MachineRow coagulator() {
+		return new GTBasicMachineBlock.MachineRow("coagulator", "stainless_steel", "StainlessSteel", TU_FOUR_MATERIAL, COAGULATOR_DISPLAY_KEY, 22000, 6.0F,
+				0, 1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1651*/,
+				() -> GT6RecipeMaps.COAGULATOR, TD.Energy.TU, "coagulator",
+				TU_ENERGY_SIDES /*NBT_ENERGY_ACCEPTED_SIDES 63, the :151 read → all six faces*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)127 /*no NBT_INV_SIDE_IN key → the upstream field default — the fluid-only map's zero-item face*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D|SBIT_R*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)-1 /*no NBT_INV_SIDE_AUTO_IN key → SIDE_UNDEFINED*/, (byte)0 /*NBT_INV_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING*/, null /*no melting gate*/, false);
+	}
+
+	/**
+	 * The ONE Generifier row factory (upstream :1652): the coagulator energy face over the
+	 * full :1652 masks (item+tank in SBIT_U|SBIT_L auto LEFT/TOP, out SBIT_D|SBIT_R auto
+	 * RIGHT/BOTTOM) and the NBT_PARALLEL 100 column.
+	 */
+	private static GTBasicMachineBlock.MachineRow generifier() {
+		return new GTBasicMachineBlock.MachineRow("generifier", "stainless_steel", "StainlessSteel", TU_FOUR_MATERIAL, GENERIFIER_DISPLAY_KEY, 22001, 6.0F,
+				0, GENERIFIER_PARALLEL, false /*NBT_PARALLEL 100 with NO NBT_PARALLEL_DURATION key :1652 — the :770-771 arm*/,
+				() -> GT6RecipeMaps.GENERIFIER, TD.Energy.TU, "generifier",
+				TU_ENERGY_SIDES /*NBT_ENERGY_ACCEPTED_SIDES 63 → all six faces*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_D|SBIT_R*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D|SBIT_R*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING*/, null /*no melting gate*/, false);
+	}
+
+	/**
+	 * The ONE Bath row factory (upstream :1653): the generifier masks verbatim over the
+	 * P26 in-catalog RM.BATH map (reused, never rebuilt — this card pours the rows only)
+	 * and NO parallel column.
+	 */
+	private static GTBasicMachineBlock.MachineRow bath() {
+		return new GTBasicMachineBlock.MachineRow("bath", "stainless_steel", "StainlessSteel", TU_FOUR_MATERIAL, BATH_DISPLAY_KEY, 22002, 6.0F,
+				0, 1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1653*/,
+				() -> GT6RecipeMaps.BATH, TD.Energy.TU, "bath",
+				TU_ENERGY_SIDES /*NBT_ENERGY_ACCEPTED_SIDES 63 → all six faces*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_D|SBIT_R*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D|SBIT_R*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING*/, null /*no melting gate*/, false);
+	}
+
+	/**
+	 * The ONE Autoclave row factory (upstream :1655): the distinctive masks — item in
+	 * SBIT_U|SBIT_L auto LEFT, item out SBIT_B|SBIT_R auto RIGHT, tank in SBIT_D|SBIT_L
+	 * auto BOTTOM, tank out SBIT_B|SBIT_R auto BACK, all six energy faces.
+	 */
+	private static GTBasicMachineBlock.MachineRow autoclave() {
+		return new GTBasicMachineBlock.MachineRow("autoclave", "stainless_steel", "StainlessSteel", TU_FOUR_MATERIAL, AUTOCLAVE_DISPLAY_KEY, 22004, 6.0F,
+				0, 1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1655*/,
+				() -> GT6RecipeMaps.AUTOCLAVE, TD.Energy.TU, "autoclave",
+				TU_ENERGY_SIDES /*NBT_ENERGY_ACCEPTED_SIDES 63 → all six faces*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_D|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_B|SBIT_R*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_B|SBIT_R*/,
+				(byte)0 /*NBT_TANK_SIDE_AUTO_IN SIDE_BOTTOM*/, (byte)5 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BACK*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING*/, null /*no melting gate*/, false);
+	}
+
+	/**
+	 * One Loom row factory (upstream :1412-1415): RU kinetic, the :1412 masks — item
+	 * top-in/bottom-out (auto TOP/BOTTOM), energy SBIT_L|SBIT_R BOTH sides (the
+	 * ElectricLoom face), ZERO tank keys → the 127 defaults, no parallel.
+	 */
+	private static GTBasicMachineBlock.MachineRow loom(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_LOOM_UNIT_KEY, aMetaId, aHardness, aTier, 1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1412-1415*/,
+				() -> GT6RecipeMaps.LOOM, TD.Energy.RU, "loom",
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_L|SBIT_R — both sides*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U — top in*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D — bottom out*/,
+				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
+				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_INV_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING*/, null /*no melting gate*/, false);
+	}
+
+	/** The registered Steam Cracker blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> STEAM_CRACKER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Steam Cracker items, same keys as {@link #STEAM_CRACKER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> STEAM_CRACKER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Catalytic Cracker blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> CATALYTIC_CRACKER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Catalytic Cracker items, same keys as {@link #CATALYTIC_CRACKER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> CATALYTIC_CRACKER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Coagulator blocks by path (the single-variant ladder). */
+	public static final java.util.Map<String, RegistryObject<Block>> COAGULATOR_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Coagulator items. */
+	public static final java.util.Map<String, RegistryObject<Item>> COAGULATOR_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Generifier blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> GENERIFIER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Generifier items. */
+	public static final java.util.Map<String, RegistryObject<Item>> GENERIFIER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Bath blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> BATH_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Bath items. */
+	public static final java.util.Map<String, RegistryObject<Item>> BATH_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Autoclave blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> AUTOCLAVE_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Autoclave items. */
+	public static final java.util.Map<String, RegistryObject<Item>> AUTOCLAVE_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Loom blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> LOOM_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Loom items, same keys as {@link #LOOM_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> LOOM_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : STEAM_CRACKER_ROWS) {
+			STEAM_CRACKER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.STEAM_CRACKER_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			STEAM_CRACKER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : CATALYTIC_CRACKER_ROWS) {
+			CATALYTIC_CRACKER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CATALYTIC_CRACKER_BE.get(), tRow)));
+			CATALYTIC_CRACKER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : COAGULATOR_ROWS) {
+			COAGULATOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.COAGULATOR_BE.get(), tRow)));
+			COAGULATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.COAGULATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : GENERIFIER_ROWS) {
+			GENERIFIER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.GENERIFIER_BE.get(), tRow)));
+			GENERIFIER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.GENERIFIER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : BATH_ROWS) {
+			BATH_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.BATH_BE.get(), tRow)));
+			BATH_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.BATH_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : AUTOCLAVE_ROWS) {
+			AUTOCLAVE_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.AUTOCLAVE_BE.get(), tRow)));
+			AUTOCLAVE_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.AUTOCLAVE_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : LOOM_ROWS) {
+			LOOM_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.LOOM_BE.get(), tRow)));
+			LOOM_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.LOOM_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Steam Cracker block list in registration order (the loot/datagen walkers). */
+	public static Block[] steamcrackerBlockArray() {
+		Block[] rBlocks = new Block[STEAM_CRACKER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : STEAM_CRACKER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Catalytic Cracker block list in registration order. */
+	public static Block[] catalyticcrackerBlockArray() {
+		Block[] rBlocks = new Block[CATALYTIC_CRACKER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : CATALYTIC_CRACKER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Coagulator block list in registration order (the single-variant ladder). */
+	public static Block[] coagulatorBlockArray() {
+		Block[] rBlocks = new Block[COAGULATOR_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : COAGULATOR_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Generifier block list in registration order. */
+	public static Block[] generifierBlockArray() {
+		Block[] rBlocks = new Block[GENERIFIER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : GENERIFIER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Bath block list in registration order. */
+	public static Block[] bathBlockArray() {
+		Block[] rBlocks = new Block[BATH_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : BATH_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Autoclave block list in registration order. */
+	public static Block[] autoclaveBlockArray() {
+		Block[] rBlocks = new Block[AUTOCLAVE_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : AUTOCLAVE_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Loom block list in registration order. */
+	public static Block[] loomBlockArray() {
+		Block[] rBlocks = new Block[LOOM_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : LOOM_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	// the seven hu-tu family BETs: the W1-trio shape verbatim — the crackers and the loom
+	// ride the SHARED kineticMachine factory body, the TU four the {@link #tuMachine} body
+	// (the {1,1,16} window override + the NO_CONSTANT_POWER bind live there).
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> STEAM_CRACKER_BE =
+			BLOCK_ENTITY_TYPES.register("steamcracker", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.STEAM_CRACKER_BE.get(), aPos, aState),
+					steamcrackerBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> CATALYTIC_CRACKER_BE =
+			BLOCK_ENTITY_TYPES.register("catalyticcracker", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.CATALYTIC_CRACKER_BE.get(), aPos, aState),
+					catalyticcrackerBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> COAGULATOR_BE =
+			BLOCK_ENTITY_TYPES.register("coagulator", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> tuMachine(GTMachines.COAGULATOR_BE.get(), aPos, aState),
+					coagulatorBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> GENERIFIER_BE =
+			BLOCK_ENTITY_TYPES.register("generifier", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> tuMachine(GTMachines.GENERIFIER_BE.get(), aPos, aState),
+					generifierBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> BATH_BE =
+			BLOCK_ENTITY_TYPES.register("bath", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> tuMachine(GTMachines.BATH_BE.get(), aPos, aState),
+					bathBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> AUTOCLAVE_BE =
+			BLOCK_ENTITY_TYPES.register("autoclave", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> tuMachine(GTMachines.AUTOCLAVE_BE.get(), aPos, aState),
+					autoclaveBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> LOOM_BE =
+			BLOCK_ENTITY_TYPES.register("loom", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.LOOM_BE.get(), aPos, aState),
+					loomBlockArray()).build(null));
+
+	/**
+	 * The TU four BET factory body (the Canner card's tier-indexed-constants precedent —
+	 * the row record stays out of this card's scope, so the two TU-only columns are
+	 * factory locals): the kineticMachine half verbatim, then the {@link #TU_WINDOW}
+	 * {1, 1, 16} override (the upstream :1651-1655 explicit NBT_INPUT_MIN/NBT_INPUT_MAX
+	 * re-bind after the :126 conversion — the Fermenter's 16/32/64 fold does NOT apply)
+	 * and the NBT_NO_CONSTANT_POWER T bind on {@code mNoConstantEnergy} (the :123 key —
+	 * the :894 idle reset gate is skipped, the progress RETAINS across a power gap).
+	 */
+	private static TileEntityBasicMachine tuMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		TileEntityBasicMachine tMachine = machine(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.energyType(), tRow.tier(), tRow.menu());
+		return applyTuRow(tMachine, tRow);
+	}
+
+	/**
+	 * The TU-column assignment (public — the offline row test drives it against the fixture
+	 * machine, the {@link #applyRow} seam shape): applyRow's masks + the two TU-only
+	 * columns — {@code mNoConstantEnergy = true} (the :123 NBT_NO_CONSTANT_POWER T bind)
+	 * and the {@link #TU_WINDOW} {1, 1, 16} override.
+	 */
+	public static TileEntityBasicMachine applyTuRow(TileEntityBasicMachine aMachine, GTBasicMachineBlock.MachineRow aRow) {
+		applyRow(aMachine, aRow);
+		aMachine.mNoConstantEnergy = true; // the :123 NBT_NO_CONSTANT_POWER T bind (:1651-1655)
+		aMachine.mInputMin = TU_WINDOW[0];
+		aMachine.mInput = TU_WINDOW[1];
+		aMachine.mInputMax = TU_WINDOW[2];
+		return aMachine;
+	}
 
 	private GTMachines() {}
 

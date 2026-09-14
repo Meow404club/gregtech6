@@ -534,6 +534,18 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.registry.GTMachines.AUTOCRAFTER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.LIGHTNING_PROCESSOR_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.LAMINATOR_DISPLAY_KEY);
+		// hu-tu piggyback (task p29-w2-hu-tu-piggyback): the seven family templates — the
+		// two Crackers and the Loom ride the material-word slot (the Heat_T/Kinetic row
+		// words are the walks above), the TU four are the atomic single-variant rows; the
+		// zh words are the upstream dump verbatim
+		// (gt.multitileentity.20491-20494/20481-20484/22000/22001/22002/22004/20211-20214)
+		addDirect(gregtech6.registry.GTMachines.MACHINE_STEAM_CRACKER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_CATALYTIC_CRACKER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_LOOM_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.COAGULATOR_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.GENERIFIER_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.BATH_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.AUTOCLAVE_DISPLAY_KEY);
 		// the fermenter's stainless_steel row word (the dump face the attachment walk
 		// already carries — emitted here so the row walk stays self-contained)
 		addRowUnit(tEmitted, "gt6.row.mat.stainless_steel");		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tUlvRows

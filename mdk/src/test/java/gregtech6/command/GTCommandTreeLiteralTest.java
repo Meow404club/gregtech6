@@ -84,6 +84,11 @@ public class GTCommandTreeLiteralTest {
 		"electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4",
 		"boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4",
 		"unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4",
+		// task p29-w2-hu-tu-piggyback — the seven hu-tu families
+		"steamcracker", "steamcracker_t2", "steamcracker_t3", "steamcracker_t4",
+		"catalyticcracker", "catalyticcracker_t2", "catalyticcracker_t3", "catalyticcracker_t4",
+		"coagulator", "generifier", "bath", "autoclave",
+		"loom", "loom_t2", "loom_t3", "loom_t4",
 		"fermenter", // task p29-w1-eu-hu-families — the single-variant rung
 		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 

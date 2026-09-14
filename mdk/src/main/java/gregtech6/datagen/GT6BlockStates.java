@@ -135,20 +135,22 @@ public final class GT6BlockStates extends BlockStateProvider {
         addEuSpecialFamilies(); // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families (family textures, the addCanner shape)
         addExoticFamilies(); // task p29-w2-exotic-energy — the six exotic-energy families (family textures, the addCanner shape)
         addEuCoreMachines(); // task p29-w2-eu-core-5tier — the five eu-core families (family textures, the addCanner shape)
+        addHuTuFamilies(); // task p29-w2-hu-tu-piggyback — the seven hu-tu families (family textures, the addCanner shape)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 188 machine blocks x
+        // task p21-paintable-tint-render: the datagen-JVM census half — 204 machine blocks x
         // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder; the roll ladders
         // and the six P29 W1 process families joined at their owning cards; the seven eu-hu
         // families at task p29-w1-eu-hu-families; the three eu-special families at task
         // p29-w2-eu-special; the six exotic-energy families at task
         // p29-w2-exotic-energy; the five eu-core 5-tier families at task
-        // p29-w2-eu-core-5tier), // matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 564; the ACT
+        // p29-w2-eu-core-5tier; the seven hu-tu piggyback families at task
+        // p29-w2-hu-tu-piggyback), // matching the paintableBlockArray() client registration census
+        // (the offline JUnit half walks the generated tree and pins the same 612; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (188 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addExoticFamilies/addEuCoreMachines/addAdvancedCraftingTable)", mMachineTintModels);
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (204 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addExoticFamilies/addEuCoreMachines/addHuTuFamilies/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -506,6 +508,38 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SLICER_ROWS) {
             addMachine(GTMachines.SLICER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p29-w2-hu-tu-piggyback — the seven hu-tu families (the SteamCracker/CatalyticCracker
+     * HU 4-ladders :1576-1579/:1570-1573 + the TU four singles :1651-1655 + the Loom RU
+     * 4-ladder :1412-1415, every row NBT_TEXTURE riding its family token): the addCanner
+     * shape verbatim — model names per path, the FRONT TEXTURES stay on the family sets
+     * (the borrowed upstream basicmachines/{steamcracker,catalyticcracker,coagulator,
+     * generifier,bath,autoclave,loom} fronts — the borrow-or-declare rule, zero hand-drawn).
+     */
+    private void addHuTuFamilies() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.STEAM_CRACKER_ROWS) {
+            addMachine(GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CATALYTIC_CRACKER_ROWS) {
+            addMachine(GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.COAGULATOR_ROWS) {
+            addMachine(GTMachines.COAGULATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.GENERIFIER_ROWS) {
+            addMachine(GTMachines.GENERIFIER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.BATH_ROWS) {
+            addMachine(GTMachines.BATH_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.AUTOCLAVE_ROWS) {
+            addMachine(GTMachines.AUTOCLAVE_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LOOM_ROWS) {
+            addMachine(GTMachines.LOOM_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 
