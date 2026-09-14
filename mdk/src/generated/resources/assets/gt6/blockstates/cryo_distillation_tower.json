@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=east,formed=false": {
+      "model": "gt6:block/cryo_distillation_tower"
+    },
+    "facing=east,formed=true": {
+      "model": "gt6:block/cryo_distillation_tower"
+    },
+    "facing=north,formed=false": {
+      "model": "gt6:block/cryo_distillation_tower"
+    },
+    "facing=north,formed=true": {
+      "model": "gt6:block/cryo_distillation_tower"
+    },
+    "facing=south,formed=false": {
+      "model": "gt6:block/cryo_distillation_tower"
+    },
+    "facing=south,formed=true": {
+      "model": "gt6:block/cryo_distillation_tower"
+    },
+    "facing=west,formed=false": {
+      "model": "gt6:block/cryo_distillation_tower"
+    },
+    "facing=west,formed=true": {
+      "model": "gt6:block/cryo_distillation_tower"
+    }
+  }
+}

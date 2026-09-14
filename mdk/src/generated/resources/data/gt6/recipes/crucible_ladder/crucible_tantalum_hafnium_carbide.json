@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:crucible_tantalum_hafnium_carbide_wall"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "hM"
+  ],
+  "result": {
+    "item": "gt6:crucible_tantalum_hafnium_carbide"
+  },
+  "show_notification": true
+}

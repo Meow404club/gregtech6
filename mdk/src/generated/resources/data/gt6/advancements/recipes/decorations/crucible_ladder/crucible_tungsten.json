@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_crucible_wall": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "gt6:crucible_tungsten_wall"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:crucible_ladder/crucible_tungsten"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_crucible_wall",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:crucible_ladder/crucible_tungsten"
+    ]
+  },
+  "sends_telemetry_event": false
+}

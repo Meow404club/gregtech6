@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_crucible_wall": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "gt6:crucible_tantalum_hafnium_carbide_wall"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:crucible_ladder/crucible_tantalum_hafnium_carbide"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_crucible_wall",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:crucible_ladder/crucible_tantalum_hafnium_carbide"
+    ]
+  },
+  "sends_telemetry_event": false
+}
