@@ -710,6 +710,7 @@ public final class GT6LargeMachines {
 			} else {
 				tRecipe = tRecipes.findRecipe(mLastRecipe, mInputMax, slot(SLOT_SPECIAL), tFluids, tInputs);
 			}
+			if (tRecipe == null) return DID_NOT_FIND_RECIPE; // :719
 
 			if (tRecipe.mCanBeBuffered) mLastRecipe = tRecipe; // :734
 			int tMaxProcessCount = canOutput(tRecipe); // :735
