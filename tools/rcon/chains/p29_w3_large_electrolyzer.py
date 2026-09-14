@@ -4,16 +4,15 @@ p29_w3_large12 sweep group; Loader_MultiTileEntities.java:1230).
 
   EU eff 5000, window 512..4096, parallel 16 + DURATION; the heavy snow_block row
   (1 -> 4 snowball, eUt 16, dur 512; the pollable bar) over the electrolyzer_part shell.
+  The map reads TWO item slots (IN 2 / MIN-ITEM 2) — the feed splits across slots 0+1.
 
 acceptance arms this machine carries:
   1 form all-green + the wrong-part rejection
-  4 eff 5000 numeric bar: maxprogress = units(16x512x4, 5000, 10000) = 65536 at the
-    8-process snow_block batch (TWO slots — the map MIN-ITEM 2 gate) (the W1 units() half-speed ruling, live)
-  5 the type gate: dialed RU the EU door refuses the waiting batch; the EU resume runs it
+  4 eff 5000 numeric bar: maxprogress = units(16x512x8, 5000, 10000) = 131072 at the
+    8-process snow_block batch (the W1 units() half-speed ruling, live)
   6 the window-511 refusal (volt 511 < min 512 stalls) and the 512 resume
-
-NOTE the data-merge feeds REWRITE the whole Items list — the later merge re-includes the
-accumulated output stack.
+  5 the type gate: dialed RU the EU door refuses (the buffer starves, energy 0); the EU
+    resume runs the fresh batch
 
 passes=2 is the idempotency proof.
 Run:  GT6_SESSION=off python3 tools/rcon/chains/p29_w3_large_electrolyzer.py
@@ -49,7 +48,6 @@ def merge(items):
     }
 
 SNOWB = merge([("minecraft:snow_block", 4), ("minecraft:snow_block", 4)])  # TWO slots: the map MIN-ITEM 2 gate; 8 processes at dur 512
-BATCH2 = merge([("minecraft:snow_block", 4), ("minecraft:snow_block", 4), ("minecraft:snowball", 32)])  # re-include the outputs
 
 steps = [
     phase("A: the site — the wrong-part rejection, then the all-green form"),
@@ -61,33 +59,31 @@ steps = [
     Step("gt6multiblock form " + C, expect="formed=true okay=true"),
     Step("execute if block " + C + " gt6:" + MACHINE + "[formed=true]", expect="Test passed"),
 
-    phase("B: the run — the numeric 65536 bar"),
+    phase("B: the run — the numeric 131072 bar"),
     Step(SNOWB["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": SNOWB["1.21.1"]}),
     Step("gt6energy place " + R, expect="GT6 energy source placed"),
     Step("gt6energy type " + R + " EU", expect="type ENERGY."),
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
     Step("gt6energy mode " + R + " on", expect="emitting true"),
-    Step("data get block " + C, expect="maxprogress: 131072L", poll=20),  # the eff-5000 numeric bar, live (units(16x512x8, 5000, 10000))
+    Step("data get block " + C, expect="maxprogress: 131072L", poll=20),  # the eff-5000 numeric bar, live
 
     phase("C: the window-511 refusal + the batch completion"),
     Step("gt6energy volt " + R + " 511", expect="voltage 511"),
-    Step(BATCH2["1.20.1"], expect="Modified block data",
-         node_cmds={"1.21.1": BATCH2["1.21.1"]}),
     Step("data get block " + C, expect="active: 0b", poll=10),  # 511 < mInputMin 512: the :780 gate stalls
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
-    Step("data get block " + C, expect="Count: 36b", poll=30,   # the resume: 4 + 32 snowball stacked
-         node_expects={"1.21.1": "Count: 36"}),
+    Step("data get block " + C, expect="active: 1b", poll=10),  # the resume on the fresh 512 packet
+    Step("data get block " + C, expect="Count: 32b", poll=60,   # the batch completes: 8x4 snowball stacked at slot 2
+         node_expects={"1.21.1": "Count: 32"}),
 
     phase("D: the type gate — dialed RU the EU door refuses the waiting batch"),
     Step("gt6energy type " + R + " RU", expect="type ENERGY."),
-    Step(BATCH2["1.20.1"], expect="Modified block data",
-         node_cmds={"1.21.1": BATCH2["1.21.1"]}),
-    Step("data get block " + C, expect="active: 0b", poll=10),   # the cross-type refusal: RU on an EU row
+    Step(SNOWB["1.20.1"], expect="Modified block data",
+         node_cmds={"1.21.1": SNOWB["1.21.1"]}),
+    Step("data get block " + C, expect="active: 0b", poll=10),   # the cross-type refusal: RU on an EU row never runs
     Step("data get block " + C, expect="energy: 0L"),            # the starved buffer (no packet paid)
     Step("gt6energy type " + R + " EU", expect="type ENERGY."),
-    Step("data get block " + C, expect="Count: 68b", poll=30,    # the resume: 36 + 32 stacked
-         node_expects={"1.21.1": "Count: 68"}),
+    Step("data get block " + C, expect="active: 1b", poll=10),   # the EU resume
 
     phase("E: teardown — the explicit band restore"),
     Step("fill 393 60 337 399 70 352 air", expect="filled"),

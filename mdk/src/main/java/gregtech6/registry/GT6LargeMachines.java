@@ -624,6 +624,8 @@ public final class GT6LargeMachines {
 		}
 
 		/** The row accessor — null on mis-registered offline fixtures (they inject the config instead). */
+		private static String aRecipeOut(Recipe aR) { return aR.mOutputs.length + "x" + (aR.mOutputs[0] == null ? "null" : aR.mOutputs[0].getCount()); }
+
 		@Nullable
 		public LargeMachineRow row() {
 			return mRow;
@@ -708,7 +710,6 @@ public final class GT6LargeMachines {
 			} else {
 				tRecipe = tRecipes.findRecipe(mLastRecipe, mInputMax, slot(SLOT_SPECIAL), tFluids, tInputs);
 			}
-			if (tRecipe == null) return DID_NOT_FIND_RECIPE; // :719
 
 			if (tRecipe.mCanBeBuffered) mLastRecipe = tRecipe; // :734
 			int tMaxProcessCount = canOutput(tRecipe); // :735
@@ -775,6 +776,59 @@ public final class GT6LargeMachines {
 				long tSnapNow = aSnapshots[i] == null ? 0 : aSnapshots[i].getAmount();
 				if (tSnapNow < aBefore[i]) mTanksInput[i].drain((int)(aBefore[i] - tSnapNow), FluidAction.EXECUTE);
 			}
+		}
+
+		/**
+		 * The map-aware canOutput (upstream :620-668 — the base copy walks the outputs from
+		 * the FIXED slot 1, the Coke-Oven one-input shape; the twelve rows' maps carry 0..2
+		 * input slots, so the output slots start at {@code mInputItemsCount + 1}). The
+		 * :626-629 chain cap and the stack-cap arithmetic are the base body verbatim.
+		 */
+		@Override
+		public int canOutput(Recipe aRecipe) {
+			int rMaxTimes = (int) mParallel; // :621
+
+			if (mParallelDuration) {
+				// :626-629 — chain processing: don't take more than 600 ticks worth of power
+				while (rMaxTimes > 1 && aRecipe.getAbsoluteTotalPower() * rMaxTimes > mInputMax * 600) rMaxTimes--;
+			}
+
+			for (int i = 0, j = recipes().mInputItemsCount; i < recipes().mOutputItemsCount && i < aRecipe.mOutputs.length; i++, j++) {
+				ItemStack tOutput = aRecipe.mOutputs[i];
+				if (tOutput == null || tOutput.isEmpty()) continue;
+				ItemStack tSlot = slot(j);
+				if (tSlot != null && !tSlot.isEmpty()) {
+					if (aRecipe.mNeedsEmptyOutput) return 0; // :633-636
+					//? if forge {
+					if (!ItemStack.isSameItemSameTags(tSlot, tOutput)) { mOutputBlocked++; return 0; } // :637-640
+					//?} else {
+					/*if (!ItemStack.isSameItemSameComponents(tSlot, tOutput)) { mOutputBlocked++; return 0; } // 21.1
+					*///?}
+					rMaxTimes = Math.min(rMaxTimes, (tSlot.getMaxStackSize() - tSlot.getCount()) / tOutput.getCount()); // :641
+					if (rMaxTimes <= 0) { mOutputBlocked++; return 0; } // :642-645
+				} else {
+					rMaxTimes = Math.min(rMaxTimes, Math.max(1, 64 / tOutput.getCount())); // :647
+				}
+			}
+			if (aRecipe.mFluidOutputs.length > 0) { // :650-666 verbatim
+				int tEmptyOutputTanks = 0, tRequiredEmptyTanks = aRecipe.mFluidOutputs.length;
+				for (FluidTankGT tTank : mTanksOutput) if (tTank.isEmpty()) tEmptyOutputTanks++;
+				for (int j = 0; j < aRecipe.mFluidOutputs.length; j++) {
+					if (aRecipe.mFluidOutputs[j] == null) {
+						tRequiredEmptyTanks--;
+					} else for (FluidTankGT tTank : mTanksOutput) if (tTank.contains(aRecipe.mFluidOutputs[j])) {
+						//? if forge {
+						if (tTank.has(Math.max(16000, 1 + (long) aRecipe.mFluidOutputs[j].getAmount() * mParallel)) && !FLUIDS_VOID_OVERFLOW.contains(String.valueOf(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(aRecipe.mFluidOutputs[j].getFluid())))) return 0; // :659
+						//?} else {
+						/*if (tTank.has(Math.max(16000, 1 + (long) aRecipe.mFluidOutputs[j].getAmount() * mParallel)) && !FLUIDS_VOID_OVERFLOW.contains(String.valueOf(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(aRecipe.mFluidOutputs[j].getFluid())))) return 0; // 21.1
+						*///?}
+						tRequiredEmptyTanks--;
+						break;
+					}
+				}
+				if (tRequiredEmptyTanks > tEmptyOutputTanks) return 0; // :664
+			}
+			return rMaxTimes; // :667
 		}
 
 		// ---------------------------------------------------------------------
@@ -985,11 +1039,16 @@ public final class GT6LargeMachines {
 				return aTank == 0 && aStack != null && !aStack.isEmpty();
 			}
 
-			/** The all-open fill (mask 127) into the input tank. */
+			/** The all-open fill (mask 127) into the input tank; an executed fill OPENS the doActive re-check window (mInventoryChanged, the :798-805 gate) — without it a fluid feed mid-idle would wait for the aTimer%1200 tick. */
 			@Override
 			public int fill(FluidStack aResource, FluidAction aAction) {
 				if (aResource == null || aResource.isEmpty()) return 0;
-				return mMachine.mTanksInput[0].fill(aResource, aAction);
+				int rFilled = mMachine.mTanksInput[0].fill(aResource, aAction);
+				if (rFilled > 0 && aAction.execute()) {
+					mMachine.setChanged();
+					mMachine.mInventoryChanged = true;
+				}
+				return rFilled;
 			}
 
 			/** The output-tank drain (the base drain rules; the input tank never drains through the face). */
@@ -1031,7 +1090,10 @@ public final class GT6LargeMachines {
 	@Override
 	public void load(CompoundTag aNBT) {
 		super.load(aNBT);
-		if (aNBT.contains(NBT_INPUT_TANK, Tag.TAG_COMPOUND)) mTanksInput[0].readFromNBT(aNBT, NBT_INPUT_TANK);
+		if (aNBT.contains(NBT_INPUT_TANK, Tag.TAG_COMPOUND)) {
+			mTanksInput[0].readFromNBT(aNBT, NBT_INPUT_TANK);
+			if (mTanksInput[0].has()) mInventoryChanged = true; // the fed tank opens the doActive re-check window (the :798-805 gate)
+		}
 	}
 	}
 }

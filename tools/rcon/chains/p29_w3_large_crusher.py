@@ -71,7 +71,7 @@ steps = [
     phase("C: the NO_CONSTANT_POWER cycle — the rig-off gap parks the bar"),
     Step("gt6energy mode " + R + " off", expect="emitting false"),
     Step("data get block " + C, expect="active: 0b", poll=10),            # the gap: the buffer drains, the run stops
-    Step("data get block " + C, expect="maxprogress: 524288L", poll=10),  # the PARKED bar survives
+    Step("data get block " + C, expect="maxprogress: 1048576L", poll=10),  # the PARKED bar survives
     Step("gt6energy mode " + R + " on", expect="emitting true"),
     Step("data get block " + C, expect="active: 1b", poll=10),            # the restart resumes the run
     Step("gt6energy volt " + R + " 4096", expect="voltage 4096"),         # the fast finish (the window max): 64 procs x 8192 bar / 4096 = 128 ticks

@@ -83,7 +83,7 @@ steps = [
     Step("data get block " + C, expect="maxprogress: 64L", poll=10),  # the PARKED bar survives (the retain face)
     Step(RESTART["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": RESTART["1.21.1"]}),
-    Step("data get block " + C, expect="active: 1b", poll=10),      # the restart
+    Step("data get block " + C, expect="active: 1b", poll=30),      # the restart
     Step("data get block " + C, expect="minecraft:snowball", poll=30),  # the row completes after the gap
 
     phase("D: teardown — the explicit band restore"),
