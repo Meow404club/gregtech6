@@ -1,9 +1,23 @@
 {
   "recipes": [
     {
-      "comment": "task p29-w1-kinetic-roll-ladder smoke row — the plate->curved-plate minimal row (the upstream RollBender product class, OP.plateCurved), eut 16 / duration 32 riding the RollingMill row shape",
+      "comment": "task p29-w1-kinetic-roll-ladder smoke row — the plate->curved-plate row (the upstream RollBender handler Loader_Recipes_Handlers.java:298: plate 1 -> plateCurved 1), eut 16 / duration 32 riding the RollingMill row shape",
       "inputs": [{"item": "gt6:plate_iron", "count": 1}],
       "outputs": [{"item": "gt6:plate_curved_iron", "count": 1}],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "task p29-w3-heat-smelter row-semantics fix — the stick->ring row (the upstream :299 handler verbatim: stick 1 -> ring 2), eut 16 / duration 32 riding the same smoke shape",
+      "inputs": [{"item": "gt6:stick_iron", "count": 1}],
+      "outputs": [{"item": "gt6:ring_iron", "count": 2}],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "task p29-w3-heat-smelter row-semantics fix — the stickLong->spring row (the upstream :300 handler verbatim: stickLong 1 -> spring 1), eut 16 / duration 32 riding the same smoke shape",
+      "inputs": [{"item": "gt6:stick_long_iron", "count": 1}],
+      "outputs": [{"item": "gt6:spring_iron", "count": 1}],
       "duration": 32,
       "eut": 16
     }

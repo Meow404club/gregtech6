@@ -595,11 +595,18 @@ public class GT6EnUs extends LanguageProvider {
      * processing machines, not cookware; no renamed successor) — the four items ride
      * the machines tab through the GT6Kitchen BuildCreativeModeTabContentsEvent join,
      * so this provider carries no tab key for the family anymore.
+     *
+     * <p>Task p29-w3-heat-smelter lang rider (decisions.p29-mixingbowl-ruling, the user
+     * ruling 2026-09-14): the en display of the mixing_bowl row had DRIFTED to the
+     * upstream registration literal "Ceramic Bowl" while the zh face always carried the
+     * correct 搅拌盆 ("Mixing Bowl") — the en face is corrected to the Mixing Bowl
+     * semantics here, keeping the three surfaces (GT6EnUs / GT6ZhCn / the TSV) on one
+     * 口径. Deliberate deviation from the :2177 name column, ruling-backed.
      */
     private void addKitchen() {
         add("block.gt6.bathing_pot_wood", "Wooden Bathing Pot");
         add("block.gt6.bathing_pot_steel", "Bathing Pot");
-        add("block.gt6.mixing_bowl", "Ceramic Bowl");
+        add("block.gt6.mixing_bowl", "Mixing Bowl"); // decisions.p29-mixingbowl-ruling — the en drift corrected
         add("item.gt6.clay_bowl", "Clay Bowl");
     }
 

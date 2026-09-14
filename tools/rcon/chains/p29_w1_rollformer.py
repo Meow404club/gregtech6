@@ -5,13 +5,15 @@ the rollingmill chain carries the cluster's real RU source; the sibling ladders
 prove the same acceptance set through the /gt6machine inject driver, the same
 driver the p26_w1 trio and the p28 arms C used).
 
-  A THE 8 RU PACKET IS DEAD BELOW T1 (x410): one stick_iron in, an inject of 60 x 8
+  A THE 8 RU PACKET IS DEAD BELOW T1 (x410): one plate_iron in, an inject of 60 x 8
     leaves progress=0/0 (the 8 RU packet is below the ladder min 16 — the ULV-wall
     semantics on the RU side), and the CONTROL leg on the SAME machine (inject 60 x 64)
     completes the row: the red is the packet size, not the rig.
   B THE T2-T4 INJECT LADDER: one item in, packet = the tier max (256/1024/4096), the
-    poured smoke row (stick_iron -> rail_gt_iron, eUt 16 / duration 32) completes on every
-    tier — the outputs pin 1x rail_gt_iron.
+    poured smoke row (plate_iron -> rail_gt_iron x4 — SEMANTICS CORRECTED by task
+    p29-w3-heat-smelter, the upstream :314 handler plate 1 -> railGt 4; the shipped row
+    had fed a stick), eUt 16 / duration 32 completes on every tier — the outputs pin
+    4x rail_gt_iron.
   C THE TIER_INPUTS WINDOW PINS: minIn=64 recIn=128 maxIn=256 / minIn=256 recIn=512 maxIn=1024 / minIn=1024 recIn=2048 maxIn=4096 across the four tiers
     (the :126 conversion of NBT_INPUT 128/512/2048, read off the BE reports).
 
@@ -49,15 +51,15 @@ MILL_T2_P, MILL_T3_P, MILL_T4_P = F(MILL_T2), F(MILL_T3), F(MILL_T4)
 
 # the output-slot pin: the inject report lists outputs=[<count>x <item>; ] — the 21.1
 # leg namespaces the item path (the p26_w1 fork)
-OUT = {"1.20.1": "outputs=[1x rail_gt_iron; ]", "1.21.1": "outputs=[1x gt6:rail_gt_iron; ]"}
+OUT = {"1.20.1": "outputs=[4x rail_gt_iron; ]", "1.21.1": "outputs=[4x gt6:rail_gt_iron; ]"}
 
 steps = [
     # ---------------------------------------------------------------- arm A
     phase("A: the 8 RU packet is dead below T1 (min 16) — inject 8 red, inject 64 on the SAME machine completes"),
     Step(f"setblock {MILL_T1_P} gt6:rollformer", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine rollformer input 1 {MILL_T1_P}",
-         expect="GT6 rollformer input: 1x stick_iron into slot 0",
-         node_expects={"1.21.1": "GT6 rollformer input: 1x gt6:stick_iron into slot 0"}),
+         expect="GT6 rollformer input: 1x plate_iron into slot 0",
+         node_expects={"1.21.1": "GT6 rollformer input: 1x gt6:plate_iron into slot 0"}),
     # the wall: 8 < mInputMin 16 — no recipe ever binds
     Step(f"gt6machine rollformer inject 60 8 {MILL_T1_P}", expect="progress=0/0"),
     Step(f"gt6machine rollformer check {MILL_T1_P}", expect="progress=0/0"),
@@ -76,8 +78,8 @@ for tPos, tPacket, tPath in [
     steps += [
         Step(f"setblock {tPos} gt6:{tPath}", expect="Changed the block", sleep=1.0),
         Step(f"gt6machine {tPath} input 1 {tPos}",
-             expect="GT6 rollformer input: 1x stick_iron into slot 0",
-             node_expects={"1.21.1": "GT6 rollformer input: 1x gt6:stick_iron into slot 0"}),
+             expect="GT6 rollformer input: 1x plate_iron into slot 0",
+             node_expects={"1.21.1": "GT6 rollformer input: 1x gt6:plate_iron into slot 0"}),
         Step(f"gt6machine {tPath} inject 60 {tPacket} {tPos}", expect=OUT, node_expects=OUT),
     ]
 

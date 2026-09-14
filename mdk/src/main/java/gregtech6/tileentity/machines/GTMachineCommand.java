@@ -207,10 +207,11 @@ public final class GTMachineCommand {
 		.then(machine("extruder_t4", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t4"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
 		// task p29-w1-kinetic-roll-ladder: the roll ladders — the input feed is the iron
 		// pair item of each map's poured smoke row (data/gt6/recipe_maps: rollingmill
-		// ingot_iron / rollbender plate_iron / rollformer stick_iron (the port rod semantics) / clustermill
-		// plate_iron); the RU RollingMill ladder rides tier-suffixed literals (the p28
-		// ULV rung owns the bare "rollingmill" path, which registers NO command arm —
-		// the p28 chain reads it through the shared BET faces)
+		// ingot_iron / rollbender plate_iron / rollformer plate_iron — the W3
+		// row-semantics fix, :314 plate -> railGt x4 / clustermill plate_iron); the RU
+		// RollingMill ladder rides tier-suffixed literals (the p28 ULV rung owns the
+		// bare "rollingmill" path, which registers NO command arm — the p28 chain reads
+		// it through the shared BET faces)
 		.then(machine("rollingmill_t1", GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get("rollingmill_t1"), rollFeed(gregapi.data.OP.ingot)))
 		.then(machine("rollingmill_t2", GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get("rollingmill_t2"), rollFeed(gregapi.data.OP.ingot)))
 		.then(machine("rollingmill_t3", GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get("rollingmill_t3"), rollFeed(gregapi.data.OP.ingot)))
@@ -219,10 +220,10 @@ public final class GTMachineCommand {
 		.then(machine("rollbender_t2", GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get("rollbender_t2"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("rollbender_t3", GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get("rollbender_t3"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("rollbender_t4", GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get("rollbender_t4"), rollFeed(gregapi.data.OP.plate)))
-		.then(machine("rollformer", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer"), rollFeed(gregapi.data.OP.stick)))
-		.then(machine("rollformer_t2", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t2"), rollFeed(gregapi.data.OP.stick)))
-		.then(machine("rollformer_t3", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t3"), rollFeed(gregapi.data.OP.stick)))
-		.then(machine("rollformer_t4", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t4"), rollFeed(gregapi.data.OP.stick)))
+		.then(machine("rollformer", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("rollformer_t2", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t2"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("rollformer_t3", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t3"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("rollformer_t4", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t4"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill_t2", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t2"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill_t3", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t3"), rollFeed(gregapi.data.OP.plate)))

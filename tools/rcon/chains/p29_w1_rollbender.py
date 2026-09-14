@@ -12,6 +12,9 @@ driver the p26_w1 trio and the p28 arms C used).
   B THE T2-T4 INJECT LADDER: one item in, packet = the tier max (256/1024/4096), the
     poured smoke row (plate_iron -> plate_curved_iron, eUt 16 / duration 32) completes on every
     tier — the outputs pin 1x plate_curved_iron.
+  B3 THE W3 ROW-SEMANTICS FIX (task p29-w3-heat-smelter): the stick -> ring x2 row
+    (:299) on a FRESH T4 block at x406 — the used T1-T4 machines carry plate_curved
+    output slots that would block the ring row (the canOutput slot-identity gate).
   C THE TIER_INPUTS WINDOW PINS: minIn=64 recIn=128 maxIn=256 / minIn=256 recIn=512 maxIn=1024 / minIn=1024 recIn=2048 maxIn=4096 across the four tiers
     (the :126 conversion of NBT_INPUT 128/512/2048, read off the BE reports).
 
@@ -50,6 +53,12 @@ MILL_T2_P, MILL_T3_P, MILL_T4_P = F(MILL_T2), F(MILL_T3), F(MILL_T4)
 # the output-slot pin: the inject report lists outputs=[<count>x <item>; ] — the 21.1
 # leg namespaces the item path (the p26_w1 fork)
 OUT = {"1.20.1": "outputs=[1x plate_curved_iron; ]", "1.21.1": "outputs=[1x gt6:plate_curved_iron; ]"}
+# the W3 row-semantics-fix pin (task p29-w3-heat-smelter): the stick -> ring x2 row
+# (:299) on a FRESH T4 block — a used machine's output slots hold plate_curved_iron,
+# which would block the ring row (the canOutput slot-identity gate)
+OUT_RING = {"1.20.1": "outputs=[2x ring_iron; ]", "1.21.1": "outputs=[2x gt6:ring_iron; ]"}
+MILL_T5 = gt6world.Site(406, 64, 180)
+MILL_T5_P = F(MILL_T5)
 
 steps = [
     # ---------------------------------------------------------------- arm A
@@ -82,6 +91,14 @@ for tPos, tPacket, tPath in [
     ]
 
 steps += [
+    # ---------------------------------------------------------------- arm B3
+    phase("B3: the W3 stick->ring row on a fresh T4 block (the canOutput slot-identity proof)"),
+    Step(f"setblock {MILL_T5_P} gt6:rollbender_t4", expect="Changed the block", sleep=1.0),
+    Step(f"gt6machine rollbender_t4 input 1 {MILL_T5_P}",
+         expect="GT6 rollbender input: 1x stick_iron into slot 0",
+         node_expects={"1.21.1": "GT6 rollbender input: 1x gt6:stick_iron into slot 0"}),
+    Step(f"gt6machine rollbender_t4 inject 60 64 {MILL_T5_P}", expect=OUT_RING, node_expects=OUT_RING),
+
     # ---------------------------------------------------------------- arm C
     phase("C: the TIER_INPUTS window pins across the four tiers"),
     Step(f"gt6machine rollbender check {MILL_T1_P}", expect="minIn=16 recIn=32 maxIn=64"),
@@ -90,14 +107,14 @@ steps += [
     Step(f"gt6machine rollbender_t4 check {MILL_T4_P}", expect="minIn=1024 recIn=2048 maxIn=4096"),
 
     phase("D: teardown — the explicit band restore (no global state was touched)"),
-    Step("fill 396 62 179 406 68 182 air", expect="filled"),
+    Step("fill 396 62 179 408 68 182 air", expect="filled"),
     Step("time query daytime", expect="The time is"),
 ]
 
 CHAIN = Chain(
     name="p29-w1-p29_w1_rollbender",
     slug="p29w1rollbender",
-    sites=gt6world.declare_sites(MILL_T1, MILL_T2, MILL_T3, MILL_T4),
+    sites=gt6world.declare_sites(MILL_T1, MILL_T2, MILL_T3, MILL_T4, MILL_T5),
     preferred_ports=(26172, 26182),      # this card's pinned rcon/query pair (the fresh 2617x segment)
     steps=steps,
 )
