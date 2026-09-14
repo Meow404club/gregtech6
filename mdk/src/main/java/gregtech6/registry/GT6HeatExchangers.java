@@ -260,7 +260,10 @@ public final class GT6HeatExchangers {
 			return 0;
 		}
 		for (String tLine : new String[] {
-				"GT6 heat exchanger at " + aPos.toShortString() + ": formed=" + tHex.checkStructure(false)
+				// the FORCE recheck (the acceptance arm: the chains build the shell by plain
+				// setblocks AFTER the controller's first-tick force check — the cached verdict
+				// would read false until the 600-tick poll)
+				"GT6 heat exchanger at " + aPos.toShortString() + ": formed=" + tHex.checkStructure(true)
 						+ " rate=" + tHex.mRate + " efficiency=" + tHex.mEfficiency + " active=" + tHex.mActive,
 				"buffer=" + tHex.mEnergy + " HU offered=" + tHex.getEnergyOffered(tHex.mEnergyTypeEmitted, (byte)1, tHex.mRate)
 						+ " HU/t fuel=" + tHex.mTanks[0].amount() + "/" + tHex.mTanks[0].capacity() + " L overflow=" + tHex.mTanks[1].amount() + " L"}) {

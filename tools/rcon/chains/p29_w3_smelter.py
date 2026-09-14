@@ -46,7 +46,7 @@ steps = [
     Step(f"gt6machine smelter check {F(SM1)}",
          expect="parallel=1000 parallelDuration=true"),
     Step(f"gt6machine smelter inject 40 8 {F(SM1)}", expect="progress=0/0"),
-    Step(f"gt6machine smelter inject 500 64 {F(SM1)}", expect="progress=0/0, energy=0"),
+    Step(f"gt6machine smelter inject 500 64 {F(SM1)}", expect="used=500 progress=0/0 energy=0"),
     Step(f"gt6machine smelter fluid stat {F(SM1)}", expect="out[0]=1000 L of minecraft:water"),
 
     phase("B: the T2-T4 window ladder (the TIER_INPUTS per-row pin)"),

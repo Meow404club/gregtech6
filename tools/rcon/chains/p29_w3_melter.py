@@ -40,7 +40,7 @@ steps = [
     Step(f"gt6machine melter check {F(ME1)}",
          expect="parallel=1000 parallelDuration=true"),
     Step(f"gt6machine melter inject 40 8 {F(ME1)}", expect="progress=0/0"),
-    Step(f"gt6machine melter inject 500 64 {F(ME1)}", expect="progress=0/0, energy=0"),
+    Step(f"gt6machine melter inject 500 64 {F(ME1)}", expect="used=500 progress=0/0 energy=0"),
     Step(f"gt6machine melter fluid stat {F(ME1)}", expect="out[0]=1000 L of minecraft:water"),
 
     phase("C: teardown — the explicit band restore (no global state was touched)"),

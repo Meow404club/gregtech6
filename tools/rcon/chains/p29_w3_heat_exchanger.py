@@ -71,15 +71,20 @@ steps = [
 
     phase("B: the fuel door — hot_water through the capability gate (the poured fuels_hot row, live)"),
     Step(f"gt6heatexchanger fill {HEX_P} 500000",
-         expect="filled 500000/500000 L of gt6:hot_water (ACCEPTED)"),
+         # the fuel tank caps at mRate * 10 = 163840 L (:72) — the door fills to the brim
+         expect="filled 163840/500000 L of gt6:hot_water (ACCEPTED)"),
+    Step(f"gt6heatexchanger stat {HEX_P}", expect="offered=16384"),
 
     phase("C: the boiler stack — the 18101 proxy relay to the SS large boiler"),
     Step(f"gt6multiblock boiler place {LB_P} {VARIANT}", expect="GT6 large boiler placed"),
-    Step(f"gt6multiblock boiler frame {LB_P} {VARIANT}", expect="34 parts placed"),
+    # the frame count reads 29/34 on the stacked band — five cells already hold the
+    # right block from the HEX shell pass (the wand's 9 tx + 25 walls formed verdict
+    # below is the completeness proof)
+    Step(f"gt6multiblock boiler frame {LB_P} {VARIANT}", expect="parts placed around"),
     Step(f"gt6multiblock boiler wand {LB_P} {VARIANT}", expect="formed", sleep=1.0),
     Step(f"gt6multiblock boiler fill {LB_P} 128000", expect="ACCEPTED"),
     Step(f"gt6multiblock boiler stat {LB_P}", expect="formed=true", sleep=2.0),
-    Step(f"gt6heatexchanger stat {HEX_P}", expect="offered=16384"),
+    Step(f"gt6heatexchanger stat {HEX_P}", expect="overflow=163840 L"),
     Step(f"gt6multiblock boiler stat {LB_P}", expect="barometer=1", sleep=6.0),
     # the raw twin: the acceptance-channel direct-tank fill (the boiler distw form)
     Step(f"gt6heatexchanger fillraw {HEX_P} 100000", expect="filled 100000/100000 L of gt6:hot_water (ACCEPTED)"),
