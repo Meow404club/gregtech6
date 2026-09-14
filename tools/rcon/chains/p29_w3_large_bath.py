@@ -74,7 +74,7 @@ steps = [
     Step("data get block " + C, expect="maxprogress: 2048L", poll=10),  # the PARKED bar survives
     Step(RESTART["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": RESTART["1.21.1"]}),
-    Step("data get block " + C, expect="active: 1b", poll=60),
+    Step("data get block " + C, expect="minecraft:string", poll=180),  # the restart runs the row out: 4 string land (the 2048-tick batch)
 
     phase("D: teardown — the explicit band restore"),
     Step("fill 429 60 337 435 70 352 air", expect="filled"),

@@ -76,7 +76,7 @@ steps = [
     Step("data get block " + C, expect="maxprogress: 2048L", poll=10),  # the PARKED bar survives
     Step(RESTART["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": RESTART["1.21.1"]}),
-    Step("data get block " + C, expect="active: 1b", poll=60),        # the restart resumes the run (the 1-in-16 self-gen flash)
+    Step("data get block " + C, expect="minecraft:kelp", poll=180),   # the restart runs the row out: 2 kelp land (the 2048-tick batch at the 1/t self-gen pace)
 
     phase("D: teardown — the explicit band restore"),
     Step("fill 417 60 337 423 70 352 air", expect="filled"),

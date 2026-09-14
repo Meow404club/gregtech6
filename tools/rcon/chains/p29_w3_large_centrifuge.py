@@ -89,14 +89,18 @@ steps = [
     Step("data get block " + C, expect="Count: 20b", poll=30,   # batch 2 done: 4 + 16 clay stacked
          node_expects={"1.21.1": "Count: 20"}),
 
-    phase("D: the type gate — dialed EU the RU door refuses the waiting batch"),
+    phase("D: the type gate — the EU-refused machine holds the waiting batch untouched"),
+    Step("gt6energy mode " + R + " off", expect="emitting false"),  # the rig stops: the buffer drains
+    Step("sleep 2", expect=""),
     Step("gt6energy type " + R + " EU", expect="type ENERGY."),
     Step(BATCH3["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": BATCH3["1.21.1"]}),
-    Step("data get block " + C, expect="active: 0b", poll=10),   # the cross-type refusal: EU on an RU row never runs
-    Step("data get block " + C, expect="energy: 0L"),            # the starved buffer (no packet paid)
+    Step("gt6energy mode " + R + " on", expect="emitting true"),    # the EU rig pays an RU row NOTHING
+    Step("data get block " + C, expect="active: 0b", poll=10),      # the cross-type refusal: no run
+    Step("data get block " + C, expect="energy: 0L"),               # the starved buffer
     Step("gt6energy type " + R + " RU", expect="type ENERGY."),
-    Step("data get block " + C, expect="Count: 36b", poll=30,    # the resume: batch 3 stacks (20 + 16)
+    Step("gt6energy volt " + R + " 512", expect="voltage 512"),
+    Step("data get block " + C, expect="Count: 36b", poll=60,    # the resume: batch 3 stacks (20 + 16)
          node_expects={"1.21.1": "Count: 36"}),
 
     phase("E: teardown — the explicit band restore"),
