@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "comment": "task p29-w3-heat-smelter smoke row — hot water gives back its heat as HU and condenses to water (the upstream FM.Hot row Loader_Fuels.java:196/:198 verbatim: addRecipe0(T, -2, 1, FL.Hot_Water.make(1), FL.Water.make(1), ZL_IS)), eut -2 / duration 1 — the negative eut is the fuel-map semantics, |eut x duration| = 2 power per fluid unit books into the exchanger buffer",
+      "fluidInputs": [{"fluid": "gt6:hot_water", "amount": 1}],
+      "fluidOutputs": [{"fluid": "minecraft:water", "amount": 1}],
+      "duration": 1,
+      "eut": -2
+    }
+  ]
+}

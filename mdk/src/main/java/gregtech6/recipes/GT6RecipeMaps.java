@@ -167,7 +167,7 @@ public class GT6RecipeMaps {
 	/**
 	 * The generation-reset hooks: every loader that owns a private static "poured" flag
 	 * registers its resetForTest here from its static initializer, so {@link #reset()}
-	 * retires the WHOLE generation. One generation = the 57 map fields (the 12 pre-W1
+	 * retires the WHOLE generation. One generation = the 60 map fields (the 12 pre-W1
  * fields + the mixer/W1-trio/press-extruder/crucible-pair appends + the BATH append
  * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
  * p28-c-ulv-machine-ladder + the anvil pair of task p28-c-anvil + the twelve-map
@@ -604,6 +604,34 @@ public class GT6RecipeMaps {
 	 * Cryo chemical rows stay POOLED (the card boundary — batch F follows).
 	 */
 	public static volatile RecipeMap CRYO_DISTILLATION_TOWER;
+
+	/**
+	 * RM.java:131 — the Melter map (1/1/0 items, 1/1/0 fluids, MIN 1). DECLARED-empty;
+	 * consumer = the Melter (task p29-w3-heat-smelter, the HU single at 22010). The
+	 * upstream Ice→Water family (Loader_Recipes_Chem.java:480-492) is the canonical row
+	 * pool; the live pour is the smoke row via the {@code fuels}-independent map key.
+	 */
+	public static volatile RecipeMap MELTER;
+
+	/**
+	 * RM.java:132 — the Smelter map (1/1/0 items, 1/1/0 fluids, MIN 1). DECLARED-empty;
+	 * consumer = the Smelter 4-ladder (task p29-w3-heat-smelter, HU 20241-20244). The
+	 * map shares the Melter's constant row shape — the two maps differ ONLY in their
+	 * local names and GUI paths, exactly like the upstream declaration pair.
+	 */
+	public static volatile RecipeMap SMELTER;
+
+	/**
+	 * FM.java:43 — the Hot Fuels map (the RecipeMapFuel row over the base-{@link RecipeMap}
+	 * form, the BURN/ENGINE_FUELS judged shell: 1/2/0 items, 1/2/0 fluids, MIN 1). The
+	 * GUI path is the upstream machines/Default lowercased (the fuel-map convention).
+	 * DECLARED-empty as a static stock — the upstream Hot table (Loader_Fuels.java:191-205)
+	 * burns the Pahoehoe/Hot-Water/coolant fluid families no card has registered except the
+	 * one live anchor: gt6:hot_water (GTFluids.AquaFluid) → vanilla water, :196/:198 — the
+	 * smoke row pours through the {@code fuels_hot} JSON key (task p29-w3-heat-smelter,
+	 * the Large Heat Exchanger's fuel map).
+	 */
+	public static volatile RecipeMap FUELS_HOT;
 
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
@@ -1178,6 +1206,35 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 9, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
+		// the P29 W3 three-map block (task p29-w3-heat-smelter), upstream declaration
+		// order — Melter :131 before Smelter :132, then FM.Hot (FM.java:43): the first
+		// two are the IDENTICAL-constants pair (item 1/1/0, fluid 1/1/0, MIN 1), the
+		// fuel map is the BURN row shape over its own local name (the RecipeMapFuel
+		// shell folds to the base class, the BURN/FLUIDBED judged form)
+		MELTER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.melter", "Melter", null,
+				0, 1,
+				"gt6:textures/gui/machines/melter",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		SMELTER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.smelter", "Smelter", null,
+				0, 1,
+				"gt6:textures/gui/machines/smelter",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		FUELS_HOT = new RecipeMap(new HashSet<>(),
+				"gt.recipe.fuels.hot", "Hot Fuels", null,
+				0, 1,
+				"gt6:textures/gui/machines/default",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -1247,6 +1304,9 @@ public class GT6RecipeMaps {
 		GENERIFIER = null;
 		DISTILLATION_TOWER = null;
 		CRYO_DISTILLATION_TOWER = null;
+		MELTER = null;
+		SMELTER = null;
+		FUELS_HOT = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}
