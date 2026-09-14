@@ -273,22 +273,26 @@ public class GT6TankValveFamilyTest extends GTMultiBlocksOfflineTestBase {
 		assertFalse(tTank.checkStructure(true), "a non-air centre fails the check (fail-not-clear)");
 	}
 
-	@Test
-	public void structure5x5x5FormsAndPatternStaysUnbound() {
-		MultiBlockLevel tLevel = new MultiBlockLevel();
-		TestTank tTank = placedTank(tLevel, (byte)Direction.NORTH.get3DDataValue(), 2);
-		// the 5x5x5 shell around the centre (100,64,102): 98 wall cells minus the valve cell
+	/** Places the 97 wall BEs of the 5x5x5 shell (125 cells minus the 27-cell hollow minus the valve cell). */
+	private static int placeShell5(MultiBlockLevel aLevel, net.minecraft.world.level.block.Block aWall) {
 		BlockPos tCentre5 = V.relative(Direction.NORTH, -2); // (100,64,102)
 		int tWalls = 0;
 		for (int i = -2; i <= 2; i++) for (int j = -2; j <= 2; j++) for (int k = -2; k <= 2; k++) {
 			if (i * i <= 1 && j * j <= 1 && k * k <= 1) continue; // the inner 3x3x3 hollow (:66)
 			BlockPos tPos = new BlockPos(tCentre5.getX() + i, tCentre5.getY() + j, tCentre5.getZ() + k);
 			if (tPos.equals(V)) continue;
-			placePart(tLevel, tPos);
-			tLevel.mStates.put(tPos, Blocks.BRICKS.defaultBlockState());
+			placePart(aLevel, tPos);
+			aLevel.mStates.put(tPos, aWall.defaultBlockState());
 			tWalls++;
 		}
-		assertEquals(97, tWalls, "125 - 27 hollow - 1 controller cell = 97 walls");
+		return tWalls;
+	}
+
+	@Test
+	public void structure5x5x5FormsAndPatternStaysUnbound() {
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TestTank tTank = placedTank(tLevel, (byte)Direction.NORTH.get3DDataValue(), 2);
+		assertEquals(97, placeShell5(tLevel, Blocks.BRICKS), "125 - 27 hollow - 1 controller cell = 97 walls");
 		assertTrue(tTank.checkStructure(true), "the hollow 5x5x5 forms");
 		assertNull(tTank.getStructurePattern(), "the distance-2 anchor stays pattern-less (the class-doc ruling)");
 	}
@@ -297,14 +301,7 @@ public class GT6TankValveFamilyTest extends GTMultiBlocksOfflineTestBase {
 	public void structure5x5x5RejectsWrongWall() {
 		MultiBlockLevel tLevel = new MultiBlockLevel();
 		TestTank tTank = placedTank(tLevel, (byte)Direction.NORTH.get3DDataValue(), 2);
-		BlockPos tCentre5 = V.relative(Direction.NORTH, -2);
-		for (int i = -2; i <= 2; i++) for (int j = -2; j <= 2; j++) for (int k = -2; k <= 2; k++) {
-			if (i * i <= 1 && j * j <= 1 && k * k <= 1) continue;
-			BlockPos tPos = new BlockPos(tCentre5.getX() + i, tCentre5.getY() + j, tCentre5.getZ() + k);
-			if (tPos.equals(V)) continue;
-			placePart(tLevel, tPos);
-			tLevel.mStates.put(tPos, Blocks.STONE.defaultBlockState());
-		}
+		placeShell5(tLevel, Blocks.STONE);
 		assertFalse(tTank.checkStructure(true), "the wrong-material 5x5x5 shell refuses");
 	}
 
@@ -449,6 +446,27 @@ public class GT6TankValveFamilyTest extends GTMultiBlocksOfflineTestBase {
 		assertTrue(tLevel.getBlockState(CENTRE3).is(Blocks.LAVA), "the centre keeps the :136 lava block");
 		assertTrue(tLevel.getBlockState(V).is(Blocks.FIRE), "the valve ends in fire (:138 setToFire)");
 		assertEquals(0, tTank.mTank.amount(), "the meltdown trashes the content (:137)");
+	}
+
+	@Test
+	public void meltdown5x5x5HasNoLavaArm() {
+		// Tank5x5x5.java:130-139 carries NO :136 lava arm (Tank3x3x3.java:136 only — the
+		// review-round red item: the first cut ran the arm at both radii) — the 5x5x5
+		// meltdown leaves the hollow centre AIR and only fires/trashes
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TestTank tTank = placedTank(tLevel, (byte)Direction.NORTH.get3DDataValue(), 2);
+		placeShell5(tLevel, Blocks.BRICKS);
+		tTank.checkStructure(true);
+		tTank.setMeltingPointOverride(200);
+		tTank.mTank.fill(new FluidStack(Fluids.LAVA, 2000), FluidAction.EXECUTE);
+		tTank.onTick(1, true);
+		BlockPos tCentre5 = V.relative(Direction.NORTH, -2); // (100,64,102)
+		// the lava arm is radius-1 only — the centre never becomes a lava block (the
+		// deterministic rng(4)==0 override DOES place fire in the hollow cells, the
+		// upstream :134 verbatim — so the negative is the LAVA absence, not air)
+		assertFalse(tLevel.getBlockState(tCentre5).is(Blocks.LAVA), "the 5x5x5 centre never becomes lava — NO lava arm at radius 2");
+		assertTrue(tLevel.getBlockState(V).is(Blocks.FIRE), "the valve still ends in fire (the shared :138 face)");
+		assertEquals(0, tTank.mTank.amount(), "the meltdown trashes the content (the shared :137 face)");
 	}
 
 	@Test

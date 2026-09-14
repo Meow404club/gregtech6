@@ -74,6 +74,7 @@ import gregtech6.registry.GTItemPipes;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GT6Tanks;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GTWires;
@@ -214,7 +215,7 @@ public class GT6LangParityTest {
  * words 蒸汽裂解器/催化裂解器/织布机/凝结器/转换器/浸洗器/高压釜), both locales; zh == en,
  * the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2885; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales)
+private static final int ZH_KEY_FLOOR = 2893; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales)
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -742,10 +743,19 @@ private static final int ZH_KEY_FLOOR = 2885; // 2839 +3 (task p29-w2-eu-special
 			tChecked++;
 			if (!en().containsKey(GT6Attachments.matUnitKeyOf(tRow))) tMissing.add("att:" + tRow.path());
 		}
-		assertEquals(261, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
+		// task p29-w3-tank-valves — the 25 Tank Main Valve rows: the size word + the
+		// material unit word per row (the metal materials ride the EXISTING dense-wall
+		// units, the wood row the dedicated wood unit — both faces must carry them)
+		for (GT6Tanks.TankValveRow tRow : GT6Tanks.ROWS) {
+			tChecked++;
+			if (!en().containsKey(GT6Tanks.sizeUnitKeyOf(tRow))) tMissing.add("tank_size:" + tRow.path());
+			if (!en().containsKey(GT6Tanks.matUnitKeyOf(tRow))) tMissing.add("tank_mat:" + tRow.path());
+		}
+		assertEquals(286, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
             + " (44 axle + 28 steam + 8 diesel + 96 burning + 26 boiler + 4 dryer + 4 distillery"
             + " + 6 p28 ULV rows + 5 large boiler + 11 wall (the 6 p29-w3 dense additions joined)"
-            + " + 12 attachments + 2 dry/dist shares not double-counted)"
+            + " + 12 attachments + 2 dry/dist shares not double-counted + 25 tank valves (task"
+            + " p29-w3-tank-valves))"
             + " — bump this pin ONLY with a real row-table change");
 		assertTrue(tMissing.isEmpty(), "every composed row/stone unit key must exist on the en face"
 			+ " (a missing face renders the RAW key at runtime): " + tMissing);

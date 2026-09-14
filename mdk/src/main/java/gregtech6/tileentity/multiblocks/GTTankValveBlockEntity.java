@@ -362,15 +362,15 @@ public class GTTankValveBlockEntity extends TileEntityBase10MultiBlockBase
 		boolean tSuccess = true;
 		for (int i = -r; i <= r; i++) for (int j = -r; j <= r; j++) for (int k = -r; k <= r; k++) {
 			if (Math.abs(i) <= tHollow && Math.abs(j) <= tHollow && Math.abs(k) <= tHollow) {
-				// :67 — clear-if-air (getAir → setBlockToAir), a non-air hollow cell FAILS
+				// :67 — the upstream getAir verdict is STRICT isAir (TileEntityBase01Root
+				// .java:281-285): a non-air hollow cell FAILS and is never cleared; the air
+				// case runs the :67 setBlockToAir as the idempotent no-op
 				BlockPos tPos = new BlockPos(tCentre.getX() + i, tCentre.getY() + j, tCentre.getZ() + k);
 				BlockState tState = getLevel().getBlockState(tPos);
 				if (tState.isAir()) {
 					getLevel().setBlock(tPos, Blocks.AIR.defaultBlockState(), 3); // the idempotent no-op
-				} else if (!tState.canBeReplaced()) {
-					tSuccess = false;
 				} else {
-					getLevel().setBlock(tPos, Blocks.AIR.defaultBlockState(), 3); // the WD.air replaceable family clears
+					tSuccess = false; // the :67 else arm — non-air (replaceable or not) FAILS, verbatim
 				}
 			} else {
 				// :69 — the wall check, design 0 (the LITERAL; the wall choice is the row's wallPath)
@@ -523,7 +523,15 @@ public class GTTankValveBlockEntity extends TileEntityBase10MultiBlockBase
 	@Nullable
 	private IFluidHandler mEmitTargetOverride = null;
 
-	/** The :130-140 meltdown (the 3x3x3 form — the 5x5x5 :130-138 lacks the lava arm, the asymmetry verbatim). */
+	/**
+	 * The meltdown (upstream Tank3x3x3.java:130-140 for the 3x3x3, Tank5x5x5.java:130-139
+	 * for the 5x5x5). The two sizes differ in exactly ONE clause — the :136 lava arm is a
+	 * 3x3x3-ONLY feature (the 5x5x5 body has no {@code FL.lava && drainAll(1000)} centre
+	 * arm), so the arm is gated on {@code radius() == 1} (the review-round fix: the first
+	 * cut ran it at both radii while the javadoc claimed the asymmetry — doc/code opposite).
+	 * Shared face: the 1-in-4 fire placement (:134; the :133 WD.burn fire-spread surface is
+	 * the unported cut), the :137 content trash and the :138 setToFire end state.
+	 */
 	public boolean meltdown() {
 		BlockPos tCentre = centre();
 		int r = radius();
@@ -536,8 +544,9 @@ public class GTTankValveBlockEntity extends TileEntityBase10MultiBlockBase
 				getLevel().setBlock(tPos, Blocks.FIRE.defaultBlockState(), 3);
 			}
 		}
-		// :136 — the 3x3x3-only lava arm: ≥1000 L of lava leaves a lava block in the centre
-		if (isLava(mTank.getFluid()) && mTank.amount() >= 1000) {
+		// Tank3x3x3.java:136 ONLY — the lava arm does NOT exist in the Tank5x5x5 body
+		// (Tank5x5x5.java:130-139): ≥1000 L of lava leaves a lava block in the centre, 3x3x3 tanks only
+		if (radius() == 1 && isLava(mTank.getFluid()) && mTank.amount() >= 1000) {
 			mTank.remove(1000);
 			getLevel().setBlock(tCentre, Blocks.LAVA.defaultBlockState(), 3);
 		}
