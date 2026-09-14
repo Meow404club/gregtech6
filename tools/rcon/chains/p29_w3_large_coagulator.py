@@ -73,9 +73,7 @@ steps = [
     phase("B: the run — the TU self-generation, the 64-tick water row"),
     Step(FEED["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": FEED["1.21.1"]}),
-    Step(RESTART["1.20.1"], expect="Modified block data",
-         node_cmds={"1.21.1": RESTART["1.21.1"]}),
-    Step("data get block " + C, expect="active: 1b", poll=20),      # the self-generated run
+    Step("data get block " + C, expect="active: 1b", poll=20),        # the self-generated run (the placed machine starts un-stopped)
     Step("data get block " + C, expect="maxprogress: 64L", poll=20),  # the 1x64 TU-constant bar
 
     phase("C: the NO_CONSTANT_POWER cycle — the stopped-toggle gap parks the bar"),

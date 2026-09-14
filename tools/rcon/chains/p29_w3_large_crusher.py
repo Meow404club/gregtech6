@@ -5,8 +5,8 @@ p29_w3_large12 sweep group; Loader_MultiTileEntities.java:1238).
   RU eff 5000, window 512..4096, parallel 64 + DURATION + NO_CONSTANT_POWER; the 5x5x3
   tungstensteel basin (the wheel filling 3x3x2, the two perpendicular mid-edge ENERGY_IN
   walls per facing); the heavy granite row (granite -> cobblestone, eUt 16, dur 512) —
-  32 granite (the slot cap) = 32 processes, the 524288-progress bar at the 512/t rig
-  pace = 1024 ticks, the long pollable window.
+  64 granite (the slot cap) = 64 processes, the 1048576-progress bar at the 512/t rig
+  pace = 2048 ticks, the long pollable window.
 
 acceptance arms this machine carries:
   1 form all-green + the wrong-part rejection
@@ -66,7 +66,7 @@ steps = [
     Step("gt6energy type " + R + " RU", expect="type ENERGY."),
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
     Step("gt6energy mode " + R + " on", expect="emitting true"),
-    Step("data get block " + C, expect="maxprogress: 524288L", poll=20),  # the eff-5000 numeric bar, live
+    Step("data get block " + C, expect="maxprogress: 1048576L", poll=30),  # the eff-5000 numeric bar, live (units(16x512x64, 5000, 10000))
 
     phase("C: the NO_CONSTANT_POWER cycle — the rig-off gap parks the bar"),
     Step("gt6energy mode " + R + " off", expect="emitting false"),
@@ -74,9 +74,9 @@ steps = [
     Step("data get block " + C, expect="maxprogress: 524288L", poll=10),  # the PARKED bar survives
     Step("gt6energy mode " + R + " on", expect="emitting true"),
     Step("data get block " + C, expect="active: 1b", poll=10),            # the restart resumes the run
-    Step("gt6energy volt " + R + " 4096", expect="voltage 4096"),         # the fast finish (the window max)
-    Step("data get block " + C, expect="Count: 32b", poll=60,             # 32 cobblestone out (one stack)
-         node_expects={"1.21.1": "Count: 32"}),
+    Step("gt6energy volt " + R + " 4096", expect="voltage 4096"),         # the fast finish (the window max): 64 procs x 8192 bar / 4096 = 128 ticks
+    Step("data get block " + C, expect="Count: 64b", poll=90,             # 64 cobblestone out (one stack)
+         node_expects={"1.21.1": "Count: 64"}),
 
     phase("D: the type gate — dialed EU the RU door refuses the waiting batch"),
     Step("gt6energy type " + R + " EU", expect="type ENERGY."),

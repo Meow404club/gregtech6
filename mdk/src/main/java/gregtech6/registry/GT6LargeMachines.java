@@ -46,6 +46,7 @@ import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
+import gregtech6.recipes.RecipeMapFurnace;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.multiblocks.ITileEntityMultiBlockController;
 import gregtech6.tileentity.multiblocks.MultiBlockFluidHandler;
@@ -699,8 +700,14 @@ public final class GT6LargeMachines {
 			if (tInputFluidCount                     < tRecipes.mMinimalInputFluids) return DID_NOT_FIND_RECIPE; // :709
 			if (tInputItemsCount + tInputFluidCount  < tRecipes.mMinimalInputs     ) return DID_NOT_FIND_RECIPE; // :710
 
-			// :712 — mInputMax is the voltage
-			Recipe tRecipe = tRecipes.findRecipe(mLastRecipe, mInputMax, slot(SLOT_SPECIAL), tFluids, tInputs);
+			// :712 — mInputMax is the voltage; the FURNACE bridge takes the Level (the
+			// vanilla smelting lookup synthesises the row: eUt 16, dur 16, mCanBeBuffered F)
+			Recipe tRecipe;
+			if (tRecipes instanceof RecipeMapFurnace tFurnace) {
+				tRecipe = hasLevel() ? tFurnace.findRecipe(getLevel(), mLastRecipe, mInputMax, slot(SLOT_SPECIAL), tFluids, tInputs) : null;
+			} else {
+				tRecipe = tRecipes.findRecipe(mLastRecipe, mInputMax, slot(SLOT_SPECIAL), tFluids, tInputs);
+			}
 			if (tRecipe == null) return DID_NOT_FIND_RECIPE; // :719
 
 			if (tRecipe.mCanBeBuffered) mLastRecipe = tRecipe; // :734

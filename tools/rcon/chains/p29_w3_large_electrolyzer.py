@@ -8,7 +8,7 @@ p29_w3_large12 sweep group; Loader_MultiTileEntities.java:1230).
 acceptance arms this machine carries:
   1 form all-green + the wrong-part rejection
   4 eff 5000 numeric bar: maxprogress = units(16x512x4, 5000, 10000) = 65536 at the
-    4-process snow_block batch (the W1 units() half-speed ruling, live)
+    8-process snow_block batch (TWO slots — the map MIN-ITEM 2 gate) (the W1 units() half-speed ruling, live)
   5 the type gate: dialed RU the EU door refuses the waiting batch; the EU resume runs it
   6 the window-511 refusal (volt 511 < min 512 stalls) and the 512 resume
 
@@ -48,8 +48,8 @@ def merge(items):
                    ",".join('{Slot:%db,id:"%s",count:%d}' % (i, iid, n) for i, (iid, n) in enumerate(items)) + "]}}"),
     }
 
-SNOWB = merge([("minecraft:snow_block", 8)])  # 4 processes at dur 512 (the pollable bar)
-BATCH2 = merge([("minecraft:snow_block", 8), ("minecraft:snowball", 32)])  # re-include the outputs
+SNOWB = merge([("minecraft:snow_block", 4), ("minecraft:snow_block", 4)])  # TWO slots: the map MIN-ITEM 2 gate; 8 processes at dur 512
+BATCH2 = merge([("minecraft:snow_block", 4), ("minecraft:snow_block", 4), ("minecraft:snowball", 32)])  # re-include the outputs
 
 steps = [
     phase("A: the site — the wrong-part rejection, then the all-green form"),
@@ -68,7 +68,7 @@ steps = [
     Step("gt6energy type " + R + " EU", expect="type ENERGY."),
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
     Step("gt6energy mode " + R + " on", expect="emitting true"),
-    Step("data get block " + C, expect="maxprogress: 65536L", poll=20),  # the eff-5000 numeric bar, live
+    Step("data get block " + C, expect="maxprogress: 131072L", poll=20),  # the eff-5000 numeric bar, live (units(16x512x8, 5000, 10000))
 
     phase("C: the window-511 refusal + the batch completion"),
     Step("gt6energy volt " + R + " 511", expect="voltage 511"),

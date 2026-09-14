@@ -68,7 +68,7 @@ steps = [
          node_cmds={"1.21.1": FEED["1.21.1"]}),
     Step("gt6energy place " + R, expect="GT6 energy source placed"),
     Step("gt6energy type " + R + " HU", expect="type ENERGY."),
-    Step("gt6energy volt " + R + " 2", expect="voltage 2"),
+    Step("gt6energy volt " + R + " 32", expect="voltage 32"),  # >= the bar pace floor (mMinEnergy 16); 2048/32 = 64 ticks
     Step("gt6energy mode " + R + " on", expect="emitting true"),
     Step("data get block " + C, expect="maxprogress: 2048L", poll=20),  # the eff-10000 numeric bar, live
 

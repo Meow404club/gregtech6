@@ -69,7 +69,7 @@ steps = [
     Step("gt6energy type " + R + " RU", expect="type ENERGY."),
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
     Step("gt6energy mode " + R + " on", expect="emitting true"),
-    Step("data get block " + C, expect="cfoam", poll=30),  # the row completes: the cfoam lands in the output tank
+    Step("data get block " + C, expect="Amount: 1000", poll=30),  # batch 1: the cfoam lands in the output tank
 
     phase("C: the window-511 refusal — the next batch stalls under the window minimum"),
     Step("gt6energy volt " + R + " 511", expect="voltage 511"),
@@ -77,7 +77,7 @@ steps = [
          node_cmds={"1.21.1": FEED["1.21.1"]}),
     Step("data get block " + C, expect="active: 0b", poll=10),  # 511 < mInputMin 512: the :780 gate stalls
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
-    Step("data get block " + C, expect="active: 1b", poll=10),  # the resume on the fresh 512 packet
+    Step("data get block " + C, expect="Amount: 2000", poll=30),  # the resume: batch 2 completes
 
     phase("D: the type gate — dialed EU the RU door refuses the waiting batch"),
     Step("gt6energy type " + R + " EU", expect="type ENERGY."),
@@ -85,7 +85,7 @@ steps = [
          node_cmds={"1.21.1": FEED["1.21.1"]}),
     Step("data get block " + C, expect="active: 0b", poll=10),   # the cross-type refusal: EU on an RU row
     Step("gt6energy type " + R + " RU", expect="type ENERGY."),
-    Step("data get block " + C, expect="active: 1b", poll=10),   # the RU resume
+    Step("data get block " + C, expect="Amount: 3000", poll=30),   # the RU resume: batch 3 completes
 
     phase("E: teardown — the explicit band restore"),
     Step("fill 441 60 337 447 70 352 air", expect="filled"),

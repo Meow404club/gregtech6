@@ -65,7 +65,7 @@ steps = [
     Step("gt6energy type " + R + " EU", expect="type ENERGY."),
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
     Step("gt6energy mode " + R + " on", expect="emitting true"),
-    Step("data get block " + C, expect="minecraft:glass", poll=60),  # the bridge smelts
+    Step("data get block " + C, expect="minecraft:glass", poll=60),  # the bridge smelts (64 sand)
 
     phase("C: the window-511 refusal — the next batch stalls under the window minimum"),
     Step("gt6energy volt " + R + " 511", expect="voltage 511"),
@@ -73,7 +73,7 @@ steps = [
          node_cmds={"1.21.1": FEED["1.21.1"]}),
     Step("data get block " + C, expect="active: 0b", poll=10),  # 511 < mInputMin 512: the :780 gate stalls
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
-    Step("data get block " + C, expect="active: 1b", poll=10),  # the resume on the fresh 512 packet
+    Step("data get block " + C, expect="active: 1b", poll=30),  # the resume on the fresh 512 packet
 
     phase("D: the type gate — dialed HU the EU door refuses the waiting batch"),
     Step("gt6energy type " + R + " HU", expect="type ENERGY."),
