@@ -69,6 +69,14 @@ brain 守护内置调度线程：启动 30s 后首轮、之后每轮间隔 600s�
 生命周期日志 `tmp/index/autorefresh.log`，索引输出与手动 refresh 共用
 `tmp/index/refresh.log`。
 
+## SessionStart 上下文自动注入
+
+`tools/context_inject.py`：新会话自动注入压缩状态页（阶段/在途任务/近决策/
+已知 Bug/main 最新）。已注册在**用户级** `~/.zcode/cli/config.json`
+（SessionStart 事件，timeout 5s）；脚本 git toplevel 自探测作用域——只在
+brain 框架仓库内输出，其他目录静默。工程卫生：恒 exit 0、无副作用、
+SQLite 只读、≤40 行。
+
 ## 关于 PreToolUse 钩子的注册位置
 
 GPG 提交拦截钩子已注册在**用户级** `~/.zcode/cli/config.json`（hooks 段），

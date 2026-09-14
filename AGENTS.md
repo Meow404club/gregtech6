@@ -144,6 +144,10 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
    `nohup ./gradlew :mdk:runServer > /tmp/xxx.log 2>&1 & echo $! > /tmp/xxx.pid`，
    然后轮询**读日志文件**判定成功标记（如 `Done (…)!`），收尾按 PID/端口杀进程。
    会自行退出的有限任务（check/build/runData）不受此限。
+7. **Hook 工程卫生（ruflo ADR 教训，新增 hook 时强制）**：恒 exit 0（hook 故障绝不
+   阻塞会话）；≤5s 超时；stdin JSON 容错；副作用事件必须去重锁；**handler 不存在
+   就整个不装 hook**；注入会话上下文必须真数据——缺失就明说，禁止打印硬编码的
+   剧场表格（SessionStart 注入见 tools/context_inject.py）。
 
 ## 六、上下文工程纪律（Anthropic 上下文工程指南的落地）
 
