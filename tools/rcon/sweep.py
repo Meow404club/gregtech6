@@ -264,6 +264,14 @@ SESSION_GROUPS = (
     # Band-local setblocks only — no fresh_boot / mutates member.
     # --group p29_w3_tank matches through the chain's embedded name prefix.
     ("p29_w3_tank",),
+    # P29 W3 card ③ (p29-w3-turbine-dynamo): the turbine + dynamo converter band —
+    # one fresh z=300 strip, three chains on x-disjoint columns (the steam tiers
+    # x384..448, the gas pair x448..480, the dynamo tiers x464..560 — the gas band
+    # rides the steam/dynamo gap), the STEAM 夹具 = the card's dial short-code
+    # precedent, the sinks = the flux dynamo t5 / electric transformer delivery
+    # legs (band-local setblocks only — no fresh_boot / mutates member).
+    # --group p29_w3_turbine_dynamo matches through the chains' embedded name prefix.
+    ("p29_w3_steam_turbine", "p29_w3_gas_turbine", "p29_w3_large_dynamo"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
