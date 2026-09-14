@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "comment": "FM.Gas — Loader_Fuels.java:169 verbatim: naturalgas 5 L, -64 EUt x 30, water 6 out; the CO2 3 byproduct is dropped (gt6:carbon_dioxide is unregistered, the engine-fuels silent-skip ruling).",
+      "fluidInputs": [{ "fluid": "gt6:natural_gas", "amount": 5 }],
+      "fluidOutputs": [{ "fluid": "minecraft:water", "amount": 6 }],
+      "duration": 30,
+      "eut": -64
+    }
+  ]
+}

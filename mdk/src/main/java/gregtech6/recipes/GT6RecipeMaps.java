@@ -224,6 +224,9 @@ public class GT6RecipeMaps {
 	/** FM.java:41 — the Burnable Fuels map (1/2/0 items, 1/2/0 fluids, minimal inputs 1; empty until the W2 burning-box card pours the rows). */
 	public static volatile RecipeMap BURN;
 
+	/** FM.java:42 — the Gas Fuels map (1/2/0 items, 1/2/0 fluids, minimal inputs 1; the Gas Turbine fuel face, task p29-w3-turbine-dynamo ③ — the natural-gas row pours via data/gt6/recipe_maps/gas_fuels.json, the direct-fill anchor; FM.Hot/Plasma/Turbine/Magic stay the pool bottom, decisions.p29-w3-split-rulings). */
+	public static volatile RecipeMap GAS_FUELS;
+
 	/** RM.java:70 — the Distillery map (1/2/1 items, 1/2/1 fluids, minimal inputs 2; the seven water-family rows pour via GT6RecipesDistillery, the rest of the census stays pooled). */
 	public static volatile RecipeMap DISTILLERY;
 
@@ -655,6 +658,18 @@ public class GT6RecipeMaps {
 				/*AMP=*/ 1);
 		BURN = new RecipeMap(new HashSet<>(),
 				"gt.recipe.fuels.burn", "Burnable Fuels", null,
+				0, 1,
+				"gt6:textures/gui/machines/default",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		// FM.java:42 — the Gas Fuels map (task p29-w3-turbine-dynamo ③): the Gas Turbine fuel
+		// face, the FM.java:42 column row verbatim (1/2/0 items, 1/2/0 fluids, MIN 1, AMP 1 —
+		// the ENGINE_FUELS shape). The rows pour via the datapack (gas_fuels.json, the
+		// direct-fill anchor); the Hot/Plasma/Turbine/Magic FM maps stay the pool bottom.
+		GAS_FUELS = new RecipeMap(new HashSet<>(),
+				"gt.recipe.fuels.gas", "Gas Fuels", null,
 				0, 1,
 				"gt6:textures/gui/machines/default",
 				/*IN-OUT-MIN-ITEM=*/ 1, 2, 0,
@@ -1139,6 +1154,7 @@ public class GT6RecipeMaps {
 		ENGINE_FUELS = null;
 		FLUIDBED = null;
 		BURN = null;
+		GAS_FUELS = null;
 		DISTILLERY = null;
 		DRYING = null;
 		CANNER = null;
