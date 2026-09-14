@@ -177,6 +177,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addParts(); // task p29-w3-nbtdesign-parts — the part-family expansion (per-design variants)
         addTanks(); // task p29-w3-tank-valves — the 25 valve controllers
         addTurbinesDynamo(); // task p29-w3-turbine-dynamo — the Large Turbine + Large Dynamo controllers
+        addLargeMachines(); // task p29-w3-large-12 — the twelve large-machine controllers
         addLargeCrucible(); // task p26-crucible-multiblock
         addDistillationTowers(); // task p29-w3-distill-crucible — the twin tower controllers
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
@@ -1916,6 +1917,40 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /** One two-layer part model (body cube + six overlay decals) over the borrowed design textures. */
+    /**
+     * Task p29-w3-large-12 — the twelve large-machine controllers: ONE oriented cube
+     * model per machine over the six borrowed colored faces (the basicmachines/&lt;family&gt;
+     * frame 0 byte copies, the borrow_port_overlays naming shape), the 8 FACING x FORMED
+     * states sharing the one model (the FORMED dual-model was the coke-oven enhancement;
+     * the RCON formed assertion rides the blockstate property, not the model). The
+     * overlay/active layers stay unborrowed — the ACTIVE visual is the render wave's
+     * surface (the card exclusion), the borrow-or-declare rule keeps the byte count at
+     * the six colored frames per family.
+     */
+    private void addLargeMachines() {
+        for (gregtech6.registry.GT6LargeMachines.LargeMachineRow tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
+            Block tBlock = gregtech6.registry.GT6LargeMachines.BLOCKS_BY_PATH.get(tRow.path()).get();
+            ModelFile tModel = models().cube(tRow.path(),
+                    modLoc("block/" + tRow.texture() + "_colored_bottom"),
+                    modLoc("block/" + tRow.texture() + "_colored_top"),
+                    modLoc("block/" + tRow.texture() + "_colored_front"),
+                    modLoc("block/" + tRow.texture() + "_colored_back"),
+                    modLoc("block/" + tRow.texture() + "_colored_left"),
+                    modLoc("block/" + tRow.texture() + "_colored_right"));
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY;
+                switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                    case SOUTH -> tY = 180;
+                    case WEST -> tY = 270;
+                    case EAST -> tY = 90;
+                    default -> tY = 0; // NORTH
+                }
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+        }
+    }
+
     private ModelFile partModel(String aName, String aFamily, int aDesign) {
         String tBase = "block/parts/" + aFamily + "/" + aDesign;
         BlockModelBuilder tModel = models().getBuilder(aName)

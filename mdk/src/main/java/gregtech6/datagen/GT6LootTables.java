@@ -104,6 +104,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
                 new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-turbine-dynamo — the twelve turbine/dynamo controllers
                 new SubProviderEntry(GT6DistillCrucibleLoot::new, LootContextParamSets.BLOCK), // task p29-w3-distill-crucible — the towers + the crucible ladder
+                new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-large-12 — the twelve large machines
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -143,6 +144,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
                 new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-turbine-dynamo — the twelve turbine/dynamo controllers
                 new SubProviderEntry(GT6DistillCrucibleLoot::new, LootContextParamSets.BLOCK), // task p29-w3-distill-crucible — the towers + the crucible ladder
+                new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-large-12 — the twelve large machines
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -1886,6 +1888,45 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : distillCrucibleLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The twelve large machines (task p29-w3-large-12) — the upstream large-machine MTEs
+     * self-drop (the MTE default; the controllers carry no item inventory face this port
+     * drops — the gated item handler is the BE's, not the block drop's), the vanilla
+     * {@code dropSelf} equivalent.
+     */
+    public static List<Block> largeMachineLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6LargeMachines.LargeMachineRow tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6LargeMachines.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The large-machine self-drop provider (task p29-w3-large-12; the part-provider shape). */
+    public static final class GT6LargeMachineBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6LargeMachineBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6LargeMachineBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return largeMachineLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : largeMachineLootBlocks()) dropSelf(tBlock);
         }
     }
 }

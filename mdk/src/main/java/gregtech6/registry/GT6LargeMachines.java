@@ -109,7 +109,7 @@ public final class GT6LargeMachines {
 	 * @param innerPath the interior part block (wheels/blades/sluice parts/coils/parts); null = walls only
 	 * @param basePath  the bottom-layer block (the Fermenter's heat transmitters); null = none
 	 */
-	public record LargeMachineRow(String path, String display, int metaId, float hardness,
+	public record LargeMachineRow(String path, String display, int metaId, float hardness, String texture,
 			gregapi.code.TagData energyType, RecipeMapSupplier recipes,
 			long nbtInput, long nbtInputMin, long nbtInputMax,
 			int parallel, boolean parallelDuration, boolean cheapOverclocking,
@@ -136,62 +136,62 @@ public final class GT6LargeMachines {
 	/** The VanillasGT-convention singleton-row offsets — none; every machine carries a hand row. */
 	public static final List<LargeMachineRow> ROWS = List.of(
 			// :1229 — aMat = MT.TungstenSteel; "CMC","RCR" crafting (CUT, the absent-input pool)
-			new LargeMachineRow("large_centrifuge", "Large Centrifuge", 17100, 12.5F,
+			new LargeMachineRow("large_centrifuge", "Large Centrifuge", 17100, 12.5F, "largecentrifuge",
 					gregapi.data.TD.Energy.RU, () -> GT6RecipeMaps.CENTRIFUGE,
 					512, 512, 4096, 16, true, true, false, 5000, false,
 					"centrifuge_part", null, null, StructureKind.CENTRIFUGE),
 			// :1230
-			new LargeMachineRow("large_electrolyzer", "Large Electrolyzer", 17103, 6.0F,
+			new LargeMachineRow("large_electrolyzer", "Large Electrolyzer", 17103, 6.0F, "largeelectrolyzer",
 					gregapi.data.TD.Energy.EU, () -> GT6RecipeMaps.ELECTROLYZER,
 					512, 512, 4096, 16, true, true, false, 5000, false,
 					"electrolyzer_part", null, null, StructureKind.ELECTROLYZER),
 			// :1231 — "Large Coagulator Array"
-			new LargeMachineRow("large_coagulator", "Large Coagulator Array", 17105, 6.0F,
+			new LargeMachineRow("large_coagulator", "Large Coagulator Array", 17105, 6.0F, "largecoagulator",
 					gregapi.data.TD.Energy.TU, () -> GT6RecipeMaps.COAGULATOR,
 					1, 1, 16, 64, false, false, true, 10000, false,
 					"machine_wall_stainless_steel", null, null, StructureKind.BOX_5X5X2),
 			// :1232 — the hollow sits ABOVE the controller (the shell centre one up)
-			new LargeMachineRow("large_autoclave", "Large Autoclave", 17112, 6.0F,
+			new LargeMachineRow("large_autoclave", "Large Autoclave", 17112, 6.0F, "largeautoclave",
 					gregapi.data.TD.Energy.TU, () -> GT6RecipeMaps.AUTOCLAVE,
 					1, 1, 16, 16, false, false, true, 10000, false,
 					"dense_wall_stainless_steel", null, null, StructureKind.HOLLOW_3X3X3),
 			// :1233 — "Large Bathing Vat"
-			new LargeMachineRow("large_bath", "Large Bathing Vat", 17104, 6.0F,
+			new LargeMachineRow("large_bath", "Large Bathing Vat", 17104, 6.0F, "largebath",
 					gregapi.data.TD.Energy.TU, () -> GT6RecipeMaps.BATH,
 					1, 1, 16, 64, false, false, true, 10000, false,
 					"machine_wall_stainless_steel", null, null, StructureKind.BOX_5X5X2),
 			// :1234 — "Large Batch Mixer"
-			new LargeMachineRow("large_batch_mixer", "Large Batch Mixer", 17102, 6.0F,
+			new LargeMachineRow("large_batch_mixer", "Large Batch Mixer", 17102, 6.0F, "largemixer",
 					gregapi.data.TD.Energy.RU, () -> GT6RecipeMaps.MIXER,
 					512, 512, 4096, 256, true, true, false, 10000, false,
 					"machine_wall_stainless_steel", null, null, StructureKind.MIXER),
 			// :1235 — the SIDE_BACK auto-out row; the 512/1/4096 window (MIN overridden to 1)
-			new LargeMachineRow("large_fermenter", "Large Fermenter", 17113, 6.0F,
+			new LargeMachineRow("large_fermenter", "Large Fermenter", 17113, 6.0F, "largefermenter",
 					gregapi.data.TD.Energy.HU, () -> GT6RecipeMaps.FERMENTER,
 					512, 1, 4096, 256, true, true, false, 10000, true,
 					"machine_wall_stainless_steel", null, "heat_transmitter", StructureKind.FERMENTER),
 			// :1236 — "Large Electric Oven" (MultiTileEntityOven; the two-coil middle ring)
-			new LargeMachineRow("large_electric_oven", "Large Electric Oven", 17106, 6.0F,
+			new LargeMachineRow("large_electric_oven", "Large Electric Oven", 17106, 6.0F, "largeoven",
 					gregapi.data.TD.Energy.EU, () -> GT6RecipeMaps.FURNACE,
 					512, 512, 4096, 64, true, true, false, 2500, false,
 					"machine_wall_invar", "large_nichrome_coil", null, StructureKind.OVEN),
 			// :1237
-			new LargeMachineRow("large_sluice", "Large Sluice", 17107, 9.0F,
+			new LargeMachineRow("large_sluice", "Large Sluice", 17107, 9.0F, "largesluice",
 					gregapi.data.TD.Energy.RU, () -> GT6RecipeMaps.SLUICE,
 					512, 512, 4096, 64, true, true, false, 5000, false,
 					"machine_wall_titanium", "sluice_part", null, StructureKind.SLUICE),
 			// :1238
-			new LargeMachineRow("large_crusher", "Large Crusher", 17108, 12.5F,
+			new LargeMachineRow("large_crusher", "Large Crusher", 17108, 12.5F, "largecrusher",
 					gregapi.data.TD.Energy.RU, () -> GT6RecipeMaps.CRUSHER,
 					512, 512, 4096, 64, true, true, true, 5000, false,
 					"machine_wall_tungstensteel", "crusher_wheels", null, StructureKind.BASIN_WHEELS),
 			// :1239
-			new LargeMachineRow("large_shredder", "Large Shredder", 17109, 12.5F,
+			new LargeMachineRow("large_shredder", "Large Shredder", 17109, 12.5F, "largeshredder",
 					gregapi.data.TD.Energy.RU, () -> GT6RecipeMaps.SHREDDER,
 					512, 512, 4096, 64, true, true, true, 5000, false,
 					"machine_wall_tungstensteel", "shredder_blades", null, StructureKind.BASIN_WHEELS),
 			// :1240 — aMat = ANY.Steel
-			new LargeMachineRow("large_squeezer", "Large Squeezer", 17114, 6.0F,
+			new LargeMachineRow("large_squeezer", "Large Squeezer", 17114, 6.0F, "largesqueezer",
 					gregapi.data.TD.Energy.RU, () -> GT6RecipeMaps.SQUEEZER,
 					512, 512, 4096, 64, true, true, true, 5000, false,
 					"machine_wall_steel", null, null, StructureKind.BASIN_OPEN));
@@ -288,7 +288,7 @@ public final class GT6LargeMachines {
 		/** MultiTileEntityCentrifuge :49-76 — 3x3x2, per-position ring designs 1..8, the centre column ONLY_ENERGY_IN. */
 		CENTRIFUGE {
 			@Override
-			GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
+			public GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
 				int[] anch = GTMultiBlockPattern.anchorOffset(aFacing);
 				GTMultiBlockPattern.Builder b = GTMultiBlockPattern.builder();
 				byte[][] tDesigns = {{1,2,3},{4,0,5},{6,7,8}}; // the (i,k) -> design table; 0 = the centre (energy)
@@ -304,7 +304,7 @@ public final class GT6LargeMachines {
 		/** MultiTileEntityElectrolyzer :49-73 — 3x3x2, the bottom layer design 1 item+fluid+energy in, the top layer design 0 out. */
 		ELECTROLYZER {
 			@Override
-			GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
+			public GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
 				int[] anch = GTMultiBlockPattern.anchorOffset(aFacing);
 				GTMultiBlockPattern.Builder b = GTMultiBlockPattern.builder();
 				for (int i = -1; i <= 1; i++) for (int k = -1; k <= 1; k++) {
@@ -317,7 +317,7 @@ public final class GT6LargeMachines {
 		/** MultiTileEntityMixer :46-77 — 3x3x2, the bottom layer OUT, the top layer IN, the centre column design 3 ONLY_ENERGY_IN. */
 		MIXER {
 			@Override
-			GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
+			public GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
 				int[] anch = GTMultiBlockPattern.anchorOffset(aFacing);
 				GTMultiBlockPattern.Builder b = GTMultiBlockPattern.builder();
 				for (int j = 0; j <= 1; j++) for (int i = -1; i <= 1; i++) for (int k = -1; k <= 1; k++) {
@@ -332,7 +332,7 @@ public final class GT6LargeMachines {
 		/** MultiTileEntityAutoclave :47-63 — 3x3x3 hollow one ABOVE the controller, dense walls, item+fluid+energy. */
 		HOLLOW_3X3X3 {
 			@Override
-			GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
+			public GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
 				int[] anch = GTMultiBlockPattern.anchorOffset(aFacing);
 				GTMultiBlockPattern.Builder b = GTMultiBlockPattern.builder();
 				for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) for (int k = -1; k <= 1; k++) {
@@ -348,7 +348,7 @@ public final class GT6LargeMachines {
 		/** MultiTileEntityCoagulator/Bath :47-79 — the solid 5x5x2 wall box. */
 		BOX_5X5X2 {
 			@Override
-			GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
+			public GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
 				int[] anch = GTMultiBlockPattern.anchorOffset(aFacing);
 				GTMultiBlockPattern.Builder b = GTMultiBlockPattern.builder();
 				for (int j = 0; j <= 1; j++) for (int i = -2; i <= 2; i++) for (int k = -2; k <= 2; k++) {
@@ -360,7 +360,7 @@ public final class GT6LargeMachines {
 		/** MultiTileEntityFermenter :48-129 — the 5x5 transmitter slab one BELOW the mid layer, the 5x5x2 wall box above it, the back mid-edge cells design 7 (the vent hole). */
 		FERMENTER {
 			@Override
-			GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
+			public GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
 				int[] anch = GTMultiBlockPattern.anchorOffset(aFacing);
 				int tVentI = -gt6APIOffX(aFacing) * 2, tVentK = -gt6APIOffZ(aFacing) * 2; // the back mid-edge (see the class doc table)
 				GTMultiBlockPattern.Builder b = GTMultiBlockPattern.builder();
@@ -378,7 +378,7 @@ public final class GT6LargeMachines {
 		/** MultiTileEntityOven :47-91 — the 3x3x3: walls / the 8-coil ring around an air centre / walls; the coil type is the standing-block probe (the :62-63 try-Nichrome-then-Carborundum two-step). */
 		OVEN {
 			@Override
-			GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
+			public GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
 				int[] anch = GTMultiBlockPattern.anchorOffset(aFacing);
 				GTMultiBlockPattern.Builder b = GTMultiBlockPattern.builder();
 				for (int i = -1; i <= 1; i++) for (int k = -1; k <= 1; k++) {
@@ -400,7 +400,7 @@ public final class GT6LargeMachines {
 		/** MultiTileEntitySluice :50-83 — the 7x3x3 trough controller-relative ("Slim-Side-Bottom"): walls down, the far-row energy wall at the middle layer, sluice parts on top. */
 		SLUICE {
 			@Override
-			GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
+			public GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
 				// the trough extends -OFF (behind the facing) 6 cells: the controller-relative axis step
 				int[] anch = GTMultiBlockPattern.anchorOffset(aFacing); // OFF_Y = 0 on the horizontal domain
 				int tStepI = -gt6APIOffX(aFacing), tStepK = -gt6APIOffZ(aFacing);
@@ -428,7 +428,7 @@ public final class GT6LargeMachines {
 		/** MultiTileEntityCrusher/Shredder :49-140 — the 5x5x3 basin: the full wall floor OUT, the wall ring with the two perpendicular mid-edge ENERGY_IN walls + the 9-wheel filling, the wall ring + the 9-wheel input top. */
 		BASIN_WHEELS {
 			@Override
-			GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
+			public GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
 				int[] anch = GTMultiBlockPattern.anchorOffset(aFacing);
 				boolean tAxisX = gt6APIOffX(aFacing) != 0;
 				int tDesign = tAxisX ? 2 : 0; // the idle tD: axis-Z -> 0, axis-X -> 2
@@ -466,7 +466,7 @@ public final class GT6LargeMachines {
 		/** MultiTileEntitySqueezer :48-107 — the 5x5x3 open basin: the full floor OUT, the 12-wall corner+edge ring (the interior and mid-edges OPEN), the full top IN. */
 		BASIN_OPEN {
 			@Override
-			GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
+			public GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase) {
 				int[] anch = GTMultiBlockPattern.anchorOffset(aFacing);
 				GTMultiBlockPattern.Builder b = GTMultiBlockPattern.builder();
 				for (int i = -2; i <= 2; i++) for (int k = -2; k <= 2; k++) {
@@ -475,7 +475,8 @@ public final class GT6LargeMachines {
 				for (int i = -2; i <= 2; i++) for (int k = -2; k <= 2; k++) {
 					if (Math.abs(i) == 2 && Math.abs(k) == 2) {
 						b.formingPart(i + anch[0], anch[1] + 1, k + anch[2], aWall, MultiBlockPartBlockEntity.NOTHING, 0);
-					} else if (Math.abs(i) == 2 && Math.abs(k) <= 1 || Math.abs(k) == 2 && Math.abs(i) <= 1) {
+					} else if (Math.abs(i) == 2 && Math.abs(k) == 1 || Math.abs(k) == 2 && Math.abs(i) == 1) {
+						// the edge walls only — the four mid-edges stay OPEN (the :57-67 ring census)
 						b.formingPart(i + anch[0], anch[1] + 1, k + anch[2], aWall, MultiBlockPartBlockEntity.NOTHING, 0);
 					}
 					b.formingPart(i + anch[0], anch[1] + 2, k + anch[2], aWall, MultiBlockPartBlockEntity.ONLY_ITEM_FLUID_IN, 0);
@@ -490,7 +491,7 @@ public final class GT6LargeMachines {
 		 * wall), {@code aCoil} = the resolved Oven coil type, {@code aBase} = the bottom
 		 * slab block (null-safe: only the Fermenter carries one).
 		 */
-		abstract GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase);
+		public abstract GTMultiBlockPattern build(LargeMachineRow aRow, byte aFacing, Block aWall, Block aInner, Block aCoil, Block aBase);
 
 		/** The GT6 OFF_X entry (GTMultiBlockPattern.OFF_X mirror — the horizontal 2..5 domain). */
 		static int gt6APIOffX(byte aFacing) { return switch (aFacing) { case 4 -> -1; case 5 -> 1; default -> 0; }; }
@@ -682,9 +683,11 @@ public final class GT6LargeMachines {
 			// (the :696-705 auto-input pull is cut with the auto-IO surface, its absence is
 			// the all-face capability fill this machine family carries instead)
 			FluidStack[] tFluids = new FluidStack[mTanksInput.length];
+			long[] tFluidsBefore = new long[mTanksInput.length]; // the pre-consume levels (the mirror's delta source)
 			int tInputFluidCount = 0;
 			for (int i = 0; i < mTanksInput.length; i++) {
 				tFluids[i] = mTanksInput[i].fluid();
+				tFluidsBefore[i] = tFluids[i] == null ? 0 : tFluids[i].getAmount();
 				if (tFluids[i] != null && !tFluids[i].isEmpty()) tInputFluidCount++;
 			}
 
@@ -745,7 +748,7 @@ public final class GT6LargeMachines {
 				}
 			}
 
-			if (aApplyRecipe) mirrorFluidConsume(tFluids); // the snapshot shrink lands on the tanks
+			if (aApplyRecipe) mirrorFluidConsume(tFluids, tFluidsBefore); // the snapshot shrink lands on the tanks
 			removeEmptyInputStacks(); // :776
 			return FOUND_AND_SUCCESSFULLY_USED_RECIPE; // :777
 		}
@@ -755,12 +758,11 @@ public final class GT6LargeMachines {
 		 * port Recipe mutates the passed stacks); the per-index delta drains the owning
 		 * tank. One tank index per snapshot index — the arrays are the same length.
 		 */
-		private void mirrorFluidConsume(FluidStack[] aSnapshots) {
+		private void mirrorFluidConsume(FluidStack[] aSnapshots, long[] aBefore) {
 			for (int i = 0; i < mTanksInput.length && i < aSnapshots.length; i++) {
-				FluidStack tSnapshot = aSnapshots[i];
-				long tBefore = tSnapshot == null ? 0 : tSnapshot.getAmount();
-				long tNow = mTanksInput[i].amount();
-				if (tNow < tBefore) mTanksInput[i].drain((int)(tBefore - tNow), FluidAction.EXECUTE);
+				// the :812-815 consume shrank the SNAPSHOT copy; the delta lands on the tank
+				long tSnapNow = aSnapshots[i] == null ? 0 : aSnapshots[i].getAmount();
+				if (tSnapNow < aBefore[i]) mTanksInput[i].drain((int)(aBefore[i] - tSnapNow), FluidAction.EXECUTE);
 			}
 		}
 
