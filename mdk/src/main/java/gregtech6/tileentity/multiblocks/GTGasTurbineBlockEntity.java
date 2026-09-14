@@ -3,6 +3,8 @@ package gregtech6.tileentity.multiblocks;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
@@ -73,6 +75,25 @@ public class GTGasTurbineBlockEntity extends GTMultiBlockConverter {
 	@Override
 	public String getTileEntityName() {
 		return "multiblock_gas_turbine"; // BET registry path mirrors it (GT6Turbines.GAS_TURBINE_BE)
+	}
+
+	/** The upstream NBT_TANK key family (:50-65): the input tank at NBT_TANK, the exhausts at NBT_TANK.i. */
+	public static final String NBT_TANK = "gt.tank";
+
+	@Override
+	public void load(CompoundTag aNBT) {
+		super.load(aNBT);
+		if (aNBT.contains(NBT_TANK, Tag.TAG_COMPOUND)) mInputTank.readFromNBT(aNBT, NBT_TANK);
+		for (int i = 0; i < mTanksOutput.length; i++) {
+			mTanksOutput[i].readFromNBT(aNBT, NBT_TANK + "." + i).setCapacity(mInput * 2 * 16); // :55
+		}
+	}
+
+	@Override
+	protected void saveAdditional(CompoundTag aNBT) {
+		super.saveAdditional(aNBT);
+		mInputTank.writeToNBT(aNBT, NBT_TANK);
+		for (int i = 0; i < mTanksOutput.length; i++) mTanksOutput[i].writeToNBT(aNBT, NBT_TANK + "." + i);
 	}
 
 	@Override

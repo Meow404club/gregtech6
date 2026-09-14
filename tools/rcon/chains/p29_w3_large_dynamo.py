@@ -77,7 +77,7 @@ for i, (variant, t_in, t_out) in enumerate(TIERS):
 
 steps += [
     phase("E: the structure semantics — the coil segment, the design-2 plate, the NOTHING walls"),
-    Step(f"execute if block {plate_cell(0)} gt6:large_dynamo_stainless_steel", expect="Test passed"),
+    Step(f"execute if block {plate_cell(0)} gt6:dense_wall_stainless_steel", expect="Test passed"),
     Step(f"data get block {plate_cell(0)}", expect="mode: -2"),
     Step(f"data get block {plate_cell(0)}", expect="design: 2b"),
     Step(f"execute if block {coil_cell(0)} gt6:large_copper_coil", expect="Test passed"),

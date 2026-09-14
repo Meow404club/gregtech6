@@ -64,8 +64,8 @@ steps = [
     Step(FUEL_MERGE % ctrl(XF), expect="Modified block data",
          node_cmds={"1.21.1": FUEL_MERGE_1211 % ctrl(XF)}),
     Step(f"data get block {ctrl(XF)}", expect="gt.last_out: 8192L", sleep=1.5, poll=15.0),
-    Step(f"data get block {ctrl(XF)}", expect="gt.limit_consumption:1b"),
-    Step(f"data get block {ctrl(XF)}", expect="gt.waste_energy:0b"),
+    Step(f"data get block {ctrl(XF)}", expect="gt.limit_consumption: 1b"),
+    Step(f"data get block {ctrl(XF)}", expect="gt.waste_energy: 0b"),
     Step(f"data get block {ctrl(XF)}", expect="minecraft:water", sleep=1.0),
 
     phase("B: the HU arm — the window-charge clamp leg over the idle drain"),
