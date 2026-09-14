@@ -737,6 +737,11 @@ public final class GT6LootTables extends LootTableProvider {
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.bathBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.autoclaveBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.loomBlockArray());
+        // task p29-w3-heat-smelter — the Smelter 4-ladder + the Melter single join the
+        // machine self-drop provider (the same MTE default self-drop, the tail-append
+        // EDIT ruling: the provider is the generic machine self-drop walker)
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.smelterBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.melterBlockArray());
         return rBlocks;
     }
 

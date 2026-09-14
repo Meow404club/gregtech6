@@ -569,6 +569,12 @@ HAND_TRANSLATIONS = {
     "gt6.row.machine.catalytic_cracker": ("催化裂解器 (%s)", "hand"),
     "gt6.row.machine.loom": ("织布机 (%s)", "hand"),
     "gt6.row.machine.steam_cracker": ("蒸汽裂解器 (%s)", "hand"),
+    # task p29-w3-heat-smelter -- the two heat families (the mte dump carries 液化炉
+    # (钢/殷钢/钛/碳化钨) at gt.multitileentity.20241-20244 verbatim; the Melter 22010
+    # dump row is the ASCII "Melter" -- status review -- so the zh word is the hand
+    # translation 熔化炉, the natural counterpart of the 液化炉 family)
+    "gt6.row.machine.smelter": ("液化炉 (%s)", "hand"),
+    "gt6.row.melter.display": ("熔化炉", "hand"),
     "gt6.row.printer.display": ("打印机 (%s)", "hand"),
     "gt6.row.scannervisuals.display": ("扫描仪 (%s)", "hand"),
     "gt6.row.slicer.display": ("切片器 (%s)", "hand"),

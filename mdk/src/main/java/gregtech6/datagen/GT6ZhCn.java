@@ -558,6 +558,12 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.registry.GTMachines.GENERIFIER_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.BATH_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.AUTOCLAVE_DISPLAY_KEY);
+		// heat-smelter families (task p29-w3-heat-smelter): the Smelter rides the
+		// material-word slot (the Heat_T row words are the walks above), the Melter is
+		// the atomic single-variant row; the zh words are the upstream dump verbatim
+		// (gt.multitileentity.20241-20244 液化炉, 22010 "Melter" ASCII → the hand row 熔化炉)
+		addDirect(gregtech6.registry.GTMachines.MACHINE_SMELTER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MELTER_DISPLAY_KEY);
 		// the fermenter's stainless_steel row word (the dump face the attachment walk
 		// already carries — emitted here so the row walk stays self-contained)
 		addRowUnit(tEmitted, "gt6.row.mat.stainless_steel");		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tUlvRows

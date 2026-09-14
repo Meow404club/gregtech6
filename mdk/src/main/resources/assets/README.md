@@ -8034,3 +8034,23 @@ upstream `README.md` block as above).
   files (find | sha256sum): `46b815afba72c38d...` — per-file hashes omitted per the
   372-file parts precedent. Copied on 2026-09-14. Upstream license: **CC0 1.0 Universal
   Public Domain Dedication** (same upstream `README.md` block as above).
+
+Heat-smelter append, task p29-w3-heat-smelter (copied 2026-09-14): two new
+basicmachines families joined the local registration face — `smelter` (the HU
+4-ladder :1431-1434) and `melter` (the single :1657) — via the same pipeline:
+borrow_port_overlays census self-discovery (the GTMachines
+`TD.Energy.HU, "smelter"/"melter",` literal pairs) landed 2 x (colored 6 + 3
+states x 5 side faces) = 42 borrows, byte copies of the upstream
+`basicmachines/{smelter,melter}/` layers (snapshot v6.17.06-22-g3703e4030;
+the two families share the same generic machine plate bases — e.g.
+`colored/front.png`
+`db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`); and
+bake_machine_fronts --split-fronts landed the 2 x 4 front products
+(`<fam>_colored_front` + the three overlay front states, strips cropped to
+FRAME 0, `overlay/front.png` sha256
+`60fef49fb5c540732ed7153fab55864ad8756954ddaeee1051b6209e739785a8` shared).
+Upstream tints the colored layer with the machine material's mRGBa and
+alpha-overlays the state layers; the port renders the grayscale colored layer
+through the runtime paint tint (tintindex 0) and carries the overlays as
+untinted decal elements (the familyMachineModel two-layer form).
+

@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_custom_data",
+              "ops": [
+                {
+                  "op": "replace",
+                  "source": "'gt.color'",
+                  "target": "BlockEntityTag.'gt.color'"
+                },
+                {
+                  "op": "replace",
+                  "source": "'gt.painted'",
+                  "target": "BlockEntityTag.'gt.painted'"
+                }
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "gt6:smelter_t3"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "gt6:blocks/smelter_t3"
+}

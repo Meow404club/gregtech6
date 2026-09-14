@@ -216,10 +216,17 @@ public class GT6LangParityTest {
  * gt6.row.coagulator / generifier / bath / autoclave atomic display keys, the dump
  * words 蒸汽裂解器/催化裂解器/织布机/凝结器/转换器/浸洗器/高压釜), both locales; zh == en,
  * the zero-debt state holds.
+ *
+ * <p>Task p29-w3-heat-smelter: raised to the measured 2888 — the +2 heat-family keys
+ * (gt6.row.machine.smelter one-slot unit key + gt6.row.melter.display atomic display,
+ * the dump words 液化炉 (钢/殷钢/钛/碳化钨) at gt.multitileentity.20241-20244 + the
+ * hand-translated 熔化炉 for the ASCII 22010 "Melter" dump row), both locales. The
+ * re-measure also replayed the en-side mold/faucet union keys onto the committed en file
+ * (the GT6MoldDatagen.Lang registration-order replay — the W2 note), so this card's
+ * runData lands en == zh 2888, the zero-delta state again (the committed zh face led by
+ * one stray key at the card-① merge — this card's floor absorbs it).
  */
-private static final int ZH_KEY_FLOOR = 2926; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales) +9 (task p29-w3-distill-crucible: the 7 crucible ladder rungs + the twin towers; both locales — the ladder walls compose over the EXISTING gt6.row.mat words, zero new keys) +12 (task p29-w3-large-12: the 12 large-machine display names; all both locales)
-
-
+private static final int ZH_KEY_FLOOR = 2928; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales) +9 (task p29-w3-distill-crucible: the 7 crucible ladder rungs + the twin towers; both locales — the ladder walls compose over the EXISTING gt6.row.mat words, zero new keys) +12 (task p29-w3-large-12: the 12 large-machine display names; all both locales) +2 (task p29-w3-heat-smelter: the smelter unit template + the melter atomic display; the Heat_T mat words are the in-catalog walks; all both locales)
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
 	 * en keys are pre-installed full strings that the B-wave cards replace with template keys;
@@ -1026,6 +1033,11 @@ private static final int ZH_KEY_FLOOR = 2926; // 2839 +3 (task p29-w2-eu-special
 				GTMachines.GENERIFIER_ROWS, GTMachines.BATH_ROWS, GTMachines.AUTOCLAVE_ROWS, GTMachines.LOOM_ROWS)) {
 			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tHuTuRows) tExempt.add(tRow.path());
 		}
+		// task p29-w3-heat-smelter — the 5 heat-smelter row carriers (GTBasicMachineBlock.getName)
+		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tHeatRows : java.util.List.of(
+				GTMachines.SMELTER_ROWS, GTMachines.MELTER_ROWS)) {
+			for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : tHeatRows) tExempt.add(tRow.path());
+		}
 		for (GTMachines.OvenRow tRow : GTMachines.OVEN_ROWS) tExempt.add(tRow.path()); // GTOvenBlock.getName — the composed Heat_T ladder (p27-oven-heat-t-ladder)
 		// the Kinetic_T tier carriers T2-T4 (GTBasicMachineBlock mComposedName, p27-machine-
 		// energy-display-fix) — T1 keeps its vanilla atomic key (block.gt6.shredder/lathe/
@@ -1123,14 +1135,14 @@ private static final int ZH_KEY_FLOOR = 2926; // 2839 +3 (task p29-w2-eu-special
 			+ " the 16 hu-tu row carriers joined at 1043 + 16, task p29-w2-hu-tu-piggyback)"
 			+ " (+14 task p29-w3-distill-crucible: the seven crucible ladder rung carriers"
 			+ " (the CRUCIBLE_ROWS walk grew 1 -> 8) + the seven dedicated GTCrucibleWallBlock"
-			+ " wall carriers over the metal-wall template))");
+			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5))");
 		assertEquals(134, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"
 			+ " the eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
 			+ " and the transformer joined at 323c4ae4/1e07061d; the 28 p29-w3 part blocks"
 			+ " joined at bff8400a — GTMultiBlocks 7 -> 25 checked (the ten composed metal"
-			+ " walls exempt) + the six dense additions)"
+			+ " walls exempt) + the six dense additions); the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (134 + 5)"
 			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"

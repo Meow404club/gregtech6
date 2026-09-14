@@ -137,21 +137,23 @@ public final class GT6BlockStates extends BlockStateProvider {
         addExoticFamilies(); // task p29-w2-exotic-energy — the six exotic-energy families (family textures, the addCanner shape)
         addEuCoreMachines(); // task p29-w2-eu-core-5tier — the five eu-core families (family textures, the addCanner shape)
         addHuTuFamilies(); // task p29-w2-hu-tu-piggyback — the seven hu-tu families (family textures, the addCanner shape)
+        addHeatSmelterFamilies(); // task p29-w3-heat-smelter — the Smelter ladder + the Melter single (family textures, the addCanner shape)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 204 machine blocks x
+        // task p21-paintable-tint-render: the datagen-JVM census half — 209 machine blocks x
         // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder; the roll ladders
         // and the six P29 W1 process families joined at their owning cards; the seven eu-hu
         // families at task p29-w1-eu-hu-families; the three eu-special families at task
         // p29-w2-eu-special; the six exotic-energy families at task
         // p29-w2-exotic-energy; the five eu-core 5-tier families at task
         // p29-w2-eu-core-5tier; the seven hu-tu piggyback families at task
-        // p29-w2-hu-tu-piggyback), // matching the paintableBlockArray() client registration census
-        // (the offline JUnit half walks the generated tree and pins the same 612; the ACT
+        // p29-w2-hu-tu-piggyback; the Smelter ladder + Melter single at task
+        // p29-w3-heat-smelter), // matching the paintableBlockArray() client registration census
+        // (the offline JUnit half walks the generated tree and pins the same 627; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        LOGGER.info("GT6 machine paint tint: {} machine models tinted (204 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addExoticFamilies/addEuCoreMachines/addHuTuFamilies/addAdvancedCraftingTable)", mMachineTintModels);
+        LOGGER.info("GT6 machine paint tint: {} machine models tinted (209 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addExoticFamilies/addEuCoreMachines/addHuTuFamilies/addHeatSmelterFamilies/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
@@ -569,6 +571,22 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.LOOM_ROWS) {
             addMachine(GTMachines.LOOM_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p29-w3-heat-smelter — the two heat families (the Smelter HU 4-ladder
+     * :1431-1434 + the Melter HU single :1657, every row NBT_TEXTURE riding its family
+     * token): the addCanner shape verbatim — model names per path, the FRONT TEXTURES
+     * stay on the family sets (the borrowed upstream basicmachines/{smelter,melter}
+     * fronts — the borrow-or-declare rule, zero hand-drawn).
+     */
+    private void addHeatSmelterFamilies() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.SMELTER_ROWS) {
+            addMachine(GTMachines.SMELTER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.MELTER_ROWS) {
+            addMachine(GTMachines.MELTER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

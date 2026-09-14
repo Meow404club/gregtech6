@@ -112,7 +112,9 @@ class GT6MachinePaintRenderDatagenTest {
             "steamcracker", "steamcracker_t2", "steamcracker_t3", "steamcracker_t4", // task p29-w2-hu-tu-piggyback
             "catalyticcracker", "catalyticcracker_t2", "catalyticcracker_t3", "catalyticcracker_t4",
             "coagulator", "generifier", "bath", "autoclave",
-            "loom", "loom_t2", "loom_t3", "loom_t4");
+            "loom", "loom_t2", "loom_t3", "loom_t4",
+            "smelter", "smelter_t2", "smelter_t3", "smelter_t4", // task p29-w3-heat-smelter
+            "melter");
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
 
@@ -204,9 +206,9 @@ class GT6MachinePaintRenderDatagenTest {
 
     @Test
     void pinnedMachinePaintCensus() {
-        assertEquals(204, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(204 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
-                "204 blocks x 3 models — the pinned tinted-model total");
+        assertEquals(209, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
+        assertEquals(209 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
+                "209 blocks x 3 models — the pinned tinted-model total");
     }
 
     /**

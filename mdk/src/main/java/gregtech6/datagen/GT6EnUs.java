@@ -826,6 +826,13 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.GENERIFIER_DISPLAY_KEY, "Generifier");
         add(gregtech6.registry.GTMachines.BATH_DISPLAY_KEY, "Bath");
         add(gregtech6.registry.GTMachines.AUTOCLAVE_DISPLAY_KEY, "Autoclave");
+        // task p29-w3-heat-smelter — the two heat families: the Smelter rides the
+        // one-slot unit-key form (the Heat_T material word, the upstream name column
+        // "Smelter ("+aMat+")" :1431-1434); the Melter is the single-variant ATOMIC row
+        // (the upstream name column "Melter" :1657 — the FERMENTER_DISPLAY_KEY no-slot
+        // contract)
+        add(gregtech6.registry.GTMachines.MACHINE_SMELTER_UNIT_KEY, "Smelter (%s)");
+        add(gregtech6.registry.GTMachines.MELTER_DISPLAY_KEY, "Melter");
         // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
