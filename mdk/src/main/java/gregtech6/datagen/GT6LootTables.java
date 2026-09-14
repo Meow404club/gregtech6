@@ -1814,7 +1814,36 @@ public final class GT6LootTables extends LootTableProvider {
         List<Block> rBlocks = new ArrayList<>();
         for (var tRow : gregtech6.registry.GT6Tanks.ROWS) {
             rBlocks.add(gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get());
-    /**
+        }
+        return rBlocks;
+    }
+
+    /** The Tank Main Valve self-drop provider (task p29-w3-tank-valves; the part-family provider shape). */
+    public static final class GT6TankBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6TankBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6TankBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return tankLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : tankLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+/**
      * The distill-crucible family block list (task p29-w3-distill-crucible): the two tower
      * controllers + the SEVEN new crucible rungs and their walls (self-drops, the MTE
      * default). The pre-existing crucible_steel lootless gap CARRIES (the P26 state — not
@@ -1835,16 +1864,6 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The Tank Main Valve self-drop provider (task p29-w3-tank-valves; the part-family provider shape). */
-    public static final class GT6TankBlockLoot extends BlockLootSubProvider {
-
-        //? if neoforge {
-        /*
-        public GT6TankBlockLoot(HolderLookup.Provider registries) {
-            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
-        }
-         *///?} else {
-        public GT6TankBlockLoot() {
     /** The distill-crucible self-drop provider (task p29-w3-distill-crucible; the part provider shape). */
     public static final class GT6DistillCrucibleLoot extends BlockLootSubProvider {
 
@@ -1861,13 +1880,11 @@ public final class GT6LootTables extends LootTableProvider {
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return tankLootBlocks();
             return distillCrucibleLootBlocks();
         }
 
         @Override
         protected void generate() {
-            for (Block tBlock : tankLootBlocks()) dropSelf(tBlock);
             for (Block tBlock : distillCrucibleLootBlocks()) dropSelf(tBlock);
         }
     }

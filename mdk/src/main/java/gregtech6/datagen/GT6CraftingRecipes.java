@@ -204,6 +204,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
 		for (PartFamilyRecipeRow tRow : tankValveRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -245,6 +247,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (PartFamilyRecipeRow tRow : tankValveRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
 		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}

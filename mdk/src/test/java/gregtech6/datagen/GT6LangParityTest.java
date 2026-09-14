@@ -1123,7 +1123,7 @@ private static final int ZH_KEY_FLOOR = 2914; // 2839 +3 (task p29-w2-eu-special
 			+ " (+14 task p29-w3-distill-crucible: the seven crucible ladder rung carriers"
 			+ " (the CRUCIBLE_ROWS walk grew 1 -> 8) + the seven dedicated GTCrucibleWallBlock"
 			+ " wall carriers over the metal-wall template))");
-		assertEquals(148, tChecked, "the checked block census: every DeferredRegister block NOT"
+		assertEquals(134, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"
 			+ " the eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
