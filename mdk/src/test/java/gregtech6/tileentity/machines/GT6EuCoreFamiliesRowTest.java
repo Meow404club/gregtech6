@@ -25,7 +25,7 @@ import gregtech6.registry.GTMachines;
  * :1450-1454 Printer / :1457-1461 Scanner (Visuals) / :1525-1529 Slicer), the FIRST
  * 5-tier ladders of the port (Electric_T[1..5], the T5 rung {@link GTMachines#ELECTRIC_T5}
  * = Ti, MT.java:3691), the 5-tier windows ({@link GTMachines#TIER_INPUTS}[0..3] + the
- * {@link GTMachines#EV_TIER_INPUTS} tier-4 arm — the euCoreMachine factory split), the
+ * {@link GTMachines#EV_TIER_INPUTS} tier-4 arm — the euFiveTierMachine factory (the card-③ landed 5-tier resolver, the merge dedup of the authored euCoreMachine body folded onto it), the
  * T5 packet-domain behavior (4095 dead below min, 8192 mid-window runs), the
  * ELECTROLYZER_PARALLEL {1,2,4,8,16} duration-T ladder 对拍 the Centrifuge non-standard
  * precedent, the EU type gate live against the exotic packets (the cross-card-①
@@ -201,12 +201,12 @@ public class GT6EuCoreFamiliesRowTest extends TileEntityBasicMachineOfflineTestB
 		}
 	}
 
-	/** Builds a row-config fixture machine: the euCoreMachine body contract (window + applyRow) against the offline fixture. */
+	/** Builds a row-config fixture machine: the euFiveTierMachine body contract (window + applyRow) against the offline fixture. */
 	private static TileEntityBasicMachine rowMachine(GTBasicMachineBlock.MachineRow aRow) {
 		TileEntityBasicMachine tMachine = makeMachine(aRow.recipes().get(), aRow.parallel(), aRow.parallelDuration(), aRow.energyType());
 		long[] tInputs = aRow.tier() < GTMachines.TIER_INPUTS.length
 				? GTMachines.TIER_INPUTS[aRow.tier()]
-				: GTMachines.EV_TIER_INPUTS; // the euCoreMachine T5 arm (the machineUlv override form)
+				: GTMachines.EV_TIER_INPUTS; // the euFiveTierMachine T5 arm (the machineUlv override form)
 		tMachine.mInputMin = tInputs[0];
 		tMachine.mInput = tInputs[1];
 		tMachine.mInputMax = tInputs[2];
@@ -216,7 +216,7 @@ public class GT6EuCoreFamiliesRowTest extends TileEntityBasicMachineOfflineTestB
 	@Test
 	void theFiveTierWindowsRampThroughEvTierInputs() {
 		// the per-row windows: TIER_INPUTS[0..3] for T1-T4 and EV_TIER_INPUTS for T5 —
-		// read through the euCoreMachine body contract on EVERY family
+		// read through the euFiveTierMachine body contract on EVERY family
 		for (java.util.List<GTBasicMachineBlock.MachineRow> tRows : java.util.List.of(
 				GTMachines.ELECTROLYZER_ROWS, GTMachines.INJECTOR_ROWS, GTMachines.PRINTER_ROWS,
 				GTMachines.SCANNER_VISUALS_ROWS, GTMachines.SLICER_ROWS)) {

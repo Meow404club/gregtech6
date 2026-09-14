@@ -1081,8 +1081,8 @@ private static final int ZH_KEY_FLOOR = 2860; // 2839 +3 (task p29-w2-eu-special
 			+ " p29 process families joined at 925 + 24, task p29-w1-kinetic-process-ladder;"
 			+ " the 25 eu-hu row carriers joined at 949 + 25, task p29-w1-eu-hu-families;"
 			+ " the 14 eu-special row carriers joined at 974 + 14, task p29-w2-eu-special;"
-			+ " the 30 exotic-energy row carriers joined at 988 + 30, task p29-w2-exotic-energy;");
-			+ " the 25 eu-core 5-tier row carriers joined at 1018 + 25, task p29-w2-eu-core-5tier)")
+			+ " the 30 exotic-energy row carriers joined at 988 + 30, task p29-w2-exotic-energy;"
+			+ " the 25 eu-core 5-tier row carriers joined at 1018 + 25, task p29-w2-eu-core-5tier)");
 		assertEquals(104, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
