@@ -117,11 +117,23 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 		super(stage(aProperties, aMaxDesign));
 		this.mRow = aRow;
 		this.mMaxDesign = sPendingMaxDesign;
+		this.mComposedName = null;
 		// IntegerProperty demands min < max (IntegerProperty.java:19) — a DESIGNS-0 row has
 		// no variant axis, so the property is ABSENT there (the datagen walk and the BE sync
 		// branch on null)
 		this.DESIGN = mMaxDesign > 0 ? designPropertyByMax(mMaxDesign) : null;
 		if (DESIGN != null) registerDefaultState(this.stateDefinition.any().setValue(DESIGN, 0));
+	}
+
+	/**
+	 * The precomposed-name form (task p29-w3-nbtdesign-parts ③): the metal-wall rows
+	 * compose "{@code <mat> Wall}" (the {@code gt6.row.metal_wall.display} template over
+	 * the gt6.row.mat small unit) at registration; the other new rows pass null and keep
+	 * the vanilla atomic-key lookup.
+	 */
+	public GTMultiBlockPartBlock(Properties aProperties, int aMaxDesign, @Nullable net.minecraft.network.chat.Component aComposedName) {
+		this(aProperties, null, aMaxDesign);
+		this.mComposedName = aComposedName;
 	}
 
 	/**
@@ -137,6 +149,10 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	/** The carried part row (task p13-large-boiler record; null = the rows without a composed name — the coke-oven bricks). */
 	@Nullable
 	private final gregtech6.registry.GTMultiBlocks.MultiblockPartRow mRow;
+
+	/** The precomposed display name (the metal-wall template form); null = the mRow/vanilla-key resolution. */
+	@Nullable
+	private net.minecraft.network.chat.Component mComposedName;
 
 	/** The top of this block's DESIGN range (the row's NBT_DESIGNS; 0 = single-variant rows). */
 	public int maxDesign() {
@@ -162,6 +178,7 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	 */
 	@Override
 	public net.minecraft.network.chat.MutableComponent getName() {
+		if (mComposedName != null) return mComposedName.copy();
 		if (mRow == null) return super.getName();
 		return net.minecraft.network.chat.Component.translatable(gregtech6.registry.GTMultiBlocks.DENSE_WALL_DISPLAY_KEY,
 				net.minecraft.network.chat.Component.translatable(gregtech6.registry.GTMultiBlocks.wallMatUnitKeyOf(mRow)));
