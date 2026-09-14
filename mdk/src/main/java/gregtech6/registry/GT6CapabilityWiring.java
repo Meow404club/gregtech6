@@ -655,7 +655,7 @@ public final class GT6CapabilityWiring {
 	private static void registerGasTurbine(RegisterCapabilitiesEvent aEvent) {
 		BlockEntityType<GTGasTurbineBlockEntity> tGasTurbine = GT6Turbines.GAS_TURBINE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tGasTurbine,
-				(aBe, aSide) -> aBe.fluidCapability(aSide));
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
 }
