@@ -77,6 +77,14 @@ brain 守护内置调度线程：启动 30s 后首轮、之后每轮间隔 600s�
 brain 框架仓库内输出，其他目录静默。工程卫生：恒 exit 0、无副作用、
 SQLite 只读、≤40 行。
 
+2026-09-14 实测踩坑三课（注册写错一处 = 整个 hooks 段加载失败，当日全部
+hook 静默失效）：① `matcher` 要匹配全部就**省略字段**，空串 `""` 违反
+schema（minLength 1）连累整份 config 拒载；② `type: "process"` 是无 shell
+的参数向量，命令必须拆 `command` + `args`，不能写带空格的整串；③ hook
+stdout 走严格 JSON 校验，注入必须输出 `{"additionalContext": ...}`——
+纯文本被丢弃不进上下文。`progress` 账本的 `phase/current/next` 三键是注入
+页数据源，阶段推进时必须同步（铁律#7 真数据）。
+
 ## 关于 PreToolUse 钩子的注册位置
 
 GPG 提交拦截钩子已注册在**用户级** `~/.zcode/cli/config.json`（hooks 段），
