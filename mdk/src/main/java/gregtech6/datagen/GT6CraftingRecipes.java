@@ -991,7 +991,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
             if (tWall == null) continue;
             if (tRow.size() == 3) {
                 // :1196-1208 — the small pair: " R ","hMs"," R " over the row's wall
-                net.minecraftforge.registries.RegistryObject<Item> tRing = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.ring, tRow.material().get());
+                var tRing = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.ring, tRow.material().get()); // the bare-local form — the RegistryObject/DeferredHolder swap keeps the type arguments
                 if (tRing == null) continue;
                 rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get())
                         .pattern(" R ").pattern("hMs").pattern(" R ")
@@ -1006,8 +1006,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 String tMatSlug = tRow.path().substring((tDense ? "tank_large_dense_" : "tank_large_").length());
                 String tSmallPath = (tDense ? "tank_small_dense_" : "tank_small_") + tMatSlug;
                 net.minecraft.world.level.block.Block tSmallValve = gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tSmallPath).get();
-                net.minecraftforge.registries.RegistryObject<Item> tPlate = gregtech6.registry.GTMaterialItems.get(
-                        tDense ? gregapi.data.OP.plateDense : gregapi.data.OP.plate, tRow.material().get());
+                var tPlate = gregtech6.registry.GTMaterialItems.get(
+                        tDense ? gregapi.data.OP.plateDense : gregapi.data.OP.plate, tRow.material().get()); // the bare-local form (the swap note above)
                 if (tPlate == null) continue;
                 rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get())
                         .pattern("PPP").pattern("hMs").pattern("PPP")
@@ -1023,7 +1023,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
     /** A bare item by prefix+material — null when the flood has no row (the silent-skip guard). */
     private Item itemOrNull(gregapi.oredict.OreDictPrefix aPrefix, gregapi.oredict.OreDictMaterial aMaterial) {
-        net.minecraftforge.registries.RegistryObject<Item> tHandle = gregtech6.registry.GTMaterialItems.get(aPrefix, aMaterial);
+        var tHandle = gregtech6.registry.GTMaterialItems.get(aPrefix, aMaterial); // the bare-local form (the swap note above)
         return tHandle == null ? null : tHandle.get();
     }
 
