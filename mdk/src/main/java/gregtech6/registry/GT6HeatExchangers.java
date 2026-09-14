@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -130,17 +131,17 @@ public final class GT6HeatExchangers {
 		}
 	}
 
-	public static final net.minecraftforge.registries.RegistryObject<HeatExchangerBlock> HEAT_EXCHANGER_BLOCK =
+	public static final RegistryObject<HeatExchangerBlock> HEAT_EXCHANGER_BLOCK =
 			BLOCKS_REG.register(HEAT_EXCHANGER_ROW.path(), () -> new HeatExchangerBlock(HEAT_EXCHANGER_ROW.properties()));
 
-	public static final net.minecraftforge.registries.RegistryObject<Item> HEAT_EXCHANGER_ITEM =
+	public static final RegistryObject<Item> HEAT_EXCHANGER_ITEM =
 			ITEMS.register(HEAT_EXCHANGER_ROW.path(), () -> new BlockItem(HEAT_EXCHANGER_BLOCK.get(), new Item.Properties()));
 
 	/**
 	 * The HEX BET: one controller class over its one block (the CokeOven BET degenerate
 	 * shape). Registry path mirrors {@link GT6HeatExchangerBlockEntity#getTileEntityName()}.
 	 */
-	public static final net.minecraftforge.registries.RegistryObject<BlockEntityType<GT6HeatExchangerBlockEntity>> HEAT_EXCHANGER_BE =
+	public static final RegistryObject<BlockEntityType<GT6HeatExchangerBlockEntity>> HEAT_EXCHANGER_BE =
 			BLOCK_ENTITY_TYPES.register("multiblock_heat_exchanger", () -> BlockEntityType.Builder.of(
 					GT6HeatExchangerBlockEntity::new, HEAT_EXCHANGER_BLOCK.get()).build(null));
 
@@ -236,7 +237,7 @@ public final class GT6HeatExchangers {
 					Direction.UP).orElse(null);
 			//?} else {
 			/*IFluidHandler tDoor = tHex.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-					aPos, Direction.UP);
+					Direction.UP);
 			 *///?}
 			if (tDoor == null) {
 				aSource.sendFailure(Component.literal("FILL FAILED: no fuel door at " + aPos.toShortString()));
