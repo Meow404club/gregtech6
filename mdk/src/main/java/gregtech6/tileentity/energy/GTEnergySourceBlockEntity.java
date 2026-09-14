@@ -304,6 +304,7 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 			case "TU" -> TD.Energy.TU;
 			case "RF" -> TD.Energy.RF;
 			case "MJ" -> TD.Energy.MJ;
+			case "STEAM" -> TD.Energy.STEAM; // task p29-w3-turbine-dynamo — the steam-turbine dial (the W2 MU/LU/CU/TU same-ruling short code; the Jade word form, GT6MachineProvider:97)
 			default -> null;
 		};
 	}
