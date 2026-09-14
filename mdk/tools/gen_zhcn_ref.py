@@ -575,6 +575,9 @@ HAND_TRANSLATIONS = {
     # translation 熔化炉, the natural counterpart of the 液化炉 family)
     "gt6.row.machine.smelter": ("液化炉 (%s)", "hand"),
     "gt6.row.melter.display": ("熔化炉", "hand"),
+    # task p29-w3-heat-smelter -- the HEX controller (the mte dump carries
+    # 大型热交换器 at gt.multitileentity.17197 verbatim)
+    "block.gt6.large_heat_exchanger": ("大型热交换器", "hand"),
     "gt6.row.printer.display": ("打印机 (%s)", "hand"),
     "gt6.row.scannervisuals.display": ("扫描仪 (%s)", "hand"),
     "gt6.row.slicer.display": ("切片器 (%s)", "hand"),

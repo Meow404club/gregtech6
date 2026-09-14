@@ -8054,3 +8054,10 @@ alpha-overlays the state layers; the port renders the grayscale colored layer
 through the runtime paint tint (tintindex 0) and carries the overlays as
 untinted decal elements (the familyMachineModel two-layer form).
 
+Heat-exchanger append, task p29-w3-heat-smelter (composited 2026-09-14): the
+Large Heat Exchanger controller borrows the upstream
+`multiblockmains/largeheatexchanger/` group (snapshot v6.17.06-22-g3703e4030)
+— the colored base alpha-over the overlay layer composited into the single
+`large_heat_exchanger/main.png` (sha256 `bdb119c163a62dae92c6cfde9f5c40c4fe1
+ba1965e5ded6231824d1c67ad88ee`, all three upstream faces composite to the
+SAME visible pixels, the lightningrod one-texture ruling).

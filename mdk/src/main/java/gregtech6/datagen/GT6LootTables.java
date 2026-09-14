@@ -100,6 +100,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-core-5tier — the five eu-core families
                 new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-hu-tu-piggyback — the seven hu-tu families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
+                new SubProviderEntry(GT6HeatExchangerBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-heat-smelter — the Large Heat Exchanger controller
                 new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
                 new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
                 new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-turbine-dynamo — the twelve turbine/dynamo controllers
@@ -140,6 +141,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-core-5tier — the five eu-core families
                 new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-hu-tu-piggyback — the seven hu-tu families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
+                new SubProviderEntry(GT6HeatExchangerBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-heat-smelter — the Large Heat Exchanger controller
                 new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
                 new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
                 new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-turbine-dynamo — the twelve turbine/dynamo controllers
@@ -946,6 +948,36 @@ public final class GT6LootTables extends LootTableProvider {
             rBlocks.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
+    }
+
+    /** The heat-exchanger block list (task p29-w3-heat-smelter): the one controller block. */
+    public static List<Block> heatExchangerLootBlocks() {
+        return List.of(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get());
+    }
+
+    /** The heat-exchanger self-drop provider (task p29-w3-heat-smelter; the lightning-rod shape). */
+    public static final class GT6HeatExchangerBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6HeatExchangerBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6HeatExchangerBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return heatExchangerLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : heatExchangerLootBlocks()) dropSelf(tBlock);
+        }
     }
 
     /** The Lightning Rod family self-drop provider (task p24-lightning-rod; plain dropSelf, no paint on the part BEs). */

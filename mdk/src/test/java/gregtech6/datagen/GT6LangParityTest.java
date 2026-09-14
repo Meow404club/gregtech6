@@ -220,14 +220,14 @@ public class GT6LangParityTest {
  * <p>Task p29-w3-heat-smelter: raised to the measured 2888 — the +2 heat-family keys
  * (gt6.row.machine.smelter one-slot unit key + gt6.row.melter.display atomic display,
  * the dump words 液化炉 (钢/殷钢/钛/碳化钨) at gt.multitileentity.20241-20244 + the
- * hand-translated 熔化炉 for the ASCII 22010 "Melter" dump row), both locales. The
+ * hand-translated 熔化炉 for the ASCII 22010 "Melter" dump row) + block.gt6.large_heat_exchanger
+ * (大型热交换器, the dump face verbatim), both locales. The
  * re-measure also replayed the en-side mold/faucet union keys onto the committed en file
  * (the GT6MoldDatagen.Lang registration-order replay — the W2 note), so this card's
  * runData lands en == zh 2888, the zero-delta state again (the committed zh face led by
  * one stray key at the card-① merge — this card's floor absorbs it).
  */
-private static final int ZH_KEY_FLOOR = 2928; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales) +9 (task p29-w3-distill-crucible: the 7 crucible ladder rungs + the twin towers; both locales — the ladder walls compose over the EXISTING gt6.row.mat words, zero new keys) +12 (task p29-w3-large-12: the 12 large-machine display names; all both locales) +2 (task p29-w3-heat-smelter: the smelter unit template + the melter atomic display; the Heat_T mat words are the in-catalog walks; all both locales)
-	/**
+private static final int ZH_KEY_FLOOR = 2929; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales) +9 (task p29-w3-distill-crucible: the 7 crucible ladder rungs + the twin towers; both locales — the ladder walls compose over the EXISTING gt6.row.mat words, zero new keys) +12 (task p29-w3-large-12: the 12 large-machine display names; all both locales) +2 (task p29-w3-heat-smelter: the smelter unit template + the melter atomic display; the Heat_T mat words are the in-catalog walks; aall both locales) +1 (task p29-w3-heat-smelter: block.gt6.large_heat_exchanger, the dump word 大型热交换器 at gt.multitileentity.17197; both locales)	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
 	 * en keys are pre-installed full strings that the B-wave cards replace with template keys;
 	 * every card SHRINKS its assertion as it lands, until the list is empty. B1
@@ -1142,7 +1142,7 @@ private static final int ZH_KEY_FLOOR = 2928; // 2839 +3 (task p29-w2-eu-special
 			+ " the eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
 			+ " and the transformer joined at 323c4ae4/1e07061d; the 28 p29-w3 part blocks"
 			+ " joined at bff8400a — GTMultiBlocks 7 -> 25 checked (the ten composed metal"
-			+ " walls exempt) + the six dense additions); the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (134 + 5)"
+			+ " walls exempt) + the six dense additions); the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (134 + 5; the HEX controller joins at task p29-w3-heat-smelter — GT6HeatExchangers 1 checked)"
 			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"

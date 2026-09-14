@@ -153,6 +153,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
+        addHeatExchanger(); // task p29-w3-heat-smelter — the Large Heat Exchanger controller (the lightning-rod one-texture cube form)
         LOGGER.info("GT6 machine paint tint: {} machine models tinted (209 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addExoticFamilies/addEuCoreMachines/addHuTuFamilies/addHeatSmelterFamilies/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
@@ -634,6 +635,23 @@ public final class GT6BlockStates extends BlockStateProvider {
             case BOOKSHELF -> "bookshelf";
             case BOTTLECRATE -> "bottlecrate";
         };
+    }
+
+    /**
+     * Task p29-w3-heat-smelter — the Large Heat Exchanger controller (Loader
+     * :1245): ONE cube_all model over the borrowed upstream multiblockmains/
+     * largeheatexchanger composite (the colored base alpha-over the overlay layer
+     * composited at borrow time — all three upstream faces composite to the SAME
+     * visible pixels, the lightningrod ruling; one texture serves all six faces),
+     * every FORMED state maps to the same model (the formed-look visual is the p9
+     * pool). No facing (the structure is facing-independent — the controller is the
+     * centre cell of both layers). The BlockItem parents the block model.
+     */
+    private void addHeatExchanger() {
+        ModelFile tMain = models().cubeAll("large_heat_exchanger", modLoc("block/large_heat_exchanger/main"));
+        Block tController = gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get();
+        getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
+        itemModels().withExistingParent("large_heat_exchanger", tMain.getLocation());
     }
 
     /**

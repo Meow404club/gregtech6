@@ -916,6 +916,8 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.distillation_tower", "Distillation Tower");
         add("block.gt6.cryo_distillation_tower", "Cryo Distillation Tower");
         add("block.gt6.multiblock_lightning_rod", "Lightning Rod Electric Output");
+        // task p29-w3-heat-smelter — the Large Heat Exchanger controller (the :1245 name column)
+        add("block.gt6.large_heat_exchanger", "Large Heat Exchanger");
         add("block.gt6.machine_wall_tungsten", "Tungsten Wall");
         add("block.gt6.niobium_titanium_coil", "Large Niobium-Titanium Coil");
         add("block.gt6.lightning_rod", "Lightning Rod");
