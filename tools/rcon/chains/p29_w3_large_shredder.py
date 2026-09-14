@@ -73,7 +73,7 @@ steps = [
     Step("data get block " + C, expect="active: 1b", poll=10),
     Step("gt6energy volt " + R + " 4096", expect="voltage 4096"),         # the fast finish (the window max): 64 procs x 8192 bar / 4096 = 128 ticks
     Step("data get block " + C, expect="Count: 64b", poll=90,             # 64 cobblestone out (one stack)
-         node_expects={"1.21.1": "Count: 64"}),
+         node_expects={"1.21.1": "count: 64"}),
 
     phase("D: the type gate — dialed EU the RU door refuses the waiting batch"),
     Step("gt6energy type " + R + " EU", expect="type ENERGY."),

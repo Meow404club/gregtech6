@@ -39,6 +39,10 @@ W = F(WRONG)
 MACHINE = "large_coagulator"
 
 def merge(items, fluid=None):
+    # the tank shapes are loader-versioned too (the 21.1 FluidStack codec keys vs the
+    # forge FluidName/Amount pair — the FluidTankGT read forks per leg)
+    tank = {"1.20.1": 'input_tank:{FluidName:"%s",Amount:%d}' % fluid if fluid else "",
+            "1.21.1": 'input_tank:{id:"%s",amount:%d}' % fluid if fluid else ""}
     out = {}
     for k in ("1.20.1", "1.21.1"):
         parts = ",".join(
@@ -46,7 +50,7 @@ def merge(items, fluid=None):
             for i, (iid, n) in enumerate(items))
         payload = "inventory:{Size:11,Items:[" + parts + "]}"
         if fluid:
-            payload += ',input_tank:{FluidName:"%s",Amount:%d}' % fluid
+            payload += "," + tank[k]
         out[k] = "data merge block " + C + " {" + payload + "}"
     return out
 

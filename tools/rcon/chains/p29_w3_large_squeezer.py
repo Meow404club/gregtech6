@@ -73,7 +73,8 @@ steps = [
     Step("data get block " + C, expect="maxprogress: 131072L", poll=10),  # the PARKED bar survives
     Step("gt6energy mode " + R + " on", expect="emitting true"),
     Step("data get block " + C, expect="active: 1b", poll=10),
-    Step("data get block " + C, expect='output_tank: {FluidName: "minecraft:water"', poll=120),  # the batch runs out (12.8s+): the sticks land AND the 800 L water hits the output tank (the FLUID-output leg)
+    Step("data get block " + C, expect='output_tank: {FluidName: "minecraft:water"', poll=120,  # the batch runs out: the sticks land AND the 800 L water hits the output tank
+         node_expects={"1.21.1": "minecraft:water"}),  # 21.1: the codec face renders first ({id, amount, ...})
 
     phase("D: the type gate — dialed EU the RU door refuses the waiting batch"),
     Step("gt6energy type " + R + " EU", expect="type ENERGY."),

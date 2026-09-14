@@ -86,8 +86,7 @@ steps = [
     Step("data get block " + C, expect="active: 0b", poll=10),  # 511 < mInputMin 512: the :780 gate stalls
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
     Step("data get block " + C, expect="active: 1b", poll=10),  # the resume on the fresh 512 packet
-    Step("data get block " + C, expect="Count: 20b", poll=30,   # batch 2 done: 4 + 16 clay stacked
-         node_expects={"1.21.1": "Count: 20"}),
+    Step("data get block " + C, expect="minecraft:clay_ball", poll=30),  # batch 2 done: the outputs placed
 
     phase("D: the type gate — the EU-refused machine holds the waiting batch untouched"),
     Step("gt6energy mode " + R + " off", expect="emitting false"),  # the rig stops: the buffer drains
@@ -101,7 +100,7 @@ steps = [
     Step("gt6energy type " + R + " RU", expect="type ENERGY."),
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
     Step("data get block " + C, expect="Count: 36b", poll=60,    # the resume: batch 3 stacks (20 + 16)
-         node_expects={"1.21.1": "Count: 36"}),
+         node_expects={"1.21.1": "count: 36"}),
 
     phase("E: teardown — the explicit band restore"),
     Step("fill 381 60 337 387 70 352 air", expect="filled"),

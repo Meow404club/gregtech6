@@ -74,7 +74,7 @@ steps = [
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
     Step("data get block " + C, expect="active: 1b", poll=10),  # the resume on the fresh 512 packet
     Step("data get block " + C, expect="Count: 32b", poll=60,   # the batch completes: 8x4 snowball stacked at slot 2
-         node_expects={"1.21.1": "Count: 32"}),
+         node_expects={"1.21.1": "count: 32"}),
 
     phase("D: the type gate — dialed RU the EU door refuses the waiting batch"),
     Step("gt6energy type " + R + " RU", expect="type ENERGY."),

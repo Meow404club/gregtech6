@@ -42,6 +42,10 @@ W = F(WRONG)
 MACHINE = "large_sluice"
 
 def merge(items, fluid=None):
+    # the tank shapes are loader-versioned too (the 21.1 FluidStack codec keys vs the
+    # forge FluidName/Amount pair — the FluidTankGT read forks per leg)
+    tank = {"1.20.1": 'input_tank:{FluidName:"%s",Amount:%d}' % fluid if fluid else "",
+            "1.21.1": 'input_tank:{id:"%s",amount:%d}' % fluid if fluid else ""}
     out = {}
     for k in ("1.20.1", "1.21.1"):
         parts = ",".join(
@@ -49,7 +53,7 @@ def merge(items, fluid=None):
             for i, (iid, n) in enumerate(items))
         payload = "inventory:{Size:11,Items:[" + parts + "]}"
         if fluid:
-            payload += ',input_tank:{FluidName:"%s",Amount:%d}' % fluid
+            payload += "," + tank[k]
         out[k] = "data merge block " + C + " {" + payload + "}"
     return out
 
@@ -83,7 +87,7 @@ steps = [
     Step("data get block " + C, expect="active: 0b", poll=10),  # 511 < mInputMin 512: the :780 gate stalls
     Step("gt6energy volt " + R + " 512", expect="voltage 512"),
     Step("data get block " + C, expect="Count: 16b", poll=60,   # the resume: 8 + 8 clay stacked
-         node_expects={"1.21.1": "Count: 16"}),
+         node_expects={"1.21.1": "count: 16"}),
 
     phase("D: the type gate — dialed EU the RU door refuses the waiting batch"),
     Step("gt6energy type " + R + " EU", expect="type ENERGY."),
@@ -92,7 +96,7 @@ steps = [
     Step("data get block " + C, expect="active: 0b", poll=10),   # the cross-type refusal: EU on an RU row
     Step("gt6energy type " + R + " RU", expect="type ENERGY."),
     Step("data get block " + C, expect="Count: 24b", poll=60,    # the resume: 16 + 8 stacked
-         node_expects={"1.21.1": "Count: 24"}),
+         node_expects={"1.21.1": "count: 24"}),
 
     phase("E: teardown — the explicit band restore"),
     Step("fill 477 60 337 483 70 352 air", expect="filled"),
