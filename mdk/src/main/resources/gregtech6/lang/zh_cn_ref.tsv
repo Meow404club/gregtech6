@@ -349,6 +349,7 @@ direct	gt6.row.mat.tungsten_carbide	碳化钨	hand
 direct	gt6.row.mat.tungstensteel	钨钢	hand
 direct	gt6.row.mat.ultimet	钴铬钨合金	hand
 direct	gt6.row.mat.ulv	ULV	hand
+direct	gt6.row.mat.wood	木	hand
 direct	gt6.row.mat.wood_treated	木制	hand
 direct	gt6.row.metal_wall.display	%s壁板	hand
 direct	gt6.row.mold.display.mold_ceramic	陶瓷模具	hand
@@ -394,6 +395,12 @@ direct	gt6.row.size.small	小型	hand
 direct	gt6.row.slicer.display	切片器 (%s)	hand
 direct	gt6.row.steam_engine.display	蒸汽引擎 (%s)	hand
 direct	gt6.row.steam_engine.display.strong	强化蒸汽引擎 (%s)	hand
+direct	gt6.row.tank_size.large	大型	hand
+direct	gt6.row.tank_size.large_dense	大型致密	hand
+direct	gt6.row.tank_size.small	小型	hand
+direct	gt6.row.tank_size.small_dense	小型致密	hand
+direct	gt6.row.tank_valve.display	%s%s储罐主阀	hand
+direct	gt6.row.tank_valve.wood.display	%s储罐主阀	hand
 direct	gt6.row.tap.display	%s龙头	hand
 direct	gt6.row.unboxinator.display	拆箱机 (%s)	hand
 direct	gt6.spraycan.decolor	可为物品除色	hand

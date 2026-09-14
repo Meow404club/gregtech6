@@ -921,6 +921,16 @@ public class GT6EnUs extends LanguageProvider {
                 add("block.gt6." + tRow.path(), tRow.display());
             }
         }
+        // task p29-w3-tank-valves — the 25 Tank Main Valve rows compose over the size words
+        // and the EXISTING gt6.row.mat wall-row words (all six metal materials already in the
+        // table); the wood valve takes the ONE-slot template over the new wood unit word
+        add(gregtech6.registry.GT6Tanks.TANK_VALVE_DISPLAY_KEY, "%s %s Tank Main Valve");
+        add(gregtech6.registry.GT6Tanks.TANK_VALVE_WOOD_DISPLAY_KEY, "%s Tank Main Valve");
+        add(gregtech6.registry.GT6Tanks.WOOD_UNIT_KEY, "Wood");
+        add(gregtech6.registry.GT6Tanks.SIZE_SMALL, "Small");
+        add(gregtech6.registry.GT6Tanks.SIZE_SMALL_DENSE, "Small Dense");
+        add(gregtech6.registry.GT6Tanks.SIZE_LARGE, "Large");
+        add(gregtech6.registry.GT6Tanks.SIZE_LARGE_DENSE, "Large Dense");
     }
 
     /**

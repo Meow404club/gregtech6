@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:dense_wall_tungsten"
+    },
+    "R": {
+      "item": "gt6:ring_tungsten"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    " R ",
+    "hMs",
+    " R "
+  ],
+  "result": {
+    "item": "gt6:tank_small_dense_tungsten"
+  },
+  "show_notification": true
+}

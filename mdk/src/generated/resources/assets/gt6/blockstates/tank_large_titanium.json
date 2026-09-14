@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=east,formed=false": {
+      "model": "gt6:block/tank_metal"
+    },
+    "facing=east,formed=true": {
+      "model": "gt6:block/tank_metal"
+    },
+    "facing=north,formed=false": {
+      "model": "gt6:block/tank_metal"
+    },
+    "facing=north,formed=true": {
+      "model": "gt6:block/tank_metal"
+    },
+    "facing=south,formed=false": {
+      "model": "gt6:block/tank_metal"
+    },
+    "facing=south,formed=true": {
+      "model": "gt6:block/tank_metal"
+    },
+    "facing=west,formed=false": {
+      "model": "gt6:block/tank_metal"
+    },
+    "facing=west,formed=true": {
+      "model": "gt6:block/tank_metal"
+    }
+  }
+}

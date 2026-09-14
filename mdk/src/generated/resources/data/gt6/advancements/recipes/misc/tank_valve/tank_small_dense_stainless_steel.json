@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_ring": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "gt6:ring_stainless_steel"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:tank_valve/tank_small_dense_stainless_steel"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_ring",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:tank_valve/tank_small_dense_stainless_steel"
+    ]
+  },
+  "sends_telemetry_event": false
+}
