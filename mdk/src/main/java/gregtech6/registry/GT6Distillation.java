@@ -278,6 +278,16 @@ public final class GT6Distillation {
 			return getBlockPos().relative(tBack);
 		}
 
+		/** The base-layer part block (upstream part id 18101). A hook so the offline tests bind fixtures (the CokeOven getPartBlock seam). */
+		protected Block getTransmitterBlock() {
+			return GTMultiBlocks.HEAT_TRANSMITTER.get();
+		}
+
+		/** The column part block (upstream part id 18102). The same offline fixture hook. */
+		protected Block getPartBlock() {
+			return GTMultiBlocks.anyPartBlock("distill_part");
+		}
+
 		/**
 		 * The declared pattern (the class doc derivation): 9 transmitter cells at y-1, 72 part
 		 * cells at y0..y7, the back-centre design 1. Built PER FACING (the hole column moves
@@ -288,8 +298,8 @@ public final class GT6Distillation {
 		public GTMultiBlockPattern getStructurePattern() {
 			if (mStructurePattern == null || mPatternFacing != mFacing) {
 				GTMultiBlockPattern.Builder tBuilder = GTMultiBlockPattern.builder();
-				Block tTransmitter = GTMultiBlocks.HEAT_TRANSMITTER.get();
-				Block tPart = GTMultiBlocks.anyPartBlock("distill_part");
+				Block tTransmitter = getTransmitterBlock();
+				Block tPart = getPartBlock();
 				int tBackX = -Direction.from3DDataValue(mFacing).getStepX(); // the back-centre column, centre-relative
 				int tBackZ = -Direction.from3DDataValue(mFacing).getStepZ();
 				for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) {
@@ -524,13 +534,17 @@ public final class GT6Distillation {
 
 		/** The upstream :152-166 class table → the hole column layer (1..7) of the fluid. */
 		public static int routingLayer(Fluid aFluid) {
-			String tName = String.valueOf(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(aFluid));
-			if (tName.contains("propane") || tName.contains("methane")) return 7;
-			if (tName.contains("butane")) return 6;
-			if (tName.contains("petrol") || tName.contains("gasoline") || tName.contains("bioethanol")) return 5;
-			if (tName.contains("kerosene") || tName.contains("kerosine") || tName.contains("glycerol")) return 4;
-			if (tName.contains("diesel") || tName.contains("biodiesel")) return 3;
-			if (tName.contains("fuel") || tName.contains("fueloil") || tName.contains("biofuel")) return 2;
+			return routingLayerByName(String.valueOf(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(aFluid)));
+		}
+
+		/** The pure name-seam of the routing table (the offline tests drive THIS — the registry lookup stays the production wrapper). "fuel" is the cover word: fueloil/biofuel carry it as a substring, exactly like upstream {@code FL.is} name matching. */
+		public static int routingLayerByName(String aKey) {
+			if (aKey.contains("propane") || aKey.contains("methane")) return 7;
+			if (aKey.contains("butane")) return 6;
+			if (aKey.contains("petrol") || aKey.contains("gasoline") || aKey.contains("bioethanol")) return 5;
+			if (aKey.contains("kerosene") || aKey.contains("kerosine") || aKey.contains("glycerol")) return 4;
+			if (aKey.contains("diesel") || aKey.contains("biodiesel")) return 3;
+			if (aKey.contains("fuel")) return 2;
 			return 1;
 		}
 
@@ -770,7 +784,8 @@ public final class GT6Distillation {
 			}
 			net.minecraft.resources.ResourceLocation tFluidId;
 			try {
-				tFluidId = new net.minecraft.resources.ResourceLocation(aFluidWord.toLowerCase(Locale.ROOT));
+				String tLower = aFluidWord.toLowerCase(Locale.ROOT); // the precomputed arg — the stonecutter ctor swap rewrites simple-arg calls only
+				tFluidId = new net.minecraft.resources.ResourceLocation(tLower);
 			} catch (IllegalArgumentException e) {
 				aSource.sendFailure(Component.literal("Malformed fluid id: " + aFluidWord));
 				return 0;

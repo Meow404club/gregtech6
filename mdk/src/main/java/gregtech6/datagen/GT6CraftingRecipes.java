@@ -574,12 +574,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if ("crucible_steel".equals(tRow.path())) continue; // the single-rung row above
 			Item tWall = gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_ITEMS_BY_PATH.get(tRow.wallPath()).get();
 			Item tController = gregtech6.registry.GT6Crucibles.CRUCIBLE_ITEMS_BY_PATH.get(tRow.path()).get();
+			String tIdPath = "crucible_ladder/" + tRow.path(); // the precomputed arg — the stonecutter ctor swap rewrites simple-arg calls only
 			rRows.add(new CrucibleLadderRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, tController)
 					.pattern("hM")
 					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 					.define('M', tWall)
 					.unlockedBy("has_crucible_wall", has(tWall)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, "crucible_ladder/" + tRow.path())));
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
 		}
 		return rRows;
 	}

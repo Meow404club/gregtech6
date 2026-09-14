@@ -233,9 +233,21 @@ public final class GT6Crucibles {
 	// the LARGE-crucible family (task p26-crucible-multiblock SPEC ⑤)
 	// ------------------------------------------------------------------------------------
 
-	/** One LARGE registration row — the Loader aRegistry.add projection (path + shell material + hardness + the NBT_DESIGN wall). */
-	public record CrucibleRow(String path, OreDictMaterial material, String display, float hardness,
-			String wallPath, boolean acidProof, int metaId) {}
+	/**
+	 * One LARGE registration row — the Loader aRegistry.add projection (path + shell material
+	 * + hardness + the NBT_DESIGN wall). The material rides a {@link java.util.function.Supplier}
+	 * (the {@link SmelteryRow} form, task p29-w3-distill-crucible ③): the static rows initialize
+	 * at class-load time which on the 21.1 leg runs before MT.init() — a direct MT.Steel
+	 * reference captured null and the shell (the physics ceiling input) read as null.
+	 */
+	public record CrucibleRow(String path, java.util.function.Supplier<OreDictMaterial> materialSupplier, String display, float hardness,
+			String wallPath, boolean acidProof, int metaId) {
+
+		/** The shell material (the supplier dereference — the physics ceiling input). */
+		public OreDictMaterial material() {
+			return materialSupplier.get();
+		}
+	}
 
 	/**
 	 * The single rung (SPEC ⑤): upstream :1270 verbatim — Steel shell, the 18009 Steel
@@ -243,11 +255,11 @@ public final class GT6Crucibles {
 	 * rung would flip the wall row with the defer-pool ladder).
 	 */
 	public static final CrucibleRow STEEL_ROW =
-			new CrucibleRow("crucible_steel", MT.Steel, "Large Steel Crucible", 6.0F, "crucible_steel_wall", false, 17309);
+			new CrucibleRow("crucible_steel", () -> MT.Steel, "Large Steel Crucible", 6.0F, "crucible_steel_wall", false, 17309);
 
 	/** The wall row (upstream :1145 "Steel Wall" — part id 18009, the single-rung wall ladder). */
 	public static final CrucibleRow STEEL_WALL_ROW =
-			new CrucibleRow("crucible_steel_wall", MT.Steel, "Steel Wall", 6.0F, "crucible_steel_wall", false, 18009);
+			new CrucibleRow("crucible_steel_wall", () -> MT.Steel, "Steel Wall", 6.0F, "crucible_steel_wall", false, 18009);
 
 	// ------------------------------------------------------------------------------------
 	// task p29-w3-distill-crucible ③ — the 8-material ladder completion (the P26 defer pool
@@ -265,25 +277,25 @@ public final class GT6Crucibles {
 
 	/** :1271 — the Stainless Steel rung (ACIDPROOF T). */
 	public static final CrucibleRow STAINLESS_STEEL_ROW =
-			new CrucibleRow("crucible_stainless_steel", MT.StainlessSteel, "Large Stainless Steel Crucible", 6.0F, "crucible_stainless_steel_wall", true, 17302);
+			new CrucibleRow("crucible_stainless_steel", () -> MT.StainlessSteel, "Large Stainless Steel Crucible", 6.0F, "crucible_stainless_steel_wall", true, 17302);
 	/** :1272 — the Invar rung. */
 	public static final CrucibleRow INVAR_ROW =
-			new CrucibleRow("crucible_invar", MT.Invar, "Large Invar Crucible", 6.0F, "crucible_invar_wall", false, 17307);
+			new CrucibleRow("crucible_invar", () -> MT.Invar, "Large Invar Crucible", 6.0F, "crucible_invar_wall", false, 17307);
 	/** :1273 — the Titanium rung (hardness 9.0). */
 	public static final CrucibleRow TITANIUM_ROW =
-			new CrucibleRow("crucible_titanium", MT.Ti, "Large Titanium Crucible", 9.0F, "crucible_titanium_wall", false, 17306);
+			new CrucibleRow("crucible_titanium", () -> MT.Ti, "Large Titanium Crucible", 9.0F, "crucible_titanium_wall", false, 17306);
 	/** :1274 — the Tungstensteel rung (hardness 12.5). */
 	public static final CrucibleRow TUNGSTENSTEEL_ROW =
-			new CrucibleRow("crucible_tungstensteel", MT.TungstenSteel, "Large Tungstensteel Crucible", 12.5F, "crucible_tungstensteel_wall", false, 17303);
+			new CrucibleRow("crucible_tungstensteel", () -> MT.TungstenSteel, "Large Tungstensteel Crucible", 12.5F, "crucible_tungstensteel_wall", false, 17303);
 	/** :1275 — the Tungsten rung (hardness 10.0, ACIDPROOF T). */
 	public static final CrucibleRow TUNGSTEN_ROW =
-			new CrucibleRow("crucible_tungsten", MT.W, "Large Tungsten Crucible", 10.0F, "crucible_tungsten_wall", true, 17304);
+			new CrucibleRow("crucible_tungsten", () -> MT.W, "Large Tungsten Crucible", 10.0F, "crucible_tungsten_wall", true, 17304);
 	/** :1276 — the Tantalum Hafnium Carbide rung (hardness 12.5). */
 	public static final CrucibleRow TANTALUM_HAFNIUM_CARBIDE_ROW =
-			new CrucibleRow("crucible_tantalum_hafnium_carbide", MT.Ta4HfC5, "Large Tantalum Hafnium Carbide Crucible", 12.5F, "crucible_tantalum_hafnium_carbide_wall", false, 17312);
+			new CrucibleRow("crucible_tantalum_hafnium_carbide", () -> MT.Ta4HfC5, "Large Tantalum Hafnium Carbide Crucible", 12.5F, "crucible_tantalum_hafnium_carbide_wall", false, 17312);
 	/** :1277 — the Adamantium rung (hardness 100.0, ACIDPROOF T). */
 	public static final CrucibleRow ADAMANTIUM_ROW =
-			new CrucibleRow("crucible_adamantium", MT.Ad, "Large Adamantium Crucible", 100.0F, "crucible_adamantium_wall", true, 17305);
+			new CrucibleRow("crucible_adamantium", () -> MT.Ad, "Large Adamantium Crucible", 100.0F, "crucible_adamantium_wall", true, 17305);
 
 	/**
 	 * The controller rows — the FULL 8-material ladder (upstream :1270-1277, the line order
