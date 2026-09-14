@@ -137,7 +137,10 @@ steps = [
     *[Step(f"setblock {F(p)} gt6:{b}", expect="Changed the block") for (p, b) in shell3(V_MELT, "wood_wall")],
     Step(f"gt6tankvalve form {F(V_MELT)}", expect="formed=true"),
     Step(f"gt6tankvalve fill {F(V_MELT)} minecraft:lava 2000", expect="filled 2000/2000 L"),
-    Step(f"gt6tankvalve tick {F(V_MELT)} 1", expect="ticked 1"),
+    # NO manual tick step here: the LIVE dispatcher melts the tank down within the
+    # server ticks between two commands (live-proven: the manual-tick probe came back
+    # "No GTTankValveBlockEntity" while the lava/fire assertions below passed — the
+    # valve's own BE was already consumed by its :130-140 meltdown).
     Step(f"execute if block {F((V_MELT[0], V_MELT[1], V_MELT[2] + 1))} minecraft:lava", expect="Test passed"),
     Step(f"execute if block {F(V_MELT)} minecraft:fire", expect="Test passed"),
 
