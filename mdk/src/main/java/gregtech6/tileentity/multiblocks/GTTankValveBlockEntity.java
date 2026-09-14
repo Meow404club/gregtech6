@@ -316,14 +316,19 @@ public class GTTankValveBlockEntity extends TileEntityBase10MultiBlockBase
 		return tMaterial == null ? DEFAULT_MELTING_POINT : tMaterial.mMeltingPoint;
 	}
 
+	/** The upstream onlySimple gate (MultiTileEntityTank.java:105 — the wood row only; the fixture seam). */
+	public boolean onlySimple() {
+		GT6Tanks.TankValveRow tRow = row();
+		return tRow != null && tRow.onlySimple();
+	}
+
 	/**
 	 * Upstream allowFluid (:101-103): NOT power-conducting AND below the melting point AND
 	 * ({@code !onlySimple() || FL.simple}) — the wood valve is the only onlySimple row.
 	 */
 	public boolean allowFluid(@Nullable FluidStack aFluid) {
-		boolean tOnlySimple = row() != null && row().onlySimple();
 		return !isPowerConducting(aFluid) && fluidTemperature(aFluid) < meltingPoint()
-				&& (!tOnlySimple || isSimple(aFluid));
+				&& (!onlySimple() || isSimple(aFluid));
 	}
 
 	// ---------------------------------------------------------------------------
@@ -353,10 +358,11 @@ public class GTTankValveBlockEntity extends TileEntityBase10MultiBlockBase
 		int r = radius();
 		if (!cornersLoaded()) return mStructureOkay; // :63/:74 — unloaded corners keep the last verdict
 		BlockPos tCentre = centre();
+		int tHollow = r - 1; // the hollow half-width: the (0,0,0) cell at r=1 (:66's i==0&&j==0&&k==0), the inner 3x3x3 at r=2 (:66's i*i<=1&&j*j<=1&&k*k<=1)
 		boolean tSuccess = true;
 		for (int i = -r; i <= r; i++) for (int j = -r; j <= r; j++) for (int k = -r; k <= r; k++) {
-			if (i == 0 && j == 0 && k == 0) {
-				// :67 — clear-if-air (getAir → setBlockToAir), a non-air centre FAILS
+			if (Math.abs(i) <= tHollow && Math.abs(j) <= tHollow && Math.abs(k) <= tHollow) {
+				// :67 — clear-if-air (getAir → setBlockToAir), a non-air hollow cell FAILS
 				BlockPos tPos = new BlockPos(tCentre.getX() + i, tCentre.getY() + j, tCentre.getZ() + k);
 				BlockState tState = getLevel().getBlockState(tPos);
 				if (tState.isAir()) {
@@ -483,8 +489,7 @@ public class GTTankValveBlockEntity extends TileEntityBase10MultiBlockBase
 	private void autoEmit() {
 		FluidStack tContent = mTank.getFluid();
 		if (tContent == null || mTank.amount() <= 0) return;
-		Direction tDir = Direction.from3DDataValue(mFacing);
-		IFluidHandler tTarget = fluidHandlerAt(getBlockPos().relative(tDir), tDir.getOpposite()); // the neighbour's face towards the valve
+		IFluidHandler tTarget = emitTarget();
 		if (tTarget == null) return;
 		int tOffer = FluidTankGT.bindInt(mTank.amount());
 		FluidStack tProbe = new FluidStack(tContent.getFluid(), tOffer);
@@ -495,6 +500,28 @@ public class GTTankValveBlockEntity extends TileEntityBase10MultiBlockBase
 			setChanged(); // the :124 updateInventory() beat
 		}
 	}
+
+	/**
+	 * The emit target — the fluid handler of the block entity in the facing direction,
+	 * consulted through the face pointing back at the valve (the upstream
+	 * {@code getAdjacentTileEntity(mFacing)} DelegatorTileEntity pair). Offline-seamable
+	 * (the boiler steamTargetAt shape): ForgeCapabilities cannot class-init offline.
+	 */
+	@Nullable
+	protected IFluidHandler emitTarget() {
+		if (mEmitTargetOverride != null) return mEmitTargetOverride;
+		if (!hasLevel()) return null;
+		Direction tDir = Direction.from3DDataValue(mFacing);
+		return fluidHandlerAt(getBlockPos().relative(tDir), tDir.getOpposite());
+	}
+
+	/** The offline emit-target seam (the setSteamTargetsOverride shape). */
+	public void setEmitTargetOverride(@Nullable IFluidHandler aTarget) {
+		mEmitTargetOverride = aTarget;
+	}
+
+	@Nullable
+	private IFluidHandler mEmitTargetOverride = null;
 
 	/** The :130-140 meltdown (the 3x3x3 form — the 5x5x5 :130-138 lacks the lava arm, the asymmetry verbatim). */
 	public boolean meltdown() {
