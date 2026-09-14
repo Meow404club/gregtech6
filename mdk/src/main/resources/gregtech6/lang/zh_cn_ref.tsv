@@ -53,6 +53,7 @@ direct	block.gt6.bottlecrate_oak	橡木瓶箱	hand
 direct	block.gt6.bottlecrate_spruce	云杉木瓶箱	hand
 direct	block.gt6.bottlecrate_warped	诡异木瓶箱	hand
 direct	block.gt6.brick_burning_box	砖块燃烧室 (固体)	hand
+direct	block.gt6.centrifuge_part	大型离心机部件	hand
 direct	block.gt6.cfoam	建筑泡沫	hand
 direct	block.gt6.cfoam_fresh	新鲜建筑泡沫	hand
 direct	block.gt6.cfoam_fresh_slab	新鲜建筑泡沫台阶	hand
@@ -62,6 +63,8 @@ direct	block.gt6.crank	手摇曲柄	hand
 direct	block.gt6.crucible_steel	大型钢坩埚	hand
 direct	block.gt6.crucible_steel_wall	钢壁板	hand
 direct	block.gt6.crusher	破碎机	hand
+direct	block.gt6.crusher_wheels	破碎机辊轮	hand
+direct	block.gt6.distill_part	蒸馏塔壁	hand
 direct	block.gt6.drawer_bronze	青铜四格抽屉	hand
 direct	block.gt6.drawer_steel	钢四格抽屉	hand
 direct	block.gt6.electric_dynamo	发电机 (LV)	hand
@@ -71,6 +74,7 @@ direct	block.gt6.electric_dynamo_t4	发电机 (EV)	hand
 direct	block.gt6.electric_dynamo_t5	发电机 (IV)	hand
 direct	block.gt6.electric_dynamo_ulv	发电机 (ULV)	hand
 direct	block.gt6.electric_transformer	变压器 (ULV-LV)	hand
+direct	block.gt6.electrolyzer_part	电解器部件	hand
 direct	block.gt6.electrometer	静电计传感器	hand
 direct	block.gt6.energy_source	测试能源	hand
 direct	block.gt6.example_chest	GT 示例箱子	hand
@@ -91,6 +95,11 @@ direct	block.gt6.grass_light_gray	草方块	hand
 direct	block.gt6.grass_lime	草方块	hand
 direct	block.gt6.grass_yellow	草方块	hand
 direct	block.gt6.heat_transmitter	传热装置	hand
+direct	block.gt6.large_carborundum_coil	大型碳化硅线圈	hand
+direct	block.gt6.large_copper_coil	大型铜线圈	hand
+direct	block.gt6.large_iridium_coil	大型铱线圈	hand
+direct	block.gt6.large_nichrome_coil	大型镍铬合金线圈	hand
+direct	block.gt6.large_osmium_coil	大型锇线圈	hand
 direct	block.gt6.lathe	车床	hand
 direct	block.gt6.lightning_rod	避雷针	hand
 direct	block.gt6.locker_bronze	青铜储物柜	hand
@@ -100,22 +109,31 @@ direct	block.gt6.multiblock_coke_oven	焦炉	hand
 direct	block.gt6.multiblock_coke_oven_bricks	焦炉砖	hand
 direct	block.gt6.multiblock_lightning_rod	避雷针电力输出口	hand
 direct	block.gt6.niobium_titanium_coil	大型铌钛合金线圈	hand
+direct	block.gt6.processor_unit_control	控制四核处理器	hand
+direct	block.gt6.processor_unit_conversion	转换四核处理器	hand
+direct	block.gt6.processor_unit_logic	逻辑四核处理器	hand
+direct	block.gt6.processor_unit_storage	存储四核处理器	hand
+direct	block.gt6.processor_unit_versatile	多功能四核处理器	hand
 direct	block.gt6.progressmeter	进度传感器	hand
 direct	block.gt6.safe_keylocked_bronze	钥匙锁定青铜保险箱	hand
 direct	block.gt6.safe_keylocked_steel	钥匙锁定钢保险箱	hand
 direct	block.gt6.safe_mechanical_bronze	机械青铜保险箱	hand
 direct	block.gt6.safe_mechanical_steel	机械钢保险箱	hand
 direct	block.gt6.shredder	粉碎机	hand
+direct	block.gt6.shredder_blades	研磨机刀片	hand
+direct	block.gt6.sluice_part	洗矿厂部件	hand
 direct	block.gt6.stone_anvil	石头砧	hand
 direct	block.gt6.test_machine	测试机器	hand
 direct	block.gt6.test_machine_idle	测试机器 (被动)	hand
 direct	block.gt6.transformer_rotation	木制转向齿轮箱	hand
+direct	block.gt6.ventilation_unit	通风单元	hand
 direct	block.gt6.water_wheel	水车	hand
 direct	block.gt6.wire_electric_1x	1×导线	hand
 direct	block.gt6.wire_electric_2x	2×导线	hand
 direct	block.gt6.wire_laser	激光光纤导线	hand
 direct	block.gt6.wood_fluid_pipe_medium	木制流体管道	hand
 direct	block.gt6.wood_fluid_pipe_small	小型木制流体管道	hand
+direct	block.gt6.wood_wall	木壁板	hand
 direct	fluid.gt6.cactuswater	仙人掌汁	hand
 direct	fluid.gt6.cfoam	建筑泡沫	hand
 direct	fluid.gt6.cfoam_black	黑色建筑泡沫	hand
@@ -332,6 +350,7 @@ direct	gt6.row.mat.tungstensteel	钨钢	hand
 direct	gt6.row.mat.ultimet	钴铬钨合金	hand
 direct	gt6.row.mat.ulv	ULV	hand
 direct	gt6.row.mat.wood_treated	木制	hand
+direct	gt6.row.metal_wall.display	%s壁板	hand
 direct	gt6.row.mold.display.mold_ceramic	陶瓷模具	hand
 direct	gt6.row.mold.display.mold_ceramic_arrow	陶瓷模具 (箭)	hand
 direct	gt6.row.mold.display.mold_ceramic_axe	陶瓷模具 (斧)	hand

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "design=0": {
+      "model": "gt6:block/shredder_blades_design_0"
+    },
+    "design=1": {
+      "model": "gt6:block/shredder_blades_design_1"
+    },
+    "design=2": {
+      "model": "gt6:block/shredder_blades_design_2"
+    },
+    "design=3": {
+      "model": "gt6:block/shredder_blades_design_3"
+    }
+  }
+}

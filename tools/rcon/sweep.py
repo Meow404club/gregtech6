@@ -250,6 +250,13 @@ SESSION_GROUPS = (
     # NO_CONSTANT_POWER power-gap retention arm on a real TU machine.
     ("p29_w2_steam_cracker", "p29_w2_catalytic_cracker", "p29_w2_coagulator",
      "p29_w2_generifier", "p29_w2_bath", "p29_w2_autoclave", "p29_w2_loom"),
+    # P29 W3 card ① (p29-w3-nbtdesign-parts): the part-family expansion chain — one
+    # fresh z=292 band, 41 part blocks on x-disjoint even columns x384..464 (the metal
+    # walls 11 / dense walls 11 / coils 6 / parts 6 / ventilation+PU+wood 7), the
+    # DESIGN render-slot probes riding the dense-wall + distill + coil + centrifuge
+    # sites (band-local setblocks only — no fresh_boot / mutates member).
+    # --group p29_w3_parts matches through the chain's embedded name prefix.
+    ("p29_w3_parts",),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 

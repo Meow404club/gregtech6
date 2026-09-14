@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "forge:plates/lead"
+    },
+    "W": {
+      "tag": "forge:plates/wood_treated"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "W W",
+    "sPh",
+    "W W"
+  ],
+  "result": {
+    "item": "gt6:wood_wall"
+  },
+  "show_notification": true
+}

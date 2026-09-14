@@ -214,7 +214,7 @@ public class GT6LangParityTest {
  * words 蒸汽裂解器/催化裂解器/织布机/凝结器/转换器/浸洗器/高压釜), both locales; zh == en,
  * the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 2867; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys; all both locales)
+private static final int ZH_KEY_FLOOR = 2885; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales)
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -742,9 +742,10 @@ private static final int ZH_KEY_FLOOR = 2867; // 2839 +3 (task p29-w2-eu-special
 			tChecked++;
 			if (!en().containsKey(GT6Attachments.matUnitKeyOf(tRow))) tMissing.add("att:" + tRow.path());
 		}
-		assertEquals(255, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
+		assertEquals(261, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
             + " (44 axle + 28 steam + 8 diesel + 96 burning + 26 boiler + 4 dryer + 4 distillery"
-            + " + 6 p28 ULV rows + 5 large boiler + 5 wall + 12 attachments + 2 dry/dist shares not double-counted)"
+            + " + 6 p28 ULV rows + 5 large boiler + 11 wall (the 6 p29-w3 dense additions joined)"
+            + " + 12 attachments + 2 dry/dist shares not double-counted)"
             + " — bump this pin ONLY with a real row-table change");
 		assertTrue(tMissing.isEmpty(), "every composed row/stone unit key must exist on the en face"
 			+ " (a missing face renders the RAW key at runtime): " + tMissing);
@@ -942,6 +943,11 @@ private static final int ZH_KEY_FLOOR = 2867; // 2839 +3 (task p29-w2-eu-special
 		tExempt.add("mold_ceramic"); // the carvable blank the GT6Molds.withBlank(CERAMIC_ROWS) walk prepends (private helper, same MoldBlock class)
 		for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) tExempt.add(tRow.path()); // TileEntityFaucet.FaucetBlock.getName
 		for (GTItemPipes.ItemPipeRow tRow : GTItemPipes.ROWS) tExempt.add(tRow.path()); // GTItemPipeBlock.getName
+		// task p29-w3-nbtdesign-parts — the ten composed metal-wall carriers (the tungsten
+		// wall rides the Lightning Rod family's registration, not the expansion rows)
+		for (GTMultiBlocks.PartRow tRow : GTMultiBlocks.METAL_WALL_ROWS) {
+			if (!tRow.path().equals("machine_wall_tungsten")) tExempt.add(tRow.path()); // GTMultiBlockPartBlock.getName -> mComposedName
+		}
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.DRYER_ROWS) tExempt.add(tRow.path()); // GTBasicMachineBlock.getName — the mRow carriers
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CANNER_ROWS) tExempt.add(tRow.path());
 		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.PRESS_ROWS) tExempt.add(tRow.path());
@@ -1083,7 +1089,10 @@ private static final int ZH_KEY_FLOOR = 2867; // 2839 +3 (task p29-w2-eu-special
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(1059, tExemptTotal, "the derived composed-name exemption census"
+		assertEquals(1075, tExemptTotal, "the derived composed-name exemption census"
+			+ " (+16 task p29-w3-nbtdesign-parts: the ten composed metal-wall carriers"
+			+ " + the six dense-wall additions joined the carrier set — the five"
+			+ " pre-existing dense rows were already exempted)"
 			+ " (the six p28 ULV row carriers joined at 903 + 6; the sixteen roll-ladder"
 			+ " row carriers joined at task p29-w1-kinetic-roll-ladder, 909 + 16; the six"
 			+ " p29 process families joined at 925 + 24, task p29-w1-kinetic-process-ladder;"
@@ -1092,10 +1101,12 @@ private static final int ZH_KEY_FLOOR = 2867; // 2839 +3 (task p29-w2-eu-special
 			+ " the 30 exotic-energy row carriers joined at 988 + 30, task p29-w2-exotic-energy;"
 			+ " the 25 eu-core 5-tier row carriers joined at 1018 + 25, task p29-w2-eu-core-5tier;"
 			+ " the 16 hu-tu row carriers joined at 1043 + 16, task p29-w2-hu-tu-piggyback)");
-		assertEquals(104, tChecked, "the checked block census: every DeferredRegister block NOT"
+		assertEquals(122, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
-			+ " and the transformer joined at 323c4ae4/1e07061d)"
+			+ " and the transformer joined at 323c4ae4/1e07061d; the 28 p29-w3 part blocks"
+			+ " joined at bff8400a — GTMultiBlocks 7 -> 25 checked (the ten composed metal"
+			+ " walls exempt) + the six dense additions)"
 			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"

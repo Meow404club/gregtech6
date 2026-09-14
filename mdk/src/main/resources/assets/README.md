@@ -8013,3 +8013,14 @@ Baked products (the landed files):
 Baked on 2026-09-13 (bake_distillery_fronts.py src_over/encode_png functions verbatim,
 inline pass). Upstream license: **CC0 1.0 Universal Public Domain Dedication** (same
 upstream `README.md` block as above).
+- `gt6/textures/block/parts/<family>/<design>/{colored,overlay}/{bottom,top,side}.png` —
+  the multiblock part-family design textures (372 files, task p29-w3-nbtdesign-parts;
+  upstream `textures/blocks/machines/multiblockparts/<family>/<design>/...` verbatim,
+  families: metalwall 0-7, metalwalldense 0-7, coil 0-1, woodwall, centrifugeparts 0-8,
+  electrolyzerparts 0-7, distillationtowerparts 0-1, sluiceparts 0-7, crusherwheels 0-3,
+  shredderblades 0-3, ventilationunit, processorversatile/logic/control/storage/conversion,
+  heatacceptor, firebricks). Upstream tints the colored layer with the part material's
+  mRGBa and alpha-overlays the overlay layer; the port renders the borrowed grayscale
+  colored layer un-tinted and carries the overlay as a separate 0.01-offset decal element
+  (the familyMachineModel two-layer form) — declared deviation, the material tint rides
+  the render pool card.

@@ -200,6 +200,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
 			staticStorageRecipeBuilder(tRow).save(aConsumer, staticStorageRecipeId(tRow));
 		}
+		for (PartFamilyRecipeRow tRow : partFamilyRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 	}
 	//?} else {
 	/*@Override
@@ -233,6 +236,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
 			staticStorageRecipeBuilder(tRow).save(aOutput, staticStorageRecipeId(tRow));
+		}
+		for (PartFamilyRecipeRow tRow : partFamilyRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
 		}
 	}
 	*///?}
@@ -866,4 +872,88 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
 	/** One staged sensor recast: the shared builder + the path its save face ids from (the GrassRecipeRow shape). */
 	private record SensorRecastRow(ShapelessRecipeBuilder builder, String path) {}
+
+    // -------------------------------------------------------------------------
+    // task p29-w3-nbtdesign-parts ③ — the part-family crafting rows (Loader
+    // :1138-1182 recipe strings, the tool letters per CR.java:339-361: h = hard
+    // hammer, s = saw, w = wrench, x = wirecutter, d = screwdriver). Declared CUTS
+    // (the absent-input rows ride the pool, the sensor-shaped-row precedent):
+    //   - coils 18043/18044 (SiC/Os): the materials carry NO port item rows;
+    //   - electrolyzer_part :18105 ('W' wireGt01 Pt + 'C' OD_CIRCUITS[6] absent);
+    //   - distill_part :18102 / sluice_part :18106 ('P' pipeSmall/pipeMedium — the
+    //     pipe prefixes are off the port item path);
+    //   - ventilation_unit :1184 ('F' IL.Cover_Vent + 'E' IL.MOTORS[1] absent);
+    //   - processor units :1185-1189 ('S/D/R/E' IL.Processor_Crystal_* absent).
+    // The coil 'W' fold: wireGt04 has no port items — ONE fine wire per cell (the
+    // transformerBuilder fold precedent, the count differential declared).
+    // -------------------------------------------------------------------------
+    private static final ResourceLocation WOOD_WALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/wood_wall");
+    private static final ResourceLocation CENTRIFUGE_PART_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/centrifuge_part");
+    private static final ResourceLocation CRUSHER_WHEELS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/crusher_wheels");
+    private static final ResourceLocation SHREDDER_BLADES_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/shredder_blades");
+
+    /** One staged part-family row: the shared builder + the id its save face ids from. */
+    private record PartFamilyRecipeRow(ShapedRecipeBuilder builder, ResourceLocation id) {}
+
+    private java.util.List<PartFamilyRecipeRow> partFamilyRecipeBuilders() {
+        java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+        TagKey<Item> tTreatedPlates = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "wood_treated");
+        TagKey<Item> tLeadPlates = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "lead");
+        // the Wood Wall (:1139 "W W","sPh","W W" — W = plate WoodTreated, P = plate Pb)
+        rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get("wood_wall").get())
+                .pattern("W W").pattern("sPh").pattern("W W")
+                .define('W', tTreatedPlates)
+                .define('P', tLeadPlates)
+                .define('s', GT6ItemTags.TOOLS_SAW)
+                .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+                .unlockedBy("has_plates", has(tTreatedPlates)), WOOD_WALL_ID));
+        // the Centrifuge Part (:1174 "TwT","GMG","TdT" — casingMachine → casingSmall, the
+        // transformerBuilder fold precedent)
+        Item tWsCasing = GTMaterialItems.get(gregapi.data.OP.casingSmall, gregapi.data.MT.TungstenSteel).get();
+        Item tWsGear = GTMaterialItems.get(gregapi.data.OP.gearGt, gregapi.data.MT.TungstenSteel).get();
+        Item tWsScrew = GTMaterialItems.get(gregapi.data.OP.screw, gregapi.data.MT.TungstenSteel).get();
+        rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get("centrifuge_part").get())
+                .pattern("TwT").pattern("GMG").pattern("TdT")
+                .define('T', tWsScrew)
+                .define('w', GT6ItemTags.TOOLS_WRENCH)
+                .define('G', tWsGear)
+                .define('M', tWsCasing)
+                .define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+                .unlockedBy("has_plates", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "tungstensteel"))), CENTRIFUGE_PART_ID));
+        // the Crusher Wheels (:1181 "DDD","GDG","GMG" — casingMachineDouble → casingSmall fold)
+        rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get("crusher_wheels").get())
+                .pattern("DDD").pattern("GDG").pattern("GMG")
+                .define('D', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "diamond"))
+                .define('G', tWsGear)
+                .define('M', tWsCasing)
+                .unlockedBy("has_plates", has(Items.DIAMOND)), CRUSHER_WHEELS_ID));
+        // the Shredder Blades (:1182 "DGD","GwG","GMG" — D = plateGem Diamond)
+        rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get("shredder_blades").get())
+                .pattern("DGD").pattern("GwG").pattern("GMG")
+                .define('D', GTMaterialItems.get(gregapi.data.OP.plateGem, gregapi.data.MT.Diamond).get())
+                .define('G', tWsGear)
+                .define('w', GT6ItemTags.TOOLS_WRENCH)
+                .define('M', tWsCasing)
+                .unlockedBy("has_plates", has(Items.DIAMOND)), SHREDDER_BLADES_ID));
+        // the three resolvable coils (:1167/:1169/:1172 "WWW","WxW","WWW" — the wireGt04
+        // column folds to one fine wire per cell, the transformerBuilder fold)
+        coilBuilder("large_copper_coil", gregapi.data.MT.AnnealedCopper)
+                .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/large_copper_coil"))));
+        coilBuilder("large_nichrome_coil", gregapi.data.MT.Nichrome)
+                .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/large_nichrome_coil"))));
+        coilBuilder("large_iridium_coil", gregapi.data.MT.Ir)
+                .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/large_iridium_coil"))));
+        return rRows;
+    }
+
+    /** One coil row builder — empty when the material's fine-wire tag has no members (the silent skip). */
+    private java.util.Optional<ShapedRecipeBuilder> coilBuilder(String aPath, gregapi.oredict.OreDictMaterial aMaterial) {
+        net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get(aPath).get();
+        TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, aMaterial);
+        return java.util.Optional.of(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tBlock)
+                .pattern("WWW").pattern("WxW").pattern("WWW")
+                .define('W', tFineWires)
+                .define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+                .unlockedBy("has_plates", has(tFineWires)));
+    }
 }

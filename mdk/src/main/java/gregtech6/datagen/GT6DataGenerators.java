@@ -41,7 +41,11 @@ public final class GT6DataGenerators {
     private GT6DataGenerators() {
     }
 
-    @SubscribeEvent
+    //? if forge {
+    @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST)
+    //?} else {
+    /*@SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST)
+    *///?}
     public static void onGatherData(GatherDataEvent event) {
         if (event.includeClient()) {
             event.getGenerator().addProvider(true,

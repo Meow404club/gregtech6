@@ -33,8 +33,9 @@ import gregtech6.tileentity.TileEntityBase01Root;
  *     {@code isInsideStructure} ownership validation, the dead-controller drop, and the
  *     aCheckValidity gate that runs a full (cheap-path) checkStructure;</li>
  * <li>{@link #setTarget} (:216-221) + {@link #setDesign} (:223-231 — the design is the
- *     upstream texture-group index; with no texture system it persists and does nothing
- *     visual, and the updateClientData :227 becomes a setChanged);</li>
+ *     upstream texture-group index; the updateClientData :227 client-data push re-formed
+ *     as the part block's {@code design} blockstate property sync, task
+ *     p29-w3-nbtdesign-parts ①);</li>
  * <li>the {@code mMode} permission bitmask (:85-126) verbatim, constants and all — the
  *     CokeOven asks its parts for {@link #ONLY_ITEM_FLUID_ENERGY}; the relay consumer that
  *     reads the mask arrives with the IO cards;</li>
@@ -213,15 +214,46 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 		setDesign(aDesign);
 	}
 
-	/** Upstream :223-231 with the texture surface cut (updateClientData :227 → setChanged). */
+	/**
+	 * Upstream :223-231 with the texture surface re-formed as the DESIGN blockstate
+	 * property (task p29-w3-nbtdesign-parts ①): the upstream {@code updateClientData} :227
+	 * shipped mDesign to the client renderer, the 1.20.1 equivalent is the
+	 * {@code design} blockstate variant flip on {@link #syncDesignToState} — the checker's
+	 * per-cell design write (Util.checkAndSetTarget → here) therefore lands visibly.
+	 */
 	public boolean setDesign(int aDesign) {
 		aDesign = Mth.clamp(aDesign, 0, 255); // UT.Code.bind8
 		if (aDesign != mDesign) {
 			mDesign = (short) aDesign;
 			setChanged();
+			syncDesignToState();
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * The render-slot sync (task p29-w3-nbtdesign-parts ①): mirrors {@link #mDesign} into
+	 * the part block's {@code design} property, clamped to the block's own
+	 * {@code 0..maxDesign()} range (an NBT-borne index of a wider family never leaves the
+	 * property domain). Server-side only (the setBlock flip IS the client packet); the
+	 * same-block flip keeps the BE — the LevelChunk.setBlockState:292 CHECK branch the
+	 * never-onRemove rule is built on (GTMultiBlockPartBlock class doc).
+	 */
+	public void syncDesignToState() {
+		if (!hasLevel() || getLevel().isClientSide()) return;
+		if (getBlockState().getBlock() instanceof gregtech6.block.multiblock.GTMultiBlockPartBlock tPart && tPart.DESIGN != null) {
+			int tDesign = Math.min(mDesign & 0xFF, tPart.maxDesign());
+			BlockState tState = getBlockState().setValue(tPart.DESIGN, tDesign);
+			if (tState != getBlockState()) getLevel().setBlock(getBlockPos(), tState, 2); // Block.UPDATE_CLIENTS — a visual variant needs no neighbour work
+		}
+	}
+
+	/** The world-load arm of the sync: a persisted design re-lands in its blockstate once the level is attached. */
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		syncDesignToState();
 	}
 
 	/** The breakBlock body (:176-184, minus the onStructureChange the Block hook fires). */

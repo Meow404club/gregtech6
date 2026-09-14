@@ -100,6 +100,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-core-5tier — the five eu-core families
                 new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-hu-tu-piggyback — the seven hu-tu families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
+                new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -135,6 +136,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-core-5tier — the five eu-core families
                 new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-hu-tu-piggyback — the seven hu-tu families
                 new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
+                new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -1710,6 +1712,48 @@ public final class GT6LootTables extends LootTableProvider {
             // dropSelf registers through the void add() face — the statement form, the
             // wireLootBlocks/axleLootBlocks precedent (:176/:215)
             for (Block tBlock : staticStorageLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The part-family expansion block list (task p29-w3-nbtdesign-parts ③): the 28
+     * new-form part blocks (metal walls 10 — the tungsten wall already rides the
+     * Lightning Rod provider — plus coils 5, parts 6, ventilation, processor units 5,
+     * the wood wall). The upstream part MTEs self-drop (the MTE default). NOTE the six
+     * Dense Wall additions also ship table-less here (the older walls' pre-existing gap
+     * carries — not this card's delta).
+     */
+    public static List<Block> partLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (var tRow : gregtech6.registry.GTMultiBlocks.NEW_PART_ROWS) {
+            if (!gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.containsKey(tRow.path())) continue; // machine_wall_tungsten — the reused Lightning Rod registration
+            rBlocks.add(gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The part-family self-drop provider (task p29-w3-nbtdesign-parts; the lightning-rod provider shape). */
+    public static final class GT6PartBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6PartBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6PartBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return partLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : partLootBlocks()) dropSelf(tBlock);
         }
     }
 }

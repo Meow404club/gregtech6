@@ -646,6 +646,14 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.machine_wall_tungsten");
 		addDirect("block.gt6.niobium_titanium_coil");
 		addDirect("block.gt6.lightning_rod");
+		// task p29-w3-nbtdesign-parts — the part-family expansion: the metal-wall template
+		// over the existing row words + the atomic names (the dump mte words, verbatim)
+		addDirect(gregtech6.registry.GTMultiBlocks.PartRow.METAL_WALL_DISPLAY_KEY);
+		for (gregtech6.registry.GTMultiBlocks.PartRow tRow : gregtech6.registry.GTMultiBlocks.NEW_PART_ROWS) {
+			if (!tRow.metalWall()) {
+				addDirect("block.gt6." + tRow.path());
+			}
+		}
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_STRUCTURE);
 		for (int i = 1; i <= 9; i++) {
 			addDirect(String.format(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE, i));

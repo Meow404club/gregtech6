@@ -89,6 +89,13 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> TOOLS_WRENCH = gt6("tools/wrench");
 
 	/**
+	 * The craftingToolWirecutter oredient translation — #gt6:tools/wire_cutter (task
+	 * p29-w3-nbtdesign-parts ③ — the coil crafting rows' 'x' letter, CR.java:359
+	 * {@code case 'x': OreDictToolNames.wirecutter}; the TOOLS_WRENCH snake shape).
+	 */
+	public static final TagKey<Item> TOOLS_WIRE_CUTTER = gt6("tools/wire_cutter");
+
+	/**
 	 * The craftingToolBendingCylinderSmall oredient translation —
 	 * #gt6:tools/bending_cylinder_small (task p25-food-can-row0 spec ②, the TOOLS_FILE
 	 * snake shape). Upstream key {@code OreDictToolNames.bendingcylindersmall =
@@ -324,6 +331,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_SCREWDRIVER).add(item(GT6Tools.SCREWDRIVER.getId())); // task p24-screwdriver-item — the craftingToolScrewdriver snake
 		tag(TOOLS_HARD_HAMMER).add(item(GT6Tools.HAMMER.getId())); // task p25-tool-hammer-wrench — the craftingToolHardHammer snake
 		tag(TOOLS_WRENCH).add(item(GT6Tools.WRENCH.getId())); // task p25-tool-hammer-wrench — the craftingToolWrench snake
+		tag(TOOLS_WIRE_CUTTER).add(item(GT6Tools.CUTTER.getId())); // task p29-w3-nbtdesign-parts — the CR 'x' wirecutter letter
 		tag(TOOLS_BENDING_CYLINDER_SMALL).add(item(GT6Tools.BENDING_CYLINDER_SMALL.getId())); // task p25-food-can-row0 — the craftingToolBendingCylinderSmall snake
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));

@@ -1,7 +1,28 @@
 {
   "variants": {
-    "": {
-      "model": "gt6:block/dense_wall_titanium"
+    "design=0": {
+      "model": "gt6:block/dense_wall_titanium_design_0"
+    },
+    "design=1": {
+      "model": "gt6:block/dense_wall_titanium_design_1"
+    },
+    "design=2": {
+      "model": "gt6:block/dense_wall_titanium_design_2"
+    },
+    "design=3": {
+      "model": "gt6:block/dense_wall_titanium_design_3"
+    },
+    "design=4": {
+      "model": "gt6:block/dense_wall_titanium_design_4"
+    },
+    "design=5": {
+      "model": "gt6:block/dense_wall_titanium_design_5"
+    },
+    "design=6": {
+      "model": "gt6:block/dense_wall_titanium_design_6"
+    },
+    "design=7": {
+      "model": "gt6:block/dense_wall_titanium_design_7"
     }
   }
 }
