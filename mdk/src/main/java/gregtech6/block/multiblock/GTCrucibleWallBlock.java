@@ -25,6 +25,17 @@ public class GTCrucibleWallBlock extends GTMultiBlockPartBlock {
 		super(aProperties);
 	}
 
+	/**
+	 * The composed-name ctor (task p29-w3-distill-crucible ③ — the 8-material ladder): the
+	 * "{@code <mat> Wall}" template over the EXISTING gt6.row.mat unit words (the card ①
+	 * metal-wall composition — zero new lang unit keys; the composed carrier is the
+	 * GTMultiBlockPartBlock :134 form, DESIGNS 0 → no DESIGN property).
+	 */
+	public GTCrucibleWallBlock(Properties aProperties, String aTemplateKey, String aUnitKey) {
+		super(aProperties, 0, net.minecraft.network.chat.Component.translatable(aTemplateKey,
+				net.minecraft.network.chat.Component.translatable(aUnitKey)));
+	}
+
 	@Override
 	@Nullable
 	public BlockEntity newBlockEntity(BlockPos aPos, BlockState aState) {
