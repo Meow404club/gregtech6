@@ -18,6 +18,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
+import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.block.foam.GT6CFoamOwnedBlock;
 import gregtech6.block.energy.GT6ElectricTransformerBlock;
@@ -173,6 +174,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addElectricDynamoUlv(); // task p28-c-ulv-dynamo-row — the Electric Dynamo T0 row
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
+        addParts(); // task p29-w3-nbtdesign-parts — the part-family expansion (per-design variants)
         addLargeCrucible(); // task p26-crucible-multiblock
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
@@ -664,7 +666,10 @@ public final class GT6BlockStates extends BlockStateProvider {
         itemModels().withExistingParent("multiblock_coke_oven", modLoc("block/multiblock_coke_oven"));
 
         Block tBricks = GTMultiBlocks.COKE_OVEN_BRICKS.get();
-        simpleBlock(tBricks, models().cubeAll("multiblock_coke_oven_bricks", modLoc("block/multiblock_coke_oven_bricks")));
+        // task p29-w3-nbtdesign-parts — the firebricks retexture: multiblock_coke_oven_bricks
+        // IS the upstream Fire Bricks (MTE 18000, the reuse ruling), so the placeholder
+        // cube_all gives way to the borrowed two-layer firebricks textures
+        simpleBlock(tBricks, partModel("multiblock_coke_oven_bricks", "firebricks", 0));
         itemModels().withExistingParent("multiblock_coke_oven_bricks", modLoc("block/multiblock_coke_oven_bricks"));
     }
 
@@ -1591,10 +1596,9 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tRow.path(), tMain.getLocation());
         }
-        for (var tRow : gregtech6.registry.GTMultiBlocks.WALL_ROWS) {
-            addLargeBoilerPart(tRow.path(), "block/large_boiler/wall");
-        }
-        addLargeBoilerPart(gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.path(), "block/large_boiler/transmitter");
+        // task p29-w3-nbtdesign-parts — the Dense Wall parts + the transmitter moved to
+        // addParts() (the dense walls carry the DESIGN property — per-design variants; the
+        // transmitter rides the upstream heatacceptor borrow); addLargeBoilerPart retired
     }
 
     /** One cube_all part block + its BlockItem parent (the coke-oven-bricks shape). */
@@ -1810,5 +1814,105 @@ public final class GT6BlockStates extends BlockStateProvider {
             itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
         }
         LOGGER.info("GT6 sensors: {} pioneer blockstates x 6 FACING variants (the oriented cube)", GT6Sensors.ROWS.size());
+    }
+    /**
+     * Task p29-w3-nbtdesign-parts ③④ — the part-family expansion (Loader
+     * :1138-1189). Every new-form part block gets ONE MODEL PER DESIGN VARIANT: the
+     * upstream part renders {@code mTextures[mDesign][face]} with
+     * {@code mTextures = new IIconContainer[bind8(NBT_DESIGNS)+1][6]}
+     * (MultiTileEntityMultiBlockPart.java:138-146), the 1.20.1 form is the
+     * {@code design} blockstate variant per model. Each model is the two-layer part
+     * shape: the body cube over the BORROWED upstream colored textures (untinted — the
+     * crank/lightning-rod grayscale deviation, the material tint rides the render pool)
+     * plus six 0.01-offset overlay decals (the familyMachineModel decal form, the
+     * upstream colored/overlay two-texture pair). The borrowed texture path is
+     * {@code block/parts/<family>/<design>/{colored,overlay}/{bottom,top,side}} — the
+     * upstream {@code machines/multiblockparts/<family>/<design>/...} files verbatim
+     * (assets/README.md attribution). DESIGNS-0 rows emit the property-less singleton.
+     *
+     * <p>Two retextures ride along (the borrow table's 18000/18101 rows): the Heat
+     * Transmitter drops its large-boiler placeholder for the upstream
+     * {@code heatacceptor} textures, and the coke oven bricks (= the upstream Fire
+     * Bricks 18000, the reuse ruling) drop the placeholder for {@code firebricks}.
+     */
+    private void addParts() {
+        // the DENSE WALLS (the MultiblockPartRow rows — the ctor convention pins their
+        // family DESIGNS at 7, the metalwalldense texture family)
+        for (var tRow : gregtech6.registry.GTMultiBlocks.WALL_ROWS) {
+            GTMultiBlockPartBlock tBlock = (GTMultiBlockPartBlock) gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(tRow.path()).get();
+            for (int d = 0; d <= tBlock.maxDesign(); d++) {
+                ModelFile tModel = partModel(tRow.path() + "_design_" + d, "metalwalldense", d);
+                getVariantBuilder(tBlock).partialState().with(tBlock.DESIGN, d).setModels(new ConfiguredModel(tModel));
+            }
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path() + "_design_0"));
+        }
+        for (var tRow : gregtech6.registry.GTMultiBlocks.NEW_PART_ROWS) {
+            if (!gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.containsKey(tRow.path())) continue; // machine_wall_tungsten — the reused Lightning Rod registration
+            Block tBlock = gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get(tRow.path()).get();
+            if (tRow.designs() > 0) {
+                GTMultiBlockPartBlock tPart = (GTMultiBlockPartBlock) tBlock;
+                for (int d = 0; d <= tRow.designs(); d++) {
+                    ModelFile tModel = partModel(tRow.path() + "_design_" + d, tRow.textureFamily(), d);
+                    getVariantBuilder(tBlock).partialState().with(tPart.DESIGN, d).setModels(new ConfiguredModel(tModel));
+                }
+            } else {
+                ModelFile tModel = partModel(tRow.path(), tRow.textureFamily(), 0);
+                getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+            }
+            // the BlockItem shows design 0 (the placed look)
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path() + (tRow.designs() > 0 ? "_design_0" : "")));
+        }
+        // the transmitter retexture (the heatacceptor borrow — the ONLY_ENERGY_IN base layer face)
+        ModelFile tTransmitter = partModel("heat_transmitter", "heatacceptor", 0);
+        getVariantBuilder(gregtech6.registry.GTMultiBlocks.HEAT_TRANSMITTER.get())
+                .forAllStates(aState -> ConfiguredModel.builder().modelFile(tTransmitter).build());
+        itemModels().withExistingParent("heat_transmitter", modLoc("block/heat_transmitter"));
+    }
+
+    /** One two-layer part model (body cube + six overlay decals) over the borrowed design textures. */
+    private ModelFile partModel(String aName, String aFamily, int aDesign) {
+        String tBase = "block/parts/" + aFamily + "/" + aDesign;
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc(tBase + "/colored/bottom"))
+                .texture("up", modLoc(tBase + "/colored/top"))
+                .texture("north", modLoc(tBase + "/colored/side"))
+                .texture("south", modLoc(tBase + "/colored/side"))
+                .texture("west", modLoc(tBase + "/colored/side"))
+                .texture("east", modLoc(tBase + "/colored/side"))
+                .texture("overlay_bottom", modLoc(tBase + "/overlay/bottom"))
+                .texture("overlay_top", modLoc(tBase + "/overlay/top"))
+                .texture("overlay_side", modLoc(tBase + "/overlay/side"));
+        // element 0 — the body cube (the colored layer, no tint: the crank grayscale deviation)
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).cullface(aDir))
+                .end();
+        // elements 1-6 — the overlay decals (the familyMachineModel 0.01-offset form)
+        tModel.element() // north
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_side").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // south
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_side").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // east
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_side").cullface(Direction.EAST)
+                .end();
+        tModel.element() // west
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_side").cullface(Direction.WEST)
+                .end();
+        tModel.element() // top
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_top").cullface(Direction.UP)
+                .end();
+        tModel.element() // bottom
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_bottom").cullface(Direction.DOWN)
+                .end();
+        return tModel;
     }
 }

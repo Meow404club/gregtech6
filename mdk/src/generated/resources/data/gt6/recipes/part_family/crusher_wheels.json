@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "tag": "forge:gems/diamond"
+    },
+    "G": {
+      "item": "gt6:gear_gt_tungstensteel"
+    },
+    "M": {
+      "item": "gt6:casing_small_tungstensteel"
+    }
+  },
+  "pattern": [
+    "DDD",
+    "GDG",
+    "GMG"
+  ],
+  "result": {
+    "item": "gt6:crusher_wheels"
+  },
+  "show_notification": true
+}

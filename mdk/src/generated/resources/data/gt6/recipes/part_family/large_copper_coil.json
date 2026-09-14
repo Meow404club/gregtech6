@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "W": {
+      "tag": "forge:fine_wires/annealed_copper"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "WWW",
+    "WxW",
+    "WWW"
+  ],
+  "result": {
+    "item": "gt6:large_copper_coil"
+  },
+  "show_notification": true
+}

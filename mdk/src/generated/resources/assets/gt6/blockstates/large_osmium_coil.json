@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "design=0": {
+      "model": "gt6:block/large_osmium_coil_design_0"
+    },
+    "design=1": {
+      "model": "gt6:block/large_osmium_coil_design_1"
+    }
+  }
+}

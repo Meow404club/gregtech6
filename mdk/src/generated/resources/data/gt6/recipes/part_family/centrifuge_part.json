@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_tungstensteel"
+    },
+    "M": {
+      "item": "gt6:casing_small_tungstensteel"
+    },
+    "T": {
+      "item": "gt6:screw_tungstensteel"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "TwT",
+    "GMG",
+    "TdT"
+  ],
+  "result": {
+    "item": "gt6:centrifuge_part"
+  },
+  "show_notification": true
+}

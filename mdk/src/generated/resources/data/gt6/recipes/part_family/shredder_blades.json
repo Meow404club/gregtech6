@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "item": "gt6:plate_gem_diamond"
+    },
+    "G": {
+      "item": "gt6:gear_gt_tungstensteel"
+    },
+    "M": {
+      "item": "gt6:casing_small_tungstensteel"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "DGD",
+    "GwG",
+    "GMG"
+  ],
+  "result": {
+    "item": "gt6:shredder_blades"
+  },
+  "show_notification": true
+}

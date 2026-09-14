@@ -912,6 +912,15 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(9), "Reduced Efficiency if too close to another Lightning Rod (256m)");
         add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_ENERGY, "%s EU/p (up to 16 Amps)");
         add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_CAPACITY, "%s EU per Lightning Strike");
+        // task p29-w3-nbtdesign-parts — the part-family expansion: the METAL WALL rows
+        // compose "<mat> Wall" over the EXISTING gt6.row.mat words (zero new unit keys);
+        // every other new row is ATOMIC (the Loader :1138-1189 name column verbatim)
+        add(gregtech6.registry.GTMultiBlocks.PartRow.METAL_WALL_DISPLAY_KEY, "%s Wall");
+        for (gregtech6.registry.GTMultiBlocks.PartRow tRow : gregtech6.registry.GTMultiBlocks.NEW_PART_ROWS) {
+            if (!tRow.metalWall()) {
+                add("block.gt6." + tRow.path(), tRow.display());
+            }
+        }
     }
 
     /**

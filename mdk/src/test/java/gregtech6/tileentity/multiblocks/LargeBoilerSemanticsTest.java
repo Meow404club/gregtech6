@@ -468,7 +468,8 @@ public class LargeBoilerSemanticsTest extends GTMultiBlocksOfflineTestBase {
 	@Test
 	public void theWallRowsAndTheTransmitterRowAreTheLoaderLinesVerbatim() {
 		var tWalls = gregtech6.registry.GTMultiBlocks.WALL_ROWS;
-		assertEquals(5, tWalls.size(), "five Dense Wall rows (:1159-1165)");
+		assertEquals(11, tWalls.size(), "eleven Dense Wall rows (5 at :1159-1165 + the 6 additions"
+			+ " at :1155-1165, task p29-w3-nbtdesign-parts — appended, the p13 EDIT-ruling shape)");
 		String[][] tExpected = {
 			{"dense_wall_stainless_steel", "Dense Stainless Steel Wall", "18022", "6.0"},
 			{"dense_wall_invar"          , "Dense Invar Wall"           , "18027", "6.0"},

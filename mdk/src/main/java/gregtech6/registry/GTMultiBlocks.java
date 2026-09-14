@@ -202,7 +202,7 @@ public final class GTMultiBlocks {
 			new MultiblockPartRow("dense_wall_steel"          , "Steel"          , 18029,   6.0F),
 			new MultiblockPartRow("dense_wall_galvanized_steel", "Galvanized Steel", 18028,  6.0F),
 			new MultiblockPartRow("dense_wall_tungsten"       , "Tungsten"       , 18024,  10.0F),
-			new MultiblockPartRow("dense_wall_tantalum_hafnium_carbide", "Tantalum Hafnium Carbide", 18032, 12.5F));
+			new MultiblockPartRow("dense_wall_tantalum_hafnium_carbide", "Ta4HfC5", 18032, 12.5F));
 
 	/** The Heat Transmitter row (:1176) — the ATOMIC form (a bare noun, nothing to compose; the wire_laser/bricks precedent). */
 	public static final MultiblockPartRow TRANSMITTER_ROW = new MultiblockPartRow("heat_transmitter", "Heat Transmitter", 18101, 10.0F);
@@ -540,13 +540,12 @@ public final class GTMultiBlocks {
 				() -> new GTComposedNameItem(NEW_PART_BLOCKS_BY_PATH.get(aRow.path()).get(), new Item.Properties())));
 	}
 
-	/** The row lookup over every registration map (null when the path is unknown — the defensive callers fall back). */
+	/** The part BLOCK by path over every registration map (null when the path is unknown; the leg-neutral form — no Forge registry types in the signature). */
 	@Nullable
-	public static RegistryObject<GTMultiBlockPartBlock> anyPartBlock(String aPath) {
+	public static GTMultiBlockPartBlock anyPartBlock(String aPath) {
 		RegistryObject<GTMultiBlockPartBlock> tHandle = NEW_PART_BLOCKS_BY_PATH.get(aPath);
-		if (tHandle != null) return tHandle;
-		tHandle = WALL_BLOCKS_BY_PATH.get(aPath);
-		if (tHandle != null) return tHandle;
-		return LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(aPath);
+		if (tHandle == null) tHandle = WALL_BLOCKS_BY_PATH.get(aPath);
+		if (tHandle == null) tHandle = LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
 	}
 }

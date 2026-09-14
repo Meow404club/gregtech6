@@ -523,6 +523,45 @@ HAND_TRANSLATIONS = {
     "block.gt6.machine_wall_tungsten": ("钨壁板", "hand"),
     "block.gt6.multiblock_lightning_rod": ("避雷针电力输出口", "hand"),  # task p27-lang-fix P1 §2.2 — de-collides with the rod block 避雷针 (en "Lightning Rod Electric Output", en_us.json:73; the structure tooltip line 1 already used the long face)
     "block.gt6.niobium_titanium_coil": ("大型铌钛合金线圈", "hand"),
+    # task p29-w3-nbtdesign-parts — the part-family expansion: the metal-wall template over
+    # the EXISTING gt6.row.mat words (all eleven unit words already emitted by the WALL_ROWS
+    # walk), the atomic names carry the dump mte words VERBATIM (zh_cn_ref mte rows
+    # 18001/18040/18042-18045/18100/18102/18105-18108/18200-18204/18299 — the community
+    # forms, never hand-guessed)
+    "gt6.row.metal_wall.display": ("%s壁板", "hand"),
+    "block.gt6.wood_wall": ("木壁板", "hand"),
+    "block.gt6.large_copper_coil": ("大型铜线圈", "hand"),
+    "block.gt6.large_nichrome_coil": ("大型镍铬合金线圈", "hand"),
+    "block.gt6.large_carborundum_coil": ("大型碳化硅线圈", "hand"),
+    "block.gt6.large_osmium_coil": ("大型锇线圈", "hand"),
+    "block.gt6.large_iridium_coil": ("大型铱线圈", "hand"),
+    "block.gt6.centrifuge_part": ("大型离心机部件", "hand"),
+    "block.gt6.electrolyzer_part": ("电解器部件", "hand"),
+    "block.gt6.distill_part": ("蒸馏塔壁", "hand"),
+    "block.gt6.sluice_part": ("洗矿厂部件", "hand"),
+    "block.gt6.crusher_wheels": ("破碎机辊轮", "hand"),
+    "block.gt6.shredder_blades": ("研磨机刀片", "hand"),
+    "block.gt6.ventilation_unit": ("通风单元", "hand"),
+    "block.gt6.processor_unit_versatile": ("多功能四核处理器", "hand"),
+    "block.gt6.processor_unit_logic": ("逻辑四核处理器", "hand"),
+    "block.gt6.processor_unit_control": ("控制四核处理器", "hand"),
+    "block.gt6.processor_unit_storage": ("存储四核处理器", "hand"),
+    "block.gt6.processor_unit_conversion": ("转换四核处理器", "hand"),
+    # task p29-w3-nbtdesign-parts restoration (the module docstring contract, the same
+    # straight-into-TSV wipe the process/eu-hu rows hit): the twelve W2 card hand rows
+    # re-entered VERBATIM from the pre-wipe TSV (git show d646f588:mdk/.../zh_cn_ref.tsv)
+    "gt6.row.autoclave.display": ("高压釜", "hand"),
+    "gt6.row.bath.display": ("浸洗器", "hand"),
+    "gt6.row.coagulator.display": ("凝结器", "hand"),
+    "gt6.row.electrolyzer.display": ("电解器 (%s)", "hand"),
+    "gt6.row.generifier.display": ("转换器", "hand"),
+    "gt6.row.injector.display": ("流体灌装机 (%s)", "hand"),
+    "gt6.row.machine.catalytic_cracker": ("催化裂解器 (%s)", "hand"),
+    "gt6.row.machine.loom": ("织布机 (%s)", "hand"),
+    "gt6.row.machine.steam_cracker": ("蒸汽裂解器 (%s)", "hand"),
+    "gt6.row.printer.display": ("打印机 (%s)", "hand"),
+    "gt6.row.scannervisuals.display": ("扫描仪 (%s)", "hand"),
+    "gt6.row.slicer.display": ("切片器 (%s)", "hand"),
     "gt.grass.tooltip": ("不会传播、被吃、改变颜色, 也不需要光照", "hand"),
     "gt.grass.tooltip.spray": ("喷漆罐也可以用来给草染色！", "hand"),
     "gt6.tooltip.lightningrod.1": ("最底层是3x3的钨壁板, 中间是避雷针电力输出口", "hand"),
