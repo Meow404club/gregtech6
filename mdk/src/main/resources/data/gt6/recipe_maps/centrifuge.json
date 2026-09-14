@@ -1,12 +1,39 @@
 {
   "recipes": [
     {
-      "inputs": [{"item": "minecraft:snowball", "count": 2}],
+      "inputs": [
+        {
+          "item": "minecraft:snowball",
+          "count": 2
+        }
+      ],
       "outputs": [
-        {"item": "minecraft:clay_ball", "count": 1},
-        {"item": "minecraft:flint", "count": 1}
+        {
+          "item": "minecraft:clay_ball",
+          "count": 1
+        },
+        {
+          "item": "minecraft:flint",
+          "count": 1
+        }
       ],
       "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {
+          "item": "minecraft:snow",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:clay_ball",
+          "count": 1
+        }
+      ],
+      "duration": 512,
       "eut": 16
     }
   ]

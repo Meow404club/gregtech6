@@ -615,6 +615,10 @@ public final class GT6LargeMachines {
 				mEnergyTypeAccepted = aRow.energyType();
 				mNoConstantEnergy = aRow.noConstantPower();
 				mEfficiency = aRow.efficiency();
+				// none of the twelve Loader :1229-1240 rows carries NBT_NEEDS_IGNITION — the
+				// base TRUE default is the Coke-Oven-only fold (its :1193 row wrote the key T),
+				// the large machines start on their own
+				mRequiresIgnition = false;
 			}
 		}
 
