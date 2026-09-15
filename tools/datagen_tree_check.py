@@ -276,30 +276,49 @@ def _norm_tag_c_to_forge(o: dict) -> bool:
     return False
 
 
-def _norm_requirements_order(o: dict) -> bool:
-    """配方 advancement requirements 组内排序：1.21 侧 has_the_recipe 提前 →
-    1.20.1 侧按 criteria 插入序。
+def _norm_requirements_order(o: dict, canon: dict | None = None) -> bool:
+    """配方 advancement requirements 组序归一：requirements 是组内 AND 的集语义，
+    组序骑各侧 criteria 容器的迭代序（1.20.1 Strategy 序 / 1.21.x HashMap 序——
+    p29-w5-t3 实录：soft_hammer 解锁键哈希序与 grass 带 13 文件相反，node 侧
+    「按自身 criteria 序排序」归一退化为恒等 → 误 FAIL）。
 
-    出处：1.20.1 vanilla Advancement requirements 由 Strategy 按 criteria 迭代序
-    构建（tmp/vanilla-1.20.1 net/minecraft/advancements/Advancement.java:37
-    String[][] requirements）；1.21.x RecipeProvider 先加 recipe criterion 导致组内
-    倒序。census 样本：advancements/recipes/decorations/grass.json（requirements[0]
-    ["has_the_recipe","has_grass_block"]→["has_grass_block","has_the_recipe"]，13 文件）。
-    仅当组内是 criteria 键的排列才施用，否则原样保留 → FAIL。
+    canonical 参照可用时（try_value_normalize 捆绑传入）：node 组直接采纳
+    canonical 组——仅当两侧 criteria 键集相等且组结构逐组同构（同一键集的排列）
+    才施用，表外形态原样保留 → FAIL（fail-visible 不放宽）。
+    census 样本：advancements/recipes/decorations/grass.json（13 文件，组内倒序）
+    + advancements/recipes/tools/soft_hammer.json（哈希序同侧恒等案，2026-09-16）。
     """
     criteria = o.get("criteria")
     req = o.get("requirements")
     if not (isinstance(criteria, dict) and isinstance(req, list)):
         return False
-    idx = {k: i for i, k in enumerate(criteria)}
-    new: list[list] = []
-    for group in req:
-        if not (isinstance(group, list) and group and all(k in idx for k in group)):
-            return False  # 未注册形态：原样保留
-        new.append(sorted(group, key=lambda k: idx[k]))
-    if new == req:
+    if canon is None:
+        # 无 canonical 参照的保守回退：按 node 自身 criteria 迭代序排序（原行为）
+        idx = {k: i for i, k in enumerate(criteria)}
+        new: list[list] = []
+        for group in req:
+            if not (isinstance(group, list) and group and all(k in idx for k in group)):
+                return False  # 未注册形态：原样保留
+            new.append(sorted(group, key=lambda k: idx[k]))
+        if new == req:
+            return False
+        o["requirements"] = new
+        return True
+    c_criteria = canon.get("criteria")
+    c_req = canon.get("requirements")
+    if not (isinstance(c_criteria, dict) and isinstance(c_req, list)):
         return False
-    o["requirements"] = new
+    if set(criteria.keys()) != set(c_criteria.keys()):
+        return False  # 键集不同 = 非排列：原样保留
+    if len(req) != len(c_req):
+        return False
+    for group, c_group in zip(req, c_req):
+        if not (isinstance(group, list) and isinstance(c_group, list)
+                and sorted(group) == sorted(c_group)):
+            return False  # 组结构不同构：原样保留
+    if req == c_req:
+        return False  # 已等序：零施用
+    o["requirements"] = json.loads(json.dumps(c_req))
     return True
 
 
@@ -399,11 +418,19 @@ def try_value_normalize(rel: PurePosixPath, c_bytes: bytes, n_bytes: bytes
     if not regs:
         return None
     try:
-        json.loads(c_bytes)  # 正典侧必须可解析（形态钉），不通过则归一通道不开放
+        c_obj = json.loads(c_bytes)  # 正典侧必须可解析（形态钉），不通过则归一通道不开放
         n_obj = json.loads(n_bytes)
     except ValueError:
         return None
-    applied = [name for name, fn in regs if _walk_dicts(n_obj, fn)]
+    canon = c_obj if isinstance(c_obj, dict) else None
+
+    def _bound(fn):
+        # requirements 组序归一需要 canonical 参照（集语义，两侧容器序皆无实义）
+        if canon is not None and fn is _norm_requirements_order:
+            return lambda o: _norm_requirements_order(o, canon)
+        return fn
+
+    applied = [name for name, fn in regs if _walk_dicts(n_obj, _bound(fn))]
     if not applied:
         return None
     try:
