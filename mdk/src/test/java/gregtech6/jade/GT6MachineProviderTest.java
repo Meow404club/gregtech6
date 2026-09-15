@@ -59,6 +59,17 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 				Blocks.BRICKS).build(null);
 	}
 
+	/**
+	 * The fixture map lands in RecipeMap.RECIPE_MAPS and STAYS after the class — the
+	 * p29-w4-f1-chemicals full-suite lesson (the GT6ChemicalRowsPourTest red): the residue
+	 * collided with the NEXT init() whose class name sorts before jade's, so the class
+	 * hands the registry back clean via {@link GT6RecipeMaps#reset}.
+	 */
+	@org.junit.jupiter.api.AfterAll
+	static void handBackACleanRegistry() {
+		gregtech6.recipes.GT6RecipeMaps.reset();
+	}
+
 	private static TileEntityBasicMachine makeMachine() {
 		return sHolder.type.create(POS, Blocks.BRICKS.defaultBlockState());
 	}
