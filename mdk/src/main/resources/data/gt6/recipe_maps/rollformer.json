@@ -1,9 +1,9 @@
 {
   "recipes": [
     {
-      "comment": "task p29-w1-kinetic-roll-ladder smoke row — the stick->rail minimal row (the upstream RollFormer product class, OP.railGt — the iron rail the RAILS-tagged iron material generates; the port's rod semantics ride the OP.stick prefix, the port rod item id is gt6:stick_iron), eut 16 / duration 32 riding the RollingMill row shape",
-      "inputs": [{"item": "gt6:stick_iron", "count": 1}],
-      "outputs": [{"item": "gt6:rail_gt_iron", "count": 1}],
+      "comment": "task p29-w1-kinetic-roll-ladder smoke row, SEMANTICS CORRECTED by task p29-w3-heat-smelter — the upstream RollFormer handler (Loader_Recipes_Handlers.java:314) is plate 1 -> railGt 4, NOT stick -> rail: the shipped row fed a stick while citing the OP.railGt product class (the port rod semantics on the wrong family). eut 16 / duration 32 riding the RollingMill row shape",
+      "inputs": [{"item": "gt6:plate_iron", "count": 1}],
+      "outputs": [{"item": "gt6:rail_gt_iron", "count": 4}],
       "duration": 32,
       "eut": 16
     }

@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "comment": "task p29-w3-heat-smelter smoke row — the vanilla ice block melts to water (the upstream RM.Smelter row Loader_Recipes_Chem.java:501 verbatim: addRecipe1(T, 16, 1000*2, Blocks.ice, NF, FL.Water.make(1000), NI)), eut 16 / duration 2000",
+      "inputs": [{"item": "minecraft:ice", "count": 1}],
+      "fluidOutputs": [{"fluid": "minecraft:water", "amount": 1000}],
+      "duration": 2000,
+      "eut": 16
+    }
+  ]
+}

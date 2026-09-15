@@ -595,11 +595,18 @@ public class GT6EnUs extends LanguageProvider {
      * processing machines, not cookware; no renamed successor) — the four items ride
      * the machines tab through the GT6Kitchen BuildCreativeModeTabContentsEvent join,
      * so this provider carries no tab key for the family anymore.
+     *
+     * <p>Task p29-w3-heat-smelter lang rider (decisions.p29-mixingbowl-ruling, the user
+     * ruling 2026-09-14): the en display of the mixing_bowl row had DRIFTED to the
+     * upstream registration literal "Ceramic Bowl" while the zh face always carried the
+     * correct 搅拌盆 ("Mixing Bowl") — the en face is corrected to the Mixing Bowl
+     * semantics here, keeping the three surfaces (GT6EnUs / GT6ZhCn / the TSV) on one
+     * 口径. Deliberate deviation from the :2177 name column, ruling-backed.
      */
     private void addKitchen() {
         add("block.gt6.bathing_pot_wood", "Wooden Bathing Pot");
         add("block.gt6.bathing_pot_steel", "Bathing Pot");
-        add("block.gt6.mixing_bowl", "Ceramic Bowl");
+        add("block.gt6.mixing_bowl", "Mixing Bowl"); // decisions.p29-mixingbowl-ruling — the en drift corrected
         add("item.gt6.clay_bowl", "Clay Bowl");
     }
 
@@ -826,6 +833,13 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.GENERIFIER_DISPLAY_KEY, "Generifier");
         add(gregtech6.registry.GTMachines.BATH_DISPLAY_KEY, "Bath");
         add(gregtech6.registry.GTMachines.AUTOCLAVE_DISPLAY_KEY, "Autoclave");
+        // task p29-w3-heat-smelter — the two heat families: the Smelter rides the
+        // one-slot unit-key form (the Heat_T material word, the upstream name column
+        // "Smelter ("+aMat+")" :1431-1434); the Melter is the single-variant ATOMIC row
+        // (the upstream name column "Melter" :1657 — the FERMENTER_DISPLAY_KEY no-slot
+        // contract)
+        add(gregtech6.registry.GTMachines.MACHINE_SMELTER_UNIT_KEY, "Smelter (%s)");
+        add(gregtech6.registry.GTMachines.MELTER_DISPLAY_KEY, "Melter");
         // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
@@ -909,6 +923,8 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.distillation_tower", "Distillation Tower");
         add("block.gt6.cryo_distillation_tower", "Cryo Distillation Tower");
         add("block.gt6.multiblock_lightning_rod", "Lightning Rod Electric Output");
+        // task p29-w3-heat-smelter — the Large Heat Exchanger controller (the :1245 name column)
+        add("block.gt6.large_heat_exchanger", "Large Heat Exchanger");
         add("block.gt6.machine_wall_tungsten", "Tungsten Wall");
         add("block.gt6.niobium_titanium_coil", "Large Niobium-Titanium Coil");
         add("block.gt6.lightning_rod", "Lightning Rod");

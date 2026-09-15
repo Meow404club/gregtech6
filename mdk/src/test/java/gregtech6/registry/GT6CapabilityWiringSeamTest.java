@@ -172,6 +172,8 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("bath", "item+fluid"); // task p29-w2-hu-tu-piggyback — the P26 in-catalog BATH map, reused
 		tFaces.put("autoclave", "item+fluid"); // task p29-w2-hu-tu-piggyback
 		tFaces.put("loom", "item+fluid"); // task p29-w2-hu-tu-piggyback — the W1 in-catalog LOOM map, the kinetic rung
+		tFaces.put("smelter", "item+fluid"); // task p29-w3-heat-smelter — the two heat families join (the ice row's output is the fluid face)
+		tFaces.put("melter", "item+fluid"); // task p29-w3-heat-smelter
 		tFaces.put("oven", "item"); // the exception: the gated item handler alone
 		tFaces.put("advanced_crafting_table", "item"); // task p24-act-machine — the second item-only face (zero fluid tanks)
 		BASIC_MACHINE_FAMILY_FACES = Collections.unmodifiableMap(tFaces);

@@ -106,6 +106,7 @@ direct	block.gt6.grass_yellow	草方块	hand
 direct	block.gt6.heat_transmitter	传热装置	hand
 direct	block.gt6.large_carborundum_coil	大型碳化硅线圈	hand
 direct	block.gt6.large_copper_coil	大型铜线圈	hand
+direct	block.gt6.large_heat_exchanger	大型热交换器	hand
 direct	block.gt6.large_iridium_coil	大型铱线圈	hand
 direct	block.gt6.large_nichrome_coil	大型镍铬合金线圈	hand
 direct	block.gt6.large_osmium_coil	大型锇线圈	hand
@@ -314,6 +315,7 @@ direct	gt6.row.machine.shredder	粉碎机	hand
 direct	gt6.row.machine.shredder.display	粉碎机 (%s)	hand
 direct	gt6.row.machine.sifter	筛选机 (%s)	hand
 direct	gt6.row.machine.sluice	洗矿厂 (%s)	hand
+direct	gt6.row.machine.smelter	液化炉 (%s)	hand
 direct	gt6.row.machine.squeezer	榨汁机 (%s)	hand
 direct	gt6.row.machine.steam_cracker	蒸汽裂解器 (%s)	hand
 direct	gt6.row.machine.wiremill	线材机 (%s)	hand
@@ -360,6 +362,7 @@ direct	gt6.row.mat.ultimet	钴铬钨合金	hand
 direct	gt6.row.mat.ulv	ULV	hand
 direct	gt6.row.mat.wood	木	hand
 direct	gt6.row.mat.wood_treated	木制	hand
+direct	gt6.row.melter.display	熔化炉	hand
 direct	gt6.row.metal_wall.display	%s壁板	hand
 direct	gt6.row.mold.display.mold_ceramic	陶瓷模具	hand
 direct	gt6.row.mold.display.mold_ceramic_arrow	陶瓷模具 (箭)	hand

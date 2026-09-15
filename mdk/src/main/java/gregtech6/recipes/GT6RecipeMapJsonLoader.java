@@ -160,7 +160,7 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 	public static final String DATA_NAMESPACE = "gt6";
 
 	/**
-	 * The 21 pourable map keys (the registered {@link GT6RecipeMaps} census minus
+	 * The 50 pourable map keys (the registered {@link GT6RecipeMaps} census minus
 	 * FURNACE/FURNACE_FUEL — 11 at the tier-b landing, the 12th is the MIXER append of
 	 * task p26-c-foam-fluid-refill (whose review ruling joins it here), the 13th the
 	 * BATH append of task p26-kitchen-pot-bowl; the P29 W1 wave appends its owning
@@ -197,7 +197,12 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// natural-gas row ships with the key (the direct-fill anchor; the byproduct CO2 of
 			// Loader_Fuels.java:169 is dropped with the unregistered-fluid ruling, the water
 			// leg rides the row verbatim)
-			"gas_fuels");
+			"gas_fuels",
+			// the P29 W3 three (task p29-w3-heat-smelter — the wave's one recipe-batch
+			// card): the two new RM maps + the FM.Hot fuel map, the keys ARE the
+			// snake-case GT6RecipeMaps field names; the smelter/melter/fuels_hot smoke
+			// rows ship with this card (the datapack face)
+			"melter", "smelter", "fuels_hot");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -573,7 +578,12 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// field-name snake case; both targets are the consumer card's live maps)
 			case "distillationtower" -> GT6RecipeMaps.DISTILLATION_TOWER;
 			case "cryodistillationtower" -> GT6RecipeMaps.CRYO_DISTILLATION_TOWER;
-			default -> null;
+			// the P29 W3 three (task p29-w3-heat-smelter — the wave's one recipe-batch
+			// card; the keys are the field-name snake case, FUELS_HOT = the FM.Hot fuel map)
+			case "melter" -> GT6RecipeMaps.MELTER;
+			case "smelter" -> GT6RecipeMaps.SMELTER;
+			case "fuels_hot" -> GT6RecipeMaps.FUELS_HOT;
+		default -> null;
 		};
 	}
 }

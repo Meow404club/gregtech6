@@ -2485,7 +2485,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(204);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(209);
 		rBlocks.add(OVEN.get());
 		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
@@ -2567,6 +2567,10 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, bathBlockArray());
 		java.util.Collections.addAll(rBlocks, autoclaveBlockArray());
 		java.util.Collections.addAll(rBlocks, loomBlockArray());
+		// task p29-w3-heat-smelter — the Smelter 4-ladder + the Melter single, +5 blocks,
+		// the census comment and the datagen-JVM half move together
+		java.util.Collections.addAll(rBlocks, smelterBlockArray());
+		java.util.Collections.addAll(rBlocks, melterBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
@@ -4254,6 +4258,151 @@ public final class GTMachines {
 		aMachine.mInputMax = TU_WINDOW[2];
 		return aMachine;
 	}
+
+	// ---------------------------------------------------------------------------
+	// the P29 W3 heat-smelter section (task p29-w3-heat-smelter — the GTMachines.java
+	// EXCLUSIVE append of the wave, the structural conflict-elimination ruling): the
+	// Smelter HU 4-ladder 20241-20244 (Loader_MultiTileEntities.java:1431-1434, the
+	// Heat_T[1..4] ladder, NBT_TEXTURE "smelter", RM.Smelter, NBT_CHEAP_OVERCLOCKING T,
+	// NBT_PARALLEL 1000 + NBT_PARALLEL_DURATION T) and the ONE Melter 22010 (:1657,
+	// ANY.Iron, RM.Melter, the same CHEAP_OC + PARALLEL 1000 + DURATION T columns).
+	// Both families share the :1431 masks verbatim — inv+tank in SBIT_U auto TOP,
+	// inv out SBIT_L auto LEFT, tank out SBIT_R auto RIGHT, energy SBIT_D — and ride
+	// the SHARED kineticMachine factory body (the row drives everything; the window is
+	// the TIER_INPUTS[tier] assignment 32/128/512/2048 = the upstream NBT_INPUT column
+	// exactly). The crafting-table tails ('wUh','PMP','BCB' with the furnace-class U
+	// items 1024/1019/1019/1043 = getItem(1005) for the Melter) are the unported
+	// crafting-table domain — data-only, the rows carry no column for them (the W2
+	// cracker ruling).
+	//
+	// KJS face of this card (the wave-plan declaration): REGISTRATION face — five
+	// MachineRow rows (Smelter 4 + Melter 1) plus the HEX controller (GT6HeatExchangers,
+	// the self-contained registry) — plus the datapack face (the SMELTER/MELTER/FM.Hot
+	// three smoke rows under data/gt6/recipe_maps/ through the C1 POURABLE keys). NO
+	// KubeJS surface.
+	// ---------------------------------------------------------------------------
+
+	/** The Smelter family unit word (the W2 one-slot key form; the upstream name column "Smelter ("+aMat.getLocal()+")", :1431-1434). */
+	public static final String MACHINE_SMELTER_UNIT_KEY = "gt6.row.machine.smelter";
+
+	/** The Melter atomic display template — the single-variant row has NO slot (upstream name column "Melter", :1657). */
+	public static final String MELTER_DISPLAY_KEY = "gt6.row.melter.display";
+
+	/** The Melter housing material — the :1657 ANY.Iron column. */
+	public static final java.util.function.Supplier<OreDictMaterial> MELTER_MATERIAL = () -> gregapi.data.ANY.Iron;
+
+	/** The Smelter/Melter PARALLEL column (:1431-1434/:1657 — NBT_PARALLEL 1000 + NBT_PARALLEL_DURATION T on every row). */
+	public static final int SMELTER_PARALLEL = 1000;
+
+	/** The four Smelter rows, upstream line order :1431-1434 (T1-T4, the Heat_T ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> SMELTER_ROWS = java.util.List.of(
+			smelter("smelter"   , "steel"           , "Steel"           , 20241,  6.0F, 0),
+			smelter("smelter_t2", "invar"           , "Invar"           , 20242,  4.0F, 1),
+			smelter("smelter_t3", "titanium"        , "Titanium"        , 20243,  9.0F, 2),
+			smelter("smelter_t4", "tungsten_carbide", "Tungsten Carbide", 20244, 12.5F, 3));
+
+	/** The ONE Melter row (upstream :1657 — the HU single over ANY.Iron). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> MELTER_ROWS = java.util.List.of(melter());
+
+	/**
+	 * The :1431 masks — the family shape shared by the Smelter ladder and the Melter
+	 * (item+tank in SBIT_U auto TOP, inv out SBIT_L auto LEFT, tank out SBIT_R auto
+	 * RIGHT, energy SBIT_D; PARALLEL 1000 + DURATION T on every row; the keyed masks
+	 * carry the post-read OR-SBIT_A form).
+	 */
+	private static GTBasicMachineBlock.MachineRow heatSmelterRow(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier,
+			java.util.function.Supplier<gregtech6.recipes.RecipeMap> aRecipes, TagData aEnergyType, String aTexture, String aDisplayKey,
+			java.util.function.Supplier<OreDictMaterial> aMaterial) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, aMaterial, aDisplayKey, aMetaId, aHardness, aTier, SMELTER_PARALLEL, true /*NBT_PARALLEL_DURATION T*/,
+				aRecipes, aEnergyType, aTexture,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D, the :151 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U, the :143 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R, the :144 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U, the :137 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_L, the :138 read*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)4 /*NBT_TANK_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)2 /*NBT_INV_SIDE_AUTO_OUT SIDE_LEFT*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/** One Smelter row factory — the :1431 shape over RM.Smelter and the "smelter" texture (the Heat_T material-word slot). */
+	private static GTBasicMachineBlock.MachineRow smelter(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		// the TD.Energy.<KIND>, "<family>", literal order is the borrow_port_overlays census key
+		return heatSmelterRow(aPath, aMatSlug, aMatDisplay, aMetaId, aHardness, aTier, () -> GT6RecipeMaps.SMELTER, TD.Energy.HU, "smelter", MACHINE_SMELTER_UNIT_KEY, HEAT_T_LADDER.get(aTier));
+	}
+
+	/** The ONE Melter row factory — the :1657 shape over RM.Melter and the "melter" texture (the atomic no-slot display). */
+	private static GTBasicMachineBlock.MachineRow melter() {
+		return heatSmelterRow("melter", "iron", "Iron", 22010, 6.0F, 0, () -> GT6RecipeMaps.MELTER, TD.Energy.HU, "melter", MELTER_DISPLAY_KEY, MELTER_MATERIAL);
+	}
+
+	/** The registered Smelter blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> SMELTER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Smelter items, same keys as {@link #SMELTER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> SMELTER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Melter blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> MELTER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Melter items, same keys as {@link #MELTER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> MELTER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : SMELTER_ROWS) {
+			SMELTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SMELTER_BE.get(), tRow)));
+			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
+			SMELTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SMELTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : MELTER_ROWS) {
+			MELTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.MELTER_BE.get(), tRow)));
+			MELTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.MELTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Smelter block list in registration order (the loot/datagen walkers). */
+	public static Block[] smelterBlockArray() {
+		Block[] rBlocks = new Block[SMELTER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : SMELTER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Melter block list in registration order. */
+	public static Block[] melterBlockArray() {
+		Block[] rBlocks = new Block[MELTER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : MELTER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine smelter — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block smelterBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = SMELTER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine melter — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block melterBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = MELTER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The Smelter family BET: the Wiremill shape verbatim — the shared kineticMachine factory, the four tier blocks multi-attached. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> SMELTER_BE =
+			BLOCK_ENTITY_TYPES.register("smelter", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.SMELTER_BE.get(), aPos, aState),
+					smelterBlockArray()).build(null));
+
+	/** The Melter family BET: the same kineticMachine body over its one block. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> MELTER_BE =
+			BLOCK_ENTITY_TYPES.register("melter", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.MELTER_BE.get(), aPos, aState),
+					melterBlockArray()).build(null));
 
 	private GTMachines() {}
 

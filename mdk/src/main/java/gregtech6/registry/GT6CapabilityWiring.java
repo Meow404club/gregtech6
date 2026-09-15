@@ -32,6 +32,7 @@ import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 import gregtech6.tileentity.machines.TileEntityOven;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
+import gregtech6.tileentity.multiblocks.GT6HeatExchangerBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 import gregtech6.tileentity.tank.BarrelFluidHandler;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
@@ -418,6 +419,23 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLoom,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLoom,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p29-w3-heat-smelter — the two heat families join (the HU machines whose
+		// output is the fluid face: the ice row's water lands in mTanksOutput)
+		BlockEntityType<TileEntityBasicMachine> tSmelter = GTMachines.SMELTER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tSmelter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tSmelter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tMelter = GTMachines.MELTER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tMelter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tMelter,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p29-w3-heat-smelter — the HEX controller joins as a FLUID-ONLY face (the
+		// :222 fuel door + the :228 overflow drain; no item face on the controller)
+		BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.HEAT_EXCHANGER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tHeatExchanger,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();

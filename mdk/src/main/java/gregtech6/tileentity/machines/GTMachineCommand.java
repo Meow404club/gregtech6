@@ -207,10 +207,11 @@ public final class GTMachineCommand {
 		.then(machine("extruder_t4", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t4"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
 		// task p29-w1-kinetic-roll-ladder: the roll ladders — the input feed is the iron
 		// pair item of each map's poured smoke row (data/gt6/recipe_maps: rollingmill
-		// ingot_iron / rollbender plate_iron / rollformer stick_iron (the port rod semantics) / clustermill
-		// plate_iron); the RU RollingMill ladder rides tier-suffixed literals (the p28
-		// ULV rung owns the bare "rollingmill" path, which registers NO command arm —
-		// the p28 chain reads it through the shared BET faces)
+		// ingot_iron / rollbender plate_iron / rollformer plate_iron — the W3
+		// row-semantics fix, :314 plate -> railGt x4 / clustermill plate_iron); the RU
+		// RollingMill ladder rides tier-suffixed literals (the p28 ULV rung owns the
+		// bare "rollingmill" path, which registers NO command arm — the p28 chain reads
+		// it through the shared BET faces)
 		.then(machine("rollingmill_t1", GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get("rollingmill_t1"), rollFeed(gregapi.data.OP.ingot)))
 		.then(machine("rollingmill_t2", GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get("rollingmill_t2"), rollFeed(gregapi.data.OP.ingot)))
 		.then(machine("rollingmill_t3", GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get("rollingmill_t3"), rollFeed(gregapi.data.OP.ingot)))
@@ -219,10 +220,10 @@ public final class GTMachineCommand {
 		.then(machine("rollbender_t2", GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get("rollbender_t2"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("rollbender_t3", GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get("rollbender_t3"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("rollbender_t4", GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get("rollbender_t4"), rollFeed(gregapi.data.OP.plate)))
-		.then(machine("rollformer", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer"), rollFeed(gregapi.data.OP.stick)))
-		.then(machine("rollformer_t2", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t2"), rollFeed(gregapi.data.OP.stick)))
-		.then(machine("rollformer_t3", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t3"), rollFeed(gregapi.data.OP.stick)))
-		.then(machine("rollformer_t4", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t4"), rollFeed(gregapi.data.OP.stick)))
+		.then(machine("rollformer", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("rollformer_t2", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t2"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("rollformer_t3", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t3"), rollFeed(gregapi.data.OP.plate)))
+		.then(machine("rollformer_t4", GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get("rollformer_t4"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill_t2", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t2"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill_t3", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t3"), rollFeed(gregapi.data.OP.plate)))
@@ -279,9 +280,18 @@ public final class GTMachineCommand {
 		.then(machine("loom_t2", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t2"), GTMachineCommand::firstPouredLoomInput))
 		.then(machine("loom_t3", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t3"), GTMachineCommand::firstPouredLoomInput))
 		.then(machine("loom_t4", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t4"), GTMachineCommand::firstPouredLoomInput))
-		.then(machine("fermenter", GTMachines.FERMENTER_BLOCKS_BY_PATH.get("fermenter"), () -> net.minecraft.world.item.Items.WHEAT)); // fermenter.json smoke row (wheat + water → sugar)
+		.then(machine("fermenter", GTMachines.FERMENTER_BLOCKS_BY_PATH.get("fermenter"), () -> net.minecraft.world.item.Items.WHEAT)) // fermenter.json smoke row (wheat + water → sugar)
+		// task p29-w3-heat-smelter: the Smelter ladder + the Melter single — the feed is
+		// the ice smoke-row input (smelter.json / melter.json: ice -> 1000 L water, the
+		// Loader_Recipes_Chem.java:486/:501 transcription; the output is FLUID, the chains
+		// assert through the fluid stat face, not the output slots)
+		.then(machine("smelter", GTMachines.SMELTER_BLOCKS_BY_PATH.get("smelter"), () -> net.minecraft.world.item.Items.ICE))
+		.then(machine("smelter_t2", GTMachines.SMELTER_BLOCKS_BY_PATH.get("smelter_t2"), () -> net.minecraft.world.item.Items.ICE))
+		.then(machine("smelter_t3", GTMachines.SMELTER_BLOCKS_BY_PATH.get("smelter_t3"), () -> net.minecraft.world.item.Items.ICE))
+		.then(machine("smelter_t4", GTMachines.SMELTER_BLOCKS_BY_PATH.get("smelter_t4"), () -> net.minecraft.world.item.Items.ICE))
+		.then(machine("melter", GTMachines.MELTER_BLOCKS_BY_PATH.get("melter"), () -> net.minecraft.world.item.Items.ICE));
 		event.getDispatcher().register(tMachine);
-		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder|rollingmill_t1..t4|rollbender|rollformer|clustermill x t1..t4 | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
+		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder|rollingmill_t1..t4|rollbender|rollformer|clustermill x t1..t4|smelter x t1..t4|melter | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
 		// the p8 ladder registration line (the runServer gate asserts it): every family BET
 		// resolves — proof the RegistryObjects bound (the merge totals: 36 + 8 + 16 blocks
 		// and 9 + 2 + 3 family BETs — the press/extruder join = task p26-w1-press-extruder-
@@ -295,6 +305,13 @@ public final class GTMachineCommand {
 		LOGGER.info("GT6 hu-tu families registered: 16 blocks / 7 family BETs (steamcracker+catalyticcracker HU 4-ladders, "
 			+ "loom RU 4-ladder, coagulator/generifier/bath/autoclave TU singles), TU window " + java.util.Arrays.toString(GTMachines.TU_WINDOW)
 			+ ", energy sides 63 (all six faces), NO_CONSTANT_POWER T, generifier parallel " + GTMachines.GENERIFIER_PARALLEL);
+		// the p29-w3-heat-smelter registration smoke line: the Smelter 4-ladder + the
+		// Melter single resolve — the :1431/:1657 row shapes (HU bottom-face energy,
+		// parallel 1000 + parallelDuration T, inv/tank in top auto-top, inv out left
+		// auto-left, tank out right auto-right).
+		LOGGER.info("GT6 heat-smelter families registered: 5 blocks / 2 family BETs (smelter HU 4-ladder 20241-20244 + melter single 22010), "
+			+ "RM.Smelter/RM.Melter (gt.recipe.smelter/gt.recipe.melter) row maps, parallel " + GTMachines.SMELTER_PARALLEL + " + parallelDuration, "
+			+ "HU energy bottom face, hardness 6/4/9/12.5 (smelter) / 6.0 (melter)");
 		// the p14 dryer registration smoke line (the runServer gate asserts it): the family
 		// BET resolves, the row config is the upstream :1477-1480 columns.
 		LOGGER.info("GT6 dryer family registered: 4 blocks / 1 family BET (T1-T4 validBlocks multi-attach), HU bottom-face energy, "

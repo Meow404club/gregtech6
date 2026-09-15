@@ -291,6 +291,13 @@ SESSION_GROUPS = (
      "p29_w3_large_autoclave", "p29_w3_large_bath", "p29_w3_large_mixer",
      "p29_w3_large_fermenter", "p29_w3_large_oven", "p29_w3_large_sluice",
      "p29_w3_large_crusher", "p29_w3_large_shredder", "p29_w3_large_squeezer"),
+    # P29 W3 card ⑥ (p29-w3-heat-smelter): the three heat-family chains — one fresh
+    # z=304 band, x-disjoint columns (smelter 396..408 / melter 416 / the HEX+boiler
+    # stack 426..434 with the boiler frame+wand arms), admission mirroring the p29 W2
+    # cluster form (bbox-registered, no fresh_boot / mutates member; the HU fixture is
+    # the inject rig for the machines and the real boiler stack for the exchanger).
+    # --group p29_w3_heat_smelter matches through the chains' embedded name prefix.
+    ("p29_w3_heat_exchanger", "p29_w3_smelter", "p29_w3_melter"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 

@@ -90,6 +90,8 @@ public class GTCommandTreeLiteralTest {
 		"coagulator", "generifier", "bath", "autoclave",
 		"loom", "loom_t2", "loom_t3", "loom_t4",
 		"fermenter", // task p29-w1-eu-hu-families — the single-variant rung
+		// task p29-w3-heat-smelter — the Smelter ladder + the Melter single
+		"smelter", "smelter_t2", "smelter_t3", "smelter_t4", "melter",
 		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 
 	private static CommandSourceStack stack() {
