@@ -306,6 +306,22 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("fluid.gt6." + GTFluids.dyeChemicalName(i));
 		}
 		addDirect("fluid.gt6.chlorine");
+		// task p29-w4-f1-chemicals: the 25 chemical display names — the dump carries all 25
+		// faces (S:fluid.liquid_extra_heavy_oil=超重油 tmp/gregtech.lang:388, :389-391 the
+		// other oils, S:fluid.soulsandoil=灵魂沙油 :865, S:fluid.propane=丙烷 :817,
+		// S:fluid.butane=丁烷 :120, S:fluid.propylene=丙烯 :821, S:fluid.ethylene=乙烯 :289,
+		// S:fluid.methane=甲烷 :413, S:fluid.carbondioxide=二氧化碳 :127,
+		// S:fluid.carbonmonoxide=一氧化碳 :128, S:fluid.hydrogen=氢气 :355,
+		// S:fluid.nitrogen=氮 :658, S:fluid.oxygen=氧 :668, S:fluid.fluorine=氟 :301,
+		// S:fluid.helium=氦 :328, S:fluid.neon=氖 :651, S:fluid.argon=氩 :54,
+		// S:fluid.krypton=氪 :381, S:fluid.xenon=氙 :920, S:fluid.radon=氡 :828,
+		// S:fluid.liquidoxygen=液氧 :392, S:fluid.heliumplasma=氦离子 :331,
+		// S:fluid.nitrogenplasma=氮离子 :661); the keys ride the SAME GTFluids.CHEMICAL_SPECS
+		// derivation the en walk and the FluidType descriptionIds use. Values are hand rows
+		// in the reference table.
+		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.CHEMICAL_SPECS) {
+			addDirect(tSpec.descriptionId());
+		}
 		// task p26-c-foam-fluid-refill: the base + the 32 C-Foam display names — the dump
 		// carries all 33 faces (S:fluid.ic2constructionfoam=建筑泡沫 tmp/gregtech.lang:361,
 		// S:fluid.cfoam.* :130-161); the keys ride the SAME GTFluids.cfoamName/

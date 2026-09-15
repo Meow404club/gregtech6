@@ -1,63 +1,63 @@
 {
   "recipes": [
     {
-      "comment": "FM.Gas — Loader_Fuels.java:162 verbatim: gas_natural_gas 5 L, -64 EUt x 30, water 6 + carbon dioxide 3 out (the CO2 byproduct dropped at p29-w3-turbine-dynamo for the unregistered fluid now RIDES — the p29-w4-f1-chemicals closure makes gt6:carbondioxide live; the exhaust tanks rotate).",
-      "fluidInputs": [{ "fluid": "gt6:natural_gas", "amount": 5 }],
-      "fluidOutputs": [
-        { "fluid": "minecraft:water", "amount": 6 },
-        { "fluid": "gt6:carbondioxide", "amount": 3 }
-      ],
-      "duration": 30,
-      "eut": -64
-    },
-    {
-      "comment": "FM.Gas — Loader_Fuels.java:161 verbatim: methane 5 L, -64 EUt x 30, water 6 + carbon dioxide 3 out.",
+      "comment": "FM.Burn — Loader_Fuels.java:159 verbatim: methane 5 L, -64 EUt x 24, water 6 + carbon dioxide 3 out (the Burnable face of the methane FM.Gas row, :161).",
       "fluidInputs": [{ "fluid": "gt6:methane", "amount": 5 }],
       "fluidOutputs": [
         { "fluid": "minecraft:water", "amount": 6 },
         { "fluid": "gt6:carbondioxide", "amount": 3 }
       ],
-      "duration": 30,
+      "duration": 24,
       "eut": -64
     },
     {
-      "comment": "FM.Gas — Loader_Fuels.java:180 verbatim: butane 7 L, -64 EUt x 56, water 7 + carbon dioxide 6 out.",
+      "comment": "FM.Burn — Loader_Fuels.java:160 verbatim: gas_natural_gas 5 L, -64 EUt x 24, water 6 + carbon dioxide 3 out (the Burnable face of the natural_gas FM.Gas row, :162).",
+      "fluidInputs": [{ "fluid": "gt6:natural_gas", "amount": 5 }],
+      "fluidOutputs": [
+        { "fluid": "minecraft:water", "amount": 6 },
+        { "fluid": "gt6:carbondioxide", "amount": 3 }
+      ],
+      "duration": 24,
+      "eut": -64
+    },
+    {
+      "comment": "FM.Burn — Loader_Fuels.java:179 verbatim: butane 7 L, -64 EUt x 42, water 7 + carbon dioxide 6 out (the Burnable Fuels face for the oil-burning machines; the map pours since the p29-w2 shared-layer key).",
       "fluidInputs": [{ "fluid": "gt6:butane", "amount": 7 }],
       "fluidOutputs": [
         { "fluid": "minecraft:water", "amount": 7 },
         { "fluid": "gt6:carbondioxide", "amount": 6 }
       ],
-      "duration": 56,
+      "duration": 42,
       "eut": -64
     },
     {
-      "comment": "FM.Gas — Loader_Fuels.java:183 verbatim: propane 5 L, -64 EUt x 40, water 5 + carbon dioxide 4 out.",
+      "comment": "FM.Burn — Loader_Fuels.java:182 verbatim: propane 5 L, -64 EUt x 30, water 5 + carbon dioxide 4 out.",
       "fluidInputs": [{ "fluid": "gt6:propane", "amount": 5 }],
       "fluidOutputs": [
         { "fluid": "minecraft:water", "amount": 5 },
         { "fluid": "gt6:carbondioxide", "amount": 4 }
       ],
-      "duration": 40,
+      "duration": 30,
       "eut": -64
     },
     {
-      "comment": "FM.Gas — Loader_Fuels.java:186 verbatim: ethylene 1 L, -64 EUt x 5, water 1 + carbon dioxide 1 out.",
+      "comment": "FM.Burn — Loader_Fuels.java:185 verbatim: ethylene 1 L, -64 EUt x 4, water 1 + carbon dioxide 1 out.",
       "fluidInputs": [{ "fluid": "gt6:ethylene", "amount": 1 }],
       "fluidOutputs": [
         { "fluid": "minecraft:water", "amount": 1 },
         { "fluid": "gt6:carbondioxide", "amount": 1 }
       ],
-      "duration": 5,
+      "duration": 4,
       "eut": -64
     },
     {
-      "comment": "FM.Gas — Loader_Fuels.java:189 verbatim: propylene 1 L, -64 EUt x 4, water 1 + carbon dioxide 1 out.",
+      "comment": "FM.Burn — Loader_Fuels.java:188 verbatim: propylene 1 L, -64 EUt x 3, water 1 + carbon dioxide 1 out.",
       "fluidInputs": [{ "fluid": "gt6:propylene", "amount": 1 }],
       "fluidOutputs": [
         { "fluid": "minecraft:water", "amount": 1 },
         { "fluid": "gt6:carbondioxide", "amount": 1 }
       ],
-      "duration": 4,
+      "duration": 3,
       "eut": -64
     }
   ]

@@ -1,11 +1,46 @@
 {
   "recipes": [
     {
-      "inputs": [{ "item": "minecraft:charcoal", "count": 1 }],
-      "fluidInputs": [{ "fluid": "minecraft:water", "amount": 1000 }],
-      "outputs": [{ "item": "minecraft:coal", "count": 1 }],
-      "duration": 128,
-      "eut": 32
+      "comment": "RM.CatalyticCracking Loader_Recipes_Chem.java:373+:374 merged — the Reikanol/BioEthanol double-id rows land as the ONE ethanol row (the port single-name ruling, decisions.p29-w4-split-rulings conflicts[0]): hydrogen 100 + ethanol 100 -> ethylene 20 + propylene 5, Pt dust catalyst, 16 EUt x 64.",
+      "inputs": [{ "item": "gt6:dust_platinum", "count": 1 }],
+      "fluidInputs": [
+        { "fluid": "gt6:hydrogen", "amount": 100 },
+        { "fluid": "gt6:ethanol", "amount": 100 }
+      ],
+      "fluidOutputs": [
+        { "fluid": "gt6:ethylene", "amount": 20 },
+        { "fluid": "gt6:propylene", "amount": 5 }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.CatalyticCracking Loader_Recipes_Chem.java:375 verbatim: hydrogen 100 + petrol 100 -> ethylene 30 + propylene 20, Pt dust catalyst, 16 EUt x 64.",
+      "inputs": [{ "item": "gt6:dust_platinum", "count": 1 }],
+      "fluidInputs": [
+        { "fluid": "gt6:hydrogen", "amount": 100 },
+        { "fluid": "gt6:petrol", "amount": 100 }
+      ],
+      "fluidOutputs": [
+        { "fluid": "gt6:ethylene", "amount": 30 },
+        { "fluid": "gt6:propylene", "amount": 20 }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.CatalyticCracking Loader_Recipes_Chem.java:376 verbatim: hydrogen 100 + fuel 100 -> ethylene 40 + propylene 10, Pt dust catalyst, 16 EUt x 64.",
+      "inputs": [{ "item": "gt6:dust_platinum", "count": 1 }],
+      "fluidInputs": [
+        { "fluid": "gt6:hydrogen", "amount": 100 },
+        { "fluid": "gt6:fuel", "amount": 100 }
+      ],
+      "fluidOutputs": [
+        { "fluid": "gt6:ethylene", "amount": 40 },
+        { "fluid": "gt6:propylene", "amount": 10 }
+      ],
+      "duration": 64,
+      "eut": 16
     }
   ]
 }
