@@ -42,15 +42,18 @@ GRID = {
 steps = [phase("A: the universal-leggings 3x3 ingredient face — the :95 grid, laid out live")]
 steps.append(Step(f"setblock {CHEST} minecraft:chest", expect="Changed the block"))
 for slot, item_id in sorted(GRID.items()):
-    steps.append(Step(f"item replace block {CHEST} container.{slot} with {item_id} 1", expect="Replaced slot"))
+    steps.append(Step(f"item replace block {CHEST} container.{slot} with {item_id} 1", expect="Replaced"))
 steps += [
+    # the chest NBT COMPACTS entries (the two empty grid cells serialize away), so the
+    # seven grid items occupy entry indices 0..6 — beyond that, probe the full list
     Step(f"data get block {CHEST} Items[0].id", expect="gt6:hazmat_biochemgas_leggings"),
     Step(f"data get block {CHEST} Items[6].id", expect="gt6:hazmat_radiation_leggings"),
-    Step(f"data get block {CHEST} Items[7].id", expect="minecraft:chainmail_leggings"),
+    Step(f"data get block {CHEST} Items", expect="minecraft:chainmail_leggings"),
+    Step(f"data get block {CHEST} Items", expect="gt6:hazmat_insect_leggings"),
 
-    phase("B: the result face — the five assembled pieces exist as live items"),
-    Step(f"item replace block {CHEST} container.13 with gt6:hazmat_universal_leggings 1", expect="Replaced slot"),
-    Step(f"data get block {CHEST} Items[13].id", expect="gt6:hazmat_universal_leggings"),
+    phase("B: the result face — the assembled piece exists as a live item"),
+    Step(f"item replace block {CHEST} container.13 with gt6:hazmat_universal_leggings 1", expect="Replaced"),
+    Step(f"data get block {CHEST} Items", expect="gt6:hazmat_universal_leggings"),
 
     phase("C: teardown — the explicit band restore (no global state was touched)"),
     Step("fill 428 62 329 440 68 336 air", expect="filled"),

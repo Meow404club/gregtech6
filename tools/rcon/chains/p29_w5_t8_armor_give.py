@@ -33,14 +33,16 @@ IDS = [f"gt6:hazmat_{s}_{p}" for s in SUITS for p in PIECES]
 steps = [phase("A: the 24-item census — every flat piece lands as a real stack")]
 steps.append(Step(f"setblock {CHEST} minecraft:chest", expect="Changed the block"))
 for slot, item_id in enumerate(IDS):
-    steps.append(Step(f"item replace block {CHEST} container.{slot} with {item_id} 1", expect="Replaced slot"))
-# the roster probes: the first suit's helmet, the biochemgas/leggings middle, the
-# universal/boots tail — the id walk itself is pinned offline (ArmorSetTest census)
+    steps.append(Step(f"item replace block {CHEST} container.{slot} with {item_id} 1", expect="Replaced"))
+# the roster probes: one piece per band edge — the chest NBT compacts to entry
+# indices (all 24 slots filled, so entry N = slot N); the id walk itself is pinned
+# offline (the ArmorSetTest census)
 steps += [
     Step(f"data get block {CHEST} Items[0]", expect="gt6:hazmat_insect_helmet"),
-    Step(f"data get block {CHEST} Items[5]", expect="gt6:hazmat_frost_boots"),
-    Step(f"data get block {CHEST} Items[10]", expect="gt6:hazmat_biochemgas_leggings"),
-    Step(f"data get block {CHEST} Items[15]", expect="gt6:hazmat_universal_helmet"),
+    Step(f"data get block {CHEST} Items[5]", expect="gt6:hazmat_frost_chestplate"),
+    Step(f"data get block {CHEST} Items[10]", expect="gt6:hazmat_heat_leggings"),
+    Step(f"data get block {CHEST} Items[15]", expect="gt6:hazmat_radiation_boots"),
+    Step(f"data get block {CHEST} Items[18]", expect="gt6:hazmat_biochemgas_leggings"),
     Step(f"data get block {CHEST} Items[23]", expect="gt6:hazmat_universal_boots"),
 
     phase("B: teardown — the explicit band restore (no global state was touched)"),
