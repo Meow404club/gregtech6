@@ -8189,3 +8189,25 @@ direct	block.gt6.battery_box_large_mv	大型电池箱 (MV)	hand
 direct	block.gt6.battery_box_large_hv	大型电池箱 (HV)	hand
 direct	block.gt6.battery_box_large_ev	大型电池箱 (EV)	hand
 direct	block.gt6.battery_box_large_iv	大型电池箱 (IV)	hand
+direct	fluid.gt6.ic2coolant	冷却液	hand
+direct	fluid.gt6.ic2hotcoolant	热冷却液	hand
+direct	fluid.gt6.hotmoltensodium	热熔融钠	hand
+direct	fluid.gt6.hotmoltentin	热熔融锡	hand
+direct	fluid.gt6.hotmoltenlicl	热熔融氯化锂	hand
+direct	fluid.gt6.hotheavywater	热重水	hand
+direct	fluid.gt6.hotsemiheavywater	热半重水	hand
+direct	fluid.gt6.hottritiatedwater	热超重水	hand
+direct	fluid.gt6.hotcarbondioxide	热二氧化碳	hand
+direct	fluid.gt6.hothelium	热氦	hand
+direct	fluid.gt6.thoriumsalt	熔融钍盐	hand
+direct	fluid.gt6.ic2pahoehoelava	熔岩岩浆	hand
+direct	fluid.gt6.blaze	烈焰粘浆	hand
+direct	fluid.gt6.sodium_molten	熔融钠	hand
+direct	fluid.gt6.tin_molten	熔融锡	hand
+direct	fluid.gt6.lithium_chloride_molten	熔融氯化锂	hand
+direct	fluid.gt6.heavywater	重水	hand
+direct	fluid.gt6.semiheavywater	半重水	hand
+direct	fluid.gt6.tritiatedwater	超重水	hand
+direct	fluid.gt6.lubricant	润滑油	hand
+direct	item.gt6.lubricant_bucket	润滑油桶	hand
+direct	item.gt6.lubricant_bucket.tooltip	仅限工业用途！	hand

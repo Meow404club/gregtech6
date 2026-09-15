@@ -27,27 +27,31 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The tower smoke-row datapack acceptance (task p29-w3-distill-crucible, the OFFLINE half):
- * the two committed {@code data/gt6/recipe_maps/<map>.json} files —
- * {@code distillationtower} (gt6:oil → gt6:creosote fraction row) and
- * {@code cryodistillationtower} (water → ice freeze row) — pour through the PUBLIC
- * {@link GT6RecipeMapJsonLoader#pour} seam into their maps (the GT6EuHuSmokeRowJsonTest
- * fixture convention), and the map-key anchors resolve (the consumer-card JSON
- * direct-pour seam). The map constants rows carry the RM.java:65/:66 columns.
+ * The tower datapack acceptance (task p29-w3-distill-crucible, the OFFLINE half — the
+ * tower half RESHAPED by the p29-w4-hot-lube review round: the W3 smoke row
+ * (gt6:oil 1000 → gt6:creosote, 120/160) had no upstream anchor and crowded the
+ * Loader_Recipes_Chem.java:356 Oil_Normal true row off its own input face, so the file now
+ * carries the SIX :352-:360 true rows while {@code cryodistillationtower} keeps its
+ * water → ice freeze row) — both committed {@code data/gt6/recipe_maps/<map>.json} files
+ * pour through the PUBLIC {@link GT6RecipeMapJsonLoader#pour} seam into their maps (the
+ * GT6EuHuSmokeRowJsonTest fixture convention), and the map-key anchors resolve (the
+ * consumer-card JSON direct-pour seam). The map constants rows carry the RM.java:65/:66
+ * columns.
  */
 class GT6DistillTowerSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 
-	/** The ids the two smoke rows carry. */
+	// the fixtures widen to catch-all gt6 stand-ins (the review-round reshape): the six
+	// true rows carry SEVEN fluid product ids + three dustTiny item ids per row — a null
+	// from the resolver DROPS the row (the loader bad-row seam), so every gt6 id stands in
 	private static final Function<ResourceLocation, Item> ITEM_FIXTURE = aId -> switch (aId.toString()) {
 		case "minecraft:ice" -> Items.ICE;
-		default -> null;
+		default -> aId.getNamespace().equals("gt6") ? Items.IRON_INGOT : null;
 	};
 
 	private static final Function<ResourceLocation, Fluid> FLUID_FIXTURE = aId -> switch (aId.toString()) {
-		case "gt6:oil" -> Fluids.WATER; // the stand-in for the port oil fluid (the row's id is what the test pins)
-		case "gt6:creosote" -> Fluids.LAVA;
 		case "minecraft:water" -> Fluids.WATER;
-		default -> null;
+		case "minecraft:lava" -> Fluids.LAVA;
+		default -> aId.getNamespace().equals("gt6") ? Fluids.WATER : null; // the identity is what the test pins
 	};
 
 	private static final Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
@@ -77,29 +81,32 @@ class GT6DistillTowerSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 	}
 
 	@Test
-	public void theTwoSmokeRowsPourThroughTheLoaderSeam() throws Exception {
+	public void theTwoFilesPourThroughTheLoaderSeam() throws Exception {
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
 		tData.put(new ResourceLocation("gt6", "distillationtower"), resource("distillationtower.json"));
 		tData.put(new ResourceLocation("gt6", "cryodistillationtower"), resource("cryodistillationtower.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 
-		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("distillationtower"), "one tower smoke row");
+		// the review-round ratchet: the tower file pours the SIX :352-:360 true rows (the
+		// W3 smoke row removed — no upstream anchor, it crowded :356 off the oil input face)
+		assertEquals(6, GT6RecipeMapJsonLoader.pouredCount("distillationtower"), "the six tower true rows");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("cryodistillationtower"), "one cryo smoke row");
 	}
 
 	@Test
 	public void thePouredRowIsFindableThroughTheTowerLookup() throws Exception {
 		// the tower's own lookup shape (the checkRecipe override): one empty item slot, the
-		// input-tank snapshot, size mInputMax
+		// input-tank snapshot, size mInputMax — the oil stand-in rides the ALL rows share one
+		// input face shape (25 L), so the lookup resolves a true row and the shared faces pin
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
 		tData.put(new ResourceLocation("gt6", "distillationtower"), resource("distillationtower.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 
 		Recipe tFound = GT6RecipeMaps.DISTILLATION_TOWER.findRecipe(null, 1024, ItemStack.EMPTY,
-				new FluidStack[]{new FluidStack(Fluids.WATER, 1000)}, ItemStack.EMPTY);
-		assertNotNull(tFound, "the pure-fluid row must be findable with an all-empty item array");
-		assertEquals(120, tFound.mEUt);
-		assertEquals(160, tFound.mDuration);
+				new FluidStack[]{new FluidStack(Fluids.WATER, 25)}, ItemStack.EMPTY);
+		assertNotNull(tFound, "the true-row file must be findable with an all-empty item array");
+		assertEquals(64, tFound.mEUt, "the shared :352-:360 EUt");
+		assertEquals(7, tFound.mFluidOutputs.length, "the SEVEN product slots");
 	}
 
 	@Test

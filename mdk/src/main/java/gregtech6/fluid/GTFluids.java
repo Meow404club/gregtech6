@@ -129,6 +129,21 @@ import gregtech6.registry.GTFluidPipes;
  * face (the 25 Spec rows) only on this side — the datapack-domain recipe rows this card
  * ships (STEAM_CRACKING/CATALYTIC_CRACKING/FM.GAS/FM.BURN) are plain data/gt6 JSON the
  * loader already reads; tier-a crafting adds nothing; there is NO KubeJS-specific seam.
+ *
+ * <p><b>The HOT family, the closure carriers and the lubricant</b> (task p29-w4-hot-lube)
+ * ride the SAME {@link ChemicalFluidSpec} record and the SAME registration body — the
+ * FIFTH-SPEC-SECTION append AFTER the chemical table (the merge-order seam: card ① is the
+ * first writer, card ④ appends behind it): the twelve hot fluids
+ * {@code ic2coolant/ic2hotcoolant/hotmoltensodium/hotmoltentin/hotmoltenlicl/
+ * hotheavywater/hotsemiheavywater/hottritiatedwater/hotcarbondioxide/hothelium/
+ * thoriumsalt/ic2pahoehoelava} (Loader_Fluids.java:85-99, {@link #HOT_FLUID_SPECS}), the
+ * seven FM.Hot closure carriers {@code blaze/sodium_molten/tin_molten/
+ * lithium_chloride_molten/heavywater/semiheavywater/tritiatedwater}
+ * ({@link #CLOSURE_FLUID_SPECS} — each row doc-anchored to the Loader_Fuels.java:191-211
+ * reference that needs it), and the single F-2 lubricant row (Loader_Fluids.java:617,
+ * {@link #LUBRICANT_FLUID_SPECS}). KJS surface: REGISTRATION face (the 20 Spec rows) +
+ * the FM.HOT/distillation/DieselEngine datapack-domain rows of the same card; NO
+ * KubeJS-specific seam.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTFluids {
@@ -1344,14 +1359,18 @@ public final class GTFluids {
 	 * water textures over the row's tint (the family initializeClient convention).
 	 */
 	private static ChemicalFluid chemicalFluid(String aName) {
-		ChemicalFluidSpec tSpec = chemicalSpec(aName);
-		if (tSpec == null) throw new IllegalArgumentException("no chemical fluid spec: " + aName);
-		RegistryObject<FluidType> tType = FLUID_TYPES.register(tSpec.name(), () -> new FluidType(FluidType.Properties.create()
-				.descriptionId(tSpec.descriptionId())
-				.temperature(tSpec.temperature())
-				.density(tSpec.density())
-				.viscosity(tSpec.viscosity())
-				.lightLevel(tSpec.luminosity())) {
+		return specFluid(chemicalSpec(aName), "chemical fluid");
+	}
+
+	/** The spec-first registration core of {@link #chemicalFluid} — shared with the hot/closure/lubricant families. */
+	private static ChemicalFluid specFluid(ChemicalFluidSpec aSpec, String aFamily) {
+		if (aSpec == null) throw new IllegalArgumentException("no " + aFamily + " spec");
+		RegistryObject<FluidType> tType = FLUID_TYPES.register(aSpec.name(), () -> new FluidType(FluidType.Properties.create()
+				.descriptionId(aSpec.descriptionId())
+				.temperature(aSpec.temperature())
+				.density(aSpec.density())
+				.viscosity(aSpec.viscosity())
+				.lightLevel(aSpec.luminosity())) {
 			@Override
 			public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
 				aConsumer.accept(new IClientFluidTypeExtensions() {
@@ -1365,17 +1384,17 @@ public final class GTFluids {
 					public ResourceLocation getFlowingTexture() {return FLOW;}
 
 					@Override
-					public int getTintColor() {return tSpec.tint();}
+					public int getTintColor() {return aSpec.tint();}
 				});
 			}
 		});
-		RegistryObject<FlowingFluid> tSource = FLUIDS.register(tSpec.name(),
-				() -> new ForgeFlowingFluid.Source(chemicalProperties(tSpec, tType)));
-		RegistryObject<Fluid> tFlowing = FLUIDS.register(tSpec.name() + "_flowing",
-				() -> new ForgeFlowingFluid.Flowing(chemicalProperties(tSpec, tType)));
-		SOURCE_SEAM.put(tSpec.name(), tSource);
-		FLOWING_SEAM.put(tSpec.name(), tFlowing);
-		return new ChemicalFluid(tSpec, tType, tSource, tFlowing);
+		RegistryObject<FlowingFluid> tSource = FLUIDS.register(aSpec.name(),
+				() -> new ForgeFlowingFluid.Source(chemicalProperties(aSpec, tType)));
+		RegistryObject<Fluid> tFlowing = FLUIDS.register(aSpec.name() + "_flowing",
+				() -> new ForgeFlowingFluid.Flowing(chemicalProperties(aSpec, tType)));
+		SOURCE_SEAM.put(aSpec.name(), tSource);
+		FLOWING_SEAM.put(aSpec.name(), tFlowing);
+		return new ChemicalFluid(aSpec, tType, tSource, tFlowing);
 	}
 
 	/** The shared per-family Properties for the chemical rows — registry-event time only (see chemicalFluid). */
@@ -1401,6 +1420,141 @@ public final class GTFluids {
 			chemicalFluid("helium"), chemicalFluid("neon"), chemicalFluid("argon"),
 			chemicalFluid("krypton"), chemicalFluid("xenon"), chemicalFluid("radon"),
 			chemicalFluid("liquidoxygen"));
+
+	/**
+	 * The hot-family row lookup (the {@link #chemicalSpec} shape) — the fuels_hot consumer
+	 * side and the offline census both resolve through it.
+	 */
+	public static ChemicalFluidSpec hotSpec(String aName) {
+		for (ChemicalFluidSpec tSpec : HOT_FLUID_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/**
+	 * The twelve HOT rows (task p29-w4-hot-lube) — the upstream Loader_Fluids.java:85-99
+	 * block verbatim in declaration order. Every row is the {@code FL.create(name, display,
+	 * null, 1, 1000, tempK)} six-arg form (FL.java:1089: state = STATE_LIQUID, the 1000 is
+	 * the amount-per-unit NOT a density — the material is null so the :1128 density formula
+	 * never fires and the vanilla 1000 default rides): ic2coolant (:85) is the four-arg form
+	 * (FL.java:1088 → 300 K), the eleven others carry their literal K (:86-:99), and
+	 * ic2pahoehoelava (:99) chains {@code .setLuminosity(10).setDensity(50000)
+	 * .setViscosity(250000)} over the liquid carrier. Tints are PORT-OWNED DECLARED VALUES
+	 * (the oil-family precedent — the materials are null so no MT RGBa anchor exists):
+	 * the two molten rows anchor the parent material RGBa (MT.Sn 220,220,220 / MT.LiCl
+	 * 222,222,250), the three hot waters ride the aqua hot_water hue (the p16 port-owned
+	 * 0xFF6E6EDE family, tritiated shifted red), the two hot gases lift the card-① parent
+	 * hues toward grey/pale, and the coolant/salt/lava rows are declared.
+	 */
+	public static final List<ChemicalFluidSpec> HOT_FLUID_SPECS = List.of(
+		new ChemicalFluidSpec("ic2coolant"       , "Industrial Coolant"          ,  300,  1000, 1000, 0xFF3EC8DC, false,  0), // :85 the four-arg create (300 K liquid); tint declared
+		new ChemicalFluidSpec("ic2hotcoolant"    , "Industrial Heatant"          , 1200,  1000, 1000, 0xFFB44A28, false,  0), // :86
+		new ChemicalFluidSpec("hotmoltensodium"  , "Hot Molten Sodium"           , 1100,  1000, 1000, 0xFFF5F5A0, false,  0), // :87 — the sodium glow (declared)
+		new ChemicalFluidSpec("hotmoltentin"     , "Hot Molten Tin"              , 2800,  1000, 1000, 0xFFDCDCDC, false,  0), // :88 — the MT.Sn RGBa
+		new ChemicalFluidSpec("hotmoltenlicl"    , "Hot Molten Lithium Chloride" , 1600,  1000, 1000, 0xFFDEDEFA, false,  0), // :89 — the MT.LiCl RGBa
+		new ChemicalFluidSpec("hotheavywater"    , "Hot Heavy Water"             ,  600,  1000, 1000, 0xFF6E6EDE, false,  0), // :91 — the aqua hot_water hue family
+		new ChemicalFluidSpec("hotsemiheavywater", "Hot Semiheavy Water"         ,  550,  1000, 1000, 0xFF7E7ED2, false,  0), // :92
+		new ChemicalFluidSpec("hottritiatedwater", "Hot Tritiated Water"         ,  650,  1000, 1000, 0xFFDE6E6E, false,  0), // :93 — the tritium red shift
+		new ChemicalFluidSpec("hotcarbondioxide" , "Hot Carbon Dioxide"          ,  950,  1000, 1000, 0xFF646464, false,  0), // :95 — the CO2 grey, heat-lifted
+		new ChemicalFluidSpec("hothelium"        , "Hot Helium"                  , 1150,  1000, 1000, 0xFFF5F5C0, false,  0), // :96 — the He pale yellow, heat-lifted
+		new ChemicalFluidSpec("thoriumsalt"      , "Molten Thorium Salt"         ,  600,  1000, 1000, 0xFF96C832, false,  0), // :97 — the fluoride-salt green (declared)
+		new ChemicalFluidSpec("ic2pahoehoelava"  , "Pahoehoe Lava"               , 1200, 50000, 250000, 0xFFC83C0A, false, 10)); // :99 lum10/dens50000/visc250000 verbatim
+
+	/** The closure-carrier row lookup (the {@link #hotSpec} shape). */
+	public static ChemicalFluidSpec closureSpec(String aName) {
+		for (ChemicalFluidSpec tSpec : CLOSURE_FLUID_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/**
+	 * The seven CLOSURE carrier rows (task p29-w4-hot-lube spec ②) — the fluids the
+	 * Loader_Fuels.java:191-211 FM.Hot rows reference that no earlier family registered;
+	 * without them the hot rows would pour into UNRESOLVED ids (the dead-row class the
+	 * card was cut to prevent). One row per referenced carrier, the upstream names where
+	 * they are clean tokens and the {@code iron_molten} port convention for the molten
+	 * trio ({@code molten.<mat>} upstream):
+	 * <ul>
+	 * <li><b>blaze</b> — the :191 FUEL row {@code FL.Blaze.make(1)}; Loader_Fluids.java:195
+	 *     {@code FL.create("blaze", "Blazing Goo", MT.Blaze, 1, 9*L, 4000).setLuminosity(15)}
+	 *     (the {@code 9*L} is the amount-per-unit; the density rides the :1128 formula over
+	 *     MT.Blaze's default 1.0 g/cm³ → 1000, the 4000 K is the row temp, lum 15 verbatim,
+	 *     tint the MT.Blaze RGBa 255,200,0, MT.java:1275);</li>
+	 * <li><b>sodium_molten / tin_molten / lithium_chloride_molten</b> — the :204/:205/:211
+	 *     output carriers {@code FL.amount(MT.Na.mLiquid, 1)} etc. The MOLTEN-flag walk
+	 *     (FL.java:1077 createMolten: Na rides the alkali helper's MOLTEN grant, MT.java:354;
+	 *     Sn carries MOLTEN explicitly :439; LiCl :1121): id = molten.&lt;mat&gt; upstream →
+	 *     the gt6 iron_molten convention here, temperature = the material melting-point rule
+	 *     (:1077: Na 370 / Sn 505 / LiCl 880, MT.java:399/:439/:1121), density = the :1128
+	 *     formula over the material g/cm³ (Na 0.971 → 971; Sn 7.287 → 7287; LiCl rides the
+	 *     uumMcfg molecule sum Li 0.534 + Cl 0.003214 → 537, MT.java:953/:993/:1121),
+	 *     luminosity 10 = the createMolten literal, viscosity 1000 = STATE_LIQUID; tints are
+	 *     the materials' RGBa (Na 0,0,150 / Sn 220,220,220 / LiCl 222,222,250);</li>
+	 * <li><b>heavywater / semiheavywater / tritiatedwater</b> — the :206/:207/:208 output
+	 *     carriers {@code MT.D2O.mLiquid} etc. The LIQUID-flag walk (FL.java:1072
+	 *     createLiquid over the lquddcmp materials, MT.java:1008-1010): the bare
+	 *     mNameInternal ids upstream (heavywater/semiheavywater/tritiatedwater — the same
+	 *     roots the :91-93 hot rows prefix with "hot"), temperature 300 K = the :1072 rule
+	 *     (melting C+4/C+2/C+7 &lt; 300 → min(300, boiling − 1)), density = the :1128 formula
+	 *     over the materials' setDensity g/cm³ (D2O 1.1056 → 1105, HDO 1.0540 → 1054, T2O
+	 *     1.2112 → 1211); tints the materials' RGBa (255,255,100 / 200,200,155 /
+	 *     255,100,100).</li>
+	 * </ul>
+	 */
+	public static final List<ChemicalFluidSpec> CLOSURE_FLUID_SPECS = List.of(
+		new ChemicalFluidSpec("blaze"      , "Blazing Goo"             , 4000, 1000, 1000, 0xFFFFC800, false, 15), // :195 — the FM.Hot :191 fuel
+		new ChemicalFluidSpec("sodium_molten", "Molten Sodium"         ,  370,  971, 1000, 0xFF000096, false, 10), // :204 — createMolten MT.Na
+		new ChemicalFluidSpec("tin_molten" , "Molten Tin"             ,  505, 7287, 1000, 0xFFDCDCDC, false, 10), // :205 — createMolten MT.Sn
+		new ChemicalFluidSpec("lithium_chloride_molten", "Molten Lithium Chloride", 880, 537, 1000, 0xFFDEDEFA, false, 10), // :211 — createMolten MT.LiCl
+		new ChemicalFluidSpec("heavywater"     , "Heavy Water"       ,  300, 1105, 1000, 0xFFFFFF64, false,  0), // :206 — createLiquid MT.D2O
+		new ChemicalFluidSpec("semiheavywater" , "Semiheavy Water"   ,  300, 1054, 1000, 0xFFC8C89B, false,  0), // :207 — createLiquid MT.HDO
+		new ChemicalFluidSpec("tritiatedwater" , "Tritiated Water"   ,  300, 1211, 1000, 0xFFFF6464, false,  0)); // :208 — createLiquid MT.T2O
+
+	/**
+	 * The LUBRICANT row (task p29-w4-hot-lube spec ④, the F-2 single-fluid batch) —
+	 * Loader_Fluids.java:617 {@code FL.create("lubricant", "Lubricant", MT.Lubricant, 1)}
+	 * (the four-arg form → 300 K STATE_LIQUID carrier; density = the :1128 formula over
+	 * MT.Lubricant's default 1.0 g/cm³ → 1000, MT.java:2081 no uumMcfg/no setDensity), the
+	 * Diesel Engine crafting 'L' ingredient face (Loader:722-729 {@code OD.itemLubricant};
+	 * the fluid's other consumer faces ride the distillation-tower lube product slots
+	 * :352-:360 and the FoodStatDrink potion form is a declared cut — no drink seam).
+	 */
+	public static final List<ChemicalFluidSpec> LUBRICANT_FLUID_SPECS = List.of(
+		new ChemicalFluidSpec("lubricant", "Lubricant", 300, 1000, 1000, 0xFFFFC400, false, 0)); // :617 — MT.Lubricant 255,196,0
+
+	/** The lubricant row lookup (the {@link #hotSpec} shape) — the single-row family. */
+	public static ChemicalFluidSpec lubricantSpec(String aName) {
+		for (ChemicalFluidSpec tSpec : LUBRICANT_FLUID_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/** The live registrations of the three families — one per spec row, in declaration order (the {@link #CHEMICALS} shape). */
+	public static final List<ChemicalFluid> HOT_FLUIDS = HOT_FLUID_SPECS.stream().map(s -> specFluid(s, "hot fluid")).toList();
+	public static final List<ChemicalFluid> CLOSURE_FLUIDS = CLOSURE_FLUID_SPECS.stream().map(s -> specFluid(s, "closure carrier fluid")).toList();
+	public static final List<ChemicalFluid> LUBRICANT_FLUIDS = LUBRICANT_FLUID_SPECS.stream().map(s -> specFluid(s, "lubricant fluid")).toList();
+
+	/**
+	 * The POWER_CONDUCTING seeds of the hot family — the upstream FL.java:89-102 enum block
+	 * verbatim, NINE rows (the review-round correction: the first cut read only the four
+	 * Hot_Molten and Coolant rows and missed the enum tail :97-102): ic2hotcoolant (:90),
+	 * hotmoltensodium (:95), hotmoltentin (:96), hotheavywater (:97), hotsemiheavywater
+	 * (:98), hottritiatedwater (:99), hotmoltenlicl (:100), hotcarbondioxide (:101 — the
+	 * GAS-flag row) and hothelium (:102 — the GAS-flag row). The UNSEEDED members of the
+	 * same block stay out verbatim: ic2coolant (:89 SIMPLE, LIQUID), thoriumsalt (:93
+	 * LIQUID) and ic2pahoehoelava (:105 SIMPLE, LIQUID). The pipe :184 void gate and the
+	 * :250 item-fill gate are the live consumers (GTFluidLists.POWER_CONDUCTING — a
+	 * POWER_CONDUCTING fluid cannot sit in ANY barrel, the tick voids it). The call lives
+	 * here because the rows live here (GTFluidLists.java stays untouched).
+	 */
+	static {
+		GTFluidLists.register("ic2hotcoolant"    , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotmoltensodium"  , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotmoltentin"     , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotheavywater"    , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotsemiheavywater", GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hottritiatedwater", GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotmoltenlicl"    , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotcarbondioxide" , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hothelium"        , GTFluidLists.POWER_CONDUCTING);
+	}
 
 	private GTFluids() {}
 

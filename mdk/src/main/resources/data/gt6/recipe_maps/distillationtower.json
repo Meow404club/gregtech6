@@ -1,10 +1,334 @@
 {
   "recipes": [
     {
-      "fluidInputs": [{ "fluid": "gt6:oil", "amount": 1000 }],
-      "fluidOutputs": [{ "fluid": "gt6:creosote", "amount": 500 }],
-      "duration": 160,
-      "eut": 120
+      "comment": "task p29-w4-hot-lube — Loader_Recipes_Chem.java:352 verbatim: RM.DistillationTower.addRecipe0(F, 64, 256, {5000,5000,5000}, Oil_ExtraHeavy 25, {Fuel 35, Diesel 25, Kerosine 25, Petrol 20, Propane 5, Butane 5, lube 50}, dustTiny WaxParaffin/Asphalt/PetCoke) — the three dust slots ride chance 5000/10000 each (the chances array), the seven fluid slots are guaranteed. eut 64 / duration 256. The lube 7th slot is WHY this row landed on card ④ (the lube closure).",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:liquid_extra_heavy_oil",
+          "amount": 25
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:fuel",
+          "amount": 35
+        },
+        {
+          "fluid": "gt6:diesel",
+          "amount": 25
+        },
+        {
+          "fluid": "gt6:kerosine",
+          "amount": 25
+        },
+        {
+          "fluid": "gt6:petrol",
+          "amount": 20
+        },
+        {
+          "fluid": "gt6:propane",
+          "amount": 5
+        },
+        {
+          "fluid": "gt6:butane",
+          "amount": 5
+        },
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 50
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_wax_paraffin",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_asphalt",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_petroleum_coke",
+          "chance": 5000
+        }
+      ],
+      "duration": 256,
+      "eut": 64
+    },
+    {
+      "comment": "task p29-w4-hot-lube — Loader_Recipes_Chem.java:353/:354 verbatim (the :353 Oil_Heavy row and its :354 Oil_Heavy2 twin collapse to ONE row: the port registers single-name oils, decisions.p29-w4-split-rulings conflicts[0]): heavy oil 25 -> fuel 30, diesel 20, kerosine 20, petrol 15, propane 10, butane 10, lube 40 + the three dustTiny slots at chance 5000. eut 64 / duration 196.",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:liquid_heavy_oil",
+          "amount": 25
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:fuel",
+          "amount": 30
+        },
+        {
+          "fluid": "gt6:diesel",
+          "amount": 20
+        },
+        {
+          "fluid": "gt6:kerosine",
+          "amount": 20
+        },
+        {
+          "fluid": "gt6:petrol",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:propane",
+          "amount": 10
+        },
+        {
+          "fluid": "gt6:butane",
+          "amount": 10
+        },
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 40
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_wax_paraffin",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_asphalt",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_petroleum_coke",
+          "chance": 5000
+        }
+      ],
+      "duration": 196,
+      "eut": 64
+    },
+    {
+      "comment": "task p29-w4-hot-lube — Loader_Recipes_Chem.java:355/:356 verbatim (Oil_Medium + Oil_Normal collapse onto liquid_medium_oil, the single-name ruling; :356's Oil_HotCrude arm rides exists() and the port registers no hot crude): raw oil 25 -> fuel 25, diesel 15, kerosine 15, petrol 15, propane 15, butane 15, lube 25 + the three dustTiny slots at chance 5000. eut 64 / duration 128.",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:liquid_medium_oil",
+          "amount": 25
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:fuel",
+          "amount": 25
+        },
+        {
+          "fluid": "gt6:diesel",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:kerosine",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:petrol",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:propane",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:butane",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 25
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_wax_paraffin",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_asphalt",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_petroleum_coke",
+          "chance": 5000
+        }
+      ],
+      "duration": 128,
+      "eut": 64
+    },
+    {
+      "comment": "task p29-w4-hot-lube — Loader_Recipes_Chem.java:356 verbatim: RM.DistillationTower.addRecipe0(F, 64, 128, {3000,3000,3000}, Oil_Normal.make(25), {Fuel 25, Diesel 15, Kerosine 15, Petrol 15, Propane 15, Butane 15, lube 25}, dustTiny WaxParaffin/Asphalt/PetCoke) — Oil_Normal's registered fluid name IS \"oil\" (FL.java:403) = the port's gt6:oil. eut 64 / duration 128 (shared with :355). The review-round add: this row was wrongly crowded out by the W3 smoke row that sat on the same input face (now removed — no upstream anchor).",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oil",
+          "amount": 25
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:fuel",
+          "amount": 25
+        },
+        {
+          "fluid": "gt6:diesel",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:kerosine",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:petrol",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:propane",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:butane",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 25
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_wax_paraffin",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_asphalt",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_petroleum_coke",
+          "chance": 5000
+        }
+      ],
+      "duration": 128,
+      "eut": 64
+    },
+    {
+      "comment": "task p29-w4-hot-lube — Loader_Recipes_Chem.java:358/:359 verbatim (Oil_Light + Oil_Light2 collapse onto liquid_light_oil): light oil 25 -> fuel 15, diesel 10, kerosine 10, petrol 10, propane 25, butane 25, lube 15 + the three dustTiny slots at chance 5000. eut 64 / duration 64.",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:liquid_light_oil",
+          "amount": 25
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:fuel",
+          "amount": 15
+        },
+        {
+          "fluid": "gt6:diesel",
+          "amount": 10
+        },
+        {
+          "fluid": "gt6:kerosine",
+          "amount": 10
+        },
+        {
+          "fluid": "gt6:petrol",
+          "amount": 10
+        },
+        {
+          "fluid": "gt6:propane",
+          "amount": 25
+        },
+        {
+          "fluid": "gt6:butane",
+          "amount": 25
+        },
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 15
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_wax_paraffin",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_asphalt",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_petroleum_coke",
+          "chance": 5000
+        }
+      ],
+      "duration": 64,
+      "eut": 64
+    },
+    {
+      "comment": "task p29-w4-hot-lube — Loader_Recipes_Chem.java:360 verbatim: soulsand oil 25 -> fuel 10, diesel 5, kerosine 5, petrol 5, propane 5, butane 5, lube 40 + the three dustTiny slots at chance 5000. eut 64 / duration 64.",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:soulsandoil",
+          "amount": 25
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:fuel",
+          "amount": 10
+        },
+        {
+          "fluid": "gt6:diesel",
+          "amount": 5
+        },
+        {
+          "fluid": "gt6:kerosine",
+          "amount": 5
+        },
+        {
+          "fluid": "gt6:petrol",
+          "amount": 5
+        },
+        {
+          "fluid": "gt6:propane",
+          "amount": 5
+        },
+        {
+          "fluid": "gt6:butane",
+          "amount": 5
+        },
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 40
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_wax_paraffin",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_asphalt",
+          "chance": 5000
+        },
+        {
+          "item": "gt6:dust_tiny_petroleum_coke",
+          "chance": 5000
+        }
+      ],
+      "duration": 64,
+      "eut": 64
     }
   ]
 }
