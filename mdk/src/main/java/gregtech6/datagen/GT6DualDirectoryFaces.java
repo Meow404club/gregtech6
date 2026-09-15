@@ -172,6 +172,13 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	 * through {@link DataProvider#saveStable}), so the runData 2nd-run {@code written: 0}
 	 * gate holds.
 	 *
+	 * <p>TWO-PHASE for the involution's read/write aliasing (the r3 live finding): phase 1
+	 * reads and parses EVERY source synchronously — the async saveStable writes of one
+	 * direction target exactly the other direction's read sources (forge→neoforge writes
+	 * what neoforge→forge reads), and a write landing mid-read served a truncated file
+	 * (parsed as {@code JsonNull} = the shape gate fired). Only after all parses may the
+	 * saves be scheduled.
+	 *
 	 * <p>The shape gate is fail-visible (the {@link #adaptLootFunctions21} discipline): only
 	 * the two {@code add_features} type names are codec-verified across the legs — a
 	 * {@code remove_features}/{@code conditional} row (never generated here) has no
@@ -180,6 +187,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	 * class this face closes.
 	 */
 	private void mirrorBiomeModifiers(CachedOutput aCache, Path aData, List<CompletableFuture<?>> aSaves) {
+		List<BiomeMirrorRow> tRows = new ArrayList<>(0);
 		for (String tNamespace : NAMESPACES) {
 			for (String tBrand : BIOME_MODIFIER_BRANDS) {
 				Path tSource = aData.resolve(tNamespace).resolve(tBrand).resolve(BIOME_MODIFIER_FACE);
@@ -187,19 +195,24 @@ public class GT6DualDirectoryFaces implements DataProvider {
 				String tTargetBrand = "forge".equals(tBrand) ? "neoforge" : "forge";
 				Path tTargetRoot = aData.resolve(tNamespace).resolve(tTargetBrand).resolve(BIOME_MODIFIER_FACE);
 				try (Stream<Path> tWalk = Files.walk(tSource)) {
-					tWalk.filter(Files::isRegularFile).filter(tPath -> tPath.toString().endsWith(".json")).forEach(tFile -> {
-						aSaves.add(saveBiomeModifierMirror(aCache, tFile,
-								tTargetRoot.resolve(tSource.relativize(tFile))));
-					});
+					tWalk.filter(Files::isRegularFile).filter(tPath -> tPath.toString().endsWith(".json"))
+							.forEach(tFile -> tRows.add(parseBiomeModifier(tFile,
+									tTargetRoot.resolve(tSource.relativize(tFile)))));
 				} catch (IOException tError) {
 					throw new RuntimeException("the biome-modifier brand walk failed under " + tSource, tError);
 				}
 			}
 		}
+		for (BiomeMirrorRow tRow : tRows) {
+			aSaves.add(DataProvider.saveStable(aCache, tRow.mJson, tRow.mTarget));
+		}
 	}
 
-	/** One brand mirror: parse + the {@code type} swap (fail-visible gate) + saveStable. */
-	private static CompletableFuture<?> saveBiomeModifierMirror(CachedOutput aCache, Path aSource, Path aTarget) {
+	/** One collected mirror row — parsed BEFORE any save of the sibling walk is scheduled. */
+	private record BiomeMirrorRow(Path mTarget, JsonObject mJson) {}
+
+	/** Phase 1 of the mirror: read + parse + gate + the {@code type} swap, all synchronous. */
+	private static BiomeMirrorRow parseBiomeModifier(Path aSource, Path aTarget) {
 		try (Reader tReader = Files.newBufferedReader(aSource)) {
 			JsonElement tJson = JsonParser.parseReader(tReader);
 			if (!tJson.isJsonObject()) {
@@ -213,12 +226,12 @@ public class GT6DualDirectoryFaces implements DataProvider {
 							&& !NEOFORGE_ADD_FEATURES.equals(tType.getAsString()))) {
 				throw new IllegalArgumentException("the biome-modifier mirror only verifies the add_features "
 						+ "brands (" + FORGE_ADD_FEATURES + " / " + NEOFORGE_ADD_FEATURES + ", got " + tType
-						+ " in " + aSource + ") — extend saveBiomeModifierMirror with the codec evidence "
+						+ " in " + aSource + ") — extend parseBiomeModifier with the codec evidence "
 						+ "before rebranding this shape");
 			}
 			tObject.addProperty("type", FORGE_ADD_FEATURES.equals(tType.getAsString())
 					? NEOFORGE_ADD_FEATURES : FORGE_ADD_FEATURES);
-			return DataProvider.saveStable(aCache, tJson, aTarget);
+			return new BiomeMirrorRow(aTarget, tObject);
 		} catch (IOException tError) {
 			throw new RuntimeException("the biome-modifier brand mirror failed reading " + aSource, tError);
 		}
