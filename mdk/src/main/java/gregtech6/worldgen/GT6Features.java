@@ -1,5 +1,8 @@
 package gregtech6.worldgen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -8,21 +11,22 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.DeferredRegister;
 
+import gregtech6.block.tree.GT6TreeKind;
+import gregtech6.registry.GT6TreeBlocks;
+
 /**
  * The worldgen Feature registration home — the L1 large-vein pipeline skeleton (task
  * p26-worldgen-pipeline-skeleton), self-contained in the GT6Attachments/GT6Kinetics
  * shape: a card-owned {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the
  * construct event — GT6Mod.java / GTModBusListener.java stay untouched.
  *
- * <p>L0 (this card) registers ZERO entries: the 17 stone blobs are pure datagen over the
- * vanilla {@code Feature.ORE} + {@code OreConfiguration} (GT6WorldgenDatagen), no custom
- * Feature/codec exists yet. The register lives here so the L1 vein card (the single
- * custom {@code Feature<GTVeinConfig>} + JSON vein-table port of WorldgenOresLarge's
- * 4-material layering, WorldgenOresLarge.java:46-137) drops its
- * {@code FEATURES.register(...)} row into an existing wiring. A
- * {@code GT6WorldgenPlacements} DeferredRegister (custom PlacementModifier seam) is
- * deliberately NOT created until L1 needs one — an empty second register is dead weight
- * (the spec's "GT6WorldgenPlacements(若需)" clause).
+ * <p>L0 registered ZERO entries (the 17 stone blobs are pure datagen over the vanilla
+ * {@code Feature.ORE} + {@code OreConfiguration}). Task p30-w6-t1-trees-nine lands the
+ * FIRST custom features: the nine {@link GT6TreeFeature} instances (one per
+ * {@link GT6TreeKind}, the grow-semantics option-b ruling) — the sapling grower and the
+ * placed feature run the same code through the configured-feature key
+ * ({@code GT6Worldgen.treeConfiguredKey}). The L1 vein card still drops its rows into
+ * this register.
  *
  * <p>KJS face (the card declaration): configured/placed/biome-modifier JSONs are the
  * tier-a datapack-native surface; the Feature/codec registration here is the registry
@@ -32,8 +36,33 @@ import net.minecraftforge.registries.DeferredRegister;
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Features {
 
-    /** The L1 custom-feature register (vanilla {@code minecraft:feature} registry, the DeferredRegister.create(ResourceKey, modid) overload — both legs same shape). */
+    /** The custom-feature register (vanilla {@code minecraft:feature} registry, the DeferredRegister.create(ResourceKey, modid) overload — both legs same shape). */
     public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, "gt6");
+
+    /**
+     * The 9 tree feature INSTANCES, GT6TreeBlocks.KINDS order — registry ids {@code
+     * tree_<snake>} (the GT6Worldgen.treeEntryPath scheme over the FEATURE registry: the
+     * configured JSON's "type" field is this id). The list holds the plain instances (NOT
+     * registry handles): datagen serializes the instance itself, and the handle face stays
+     * inside the DeferredRegister (the stonecutter RegistryObject swap table is typed to
+     * concrete element classes — the wildcard Feature<?> is the ponytail-avoided shape).
+     */
+    public static final List<Feature<?>> TREE_FEATURES = registerTreeFeatures();
+
+    private static List<Feature<?>> registerTreeFeatures() {
+        List<Feature<?>> rList = new ArrayList<>(GT6TreeBlocks.KINDS.size());
+        for (GT6TreeKind tKind : GT6TreeBlocks.KINDS) {
+            Feature<?> tFeature = new GT6TreeFeature(tKind);
+            FEATURES.register(GT6Worldgen.treeEntryPath(tKind.snake()), () -> tFeature);
+            rList.add(tFeature);
+        }
+        return List.copyOf(rList);
+    }
+
+    /** The feature instance of a kind (index-aligned with KINDS). */
+    public static GT6TreeFeature treeFeature(GT6TreeKind aKind) {
+        return (GT6TreeFeature) TREE_FEATURES.get(aKind.ordinal());
+    }
 
     private GT6Features() {
     }
