@@ -305,6 +305,15 @@ SESSION_GROUPS = (
     # restored CO2 exhaust. Admission mirrors the p29 W3 cluster form.
     # --group p29_w4_chemicals matches through the chains' embedded name prefix.
     ("p29_w4_chemicals_cracker", "p29_w4_chemicals_gas_turbine"),
+    # P29 W4 card ② (p29-w4-battery-storage): the two battery chains — one fresh
+    # z=336 band, x-disjoint columns (charge 480..483 / discharge 490..494); the
+    # charge leg runs the source->box doInject cap (buffer 10240) + the top-band
+    # battery push (battery lands exactly 1280 EU) + the volt-32 overvoltage
+    # reject; the discharge leg runs four charged batteries -> wiremill_ulv row
+    # completion (the supply arm for the W4 eu-bridge cards) + the 8-EU-vs-oven
+    # minIn-16 white burn. Admission mirrors the p29 W3 cluster form.
+    # --group p29_w4_battery matches through the chains' embedded name prefix.
+    ("p29_w4_battery_charge", "p29_w4_battery_discharge"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
