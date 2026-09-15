@@ -75,7 +75,7 @@ CHAIN = Chain(
     name="p29_w5_t7_pocket_ring",
     slug="p29w5t7pocketring",
     sites=gt6world.declare_sites(SITE),
-    preferred_ports=(26471, 26481),      # this card's pinned rcon/query pair (the 2647x segment)
+    preferred_ports=(26471, 26481),      # per-chain pair — DISAGREEING pins on purpose (session_ports: the session falls back to the node segments, keeping the --dual legs apart)
     steps=steps,
 )
 

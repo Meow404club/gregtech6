@@ -16,7 +16,7 @@ Chain semantics (/gt6pocket face drives the STATIC seams the item's own isCorrec
 
   C the attack arms: knife attack=2.0 classifies=[] (GT_Tool_Knife.getBaseDamage :56-58,
     no modern knife action yet — the t2 pool), scissors attack=1.0, multitool
-    form=0 attack=0.0 (the closed form).
+    form=0 attack=0.0 mines=false speed=1.0 (the closed form).
 
   D the teardown. No other world state.
 
@@ -70,7 +70,7 @@ steps += [
     phase("C: the attack arms — knife 2.0 / scissors 1.0 / the closed multitool 0"),
     Step(f"gt6pocket face knife {LOG}", expect="form=1 classifies=[] attack=2.0"),
     Step(f"gt6pocket face scissors {LOG}", expect="form=6 classifies=[] attack=1.0"),
-    Step(f"gt6pocket face multitool {LOG}", expect="form=0 classifies=[] attack=0.0 mines=false"),
+    Step(f"gt6pocket face multitool {LOG}", expect="form=0 classifies=[] attack=0.0 block=minecraft:oak_log mines=false speed=1.0"),
 ]
 
 # ------------------------------------------------- D: teardown
@@ -88,7 +88,7 @@ CHAIN = Chain(
     name="p29_w5_t7_pocket_faces",
     slug="p29w5t7pocketfaces",
     sites=gt6world.declare_sites(SITE),
-    preferred_ports=(26471, 26481),      # this card's pinned rcon/query pair (shared with the sibling chains)
+    preferred_ports=(26472, 26482),      # per-chain pair — DISAGREEING pins on purpose (session_ports: the session falls back to the node segments, keeping the --dual legs apart)
     steps=steps,
 )
 

@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 """p29_w5_t7_pocket_smoke — the pocket multitool smoke chain (task p29-w5-t7-pocket-eight,
-the ACCEPTANCE RCON 替身面 arm 4: the chisel-form zero-behavior smoke + the mCheckTarget
-negative — the switch must NOT fire when the target carries a tile entity, the upstream
+the ACCEPTANCE RCON 替身面 arm 4: the chisel-form smoke + the mCheckTarget negative — the
+switch must NOT fire when the target carries a tile entity, the upstream
 Behavior_Switch_Metadata onItemUseFirst :43-50 gate).
 
 Chain semantics (/gt6pocket use drives ONE real useOn dispatch with a fake player):
 
-  A the zero-behavior arm: pocket_multitool_chisel NON-sneak at a bare stone — the stone
-    gate finds no chisel recipe for vanilla stone (GTChiselItem.stoneToolClick returns 0),
-    the block stays and the form stays: "result=PASS held=pocket_multitool_chisel block
-    minecraft:stone->minecraft:stone" (the chisel decalcify/stone faces RIDE the delegated
-    twin statics; their live behavior is the p16/p19/p21 chains' domain).
+  A the delegated-face arm: pocket_multitool_chisel NON-sneak at a bare stone — the stone
+    gate finds the vanilla stone -> chiseled stone bricks row LIVE through the delegated
+    GTChiselItem.stoneToolClick static (the P16 face rides; the CONVERSION pays the twin's
+    durabilityPoints(10000) = 25 vanilla points on the POCKET stack — the payment rides
+    the held stack through the twin's own item-layer conversion). The forge live run
+    DISPROVED the zero-behavior assumption this arm originally asserted (vanilla stone IS
+    a chisel recipe target in this repo) — the assertion now pins the conversion, the
+    stronger half-face.
 
   B the mCheckTarget negative: pocket_multitool_saw SNEAK at a chest (a BE target) — the
     switch arm is blocked (no switch on a tile-entity target), the saw form has no BE
@@ -43,12 +46,12 @@ CHEST = "405 64 352"
 
 steps = []
 
-# ------------------------------------------------- A: the zero-behavior arm
+# ------------------------------------------------- A: the delegated-face arm
 steps += [
-    phase("A: the zero-behavior arm — chisel form, bare stone, non-sneak: PASS, nothing changes"),
+    phase("A: the delegated chisel face — non-sneak bare stone converts, the POCKET stack pays"),
     Step(f"setblock {STONE} minecraft:stone", expect="Changed the block"),
     Step(f"gt6pocket use chisel {STONE}",
-         expect="result=PASS held=pocket_multitool_chisel@0 block minecraft:stone->minecraft:stone"),
+         expect="result=CONSUME held=pocket_multitool_chisel@25 block minecraft:stone->minecraft:chiseled_stone_bricks"),
 ]
 
 # ------------------------------------------------- B: the mCheckTarget negative
@@ -61,9 +64,9 @@ steps += [
 
 # ------------------------------------------------- C: the switch positive
 steps += [
-    phase("C: the switch positive — bare sneak target wraps chisel -> multitool"),
+    phase("C: the switch positive — bare sneak target wraps chisel -> multitool (the :183 hop)"),
     Step(f"gt6pocket use chisel {STONE} sneak",
-         expect="result=CONSUME held=pocket_multitool@0 block minecraft:stone->minecraft:stone"),
+         expect="result=CONSUME held=pocket_multitool@0 block minecraft:chiseled_stone_bricks->minecraft:chiseled_stone_bricks"),
 ]
 
 # ------------------------------------------------- D: teardown
@@ -78,7 +81,7 @@ CHAIN = Chain(
     name="p29_w5_t7_pocket_smoke",
     slug="p29w5t7pocketsmoke",
     sites=gt6world.declare_sites(SITE),
-    preferred_ports=(26471, 26481),      # this card's pinned rcon/query pair (shared with the sibling chains)
+    preferred_ports=(26473, 26483),      # per-chain pair — DISAGREEING pins on purpose (session_ports: the session falls back to the node segments, keeping the --dual legs apart)
     steps=steps,
 )
 
