@@ -30,6 +30,8 @@ import net.neoforged.neoforge.common.loot.LootModifier;
 //lesson — the loot subtree is NOT on the stonecutter swap table).
 *///?}
 
+import gregtech6.items.tools.GTBranchCutterItem;
+import gregtech6.items.tools.GTSenseItem;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -305,6 +307,9 @@ public final class GT6ToolLootModifiers {
 				aDrops.add(new ItemStack(tRock.get(), 1 + java.util.concurrent.ThreadLocalRandom.current().nextInt(4))); // :66
 				return true;
 			}
+			case SENSE_VEGETAL -> {
+				return GTSenseItem.convertVegetal(aState, aDrops); // task p29-w5-t4-field-five — the grass/fern self-drop + the dead-bush stick
+			}
 		}
 		return false;
 	}
@@ -344,7 +349,21 @@ public final class GT6ToolLootModifiers {
 		 * REPLACES the drops with 1-4 of the crushed material item (the :66
 		 * {@code 1+RNGSUS.nextInt(4)} row).
 		 */
-		CLUB_ROCK_CRUSH
+		CLUB_ROCK_CRUSH,
+		/**
+		 * The sense grass/fern self-drop + dead-bush stick conversion (task
+		 * p29-w5-t4-field-five; upstream harvestGrass/harvestStick, ToolStats.java:111-176) —
+		 * pure, rides {@link GT6ToolLootModifiers#convert} →
+		 * {@code GTSenseItem.convertVegetal}.
+		 */
+		SENSE_VEGETAL,
+		/**
+		 * The branch-cutter leaves→sapling/apple conversion (task p29-w5-t4-field-five;
+		 * upstream GT_Tool_BranchCutter.java:84-92). NOT a pure convert-mode member —
+		 * the apple arm reads the tool's fortune enchantment + the loot random, so the
+		 * dispatch lives on {@link #doApply} over {@code GTBranchCutterItem.convertLeaves}.
+		 */
+		BRANCHCUTTER_LEAVES
 	}
 
 		private static final Codec<Mode> MODE_CODEC = Codec.STRING.xmap(Mode::valueOf, Mode::name);
@@ -382,7 +401,24 @@ public final class GT6ToolLootModifiers {
 
 		@Override
 		protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> aLoot, LootContext aContext) {
-			convert(mMode, aContext.getParamOrNull(LootContextParams.BLOCK_STATE), aLoot);
+			BlockState tState = aContext.getParamOrNull(LootContextParams.BLOCK_STATE);
+			if (mMode == GT6ToolConvertModifier.Mode.BRANCHCUTTER_LEAVES) {
+				// the apple arm reads the tool's fortune + the loot random (upstream :83/:86 carried
+				// both through the HarvestDropsEvent; the 1.20.1 context has no fortune param — the
+				// TOOL stack is the carrier, the 1.7.10-identical read)
+				ItemStack tTool = aContext.getParamOrNull(LootContextParams.TOOL);
+				int tFortune = 0;
+				//? if forge {
+				tFortune = tTool == null ? 0 : tTool.getEnchantmentLevel(net.minecraft.world.item.enchantment.Enchantments.BLOCK_FORTUNE);
+				//?} else {
+				/*tFortune = tTool == null ? 0 : tTool.getEnchantmentLevel(aContext.getLevel().holderOrThrow(net.minecraft.world.item.enchantment.Enchantments.FORTUNE));
+				//21.1: the enchantment argument went Holder (Enchantments.FORTUNE = ResourceKey →
+				//holderOrThrow; javap 21.1.249 Enchantments/ItemStack).
+				*///?}
+				GTBranchCutterItem.convertLeaves(tState, aLoot, tFortune, aContext.getRandom());
+				return aLoot;
+			}
+			convert(mMode, tState, aLoot);
 			return aLoot;
 		}
 	}

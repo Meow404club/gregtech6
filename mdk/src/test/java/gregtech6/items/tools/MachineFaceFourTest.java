@@ -173,11 +173,14 @@ public class MachineFaceFourTest {
 	@Test
 	public void theFourRowsAreTheTableTailInOrder() {
 		int tSize = GT6Tools.TAB_TABLE.size();
-		assertTrue(tSize >= 14, "the table must carry at least the ten pre-wave rows plus the four");
-		assertSame(GT6Tools.SOFT_HAMMER, GT6Tools.TAB_TABLE.get(tSize - 4), "the soft hammer is the tail's first row");
-		assertSame(GT6Tools.MONKEY_WRENCH, GT6Tools.TAB_TABLE.get(tSize - 3), "the monkey wrench is the tail's second row");
-		assertSame(GT6Tools.MAGNIFYING_GLASS, GT6Tools.TAB_TABLE.get(tSize - 2), "the magnifying glass is the tail's third row");
-		assertSame(GT6Tools.PINCERS, GT6Tools.TAB_TABLE.get(tSize - 1), "the pincers is the tail's last row");
+		assertTrue(tSize >= 18, "the table must carry at least the fourteen pre-t4 rows plus the four");
+		// rows 22..25 absolute — the t4-field-five card appended five rows behind this
+		// four (the dynamic tail pin went stale at t4; the tail-append discipline keeps
+		// EARLIER rows stable, so the absolute pin is the immune form)
+		assertSame(GT6Tools.SOFT_HAMMER, GT6Tools.TAB_TABLE.get(22), "row 22 is the soft hammer");
+		assertSame(GT6Tools.MONKEY_WRENCH, GT6Tools.TAB_TABLE.get(23), "row 23 is the monkey wrench");
+		assertSame(GT6Tools.MAGNIFYING_GLASS, GT6Tools.TAB_TABLE.get(24), "row 24 is the magnifying glass");
+		assertSame(GT6Tools.PINCERS, GT6Tools.TAB_TABLE.get(25), "row 25 is the pincers");
 		assertEquals(rl("soft_hammer"), GT6Tools.SOFT_HAMMER.getId());
 		assertEquals(rl("monkey_wrench"), GT6Tools.MONKEY_WRENCH.getId());
 		assertEquals(rl("magnifying_glass"), GT6Tools.MAGNIFYING_GLASS.getId());
