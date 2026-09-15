@@ -8077,3 +8077,12 @@ SAME visible pixels, the lightningrod one-texture ruling).
   + `overlay/side.png` (the transformer bake treatment). Produced by
   `mdk/tools/bake_battery_textures.py`; the circuit-carrier items reuse the in-repo
   `item/integrated_circuit.png` (no new file, the declared placeholder).
+Hot-lube append, task p29-w4-hot-lube (2026-09-15): the Lubricant Bucket item
+icon borrows the VANILLA `item/bucket.png` (1.20.1 client jar, 16x16,
+byte-identical, sha256 verified) — the port's declared single-item-container
+face needs a neutral bucket glyph; the tinted/filled upgrade rides the
+fluid-container capability card.
+
+- `gt6/textures/item/lubricant_bucket.png` — vanilla
+  `assets/minecraft/textures/item/bucket.png` verbatim,
+  sha256 `3f14980d6d2dea8d547e44104a55a51d62bee71bd45f16068113b279b3d2d042`

@@ -258,6 +258,12 @@ public final class GT6ItemModels extends ItemModelProvider {
         // attribution)
         withExistingParent("integrated_circuit", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/integrated_circuit"));
+        // the Lubricant Bucket item (task p29-w4-hot-lube ④) — item/generated over the
+        // byte-identical vanilla bucket icon borrow (assets/README.md attribution; the
+        // crafting-ingredient face needs a neutral bucket glyph, the filled/tinted upgrade
+        // rides the fluid-container capability card)
+        withExistingParent("lubricant_bucket", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/lubricant_bucket"));
         // the spray-can family (task p22-spraycan-items) — 18 item/generated models over the
         // byte-identical upstream icon borrows (gt.multiitem.randomtools metas
         // 1000+2i/1096/999, assets/README.md attribution): one model per colour + the remover

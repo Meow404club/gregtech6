@@ -8209,3 +8209,5 @@ direct	fluid.gt6.heavywater	重水	hand
 direct	fluid.gt6.semiheavywater	半重水	hand
 direct	fluid.gt6.tritiatedwater	超重水	hand
 direct	fluid.gt6.lubricant	润滑油	hand
+direct	item.gt6.lubricant_bucket	润滑油桶	hand
+direct	item.gt6.lubricant_bucket.tooltip	仅限工业用途！	hand

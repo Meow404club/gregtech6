@@ -2880,6 +2880,8 @@
   "item.gt6.hammer": "Hammer",
   "item.gt6.integrated_circuit": "Selector Tag",
   "item.gt6.integrated_circuit.configuration": "Configuration: %s",
+  "item.gt6.lubricant_bucket": "Lubricant Bucket",
+  "item.gt6.lubricant_bucket.tooltip": "Industrial Use ONLY!",
   "item.gt6.mold_ceramic_arrow_raw": "Ceramic Arrow Mold (Raw)",
   "item.gt6.mold_ceramic_axe_raw": "Ceramic Axe Mold (Raw)",
   "item.gt6.mold_ceramic_billet_raw": "Ceramic Billet Mold (Raw)",

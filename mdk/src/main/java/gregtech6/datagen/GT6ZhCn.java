@@ -944,6 +944,10 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.cover_controller");
 		addDirect("item.gt6.integrated_circuit");
 		addDirect(GT6Circuits.TOOLTIP_KEY);
+		// task p29-w4-hot-lube ④ — the Lubricant Bucket + the "Industrial Use ONLY!"
+		// tooltip (仅限工业用途！, the :617 hand row; 润滑油桶 the naming candidate).
+		addDirect("item.gt6.lubricant_bucket");
+		addDirect(gregtech6.item.GT6LubricantBucket.TOOLTIP_KEY);
 		addDirect(GT6JeiPlugin.INFO_KEY_COKE_OVEN);
 		addDirect("block.gt6.example_chest");
 		// task p28-cfoam-lang-key: the TestMachine framework blocks joined the coverage gate —
