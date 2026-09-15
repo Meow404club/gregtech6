@@ -91,6 +91,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoodFluids(); // task p21-drying-food-fluids
         addDyeChemicalFluids(); // task p24-dye-chemical-fluids — table-tail append
         addCFoamFluids(); // task p26-c-foam-fluid-refill — table-tail append
+        addChemicalFluids(); // task p29-w4-f1-chemicals — table-tail append
         addCFoamBlocks(); // task p26-c-foam-block-family — table-tail append
         addElectricWires();
         addMachines();
@@ -232,6 +233,26 @@ public class GT6EnUs extends LanguageProvider {
         }
         for (GTFluids.CFoamFluid tFamily : GTFluids.CFOAMS_OWNED) {
             add(tFamily.descriptionId(), tFamily.displayName());
+        }
+    }
+
+    /**
+     * Chemical family keys (task p29-w4-f1-chemicals): one description entry per
+     * {@link GTFluids.ChemicalFluidSpec} row — the exact descriptionId the FluidType is
+     * registered with, walked from {@link GTFluids#CHEMICAL_SPECS} so the lang face cannot
+     * drift from the registered fluids. Values ride the row's displayName: the upstream
+     * display names verbatim — the oils' {@code FL.create} local strings
+     * (Loader_Fluids.java:59-63 "Very Heavy Oil"/"Heavy Oil"/"Raw Oil"/"Light Oil"/
+     * "Soulsand Oil"), the plasma literals (:40-41 "Helium Plasma"/"Nitrogen Plasma"),
+     * "Liquid Oxygen" (:68), and the createGas material local names for the rest
+     * (FL.java:1080 — the MT.java mNameLocal face, "Propane"/"Methane"/"Carbon Dioxide"/
+     * "Hydrogen"/"Nitrogen"/the noble gases). zh values ride the reference table's hand
+     * layer (the GT6ZhCn mirror walk; the dump carries all 25 faces — tmp/gregtech.lang
+     * S:fluid.* rows cited on the zh side).
+     */
+    private void addChemicalFluids() {
+        for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.CHEMICAL_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
         }
     }
 
