@@ -52,6 +52,8 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 	 */
 	static final List<String> MODIFIER_NAMES = List.of(
 			"construction_ender_chest",
+			"scissors_plant_self",
+			"scoop_plant_self",
 			"spade_harvest",
 			"universal_spade_openable",
 			"axe_tree_fell",
@@ -106,6 +108,14 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 		add("sense_vegetal", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.SENSE.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.SENSE_VEGETAL));
+		// task p29-w5-t5-scene-six — the scissors vine self-drop (GT_Tool_Scissors.java:87-101)
+		// and the scoop shears-class vine+cobweb full-drop; one shared mode, two identity gates.
+		add("scissors_plant_self", new GT6ToolLootModifiers.GT6ToolConvertModifier(
+				conditions(GT6Tools.SCISSORS.get()),
+				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.PLANT_SELF_DROP));
+		add("scoop_plant_self", new GT6ToolLootModifiers.GT6ToolConvertModifier(
+				conditions(GT6Tools.SCOOP.get()),
+				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.PLANT_SELF_DROP));
 	}
 
 	private static LootItemCondition[] conditions(net.minecraft.world.item.Item aTool) {
