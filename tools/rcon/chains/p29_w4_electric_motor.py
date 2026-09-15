@@ -39,7 +39,7 @@ M3_SINK = gt6world.Site(470, 65, Z + 1)
 
 steps = [
     phase("A: the T1 delivery leg — EU 32 in, RU 16 out, the axle spins"),
-    Step(f"setblock {F(M1)} gt6:electric_motor[facing=north]", expect="Changed the block"),
+    Step(f"setblock {F(M1)} gt6:electric_motor[facing=south]", expect="Changed the block"),
     Step(f"gt6energy place {F(M1_SRC)}", expect="GT6 energy source placed at"),
     Step(f"gt6energy type {F(M1_SRC)} EU", expect="type ENERGY.ELECTRICITY"),
     Step(f"gt6energy volt {F(M1_SRC)} 32", expect="voltage 32 EU"),
@@ -49,7 +49,7 @@ steps = [
     Step(f"gt6bridge stat {F(M1)}", expect="half true", sleep=3.0, poll=15.0),
 
     phase("B: the T3 rung — 512 EU in, 256 RU out"),
-    Step(f"setblock {F(M3)} gt6:electric_motor_t3[facing=north]", expect="Changed the block"),
+    Step(f"setblock {F(M3)} gt6:electric_motor_t3[facing=south]", expect="Changed the block"),
     Step(f"gt6energy place {F(M3_SRC)}", expect="GT6 energy source placed at"),
     Step(f"gt6energy type {F(M3_SRC)} EU", expect="type ENERGY.ELECTRICITY"),
     Step(f"gt6energy volt {F(M3_SRC)} 512", expect="voltage 512 EU"),

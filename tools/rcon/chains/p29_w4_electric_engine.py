@@ -40,7 +40,7 @@ E1_SINK = gt6world.Site(458, 65, Z + 1)  # the RU axle seat
 
 steps = [
     phase("A: the waste arm — the KU emission has no consumer, the intake still pays"),
-    Step(f"setblock {F(E1)} gt6:electric_engine[facing=north]", expect="Changed the block"),
+    Step(f"setblock {F(E1)} gt6:electric_engine[facing=south]", expect="Changed the block"),
     Step(f"gt6energy place {F(E1_SRC)}", expect="GT6 energy source placed at"),
     Step(f"gt6energy type {F(E1_SRC)} EU", expect="type ENERGY.ELECTRICITY"),
     Step(f"gt6energy volt {F(E1_SRC)} 32", expect="voltage 32 EU"),

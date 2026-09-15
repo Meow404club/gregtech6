@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """p29-w4-eu-bridge (heater leg) — the Electric Heater EU->HU live acceptance chain
 (task p29-w4-eu-bridge RCON group p29_w4_eu_bridge; the p29_w3_large_dynamo rig
-geometry: the /gt6energy dial at z-1, the machine facing=north, the consumer east of
+geometry: the /gt6energy dial at z-1, the machine facing=south (the BACK face north toward the dial seat), the consumer east of
 the emission face).
 
   A the T1 delivery leg: the EU dial (volt 32 = the NBT_INPUT rec column) behind the
@@ -45,7 +45,7 @@ H5_SINK = gt6world.Site(452, 65, Z + 1)
 
 steps = [
     phase("A: the T1 delivery leg — EU 32 in, HU 16 out, the boiler eats the heat"),
-    Step(f"setblock {F(H1)} gt6:electric_heater[facing=north]", expect="Changed the block"),
+    Step(f"setblock {F(H1)} gt6:electric_heater[facing=south]", expect="Changed the block"),
     Step(f"gt6energy place {F(H1_SRC)}", expect="GT6 energy source placed at"),
     Step(f"gt6energy type {F(H1_SRC)} EU", expect="type ENERGY.ELECTRICITY"),
     Step(f"gt6energy volt {F(H1_SRC)} 32", expect="voltage 32 EU"),
@@ -77,7 +77,7 @@ steps = [
     Step(f"gt6energy mode {F(H1_SRC)} off", expect="emitting false"),
 
     phase("D: the T5 rung — 8192 EU in, 4096 HU out"),
-    Step(f"setblock {F(H5)} gt6:electric_heater_t5[facing=north]", expect="Changed the block"),
+    Step(f"setblock {F(H5)} gt6:electric_heater_t5[facing=south]", expect="Changed the block"),
     Step(f"gt6energy place {F(H5_SRC)}", expect="GT6 energy source placed at"),
     Step(f"gt6energy type {F(H5_SRC)} EU", expect="type ENERGY.ELECTRICITY"),
     Step(f"gt6energy volt {F(H5_SRC)} 8192", expect="voltage 8192 EU"),

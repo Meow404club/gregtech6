@@ -42,10 +42,10 @@ steps = [
     # path on 1.20.1 (the cracker form); the fill side is the WORLD south = the machine
     # BACK for the north-facing placer canon (the :1386 NBT_TANK_SIDE_IN SBIT_B)
     Step(f"gt6machine roasting_oven input 1 {F(R1)}",
-         expect="GT6 roasting_oven input: 1x dust_coal into slot 0",
-         node_expects={"1.21.1": "GT6 roasting_oven input: 1x gt6:dust_coal into slot 0"}),
+         expect="GT6 roaster input: 1x dust_coal into slot 0",  # the report name is the BE tile-entity name ("roaster"), not the block path
+         node_expects={"1.21.1": "GT6 roaster input: 1x gt6:dust_coal into slot 0"}),
     Step(f"gt6machine roasting_oven fluid fill south gt6:carbondioxide 864 {F(R1)}",
-         expect="filled 864/1000 L of gt6:carbondioxide (ACCEPTED), input tanks hold 864 L"),
+         expect="filled 864/864 L of gt6:carbondioxide (ACCEPTED), input tanks hold 864 L"),  # the tank takes exactly the row amount
     Step(f"gt6machine roasting_oven check {F(R1)}",
          expect="minIn=16 recIn=32 maxIn=64"),
     Step(f"gt6machine roasting_oven check {F(R1)}",
