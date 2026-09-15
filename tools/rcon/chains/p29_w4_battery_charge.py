@@ -91,7 +91,7 @@ steps = [
     Step(f"gt6energy mode {SRC2_P} on", expect="emitting true", sleep=2.5),
     # the buffer reads ZERO after the window: consumed-but-not-stored (:183), and
     # the ~50 ticks stay inside the 100-strike soft ladder so the box survives
-    Step(f"data get block {BOX2_P} gt.energy", expect="gt.energy: 0"),
+    Step(f"data get block {BOX2_P}", expect="gt.energy: 0L"),
     Step(f"gt6energy mode {SRC2_P} off", expect="emitting false"),
 ]
 

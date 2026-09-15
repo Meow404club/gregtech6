@@ -79,7 +79,9 @@ MILL_FEED = {
     "1.20.1": f'data merge block {MILL_P} {{inventory:{{Size:2,Items:[{{Slot:0b,id:"gt6:stick_copper",Count:1b}}]}}}}',
     "1.21.1": f'data merge block {MILL_P} {{inventory:{{Size:2,Items:[{{Slot:0b,id:"gt6:stick_copper",count:1}}]}}}}',
 }
-MILL_OUT = {"1.20.1": "outputs=[4x wire_fine_copper; ]", "1.21.1": "outputs=[4x gt6:wire_fine_copper; ]"}
+# the completion renders in the CHECK report's out[N] slot face (the inject
+# report's outputs=[...] shape is a different command, the p28 arm-A distinction)
+MILL_OUT = {"1.20.1": "out[0]=4x wire_fine_copper", "1.21.1": "out[0]=4x gt6:wire_fine_copper"}
 
 steps = [
     # ---------------------------------------------------------------- arm A
