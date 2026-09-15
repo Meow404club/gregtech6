@@ -56,6 +56,7 @@ import gregtech6.items.tools.GTPincersItem;
 import gregtech6.items.tools.GTSoftHammerItem;
 import gregtech6.items.tools.GTWrenchItem;
 import gregtech6.items.tools.electric.GT6ElectricToolItem;
+import gregtech6.items.tools.pocket.GTPocketMultitoolItem;
 
 /**
  * The GT6 tool registration home — task p9-tool-crowbar spec ③, the ADR
@@ -221,6 +222,56 @@ public final class GT6Tools {
 	 */
 	public static final RegistryObject<Item> BENDING_CYLINDER_SMALL = ITEMS.register("bending_cylinder_small",
 			() -> new GT6BendingCylinderSmallItem(new Item.Properties().durability(GT6BendingCylinderSmallItem.DURABILITY_POINTS)));
+
+	// ─── the pocket multitool family (task p29-w5-t7-pocket-eight, tail-append) ───
+	// Eight forms of one tool (Loader_Tools.java:176-183): the closed multitool plus the
+	// seven switch faces, ring-chained by GTPocketMultitoolItem.next = (i+1)%8 (the :187-196
+	// NEI-redirect walk, which itself has no modern counterpart — the declared deviation
+	// puts all eight in the creative tab, the hide-face rides the JEI binding pool). One
+	// class, eight registrations (the card's base + form-parameter shape); pure durability
+	// 512 (the family value, ruling d) — NO battery/EU face (the reversal ruling: the :354
+	// recipe row carries no battery slot).
+
+	/** The closed form — item id {@code gt6:pocket_multitool} ("7 useful Tools in one!"). */
+	public static final RegistryObject<Item> POCKET_MULTITOOL = ITEMS.register("pocket_multitool",
+			() -> new GTPocketMultitoolItem(GTPocketMultitoolItem.MULTITOOL, new Item.Properties().durability(GTPocketMultitoolItem.DURABILITY_POINTS)));
+
+	/** The knife form — item id {@code gt6:pocket_multitool_knife} (the attack face). */
+	public static final RegistryObject<Item> POCKET_MULTITOOL_KNIFE = ITEMS.register("pocket_multitool_knife",
+			() -> new GTPocketMultitoolItem(GTPocketMultitoolItem.KNIFE, new Item.Properties().durability(GTPocketMultitoolItem.DURABILITY_POINTS)));
+
+	/** The saw form — item id {@code gt6:pocket_multitool_saw} (wood+ice mining). */
+	public static final RegistryObject<Item> POCKET_MULTITOOL_SAW = ITEMS.register("pocket_multitool_saw",
+			() -> new GTPocketMultitoolItem(GTPocketMultitoolItem.SAW, new Item.Properties().durability(GTPocketMultitoolItem.DURABILITY_POINTS)));
+
+	/** The file form — item id {@code gt6:pocket_multitool_file} (iron-bars mining, ×3). */
+	public static final RegistryObject<Item> POCKET_MULTITOOL_FILE = ITEMS.register("pocket_multitool_file",
+			() -> new GTPocketMultitoolItem(GTPocketMultitoolItem.FILE, new Item.Properties().durability(GTPocketMultitoolItem.DURABILITY_POINTS)));
+
+	/** The screwdriver form — item id {@code gt6:pocket_multitool_screwdriver}. */
+	public static final RegistryObject<Item> POCKET_MULTITOOL_SCREWDRIVER = ITEMS.register("pocket_multitool_screwdriver",
+			() -> new GTPocketMultitoolItem(GTPocketMultitoolItem.SCREWDRIVER, new Item.Properties().durability(GTPocketMultitoolItem.DURABILITY_POINTS)));
+
+	/** The wire cutter form — item id {@code gt6:pocket_multitool_wire_cutter} (the cutter useOn face delegates). */
+	public static final RegistryObject<Item> POCKET_MULTITOOL_WIRE_CUTTER = ITEMS.register("pocket_multitool_wire_cutter",
+			() -> new GTPocketMultitoolItem(GTPocketMultitoolItem.WIRE_CUTTER, new Item.Properties().durability(GTPocketMultitoolItem.DURABILITY_POINTS)));
+
+	/** The scissors form — item id {@code gt6:pocket_multitool_scissors} (the attack face). */
+	public static final RegistryObject<Item> POCKET_MULTITOOL_SCISSORS = ITEMS.register("pocket_multitool_scissors",
+			() -> new GTPocketMultitoolItem(GTPocketMultitoolItem.SCISSORS, new Item.Properties().durability(GTPocketMultitoolItem.DURABILITY_POINTS)));
+
+	/** The chisel form — item id {@code gt6:pocket_multitool_chisel} (the chisel useOn arms delegate). */
+	public static final RegistryObject<Item> POCKET_MULTITOOL_CHISEL = ITEMS.register("pocket_multitool_chisel",
+			() -> new GTPocketMultitoolItem(GTPocketMultitoolItem.CHISEL, new Item.Properties().durability(GTPocketMultitoolItem.DURABILITY_POINTS)));
+
+	/**
+	 * The pocket ring in switch order (task p29-w5-t7-pocket-eight) — the registration-row
+	 * sequence Loader_Tools.java:176-183 pins: each form's switch target is the NEXT entry,
+	 * the chisel wrapping back to the multitool (GTPocketMultitoolItem.next = (i+1)%8).
+	 */
+	public static final List<RegistryObject<Item>> POCKET_FORMS = List.of(POCKET_MULTITOOL, POCKET_MULTITOOL_KNIFE,
+			POCKET_MULTITOOL_SAW, POCKET_MULTITOOL_FILE, POCKET_MULTITOOL_SCREWDRIVER, POCKET_MULTITOOL_WIRE_CUTTER,
+			POCKET_MULTITOOL_SCISSORS, POCKET_MULTITOOL_CHISEL);
 
 	/**
 	 * The six dig tools — task p29-w5-t1-dig-six (the W5 tool wave card 1; rows 11-16 of
@@ -526,7 +577,8 @@ public final class GT6Tools {
 			JACKHAMMER_HV_NORMAL, JACKHAMMER_HV_NO_ORES,
 			BUZZSAW_LV, SCREWDRIVER_LV, HAND_DRILL_LV, HAND_MIXER_LV,
 			MONKEY_WRENCH_LV, MONKEY_WRENCH_MV, MONKEY_WRENCH_HV,
-			TRIMMER_LV);
+			TRIMMER_LV,
+			POCKET_MULTITOOL, POCKET_MULTITOOL_KNIFE, POCKET_MULTITOOL_SAW, POCKET_MULTITOOL_FILE, POCKET_MULTITOOL_SCREWDRIVER, POCKET_MULTITOOL_WIRE_CUTTER, POCKET_MULTITOOL_SCISSORS, POCKET_MULTITOOL_CHISEL); // task p29-w5-t7-pocket-eight — rows 57-64, the POCKET_FORMS order
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -659,6 +711,9 @@ public final class GT6Tools {
 				GT6Mod.LOGGER.info("GT6 tool registered: {} durability {} (electric)",
 						ForgeRegistries.ITEMS.getKey(tRow.get()), GT6ElectricToolItem.DURABILITY_POINTS);
 			}
+			// task p29-w5-t7-pocket-eight — one line for the ring (the census rides the tab line below)
+			GT6Mod.LOGGER.info("GT6 tool registered: gt6:pocket_multitool + 7 switch forms, durability {} (ring {})",
+					GTPocketMultitoolItem.DURABILITY_POINTS, POCKET_FORMS.size());
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

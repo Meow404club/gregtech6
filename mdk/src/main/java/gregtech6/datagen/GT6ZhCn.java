@@ -108,6 +108,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addKitchenUnits();      // task p26-kitchen-pot-bowl
 		addCrucibleJadeUnits(); // task p28-crucible-jade-face
 		addAnvilUnits();        // task p28-c-anvil
+		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 	}
 
 	/**
@@ -120,6 +121,34 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addAnvilUnits() {
 		addDirect("block.gt6.stone_anvil");
 		addDirect("block.gt6.blackstone_anvil");
+	}
+
+	/**
+	 * The pocket multitool family zh faces (task p29-w5-t7-pocket-eight, 15 hand rows):
+	 * NO dump face exists (the upstream 1.7.10 lang carries zero pocket rows — the
+	 * tmp/gregtech.lang sweep found only the written-book mention), so all fifteen ride
+	 * the HAND layer directly (the addAnvilUnits shape; these keys are registry-path
+	 * keyed, not meta-keyed, so plain add rows). Display names translate the :176-183
+	 * registration rows ("便攜多功能工具" style + the （X） parenthetical tails); the
+	 * tooltips translate the note columns + the switch hint. Provenance: hand, slug
+	 * p29-w5-t7-pocket-eight, 15 rows = the en band parity. Table-tail append, append-only.
+	 */
+	private void addPocketUnits() {
+		add("item.gt6.pocket_multitool", "便携多功能工具");
+		add("item.gt6.pocket_multitool_knife", "便携多功能工具（刀）");
+		add("item.gt6.pocket_multitool_saw", "便携多功能工具（锯）");
+		add("item.gt6.pocket_multitool_file", "便携多功能工具（锉）");
+		add("item.gt6.pocket_multitool_screwdriver", "便携多功能工具（螺丝刀）");
+		add("item.gt6.pocket_multitool_wire_cutter", "便携多功能工具（剪线钳）");
+		add("item.gt6.pocket_multitool_scissors", "便携多功能工具（剪刀）");
+		add("item.gt6.pocket_multitool_chisel", "便携多功能工具（凿子）");
+		add(gregtech6.items.tools.pocket.GTPocketMultitoolItem.SWITCH_TOOLTIP_KEY, "潜行右键切换模式");
+		add("tooltip.gt6.pocket.multitool", "7 种工具合而为一！");
+		add("tooltip.gt6.pocket.saw", "采木板更快，采原木较慢，可以采集冰。");
+		add("tooltip.gt6.pocket.file", "采集铁栏杆与其类似方块更快");
+		add("tooltip.gt6.pocket.wire_cutter", "采集线缆和导线更快");
+		add("tooltip.gt6.pocket.scissors", "拿着它的时候别到处乱跑！");
+		add("tooltip.gt6.pocket.chisel", "服务器延迟高时请务必小心使用！");
 	}
 
 	/**

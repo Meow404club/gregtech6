@@ -295,6 +295,20 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParent("trimmer_lv", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/electric/tip_electric_trimmer"))
             .texture("layer1", modLoc("item/electric/handle_electric_trimmer"));
+        // the pocket multitool family (task p29-w5-t7-pocket-eight) — eight handheld
+        // models over the byte-identical upstream iconset borrows (the POCKET_MULTITOOL_*
+        // pair per form + its OVERLAY pass, the two-layer wrench row shape — the pocket
+        // icons are complete single sprites, GT_Tool_Pocket_Multitool.getIcon :42-44,
+        // assets/README.md attribution), walked over the POCKET_FORMS id table so the
+        // model ids cannot drift (the spray-can band convention). The closed multitool
+        // rides the POCKET_MULTITOOL_CLOSED pair (the sprite tail "multitool").
+        for (net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tForm : gregtech6.registry.GT6Tools.POCKET_FORMS) {
+            String tTail = tForm.getId().getPath().replace("pocket_multitool", "").replaceFirst("^_", "");
+            if (tTail.isEmpty()) tTail = "multitool"; // the closed form → the _CLOSED pair
+            withExistingParent(tForm.getId().getPath(), mcLoc("item/handheld"))
+                .texture("layer0", modLoc("item/pocket/" + tTail))
+                .texture("layer1", modLoc("item/pocket/" + tTail + "_overlay"));
+        }
         // the food-can row0 subset (task p25-food-can-row0) — 8 item/generated models over
         // the byte-identical upstream icon borrows (gt.multiitem.randomtools/998 for the
         // empty can, gt.multiitem.cans/11-16 for the rotten family, :86 for the cookies

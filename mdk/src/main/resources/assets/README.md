@@ -8149,3 +8149,11 @@ MonkeyWrench getIcon inherits GT_Tool_Wrench_LV verbatim).
   the IN-REPO `item/material_sets/metallic/tool_head_*` sprites (no new file,
   the chisel/file/saw row convention). The OVERLAY passes are cut — the port
   draws the base borrow untinted (the family single-tier deviation).
+Pocket append, task p29-w5-t7-pocket-eight (2026-09-16): the eight pocket-multitool
+item icons + their OVERLAY passes borrow the upstream 1.7.10 iconset sprites
+byte-identical (16 files, POCKET_MULTITOOL_* + POCKET_MULTITOOL_*_OVERLAY.png from
+`textures/items/iconsets/`, the closed multitool sprite = the "Multitool" form per
+Textures.ItemIcons.POCKET_MULTITOOL_CLOSED, GT_Tool_Pocket_Multitool.getIcon :42-44;
+the CUTTER pair serves the wire-cutter form). Renamed to the snake id tails under
+`gt6/textures/item/pocket/` (multitool/knife/saw/file/screwdriver/wire_cutter/
+scissors/chisel + _overlay), 16x16 RGBA, sha256s of the copies match the sources.
