@@ -1532,17 +1532,28 @@ public final class GTFluids {
 	public static final List<ChemicalFluid> LUBRICANT_FLUIDS = LUBRICANT_FLUID_SPECS.stream().map(s -> specFluid(s, "lubricant fluid")).toList();
 
 	/**
-	 * The POWER_CONDUCTING seeds of the hot family — upstream FL.java:89-100: ic2hotcoolant,
-	 * hotmoltensodium, hotmoltentin and hotmoltenlicl ride the POWER_CONDUCTING set (the
-	 * cold ic2coolant deliberately does NOT — :89 vs :90); the pipe :184 void gate and the
-	 * :250 item-fill gate are the live consumers (GTFluidLists.POWER_CONDUCTING). The call
-	 * lives here because the four rows live here (GTFluidLists.java stays untouched).
+	 * The POWER_CONDUCTING seeds of the hot family — the upstream FL.java:89-102 enum block
+	 * verbatim, NINE rows (the review-round correction: the first cut read only the four
+	 * Hot_Molten and Coolant rows and missed the enum tail :97-102): ic2hotcoolant (:90),
+	 * hotmoltensodium (:95), hotmoltentin (:96), hotheavywater (:97), hotsemiheavywater
+	 * (:98), hottritiatedwater (:99), hotmoltenlicl (:100), hotcarbondioxide (:101 — the
+	 * GAS-flag row) and hothelium (:102 — the GAS-flag row). The UNSEEDED members of the
+	 * same block stay out verbatim: ic2coolant (:89 SIMPLE, LIQUID), thoriumsalt (:93
+	 * LIQUID) and ic2pahoehoelava (:105 SIMPLE, LIQUID). The pipe :184 void gate and the
+	 * :250 item-fill gate are the live consumers (GTFluidLists.POWER_CONDUCTING — a
+	 * POWER_CONDUCTING fluid cannot sit in ANY barrel, the tick voids it). The call lives
+	 * here because the rows live here (GTFluidLists.java stays untouched).
 	 */
 	static {
-		GTFluidLists.register("ic2hotcoolant"   , GTFluidLists.POWER_CONDUCTING);
-		GTFluidLists.register("hotmoltensodium" , GTFluidLists.POWER_CONDUCTING);
-		GTFluidLists.register("hotmoltentin"    , GTFluidLists.POWER_CONDUCTING);
-		GTFluidLists.register("hotmoltenlicl"   , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("ic2hotcoolant"    , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotmoltensodium"  , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotmoltentin"     , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotheavywater"    , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotsemiheavywater", GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hottritiatedwater", GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotmoltenlicl"    , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hotcarbondioxide" , GTFluidLists.POWER_CONDUCTING);
+		GTFluidLists.register("hothelium"        , GTFluidLists.POWER_CONDUCTING);
 	}
 
 	private GTFluids() {}

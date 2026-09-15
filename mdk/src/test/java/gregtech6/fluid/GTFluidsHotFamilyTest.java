@@ -107,7 +107,7 @@ public class GTFluidsHotFamilyTest extends GTOfflineTestBase {
 		assertNull(GTFluids.hotSpec("nonexistent"), "the lookup misses clean");
 	}
 
-	/** Acceptance ③ census half: the >340 K flag column — every row above the wood ceiling plus the FL.java:89-100 POWER_CONDUCTING membership (the cold coolant deliberately NOT). */
+	/** Acceptance ③ census half: the >340 K flag column — every row above the wood ceiling plus the FL.java:90+:95-102 POWER_CONDUCTING membership (nine rows — the cold coolant/thoriumsalt/pahoehoe deliberately NOT). */
 	@Test
 	public void theOver340KCarriersAndThePowerConductingSeedsArePinned() {
 		java.util.Set<String> tOver340 = new java.util.HashSet<>();
@@ -124,11 +124,17 @@ public class GTFluidsHotFamilyTest extends GTOfflineTestBase {
 				"hotcarbondioxide", "hothelium", "thoriumsalt", "ic2pahoehoelava",
 				"blaze", "sodium_molten", "tin_molten", "lithium_chloride_molten"), tOver340,
 				"the >340 K flag column — the RCON wood-barrel arm melts exactly this set");
-		// FL.java:89-100 — the four POWER_CONDUCTING rows (the pipe :184 void gate consumers)
-		assertTrue(GTFluidLists.POWER_CONDUCTING.contains("ic2hotcoolant"), ":90");
-		assertTrue(GTFluidLists.POWER_CONDUCTING.contains("hotmoltensodium"), ":95");
-		assertTrue(GTFluidLists.POWER_CONDUCTING.contains("hotmoltentin"), ":96");
-		assertTrue(GTFluidLists.POWER_CONDUCTING.contains("hotmoltenlicl"), ":100");
+		// FL.java:90 + :95-102 — the NINE POWER_CONDUCTING rows (the review-round correction:
+		// the enum tail :97-102 carries the three hot waters + the two hot GAS rows); the
+		// pipe :184 void gate consumers
+		for (String tPc : new String[] {"ic2hotcoolant", "hotmoltensodium", "hotmoltentin",
+				"hotheavywater", "hotsemiheavywater", "hottritiatedwater", "hotmoltenlicl",
+				"hotcarbondioxide", "hothelium"}) {
+			assertTrue(GTFluidLists.POWER_CONDUCTING.contains(tPc), tPc + ": the POWER_CONDUCTING flag row");
+		}
+		// the unseeded members of the same :89-105 block
 		assertTrue(!GTFluidLists.POWER_CONDUCTING.contains("ic2coolant"), ":89 — the COLD coolant is deliberately not power conducting");
+		assertTrue(!GTFluidLists.POWER_CONDUCTING.contains("thoriumsalt"), ":93 — LIQUID only");
+		assertTrue(!GTFluidLists.POWER_CONDUCTING.contains("ic2pahoehoelava"), ":105 — SIMPLE, LIQUID only");
 	}
 }

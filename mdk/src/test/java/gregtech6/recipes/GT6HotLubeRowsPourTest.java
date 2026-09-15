@@ -94,11 +94,12 @@ public class GT6HotLubeRowsPourTest extends GTRecipesOfflineTestBase {
 			assertEquals(1, tRow.mFluidInputs.length, "every FM.Hot row burns exactly one fuel fluid");
 			tByDuration.merge(tRow.mDuration, 1, Integer::sum);
 		}
-		// CS.java:216-234: blaze 6 / lava 5 / hot waters 1 x3 / coolant 20 / sodium 30 / tin 40 /
-		// heavy 50 / semiheavy 40 / tritiated 60 / CO2 20 / helium 30 / licl 15
+		// CS.java:216-234: blaze 6 / lava 5 / hot waters 1 x2 / geothermal 4 / coolant 20 /
+		// sodium 30 / tin 40 / heavy 50 / semiheavy 40 / tritiated 60 / CO2 20 / helium 30 / licl 15
 		assertEquals(1, tByDuration.get(6L), "blaze :191");
 		assertEquals(1, tByDuration.get(5L), "lava :192 EU_PER_LAVA/16 = 5");
-		assertEquals(3, tByDuration.get(1L), "hot_water + water_boiling + geothermal (:196/:200/:201)");
+		assertEquals(2, tByDuration.get(1L), "hot_water + water_boiling (:196/:200)");
+		assertEquals(1, tByDuration.get(4L), "geothermal :201 — the -16/4 review-round fix (was wrongly -2/1)");
 		assertEquals(2, tByDuration.get(20L), "EU_PER_COOLANT + EU_PER_CO2");
 		assertEquals(2, tByDuration.get(30L), "EU_PER_SODIUM + EU_PER_HELIUM");
 		assertEquals(2, tByDuration.get(40L), "EU_PER_TIN + EU_PER_SEMI_HEAVY_WATER");
@@ -139,16 +140,14 @@ public class GT6HotLubeRowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals(tExpected, tRequestedGt6, "the fuel-row id face closes over the declared carriers — no dead row");
 	}
 
-	/** Acceptance ⑤: the distillation pour — 5 true rows (the W3 smoke row preserved), each with SEVEN non-empty fluid product slots and the three dustTiny item slots at chance 5000. */
+	/** Acceptance ⑤ (the review-round shape): the distillation pour — SIX true rows (:352/:353/:355/:356/:358/:360, the W3 smoke row REMOVED — no upstream anchor and it crowded out :356), each with SEVEN non-empty fluid product slots and the three dustTiny item slots at chance 5000. */
 	@Test
 	public void distillationOilRowsCarrySevenFilledProductSlotsAndTheDustFace() throws Exception {
 		pourShipped("distillationtower");
-		assertEquals(6, GT6RecipeMaps.DISTILLATION_TOWER.mRecipeList.size(), "the W3 smoke row + the :352-:360 five true rows");
-		int tTrueRows = 0;
+		assertEquals(6, GT6RecipeMaps.DISTILLATION_TOWER.mRecipeList.size(), "the six :352-:360 true rows (the smoke row removed)");
 		Set<Long> tDurations = new HashSet<>();
 		for (Recipe tRow : GT6RecipeMaps.DISTILLATION_TOWER.mRecipeList) {
-			if (tRow.mFluidInputs.length != 1 || tRow.mFluidInputs[0].getAmount() != 25) continue; // the W3 smoke row (oil 1000 → creosote)
-			tTrueRows++;
+			assertEquals(25, tRow.mFluidInputs[0].getAmount(), "every oil row feeds 25 L");
 			assertEquals(64L, tRow.mEUt, "the :352-:360 EUt literal");
 			assertEquals(7, tRow.mFluidOutputs.length, "acceptance ⑤: SEVEN non-empty product slots");
 			for (int i = 0; i < 7; i++) {
@@ -158,13 +157,12 @@ public class GT6HotLubeRowsPourTest extends GTRecipesOfflineTestBase {
 			assertEquals(3, tRow.mOutputs.length, "the WaxParaffin/Asphalt/PetCoke dustTiny slots");
 			tDurations.add(tRow.mDuration);
 		}
-		assertEquals(5, tTrueRows, "the five oil true rows poured");
-		assertEquals(Set.of(256L, 196L, 128L, 64L), tDurations, "the duration ladder: :352 256 / :353 196 / :355 128 / :358+:360 share 64");
+		assertEquals(Set.of(256L, 196L, 128L, 64L), tDurations, "the duration ladder: :352 256 / :353 196 / :355+:356 128 / :358+:360 64");
 		Set<String> tExpectedDusts = Set.of("dust_tiny_wax_paraffin", "dust_tiny_asphalt", "dust_tiny_petroleum_coke");
 		assertTrue(mRequestedItemPaths.containsAll(tExpectedDusts), "the dust face: " + mRequestedItemPaths);
 		Set<String> tExpectedFluids = Set.of("liquid_extra_heavy_oil", "liquid_heavy_oil", "liquid_medium_oil",
-				"liquid_light_oil", "soulsandoil",
+				"oil", "liquid_light_oil", "soulsandoil",
 				"fuel", "diesel", "kerosine", "petrol", "propane", "butane", "lubricant");
-		assertTrue(mRequestedFluidPaths.containsAll(tExpectedFluids), "the oil-row id face (7 products + 5 feeds): " + mRequestedFluidPaths);
+		assertTrue(mRequestedFluidPaths.containsAll(tExpectedFluids), "the oil-row id face (7 products + 6 feeds, the :356 Oil_Normal = oil): " + mRequestedFluidPaths);
 	}
 }

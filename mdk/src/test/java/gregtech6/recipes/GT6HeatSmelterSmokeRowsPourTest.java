@@ -66,7 +66,8 @@ public class GT6HeatSmelterSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 	@Test
 	void theThreeShippedSmokeFilesPourIntoTheirMaps() throws Exception {
 		// the fuels_hot per-key poured count ratcheted 1 → 14 (the card-④ FM.Hot true rows
-		// appended behind the W3 smoke row; smelter/melter keep their single smoke rows)
+		// appended behind the :196 hot_water row, itself upgraded to the true-row framing;
+		// smelter/melter keep their single smoke rows)
 		java.util.Map<String, Integer> tExpected = java.util.Map.of("smelter", 1, "melter", 1, "fuels_hot", 14);
 		for (String tKey : new String[] {"smelter", "melter", "fuels_hot"}) {
 			pourShipped(tKey);
@@ -77,7 +78,7 @@ public class GT6HeatSmelterSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.MELTER.mRecipeList.size(), "the melter map holds the ice smoke row");
 		// task p29-w4-hot-lube appended the 13 FM.Hot true rows behind the W3 smoke row —
 		// the ratchet: 14 rows now, the smoke row still among them (pinned by content below)
-		assertEquals(14, GT6RecipeMaps.FUELS_HOT.mRecipeList.size(), "the fuels_hot map: the W3 hot-water row + the 13 card-④ FM.Hot rows");
+		assertEquals(14, GT6RecipeMaps.FUELS_HOT.mRecipeList.size(), "the fuels_hot map: the :196 hot-water TRUE row (the review-round upgrade from the smoke-row framing) + the 13 card-④ FM.Hot rows");
 	}
 
 	@Test
@@ -96,8 +97,9 @@ public class GT6HeatSmelterSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 	@Test
 	void theHotWaterFuelRowIsANegativeEutRowWorthTwoPowerPerLitre() throws Exception {
 		pourShipped("fuels_hot");
-		// the W3 smoke row is matched BY CONTENT now — the card-④ rows ride beside it (the
-		// row list is unordered, so the hot_water 1→1 pair is picked by its amount face)
+		// the :196 hot_water TRUE row is matched BY CONTENT now — the card-④ rows ride beside it
+		// (the row list is unordered, so the hot_water 1→1 pair is picked by its duration-1 face;
+		// both duration-1 rows carry eut -2 and |power| 2, so the content face pins them equally)
 		Recipe tRow = null;
 		for (Recipe tCandidate : GT6RecipeMaps.FUELS_HOT.mRecipeList) {
 			if (tCandidate.mDuration == 1 && tCandidate.mFluidInputs.length == 1 && tCandidate.mFluidInputs[0].getAmount() == 1) tRow = tCandidate;
