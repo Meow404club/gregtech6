@@ -1,6 +1,26 @@
 {
   "recipes": [
     {
+      "comment": "FM.Burn — Loader_Fuels.java:159 verbatim: methane 5 L, -64 EUt x 24, water 6 + carbon dioxide 3 out (the Burnable face of the methane FM.Gas row, :161).",
+      "fluidInputs": [{ "fluid": "gt6:methane", "amount": 5 }],
+      "fluidOutputs": [
+        { "fluid": "minecraft:water", "amount": 6 },
+        { "fluid": "gt6:carbondioxide", "amount": 3 }
+      ],
+      "duration": 24,
+      "eut": -64
+    },
+    {
+      "comment": "FM.Burn — Loader_Fuels.java:160 verbatim: gas_natural_gas 5 L, -64 EUt x 24, water 6 + carbon dioxide 3 out (the Burnable face of the natural_gas FM.Gas row, :162).",
+      "fluidInputs": [{ "fluid": "gt6:natural_gas", "amount": 5 }],
+      "fluidOutputs": [
+        { "fluid": "minecraft:water", "amount": 6 },
+        { "fluid": "gt6:carbondioxide", "amount": 3 }
+      ],
+      "duration": 24,
+      "eut": -64
+    },
+    {
       "comment": "FM.Burn — Loader_Fuels.java:179 verbatim: butane 7 L, -64 EUt x 42, water 7 + carbon dioxide 6 out (the Burnable Fuels face for the oil-burning machines; the map pours since the p29-w2 shared-layer key).",
       "fluidInputs": [{ "fluid": "gt6:butane", "amount": 7 }],
       "fluidOutputs": [

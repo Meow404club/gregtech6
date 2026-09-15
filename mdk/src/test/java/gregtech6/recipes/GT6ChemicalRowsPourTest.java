@@ -91,7 +91,7 @@ public class GT6ChemicalRowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals(2, GT6RecipeMaps.STEAM_CRACKING.mRecipeList.size(), "the two SteamCracking rows (:368-369)");
 		assertEquals(3, GT6RecipeMaps.CATALYTIC_CRACKING.mRecipeList.size(), "the three CatalyticCracking rows (:373-376, the ethanol double-id merged)");
 		assertEquals(6, GT6RecipeMaps.GAS_FUELS.mRecipeList.size(), "natural_gas + methane + butane + propane + ethylene + propylene");
-		assertEquals(4, GT6RecipeMaps.BURN.mRecipeList.size(), "butane + propane + ethylene + propylene (Loader_Fuels :179-188)");
+		assertEquals(6, GT6RecipeMaps.BURN.mRecipeList.size(), "the six Burnable rows (:159-188)");
 	}
 
 	/** Acceptance ② in: the SteamCracking rows carry the :368-369 ins/outs (2 in, 4 out, 16 EUt × 64). The map row list is a HashSet — the two rows match by CONTENT pattern, not iteration order. */
@@ -157,18 +157,19 @@ public class GT6ChemicalRowsPourTest extends GTRecipesOfflineTestBase {
 		assertTrue(mRequestedFluidPaths.containsAll(tExpected), "the FM.Gas id face: " + mRequestedFluidPaths);
 	}
 
-	/** The FM.Burn face: the same four gases over the Burnable map, the :179-188 durations (content-matched — the row list is unordered). */
+	/** The FM.Burn face: the same gases over the Burnable map, the :159-188 durations (content-matched — the row list is unordered). */
 	@Test
 	public void burnRowsCarryTheFuelSemantics() throws Exception {
 		pourShipped("burn");
-		assertEquals(4, GT6RecipeMaps.BURN.mRecipeList.size());
+		assertEquals(6, GT6RecipeMaps.BURN.mRecipeList.size(), "methane + natural_gas + butane + propane + ethylene + propylene (:159-188)");
 		Set<String> tSeen = new HashSet<>();
 		for (Recipe tRow : GT6RecipeMaps.BURN.mRecipeList) {
 			assertEquals(-64L, tRow.mEUt, "the NEGATIVE fuel EUt");
 			tSeen.add(tRow.mFluidInputs[0].getAmount() + "x" + tRow.mDuration);
 		}
-		assertEquals(Set.of("7x42", "5x30", "1x4", "1x3"), tSeen, "the litres×duration columns of :179/:182/:185/:188");
-		Set<String> tExpected = Set.of("butane", "propane", "ethylene", "propylene");
+		// the natural_gas and methane Burn rows share the 5 L × 24 column — five DISTINCT column pairs over six rows
+		assertEquals(Set.of("5x24", "7x42", "5x30", "1x4", "1x3"), tSeen, "the litres×duration columns of :159-188");
+		Set<String> tExpected = Set.of("methane", "natural_gas", "butane", "propane", "ethylene", "propylene");
 		assertTrue(mRequestedFluidPaths.containsAll(tExpected), "the FM.Burn id face: " + mRequestedFluidPaths);
 	}
 

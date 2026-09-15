@@ -59,8 +59,8 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 		// the cracked hydrocarbons (:45-48)
 		assertEquals(-1000, GTFluids.chemicalSpec("propane").density(), ":45 the density literal");
 		assertEquals(-1000, GTFluids.chemicalSpec("butane").density(), ":46 the density literal");
-		assertEquals(-100, GTFluids.chemicalSpec("propylene").density(), ":47 the STATE_GASEOUS carrier");
-		assertEquals(-100, GTFluids.chemicalSpec("ethylene").density(), ":48 the STATE_GASEOUS carrier");
+		assertEquals(1000, GTFluids.chemicalSpec("propylene").density(), "the FL.java:1130 formula over the 1.0 g/cm³ default (OreDictMaterial.java:240 — no uumMcfg on :1208)");
+		assertEquals(1000, GTFluids.chemicalSpec("ethylene").density(), "the FL.java:1130 formula over the 1.0 g/cm³ default (no uumMcfg on :1209)");
 		for (String tId : List.of("propane", "butane", "propylene", "ethylene")) {
 			GTFluids.ChemicalFluidSpec tSpec = GTFluids.chemicalSpec(tId);
 			assertEquals(300, tSpec.temperature(), tId + ": the four-arg create default");
@@ -94,7 +94,10 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 	 * plasma = boiling × 100 (OreDictMaterial.java:927) so the temperature rule lands on
 	 * min(300, plasma − 1) = 300 K, and the :1128-1136 density formula per material g/cm³:
 	 * heavier than the 0.0012 air weight → (long)(1000·g) &gt; 0, lighter → (long)(−0.1/g)
-	 * &lt; 0, the compounds carry no g/cm³ so the −100 STATE_GASEOUS carrier stands.
+	 * &lt; 0. The ELEMENT gases carry their measured g/cm³ (MT.java:380-476); the COMPOUNDS
+	 * ride the molecule-configuration recomputation (OreDictMaterial.java:478-492 over the
+	 * :240 default 1.0 — the uumMcfg rows sum the constituent g/cm³ over the recipe ratios,
+	 * carbon 2.267, MT.java:392) so they all SINK.
 	 */
 	@Test
 	public void gasClosureRidesTheCreateGasDensityAndTemperatureRules() {
@@ -110,9 +113,9 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			{"krypton"       ,     3}, // 1000×0.003733 = 3.73 → 3 (:425)
 			{"xenon"         ,     5}, // 1000×0.005887 = 5.89 → 5 (:443)
 			{"radon"         ,     9}, // 1000×0.00973 = 9.73 → 9 (:476)
-			{"methane"       ,  -100}, // no g/cm³ — the :1105 carrier (:1037)
-			{"carbondioxide" ,  -100}, // (:1035)
-			{"carbonmonoxide",  -100}, // (:1034)
+			{"methane"       ,  2267}, // molecule g/cm³ = 2.267 (C) + 4×0.00008988 (H) = 2.2674 → 1000×g (:1037 uumMcfg)
+			{"carbondioxide" ,  2269}, // 2.267 + 2×0.001429 (O) = 2.2699 → 2269 (:1035 uumMcfg)
+			{"carbonmonoxide",  2268}, // 2.267 + 0.001429 = 2.2684 → 2268 (:1034 uumMcfg)
 		};
 		assertEquals(13, tFormulas.length, "the gas closure is thirteen");
 		for (Object[] tRow : tFormulas) {
@@ -127,11 +130,13 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			assertTrue(tSpec.density() < 0 || tSpec.density() > 0, tId + ": never zero — the FL sign rule carries the gravity consumers");
 		}
 		// the negative-density gases ARE lighter than air (the FL.java:775 gravity verdict face)
-		for (String tLight : List.of("hydrogen", "helium", "neon", "methane", "carbondioxide", "carbonmonoxide")) {
+		for (String tLight : List.of("hydrogen", "helium", "neon")) {
 			assertTrue(GTFluids.chemicalSpec(tLight).density() < 0, tLight + ": lighter than air");
 		}
-		// the positive ones are the heavy noble/diatomic set
-		for (String tHeavy : List.of("nitrogen", "oxygen", "fluorine", "argon", "krypton", "xenon", "radon")) {
+		// the positive ones: the heavy noble/diatomic set AND the carbon compounds (the
+		// molecule recomputation sums carbon's 2.267 — they SINK despite being gases)
+		for (String tHeavy : List.of("nitrogen", "oxygen", "fluorine", "argon", "krypton", "xenon", "radon",
+				"methane", "carbondioxide", "carbonmonoxide")) {
 			assertTrue(GTFluids.chemicalSpec(tHeavy).density() > 0, tHeavy + ": heavier than air");
 		}
 	}

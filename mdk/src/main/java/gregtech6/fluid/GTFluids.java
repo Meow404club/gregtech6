@@ -1253,19 +1253,27 @@ public final class GTFluids {
 	 *     JetFuel/aqua precedent — the upstream fluids carry dedicated PNGs this port does
 	 *     not have), an oil-dark family ramp over the creosote :242 hue;</li>
 	 * <li><b>Cracked hydrocarbons</b> (:45-48) — the four-arg form with STATE_GASEOUS
-	 *     carriers (viscosity 200 / density −100 / setGaseous, FL.java:1105); propane/butane
-	 *     override the density to the literal −1000, propylene/ethylene keep the carrier;
+	 *     carriers (viscosity 200 / setGaseous, FL.java:1105); propane/butane override the
+	 *     density to the literal −1000, propylene/ethylene ride the :1130 formula over the
+	 *     1.0 g/cm³ default (OreDictMaterial.java:240) → 1000;
 	 *     tints are the materials' RGBa (MT.java:1206-1209);</li>
 	 * <li><b>Gas closure</b> — the createGas walk semantics (FL.java:1080: the bare
 	 *     material-name id, STATE_GASEOUS carriers, temperature = the :1080 rule) with every
 	 *     element's {@code plasma = boiling × 100} (OreDictMaterial.java:927) so the rule
 	 *     lands on {@code min(300, plasma − 1) = 300 K} for all thirteen; densities are the
 	 *     :1128-1136 formula transcribed per material ({@code g/cm³ > 0.0012 air →
-	 *     (long)(1000·g)}, {@code < air → (long)(−0.1/g)} — nitrogen 0.0012506 → 1, oxygen
-	 *     0.001429 → 1, fluorine 0.001696 → 1, argon 0.0017837 → 1, krypton 0.003733 → 3,
-	 *     xenon 0.005887 → 5, radon 0.00973 → 9; hydrogen 0.00008988 → −1112, helium
-	 *     0.0001785 → −560, neon 0.0008999 → −111; the compounds CH4/CO/CO2 carry no
-	 *     g/cm³ → the −100 carrier); tints are the materials' RGBa (MT.java:380/:383/:395-
+	 *     (long)(1000·g)}, {@code < air → (long)(−0.1/g)}): the ELEMENT gases carry their
+	 *     measured g/cm³ (nitrogen 0.0012506 → 1, oxygen 0.001429 → 1, fluorine 0.001696 → 1,
+	 *     argon 0.0017837 → 1, krypton 0.003733 → 3, xenon 0.005887 → 5, radon 0.00973 → 9;
+	 *     hydrogen 0.00008988 → −1112, helium 0.0001785 → −560, neon 0.0008999 → −111), while
+	 *     the COMPOUNDS ride the molecule-configuration recomputation
+	 *     (OreDictMaterial.java:240 — the field default 1.0, never cleared — and :478-492
+	 *     {@code setMoleculeConfiguration}: the uumMcfg rows sum the constituent g/cm³ over
+	 *     the recipe ratios — CH4 = 2.267 (MT.java:392 carbon) + 4×0.00008988 → 2.2674 →
+	 *     2267, CO2 → 2.2699 → 2269, CO → 2.2684 → 2268; the no-uumMcfg hydrocarbons
+	 *     propylene/ethylene keep the default 1.0 → 1000) — the formula applies to GASEOUS
+	 *     whenever g &gt; 0, so every compound gas SINKS (the pushByGravity sign consumers,
+	 *     lesson id224); tints are the materials' RGBa (MT.java:380/:383/:395-
 	 *     398/:406/:425/:443/:476/:1027-1037);</li>
 	 * <li><b>Liquid oxygen</b> (:68) — the six-arg form 85 K over MT.O, the LIQUID viscosity
 	 *     carrier, density = the :1130 formula over O's 0.001429 g/cm³ → 1, tint the O
@@ -1285,8 +1293,8 @@ public final class GTFluids {
 		// the cracked hydrocarbons (:45-48)
 		new ChemicalFluidSpec("propane"         , "Propane"          ,   300,  -1000,  200, 0xFFFF1414, true ,  0), // MT.Propane 255,20,20 (MT.java:1206); the :45 density literal
 		new ChemicalFluidSpec("butane"          , "Butane"           ,   300,  -1000,  200, 0xFFFF2828, true ,  0), // MT.Butane 255,40,40 (MT.java:1207); the :46 density literal
-		new ChemicalFluidSpec("propylene"       , "Propylene"        ,   300,   -100,  200, 0xFF5A3C8C, true ,  0), // MT.Propylene 90,60,140 (MT.java:1208); the :47 carrier
-		new ChemicalFluidSpec("ethylene"        , "Ethylene"         ,   300,   -100,  200, 0xFF402864, true ,  0), // MT.Ethylene 64,40,100 (MT.java:1209); the :48 carrier
+		new ChemicalFluidSpec("propylene"       , "Propylene"        ,   300,   1000,  200, 0xFF5A3C8C, true ,  0), // MT.Propylene 90,60,140 (MT.java:1208); the :1130 formula over the default 1.0 g/cm³
+		new ChemicalFluidSpec("ethylene"        , "Ethylene"         ,   300,   1000,  200, 0xFF402864, true ,  0), // MT.Ethylene 64,40,100 (MT.java:1209); the :1130 formula over the default 1.0 g/cm³
 		// the oils (:59-63)
 		new ChemicalFluidSpec("liquid_extra_heavy_oil", "Very Heavy Oil", 300,   900, 1000, 0xFF1E140A, false,  0), // :59 — the declared oil-dark ramp (port-owned tints)
 		new ChemicalFluidSpec("liquid_heavy_oil", "Heavy Oil"        ,   300,    800, 1000, 0xFF28180A, false,  0), // :60
@@ -1294,9 +1302,9 @@ public final class GTFluids {
 		new ChemicalFluidSpec("liquid_light_oil", "Light Oil"        ,   300,    600, 1000, 0xFF4A3818, false,  0), // :62
 		new ChemicalFluidSpec("soulsandoil"     , "Soulsand Oil"     ,   300,    650, 1000, 0xFF2E2030, false,  0), // :63 — the soulsand violet-brown (declared)
 		// the gas closure — the FL.java:1080 createGas walk, densities per the :1128-1136 formula
-		new ChemicalFluidSpec("methane"         , "Methane"          ,   300,   -100,  200, 0xFFC8C8FA, true ,  0), // MT.CH4 250,200,250 (MT.java:1037); no g/cm³ — the −100 carrier
-		new ChemicalFluidSpec("carbondioxide"   , "Carbon Dioxide"   ,   300,   -100,  200, 0xFF282828, true ,  0), // MT.CO2 40,40,40 (MT.java:1035)
-		new ChemicalFluidSpec("carbonmonoxide"  , "Carbon Monoxide"  ,   300,   -100,  200, 0xFF0A0A0A, true ,  0), // MT.CO 10,10,10 (MT.java:1034)
+		new ChemicalFluidSpec("methane"         , "Methane"          ,   300,   2267,  200, 0xFFC8C8FA, true ,  0), // MT.CH4 (MT.java:1037); the molecule-configuration g/cm³ 2.2674 (C 2.267 + 4 H) → 1000×g
+		new ChemicalFluidSpec("carbondioxide"   , "Carbon Dioxide"   ,   300,   2269,  200, 0xFF282828, true ,  0), // MT.CO2 (MT.java:1035); the molecule g/cm³ 2.2699 (C + 2 O) → 1000×g
+		new ChemicalFluidSpec("carbonmonoxide"  , "Carbon Monoxide"  ,   300,   2268,  200, 0xFF0A0A0A, true ,  0), // MT.CO (MT.java:1034); the molecule g/cm³ 2.2684 (C + O) → 1000×g
 		new ChemicalFluidSpec("hydrogen"        , "Hydrogen"         ,   300,  -1112,  200, 0xFF0000FF, true ,  0), // MT.H2 0,0,255 (MT.java:380); −0.1/0.00008988
 		new ChemicalFluidSpec("nitrogen"        , "Nitrogen"         ,   300,      1,  200, 0xFF0096C8, true ,  0), // MT.N2 (MT.java:395); 1000×0.0012506
 		new ChemicalFluidSpec("oxygen"          , "Oxygen"           ,   300,      1,  200, 0xFF0064C8, true ,  0), // MT.O2 (MT.java:396); 1000×0.001429
