@@ -40,7 +40,10 @@ from framework import Chain, Step, main, phase
 # this card's magnifying-glass (x392..396) and pincers (x400..404) columns.
 CHEST = "386 64 292"
 STAIRS = "386 64 290"
+C_STAIRS = "386, 64, 290"
 RAIL = "386 64 288"
+C_RAIL = "386, 64, 288"
+RAIL_BASE = "386 63 288"   # X Y Z — the support sits DIRECTLY BELOW the rail (y=63)
 LAMP = "386 64 286"
 FURNACE = "386 64 284"
 SITE = gt6world.Site(386, 64, 288, dy=4, dz=4)
@@ -59,10 +62,13 @@ steps += [
 steps += [
     phase("B: the rotation arm — stairs facing, rail flat-flip, lamp toggle, the furnace negative"),
     Step(f"setblock {STAIRS} minecraft:oak_stairs", expect="Changed the block"),
-    Step(f"gt6machineface rotate {STAIRS}", expect=f"rotate ROTATED at {STAIRS}: state Block{{minecraft:oak_stairs}}"),
+    # the report rides BlockPos.toShortString() — the "x, y, z" comma form (the p28wandclick lesson)
+    Step(f"gt6machineface rotate {STAIRS}", expect=f"rotate ROTATED at {C_STAIRS}: state Block{{minecraft:oak_stairs}}"),
     Step(f"execute if block {STAIRS} minecraft:oak_stairs[facing=east] run time query daytime", expect="The time is"),
+    # the straight rail needs a solid base — floating rails pop on the placement update
+    Step(f"setblock {RAIL_BASE} minecraft:stone", expect="Changed the block"),
     Step(f"setblock {RAIL} minecraft:powered_rail", expect="Changed the block"),
-    Step(f"gt6machineface rotate {RAIL}", expect="rotate ROTATED"),
+    Step(f"gt6machineface rotate {RAIL}", expect=f"rotate ROTATED at {C_RAIL}"),
     Step(f"execute if block {RAIL} minecraft:powered_rail[shape=east_west] run time query daytime", expect="The time is"),
     Step(f"setblock {LAMP} minecraft:redstone_lamp", expect="Changed the block"),
     Step(f"gt6machineface rotate {LAMP}", expect="rotate ROTATED"),

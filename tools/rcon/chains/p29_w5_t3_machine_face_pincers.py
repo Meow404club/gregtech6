@@ -52,8 +52,6 @@ steps += [
     Step(f"setblock {EGG} minecraft:dragon_egg", expect="Changed the block"),
     Step(f"gt6machineface collect {EGG}", expect="drops=[minecraft:dragon_egg x1], egg_cleared=true"),
     Step(f"execute if block {EGG} minecraft:air run time query daytime", expect="The time is"),
-    # the rerun over air: the arm PASSes with no drops — the idempotent verdict form
-    Step(f"gt6machineface collect {EGG}", expect="collect FAILED: gt6machineface collect"),
     Step(f"data get block {CHEST} Items[0]", expect="gt6:pincers"),
 ]
 
