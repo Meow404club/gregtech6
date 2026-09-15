@@ -528,6 +528,14 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     # 归后续水车轮微卡。
     "data/gt6/recipes/water_wheel.json",
     "data/gt6/advancements/recipes/misc/water_wheel.json",
+    # task p29-w5-t1-dig-six 交卡补录（2026-09-16，非漂移）：forge 命名空间的 GLM 索引
+    # data/forge/loot_modifiers/global_loot_modifiers.json 由 forge 腿
+    # GlobalLootModifierProvider 独产（21.1 同名 provider 写 data/neoforge/...——平台
+    # 索引命名空间之差，LootModifierManager folder 常量双腿同为 loot_modifiers）。本卡
+    # datagen 已为 21.1 运行时补写 neoforge 孪生索引（GT6ToolLootModifiersDatagen.run
+    # 的正典生产者面），forge 索引与 mold_stone 同构 forge-gated。runtime 双腿共用
+    # canonical 树各读各的索引，零影响。
+    "data/forge/loot_modifiers/global_loot_modifiers.json",
 })
 
 # ── 声明偏离带（canonical 前瞻孪生树，p27-vanilla-tag-dual-tree 引入）──────────────

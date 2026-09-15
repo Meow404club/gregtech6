@@ -333,6 +333,14 @@ SESSION_GROUPS = (
     # cluster form.
     # --group p29_w4_hot_lube matches through the chains' embedded name prefix.
     ("p29_w4_hot_lube_hex", "p29_w4_hot_lube_lube"),
+    # P29 W5 card 1 (p29-w5-t1-dig-six): the six dig-tool chains — one fresh z=192
+    # band (x384..419: torch 384..388 / path 389..392 / enderchest 394..396 / harvest
+    # 399..405 / faces 408..414 / openable 417..419), admission mirroring the p29 W1
+    # cluster form (bbox-registered, no fresh_boot / mutates member — the fake-player
+    # /gt6dig arms are band-local setblocks). --group p29_w5_t1_dig_six matches through
+    # the chains' embedded name prefix (the p29_w1_process form).
+    ("p29_w5_t1_dig_six_torch", "p29_w5_t1_dig_six_path", "p29_w5_t1_dig_six_enderchest",
+     "p29_w5_t1_dig_six_harvest", "p29_w5_t1_dig_six_faces", "p29_w5_t1_dig_six_openable"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
