@@ -116,6 +116,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task p28-b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
+                new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK)), // task p28-c-ulv-dynamo-row — the T0 self-drop
             lookupProvider);
@@ -157,6 +158,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task p28-b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
+                new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK))); // task p28-c-ulv-dynamo-row — the T0 self-drop
         //?}
@@ -1080,6 +1082,56 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /** The electric-transformer self-drop provider (task p28-c-ulv-lv-transformer, the FE-converter shape verbatim). */
+    /**
+     * The eu-bridge block list (task p29-w4-eu-bridge): the Roasting 4-ladder (the MTE
+     * default self-drop with the paint carry, the smelter shape) + the 15 EU-bridge
+     * converter rungs (plain self-drop — the dynamo/transformer shape, the converters
+     * carry no paint face).
+     */
+    public static List<Block> euBridgeLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.roastingBlockArray());
+        for (java.util.Map<String, RegistryObject<Block>> tFamily : java.util.List.of(
+                gregtech6.registry.GTMachines.ELECTRIC_HEATER_BLOCKS_BY_PATH,
+                gregtech6.registry.GTMachines.ELECTRIC_ENGINE_BLOCKS_BY_PATH,
+                gregtech6.registry.GTMachines.ELECTRIC_MOTOR_BLOCKS_BY_PATH)) {
+            for (RegistryObject<Block> tHandle : tFamily.values()) rBlocks.add(tHandle.get());
+        }
+        return rBlocks;
+    }
+
+    /** The eu-bridge self-drop provider (task p29-w4-eu-bridge; the Roasting paint carry = task p22-painted-item-domain). */
+    public static final class GT6EuBridgeBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6EuBridgeBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6EuBridgeBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return euBridgeLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            java.util.List<Block> tRoasting = java.util.Arrays.asList(gregtech6.registry.GTMachines.roastingBlockArray());
+            for (Block tBlock : euBridgeLootBlocks()) {
+                if (tRoasting.contains(tBlock)) {
+                    add(tBlock, paintSelfTable(tBlock)); // the machine paint carry
+                } else {
+                    dropSelf(tBlock); // the converter plain self-drop, the transformer form
+                }
+            }
+        }
+    }
+
     public static final class GT6ElectricTransformerBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {

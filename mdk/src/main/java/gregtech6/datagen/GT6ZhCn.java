@@ -253,6 +253,26 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.electric_dynamo_ulv");
 		addDirect("block.gt6.electrometer"); // task p26-sensors-core — the MTE 31015 dump row 电力传感器
 		addDirect("block.gt6.electric_transformer"); // task p28-c-ulv-lv-transformer — hand row (no dump face in the port snapshot; the :881 registration wording + the standard zh machine word)
+		// task p29-w4-eu-bridge — the three EU-bridge families (the dump faces verbatim,
+		// gt.multitileentity.10001-10005 电力加热器 / 10011-10015 电动引擎 / 10021-10025
+		// 电动机) + the Roasting template (gt.multitileentity.20171-20174 焙烧炉, the
+		// Heat_T word slot)
+		addDirect(gregtech6.registry.GTMachines.MACHINE_ROASTING_OVEN_UNIT_KEY);
+		addDirect("block.gt6.electric_heater");
+		addDirect("block.gt6.electric_heater_t2");
+		addDirect("block.gt6.electric_heater_t3");
+		addDirect("block.gt6.electric_heater_t4");
+		addDirect("block.gt6.electric_heater_t5");
+		addDirect("block.gt6.electric_engine");
+		addDirect("block.gt6.electric_engine_t2");
+		addDirect("block.gt6.electric_engine_t3");
+		addDirect("block.gt6.electric_engine_t4");
+		addDirect("block.gt6.electric_engine_t5");
+		addDirect("block.gt6.electric_motor");
+		addDirect("block.gt6.electric_motor_t2");
+		addDirect("block.gt6.electric_motor_t3");
+		addDirect("block.gt6.electric_motor_t4");
+		addDirect("block.gt6.electric_motor_t5");
 		addDirect("block.gt6.energy_source");
 		addDirect("block.gt6.fe_battery"); // task p26-eu-bridge-outbound — tail-append
 		addDirect("block.gt6.fe_converter"); // task p28-b-fe-converter-machine — tail-append

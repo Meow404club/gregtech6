@@ -2488,7 +2488,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(209);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(213);
 		rBlocks.add(OVEN.get());
 		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
@@ -2574,6 +2574,9 @@ public final class GTMachines {
 		// the census comment and the datagen-JVM half move together
 		java.util.Collections.addAll(rBlocks, smelterBlockArray());
 		java.util.Collections.addAll(rBlocks, melterBlockArray());
+		// task p29-w4-eu-bridge — the Roasting 4-ladder, +4 blocks, the census comment and
+		// the datagen-JVM half move together (163 → 188 → 192)
+		java.util.Collections.addAll(rBlocks, roastingBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 

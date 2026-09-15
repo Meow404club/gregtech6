@@ -103,6 +103,7 @@ public class GT6EnUs extends LanguageProvider {
         addFeBattery(); // task p26-eu-bridge-outbound — tail-append
         addFeConverter(); // task p28-b-fe-converter-machine — tail-append
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
+        addEuBridgeFamilies(); // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting template
         addDynamoFamily(); // task p28-c-ulv-dynamo-row — the W1 family's deferred name face + the T0 row
         addKinetics(); // task p12-engine-crank
         addAttachments(); // task p12-tap-funnel-attachment
@@ -410,6 +411,28 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addElectricTransformer() {
         add("block.gt6.electric_transformer", "Transformer (ULV-LV)");
+    }
+
+    /**
+     * The EU-bridge display rows (task p29-w4-eu-bridge): the three converter families'
+     * atomic keys over the upstream name columns "Electric Heater (LV)" / "Electric
+     * Engine (LV)" / "Electric Motor (LV)" (Loader :817-821/:833-837/:849-853, VN[1..5]),
+     * plus the Roasting Oven one-slot template (the upstream name column
+     * "Roasting Oven ("+aMat.getLocal()+")" :1386-1389 — the Heat_T material-word slot,
+     * the OVEN/MACHINE_SMELTER_UNIT_KEY contract). The converters are row-less blocks
+     * (the GT6DynamoBlock carrier), so their names are the plain atomic-key form.
+     */
+    private void addEuBridgeFamilies() {
+        add(gregtech6.registry.GTMachines.MACHINE_ROASTING_OVEN_UNIT_KEY, "Roasting Oven (%s)");
+        for (String[] tFace : new String[][] {
+                {"electric_heater", "Electric Heater"}, {"electric_engine", "Electric Engine"}, {"electric_motor", "Electric Motor"}}) {
+            String[] tWords = {"LV", "MV", "HV", "EV", "IV"};
+            add("block.gt6." + tFace[0], tFace[1] + " (" + tWords[0] + ")");
+            add("block.gt6." + tFace[0] + "_t2", tFace[1] + " (" + tWords[1] + ")");
+            add("block.gt6." + tFace[0] + "_t3", tFace[1] + " (" + tWords[2] + ")");
+            add("block.gt6." + tFace[0] + "_t4", tFace[1] + " (" + tWords[3] + ")");
+            add("block.gt6." + tFace[0] + "_t5", tFace[1] + " (" + tWords[4] + ")");
+        }
     }
 
     /**

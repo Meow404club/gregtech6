@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "forge:fine_wires/copper"
+    },
+    "I": {
+      "item": "gt6:stick_long_iron_magnetic"
+    },
+    "P": {
+      "item": "gt6:plate_triple_steel_galvanized"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "PhP",
+    "CIC",
+    "PwP"
+  ],
+  "result": {
+    "item": "gt6:electric_engine"
+  },
+  "show_notification": true
+}

@@ -15,6 +15,7 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
@@ -138,6 +139,8 @@ public final class GT6BlockStates extends BlockStateProvider {
         addEuCoreMachines(); // task p29-w2-eu-core-5tier — the five eu-core families (family textures, the addCanner shape)
         addHuTuFamilies(); // task p29-w2-hu-tu-piggyback — the seven hu-tu families (family textures, the addCanner shape)
         addHeatSmelterFamilies(); // task p29-w3-heat-smelter — the Smelter ladder + the Melter single (family textures, the addCanner shape)
+        addRoastingFamilies(); // task p29-w4-eu-bridge — the Roasting Oven ladder (the "roaster" family textures)
+        addElectricBridges(); // task p29-w4-eu-bridge — the three EU-bridge converter families (the borrowed upstream colored front/side pairs)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
         // task p21-paintable-tint-render: the datagen-JVM census half — 209 machine blocks x
@@ -841,6 +844,57 @@ public final class GT6BlockStates extends BlockStateProvider {
      * value equality inside StateHolder, which 1.21.x replaced with identity lookup —
      * distinct instances crash there, hence the single-owner aliases.)
      */
+    /**
+     * Task p29-w4-eu-bridge — the Roasting Oven 4-ladder (Loader_MultiTileEntities.java
+     * :1386-1389): the addMachine three-model walk over the "roaster" family texture set
+     * (the borrowed upstream basicmachines/roaster colored 6-set + the overlay state trio
+     * x6; the front_active strip is cropped to its first frame — the port carries no
+     * animated fronts, the assets/README.md note). The NBT_TEXTURE column is "roaster"
+     * over the roasting_oven registry paths, the art-token-fidelity overload.
+     */
+    private void addRoastingFamilies() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROASTING_ROWS) {
+            addMachine(GTMachines.ROASTING_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p29-w4-eu-bridge — the three EU-bridge converter families (Loader
+     * :815-821/:831-837/:847-853, 15 blocks). NOT paintable machines — the reused
+     * {@link gregtech6.block.energy.GT6DynamoBlock} carrier rides the transformer
+     * orientable-cube form instead of the addMachine paint walk: one orientable model
+     * per family over the borrowed upstream colored front/side pairs (heaters/heat_electric,
+     * engines/kinetic_electric, motors/rotation_electric — the assets/README.md faces),
+     * FRONT = the emission face (the dynamo-block geometry), the FACING y-rotation the
+     * addGearBoxTransformer/transformer form. The five rungs of a family share the model
+     * (the tier is not a visual state upstream, the p8 texture ruling).
+     */
+    private void addElectricBridges() {
+        addBridgeFamily(GTMachines.ELECTRIC_HEATER_BLOCKS_BY_PATH, "electric_heater", "bridge_heater");
+        addBridgeFamily(GTMachines.ELECTRIC_ENGINE_BLOCKS_BY_PATH, "electric_engine", "bridge_engine");
+        addBridgeFamily(GTMachines.ELECTRIC_MOTOR_BLOCKS_BY_PATH, "electric_motor", "bridge_motor");
+    }
+
+    /** One bridge family: the orientable cube + the five rung blockstates + the item parents (the transformer form). */
+    private void addBridgeFamily(java.util.Map<String, RegistryObject<Block>> aBlocks, String aFamily, String aTexture) {
+        ModelFile tModel = models().orientable(aTexture,
+                modLoc("block/" + aTexture + "_side"), modLoc("block/" + aTexture + "_front"), modLoc("block/" + aTexture + "_side"));
+        for (RegistryObject<Block> tHandle : aBlocks.values()) {
+            getVariantBuilder(tHandle.get()).forAllStates(aState -> {
+                // the vanilla horizontal-facing rotation map (the transformer verbatim form)
+                Direction tFacing = aState.getValue(gregtech6.block.energy.GT6DynamoBlock.FACING);
+                return ConfiguredModel.builder()
+                        .modelFile(tModel)
+                        .rotationY((int) (tFacing.toYRot() + 180) % 360)
+                        .build();
+            });
+        }
+        itemModels().withExistingParent(aFamily, modLoc("block/" + aTexture));
+        for (String tPath : aBlocks.keySet()) {
+            if (!tPath.equals(aFamily)) itemModels().withExistingParent(tPath, modLoc("item/" + aFamily));
+        }
+    }
+
     private void addMachine(Block aBlock, String aBase) {
         addMachine(aBlock, aBase, aBase);
     }

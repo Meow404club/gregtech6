@@ -35,9 +35,9 @@
  * task p29-w1-kinetic-process-ladder) + the seven eu-hu families (25, task
  * p29-w1-eu-hu-families) + the six exotic-energy families (30, task
  * p29-w2-exotic-energy) + the five eu-core 5-tier families (25, task
- * p29-w2-eu-core-5tier) = 188 blocks (the
+ * p29-w2-eu-core-5tier) = 192 blocks (the
  * GTMachines.paintableBlockArray
- * registration census), three models each (inactive/active/running) = 564 block-model
+ * registration census), three models each (inactive/active/running) = 576 block-model
  * JSONs. Upstream canonical: every faced face multiplies the grayscale texture by mRGBa
  * (MultiTileEntityBasicMachine.java:1014), so all three models tint identically.
  */
@@ -63,7 +63,7 @@ import com.google.gson.JsonParser;
 
 class GT6MachinePaintRenderDatagenTest {
 
-    /** The 188 machine-domain bases (the paintableBlockArray census). */
+    /** The 192 machine-domain bases (the paintableBlockArray census). */
     private static final List<String> MACHINE_BASES = List.of(
             "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
@@ -114,7 +114,8 @@ class GT6MachinePaintRenderDatagenTest {
             "coagulator", "generifier", "bath", "autoclave",
             "loom", "loom_t2", "loom_t3", "loom_t4",
             "smelter", "smelter_t2", "smelter_t3", "smelter_t4", // task p29-w3-heat-smelter
-            "melter");
+            "melter",
+            "roasting_oven", "roasting_oven_t2", "roasting_oven_t3", "roasting_oven_t4"); // task p29-w4-eu-bridge — the Roasting ladder (the "roaster" NBT_TEXTURE token)
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
 
@@ -192,6 +193,7 @@ class GT6MachinePaintRenderDatagenTest {
             case "laser_engraver" -> "laserengraver";
             case "laser_welder" -> "laserwelder";
             case "cryo_mixer" -> "cryomixer";
+            case "roasting_oven" -> "roaster"; // task p29-w4-eu-bridge — the roaster art token
             default -> aBase;
         };
     }
@@ -206,8 +208,8 @@ class GT6MachinePaintRenderDatagenTest {
 
     @Test
     void pinnedMachinePaintCensus() {
-        assertEquals(209, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(209 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
+        assertEquals(213, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
+        assertEquals(213 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
                 "209 blocks x 3 models — the pinned tinted-model total");
     }
 

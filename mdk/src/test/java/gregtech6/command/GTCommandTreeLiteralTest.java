@@ -92,6 +92,7 @@ public class GTCommandTreeLiteralTest {
 		"fermenter", // task p29-w1-eu-hu-families — the single-variant rung
 		// task p29-w3-heat-smelter — the Smelter ladder + the Melter single
 		"smelter", "smelter_t2", "smelter_t3", "smelter_t4", "melter",
+		"roasting_oven", "roasting_oven_t2", "roasting_oven_t3", "roasting_oven_t4", // task p29-w4-eu-bridge — the Roasting ladder
 		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 
 	private static CommandSourceStack stack() {
@@ -144,12 +145,15 @@ public class GTCommandTreeLiteralTest {
 	@Test
 	public void twoFamiliesOwnDisjointRootLiterals() {
 		CommandDispatcher<CommandSourceStack> tDispatcher = registerBoth();
-		assertEquals(2, tDispatcher.getRoot().getChildren().size(), "exactly the two family roots (a duplicate-root registration would silently merge into ONE node)");
+		assertEquals(3, tDispatcher.getRoot().getChildren().size(), "exactly the three family roots (a duplicate-root registration would silently merge into ONE node)");
 		CommandNode<CommandSourceStack> tChest = tDispatcher.getRoot().getChild("gt6chest");
 		CommandNode<CommandSourceStack> tMachine = tDispatcher.getRoot().getChild("gt6machine");
+		CommandNode<CommandSourceStack> tBridge = tDispatcher.getRoot().getChild("gt6bridge");
 		assertNotNull(tChest, "the chest open-chain proof must have its own root literal");
 		assertNotNull(tMachine, "the machine family must keep /gt6machine");
+		assertNotNull(tBridge, "the EU-bridge converter family keeps /gt6bridge (task p29-w4-eu-bridge)");
 		assertNotEquals(tChest, tMachine);
+		assertNotEquals(tMachine, tBridge);
 	}
 
 	@Test
