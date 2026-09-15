@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:gear_gt_small_arsenic_bronze"
+    },
+    "G": {
+      "item": "gt6:gear_gt_arsenic_bronze"
+    },
+    "L": {
+      "item": "gt6:lubricant_bucket"
+    },
+    "M": {
+      "item": "gt6:casing_small_arsenic_bronze"
+    },
+    "P": {
+      "item": "gt6:plate_curved_arsenic_bronze"
+    },
+    "S": {
+      "item": "gt6:stick_arsenic_bronze"
+    }
+  },
+  "pattern": [
+    "PLP",
+    "SMS",
+    "GPC"
+  ],
+  "result": {
+    "item": "gt6:diesel_engine_arsenic_bronze"
+  },
+  "show_notification": true
+}
