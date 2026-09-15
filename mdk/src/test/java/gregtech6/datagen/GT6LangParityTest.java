@@ -1123,7 +1123,7 @@ private static final int ZH_KEY_FLOOR = 2929; // 2839 +3 (task p29-w2-eu-special
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(1089, tExemptTotal, "the derived composed-name exemption census"
+		assertEquals(1094, tExemptTotal, "the derived composed-name exemption census"
 			+ " (+16 task p29-w3-nbtdesign-parts: the ten composed metal-wall carriers"
 			+ " + the six dense-wall additions joined the carrier set — the five"
 			+ " pre-existing dense rows were already exempted)"
@@ -1137,7 +1137,7 @@ private static final int ZH_KEY_FLOOR = 2929; // 2839 +3 (task p29-w2-eu-special
 			+ " the 16 hu-tu row carriers joined at 1043 + 16, task p29-w2-hu-tu-piggyback)"
 			+ " (+14 task p29-w3-distill-crucible: the seven crucible ladder rung carriers"
 			+ " (the CRUCIBLE_ROWS walk grew 1 -> 8) + the seven dedicated GTCrucibleWallBlock"
-			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5))");
+			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5 = 1094)");
 		assertEquals(134, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"
