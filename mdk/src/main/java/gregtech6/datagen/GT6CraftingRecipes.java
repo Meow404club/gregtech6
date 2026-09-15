@@ -91,6 +91,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "wrench");
 	/** The bending-cylinder self-craft row (task p25-food-can-row0 spec ②) — the result-path convention. */
 	public static final ResourceLocation BENDING_CYLINDER_SMALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bending_cylinder_small");
+	/** The pocket multitool recipe id (task p29-w5-t7-pocket-eight, the result-path convention). */
+	public static final ResourceLocation POCKET_MULTITOOL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pocket_multitool");
 	/** The empty-food-can crafting row (task p25-food-can-row0 spec ③, MultiItemRandomTools.java:239). */
 	public static final ResourceLocation FOOD_CAN_EMPTY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "food_can_empty");
 	/** The machine-face four self-craft rows (task p29-w5-t3-machine-face-four) — the result-path convention, one per tool. */
@@ -297,6 +299,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (ElectricToolRow tRow : electricToolRows()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		pocketMultitoolBuilder().save(aConsumer, POCKET_MULTITOOL_ID);
 	}
 	//?} else {
 	/*@Override
@@ -391,6 +394,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (ElectricToolRow tRow : electricToolRows()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
+		pocketMultitoolBuilder().save(aOutput, POCKET_MULTITOOL_ID);
 	}
 	*///?}
 
@@ -721,6 +725,36 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.pattern(" P ")
 				.define('P', tSteelPlates)
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+	 * The POCKET MULTITOOL crafting row (task p29-w5-t7-pocket-eight) — the upstream
+	 * OreProcessing_Tool row over toolHeadScrewdriver (Loader_Tools.java:354) with its
+	 * {"AXO","ZPV","OWY"} grid kept letter-verbatim and the tool-head universe folded to
+	 * the steel convergence (the W5 ruling d: the per-material listener loop flattens to
+	 * ONE steel row): 'A' (the listening screwdriver HEAD) = the {@code #gt6:tools/screwdriver}
+	 * tag, 'X' = the saw tag, 'Z' = the file tag, 'Y' (the chisel head) = the
+	 * {@code gt6:chisel} item (no TOOLS_CHISEL tag exists, the in-grid tool precedent),
+	 * 'V'/'W' (the two SWORD heads — no sword item in the port) = the {@code ingots/steel}
+	 * tag (the raw blade material), 'O' = the steel ring (the GTMaterialItems bare-item
+	 * form, the :1121 bronze-ring precedent), 'P' = {@code plates/steel} (the wrench-row
+	 * key). NO battery slot — the reversal ruling (the :354 row's null battery column).
+	 * The in-grid tools pay one point each and ride along (the container-item channel).
+	 * Result 1x {@code gt6:pocket_multitool} — the seven switch forms are NOT crafted,
+	 * they are the sneak-right-click ring (the :176-183 chain).
+	 */
+	private ShapedRecipeBuilder pocketMultitoolBuilder() {
+		TagKey<Item> tSteelPlates = gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "steel");
+		TagKey<Item> tSteelIngots = gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, "steel");
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.POCKET_MULTITOOL.get())
+				.pattern("AXO")
+				.pattern("ZPV")
+				.pattern("OWY")
+				.define('A', GT6ItemTags.TOOLS_SCREWDRIVER)
+				.define('X', GT6ItemTags.TOOLS_SAW)
+				.define('Z', GT6ItemTags.TOOLS_FILE)
+				.define('Y', GT6Tools.CHISEL.get())
+				.define('V', tSteelIngots)
+				.define('W', tSteelIngots)
+				.define('O', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.ring, gregapi.data.MT.Steel).get())
+				.define('P', tSteelPlates)
 				.unlockedBy("has_steel_plate", has(tSteelPlates));
 	}
 
