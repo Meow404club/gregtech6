@@ -343,6 +343,29 @@ public class GT6ZhCn extends LanguageProvider {
 		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.CHEMICAL_SPECS) {
 			addDirect(tSpec.descriptionId());
 		}
+		// task p29-w4-hot-lube: the 20 hot-family display names — the 12 hot fluids + the 7
+		// FM.Hot closure carriers + the F-2 lubricant; the dump carries all but one face
+		// (S:fluid.ic2coolant=冷却液 tmp/gregtech.lang:362, S:fluid.ic2hotcoolant=热冷却液
+		// :364, S:fluid.hotmoltensodium=热熔融钠 :347, S:fluid.hotmoltentin=热熔融锡 :348,
+		// S:fluid.hotmoltenlicl=热熔融氯化锂 :346, S:fluid.hotheavywater=热重水 :344,
+		// S:fluid.hotsemiheavywater=热半重水 :350, S:fluid.hottritiatedwater=热超重水 :351,
+		// S:fluid.hotcarbondioxide=热二氧化碳 :341, S:fluid.hothelium=热氦 :345,
+		// S:fluid.thoriumsalt=熔融钍盐 :890, S:fluid.ic2pahoehoelava=熔岩岩浆 :365,
+		// S:fluid.blaze=烈焰粘浆 :104, S:fluid.molten.sodium=熔融钠 :596,
+		// S:fluid.molten.tin=熔融锡 :614, S:fluid.heavywater=重水 :327,
+		// S:fluid.semiheavywater=半重水 :853, S:fluid.tritiatedwater=超重水 :897,
+		// S:fluid.lubricant=润滑油 :394; the lithium_chloride_molten display 熔融氯化锂 is
+		// the one hand row following the molten.X=熔融X dump rule); the keys ride the SAME
+		// GTFluids.HOT/CLOSURE/LUBRICANT tables the en walk uses.
+		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.HOT_FLUID_SPECS) {
+			addDirect(tSpec.descriptionId());
+		}
+		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.CLOSURE_FLUID_SPECS) {
+			addDirect(tSpec.descriptionId());
+		}
+		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.LUBRICANT_FLUID_SPECS) {
+			addDirect(tSpec.descriptionId());
+		}
 		// task p26-c-foam-fluid-refill: the base + the 32 C-Foam display names — the dump
 		// carries all 33 faces (S:fluid.ic2constructionfoam=建筑泡沫 tmp/gregtech.lang:361,
 		// S:fluid.cfoam.* :130-161); the keys ride the SAME GTFluids.cfoamName/

@@ -92,6 +92,7 @@ public class GT6EnUs extends LanguageProvider {
         addDyeChemicalFluids(); // task p24-dye-chemical-fluids — table-tail append
         addCFoamFluids(); // task p26-c-foam-fluid-refill — table-tail append
         addChemicalFluids(); // task p29-w4-f1-chemicals — table-tail append
+        addHotFamilyFluids(); // task p29-w4-hot-lube — table-tail append (hot + closure + lubricant)
         addCFoamBlocks(); // task p26-c-foam-block-family — table-tail append
         addElectricWires();
         addMachines();
@@ -254,6 +255,32 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addChemicalFluids() {
         for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.CHEMICAL_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
+
+    /**
+     * Hot family keys (task p29-w4-hot-lube): one description entry per
+     * {@link GTFluids.ChemicalFluidSpec} row across the THREE tables this card appends —
+     * the twelve hot fluids ({@link GTFluids#HOT_FLUID_SPECS}, the upstream
+     * Loader_Fluids.java:85-99 local strings verbatim: "Industrial Coolant"/"Industrial
+     * Heatant"/"Hot Molten Sodium"/... /"Pahoehoe Lava"), the seven FM.Hot closure carriers
+     * ({@link GTFluids#CLOSURE_FLUID_SPECS}, the createMolten "Molten Sodium"/"Molten Tin"/
+     * "Molten Lithium Chloride" + createLiquid "Heavy Water"/"Semiheavy Water"/
+     * "Tritiated Water" local names + :195 "Blazing Goo"), and the F-2 lubricant row
+     * ({@link GTFluids#LUBRICANT_FLUID_SPECS}, :617 "Lubricant"). zh values ride the
+     * reference table's hand layer (the GT6ZhCn mirror walk; the dump carries the faces —
+     * tmp/gregtech.lang S:fluid.* rows cited on the zh side, the molten-licl display the
+     * one hand row following the molten.X=熔融X dump rule).
+     */
+    private void addHotFamilyFluids() {
+        for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.HOT_FLUID_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+        for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.CLOSURE_FLUID_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+        for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.LUBRICANT_FLUID_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
     }
