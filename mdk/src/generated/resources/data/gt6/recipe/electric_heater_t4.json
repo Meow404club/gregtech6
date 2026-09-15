@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "forge:fine_wires/nichrome"
+    },
+    "M": {
+      "item": "gt6:casing_small_chromium"
+    },
+    "T": {
+      "item": "gt6:screw_chromium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TCT",
+    "CMC",
+    "TCd"
+  ],
+  "result": {
+    "item": "gt6:electric_heater_t4"
+  },
+  "show_notification": true
+}

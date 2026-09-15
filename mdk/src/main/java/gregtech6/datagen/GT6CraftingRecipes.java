@@ -194,6 +194,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		feConverterBuilder().save(aConsumer, FE_CONVERTER_ID);
 		waterWheelBuilder().save(aConsumer, WATER_WHEEL_ID);
 		transformerBuilder().save(aConsumer, ELECTRIC_TRANSFORMER_ID);
+		for (BridgeCraftRow tRow : euBridgeCraftingRows()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		for (SensorRecastRow tRow : sensorRecastBuilders()) {
 			tRow.builder().save(aConsumer, sensorRecastId(tRow.path()));
 		}
@@ -244,6 +247,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		fluidometerBuilder().save(aOutput, FLUIDOMETER_ID);
 		feConverterBuilder().save(aOutput, FE_CONVERTER_ID);
 		transformerBuilder().save(aOutput, ELECTRIC_TRANSFORMER_ID);
+		for (BridgeCraftRow tRow : euBridgeCraftingRows()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
 		for (SensorRecastRow tRow : sensorRecastBuilders()) {
 			tRow.builder().save(aOutput, sensorRecastId(tRow.path()));
 		}
@@ -972,6 +978,81 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('I', tDoublePlates)
 				.define('M', GTMaterialItems.get(gregapi.data.OP.casingSmall, gregapi.data.MT.SteelGalvanized).get())
 				.unlockedBy("has_fine_wire", has(tFineWires));
+	}
+
+	// -------------------------------------------------------------------------
+	// task p29-w4-eu-bridge — the EU-bridge crafting rows (Loader :817-821/:833-837/
+	// :849-853 recipe strings, the tool letters per CR.java:339-361: d = screwdriver,
+	// h = hard hammer, w = wrench). Declared folds and CUTS:
+	//   - casingMachineDouble → casingSmall (the transformerBuilder casing fold —
+	//     no casingMachineDouble item row in the port);
+	//   - the wire columns → the fine_wires tags (the count differential folded, the
+	//     transformer fold precedent);
+	//   - the Heater T5 row CUT: wireGt16(SiC) has NO port fine-wires face (SiC carries
+	//     no WIRES flag — the part-family absent-input CUT precedent, the SiC coil row).
+	// The T1 result ids equal the block path, T2-T5 the _tN suffix (the vanilla
+	// result-path naming convention).
+	// -------------------------------------------------------------------------
+
+	/** One EU-bridge crafting row — the builder + the result-path id its save face ids from (the PartFamilyRecipeRow shape). */
+	private record BridgeCraftRow(ShapedRecipeBuilder builder, ResourceLocation id) {}
+
+	/** The rung path of a family ladder index (the GTMachines.bridgePath form mirrored locally). */
+	private static String bridgePath(String aFamily, int aTier) {
+		return aTier == 0 ? aFamily : aFamily + "_t" + (aTier + 1);
+	}
+
+	private static java.util.List<BridgeCraftRow> euBridgeCraftingRows() {
+		java.util.List<BridgeCraftRow> rRows = new java.util.ArrayList<>();
+		// --- the Heaters :817-821 ("TCT","CMC","TCd") — T5 CUT (SiC wires absent) ---
+		gregapi.oredict.OreDictMaterial[] tHeaterWires = {gregapi.data.MT.Copper, gregapi.data.MT.Constantan, gregapi.data.MT.Kanthal, gregapi.data.MT.Nichrome};
+		for (int i = 0; i < 4; i++) {
+			gregapi.oredict.OreDictMaterial tMat = bridgeMat(i);
+			String tPath = bridgePath("electric_heater", i);
+			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMachines.ELECTRIC_HEATER_ITEMS_BY_PATH.get(tPath).get())
+					.pattern("TCT").pattern("CMC").pattern("TCd")
+					.define('T', GTMaterialItems.get(gregapi.data.OP.screw, tMat).get())
+					.define('C', GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, tHeaterWires[i]))
+					.define('M', GTMaterialItems.get(gregapi.data.OP.casingSmall, tMat).get())
+					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+					.unlockedBy("has_screw", has(GTMaterialItems.get(gregapi.data.OP.screw, tMat).get())), new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+		}
+		// --- the Engines :833-837 ("PhP","CIC","PwP") ---
+		gregapi.oredict.OreDictMaterial[] tMagnets = {gregapi.data.MT.IronMagnetic, gregapi.data.MT.SteelMagnetic, gregapi.data.MT.SteelMagnetic, gregapi.data.MT.NeodymiumMagnetic, gregapi.data.MT.NeodymiumMagnetic};
+		gregapi.oredict.OreDictMaterial[] tCopperWires = {gregapi.data.MT.Copper, gregapi.data.MT.Copper, gregapi.data.MT.AnnealedCopper, gregapi.data.MT.AnnealedCopper, gregapi.data.MT.AnnealedCopper};
+		for (int i = 0; i < 5; i++) {
+			gregapi.oredict.OreDictMaterial tMat = bridgeMat(i);
+			String tPath = bridgePath("electric_engine", i);
+			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMachines.ELECTRIC_ENGINE_ITEMS_BY_PATH.get(tPath).get())
+					.pattern("PhP").pattern("CIC").pattern("PwP")
+					.define('P', GTMaterialItems.get(gregapi.data.OP.plateTriple, tMat).get())
+					.define('I', GTMaterialItems.get(gregapi.data.OP.stickLong, tMagnets[i]).get())
+					.define('C', GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, tCopperWires[i]))
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_plate", has(GTMaterialItems.get(gregapi.data.OP.plateTriple, tMat).get())), new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+		}
+		// --- the Motors :849-853 ("TIT","CMC","TGd") ---
+		for (int i = 0; i < 5; i++) {
+			gregapi.oredict.OreDictMaterial tMat = bridgeMat(i);
+			String tPath = bridgePath("electric_motor", i);
+			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMachines.ELECTRIC_MOTOR_ITEMS_BY_PATH.get(tPath).get())
+					.pattern("TIT").pattern("CMC").pattern("TGd")
+					.define('T', GTMaterialItems.get(gregapi.data.OP.screw, tMat).get())
+					.define('I', GTMaterialItems.get(gregapi.data.OP.stickLong, tMagnets[i]).get())
+					.define('C', GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, tCopperWires[i]))
+					.define('M', GTMaterialItems.get(gregapi.data.OP.casingSmall, tMat).get())
+					.define('G', GTMaterialItems.get(gregapi.data.OP.gearGt, tMat).get())
+					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+					.unlockedBy("has_gear", has(GTMaterialItems.get(gregapi.data.OP.gearGt, tMat).get())), new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+		}
+		return rRows;
+	}
+
+	/** The Electric_T[1..5] rung material by ladder index (upstream MT.java:3691 members, the dynamo family's ladder face). */
+	private static gregapi.oredict.OreDictMaterial bridgeMat(int aTier) {
+		gregapi.oredict.OreDictMaterial[] tMats = {gregapi.data.MT.SteelGalvanized, gregapi.data.MT.Al, gregapi.data.MT.StainlessSteel, gregapi.data.MT.Cr, gregapi.data.MT.Ti};
+		return tMats[aTier];
 	}
 
 	private ShapedRecipeBuilder waterWheelBuilder() {

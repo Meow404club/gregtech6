@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "forge:fine_wires/copper"
+    },
+    "G": {
+      "item": "gt6:gear_gt_steel_galvanized"
+    },
+    "I": {
+      "item": "gt6:stick_long_iron_magnetic"
+    },
+    "M": {
+      "item": "gt6:casing_small_steel_galvanized"
+    },
+    "T": {
+      "item": "gt6:screw_steel_galvanized"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TIT",
+    "CMC",
+    "TGd"
+  ],
+  "result": {
+    "item": "gt6:electric_motor"
+  },
+  "show_notification": true
+}

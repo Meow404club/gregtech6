@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gt6:block/bridge_heater",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/bridge_heater"
+    },
+    "facing=south": {
+      "model": "gt6:block/bridge_heater",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gt6:block/bridge_heater",
+      "y": 270
+    }
+  }
+}

@@ -583,6 +583,9 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "melter" -> GT6RecipeMaps.MELTER;
 			case "smelter" -> GT6RecipeMaps.SMELTER;
 			case "fuels_hot" -> GT6RecipeMaps.FUELS_HOT;
+			// the P29 W4 tail-append (task p29-w4-eu-bridge — the Roasting Oven card owns the
+			// map end to end; the key is the field-name snake case)
+			case "roasting" -> GT6RecipeMaps.ROASTING;
 		default -> null;
 		};
 	}

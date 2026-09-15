@@ -633,6 +633,24 @@ public class GT6RecipeMaps {
 	 */
 	public static volatile RecipeMap FUELS_HOT;
 
+	/**
+	 * RM.java:79 — the Roasting map (task p29-w4-eu-bridge): items 1/3/1, fluids 1/1/1,
+	 * MIN 2 — the RM.java:79 row verbatim over the 15-arg port ctor, the GUI path the
+	 * upstream "machines/Roaster" string lowercased (the Shredder-line convention). Base-
+	 * {@link RecipeMap} (RM.Roasting IS a plain RecipeMap upstream). The MIN columns are
+	 * exactly what makes the upstream row shape type-check: every :397-415 row is
+	 * addRecipe1(input dust, fluidInput, fluidOutput, itemOutput) (Recipe.java:187 — the
+	 * load-bearing reading: the FIRST FluidStack after the input dust is the fluid INPUT,
+	 * carbon + CO2 → CO is the Boudouard reaction, the oxygen rows Pyrite + O2 → SO2 +
+	 * Fe2O3 the same arm), so every row carries 1 item + 1 fluid input (≥ the item-min 1,
+	 * the fluid-min 1, the total-min 2 — the :708-710 gates). DECLARED-empty at
+	 * declaration; the carbon rows (Loader_Recipes_Chem.java:397-403, over the card-①
+	 * closure fluids gt6:carbondioxide/gt6:carbonmonoxide) pour via the tier-b JSON seam
+	 * (key "roasting"); the oxygen sulfide rows (:408+, the SO2 domain) stay POOLED. The
+	 * live findRecipe consumer is the Roasting Oven 4-ladder (20171-20174, the same card).
+	 */
+	public static volatile RecipeMap ROASTING;
+
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
 		if (FURNACE != null) return;
@@ -1235,6 +1253,23 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
+		// RM.java:79 — the Roasting map (task p29-w4-eu-bridge): items 1/3/1, fluids 1/1/1,
+		// MIN 2, AMP 1 — the RM.java:79 row verbatim over the 15-arg port ctor (the trailing
+		// NEI booleans fold away like every other map), the GUI path the upstream
+		// "machines/Roaster" string lowercased (the Shredder-line convention). Base-RecipeMap
+		// (RM.Roasting IS a plain RecipeMap upstream). The rows pour via the tier-b JSON
+		// seam (key "roasting", data/gt6/recipe_maps/roasting.json — the Boudouard carbon
+		// rows of Loader_Recipes_Chem.java:397-403, dust + CO2 in → CO out over the card-①
+		// closure fluids); the oxygen sulfide rows (:408+ , the SO2 domain) stay POOLED. The
+		// live findRecipe consumer is the Roasting Oven 4-ladder (the same card, 20171-20174).
+		ROASTING = new RecipeMap(new HashSet<>(),
+				"gt.recipe.roaster", "Roaster", null,
+				0, 1,
+				"gt6:textures/gui/machines/roaster",
+				/*IN-OUT-MIN-ITEM=*/ 1, 3, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 1,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -1307,6 +1342,7 @@ public class GT6RecipeMaps {
 		MELTER = null;
 		SMELTER = null;
 		FUELS_HOT = null;
+		ROASTING = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}

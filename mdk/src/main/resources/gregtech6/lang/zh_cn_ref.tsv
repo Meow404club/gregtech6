@@ -82,6 +82,21 @@ direct	block.gt6.electric_dynamo_t3	发电机 (HV)	hand
 direct	block.gt6.electric_dynamo_t4	发电机 (EV)	hand
 direct	block.gt6.electric_dynamo_t5	发电机 (IV)	hand
 direct	block.gt6.electric_dynamo_ulv	发电机 (ULV)	hand
+direct	block.gt6.electric_engine	电动引擎 (LV)	hand
+direct	block.gt6.electric_engine_t2	电动引擎 (MV)	hand
+direct	block.gt6.electric_engine_t3	电动引擎 (HV)	hand
+direct	block.gt6.electric_engine_t4	电动引擎 (EV)	hand
+direct	block.gt6.electric_engine_t5	电动引擎 (IV)	hand
+direct	block.gt6.electric_heater	电力加热器 (LV)	hand
+direct	block.gt6.electric_heater_t2	电力加热器 (MV)	hand
+direct	block.gt6.electric_heater_t3	电力加热器 (HV)	hand
+direct	block.gt6.electric_heater_t4	电力加热器 (EV)	hand
+direct	block.gt6.electric_heater_t5	电力加热器 (IV)	hand
+direct	block.gt6.electric_motor	电动机 (LV)	hand
+direct	block.gt6.electric_motor_t2	电动机 (MV)	hand
+direct	block.gt6.electric_motor_t3	电动机 (HV)	hand
+direct	block.gt6.electric_motor_t4	电动机 (EV)	hand
+direct	block.gt6.electric_motor_t5	电动机 (IV)	hand
 direct	block.gt6.electric_transformer	变压器 (ULV-LV)	hand
 direct	block.gt6.electrolyzer_part	电解器部件	hand
 direct	block.gt6.electrometer	静电计传感器	hand
@@ -96,6 +111,10 @@ direct	block.gt6.flux_dynamo_t2	红石通量发电机 (殷钢)	hand
 direct	block.gt6.flux_dynamo_t3	红石通量发电机 (琥珀金)	hand
 direct	block.gt6.flux_dynamo_t4	红石通量发电机 (末影粗胚)	hand
 direct	block.gt6.flux_dynamo_t5	红石通量发电机 (末影)	hand
+direct	block.gt6.gas_turbine_graphene	石墨烯燃气涡轮主外壳	hand
+direct	block.gt6.gas_turbine_magnalium	镁铝合金燃气涡轮主外壳	hand
+direct	block.gt6.gas_turbine_trinitanium	特林钛合金燃气涡轮主外壳	hand
+direct	block.gt6.gas_turbine_vibramantium	艾德曼振金燃气涡轮主外壳	hand
 direct	block.gt6.gearbox	定制木制齿轮箱	hand
 direct	block.gt6.grass	草方块	hand
 direct	block.gt6.grass_black	草方块	hand
@@ -106,6 +125,10 @@ direct	block.gt6.grass_yellow	草方块	hand
 direct	block.gt6.heat_transmitter	传热装置	hand
 direct	block.gt6.large_carborundum_coil	大型碳化硅线圈	hand
 direct	block.gt6.large_copper_coil	大型铜线圈	hand
+direct	block.gt6.large_dynamo_adamantium	艾德曼合金大型发电机主外壳	hand
+direct	block.gt6.large_dynamo_stainless_steel	不锈钢大型发电机主外壳	hand
+direct	block.gt6.large_dynamo_titanium	钛大型发电机主外壳	hand
+direct	block.gt6.large_dynamo_tungstensteel	钨钢大型发电机主外壳	hand
 direct	block.gt6.large_heat_exchanger	大型热交换器	hand
 direct	block.gt6.large_iridium_coil	大型铱线圈	hand
 direct	block.gt6.large_nichrome_coil	大型镍铬合金线圈	hand
@@ -132,6 +155,10 @@ direct	block.gt6.safe_mechanical_steel	机械钢保险箱	hand
 direct	block.gt6.shredder	粉碎机	hand
 direct	block.gt6.shredder_blades	研磨机刀片	hand
 direct	block.gt6.sluice_part	洗矿厂部件	hand
+direct	block.gt6.steam_turbine_graphene	石墨烯蒸汽涡轮主外壳	hand
+direct	block.gt6.steam_turbine_magnalium	镁铝合金蒸汽涡轮主外壳	hand
+direct	block.gt6.steam_turbine_trinitanium	特林钛合金蒸汽涡轮主外壳	hand
+direct	block.gt6.steam_turbine_vibramantium	艾德曼振金蒸汽涡轮主外壳	hand
 direct	block.gt6.stone_anvil	石头砧	hand
 direct	block.gt6.test_machine	测试机器	hand
 direct	block.gt6.test_machine_idle	测试机器 (被动)	hand
@@ -144,7 +171,11 @@ direct	block.gt6.wire_laser	激光光纤导线	hand
 direct	block.gt6.wood_fluid_pipe_medium	木制流体管道	hand
 direct	block.gt6.wood_fluid_pipe_small	小型木制流体管道	hand
 direct	block.gt6.wood_wall	木壁板	hand
+direct	fluid.gt6.argon	氩	hand
+direct	fluid.gt6.butane	丁烷	hand
 direct	fluid.gt6.cactuswater	仙人掌汁	hand
+direct	fluid.gt6.carbondioxide	二氧化碳	hand
+direct	fluid.gt6.carbonmonoxide	一氧化碳	hand
 direct	fluid.gt6.cfoam	建筑泡沫	hand
 direct	fluid.gt6.cfoam_black	黑色建筑泡沫	hand
 direct	fluid.gt6.cfoam_blue	蓝色建筑泡沫	hand
@@ -199,24 +230,45 @@ direct	fluid.gt6.dye_chemical_red	红色化学染料	hand
 direct	fluid.gt6.dye_chemical_white	白色化学染料	hand
 direct	fluid.gt6.dye_chemical_yellow	黄色化学染料	hand
 direct	fluid.gt6.ethanol	乙醇	hand
+direct	fluid.gt6.ethylene	乙烯	hand
+direct	fluid.gt6.fluorine	氟	hand
 direct	fluid.gt6.fuel	燃料	hand
+direct	fluid.gt6.helium	氦	hand
+direct	fluid.gt6.helium_plasma	氦离子	hand
 direct	fluid.gt6.hot_water	热水	hand
+direct	fluid.gt6.hydrogen	氢气	hand
 direct	fluid.gt6.iron_molten	熔融铁	hand
 direct	fluid.gt6.jetfuel	喷气燃料	hand
 direct	fluid.gt6.kerosine	煤油	hand
+direct	fluid.gt6.krypton	氪	hand
+direct	fluid.gt6.liquid_extra_heavy_oil	超重油	hand
+direct	fluid.gt6.liquid_heavy_oil	重油	hand
+direct	fluid.gt6.liquid_light_oil	轻油	hand
+direct	fluid.gt6.liquid_medium_oil	原油	hand
+direct	fluid.gt6.liquidoxygen	液氧	hand
 direct	fluid.gt6.maplesap	枫树汁液	hand
+direct	fluid.gt6.methane	甲烷	hand
 direct	fluid.gt6.mnwtr	矿泉水	hand
 direct	fluid.gt6.natural_gas	天然气	hand
+direct	fluid.gt6.neon	氖	hand
 direct	fluid.gt6.nitrofuel	硝基燃料	hand
+direct	fluid.gt6.nitrogen	氮	hand
+direct	fluid.gt6.nitrogen_plasma	氮离子	hand
+direct	fluid.gt6.oxygen	氧	hand
 direct	fluid.gt6.petrol	汽油	hand
+direct	fluid.gt6.propane	丙烷	hand
+direct	fluid.gt6.propylene	丙烯	hand
+direct	fluid.gt6.radon	氡	hand
 direct	fluid.gt6.reedwater	芦苇水	hand
 direct	fluid.gt6.sap	树液	hand
 direct	fluid.gt6.seawater	海水	hand
+direct	fluid.gt6.soulsandoil	灵魂沙油	hand
 direct	fluid.gt6.spdew	幻露	hand
 direct	fluid.gt6.steam	蒸汽	hand
 direct	fluid.gt6.water_boiling	沸水	hand
 direct	fluid.gt6.water_geothermal	温泉水	hand
 direct	fluid.gt6.waterdirty	污水	hand
+direct	fluid.gt6.xenon	氙	hand
 direct	gt.grass.tooltip	不会传播、被吃、改变颜色, 也不需要光照	hand
 direct	gt.grass.tooltip.spray	喷漆罐也可以用来给草染色！	hand
 direct	gt6.cover.conveyor.display	小型电动输送机 (%s)	hand
@@ -307,6 +359,7 @@ direct	gt6.row.machine.polarizer	电磁偏振器 (%s)	hand
 direct	gt6.row.machine.press	压力成型机	hand
 direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
 direct	gt6.row.machine.pressure_washer	水压清洗机 (%s)	hand
+direct	gt6.row.machine.roasting_oven	焙烧炉 (%s)	hand
 direct	gt6.row.machine.roll_bender	辊弯机 (%s)	hand
 direct	gt6.row.machine.roll_former	辊压成型机 (%s)	hand
 direct	gt6.row.machine.rolling_mill	辊压机 (%s)	hand
