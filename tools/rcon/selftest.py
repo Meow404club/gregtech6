@@ -45,6 +45,7 @@ p17-rcon-framework-fixes):
 """
 
 import os
+import shutil
 import socket
 import subprocess
 import sys
@@ -67,6 +68,10 @@ import gt6world
 # process-global and restored by design "never") — section 9 exercises the
 # genuine polling loop, not the lambda-True stand-in sections 1/8 run on.
 REAL_WAIT_DONE = gt6server.wait_done
+# Same for the real stop path: section 11 exercises the genuine P30 ownership
+# gate, which the section-1 fake (`stop_server = lambda: {"faked": True}`)
+# would otherwise swallow for every later section.
+REAL_STOP_SERVER = gt6server.stop_server
 
 P16_STEMS = ("p16_pattern_checker", "p16_aqua_fluids", "p16_side_io",
              "p16_machine_fluid_gui", "p16_drying_rows", "p16_form_scaffold",
@@ -535,6 +540,157 @@ def check_10_node_expects_fork():
           results["1.20.1-forge"] == 1)
 
 
+def _ownership_fixture(scratch, name, owner, legacy=False):
+    """A pid_file + slot marker + slot record shaped exactly like start_server
+    leaves them. The recorded pid is genuinely gone, so an ALLOWED stop
+    returns immediately instead of waiting out the grace window."""
+    pid_file = scratch / f"{name}.pid"
+    pid_file.write_text(f"{_reaped_pid()}\n", encoding="utf-8")
+    slot = scratch / f"{name}.slot.record"
+    slot.write_text(f"{time.time()}\n" + ("" if legacy else f"owner {owner}\n"),
+                    encoding="utf-8")
+    Path(str(pid_file) + ".slot").write_text(f"{slot}\n", encoding="utf-8")
+    return pid_file, slot
+
+
+def check_11_stop_ownership():
+    """The P30 stop-ownership gate (ops.p30-rcon-chain-repair: a foreign
+    session's cleanup RCON-stopped a live server through the shared default
+    password — stop had no owner check). start_server stamps
+    caller_identity() into the slot record; stop_server resolves the record
+    via the <pid_file>.slot marker and refuses anyone who is neither the
+    boot process nor the same worktree session; --force is the escape.
+    Serverless end to end: the RCON surface is FakeClient and the slot
+    namespace is swapped to a scratch dir, so acquire/reap/gate never touch
+    the shared-box state (and never queue on a full slot set).
+    """
+    print("\n--- 11: stop-ownership gate (P30)")
+    gt6rcon.RconClient = FakeClient  # section 10 left _OvenFake installed
+    scratch = Path(tempfile.mkdtemp())
+    cli_pid = cli_file = cli_slot = None   # /tmp CLI fixtures, bound in try
+    real_slot_dir = gt6server.RCON_SLOT_DIR
+    gt6server.RCON_SLOT_DIR = scratch
+    cwd_token = Path.cwd().resolve()
+    try:
+        # record shape: born complete in the single O_EXCL write
+        slot = gt6server.acquire_rcon_slot(owner="pid=1 /tmp/foreign")
+        lines = slot.read_text(encoding="utf-8").splitlines()
+        check("11a acquire stamps the owner line into the slot record",
+              len(lines) == 2 and lines[0] and lines[1] == "owner pid=1 /tmp/foreign",
+              repr(lines))
+        gt6server.release_rcon_slot(slot)
+        legacy_slot = gt6server.acquire_rcon_slot()
+        check("11b ownerless acquire keeps the legacy single-line record",
+              len(legacy_slot.read_text(encoding="utf-8").splitlines()) == 1)
+        gt6server.release_rcon_slot(legacy_slot)
+
+        # the marker round-trip: recorded_stop_owner resolves through <pid>.slot
+        mine = gt6server.caller_identity()
+        pid_file, slot = _ownership_fixture(scratch, "own_mine", mine)
+        recorded, detail = gt6server.recorded_stop_owner(pid_file)
+        check("11c marker round-trip resolves the recorded owner",
+              recorded == mine and detail is None, f"{recorded!r} {detail!r}")
+        legacy_file, _ = _ownership_fixture(scratch, "own_legacy", mine, legacy=True)
+        recorded, detail = gt6server.recorded_stop_owner(legacy_file)
+        check("11d legacy record reports itself unverifiable",
+              recorded is None and "legacy" in detail, f"{recorded!r} {detail!r}")
+        recorded, detail = gt6server.recorded_stop_owner(scratch / "own_absent.pid")
+        check("11e missing marker reports not-a-boot-handle",
+              recorded is None and "no boot-slot marker" in detail, f"{detail!r}")
+
+        # matched caller passes and still pairs the slot release
+        pid_file, slot = _ownership_fixture(scratch, "own_allow", mine)
+        report = REAL_STOP_SERVER(pid_file)
+        check("11f matched-identity stop proceeds (report returned)",
+              isinstance(report, dict) and report.get("wrapper_pid") is not None)
+        check("11g allowed stop still releases the boot slot",
+              not slot.exists() and not Path(str(pid_file) + ".slot").exists())
+        pid_file, slot = _ownership_fixture(
+            scratch, "own_token", f"pid=999999 {cwd_token}")
+        check("11h same-worktree token passes with a foreign pid "
+              "(manual CLI stop after a crashed sweep)",
+              REAL_STOP_SERVER(pid_file).get("wrapper_pid") is not None)
+
+        # the incident vector: foreign identity refused BEFORE any RCON/pid
+        # action and without releasing the boot's slot
+        foreign = "pid=999999 /tmp/foreign-session-p30"
+        pid_file, slot = _ownership_fixture(scratch, "own_deny", foreign)
+        stops_before = sum(1 for c in FakeClient.commands if c == "stop")
+        try:
+            REAL_STOP_SERVER(pid_file, rcon=("127.0.0.1", 45987, "pw"))
+            check("11i foreign-identity stop refused", False)
+        except gt6server.StopOwnershipError as exc:
+            message = str(exc)
+            check("11i foreign-identity stop refused", True)
+            check("11j refusal names BOTH identities and the --force escape",
+                  foreign in message and "caller is" in message
+                  and "--force" in message, message[:90])
+        check("11k refusal sends no RCON stop (pre-connect gate)",
+              sum(1 for c in FakeClient.commands if c == "stop") == stops_before)
+        check("11l refusal releases nothing (boot slot + marker intact)",
+              slot.exists() and Path(str(pid_file) + ".slot").exists())
+
+        legacy_file, _ = _ownership_fixture(scratch, "own_legacy2", mine, legacy=True)
+        try:
+            REAL_STOP_SERVER(legacy_file)
+            check("11m legacy-record stop refused (unverifiable)", False)
+        except gt6server.StopOwnershipError as exc:
+            check("11m legacy-record stop refused (unverifiable)",
+                  "legacy" in str(exc) and "--force" in str(exc), str(exc)[:90])
+
+        # --force escape: proceeds through RCON and releases the slot
+        pid_file, slot = _ownership_fixture(scratch, "own_force", foreign)
+        report = REAL_STOP_SERVER(pid_file, rcon=("127.0.0.1", 45987, "pw"),
+                                  force=True)
+        check("11n --force proceeds: RCON stop sent through the client",
+              any(c == "stop" for c in FakeClient.commands))
+        check("11o --force completes the slot pairing (slot + marker released)",
+              not slot.exists() and not Path(str(pid_file) + ".slot").exists())
+
+        # stale-slot reaping is mtime-based and owner-line agnostic
+        stale = scratch / "slot.stale"
+        stale.write_text(f"{time.time()}\nowner pid=1 /tmp/foreign\n", encoding="utf-8")
+        old = time.time() - gt6server.RCON_SLOT_STALE_SECONDS - 60
+        os.utime(stale, (old, old))
+        fresh = scratch / "slot.fresh"
+        fresh.write_text(f"{time.time()}\nowner pid=1 /tmp/foreign\n", encoding="utf-8")
+        gt6server._reap_stale_slots(log=lambda *a, **k: None)
+        check("11p stale reaper collects the aged owner-stamped slot, keeps fresh",
+              not stale.exists() and fresh.exists())
+
+        # CLI exit codes in a REAL process (in-process stop_server is faked):
+        # refusal exits 3 with the message; --force exits 0 — and the rcon
+        # port is pre-picked free so the forced fallback never aims at a
+        # foreign listener (the incident shape, never re-enacted).
+        cli_slug = "selftest_p30own_gate"
+        cli_pid = gt6server.artifact_paths(cli_slug)[1]
+        cli_file, cli_slot = _ownership_fixture(
+            Path("/tmp"), f"gt6_rs_{cli_slug}", foreign)
+        safe_port = gt6server.pick_ports((45987,))[0]
+        base_cmd = [sys.executable, str(_HERE / "gt6server.py"), "stop",
+                    "--slug", cli_slug, "--rcon-port", str(safe_port)]
+        refused = subprocess.run(base_cmd, capture_output=True, text=True,
+                                 timeout=60)
+        check("11q CLI foreign stop exits 3 with the refusal message",
+              refused.returncode == 3 and "stop refused" in refused.stdout
+              and "Traceback" not in refused.stdout,
+              (refused.stdout + refused.stderr)[-90:])
+        forced = subprocess.run(base_cmd + ["--force"], capture_output=True,
+                                text=True, timeout=60)
+        check("11r CLI --force stop exits 0 with the warning",
+              forced.returncode == 0 and "WARNING" in forced.stdout,
+              (forced.stdout + forced.stderr)[-90:])
+    finally:
+        gt6server.RCON_SLOT_DIR = real_slot_dir
+        shutil.rmtree(scratch, ignore_errors=True)
+        leftovers = [cli_pid, cli_file, cli_slot]
+        if cli_pid is not None:
+            leftovers.append(Path(str(cli_pid) + ".slot"))
+        for path in leftovers:
+            if path is not None:
+                path.unlink(missing_ok=True)
+
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
@@ -546,6 +702,7 @@ def main():
     check_8_perboot_exit_aggregate()
     check_9_waitdone_monotonic_window()
     check_10_node_expects_fork()
+    check_11_stop_ownership()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 
