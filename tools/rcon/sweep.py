@@ -305,6 +305,15 @@ SESSION_GROUPS = (
     # restored CO2 exhaust. Admission mirrors the p29 W3 cluster form.
     # --group p29_w4_chemicals matches through the chains' embedded name prefix.
     ("p29_w4_chemicals_cracker", "p29_w4_chemicals_gas_turbine"),
+    # P29 W4 card ③ (p29-w4-eu-bridge): the three EU-bridge converter chains + the
+    # Roasting Oven ladder — one fresh z=324 band, x-disjoint columns (heater 446..452 /
+    # engine 458 / motor 464..470 / roasting 476..488); the heater legs sink into the
+    # steam boiler tank (the p13 W2 firebox arm's consumer), the motor legs into the
+    # wood-small axle (the diesel->axle 判例), the engine legs run the accounting +
+    # the type-wall arms (no KU consumer exists — the declared gap, the chain doc);
+    # admission mirrors the p29 W3 cluster form (bbox-registered, band-local setblocks
+    # only). --group p29_w4_eu_bridge matches through the chains' embedded name prefix.
+    ("p29_w4_electric_heater", "p29_w4_electric_engine", "p29_w4_electric_motor", "p29_w4_roasting_oven"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
