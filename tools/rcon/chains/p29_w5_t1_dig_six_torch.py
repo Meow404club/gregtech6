@@ -57,8 +57,12 @@ steps += [
 ]
 
 # --------------------------------- B: the second placement (the scan keeps finding the stack)
+# the arm-A torch must be cleared first: a second placement at an OCCUPIED spot is a
+# vanilla canPlace refusal (PASS, no consumption — the upstream tryPlaceItemIntoWorld
+# false arm), so the 3 -> 2 count leg needs the empty spot.
 steps += [
-    phase("B: the second arm — torchesLeft 3 -> 2"),
+    phase("B: the second arm — clear the landed torch, then torchesLeft 3 -> 2"),
+    Step("setblock 384 65 192 minecraft:air", expect="Changed the block"),
     Step("gt6dig place 384 64 192 pickaxe",
          expect="torchPlaced=true, torchesLeft=2 (of 4), landed=Block{minecraft:torch}"),
 ]
