@@ -47,18 +47,21 @@ steps = [
     Step(f"gt6machine steamcracker fluid fill up gt6:propane 100 {F(SC1)}",
          expect="filled 100/100 L of gt6:propane (ACCEPTED), input tanks hold 1100 L"),
     Step(f"gt6machine steamcracker check {F(SC1)}", expect="minIn=16 recIn=32 maxIn=64"),
+    # the row budget |16 x 64| = 1024 fits the 64-tick inject — the row COMPLETES inside the
+    # command (the four outputs land in the output bank instantly, so progress reads the
+    # post-run idle 0/0; the bank volume 90 L in the draw arm is the completion evidence)
     Step(f"gt6machine steamcracker inject 64 16 {F(SC1)}",
-         expect="progress=64/64",
-         node_expects={"1.21.1": "progress=64/64"}),
-    # the output bank: the draw arm drains the first non-empty tank each call — the row's
+         expect="inject ticks=64 size=16 finalSize=null used=64"),
+    # the draw arm rides the TANK_SIDE_OUT face (SBIT_R|SBIT_B — facing north: south = BACK);
+    # the resource-less drain pulls the FIRST non-empty tank each call = the row's
     # fluidOutputs order (hydrogen 2, methane 27, ethylene 42, propylene 19)
-    Step(f"gt6machine steamcracker fluid draw up 1000 {F(SC1)}",
+    Step(f"gt6machine steamcracker fluid draw south 1000 {F(SC1)}",
          expect="drawn 2/1000 L of gt6:hydrogen (ACCEPTED)"),
-    Step(f"gt6machine steamcracker fluid draw up 1000 {F(SC1)}",
+    Step(f"gt6machine steamcracker fluid draw south 1000 {F(SC1)}",
          expect="drawn 27/1000 L of gt6:methane (ACCEPTED)"),
-    Step(f"gt6machine steamcracker fluid draw up 1000 {F(SC1)}",
+    Step(f"gt6machine steamcracker fluid draw south 1000 {F(SC1)}",
          expect="drawn 42/1000 L of gt6:ethylene (ACCEPTED)"),
-    Step(f"gt6machine steamcracker fluid draw up 1000 {F(SC1)}",
+    Step(f"gt6machine steamcracker fluid draw south 1000 {F(SC1)}",
          expect="drawn 19/1000 L of gt6:propylene (ACCEPTED)"),
 
     phase("B: the catalytic gate — the charcoal feed does NOT match the Pt-dust catalyst row"),
