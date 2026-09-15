@@ -66,14 +66,17 @@ steps = [
     Step(f"gt6energy amp {SRC1_P} 40", expect="amperage 40"),
     Step(f"gt6energy mode {SRC1_P} on", expect="emitting true", sleep=1.0),
     # the buffer caps at mInput*320*slots = 16*320*4 = 10240 (the doInject :185 throttle);
-    # volt 16 stays inside the maxIn 16 band, amp 40 = 640 EU/t fills it in ~16 s
-    Step(f"data get block {BOX1_P} gt.energy", expect="10240", poll=60.0),
+    # volt 16 stays inside the maxIn 16 band, amp 40 = 640 EU/t fills it in ~16 s.
+    # THE DOTTED-KEY PATH RULE (the p26 lesson): "gt.energy" is unreachable in the /data
+    # path syntax ("Found no elements matching gt") — the reads dump the block (or the
+    # item segment) and match the SNBT print.
+    Step(f"data get block {BOX1_P}", expect="10240L", poll=60.0),
     Step(f"gt6energy mode {SRC1_P} off", expect="emitting false", sleep=1.0),
     # the deterministic push: reset the buffer into the top band, source OFF —
     # 20 phases x 8 packets x 8 EU (the :159 per-call cap) land in the battery
     Step(f"data merge block {BOX1_P} {{gt.energy: 8960L}}", expect="Modified block data", sleep=24.0),
-    Step(f"data get block {BOX1_P} gt.energy", expect="7680"),
-    Step(f'data get block {BOX1_P} inventory.Items[0].tag.gt.energy 1', expect="1280"),
+    Step(f"data get block {BOX1_P}", expect="7680L"),
+    Step(f"data get block {BOX1_P} inventory.Items[0]", expect="1280L"),
 
     # ---------------------------------------------------------------- arm B
     phase("B: the overvoltage reject — 32 EU packets against the ULV maxIn 16 are consumed but never stored"),
@@ -88,7 +91,14 @@ steps = [
     Step(f"gt6energy mode {SRC2_P} off", expect="emitting false"),
 ]
 
-CHAIN = Chain(__file__, steps)
+CHAIN = Chain(
+    # the name carries the band key: sweep --group p29_w4_battery matches this member
+    name="p29-w4-battery-charge p29_w4_battery",
+    slug="p29w4batterycharge",
+    sites=gt6world.declare_sites(BOX1, SRC1, BOX2, SRC2),
+    preferred_ports=(26363, 26373),
+    steps=steps,
+)
 
 if __name__ == "__main__":
     main(CHAIN)

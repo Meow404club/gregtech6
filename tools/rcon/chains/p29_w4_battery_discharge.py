@@ -58,7 +58,7 @@ def charged_batteries(pos):
         "1.20.1": (
             f"data merge block {pos} {{inventory:{{Size:4,Items:["
             + ",".join(f'{{Slot:{i}b,id:"gt6:battery_lead_acid_ulv",Count:1b,tag:{{gt.energy:6400L}}}}' for i in range(4))
-            + "]}}}}"
+            + "]}}"  # ] + }} (inventory) + }} (root) — the rendered form
         ),
         "1.21.1": (
             f"data merge block {pos} {{inventory:{{Size:4,Items:["
@@ -66,7 +66,7 @@ def charged_batteries(pos):
                 f'{{Slot:{i}b,id:"gt6:battery_lead_acid_ulv",count:1,components:{{"minecraft:custom_data":{{gt.energy:6400L}}}}}}'
                 for i in range(4)
             )
-            + "]}}}}"
+            + "]}}"  # ] + }} (inventory) + }} (root) — the rendered form
         ),
     }
 
@@ -106,7 +106,14 @@ steps = [
     Step(f"gt6oven check {OVEN_P}", expect="energy=0", poll=8.0),
 ]
 
-CHAIN = Chain(__file__, steps)
+CHAIN = Chain(
+    # the name carries the band key: sweep --group p29_w4_battery matches this member
+    name="p29-w4-battery-discharge p29_w4_battery",
+    slug="p29w4batterydischarge",
+    sites=gt6world.declare_sites(BOXA, MILL, BOXB, OVEN),
+    preferred_ports=(26363, 26373),
+    steps=steps,
+)
 
 if __name__ == "__main__":
     main(CHAIN)
