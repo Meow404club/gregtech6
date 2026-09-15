@@ -393,6 +393,7 @@ SESSION_GROUPS = (
     # name prefix.
     ("p29_w5_t8_armor_give", "p29_w5_t8_armor_wear", "p29_w5_t8_armor_recipe"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
+<<<<<<< HEAD
     # P29 W5 t3 (p29-w5-t3-machine-face-four): the machine-face-four chains — one fresh
     # z=292 band, per-tool x-disjoint columns (softhammer x384..388 / magnglass x392..396 /
     # pincers x400..404, margins grazing at x390/x398 — the grass|hammer same-cluster form),
@@ -409,6 +410,13 @@ SESSION_GROUPS = (
     # the natural-generation RCON gate rides the card's separate forceload+scan
     # (level-type normal + seed, the p26/p30 biome card form).
     ("p29_w6_t1_trees",),
+    # P30 W6 card (p30-w6-rocks-sticks): the surface rock trio + the stick — one
+    # fresh z=300 band (x384..390: stone 384 / flint 386 / meteorite 388 / stick
+    # 390, the support-pop and loot-spawn faces at z=304), the p21 stoneblocks
+    # destroy-drop form (setblock air destroy -> the item-entity NBT id via
+    # execute if entity; the meteorite arm rides 40 kill-less cycles for the
+    # 3:1 rockGt:oreRaw lottery). No fresh_boot / mutates member.
+    ("p29_w6_rocks_sticks",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
