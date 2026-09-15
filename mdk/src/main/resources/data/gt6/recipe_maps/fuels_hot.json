@@ -6,6 +6,96 @@
       "fluidOutputs": [{"fluid": "minecraft:water", "amount": 1}],
       "duration": 1,
       "eut": -2
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:191 verbatim: addRecipe0(T, -16, 6, FL.Blaze.make(1), NF, ZL_IS) — blazing goo 1 L, -16 EUt x 6, NO fluid or item output (NF/ZL_IS verbatim): the heat burns to the buffer alone",
+      "fluidInputs": [{ "fluid": "gt6:blaze", "amount": 1 }],
+      "duration": 6,
+      "eut": -16
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:192 verbatim: addRecipe0(T, -16, EU_PER_LAVA/16, FL.Lava.make(1), FL.Lava_Pahoehoe.make(1), ZL_IS) — CS.java:216 EU_PER_LAVA = 80, /16 = 5: vanilla lava 1 L thickens to pahoehoe 1 L at -16 EUt x 5 (the :193-194 Lava_Volcanic row is guarded by exists() and the port registers no volcanic lava)",
+      "fluidInputs": [{ "fluid": "minecraft:lava", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:ic2pahoehoelava", "amount": 1 }],
+      "duration": 5,
+      "eut": -16
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:200 verbatim: addRecipe0(T, -2, 1, FL.Water_Boiling.make(1), FL.Water.make(1), ZL_IS) — boiling water condenses 1:1 (the :197-198 Water_Hot twin rides the exists() guard the port fails — the aqua family registers no water_hot)",
+      "fluidInputs": [{ "fluid": "gt6:water_boiling", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "minecraft:water", "amount": 1 }],
+      "duration": 1,
+      "eut": -2
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:201 verbatim: addRecipe0(T, -2, 1, FL.Water_Geothermal.make(1), FL.MnWtr.make(1), ZL_IS) — hot spring water gives up 2 power and condenses to mineral water",
+      "fluidInputs": [{ "fluid": "gt6:water_geothermal", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:mnwtr", "amount": 1 }],
+      "duration": 1,
+      "eut": -2
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:203 verbatim: addRecipe0(T, -1, EU_PER_COOLANT, FL.Coolant_IC2_Hot.make(1), FL.Coolant_IC2.make(1), ZL_IS) — CS.java:218 EU_PER_COOLANT = 20: hot industrial coolant 1 L cools to coolant 1 L at -1 EUt x 20 (THE card chain row — the HEX burns this live)",
+      "fluidInputs": [{ "fluid": "gt6:ic2hotcoolant", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:ic2coolant", "amount": 1 }],
+      "duration": 20,
+      "eut": -1
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:204 verbatim: addRecipe0(T, -1, EU_PER_SODIUM, FL.Hot_Molten_Sodium.make(1), FL.amount(MT.Na.mLiquid, 1), ZL_IS) — CS.java:226 EU_PER_SODIUM = 30; the output carrier is the closure fluid gt6:sodium_molten (the MOLTEN-flag walk, MT.java:399 alkali grant)",
+      "fluidInputs": [{ "fluid": "gt6:hotmoltensodium", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:sodium_molten", "amount": 1 }],
+      "duration": 30,
+      "eut": -1
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:205 verbatim: addRecipe0(T, -1, EU_PER_TIN, FL.Hot_Molten_Tin.make(1), FL.amount(MT.Sn.mLiquid, 1), ZL_IS) — CS.java:228 EU_PER_TIN = 40; the output carrier is gt6:tin_molten (MT.java:439 the explicit MOLTEN flag)",
+      "fluidInputs": [{ "fluid": "gt6:hotmoltentin", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:tin_molten", "amount": 1 }],
+      "duration": 40,
+      "eut": -1
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:206 verbatim: addRecipe0(T, -1, EU_PER_HEAVY_WATER, FL.Hot_Heavy_Water.make(1), FL.amount(MT.D2O.mLiquid, 1), ZL_IS) — CS.java:222 EU_PER_HEAVY_WATER = 50; the output carrier is gt6:heavywater (the LIQUID-flag lquddcmp walk, MT.java:1009)",
+      "fluidInputs": [{ "fluid": "gt6:hotheavywater", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:heavywater", "amount": 1 }],
+      "duration": 50,
+      "eut": -1
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:207 verbatim: addRecipe0(T, -1, EU_PER_SEMI_HEAVY_WATER, FL.Hot_Semi_Heavy_Water.make(1), FL.amount(MT.HDO.mLiquid, 1), ZL_IS) — CS.java:220 EU_PER_SEMI_HEAVY_WATER = 40; the output carrier is gt6:semiheavywater (MT.java:1008)",
+      "fluidInputs": [{ "fluid": "gt6:hotsemiheavywater", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:semiheavywater", "amount": 1 }],
+      "duration": 40,
+      "eut": -1
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:208 verbatim: addRecipe0(T, -1, EU_PER_TRITIATED_WATER, FL.Hot_Tritiated_Water.make(1), FL.amount(MT.T2O.mLiquid, 1), ZL_IS) — CS.java:224 EU_PER_TRITIATED_WATER = 60; the output carrier is gt6:tritiatedwater (MT.java:1010)",
+      "fluidInputs": [{ "fluid": "gt6:hottritiatedwater", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:tritiatedwater", "amount": 1 }],
+      "duration": 60,
+      "eut": -1
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:209 verbatim: addRecipe0(T, -1, EU_PER_CO2, FL.Hot_Carbon_Dioxide.make(1), FL.amount(MT.CO2.mGas, 1), ZL_IS) — CS.java:230 EU_PER_CO2 = 20; the output carrier is the card-① closure gas gt6:carbondioxide",
+      "fluidInputs": [{ "fluid": "gt6:hotcarbondioxide", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 1 }],
+      "duration": 20,
+      "eut": -1
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:210 verbatim: addRecipe0(T, -1, EU_PER_HELIUM, FL.Hot_Helium.make(1), FL.amount(MT.He.mGas, 1), ZL_IS) — CS.java:232 EU_PER_HELIUM = 30; the output carrier is the card-① closure gas gt6:helium",
+      "fluidInputs": [{ "fluid": "gt6:hothelium", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:helium", "amount": 1 }],
+      "duration": 30,
+      "eut": -1
+    },
+    {
+      "comment": "task p29-w4-hot-lube FM.Hot — Loader_Fuels.java:211 verbatim: addRecipe0(T, -1, EU_PER_LICL, FL.Hot_Molten_LiCl.make(1), FL.amount(MT.LiCl.mLiquid, 1), ZL_IS) — CS.java:234 EU_PER_LICL = 15; the output carrier is gt6:lithium_chloride_molten (MT.java:1121 the explicit MOLTEN flag)",
+      "fluidInputs": [{ "fluid": "gt6:hotmoltenlicl", "amount": 1 }],
+      "fluidOutputs": [{ "fluid": "gt6:lithium_chloride_molten", "amount": 1 }],
+      "duration": 15,
+      "eut": -1
     }
   ]
 }
