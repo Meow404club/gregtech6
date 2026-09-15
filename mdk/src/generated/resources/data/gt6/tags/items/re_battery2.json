@@ -1,0 +1,9 @@
+{
+  "values": [
+    "gt6:battery_lead_acid_mv",
+    "gt6:battery_alkaline_mv",
+    "gt6:battery_nicd_mv",
+    "gt6:battery_licoo2_mv",
+    "gt6:battery_limn_mv"
+  ]
+}

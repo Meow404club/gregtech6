@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:cable_gold_gt01"
+    },
+    "M": {
+      "item": "gt6:casing_small_stainless_steel"
+    },
+    "W": {
+      "item": "gt6:wire_gold_gt01"
+    },
+    "X": {
+      "tag": "gt6:circuit3"
+    }
+  },
+  "pattern": [
+    "WCW",
+    "WCW",
+    "XMX"
+  ],
+  "result": {
+    "item": "gt6:battery_box_hv"
+  },
+  "show_notification": true
+}

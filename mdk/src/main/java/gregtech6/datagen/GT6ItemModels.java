@@ -185,6 +185,26 @@ public final class GT6ItemModels extends ItemModelProvider {
         // models over the composed placeholder icons (the mold-plate/mold-rod 16x16 stdlib
         // generator, the P20 placeholder-PNG convention; the upstream multiitem icons are
         // meta-atlas tiles with no standalone sprite file to borrow)
+        // the battery family (task p29-w4-battery-storage): 37 item/generated models over
+        // the per-family upstream sprite borrows (the bake_battery_textures.py products,
+        // assets/README.md attribution), walked over the ROWS table so model ids cannot
+        // drift; the 5 cells share one cell sprite; the 7 circuit carriers reuse the
+        // in-repo item/integrated_circuit.png (no new file, the declared placeholder);
+        // the 12 box items parent their block models (the dynamo band convention)
+        for (gregtech6.registry.GT6Batteries.BatteryRow tRow : gregtech6.registry.GT6Batteries.ROWS) {
+            withExistingParent(tRow.path(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/battery/" + tRow.family()));
+        }
+        for (String tPath : gregtech6.registry.GT6Batteries.CELL_ITEMS.keySet()) {
+            withExistingParent(tPath, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/battery/cell"));
+        }
+        for (String tPath : gregtech6.registry.GT6Batteries.CIRCUIT_ITEMS.keySet()) {
+            withExistingParent(tPath, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/integrated_circuit"));
+        }
+        // (the 12 box ITEMS parent their block models from GT6BlockStates.addBatteryBoxes —
+        //  the item face validates against the blockstates provider's own output, the dynamo band convention)
         withExistingParent("shape_extruder_plate", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/shape_extruder/plate"));
         withExistingParent("shape_extruder_rod", mcLoc("item/generated"))

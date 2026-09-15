@@ -175,6 +175,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addWaterWheel(); // task p28-c-water-wheel
         addElectricDynamoUlv(); // task p28-c-ulv-dynamo-row — the Electric Dynamo T0 row
+        addBatteryBoxes(); // task p29-w4-battery-storage — the 12-box storage face
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
         addParts(); // task p29-w3-nbtdesign-parts — the part-family expansion (per-design variants)
@@ -1382,6 +1383,23 @@ public final class GT6BlockStates extends BlockStateProvider {
      * borrowed upstream dynamos art (the family's five LV..IV rows stay the W2 surface;
      * this card owns ONLY the new tier per its SPEC).
      */
+    /**
+     * Task p29-w4-battery-storage — the twelve BatteryBox rows: one cube_all per row over
+     * the BAKED upstream energystorages side sprites (small/large, the
+     * bake_battery_textures.py composites; assets/README.md attribution). The FACING
+     * property is a functional IO face (FRONT out EU / ALL-BUT-FRONT in — the
+     * addElectricDynamoUlv placeholder convention, the per-face art is the render pool);
+     * the item models parent the block models.
+     */
+    private void addBatteryBoxes() {
+        for (gregtech6.registry.GT6Batteries.BoxRow tRow : gregtech6.registry.GT6Batteries.BOX_ROWS) {
+            net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6Batteries.BATTERY_BOX_BLOCKS.get(tRow.path()).get();
+            simpleBlock(tBlock, models().cubeAll(tRow.path(),
+                    modLoc(tRow.slots() == 16 ? "block/battery_box_large" : "block/battery_box")));
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+        }
+    }
+
     private void addElectricDynamoUlv() {
         Block tBlock = GT6ElectricDynamos.ELECTRIC_DYNAMO_ULV.get();
         simpleBlock(tBlock, models().cubeAll("electric_dynamo_ulv", modLoc("block/energy_source")));
