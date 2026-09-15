@@ -128,20 +128,21 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 		this(null, aPos, aState);
 	}
 
-	/** Full constructor — also the offline (test) entry point (the dual-ctor precedent). The BET resolves off the block's slot family at runtime. */
+	/** Full constructor — also the offline (test) entry point (the dual-ctor precedent). The row data (tier/slots/BET) resolves off the block state at runtime. */
 	public GT6BatteryBoxBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
-		this(aType, aPos, aState, resolveSlots(aState));
+		this(aType, aPos, aState, resolveTier(aState), resolveSlots(aState));
 	}
 
-	/** The explicit-slot constructor (the offline fixture — vanilla STONE states carry no GT6 block). */
-	public GT6BatteryBoxBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState, int aSlots) {
-		this(aType, aPos, aState, aSlots, resolveBet(aType, aState));
+	/** The explicit-row constructor (the offline fixture — vanilla STONE states carry no GT6 block). */
+	public GT6BatteryBoxBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState, int aTier, int aSlots) {
+		this(aType, aPos, aState, aTier, aSlots, resolveBet(aType, aState));
 	}
 
-	private GT6BatteryBoxBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState, int aSlots,
+	private GT6BatteryBoxBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState, int aTier, int aSlots,
 			BlockEntityType<? extends TileEntityBase03TicksAndSync> aResolved) {
 		super(true, aResolved, aPos, aState);
 		mSlots = aSlots;
+		mInput = mOutput = gregtech6.registry.GTWireSpecs.V[aTier]; // the NBT_INPUT/NBT_OUTPUT columns, V[tier] both directions
 		setInventory(new GTItemStackHandler(aSlots) {
 			@Override
 			public boolean isItemValid(int aSlot, ItemStack aStack) {
@@ -160,6 +161,11 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 	/** The family slot count off the block (the NBT_INV_SIZE column; 4 = the STONE/offline fallback). */
 	static int resolveSlots(BlockState aState) {
 		return aState.getBlock() instanceof GT6BatteryBoxBlock tBox ? tBox.slots() : 4;
+	}
+
+	/** The tier ladder index off the block (the V[tier] seat; 1 = the STONE/offline fallback). */
+	static int resolveTier(BlockState aState) {
+		return aState.getBlock() instanceof GT6BatteryBoxBlock tBox ? tBox.tier() : 1;
 	}
 
 	/** The BET resolution — small/large off the block's slot family (runtime: both registered; offline: the explicit type). */
@@ -183,7 +189,7 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 		return mSlots;
 	}
 
-	private GTItemStackHandler inv() {
+	GTItemStackHandler inv() { // package-private: the offline test seeding seam
 		return mInventory; // the Root carrier
 	}
 

@@ -285,7 +285,7 @@ public final class GT6Batteries {
 	 */
 	private static GT6BatteryBoxBlock batteryBox(BoxRow aRow) {
 		return new GT6BatteryBoxBlock(BlockBehaviour.Properties.of().strength(4.0F, 4.0F).sound(SoundType.METAL),
-				aRow.slots(), () -> aRow.slots() == 4 ? BATTERY_BOX_BE.get() : BATTERY_BOX_LARGE_BE.get());
+				aRow.tier(), aRow.slots(), () -> aRow.slots() == 4 ? BATTERY_BOX_BE.get() : BATTERY_BOX_LARGE_BE.get());
 	}
 
 	// ---------------------------------------------------------------------------

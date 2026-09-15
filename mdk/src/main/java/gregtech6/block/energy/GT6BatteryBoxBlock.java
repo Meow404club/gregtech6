@@ -44,12 +44,16 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 	/** The NBT_INV_SIZE column: 4 (the small box, :894) or 16 (the Large box, :895). */
 	private final int mSlots;
 
+	/** The tier ladder index (the VN ordinal — V[tier] rides mInput/mOutput, the NBT_INPUT/OUTPUT columns). */
+	private final int mTier;
+
 	/** The family BET (the GT6ElectricTransformers registry object supplier). */
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
-	public GT6BatteryBoxBlock(Properties aProperties, int aSlots,
+	public GT6BatteryBoxBlock(Properties aProperties, int aTier, int aSlots,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType) {
 		super(aProperties);
+		mTier = aTier;
 		mSlots = aSlots;
 		mTickerType = aTickerType;
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
@@ -60,13 +64,18 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 		return mSlots;
 	}
 
+	/** The tier ladder index (the BE reads V[tier] off it — the NBT_INPUT/NBT_OUTPUT columns). */
+	public int tier() {
+		return mTier;
+	}
+
 	//? if neoforge {
 	/*
 	// 21.1 made BaseEntityBlock.codec() abstract — the GT6ElectricTransformerBlock
 	// simpleCodec representative-value form (slot count 4, the family supplier dropped).
 	@Override
 	protected com.mojang.serialization.MapCodec<? extends GT6BatteryBoxBlock> codec() {
-		return simpleCodec(aProperties -> new GT6BatteryBoxBlock(aProperties, 4, () -> null));
+		return simpleCodec(aProperties -> new GT6BatteryBoxBlock(aProperties, 0, 4, () -> null));
 	}
 	*///?}
 
