@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "gt6:item/pocket/knife",
+    "layer1": "gt6:item/pocket/knife_overlay"
+  }
+}

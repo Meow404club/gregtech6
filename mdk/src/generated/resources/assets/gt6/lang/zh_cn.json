@@ -2961,6 +2961,14 @@
   "item.gt6.pincers": "钳子",
   "item.gt6.plow": "犁",
   "item.gt6.plunger": "搋子",
+  "item.gt6.pocket_multitool": "便携多功能工具",
+  "item.gt6.pocket_multitool_chisel": "便携多功能工具（凿子）",
+  "item.gt6.pocket_multitool_file": "便携多功能工具（锉）",
+  "item.gt6.pocket_multitool_knife": "便携多功能工具（刀）",
+  "item.gt6.pocket_multitool_saw": "便携多功能工具（锯）",
+  "item.gt6.pocket_multitool_scissors": "便携多功能工具（剪刀）",
+  "item.gt6.pocket_multitool_screwdriver": "便携多功能工具（螺丝刀）",
+  "item.gt6.pocket_multitool_wire_cutter": "便携多功能工具（剪线钳）",
   "item.gt6.rolling_pin": "擀面杖",
   "item.gt6.saw": "锯",
   "item.gt6.scissors": "剪刀",
@@ -3116,5 +3124,12 @@
   "itemGroup.gt6.tool_head_universal_spade": "万用铲头",
   "itemGroup.gt6.tool_head_wrench": "扳手头",
   "itemGroup.gt6.tools": "工具",
-  "itemGroup.gt6.wire_fine": "细导线"
+  "itemGroup.gt6.wire_fine": "细导线",
+  "tooltip.gt6.pocket.chisel": "服务器延迟高时请务必小心使用！",
+  "tooltip.gt6.pocket.file": "采集铁栏杆与其类似方块更快",
+  "tooltip.gt6.pocket.multitool": "7 种工具合而为一！",
+  "tooltip.gt6.pocket.saw": "采木板更快，采原木较慢，可以采集冰。",
+  "tooltip.gt6.pocket.scissors": "拿着它的时候别到处乱跑！",
+  "tooltip.gt6.pocket.switch": "潜行右键切换模式",
+  "tooltip.gt6.pocket.wire_cutter": "采集线缆和导线更快"
 }

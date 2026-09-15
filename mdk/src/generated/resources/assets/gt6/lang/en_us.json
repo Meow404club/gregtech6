@@ -2961,6 +2961,14 @@
   "item.gt6.pincers": "Pincers",
   "item.gt6.plow": "Plow",
   "item.gt6.plunger": "Plunger",
+  "item.gt6.pocket_multitool": "Pocket Multitool",
+  "item.gt6.pocket_multitool_chisel": "Pocket Multitool (Chisel)",
+  "item.gt6.pocket_multitool_file": "Pocket Multitool (File)",
+  "item.gt6.pocket_multitool_knife": "Pocket Multitool (Knife)",
+  "item.gt6.pocket_multitool_saw": "Pocket Multitool (Saw)",
+  "item.gt6.pocket_multitool_scissors": "Pocket Multitool (Scissors)",
+  "item.gt6.pocket_multitool_screwdriver": "Pocket Multitool (Screwdriver)",
+  "item.gt6.pocket_multitool_wire_cutter": "Pocket Multitool (Wire Cutter)",
   "item.gt6.rolling_pin": "Rolling Pin",
   "item.gt6.saw": "Saw",
   "item.gt6.scissors": "Scissors",
@@ -3116,5 +3124,12 @@
   "itemGroup.gt6.tool_head_universal_spade": "Universal Spade Heads",
   "itemGroup.gt6.tool_head_wrench": "Wrench Tips",
   "itemGroup.gt6.tools": "Tools",
-  "itemGroup.gt6.wire_fine": "Fine Wires"
+  "itemGroup.gt6.wire_fine": "Fine Wires",
+  "tooltip.gt6.pocket.chisel": "Be slow/careful with it on Servers because Ping!",
+  "tooltip.gt6.pocket.file": "Harvests Iron Bars and similar faster",
+  "tooltip.gt6.pocket.multitool": "7 useful Tools in one!",
+  "tooltip.gt6.pocket.saw": "Faster on Planks. Slower on Logs. Can harvest Ice.",
+  "tooltip.gt6.pocket.scissors": "Don't run around while holding them!",
+  "tooltip.gt6.pocket.switch": "Sneak Rightclick to switch Mode",
+  "tooltip.gt6.pocket.wire_cutter": "Harvests Cables and Wires faster"
 }
