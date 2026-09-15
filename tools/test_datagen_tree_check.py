@@ -3,13 +3,16 @@
 """test_datagen_tree_check.py — datagen_tree_check 的 stdlib unittest 单测。
 
 零第三方依赖（python3 tools/test_datagen_tree_check.py 直跑）。覆盖：
-  * p27 品牌段映射带：brand_normalize 路径折叠 / _fold 碰撞守卫 /
-    _norm_add_features_brand 值形归一 / main() 端到端 17+17→0 形。
-  * （p27 后续提交追加）陈旧守卫 STALE 判定与逃生阀。
+  * p30 双目录终态：biome_modifier 带 forge/↔forge/、neoforge/↔neoforge/ 同品牌
+    直接对账（p27 brand_normalize 折叠退役）——normalize 恒等 / _fold 双品牌同侧
+    不撞键 / 值形归一器对该带退役（字节差原样 FAIL）/ main() 端到端 17+17 双腿面
+    绿形 + 单面树 34 形 FAIL 回归钉。
+  * p27 起的陈旧守卫 STALE 判定与逃生阀。
 
-证据基线：main 树实测（2026-09-12，HEAD fe519aa8）——canonical
-data/gt6/forge/biome_modifier/ 17 文件 vs 节点 data/gt6/neoforge/biome_modifier/
-17 文件互为 only-*，逐对仅 "type" 一键差（forge:add_features ↔ neoforge:add_features）。
+证据基线：p30 before 实测（work/p30-ops-biome-modifier-dual-dir，base 树）——canonical
+仅 data/gt6/forge/biome_modifier/ 17 文件 vs 节点仅 data/gt6/neoforge/biome_modifier/
+17 文件 → 34 条目录形 FAIL（only-canonical 17 + only-node 17），即本卡清偿对象；
+双目录并载后（GT6DualDirectoryFaces.mirrorBiomeModifiers）同品牌逐字节相等 → 0。
 """
 
 from __future__ import annotations
@@ -47,59 +50,53 @@ def _biome_json(brand_prefix: str) -> bytes:
     })
 
 
-class TestBrandNormalize(unittest.TestCase):
-    """层 1 品牌段作用域折叠（路径面）。"""
+class TestNormalizeDualDir(unittest.TestCase):
+    """层 1：双目录终态下品牌段恒等（p27 折叠退役），SEGMENT_MAP 层照旧。"""
 
-    def test_node_neoforge_biome_modifier_folds_to_forge(self):
-        rel = PurePosixPath("data/gt6/neoforge/biome_modifier/overworld_stone_andesite.json")
-        self.assertEqual(
-            mod.normalize(rel),
-            PurePosixPath("data/gt6/forge/biome_modifier/overworld_stone_andesite.json"))
+    def test_biome_brand_paths_are_identity_both_brands(self):
+        for brand in ("forge", "neoforge"):
+            rel = PurePosixPath(f"data/gt6/{brand}/biome_modifier/overworld_stone_andesite.json")
+            self.assertEqual(mod.normalize(rel), rel, msg=brand)
 
-    def test_canonical_forge_form_is_identity(self):
-        rel = PurePosixPath("data/gt6/forge/biome_modifier/overworld_stone_andesite.json")
-        self.assertEqual(mod.normalize(rel), rel)
-        self.assertEqual(mod.brand_normalize(rel), rel)
+    def test_global_segment_map_still_folds(self):
+        rel = PurePosixPath("data/gt6/loot_table/blocks/a.json")
+        self.assertEqual(mod.normalize(rel),
+                         PurePosixPath("data/gt6/loot_tables/blocks/a.json"))
 
-    def test_fold_is_symmetric_on_the_pair(self):
+    def test_same_brand_pairs_match_across_sides(self):
+        c = PurePosixPath("data/gt6/forge/biome_modifier/x.json")
+        n = PurePosixPath("data/gt6/forge/biome_modifier/x.json")
+        self.assertEqual(mod.normalize(c), mod.normalize(n))
+        cn = PurePosixPath("data/gt6/neoforge/biome_modifier/x.json")
+        nn = PurePosixPath("data/gt6/neoforge/biome_modifier/x.json")
+        self.assertEqual(mod.normalize(cn), mod.normalize(nn))
+
+    def test_cross_brand_pairs_stay_distinct_keys(self):
+        # 旧世界单面树（canonical 仅 forge/、node 仅 neoforge/）不再折到同键：
+        # 34 条目录形差必须以 only-* 形态显形（fail-visible），而非被折叠吞掉
         c = PurePosixPath("data/gt6/forge/biome_modifier/x.json")
         n = PurePosixPath("data/gt6/neoforge/biome_modifier/x.json")
-        self.assertEqual(mod.normalize(c), mod.normalize(n))
-
-    def test_brand_out_of_band_paths_untouched(self):
-        # 带外（band 段不符 / 顶层非 data / 深度不足）一概不动
-        for rel in (
-            PurePosixPath("data/gt6/neoforge/tags/blocks/x.json"),   # 段[3]≠biome_modifier
-            PurePosixPath("assets/gt6/models/neoforge/x.json"),      # 顶层非 data
-            PurePosixPath("data/gt6/neoforge.json"),                 # 深度不足
-            PurePosixPath("data/neoforge/biome_modifier/x.json"),    # 段[2]非品牌位（ns 位）
-        ):
-            self.assertEqual(mod.brand_normalize(rel), rel, msg=str(rel))
+        self.assertNotEqual(mod.normalize(c), mod.normalize(n))
 
 
-class TestFoldGuard(unittest.TestCase):
-    """_fold：品牌折叠撞键 → 硬 ERROR；既有全局折叠阴影维持后写覆盖现行为。"""
+class TestFoldDualDir(unittest.TestCase):
+    """_fold：双品牌同侧共存 = 两个独立对账键（终态形），无碰撞概念。"""
 
-    def test_dual_brand_same_side_hard_errors(self):
+    def test_dual_brand_same_side_folds_to_two_keys(self):
+        # p27 时代此形硬 ERROR（by design 逼 revisit）；p30 终态即本形，守卫退役
         files = {
             PurePosixPath("data/gt6/forge/biome_modifier/a.json"): Path("/c/a.json"),
             PurePosixPath("data/gt6/neoforge/biome_modifier/a.json"): Path("/c2/a.json"),
         }
-        with self.assertRaises(SystemExit) as cm:
-            mod._fold(files)
-        self.assertIn("brand-fold collision", str(cm.exception))
-
-    def test_brand_folded_key_then_plain_key_also_errors(self):
-        # 折叠文件先到、原形 forge 文件后到：同样撞键（守卫须双向）
-        files = {
-            PurePosixPath("data/gt6/neoforge/biome_modifier/a.json"): Path("/n/a.json"),
-            PurePosixPath("data/gt6/forge/biome_modifier/a.json"): Path("/c/a.json"),
-        }
-        with self.assertRaises(SystemExit):
-            mod._fold(files)
+        out = mod._fold(files)
+        self.assertEqual(len(out), 2)
+        self.assertEqual(out[PurePosixPath("data/gt6/forge/biome_modifier/a.json")],
+                         Path("/c/a.json"))
+        self.assertEqual(out[PurePosixPath("data/gt6/neoforge/biome_modifier/a.json")],
+                         Path("/c2/a.json"))
 
     def test_legacy_global_fold_shadow_keeps_last_wins(self):
-        # SEGMENT_MAP 层既有阴影（singular/plural 瞬态并存）不归本守卫管：行为不变
+        # SEGMENT_MAP 层既有阴影（singular/plural 瞬态并存）行为不变
         files = {
             PurePosixPath("data/gt6/loot_table/blocks/a.json"): Path("/n/a.json"),
             PurePosixPath("data/gt6/loot_tables/blocks/a.json"): Path("/c/a.json"),
@@ -110,119 +107,112 @@ class TestFoldGuard(unittest.TestCase):
         self.assertIn(key, out)
         self.assertEqual(out[key], Path("/c/a.json"))  # 后写覆盖（插入序）
 
-    def test_distinct_biome_names_do_not_collide(self):
-        files = {
-            PurePosixPath("data/gt6/forge/biome_modifier/a.json"): Path("/c/a.json"),
-            PurePosixPath("data/gt6/neoforge/biome_modifier/b.json"): Path("/n/b.json"),
-        }
-        out = mod._fold(files)
-        self.assertEqual(len(out), 2)
 
+class TestBiomeBandUnregistered(unittest.TestCase):
+    """值形归一器对 biome_modifier 带退役：该带任何字节差原样 FAIL（fail-visible）。"""
 
-class TestAddFeaturesValueNormalizer(unittest.TestCase):
-    """层 2 品牌段值形归一（type 键前缀）。"""
+    def test_biome_band_is_no_longer_registered(self):
+        for brand in ("forge", "neoforge"):
+            rel = PurePosixPath(f"data/gt6/{brand}/biome_modifier/overworld_stone_andesite.json")
+            self.assertIsNone(mod._registered_band(rel), msg=brand)
 
-    def test_registered_band_matches_canonical_form(self):
-        rel = PurePosixPath("data/gt6/forge/biome_modifier/overworld_stone_andesite.json")
-        regs = mod._registered_band(rel)
-        self.assertIsNotNone(regs)
-        self.assertEqual([name for name, _ in regs],
-                         ["add-features-neoforge→forge"])
-
-    def test_node_brand_normalizes_to_canonical_bytes(self):
-        rel = PurePosixPath("data/gt6/forge/biome_modifier/overworld_stone_andesite.json")
-        c = _biome_json("forge")
-        n = _biome_json("neoforge")
-        out = mod.try_value_normalize(rel, c, n)
-        self.assertIsNotNone(out)
-        self.assertEqual(out[0], c)
-        self.assertEqual(out[1], "add-features-neoforge→forge")
-
-    def test_unregistered_brand_shape_stays_fail_visible(self):
-        # remove_features 未注册：归一通道不吞，返回 None → 原样 FAIL
-        rel = PurePosixPath("data/gt6/forge/biome_modifier/x.json")
-        c = _gson({"type": "forge:remove_features", "biomes": []})
-        n = _gson({"type": "neoforge:remove_features", "biomes": []})
+    def test_brand_type_diff_stays_fail_visible(self):
+        # p27 时代 type 差由 _norm_add_features_brand 归一；终态两侧同品牌同形，
+        # 归一器已删——残余 type 差 = 真实漂移，必须 FAIL 而非吞掉
+        rel = PurePosixPath("data/gt6/neoforge/biome_modifier/x.json")
+        c = _biome_json("neoforge")
+        n = _biome_json("forge")
         self.assertIsNone(mod.try_value_normalize(rel, c, n))
 
-    def test_non_biome_band_not_matched(self):
+    def test_non_biome_registered_bands_still_work(self):
         rel = PurePosixPath("data/gt6/recipes/x.json")
-        c = _biome_json("forge")
-        n = _biome_json("neoforge")
-        self.assertIsNone(mod.try_value_normalize(rel, c, n))
-
-    def test_byte_equal_never_enters_normalizer(self):
-        rel = PurePosixPath("data/gt6/forge/biome_modifier/x.json")
-        b = _biome_json("forge")
-        # 快路径语义由 main() 保证（byte 相等不进归一通道）；此处只钉归一器对同字节
-        # 输入的零施用（canonical 形 forge: 前缀不被 _norm_add_features_brand 消费）
-        self.assertIsNone(mod.try_value_normalize(rel, b, b))
+        c = _gson({"type": "minecraft:smelting", "result": {"count": 1, "id": "gt6:mold"}})
+        n = _gson({"type": "minecraft:smelting", "result": {"count": 1, "id": "gt6:mold"}})
+        # byte 相等走快路径不进归一通道（main() 语义）；此处只钉带注册面仍在
+        self.assertIsNotNone(mod._registered_band(rel))
 
 
-class TestMainEndToEndBrand(unittest.TestCase):
-    """端到端：canonical forge/ + node neoforge/ 双目录 → biome 带 17+17→0 形。"""
+class TestMainEndToEndDualDir(unittest.TestCase):
+    """端到端：双目录终态 17+17 ↔ 17+17 同品牌绿形 / 旧世界单面树 34 形红钉。"""
 
-    def test_biome_brand_pair_goes_green(self):
+    @staticmethod
+    def _write_biome_tree(root: Path, brand: str) -> None:
+        d = root / "data/gt6" / brand / "biome_modifier"
+        d.mkdir(parents=True)
+        (d / "overworld_stone_andesite.json").write_bytes(_biome_json(brand))
+
+    def _run(self, canon: Path, node: Path) -> tuple[int, str]:
+        argv = sys.argv
+        buf = io.StringIO()
+        try:
+            sys.argv = ["datagen_tree_check.py",
+                        "--canonical", str(canon), "--node-output", str(node)]
+            with contextlib.redirect_stdout(buf):
+                rc = mod.main()
+        finally:
+            sys.argv = argv
+        return rc, buf.getvalue()
+
+    def test_dual_dir_same_brand_pairs_go_green(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             canon = root / "canonical"
             node = root / "node"
-            (canon / "data/gt6/forge/biome_modifier").mkdir(parents=True)
-            (node / "data/gt6/neoforge/biome_modifier").mkdir(parents=True)
+            # 终态形：双侧各并载 forge/ 与 neoforge/ 两面（同品牌字节同源）
+            self._write_biome_tree(canon, "forge")
+            self._write_biome_tree(canon, "neoforge")
+            self._write_biome_tree(node, "forge")
+            self._write_biome_tree(node, "neoforge")
             (canon / "assets/gt6/lang").mkdir(parents=True)
             (node / "assets/gt6/lang").mkdir(parents=True)
-            (canon / "data/gt6/forge/biome_modifier/overworld_stone_andesite.json"
-             ).write_bytes(_biome_json("forge"))
-            (node / "data/gt6/neoforge/biome_modifier/overworld_stone_andesite.json"
-             ).write_bytes(_biome_json("neoforge"))
             lang = _gson({"gt6.row.x": "X"})
             (canon / "assets/gt6/lang/en_us.json").write_bytes(lang)
             (node / "assets/gt6/lang/en_us.json").write_bytes(lang)
 
-            argv = sys.argv
-            buf = io.StringIO()
-            try:
-                sys.argv = ["datagen_tree_check.py",
-                            "--canonical", str(canon), "--node-output", str(node)]
-                with contextlib.redirect_stdout(buf):
-                    rc = mod.main()
-            finally:
-                sys.argv = argv
-            out = buf.getvalue()
+            rc, out = self._run(canon, node)
             self.assertEqual(rc, 0, msg=out)
-            self.assertIn("NORMALIZED [add-features-neoforge→forge] "
-                          "data/gt6/forge/biome_modifier/overworld_stone_andesite.json",
-                          out)
-            self.assertIn("biome band: canonical 1 (data/*/forge/biome_modifier)"
-                          "  node 1 (data/*/neoforge/biome_modifier)", out)
+            self.assertIn("biome band: canonical 1+1 "
+                          "(data/*/forge+neoforge/biome_modifier)  node 1+1 "
+                          "(data/*/forge+neoforge/biome_modifier)", out)
             self.assertIn("RESULT: OK", out)
+            self.assertNotIn("NORMALIZED [add-features", out)  # 归一器已退役
 
-    def test_unpaired_brand_shape_still_fails(self):
-        # 归一不是吞差：node 侧连 features 都改了 → 归一后仍不等 → FAIL + 定位
+    def test_single_face_base_shape_still_fails(self):
+        # 回归钉（本卡清偿对象）：canonical 仅 forge/ + node 仅 neoforge/（p26-p29
+        # 结构债本体）→ 34 形（此处 1+1 缩比）目录形 FAIL，绝不许再被折叠吞绿
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             canon = root / "canonical"
             node = root / "node"
-            (canon / "data/gt6/forge/biome_modifier").mkdir(parents=True)
-            (node / "data/gt6/neoforge/biome_modifier").mkdir(parents=True)
-            (canon / "data/gt6/forge/biome_modifier/a.json"
-             ).write_bytes(_biome_json("forge"))
+            self._write_biome_tree(canon, "forge")
+            self._write_biome_tree(node, "neoforge")
+
+            rc, out = self._run(canon, node)
+            self.assertEqual(rc, 1, msg=out)
+            self.assertIn("DIFF [only-canonical] data/gt6/forge/biome_modifier/"
+                          "overworld_stone_andesite.json", out)
+            self.assertIn("DIFF [only-node] data/gt6/neoforge/biome_modifier/"
+                          "overworld_stone_andesite.json", out)
+            self.assertIn("only-canonical:1, only-node:1", out)
+            self.assertIn("RESULT: FAIL", out)
+
+    def test_dual_dir_content_drift_still_fails(self):
+        # 终态无归一兜底：同品牌面任何字节差 → content FAIL + 定位
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            canon = root / "canonical"
+            node = root / "node"
+            self._write_biome_tree(canon, "neoforge")
             drift = json.loads(_biome_json("neoforge"))
             drift["features"] = "gt6:somewhere_else"
-            (node / "data/gt6/neoforge/biome_modifier/a.json").write_bytes(_gson(drift))
+            d = node / "data/gt6/neoforge/biome_modifier"
+            d.mkdir(parents=True)
+            (d / "overworld_stone_andesite.json").write_bytes(_gson(drift))
 
-            argv = sys.argv
-            buf = io.StringIO()
-            try:
-                sys.argv = ["datagen_tree_check.py",
-                            "--canonical", str(canon), "--node-output", str(node)]
-                with contextlib.redirect_stdout(buf):
-                    rc = mod.main()
-            finally:
-                sys.argv = argv
-            out = buf.getvalue()
+            rc, out = self._run(canon, node)
             self.assertEqual(rc, 1, msg=out)
-            self.assertIn("DIFF [content]", out)
+            self.assertIn("DIFF [content] data/gt6/neoforge/biome_modifier/"
+                          "overworld_stone_andesite.json", out)
             self.assertIn("RESULT: FAIL", out)
 
 
@@ -300,12 +290,11 @@ class TestStaleGuardEndToEnd(unittest.TestCase):
             repo = root / "repo"
             canon = repo / "tree"
             node = root / "node"
-            (canon / "data/gt6/forge/biome_modifier").mkdir(parents=True)
-            (node / "data/gt6/neoforge/biome_modifier").mkdir(parents=True)
-            (canon / "data/gt6/forge/biome_modifier/a.json"
-             ).write_bytes(_biome_json("forge"))
-            (node / "data/gt6/neoforge/biome_modifier/a.json"
-             ).write_bytes(_biome_json("neoforge"))
+            # 终态对账形：同品牌同路径（forge/↔forge/），字节同源
+            for base in (canon, node):
+                d = base / "data/gt6/forge/biome_modifier"
+                d.mkdir(parents=True)
+                (d / "a.json").write_bytes(_biome_json("forge"))
             # canonical 侧：真 git 仓库，HEAD 提交时间 = now
             self._git(repo, "init", "-q")
             self._git(repo, "-c", "user.email=t@t", "-c", "user.name=t",
@@ -325,8 +314,6 @@ class TestStaleGuardEndToEnd(unittest.TestCase):
             rc, out = self._run_main(canon, node, ["--allow-stale"])
             self.assertEqual(rc, 0, msg=out)
             self.assertIn("STALE-WARN (allowed by --allow-stale)", out)
-            self.assertIn("NORMALIZED [add-features-neoforge→forge] "
-                          "data/gt6/forge/biome_modifier/a.json", out)
             self.assertIn("RESULT: OK", out)
 
     def test_fresh_snapshot_passes_guard(self):
@@ -336,12 +323,10 @@ class TestStaleGuardEndToEnd(unittest.TestCase):
             repo = root / "repo"
             canon = repo / "tree"
             node = root / "node"
-            (canon / "data/gt6/forge/biome_modifier").mkdir(parents=True)
-            (node / "data/gt6/neoforge/biome_modifier").mkdir(parents=True)
-            (canon / "data/gt6/forge/biome_modifier/a.json"
-             ).write_bytes(_biome_json("forge"))
-            (node / "data/gt6/neoforge/biome_modifier/a.json"
-             ).write_bytes(_biome_json("neoforge"))
+            for base in (canon, node):
+                d = base / "data/gt6/forge/biome_modifier"
+                d.mkdir(parents=True)
+                (d / "a.json").write_bytes(_biome_json("forge"))
             self._git(repo, "init", "-q")
             self._git(repo, "-c", "user.email=t@t", "-c", "user.name=t",
                       "add", "-A")

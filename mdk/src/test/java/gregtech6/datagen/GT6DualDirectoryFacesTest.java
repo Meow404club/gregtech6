@@ -181,4 +181,74 @@ public class GT6DualDirectoryFacesTest {
 		}
 		assertTrue(tAdapted >= 51, "the 51-table paint/foam carry band rides the adapter (got " + tAdapted + ")");
 	}
+
+	/**
+	 * The biome-modifier dual-brand faces (task p30-ops-biome-modifier-dual-dir, decisions
+	 * .p26-worldgen-biome-modifier-dual-dir plan a): the band's directory follows the
+	 * REGISTRY-KEY namespace (forge:biome_modifier → data/gt6/forge/biome_modifier/,
+	 * ForgeRegistries.java:195; neoforge:biome_modifier → data/gt6/neoforge/biome_modifier/,
+	 * NeoForgeRegistries.java:61-66, the directory derivation Registries.java:251-253), and
+	 * the r2 live finding was the neoforge face MISSING from the shared tree — 1444
+	 * forceloaded chunks, zero GT6 stones, zero log errors (a foreign-brand directory is
+	 * simply not scanned by a loader). The mirror face (GT6DualDirectoryFaces
+	 * .mirrorBiomeModifiers) ships BOTH brands from the ONE canonical producer.
+	 */
+	@Test
+	public void biomeModifierDualFacesShipPerBrand() throws Exception {
+		ClassLoader tLoader = GT6DualDirectoryFacesTest.class.getClassLoader();
+		URL tForgeBand = tLoader.getResource("data/gt6/forge/biome_modifier");
+		URL tNeoforgeBand = tLoader.getResource("data/gt6/neoforge/biome_modifier");
+		assertNotNull(tForgeBand, "the forge brand face ships on the classpath");
+		assertNotNull(tNeoforgeBand, "the neoforge brand face ships on the classpath (the r2 structural fix)");
+		assertEquals(countJson(tForgeBand), countJson(tNeoforgeBand),
+				"the brand faces are same-source twins: equal member counts");
+		assertTrue(countJson(tForgeBand) >= 17, "the 17 stone-blob modifiers ship (got " + countJson(tForgeBand) + ")");
+	}
+
+	/**
+	 * The full biome-modifier sweep: EVERY neoforge-brand face equals its forge-brand twin
+	 * with EXACTLY the registry-brand type swap ({@code forge:add_features} ↔
+	 * {@code neoforge:add_features} — the census-proven single-key delta over
+	 * GT6WorldgenDatagen's AddFeaturesBiomeModifier legs) — biomes/features/step identical.
+	 * Zero foreign-brand survivors on either side: one survivor is one boot-time parse
+	 * failure on the loader that owns that directory (the silent-zero bug class).
+	 */
+	@Test
+	public void everyBiomeModifierBrandFaceIsTheTypeDeltaAlone() throws Exception {
+		ClassLoader tLoader = GT6DualDirectoryFacesTest.class.getClassLoader();
+		URL tForgeBand = tLoader.getResource("data/gt6/forge/biome_modifier");
+		URL tNeoforgeBand = tLoader.getResource("data/gt6/neoforge/biome_modifier");
+		assertNotNull(tForgeBand, "the forge brand face ships on the classpath");
+		assertNotNull(tNeoforgeBand, "the neoforge brand face ships on the classpath");
+		Path tForgeRoot = Paths.get(tForgeBand.toURI());
+		Path tNeoforgeRoot = Paths.get(tNeoforgeBand.toURI());
+		List<Path> tForgeFiles = new ArrayList<>(0);
+		try (Stream<Path> tWalk = Files.walk(tForgeRoot)) {
+			tWalk.filter(tPath -> tPath.toString().endsWith(".json")).forEach(tForgeFiles::add);
+		}
+		assertFalse(tForgeFiles.isEmpty(), "the forge brand face ships members");
+		for (Path tForge : tForgeFiles) {
+			String tForgeText = Files.readString(tForge);
+			String tNeoforgeText = Files.readString(tNeoforgeRoot.resolve(tForgeRoot.relativize(tForge)));
+			assertTrue(tForgeText.contains("\"forge:add_features\""),
+					tForge.getFileName() + " the forge face carries the forge brand");
+			assertFalse(tForgeText.contains("neoforge:add_features"),
+					tForge.getFileName() + " the forge face carries no foreign brand");
+			assertTrue(tNeoforgeText.contains("\"neoforge:add_features\""),
+					tForge.getFileName() + " the neoforge face carries the neoforge brand");
+			// the negative arm pins the QUOTED token: the bare string is a substring of
+			// the neoforge brand itself ("neoforge:add_features".contains("forge:..."))
+			assertFalse(tNeoforgeText.contains("\"forge:add_features\""),
+					tForge.getFileName() + " the neoforge face carries no foreign brand");
+			assertEquals(tForgeText.replace("\"forge:add_features\"", "\"neoforge:add_features\""), tNeoforgeText,
+					tForge.getFileName() + " the brand mirror is the type-key delta alone");
+		}
+	}
+
+	/** The .json member count under a band classpath root (the union-FS-safe top-level form). */
+	private static int countJson(URL aBandUrl) throws Exception {
+		try (Stream<Path> tWalk = Files.walk(Paths.get(aBandUrl.toURI()))) {
+			return (int) tWalk.filter(tPath -> tPath.toString().endsWith(".json")).count();
+		}
+	}
 }

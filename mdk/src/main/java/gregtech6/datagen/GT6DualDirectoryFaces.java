@@ -102,6 +102,33 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	/** The loot face directory alias (the RENAMES row the adapter rides on). */
 	private static final String LOOT_FACE_SINGULAR = "loot_table";
 
+	/**
+	 * The biome-modifier dual-brand face (task p30-ops-biome-modifier-dual-dir, decisions
+	 * .p26-worldgen-biome-modifier-dual-dir plan a): the band's directory follows the
+	 * REGISTRY-KEY namespace — {@code data/gt6/forge/biome_modifier/} (the registry key
+	 * {@code forge:biome_modifier}, ForgeRegistries.java:195) vs
+	 * {@code data/gt6/neoforge/biome_modifier/} ({@code neoforge:biome_modifier},
+	 * NeoForgeRegistries.java:61-66; the 1.21.1 directory derivation
+	 * {@code Registries.elementsDirPath = CommonHooks.prefixNamespace}, Registries.java
+	 * :251-253). Each leg's {@code DatapackBuiltinEntriesProvider} natively writes only its
+	 * own brand — the OTHER brand's loader then reads an empty directory: the structural
+	 * root cause of the r2 neo forceload (1444 chunks, zero GT6 stones, zero log errors —
+	 * the shared ADR-P17-1 tree shipped only the forge face). The ruling: plan a — ONE
+	 * canonical producer, BOTH brand faces shipped (a loader ignores the foreign brand's
+	 * directory), never a second production path (plan b's build-side srcDir graft was
+	 * ruled out for breaking the single-producer contract).
+	 */
+	private static final String BIOME_MODIFIER_FACE = "biome_modifier";
+
+	/** The two brand directories (the registry-key namespaces), mirrored onto each other. */
+	private static final String[] BIOME_MODIFIER_BRANDS = {"forge", "neoforge"};
+
+	/** The AddFeaturesBiomeModifier JSON type, forge brand (ForgeBiomeModifiers.java:46 record). */
+	private static final String FORGE_ADD_FEATURES = "forge:add_features";
+
+	/** The AddFeaturesBiomeModifier JSON type, neoforge brand (BiomeModifiers.java:47 record). */
+	private static final String NEOFORGE_ADD_FEATURES = "neoforge:add_features";
+
 	private final PackOutput mOutput;
 
 	public GT6DualDirectoryFaces(PackOutput aOutput) {
@@ -129,7 +156,85 @@ public class GT6DualDirectoryFaces implements DataProvider {
 				}
 			}
 		}
+		mirrorBiomeModifiers(aCache, tData, tSaves);
 		return CompletableFuture.allOf(tSaves.toArray(new CompletableFuture[0]));
+	}
+
+	/**
+	 * The biome-modifier dual-brand emission (decisions.p26-worldgen-biome-modifier-dual-dir
+	 * plan a): whatever brand face a leg's providers natively produced, the OTHER brand's
+	 * face is emitted beside it as THE TYPE-KEY DELTA ALONE — the census-proven whole diff
+	 * between the legs' biome modifier JSON (2026-09-12: 17/17 pairs byte-equal after the
+	 * one {@code type} prefix swap, {@code forge:add_features} ↔ {@code neoforge:add_features};
+	 * biomes/features/step codec-identical). The walk covers BOTH brand directories and is
+	 * an INVOLUTION: a re-run re-mirrors the previous mirror back onto the native brand —
+	 * a fixed point (the swap is self-inverse and the re-serialization is deterministic
+	 * through {@link DataProvider#saveStable}), so the runData 2nd-run {@code written: 0}
+	 * gate holds.
+	 *
+	 * <p>TWO-PHASE for the involution's read/write aliasing (the r3 live finding): phase 1
+	 * reads and parses EVERY source synchronously — the async saveStable writes of one
+	 * direction target exactly the other direction's read sources (forge→neoforge writes
+	 * what neoforge→forge reads), and a write landing mid-read served a truncated file
+	 * (parsed as {@code JsonNull} = the shape gate fired). Only after all parses may the
+	 * saves be scheduled.
+	 *
+	 * <p>The shape gate is fail-visible (the {@link #adaptLootFunctions21} discipline): only
+	 * the two {@code add_features} type names are codec-verified across the legs — a
+	 * {@code remove_features}/{@code conditional} row (never generated here) has no
+	 * cross-leg evidence and throws instead of emitting an unparseable JSON on the foreign
+	 * loader. A silently rebranded dead row would re-create the r2 structural-zero bug
+	 * class this face closes.
+	 */
+	private void mirrorBiomeModifiers(CachedOutput aCache, Path aData, List<CompletableFuture<?>> aSaves) {
+		List<BiomeMirrorRow> tRows = new ArrayList<>(0);
+		for (String tNamespace : NAMESPACES) {
+			for (String tBrand : BIOME_MODIFIER_BRANDS) {
+				Path tSource = aData.resolve(tNamespace).resolve(tBrand).resolve(BIOME_MODIFIER_FACE);
+				if (!Files.isDirectory(tSource)) continue;
+				String tTargetBrand = "forge".equals(tBrand) ? "neoforge" : "forge";
+				Path tTargetRoot = aData.resolve(tNamespace).resolve(tTargetBrand).resolve(BIOME_MODIFIER_FACE);
+				try (Stream<Path> tWalk = Files.walk(tSource)) {
+					tWalk.filter(Files::isRegularFile).filter(tPath -> tPath.toString().endsWith(".json"))
+							.forEach(tFile -> tRows.add(parseBiomeModifier(tFile,
+									tTargetRoot.resolve(tSource.relativize(tFile)))));
+				} catch (IOException tError) {
+					throw new RuntimeException("the biome-modifier brand walk failed under " + tSource, tError);
+				}
+			}
+		}
+		for (BiomeMirrorRow tRow : tRows) {
+			aSaves.add(DataProvider.saveStable(aCache, tRow.mJson, tRow.mTarget));
+		}
+	}
+
+	/** One collected mirror row — parsed BEFORE any save of the sibling walk is scheduled. */
+	private record BiomeMirrorRow(Path mTarget, JsonObject mJson) {}
+
+	/** Phase 1 of the mirror: read + parse + gate + the {@code type} swap, all synchronous. */
+	private static BiomeMirrorRow parseBiomeModifier(Path aSource, Path aTarget) {
+		try (Reader tReader = Files.newBufferedReader(aSource)) {
+			JsonElement tJson = JsonParser.parseReader(tReader);
+			if (!tJson.isJsonObject()) {
+				throw new IllegalArgumentException("the biome-modifier mirror expects a JSON object (got "
+						+ tJson + " in " + aSource + ")");
+			}
+			JsonObject tObject = tJson.getAsJsonObject();
+			JsonElement tType = tObject.get("type");
+			if (tType == null || !tType.isJsonPrimitive()
+					|| (!FORGE_ADD_FEATURES.equals(tType.getAsString())
+							&& !NEOFORGE_ADD_FEATURES.equals(tType.getAsString()))) {
+				throw new IllegalArgumentException("the biome-modifier mirror only verifies the add_features "
+						+ "brands (" + FORGE_ADD_FEATURES + " / " + NEOFORGE_ADD_FEATURES + ", got " + tType
+						+ " in " + aSource + ") — extend parseBiomeModifier with the codec evidence "
+						+ "before rebranding this shape");
+			}
+			tObject.addProperty("type", FORGE_ADD_FEATURES.equals(tType.getAsString())
+					? NEOFORGE_ADD_FEATURES : FORGE_ADD_FEATURES);
+			return new BiomeMirrorRow(aTarget, tObject);
+		} catch (IOException tError) {
+			throw new RuntimeException("the biome-modifier brand mirror failed reading " + aSource, tError);
+		}
 	}
 
 	/**
