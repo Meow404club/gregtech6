@@ -39,6 +39,16 @@ import net.minecraftforge.registries.ForgeRegistries;
  *     and the lists key on OUR registry paths, so the port name is the seed. The
  *     upstream CS.java:1534 pre-seed {@code "rc fusion plasma"} stays unported (a
  *     RotaryCraft compat name, no such fluid — pool).</li>
+ * <li>the gaseous chemical seeds (task p30-pool-gas-seeds-13) in GAS — upstream,
+ *     {@code FL.create} AUTO-adds every STATE_GASEOUS fluid to {@code FluidsGT.GAS}
+ *     (FL.java:1105), so every port fluid born gaseous is a GAS member by the same rule:
+ *     the thirteen-row createGas closure + the four cracked hydrocarbons (both from task
+ *     p29-w4-f1-chemicals, Loader_Fluids.java:45-48 and the :660 walk over the GASES-flag
+ *     materials, MT.java:380/:383/:395-398/:406/:425/:443/:476/:1034-1037) + the p24
+ *     standalone {@code chlorine} row (MT.java:405 diatomicgas, the same walk). The
+ *     plasmas are the deliberate NON-members (Loader_Fluids.java:40-41 — STATE_PLASMA
+ *     routes to {@code FluidsGT.PLASMA}, FL.java:1106, never GAS); the oil/liquidoxygen
+ *     rows ride STATE_LIQUID.</li>
  * </ul>
  */
 public final class GTFluidLists {
@@ -52,6 +62,34 @@ public final class GTFluidLists {
 	static {
 		register("steam", GAS, POWER_CONDUCTING); // FL.java:85 — SIMPLE, GAS, STEAM, POWER_CONDUCTING
 		register("natural_gas", GAS); // the port registry path (GTFluids NATURAL_GAS); upstream FL.java:410 gas_natural_gas
+
+		// task p30-pool-gas-seeds-13 — the gaseous chemical seeds. Upstream the FL.create
+		// STATE_GASEOUS arm auto-adds the name to FluidsGT.GAS (FL.java:1105); the port rows
+		// below were born gaseous (the spec gas flag) but the list never followed. Port
+		// registry paths, one per birth row:
+		// the gas closure — the Loader_Fluids.java:660 createGas walk over the GASES-flag
+		// materials (the :1128-1136 density rule lives in GTFluids CHEMICAL_SPECS, zero
+		// changes here — this list carries names only)
+		register("hydrogen"       , GAS); // MT.java:380 diatomicgas
+		register("nitrogen"       , GAS); // MT.java:395 diatomicgas
+		register("oxygen"         , GAS); // MT.java:396 diatomicgas
+		register("fluorine"       , GAS); // MT.java:397 diatomicgas
+		register("helium"         , GAS); // MT.java:383 noblegas
+		register("neon"           , GAS); // MT.java:398 noblegas
+		register("argon"          , GAS); // MT.java:406 noblegas
+		register("krypton"        , GAS); // MT.java:425 noblegas
+		register("xenon"          , GAS); // MT.java:443 noblegas
+		register("radon"          , GAS); // MT.java:476 noblegas
+		register("methane"        , GAS); // MT.java:1037 gaschemelec, the GASES flag
+		register("carbondioxide"  , GAS); // MT.java:1035 gaschemelec
+		register("carbonmonoxide" , GAS); // MT.java:1034 gaschemelec
+		// the cracked hydrocarbons — Loader_Fluids.java:45-48, the four-arg create at state 2
+		register("propane"        , GAS); // :45
+		register("butane"         , GAS); // :46
+		register("propylene"      , GAS); // :47
+		register("ethylene"       , GAS); // :48
+		// the p24 standalone row — MT.java:405 diatomicgas, the same :660 walk
+		register("chlorine"       , GAS); // density −100, the :1105 gaseous carrier shape
 	}
 
 	private GTFluidLists() {}
