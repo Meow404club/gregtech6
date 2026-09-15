@@ -91,8 +91,11 @@ steps = [
     # front (east) meets it directly (the p28 arm-A calibration finding)
     Step(f"data merge block {MILL_P} {{facing:5}}", expect="Modified block data"),
     Step(MILL_FEED["1.20.1"], expect="Modified block data", node_cmds=MILL_FEED),
-    # the battery-driven completion: 4 packets/tick x 8 EU = 32 EU/t over the row's eUt 16
-    Step(f"gt6machine wiremill check {MILL_P}", expect=MILL_OUT["1.20.1"], node_expects=MILL_OUT, poll=60.0),
+    # the battery-driven completion: 4 packets/tick x 8 EU = 32 EU/t over the row's eUt 16.
+    # The DUTY-CYCLE pin (run-1 calibration): the emit drains the buffer between the
+    # 20-tick pulls, so the average delivery settles at the pull rate 12.8 EU/t — the
+    # 1600 EU row takes ~125 s (the 25600 EU battery stock covers it ~20x over).
+    Step(f"gt6machine wiremill check {MILL_P}", expect=MILL_OUT["1.20.1"], node_expects=MILL_OUT, poll=180.0),
 
     # ---------------------------------------------------------------- arm B
     phase("B: the V[i] output gate — 8 EU packets into the LV oven (minIn 16) are swallowed white"),

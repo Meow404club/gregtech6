@@ -66,17 +66,21 @@ steps = [
     Step(f"gt6energy amp {SRC1_P} 40", expect="amperage 40"),
     Step(f"gt6energy mode {SRC1_P} on", expect="emitting true", sleep=1.0),
     # the buffer caps at mInput*320*slots = 16*320*4 = 10240 (the doInject :185 throttle);
-    # volt 16 stays inside the maxIn 16 band, amp 40 = 640 EU/t fills it in ~16 s.
-    # THE DOTTED-KEY PATH RULE (the p26 lesson): "gt.energy" is unreachable in the /data
-    # path syntax ("Found no elements matching gt") — the reads dump the block (or the
-    # item segment) and match the SNBT print.
-    Step(f"data get block {BOX1_P}", expect="10240L", poll=60.0),
+    # volt 16 stays inside the maxIn 16 band. THE DOTTED-KEY PATH RULE (the p26 lesson):
+    # "gt.energy" is unreachable in the /data path syntax ("Found no elements matching
+    # gt") — the reads dump the block (or the item segment) and match the SNBT print.
+    # The live-intake pin = the :126 activity flag: the first accepted packet crosses
+    # mEnergy >= mOutput and gt.active latches to 1b (stable — no consumer drains it).
+    Step(f"data get block {BOX1_P}", expect="gt.active: 1b", poll=45.0),
     Step(f"gt6energy mode {SRC1_P} off", expect="emitting false", sleep=1.0),
-    # the deterministic push: reset the buffer into the top band, source OFF —
-    # 20 phases x 8 packets x 8 EU (the :159 per-call cap) land in the battery
-    Step(f"data merge block {BOX1_P} {{gt.energy: 8960L}}", expect="Modified block data", sleep=24.0),
-    Step(f"data get block {BOX1_P}", expect="7680L"),
-    Step(f"data get block {BOX1_P} inventory.Items[0]", expect="1280L"),
+    # the deterministic push: reset the buffer into the top band (bind3(8960/1280) = 7),
+    # source OFF — the push runs one phase per 64 EU until the band-6 floor at 7680 is
+    # CROSSED (the phase starting at exactly 7680 still pushes: bind3(6)=6): 21 phases
+    # x 8 packets x 8 EU (the :159 per-call cap) = the battery lands EXACTLY 1344 EU
+    # and the buffer at 7616 — conservation 1344 + 7616 = 8960, read back off the dump.
+    Step(f"data merge block {BOX1_P} {{gt.energy: 8960L}}", expect="Modified block data", sleep=25.0),
+    Step(f"data get block {BOX1_P}", expect="7616L"),
+    Step(f"data get block {BOX1_P} inventory.Items[0]", expect="1344L"),
 
     # ---------------------------------------------------------------- arm B
     phase("B: the overvoltage reject — 32 EU packets against the ULV maxIn 16 are consumed but never stored"),
