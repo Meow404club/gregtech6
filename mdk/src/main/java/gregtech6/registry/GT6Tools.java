@@ -22,6 +22,12 @@ import gregtech6.items.tools.GT6BendingCylinderSmallItem;
 import gregtech6.items.tools.GT6BuilderWandItem;
 import gregtech6.items.tools.GT6FileItem;
 import gregtech6.items.tools.GT6ScrewdriverItem;
+import gregtech6.items.tools.GTPickaxeConstructionItem;
+import gregtech6.items.tools.GTPickaxeGemItem;
+import gregtech6.items.tools.GTPickaxeItem;
+import gregtech6.items.tools.GTShovelItem;
+import gregtech6.items.tools.GTSpadeItem;
+import gregtech6.items.tools.GTUniversalSpadeItem;
 import gregtech6.items.tools.GTHammerItem;
 import gregtech6.items.tools.GTSawItem;
 import gregtech6.items.tools.GTChiselItem;
@@ -195,6 +201,45 @@ public final class GT6Tools {
 			() -> new GT6BendingCylinderSmallItem(new Item.Properties().durability(GT6BendingCylinderSmallItem.DURABILITY_POINTS)));
 
 	/**
+	 * The six dig tools — task p29-w5-t1-dig-six (the W5 tool wave card 1; rows 11-16 of
+	 * the table). Single steel tier, durability 512 (the family value; upstream scales
+	 * per material, the same pool cut — the gem pick's upstream ×0.25 multiplier folds
+	 * into its flat 128, GTPickaxeGemItem javadoc). Display names = the upstream
+	 * registration-row wordings (Loader_Tools.java:147/:151/:336-341). The world arms:
+	 * <ul>
+	 * <li>{@code gt6:pickaxe} (upstream GT_Tool_Pickaxe, the TOOL_pickaxe surface + the
+	 *     Place_Torch arm);</li>
+	 * <li>{@code gt6:pickaxe_gem} (upstream GT_Tool_PickaxeGem — the fragility
+	 *     variant);</li>
+	 * <li>{@code gt6:pickaxe_construction} (upstream GT_Tool_PickaxeConstruction — speed
+	 *     ×2, ore-stone ×0.25, the ender-chest drop conversion riding the
+	 *     {@code GT6ToolLootModifiers} loot seam);</li>
+	 * <li>{@code gt6:shovel} (upstream GT_Tool_Shovel — path/torch arms);</li>
+	 * <li>{@code gt6:spade} (upstream GT_Tool_Spade — speed ×1.5, the harvestableSpade
+	 *     drop conversion riding the loot seam);</li>
+	 * <li>{@code gt6:universal_spade} (upstream GT_Tool_UniversalSpade — the five-face
+	 *     surface + the openableCrowbar Unboxinator conversion riding the loot seam).</li>
+	 * </ul>
+	 */
+	public static final RegistryObject<Item> PICKAXE = ITEMS.register("pickaxe",
+			() -> new GTPickaxeItem(new Item.Properties().durability(GTPickaxeItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> PICKAXE_GEM = ITEMS.register("pickaxe_gem",
+			() -> new GTPickaxeGemItem(new Item.Properties().durability(GTPickaxeGemItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> PICKAXE_CONSTRUCTION = ITEMS.register("pickaxe_construction",
+			() -> new GTPickaxeConstructionItem(new Item.Properties().durability(GTPickaxeConstructionItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> SHOVEL = ITEMS.register("shovel",
+			() -> new GTShovelItem(new Item.Properties().durability(GTShovelItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> SPADE = ITEMS.register("spade",
+			() -> new GTSpadeItem(new Item.Properties().durability(GTSpadeItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> UNIVERSAL_SPADE = ITEMS.register("universal_spade",
+			() -> new GTUniversalSpadeItem(new Item.Properties().durability(GTUniversalSpadeItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -205,9 +250,12 @@ public final class GT6Tools {
 	 * saw); task p24-builder-wand appended row 5 (the builder wand); task
 	 * p24-screwdriver-item appends row 6 (the screwdriver); task p25-tool-hammer-wrench
 	 * appends rows 7/8 (the hammer, the wrench); task p25-food-can-row0 appends row 9
-	 * (the small bending cylinder).
+	 * (the small bending cylinder); task p29-w5-t1-dig-six appends rows 10-15 (the six
+	 * dig tools — pickaxe, pickaxe_gem, pickaxe_construction, shovel, spade,
+	 * universal_spade).
 	 */
-	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL);
+	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL,
+			PICKAXE, PICKAXE_GEM, PICKAXE_CONSTRUCTION, SHOVEL, SPADE, UNIVERSAL_SPADE);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -274,6 +322,19 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.WRENCH.get()), GTWrenchItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.BENDING_CYLINDER_SMALL.get()), GT6BendingCylinderSmallItem.DURABILITY_POINTS);
+			// task p29-w5-t1-dig-six — the six dig tools join the registration smoke log
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.PICKAXE.get()), GTPickaxeItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.PICKAXE_GEM.get()), GTPickaxeGemItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.PICKAXE_CONSTRUCTION.get()), GTPickaxeConstructionItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.SHOVEL.get()), GTShovelItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.SPADE.get()), GTSpadeItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.UNIVERSAL_SPADE.get()), GTUniversalSpadeItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

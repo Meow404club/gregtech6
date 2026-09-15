@@ -99,5 +99,18 @@ public final class GT6DataGenerators {
         // earlier providers' on-disk output; see GT6DualDirectoryFaces)
         event.getGenerator().addProvider(true,
             new GT6DualDirectoryFaces(event.getGenerator().getPackOutput()));
+        // task p29-w5-t1-dig-six ①: the drop-conversion loot seam — one GLM JSON per
+        // converting tool + the platform index; the forge leg (canonical producer) also
+        // writes the neoforge-namespaced twin index the 21.1 runtime reads (ADR-P17-1).
+        // Registered AFTER the dual-directory mirror: the mirror's walk ignores the
+        // loot_modifiers family (not in RENAMES), so ordering is only nominal — kept
+        // last-append per the tail-append seam discipline.
+        //? if forge {
+        event.getGenerator().addProvider(true,
+            new gregtech6.items.tools.loot.GT6ToolLootModifiersDatagen(event.getGenerator().getPackOutput()));
+        //?} else {
+        /*event.getGenerator().addProvider(true,
+            new gregtech6.items.tools.loot.GT6ToolLootModifiersDatagen(event.getGenerator().getPackOutput(), event.getLookupProvider()));
+        *///?}
     }
 }
