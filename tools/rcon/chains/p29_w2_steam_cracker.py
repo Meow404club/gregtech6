@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 """p29-w2-steam-cracker — the Steam Cracker chain (task p29-w2-hu-tu-piggyback, group
-p29_w2_hu_tu; the HU 4-ladder :1576-1579 over the JSON-poured steamcracking.json smoke
-row — 1 coal + water 1000 -> 1 charcoal, eUt 32, duration 128):
+p29_w2_hu_tu; re-pinned by p30-rcon-chain-repair onto the TRUE row — the W2 smoke row
+(coal + water -> charcoal) was replaced by the p29-w4-f1 chemicals card with the
+upstream verbatim rows, Loader_Recipes_Chem.java:368: steam 1000 + propane 100 ->
+hydrogen 2 + methane 27 + ethylene 42 + propylene 19, eUt 16 x duration 64):
 
-  T1 budget units(32x128x1, 10000, 10000, T) = 4096 -> 128 ticks @ 32 EU/tick.
+  T1 budget units = 4096; the row budget |16 x 64| = 1024 completes inside ONE
+  inject of 64 ticks @ 16 HU (the outputs land in the output bank, so the inject
+  report reads the post-run idle — the fluid draw arm is the completion evidence).
   the HU window ladder (TIER_INPUTS per row, the ACCEPTANCE-① per-row pin):
     T1 16/32/64, T2 64/128/256, T3 256/512/1024, T4 1024/2048/4096.
-  the dead-packet wall: 40x 8 HU packets never cross mInputMin 16 -> 0/0;
-  the run: 128x 32 HU ticks complete IN ONE COMMAND -> out charcoal.
+  the dead-packet wall: 40x 8 HU packets never cross mInputMin 16 -> 0/0.
 
-The catalytic_cracker chain runs the MIRROR row on the twin map (the same-parameters
-对拍 the card names). passes=2 is the idempotency proof.
+The catalytic_cracker chain runs the mirror re-pin on the twin map (the :373 row).
+passes=2 is the idempotency proof.
 Run:  GT6_SESSION=off python3 tools/rcon/chains/p29_w2_steam_cracker.py
 """
 
@@ -33,18 +36,30 @@ SC3 = gt6world.Site(388, 65, 280)        # T3
 SC4 = gt6world.Site(390, 65, 280)        # T4
 
 steps = [
-    phase("A: the T1 cracker — the smoke row, the 8-HU wall, then the full 4096 bar in one command"),
+    phase("A: the T1 cracker — the TRUE row (steam + propane -> the four-gas ladder), the 8-HU wall, the row budget in one command"),
     Step(f"gt6machine steamcracker place {F(SC1)}", expect="GT6 steamcracker placed at 384, 65, 280"),
-    Step(f"gt6machine steamcracker input 1 {F(SC1)}",
-         expect="GT6 steamcracking input: 1x coal into slot 0",  # the report name is the MAP local (getTileEntityName), not the block literal
-         node_expects={"1.21.1": "GT6 steamcracking input: 1x minecraft:coal into slot 0"}),
-    Step(f"gt6machine steamcracker fluid fill up minecraft:water 1000 {F(SC1)}",
-         expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),
+    # the p29-w4-f1 chemicals card replaced the smoke row with the upstream true rows
+    # (2153094c, Loader_Recipes_Chem.java:368 verbatim) — the chain re-pins onto the :368
+    # row; the two-tank fill shapes are the p29_w4_chemicals_cracker proven forms.
+    Step(f"gt6machine steamcracker fluid fill up gt6:steam 1000 {F(SC1)}",
+         expect="filled 1000/1000 L of gt6:steam (ACCEPTED), input tanks hold 1000 L"),
+    Step(f"gt6machine steamcracker fluid fill up gt6:propane 100 {F(SC1)}",
+         expect="filled 100/100 L of gt6:propane (ACCEPTED), input tanks hold 1100 L"),
     Step(f"gt6machine steamcracker check {F(SC1)}", expect="minIn=16 recIn=32 maxIn=64"),
     Step(f"gt6machine steamcracker inject 40 8 {F(SC1)}", expect="progress=0/0"),
-    Step(f"gt6machine steamcracker inject 128 32 {F(SC1)}",
-         expect="outputs=[1x charcoal; ]",
-         node_expects={"1.21.1": "outputs=[1x minecraft:charcoal; ]"}),
+    # the row budget |16 x 64| = 1024 fits the 64-tick inject — the row COMPLETES inside
+    # the command (progress reads the post-run idle 0/0; the draw arm is the completion
+    # evidence, pulling the FIRST non-empty output tank each call = the row's order)
+    Step(f"gt6machine steamcracker inject 64 16 {F(SC1)}",
+         expect="inject ticks=64 size=16 finalSize=null used=64"),
+    Step(f"gt6machine steamcracker fluid draw south 1000 {F(SC1)}",
+         expect="drawn 2/1000 L of gt6:hydrogen (ACCEPTED)"),
+    Step(f"gt6machine steamcracker fluid draw south 1000 {F(SC1)}",
+         expect="drawn 27/1000 L of gt6:methane (ACCEPTED)"),
+    Step(f"gt6machine steamcracker fluid draw south 1000 {F(SC1)}",
+         expect="drawn 42/1000 L of gt6:ethylene (ACCEPTED)"),
+    Step(f"gt6machine steamcracker fluid draw south 1000 {F(SC1)}",
+         expect="drawn 19/1000 L of gt6:propylene (ACCEPTED)"),
 
     phase("B: the T2-T4 window ladder (the TIER_INPUTS per-row pin)"),
     Step(f"gt6machine steamcracker_t2 place {F(SC2)}", expect="GT6 steamcracker_t2 placed at 386, 65, 280"),
