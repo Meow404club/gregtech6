@@ -1,10 +1,47 @@
 {
   "recipes": [
     {
-      "inputs": [{"item": "minecraft:apple", "count": 1}],
-      "outputs": [{"item": "minecraft:stick", "count": 1}],
-      "fluidOutputs": [{"fluid": "minecraft:water", "amount": 50}],
+      "inputs": [
+        {
+          "item": "minecraft:apple",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stick",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 50
+        }
+      ],
       "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {
+          "item": "minecraft:melon_slice",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stick",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 100
+        }
+      ],
+      "duration": 512,
       "eut": 16
     }
   ]

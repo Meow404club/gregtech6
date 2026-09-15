@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/largefermenter_colored_bottom",
+    "east": "gt6:block/largefermenter_colored_left",
+    "north": "gt6:block/largefermenter_colored_front",
+    "south": "gt6:block/largefermenter_colored_back",
+    "up": "gt6:block/largefermenter_colored_top",
+    "west": "gt6:block/largefermenter_colored_right"
+  }
+}

@@ -1,13 +1,51 @@
 {
   "recipes": [
     {
-      "inputs": [{"item": "minecraft:sand", "count": 1}],
-      "fluidInputs": [{"fluid": "minecraft:water", "amount": 100}],
+      "inputs": [
+        {
+          "item": "minecraft:sand",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 100
+        }
+      ],
       "outputs": [
-        {"item": "minecraft:clay_ball", "count": 1},
-        {"item": "minecraft:gold_nugget", "count": 1}
+        {
+          "item": "minecraft:clay_ball",
+          "count": 1
+        },
+        {
+          "item": "minecraft:gold_nugget",
+          "count": 1
+        }
       ],
       "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {
+          "item": "minecraft:gravel",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 100
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:clay_ball",
+          "count": 1
+        }
+      ],
+      "duration": 512,
       "eut": 16
     }
   ]

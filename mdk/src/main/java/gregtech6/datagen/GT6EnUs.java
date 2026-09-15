@@ -954,6 +954,11 @@ public class GT6EnUs extends LanguageProvider {
         for (gregtech6.registry.GT6DynamoHousings.DynamoRow tRow : gregtech6.registry.GT6DynamoHousings.DYNAMO_ROWS) {
             add("block.gt6." + tRow.path(), tRow.display());
         }
+        // task p29-w3-large-12 — the twelve large machines (the Loader :1229-1240 name
+        // column verbatim, the row walk over GT6LargeMachines.ROWS)
+        for (gregtech6.registry.GT6LargeMachines.LargeMachineRow tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
+            add("block.gt6." + tRow.path(), tRow.display());
+        }
     }
 
     /**

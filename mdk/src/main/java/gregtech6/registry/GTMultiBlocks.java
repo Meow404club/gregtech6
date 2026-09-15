@@ -113,6 +113,8 @@ public final class GTMultiBlocks {
 						for (RegistryObject<Item> tItem : GTMultiBlocks.LIGHTNING_ROD_PART_ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
 						// task p29-w3-nbtdesign-parts — the part-family expansion (walls, coils, parts, ventilation, processor units, wood wall)
 						for (RegistryObject<Item> tItem : GTMultiBlocks.NEW_PART_ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
+						// task p29-w3-large-12 — the twelve large-machine controllers
+						for (RegistryObject<Item> tItem : GT6LargeMachines.ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
 					})
 					.build());
 

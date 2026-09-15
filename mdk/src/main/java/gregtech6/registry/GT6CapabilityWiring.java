@@ -93,6 +93,7 @@ public final class GT6CapabilityWiring {
 	public static void onRegisterCapabilities(RegisterCapabilitiesEvent aEvent) {
 		registerMachineBlockEntities(aEvent);
 		registerCokeOvenFaces(aEvent);
+		registerLargeMachineFaces(aEvent); // task p29-w3-large-12 — the twelve large-machine controllers
 		registerBarrelBlockFluidHandler(aEvent);
 		registerBarrelItemHandlers(aEvent);
 		registerFeBattery(aEvent); // the pure-sink fixture row, the W3 dynamo-chain measurement end (tail-append; shared serial file)
@@ -532,6 +533,23 @@ public final class GT6CapabilityWiring {
 	// "gt6tank fill ... CAPABILITY MISSING" sided AND side-less; the forge leg cannot see
 	// the gap because every BE overrides getCapability directly). One BET per material
 	// row (GTBarrels:83/:104/:207/:240), same fresh-per-call provider for all.
+
+	// -- the twelve large machines (p29-w3-large-12) --
+	// The forge face lives on GTLargeMachineBlockEntity.getCapability (item = the base
+	// gated inventory surface, fluid = the fill+drain LargeMachineFluidHandler); this
+	// provider row delegates to the same BE seam member (the coke-oven-pair form).
+	// DECLARED DEVIATION: FILES_SCOPE listed no GT6CapabilityWiring touch — the
+	// p29-w2-eu-special precedent applies (the seam test's live-census face + the
+	// neoforge capability-blind gap force the shared seam; tail-append, card-③'s own
+	// STEAM tail-append rebases on top).
+
+	private static void registerLargeMachineFaces(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6LargeMachines.GTLargeMachineBlockEntity> tBe = GT6LargeMachines.LARGE_MACHINE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tBe,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBe,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+	}
 
 	private static void registerBarrelBlockFluidHandler(RegisterCapabilitiesEvent aEvent) {
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GTBarrels.BARREL_BE.get(),

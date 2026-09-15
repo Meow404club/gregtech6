@@ -688,6 +688,23 @@ public class GT6ZhCn extends LanguageProvider {
 		for (gregtech6.registry.GT6DynamoHousings.DynamoRow tRow : gregtech6.registry.GT6DynamoHousings.DYNAMO_ROWS) {
 			addDirect("block.gt6." + tRow.path());
 		}
+		// task p29-w3-large-12 — the twelve large machines, the dump
+		// gt.multitileentity.multiblock.{centrifuge..squeezer} column verbatim
+		// (tmp/gregtech.lang :15125-15138; the coagulator dump slot is EMPTY upstream,
+		// the composed 大型凝结器阵列 rides the W2 凝结器 word; the Array tail renders
+		// the upstream "Large Coagulator Array" name column)
+		add("block.gt6.large_centrifuge", "大型离心机");
+		add("block.gt6.large_electrolyzer", "大型电解机");
+		add("block.gt6.large_coagulator", "大型凝结器阵列");
+		add("block.gt6.large_autoclave", "大型高压釜");
+		add("block.gt6.large_bath", "大型浸洗器");
+		add("block.gt6.large_batch_mixer", "大型搅拌机");
+		add("block.gt6.large_fermenter", "大型发酵室");
+		add("block.gt6.large_electric_oven", "大型电炉");
+		add("block.gt6.large_sluice", "大型洗矿厂");
+		add("block.gt6.large_crusher", "大型破碎机");
+		add("block.gt6.large_shredder", "大型研磨机");
+		add("block.gt6.large_squeezer", "大型榨汁机");
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_STRUCTURE);
 		for (int i = 1; i <= 9; i++) {
 			addDirect(String.format(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE, i));

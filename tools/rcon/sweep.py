@@ -280,6 +280,17 @@ SESSION_GROUPS = (
     # and the barrel/chest sinks are band-local setblocks). --group p29_w3_distill_crucible
     # matches through the chains' embedded name prefix.
     ("p29_w3_distillation_tower", "p29_w3_cryo_tower", "p29_w3_crucible_ladder"),
+    # P29 W3 card 5 (p29-w3-large-12): the twelve large-machine chains — one fresh
+    # z=340 band, twelve x-disjoint columns x384..516 (12-wide pitch, the 7-long sluice
+    # trough the widest tenant; per-machine teardown fills), admission mirroring the
+    # p29 W1/W2 cluster form (bbox-registered, no fresh_boot / mutates member — the
+    # rigs are per-site band-local setblocks: the under-controller gt6energy rig, the
+    # fermenter's under-transmitter relay rig, the TU three run rig-less).
+    # --group p29_w3_large12 matches through the chains' embedded name prefix.
+    ("p29_w3_large_centrifuge", "p29_w3_large_electrolyzer", "p29_w3_large_coagulator",
+     "p29_w3_large_autoclave", "p29_w3_large_bath", "p29_w3_large_mixer",
+     "p29_w3_large_fermenter", "p29_w3_large_oven", "p29_w3_large_sluice",
+     "p29_w3_large_crusher", "p29_w3_large_shredder", "p29_w3_large_squeezer"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
