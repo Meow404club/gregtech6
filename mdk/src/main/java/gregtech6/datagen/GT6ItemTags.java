@@ -104,6 +104,24 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	 */
 	public static final TagKey<Item> TOOLS_BENDING_CYLINDER_SMALL = gt6("tools/bending_cylinder_small");
 
+	/** The craftingToolPickaxe translation — #gt6:tools/pickaxe (task p29-w5-t1-dig-six, the snake rule). */
+	public static final TagKey<Item> TOOLS_PICKAXE = gt6("tools/pickaxe");
+
+	/** The gem-pickaxe tool tag — #gt6:tools/pickaxe_gem (task p29-w5-t1-dig-six). */
+	public static final TagKey<Item> TOOLS_PICKAXE_GEM = gt6("tools/pickaxe_gem");
+
+	/** The construction-pickaxe tool tag — #gt6:tools/pickaxe_construction (task p29-w5-t1-dig-six). */
+	public static final TagKey<Item> TOOLS_PICKAXE_CONSTRUCTION = gt6("tools/pickaxe_construction");
+
+	/** The craftingToolShovel translation — #gt6:tools/shovel (task p29-w5-t1-dig-six). */
+	public static final TagKey<Item> TOOLS_SHOVEL = gt6("tools/shovel");
+
+	/** The craftingToolSpade translation — #gt6:tools/spade (task p29-w5-t1-dig-six). */
+	public static final TagKey<Item> TOOLS_SPADE = gt6("tools/spade");
+
+	/** The universal-spade tool tag — #gt6:tools/universal_spade (task p29-w5-t1-dig-six). */
+	public static final TagKey<Item> TOOLS_UNIVERSAL_SPADE = gt6("tools/universal_spade");
+
 	/** The dustRedstone recipe-material translation — #gt6:redstone (snake ruling). */
 	public static final TagKey<Item> REDSTONE_DUSTS = gt6("redstone");
 
@@ -354,6 +372,13 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_WRENCH).add(item(GT6Tools.WRENCH.getId())); // task p25-tool-hammer-wrench — the craftingToolWrench snake
 		tag(TOOLS_WIRE_CUTTER).add(item(GT6Tools.CUTTER.getId())); // task p29-w3-nbtdesign-parts — the CR 'x' wirecutter letter
 		tag(TOOLS_BENDING_CYLINDER_SMALL).add(item(GT6Tools.BENDING_CYLINDER_SMALL.getId())); // task p25-food-can-row0 — the craftingToolBendingCylinderSmall snake
+		// task p29-w5-t1-dig-six — the six dig-tool tags (one member each, the p24 band shape)
+		tag(TOOLS_PICKAXE).add(item(GT6Tools.PICKAXE.getId()));
+		tag(TOOLS_PICKAXE_GEM).add(item(GT6Tools.PICKAXE_GEM.getId()));
+		tag(TOOLS_PICKAXE_CONSTRUCTION).add(item(GT6Tools.PICKAXE_CONSTRUCTION.getId()));
+		tag(TOOLS_SHOVEL).add(item(GT6Tools.SHOVEL.getId()));
+		tag(TOOLS_SPADE).add(item(GT6Tools.SPADE.getId()));
+		tag(TOOLS_UNIVERSAL_SPADE).add(item(GT6Tools.UNIVERSAL_SPADE.getId()));
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
 		// task p26-w1-press-extruder-molds — the mold-family membership face (the row0 pair,
@@ -375,7 +400,9 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 				item(GT6Tools.CROWBAR.getId()), item(GT6Tools.CUTTER.getId()), item(GT6Tools.CHISEL.getId()),
 				item(GT6Tools.BUILDER_WAND.getId()), item(GT6Tools.SCREWDRIVER.getId()),
 				item(GT6Tools.HAMMER.getId()), item(GT6Tools.WRENCH.getId()), // task p25-tool-hammer-wrench — the family band 7 → 9
-				item(GT6Tools.BENDING_CYLINDER_SMALL.getId())); // task p25-food-can-row0 — the family band 9 → 10
+				item(GT6Tools.BENDING_CYLINDER_SMALL.getId()), // task p25-food-can-row0 — the family band 9 → 10
+				item(GT6Tools.PICKAXE.getId()), item(GT6Tools.PICKAXE_GEM.getId()), item(GT6Tools.PICKAXE_CONSTRUCTION.getId()),
+				item(GT6Tools.SHOVEL.getId()), item(GT6Tools.SPADE.getId()), item(GT6Tools.UNIVERSAL_SPADE.getId())); // task p29-w5-t1-dig-six — the family band 10 → 16
 	}
 
 	/**

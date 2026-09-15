@@ -932,6 +932,12 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.food_can_rotten_huge"); // dump :16
 		addDirect("item.gt6.food_can_cookies_huge"); // task p25-food-can-row0 — 超大食物罐头 (饼干) (dump cans.86 untranslated; 饼干 = the vanilla cookie face)
 		addDirect("item.gt6.bending_cylinder_small"); // task p25-food-can-row0 — dump gt.metatool.01.56 小型弯曲绕筒 (Loader_Tools.java:146 "Small Bending Cylinder")
+		addDirect("item.gt6.pickaxe"); // task p29-w5-t1-dig-six — 镐 (dump tagprefix tool_head_pickaxe 镐头 :895, minus 头)
+		addDirect("item.gt6.pickaxe_gem"); // 镶尖镐 (dump tagprefix tool_head_pickaxe_gem 镶尖镐头 :896)
+		addDirect("item.gt6.pickaxe_construction"); // 建筑镐 (dump tagprefix tool_head_construction_pickaxe 建筑镐头 :890)
+		addDirect("item.gt6.shovel"); // 锹 (dump tagprefix tool_head_shovel 锹头 :914)
+		addDirect("item.gt6.spade"); // 铲 (dump tagprefix tool_head_spade 铲头 :907)
+		addDirect("item.gt6.universal_spade"); // 万用铲 (dump tagprefix tool_head_universal_spade 万用铲头 :910)
 		addDirect("item.gt6.shape_extruder_plate"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10001 模具 (板) (:10129)
 		addDirect("item.gt6.shape_extruder_rod"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10027 模具 (杆) (:10185)
 		addDirect("item.gt6.cover_redstone_emitter");

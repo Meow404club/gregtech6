@@ -9,6 +9,12 @@
     "gt6:screwdriver",
     "gt6:hammer",
     "gt6:wrench",
-    "gt6:bending_cylinder_small"
+    "gt6:bending_cylinder_small",
+    "gt6:pickaxe",
+    "gt6:pickaxe_gem",
+    "gt6:pickaxe_construction",
+    "gt6:shovel",
+    "gt6:spade",
+    "gt6:universal_spade"
   ]
 }
