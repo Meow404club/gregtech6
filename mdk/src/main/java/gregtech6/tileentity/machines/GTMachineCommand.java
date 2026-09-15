@@ -569,7 +569,7 @@ public final class GTMachineCommand {
 	/** The Roasting acceptance feed: the coal dust of the Boudouard row (roasting.json, the Loader :400 input). */
 	private static net.minecraft.world.item.Item firstCoalDust() {
 		RegistryObject<Item> tDust = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.Coal);
-		return tDust != null && tDust.isPresent() ? tDust.get() : net.minecraft.world.item.Items.COAL;
+		return tDust != null ? tDust.get() : net.minecraft.world.item.Items.COAL; // the part-family raw .get() form — isPresent() has no 21.1 swap twin
 	}
 
 	/**
