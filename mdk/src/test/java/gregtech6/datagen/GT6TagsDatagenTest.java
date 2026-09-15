@@ -424,14 +424,18 @@ class GT6TagsDatagenTest {
                 "gt6:axe_double", "gt6:hoe", "gt6:branch_cutter", "gt6:sense", "gt6:plow",
                 "gt6:hand_drill", "gt6:scissors", "gt6:scoop", "gt6:plunger",
                 "gt6:flint_and_tinder", "gt6:rolling_pin", "gt6:bending_cylinder",
-                // task p29-w5-t6-electric-nineteen — the electric nineteen, band 33 → 52
                 "gt6:mining_drill_lv", "gt6:mining_drill_mv", "gt6:mining_drill_hv",
                 "gt6:chainsaw_lv", "gt6:chainsaw_mv", "gt6:chainsaw_hv",
                 "gt6:wrench_lv", "gt6:wrench_mv", "gt6:wrench_hv",
                 "gt6:jackhammer_hv_normal", "gt6:jackhammer_hv_no_ores",
                 "gt6:buzzsaw_lv", "gt6:screwdriver_lv", "gt6:hand_drill_lv", "gt6:hand_mixer_lv",
                 "gt6:monkey_wrench_lv", "gt6:monkey_wrench_mv", "gt6:monkey_wrench_hv",
-                "gt6:trimmer_lv"),
+                "gt6:trimmer_lv",
+                // task p29-w5-t7-pocket-eight appended the seven pocket switch forms at the tail
+                // (the closed multitool carries no tool-name oredict upstream, Loader_Tools :176)
+                "gt6:pocket_multitool_knife", "gt6:pocket_multitool_saw", "gt6:pocket_multitool_file",
+                "gt6:pocket_multitool_screwdriver", "gt6:pocket_multitool_wire_cutter",
+                "gt6:pocket_multitool_scissors", "gt6:pocket_multitool_chisel"),
                 tagValues("forge/tags/items/tools.json"));
     }
 
