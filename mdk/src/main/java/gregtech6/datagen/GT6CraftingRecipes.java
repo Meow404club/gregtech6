@@ -222,6 +222,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (BatteryBoxRecipeRow tRow : batteryBoxRecipeBuilders()) {
 			tRow.builder().save(aConsumer, batteryBoxRecipeId(tRow.row()));
 		}
+		for (DieselEngineRecipeRow tRow : dieselEngineRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 	}
 	//?} else {
 	/*@Override
@@ -274,6 +277,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		for (BatteryBoxRecipeRow tRow : batteryBoxRecipeBuilders()) {
 			tRow.builder().save(aOutput, batteryBoxRecipeId(tRow.row()));
+		}
+		for (DieselEngineRecipeRow tRow : dieselEngineRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
 		}
 	}
 	*///?}
@@ -622,6 +628,57 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 				.define('M', gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL_ITEM.get())
 				.unlockedBy("has_crucible_wall", has(gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL_ITEM.get()));
+	}
+
+	/** One staged diesel-engine row: the shared builder + the id its save face ids from. */
+	private record DieselEngineRecipeRow(ShapedRecipeBuilder builder, ResourceLocation id) {}
+
+	/**
+	 * The Diesel Engine crafting rows (task p29-w4-hot-lube spec ④) — the Loader
+	 * MultiTileEntities.java:722-729 grids VERBATIM: "PLP"/"SMS"/"GPC" per material with
+	 * 'M' = {@code OP.casingMachineDouble.dat(aMat)} folded to casingSmall (the prefix has
+	 * no port item row — the Locker 'M' fold precedent), 'P' = plateCurved, 'S' = stick,
+	 * 'G' = gearGt, 'C' = gearGtSmall (all per-material through GTMaterialItems), and 'L' =
+	 * {@code OD.itemLubricant} → the port's single-item carrier
+	 * {@code gt6:lubricant_bucket} (the declared crafting-only face, GT6LubricantBucket
+	 * class doc). One row per DIESEL_SPECS material, result = the engine block item; ids
+	 * ride the result path ("diesel_engine_&lt;mat&gt;", the hopper result-path convention).
+	 */
+	private java.util.List<DieselEngineRecipeRow> dieselEngineRecipeBuilders() {
+		java.util.List<DieselEngineRecipeRow> rRows = new java.util.ArrayList<>();
+		for (gregtech6.registry.GT6Kinetics.DieselSpec tSpec : gregtech6.registry.GT6Kinetics.DIESEL_SPECS) {
+			gregapi.oredict.OreDictMaterial tMat = dieselMaterial(tSpec.material());
+			Item tEngine = gregtech6.registry.GT6Kinetics.DIESEL_ITEMS.get(gregtech6.registry.GT6Kinetics.dieselName(tSpec.material())).get();
+			String tIdPath = gregtech6.registry.GT6Kinetics.dieselName(tSpec.material()); // the precomputed arg — the stonecutter ctor swap rewrites simple-arg calls only
+			rRows.add(new DieselEngineRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, tEngine)
+					.pattern("PLP")
+					.pattern("SMS")
+					.pattern("GPC")
+					.define('M', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.casingSmall, tMat).get())
+					.define('P', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateCurved, tMat).get())
+					.define('S', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, tMat).get())
+					.define('G', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.gearGt, tMat).get())
+					.define('C', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.gearGtSmall, tMat).get())
+					.define('L', gregtech6.item.GT6LubricantBucket.LUBRICANT_BUCKET.get())
+					.unlockedBy("has_lubricant_bucket", has(gregtech6.item.GT6LubricantBucket.LUBRICANT_BUCKET.get())),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+		}
+		return rRows;
+	}
+
+	/** The DIESEL_SPECS slug → the loader material (the GT6Hoppers.HopperMaterial.mt() switch shape). */
+	private static gregapi.oredict.OreDictMaterial dieselMaterial(String aSlug) {
+		return switch (aSlug) {
+			case "bronze" -> MT.Bronze;
+			case "arsenic_copper" -> MT.ArsenicCopper;
+			case "arsenic_bronze" -> MT.ArsenicBronze;
+			case "steel" -> MT.Steel;
+			case "invar" -> MT.Invar;
+			case "titanium" -> MT.Ti;
+			case "tungstensteel" -> MT.TungstenSteel;
+			case "iridium" -> MT.Ir;
+			default -> throw new IllegalStateException("no loader material for diesel slug " + aSlug);
+		};
 	}
 
 	private ShapedRecipeBuilder foodCanEmptyBuilder() {
