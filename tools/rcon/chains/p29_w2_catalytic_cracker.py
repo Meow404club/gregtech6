@@ -9,11 +9,11 @@ dust_platinum x1 -> ethylene 20 + propylene 5, eUt 16 x duration 64):
   inject of 64 ticks @ 16 HU (the fluid draw arm is the completion evidence).
   the T1 window + the full run in one command; the T2-T4 window ladder.
 
-The catalyst gt6:dust_platinum rides the inventory merge (Size 1 = 1 input + 0
-output, the TileEntityBasicMachine :343 construction over the catalyticcracking
-map shape) — the feed literal carries the W2-era charcoal (GTMachineCommand :271),
-which the p29-w4-f1 chain declared an RCON gap for the positive run; the merge
-closes it. passes=2 is the idempotency proof.
+The catalyst gt6:dust_platinum rides the inventory merge (Size 4 = 1 input + 3
+output slots, the CATALYTIC_CRACKING map constants GT6RecipeMaps.java:1047-1055)
+— the feed literal carries the W2-era charcoal (GTMachineCommand :271), which
+the p29-w4-f1 chain declared an RCON gap for the positive run; the merge closes
+it. passes=2 is the idempotency proof.
 Run:  GT6_SESSION=off python3 tools/rcon/chains/p29_w2_catalytic_cracker.py
 """
 
@@ -32,11 +32,12 @@ F = gt6world.fmt
 
 # the catalyst merge (the p26_w1_press key-shape ruling): the feed literal carries the
 # W2-era charcoal (GTMachineCommand :271), the true row's gt6:dust_platinum rides the
-# inventory merge — Size 1 = 1 input + 0 output (mInputItemsCount + mOutputItemsCount,
-# the TileEntityBasicMachine :343 construction over the catalyticcracking map shape).
+# inventory merge — Size 4 = 1 input + 3 output slots (the CATALYTIC_CRACKING map
+# constants IN-OUT-MIN-ITEM 1/3/0, GT6RecipeMaps.java:1047-1055; the handler shrink
+# makes the fixed-slot report reads throw — the p30repair1 live calibration).
 PT_MERGE = {
-    "1.20.1": 'data merge block {p} {{inventory:{{Size:1,Items:[{{Slot:0b,id:"gt6:dust_platinum",Count:1b}}]}}}}',
-    "1.21.1": 'data merge block {p} {{inventory:{{Size:1,Items:[{{Slot:0b,id:"gt6:dust_platinum",count:1}}]}}}}',
+    "1.20.1": 'data merge block {p} {{inventory:{{Size:4,Items:[{{Slot:0b,id:"gt6:dust_platinum",Count:1b}}]}}}}',
+    "1.21.1": 'data merge block {p} {{inventory:{{Size:4,Items:[{{Slot:0b,id:"gt6:dust_platinum",count:1}}]}}}}',
 }
 
 CC1 = gt6world.Site(394, 65, 280, dz=1)  # catalyticcracker T1
