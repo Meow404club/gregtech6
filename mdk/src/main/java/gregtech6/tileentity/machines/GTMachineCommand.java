@@ -289,8 +289,18 @@ public final class GTMachineCommand {
 		.then(machine("smelter_t2", GTMachines.SMELTER_BLOCKS_BY_PATH.get("smelter_t2"), () -> net.minecraft.world.item.Items.ICE))
 		.then(machine("smelter_t3", GTMachines.SMELTER_BLOCKS_BY_PATH.get("smelter_t3"), () -> net.minecraft.world.item.Items.ICE))
 		.then(machine("smelter_t4", GTMachines.SMELTER_BLOCKS_BY_PATH.get("smelter_t4"), () -> net.minecraft.world.item.Items.ICE))
-		.then(machine("melter", GTMachines.MELTER_BLOCKS_BY_PATH.get("melter"), () -> net.minecraft.world.item.Items.ICE));
+		.then(machine("melter", GTMachines.MELTER_BLOCKS_BY_PATH.get("melter"), () -> net.minecraft.world.item.Items.ICE))
+		// task p29-w4-eu-bridge: the Roasting Oven ladder — the feed is the coal dust of the
+		// Boudouard row (roasting.json: coal dust + CO2 -> CO, the Loader_Recipes_Chem.java
+		// :400 transcription; the CO2 input rides the fluid fill face, the CO output the
+		// fluid stat face)
+		.then(machine("roasting_oven", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven"), GTMachineCommand::firstCoalDust))
+		.then(machine("roasting_oven_t2", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven_t2"), GTMachineCommand::firstCoalDust))
+		.then(machine("roasting_oven_t3", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven_t3"), GTMachineCommand::firstCoalDust))
+		.then(machine("roasting_oven_t4", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven_t4"), GTMachineCommand::firstCoalDust));
 		event.getDispatcher().register(tMachine);
+		event.getDispatcher().register(bridgeArm());
+		LOGGER.info("Registered GT6 bridge acceptance command /gt6bridge (heater|engine|motor x stat|reset, the EU->HU/KU/RU converter live face)");
 		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder|rollingmill_t1..t4|rollbender|rollformer|clustermill x t1..t4|smelter x t1..t4|melter | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
 		// the p8 ladder registration line (the runServer gate asserts it): every family BET
 		// resolves — proof the RegistryObjects bound (the merge totals: 36 + 8 + 16 blocks
@@ -554,6 +564,70 @@ public final class GTMachineCommand {
 			if (tRecipe.mInputs.length > 0 && !tRecipe.mInputs[0].isEmpty()) return tRecipe.mInputs[0].getItem();
 		}
 		throw new IllegalStateException("No poured RM.Loom row resolved for the electricloom feed (the recipe_maps JSON reload must run first)");
+	}
+
+	/** The Roasting acceptance feed: the coal dust of the Boudouard row (roasting.json, the Loader :400 input). */
+	private static net.minecraft.world.item.Item firstCoalDust() {
+		RegistryObject<Item> tDust = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.Coal);
+		return tDust != null && tDust.isPresent() ? tDust.get() : net.minecraft.world.item.Items.COAL;
+	}
+
+	/**
+	 * The EU-bridge acceptance arm (task p29-w4-eu-bridge): the three converter families'
+	 * live face. The blocks ride /setblock (the dynamo-chain RCON form — facing = the
+	 * state), the EU input the /gt6energy dial behind the BACK face; this arm reads and
+	 * resets the persisted accounting pair {@code gt.last_in}/{@code gt.last_out} so the
+	 * chain phases stay deterministic:
+	 * <ul>
+	 * <li>{@code /gt6bridge stat <pos>} — one consistent snapshot:
+	 *     "GT6 bridge EU-&gt;HU at x,y,z: in 800, out 400, capacitor 0, half true" —
+	 *     the {@code half} flag is the server-side in == 2*out check (the units()
+	 *     half-rate, the WASTE vent pinning the per-tick pairing).</li>
+	 * <li>{@code /gt6bridge reset <pos>} — zeroes both counters (the next stat reads
+	 *     exactly the ticks since the reset).</li>
+	 * </ul>
+	 */
+	private static LiteralArgumentBuilder<CommandSourceStack> bridgeArm() {
+		LiteralArgumentBuilder<CommandSourceStack> tBridge = Commands.literal("gt6bridge")
+			.requires(source -> source.hasPermission(2));
+		tBridge.then(Commands.literal("stat")
+			.then(Commands.argument("pos", BlockPosArgument.blockPos())
+				.executes(context -> bridgeStat(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
+		tBridge.then(Commands.literal("reset")
+			.then(Commands.argument("pos", BlockPosArgument.blockPos())
+				.executes(context -> bridgeReset(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
+		return tBridge;
+	}
+
+	private static int bridgeStat(CommandSourceStack aSource, BlockPos aPos) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		if (aSource.getLevel().getBlockEntity(aPos) instanceof gregtech6.registry.GTMachines.ElectricBridgeBlockEntity tBridge) {
+			boolean tHalf = tBridge.mLastOut * 2 == tBridge.mLastIn;
+			aSource.sendSuccess(() -> Component.literal("GT6 bridge EU->" + shortType(tBridge.outputType())
+					+ " at " + aPos.toShortString() + ": in " + tBridge.mLastIn + ", out " + tBridge.mLastOut
+					+ ", capacitor " + tBridge.mStorage + ", half " + tHalf), false);
+			return 1;
+		}
+		aSource.sendFailure(Component.literal("No GT6 electric bridge at " + aPos.toShortString()));
+		return 0;
+	}
+
+	private static int bridgeReset(CommandSourceStack aSource, BlockPos aPos) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		if (aSource.getLevel().getBlockEntity(aPos) instanceof gregtech6.registry.GTMachines.ElectricBridgeBlockEntity tBridge) {
+			tBridge.resetAccounting();
+			aSource.sendSuccess(() -> Component.literal("GT6 bridge accounting reset at " + aPos.toShortString()), false);
+			return 1;
+		}
+		aSource.sendFailure(Component.literal("No GT6 electric bridge at " + aPos.toShortString()));
+		return 0;
+	}
+
+	/** The short energy-type word (the dial's type-word face, GT6MachineProvider.energyTypeShortCode form). */
+	private static String shortType(gregapi.code.TagData aType) {
+		if (aType == gregapi.data.TD.Energy.HU) return "HU";
+		if (aType == gregapi.data.TD.Energy.KU) return "KU";
+		if (aType == gregapi.data.TD.Energy.RU) return "RU";
+		if (aType == gregapi.data.TD.Energy.EU) return "EU";
+		return aType.toString();
 	}
 
 	private static TileEntityBasicMachine machineAt(CommandSourceStack source, BlockPos pos) {

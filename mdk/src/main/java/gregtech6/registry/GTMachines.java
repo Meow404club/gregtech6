@@ -22,12 +22,15 @@ import net.minecraftforge.registries.RegistryObject;
 import gregapi.code.TagData;
 import gregapi.data.TD;
 import gregapi.oredict.OreDictMaterial;
-import gregtech6.block.GTBasicMachineBlock;
-import gregtech6.block.GTOvenBlock;
+import gregapi.tileentity.energy.ITileEntityEnergy;
+	import gregtech6.block.GTBasicMachineBlock;
+	import gregtech6.block.GTOvenBlock;
+import gregtech6.block.energy.GT6DynamoBlock;
 import gregtech6.gui.machines.GTBasicMachineMenu;
 import gregtech6.gui.machines.GTBasicMachinesMenus;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.RecipeMap;
+import gregtech6.tileentity.energy.GT6DynamoBlockEntity;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.machines.TileEntityOven;
@@ -3771,7 +3774,7 @@ public final class GTMachines {
 							// task p29-w2-eu-core-5tier: the five eu-core families, +25 rows
 							// (Electrolyzer/Injector/Printer/ScannerVisuals/Slicer, the first
 							// 5-tier ladders — the T5 rung rides each family walk's tail)
-							for (GTBasicMachineBlock.MachineRow tRow : ELECTROLYZER_ROWS) {
+							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.ELECTROLYZER_ROWS) {
 								aOutput.accept(new ItemStack(ELECTROLYZER_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
 							for (GTBasicMachineBlock.MachineRow tRow : INJECTOR_ROWS) {
@@ -3785,6 +3788,21 @@ public final class GTMachines {
 							}
 							for (GTBasicMachineBlock.MachineRow tRow : SLICER_ROWS) {
 								aOutput.accept(new ItemStack(SLICER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							// task p29-w4-eu-bridge: the three EU-bridge families + the Roasting
+							// Oven ladder, +19 rows (upstream row order per family; the
+							// GTMachines. qualification dodges the tail-section declaration order)
+							for (gregtech6.registry.GTMachines.BridgeRow tRow : GTMachines.ELECTRIC_HEATER_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.ELECTRIC_HEATER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (gregtech6.registry.GTMachines.BridgeRow tRow : GTMachines.ELECTRIC_ENGINE_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.ELECTRIC_ENGINE_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (gregtech6.registry.GTMachines.BridgeRow tRow : GTMachines.ELECTRIC_MOTOR_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.ELECTRIC_MOTOR_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.ROASTING_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.ROASTING_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
 								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
 								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));
@@ -4403,6 +4421,372 @@ public final class GTMachines {
 			BLOCK_ENTITY_TYPES.register("melter", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> kineticMachine(GTMachines.MELTER_BE.get(), aPos, aState),
 					melterBlockArray()).build(null));
+
+	// ---------------------------------------------------------------------------
+	// the P29 W4 EU-bridge card (task p29-w4-eu-bridge) — the three EU→X converter
+	// families (Loader_MultiTileEntities.java:815-821/:831-837/:847-853) + the Roasting
+	// Oven 4-ladder (:1386-1389). The bridges are GT-INTERNAL energy converters, NOT
+	// outbound bridges: EU never leaves the GT grid through them (the P28 ruling,
+	// decisions.p28-cut-eu-fe-bridge — the emission face is the native TD.Energy.HU/KU/RU
+	// push, consumed by the crucible/HEX heat face, the kinetic axle and the kinetic
+	// machine faces that already live in this repo). KJS face of this card: REGISTRATION
+	// face (15 converter rows + 4 Roasting rows) + datapack domain (RM.ROASTING rows via
+	// the tier-b JSON seam); NO KubeJS surface.
+	//
+	// The bridges ride the GT6DynamoBlock carrier (the p28 dynamo family block class,
+	// reused UNTOUCHED: FRONT = the emission face, BACK = the EU input face, the tier
+	// index selects the ladder rung) over a SHARED conversion core — the nested
+	// {@link ElectricBridgeBlockEntity} extends {@link GT6DynamoBlockEntity} (the
+	// TileEntityBase10EnergyConverter :45-180 port core) and re-types the INPUT arm
+	// RU → EU (the core's ONLY hardcoded family axis): capacitor = NBT_INPUT × 2
+	// (Base10:75), the input band min = in/2 (Base10:76, in > 16 on every row here),
+	// rec = in, max = in × 2; the output band min = out/2, rec = out, max = out × 2
+	// (Base10:77). THE HALF-RATE MECHANISM (the units() semantics — doConversion :62):
+	// {@code tOutput = units(mStorage, mInput, mOutput, F)} = stored × mOutput/mInput,
+	// and every ladder row carries mOutput = mInput / 2 exactly (32/16, 128/64, 512/256,
+	// 2048/1024, 8192/4096 — the Loader rows verbatim), so one tick converts stored/2:
+	// "出恒半 = in×2 = out" is NOT a separate loss factor, it IS the units() conversion
+	// between the row's own NBT_INPUT and NBT_OUTPUT columns. WASTE_ENERGY = T (the
+	// :92 tail, aMode = 0): every tick the capacitor vents units(mInput × 2, 16, 16, T)
+	// = 2 × NBT_INPUT REGARDLESS of output demand — the intake is never gated by the
+	// consumer side, the bucket empties every tick (the dynamo-core waste=T semantics
+	// verbatim; the emitted half is NOT deducted — the :81/:87 arms are skipped).
+	//
+	// The three upstream families collapse onto ONE BE class: the Heater is the
+	// TileEntityBase10EnergyConverter core itself, the Motor rides TileEntityBase11Motor
+	// (the same converter core plus the counter-clockwise toggle — pooled, the mMode
+	// crop precedent) and the Engine carries its own 32-state screwdriver ladder
+	// (MultiTileEntityEngineElectric :118-133, mState = 15 = the full-rate rung — the
+	// state ladder crops to the constant full rate here, the same declared mMode=0 crop
+	// the transformer/dynamo cores carry). All three rows share the identical
+	// NBT_INPUT/NBT_OUTPUT ladders and WASTE_ENERGY = T, so the port carries ONE class
+	// parameterized by the emitted type (HU / KU / RU) — the Flux/Electric dynamo
+	// two-classes-one-core shape generalized.
+	//
+	// Emission signs: TD.Energy.ALL_NEGATIVE_ALLOWED = (AU, QU, MU, KU, RU, EU)
+	// (TD.java:202) — HU is NOT in it, so the Heater emits positive-size HU packets
+	// only; the KU/RU families ride the live ±sign (the aNegative conjunct:
+	// the EU input IS negative-allowed, Base10:121).
+	// ---------------------------------------------------------------------------
+
+	/** One EU-bridge ladder row — the upstream-parity columns of one Loader aRegistry.add line (:817-821/:833-837/:849-853). */
+	public record BridgeRow(String path, int metaId, int tier, String voltageWord, TagData outType) {}
+
+	/** The shared NBT_INPUT ladder of all three families (EU in, the Loader rows verbatim). */
+	public static final long[] BRIDGE_INPUTS = {32, 128, 512, 2048, 8192};
+
+	/** The shared NBT_OUTPUT ladder of all three families (out = in/2 EXACTLY — the units() half-rate, the class-doc mechanism). */
+	public static final long[] BRIDGE_OUTPUTS = {16, 64, 256, 1024, 4096};
+
+	/** The voltage words of the five rungs (upstream VN[1..5], CS.java:154 — the name column "Electric Heater (LV)" form). */
+	public static final java.util.List<String> BRIDGE_VOLTAGE_WORDS = java.util.List.of("LV", "MV", "HV", "EV", "IV");
+
+	/** The Heater rows, upstream line order :817-821 (ids 10001-10005, the EU→HU family). */
+	public static final java.util.List<BridgeRow> ELECTRIC_HEATER_ROWS;
+	/** The Engine rows, upstream line order :833-837 (ids 10011-10015, the EU→KU family). */
+	public static final java.util.List<BridgeRow> ELECTRIC_ENGINE_ROWS;
+	/** The Motor rows, upstream line order :849-853 (ids 10021-10025, the EU→RU family). */
+	public static final java.util.List<BridgeRow> ELECTRIC_MOTOR_ROWS;
+
+	static {
+		java.util.List<BridgeRow> tRows = new java.util.ArrayList<>();
+		for (int i = 0; i < 5; i++) tRows.add(new BridgeRow(bridgePath("electric_heater", i), 10001 + i, i, BRIDGE_VOLTAGE_WORDS.get(i), TD.Energy.HU));
+		ELECTRIC_HEATER_ROWS = java.util.List.copyOf(tRows);
+		tRows = new java.util.ArrayList<>();
+		for (int i = 0; i < 5; i++) tRows.add(new BridgeRow(bridgePath("electric_engine", i), 10011 + i, i, BRIDGE_VOLTAGE_WORDS.get(i), TD.Energy.KU));
+		ELECTRIC_ENGINE_ROWS = java.util.List.copyOf(tRows);
+		tRows = new java.util.ArrayList<>();
+		for (int i = 0; i < 5; i++) tRows.add(new BridgeRow(bridgePath("electric_motor", i), 10021 + i, i, BRIDGE_VOLTAGE_WORDS.get(i), TD.Energy.RU));
+		ELECTRIC_MOTOR_ROWS = java.util.List.copyOf(tRows);
+	}
+
+	/** The rung path: T1 carries the bare family name, T2-T5 the _tN suffix (the W2 exotic five-rung convention). */
+	private static String bridgePath(String aFamily, int aTier) {
+		return aTier == 0 ? aFamily : aFamily + "_t" + (aTier + 1);
+	}
+
+	/** The registered Heater blocks by path (the BET/datagen/loot/command walkers). */
+	public static final java.util.Map<String, RegistryObject<Block>> ELECTRIC_HEATER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+	/** The registered Heater items, same keys. */
+	public static final java.util.Map<String, RegistryObject<Item>> ELECTRIC_HEATER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+	/** The registered Engine blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> ELECTRIC_ENGINE_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+	/** The registered Engine items, same keys. */
+	public static final java.util.Map<String, RegistryObject<Item>> ELECTRIC_ENGINE_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+	/** The registered Motor blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> ELECTRIC_MOTOR_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+	/** The registered Motor items, same keys. */
+	public static final java.util.Map<String, RegistryObject<Item>> ELECTRIC_MOTOR_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		registerBridgeFamily(ELECTRIC_HEATER_ROWS, ELECTRIC_HEATER_BLOCKS_BY_PATH, ELECTRIC_HEATER_ITEMS_BY_PATH, () -> GTMachines.ELECTRIC_HEATER_BE);
+		registerBridgeFamily(ELECTRIC_ENGINE_ROWS, ELECTRIC_ENGINE_BLOCKS_BY_PATH, ELECTRIC_ENGINE_ITEMS_BY_PATH, () -> GTMachines.ELECTRIC_ENGINE_BE);
+		registerBridgeFamily(ELECTRIC_MOTOR_ROWS, ELECTRIC_MOTOR_BLOCKS_BY_PATH, ELECTRIC_MOTOR_ITEMS_BY_PATH, () -> GTMachines.ELECTRIC_MOTOR_BE);
+	}
+
+	/**
+	 * One bridge family's block+item registration walk — the W1 BY_PATH form over the
+	 * REUSED {@link GT6DynamoBlock} carrier (the qualified-read forward-reference lambda,
+	 * the P6 lesson). Hardness/resistance 4.0 (the NBT_HARDNESS column, every row), stack
+	 * 16 (the upstream stack column).
+	 */
+	private static void registerBridgeFamily(java.util.List<BridgeRow> aRows,
+			java.util.Map<String, RegistryObject<Block>> aBlocks, java.util.Map<String, RegistryObject<Item>> aItems,
+			java.util.function.Supplier<RegistryObject<BlockEntityType<ElectricBridgeBlockEntity>>> aBe) {
+		for (BridgeRow tRow : aRows) {
+			aBlocks.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GT6DynamoBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+							.strength(4.0F, 4.0F).sound(SoundType.METAL), tRow.tier(), () -> aBe.get().get())));
+			aItems.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new BlockItem(aBlocks.get(tRow.path()).get(), new Item.Properties().stacksTo(16))));
+		}
+	}
+
+	/** The Heater family BET — one BE class, the five ladder blocks multi-attached, the HU emission type captured per factory. */
+	public static final RegistryObject<BlockEntityType<ElectricBridgeBlockEntity>> ELECTRIC_HEATER_BE =
+			BLOCK_ENTITY_TYPES.register("electric_heater", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> new ElectricBridgeBlockEntity(GTMachines.ELECTRIC_HEATER_BE.get(), TD.Energy.HU, aPos, aState),
+					bridgeBlockArray(ELECTRIC_HEATER_ROWS, ELECTRIC_HEATER_BLOCKS_BY_PATH)).build(null));
+
+	/** The Engine family BET (the KU emission type). */
+	public static final RegistryObject<BlockEntityType<ElectricBridgeBlockEntity>> ELECTRIC_ENGINE_BE =
+			BLOCK_ENTITY_TYPES.register("electric_engine", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> new ElectricBridgeBlockEntity(GTMachines.ELECTRIC_ENGINE_BE.get(), TD.Energy.KU, aPos, aState),
+					bridgeBlockArray(ELECTRIC_ENGINE_ROWS, ELECTRIC_ENGINE_BLOCKS_BY_PATH)).build(null));
+
+	/** The Motor family BET (the RU emission type). */
+	public static final RegistryObject<BlockEntityType<ElectricBridgeBlockEntity>> ELECTRIC_MOTOR_BE =
+			BLOCK_ENTITY_TYPES.register("electric_motor", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> new ElectricBridgeBlockEntity(GTMachines.ELECTRIC_MOTOR_BE.get(), TD.Energy.RU, aPos, aState),
+					bridgeBlockArray(ELECTRIC_MOTOR_ROWS, ELECTRIC_MOTOR_BLOCKS_BY_PATH)).build(null));
+
+	/** The block list of one bridge family in registration order (the BET varargs). */
+	private static Block[] bridgeBlockArray(java.util.List<BridgeRow> aRows, java.util.Map<String, RegistryObject<Block>> aBlocks) {
+		Block[] rBlocks = new Block[aRows.size()];
+		for (int i = 0; i < rBlocks.length; i++) rBlocks[i] = aBlocks.get(aRows.get(i).path()).get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6bridge — null for an unknown family name. */
+	@javax.annotation.Nullable
+	public static TagData bridgeOutType(String aFamily) {
+		return switch (aFamily) {
+			case "heater" -> TD.Energy.HU;
+			case "engine" -> TD.Energy.KU;
+			case "motor" -> TD.Energy.RU;
+			default -> null;
+		};
+	}
+
+	/**
+	 * The shared EU→X conversion core of the three bridge families — the
+	 * {@link GT6DynamoBlockEntity} core (the TileEntityBase10EnergyConverter :45-180
+	 * port) with the input arm re-typed RU → EU. EVERYTHING else is the core verbatim:
+	 * the capacitor = in × 2, the min/rec/max bands, the per-tick units() conversion
+	 * (the half-rate mechanism — see the segment doc), the WASTE_ENERGY = T vent, the
+	 * BACK-in/FRONT-out faces, the 100-strike overload ladder. The accounting pair
+	 * {@code gt.last_in}/{@code gt.last_out} (EU consumed / X emitted, cumulative,
+	 * persisted) is the live RCON acceptance face — with the waste vent pinning the
+	 * per-tick pairing, one dial tick contributes exactly in = rec EU and out = rec/2 X.
+	 */
+	public static class ElectricBridgeBlockEntity extends GT6DynamoBlockEntity {
+
+		/** The persisted cumulative EU intake (EU units — consumed packet mass). */
+		public static final String NBT_LAST_IN = "gt.last_in";
+		/** The persisted cumulative emission (the emitted type's own units). */
+		public static final String NBT_LAST_OUT = "gt.last_out";
+
+		/** The family's emitted type (HU / KU / RU — the Loader NBT_ENERGY_EMITTED column). */
+		private final TagData mOutType;
+
+		/** Cumulative EU consumed (doInject whole packets). */
+		public long mLastIn = 0;
+		/** Cumulative emitted mass (whole accepted packets — the emission packet is atomic at size tOutput). */
+		public long mLastOut = 0;
+
+		/** The offline test seam — the core's {@code setAdjacencyOverride} is package-private to its home package. */
+		private @javax.annotation.Nullable gregapi.tileentity.energy.IEnergyAdjacency mAdjacencyOverride = null;
+
+		/** BET factory — resolves the shared type through the registry at runtime. */
+		public ElectricBridgeBlockEntity(net.minecraft.core.BlockPos aPos, net.minecraft.world.level.block.state.BlockState aState) {
+			this(null, TD.Energy.HU, aPos, aState);
+		}
+
+		/** Full constructor — the type-capturing BET factories and the offline (test) entry point (the dual-constructor precedent). */
+		public ElectricBridgeBlockEntity(@javax.annotation.Nullable BlockEntityType<?> aType, TagData aOutType,
+				net.minecraft.core.BlockPos aPos, net.minecraft.world.level.block.state.BlockState aState) {
+			super(aType, aPos, aState);
+			mOutType = aOutType;
+			applyTier(aState, BRIDGE_INPUTS, BRIDGE_OUTPUTS);
+		}
+
+		@Override
+		public String getTileEntityName() {
+			return "electric_bridge"; // the shared-class name; the family lives in the BET id (electric_heater/electric_engine/electric_motor)
+		}
+
+		@Override
+		public TagData outputType() {
+			return mOutType; // the Loader NBT_ENERGY_EMITTED column; widened to public for the /gt6bridge stat arm
+		}
+
+		@Override
+		protected boolean negativeOutputAllowed() {
+			return TD.Energy.ALL_NEGATIVE_ALLOWED.contains(mOutType); // HU = false (positive packets only); KU/RU = true (the live ±sign)
+		}
+
+		@Override
+		protected long emitConverted(long tOutput, boolean aNegative) {
+			// the Converter :85 size-carrying branch: ONE packet, size = ±tOutput, amount 1;
+			// the Util loops the sides, isEnergyEmittingTo gates FRONT-only (the core face)
+			long tSign = aNegative ? -1 : 1;
+			long tUsed = ITileEntityEnergy.Util.emitEnergyToNetwork(mOutType, tSign * tOutput, 1, this, adjacency());
+			if (tUsed > 0) mLastOut += tOutput; // the packet is atomic: accepted = the whole tOutput landed
+			return tUsed;
+		}
+
+		// --- the EU input arm: the core's ONLY family axis (RU) re-typed to EU ---
+
+		@Override
+		public boolean isEnergyType(TagData aEnergyType, byte aSide, boolean aEmitting) {
+			// upstream :150: (aEmitting ? mEnergyOUT : mEnergyIN).isType(aEnergyType)
+			return aEmitting ? aEnergyType == outputType() : aEnergyType == TD.Energy.EU;
+		}
+
+		@Override
+		public long getEnergySizeInputMin(TagData aEnergyType, byte aSide) {
+			if (aEnergyType != TD.Energy.EU) return 0;
+			return mInput <= 16 ? 1 : mInput / 2; // Base10:76 verbatim (in > 16 on every row here)
+		}
+
+		@Override
+		public long getEnergySizeInputRecommended(TagData aEnergyType, byte aSide) {
+			return aEnergyType == TD.Energy.EU ? mInput : 0;
+		}
+
+		@Override
+		public long getEnergySizeInputMax(TagData aEnergyType, byte aSide) {
+			return aEnergyType == TD.Energy.EU ? mInput * 2 : 0;
+		}
+
+		@Override
+		public java.util.Collection<TagData> getEnergyTypes(byte aSide) {
+			// upstream :159 — both converter halves
+			return java.util.Arrays.asList(TD.Energy.EU, outputType());
+		}
+
+		@Override
+		public long doInject(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
+			long tConsumed = super.doInject(aEnergyType, aSide, aSize, aAmount, aDoInject);
+			if (aDoInject && tConsumed > 0) mLastIn += tConsumed * Math.abs(aSize); // the Stats whole-packet mass
+			return tConsumed;
+		}
+
+		/** The live accounting snapshot arm — resets both counters (the RCON phase determinism). */
+		public void resetAccounting() {
+			mLastIn = 0;
+			mLastOut = 0;
+		}
+
+		/** The offline test seam for the emit side (the core's seam is package-private to gregtech6.tileentity.energy). */
+		public void setAdjacencyOverrideForTest(@javax.annotation.Nullable gregapi.tileentity.energy.IEnergyAdjacency aAdjacency) {
+			mAdjacencyOverride = aAdjacency;
+		}
+
+		@Override
+		protected gregapi.tileentity.energy.IEnergyAdjacency adjacency() {
+			if (mAdjacencyOverride != null) return mAdjacencyOverride;
+			return super.adjacency();
+		}
+
+		@Override
+		protected void saveAdditional(net.minecraft.nbt.CompoundTag aNBT) {
+			super.saveAdditional(aNBT);
+			aNBT.putLong(NBT_LAST_IN, mLastIn);
+			aNBT.putLong(NBT_LAST_OUT, mLastOut);
+		}
+
+		@Override
+		public void load(net.minecraft.nbt.CompoundTag aNBT) {
+			super.load(aNBT);
+			if (aNBT.contains(NBT_LAST_IN, net.minecraft.nbt.Tag.TAG_ANY_NUMERIC)) mLastIn = Math.max(0, aNBT.getLong(NBT_LAST_IN));
+			if (aNBT.contains(NBT_LAST_OUT, net.minecraft.nbt.Tag.TAG_ANY_NUMERIC)) mLastOut = Math.max(0, aNBT.getLong(NBT_LAST_OUT));
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// the Roasting Oven 4-ladder (task p29-w4-eu-bridge, Loader_MultiTileEntities.java
+	// :1386-1389) — the HU recipe machine over RM.ROASTING, the Heat_T[1..4] material
+	// ladder (the Oven/Dryer word set), the smelter-family row shape with the :1386
+	// deltas: hardness 6.0/4.0/9.0/12.5, NBT_PARALLEL {1, 2, 4, 8} with NO
+	// NBT_PARALLEL_DURATION key (parallelDuration = F — the parallel arm is the plain
+	// mInput-bound count, NOT the duration-folding one), NBT_CHEAP_OVERCLOCKING T
+	// (the :773 unconditional port face), NBT_TEXTURE "roaster", the display column
+	// "Roasting Oven ("+aMat.getLocal()+")" (the material-word slot — the OVEN name
+	// form). Masks (:1386 verbatim + the ORed SBIT_A): item+tank in SBIT_B|SBIT_L auto
+	// LEFT/BACK, item out SBIT_R auto RIGHT, tank out SBIT_U auto TOP, energy SBIT_D.
+	// ---------------------------------------------------------------------------
+
+	/** The Roasting Oven family unit word (the one-slot key form; the upstream name column "Roasting Oven ("+aMat.getLocal()+")", :1386-1389). */
+	public static final String MACHINE_ROASTING_OVEN_UNIT_KEY = "gt6.row.machine.roasting_oven";
+
+	/** The :1386-1389 NBT_PARALLEL ladder — NON-standard (T1 = 1), the CENTRIFUGE_PARALLEL shape ({1, 2, 4, 8}). */
+	public static final int[] ROASTING_PARALLEL = {1, 2, 4, 8};
+
+	/** The four Roasting rows, upstream line order :1386-1389 (T1-T4, the Heat_T ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> ROASTING_ROWS = java.util.List.of(
+			roastingOven("roasting_oven"   , "steel"           , "Steel"           , 20171,  6.0F, 0),
+			roastingOven("roasting_oven_t2", "invar"           , "Invar"           , 20172,  4.0F, 1),
+			roastingOven("roasting_oven_t3", "titanium"        , "Titanium"        , 20173,  9.0F, 2),
+			roastingOven("roasting_oven_t4", "tungsten_carbide", "Tungsten Carbide", 20174, 12.5F, 3));
+
+	/** One Roasting row factory — the :1386 masks and the ROASTING_PARALLEL duration-F ladder over RM.ROASTING and the "roaster" texture. */
+	private static GTBasicMachineBlock.MachineRow roastingOven(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, HEAT_T_LADDER.get(aTier), MACHINE_ROASTING_OVEN_UNIT_KEY, aMetaId, aHardness, aTier,
+				ROASTING_PARALLEL[aTier], false /*NO NBT_PARALLEL_DURATION key :1386-1389*/,
+				() -> GT6RecipeMaps.ROASTING, TD.Energy.HU, "roaster",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D*/,
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_B|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_B|SBIT_L*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
+				(byte)5 /*NBT_TANK_SIDE_AUTO_IN SIDE_BACK*/, (byte)1 /*NBT_TANK_SIDE_AUTO_OUT SIDE_TOP*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType*/, true /*NBT_CHEAP_OVERCLOCKING :1386*/, null /*no melting gate*/, false);
+	}
+
+	/** The registered Roasting blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> ROASTING_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Roasting items, same keys. */
+	public static final java.util.Map<String, RegistryObject<Item>> ROASTING_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : ROASTING_ROWS) {
+			ROASTING_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ROASTING_BE.get(), tRow)));
+			ROASTING_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new gregtech6.block.GTComposedNameItem(GTMachines.ROASTING_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Roasting block list in registration order (the loot/datagen walkers). */
+	public static Block[] roastingBlockArray() {
+		return blockArrayOf(ROASTING_BLOCKS_BY_PATH);
+	}
+
+	/** The lookup for /gt6machine roasting_oven — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block roastingBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = ROASTING_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The Roasting family BET: the smelter shape verbatim — the shared kineticMachine factory, the four tier blocks multi-attached. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> ROASTING_BE =
+			BLOCK_ENTITY_TYPES.register("roasting_oven", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.ROASTING_BE.get(), aPos, aState),
+					roastingBlockArray()).build(null));
 
 	private GTMachines() {}
 

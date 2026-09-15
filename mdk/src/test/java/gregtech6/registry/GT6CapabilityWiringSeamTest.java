@@ -174,6 +174,14 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("loom", "item+fluid"); // task p29-w2-hu-tu-piggyback — the W1 in-catalog LOOM map, the kinetic rung
 		tFaces.put("smelter", "item+fluid"); // task p29-w3-heat-smelter — the two heat families join (the ice row's output is the fluid face)
 		tFaces.put("melter", "item+fluid"); // task p29-w3-heat-smelter
+		tFaces.put("roasting_oven", "item+fluid"); // task p29-w4-eu-bridge — the Roasting ladder joins (the Boudouard row's CO2 input + CO output are the fluid face)
+		// the CONVERTER exception (task p29-w4-eu-bridge): the three EU->X bridge families
+		// carry NO capability face at all — no inventory, no tanks, pure TD.Energy push
+		// over the ITileEntityEnergy face (the electric dynamo family posture; they live
+		// in GTMachines as BridgeRow BETs, hence the table rows with the "none" marker)
+		tFaces.put("electric_heater", "none (GT-energy converter — no item/fluid face)");
+		tFaces.put("electric_engine", "none (GT-energy converter — no item/fluid face)");
+		tFaces.put("electric_motor", "none (GT-energy converter — no item/fluid face)");
 		tFaces.put("oven", "item"); // the exception: the gated item handler alone
 		tFaces.put("advanced_crafting_table", "item"); // task p24-act-machine — the second item-only face (zero fluid tanks)
 		BASIC_MACHINE_FAMILY_FACES = Collections.unmodifiableMap(tFaces);

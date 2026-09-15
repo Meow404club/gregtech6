@@ -434,7 +434,15 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// task p29-w3-heat-smelter — the HEX controller joins as a FLUID-ONLY face (the
 		// :222 fuel door + the :228 overflow drain; no item face on the controller)
-		BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.HEAT_EXCHANGER_BE.get();
+				// task p29-w4-eu-bridge — the Roasting Oven ladder joins (tail-append; the
+		// smelter/melter shape): the HU machine whose CO2 input rides the fluid-in face
+		// and whose CO output lands in mTanksOutput, both faces load-bearing on this node
+		BlockEntityType<TileEntityBasicMachine> tRoastingOven = GTMachines.ROASTING_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tRoastingOven,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tRoastingOven,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.HEAT_EXCHANGER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tHeatExchanger,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// the p4 oven — its forge getCapability serves the gated item handler alone
