@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:hazmat_biochemgas_boots"
+    },
+    "B": {
+      "item": "gt6:hazmat_insect_boots"
+    },
+    "C": {
+      "item": "gt6:hazmat_frost_boots"
+    },
+    "D": {
+      "item": "gt6:hazmat_heat_boots"
+    },
+    "E": {
+      "item": "gt6:hazmat_radiation_boots"
+    },
+    "F": {
+      "item": "minecraft:chainmail_boots"
+    }
+  },
+  "pattern": [
+    "A B",
+    "C D",
+    "E F"
+  ],
+  "result": {
+    "item": "gt6:hazmat_universal_boots"
+  },
+  "show_notification": true
+}

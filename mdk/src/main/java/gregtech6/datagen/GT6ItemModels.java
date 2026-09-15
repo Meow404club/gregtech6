@@ -452,6 +452,17 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParent("bending_cylinder", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/bending_cylinder"))
             .texture("layer1", modLoc("item/bending_cylinder_overlay"));
+        // the Hazmat armor family (task p29-w5-t8-armor-24) — 24 item/generated models
+        // over the bake_armor_textures.py placeholder icons (6 suits x 4 slots, the SUITS
+        // walk so the model ids cannot drift from the registered ids; the WORN layer
+        // textures are NOT item models — they resolve through the getArmorTexture
+        // override straight from assets/gt6/textures/models/armor/)
+        for (gregtech6.items.armor.GT6ArmorMaterials.SuitRow tSuit : gregtech6.items.armor.GT6ArmorMaterials.SUITS) {
+            for (int i = 0; i < gregtech6.items.armor.GT6ArmorMaterials.PIECE_WORDS.length; i++) {
+                withExistingParent(tSuit.pieceId(i), mcLoc("item/generated"))
+                    .texture("layer0", modLoc("item/armor/" + tSuit.textureName() + "/" + gregtech6.items.armor.GT6ArmorMaterials.PIECE_WORDS[i]));
+            }
+        }
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

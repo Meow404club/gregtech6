@@ -118,6 +118,14 @@ public class GT6ToolsCreativeTabTest {
 	@Test
 	public void displayTableIsExactlyTheThirtyOneToolRows() {
 		assertEquals(64, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the 56 prior tools plus the eight pocket forms");
+	public void displayTableIsExactlyTheTenToolRows() {
+		// task p29-w5-t8-armor-24: the seam is APPEND-ONLY (decisions.p30-w5-split-rulings)
+		// — the ten base rows stay pinned at the HEAD (the asserts below), while the total
+		// grows: this baseline 10 + 24 armor = 34; the W5 tool cards' 54 rows rebase in
+		// between and the wave-final census the wave gate re-measures is 88. The tail alone
+		// is fluid (the ArmorSetTest pins it).
+		assertTrue(GT6Tools.TAB_TABLE.size() >= 34,
+				"the ten base rows + the 24 armor rows are the floor; the wave cards append between");
 		assertSame(GT6Tools.CROWBAR, GT6Tools.TAB_TABLE.get(0), "row 0 is the registered crowbar item, not a parallel supplier");
 		assertSame(GT6Tools.CUTTER, GT6Tools.TAB_TABLE.get(1), "row 1 is the registered cutter item, not a parallel supplier");
 		assertSame(GT6Tools.CHISEL, GT6Tools.TAB_TABLE.get(2), "row 2 is the registered chisel item, not a parallel supplier");

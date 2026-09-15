@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:hazmat_biochemgas_leggings"
+    },
+    "B": {
+      "item": "gt6:hazmat_insect_leggings"
+    },
+    "C": {
+      "item": "gt6:hazmat_frost_leggings"
+    },
+    "D": {
+      "item": "gt6:hazmat_heat_leggings"
+    },
+    "E": {
+      "item": "gt6:hazmat_radiation_leggings"
+    },
+    "F": {
+      "item": "minecraft:chainmail_leggings"
+    }
+  },
+  "pattern": [
+    "A B",
+    "C D",
+    "E F"
+  ],
+  "result": {
+    "item": "gt6:hazmat_universal_leggings"
+  },
+  "show_notification": true
+}

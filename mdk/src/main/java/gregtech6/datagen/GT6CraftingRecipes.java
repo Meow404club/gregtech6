@@ -26,6 +26,7 @@ import net.minecraftforge.common.Tags;
 *///?}
 
 import gregtech6.datagen.GT6ItemTags;
+import gregtech6.items.armor.GT6ArmorMaterials;
 import gregtech6.registry.GT6Batteries;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GTWires;
@@ -300,6 +301,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
 		pocketMultitoolBuilder().save(aConsumer, POCKET_MULTITOOL_ID);
+		// task p29-w5-t8-armor-24 — the 24 hazmat rows (tail-append)
+		for (GT6ArmorMaterials.SuitRow tSuit : GT6ArmorMaterials.SUITS) {
+			for (int i = 0; i < GT6ArmorMaterials.PIECE_TYPES.length; i++) {
+				armorPieceBuilder(tSuit, i).save(aConsumer, armorRecipeId(tSuit, i));
+			}
+		}
 	}
 	//?} else {
 	/*@Override
@@ -395,6 +402,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		pocketMultitoolBuilder().save(aOutput, POCKET_MULTITOOL_ID);
+		// task p29-w5-t8-armor-24 — the 24 hazmat rows (tail-append)
+		for (GT6ArmorMaterials.SuitRow tSuit : GT6ArmorMaterials.SUITS) {
+			for (int i = 0; i < GT6ArmorMaterials.PIECE_TYPES.length; i++) {
+				armorPieceBuilder(tSuit, i).save(aOutput, armorRecipeId(tSuit, i));
+			}
+		}
 	}
 	*///?}
 
@@ -1944,5 +1957,88 @@ public class GT6CraftingRecipes extends RecipeProvider {
         if (tKeys.indexOf('f') >= 0) tBuilder.define('f', GT6ItemTags.TOOLS_FILE);
         if (tKeys.indexOf('h') >= 0) tBuilder.define('h', GT6ItemTags.TOOLS_HARD_HAMMER);
         return tBuilder.unlockedBy("has_battery", has(batteryTag(tTier)));
+    // ─── the Hazmat armor band (task p29-w5-t8-armor-24, tail-append) ───
+
+    /**
+     * The id of one armor recipe — the result-path convention ({@code gt6:hazmat_<suit>_<piece>}).
+     * The path rides a local so the two-arg RL ctor args stay bare identifiers (the
+     * swap-table regex note).
+     */
+    public static ResourceLocation armorRecipeId(GT6ArmorMaterials.SuitRow aSuit, int aSlot) {
+        String tPath = aSuit.pieceId(aSlot);
+        return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+    }
+
+    /**
+     * The 24 armor rows (Loader_Tools.java:68-96 verbatim grids, tool letters dropped).
+     * Base suits: the helmet mask carries the glass pane 'G' (black stained for the
+     * insect/frost/heat rows :68/:73/:78, plain for radiation/biochemgas :83/:88); the
+     * material column 'M' per suit = rubber FOIL (:68), asbestos PLATE (:73), aluminium
+     * FOIL (:78), lead PLATE (:83), rubber PLATE (:88) — the ANY.Rubber rows flatten to
+     * MT.Rubber (the upstream ANY.Rubber group holds exactly that member,
+     * ANY.java:144). UNIVERSAL (:93-96): one 3x3 over the five suits' SAME-SLOT piece +
+     * the vanilla chainmail piece 'F'.
+     *
+     * <p>DECLARED DEVIATION: the upstream lowercase tool letters ('q' scissors, 'l'
+     * magnifying glass, 'x' wire cutter — the CR.java:193-216 alphabet) are DROPPED, the
+     * cell alignment kept by spaces. The scissors/magnifying-glass items do not exist on
+     * this baseline (the W5 t3/t5 tool cards land later in the merge queue, the cutter
+     * alone is ported), and a half-faithful grid mixing present/absent tools would drift
+     * per suit; the recipe-precision rework is a tool-wave follow-up pool item.
+     */
+    private ShapedRecipeBuilder armorPieceBuilder(GT6ArmorMaterials.SuitRow aSuit, int aSlot) {
+        Item tResult = GT6Tools.armorRow(aSuit, aSlot).get();
+        if (aSuit.suit() == GT6ArmorMaterials.UNIVERSAL) {
+            Item tGas = GT6Tools.armorRow(GT6ArmorMaterials.rowOf(GT6ArmorMaterials.BIOCHEMGAS), aSlot).get();
+            Item tInsect = GT6Tools.armorRow(GT6ArmorMaterials.rowOf(GT6ArmorMaterials.INSECTS), aSlot).get();
+            Item tFrost = GT6Tools.armorRow(GT6ArmorMaterials.rowOf(GT6ArmorMaterials.FROST), aSlot).get();
+            Item tHeat = GT6Tools.armorRow(GT6ArmorMaterials.rowOf(GT6ArmorMaterials.HEAT), aSlot).get();
+            Item tRadiation = GT6Tools.armorRow(GT6ArmorMaterials.rowOf(GT6ArmorMaterials.RADIATION), aSlot).get();
+            Item tChainmail = new Item[] { net.minecraft.world.item.Items.CHAINMAIL_HELMET,
+                    net.minecraft.world.item.Items.CHAINMAIL_CHESTPLATE,
+                    net.minecraft.world.item.Items.CHAINMAIL_LEGGINGS,
+                    net.minecraft.world.item.Items.CHAINMAIL_BOOTS }[aSlot];
+            return ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, tResult)
+                    .pattern("A B").pattern("C D").pattern("E F")
+                    .define('A', tGas).define('B', tInsect).define('C', tFrost)
+                    .define('D', tHeat).define('E', tRadiation).define('F', tChainmail)
+                    .unlockedBy("has_hazmat_piece", has(tGas));
+        }
+        Item tMaterial = suitMaterial(aSuit);
+        String[][] tPattern = new String[][] {
+                {"MMM", "MGM"},         // helmet mask (the 'G' pane row, :68/:73/:78/:83/:88)
+                {"M M", "MMM", "MMM"},  // chest (:69/:74/:79/:84/:89)
+                {"MMM", "M M", "M M"},  // legs (:70/:75/:80/:85/:90)
+                {"M M", "M M"}};        // boots (:71/:76/:81/:86/:91)
+        ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, tResult);
+        boolean tHasGlass = false;
+        for (String tRow : tPattern[aSlot]) {
+            tBuilder = tBuilder.pattern(tRow);
+            tHasGlass |= tRow.indexOf('G') >= 0;
+        }
+        tBuilder = tBuilder.define('M', tMaterial);
+        if (tHasGlass) tBuilder = tBuilder.define('G', suitGlass(aSuit));
+        return tBuilder.unlockedBy("has_material", has(tMaterial));
+    }
+
+    /** The 'M' column per base suit — the Loader_Tools.java:68-91 material rows. */
+    private Item suitMaterial(GT6ArmorMaterials.SuitRow aSuit) {
+        return switch (aSuit.suit()) {
+            case INSECTS -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.foil, gregapi.data.MT.Rubber).get();
+            case FROST -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, gregapi.data.MT.Asbestos).get();
+            case HEAT -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.foil, gregapi.data.MT.Al).get();
+            case RADIATION -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, gregapi.data.MT.Pb).get();
+            case BIOCHEMGAS -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, gregapi.data.MT.Rubber).get();
+            default -> throw new IllegalArgumentException("base suit only: " + aSuit.suit());
+        };
+    }
+
+    /** The 'G' pane column — black stained on the :68/:73/:78 rows, plain on :83/:88. */
+    private Item suitGlass(GT6ArmorMaterials.SuitRow aSuit) {
+        return switch (aSuit.suit()) {
+            case INSECTS, FROST, HEAT -> net.minecraft.world.item.Items.BLACK_STAINED_GLASS_PANE;
+            case RADIATION, BIOCHEMGAS -> net.minecraft.world.item.Items.GLASS_PANE;
+            default -> throw new IllegalArgumentException("base suit only: " + aSuit.suit());
+        };
     }
 }

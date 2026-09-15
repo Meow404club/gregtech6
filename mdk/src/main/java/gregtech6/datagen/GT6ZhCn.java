@@ -109,6 +109,24 @@ public class GT6ZhCn extends LanguageProvider {
 		addCrucibleJadeUnits(); // task p28-crucible-jade-face
 		addAnvilUnits();        // task p28-c-anvil
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
+		addArmorUnits();        // task p29-w5-t8-armor-24
+	}
+
+	/**
+	 * The Hazmat armor zh faces (task p29-w5-t8-armor-24, the addAnvilUnits shape): the
+	 * 24 display names + the 24 per-piece tooltip keys, all riding the reference table's
+	 * hand layer — the values are the DUMP faces verbatim (tmp/gregtech.lang:927-974,
+	 * the gt.armor.hazmat.* + *.tooltip_main families keyed onto the modern snake ids).
+	 * Hand rows (the reference dump keys are the 1.7 unlocalized forms, lifted onto the
+	 * direct hand layer — the TSV regen and this walk land in the SAME commit).
+	 */
+	private void addArmorUnits() {
+		for (gregtech6.items.armor.GT6ArmorMaterials.SuitRow tSuit : gregtech6.items.armor.GT6ArmorMaterials.SUITS) {
+			for (int i = 0; i < gregtech6.items.armor.GT6ArmorMaterials.PIECE_WORDS.length; i++) {
+				addDirect("item.gt6." + tSuit.pieceId(i));
+				addDirect("item.gt6." + tSuit.pieceId(i) + ".tooltip");
+			}
+		}
 	}
 
 	/**

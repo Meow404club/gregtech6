@@ -60,18 +60,20 @@ public class GT6ArmorItem extends ArmorItem {
 	}
 
 	/**
-	 * The worn-model texture path — gt6-namespaced layered file, legs = layer 2 (the
-	 * vanilla HumanoidArmorLayer inner-model split).
+	 * The worn-model texture path composition — the STATIC seam (the ArmorSetTest pins
+	 * the literal offline; item instances are not constructible in the bootstrapped-frozen
+	 * test JVM). gt6-namespaced layered file, legs = layer 2 (the vanilla
+	 * HumanoidArmorLayer inner-model split).
 	 */
-	public String armorTexturePath(boolean aInnerModel) {
-		String tPath = TEXTURE_DIR + this.textureName + "_layer_" + (aInnerModel ? 2 : 1) + ".png";
+	public static String armorTexturePath(String aTextureName, boolean aInnerModel) {
+		String tPath = TEXTURE_DIR + aTextureName + "_layer_" + (aInnerModel ? 2 : 1) + ".png";
 		return new ResourceLocation("gt6", tPath).toString();
 	}
 
 	@Override
 	public String getArmorTexture(ItemStack aStack, Entity aEntity, EquipmentSlot aSlot, String aType) {
 		// the ItemArmorBase.java:136 verbatim face — every call answers the base texture
-		return this.armorTexturePath(aSlot == EquipmentSlot.LEGS);
+		return armorTexturePath(this.textureName, aSlot == EquipmentSlot.LEGS);
 	}
 
 	@Override

@@ -131,4 +131,9 @@ public enum GT6ArmorMaterials implements ArmorMaterial {
 			new SuitRow(BIOCHEMGAS, EnumSet.of(GT6HazardSets.Hazard.GAS,
 					GT6HazardSets.Hazard.BIO, GT6HazardSets.Hazard.CHEM)),
 			new SuitRow(UNIVERSAL, EnumSet.allOf(GT6HazardSets.Hazard.class)));
+
+	/** The SUITS row of one material constant — SUITS order is the enum ordinal order. */
+	public static SuitRow rowOf(GT6ArmorMaterials aSuit) {
+		return SUITS.get(aSuit.ordinal());
+	}
 }
