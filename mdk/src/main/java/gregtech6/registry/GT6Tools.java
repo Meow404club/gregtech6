@@ -1,6 +1,9 @@
 package gregtech6.registry;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -8,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,6 +23,8 @@ import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.GT6Mod;
 import gregtech6.items.tools.GT6BendingCylinderItem;
+import gregtech6.items.armor.GT6ArmorItem;
+import gregtech6.items.armor.GT6ArmorMaterials;
 import gregtech6.items.tools.GT6BendingCylinderSmallItem;
 import gregtech6.items.tools.GT6BuilderWandItem;
 import gregtech6.items.tools.GT6FileItem;
@@ -542,6 +548,36 @@ public final class GT6Tools {
 	}
 
 	/**
+	 * The Hazmat armor family — task p29-w5-t8-armor-24 (tail-append,
+	 * decisions.p30-w5-split-rulings): 24 FLAT items (6 suits x 4 slots, non-NBT, the
+	 * research ruling over the upstream per-piece rows Loader_Tools.java:68-96),
+	 * registered into THIS single DeferredRegister (the card boundary — no second DR)
+	 * and appended to the {@link #TAB_TABLE} tail below. Registration order = the
+	 * {@link GT6ArmorMaterials#SUITS} walk x the four {@link ArmorItem.Type} slots; the
+	 * datagen bands' row lookup rides {@link #armorRow}.
+	 */
+	public static final List<RegistryObject<Item>> ARMOR_ROWS = buildArmorRows();
+
+	private static List<RegistryObject<Item>> buildArmorRows() {
+		List<RegistryObject<Item>> rRows = new ArrayList<>();
+		for (GT6ArmorMaterials.SuitRow tSuit : GT6ArmorMaterials.SUITS) {
+			for (int i = 0; i < GT6ArmorMaterials.PIECE_TYPES.length; i++) {
+				ArmorItem.Type tType = GT6ArmorMaterials.PIECE_TYPES[i];
+				String tPath = tSuit.pieceId(i);
+				String tTexture = tSuit.textureName();
+				rRows.add(ITEMS.register(tPath,
+						() -> new GT6ArmorItem(tSuit.suit(), tType, new Item.Properties(), tTexture)));
+			}
+		}
+		return List.copyOf(rRows);
+	}
+
+	/** One armor row by suit + slot — the datagen bands' lookup face (the SUITS-walk order). */
+	public static RegistryObject<Item> armorRow(GT6ArmorMaterials.SuitRow aSuit, int aSlot) {
+		return ARMOR_ROWS.get(GT6ArmorMaterials.SUITS.indexOf(aSuit) * GT6ArmorMaterials.PIECE_TYPES.length + aSlot);
+	}
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -565,7 +601,8 @@ public final class GT6Tools {
 	 * task p29-w5-t6-electric-nineteen appends rows 38-56 (the nineteen electric tools —
 	 * the upstream Loader_Tools.java:156-174 registration-row order).
 	 */
-	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL,
+	public static final List<RegistryObject<Item>> TAB_TABLE = ImmutableList.<RegistryObject<Item>>builder()
+			.add(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL,
 			PICKAXE, PICKAXE_GEM, PICKAXE_CONSTRUCTION, SHOVEL, SPADE, UNIVERSAL_SPADE,
 			SWORD, KNIFE, BUTCHERY_KNIFE, CLUB, AXE, AXE_DOUBLE,
 			SOFT_HAMMER, MONKEY_WRENCH, MAGNIFYING_GLASS, PINCERS,
@@ -578,7 +615,12 @@ public final class GT6Tools {
 			BUZZSAW_LV, SCREWDRIVER_LV, HAND_DRILL_LV, HAND_MIXER_LV,
 			MONKEY_WRENCH_LV, MONKEY_WRENCH_MV, MONKEY_WRENCH_HV,
 			TRIMMER_LV,
-			POCKET_MULTITOOL, POCKET_MULTITOOL_KNIFE, POCKET_MULTITOOL_SAW, POCKET_MULTITOOL_FILE, POCKET_MULTITOOL_SCREWDRIVER, POCKET_MULTITOOL_WIRE_CUTTER, POCKET_MULTITOOL_SCISSORS, POCKET_MULTITOOL_CHISEL); // task p29-w5-t7-pocket-eight — rows 57-64, the POCKET_FORMS order
+			POCKET_MULTITOOL, POCKET_MULTITOOL_KNIFE, POCKET_MULTITOOL_SAW, POCKET_MULTITOOL_FILE, POCKET_MULTITOOL_SCREWDRIVER, POCKET_MULTITOOL_WIRE_CUTTER, POCKET_MULTITOOL_SCISSORS, POCKET_MULTITOOL_CHISEL)
+			// task p29-w5-t8-armor-24 — the 24 hazmat armor rows, tail-append (rows 65-88;
+			// the wave-final tally 10 base tools + the 54 W5 tool-card rows + these 24 =
+			// the 88-row census the wave gate re-measures)
+			.addAll(ARMOR_ROWS)
+			.build();
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -714,6 +756,11 @@ public final class GT6Tools {
 			// task p29-w5-t7-pocket-eight — one line for the ring (the census rides the tab line below)
 			GT6Mod.LOGGER.info("GT6 tool registered: gt6:pocket_multitool + 7 switch forms, durability {} (ring {})",
 					GTPocketMultitoolItem.DURABILITY_POINTS, POCKET_FORMS.size());
+			// task p29-w5-t8-armor-24 — the armor family as ONE evidence line (the 24
+			// per-item lines would drown the log; the family registration rides the same
+			// ITEMS DR whose registry lookup the tab line below already pins)
+			GT6Mod.LOGGER.info("GT6 armor registered: {} pieces across {} hazmat suits",
+					ARMOR_ROWS.size(), GT6ArmorMaterials.SUITS.size());
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",
