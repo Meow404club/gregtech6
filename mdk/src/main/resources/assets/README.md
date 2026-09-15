@@ -8024,6 +8024,12 @@ upstream `README.md` block as above).
   colored layer un-tinted and carries the overlay as a separate 0.01-offset decal element
   (the familyMachineModel two-layer form) — declared deviation, the material tint rides
   the render pool card.
+
+  Bedrock-drill append, task p30-pool-drillhead-18103 (copied 2026-09-16): the
+  `bedrockdrill/0` family (6 files — colored 3 + overlay 3, byte copies of the upstream
+  `multiblockparts/bedrockdrill/0/` layers, snapshot v6.17.06) joined for the missed
+  18103 Bedrock Mining Drill Head part row (Loader :1178, NBT_TEXTURE "bedrockdrill",
+  NBT_DESIGNS 0). Upstream license: **CC0 1.0 Universal Public Domain Dedication**.
 - `gt6/textures/block/turbine_mains/<family>/<group>/{bottom,top,side}.png` — the Large
   Turbine / Large Dynamo controller main textures (36 files, task p29-w3-turbine-dynamo;
   upstream `textures/blocks/machines/multiblockmains/{largeturbine,gasturbine,largedynamo}/
