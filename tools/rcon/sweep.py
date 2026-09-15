@@ -298,6 +298,13 @@ SESSION_GROUPS = (
     # the inject rig for the machines and the real boiler stack for the exchanger).
     # --group p29_w3_heat_smelter matches through the chains' embedded name prefix.
     ("p29_w3_heat_exchanger", "p29_w3_smelter", "p29_w3_melter"),
+    # P29 W4 card ① (p29-w4-f1-chemicals): the two chemical chains — one fresh z=320
+    # band, x-disjoint columns (cracker 446..458 / gas turbine 462..466); the cracker
+    # leg runs the steam-cracker TRUE row (steam+propane -> the four-gas ladder) and
+    # the catalytic catalyst gate; the gas leg burns the methane FM.Gas row with the
+    # restored CO2 exhaust. Admission mirrors the p29 W3 cluster form.
+    # --group p29_w4_chemicals matches through the chains' embedded name prefix.
+    ("p29_w4_chemicals_cracker", "p29_w4_chemicals_gas_turbine"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
