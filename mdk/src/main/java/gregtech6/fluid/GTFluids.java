@@ -1520,6 +1520,12 @@ public final class GTFluids {
 	public static final List<ChemicalFluidSpec> LUBRICANT_FLUID_SPECS = List.of(
 		new ChemicalFluidSpec("lubricant", "Lubricant", 300, 1000, 1000, 0xFFFFC400, false, 0)); // :617 — MT.Lubricant 255,196,0
 
+	/** The lubricant row lookup (the {@link #hotSpec} shape) — the single-row family. */
+	public static ChemicalFluidSpec lubricantSpec(String aName) {
+		for (ChemicalFluidSpec tSpec : LUBRICANT_FLUID_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
 	/** The live registrations of the three families — one per spec row, in declaration order (the {@link #CHEMICALS} shape). */
 	public static final List<ChemicalFluid> HOT_FLUIDS = HOT_FLUID_SPECS.stream().map(s -> specFluid(s, "hot fluid")).toList();
 	public static final List<ChemicalFluid> CLOSURE_FLUIDS = CLOSURE_FLUID_SPECS.stream().map(s -> specFluid(s, "closure carrier fluid")).toList();
