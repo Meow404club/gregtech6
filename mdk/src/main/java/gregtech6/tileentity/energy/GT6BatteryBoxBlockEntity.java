@@ -444,6 +444,22 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 		return rStacks;
 	}
 
+	//? if forge {
+	// (the forge leg answers the ItemHandler face through the Root getCapability override
+	// over the mInventory carrier — zero extra code here.)
+	//?} else {
+	/*// (21.1 seam: NeoForge removed BlockEntity#getCapability — the W4 registerBlockEntity
+	// delegates to this member; no @Override. The whole-inventory view IS the battery
+	// access face — the upstream getAccessibleSlotsFromSide2 answers every side the same
+	// way, UT.Code.getAscendingArray. The GT6HopperBaseBlockEntity member shape.)
+	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
+		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
+			return (T) mInventory;
+		}
+		return null;
+	}
+	 *///?}
+
 	// the MACHINES-tab seats and the command faces stay the W2/pool cards' surface — this
 	// class carries the energy behavior only.
 }

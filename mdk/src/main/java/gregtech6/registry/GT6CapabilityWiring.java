@@ -26,6 +26,7 @@ import gregtech6.tileentity.energy.GT6FeSourceBlockEntity; // p28 tail-append
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.inventories.GT6HopperBlockEntity; // p26 tail-append
 import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity; // p26 tail-append
+import gregtech6.tileentity.energy.GT6BatteryBoxBlockEntity; // p29-w4 tail-append
 import gregtech6.tileentity.multiblocks.GTGasTurbineBlockEntity; // p29-w3 tail-append
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
@@ -105,6 +106,7 @@ public final class GT6CapabilityWiring {
 		registerStaticStorages(aEvent); // task p26-storage-static-batch (tail-append; shared serial file)
 		registerGasTurbine(aEvent); // task p29-w3-turbine-dynamo (tail-append; shared serial file)
 		registerDistillationFaces(aEvent); // task p29-w3-distill-crucible (tail-append; shared serial file)
+		registerBatteryBoxFamily(aEvent); // task p29-w4-battery-storage (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -706,6 +708,28 @@ public final class GT6CapabilityWiring {
 		BlockEntityType<GTGasTurbineBlockEntity> tGasTurbine = GT6Turbines.GAS_TURBINE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tGasTurbine,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+	}
+
+	// -- the battery family (p29-w4-battery-storage; TAIL-APPENDED ROW, the shared serial
+	// file: append-only discipline) --
+	// The two BatteryBox BETs join as an ITEM-ONLY face (the canInsertItem2/upstream
+	// :199 battery-slot access; the energy face is GT-native — the box answers
+	// ITileEntityEnergy directly, so NO EnergyStorage capability row exists here: an FE
+	// face on an EU box would BE the cut EU→FE outbound bridge / the un-ruled FE→EU
+	// bypass, decisions.p28-cut-eu-fe-bridge + the p28 inbound-converter wall). The forge
+	// leg answers through the TileEntityBase01Root.getCapability override over the
+	// Root mInventory carrier; this row is the 21.1 registration only. Without it every
+	// external battery push (the hopper/pipe level ItemHandler.BLOCK query) is
+	// capability-blind on this node while the 1.20.1 BE override hides the gap — the
+	// ADR-P15-4 census discipline, mechanized by GT6CapabilityWiringSeamTest.
+
+	private static void registerBatteryBoxFamily(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6BatteryBoxBlockEntity> tBox = GT6Batteries.BATTERY_BOX_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tBox,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		BlockEntityType<GT6BatteryBoxBlockEntity> tLarge = GT6Batteries.BATTERY_BOX_LARGE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLarge,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 	}
 
 }
