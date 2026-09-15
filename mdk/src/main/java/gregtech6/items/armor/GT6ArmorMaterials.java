@@ -2,17 +2,26 @@ package gregtech6.items.armor;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
 
+//? if forge {
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.Holder;
+//?} else {
+/*import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+*///?}
+
 /**
  * The six Hazmat suit materials — task p29-w5-t8-armor-24 spec ①, the vanilla
- * {@link ArmorMaterial} interface implementation of the upstream
+ * {@link ArmorMaterial} face of the upstream
  * {@code EnumHelper.addArmorMaterial("armor." + aUnlocalized, ...)} row
  * (gregapi/item/ItemArmorBase.java:82, once per registration row Loader_Tools.java:68-96).
  * The stat triple is the upstream :68 parameter shape, flat across all six suits:
@@ -20,18 +29,28 @@ import net.minecraft.world.item.crafting.Ingredient;
  * durability 128 ({@link #DURABILITY}), enchantability 8 ({@link #ENCHANTMENT_VALUE}),
  * toughness/knockback 0.
  *
- * <p>{@link #getName()} returns the suit's lower-snake texture word
- * ({@code hazmat_insect}...) — the vanilla {@code HumanoidArmorLayer.java:121} fallback
- * composition root. The WORN texture actually resolves through the item-level
- * {@code getArmorTexture} override ({@link GT6ArmorItem}, the ForgeHooksClient
- * :264 seam — the port of the upstream ItemArmorBase.java:86/:136 mArmorTexture face),
- * so the name stays a texture-word identity, never a namespace-carrying path.
+ * <p>Leg split (the ONLY //? surface of the armor card): 1.20.1 — {@code ArmorMaterial}
+ * is an INTERFACE (vanilla ArmorMaterial.java:6-22: getDurabilityForType /
+ * getDefenseForType / getEquipSound / getRepairIngredient / getName), so the enum
+ * implements it directly; 1.21.1 — it became a RECORD (vanilla-mc 1.21.1
+ * ArmorMaterial.java:16-25: defense Map / enchantmentValue / equipSound Holder /
+ * repairIngredient Supplier / layers / toughness / knockbackResistance, the durability
+ * moved onto the item Properties), so each constant builds a direct-held record whose
+ * {@code Layer(assetName)} resolves the SAME gt6:textures/models/armor/&lt;suit&gt;_layer_*
+ * paths the forge leg serves through the item-level getArmorTexture override. The
+ * leg-neutral literal face ({@link #defenseFor}, {@link #durabilityFor},
+ * {@link #enchantValue}) exists so the offline ArmorSetTest pins the :68 numbers without
+ * touching either leg's vanilla signature.
  *
  * <p>The {@link #SUITS} table is the card's single source: the registration walk
  * (GT6Tools ARMOR_ROWS), the membership derivation (GT6HazardSets), the datagen bands
  * (recipes/tags/models/lang) and the offline ArmorSetTest all read THIS table.
  */
+//? if forge {
 public enum GT6ArmorMaterials implements ArmorMaterial {
+	//?} else {
+	/*public enum GT6ArmorMaterials {
+	*///?}
 
 	INSECTS("hazmat_insect"),
 	FROST("hazmat_frost"),
@@ -64,45 +83,91 @@ public enum GT6ArmorMaterials implements ArmorMaterial {
 		return this.textureName;
 	}
 
-	@Override
+	/** The leg-neutral literal face — the ArmorSetTest pins these, not the vanilla signatures. */
+	public int defenseFor(ArmorItem.Type aType) {
+		//? if forge {
+		return getDefenseForType(aType);
+		//?} else {
+		/*return material().value().getDefense(aType);
+		*///?}
+	}
+
+	/** The leg-neutral durability literal (the :68 {@code 128}). */
+	public int durabilityFor(ArmorItem.Type aType) {
+		//? if forge {
+		return getDurabilityForType(aType);
+		//?} else {
+		/*return DURABILITY; // the 1.21 durability rides the item Properties, not the record
+		*///?}
+	}
+
+	/** The leg-neutral enchantability literal (the :68 {@code 8}). */
+	public int enchantValue() {
+		//? if forge {
+		return getEnchantmentValue();
+		//?} else {
+		/*return material().value().enchantmentValue();
+		*///?}
+	}
+
+	//? if forge {
+	// the suit's lower-snake texture word — the vanilla HumanoidArmorLayer.java:121
+	// fallback root (NO javadoc inside a fork branch: the stonecutter /*-wrapping
+	// cannot nest block comments)
 	public String getName() {
 		return this.textureName;
 	}
 
-	@Override
 	public int getDurabilityForType(ArmorItem.Type aType) {
 		return DURABILITY;
 	}
 
-	@Override
 	public int getDefenseForType(ArmorItem.Type aType) {
 		return DEFENSE_PER_PIECE;
 	}
 
-	@Override
 	public int getEnchantmentValue() {
 		return ENCHANTMENT_VALUE;
 	}
 
-	@Override
 	public SoundEvent getEquipSound() {
 		return SoundEvents.ARMOR_EQUIP_GENERIC;
 	}
 
-	@Override
 	public Ingredient getRepairIngredient() {
 		return Ingredient.EMPTY;
 	}
 
-	@Override
 	public float getToughness() {
 		return 0.0F;
 	}
 
-	@Override
 	public float getKnockbackResistance() {
 		return 0.0F;
 	}
+	//?} else {
+	/*private Holder<ArmorMaterial> tHolder;
+
+	// The 1.21 record face — defense Map + the Layer whose assetName resolves
+	// gt6:textures/models/armor/&lt;suit&gt;_layer_&lt;1|2&gt;.png natively
+	// (vanilla-mc 1.21.1 ArmorMaterial.Layer.resolveTexture). Holder.direct keeps the
+	// materials off the 1.21 ARMOR_MATERIAL registry (the trim/codec face is unused here).
+	public Holder<ArmorMaterial> material() {
+		if (tHolder == null) {
+			tHolder = Holder.direct(new ArmorMaterial(
+					Map.of(ArmorItem.Type.HELMET, DEFENSE_PER_PIECE,
+							ArmorItem.Type.CHESTPLATE, DEFENSE_PER_PIECE,
+							ArmorItem.Type.LEGGINGS, DEFENSE_PER_PIECE,
+							ArmorItem.Type.BOOTS, DEFENSE_PER_PIECE),
+					ENCHANTMENT_VALUE,
+					SoundEvents.ARMOR_EQUIP_GENERIC,
+					() -> Ingredient.EMPTY,
+					List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath("gt6", textureName))),
+					0.0F, 0.0F));
+		}
+		return tHolder;
+	}
+	*///?}
 
 	/**
 	 * One suit row: the material plus the hazard-class coverage — the Loader_Tools

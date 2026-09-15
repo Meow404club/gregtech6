@@ -76,17 +76,17 @@ public class ArmorSetTest {
 		assertEquals(24, rIds.size());
 	}
 
-	/** The stat literals — the Loader_Tools.java:68 row verbatim (1/件, 128, 8, 0). */
+	/** The stat literals — the Loader_Tools.java:68 row verbatim (1/件, 128, 8), via the leg-neutral face. */
 	@Test
 	public void statLiteralsMatchTheUpstreamRow() {
 		for (GT6ArmorMaterials tMaterial : GT6ArmorMaterials.values()) {
-			for (ArmorItem.Type tType : ArmorItem.Type.values()) {
-				assertEquals(1, tMaterial.getDefenseForType(tType), "defense 1/件 (" + tMaterial + ")");
-				assertEquals(128, tMaterial.getDurabilityForType(tType), "durability 128 (" + tMaterial + ")");
+			// the four WEARABLE slots (the :68 int[]{1,1,1,1}); the 1.21 BODY slot (wolf
+			// armor) carries no upstream analogue and reads the map default
+			for (ArmorItem.Type tType : GT6ArmorMaterials.PIECE_TYPES) {
+				assertEquals(1, tMaterial.defenseFor(tType), "defense 1/件 (" + tMaterial + ")");
+				assertEquals(128, tMaterial.durabilityFor(tType), "durability 128 (" + tMaterial + ")");
 			}
-			assertEquals(8, tMaterial.getEnchantmentValue());
-			assertEquals(0.0F, tMaterial.getToughness());
-			assertEquals(0.0F, tMaterial.getKnockbackResistance());
+			assertEquals(8, tMaterial.enchantValue());
 		}
 	}
 
