@@ -15,12 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gregtech6.block.tree.GT6TreeKind;
+import gregtech6.datagen.GT6WorldgenDatagen;
 import gregtech6.worldgen.GT6Worldgen;
 
 class GT6TreeBlocksCensusTest {
@@ -98,5 +100,22 @@ class GT6TreeBlocksCensusTest {
         assertEquals("Coconut", GT6TreeKind.COCONUT.enName(), ":53");
         assertEquals("Rainbowood", GT6TreeKind.RAINBOWOOD.enName(), ":54");
         assertEquals("Blue Spruce", GT6TreeKind.BLUE_SPRUCE.enName(), "BlockTreeSaplingCD.java:45");
+    }
+
+    /** The biome-modifier key band mirrors the KINDS order (the offline-safe ResourceKey face). */
+    @Test
+    void treeBiomeModifierKeysMirrorKinds() {
+        assertEquals(GT6TreeBlocks.KINDS.size(), GT6WorldgenDatagen.TREE_BIOME_MODIFIER_KEYS.size(),
+                "9 tree AddFeaturesBiomeModifier keys");
+        assertEquals("gt6:tree_rubber", GT6WorldgenDatagen.TREE_BIOME_MODIFIER_KEYS.get(0).location().toString(),
+                "the Loader tree.rubber row, dot flattened");
+    }
+
+    /** The upstream probability column, Loader_Worldgen.java:608-616 verbatim (KINDS order). */
+    @Test
+    void treeProbabilityColumnIsPinned() {
+        assertEquals(List.of(5, 5, 4, 3, 32, 3, 1, 4, 32), GT6WorldgenDatagen.TREE_PROBABILITY,
+                "rubber 1/5, maple 1/5, willow 1/4, bluemahoe 1/3, hazel 1/32, cinnamon 1/3, "
+                        + "coconut 1/1, rainbowood 1/4, bluespruce 1/32");
     }
 }
