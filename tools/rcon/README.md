@@ -319,6 +319,14 @@ boot 前 `assert_ports_free` 在起服现场重跑 `ss -ltn`，本 boot 要绑�
 的 pid 文件，内容必须等于本次 boot 的 wrapper pid——并行 boot 互踩 artifact 路径（P16
 session pid 互踩实证）在 boot 时炸，而不是收尾时把句柄指向别人进程。
 
+**stop 归属门（P30，`StopOwnershipError`）**：boot 时 `start_server` 把调用方身份
+（pid + worktree token，`GT6_RCON_OWNER` 可覆盖）作为 owner 行原子写进 RCON 槽记录；
+`stop_server` 经 `<pid_file>.slot` 标记反查记录，调用方既非 boot 进程又非同 worktree
+会话即拒绝（报明双方归属，任何 RCON/pid 动作与槽释放都不发生）——ops.p30-rcon-chain-repair
+事故（共享箱他者 cleanup 同默认口令 RCON stop 掉活跑中的 neo 腿）由此结构性不可能。
+人工清场走 `--force`（CLI 同名旗标，打印警告；CLI 拒绝退出码 3）。框架链与重启 probe
+同进程自停天然放行；2h 陈旧槽回收、槽满排队、纯 no-op 不设门，语义零回归。
+
 ### 世界层 gt6world（站点注册 + bbox 自动清场）
 
 ```python
