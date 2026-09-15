@@ -236,7 +236,9 @@ public class GT6DualDirectoryFacesTest {
 					tForge.getFileName() + " the forge face carries no foreign brand");
 			assertTrue(tNeoforgeText.contains("\"neoforge:add_features\""),
 					tForge.getFileName() + " the neoforge face carries the neoforge brand");
-			assertFalse(tNeoforgeText.contains("forge:add_features"),
+			// the negative arm pins the QUOTED token: the bare string is a substring of
+			// the neoforge brand itself ("neoforge:add_features".contains("forge:..."))
+			assertFalse(tNeoforgeText.contains("\"forge:add_features\""),
 					tForge.getFileName() + " the neoforge face carries no foreign brand");
 			assertEquals(tForgeText.replace("\"forge:add_features\"", "\"neoforge:add_features\""), tNeoforgeText,
 					tForge.getFileName() + " the brand mirror is the type-key delta alone");
