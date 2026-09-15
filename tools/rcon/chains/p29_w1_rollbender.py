@@ -15,6 +15,10 @@ driver the p26_w1 trio and the p28 arms C used).
   B3 THE W3 ROW-SEMANTICS FIX (task p29-w3-heat-smelter): the stick -> ring x2 row
     (:299) on a FRESH T4 block at x406 — the used T1-T4 machines carry plate_curved
     output slots that would block the ring row (the canOutput slot-identity gate).
+    The stick_iron input rides the inventory merge, NOT the literal feed (the
+    rollbender literals feed OP.plate per the W1 registration and 19a68e9d never
+    re-pinned them), and the packet rides the T4 window (minIn 1024 — the old
+    64-packet form sat below the gate).
   C THE TIER_INPUTS WINDOW PINS: minIn=64 recIn=128 maxIn=256 / minIn=256 recIn=512 maxIn=1024 / minIn=1024 recIn=2048 maxIn=4096 across the four tiers
     (the :126 conversion of NBT_INPUT 128/512/2048, read off the BE reports).
 
@@ -57,6 +61,15 @@ OUT = {"1.20.1": "outputs=[1x plate_curved_iron; ]", "1.21.1": "outputs=[1x gt6:
 # (:299) on a FRESH T4 block — a used machine's output slots hold plate_curved_iron,
 # which would block the ring row (the canOutput slot-identity gate)
 OUT_RING = {"1.20.1": "outputs=[2x ring_iron; ]", "1.21.1": "outputs=[2x gt6:ring_iron; ]"}
+# the B3 input merge (the p26_w1_press key-shape ruling): the rollbender literals feed
+# OP.plate (GTMachineCommand rollFeed — the W1 registration; 19a68e9d re-pinned only
+# rollformer), so the stick_iron row-2 input goes in through the inventory merge.
+# Size 2 = 1 input + 1 output (mInputItemsCount + mOutputItemsCount, the
+# TileEntityBasicMachine :343 construction over the rollbender map shape).
+STICK_MERGE = {
+    "1.20.1": 'data merge block {p} {{inventory:{{Size:2,Items:[{{Slot:0b,id:"gt6:stick_iron",Count:1b}}]}}}}',
+    "1.21.1": 'data merge block {p} {{inventory:{{Size:2,Items:[{{Slot:0b,id:"gt6:stick_iron",count:1}}]}}}}',
+}
 MILL_T5 = gt6world.Site(406, 64, 180)
 MILL_T5_P = F(MILL_T5)
 
@@ -93,11 +106,15 @@ for tPos, tPacket, tPath in [
 steps += [
     # ---------------------------------------------------------------- arm B3
     phase("B3: the W3 stick->ring row on a fresh T4 block (the canOutput slot-identity proof)"),
-    Step(f"setblock {MILL_T5_P} gt6:rollbender_t4", expect="Changed the block", sleep=1.0),
-    Step(f"gt6machine rollbender_t4 input 1 {MILL_T5_P}",
-         expect="GT6 rollbender input: 1x stick_iron into slot 0",
-         node_expects={"1.21.1": "GT6 rollbender input: 1x gt6:stick_iron into slot 0"}),
-    Step(f"gt6machine rollbender_t4 inject 60 64 {MILL_T5_P}", expect=OUT_RING, node_expects=OUT_RING),
+    Step(f"setblock {MILL_T5_P} gt6:rollbender_t4", expect="Changed the block"),
+    # the literal feed is OP.plate for every rollbender tier — the stick_iron rides the
+    # inventory merge (the p26_w1_press shape); upstream :299 stick 1 -> ring 2.
+    Step(STICK_MERGE["1.20.1"].format(p=MILL_T5_P), expect="Modified block data",
+         node_cmds={"1.21.1": STICK_MERGE["1.21.1"].format(p=MILL_T5_P)}),
+    Step(f"data get block {MILL_T5_P} inventory", expect="stick_iron"),
+    # the packet rides the T4 window (minIn 1024): 2048 = recIn, 60 x 2048 >= the row
+    # budget 16 x 32 = 512 — the old 64-packet form sat below the gate and never bound.
+    Step(f"gt6machine rollbender_t4 inject 60 2048 {MILL_T5_P}", expect=OUT_RING, node_expects=OUT_RING),
 
     # ---------------------------------------------------------------- arm C
     phase("C: the TIER_INPUTS window pins across the four tiers"),

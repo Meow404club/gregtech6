@@ -13,19 +13,25 @@ arithmetic):
               y66..y72 — the upstream :143 offset-3 cells)
   y 63 z 303  the /gt6energy source block, under the transmitter base (the W2 rig form)
 
-The smoke row is the committed distillationtower.json (oil 1000 -> creosote 500,
-eUt 120, duration 160, total power 19200): at the 32V x 8A = 256 HU/t dial the
-run completes in ceil(19200/256) = 75 ticks (~4 s; the chain sleeps 8).
+The map rows are the W4 hot-lube card's TRUE oil rows (distillationtower.json,
+Loader_Recipes_Chem.java:352-:360 verbatim — seven fractions per row), but the
+PORT freezes mTanksOutput to ONE tank (GT6Distillation.java:87-90, the declared
+deviation; TileEntityBase10MultiBlockMachine.java:191), so multi-fraction rows
+refuse at canOutput=0 (:735-:736 FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS) —
+the old single-fraction smoke row (oil 1000 -> creosote 500) they replaced was
+the last runnable shape. The run arm therefore pins the REFUSAL live (progress
+0/0 steady over >= 2x the :356 row duration, input untouched); the output-bank
+expansion is a product-side follow-up and is reported, not chain-fixable.
 
   A  form — /gt6multiblock form scaffolds the 80 part cells from the fake-player
      stock (the self-cell passes without consuming), the design-1 probe pins the
      card-1 DESIGN render slot on the hole column, and the plain distill_part
      cell rejects it (the layering live).
   B  互拒 — the CU dial against the HU tower: the oil sits untouched, progress 0.
-  C  run — the HU dial: the fraction row completes, the output tank holds the
-     creosote (the live "1 行分馏进出").
-  D  the back-hole routing arm — a barrel at the creosote hole (y+1) receives the
-     push (the upstream :152-166 default layer).
+  C  the HU dial + the multi-fraction refusal pin — progress 0/0 steady, input
+     tank intact, out bank empty (the :356 row found but canOutput=0).
+  D  the steady-state window — a third spaced read past 2x the row duration (the
+     old barrel-at-the-hole push arm went dark with the refusal: nothing routes).
 
 passes=2 is the idempotency proof (the [0,0] of this chain).
 Run:  python3 tools/rcon/chains/p29_w3_distillation_tower.py --node 1.20.1-forge
@@ -48,7 +54,6 @@ TOWER = "386 65 302"          # the controller (facing north)
 SOURCE = "386 63 303"         # the energy rig under the base layer
 HOLE = "386 70 304"           # a y+5 hole-column cell (design 1)
 PLAIN = "386 70 303"          # the same-layer centre cell (design 0)
-ARM_BARREL = "386 66 305"     # the creosote routing hole target (controller Y + 1)
 
 steps = [
     phase("A: form — the generic scaffold arm builds the 80-cell tower"),
@@ -73,14 +78,23 @@ steps = [
     Step(f"gt6distillation check {TOWER}", expect="progress=0/0", sleep=5.0),
     Step(f"gt6distillation check {TOWER}", expect="in_tank=[1000mB gt6:oil]"),
 
-    phase("C: run — the HU dial drives the fraction row to completion"),
+    phase("C: the HU dial + the multi-fraction refusal pin (the declared single-tank deviation)"),
     Step(f"gt6energy type {SOURCE} HU", expect="type"),
-    Step(f"gt6distillation check {TOWER}", expect="out_tank=[500mB gt6:creosote]", poll=15.0),
-    Step(f"gt6distillation check {TOWER}", expect="in_tank=[-]"),
+    # the :356 true row (gt6:oil -> seven fractions) is FOUND but canOutput=0 — the frozen
+    # one-tank output bank (GT6Distillation.java:87-90, TileEntityBase10MultiBlockMachine
+    # :191) refuses it at :735-:736 (FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS). The oil
+    # must sit UNTOUCHED while the HU dial is live: progress 0/0 steady, input intact,
+    # output bank empty (tankText renders the empty tank as '-', GT6Distillation :861-863).
+    Step(f"gt6distillation check {TOWER}", expect="progress=0/0", sleep=6.0),
+    Step(f"gt6distillation check {TOWER}", expect="progress=0/0", sleep=6.0),
+    Step(f"gt6distillation check {TOWER}", expect="in_tank=[1000mB gt6:oil]"),
+    Step(f"gt6distillation check {TOWER}", expect="out_tank=[-]"),
 
-    phase("D: the back-hole routing arm — the barrel at the y+1 hole receives the push"),
-    Step(f"setblock {ARM_BARREL} gt6:barrel_wood", expect="Changed the block"),
-    Step(f"gt6tank stat {ARM_BARREL}", expect="L of gt6:creosote", poll=10.0),
+    phase("D: the steady-state window — a third spaced read past 2x the :356 row duration"),
+    # the old barrel-at-the-hole push arm went dark with the refusal: nothing routes while
+    # the output bank stays one tank (the product-side expansion is reported, not
+    # chain-fixable) — the refusal holding past 2x the row duration is the live pin.
+    Step(f"gt6distillation check {TOWER}", expect="progress=0/0", sleep=9.0),
 
     phase("E: teardown — the explicit band restore"),
     Step("fill 383 62 300 389 75 307 air", expect="filled"),
