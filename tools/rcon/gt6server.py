@@ -15,7 +15,11 @@ card is baked in here as module behaviour:
 - stop: :func:`stop_server` sends the RCON ``stop`` first, then touches only
   the pid we recorded or the pid that owns OUR rcon port. No ``--stop``, no
   broad pkill/pgrep anywhere (user ruling 2026-09-01; gradle daemons are left
-  alone — they are not ours to kill).
+  alone — they are not ours to kill). Since P30 the stop is gated by boot
+  ownership: start_server stamps the caller identity into the slot record and
+  stop_server refuses a foreign caller (same default password made any
+  session's cleanup able to RCON-stop another session's live server,
+  ops.p30-rcon-chain-repair); ``--force`` is the manual-cleanup escape.
 - artifacts: ``/tmp/gt6_rs_<slug>.log`` + ``/tmp/gt6_rs_<slug>.pid`` — the
   convention every phase-era segment already used, now defined once here.
 
@@ -70,18 +74,23 @@ def _reap_stale_slots(log=print):
             pass  # raced with another reaper/owner
 
 
-def acquire_rcon_slot(poll=15.0, log=print):
+def acquire_rcon_slot(poll=15.0, log=print, owner=None):
     """Claim one global boot slot, actively queueing while full.
 
     Atomic O_EXCL create over a fixed /tmp namespace — cross-worktree by
     construction. Stale slots (agent died mid-session, WSL crash) are reaped
-    by age so a leak cannot wedge the suite forever. Returns the slot path;
-    pair with :func:`release_rcon_slot` (stop_server does this via the
-    ``<pid_file>.slot`` marker start_server leaves behind).
+    by age so a leak cannot wedge the suite forever. The record is born
+    complete in the single O_EXCL write (timestamp + optional ``owner`` line)
+    so a concurrent reader never sees a half-written ownership stamp. Returns
+    the slot path; pair with :func:`release_rcon_slot` (stop_server does this
+    via the ``<pid_file>.slot`` marker start_server leaves behind).
     """
     RCON_SLOT_DIR.mkdir(exist_ok=True)
     limit = rcon_slot_limit()
     waited = False
+    record = f"{time.time()}\n"
+    if owner:
+        record += f"owner {owner}\n"
     while True:
         _reap_stale_slots(log)
         live = sorted(RCON_SLOT_DIR.glob("slot.*"))
@@ -90,7 +99,7 @@ def acquire_rcon_slot(poll=15.0, log=print):
                 candidate = RCON_SLOT_DIR / f"slot.{os.getpid()}.{time.monotonic_ns()}"
                 try:
                     fd = os.open(candidate, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-                    os.write(fd, str(time.time()).encode())
+                    os.write(fd, record.encode())
                     os.close(fd)
                     if waited:
                         log(f"[gt6server] RCON slot acquired after queueing")
@@ -109,6 +118,78 @@ def release_rcon_slot(slot, log=print):
         Path(slot).unlink(missing_ok=True)
     except OSError as exc:
         log(f"[gt6server] slot release failed ({exc}) — stale reaper will collect it")
+
+
+# --- stop ownership (P30) ----------------------------------------------------
+# ops.p30-rcon-chain-repair: a foreign session's cleanup RCON-stopped another
+# session's live neo-leg server through the same default password — stop had
+# no owner check (gt6server.py's old :542). The seam: start_server stamps
+# caller_identity() into the slot record; stop_server resolves the record via
+# the <pid_file>.slot marker and refuses anyone who is not the boot process
+# itself or the same worktree session.
+
+def caller_identity(worktree=None):
+    """The boot/stop ownership identity: PID + the session's worktree token.
+
+    One card, one worktree (project discipline), so the resolved worktree
+    path is the coarsest reliable session identity; GT6_RCON_OWNER overrides
+    it for callers whose cwd cannot be trusted. The PID makes the common
+    boot-then-stop-in-one-process case an exact match.
+    """
+    token = os.environ.get("GT6_RCON_OWNER", "").strip()
+    if not token:
+        base = Path(worktree) if worktree else Path.cwd()
+        token = str(base.resolve())
+    return f"pid={os.getpid()} {token}"
+
+
+def _identity_pid(identity):
+    match = re.match(r"pid=(\d+)", identity)
+    return int(match.group(1)) if match else None
+
+
+def identity_matches(recorded, caller):
+    """True when `caller` may stop a boot whose record says `recorded`.
+
+    Either the very boot process (PID equal — the framework boots and stops
+    in one process) or the same worktree session (token equal, or the caller
+    token resolves inside the recorded worktree — manual CLI stops from a
+    subdirectory).
+    """
+    if recorded.strip() == caller.strip():
+        return True
+    recorded_pid, caller_pid = _identity_pid(recorded), _identity_pid(caller)
+    if recorded_pid is not None and recorded_pid == caller_pid:
+        return True
+    recorded_token = recorded.split(" ", 1)[-1]
+    caller_token = caller.split(" ", 1)[-1]
+    try:
+        return Path(caller_token).resolve().is_relative_to(
+            Path(recorded_token).resolve())
+    except (OSError, ValueError):
+        return False
+
+
+class StopOwnershipError(RuntimeError):
+    """A stop was refused: the caller does not match the boot's ownership
+    record (P30 — see the stop-ownership block comment)."""
+
+
+def recorded_stop_owner(pid_file):
+    """The boot owner recorded for this pid_file handle, or (None, reason)."""
+    marker = Path(str(pid_file) + ".slot")
+    try:
+        slot = Path(marker.read_text(encoding="utf-8").strip())
+    except OSError:
+        return None, f"no boot-slot marker {marker} — not a start_server boot handle"
+    try:
+        text = slot.read_text(encoding="utf-8")
+    except OSError:
+        return None, f"slot record {slot.name} unreadable or reaped"
+    for line in text.splitlines():
+        if line.startswith("owner "):
+            return line[len("owner "):].strip(), None
+    return None, f"slot record {slot.name} predates ownership stamping (legacy boot)"
 
 
 def gradle_task(node=None):
@@ -457,10 +538,11 @@ def start_server(worktree, log_path, pid_path, gradle_task=GRADLE_TASK):
     wrote with `echo $! > $PIDF`. The wrapper is the tracked handle; the server
     JVM itself is reached through stop_server's RCON stop / port-owner lookup.
     Boots are gated by the global RCON slot semaphore (OOM ruling 2026-09-09):
-    acquire before boot, leave a `<pid_file>.slot` marker for stop_server to
-    release.
+    acquire before boot with the caller identity stamped into the slot record
+    (the P30 stop-ownership seam), leave a ``<pid_file>.slot`` marker for
+    stop_server to release.
     """
-    slot = acquire_rcon_slot()
+    slot = acquire_rcon_slot(owner=caller_identity(worktree))
     slot_marker = Path(str(pid_path) + ".slot")
     log_path, pid_path = Path(log_path), Path(pid_path)
     log = log_path.open("w")  # truncates, like the segments' `: > "$LOG"`
@@ -597,9 +679,31 @@ def _stop_server_impl(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grac
     return report
 
 
-def stop_server(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grace=10.0):
+def stop_server(pid_file, rcon=None, grace=60.0, jvm_grace=15.0, term_grace=10.0,
+                owner=None, force=False):
     """:func:`_stop_server_impl` plus the boot-slot release (gate pairing:
-    start_server acquired a slot and left a ``<pid_file>.slot`` marker)."""
+    start_server acquired a slot and left a ``<pid_file>.slot`` marker) and
+    the P30 ownership gate: only the boot process itself or the same
+    worktree session may stop; a foreign caller is refused with both
+    identities named, before any RCON/pid action and without releasing the
+    boot's slot. ``force=True`` overrides for manual cleanup (prints a
+    warning). A pure no-op (no pid file, no rcon) stays ungated.
+    """
+    pid_file = Path(pid_file)
+    if force:
+        print("[gt6server] WARNING: --force stop — boot-ownership gate overridden "
+              "(manual cleanup)")
+    elif pid_file.exists() or rcon:
+        recorded, detail = recorded_stop_owner(pid_file)
+        caller = owner or caller_identity()
+        if recorded is None:
+            raise StopOwnershipError(
+                f"stop refused: boot ownership unverifiable ({detail}); "
+                f"caller is [{caller}] — rerun with --force for manual cleanup")
+        if not identity_matches(recorded, caller):
+            raise StopOwnershipError(
+                f"stop refused: server belongs to [{recorded}], caller is "
+                f"[{caller}] — rerun with --force for manual cleanup")
     try:
         return _stop_server_impl(pid_file, rcon, grace, jvm_grace, term_grace)
     finally:
@@ -641,6 +745,8 @@ def main(argv=None):
     parser.add_argument("--password", default="gt6")
     parser.add_argument("--node", default=None,
                         help="stonecutter node (e.g. 1.21.1-neoforge); default = legacy :mdk:runServer")
+    parser.add_argument("--force", action="store_true",
+                        help="override the boot-ownership gate (manual cleanup; prints a warning)")
     args = parser.parse_args(argv)
     log_path, pid_path = artifact_paths(args.slug)
     if args.action == "status":
@@ -650,7 +756,12 @@ def main(argv=None):
         provision_run_dir(args.worktree, args.game_port, args.rcon_port,
                           args.query_port, args.password, node=args.node)
         return 0
-    stop_server(pid_path, rcon=("127.0.0.1", args.rcon_port, args.password))
+    try:
+        stop_server(pid_path, rcon=("127.0.0.1", args.rcon_port, args.password),
+                    force=args.force)
+    except StopOwnershipError as exc:
+        print(f"[gt6server] {exc}")
+        return 3
     return 0
 
 
