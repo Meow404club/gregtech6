@@ -94,18 +94,19 @@ public class GT6ToolsCreativeTabTest {
 	}
 
 	/**
-	 * The display table: exactly sixteen rows in display order — the p10-tool-cutter card
-	 * appended row 2, the p16-chisel-decalcify card appended row 3, the p24-tool-system
-	 * card appended rows 3/4, the p24-builder-wand card appended row 5, the
-	 * p24-screwdriver-item card appended row 6, the p25-tool-hammer-wrench card appended
-	 * rows 7/8, the p25-food-can-row0 card appended row 9, and task p29-w5-t1-dig-six
-	 * appended rows 10-15 (the six dig tools — pickaxe, pickaxe_gem,
-	 * pickaxe_construction, shovel, spade, universal_spade; the dig-six card owns the
-	 * full 16-row parity in DigSixTest).
+	 * The display table: exactly twenty-two rows in display order — the p10-tool-cutter
+	 * card appended row 2, the p16-chisel-decalcify card appended row 3, the
+	 * p24-tool-system card appended rows 3/4, the p24-builder-wand card appended row 5,
+	 * the p24-screwdriver-item card appended row 6, the p25-tool-hammer-wrench card
+	 * appended rows 7/8, the p25-food-can-row0 card appended row 9, task
+	 * p29-w5-t1-dig-six appended rows 10-15 (the six dig tools) and task
+	 * p29-w5-t2-blade-six appended rows 16-21 (the six blade tools — sword, knife,
+	 * butchery_knife, club, axe, axe_double; the blade-six card owns the full 22-row
+	 * parity in BladeSixTest).
 	 */
 	@Test
-	public void displayTableIsExactlyTheSixteenToolRows() {
-		assertEquals(16, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the 10 prior tools plus the six dig tools");
+	public void displayTableIsExactlyTheTwentyTwoToolRows() {
+		assertEquals(22, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the 16 prior tools plus the six blade tools");
 		assertSame(GT6Tools.CROWBAR, GT6Tools.TAB_TABLE.get(0), "row 0 is the registered crowbar item, not a parallel supplier");
 		assertSame(GT6Tools.CUTTER, GT6Tools.TAB_TABLE.get(1), "row 1 is the registered cutter item, not a parallel supplier");
 		assertSame(GT6Tools.CHISEL, GT6Tools.TAB_TABLE.get(2), "row 2 is the registered chisel item, not a parallel supplier");

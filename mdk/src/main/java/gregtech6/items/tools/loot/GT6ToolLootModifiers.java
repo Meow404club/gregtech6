@@ -102,6 +102,20 @@ public final class GT6ToolLootModifiers {
 	//21.1: the wildcard-holder form (the GT6ToolsCreativeTabTest itemIds lesson).
 	*///?}
 
+	/**
+	 * The tree-fell serializer row — id {@code gt6:gt6_tree_fell} (task p29-w5-t2-blade-six,
+	 * the documented consumer contract's "new modifier class + a serializer row under
+	 * SERIALIZERS" path: the whole-tree felling needs the loot ORIGIN/entity context the
+	 * pure convert() switch does not carry).
+	 */
+	//? if forge {
+	public static final net.minecraftforge.registries.RegistryObject<Codec<? extends net.minecraftforge.common.loot.IGlobalLootModifier>> GT6_TREE_FELL =
+			SERIALIZERS.register("gt6_tree_fell", () -> GT6TreeFellModifier.CODEC);
+	//?} else {
+	/*public static final net.neoforged.neoforge.registries.DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>, com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>> GT6_TREE_FELL =
+			SERIALIZERS.register("gt6_tree_fell", () -> GT6TreeFellModifier.CODEC);
+	*///?}
+
 	/** The condition type — id {@code gt6:holds_tool} (the JSON "condition" key). */
 	//? if forge {
 	public static final net.minecraftforge.registries.RegistryObject<net.minecraft.world.level.storage.loot.predicates.LootItemConditionType> HOLDS_TOOL =
@@ -129,6 +143,51 @@ public final class GT6ToolLootModifiers {
 	public static final ImmutableSet<Block> OPENABLE_CROWBAR = ImmutableSet.of(
 			Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK, Blocks.LAPIS_BLOCK, Blocks.DIAMOND_BLOCK,
 			Blocks.EMERALD_BLOCK, Blocks.REDSTONE_BLOCK, Blocks.COAL_BLOCK);
+
+	/**
+	 * The club rock-crush mapping table — the prefix x material pair each block crushes
+	 * into (task p29-w5-t2-blade-six; the pairs resolve through
+	 * {@code GTMaterialItems.get} at conversion time, so the table stays a pure
+	 * offline-pinnable face — the card ACCEPTANCE "club rockGt 映射表纯函数"). Upstream
+	 * GT_Tool_Club.convertBlockDrops :61-110 minus the mod arms (NeLi/NePl/BOTA/GaSu →
+	 * the vanilla basalt/blackstone pairs, {@code BlockStones.JUSTSTONE} → the W6
+	 * domain, the {@code oreRedstone} oredict arm → the vanilla ore block):
+	 * the stone family → rockGt Stone (:64-68), the nether-brick family (:69-73),
+	 * netherrack (:74-78), end stone (:79-83), obsidian (:84-88), basalt (:89-93),
+	 * blackstone (:94-98), and the redstone ore → the Cinnabar gemChipped (:104-108).
+	 */
+	public static final java.util.Map<Block, CrushTarget> ROCK_CRUSH = buildRockCrush();
+
+	/** The crush-table entry (the record keeps the mapping table a pure data face). */
+	public record CrushTarget(gregapi.oredict.OreDictPrefix prefix, gregapi.oredict.OreDictMaterial material) {
+	}
+
+	private static java.util.Map<Block, CrushTarget> buildRockCrush() {
+		java.util.Map<Block, CrushTarget> tMap = new java.util.HashMap<>();
+		CrushTarget tStone = new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.Stone);
+		for (Block tBlock : new Block[] {Blocks.STONE, Blocks.COBBLESTONE, Blocks.MOSSY_COBBLESTONE,
+				Blocks.STONE_BRICKS, Blocks.STONE_BRICK_STAIRS, Blocks.COBBLESTONE_WALL,
+				Blocks.STONE_BUTTON, Blocks.STONE_PRESSURE_PLATE}) {
+			tMap.put(tBlock, tStone); // upstream :64
+		}
+		CrushTarget tNetherBrick = new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.NetherBrick);
+		for (Block tBlock : new Block[] {Blocks.NETHER_BRICKS, Blocks.NETHER_BRICK_STAIRS, Blocks.NETHER_BRICK_FENCE}) {
+			tMap.put(tBlock, tNetherBrick); // upstream :69
+		}
+		tMap.put(Blocks.NETHERRACK, new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.Netherrack)); // :74
+		tMap.put(Blocks.END_STONE, new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.Endstone)); // :79
+		tMap.put(Blocks.OBSIDIAN, new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.Obsidian)); // :84
+		tMap.put(Blocks.BASALT, new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.STONES.Basalt)); // :89
+		tMap.put(Blocks.POLISHED_BASALT, tMap.get(Blocks.BASALT)); // the polished unfold
+		CrushTarget tBlackstone = new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.STONES.Blackstone);
+		for (Block tBlock : new Block[] {Blocks.BLACKSTONE, Blocks.POLISHED_BLACKSTONE,
+				Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.CHISELED_POLISHED_BLACKSTONE,
+				Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS}) {
+			tMap.put(tBlock, tBlackstone); // upstream :94
+		}
+		tMap.put(Blocks.REDSTONE_ORE, new CrushTarget(gregapi.data.OP.gemChipped, gregapi.data.MT.OREMATS.Cinnabar)); // :104
+		return java.util.Collections.unmodifiableMap(tMap);
+	}
 
 	private GT6ToolLootModifiers() {
 	}
@@ -188,6 +247,68 @@ public final class GT6ToolLootModifiers {
 				aDrops.addAll(tUnpacked);
 				return true;
 			}
+			case SWORD_HARVEST -> {
+				// upstream harvestGrass :111-146 — the 1.7.10 tallgrass meta 1/2 pair and the
+				// double_plant meta 2/3 pair, unfolded onto the four modern plant blocks
+				//? if forge {
+				Block tBlock = aState.getBlock();
+				if (tBlock == Blocks.GRASS || tBlock == Blocks.FERN) {
+					aDrops.add(new ItemStack(tBlock)); // the plant's own item, :114 count 1+nextInt(1+fortune) = 1
+					return true;
+				}
+				if (tBlock == Blocks.TALL_GRASS || tBlock == Blocks.LARGE_FERN) {
+					aDrops.add(new ItemStack(tBlock, 2)); // :120 count 2+... = 2 at zero fortune
+					return true;
+				}
+				//?} else {
+				/*Block tBlock = aState.getBlock();
+				if (tBlock == Blocks.SHORT_GRASS || tBlock == Blocks.FERN) { // 21.1: GRASS renamed SHORT_GRASS
+					aDrops.add(new ItemStack(tBlock)); // the plant's own item, :114 count 1+nextInt(1+fortune) = 1
+					return true;
+				}
+				if (tBlock == Blocks.TALL_GRASS || tBlock == Blocks.LARGE_FERN) {
+					aDrops.add(new ItemStack(tBlock, 2)); // :120 count 2+... = 2 at zero fortune
+					return true;
+				}
+				*///?}
+				if (tBlock == Blocks.DEAD_BUSH) { // upstream harvestStick :161-164
+					aDrops.add(new ItemStack(net.minecraft.world.item.Items.STICK, 1 + java.util.concurrent.ThreadLocalRandom.current().nextInt(2)));
+					return true;
+				}
+				if (tBlock == Blocks.VINE) { // upstream :98-101 — the vanilla empty table filled with the vine
+					aDrops.clear();
+					aDrops.add(new ItemStack(Blocks.VINE));
+					return true;
+				}
+				return false;
+			}
+			case CLUB_ROCK_CRUSH -> {
+				// upstream :62-63 — the single drop's block keys first (stone breaks into a
+				// cobblestone drop; the conversion must still crush), else the state block
+				Block tKey = null;
+				if (aDrops.size() == 1 && aDrops.get(0).getItem() instanceof net.minecraft.world.item.BlockItem tBlockItem
+						&& ROCK_CRUSH.containsKey(tBlockItem.getBlock())) {
+					tKey = tBlockItem.getBlock();
+				} else if (ROCK_CRUSH.containsKey(aState.getBlock())) {
+					tKey = aState.getBlock();
+				}
+				if (tKey == null) return false;
+				CrushTarget tTarget = ROCK_CRUSH.get(tKey);
+				//? if forge {
+				net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tRock = gregtech6.registry.GTMaterialItems.get(tTarget.prefix(), tTarget.material());
+				//?} else {
+				/*net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.Item> tRock = gregtech6.registry.GTMaterialItems.get(tTarget.prefix(), tTarget.material());
+				*///?}
+				if (tRock == null) return false; // off-table pair — the identity guard
+				//? if forge {
+				if (!tRock.isPresent()) return false; // off-registry — the identity guard
+				//?} else {
+				/*if (!tRock.isBound()) return false; // 21.1: DeferredHolder binding read
+				*///?}
+				aDrops.clear(); // upstream :65 — the drops replaced wholesale
+				aDrops.add(new ItemStack(tRock.get(), 1 + java.util.concurrent.ThreadLocalRandom.current().nextInt(4))); // :66
+				return true;
+			}
 		}
 		return false;
 	}
@@ -206,9 +327,29 @@ public final class GT6ToolLootModifiers {
 			HARVESTABLE_SPADE,
 			/** The construction-pick ender_chest self-drop conversion (upstream :53-59). */
 			ENDER_CHEST_SELF,
-			/** The universal-spade openableCrowbar Unboxinator walk (upstream :98-115). */
-			UNBOXINATOR_OPEN
-		}
+		/**
+		 * The universal-spade openableCrowbar Unboxinator walk (upstream :98-115).
+		 */
+		UNBOXINATOR_OPEN,
+		/**
+		 * The sword grass/stick/vine harvest (task p29-w5-t2-blade-six; upstream
+		 * GT_Tool_Sword.convertBlockDrops :94-105 over the harvestGrass :111-146 /
+		 * harvestStick :148-176 ToolStats helpers): the grass family (the 1.7.10
+		 * tallgrass 1/2 + double_plant 2/3 pairs, the flattening unfolded) ADDS the
+		 * plant's own item at the upstream counts (1 / 2 at zero fortune — the vanilla
+		 * seeds ride untouched), the dead bush ADDS sticks 1-2 (:161-163), the vine is
+		 * REPLACED by itself (:98-101, the vanilla no-shears empty table filled).
+		 */
+		SWORD_HARVEST,
+		/**
+		 * The club rockGt crush (task p29-w5-t2-blade-six; upstream GT_Tool_Club
+		 * :61-110): the {@link GT6ToolLootModifiers#ROCK_CRUSH} block (or the single
+		 * drop's block — the :62-63 face that catches the stone→cobblestone drop)
+		 * REPLACES the drops with 1-4 of the crushed material item (the :66
+		 * {@code 1+RNGSUS.nextInt(4)} row).
+		 */
+		CLUB_ROCK_CRUSH
+	}
 
 		private static final Codec<Mode> MODE_CODEC = Codec.STRING.xmap(Mode::valueOf, Mode::name);
 
