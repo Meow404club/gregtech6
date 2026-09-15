@@ -1340,6 +1340,13 @@ public class GT6EnUs extends LanguageProvider {
         }
         add("item.gt6." + GT6FoodCans.FOOD_CAN_COOKIES_HUGE.getId().getPath(), "Huge Food Can (Cookies)");
         add("item.gt6.bending_cylinder_small", "Small Bending Cylinder");
+        // task p29-w5-t3-machine-face-four: the machine-face four display names (the
+        // upstream registration-row wordings "Soft Hammer"/"Monkey Wrench"/"Magnifying
+        // Glass"/"Pincers", Loader_Tools.java:125/:144/:148/:150 verbatim)
+        add("item.gt6.soft_hammer", "Soft Hammer");
+        add("item.gt6.monkey_wrench", "Monkey Wrench");
+        add("item.gt6.magnifying_glass", "Magnifying Glass");
+        add("item.gt6.pincers", "Pincers");
         add(GT6FoodCans.TAB_TITLE_KEY, "GregTech: Cans");
     }
 

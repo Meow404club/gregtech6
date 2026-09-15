@@ -949,6 +949,10 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.axe_double.tooltip");
 		addDirect("item.gt6.club.tooltip");
 		addDirect("item.gt6.butchery_knife.tooltip");
+		addDirect("item.gt6.soft_hammer"); // task p29-w5-t3-machine-face-four — dump gt.metatool.01.14 软锤 (Loader_Tools.java:125 "Soft Hammer")
+		addDirect("item.gt6.monkey_wrench"); // task p29-w5-t3-machine-face-four — dump gt.metatool.01.52 活动扳手 (Loader_Tools.java:144 "Monkey Wrench")
+		addDirect("item.gt6.magnifying_glass"); // task p29-w5-t3-machine-face-four — dump gt.metatool.01.62 放大镜 (Loader_Tools.java:148 "Magnifying Glass")
+		addDirect("item.gt6.pincers"); // task p29-w5-t3-machine-face-four — dump gt.metatool.01.66 钳子 (Loader_Tools.java:150 "Pincers")
 		addDirect("item.gt6.shape_extruder_plate"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10001 模具 (板) (:10129)
 		addDirect("item.gt6.shape_extruder_rod"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10027 模具 (杆) (:10185)
 		addDirect("item.gt6.cover_redstone_emitter");

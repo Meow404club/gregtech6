@@ -659,6 +659,12 @@ HAND_TRANSLATIONS = {
     "item.gt6.bending_cylinder_small": ("小型弯曲绕筒", "hand"),
     "item.gt6.builder_wand": ("建筑之杖", "hand"),
     "item.gt6.file": ("锉刀", "hand"),
+    # task p29-w5-t3-machine-face-four: the machine-face four (the dump metatool faces
+    # verbatim — gt.metatool.01.14/.52/.62/.66, Loader_Tools.java:125/:144/:148/:150)
+    "item.gt6.soft_hammer": ("软锤", "hand"),
+    "item.gt6.monkey_wrench": ("活动扳手", "hand"),
+    "item.gt6.magnifying_glass": ("放大镜", "hand"),
+    "item.gt6.pincers": ("钳子", "hand"),
     "item.gt6.food_can_cookies_huge": ("超大食物罐头 (饼干)", "hand"),
     "item.gt6.food_can_empty": ("空食物罐头", "hand"),
     "item.gt6.food_can_rotten_huge": ("超大食物罐头 (腐肉)", "hand"),
