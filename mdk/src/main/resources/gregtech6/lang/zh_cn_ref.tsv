@@ -8352,3 +8352,5 @@ direct	block.gt6.rainbowood_leaves	彩虹木树叶	hand
 direct	block.gt6.blue_spruce_sapling	蓝云杉树苗	hand
 direct	block.gt6.blue_spruce_log	蓝云杉原木	hand
 direct	block.gt6.blue_spruce_leaves	蓝云杉树叶	hand
+direct	gt6.surface.rock	%s地表岩	hand
+direct	block.gt6.surface_stick	木棍	hand

@@ -5,6 +5,8 @@ import java.util.List;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
@@ -131,6 +133,68 @@ public final class GT6Worldgen {
     /** The 9 tree placed keys, same order (placed[i] hangs off configured[i]). */
     public static final List<ResourceKey<PlacedFeature>> TREE_PLACED_KEYS = GT6TreeBlocks.KINDS.stream()
             .map(GT6TreeKind::snake).map(GT6Worldgen::treePlacedKey).toList();
+
+    // ------------------------------------------------------------------
+    // The surface deco band (task p30-w6-rocks-sticks) — WorldgenOnSurface
+    // ray-cast semantics (WorldgenOnSurface.java:49-76) translated into the
+    // vanilla placed-feature modifiers: Amount -> Count, the per-ray
+    // nextInt(mProbability) gate -> RarityFilter, the sky ray ->
+    // InSquare+HEIGHTMAP, the ground contact -> BlockPredicateFilter.
+    // ------------------------------------------------------------------
+
+    /** Loader_Worldgen.java:618 overworld.rocks amount=2 (the per-chunk ray targets). */
+    public static final int SURFACE_ROCKS_AMOUNT = 2;
+    /** Loader_Worldgen.java:618 overworld.rocks probability=3 (nextInt(3)==0 per ray, WorldgenOnSurface.java:60). */
+    public static final int SURFACE_ROCKS_PROBABILITY = 3;
+    /** Loader_Worldgen.java:630 sticks probability=2. */
+    public static final int STICKS_PROBABILITY = 2;
+
+    /** WorldgenSticks.java:53 woods/swamp = mAmount*3 = 6 rays. */
+    public static final int STICKS_DENSE_COUNT = 6;
+    /** WorldgenSticks.java:54 river/plains/savanna = mAmount*2 = 4 rays. */
+    public static final int STICKS_MODERATE_COUNT = 4;
+    /** WorldgenSticks.java:55 taiga/mesa/wasteland = mAmount*1 = 2 rays. */
+    public static final int STICKS_SPARSE_COUNT = 2;
+
+    /**
+     * The rock-type lottery of WorldgenRocks.java:63, as the RANDOM_SELECTOR chances:
+     * the NBT-less half (nextInt(2)!=0) is the stone default rock; of the NBT half
+     * 11/12 carry a flint item and 1/12 carry MeteoricIron. Sequential chances:
+     * stone if r<0.5, else flint if r<11/12, else meteorite — the joint distribution
+     * is 12/24 stone, 11/24 flint, 1/24 meteorite (the SPEC's 12:11:1 weights).
+     */
+    public static final float SURFACE_ROCK_CHANCE_STONE = 0.5F;
+    public static final float SURFACE_ROCK_CHANCE_FLINT = 11.0F / 12.0F;
+
+    /** The generic configured-feature key (the stone-blob key form, path-direct). */
+    public static ResourceKey<ConfiguredFeature<?, ?>> configKey(String aPath) {
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath("gt6", aPath));
+    }
+
+    /** The generic placed-feature key, same path as its configured sibling. */
+    public static ResourceKey<PlacedFeature> placedKeyOf(String aPath) {
+        return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath("gt6", aPath));
+    }
+
+    /** The rocks' outer configured feature (the RANDOM_SELECTOR lottery). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> SURFACE_ROCKS_CONFIGURED = configKey("overworld_surface_rocks");
+    /** The rocks' outer placed feature (rarity 3 + count 2, hangs off {@link #SURFACE_ROCKS_CONFIGURED}). */
+    public static final ResourceKey<PlacedFeature> SURFACE_ROCKS_PLACED = placedKeyOf("overworld_surface_rocks");
+    /** The stick's configured feature (the bare SIMPLE_BLOCK). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> SURFACE_STICK_CONFIGURED = configKey("overworld_surface_stick");
+
+    /** The three stick-group placed paths (WorldgenSticks.java:53-55, dense/moderate/sparse). */
+    public static final List<String> STICKS_GROUP_PATHS =
+            List.of("overworld_surface_sticks_dense", "overworld_surface_sticks_moderate", "overworld_surface_sticks_sparse");
+
+    /** The biome tags the biome modifiers hang off (gt6 biome tag datagen, the t1-card form). */
+    public static final TagKey<Biome> SURFACE_ROCKS_BIOMES = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("gt6", "surface_rocks"));
+    /** WorldgenSticks.java:53 woods|swamp biomes. */
+    public static final TagKey<Biome> STICKS_DENSE_BIOMES = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("gt6", "sticks_dense"));
+    /** WorldgenSticks.java:54 river|plains|savanna biomes. */
+    public static final TagKey<Biome> STICKS_MODERATE_BIOMES = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("gt6", "sticks_moderate"));
+    /** WorldgenSticks.java:55 taiga|mesa|wasteland biomes (the BoP wastelands have no vanilla tag equivalent — declared skip). */
+    public static final TagKey<Biome> STICKS_SPARSE_BIOMES = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("gt6", "sticks_sparse"));
 
     private GT6Worldgen() {
     }

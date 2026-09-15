@@ -30,6 +30,7 @@ import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.sensors.GTSensorBlock;
 import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
+import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTBlockEntities;
@@ -193,6 +194,63 @@ public final class GT6BlockStates extends BlockStateProvider {
         addFoamBlocks(); // task p26-c-foam-block-family — the C-Foam pair + slabs + the owned carrier
         addSensors(); // task p26-sensors-core — the three pioneer sensor blocks
         addAnvils(); // task p28-c-anvil — the stone anvil pair
+        addSurfaceBand(); // task p30-w6-rocks-sticks — the surface rock trio + the stick (shared models, no items)
+    }
+
+    /**
+     * Task p30-w6-rocks-sticks — the surface deco band: FOUR blocks over TWO shared
+     * models (the research winner's shared-model+tint deviation — a 1.20.1 static model
+     * cannot sample the block below, GTCEu SurfaceRockModelGenerator.java:29-51 same).
+     * The rock model is ONE tinted micro slab (vanilla stone texture, tintindex 0 — the
+     * {@link #tintedCubeAll} grammar; the client BlockColor paints it per material), the
+     * stick model a thinner slab over the vanilla oak-log side (MultiTileEntityStick
+     * .java:51 Blocks.log SIDE_FRONT 0 borrow, no tint index). Textures are VANILLA
+     * borrows — the upstream rocks/sticks copy Blocks.stone/Blocks.log verbatim
+     * (MultiTileEntityRock.java:55), so no PNG lands.
+     *
+     * <p>The FACING dispatch follows the GTCEu :38-48 variant table shape, with the
+     * x-rotation arms corrected to what the rotations actually express (the blockstate
+     * variant grammar has NO rotationZ, so EAST/WEST stay y-only — a floor-lying slab
+     * quirk GTCEu's table shares; worldgen and player placement are DOWN/UP anyway).
+     * No BlockItem models: the blocks are never obtainable as items (the pickup loot is
+     * the only item path).
+     */
+    private void addSurfaceBand() {
+        ModelFile tRockModel = microSlabModel("surface_rock", mcLoc("block/stone"), true, 3);
+        ModelFile tStickModel = microSlabModel("surface_stick", mcLoc("block/oak_log"), false, 2);
+        for (var tRow : GT6SurfaceBlocks.ALL) {
+            Block tBlock = tRow.get();
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tX = 0, tY = 0;
+                switch (aState.getValue(gregtech6.block.surface.GT6SurfaceRockBlock.FACING)) {
+                    case UP -> tX = 180;
+                    case NORTH -> tX = 270;
+                    case SOUTH -> tX = 90;
+                    case WEST -> tY = 270; // no rotationZ in the variant grammar (see javadoc)
+                    case EAST -> tY = 90;
+                    default -> {} // DOWN: the floor form, no rotation
+                }
+                return ConfiguredModel.builder().modelFile(
+                        tBlock == GT6SurfaceBlocks.SURFACE_STICK.get() ? tStickModel : tRockModel)
+                        .rotationX(tX).rotationY(tY).build();
+            });
+        }
+    }
+
+    /** One tinted-or-plain micro slab model: an {aHeight}/16-thick inset slab, tintindex 0 on every face when aTinted. */
+    private ModelFile microSlabModel(String aName, ResourceLocation aTexture, boolean aTinted, int aHeight) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("slab", aTexture)
+                .texture("particle", "#slab");
+        tModel.element()
+                .from(2.0F, 0.0F, 2.0F).to(14.0F, (float) aHeight, 14.0F)
+                .allFaces((aDir, aFace) -> {
+                    aFace.texture("#slab");
+                    if (aTinted) aFace.tintindex(0);
+                })
+                .end();
+        return tModel;
     }
 
     /**
