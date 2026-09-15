@@ -383,7 +383,9 @@ public final class GT6Tools {
 
 	public static final RegistryObject<Item> HAND_DRILL = ITEMS.register("hand_drill",
 			() -> new GTHandDrillItem(new Item.Properties().durability(GTHandDrillItem.DURABILITY_POINTS)));
-	 * The six scene tools — task p29-w5-t5-scene-six (the W5 tool wave card 5; rows 17-22
+
+	/**
+	 * The six scene tools — task p29-w5-t5-scene-six (the W5 tool wave card 5; rows 32-37
 	 * of the table). Single steel tier, durability 512 (the family value; the flint-and-
 	 * tinder's upstream ×0.25 multiplier folds into its flat 128, the gem-pick precedent).
 	 * Display names = the upstream registration-row wordings (Loader_Tools.java:132/:140/

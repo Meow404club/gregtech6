@@ -958,6 +958,12 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.sense"); // 镰刀 (dump tagprefix tool_head_sense 镰刀刃, minus 刃)
 		addDirect("item.gt6.plow"); // 犁 (dump tagprefix tool_head_plow 犁头, minus 头)
 		addDirect("item.gt6.hand_drill"); // 手钻 (dump 零 handdrill 行; hand 行, 上游 "Hand Drill" Loader_Tools.java:152)
+		addDirect("item.gt6.scissors"); // task p29-w5-t5-scene-six — 剪刀 (dump gt.metatool.01.64 :6812)
+		addDirect("item.gt6.scoop"); // 捕虫网 (dump gt.metatool.01.28 :6720)
+		addDirect("item.gt6.plunger"); // 搋子 (dump gt.lang.tool.name.plunger :3474)
+		addDirect("item.gt6.flint_and_tinder"); // 打火石 (dump gt.metatool.01.50 :6766)
+		addDirect("item.gt6.rolling_pin"); // 擀面杖 (dump gt.metatool.01.46 :6756)
+		addDirect("item.gt6.bending_cylinder"); // 弯曲绕筒 (dump gt.metatool.01.54 :6786)
 		addDirect("item.gt6.shape_extruder_plate"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10001 模具 (板) (:10129)
 		addDirect("item.gt6.shape_extruder_rod"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10027 模具 (杆) (:10185)
 		addDirect("item.gt6.cover_redstone_emitter");

@@ -192,6 +192,8 @@ public final class GT6ToolLootModifiers {
 		tMap.put(Blocks.REDSTONE_ORE, new CrushTarget(() -> gregapi.data.OP.gemChipped, () -> gregapi.data.MT.OREMATS.Cinnabar)); // :104
 		return java.util.Collections.unmodifiableMap(tMap);
 	}
+
+	/**
 	 * The shear-plant self-drop set (task p29-w5-t5-scene-six): the vine arm of
 	 * GT_Tool_Scissors.convertBlockDrops (:87-101 — the cleared-drops + vine self
 	 * replacement, verbatim) and the shears-class cobweb/vine full-drop face of the scoop
