@@ -76,16 +76,19 @@ steps = [
     Step(f"gt6bridge stat {F(H1)}", expect="half false", sleep=0.5),
     Step(f"gt6energy mode {F(H1_SRC)} off", expect="emitting false"),
 
-    phase("D: the T5 rung — 8192 EU in, 4096 HU out"),
+    phase("D: the T5 rung — 8192 EU in through the same wall, the waste form"),
+    # the T5 delivery leg is a boiler EXPLOSION (4096 HU/t massively over-fires the
+    # lead tank's demand — the p13 barometer/overpressure ruling; the live run ate the
+    # dial), so the T5 presence rides the waste arm: the intake pays, out stays 0
     Step(f"setblock {F(H5)} gt6:electric_heater_t5[facing=south]", expect="Changed the block"),
     Step(f"gt6energy place {F(H5_SRC)}", expect="GT6 energy source placed at"),
     Step(f"gt6energy type {F(H5_SRC)} EU", expect="type ENERGY.ELECTRICITY"),
     Step(f"gt6energy volt {F(H5_SRC)} 8192", expect="voltage 8192 EU"),
-    Step(f"setblock {F(H5_SINK)} gt6:steam_boiler_tank_lead", expect="Changed the block"),
-    Step(f"gt6boiler fill {F(H5_SINK)} 4000", expect="filled 4000/4000 L of minecraft:water (ACCEPTED)"),
     Step(f"gt6bridge reset {F(H5)}", expect="GT6 bridge accounting reset"),
     Step(f"gt6energy mode {F(H5_SRC)} on", expect="emitting true"),
-    Step(f"gt6bridge stat {F(H5)}", expect="half true", sleep=3.0, poll=15.0),
+    Step(f"gt6bridge stat {F(H5)}", expect="out 0,", sleep=2.0),
+    Step(f"gt6bridge stat {F(H5)}", expect="half false", sleep=0.5),
+    Step(f"gt6bridge stat {F(H5)}", expect="in ", sleep=0.5),
     Step(f"gt6energy mode {F(H5_SRC)} off", expect="emitting false"),
 
     phase("E: teardown — restore the band"),

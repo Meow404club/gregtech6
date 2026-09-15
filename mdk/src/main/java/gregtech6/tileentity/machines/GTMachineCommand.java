@@ -601,7 +601,10 @@ public final class GTMachineCommand {
 
 	private static int bridgeStat(CommandSourceStack aSource, BlockPos aPos) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		if (aSource.getLevel().getBlockEntity(aPos) instanceof gregtech6.registry.GTMachines.ElectricBridgeBlockEntity tBridge) {
-			boolean tHalf = tBridge.mLastOut * 2 == tBridge.mLastIn;
+			// the boundary-tolerant half: the LAST dial packet may sit un-converted in the
+			// capacitor at stat time (the dial tick and the bridge tick interleave) — it
+			// has paid in but not yet emitted, so subtract it from the in side
+			boolean tHalf = tBridge.mLastIn - tBridge.mStorage == tBridge.mLastOut * 2;
 			aSource.sendSuccess(() -> Component.literal("GT6 bridge EU->" + shortType(tBridge.outputType())
 					+ " at " + aPos.toShortString() + ": in " + tBridge.mLastIn + ", out " + tBridge.mLastOut
 					+ ", capacitor " + tBridge.mStorage + ", half " + tHalf), false);

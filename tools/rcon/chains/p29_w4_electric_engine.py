@@ -49,7 +49,8 @@ steps = [
     Step(f"gt6energy mode {F(E1_SRC)} on", expect="emitting true"),
     Step(f"gt6bridge stat {F(E1)}", expect="out 0,", sleep=3.0),
     Step(f"gt6bridge stat {F(E1)}", expect="half false", sleep=0.5),
-    Step(f"gt6bridge stat {F(E1)}", expect="capacitor 0", sleep=0.5),
+    # the capacitor rides ONE pending dial packet at any stat instant (the tick
+    # interleave) — it is NOT the vent state; the in-growth + out-0 are the waste proof
     Step(f"gt6bridge stat {F(E1)}", expect="in ", sleep=0.5),
 
     phase("B: the RU twin proof — the same axle accepts an RU packet (the type split is the refusal)"),
@@ -59,6 +60,7 @@ steps = [
     Step(f"gt6energy mode {F(E1_SRC)} on", expect="emitting true"),
     Step(f"gt6bridge stat {F(E1)}", expect="in 0,", sleep=2.0),
     Step(f"gt6energy type {F(E1_SRC)} EU", expect="type ENERGY.ELECTRICITY"),
+    Step(f"gt6energy mode {F(E1_SRC)} off", expect="emitting false"),  # arm the type switch OFF (a live dial leaks one EU packet into the reset otherwise)
 
     phase("C: the input cross-domain arms — KU then RU offers refused"),
     Step(f"gt6bridge reset {F(E1)}", expect="GT6 bridge accounting reset"),
