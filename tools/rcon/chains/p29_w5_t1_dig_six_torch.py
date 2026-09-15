@@ -59,12 +59,14 @@ steps += [
 # --------------------------------- B: the second placement (the scan keeps finding the stack)
 # the arm-A torch must be cleared first: a second placement at an OCCUPIED spot is a
 # vanilla canPlace refusal (PASS, no consumption — the upstream tryPlaceItemIntoWorld
-# false arm), so the 3 -> 2 count leg needs the empty spot.
+# false arm, live in the first forge sweep). The /gt6dig place channel re-seeds the
+# 4-torch stack per invocation, so the count resets to 4 -> 3; the within-one-call
+# consumption face (4 -> 3 on CONSUME) is what arm A already pinned.
 steps += [
-    phase("B: the second arm — clear the landed torch, then torchesLeft 3 -> 2"),
+    phase("B: the second arm — clear the landed torch, re-place succeeds again"),
     Step("setblock 384 65 192 minecraft:air", expect="Changed the block"),
     Step("gt6dig place 384 64 192 pickaxe",
-         expect="torchPlaced=true, torchesLeft=2 (of 4), landed=Block{minecraft:torch}"),
+         expect="torchPlaced=true, torchesLeft=3 (of 4), landed=Block{minecraft:torch}"),
 ]
 
 # --------------------------------- C: the bare negative (no tool, no arm)
