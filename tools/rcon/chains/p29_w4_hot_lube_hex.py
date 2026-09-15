@@ -85,8 +85,13 @@ steps = [
     Step(f"gt6heatexchanger stat {HEX_P}", expect="formed=true rate=16384 efficiency=10000", sleep=2.0),
 
     phase("B: the coolant row — ic2hotcoolant via the setblock-NBT tank channel, the :203 conversion live in the overflow barrel"),
+    # the tank payload keys are leg-variant: 1.20.1 Forge FluidStack NBT ("FluidName") vs
+    # the 21.1 codec face — LOWERCASE {id, amount} (the neoforge-21.1.209 FluidStack
+    # CODEC ldc keys, javap-verified; "Amount"/"FluidName" both fail the codec and the
+    # keepFilter read-side rebuild, landing fuel=0/163840 — the p29w4hl neo runs)
     Step(f'setblock {HEX_P} gt6:large_heat_exchanger{{gt.tank0:{{FluidName:"gt6:ic2hotcoolant",Amount:163840}}}}',
-         expect="Changed the block"),
+         expect="Changed the block",
+         node_cmds={"1.21.1": f'setblock {HEX_P} gt6:large_heat_exchanger{{gt.tank0:{{id:"gt6:ic2hotcoolant",amount:163840}}}}'}),
     Step(f"gt6heatexchanger stat {HEX_P}", expect="formed=true", sleep=2.0),
     # the burn starts the moment the NBT lands (the row resolves by content) — the
     # fuel face is LIVE but already draining, so the pin is the face, not the level
