@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:cable_lead_gt04"
+    },
+    "M": {
+      "item": "gt6:electric_transformer"
+    },
+    "W": {
+      "item": "gt6:wire_lead_gt04"
+    },
+    "X": {
+      "tag": "gt6:circuit0"
+    }
+  },
+  "pattern": [
+    "WCW",
+    "WCW",
+    "XMX"
+  ],
+  "result": {
+    "item": "gt6:battery_box_large_ulv"
+  },
+  "show_notification": true
+}

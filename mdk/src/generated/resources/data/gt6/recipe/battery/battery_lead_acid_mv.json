@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "gt6:battery_cell_lead_acid"
+    },
+    "C": {
+      "tag": "gt6:circuit2"
+    },
+    "P": {
+      "tag": "forge:plates/battery_alloy"
+    },
+    "W": {
+      "item": "gt6:cable_copper_gt01"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "WxW",
+    "BCB",
+    "PBP"
+  ],
+  "result": {
+    "item": "gt6:battery_lead_acid_mv"
+  },
+  "show_notification": true
+}

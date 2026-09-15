@@ -104,6 +104,7 @@ public class GT6EnUs extends LanguageProvider {
         addFeConverter(); // task p28-b-fe-converter-machine — tail-append
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addDynamoFamily(); // task p28-c-ulv-dynamo-row — the W1 family's deferred name face + the T0 row
+        addBatteryFamily(); // task p29-w4-battery-storage — the 37+5+7+12 storage face
         addKinetics(); // task p12-engine-crank
         addAttachments(); // task p12-tap-funnel-attachment
         addTools();
@@ -451,6 +452,70 @@ public class GT6EnUs extends LanguageProvider {
      * upstream row wording "Diesel Engine (Bronze)" :721-729, the port noun-order
      * convention). Table-driven over {@link GT6Kinetics#DIESEL_SPECS}.
      */
+    private void addBatteryFamily() {
+		add("item.gt6.battery_lead_acid_ulv", "Lead-Acid Battery (ULV)");
+		add("item.gt6.battery_lead_acid_lv", "Lead-Acid Battery (LV)");
+		add("item.gt6.battery_lead_acid_mv", "Lead-Acid Battery (MV)");
+		add("item.gt6.battery_lead_acid_hv", "Lead-Acid Battery (HV)");
+		add("item.gt6.battery_lead_acid_ev", "Lead-Acid Battery (EV)");
+		add("item.gt6.battery_alkaline_ulv", "Alkaline Battery (ULV)");
+		add("item.gt6.battery_alkaline_lv", "Alkaline Battery (LV)");
+		add("item.gt6.battery_alkaline_mv", "Alkaline Battery (MV)");
+		add("item.gt6.battery_alkaline_hv", "Alkaline Battery (HV)");
+		add("item.gt6.battery_alkaline_ev", "Alkaline Battery (EV)");
+		add("item.gt6.battery_nicd_ulv", "Nickel-Cadmium Battery (ULV)");
+		add("item.gt6.battery_nicd_lv", "Nickel-Cadmium Battery (LV)");
+		add("item.gt6.battery_nicd_mv", "Nickel-Cadmium Battery (MV)");
+		add("item.gt6.battery_nicd_hv", "Nickel-Cadmium Battery (HV)");
+		add("item.gt6.battery_nicd_ev", "Nickel-Cadmium Battery (EV)");
+		add("item.gt6.battery_licoo2_ulv", "Lithium-Cobalt Battery (ULV)");
+		add("item.gt6.battery_licoo2_lv", "Lithium-Cobalt Battery (LV)");
+		add("item.gt6.battery_licoo2_mv", "Lithium-Cobalt Battery (MV)");
+		add("item.gt6.battery_licoo2_hv", "Lithium-Cobalt Battery (HV)");
+		add("item.gt6.battery_licoo2_ev", "Lithium-Cobalt Battery (EV)");
+		add("item.gt6.battery_limn_ulv", "Lithium-Manganese Battery (ULV)");
+		add("item.gt6.battery_limn_lv", "Lithium-Manganese Battery (LV)");
+		add("item.gt6.battery_limn_mv", "Lithium-Manganese Battery (MV)");
+		add("item.gt6.battery_limn_hv", "Lithium-Manganese Battery (HV)");
+		add("item.gt6.battery_limn_ev", "Lithium-Manganese Battery (EV)");
+		add("item.gt6.energium_red_ulv", "Red Energium Crystal (T0)");
+		add("item.gt6.energium_red_lv", "Red Energium Crystal (T1)");
+		add("item.gt6.energium_red_mv", "Red Energium Crystal (T2)");
+		add("item.gt6.energium_red_hv", "Red Energium Crystal (T3)");
+		add("item.gt6.energium_red_ev", "Red Energium Crystal (T4)");
+		add("item.gt6.energium_red_iv", "Red Energium Crystal (T5)");
+		add("item.gt6.energium_cyan_ulv", "Cyan Energium Crystal (T0)");
+		add("item.gt6.energium_cyan_lv", "Cyan Energium Crystal (T1)");
+		add("item.gt6.energium_cyan_mv", "Cyan Energium Crystal (T2)");
+		add("item.gt6.energium_cyan_hv", "Cyan Energium Crystal (T3)");
+		add("item.gt6.energium_cyan_ev", "Cyan Energium Crystal (T4)");
+		add("item.gt6.energium_cyan_iv", "Cyan Energium Crystal (T5)");
+		add("item.gt6.battery_cell_lead_acid", "Lead-Acid Cell (Filled)");
+		add("item.gt6.battery_cell_alkaline", "Alkaline Button Cell (Filled)");
+		add("item.gt6.battery_cell_nicd", "Nickel-Cadmium Cell (Filled)");
+		add("item.gt6.battery_cell_licoo2", "Lithium-Cobalt Cell (Filled)");
+		add("item.gt6.battery_cell_limn", "Lithium-Manganese Cell (Filled)");
+		add("item.gt6.circuit_primitive", "Primitive Circuit");
+		add("item.gt6.circuit_basic", "Basic Electronic Circuit");
+		add("item.gt6.circuit_good", "Good Electronic Circuit");
+		add("item.gt6.circuit_advanced", "Advanced Electronic Circuit");
+		add("item.gt6.circuit_elite", "Elite Electronic Circuit");
+		add("item.gt6.circuit_master", "Master Electronic Circuit");
+		add("item.gt6.circuit_ultimate", "Ultimate Electronic Circuit");
+		add("block.gt6.battery_box_ulv", "Battery Box (ULV)");
+		add("block.gt6.battery_box_lv", "Battery Box (LV)");
+		add("block.gt6.battery_box_mv", "Battery Box (MV)");
+		add("block.gt6.battery_box_hv", "Battery Box (HV)");
+		add("block.gt6.battery_box_ev", "Battery Box (EV)");
+		add("block.gt6.battery_box_iv", "Battery Box (IV)");
+		add("block.gt6.battery_box_large_ulv", "Large Battery Box (ULV)");
+		add("block.gt6.battery_box_large_lv", "Large Battery Box (LV)");
+		add("block.gt6.battery_box_large_mv", "Large Battery Box (MV)");
+		add("block.gt6.battery_box_large_hv", "Large Battery Box (HV)");
+		add("block.gt6.battery_box_large_ev", "Large Battery Box (EV)");
+		add("block.gt6.battery_box_large_iv", "Large Battery Box (IV)");
+    }
+
     private void addKinetics() {
         add("block.gt6.crank", "Hand Crank");
         // task p28-c-water-wheel — the kTFRUAddon registration wording ("Water Mill",

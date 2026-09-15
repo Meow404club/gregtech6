@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "gt6:battery_cell_licoo2"
+    },
+    "C": {
+      "tag": "gt6:circuit2"
+    },
+    "P": {
+      "tag": "forge:plates/battery_alloy"
+    },
+    "W": {
+      "item": "gt6:cable_lead_gt01"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "Wx",
+    "BC",
+    "P "
+  ],
+  "result": {
+    "item": "gt6:battery_licoo2_ulv"
+  },
+  "show_notification": true
+}

@@ -26,7 +26,10 @@ import net.minecraftforge.common.Tags;
 *///?}
 
 import gregtech6.datagen.GT6ItemTags;
+import gregtech6.registry.GT6Batteries;
 import gregtech6.registry.GT6ElectricTransformers;
+import gregtech6.registry.GTWires;
+import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6FoodCans;
@@ -209,6 +212,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		for (GT6Batteries.BatteryRow tRow : GT6Batteries.ROWS) {
+			if (tRow.family().startsWith("energium")) continue; // the crystals carry NO rows (upstream :1079-:1092, the declared cut)
+			batteryRecipeBuilder(tRow).save(aConsumer, batteryRecipeId(tRow));
+		}
+		for (BatteryBoxRecipeRow tRow : batteryBoxRecipeBuilders()) {
+			tRow.builder().save(aConsumer, batteryBoxRecipeId(tRow.row()));
+		}
 	}
 	//?} else {
 	/*@Override
@@ -251,6 +261,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
+		}
+		for (GT6Batteries.BatteryRow tRow : GT6Batteries.ROWS) {
+			if (tRow.family().startsWith("energium")) continue; // the crystals carry NO rows (upstream :1079-:1092, the declared cut)
+			batteryRecipeBuilder(tRow).save(aOutput, batteryRecipeId(tRow));
+		}
+		for (BatteryBoxRecipeRow tRow : batteryBoxRecipeBuilders()) {
+			tRow.builder().save(aOutput, batteryBoxRecipeId(tRow.row()));
 		}
 	}
 	*///?}
@@ -858,6 +875,91 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * {@code #forge:double_plates/iron} (the :881 column verbatim). Result 1x
 	 * {@code gt6:electric_transformer}.
 	 */
+	// -------------------------------------------------------------------------
+	// task p29-w4-battery-storage — the battery + BatteryBox crafting rows (the Loader
+	// :1009-:1068 battery strings and the :893-:896 box strings; the pattern columns ride
+	// the GT6Batteries mapping helpers, the datagen and the tests share that one source).
+	// Declared CUTS (the absent-input rows ride the pool, the electrolyzer_part precedent):
+	//   - the LARGE BatteryBox tiers 1..5 ('M' = the tier transformer 10041..10045 — the
+	//     port transformer ladder carries only the ULV-LV row 10040; the rows land when
+	//     their transformer tiers do, the GT6ElectricTransformers extension-seat ruling);
+	//   - the Energium crystals carry NO rows — upstream registers none either
+	//     (:1079-:1092 are bare registrations).
+	// The 'x' tool letter = the wire cutter tool tag (the tank-valve h/s fold precedent);
+	// the 'C' circuit column keys the #gt6:circuit<i> TAG (the OD_CIRCUITS oredict
+	// semantics — any item of that circuit tier matches).
+	// -------------------------------------------------------------------------
+
+	/** The battery row's recipe id: battery/&lt;path&gt; (the part_family/&lt;path&gt; convention). */
+	public static ResourceLocation batteryRecipeId(GT6Batteries.BatteryRow aRow) {
+		// the path rides a local so the two-arg RL ctor args stay bare identifiers (the
+		// swap-table regex note, staticStorageRecipeId form)
+		String tPath = "battery/" + aRow.path();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/** The BatteryBox row's recipe id: battery_box/&lt;path&gt; (the same convention). */
+	public static ResourceLocation batteryBoxRecipeId(GT6Batteries.BoxRow aRow) {
+		String tPath = "battery_box/" + aRow.path();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/** One staged BatteryBox row: the shared builder + the row its save face ids from (the PartFamilyRecipeRow shape). */
+	record BatteryBoxRecipeRow(ShapedRecipeBuilder builder, GT6Batteries.BoxRow row) {}
+
+	/** The wire/cable item face of a tier+size+form (the GTWires parallel-list composition). */
+	private static Item wireItem(int aTier, int aSize, boolean aInsulated) {
+		String tPath = GT6Batteries.wirePath(aTier, aSize, aInsulated);
+		java.util.List<GTWireSpecs.Variant> tVariants = GTWireSpecs.variants();
+		for (int i = 0; i < tVariants.size(); i++) {
+			if (GTWireSpecs.registryName(tVariants.get(i)).equals(tPath)) return GTWires.FAMILY_ITEMS.get(i).get();
+		}
+		throw new IllegalStateException("gt6 batteries: no wire item for " + tPath);
+	}
+
+	private ShapedRecipeBuilder batteryRecipeBuilder(GT6Batteries.BatteryRow aRow) {
+		TagKey<Item> tPlates = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "battery_alloy");
+		String[] tPattern = GT6Batteries.batteryPattern(aRow);
+		String tKeys = tPattern[0] + tPattern[1] + tPattern[2];
+		ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder
+				.shaped(RecipeCategory.MISC, GT6Batteries.BATTERY_ITEMS.get(aRow.path()).get())
+				.pattern(tPattern[0]).pattern(tPattern[1]).pattern(tPattern[2])
+				.define('W', wireItem(aRow.tier(), 1, true)); // the CABLES_01 column (1x insulated cable)
+		if (tKeys.indexOf('x') >= 0) tBuilder.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER); // the CR 'x' wirecutter letter (absent on the EV rows)
+		tBuilder
+				.define('B', GT6Batteries.CELL_ITEMS.get(GT6Batteries.batteryCellPath(aRow)).get())
+				.define('P', tPlates); // the OP.plate.dat(MT.BatteryAlloy) column
+		int tCircuit = GT6Batteries.batteryCircuitTier(aRow);
+		if (tCircuit >= 0) tBuilder.define('C', GT6ItemTags.gt6("circuit" + tCircuit)); // the OD_CIRCUITS column
+		return tBuilder.unlockedBy("has_battery_alloy", has(tPlates));
+	}
+
+	private java.util.List<BatteryBoxRecipeRow> batteryBoxRecipeBuilders() {
+		java.util.List<BatteryBoxRecipeRow> rRows = new ArrayList<>();
+		for (GT6Batteries.BoxRow tRow : GT6Batteries.BOX_ROWS) {
+			int tSize = tRow.slots() == 16 ? 4 : 1; // the CABLES_01 vs CABLES_04 column (wire sizes ride the same ladder)
+			Item tM; // the 'M' column: casingMachine(Electric_T[i]) folds to casingSmall (the transformer fold);
+					// the LARGE rows carry the TIER TRANSFORMER item (getItem(10040+i)) — only 10040 exists
+			if (tRow.slots() == 16) {
+				if (tRow.tier() != 0) continue; // the declared cut: large tiers 1..5 ride the transformer-ladder pool
+				tM = GT6ElectricTransformers.ELECTRIC_TRANSFORMER_ITEM.get();
+			} else {
+				tM = GTMaterialItems.get(gregapi.data.OP.casingSmall,
+						gregtech6.registry.GT6ElectricDynamos.ELECTRIC_T_LADDER.get(tRow.tier()).get()).get();
+			}
+			ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder
+					.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Batteries.BATTERY_BOX_ITEMS.get(tRow.path()).get())
+					.pattern(GT6Batteries.BOX_PATTERN[0]).pattern(GT6Batteries.BOX_PATTERN[1]).pattern(GT6Batteries.BOX_PATTERN[2])
+					.define('W', wireItem(tRow.tier(), tSize, false)) // the WIRES_01/04 column
+					.define('C', wireItem(tRow.tier(), tSize, true)) // the CABLES_01/04 column
+					.define('X', GT6ItemTags.gt6("circuit" + tRow.tier())) // the OD_CIRCUITS column
+					.define('M', tM)
+					.unlockedBy("has_circuit", has(GT6ItemTags.gt6("circuit" + tRow.tier())));
+			rRows.add(new BatteryBoxRecipeRow(tBuilder, tRow));
+		}
+		return rRows;
+	}
+
 	private ShapedRecipeBuilder transformerBuilder() {
 		TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.Copper);
 		TagKey<Item> tDoublePlates = GT6ItemTags.materialTag(GT6ItemTags.DOUBLE_PLATES_FAMILY, MT.Iron);

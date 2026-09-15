@@ -96,6 +96,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addPrefixTemplates();
 		addMaterialNames();
 		addMiscUnits();
+		addBatteryFamily(); // task p29-w4-battery-storage — the 37+5+7+12 storage face (hand rows, the tsv direct band)
 		addBackfillUnits();     // task p23-i18n-zh-442-backfill
 		addWireDomainUnits();
 		addStoneVariantUnits();
@@ -928,6 +929,70 @@ public class GT6ZhCn extends LanguageProvider {
 	 * are {@code kind<TAB>source<TAB>value<TAB>status}. Package-private static so the parity
 	 * test reuses the single parse implementation (it asserts no hand row is orphaned).
 	 */
+    private void addBatteryFamily() {
+		addDirect("item.gt6.battery_lead_acid_ulv");
+		addDirect("item.gt6.battery_lead_acid_lv");
+		addDirect("item.gt6.battery_lead_acid_mv");
+		addDirect("item.gt6.battery_lead_acid_hv");
+		addDirect("item.gt6.battery_lead_acid_ev");
+		addDirect("item.gt6.battery_alkaline_ulv");
+		addDirect("item.gt6.battery_alkaline_lv");
+		addDirect("item.gt6.battery_alkaline_mv");
+		addDirect("item.gt6.battery_alkaline_hv");
+		addDirect("item.gt6.battery_alkaline_ev");
+		addDirect("item.gt6.battery_nicd_ulv");
+		addDirect("item.gt6.battery_nicd_lv");
+		addDirect("item.gt6.battery_nicd_mv");
+		addDirect("item.gt6.battery_nicd_hv");
+		addDirect("item.gt6.battery_nicd_ev");
+		addDirect("item.gt6.battery_licoo2_ulv");
+		addDirect("item.gt6.battery_licoo2_lv");
+		addDirect("item.gt6.battery_licoo2_mv");
+		addDirect("item.gt6.battery_licoo2_hv");
+		addDirect("item.gt6.battery_licoo2_ev");
+		addDirect("item.gt6.battery_limn_ulv");
+		addDirect("item.gt6.battery_limn_lv");
+		addDirect("item.gt6.battery_limn_mv");
+		addDirect("item.gt6.battery_limn_hv");
+		addDirect("item.gt6.battery_limn_ev");
+		addDirect("item.gt6.energium_red_ulv");
+		addDirect("item.gt6.energium_red_lv");
+		addDirect("item.gt6.energium_red_mv");
+		addDirect("item.gt6.energium_red_hv");
+		addDirect("item.gt6.energium_red_ev");
+		addDirect("item.gt6.energium_red_iv");
+		addDirect("item.gt6.energium_cyan_ulv");
+		addDirect("item.gt6.energium_cyan_lv");
+		addDirect("item.gt6.energium_cyan_mv");
+		addDirect("item.gt6.energium_cyan_hv");
+		addDirect("item.gt6.energium_cyan_ev");
+		addDirect("item.gt6.energium_cyan_iv");
+		addDirect("item.gt6.battery_cell_lead_acid");
+		addDirect("item.gt6.battery_cell_alkaline");
+		addDirect("item.gt6.battery_cell_nicd");
+		addDirect("item.gt6.battery_cell_licoo2");
+		addDirect("item.gt6.battery_cell_limn");
+		addDirect("item.gt6.circuit_primitive");
+		addDirect("item.gt6.circuit_basic");
+		addDirect("item.gt6.circuit_good");
+		addDirect("item.gt6.circuit_advanced");
+		addDirect("item.gt6.circuit_elite");
+		addDirect("item.gt6.circuit_master");
+		addDirect("item.gt6.circuit_ultimate");
+		addDirect("block.gt6.battery_box_ulv");
+		addDirect("block.gt6.battery_box_lv");
+		addDirect("block.gt6.battery_box_mv");
+		addDirect("block.gt6.battery_box_hv");
+		addDirect("block.gt6.battery_box_ev");
+		addDirect("block.gt6.battery_box_iv");
+		addDirect("block.gt6.battery_box_large_ulv");
+		addDirect("block.gt6.battery_box_large_lv");
+		addDirect("block.gt6.battery_box_large_mv");
+		addDirect("block.gt6.battery_box_large_hv");
+		addDirect("block.gt6.battery_box_large_ev");
+		addDirect("block.gt6.battery_box_large_iv");
+    }
+
 	static Map<String, Map<String, RefRow>> loadReference() {
 		Map<String, Map<String, RefRow>> rTable = new HashMap<>();
 		InputStream tStream = GT6ZhCn.class.getResourceAsStream(REFERENCE_RESOURCE);

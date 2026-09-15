@@ -64,9 +64,10 @@ import gregtech6.item.energy.GT6BatteryItem;
  *     Advanced/Elite/Master/...). The port has NO circuit item rows (the itemPathPrefixes
  *     gate omits OP.circuit — the generic prefix walk would register one circuit item per
  *     EVERY material, which is not the upstream shape either; the real circuit family is
- *     the p24 circuit-census card's domain). This card registers the MINIMUM six-item
- *     ladder ({@code gt6:circuit_primitive..circuit_master}, the OD_CIRCUITS[0..5]
- *     carriers) so the battery/box crafting closure resolves; the selector/256-icon face
+ *     the p24 circuit-census card's domain). This card registers the MINIMUM seven-item
+ *     ladder ({@code gt6:circuit_primitive..circuit_ultimate}, the OD_CIRCUITS[0..6]
+ *     carriers — [6] = Ultimate, the column the LiCoO2/LiMn EV rows carry) so the
+ *     battery/box crafting closure resolves; the selector/256-icon face
  *     stays with the future circuit card. Tags: {@code #gt6:circuit0..circuit5} — the
  *     upstream tag names byte-kept (already snake-legal).</li>
  * <li><b>The BatteryBox tier closure (12 blocks, not upstream 20)</b>: upstream registers
@@ -111,7 +112,7 @@ public final class GT6Batteries {
 	/** One cell row — the MultiItemTechnological Filled-cell subset (the crafting 'B' column). */
 	public record CellRow(String path, int metaId, String enName) {}
 
-	/** One circuit row — the OD_CIRCUITS[0..5] carrier (the class-doc deviation). */
+	/** One circuit row — the OD_CIRCUITS[0..6] carrier (the class-doc deviation). */
 	public record CircuitRow(String path, int tier, String tagPath, String enName) {}
 
 	/** One BatteryBox row — the Loader :893-:896 loop iteration (the port tier-closed subset). */
@@ -190,7 +191,8 @@ public final class GT6Batteries {
 			new CircuitRow("circuit_good"     , 2, "circuit2", "Good Electronic Circuit"),
 			new CircuitRow("circuit_advanced" , 3, "circuit3", "Advanced Electronic Circuit"),
 			new CircuitRow("circuit_elite"    , 4, "circuit4", "Elite Electronic Circuit"),
-			new CircuitRow("circuit_master"   , 5, "circuit5", "Master Electronic Circuit"));
+			new CircuitRow("circuit_master"   , 5, "circuit5", "Master Electronic Circuit"),
+			new CircuitRow("circuit_ultimate" , 6, "circuit6", "Ultimate Electronic Circuit"));
 
 	/**
 	 * The 12 BatteryBox rows — the :893-:896 loop closed at the port tiers (the class-doc
@@ -343,6 +345,62 @@ public final class GT6Batteries {
 	public static String boxEnName(BoxRow aRow) {
 		return (aRow.slots() == 16 ? "Large Battery Box (" : "Battery Box (") + aRow.tierWord() + ")";
 	}
+
+	// ---------------------------------------------------------------------------
+	// the recipe mapping (the Loader :1009-:1092 / :893-:896 columns as data — the
+	// datagen and the tests share this single source)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The CABLES_01/WIRES_01 [0..5] wire tokens (upstream MT.java:3595/:3631 = Pb, Sn,
+	 * ANY.Cu, Au, Al, Pt — the wire rows' tokens are "lead"/"tin"/"copper"/"gold"/
+	 * "aluminium"/"platinum", GTWireSpecs.ROWS). The port wire/cable items ride these
+	 * tokens: {@code wire_<token>_gt<size>} / {@code cable_<token>_gt<size>} (the
+	 * GTWireSpecs.registryName composition).
+	 */
+	public static final String[] WIRE_TOKENS = {"lead", "tin", "copper", "gold", "aluminium", "platinum"};
+
+	/** The registry path of a wire/cable item — the GTWireSpecs.registryName composition rule. */
+	public static String wirePath(int aTier, int aSize, boolean aInsulated) {
+		return (aInsulated ? "cable_" : "wire_") + WIRE_TOKENS[aTier] + "_gt" + (aSize < 10 ? "0" : "") + aSize;
+	}
+
+	/** The battery row's crafting pattern (the :1009-:1068 recipe strings; 'W' wire, 'x' wirecutter tool, 'B' cell, 'P' plate, 'C' circuit). */
+	public static String[] batteryPattern(BatteryRow aRow) {
+		boolean tAdv = aRow.family().equals("licoo2") || aRow.family().equals("limn");
+		return switch (aRow.tierWord()) {
+			case "ULV" -> tAdv ? new String[] {"Wx", "BC", "P "} : new String[] {"Wx", "B ", "P "};
+			case "LV"  -> tAdv ? new String[] {"CWx", "PBP", " B "} : new String[] {" Wx", "PBP", " B "};
+			case "MV"  -> new String[] {"WxW", "BCB", "PBP"};
+			case "HV"  -> new String[] {"WxW", "BCB", "BPB"};
+			case "EV"  -> new String[] {"WPW", "BCB", "BBB"};
+			default -> throw new IllegalStateException("gt6 batteries: no recipe for " + aRow.path());
+		};
+	}
+
+	/**
+	 * The battery row's circuit-tag tier (the 'C' column = OD_CIRCUITS[i]), or -1 when the
+	 * row carries no circuit: standard families ride [2]/[3]/[4] on MV/HV/EV, the
+	 * advanced (LiCoO2/LiMn) ladder is shifted one rung up ([2]/[3]/[4]/[5]/[6] from ULV).
+	 */
+	public static int batteryCircuitTier(BatteryRow aRow) {
+		boolean tAdv = aRow.family().equals("licoo2") || aRow.family().equals("limn");
+		if (tAdv) return aRow.tier() + 2; // ULV..EV -> circuit2..circuit6
+		return switch (aRow.tierWord()) {
+			case "MV" -> 2;
+			case "HV" -> 3;
+			case "EV" -> 4;
+			default -> -1;
+		};
+	}
+
+	/** The battery row's cell item path (the 'B' column — the family's Filled cell). */
+	public static String batteryCellPath(BatteryRow aRow) {
+		return "battery_cell_" + aRow.family();
+	}
+
+	/** The BatteryBox crafting pattern (the :894-:895 verbatim: 'W' wire, 'C' cable, 'X' circuit, 'M' casing/transformer). */
+	public static final String[] BOX_PATTERN = {"WCW", "WCW", "XMX"};
 
 	/** The display rows the datagen lang face walks (batteries, then cells, then circuits, then boxes — the tab order). */
 	public static List<String> allItemPaths() {

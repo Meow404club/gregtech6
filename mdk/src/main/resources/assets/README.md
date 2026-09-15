@@ -8061,3 +8061,19 @@ Large Heat Exchanger controller borrows the upstream
 `large_heat_exchanger/main.png` (sha256 `bdb119c163a62dae92c6cfde9f5c40c4fe1
 ba1965e5ded6231824d1c67ad88ee`, all three upstream faces composite to the
 SAME visible pixels, the lightningrod one-texture ruling).
+
+- `gt6/textures/item/battery/{lead_acid,alkaline,nicd,licoo2,limn,energium_red,energium_cyan}.png`
+  and `gt6/textures/item/battery/cell.png` — the battery-family item sprites (task
+  p29-w4-battery-storage), byte-copy borrows from upstream
+  `src/main/resources/assets/gregtech/textures/blocks/machines/batteries/…/sides.png|top.png`
+  (eu/standard 8/32/128, eu/advanced 8/32, lu/8/32; the cell = eu/standard/8/top).
+  Upstream tints the grayscale colored icons per battery family via the MTE NBT_COLOR
+  mRGBa lane; the port BAKES the per-family sprites instead (the crank un-tinted borrow
+  posture one declared step further — the runtime tint lane is the render-pool card).
+  Produced by `mdk/tools/bake_battery_textures.py` (pure stdlib, byte-copy mode).
+- `gt6/textures/block/battery_box.png` and `battery_box_large.png` — the BatteryBox side
+  sprites (task p29-w4-battery-storage), BAKED src-over composites of upstream
+  `textures/blocks/machines/energystorages/battery_electric[_large]/colored/side.png`
+  + `overlay/side.png` (the transformer bake treatment). Produced by
+  `mdk/tools/bake_battery_textures.py`; the circuit-carrier items reuse the in-repo
+  `item/integrated_circuit.png` (no new file, the declared placeholder).

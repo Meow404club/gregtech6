@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_battery_alloy": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/battery_alloy"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:battery/battery_nicd_ev"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_battery_alloy",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:battery/battery_nicd_ev"
+    ]
+  },
+  "sends_telemetry_event": false
+}

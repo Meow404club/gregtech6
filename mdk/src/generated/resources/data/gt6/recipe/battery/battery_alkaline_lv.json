@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "gt6:battery_cell_alkaline"
+    },
+    "P": {
+      "tag": "forge:plates/battery_alloy"
+    },
+    "W": {
+      "item": "gt6:cable_tin_gt01"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    " Wx",
+    "PBP",
+    " B "
+  ],
+  "result": {
+    "item": "gt6:battery_alkaline_lv"
+  },
+  "show_notification": true
+}

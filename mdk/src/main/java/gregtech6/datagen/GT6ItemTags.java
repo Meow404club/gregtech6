@@ -297,6 +297,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		addToolTags(aProvider);
 		addMaterialTags(aProvider);
 		addGrassTags(aProvider); // task p24-grass-block
+		addBatteryTags(aProvider); // task p29-w4-battery-storage — the re-battery/re-crystal/circuit tag seams
 	}
 
 	/**
@@ -312,6 +313,26 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	private void addGrassTags(HolderLookup.Provider aProvider) {
 		for (String tPath : gregtech6.registry.GTGrassBlocks.PATHS) {
 			tag(net.minecraft.tags.ItemTags.DIRT).add(item(gt6Rl(tPath)));
+		}
+	}
+
+	/**
+	 * The battery-family tag band (task p29-w4-battery-storage): the upstream oredict seams
+	 * translated — {@code gt:re-battery0..4}/{@code gt:re-crystal0..5} (the Loader
+	 * :1009-:1092 tail columns; the W5 electric-tool capacity-sum face iterates exactly
+	 * these, Loader_Tools.java:356-377) become {@code #gt6:re_battery0..4}/
+	 * {@code #gt6:re_crystal0..5} (the dash→underscore snake rule, the tier digits stay
+	 * attached) and the circuit ladder {@code OD_CIRCUITS[i] = "gt:circuit0..9"} (upstream
+	 * CS.java:166) becomes {@code #gt6:circuit0..6} over the seven carrier items. The
+	 * recipe rows key their 'C' column on the TAG (the oredict semantics — any item of
+	 * that circuit tier matches), not the carrier item.
+	 */
+	private void addBatteryTags(HolderLookup.Provider aProvider) {
+		for (gregtech6.registry.GT6Batteries.BatteryRow tRow : gregtech6.registry.GT6Batteries.ROWS) {
+			tag(gt6(tRow.tagPath())).add(item(gt6Rl(tRow.path())));
+		}
+		for (gregtech6.registry.GT6Batteries.CircuitRow tRow : gregtech6.registry.GT6Batteries.CIRCUIT_ROWS) {
+			tag(gt6(tRow.tagPath())).add(item(gt6Rl(tRow.path())));
 		}
 	}
 
