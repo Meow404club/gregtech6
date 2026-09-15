@@ -1,0 +1,44 @@
+{
+  "recipes": [
+    {
+      "comment": "task p29-w4-eu-bridge — the Roasting carbon rows, Loader_Recipes_Chem.java:397-403 verbatim over the addRecipe1(Recipe.java:187) arm: input dust + fluid INPUT CO2 -> fluid OUTPUT CO (the Boudouard reaction C + CO2 -> 2CO — the FIRST FluidStack after the input dust is the fluid INPUT, proven by the :408 oxygen rows Pyrite + O2 -> SO2 + Fe2O3 on the same overload). 16 EUt x 16. U = 144 (the :390 LiCl.liquid(U*144) = FL.Thorium_Salt.make(20736) calibration): 3*U = 432, 4*U = 576. The upstream ANY.C.mToThis / ANY.Diamond.mToThis walks (the polymorph arms) fold to the base members that carry port dust rows — the P8 registration-time-expansion form; Graphene stays excluded per the :397 guard.",
+      "inputs": [{ "item": "gt6:dust_carbon", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:carbondioxide", "amount": 432 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 576 }],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Chem.java:399 verbatim: charcoal dust + CO2 3U -> CO 4U, 16 EUt x 16.",
+      "inputs": [{ "item": "gt6:dust_charcoal", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:carbondioxide", "amount": 432 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 576 }],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Chem.java:400 verbatim: coal dust + CO2 6U -> CO 8U, 16 EUt x 16.",
+      "inputs": [{ "item": "gt6:dust_coal", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:carbondioxide", "amount": 864 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 1152 }],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Chem.java:401 verbatim: coal coke dust + CO2 6U -> CO 8U, 16 EUt x 16.",
+      "inputs": [{ "item": "gt6:dust_coal_coke", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:carbondioxide", "amount": 864 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 1152 }],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Chem.java:402-403 verbatim: the ANY.Diamond walk folds to the base diamond rung — diamond dust + CO2 12U -> CO 16U, 16 EUt x 16.",
+      "inputs": [{ "item": "gt6:dust_diamond", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:carbondioxide", "amount": 1728 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 2304 }],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}
