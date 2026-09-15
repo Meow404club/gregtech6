@@ -8074,3 +8074,65 @@ direct	fluid.gt6.propylene	丙烯	hand
 direct	fluid.gt6.radon	氡	hand
 direct	fluid.gt6.soulsandoil	灵魂沙油	hand
 direct	fluid.gt6.xenon	氙	hand
+# ---- task p29-w4-battery-storage — the battery family hand band (61 keys) ----
+direct	item.gt6.battery_lead_acid_ulv	铅酸电池 (ULV)	hand
+direct	item.gt6.battery_lead_acid_lv	铅酸电池 (LV)	hand
+direct	item.gt6.battery_lead_acid_mv	铅酸电池 (MV)	hand
+direct	item.gt6.battery_lead_acid_hv	铅酸电池 (HV)	hand
+direct	item.gt6.battery_lead_acid_ev	铅酸电池 (EV)	hand
+direct	item.gt6.battery_alkaline_ulv	碱性电池 (ULV)	hand
+direct	item.gt6.battery_alkaline_lv	碱性电池 (LV)	hand
+direct	item.gt6.battery_alkaline_mv	碱性电池 (MV)	hand
+direct	item.gt6.battery_alkaline_hv	碱性电池 (HV)	hand
+direct	item.gt6.battery_alkaline_ev	碱性电池 (EV)	hand
+direct	item.gt6.battery_nicd_ulv	镍镉电池 (ULV)	hand
+direct	item.gt6.battery_nicd_lv	镍镉电池 (LV)	hand
+direct	item.gt6.battery_nicd_mv	镍镉电池 (MV)	hand
+direct	item.gt6.battery_nicd_hv	镍镉电池 (HV)	hand
+direct	item.gt6.battery_nicd_ev	镍镉电池 (EV)	hand
+direct	item.gt6.battery_licoo2_ulv	锂钴电池 (ULV)	hand
+direct	item.gt6.battery_licoo2_lv	锂钴电池 (LV)	hand
+direct	item.gt6.battery_licoo2_mv	锂钴电池 (MV)	hand
+direct	item.gt6.battery_licoo2_hv	锂钴电池 (HV)	hand
+direct	item.gt6.battery_licoo2_ev	锂钴电池 (EV)	hand
+direct	item.gt6.battery_limn_ulv	锂锰电池 (ULV)	hand
+direct	item.gt6.battery_limn_lv	锂锰电池 (LV)	hand
+direct	item.gt6.battery_limn_mv	锂锰电池 (MV)	hand
+direct	item.gt6.battery_limn_hv	锂锰电池 (HV)	hand
+direct	item.gt6.battery_limn_ev	锂锰电池 (EV)	hand
+direct	item.gt6.energium_red_ulv	红色能量水晶 (T0)	hand
+direct	item.gt6.energium_red_lv	红色能量水晶 (T1)	hand
+direct	item.gt6.energium_red_mv	红色能量水晶 (T2)	hand
+direct	item.gt6.energium_red_hv	红色能量水晶 (T3)	hand
+direct	item.gt6.energium_red_ev	红色能量水晶 (T4)	hand
+direct	item.gt6.energium_red_iv	红色能量水晶 (T5)	hand
+direct	item.gt6.energium_cyan_ulv	青色能量水晶 (T0)	hand
+direct	item.gt6.energium_cyan_lv	青色能量水晶 (T1)	hand
+direct	item.gt6.energium_cyan_mv	青色能量水晶 (T2)	hand
+direct	item.gt6.energium_cyan_hv	青色能量水晶 (T3)	hand
+direct	item.gt6.energium_cyan_ev	青色能量水晶 (T4)	hand
+direct	item.gt6.energium_cyan_iv	青色能量水晶 (T5)	hand
+direct	item.gt6.battery_cell_lead_acid	铅酸电池单元(满)	hand
+direct	item.gt6.battery_cell_alkaline	碱性纽扣电池单元(满)	hand
+direct	item.gt6.battery_cell_nicd	镍镉电池单元(满)	hand
+direct	item.gt6.battery_cell_licoo2	锂钴电池单元(满)	hand
+direct	item.gt6.battery_cell_limn	锂锰电池单元(满)	hand
+direct	item.gt6.circuit_primitive	原始电路	hand
+direct	item.gt6.circuit_basic	基础电子电路	hand
+direct	item.gt6.circuit_good	优质电子电路	hand
+direct	item.gt6.circuit_advanced	高级电子电路	hand
+direct	item.gt6.circuit_elite	精英电子电路	hand
+direct	item.gt6.circuit_master	主控电子电路	hand
+direct	item.gt6.circuit_ultimate	终极电子电路	hand
+direct	block.gt6.battery_box_ulv	电池箱 (ULV)	hand
+direct	block.gt6.battery_box_lv	电池箱 (LV)	hand
+direct	block.gt6.battery_box_mv	电池箱 (MV)	hand
+direct	block.gt6.battery_box_hv	电池箱 (HV)	hand
+direct	block.gt6.battery_box_ev	电池箱 (EV)	hand
+direct	block.gt6.battery_box_iv	电池箱 (IV)	hand
+direct	block.gt6.battery_box_large_ulv	大型电池箱 (ULV)	hand
+direct	block.gt6.battery_box_large_lv	大型电池箱 (LV)	hand
+direct	block.gt6.battery_box_large_mv	大型电池箱 (MV)	hand
+direct	block.gt6.battery_box_large_hv	大型电池箱 (HV)	hand
+direct	block.gt6.battery_box_large_ev	大型电池箱 (EV)	hand
+direct	block.gt6.battery_box_large_iv	大型电池箱 (IV)	hand
