@@ -58,7 +58,7 @@ import gregtech6.item.energy.GT6BatteryItem;
  *
  * <h2>The declared deviations</h2>
  * <ul>
- * <li><b>The circuit ladder (6 items)</b>: upstream recipes reference circuits by the
+ * <li><b>The circuit ladder (7 items)</b>: upstream recipes reference circuits by the
  *     oredict tag ladder {@code OD_CIRCUITS[i] = "gt:circuit0..9"} (upstream CS.java:166),
  *     carried by the OP.circuit tier materials (MT.DATA.CIRCUITS = Primitive/Basic/Good/
  *     Advanced/Elite/Master/...). The port has NO circuit item rows (the itemPathPrefixes
@@ -95,7 +95,7 @@ import gregtech6.item.energy.GT6BatteryItem;
  * are bare registrations).
  *
  * <p>KJS surface (the card declaration): this card's output is the REGISTRATION face
- * (37 batteries + 5 cells + 6 circuits + 12 BatteryBox blocks/BEs) plus the tier-a
+ * (37 batteries + 5 cells + 7 circuits + 12 BatteryBox blocks/BEs) plus the tier-a
  * crafting JSON; there are NO datapack recipe-map rows and NO KubeJS face.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -184,7 +184,7 @@ public final class GT6Batteries {
 			new CellRow("battery_cell_licoo2"   , 20007, "Lithium-Cobalt Cell (Filled)"),
 			new CellRow("battery_cell_limn"     , 20009, "Lithium-Manganese Cell (Filled)"));
 
-	/** The six circuit carriers — upstream MT.DATA.CIRCUITS[0..5] + the OD_CIRCUITS tag ladder (the class-doc deviation). */
+	/** The seven circuit carriers — upstream MT.DATA.CIRCUITS[0..6] + the OD_CIRCUITS tag ladder (the class-doc deviation). */
 	public static final List<CircuitRow> CIRCUIT_ROWS = List.of(
 			new CircuitRow("circuit_primitive", 0, "circuit0", "Primitive Circuit"),
 			new CircuitRow("circuit_basic"    , 1, "circuit1", "Basic Electronic Circuit"),
@@ -240,7 +240,7 @@ public final class GT6Batteries {
 		}
 	}
 
-	/** The six circuit carriers — plain single items (the class-doc deviation). */
+	/** The seven circuit carriers — plain single items (the class-doc deviation). */
 	public static final Map<String, RegistryObject<Item>> CIRCUIT_ITEMS = new LinkedHashMap<>();
 	static {
 		for (CircuitRow tRow : CIRCUIT_ROWS) {
