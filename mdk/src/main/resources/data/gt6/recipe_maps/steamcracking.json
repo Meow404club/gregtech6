@@ -1,11 +1,34 @@
 {
   "recipes": [
     {
-      "inputs": [{ "item": "minecraft:coal", "count": 1 }],
-      "fluidInputs": [{ "fluid": "minecraft:water", "amount": 1000 }],
-      "outputs": [{ "item": "minecraft:charcoal", "count": 1 }],
-      "duration": 128,
-      "eut": 32
+      "comment": "RM.SteamCracking Loader_Recipes_Chem.java:368 verbatim: steam 1000 + propane 100 -> hydrogen 2 + methane 27 + ethylene 42 + propylene 19, 16 EUt x 64.",
+      "fluidInputs": [
+        { "fluid": "gt6:steam", "amount": 1000 },
+        { "fluid": "gt6:propane", "amount": 100 }
+      ],
+      "fluidOutputs": [
+        { "fluid": "gt6:hydrogen", "amount": 2 },
+        { "fluid": "gt6:methane", "amount": 27 },
+        { "fluid": "gt6:ethylene", "amount": 42 },
+        { "fluid": "gt6:propylene", "amount": 19 }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.SteamCracking Loader_Recipes_Chem.java:369 verbatim: steam 1000 + butane 100 -> hydrogen 5 + methane 9 + ethylene 78 + propylene 3, 16 EUt x 64.",
+      "fluidInputs": [
+        { "fluid": "gt6:steam", "amount": 1000 },
+        { "fluid": "gt6:butane", "amount": 100 }
+      ],
+      "fluidOutputs": [
+        { "fluid": "gt6:hydrogen", "amount": 5 },
+        { "fluid": "gt6:methane", "amount": 9 },
+        { "fluid": "gt6:ethylene", "amount": 78 },
+        { "fluid": "gt6:propylene", "amount": 3 }
+      ],
+      "duration": 64,
+      "eut": 16
     }
   ]
 }
