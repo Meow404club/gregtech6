@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 //? if forge {
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 //?} else {
 /*import net.neoforged.neoforge.capabilities.Capabilities;
@@ -78,10 +78,13 @@ public class GTPlungerItem extends Item {
 		Level tLevel = aContext.getLevel();
 		BlockPos tPos = aContext.getClickedPos();
 		//? if forge {
-		LazyOptional<IFluidHandler> tCapability =
-				tLevel.getCapability(ForgeCapabilities.FLUID_HANDLER_CAPABILITY, tPos, aContext.getClickedFace());
+		net.minecraft.world.level.block.entity.BlockEntity tDrainBE = tLevel.getBlockEntity(tPos);
+		if (tDrainBE == null) return InteractionResult.PASS;
+		LazyOptional<IFluidHandler> tCapability = tDrainBE.getCapability(ForgeCapabilities.FLUID_HANDLER, aContext.getClickedFace());
 		if (!tCapability.isPresent()) return InteractionResult.PASS;
 		IFluidHandler tHandler = tCapability.orElse(null);
+		//1.20.1 Level has NO getCapability(cap, pos, side) overload — the BE read face is
+		//the in-repo shape (TileEntityBasicMachine.java:1142).
 		//?} else {
 		/*IFluidHandler tHandler =
 				tLevel.getCapability(Capabilities.FluidHandler.BLOCK, tPos, aContext.getClickedFace());

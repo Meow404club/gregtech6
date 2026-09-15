@@ -1684,17 +1684,17 @@ public class GT6CraftingRecipes extends RecipeProvider {
     /**
      * The scoop row — the upstream {"SVS","SSS","xSh"} pattern verbatim (Loader_Tools.java:320
      * with V = the special auxiliary wool, S = stick): 6 rods frame the wool net ('V' =
-     * {@code Tags.Items.WOOL}, the auxiliary identity kept) + the wire cutter + the hammer
+     * {@code ItemTags.WOOL}, the auxiliary identity kept; the vanilla tag rides both legs — the 21.1 neoforge Tags.Items has no WOOL field) + the wire cutter + the hammer
      * tools (the 'x'/'h' letters, the CR.java:359/:346 alphabet).
      */
     private ShapedRecipeBuilder scoopBuilder() {
         return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.SCOOP.get())
                 .pattern("SVS").pattern("SSS").pattern("xSh")
                 .define('S', Tags.Items.RODS_WOODEN)
-                .define('V', Tags.Items.WOOL)
+                .define('V', ItemTags.WOOL)
                 .define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
                 .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
-                .unlockedBy("has_wool", has(Tags.Items.WOOL));
+                .unlockedBy("has_wool", has(ItemTags.WOOL));
     }
 
     /**

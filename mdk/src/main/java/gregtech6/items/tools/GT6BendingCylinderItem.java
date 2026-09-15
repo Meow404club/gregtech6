@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
  * per craft. The recipe is the {"sfh"/"III"/"III"} self-craft row (Loader_Tools.java:312
  * — the Small row :313 with ONE more ingot row, the 6*U amount made literal).
  */
-public class GTBendingCylinderItem extends Item {
+public class GT6BendingCylinderItem extends Item {
 
 	/** The vanilla durability points — single steel tier (the crowbar/file/saw pinned family value). */
 	public static final int DURABILITY_POINTS = 512;
@@ -28,7 +28,7 @@ public class GTBendingCylinderItem extends Item {
 	/** The crafting-loss mapping — ONE vanilla point per craft (the shared ruling). */
 	public static final int DAMAGE_PER_CRAFT = GT6FileItem.DAMAGE_PER_CRAFT;
 
-	public GTBendingCylinderItem(Properties aProperties) {
+	public GT6BendingCylinderItem(Properties aProperties) {
 		super(aProperties);
 	}
 

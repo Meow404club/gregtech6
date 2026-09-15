@@ -73,7 +73,9 @@ public class GTFlintAndTinderItem extends Item {
 		BlockPos tPos = aContext.getClickedPos();
 		BlockState tState = tLevel.getBlockState(tPos);
 		if (!tLevel.isClientSide && tPlayer != null) {
-			aContext.getItemInHand().hurtAndBreak(1, tPlayer, e -> e.broadcastBreakEvent(aContext.getHand())); // upstream :58 unconditional
+			// MAINHAND literal, not getHand(): the 21.1 LivingEntity dropped the
+			// broadcastBreakEvent(InteractionHand) overload (the GTPickaxeItem leg-green shape).
+			aContext.getItemInHand().hurtAndBreak(1, tPlayer, e -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND)); // upstream :58 unconditional
 		}
 		if (CampfireBlock.canLight(tState) || CandleBlock.canLight(tState) || CandleCakeBlock.canLight(tState)) {
 			tLevel.playSound(tPlayer, tPos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, tLevel.getRandom().nextFloat() * 0.4F + 0.8F);
