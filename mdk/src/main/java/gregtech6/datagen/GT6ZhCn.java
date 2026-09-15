@@ -110,6 +110,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addAnvilUnits();        // task p28-c-anvil
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task p29-w5-t8-armor-24
+		addTreeUnits();         // task p30-w6-t1-trees-nine — the 27 tree-family rows (hand, the tsv direct band)
 	}
 
 	/**
@@ -126,6 +127,21 @@ public class GT6ZhCn extends LanguageProvider {
 				addDirect("item.gt6." + tSuit.pieceId(i));
 				addDirect("item.gt6." + tSuit.pieceId(i) + ".tooltip");
 			}
+		}
+	}
+
+	/**
+	 * The tree family zh faces (task p30-w6-t1-trees-nine, the GT6EnUs.addTreeBlocks
+	 * mirror): the 27 block display names, all hand rows (no upstream zh dump face exists
+	 * for the 1.7.10 tree blocks — the anvil-family precedent), walked from
+	 * {@link gregtech6.registry.GT6TreeBlocks#KINDS}: "&lt;zhName&gt;树苗/原木/树叶" over the
+	 * TSV's direct band.
+	 */
+	private void addTreeUnits() {
+		for (gregtech6.block.tree.GT6TreeKind tKind : gregtech6.registry.GT6TreeBlocks.KINDS) {
+			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_sapling"));
+			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_log"));
+			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"));
 		}
 	}
 
@@ -236,6 +252,21 @@ public class GT6ZhCn extends LanguageProvider {
 		}
 		addDirect(gregtech6.block.GTGrassBlock.TOOLTIP_KEY);
 		addDirect(gregtech6.block.GTGrassBlock.TOOLTIP_SPRAY_KEY);
+	}
+
+	/**
+	 * The tree family zh faces (task p30-w6-t1-trees-nine, the GT6EnUs.addTreeBlocks
+	 * mirror): the 27 block display names, all hand rows (no upstream zh dump face exists
+	 * for the 1.7.10 tree blocks — the anvil-family precedent), walked from
+	 * {@link gregtech6.registry.GT6TreeBlocks#KINDS}: "&lt;zhName&gt;树苗/原木/树叶" over the
+	 * TSV's direct band.
+	 */
+	private void addTreeUnits() {
+		for (gregtech6.block.tree.GT6TreeKind tKind : gregtech6.registry.GT6TreeBlocks.KINDS) {
+			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_sapling"));
+			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_log"));
+			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"));
+		}
 	}
 
 	/**
