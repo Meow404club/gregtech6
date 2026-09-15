@@ -18,9 +18,14 @@ p29-w4-hot-lube; the p29-w3-heat-exchanger boiler-stack form):
     six-of-eight y+2 emission targets) — the relay books HU, the boiler
     converts to steam and the stat pins barometer>=1.
   D THE 340 K CARRIER ARMS (acceptance ③): a barrel_metal (bronze drum,
-    1696 K ceiling, gas-proof) ACCEPTS gt6:ic2hotcoolant 1000 L and HOLDS it;
-    a barrel_wood (340 K ceiling) takes the ACCEPTED fill then MELTS — the
-    block is gone, the offline >340 K flag column's live twin.
+    1696 K ceiling, gas-proof) ACCEPTS gt6:ic2pahoehoelava (1200 K, not
+    POWER_CONDUCTING) and HOLDS it; a barrel_wood (340 K ceiling) takes the
+    ACCEPTED fill then MELTS — the block is gone, the offline >340 K flag
+    column's live twin. The drain-then-refill arm pins the :184
+    allowFluid gate LIVE: ic2hotcoolant is a POWER_CONDUCTING fluid, so the
+    same drum VOIDS it on the first tick (filled 1000 -> stat 0 "of nothing")
+    — the hot coolants cannot sit in ANY barrel, which is exactly why the
+    conversion arm above reads the overflow drum, not a carrier drum.
 
 passes=2 is the idempotency proof. teardown: the explicit band restore.
 
@@ -83,7 +88,9 @@ steps = [
     Step(f'setblock {HEX_P} gt6:large_heat_exchanger{{gt.tank0:{{FluidName:"gt6:ic2hotcoolant",Amount:163840}}}}',
          expect="Changed the block"),
     Step(f"gt6heatexchanger stat {HEX_P}", expect="formed=true", sleep=2.0),
-    Step(f"gt6heatexchanger stat {HEX_P}", expect="fuel=163840/163840 L"),
+    # the burn starts the moment the NBT lands (the row resolves by content) — the
+    # fuel face is LIVE but already draining, so the pin is the face, not the level
+    Step(f"gt6heatexchanger stat {HEX_P}", expect=" HU/t fuel="),
     Step(f"setblock {OVERFLOW_P} gt6:barrel_metal", expect="Changed the block"),
     Step(f"gt6tank stat {OVERFLOW_P}", expect="L of gt6:ic2coolant", poll=20.0),
 
@@ -95,13 +102,19 @@ steps = [
     Step(f"gt6multiblock boiler stat {LB_P}", expect="formed=true", sleep=2.0),
     Step(f"gt6multiblock boiler stat {LB_P}", expect="barometer=1", sleep=6.0),
 
-    phase("D: the 340 K carrier arms — the bronze drum holds the 1200 K coolant, the wood barrel melts"),
+    phase("D: the 340 K carrier arms — the bronze drum holds the 1200 K pahoehoe, the wood barrel melts, the hot coolant voids"),
     Step(f"setblock {METAL_P} gt6:barrel_metal", expect="Changed the block"),
-    Step(f"gt6tank fill {METAL_P} gt6:ic2hotcoolant 1000", expect="filled 1000/1000 L of gt6:ic2hotcoolant (ACCEPTED)"),
-    Step(f"gt6tank stat {METAL_P}", expect="1000/64000 L of gt6:ic2hotcoolant"),
+    Step(f"gt6tank fill {METAL_P} gt6:ic2pahoehoelava 1000", expect="filled 1000/1000 L of gt6:ic2pahoehoelava (ACCEPTED)"),
+    Step(f"gt6tank stat {METAL_P}", expect="1000/64000 L of gt6:ic2pahoehoelava"),
     Step(f"setblock {WOOD_P} gt6:barrel_wood", expect="Changed the block"),
-    Step(f"gt6tank fill {WOOD_P} gt6:ic2hotcoolant 1000", expect="(ACCEPTED)"),
+    Step(f"gt6tank fill {WOOD_P} gt6:ic2pahoehoelava 1000", expect="(ACCEPTED)"),
     Step(f"execute if block {WOOD_P} gt6:barrel_wood", expect="Test failed", sleep=3.0),  # melted down — the block is gone
+    # the :184 allowFluid arm: the POWER_CONDUCTING hot coolant cannot sit in ANY barrel —
+    # the fill is ACCEPTED (the fill face has no gate) and the tick voids it (gas-proof only
+    # exempts the GAS gate — GT6HeatExchangerBlockEntity-independent upstream semantics)
+    Step(f"gt6tank draw {METAL_P} 1000", expect="drawn 1000/1000 L of gt6:ic2pahoehoelava (ACCEPTED)"),
+    Step(f"gt6tank fill {METAL_P} gt6:ic2hotcoolant 1000", expect="filled 1000/1000 L of gt6:ic2hotcoolant (ACCEPTED)"),
+    Step(f"gt6tank stat {METAL_P}", expect="0/64000 L of nothing", sleep=3.0),  # the :184 void, live
 
     phase("E: teardown — the explicit band restore (no global state was touched)"),
     Step("fill 426 62 324 436 76 333 air", expect="filled"),
