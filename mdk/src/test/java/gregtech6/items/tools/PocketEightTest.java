@@ -263,7 +263,9 @@ public class PocketEightTest {
 			tForgeUnfreeze.invoke(tForgeRegistry);
 			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
 			tLocked.setBoolean(tRegistry, false);
-			Item rItem = new Item(new Item.Properties());
+			// the durability() properties face: the 21.1 damage is a data COMPONENT keyed on
+			// max_damage — a bare Item cannot carry the axis (the BendingCylinderSmallTest form)
+			Item rItem = new Item(new Item.Properties().durability(512));
 			net.minecraft.core.Registry.register(tRegistry, aProbeId, rItem);
 			return rItem;
 		} catch (Exception aE) {
@@ -290,7 +292,9 @@ public class PocketEightTest {
 			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
 			tUnfreeze.setAccessible(true);
 			tUnfreeze.invoke(tRegistry);
-			Item rItem = new Item(new Item.Properties());
+			// the durability() properties face: the 21.1 damage is a data COMPONENT keyed on
+			// max_damage — a bare Item cannot carry the axis (the BendingCylinderSmallTest form)
+			Item rItem = new Item(new Item.Properties().durability(512));
 			net.minecraft.core.Registry.register(tRegistry, net.minecraft.resources.ResourceLocation.parse("gt6:" + aProbeId), rItem);
 			return rItem;
 		} catch (Exception aE) {
