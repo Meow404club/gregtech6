@@ -109,6 +109,26 @@ import gregtech6.registry.GTFluidPipes;
  * family — plus the standalone {@code chlorine} row (the material-gas-loop fluid the
  * port's logic-only material system has no bridge for, ruling R3). See the
  * {@link DyeChemicalFluid} block below for the full ruling map (R3/R4/R6).
+ *
+ * <p>Chemical family (task p29-w4-f1-chemicals): twenty-five further fluid-only rows —
+ * the F-1 chemicals batch of the W4 fluid wave (decisions.p29-w4-split-rulings card ①):
+ * the five oils {@code liquid_extra_heavy_oil/liquid_heavy_oil/liquid_medium_oil/
+ * liquid_light_oil/soulsandoil} (Loader_Fluids.java:59-63), the four cracked gases
+ * {@code propane/butane} (density −1000, :45-46) and {@code propylene/ethylene} (the
+ * STATE_GASEOUS −100 carrier, :47-48), the thirteen gas-closure rows
+ * {@code methane/carbondioxide/carbonmonoxide/hydrogen/nitrogen/oxygen/fluorine/helium/
+ * neon/argon/krypton/xenon/radon} — the createGas walk semantics of FL.java:1080 (bare
+ * material-name id, the boiling-point temperature rule) with the :1128-1136 density
+ * formula transcribed to literals (the port registers no material bridge) — plus
+ * {@code liquidoxygen} (:68) and the two plasmas {@code helium_plasma/nitrogen_plasma}
+ * (:40-41, 10000 K / luminosity 15, the STATE_PLASMA carriers of FL.java:1106; the
+ * upstream createPlasma amount semantics are 1 L per registered unit here — the port's
+ * L semantics, the pool-bottom ruling with the Fusion card as the consumer). All on the
+ * FOURTH spec table {@link #CHEMICAL_SPECS} riding a shared registration body with the
+ * engine/aqua families. KJS surface (the class-doc declaration the card pins): REGISTRATION
+ * face (the 25 Spec rows) only on this side — the datapack-domain recipe rows this card
+ * ships (STEAM_CRACKING/CATALYTIC_CRACKING/FM.GAS/FM.BURN) are plain data/gt6 JSON the
+ * loader already reads; tier-a crafting adds nothing; there is NO KubeJS-specific seam.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTFluids {
@@ -1211,6 +1231,169 @@ public final class GTFluids {
 		return aOwned ? CFOAMS_OWNED.get(aIndex) : CFOAMS.get(aIndex);
 	}
 
+	/**
+	 * One chemical-family declaration row (task p29-w4-f1-chemicals) — the offline-readable
+	 * half, the {@link AquaFluidSpec} shape (display name inline) plus the gas flag and the
+	 * luminosity the two plasma rows carry (the STATE_PLASMA lum 15, FL.java:1106).
+	 */
+	public record ChemicalFluidSpec(String name, String displayName, int temperature, int density,
+			int viscosity, int tint, boolean gas, int luminosity) {
+		/** The lang/description key, the descriptionId the FluidType is registered with. */
+		public String descriptionId() {return "fluid.gt6." + name;}
+	}
+
+	/**
+	 * The twenty-five chemical rows (task p29-w4-f1-chemicals), declaration order = the
+	 * upstream Loader_Fluids.java block order (:40-41 plasmas, :45-48 hydrocarbons,
+	 * :59-63 oils, the :66-68 oxygen leg, the createGas closure). Every value census-anchored:
+	 * <ul>
+	 * <li><b>Oils</b> (:59-63) — the {@code FL.create(name, display, null, 1)} four-arg form
+	 *     rides the 300 K / viscosity-1000 STATE_LIQUID carriers with the row's literal
+	 *     {@code setDensity} (900/800/700/600/650); tints are PORT-OWNED DECLARED VALUES (the
+	 *     JetFuel/aqua precedent — the upstream fluids carry dedicated PNGs this port does
+	 *     not have), an oil-dark family ramp over the creosote :242 hue;</li>
+	 * <li><b>Cracked hydrocarbons</b> (:45-48) — the four-arg form with STATE_GASEOUS
+	 *     carriers (viscosity 200 / density −100 / setGaseous, FL.java:1105); propane/butane
+	 *     override the density to the literal −1000, propylene/ethylene keep the carrier;
+	 *     tints are the materials' RGBa (MT.java:1206-1209);</li>
+	 * <li><b>Gas closure</b> — the createGas walk semantics (FL.java:1080: the bare
+	 *     material-name id, STATE_GASEOUS carriers, temperature = the :1080 rule) with every
+	 *     element's {@code plasma = boiling × 100} (OreDictMaterial.java:927) so the rule
+	 *     lands on {@code min(300, plasma − 1) = 300 K} for all thirteen; densities are the
+	 *     :1128-1136 formula transcribed per material ({@code g/cm³ > 0.0012 air →
+	 *     (long)(1000·g)}, {@code < air → (long)(−0.1/g)} — nitrogen 0.0012506 → 1, oxygen
+	 *     0.001429 → 1, fluorine 0.001696 → 1, argon 0.0017837 → 1, krypton 0.003733 → 3,
+	 *     xenon 0.005887 → 5, radon 0.00973 → 9; hydrogen 0.00008988 → −1112, helium
+	 *     0.0001785 → −560, neon 0.0008999 → −111; the compounds CH4/CO/CO2 carry no
+	 *     g/cm³ → the −100 carrier); tints are the materials' RGBa (MT.java:380/:383/:395-
+	 *     398/:406/:425/:443/:476/:1027-1037);</li>
+	 * <li><b>Liquid oxygen</b> (:68) — the six-arg form 85 K over MT.O, the LIQUID viscosity
+	 *     carrier, density = the :1130 formula over O's 0.001429 g/cm³ → 1, tint the O
+	 *     RGBa (MT.java:396);</li>
+	 * <li><b>Plasmas</b> (:40-41) — the STATE_PLASMA carriers (viscosity 10 / density
+	 *     −100000 / luminosity 15 / setGaseous, FL.java:1106) at the 10000 K literal; the
+	 *     upstream createPlasma amount is L×L mB per unit (FL.java:1086) — the port
+	 *     registers the fluid at its L semantics and the AMOUNT question stays the Fusion
+	 *     card's (the pool-bottom ruling, decisions.p29-w4-split-rulings conflicts[2]);
+	 *     tints are the parent materials' RGBa (MT.java:383/:395).</li>
+	 * </ul>
+	 */
+	public static final List<ChemicalFluidSpec> CHEMICAL_SPECS = List.of(
+		// the plasmas (Loader_Fluids.java:40-41 — the upstream block order)
+		new ChemicalFluidSpec("helium_plasma"   , "Helium Plasma"    , 10000, -100000,   10, 0xFFFFFF78, true , 15), // MT.He 255,255,120 (MT.java:383)
+		new ChemicalFluidSpec("nitrogen_plasma" , "Nitrogen Plasma"  , 10000, -100000,   10, 0xFF0096C8, true , 15), // MT.N 0,150,200 (MT.java:395)
+		// the cracked hydrocarbons (:45-48)
+		new ChemicalFluidSpec("propane"         , "Propane"          ,   300,  -1000,  200, 0xFFFF1414, true ,  0), // MT.Propane 255,20,20 (MT.java:1206); the :45 density literal
+		new ChemicalFluidSpec("butane"          , "Butane"           ,   300,  -1000,  200, 0xFFFF2828, true ,  0), // MT.Butane 255,40,40 (MT.java:1207); the :46 density literal
+		new ChemicalFluidSpec("propylene"       , "Propylene"        ,   300,   -100,  200, 0xFF5A3C8C, true ,  0), // MT.Propylene 90,60,140 (MT.java:1208); the :47 carrier
+		new ChemicalFluidSpec("ethylene"        , "Ethylene"         ,   300,   -100,  200, 0xFF402864, true ,  0), // MT.Ethylene 64,40,100 (MT.java:1209); the :48 carrier
+		// the oils (:59-63)
+		new ChemicalFluidSpec("liquid_extra_heavy_oil", "Very Heavy Oil", 300,   900, 1000, 0xFF1E140A, false,  0), // :59 — the declared oil-dark ramp (port-owned tints)
+		new ChemicalFluidSpec("liquid_heavy_oil", "Heavy Oil"        ,   300,    800, 1000, 0xFF28180A, false,  0), // :60
+		new ChemicalFluidSpec("liquid_medium_oil", "Raw Oil"         ,   300,    700, 1000, 0xFF322814, false,  0), // :61
+		new ChemicalFluidSpec("liquid_light_oil", "Light Oil"        ,   300,    600, 1000, 0xFF4A3818, false,  0), // :62
+		new ChemicalFluidSpec("soulsandoil"     , "Soulsand Oil"     ,   300,    650, 1000, 0xFF2E2030, false,  0), // :63 — the soulsand violet-brown (declared)
+		// the gas closure — the FL.java:1080 createGas walk, densities per the :1128-1136 formula
+		new ChemicalFluidSpec("methane"         , "Methane"          ,   300,   -100,  200, 0xFFC8C8FA, true ,  0), // MT.CH4 250,200,250 (MT.java:1037); no g/cm³ — the −100 carrier
+		new ChemicalFluidSpec("carbondioxide"   , "Carbon Dioxide"   ,   300,   -100,  200, 0xFF282828, true ,  0), // MT.CO2 40,40,40 (MT.java:1035)
+		new ChemicalFluidSpec("carbonmonoxide"  , "Carbon Monoxide"  ,   300,   -100,  200, 0xFF0A0A0A, true ,  0), // MT.CO 10,10,10 (MT.java:1034)
+		new ChemicalFluidSpec("hydrogen"        , "Hydrogen"         ,   300,  -1112,  200, 0xFF0000FF, true ,  0), // MT.H2 0,0,255 (MT.java:380); −0.1/0.00008988
+		new ChemicalFluidSpec("nitrogen"        , "Nitrogen"         ,   300,      1,  200, 0xFF0096C8, true ,  0), // MT.N2 (MT.java:395); 1000×0.0012506
+		new ChemicalFluidSpec("oxygen"          , "Oxygen"           ,   300,      1,  200, 0xFF0064C8, true ,  0), // MT.O2 (MT.java:396); 1000×0.001429
+		new ChemicalFluidSpec("fluorine"        , "Fluorine"         ,   300,      1,  200, 0xFF40C000, true ,  0), // MT.F2 (MT.java:397); 1000×0.001696
+		new ChemicalFluidSpec("helium"          , "Helium"           ,   300,   -560,  200, 0xFFFFFF78, true ,  0), // MT.He (MT.java:383); −0.1/0.0001785
+		new ChemicalFluidSpec("neon"            , "Neon"             ,   300,   -111,  200, 0xFFC8B4B4, true ,  0), // MT.Ne 250,180,180 (MT.java:398); −0.1/0.0008999
+		new ChemicalFluidSpec("argon"           , "Argon"            ,   300,      1,  200, 0xFF00FF00, true ,  0), // MT.Ar 0,255,0 (MT.java:406); 1000×0.0017837
+		new ChemicalFluidSpec("krypton"         , "Krypton"          ,   300,      3,  200, 0xFF80FF80, true ,  0), // MT.Kr 128,255,128 (MT.java:425); 1000×0.003733
+		new ChemicalFluidSpec("xenon"           , "Xenon"            ,   300,      5,  200, 0xFF00FFFF, true ,  0), // MT.Xe 0,255,255 (MT.java:443); 1000×0.005887
+		new ChemicalFluidSpec("radon"           , "Radon"            ,   300,      9,  200, 0xFFFF00FF, true ,  0), // MT.Rn 255,0,255 (MT.java:476); 1000×0.00973
+		// liquid oxygen (:68)
+		new ChemicalFluidSpec("liquidoxygen"    , "Liquid Oxygen"    ,    85,      1, 1000, 0xFF0064C8, false,  0)); // the :1130 formula over O's 0.001429 g/cm³; tint = the O RGBa
+
+	/** The chemical row for a gt6 id path, or null (the {@link #engineSpec} lookup shape). */
+	public static ChemicalFluidSpec chemicalSpec(String aName) {
+		for (ChemicalFluidSpec tSpec : CHEMICAL_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/** One registered chemical family: the declared spec + the three live handles. Fluid-only — no block, no bucket. */
+	public static final class ChemicalFluid {
+		/** The declaration row ({@link #CHEMICAL_SPECS}); the offline-readable half. */
+		public final ChemicalFluidSpec spec;
+		public final RegistryObject<FluidType> type;
+		public final RegistryObject<FlowingFluid> source;
+		public final RegistryObject<Fluid> flowing;
+
+		ChemicalFluid(ChemicalFluidSpec aSpec, RegistryObject<FluidType> aType, RegistryObject<FlowingFluid> aSource, RegistryObject<Fluid> aFlowing) {
+			spec = aSpec; type = aType; source = aSource; flowing = aFlowing;
+		}
+	}
+
+	/**
+	 * The table-driven registration helper for one chemical row — the
+	 * {@link #registerFluidFamily} shape plus the luminosity the plasmas carry
+	 * ({@code .lightLevel}, the iron_molten :132 form). Client layers reuse the vanilla
+	 * water textures over the row's tint (the family initializeClient convention).
+	 */
+	private static ChemicalFluid chemicalFluid(String aName) {
+		ChemicalFluidSpec tSpec = chemicalSpec(aName);
+		if (tSpec == null) throw new IllegalArgumentException("no chemical fluid spec: " + aName);
+		RegistryObject<FluidType> tType = FLUID_TYPES.register(tSpec.name(), () -> new FluidType(FluidType.Properties.create()
+				.descriptionId(tSpec.descriptionId())
+				.temperature(tSpec.temperature())
+				.density(tSpec.density())
+				.viscosity(tSpec.viscosity())
+				.lightLevel(tSpec.luminosity())) {
+			@Override
+			public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+				aConsumer.accept(new IClientFluidTypeExtensions() {
+					private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
+					private static final ResourceLocation FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
+
+					@Override
+					public ResourceLocation getStillTexture() {return STILL;}
+
+					@Override
+					public ResourceLocation getFlowingTexture() {return FLOW;}
+
+					@Override
+					public int getTintColor() {return tSpec.tint();}
+				});
+			}
+		});
+		RegistryObject<FlowingFluid> tSource = FLUIDS.register(tSpec.name(),
+				() -> new ForgeFlowingFluid.Source(chemicalProperties(tSpec, tType)));
+		RegistryObject<Fluid> tFlowing = FLUIDS.register(tSpec.name() + "_flowing",
+				() -> new ForgeFlowingFluid.Flowing(chemicalProperties(tSpec, tType)));
+		SOURCE_SEAM.put(tSpec.name(), tSource);
+		FLOWING_SEAM.put(tSpec.name(), tFlowing);
+		return new ChemicalFluid(tSpec, tType, tSource, tFlowing);
+	}
+
+	/** The shared per-family Properties for the chemical rows — registry-event time only (see chemicalFluid). */
+	private static ForgeFlowingFluid.Properties chemicalProperties(ChemicalFluidSpec aSpec, RegistryObject<FluidType> aType) {
+		// NO .block(...) — the fluid-only declaration of this family
+		return new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aSpec.name()), FLOWING_SEAM.get(aSpec.name()));
+	}
+
+	/**
+	 * The twenty-five chemical registrations — one per {@link #CHEMICAL_SPECS} row, in
+	 * declaration order (the upstream Loader_Fluids.java block order: plasmas,
+	 * hydrocarbons, oils, the gas closure, liquid oxygen). Static-init order: the
+	 * DeferredRegister fields accumulate, the entries fire with the existing
+	 * {@link #onModConstruct} (types before fluids).
+	 */
+	public static final List<ChemicalFluid> CHEMICALS = List.of(
+			chemicalFluid("helium_plasma"), chemicalFluid("nitrogen_plasma"),
+			chemicalFluid("propane"), chemicalFluid("butane"), chemicalFluid("propylene"), chemicalFluid("ethylene"),
+			chemicalFluid("liquid_extra_heavy_oil"), chemicalFluid("liquid_heavy_oil"), chemicalFluid("liquid_medium_oil"),
+			chemicalFluid("liquid_light_oil"), chemicalFluid("soulsandoil"),
+			chemicalFluid("methane"), chemicalFluid("carbondioxide"), chemicalFluid("carbonmonoxide"), chemicalFluid("hydrogen"),
+			chemicalFluid("nitrogen"), chemicalFluid("oxygen"), chemicalFluid("fluorine"),
+			chemicalFluid("helium"), chemicalFluid("neon"), chemicalFluid("argon"),
+			chemicalFluid("krypton"), chemicalFluid("xenon"), chemicalFluid("radon"),
+			chemicalFluid("liquidoxygen"));
+
 	private GTFluids() {}
 
 	@SubscribeEvent
@@ -1342,6 +1525,18 @@ public final class GTFluids {
 						ForgeRegistries.BLOCKS.getKey(tFamily.block.get()),
 						tFamily.displayName(),
 						tFamily.dyeIndex);
+			}
+			// task p29-w4-f1-chemicals — the chemical family, the same smoke line shape
+			// (temperature K, density, the gaseous/plasma markers, the lum face on the plasmas)
+			for (ChemicalFluid tFamily : CHEMICALS) {
+				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}{}{} (chemical family, {})",
+						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
+						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
+						tFamily.spec.temperature(),
+						tFamily.spec.density(),
+						tFamily.spec.gas() ? " (gaseous)" : "",
+						tFamily.spec.luminosity() > 0 ? ", lum " + tFamily.spec.luminosity() : "",
+						tFamily.spec.displayName());
 			}
 		});
 	}
