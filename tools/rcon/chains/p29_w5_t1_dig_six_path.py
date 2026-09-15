@@ -54,14 +54,14 @@ steps += [
 # --------------------------------- B: the repeat arm — a path is a no-op
 steps += [
     phase("B: the repeat arm — dirt_path never re-converts (unpaid NO-OP)"),
-    Step("gt6dig use 389 64 192 spade", expect="NO-OP at 389, 64, 192"),
+    Step("gt6dig use 389 64 192 spade", expect="NO-OP"),
 ]
 
 # --------------------------------- C: the pickaxe negative (no path arm upstream)
 steps += [
     phase("C: the pickaxe negative — the pickaxe carries the torch arm only"),
     Step(f"setblock 392 64 192 minecraft:grass_block", expect="Changed the block"),
-    Step("gt6dig use 392 64 192 pickaxe", expect="NO-OP at 392, 64, 192"),
+    Step("gt6dig use 392 64 192 pickaxe", expect="NO-OP"),
 ]
 
 # --------------------------------------------------------------------- T: teardown

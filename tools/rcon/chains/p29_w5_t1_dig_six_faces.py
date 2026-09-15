@@ -49,6 +49,8 @@ steps += [
     Step("gt6dig speed 409 64 192 universal_spade", expect="speed=4.5, correctForDrops=true"),
     Step(f"setblock 410 64 192 minecraft:rail", expect="Changed the block"),
     Step("gt6dig speed 410 64 192 universal_spade", expect="speed=4.5, correctForDrops=true"),
+    # the support floor (the bbox cleanup strips y62..66 — a bare snow layer pops)
+    Step(f"setblock 411 63 192 minecraft:stone", expect="Changed the block"),
     Step(f"setblock 411 64 192 minecraft:snow", expect="Changed the block"),
     Step("gt6dig speed 411 64 192 universal_spade", expect="speed=4.5, correctForDrops=true"),
     Step(f"setblock 411 64 192 minecraft:snow_block", expect="Changed the block"),

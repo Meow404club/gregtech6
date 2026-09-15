@@ -5,7 +5,10 @@ Chain semantics (task p29-w5-t1-dig-six RCON arm 1, the /gt6dig place channel �
 command drives the item's own useOn so the inventory scan is the LIVE one):
 
   A the pickaxe/spade/shovel/universal_spade place a torch from the fake player's
-    inventory onto a floor block (upstream Behavior_Place_Torch.java:37-59 —
+    inventory onto a STONE floor block (stone = the no-path-arm floor: the
+    spade/shovel/universal run the path arm BEFORE the torch arm — the upstream
+    behavior order GT_Tool_Spade.java:110-113 — so a grass floor is consumed by
+    Place_Path first; the grass-face conversion lives in the path chain) (upstream Behavior_Place_Torch.java:37-59 —
     tryPlaceItemIntoWorld counterpart = BlockItem.place, the torch lands on TOP,
     the stack shrinks 4 -> 3);
   B the second arm on the same tool: 3 -> 2 (the scan keeps finding the stack);
@@ -41,23 +44,23 @@ steps += [
     phase("A: pickaxe/spade/shovel/universal_spade place a torch from the inventory (Behavior_Place_Torch :37-59)"),
     Step(f"setblock 384 64 192 minecraft:stone", expect="Changed the block"),
     Step("gt6dig place 384 64 192 pickaxe",
-         expect="torchPlaced=true, torchesLeft=3 (of 4), landed=minecraft:torch"),
-    Step(f"setblock 385 64 192 minecraft:grass_block", expect="Changed the block"),
+         expect="torchPlaced=true, torchesLeft=3 (of 4), landed=Block{minecraft:torch}"),
+    Step(f"setblock 385 64 192 minecraft:stone", expect="Changed the block"),
     Step("gt6dig place 385 64 192 spade",
-         expect="torchPlaced=true, torchesLeft=3 (of 4), landed=minecraft:torch"),
-    Step(f"setblock 386 64 192 minecraft:dirt", expect="Changed the block"),
+         expect="torchPlaced=true, torchesLeft=3 (of 4), landed=Block{minecraft:torch}"),
+    Step(f"setblock 386 64 192 minecraft:stone", expect="Changed the block"),
     Step("gt6dig place 386 64 192 shovel",
-         expect="torchPlaced=true, torchesLeft=3 (of 4), landed=minecraft:torch"),
-    Step(f"setblock 387 64 192 minecraft:grass_block", expect="Changed the block"),
+         expect="torchPlaced=true, torchesLeft=3 (of 4), landed=Block{minecraft:torch}"),
+    Step(f"setblock 387 64 192 minecraft:stone", expect="Changed the block"),
     Step("gt6dig place 387 64 192 universal_spade",
-         expect="torchPlaced=true, torchesLeft=3 (of 4), landed=minecraft:torch"),
+         expect="torchPlaced=true, torchesLeft=3 (of 4), landed=Block{minecraft:torch}"),
 ]
 
 # --------------------------------- B: the second placement (the scan keeps finding the stack)
 steps += [
     phase("B: the second arm — torchesLeft 3 -> 2"),
     Step("gt6dig place 384 64 192 pickaxe",
-         expect="torchPlaced=true, torchesLeft=2 (of 4), landed=minecraft:torch"),
+         expect="torchPlaced=true, torchesLeft=2 (of 4), landed=Block{minecraft:torch}"),
 ]
 
 # --------------------------------- C: the bare negative (no tool, no arm)
