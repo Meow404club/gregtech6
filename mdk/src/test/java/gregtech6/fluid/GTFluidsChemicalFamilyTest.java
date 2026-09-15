@@ -141,6 +141,23 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 		}
 	}
 
+	/**
+	 * Task p30-pool-gas-seeds-13 — the GAS-list reconciliation: upstream the
+	 * {@code FL.create} STATE_GASEOUS arm auto-adds the fluid name to {@code FluidsGT.GAS}
+	 * (FL.java:1105) while STATE_PLASMA routes to {@code FluidsGT.PLASMA} (:1106) and the
+	 * liquid rows never touch it — so every gaseous non-plasma row of
+	 * {@link GTFluids#CHEMICAL_SPECS} must be a {@link GTFluidLists#GAS} member under its
+	 * port registry path, the plasmas and liquids must not.
+	 */
+	@Test
+	public void gaseousRowsReconcileWithTheGasList() {
+		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.CHEMICAL_SPECS) {
+			boolean tPlasma = tSpec.name().endsWith("_plasma"); // Loader_Fluids.java:40-41, the :1106 PLASMA route
+			assertEquals(tSpec.gas() && !tPlasma, GTFluidLists.isGas(tSpec.name()),
+					tSpec.name() + ": the GAS-list reconciliation");
+		}
+	}
+
 	/** The registration shape: source = the id, flowing = id + "_flowing" (the four-DR template), specs aligned with the live handles. */
 	@Test
 	public void registrationShapeCarriesSourceAndFlowingIds() {
