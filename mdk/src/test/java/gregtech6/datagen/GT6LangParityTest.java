@@ -1138,13 +1138,13 @@ private static final int ZH_KEY_FLOOR = 3060; // 2839 +3 (task p29-w2-eu-special
 			+ " (+14 task p29-w3-distill-crucible: the seven crucible ladder rung carriers"
 			+ " (the CRUCIBLE_ROWS walk grew 1 -> 8) + the seven dedicated GTCrucibleWallBlock"
 			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5 = 1094); the 4 Roasting row carriers joined at task p29-w4-eu-bridge (1094 + 4 = 1098)");
-		assertEquals(149, tChecked, "the checked block census: every DeferredRegister block NOT"
+		assertEquals(150, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"
 			+ " the eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
 			+ " and the transformer joined at 323c4ae4/1e07061d; the 28 p29-w3 part blocks"
 			+ " joined at bff8400a — GTMultiBlocks 7 -> 25 checked (the ten composed metal"
-			+ " walls exempt) + the six dense additions); the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (134 + 5; the HEX controller joins at task p29-w3-heat-smelter — GT6HeatExchangers 1 checked; the 15 EU-bridge converter rows joined at task p29-w4-eu-bridge (134 + 15 = 149 checked — GTMachines 38 checked, the bridges' atomic names), the 4 Roasting rows exempt as composed carriers)"
+			+ " walls exempt) + the six dense additions); the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (134 + 5; the HEX controller joins at task p29-w3-heat-smelter — GT6HeatExchangers 1 checked; the 15 EU-bridge converter rows joined at task p29-w4-eu-bridge (134 + 15 = 149 checked — GTMachines 38 checked, the bridges' atomic names), the 4 Roasting rows exempt as composed carriers); the missed 18103 bedrock_drill_head joined at task p30-pool-drillhead-18103 (149 + 1 = 150 — GTMultiBlocks 25 -> 26 checked)"
 			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"
