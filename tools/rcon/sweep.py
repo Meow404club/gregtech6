@@ -323,6 +323,16 @@ SESSION_GROUPS = (
     # admission mirrors the p29 W3 cluster form (bbox-registered, band-local setblocks
     # only). --group p29_w4_eu_bridge matches through the chains' embedded name prefix.
     ("p29_w4_electric_heater", "p29_w4_electric_engine", "p29_w4_electric_motor", "p29_w4_roasting_oven"),
+    # P29 W4 card ④ (p29-w4-hot-lube): the two hot-lube chains — one fresh z=328
+    # band, x-disjoint columns (HEX 426..436 / diesel-lube 444..452); the hex leg
+    # runs the :203 ic2hotcoolant -> ic2coolant fuels_hot row through the large
+    # heat exchanger (the setblock-NBT tank channel, the boiler-stack HU relay)
+    # plus the 340 K carrier arms (bronze drum holds / wood barrel melts); the
+    # lube leg puts the gt6:lubricant_bucket item face live and drives the steel
+    # diesel engine the 8 crafting rows build. Admission mirrors the p29 W3/W4
+    # cluster form.
+    # --group p29_w4_hot_lube matches through the chains' embedded name prefix.
+    ("p29_w4_hot_lube_hex", "p29_w4_hot_lube_lube"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 
