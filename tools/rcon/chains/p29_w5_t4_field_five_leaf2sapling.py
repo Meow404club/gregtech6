@@ -35,7 +35,8 @@ steps += [
     Step("fill 409 62 224 411 67 226 minecraft:air", expect="filled"),
     Step("setblock 410 64 225 minecraft:oak_leaves", expect="Changed the block"),
     Step("gt6field break 410 64 225 branch_cutter",
-         expect="neighbours 1 -> 0 (broke 1), drops=[minecraft:oak_sapling x1] (count 1)"),
+         expect="neighbours 1 -> 0 (broke 1), drops=[minecraft:oak_sapling x1] (count 1), "
+                "toolDamage=1/128"),
 ]
 
 # --------------------------------- T: teardown

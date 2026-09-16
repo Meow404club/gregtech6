@@ -40,7 +40,8 @@ steps += [
     # the dig-speed gate target: stone is off the snow/fire family -> speed 0.0 -> skipped
     Step("setblock 400 64 224 minecraft:stone", expect="Changed the block"),
     Step("gt6field break 401 65 225 plow",
-         expect="destroyed=true, neighbours 27 -> 1 (broke 26), drops=[minecraft:snowball"),
+         expect="destroyed=true, neighbours 27 -> 1 (broke 26), "
+                "drops=[minecraft:snowball x4] (count 104), toolDamage=26/512"),
 ]
 
 # --------------------------------- T: teardown

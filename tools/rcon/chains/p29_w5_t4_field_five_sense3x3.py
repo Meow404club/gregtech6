@@ -46,9 +46,9 @@ steps += [
          node_cmds={"1.21.1": "fill 405 64 224 407 64 226 minecraft:short_grass"}),
     Step("gt6field break 406 64 225 sense",
          expect="destroyed=true, neighbours 18 -> 9 (broke 9), "
-                "drops=[minecraft:grass x1, minecraft:grass x1",
+                "drops=[minecraft:grass x1] (count 9), toolDamage=0/2048",
          node_expects={"1.21.1": "destroyed=true, neighbours 18 -> 9 (broke 9), "
-                                 "drops=[minecraft:short_grass x1, minecraft:short_grass x1"}),
+                                 "drops=[minecraft:short_grass x1] (count 9), toolDamage=0/2048"}),
 ]
 
 # --------------------------------- T: teardown
