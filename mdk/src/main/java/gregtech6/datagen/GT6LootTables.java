@@ -135,7 +135,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
-                new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK)), // task p30-w6-rocks-sticks — the surface deco band
+                new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
+                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK)), // task p30-ore-4-loot — the 3922 ore tables
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -179,7 +180,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
-                new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK))); // task p30-w6-rocks-sticks — the surface deco band
+                new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
+                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK))); // task p30-ore-4-loot — the 3922 ore tables
         //?}
     }
 
