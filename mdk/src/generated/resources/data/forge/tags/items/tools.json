@@ -26,6 +26,12 @@
     "gt6:branch_cutter",
     "gt6:sense",
     "gt6:plow",
-    "gt6:hand_drill"
+    "gt6:hand_drill",
+    "gt6:scissors",
+    "gt6:scoop",
+    "gt6:plunger",
+    "gt6:flint_and_tinder",
+    "gt6:rolling_pin",
+    "gt6:bending_cylinder"
   ]
 }

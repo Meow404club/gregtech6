@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "tag": "forge:rods/wooden"
+    },
+    "V": {
+      "tag": "minecraft:wool"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "SVS",
+    "SSS",
+    "xSh"
+  ],
+  "result": {
+    "item": "gt6:scoop"
+  },
+  "show_notification": true
+}

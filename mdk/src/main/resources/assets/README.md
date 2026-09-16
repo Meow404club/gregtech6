@@ -139,6 +139,17 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   `Textures.ItemIcons.VOID`, i.e. NOTHING to compose — a single-layer icon); the port
   shows the grayscale icon un-tinted at the single steel tier — declared deviation,
   the family runtime-tint pool.
+- `gt6/textures/item/{scissors,scoop,plunger,flint_tinder,rolling_pin,bending_cylinder}.png`
+  (+ the `_overlay` twins, 12 textures, task p29-w5-t5-scene-six) — byte-identical
+  borrows from upstream `textures/items/iconsets/{SCISSORS,SCOOP,PLUNGER,FLINT_TINDER,
+  ROLLING_PIN,BENDING_CYLINDER}{,_OVERLAY}.png`, filenames lowercased on borrow; sha256
+  heads: scissors `e03dde3e0ac705ff`, scoop `7fe747cd488395e6`, plunger `39e8d99b127e6d7c`,
+  flint_tinder `9c5bef3c9c4e6e47`, rolling_pin `dc17057249cad058`,
+  bending_cylinder `173e914c8435f202`. The upstream tool head icons
+  (each GT_Tool_*.getIcon head half; the handle half is `Textures.ItemIcons.VOID`
+  for the crafting trio — a single-layer icon composed over its own shadow overlay);
+  the port shows the grayscale icons un-tinted at the single steel tier — declared
+  deviation, the family runtime-tint pool.
 - `gt6/textures/item/food_can/*.png` — the food-can row0 subset (8 textures, task
   p25-food-can-row0), byte-identical borrows renamed to the registered item ids:
   - `empty.png`            `textures/items/gt.multiitem.randomtools/998.png`

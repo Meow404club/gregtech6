@@ -193,6 +193,16 @@ public final class GT6ToolLootModifiers {
 		return java.util.Collections.unmodifiableMap(tMap);
 	}
 
+	/**
+	 * The shear-plant self-drop set (task p29-w5-t5-scene-six): the vine arm of
+	 * GT_Tool_Scissors.convertBlockDrops (:87-101 — the cleared-drops + vine self
+	 * replacement, verbatim) and the shears-class cobweb/vine full-drop face of the scoop
+	 * (the research-ammunition declarative mapping; the vanilla loot match_tool predicate
+	 * is the bare-shears ITEM identity, ShearsItem {@code Items.SHEARS} — it cannot see
+	 * either GT tool, so this seam IS the drop path for both).
+	 */
+	public static final ImmutableSet<Block> PLANT_SELF = ImmutableSet.of(Blocks.VINE, Blocks.COBWEB);
+
 	private GT6ToolLootModifiers() {
 	}
 
@@ -310,6 +320,13 @@ public final class GT6ToolLootModifiers {
 			case SENSE_VEGETAL -> {
 				return GTSenseItem.convertVegetal(aState, aDrops); // task p29-w5-t4-field-five — the grass/fern self-drop + the dead-bush stick
 			}
+			case PLANT_SELF_DROP -> {
+				Block tBlock = aState.getBlock();
+				if (!PLANT_SELF.contains(tBlock) || tBlock.asItem() == net.minecraft.world.item.Items.AIR) return false;
+				aDrops.clear(); // upstream GT_Tool_Scissors.java:89 — the cleared-drops contract
+				aDrops.add(new ItemStack(tBlock)); // :90 — the vine self replacement, verbatim shape
+				return true;
+			}
 		}
 		return false;
 	}
@@ -363,7 +380,9 @@ public final class GT6ToolLootModifiers {
 		 * the apple arm reads the tool's fortune enchantment + the loot random, so the
 		 * dispatch lives on {@link #doApply} over {@code GTBranchCutterItem.convertLeaves}.
 		 */
-		BRANCHCUTTER_LEAVES
+		BRANCHCUTTER_LEAVES,
+		/** The scissors/scoop vine+cobweb self-drop (task p29-w5-t5-scene-six, GT_Tool_Scissors.java:87-101). */
+		PLANT_SELF_DROP
 	}
 
 		private static final Codec<Mode> MODE_CODEC = Codec.STRING.xmap(Mode::valueOf, Mode::name);

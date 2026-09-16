@@ -352,6 +352,28 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("foam_spray_owned_" + tDye, mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/spray/foam_owned_" + tDye));
         }
+        // the six scene tools (task p29-w5-t5-scene-six) — handheld parents over the
+        // byte-identical upstream iconset borrows (assets/README.md attribution): layer0 =
+        // the tool head icon, layer1 = the OVERLAY shadow borrow (the crowbar/cutter
+        // two-layer shape; the upstream handle half is VOID — passes 2/3 draw nothing).
+        withExistingParent("scissors", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/scissors"))
+            .texture("layer1", modLoc("item/scissors_overlay"));
+        withExistingParent("scoop", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/scoop"))
+            .texture("layer1", modLoc("item/scoop_overlay"));
+        withExistingParent("plunger", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/plunger"))
+            .texture("layer1", modLoc("item/plunger_overlay"));
+        withExistingParent("flint_and_tinder", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/flint_tinder"))
+            .texture("layer1", modLoc("item/flint_tinder_overlay"));
+        withExistingParent("rolling_pin", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/rolling_pin"))
+            .texture("layer1", modLoc("item/rolling_pin_overlay"));
+        withExistingParent("bending_cylinder", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/bending_cylinder"))
+            .texture("layer1", modLoc("item/bending_cylinder_overlay"));
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

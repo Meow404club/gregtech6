@@ -182,6 +182,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation SENSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sense");
 	public static final ResourceLocation HAND_DRILL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hand_drill");
 
+	/** The six scene-tool row ids (task p29-w5-t5-scene-six — the same CR row id shape; the flint pair is TWO rows). */
+	public static final ResourceLocation SCISSORS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "scissors");
+	public static final ResourceLocation SCOOP_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "scoop");
+	public static final ResourceLocation PLUNGER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "plunger");
+	public static final ResourceLocation FLINT_AND_TINDER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "flint_and_tinder");
+	public static final ResourceLocation FLINT_AND_STEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "flint_and_steel");
+	public static final ResourceLocation ROLLING_PIN_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "rolling_pin");
+	public static final ResourceLocation BENDING_CYLINDER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bending_cylinder");
+
 	/** The CR.shapeless self-recast row id of a sensor path (task p26-sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
 	public static ResourceLocation sensorRecastId(String aPath) {
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, aPath + "_recast");
@@ -275,6 +284,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		branchCutterBuilder().save(aConsumer, BRANCH_CUTTER_ID);
 		senseBuilder().save(aConsumer, SENSE_ID);
 		handDrillBuilder().save(aConsumer, HAND_DRILL_ID);
+		// task p29-w5-t5-scene-six — the six scene-tool rows (the same steel-route shape)
+		scissorsBuilder().save(aConsumer, SCISSORS_ID);
+		scoopBuilder().save(aConsumer, SCOOP_ID);
+		net.minecraft.world.item.Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber);
+		if (tRubberPlate != null) plungerBuilder(tRubberPlate).save(aConsumer, PLUNGER_ID); // the CR.ONLY_IF_HAS_RESULT face — no rubber plate, no row
+		flintAndTinderFromFlintAndSteelBuilder().save(aConsumer, FLINT_AND_TINDER_ID);
+		flintAndSteelBuilder().save(aConsumer, FLINT_AND_STEEL_ID);
+		rollingPinBuilder().save(aConsumer, ROLLING_PIN_ID);
+		bendingCylinderBuilder().save(aConsumer, BENDING_CYLINDER_ID);
 	}
 	//?} else {
 	/*@Override
@@ -356,6 +374,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		branchCutterBuilder().save(aOutput, BRANCH_CUTTER_ID);
 		senseBuilder().save(aOutput, SENSE_ID);
 		handDrillBuilder().save(aOutput, HAND_DRILL_ID);
+		// task p29-w5-t5-scene-six — the six scene-tool rows (the same steel-route shape)
+		scissorsBuilder().save(aOutput, SCISSORS_ID);
+		scoopBuilder().save(aOutput, SCOOP_ID);
+		net.minecraft.world.item.Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber);
+		if (tRubberPlate != null) plungerBuilder(tRubberPlate).save(aOutput, PLUNGER_ID); // the CR.ONLY_IF_HAS_RESULT face — no rubber plate, no row
+		flintAndTinderFromFlintAndSteelBuilder().save(aOutput, FLINT_AND_TINDER_ID);
+		flintAndSteelBuilder().save(aOutput, FLINT_AND_STEEL_ID);
+		rollingPinBuilder().save(aOutput, ROLLING_PIN_ID);
+		bendingCylinderBuilder().save(aOutput, BENDING_CYLINDER_ID);
 	}
 	*///?}
 
@@ -1625,5 +1652,124 @@ public class GT6CraftingRecipes extends RecipeProvider {
         return digToolBuilder(GT6Tools.HAND_DRILL.get(), new String[] {"P  ", " S ", "hSf"},
                 'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
                 'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    // ------------------------------------------------------------------
+    // task p29-w5-t5-scene-six — the six scene-tool rows. The OreProcessing_Tool
+    // uppercase alphabet (Loader_Tools.java:308-318 comment): I=ingot P=plate
+    // T=screw O=ring S=stick G=gem C=plateGem R=stone; the lowercase letters are
+    // the CR.java:339-361 tool keys. Single-steel-tier convergence folds the
+    // material loops onto the steel plates/screw/ring items (the t7 pocket
+    // letter-by-letter precedent).
+
+    /**
+     * The scissors row — the upstream {"PfP"," T ","OdO"} pattern (Loader_Tools.java:326,
+     * the plateGem variant "CfC" CUT with the gem-plate system): 2 steel plates + the
+     * file tool + the steel screw (the 'T' centre) + 2 steel rings + the screwdriver tool.
+     * The screw/ring ride the BARE GTMaterialItems items (the ring_steel bare-item
+     * precedent, the tank-valve rows); the two tools pay one point per craft through
+     * their crafting-remaining faces.
+     */
+    private ShapedRecipeBuilder scissorsBuilder() {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.SCISSORS.get())
+                .pattern("PfP").pattern(" T ").pattern("OdO")
+                .define('P', DIG_STEEL_PLATES)
+                .define('f', GT6ItemTags.TOOLS_FILE)
+                .define('T', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.screw, gregapi.data.MT.Steel).get())
+                .define('O', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.ring, gregapi.data.MT.Steel).get())
+                .define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+                .unlockedBy("has_steel_plate", has(DIG_STEEL_PLATES));
+    }
+
+    /**
+     * The scoop row — the upstream {"SVS","SSS","xSh"} pattern verbatim (Loader_Tools.java:320
+     * with V = the special auxiliary wool, S = stick): 6 rods frame the wool net ('V' =
+     * {@code ItemTags.WOOL}, the auxiliary identity kept; the vanilla tag rides both legs — the 21.1 neoforge Tags.Items has no WOOL field) + the wire cutter + the hammer
+     * tools (the 'x'/'h' letters, the CR.java:359/:346 alphabet).
+     */
+    private ShapedRecipeBuilder scoopBuilder() {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.SCOOP.get())
+                .pattern("SVS").pattern("SSS").pattern("xSh")
+                .define('S', Tags.Items.RODS_WOODEN)
+                .define('V', ItemTags.WOOL)
+                .define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+                .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+                // the key sorts BEFORE "has_the_recipe": the canonical criteria/requirements
+                // order must stay insertion==alphabetical or the datagen_tree_check
+                // requirements normalizer cannot bridge the 1.21 leg ("has_wool" > "has_the_recipe").
+                .unlockedBy("has_fleece", has(ItemTags.WOOL));
+    }
+
+    /**
+     * The plunger row — the upstream {"xVV"," SV","S f"} pattern (Loader_Tools.java:315
+     * with V = the special auxiliary rubber plate): the wire cutter + 2 rubber plates +
+     * 2 rods + the file tool. CALLER GUARDS the null rubber plate (the
+     * CR.ONLY_IF_HAS_RESULT face — no registered plate item, no row).
+     */
+    private ShapedRecipeBuilder plungerBuilder(net.minecraft.world.item.Item aRubberPlate) {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.PLUNGER.get())
+                .pattern("xVV").pattern(" SV").pattern("S f")
+                .define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+                .define('V', aRubberPlate)
+                .define('S', Tags.Items.RODS_WOODEN)
+                .define('f', GT6ItemTags.TOOLS_FILE)
+                .unlockedBy("has_rubber_plate", has(aRubberPlate));
+    }
+
+    /**
+     * The flint-and-tinder SELF-RECAST row — the upstream :207 Steel shapeless row
+     * verbatim: flint_and_steel → gt6:flint_and_tinder (one-way; the :208 reverse row
+     * below is the counterpart).
+     */
+    private ShapelessRecipeBuilder flintAndTinderFromFlintAndSteelBuilder() {
+        return ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, GT6Tools.FLINT_AND_TINDER.get())
+                .requires(Items.FLINT_AND_STEEL)
+                .unlockedBy("has_flint_and_steel", has(Items.FLINT_AND_STEEL));
+    }
+
+    /**
+     * The flint-and-steel reverse row — the upstream :208 {"T "," F"} Steel row
+     * (flint + steel NUGGET → vanilla flint_and_steel). DECLARED deviation: the upstream
+     * {@code CR.DEL_OTHER_NATIVE_RECIPES} deletes the vanilla iron-ingot row, the port
+     * datagen cannot delete — the two rows coexist (the vanilla iron route stays live).
+     */
+    private ShapedRecipeBuilder flintAndSteelBuilder() {
+        TagKey<Item> tSteelNuggets = gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.NUGGETS_FAMILY, "steel");
+        return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.FLINT_AND_STEEL)
+                .pattern("T ").pattern(" F")
+                .define('T', tSteelNuggets)
+                .define('F', Items.FLINT)
+                .unlockedBy("has_flint", has(Items.FLINT));
+    }
+
+    /**
+     * The rolling-pin row — the upstream wood route (Loader_Recipes_Woods.java:237,
+     * {"  S"," P ","S f"}): planks + 2 rods + the file tool (the 'P' letter folds to the
+     * vanilla planks tag — the upstream MT.Wood I/P special case; the :238 knife variant
+     * and the :250-253 metal/plastic ladder are the pool cuts).
+     */
+    private ShapedRecipeBuilder rollingPinBuilder() {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.ROLLING_PIN.get())
+                .pattern("  S").pattern(" P ").pattern("S f")
+                .define('S', Tags.Items.RODS_WOODEN)
+                .define('P', ItemTags.PLANKS)
+                .define('f', GT6ItemTags.TOOLS_FILE)
+                .unlockedBy("has_planks", has(ItemTags.PLANKS));
+    }
+
+    /**
+     * The LARGE bending-cylinder row — the upstream {"sfh","III","III"} self-craft row
+     * (Loader_Tools.java:312, the Small :313 with ONE more ingot row — the 6*U amount
+     * made literal): saw+file+hammer worn, 6 generic ingots (the
+     * bendingCylinderSmallBuilder shape, one ingot row longer).
+     */
+    private ShapedRecipeBuilder bendingCylinderBuilder() {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.BENDING_CYLINDER.get())
+                .pattern("sfh").pattern("III").pattern("III")
+                .define('s', GT6ItemTags.TOOLS_SAW)
+                .define('f', GT6ItemTags.TOOLS_FILE)
+                .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+                .define('I', Tags.Items.INGOTS)
+                .unlockedBy("has_ingot", has(Tags.Items.INGOTS));
     }
 }

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "T": {
+      "tag": "forge:nuggets/steel"
+    }
+  },
+  "pattern": [
+    "T ",
+    " F"
+  ],
+  "result": {
+    "item": "minecraft:flint_and_steel"
+  },
+  "show_notification": true
+}

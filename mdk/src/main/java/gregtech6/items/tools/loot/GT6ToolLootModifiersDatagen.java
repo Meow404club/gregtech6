@@ -36,6 +36,10 @@ import gregtech6.registry.GT6Tools;
  * verified on both jars). {@link #MODIFIER_NAMES} is the single source both the
  * {@code add()} calls and the twin builder walk, so the two indices cannot drift. The
  * 21.1 node's own runData emits its native index into the node-local verification tree.
+ * ORDER (t5 revision): the 21.1 native index order is the backing-map iteration face —
+ * with five entries it is NOT alphabetical any more (the t1 three-entry alphabetical
+ * coincidence, live 21.1 runData output 2026-09-16), so the canonical twin pins the
+ * OBSERVED 21.1 order and the datagen_tree_check gate flags any drift.
  */
 public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 
@@ -49,6 +53,9 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 	 * its own HashMap order (the declared forge-gated canonical-only face). A
 	 * renamed/reordered entry drifts the twin and the gate flags it — re-derive the
 	 * order from the node output after ANY name change.
+	 * drifts the twin and the gate flags it. MERGE NOTE (S17): when a sibling tool card
+	 * rebases over this file, take the LATER card's list WHOLESALE and rerun runData —
+	 * the order is re-observed, never hand-merged.
 	 */
 	static final List<String> MODIFIER_NAMES = List.of(
 			"construction_ender_chest",
@@ -58,7 +65,9 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 			"club_rock_crush",
 			"sword_harvest",
 			"branch_cutter_leaves",
-			"sense_vegetal");
+			"sense_vegetal",
+			"scissors_plant_self",
+			"scoop_plant_self");
 
 	/** The ctor face of the platform output (the base field is private — kept for the twin path). */
 	private final PackOutput mOutput;
@@ -106,6 +115,14 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 		add("sense_vegetal", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.SENSE.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.SENSE_VEGETAL));
+		// task p29-w5-t5-scene-six — the scissors vine self-drop (GT_Tool_Scissors.java:87-101)
+		// and the scoop shears-class vine+cobweb full-drop; one shared mode, two identity gates.
+		add("scissors_plant_self", new GT6ToolLootModifiers.GT6ToolConvertModifier(
+				conditions(GT6Tools.SCISSORS.get()),
+				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.PLANT_SELF_DROP));
+		add("scoop_plant_self", new GT6ToolLootModifiers.GT6ToolConvertModifier(
+				conditions(GT6Tools.SCOOP.get()),
+				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.PLANT_SELF_DROP));
 	}
 
 	private static LootItemCondition[] conditions(net.minecraft.world.item.Item aTool) {

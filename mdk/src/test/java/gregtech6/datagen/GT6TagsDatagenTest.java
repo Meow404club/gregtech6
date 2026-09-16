@@ -375,10 +375,12 @@ class GT6TagsDatagenTest {
     /**
      * The p25 tool face (task p25-tool-hammer-wrench + p25-food-can-row0, the PIN
      * evolution duty): the three new self-owned crafting-tool tags carry EXACTLY their
-     * one registered member each, and the ecosystem tools band grew 7 → 9 → 10 → 16 → 21
-     * (the hammer + wrench pair, then the bending cylinder, then task p29-w5-t1-dig-six's
-     * six dig tools, then task p29-w5-t4-field-five's five field tools, appended in the
-     * band order). Pinned so any band change is a conscious constant update.
+     * one registered member each, and the ecosystem tools band grew 7 → 9 → 10 → 16 → 22
+     * → 27 → 33 (the hammer + wrench pair, then the bending cylinder, then task
+     * p29-w5-t1-dig-six's six dig tools, then task p29-w5-t5-scene-six's six scene
+     * tools, then task p29-w5-t2-blade-six's six blade tools, then task
+     * p29-w5-t4-field-five's five field tools, appended in the band order). Pinned so
+     * any band change is a conscious constant update.
      */
     @Test
     void p25ToolFacesAreTheExactMembers() throws Exception {
@@ -405,6 +407,14 @@ class GT6TagsDatagenTest {
         assertEquals(List.of("gt6:branch_cutter"), tagValues("gt6/tags/items/tools/branch_cutter.json"));
         assertEquals(List.of("gt6:sense"), tagValues("gt6/tags/items/tools/sense.json"));
         assertEquals(List.of("gt6:hand_drill"), tagValues("gt6/tags/items/tools/hand_drill.json"));
+        // task p29-w5-t5-scene-six: the six scene-tool tags join the one-member census
+        assertEquals(List.of("gt6:scissors"), tagValues("gt6/tags/items/tools/scissors.json"));
+        assertEquals(List.of("gt6:scoop"), tagValues("gt6/tags/items/tools/scoop.json"));
+        assertEquals(List.of("gt6:plunger"), tagValues("gt6/tags/items/tools/plunger.json"));
+        assertEquals(List.of("gt6:flint_and_tinder"), tagValues("gt6/tags/items/tools/flint_and_tinder.json"));
+        assertEquals(List.of("gt6:rolling_pin"), tagValues("gt6/tags/items/tools/rolling_pin.json"));
+        assertEquals(List.of("gt6:bending_cylinder"), tagValues("gt6/tags/items/tools/bending_cylinder.json"));
+
         assertEquals(List.of(
                 "gt6:file", "gt6:saw", "gt6:crowbar", "gt6:cutter", "gt6:chisel",
                 "gt6:builder_wand", "gt6:screwdriver", "gt6:hammer", "gt6:wrench",
@@ -412,7 +422,8 @@ class GT6TagsDatagenTest {
                 "gt6:pickaxe_construction", "gt6:shovel", "gt6:spade", "gt6:universal_spade",
                 "gt6:sword", "gt6:knife", "gt6:butchery_knife", "gt6:club", "gt6:axe",
                 "gt6:axe_double", "gt6:hoe", "gt6:branch_cutter", "gt6:sense", "gt6:plow",
-                "gt6:hand_drill"),
+                "gt6:hand_drill", "gt6:scissors", "gt6:scoop", "gt6:plunger",
+                "gt6:flint_and_tinder", "gt6:rolling_pin", "gt6:bending_cylinder"),
                 tagValues("forge/tags/items/tools.json"));
     }
 

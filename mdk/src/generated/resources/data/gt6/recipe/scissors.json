@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_steel"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    },
+    "T": {
+      "item": "gt6:screw_steel"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "item": "gt6:scissors"
+  },
+  "show_notification": true
+}

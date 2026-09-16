@@ -18,6 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.GT6Mod;
+import gregtech6.items.tools.GT6BendingCylinderItem;
 import gregtech6.items.tools.GT6BendingCylinderSmallItem;
 import gregtech6.items.tools.GT6BuilderWandItem;
 import gregtech6.items.tools.GT6FileItem;
@@ -36,6 +37,11 @@ import gregtech6.items.tools.GTPickaxeConstructionItem;
 import gregtech6.items.tools.GTPickaxeGemItem;
 import gregtech6.items.tools.GTPickaxeItem;
 import gregtech6.items.tools.GTSwordItem;
+import gregtech6.items.tools.GTFlintAndTinderItem;
+import gregtech6.items.tools.GTPlungerItem;
+import gregtech6.items.tools.GTRollingPinItem;
+import gregtech6.items.tools.GTScoopItem;
+import gregtech6.items.tools.GTScissorsItem;
 import gregtech6.items.tools.GTShovelItem;
 import gregtech6.items.tools.GTSpadeItem;
 import gregtech6.items.tools.GTUniversalSpadeItem;
@@ -379,6 +385,45 @@ public final class GT6Tools {
 			() -> new GTHandDrillItem(new Item.Properties().durability(GTHandDrillItem.DURABILITY_POINTS)));
 
 	/**
+	 * The six scene tools — task p29-w5-t5-scene-six (the W5 tool wave card 5; rows 32-37
+	 * of the table). Single steel tier, durability 512 (the family value; the flint-and-
+	 * tinder's upstream ×0.25 multiplier folds into its flat 128, the gem-pick precedent).
+	 * Display names = the upstream registration-row wordings (Loader_Tools.java:132/:140/
+	 * :141/:143/:145/:149). The world arms:
+	 * <ul>
+	 * <li>{@code gt6:scissors} (upstream GT_Tool_Scissors — the ShearsItem base carries the
+	 *     cloth/web shear universe; the vine self-drop rides the loot seam);</li>
+	 * <li>{@code gt6:scoop} (upstream GT_Tool_Scoop — the shears base + the declarative
+	 *     BeehiveBlock honeycomb mapping; the cobweb/vine full-drop rides the loot seam);</li>
+	 * <li>{@code gt6:plunger} (upstream GT_Tool_Plunger — the 1000 L fluid-void drain over
+	 *     the platform capability seam; the item arm is upstream-dead code);</li>
+	 * <li>{@code gt6:flint_and_tinder} (upstream GT_Tool_FlintAndTinder — the 30% chance
+	 *     strike over the vanilla ignition faces + the creeper ignite);</li>
+	 * <li>{@code gt6:rolling_pin} (upstream GT_Tool_RollingPin — the pure-crafting
+	 *     consumable, the GT6BendingCylinderSmallItem structure-empty form);</li>
+	 * <li>{@code gt6:bending_cylinder} (upstream GT_Tool_BendingCylinder, the LARGE form —
+	 *     the Small size landed with p25-food-can-row0; same structure-empty form).</li>
+	 * </ul>
+	 */
+	public static final RegistryObject<Item> SCISSORS = ITEMS.register("scissors",
+			() -> new GTScissorsItem(new Item.Properties().durability(GTScissorsItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> SCOOP = ITEMS.register("scoop",
+			() -> new GTScoopItem(new Item.Properties().durability(GTScoopItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> PLUNGER = ITEMS.register("plunger",
+			() -> new GTPlungerItem(new Item.Properties().durability(GTPlungerItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> FLINT_AND_TINDER = ITEMS.register("flint_and_tinder",
+			() -> new GTFlintAndTinderItem(new Item.Properties().durability(GTFlintAndTinderItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> ROLLING_PIN = ITEMS.register("rolling_pin",
+			() -> new GTRollingPinItem(new Item.Properties().durability(GTRollingPinItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> BENDING_CYLINDER = ITEMS.register("bending_cylinder",
+			() -> new GT6BendingCylinderItem(new Item.Properties().durability(GT6BendingCylinderItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -397,13 +442,16 @@ public final class GT6Tools {
 	 * hammer, the monkey wrench, the magnifying glass, the pincers); task
 	 * p29-w5-t4-field-five appends rows 27-31 (the five field tools — hoe,
 	 * branch_cutter, sense, plow, hand_drill, the upstream Loader_Tools id order
-	 * 122/133/138/139/152).
+	 * 122/133/138/139/152); task p29-w5-t5-scene-six appends rows 32-37 (the six scene
+	 * tools — scissors, scoop, plunger, flint_and_tinder, rolling_pin, bending_cylinder).
 	 */
 	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL,
 			PICKAXE, PICKAXE_GEM, PICKAXE_CONSTRUCTION, SHOVEL, SPADE, UNIVERSAL_SPADE,
 			SWORD, KNIFE, BUTCHERY_KNIFE, CLUB, AXE, AXE_DOUBLE,
 			SOFT_HAMMER, MONKEY_WRENCH, MAGNIFYING_GLASS, PINCERS,
-			HOE, BRANCH_CUTTER, SENSE, PLOW, HAND_DRILL); // task p29-w5-t4-field-five — rows 27-31, the upstream Loader_Tools id order 122/133/138/139/152
+			HOE, BRANCH_CUTTER, SENSE, PLOW, HAND_DRILL,
+			SCISSORS, SCOOP, PLUNGER, FLINT_AND_TINDER, ROLLING_PIN, BENDING_CYLINDER); // task p29-w5-t5-scene-six — rows 32-37
+
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -516,6 +564,19 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.SENSE.get()), GTSenseItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.HAND_DRILL.get()), GTHandDrillItem.DURABILITY_POINTS);
+			// task p29-w5-t5-scene-six — the six scene tools join the registration smoke log
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.SCISSORS.get()), GTScissorsItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.SCOOP.get()), GTScoopItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.PLUNGER.get()), GTPlungerItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.FLINT_AND_TINDER.get()), GTFlintAndTinderItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.ROLLING_PIN.get()), GTRollingPinItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.BENDING_CYLINDER.get()), GT6BendingCylinderItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

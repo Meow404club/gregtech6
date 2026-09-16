@@ -392,6 +392,16 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.sense", "Sense");
         add("item.gt6.plow", "Plow");
         add("item.gt6.hand_drill", "Hand Drill");
+        // task p29-w5-t5-scene-six — the six scene-tool display names (the upstream
+        // registration-row wordings verbatim: "Scoop" Loader_Tools.java:132, "Plunger"
+        // :140, "Rolling Pin" :141, "Flint and Tinder" :143, "Bending Cylinder" :145,
+        // "Scissors" :149)
+        add("item.gt6.scissors", "Scissors");
+        add("item.gt6.scoop", "Scoop");
+        add("item.gt6.plunger", "Plunger");
+        add("item.gt6.flint_and_tinder", "Flint and Tinder");
+        add("item.gt6.rolling_pin", "Rolling Pin");
+        add("item.gt6.bending_cylinder", "Bending Cylinder");
         add(GT6Tools.TAB_TITLE_KEY, "Tools");
     }
 
