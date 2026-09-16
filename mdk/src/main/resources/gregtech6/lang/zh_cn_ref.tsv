@@ -8325,30 +8325,6 @@ direct	item.gt6.monkey_wrench_hv	活动扳手 (HV)	hand
 direct	item.gt6.monkey_wrench_hv.tooltip	潜行右键切换为扳手	hand
 direct	item.gt6.trimmer_lv	修剪器 (LV)	hand
 direct	item.gt6.mode_switch.tooltip	潜行右键切换模式	hand
-direct	block.gt6.rubber 橡胶树_sapling	树苗	hand
-direct	block.gt6.rubber 橡胶树_log	原木	hand
-direct	block.gt6.rubber 橡胶树_leaves	树叶	hand
-direct	block.gt6.maple 枫树_sapling	树苗	hand
-direct	block.gt6.maple 枫树_log	原木	hand
-direct	block.gt6.maple 枫树_leaves	树叶	hand
-direct	block.gt6.willow 柳树_sapling	树苗	hand
-direct	block.gt6.willow 柳树_log	原木	hand
-direct	block.gt6.willow 柳树_leaves	树叶	hand
-direct	block.gt6.blue_mahoe 蓝梧桐_sapling	树苗	hand
-direct	block.gt6.blue_mahoe 蓝梧桐_log	原木	hand
-direct	block.gt6.blue_mahoe 蓝梧桐_leaves	树叶	hand
-direct	block.gt6.hazel 榛树_sapling	树苗	hand
-direct	block.gt6.hazel 榛树_log	原木	hand
-direct	block.gt6.hazel 榛树_leaves	树叶	hand
-direct	block.gt6.cinnamon 肉桂_sapling	树苗	hand
-direct	block.gt6.cinnamon 肉桂_log	原木	hand
-direct	block.gt6.cinnamon 肉桂_leaves	树叶	hand
-direct	block.gt6.coconut 椰子树_sapling	树苗	hand
-direct	block.gt6.coconut 椰子树_log	原木	hand
-direct	block.gt6.coconut 椰子树_leaves	树叶	hand
-direct	block.gt6.rainbowood 彩虹木_sapling	树苗	hand
-direct	block.gt6.rainbowood 彩虹木_log	原木	hand
-direct	block.gt6.rainbowood 彩虹木_leaves	树叶	hand
 direct	block.gt6.rubber_sapling	橡胶树树苗	hand
 direct	block.gt6.rubber_log	橡胶树原木	hand
 direct	block.gt6.rubber_leaves	橡胶树树叶	hand
