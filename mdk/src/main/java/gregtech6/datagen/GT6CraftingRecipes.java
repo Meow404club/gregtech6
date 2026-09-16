@@ -175,6 +175,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation AXE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "axe");
 	public static final ResourceLocation AXE_DOUBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "axe_double");
 
+	/** The five field-tool row ids (task p29-w5-t4-field-five — the t1 row-id shape). */
+	public static final ResourceLocation HOE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hoe");
+	public static final ResourceLocation PLOW_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "plow");
+	public static final ResourceLocation BRANCH_CUTTER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "branch_cutter");
+	public static final ResourceLocation SENSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sense");
+	public static final ResourceLocation HAND_DRILL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hand_drill");
+
 	/** The CR.shapeless self-recast row id of a sensor path (task p26-sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
 	public static ResourceLocation sensorRecastId(String aPath) {
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, aPath + "_recast");
@@ -262,6 +269,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		clubBuilder().save(aConsumer, CLUB_ID);
 		axeBuilder().save(aConsumer, AXE_ID);
 		axeDoubleBuilder().save(aConsumer, AXE_DOUBLE_ID);
+		// task p29-w5-t4-field-five — the five field-tool steel-route rows (the t1 shape)
+		hoeBuilder().save(aConsumer, HOE_ID);
+		plowBuilder().save(aConsumer, PLOW_ID);
+		branchCutterBuilder().save(aConsumer, BRANCH_CUTTER_ID);
+		senseBuilder().save(aConsumer, SENSE_ID);
+		handDrillBuilder().save(aConsumer, HAND_DRILL_ID);
 	}
 	//?} else {
 	/*@Override
@@ -337,6 +350,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		clubBuilder().save(aOutput, CLUB_ID);
 		axeBuilder().save(aOutput, AXE_ID);
 		axeDoubleBuilder().save(aOutput, AXE_DOUBLE_ID);
+		// task p29-w5-t4-field-five — the five field-tool steel-route rows (the t1 shape)
+		hoeBuilder().save(aOutput, HOE_ID);
+		plowBuilder().save(aOutput, PLOW_ID);
+		branchCutterBuilder().save(aOutput, BRANCH_CUTTER_ID);
+		senseBuilder().save(aOutput, SENSE_ID);
+		handDrillBuilder().save(aOutput, HAND_DRILL_ID);
 	}
 	*///?}
 
@@ -1528,6 +1547,23 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
     }
 
+    // -----------------------------------------------------------------------
+    // The five field-tool steel-route rows (task p29-w5-t4-field-five). The upstream
+    // AdvancedCraftingTool rows for hoe/sense/plow (Loader_Tools.java:344-346 — the
+    // :344 Birch and :346 Spruce suggestions converge steel per the t1 single-tier
+    // ruling); the branch cutter and hand drill ride the same family shape. Plate
+    // counts keep the upstream tool-head material ratios (OP.java:244-246/:254):
+    // hoe 2 plates (toolHeadHoe U*2), sense 3 (toolHeadSense U*3), plow 4
+    // (toolHeadPlow U*4), branch cutter 5 (the :133 setMaterialAmount(5*U)),
+    // hand drill 1 (the :152 toolHeadArrow+2*bolt row — the arrow head folds to a
+    // plate, the two bolts to two rods, the file worn like the :349 screwdriver row).
+    /** The hoe row — the 2-plate head (the :344 Birch-suggestion row, steel converged). */
+    private ShapedRecipeBuilder hoeBuilder() {
+        return digToolBuilder(GT6Tools.HOE.get(), new String[] {"PP ", " S ", "hSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
     /** The knife row — the small blade (1 plate + the rod). */
     private ShapedRecipeBuilder knifeBuilder() {
         return digToolBuilder(GT6Tools.KNIFE.get(), new String[] {"hP ", " S ", " f "},
@@ -1535,9 +1571,30 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
     }
 
+    /** The plow row — the 4-plate head (the :346 Spruce-suggestion row, steel converged). */
+    private ShapedRecipeBuilder plowBuilder() {
+        return digToolBuilder(GT6Tools.PLOW.get(), new String[] {"PP ", "PP ", "hSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
     /** The butchery knife row — the heavier blade (2 plates, the 4*U scale). */
     private ShapedRecipeBuilder butcheryKnifeBuilder() {
         return digToolBuilder(GT6Tools.BUTCHERY_KNIFE.get(), new String[] {"PP", " S", "hf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The branch cutter row — the 5-plate material (the :133 row, the scissors-form file pair). */
+    private ShapedRecipeBuilder branchCutterBuilder() {
+        return digToolBuilder(GT6Tools.BRANCH_CUTTER.get(), new String[] {"PPP", "PSP", "fSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The sense row — the 3-plate scythe blade (the :345 row). */
+    private ShapedRecipeBuilder senseBuilder() {
+        return digToolBuilder(GT6Tools.SENSE.get(), new String[] {"PPP", " S ", "hSf"},
                 'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
                 'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
     }
@@ -1559,6 +1616,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
     /** The double-axe row — the upstream :343 DOUBLE_AXE heavy head (5 plates). */
     private ShapedRecipeBuilder axeDoubleBuilder() {
         return digToolBuilder(GT6Tools.AXE_DOUBLE.get(), new String[] {"PP ", "PPS", "hSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The hand drill row — the arrow head + 2 bolts (the :152 row, the worn file). */
+    private ShapedRecipeBuilder handDrillBuilder() {
+        return digToolBuilder(GT6Tools.HAND_DRILL.get(), new String[] {"P  ", " S ", "hSf"},
                 'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
                 'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
     }

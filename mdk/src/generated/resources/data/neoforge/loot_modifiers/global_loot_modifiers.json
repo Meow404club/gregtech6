@@ -5,7 +5,9 @@
     "gt6:universal_spade_openable",
     "gt6:axe_tree_fell",
     "gt6:club_rock_crush",
-    "gt6:sword_harvest"
+    "gt6:sword_harvest",
+    "gt6:branch_cutter_leaves",
+    "gt6:sense_vegetal"
   ],
   "replace": false
 }
