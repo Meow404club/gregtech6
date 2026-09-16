@@ -8157,3 +8157,100 @@ Textures.ItemIcons.POCKET_MULTITOOL_CLOSED, GT_Tool_Pocket_Multitool.getIcon :42
 the CUTTER pair serves the wire-cutter form). Renamed to the snake id tails under
 `gt6/textures/item/pocket/` (multitool/knife/saw/file/screwdriver/wire_cutter/
 scissors/chisel + _overlay), 16x16 RGBA, sha256s of the copies match the sources.
+
+
+GT6 ore block overlay textures, task p30-ore-2-textures: the 60
+`gt6/textures/block/materialicons/<set>/{ore,ore_small,ore_overlay,ore_small_overlay}.png`
+files come from upstream `https://github.com/GregTech6/gregtech6` snapshot `v6.17.06-22-g3703e4030`, files
+`src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/<Name>.png`,
+byte-identical to upstream, sha256 verified per file (manifest below). Consumers:
+the ore block atlas sources `gt6:block/materialicons/<set>/{ore,ore_small}`
+(GT6Atlases <- GTOreBakedModel.overlaySprites(), 15 SETs over the 53-material
+registration axis, task p30-ore-1-mech) — the missingno intermediate state of
+p30-ore-3-datagen closes with this wave; the `_overlay` pair is the upstream
+pass-1 extension (TextureSet.java:113-116), borrowed for pair completeness
+(the p27 posture), no modern consumer yet. Naming follows the P20/P27 rules:
+set folder lowercased, icon segment camelCase -> snake_case
+(oreSmall -> ore_small), `_OVERLAY` -> `_overlay`. Audit census
+(audit_ore_textures.py): 5 vanilla families x SET x 2 forms all present,
+zero defers — 100% upstream presence over the whole matrix. GT17 stone bases need NO borrow — block/stones/<snake>/{stone,cobble}.png
+already in repo (the 28 shared base models covered: 11 vanilla anchors free +
+17 GT stones), the card's ore_bases/ 34-borrow plan dedupes to zero. No
+`.mcmeta` animations exist in the borrowed cells. Upstream license: **CC0 1.0
+Universal Public Domain Dedication** (same upstream `README.md` block as above).
+
+- `COPPER` -> `gt6/textures/block/materialicons/copper/`:
+  - `ore.png` `406b03465bbf84a9fb1d1be0a0aa750d11572e5e72e44eed466f8b6906c57081`
+  - `ore_small.png` `da732a986333a1f319175ba007eabf7db01d2c3509ac3bdeaf2f098c802df6d3`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `CUBE` -> `gt6/textures/block/materialicons/cube/`:
+  - `ore.png` `406b03465bbf84a9fb1d1be0a0aa750d11572e5e72e44eed466f8b6906c57081`
+  - `ore_small.png` `da732a986333a1f319175ba007eabf7db01d2c3509ac3bdeaf2f098c802df6d3`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `DIAMOND` -> `gt6/textures/block/materialicons/diamond/`:
+  - `ore.png` `5a358784e55d023adf5da914c548dd6e71b664b0751a8d66635772a48b348789`
+  - `ore_small.png` `8c021e43df7c644075a9402b8a5bc735583f6f17e3ec2f0f5e566699f5feb305`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `DULL` -> `gt6/textures/block/materialicons/dull/`:
+  - `ore.png` `120fcc8c75f8f90c25e095f6bb8549c25d7b9e54c2428318c157f76c9b793501`
+  - `ore_small.png` `e90c89a6c16dcbb54c0bc7f14fd82881b721a8a5a5058ee05ef1d3c41ea3a8ee`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `FINE` -> `gt6/textures/block/materialicons/fine/`:
+  - `ore.png` `7c7d321145547b556739f43f1187fd75d9614913ddc8bb6c4c43ff067f916b9b`
+  - `ore_small.png` `e2ea0bbee3f2ef1295a68142cc015f5c4f32fece0929edddbc183ac063840774`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `FLINT` -> `gt6/textures/block/materialicons/flint/`:
+  - `ore.png` `7e409880ff4df0945dd757f094bc688a507e6dfc18145cb11ed23c5e678fdd81`
+  - `ore_small.png` `66b1ff5ef23aebbf83549a4788e197c4e21c76be4fc6289cec790e932d3221e1`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `LAPIS` -> `gt6/textures/block/materialicons/lapis/`:
+  - `ore.png` `7e409880ff4df0945dd757f094bc688a507e6dfc18145cb11ed23c5e678fdd81`
+  - `ore_small.png` `66b1ff5ef23aebbf83549a4788e197c4e21c76be4fc6289cec790e932d3221e1`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `LIGNITE` -> `gt6/textures/block/materialicons/lignite/`:
+  - `ore.png` `7c7d321145547b556739f43f1187fd75d9614913ddc8bb6c4c43ff067f916b9b`
+  - `ore_small.png` `e2ea0bbee3f2ef1295a68142cc015f5c4f32fece0929edddbc183ac063840774`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `METALLIC` -> `gt6/textures/block/materialicons/metallic/`:
+  - `ore.png` `406b03465bbf84a9fb1d1be0a0aa750d11572e5e72e44eed466f8b6906c57081`
+  - `ore_small.png` `da732a986333a1f319175ba007eabf7db01d2c3509ac3bdeaf2f098c802df6d3`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `QUARTZ` -> `gt6/textures/block/materialicons/quartz/`:
+  - `ore.png` `7c7d321145547b556739f43f1187fd75d9614913ddc8bb6c4c43ff067f916b9b`
+  - `ore_small.png` `e2ea0bbee3f2ef1295a68142cc015f5c4f32fece0929edddbc183ac063840774`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `RAD` -> `gt6/textures/block/materialicons/rad/`:
+  - `ore.png` `7309820ac6ea8ac18fa37da6b580058d80b8ecc9b4cf0a0de5820220b8b9ed2b`
+  - `ore_small.png` `7354b58b970e04a4f3aa477fd14c6cad4642b526a344eb825d0ef65b05a753bf`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `REDSTONE` -> `gt6/textures/block/materialicons/redstone/`:
+  - `ore.png` `406b03465bbf84a9fb1d1be0a0aa750d11572e5e72e44eed466f8b6906c57081`
+  - `ore_small.png` `da732a986333a1f319175ba007eabf7db01d2c3509ac3bdeaf2f098c802df6d3`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `RUBY` -> `gt6/textures/block/materialicons/ruby/`:
+  - `ore.png` `5a358784e55d023adf5da914c548dd6e71b664b0751a8d66635772a48b348789`
+  - `ore_small.png` `8c021e43df7c644075a9402b8a5bc735583f6f17e3ec2f0f5e566699f5feb305`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `SHINY` -> `gt6/textures/block/materialicons/shiny/`:
+  - `ore.png` `95322b721304c5b4bd9798bb61461aef7a2e1e95c0f1b9f75396368af9c6412c`
+  - `ore_small.png` `570570a46ae308c82cf041630c1474f6968eeb89c73794056c14f2f73920de6d`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `SPACE` -> `gt6/textures/block/materialicons/space/`:
+  - `ore.png` `406b03465bbf84a9fb1d1be0a0aa750d11572e5e72e44eed466f8b6906c57081`
+  - `ore_small.png` `da732a986333a1f319175ba007eabf7db01d2c3509ac3bdeaf2f098c802df6d3`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
