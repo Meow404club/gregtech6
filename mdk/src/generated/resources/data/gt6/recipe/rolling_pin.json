@@ -6,7 +6,7 @@
       "tag": "minecraft:planks"
     },
     "S": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     },
     "f": {
       "tag": "gt6:tools/file"
@@ -18,7 +18,7 @@
     "S f"
   ],
   "result": {
-    "item": "gt6:rolling_pin"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:rolling_pin"
+  }
 }

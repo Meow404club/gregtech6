@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "C": {
-      "tag": "forge:chests"
+      "tag": "c:chests"
     },
     "L": {
       "item": "minecraft:leather"
@@ -27,7 +27,7 @@
     "TMT"
   ],
   "result": {
-    "item": "gt6:locker_bronze"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:locker_bronze"
+  }
 }

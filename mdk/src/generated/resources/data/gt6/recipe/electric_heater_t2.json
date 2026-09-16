@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "C": {
-      "tag": "forge:fine_wires/constantan"
+      "tag": "c:fine_wires/constantan"
     },
     "M": {
       "item": "gt6:casing_small_aluminium"
@@ -21,7 +21,7 @@
     "TCd"
   ],
   "result": {
-    "item": "gt6:electric_heater_t2"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:electric_heater_t2"
+  }
 }

@@ -30,7 +30,7 @@
     "hVZ"
   ],
   "result": {
-    "item": "gt6:hand_mixer_lv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:hand_mixer_lv"
+  }
 }

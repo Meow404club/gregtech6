@@ -14,7 +14,7 @@
     "S"
   ],
   "result": {
-    "item": "gt6:magnifying_glass"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:magnifying_glass"
+  }
 }

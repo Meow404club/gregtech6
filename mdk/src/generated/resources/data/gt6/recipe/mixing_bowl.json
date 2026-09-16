@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "gt6:clay_bowl"
   },
-  "result": "gt6:mixing_bowl"
+  "result": {
+    "count": 1,
+    "id": "gt6:mixing_bowl"
+  }
 }

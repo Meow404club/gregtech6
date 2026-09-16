@@ -3,13 +3,13 @@
   "category": "misc",
   "key": {
     "B": {
-      "tag": "forge:bolts/tin_alloy"
+      "tag": "c:bolts/tin_alloy"
     },
     "P": {
-      "tag": "forge:double_plates/tin_alloy"
+      "tag": "c:double_plates/tin_alloy"
     },
     "W": {
-      "tag": "forge:fine_wires/red_alloy"
+      "tag": "c:fine_wires/red_alloy"
     },
     "X": {
       "item": "minecraft:stone_pressure_plate"
@@ -24,7 +24,7 @@
     "WPW"
   ],
   "result": {
-    "item": "gt6:fluidometer"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:fluidometer"
+  }
 }

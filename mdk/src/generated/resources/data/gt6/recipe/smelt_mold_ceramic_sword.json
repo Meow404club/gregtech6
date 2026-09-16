@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "gt6:mold_ceramic_sword_raw"
   },
-  "result": "gt6:mold_ceramic_sword"
+  "result": {
+    "count": 1,
+    "id": "gt6:mold_ceramic_sword"
+  }
 }

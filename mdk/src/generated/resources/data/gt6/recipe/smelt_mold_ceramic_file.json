@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "gt6:mold_ceramic_file_raw"
   },
-  "result": "gt6:mold_ceramic_file"
+  "result": {
+    "count": 1,
+    "id": "gt6:mold_ceramic_file"
+  }
 }

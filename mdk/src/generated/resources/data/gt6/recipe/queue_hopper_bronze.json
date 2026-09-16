@@ -3,10 +3,10 @@
   "category": "misc",
   "key": {
     "C": {
-      "tag": "forge:chests"
+      "tag": "c:chests"
     },
     "P": {
-      "tag": "forge:plates/bronze"
+      "tag": "c:plates/bronze"
     },
     "X": {
       "item": "gt6:plate_curved_bronze"
@@ -24,7 +24,7 @@
     "wXh"
   ],
   "result": {
-    "item": "gt6:queue_hopper_bronze"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:queue_hopper_bronze"
+  }
 }

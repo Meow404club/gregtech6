@@ -9,7 +9,7 @@
       "tag": "gt6:circuit2"
     },
     "P": {
-      "tag": "forge:plates/battery_alloy"
+      "tag": "c:plates/battery_alloy"
     },
     "W": {
       "item": "gt6:cable_copper_gt01"
@@ -24,7 +24,7 @@
     "PBP"
   ],
   "result": {
-    "item": "gt6:battery_nicd_mv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:battery_nicd_mv"
+  }
 }

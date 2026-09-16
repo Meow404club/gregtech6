@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "I": {
-      "tag": "forge:ingots"
+      "tag": "c:ingots"
     },
     "h": {
       "tag": "gt6:tools/hard_hammer"
@@ -15,7 +15,7 @@
     "II "
   ],
   "result": {
-    "item": "gt6:hammer"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:hammer"
+  }
 }

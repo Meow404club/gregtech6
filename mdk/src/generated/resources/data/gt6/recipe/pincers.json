@@ -21,7 +21,7 @@
     "S S"
   ],
   "result": {
-    "item": "gt6:pincers"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:pincers"
+  }
 }

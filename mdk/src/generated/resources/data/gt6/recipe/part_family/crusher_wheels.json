@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "D": {
-      "tag": "forge:gems/diamond"
+      "tag": "c:gems/diamond"
     },
     "G": {
       "item": "gt6:gear_gt_tungstensteel"
@@ -18,7 +18,7 @@
     "GMG"
   ],
   "result": {
-    "item": "gt6:crusher_wheels"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:crusher_wheels"
+  }
 }

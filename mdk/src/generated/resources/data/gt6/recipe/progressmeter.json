@@ -9,13 +9,13 @@
       "item": "minecraft:glass"
     },
     "P": {
-      "tag": "forge:double_plates/tin_alloy"
+      "tag": "c:double_plates/tin_alloy"
     },
     "W": {
-      "tag": "forge:fine_wires/red_alloy"
+      "tag": "c:fine_wires/red_alloy"
     },
     "X": {
-      "tag": "forge:small_gears/brass"
+      "tag": "c:small_gears/brass"
     }
   },
   "pattern": [
@@ -24,7 +24,7 @@
     "WPW"
   ],
   "result": {
-    "item": "gt6:progressmeter"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:progressmeter"
+  }
 }

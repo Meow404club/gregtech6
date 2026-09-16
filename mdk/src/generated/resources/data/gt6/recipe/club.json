@@ -3,10 +3,10 @@
   "category": "equipment",
   "key": {
     "P": {
-      "tag": "forge:plates/steel"
+      "tag": "c:plates/steel"
     },
     "S": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     },
     "f": {
       "tag": "gt6:tools/file"
@@ -21,7 +21,7 @@
     "hSf"
   ],
   "result": {
-    "item": "gt6:club"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:club"
+  }
 }

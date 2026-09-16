@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "P": {
-      "tag": "forge:plates/steel"
+      "tag": "c:plates/steel"
     },
     "h": {
       "tag": "gt6:tools/hard_hammer"
@@ -15,7 +15,7 @@
     " P "
   ],
   "result": {
-    "item": "gt6:wrench"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:wrench"
+  }
 }

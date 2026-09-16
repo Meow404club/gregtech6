@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "I": {
-      "tag": "forge:ingots"
+      "tag": "c:ingots"
     },
     "f": {
       "tag": "gt6:tools/file"
@@ -20,7 +20,7 @@
     "III"
   ],
   "result": {
-    "item": "gt6:bending_cylinder_small"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:bending_cylinder_small"
+  }
 }

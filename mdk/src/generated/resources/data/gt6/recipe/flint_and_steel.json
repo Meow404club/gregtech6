@@ -6,7 +6,7 @@
       "item": "minecraft:flint"
     },
     "T": {
-      "tag": "forge:nuggets/steel"
+      "tag": "c:nuggets/steel"
     }
   },
   "pattern": [
@@ -14,7 +14,7 @@
     " F"
   ],
   "result": {
-    "item": "minecraft:flint_and_steel"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "minecraft:flint_and_steel"
+  }
 }

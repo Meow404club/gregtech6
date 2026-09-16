@@ -9,7 +9,7 @@
       "tag": "gt6:circuit4"
     },
     "P": {
-      "tag": "forge:plates/battery_alloy"
+      "tag": "c:plates/battery_alloy"
     },
     "W": {
       "item": "gt6:cable_aluminium_gt01"
@@ -21,7 +21,7 @@
     "BBB"
   ],
   "result": {
-    "item": "gt6:battery_lead_acid_ev"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:battery_lead_acid_ev"
+  }
 }

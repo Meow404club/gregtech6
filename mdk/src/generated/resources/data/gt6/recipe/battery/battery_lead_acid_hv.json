@@ -9,7 +9,7 @@
       "tag": "gt6:circuit3"
     },
     "P": {
-      "tag": "forge:plates/battery_alloy"
+      "tag": "c:plates/battery_alloy"
     },
     "W": {
       "item": "gt6:cable_gold_gt01"
@@ -24,7 +24,7 @@
     "BPB"
   ],
   "result": {
-    "item": "gt6:battery_lead_acid_hv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:battery_lead_acid_hv"
+  }
 }

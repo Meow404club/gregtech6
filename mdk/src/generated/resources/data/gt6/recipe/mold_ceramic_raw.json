@@ -11,7 +11,7 @@
     "CCC"
   ],
   "result": {
-    "item": "gt6:mold_ceramic_raw"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:mold_ceramic_raw"
+  }
 }

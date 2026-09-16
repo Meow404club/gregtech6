@@ -27,11 +27,11 @@
       "item": "minecraft:grass_block"
     },
     {
-      "tag": "forge:dyes/black"
+      "tag": "c:dyes/black"
     }
   ],
   "result": {
     "count": 8,
-    "item": "gt6:grass_black"
+    "id": "gt6:grass_black"
   }
 }

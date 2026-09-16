@@ -11,7 +11,7 @@
     " C "
   ],
   "result": {
-    "item": "gt6:faucet_ceramic_raw"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:faucet_ceramic_raw"
+  }
 }

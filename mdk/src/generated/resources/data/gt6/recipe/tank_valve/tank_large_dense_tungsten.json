@@ -21,7 +21,7 @@
     "PPP"
   ],
   "result": {
-    "item": "gt6:tank_large_dense_tungsten"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:tank_large_dense_tungsten"
+  }
 }

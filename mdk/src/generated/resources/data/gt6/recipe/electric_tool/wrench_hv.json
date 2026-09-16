@@ -27,7 +27,7 @@
     "XVX"
   ],
   "result": {
-    "item": "gt6:wrench_hv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:wrench_hv"
+  }
 }

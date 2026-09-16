@@ -15,7 +15,7 @@
     "RRR"
   ],
   "result": {
-    "item": "gt6:blackstone_anvil"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:blackstone_anvil"
+  }
 }

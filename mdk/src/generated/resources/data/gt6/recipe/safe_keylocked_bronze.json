@@ -21,7 +21,7 @@
     "PGP"
   ],
   "result": {
-    "item": "gt6:safe_keylocked_bronze"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:safe_keylocked_bronze"
+  }
 }

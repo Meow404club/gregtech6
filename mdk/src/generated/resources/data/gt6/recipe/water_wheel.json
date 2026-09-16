@@ -18,7 +18,7 @@
     "PPP"
   ],
   "result": {
-    "item": "gt6:water_wheel"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:water_wheel"
+  }
 }

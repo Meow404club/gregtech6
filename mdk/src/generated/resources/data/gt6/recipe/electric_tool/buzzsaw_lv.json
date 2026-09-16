@@ -30,7 +30,7 @@
     "AdY"
   ],
   "result": {
-    "item": "gt6:buzzsaw_lv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:buzzsaw_lv"
+  }
 }

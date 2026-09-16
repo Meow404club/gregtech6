@@ -27,7 +27,7 @@
     "GPC"
   ],
   "result": {
-    "item": "gt6:diesel_engine_steel"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:diesel_engine_steel"
+  }
 }

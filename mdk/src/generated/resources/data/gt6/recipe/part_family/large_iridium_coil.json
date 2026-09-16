@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "W": {
-      "tag": "forge:fine_wires/iridium"
+      "tag": "c:fine_wires/iridium"
     },
     "x": {
       "tag": "gt6:tools/wire_cutter"
@@ -15,7 +15,7 @@
     "WWW"
   ],
   "result": {
-    "item": "gt6:large_iridium_coil"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:large_iridium_coil"
+  }
 }

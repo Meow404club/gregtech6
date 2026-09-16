@@ -27,11 +27,11 @@
       "item": "minecraft:grass_block"
     },
     {
-      "tag": "forge:dyes/light_gray"
+      "tag": "c:dyes/light_gray"
     }
   ],
   "result": {
     "count": 8,
-    "item": "gt6:grass_light_gray"
+    "id": "gt6:grass_light_gray"
   }
 }
