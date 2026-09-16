@@ -329,7 +329,7 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 		// a Fluid instance registers its intrusive holder on the VANILLA fluid registry
 		// (Fluid.<init> → BuiltInRegistries.FLUID.createIntrusiveHolder) — reopen that
 		// registry's write window (the GTOfflineTestBase BET-unfreeze recipe, reflected
-		// onto the fluid wrapper; silent no-op where nothing matches)
+		// onto the fluid wrapper; silent no-op where nothing matches). Shared both legs.
 		for (Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.FLUID.getClass();
 				tClass != null && tClass != Object.class; tClass = tClass.getSuperclass()) {
 			try {
@@ -343,13 +343,16 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 				break;
 			}
 		}
-		// the seven stand-ins ride REAL FluidStacks, so they need the Forge fluid registry's
-		// delegate face too: unfreeze + register under test-only gt6 keys (the JVM-wide
-		// registry keeps them — distinct identities are what the per-tank placement needs)
+		// the seven stand-ins ride REAL FluidStacks, so the identity needs a registry face:
+		// registered under test-only gt6 keys (the JVM-wide registry keeps them — distinct
+		// identities are what the per-tank placement needs)
 		StandInFluid[] tBuilt = new StandInFluid[] {
 				new StandInFluid(), new StandInFluid(), new StandInFluid(), new StandInFluid(),
 				new StandInFluid(), new StandInFluid(), new StandInFluid()
 		};
+		//? if forge {
+		// the Forge delegate face: FluidStack's ctor reads ForgeRegistry delegates — unfreeze
+		// the Forge fluid registry too, then register (the delegates bake with the entry)
 		for (Class<?> tClass = net.minecraftforge.registries.ForgeRegistries.FLUIDS.getClass();
 				tClass != null && tClass != Object.class; tClass = tClass.getSuperclass()) {
 			try {
@@ -367,6 +370,16 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 			net.minecraftforge.registries.ForgeRegistries.FLUIDS.register(
 					new net.minecraft.resources.ResourceLocation("gt6", "tower_stand_in_" + i), tBuilt[i]);
 		}
+		//?} else {
+		/*// 21.1: no delegates — the vanilla register face is enough (the built-in holder
+		   // the ctor's registry lookups ride; the unfreeze above opened the window)
+		for (int i = 0; i < tBuilt.length; i++) {
+			net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.FLUID,
+					net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.FLUID,
+							net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "tower_stand_in_" + i)),
+					tBuilt[i]);
+		}
+		*///?}
 		FRACTIONS = tBuilt;
 	}
 
@@ -463,12 +476,17 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 		assertTrue(tLoaded.mTanksOutput[0].isEmpty(), "tank 0 stayed empty");
 
 		// the LEGACY save: one "output_tank" key only (the old single-tank shape) — tank 0
-		// loads through the base key untouched, the tail stays empty (declared-compatible)
+		// loads through the base key untouched, the tail stays empty (declared-compatible).
+		// The payload is produced by the tank's OWN writer (the exact shape a legacy save
+		// carries, leg-portable).
+		FluidTankGT tLegacyTank = new FluidTankGT();
+		tLegacyTank.add(300, new FluidStack(Fluids.WATER, 300));
 		net.minecraft.nbt.CompoundTag tLegacy = new net.minecraft.nbt.CompoundTag();
-		tLegacy.put("output_tank", new FluidStack(Fluids.WATER, 300).writeToNBT(new net.minecraft.nbt.CompoundTag()));
+		tLegacyTank.writeToNBT(tLegacy, "output_tank");
 		TestTower tOld = newTower();
 		tOld.load(tLegacy);
 		assertEquals(300, tOld.mTanksOutput[0].amount(), "the legacy single tank lands in bank slot 0 verbatim");
+		assertEquals(Fluids.WATER, tOld.mTanksOutput[0].fluid().getFluid());
 		assertTrue(tOld.mTanksOutput[5].isEmpty(), "the tail tanks stay empty on a legacy save");
 	}
 }
