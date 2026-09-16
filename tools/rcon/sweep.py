@@ -393,7 +393,6 @@ SESSION_GROUPS = (
     # name prefix.
     ("p29_w5_t8_armor_give", "p29_w5_t8_armor_wear", "p29_w5_t8_armor_recipe"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
-<<<<<<< HEAD
     # P29 W5 t3 (p29-w5-t3-machine-face-four): the machine-face-four chains — one fresh
     # z=292 band, per-tool x-disjoint columns (softhammer x384..388 / magnglass x392..396 /
     # pincers x400..404, margins grazing at x390/x398 — the grass|hammer same-cluster form),

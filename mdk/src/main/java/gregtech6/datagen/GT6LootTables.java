@@ -178,11 +178,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
-<<<<<<< HEAD
-                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK))); // task p30-w6-t1-trees-nine — the 27 tree blocks
-=======
+                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK))); // task p30-w6-rocks-sticks — the surface deco band
->>>>>>> 760df2cb (feat(datagen): surface Feature 直译+biome tag/modifier+模型+loot+双 lang)
         //?}
     }
 

@@ -200,7 +200,6 @@ public final class GT6WorldgenDatagen {
                                     GTStoneBlocks.block(tSnake, StoneVariant.STONE).get().defaultBlockState())),
                             GT6Worldgen.oreBlobSize()));
         }
-<<<<<<< HEAD
         // task p30-w6-t1-trees-nine — the 9 tree configured features: the registered
         // GT6TreeFeature instance per kind over NoneFeatureConfiguration (zero JSON
         // config face; the Feature carries the shape). The double casts bind the
@@ -211,9 +210,7 @@ public final class GT6WorldgenDatagen {
             FeatureUtils.register(ctx, GT6Worldgen.TREE_CONFIGURED_KEYS.get(i), tFeature,
                     NoneFeatureConfiguration.INSTANCE);
         }
-=======
         bootstrapSurfaceConfigured(ctx); // task p30-w6-rocks-sticks — tail-append
->>>>>>> 760df2cb (feat(datagen): surface Feature 直译+biome tag/modifier+模型+loot+双 lang)
     }
 
     /**
@@ -239,7 +236,6 @@ public final class GT6WorldgenDatagen {
                     HeightRangePlacement.uniform(VerticalAnchor.absolute(GT6Worldgen.OVERWORLD_MIN_Y),
                             VerticalAnchor.absolute(GT6Worldgen.OVERWORLD_MAX_Y)));
         }
-<<<<<<< HEAD
         // task p30-w6-t1-trees-nine — the 9 tree placed features: the GTCEu tree modifier
         // chain (GTPlacedFeatures.java:31-43 RUBBER_CHECKED: spread + SurfaceWaterDepth(0)
         // + HEIGHTMAP_TOP_SOLID + BiomeFilter + filteredByBlockSurvival) with the upstream
@@ -255,9 +251,7 @@ public final class GT6WorldgenDatagen {
                     PlacementUtils.filteredByBlockSurvival(
                             GT6TreeBlocks.SAPLINGS.get(i).get()));
         }
-=======
         bootstrapSurfacePlaced(ctx, tFeatures); // task p30-w6-rocks-sticks — tail-append
->>>>>>> 760df2cb (feat(datagen): surface Feature 直译+biome tag/modifier+模型+loot+双 lang)
     }
 
     /**
@@ -280,7 +274,6 @@ public final class GT6WorldgenDatagen {
                     HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.PLACED_KEYS.get(i))),
                     GenerationStep.Decoration.UNDERGROUND_ORES));
         }
-<<<<<<< HEAD
         // task p30-w6-t1-trees-nine — the 9 tree biome modifiers: one per kind, keyed on
         // the #gt6:trees/<snake> biome tag (GT6BiomeTags; the tag IS the datapack
         // per-feature biome face) at the VEGETAL_DECORATION step (the vanilla tree pass —
@@ -289,7 +282,8 @@ public final class GT6WorldgenDatagen {
             ctx.register(TREE_BIOME_MODIFIER_KEYS.get(i), addFeatures(
                     tBiomes.getOrThrow(GT6BiomeTags.treeTag(GT6TreeBlocks.KINDS.get(i).snake())),
                     HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.TREE_PLACED_KEYS.get(i))),
-=======
+                    GenerationStep.Decoration.VEGETAL_DECORATION));
+        }
         bootstrapSurfaceBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-rocks-sticks — tail-append
     }
 
@@ -414,7 +408,6 @@ public final class GT6WorldgenDatagen {
                     GT6Worldgen.STICKS_SPARSE_BIOMES}[i];
             ctx.register(SURFACE_BIOME_MODIFIER_KEYS.get(i + 1), addFeatures(aBiomes.getOrThrow(tTag),
                     HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.placedKeyOf(GT6Worldgen.STICKS_GROUP_PATHS.get(i)))),
->>>>>>> 760df2cb (feat(datagen): surface Feature 直译+biome tag/modifier+模型+loot+双 lang)
                     GenerationStep.Decoration.VEGETAL_DECORATION));
         }
     }
