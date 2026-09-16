@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "item": "minecraft:black_stained_glass_pane"
+    },
+    "M": {
+      "item": "gt6:plate_asbestos"
+    }
+  },
+  "pattern": [
+    "MMM",
+    "MGM"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hazmat_frost_helmet"
+  }
+}

@@ -25,6 +25,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.items.armor.GT6HazardSets;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GT6Tools;
@@ -414,6 +415,25 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		addMaterialTags(aProvider);
 		addGrassTags(aProvider); // task p24-grass-block
 		addBatteryTags(aProvider); // task p29-w4-battery-storage — the re-battery/re-crystal/circuit tag seams
+		addArmorTags(aProvider); // task p29-w5-t8-armor-24 — the 8 hazard-set tag faces
+	}
+
+	/**
+	 * The armor hazard band (task p29-w5-t8-armor-24): one {@code #gt6:hazmat/<hazard>}
+	 * tag per {@link GT6HazardSets.Hazard} (the eight CS.java:1712-1721 HAZMATS_* sets),
+	 * membership = the SAME {@link GT6ArmorMaterials#SUITS} walk GT6HazardSets derives
+	 * its runtime table from (Loader_Tools.java:68-112 join semantics) — the tag face and
+	 * the API face cannot drift (the ArmorSetTest pins the id-level parity). The tags are
+	 * the datapack half of the SPEC's "tag+static table" translation; the RCON surrogate
+	 * reads them through /gt6tags dump (the p27_vanilla_tag_dual_tree command).
+	 */
+	private void addArmorTags(HolderLookup.Provider aProvider) {
+		for (GT6HazardSets.Hazard tHazard : GT6HazardSets.Hazard.values()) {
+			var tAppender = tag(gt6(GT6HazardSets.tagPath(tHazard)));
+			for (ResourceLocation tId : GT6HazardSets.members(tHazard)) {
+				tAppender.add(item(tId));
+			}
+		}
 	}
 
 	/**

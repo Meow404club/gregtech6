@@ -380,6 +380,18 @@ SESSION_GROUPS = (
     # rigs are band-local setblocks; /gt6pocket drives the item's own useOn).
     # --group p29_w5_t7_pocket matches through the chains' embedded name prefix.
     ("p29_w5_t7_pocket_ring", "p29_w5_t7_pocket_faces", "p29_w5_t7_pocket_smoke"),
+    # P29 W5 card t8 (p29-w5-t8-armor-24, the wave tail): the three Hazmat armor
+    # chains — one fresh z=332 band, x-disjoint columns (give 384..398 / wear 410..420 /
+    # recipe 430..440); the give leg censuses all 24 flat pieces through a chest; the
+    # wear leg suits an armor stand with the universal four (the wear/doff smoke + the
+    # fire-proximity idle, NO damage assertion — the guard face is unwired by ruling)
+    # and reads the judgment seam through /gt6tags dump of the hazard tag faces; the
+    # recipe leg lays the universal-leggings 3x3 grid live (the craft itself rides the
+    # committed JSON + the offline ArmorSetTest pin — no vanilla crafting command).
+    # Admission mirrors the p29 W3/W4 cluster form (bbox-registered, no fresh_boot /
+    # mutates member). --group p29_w5_t8_armor matches through the chains' embedded
+    # name prefix.
+    ("p29_w5_t8_armor_give", "p29_w5_t8_armor_wear", "p29_w5_t8_armor_recipe"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
     # P29 W5 t3 (p29-w5-t3-machine-face-four): the machine-face-four chains — one fresh
     # z=292 band, per-tool x-disjoint columns (softhammer x384..388 / magnglass x392..396 /

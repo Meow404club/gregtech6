@@ -154,7 +154,7 @@ public class ElectricNineteenTest extends GTOfflineTestBase {
 					"row " + (37 + i) + " of the tab is the registered " + tExpected[i]);
 			assertEquals(rl(tExpected[i]), GT6Tools.electricTool(tExpected[i]).getId());
 		}
-		assertEquals(64, GT6Tools.TAB_TABLE.size(), "the 37 prior rows + the nineteen electric rows");
+		assertEquals(88, GT6Tools.TAB_TABLE.size(), "the 37 prior rows + the nineteen electric rows");
 	}
 
 	/** The 19 snake tags (the p24 band shape — the constants pinned at their paths). */

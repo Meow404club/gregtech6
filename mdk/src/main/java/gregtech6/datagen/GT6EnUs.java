@@ -16,6 +16,7 @@ import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.wire.GTWireBlock;
 import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.items.armor.GT6ArmorMaterials;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6ExtruderMolds;
@@ -121,6 +122,7 @@ public class GT6EnUs extends LanguageProvider {
         addSensors(); // task p26-sensors-core — table-tail append
         addCrucibleJade(); // task p28-crucible-jade-face — table-tail append
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
+        addArmor(); // task p29-w5-t8-armor-24 — table-tail append
     }
 
     /**
@@ -1534,5 +1536,54 @@ public class GT6EnUs extends LanguageProvider {
         add("tooltip.gt6.pocket.wire_cutter", "Harvests Cables and Wires faster");
         add("tooltip.gt6.pocket.scissors", "Don't run around while holding them!");
         add("tooltip.gt6.pocket.chisel", "Be slow/careful with it on Servers because Ping!");
+    }
+
+    /**
+     * The Hazmat armor face (task p29-w5-t8-armor-24): 48 rows — 24 display names + 24
+     * per-piece tooltip keys (one shared value per suit), walked over the
+     * {@link GT6ArmorMaterials#SUITS} table so the key set cannot drift from the
+     * registered ids. The values are the upstream registration rows verbatim
+     * (Loader_Tools.java:68-96: aEnglish and aEnglishTooltip per row; the zh wordings
+     * ride the reference table's hand rows, dump tmp/gregtech.lang:927-974).
+     * Table-tail append, append-only.
+     */
+    private void addArmor() {
+        for (GT6ArmorMaterials.SuitRow tSuit : GT6ArmorMaterials.SUITS) {
+            String[] tNames = armorNames(tSuit.suit());
+            String tTooltip = armorTooltip(tSuit.suit());
+            for (int i = 0; i < tNames.length; i++) {
+                add("item.gt6." + tSuit.pieceId(i), tNames[i]);
+                add("item.gt6." + tSuit.pieceId(i) + ".tooltip", tTooltip);
+            }
+        }
+    }
+
+    /** The display names per suit, slot order helmet/chestplate/leggings/boots (the :68-96 rows). */
+    private static String[] armorNames(GT6ArmorMaterials aSuit) {
+        return switch (aSuit) {
+            case INSECTS -> new String[] {"Bumblehead", "Bumbleshirt", "Bumblepants", "Bumbleboots"};
+            case FROST -> new String[] {"Frost Protection Suit Mask", "Frost Protection Suit Shirt",
+                    "Frost Protection Suit Pants", "Frost Protection Suit Boots"};
+            case HEAT -> new String[] {"Heat Protection Suit Mask", "Heat Protection Suit Shirt",
+                    "Heat Protection Suit Pants", "Heat Protection Suit Boots"};
+            case RADIATION -> new String[] {"Radiation Hazard Suit Mask", "Radiation Hazard Suit Shirt",
+                    "Radiation Hazard Suit Pants", "Radiation Hazard Suit Boots"};
+            case BIOCHEMGAS -> new String[] {"Biochemical Gas Hazard Suit Mask", "Biochemical Gas Hazard Suit Shirt",
+                    "Biochemical Gas Hazard Suit Pants", "Biochemical Gas Hazard Suit Boots"};
+            case UNIVERSAL -> new String[] {"Universal Hazard Suit Mask", "Universal Hazard Suit Shirt",
+                    "Universal Hazard Suit Pants", "Universal Hazard Suit Boots"};
+        };
+    }
+
+    /** The "Full Set protects against ..." line per suit (the aEnglishTooltip column). */
+    private static String armorTooltip(GT6ArmorMaterials aSuit) {
+        return switch (aSuit) {
+            case INSECTS -> "Full Set protects against any Insects";
+            case FROST -> "Full Set protects against Cold";
+            case HEAT -> "Full Set protects against Heat";
+            case RADIATION -> "Full Set protects against Radiation";
+            case BIOCHEMGAS -> "Full Set protects against Chemicals and Gases";
+            case UNIVERSAL -> "Full Set protects against Hazards";
+        };
     }
 }

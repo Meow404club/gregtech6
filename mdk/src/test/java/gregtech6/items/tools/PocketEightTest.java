@@ -70,15 +70,17 @@ public class PocketEightTest {
 				"pocket_multitool_screwdriver", "pocket_multitool_wire_cutter", "pocket_multitool_scissors",
 				"pocket_multitool_chisel"};
 		for (int i = 0; i < 8; i++) {
-			assertSame(GT6Tools.POCKET_FORMS.get(i), GT6Tools.TAB_TABLE.get(GT6Tools.TAB_TABLE.size() - 8 + i), "row rides the tab tail");
+			assertSame(GT6Tools.POCKET_FORMS.get(i), GT6Tools.TAB_TABLE.get(56 + i), "row " + (56 + i) + " rides the pocket band (the t8 armor rows took the tail after — the absolute pin is the immune form)");
 			assertEquals(rl(tIds[i]), GT6Tools.POCKET_FORMS.get(i).getId(), "form " + i + " id");
 		}
-		// the TAB_TABLE parity: the table tail IS the ring (rows 10-17)
+		// the TAB_TABLE parity: the pocket band is rows 56..63 (the absolute pin — the
+		// t8 armor rows took the table tail after this card, the dynamic tail pin went
+		// stale, the t3-machine-face immune-form ruling)
 		for (int i = 0; i < 8; i++) {
-			assertSame(GT6Tools.POCKET_FORMS.get(i), GT6Tools.TAB_TABLE.get(GT6Tools.TAB_TABLE.size() - 8 + i),
-					"the tab tail mirrors the ring at offset " + i);
+			assertSame(GT6Tools.POCKET_FORMS.get(i), GT6Tools.TAB_TABLE.get(56 + i),
+					"the pocket band mirrors the ring at offset " + i + " (row " + (56 + i) + ")");
 		}
-		assertEquals(64, GT6Tools.TAB_TABLE.size(), "the 56 prior rows + the eight pocket forms (the tail-mirror loop above still holds — the pocket forms ride the table tail)");
+		assertEquals(88, GT6Tools.TAB_TABLE.size(), "the 64 prior rows + the 24 armor rows");
 		assertEquals(512, GTPocketMultitoolItem.DURABILITY_POINTS, "the single-steel-tier family value (ruling d)");
 	}
 

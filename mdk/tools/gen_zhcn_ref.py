@@ -1382,11 +1382,66 @@ MOLD_CRUCIBLE_GAP_BACKFILL = {
     "gt6.row.faucet.mat.ceramic": "陶瓷",                             # renders dump :11224 坩埚浇铸口 (陶瓷)
     "item.gt6.faucet_ceramic_raw": "粘土浇铸口",                      # dump :10104 verbatim (Clay Faucet, 992)
 }
+
+# ---- task p29-w5-t8-armor-24: the 48 Hazmat armor rows — 24 display names + the 24
+# per-piece .tooltip keys, the dump faces verbatim (tmp/gregtech.lang:927-974, the
+# gt.armor.hazmat.* + *.tooltip_main families keyed onto the modern snake ids; the
+# slot words: 面罩=helmet 服=chestplate 裤=leggings 靴=boots).
+ARMOR_BACKFILL = {
+    "item.gt6.hazmat_insect_helmet": "防蜂面罩",
+    "item.gt6.hazmat_insect_chestplate": "防蜂服",
+    "item.gt6.hazmat_insect_leggings": "防蜂裤",
+    "item.gt6.hazmat_insect_boots": "防蜂靴",
+    "item.gt6.hazmat_insect_helmet.tooltip": "穿齐一套可以抵御任何昆虫",
+    "item.gt6.hazmat_insect_chestplate.tooltip": "穿齐一套可以抵御任何昆虫",
+    "item.gt6.hazmat_insect_leggings.tooltip": "穿齐一套可以抵御任何昆虫",
+    "item.gt6.hazmat_insect_boots.tooltip": "穿齐一套可以抵御任何昆虫",
+    "item.gt6.hazmat_frost_helmet": "防冻面罩",
+    "item.gt6.hazmat_frost_chestplate": "防冻服",
+    "item.gt6.hazmat_frost_leggings": "防冻裤",
+    "item.gt6.hazmat_frost_boots": "防冻靴",
+    "item.gt6.hazmat_frost_helmet.tooltip": "穿齐一套可以抵御严寒",
+    "item.gt6.hazmat_frost_chestplate.tooltip": "穿齐一套可以抵御严寒",
+    "item.gt6.hazmat_frost_leggings.tooltip": "穿齐一套可以抵御严寒",
+    "item.gt6.hazmat_frost_boots.tooltip": "穿齐一套可以抵御严寒",
+    "item.gt6.hazmat_heat_helmet": "防火面罩",
+    "item.gt6.hazmat_heat_chestplate": "防火服",
+    "item.gt6.hazmat_heat_leggings": "防火裤",
+    "item.gt6.hazmat_heat_boots": "防火靴",
+    "item.gt6.hazmat_heat_helmet.tooltip": "穿齐一套可以抵御高温",
+    "item.gt6.hazmat_heat_chestplate.tooltip": "穿齐一套可以抵御高温",
+    "item.gt6.hazmat_heat_leggings.tooltip": "穿齐一套可以抵御高温",
+    "item.gt6.hazmat_heat_boots.tooltip": "穿齐一套可以抵御高温",
+    "item.gt6.hazmat_radiation_helmet": "防辐射面罩",
+    "item.gt6.hazmat_radiation_chestplate": "防辐射服",
+    "item.gt6.hazmat_radiation_leggings": "防辐射裤",
+    "item.gt6.hazmat_radiation_boots": "防辐射靴",
+    "item.gt6.hazmat_radiation_helmet.tooltip": "穿齐一套可以抵御辐射",
+    "item.gt6.hazmat_radiation_chestplate.tooltip": "穿齐一套可以抵御辐射",
+    "item.gt6.hazmat_radiation_leggings.tooltip": "穿齐一套可以抵御辐射",
+    "item.gt6.hazmat_radiation_boots.tooltip": "穿齐一套可以抵御辐射",
+    "item.gt6.hazmat_biochemgas_helmet": "生化毒气防护面罩",
+    "item.gt6.hazmat_biochemgas_chestplate": "生化毒气防护服",
+    "item.gt6.hazmat_biochemgas_leggings": "生化毒气防护裤",
+    "item.gt6.hazmat_biochemgas_boots": "生化毒气防护靴",
+    "item.gt6.hazmat_biochemgas_helmet.tooltip": "穿齐一套可以抵御化学品和毒气",
+    "item.gt6.hazmat_biochemgas_chestplate.tooltip": "穿齐一套可以抵御化学品和毒气",
+    "item.gt6.hazmat_biochemgas_leggings.tooltip": "穿齐一套可以抵御化学品和毒气",
+    "item.gt6.hazmat_biochemgas_boots.tooltip": "穿齐一套可以抵御化学品和毒气",
+    "item.gt6.hazmat_universal_helmet": "全防面罩",
+    "item.gt6.hazmat_universal_chestplate": "全防服",
+    "item.gt6.hazmat_universal_leggings": "全防裤",
+    "item.gt6.hazmat_universal_boots": "全防靴",
+    "item.gt6.hazmat_universal_helmet.tooltip": "穿齐一套可以抵御一切危险",
+    "item.gt6.hazmat_universal_chestplate.tooltip": "穿齐一套可以抵御一切危险",
+    "item.gt6.hazmat_universal_leggings.tooltip": "穿齐一套可以抵御一切危险",
+    "item.gt6.hazmat_universal_boots.tooltip": "穿齐一套可以抵御一切危险",
+}
 for _shape, _word in MOLD_SHAPE_WORDS.items():
     MOLD_CRUCIBLE_GAP_BACKFILL["gt6.row.mold.display.mold_ceramic_" + _shape] = "陶瓷模具 (%s)" % _word
     MOLD_CRUCIBLE_GAP_BACKFILL["item.gt6.mold_ceramic_" + _shape + "_raw"] = "粘土模具 (%s)" % _word
 
-for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL):
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL):
     for _key, _value in _backfill.items():
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")
