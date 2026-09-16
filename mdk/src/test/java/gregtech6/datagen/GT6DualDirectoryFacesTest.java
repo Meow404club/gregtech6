@@ -15,9 +15,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * The dual-directory faces pin (task p26-w1-press-extruder-molds): the generated tree ships
@@ -249,6 +254,105 @@ public class GT6DualDirectoryFacesTest {
 	private static int countJson(URL aBandUrl) throws Exception {
 		try (Stream<Path> tWalk = Files.walk(Paths.get(aBandUrl.toURI()))) {
 			return (int) tWalk.filter(tPath -> tPath.toString().endsWith(".json")).count();
+		}
+	}
+
+	/**
+	 * The recipe face 1.21.1 key-form adapter spot pin (task p30-pool-recipe-key-form): the
+	 * mirrored singular recipe JSON carries the ItemStack id-form result (1.21.1
+	 * ItemStack.java:103-126 — {@code id} fieldOf + {@code count} optionalFieldOf(1), riding
+	 * ShapedRecipe.java:96 / ShapelessRecipe.java:86 / SimpleCookingSerializer.java:23), the
+	 * codec-omitted {@code show_notification} default is gone, and the platform tags read
+	 * {@code c:} (the 21.1 runtime tag carrier). The plural face stays the 1.20.1 form —
+	 * the forge runtime never scans the singular directory, so its face is untouched.
+	 * The before-fix live run: ALL 225 rows died with "Parsing error loading recipe".
+	 */
+	@Test
+	public void theRecipeFaceAliasCarriesThe21KeyForms() throws Exception {
+		// the shaped row: result id-form (count first), the default-true tail dropped,
+		// the gt6 ingredient tags ride UNTOUCHED (the 1.21.1 ingredient codec keeps item/tag)
+		String tPlural = resource("data/gt6/recipes/spray_can_empty.json");
+		String tSingular = resource("data/gt6/recipe/spray_can_empty.json");
+		assertTrue(tPlural.contains("\"result\": {\n    \"item\": \"gt6:spray_can_empty\"\n  }")
+				&& tPlural.contains("\"show_notification\": true"), "plural stays the 1.20.1 form");
+		assertTrue(tSingular.contains("\"result\": {\n    \"count\": 1,\n    \"id\": \"gt6:spray_can_empty\"\n  }"),
+				"the mirror carries the id-form result (count first)");
+		assertFalse(tSingular.contains("show_notification"), "the codec-omitted default true rides nowhere");
+		assertTrue(tSingular.contains("\"tag\": \"gt6:plate_curved_tin\""), "the gt6 ingredient tags ride untouched");
+		// the count>1 shapeless row: the count value survives
+		assertTrue(resource("data/gt6/recipe/grass.json")
+				.contains("\"result\": {\n    \"count\": 8,\n    \"id\": \"gt6:grass\"\n  }"), "count>1 survives");
+		// the smelting row: the 1.20.1 bare-id string becomes the object form, ingredient untouched
+		String tSmeltPlural = resource("data/gt6/recipes/smelt_mold_ceramic_sense.json");
+		String tSmeltSingular = resource("data/gt6/recipe/smelt_mold_ceramic_sense.json");
+		assertTrue(tSmeltPlural.contains("\"result\": \"gt6:mold_ceramic_sense\""), "plural keeps the bare-id form");
+		assertTrue(tSmeltSingular.contains("\"result\": {\n    \"count\": 1,\n    \"id\": \"gt6:mold_ceramic_sense\"\n  }"),
+				"the cooking row mirror carries the object id-form");
+		assertFalse(tSmeltSingular.contains("\"item\": \"gt6:mold_ceramic_sense\""),
+				"no id-form leak into a bare string; the _raw ingredient is the only item");
+		// the platform-tag row: forge: → c: (a forge: survivor would resolve EMPTY on 21.1)
+		tPlural = resource("data/gt6/recipes/axe.json");
+		tSingular = resource("data/gt6/recipe/axe.json");
+		assertTrue(tPlural.contains("\"tag\": \"forge:plates/steel\""), "plural keeps the forge namespace");
+		assertTrue(tSingular.contains("\"tag\": \"c:plates/steel\""), "the mirror reads the c: carrier");
+	}
+
+	/**
+	 * The full recipe band sweep (task p30-pool-recipe-key-form): EVERY mirrored singular
+	 * recipe JSON is the 1.21.1 key form — zero {@code forge:} tag values, zero
+	 * {@code show_notification} keys, every result the {@code {count,id}} object. One
+	 * survivor of any of the three is one boot-time RecipeManager parse death (the
+	 * 225-row outage this adapter closes). Pairs 1:1 with the plural band by name, and
+	 * ingredient shapes ride untouched (item/tag keys stay, only VALUES never rename).
+	 */
+	@Test
+	public void everyRecipeAliasIsThe21KeyForm() throws Exception {
+		ClassLoader tLoader = GT6DualDirectoryFacesTest.class.getClassLoader();
+		URL tSingularBand = tLoader.getResource("data/gt6/recipe");
+		URL tPluralBand = tLoader.getResource("data/gt6/recipes");
+		assertNotNull(tSingularBand, "the singular recipe band ships on the classpath");
+		assertNotNull(tPluralBand, "the plural recipe band ships on the classpath");
+		Path tSingularRoot = Paths.get(tSingularBand.toURI());
+		Path tPluralRoot = Paths.get(tPluralBand.toURI());
+		List<Path> tRows = new ArrayList<>(0);
+		try (Stream<Path> tWalk = Files.walk(tSingularRoot)) {
+			tWalk.filter(tPath -> tPath.toString().endsWith(".json")).forEach(tRows::add);
+		}
+		assertTrue(tRows.size() >= 225, "the full gt6 crafting universe ships (got " + tRows.size() + ")");
+		int tSmelting = 0;
+		for (Path tRow : tRows) {
+			String tName = "gt6/recipe/" + tSingularRoot.relativize(tRow);
+			assertTrue(Files.exists(tPluralRoot.resolve(tSingularRoot.relativize(tRow))),
+					tName + " pairs with a plural twin");
+			JsonObject tRoot = JsonParser.parseString(Files.readString(tRow)).getAsJsonObject();
+			assertFalse(tRoot.has("show_notification"), tName + " carries the codec-omitted default");
+			if ("minecraft:smelting".equals(tRoot.get("type").getAsString())) tSmelting++;
+			// the result member: the object id-form only
+			JsonObject tResult = tRoot.getAsJsonObject("result");
+			assertNotNull(tResult, tName + " result is the object form (no bare-id string survivor)");
+			assertTrue(tResult.get("id") != null && tResult.get("id").isJsonPrimitive()
+					&& tResult.get("count") != null && tResult.get("count").isJsonPrimitive()
+					&& tResult.get("item") == null, tName + " result is {count,id}, never item");
+			// the whole tree: no forge: tag value anywhere
+			assertNoForgeTagValue(tRoot, tName);
+		}
+		assertTrue(tSmelting >= 33, "the ceramic-mold cooking band rides the bare-id adapter (got " + tSmelting + ")");
+	}
+
+	/** The recursive arm: every {@code tag} VALUE must be off the forge: namespace. */
+	private static void assertNoForgeTagValue(JsonElement aJson, String aName) {
+		if (aJson.isJsonObject()) {
+			for (Map.Entry<String, JsonElement> tMember : aJson.getAsJsonObject().entrySet()) {
+				if ("tag".equals(tMember.getKey()) && tMember.getValue().isJsonPrimitive()) {
+					assertFalse(tMember.getValue().getAsString().startsWith("forge:"),
+							aName + " a forge: survivor resolves EMPTY on the 21.1 loader");
+				}
+				assertNoForgeTagValue(tMember.getValue(), aName);
+			}
+		} else if (aJson.isJsonArray()) {
+			for (JsonElement tElement : aJson.getAsJsonArray()) {
+				assertNoForgeTagValue(tElement, aName);
+			}
 		}
 	}
 }

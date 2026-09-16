@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -70,7 +71,16 @@ import net.minecraft.data.PackOutput;
  * function name. Any OTHER source shape (the typed-object nbt provider forms) is NOT
  * codec-verified and throws — a silent rename would re-create the dead-table bug class.
  *
- * <p><b>Scope</b>: the {@code gt6} and {@code minecraft} namespaces — the machine port's
+	 * <p><b>The recipe face is a KEY-FORM ADAPTER too</b> (task p30-pool-recipe-key-form):
+	 * the byte-mirrored singular recipe band made the 21.1 RecipeManager reject EVERY gt6
+	 * row at boot (225/225 "Parsing error loading recipe", 2026-09-16 live run) — the
+	 * 1.20.1 {@code {"item": X}}/bare-string result forms and the {@code forge:} tag
+	 * values are unreadable on the 1.21.1 ItemStack codec ({@code id}) and the {@code c:}
+	 * tag carrier. The mirror rewrites the census-proven delta ({@link #adaptRecipes21};
+	 * the codec evidence trail lives on the method), the 1.20.1 plural face stays the byte
+	 * identity (the forge runtime never scans the singular directory).
+	 *
+	 * <p><b>Scope</b>: the {@code gt6} and {@code minecraft} namespaces — the machine port's
  * own faces (the mold tag, the gt6 crafting rows, the loot tables, the vanilla-tag joins
  * dirt + mineable). The {@code forge} namespace is deliberately NOT mirrored: the platform
  * material-tag face on 21.1 is the {@code c:} namespace (GT6ItemTags MATERIALS_NAMESPACE),
@@ -101,6 +111,21 @@ public class GT6DualDirectoryFaces implements DataProvider {
 
 	/** The loot face directory alias (the RENAMES row the adapter rides on). */
 	private static final String LOOT_FACE_SINGULAR = "loot_table";
+
+	/** The recipe face directory alias (the RENAMES row the 1.21.1 key-form adapter rides on). */
+	private static final String RECIPE_FACE_SINGULAR = "recipe";
+
+	/**
+	 * The platform material-tag namespaces IN RECIPE VALUES (task p30-pool-recipe-key-form):
+	 * the canonical 1.20.1 face carries {@code forge:} tag keys (the {@code Tags} constants,
+	 * e.g. {@code forge:plates/steel}) while the 1.21.1 runtime tag carrier is the {@code c:}
+	 * namespace (GT6ItemTags MATERIALS_NAMESPACE; the build-side neoforgeTagFaces graft lands
+	 * the material band at {@code data/c/tags/item/} — build.neoforge.gradle.kts:255-262), so
+	 * a mirrored {@code forge:} reference would resolve EMPTY on the 21.1 loader.
+	 */
+	private static final String FORGE_TAG_PREFIX = "forge:";
+
+	private static final String COMMON_TAG_PREFIX = "c:";
 
 	/**
 	 * The biome-modifier dual-brand face (task p30-ops-biome-modifier-dual-dir, decisions
@@ -240,12 +265,14 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	/**
 	 * Re-saves one produced JSON at the singular path — parse + saveStable, the canonical
 	 * form both legs; the loot face rides the 1.21.1 adapter first ({@link
-	 * #adaptLootFunctions21}), every other family stays the byte identity.
+	 * #adaptLootFunctions21}), the recipe face rides the key-form adapter ({@link
+	 * #adaptRecipes21}), every other family stays the byte identity.
 	 */
 	private static CompletableFuture<?> saveMirror(CachedOutput aCache, Path aSource, Path aTarget, String aSingularFace) {
 		try (Reader tReader = Files.newBufferedReader(aSource)) {
 			JsonElement tJson = JsonParser.parseReader(tReader);
 			if (LOOT_FACE_SINGULAR.equals(aSingularFace)) adaptLootFunctions21(tJson, aSource);
+			else if (RECIPE_FACE_SINGULAR.equals(aSingularFace)) adaptRecipes21(tJson, aSource);
 			return DataProvider.saveStable(aCache, tJson, aTarget);
 		} catch (IOException tError) {
 			throw new RuntimeException("the dual-directory mirror failed reading " + aSource, tError);
@@ -287,6 +314,114 @@ public class GT6DualDirectoryFaces implements DataProvider {
 				adaptLootFunctions21(tElement, aSource);
 			}
 		}
+	}
+
+	/**
+	 * The recipe face 1.21.1 adapter — the key-form deltas the 21.1 RecipeManager needs to
+	 * parse the singular alias (task p30-pool-recipe-key-form; the before-fix live run had
+	 * ALL 225 gt6 rows dying at boot with "Parsing error loading recipe", RecipeManager
+	 * .java:70 — the 1.20.1-shaped alias face is the ONLY recipe face the 1.21.1 loader
+	 * scans, plural recipe/ is the 24w21a singular form it never reads). The census-proven
+	 * complete delta set (the node's own datagen output is the ground truth; treecheck's
+	 * recipes-band normalizers are these four in the node→canonical direction):
+	 *
+	 * <ul>
+	 * <li>{@code result} item-form → id-form: 1.20.1 serializers write {@code {"item": X}}
+	 * (objects) or the bare id string (cooking rows); 1.21.1 reads the ItemStack codec —
+	 * {@code id} fieldOf + {@code count} optionalFieldOf(1) (1.21.1 ItemStack.java:103-126,
+	 * STRICT_CODEC at ShapedRecipe.java:96 / ShapelessRecipe.java:86, CODEC at
+	 * SimpleCookingSerializer.java:23) — and the 1.21 datagen shape is
+	 * {@code {"count": N, "id": X}} (count ALWAYS written, first).</li>
+	 * <li>{@code show_notification}: 1.20.1 writes the default {@code true} unconditionally
+	 * on shaped rows (88/88 census), the 1.21.1 codec omits the optionalFieldOf default
+	 * (ShapedRecipe.java:97) — a {@code true} is dropped, a non-default {@code false} would
+	 * ride along (codec-exact: {@code true} ≡ absent).</li>
+	 * <li>platform tag values {@code forge:} → {@code c:}: the 21.1 runtime tag carrier is
+	 * the common namespace (see FORGE_TAG_PREFIX; node census 0 {@code forge:} survivors).</li>
+	 * <li>ingredients ride UNTOUCHED: the 1.21.1 ingredient codec keeps the {@code item}
+	 * /{@code tag} keys (Ingredient.java:252/:277 via CraftingHelper.makeIngredientCodec).</li>
+	 * </ul>
+	 *
+	 * <p>The shape gate is fail-visible (the {@link #adaptLootFunctions21} discipline): a
+	 * {@code result} that is neither the bare string nor the {@code item}-keyed object (extra
+	 * keys like {@code nbt}, a non-string item, a non-number count) has NO codec evidence and
+	 * throws instead of emitting a row the 1.21.1 parser may reject — a silent passthrough
+	 * would re-create the 225-row boot-death bug class this adapter closes.
+	 */
+	private static void adaptRecipes21(JsonElement aJson, Path aSource) {
+		if (aJson.isJsonObject()) {
+			JsonObject tObject = aJson.getAsJsonObject();
+			JsonElement tResult = tObject.get("result");
+			if (tResult != null) adaptRecipeResult21(tObject, tResult, aSource);
+			// BEFORE the child walk: the removal is structural (add-on-existing-key is not)
+			JsonElement tShow = tObject.get("show_notification");
+			if (tShow != null && tShow.isJsonPrimitive() && tShow.getAsBoolean()) {
+				tObject.remove("show_notification");
+			}
+			for (Map.Entry<String, JsonElement> tMember : tObject.entrySet()) {
+				JsonElement tValue = tMember.getValue();
+				if ("tag".equals(tMember.getKey()) && tValue.isJsonPrimitive()
+						&& tValue.getAsString().startsWith(FORGE_TAG_PREFIX)) {
+					// value-layer replace on an existing key — no structural change mid-walk
+					tMember.setValue(new JsonPrimitive(
+							COMMON_TAG_PREFIX + tValue.getAsString().substring(FORGE_TAG_PREFIX.length())));
+				}
+				adaptRecipes21(tValue, aSource);
+			}
+		} else if (aJson.isJsonArray()) {
+			for (JsonElement tElement : aJson.getAsJsonArray()) {
+				adaptRecipes21(tElement, aSource);
+			}
+		}
+	}
+
+	/**
+	 * The result member rewrite (the id-form delta): rebuilds in place as
+	 * {@code {"count": N, "id": X}} — the count-first member order the 1.21 datagen shape
+	 * writes (the Gson map keeps the parent's {@code result} key position untouched).
+	 */
+	private static void adaptRecipeResult21(JsonObject aRecipe, JsonElement aResult, Path aSource) {
+		String tId;
+		int tCount;
+		if (aResult.isJsonPrimitive()) {
+			if (!aResult.getAsJsonPrimitive().isString()) {
+				throw new IllegalArgumentException("the recipe mirror's 1.21.1 adapter only verifies the bare-id "
+						+ "string result or the item-keyed object (got " + aResult + " in " + aSource + ")");
+			}
+			tId = aResult.getAsString();
+			tCount = 1;
+		} else if (aResult.isJsonObject()) {
+			JsonObject tOld = aResult.getAsJsonObject();
+			JsonElement tItem = tOld.get("item");
+			if (tItem == null || !tItem.isJsonPrimitive() || !tItem.getAsJsonPrimitive().isString()) {
+				throw new IllegalArgumentException("the recipe mirror's 1.21.1 adapter only verifies the item-keyed "
+						+ "result object (got " + aResult + " in " + aSource + ") — extend adaptRecipeResult21 with "
+						+ "the codec evidence before rewriting this shape");
+			}
+			tId = tItem.getAsString();
+			JsonElement tOldCount = tOld.get("count");
+			if (tOldCount == null) {
+				tCount = 1;
+			} else {
+				if (!tOldCount.isJsonPrimitive() || !tOldCount.getAsJsonPrimitive().isNumber()) {
+					throw new IllegalArgumentException("the recipe mirror's 1.21.1 adapter only verifies a number "
+							+ "count (got " + tOldCount + " in " + aSource + ")");
+				}
+				tCount = tOldCount.getAsInt();
+			}
+			// an extra key (nbt/components/...) is an unverified cross-leg shape — fail-visible
+			if (tOld.size() != (tOldCount == null ? 1 : 2)) {
+				throw new IllegalArgumentException("the recipe mirror's 1.21.1 adapter only verifies the {item"
+						+ "[,count]} result shape (got keys " + tOld.keySet() + " in " + aSource + ")");
+			}
+		} else {
+			throw new IllegalArgumentException("the recipe mirror's 1.21.1 adapter only verifies the bare-id string "
+					+ "result or the item-keyed object (got " + aResult + " in " + aSource + ")");
+		}
+		JsonObject tNew = new JsonObject();
+		tNew.addProperty("count", tCount);
+		tNew.addProperty("id", tId);
+		aRecipe.add("result", tNew);
 	}
 
 	@Override
