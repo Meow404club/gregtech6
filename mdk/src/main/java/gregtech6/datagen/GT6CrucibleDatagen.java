@@ -17,15 +17,17 @@ import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6Molds;
 
 /**
- * The crucible-chain datagen home (task p26-crucible-physics-smeltery spec ⑦, the
- * self-contained GatherDataEvent subscriber — GT6DataGenerators stays untouched). All
- * four faces are datagen-native; ZERO hand-written JSON:
+ * The crucible-chain datagen home (task p26-crucible-physics-smeltery spec ⑦). Since task
+ * p30-ops-datagen-lang-order the provider band folds into {@link GT6DataGenerators#onGatherData}
+ * — this class is NO LONGER a {@code @Mod.EventBusSubscriber}: three self-contained
+ * GatherDataEvent subscribers ordered themselves by the annotation-scan lottery and the
+ * per-family full-file lang writers made the last one win (the p30 card's live repro: an
+ * incremental recompile flipped the scan order and a cache-cold runData landed en_us.json
+ * 66 keys short). All four faces are datagen-native; ZERO hand-written JSON:
  * <ul>
  * <li><b>blockstates</b>: per crucible block NINE variants over the
  *     {@link GT6Crucibles.CrucibleBlock#LIQUID_LEVEL} int property (0..8, the
@@ -42,17 +44,20 @@ import gregtech6.registry.GT6Molds;
  *     universe (KJS: the naturally moddable face).</li>
  * </ul>
  */
-@Mod.EventBusSubscriber(modid = GT6DataGenerators.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6CrucibleDatagen {
 
 	private GT6CrucibleDatagen() {}
 
-	@SubscribeEvent
-	public static void onGatherData(GatherDataEvent aEvent) {
+	/**
+	 * The provider band {@link GT6DataGenerators} appends to ITS listener — package-visible,
+	 * deliberately NOT a {@code @SubscribeEvent}. The Lang face is NOT registered here: the
+	 * chain GT6EnUs ← this Lang ← GT6MoldDatagen.Lang replays the full base table through the
+	 * super calls, so the ONE registered tail ({@link GT6MoldDatagen.Lang}) writes the
+	 * complete en_us.json; any extra registered writer would re-open the last-writer lottery.
+	 */
+	static void appendProviders(GatherDataEvent aEvent) {
 		aEvent.getGenerator().addProvider(true,
 				new Provider(aEvent.getGenerator().getPackOutput(), aEvent.getExistingFileHelper()));
-		aEvent.getGenerator().addProvider(true,
-				new Lang(aEvent.getGenerator().getPackOutput()));
 		//? if forge {
 		// the crafting face is the 1.20.1-forge runData surface this card drives; the 21.1
 		// datagen flow (RecipeOutput) has no FinishedRecipe and stays the card-B future
@@ -129,7 +134,9 @@ public final class GT6CrucibleDatagen {
 	 * GT6EnUs provider on purpose: a standalone LanguageProvider would clobber
 	 * en_us.json (LanguageProvider.finish rewrites the whole file — the later-registered
 	 * provider would wipe every GT6EnUs key), so this provider replays the full base
-	 * translation set plus the four crucible keys.
+	 * translation set plus the four crucible keys. Since task p30-ops-datagen-lang-order this
+	 * class is a CHAIN LINK only — never registered itself; {@link GT6MoldDatagen.Lang}, the
+	 * chain tail, is the single registered en_us writer.
 	 */
 	public static class Lang extends GT6EnUs {
 

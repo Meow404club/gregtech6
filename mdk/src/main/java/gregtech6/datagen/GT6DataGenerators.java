@@ -22,9 +22,13 @@ import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
  * neither has Client/Server inner sub-events — providers are gated with
  * {@code event.includeClient()} only.
  *
- * <p>Client data this phase: item models (GT6ItemModels) + en_us lang (GT6EnUs) + zh_cn lang
+ * <p>Client data this phase: item models (GT6ItemModels) + en_us lang + zh_cn lang
  * (GT6ZhCn, task p20-i18n-zhcn-provider), joined by
- * blockstates/block models (GT6BlockStates) with the p3-example-machine chest. Server providers:
+ * blockstates/block models (GT6BlockStates) with the p3-example-machine chest. The en_us
+ * writer is the SINGLE registered {@link GT6MoldDatagen.Lang} — the chain tail
+ * GT6EnUs ← GT6CrucibleDatagen.Lang ← GT6MoldDatagen.Lang replays base ⊕ crucible ⊕ mold
+ * through the super calls (task p30-ops-datagen-lang-order: registering more than one
+ * full-file lang writer made the winner an annotation-scan lottery). Server providers:
  * the material prefix blocks' loot tables (GT6LootTables, task p8-prefixblock-render) and, since
  * task p24-tool-system, the first tags provider (GT6ItemTags — registered BEFORE the recipes so
  * the tag band keeps precedence as the recipe band grows) and the first recipe provider
@@ -50,8 +54,14 @@ public final class GT6DataGenerators {
         if (event.includeClient()) {
             event.getGenerator().addProvider(true,
                 new GT6ItemModels(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
+            // task p30-ops-datagen-lang-order: the ONE en_us writer — the mold-chain tail
+            // (GT6MoldDatagen.Lang → GT6CrucibleDatagen.Lang → GT6EnUs) replays the full table
+            // through its super calls, so base + the 4 crucible keys + the 66 mold keys land in
+            // one deterministic write. The two chained providers are never registered
+            // themselves; a second registered writer would re-open the last-writer lottery the
+            // three-subscriber form suffered (an annotation-scan order a recompile flips).
             event.getGenerator().addProvider(true,
-                new GT6EnUs(event.getGenerator().getPackOutput()));
+                new GT6MoldDatagen.Lang(event.getGenerator().getPackOutput()));
             // task p20-i18n-zhcn-provider: the zh_cn companion walks the same small-unit faces,
             // values joined from the committed zh_cn_ref.tsv (ADR 2026-09-06-p20-i18n-zhcn-pipeline)
             event.getGenerator().addProvider(true,
@@ -94,6 +104,15 @@ public final class GT6DataGenerators {
         event.getGenerator().addProvider(true,
             new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(),
                 event.getLookupProvider(), GT6WorldgenDatagen.BUILDER, Set.of("gt6")));
+        // task p30-ops-datagen-lang-order: the crucible/mold provider bands — appended HERE so
+        // exactly ONE GatherDataEvent listener registers every provider (the pre-p30
+        // three-subscriber form ordered itself by the annotation-scan lottery, and its split
+        // registration could even land the lang writers after this listener). Their crafting
+        // faces MUST precede the mirror below: GT6DualDirectoryFaces walks the on-disk plural
+        // face (recipes/), so in-run fresh output replaces the stale-seeding the split form
+        // relied on.
+        GT6CrucibleDatagen.appendProviders(event);
+        GT6MoldDatagen.appendProviders(event);
         // task p26-w1-press-extruder-molds: the 1.21 singular-registry aliases — MUST stay
         // LAST (the sequential per-provider join order is the contract: the mirror walks the
         // earlier providers' on-disk output; see GT6DualDirectoryFaces)
