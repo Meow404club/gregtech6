@@ -189,6 +189,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addDistillationTowers(); // task p29-w3-distill-crucible — the twin tower controllers
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
+        addTreeBlocks(); // task p30-w6-t1-trees-nine — the 27 per-pair tree blocks
         addFoamBlocks(); // task p26-c-foam-block-family — the C-Foam pair + slabs + the owned carrier
         addSensors(); // task p26-sensors-core — the three pioneer sensor blocks
         addAnvils(); // task p28-c-anvil — the stone anvil pair
@@ -1865,6 +1866,51 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         LOGGER.info("GT6 grass blocks: {} per-pair blockstates over {} cube_bottom_top models (no tint)",
                 GTGrassBlocks.PATHS.size(), GTGrassBlocks.PATHS.size());
+    }
+
+    /**
+     * Task p30-w6-t1-trees-nine — the 27 GT tree blocks ({@link GT6TreeBlocks}): saplings
+     * render the vanilla cross idiom over the borrowed SAPLING_SMALL PNGs (cutout layer,
+     * the vanilla sapling render type), logs the axis blockstate over
+     * cube_column(side/end, the vanilla log idiom), leaves a cube_all over the borrowed
+     * LEAVES PNG (cutout_mipped, the vanilla leaves layer). All 36 textures are the
+     * upstream iconsets PNGs byte-borrowed ({@code gt6:block/tree/*}, the
+     * assets/README.md ledger face; the grass card pre-coloured-PNG precedent) — the
+     * Rainbowood dynamic tint deviation is declared in GT6TreeLeavesBlock. The RED LINE
+     * question (render_type in model JSON) is the FORGE 1.20.1 + NeoForge 21.1 shared
+     * model face — no client code, no ItemBlockRenderTypes call. Item models parent the
+     * block models (the grass walk shape).
+     */
+    private void addTreeBlocks() {
+        for (int i = 0; i < gregtech6.registry.GT6TreeBlocks.KINDS.size(); i++) {
+            gregtech6.block.tree.GT6TreeKind tKind = gregtech6.registry.GT6TreeBlocks.KINDS.get(i);
+            String tSnake = tKind.snake();
+            // sapling: cross + cutout
+            ModelFile tSaplingModel = models().cross(tSnake + "_sapling",
+                    modLoc("block/tree/sapling_" + tSnake)).renderType("cutout");
+            simpleBlock(gregtech6.registry.GT6TreeBlocks.SAPLINGS.get(i).get(), tSaplingModel);
+            itemModels().withExistingParent(tSnake + "_sapling", modLoc("block/" + tSnake + "_sapling"));
+            // log: the axis blockstate (hand-built variants, the vanilla column idiom)
+            // + cube_column model
+            ModelFile tLogModel = models().cubeColumn(tSnake + "_log",
+                    modLoc("block/tree/log_side_" + tSnake), modLoc("block/tree/log_top_" + tSnake));
+            net.minecraft.world.level.block.RotatedPillarBlock tLog =
+                    (net.minecraft.world.level.block.RotatedPillarBlock) gregtech6.registry.GT6TreeBlocks.LOGS.get(i).get();
+            getVariantBuilder(tLog).forAllStates(tState -> ConfiguredModel.builder()
+                    .modelFile(tLogModel)
+                    .rotationX(tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)
+                            == net.minecraft.core.Direction.Axis.X ? 90 : 0)
+                    .rotationY(tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)
+                            == net.minecraft.core.Direction.Axis.Z ? 90 : 0)
+                    .build());
+            itemModels().withExistingParent(tSnake + "_log", modLoc("block/" + tSnake + "_log"));
+            // leaves: cube_all + cutout_mipped
+            ModelFile tLeavesModel = models().cubeAll(tSnake + "_leaves",
+                    modLoc("block/tree/leaves_" + tSnake)).renderType("cutout_mipped");
+            simpleBlock(gregtech6.registry.GT6TreeBlocks.LEAVES.get(i).get(), tLeavesModel);
+            itemModels().withExistingParent(tSnake + "_leaves", modLoc("block/" + tSnake + "_leaves"));
+        }
+        LOGGER.info("GT6 tree blocks: 27 per-pair blockstates over 9 cross + 9 column + 9 leaves models");
     }
 
     /**
