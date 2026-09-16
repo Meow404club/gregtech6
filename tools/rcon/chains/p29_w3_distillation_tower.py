@@ -14,24 +14,28 @@ arithmetic):
   y 63 z 303  the /gt6energy source block, under the transmitter base (the W2 rig form)
 
 The map rows are the W4 hot-lube card's TRUE oil rows (distillationtower.json,
-Loader_Recipes_Chem.java:352-:360 verbatim — seven fractions per row), but the
-PORT freezes mTanksOutput to ONE tank (GT6Distillation.java:87-90, the declared
-deviation; TileEntityBase10MultiBlockMachine.java:191), so multi-fraction rows
-refuse at canOutput=0 (:735-:736 FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS) —
-the old single-fraction smoke row (oil 1000 -> creosote 500) they replaced was
-the last runnable shape. The run arm therefore pins the REFUSAL live (progress
-0/0 steady over >= 2x the :356 row duration, input untouched); the output-bank
-expansion is a product-side follow-up and is reported, not chain-fixable.
+Loader_Recipes_Chem.java:352-:360 verbatim — seven fractions per row), and since
+task p30-distill-output-routing (ruling 2026-09-16 distill-tower option a) the
+port RUNS them: the output bank is the upstream NINE-tank library (RM.java:65/:66
+fluids 1/9/0 — the W3④ single-tank freeze is undone), so the :356 row passes
+canOutput and every fraction routes down its class hole (the upstream :148-170
+table: propane/methane y+7 ... default y+1). The C/D refusal pins of the
+p30-rcon-chain-repair session are REBOUND onto the live run (the 7-barrel capture
+census).
 
   A  form — /gt6multiblock form scaffolds the 80 part cells from the fake-player
      stock (the self-cell passes without consuming), the design-1 probe pins the
      card-1 DESIGN render slot on the hole column, and the plain distill_part
      cell rejects it (the layering live).
   B  互拒 — the CU dial against the HU tower: the oil sits untouched, progress 0.
-  C  the HU dial + the multi-fraction refusal pin — progress 0/0 steady, input
-     tank intact, out bank empty (the :356 row found but canOutput=0).
-  D  the steady-state window — a third spaced read past 2x the row duration (the
-     old barrel-at-the-hole push arm went dark with the refusal: nothing routes).
+  C  the HU dial + the seven-fraction live run — 7 capture barrels ride the
+     routing holes y66..y72 and a chest the item arm; the oil drains batch by
+     batch (the :743 bind: 8 stages of 25 L per batch), the out bank ends empty
+     (everything pushed down the holes), the chest catches the chance dusts so
+     no batch parks.
+  D  the routing census — each barrel holds EXACTLY its class fraction:
+     lube y66 / fuel y67 / diesel y68 / kerosine y69 / petrol y70 / butane y71 /
+     propane y72 (the seven-way positive set uniquely pins the table).
 
 passes=2 is the idempotency proof (the [0,0] of this chain).
 Run:  python3 tools/rcon/chains/p29_w3_distillation_tower.py --node 1.20.1-forge
@@ -54,6 +58,7 @@ TOWER = "386 65 302"          # the controller (facing north)
 SOURCE = "386 63 303"         # the energy rig under the base layer
 HOLE = "386 70 304"           # a y+5 hole-column cell (design 1)
 PLAIN = "386 70 303"          # the same-layer centre cell (design 0)
+ARM_CHEST = "386 65 305"      # the item-arm capture (the offset-3 cell, the cryo chain's chest form)
 
 steps = [
     phase("A: form — the generic scaffold arm builds the 80-cell tower"),
@@ -78,23 +83,43 @@ steps = [
     Step(f"gt6distillation check {TOWER}", expect="progress=0/0", sleep=5.0),
     Step(f"gt6distillation check {TOWER}", expect="in_tank=[1000mB gt6:oil]"),
 
-    phase("C: the HU dial + the multi-fraction refusal pin (the declared single-tank deviation)"),
+    phase("C: the HU dial + the seven-fraction live run (the nine-tank bank, ruling 2026-09-16)"),
+    # the capture rig FIRST: a chest on the item arm (the chance dusts — no batch parks)
+    # and 7 barrels on the routing holes y66..y72 (the class holes y+1..y+7). Then the HU
+    # dial at 1024V: the :356 true row (gt6:oil 25 -> seven fractions) runs 8-stage
+    # batches (the :743 bind 512/64), 64 ticks per batch, 5 batches drain the 1000 mB.
+    Step(f"setblock {ARM_CHEST} minecraft:chest", expect="Changed the block"),
+    Step(f"setblock 386 66 305 gt6:barrel_metal", expect="Changed the block"),
+    Step(f"setblock 386 67 305 gt6:barrel_metal", expect="Changed the block"),
+    Step(f"setblock 386 68 305 gt6:barrel_metal", expect="Changed the block"),
+    Step(f"setblock 386 69 305 gt6:barrel_metal", expect="Changed the block"),
+    Step(f"setblock 386 70 305 gt6:barrel_metal", expect="Changed the block"),
+    Step(f"setblock 386 71 305 gt6:barrel_metal", expect="Changed the block"),
+    Step(f"setblock 386 72 305 gt6:barrel_metal", expect="Changed the block"),
     Step(f"gt6energy type {SOURCE} HU", expect="type"),
-    # the :356 true row (gt6:oil -> seven fractions) is FOUND but canOutput=0 — the frozen
-    # one-tank output bank (GT6Distillation.java:87-90, TileEntityBase10MultiBlockMachine
-    # :191) refuses it at :735-:736 (FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS). The oil
-    # must sit UNTOUCHED while the HU dial is live: progress 0/0 steady, input intact,
-    # output bank empty (tankText renders the empty tank as '-', GT6Distillation :861-863).
-    Step(f"gt6distillation check {TOWER}", expect="progress=0/0", sleep=6.0),
-    Step(f"gt6distillation check {TOWER}", expect="progress=0/0", sleep=6.0),
-    Step(f"gt6distillation check {TOWER}", expect="in_tank=[1000mB gt6:oil]"),
-    Step(f"gt6distillation check {TOWER}", expect="out_tank=[-]"),
+    Step(f"gt6energy volt {SOURCE} 1024", expect="voltage 1024"),
+    Step(f"gt6energy amp {SOURCE} 1", expect="amperage 1"),
+    # the run: poll until the input tank drains (every batch found its row — canOutput
+    # passes on the nine-tank bank). NOTE: this face can light up between the LAST
+    # batch's consumption and its completion — the terminal empty-bank gate lives in D.
+    Step(f"gt6distillation check {TOWER}", expect="in_tank=[-]", poll=45.0),
 
-    phase("D: the steady-state window — a third spaced read past 2x the :356 row duration"),
-    # the old barrel-at-the-hole push arm went dark with the refusal: nothing routes while
-    # the output bank stays one tank (the product-side expansion is reported, not
-    # chain-fixable) — the refusal holding past 2x the row duration is the live pin.
-    Step(f"gt6distillation check {TOWER}", expect="progress=0/0", sleep=9.0),
+    phase("D: the routing census — each fraction landed on its class hole"),
+    # RACE NOTE (live-calibrated, first run): out_tank=[-] also matches BETWEEN the last
+    # batch's oil consumption and its completion, so the EMPTY faces cannot gate the
+    # census. The gate is the FINAL TOTAL on the fuel hole instead — 1000 = 5 batches
+    # (the :743 bind 8 stages x 25 L) x the 25 L fuel slot; the poll waits out the last
+    # batch's completion+push. The remaining holes are then read as exact amounts
+    # (lube 1000, the rest 600 — the :356 slot table x 40 processes).
+    Step(f"gt6tank stat 386 67 305", expect="1000/64000 L of gt6:fuel", poll=30.0),
+    Step(f"gt6tank stat 386 66 305", expect="1000/64000 L of gt6:lubricant"),
+    Step(f"gt6tank stat 386 68 305", expect="600/64000 L of gt6:diesel"),
+    Step(f"gt6tank stat 386 69 305", expect="600/64000 L of gt6:kerosine"),
+    Step(f"gt6tank stat 386 70 305", expect="600/64000 L of gt6:petrol"),
+    Step(f"gt6tank stat 386 71 305", expect="600/64000 L of gt6:butane"),
+    Step(f"gt6tank stat 386 72 305", expect="600/64000 L of gt6:propane"),
+    # terminal census: the bank really is empty AFTER the last batch landed
+    Step(f"gt6distillation fluid {TOWER} stat", expect="out_tank=[-]"),
 
     phase("E: teardown — the explicit band restore"),
     Step("fill 383 62 300 389 75 307 air", expect="filled"),

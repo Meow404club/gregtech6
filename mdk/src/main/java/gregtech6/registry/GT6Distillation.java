@@ -84,10 +84,15 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  * the port's auto-IO cut is restored HERE because the registration row declares
  * NBT_INV_SIDE_AUTO_OUT SIDE_BACK, an auto-out machine by census); fluids push per-class down
  * the back hole column ({@code mTanksOutput} iterate + the upstream fluid-class routing table
- * :152-166: propane/methane y+7 ... default y+1). Declared deviation: the port base freezes
- * {@code mTanksOutput} to ONE tank (the final 1-element array, TileEntityBase10MultiBlockMachine
- * :191), so multi-fraction recipes (>1 distinct output fluids) wait at canOutput=0 — the smoke
- * row's single-fraction shape is the live path; the routing table itself is exact.
+ * :148-170: propane/methane y+7 ... default y+1). <b>The output bank is the upstream NINE-tank
+ * library</b> (task p30-distill-output-routing, the 2026-09-16 distill-tower ruling option a
+ * — the W3④ single-tank freeze is UNDONE): upstream readFromNBT2 sizes {@code mTanksOutput}
+ * from the map's fluid-OUT count (MultiTileEntityBasicMachine.java:161), and RM.java:65/:66
+ * fix BOTH tower maps at fluids 1/9/0 — nine default-capacity tanks, so the seven-fraction
+ * true rows (Loader_Recipes_Chem.java:352-:360) pass canOutput and every fraction lands in
+ * its own tank before the class routing pushes it out. NBT: tank 0 keeps the base
+ * {@code output_tank} key (old single-tank saves load verbatim), tanks 1..8 ride
+ * {@code output_tank_i} (the upstream {@code NBT_TANK.out.i} index form, in-repo key naming).
  *
  * <p><b>The tick face</b> (the one deliberate base override): the shared machine base's onTick
  * carries the Coke Oven's UNCONDITIONAL TU self-generation ({@code mEnergy++} per tick), whose
@@ -211,14 +216,23 @@ public final class GT6Distillation {
 		/** The shared registration constants: NBT_HARDNESS/NBT_RESISTANCE 6.0 (:1226-1227). */
 		public static final float SHELL_HARDNESS = 6.0F;
 
+		/**
+		 * The output-bank size — RM.java:65/:66 {@code IN-OUT-MIN-FLUID} 1/9/0: BOTH tower
+		 * maps declare NINE fluid-OUT slots, which is the upstream readFromNBT2 :161
+		 * {@code mTanksOutput} length (MultiTileEntityBasicMachine sizes the bank from
+		 * {@code mRecipes.mOutputFluidCount}). The seven-fraction true rows fill seven of
+		 * the nine; the last two stay spare, exactly like upstream.
+		 */
+		public static final int OUTPUT_TANK_COUNT = 9;
+
 		/** The NBT key of the input tank (the upstream NBT_TANK+".in."+i form, i = 0). */
 		public static final String NBT_INPUT_TANK = "tank_in_0";
 
 		/** The item auto-out arm distance — upstream :143 {@code getOffset*N(mFacing, 3)}. */
 		public static final int OUTPUT_ARM_DISTANCE = 3;
 
-		/** The input tank — ONE (the map's fluid-IN count is 1; the upstream :160 per-map sizing). */
-		public final FluidTankGT mTankInput = new FluidTankGT();
+	/** The input tank — ONE (the map's fluid-IN count is 1; the upstream :160 per-map sizing). */
+	public final FluidTankGT mTankInput = new FluidTankGT();
 
 		/** The facing the cached pattern was built for (the hole column is facing-dependent). */
 		private byte mPatternFacing = -1;
@@ -238,6 +252,14 @@ public final class GT6Distillation {
 		/** The test seam: offline fixtures build their own BET (the frozen-registry form). */
 		public TileEntityDistillationTower(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 			super(aType, aPos, aState);
+			// the output bank unfrozen (p30-distill-output-routing, ruling 2026-09-16 option
+			// a): the upstream readFromNBT2 :161 row — the bank re-points to the map's
+			// fluid-OUT count, nine default-capacity tanks (RM.java:65/:66 fluids 1/9/0; the
+			// tower rows carry no NBT_TANK_CAPACITY so the upstream default FluidTankGT
+			// capacity stands). The base field lost its final for THIS consumer; the Coke
+			// Oven family keeps the one-tank default.
+			mTanksOutput = new FluidTankGT[OUTPUT_TANK_COUNT];
+			for (int i = 0; i < mTanksOutput.length; i++) mTanksOutput[i] = new FluidTankGT();
 			// Loader:1226-1227 — NBT_INPUT 512 + NBT_INPUT_MIN 1 + NBT_INPUT_MAX 1024 (the
 			// explicit-override form) + NBT_CHEAP_OVERCLOCKING T (the card ① semantic bit's
 			// first live consumer). Registration config, not persisted.
@@ -538,25 +560,27 @@ public final class GT6Distillation {
 		}
 
 		/**
-		 * Upstream :146-171 doOutputFluids — the single output tank pushes down the back hole
-		 * column by FLUID CLASS (:152-166): propane/methane to y+7, butane y+6, petrol/gasoline
-		 * /bioethanol y+5, kerosene/kerosine/glycerol y+4, diesel/biodiesel y+3, fuel/fueloil
-		 * /biofuel y+2, everything else y+1. The three-beat fill-then-deduct is the base's
-		 * {@code doOutputFluids} form.
+		 * Upstream :146-171 — every output tank pushes down the back hole column by FLUID
+		 * CLASS (:152-166): propane/methane to y+7, butane y+6, petrol/gasoline/bioethanol
+		 * y+5, kerosene/kerosine/glycerol y+4, diesel/biodiesel y+3, fuel/fueloil/biofuel
+		 * y+2, everything else y+1. The bank loop is the upstream :148
+		 * {@code for (FluidTankGT tTank : mTanksOutput)} (the nine-tank library); the
+		 * three-beat fill-then-deduct is the base's {@code doOutputFluids} form.
 		 */
 		@Override
 		public void doOutputFluids() {
-			FluidTankGT tTank = mTanksOutput[0];
-			FluidStack tContent = tTank.fluid();
-			if (tContent == null || tContent.getAmount() <= 0) return;
-			IFluidHandler tTarget = fluidHandlerAt(routingCell(tContent.getFluid()));
-			if (tTarget == null) return;
-			FluidStack tAvailable = tTank.drain(Integer.MAX_VALUE, FluidAction.SIMULATE);
-			if (tAvailable == null || tAvailable.isEmpty()) return;
-			int tFilled = tTarget.fill(tAvailable, FluidAction.EXECUTE);
-			if (tFilled <= 0) return; // the target refuses → the source keeps everything
-			FluidStack tDrained = tTank.drain(tFilled, FluidAction.EXECUTE);
-			if (tDrained != null && !tDrained.isEmpty()) mInventoryChanged = true; // :168 updateInventory
+			for (FluidTankGT tTank : mTanksOutput) {
+				FluidStack tContent = tTank.fluid();
+				if (tContent == null || tContent.getAmount() <= 0) continue;
+				IFluidHandler tTarget = fluidHandlerAt(routingCell(tContent.getFluid()));
+				if (tTarget == null) continue;
+				FluidStack tAvailable = tTank.drain(Integer.MAX_VALUE, FluidAction.SIMULATE);
+				if (tAvailable == null || tAvailable.isEmpty()) continue;
+				int tFilled = tTarget.fill(tAvailable, FluidAction.EXECUTE);
+				if (tFilled <= 0) continue; // the target refuses → the source keeps everything
+				FluidStack tDrained = tTank.drain(tFilled, FluidAction.EXECUTE);
+				if (tDrained != null && !tDrained.isEmpty()) mInventoryChanged = true; // :168 updateInventory
+			}
 		}
 
 		/** The upstream :152-166 class table → the hole column layer (1..7) of the fluid. */
@@ -613,8 +637,10 @@ public final class GT6Distillation {
 		/**
 		 * The tower fluid face: FILL reaches the input tank (the map carries fluid-IN 1; the
 		 * side-less query and every world face admit — the input geometry "bottom layer only"
-		 * is the PARTS' ONLY_ITEM_FLUID mode, not a face mask), DRAIN reads the output tank
-		 * behind the shared coke-oven mask 61 (the MultiBlockFluidHandler side rules).
+		 * is the PARTS' ONLY_ITEM_FLUID mode, not a face mask), DRAIN reads the output bank
+		 * behind the shared coke-oven mask 61 (the MultiBlockFluidHandler side rules). The
+		 * exposed tank list is the upstream getFluidTanks2 union: index 0 = the input, 1..9 =
+		 * the output library in bank order (the nine-tank library).
 		 */
 		public static final class TowerFluidHandler implements IFluidHandler {
 
@@ -627,18 +653,22 @@ public final class GT6Distillation {
 				mSide = aSide;
 			}
 
-			@Override public int getTanks() {return 2;} // input + output
+			@Override public int getTanks() {return 1 + mTower.mTanksOutput.length;} // input + the output library
+
+			/** Index 0 = the input tank, i >= 1 = output bank slot i-1 (the getFluidTanks2 union). */
+			private FluidTankGT tank(int aTank) {
+				return aTank == 0 ? mTower.mTankInput : mTower.mTanksOutput[aTank - 1];
+			}
 
 			@Override
 			public net.minecraftforge.fluids.FluidStack getFluidInTank(int aTank) {
-				FluidTankGT tTank = aTank == 0 ? mTower.mTankInput : mTower.mTanksOutput[0];
-				FluidStack tContent = tTank.fluid();
+				FluidStack tContent = tank(aTank).fluid();
 				return tContent == null ? net.minecraftforge.fluids.FluidStack.EMPTY : tContent;
 			}
 
 			@Override
 			public int getTankCapacity(int aTank) {
-				return FluidTankGT.bindInt((aTank == 0 ? mTower.mTankInput : mTower.mTanksOutput[0]).getCapacity());
+				return FluidTankGT.bindInt(tank(aTank).getCapacity());
 			}
 
 			@Override
@@ -663,45 +693,62 @@ public final class GT6Distillation {
 			public net.minecraftforge.fluids.FluidStack drain(int aMaxDrain, FluidAction aAction) {
 				if (aMaxDrain <= 0) return net.minecraftforge.fluids.FluidStack.EMPTY;
 				if (!MultiBlockFluidHandler.drainAllowedBySide(mTower.mFacing, mSide)) return net.minecraftforge.fluids.FluidStack.EMPTY;
-				FluidTankGT tTank = mTower.mTanksOutput[0];
-				if (tTank.isEmpty()) return net.minecraftforge.fluids.FluidStack.EMPTY;
-				return tTank.drain(aMaxDrain, aAction);
+				for (FluidTankGT tTank : mTower.mTanksOutput) { // the first bank tank with content serves the draw
+					if (tTank.isEmpty()) continue;
+					return tTank.drain(aMaxDrain, aAction);
+				}
+				return net.minecraftforge.fluids.FluidStack.EMPTY;
 			}
 
 			@Override
 			public net.minecraftforge.fluids.FluidStack drain(net.minecraftforge.fluids.FluidStack aResource, FluidAction aAction) {
-				if (aResource == null || aResource.isEmpty() || !mTower.mTanksOutput[0].contains(aResource)) return net.minecraftforge.fluids.FluidStack.EMPTY;
-				return drain(FluidTankGT.bindInt(Math.min(mTower.mTanksOutput[0].amount(), aResource.getAmount())), aAction);
+				if (aResource == null || aResource.isEmpty()) return net.minecraftforge.fluids.FluidStack.EMPTY;
+				for (FluidTankGT tTank : mTower.mTanksOutput) if (tTank.contains(aResource)) {
+					return tTank.drain(FluidTankGT.bindInt(Math.min(tTank.amount(), aResource.getAmount())), aAction);
+				}
+				return net.minecraftforge.fluids.FluidStack.EMPTY;
 			}
 		}
 
 		// ---------------------------------------------------------------------------
-		// NBT (the base shape + the input tank)
+		// NBT (the base shape + the input tank + the output library tail)
+		//
+		// The BASE owns tank 0 under "output_tank" (super save/load) — old single-tank
+		// saves load verbatim, no migration branch. Tanks 1..8 ride the per-index
+		// "output_tank_i" keys here (the upstream NBT_TANK+".out."+i index form, in-repo
+		// key naming); absent keys leave an empty tank.
 		// ---------------------------------------------------------------------------
+
+		/** The per-index key of output bank tank i, i >= 1 (tank 0 stays the base's). */
+		public static String outputTankKey(int aIndex) {return TileEntityBase10MultiBlockMachine.NBT_OUTPUT_TANK + "_" + aIndex;}
 
 		//? if forge {
 		@Override
 		protected void saveAdditional(CompoundTag aNBT) {
 			super.saveAdditional(aNBT);
 			mTankInput.writeToNBT(aNBT, NBT_INPUT_TANK);
+			for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].writeToNBT(aNBT, outputTankKey(i));
 		}
 
 		@Override
 		public void load(CompoundTag aNBT) {
 			super.load(aNBT);
 			mTankInput.readFromNBT(aNBT, NBT_INPUT_TANK);
+			for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, outputTankKey(i));
 		}
 		//?} else {
 		/*@Override
 		protected void saveAdditional(CompoundTag aNBT) {
 			super.saveAdditional(aNBT);
 			mTankInput.writeToNBT(aNBT, NBT_INPUT_TANK);
+			for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].writeToNBT(aNBT, outputTankKey(i));
 		}
 
 		@Override
 		public void load(CompoundTag aNBT) {
 			super.load(aNBT);
 			mTankInput.readFromNBT(aNBT, NBT_INPUT_TANK);
+			for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, outputTankKey(i));
 		}
 		*///?}
 
@@ -797,7 +844,7 @@ public final class GT6Distillation {
 			String tMachine = String.format("machine: progress=%d/%d energy=%d min_energy=%d window=%d/%d/%d timer=%d active=%s stopped=%s in_tank=[%s] out_tank=[%s]",
 					tTower.mProgress, tTower.mMaxProgress, tTower.mEnergy, tTower.mMinEnergy,
 					tTower.mInputMin, tTower.mInput, tTower.mInputMax, tTower.getTimer(),
-					tTower.mActive, tTower.mStopped, tankText(tTower.mTankInput), tankText(tTower.mTanksOutput[0]));
+					tTower.mActive, tTower.mStopped, tankText(tTower.mTankInput), outBankText(tTower));
 			String tReport = String.format("GT6 %s at %s: %s okay=%s block_formed=%s linked_parts=%d/81 | %s",
 					tTower.getTileEntityName(), tTower.getBlockPos().toShortString(), tVerdict, tTower.mStructureOkay,
 					tBlockFormed, tLinked, tMachine);
@@ -852,7 +899,7 @@ public final class GT6Distillation {
 				return 0;
 			}
 			String tLine = String.format("GT6 %s fluid stat at %s: in_tank=[%s] out_tank=[%s]",
-					tTower.getTileEntityName(), tTower.getBlockPos().toShortString(), tankText(tTower.mTankInput), tankText(tTower.mTanksOutput[0]));
+					tTower.getTileEntityName(), tTower.getBlockPos().toShortString(), tankText(tTower.mTankInput), outBankText(tTower));
 			aSource.sendSuccess(() -> Component.literal(tLine), false);
 			LOGGER.info(tLine);
 			return com.mojang.brigadier.Command.SINGLE_SUCCESS;
@@ -861,6 +908,22 @@ public final class GT6Distillation {
 		private static String tankText(FluidTankGT aTank) {
 			if (aTank.isEmpty() || aTank.fluid() == null) return "-";
 			return aTank.amount() + "mB " + net.minecraftforge.registries.ForgeRegistries.FLUIDS.getKey(aTank.fluid().getFluid());
+		}
+
+		/**
+		 * The output-library census — every NON-EMPTY bank tank joined with ", " (the bank
+		 * index in brackets); an empty bank renders as "-" exactly like the old single-tank
+		 * empty form (the chain asserts keep their shape).
+		 */
+		private static String outBankText(TileEntityDistillationTower aTower) {
+			StringBuilder rText = new StringBuilder();
+			for (int i = 0; i < aTower.mTanksOutput.length; i++) {
+				String tTank = tankText(aTower.mTanksOutput[i]);
+				if ("-".equals(tTank)) continue;
+				if (rText.length() > 0) rText.append(", ");
+				rText.append("[").append(i).append("]").append(tTank);
+			}
+			return rText.length() == 0 ? "-" : rText.toString();
 		}
 	}
 
