@@ -100,19 +100,26 @@ steps = [
     Step(f"gt6energy volt {SOURCE} 1024", expect="voltage 1024"),
     Step(f"gt6energy amp {SOURCE} 1", expect="amperage 1"),
     # the run: poll until the input tank drains (every batch found its row — canOutput
-    # passes on the nine-tank bank), then poll until the out bank empties (the last
-    # batch's fractions pushed down the class holes)
+    # passes on the nine-tank bank). NOTE: this face can light up between the LAST
+    # batch's consumption and its completion — the terminal empty-bank gate lives in D.
     Step(f"gt6distillation check {TOWER}", expect="in_tank=[-]", poll=45.0),
-    Step(f"gt6distillation fluid {TOWER} stat", expect="out_tank=[-]", poll=30.0),
 
     phase("D: the routing census — each fraction landed on its class hole"),
-    Step(f"gt6tank stat 386 66 305", expect="L of gt6:lubricant"),
-    Step(f"gt6tank stat 386 67 305", expect="L of gt6:fuel"),
-    Step(f"gt6tank stat 386 68 305", expect="L of gt6:diesel"),
-    Step(f"gt6tank stat 386 69 305", expect="L of gt6:kerosine"),
-    Step(f"gt6tank stat 386 70 305", expect="L of gt6:petrol"),
-    Step(f"gt6tank stat 386 71 305", expect="L of gt6:butane"),
-    Step(f"gt6tank stat 386 72 305", expect="L of gt6:propane"),
+    # RACE NOTE (live-calibrated, first run): out_tank=[-] also matches BETWEEN the last
+    # batch's oil consumption and its completion, so the EMPTY faces cannot gate the
+    # census. The gate is the FINAL TOTAL on the fuel hole instead — 1000 = 5 batches
+    # (the :743 bind 8 stages x 25 L) x the 25 L fuel slot; the poll waits out the last
+    # batch's completion+push. The remaining holes are then read as exact amounts
+    # (lube 1000, the rest 600 — the :356 slot table x 40 processes).
+    Step(f"gt6tank stat 386 67 305", expect="1000/64000 L of gt6:fuel", poll=30.0),
+    Step(f"gt6tank stat 386 66 305", expect="1000/64000 L of gt6:lubricant"),
+    Step(f"gt6tank stat 386 68 305", expect="600/64000 L of gt6:diesel"),
+    Step(f"gt6tank stat 386 69 305", expect="600/64000 L of gt6:kerosine"),
+    Step(f"gt6tank stat 386 70 305", expect="600/64000 L of gt6:petrol"),
+    Step(f"gt6tank stat 386 71 305", expect="600/64000 L of gt6:butane"),
+    Step(f"gt6tank stat 386 72 305", expect="600/64000 L of gt6:propane"),
+    # terminal census: the bank really is empty AFTER the last batch landed
+    Step(f"gt6distillation fluid {TOWER} stat", expect="out_tank=[-]"),
 
     phase("E: teardown — the explicit band restore"),
     Step("fill 383 62 300 389 75 307 air", expect="filled"),
