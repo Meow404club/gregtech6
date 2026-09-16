@@ -65,19 +65,24 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
 
     /** The vanilla subset per kind, GT6TreeBlocks.KINDS order (the class-javadoc mapping). */
     public static final List<List<ResourceKey<Biome>>> TREE_BIOMES = List.of(
-            // RUBBER = BIOMES_RUBBER (CS.java:267, the taiga family)
-            List.of(biome("taiga"), biome("taiga_hills"), biome("snowy_taiga"), biome("snowy_taiga_hills"),
+            // RUBBER = BIOMES_RUBBER (CS.java:267, the taiga family) — the 1.7.10
+            // taigaHills/coldTaigaHills hills variants were REMOVED in 1.18 (folded
+            // into the plains taiga/snowy_taiga), so the family is the four survivors
+            // plus the two old-growth giants
+            List.of(biome("taiga"), biome("snowy_taiga"),
                     biome("old_growth_pine_taiga"), biome("old_growth_spruce_taiga")),
             // MAPLE = BIOMES_MAPLE (CS.java:280, the vanilla members forest/forestHills)
-            List.of(biome("forest"), biome("forest_hills")),
+            // — forest_hills REMOVED in 1.18
+            List.of(biome("forest")),
             // WILLOW = BIOMES_WILLOW (CS.java:264, the vanilla member swampland)
             List.of(biome("swamp")),
-            // BLUE_MAHOE = BIOMES_BLUEMAHOE (CS.java:256, the jungle family)
-            List.of(biome("jungle"), biome("jungle_hills"), biome("sparse_jungle")),
+            // BLUE_MAHOE = BIOMES_BLUEMAHOE (CS.java:256, the jungle family — jungle_hills
+            // REMOVED in 1.18)
+            List.of(biome("jungle"), biome("sparse_jungle")),
             // HAZEL = BIOMES_HAZEL (CS.java:283, the vanilla member plains)
             List.of(biome("plains")),
             // CINNAMON = BIOMES_CINNAMON (CS.java:256, the jungle family)
-            List.of(biome("jungle"), biome("jungle_hills"), biome("sparse_jungle")),
+            List.of(biome("jungle"), biome("sparse_jungle")),
             // COCONUT = BIOMES_COCONUT (CS.java:285, the vanilla member beach; the
             // upstream mountain/frozen/taiga/swamp/woods exclusions never intersect it)
             List.of(biome("beach")),
