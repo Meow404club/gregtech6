@@ -1,0 +1,42 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "gt6:stick_steel"
+    },
+    "T": {
+      "item": "gt6:screw_steel"
+    },
+    "V": {
+      "tag": "gt6:re_battery1"
+    },
+    "W": {
+      "item": "gt6:stick_steel_galvanized"
+    },
+    "X": {
+      "item": "gt6:plate_curved_steel_galvanized"
+    },
+    "Y": {
+      "item": "gt6:ring_steel_galvanized"
+    },
+    "Z": {
+      "item": "gt6:plate_steel_galvanized"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "fSY",
+    "TXW",
+    "dVZ"
+  ],
+  "result": {
+    "item": "gt6:hand_drill_lv"
+  },
+  "show_notification": true
+}

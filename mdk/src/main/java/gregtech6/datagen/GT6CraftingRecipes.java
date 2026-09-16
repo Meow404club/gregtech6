@@ -293,6 +293,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		flintAndSteelBuilder().save(aConsumer, FLINT_AND_STEEL_ID);
 		rollingPinBuilder().save(aConsumer, ROLLING_PIN_ID);
 		bendingCylinderBuilder().save(aConsumer, BENDING_CYLINDER_ID);
+		// task p29-w5-t6-electric-nineteen — the fifteen electric rows (the :356-377 convergence)
+		for (ElectricToolRow tRow : electricToolRows()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 	}
 	//?} else {
 	/*@Override
@@ -383,6 +387,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		flintAndSteelBuilder().save(aOutput, FLINT_AND_STEEL_ID);
 		rollingPinBuilder().save(aOutput, ROLLING_PIN_ID);
 		bendingCylinderBuilder().save(aOutput, BENDING_CYLINDER_ID);
+		// task p29-w5-t6-electric-nineteen — the fifteen electric rows (the :356-377 convergence)
+		for (ElectricToolRow tRow : electricToolRows()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
 	}
 	*///?}
 
@@ -1771,5 +1779,130 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
                 .define('I', Tags.Items.INGOTS)
                 .unlockedBy("has_ingot", has(Tags.Items.INGOTS));
+    // -------------------------------------------------------------------------
+    // task p29-w5-t6-electric-nineteen — the fifteen electric-tool crafting rows
+    // (the upstream OreProcessing_Tool rows Loader_Tools.java:356-377 converged to the
+    // single steel tier; the VANILLA pattern strings byte-kept, the keys remapped):
+    //   'A' = the steel tool head item (the per-material head loop folds to steel);
+    //   'S'/'T' = stick/screw of Steel (the tool-head material columns);
+    //   'X' = plateCurved(Electric_T[i]);
+    //   'Y' = ring (plate on the buzzsaw, spring on the jackhammer) of the tier;
+    //   'Z' = plate (stick_long on the trimmer) of the tier;
+    //   'V' = #gt6:re_battery<i> (the W4 tag seam — ANY battery of the tier, the oredict
+    //         semantics; the tool CAPACITY pins the lead-acid representative regardless);
+    //   'W' = the MOTOR/PISTON component ruling (the card open question, declared):
+    //         IL.MOTORS[i] → stick(Electric_T[i]), IL.PISTONS[i] → gear_gt_small(
+    //         Electric_T[i]) — the motor/piston ITEM families do not exist in this
+    //         universe, the Electric_T-machined parts are the closest live equivalent;
+    //   'd'/'f'/'h' = the crafting tool tags (the in-grid tool wear channel).
+    // The lv batch: MixerLV/DrillLV/ScrewdriverLV/BuzzsawLV/TrimmerLV/WrenchLV/
+    // MiningDrillLV/ChainsawLV (:357-365); the mv trio (:368-370); the hv trio + the
+    // JackHammer (:373-377). The monkey-wrench and no-ores forms have NO crafting row
+    // upstream — they exist only through the sneak swap.
+    // -------------------------------------------------------------------------
+
+    /** One staged electric row: the shared builder + the row id its save face ids from. */
+    record ElectricToolRow(ShapedRecipeBuilder builder, ResourceLocation id) {}
+
+    /** The electric row id: {@code electric_tool/<path>} (the battery/&lt;path&gt; convention). */
+    public static ResourceLocation electricToolRecipeId(String aPath) {
+        return new ResourceLocation(GT6DataGenerators.MOD_ID, "electric_tool/" + aPath);
+    }
+
+    /** The Electric_T[i] material (tier 1..3 = SteelGalvanized/Al/StainlessSteel, upstream MT.java:3691). */
+    private static gregapi.oredict.OreDictMaterial electricMaterial(int aTier) {
+        return gregtech6.registry.GTMachines.ELECTRIC_T_LADDER.get(aTier - 1).get();
+    }
+
+    /** The tier-tagged battery column ('V') — #gt6:re_battery&lt;i&gt; (the W4 seam). */
+    private static TagKey<Item> batteryTag(int aTier) {
+        return GT6ItemTags.gt6("re_battery" + aTier);
+    }
+
+    /** The fifteen rows, the upstream registration order :356-377. */
+    public java.util.List<ElectricToolRow> electricToolRows() {
+        java.util.List<ElectricToolRow> rRows = new ArrayList<>();
+        gregtech6.items.tools.electric.GT6ElectricToolItem.Spec[] tSpecs = {
+                gregtech6.items.tools.electric.GT6ElectricToolItem.HAND_MIXER_LV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.HAND_DRILL_LV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.SCREWDRIVER_LV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.BUZZSAW_LV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.TRIMMER_LV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.WRENCH_LV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.MINING_DRILL_LV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.CHAINSAW_LV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.WRENCH_MV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.MINING_DRILL_MV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.CHAINSAW_MV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.WRENCH_HV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.MINING_DRILL_HV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.CHAINSAW_HV,
+                gregtech6.items.tools.electric.GT6ElectricToolItem.JACKHAMMER_HV_NORMAL};
+        for (gregtech6.items.tools.electric.GT6ElectricToolItem.Spec tSpec : tSpecs) {
+            rRows.add(new ElectricToolRow(electricToolBuilder(tSpec), electricToolRecipeId(tSpec.aPath())));
+        }
+        return rRows;
+    }
+
+    /**
+     * One row's builder — the pattern/key columns live in the two upstream tables
+     * (the shape strings :357-377 and the OreProcessing_Tool ctor args per row).
+     */
+    private ShapedRecipeBuilder electricToolBuilder(gregtech6.items.tools.electric.GT6ElectricToolItem.Spec aSpec) {
+        String tPath = aSpec.aPath();
+        int tTier = aSpec.aTier();
+        gregapi.oredict.OreDictMaterial tTierMat = electricMaterial(tTier);
+        gregapi.oredict.OreDictMaterial tSteel = gregapi.data.MT.Steel;
+        // the shape string per row (the :357-377 byte-forms); the wrench/miningdrill/
+        // chainsaw ladder rows share the {"dAT","XWX","XVX"} shape.
+        String[] tPattern = switch (tPath) {
+            case "hand_mixer_lv" -> new String[] {"SSY", "SXW", "hVZ"};
+            case "hand_drill_lv" -> new String[] {"fSY", "TXW", "dVZ"};
+            case "screwdriver_lv" -> new String[] {"XdA", "TWY", "VYX"};
+            case "buzzsaw_lv" -> new String[] {"YXV", "TWX", "AdY"};
+            case "trimmer_lv" -> new String[] {"XAT", "ZYA", "VWd"};
+            case "jackhammer_hv_normal" -> new String[] {"SVS", "XWX", "YSY"};
+            default -> new String[] {"dAT", "XWX", "XVX"};
+        };
+        // the head prefix per row (the listener column: the mixer/drill/jackhammer rows
+        // ride toolHeadDrill upstream, :357-358/:364/:377)
+        gregapi.oredict.OreDictPrefix tHead = switch (tPath) {
+            case "screwdriver_lv" -> gregapi.data.OP.toolHeadScrewdriver;
+            case "buzzsaw_lv" -> gregapi.data.OP.toolHeadBuzzSaw;
+            case "trimmer_lv" -> gregapi.data.OP.toolHeadSword; // 2x toolHeadSword (the :174 material amount)
+            case "chainsaw_lv", "chainsaw_mv", "chainsaw_hv" -> gregapi.data.OP.toolHeadChainsaw;
+            case "wrench_lv", "wrench_mv", "wrench_hv" -> gregapi.data.OP.toolHeadWrench;
+            default -> gregapi.data.OP.toolHeadDrill;
+        };
+        // the 'Y' column: ring on the lv batch, plate on the buzzsaw (:360), spring on the
+        // jackhammer (:377); the 'Z' column: plate (mixer/drill), stick_long (trimmer :361);
+        // the 'W' column: the motor equivalent (stick) except the pistons rows
+        // (trimmer/jackhammer = the gear equivalent).
+        gregapi.oredict.OreDictPrefix tY = switch (tPath) {
+            case "buzzsaw_lv" -> gregapi.data.OP.plate;
+            case "jackhammer_hv_normal" -> gregapi.data.OP.spring;
+            default -> gregapi.data.OP.ring;
+        };
+        gregapi.oredict.OreDictPrefix tZ = tPath.equals("trimmer_lv") ? gregapi.data.OP.stickLong : gregapi.data.OP.plate;
+        gregapi.oredict.OreDictPrefix tW = tPath.equals("trimmer_lv") || tPath.equals("jackhammer_hv_normal")
+                ? gregapi.data.OP.gearGtSmall : gregapi.data.OP.stick;
+        String tKeys = tPattern[0] + tPattern[1] + tPattern[2];
+        ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder
+                .shaped(RecipeCategory.TOOLS, GT6Tools.electricTool(tPath).get());
+        for (String tRow : tPattern) tBuilder.pattern(tRow);
+        // define ONLY the keys the shape actually uses — ShapedRecipeBuilder throws on a
+        // defined-but-unused ingredient (the hand_mixer row carries no head/screw key)
+        if (tKeys.indexOf('A') >= 0) tBuilder.define('A', GTMaterialItems.get(tHead, tSteel).get());
+        if (tKeys.indexOf('S') >= 0) tBuilder.define('S', GTMaterialItems.get(gregapi.data.OP.stick, tSteel).get());
+        if (tKeys.indexOf('T') >= 0) tBuilder.define('T', GTMaterialItems.get(gregapi.data.OP.screw, tSteel).get());
+        if (tKeys.indexOf('X') >= 0) tBuilder.define('X', GTMaterialItems.get(gregapi.data.OP.plateCurved, tTierMat).get());
+        if (tKeys.indexOf('V') >= 0) tBuilder.define('V', batteryTag(tTier));
+        if (tKeys.indexOf('W') >= 0) tBuilder.define('W', GTMaterialItems.get(tW, tTierMat).get());
+        if (tKeys.indexOf('Y') >= 0) tBuilder.define('Y', GTMaterialItems.get(tY, tTierMat).get());
+        if (tKeys.indexOf('Z') >= 0) tBuilder.define('Z', GTMaterialItems.get(tZ, tTierMat).get());
+        if (tKeys.indexOf('d') >= 0) tBuilder.define('d', GT6ItemTags.TOOLS_SCREWDRIVER);
+        if (tKeys.indexOf('f') >= 0) tBuilder.define('f', GT6ItemTags.TOOLS_FILE);
+        if (tKeys.indexOf('h') >= 0) tBuilder.define('h', GT6ItemTags.TOOLS_HARD_HAMMER);
+        return tBuilder.unlockedBy("has_battery", has(batteryTag(tTier)));
     }
 }

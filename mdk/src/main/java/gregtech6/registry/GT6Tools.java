@@ -480,6 +480,14 @@ public final class GT6Tools {
 			MONKEY_WRENCH_LV, MONKEY_WRENCH_MV, MONKEY_WRENCH_HV,
 			TRIMMER_LV);
 
+	/** The path → the electric RegistryObject (the recipe builder + the RCON command seam). */
+	public static RegistryObject<Item> electricTool(String aPath) {
+		for (RegistryObject<Item> tRow : ELECTRIC_TOOLS) {
+			if (tRow.getId().getPath().equals(aPath)) return tRow;
+		}
+		return null;
+	}
+
 	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:

@@ -846,6 +846,44 @@ HAND_TRANSLATIONS = {
     # direct hand layer so the parity orphan gate walks them) ----
     "block.gt6.stone_anvil": ("石头砧", "hand"),
     "block.gt6.blackstone_anvil": ("黑石砧", "hand"),
+    # ---- task p29-w5-t6-electric-nineteen: the 33 electric keys (19 names + 14 tooltips).
+    # The upstream dump carries ZERO electric-tool display rows — every zh face is a hand
+    # word composed over the EXISTING dump roots (链锯头→链锯 / 扳手 / 圆锯
+    # gt6.row.machine.buzzsaw / 螺丝刀 / 活动扳手 = the t3 metatool.01.52 word).
+    # provenance p29-w5-t6-electric-nineteen+hand33 ----
+    "item.gt6.mining_drill_lv": ("采矿钻头 (LV)", "hand"),
+    "item.gt6.mining_drill_mv": ("采矿钻头 (MV)", "hand"),
+    "item.gt6.mining_drill_hv": ("采矿钻头 (HV)", "hand"),
+    "item.gt6.chainsaw_lv": ("链锯 (LV)", "hand"),
+    "item.gt6.chainsaw_lv.tooltip": ("也可采集冰", "hand"),
+    "item.gt6.chainsaw_mv": ("链锯 (MV)", "hand"),
+    "item.gt6.chainsaw_mv.tooltip": ("也可采集冰", "hand"),
+    "item.gt6.chainsaw_hv": ("链锯 (HV)", "hand"),
+    "item.gt6.chainsaw_hv.tooltip": ("也可采集冰", "hand"),
+    "item.gt6.wrench_lv": ("扳手 (LV)", "hand"),
+    "item.gt6.wrench_lv.tooltip": ("潜行右键切换为活动扳手", "hand"),
+    "item.gt6.wrench_mv": ("扳手 (MV)", "hand"),
+    "item.gt6.wrench_mv.tooltip": ("潜行右键切换为活动扳手", "hand"),
+    "item.gt6.wrench_hv": ("扳手 (HV)", "hand"),
+    "item.gt6.wrench_hv.tooltip": ("潜行右键切换为活动扳手", "hand"),
+    "item.gt6.jackhammer_hv_normal": ("电镐 (HV, 普通模式)", "hand"),
+    "item.gt6.jackhammer_hv_normal.tooltip": ("将岩石击碎成碎块", "hand"),
+    "item.gt6.jackhammer_hv_no_ores": ("电镐 (HV, 无矿石模式)", "hand"),
+    "item.gt6.jackhammer_hv_no_ores.tooltip": ("不会破坏矿石方块，层矿除外", "hand"),
+    "item.gt6.buzzsaw_lv": ("圆锯 (LV)", "hand"),
+    "item.gt6.buzzsaw_lv.tooltip": ("不适合采集方块", "hand"),
+    "item.gt6.screwdriver_lv": ("螺丝刀 (LV)", "hand"),
+    "item.gt6.hand_drill_lv": ("手钻 (LV)", "hand"),
+    "item.gt6.hand_mixer_lv": ("手持搅拌器 (LV)", "hand"),
+    "item.gt6.hand_mixer_lv.tooltip": ("在搅拌碗中使用不消耗疲劳度", "hand"),
+    "item.gt6.monkey_wrench_lv": ("活动扳手 (LV)", "hand"),
+    "item.gt6.monkey_wrench_lv.tooltip": ("潜行右键切换为扳手", "hand"),
+    "item.gt6.monkey_wrench_mv": ("活动扳手 (MV)", "hand"),
+    "item.gt6.monkey_wrench_mv.tooltip": ("潜行右键切换为扳手", "hand"),
+    "item.gt6.monkey_wrench_hv": ("活动扳手 (HV)", "hand"),
+    "item.gt6.monkey_wrench_hv.tooltip": ("潜行右键切换为扳手", "hand"),
+    "item.gt6.trimmer_lv": ("修剪器 (LV)", "hand"),
+    "item.gt6.mode_switch.tooltip": ("潜行右键切换模式", "hand"),
 }
 
 # ---------------------------------------------------------------------------

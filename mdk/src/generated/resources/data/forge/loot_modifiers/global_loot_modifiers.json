@@ -1,8 +1,13 @@
 {
   "entries": [
+<<<<<<< HEAD
     "gt6:scissors_plant_self",
     "gt6:sword_harvest",
     "gt6:axe_tree_fell",
+=======
+    "gt6:jackhammer_hv_normal_rocks",
+    "gt6:jackhammer_hv_no_ores_rocks",
+>>>>>>> 3739a3fd (feat(tools,data): 电动族 19 形 datagen/资源/测试面——p29-w5-t6 提交②)
     "gt6:spade_harvest",
     "gt6:sense_vegetal",
     "gt6:construction_ender_chest",

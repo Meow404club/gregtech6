@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "gt6:stick_steel"
+    },
+    "V": {
+      "tag": "gt6:re_battery3"
+    },
+    "W": {
+      "item": "gt6:gear_gt_small_stainless_steel"
+    },
+    "X": {
+      "item": "gt6:plate_curved_stainless_steel"
+    },
+    "Y": {
+      "item": "gt6:spring_stainless_steel"
+    }
+  },
+  "pattern": [
+    "SVS",
+    "XWX",
+    "YSY"
+  ],
+  "result": {
+    "item": "gt6:jackhammer_hv_normal"
+  },
+  "show_notification": true
+}

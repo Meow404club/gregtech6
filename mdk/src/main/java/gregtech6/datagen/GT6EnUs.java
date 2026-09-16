@@ -402,6 +402,43 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.flint_and_tinder", "Flint and Tinder");
         add("item.gt6.rolling_pin", "Rolling Pin");
         add("item.gt6.bending_cylinder", "Bending Cylinder");
+        // task p29-w5-t6-electric-nineteen — the nineteen electric-tool display names
+        // (the upstream registration-row wordings verbatim, Loader_Tools.java:156-174) +
+        // the fourteen tooltips (the row tooltip strings verbatim, :159-171 + the
+        // Behavior_Switch_Metadata mode line) = the 33-key band.
+        add("item.gt6.mining_drill_lv", "Mining Drill (LV)");
+        add("item.gt6.mining_drill_mv", "Mining Drill (MV)");
+        add("item.gt6.mining_drill_hv", "Mining Drill (HV)");
+        add("item.gt6.chainsaw_lv", "Chainsaw (LV)");
+        add("item.gt6.chainsaw_lv.tooltip", "Can also harvest Ice");
+        add("item.gt6.chainsaw_mv", "Chainsaw (MV)");
+        add("item.gt6.chainsaw_mv.tooltip", "Can also harvest Ice");
+        add("item.gt6.chainsaw_hv", "Chainsaw (HV)");
+        add("item.gt6.chainsaw_hv.tooltip", "Can also harvest Ice");
+        add("item.gt6.wrench_lv", "Wrench (LV)");
+        add("item.gt6.wrench_lv.tooltip", "Sneak Rightclick to switch to Monkey Wrench");
+        add("item.gt6.wrench_mv", "Wrench (MV)");
+        add("item.gt6.wrench_mv.tooltip", "Sneak Rightclick to switch to Monkey Wrench");
+        add("item.gt6.wrench_hv", "Wrench (HV)");
+        add("item.gt6.wrench_hv.tooltip", "Sneak Rightclick to switch to Monkey Wrench");
+        add("item.gt6.jackhammer_hv_normal", "JackHammer (HV, Normal Mode)");
+        add("item.gt6.jackhammer_hv_normal.tooltip", "Breaks Rocks into pieces");
+        add("item.gt6.jackhammer_hv_no_ores", "JackHammer (HV, No Ores Mode)");
+        add("item.gt6.jackhammer_hv_no_ores.tooltip", "Doesn't break Ore Blocks, except Layer Ores");
+        add("item.gt6.buzzsaw_lv", "Buzzsaw (LV)");
+        add("item.gt6.buzzsaw_lv.tooltip", "Not suitable for harvesting Blocks");
+        add("item.gt6.screwdriver_lv", "Screwdriver (LV)");
+        add("item.gt6.hand_drill_lv", "Hand Drill (LV)");
+        add("item.gt6.hand_mixer_lv", "Hand Mixer (LV)");
+        add("item.gt6.hand_mixer_lv.tooltip", "Doesn't consume exhaustion in the Mixing Bowls");
+        add("item.gt6.monkey_wrench_lv", "Monkey Wrench (LV)");
+        add("item.gt6.monkey_wrench_lv.tooltip", "Sneak Rightclick to switch to Wrench");
+        add("item.gt6.monkey_wrench_mv", "Monkey Wrench (MV)");
+        add("item.gt6.monkey_wrench_mv.tooltip", "Sneak Rightclick to switch to Wrench");
+        add("item.gt6.monkey_wrench_hv", "Monkey Wrench (HV)");
+        add("item.gt6.monkey_wrench_hv.tooltip", "Sneak Rightclick to switch to Wrench");
+        add("item.gt6.trimmer_lv", "Trimmer (LV)");
+        add("item.gt6.mode_switch.tooltip", "Sneak Rightclick to switch Mode");
         add(GT6Tools.TAB_TITLE_KEY, "Tools");
     }
 

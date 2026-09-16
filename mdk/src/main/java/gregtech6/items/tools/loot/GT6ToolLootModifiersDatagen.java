@@ -47,18 +47,20 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 	 * The single source of the modifier set (the {@code add} names AND the twin index
 	 * entries). ORDER: the {@code start()} CALL ORDER — the 21.1 base run() emits its
 	 * native index in call order (the p29-w5-t2 correction of the t1/t4 "alphabetical /
-	 * HashMap iteration" readings: t1's calls happened to BE alphabetical and t4's list
-	 * matched its call order, both masking the real face), so the canonical twin must
-	 * match it for the datagen_tree_check byte comparison; the forge base index keeps
-	 * its own HashMap order (the declared forge-gated canonical-only face). A
-	 * renamed/reordered entry drifts the twin and the gate flags it — re-derive the
-	 * order from the node output after ANY name change.
-	 * drifts the twin and the gate flags it. MERGE NOTE (S17): when a sibling tool card
-	 * rebases over this file, take the LATER card's list WHOLESALE and rerun runData —
-	 * the order is re-observed, never hand-merged.
+	 * HashMap iteration" readings AND the p29-w5-t6 live re-observation: the jackhammer
+	 * entries appended at the tail surfaced at the tail, the sort hypothesis retired),
+	 * so the canonical twin must match it for the datagen_tree_check byte comparison;
+	 * the forge base index keeps its own HashMap order (the declared forge-gated
+	 * canonical-only face). A renamed/reordered entry drifts the twin and the gate
+	 * flags it — re-derive the order from the node output after ANY name change.
+	 * MERGE NOTE (S17/S18): sibling tool cards union by the call order (later appends
+	 * land at the tail) and rerun runData — the forge order is re-observed by the
+	 * canonical writer, never trusted from a hand merge.
 	 */
 	static final List<String> MODIFIER_NAMES = List.of(
 			"construction_ender_chest",
+			"jackhammer_hv_no_ores_rocks",
+			"jackhammer_hv_normal_rocks",
 			"spade_harvest",
 			"universal_spade_openable",
 			"axe_tree_fell",
@@ -89,9 +91,21 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 	@Override
 	protected void start() {
 		// the per-tool identity rides the gt6:holds_tool condition; the mode picks the arm.
+		// ORDER = the MODIFIER_NAMES sequence: the 21.1 native index emits the add() CALL
+		// order (the t6 live observation — NOT a sort), so the calls, the MODIFIER_NAMES
+		// list and the canonical twin walk must stay ONE sequence.
 		add("construction_ender_chest", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.PICKAXE_CONSTRUCTION.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.ENDER_CHEST_SELF));
+		// task p29-w5-t6-electric-nineteen — BOTH jackhammer forms carry the rockGt
+		// conversion (the upstream convertBlockDrops rides the base class GT_Tool_JackHammer_HV;
+		// the No_Ores form only narrows the MINING surface, not the drop arm).
+		add("jackhammer_hv_no_ores_rocks", new GT6ToolLootModifiers.GT6ToolConvertModifier(
+				conditions(GT6Tools.JACKHAMMER_HV_NO_ORES.get()),
+				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.JACKHAMMER_ROCKS));
+		add("jackhammer_hv_normal_rocks", new GT6ToolLootModifiers.GT6ToolConvertModifier(
+				conditions(GT6Tools.JACKHAMMER_HV_NORMAL.get()),
+				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.JACKHAMMER_ROCKS));
 		add("spade_harvest", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.SPADE.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.HARVESTABLE_SPADE));
