@@ -416,6 +416,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		addGrassTags(aProvider); // task p24-grass-block
 		addBatteryTags(aProvider); // task p29-w4-battery-storage — the re-battery/re-crystal/circuit tag seams
 		addArmorTags(aProvider); // task p29-w5-t8-armor-24 — the 8 hazard-set tag faces
+		addTreeTags(); // task p30-w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
 	}
 
 	/**
@@ -433,7 +434,8 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 			for (ResourceLocation tId : GT6HazardSets.members(tHazard)) {
 				tAppender.add(item(tId));
 			}
-		}
+			}
+		addTreeTags(); // task p30-w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
 	}
 
 	/**
@@ -469,6 +471,30 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		}
 		for (gregtech6.registry.GT6Batteries.CircuitRow tRow : gregtech6.registry.GT6Batteries.CIRCUIT_ROWS) {
 			tag(gt6(tRow.tagPath())).add(item(gt6Rl(tRow.path())));
+		}
+	}
+
+	/**
+	 * The tree-family item band (task p30-w6-t1-trees-nine — the decisions
+	 * .p25-leaves-logs-tags-deferred UNLOCK): the 9 log ITEMS join
+	 * {@code minecraft:logs} — THIS IS THE SPEC-FIRST-LINE DEPENDENCY: the coke oven
+	 * tag listener (GT6CokeOvenTagListener.java:77 reads ItemTags.LOGS on every
+	 * TagsUpdatedEvent) expands the log->charcoal recipes from exactly this tag, a
+	 * missed membership = a silently dead recipe; the 9 leaves join
+	 * {@code minecraft:leaves}, the 9 saplings {@code minecraft:saplings} (the vanilla
+	 * shared faces — the platform forge:/c: namespaces carry NO logs/leaves family on
+	 * either leg, so #minecraft:* IS the ecosystem face here). Zero optional: all 27
+	 * members are live-registered items.
+	 */
+	private void addTreeTags() {
+		for (RegistryObject<Item> tLog : gregtech6.registry.GT6TreeBlocks.LOG_ITEMS) {
+			tag(net.minecraft.tags.ItemTags.LOGS).add(item(tLog.getId()));
+		}
+		for (RegistryObject<Item> tLeaves : gregtech6.registry.GT6TreeBlocks.LEAF_ITEMS) {
+			tag(net.minecraft.tags.ItemTags.LEAVES).add(item(tLeaves.getId()));
+		}
+		for (RegistryObject<Item> tSapling : gregtech6.registry.GT6TreeBlocks.SAPLING_ITEMS) {
+			tag(net.minecraft.tags.ItemTags.SAPLINGS).add(item(tSapling.getId()));
 		}
 	}
 
