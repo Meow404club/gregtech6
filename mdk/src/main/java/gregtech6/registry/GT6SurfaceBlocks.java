@@ -1,13 +1,18 @@
 package gregtech6.registry;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -16,8 +21,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.data.MT;
+import gregtech6.block.surface.GT6BlackSandBlock;
+import gregtech6.block.surface.GT6GlowtusBlock;
 import gregtech6.block.surface.GT6SurfaceRockBlock;
 import gregtech6.block.surface.GT6SurfaceStickBlock;
+import gregtech6.block.surface.GT6WildBushBlock;
+import gregtech6.block.tree.GT6FallenLogBlock;
 
 /**
  * The surface deco block registrations (task p30-w6-rocks-sticks) — the card-owned
@@ -66,6 +75,64 @@ public final class GT6SurfaceBlocks {
 	public static final List<RegistryObject<Block>> ALL = List.of(
 			SURFACE_ROCK_STONE, SURFACE_ROCK_FLINT, SURFACE_ROCK_METEORITE, SURFACE_STICK);
 
+	// ------------------------------------------------------------------
+	// The surface-plants + fallen-woods band (task p30-w6-t2-surface-blocks)
+	// — tail-append. Unlike the pickup-only rocks/sticks these are OBTAINABLE
+	// blocks (worldgen loot = self-drop), so each carries a BlockItem and a
+	// creative-tab row.
+	// ------------------------------------------------------------------
+
+	/** The glowtus (BlockGlowtus = BlockBaseLilyPad light 15; the 16-colour face collapsed, declared in GT6GlowtusBlock). */
+	public static final RegistryObject<Block> GLOWTUS =
+			BLOCKS.register("glowtus", () -> new GT6GlowtusBlock(decoProperties(MapColor.PLANT, SoundType.GRASS)
+					.noCollission().lightLevel(aState -> 15)));
+	/** The berry bush, block-only (MTE 32759 "Berry Bush"; the berry NBT face cut, declared in GT6WildBushBlock). */
+	public static final RegistryObject<Block> BERRY_BUSH =
+			BLOCKS.register("berry_bush", () -> new GT6WildBushBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.PLANT).strength(0.5F, 0.3F) // Loader_MultiTileEntities.java:2030
+					.sound(SoundType.GRASS).noOcclusion().pushReaction(PushReaction.DESTROY)));
+	/** The magnetite black sand (WorldgenBlackSand, the river-bed soil; the vanilla FallingBlock gravity idiom —
+	 * SandBlock died with the 1.21.2 merge so the shared face is the {@link GT6BlackSandBlock} subclass). */
+	public static final RegistryObject<Block> BLACK_SAND =
+			BLOCKS.register("black_sand", () -> new GT6BlackSandBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BLACK).strength(0.5F).sound(SoundType.SAND)));
+	/** The swamp turf (WorldgenTurf, the Diggables meta-2 soil — BlocksGT.Diggables has no modern port, card spec ⑤). */
+	public static final RegistryObject<Block> TURF =
+			BLOCKS.register("turf", () -> new Block(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_GREEN).strength(0.6F).sound(SoundType.GRASS)));
+
+	/** The four fallen-log woods (Dead/Rotten/Mossy/Frozen — the Log1 meta variants, see GT6FallenLogBlock), path order. */
+	public static final List<RegistryObject<Block>> FALLEN_LOGS = List.of(
+			BLOCKS.register("dead_log", GT6FallenLogBlock::new),
+			BLOCKS.register("rotten_log", GT6FallenLogBlock::new),
+			BLOCKS.register("mossy_log", GT6FallenLogBlock::new),
+			BLOCKS.register("frozen_log", GT6FallenLogBlock::new));
+
+	/** The obtainable-band blocks, registration order (the census/lang walk unit). */
+	public static final List<RegistryObject<Block>> PLANT_BAND = List.of(
+			GLOWTUS, BERRY_BUSH, BLACK_SAND, TURF);
+
+	/** The obtainable band's item register (the GT6TreeBlocks shape). */
+	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "gt6");
+	/** The 8 block items, registration order (the 4 plants, then the 4 fallen logs — the tab walks use the sub-lists). */
+	public static final List<RegistryObject<Item>> PLANT_ITEMS = registerPlantItems();
+
+	private static List<RegistryObject<Item>> registerPlantItems() {
+		List<RegistryObject<Item>> rList = new ArrayList<>(PLANT_BAND.size() + FALLEN_LOGS.size());
+		for (RegistryObject<Block> tBlock : PLANT_BAND) {
+			rList.add(ITEMS.register(tBlock.getId().getPath(), () -> new BlockItem(tBlock.get(), new Item.Properties())));
+		}
+		for (RegistryObject<Block> tBlock : FALLEN_LOGS) {
+			rList.add(ITEMS.register(tBlock.getId().getPath(), () -> new BlockItem(tBlock.get(), new Item.Properties())));
+		}
+		return List.copyOf(rList);
+	}
+
+	/** The four plant block items, registration order (the natural-tab walk). */
+	public static final List<RegistryObject<Item>> PLANT_TAB_ITEMS = PLANT_ITEMS.subList(0, PLANT_BAND.size());
+	/** The four fallen-log block items, registration order (the building-tab walk, the t1 log row). */
+	public static final List<RegistryObject<Item>> LOG_TAB_ITEMS = PLANT_ITEMS.subList(PLANT_BAND.size(), PLANT_ITEMS.size());
+
 	/** The shared behaviour properties (MultiTileEntityRock.java:238/:248/:249/:250 verbatim). */
 	private static BlockBehaviour.Properties surfaceProperties(MapColor aColor, SoundType aSound) {
 		return BlockBehaviour.Properties.of()
@@ -75,6 +142,16 @@ public final class GT6SurfaceBlocks {
 				.noCollission() // the upstream collision box is null (:238)
 				.noOcclusion() // light opacity none (:248); the micro box never occludes
 				.pushReaction(PushReaction.DESTROY); // the deco walks like the vanilla flower row
+	}
+
+	/** The obtainable-deco base (the vanilla lily-pad row: strength 0 + grass sound + DESTROY push). */
+	private static BlockBehaviour.Properties decoProperties(MapColor aColor, SoundType aSound) {
+		return BlockBehaviour.Properties.of()
+				.mapColor(aColor)
+				.strength(0.0F)
+				.sound(aSound)
+				.noOcclusion()
+				.pushReaction(PushReaction.DESTROY);
 	}
 
 	private GT6SurfaceBlocks() {
@@ -89,5 +166,24 @@ public final class GT6SurfaceBlocks {
 		/*IEventBus tModBus = net.neoforged.fml.ModList.get().getModContainerById("gt6").orElseThrow().getEventBus();
 		 *///?}
 		BLOCKS.register(tModBus);
+		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The obtainable-band tab joins (the GT6TreeBlocks.onBuildTabContents shape): the
+	 * fallen logs join BUILDING_BLOCKS (the t1 log row), the plant band joins
+	 * NATURAL_BLOCKS (the vanilla flower/sand row face).
+	 */
+	@net.minecraftforge.eventbus.api.SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+			for (RegistryObject<Item> tItem : LOG_TAB_ITEMS) {
+				aEvent.accept(new net.minecraft.world.item.ItemStack(tItem.get()));
+			}
+		} else if (aEvent.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
+			for (RegistryObject<Item> tItem : PLANT_TAB_ITEMS) {
+				aEvent.accept(new net.minecraft.world.item.ItemStack(tItem.get()));
+			}
+		}
 	}
 }
