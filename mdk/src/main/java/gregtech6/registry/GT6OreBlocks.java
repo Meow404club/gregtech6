@@ -23,6 +23,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregapi.data.MT;
 import gregapi.data.OP;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
@@ -56,13 +57,17 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  * That is <b>74 form-rows per material</b> (22x3 + 4x2), the architect's pinned
  * enumeration (tasks.p30-arch-ore-registration.enumeration.block_rows_per_material).
  *
- * <p><b>Material axis M</b> (decisions.p30-ore-rulings.ore-material-axis): the
- * {@link OP#ore} {@code isGeneratingItem} walk (OP.java:1098 setCondition(ORES); the
- * same criterion as GTMaterialItems enumerate, GTMaterialItems.java:146), UNIFIED across
- * all 26 families and all three forms — upstream's per-prefix conditions are
- * family-equivalent here (every family prefix gets ORES via setOreStats, and per-family
- * blacklist deltas are declared unified by the ruling). Total blocks = 74 x M, pinned by
- * GT6OreBlocksRegistrationTest.
+ * <p><b>Material axis M</b> (the reviewer-corrected口径, 2026-09-16): the upstream
+ * always-on worldgen small-ore materials (Loader_Worldgen.java:800-852 + :875 —
+ * {@link #WORLDGEN_ORES}), each passing the authoritative {@link OP#ore}
+ * {@code isGeneratingItem} filter (OP.java:1098 setCondition(ORES); the same
+ * per-material criterion as the GTMaterialItems.java:146 item walk), UNIFIED across
+ * all 26 families and all three forms. M = 53 distinct materials (54 worldgen rows,
+ * the redcinnabar/cinnabar pair sharing one material); total blocks = 74 x 53 = 3922,
+ * the architect enumeration table's "~4000 magnitude", pinned by
+ * GT6OreBlocksRegistrationTest. (The bare isGeneratingItem walk over the whole
+ * MATERIAL_ARRAY measures 618 — nine tenths of it materials no ore placement ever
+ * references; that over-registration face was REJECTED in review and removed.)
  *
  * <p><b>id scheme</b> {@code gt6:ore[_broken|_small]_<family>_<material>} — the normal
  * form carries no form segment; family snakes are the upstream internal names (blackgranite
@@ -307,18 +312,66 @@ public final class GT6OreBlocks {
     }
 
     /**
-     * The material axis M (decisions.p30-ore-rulings.ore-material-axis): the
-     * {@link OP#ore} isGeneratingItem walk over MATERIAL_ARRAY with the registration-target
-     * merge (the GTMaterialItems.java:137-146 shape), unified across all families and forms.
+     * The upstream always-on small-ore materials — the material axis M (the architect
+     * enumeration table's own basis, tasks.p30-arch-ore-registration; the reviewer
+     * correction 2026-09-16 restores this口径 after the 45732-block over-registration
+     * was rejected): the 53 unconditional WorldgenOresSmall rows (Loader_Worldgen.java
+     * :800-852 — every gate-T row; redcinnabar :828 and cinnabar :851 both carry
+     * MT.OREMATS.Cinnabar, so the rows collapse to 51 distinct materials) + nikolite
+     * (:875, the !mHidden row) = <b>53 distinct materials</b> → 74 x 53 = 3922 blocks
+     * (the architect's "~4000 magnitude" band; their "M>=54" counted ROWS, not unique
+     * materials). The 21 mod-gated rows (:854-874, MD.AA/AE/ARS/HEX/TC/IHL) and the
+     * RANDOM_SMALL_GEM loop (:877-880, GEN_GEMS) and the large-vein materials (:886-925,
+     * the t3 card's consumption) stay OUT — the mod-gated faces are the compat cards'
+     * pool, upstream's own out-of-scope ruling.
+     *
+     * <p>The ancientdebris row (:852) is one of the 53 always-on rows and stays in: its
+     * {@code !IL.Ancient_Debris.exists()} gate is a PLACEMENT-time compat check (vanilla
+     * 1.20.1 ships ancient debris, so the worldgen card will not place the GT row), not a
+     * registration-time one — upstream registers every family's metas regardless of the
+     * per-row placement gates.
+     *
+     * <p>Suppliers again (post-OP.init resolution — the {@link OreFamily} lesson).
+     */
+    public static final List<Supplier<OreDictMaterial>> WORLDGEN_ORES = List.of(
+        () -> MT.Cu,                        () -> MT.OREMATS.Chalcopyrite, () -> MT.OREMATS.Malachite,     // :800-802
+        () -> MT.Sn,                        () -> MT.OREMATS.Cassiterite,  () -> MT.Zn,                    // :803-805
+        () -> MT.OREMATS.Sphalerite,        () -> MT.OREMATS.Smithsonite,  () -> MT.OREMATS.Stibnite,      // :806-808
+        () -> MT.Bi,                        () -> MT.Pb,                   () -> MT.OREMATS.Galena,        // :809-811
+        () -> MT.Ag,                        () -> MT.Au,                   () -> MT.Pyrite,                // :812-814
+        () -> MT.Fe2O3,                     () -> MT.MnO2,                 () -> MT.OREMATS.Garnierite,    // :815-817
+        () -> MT.OREMATS.Pentlandite,       () -> MT.OREMATS.Scheelite,    () -> MT.NaCl,                  // :818-820
+        () -> MT.KCl,                       () -> MT.OREMATS.Borax,        () -> MT.Asbestos,              // :821-823
+        () -> MT.Diamond,                   () -> MT.Amber,                () -> MT.Craponite,             // :824-826
+        () -> MT.Redstone,                  () -> MT.OREMATS.Cinnabar,     () -> MT.Lapis,                 // :827-829 (redcinnabar)
+        () -> MT.Eudialyte,                 () -> MT.Azurite,              () -> MT.Coal,                  // :830-832
+        () -> MT.Graphite,                  () -> MT.OREMATS.Pollucite,    () -> MT.OREMATS.Zeolite,       // :833-835
+        () -> MT.OREMATS.Coltan,            () -> MT.Pt,                   () -> MT.Ir,                    // :836-838
+        () -> MT.OREMATS.Sperrylite,        () -> MT.OREMATS.Cooperite,    () -> MT.Nq,                    // :839-841
+        () -> MT.Ke,                        () -> MT.Dolamide,             () -> MT.Endium,                // :842-844
+        () -> MT.Sugilite,                  () -> MT.Ambrosium,            () -> MT.Zanite,                // :845-847
+        () -> MT.S,                         () -> MT.Niter,                () -> MT.Efrine,                // :848-850
+        () -> MT.OREMATS.Cinnabar,          () -> MT.AncientDebris,        () -> MT.Nikolite               // :851, :852, :875
+    );
+
+    /**
+     * The material axis M (the reviewer-corrected口径, 2026-09-16): the upstream
+     * always-on worldgen small-ore materials ({@link #WORLDGEN_ORES}, Loader_Worldgen
+     * .java:800-852 + :875), each passing the authoritative oredict filter
+     * {@link OP#ore} {@code isGeneratingItem} (OP.java:1098 setCondition(ORES) — the
+     * same per-material criterion as the GTMaterialItems.java:146 item walk, whose
+     * resolve/dedup shape this walk mirrors), unified across all families and forms.
+     * M = 53, total 74 x 53 = 3922, pinned by GT6OreBlocksRegistrationTest.
      */
     public static List<OreDictMaterial> materialAxis() {
         Set<OreDictMaterial> tSeen = Collections.newSetFromMap(new IdentityHashMap<>());
         List<OreDictMaterial> rAxis = new ArrayList<>();
-        for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+        for (Supplier<OreDictMaterial> tSupply : WORLDGEN_ORES) {
+            OreDictMaterial tMaterial = tSupply.get();
             if (tMaterial == null || tMaterial.mID < 0) continue;
             tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias slot -> target (MaterialRegistry.java:182-185)
             if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial)) continue;
-            if (!OP.ore.isGeneratingItem(tMaterial)) continue; // OP.java:1098 setCondition(ORES)
+            if (!OP.ore.isGeneratingItem(tMaterial)) continue; // OP.java:1098 setCondition(ORES), the authoritative filter
             rAxis.add(tMaterial);
         }
         return rAxis;

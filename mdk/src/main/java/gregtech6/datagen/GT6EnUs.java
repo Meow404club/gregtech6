@@ -126,7 +126,7 @@ public class GT6EnUs extends LanguageProvider {
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
         addSurfaceBand(); // task p30-w6-rocks-sticks — table-tail append
         // task p30-ore-1-mech — template-pin NOTE, zero keys this card (zh ratchet 0): the
-        // ore universe (GT6OreBlocks, 26 families x 74 form-rows x M=618) needs NO en_us
+        // ore universe (GT6OreBlocks, 26 families x 74 form-rows x M=53) needs NO en_us
         // delta — every ore block item composes the EXISTING gt6.tagprefix.<prefix_snake>
         // templates (addPrefixTemplates covers all OP prefixes; normal/broken share the
         // family prefix, small rides OP.oreSmall, GTMaterialPrefixBlockItem.getName). The

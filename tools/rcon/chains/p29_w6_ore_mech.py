@@ -2,18 +2,18 @@
 """p29_w6_ore_mech — the p30 ore registration card 1 face (task p30-ore-1-mech).
 
 A ZERO-COMMAND chain: the chain's content is the fresh boot itself. The ore universe
-(GT6OreBlocks: 26 families x 618 materials x 74 form-rows = 45732 per-pair blocks + items
+(GT6OreBlocks: 26 families x 53 materials x 74 form-rows = 3922 per-pair blocks + items
 + the one upstream-visible creative tab) registers during the boot's RegisterEvent stream,
 and the three INFO lines land in this chain's log slice:
 
-    GT6 registered 45732 ore blocks (26 families x 618 materials x 74 form-rows per material, per-pair)
-    GT6 registered 45732 ore block items
+    GT6 registered 3922 ore blocks (26 families x 53 materials x 74 form-rows per material, per-pair)
+    GT6 registered 3922 ore block items
     GT6 registered 1 ore creative tab (the stone family, upstream SHOW_ORE_BLOCK_PREFIXES=false)
 
 The sweep runner's boot-health gate (wait_done) plus its per-slice server ERROR-line scan
 over that slice IS the card acceptance ("runServer 注册日志=块+item+tab 三行零 ERROR").
 No RCON arms, no sites, no mutates — the ore WORLD face (placement/prospecting) is card 5;
-the offline census pins (M=618 / 45732 / 74 non-empty rows) live in
+the offline census pins (M=53 / 3922 / 74 non-empty rows) live in
 GT6OreBlocksRegistrationTest.
 
 Run:  python3 tools/rcon/chains/p29_w6_ore_mech.py [--node 1.21.1-neoforge]

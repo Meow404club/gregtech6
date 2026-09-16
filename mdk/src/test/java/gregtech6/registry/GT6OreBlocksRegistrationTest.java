@@ -63,14 +63,15 @@ class GT6OreBlocksRegistrationTest {
     /** The pinned form-row total (22 three-form + 4 two-form families). */
     private static final int PINNED_ROWS = 74;
     /**
-     * The pinned material axis M (decisions.p30-ore-rulings.ore-material-axis, user ruling
-     * 2026-09-16: the walk is pinned LETTER-VERBATIM at 618 — 625 raw isGeneratingItem hits
-     * over the 2200-entry MATERIAL_ARRAY minus 7 alias-slot duplicates — NOT the card's
-     * ~54-62.5 estimate, which conflated the worldgen row set with the tag condition. Total
-     * 74 x 618 = 45732 blocks, live-verified on both legs (registration + Done 16s)). The
-     * arch card lower bound M >= 54 (Loader_Worldgen.java:800-875) holds trivially.
+     * The pinned material axis M (the reviewer-corrected口径, 2026-09-16): the 53 distinct
+     * upstream always-on worldgen small-ore materials (Loader_Worldgen.java:800-852 — 53
+     * rows whose redcinnabar :828 / cinnabar :851 pair shares MT.OREMATS.Cinnabar — plus
+     * nikolite :875), each passing OP.ore.isGeneratingItem. The architect table's "M>=54"
+     * counted ROWS; the unique-material axis is 53. The bare isGeneratingItem walk over
+     * the whole MATERIAL_ARRAY measures 618 and was REJECTED in review (nine tenths of it
+     * materials no ore placement ever references) — the 45732-block face is gone.
      */
-    private static final int PINNED_M = 618;
+    private static final int PINNED_M = 53;
     /** The pinned total block count (74 x M) — see materialAxisIsPinned. */
     private static final int PINNED_TOTAL = PINNED_ROWS * PINNED_M;
 
@@ -119,11 +120,22 @@ class GT6OreBlocksRegistrationTest {
     void materialAxisIsPinned() {
         List<OreDictMaterial> tAxis = GT6OreBlocks.materialAxis();
         assertEquals(PINNED_M, tAxis.size(),
-                "M = |{m : OP.ore.isGeneratingItem(m)}| — bump PINNED_M only with an upstream material-set delta");
-        assertTrue(tAxis.size() >= 54, "the arch card lower bound (Loader_Worldgen.java:800-875)");
+                "M = the 53 distinct upstream always-on worldgen small-ore materials — bump PINNED_M only with an upstream row delta");
+        // every axis material passes the authoritative oredict filter (OP.java:1098 setCondition(ORES))
         for (OreDictMaterial tMaterial : tAxis) {
             assertTrue(OP.ore.isGeneratingItem(tMaterial), "every axis material passes the OP.ore criterion");
         }
+        // the axis IS the pinned upstream worldgen set, row order preserved (Loader_Worldgen.java:800-852 + :875)
+        List<String> tExpected = List.of(
+            "Copper", "Chalcopyrite", "Malachite", "Tin", "Cassiterite", "Zinc", "Sphalerite", "Smithsonite",
+            "Stibnite", "Bismuth", "Lead", "Galena", "Silver", "Gold", "Pyrite", "Hematite", "Pyrolusite", "Garnierite",
+            "Pentlandite", "Scheelite", "Salt", "Sylvite", "Borax", "Asbestos", "Diamond", "Amber",
+            "Craponite", "Redstone", "Cinnabar", "Lapis", "Eudialyte", "Azurite", "Coal", "Graphite",
+            "Pollucite", "Zeolite", "Coltan", "Platinum", "Iridium", "Sperrylite", "Cooperite", "Naquadah", "Trinium",
+            "Dolamide", "Endium", "Sugilite", "Ambrosium", "Zanite", "Sulfur", "Niter", "Efrine",
+            "AncientDebris", "Nikolite");
+        assertEquals(tExpected, tAxis.stream().map(m -> m.mNameInternal).toList(),
+                "the axis is the pinned always-on worldgen set in row order");
         assertEquals(PINNED_TOTAL, GT6OreBlocks.registrationOrder().size(), "74 x M total blocks");
     }
 
