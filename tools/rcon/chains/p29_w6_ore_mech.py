@@ -28,11 +28,15 @@ for _path in (str(_HERE), str(_HERE.parent)):
         sys.path.insert(0, _path)
 
 from framework import Chain, main, phase
+import gt6world
 
 CHAIN = Chain(
     name="p29-w6-ore-mech",
     slug="p29_w6_ore_mech",
-    sites=(),                            # no world placement — registration face only (world face = card 5)
+    # one nominal site (fresh z=400 band, clear of the roster's z<=340 strips): the
+    # framework requires a declared site for the boundary forceload/cleanup even though
+    # this chain never places a block — the ore WORLD face is card 5
+    sites=gt6world.declare_sites(gt6world.Site(384, 64, 400)),
     preferred_ports=(26208, 26218),      # this card's pinned rcon/query pair; game = rcon-10
     fresh_boot=True,                     # the registration log lines belong to a fresh boot's slice
     steps=[

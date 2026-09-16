@@ -39,4 +39,18 @@ public class GTOreFallingBlock extends FallingBlock {
         this.prefix = prefix;
         this.material = material;
     }
+
+    //? if neoforge {
+    /*
+    // 21.1 made FallingBlock.codec() abstract (the vanilla 1.21 block-state codec
+    // dispatch). The simpleCodec representative-value form is the GTOvenBlock codec
+    // note verbatim — a parse-time default carrying no live config; world save/load
+    // never runs through this codec (the registry-id + property mapper does).
+    @Override
+    protected com.mojang.serialization.MapCodec<? extends GTOreFallingBlock> codec() {
+        return simpleCodec(aProperties -> new GTOreFallingBlock(GT6OreBlocks.FAMILIES.get(0),
+                GT6OreBlocks.FormKind.NORMAL, GT6OreBlocks.FAMILIES.get(0).normal(),
+                gregapi.data.OP.oreVanillastone, gregapi.data.MT.Stone));
+    }
+    *///?}
 }
