@@ -48,7 +48,8 @@ type 用小写词（feat/fix/perf/release…词表不限，格式对即可）。
 
 1. **交卡门禁**（结果附交卡报告，未过不入队）：
    编译 + 离线测试套件 + 本卡 RCON 组（组名见任务卡 ACCEPTANCE，
-   `tools/rcon/sweep.py --group <组>`）；触碰共享层的卡跑全量 sweep。
+   `tools/rcon/sweep.py --group <组>`）。**严禁跑全量 sweep**——全量只在阶段末；
+   触碰共享层的卡也只跑到离线套件全绿，共享层回归由阶段末全量兜底。
 2. `kg_add` 记录新建立的模块关系；`remember(kind="handoff", text="<实现要点+遗留>")`。
 3. 按此格式返回：
 ```
