@@ -178,7 +178,9 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 			// the 17 GT stones: the GTStoneBlocks STONE-variant texture (the addStoneBlocks
 			// model/texture path shape, GT6BlockStates.java:1824 — block id ≠ texture path,
 			// the granite/prismarine splits mirror GT6OreBlocks.stoneBlockSnake)
-			default -> new ResourceLocation("gt6", "block/stones/" + stoneTextureSnake(aFamily.snake()) + "/stone");
+			// (fromNamespaceAndPath: the concatenated arg escapes the 21.1 swap regex — the
+			// GTWireBakedModel.spriteOf form, Forge 1.20.1 backported, both legs javap-proven)
+			default -> ResourceLocation.fromNamespaceAndPath("gt6", "block/stones/" + stoneTextureSnake(aFamily.snake()) + "/stone");
 		};
 	}
 
@@ -195,7 +197,8 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 
 	/** The SET's ore overlay sprite; small ores ride {@code ore_small} (OreDictPrefix.java:399/408 naming, snaked). */
 	public static ResourceLocation overlaySpriteOf(String aSetSnake, GT6OreBlocks.FormKind aKind) {
-		return new ResourceLocation("gt6", "block/materialicons/" + aSetSnake
+		// fromNamespaceAndPath: the concatenated arg escapes the 21.1 swap regex (the spriteOf form)
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/materialicons/" + aSetSnake
 				+ (aKind == GT6OreBlocks.FormKind.SMALL ? "/ore_small" : "/ore"));
 	}
 
