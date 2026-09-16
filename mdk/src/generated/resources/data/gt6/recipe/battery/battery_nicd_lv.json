@@ -6,7 +6,7 @@
       "item": "gt6:battery_cell_nicd"
     },
     "P": {
-      "tag": "forge:plates/battery_alloy"
+      "tag": "c:plates/battery_alloy"
     },
     "W": {
       "item": "gt6:cable_tin_gt01"
@@ -21,7 +21,7 @@
     " B "
   ],
   "result": {
-    "item": "gt6:battery_nicd_lv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:battery_nicd_lv"
+  }
 }

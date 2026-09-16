@@ -20,7 +20,7 @@
     "oP"
   ],
   "result": {
-    "item": "gt6:food_can_empty"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:food_can_empty"
+  }
 }

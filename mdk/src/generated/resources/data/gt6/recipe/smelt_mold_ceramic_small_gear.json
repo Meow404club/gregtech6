@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "gt6:mold_ceramic_small_gear_raw"
   },
-  "result": "gt6:mold_ceramic_small_gear"
+  "result": {
+    "count": 1,
+    "id": "gt6:mold_ceramic_small_gear"
+  }
 }

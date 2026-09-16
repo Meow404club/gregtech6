@@ -27,11 +27,11 @@
       "item": "minecraft:grass_block"
     },
     {
-      "tag": "forge:dyes/yellow"
+      "tag": "c:dyes/yellow"
     }
   ],
   "result": {
     "count": 8,
-    "item": "gt6:grass_yellow"
+    "id": "gt6:grass_yellow"
   }
 }

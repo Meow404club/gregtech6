@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "P": {
-      "tag": "forge:plates/tungsten_carbide"
+      "tag": "c:plates/tungsten_carbide"
     },
     "x": {
       "tag": "gt6:tools/file"
@@ -15,7 +15,7 @@
     "   "
   ],
   "result": {
-    "item": "gt6:shape_extruder_rod"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:shape_extruder_rod"
+  }
 }

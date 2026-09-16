@@ -20,7 +20,7 @@
     "Cs"
   ],
   "result": {
-    "item": "gt6:spray_can_empty"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:spray_can_empty"
+  }
 }

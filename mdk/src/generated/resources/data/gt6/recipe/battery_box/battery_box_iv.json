@@ -21,7 +21,7 @@
     "XMX"
   ],
   "result": {
-    "item": "gt6:battery_box_iv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:battery_box_iv"
+  }
 }

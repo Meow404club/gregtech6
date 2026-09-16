@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "P": {
-      "tag": "forge:plates/stainless_steel"
+      "tag": "c:plates/stainless_steel"
     },
     "f": {
       "tag": "gt6:tools/file"
@@ -18,7 +18,7 @@
     "PPP"
   ],
   "result": {
-    "item": "gt6:bathing_pot_steel"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:bathing_pot_steel"
+  }
 }

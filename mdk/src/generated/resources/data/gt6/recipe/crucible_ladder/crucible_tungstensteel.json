@@ -13,7 +13,7 @@
     "hM"
   ],
   "result": {
-    "item": "gt6:crucible_tungstensteel"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:crucible_tungstensteel"
+  }
 }

@@ -30,7 +30,7 @@
     "VYX"
   ],
   "result": {
-    "item": "gt6:screwdriver_lv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:screwdriver_lv"
+  }
 }

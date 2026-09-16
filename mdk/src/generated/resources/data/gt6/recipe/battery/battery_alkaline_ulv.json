@@ -6,7 +6,7 @@
       "item": "gt6:battery_cell_alkaline"
     },
     "P": {
-      "tag": "forge:plates/battery_alloy"
+      "tag": "c:plates/battery_alloy"
     },
     "W": {
       "item": "gt6:cable_lead_gt01"
@@ -21,7 +21,7 @@
     "P "
   ],
   "result": {
-    "item": "gt6:battery_alkaline_ulv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:battery_alkaline_ulv"
+  }
 }

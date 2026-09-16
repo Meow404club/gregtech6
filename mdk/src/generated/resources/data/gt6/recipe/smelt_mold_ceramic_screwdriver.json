@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "gt6:mold_ceramic_screwdriver_raw"
   },
-  "result": "gt6:mold_ceramic_screwdriver"
+  "result": {
+    "count": 1,
+    "id": "gt6:mold_ceramic_screwdriver"
+  }
 }

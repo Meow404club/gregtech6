@@ -15,7 +15,7 @@
     "XX "
   ],
   "result": {
-    "item": "gt6:hammer"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:hammer"
+  }
 }

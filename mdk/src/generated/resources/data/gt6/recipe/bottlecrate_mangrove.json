@@ -27,7 +27,7 @@
     "BPB"
   ],
   "result": {
-    "item": "gt6:bottlecrate_mangrove"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:bottlecrate_mangrove"
+  }
 }

@@ -6,7 +6,7 @@
       "item": "gt6:ring_steel"
     },
     "P": {
-      "tag": "forge:plates/steel"
+      "tag": "c:plates/steel"
     },
     "T": {
       "item": "gt6:screw_steel"
@@ -24,7 +24,7 @@
     "OdO"
   ],
   "result": {
-    "item": "gt6:scissors"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:scissors"
+  }
 }

@@ -3,10 +3,10 @@
   "category": "equipment",
   "key": {
     "P": {
-      "tag": "forge:plates/steel"
+      "tag": "c:plates/steel"
     },
     "S": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     },
     "f": {
       "tag": "gt6:tools/file"
@@ -18,7 +18,7 @@
     "fSf"
   ],
   "result": {
-    "item": "gt6:branch_cutter"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:branch_cutter"
+  }
 }

@@ -3,13 +3,13 @@
   "category": "misc",
   "key": {
     "C": {
-      "tag": "forge:ingots/copper"
+      "tag": "c:ingots/copper"
     },
     "P": {
-      "tag": "forge:double_plates/tin"
+      "tag": "c:double_plates/tin"
     },
     "W": {
-      "tag": "forge:fine_wires/red_alloy"
+      "tag": "c:fine_wires/red_alloy"
     }
   },
   "pattern": [
@@ -18,7 +18,7 @@
     "PWP"
   ],
   "result": {
-    "item": "gt6:fe_converter"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:fe_converter"
+  }
 }

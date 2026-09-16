@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "S": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     },
     "V": {
       "tag": "minecraft:wool"
@@ -21,7 +21,7 @@
     "xSh"
   ],
   "result": {
-    "item": "gt6:scoop"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:scoop"
+  }
 }

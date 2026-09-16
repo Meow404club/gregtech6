@@ -21,7 +21,7 @@
     "PPP"
   ],
   "result": {
-    "item": "gt6:bookshelf_birch"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:bookshelf_birch"
+  }
 }

@@ -27,7 +27,7 @@
     "GPC"
   ],
   "result": {
-    "item": "gt6:diesel_engine_arsenic_bronze"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:diesel_engine_arsenic_bronze"
+  }
 }

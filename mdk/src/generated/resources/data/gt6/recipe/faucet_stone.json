@@ -11,7 +11,7 @@
     " B "
   ],
   "result": {
-    "item": "gt6:faucet_stone"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:faucet_stone"
+  }
 }

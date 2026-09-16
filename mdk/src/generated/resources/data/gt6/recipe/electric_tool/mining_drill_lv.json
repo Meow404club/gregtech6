@@ -27,7 +27,7 @@
     "XVX"
   ],
   "result": {
-    "item": "gt6:mining_drill_lv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:mining_drill_lv"
+  }
 }

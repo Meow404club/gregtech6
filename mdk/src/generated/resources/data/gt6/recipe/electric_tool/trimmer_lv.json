@@ -33,7 +33,7 @@
     "VWd"
   ],
   "result": {
-    "item": "gt6:trimmer_lv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:trimmer_lv"
+  }
 }

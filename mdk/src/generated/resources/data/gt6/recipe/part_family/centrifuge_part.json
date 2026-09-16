@@ -24,7 +24,7 @@
     "TdT"
   ],
   "result": {
-    "item": "gt6:centrifuge_part"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:centrifuge_part"
+  }
 }

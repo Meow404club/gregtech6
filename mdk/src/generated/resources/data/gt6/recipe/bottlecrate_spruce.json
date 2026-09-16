@@ -27,7 +27,7 @@
     "BPB"
   ],
   "result": {
-    "item": "gt6:bottlecrate_spruce"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:bottlecrate_spruce"
+  }
 }

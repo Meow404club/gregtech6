@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "C": {
-      "tag": "forge:fine_wires/nichrome"
+      "tag": "c:fine_wires/nichrome"
     },
     "M": {
       "item": "gt6:casing_small_chromium"
@@ -21,7 +21,7 @@
     "TCd"
   ],
   "result": {
-    "item": "gt6:electric_heater_t4"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:electric_heater_t4"
+  }
 }

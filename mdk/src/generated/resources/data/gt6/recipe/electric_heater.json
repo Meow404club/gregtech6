@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "C": {
-      "tag": "forge:fine_wires/copper"
+      "tag": "c:fine_wires/copper"
     },
     "M": {
       "item": "gt6:casing_small_steel_galvanized"
@@ -21,7 +21,7 @@
     "TCd"
   ],
   "result": {
-    "item": "gt6:electric_heater"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:electric_heater"
+  }
 }

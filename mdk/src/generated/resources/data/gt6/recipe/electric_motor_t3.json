@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "C": {
-      "tag": "forge:fine_wires/annealed_copper"
+      "tag": "c:fine_wires/annealed_copper"
     },
     "G": {
       "item": "gt6:gear_gt_stainless_steel"
@@ -27,7 +27,7 @@
     "TGd"
   ],
   "result": {
-    "item": "gt6:electric_motor_t3"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:electric_motor_t3"
+  }
 }

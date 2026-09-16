@@ -27,7 +27,7 @@
     "XVX"
   ],
   "result": {
-    "item": "gt6:chainsaw_mv"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:chainsaw_mv"
+  }
 }
