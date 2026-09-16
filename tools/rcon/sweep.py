@@ -432,6 +432,14 @@ SESSION_GROUPS = (
     # the module stem; the card's acceptance legs run the same chain through
     # census_ore.py (NORMAL world + the fixed seed, the p30 worldgen card form).
     ("p29_w6_ore_census",),
+    # P30 W6 card (p30-w6-t2-surface-blocks): the surface-plants + fallen-woods chain —
+    # one fresh sky band (x641..769 z299..317 y98..121, x/z-disjoint from the t1 tree
+    # band and the rocks/sticks z=300 band): the 9 /place-feature cells (glowtus pool /
+    # bush / the 4 fallen-log woods incl. the frozen snow arm / the 3 soil disks), the
+    # 5 destroy-drop loot arms, and the #minecraft:logs tag face (13 gt6 members = the
+    # coke-oven source count drift the coordinator noted). Single-member session group;
+    # the natural-generation RCON gate rides the card's separate forceload+scan.
+    ("p29_w6_t2_surface",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
