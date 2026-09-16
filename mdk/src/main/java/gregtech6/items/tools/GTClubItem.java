@@ -58,6 +58,9 @@ public class GTClubItem extends Item {
 	/** Upstream getSpeedMultiplier :53 — the 6.0F anchor × 0.5. */
 	public static final float MINING_SPEED = GTPickaxeItem.MINING_SPEED * 0.5F;
 
+	/** The registration-row desc (Loader_Tools.java:130 "A blunt primitive Weapon and Rock Crusher"). */
+	public static final String TOOLTIP_KEY = "item.gt6.club.tooltip";
+
 	//? if forge {
 	private final com.google.common.collect.Multimap<Attribute, AttributeModifier> mAttackModifiers = com.google.common.collect.ImmutableMultimap.of(
 			net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE,
@@ -144,8 +147,23 @@ public class GTClubItem extends Item {
 	}
 	*///?}
 
-	/**
-	 * The stack classifier — the gt6 CLUB key + the vanilla pickaxe face (the inherited
+	/** The registration-row desc tooltip (the GTAxeItem hover shape). */
+	//? if forge {
+	@Override
+	public void appendHoverText(ItemStack aStack, net.minecraft.world.level.Level aLevel, java.util.List<net.minecraft.network.chat.Component> aTooltip, net.minecraft.world.item.TooltipFlag aFlag) {
+		super.appendHoverText(aStack, aLevel, aTooltip, aFlag);
+		aTooltip.add(net.minecraft.network.chat.Component.translatable(TOOLTIP_KEY));
+	}
+	//?} else {
+	/*@Override
+	public void appendHoverText(ItemStack aStack, Item.TooltipContext aContext, java.util.List<net.minecraft.network.chat.Component> aTooltip, net.minecraft.world.item.TooltipFlag aFlag) {
+	//21.1: the hover signature carries the Item.TooltipContext (the GT6LubricantBucket fork).
+		super.appendHoverText(aStack, aContext, aTooltip, aFlag);
+		aTooltip.add(net.minecraft.network.chat.Component.translatable(TOOLTIP_KEY));
+	}
+	*///?}
+
+	/** The stack classifier — the gt6 CLUB key + the vanilla pickaxe face (the inherited
 	 * HardHammer hammer/pickaxe arms) + the HAMMER gt6 action (the Loader_Tools.java:130
 	 * behaviour row {@code TOOL_hammer} — the machine dispatch must see the club exactly
 	 * as the 1.7.10 behaviour row did).

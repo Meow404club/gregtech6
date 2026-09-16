@@ -8219,3 +8219,13 @@ direct	item.gt6.pickaxe_construction	建筑镐	hand
 direct	item.gt6.shovel	锹	hand
 direct	item.gt6.spade	铲	hand
 direct	item.gt6.universal_spade	万用铲	hand
+direct	item.gt6.sword	剑	hand
+direct	item.gt6.knife	小刀	hand
+direct	item.gt6.butchery_knife	屠宰刀	hand
+direct	item.gt6.club	木棒	hand
+direct	item.gt6.axe	斧	hand
+direct	item.gt6.axe_double	双面斧	hand
+direct	item.gt6.axe.tooltip	伐木更快, 砍倒整棵树	hand
+direct	item.gt6.axe_double.tooltip	砍倒整棵树, 攻击速度较慢	hand
+direct	item.gt6.club.tooltip	钝重的原始武器兼碎石器	hand
+direct	item.gt6.butchery_knife.tooltip	攻击速度较慢	hand

@@ -51,6 +51,9 @@ public class GTAxeItem extends Item {
 	/** The dig speed on the axe surface — the iron-tier anchor (upstream speed ×1.0). */
 	public static final float MINING_SPEED = 6.0F;
 
+	/** The registration-row desc (Loader_Tools.java:122 "Faster on Logs. Chops down whole Trees."). */
+	public static final String TOOLTIP_KEY = "item.gt6.axe.tooltip";
+
 	//? if forge {
 	private final com.google.common.collect.Multimap<Attribute, AttributeModifier> mAttackModifiers = buildAttackModifiers(ATTACK_DAMAGE, ATTACK_SPEED);
 
@@ -154,6 +157,22 @@ public class GTAxeItem extends Item {
 	/*@Override
 	public net.minecraft.world.item.component.ItemAttributeModifiers getDefaultAttributeModifiers() {
 		return mAttackModifiers;
+	}
+	*///?}
+
+	/** The registration-row desc tooltip (the GT6LubricantBucket hover shape). */
+	//? if forge {
+	@Override
+	public void appendHoverText(ItemStack aStack, net.minecraft.world.level.Level aLevel, java.util.List<net.minecraft.network.chat.Component> aTooltip, net.minecraft.world.item.TooltipFlag aFlag) {
+		super.appendHoverText(aStack, aLevel, aTooltip, aFlag);
+		aTooltip.add(net.minecraft.network.chat.Component.translatable(TOOLTIP_KEY));
+	}
+	//?} else {
+	/*@Override
+	public void appendHoverText(ItemStack aStack, Item.TooltipContext aContext, java.util.List<net.minecraft.network.chat.Component> aTooltip, net.minecraft.world.item.TooltipFlag aFlag) {
+	//21.1: the hover signature carries the Item.TooltipContext (the GT6LubricantBucket fork).
+		super.appendHoverText(aStack, aContext, aTooltip, aFlag);
+		aTooltip.add(net.minecraft.network.chat.Component.translatable(TOOLTIP_KEY));
 	}
 	*///?}
 

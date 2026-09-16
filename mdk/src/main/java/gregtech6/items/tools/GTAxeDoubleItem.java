@@ -30,6 +30,9 @@ public class GTAxeDoubleItem extends GTAxeItem {
 	/** Upstream getMaxDurabilityMultiplier :34-37 — 1.0 × 1.5 over the family 512. */
 	public static final int DURABILITY_POINTS = (int) (GTAxeItem.DURABILITY_POINTS * 1.5F);
 
+	/** The registration-row desc (Loader_Tools.java:123 "Chops down whole Trees and has a slow Attack Rate"). */
+	public static final String TOOLTIP_KEY = "item.gt6.axe_double.tooltip";
+
 	//? if forge {
 	private final com.google.common.collect.Multimap<Attribute, AttributeModifier> mAttackModifiers = buildAttackModifiers(ATTACK_DAMAGE, ATTACK_SPEED);
 	//?} else {
@@ -39,6 +42,22 @@ public class GTAxeDoubleItem extends GTAxeItem {
 	public GTAxeDoubleItem(Properties aProperties) {
 		super(aProperties);
 	}
+
+	/** The registration-row desc tooltip (the GTAxeItem hover shape, own key). */
+	//? if forge {
+	@Override
+	public void appendHoverText(ItemStack aStack, net.minecraft.world.level.Level aLevel, java.util.List<net.minecraft.network.chat.Component> aTooltip, net.minecraft.world.item.TooltipFlag aFlag) {
+		super.appendHoverText(aStack, aLevel, aTooltip, aFlag);
+		aTooltip.add(net.minecraft.network.chat.Component.translatable(TOOLTIP_KEY));
+	}
+	//?} else {
+	/*@Override
+	public void appendHoverText(ItemStack aStack, net.minecraft.world.item.Item.TooltipContext aContext, java.util.List<net.minecraft.network.chat.Component> aTooltip, net.minecraft.world.item.TooltipFlag aFlag) {
+	//21.1: the hover signature carries the Item.TooltipContext (the GT6LubricantBucket fork).
+		super.appendHoverText(aStack, aContext, aTooltip, aFlag);
+		aTooltip.add(net.minecraft.network.chat.Component.translatable(TOOLTIP_KEY));
+	}
+	*///?}
 
 	//? if forge {
 	@Override

@@ -146,11 +146,12 @@ public final class GT6ToolLootModifiers {
 
 	/**
 	 * The club rock-crush mapping table — the prefix x material pair each block crushes
-	 * into (task p29-w5-t2-blade-six; the pairs resolve through
-	 * {@code GTMaterialItems.get} at conversion time, so the table stays a pure
-	 * offline-pinnable face — the card ACCEPTANCE "club rockGt 映射表纯函数"). Upstream
-	 * GT_Tool_Club.convertBlockDrops :61-110 minus the mod arms (NeLi/NePl/BOTA/GaSu →
-	 * the vanilla basalt/blackstone pairs, {@code BlockStones.JUSTSTONE} → the W6
+	 * into (task p29-w5-t2-blade-six; the card ACCEPTANCE "club rockGt 映射表纯函数" —
+	 * the KEY SET is the offline-pinnable face, the handle resolution is the live RCON
+	 * face: the gt6 OP/MT handles are runtime {@code init()}-filled, so the record holds
+	 * SUPPLIERS resolved at conversion time through {@code GTMaterialItems.get}).
+	 * Upstream GT_Tool_Club.convertBlockDrops :61-110 minus the mod arms (NeLi/NePl/BOTA/
+	 * GaSu → the vanilla basalt/blackstone pairs, {@code BlockStones.JUSTSTONE} → the W6
 	 * domain, the {@code oreRedstone} oredict arm → the vanilla ore block):
 	 * the stone family → rockGt Stone (:64-68), the nether-brick family (:69-73),
 	 * netherrack (:74-78), end stone (:79-83), obsidian (:84-88), basalt (:89-93),
@@ -158,34 +159,35 @@ public final class GT6ToolLootModifiers {
 	 */
 	public static final java.util.Map<Block, CrushTarget> ROCK_CRUSH = buildRockCrush();
 
-	/** The crush-table entry (the record keeps the mapping table a pure data face). */
-	public record CrushTarget(gregapi.oredict.OreDictPrefix prefix, gregapi.oredict.OreDictMaterial material) {
+	/** The crush-table entry (suppliers — the gt6 handles fill at mod-construct init). */
+	public record CrushTarget(java.util.function.Supplier<gregapi.oredict.OreDictPrefix> prefix,
+			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {
 	}
 
 	private static java.util.Map<Block, CrushTarget> buildRockCrush() {
 		java.util.Map<Block, CrushTarget> tMap = new java.util.HashMap<>();
-		CrushTarget tStone = new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.Stone);
+		CrushTarget tStone = new CrushTarget(() -> gregapi.data.OP.rockGt, () -> gregapi.data.MT.Stone);
 		for (Block tBlock : new Block[] {Blocks.STONE, Blocks.COBBLESTONE, Blocks.MOSSY_COBBLESTONE,
 				Blocks.STONE_BRICKS, Blocks.STONE_BRICK_STAIRS, Blocks.COBBLESTONE_WALL,
 				Blocks.STONE_BUTTON, Blocks.STONE_PRESSURE_PLATE}) {
 			tMap.put(tBlock, tStone); // upstream :64
 		}
-		CrushTarget tNetherBrick = new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.NetherBrick);
+		CrushTarget tNetherBrick = new CrushTarget(() -> gregapi.data.OP.rockGt, () -> gregapi.data.MT.NetherBrick);
 		for (Block tBlock : new Block[] {Blocks.NETHER_BRICKS, Blocks.NETHER_BRICK_STAIRS, Blocks.NETHER_BRICK_FENCE}) {
 			tMap.put(tBlock, tNetherBrick); // upstream :69
 		}
-		tMap.put(Blocks.NETHERRACK, new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.Netherrack)); // :74
-		tMap.put(Blocks.END_STONE, new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.Endstone)); // :79
-		tMap.put(Blocks.OBSIDIAN, new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.Obsidian)); // :84
-		tMap.put(Blocks.BASALT, new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.STONES.Basalt)); // :89
+		tMap.put(Blocks.NETHERRACK, new CrushTarget(() -> gregapi.data.OP.rockGt, () -> gregapi.data.MT.Netherrack)); // :74
+		tMap.put(Blocks.END_STONE, new CrushTarget(() -> gregapi.data.OP.rockGt, () -> gregapi.data.MT.Endstone)); // :79
+		tMap.put(Blocks.OBSIDIAN, new CrushTarget(() -> gregapi.data.OP.rockGt, () -> gregapi.data.MT.Obsidian)); // :84
+		tMap.put(Blocks.BASALT, new CrushTarget(() -> gregapi.data.OP.rockGt, () -> gregapi.data.MT.STONES.Basalt)); // :89
 		tMap.put(Blocks.POLISHED_BASALT, tMap.get(Blocks.BASALT)); // the polished unfold
-		CrushTarget tBlackstone = new CrushTarget(gregapi.data.OP.rockGt, gregapi.data.MT.STONES.Blackstone);
+		CrushTarget tBlackstone = new CrushTarget(() -> gregapi.data.OP.rockGt, () -> gregapi.data.MT.STONES.Blackstone);
 		for (Block tBlock : new Block[] {Blocks.BLACKSTONE, Blocks.POLISHED_BLACKSTONE,
 				Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.CHISELED_POLISHED_BLACKSTONE,
 				Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS}) {
 			tMap.put(tBlock, tBlackstone); // upstream :94
 		}
-		tMap.put(Blocks.REDSTONE_ORE, new CrushTarget(gregapi.data.OP.gemChipped, gregapi.data.MT.OREMATS.Cinnabar)); // :104
+		tMap.put(Blocks.REDSTONE_ORE, new CrushTarget(() -> gregapi.data.OP.gemChipped, () -> gregapi.data.MT.OREMATS.Cinnabar)); // :104
 		return java.util.Collections.unmodifiableMap(tMap);
 	}
 
@@ -250,19 +252,13 @@ public final class GT6ToolLootModifiers {
 			case SWORD_HARVEST -> {
 				// upstream harvestGrass :111-146 — the 1.7.10 tallgrass meta 1/2 pair and the
 				// double_plant meta 2/3 pair, unfolded onto the four modern plant blocks
-				//? if forge {
 				Block tBlock = aState.getBlock();
-				if (tBlock == Blocks.GRASS || tBlock == Blocks.FERN) {
-					aDrops.add(new ItemStack(tBlock)); // the plant's own item, :114 count 1+nextInt(1+fortune) = 1
-					return true;
-				}
-				if (tBlock == Blocks.TALL_GRASS || tBlock == Blocks.LARGE_FERN) {
-					aDrops.add(new ItemStack(tBlock, 2)); // :120 count 2+... = 2 at zero fortune
-					return true;
-				}
+				//? if forge {
+				Block tSelfGrass = Blocks.GRASS;
 				//?} else {
-				/*Block tBlock = aState.getBlock();
-				if (tBlock == Blocks.SHORT_GRASS || tBlock == Blocks.FERN) { // 21.1: GRASS renamed SHORT_GRASS
+				/*Block tSelfGrass = Blocks.SHORT_GRASS; // 21.1: GRASS renamed SHORT_GRASS (the 1.20.3 rename)
+				*///?}
+				if (tBlock == tSelfGrass || tBlock == Blocks.FERN) {
 					aDrops.add(new ItemStack(tBlock)); // the plant's own item, :114 count 1+nextInt(1+fortune) = 1
 					return true;
 				}
@@ -270,7 +266,6 @@ public final class GT6ToolLootModifiers {
 					aDrops.add(new ItemStack(tBlock, 2)); // :120 count 2+... = 2 at zero fortune
 					return true;
 				}
-				*///?}
 				if (tBlock == Blocks.DEAD_BUSH) { // upstream harvestStick :161-164
 					aDrops.add(new ItemStack(net.minecraft.world.item.Items.STICK, 1 + java.util.concurrent.ThreadLocalRandom.current().nextInt(2)));
 					return true;
@@ -295,10 +290,11 @@ public final class GT6ToolLootModifiers {
 				if (tKey == null) return false;
 				CrushTarget tTarget = ROCK_CRUSH.get(tKey);
 				//? if forge {
-				net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tRock = gregtech6.registry.GTMaterialItems.get(tTarget.prefix(), tTarget.material());
+				net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tRock = gregtech6.registry.GTMaterialItems.get(tTarget.prefix().get(), tTarget.material().get());
 				//?} else {
-				/*net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.Item> tRock = gregtech6.registry.GTMaterialItems.get(tTarget.prefix(), tTarget.material());
+				/*net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.Item> tRock = gregtech6.registry.GTMaterialItems.get(tTarget.prefix().get(), tTarget.material().get());
 				*///?}
+				if (tTarget.prefix().get() == null || tTarget.material().get() == null) return false; // pre-init — the identity guard
 				if (tRock == null) return false; // off-table pair — the identity guard
 				//? if forge {
 				if (!tRock.isPresent()) return false; // off-registry — the identity guard

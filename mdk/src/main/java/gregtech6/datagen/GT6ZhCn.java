@@ -938,6 +938,17 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.shovel"); // 锹 (dump tagprefix tool_head_shovel 锹头 :914)
 		addDirect("item.gt6.spade"); // 铲 (dump tagprefix tool_head_spade 铲头 :907)
 		addDirect("item.gt6.universal_spade"); // 万用铲 (dump tagprefix tool_head_universal_spade 万用铲头 :910)
+		// task p29-w5-t2-blade-six — 剑/小刀/斧 dump gt.lang.tool.name 行逐字；屠宰刀/木棒/双面斧 dump 无行走手翻；tooltip 四行=Loader_Tools desc 列手翻（dump tooltip 行异版不采）
+		addDirect("item.gt6.sword");
+		addDirect("item.gt6.knife");
+		addDirect("item.gt6.butchery_knife");
+		addDirect("item.gt6.club");
+		addDirect("item.gt6.axe");
+		addDirect("item.gt6.axe_double");
+		addDirect("item.gt6.axe.tooltip");
+		addDirect("item.gt6.axe_double.tooltip");
+		addDirect("item.gt6.club.tooltip");
+		addDirect("item.gt6.butchery_knife.tooltip");
 		addDirect("item.gt6.shape_extruder_plate"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10001 模具 (板) (:10129)
 		addDirect("item.gt6.shape_extruder_rod"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10027 模具 (杆) (:10185)
 		addDirect("item.gt6.cover_redstone_emitter");

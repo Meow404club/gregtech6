@@ -168,6 +168,39 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParent("bending_cylinder_small", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/bending_cylinder_small"))
             .texture("layer1", modLoc("item/bending_cylinder_small_overlay"));
+        // the six blade tools (task p29-w5-t2-blade-six) — the chisel/file four-layer row
+        // shape. Sword: head = the toolHeadSword metallic-set pair (upstream getIcon :113-115
+        // primary Steel), handle = the HANDLE_SWORD iconset pair borrow (item/sword.png).
+        // Knife/Butchery Knife/Club: the single composed iconset pair borrows (upstream
+        // KNIFE/BUTCHERYKNIFE/CLUB icons, VOID handles — GT_Tool_Knife.getIcon :85-87 /
+        // GT_Tool_ButcheryKnife :97-99 / GT_Tool_Club :113-115), two-layer.
+        withExistingParent("sword", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_sword"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_sword_overlay"))
+            .texture("layer2", modLoc("item/sword"))
+            .texture("layer3", modLoc("item/sword_overlay"));
+        withExistingParent("knife", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/knife"))
+            .texture("layer1", modLoc("item/knife_overlay"));
+        withExistingParent("butchery_knife", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/butchery_knife"))
+            .texture("layer1", modLoc("item/butchery_knife_overlay"));
+        withExistingParent("club", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/club"))
+            .texture("layer1", modLoc("item/club_overlay"));
+        // Axe: head = the toolHeadAxe metallic-set pair (GT_Tool_Axe.getIcon :151-153), handle
+        // = the stick pair (the secondary Spruce — the builder-wand handle borrow shape).
+        withExistingParent("axe", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_axe"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_axe_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        // Double Axe: the toolHeadAxeDouble metallic-set pair + the stick pair.
+        withExistingParent("axe_double", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_axe_double"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_axe_double_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
         // the food-can row0 subset (task p25-food-can-row0) — 8 item/generated models over
         // the byte-identical upstream icon borrows (gt.multiitem.randomtools/998 for the
         // empty can, gt.multiitem.cans/11-16 for the rotten family, :86 for the cookies

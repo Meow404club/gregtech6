@@ -9,7 +9,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -42,18 +41,19 @@ import gregtech6.items.tools.GTAxeItem;
  *     arms are the declared-F cuts — vanilla trees only) + the sneak gate
  *     {@code !isSteppingCarefully} + a ServerPlayer breaker.</li>
  * <li><b>The guard</b> — the upstream {@code LOCK} static boolean IS the
- *     {@link GT6ToolSweep} ThreadLocal sentinel (the shared guard: each felled log's own
- *     loot flow re-enters this modifier and reads the claim, the infinite-collapse
- *     stop).</li>
+ *     {@link GT6ToolSweep} ThreadLocal sentinel (the shared guard).</li>
  * <li><b>The walk</b> (:110-122) — scan the column ABOVE the broken base while the same
- *     log block stands (world top = the cap, the open-questions 逐字 ruling), collect at
- *     most the tool's durability margin (the :114 {@code rAmount >= aAvailableDurability
- *     continue} semantics — the margin keeps the tool alive at one point per log through
- *     the vanilla {@code mineBlock} inside destroyBlock, so the payment IS the tree
- *     height), then harvest TOP-DOWN (:119 {@code --tY}) through
- *     {@code ServerPlayerGameMode.destroyBlock} (the tryHarvestBlock face the card
- *     boundary pins: instant break, correct-tool drops, per-log durability payment —
- *     the felled logs' loot re-entries die on the guard).</li>
+ *     log block stands (world top = the cap, the open-questions 逐字 ruling), then
+ *     harvest TOP-DOWN (:119 {@code --tY}). The 21.1 drop-capture lesson: the walk does
+ *     NOT ride {@code ServerPlayerGameMode.destroyBlock} — it runs INSIDE the base
+ *     break's loot evaluation, and the 21.1 {@code dropResources} capture window
+ *     re-entered through the walk's own drop face (the outer capture came back null).
+ *     The port form: {@code removeBlock} per felled log + the break particle event, the
+ *     felled stacks APPENDED to this modifier's loot output (the outer flow spawns
+ *     them), and ONE durability point per felled log paid on the held tool (the
+ *     vanilla-mineBlock payment folded onto the walk — the card face: the payment = the
+ *     tree height, the upstream :114 {@code rAmount >= aAvailableDurability continue}
+ *     semantics as the −1 tool-keep-alive margin).</li>
  * <li><b>FAST_LEAF_DECAY</b> (:120-122) — CUT: the vanilla distance-based leaf decay
  *     supersedes (leaves fall on their own tick after the trunk goes).</li>
  * </ul>
@@ -98,23 +98,24 @@ public class GT6TreeFellModifier extends LootModifier {
 		if (tPlayer.isSteppingCarefully()) return aLoot; // upstream :107 !isSneaking — the single-log sneak face
 		Vec3 tOrigin = aContext.getParamOrNull(LootContextParams.ORIGIN);
 		if (tOrigin == null) return aLoot;
-		fell(tPlayer, BlockPos.containing(tOrigin), tState.getBlock());
+		fell(tPlayer, BlockPos.containing(tOrigin), tState.getBlock(), aLoot);
 		return aLoot;
 	}
 
 	/**
 	 * The upstream :110-122 walk — see the class javadoc. Exposed static for the
-	 * command/test seams; {@code aLog} is the base block the caller already broke.
+	 * command/test seams; {@code aLog} is the base block the caller already broke; the
+	 * felled stacks land in {@code aLoot} (the modifier output the outer flow spawns).
 	 *
 	 * @return the number of felled logs (the guard-blocked re-entry returns 0).
 	 */
-	public static int fell(ServerPlayer aPlayer, BlockPos aBase, Block aLog) {
+	public static int fell(ServerPlayer aPlayer, BlockPos aBase, Block aLog, List<ItemStack> aLoot) {
 		if (!GT6ToolSweep.tryEnter()) return 0; // the upstream LOCK (GT_Tool_Axe.java:102/:108/:124)
 		try {
 			ServerLevel tLevel = aPlayer.serverLevel();
 			ItemStack tTool = aPlayer.getMainHandItem();
-			// the durability margin (upstream :114 continue semantics): one point per log
-			// through destroyBlock's vanilla mineBlock, the −1 keeps the tool alive
+			// the durability margin (upstream :114 continue semantics): one point per felled
+			// log paid below, the −1 keeps the tool alive
 			int tBudget = Math.max(0, tTool.getMaxDamage() - tTool.getDamageValue() - 1);
 			List<BlockPos> tFell = new ArrayList<>();
 			// the counting scan (upstream :112-117): straight up while the same log stands
@@ -122,10 +123,21 @@ public class GT6TreeFellModifier extends LootModifier {
 					&& tLevel.getBlockState(tCursor).getBlock() == aLog; tCursor = tCursor.above()) {
 				if (tFell.size() < tBudget) tFell.add(tCursor.immutable());
 			}
-			// the harvest (upstream :119 --tY): top-down, the tryHarvestBlock face
+			// the harvest (upstream :119 --tY): top-down, remove + loot-append + pay
 			int rFelled = 0;
 			for (int i = tFell.size() - 1; i >= 0; i--) {
-				if (aPlayer.gameMode.destroyBlock(tFell.get(i))) rFelled++;
+				BlockPos tPos = tFell.get(i);
+				tLevel.levelEvent(net.minecraft.world.level.block.LevelEvent.PARTICLES_DESTROY_BLOCK /*2001 break particles*/,
+						tPos, Block.getId(tLevel.getBlockState(tPos)));
+				tLevel.removeBlock(tPos, false);
+				aLoot.add(new ItemStack(aLog.asItem()));
+				//? if forge {
+				tTool.hurtAndBreak(1, aPlayer, e -> e.broadcastBreakEvent(net.minecraft.world.entity.EquipmentSlot.MAINHAND));
+				//?} else {
+				/*tTool.hurtAndBreak(1, aPlayer, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+				//21.1: the hurt callback folded onto the slot param (ItemStack.java:478).
+				*///?}
+				rFelled++;
 			}
 			return rFelled;
 		} finally {

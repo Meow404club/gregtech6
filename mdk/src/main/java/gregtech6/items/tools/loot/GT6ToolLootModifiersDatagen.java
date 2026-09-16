@@ -41,16 +41,21 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 
 	/**
 	 * The single source of the modifier set (the {@code add} names AND the twin index
-	 * entries). ORDER: alphabetical — the 21.1 base run() orders its native index
-	 * alphabetically (the observed node-local face), so the canonical twin must match it
-	 * for the datagen_tree_check byte comparison; the forge base index keeps its own
-	 * HashMap order (the declared forge-gated canonical-only face). A renamed/reordered
-	 * entry drifts the twin and the gate flags it.
+	 * entries). ORDER: the {@code start()} CALL ORDER — the 21.1 base run() emits its
+	 * native index in call order (the p29-w5-t2 correction of the t1 "alphabetical"
+	 * reading: t1's calls happened to BE alphabetical, which masked the real face), so
+	 * the canonical twin must match it for the datagen_tree_check byte comparison; the
+	 * forge base index keeps its own HashMap order (the declared forge-gated
+	 * canonical-only face). A renamed/reordered entry drifts the twin and the gate
+	 * flags it.
 	 */
 	static final List<String> MODIFIER_NAMES = List.of(
 			"construction_ender_chest",
 			"spade_harvest",
-			"universal_spade_openable");
+			"universal_spade_openable",
+			"axe_tree_fell",
+			"club_rock_crush",
+			"sword_harvest");
 
 	/** The ctor face of the platform output (the base field is private — kept for the twin path). */
 	private final PackOutput mOutput;
@@ -81,6 +86,16 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 		add("universal_spade_openable", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.UNIVERSAL_SPADE.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.UNBOXINATOR_OPEN));
+		// task p29-w5-t2-blade-six — the three blade-conversion rows (the same per-tool
+		// holds_tool gate; the felling row rides the gt6_tree_fell serializer, the two
+		// pure rows ride gt6_tool_convert with the new modes)
+		add("axe_tree_fell", new GT6TreeFellModifier(conditions(GT6Tools.AXE.get())));
+		add("club_rock_crush", new GT6ToolLootModifiers.GT6ToolConvertModifier(
+				conditions(GT6Tools.CLUB.get()),
+				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.CLUB_ROCK_CRUSH));
+		add("sword_harvest", new GT6ToolLootModifiers.GT6ToolConvertModifier(
+				conditions(GT6Tools.SWORD.get()),
+				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.SWORD_HARVEST));
 	}
 
 	private static LootItemCondition[] conditions(net.minecraft.world.item.Item aTool) {
