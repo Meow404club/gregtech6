@@ -50,6 +50,10 @@ steps += [
     Step("gt6dig mine 401 64 192 spade", expect="drops=[minecraft:clay x1]"),
     Step(f"setblock 402 64 192 minecraft:snow_block", expect="Changed the block"),
     Step("gt6dig mine 402 64 192 spade", expect="drops=[minecraft:snow_block x1]"),
+    # the support floor first (the faces-chain 2c21622e precedent): the bbox cleanup
+    # strips y62..66, and gravel is a GRAVITY block — without a floor it falls off the
+    # site within ~2 ticks and the mine arm reads air (the S14 live red)
+    Step(f"setblock 403 63 192 minecraft:stone", expect="Changed the block"),
     Step(f"setblock 403 64 192 minecraft:gravel", expect="Changed the block"),
     Step("gt6dig mine 403 64 192 spade", expect="drops=[minecraft:gravel x1]"),
 ]

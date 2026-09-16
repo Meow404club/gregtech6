@@ -40,9 +40,14 @@ import net.minecraft.world.level.gameevent.GameEvent;
  *     sets {@link #GLASS_FAMILY} / {@link #ICE_FAMILY} / {@link #FLOWER_POT_FAMILY} /
  *     {@link #CAULDRON_FAMILY} (the GTCrowbarItem.CIRCUITS_FAMILY explicit-set ruling —
  *     1.20.1 has no server-side Material; the 1.7.10 button-flattening lesson applies:
- *     the single {@code Blocks.flower_pot} unfolds to the potted family). Rails are NOT
- *     in the surface — the crowbar owns that arm (uncertain 1.7.10 rail material,
- *     conservative cut).</li>
+ *     the single {@code Blocks.flower_pot} unfolds to the potted family). Rails ride
+ *     the TAG arm too — the vanilla {@code #minecraft:mineable/pickaxe} carries the
+ *     nested {@code #minecraft:rails} reference (the 1.20.x client-extra tag data,
+ *     S14 correction of this javadoc's earlier "rails are NOT in the surface" claim:
+ *     the first census grep missed the {@code #}-prefixed tag-nested entry), so the
+ *     rails face is faithful to the upstream {@code Material.iron} arm and the crowbar
+ *     holds it as its EXPLICIT instanceof arm beside the circuits set (the overlap is
+ *     upstream-true: 1.7.10 rails were Material.iron).</li>
  * <li><b>Damage</b>: per-block 25 / per-attack 200 (:42-43) fold into the single
  *     vanilla point each (the crowbar declared-deviation mapping); base damage 3.0F
  *     (:44) kept as the attribute.</li>
