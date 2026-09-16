@@ -438,14 +438,23 @@ public final class GTMultiBlocks {
 			new PartRow("large_osmium_coil"     , "Large Osmium Coil"     , 18044, 6.0F, 1, "coil"),
 			new PartRow("large_iridium_coil"    , "Large Iridium Coil"    , 18045, 6.0F, 1, "coil"));
 
-	/** The six Part rows (:1174-1182 minus the registered transmitter/rod; per-row NBT_TEXTURE, per-row NBT_DESIGNS). */
+	/**
+	 * The seven Part rows (:1174-1182 minus the registered transmitter/rod; per-row
+	 * NBT_TEXTURE, per-row NBT_DESIGNS). The Bedrock Mining Drill Head (:1178) joined in
+	 * task p30-pool-drillhead-18103 — the research.p29-gap-refresh-worldgen-mb
+	 * mb_residual.part_miss line: the card-① census carried
+	 * 18100/18101/18102/18105/18106/18107/18108 and missed 18103; the parent Bedrock
+	 * Mining Drill machine (17999, :1283) itself STAYS pool-deferred (the W6 bedrock
+	 * coupling), this row is the standalone part block only.
+	 */
 	public static final java.util.List<PartRow> PART_ROWS = java.util.List.of(
-			new PartRow("centrifuge_part"  , "Centrifuge Part"          , 18100, 12.5F, 8, "centrifugeparts"),
-			new PartRow("electrolyzer_part", "Electrolyzer Part"        , 18105, 12.5F, 7, "electrolyzerparts"),
-			new PartRow("distill_part"     , "Distillation Tower Part"  , 18102,  6.0F, 1, "distillationtowerparts"),
-			new PartRow("sluice_part"      , "Sluice Part"              , 18106,  9.0F, 7, "sluiceparts"),
-			new PartRow("crusher_wheels"   , "Crusher Wheels"           , 18107,  9.0F, 3, "crusherwheels"),
-			new PartRow("shredder_blades"  , "Shredder Blades"          , 18108,  9.0F, 3, "shredderblades"));
+			new PartRow("centrifuge_part"     , "Centrifuge Part"          , 18100, 12.5F, 8, "centrifugeparts"),
+			new PartRow("electrolyzer_part"   , "Electrolyzer Part"        , 18105, 12.5F, 7, "electrolyzerparts"),
+			new PartRow("distill_part"        , "Distillation Tower Part"  , 18102,  6.0F, 1, "distillationtowerparts"),
+			new PartRow("bedrock_drill_head"  , "Bedrock Mining Drill Head", 18103, 12.5F, 0, "bedrockdrill"),
+			new PartRow("sluice_part"         , "Sluice Part"              , 18106,  9.0F, 7, "sluiceparts"),
+			new PartRow("crusher_wheels"      , "Crusher Wheels"           , 18107,  9.0F, 3, "crusherwheels"),
+			new PartRow("shredder_blades"     , "Shredder Blades"          , 18108,  9.0F, 3, "shredderblades"));
 
 	/** The Ventilation Unit row (:1184 — NBT_DESIGNS 0). */
 	public static final PartRow VENTILATION_ROW = new PartRow("ventilation_unit", "Ventilation Unit", 18299, 6.0F, 0, "ventilationunit");
