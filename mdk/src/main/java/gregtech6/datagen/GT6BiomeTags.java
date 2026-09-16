@@ -13,6 +13,10 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.level.biome.Biomes;
+import gregtech6.worldgen.GT6Worldgen;
+
 /**
  * The GT6 biome-tag datagen home (task p30-w6-t1-trees-nine spec ③): the biome
  * determination face of the 9 tree worldgen rows — the upstream {@code BIOMES_*}
@@ -109,5 +113,31 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
             tag(treeTag(gregtech6.registry.GT6TreeBlocks.KINDS.get(i).snake()))
                     .add(tBiomes.toArray(new ResourceKey[0]));
         }
+        // task p30-w6-rocks-sticks — the surface deco bands (the tags are NOT
+        // loader-branded, one band serves both legs; the rocks version's
+        // BiomeTagsProvider base folds into this TagsProvider<Biome>):
+        // WorldgenRocks.java:54 — the nine rock biome groups (wastelands skipped, no vanilla tag).
+        tag(GT6Worldgen.SURFACE_ROCKS_BIOMES)
+                .add(Biomes.DESERT, Biomes.PLAINS, Biomes.SNOWY_PLAINS, Biomes.SUNFLOWER_PLAINS,
+                        Biomes.SWAMP, Biomes.MANGROVE_SWAMP)
+                .addTag(BiomeTags.IS_BADLANDS)  // MESA
+                .addTag(BiomeTags.IS_TAIGA)
+                .addTag(BiomeTags.IS_SAVANNA)
+                .addTag(BiomeTags.IS_FOREST)    // WOODS
+                .addTag(BiomeTags.IS_MOUNTAIN)  // MOUNTAINS
+                .addTag(BiomeTags.IS_HILL);     // the windswept extremeHills family
+        // WorldgenSticks.java:53 — woods|swamp.
+        tag(GT6Worldgen.STICKS_DENSE_BIOMES)
+                .add(Biomes.SWAMP, Biomes.MANGROVE_SWAMP)
+                .addTag(BiomeTags.IS_FOREST);
+        // :54 — river|plains|savanna.
+        tag(GT6Worldgen.STICKS_MODERATE_BIOMES)
+                .add(Biomes.PLAINS, Biomes.SNOWY_PLAINS, Biomes.SUNFLOWER_PLAINS)
+                .addTag(BiomeTags.IS_RIVER)
+                .addTag(BiomeTags.IS_SAVANNA);
+        // :55 — taiga|mesa|wasteland.
+        tag(GT6Worldgen.STICKS_SPARSE_BIOMES)
+                .addTag(BiomeTags.IS_TAIGA)
+                .addTag(BiomeTags.IS_BADLANDS);
     }
 }

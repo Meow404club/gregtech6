@@ -124,6 +124,21 @@ public class GT6EnUs extends LanguageProvider {
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
+        addSurfaceBand(); // task p30-w6-rocks-sticks — table-tail append
+    }
+
+    /**
+     * Surface deco family keys (task p30-w6-rocks-sticks): the composed rock template
+     * (the p20-i18n-compose-rows B-wave form — ONE {@code gt6.surface.rock} template,
+     * the material slot riding the {@code gt6.material.<snake>} small unit at
+     * GT6SurfaceRockBlock.getName; per-pair naming is a modern necessity, the upstream
+     * MTE name was the generic "Rock", Loader_MultiTileEntities.java:2033) and the
+     * single stick key (the upstream :2035 "Stick" verbatim). Table-tail append,
+     * append-only.
+     */
+    private void addSurfaceBand() {
+        add("gt6.surface.rock", "%s Surface Rock");
+        add("block.gt6.surface_stick", "Stick");
     }
 
     /**

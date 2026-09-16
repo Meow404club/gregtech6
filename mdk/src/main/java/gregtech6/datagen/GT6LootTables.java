@@ -24,12 +24,19 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.registries.RegistryObject;
+
+import gregapi.data.MT;
+import gregapi.data.OP;
+import gregtech6.registry.GT6SurfaceBlocks;
+import gregtech6.registry.GTMaterialItems;
 
 //? if forge {
 import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
@@ -127,7 +134,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
-                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK)), // task p30-w6-t1-trees-nine — the 27 tree blocks
+                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
+                new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK)), // task p30-w6-rocks-sticks — the surface deco band
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -170,7 +178,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
-                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK))); // task p30-w6-t1-trees-nine — the 27 tree blocks
+                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
+                new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK))); // task p30-w6-rocks-sticks — the surface deco band
         //?}
     }
 
@@ -2131,6 +2140,82 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : largeMachineLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The surface deco block list (task p30-w6-rocks-sticks): the three per-material
+     * surface rocks + the stick — four blocks, four pickup/break loot tables.
+     */
+    public static List<Block> surfaceLootBlocks() {
+        return GT6SurfaceBlocks.ALL.stream().map(RegistryObject::get).toList();
+    }
+
+    /**
+     * The surface deco provider (task p30-w6-rocks-sticks). The upstream MTE getDrops
+     * {@code getRock(1+rng(1+fortune))} (MultiTileEntityRock.java:81) transcribes as ONE
+     * pool: count uniform 1..2 (SetItemCountFunction + UniformGenerator), the winner per
+     * the upstream NBT lottery —
+     * <ul>
+     * <li>{@code surface_rock_stone}: {@code gt6:rock_gt_stone} (the NBT-less default
+     *     rock, the overworld arm of MultiTileEntityRock.java:174);</li>
+     * <li>{@code surface_rock_flint}: {@code minecraft:flint} (11/12 of the NBT half,
+     *     WorldgenRocks.java:63 {@code ST.make(Items.flint, 1, 0)});</li>
+     * <li>{@code surface_rock_meteorite}: {@code gt6:rock_gt_meteoric_iron} weight 3 /
+     *     {@code gt6:ore_raw_meteoric_iron} weight 1 (WorldgenRocks.java:63
+     *     {@code nextInt(4)==0 ? oreRaw : rockGt} verbatim);</li>
+     * <li>{@code surface_stick}: {@code minecraft:stick} (MultiTileEntityStick
+     *     .java:103 {@code IL.Stick.get} — the biome wood band is a DECLARED DEVIATION:
+     *     the ~25-material substring ladder is not materialised, the vanilla stick is the
+     *     research-converged first batch, the wood rows land later as loot-table biome
+     *     conditions, never as 25 blocks).</li>
+     * </ul>
+     * DECLARED DEVIATION: the fortune bonus ({@code rng(1+fortune)}) is not wired — the
+     * 1.21.1 leg moved Enchantments to ResourceKey + ApplyBonusCount to
+     * {@code Holder<Enchantment>}, a leg fork bought only by the rare pickaxe-break path
+     * (the upstream right-click pickup gives exactly 1, MultiTileEntityRock.java:145);
+     * the fortune leg lands with the t1 loot-modifier wave if a live use shows up.
+     */
+    public static final class GT6SurfaceBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6SurfaceBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6SurfaceBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return surfaceLootBlocks();
+        }
+
+        /** The collected-deco table: one pool, uniform 1..2 of {@code aItem} (the getRock count row). */
+        private LootTable.Builder collectedTable(ItemLike aItem) {
+            return LootTable.lootTable().withPool(this.applyExplosionCondition(aItem,
+                    LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                            .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
+                            .add(LootItem.lootTableItem(aItem))));
+        }
+
+        @Override
+        protected void generate() {
+            add(GT6SurfaceBlocks.SURFACE_ROCK_STONE.get(),
+                    collectedTable(GTMaterialItems.get(OP.rockGt, MT.Stone).get()));
+            add(GT6SurfaceBlocks.SURFACE_ROCK_FLINT.get(), collectedTable(Items.FLINT));
+            add(GT6SurfaceBlocks.SURFACE_ROCK_METEORITE.get(),
+                    // WorldgenRocks.java:63 nextInt(4)==0 ? oreRaw : rockGt — the 3:1 weights
+                    LootTable.lootTable().withPool(this.applyExplosionCondition(
+                            GT6SurfaceBlocks.SURFACE_ROCK_METEORITE.get(),
+                            LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
+                                    .add(LootItem.lootTableItem(GTMaterialItems.get(OP.rockGt, MT.MeteoricIron).get()).setWeight(3))
+                                    .add(LootItem.lootTableItem(GTMaterialItems.get(OP.oreRaw, MT.MeteoricIron).get()).setWeight(1)))));
+            add(GT6SurfaceBlocks.SURFACE_STICK.get(), collectedTable(Items.STICK));
         }
     }
 }

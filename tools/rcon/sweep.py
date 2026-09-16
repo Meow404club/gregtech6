@@ -409,6 +409,13 @@ SESSION_GROUPS = (
     # the natural-generation RCON gate rides the card's separate forceload+scan
     # (level-type normal + seed, the p26/p30 biome card form).
     ("p29_w6_t1_trees",),
+    # P30 W6 card (p30-w6-rocks-sticks): the surface rock trio + the stick — one
+    # fresh z=300 band (x384..390: stone 384 / flint 386 / meteorite 388 / stick
+    # 390, the support-pop and loot-spawn faces at z=304), the p21 stoneblocks
+    # destroy-drop form (setblock air destroy -> the item-entity NBT id via
+    # execute if entity; the meteorite arm rides 40 kill-less cycles for the
+    # 3:1 rockGt:oreRaw lottery). No fresh_boot / mutates member.
+    ("p29_w6_rocks_sticks",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

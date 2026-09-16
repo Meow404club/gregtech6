@@ -96,6 +96,9 @@ public final class GT6DataGenerators {
         // bands the tree biome modifiers reference (the registry-key dir
         // tags/worldgen/biome is IDENTICAL on both legs, no mirror row and no
         // datagen_tree_check SEGMENT_MAP entry).
+        // task p30-w6-rocks-sticks: the biome tag band — the surface_rocks + sticks_*
+        // groups the surface biome modifiers hang off (the BiomeTagsProvider base; the
+        // tags are NOT loader-branded, one band serves both legs).
         event.getGenerator().addProvider(true,
             new GT6BiomeTags(event.getGenerator().getPackOutput(), event.getLookupProvider(),
                 event.getExistingFileHelper()));

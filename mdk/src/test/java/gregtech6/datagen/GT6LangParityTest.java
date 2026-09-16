@@ -67,6 +67,7 @@ import gregtech6.registry.GT6Kitchen;
 import gregtech6.registry.GT6Molds;
 import gregtech6.registry.GT6Sensors;
 import gregtech6.registry.GT6StaticStorages;
+import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTEnergySources;
@@ -949,6 +950,7 @@ private static final int ZH_KEY_FLOOR = 3208; // 2839 +3 (task p29-w2-eu-special
 			GT6ElectricTransformers.class, GT6FeBatteries.class, GT6FeConverters.class, GT6FluxDynamos.class,
 			GT6FoamBlocks.class, GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6Molds.class,
 			GT6Sensors.class, GT6StaticStorages.class,
+			GT6SurfaceBlocks.class, // task p30-w6-rocks-sticks — the surface deco blocks (all four composed-name, EXEMPT below)
 			// task p29-w3-turbine-dynamo — the turbine + dynamo controller carriers (ATOMIC
 			// vanilla-key names, so they ride the CHECKED leg, no exemptions)
 			GT6Turbines.class, GT6DynamoHousings.class,
@@ -977,6 +979,10 @@ private static final int ZH_KEY_FLOOR = 3208; // 2839 +3 (task p29-w2-eu-special
 		tExempt.add("mold_ceramic"); // the carvable blank the GT6Molds.withBlank(CERAMIC_ROWS) walk prepends (private helper, same MoldBlock class)
 		for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) tExempt.add(tRow.path()); // TileEntityFaucet.FaucetBlock.getName
 		for (GTItemPipes.ItemPipeRow tRow : GTItemPipes.ROWS) tExempt.add(tRow.path()); // GTItemPipeBlock.getName
+		// task p30-w6-rocks-sticks — the four surface deco carriers (GT6SurfaceRockBlock
+		// .getName: the gt6.surface.rock template + material unit, or the stick's atomic
+		// template key — the vanilla descriptionId is deliberately NOT backed)
+		for (var tSurfaceRow : GT6SurfaceBlocks.ALL) tExempt.add(tSurfaceRow.getId().getPath());
 		// task p29-w3-nbtdesign-parts — the ten composed metal-wall carriers (the tungsten
 		// wall rides the Lightning Rod family's registration, not the expansion rows)
 		for (GTMultiBlocks.PartRow tRow : GTMultiBlocks.METAL_WALL_ROWS) {
@@ -1128,7 +1134,7 @@ private static final int ZH_KEY_FLOOR = 3208; // 2839 +3 (task p29-w2-eu-special
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(1098, tExemptTotal, "the derived composed-name exemption census"
+		assertEquals(1102, tExemptTotal, "the derived composed-name exemption census"
 			+ " (+16 task p29-w3-nbtdesign-parts: the ten composed metal-wall carriers"
 			+ " + the six dense-wall additions joined the carrier set — the five"
 			+ " pre-existing dense rows were already exempted)"
@@ -1142,7 +1148,7 @@ private static final int ZH_KEY_FLOOR = 3208; // 2839 +3 (task p29-w2-eu-special
 			+ " the 16 hu-tu row carriers joined at 1043 + 16, task p29-w2-hu-tu-piggyback)"
 			+ " (+14 task p29-w3-distill-crucible: the seven crucible ladder rung carriers"
 			+ " (the CRUCIBLE_ROWS walk grew 1 -> 8) + the seven dedicated GTCrucibleWallBlock"
-			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5 = 1094); the 4 Roasting row carriers joined at task p29-w4-eu-bridge (1094 + 4 = 1098)");
+			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5 = 1094); the 4 Roasting row carriers joined at task p29-w4-eu-bridge (1094 + 4 = 1098); the 4 surface deco carriers joined at task p30-w6-rocks-sticks (1098 + 4 = 1102)");
 		assertEquals(150, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"

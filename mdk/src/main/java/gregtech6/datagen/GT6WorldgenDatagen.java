@@ -1,9 +1,11 @@
 package gregtech6.datagen;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 //? if forge {
 import net.minecraft.data.worldgen.BootstapContext;
@@ -24,17 +26,28 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.WeightedPlacedFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 
@@ -43,6 +56,7 @@ import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTStoneBlocks;
+import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.worldgen.GT6Features;
 import gregtech6.worldgen.GT6Worldgen;
 
@@ -196,6 +210,7 @@ public final class GT6WorldgenDatagen {
             FeatureUtils.register(ctx, GT6Worldgen.TREE_CONFIGURED_KEYS.get(i), tFeature,
                     NoneFeatureConfiguration.INSTANCE);
         }
+        bootstrapSurfaceConfigured(ctx); // task p30-w6-rocks-sticks — tail-append
     }
 
     /**
@@ -236,6 +251,7 @@ public final class GT6WorldgenDatagen {
                     PlacementUtils.filteredByBlockSurvival(
                             GT6TreeBlocks.SAPLINGS.get(i).get()));
         }
+        bootstrapSurfacePlaced(ctx, tFeatures); // task p30-w6-rocks-sticks — tail-append
     }
 
     /**
@@ -266,6 +282,132 @@ public final class GT6WorldgenDatagen {
             ctx.register(TREE_BIOME_MODIFIER_KEYS.get(i), addFeatures(
                     tBiomes.getOrThrow(GT6BiomeTags.treeTag(GT6TreeBlocks.KINDS.get(i).snake())),
                     HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.TREE_PLACED_KEYS.get(i))),
+                    GenerationStep.Decoration.VEGETAL_DECORATION));
+        }
+        bootstrapSurfaceBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-rocks-sticks — tail-append
+    }
+
+    // ------------------------------------------------------------------
+    // The surface deco band (task p30-w6-rocks-sticks). Structure:
+    // - configured overworld_surface_rocks = Feature.RANDOM_SELECTOR over three
+    //   INLINE placed features (PlacementUtils.inlinePlaced form — the vanilla
+    //   patch-feature posture; the inner chains never enter any biome's feature
+    //   list, so they carry NO BiomeFilter) wrapping SIMPLE_BLOCK configured
+    //   features, one per rock, with the WorldgenRocks.java:63 lottery chances;
+    // - configured overworld_surface_stick = the bare SIMPLE_BLOCK;
+    // - placed overworld_surface_rocks = RarityFilter(3)+Count(2)+BiomeFilter
+    //   (the WorldgenOnSurface ray gates: amount=2/probability=3,
+    //   Loader_Worldgen.java:618); placed overworld_surface_sticks_*= the three
+    //   WorldgenSticks.java:53-55 groups (rarity 2, count 6/4/2);
+    // - four biome modifiers over the gt6 biome tags at VEGETAL_DECORATION.
+    // ------------------------------------------------------------------
+
+    /** The surface band's four biome-modifier keys, worldgen order (rocks + the three stick groups). */
+    public static final List<ResourceKey<BiomeModifier>> SURFACE_BIOME_MODIFIER_KEYS = List.of(
+            biomeModifierKeyOf("overworld_surface_rocks"),
+            biomeModifierKeyOf("overworld_surface_sticks_dense"),
+            biomeModifierKeyOf("overworld_surface_sticks_moderate"),
+            biomeModifierKeyOf("overworld_surface_sticks_sparse"));
+
+    private static ResourceKey<BiomeModifier> biomeModifierKeyOf(String aPath) {
+        return ResourceKey.create(biomeModifierRegistryKey(), ResourceLocation.fromNamespaceAndPath("gt6", aPath));
+    }
+
+    /** The ground-contact predicate (WorldgenRocks.java:60 grass|ground|sand; WorldgenSticks.java:62 grass|ground — gravel is the modern ground arm). */
+    private static BlockPredicate groundContact(boolean aRocks) {
+        return BlockPredicate.allOf(
+                BlockPredicate.replaceable(), // WD.easyRep (WorldgenRocks.java:63) — the tall-grass slot is replaceable
+                aRocks
+                        ? BlockPredicate.anyOf(
+                                BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.DIRT),
+                                BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), Blocks.SAND, Blocks.RED_SAND, Blocks.GRAVEL))
+                        : BlockPredicate.anyOf(
+                                BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.DIRT),
+                                BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), Blocks.GRAVEL)));
+    }
+
+    /** The sky-ray position chain (square spread + surface heightmap + ground contact) — shared by the sticks' outer chains and the rocks' inline inner chains. */
+    private static PlacementModifier[] surfaceRayChain(boolean aRocks) {
+        return new PlacementModifier[] {InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
+                BlockPredicateFilter.forPredicate(groundContact(aRocks))};
+    }
+
+    /** One inline placed SIMPLE_BLOCK for the rocks lottery: the sky-ray chain over the bare block. */
+    private static Holder<PlacedFeature> inlineSurfaceFeature(Block aBlock, boolean aRocks) {
+        return PlacementUtils.inlinePlaced(
+                Holder.direct(new ConfiguredFeature<>(Feature.SIMPLE_BLOCK,
+                        new SimpleBlockConfiguration(BlockStateProvider.simple(aBlock.defaultBlockState())))),
+                surfaceRayChain(aRocks));
+    }
+
+    private static void bootstrapSurfaceConfigured(
+        //? if forge {
+        BootstapContext<ConfiguredFeature<?, ?>> ctx
+        //?} else {
+        /*BootstrapContext<ConfiguredFeature<?, ?>> ctx
+        *///?}
+    ) {
+        FeatureUtils.register(ctx, GT6Worldgen.SURFACE_ROCKS_CONFIGURED, Feature.RANDOM_SELECTOR,
+                new RandomFeatureConfiguration(
+                        List.of(new WeightedPlacedFeature(inlineSurfaceFeature(GT6SurfaceBlocks.SURFACE_ROCK_STONE.get(), true),
+                                        GT6Worldgen.SURFACE_ROCK_CHANCE_STONE),
+                                new WeightedPlacedFeature(inlineSurfaceFeature(GT6SurfaceBlocks.SURFACE_ROCK_FLINT.get(), true),
+                                        GT6Worldgen.SURFACE_ROCK_CHANCE_FLINT)),
+                        inlineSurfaceFeature(GT6SurfaceBlocks.SURFACE_ROCK_METEORITE.get(), true))); // the default: 1/12 of the NBT half = 1/24 joint
+        FeatureUtils.register(ctx, GT6Worldgen.SURFACE_STICK_CONFIGURED, Feature.SIMPLE_BLOCK,
+                new SimpleBlockConfiguration(BlockStateProvider.simple(GT6SurfaceBlocks.SURFACE_STICK.get().defaultBlockState())));
+    }
+
+    private static void bootstrapSurfacePlaced(
+        //? if forge {
+        BootstapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        //?} else {
+        /*BootstrapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        *///?}
+    ) {
+        // The rocks: 2 ray targets (amount) x the 1/3 gate (probability), the lottery
+        // lives in the configured RANDOM_SELECTOR. The outer chain needs NO square/
+        // heightmap — the inline inner chains do that per attempt.
+        PlacementUtils.register(ctx, GT6Worldgen.SURFACE_ROCKS_PLACED,
+                aFeatures.getOrThrow(GT6Worldgen.SURFACE_ROCKS_CONFIGURED),
+                RarityFilter.onAverageOnceEvery(GT6Worldgen.SURFACE_ROCKS_PROBABILITY),
+                CountPlacement.of(GT6Worldgen.SURFACE_ROCKS_AMOUNT),
+                BiomeFilter.biome());
+        // The sticks: the three biome-group ray counts (x3/x2/x1 on mAmount=2), each 1/2 gated.
+        // The POSITION ANCHORS (square spread + surface heightmap + ground contact) ride the
+        // outer chain — without them the decoration origin (chunk corner, y = build-bottom)
+        // reaches the feature and the SIMPLE_BLOCK never lands (the live-scan finding, the
+        // probe6 T1/T2 split: anchored chain 210 chunk hits, anchor-less chain 0).
+        for (int i = 0; i < GT6Worldgen.STICKS_GROUP_PATHS.size(); i++) {
+            int tCount = new int[] {GT6Worldgen.STICKS_DENSE_COUNT, GT6Worldgen.STICKS_MODERATE_COUNT,
+                    GT6Worldgen.STICKS_SPARSE_COUNT}[i];
+            PlacementModifier[] tRay = surfaceRayChain(false);
+            PlacementUtils.register(ctx, GT6Worldgen.placedKeyOf(GT6Worldgen.STICKS_GROUP_PATHS.get(i)),
+                    aFeatures.getOrThrow(GT6Worldgen.SURFACE_STICK_CONFIGURED),
+                    RarityFilter.onAverageOnceEvery(GT6Worldgen.STICKS_PROBABILITY),
+                    CountPlacement.of(tCount),
+                    tRay[0], tRay[1], tRay[2],
+                    BiomeFilter.biome());
+        }
+    }
+
+    private static void bootstrapSurfaceBiomeModifiers(
+        //? if forge {
+        BootstapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
+        //?} else {
+        /*BootstrapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
+        *///?}
+    ) {
+        // VEGETAL_DECORATION — the surface deco step (the upstream surface pass rides
+        // the per-chunk decoration, not the ore pass the blobs use).
+        ctx.register(SURFACE_BIOME_MODIFIER_KEYS.get(0), addFeatures(aBiomes.getOrThrow(GT6Worldgen.SURFACE_ROCKS_BIOMES),
+                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.SURFACE_ROCKS_PLACED)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+        for (int i = 0; i < GT6Worldgen.STICKS_GROUP_PATHS.size(); i++) {
+            TagKey<Biome> tTag = new TagKey[] {GT6Worldgen.STICKS_DENSE_BIOMES, GT6Worldgen.STICKS_MODERATE_BIOMES,
+                    GT6Worldgen.STICKS_SPARSE_BIOMES}[i];
+            ctx.register(SURFACE_BIOME_MODIFIER_KEYS.get(i + 1), addFeatures(aBiomes.getOrThrow(tTag),
+                    HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.placedKeyOf(GT6Worldgen.STICKS_GROUP_PATHS.get(i)))),
                     GenerationStep.Decoration.VEGETAL_DECORATION));
         }
     }

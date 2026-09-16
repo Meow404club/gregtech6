@@ -111,6 +111,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task p29-w5-t8-armor-24
 		addTreeUnits();         // task p30-w6-t1-trees-nine — the 27 tree-family rows (hand, the tsv direct band)
+		addSurfaceUnits();      // task p30-w6-rocks-sticks
 	}
 
 	/**
@@ -128,6 +129,19 @@ public class GT6ZhCn extends LanguageProvider {
 				addDirect("item.gt6." + tSuit.pieceId(i) + ".tooltip");
 			}
 		}
+	}
+
+	/**
+	 * The surface deco family zh faces (task p30-w6-rocks-sticks): the rock template
+	 * (hand composition "%s地表岩" over the dump's generic MTE name 石头 :13578 — the
+	 * per-material composed form, the addStoneVariantUnits canon) and the stick (the
+	 * dump :13577 木棍 verbatim). Hand rows — the reference dump keys are the meta-keyed
+	 * 1.7 forms, lifted onto the direct hand layer (the addAnvilUnits posture; the
+	 * TSV rows and this walk land in the SAME commit, the noHandRowIsOrphaned pin).
+	 */
+	private void addSurfaceUnits() {
+		addDirect("gt6.surface.rock");
+		addDirect("block.gt6.surface_stick");
 	}
 
 	/**
