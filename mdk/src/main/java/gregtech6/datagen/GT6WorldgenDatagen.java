@@ -47,6 +47,7 @@ import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 
@@ -318,27 +319,31 @@ public final class GT6WorldgenDatagen {
         return ResourceKey.create(biomeModifierRegistryKey(), ResourceLocation.fromNamespaceAndPath("gt6", aPath));
     }
 
-    /** One inline placed SIMPLE_BLOCK: the sky-ray chain (square spread + surface heightmap + ground contact). */
-    private static Holder<PlacedFeature> inlineSurfaceFeature(Block aBlock, boolean aRocks) {
-        // The ground-contact predicate: the upstream ray lands on the first opaque
-        // cube and the contact material gate (WorldgenRocks.java:60 grass|ground|sand;
-        // WorldgenSticks.java:62 grass|ground — gravel is the modern ground arm).
-        BlockPredicate tGround = aRocks
-                ? BlockPredicate.allOf(
-                        BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.DIRT),
-                        BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), Blocks.SAND, Blocks.RED_SAND, Blocks.GRAVEL))
-                : BlockPredicate.anyOf(
-                        BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.DIRT),
-                        BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), Blocks.GRAVEL));
-        BlockPredicate tContact = BlockPredicate.allOf(
+    /** The ground-contact predicate (WorldgenRocks.java:60 grass|ground|sand; WorldgenSticks.java:62 grass|ground — gravel is the modern ground arm). */
+    private static BlockPredicate groundContact(boolean aRocks) {
+        return BlockPredicate.allOf(
                 BlockPredicate.replaceable(), // WD.easyRep (WorldgenRocks.java:63) — the tall-grass slot is replaceable
-                tGround);
+                aRocks
+                        ? BlockPredicate.anyOf(
+                                BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.DIRT),
+                                BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), Blocks.SAND, Blocks.RED_SAND, Blocks.GRAVEL))
+                        : BlockPredicate.anyOf(
+                                BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.DIRT),
+                                BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), Blocks.GRAVEL)));
+    }
+
+    /** The sky-ray position chain (square spread + surface heightmap + ground contact) — shared by the sticks' outer chains and the rocks' inline inner chains. */
+    private static PlacementModifier[] surfaceRayChain(boolean aRocks) {
+        return new PlacementModifier[] {InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
+                BlockPredicateFilter.forPredicate(groundContact(aRocks))};
+    }
+
+    /** One inline placed SIMPLE_BLOCK for the rocks lottery: the sky-ray chain over the bare block. */
+    private static Holder<PlacedFeature> inlineSurfaceFeature(Block aBlock, boolean aRocks) {
         return PlacementUtils.inlinePlaced(
                 Holder.direct(new ConfiguredFeature<>(Feature.SIMPLE_BLOCK,
                         new SimpleBlockConfiguration(BlockStateProvider.simple(aBlock.defaultBlockState())))),
-                InSquarePlacement.spread(),
-                PlacementUtils.HEIGHTMAP, // MOTION_BLOCKING — the ray top; canopies skip via the ground predicate
-                BlockPredicateFilter.forPredicate(tContact));
+                surfaceRayChain(aRocks));
     }
 
     private static void bootstrapSurfaceConfigured(
@@ -375,13 +380,19 @@ public final class GT6WorldgenDatagen {
                 CountPlacement.of(GT6Worldgen.SURFACE_ROCKS_AMOUNT),
                 BiomeFilter.biome());
         // The sticks: the three biome-group ray counts (x3/x2/x1 on mAmount=2), each 1/2 gated.
+        // The POSITION ANCHORS (square spread + surface heightmap + ground contact) ride the
+        // outer chain — without them the decoration origin (chunk corner, y = build-bottom)
+        // reaches the feature and the SIMPLE_BLOCK never lands (the live-scan finding, the
+        // probe6 T1/T2 split: anchored chain 210 chunk hits, anchor-less chain 0).
         for (int i = 0; i < GT6Worldgen.STICKS_GROUP_PATHS.size(); i++) {
             int tCount = new int[] {GT6Worldgen.STICKS_DENSE_COUNT, GT6Worldgen.STICKS_MODERATE_COUNT,
                     GT6Worldgen.STICKS_SPARSE_COUNT}[i];
+            PlacementModifier[] tRay = surfaceRayChain(false);
             PlacementUtils.register(ctx, GT6Worldgen.placedKeyOf(GT6Worldgen.STICKS_GROUP_PATHS.get(i)),
                     aFeatures.getOrThrow(GT6Worldgen.SURFACE_STICK_CONFIGURED),
                     RarityFilter.onAverageOnceEvery(GT6Worldgen.STICKS_PROBABILITY),
                     CountPlacement.of(tCount),
+                    tRay[0], tRay[1], tRay[2],
                     BiomeFilter.biome());
         }
     }

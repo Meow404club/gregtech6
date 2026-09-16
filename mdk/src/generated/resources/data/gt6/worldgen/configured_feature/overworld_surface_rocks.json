@@ -1,0 +1,202 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "default": {
+      "feature": {
+        "type": "minecraft:simple_block",
+        "config": {
+          "to_place": {
+            "type": "minecraft:simple_state_provider",
+            "state": {
+              "Name": "gt6:surface_rock_meteorite",
+              "Properties": {
+                "facing": "down"
+              }
+            }
+          }
+        }
+      },
+      "placement": [
+        {
+          "type": "minecraft:in_square"
+        },
+        {
+          "type": "minecraft:heightmap",
+          "heightmap": "MOTION_BLOCKING"
+        },
+        {
+          "type": "minecraft:block_predicate_filter",
+          "predicate": {
+            "type": "minecraft:all_of",
+            "predicates": [
+              {
+                "type": "minecraft:replaceable"
+              },
+              {
+                "type": "minecraft:any_of",
+                "predicates": [
+                  {
+                    "type": "minecraft:matching_block_tag",
+                    "offset": [
+                      0,
+                      -1,
+                      0
+                    ],
+                    "tag": "minecraft:dirt"
+                  },
+                  {
+                    "type": "minecraft:matching_blocks",
+                    "blocks": [
+                      "minecraft:sand",
+                      "minecraft:red_sand",
+                      "minecraft:gravel"
+                    ],
+                    "offset": [
+                      0,
+                      -1,
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "features": [
+      {
+        "chance": 0.5,
+        "feature": {
+          "feature": {
+            "type": "minecraft:simple_block",
+            "config": {
+              "to_place": {
+                "type": "minecraft:simple_state_provider",
+                "state": {
+                  "Name": "gt6:surface_rock_stone",
+                  "Properties": {
+                    "facing": "down"
+                  }
+                }
+              }
+            }
+          },
+          "placement": [
+            {
+              "type": "minecraft:in_square"
+            },
+            {
+              "type": "minecraft:heightmap",
+              "heightmap": "MOTION_BLOCKING"
+            },
+            {
+              "type": "minecraft:block_predicate_filter",
+              "predicate": {
+                "type": "minecraft:all_of",
+                "predicates": [
+                  {
+                    "type": "minecraft:replaceable"
+                  },
+                  {
+                    "type": "minecraft:any_of",
+                    "predicates": [
+                      {
+                        "type": "minecraft:matching_block_tag",
+                        "offset": [
+                          0,
+                          -1,
+                          0
+                        ],
+                        "tag": "minecraft:dirt"
+                      },
+                      {
+                        "type": "minecraft:matching_blocks",
+                        "blocks": [
+                          "minecraft:sand",
+                          "minecraft:red_sand",
+                          "minecraft:gravel"
+                        ],
+                        "offset": [
+                          0,
+                          -1,
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "chance": 0.9166667,
+        "feature": {
+          "feature": {
+            "type": "minecraft:simple_block",
+            "config": {
+              "to_place": {
+                "type": "minecraft:simple_state_provider",
+                "state": {
+                  "Name": "gt6:surface_rock_flint",
+                  "Properties": {
+                    "facing": "down"
+                  }
+                }
+              }
+            }
+          },
+          "placement": [
+            {
+              "type": "minecraft:in_square"
+            },
+            {
+              "type": "minecraft:heightmap",
+              "heightmap": "MOTION_BLOCKING"
+            },
+            {
+              "type": "minecraft:block_predicate_filter",
+              "predicate": {
+                "type": "minecraft:all_of",
+                "predicates": [
+                  {
+                    "type": "minecraft:replaceable"
+                  },
+                  {
+                    "type": "minecraft:any_of",
+                    "predicates": [
+                      {
+                        "type": "minecraft:matching_block_tag",
+                        "offset": [
+                          0,
+                          -1,
+                          0
+                        ],
+                        "tag": "minecraft:dirt"
+                      },
+                      {
+                        "type": "minecraft:matching_blocks",
+                        "blocks": [
+                          "minecraft:sand",
+                          "minecraft:red_sand",
+                          "minecraft:gravel"
+                        ],
+                        "offset": [
+                          0,
+                          -1,
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/surface_stick"
+    },
+    "facing=east": {
+      "model": "gt6:block/surface_stick",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/surface_stick",
+      "x": 270
+    },
+    "facing=south": {
+      "model": "gt6:block/surface_stick",
+      "x": 90
+    },
+    "facing=up": {
+      "model": "gt6:block/surface_stick",
+      "x": 180
+    },
+    "facing=west": {
+      "model": "gt6:block/surface_stick",
+      "y": 270
+    }
+  }
+}

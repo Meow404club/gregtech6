@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#gt6:sticks_sparse",
+  "features": "gt6:overworld_surface_sticks_sparse",
+  "step": "vegetal_decoration"
+}
