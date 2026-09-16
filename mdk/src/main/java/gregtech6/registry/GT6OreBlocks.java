@@ -148,8 +148,8 @@ public final class GT6OreBlocks {
     /**
      * The 26 families, walk order: the 5 three-form vanilla anchors, the 4 two-form dust
      * families, then the 17 GT stones in Loader_Rocks order. Every literal below cites its
-     * upstream row; GT17 rows = (normal hardness/resistance, level) with broken = half/half,
-     * offset -1, min level-1 (clamp 0), gravity — Loader_Rocks.java:57-139.
+     * upstream row; the GT17 rows expand via {@link #gtStone} (the row-pair form, the
+     * upstream LITERALS).
      */
     public static final List<OreFamily> FAMILIES = List.of(
         // -- vanilla anchors, three-form (normal/broken/small) --------------------------------------
