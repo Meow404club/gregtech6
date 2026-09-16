@@ -49,6 +49,17 @@ public final class GT6OreBlockStates extends BlockStateProvider {
         super(output, GT6DataGenerators.MOD_ID, existingFileHelper);
     }
 
+    /**
+     * Forge 1.20.1's DataGenerator rejects two providers carrying the same name
+     * (DataGenerator.java:83 "Duplicate provider: Block States: gt6" — the super's
+     * {@code "Block States: " + modid} collides with GT6BlockStates), so this provider
+     * carries its own. Same shape on the 21.1 leg (DataProvider.getName interface method).
+     */
+    @Override
+    public String getName() {
+        return "Ore Block States: " + GT6DataGenerators.MOD_ID;
+    }
+
     @Override
     protected void registerStatesAndModels() {
         Map<ResourceLocation, ModelFile> tShared = new HashMap<>();

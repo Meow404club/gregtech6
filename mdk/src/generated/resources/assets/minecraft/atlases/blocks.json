@@ -31,6 +31,126 @@
     {
       "type": "minecraft:single",
       "resource": "gt6:block/cfoam_hardened_owned"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/copper/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/copper/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/dull/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/dull/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/lapis/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/lapis/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/metallic/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/metallic/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/shiny/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/shiny/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/cube/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/cube/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/fine/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/fine/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/diamond/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/diamond/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/ruby/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/ruby/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/flint/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/flint/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/redstone/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/redstone/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/quartz/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/quartz/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/lignite/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/lignite/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/rad/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/rad/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/space/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/space/ore_small"
     }
   ]
 }
