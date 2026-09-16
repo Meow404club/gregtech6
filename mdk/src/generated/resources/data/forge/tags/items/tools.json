@@ -51,6 +51,13 @@
     "gt6:monkey_wrench_lv",
     "gt6:monkey_wrench_mv",
     "gt6:monkey_wrench_hv",
-    "gt6:trimmer_lv"
+    "gt6:trimmer_lv",
+    "gt6:pocket_multitool_knife",
+    "gt6:pocket_multitool_saw",
+    "gt6:pocket_multitool_file",
+    "gt6:pocket_multitool_screwdriver",
+    "gt6:pocket_multitool_wire_cutter",
+    "gt6:pocket_multitool_scissors",
+    "gt6:pocket_multitool_chisel"
   ]
 }

@@ -521,6 +521,13 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_MONKEY_WRENCH_MV).add(item(GT6Tools.MONKEY_WRENCH_MV.getId()));
 		tag(TOOLS_MONKEY_WRENCH_HV).add(item(GT6Tools.MONKEY_WRENCH_HV.getId()));
 		tag(TOOLS_TRIMMER_LV).add(item(GT6Tools.TRIMMER_LV.getId()));
+		// task p29-w5-t7-pocket-eight — the pocket switch forms join the tool tags their
+		// upstream rows carried (Loader_Tools.java:178-183 verbatim: pocket_saw rides
+		// OreDictToolNames.saw, etc.); the closed multitool form carries none (:176)
+		tag(TOOLS_SAW).add(item(GT6Tools.POCKET_MULTITOOL_SAW.getId()));
+		tag(TOOLS_FILE).add(item(GT6Tools.POCKET_MULTITOOL_FILE.getId()));
+		tag(TOOLS_SCREWDRIVER).add(item(GT6Tools.POCKET_MULTITOOL_SCREWDRIVER.getId()));
+		tag(TOOLS_WIRE_CUTTER).add(item(GT6Tools.POCKET_MULTITOOL_WIRE_CUTTER.getId()));
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
 		// task p26-w1-press-extruder-molds — the mold-family membership face (the row0 pair,
@@ -555,6 +562,14 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		for (RegistryObject<Item> tRow : GT6Tools.ELECTRIC_TOOLS) {
 			tag(Tags.Items.TOOLS).add(item(tRow.getId()));
 		}
+		// task p29-w5-t7-pocket-eight — the seven switch forms (the closed multitool
+		// carries no tool-name oredict upstream, :176 — it stays out of the band);
+		// the family band 52 → 59
+		tag(Tags.Items.TOOLS).add(
+				item(GT6Tools.POCKET_MULTITOOL_KNIFE.getId()), item(GT6Tools.POCKET_MULTITOOL_SAW.getId()),
+				item(GT6Tools.POCKET_MULTITOOL_FILE.getId()), item(GT6Tools.POCKET_MULTITOOL_SCREWDRIVER.getId()),
+				item(GT6Tools.POCKET_MULTITOOL_WIRE_CUTTER.getId()), item(GT6Tools.POCKET_MULTITOOL_SCISSORS.getId()),
+				item(GT6Tools.POCKET_MULTITOOL_CHISEL.getId()));
 	}
 
 	/**

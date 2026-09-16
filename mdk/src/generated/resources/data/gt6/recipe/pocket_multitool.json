@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "O": {
+      "item": "gt6:ring_steel"
+    },
+    "P": {
+      "tag": "c:plates/steel"
+    },
+    "V": {
+      "tag": "c:ingots/steel"
+    },
+    "W": {
+      "tag": "c:ingots/steel"
+    },
+    "X": {
+      "tag": "gt6:tools/saw"
+    },
+    "Y": {
+      "item": "gt6:chisel"
+    },
+    "Z": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "AXO",
+    "ZPV",
+    "OWY"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pocket_multitool"
+  }
+}

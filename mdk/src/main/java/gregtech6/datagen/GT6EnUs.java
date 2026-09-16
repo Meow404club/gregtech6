@@ -120,6 +120,7 @@ public class GT6EnUs extends LanguageProvider {
         addExtruderMolds(); // task p26-w1-press-extruder-molds — table-tail append
         addSensors(); // task p26-sensors-core — table-tail append
         addCrucibleJade(); // task p28-crucible-jade-face — table-tail append
+        addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
     }
 
     /**
@@ -1507,5 +1508,31 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.jade.crucible.total", "Content: %s U");
         add("gt6.jade.crucible.empty", "Empty");
         add("gt6.jade.crucible.more", "+%s more");
+    }
+    /**
+     * Pocket multitool family keys (task p29-w5-t7-pocket-eight): the eight display names
+     * (the upstream registration rows Loader_Tools.java:176-183 VERBATIM — "Pocket
+     * Multitool" + the seven "Pocket Multitool (X)" faces) and the seven tooltip lines
+     * (the registration-row note columns for the six noted forms + the switch hint the
+     * Behavior_Switch_Metadata :46-48 line carries, mShowModeSwitchTooltip=T on every
+     * pocket row; the knife/screwdriver note columns are "" upstream = no key, the
+     * null-tooltip form ruling). Table-tail append, append-only.
+     */
+    private void addPocketTools() {
+        add("item.gt6.pocket_multitool", "Pocket Multitool");
+        add("item.gt6.pocket_multitool_knife", "Pocket Multitool (Knife)");
+        add("item.gt6.pocket_multitool_saw", "Pocket Multitool (Saw)");
+        add("item.gt6.pocket_multitool_file", "Pocket Multitool (File)");
+        add("item.gt6.pocket_multitool_screwdriver", "Pocket Multitool (Screwdriver)");
+        add("item.gt6.pocket_multitool_wire_cutter", "Pocket Multitool (Wire Cutter)");
+        add("item.gt6.pocket_multitool_scissors", "Pocket Multitool (Scissors)");
+        add("item.gt6.pocket_multitool_chisel", "Pocket Multitool (Chisel)");
+        add(gregtech6.items.tools.pocket.GTPocketMultitoolItem.SWITCH_TOOLTIP_KEY, "Sneak Rightclick to switch Mode");
+        add("tooltip.gt6.pocket.multitool", "7 useful Tools in one!");
+        add("tooltip.gt6.pocket.saw", "Faster on Planks. Slower on Logs. Can harvest Ice.");
+        add("tooltip.gt6.pocket.file", "Harvests Iron Bars and similar faster");
+        add("tooltip.gt6.pocket.wire_cutter", "Harvests Cables and Wires faster");
+        add("tooltip.gt6.pocket.scissors", "Don't run around while holding them!");
+        add("tooltip.gt6.pocket.chisel", "Be slow/careful with it on Servers because Ping!");
     }
 }

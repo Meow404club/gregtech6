@@ -372,6 +372,14 @@ SESSION_GROUPS = (
     # --group p29_w5_t6_electric matches through the chains' embedded name prefix.
     ("p29_w5_t6_electric_drill", "p29_w5_t6_electric_switch", "p29_w5_t6_electric_jackhammer",
      "p29_w5_t6_electric_faces"),
+    # P30 W5 card 7 (p29-w5-t7-pocket-eight): the pocket multitool chains — one fresh
+    # z=352 band, three x-disjoint columns (ring x384..386 — the give chest + the bare
+    # stone walk rig / faces x394..398 — the log|ice|stone|bars|pane probe blocks /
+    # smoke x404..405 — the bare stone + chest mCheckTarget rig), admission mirroring
+    # the p29 W1 cluster form (bbox-registered, no fresh_boot / mutates member — the
+    # rigs are band-local setblocks; /gt6pocket drives the item's own useOn).
+    # --group p29_w5_t7_pocket matches through the chains' embedded name prefix.
+    ("p29_w5_t7_pocket_ring", "p29_w5_t7_pocket_faces", "p29_w5_t7_pocket_smoke"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
     # P29 W5 t3 (p29-w5-t3-machine-face-four): the machine-face-four chains — one fresh
     # z=292 band, per-tool x-disjoint columns (softhammer x384..388 / magnglass x392..396 /
