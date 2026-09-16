@@ -350,6 +350,15 @@ SESSION_GROUPS = (
     # embedded name prefix (the p29_w1_process form).
     ("p29_w5_t2_blade_six_tree", "p29_w5_t2_blade_six_grass", "p29_w5_t2_blade_six_rock",
      "p29_w5_t2_blade_six_vine", "p29_w5_t2_blade_six_faces"),
+    # P29 W5 card 4 (p29-w5-t4-field-five): the four field-tool chains — one fresh
+    # z=224 band (plow 400..402 / sense 405..407 / leaf 410 / hand_drill 413: the
+    # 3x3x3 snow cube with the off-surface corner, the 3x3 grass carpet on its floor,
+    # the single oak leaf, the two speed-read targets), admission mirroring the p29
+    # W5 t1 form (bbox-registered, no fresh_boot / mutates member — the fake-player
+    # /gt6field arms are band-local setblocks). --group p29_w5_t4_field_five matches
+    # through the chains' embedded name prefix (the p29_w1_process form).
+    ("p29_w5_t4_field_five_plow3x3", "p29_w5_t4_field_five_sense3x3",
+     "p29_w5_t4_field_five_leaf2sapling", "p29_w5_t4_field_five_handdrill"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
     # P29 W5 t3 (p29-w5-t3-machine-face-four): the machine-face-four chains — one fresh
     # z=292 band, per-tool x-disjoint columns (softhammer x384..388 / magnglass x392..396 /

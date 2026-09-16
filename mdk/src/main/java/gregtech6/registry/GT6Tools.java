@@ -27,6 +27,11 @@ import gregtech6.items.tools.GTAxeItem;
 import gregtech6.items.tools.GTButcheryKnifeItem;
 import gregtech6.items.tools.GTClubItem;
 import gregtech6.items.tools.GTKnifeItem;
+import gregtech6.items.tools.GTBranchCutterItem;
+import gregtech6.items.tools.GTHandDrillItem;
+import gregtech6.items.tools.GTHoeItem;
+import gregtech6.items.tools.GTPlowItem;
+import gregtech6.items.tools.GTSenseItem;
 import gregtech6.items.tools.GTPickaxeConstructionItem;
 import gregtech6.items.tools.GTPickaxeGemItem;
 import gregtech6.items.tools.GTPickaxeItem;
@@ -338,6 +343,42 @@ public final class GT6Tools {
 			() -> new GTPincersItem(new Item.Properties().durability(GTPincersItem.DURABILITY_POINTS)));
 
 	/**
+	 * The five field tools — task p29-w5-t4-field-five (the W5 tool wave card 4; rows
+	 * 27-31 of the table). Single steel tier over the family durability mapping (512 ×
+	 * the upstream getMaxDurabilityMultiplier). Display names = the upstream
+	 * registration-row wordings (Loader_Tools.java:122/:133/:138/:139/:152). The world
+	 * arms:
+	 * <ul>
+	 * <li>{@code gt6:hoe} (upstream GT_Tool_Hoe — the hoe-tag + gourd surface; the
+	 *     buildHoe achievement face is the declared cut: no 1.20.1 node);</li>
+	 * <li>{@code gt6:plow} (upstream GT_Tool_Plow — the snow/fire surface, the 3x3
+	 *     neighbourhood sweep on {@code GT6ToolSweep}, the Snowman ×4 damage);</li>
+	 * <li>{@code gt6:branch_cutter} (upstream GT_Tool_BranchCutter — the Grafter leaf
+	 *     tool: leaves→sapling/apple conversion riding the {@code GT6ToolLootModifiers}
+	 *     loot seam + the drop-chance floor formula);</li>
+	 * <li>{@code gt6:sense} (upstream GT_Tool_Sense — the scythe: plants/leaves/vine
+	 *     surface with the lily-pad exclusion, the 3x3 sweep, the grass/stick
+	 *     conversion riding the loot seam);</li>
+	 * <li>{@code gt6:hand_drill} (upstream GT_Tool_HandDrill — the isMiningTool-F
+	 *     prospecting face, the DECLARED EMPTY surface in this universe).</li>
+	 * </ul>
+	 */
+	public static final RegistryObject<Item> HOE = ITEMS.register("hoe",
+			() -> new GTHoeItem(new Item.Properties().durability(GTHoeItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> PLOW = ITEMS.register("plow",
+			() -> new GTPlowItem(new Item.Properties().durability(GTPlowItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> BRANCH_CUTTER = ITEMS.register("branch_cutter",
+			() -> new GTBranchCutterItem(new Item.Properties().durability(GTBranchCutterItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> SENSE = ITEMS.register("sense",
+			() -> new GTSenseItem(new Item.Properties().durability(GTSenseItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> HAND_DRILL = ITEMS.register("hand_drill",
+			() -> new GTHandDrillItem(new Item.Properties().durability(GTHandDrillItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -353,12 +394,16 @@ public final class GT6Tools {
 	 * universal_spade); task p29-w5-t2-blade-six appends rows 17-22 (the six blade
 	 * tools — sword, knife, butchery_knife, club, axe, axe_double); task
 	 * p29-w5-t3-machine-face-four appends rows 23-26 (the machine-face four: the soft
-	 * hammer, the monkey wrench, the magnifying glass, the pincers).
+	 * hammer, the monkey wrench, the magnifying glass, the pincers); task
+	 * p29-w5-t4-field-five appends rows 27-31 (the five field tools — hoe,
+	 * branch_cutter, sense, plow, hand_drill, the upstream Loader_Tools id order
+	 * 122/133/138/139/152).
 	 */
 	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL,
 			PICKAXE, PICKAXE_GEM, PICKAXE_CONSTRUCTION, SHOVEL, SPADE, UNIVERSAL_SPADE,
 			SWORD, KNIFE, BUTCHERY_KNIFE, CLUB, AXE, AXE_DOUBLE,
-			SOFT_HAMMER, MONKEY_WRENCH, MAGNIFYING_GLASS, PINCERS);
+			SOFT_HAMMER, MONKEY_WRENCH, MAGNIFYING_GLASS, PINCERS,
+			HOE, BRANCH_CUTTER, SENSE, PLOW, HAND_DRILL); // task p29-w5-t4-field-five — rows 27-31, the upstream Loader_Tools id order 122/133/138/139/152
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -460,6 +505,17 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.MAGNIFYING_GLASS.get()), GTMagnifyingGlassItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.PINCERS.get()), GTPincersItem.DURABILITY_POINTS);
+			// task p29-w5-t4-field-five — the five field tools join the registration smoke log
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.HOE.get()), GTHoeItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.PLOW.get()), GTPlowItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.BRANCH_CUTTER.get()), GTBranchCutterItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.SENSE.get()), GTSenseItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.HAND_DRILL.get()), GTHandDrillItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

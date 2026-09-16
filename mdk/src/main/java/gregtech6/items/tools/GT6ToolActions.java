@@ -285,6 +285,44 @@ public final class GT6ToolActions {
 	 */
 	public static final ToolAction AXE = ToolAction.get("gt6_axe");
 
+	/**
+	 * The hoe stack-classification action ("gt6_hoe" — task p29-w5-t4-field-five, the
+	 * PICKAXE entry shape; upstream {@code TOOL_hoe} CS.java:1044, the
+	 * Loader_Tools.java:122 registration row). RED LINE: the hoe NEVER classifies
+	 * {@code ToolActions.HOE_DIG} — the wrench-substitute predicates key on it
+	 * (the CROWBAR ruling above; a hoe there would fire the wrench UI).
+	 */
+	public static final ToolAction HOE = ToolAction.get("gt6_hoe");
+
+	/**
+	 * The plow stack-classification action ("gt6_plow" — task p29-w5-t4-field-five, the
+	 * PICKAXE entry shape; upstream {@code TOOL_plow} CS.java, the Loader_Tools.java:139
+	 * registration row).
+	 */
+	public static final ToolAction PLOW = ToolAction.get("gt6_plow");
+
+	/**
+	 * The branch-cutter stack-classification action ("gt6_branch_cutter" — task
+	 * p29-w5-t4-field-five, the PICKAXE entry shape; upstream the Loader_Tools.java:133
+	 * row registers {@code TOOL_grafter} — the grafter class flattens onto this gt6 key,
+	 * no vanilla action exists for it).
+	 */
+	public static final ToolAction BRANCH_CUTTER = ToolAction.get("gt6_branch_cutter");
+
+	/**
+	 * The sense stack-classification action ("gt6_sense" — task p29-w5-t4-field-five,
+	 * the PICKAXE entry shape; upstream {@code TOOL_sense} on the Loader_Tools.java:138
+	 * row — the scythe-face tool).
+	 */
+	public static final ToolAction SENSE = ToolAction.get("gt6_sense");
+
+	/**
+	 * The hand-drill stack-classification action ("gt6_hand_drill" — task
+	 * p29-w5-t4-field-five, the PICKAXE entry shape; upstream {@code TOOL_drill} on the
+	 * Loader_Tools.java:152 row — the isMiningTool-F prospecting face).
+	 */
+	public static final ToolAction HAND_DRILL = ToolAction.get("gt6_hand_drill");
+
 	private GT6ToolActions() {
 	}
 }

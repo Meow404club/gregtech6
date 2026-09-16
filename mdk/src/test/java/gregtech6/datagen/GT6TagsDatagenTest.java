@@ -375,10 +375,10 @@ class GT6TagsDatagenTest {
     /**
      * The p25 tool face (task p25-tool-hammer-wrench + p25-food-can-row0, the PIN
      * evolution duty): the three new self-owned crafting-tool tags carry EXACTLY their
-     * one registered member each, and the ecosystem tools band grew 7 → 9 → 10 → 16
+     * one registered member each, and the ecosystem tools band grew 7 → 9 → 10 → 16 → 21
      * (the hammer + wrench pair, then the bending cylinder, then task p29-w5-t1-dig-six's
-     * six dig tools, appended in the band order). Pinned so any band change is a
-     * conscious constant update.
+     * six dig tools, then task p29-w5-t4-field-five's five field tools, appended in the
+     * band order). Pinned so any band change is a conscious constant update.
      */
     @Test
     void p25ToolFacesAreTheExactMembers() throws Exception {
@@ -399,13 +399,20 @@ class GT6TagsDatagenTest {
         assertEquals(List.of("gt6:club"), tagValues("gt6/tags/items/tools/club.json"));
         assertEquals(List.of("gt6:axe"), tagValues("gt6/tags/items/tools/axe.json"));
         assertEquals(List.of("gt6:axe_double"), tagValues("gt6/tags/items/tools/axe_double.json"));
+        // task p29-w5-t4-field-five: the five field-tool tags join the one-member census
+        assertEquals(List.of("gt6:hoe"), tagValues("gt6/tags/items/tools/hoe.json"));
+        assertEquals(List.of("gt6:plow"), tagValues("gt6/tags/items/tools/plow.json"));
+        assertEquals(List.of("gt6:branch_cutter"), tagValues("gt6/tags/items/tools/branch_cutter.json"));
+        assertEquals(List.of("gt6:sense"), tagValues("gt6/tags/items/tools/sense.json"));
+        assertEquals(List.of("gt6:hand_drill"), tagValues("gt6/tags/items/tools/hand_drill.json"));
         assertEquals(List.of(
                 "gt6:file", "gt6:saw", "gt6:crowbar", "gt6:cutter", "gt6:chisel",
                 "gt6:builder_wand", "gt6:screwdriver", "gt6:hammer", "gt6:wrench",
                 "gt6:bending_cylinder_small", "gt6:pickaxe", "gt6:pickaxe_gem",
                 "gt6:pickaxe_construction", "gt6:shovel", "gt6:spade", "gt6:universal_spade",
                 "gt6:sword", "gt6:knife", "gt6:butchery_knife", "gt6:club", "gt6:axe",
-                "gt6:axe_double"),
+                "gt6:axe_double", "gt6:hoe", "gt6:branch_cutter", "gt6:sense", "gt6:plow",
+                "gt6:hand_drill"),
                 tagValues("forge/tags/items/tools.json"));
     }
 

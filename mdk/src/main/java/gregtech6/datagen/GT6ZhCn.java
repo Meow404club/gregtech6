@@ -953,6 +953,11 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.monkey_wrench"); // task p29-w5-t3-machine-face-four — dump gt.metatool.01.52 活动扳手 (Loader_Tools.java:144 "Monkey Wrench")
 		addDirect("item.gt6.magnifying_glass"); // task p29-w5-t3-machine-face-four — dump gt.metatool.01.62 放大镜 (Loader_Tools.java:148 "Magnifying Glass")
 		addDirect("item.gt6.pincers"); // task p29-w5-t3-machine-face-four — dump gt.metatool.01.66 钳子 (Loader_Tools.java:150 "Pincers")
+		addDirect("item.gt6.hoe"); // task p29-w5-t4-field-five — 锄 (dump tagprefix tool_head_hoe 锄头, minus 头)
+		addDirect("item.gt6.branch_cutter"); // 修枝剪 (dump 零 branchcutter 行; hand 行, 上游 "Branch Cutter" Loader_Tools.java:133)
+		addDirect("item.gt6.sense"); // 镰刀 (dump tagprefix tool_head_sense 镰刀刃, minus 刃)
+		addDirect("item.gt6.plow"); // 犁 (dump tagprefix tool_head_plow 犁头, minus 头)
+		addDirect("item.gt6.hand_drill"); // 手钻 (dump 零 handdrill 行; hand 行, 上游 "Hand Drill" Loader_Tools.java:152)
 		addDirect("item.gt6.shape_extruder_plate"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10001 模具 (板) (:10129)
 		addDirect("item.gt6.shape_extruder_rod"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10027 模具 (杆) (:10185)
 		addDirect("item.gt6.cover_redstone_emitter");

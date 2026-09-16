@@ -8233,3 +8233,8 @@ direct	item.gt6.axe.tooltip	伐木更快, 砍倒整棵树	hand
 direct	item.gt6.axe_double.tooltip	砍倒整棵树, 攻击速度较慢	hand
 direct	item.gt6.club.tooltip	钝重的原始武器兼碎石器	hand
 direct	item.gt6.butchery_knife.tooltip	攻击速度较慢	hand
+direct	item.gt6.hoe	锄	hand
+direct	item.gt6.branch_cutter	修枝剪	hand
+direct	item.gt6.sense	镰刀	hand
+direct	item.gt6.plow	犁	hand
+direct	item.gt6.hand_drill	手钻	hand

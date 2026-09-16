@@ -384,6 +384,14 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.axe_double.tooltip", "Chops down whole Trees and has a slow Attack Rate");
         add("item.gt6.club.tooltip", "A blunt primitive Weapon and Rock Crusher");
         add("item.gt6.butchery_knife.tooltip", "Has a slow Attack Rate");
+        // task p29-w5-t4-field-five — the five field-tool display names (the upstream
+        // registration-row wordings verbatim: "Hoe" Loader_Tools.java:122, "Branch Cutter"
+        // :133, "Sense" :138, "Plow" :139, "Hand Drill" :152)
+        add("item.gt6.hoe", "Hoe");
+        add("item.gt6.branch_cutter", "Branch Cutter");
+        add("item.gt6.sense", "Sense");
+        add("item.gt6.plow", "Plow");
+        add("item.gt6.hand_drill", "Hand Drill");
         add(GT6Tools.TAB_TITLE_KEY, "Tools");
     }
 

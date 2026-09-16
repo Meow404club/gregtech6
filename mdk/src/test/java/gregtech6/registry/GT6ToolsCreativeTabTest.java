@@ -94,7 +94,7 @@ public class GT6ToolsCreativeTabTest {
 	}
 
 	/**
-	 * The display table: exactly twenty-six rows in display order — the p10-tool-cutter
+	 * The display table: exactly thirty-one rows in display order — the p10-tool-cutter
 	 * card appended row 2, the p16-chisel-decalcify card appended row 3, the
 	 * p24-tool-system card appended rows 3/4, the p24-builder-wand card appended row 5,
 	 * the p24-screwdriver-item card appended row 6, the p25-tool-hammer-wrench card
@@ -102,13 +102,15 @@ public class GT6ToolsCreativeTabTest {
 	 * p29-w5-t1-dig-six appended rows 10-15 (the six dig tools), task
 	 * p29-w5-t2-blade-six appended rows 16-21 (the six blade tools — sword, knife,
 	 * butchery_knife, club, axe, axe_double; the blade-six card owns the blade-row
-	 * parity in BladeSixTest) and task p29-w5-t3-machine-face-four appended rows 22-25
+	 * parity in BladeSixTest), task p29-w5-t3-machine-face-four appended rows 22-25
 	 * (the machine-face four — the soft hammer, the monkey wrench, the magnifying
-	 * glass, the pincers).
+	 * glass, the pincers) and task p29-w5-t4-field-five appended rows 26-30 (the five
+	 * field tools — hoe, branch_cutter, sense, plow, hand_drill; the field-five card
+	 * owns the field-row parity in FieldFiveTest).
 	 */
 	@Test
-	public void displayTableIsExactlyTheTwentySixToolRows() {
-		assertEquals(26, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the 22 prior tools plus the machine-face four");
+	public void displayTableIsExactlyTheThirtyOneToolRows() {
+		assertEquals(31, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the 26 prior tools plus the five field tools");
 		assertSame(GT6Tools.CROWBAR, GT6Tools.TAB_TABLE.get(0), "row 0 is the registered crowbar item, not a parallel supplier");
 		assertSame(GT6Tools.CUTTER, GT6Tools.TAB_TABLE.get(1), "row 1 is the registered cutter item, not a parallel supplier");
 		assertSame(GT6Tools.CHISEL, GT6Tools.TAB_TABLE.get(2), "row 2 is the registered chisel item, not a parallel supplier");
@@ -149,6 +151,16 @@ public class GT6ToolsCreativeTabTest {
 		assertEquals(rl("monkey_wrench"), GT6Tools.TAB_TABLE.get(23).getId());
 		assertEquals(rl("magnifying_glass"), GT6Tools.TAB_TABLE.get(24).getId());
 		assertEquals(rl("pincers"), GT6Tools.TAB_TABLE.get(25).getId());
+		assertSame(GT6Tools.HOE, GT6Tools.TAB_TABLE.get(26), "row 26 is the registered hoe item, not a parallel supplier");
+		assertSame(GT6Tools.BRANCH_CUTTER, GT6Tools.TAB_TABLE.get(27), "row 27 is the registered branch cutter item, not a parallel supplier");
+		assertSame(GT6Tools.SENSE, GT6Tools.TAB_TABLE.get(28), "row 28 is the registered sense item, not a parallel supplier");
+		assertSame(GT6Tools.PLOW, GT6Tools.TAB_TABLE.get(29), "row 29 is the registered plow item, not a parallel supplier");
+		assertSame(GT6Tools.HAND_DRILL, GT6Tools.TAB_TABLE.get(30), "row 30 is the registered hand drill item, not a parallel supplier");
+		assertEquals(rl("hoe"), GT6Tools.TAB_TABLE.get(26).getId());
+		assertEquals(rl("branch_cutter"), GT6Tools.TAB_TABLE.get(27).getId());
+		assertEquals(rl("sense"), GT6Tools.TAB_TABLE.get(28).getId());
+		assertEquals(rl("plow"), GT6Tools.TAB_TABLE.get(29).getId());
+		assertEquals(rl("hand_drill"), GT6Tools.TAB_TABLE.get(30).getId());
 	}
 
 	/**

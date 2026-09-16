@@ -167,6 +167,20 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	 * {@code OreDictToolNames.pincers = "craftingToolPincers"}, CS.java:1880).
 	 */
 	public static final TagKey<Item> TOOLS_PINCERS = gt6("tools/pincers");
+	/** The craftingToolHoe translation — #gt6:tools/hoe (task p29-w5-t4-field-five, the snake rule). */
+	public static final TagKey<Item> TOOLS_HOE = gt6("tools/hoe");
+
+	/** The plow tool tag — #gt6:tools/plow (task p29-w5-t4-field-five). */
+	public static final TagKey<Item> TOOLS_PLOW = gt6("tools/plow");
+
+	/** The branch-cutter tool tag — #gt6:tools/branch_cutter (task p29-w5-t4-field-five). */
+	public static final TagKey<Item> TOOLS_BRANCH_CUTTER = gt6("tools/branch_cutter");
+
+	/** The sense tool tag — #gt6:tools/sense (task p29-w5-t4-field-five). */
+	public static final TagKey<Item> TOOLS_SENSE = gt6("tools/sense");
+
+	/** The hand-drill tool tag — #gt6:tools/hand_drill (task p29-w5-t4-field-five). */
+	public static final TagKey<Item> TOOLS_HAND_DRILL = gt6("tools/hand_drill");
 
 	/** The dustRedstone recipe-material translation — #gt6:redstone (snake ruling). */
 	public static final TagKey<Item> REDSTONE_DUSTS = gt6("redstone");
@@ -436,6 +450,12 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_MONKEY_WRENCH).add(item(GT6Tools.MONKEY_WRENCH.getId())); // task p29-w5-t3-machine-face-four — the single-name ruling (no wrench fold)
 		tag(TOOLS_MAGNIFYING_GLASS).add(item(GT6Tools.MAGNIFYING_GLASS.getId())); // task p29-w5-t3-machine-face-four — the craftingToolMagnifyingglass snake
 		tag(TOOLS_PINCERS).add(item(GT6Tools.PINCERS.getId())); // task p29-w5-t3-machine-face-four — the craftingToolPincers snake
+		// task p29-w5-t4-field-five — the five field-tool tags (one member each, the t1 band shape)
+		tag(TOOLS_HOE).add(item(GT6Tools.HOE.getId()));
+		tag(TOOLS_PLOW).add(item(GT6Tools.PLOW.getId()));
+		tag(TOOLS_BRANCH_CUTTER).add(item(GT6Tools.BRANCH_CUTTER.getId()));
+		tag(TOOLS_SENSE).add(item(GT6Tools.SENSE.getId()));
+		tag(TOOLS_HAND_DRILL).add(item(GT6Tools.HAND_DRILL.getId()));
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
 		// task p26-w1-press-extruder-molds — the mold-family membership face (the row0 pair,
@@ -461,7 +481,9 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 				item(GT6Tools.PICKAXE.getId()), item(GT6Tools.PICKAXE_GEM.getId()), item(GT6Tools.PICKAXE_CONSTRUCTION.getId()),
 				item(GT6Tools.SHOVEL.getId()), item(GT6Tools.SPADE.getId()), item(GT6Tools.UNIVERSAL_SPADE.getId()), // task p29-w5-t1-dig-six — the family band 10 → 16
 				item(GT6Tools.SWORD.getId()), item(GT6Tools.KNIFE.getId()), item(GT6Tools.BUTCHERY_KNIFE.getId()),
-				item(GT6Tools.CLUB.getId()), item(GT6Tools.AXE.getId()), item(GT6Tools.AXE_DOUBLE.getId())); // task p29-w5-t2-blade-six — the family band 16 → 22
+				item(GT6Tools.CLUB.getId()), item(GT6Tools.AXE.getId()), item(GT6Tools.AXE_DOUBLE.getId()), // task p29-w5-t2-blade-six — the family band 16 → 22
+				item(GT6Tools.HOE.getId()), item(GT6Tools.BRANCH_CUTTER.getId()), item(GT6Tools.SENSE.getId()),
+				item(GT6Tools.PLOW.getId()), item(GT6Tools.HAND_DRILL.getId())); // task p29-w5-t4-field-five — the family band 22 → 27 (the machine-face four stay the t3 one-member tag shape, outside the family band)
 	}
 
 	/**

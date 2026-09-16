@@ -42,12 +42,13 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 	/**
 	 * The single source of the modifier set (the {@code add} names AND the twin index
 	 * entries). ORDER: the {@code start()} CALL ORDER — the 21.1 base run() emits its
-	 * native index in call order (the p29-w5-t2 correction of the t1 "alphabetical"
-	 * reading: t1's calls happened to BE alphabetical, which masked the real face), so
-	 * the canonical twin must match it for the datagen_tree_check byte comparison; the
-	 * forge base index keeps its own HashMap order (the declared forge-gated
-	 * canonical-only face). A renamed/reordered entry drifts the twin and the gate
-	 * flags it.
+	 * native index in call order (the p29-w5-t2 correction of the t1/t4 "alphabetical /
+	 * HashMap iteration" readings: t1's calls happened to BE alphabetical and t4's list
+	 * matched its call order, both masking the real face), so the canonical twin must
+	 * match it for the datagen_tree_check byte comparison; the forge base index keeps
+	 * its own HashMap order (the declared forge-gated canonical-only face). A
+	 * renamed/reordered entry drifts the twin and the gate flags it — re-derive the
+	 * order from the node output after ANY name change.
 	 */
 	static final List<String> MODIFIER_NAMES = List.of(
 			"construction_ender_chest",
@@ -55,7 +56,9 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 			"universal_spade_openable",
 			"axe_tree_fell",
 			"club_rock_crush",
-			"sword_harvest");
+			"sword_harvest",
+			"branch_cutter_leaves",
+			"sense_vegetal");
 
 	/** The ctor face of the platform output (the base field is private — kept for the twin path). */
 	private final PackOutput mOutput;
@@ -96,6 +99,13 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 		add("sword_harvest", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.SWORD.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.SWORD_HARVEST));
+		// task p29-w5-t4-field-five — the field-tool rows (the same per-tool gate shape)
+		add("branch_cutter_leaves", new GT6ToolLootModifiers.GT6ToolConvertModifier(
+				conditions(GT6Tools.BRANCH_CUTTER.get()),
+				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.BRANCHCUTTER_LEAVES));
+		add("sense_vegetal", new GT6ToolLootModifiers.GT6ToolConvertModifier(
+				conditions(GT6Tools.SENSE.get()),
+				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.SENSE_VEGETAL));
 	}
 
 	private static LootItemCondition[] conditions(net.minecraft.world.item.Item aTool) {
