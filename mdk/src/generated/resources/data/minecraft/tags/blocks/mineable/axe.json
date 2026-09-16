@@ -1,5 +1,14 @@
 {
   "values": [
-    "gt6:barrel_wood"
+    "gt6:barrel_wood",
+    "gt6:rubber_log",
+    "gt6:maple_log",
+    "gt6:willow_log",
+    "gt6:blue_mahoe_log",
+    "gt6:hazel_log",
+    "gt6:cinnamon_log",
+    "gt6:coconut_log",
+    "gt6:rainbowood_log",
+    "gt6:blue_spruce_log"
   ]
 }
