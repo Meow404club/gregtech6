@@ -434,8 +434,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 			for (ResourceLocation tId : GT6HazardSets.members(tHazard)) {
 				tAppender.add(item(tId));
 			}
-			}
-		addTreeTags(); // task p30-w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
+		}
 	}
 
 	/**
