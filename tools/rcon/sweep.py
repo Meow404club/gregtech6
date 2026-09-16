@@ -423,6 +423,15 @@ SESSION_GROUPS = (
     # in that slice). No sites (no world placement — the ore world face is card 5), no
     # mutates. --group p29_w6_ore_mech matches the module stem.
     ("p29_w6_ore_mech",),
+    # P30 ore wave close-out card (p30-ore-5-census): the live census chain — placement
+    # matrix (26 families x 3 representative materials) + the break-drop pairing (per
+    # family: bare -> the broken pair / loose self, silk -> self, fortune III -> oreRaw)
+    # + the 12-roll fortune count-sum face, all in ONE reused census cell (a 5x5x5 bbox,
+    # the tightest site on the roster). fresh_boot: the boot slice re-carries the ore
+    # registration trio (ledger 1 live). No mutates. --group p29_w6_ore_census matches
+    # the module stem; the card's acceptance legs run the same chain through
+    # census_ore.py (NORMAL world + the fixed seed, the p30 worldgen card form).
+    ("p29_w6_ore_census",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
