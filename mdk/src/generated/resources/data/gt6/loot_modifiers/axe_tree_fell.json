@@ -1,0 +1,9 @@
+{
+  "type": "gt6:gt6_tree_fell",
+  "conditions": [
+    {
+      "condition": "gt6:holds_tool",
+      "tool": "gt6:axe"
+    }
+  ]
+}

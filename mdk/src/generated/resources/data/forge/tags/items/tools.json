@@ -15,6 +15,12 @@
     "gt6:pickaxe_construction",
     "gt6:shovel",
     "gt6:spade",
-    "gt6:universal_spade"
+    "gt6:universal_spade",
+    "gt6:sword",
+    "gt6:knife",
+    "gt6:butchery_knife",
+    "gt6:club",
+    "gt6:axe",
+    "gt6:axe_double"
   ]
 }
