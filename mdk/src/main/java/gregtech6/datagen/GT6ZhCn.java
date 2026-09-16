@@ -16,6 +16,7 @@ import gregtech6.item.GT6Circuits;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GT6Tools;
+import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTWires;
@@ -118,6 +119,7 @@ public class GT6ZhCn extends LanguageProvider {
 		// normal/broken 同族前缀、small 走 OP.oreSmall）。剩余面归波次卡③（datagen）：
 		// 26x3 逐族模板键（可选）+ 唯一创造栏页签标题 itemGroup.gt6.ore_vanillastone
 		//（GT6OreBlocks.TAB_TITLE_KEY，"石矿"）。
+		addOreTabTitle(); // task p30-ore-3-datagen — ore-1 注记的卡③面（唯一新键，dump itemgroup 家族行 矿石）
 	}
 
 	/**
@@ -967,6 +969,17 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GTWires.LASER_TAB_TITLE_KEY);
 		addDirect(GT6Tools.TAB_TITLE_KEY);
 		addDirect("itemGroup.gt6.food_cans"); // task p25-food-can-row0 — dump itemgroup gt.multiitem.cans 格雷科技: 罐头 (MultiItemCans.java:41 category label)
+	}
+
+	/**
+	 * The ore tab title zh face (task p30-ore-3-datagen) — the SAME itemgroup family join as
+	 * the roster walk above, keyed by {@link GT6OreBlocks#TAB_TITLE_KEY}: the ore prefixes
+	 * are not in the tabPrefixes() roster (upstream PrefixBlockItem.java:62-67 hides them),
+	 * so the roster loop cannot carry the key; the dump row
+	 * {@code itemgroup/oreVanillastone = 矿石} does (auto status, the same emit band).
+	 */
+	private void addOreTabTitle() {
+		addFromFamily("itemgroup", GT6OreBlocks.TAB_FAMILY.prefix().mNameInternal, GT6OreBlocks.TAB_TITLE_KEY);
 	}
 
 	/** Only the hand-translated in-use prefix templates (mirror of GT6EnUs.addPrefixTemplates over OP.VALUES). */

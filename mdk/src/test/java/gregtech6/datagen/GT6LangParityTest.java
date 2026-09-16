@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,6 +78,7 @@ import gregtech6.registry.GTItemPipes;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GT6Tanks;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GTStoneBlocks;
@@ -233,7 +235,7 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-private static final int ZH_KEY_FLOOR = 3208; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales) +9 (task p29-w3-distill-crucible: the 7 crucible ladder rungs + the twin towers; both locales — the ladder walls compose over the EXISTING gt6.row.mat words, zero new keys) +12 (task p29-w3-large-12: the 12 large-machine display names; all both locales +1 (task p29-w3-heat-smelter: block.gt6.large_heat_exchanger, the dump word 大型热交换器 at gt.multitileentity.17197; both locales) +25 (task p29-w4-f1-chemicals: the 25 chemical fluid display names — the oils + hydrocarbons + gas closure + liquidoxygen + the two plasmas; the dump carries every face, all both locales) +61 (task p29-w4-battery-storage: the 37 battery display names + the 5 Filled cells + the 7 circuit carriers + the 12 BatteryBox display names; all both locales) +22 (task p29-w4-hot-lube: the 20 hot-family fluid display names (12 hot + 7 closure carriers + lubricant) + the Lubricant Bucket item + its tooltip; all both locales) +6 (task p29-w5-t1-dig-six: the six dig-tool display names Pickaxe/Gem tipped Pickaxe/Construction Pick/Shovel/Spade/Universal Spade; all both locales — the zh faces ride the dump tagprefix head words minus 头) +1 (task p30-pool-drillhead-18103: block.gt6.bedrock_drill_head, the dump word 基岩钻头 at mte 18103; both locales) +10 (task p29-w5-t2-blade-six: the six blade-tool display names Sword/Knife/Butchery Knife/Club/Axe/Double Axe — the zh faces of sword/knife/axe ride the dump gt.lang.tool.name rows verbatim, butchery knife/club/double axe are the hand words the dump lacks; plus the four registration-desc tooltips, hand zh — the dump gt.lang.tool.tooltip rows are a mismatched build) +4 (task p29-w5-t3-machine-face-four: the four machine-face display names Soft Hammer/Monkey Wrench/Magnifying Glass/Pincers; both locales — the zh faces ride the dump gt.metatool.01 rows :14/:52/:62/:66) +5 (task p29-w5-t4-field-five: the five field-tool display names Hoe/Branch Cutter/Sense/Plow/Hand Drill; all both locales — the zh faces ride the dump tagprefix head words minus 头/刃 for hoe/sense/plow, the hand rows 修枝剪/手钻 for the two dump-absent ids) +6 (task p29-w5-t5-scene-six: the six scene-tool display names Scissors/Scoop/Plunger/Flint and Tinder/Rolling Pin/Bending Cylinder; all both locales — the zh faces ride the dump words 剪刀/捕虫网/搋子/打火石/擀面杖/弯曲绕筒) +33 (task p29-w5-t6-electric-nineteen: the 19 electric-tool display names + the 14 tooltips (13 row tooltips + the mode_switch line); all both locales — the zh faces are hand words over the existing dump roots, the upstream dump carries zero electric rows, provenance p29-w5-t6-electric-nineteen+hand33) +15 (task p29-w5-t7-pocket-eight: the 8 pocket-form display names + the 7 mode-switch tooltips; all both locales — the zh faces are hand words, the upstream dump carries zero pocket rows, provenance p29-w5-t7-pocket-eight+hand15) +48 (task p29-w5-t8-armor-24: the 24 hazmat display names + the 24 per-piece tooltip keys; both locales) +27 (task p30-w6-t1-trees-nine: the 27 tree-family block names — 9 saplings + 9 logs + 9 leaves; all both locales, the hand zh rows)
+private static final int ZH_KEY_FLOOR = 3209; // 2839 +3 (task p29-w2-eu-special) +13 (task p29-w2-exotic-energy: the 6 exotic templates + the galvanized_steel/aluminium/t1..t5 units) +5 (task p29-w2-eu-core-5tier) +7 (task p29-w2-hu-tu-piggyback: the 3 one-slot unit keys + the 4 TU atomic display keys) +18 (task p29-w3-nbtdesign-parts: the metal_wall template + the 17 atomic part-family names; all both locales) +1 (the merged-main 4f68532a face) +7 (task p29-w3-tank-valves: the two valve templates + the four size words + the wood unit; all both locales) +12 (task p29-w3-turbine-dynamo: the twelve controller names; all both locales) +9 (task p29-w3-distill-crucible: the 7 crucible ladder rungs + the twin towers; both locales — the ladder walls compose over the EXISTING gt6.row.mat words, zero new keys) +12 (task p29-w3-large-12: the 12 large-machine display names; all both locales +1 (task p29-w3-heat-smelter: block.gt6.large_heat_exchanger, the dump word 大型热交换器 at gt.multitileentity.17197; both locales) +25 (task p29-w4-f1-chemicals: the 25 chemical fluid display names — the oils + hydrocarbons + gas closure + liquidoxygen + the two plasmas; the dump carries every face, all both locales) +61 (task p29-w4-battery-storage: the 37 battery display names + the 5 Filled cells + the 7 circuit carriers + the 12 BatteryBox display names; all both locales) +22 (task p29-w4-hot-lube: the 20 hot-family fluid display names (12 hot + 7 closure carriers + lubricant) + the Lubricant Bucket item + its tooltip; all both locales) +6 (task p29-w5-t1-dig-six: the six dig-tool display names Pickaxe/Gem tipped Pickaxe/Construction Pick/Shovel/Spade/Universal Spade; all both locales — the zh faces ride the dump tagprefix head words minus 头) +1 (task p30-pool-drillhead-18103: block.gt6.bedrock_drill_head, the dump word 基岩钻头 at mte 18103; both locales) +10 (task p29-w5-t2-blade-six: the six blade-tool display names Sword/Knife/Butchery Knife/Club/Axe/Double Axe — the zh faces of sword/knife/axe ride the dump gt.lang.tool.name rows verbatim, butchery knife/club/double axe are the hand words the dump lacks; plus the four registration-desc tooltips, hand zh — the dump gt.lang.tool.tooltip rows are a mismatched build) +4 (task p29-w5-t3-machine-face-four: the four machine-face display names Soft Hammer/Monkey Wrench/Magnifying Glass/Pincers; both locales — the zh faces ride the dump gt.metatool.01 rows :14/:52/:62/:66) +5 (task p29-w5-t4-field-five: the five field-tool display names Hoe/Branch Cutter/Sense/Plow/Hand Drill; all both locales — the zh faces ride the dump tagprefix head words minus 头/刃 for hoe/sense/plow, the hand rows 修枝剪/手钻 for the two dump-absent ids) +6 (task p29-w5-t5-scene-six: the six scene-tool display names Scissors/Scoop/Plunger/Flint and Tinder/Rolling Pin/Bending Cylinder; all both locales — the zh faces ride the dump words 剪刀/捕虫网/搋子/打火石/擀面杖/弯曲绕筒) +33 (task p29-w5-t6-electric-nineteen: the 19 electric-tool display names + the 14 tooltips (13 row tooltips + the mode_switch line); all both locales — the zh faces are hand words over the existing dump roots, the upstream dump carries zero electric rows, provenance p29-w5-t6-electric-nineteen+hand33) +15 (task p29-w5-t7-pocket-eight: the 8 pocket-form display names + the 7 mode-switch tooltips; all both locales — the zh faces are hand words, the upstream dump carries zero pocket rows, provenance p29-w5-t7-pocket-eight+hand15) +48 (task p29-w5-t8-armor-24: the 24 hazmat display names + the 24 per-piece tooltip keys; both locales) +27 (task p30-w6-t1-trees-nine: the 27 tree-family block names — 9 saplings + 9 logs + 9 leaves; all both locales, the hand zh rows) +1 (task p30-ore-3-datagen: itemGroup.gt6.ore_vanillastone, the dump itemgroup oreVanillastone row 矿石; both locales — the ore universe's ONLY new lang key, the 27 ore template keys predate this card)
 
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
@@ -1160,5 +1162,40 @@ private static final int ZH_KEY_FLOOR = 3208; // 2839 +3 (task p29-w2-eu-special
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"
 			+ " (Jade resolves block.gt6.<path>; a missing key hovers the raw key): " + tMissing);
+	}
+
+	/**
+	 * The ore universe template pins (task p30-ore-3-datagen spec ③ — the "26 families x 3
+	 * forms" face): every ore form resolves its display name through the
+	 * {@code gt6.tagprefix.<prefix_snake>} template (GTMaterialPrefixBlockItem.getName),
+	 * normal/broken share the family prefix and small rides OP.oreSmall — so the 74
+	 * form-rows per material collapse onto exactly 27 distinct template keys (26 family
+	 * prefixes + ore_small), pinned here on BOTH faces with the {@code %s} slot intact.
+	 * This is the RegisterEvent-family analogue of the stoneAndRows template pins (the
+	 * documented-not-walked composed-name universe note at the registry-coverage gate —
+	 * GT6OreBlocks' 3922 RegisterEvent blocks join that exemption roster with this test as
+	 * their template pin). Plus the one creative-tab title (GT6OreBlocks.TAB_TITLE_KEY) on
+	 * both faces: en = mNameCategory ("Stone Ores", OP.java:1101), zh = the dump itemgroup
+	 * row (矿石, the addOreTabTitle family join).
+	 */
+	@Test
+	public void oreUniverseTemplatePins() {
+		Set<String> tKeys = new HashSet<>();
+		for (GT6OreBlocks.OreFamily tFamily : GT6OreBlocks.FAMILIES) {
+			for (GT6OreBlocks.FormKind tKind : tFamily.kinds()) {
+				tKeys.add("gt6.tagprefix." + MaterialPrefixItem.snakeCase(tFamily.prefix(tKind).mNameInternal));
+			}
+		}
+		assertEquals(27, tKeys.size(), "26 family prefixes + the shared ore_small = the pinned 27 keys");
+		List<String> tBroken = new ArrayList<>();
+		for (String tKey : tKeys) {
+			if (!en().containsKey(tKey) || !en().get(tKey).contains("%s")) tBroken.add("en/" + tKey);
+			if (!zh().containsKey(tKey) || !zh().get(tKey).contains("%s")) tBroken.add("zh/" + tKey);
+		}
+		assertTrue(tBroken.isEmpty(),
+			"the ore template keys must exist with their %s slot on BOTH faces (the 74 form-rows"
+			+ " per material compose their names through them): " + tBroken);
+		assertEquals("Stone Ores", en().get(GT6OreBlocks.TAB_TITLE_KEY), "the en tab title = mNameCategory (OP.java:1101)");
+		assertEquals("矿石", zh().get(GT6OreBlocks.TAB_TITLE_KEY), "the zh tab title = the dump itemgroup oreVanillastone row");
 	}
 }

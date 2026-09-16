@@ -29,6 +29,7 @@ import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTStoneBlocks;
+import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
 import gregtech6.covers.GT6Covers;
@@ -133,6 +134,7 @@ public class GT6EnUs extends LanguageProvider {
         // remaining faces are wave card 3 (datagen): the 26x3 per-family template keys if
         // wanted + the one creative-tab title itemGroup.gt6.ore_vanillastone
         // (GT6OreBlocks.TAB_TITLE_KEY, "Stone Ores" — the PrefixBlockItem.java:62-67 gate).
+        addOreTabTitle(); // task p30-ore-3-datagen — the ore-1 note's card-③ face (the one new key)
     }
 
     /**
@@ -1285,6 +1287,20 @@ public class GT6EnUs extends LanguageProvider {
             add("itemGroup.gt6." + MaterialPrefixItem.snakeCase(tPrefix.mNameInternal),
                 tPrefix.mNameCategory == null ? tPrefix.mNameInternal : tPrefix.mNameCategory);
         }
+    }
+
+    /**
+     * The ore tab title (task p30-ore-3-datagen): GT6OreBlocks registers its own creative
+     * tab under {@link GT6OreBlocks#TAB_TITLE_KEY} — the ore prefixes are NOT in
+     * GTMaterialItems.tabPrefixes() (upstream hides them from the tab roster,
+     * PrefixBlockItem.java:62-67 SHOW_ORE_BLOCK_PREFIXES=false, so the roster walk above
+     * cannot carry the key), but the value composes the same mNameCategory face
+     * ("Stone Ores", the dump oredict.prefix.oreVanillastone row).
+     */
+    private void addOreTabTitle() {
+        OreDictPrefix tPrefix = GT6OreBlocks.TAB_FAMILY.prefix();
+        add(GT6OreBlocks.TAB_TITLE_KEY,
+            tPrefix.mNameCategory == null ? tPrefix.mNameInternal : tPrefix.mNameCategory);
     }
 
     /** Table a: one "%s"-template per prefix, all of OP.VALUES (post-OP.init()). */
