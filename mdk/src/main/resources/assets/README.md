@@ -93,6 +93,23 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   material colour (GT_Tool_Screwdriver.getIcon :115-117 + getRGBa, the material pool);
   the port shows the grayscale composite un-tinted — declared deviation, same
   runtime-tint pool.
+- `gt6/textures/item/sword.png` / `sword_overlay.png` — sword handle textures (upstream
+  `textures/items/iconsets/HANDLE_SWORD.png` + `_OVERLAY.png`, task p29-w5-t2-blade-six;
+  base sha256 `f678c93377fcd7799c37429c06182f18e20563125f285bbfe437e3956dfb74e5`).
+  Byte-identical borrows, filenames lowercased on borrow; the head half rides the
+  in-tree toolHeadSword metallic-set pair (upstream GT_Tool_Sword.getIcon :113-115).
+- `gt6/textures/item/knife.png` / `knife_overlay.png` — knife icon borrows (upstream
+  `textures/items/iconsets/KNIFE.png` + `_OVERLAY.png`, task p29-w5-t2-blade-six; base
+  sha256 `e0a3ac8791620ccf66e17e319914e4105b8578c58bae43d3a4d0048da84e227b`), the VOID
+  handle face (GT_Tool_Knife.getIcon :85-87).
+- `gt6/textures/item/butchery_knife.png` / `butchery_knife_overlay.png` — butchery-knife
+  icon borrows (upstream `BUTCHERYKNIFE.png` + `_OVERLAY.png`, task p29-w5-t2-blade-six;
+  base sha256 `8d69d7ea6ac203a5b550aede86362656252678ba30c19c39aadbd9db358623f3`), the
+  VOID handle face (GT_Tool_ButcheryKnife.getIcon :97-99).
+- `gt6/textures/item/club.png` / `club_overlay.png` — club icon borrows (upstream
+  `CLUB.png` + `_OVERLAY.png`, task p29-w5-t2-blade-six; base sha256
+  `b8ed2f3b2170421783419e88981018d4fe5ed3692ff5b3039a54b457f1e576d8`), the VOID handle
+  face (GT_Tool_Club.getIcon :113-115).
 - `gt6/textures/item/wrench.png` — wrench item texture (upstream
   `textures/items/iconsets/WRENCH.png`, task p25-tool-hammer-wrench; sha256
   `7c5b36f19b5607c9cc122f72b5796512db091e5baa2d815ef649d1761d9351cc`).

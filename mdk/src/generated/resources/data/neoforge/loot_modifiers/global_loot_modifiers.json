@@ -2,7 +2,10 @@
   "entries": [
     "gt6:construction_ender_chest",
     "gt6:spade_harvest",
-    "gt6:universal_spade_openable"
+    "gt6:universal_spade_openable",
+    "gt6:axe_tree_fell",
+    "gt6:club_rock_crush",
+    "gt6:sword_harvest"
   ],
   "replace": false
 }

@@ -191,7 +191,8 @@ class GT6ItemModelLayersTest {
 
     /** The tool ids with their own model rows (pinned by the dedicated tests above). */
     private static final Set<String> TOOL_MODEL_IDS = Set.of(
-        "crowbar", "cutter", "chisel", "file", "saw", "builder_wand", "screwdriver", "hammer");
+        "crowbar", "cutter", "chisel", "file", "saw", "builder_wand", "screwdriver", "hammer",
+        "sword", "knife", "butchery_knife", "club", "axe", "axe_double"); // task p29-w5-t2-blade-six — the blade rows carry their own multi-layer pins
 
     /**
      * The existence-gated overlay rule, walked over EVERY generated item model that

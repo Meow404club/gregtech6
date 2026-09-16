@@ -244,6 +244,47 @@ public final class GT6ToolActions {
 	 */
 	public static final ToolAction UNIVERSAL_SPADE = ToolAction.get("gt6_universal_spade");
 
+	/**
+	 * The sword stack-classification action ("gt6_sword" — task p29-w5-t2-blade-six, the
+	 * PICKAXE entry shape; upstream {@code TOOL_sword} CS.java:1039, the
+	 * Loader_Tools.java:118 registration row). Consumer: {@link GTSwordItem} (the Knife
+	 * subclass inherits the classifier).
+	 */
+	public static final ToolAction SWORD = ToolAction.get("gt6_sword");
+
+	/**
+	 * The knife stack-classification action ("gt6_knife" — task p29-w5-t2-blade-six, the
+	 * SWORD entry shape; upstream {@code TOOL_knife} CS.java:1046, the
+	 * Loader_Tools.java:135 registration row). Consumer: {@link GTKnifeItem}.
+	 */
+	public static final ToolAction KNIFE = ToolAction.get("gt6_knife");
+
+	/**
+	 * The butchery-knife stack-classification action ("gt6_butchery_knife" — task
+	 * p29-w5-t2-blade-six, the SWORD entry shape; upstream the Loader_Tools.java:136 row
+	 * rides {@code TOOL_knife} — the port gives the flat item its OWN key so the two
+	 * knives stay tellable, the spade/shovel ruling).
+	 */
+	public static final ToolAction BUTCHERY_KNIFE = ToolAction.get("gt6_butchery_knife");
+
+	/**
+	 * The club stack-classification action ("gt6_club" — task p29-w5-t2-blade-six, the
+	 * SWORD entry shape; upstream the Loader_Tools.java:130 row rides
+	 * {@code TOOL_hammer} — the club ALSO classifies {@link #HAMMER} so the machine
+	 * dispatch sees it exactly as the 1.7.10 behaviour row did; the own key keeps the
+	 * weapon identity tellable from the crafting hammer).
+	 */
+	public static final ToolAction CLUB = ToolAction.get("gt6_club");
+
+	/**
+	 * The axe stack-classification action ("gt6_axe" — task p29-w5-t2-blade-six, the
+	 * SWORD entry shape; upstream {@code TOOL_axe} CS.java:1036, the
+	 * Loader_Tools.java:122/:123 rows). Consumers: {@link GTAxeItem} and the
+	 * {@link GTAxeDoubleItem} subclass (the PICKAXE family ruling — one action for the
+	 * variants).
+	 */
+	public static final ToolAction AXE = ToolAction.get("gt6_axe");
+
 	private GT6ToolActions() {
 	}
 }

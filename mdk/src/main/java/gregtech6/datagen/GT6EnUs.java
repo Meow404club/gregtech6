@@ -370,6 +370,20 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.shovel", "Shovel");
         add("item.gt6.spade", "Spade");
         add("item.gt6.universal_spade", "Universal Spade");
+        // task p29-w5-t2-blade-six — the six blade-tool display names (the upstream
+        // registration-row wordings verbatim: "Sword" :118, "Knife" :135, "Butchery Knife"
+        // :136, "Club" :130, "Axe" :122, "Double Axe" :123) + the four non-empty desc rows
+        // (the Loader_Tools third column, the TOOL_LOCALISER tooltip face)
+        add("item.gt6.sword", "Sword");
+        add("item.gt6.knife", "Knife");
+        add("item.gt6.butchery_knife", "Butchery Knife");
+        add("item.gt6.club", "Club");
+        add("item.gt6.axe", "Axe");
+        add("item.gt6.axe_double", "Double Axe");
+        add("item.gt6.axe.tooltip", "Faster on Logs. Chops down whole Trees.");
+        add("item.gt6.axe_double.tooltip", "Chops down whole Trees and has a slow Attack Rate");
+        add("item.gt6.club.tooltip", "A blunt primitive Weapon and Rock Crusher");
+        add("item.gt6.butchery_knife.tooltip", "Has a slow Attack Rate");
         add(GT6Tools.TAB_TITLE_KEY, "Tools");
     }
 

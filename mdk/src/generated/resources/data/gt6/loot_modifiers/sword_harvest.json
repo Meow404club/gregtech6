@@ -1,0 +1,10 @@
+{
+  "type": "gt6:gt6_tool_convert",
+  "conditions": [
+    {
+      "condition": "gt6:holds_tool",
+      "tool": "gt6:sword"
+    }
+  ],
+  "mode": "SWORD_HARVEST"
+}

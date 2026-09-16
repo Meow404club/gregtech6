@@ -65,10 +65,15 @@ public class DigSixTest {
 
 	// ------------------------------------------------------------------ TAB_TABLE parity
 
-	/** The table holds exactly 16 rows — rows 10..15 are the six dig tools in display order. */
+	/**
+	 * The dig rows 10..15 — the six dig tools in display order. The TOTAL is the
+	 * later-card head pin (t8-armor precedent): the table only ever grows by appended
+	 * rows, so the dig card pins its own six rows and the >= floor, the blade-six card
+	 * (p29-w5-t2-blade-six, rows 16-21) owns the running total in BladeSixTest.
+	 */
 	@Test
-	public void tabTableIsExactlyTheSixteenToolRows() {
-		assertEquals(16, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 10 prior rows + the six dig tools");
+	public void tabTableHoldsTheSixDigRowsAtTenThroughFifteen() {
+		assertTrue(GT6Tools.TAB_TABLE.size() >= 16, "the table keeps at least the 16 rows this card pinned");
 		assertSame(GT6Tools.PICKAXE, GT6Tools.TAB_TABLE.get(10), "row 10 is the pickaxe");
 		assertSame(GT6Tools.PICKAXE_GEM, GT6Tools.TAB_TABLE.get(11), "row 11 is the gem pickaxe");
 		assertSame(GT6Tools.PICKAXE_CONSTRUCTION, GT6Tools.TAB_TABLE.get(12), "row 12 is the construction pickaxe");

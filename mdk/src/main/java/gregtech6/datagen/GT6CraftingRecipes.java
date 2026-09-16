@@ -163,6 +163,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation SHOVEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shovel");
 	public static final ResourceLocation SPADE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "spade");
 	public static final ResourceLocation UNIVERSAL_SPADE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "universal_spade");
+	public static final ResourceLocation SWORD_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sword");
+	public static final ResourceLocation KNIFE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "knife");
+	public static final ResourceLocation BUTCHERY_KNIFE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "butchery_knife");
+	public static final ResourceLocation CLUB_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "club");
+	public static final ResourceLocation AXE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "axe");
+	public static final ResourceLocation AXE_DOUBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "axe_double");
 
 	/** The CR.shapeless self-recast row id of a sensor path (task p26-sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
 	public static ResourceLocation sensorRecastId(String aPath) {
@@ -240,6 +246,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		shovelBuilder().save(aConsumer, SHOVEL_ID);
 		spadeBuilder().save(aConsumer, SPADE_ID);
 		universalSpadeBuilder().save(aConsumer, UNIVERSAL_SPADE_ID);
+		// task p29-w5-t2-blade-six — the six blade-tool steel-route rows (the dig-tool row shape)
+		swordBuilder().save(aConsumer, SWORD_ID);
+		knifeBuilder().save(aConsumer, KNIFE_ID);
+		butcheryKnifeBuilder().save(aConsumer, BUTCHERY_KNIFE_ID);
+		clubBuilder().save(aConsumer, CLUB_ID);
+		axeBuilder().save(aConsumer, AXE_ID);
+		axeDoubleBuilder().save(aConsumer, AXE_DOUBLE_ID);
 	}
 	//?} else {
 	/*@Override
@@ -304,6 +317,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		shovelBuilder().save(aOutput, SHOVEL_ID);
 		spadeBuilder().save(aOutput, SPADE_ID);
 		universalSpadeBuilder().save(aOutput, UNIVERSAL_SPADE_ID);
+		// task p29-w5-t2-blade-six — the six blade-tool steel-route rows (the dig-tool row shape)
+		swordBuilder().save(aOutput, SWORD_ID);
+		knifeBuilder().save(aOutput, KNIFE_ID);
+		butcheryKnifeBuilder().save(aOutput, BUTCHERY_KNIFE_ID);
+		clubBuilder().save(aOutput, CLUB_ID);
+		axeBuilder().save(aOutput, AXE_ID);
+		axeDoubleBuilder().save(aOutput, AXE_DOUBLE_ID);
 	}
 	*///?}
 
@@ -1401,5 +1421,56 @@ public class GT6CraftingRecipes extends RecipeProvider {
         return digToolBuilder(GT6Tools.UNIVERSAL_SPADE.get(), new String[] {"PPP", "PSP", "fSf"},
                 'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
                 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    // ---------------------------------------------------------------------
+    // The six blade-tool steel-route rows (task p29-w5-t2-blade-six). The upstream
+    // AdvancedCraftingTool rows (Loader_Tools.java:337/:342-343 — SWORD toolHeadSword,
+    // AXE toolHeadAxe, DOUBLE_AXE toolHeadAxeDouble; KNIFE/BUTCHERYKNIFE/CLUB carry NO
+    // AdvancedCraftingTool row — the knife's grid face is the cutting-board pool, the
+    // club's is the 6*U material scale) over the single steel tier: the plate counts
+    // keep the head-amount PROPORTIONS (the t1 mapping; the exact toolHead mAmount
+    // ladder is the standing pool cut). The worn hammer/file letters ride the dig-tool
+    // builder (each pays one point through the crafting-remaining face).
+    /** The sword row — the upstream :337 SWORD head + the rod, hammer+file worn. */
+    private ShapedRecipeBuilder swordBuilder() {
+        return digToolBuilder(GT6Tools.SWORD.get(), new String[] {"hPf", " S "},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The knife row — the small blade (1 plate + the rod). */
+    private ShapedRecipeBuilder knifeBuilder() {
+        return digToolBuilder(GT6Tools.KNIFE.get(), new String[] {"hP ", " S ", " f "},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The butchery knife row — the heavier blade (2 plates, the 4*U scale). */
+    private ShapedRecipeBuilder butcheryKnifeBuilder() {
+        return digToolBuilder(GT6Tools.BUTCHERY_KNIFE.get(), new String[] {"PP", " S", "hf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The club row — the 6*U heavy mass (6 plates + the rod, the biggest blade tier). */
+    private ShapedRecipeBuilder clubBuilder() {
+        return digToolBuilder(GT6Tools.CLUB.get(), new String[] {"PPP", "PPP", "hSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The axe row — the upstream :342 AXE head (3 plates) + the rod. */
+    private ShapedRecipeBuilder axeBuilder() {
+        return digToolBuilder(GT6Tools.AXE.get(), new String[] {"PP ", "PS ", "hSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The double-axe row — the upstream :343 DOUBLE_AXE heavy head (5 plates). */
+    private ShapedRecipeBuilder axeDoubleBuilder() {
+        return digToolBuilder(GT6Tools.AXE_DOUBLE.get(), new String[] {"PP ", "PPS", "hSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
     }
 }

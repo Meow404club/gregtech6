@@ -341,6 +341,15 @@ SESSION_GROUPS = (
     # the chains' embedded name prefix (the p29_w1_process form).
     ("p29_w5_t1_dig_six_torch", "p29_w5_t1_dig_six_path", "p29_w5_t1_dig_six_enderchest",
      "p29_w5_t1_dig_six_harvest", "p29_w5_t1_dig_six_faces", "p29_w5_t1_dig_six_openable"),
+    # P29 W5 card 2 (p29-w5-t2-blade-six): the five blade-tool chains — one fresh z=208
+    # band (x384..416: tree 384..386 (the 5-log felling rig + the bare-hand negative
+    # column) / grass 392..394 / rock 398..400 / vine 406..407 / faces 412..416, per-family
+    # x-disjoint columns), admission mirroring the p29 W5 card 1 cluster form (bbox-
+    # registered, no fresh_boot / mutates member — the fake-player /gt6blade arms are
+    # band-local setblocks). --group p29_w5_t2_blade_six matches through the chains'
+    # embedded name prefix (the p29_w1_process form).
+    ("p29_w5_t2_blade_six_tree", "p29_w5_t2_blade_six_grass", "p29_w5_t2_blade_six_rock",
+     "p29_w5_t2_blade_six_vine", "p29_w5_t2_blade_six_faces"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
 )
 

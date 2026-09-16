@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "gt6:item/material_sets/metallic/tool_head_sword",
+    "layer1": "gt6:item/material_sets/metallic/tool_head_sword_overlay",
+    "layer2": "gt6:item/sword",
+    "layer3": "gt6:item/sword_overlay"
+  }
+}

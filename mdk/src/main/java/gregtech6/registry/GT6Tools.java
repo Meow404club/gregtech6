@@ -22,9 +22,15 @@ import gregtech6.items.tools.GT6BendingCylinderSmallItem;
 import gregtech6.items.tools.GT6BuilderWandItem;
 import gregtech6.items.tools.GT6FileItem;
 import gregtech6.items.tools.GT6ScrewdriverItem;
+import gregtech6.items.tools.GTAxeDoubleItem;
+import gregtech6.items.tools.GTAxeItem;
+import gregtech6.items.tools.GTButcheryKnifeItem;
+import gregtech6.items.tools.GTClubItem;
+import gregtech6.items.tools.GTKnifeItem;
 import gregtech6.items.tools.GTPickaxeConstructionItem;
 import gregtech6.items.tools.GTPickaxeGemItem;
 import gregtech6.items.tools.GTPickaxeItem;
+import gregtech6.items.tools.GTSwordItem;
 import gregtech6.items.tools.GTShovelItem;
 import gregtech6.items.tools.GTSpadeItem;
 import gregtech6.items.tools.GTUniversalSpadeItem;
@@ -240,6 +246,43 @@ public final class GT6Tools {
 			() -> new GTUniversalSpadeItem(new Item.Properties().durability(GTUniversalSpadeItem.DURABILITY_POINTS)));
 
 	/**
+	 * The six blade tools — task p29-w5-t2-blade-six (the W5 tool wave card 2; rows
+	 * 17-22 of the table). Single steel tier, durability 512 (the family value; the
+	 * double axe carries the upstream ×1.5 multiplier as the flat 768). Display names =
+	 * the upstream registration-row wordings (Loader_Tools.java:118-136). The world arms:
+	 * <ul>
+	 * <li>{@code gt6:sword} (upstream GT_Tool_Sword — base damage 4.0F, the grass/stick/
+	 *     vine drop conversion riding the loot seam mode SWORD_HARVEST);</li>
+ * <li>{@code gt6:knife} (upstream GT_Tool_Knife, the sword subclass — 2.0F, ×0.5
+	 *     speed);</li>
+	 * <li>{@code gt6:butchery_knife} (upstream GT_Tool_ButcheryKnife — 1.0F, the Looting
+	 *     face riding the LootingLevelEvent at the constant 2, no mining face);</li>
+	 * <li>{@code gt6:club} (upstream GT_Tool_Club, the HardHammer subclass — 5.0F
+	 *     inherited, the rockGt crush riding the loot seam mode CLUB_ROCK_CRUSH);</li>
+	 * <li>{@code gt6:axe} (upstream GT_Tool_Axe — the whole-tree felling riding the
+	 *     loot seam gt6_tree_fell, vanilla trees only);</li>
+	 * <li>{@code gt6:axe_double} (upstream GT_Tool_AxeDouble — 6.0F, durability 768).</li>
+	 * </ul>
+	 */
+	public static final RegistryObject<Item> SWORD = ITEMS.register("sword",
+			() -> new GTSwordItem(new Item.Properties().durability(GTSwordItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> KNIFE = ITEMS.register("knife",
+			() -> new GTKnifeItem(new Item.Properties().durability(GTKnifeItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> BUTCHERY_KNIFE = ITEMS.register("butchery_knife",
+			() -> new GTButcheryKnifeItem(new Item.Properties().durability(GTButcheryKnifeItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> CLUB = ITEMS.register("club",
+			() -> new GTClubItem(new Item.Properties().durability(GTClubItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> AXE = ITEMS.register("axe",
+			() -> new GTAxeItem(new Item.Properties().durability(GTAxeItem.DURABILITY_POINTS)));
+
+	public static final RegistryObject<Item> AXE_DOUBLE = ITEMS.register("axe_double",
+			() -> new GTAxeDoubleItem(new Item.Properties().durability(GTAxeDoubleItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -255,7 +298,8 @@ public final class GT6Tools {
 	 * universal_spade).
 	 */
 	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL,
-			PICKAXE, PICKAXE_GEM, PICKAXE_CONSTRUCTION, SHOVEL, SPADE, UNIVERSAL_SPADE);
+			PICKAXE, PICKAXE_GEM, PICKAXE_CONSTRUCTION, SHOVEL, SPADE, UNIVERSAL_SPADE,
+			SWORD, KNIFE, BUTCHERY_KNIFE, CLUB, AXE, AXE_DOUBLE);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -335,6 +379,19 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.SPADE.get()), GTSpadeItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.UNIVERSAL_SPADE.get()), GTUniversalSpadeItem.DURABILITY_POINTS);
+			// task p29-w5-t2-blade-six — the six blade tools join the registration smoke log
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.SWORD.get()), GTSwordItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.KNIFE.get()), GTKnifeItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.BUTCHERY_KNIFE.get()), GTButcheryKnifeItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.CLUB.get()), GTClubItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.AXE.get()), GTAxeItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.AXE_DOUBLE.get()), GTAxeDoubleItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

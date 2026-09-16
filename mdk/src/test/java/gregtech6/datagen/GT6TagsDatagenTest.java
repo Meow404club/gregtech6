@@ -392,11 +392,20 @@ class GT6TagsDatagenTest {
         assertEquals(List.of("gt6:shovel"), tagValues("gt6/tags/items/tools/shovel.json"));
         assertEquals(List.of("gt6:spade"), tagValues("gt6/tags/items/tools/spade.json"));
         assertEquals(List.of("gt6:universal_spade"), tagValues("gt6/tags/items/tools/universal_spade.json"));
+        // task p29-w5-t2-blade-six: the six blade-tool tags join the one-member census
+        assertEquals(List.of("gt6:sword"), tagValues("gt6/tags/items/tools/sword.json"));
+        assertEquals(List.of("gt6:knife"), tagValues("gt6/tags/items/tools/knife.json"));
+        assertEquals(List.of("gt6:butchery_knife"), tagValues("gt6/tags/items/tools/butchery_knife.json"));
+        assertEquals(List.of("gt6:club"), tagValues("gt6/tags/items/tools/club.json"));
+        assertEquals(List.of("gt6:axe"), tagValues("gt6/tags/items/tools/axe.json"));
+        assertEquals(List.of("gt6:axe_double"), tagValues("gt6/tags/items/tools/axe_double.json"));
         assertEquals(List.of(
                 "gt6:file", "gt6:saw", "gt6:crowbar", "gt6:cutter", "gt6:chisel",
                 "gt6:builder_wand", "gt6:screwdriver", "gt6:hammer", "gt6:wrench",
                 "gt6:bending_cylinder_small", "gt6:pickaxe", "gt6:pickaxe_gem",
-                "gt6:pickaxe_construction", "gt6:shovel", "gt6:spade", "gt6:universal_spade"),
+                "gt6:pickaxe_construction", "gt6:shovel", "gt6:spade", "gt6:universal_spade",
+                "gt6:sword", "gt6:knife", "gt6:butchery_knife", "gt6:club", "gt6:axe",
+                "gt6:axe_double"),
                 tagValues("forge/tags/items/tools.json"));
     }
 
