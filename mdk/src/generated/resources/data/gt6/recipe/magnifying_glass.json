@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "item": "gt6:lens_glass"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "L",
+    "S"
+  ],
+  "result": {
+    "item": "gt6:magnifying_glass"
+  },
+  "show_notification": true
+}

@@ -8109,3 +8109,17 @@ fluid-container capability card.
 - `gt6/textures/item/lubricant_bucket.png` — vanilla
   `assets/minecraft/textures/item/bucket.png` verbatim,
   sha256 `3f14980d6d2dea8d547e44104a55a51d62bee71bd45f16068113b279b3d2d042`
+Machine-face-four append, task p29-w5-t3-machine-face-four (2026-09-16): the
+soft hammer model carries NO new sprite — all four layers are existing
+material_sets borrows (rubber/tool_head_hammer + overlay = the upstream
+ANY.Rubber primary default, GT_Tool_SoftHammer.getIcon :120; wood/stick +
+overlay = the MT.WOODS.Spruce secondary, the builder-wand borrow posture).
+
+- `gt6/textures/item/monkey_wrench.png` + `monkey_wrench_overlay.png` —
+  byte-copy borrows of upstream
+  `textures/items/iconsets/MONKEYWRENCH[_OVERLAY].png` (snapshot
+  v6.17.06-22-g3703e4030, the wrench row shape).
+- `gt6/textures/item/magnifying_glass.png` + `magnifying_glass_overlay.png` —
+  byte-copy borrows of upstream `textures/items/iconsets/MAGNIFYING_GLASS[_OVERLAY].png`.
+- `gt6/textures/item/pincers.png` + `pincers_overlay.png` — byte-copy borrows
+  of upstream `textures/items/iconsets/PINCERS[_OVERLAY].png`.

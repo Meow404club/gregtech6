@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_hammer_steel"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "item": "gt6:soft_hammer"
+  },
+  "show_notification": true
+}

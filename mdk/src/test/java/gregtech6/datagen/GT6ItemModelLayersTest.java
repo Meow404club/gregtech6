@@ -164,13 +164,24 @@ class GT6ItemModelLayersTest {
         assertLayer(wand, 1, "gt6:item/material_sets/emerald/tool_head_builderwand_overlay", "builder_wand");
         assertLayer(wand, 2, "gt6:item/material_sets/wood/stick", "builder_wand");
         assertLayer(wand, 3, "gt6:item/material_sets/wood/stick_overlay", "builder_wand");
+
+        // soft_hammer (task p29-w5-t3-machine-face-four): the RUBBER-set toolHeadHammer
+        // pair (the upstream ANY.Rubber primary, GT_Tool_SoftHammer.getIcon :120) + the
+        // wood stick pair (the MT.WOODS.Spruce secondary, the same row) — the wand shape,
+        // all four layers material_sets borrows (zero new sprites).
+        Map<String, String> softHammer = texturesOf(itemModels, "soft_hammer");
+        assertEquals(4, layerKeys(softHammer).size(), "soft_hammer must carry exactly 4 layers");
+        assertLayer(softHammer, 0, "gt6:item/material_sets/rubber/tool_head_hammer", "soft_hammer");
+        assertLayer(softHammer, 1, "gt6:item/material_sets/rubber/tool_head_hammer_overlay", "soft_hammer");
+        assertLayer(softHammer, 2, "gt6:item/material_sets/wood/stick", "soft_hammer");
+        assertLayer(softHammer, 3, "gt6:item/material_sets/wood/stick_overlay", "soft_hammer");
     }
 
     /** The VOID-handle iconset tools: base + overlay, exactly 2 layers. */
     @Test
     void voidHandleToolsCarryExactlyTwoLayers() throws IOException {
         Path itemModels = mdkRoot().resolve(GENERATED_TREE).resolve(ITEM_MODELS);
-        for (String tool : new String[] {"crowbar", "cutter", "wrench", "bending_cylinder_small"}) {
+        for (String tool : new String[] {"crowbar", "cutter", "wrench", "bending_cylinder_small", "monkey_wrench", "magnifying_glass", "pincers"}) {
             Map<String, String> textures = texturesOf(itemModels, tool);
             assertEquals(2, layerKeys(textures).size(), tool + " must carry exactly 2 layers");
             assertLayer(textures, 0, "gt6:item/" + tool, tool);
@@ -192,7 +203,8 @@ class GT6ItemModelLayersTest {
     /** The tool ids with their own model rows (pinned by the dedicated tests above). */
     private static final Set<String> TOOL_MODEL_IDS = Set.of(
         "crowbar", "cutter", "chisel", "file", "saw", "builder_wand", "screwdriver", "hammer",
-        "sword", "knife", "butchery_knife", "club", "axe", "axe_double"); // task p29-w5-t2-blade-six — the blade rows carry their own multi-layer pins
+        "sword", "knife", "butchery_knife", "club", "axe", "axe_double", // task p29-w5-t2-blade-six — the blade rows carry their own multi-layer pins
+        "soft_hammer"); // task p29-w5-t3-machine-face-four — the 4-layer rubber-head pin
 
     /**
      * The existence-gated overlay rule, walked over EVERY generated item model that

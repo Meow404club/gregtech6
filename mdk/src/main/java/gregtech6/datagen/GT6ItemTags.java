@@ -139,6 +139,34 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/** The double-axe tool tag — #gt6:tools/axe_double (task p29-w5-t2-blade-six). */
 	public static final TagKey<Item> TOOLS_AXE_DOUBLE = gt6("tools/axe_double");
+	/**
+	 * The craftingToolSoftHammer oredient translation — #gt6:tools/soft_hammer (task
+	 * p29-w5-t3-machine-face-four ①, the TOOLS_HARD_HAMMER snake shape). Upstream key
+	 * {@code OreDictToolNames.softhammer = "craftingToolSoftHammer"} (CS.java:1891).
+	 */
+	public static final TagKey<Item> TOOLS_SOFT_HAMMER = gt6("tools/soft_hammer");
+
+	/**
+	 * The craftingToolMonkeyWrench oredient translation — #gt6:tools/monkey_wrench (task
+	 * p29-w5-t3-machine-face-four ②, the snake shape). The upstream :144 row carries the
+	 * DOUBLE oredict name (OreDictToolNames.monkeywrench + wrench) — the port folds onto
+	 * the ONE tag (the card's tag ruling: no wrench substitution in recipes).
+	 */
+	public static final TagKey<Item> TOOLS_MONKEY_WRENCH = gt6("tools/monkey_wrench");
+
+	/**
+	 * The craftingToolMagnifyingglass oredient translation — #gt6:tools/magnifying_glass
+	 * (task p29-w5-t3-machine-face-four ③, the snake shape; upstream
+	 * {@code OreDictToolNames.magnifyingglass}, CS.java TOOL family).
+	 */
+	public static final TagKey<Item> TOOLS_MAGNIFYING_GLASS = gt6("tools/magnifying_glass");
+
+	/**
+	 * The craftingToolPincers oredient translation — #gt6:tools/pincers (task
+	 * p29-w5-t3-machine-face-four ④, the snake shape; upstream
+	 * {@code OreDictToolNames.pincers = "craftingToolPincers"}, CS.java:1880).
+	 */
+	public static final TagKey<Item> TOOLS_PINCERS = gt6("tools/pincers");
 
 	/** The dustRedstone recipe-material translation — #gt6:redstone (snake ruling). */
 	public static final TagKey<Item> REDSTONE_DUSTS = gt6("redstone");
@@ -404,6 +432,10 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_CLUB).add(item(GT6Tools.CLUB.getId()));
 		tag(TOOLS_AXE).add(item(GT6Tools.AXE.getId()));
 		tag(TOOLS_AXE_DOUBLE).add(item(GT6Tools.AXE_DOUBLE.getId()));
+		tag(TOOLS_SOFT_HAMMER).add(item(GT6Tools.SOFT_HAMMER.getId())); // task p29-w5-t3-machine-face-four — the craftingToolSoftHammer snake
+		tag(TOOLS_MONKEY_WRENCH).add(item(GT6Tools.MONKEY_WRENCH.getId())); // task p29-w5-t3-machine-face-four — the single-name ruling (no wrench fold)
+		tag(TOOLS_MAGNIFYING_GLASS).add(item(GT6Tools.MAGNIFYING_GLASS.getId())); // task p29-w5-t3-machine-face-four — the craftingToolMagnifyingglass snake
+		tag(TOOLS_PINCERS).add(item(GT6Tools.PINCERS.getId())); // task p29-w5-t3-machine-face-four — the craftingToolPincers snake
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
 		// task p26-w1-press-extruder-molds — the mold-family membership face (the row0 pair,

@@ -93,6 +93,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation BENDING_CYLINDER_SMALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bending_cylinder_small");
 	/** The empty-food-can crafting row (task p25-food-can-row0 spec ③, MultiItemRandomTools.java:239). */
 	public static final ResourceLocation FOOD_CAN_EMPTY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "food_can_empty");
+	/** The machine-face four self-craft rows (task p29-w5-t3-machine-face-four) — the result-path convention, one per tool. */
+	public static final ResourceLocation SOFT_HAMMER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "soft_hammer");
+	public static final ResourceLocation MONKEY_WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "monkey_wrench");
+	public static final ResourceLocation MAGNIFYING_GLASS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "magnifying_glass");
+	public static final ResourceLocation PINCERS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pincers");
 	/** The plate-mold crafting row (task p26-w1-press-extruder-molds, MultiItemTechnological.java:247 stroke). */
 	public static final ResourceLocation SHAPE_EXTRUDER_PLATE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_extruder_plate");
 	/** The rod-mold crafting row (task p26-w1-press-extruder-molds, MultiItemTechnological.java:221 stroke). */
@@ -192,6 +197,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		wrenchBuilder().save(aConsumer, WRENCH_ID);
 		bendingCylinderSmallBuilder().save(aConsumer, BENDING_CYLINDER_SMALL_ID);
 		foodCanEmptyBuilder().save(aConsumer, FOOD_CAN_EMPTY_ID);
+		softHammerBuilder().save(aConsumer, SOFT_HAMMER_ID);
+		monkeyWrenchBuilder().save(aConsumer, MONKEY_WRENCH_ID);
+		magnifyingGlassBuilder().save(aConsumer, MAGNIFYING_GLASS_ID);
+		pincersBuilder().save(aConsumer, PINCERS_ID);
 		shapeExtruderPlateBuilder().save(aConsumer, SHAPE_EXTRUDER_PLATE_ID);
 		shapeExtruderRodBuilder().save(aConsumer, SHAPE_EXTRUDER_ROD_ID);
 		largeSteelCrucibleBuilder().save(aConsumer, LARGE_STEEL_CRUCIBLE_ID);
@@ -263,6 +272,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		wrenchBuilder().save(aOutput, WRENCH_ID);
 		bendingCylinderSmallBuilder().save(aOutput, BENDING_CYLINDER_SMALL_ID);
 		foodCanEmptyBuilder().save(aOutput, FOOD_CAN_EMPTY_ID);
+		softHammerBuilder().save(aOutput, SOFT_HAMMER_ID);
+		monkeyWrenchBuilder().save(aOutput, MONKEY_WRENCH_ID);
+		magnifyingGlassBuilder().save(aOutput, MAGNIFYING_GLASS_ID);
+		pincersBuilder().save(aOutput, PINCERS_ID);
 		shapeExtruderPlateBuilder().save(aOutput, SHAPE_EXTRUDER_PLATE_ID);
 		shapeExtruderRodBuilder().save(aOutput, SHAPE_EXTRUDER_ROD_ID);
 		largeSteelCrucibleBuilder().save(aOutput, LARGE_STEEL_CRUCIBLE_ID);
@@ -617,6 +630,82 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 				.define('I', Tags.Items.INGOTS)
 				.unlockedBy("has_ingot", has(Tags.Items.INGOTS));
+	}
+
+	/**
+	 * The soft-hammer self-craft row (task p29-w5-t3-machine-face-four spec ①) — the
+	 * upstream AdvancedCraftingTool(SOFTHAMMER, toolHeadHammer, …) head+handle row
+	 * (Loader_Tools.java:334) flattened to ONE steel-tier row: 'H' =
+	 * {@code OP.toolHeadHammer.dat(MT.Steel)} → the GTMaterialItems tool_head_hammer_steel
+	 * item (the upstream toolHeadHammer head, :334 verbatim), 'S' = the vanilla stick (the
+	 * handle, the hammerFromStoneBuilder 'S' precedent). The in-grid tools pay one point
+	 * and ride along (the container-item channel). Result 1x {@code gt6:soft_hammer}.
+	 */
+	private ShapedRecipeBuilder softHammerBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.SOFT_HAMMER.get())
+				.pattern("H")
+				.pattern("S")
+				.define('H', GTMaterialItems.get(gregapi.data.OP.toolHeadHammer, MT.Steel).get())
+				.define('S', Items.STICK)
+				.unlockedBy("has_tool_head_hammer", has(GTMaterialItems.get(gregapi.data.OP.toolHeadHammer, MT.Steel).get()));
+	}
+
+	/**
+	 * The monkey-wrench self-craft row (task p29-w5-t3-machine-face-four spec ②) — the
+	 * wrenchBuilder "PhP"/" P "/" P " grid over the monkey-wrench result (the upstream
+	 * monkey wrench IS the wrench-family variant, GT_Tool_MonkeyWrench extends
+	 * GT_Tool_Wrench, machine/GT_Tool_MonkeyWrench.java:33; the :311 OreProcessing_Tool
+	 * row folds — the per-material loop flattens onto the steel-plate tag, the wrench
+	 * builder precedent). Result 1x {@code gt6:monkey_wrench} — ingredient tag
+	 * {@code #gt6:tools/monkey_wrench} single-name (no wrench fold, the card ruling).
+	 */
+	private ShapedRecipeBuilder monkeyWrenchBuilder() {
+		TagKey<Item> tSteelPlates = gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "steel");
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.MONKEY_WRENCH.get())
+				.pattern("PhP")
+				.pattern(" P ")
+				.pattern(" P ")
+				.define('P', tSteelPlates)
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.unlockedBy("has_steel_plate", has(tSteelPlates));
+	}
+
+	/**
+	 * The magnifying-glass self-craft row (task p29-w5-t3-machine-face-four spec ③) — the
+	 * upstream tagline "Crafted with a Stick and a Lens" (:148) over the
+	 * AdvancedCraftingTool(MAGNIFYING_GLASS, lens, MT.Glass) row (Loader_Tools.java:332):
+	 * 'L' = {@code OP.lens.dat(MT.Glass)} → the GTMaterialItems lens_glass item (the
+	 * GT6RecipesShCL :240 lens×glass pair precedent — the lens family IS registered), 'S' =
+	 * the vanilla stick. Result 1x {@code gt6:magnifying_glass}.
+	 */
+	private ShapedRecipeBuilder magnifyingGlassBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.MAGNIFYING_GLASS.get())
+				.pattern("L")
+				.pattern("S")
+				.define('L', GTMaterialItems.get(gregapi.data.OP.lens, MT.Glass).get())
+				.define('S', Items.STICK)
+				.unlockedBy("has_lens", has(GTMaterialItems.get(gregapi.data.OP.lens, MT.Glass).get()));
+	}
+
+	/**
+	 * The pincers self-craft row (task p29-w5-t3-machine-face-four spec ④) — the upstream
+	 * {"XhX"," T ","SdS"} row (Loader_Tools.java:316, plateCurved prefix) with the
+	 * material scale {@code U*2 + screw + 2*stick} (the :150 registration amount):
+	 * 'X' = {@code OP.plateCurved.dat(MT.Steel)} (the GTMaterialItems curved plate, the
+	 * hopper builder precedent), 'h' = {@code #gt6:tools/hard_hammer}, 'd' =
+	 * {@code OP.screw.dat(MT.Steel)}, 'S' = the vanilla stick. Result 1x
+	 * {@code gt6:pincers}.
+	 */
+	private ShapedRecipeBuilder pincersBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.PINCERS.get())
+				.pattern("XhX")
+				.pattern(" d ")
+				.pattern("S S")
+				.define('X', GTMaterialItems.get(gregapi.data.OP.plateCurved, MT.Steel).get())
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.define('d', GTMaterialItems.get(gregapi.data.OP.screw, MT.Steel).get())
+				.define('S', Items.STICK)
+				.unlockedBy("has_steel_plate_curved", has(GTMaterialItems.get(gregapi.data.OP.plateCurved, MT.Steel).get()));
 	}
 
 	/**

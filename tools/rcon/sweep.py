@@ -351,6 +351,15 @@ SESSION_GROUPS = (
     ("p29_w5_t2_blade_six_tree", "p29_w5_t2_blade_six_grass", "p29_w5_t2_blade_six_rock",
      "p29_w5_t2_blade_six_vine", "p29_w5_t2_blade_six_faces"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
+    # P29 W5 t3 (p29-w5-t3-machine-face-four): the machine-face-four chains — one fresh
+    # z=292 band, per-tool x-disjoint columns (softhammer x384..388 / magnglass x392..396 /
+    # pincers x400..404, margins grazing at x390/x398 — the grass|hammer same-cluster form),
+    # admission mirroring the p29 W2 cluster form (bbox-registered, no fresh_boot / mutates
+    # member — the /gt6machineface stand-in arms need no fakesource; the vanilla rigs are
+    # band-local setblocks). --group p29_w5_t3_machine_face matches through the chains'
+    # embedded name prefix.
+    ("p29_w5_t3_machine_face_softhammer", "p29_w5_t3_machine_face_magnglass",
+     "p29_w5_t3_machine_face_pincers"),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

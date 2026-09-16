@@ -39,6 +39,10 @@ import gregtech6.items.tools.GTSawItem;
 import gregtech6.items.tools.GTChiselItem;
 import gregtech6.items.tools.GTCrowbarItem;
 import gregtech6.items.tools.GTCutterItem;
+import gregtech6.items.tools.GTMagnifyingGlassItem;
+import gregtech6.items.tools.GTMonkeyWrenchItem;
+import gregtech6.items.tools.GTPincersItem;
+import gregtech6.items.tools.GTSoftHammerItem;
 import gregtech6.items.tools.GTWrenchItem;
 
 /**
@@ -283,6 +287,57 @@ public final class GT6Tools {
 			() -> new GTAxeDoubleItem(new Item.Properties().durability(GTAxeDoubleItem.DURABILITY_POINTS)));
 
 	/**
+	 * The formal soft hammer — item id {@code gt6:soft_hammer} (task p29-w5-t3-machine-face-four
+	 * spec ①). Single steel tier, durability 512 (the family value; the upstream 8.0x
+	 * durability multiplier is the {@link GTSoftHammerItem#MAX_DURABILITY_MULTIPLIER}
+	 * declaration, GT_Tool_SoftHammer.java:79-81 — the ladder is the same pool cut). Upstream
+	 * display name "Soft Hammer" (the :125 registration row); the vanilla-ish rotation face
+	 * (the :125 tagline) lives on the item — see
+	 * {@link GTSoftHammerItem#rotatedForm}; the crafting INGREDIENT face is the
+	 * {@code #gt6:tools/soft_hammer} item tag (the craftingToolSoftHammer snake, CS.java:1891).
+	 */
+	public static final RegistryObject<Item> SOFT_HAMMER = ITEMS.register("soft_hammer",
+			() -> new GTSoftHammerItem(new Item.Properties().durability(GTSoftHammerItem.DURABILITY_POINTS)));
+
+	/**
+	 * The formal monkey wrench — item id {@code gt6:monkey_wrench} (task
+	 * p29-w5-t3-machine-face-four spec ②, the {@link GTWrenchItem} subclass). Single steel
+	 * tier, durability 512 (the family value; upstream scales per material via {@code 4*U},
+	 * Loader_Tools.java:144 — the same pool cut). Upstream display name "Monkey Wrench" (the
+	 * same :144 registration row); the crafting INGREDIENT face is the
+	 * {@code #gt6:tools/monkey_wrench} item tag (the craftingToolMonkeyWrench snake) — the
+	 * upstream wrench double-name folds to the single tag, the card's tag ruling. RED LINE:
+	 * the machine-dismantle face stays the machine-interaction pool, zero useOn.
+	 */
+	public static final RegistryObject<Item> MONKEY_WRENCH = ITEMS.register("monkey_wrench",
+			() -> new GTMonkeyWrenchItem(new Item.Properties().durability(GTMonkeyWrenchItem.DURABILITY_POINTS)));
+
+	/**
+	 * The formal magnifying glass — item id {@code gt6:magnifying_glass} (task
+	 * p29-w5-t3-machine-face-four spec ③). Single steel tier, durability 512 (the family
+	 * value; upstream scales per material via the lens amount, Loader_Tools.java:148 — the
+	 * same pool cut). Upstream display name "Magnifying Glass" (the same :148 registration
+	 * row); the pure right-click check face rides {@link GTMagnifyingGlassItem#useOn}
+	 * (AHA/HMM, zero change); the crafting INGREDIENT face is the
+	 * {@code #gt6:tools/magnifying_glass} item tag (the craftingToolMagnifyingglass snake).
+	 */
+	public static final RegistryObject<Item> MAGNIFYING_GLASS = ITEMS.register("magnifying_glass",
+			() -> new GTMagnifyingGlassItem(new Item.Properties().durability(GTMagnifyingGlassItem.DURABILITY_POINTS)));
+
+	/**
+	 * The formal pincers — item id {@code gt6:pincers} (task p29-w5-t3-machine-face-four spec
+	 * ④). Single steel tier, durability 512 (the family value; upstream scales per material
+	 * via {@code U*2+screw+2*stick}, Loader_Tools.java:150 — the same pool cut). Upstream
+	 * display name "Pincers" (the same :150 registration row); the dragon-egg collect face
+	 * (the Material.dragonEgg isMinableBlock arm + canCollect, GT_Tool_Pincers.java:105-110)
+	 * rides {@link GTPincersItem#useOn} — sneak right-click pops the egg; the crafting
+	 * INGREDIENT face is the {@code #gt6:tools/pincers} item tag (the craftingToolPincers
+	 * snake, CS.java:1880). RED LINE: the machine wire-pulling face stays the pool.
+	 */
+	public static final RegistryObject<Item> PINCERS = ITEMS.register("pincers",
+			() -> new GTPincersItem(new Item.Properties().durability(GTPincersItem.DURABILITY_POINTS)));
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -295,11 +350,15 @@ public final class GT6Tools {
 	 * appends rows 7/8 (the hammer, the wrench); task p25-food-can-row0 appends row 9
 	 * (the small bending cylinder); task p29-w5-t1-dig-six appends rows 10-15 (the six
 	 * dig tools — pickaxe, pickaxe_gem, pickaxe_construction, shovel, spade,
-	 * universal_spade).
+	 * universal_spade); task p29-w5-t2-blade-six appends rows 17-22 (the six blade
+	 * tools — sword, knife, butchery_knife, club, axe, axe_double); task
+	 * p29-w5-t3-machine-face-four appends rows 23-26 (the machine-face four: the soft
+	 * hammer, the monkey wrench, the magnifying glass, the pincers).
 	 */
 	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL,
 			PICKAXE, PICKAXE_GEM, PICKAXE_CONSTRUCTION, SHOVEL, SPADE, UNIVERSAL_SPADE,
-			SWORD, KNIFE, BUTCHERY_KNIFE, CLUB, AXE, AXE_DOUBLE);
+			SWORD, KNIFE, BUTCHERY_KNIFE, CLUB, AXE, AXE_DOUBLE,
+			SOFT_HAMMER, MONKEY_WRENCH, MAGNIFYING_GLASS, PINCERS);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -392,6 +451,15 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.AXE.get()), GTAxeItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.AXE_DOUBLE.get()), GTAxeDoubleItem.DURABILITY_POINTS);
+			// task p29-w5-t3-machine-face-four — the machine-face four join the registration smoke log
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.SOFT_HAMMER.get()), GTSoftHammerItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.MONKEY_WRENCH.get()), GTMonkeyWrenchItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.MAGNIFYING_GLASS.get()), GTMagnifyingGlassItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.PINCERS.get()), GTPincersItem.DURABILITY_POINTS);
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

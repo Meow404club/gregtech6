@@ -67,10 +67,10 @@ public class BladeSixTest {
 
 	// ------------------------------------------------------------------ TAB_TABLE parity
 
-	/** The table holds exactly 22 rows — rows 16..21 are the six blade tools in display order. */
+	/** The table holds exactly 26 rows — rows 16..21 are the six blade tools in display order (rows 22..25 are the p29-w5-t3-machine-face-four tail append). */
 	@Test
 	public void tabTableIsExactlyTheTwentyTwoToolRows() {
-		assertEquals(22, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 16 prior rows + the six blade tools");
+		assertEquals(26, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 16 prior rows + the six blade tools + the machine-face four");
 		assertSame(GT6Tools.SWORD, GT6Tools.TAB_TABLE.get(16), "row 16 is the sword");
 		assertSame(GT6Tools.KNIFE, GT6Tools.TAB_TABLE.get(17), "row 17 is the knife");
 		assertSame(GT6Tools.BUTCHERY_KNIFE, GT6Tools.TAB_TABLE.get(18), "row 18 is the butchery knife");

@@ -201,6 +201,36 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/metallic/tool_head_axe_double_overlay"))
             .texture("layer2", modLoc("item/material_sets/wood/stick"))
             .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        // the formal soft hammer item (task p29-w5-t3-machine-face-four): FOUR layers, the
+        // builder-wand row shape — head = the RUBBER-set toolHeadHammer pair (the upstream
+        // primary ANY.Rubber default, GT_Tool_SoftHammer.getIcon :120 — SET_RUBBER, not the
+        // steel head), handle = the wood stick pair (the upstream secondary
+        // MT.WOODS.Spruce, the same :120 row; the builder-wand borrow posture — zero new
+        // sprite files, all four layers are existing material_sets borrows).
+        withExistingParent("soft_hammer", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/rubber/tool_head_hammer"))
+            .texture("layer1", modLoc("item/material_sets/rubber/tool_head_hammer_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        // the formal monkey wrench item (task p29-w5-t3-machine-face-four): the wrench row
+        // shape — layer0 = the byte-identical MONKEYWRENCH.png iconset borrow + layer1 =
+        // the MONKEYWRENCH_OVERLAY.png pass borrow (assets/README.md attribution).
+        withExistingParent("monkey_wrench", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/monkey_wrench"))
+            .texture("layer1", modLoc("item/monkey_wrench_overlay"));
+        // the formal magnifying glass item (task p29-w5-t3-machine-face-four): the wrench
+        // row shape — layer0 = the byte-identical MAGNIFYING_GLASS.png iconset borrow +
+        // layer1 = the MAGNIFYING_GLASS_OVERLAY.png pass borrow (assets/README.md
+        // attribution; the VOID handle = the two-layer form).
+        withExistingParent("magnifying_glass", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/magnifying_glass"))
+            .texture("layer1", modLoc("item/magnifying_glass_overlay"));
+        // the formal pincers item (task p29-w5-t3-machine-face-four): the wrench row
+        // shape — layer0 = the byte-identical PINCERS.png iconset borrow + layer1 = the
+        // PINCERS_OVERLAY.png pass borrow (assets/README.md attribution).
+        withExistingParent("pincers", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/pincers"))
+            .texture("layer1", modLoc("item/pincers_overlay"));
         // the food-can row0 subset (task p25-food-can-row0) — 8 item/generated models over
         // the byte-identical upstream icon borrows (gt.multiitem.randomtools/998 for the
         // empty can, gt.multiitem.cans/11-16 for the rotten family, :86 for the cookies
