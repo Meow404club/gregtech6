@@ -112,6 +112,12 @@ public class GT6ZhCn extends LanguageProvider {
 		addArmorUnits();        // task p29-w5-t8-armor-24
 		addTreeUnits();         // task p30-w6-t1-trees-nine — the 27 tree-family rows (hand, the tsv direct band)
 		addSurfaceUnits();      // task p30-w6-rocks-sticks
+		// task p30-ore-1-mech — 模板钉说明，本卡零键（zh ratchet 0）：矿域注册面
+		//（GT6OreBlocks，26 族 x 74 form-rows x M=53）不加任何 zh 键——每个矿块物品
+		// 走既有 gt6.tagprefix.<prefix_snake> 模板组合（addPrefixTemplates 覆盖全 OP 前缀，
+		// normal/broken 同族前缀、small 走 OP.oreSmall）。剩余面归波次卡③（datagen）：
+		// 26x3 逐族模板键（可选）+ 唯一创造栏页签标题 itemGroup.gt6.ore_vanillastone
+		//（GT6OreBlocks.TAB_TITLE_KEY，"石矿"）。
 	}
 
 	/**

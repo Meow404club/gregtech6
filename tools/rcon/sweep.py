@@ -416,6 +416,13 @@ SESSION_GROUPS = (
     # execute if entity; the meteorite arm rides 40 kill-less cycles for the
     # 3:1 rockGt:oreRaw lottery). No fresh_boot / mutates member.
     ("p29_w6_rocks_sticks",),
+    # P30 W6 ore registration card 1 (p30-ore-1-mech): the registration-mechanism face —
+    # a ZERO-COMMAND chain whose content IS the fresh boot (the sweep ERROR scan over the
+    # boot slice = the acceptance's "块+item+tab 三行零 ERROR"; the registration lines
+    # "GT6 registered 3922 ore blocks / 3922 ore block items / 1 ore creative tab" land
+    # in that slice). No sites (no world placement — the ore world face is card 5), no
+    # mutates. --group p29_w6_ore_mech matches the module stem.
+    ("p29_w6_ore_mech",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
