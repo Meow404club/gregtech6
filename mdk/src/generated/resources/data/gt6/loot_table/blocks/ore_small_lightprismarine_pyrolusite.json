@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "gt6:rock_gt_pyrolusite"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "gt6:blocks/ore_small_lightprismarine_pyrolusite"
+}
