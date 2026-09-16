@@ -112,38 +112,13 @@ public class GT6ZhCn extends LanguageProvider {
 		addArmorUnits();        // task p29-w5-t8-armor-24
 		addTreeUnits();         // task p30-w6-t1-trees-nine — the 27 tree-family rows (hand, the tsv direct band)
 		addSurfaceUnits();      // task p30-w6-rocks-sticks
+		// task p30-ore-1-mech — 模板钉说明，本卡零键（zh ratchet 0）：矿域注册面
+		//（GT6OreBlocks，26 族 x 74 form-rows x M=618）不加任何 zh 键——每个矿块物品
+		// 走既有 gt6.tagprefix.<prefix_snake> 模板组合（addPrefixTemplates 覆盖全 OP 前缀，
+		// normal/broken 同族前缀、small 走 OP.oreSmall）。剩余面归波次卡③（datagen）：
+		// 26x3 逐族模板键（可选）+ 唯一创造栏页签标题 itemGroup.gt6.ore_vanillastone
+		//（GT6OreBlocks.TAB_TITLE_KEY，"石矿"）。
 	}
-
-	/**
-	 * The Hazmat armor zh faces (task p29-w5-t8-armor-24, the addAnvilUnits shape): the
-	 * 24 display names + the 24 per-piece tooltip keys, all riding the reference table's
-	 * hand layer — the values are the DUMP faces verbatim (tmp/gregtech.lang:927-974,
-	 * the gt.armor.hazmat.* + *.tooltip_main families keyed onto the modern snake ids).
-	 * Hand rows (the reference dump keys are the 1.7 unlocalized forms, lifted onto the
-	 * direct hand layer — the TSV regen and this walk land in the SAME commit).
-	 */
-	private void addArmorUnits() {
-		for (gregtech6.items.armor.GT6ArmorMaterials.SuitRow tSuit : gregtech6.items.armor.GT6ArmorMaterials.SUITS) {
-			for (int i = 0; i < gregtech6.items.armor.GT6ArmorMaterials.PIECE_WORDS.length; i++) {
-				addDirect("item.gt6." + tSuit.pieceId(i));
-				addDirect("item.gt6." + tSuit.pieceId(i) + ".tooltip");
-			}
-		}
-	}
-
-	/**
-	 * The surface deco family zh faces (task p30-w6-rocks-sticks): the rock template
-	 * (hand composition "%s地表岩" over the dump's generic MTE name 石头 :13578 — the
-	 * per-material composed form, the addStoneVariantUnits canon) and the stick (the
-	 * dump :13577 木棍 verbatim). Hand rows — the reference dump keys are the meta-keyed
-	 * 1.7 forms, lifted onto the direct hand layer (the addAnvilUnits posture; the
-	 * TSV rows and this walk land in the SAME commit, the noHandRowIsOrphaned pin).
-	 */
-	private void addSurfaceUnits() {
-		addDirect("gt6.surface.rock");
-		addDirect("block.gt6.surface_stick");
-	}
-
 	/**
 	 * The anvil family zh faces (task p28-c-anvil) — the upstream zh dump rows VERBATIM
 	 * (tmp/gregtech.lang: "石头砧" = meta 32025 Stone Anvil, "黑石砧" = meta 32095
@@ -155,7 +130,6 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.stone_anvil");
 		addDirect("block.gt6.blackstone_anvil");
 	}
-
 	/**
 	 * The pocket multitool family zh faces (task p29-w5-t7-pocket-eight, 15 hand rows):
 	 * NO dump face exists (the upstream 1.7.10 lang carries zero pocket rows — the
@@ -183,7 +157,6 @@ public class GT6ZhCn extends LanguageProvider {
 		add("tooltip.gt6.pocket.scissors", "拿着它的时候别到处乱跑！");
 		add("tooltip.gt6.pocket.chisel", "服务器延迟高时请务必小心使用！");
 	}
-
 	/**
 	 * The kitchen family zh faces (task p26-kitchen-pot-bowl) — the upstream zh dump rows
 	 * VERBATIM (tmp/gregtech.lang: "木质浸洗盆" :13542 = meta 32721 Wooden Bathing Pot,
@@ -201,7 +174,6 @@ public class GT6ZhCn extends LanguageProvider {
 		add("block.gt6.mixing_bowl", "搅拌盆");
 		add("item.gt6.clay_bowl", "粘土碗");
 	}
-
 	/**
 	 * The crucible Jade face zh units (task p28-crucible-jade-face, 4 hand rows — the final
 	 * key set after the TFRU 33c22beb ruling): no dump face exists (upstream 1.7.10 has zero
@@ -217,7 +189,6 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.jade.crucible.empty");
 		addDirect("gt6.jade.crucible.more");
 	}
-
 	/**
 	 * The C-Foam spray family zh faces (task p25-c-foam-pipe-spray, the addGrassUnits
 	 * shape): the 32 item display names (16 C-Foam + 16 Advanced owned) + the family tab +
@@ -236,7 +207,6 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.item.foamspray.GT6FoamSprayItem.FOAM_TOOLTIP_KEY);
 		addDirect(gregtech6.item.foamspray.GT6FoamSprayItem.OWNED_TOOLTIP_KEY);
 	}
-
 	/**
 	 * The grass family zh faces (task p24-grass-block, the GT6EnUs.addGrassBlocks mirror):
 	 * the 6 variant display names (all "草方块" — the en "Grass" parity ruling, no colour
@@ -252,7 +222,6 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.block.GTGrassBlock.TOOLTIP_KEY);
 		addDirect(gregtech6.block.GTGrassBlock.TOOLTIP_SPRAY_KEY);
 	}
-
 	/**
 	 * The tree family zh faces (task p30-w6-t1-trees-nine, the GT6EnUs.addTreeBlocks
 	 * mirror): the 27 block display names, all hand rows (no upstream zh dump face exists
@@ -267,7 +236,6 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"));
 		}
 	}
-
 	/**
 	 * The 442-key zh backfill (task p23-i18n-zh-442-backfill), non-tagprefix face: the 76
 	 * atomic keys whose en counterpart is a whole-string {@code add} in {@link GT6EnUs} —
@@ -500,7 +468,6 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("itemGroup.gt6.billet");
 		addDirect("itemGroup.gt6.spray_cans");
 	}
-
 	/**
 	 * The B2 stone-variant composed-display units (task p20-i18n-compose-rows): the 16
 	 * {@code gt6.stone.variant.<snake>} position-param templates the
@@ -513,7 +480,6 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect(tVariant.key());
 		}
 	}
-
 	/**
 	 * The static storage batch display rows (task p26-storage-static-batch): one hand row
 	 * per GT6StaticStorages row (the kind faces 柜/抽屉/保险箱/书架/瓶箱; the metal words
@@ -524,7 +490,6 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("block.gt6." + tRow.path());
 		}
 	}
-
 	/**
 	 * The B2 rows composed-display units (task p20-i18n-compose-rows): every family template
 	 * + small unit the rows composes consume, walked from the SAME row tables and key
@@ -536,7 +501,6 @@ public class GT6ZhCn extends LanguageProvider {
 		// a word shared by several families is ONE unit key — dedup like the en walk's
 		// addRowMatUnit (duplicate add would be a hard failure on the recording face)
 		java.util.Set<String> tEmitted = new java.util.HashSet<>();
-		
 		addDirect(gregtech6.registry.GT6Kinetics.AXLE_DISPLAY_KEY);
 		for (int tSize = 0; tSize < gregtech6.registry.GT6Kinetics.AXLE_SIZE_NAMES.length; tSize++) {
 			addRowUnit(tEmitted, gregtech6.registry.GT6Kinetics.axleSizeUnitKey(tSize));
@@ -865,12 +829,10 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.gearbox");
 		addDirect("block.gt6.transformer_rotation");
 	}
-
 	/** Dedup across the row-family walks (the en addRowMatUnit mirror). */
 	private void addRowUnit(java.util.Set<String> aEmitted, String aKey) {
 		if (aEmitted.add(aKey)) addDirect(aKey);
 	}
-
 	/**
 	 * The p26 mold/crucible/faucet chain zh faces (task p27-lang-fix-batch2, the ledger §6
 	 * zh gap: the 70 keys the en chain — {@code GT6CrucibleDatagen.Lang} + the
@@ -913,7 +875,6 @@ public class GT6ZhCn extends LanguageProvider {
 		}
 		addDirect("item.gt6.faucet_ceramic_raw");
 	}
-
 	/**
 	 * The B1 wire-domain composed-display units (task p20-i18n-compose-wires): the five
 	 * position-param templates the {@code GTWireBlock.displayNameOf} compose fills
@@ -937,7 +898,6 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.cover.robot_arm.display");
 		addDirect("block.gt6.wire_laser");
 	}
-
 	/** The item + block prefix tab titles and the special MTE-category tabs (mirror of GT6EnUs.addTabTitles/addBlockTabTitles + the tab literals). */
 	private void addTabTitles() {
 		for (OreDictPrefix tPrefix : GTMaterialItems.tabPrefixes()) {
@@ -962,7 +922,6 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GT6Tools.TAB_TITLE_KEY);
 		addDirect("itemGroup.gt6.food_cans"); // task p25-food-can-row0 — dump itemgroup gt.multiitem.cans 格雷科技: 罐头 (MultiItemCans.java:41 category label)
 	}
-
 	/** Only the hand-translated in-use prefix templates (mirror of GT6EnUs.addPrefixTemplates over OP.VALUES). */
 	private void addPrefixTemplates() {
 		Set<String> tSeen = new HashSet<>();
@@ -972,7 +931,6 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect(tKey);
 		}
 	}
-
 	/**
 	 * The material small units: the shared {@link GT6EnUs#materialWalkEmittedKeys} seam (alias
 	 * merge, first mID wins) joined against the dump family — the seam's Map form carries the
@@ -983,7 +941,6 @@ public class GT6ZhCn extends LanguageProvider {
 		GT6EnUs.materialWalkEmittedKeys().forEach((tKey, tMaterial) ->
 			addFromFamily("material", tMaterial.mNameInternal, tKey));
 	}
-
 	/**
 	 * The atomic misc units — every key here mirrors a GT6EnUs literal/constant and is part of
 	 * NO composed domain (the B-wave cards shrink those; see the class javadoc). The cover
@@ -1106,19 +1063,16 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("fluid.gt6.iron_molten");
 		addDirect("fluid.gt6.natural_gas");
 	}
-
 	/** Family join: derive nothing here beyond the caller's key — look the dump suffix up, skip absent/review rows. */
 	private void addFromFamily(String aKind, String aSource, String aKey) {
 		RefRow tRow = reference.get(aKind) == null ? null : reference.get(aKind).get(aSource);
 		if (tRow != null && !tRow.skipped()) add(aKey, tRow.value());
 	}
-
 	/** Hand-row join: the key IS the final gt6 lang key (status=hand direct rows); skip absent/review rows. */
 	private void addDirect(String aKey) {
 		RefRow tRow = reference.get("direct") == null ? null : reference.get("direct").get(aKey);
 		if (tRow != null && !tRow.skipped()) add(aKey, tRow.value());
 	}
-
 	/**
 	 * Parses {@link #REFERENCE_RESOURCE}: {@code #}-comment and blank lines skipped, data rows
 	 * are {@code kind<TAB>source<TAB>value<TAB>status}. Package-private static so the parity
@@ -1187,7 +1141,6 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.battery_box_large_ev");
 		addDirect("block.gt6.battery_box_large_iv");
     }
-
 	static Map<String, Map<String, RefRow>> loadReference() {
 		Map<String, Map<String, RefRow>> rTable = new HashMap<>();
 		InputStream tStream = GT6ZhCn.class.getResourceAsStream(REFERENCE_RESOURCE);
@@ -1206,3 +1159,33 @@ public class GT6ZhCn extends LanguageProvider {
 		return rTable;
 	}
 }
+	}
+
+	/**
+	 * The Hazmat armor zh faces (task p29-w5-t8-armor-24, the addAnvilUnits shape): the
+	 * 24 display names + the 24 per-piece tooltip keys, all riding the reference table's
+	 * hand layer — the values are the DUMP faces verbatim (tmp/gregtech.lang:927-974,
+	 * the gt.armor.hazmat.* + *.tooltip_main families keyed onto the modern snake ids).
+	 * Hand rows (the reference dump keys are the 1.7 unlocalized forms, lifted onto the
+	 * direct hand layer — the TSV regen and this walk land in the SAME commit).
+	 */
+	private void addArmorUnits() {
+		for (gregtech6.items.armor.GT6ArmorMaterials.SuitRow tSuit : gregtech6.items.armor.GT6ArmorMaterials.SUITS) {
+			for (int i = 0; i < gregtech6.items.armor.GT6ArmorMaterials.PIECE_WORDS.length; i++) {
+				addDirect("item.gt6." + tSuit.pieceId(i));
+				addDirect("item.gt6." + tSuit.pieceId(i) + ".tooltip");
+			}
+		}
+	}
+
+	/**
+	 * The surface deco family zh faces (task p30-w6-rocks-sticks): the rock template
+	 * (hand composition "%s地表岩" over the dump's generic MTE name 石头 :13578 — the
+	 * per-material composed form, the addStoneVariantUnits canon) and the stick (the
+	 * dump :13577 木棍 verbatim). Hand rows — the reference dump keys are the meta-keyed
+	 * 1.7 forms, lifted onto the direct hand layer (the addAnvilUnits posture; the
+	 * TSV rows and this walk land in the SAME commit, the noHandRowIsOrphaned pin).
+	 */
+	private void addSurfaceUnits() {
+		addDirect("gt6.surface.rock");
+		addDirect("block.gt6.surface_stick");
