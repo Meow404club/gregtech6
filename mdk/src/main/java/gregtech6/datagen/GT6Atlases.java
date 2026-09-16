@@ -87,5 +87,14 @@ public final class GT6Atlases extends SpriteSourceProvider {
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.FRESH_OWNED_SPRITE, Optional.empty()));
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.HARDENED_SPRITE, Optional.empty()));
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.HARDENED_OWNED_SPRITE, Optional.empty()));
+        // task p30-ore-3-datagen — the ore SET overlay sprites: the GTOreBakedModel looks
+        // them up at bake, but they ride NO model JSON (the shared-placeholder composition),
+        // so the atlas source IS the consumer-side stitching wiring (this class's javadoc).
+        // One (ore, ore_small) pair per distinct SET across the material axis; the PNGs are
+        // card ②'s borrow face — until that card lands the sources resolve to missingno,
+        // the declared ADR ④ intermediate state.
+        for (ResourceLocation tOverlay : gregtech6.client.ore.GTOreBakedModel.overlaySprites()) {
+            atlas(BLOCKS_ATLAS).addSource(new SingleFile(tOverlay, Optional.empty()));
+        }
     }
 }
