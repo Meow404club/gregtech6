@@ -53,6 +53,9 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 	 * its own HashMap order (the declared forge-gated canonical-only face). A
 	 * renamed/reordered entry drifts the twin and the gate flags it — re-derive the
 	 * order from the node output after ANY name change.
+	 * drifts the twin and the gate flags it. MERGE NOTE (S17): when a sibling tool card
+	 * rebases over this file, take the LATER card's list WHOLESALE and rerun runData —
+	 * the order is re-observed, never hand-merged.
 	 */
 	static final List<String> MODIFIER_NAMES = List.of(
 			"construction_ender_chest",

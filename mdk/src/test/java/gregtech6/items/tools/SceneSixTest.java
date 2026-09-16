@@ -76,13 +76,13 @@ public class SceneSixTest {
 	/** The table holds exactly 22 rows — rows 16..21 are the six scene tools in display order. */
 	@Test
 	public void tabTableIsExactlyTheTwentyTwoToolRows() {
-		assertEquals(22, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 16 prior rows + the six scene tools");
-		assertSame(GT6Tools.SCISSORS, GT6Tools.TAB_TABLE.get(16), "row 16 is the scissors");
-		assertSame(GT6Tools.SCOOP, GT6Tools.TAB_TABLE.get(17), "row 17 is the scoop");
-		assertSame(GT6Tools.PLUNGER, GT6Tools.TAB_TABLE.get(18), "row 18 is the plunger");
-		assertSame(GT6Tools.FLINT_AND_TINDER, GT6Tools.TAB_TABLE.get(19), "row 19 is the flint and tinder");
-		assertSame(GT6Tools.ROLLING_PIN, GT6Tools.TAB_TABLE.get(20), "row 20 is the rolling pin");
-		assertSame(GT6Tools.BENDING_CYLINDER, GT6Tools.TAB_TABLE.get(21), "row 21 is the large bending cylinder");
+		assertEquals(37, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 31 prior rows + the six scene tools");
+		assertSame(GT6Tools.SCISSORS, GT6Tools.TAB_TABLE.get(31), "row 31 is the scissors");
+		assertSame(GT6Tools.SCOOP, GT6Tools.TAB_TABLE.get(32), "row 32 is the scoop");
+		assertSame(GT6Tools.PLUNGER, GT6Tools.TAB_TABLE.get(33), "row 33 is the plunger");
+		assertSame(GT6Tools.FLINT_AND_TINDER, GT6Tools.TAB_TABLE.get(34), "row 34 is the flint and tinder");
+		assertSame(GT6Tools.ROLLING_PIN, GT6Tools.TAB_TABLE.get(35), "row 35 is the rolling pin");
+		assertSame(GT6Tools.BENDING_CYLINDER, GT6Tools.TAB_TABLE.get(36), "row 36 is the large bending cylinder");
 		assertEquals(rl("scissors"), GT6Tools.SCISSORS.getId());
 		assertEquals(rl("scoop"), GT6Tools.SCOOP.getId());
 		assertEquals(rl("plunger"), GT6Tools.PLUNGER.getId());
