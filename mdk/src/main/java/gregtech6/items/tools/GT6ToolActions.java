@@ -210,6 +210,40 @@ public final class GT6ToolActions {
 	 */
 	public static final String WRENCH_ID = "wrench";
 
+	/**
+	 * The pickaxe stack-classification action ("gt6_pickaxe" — task p29-w5-t1-dig-six,
+	 * the CROWBAR entry shape). Upstream rides the {@code TOOL_pickaxe} behaviour string
+	 * (CS.java:1035, the Loader_Tools.java:147/:151 rows {@code TOOL_pickaxe}); the port
+	 * flattens the classification onto this Forge {@link ToolAction}. Consumers:
+	 * {@link GTPickaxeItem} and the Gem/Construction subclasses (one action — the two
+	 * variants differ in durability/speed, not in classification).
+	 */
+	public static final ToolAction PICKAXE = ToolAction.get("gt6_pickaxe");
+
+	/**
+	 * The shovel stack-classification action ("gt6_shovel" — task p29-w5-t1-dig-six, the
+	 * PICKAXE entry shape; upstream {@code TOOL_shovel} CS.java:1045).
+	 */
+	public static final ToolAction SHOVEL = ToolAction.get("gt6_shovel");
+
+	/**
+	 * The spade stack-classification action ("gt6_spade" — task p29-w5-t1-dig-six, the
+	 * PICKAXE entry shape; upstream {@code TOOL_shovel} on the spade behaviour row
+	 * GT_Tool_Spade.java:112 — the spade keeps its OWN action here so the flat port can
+	 * tell the harvest-spade from the plain shovel while both classify
+	 * {@code ToolActions.SHOVEL_DIG} for the vanilla face).
+	 */
+	public static final ToolAction SPADE = ToolAction.get("gt6_spade");
+
+	/**
+	 * The universal-spade stack-classification action ("gt6_universal_spade" — task
+	 * p29-w5-t1-dig-six, the PICKAXE entry shape; upstream GT_Tool_UniversalSpade.java:87
+	 * {@code isCrowbar}+{@code TOOL_crowbar}/{@code TOOL_shovel} behaviour rows — the
+	 * five vanilla faces ride {@code ToolActions.SHOVEL_DIG/AXE_DIG/SWORD_DIG} beside
+	 * this gt6 key).
+	 */
+	public static final ToolAction UNIVERSAL_SPADE = ToolAction.get("gt6_universal_spade");
+
 	private GT6ToolActions() {
 	}
 }

@@ -156,6 +156,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 */
 	public static final ResourceLocation ELECTRIC_TRANSFORMER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "electric_transformer");
 
+	/** The six dig-tool row ids (task p29-w5-t1-dig-six — the CR row id per tool, the WRENCH_ID shape). */
+	public static final ResourceLocation PICKAXE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe");
+	public static final ResourceLocation PICKAXE_GEM_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe_gem");
+	public static final ResourceLocation PICKAXE_CONSTRUCTION_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe_construction");
+	public static final ResourceLocation SHOVEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shovel");
+	public static final ResourceLocation SPADE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "spade");
+	public static final ResourceLocation UNIVERSAL_SPADE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "universal_spade");
+
 	/** The CR.shapeless self-recast row id of a sensor path (task p26-sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
 	public static ResourceLocation sensorRecastId(String aPath) {
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, aPath + "_recast");
@@ -225,6 +233,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (DieselEngineRecipeRow tRow : dieselEngineRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
+		pickaxeBuilder().save(aConsumer, PICKAXE_ID);
+		pickaxeGemBuilder().save(aConsumer, PICKAXE_GEM_ID);
+		pickaxeConstructionBuilder().save(aConsumer, PICKAXE_CONSTRUCTION_ID);
+		shovelBuilder().save(aConsumer, SHOVEL_ID);
+		spadeBuilder().save(aConsumer, SPADE_ID);
+		universalSpadeBuilder().save(aConsumer, UNIVERSAL_SPADE_ID);
 	}
 	//?} else {
 	/*@Override
@@ -281,6 +296,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (DieselEngineRecipeRow tRow : dieselEngineRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
+		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
+		pickaxeBuilder().save(aOutput, PICKAXE_ID);
+		pickaxeGemBuilder().save(aOutput, PICKAXE_GEM_ID);
+		pickaxeConstructionBuilder().save(aOutput, PICKAXE_CONSTRUCTION_ID);
+		shovelBuilder().save(aOutput, SHOVEL_ID);
+		spadeBuilder().save(aOutput, SPADE_ID);
+		universalSpadeBuilder().save(aOutput, UNIVERSAL_SPADE_ID);
 	}
 	*///?}
 
@@ -1308,5 +1330,75 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 .define('W', tFineWires)
                 .define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
                 .unlockedBy("has_plates", has(tFineWires)));
+    }
+
+    // -----------------------------------------------------------------------
+    // The six dig-tool steel-route rows (task p29-w5-t1-dig-six). The upstream
+    // AdvancedCraftingTool rows (Loader_Tools.java:336-341 — head + sticks + the worn
+    // hammer/file) over the single steel tier ruling d: the tool-HEAD system is the pool
+    // cut, so the head folds to STEEL PLATES (#forge:plates/steel, the wrench-row key),
+    // the sticks to the ecosystem rod tag, and the worn crafting tools ride the hammer/
+    // file TAGS (the bending-cylinder tool-letter mapping; each pays one durability point
+    // per craft through its crafting-remaining face). Per-tool head counts keep the
+    // upstream mAmount ratios: pickaxe 3, construction 5 (the heavy head), gem = the
+    // diamond tip (the Loader_Tools.java:338 Amber-suggestion row, the tip is the gem
+    // identity the single-tier ruling keeps), shovel/spade 1, universal 5 + the file
+    // pair (the multi-tool face).
+    private static final TagKey<Item> DIG_STEEL_PLATES = gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "steel");
+
+    private ShapedRecipeBuilder digToolBuilder(net.minecraft.world.item.Item aResult, String[] aPattern, Object... aKeyValues) {
+        ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, aResult);
+        tBuilder.pattern(aPattern[0]);
+        if (aPattern.length > 1) tBuilder.pattern(aPattern[1]);
+        if (aPattern.length > 2) tBuilder.pattern(aPattern[2]);
+        for (int tIndex = 0; tIndex + 1 < aKeyValues.length; tIndex += 2) {
+            Character tKey = (Character) aKeyValues[tIndex];
+            Object tValue = aKeyValues[tIndex + 1];
+            if (tValue instanceof TagKey<?> tTag) tBuilder.define(tKey, (TagKey<Item>) tTag);
+            else tBuilder.define(tKey, (net.minecraft.world.item.Item) tValue);
+        }
+        return tBuilder.unlockedBy("has_steel_plate", has(DIG_STEEL_PLATES));
+    }
+
+    /** The pickaxe row — the upstream :339 PICKAXE head (3 steel plates) + 2 rods, hammer+file worn. */
+    private ShapedRecipeBuilder pickaxeBuilder() {
+        return digToolBuilder(GT6Tools.PICKAXE.get(), new String[] {"PPP", " S ", "hSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The gem pickaxe row — the upstream :338 GEM_PICK head + the diamond tip (the gem identity). */
+    private ShapedRecipeBuilder pickaxeGemBuilder() {
+        return digToolBuilder(GT6Tools.PICKAXE_GEM.get(), new String[] {" G ", " S ", "hSf"},
+                'G', Tags.Items.GEMS_DIAMOND, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The construction pickaxe row — the upstream :337 CONSTRUCTION_PICK heavy head (5 plates). */
+    private ShapedRecipeBuilder pickaxeConstructionBuilder() {
+        return digToolBuilder(GT6Tools.PICKAXE_CONSTRUCTION.get(), new String[] {"PPP", "PSP", "hSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The shovel row — the upstream :340 SHOVEL head (1 plate) + 2 rods, hammer+file worn. */
+    private ShapedRecipeBuilder shovelBuilder() {
+        return digToolBuilder(GT6Tools.SHOVEL.get(), new String[] {"hPf", " S ", " S "},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The spade row — the upstream :341 SPADE head (1 plate) + 2 rods, hammer+file worn. */
+    private ShapedRecipeBuilder spadeBuilder() {
+        return digToolBuilder(GT6Tools.SPADE.get(), new String[] {" P ", " S ", "hSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
+    }
+
+    /** The universal spade row — the heavy head + the file pair (the multi-tool face). */
+    private ShapedRecipeBuilder universalSpadeBuilder() {
+        return digToolBuilder(GT6Tools.UNIVERSAL_SPADE.get(), new String[] {"PPP", "PSP", "fSf"},
+                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
+                'f', GT6ItemTags.TOOLS_FILE);
     }
 }

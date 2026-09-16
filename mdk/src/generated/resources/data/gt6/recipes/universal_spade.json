@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/steel"
+    },
+    "S": {
+      "tag": "forge:rods/wooden"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PSP",
+    "fSf"
+  ],
+  "result": {
+    "item": "gt6:universal_spade"
+  },
+  "show_notification": true
+}

@@ -8211,3 +8211,10 @@ direct	fluid.gt6.tritiatedwater	超重水	hand
 direct	fluid.gt6.lubricant	润滑油	hand
 direct	item.gt6.lubricant_bucket	润滑油桶	hand
 direct	item.gt6.lubricant_bucket.tooltip	仅限工业用途！	hand
+# task p29-w5-t1-dig-six — the six dig-tool names (the dump tagprefix head words: 镐头 :895 / 镶尖镐头 :896 / 建筑镐头 :890 / 锹头 :914 / 铲头 :907 / 万用铲头 :910, minus 头)
+direct	item.gt6.pickaxe	镐	hand
+direct	item.gt6.pickaxe_gem	镶尖镐	hand
+direct	item.gt6.pickaxe_construction	建筑镐	hand
+direct	item.gt6.shovel	锹	hand
+direct	item.gt6.spade	铲	hand
+direct	item.gt6.universal_spade	万用铲	hand

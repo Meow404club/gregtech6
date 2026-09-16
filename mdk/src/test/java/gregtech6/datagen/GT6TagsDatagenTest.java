@@ -375,19 +375,28 @@ class GT6TagsDatagenTest {
     /**
      * The p25 tool face (task p25-tool-hammer-wrench + p25-food-can-row0, the PIN
      * evolution duty): the three new self-owned crafting-tool tags carry EXACTLY their
-     * one registered member each, and the ecosystem tools band grew 7 → 9 → 10 (the
-     * hammer + wrench pair, then the bending cylinder, appended in the band order).
-     * Pinned so any band change is a conscious constant update.
+     * one registered member each, and the ecosystem tools band grew 7 → 9 → 10 → 16
+     * (the hammer + wrench pair, then the bending cylinder, then task p29-w5-t1-dig-six's
+     * six dig tools, appended in the band order). Pinned so any band change is a
+     * conscious constant update.
      */
     @Test
     void p25ToolFacesAreTheExactMembers() throws Exception {
         assertEquals(List.of("gt6:hammer"), tagValues("gt6/tags/items/tools/hard_hammer.json"));
         assertEquals(List.of("gt6:wrench"), tagValues("gt6/tags/items/tools/wrench.json"));
         assertEquals(List.of("gt6:bending_cylinder_small"), tagValues("gt6/tags/items/tools/bending_cylinder_small.json"));
+        // task p29-w5-t1-dig-six: the six dig-tool tags join the one-member census
+        assertEquals(List.of("gt6:pickaxe"), tagValues("gt6/tags/items/tools/pickaxe.json"));
+        assertEquals(List.of("gt6:pickaxe_gem"), tagValues("gt6/tags/items/tools/pickaxe_gem.json"));
+        assertEquals(List.of("gt6:pickaxe_construction"), tagValues("gt6/tags/items/tools/pickaxe_construction.json"));
+        assertEquals(List.of("gt6:shovel"), tagValues("gt6/tags/items/tools/shovel.json"));
+        assertEquals(List.of("gt6:spade"), tagValues("gt6/tags/items/tools/spade.json"));
+        assertEquals(List.of("gt6:universal_spade"), tagValues("gt6/tags/items/tools/universal_spade.json"));
         assertEquals(List.of(
                 "gt6:file", "gt6:saw", "gt6:crowbar", "gt6:cutter", "gt6:chisel",
                 "gt6:builder_wand", "gt6:screwdriver", "gt6:hammer", "gt6:wrench",
-                "gt6:bending_cylinder_small"),
+                "gt6:bending_cylinder_small", "gt6:pickaxe", "gt6:pickaxe_gem",
+                "gt6:pickaxe_construction", "gt6:shovel", "gt6:spade", "gt6:universal_spade"),
                 tagValues("forge/tags/items/tools.json"));
     }
 

@@ -360,6 +360,16 @@ public class GT6EnUs extends LanguageProvider {
         // verbatim, matching the TOOL_LOCALISER faces CS.java:1096/:1083)
         add("item.gt6.hammer", "Hammer");
         add("item.gt6.wrench", "Wrench");
+        // task p29-w5-t1-dig-six — the six dig-tool display names (the upstream
+        // registration-row wordings verbatim: "Construction Pick" Loader_Tools.java:147,
+        // "Gem tipped Pickaxe" :151, "Pickaxe"/"Shovel"/"Spade" the TOOL_LOCALISER rows
+        // CS.java:1093-1097 and the :339-341 recipe-row family)
+        add("item.gt6.pickaxe", "Pickaxe");
+        add("item.gt6.pickaxe_gem", "Gem tipped Pickaxe");
+        add("item.gt6.pickaxe_construction", "Construction Pick");
+        add("item.gt6.shovel", "Shovel");
+        add("item.gt6.spade", "Spade");
+        add("item.gt6.universal_spade", "Universal Spade");
         add(GT6Tools.TAB_TITLE_KEY, "Tools");
     }
 

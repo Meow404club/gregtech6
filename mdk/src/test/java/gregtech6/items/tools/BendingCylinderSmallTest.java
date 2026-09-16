@@ -68,8 +68,10 @@ public class BendingCylinderSmallTest {
 	@Test
 	public void registrationIsThePinnedId() {
 		assertEquals(rl("bending_cylinder_small"), GT6Tools.BENDING_CYLINDER_SMALL.getId());
-		assertSame(GT6Tools.BENDING_CYLINDER_SMALL, GT6Tools.TAB_TABLE.get(GT6Tools.TAB_TABLE.size() - 1),
-				"the cylinder rides the Tools tab as the last row");
+		// row 9 since task p29-w5-t1-dig-six appended the six dig rows 10-15 (the
+		// table-tail append discipline — the "last row" pin was a point-in-time face)
+		assertSame(GT6Tools.BENDING_CYLINDER_SMALL, GT6Tools.TAB_TABLE.get(9),
+				"the cylinder rides the Tools tab at row 9");
 	}
 
 	/** The self-owned tag — the craftingToolBendingCylinderSmall snake (CS.java:1903), the 'o' letter face (CR.java:207). */
