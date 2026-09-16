@@ -19,14 +19,17 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import gregtech6.registry.GT6Molds;
 
 /**
- * The card-B datagen home (task p26-crucible-mold-faucet, the self-contained
- * GatherDataEvent subscriber — GT6DataGenerators/GT6CrucibleDatagen stay untouched).
+ * The card-B datagen home (task p26-crucible-mold-faucet). Since task
+ * p30-ops-datagen-lang-order the provider band folds into {@link GT6DataGenerators#onGatherData}
+ * — this class is NO LONGER a {@code @Mod.EventBusSubscriber}: three self-contained
+ * GatherDataEvent subscribers ordered themselves by the annotation-scan lottery and the
+ * per-family full-file lang writers made the last one win (the p30 card's live repro: an
+ * incremental recompile flipped the scan order and a cache-cold runData landed en_us.json
+ * 66 keys short).
  * ZERO hand-written JSON:
  * <ul>
  * <li><b>blockstates</b>: the 31 ceramic mold rows (blank + 30 pre-carved shapes) and
@@ -46,17 +49,19 @@ import gregtech6.registry.GT6Molds;
  *     two faucet crafts (:300 stone 3-stone; :305 ceramic raw → furnace).</li>
  * </ul>
  */
-@Mod.EventBusSubscriber(modid = GT6DataGenerators.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6MoldDatagen {
 
 	private GT6MoldDatagen() {}
 
-	@SubscribeEvent
-	public static void onGatherData(GatherDataEvent aEvent) {
+	/**
+	 * The provider band {@link GT6DataGenerators} appends to ITS listener — package-visible,
+	 * deliberately NOT a {@code @SubscribeEvent}. The Lang face is registered ONCE, by
+	 * {@link GT6DataGenerators} itself (this chain tail is the single en_us writer); only the
+	 * blockstate/model and recipe providers ride here.
+	 */
+	static void appendProviders(GatherDataEvent aEvent) {
 		aEvent.getGenerator().addProvider(true,
 				new Provider(aEvent.getGenerator().getPackOutput(), aEvent.getExistingFileHelper()));
-		aEvent.getGenerator().addProvider(true,
-				new Lang(aEvent.getGenerator().getPackOutput()));
 		// the lookup provider rides along for the 21.1 saveStable face (the forge leg ignores it)
 		aEvent.getGenerator().addProvider(true,
 				new Recipes(aEvent.getGenerator().getPackOutput(), aEvent.getLookupProvider()));
@@ -125,13 +130,14 @@ public final class GT6MoldDatagen {
 
 	/**
 	 * The composed display keys. Chains BELOW {@link GT6CrucibleDatagen.Lang} (which chains
-	 * below {@link GT6EnUs}): every en_us writer replays the FULL base set through
-	 * {@code super.addTranslations()}, so the file stays complete under ANY
-	 * {@code @Mod.EventBusSubscriber} registration order — the standalone
-	 * {@code LanguageProvider} this class used before is the registration-order lottery the
-	 * p26-sensors-core merge gate caught (a bare provider's {@code finish} rewrites the
-	 * whole file; on the enumeration orders where this listener registered last it wiped
-	 * the 2701-key table down to this class's 66 keys).
+	 * below {@link GT6EnUs}): the tail replays the FULL base set through
+	 * {@code super.addTranslations()}. Since task p30-ops-datagen-lang-order this tail is the
+	 * SINGLE registered en_us writer (GT6DataGenerators registers it at a fixed position), so
+	 * the file stays complete with no second writer to race — the pre-p30 form registered this
+	 * AND the two chained providers as separate subscribers and the annotation-scan order
+	 * decided which full-file write landed last (the p26-sensors-core merge gate caught the
+	 * standalone-provider ancestor of this class wiping the 2701-key table down to 66 keys;
+	 * the t4 re-gate lost the 66 ceramic rows the same way).
 	 */
 	public static final class Lang extends GT6CrucibleDatagen.Lang {
 
