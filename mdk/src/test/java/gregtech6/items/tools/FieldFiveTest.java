@@ -62,10 +62,10 @@ public class FieldFiveTest {
 
 	// ------------------------------------------------------------------ TAB_TABLE parity
 
-	/** The table holds exactly 31 rows — rows 26..30 are the five field tools in the upstream registration order (the t3 four ride rows 22..25, the t5+ tail appends follow). */
+	/** The table holds exactly 37 rows — rows 26..30 are the five field tools in the upstream registration order (the t3 four ride rows 22..25, the t5 scene six rides 31..36). */
 	@Test
 	public void tabTableIsExactlyTheTwentyOneToolRows() {
-		assertEquals(31, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 26 prior rows + the five field tools");
+		assertEquals(37, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 26 prior rows + the five field tools + the scene six");
 		assertSame(GT6Tools.HOE, GT6Tools.TAB_TABLE.get(26), "row 26 is the hoe (Loader_Tools.java:122)");
 		assertSame(GT6Tools.BRANCH_CUTTER, GT6Tools.TAB_TABLE.get(27), "row 27 is the branch cutter (:133)");
 		assertSame(GT6Tools.SENSE, GT6Tools.TAB_TABLE.get(28), "row 28 is the sense (:138)");

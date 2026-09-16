@@ -380,7 +380,7 @@ class GT6TagsDatagenTest {
      * p29-w5-t1-dig-six's six dig tools, then task p29-w5-t5-scene-six's six scene
      * tools, then task p29-w5-t2-blade-six's six blade tools, then task
      * p29-w5-t4-field-five's five field tools, appended in the band order). Pinned so
-     * any band change is a conscious constant update. d1d08768 (feat(tools,rcon,test): 场景六 live 校准收尾——RCON 面+离线测试+census 棘轮+datagen 产物（t5 实现面 4/4）)
+     * any band change is a conscious constant update.
      */
     @Test
     void p25ToolFacesAreTheExactMembers() throws Exception {
@@ -423,7 +423,7 @@ class GT6TagsDatagenTest {
                 "gt6:sword", "gt6:knife", "gt6:butchery_knife", "gt6:club", "gt6:axe",
                 "gt6:axe_double", "gt6:hoe", "gt6:branch_cutter", "gt6:sense", "gt6:plow",
                 "gt6:hand_drill", "gt6:scissors", "gt6:scoop", "gt6:plunger",
-                "gt6:flint_and_tinder", "gt6:rolling_pin", "gt6:bending_cylinder"), d1d08768 (feat(tools,rcon,test): 场景六 live 校准收尾——RCON 面+离线测试+census 棘轮+datagen 产物（t5 实现面 4/4）)
+                "gt6:flint_and_tinder", "gt6:rolling_pin", "gt6:bending_cylinder"),
                 tagValues("forge/tags/items/tools.json"));
     }
 
