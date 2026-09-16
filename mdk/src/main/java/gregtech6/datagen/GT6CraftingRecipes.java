@@ -264,6 +264,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
 		fluidometerBuilder().save(aOutput, FLUIDOMETER_ID);
 		feConverterBuilder().save(aOutput, FE_CONVERTER_ID);
+		waterWheelBuilder().save(aOutput, WATER_WHEEL_ID); // task p30-pool-waterwheel-neo-recipes — the forge branch row (this file :195), the 21.1 face was born without it
 		transformerBuilder().save(aOutput, ELECTRIC_TRANSFORMER_ID);
 		for (BridgeCraftRow tRow : euBridgeCraftingRows()) {
 			tRow.builder().save(aOutput, tRow.id());
