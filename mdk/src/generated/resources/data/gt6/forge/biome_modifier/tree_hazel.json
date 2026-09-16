@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:trees/hazel",
+  "features": "gt6:tree_hazel",
+  "step": "vegetal_decoration"
+}

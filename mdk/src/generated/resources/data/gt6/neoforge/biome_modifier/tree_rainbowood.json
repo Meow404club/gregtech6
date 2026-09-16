@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#gt6:trees/rainbowood",
+  "features": "gt6:tree_rainbowood",
+  "step": "vegetal_decoration"
+}

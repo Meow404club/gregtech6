@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:trees/rubber",
+  "features": "gt6:tree_rubber",
+  "step": "vegetal_decoration"
+}
