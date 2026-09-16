@@ -94,7 +94,7 @@ public class GT6ToolsCreativeTabTest {
 	}
 
 	/**
-	 * The display table: exactly thirty-seven rows in display order — the p10-tool-cutter
+	 * The display table: exactly sixty-four rows in display order — the p10-tool-cutter
 	 * card appended row 2, the p16-chisel-decalcify card appended row 3, the
 	 * p24-tool-system card appended rows 3/4, the p24-builder-wand card appended row 5,
 	 * the p24-screwdriver-item card appended row 6, the p25-tool-hammer-wrench card
@@ -104,29 +104,20 @@ public class GT6ToolsCreativeTabTest {
 	 * butchery_knife, club, axe, axe_double; the blade-six card owns the blade-row
 	 * parity in BladeSixTest), task p29-w5-t3-machine-face-four appended rows 22-25
 	 * (the machine-face four — the soft hammer, the monkey wrench, the magnifying
-	 * glass, the pincers) and task p29-w5-t4-field-five appended rows 26-30 (the five
+	 * glass, the pincers), task p29-w5-t4-field-five appended rows 26-30 (the five
 	 * field tools — hoe, branch_cutter, sense, plow, hand_drill; the field-five card
-	 * owns the field-row parity in FieldFiveTest) and task p29-w5-t5-scene-six
-	 * appended rows 31-36 (the six scene tools — scissors, scoop, plunger,
-	 * flint_and_tinder, rolling_pin, bending_cylinder; the scene-six card owns the
-	 * scene-row parity in SceneSixTest).
+	 * owns the field-row parity in FieldFiveTest), task p29-w5-t5-scene-six appended
+	 * rows 31-36 (the six scene tools — scissors, scoop, plunger, flint_and_tinder,
+	 * rolling_pin, bending_cylinder; the scene-six card owns the scene-row parity in
+	 * SceneSixTest), task p29-w5-t6-electric-nineteen appended rows 37-55 (the nineteen
+	 * electric tools; the electric card owns the electric-row parity in
+	 * ElectricNineteenTest) and task p29-w5-t7-pocket-eight appended rows 56-63 (the
+	 * eight pocket forms — the POCKET_FORMS order; the pocket card owns the pocket-row
+	 * parity in PocketEightTest).
 	 */
 	@Test
 	public void displayTableIsExactlyTheThirtyOneToolRows() {
 		assertEquals(64, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the 56 prior tools plus the eight pocket forms");
-	 * The display table: exactly eighteen rows (the crowbar, the cutter, the chisel, the
-	 * file, the saw, the builder wand, the screwdriver, the hammer, the wrench, the
-	 * small bending cylinder, then the eight pocket forms) in display order — the
-	 * p10-tool-cutter card appended row 2, the p16-chisel-decalcify card appended row 3,
-	 * the p24-tool-system card appended rows 3/4, the p24-builder-wand card appended
-	 * row 5, the p24-screwdriver-item card appended row 6, the p25-tool-hammer-wrench
-	 * card appended rows 7/8, the p25-food-can-row0 card appended row 9, and the
-	 * p29-w5-t7-pocket-eight card appended rows 10-17 (task p10-tool-creative-tab
-	 * pinned the cutter-free state before that).
-	 */
-	@Test
-	public void displayTableIsExactlyTheEighteenToolRows() {
-		assertEquals(18, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the ten formal tools plus the eight pocket multitool forms");
 		assertSame(GT6Tools.CROWBAR, GT6Tools.TAB_TABLE.get(0), "row 0 is the registered crowbar item, not a parallel supplier");
 		assertSame(GT6Tools.CUTTER, GT6Tools.TAB_TABLE.get(1), "row 1 is the registered cutter item, not a parallel supplier");
 		assertSame(GT6Tools.CHISEL, GT6Tools.TAB_TABLE.get(2), "row 2 is the registered chisel item, not a parallel supplier");
@@ -176,6 +167,19 @@ public class GT6ToolsCreativeTabTest {
 		assertEquals(rl("branch_cutter"), GT6Tools.TAB_TABLE.get(27).getId());
 		assertEquals(rl("sense"), GT6Tools.TAB_TABLE.get(28).getId());
 		assertEquals(rl("plow"), GT6Tools.TAB_TABLE.get(29).getId());
+		assertEquals(rl("hand_drill"), GT6Tools.TAB_TABLE.get(30).getId());
+		assertSame(GT6Tools.SCISSORS, GT6Tools.TAB_TABLE.get(31), "row 31 is the registered scissors item, not a parallel supplier");
+		assertSame(GT6Tools.SCOOP, GT6Tools.TAB_TABLE.get(32), "row 32 is the registered scoop item, not a parallel supplier");
+		assertSame(GT6Tools.PLUNGER, GT6Tools.TAB_TABLE.get(33), "row 33 is the registered plunger item, not a parallel supplier");
+		assertSame(GT6Tools.FLINT_AND_TINDER, GT6Tools.TAB_TABLE.get(34), "row 34 is the registered flint and tinder item, not a parallel supplier");
+		assertSame(GT6Tools.ROLLING_PIN, GT6Tools.TAB_TABLE.get(35), "row 35 is the registered rolling pin item, not a parallel supplier");
+		assertSame(GT6Tools.BENDING_CYLINDER, GT6Tools.TAB_TABLE.get(36), "row 36 is the registered bending cylinder item, not a parallel supplier");
+		assertEquals(rl("scissors"), GT6Tools.TAB_TABLE.get(31).getId());
+		assertEquals(rl("scoop"), GT6Tools.TAB_TABLE.get(32).getId());
+		assertEquals(rl("plunger"), GT6Tools.TAB_TABLE.get(33).getId());
+		assertEquals(rl("flint_and_tinder"), GT6Tools.TAB_TABLE.get(34).getId());
+		assertEquals(rl("rolling_pin"), GT6Tools.TAB_TABLE.get(35).getId());
+		assertEquals(rl("bending_cylinder"), GT6Tools.TAB_TABLE.get(36).getId());
 		assertSame(GT6Tools.POCKET_MULTITOOL, GT6Tools.TAB_TABLE.get(56), "row 56 is the registered pocket multitool item, not a parallel supplier");
 		assertSame(GT6Tools.POCKET_MULTITOOL_KNIFE, GT6Tools.TAB_TABLE.get(57), "row 57 is the pocket knife form");
 		assertSame(GT6Tools.POCKET_MULTITOOL_SAW, GT6Tools.TAB_TABLE.get(58), "row 58 is the pocket saw form");
@@ -192,19 +196,6 @@ public class GT6ToolsCreativeTabTest {
 		assertEquals(rl("pocket_multitool_wire_cutter"), GT6Tools.TAB_TABLE.get(61).getId());
 		assertEquals(rl("pocket_multitool_scissors"), GT6Tools.TAB_TABLE.get(62).getId());
 		assertEquals(rl("pocket_multitool_chisel"), GT6Tools.TAB_TABLE.get(63).getId());
-		assertEquals(rl("hand_drill"), GT6Tools.TAB_TABLE.get(30).getId());
-		assertSame(GT6Tools.SCISSORS, GT6Tools.TAB_TABLE.get(31), "row 31 is the registered scissors item, not a parallel supplier");
-		assertSame(GT6Tools.SCOOP, GT6Tools.TAB_TABLE.get(32), "row 32 is the registered scoop item, not a parallel supplier");
-		assertSame(GT6Tools.PLUNGER, GT6Tools.TAB_TABLE.get(33), "row 33 is the registered plunger item, not a parallel supplier");
-		assertSame(GT6Tools.FLINT_AND_TINDER, GT6Tools.TAB_TABLE.get(34), "row 34 is the registered flint and tinder item, not a parallel supplier");
-		assertSame(GT6Tools.ROLLING_PIN, GT6Tools.TAB_TABLE.get(35), "row 35 is the registered rolling pin item, not a parallel supplier");
-		assertSame(GT6Tools.BENDING_CYLINDER, GT6Tools.TAB_TABLE.get(36), "row 36 is the registered bending cylinder item, not a parallel supplier");
-		assertEquals(rl("scissors"), GT6Tools.TAB_TABLE.get(31).getId());
-		assertEquals(rl("scoop"), GT6Tools.TAB_TABLE.get(32).getId());
-		assertEquals(rl("plunger"), GT6Tools.TAB_TABLE.get(33).getId());
-		assertEquals(rl("flint_and_tinder"), GT6Tools.TAB_TABLE.get(34).getId());
-		assertEquals(rl("rolling_pin"), GT6Tools.TAB_TABLE.get(35).getId());
-		assertEquals(rl("bending_cylinder"), GT6Tools.TAB_TABLE.get(36).getId());
 	}
 
 	/**

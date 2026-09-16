@@ -725,6 +725,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.pattern(" P ")
 				.define('P', tSteelPlates)
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.unlockedBy("has_steel_plate", has(tSteelPlates));
+	}
+
+	/**
 	 * The POCKET MULTITOOL crafting row (task p29-w5-t7-pocket-eight) — the upstream
 	 * OreProcessing_Tool row over toolHeadScrewdriver (Loader_Tools.java:354) with its
 	 * {"AXO","ZPV","OWY"} grid kept letter-verbatim and the tool-head universe folded to

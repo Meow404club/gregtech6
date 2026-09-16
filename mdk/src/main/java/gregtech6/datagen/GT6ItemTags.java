@@ -562,12 +562,14 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		for (RegistryObject<Item> tRow : GT6Tools.ELECTRIC_TOOLS) {
 			tag(Tags.Items.TOOLS).add(item(tRow.getId()));
 		}
-				// task p29-w5-t7-pocket-eight — the seven switch forms (the closed multitool
-				// carries no tool-name oredict upstream, :176 — it stays out of the band)
+		// task p29-w5-t7-pocket-eight — the seven switch forms (the closed multitool
+		// carries no tool-name oredict upstream, :176 — it stays out of the band);
+		// the family band 52 → 59
+		tag(Tags.Items.TOOLS).add(
 				item(GT6Tools.POCKET_MULTITOOL_KNIFE.getId()), item(GT6Tools.POCKET_MULTITOOL_SAW.getId()),
 				item(GT6Tools.POCKET_MULTITOOL_FILE.getId()), item(GT6Tools.POCKET_MULTITOOL_SCREWDRIVER.getId()),
 				item(GT6Tools.POCKET_MULTITOOL_WIRE_CUTTER.getId()), item(GT6Tools.POCKET_MULTITOOL_SCISSORS.getId()),
-				item(GT6Tools.POCKET_MULTITOOL_CHISEL.getId())); // the family band 10 → 17
+				item(GT6Tools.POCKET_MULTITOOL_CHISEL.getId()));
 	}
 
 	/**

@@ -70,7 +70,7 @@ public class PocketEightTest {
 				"pocket_multitool_screwdriver", "pocket_multitool_wire_cutter", "pocket_multitool_scissors",
 				"pocket_multitool_chisel"};
 		for (int i = 0; i < 8; i++) {
-			assertSame(GT6Tools.POCKET_FORMS.get(i), GT6Tools.TAB_TABLE.get(10 + i), "row " + (10 + i) + " rides the tab tail");
+			assertSame(GT6Tools.POCKET_FORMS.get(i), GT6Tools.TAB_TABLE.get(GT6Tools.TAB_TABLE.size() - 8 + i), "row rides the tab tail");
 			assertEquals(rl(tIds[i]), GT6Tools.POCKET_FORMS.get(i).getId(), "form " + i + " id");
 		}
 		// the TAB_TABLE parity: the table tail IS the ring (rows 10-17)
@@ -78,7 +78,7 @@ public class PocketEightTest {
 			assertSame(GT6Tools.POCKET_FORMS.get(i), GT6Tools.TAB_TABLE.get(GT6Tools.TAB_TABLE.size() - 8 + i),
 					"the tab tail mirrors the ring at offset " + i);
 		}
-		assertEquals(18, GT6Tools.TAB_TABLE.size(), "ten formal tools + the eight pocket forms");
+		assertEquals(64, GT6Tools.TAB_TABLE.size(), "the 56 prior rows + the eight pocket forms (the tail-mirror loop above still holds — the pocket forms ride the table tail)");
 		assertEquals(512, GTPocketMultitoolItem.DURABILITY_POINTS, "the single-steel-tier family value (ruling d)");
 	}
 

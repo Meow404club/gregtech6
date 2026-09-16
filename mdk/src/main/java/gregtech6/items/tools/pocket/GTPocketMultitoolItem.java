@@ -328,9 +328,12 @@ public class GTPocketMultitoolItem extends Item {
 
 	/**
 	 * The stack classifier — per form, the action the modern twin performs (the
-	 * cutter/crowbar static-seam shape). KNIFE/SCISSORS classify on nothing until the
-	 * blade/scenes cards land their actions (t2/t5, the declared pool); MULTITOOL is the
-	 * closed form (upstream :176 carries no OreDictToolNames at all).
+	 * cutter/crowbar static-seam shape). KNIFE classifies on the t2 blade card's action
+	 * (wired by the S18 rebase seat once p29-w5-t2 landed); SCISSORS still classifies on
+	 * nothing — the t5 scene card rides the ShearsItem semantics + the PLANT_SELF loot
+	 * seam and created NO {@code gt6_scissors} action (the declared pool entry, still
+	 * open until a card creates the action); MULTITOOL is the closed form (upstream :176
+	 * carries no OreDictToolNames at all).
 	 */
 	public static boolean classifies(int aForm, ToolAction aToolAction) {
 		return switch (aForm) {
@@ -339,6 +342,7 @@ public class GTPocketMultitoolItem extends Item {
 			case SCREWDRIVER -> GT6ToolActions.SCREWDRIVER == aToolAction;
 			case WIRE_CUTTER -> GT6ToolActions.CUTTER == aToolAction;
 			case CHISEL -> GT6ToolActions.CHISEL == aToolAction;
+			case KNIFE -> GT6ToolActions.KNIFE == aToolAction;
 			default -> false;
 		};
 	}
