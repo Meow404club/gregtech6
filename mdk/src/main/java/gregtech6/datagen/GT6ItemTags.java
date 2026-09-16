@@ -417,6 +417,19 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		addBatteryTags(aProvider); // task p29-w4-battery-storage — the re-battery/re-crystal/circuit tag seams
 		addArmorTags(aProvider); // task p29-w5-t8-armor-24 — the 8 hazard-set tag faces
 		addTreeTags(); // task p30-w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
+		addFallenLogTags(); // task p30-w6-t2-surface-blocks — the 4 fallen-log item faces (the coke-oven rebuild source)
+	}
+
+	/**
+	 * The fallen-log item faces (task p30-w6-t2-surface-blocks): the four special-wood
+	 * logs join {@code #minecraft:logs} — THE coke-oven recipe rebuild source
+	 * (GT6CokeOvenTagListener.rebuild reads ItemTags.LOGS; 40 vanilla + 9 gt6 grows +4,
+	 * the coordinator-noted census drift). The block face rides GT6BlockTags.
+	 */
+	private void addFallenLogTags() {
+		for (RegistryObject<Item> tLog : gregtech6.registry.GT6SurfaceBlocks.LOG_TAB_ITEMS) {
+			tag(net.minecraft.tags.ItemTags.LOGS).add(item(tLog.getId()));
+		}
 	}
 
 	/**

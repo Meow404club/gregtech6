@@ -2154,6 +2154,18 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
+     * The obtainable surface-plants + fallen-woods block list (task p30-w6-t2-surface-blocks):
+     * the plant quartet (glowtus/bush/black sand/turf) + the four fallen-log woods — all
+     * drop themselves (the bush's berry item face is the declared cut, GT6WildBushBlock).
+     */
+    public static List<Block> plantLootBlocks() {
+        List<Block> rList = new java.util.ArrayList<>();
+        for (RegistryObject<Block> tRow : GT6SurfaceBlocks.PLANT_BAND) rList.add(tRow.get());
+        for (RegistryObject<Block> tRow : GT6SurfaceBlocks.FALLEN_LOGS) rList.add(tRow.get());
+        return rList;
+    }
+
+    /**
      * The surface deco provider (task p30-w6-rocks-sticks). The upstream MTE getDrops
      * {@code getRock(1+rng(1+fortune))} (MultiTileEntityRock.java:81) transcribes as ONE
      * pool: count uniform 1..2 (SetItemCountFunction + UniformGenerator), the winner per
@@ -2193,7 +2205,9 @@ public final class GT6LootTables extends LootTableProvider {
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return surfaceLootBlocks();
+            List<Block> rList = new java.util.ArrayList<>(surfaceLootBlocks());
+            rList.addAll(plantLootBlocks());
+            return rList;
         }
 
         /** The collected-deco table: one pool, uniform 1..2 of {@code aItem} (the getRock count row). */
@@ -2218,6 +2232,10 @@ public final class GT6LootTables extends LootTableProvider {
                                     .add(LootItem.lootTableItem(GTMaterialItems.get(OP.rockGt, MT.MeteoricIron).get()).setWeight(3))
                                     .add(LootItem.lootTableItem(GTMaterialItems.get(OP.oreRaw, MT.MeteoricIron).get()).setWeight(1)))));
             add(GT6SurfaceBlocks.SURFACE_STICK.get(), collectedTable(Items.STICK));
+            // task p30-w6-t2-surface-blocks — the obtainable band: self-drop
+            for (Block tBlock : plantLootBlocks()) {
+                dropSelf(tBlock);
+            }
         }
     }
 }

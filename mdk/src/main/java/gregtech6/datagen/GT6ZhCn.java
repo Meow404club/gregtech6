@@ -113,6 +113,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addArmorUnits();        // task p29-w5-t8-armor-24
 		addTreeUnits();         // task p30-w6-t1-trees-nine — the 27 tree-family rows (hand, the tsv direct band)
 		addSurfaceUnits();      // task p30-w6-rocks-sticks
+		addSurfacePlantUnits(); // task p30-w6-t2-surface-blocks — the 8 plant/log rows (hand, the tsv direct band)
 		// task p30-ore-1-mech — 模板钉说明，本卡零键（zh ratchet 0）：矿域注册面
 		//（GT6OreBlocks，26 族 x 74 form-rows x M=53）不加任何 zh 键——每个矿块物品
 		// 走既有 gt6.tagprefix.<prefix_snake> 模板组合（addPrefixTemplates 覆盖全 OP 前缀，
@@ -150,6 +151,25 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addSurfaceUnits() {
 		addDirect("gt6.surface.rock");
 		addDirect("block.gt6.surface_stick");
+	}
+
+	/**
+	 * The surface-plants + fallen-woods zh faces (task p30-w6-t2-surface-blocks, the
+	 * GT6EnUs.addSurfacePlants mirror): 8 display names, all hand rows — no upstream zh
+	 * dump face exists for these blocks (the t1 tree-family precedent). The standard
+	 * Chinese words: 荧光莲 (the Glowtus lily), 浆果丛 (the bush MTE's 丛 word), 黑沙
+	 * (the magnetite sand), 草皮 (Turf), and the four special-wood logs 枯/腐朽/苔藓/冰冻
+	 * 原木 (the MT.WOODS Dead/Rotten/Mossy/Frozen wood words).
+	 */
+	private void addSurfacePlantUnits() {
+		addDirect("block.gt6.glowtus");
+		addDirect("block.gt6.berry_bush");
+		addDirect("block.gt6.black_sand");
+		addDirect("block.gt6.turf");
+		addDirect("block.gt6.dead_log");
+		addDirect("block.gt6.rotten_log");
+		addDirect("block.gt6.mossy_log");
+		addDirect("block.gt6.frozen_log");
 	}
 
 	/**

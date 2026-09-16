@@ -8254,3 +8254,39 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   - `ore_small.png` `da732a986333a1f319175ba007eabf7db01d2c3509ac3bdeaf2f098c802df6d3`
   - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
   - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+
+## Surface-plants + fallen-woods block textures (task p30-w6-t2-surface-blocks)
+
+13 upstream block-texture borrows from `src/main/resources/assets/gregtech/textures/blocks/`
+(GregTech 6, snapshot `v6.17.06-22-g3703e4030`) onto `gt6/textures/block/`:
+
+- `gt6/textures/block/glowtus.png` — the glowtus water plant (upstream
+  `iconsets/GLOWTUS_RED.png`, one sample of the 16-colour dye ladder; the collapse is
+  declared in GT6GlowtusBlock; sha256
+  `97bea0cd9618fcec9ce67c235afbd83b11fec326068864afd35afe6f617a4326`)
+- `gt6/textures/block/berry_bush.png` — the berry bush (upstream
+  `machines/plants/bush/colored/bush.png`, the grayscale tintable icon PRE-COLOURED at
+  borrow time with the leaf-green multiplier (0.35, 0.62, 0.22) — the grass-card
+  pre-coloured-PNG precedent, the upstream tint rode the per-berry NBT colour;
+  sha256 `4bd8830da402ce8f636a6cd4bc9e293e72fb64d927d65221c63979071a8d8c23`)
+- `gt6/textures/block/black_sand.png` — the magnetite river sand (upstream
+  `iconsets/SAND_MAGNETITE.png`; sha256
+  `f512f0776c14d38f5a8c40e8277513e0c569cf2ddb460a0da5d1e9535e6529f8`)
+- `gt6/textures/block/turf.png` — the swamp turf (upstream `iconsets/TURF.png`;
+  sha256 `832642f9834839f0396c01c9b6bc3b4b18b933cd6b6b6169cc9cc28d582db347`)
+- `gt6/textures/block/tree/log_side_dead.png` / `log_top_dead.png` — the Dead log
+  (upstream `iconsets/LOG_SIDE_DRY.png`/`LOG_TOP_DRY.png`, renamed to the block id;
+  sha256 `274cc0f0c6b4e8535a591f4cbd1f4dcb22bb4debe6124169f381614845341025` /
+  `db21f8801d35f47dc5b2f6b1d0d6b1305faeec6b4a8defa76d6380b55c956981`)
+- `gt6/textures/block/tree/log_side_rotten.png` / `log_top_rotten.png` — the Rotten log
+  (upstream `iconsets/LOG_SIDE_ROTTEN.png`/`LOG_TOP_ROTTEN.png`; sha256
+  `1ba5ad5760379f71de9bcc1240bdad244213abcdee510b7a62b139d4c72ed5f3` /
+  `b6cdd4f2791a2c5f36ed9167ae70f4267c7cc81759ee25a9ac35a9cfd757529b`)
+- `gt6/textures/block/tree/log_side_mossy.png` / `log_top_mossy.png` — the Mossy log
+  (upstream `iconsets/LOG_SIDE_MOSSY.png`/`LOG_TOP_MOSSY.png`; sha256
+  `2189d4da69b901344922fc046eb00dac065428619f1ea838b6c06508a40ab355` /
+  `14fd2ed60eeba5e99c529c9cb340064d0af3aa29355f7fab29d091649f991b77`)
+- `gt6/textures/block/tree/log_side_frozen.png` / `log_top_frozen.png` — the Frozen log
+  (upstream `iconsets/LOG_SIDE_FROZEN.png`/`LOG_TOP_FROZEN.png`; sha256
+  `3d3b5a8f1973c6714f859cec1381e042f58b3ee9621e9bd97532502f10142366` /
+  `ca3053f9843ff4f3475051e21667ccce90a4c575dc7dd7fbf7b59e207771b33c`)

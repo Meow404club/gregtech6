@@ -126,6 +126,7 @@ public class GT6EnUs extends LanguageProvider {
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
         addSurfaceBand(); // task p30-w6-rocks-sticks — table-tail append
+        addSurfacePlants(); // task p30-w6-t2-surface-blocks — table-tail append
         // task p30-ore-1-mech — template-pin NOTE, zero keys this card (zh ratchet 0): the
         // ore universe (GT6OreBlocks, 26 families x 74 form-rows x M=53) needs NO en_us
         // delta — every ore block item composes the EXISTING gt6.tagprefix.<prefix_snake>
@@ -149,6 +150,25 @@ public class GT6EnUs extends LanguageProvider {
     private void addSurfaceBand() {
         add("gt6.surface.rock", "%s Surface Rock");
         add("block.gt6.surface_stick", "Stick");
+    }
+
+    /**
+     * The surface-plants + fallen-woods keys (task p30-w6-t2-surface-blocks, 8 rows): the
+     * upstream display names verbatim — "Glowtus" (BlockGlowtus.java:39, the 16-colour
+     * ladder collapses to the one name), "Berry Bush" (Loader_MultiTileEntities.java:2030),
+     * "Black Sand" (the WorldgenBlackSand soil), "Turf" (BlocksGT.Diggables meta 2), and
+     * the four special-wood logs "Dead/Rotten/Mossy/Frozen Log" (BlockTreeLog1.java:46-62).
+     * Table-tail append, append-only.
+     */
+    private void addSurfacePlants() {
+        add("block.gt6.glowtus", "Glowtus");
+        add("block.gt6.berry_bush", "Berry Bush");
+        add("block.gt6.black_sand", "Black Sand");
+        add("block.gt6.turf", "Turf");
+        add("block.gt6.dead_log", "Dead Log");
+        add("block.gt6.rotten_log", "Rotten Log");
+        add("block.gt6.mossy_log", "Mossy Log");
+        add("block.gt6.frozen_log", "Frozen Log");
     }
 
     /**
