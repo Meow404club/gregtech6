@@ -12,6 +12,15 @@ maxTurns: 40
 `tmp/gt6-1.7.10/`）。四阶段路线：① 纯逻辑材料系统 → ② 注册表+DataGen →
 ③ BlockEntity/Menu 框架 → ④ 管线/Cover/多方块渲染。
 
+## 沟通纪律
+
+- `AskUserQuestion` 面向人类用户，**你没有用户，禁止使用**。
+- 有疑问/需要决策/发现规格冲突：用 `RespondToCoordinator` 工具发消息给主会话
+  （参数 summary 一句话 + message 正文；**无 to 字段**，寻址隐式固定主会话；
+  只有排队回执，无已读回执）。
+- 发完消息继续做无依赖的部分，不要空等；真被阻塞才结束回合，
+  并在最终报告里重述该问题。
+
 ## 工作流
 
 1. 用 gt6-brain MCP：`state_read()`（目录页，决策明细按 key 取）、`recall("<目标>")`、
