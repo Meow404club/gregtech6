@@ -76,7 +76,7 @@ public class SceneSixTest {
 	/** The table holds exactly 22 rows — rows 16..21 are the six scene tools in display order. */
 	@Test
 	public void tabTableIsExactlyTheTwentyTwoToolRows() {
-		assertEquals(64, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 31 prior rows + the six scene tools");
+		assertEquals(88, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 31 prior rows + the six scene tools");
 		assertSame(GT6Tools.SCISSORS, GT6Tools.TAB_TABLE.get(31), "row 31 is the scissors");
 		assertSame(GT6Tools.SCOOP, GT6Tools.TAB_TABLE.get(32), "row 32 is the scoop");
 		assertSame(GT6Tools.PLUNGER, GT6Tools.TAB_TABLE.get(33), "row 33 is the plunger");

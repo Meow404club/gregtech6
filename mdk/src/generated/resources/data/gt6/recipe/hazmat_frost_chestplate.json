@@ -12,7 +12,7 @@
     "MMM"
   ],
   "result": {
-    "item": "gt6:hazmat_frost_chestplate"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:hazmat_frost_chestplate"
+  }
 }

@@ -1536,6 +1536,7 @@ public class GT6EnUs extends LanguageProvider {
         add("tooltip.gt6.pocket.wire_cutter", "Harvests Cables and Wires faster");
         add("tooltip.gt6.pocket.scissors", "Don't run around while holding them!");
         add("tooltip.gt6.pocket.chisel", "Be slow/careful with it on Servers because Ping!");
+    }
 
     /**
      * The Hazmat armor face (task p29-w5-t8-armor-24): 48 rows — 24 display names + 24

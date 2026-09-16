@@ -27,7 +27,7 @@
     "E F"
   ],
   "result": {
-    "item": "gt6:hazmat_universal_leggings"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:hazmat_universal_leggings"
+  }
 }

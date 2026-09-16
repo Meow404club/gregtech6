@@ -14,7 +14,7 @@
     "MGM"
   ],
   "result": {
-    "item": "gt6:hazmat_heat_helmet"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "gt6:hazmat_heat_helmet"
+  }
 }

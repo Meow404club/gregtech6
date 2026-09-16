@@ -1957,6 +1957,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
         if (tKeys.indexOf('f') >= 0) tBuilder.define('f', GT6ItemTags.TOOLS_FILE);
         if (tKeys.indexOf('h') >= 0) tBuilder.define('h', GT6ItemTags.TOOLS_HARD_HAMMER);
         return tBuilder.unlockedBy("has_battery", has(batteryTag(tTier)));
+    }
+
     // ─── the Hazmat armor band (task p29-w5-t8-armor-24, tail-append) ───
 
     /**
