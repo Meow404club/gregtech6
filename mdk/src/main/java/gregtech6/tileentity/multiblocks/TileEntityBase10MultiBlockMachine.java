@@ -98,7 +98,7 @@ import gregtech6.tileentity.GTItemStackHandler;
  * <p>Fields: mEnergy/mInputMin = 1/mInput = 1/mInputMax = 16 (the :1193 NBT_INPUT triple),
  * mParallel = 16 (NBT_PARALLEL :1193), mProgress/mMaxProgress, the running/active/stopped
  * trio, mRequiresIgnition = true + mIgnited, mLastRecipe/mCurrentRecipe, the pending
- * mOutputItems/mOutputFluids and the single output tank (upstream FluidTankGT default
+ * mOutputItems/mOutputFluids and the output-tank bank (default one tank, re-pointable —
  * constructor capacity = Long.MAX_VALUE, upstream FluidTankGT.java:49).
  *
  * <p>GUI face (task p8-cokeoven-gui-menu ②): the class implements MenuProvider +
@@ -187,8 +187,15 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	/** Upstream :102 — the pending outputs of the current process. */
 	public ItemStack[] mOutputItems = new ItemStack[0];
 	public FluidStack[] mOutputFluids = new FluidStack[0];
-	/** The single output tank — the upstream default-constructor capacity Long.MAX_VALUE (upstream FluidTankGT.java:49). */
-	public final FluidTankGT[] mTanksOutput = {new FluidTankGT()};
+	/**
+	 * The output-tank bank — default ONE tank (the Coke Oven shape; the upstream
+	 * default-constructor capacity = Long.MAX_VALUE, FluidTankGT.java:49). NOT final since
+	 * task p30-distill-output-routing (the 2026-09-16 distill-tower ruling, option a): a
+	 * machine whose map carries more fluid-OUT slots re-points the bank to the upstream
+	 * readFromNBT2 :161 size ({@code mRecipes.mOutputFluidCount}) — the Distillation Tower
+	 * is the first consumer (GT6Distillation, the nine-tank library).
+	 */
+	public FluidTankGT[] mTanksOutput = {new FluidTankGT()};
 
 	/** Upstream :107 default RM.CokeOven; resolved lazily because the map registers at mod construct. */
 	public RecipeMap mRecipes = null;
