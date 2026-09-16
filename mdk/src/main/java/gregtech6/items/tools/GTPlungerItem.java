@@ -1,6 +1,7 @@
 package gregtech6.items.tools;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -69,42 +70,59 @@ public class GTPlungerItem extends Item {
 	}
 
 	/**
-	 * The drain arm — resolve the fluid capability on the clicked block entity and void
-	 * 1000 L (upstream Behavior_Plunger_Fluid.java:51-58; the empty-capability/empty-drain
-	 * arms PASS so the click stays a no-op like the upstream F return).
+	 * The drain arm — void 1000 L from the clicked block entity (upstream
+	 * Behavior_Plunger_Fluid.java:51-58; the empty-capability/empty-drain arms PASS so the
+	 * click stays a no-op like the upstream F return). The SIDE face walks
+	 * {@code ForgeDirection.VALID_DIRECTIONS} verbatim (:53 — the GT side rules make the
+	 * drain face content-dependent: the barrel top gives only lighter-than-air fluids, so
+	 * the water face is the bottom), the SIMULATE probe first (:53 {@code drain(..., F)}),
+	 * the EXECUTE drain on the first face that yields (:55 {@code drain(..., T)}).
 	 */
 	@Override
 	public InteractionResult useOn(UseOnContext aContext) {
 		Level tLevel = aContext.getLevel();
 		BlockPos tPos = aContext.getClickedPos();
-		//? if forge {
-		net.minecraft.world.level.block.entity.BlockEntity tDrainBE = tLevel.getBlockEntity(tPos);
-		if (tDrainBE == null) return InteractionResult.PASS;
-		LazyOptional<IFluidHandler> tCapability = tDrainBE.getCapability(ForgeCapabilities.FLUID_HANDLER, aContext.getClickedFace());
-		if (!tCapability.isPresent()) return InteractionResult.PASS;
-		IFluidHandler tHandler = tCapability.orElse(null);
-		//1.20.1 Level has NO getCapability(cap, pos, side) overload — the BE read face is
-		//the in-repo shape (TileEntityBasicMachine.java:1142).
-		//?} else {
-		/*IFluidHandler tHandler =
-				tLevel.getCapability(Capabilities.FluidHandler.BLOCK, tPos, aContext.getClickedFace());
+		if (!tLevel.isClientSide) {
+			IFluidHandler tHandler = resolveHandler(tLevel, tPos, aContext.getClickedFace());
+			if (tHandler == null) return InteractionResult.PASS;
+			// upstream :53 — the per-side probe, then :55 the do-drain on the yielding face
+			for (Direction tDirection : Direction.values()) {
+				IFluidHandler tSide = resolveHandler(tLevel, tPos, tDirection);
+				if (tSide == null) continue;
+				if (tSide.drain(DRAIN_MILLIBUCKETS, IFluidHandler.FluidAction.SIMULATE).isEmpty()) continue;
+				var tDrained = tSide.drain(DRAIN_MILLIBUCKETS, IFluidHandler.FluidAction.EXECUTE);
+				if (tDrained == null || tDrained.isEmpty() || tDrained.getAmount() <= 0) continue; // upstream :53 the null-drain guard
+				tLevel.playSound(null, tPos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+				Player tPlayer = aContext.getPlayer();
+				if (tPlayer != null) {
+					aContext.getItemInHand().hurtAndBreak(1, tPlayer, e -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+				}
+				return InteractionResult.SUCCESS; // server verdict — the sidedSuccess claim rode the client arm
+			}
+			return InteractionResult.PASS;
+		}
+		return InteractionResult.sidedSuccess(true);
+	}
+
+	/**
+	 * The per-direction handler resolve — 1.20.1 Level has NO getCapability(cap, pos,
+	 * side) overload, so the BE read face is the in-repo shape
+	 * (TileEntityBasicMachine.java:1142); the {@code null} side keeps the side-less
+	 * BarrelFluidHandler path reachable (the /gt6tank accept chain shape).
+	 */
+	//? if forge {
+	private static IFluidHandler resolveHandler(Level aLevel, BlockPos aPos, Direction aSide) {
+		net.minecraft.world.level.block.entity.BlockEntity tBE = aLevel.getBlockEntity(aPos);
+		if (tBE == null) return null;
+		return tBE.getCapability(ForgeCapabilities.FLUID_HANDLER, aSide).orElse(null);
+	}
+	//?} else {
+	/*private static IFluidHandler resolveHandler(Level aLevel, BlockPos aPos, Direction aSide) {
 		//21.1: the block-capability lookup returns the handler DIRECTLY (null = absent) —
 		//the GT6LargeMachines getCapability fork shape, read side.
-		if (tHandler == null) return InteractionResult.PASS;
-		*///?}
-		// var: the FluidStack simple name is NOT on the stonecutter swap table — the
-		// inferred local keeps the shared drain line leg-neutral (the t1 loot-subtree lesson).
-		var tDrained = tHandler.drain(DRAIN_MILLIBUCKETS, IFluidHandler.FluidAction.EXECUTE);
-		if (tDrained == null || tDrained.isEmpty() || tDrained.getAmount() <= 0) return InteractionResult.PASS; // upstream :53 the null-drain guard
-		if (!tLevel.isClientSide) {
-			tLevel.playSound(null, tPos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-			Player tPlayer = aContext.getPlayer();
-			if (tPlayer != null) {
-				aContext.getItemInHand().hurtAndBreak(1, tPlayer, e -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-			}
-		}
-		return InteractionResult.sidedSuccess(tLevel.isClientSide);
+		return aLevel.getCapability(Capabilities.FluidHandler.BLOCK, aPos, aSide);
 	}
+	*///?}
 
 	/** The dragon-egg arm (isMinableBlock :68-70) — the dig-speed half. */
 	@Override

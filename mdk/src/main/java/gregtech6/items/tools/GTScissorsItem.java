@@ -1,5 +1,6 @@
 package gregtech6.items.tools;
 
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShearsItem;
 
 /**
@@ -44,6 +45,22 @@ public class GTScissorsItem extends ShearsItem {
 	public GTScissorsItem(Properties aProperties) {
 		super(aProperties);
 	}
+
+	//? if neoforge {
+	/**
+	 * The 1.20.1-forge ShearsItem override the 21.1 base DROPPED (1.20.1 ShearsItem.java:45-47
+	 * vs the 21.1 sources: no isCorrectToolForDrops face): cobweb requiresCorrectToolForDrops
+	 * = true, so without this the game-mode destroy path skips the loot walk entirely
+	 * (canHarvestBlock = false) and the drop-conversion seam never sees the block.
+	 */
+	@Override
+	public boolean isCorrectToolForDrops(ItemStack aStack, net.minecraft.world.level.block.state.BlockState aState) {
+		return aState.is(net.minecraft.world.level.block.Blocks.COBWEB)
+				|| aState.is(net.minecraft.world.level.block.Blocks.REDSTONE_WIRE)
+				|| aState.is(net.minecraft.world.level.block.Blocks.TRIPWIRE)
+				|| super.isCorrectToolForDrops(aStack, aState);
+	}
+	//?}
 	// ponytail: no GT6ToolAction classifier yet — the machine-side TOOL_scissors
 	// consumers are not ported; the patched vanilla shears set IS the action face.
 	// Add a static classifies when the pocket/machine cards need it (the t7 handoff note).

@@ -359,6 +359,12 @@ SESSION_GROUPS = (
     # through the chains' embedded name prefix (the p29_w1_process form).
     ("p29_w5_t4_field_five_plow3x3", "p29_w5_t4_field_five_sense3x3",
      "p29_w5_t4_field_five_leaf2sapling", "p29_w5_t4_field_five_handdrill"),
+    # task p29-w5-t5-scene-six: the five scene-tool chains (ignite / sheep shear /
+    # tripwire disarm / scoop full-drop / plunger drain) — the x401..407 z240 band
+    # (moved from the original z224 by the S18 rebase: the t4 field-five card took the
+    # z224 x400..413 band first; the bbox-disjoint admission forces the fresh z).
+    ("p29_w5_t5_scene_six_ignite", "p29_w5_t5_scene_six_sheep", "p29_w5_t5_scene_six_tripwire",
+     "p29_w5_t5_scene_six_scoop", "p29_w5_t5_scene_six_drain"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
     # P29 W5 t3 (p29-w5-t3-machine-face-four): the machine-face-four chains — one fresh
     # z=292 band, per-tool x-disjoint columns (softhammer x384..388 / magnglass x392..396 /

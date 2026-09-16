@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "tag": "forge:rods/wooden"
+    },
+    "V": {
+      "item": "gt6:plate_rubber"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "xVV",
+    " SV",
+    "S f"
+  ],
+  "result": {
+    "item": "gt6:plunger"
+  },
+  "show_notification": true
+}

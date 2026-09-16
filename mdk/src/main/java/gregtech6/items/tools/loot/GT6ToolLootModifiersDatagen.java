@@ -36,6 +36,10 @@ import gregtech6.registry.GT6Tools;
  * verified on both jars). {@link #MODIFIER_NAMES} is the single source both the
  * {@code add()} calls and the twin builder walk, so the two indices cannot drift. The
  * 21.1 node's own runData emits its native index into the node-local verification tree.
+ * ORDER (t5 revision): the 21.1 native index order is the backing-map iteration face —
+ * with five entries it is NOT alphabetical any more (the t1 three-entry alphabetical
+ * coincidence, live 21.1 runData output 2026-09-16), so the canonical twin pins the
+ * OBSERVED 21.1 order and the datagen_tree_check gate flags any drift.
  */
 public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 
@@ -52,15 +56,15 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 	 */
 	static final List<String> MODIFIER_NAMES = List.of(
 			"construction_ender_chest",
-			"scissors_plant_self",
-			"scoop_plant_self",
 			"spade_harvest",
 			"universal_spade_openable",
 			"axe_tree_fell",
 			"club_rock_crush",
 			"sword_harvest",
 			"branch_cutter_leaves",
-			"sense_vegetal");
+			"sense_vegetal",
+			"scissors_plant_self",
+			"scoop_plant_self");
 
 	/** The ctor face of the platform output (the base field is private — kept for the twin path). */
 	private final PackOutput mOutput;

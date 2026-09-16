@@ -1694,7 +1694,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 .define('V', ItemTags.WOOL)
                 .define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
                 .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
-                .unlockedBy("has_wool", has(ItemTags.WOOL));
+                // the key sorts BEFORE "has_the_recipe": the canonical criteria/requirements
+                // order must stay insertion==alphabetical or the datagen_tree_check
+                // requirements normalizer cannot bridge the 1.21 leg ("has_wool" > "has_the_recipe").
+                .unlockedBy("has_fleece", has(ItemTags.WOOL));
     }
 
     /**
