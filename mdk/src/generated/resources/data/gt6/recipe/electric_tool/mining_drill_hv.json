@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_drill_steel"
+    },
+    "T": {
+      "item": "gt6:screw_steel"
+    },
+    "V": {
+      "tag": "gt6:re_battery3"
+    },
+    "W": {
+      "item": "gt6:stick_stainless_steel"
+    },
+    "X": {
+      "item": "gt6:plate_curved_stainless_steel"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "dAT",
+    "XWX",
+    "XVX"
+  ],
+  "result": {
+    "item": "gt6:mining_drill_hv"
+  },
+  "show_notification": true
+}

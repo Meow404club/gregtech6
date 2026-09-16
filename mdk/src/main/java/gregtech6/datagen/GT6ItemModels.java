@@ -231,6 +231,70 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParent("pincers", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/pincers"))
             .texture("layer1", modLoc("item/pincers_overlay"));
+        // the electric nineteen (task p29-w5-t6-electric-nineteen): the two-layer tool
+        // face per id — layer0 = the head/tip sprite, layer1 = the handle/power-unit
+        // pass (the upstream getIcon(false)/getIcon(true) pass order, the crowbar/cutter
+        // row shape). The head faces ride the IN-REPO material_sets metallic sprites
+        // (Steel default), the handles/power-units/jackhammer are the 12 byte-identical
+        // upstream iconset borrows (assets/README.md attribution); the OVERLAY passes
+        // are cut (the family un-tinted deviation). The monkey-wrench rows reuse the
+        // wrench head art (the upstream getIcon inheritance verbatim); the two
+        // jackhammer forms share the single JACKHAMMER sprite (the upstream icon face).
+        withExistingParent("mining_drill_lv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_drill"))
+            .texture("layer1", modLoc("item/electric/power_unit_lv"));
+        withExistingParent("mining_drill_mv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_drill"))
+            .texture("layer1", modLoc("item/electric/power_unit_mv"));
+        withExistingParent("mining_drill_hv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_drill"))
+            .texture("layer1", modLoc("item/electric/power_unit_hv"));
+        withExistingParent("chainsaw_lv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_chainsaw"))
+            .texture("layer1", modLoc("item/electric/power_unit_lv"));
+        withExistingParent("chainsaw_mv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_chainsaw"))
+            .texture("layer1", modLoc("item/electric/power_unit_mv"));
+        withExistingParent("chainsaw_hv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_chainsaw"))
+            .texture("layer1", modLoc("item/electric/power_unit_hv"));
+        withExistingParent("wrench_lv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_wrench"))
+            .texture("layer1", modLoc("item/electric/power_unit_lv"));
+        withExistingParent("wrench_mv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_wrench"))
+            .texture("layer1", modLoc("item/electric/power_unit_mv"));
+        withExistingParent("wrench_hv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_wrench"))
+            .texture("layer1", modLoc("item/electric/power_unit_hv"));
+        withExistingParent("monkey_wrench_lv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_wrench"))
+            .texture("layer1", modLoc("item/electric/power_unit_lv"));
+        withExistingParent("monkey_wrench_mv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_wrench"))
+            .texture("layer1", modLoc("item/electric/power_unit_mv"));
+        withExistingParent("monkey_wrench_hv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_wrench"))
+            .texture("layer1", modLoc("item/electric/power_unit_hv"));
+        withExistingParent("jackhammer_hv_normal", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/electric/jackhammer"));
+        withExistingParent("jackhammer_hv_no_ores", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/electric/jackhammer"));
+        withExistingParent("buzzsaw_lv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_buzz_saw"))
+            .texture("layer1", modLoc("item/electric/handle_buzzsaw"));
+        withExistingParent("screwdriver_lv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_screwdriver"))
+            .texture("layer1", modLoc("item/electric/handle_electric_screwdriver"));
+        withExistingParent("hand_drill_lv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/electric/tip_electric_drill"))
+            .texture("layer1", modLoc("item/electric/handle_electric_drill"));
+        withExistingParent("hand_mixer_lv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/electric/tip_electric_mixer"))
+            .texture("layer1", modLoc("item/electric/handle_electric_mixer"));
+        withExistingParent("trimmer_lv", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/electric/tip_electric_trimmer"))
+            .texture("layer1", modLoc("item/electric/handle_electric_trimmer"));
         // the food-can row0 subset (task p25-food-can-row0) — 8 item/generated models over
         // the byte-identical upstream icon borrows (gt.multiitem.randomtools/998 for the
         // empty can, gt.multiitem.cans/11-16 for the rotten family, :86 for the cookies

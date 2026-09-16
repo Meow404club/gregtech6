@@ -198,6 +198,27 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/** The craftingToolBendingCylinder (LARGE) translation — #gt6:tools/bending_cylinder (task p29-w5-t5-scene-six, CS.java:1902; the Small :1903 keeps its own tag). */
 	public static final TagKey<Item> TOOLS_BENDING_CYLINDER = gt6("tools/bending_cylinder");
+	// task p29-w5-t6-electric-nineteen — the nineteen electric-tool tags (the same snake
+	// band, one member each; the crafting rows and the future consumers key on the TAG).
+	public static final TagKey<Item> TOOLS_MINING_DRILL_LV = gt6("tools/mining_drill_lv");
+	public static final TagKey<Item> TOOLS_MINING_DRILL_MV = gt6("tools/mining_drill_mv");
+	public static final TagKey<Item> TOOLS_MINING_DRILL_HV = gt6("tools/mining_drill_hv");
+	public static final TagKey<Item> TOOLS_CHAINSAW_LV = gt6("tools/chainsaw_lv");
+	public static final TagKey<Item> TOOLS_CHAINSAW_MV = gt6("tools/chainsaw_mv");
+	public static final TagKey<Item> TOOLS_CHAINSAW_HV = gt6("tools/chainsaw_hv");
+	public static final TagKey<Item> TOOLS_WRENCH_LV = gt6("tools/wrench_lv");
+	public static final TagKey<Item> TOOLS_WRENCH_MV = gt6("tools/wrench_mv");
+	public static final TagKey<Item> TOOLS_WRENCH_HV = gt6("tools/wrench_hv");
+	public static final TagKey<Item> TOOLS_JACKHAMMER_HV_NORMAL = gt6("tools/jackhammer_hv_normal");
+	public static final TagKey<Item> TOOLS_JACKHAMMER_HV_NO_ORES = gt6("tools/jackhammer_hv_no_ores");
+	public static final TagKey<Item> TOOLS_BUZZSAW_LV = gt6("tools/buzzsaw_lv");
+	public static final TagKey<Item> TOOLS_SCREWDRIVER_LV = gt6("tools/screwdriver_lv");
+	public static final TagKey<Item> TOOLS_HAND_DRILL_LV = gt6("tools/hand_drill_lv");
+	public static final TagKey<Item> TOOLS_HAND_MIXER_LV = gt6("tools/hand_mixer_lv");
+	public static final TagKey<Item> TOOLS_MONKEY_WRENCH_LV = gt6("tools/monkey_wrench_lv");
+	public static final TagKey<Item> TOOLS_MONKEY_WRENCH_MV = gt6("tools/monkey_wrench_mv");
+	public static final TagKey<Item> TOOLS_MONKEY_WRENCH_HV = gt6("tools/monkey_wrench_hv");
+	public static final TagKey<Item> TOOLS_TRIMMER_LV = gt6("tools/trimmer_lv");
 
 	/** The dustRedstone recipe-material translation — #gt6:redstone (snake ruling). */
 	public static final TagKey<Item> REDSTONE_DUSTS = gt6("redstone");
@@ -480,6 +501,26 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_FLINT_AND_TINDER).add(item(GT6Tools.FLINT_AND_TINDER.getId()));
 		tag(TOOLS_ROLLING_PIN).add(item(GT6Tools.ROLLING_PIN.getId()));
 		tag(TOOLS_BENDING_CYLINDER).add(item(GT6Tools.BENDING_CYLINDER.getId()));
+		// task p29-w5-t6-electric-nineteen — the nineteen electric tags (the p24 band shape)
+		tag(TOOLS_MINING_DRILL_LV).add(item(GT6Tools.MINING_DRILL_LV.getId()));
+		tag(TOOLS_MINING_DRILL_MV).add(item(GT6Tools.MINING_DRILL_MV.getId()));
+		tag(TOOLS_MINING_DRILL_HV).add(item(GT6Tools.MINING_DRILL_HV.getId()));
+		tag(TOOLS_CHAINSAW_LV).add(item(GT6Tools.CHAINSAW_LV.getId()));
+		tag(TOOLS_CHAINSAW_MV).add(item(GT6Tools.CHAINSAW_MV.getId()));
+		tag(TOOLS_CHAINSAW_HV).add(item(GT6Tools.CHAINSAW_HV.getId()));
+		tag(TOOLS_WRENCH_LV).add(item(GT6Tools.WRENCH_LV.getId()));
+		tag(TOOLS_WRENCH_MV).add(item(GT6Tools.WRENCH_MV.getId()));
+		tag(TOOLS_WRENCH_HV).add(item(GT6Tools.WRENCH_HV.getId()));
+		tag(TOOLS_JACKHAMMER_HV_NORMAL).add(item(GT6Tools.JACKHAMMER_HV_NORMAL.getId()));
+		tag(TOOLS_JACKHAMMER_HV_NO_ORES).add(item(GT6Tools.JACKHAMMER_HV_NO_ORES.getId()));
+		tag(TOOLS_BUZZSAW_LV).add(item(GT6Tools.BUZZSAW_LV.getId()));
+		tag(TOOLS_SCREWDRIVER_LV).add(item(GT6Tools.SCREWDRIVER_LV.getId()));
+		tag(TOOLS_HAND_DRILL_LV).add(item(GT6Tools.HAND_DRILL_LV.getId()));
+		tag(TOOLS_HAND_MIXER_LV).add(item(GT6Tools.HAND_MIXER_LV.getId()));
+		tag(TOOLS_MONKEY_WRENCH_LV).add(item(GT6Tools.MONKEY_WRENCH_LV.getId()));
+		tag(TOOLS_MONKEY_WRENCH_MV).add(item(GT6Tools.MONKEY_WRENCH_MV.getId()));
+		tag(TOOLS_MONKEY_WRENCH_HV).add(item(GT6Tools.MONKEY_WRENCH_HV.getId()));
+		tag(TOOLS_TRIMMER_LV).add(item(GT6Tools.TRIMMER_LV.getId()));
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
 		// task p26-w1-press-extruder-molds — the mold-family membership face (the row0 pair,
@@ -510,6 +551,10 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 				item(GT6Tools.PLOW.getId()), item(GT6Tools.HAND_DRILL.getId()), // task p29-w5-t4-field-five — the family band 22 → 27 (the machine-face four stay the t3 one-member tag shape, outside the family band)
 				item(GT6Tools.SCISSORS.getId()), item(GT6Tools.SCOOP.getId()), item(GT6Tools.PLUNGER.getId()),
 				item(GT6Tools.FLINT_AND_TINDER.getId()), item(GT6Tools.ROLLING_PIN.getId()), item(GT6Tools.BENDING_CYLINDER.getId())); // task p29-w5-t5-scene-six — the family band 27 → 33
+		// task p29-w5-t6-electric-nineteen — the family band 33 → 52 (the electric nineteen)
+		for (RegistryObject<Item> tRow : GT6Tools.ELECTRIC_TOOLS) {
+			tag(Tags.Items.TOOLS).add(item(tRow.getId()));
+		}
 	}
 
 	/**

@@ -8134,3 +8134,18 @@ overlay = the MT.WOODS.Spruce secondary, the builder-wand borrow posture).
   byte-copy borrows of upstream `textures/items/iconsets/MAGNIFYING_GLASS[_OVERLAY].png`.
 - `gt6/textures/item/pincers.png` + `pincers_overlay.png` — byte-copy borrows
   of upstream `textures/items/iconsets/PINCERS[_OVERLAY].png`.
+
+Electric nineteen append, task p29-w5-t6-electric-nineteen (2026-09-16): the
+19 electric-tool models borrow the 12 upstream iconset sprites (one borrow
+per icon face; the drill/chainsaw/wrench ladders share the POWER_UNIT_LV/MV/HV
+top pass, the monkey-wrench rows reuse the wrench head art — the upstream
+MonkeyWrench getIcon inherits GT_Tool_Wrench_LV verbatim).
+
+- `gt6/textures/item/electric/*.png` — byte-identical upstream borrows from
+  `assets/gregtech/textures/items/iconsets/` (power_unit_lv/mv/hv, jackhammer,
+  handle_buzzsaw, handle_electric_screwdriver, tip/handle_electric_drill,
+  tip/handle_electric_mixer, tip/handle_electric_trimmer). The head faces
+  (layer0 of the drill/chainsaw/wrench/buzzsaw/screwdriver/trimmer rows) ride
+  the IN-REPO `item/material_sets/metallic/tool_head_*` sprites (no new file,
+  the chisel/file/saw row convention). The OVERLAY passes are cut — the port
+  draws the base borrow untinted (the family single-tier deviation).

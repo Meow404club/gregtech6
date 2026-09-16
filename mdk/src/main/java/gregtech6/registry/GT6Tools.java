@@ -55,6 +55,7 @@ import gregtech6.items.tools.GTMonkeyWrenchItem;
 import gregtech6.items.tools.GTPincersItem;
 import gregtech6.items.tools.GTSoftHammerItem;
 import gregtech6.items.tools.GTWrenchItem;
+import gregtech6.items.tools.electric.GT6ElectricToolItem;
 
 /**
  * The GT6 tool registration home — task p9-tool-crowbar spec ③, the ADR
@@ -424,6 +425,72 @@ public final class GT6Tools {
 			() -> new GT6BendingCylinderItem(new Item.Properties().durability(GT6BendingCylinderItem.DURABILITY_POINTS)));
 
 	/**
+	 * The nineteen electric tools — task p29-w5-t6-electric-nineteen (rows 38-56 of the
+	 * table, the upstream registration order Loader_Tools.java:156-174). ONE shared base
+	 * class ({@code GT6ElectricToolItem}) over its {@code Spec} table: EU pool per tier
+	 * (lead-acid representative capacities 64000/256000/1024000 — the declared 收敛 of the
+	 * upstream capacity-sum face :427-450), the :433 random-wear shell (512 = the family
+	 * value), the sneak bare-target twin swap (:162-166 cross-references), the mining
+	 * surfaces (the upstream isMinableBlock mappings; zero machine face — the RED LINE).
+	 */
+	public static final RegistryObject<Item> MINING_DRILL_LV = ITEMS.register(GT6ElectricToolItem.MINING_DRILL_LV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.MINING_DRILL_LV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> MINING_DRILL_MV = ITEMS.register(GT6ElectricToolItem.MINING_DRILL_MV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.MINING_DRILL_MV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> MINING_DRILL_HV = ITEMS.register(GT6ElectricToolItem.MINING_DRILL_HV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.MINING_DRILL_HV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> CHAINSAW_LV = ITEMS.register(GT6ElectricToolItem.CHAINSAW_LV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.CHAINSAW_LV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> CHAINSAW_MV = ITEMS.register(GT6ElectricToolItem.CHAINSAW_MV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.CHAINSAW_MV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> CHAINSAW_HV = ITEMS.register(GT6ElectricToolItem.CHAINSAW_HV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.CHAINSAW_HV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> WRENCH_LV = ITEMS.register(GT6ElectricToolItem.WRENCH_LV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.WRENCH_LV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> WRENCH_MV = ITEMS.register(GT6ElectricToolItem.WRENCH_MV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.WRENCH_MV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> WRENCH_HV = ITEMS.register(GT6ElectricToolItem.WRENCH_HV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.WRENCH_HV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> JACKHAMMER_HV_NORMAL = ITEMS.register(GT6ElectricToolItem.JACKHAMMER_HV_NORMAL.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.JACKHAMMER_HV_NORMAL, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> JACKHAMMER_HV_NO_ORES = ITEMS.register(GT6ElectricToolItem.JACKHAMMER_HV_NO_ORES.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.JACKHAMMER_HV_NO_ORES, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> BUZZSAW_LV = ITEMS.register(GT6ElectricToolItem.BUZZSAW_LV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.BUZZSAW_LV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> SCREWDRIVER_LV = ITEMS.register(GT6ElectricToolItem.SCREWDRIVER_LV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.SCREWDRIVER_LV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> HAND_DRILL_LV = ITEMS.register(GT6ElectricToolItem.HAND_DRILL_LV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.HAND_DRILL_LV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> HAND_MIXER_LV = ITEMS.register(GT6ElectricToolItem.HAND_MIXER_LV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.HAND_MIXER_LV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> MONKEY_WRENCH_LV = ITEMS.register(GT6ElectricToolItem.MONKEY_WRENCH_LV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.MONKEY_WRENCH_LV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> MONKEY_WRENCH_MV = ITEMS.register(GT6ElectricToolItem.MONKEY_WRENCH_MV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.MONKEY_WRENCH_MV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> MONKEY_WRENCH_HV = ITEMS.register(GT6ElectricToolItem.MONKEY_WRENCH_HV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.MONKEY_WRENCH_HV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+	public static final RegistryObject<Item> TRIMMER_LV = ITEMS.register(GT6ElectricToolItem.TRIMMER_LV.aPath(),
+			() -> new GT6ElectricToolItem(GT6ElectricToolItem.TRIMMER_LV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
+
+	/** The nineteen electric rows in TAB order (the SPECS source — one walk, no drift). */
+	public static final List<RegistryObject<Item>> ELECTRIC_TOOLS = List.of(
+			MINING_DRILL_LV, MINING_DRILL_MV, MINING_DRILL_HV,
+			CHAINSAW_LV, CHAINSAW_MV, CHAINSAW_HV,
+			WRENCH_LV, WRENCH_MV, WRENCH_HV,
+			JACKHAMMER_HV_NORMAL, JACKHAMMER_HV_NO_ORES,
+			BUZZSAW_LV, SCREWDRIVER_LV, HAND_DRILL_LV, HAND_MIXER_LV,
+			MONKEY_WRENCH_LV, MONKEY_WRENCH_MV, MONKEY_WRENCH_HV,
+			TRIMMER_LV);
+
+	/** The path → the electric RegistryObject (the recipe builder + the RCON command seam). */
+	public static RegistryObject<Item> electricTool(String aPath) {
+		for (RegistryObject<Item> tRow : ELECTRIC_TOOLS) {
+			if (tRow.getId().getPath().equals(aPath)) return tRow;
+		}
+		return null;
+	}
+
+	/**
 	 * The "Tools" tab display table — one row per registered tool item, in display order.
 	 * Table-driven so the tool-family cards append ONE row each. Pure data:
 	 * {@link RegistryObject#getId()} reads the pre-registration name field
@@ -443,15 +510,23 @@ public final class GT6Tools {
 	 * p29-w5-t4-field-five appends rows 27-31 (the five field tools — hoe,
 	 * branch_cutter, sense, plow, hand_drill, the upstream Loader_Tools id order
 	 * 122/133/138/139/152); task p29-w5-t5-scene-six appends rows 32-37 (the six scene
-	 * tools — scissors, scoop, plunger, flint_and_tinder, rolling_pin, bending_cylinder).
+	 * tools — scissors, scoop, plunger, flint_and_tinder, rolling_pin, bending_cylinder);
+	 * task p29-w5-t6-electric-nineteen appends rows 38-56 (the nineteen electric tools —
+	 * the upstream Loader_Tools.java:156-174 registration-row order).
 	 */
 	public static final List<RegistryObject<Item>> TAB_TABLE = List.of(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL,
 			PICKAXE, PICKAXE_GEM, PICKAXE_CONSTRUCTION, SHOVEL, SPADE, UNIVERSAL_SPADE,
 			SWORD, KNIFE, BUTCHERY_KNIFE, CLUB, AXE, AXE_DOUBLE,
 			SOFT_HAMMER, MONKEY_WRENCH, MAGNIFYING_GLASS, PINCERS,
 			HOE, BRANCH_CUTTER, SENSE, PLOW, HAND_DRILL,
-			SCISSORS, SCOOP, PLUNGER, FLINT_AND_TINDER, ROLLING_PIN, BENDING_CYLINDER); // task p29-w5-t5-scene-six — rows 32-37
-
+			SCISSORS, SCOOP, PLUNGER, FLINT_AND_TINDER, ROLLING_PIN, BENDING_CYLINDER,
+			MINING_DRILL_LV, MINING_DRILL_MV, MINING_DRILL_HV,
+			CHAINSAW_LV, CHAINSAW_MV, CHAINSAW_HV,
+			WRENCH_LV, WRENCH_MV, WRENCH_HV,
+			JACKHAMMER_HV_NORMAL, JACKHAMMER_HV_NO_ORES,
+			BUZZSAW_LV, SCREWDRIVER_LV, HAND_DRILL_LV, HAND_MIXER_LV,
+			MONKEY_WRENCH_LV, MONKEY_WRENCH_MV, MONKEY_WRENCH_HV,
+			TRIMMER_LV);
 
 	/**
 	 * The tab title lang key — the single source both the builder and the GT6EnUs datagen
@@ -518,6 +593,8 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.WRENCH.get()), GTWrenchItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.BENDING_CYLINDER_SMALL.get()), GT6BendingCylinderSmallItem.DURABILITY_POINTS);
+			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
+					ForgeRegistries.ITEMS.getKey(GT6Tools.UNIVERSAL_SPADE.get()), GTUniversalSpadeItem.DURABILITY_POINTS);
 			// task p29-w5-t1-dig-six — the six dig tools join the registration smoke log
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.PICKAXE.get()), GTPickaxeItem.DURABILITY_POINTS);
@@ -577,6 +654,11 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.ROLLING_PIN.get()), GTRollingPinItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.BENDING_CYLINDER.get()), GT6BendingCylinderItem.DURABILITY_POINTS);
+			// task p29-w5-t6-electric-nineteen — the nineteen electric tools join the smoke log
+			for (RegistryObject<Item> tRow : ELECTRIC_TOOLS) {
+				GT6Mod.LOGGER.info("GT6 tool registered: {} durability {} (electric)",
+						ForgeRegistries.ITEMS.getKey(tRow.get()), GT6ElectricToolItem.DURABILITY_POINTS);
+			}
 			// The registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

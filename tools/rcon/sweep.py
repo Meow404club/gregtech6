@@ -365,6 +365,13 @@ SESSION_GROUPS = (
     # z224 x400..413 band first; the bbox-disjoint admission forces the fresh z).
     ("p29_w5_t5_scene_six_ignite", "p29_w5_t5_scene_six_sheep", "p29_w5_t5_scene_six_tripwire",
      "p29_w5_t5_scene_six_scoop", "p29_w5_t5_scene_six_drain"),
+    # P29 W5 card 6 (p29-w5-t6-electric-nineteen): the four electric chains — one fresh
+    # z=240 band (x600..646: drill 600..611 / switch 620..626 / jackhammer 630..636 /
+    # faces 640..646), the t1 admission form (bbox-registered, no fresh_boot / mutates
+    # member — the fake-player /gt6electric arms are band-local setblocks).
+    # --group p29_w5_t6_electric matches through the chains' embedded name prefix.
+    ("p29_w5_t6_electric_drill", "p29_w5_t6_electric_switch", "p29_w5_t6_electric_jackhammer",
+     "p29_w5_t6_electric_faces"),
     ("p15_runtime_smoke",),   # fresh_boot singleton (decision ③)
     # P29 W5 t3 (p29-w5-t3-machine-face-four): the machine-face-four chains — one fresh
     # z=292 band, per-tool x-disjoint columns (softhammer x384..388 / magnglass x392..396 /

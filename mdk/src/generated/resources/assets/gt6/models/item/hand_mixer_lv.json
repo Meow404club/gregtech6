@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "gt6:item/electric/tip_electric_mixer",
+    "layer1": "gt6:item/electric/handle_electric_mixer"
+  }
+}

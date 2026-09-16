@@ -204,7 +204,16 @@ class GT6ItemModelLayersTest {
     private static final Set<String> TOOL_MODEL_IDS = Set.of(
         "crowbar", "cutter", "chisel", "file", "saw", "builder_wand", "screwdriver", "hammer",
         "sword", "knife", "butchery_knife", "club", "axe", "axe_double", // task p29-w5-t2-blade-six — the blade rows carry their own multi-layer pins
-        "soft_hammer"); // task p29-w5-t3-machine-face-four — the 4-layer rubber-head pin
+        "soft_hammer", // task p29-w5-t3-machine-face-four — the 4-layer rubber-head pin
+        // task p29-w5-t6-electric-nineteen — the electric rows whose layer0 rides the
+        // material_sets head sprite: their layer1 is the POWER-UNIT/HANDLE pass (the
+        // upstream getIcon(true) pass), NOT the base's _overlay sibling — the deliberate
+        // exemption, the t3 machine-face-four TOOL_MODEL_IDS ruling
+        "mining_drill_lv", "mining_drill_mv", "mining_drill_hv",
+        "chainsaw_lv", "chainsaw_mv", "chainsaw_hv",
+        "wrench_lv", "wrench_mv", "wrench_hv",
+        "monkey_wrench_lv", "monkey_wrench_mv", "monkey_wrench_hv",
+        "buzzsaw_lv", "screwdriver_lv");
 
     /**
      * The existence-gated overlay rule, walked over EVERY generated item model that

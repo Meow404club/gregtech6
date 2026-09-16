@@ -327,8 +327,46 @@ public final class GT6ToolLootModifiers {
 				aDrops.add(new ItemStack(tBlock)); // :90 — the vine self replacement, verbatim shape
 				return true;
 			}
+			case JACKHAMMER_ROCKS -> {
+				net.minecraft.world.item.Item tRock = rockItem(aState.getBlock());
+				if (tRock == null) return false; // not a rock-family block — the drops ride through
+				aDrops.clear(); // upstream convertBlockDrops :96 — the whole-block arm replaces the drops
+				aDrops.add(new ItemStack(tRock, ROCK_COUNT)); // rockGt x4, the RM.pack :152 column
+				return true;
+			}
 		}
 		return false;
+	}
+
+	/** The rockGt drop count — the upstream hammer rows ({@code rockGt.mat(mMaterial, 4)}). */
+	public static final int ROCK_COUNT = 4;
+
+	/** The rock-family mapping table — the block → the {@code rock_gt_*} material segment. */
+	public static final java.util.Map<Block, String> ROCK_MATERIALS = java.util.Map.of(
+			Blocks.STONE, "stone", Blocks.COBBLESTONE, "stone", Blocks.MOSSY_COBBLESTONE, "stone",
+			Blocks.GRANITE, "granite", Blocks.DIORITE, "diorite", Blocks.ANDESITE, "andesite",
+			Blocks.NETHERRACK, "netherrack", Blocks.END_STONE, "endstone");
+
+	/**
+	 * The rock-family mapping — task p29-w5-t6-electric-nineteen (the jackhammer "Breaks
+	 * Rocks into pieces" conversion). The upstream face routed drops through the
+	 * {@code RM.Hammer} map; the card rules the port arm a PURE FUNCTION (no RM map): the
+	 * vanilla rock-family blocks map onto the registered {@code gt6:rock_gt_*} items, the
+	 * RM.pack :152-154 columns verbatim (cobblestone→Stone) plus the BlockStones
+	 * :321 family fold (stone/granite/diorite/andesite→their material). Returns the
+	 * resolved ITEM (registry lookup, null-safe for the offline JVM) or null when the
+	 * block is not a rock — the resolver seam the offline tests pin through the ID table.
+	 */
+	public static net.minecraft.world.item.Item rockItem(Block aBlock) {
+		String tMaterial = ROCK_MATERIALS.get(aBlock);
+		if (tMaterial == null) return null;
+		//? if forge {
+		return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+				new net.minecraft.resources.ResourceLocation("gt6", "rock_gt_" + tMaterial));
+		//?} else {
+		/*return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "rock_gt_" + tMaterial));
+		*///?}
 	}
 
 	/**
@@ -382,7 +420,9 @@ public final class GT6ToolLootModifiers {
 		 */
 		BRANCHCUTTER_LEAVES,
 		/** The scissors/scoop vine+cobweb self-drop (task p29-w5-t5-scene-six, GT_Tool_Scissors.java:87-101). */
-		PLANT_SELF_DROP
+		PLANT_SELF_DROP,
+		/** The jackhammer rockGt conversion (upstream GT_Tool_JackHammer_HV convertBlockDrops — the pure-function ruling). */
+		JACKHAMMER_ROCKS
 	}
 
 		private static final Codec<Mode> MODE_CODEC = Codec.STRING.xmap(Mode::valueOf, Mode::name);

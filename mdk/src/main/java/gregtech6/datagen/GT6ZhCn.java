@@ -964,6 +964,45 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.flint_and_tinder"); // 打火石 (dump gt.metatool.01.50 :6766)
 		addDirect("item.gt6.rolling_pin"); // 擀面杖 (dump gt.metatool.01.46 :6756)
 		addDirect("item.gt6.bending_cylinder"); // 弯曲绕筒 (dump gt.metatool.01.54 :6786)
+		// task p29-w5-t6-electric-nineteen — the 33 electric keys (19 names + 14 tooltips);
+		// the upstream dump carries ZERO electric-tool display rows, so every zh face is a
+		// hand word composed over the EXISTING dump roots (链锯头→链锯 / 扳手 / 圆锯
+		// gt6.row.machine.buzzsaw / 螺丝刀 / 活动扳手 = the t3 metatool.01.52 word) —
+		// provenance p29-w5-t6-electric-nineteen+hand33 (the TSV hand rows + the
+		// gen_zhcn_ref.py HAND_TRANSLATIONS entries, the t3 double-write rule)
+		addDirect("item.gt6.mining_drill_lv");
+		addDirect("item.gt6.mining_drill_mv");
+		addDirect("item.gt6.mining_drill_hv");
+		addDirect("item.gt6.chainsaw_lv");
+		addDirect("item.gt6.chainsaw_lv.tooltip");
+		addDirect("item.gt6.chainsaw_mv");
+		addDirect("item.gt6.chainsaw_mv.tooltip");
+		addDirect("item.gt6.chainsaw_hv");
+		addDirect("item.gt6.chainsaw_hv.tooltip");
+		addDirect("item.gt6.wrench_lv");
+		addDirect("item.gt6.wrench_lv.tooltip");
+		addDirect("item.gt6.wrench_mv");
+		addDirect("item.gt6.wrench_mv.tooltip");
+		addDirect("item.gt6.wrench_hv");
+		addDirect("item.gt6.wrench_hv.tooltip");
+		addDirect("item.gt6.jackhammer_hv_normal");
+		addDirect("item.gt6.jackhammer_hv_normal.tooltip");
+		addDirect("item.gt6.jackhammer_hv_no_ores");
+		addDirect("item.gt6.jackhammer_hv_no_ores.tooltip");
+		addDirect("item.gt6.buzzsaw_lv");
+		addDirect("item.gt6.buzzsaw_lv.tooltip");
+		addDirect("item.gt6.screwdriver_lv");
+		addDirect("item.gt6.hand_drill_lv");
+		addDirect("item.gt6.hand_mixer_lv");
+		addDirect("item.gt6.hand_mixer_lv.tooltip");
+		addDirect("item.gt6.monkey_wrench_lv");
+		addDirect("item.gt6.monkey_wrench_lv.tooltip");
+		addDirect("item.gt6.monkey_wrench_mv");
+		addDirect("item.gt6.monkey_wrench_mv.tooltip");
+		addDirect("item.gt6.monkey_wrench_hv");
+		addDirect("item.gt6.monkey_wrench_hv.tooltip");
+		addDirect("item.gt6.trimmer_lv");
+		addDirect("item.gt6.mode_switch.tooltip");
 		addDirect("item.gt6.shape_extruder_plate"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10001 模具 (板) (:10129)
 		addDirect("item.gt6.shape_extruder_rod"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10027 模具 (杆) (:10185)
 		addDirect("item.gt6.cover_redstone_emitter");

@@ -32,6 +32,25 @@
     "gt6:plunger",
     "gt6:flint_and_tinder",
     "gt6:rolling_pin",
-    "gt6:bending_cylinder"
+    "gt6:bending_cylinder",
+    "gt6:mining_drill_lv",
+    "gt6:mining_drill_mv",
+    "gt6:mining_drill_hv",
+    "gt6:chainsaw_lv",
+    "gt6:chainsaw_mv",
+    "gt6:chainsaw_hv",
+    "gt6:wrench_lv",
+    "gt6:wrench_mv",
+    "gt6:wrench_hv",
+    "gt6:jackhammer_hv_normal",
+    "gt6:jackhammer_hv_no_ores",
+    "gt6:buzzsaw_lv",
+    "gt6:screwdriver_lv",
+    "gt6:hand_drill_lv",
+    "gt6:hand_mixer_lv",
+    "gt6:monkey_wrench_lv",
+    "gt6:monkey_wrench_mv",
+    "gt6:monkey_wrench_hv",
+    "gt6:trimmer_lv"
   ]
 }

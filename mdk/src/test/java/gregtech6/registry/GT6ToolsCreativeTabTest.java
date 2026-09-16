@@ -113,7 +113,7 @@ public class GT6ToolsCreativeTabTest {
 	 */
 	@Test
 	public void displayTableIsExactlyTheThirtyOneToolRows() {
-		assertEquals(37, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the 31 prior tools plus the six scene tools");
+		assertEquals(56, GT6Tools.TAB_TABLE.size(), "the Tools tab displays the 37 prior tools plus the nineteen electric tools");
 		assertSame(GT6Tools.CROWBAR, GT6Tools.TAB_TABLE.get(0), "row 0 is the registered crowbar item, not a parallel supplier");
 		assertSame(GT6Tools.CUTTER, GT6Tools.TAB_TABLE.get(1), "row 1 is the registered cutter item, not a parallel supplier");
 		assertSame(GT6Tools.CHISEL, GT6Tools.TAB_TABLE.get(2), "row 2 is the registered chisel item, not a parallel supplier");
