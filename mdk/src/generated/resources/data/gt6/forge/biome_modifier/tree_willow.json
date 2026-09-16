@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:trees/willow",
+  "features": "gt6:tree_willow",
+  "step": "vegetal_decoration"
+}

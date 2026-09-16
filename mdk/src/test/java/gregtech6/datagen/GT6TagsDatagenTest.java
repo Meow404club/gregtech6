@@ -194,10 +194,47 @@ class GT6TagsDatagenTest {
         assertTrue(!tValues.contains("gt6:barrel_wood"), "the wood barrel belongs to the axe band");
     }
 
-    /** The axe band: exactly the wood fluid barrel (the census material mapping keeps wood out of pickaxe). */
+    /**
+     * The axe band: the wood fluid barrel + the 9 GT6 tree logs (task p30-w6-t1-trees-nine
+     * — the addTreeBand walk order appended after the barrel; the census material mapping
+     * keeps wood out of pickaxe).
+     */
     @Test
-    void axeBandIsExactlyTheWoodBarrel() throws Exception {
-        assertEquals(List.of("gt6:barrel_wood"), tagValues("minecraft/tags/blocks/mineable/axe.json"));
+    void axeBandIsExactlyTheWoodBarrelAndTheTreeLogs() throws Exception {
+        assertEquals(List.of("gt6:barrel_wood",
+                "gt6:rubber_log", "gt6:maple_log", "gt6:willow_log", "gt6:blue_mahoe_log",
+                "gt6:hazel_log", "gt6:cinnamon_log", "gt6:coconut_log", "gt6:rainbowood_log",
+                "gt6:blue_spruce_log"), tagValues("minecraft/tags/blocks/mineable/axe.json"));
+    }
+
+    /**
+     * The tree-family vanilla bands (task p30-w6-t1-trees-nine): the datagen file carries
+     * ONLY the gt6 additions — the vanilla members (oak_log etc.) live in the vanilla
+     * jar's own data layer and merge at load, so the pin is exactly the 9 gt6 members per
+     * family, both the block and the item face. The item logs band is THE coke-oven
+     * expansion source (GT6CokeOvenTagListener.rebuild reads ItemTags.LOGS on every real
+     * tag load) — a missed membership = a silently dead recipe, hence the exact pin.
+     */
+    @Test
+    void treeFamiliesAreExactlyTheNineGt6Members() throws Exception {
+        List<String> tLogs = List.of(
+                "gt6:rubber_log", "gt6:maple_log", "gt6:willow_log", "gt6:blue_mahoe_log",
+                "gt6:hazel_log", "gt6:cinnamon_log", "gt6:coconut_log", "gt6:rainbowood_log",
+                "gt6:blue_spruce_log");
+        assertEquals(tLogs, tagValues("minecraft/tags/items/logs.json"));
+        assertEquals(tLogs, tagValues("minecraft/tags/blocks/logs.json"));
+        List<String> tLeaves = List.of(
+                "gt6:rubber_leaves", "gt6:maple_leaves", "gt6:willow_leaves", "gt6:blue_mahoe_leaves",
+                "gt6:hazel_leaves", "gt6:cinnamon_leaves", "gt6:coconut_leaves", "gt6:rainbowood_leaves",
+                "gt6:blue_spruce_leaves");
+        assertEquals(tLeaves, tagValues("minecraft/tags/items/leaves.json"));
+        assertEquals(tLeaves, tagValues("minecraft/tags/blocks/leaves.json"));
+        List<String> tSaplings = List.of(
+                "gt6:rubber_sapling", "gt6:maple_sapling", "gt6:willow_sapling", "gt6:blue_mahoe_sapling",
+                "gt6:hazel_sapling", "gt6:cinnamon_sapling", "gt6:coconut_sapling", "gt6:rainbowood_sapling",
+                "gt6:blue_spruce_sapling");
+        assertEquals(tSaplings, tagValues("minecraft/tags/items/saplings.json"));
+        assertEquals(tSaplings, tagValues("minecraft/tags/blocks/saplings.json"));
     }
 
     /**

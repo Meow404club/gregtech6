@@ -26,6 +26,7 @@ import gregtech6.registry.GTGrassBlocks;
 import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMachines;
+import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GTWires;
 
@@ -93,6 +94,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addAxeBand();
 		addGrassBand(); // task p24-grass-block — the grass family band
 		addShovelBand();
+		addTreeBand(); // task p30-w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
 		// the takeover seam: later cards tail-append their own add*Band() here
 		// (p24-tags-prefix-materials: rolling batches).
 	}
@@ -201,6 +203,35 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		for (var tEntry : GTMaterialBlocks.items().entrySet()) {
 			if (tEntry.getKey().prefix() != OP.blockDust) continue;
 			tShovel.add(((BlockItem) tEntry.getValue().get()).getBlock());
+		}
+	}
+
+	/**
+	 * The tree-family band (task p30-w6-t1-trees-nine — the decisions
+	 * .p25-leaves-logs-tags-deferred UNLOCK, its condition fires): the 9 tree logs join
+	 * {@code minecraft:logs} (the vanilla fire/flammability semantics) and
+	 * {@code mineable/axe}, the 9 leaves join {@code minecraft:leaves} +
+	 * {@code mineable/hoe} (the vanilla leaves hoe face, vanilla-1.20.1
+	 * data/minecraft/tags/blocks/mineable/hoe.json), the 9 saplings join
+	 * {@code minecraft:saplings}. Strictness unchanged: every member is a
+	 * live-registered block (the registration walk), zero optional.
+	 */
+	private void addTreeBand() {
+		var tLogs = tag(BlockTags.LOGS);
+		var tLeaves = tag(BlockTags.LEAVES);
+		var tSaplings = tag(BlockTags.SAPLINGS);
+		var tAxe = tag(BlockTags.MINEABLE_WITH_AXE);
+		var tHoe = tag(BlockTags.MINEABLE_WITH_HOE);
+		for (RegistryObject<Block> tHandle : GT6TreeBlocks.LOGS) {
+			tLogs.add(tHandle.get());
+			tAxe.add(tHandle.get());
+		}
+		for (RegistryObject<Block> tHandle : GT6TreeBlocks.LEAVES) {
+			tLeaves.add(tHandle.get());
+			tHoe.add(tHandle.get());
+		}
+		for (RegistryObject<Block> tHandle : GT6TreeBlocks.SAPLINGS) {
+			tSaplings.add(tHandle.get());
 		}
 	}
 }

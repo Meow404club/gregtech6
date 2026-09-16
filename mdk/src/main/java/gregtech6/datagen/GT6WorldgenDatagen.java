@@ -28,6 +28,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
@@ -39,7 +40,10 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 
 import java.util.List;
 import gregtech6.block.stone.StoneVariant;
+import gregtech6.block.tree.GT6TreeKind;
+import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTStoneBlocks;
+import gregtech6.worldgen.GT6Features;
 import gregtech6.worldgen.GT6Worldgen;
 
 /**
@@ -104,6 +108,28 @@ public final class GT6WorldgenDatagen {
         return ResourceKey.create(biomeModifierRegistryKey(), ResourceLocation.fromNamespaceAndPath("gt6", tPath));
     }
 
+    /**
+     * The 9 tree biome-modifier keys, GT6TreeBlocks.KINDS order (task p30-w6-t1-trees-nine
+     * — one AddFeaturesBiomeModifier row per tree, the upstream per-object config face).
+     */
+    public static final List<ResourceKey<BiomeModifier>> TREE_BIOME_MODIFIER_KEYS =
+            GT6TreeBlocks.KINDS.stream().map(GT6TreeKind::snake)
+                    .map(GT6WorldgenDatagen::treeBiomeModifierKey).toList();
+
+    private static ResourceKey<BiomeModifier> treeBiomeModifierKey(String aTreeSnake) {
+        String tPath = GT6Worldgen.treeEntryPath(aTreeSnake);
+        return ResourceKey.create(biomeModifierRegistryKey(), ResourceLocation.fromNamespaceAndPath("gt6", tPath));
+    }
+
+    /**
+     * The per-tree chunk-chance column (the upstream Probability), Loader_Worldgen.java
+     * :608-616 verbatim: rubber 1/5, maple 1/5, willow 1/4, bluemahoe 1/3, hazel 1/32,
+     * cinnamon 1/3, coconut 1/1, rainbowood 1/4, bluespruce 1/32. Amount is 1 for all
+     * nine rows (one placement attempt per probability hit — the RarityFilter+default
+     * count=1 translation, card spec ③).
+     */
+    public static final List<Integer> TREE_PROBABILITY = List.of(5, 5, 4, 3, 32, 3, 1, 4, 32);
+
     /** The single RegistrySetBuilder handed to the DatapackBuiltinEntriesProvider (GT6DataGenerators). */
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(Registries.CONFIGURED_FEATURE, GT6WorldgenDatagen::bootstrapConfigured)
@@ -160,6 +186,16 @@ public final class GT6WorldgenDatagen {
                                     GTStoneBlocks.block(tSnake, StoneVariant.STONE).get().defaultBlockState())),
                             GT6Worldgen.oreBlobSize()));
         }
+        // task p30-w6-t1-trees-nine — the 9 tree configured features: the registered
+        // GT6TreeFeature instance per kind over NoneFeatureConfiguration (zero JSON
+        // config face; the Feature carries the shape). The double casts bind the
+        // wildcard key/feature pair to the FC-typed register overload.
+        for (int i = 0; i < GT6Worldgen.TREE_CONFIGURED_KEYS.size(); i++) {
+            @SuppressWarnings("unchecked")
+            Feature<NoneFeatureConfiguration> tFeature = (Feature<NoneFeatureConfiguration>) GT6Features.TREE_FEATURES.get(i);
+            FeatureUtils.register(ctx, GT6Worldgen.TREE_CONFIGURED_KEYS.get(i), tFeature,
+                    NoneFeatureConfiguration.INSTANCE);
+        }
     }
 
     /**
@@ -185,6 +221,21 @@ public final class GT6WorldgenDatagen {
                     HeightRangePlacement.uniform(VerticalAnchor.absolute(GT6Worldgen.OVERWORLD_MIN_Y),
                             VerticalAnchor.absolute(GT6Worldgen.OVERWORLD_MAX_Y)));
         }
+        // task p30-w6-t1-trees-nine — the 9 tree placed features: the GTCEu tree modifier
+        // chain (GTPlacedFeatures.java:31-43 RUBBER_CHECKED: spread + SurfaceWaterDepth(0)
+        // + HEIGHTMAP_TOP_SOLID + BiomeFilter + filteredByBlockSurvival) with the upstream
+        // 1/N chunk chance as the RarityFilter (count stays the default 1 = Amount 1)
+        for (int i = 0; i < GT6Worldgen.TREE_PLACED_KEYS.size(); i++) {
+            PlacementUtils.register(ctx, GT6Worldgen.TREE_PLACED_KEYS.get(i),
+                    tFeatures.getOrThrow(GT6Worldgen.TREE_CONFIGURED_KEYS.get(i)),
+                    RarityFilter.onAverageOnceEvery(TREE_PROBABILITY.get(i)),
+                    InSquarePlacement.spread(),
+                    net.minecraft.world.level.levelgen.placement.SurfaceWaterDepthFilter.forMaxDepth(0),
+                    PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    BiomeFilter.biome(),
+                    PlacementUtils.filteredByBlockSurvival(
+                            GT6TreeBlocks.SAPLINGS.get(i).get()));
+        }
     }
 
     /**
@@ -206,6 +257,16 @@ public final class GT6WorldgenDatagen {
             ctx.register(BIOME_MODIFIER_KEYS.get(i), addFeatures(tOverworld,
                     HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.PLACED_KEYS.get(i))),
                     GenerationStep.Decoration.UNDERGROUND_ORES));
+        }
+        // task p30-w6-t1-trees-nine — the 9 tree biome modifiers: one per kind, keyed on
+        // the #gt6:trees/<snake> biome tag (GT6BiomeTags; the tag IS the datapack
+        // per-feature biome face) at the VEGETAL_DECORATION step (the vanilla tree pass —
+        // the enum has no TREES member, the upstream surface-tree surface pass rides it)
+        for (int i = 0; i < TREE_BIOME_MODIFIER_KEYS.size(); i++) {
+            ctx.register(TREE_BIOME_MODIFIER_KEYS.get(i), addFeatures(
+                    tBiomes.getOrThrow(GT6BiomeTags.treeTag(GT6TreeBlocks.KINDS.get(i).snake())),
+                    HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.TREE_PLACED_KEYS.get(i))),
+                    GenerationStep.Decoration.VEGETAL_DECORATION));
         }
     }
 }

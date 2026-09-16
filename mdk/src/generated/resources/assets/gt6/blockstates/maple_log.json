@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "gt6:block/maple_log",
+      "x": 90
+    },
+    "axis=y": {
+      "model": "gt6:block/maple_log"
+    },
+    "axis=z": {
+      "model": "gt6:block/maple_log",
+      "y": 90
+    }
+  }
+}

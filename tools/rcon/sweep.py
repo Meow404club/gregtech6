@@ -402,6 +402,13 @@ SESSION_GROUPS = (
     # embedded name prefix.
     ("p29_w5_t3_machine_face_softhammer", "p29_w5_t3_machine_face_magnglass",
      "p29_w5_t3_machine_face_pincers"),
+    # task p30-w6-t1-trees-nine: the 9-tree worldgen chain — the sky-band
+    # /place-feature probes + the gt6tags dumps (x493..619 z141..155 y179..199,
+    # x- and z-disjoint from every machine band). Single-member session group:
+    # the chain mutates only its own sky cells, no shared boot neighbour, and
+    # the natural-generation RCON gate rides the card's separate forceload+scan
+    # (level-type normal + seed, the p26/p30 biome card form).
+    ("p29_w6_t1_trees",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
+import gregtech6.block.tree.GT6TreeKind;
+import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
@@ -98,6 +100,37 @@ public final class GT6Worldgen {
     /** The 17 placed keys, same order (placed[i] hangs off configured[i]). */
     public static final List<ResourceKey<PlacedFeature>> PLACED_KEYS = GTStoneBlocks.STONES.stream()
             .map(GTStoneBlocks.StoneSpec::snake).map(GT6Worldgen::placedKey).toList();
+
+    // ------------------------------------------------------------------ the tree band (task p30-w6-t1-trees-nine)
+
+    /**
+     * The modern entry id per tree: {@code tree_<snake>} — the upstream config name {@code
+     * tree.rubber} .. {@code tree.bluespruce} (Loader_Worldgen.java:608-616) with the dot
+     * flattened ({@link #entryPath} rule).
+     */
+    public static String treeEntryPath(String aTreeSnake) {
+        return "tree_" + aTreeSnake;
+    }
+
+    /** The configured-feature key of a tree ({@link #treeEntryPath}; the Feature points at the gt6 TreeFeature). */
+    public static ResourceKey<ConfiguredFeature<?, ?>> treeConfiguredKey(String aTreeSnake) {
+        String tPath = treeEntryPath(aTreeSnake);
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath("gt6", tPath));
+    }
+
+    /** The placed-feature key of a tree (same path as the configured key — the GTCEu blob form). */
+    public static ResourceKey<PlacedFeature> treePlacedKey(String aTreeSnake) {
+        String tPath = treeEntryPath(aTreeSnake);
+        return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath("gt6", tPath));
+    }
+
+    /** The 9 tree configured keys, GT6TreeBlocks.KINDS order (the sapling grower reads treeConfiguredKey(kind)). */
+    public static final List<ResourceKey<ConfiguredFeature<?, ?>>> TREE_CONFIGURED_KEYS = GT6TreeBlocks.KINDS.stream()
+            .map(GT6TreeKind::snake).map(GT6Worldgen::treeConfiguredKey).toList();
+
+    /** The 9 tree placed keys, same order (placed[i] hangs off configured[i]). */
+    public static final List<ResourceKey<PlacedFeature>> TREE_PLACED_KEYS = GT6TreeBlocks.KINDS.stream()
+            .map(GT6TreeKind::snake).map(GT6Worldgen::treePlacedKey).toList();
 
     private GT6Worldgen() {
     }

@@ -123,6 +123,7 @@ public class GT6EnUs extends LanguageProvider {
         addCrucibleJade(); // task p28-crucible-jade-face — table-tail append
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
+        addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
     }
 
     /**
@@ -1585,5 +1586,20 @@ public class GT6EnUs extends LanguageProvider {
             case BIOCHEMGAS -> "Full Set protects against Chemicals and Gases";
             case UNIVERSAL -> "Full Set protects against Hazards";
         };
+    }
+    /**
+     * The tree family keys (task p30-w6-t1-trees-nine, 27 rows): block display names walked
+     * from {@link gregtech6.registry.GT6TreeBlocks#KINDS} — "Rubber Sapling"/"Rubber
+     * Leaves" etc are the upstream LH rows verbatim (BlockTreeSaplingAB.java:47-54,
+     * BlockTreeSaplingCD.java:45, BlockTreeLeavesAB.java:47-54), logs follow the same
+     * composition (no upstream LH row exists for the 1.7.10 logs — the vanilla-idiom
+     * "&lt;Wood&gt; Log"/"&lt;Wood&gt; Leaves" word). Table-tail append, append-only.
+     */
+    private void addTreeBlocks() {
+        for (gregtech6.block.tree.GT6TreeKind tKind : gregtech6.registry.GT6TreeBlocks.KINDS) {
+            add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_sapling"), tKind.enName() + " Sapling");
+            add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_log"), tKind.enName() + " Log");
+            add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"), tKind.enName() + " Leaves");
+        }
     }
 }

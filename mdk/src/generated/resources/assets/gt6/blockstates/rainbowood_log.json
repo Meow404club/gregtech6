@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "gt6:block/rainbowood_log",
+      "x": 90
+    },
+    "axis=y": {
+      "model": "gt6:block/rainbowood_log"
+    },
+    "axis=z": {
+      "model": "gt6:block/rainbowood_log",
+      "y": 90
+    }
+  }
+}

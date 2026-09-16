@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:trees/coconut",
+  "features": "gt6:tree_coconut",
+  "step": "vegetal_decoration"
+}

@@ -11,7 +11,13 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -31,7 +37,9 @@ import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
 
 import gregtech6.block.energy.GTAxleBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
+import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.block.wire.GTWireBlock;
+import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6Kinetics;
@@ -118,7 +126,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
-                new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK)), // task p28-c-ulv-dynamo-row — the T0 self-drop
+                new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
+                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK)), // task p30-w6-t1-trees-nine — the 27 tree blocks
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -160,7 +169,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
-                new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK))); // task p28-c-ulv-dynamo-row — the T0 self-drop
+                new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
+                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK))); // task p30-w6-t1-trees-nine — the 27 tree blocks
         //?}
     }
 
@@ -217,6 +227,111 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : wireLootBlocks()) dropSelf(tBlock); // the p8 self-drop direct translation
+        }
+    }
+
+    /**
+     * The tree-family loot (task p30-w6-t1-trees-nine): logs and saplings self-drop
+     * (dropSelf, the wire-family face); leaves carry the upstream chance table —
+     * sapling 1-in-50 (coconut 2-in-50) with the fortune scaling arithmetic verbatim
+     * (tChance = max(5, 50 - 5&lt;&lt;fortune), BlockTreeLeavesAB.java:110-114), the
+     * shears/silk face is the vanilla dispatch (the IShearable equivalent), and the
+     * stick alt-drop rides the SAME fortune table at numerator 2 for the three
+     * upstream stick kinds (willow/blue_mahoe/hazel, :119-121) over their registered
+     * gt6:stick_&lt;snake&gt; material rods. DECLARED CUT: the hazelnut/coconut fruit
+     * drops (:124-125) — the port registers no fruit items yet, the food-item domain
+     * card grows the pool.
+     */
+    public static final class GT6TreeBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6TreeBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6TreeBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return treeLootBlocks();
+        }
+
+        /** The 27 tree blocks, registration order (saplings, logs, leaves). */
+        public static List<Block> treeLootBlocks() {
+            List<Block> rBlocks = new ArrayList<>();
+            for (RegistryObject<Block> tHandle : GT6TreeBlocks.SAPLINGS) rBlocks.add(tHandle.get());
+            for (RegistryObject<Block> tHandle : GT6TreeBlocks.LOGS) rBlocks.add(tHandle.get());
+            for (RegistryObject<Block> tHandle : GT6TreeBlocks.LEAVES) rBlocks.add(tHandle.get());
+            return rBlocks;
+        }
+
+        /** The upstream fortune table: chance = numerator / max(5, 50 - (5 &lt;&lt; fortune)). */
+        private static float[] chanceTable(int aNumerator) {
+            float[] rChances = new float[5];
+            for (int f = 0; f < 5; f++) {
+                rChances[f] = (float) aNumerator / Math.max(5, 50 - (5 << f));
+            }
+            return rChances;
+        }
+
+        @Override
+        protected void generate() {
+            for (RegistryObject<Block> tLog : GT6TreeBlocks.LOGS) dropSelf(tLog.get());
+            for (RegistryObject<Block> tSapling : GT6TreeBlocks.SAPLINGS) dropSelf(tSapling.get());
+            for (int i = 0; i < GT6TreeBlocks.KINDS.size(); i++) {
+                gregtech6.block.tree.GT6TreeKind tKind = GT6TreeBlocks.KINDS.get(i);
+                Block tLeaves = GT6TreeBlocks.LEAVES.get(i).get();
+                Block tSapling = GT6TreeBlocks.SAPLINGS.get(i).get();
+                //? if forge {
+                LootTable.Builder tBuilder = createSilkTouchOrShearsDispatchTable(tLeaves,
+                        ((LootPoolSingletonContainer.Builder<?>) applyExplosionCondition(tLeaves,
+                                LootItem.lootTableItem(tSapling)))
+                                .when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE,
+                                        chanceTable(tKind == GT6TreeKind.COCONUT ? 2 : 1))));
+                //?} else {
+                /*LootTable.Builder tBuilder = createSilkTouchOrShearsDispatchTable(tLeaves,
+                        ((LootPoolSingletonContainer.Builder<?>) applyExplosionCondition(tLeaves,
+                                LootItem.lootTableItem(tSapling)))
+                                .when(BonusLevelTableCondition.bonusLevelFlatChance(
+                                        this.registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE),
+                                        chanceTable(tKind == GT6TreeKind.COCONUT ? 2 : 1))));
+                 *///?}
+                if (tKind == GT6TreeKind.WILLOW || tKind == GT6TreeKind.BLUE_MAHOE || tKind == GT6TreeKind.HAZEL) {
+                    //? if forge {
+                    Item tStick = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                            new ResourceLocation(GT6DataGenerators.MOD_ID, "stick_" + tKind.snake()));
+                    //?} else {
+                    /*Item tStick = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                            ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "stick_" + tKind.snake()));
+                     *///?}
+                    if (tStick != null && tStick != Items.AIR) {
+                        // the stick pool with the same fortune table — the fortune carrier
+                        // forks (1.20.1 plain Enchantment vs 1.21.1 Holder via the lookup)
+                        //? if forge {
+                        tBuilder.withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .when(HAS_SHEARS.or(HAS_SILK_TOUCH).invert())
+                                .add(((LootPoolSingletonContainer.Builder<?>) applyExplosionDecay(tLeaves,
+                                        LootItem.lootTableItem(tStick)))
+                                        .when(BonusLevelTableCondition.bonusLevelFlatChance(
+                                                Enchantments.BLOCK_FORTUNE, chanceTable(2)))));
+                        //?} else {
+                        /*tBuilder.withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .when(HAS_SHEARS.or(this.hasSilkTouch()).invert())
+                                .add(((LootPoolSingletonContainer.Builder<?>) applyExplosionDecay(tLeaves,
+                                        LootItem.lootTableItem(tStick)))
+                                        .when(BonusLevelTableCondition.bonusLevelFlatChance(
+                                                this.registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), chanceTable(2)))));
+                         *///?}
+                    }
+                }
+                add(tLeaves, tBuilder);
+            }
         }
     }
 

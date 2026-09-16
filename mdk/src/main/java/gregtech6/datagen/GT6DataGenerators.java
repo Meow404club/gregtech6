@@ -92,6 +92,13 @@ public final class GT6DataGenerators {
         event.getGenerator().addProvider(true,
             new GT6BlockTags(event.getGenerator().getPackOutput(), event.getLookupProvider(),
                 event.getExistingFileHelper()));
+        // task p30-w6-t1-trees-nine ③: the biome tags provider — the #gt6:trees/<snake>
+        // bands the tree biome modifiers reference (the registry-key dir
+        // tags/worldgen/biome is IDENTICAL on both legs, no mirror row and no
+        // datagen_tree_check SEGMENT_MAP entry).
+        event.getGenerator().addProvider(true,
+            new GT6BiomeTags(event.getGenerator().getPackOutput(), event.getLookupProvider(),
+                event.getExistingFileHelper()));
         // task p24-tool-system ③: the first recipe provider — the empty spray can crafting
         // (both legs construct through the two-arg form; the forge leg ignores the lookup)
         event.getGenerator().addProvider(true,

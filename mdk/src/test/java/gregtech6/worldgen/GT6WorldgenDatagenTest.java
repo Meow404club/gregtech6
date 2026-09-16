@@ -24,7 +24,6 @@
 package gregtech6.worldgen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -39,6 +38,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 
 import gregtech6.datagen.GT6WorldgenDatagen;
+import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTStoneBlocks;
 
@@ -150,18 +150,26 @@ class GT6WorldgenDatagenTest {
     }
 
     /**
-     * The zero-new-block dependency: the worldgen universe's registration face declares
-     * Feature-only (no BLOCK DeferredRegister in the package), and every worldgen id maps
-     * back 1:1 onto a GTStoneBlocks.STONES row — the 17 pin is the whole block universe
-     * this card touches.
+     * The registration face: the worldgen universe's own DeferredRegister declares
+     * Feature-only (no BLOCK register in the package) and every worldgen id maps back 1:1
+     * onto a GTStoneBlocks.STONES row. Task p30-w6-t1-trees-nine note: the
+     * {@code GT6Features.TREE_FEATURES} instance face is NOT loadable here — Feature's
+     * clinit chains into MonsterRoomFeature/EntityType (Feature.java:82) whose bootstrap
+     * needs the live datafixer (Util.fetchChoiceType), so the offline JVM ignores the
+     * bracket and the 9-entry/id face is audited by runData (9 configured JSONs typed
+     * gt6:tree_&lt;snake&gt;) + datagen_tree_check instead.
      */
     @Test
     void zeroNewBlockDependencyIsPinned() {
         assertEquals(17, GTStoneBlocks.STONES.size(), "the GTStoneBlocksRegistrationTest.java:108 pin holds");
-        assertSame(Registries.FEATURE, GT6Features.FEATURES.getRegistryKey(),
-                "GT6Features registers Feature only — no new blocks");
-        assertEquals(0, GT6Features.FEATURES.getEntries().size(),
-                "L0 registers zero entries (the blobs are pure vanilla-OreFeature datagen)");
+        // NOTE: GT6Features itself is NOT loadable in the offline JVM since
+        // p30-w6-t1-trees-nine — its clinit instantiates GT6TreeFeature (extends Feature),
+        // and Feature's clinit chains into MonsterRoomFeature/EntityType (Feature.java:82)
+        // whose bootstrap needs the live datafixer (Util.fetchChoiceType) — so the
+        // registers-Feature-only pin and the 9-entry face are audited by runData (9
+        // configured JSONs typed gt6:tree_<snake>) + datagen_tree_check + the RCON arm.
+        assertEquals(GT6TreeBlocks.KINDS.size(), GT6Worldgen.TREE_CONFIGURED_KEYS.size(),
+                "9 tree configured keys — the offline-safe face of the 9-feature band");
         List<String> tWorldgenPaths = new ArrayList<>();
         for (int i = 0; i < GT6Worldgen.CONFIGURED_KEYS.size(); i++) {
             tWorldgenPaths.add(GT6Worldgen.CONFIGURED_KEYS.get(i).location().getPath());
