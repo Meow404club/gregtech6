@@ -325,6 +325,8 @@ public final class GT6ToolLootModifiers {
 				if (!PLANT_SELF.contains(tBlock) || tBlock.asItem() == net.minecraft.world.item.Items.AIR) return false;
 				aDrops.clear(); // upstream GT_Tool_Scissors.java:89 — the cleared-drops contract
 				aDrops.add(new ItemStack(tBlock)); // :90 — the vine self replacement, verbatim shape
+				return true;
+			}
 			case JACKHAMMER_ROCKS -> {
 				net.minecraft.world.item.Item tRock = rockItem(aState.getBlock());
 				if (tRock == null) return false; // not a rock-family block — the drops ride through
@@ -418,9 +420,7 @@ public final class GT6ToolLootModifiers {
 		 */
 		BRANCHCUTTER_LEAVES,
 		/** The scissors/scoop vine+cobweb self-drop (task p29-w5-t5-scene-six, GT_Tool_Scissors.java:87-101). */
-		PLANT_SELF_DROP
-		/** The universal-spade openableCrowbar Unboxinator walk (upstream :98-115). */
-		UNBOXINATOR_OPEN,
+		PLANT_SELF_DROP,
 		/** The jackhammer rockGt conversion (upstream GT_Tool_JackHammer_HV convertBlockDrops — the pure-function ruling). */
 		JACKHAMMER_ROCKS
 	}

@@ -204,7 +204,7 @@ class GT6ItemModelLayersTest {
     private static final Set<String> TOOL_MODEL_IDS = Set.of(
         "crowbar", "cutter", "chisel", "file", "saw", "builder_wand", "screwdriver", "hammer",
         "sword", "knife", "butchery_knife", "club", "axe", "axe_double", // task p29-w5-t2-blade-six — the blade rows carry their own multi-layer pins
-        "soft_hammer"); // task p29-w5-t3-machine-face-four — the 4-layer rubber-head pin
+        "soft_hammer", // task p29-w5-t3-machine-face-four — the 4-layer rubber-head pin
         // task p29-w5-t6-electric-nineteen — the electric rows whose layer0 rides the
         // material_sets head sprite: their layer1 is the POWER-UNIT/HANDLE pass (the
         // upstream getIcon(true) pass), NOT the base's _overlay sibling — the deliberate

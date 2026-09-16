@@ -423,8 +423,8 @@ class GT6TagsDatagenTest {
                 "gt6:sword", "gt6:knife", "gt6:butchery_knife", "gt6:club", "gt6:axe",
                 "gt6:axe_double", "gt6:hoe", "gt6:branch_cutter", "gt6:sense", "gt6:plow",
                 "gt6:hand_drill", "gt6:scissors", "gt6:scoop", "gt6:plunger",
-                "gt6:flint_and_tinder", "gt6:rolling_pin", "gt6:bending_cylinder"),
-                // task p29-w5-t6-electric-nineteen — the electric nineteen, band 16 → 35
+                "gt6:flint_and_tinder", "gt6:rolling_pin", "gt6:bending_cylinder",
+                // task p29-w5-t6-electric-nineteen — the electric nineteen, band 33 → 52
                 "gt6:mining_drill_lv", "gt6:mining_drill_mv", "gt6:mining_drill_hv",
                 "gt6:chainsaw_lv", "gt6:chainsaw_mv", "gt6:chainsaw_hv",
                 "gt6:wrench_lv", "gt6:wrench_mv", "gt6:wrench_hv",

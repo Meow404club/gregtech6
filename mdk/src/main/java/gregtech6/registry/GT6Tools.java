@@ -423,7 +423,9 @@ public final class GT6Tools {
 
 	public static final RegistryObject<Item> BENDING_CYLINDER = ITEMS.register("bending_cylinder",
 			() -> new GT6BendingCylinderItem(new Item.Properties().durability(GT6BendingCylinderItem.DURABILITY_POINTS)));
-	 * The nineteen electric tools — task p29-w5-t6-electric-nineteen (rows 17-35 of the
+
+	/**
+	 * The nineteen electric tools — task p29-w5-t6-electric-nineteen (rows 38-56 of the
 	 * table, the upstream registration order Loader_Tools.java:156-174). ONE shared base
 	 * class ({@code GT6ElectricToolItem}) over its {@code Spec} table: EU pool per tier
 	 * (lead-acid representative capacities 64000/256000/1024000 — the declared 收敛 of the

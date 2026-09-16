@@ -150,11 +150,11 @@ public class ElectricNineteenTest extends GTOfflineTestBase {
 				"trimmer_lv"};
 		for (int i = 0; i < tExpected.length; i++) {
 			assertEquals(tExpected[i], GT6ElectricToolItem.SPECS.get(i).aPath(), "row " + i);
-			assertSame(GT6Tools.electricTool(tExpected[i]), GT6Tools.TAB_TABLE.get(16 + i),
-					"row " + (16 + i) + " of the tab is the registered " + tExpected[i]);
+			assertSame(GT6Tools.electricTool(tExpected[i]), GT6Tools.TAB_TABLE.get(37 + i),
+					"row " + (37 + i) + " of the tab is the registered " + tExpected[i]);
 			assertEquals(rl(tExpected[i]), GT6Tools.electricTool(tExpected[i]).getId());
 		}
-		assertEquals(35, GT6Tools.TAB_TABLE.size(), "16 prior rows + the nineteen electric rows");
+		assertEquals(56, GT6Tools.TAB_TABLE.size(), "the 37 prior rows + the nineteen electric rows");
 	}
 
 	/** The 19 snake tags (the p24 band shape — the constants pinned at their paths). */

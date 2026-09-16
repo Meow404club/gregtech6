@@ -1779,6 +1779,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
                 .define('I', Tags.Items.INGOTS)
                 .unlockedBy("has_ingot", has(Tags.Items.INGOTS));
+    }
+
     // -------------------------------------------------------------------------
     // task p29-w5-t6-electric-nineteen — the fifteen electric-tool crafting rows
     // (the upstream OreProcessing_Tool rows Loader_Tools.java:356-377 converged to the

@@ -551,8 +551,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 				item(GT6Tools.PLOW.getId()), item(GT6Tools.HAND_DRILL.getId()), // task p29-w5-t4-field-five — the family band 22 → 27 (the machine-face four stay the t3 one-member tag shape, outside the family band)
 				item(GT6Tools.SCISSORS.getId()), item(GT6Tools.SCOOP.getId()), item(GT6Tools.PLUNGER.getId()),
 				item(GT6Tools.FLINT_AND_TINDER.getId()), item(GT6Tools.ROLLING_PIN.getId()), item(GT6Tools.BENDING_CYLINDER.getId())); // task p29-w5-t5-scene-six — the family band 27 → 33
-				item(GT6Tools.SHOVEL.getId()), item(GT6Tools.SPADE.getId()), item(GT6Tools.UNIVERSAL_SPADE.getId())); // task p29-w5-t1-dig-six — the family band 10 → 16
-		// task p29-w5-t6-electric-nineteen — the family band 16 → 35 (the electric nineteen)
+		// task p29-w5-t6-electric-nineteen — the family band 33 → 52 (the electric nineteen)
 		for (RegistryObject<Item> tRow : GT6Tools.ELECTRIC_TOOLS) {
 			tag(Tags.Items.TOOLS).add(item(tRow.getId()));
 		}
