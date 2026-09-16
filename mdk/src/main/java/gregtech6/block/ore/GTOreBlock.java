@@ -1,9 +1,7 @@
 package gregtech6.block.ore;
 
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
@@ -71,15 +69,5 @@ public class GTOreBlock extends Block {
                 .mapColor(family.color())
                 .strength(form.hardness(), form.resistance())
                 .sound(family.sound());
-    }
-
-    /** The family sound (STONE for every rock family, GRAVEL/SAND for the dust families) — the census' peek hole. */
-    public static SoundType soundOf(GT6OreBlocks.OreFamily family) {
-        return family.sound();
-    }
-
-    /** The family map colour (the upstream vanilla-Material stand-in: rock->STONE, sand->SAND, ground->DIRT). */
-    public static MapColor colorOf(GT6OreBlocks.OreFamily family) {
-        return family.color();
     }
 }
