@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:rock_gt_copper"
+          "name": "gt6:rock_gt_iridium"
         }
       ],
       "functions": [
@@ -28,5 +28,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "gt6:blocks/surface_rock_cu"
+  "random_sequence": "gt6:blocks/surface_rock_iridium"
 }

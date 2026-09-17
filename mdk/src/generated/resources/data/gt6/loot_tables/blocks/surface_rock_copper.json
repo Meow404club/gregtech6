@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:rock_gt_lead"
+          "name": "gt6:rock_gt_copper"
         }
       ],
       "functions": [
@@ -28,5 +28,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "gt6:blocks/surface_rock_pb"
+  "random_sequence": "gt6:blocks/surface_rock_copper"
 }

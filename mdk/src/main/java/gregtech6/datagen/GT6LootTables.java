@@ -2235,6 +2235,7 @@ public final class GT6LootTables extends LootTableProvider {
             // task p30-w6-t2-surface-blocks — the obtainable band: self-drop
             for (Block tBlock : plantLootBlocks()) {
                 dropSelf(tBlock);
+            }
             // task p30-w6-t3-large-veins — the 31 vein-indicator rocks: the WorldgenOresLarge
             // .java:104 arm (the rock carries rockGt of the picked vein material) as one
             // collectedTable per rock, INDICATOR_SPECS order.

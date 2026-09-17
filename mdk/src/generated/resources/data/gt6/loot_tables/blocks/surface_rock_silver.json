@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:rock_gt_gold"
+          "name": "gt6:rock_gt_silver"
         }
       ],
       "functions": [
@@ -28,5 +28,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "gt6:blocks/surface_rock_au"
+  "random_sequence": "gt6:blocks/surface_rock_silver"
 }
