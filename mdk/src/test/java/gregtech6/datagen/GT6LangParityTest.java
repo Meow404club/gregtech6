@@ -1151,7 +1151,7 @@ private static final int ZH_KEY_FLOOR = 3217; // 2839 +3 (task p29-w2-eu-special
 			+ " (+14 task p29-w3-distill-crucible: the seven crucible ladder rung carriers"
 			+ " (the CRUCIBLE_ROWS walk grew 1 -> 8) + the seven dedicated GTCrucibleWallBlock"
 			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5 = 1094); the 4 Roasting row carriers joined at task p29-w4-eu-bridge (1094 + 4 = 1098); the 4 surface deco carriers joined at task p30-w6-rocks-sticks (1098 + 4 = 1102); the 31 vein-indicator rock carriers joined at task p30-w6-t3-large-veins (1102 + 31 = 1133, the spec ⑤ compensation set)");
-		assertEquals(158, tChecked, "the checked block census: every DeferredRegister block NOT"
+		assertEquals(159, tChecked, "the checked block census: every DeferredRegister block NOT"
 			+ " exempted as composed-name (seen = checked + exempt + construct-phase) — the"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"
 			+ " the eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
@@ -1159,6 +1159,7 @@ private static final int ZH_KEY_FLOOR = 3217; // 2839 +3 (task p29-w2-eu-special
 			+ " joined at bff8400a — GTMultiBlocks 7 -> 25 checked (the ten composed metal"
 			+ " walls exempt) + the six dense additions); the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (134 + 5; the HEX controller joins at task p29-w3-heat-smelter — GT6HeatExchangers 1 checked; the 15 EU-bridge converter rows joined at task p29-w4-eu-bridge (134 + 15 = 149 checked — GTMachines 38 checked, the bridges' atomic names), the 4 Roasting rows exempt as composed carriers); the missed 18103 bedrock_drill_head joined at task p30-pool-drillhead-18103 (149 + 1 = 150 — GTMultiBlocks 25 -> 26 checked)"
 			+ " ; the 8 obtainable surface carriers joined at task p30-w6-t2-surface-blocks (150 + 8 = 158 — GT6SurfaceBlocks 0 -> 8 checked, the plant quartet + the 4 fallen-log woods, atomic keys both locales)"
+			+ " ; the Implosion Compressor controller joined at task p31-implosion (158 + 1 = 159 — GTMultiBlocks 28 checked, the atomic block.gt6.implosion_compressor key)"
 			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"
