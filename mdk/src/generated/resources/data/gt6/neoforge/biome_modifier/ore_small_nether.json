@@ -1,0 +1,27 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": [
+    "gt6:ore_small_nether/cassiterite",
+    "gt6:ore_small_nether/bismuth",
+    "gt6:ore_small_nether/gold",
+    "gt6:ore_small_nether/scheelite",
+    "gt6:ore_small_nether/salt",
+    "gt6:ore_small_nether/rocksalt",
+    "gt6:ore_small_nether/borax",
+    "gt6:ore_small_nether/asbestos",
+    "gt6:ore_small_nether/diamond",
+    "gt6:ore_small_nether/craponite",
+    "gt6:ore_small_nether/redstone",
+    "gt6:ore_small_nether/redcinnabar",
+    "gt6:ore_small_nether/graphite",
+    "gt6:ore_small_nether/pollucite",
+    "gt6:ore_small_nether/zeolite",
+    "gt6:ore_small_nether/coltan",
+    "gt6:ore_small_nether/niter",
+    "gt6:ore_small_nether/efrine",
+    "gt6:ore_small_nether/cinnabar",
+    "gt6:ore_small_nether/nikolite"
+  ],
+  "step": "underground_ores"
+}
