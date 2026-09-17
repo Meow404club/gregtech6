@@ -1532,6 +1532,62 @@ public final class GTFluids {
 	public static final List<ChemicalFluid> LUBRICANT_FLUIDS = LUBRICANT_FLUID_SPECS.stream().map(s -> specFluid(s, "lubricant fluid")).toList();
 
 	/**
+	 * The QU-matter row lookup (the {@link #hotSpec} shape) — the matter/ender family of
+	 * task p31-qu-a-foundation.
+	 */
+	public static ChemicalFluidSpec quSpec(String aName) {
+		for (ChemicalFluidSpec tSpec : QU_FLUID_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/**
+	 * The three QU-matter rows (task p31-qu-a-foundation) — the fluid foundation of the
+	 * Quantum Energy domain, declaration order = the upstream block order:
+	 * <ul>
+	 * <li><b>chargedmatter / neutralmatter</b> — Loader_Fluids.java:70/:71
+	 *     {@code FL.create(name, display, null, 1, 1, 1).setDensity(-5000).setLuminosity(15)}
+	 *     (the 6-arg form, FL.java:1089: STATE_LIQUID viscosity 1000; the literal 1 K
+	 *     temperature and the amount-per-unit 1 — the GT6 UU semantics: 1 mB = 1 proton /
+	 *     neutron, the unit the element-disintegration rows of Loader_Recipes_Other.java:
+	 *     971-987 pour in — DENSITY −5000 and LUMINOSITY 15 verbatim). The consumption
+	 *     side is RM.Massfab (card C), the replication side RM.Replicator — the fluids
+	 *     land FIRST so no later row ever references an unregistered id (the dead-row
+	 *     class the closure-carrier card was cut to prevent). Tints are the average
+	 *     colours of the upstream fluid PNGs over their opaque pixels
+	 *     (assets/gregtech/textures/blocks/fluids/{chargedmatter,neutralmatter}.png —
+	 *     deep violet / olive, the sampled provenance in place of a material RGBa the
+	 *     material-null rows do not have).</li>
+	 * <li><b>enderpearl_molten</b> — the GT6-owned FL.Ender, Loader_Fluids.java:193
+	 *     {@code FL.create("molten.enderpearl", "Molten Enderpearls", MT.EnderPearl, 1, L,
+	 *     2723).setLuminosity(5)}: STATE_LIQUID carriers, temperature 2723 K = the
+	 *     MT.EnderPearl melting point verbatim (MT.java:1499 {@code heat(2723, 3785)}),
+	 *     density = the :1128-1130 formula over the material's default 1.0 g/cm³ → 1000,
+	 *     luminosity 5 verbatim. The id is the iron_molten port convention for the
+	 *     upstream {@code molten.<mat>} literal (the CLOSURE_FLUID_SPECS ruling). The
+	 *     consumers this card ships: the replicator smoke row (:929 verbatim, 144 mB = one
+	 *     L-unit → one ender pearl) and the Massfab Ender rows when card C pours them
+	 *     (:915-928). Tint = the sampled average of molten.enderpearl.png.</li>
+	 * </ul>
+	 *
+	 * <p><b>The Ender_TE conditional mount (declared, NOT registered)</b>: upstream
+	 * FL.Ender_TE ("ender", FL.java:453, 250-per-unit) is an EXTERNAL Thermal Expansion
+	 * fluid GT6 only attaches to when the mod provides it — the MT.EnderPearl.liquid
+	 * binding at Loader_Fluids.java:140-144 and the tag(1) recipe rows
+	 * (Loader_Recipes_Other.java:897-914) are all gated on {@code FL.Ender_TE.exists()}.
+	 * The port has no TE and registers no "ender" alias: the two concentration domains
+	 * must never collapse into one fluid (144 vs 250 mB per unit are different carriers),
+	 * so the mount condition stays FALSE — the Ender_TE rows ride unmounted exactly as
+	 * upstream-without-TE, and the condition is the seam a future compat card would flip.
+	 */
+	public static final List<ChemicalFluidSpec> QU_FLUID_SPECS = List.of(
+		new ChemicalFluidSpec("chargedmatter"   , "Charged Matter"    ,    1, -5000, 1000, 0xFF391889, false, 15), // :70 — 1 K / dens −5000 / lum 15 verbatim; 1 mB = 1 proton
+		new ChemicalFluidSpec("neutralmatter"   , "Neutral Matter"    ,    1, -5000, 1000, 0xFF7B6D14, false, 15), // :71 — same carriers; 1 mB = 1 neutron
+		new ChemicalFluidSpec("enderpearl_molten", "Molten Enderpearls", 2723, 1000, 1000, 0xFF002F23, false,  5)); // :193 — the FL.Ender row, MT.EnderPearl heat(2723); lum 5
+
+	/** The live registrations of the QU-matter family — one per spec row, in declaration order (the {@link #HOT_FLUIDS} shape). */
+	public static final List<ChemicalFluid> QU_FLUIDS = QU_FLUID_SPECS.stream().map(s -> specFluid(s, "qu fluid")).toList();
+
+	/**
 	 * The POWER_CONDUCTING seeds of the hot family — the upstream FL.java:89-102 enum block
 	 * verbatim, NINE rows (the review-round correction: the first cut read only the four
 	 * Hot_Molten and Coolant rows and missed the enum tail :97-102): ic2hotcoolant (:90),
