@@ -50,8 +50,7 @@ import gregtech6.registry.GTMaterialItems;
  * dot-flattening rule applied to the config name itself).
  *
  * <p><b>Translation</b> (per feature): configured = vanilla {@code Feature.ORE}
- * size={@link #ORE_SIZE} (the upstream attempt places exactly one block —
- * WorldgenOresSmall.java:61; size=1 is mathematically inert, see the constant) over the
+ * size={@link #ORE_SIZE} (see the constant's dead-zone deviation note) over the
  * WD.setSmallOre host face
  * (WD.java:765-780) — overworld rows 21 targets (stone/deepslate tags + the 17 GT
  * stone anchors + gravel/sand fallbacks; redsand/mud are NOT upstream small-ore
@@ -221,19 +220,25 @@ public final class GTOreWorldgen {
 
     /**
      * The vanilla OreConfiguration "size". THE CARD SPEC'S size=1 IS MATHEMATICALLY
-     * INERT and this card ships size=2 instead — the minimal faithful value, declared
-     * deviation (live-run finding 2026-09-17): an OreFeature walk point is always at an
-     * INTEGER y (the two walk endpoints are {@code origin.y + nextInt(3) - 2}) with the
-     * x offset confined to {@code [0, sin·size/8]}, so for size=1 the walk sphere radius
-     * {@code (1 + nextDouble·size/16)/2 ≈ 0.5} can never reach a block CENTER (nearest
-     * center distance² ≥ 0.1406 + 0.25 + 0.1406 = 0.531 > r² ≤ 0.282) — a size=1 ore
-     * places NOTHING, ever (0/20 live /place + natural origins are integers too, so the
-     * whole size=1 band would be dead-letter JSONs). Calibration (world-datapack census,
-     * 8 attempts × sizes 2/4/8/16 on a forced stone pad): EVERY size ≥ 2 places EXACTLY
-     * ONE block per attempt — the upstream WorldgenOresSmall.java:61 semantic verbatim.
-     * 2 is the smallest value clear of the dead zone.
+     * INERT and this card ships size=4 instead — declared deviation, live-calibrated
+     * (2026-09-17, coordinator-notified): an OreFeature walk point always sits at an
+     * INTEGER y (both walk endpoints are {@code origin.y + nextInt(3) - 2}) with the x
+     * offset confined to {@code [0, sin·size/8]}, so the walk sphere
+     * ({@code (1 + nextDouble·size/16)/2} radius) can never reach a block center until
+     * size >= 3 — sizes 1 and 2 place NOTHING, ever (natural origins are integers too,
+     * so dead-letter JSONs; live census: size=1 0/20, size=2 0/8 /place attempts on a
+     * forced stone pad, vanilla ore_coal and the p26 marble blob place at the same
+     * spot). The fresh-world calibration curve (blocks placed per /place attempt on a
+     * re-stoned pad): size=2 0/8; size=3 4/8, mean 0.625; size=4 6/8, mean 1.5;
+     * size=5 7/8, mean 3.25; size=6 6/6, mean 5; size=8 6/6, mean 5.5; size=12 6/6,
+     * mean 10.3; size=16 6/6, mean 9.8. Upstream semantics = exactly 1 block per
+     * attempt (WorldgenOresSmall.java:61), so the per-chunk density under the pinned
+     * count chain is ~1.5x upstream at size=4 (0.63x at size=3, ~0 at sizes 1-2) — 4
+     * is the nearest-to-faithful reliable point; the granularity gap is inherent to
+     * vanilla OreFeature (the exact single-block scatter is the L1 custom-feature
+     * card's domain).
      */
-    public static final int ORE_SIZE = 2;
+    public static final int ORE_SIZE = 4;
 
     /** WorldgenOresSmall.java:61 count range lower bound — max(1, amount/2 + rnd(1+amount)/2) >= this. */
     public static int countMin(SmallOreRow aRow) {
