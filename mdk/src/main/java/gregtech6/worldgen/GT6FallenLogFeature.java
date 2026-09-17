@@ -67,10 +67,21 @@ public final class GT6FallenLogFeature extends Feature<NoneFeatureConfiguration>
         if (tWaterArm) {
             tBaseY = tContactY - 1; // WorldgenLogRotten.java:55 the water arm's aY--
         } else if (mKind == Kind.FROZEN) {
-            if (!tGround.is(Blocks.SNOW)) return false; // :57 the snow layer owns the contact slot
-            BlockState tSoil = tLevel.getBlockState(tContact.below());
-            if (!tSoil.is(BlockTags.DIRT) && !tSoil.is(Blocks.SAND) && !tSoil.is(Blocks.RED_SAND)) return false;
-            tBaseY = tContactY - 1; // the logs start at the ground top, rows replace the layer slot
+            // :56-57 the snow face is mandatory — TWO anchor shapes (the live-scan
+            // finding: MOTION_BLOCKING skips the 2px layer, blocksMotion = isSolid):
+            if (tGround.is(Blocks.SNOW)) {
+                // the heightmap COUNTED the layer: contact = snow slot, soil below it
+                BlockState tSoil = tLevel.getBlockState(tContact.below());
+                if (!isSoil(tSoil)) return false;
+                tBaseY = tContactY - 1; // the logs start at the ground top
+            } else if (tLevel.getBlockState(tOrigin).is(Blocks.SNOW)) {
+                // the layer owns the ORIGIN slot: contact = the ground itself, the
+                // rows replace the layer slot (the upstream set(aY+1) face verbatim)
+                if (!isSoil(tGround)) return false;
+                tBaseY = tContactY;
+            } else {
+                return false;
+            }
         } else {
             if (!tGround.is(BlockTags.DIRT)
                     && (!tSandOk || !(tGround.is(Blocks.SAND) || tGround.is(Blocks.RED_SAND)))) return false;
@@ -116,6 +127,11 @@ public final class GT6FallenLogFeature extends Feature<NoneFeatureConfiguration>
             BlockPos tPos = aAxis == Direction.Axis.X ? new BlockPos(tI, aY, aFixed) : new BlockPos(aFixed, aY, tI);
             aLevel.setBlock(tPos, aLog.setValue(RotatedPillarBlock.AXIS, aAxis), 2);
         }
+    }
+
+    /** The soil face (plantableGreens/sand — the dirt-tag family plus the sand pair). */
+    private static boolean isSoil(BlockState aState) {
+        return aState.is(BlockTags.DIRT) || aState.is(Blocks.SAND) || aState.is(Blocks.RED_SAND);
     }
 
     /** The mossy cap (setMushroom :94-102, the HaC arm cut): red/brown on a free slot. */
