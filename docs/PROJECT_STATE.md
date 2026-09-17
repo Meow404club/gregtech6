@@ -5,6 +5,12 @@
 
 ## 当前阶段
 
+### 第 30 阶段详账（2026-09-18 收官，当前阶段）
+
+`第 30 阶段：W5 工具波八卡 49 件（挖掘六件+共享 GT6ToolLootModifiers/ToolSweep 基建/刃器/机器面/田野/场景/电动 19/便携 8/盔甲 24）/ore 全量注册五卡（3922 块=26 石族×53 矿材×74 行+datagen 7875+loot 7844×2+贴图 60 四件套+census）/W6 世界生成（biome 双腿目录·九树 27 块·rocks-sticks·大脉 40 行 origin 重算正案·小矿 91 对·地表块）/池卡（水车 neo 缝·21.1 配方键形归一器·蒸馏塔多罐·datagen lang 单写者·18103 钻头·GAS·stop 归属门·链臂修复·prospector）+研究十一路（材质梯/QU/物流/蜂/misc/API 现代化+地形五路）`（**2026-09-18 收官**：main 93fa6bf→c2dac68d 全合；集成门=neo 全量 176 链 175 绿/1 红链侧缺陷（用户裁定全量只 neo 腿且禁 subagent 自发，forge=逐卡组记录）；lang floor 3217；地形设计四裁定+末地让位 B+地狱透镜默认开+strata (b) 透镜+ore 全量展开+GT6ItemData 通用缝。P31 入册：材质梯五卡/QU 线/物流三切片/蜂域/杂项簇/strata/地狱末地/基岩泉/API 绞杀路线。全量锚点=phase_anchors.p30）
+
+### 第 28 阶段详账（2026-09-13 收官）
+
 `第 28 阶段：用户实测批（建筑杖一键成型·强化泡沫 Jade 名·坩埚 Jade 内容物温度）/ neo 腿 tag 运行时接线 / 能量生态重构（出向桥砍除·ULV 入向墙·Dynamo 出向）/ ULV 前期 QoL 生态（水车·砧·卷板压线·低熔点门·变压器）/ 单块机族 facing 正典化 / 机器端口 overlay / 解冻池`（**2026-09-13 收官**：21 卡全 approve 合入 main 035d43de→6f193c1e，S1-S7 七席零悬案；阶段末全量 sweep 双腿 64 链 19 簇 GREEN（forge 3247s/neo 3181s），quarantine p25cfoam neo 经 loot 修复转绿销账。三主线全落地：用户实测 bug 清零/能量生态重构（EU 留 GT·FE 只进 ULV 墙·Dynamo 出向）/ULV 前期 QoL 生态闭环（水车→Dynamo→八EU→六机 1375K 门→变压器 LV 材料锁）。方法论六沉淀+结构性发现（16EU 穿线饿死/8EU 涓流不完成加工）全量在 phase_anchors.p28。调度演化：金字塔当日生当日死→滚动合并队列+分层门禁常设；审查双席并行两犯入纪律。P29 交接：八区差距账本+六波提案（research.p29-gap-census）、KG 蒸馏与脚本加固列开局项）
 
 ### 第 27 阶段详账（2026-09-12 收官）
