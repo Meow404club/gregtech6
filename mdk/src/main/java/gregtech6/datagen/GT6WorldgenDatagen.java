@@ -68,6 +68,7 @@ import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.worldgen.GT6FallenLogFeature;
 import gregtech6.worldgen.GT6Features;
 import gregtech6.worldgen.GT6Worldgen;
+import gregtech6.worldgen.GTLensConfig;
 import gregtech6.worldgen.GTVeinConfig;
 import gregtech6.worldgen.GTOreWorldgen;
 
@@ -120,12 +121,14 @@ public final class GT6WorldgenDatagen {
     }
 
     /**
-     * The 17 biome-modifier keys, GTStoneBlocks.STONES order — one AddFeaturesBiomeModifier
+     * The 12 blob biome-modifier keys, BLOB_STONES order — one AddFeaturesBiomeModifier
      * row per stone (the upstream per-object config face,
      * {@code worldgenerator.overworld.stone.<material>}, becomes one datapack JSON each).
+     * Task p31-strata-lens: the 5 marker stones (GT6Worldgen.LENS_STONE_SNAKES) ride the
+     * ONE strata-lens modifier below instead, their blob rows retired.
      */
     public static final List<ResourceKey<BiomeModifier>> BIOME_MODIFIER_KEYS =
-            GTStoneBlocks.STONES.stream().map(GTStoneBlocks.StoneSpec::snake)
+            GT6Worldgen.BLOB_STONES.stream().map(GTStoneBlocks.StoneSpec::snake)
                     .map(GT6WorldgenDatagen::biomeModifierKey).toList();
 
     private static ResourceKey<BiomeModifier> biomeModifierKey(String aStoneSnake) {
@@ -204,7 +207,7 @@ public final class GT6WorldgenDatagen {
         *///?}
     ) {
         for (int i = 0; i < GT6Worldgen.CONFIGURED_KEYS.size(); i++) {
-            String tSnake = GTStoneBlocks.STONES.get(i).snake();
+            String tSnake = GT6Worldgen.BLOB_STONES.get(i).snake();
             FeatureUtils.register(ctx, GT6Worldgen.CONFIGURED_KEYS.get(i), Feature.ORE,
                     new OreConfiguration(
                             List.of(OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES),
@@ -228,6 +231,12 @@ public final class GT6WorldgenDatagen {
         // the table rides the config JSON — the card spec ② tier-a face).
         FeatureUtils.register(ctx, GT6Worldgen.LARGE_VEINS_CONFIGURED, GT6Features.LARGE_VEINS,
                 new GTVeinConfig.Table(LARGE_VEIN_TABLE));
+        // task p31-strata-lens — the ONE strata-lens configured feature: the registered
+        // GT6StrataLensFeature instance over the 5-row marker-stone lens table
+        // ({@link #STRATA_LENS_TABLE}; the table rides the config JSON — the same tier-a
+        // face as the vein table).
+        FeatureUtils.register(ctx, GT6Worldgen.STRATA_LENSES_CONFIGURED, GT6Features.STRATA_LENSES,
+                new GTLensConfig.Table(STRATA_LENS_TABLE));
         bootstrapOreConfigured(ctx); // task p30-w6-small-ore-datagen — tail-append
     }
 
@@ -277,6 +286,16 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.LARGE_VEINS_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.LARGE_VEINS_CONFIGURED),
                 InSquarePlacement.spread(), BiomeFilter.biome());
+        // task p31-strata-lens — the strata-lens placed feature: Count 1 CONSTANT +
+        // InSquare + BiomeFilter, one attempt per chunk (the per-chunk ±3-chunk origin
+        // scan lives in the Feature). The conflict-audit UniformInt TRAP: the count is a
+        // CONSTANT integer (CountPlacement.of(int) = ConstantInt both legs,
+        // CountPlacement.java:21/:21) — a uniform provider would fork the legs at JSON
+        // level (DFU6 wraps {"value":{min,max}}, DFU8 inlines). Y rides the lens row
+        // table (the center draw), so no HeightRangePlacement.
+        PlacementUtils.register(ctx, GT6Worldgen.STRATA_LENSES_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.STRATA_LENSES_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         bootstrapOrePlaced(ctx, tFeatures); // task p30-w6-small-ore-datagen — tail-append
     }
 
@@ -318,6 +337,13 @@ public final class GT6WorldgenDatagen {
         // carve holes into any vein crossing a biome border), at the UNDERGROUND_ORES step.
         ctx.register(biomeModifierKeyOf("large_veins"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task p31-strata-lens — the strata-lens biome modifier: EVERY overworld biome
+        // (the research.p30-w6-vein-boundary impl note carried over: a per-biome split
+        // would carve holes into any lens crossing a biome border), at the
+        // UNDERGROUND_ORES step.
+        ctx.register(biomeModifierKeyOf("strata_lenses"), addFeatures(tOverworld,
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.STRATA_LENSES_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-small-ore-datagen — tail-append
     }
@@ -785,4 +811,21 @@ public final class GT6WorldgenDatagen {
         veinOffworld("ore.large.syrmorite" , 30,  45, 160, 2, 32, MT.Syrmorite              , MT.Syrmorite                    , MT.Syrmorite                    , MT.Syrmorite          ), // :924
         veinOffworld("ore.large.octine"    , 10,  25,  40, 1, 32, MT.Octine                 , MT.Octine                       , MT.Octine                       , MT.Octine             )  // :925
     );
+
+    /**
+     * The ONE 5-row strata-lens table (task p31-strata-lens) — the card spec's settled
+     * marker-stone list, spec order. CLEAN CALIBRATION (the conflict-audit ORE_SIZE
+     * lesson): rarity/shape/Y chosen fresh for the mountain-scale lens face, no P30
+     * blob/small-ore curve reused. rarity = the weight of the exactly-one origin draw
+     * (sum 21); Y = the lens CENTER domain, nextInt(maxY-minY+1); radius rides the
+     * {@link GTLensConfig#RADIUS_CODEC_CAP} 48 (the ±3-chunk scan-safety rail);
+     * halfHeight is the flattened-blob vertical half-extent. kimberlite is the deepest
+     * and most bulbous (its real-world pipe face), granite_red the widest and shallowest.
+     */
+    public static final List<GTLensConfig> STRATA_LENS_TABLE = List.of(
+        new GTLensConfig("marble"     , 5, 32,  96, 44, 10),
+        new GTLensConfig("basalt"     , 5, 16,  80, 40,  8),
+        new GTLensConfig("kimberlite" , 3,  8,  48, 32, 14),
+        new GTLensConfig("granite_red", 4, 32, 104, 48,  9),
+        new GTLensConfig("komatiite"  , 4,  8,  64, 36, 12));
 }
