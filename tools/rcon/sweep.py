@@ -440,6 +440,14 @@ SESSION_GROUPS = (
     # coke-oven source count drift the coordinator noted). Single-member session group;
     # the natural-generation RCON gate rides the card's separate forceload+scan.
     ("p29_w6_t2_surface",),
+    # P30 W6 card (p30-w6-t3-large-veins): the large-vein /place chain — the seed-free
+    # invariant faces (the origin-cell bit-exact recompute via clone+if-blocks, the
+    # second origin cell) over two fresh stone host boxes (x16..31 + x64..79, z16..31,
+    # y0..126; staging clones x80..159), the t1 x-band form. The NATURAL-generation gate
+    # (forceload + region scan: >=3 distinct veins, cross-boundary slice continuity,
+    # indicator rocks) rides the card's separate normal+seed world scan, not this chain.
+    # No fresh_boot / mutates member. --group p29_w6_t3_veins matches the module stem.
+    ("p29_w6_t3_veins",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
