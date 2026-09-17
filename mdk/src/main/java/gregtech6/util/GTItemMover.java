@@ -1,5 +1,7 @@
 package gregtech6.util;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.world.item.ItemStack;
 
 import net.minecraftforge.items.IItemHandler;
@@ -70,8 +72,12 @@ import net.minecraftforge.items.ItemHandlerHelper;
  *
  * <h2>Trimmed upstream surface (out of the cover subset, none reachable from the call sites)</h2>
  * <ul>
- * <li>Filter/invertFilter/ejectItems parameters (ST.java:457) — every cover call passes
- *     {@code null}/F/F/T; item filtering is the FilterItem cover's job, not the mover's.</li>
+ * <li>Filter/invertFilter parameters (ST.java:457) — RESTORED with the retriever cover
+ *     (task p31-retriever-cover, the {@code ST.move(tDelegator, tTarget, tFilter, F, F,
+ *     aInvertFilter, T, 64, 1, 64, 1)} call shape, CoverRetrieverItem.java:72): the
+ *     {@link #move(IItemHandler, IItemHandler, ItemStack, boolean)} overloads carry the
+ *     :467 source gate. The ejectItems parameter STAYS trimmed — no handler-world
+ *     analog (the ST.put fallback, class doc above).</li>
  * <li>{@code aMinSize} gate (ST.java:471 second clause) — dead at the covers' aMinSize = 1:
  *     {@code tMovable >= 1} implies {@code tMovable + existing >= 1}.</li>
  * <li>Non-inventory recipient fallback to {@code ST.put} (pipes/auto-trash, ST.java:461/:518/:542/:578)
@@ -105,7 +111,16 @@ public final class GTItemMover {
 	 * CoverConveyor.java:68/:70 shape.
 	 */
 	public static int move(IItemHandler aFrom, IItemHandler aTo) {
-		return move(aFrom, aTo, DEFAULT_MAX_MOVE, DEFAULT_MIN_MOVE, DEFAULT_MAX_SLOT_SIZE);
+		return move(aFrom, aTo, DEFAULT_MAX_MOVE, DEFAULT_MIN_MOVE, DEFAULT_MAX_SLOT_SIZE, null, false);
+	}
+
+	/**
+	 * The retriever shape (task p31-retriever-cover) — the ST.java:457 filter pair over the
+	 * cover defaults: {@code aFilter == null} pulls anything, otherwise the NBT-insensitive
+	 * item identity gate (:467) runs, inverted by {@code aInvertFilter}. CoverRetrieverItem.java:72.
+	 */
+	public static int move(IItemHandler aFrom, IItemHandler aTo, @Nullable ItemStack aFilter, boolean aInvertFilter) {
+		return move(aFrom, aTo, DEFAULT_MAX_MOVE, DEFAULT_MIN_MOVE, DEFAULT_MAX_SLOT_SIZE, aFilter, aInvertFilter);
 	}
 
 	/**
@@ -114,11 +129,24 @@ public final class GTItemMover {
 	 * see class javadoc). ST.java:465-477.
 	 */
 	public static int move(IItemHandler aFrom, IItemHandler aTo, int aMaxMove, int aMinMove, int aMaxSlotSize) {
+		return move(aFrom, aTo, aMaxMove, aMinMove, aMaxSlotSize, null, false);
+	}
+
+	/**
+	 * The full core — the quantity caps plus the ST.java:467 filter gate. The gate sits
+	 * verbatim in the source-slot position: a null filter never refuses, a set filter
+	 * refuses exactly when {@code contains(stack) == aInvertFilter} (item identity — the
+	 * upstream {@code ItemStackSet.contains(stack, T)} NBT-insensitive match folded to the
+	 * single-item set {@code ST.hashset(tStack)} builds).
+	 */
+	public static int move(IItemHandler aFrom, IItemHandler aTo, int aMaxMove, int aMinMove, int aMaxSlotSize, @Nullable ItemStack aFilter, boolean aInvertFilter) {
 		if (aFrom == null || aTo == null) return 0;
 		for (int aSlotFrom = 0; aSlotFrom < aFrom.getSlots(); aSlotFrom++) {
 			ItemStack aStackFrom = aFrom.getStackInSlot(aSlotFrom);
-			// ST.java:467 — empty + below-minMove gates, then the canTake (:667-678) extractability probe.
+			// ST.java:467 — empty + below-minMove gates, then the :467 filter clause, then the
+			// canTake (:667-678) extractability probe.
 			if (aStackFrom.isEmpty() || aStackFrom.getCount() < aMinMove) continue;
+			if (aFilter != null && (aFilter.getItem() == aStackFrom.getItem()) == aInvertFilter) continue;
 			if (aFrom.extractItem(aSlotFrom, 1, true).isEmpty()) continue;
 			for (int aSlotTo = 0; aSlotTo < aTo.getSlots(); aSlotTo++) {
 				ItemStack aStackTo = aTo.getStackInSlot(aSlotTo);

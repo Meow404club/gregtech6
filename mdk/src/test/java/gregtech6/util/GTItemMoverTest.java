@@ -317,4 +317,59 @@ public class GTItemMoverTest extends GTOfflineTestBase {
 		assertEquals(0, GTItemMover.moveFrom(handler(0), tOne, 0));
 		assertEquals(0, GTItemMover.moveTo(tOne, handler(0), 0));
 	}
+
+	// ---------------------------------------------------------------------------
+	// the :467 filter gate (task p31-retriever-cover — the ST.java:457 filter pair)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void filterGateAdmitsOnlyTheFilterItem() {
+		// ST.java:467 — aFilter set, aInvertFilter F: skip when contains(stack) == F,
+		// i.e. only the filter item moves; the first scan order still applies.
+		ItemStackHandler tFrom = handler(3, dirt(10), stone(10), stone(5));
+		ItemStackHandler tTo = handler(1);
+
+		assertEquals(10, GTItemMover.move(tFrom, tTo, stone(1), false));
+		assertEquals(10, tTo.getStackInSlot(0).getCount(), "the first stone slot moved");
+		assertEquals(10, tFrom.getStackInSlot(0).getCount(), "the dirt slot was refused untouched");
+		assertEquals(5, tFrom.getStackInSlot(1).getCount() + tFrom.getStackInSlot(2).getCount(),
+				"exactly one stone stack moved");
+	}
+
+	@Test
+	public void filterGateInvertedAdmitsEverythingBut() {
+		// ST.java:467 — aInvertFilter T: skip when contains(stack) == T, i.e. only
+		// NON-matching stacks move.
+		ItemStackHandler tFrom = handler(3, stone(10), dirt(10), dirt(5));
+		ItemStackHandler tTo = handler(1);
+
+		assertEquals(10, GTItemMover.move(tFrom, tTo, stone(1), true));
+		assertTrue(tTo.getStackInSlot(0).getItem() == Items.DIRT, "the first non-stone stack moved");
+		assertEquals(10, tFrom.getStackInSlot(0).getCount(), "the matching stone slot stayed");
+	}
+
+	@Test
+	public void nullFilterPullsAnything() {
+		// ST.java:66 upstream — ST.invalid(tStack) ? null : hashset: an unset filter lane
+		// passes null = no gate at all.
+		ItemStackHandler tFrom = handler(2, dirt(10), stone(10));
+		ItemStackHandler tTo = handler(2);
+
+		assertEquals(10, GTItemMover.move(tFrom, tTo, null, false));
+		assertTrue(tTo.getStackInSlot(0).getItem() == Items.DIRT);
+		assertEquals(10, GTItemMover.move(tFrom, tTo, null, true));
+		assertTrue(tTo.getStackInSlot(1).getItem() == Items.STONE, "invert is moot with a null filter");
+	}
+
+	@Test
+	public void filterIsNBTAndCountInsensitive() {
+		// the ItemStackSet.contains(stack, T) match — item identity only. A damaged/enchanted
+		// stack still matches the plain filter item.
+		ItemStackHandler tFrom = handler(1, stone(10));
+		ItemStackHandler tTo = handler(1);
+		ItemStack tFilter = stone(64);
+
+		assertEquals(10, GTItemMover.move(tFrom, tTo, tFilter, false));
+		assertEquals(0, tFrom.getStackInSlot(0).getCount());
+	}
 }
