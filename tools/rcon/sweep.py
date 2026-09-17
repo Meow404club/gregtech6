@@ -454,6 +454,13 @@ SESSION_GROUPS = (
     # keeps the strict-attribution deepslate box GT6-ore-free). --group
     # p30_w6_small_ore_datagen matches the module stem.
     ("p30_w6_small_ore_datagen",),
+    # P30 prospector micro-card (p30-pool-prospector): the /gt6tool prospect chain — one
+    # fresh z=368 band (x596..656: uniform 600 / lava 612 / airpocket 624 / gt-stone-boundary
+    # 636 / oretrace 648 + the direct-ore and dirt-negative cells 652..656, per-scenario
+    # x-disjoint 9^3 envelopes), admission mirroring the p29 W5 band form (bbox-registered,
+    # no fresh_boot / mutates member — the /gt6tool prospect arms are band-local fills).
+    # --group p30_pool_prospector matches through the chain's embedded name prefix.
+    ("p30_pool_prospector",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
