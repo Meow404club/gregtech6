@@ -186,6 +186,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addTanks(); // task p29-w3-tank-valves — the 25 valve controllers
         addTurbinesDynamo(); // task p29-w3-turbine-dynamo — the Large Turbine + Large Dynamo controllers
         addLargeMachines(); // task p29-w3-large-12 — the twelve large-machine controllers
+        addImplosionCompressor(); // task p31-implosion — the Implosion Compressor controller
         addLargeCrucible(); // task p26-crucible-multiblock
         addDistillationTowers(); // task p29-w3-distill-crucible — the twin tower controllers
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
@@ -2213,6 +2214,37 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
         }
+    }
+
+    /**
+     * Task p31-implosion — the Implosion Compressor controller: ONE oriented cube model
+     * over the six borrowed colored faces (the upstream NBT_TEXTURE "implosioncompressor"
+     * family, the addLargeMachines form — the 8 FACING x FORMED states share the one
+     * model, the FORMED dual-model was the coke-oven enhancement and the RCON formed
+     * assertion rides the blockstate property, not the model). Overlay/active layers stay
+     * unborrowed — the ACTIVE visual is the render wave's surface.
+     */
+    private void addImplosionCompressor() {
+        Block tBlock = gregtech6.registry.GTMultiBlocks.IMPLOSION_COMPRESSOR.get();
+        String tFamily = "implosioncompressor";
+        ModelFile tModel = models().cube("implosion_compressor",
+                modLoc("block/" + tFamily + "_colored_bottom"),
+                modLoc("block/" + tFamily + "_colored_top"),
+                modLoc("block/" + tFamily + "_colored_front"),
+                modLoc("block/" + tFamily + "_colored_back"),
+                modLoc("block/" + tFamily + "_colored_left"),
+                modLoc("block/" + tFamily + "_colored_right"));
+        getVariantBuilder(tBlock).forAllStates(aState -> {
+            int tY;
+            switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                case SOUTH -> tY = 180;
+                case WEST -> tY = 270;
+                case EAST -> tY = 90;
+                default -> tY = 0; // NORTH
+            }
+            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+        });
+        itemModels().withExistingParent("implosion_compressor", modLoc("block/implosion_compressor"));
     }
 
     private ModelFile partModel(String aName, String aFamily, int aDesign) {
