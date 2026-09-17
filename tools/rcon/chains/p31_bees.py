@@ -66,7 +66,8 @@ def wax_out():
 steps = [
     phase("A: Squeezer — 1 comb_honey -> 90 L gt6:honey + 1x dust_wax_bee (the Listener:264 body live)"),
     Step(f"setblock {F(SQZ)} gt6:squeezer", expect="Changed the block", sleep=1.0),
-    Step(f"gt6machine wiremill check {F(SQZ)}", expect="parallel=1 parallelDuration=true"),
+    # the squeezer family floor is parallel 4 (the PARALLEL_4_32 table, the p29_w1_squeezer pin)
+    Step(f"gt6machine wiremill check {F(SQZ)}", expect="parallel=4 parallelDuration=true"),
     Step(feed_comb(F(SQZ))["1.20.1"], expect="Modified block data", node_cmds=feed_comb(F(SQZ))),
     Step(f"gt6machine wiremill inject 24 64 -64 {F(SQZ)}",
          expect=wax_out()["1.20.1"], node_expects=wax_out()),
@@ -77,7 +78,10 @@ steps = [
     Step(f"setblock {F(CEN)} gt6:centrifuge", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {F(CEN)}", expect="parallel=1 parallelDuration=true"),
     Step(feed_comb_cent(F(CEN))["1.20.1"], expect="Modified block data", node_cmds=feed_comb_cent(F(CEN))),
-    Step(f"gt6machine wiremill inject 8 256 {F(CEN)}",
+    # the T1 centrifuge maxIn=64 — the p29_w1_centrifuge T2 form's 256 packet OVERCHARGES
+    # the T1 machine (the energy is rejected, zero progress); 24 ticks at 64 delivers
+    # 1536 RU >= the 1024 RU budget (eUt 16 x duration 64, 4x overclock completes at t16)
+    Step(f"gt6machine wiremill inject 24 64 {F(CEN)}",
          expect=wax_out()["1.20.1"], node_expects=wax_out()),
     Step(f"gt6machine wiremill fluid stat {F(CEN)}", expect="out[0]=100 L of gt6:honey"),
     Step(f"gt6machine wiremill check {F(CEN)}", expect="data=-2"),
