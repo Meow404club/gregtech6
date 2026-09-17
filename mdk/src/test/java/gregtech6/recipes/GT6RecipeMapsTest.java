@@ -206,7 +206,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
 		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
-		assertEquals(65, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair, the p26-kitchen-pot-bowl RM.java:80 append, the p28-c-ulv-machine-ladder RM.java:113 append, the p28-c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the p29-w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150) + sluice (the p29-w1-kinetic-process-ladder batch-C tail-append, RM.java:81 — the Sluice family's map, the card-A enumeration gap) + autocrafter + steamcracking + catalyticcracking + coagulator + cryomixer + magneticseparator + injector + laminator + autoclave + freezer + polarizer + lightning + slicer + laserengraver + welder + electrolyzer + printer + scannervisuals + generifier (the p29-w2-energy-types-5tier nineteen-map block, RM.java:63/:67/:68/:72/:77/:82/:88/:90-94/:96/:116/:117/:123/:141/:142/:151 — the W2 shared-layer card) + gas_fuels (the p29-w3-turbine-dynamo FM.java:42 append — the Gas Turbine fuel face, FM.Hot/Plasma/Turbine/Magic stay the pool bottom) + distillationtower + cryodistillationtower (the p29-w3-distill-crucible RM.java:65/:66 twin pair, the tower consumer card) + melter + smelter + fuels_hot (the p29-w3-heat-smelter three-map block, RM.java:131/:132 + FM.java:43 — the wave's one recipe-batch card) + roasting (the p29-w4-eu-bridge RM.java:79 append — the Roasting Oven card's map) + implosion (the p31-implosion RM.java:86 append — the Implosion Compressor multiblock's map, the 3/3/3 item shape)");
+		assertEquals(68, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair, the p26-kitchen-pot-bowl RM.java:80 append, the p28-c-ulv-machine-ladder RM.java:113 append, the p28-c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the p29-w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150) + sluice (the p29-w1-kinetic-process-ladder batch-C tail-append, RM.java:81 — the Sluice family's map, the card-A enumeration gap) + autocrafter + steamcracking + catalyticcracking + coagulator + cryomixer + magneticseparator + injector + laminator + autoclave + freezer + polarizer + lightning + slicer + laserengraver + welder + electrolyzer + printer + scannervisuals + generifier (the p29-w2-energy-types-5tier nineteen-map block, RM.java:63/:67/:68/:72/:77/:82/:88/:90-94/:96/:116/:117/:123/:141/:142/:151 — the W2 shared-layer card) + gas_fuels (the p29-w3-turbine-dynamo FM.java:42 append — the Gas Turbine fuel face, FM.Hot/Plasma/Turbine/Magic stay the pool bottom) + distillationtower + cryodistillationtower (the p29-w3-distill-crucible RM.java:65/:66 twin pair, the tower consumer card) + melter + smelter + fuels_hot (the p29-w3-heat-smelter three-map block, RM.java:131/:132 + FM.java:43 — the wave's one recipe-batch card) + roasting (the p29-w4-eu-bridge RM.java:79 append — the Roasting Oven card's map) + implosion (the p31-implosion RM.java:86 append — the Implosion Compressor multiblock's map, the 3/3/3 item shape) + scannermolecular + massfab + replicator (the p31-qu-a-foundation QU trio, RM.java:143-145 — the declared-empty foundation, the machines are the C/D cards)");
 	}
 
 	/** The RM.java:99 Forming Press map constants (task p26-w1-press-extruder-molds). */
@@ -739,5 +739,81 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		} catch (ReflectiveOperationException tError) {
 			throw new AssertionError(tError);
 		}
+	}
+
+	/** The RM.java:143/:144/:145 QU trio constants (task p31-qu-a-foundation) — all three the base-RecipeMap carry, ALL THREE DECLARED-empty. */
+	@Test
+	void initRegistersTheQuTrioWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		// RM.java:143 — items 2/1/1, fluids 0/0/0, MIN 2, AMP 1
+		assertNotNull(GT6RecipeMaps.SCANNER_MOLECULAR);
+		assertSame(GT6RecipeMaps.SCANNER_MOLECULAR, RecipeMap.RECIPE_MAPS.get("gt.recipe.scannermolecular"));
+		assertEquals("Molecular Scanner", GT6RecipeMaps.SCANNER_MOLECULAR.mNameLocal, "RM.java:143 local name verbatim");
+		assertEquals("gt.recipe.scannermolecular", GT6RecipeMaps.SCANNER_MOLECULAR.mNameNEI, "RM.java:143 passes null → the internal name");
+		assertEquals(2, GT6RecipeMaps.SCANNER_MOLECULAR.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.SCANNER_MOLECULAR.mOutputItemsCount);
+		assertEquals(1, GT6RecipeMaps.SCANNER_MOLECULAR.mMinimalInputItems);
+		assertEquals(0, GT6RecipeMaps.SCANNER_MOLECULAR.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.SCANNER_MOLECULAR.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.SCANNER_MOLECULAR.mMinimalInputFluids);
+		assertEquals(2, GT6RecipeMaps.SCANNER_MOLECULAR.mMinimalInputs);
+		assertEquals(1, GT6RecipeMaps.SCANNER_MOLECULAR.mPower);
+		assertEquals("gt6:textures/gui/machines/scannermolecular.png", GT6RecipeMaps.SCANNER_MOLECULAR.mGUIPath, "the RM.java:143 machines/ScannerMolecular row, lowercased");
+		// RM.java:144 — items 2/1/0, fluids 1/2/0, MIN 1, AMP 1
+		assertNotNull(GT6RecipeMaps.MASSFAB);
+		assertSame(GT6RecipeMaps.MASSFAB, RecipeMap.RECIPE_MAPS.get("gt.recipe.massfab"));
+		assertEquals("Matter Fabricator", GT6RecipeMaps.MASSFAB.mNameLocal, "RM.java:144 local name verbatim");
+		assertEquals("gt.recipe.massfab", GT6RecipeMaps.MASSFAB.mNameNEI, "RM.java:144 passes null → the internal name");
+		assertEquals(2, GT6RecipeMaps.MASSFAB.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.MASSFAB.mOutputItemsCount);
+		assertEquals(0, GT6RecipeMaps.MASSFAB.mMinimalInputItems);
+		assertEquals(1, GT6RecipeMaps.MASSFAB.mInputFluidCount);
+		assertEquals(2, GT6RecipeMaps.MASSFAB.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.MASSFAB.mMinimalInputFluids);
+		assertEquals(1, GT6RecipeMaps.MASSFAB.mMinimalInputs);
+		assertEquals(1, GT6RecipeMaps.MASSFAB.mPower);
+		assertEquals("gt6:textures/gui/machines/massfab.png", GT6RecipeMaps.MASSFAB.mGUIPath, "the RM.java:144 machines/Massfab row, lowercased");
+		// RM.java:145 — items 3/3/1, fluids 3/3/0, MIN 2, AMP 1
+		assertNotNull(GT6RecipeMaps.REPLICATOR);
+		assertSame(GT6RecipeMaps.REPLICATOR, RecipeMap.RECIPE_MAPS.get("gt.recipe.replicator"));
+		assertEquals("Matter Replicator", GT6RecipeMaps.REPLICATOR.mNameLocal, "RM.java:145 local name verbatim");
+		assertEquals("gt.recipe.replicator", GT6RecipeMaps.REPLICATOR.mNameNEI, "RM.java:145 passes null → the internal name");
+		assertEquals(3, GT6RecipeMaps.REPLICATOR.mInputItemsCount);
+		assertEquals(3, GT6RecipeMaps.REPLICATOR.mOutputItemsCount);
+		assertEquals(1, GT6RecipeMaps.REPLICATOR.mMinimalInputItems);
+		assertEquals(3, GT6RecipeMaps.REPLICATOR.mInputFluidCount);
+		assertEquals(3, GT6RecipeMaps.REPLICATOR.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.REPLICATOR.mMinimalInputFluids);
+		assertEquals(2, GT6RecipeMaps.REPLICATOR.mMinimalInputs);
+		assertEquals(1, GT6RecipeMaps.REPLICATOR.mPower);
+		assertEquals("gt6:textures/gui/machines/replicator.png", GT6RecipeMaps.REPLICATOR.mGUIPath, "the RM.java:145 machines/Replicator row, lowercased");
+		// the base-RecipeMap carry over both runtime-synthesis subclasses (the judged form)
+		assertEquals(RecipeMap.class, GT6RecipeMaps.SCANNER_MOLECULAR.getClass(), "the RecipeMapScannerMolecular USB-scan arm stays pooled (RecipeMapScannerMolecular.java:46-67)");
+		assertEquals(RecipeMap.class, GT6RecipeMaps.MASSFAB.getClass(), "RM.Massfab IS the plain RecipeMap upstream");
+		assertEquals(RecipeMap.class, GT6RecipeMaps.REPLICATOR.getClass(), "the RecipeMapReplicator USB-data arm + mMaxFluidInputSize=2000 tweak stay pooled (RecipeMapReplicator.java:50-86)");
+		// DECLARED-empty row0 — the smoke rows ride the tier-b JSON seam, the loops are card-C content
+		assertTrue(GT6RecipeMaps.SCANNER_MOLECULAR.mRecipeList.isEmpty(), "DECLARED-empty: the upstream rows ARE the runtime USB synthesis");
+		assertTrue(GT6RecipeMaps.MASSFAB.mRecipeList.isEmpty(), "DECLARED-empty: the element-disintegration loop is card-C content");
+		assertTrue(GT6RecipeMaps.REPLICATOR.mRecipeList.isEmpty(), "DECLARED-empty: the static rows ride the unported Biomass/UUM families, pooled");
+	}
+
+	/**
+	 * The conflict-audit ⑤ red line (task p31-qu-a-foundation): the upstream
+	 * NBT_SPECIAL_IS_START_ENERGY ignition gate is NOT ported. Upstream the flag feeds
+	 * mChargeRequirement (MultiTileEntityBasicMachine.java:755) which has ZERO read points
+	 * repo-wide — a dead field. The port keeps the whole gate out structurally: neither the
+	 * port Recipe nor the port RecipeMap carries any ignition/charge-requirement field, so
+	 * a reader cannot exist (the reflection pin of the zero-read ruling).
+	 */
+	@Test
+	void theIgnitionGateStaysUnported() throws Exception {
+		assertThrows(NoSuchFieldException.class, () -> Recipe.class.getDeclaredField("mChargeRequirement"),
+				"the dead-field chain has no port counterpart: no mChargeRequirement on Recipe");
+		assertThrows(NoSuchFieldException.class, () -> RecipeMap.class.getDeclaredField("mChargeRequirement"),
+				"no mChargeRequirement on RecipeMap");
+		assertThrows(NoSuchFieldException.class, () -> Recipe.class.getDeclaredField("mSpecialIsStartEnergy"),
+				"no NBT_SPECIAL_IS_START_ENERGY carrier field on Recipe");
+		assertThrows(NoSuchFieldException.class, () -> RecipeMap.class.getDeclaredField("mSpecialIsStartEnergy"),
+				"no NBT_SPECIAL_IS_START_ENERGY carrier field on RecipeMap");
 	}
 }

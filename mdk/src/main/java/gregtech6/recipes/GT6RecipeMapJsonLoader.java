@@ -202,7 +202,11 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// card): the two new RM maps + the FM.Hot fuel map, the keys ARE the
 			// snake-case GT6RecipeMaps field names; the smelter/melter/fuels_hot smoke
 			// rows ship with this card (the datapack face)
-			"melter", "smelter", "fuels_hot");
+			"melter", "smelter", "fuels_hot",
+			// the P31 QU trio (task p31-qu-a-foundation): the three declared-empty maps get
+			// their keys WITH the card so the C/D machine cards never touch this loader; the
+			// three smoke rows ship with the keys (the datapack face)
+			"massfab", "replicator", "scannermolecular");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -586,6 +590,12 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// the P29 W4 tail-append (task p29-w4-eu-bridge — the Roasting Oven card owns the
 			// map end to end; the key is the field-name snake case)
 			case "roasting" -> GT6RecipeMaps.ROASTING;
+			// the P31 QU trio (task p31-qu-a-foundation — the key/field pairs are the
+			// field-name snake case; every target is a DECLARED-empty base map, the smoke
+			// rows are the card's content)
+			case "massfab" -> GT6RecipeMaps.MASSFAB;
+			case "replicator" -> GT6RecipeMaps.REPLICATOR;
+			case "scannermolecular" -> GT6RecipeMaps.SCANNER_MOLECULAR;
 		default -> null;
 		};
 	}

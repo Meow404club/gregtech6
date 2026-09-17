@@ -1,0 +1,14 @@
+{
+  "recipes": [
+    {
+      "comment": "task p31-qu-a-foundation smoke row — a DECLARED stand-in, not an upstream transcription: the upstream Molecular Scanner rows are runtime USB-scan synthesis (RecipeMapScannerMolecular.java:57-61 — a SCANNABLE item + a T3 USB stick in, the stick back with NBT_REPLICATOR_DATA, power (protons+neutrons)*512 eut 512), and the USB chain is out of this card's scope. The row keeps the 2-in/1-out map shape with vanilla items (the scanned material stand-in ender_pearl + the data-medium stand-in paper → the medium back, the scan data itself being NBT the v1 row schema cannot carry), so the DECLARED-empty map stays visible in NEI; the real rows ride the subclass synthesis when the USB-chain card lands.",
+      "inputs": [
+        {"item": "minecraft:ender_pearl", "count": 1},
+        {"item": "minecraft:paper", "count": 1}
+      ],
+      "outputs": [{"item": "minecraft:paper", "count": 1}],
+      "duration": 512,
+      "eut": 512
+    }
+  ]
+}

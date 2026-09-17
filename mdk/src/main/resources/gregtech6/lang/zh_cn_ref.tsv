@@ -8364,3 +8364,7 @@ direct	block.gt6.dead_log	枯原木	hand
 direct	block.gt6.rotten_log	腐朽原木	hand
 direct	block.gt6.mossy_log	苔藓原木	hand
 direct	block.gt6.frozen_log	冰冻原木	hand
+# task p31-qu-a-foundation — the 3 QU-matter fluid display names (no upstream zh dump face: the 1.7.10 zh assets carry no S:fluid.chargedmatter / S:fluid.neutralmatter / S:fluid.molten.enderpearl row; hand rows — 带电物质/中性物质 the physics charged/neutral pairing, 熔融末影珍珠 the molten.<mat>=熔融X rule over the vanilla pearl name)
+direct	fluid.gt6.chargedmatter	带电物质	hand
+direct	fluid.gt6.neutralmatter	中性物质	hand
+direct	fluid.gt6.enderpearl_molten	熔融末影珍珠	hand

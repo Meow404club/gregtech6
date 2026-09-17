@@ -471,6 +471,15 @@ public class GT6ZhCn extends LanguageProvider {
 		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.LUBRICANT_FLUID_SPECS) {
 			addDirect(tSpec.descriptionId());
 		}
+		// task p31-qu-a-foundation: the 3 QU-matter display names (chargedmatter/
+		// neutralmatter/enderpearl_molten) — no upstream zh dump face exists for these
+		// fluids (the 1.7.10 zh assets carry no S:fluid.chargedmatter row to borrow); all
+		// three are hand rows in the reference table (带电物质/中性物质 the physics-standard
+		// charged/neutral pairing, 熔融末影珍珠 the molten.<mat>=熔融X rule over the vanilla
+		// pearl name); the keys ride the SAME GTFluids.QU_FLUID_SPECS table the en walk uses.
+		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.QU_FLUID_SPECS) {
+			addDirect(tSpec.descriptionId());
+		}
 		// task p26-c-foam-fluid-refill: the base + the 32 C-Foam display names — the dump
 		// carries all 33 faces (S:fluid.ic2constructionfoam=建筑泡沫 tmp/gregtech.lang:361,
 		// S:fluid.cfoam.* :130-161); the keys ride the SAME GTFluids.cfoamName/
