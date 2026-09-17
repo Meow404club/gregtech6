@@ -26,6 +26,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.multiblock.GTCokeOvenBlock;
 import gregtech6.block.multiblock.GTHeatTransmitterBlock;
+import gregtech6.block.multiblock.GTImplosionCompressorBlock;
 import gregtech6.block.multiblock.GTLargeBoilerBlock;
 import gregtech6.block.multiblock.GTLightningRodBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
@@ -33,6 +34,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.tileentity.multiblocks.HeatTransmitterBlockEntity;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
+import gregtech6.tileentity.multiblocks.TileEntityImplosionCompressor;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 import gregtech6.tileentity.multiblocks.TileEntityLightningRod;
 
@@ -115,6 +117,8 @@ public final class GTMultiBlocks {
 						for (RegistryObject<Item> tItem : GTMultiBlocks.NEW_PART_ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
 						// task p29-w3-large-12 — the twelve large-machine controllers
 						for (RegistryObject<Item> tItem : GT6LargeMachines.ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
+						// task p31-implosion — the Implosion Compressor controller
+						aOutput.accept(new ItemStack(GTMultiBlocks.IMPLOSION_COMPRESSOR_ITEM.get()));
 					})
 					.build());
 
@@ -373,6 +377,37 @@ public final class GTMultiBlocks {
 		RegistryObject<GTMultiBlockPartBlock> tHandle = LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(aPath);
 		return tHandle == null ? COKE_OVEN_BRICKS.get() : tHandle.get();
 	}
+
+	// ===========================================================================
+	// task p31-implosion — the Implosion Compressor controller (Loader_MultiTileEntities
+	// .java:1228 re-read VERBATIM at implementation time: meta 17110, MT.TungstenSteel,
+	// NBT_HARDNESS 12.5 == NBT_RESISTANCE 12.5, NBT_TEXTURE "implosioncompressor",
+	// NBT_INPUT 1 / MIN 1 / MAX 16, NBT_ENERGY_ACCEPTED TD.Energy.TU,
+	// NBT_RECIPEMAP RM.ImplosionCompressor, NBT_INV/TANK_SIDE_AUTO_OUT SIDE_BOTTOM,
+	// NBT_PARALLEL 64, NBT_NO_CONSTANT_POWER T — the config lands in the BE constructor,
+	// the GT6LargeMachineBlockEntity row-injection form). The controller crafting row
+	// "CPC/PAP/RMR" is CUT (the W3 absent-input pool: 'R' IL.Processor_Crystal_Ruby and
+	// 'A' IL.ROBOT_ARMS[2] have no port item identity; GT6CraftingRecipes.java:880-886).
+	// The part block the structure is built from is the EXISTING dense_wall_tungstensteel
+	// row (upstream 18023, the :1162 Dense Wall registration) — zero new part blocks.
+	// ===========================================================================
+
+	/** The Implosion Compressor controller block — the FACING+FORMED base owns the visuals. */
+	public static final RegistryObject<GTImplosionCompressorBlock> IMPLOSION_COMPRESSOR = BLOCKS.register("implosion_compressor",
+			() -> new GTImplosionCompressorBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL)));
+
+	/** The Implosion Compressor controller item (the plain BlockItem — the twelve-row shape; no addToolTips replay exists this port). */
+	public static final RegistryObject<Item> IMPLOSION_COMPRESSOR_ITEM = ITEMS.register("implosion_compressor",
+			() -> new BlockItem(IMPLOSION_COMPRESSOR.get(), new Item.Properties()));
+
+	/**
+	 * The Implosion Compressor BET: one controller class over its one block (the
+	 * CokeOven/LightningRod BET degenerate shape). Registry path mirrors
+	 * {@link TileEntityImplosionCompressor#getTileEntityName()}.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityImplosionCompressor>> IMPLOSION_COMPRESSOR_BE =
+			BLOCK_ENTITY_TYPES.register("multiblock_implosion_compressor", () -> BlockEntityType.Builder.of(
+					TileEntityImplosionCompressor::new, IMPLOSION_COMPRESSOR.get()).build(null));
 
 	// ===========================================================================
 	// task p29-w3-nbtdesign-parts ③ — the part-family expansion (Loader_MultiTileEntities

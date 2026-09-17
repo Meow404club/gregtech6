@@ -651,6 +651,23 @@ public class GT6RecipeMaps {
 	 */
 	public static volatile RecipeMap ROASTING;
 
+	/**
+	 * RM.java:86 — the Implosion Compressor map (task p31-implosion): items 3/3/3, fluids
+	 * 0/0/0, MIN 0, AMP 1 — the RM.java:86 row verbatim over the 15-arg port ctor (the
+	 * trailing NEI booleans fold away like every other map), the GUI path the upstream
+	 * "machines/ImplosionCompressor" lowercased (the Shredder-line convention; string
+	 * only, no asset ships while the controller runs headless — the W2 menu-null form).
+	 * Base-{@link RecipeMap} (RM.ImplosionCompressor IS a plain RecipeMap upstream). The
+	 * item-min 3 is what shapes every row: dust + TNT + the {@code ST.tag(0..3)} selector
+	 * circuit (the per-row tier selector, the Distillery {@code ST.tag(n)} routing — the
+	 * selector rides count 1 with the never-consumed identity-skip, Recipe.sNotConsumable).
+	 * The rows pour via {@link gregtech6.recipes.GT6RecipesImplosion} (FMLCommonSetup; the
+	 * per-gem-material 4-tier walk of Loader_Recipes_Other.java:709-764, the TNT branch
+	 * cut to vanilla TNT only). The live findRecipe consumer is the Implosion Compressor
+	 * multiblock controller 17110 (TileEntityImplosionCompressor).
+	 */
+	public static volatile RecipeMap IMPLOSION;
+
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
 		if (FURNACE != null) return;
@@ -1270,6 +1287,16 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 1,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
+		// RM.java:86 — the Implosion Compressor map, the base-map row verbatim (items
+		// 3/3/3, fluids 0/0/0, MIN 0, AMP 1); the rows pour via GT6RecipesImplosion.
+		IMPLOSION = new RecipeMap(new HashSet<>(),
+				"gt.recipe.implosioncompressor", "Implosion Compressor", null,
+				0, 1,
+				"gt6:textures/gui/machines/implosioncompressor",
+				/*IN-OUT-MIN-ITEM=*/ 3, 3, 3,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -1343,6 +1370,7 @@ public class GT6RecipeMaps {
 		SMELTER = null;
 		FUELS_HOT = null;
 		ROASTING = null;
+		IMPLOSION = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}

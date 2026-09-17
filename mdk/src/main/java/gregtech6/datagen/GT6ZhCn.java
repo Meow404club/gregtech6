@@ -877,6 +877,9 @@ public class GT6ZhCn extends LanguageProvider {
 		add("block.gt6.large_crusher", "大型破碎机");
 		add("block.gt6.large_shredder", "大型研磨机");
 		add("block.gt6.large_squeezer", "大型榨汁机");
+		// task p31-implosion — the Implosion Compressor (the Loader :1228 row; GTCEu Modern
+		// zh 爆破压缩机 lineage, the machine's explosion-driven compression)
+		add("block.gt6.implosion_compressor", "爆破压缩机");
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_STRUCTURE);
 		for (int i = 1; i <= 9; i++) {
 			addDirect(String.format(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE, i));

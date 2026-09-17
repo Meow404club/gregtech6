@@ -1249,6 +1249,8 @@ public class GT6EnUs extends LanguageProvider {
         for (gregtech6.registry.GT6LargeMachines.LargeMachineRow tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
             add("block.gt6." + tRow.path(), tRow.display());
         }
+        // task p31-implosion — the Implosion Compressor (the Loader :1228 name column)
+        add("block.gt6.implosion_compressor", "Implosion Compressor");
     }
 
     /**
