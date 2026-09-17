@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/ruthenium"
+    },
+    "P": {
+      "tag": "c:plates/ruthenium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "ruthenium",
+  "pattern": [
+    "PII",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pickaxe"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:axe/wax_magic"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wax_magic": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/wax_magic"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_wax_magic",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:axe/wax_magic"
+    ]
+  },
+  "sends_telemetry_event": false
+}

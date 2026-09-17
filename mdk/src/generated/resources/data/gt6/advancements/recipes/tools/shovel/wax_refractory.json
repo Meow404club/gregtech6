@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:shovel/wax_refractory"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wax_refractory": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/wax_refractory"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_wax_refractory",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:shovel/wax_refractory"
+    ]
+  },
+  "sends_telemetry_event": false
+}

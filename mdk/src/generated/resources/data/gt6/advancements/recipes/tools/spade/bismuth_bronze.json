@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_bismuth_bronze": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/bismuth_bronze"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:spade/bismuth_bronze"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_bismuth_bronze",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:spade/bismuth_bronze"
+    ]
+  },
+  "sends_telemetry_event": false
+}

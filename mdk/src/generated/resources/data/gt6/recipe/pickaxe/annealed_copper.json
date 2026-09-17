@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/annealed_copper"
+    },
+    "P": {
+      "tag": "c:plates/annealed_copper"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "annealed_copper",
+  "pattern": [
+    "PII",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pickaxe"
+  }
+}

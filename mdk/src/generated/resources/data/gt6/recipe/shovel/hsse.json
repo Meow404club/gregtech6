@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/hsse"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "hsse",
+  "pattern": [
+    "fPh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:shovel"
+  }
+}

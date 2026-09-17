@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/flerovium"
+    },
+    "P": {
+      "tag": "c:plates/flerovium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "flerovium",
+  "pattern": [
+    "PIh",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hoe"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/gold_inductive"
+    },
+    "P": {
+      "tag": "c:plates/gold_inductive"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "gold_inductive",
+  "pattern": [
+    "PIh",
+    "P  ",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:axe"
+  }
+}

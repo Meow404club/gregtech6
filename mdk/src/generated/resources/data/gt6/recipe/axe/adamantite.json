@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/adamantite"
+    },
+    "P": {
+      "tag": "c:plates/adamantite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "adamantite",
+  "pattern": [
+    "PIh",
+    "P  ",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:axe"
+  }
+}

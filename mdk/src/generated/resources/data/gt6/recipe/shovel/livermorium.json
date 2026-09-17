@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/livermorium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "livermorium",
+  "pattern": [
+    "fPh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:shovel"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/sodium"
+    },
+    "P": {
+      "tag": "c:plates/sodium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "sodium",
+  "pattern": [
+    "PII",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pickaxe"
+  }
+}

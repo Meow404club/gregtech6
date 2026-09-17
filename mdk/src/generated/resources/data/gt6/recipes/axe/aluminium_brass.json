@@ -1,0 +1,29 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/aluminium_brass"
+    },
+    "P": {
+      "tag": "forge:plates/aluminium_brass"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "aluminium_brass",
+  "pattern": [
+    "PIh",
+    "P  ",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:axe"
+  },
+  "show_notification": true
+}

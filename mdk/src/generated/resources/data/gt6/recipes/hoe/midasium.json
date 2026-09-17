@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/midasium"
+    },
+    "P": {
+      "tag": "forge:plates/midasium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "midasium",
+  "pattern": [
+    "PIh",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:hoe"
+  },
+  "show_notification": true
+}

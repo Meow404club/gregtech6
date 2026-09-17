@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:hoe/wax_soulful"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wax_soulful": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/wax_soulful"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_wax_soulful",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:hoe/wax_soulful"
+    ]
+  },
+  "sends_telemetry_event": false
+}

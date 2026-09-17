@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/alduorite"
+    },
+    "P": {
+      "tag": "forge:plates/alduorite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "alduorite",
+  "pattern": [
+    "PIh",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:hoe"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/petroleum_coke"
+    },
+    "P": {
+      "tag": "c:plates/petroleum_coke"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "petroleum_coke",
+  "pattern": [
+    "PII",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pickaxe"
+  }
+}

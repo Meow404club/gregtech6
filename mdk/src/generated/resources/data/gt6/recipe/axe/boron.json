@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/boron"
+    },
+    "P": {
+      "tag": "c:plates/boron"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "boron",
+  "pattern": [
+    "PIh",
+    "P  ",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:axe"
+  }
+}

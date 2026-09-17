@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/gaia_spirit"
+    },
+    "P": {
+      "tag": "c:plates/gaia_spirit"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "gaia_spirit",
+  "pattern": [
+    "PIh",
+    "P  ",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:axe"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/chromium_dioxide"
+    },
+    "P": {
+      "tag": "forge:plates/chromium_dioxide"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "chromium_dioxide",
+  "pattern": [
+    "PII",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:pickaxe"
+  },
+  "show_notification": true
+}

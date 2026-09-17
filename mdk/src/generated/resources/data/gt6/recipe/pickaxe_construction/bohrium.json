@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/bohrium"
+    },
+    "P": {
+      "tag": "c:plates/bohrium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "bohrium",
+  "pattern": [
+    "PIP",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pickaxe_construction"
+  }
+}

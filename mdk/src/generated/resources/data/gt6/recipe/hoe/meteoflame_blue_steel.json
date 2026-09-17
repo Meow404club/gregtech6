@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/meteoflame_blue_steel"
+    },
+    "P": {
+      "tag": "c:plates/meteoflame_blue_steel"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "meteoflame_blue_steel",
+  "pattern": [
+    "PIh",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hoe"
+  }
+}

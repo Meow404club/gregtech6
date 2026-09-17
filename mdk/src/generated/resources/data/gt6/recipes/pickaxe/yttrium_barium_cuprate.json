@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/yttrium_barium_cuprate"
+    },
+    "P": {
+      "tag": "forge:plates/yttrium_barium_cuprate"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "yttrium_barium_cuprate",
+  "pattern": [
+    "PII",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:pickaxe"
+  },
+  "show_notification": true
+}

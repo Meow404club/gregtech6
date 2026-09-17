@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/arsenic_copper"
+    },
+    "P": {
+      "tag": "forge:plates/arsenic_copper"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "arsenic_copper",
+  "pattern": [
+    "PIh",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:hoe"
+  },
+  "show_notification": true
+}

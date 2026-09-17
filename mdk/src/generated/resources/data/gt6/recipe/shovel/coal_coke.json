@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/coal_coke"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "coal_coke",
+  "pattern": [
+    "fPh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:shovel"
+  }
+}
