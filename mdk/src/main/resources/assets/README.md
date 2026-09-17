@@ -8312,3 +8312,14 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   (upstream `iconsets/LOG_SIDE_FROZEN.png`/`LOG_TOP_FROZEN.png`; sha256
   `3d3b5a8f1973c6714f859cec1381e042f58b3ee9621e9bd97532502f10142366` /
   `ca3053f9843ff4f3475051e21667ccce90a4c575dc7dd7fbf7b59e207771b33c`)
+
+- `gt6/textures/item/comb/comb_<name>.png` (×20) — the bee-comb item icons (task
+  p31-bees-lv1). PORT-GENERATED ART (not borrowed): one 16×16 five-cell honeycomb
+  silhouette, per-comb tinted — the upstream 1.7.10 combs carry no dedicated item PNGs
+  (the MultiItemFood icons composite from the FOOD material icon set at runtime), so the
+  port declares the tint family: honey e8b84a / water 6fa8e8 / magic b070e0 / nether
+  c04030 / end 60c8c0 / rock 909090 / jungle 70a840 / frozen b8d8f0 / shroom c08070 /
+  sandy d8c890 / clay a0a8b8 / sticky e8c860 / royal f0d040 / soul 504858 / amnesic
+  c8a0e8 / military 808850 / pyro e87830 / cryo 90c8e8 / aero f0e8a0 / tera 986838.
+  Regeneration recipe: the five-cell ellipse grid (rim = tint, cell interior = 55%,
+  top edge = 125%, bottom edge = 45%), PIL, RGBA 16×16.

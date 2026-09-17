@@ -96,6 +96,7 @@ public class GT6EnUs extends LanguageProvider {
         addChemicalFluids(); // task p29-w4-f1-chemicals — table-tail append
         addHotFamilyFluids(); // task p29-w4-hot-lube — table-tail append (hot + closure + lubricant)
         addQuFluids(); // task p31-qu-a-foundation — table-tail append (the QU matter/ender trio)
+        addBeeFamily(); // task p31-bees-lv1 — table-tail append (honey + bee-row fluids + the 20 combs + the tab)
         addCFoamBlocks(); // task p26-c-foam-block-family — table-tail append
         addElectricWires();
         addMachines();
@@ -346,6 +347,28 @@ public class GT6EnUs extends LanguageProvider {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
         for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.LUBRICANT_FLUID_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
+
+    /**
+     * The bee family (task p31-bees-lv1): the "Bees" tab title, the 20 comb display names
+     * (walked over the GT6BeeCombs.COMB_SPECS table so the id/name pairs cannot drift —
+     * the upstream MultiItemFood.java:226-247 display faces verbatim, the record's single
+     * source) and the 11 honey-family + bee-row fluid display names (the spec tables' own
+     * displayName faces, the addHotFamilyFluids shape). zh values ride the reference
+     * table's hand layer (the GT6ZhCn mirror walk; the dump carries no comb rows — the
+     * 蜜脾 wording is hand zh over the 黄蜂蜂巢 hive face, zh_cn_ref.tsv:6569).
+     */
+    private void addBeeFamily() {
+        add(gregtech6.registry.GT6BeeCombs.TAB_TITLE_KEY, "Bees");
+        for (gregtech6.registry.GT6BeeCombs.CombSpec tSpec : gregtech6.registry.GT6BeeCombs.COMB_SPECS) {
+            add("item.gt6." + tSpec.itemId(), tSpec.display());
+        }
+        for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.HONEY_FLUID_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+        for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.BEE_ROW_FLUID_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
     }
