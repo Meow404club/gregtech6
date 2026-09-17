@@ -130,11 +130,13 @@ public final class GT6ToolActions {
 	 * ingredient face; the port flattens the classification onto this Forge
 	 * {@link ToolAction} and keeps the string for the dispatch seam as
 	 * {@link #HAMMER_ID}. Consumer: {@link GTHammerItem} (the crafting ingredient route
-	 * rides the {@code #gt6:tools/hard_hammer} item tag, GT6ItemTags — the hard_hammer
-	 * naming ruling, decisions.p25-tool-hammer-wrench-rulings). The world arms (the
-	 * ore-crush drop conversion + the mining surface, GT_Tool_HardHammer.java:83-119)
-	 * stay the world-interaction card's pool — zero {@code useOn} here by card cut.
-	 */
+ * rides the {@code #gt6:tools/hard_hammer} item tag, GT6ItemTags — the hard_hammer
+ * naming ruling, decisions.p25-tool-hammer-wrench-rulings). The world arms (the
+ * ore-crush drop conversion + the mining surface, GT_Tool_HardHammer.java:83-119) stay
+ * the world-interaction card's pool; the SECOND behavior arm (TOOL_prospector,
+ * GT_Tool_HardHammer.java:132-135) landed with task p30-pool-prospector — see
+ * {@link #PROSPECTOR} and {@link GT6Prospector}.
+ */
 	public static final ToolAction HAMMER = ToolAction.get("gt6_hammer");
 
 	/**
@@ -322,6 +324,21 @@ public final class GT6ToolActions {
 	 * Loader_Tools.java:152 row — the isMiningTool-F prospecting face).
 	 */
 	public static final ToolAction HAND_DRILL = ToolAction.get("gt6_hand_drill");
+
+	/**
+	 * The prospector stack-classification action ("gt6_prospector" — task
+	 * p30-pool-prospector, the CROWBAR entry shape). Upstream rides the
+	 * {@code TOOL_prospector} behaviour string (CS.java:1074) mounted as the HardHammer's
+	 * SECOND Behavior_Tool arm (GT_Tool_HardHammer.java:132-135 — the only mount in the
+	 * library; hammer 100 / prospector 10 durability scale), so the port does NOT mint a
+	 * tool item: {@link GTHammerItem} classifies on BOTH {@link #HAMMER} and this action
+	 * (the GTClubItem multi-action precedent), and the world arm is the
+	 * {@link GT6Prospector} static seam. No reserved _ID string: upstream's prospector
+	 * consumers are all in-process IBlockToolable clicks (BlockStones.java:572 /
+	 * PrefixBlock.java:492 / ToolCompat.java:367-373), there is no string-keyed dispatch
+	 * seam in this port to stay faithful to.
+	 */
+	public static final ToolAction PROSPECTOR = ToolAction.get("gt6_prospector");
 
 	private GT6ToolActions() {
 	}
