@@ -50,8 +50,9 @@ import gregtech6.registry.GTMaterialItems;
  * dot-flattening rule applied to the config name itself).
  *
  * <p><b>Translation</b> (per feature): configured = vanilla {@code Feature.ORE}
- * size=1 (WorldgenOresSmall.java:61 places exactly one block per attempt; the vanilla
- * size codec cap intRange(0,64) is trivially safe) over the WD.setSmallOre host face
+ * size={@link #ORE_SIZE} (the upstream attempt places exactly one block —
+ * WorldgenOresSmall.java:61; size=1 is mathematically inert, see the constant) over the
+ * WD.setSmallOre host face
  * (WD.java:765-780) — overworld rows 21 targets (stone/deepslate tags + the 17 GT
  * stone anchors + gravel/sand fallbacks; redsand/mud are NOT upstream small-ore
  * hosts), nether rows the base_stone_nether tag, end rows end_stone (the
@@ -217,6 +218,22 @@ public final class GTOreWorldgen {
             placementPairs().stream().map(tPair -> placedKey(tPair.row(), tPair.dim())).toList();
 
     // ---------------------------------------------------------------- placement translation
+
+    /**
+     * The vanilla OreConfiguration "size". THE CARD SPEC'S size=1 IS MATHEMATICALLY
+     * INERT and this card ships size=2 instead — the minimal faithful value, declared
+     * deviation (live-run finding 2026-09-17): an OreFeature walk point is always at an
+     * INTEGER y (the two walk endpoints are {@code origin.y + nextInt(3) - 2}) with the
+     * x offset confined to {@code [0, sin·size/8]}, so for size=1 the walk sphere radius
+     * {@code (1 + nextDouble·size/16)/2 ≈ 0.5} can never reach a block CENTER (nearest
+     * center distance² ≥ 0.1406 + 0.25 + 0.1406 = 0.531 > r² ≤ 0.282) — a size=1 ore
+     * places NOTHING, ever (0/20 live /place + natural origins are integers too, so the
+     * whole size=1 band would be dead-letter JSONs). Calibration (world-datapack census,
+     * 8 attempts × sizes 2/4/8/16 on a forced stone pad): EVERY size ≥ 2 places EXACTLY
+     * ONE block per attempt — the upstream WorldgenOresSmall.java:61 semantic verbatim.
+     * 2 is the smallest value clear of the dead zone.
+     */
+    public static final int ORE_SIZE = 2;
 
     /** WorldgenOresSmall.java:61 count range lower bound — max(1, amount/2 + rnd(1+amount)/2) >= this. */
     public static int countMin(SmallOreRow aRow) {

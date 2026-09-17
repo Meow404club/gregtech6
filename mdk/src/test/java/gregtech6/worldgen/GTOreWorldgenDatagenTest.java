@@ -289,6 +289,19 @@ class GTOreWorldgenDatagenTest {
         }
     }
 
+    /** The declared ORE_SIZE=2 deviation: size=1 is mathematically inert (the dead-zone derivation). */
+    @Test
+    void oreSizeDeviationIsPinned() {
+        assertEquals(2, GTOreWorldgen.ORE_SIZE, "size=2 — the minimal value clear of the size=1 dead zone");
+        // the dead-zone arithmetic, pinned: the walk point sits at an integer y (both
+        // endpoints y + nextInt(3) - 2) with x within [0, sin·size/8], so for size=1 the
+        // sphere radius (1 + u·size/16)/2 ∈ [0.5, 0.531) can never reach a block center —
+        // nearest center distance² >= 0.1406(x) + 0.25(y) + 0.1406(z) = 0.531 > r² <= 0.282.
+        // Live evidence: 0/20 /place attempts on a forced stone pad (vanilla ore_coal and
+        // the p26 marble blob place at the same spot); calibration 8 attempts x sizes
+        // 2/4/8/16 = exactly 1 block per attempt (32/32) — the upstream :61 semantic.
+    }
+
     private static GTOreWorldgen.SmallOreRow rowOf(String aName) {
         return GTOreWorldgen.ROWS.stream().filter(tRow -> tRow.name().equals(aName)).findFirst().orElseThrow();
     }

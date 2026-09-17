@@ -454,7 +454,9 @@ public final class GT6WorldgenDatagen {
         for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
             OreDictMaterial tMaterial = GTOreWorldgen.resolve(tPair.row());
             FeatureUtils.register(ctx, GTOreWorldgen.configuredKey(tPair.row(), tPair.dim()), Feature.ORE,
-                    new OreConfiguration(oreTargets(tMaterial, tPair.dim()), 1)); // size=1: WorldgenOresSmall.java:61 places one block per attempt
+                    // size=2 (GTOreWorldgen.ORE_SIZE): size=1 is mathematically inert — the walk
+                    // sphere never reaches a block center from an integer origin (live-run 0/20)
+                    new OreConfiguration(oreTargets(tMaterial, tPair.dim()), GTOreWorldgen.ORE_SIZE));
         }
     }
 
