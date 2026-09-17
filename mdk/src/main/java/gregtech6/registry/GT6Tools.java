@@ -76,22 +76,27 @@ import gregtech6.items.tools.pocket.GTPocketMultitoolItem;
  * {@code displayItems} ({@link #TAB_TABLE}, the GTWires.ELECTRIC_WIRES_TAB form, the
  * W1 ADR ①c) — the p9 ADR cut ("the item is {@code /give} reachable") closes here.
  *
- * <p>Declared pool cuts (ADR 2026-09-01-p10-tools-covers-split, zero code in this card):
+ * <p>Declared pool cuts (ADR 2026-09-01-p10-tools-covers-split):
  * <ol>
  * <li><b>Crowbar crafting recipe</b> — upstream shapes {@code {"hVS","VSV","SVf"}} per
  *     material, requiring the {@code h} hammer + {@code f} file TOOL PIECES plus a blue
  *     dye auxiliary (Loader_Tools.java:314, the OreProcessing_Tool row over
  *     toolHeadWrench); the port has no tool-piece item family and inventing vanilla
  *     substitutes is not done — unlocks with the tool-family card.</li>
- * <li><b>Crowbar material ladder</b> — upstream registers ONE meta id with an NBT-chosen
- *     material, per-material recipes (the whole ToolsGT block Loader_Tools.java:114-145;
- *     the crowbar row :128 carries {@code setMaterialAmount(3*U2)} = per-material
- *     durability); the port keeps the single steel tier at durability 512 (the pinned
- *     ADR value).</li>
- * <li><b>Crowbar runtime tint</b> — the material RGBa recolouring, coupled to the ladder:
- *     upstream {@code getRGBa} returns the primary material {@code mRGBaSolid}
- *     (GT_Tool_Crowbar.java:146-149, gregtech/items/tools/machine/); the port renders
- *     the single steel texture untinted until the ladder lands.</li>
+ * <li><b>Crowbar material ladder</b> — UNLOCKED by task p31-identity-seam (was: the
+ *     single steel tier at durability 512). Upstream registers ONE meta id with an
+ *     NBT-chosen material (the whole ToolsGT block Loader_Tools.java:114-145; the
+ *     crowbar row :128 carries {@code setMaterialAmount(3*U2)}); the port isomorph
+ *     stores the material identity in the {@code gregtech6.itemdata} seam
+ *     ({@code GT.ToolStats}, the upstream MultiItemTool.java:192 compound) and scales
+ *     durability per material ({@link GTCrowbarItem#durabilityPoints}, :182 at the
+ *     pinned 100 units = 1 point ratio — Steel stays at the ADR 512). The per-material
+ *     CRAFTING rows still unlock with the tool-family card (cut ① above).</li>
+ * <li><b>Crowbar runtime tint</b> — UNLOCKED with the same card (was: untinted single
+ *     texture): the material RGBa recolouring over the seam identity, upstream
+ *     {@code getRGBa} primary {@code mRGBaSolid} with the steel fallback verbatim
+ *     (GT_Tool_Crowbar.java:146-149, gregtech/items/tools/machine/), registered from
+ *     GTClientHandlers.</li>
  * </ol>
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -101,10 +106,11 @@ public final class GT6Tools {
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
 
 	/**
-	 * The formal crowbar — item id {@code gt6:crowbar}. Single steel tier, durability
-	 * 512 (the declared ADR value; upstream scales per material, Loader_Tools:128 —
-	 * the ladder is a pool cut). Durability semantics: one vanilla point per 10000
-	 * upstream tool-damage units, so one cover dismantle = one point.
+	 * The formal crowbar — item id {@code gt6:crowbar}. Base durability 512 = the
+	 * IDENTITY-LESS legacy value (the ADR pin); identity-carrying stacks scale per
+	 * material through the p31-identity-seam (upstream Loader_Tools:128 row,
+	 * {@link GTCrowbarItem#getMaxDamage}). Durability semantics: one vanilla point per
+	 * 10000 upstream tool-damage units, so one cover dismantle = one point.
 	 */
 	public static final RegistryObject<Item> CROWBAR = ITEMS.register("crowbar",
 			() -> new GTCrowbarItem(new Item.Properties().durability(GTCrowbarItem.DURABILITY_POINTS)));
