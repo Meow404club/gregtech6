@@ -372,6 +372,13 @@ SESSION_GROUPS = (
     # --group p29_w5_t6_electric matches through the chains' embedded name prefix.
     ("p29_w5_t6_electric_drill", "p29_w5_t6_electric_switch", "p29_w5_t6_electric_jackhammer",
      "p29_w5_t6_electric_faces"),
+    # P31 card (p31-retriever-cover): the item retriever cover chain — a fresh z=248
+    # band (A x470 = the one-tick deterministic drive, B x476 = the live phase-gate
+    # arm + the /gt6cover dismantle restore; both sites dz=1 for the south source
+    # chest), admission mirroring the p29 cluster form (bbox-registered, no
+    # fresh_boot / mutates member — the chest rigs are band-local setblocks).
+    # --group p31_retriever matches through the chains' embedded name prefix.
+    ("p31_retriever_cover",),
     # P30 W5 card 7 (p29-w5-t7-pocket-eight): the pocket multitool chains — one fresh
     # z=352 band, three x-disjoint columns (ring x384..386 — the give chest + the bare
     # stone walk rig / faces x394..398 — the log|ice|stone|bars|pane probe blocks /

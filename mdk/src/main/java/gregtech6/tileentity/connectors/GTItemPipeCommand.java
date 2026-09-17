@@ -120,8 +120,13 @@ public final class GTItemPipeCommand {
 									(byte)IntegerArgumentType.getInteger(aContext, "side"))))))
 				.then(Commands.literal("accept")
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
-						.executes(aContext -> accept(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
-		LOGGER.info("Registered GT6 item pipe command /gt6itempipe (place|stat|insert|wrench|toggle|accept)");
+						.executes(aContext -> accept(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+				.then(Commands.literal("retriever")
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(aContext -> retriever(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))
+						.then(Commands.literal("setup")
+							.executes(aContext -> retrieverSetup(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))));
+		LOGGER.info("Registered GT6 item pipe command /gt6itempipe (place|stat|insert|wrench|toggle|accept|retriever)");
 	}
 
 	// ---------------------------------------------------------------------------
@@ -342,6 +347,197 @@ public final class GTItemPipeCommand {
 		int tCount = 0;
 		for (int i = 0; i < aPipe.mInventory.getSlots(); i++) {
 			tCount += aPipe.mInventory.getStackInSlot(i).getCount();
+		}
+		return tCount;
+	}
+
+	// ---------------------------------------------------------------------------
+	// retriever — the p31 card scenario (all four acceptance arms, one tick, deterministic)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * {@code retriever <pos> setup} — the live-tick arm's installer: mounts the retriever
+	 * (no filter lane) on the FIRST connected container face and leaves everything to the
+	 * live ticker (the :61 phase gate fires within 20 ticks; the chain polls the target
+	 * chest, then drives the dismantle over /gt6cover). The pipe BE carries no cover-plate
+	 * render snapshot yet, so /gt6cover install's own snapshot assertion cannot run here —
+	 * this setup arm is the pipe-side install seam.
+	 */
+	private static int retrieverSetup(CommandSourceStack aSource, BlockPos aPos) {
+		ServerLevel tLevel = aSource.getLevel();
+		if (!(tLevel.getBlockEntity(aPos) instanceof GTItemPipeBlockEntity tPipe)) {
+			aSource.sendFailure(Component.literal("No GTItemPipeBlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		if (tPipe.hasCovers()) {
+			aSource.sendFailure(Component.literal("RETRIEVER SETUP SKIPPED: the pipe already carries covers at " + aPos.toShortString()));
+			return 0;
+		}
+		byte tCoverFace = -1;
+		for (byte tSide = 0; tSide < 6 && tCoverFace < 0; tSide++) {
+			if (!tPipe.connected(tSide)) continue;
+			BlockEntity tNeighbor = tLevel.getBlockEntity(aPos.relative(Direction.from3DDataValue(tSide)));
+			if (tNeighbor == null || tNeighbor instanceof TileEntityBase09Connector) continue;
+			IItemHandler tHandler = GTItemPipeBlockEntity.itemHandlerOf(tNeighbor, Direction.from3DDataValue(tSide).getOpposite());
+			if (tHandler != null && tHandler.getSlots() > 0) tCoverFace = tSide;
+		}
+		if (tCoverFace < 0) {
+			aSource.sendFailure(Component.literal("RETRIEVER SETUP SKIPPED: no connected container face at " + aPos.toShortString()));
+			return 0;
+		}
+		gregtech6.covers.GT6Covers.init();
+		if (!tPipe.setCoverItem(tCoverFace, new ItemStack(gregtech6.covers.GT6Covers.COVER_ITEM_RETRIEVER.get()), null, false, true)) {
+			aSource.sendFailure(Component.literal("RETRIEVER SETUP FAILED: the cover install was refused at " + aPos.toShortString()));
+			return 0;
+		}
+		String tLine = "GT6 item pipe retriever setup OK at " + aPos.toShortString() + ": cover face " + tCoverFace
+				+ " (no filter — the live phase gate pulls anything within 20 ticks)";
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * {@code retriever <pos>} — the retriever acceptance drive (task p31-retriever-cover
+	 * acceptance ④, the {@code accept} shape): the pipe at pos with TWO connected
+	 * containers (the first found face carries the cover and is the pull TARGET, the
+	 * second the pull SOURCE), each container pre-loaded by the caller (the chain feeds
+	 * stone×3 slots + dirt×1 into the source). Inside one tick:
+	 * <ol>
+	 * <li>install gt6:cover_item_retriever on the target face + set the stone filter
+	 *     lane; the filtered pull moves exactly one stone stack, the dirt stays (the
+	 *     :467 gate), both pipes of the path prefix pay one counter unit (:73);</li>
+	 * <li>the second drive spends the brass-medium invSize=2 window, the third is
+	 *     REFUSED by {@code pipeCapacityCheck} (the acceptance capacity-window arm) —
+	 *     counters and chests frozen at 2 stacks moved;</li>
+	 * <li>the screwdriver relay flips the visual lane; after the window reset
+	 *     (:193 — the direct write is the deterministic seam) the inverted pull takes
+	 *     the DIRT stack (the non-matching one);</li>
+	 * <li>the hoe relay dismantles (damage 10000, the drop spawns at the covered face),
+	 *     the store dissolves to null and a further armed drive is a no-op — 拆盖恢复原状.</li>
+	 * </ol>
+	 */
+	private static int retriever(CommandSourceStack aSource, BlockPos aPos) {
+		ServerLevel tLevel = aSource.getLevel();
+		if (!(tLevel.getBlockEntity(aPos) instanceof GTItemPipeBlockEntity tPipe)) {
+			aSource.sendFailure(Component.literal("No GTItemPipeBlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		if (tPipe.hasCovers()) {
+			aSource.sendFailure(Component.literal("RETRIEVER SKIPPED: the pipe already carries covers at " + aPos.toShortString()));
+			return 0;
+		}
+
+		// locate the two connected container faces (the accept shape): first = the cover
+		// face (the pull target), second = the pull source
+		byte tCoverFace = -1, tSourceFace = -1;
+		IItemHandler tSource = null;
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			if (!tPipe.connected(tSide)) continue;
+			BlockEntity tNeighbor = tLevel.getBlockEntity(aPos.relative(Direction.from3DDataValue(tSide)));
+			if (tNeighbor == null || tNeighbor instanceof TileEntityBase09Connector) continue;
+			IItemHandler tHandler = GTItemPipeBlockEntity.itemHandlerOf(tNeighbor, Direction.from3DDataValue(tSide).getOpposite());
+			if (tHandler == null || tHandler.getSlots() <= 0) continue;
+			if (tCoverFace < 0) {
+				tCoverFace = tSide;
+			} else {
+				tSourceFace = tSide;
+				tSource = tHandler;
+				break;
+			}
+		}
+		if (tSource == null) {
+			aSource.sendFailure(Component.literal("RETRIEVER SKIPPED: the pipe needs TWO connected containers (a target face for the cover and a source face) at " + aPos.toShortString()));
+			return 0;
+		}
+		IItemHandler tTarget = tPipe.adjacentInventoryOf(tPipe, tCoverFace);
+		if (tTarget == null) {
+			aSource.sendFailure(Component.literal("RETRIEVER FAILED: no handler on the cover face " + tCoverFace));
+			return 0;
+		}
+		if (tPipe.getPipeCapacity() != 2) {
+			aSource.sendFailure(Component.literal("RETRIEVER FAILED: the capacity arm pins the brass-medium invSize=2 row, this pipe carries " + tPipe.getPipeCapacity()));
+			return 0;
+		}
+
+		// install + the stone filter lane (the /gt6cover install + right-click set equivalent)
+		gregtech6.covers.GT6Covers.init();
+		if (!tPipe.setCoverItem(tCoverFace, new ItemStack(gregtech6.covers.GT6Covers.COVER_ITEM_RETRIEVER.get()), null, false, true)) {
+			aSource.sendFailure(Component.literal("RETRIEVER FAILED: the cover install was refused (a ticking item pipe admits it, CoverRetrieverItem :50)"));
+			return 0;
+		}
+		tPipe.getCovers().mNBTs[tCoverFace] = gregtech6.covers.covers.CoverFilterItem.filterTagFor(new ItemStack(net.minecraft.world.item.Items.STONE));
+
+		// arm 1: the filtered pull — one stone stack crosses, the dirt stays
+		drive(tPipe, tCoverFace);
+		long tHostAfterPull1 = tPipe.mTransferredItems;
+		if (countOf(tTarget, net.minecraft.world.item.Items.STONE) != 64 || countOf(tSource, net.minecraft.world.item.Items.STONE) != 128
+				|| countOf(tSource, net.minecraft.world.item.Items.DIRT) != 64 || tHostAfterPull1 != 1) {
+			return fail(aSource, "FILTERED PULL FAILED: target stone " + countOf(tTarget, net.minecraft.world.item.Items.STONE)
+					+ " (want 64), source stone " + countOf(tSource, net.minecraft.world.item.Items.STONE) + " (want 128), source dirt "
+					+ countOf(tSource, net.minecraft.world.item.Items.DIRT) + " (want 64 — the :467 gate), transferred " + tHostAfterPull1 + " (want 1)");
+		}
+
+		// arm 2: the second drive spends the invSize=2 window
+		drive(tPipe, tCoverFace);
+		if (countOf(tTarget, net.minecraft.world.item.Items.STONE) != 128 || tPipe.mTransferredItems != 2) {
+			return fail(aSource, "SECOND PULL FAILED: target stone " + countOf(tTarget, net.minecraft.world.item.Items.STONE)
+					+ " (want 128), transferred " + tPipe.mTransferredItems + " (want 2)");
+		}
+
+		// arm 3: the capacity-window stop — the third drive is refused (:61 pipeCapacityCheck)
+		drive(tPipe, tCoverFace);
+		if (countOf(tTarget, net.minecraft.world.item.Items.STONE) != 128 || countOf(tSource, net.minecraft.world.item.Items.STONE) != 64
+				|| tPipe.mTransferredItems != 2) {
+			return fail(aSource, "CAPACITY STOP FAILED: target stone " + countOf(tTarget, net.minecraft.world.item.Items.STONE)
+					+ " (want 128), source stone " + countOf(tSource, net.minecraft.world.item.Items.STONE) + " (want 64), transferred "
+					+ tPipe.mTransferredItems + " (want 2) — the invSize=2 window did not stop the pull");
+		}
+
+		// arm 4: the inverted pull — the screwdriver relay flips the visual lane, the
+		// window reset (:193 direct write, the deterministic seam) re-arms the budget
+		long tFlip = tPipe.onCoverToolClick(gregtech6.covers.ICover.TOOL_SCREWDRIVER, null, ItemStack.EMPTY, tCoverFace, false);
+		tPipe.mTransferredItems = 0;
+		drive(tPipe, tCoverFace);
+		if (tFlip != 1000 || tPipe.getCovers().mVisuals[tCoverFace] != 1
+				|| countOf(tTarget, net.minecraft.world.item.Items.DIRT) != 64 || countOf(tSource, net.minecraft.world.item.Items.DIRT) != 0) {
+			return fail(aSource, "INVERTED PULL FAILED: flip " + tFlip + " (want 1000), visual "
+					+ tPipe.getCovers().mVisuals[tCoverFace] + " (want 1), target dirt " + countOf(tTarget, net.minecraft.world.item.Items.DIRT)
+					+ " (want 64 — the NON-matching stack), source dirt " + countOf(tSource, net.minecraft.world.item.Items.DIRT) + " (want 0)");
+		}
+
+		// arm 5: the dismantle restores the pipe — the hoe relay, the drop at the covered
+		// face, the store dissolved, the further armed drive a no-op
+		long tDamage = tPipe.onCoverToolClick("", null, new ItemStack(net.minecraft.world.item.Items.WOODEN_HOE), tCoverFace, false);
+		boolean tStoreGone = tPipe.getCovers() == null;
+		drive(tPipe, tCoverFace); // the value lane write would NPE without the cover — the no-op is the store-gone itself
+		boolean tQuiescent = countOf(tSource, net.minecraft.world.item.Items.STONE) == 64;
+		if (tDamage != 10000 || !tStoreGone || !tQuiescent) {
+			return fail(aSource, "DISMANTLE FAILED: damage " + tDamage + " (want 10000), store "
+					+ (tStoreGone ? "null" : "alive") + ", source stone " + countOf(tSource, net.minecraft.world.item.Items.STONE)
+					+ " (want 64 — no further pulls after the cover left)");
+		}
+
+		String tOk = "GT6 item pipe retriever OK at " + aPos.toShortString() + ": cover face " + tCoverFace + " source face " + tSourceFace
+				+ ", filtered pull 64 stone (dirt stayed), second pull spent the invSize=2 window, third drive capacity-stopped,"
+				+ " inverted pull took the 64 dirt, dismantle dropped the cover and restored the pipe";
+		aSource.sendSuccess(() -> Component.literal(tOk), false);
+		LOGGER.info(tOk);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** One deterministic pull round: the value-lane fast trigger (the :55-57 arm) over one cover tick. */
+	private static void drive(GTItemPipeBlockEntity aPipe, byte aCoverFace) {
+		if (!aPipe.hasCovers()) return;
+		aPipe.getCovers().value(aCoverFace, (short) 1);
+		aPipe.getCovers().tickPre(0, true, false, false);
+	}
+
+	private static int countOf(IItemHandler aHandler, net.minecraft.world.item.Item aItem) {
+		int tCount = 0;
+		for (int i = 0; i < aHandler.getSlots(); i++) {
+			ItemStack tStack = aHandler.getStackInSlot(i);
+			if (!tStack.isEmpty() && tStack.getItem() == aItem) tCount += tStack.getCount();
 		}
 		return tCount;
 	}
