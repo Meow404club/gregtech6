@@ -74,7 +74,7 @@ SAMPLE = "copper"                                     # the drop-pairing sample
 POS = "384 64 400"                                     # the single reused census cell
 SPOT = dict(x=384, y=64, z=400)
 ITEMS_NEAR = f"@e[type=minecraft:item,distance=..4,x={SPOT['x']},y={SPOT['y']},z={SPOT['z']}]"
-ITEM_ID = (f"@e[type=minecraft:item,nbt={{Item:{{id:\"gt6:%s\"}}}},"
+ITEM_ID = (f"@e[type=minecraft:item,nbt={{Item:{{id:\"%s\"}}}},"
            f"distance=..4,x={SPOT['x']},y={SPOT['y']},z={SPOT['z']}]")
 
 # the per-node tool forks: 1.20.1 tag NBT vs the 21.1 component syntax
@@ -143,8 +143,9 @@ for family in FAMILIES:
         silk,
         Step(f"execute if entity {ITEM_ID % f'gt6:ore_{family}_{SAMPLE}'}", expect="Test passed"),
         Step(f"kill {ITEMS_NEAR}", expect="Killed"),
-        # fortune III arm (the id face)
-        Step(f"setblock {POS} {block}", expect="Changed the block"),
+        # fortune III arm (the id face) — the silk arm left the block placed, and
+        # setblock refuses the same-state no-op ("Could not set the block"), so no
+        # re-placement here: the loot mine consults the standing block
         fortune,
         Step(f"execute if entity {ITEM_ID % 'gt6:ore_raw_copper'}", expect="Test passed"),
         Step(f"kill {ITEMS_NEAR}", expect="Killed"),
@@ -155,12 +156,17 @@ steps += [
     phase("C: fortune III count distribution — 12 rolls on ore_stone_copper, the "
           "per-roll Count summed; 1+nextInt(4) per roll means 30 mean, the gate "
           "17..48 rejects the no-bonus flat line (12) and any cap overflow"),
-    Step("scoreboard objectives add orecensus dummy", expect="orecensus"),
+    # allow_failed: pass 2 re-adds — "already exists" is the idempotency face, the
+    # following players set proves the objective
+    Step("scoreboard objectives add orecensus dummy", allow_failed=True),
     Step("scoreboard players set oreTotal orecensus 0", expect="oreTotal"),
 ]
 for roll in range(12):
     steps += [
         Step(f"kill {ITEMS_NEAR}", allow_failed=True),
+        # setblock refuses the same-state no-op: rolls 2..12 clear the standing
+        # block first (roll 1 lands on the previous B family's block — a change)
+        *([Step(f"setblock {POS} air", expect="Changed the block")] if roll else []),
         Step(f"setblock {POS} gt6:ore_stone_copper", expect="Changed the block"),
         Step(f"loot spawn 384 65 400 mine {POS} {FORTUNE_PICK}", expect="Dropped",
              node_cmds={"1.21.1": f"loot spawn 384 65 400 mine {POS} {NEO_FORTUNE_PICK}"}),

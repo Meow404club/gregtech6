@@ -18,9 +18,7 @@
                 {
                   "condition": "minecraft:match_tool",
                   "predicate": {
-                    "items": [
-                      "gt6:chisel"
-                    ]
+                    "items": "gt6:chisel"
                   }
                 }
               ],
