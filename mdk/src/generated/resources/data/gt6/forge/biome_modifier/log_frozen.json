@@ -2,5 +2,5 @@
   "type": "forge:add_features",
   "biomes": "#gt6:surface_log_frozen",
   "features": "gt6:log_frozen",
-  "step": "vegetal_decoration"
+  "step": "top_layer_modification"
 }

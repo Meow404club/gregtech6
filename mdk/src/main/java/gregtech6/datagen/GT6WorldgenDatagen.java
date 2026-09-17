@@ -60,6 +60,7 @@ import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GT6SurfaceBlocks;
+import gregtech6.worldgen.GT6FallenLogFeature;
 import gregtech6.worldgen.GT6Features;
 import gregtech6.worldgen.GT6Worldgen;
 
@@ -565,9 +566,21 @@ public final class GT6WorldgenDatagen {
         for (int i = 0; i < GT6Worldgen.FALLEN_LOG_PLACED_KEYS.size(); i++) {
             TagKey<Biome> tLogTag = new TagKey[] {GT6Worldgen.LOG_DRY_BIOMES, GT6Worldgen.LOG_ROTTEN_BIOMES,
                     GT6Worldgen.LOG_MOSSY_BIOMES, GT6Worldgen.LOG_FROZEN_BIOMES}[i];
+            // the frozen row rides TOP_LAYER_MODIFICATION (appends AFTER the vanilla
+            // FREEZE_TOP_LAYER in the same step list): its contact face needs the snow
+            // layer ALREADY on the ground — the vegetal step runs before the freeze and
+            // the snow arm could never fire (the forge-leg live-scan finding, 0 hits).
+            GenerationStep.Decoration tStep = mKindOf(i) == GT6FallenLogFeature.Kind.FROZEN
+                    ? GenerationStep.Decoration.TOP_LAYER_MODIFICATION
+                    : GenerationStep.Decoration.VEGETAL_DECORATION;
             ctx.register(PLANT_BIOME_MODIFIER_KEYS.get(5 + i), addFeatures(aBiomes.getOrThrow(tLogTag),
                     HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.FALLEN_LOG_PLACED_KEYS.get(i))),
-                    GenerationStep.Decoration.VEGETAL_DECORATION));
+                    tStep));
         }
+    }
+
+    /** The fallen-log kind of a FALLEN_LOG_PATHS index (the step face above). */
+    private static GT6FallenLogFeature.Kind mKindOf(int aIndex) {
+        return GT6FallenLogFeature.Kind.values()[aIndex];
     }
 }
