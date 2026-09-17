@@ -294,6 +294,16 @@ public final class GT6Worldgen {
     /** WorldgenSticks.java:55 taiga|mesa|wasteland biomes (the BoP wastelands have no vanilla tag equivalent — declared skip). */
     public static final TagKey<Biome> STICKS_SPARSE_BIOMES = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("gt6", "sticks_sparse"));
 
+    // ------------------------------------------------------------------
+    // The large-vein band (task p30-w6-t3-large-veins) — the single Feature over the
+    // 40-row JSON vein table; key form = the surface-band path-direct shape.
+    // ------------------------------------------------------------------
+
+    /** The large-vein configured feature (the GT6LargeVeinFeature instance + the 40-row vein table). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> LARGE_VEINS_CONFIGURED = configKey("large_veins");
+    /** The large-vein placed feature (one attempt per chunk — the per-chunk origin-grid scan lives in the Feature). */
+    public static final ResourceKey<PlacedFeature> LARGE_VEINS_PLACED = placedKeyOf("large_veins");
+
     private GT6Worldgen() {
     }
 }

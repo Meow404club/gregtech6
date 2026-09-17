@@ -30,23 +30,30 @@ class GT6SurfaceBlocksTest {
 
     @BeforeAll
     static void boot() {
-        // the material system before MT dereferences (the GTStoneBlocksRegistrationTest posture)
+        // the material system before MT dereferences (the GTStoneBlocksRegistrationTest posture);
+        // the vanilla bootstrap bracket for the ForgeRegistries/ResourceKey classes the
+        // GT6SurfaceBlocks clinit touches (the GT6WorldgenDatagenTest posture, offline throwables ignored)
         GTMaterialItems.initMaterials();
+        try {
+            net.minecraft.server.Bootstrap.bootStrap();
+        } catch (Throwable ignored) {
+        }
     }
 
-    /** The four registration paths, registration order — the Jade/lang/census walk unit. */
+    /** The first-batch registration paths, registration order — the Jade/lang/census walk unit. */
     @Test
     void registrationPathsArePinned() {
         assertEquals(List.of("surface_rock_stone", "surface_rock_flint", "surface_rock_meteorite", "surface_stick"),
-                GT6SurfaceBlocks.ALL.stream().map(tRow -> tRow.getId().getPath()).toList(),
-                "the four surface deco blocks, rocks first (the WorldgenRocks first-batch set + the stick)");
+                GT6SurfaceBlocks.ALL.stream().map(tRow -> tRow.getId().getPath()).limit(4).toList(),
+                "the first-batch surface deco blocks, rocks first (the WorldgenRocks first-batch set + the stick)");
         // +8 (task p30-w6-t2-surface-blocks): the plant quartet + the 4 fallen-log woods.
-        // The pickup-only rock/stick ruling stays for ALL; the obtainable band adds the
-        // ITEMS register (8 block items).
-        assertEquals(12, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
-                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows");
+        // +31 (task p30-w6-t3-large-veins): the vein-indicator rocks, pickup-only like
+        // the first-batch rocks/sticks. 4 + 8 + 31 = 43; the ITEMS register holds the 8
+        // obtainable block items (the rocks/sticks/indicator rocks stay zero-item).
+        assertEquals(43, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
+                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 31 indicator rocks");
         assertEquals(8, GT6SurfaceBlocks.ITEMS.getEntries().size(),
-                "the obtainable band's block items (the rocks/sticks stay zero-item)");
+                "the obtainable band's block items (the rocks/sticks/indicator rocks stay zero-item)");
     }
 
     /** The obtainable band paths + item pairing (task p30-w6-t2-surface-blocks). */
@@ -68,6 +75,33 @@ class GT6SurfaceBlocksTest {
                     GT6SurfaceBlocks.FALLEN_LOGS.get(i).getId().getPath(),
                     "log block item i pairs fallen-log block i");
         }
+    }
+
+    /**
+     * The 31 vein-indicator rocks (task p30-w6-t3-large-veins): each literal id snake
+     * matches the material's composed path (GTMaterialItems.snakeCase over mNameInternal —
+     * the literal was required because the class loads before MT.init), the rockGt loot
+     * item exists in the headless enumeration, and the {@code indicatorRock} lookup
+     * resolves by material identity with the default-rock fallback (the WorldgenOresLarge
+     * .java:104 NBT-less arm).
+     */
+    @Test
+    void indicatorRocksMatchTheirMaterials() {
+        Set<String> tItemIds = GTMaterialItems.registrationOrder().stream()
+                .map(tPair -> GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()))
+                .collect(Collectors.toSet());
+        assertEquals(31, GT6SurfaceBlocks.INDICATOR_ROCKS.size(), "the spec \u2164 compensation set: 31 distinct valid vein slots");
+        for (int i = 0; i < GT6SurfaceBlocks.INDICATOR_ROCKS.size(); i++) {
+            gregapi.oredict.OreDictMaterial tMaterial = GT6SurfaceBlocks.INDICATOR_MATERIALS.get(i).get();
+            assertEquals("surface_rock_" + GTMaterialItems.snakeCase(tMaterial.mNameInternal),
+                    GT6SurfaceBlocks.INDICATOR_ROCKS.get(i).getId().getPath(),
+                    "the literal snake must equal the composed material path (row " + i + ")");
+            assertTrue(tItemIds.contains("rock_gt_" + GTMaterialItems.snakeCase(tMaterial.mNameInternal)),
+                    "the loot item rock_gt_" + GTMaterialItems.snakeCase(tMaterial.mNameInternal) + " must exist");
+        }
+        // the block-instance faces (the indicatorRock identity lookup + the default-rock
+        // fallback for a null/unregistered pick) need the live RegisterEvent — the RCON
+        // live face covers them (offline DeferredRegister handles resolve only post-registration)
     }
 
     /** The WorldgenOnSurface binds, transcribed into the constant table. */

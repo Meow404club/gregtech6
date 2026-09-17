@@ -2,6 +2,7 @@ package gregtech6.registry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -23,6 +24,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregapi.data.MT;
 import gregtech6.block.surface.GT6BlackSandBlock;
 import gregtech6.block.surface.GT6GlowtusBlock;
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.surface.GT6SurfaceRockBlock;
 import gregtech6.block.surface.GT6SurfaceStickBlock;
 import gregtech6.block.surface.GT6WildBushBlock;
@@ -71,9 +73,85 @@ public final class GT6SurfaceBlocks {
 	public static final RegistryObject<Block> SURFACE_STICK =
 			BLOCKS.register("surface_stick", () -> new GT6SurfaceStickBlock(surfaceProperties(MapColor.WOOD, SoundType.WOOD)));
 
-	/** All four, registration order — the census/exemption walk unit (GT6LangParityTest, Jade name face). */
-	public static final List<RegistryObject<Block>> ALL = List.of(
-			SURFACE_ROCK_STONE, SURFACE_ROCK_FLINT, SURFACE_ROCK_METEORITE, SURFACE_STICK);
+	/** One indicator row: the literal id snake (the class loads before MT.init — the GT6OreBlocks.java:114-117 supplier lesson) + the material. */
+	private record IndicatorSpec(String snake, Supplier<OreDictMaterial> material) {}
+
+	/**
+	 * The large-vein indicator rock rows (task p30-w6-t3-large-veins, the spec ⑤
+	 * compensation for the MTE 32757 arm): the DISTINCT VALID slots of the 40-row vein
+	 * table (Loader_Worldgen.java:886-925 — a slot is valid when its material is in the
+	 * GT6OreBlocks.materialAxis() universe, the same gate the vein Feature draws through).
+	 * The upstream indicator carried one of the four vein materials (WorldgenOresLarge
+	 * .java:104); rows whose materials have not landed in the registered universe yet
+	 * light up here as the axis extends — GT6LargeVeinTest pins this list 1:1 against the
+	 * datagen vein table, and each literal snake against GTMaterialItems.snakeCase.
+	 */
+	private static final List<IndicatorSpec> INDICATOR_SPECS = List.of(
+			new IndicatorSpec("coal",         () -> MT.Coal),                 // ore.large.lignite/.coal (the coal-arm slots)
+			new IndicatorSpec("lapis",        () -> MT.Lapis),                // ore.large.lapis between
+			new IndicatorSpec("azurite",      () -> MT.Azurite),              // ore.large.lapis spread
+			new IndicatorSpec("salt",         () -> MT.NaCl),                 // ore.large.iodinesalt bottom
+			new IndicatorSpec("borax",        () -> MT.OREMATS.Borax),        // ore.large.iodinesalt between
+			new IndicatorSpec("zeolite",      () -> MT.OREMATS.Zeolite),      // ore.large.iodinesalt spread
+			new IndicatorSpec("sylvite",      () -> MT.KCl),                  // ore.large.rocksalt top
+			new IndicatorSpec("coltan",       () -> MT.OREMATS.Coltan),       // ore.large.rocksalt bottom / manganese spread
+			new IndicatorSpec("asbestos",     () -> MT.Asbestos),             // ore.large.asbestos spread
+			new IndicatorSpec("graphite",     () -> MT.Graphite),             // ore.large.diamond top/bottom/spread
+			new IndicatorSpec("diamond",      () -> MT.Diamond),              // ore.large.diamond between
+			new IndicatorSpec("galena",       () -> MT.OREMATS.Galena),       // ore.large.galena top/bottom
+			new IndicatorSpec("silver",      () -> MT.Ag),                   // ore.large.galena between
+			new IndicatorSpec("lead",        () -> MT.Pb),                   // ore.large.galena spread
+			new IndicatorSpec("pyrite",       () -> MT.Pyrite),               // ore.large.gold top / copper between
+			new IndicatorSpec("chalcopyrite", () -> MT.OREMATS.Chalcopyrite), // ore.large.gold bottom / copper top
+			new IndicatorSpec("gold",        () -> MT.Au),                   // ore.large.gold spread
+			new IndicatorSpec("cooperite",    () -> MT.OREMATS.Cooperite),    // ore.large.platinum top
+			new IndicatorSpec("sperrylite",   () -> MT.OREMATS.Sperrylite),   // ore.large.platinum between
+			new IndicatorSpec("iridium",     () -> MT.Ir),                   // ore.large.platinum spread
+			new IndicatorSpec("cassiterite",  () -> MT.OREMATS.Cassiterite),  // ore.large.cassiterite spread
+			new IndicatorSpec("scheelite",    () -> MT.OREMATS.Scheelite),    // ore.large.tungstate top
+			new IndicatorSpec("pyrolusite",   () -> MT.MnO2),                 // ore.large.manganese between
+			new IndicatorSpec("garnierite",   () -> MT.OREMATS.Garnierite),   // ore.large.nickel top
+			new IndicatorSpec("pentlandite",  () -> MT.OREMATS.Pentlandite),  // ore.large.nickel spread
+			new IndicatorSpec("redstone",     () -> MT.Redstone),             // ore.large.redstone top/bottom
+			new IndicatorSpec("cinnabar",     () -> MT.OREMATS.Cinnabar),     // ore.large.redstone spread
+			new IndicatorSpec("copper",      () -> MT.Cu),                   // ore.large.tetrahedrite between / copper spread
+			new IndicatorSpec("stibnite",     () -> MT.OREMATS.Stibnite),     // ore.large.tetrahedrite spread
+			new IndicatorSpec("hematite",     () -> MT.Fe2O3),                // ore.large.iron between / copper bottom
+			new IndicatorSpec("malachite",    () -> MT.OREMATS.Malachite));   // ore.large.iron spread
+
+	/** The 31 indicator rock handles, INDICATOR_SPECS order. */
+	public static final List<RegistryObject<Block>> INDICATOR_ROCKS = INDICATOR_SPECS.stream()
+			.map(tRow -> BLOCKS.<Block>register("surface_rock_" + tRow.snake(),
+					() -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), tRow.material().get())))
+			.toList();
+
+	/** The indicator rock materials, INDICATOR_ROCKS order (the loot walk + the Feature pick face). */
+	public static final List<Supplier<OreDictMaterial>> INDICATOR_MATERIALS =
+			INDICATOR_SPECS.stream().map(IndicatorSpec::material).toList();
+
+	/**
+	 * The vein-indicator rock of a picked material (GT6LargeVeinFeature's IO face): the
+	 * per-material rock, or the default rock for a null/unregistered pick — the upstream
+	 * NBT-less arm (WorldgenOresLarge.java:104 {@code : UT.NBT.make()}).
+	 */
+	public static Block indicatorRock(OreDictMaterial aMaterial) {
+		if (aMaterial != null && aMaterial.mID > 0) {
+			for (int i = 0; i < INDICATOR_MATERIALS.size(); i++) {
+				if (INDICATOR_MATERIALS.get(i).get() == aMaterial) return INDICATOR_ROCKS.get(i).get();
+			}
+		}
+		return SURFACE_ROCK_STONE.get();
+	}
+
+	/** All surface deco blocks, registration order — the census/exemption walk unit (GT6LangParityTest, Jade name face). */
+	public static final List<RegistryObject<Block>> ALL;
+
+	static {
+		List<RegistryObject<Block>> tAll = new ArrayList<>(List.of(
+				SURFACE_ROCK_STONE, SURFACE_ROCK_FLINT, SURFACE_ROCK_METEORITE, SURFACE_STICK));
+		tAll.addAll(INDICATOR_ROCKS);
+		ALL = List.copyOf(tAll);
+	}
 
 	// ------------------------------------------------------------------
 	// The surface-plants + fallen-woods band (task p30-w6-t2-surface-blocks)

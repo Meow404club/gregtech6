@@ -59,6 +59,21 @@ public final class GT6Features {
         return List.copyOf(rList);
     }
 
+    /**
+     * The L1 large-vein feature (task p30-w6-t3-large-veins) — the reserved seam fulfilled:
+     * ONE registration row {@code gt6:large_veins}, the single Feature over the 40-row JSON
+     * vein table (the card spec ①/② — 40 separate configured features would lose the
+     * weight-for-exactly-one draw semantics, GT6WorldGenerator.java:93-103). The
+     * configured/placed/biome-modifier rows hang off it in GT6WorldgenDatagen.
+     */
+    public static final GT6LargeVeinFeature LARGE_VEINS = registerLargeVeinFeature();
+
+    private static GT6LargeVeinFeature registerLargeVeinFeature() {
+        GT6LargeVeinFeature tFeature = new GT6LargeVeinFeature();
+        FEATURES.register("large_veins", () -> tFeature);
+        return tFeature;
+    }
+
     /** The feature instance of a kind (index-aligned with KINDS). */
     public static GT6TreeFeature treeFeature(GT6TreeKind aKind) {
         return (GT6TreeFeature) TREE_FEATURES.get(aKind.ordinal());
