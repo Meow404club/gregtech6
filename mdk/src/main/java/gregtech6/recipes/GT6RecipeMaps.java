@@ -155,6 +155,28 @@ import com.mojang.logging.LogUtils;
  * SCANNER_VISUALS ({@code RecipeMapScannerVisuals} — the NBT scan-data face) all
  * stay POOLED (documented on their fields).
  *
+ * <p>The P31 QU trio (task p31-qu-a-foundation): {@code SCANNER_MOLECULAR} (RM.java:143),
+ * {@code MASSFAB} (:144) and {@code REPLICATOR} (:145) — declared in the upstream order,
+ * each the base-{@link RecipeMap} row transcribed parameter-for-parameter over the 15-arg
+ * port ctor, the GUI paths the upstream machines/&lt;Name&gt; strings lowercased (the
+ * Shredder-line convention). ALL THREE ship DECLARED-empty row0 (the W1/W2 judged form):
+ * the element-disintegration rows of Loader_Recipes_Other.java:969-987 are card-C content
+ * (the dynamic material-walk pour), the rows that DID land ride the tier-b JSON seam as the
+ * three smoke rows ({@code massfab}/{@code replicator}/{@code scannermolecular} keys,
+ * added to {@code GT6RecipeMapJsonLoader} BY THIS CARD). Two subclass deviations, both the
+ * RecipeMapShredder/Chisel judged form: ScannerMolecular ({@code RecipeMapScannerMolecular}
+ * — the runtime USB-scan synthesis, RecipeMapScannerMolecular.java:46-67) and Replicator
+ * ({@code RecipeMapReplicator} — the runtime USB-data replication, :54-86, including the
+ * ctor's {@code mMaxFluidInputSize = 2000} tweak, a field the port RecipeMap does not
+ * carry) both stay POOLED — the USB chain is not ported (declared card scope). RED LINE,
+ * the conflict-audit ⑤ ruling: the upstream {@code NBT_SPECIAL_IS_START_ENERGY} ignition
+ * gate is NOT ported — {@code mChargeRequirement} is a dead field upstream
+ * (MultiTileEntityBasicMachine.java:755 writes it, zero read points repo-wide), so the
+ * port records the semantics here only; the structural pin is the
+ * GT6RecipeMapsTest ignition-gate reflection assertion (Recipe/RecipeMap carry no such
+ * field). No machine consumer lands with this card — a map without a findRecipe consumer
+ * is the CHISEL judged form; the Massfab/Fusion machines are the C/D cards.
+ *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
@@ -172,7 +194,8 @@ public class GT6RecipeMaps {
  * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
  * p28-c-ulv-machine-ladder + the anvil pair of task p28-c-anvil + the twelve-map
  * P29 W1 block of task p29-w1-rm-maps-scaffold + the SLUICE batch-C tail-append
- * + the nineteen-map P29 W2 block of task p29-w2-energy-types-5tier) + RecipeMap.RECIPE_MAPS
+ * + the nineteen-map P29 W2 block of task p29-w2-energy-types-5tier + the QU trio of
+ * task p31-qu-a-foundation) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
@@ -667,6 +690,50 @@ public class GT6RecipeMaps {
 	 * multiblock controller 17110 (TileEntityImplosionCompressor).
 	 */
 	public static volatile RecipeMap IMPLOSION;
+
+	/**
+	 * RM.java:143 — the Molecular Scanner map (task p31-qu-a-foundation): items 2/1/1,
+	 * fluids 0/0/0, MIN 2. Base-{@link RecipeMap} — the upstream RecipeMapScannerMolecular
+	 * subclass synthesizes USB-scan rows at lookup time from SCANNABLE items + a T3 USB
+	 * stick (RecipeMapScannerMolecular.java:46-67, power (protons+neutrons)×512): a
+	 * recipe-POOL feature riding the unported USB chain, so the port carries the base class
+	 * with the identical constants (the RecipeMapShredder judged form). DECLARED-empty —
+	 * the upstream rows ARE that runtime synthesis, there is no static stock to transcribe;
+	 * the shipped {@code scannermolecular.json} smoke row (the vanilla stand-in, declared
+	 * as such) keeps the map visible in NEI.
+	 */
+	public static volatile RecipeMap SCANNER_MOLECULAR;
+
+	/**
+	 * RM.java:144 — the Matter Fabricator map (task p31-qu-a-foundation): items 2/1/0,
+	 * fluids 1/2/0, MIN 1. Upstream RM.Massfab IS a plain RecipeMap. DECLARED-empty as a
+	 * static stock — the element-disintegration rows (Loader_Recipes_Other.java:969-987:
+	 * every ELEMENT material's dust/ingot/plate/gem → FL.MatterCharged mProtons +
+	 * FL.MatterNeutral mNeutrons, 1 mB = 1 proton/neutron, duration
+	 * (p+n)×131072 per unit ×9 for block forms) are card-C content (the dynamic
+	 * material-walk pour, the RM-shape ruling of research.p31-qu-line); the shipped
+	 * {@code massfab.json} smoke row (the iron-ingot disintegration stand-in, :971-972
+	 * constants verbatim) keeps the map visible in NEI. RED LINE (conflict-audit ⑤):
+	 * the upstream NBT_SPECIAL_IS_START_ENERGY ignition gate is deliberately NOT ported —
+	 * mChargeRequirement is a dead field (MultiTileEntityBasicMachine.java:755 write, zero
+	 * read points repo-wide); semantics recorded here only, see the class doc.
+	 */
+	public static volatile RecipeMap MASSFAB;
+
+	/**
+	 * RM.java:145 — the Matter Replicator map (task p31-qu-a-foundation): items 3/3/1,
+	 * fluids 3/3/0, MIN 2. Base-{@link RecipeMap} — the upstream RecipeMapReplicator
+	 * subclass replicates from USB-stick/cable data at lookup time
+	 * (RecipeMapReplicator.java:54-86) and its ctor tweaks
+	 * {@code mMaxFluidInputSize = 2000} (:50), a field the port RecipeMap does not carry:
+	 * both the runtime arm and the tank-size tweak stay POOLED (the declared deviation,
+	 * the RecipeMapChisel judged form). The static rows upstream carry real content
+	 * (RM.java:672-676 the trophy/matter rows over the unported Biomass/UUM families and
+	 * :912/:929/:933-946 the Ender/Ender_TE/Redstone rows over card-C machines) — all
+	 * POOLED; the shipped {@code replicator.json} smoke row (the :929 molten-enderpearl →
+	 * ender-pearl row verbatim, now that the fluid is live) keeps the map visible in NEI.
+	 */
+	public static volatile RecipeMap REPLICATOR;
 
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
@@ -1297,6 +1364,41 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		// --- the P31 QU trio (task p31-qu-a-foundation), upstream declaration order ---
+		// ScannerMolecular :143, Massfab :144, Replicator :145; all three DECLARED-empty,
+		// the base-RecipeMap carry over the two runtime-synthesis subclasses (the judged
+		// form); the smoke rows ride the tier-b JSON seam; the ignition gate stays
+		// unported (the class-doc red line) ---
+		// RM.java:143 — items 2/1/1, fluids 0/0/0, MIN 2, AMP 1 (the USB-scan synthesis
+		// subclass stays POOLED, RecipeMapScannerMolecular.java:46-67)
+		SCANNER_MOLECULAR = new RecipeMap(new HashSet<>(),
+				"gt.recipe.scannermolecular", "Molecular Scanner", null,
+				0, 1,
+				"gt6:textures/gui/machines/scannermolecular",
+				/*IN-OUT-MIN-ITEM=*/ 2, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:144 — items 2/1/0, fluids 1/2/0, MIN 1, AMP 1 (RM.Massfab IS a plain
+		// RecipeMap upstream; the element-disintegration rows are card-C content)
+		MASSFAB = new RecipeMap(new HashSet<>(),
+				"gt.recipe.massfab", "Matter Fabricator", null,
+				0, 1,
+				"gt6:textures/gui/machines/massfab",
+				/*IN-OUT-MIN-ITEM=*/ 2, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		// RM.java:145 — items 3/3/1, fluids 3/3/0, MIN 2, AMP 1 (the USB-data subclass stays
+		// POOLED with its mMaxFluidInputSize=2000 ctor tweak, RecipeMapReplicator.java:50)
+		REPLICATOR = new RecipeMap(new HashSet<>(),
+				"gt.recipe.replicator", "Matter Replicator", null,
+				0, 1,
+				"gt6:textures/gui/machines/replicator",
+				/*IN-OUT-MIN-ITEM=*/ 3, 3, 1,
+				/*IN-OUT-MIN-FLUID=*/ 3, 3, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -1371,6 +1473,9 @@ public class GT6RecipeMaps {
 		FUELS_HOT = null;
 		ROASTING = null;
 		IMPLOSION = null;
+		SCANNER_MOLECULAR = null;
+		MASSFAB = null;
+		REPLICATOR = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}
