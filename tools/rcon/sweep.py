@@ -448,6 +448,12 @@ SESSION_GROUPS = (
     # indicator rocks) rides the card's separate normal+seed world scan, not this chain.
     # No fresh_boot / mutates member. --group p29_w6_t3_veins matches the module stem.
     ("p29_w6_t3_veins",),
+    # P30 W6 small-ore datagen card (p30-w6-small-ore-datagen): the /place feature live
+    # triptych (stone/deepslate/non-host) + nether 3-row and end 2-row samples over the
+    # 91 configured/placed pairs the card generates. fresh_boot member (the fresh world
+    # keeps the strict-attribution deepslate box GT6-ore-free). --group
+    # p30_w6_small_ore_datagen matches the module stem.
+    ("p30_w6_small_ore_datagen",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

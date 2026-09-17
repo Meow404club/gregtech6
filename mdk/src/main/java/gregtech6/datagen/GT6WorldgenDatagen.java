@@ -51,14 +51,17 @@ import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import net.minecraft.world.level.material.Fluids;
 
+import java.util.ArrayList;
 import java.util.List;
 import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.tree.GT6TreeKind;
+import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GT6SurfaceBlocks;
@@ -66,6 +69,7 @@ import gregtech6.worldgen.GT6FallenLogFeature;
 import gregtech6.worldgen.GT6Features;
 import gregtech6.worldgen.GT6Worldgen;
 import gregtech6.worldgen.GTVeinConfig;
+import gregtech6.worldgen.GTOreWorldgen;
 
 /**
  * The worldgen datagen band (task p26-worldgen-pipeline-skeleton): one
@@ -224,6 +228,7 @@ public final class GT6WorldgenDatagen {
         // the table rides the config JSON — the card spec ② tier-a face).
         FeatureUtils.register(ctx, GT6Worldgen.LARGE_VEINS_CONFIGURED, GT6Features.LARGE_VEINS,
                 new GTVeinConfig.Table(LARGE_VEIN_TABLE));
+        bootstrapOreConfigured(ctx); // task p30-w6-small-ore-datagen — tail-append
     }
 
     /**
@@ -272,6 +277,7 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.LARGE_VEINS_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.LARGE_VEINS_CONFIGURED),
                 InSquarePlacement.spread(), BiomeFilter.biome());
+        bootstrapOrePlaced(ctx, tFeatures); // task p30-w6-small-ore-datagen — tail-append
     }
 
     /**
@@ -313,6 +319,7 @@ public final class GT6WorldgenDatagen {
         ctx.register(biomeModifierKeyOf("large_veins"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+        bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-small-ore-datagen — tail-append
     }
 
     // ------------------------------------------------------------------
@@ -416,6 +423,115 @@ public final class GT6WorldgenDatagen {
                     CountPlacement.of(tCount),
                     tRay[0], tRay[1], tRay[2],
                     BiomeFilter.biome());
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // The small-ore band (task p30-w6-small-ore-datagen). Structure: 91
+    // (row, dim) placement pairs (GTOreWorldgen.placementPairs, the upstream
+    // GEN-flag walk) x {configured = vanilla Feature.ORE size=1 over the
+    // WD.setSmallOre host targets, placed = Count(UniformInt)+InSquare+
+    // HeightRange uniform+BiomeFilter}, then 3 biome modifiers
+    // (IS_OVERWORLD/IS_NETHER/IS_END at UNDERGROUND_ORES) hanging the per-dim
+    // placed sets off the vanilla dimension tags. Zero new blocks/features —
+    // pure JSON consumption of the ore-1 ore_small universe.
+    // ------------------------------------------------------------------
+
+    /** The 3 small-ore biome-modifier keys, Dim order (overworld/nether/end). */
+    public static final List<ResourceKey<BiomeModifier>> ORE_BIOME_MODIFIER_KEYS = List.of(
+            biomeModifierKeyOf("ore_small_overworld"),
+            biomeModifierKeyOf("ore_small_nether"),
+            biomeModifierKeyOf("ore_small_end"));
+
+    private static void bootstrapOreConfigured(
+        //? if forge {
+        BootstapContext<ConfiguredFeature<?, ?>> ctx
+        //?} else {
+        /*BootstrapContext<ConfiguredFeature<?, ?>> ctx
+        *///?}
+    ) {
+        for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
+            OreDictMaterial tMaterial = GTOreWorldgen.resolve(tPair.row());
+            FeatureUtils.register(ctx, GTOreWorldgen.configuredKey(tPair.row(), tPair.dim()), Feature.ORE,
+                    // size=2 (GTOreWorldgen.ORE_SIZE): size=1 is mathematically inert — the walk
+                    // sphere never reaches a block center from an integer origin (live-run 0/20)
+                    new OreConfiguration(oreTargets(tMaterial, tPair.dim()), GTOreWorldgen.ORE_SIZE));
+        }
+    }
+
+    /**
+     * The WD.setSmallOre host face per dimension (WD.java:765-780), in
+     * {@link GTOreWorldgen#hostPaths} rule order — the stone/deepslate tags first (the
+     * vanilla OreFeatures.java:49-60 dual-target canon carries the y<0 deepslate split
+     * on the HOST tag, no per-y feature pairs), the 17 GT stone blob anchors, the
+     * gravel/sand fallbacks; nether the base_stone_nether tag; end end_stone.
+     */
+    private static List<OreConfiguration.TargetBlockState> oreTargets(OreDictMaterial aMaterial, GTOreWorldgen.Dim aDim) {
+        if (aDim == GTOreWorldgen.Dim.NETHER) {
+            return List.of(OreConfiguration.target(new TagMatchTest(BlockTags.BASE_STONE_NETHER), smallState("netherrack", aMaterial)));
+        }
+        if (aDim == GTOreWorldgen.Dim.END) {
+            return List.of(OreConfiguration.target(new BlockMatchTest(Blocks.END_STONE), smallState("endstone", aMaterial)));
+        }
+        List<OreConfiguration.TargetBlockState> rTargets = new ArrayList<>(21);
+        rTargets.add(OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES), smallState("stone", aMaterial)));
+        rTargets.add(OreConfiguration.target(new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES), smallState("deepslate", aMaterial)));
+        for (int i = GTOreWorldgen.GT_STONE_FAMILY_START; i < GT6OreBlocks.FAMILIES.size(); i++) {
+            GT6OreBlocks.OreFamily tFamily = GT6OreBlocks.FAMILIES.get(i);
+            rTargets.add(OreConfiguration.target(new BlockMatchTest(tFamily.stoneAnchor().get()), smallState(tFamily.snake(), aMaterial)));
+        }
+        rTargets.add(OreConfiguration.target(new BlockMatchTest(Blocks.GRAVEL), smallState("gravel", aMaterial)));
+        rTargets.add(OreConfiguration.target(new BlockMatchTest(Blocks.SAND), smallState("sand", aMaterial)));
+        return rTargets;
+    }
+
+    /** The registered small-ore block of a (family, material) pair (the ore-1 universe — zero new blocks). */
+    private static net.minecraft.world.level.block.state.BlockState smallState(String aFamilySnake, OreDictMaterial aMaterial) {
+        return GT6OreBlocks.get(GTOreWorldgen.oreFamily(aFamilySnake), GT6OreBlocks.FormKind.SMALL, aMaterial)
+                .get().defaultBlockState();
+    }
+
+    private static void bootstrapOrePlaced(
+        //? if forge {
+        BootstapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        //?} else {
+        /*BootstrapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        *///?}
+    ) {
+        for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
+            GTOreWorldgen.SmallOreRow tRow = tPair.row();
+            PlacementUtils.register(ctx, GTOreWorldgen.placedKey(tRow, tPair.dim()),
+                    aFeatures.getOrThrow(GTOreWorldgen.configuredKey(tRow, tPair.dim())),
+                    // count = the constant max(1, amount/2) — the :61 range lower bound, the
+                    // density-exact cross-leg face (UniformInt is dispatch-divergent per leg,
+                    // GTOreWorldgen.veinCount javadoc)
+                    CountPlacement.of(GTOreWorldgen.veinCount(tRow)),
+                    InSquarePlacement.spread(),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(tRow.minY()),
+                            VerticalAnchor.absolute(GTOreWorldgen.placedMaxY(tRow, tPair.dim()))),
+                    BiomeFilter.biome());
+        }
+    }
+
+    private static void bootstrapOreBiomeModifiers(
+        //? if forge {
+        BootstapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
+        //?} else {
+        /*BootstrapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
+        *///?}
+    ) {
+        // one modifier per vanilla dimension tag, the dim's whole placed set at the ore
+        // pass (spec ④); IS_OVERWORLD/IS_NETHER/IS_END ride Dim ordinal order.
+        TagKey<Biome>[] tDimTags = new TagKey[] {BiomeTags.IS_OVERWORLD, BiomeTags.IS_NETHER, BiomeTags.IS_END};
+        for (int i = 0; i < ORE_BIOME_MODIFIER_KEYS.size(); i++) {
+            GTOreWorldgen.Dim tDim = GTOreWorldgen.Dim.values()[i];
+            List<Holder<PlacedFeature>> tHolders = new ArrayList<>(38);
+            for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
+                if (tPair.dim() == tDim) tHolders.add(aPlaced.getOrThrow(GTOreWorldgen.placedKey(tPair.row(), tPair.dim())));
+            }
+            ctx.register(ORE_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(tDimTags[i]),
+                    HolderSet.direct(tHolders),
+                    GenerationStep.Decoration.UNDERGROUND_ORES));
         }
     }
 
