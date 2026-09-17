@@ -305,6 +305,18 @@ public final class GT6Tools {
 	 * <li>{@code gt6:universal_spade} (upstream GT_Tool_UniversalSpade — the five-face
 	 *     surface + the openableCrowbar Unboxinator conversion riding the loot seam).</li>
 	 * </ul>
+	 *
+	 * <p>MATERIAL LADDER (task p31-dig-ladder): the pickaxe trio + the shovel/spade/hoe
+	 * ride the {@code GT6ToolLadder} face over the {@code GT.ToolStats} identity (the
+	 * per-material durability/speed/level/tint/name, the upstream MultiItemTool :482/:483
+	 * formulas; the identity-less arm = the steel fallback bit-exact). The AXE joins the
+	 * dig ladder per the upstream family table (row :120 sits in the dig rows, harvest
+	 * TOOL_axe, OreDictToolNames.axe — the blade family = sword/universal_spade/knife/
+	 * butchery_knife/sense); the axe_double (:121, likewise TOOL_axe) and the universal
+	 * spade (row :134 carries the blade name) stay single-steel for the W3
+	 * single-tier-ruling audit. The per-material CRAFTING rows ride the shared
+	 * gt6:material_tool serializer (GT6MaterialToolRecipe, the Loader_Tools :293-300
+	 * OreProcessing_Tool axis), cut ① above now unlocked for this family.
 	 */
 	public static final RegistryObject<Item> PICKAXE = ITEMS.register("pickaxe",
 			() -> new GTPickaxeItem(new Item.Properties().durability(GTPickaxeItem.DURABILITY_POINTS)));

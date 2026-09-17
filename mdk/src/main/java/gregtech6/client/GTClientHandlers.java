@@ -19,6 +19,7 @@ import gregtech6.client.render.GTMachinePaintTint;
 import gregtech6.client.wire.GTWireTint;
 import gregtech6.item.GTMaterialPrefixBlockItem;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.items.tools.GT6ToolLadder;
 import gregtech6.items.tools.GTCrowbarItem;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
@@ -173,6 +174,13 @@ public final class GTClientHandlers {
      */
     private static void onRegisterToolIdentityItemColors(RegisterColorHandlersEvent.Item event) {
         event.getItemColors().register(GTCrowbarItem::tintARGB, GT6Tools.CROWBAR.get());
+        // task p31-dig-ladder: the dig family shares ONE tint face — the GT6ToolLadder
+        // static (tint index 0 = the head layer, the material mRGBaSolid with the steel
+        // fallback); the universal spade rides it too (it stays single-steel, so the
+        // fallback arm is its whole colour face).
+        event.getItemColors().register(GT6ToolLadder::tintARGB, GT6Tools.PICKAXE.get(), GT6Tools.PICKAXE_GEM.get(),
+                GT6Tools.PICKAXE_CONSTRUCTION.get(), GT6Tools.SHOVEL.get(), GT6Tools.SPADE.get(),
+                GT6Tools.UNIVERSAL_SPADE.get(), GT6Tools.HOE.get(), GT6Tools.AXE.get());
     }
 
     /** Translation key existence check (Language.getInstance Language.java:83, has :97). */
