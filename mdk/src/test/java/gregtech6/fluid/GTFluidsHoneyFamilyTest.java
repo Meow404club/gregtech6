@@ -55,20 +55,22 @@ public class GTFluidsHoneyFamilyTest extends GTOfflineTestBase {
 		}
 	}
 
-	/** The per-fluid bee-row census — the density/luminosity/temperature literals verbatim. */
+	/** The per-fluid bee-row census — the density/luminosity/temperature literals verbatim + the state-2 gas flag. */
 	@Test
 	public void beeRowDeclaredValuesMatchTheUpstreamAnchors() {
-		// {id, tempK, density, viscosity, lum} — :49 the setDensity(100)/setLuminosity(5)
-		// literals; :196/:201/:364/:627/:198 the material-formula/1.0-default 1000s;
+		// {id, tempK, density, viscosity, lum, gas} — :49 the aState=2 STATE_GASEOUS row
+		// (FL.java:1105 viscosity 200 + gaseous; the explicit setDensity(100) literal
+		// overrides the state's −100 density carrier) + the setLuminosity(5) literal;
+		// :196/:201/:364/:627/:198 the material-formula/1.0-default 1000s;
 		// FL.java:476 the water-based potion carrier.
 		Object[][] tCensus = {
-			{"dragon_breath"   , 300,  100, 1000, 5  }, // :49 — the density/lum literals
-			{"concrete"        , 300, 1000, 1000, 0  }, // :196 — 1.0 g/cm³ default formula
-			{"chocolate_molten", 313, 1000, 1000, 0  }, // :201 — the .heat(C+40) melting rule
-			{"ice"             , 273, 1000, 1000, 0  }, // :364 — the C literal; MT.Ice setDensity 1.0
-			{"soup_mushroom"   , 300, 1000, 1000, 0  }, // :627 "mushroomsoup"
-			{"latex"           , 300, 1000, 1000, 0  }, // :198 — DEF_ENV_TEMP
-			{"potion_harm_1"   , 300, 1000, 1000, 0  }, // FL.java:476 "potion.damage"
+			{"dragon_breath"   , 300,  100,  200, 5, true }, // :49 — the state-2 gaseous + density/lum literals
+			{"concrete"        , 300, 1000, 1000, 0, false}, // :196 — 1.0 g/cm³ default formula
+			{"chocolate_molten", 313, 1000, 1000, 0, false}, // :201 — the .heat(C+40) melting rule
+			{"ice"             , 273, 1000, 1000, 0, false}, // :364 — the C literal; MT.Ice setDensity 1.0
+			{"soup_mushroom"   , 300, 1000, 1000, 0, false}, // :627 "mushroomsoup"
+			{"latex"           , 300, 1000, 1000, 0, false}, // :198 — DEF_ENV_TEMP
+			{"potion_harm_1"   , 300, 1000, 1000, 0, false}, // FL.java:476 "potion.damage"
 		};
 		for (Object[] tRow : tCensus) {
 			GTFluids.ChemicalFluidSpec tSpec = GTFluids.beeRowSpec((String)tRow[0]);
@@ -76,7 +78,7 @@ public class GTFluidsHoneyFamilyTest extends GTOfflineTestBase {
 			assertEquals(tRow[2], tSpec.density(), tRow[0] + " density");
 			assertEquals(tRow[3], tSpec.viscosity(), tRow[0] + " viscosity");
 			assertEquals(tRow[4], tSpec.luminosity(), tRow[0] + " luminosity");
-			assertTrue(!tSpec.gas(), tRow[0] + " is a liquid row");
+			assertEquals(tRow[5], tSpec.gas(), tRow[0] + " state flag (dragon_breath rides the :49 aState=2 gaseous form)");
 		}
 	}
 

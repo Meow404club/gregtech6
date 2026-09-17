@@ -1552,11 +1552,11 @@ public final class GTFluids {
 	 * <li><b>honey</b> — Loader_Fluids.java:572 {@code FL.create("honey", ..., MT.Honey, 1,
 	 *     1000, 300)} — 300 K, STATE_LIQUID carriers (density 1000 = the :1130 formula over
 	 *     Honey's 1.0 g/cm³ default, viscosity 1000), tint = the MT.Honey RGBa 250,200,0
-	 *     (MT.java:2204). The upstream local's "(Biomes o'Plenty, Erebus)" parenthetical is a
+	 *     (MT.java:1352). The upstream local's "(Biomes o'Plenty, Erebus)" parenthetical is a
 	 *     1.7.10 multi-mod disambiguator — the port's single honey row trims it (declared).</li>
 	 * <li><b>honeydew</b> — :575 {@code FL.create("honeydew", "Honeydew", MT.Honeydew, 1,
 	 *     1000, 300)} — 300 K, carriers over Honeydew's 1.0 default → 1000, tint the
-	 *     MT.Honeydew RGBa 210,100,0 (MT.java:2205).</li>
+	 *     MT.Honeydew RGBa 210,100,0 (MT.java:1353).</li>
 	 * <li><b>royal_jelly</b> — :577 {@code FL.create("royaljelly", "Royal Jelly", null, 1,
 	 *     1000, 275)} — the 275 K literal, material-null so density/viscosity are the honest
 	 *     FluidType defaults (the water_boiling precedent); tint is a PORT-OWNED DECLARED
@@ -1568,8 +1568,8 @@ public final class GTFluids {
 	 * All four sit far under the wood-barrel 340 K ceiling (GTBarrelCommand.WOOD_MELTING_POINT).
 	 */
 	public static final List<ChemicalFluidSpec> HONEY_FLUID_SPECS = List.of(
-		new ChemicalFluidSpec("honey"      , "Honey"      , 300, 1000, 1000, 0xFFC8C800, false, 0), // :572 — MT.Honey 250,200,0 (MT.java:2204)
-		new ChemicalFluidSpec("honeydew"   , "Honeydew"   , 300, 1000, 1000, 0xFFD26400, false, 0), // :575 — MT.Honeydew 210,100,0 (MT.java:2205)
+		new ChemicalFluidSpec("honey"      , "Honey"      , 300, 1000, 1000, 0xFFFAC800, false, 0), // :572 — MT.Honey 250,200,0 (MT.java:1352)
+		new ChemicalFluidSpec("honeydew"   , "Honeydew"   , 300, 1000, 1000, 0xFFD26400, false, 0), // :575 — MT.Honeydew 210,100,0 (MT.java:1353)
 		new ChemicalFluidSpec("royal_jelly", "Royal Jelly", 275, 1000, 1000, 0xFFF0D890, false, 0), // :577 — the 275 K literal; tint declared
 		new ChemicalFluidSpec("ambrosia"   , "Ambrosia"   , 275, 1000, 1000, 0xFFE0A850, false, 0));// :576 "potion.ambrosia" — the 275 K literal; tint declared
 
@@ -1589,23 +1589,25 @@ public final class GTFluids {
 	 * <ul>
 	 * <li><b>dragon_breath</b> — Loader_Fluids.java:49 {@code FL.create("dragonbreath",
 	 *     "Dragon's Breath", null, 2, 1000, 300).setDensity(100).setLuminosity(5)} — the
-	 *     density 100 and luminosity 5 literals, 300 K, honest viscosity default; tint a
-	 *     port-owned dragon purple (no upstream texture/colour). Display = the vanilla item
-	 *     name verbatim.</li>
+	 *     aState=2 STATE_GASEOUS row (FL.java:1105: viscosity 200 + gaseous; the explicit
+	 *     {@code setDensity(100)} literal overrides the state's −100 density carrier, the
+	 *     {@code setLuminosity(5)} literal rides the same form), 300 K; tint a port-owned
+	 *     dragon purple (no upstream texture/colour). Display = the vanilla item name
+	 *     verbatim. The propane :45 row is the same state-2 form in the chemical family.</li>
 	 * <li><b>concrete</b> — :196 {@code FL.create("concrete", "Wet Concrete", MT.Concrete,
 	 *     1, L, 300)} — 300 K, density = the :1130 formula over Concrete's 1.0 g/cm³ default
 	 *     → 1000 (the propylene/ethylene arm), tint the MT.Concrete RGBa 100,100,100
-	 *     (MT.java:2391).</li>
+	 *     (MT.java:1632).</li>
 	 * <li><b>chocolate_molten</b> — :201 {@code FL.createMolten(MT.Chocolate, ..., SIMPLE)}
 	 *     — upstream id "chocolate.molten" (the "iron.molten" → {@code iron_molten}
 	 *     dot-to-underscore precedent); temperature = the molten melting-point rule over
 	 *     Chocolate's {@code .heat(C+40, 400)} → 313 K (the iron_molten 1811 K anchor form),
 	 *     density 1000 over the 1.0 default, tint the MT.Chocolate RGBa 100,50,0
-	 *     (MT.java:2186). ABOVE the 340 K wood-barrel ceiling is false (313 &lt; 340) — wood
+	 *     (MT.java:1336). ABOVE the 340 K wood-barrel ceiling is false (313 &lt; 340) — wood
 	 *     barrels carry it.</li>
 	 * <li><b>ice</b> — :364 {@code FL.create("ice", "Near Frozen Water", MT.Ice, 1, 1000,
 	 *     C)} — the 273 K literal, density = the MT.Ice {@code setDensity(..., 1.0)} explicit
-	 *     (MT.java:1901) → 1000, tint the MT.Ice RGBa 200,200,255.</li>
+	 *     (MT.java:1013) → 1000, tint the MT.Ice RGBa 200,200,255.</li>
 	 * <li><b>soup_mushroom</b> — :627 {@code FL.create("mushroomsoup", "Mushroom Stew",
 	 *     null, 1, 1000, 300, ...)} — 300 K, honest defaults (material-null); the :627
 	 *     mushroom-stew bottle/bowl container face stays POOLED (the MultiItemBottles
@@ -1613,7 +1615,7 @@ public final class GTFluids {
 	 *     (Soup_Mushroom, FL.java:268) over the "mushroomsoup" literal (the aqua precedent).</li>
 	 * <li><b>latex</b> — :198 {@code FL.create("latex", "Latex", MT.Latex, 1, L,
 	 *     DEF_ENV_TEMP)} — 300 K, density over Latex's 1.0 default → 1000, tint the
-	 *     MT.Latex RGBa 250,250,250 (MT.java:2085). The :197 "molten.latex" alias row POOLS
+	 *     MT.Latex RGBa 250,250,250 (MT.java:1225). The :197 "molten.latex" alias row POOLS
 	 *     (one latex fluid in the port, the alias is the same body upstream).</li>
 	 * <li><b>potion_harm_1</b> — FL.java:476 {@code Potion_Harm_1("potion.damage", ...)} —
 	 *     the instant-damage potion carrier the Military comb row pours (50 L); upstream it
@@ -1624,12 +1626,12 @@ public final class GTFluids {
 	 * </ul>
 	 */
 	public static final List<ChemicalFluidSpec> BEE_ROW_FLUID_SPECS = List.of(
-		new ChemicalFluidSpec("dragon_breath"   , "Dragon's Breath"    , 300,  100, 1000, 0xFFC864C8, false, 5), // :49 — the setDensity(100)/setLuminosity(5) literals
-		new ChemicalFluidSpec("concrete"        , "Wet Concrete"       , 300, 1000, 1000, 0xFF646464, false, 0), // :196 — MT.Concrete 100,100,100 (MT.java:2391)
-		new ChemicalFluidSpec("chocolate_molten", "Molten Chocolate"   , 313, 1000, 1000, 0xFF643200, false, 0), // :201 — the .heat(C+40) melting rule (MT.java:2186)
-		new ChemicalFluidSpec("ice"             , "Near Frozen Water"  , 273, 1000, 1000, 0xFFC8C8FF, false, 0), // :364 — the C literal; MT.Ice setDensity 1.0 (MT.java:1901)
+		new ChemicalFluidSpec("dragon_breath"   , "Dragon's Breath"    , 300,  100,  200, 0xFFC864C8, true , 5), // :49 — aState=2 STATE_GASEOUS (viscosity 200, FL.java:1105) + the setDensity(100)/setLuminosity(5) literals
+		new ChemicalFluidSpec("concrete"        , "Wet Concrete"       , 300, 1000, 1000, 0xFF646464, false, 0), // :196 — MT.Concrete 100,100,100 (MT.java:1632)
+		new ChemicalFluidSpec("chocolate_molten", "Molten Chocolate"   , 313, 1000, 1000, 0xFF643200, false, 0), // :201 — the .heat(C+40) melting rule (MT.java:1336)
+		new ChemicalFluidSpec("ice"             , "Near Frozen Water"  , 273, 1000, 1000, 0xFFC8C8FF, false, 0), // :364 — the C literal; MT.Ice setDensity 1.0 (MT.java:1013)
 		new ChemicalFluidSpec("soup_mushroom"   , "Mushroom Stew"      , 300, 1000, 1000, 0xFF96784C, false, 0), // :627 "mushroomsoup" — honest defaults; tint declared
-		new ChemicalFluidSpec("latex"           , "Latex"              , 300, 1000, 1000, 0xFFFAFAFA, false, 0), // :198 — MT.Latex 250,250,250 (MT.java:2085)
+		new ChemicalFluidSpec("latex"           , "Latex"              , 300, 1000, 1000, 0xFFFAFAFA, false, 0), // :198 — MT.Latex 250,250,250 (MT.java:1225)
 		new ChemicalFluidSpec("potion_harm_1"   , "Potion of Harming"  , 300, 1000, 1000, 0xFFB03248, false, 0));// FL.java:476 "potion.damage" — the water-based carrier; tint declared
 
 	/** The bee-row dependency fluid for a gt6 id path, or null (the {@link #honeySpec} lookup shape). */
