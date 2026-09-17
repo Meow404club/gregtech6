@@ -172,7 +172,11 @@ public final class GT6BladeToolCommand {
 		//?} else {
 		/*double[] tSum = {0};
 		tStack.getAttributeModifiers().forEach(net.minecraft.world.entity.EquipmentSlot.MAINHAND,
-				(aHolder, aMod) -> { if (aHolder.value() == net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE) tSum[0] += aMod.amount(); });
+				(aHolder, aMod) -> {
+					// 21.1: Attributes.ATTACK_DAMAGE IS the Holder<Attribute> (javap
+					// compiledWithNeoForge 21.1.249) — compare holder identity, not .value()
+					if (aHolder == net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE) tSum[0] += aMod.amount();
+				});
 		double tAttack = tSum[0];
 		*///?}
 		String tReport = String.format("gt6blade stats %s@%s: attack=%.1f, maxDamage=%d, tint=0x%08X",
