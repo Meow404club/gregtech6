@@ -32,8 +32,10 @@ import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 
 import gregtech6.covers.ICoverableTE;
+import gregtech6.items.tools.GT6Prospector;
 import gregtech6.items.tools.GTCrowbarItem;
 import gregtech6.items.tools.GTCutterItem;
+import gregtech6.items.tools.GTHammerItem;
 import gregtech6.registry.GT6Tools;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
@@ -86,9 +88,16 @@ public final class GTToolCommand {
 					.executes(context -> cut(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP))
 					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
 						.executes(context -> cut(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
+								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))))
+			.then(Commands.literal("prospect")
+				.executes(context -> prospect(context.getSource(), null, Direction.UP))
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.executes(context -> prospect(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP))
+					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
+						.executes(context -> prospect(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
 								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))));
 		event.getDispatcher().register(tTool);
-		LOGGER.info("Registered GT6 tool acceptance command /gt6tool (dismantle, cut)");
+		LOGGER.info("Registered GT6 tool acceptance command /gt6tool (dismantle, cut, prospect)");
 		// task p27-vanilla-tag-dual-tree: the tag-membership debug command — the RCON
 		// face of the dual-tree acceptance (`/gt6tags dump <tag>` lists the bound
 		// runtime members of ANY item tag, so the forge:/c: twin faces are provable
@@ -223,6 +232,39 @@ public final class GTToolCommand {
 			return 0;
 		}
 		source.sendSuccess(() -> Component.literal("gt6tool cut check OK: " + tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * Prospect through the item's own dispatch (task p30-pool-prospector spec, the cut
+	 * shape): the fake player holds a gt6:hammer, the synthetic hit pins the clicked face
+	 * at the block pos, and the {@link GTHammerItem#useOn} arm runs the
+	 * {@link GT6Prospector#prospect} single-source seam. The chat lines ride the report
+	 * verbatim (RCON has no player to display to — the report IS the observable channel);
+	 * the negative arm (nothing answers) is an EXPECTED report, not a sendFailure.
+	 */
+	private static int prospect(CommandSourceStack source, BlockPos pos, Direction side) {
+		ServerLevel tLevel = source.getLevel();
+		BlockPos tTarget = pos != null ? pos : BlockPos.containing(source.getPosition());
+		ItemStack tHammer = new ItemStack(GT6Tools.HAMMER.get());
+		var tFakePlayer = FakePlayerFactory.getMinecraft(tLevel);
+		tFakePlayer.getInventory().clearContent(); // a leftover would fake the durability arm
+		tFakePlayer.setItemInHand(InteractionHand.MAIN_HAND, tHammer);
+		// the same UseOnContext shape useOn receives: the synthetic centre hit pins the
+		// clicked face at the block pos (isInside=false, the plain four-arg constructor)
+		var tContext = new UseOnContext(tFakePlayer, InteractionHand.MAIN_HAND,
+				new BlockHitResult(Vec3.atCenterOf(tTarget), side, tTarget, false));
+		List<String> tLines = new ArrayList<>();
+		long tDamage = GT6Prospector.prospect(tContext, tLines); // the item's useOn runs the identical call (null collector)
+		int tHeldDamage = tHammer.getDamageValue();
+		String tReport = String.format("gt6tool prospect face %s at %s: toolDamage=%d, hammerDamage=%d/%d, lines=%s",
+				side, tTarget.toShortString(), tDamage, tHeldDamage, GTHammerItem.DURABILITY_POINTS, tLines);
+		if (tDamage > 0 && tHeldDamage != 1) {
+			source.sendFailure(Component.literal("gt6tool prospect FAILED: " + tReport));
+			return 0;
+		}
+		source.sendSuccess(() -> Component.literal("gt6tool prospect check OK: " + tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
 	}

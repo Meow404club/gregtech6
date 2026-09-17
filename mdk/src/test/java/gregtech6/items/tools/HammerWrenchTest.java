@@ -152,17 +152,16 @@ public class HammerWrenchTest {
 	// ------------------------------------------------------- the zero-world-arm pins
 
 	/**
-	 * The zero-world-interaction surface (card spec ⑥): NEITHER item may declare a
-	 * {@code useOn} override — the whole world arm (the ore-crush drop conversion, the
-	 * mining surface, the Behavior_Tool machine face) is the interaction cards' pool.
-	 * Reflection over declared methods: the parent Item.useOn exists, a declared
-	 * override would throw here.
+	 * The zero-world-interaction surface (card spec ⑥), EVOLVED by task p30-pool-prospector:
+	 * the WRENCH still may not declare a {@code useOn} override (the wrench pool ruling ②
+	 * stands); the HAMMER half of the pin was the p25 pool statement the prospector card
+	 * came to collect — the hammer now carries the SECOND Behavior_Tool arm
+	 * (GT_Tool_HardHammer.java:132-135) as its useOn dispatch into GT6Prospector, pinned
+	 * positively by ProspectorTest. Reflection over declared methods: the parent
+	 * Item.useOn exists, a declared override would throw here.
 	 */
 	@Test
 	public void zeroUseOnWorldArmIsPinned() throws NoSuchMethodException {
-		assertThrows(NoSuchMethodException.class,
-				() -> GTHammerItem.class.getDeclaredMethod("useOn", net.minecraft.world.item.context.UseOnContext.class),
-				"the hammer must not override useOn (the world arm is pooled)");
 		assertThrows(NoSuchMethodException.class,
 				() -> GTWrenchItem.class.getDeclaredMethod("useOn", net.minecraft.world.item.context.UseOnContext.class),
 				"the wrench must not override useOn (the wrench pool ruling ②)");
