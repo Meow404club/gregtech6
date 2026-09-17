@@ -1,0 +1,29 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "forge:rods/wooden"
+    },
+    "P": {
+      "tag": "forge:plates/cosmic_neutronium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "cosmic_neutronium",
+  "pattern": [
+    "fPP",
+    "hPP",
+    "  H"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:butchery_knife"
+  },
+  "show_notification": true
+}

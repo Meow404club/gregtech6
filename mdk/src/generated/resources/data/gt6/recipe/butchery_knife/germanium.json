@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "P": {
+      "tag": "c:plates/germanium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "germanium",
+  "pattern": [
+    "fPP",
+    "hPP",
+    "  H"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:butchery_knife"
+  }
+}

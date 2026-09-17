@@ -354,6 +354,12 @@ public final class GT6Tools {
 	 *     loot seam gt6_tree_fell, vanilla trees only);</li>
 	 * <li>{@code gt6:axe_double} (upstream GT_Tool_AxeDouble — 6.0F, durability 768).</li>
 	 * </ul>
+	 *
+	 * <p>MATERIAL LADDER (task p31-blade-ladder): the sword/knife/butchery_knife read the
+	 * {@code GT.ToolStats} identity per stack (durability, the MultiItemTool.java:392
+	 * attack fold, the name template, the tint — {@link GT6ToolLadder}); the axe pair and
+	 * the club stay SINGLE-TIER (the p31 family ruling: the axe rows are the dig card's
+	 * judge, the club sits in the single-tier-ruling audit pool).</p>
 	 */
 	public static final RegistryObject<Item> SWORD = ITEMS.register("sword",
 			() -> new GTSwordItem(new Item.Properties().durability(GTSwordItem.DURABILITY_POINTS)));

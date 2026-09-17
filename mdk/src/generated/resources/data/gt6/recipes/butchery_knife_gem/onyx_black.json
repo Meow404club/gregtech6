@@ -1,0 +1,26 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_onyx_black"
+    },
+    "H": {
+      "tag": "forge:rods/wooden"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "onyx_black",
+  "pattern": [
+    "fCC",
+    " CC",
+    "  H"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:butchery_knife"
+  },
+  "show_notification": true
+}

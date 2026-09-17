@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_infused_fire"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "infused_fire",
+  "pattern": [
+    " C ",
+    "fC "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:sword"
+  }
+}

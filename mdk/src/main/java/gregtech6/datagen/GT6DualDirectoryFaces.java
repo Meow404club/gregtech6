@@ -409,7 +409,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 				}
 				tCount = tOldCount.getAsInt();
 			}
-			// an extra key (nbt/components/...) is an unverified cross-leg shape — fail-visible
+			// an extra key (components/...) with no nbt arm is an unverified cross-leg shape — fail-visible
 			if (tOld.size() != (tOldCount == null ? 1 : 2)) {
 				throw new IllegalArgumentException("the recipe mirror's 1.21.1 adapter only verifies the {item"
 						+ "[,count]} result shape (got keys " + tOld.keySet() + " in " + aSource + ")");

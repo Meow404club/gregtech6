@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_red_diamond"
+    },
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "red_diamond",
+  "pattern": [
+    "fC",
+    "hH"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:knife"
+  }
+}

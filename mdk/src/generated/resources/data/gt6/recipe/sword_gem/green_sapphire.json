@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_green_sapphire"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "green_sapphire",
+  "pattern": [
+    " C ",
+    "fC "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:sword"
+  }
+}

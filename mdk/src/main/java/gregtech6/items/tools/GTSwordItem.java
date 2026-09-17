@@ -3,6 +3,7 @@ package gregtech6.items.tools;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,6 +14,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+
+import gregapi.data.MT;
 
 /**
  * The formal GT6 sword — item id {@code gt6:sword} (task p29-w5-t2-blade-six, the W5
@@ -43,8 +46,28 @@ import net.minecraft.world.level.block.state.BlockState;
  * </ul>
  *
  * <p>Durability 512 (the family value; upstream per-block 200 units folds to one point).
+ *
+ * <p>MATERIAL LADDER (task p31-blade-ladder): an identity stack carries its material in
+ * {@code GT.ToolStats} (the p31-identity-seam) and the item reads it per stack:
+ * <ul>
+ * <li>durability — {@link GT6ToolLadder#durabilityPoints} over
+ *     {@link GT6ToolLadder#statsOf} (the payload {@code j}; Steel → the family 512,
+ *     the identity-less arm bit-exact);</li>
+ * <li>attack — {@link GT6ToolLadder#attackDamage} (the upstream
+ *     {@code getBaseDamage + mToolQuality} fold MultiItemTool.java:392, UNLOCKED here —
+ *     the t1 pin was the identity-less bare face; a Steel sword → 6.0F);</li>
+ * <li>dig speed — {@code getSpeedMultiplier × mToolSpeed} (MultiItemTool.getDigSpeed
+ *     :483; Steel → the 6.0F anchor);</li>
+ * <li>attack speed — NO material axis (no 1.7.10 source; the GTCEu-modern precedent
+ *     IGTTool.java:208-211 defaults the material term to 0 — the shape anchor stands);</li>
+ * <li>name — the material-filled {@link #NAME_TEMPLATE_KEY} template;</li>
+ * <li>tint — {@link #tintARGB} index 0 = the head (primary, Steel fallback :119
+ *     verbatim), index 2 = the handle (secondary, Spruce fallback :119 verbatim),
+ *     the overlays -1.</li>
+ * </ul>
+ * Identity-less stacks (every pre-ladder stack) keep the legacy arm verbatim.
  */
-public class GTSwordItem extends Item {
+public class GTSwordItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/** The family value (512; 10000 upstream units = 1 point). */
 	public static final int DURABILITY_POINTS = 512;
@@ -58,8 +81,13 @@ public class GTSwordItem extends Item {
 	/** The dig speed on the sword surface — the iron-tier anchor (upstream speed ×1.0). */
 	public static final float MINING_SPEED = 6.0F;
 
+	/** Upstream getMaxDurabilityMultiplier :80-82 — 1.0F (the payload {@code j} factor). */
+	public static final float DURABILITY_MULTIPLIER = 1.0F;
+
+	/** Upstream getSpeedMultiplier :75-77 — 1.0F (the :483 dig-speed factor). */
+	public static final float SPEED_MULTIPLIER = 1.0F;
+
 	//? if forge {
-	private final Multimap<Attribute, AttributeModifier> mAttackModifiers = buildAttackModifiers(ATTACK_DAMAGE, ATTACK_SPEED);
 
 	/** The dual-modifier builder — the DiggerItem.java:29-35 shape; subclasses re-call with their own constants. */
 	protected static Multimap<Attribute, AttributeModifier> buildAttackModifiers(float aDamage, float aSpeed) {
@@ -90,6 +118,12 @@ public class GTSwordItem extends Item {
 		super(aProperties);
 	}
 
+	/** The ladder-form face (the RCON material arm's polymorphic read). */
+	@Override
+	public float durabilityMultiplier() {
+		return DURABILITY_MULTIPLIER;
+	}
+
 	/**
 	 * The upstream isMinableBlock :108-110 modern form — the leaves/vine/plants/gourd
 	 * material arms fold into the native {@code #minecraft:sword_efficient} vanilla face
@@ -113,7 +147,76 @@ public class GTSwordItem extends Item {
 		return mines(aState) ? MINING_SPEED : 1.0F;
 	}
 
-	/** The drop-authorization half (the family iron-tier gate). */
+	/**
+	 * The per-material dig speed (MultiItemTool.getDigSpeed :483, the level gate first):
+	 * a quality-starved stack returns ZERO on the too-hard surface (the dig family
+	 * order), else the surface speed = {@link #SPEED_MULTIPLIER} × the primary
+	 * {@code mToolSpeed} — the {@code materialOf} Steel fallback reproduces the
+	 * {@link #MINING_SPEED} anchor bit-exact for identity-less stacks; the hand speed
+	 * elsewhere.
+	 */
+	@Override
+	public float getDestroySpeed(ItemStack aStack, BlockState aState) {
+		if (!mines(aState)) return 1.0F;
+		if (GT6ToolLadder.qualityGate(aStack, aState)) return 0.0F; // the :482 zero-speed floor
+		return GT6ToolLadder.speed(SPEED_MULTIPLIER, GT6ToolLadder.materialOf(aStack));
+	}
+
+	/**
+	 * The stack durability read (the ladder face — the GT6ToolLadder javadoc): the
+	 * payload {@code j} at the pinned ratio, the family value when identity-less.
+	 */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, DURABILITY_MULTIPLIER));
+	}
+
+	/**
+	 * The per-stack attack face (MultiItemTool.java:392): the material
+	 * {@code mToolQuality} rides the DAMAGE term only — the speed term is the shape
+	 * anchor {@link #ATTACK_SPEED} (no upstream material axis, the class javadoc).
+	 * Per-stack override — forge: IForgeItem.getAttributeModifiers(EquipmentSlot,
+	 * ItemStack) (IForgeItem.java:61-62, the ItemStack.getAttributeModifiers(slot) route).
+	 */
+	//? if forge {
+	@Override
+	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot aSlot, ItemStack aStack) {
+		return aSlot == EquipmentSlot.MAINHAND
+				? buildAttackModifiers(GT6ToolLadder.attackDamage(aStack, ATTACK_DAMAGE), ATTACK_SPEED)
+				: super.getAttributeModifiers(aSlot, aStack);
+	}
+	//?} else {
+	/*@Override
+	public net.minecraft.world.item.component.ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack aStack) {
+		//21.1: the per-stack hook — IItemExtension.getDefaultAttributeModifiers(ItemStack)
+		//(javap neoforge-21.1.249 universal jar); the routing proof: IItemStackExtension
+		//.getAttributeModifiers falls back to it when the stack carries no
+		//ATTRIBUTE_MODIFIERS component (disassembled default method).
+		return buildAttackModifiers(GT6ToolLadder.attackDamage(aStack, ATTACK_DAMAGE), ATTACK_SPEED);
+	}
+	*///?}
+
+	/** The per-material name — the shared composed face ("Sword (Steel)"). */
+	@Override
+	public Component getName(ItemStack aStack) {
+		return GT6ToolLadder.displayName(aStack, getDescriptionId());
+	}
+
+	/**
+	 * The runtime tint (upstream GT_Tool_Sword.getRGBa :118-120): index 0 = the head
+	 * layer (primary, the {@code getPrimaryMaterial(aStack, MT.Steel)} fallback
+	 * verbatim), index 2 = the handle layer (secondary, the Spruce fallback verbatim),
+	 * the overlay layers = the {@code -1} no-tint sentinel.
+	 */
+	public static int tintARGB(ItemStack aStack, int aTintIndex) {
+		return GT6ToolLadder.bladeTintARGB(aStack, aTintIndex, false);
+	}
+
+	/**
+	 * The stackless floor the 1.20.1 break path consults (the dig family form: the
+	 * quality-correct steel-or-better semantics; 21.1 has no stackless form — the
+	 * stack-aware overload below is the only face).
+	 */
 	@Override
 	//? if forge {
 	public boolean isCorrectToolForDrops(BlockState aState) {
@@ -124,10 +227,9 @@ public class GTSwordItem extends Item {
 		return mines(aState) && !aState.is(BlockTags.NEEDS_DIAMOND_TOOL);
 	}
 
-	/** The dig-speed half. */
-	@Override
-	public float getDestroySpeed(ItemStack aStack, BlockState aState) {
-		return destroySpeedBonus(aState);
+	/** The stack-aware authorization (the dig 567491b97 ruling) — the RCON/test face. */
+	public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
+		return mines(aState) && !GT6ToolLadder.qualityGate(aStack, aState);
 	}
 
 	/** Upstream getToolDamagePerBlockBreak :44-47 — 200 units fold into one point. */
@@ -146,18 +248,6 @@ public class GTSwordItem extends Item {
 		aStack.hurtAndBreak(1, aAttacker, e -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
 		return true;
 	}
-
-	//? if forge {
-	@Override
-	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot aSlot) {
-		return aSlot == EquipmentSlot.MAINHAND ? mAttackModifiers : super.getDefaultAttributeModifiers(aSlot);
-	}
-	//?} else {
-	/*@Override
-	public net.minecraft.world.item.component.ItemAttributeModifiers getDefaultAttributeModifiers() {
-		return mAttackModifiers;
-	}
-	*///?}
 
 	/**
 	 * The stack classifier — the gt6 sword action + the vanilla SWORD_DIG face (the

@@ -172,6 +172,56 @@ public final class GT6ToolLadder {
 		return 0xFF000000 | (tMaterial.mRGBaSolid[0] << 16) | (tMaterial.mRGBaSolid[1] << 8) | tMaterial.mRGBaSolid[2];
 	}
 
+	// ---------------------- the blade-family increments (task p31-blade-ladder) ----------------------
+	// Merged per the S31-3 alignment: the DIG surface above stays byte-identical; the
+	// blade family adds the attack fold, the secondary (handle) face and the family
+	// tint dispatch — additive only, no dig signature touched.
+
+	/**
+	 * The blade attack fold (MultiItemTool.java:392 — {@code getBaseDamage +
+	 * mToolQuality}): the material term rides WITH the identity only — the W5 attack
+	 * rows pin the BARE steel anchor for identity-less stacks (the declared t1 face),
+	 * so unlike the dig faces above the fallback here is the bare constant, never the
+	 * synthesized Steel stats (whose quality would add +2).
+	 */
+	public static float attackDamage(ItemStack aStack, float aBaseDamage) {
+		return GT6ItemData.find(aStack, GT6ToolStats.KEY)
+				.map(tStats -> aBaseDamage + tStats.primaryMaterial().mToolQuality)
+				.orElse(aBaseDamage);
+	}
+
+	/**
+	 * The secondary (handle) material with the caller's fallback — the blade
+	 * handle-pass face (the sword :119 {@code getSecondaryMaterial(aStack,
+	 * MT.WOODS.Spruce)} shape). The shared {@code gt6:material_tool} stamp carries no
+	 * secondary (the dig face), so the crafted blades render the fallback — the
+	 * declared handle-colour deviation (upstream metals read handle = the primary).
+	 */
+	public static OreDictMaterial secondaryOf(ItemStack aStack, OreDictMaterial aFallback) {
+		return GT6ItemData.find(aStack, GT6ToolStats.KEY)
+				.map(GT6ToolStats::secondaryMaterial).orElse(aFallback);
+	}
+
+	private static int packARGB(OreDictMaterial aMaterial) {
+		return 0xFF000000 | (aMaterial.mRGBaSolid[0] << 16) | (aMaterial.mRGBaSolid[1] << 8) | aMaterial.mRGBaSolid[2];
+	}
+
+	/**
+	 * The blade-family tint dispatch: index 0 = the head pass (the PRIMARY, the Steel
+	 * fallback verbatim) — UNLESS the form's visible sprite rides the handle pass (the
+	 * knife: the upstream head pass is {@code VOID}, GT_Tool_Knife.getIcon :73-75, so
+	 * the visible colour is the SECONDARY — pass {@code aIndex0IsSecondary}); index 2 =
+	 * the handle layer (the secondary, Spruce fallback); every other index = the
+	 * {@code -1} sentinel. The DIG family keeps {@link #tintARGB} (index 0 only).
+	 */
+	public static int bladeTintARGB(ItemStack aStack, int aTintIndex, boolean aIndex0IsSecondary) {
+		if (aTintIndex == 2 && !aIndex0IsSecondary) return packARGB(secondaryOf(aStack, MT.WOODS.Spruce));
+		if (aTintIndex == 0) {
+			return packARGB(aIndex0IsSecondary ? secondaryOf(aStack, MT.WOODS.Spruce) : materialOf(aStack));
+		}
+		return -1;
+	}
+
 	/**
 	 * The composed display name — "Pickaxe (Bronze)" over the {@code gt6.material.*}
 	 * lang family (no per-material lang rows to mint; the fill rides the existing
