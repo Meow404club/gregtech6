@@ -132,13 +132,16 @@ public final class GT6BladeToolCommand {
 			return 0;
 		}
 		// the lenient material scan (the GT6CrucibleCommand.drop shape — the RCON word
-		// arrives lower-case while MATERIAL_MAP keys are the camel-case internal names)
+		// arrives lower-case while MATERIAL_MAP keys are the camel-case internal names),
+		// then the ALIAS MERGE: the alt-name slots (e.g. TungstenSteel → the
+		// "Tungstensteel" target, id -1 → 8635) resolve onto the registration target
 		OreDictMaterial tMaterial = MaterialRegistry.INSTANCE.byName(aMaterial);
 		if (tMaterial == null) {
 			for (OreDictMaterial tScan : MaterialRegistry.INSTANCE.MATERIAL_MAP.values()) {
 				if (tScan.mNameInternal.equalsIgnoreCase(aMaterial)) {tMaterial = tScan; break;}
 			}
 		}
+		if (tMaterial != null) tMaterial = MaterialRegistry.INSTANCE.get(tMaterial);
 		if (tMaterial == null || tMaterial.mID < 0) {
 			aSource.sendFailure(Component.literal("gt6blade: unknown material: " + aMaterial));
 			return 0;
