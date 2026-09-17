@@ -12,10 +12,11 @@ import net.minecraft.world.level.block.state.BlockState;
  * p29-w5-t1-dig-six). Upstream GT_Tool_PickaxeConstruction.java:39-65 extends
  * GT_Tool_Pickaxe with three arms:
  * <ul>
- * <li><b>Speed ×2</b> (:41-43) → {@link #MINING_SPEED} = 12.0F (the pickaxe 6.0F anchor
- *     doubled — "Good for Brucks and alike", Loader_Tools.java:147).</li>
+ * <li><b>Speed ×2</b> (:41-43) → {@link #SPEED_MULTIPLIER} = 2.0F (the pickaxe ×1.0
+ *     doubled — "Good for Bricks and alike", Loader_Tools.java:147). The ladder face
+ *     (task p31-dig-ladder) reads the stack's material speed × this multiplier.</li>
  * <li><b>Ore-stone penalty</b> (:62-65 {@code WD.ore_stone → default / 4}) →
- *     {@link #destroySpeedBonus} quarters the speed on {@link #ORE_STONE} (the vanilla
+ *     {@link #destroySpeedLadder} quarters the speed on {@link #ORE_STONE} (the vanilla
  *     ore set; the GT ore blocks of the W6 worldgen join the set when they land).</li>
  * <li><b>Ender-chest self-drop</b> (:53-59) → the loot seam
  *     ({@code GT6ToolLootModifiers} mode {@code ENDER_CHEST_SELF}, the per-tool GLM
@@ -26,16 +27,16 @@ import net.minecraft.world.level.block.state.BlockState;
  * </ul>
  *
  * <p>Mining surface, torch arm, attack damage 3.0F, classifier (the gt6_pickaxe action —
- * upstream registers it as a {@code TOOL_pickaxe} variant, Loader_Tools.java:147): all
- * inherited from {@link GTPickaxeItem} verbatim.
+ * upstream registers it as a {@code TOOL_pickaxe} variant, Loader_Tools.java:147),
+ * durability ×1.0, base quality 0: all inherited from {@link GTPickaxeItem} verbatim.
  */
 public class GTPickaxeConstructionItem extends GTPickaxeItem {
 
 	/** The family value — the construction pick takes NO durability multiplier upstream. */
 	public static final int DURABILITY_POINTS = GTPickaxeItem.DURABILITY_POINTS;
 
-	/** Upstream getSpeedMultiplier :41-43 — the pickaxe anchor doubled (6.0 × 2). */
-	public static final float MINING_SPEED = GTPickaxeItem.MINING_SPEED * 2.0F;
+	/** Upstream getSpeedMultiplier :41-43 — the pickaxe ×1.0 doubled (the ladder form constant). */
+	public static final float SPEED_MULTIPLIER = GTPickaxeItem.SPEED_MULTIPLIER * 2.0F;
 
 	/**
 	 * The upstream {@code WD.ore_stone} test, vanilla members (GT_Tool_PickaxeConstruction
@@ -58,15 +59,25 @@ public class GTPickaxeConstructionItem extends GTPickaxeItem {
 		super(aProperties);
 	}
 
-	/** Upstream :62-65 — the ore-stone quarter speed, the ×2 surface speed elsewhere. */
+	/** The stack-free steel arm (the legacy fallback pin): the ore-stone quarter, ×2 elsewhere. */
 	public static float destroySpeedBonus(BlockState aState) {
 		if (ORE_STONE.contains(aState.getBlock())) return MINING_SPEED / 4.0F; // aDefault / 4
-		return GTPickaxeItem.mines(aState) ? MINING_SPEED : 1.0F;
+		return GTPickaxeItem.mines(aState) ? GTPickaxeItem.MINING_SPEED * 2.0F : 1.0F;
 	}
 
+	/** The stack-free steel anchor (6.0 × 2, the pre-ladder constant). */
+	public static final float MINING_SPEED = GTPickaxeItem.MINING_SPEED * 2.0F;
+
+	/** The ladder dig-speed seam — the ore-stone quarter, ×2 × material speed elsewhere (:62-65). */
+	public static float destroySpeedBonus(ItemStack aStack, BlockState aState) {
+		if (ORE_STONE.contains(aState.getBlock())) return GT6ToolLadder.speed(SPEED_MULTIPLIER, GT6ToolLadder.materialOf(aStack)) / 4.0F;
+		return GTPickaxeItem.destroySpeedBonus(aStack, aState);
+	}
+
+	/** Upstream :62-65 — the ore-stone quarter speed re-point (the instance face). */
 	@Override
-	public float getDestroySpeed(ItemStack aStack, BlockState aState) {
-		return destroySpeedBonus(aState);
+	protected float destroySpeedLadder(ItemStack aStack, BlockState aState) {
+		return destroySpeedBonus(aStack, aState);
 	}
 
 	// The drop-authorization + mining surface stay the pickaxe's (upstream isMinableBlock
