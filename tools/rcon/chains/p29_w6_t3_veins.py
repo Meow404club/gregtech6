@@ -57,6 +57,14 @@ steps = []
 # ------------------------------------------------- A: the origin-cell recompute probe
 steps += [
     phase("A: chunk (1,1) — the host box, the first /place, the change proof, the bit-exact recompute"),
+    # the neo-leg live finding: the framework's pass-open forceload does NOT reach the
+    # staging area on 1.21.1 ("That position is not loaded" on the clones) — the chain
+    # forceloads its own five bboxes explicitly (self-reliant, both legs)
+    Step("forceload add 16 16 31 31"),
+    Step("forceload add 80 80 95 95"),
+    Step("forceload add 112 112 127 127"),
+    Step("forceload add 144 144 159 159"),
+    Step("forceload add 64 64 79 79"),
     Step(f"fill {BOX} minecraft:stone"),
     Step(f"clone {BOX} 80 0 80"),  # staging1 = pristine stone (the t1 note: fill/clone reply empty)
     Step("place feature gt6:large_veins 24 90 24", expect="Placed"),
