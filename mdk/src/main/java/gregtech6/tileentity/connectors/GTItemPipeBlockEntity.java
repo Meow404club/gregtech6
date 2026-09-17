@@ -35,6 +35,8 @@ import net.neoforged.neoforge.items.IItemHandler;
 import gregapi.code.TagData;
 import gregapi.data.TD;
 
+import gregtech6.covers.CoverData;
+import gregtech6.covers.ICoverableTE;
 import gregtech6.registry.GTItemPipes;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.util.GTItemMover;
@@ -85,8 +87,15 @@ import gregtech6.util.UT6;
  * the declared ≤1-round skew of the fold). The ITileEntityAdjacentInventoryUpdatable
  * fan-out (:210-215/:254-261) has no port-side consumer (the 1.7.10 machine re-plan
  * hint) and is trimmed.
+ *
+ * <p>Covers (task p31-retriever-cover ①): the BE implements {@link ICoverableTE} by
+ * composition (the TileEntityOven precedent) — the {@link #mCovers} store, the
+ * 06Covers :68/:74 NBT round trip, the :191 validity sweep on the first tick, the
+ * :200/:202 tickPre/tickPost dispatch and the :184-186 visual-sync window; the
+ * retriever cover is the first consumer (upstream CoverRetrieverItem places only on a
+ * ticking item pipe, CoverRetrieverItem.java:50).
  */
-public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
+public class GTItemPipeBlockEntity extends TileEntityBase09Connector implements ICoverableTE {
 
 	/** Upstream :194 — the transfer round period (SERVER_TIME % 10). */
 	public static final int TRANSFER_PERIOD = 10;
@@ -131,6 +140,25 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
 	private int mPhaseOffset = 0;
 	private boolean mPhaseAssigned = false;
 
+	// ---------------------------------------------------------------------------
+	// covers (task p31-retriever-cover ① — the composition attachment, the Oven
+	// precedent: the store lives here, the 06Covers behaviour comes from the
+	// ICoverableTE defaults; the base-class chain stays untouched)
+	// ---------------------------------------------------------------------------
+
+	/** Upstream 06Covers :63 mCovers — {@code null} while no face carries a cover. */
+	public CoverData mCovers = null;
+
+	@Override
+	public CoverData getCovers() {
+		return mCovers;
+	}
+
+	@Override
+	public void setCovers(CoverData aCoverData) {
+		mCovers = aCoverData;
+	}
+
 	/** BET factory for BlockEntityType.Builder.of — resolves the shared type through the registry at runtime. */
 	public GTItemPipeBlockEntity(BlockPos aPos, BlockState aState) {
 		this(null, aPos, aState);
@@ -166,6 +194,8 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
 	@Override
 	public void onTickFirst(boolean aIsServerSide) {
 		if (aIsServerSide) {
+			// upstream 06Covers :191 — the validity sweep rides onTickFirst before the pipe business
+			checkCoverValidity();
 			// the level-less offline fixtures take phase 0 (the rng seam returns 0 there) —
 			// deterministic ticking for the offline tests
 			mPhaseOffset = hasLevel() ? getLevel().random.nextInt(TRANSFER_PERIOD) : 0;
@@ -175,7 +205,13 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
 
 	@Override
 	public void onTick(long aTimer, boolean aIsServerSide) {
-		if (!aIsServerSide || !mPhaseAssigned) return;
+		// upstream 06Covers :200 — the cover tick precedes the pipe business (the Oven shape;
+		// the pipe carries no mInventoryChanged writer, the inventory handler marks setChanged)
+		if (hasCovers()) getCovers().tickPre(aTimer, aIsServerSide, mBlockUpdated, false);
+		if (!aIsServerSide || !mPhaseAssigned) {
+			if (hasCovers()) getCovers().tickPost(aTimer, aIsServerSide, mBlockUpdated, false);
+			return;
+		}
 		long tPhase = aTimer + mPhaseOffset;
 		if (tPhase % CAPACITY_WINDOW == 0) {
 			mTransferredItems = 0; // upstream :193 (the PRE-list half)
@@ -186,6 +222,8 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
 			if (!inventoryHasSomething()) mLastReceivedFrom = SIDE_UNDEFINED;
 			oLastReceivedFrom = mLastReceivedFrom;
 		}
+		// upstream 06Covers :202 — the cover tick follows the pipe business
+		if (hasCovers()) getCovers().tickPost(aTimer, aIsServerSide, mBlockUpdated, false);
 	}
 
 	/**
@@ -486,6 +524,25 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
 		return tNeighbor instanceof GTItemPipeBlockEntity tPipe ? tPipe : null;
 	}
 
+	/**
+	 * The adjacent-inventory walk of the retriever cover (task p31-retriever-cover; the
+	 * upstream CoverRetrieverItem :67 {@code getAdjacentTileEntity} / :71
+	 * {@code getAdjacentInventory} pair folded to one query): the item handler of the BE
+	 * sitting on aSide of aPipe — never a connector (the :72 non-pipe arm) and only when
+	 * the neighbour exposes slots. Null when the face has no pull source/target. Public
+	 * (the upstream getAdjacentInventory surface — the retriever cover is the consumer);
+	 * the offline tests override it to wire synthetic containers (the
+	 * {@link #adjacentItemPipe} seam precedent).
+	 */
+	@Nullable
+	public IItemHandler adjacentInventoryOf(GTItemPipeBlockEntity aPipe, byte aSide) {
+		if (!aPipe.hasLevel()) return null;
+		BlockEntity tNeighbor = aPipe.getLevel().getBlockEntity(aPipe.getBlockPos().relative(Direction.from3DDataValue(aSide)));
+		if (tNeighbor == null || tNeighbor instanceof TileEntityBase09Connector) return null;
+		IItemHandler tHandler = itemHandlerOf(tNeighbor, Direction.from3DDataValue(aSide).getOpposite());
+		return tHandler != null && tHandler.getSlots() > 0 ? tHandler : null;
+	}
+
 	// ---------------------------------------------------------------------------
 	// the monkeywrench face-disable cycle (:128-153)
 	// ---------------------------------------------------------------------------
@@ -602,6 +659,19 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
 	// ---------------------------------------------------------------------------
 
 	@Override
+	public boolean onTickCheck(long aTimer) {
+		// upstream 06Covers :184-186 — the cover visual sync (the Oven shape) over the connector mask gate
+		return (hasCovers() && getCovers().requiresSync()) || super.onTickCheck(aTimer);
+	}
+
+	@Override
+	public void onTickChecked(long aTimer) {
+		super.onTickChecked(aTimer);
+		// upstream 06Covers :178-181 — the visual sync flags reset after the sync window
+		if (hasCovers()) getCovers().resetSync();
+	}
+
+	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
 		aNBT.putByte(NBT_MLAST, mLastReceivedFrom);
@@ -610,6 +680,7 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
 		aNBT.putByte(NBT_OUTPUT, mDisabledOutputs);
 		aNBT.putLong(NBT_TRANSFERRED, mTransferredItems);
 		aNBT.put(NBT_INVENTORY, serializeInventory());
+		writeCoversToNBT(aNBT); // upstream 06Covers :74
 	}
 
 	@Override
@@ -623,6 +694,7 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector {
 		if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) {
 			deserializeInventory(aNBT.getCompound(NBT_INVENTORY));
 		}
+		readCoversFromNBT(aNBT); // upstream 06Covers :68
 	}
 
 	/** The ItemStackHandler NBT face (21.1 takes the registry provider — the 03 NBT_ACCESS seam). */

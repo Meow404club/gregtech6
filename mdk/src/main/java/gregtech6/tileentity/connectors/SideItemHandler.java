@@ -71,6 +71,7 @@ public class SideItemHandler implements IItemHandler {
 	@Override
 	public ItemStack insertItem(int aSlot, ItemStack aStack, boolean aSimulate) {
 		if (aStack.isEmpty()) return aStack;
+		if (mSide >= 0 && !mTile.canInsertItem(mSide, aSlot, aStack)) return aStack; // the 04Covers :349-356 cover gate (the retriever plate refuses its face, CoverRetrieverItem :138)
 		if (!mTile.canInsertItem(aSlot, aStack, mSide)) return aStack;
 		return mTile.mInventory.insertItem(aSlot, aStack, aSimulate);
 	}
@@ -79,6 +80,7 @@ public class SideItemHandler implements IItemHandler {
 	@Override
 	public ItemStack extractItem(int aSlot, int aAmount, boolean aSimulate) {
 		if (aAmount <= 0) return ItemStack.EMPTY;
+		if (mSide >= 0 && !mTile.canExtractItem(mSide, aSlot, mTile.mInventory.getStackInSlot(aSlot))) return ItemStack.EMPTY; // the :358-365 cover gate (CoverRetrieverItem :139)
 		if (!mTile.canExtractItem(aSlot, mTile.mInventory.getStackInSlot(aSlot), mSide)) return ItemStack.EMPTY;
 		return mTile.mInventory.extractItem(aSlot, aAmount, aSimulate);
 	}

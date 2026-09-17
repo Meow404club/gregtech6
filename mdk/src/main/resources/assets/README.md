@@ -434,6 +434,28 @@ cover (AbstractCoverDefault :71-72 defaults).
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
+Item Retriever cover textures, task p31-retriever-cover: the 2 PNGs under
+`gt6/textures/block/retrieveritem/` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/covers/retrieveritem/`
+(the `CoverRetrieverItem.java:147-148` normal/inverted sprite pair),
+byte-identical to upstream, sha256 verified:
+
+- `retrieveritem/normal.png`   `c4b860dcc9d973fe0d457204d5e0e106e86e09e4c96d7758004d64a09ceff3bd`
+- `retrieveritem/inverted.png` `6b6b96a216f6b914c0d21758314902fd5e6a24191f0d5398c694a8404722e1aa`
+
+Path mapping (declared, the filter-item precedent): upstream
+`machines/covers/retrieveritem/<normal|inverted>` lowercased/underscored to
+`retrieveritem/<...>` (1.20.1 `ResourceLocation` charset), landing under
+`textures/block/` — the vanilla block atlas `directory("block")` source
+auto-stitches the sprite ids `gt6:block/retrieveritem/<normal|inverted>` with
+zero extra atlas wiring. The upstream `BACKGROUND_COVER` layer
+(covers/base.png, the attachment/holder faces) is NOT borrowed — it folds into
+the single-sprite plate like every cover (AbstractCoverDefault :71-72
+defaults).
+
+Copied on 2026-09-17. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
 Auto Redstone Machine Switch cover texture, task p11-cover-controllers: the
 1 PNG under `gt6/textures/block/auto_redstone_switch/` comes from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/autoredstoneswitch/`

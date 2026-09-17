@@ -1026,6 +1026,7 @@ direct	item.gt6.chisel	凿子	hand
 direct	item.gt6.cover_auto_redstone_machine_switch	自动红石机器开关	hand
 direct	item.gt6.cover_controller	面板控制器	hand
 direct	item.gt6.cover_item_filter	物品过滤器	hand
+direct	item.gt6.cover_item_retriever	物品回收器面板	hand
 direct	item.gt6.cover_redstone_conductor_in	红石导线面板（接收）	hand
 direct	item.gt6.cover_redstone_conductor_out	红石导线面板（发出）	hand
 direct	item.gt6.cover_redstone_emitter	红石发射器	hand
