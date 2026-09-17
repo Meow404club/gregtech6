@@ -177,14 +177,89 @@ public class GT6DualDirectoryFacesTest {
 		for (Path tSingular : tTables) {
 			String tSingularText = Files.readString(tSingular);
 			String tPluralText = Files.readString(tPluralRoot.resolve(tSingularRoot.relativize(tSingular)));
-			String tExpected = tPluralText.replace("\"minecraft:copy_nbt\"", "\"minecraft:copy_custom_data\"");
-			assertEquals(tExpected, tSingularText,
+			// task p30-ore-5-census dialect tolerance: the singular band carries the 21.1
+			// predicate dialect — the census LIVE finding was that the old byte-identity
+			// contract shipped 1.20.1 match_tool shapes into the 1.21.1 loader, where they
+			// parse as an EMPTY ItemPredicate (the RecordCodecBuilder silently drops the
+			// unknown "enchantments" key) = an always-true tool match = the fortune arm
+			// firing on bare hands. The identity contract is therefore judged on the
+			// DIALECT-NORMALIZED trees (the tools/datagen_tree_check.py match_tool
+			// normalizer, test-side), not on bytes.
+			assertEquals(dialectNormalize(JsonParser.parseString(tPluralText)),
+					dialectNormalize(JsonParser.parseString(tSingularText)),
 					"gt6/loot_table/" + tSingularRoot.relativize(tSingular) + " differs beyond the codec-verified rename");
 			assertFalse(tSingularText.contains("minecraft:copy_nbt"),
 					"gt6/loot_table/" + tSingularRoot.relativize(tSingular) + " a survivor is a boot-time LootDataType parse death");
-			if (!tExpected.equals(tPluralText)) tAdapted++;
+			if (tPluralText.contains("minecraft:copy_nbt")) tAdapted++;
 		}
 		assertTrue(tAdapted >= 51, "the 51-table paint/foam carry band rides the adapter (got " + tAdapted + ")");
+	}
+
+	/**
+	 * The dual-dialect fold (task p30-ore-5-census): one comparable tree from either
+	 * loader dialect — ① the value rename {@code minecraft:copy_nbt} → {@code
+	 * minecraft:copy_custom_data} (the p28 adapter), ② the match_tool predicate
+	 * reshape: 1.20.1 (plural) {@code "enchantments": [{"enchantment": X, ...}]} vs
+	 * 1.21.1 (singular) {@code "predicates": {"minecraft:enchantments": [{"enchantments":
+	 * X, ...}]}} (ItemPredicate.java:29 optionalFieldOf("predicates") — the p28-era
+	 * byte contract predates the first match_tool tables in the singular band), ③ the
+	 * item-id scalar/array tolerance ({@code "items": "gt6:x"} vs {@code ["gt6:x"]},
+	 * the 1.21 single-element HolderSet face).
+	 */
+	private static JsonElement dialectNormalize(JsonElement aElement) {
+		if (aElement.isJsonObject()) {
+			JsonObject tObject = aElement.getAsJsonObject();
+			JsonObject rObject = new JsonObject();
+			for (Map.Entry<String, JsonElement> tEntry : tObject.entrySet()) {
+				String tKey = tEntry.getKey();
+				JsonElement tValue = dialectNormalize(tEntry.getValue());
+				// ② 1.21.1 predicate map -> the 1.20.1 enchantment list; the entry
+				// key folds too ("enchantments": "minecraft:fortune" -> "enchantment": ...)
+				if (tKey.equals("predicates") && tValue.isJsonObject()
+						&& tValue.getAsJsonObject().has("minecraft:enchantments")) {
+					JsonElement tList = tValue.getAsJsonObject().get("minecraft:enchantments");
+					if (tList.isJsonArray()) {
+						com.google.gson.JsonArray rList = new com.google.gson.JsonArray();
+						for (JsonElement tCond : tList.getAsJsonArray()) {
+							if (tCond.isJsonObject() && tCond.getAsJsonObject().has("enchantments")
+									&& !tCond.getAsJsonObject().has("enchantment")) {
+								JsonObject tFolded = new JsonObject();
+								for (Map.Entry<String, JsonElement> tRest : tCond.getAsJsonObject().entrySet()) {
+									tFolded.add(tRest.getKey().equals("enchantments") ? "enchantment" : tRest.getKey(),
+											tRest.getValue());
+								}
+								rList.add(tFolded);
+							} else {
+								rList.add(tCond);
+							}
+						}
+						rObject.add("enchantments", rList);
+						continue;
+					}
+					rObject.add("enchantments", tList);
+					continue;
+				}
+				// ③ the 1.21 scalar item id -> the 1.20.1 single-element array
+				if (tKey.equals("items") && tValue.isJsonPrimitive()) {
+					com.google.gson.JsonArray tItems = new com.google.gson.JsonArray();
+					tItems.add(tValue);
+					rObject.add(tKey, tItems);
+					continue;
+				}
+				rObject.add(tKey, tValue);
+			}
+			return rObject;
+		}
+		if (aElement.isJsonArray()) {
+			com.google.gson.JsonArray rArray = new com.google.gson.JsonArray();
+			for (JsonElement tItem : aElement.getAsJsonArray()) rArray.add(dialectNormalize(tItem));
+			return rArray;
+		}
+		if (aElement.isJsonPrimitive() && aElement.getAsJsonPrimitive().isString()
+				&& aElement.getAsString().equals("minecraft:copy_nbt")) {
+			return new com.google.gson.JsonPrimitive("minecraft:copy_custom_data"); // ① the p28 adapter rename
+		}
+		return aElement;
 	}
 
 	/**
