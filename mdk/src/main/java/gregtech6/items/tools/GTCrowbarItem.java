@@ -26,6 +26,11 @@ import net.minecraftforge.common.ToolAction;
 
 import gregtech6.covers.ICover;
 import gregtech6.covers.ICoverableTE;
+import gregtech6.itemdata.GT6ItemData;
+import gregtech6.itemdata.GT6ToolStats;
+
+import gregapi.data.MT;
+import gregapi.oredict.OreDictMaterial;
 
 /**
  * The formal GT6 crowbar — task p9-tool-crowbar spec ②, the ADR
@@ -54,10 +59,26 @@ import gregtech6.covers.ICoverableTE;
  * 10000 = one durability point (Behavior_Tool.doDamage units(…,10000,100) :63), so
  * the :151 return {@code 10000} maps to a single {@link ItemStack#hurtAndBreak} of 1
  * here; the per-block-break 50 / per-attack 200 figures (GT_Tool_Crowbar :48-50/:70-72)
- * fold into that single point (declared deviation). Durability 512, single steel tier
- * (upstream scales by material, Loader_Tools:128 — the ladder is a pool cut). Attack
- * damage 2.0 kept (getBaseDamage :75-77); the canBlock/isWeapon blocking semantics are
- * cut (1.20.1 has no item-blocking mechanic, ADR ①).
+ * fold into that single point (declared deviation). Attack damage 2.0 kept (getBaseDamage
+ * :75-77); the canBlock/isWeapon blocking semantics are cut (1.20.1 has no item-blocking
+ * mechanic, ADR ①).
+ *
+ * <p>IDENTITY SEAM (task p31-identity-seam — the crowbar is the GT6ItemData seam's
+ * FIRST consumer, the GT6Tools pool cuts ②③ unlocked): a stack carries its material
+ * in {@link GT6ToolStats#KEY} (the upstream {@code GT.ToolStats} compound,
+ * MultiItemTool.java:192) and the item reads it per stack:
+ * <ul>
+ * <li>durability — {@link #getMaxDamage} over the payload's {@code j}
+ * (mToolDurability × 100 × multiplier, :182) at the pinned 100 units = 1 point
+ * ratio: Steel → the ADR-pinned 512, TungstenSteel → 5120, ...; a stack with NO
+ * identity (every legacy stack) keeps {@link #DURABILITY_POINTS};</li>
+ * <li>tint — {@link #tintARGB} on the head layer (model tint index 0, the
+ * MaterialPrefixItem pattern), the material {@code mRGBaSolid} with the VERBATIM
+ * upstream steel fallback (GT_Tool_Crowbar.getRGBa :148,
+ * {@code getPrimaryMaterial(aStack, MT.Steel)}).</li>
+ * </ul>
+ * Identity-less stacks are the declared legacy arm, not a fabricated default: the
+ * seam's own reads are fail-visible ({@link GT6ItemData#find} = explicit empty).
  *
  * <p>Mining half (task p10-tool-crowbar-mining, unlocking the formerly-pooled rails/
  * circuits arm — the javadoc here previously declared it pooled): upstream
@@ -118,8 +139,15 @@ public class GTCrowbarItem extends Item {
 	/** The tool damage the ICoverableTE dispatch returns for a successful dismantle (upstream :151). */
 	public static final long TOOL_DAMAGE_PER_DISMANTLE = 10000;
 
-	/** The vanilla durability points — declared deviation (upstream material-scaled, single steel tier here). */
+	/**
+	 * The vanilla durability points for an IDENTITY-LESS stack — every pre-seam
+	 * legacy stack, the pinned ADR value. Identity-carrying stacks scale per
+	 * material through {@link #durabilityPoints} (upstream :182, the seam javadoc).
+	 */
 	public static final int DURABILITY_POINTS = 512;
+
+	/** The upstream :182 unit budget per vanilla point (j = mToolDurability × 100 × mult; Steel 51200 → 512 points). */
+	public static final long UNITS_PER_POINT = 100;
 
 	/** Upstream getBaseDamage :75-77 — 2.0F kept verbatim as the main-hand attribute. */
 	private static final float ATTACK_DAMAGE = 2.0F;
@@ -248,6 +276,53 @@ public class GTCrowbarItem extends Item {
 	 */
 	public static float destroySpeedBonus(BlockState aState) {
 		return mines(aState) ? MINING_SPEED : 1.0F;
+	}
+
+	// ------------------------------ the GT6ItemData identity seams (task p31-identity-seam) ------------------------------
+
+	/**
+	 * The primary material of a stack's {@link GT6ToolStats#KEY} identity, or
+	 * {@code null} when the stack carries none (the explicit-missing arm — never a
+	 * fabricated default). Static so the offline tests can pin it without
+	 * constructing the item (the same mod-Item wall the classifier seam rides).
+	 */
+	public static OreDictMaterial materialOf(ItemStack aStack) {
+		return GT6ItemData.find(aStack, GT6ToolStats.KEY)
+				.map(GT6ToolStats::primaryMaterial).orElse(null);
+	}
+
+	/**
+	 * The per-material durability: the payload's {@code j} (upstream
+	 * MultiItemTool.java:182 {@code mToolDurability * 100 * multiplier}) at the
+	 * pinned {@link #UNITS_PER_POINT} ratio — Steel 51200 → 512 (the ADR value),
+	 * TungstenSteel 512000 → 5120. {@code null} identity → {@link #DURABILITY_POINTS}
+	 * (the legacy arm). The upstream per-USE damage numbers stay folded into one
+	 * point per event (the declared deviation above), so the ratio — not the raw
+	 * upstream unit count — is what carries over.
+	 */
+	public static int durabilityPoints(GT6ToolStats aStats) {
+		return aStats == null ? DURABILITY_POINTS : (int) Math.max(1, aStats.maxDamage() / UNITS_PER_POINT);
+	}
+
+	/** The stack-level durability read the vanilla bar renders and pays from. */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return durabilityPoints(GT6ItemData.find(aStack, GT6ToolStats.KEY).orElse(null));
+	}
+
+	/**
+	 * The runtime tint (upstream GT_Tool_Crowbar.getRGBa :146-149): tint index 0 = the
+	 * head layer (the ItemModelGenerator layers quads by index, so layer1 = the
+	 * overlay pass stays un-tinted — the MaterialPrefixItem.tintColor pattern), the
+	 * material {@code mRGBaSolid} packed ARGB with the VERBATIM upstream
+	 * {@code getPrimaryMaterial(aStack, MT.Steel)} fallback; every other index = the
+	 * {@code -1} no-tint sentinel like every other GT6 tint seam.
+	 */
+	public static int tintARGB(ItemStack aStack, int aTintIndex) {
+		if (aTintIndex != 0) return -1;
+		OreDictMaterial tMaterial = GT6ItemData.find(aStack, GT6ToolStats.KEY)
+				.map(GT6ToolStats::primaryMaterial).orElse(MT.Steel);
+		return 0xFF000000 | (tMaterial.mRGBaSolid[0] << 16) | (tMaterial.mRGBaSolid[1] << 8) | tMaterial.mRGBaSolid[2];
 	}
 
 	/** The drop-authorization half of isMinableBlock (SwordItem.java:68 shape). */

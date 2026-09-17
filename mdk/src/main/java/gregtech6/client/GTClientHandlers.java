@@ -19,10 +19,12 @@ import gregtech6.client.render.GTMachinePaintTint;
 import gregtech6.client.wire.GTWireTint;
 import gregtech6.item.GTMaterialPrefixBlockItem;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.items.tools.GTCrowbarItem;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTBarrels;
+import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTWires;
 
 /**
@@ -53,6 +55,7 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterMachinePaintItemColors); // task p22-painted-item-domain: machine paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintBlockColors); // task p23-barrel-paint-render: barrel paint tint, world half
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintItemColors); // task p23-barrel-paint-render: barrel paint tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterToolIdentityItemColors); // task p31-identity-seam: the crowbar material identity tint, inventory half
     }
 
     /** Material tint for every registered material prefix item (GTCEu TagPrefixItem.java:55-57 isomorph). */
@@ -156,6 +159,20 @@ public final class GTClientHandlers {
         List<Item> tBarrelPaintItems = new ArrayList<>();
         for (Block tBlock : GTBarrels.paintableBlockArray()) tBarrelPaintItems.add(tBlock.asItem());
         event.getItemColors().register(GTItemPaintTint.itemColor(), tBarrelPaintItems.toArray(Item[]::new));
+    }
+
+    /**
+     * Task p31-identity-seam: the crowbar MATERIAL IDENTITY tint, the inventory half —
+     * the former GT6Tools pool cut ③. {@link GTCrowbarItem#tintARGB} reads the
+     * {@code GT.ToolStats} identity through the GT6ItemData seam (client-visible on
+     * both legs: the 1.20.1 root NBT rides the stack sync, the 1.21.1 payload is the
+     * network-synchronized component) and colours the head layer with the material
+     * {@code mRGBaSolid}, the upstream steel fallback verbatim (GT_Tool_Crowbar
+     * .getRGBa :148). The method reference rides the shared static seam, so the
+     * offline tests pin the exact lambda the client runs.
+     */
+    private static void onRegisterToolIdentityItemColors(RegisterColorHandlersEvent.Item event) {
+        event.getItemColors().register(GTCrowbarItem::tintARGB, GT6Tools.CROWBAR.get());
     }
 
     /** Translation key existence check (Language.getInstance Language.java:83, has :97). */
