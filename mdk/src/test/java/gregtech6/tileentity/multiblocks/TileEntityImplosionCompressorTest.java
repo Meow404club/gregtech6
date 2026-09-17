@@ -205,8 +205,11 @@ public class TileEntityImplosionCompressorTest extends GTMultiBlocksOfflineTestB
 		gregtech6.recipes.GT6RecipesImplosion.sCircuitResolver = gregtech6.recipes.GT6RecipesImplosionTest::fixtureCircuit;
 		gregtech6.recipes.Recipe.sNotConsumable = gregtech6.recipes.GT6RecipesImplosionTest.FIXTURE_NOT_CONSUMABLE;
 		try {
-			gregtech6.recipes.GT6RecipeMaps.init();
+			// reset FIRST (load-bearing on 21.1: the offline JVM runs the mod lifecycle, so
+			// the live pour already happened at FMLCommonSetup — see the recipes-test note)
+			gregtech6.recipes.GT6RecipeMaps.reset();
 			gregtech6.recipes.GT6RecipesImplosion.resetForTest();
+			gregtech6.recipes.GT6RecipeMaps.init();
 			gregtech6.recipes.GT6RecipesImplosion.load();
 
 			TestImplosion tMachine = sImplosionType.create(IMP_POS, Blocks.BRICKS.defaultBlockState());

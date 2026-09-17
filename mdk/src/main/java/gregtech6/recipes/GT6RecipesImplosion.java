@@ -103,12 +103,26 @@ public final class GT6RecipesImplosion {
 	/** The circuit seam: the live selector stack ({@link GT6Circuits#selector(int)}), fixtures injected offline (the Distillery form). */
 	public static Function<Integer, ItemStack> sCircuitResolver = GT6Circuits::selector;
 
-	/** The four tier arms, vanilla-TNT branch (upstream order :711-714). */
-	public static final List<ImplosionTier> TIERS = List.of(
-			new ImplosionTier(":711", 1,  8, 0, OP.plateGem     ),
-			new ImplosionTier(":712", 1,  8, 1, OP.gem          ),
-			new ImplosionTier(":713", 2, 32, 2, OP.gemFlawless  ),
-			new ImplosionTier(":714", 4, 64, 3, OP.gemExquisite));
+	/**
+	 * The four tier arms, vanilla-TNT branch (upstream order :711-714). LAZILY built —
+	 * the {@code @EventBusSubscriber} scan class-loads this file at MOD CONSTRUCTION,
+	 * before OP.init() (the a9027ac lesson): an eager capture would freeze null prefixes
+	 * into the constants.
+	 */
+	private static volatile List<ImplosionTier> sTiers = null;
+
+	/** The transcribed tier arms, captured on first use (one material generation). */
+	public static List<ImplosionTier> tiers() {
+		List<ImplosionTier> tTable = sTiers;
+		if (tTable == null) {
+			sTiers = tTable = List.of(
+					new ImplosionTier(":711", 1,  8, 0, OP.plateGem     ),
+					new ImplosionTier(":712", 1,  8, 1, OP.gem          ),
+					new ImplosionTier(":713", 2, 32, 2, OP.gemFlawless  ),
+					new ImplosionTier(":714", 4, 64, 3, OP.gemExquisite));
+		}
+		return tTable;
+	}
 
 	/** The lazily built group table (MT.init at class-load lesson — the a9027ac form). */
 	private static volatile List<ImplosionRow> sRows = null;
@@ -168,7 +182,7 @@ public final class GT6RecipesImplosion {
 		if (GT6RecipeMaps.IMPLOSION == null) return; // reset() between init and load — a broken lifecycle
 		int tPoured = 0, tSkipped = 0;
 		for (ImplosionRow tRow : table()) {
-			for (ImplosionTier tTier : TIERS) {
+			for (ImplosionTier tTier : tiers()) {
 				Recipe tRecipe = buildRecipe(tRow, tTier);
 				if (tRecipe == null || GT6RecipeMaps.IMPLOSION.addRecipe(tRecipe) == null) {tSkipped++; continue;} // mat() → null / the ghost guard
 				tPoured++;
@@ -206,9 +220,10 @@ public final class GT6RecipesImplosion {
 		return tHandle == null ? null : tHandle.get();
 	}
 
-	/** Test seam: clears the poured flag and the captured table so a fresh generation can re-pour. Public — the BE-package e2e shares the reset. */
+	/** Test seam: clears the poured flag and the captured tables so a fresh generation can re-pour. Public — the BE-package e2e shares the reset. */
 	public static void resetForTest() {
 		sLoaded = false;
 		sRows = null;
+		sTiers = null;
 	}
 }

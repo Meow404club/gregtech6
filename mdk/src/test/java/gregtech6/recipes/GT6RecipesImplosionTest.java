@@ -76,7 +76,10 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
-		MT.init(); // the group walks need the material table (the MaterialStackNBTTest form)
+		// the offline material universe — OP prefixes AND the MT walk (the
+		// GT6RecipeGenerationGuardTest form; bare MT.init() leaves OP.* null and the
+		// result depends on the JVM class order, the neo-leg 7/9 red lesson)
+		gregtech6.registry.GTMaterialItems.initMaterials();
 		sDefaultMaterialResolver = GT6RecipesImplosion.sMaterialItemResolver;
 		sDefaultTntResolver = GT6RecipesImplosion.sTntResolver;
 		sDefaultCircuitResolver = GT6RecipesImplosion.sCircuitResolver;
@@ -104,7 +107,7 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	void tiersTablePinsTheUpstreamArms() {
-		assertEquals(4, GT6RecipesImplosion.TIERS.size());
+		assertEquals(4, GT6RecipesImplosion.tiers().size());
 		// :711 — dust1 + TNT x8 + tag(0) → plateGem
 		assertTier(":711", 1, 8, 0, OP.plateGem);
 		// :712 — dust1 + TNT x8 + tag(1) → gem
@@ -116,7 +119,7 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 	}
 
 	private void assertTier(String aNote, int aDust, int aTnt, int aConfig, gregapi.oredict.OreDictPrefix aPrefix) {
-		GT6RecipesImplosion.ImplosionTier tTier = GT6RecipesImplosion.TIERS.stream()
+		GT6RecipesImplosion.ImplosionTier tTier = GT6RecipesImplosion.tiers().stream()
 				.filter(t -> t.note().equals(aNote)).findFirst().orElse(null);
 		assertNotNull(tTier, "tier " + aNote + " transcribed");
 		assertEquals(aDust, tTier.dustCount(), aNote + ": the dust count");
@@ -168,13 +171,10 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	void loadPoursEveryResolvedRowTier() {
-		GT6RecipesImplosion.sMaterialItemResolver = FIXTURE_RESOLVER;
-		GT6RecipesImplosion.sTntResolver = () -> Items.TNT;
-		GT6RecipesImplosion.sCircuitResolver = GT6RecipesImplosionTest::fixtureCircuit;
-		GT6RecipesImplosion.load();
-		assertEquals(GT6RecipesImplosion.table().size() * 4, GT6RecipeMaps.IMPLOSION.mRecipeList.size(),
+		RecipeMap tMap = pour();
+		assertEquals(GT6RecipesImplosion.table().size() * 4, tMap.mRecipeList.size(),
 				"every table row x every tier resolves over the fixture seams — zero skips");
-		for (Recipe tRecipe : GT6RecipeMaps.IMPLOSION.mRecipeList) {
+		for (Recipe tRecipe : tMap.mRecipeList) {
 			assertEquals(3, tRecipe.mInputs.length, "every row carries dust + TNT + selector");
 			assertEquals(1, tRecipe.mOutputs.length, "every row carries one output");
 			assertEquals(0, tRecipe.mEUt, "the :711-714 rows are eUt 0 (EUt0/256t 直译)");
@@ -184,13 +184,10 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	void tntCountsAreTheVanillaBranchVerbatim() {
-		GT6RecipesImplosion.sMaterialItemResolver = FIXTURE_RESOLVER;
-		GT6RecipesImplosion.sTntResolver = () -> Items.TNT;
-		GT6RecipesImplosion.sCircuitResolver = GT6RecipesImplosionTest::fixtureCircuit;
-		GT6RecipesImplosion.load();
-		long tEights = GT6RecipeMaps.IMPLOSION.mRecipeList.stream().filter(r -> r.mInputs[1].getCount() == 8).count();
-		long tThirtyTwos = GT6RecipeMaps.IMPLOSION.mRecipeList.stream().filter(r -> r.mInputs[1].getCount() == 32).count();
-		long tSixtyFours = GT6RecipeMaps.IMPLOSION.mRecipeList.stream().filter(r -> r.mInputs[1].getCount() == 64).count();
+		RecipeMap tMap = pour();
+		long tEights = tMap.mRecipeList.stream().filter(r -> r.mInputs[1].getCount() == 8).count();
+		long tThirtyTwos = tMap.mRecipeList.stream().filter(r -> r.mInputs[1].getCount() == 32).count();
+		long tSixtyFours = tMap.mRecipeList.stream().filter(r -> r.mInputs[1].getCount() == 64).count();
 		int tRowCount = GT6RecipesImplosion.table().size();
 		assertEquals(tRowCount * 2, tEights, "tiers :711/:712 ride 8 TNT each");
 		assertEquals(tRowCount, tThirtyTwos, "tier :713 rides 32 TNT (ST.mul(4, count-8))");
@@ -201,11 +198,19 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 	// the machine-shape lookup: selector routing + never-consumed
 	// ------------------------------------------------------------------
 
-	/** Pours the fixture set once and hands the map. */
+	/**
+	 * Pours the fixture set fresh and hands the map. The RESET FIRST is load-bearing on
+	 * the 21.1 leg: the offline JVM actually RUNS the mod lifecycle, so load() already
+	 * fired at FMLCommonSetup with the LIVE resolvers (the production pour — its boot-log
+	 * line "268 rows loaded, 0 skipped" is the live evidence) and sLoaded is up — without
+	 * the reset the fixture pour early-returns and the lookup faces the live-poured map.
+	 */
 	private gregtech6.recipes.RecipeMap pour() {
 		GT6RecipesImplosion.sMaterialItemResolver = FIXTURE_RESOLVER;
 		GT6RecipesImplosion.sTntResolver = () -> Items.TNT;
 		GT6RecipesImplosion.sCircuitResolver = GT6RecipesImplosionTest::fixtureCircuit;
+		GT6RecipeMaps.reset();
+		GT6RecipesImplosion.resetForTest();
 		GT6RecipesImplosion.load();
 		return GT6RecipeMaps.IMPLOSION;
 	}
