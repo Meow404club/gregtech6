@@ -44,10 +44,15 @@ MACHINE = "implosion_compressor"
 # Damage key on 1.20.1 and the minecraft:custom_data component on 1.21.1
 # (GT6Circuits.applyConfiguration; the p24_act chain form)
 def selector(config, slot=2):
-    # the selector rides slot 2 (the third input slot); Damage on 1.20.1, the
-    # minecraft:custom_data component on 1.21.1 (GT6Circuits.applyConfiguration)
+    # the selector rides slot 2 (the third input slot). 1.20.1: the Damage key lives
+    # INSIDE the item's `tag:{}` compound (the raw data-merge NBT does NOT redirect
+    # item arguments like /give does; a top-level Damage key is dead weight —
+    # ItemStack.of only carries "tag" into the stack's metadata) and is an INT
+    # (the setDamageValue carrier, GT6Circuits.applyConfiguration — the recipe's
+    # exact-tag match then sees {Damage:0} on BOTH sides). 1.21.1: the
+    # minecraft:custom_data component (the applyConfiguration 21.1 branch).
     return {
-        "1.20.1": '{Slot:%db,id:"gt6:integrated_circuit",Count:1b,Damage:%db}' % (slot, config),
+        "1.20.1": '{Slot:%db,id:"gt6:integrated_circuit",Count:1b,tag:{Damage:%d}}' % (slot, config),
         "1.21.1": '{Slot:%db,id:"gt6:integrated_circuit",count:1,components:{"minecraft:custom_data":{Damage:%d}}}' % (slot, config),
     }
 
@@ -99,7 +104,10 @@ steps = [
     Step("data get block " + C, expect="maxprogress: 256L", poll=20),   # the eUt0/256t bar
     Step("data get block " + C, expect="gt6:plate_gem_diamond_industrial", poll=300),  # the completed run lands the output
 
-    phase("C: the tier-1 arm — the same stack with tag(1) -> gem DiamondIndustrial"),
+    phase("C: the tier-1 arm — fresh machine (the tier-0 plate output would block the gem output: the canOutput blockage semantics), then the tag(1) run"),
+    Step("fill 385 60 377 391 70 384 air", expect="filled"),
+    Step("setblock " + C + " gt6:" + MACHINE, expect="Changed the block"),
+    Step("gt6multiblock form " + C, expect="formed=true okay=true"),
     Step(FEED_T1["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": FEED_T1["1.21.1"]}),
     Step("data get block " + C, expect="active: 1b", poll=60),
