@@ -1,0 +1,14 @@
+{
+  "recipes": [
+    {
+      "comment": "task p31-qu-a-foundation smoke row — the element-disintegration row shape of Loader_Recipes_Other.java:971-972 verbatim over iron (MT.java:414: Fe protons 26 / neutrons 30): one ingot → MatterCharged 26 mB + MatterNeutral 30 mB (1 mB = 1 proton/neutron), duration (26+30)*131072 = 7340032, eut 1. The input rides minecraft:iron_ingot (concrete and always registered) as the stand-in for the GT6 material-family ingot the card-C dynamic walk will pour; this row is the NEI visibility anchor of the DECLARED-empty map, not the loop itself.",
+      "inputs": [{"item": "minecraft:iron_ingot", "count": 1}],
+      "fluidOutputs": [
+        {"fluid": "gt6:chargedmatter", "amount": 26},
+        {"fluid": "gt6:neutralmatter", "amount": 30}
+      ],
+      "duration": 7340032,
+      "eut": 1
+    }
+  ]
+}

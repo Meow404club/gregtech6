@@ -95,6 +95,7 @@ public class GT6EnUs extends LanguageProvider {
         addCFoamFluids(); // task p26-c-foam-fluid-refill — table-tail append
         addChemicalFluids(); // task p29-w4-f1-chemicals — table-tail append
         addHotFamilyFluids(); // task p29-w4-hot-lube — table-tail append (hot + closure + lubricant)
+        addQuFluids(); // task p31-qu-a-foundation — table-tail append (the QU matter/ender trio)
         addCFoamBlocks(); // task p26-c-foam-block-family — table-tail append
         addElectricWires();
         addMachines();
@@ -304,6 +305,21 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addChemicalFluids() {
         for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.CHEMICAL_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
+
+    /**
+     * QU-matter family keys (task p31-qu-a-foundation): one description entry per
+     * {@link GTFluids.ChemicalFluidSpec} row of {@link GTFluids#QU_FLUID_SPECS}, walked
+     * from the table so the lang face cannot drift from the registered fluids (the
+     * addChemicalFluids shape). Values are the upstream display names verbatim:
+     * "Charged Matter" / "Neutral Matter" (Loader_Fluids.java:70/:71) and
+     * "Molten Enderpearls" (:193, the GT6-owned FL.Ender). zh values ride the reference
+     * table's hand layer (no upstream dump faces for the matter fluids — hand rows).
+     */
+    private void addQuFluids() {
+        for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.QU_FLUID_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
     }

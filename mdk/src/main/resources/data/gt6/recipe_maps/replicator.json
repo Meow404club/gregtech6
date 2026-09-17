@@ -1,0 +1,11 @@
+{
+  "recipes": [
+    {
+      "comment": "task p31-qu-a-foundation smoke row — Loader_Recipes_Other.java:929 verbatim: RM.Replicator.addRecipe1(T, 16, 144, ST.tag(0), FL.Ender.make(L), NF, gem.mat(MT.EnderPearl, 1)) — 144 mB (one unit, L) of molten enderpearls replicate one ender pearl, eut 16 / duration 144. The output rides the vanilla ender_pearl (the GT6 gem-form EnderPearl item is not item-registered in the port); the USB-data rows (RM.java:672-676) stay POOLED with the unported USB chain.",
+      "fluidInputs": [{"fluid": "gt6:enderpearl_molten", "amount": 144}],
+      "outputs": [{"item": "minecraft:ender_pearl", "count": 1}],
+      "duration": 144,
+      "eut": 16
+    }
+  ]
+}
