@@ -202,7 +202,7 @@ public final class GT6RecipesImplosion {
 	/** The live item lookup (GTMaterialItems.get) — null when the pair has no item-path item (the compressor resolveItem form). */
 	@Nullable
 	private static Item resolveItem(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
-		net.minecraftforge.registries.RegistryObject<Item> tHandle = GTMaterialItems.get(aPrefix, aMaterial);
+		var tHandle = GTMaterialItems.get(aPrefix, aMaterial); // RegistryObject (forge) / DeferredHolder (neo) — the var cross-leg form
 		return tHandle == null ? null : tHandle.get();
 	}
 

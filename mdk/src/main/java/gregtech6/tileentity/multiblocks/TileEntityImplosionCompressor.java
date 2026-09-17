@@ -14,8 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 
 //? if forge {
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 //?}
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
@@ -166,7 +167,12 @@ public class TileEntityImplosionCompressor extends TileEntityBase10MultiBlockMac
 	@Override
 	public void onProcessStarted() {
 		if (hasLevel() && !isClientSide()) {
+			//? if forge {
 			getLevel().playSound(null, getBlockPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0F, 1.0F);
+			//?} else {
+			/*// 21.1: the vanilla SoundEvents are Holder.References (the 1.21.1 javap).
+			getLevel().playSound(null, getBlockPos(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
+			*///?}
 		}
 		super.onProcessStarted();
 	}
