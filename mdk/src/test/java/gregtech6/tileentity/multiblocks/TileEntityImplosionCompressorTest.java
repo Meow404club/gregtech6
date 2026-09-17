@@ -179,4 +179,57 @@ public class TileEntityImplosionCompressorTest extends GTMultiBlocksOfflineTestB
 			assertEquals(tFrontZ, tHollow[2], "facing " + tFacing + ": the hollow z lands at the facing front");
 		}
 	}
+
+	// ------------------------------------------------------------------
+	// the recipe walk e2e (level-less — the machine face over the poured fixture map)
+	// ------------------------------------------------------------------
+
+	/**
+	 * The three-input walk: dust + TNT + selector(0) in slots 0..2 consumes to the tier-0
+	 * output landing on slot 3 (the map-aware canOutput — the base's fixed slot-1 walk
+	 * would have read the TNT input slot as the output), eUt 0 → minEnergy 1, duration
+	 * 256, and the never-consumed selector. The resolvers ride the
+	 * {@link gregtech6.recipes.GT6RecipesImplosion} fixture seams (the Distillery test
+	 * convention); the production item identities are the RCON chain's proof.
+	 */
+	@Test
+	public void recipeWalkConsumesAndLandsTheOutput() {
+		// pour the fixture map — capture and restore every seam (the Distillery test form)
+		java.util.function.BiFunction<gregapi.oredict.OreDictPrefix, gregapi.oredict.OreDictMaterial, net.minecraft.world.item.Item> tDefaultResolver =
+				gregtech6.recipes.GT6RecipesImplosion.sMaterialItemResolver;
+		java.util.function.Supplier<net.minecraft.world.item.Item> tDefaultTnt = gregtech6.recipes.GT6RecipesImplosion.sTntResolver;
+		java.util.function.Function<Integer, ItemStack> tDefaultCircuit = gregtech6.recipes.GT6RecipesImplosion.sCircuitResolver;
+		java.util.function.Predicate<ItemStack> tDefaultNotConsumable = gregtech6.recipes.Recipe.sNotConsumable;
+		gregtech6.recipes.GT6RecipesImplosion.sMaterialItemResolver = gregtech6.recipes.GT6RecipesImplosionTest.FIXTURE_RESOLVER;
+		gregtech6.recipes.GT6RecipesImplosion.sTntResolver = () -> net.minecraft.world.item.Items.TNT;
+		gregtech6.recipes.GT6RecipesImplosion.sCircuitResolver = gregtech6.recipes.GT6RecipesImplosionTest::fixtureCircuit;
+		gregtech6.recipes.Recipe.sNotConsumable = gregtech6.recipes.GT6RecipesImplosionTest.FIXTURE_NOT_CONSUMABLE;
+		try {
+			gregtech6.recipes.GT6RecipeMaps.init();
+			gregtech6.recipes.GT6RecipesImplosion.resetForTest();
+			gregtech6.recipes.GT6RecipesImplosion.load();
+
+			TestImplosion tMachine = sImplosionType.create(IMP_POS, Blocks.BRICKS.defaultBlockState());
+			tMachine.mInventory.setStackInSlot(0, new ItemStack(net.minecraft.world.item.Items.CLAY_BALL, 1)); // the dust stand-in
+			tMachine.mInventory.setStackInSlot(1, new ItemStack(net.minecraft.world.item.Items.TNT, 8));
+			tMachine.mInventory.setStackInSlot(2, gregtech6.recipes.GT6RecipesImplosionTest.fixtureCircuit(0));
+
+			assertEquals(TileEntityBase10MultiBlockMachine.FOUND_AND_SUCCESSFULLY_USED_RECIPE,
+					tMachine.checkRecipe(true, false), "the tier-0 row applies");
+			assertEquals(1, tMachine.mMinEnergy, "eUt 0 → the TU constant-per-process floor of 1");
+			assertEquals(256, tMachine.mMaxProgress, "duration 256 at the zero-overclock window (mInputMin 1)");
+			assertEquals(0, tMachine.mInventory.getStackInSlot(0).getCount(), "the dust consumed");
+			assertEquals(0, tMachine.mInventory.getStackInSlot(1).getCount(), "the TNT consumed");
+			assertEquals(1, tMachine.mInventory.getStackInSlot(2).getCount(), "the selector never consumed");
+			assertNotNull(tMachine.mOutputItems, "the pending output is staged");
+			assertEquals(net.minecraft.world.item.Items.BRICK, tMachine.mOutputItems[0].getItem(), "the plateGem stand-in output");
+		} finally {
+			gregtech6.recipes.GT6RecipesImplosion.sMaterialItemResolver = tDefaultResolver;
+			gregtech6.recipes.GT6RecipesImplosion.sTntResolver = tDefaultTnt;
+			gregtech6.recipes.GT6RecipesImplosion.sCircuitResolver = tDefaultCircuit;
+			gregtech6.recipes.Recipe.sNotConsumable = tDefaultNotConsumable;
+			gregtech6.recipes.GT6RecipesImplosion.resetForTest();
+			gregtech6.recipes.GT6RecipeMaps.reset();
+		}
+	}
 }

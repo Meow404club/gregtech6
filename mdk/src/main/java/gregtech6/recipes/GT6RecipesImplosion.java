@@ -206,8 +206,8 @@ public final class GT6RecipesImplosion {
 		return tHandle == null ? null : tHandle.get();
 	}
 
-	/** Test seam: clears the poured flag and the captured table so a fresh generation can re-pour. */
-	static void resetForTest() {
+	/** Test seam: clears the poured flag and the captured table so a fresh generation can re-pour. Public — the BE-package e2e shares the reset. */
+	public static void resetForTest() {
 		sLoaded = false;
 		sRows = null;
 	}

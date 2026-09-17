@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 
 //? if forge {
@@ -19,8 +20,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.recipes.GT6RecipeMaps;
+import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.registry.GTMultiBlocks;
+import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 
 /**
@@ -166,6 +169,42 @@ public class TileEntityImplosionCompressor extends TileEntityBase10MultiBlockMac
 			getLevel().playSound(null, getBlockPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0F, 1.0F);
 		}
 		super.onProcessStarted();
+	}
+
+	/**
+	 * The map-aware canOutput (the GTLargeMachineBlockEntity :789-833 override — the base
+	 * copy walks the outputs from the FIXED slot 1, the Coke-Oven one-input shape; this
+	 * map carries THREE input slots, so the output slots start at
+	 * {@code mInputItemsCount}). The :626-629 chain cap and the stack-cap arithmetic are
+	 * the base body verbatim.
+	 */
+	@Override
+	public int canOutput(Recipe aRecipe) {
+		int rMaxTimes = (int) mParallel; // :621 — the :1228 NBT_PARALLEL 64
+
+		for (int i = 0, j = recipes().mInputItemsCount; i < recipes().mOutputItemsCount && i < aRecipe.mOutputs.length; i++, j++) {
+			ItemStack tOutput = aRecipe.mOutputs[i];
+			if (tOutput == null || tOutput.isEmpty()) continue;
+			ItemStack tSlot = slot(j);
+			if (tSlot != null && !tSlot.isEmpty()) {
+				if (aRecipe.mNeedsEmptyOutput) return 0; // :633-636
+				//? if forge {
+				if (!ItemStack.isSameItemSameTags(tSlot, tOutput)) {mOutputBlocked++; return 0;} // :637-640
+				//?}
+				//? if neoforge {
+				/*if (!ItemStack.isSameItemSameComponents(tSlot, tOutput)) {mOutputBlocked++; return 0;} // 21.1
+				*///?}
+				rMaxTimes = Math.min(rMaxTimes, (tSlot.getMaxStackSize() - tSlot.getCount()) / tOutput.getCount()); // :641
+				if (rMaxTimes <= 0) {mOutputBlocked++; return 0;} // :642-645
+			} else {
+				rMaxTimes = Math.min(rMaxTimes, Math.max(1, 64 / tOutput.getCount())); // :647
+			}
+		}
+		if (aRecipe.mFluidOutputs.length > 0) { // :650-666 — dormant (the map carries no fluid outputs)
+			for (FluidTankGT tTank : mTanksOutput) if (tTank.isEmpty()) return rMaxTimes;
+			return 0;
+		}
+		return rMaxTimes; // :667
 	}
 
 	/**

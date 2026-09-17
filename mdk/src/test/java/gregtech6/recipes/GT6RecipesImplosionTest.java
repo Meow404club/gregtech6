@@ -48,7 +48,7 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 	private static java.util.function.Predicate<ItemStack> sDefaultNotConsumable;
 
 	/** The offline fixture resolver: vanilla stand-ins per prefix (the Distillery fixture convention). */
-	private static final java.util.function.BiFunction<gregapi.oredict.OreDictPrefix, OreDictMaterial, net.minecraft.world.item.Item> FIXTURE_RESOLVER =
+	public static final java.util.function.BiFunction<gregapi.oredict.OreDictPrefix, OreDictMaterial, net.minecraft.world.item.Item> FIXTURE_RESOLVER =
 			(aPrefix, aMaterial) -> {
 				if (aPrefix == OP.dust        ) return Items.CLAY_BALL;
 				if (aPrefix == OP.plateGem    ) return Items.BRICK;
@@ -59,7 +59,8 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 			};
 
 	/** The fixture circuit stack: a tagged BRICKS stand-in (the Distillery fixtureCircuit form). */
-	private static ItemStack circuit(int aConfig) {
+	/** Public — the BE-package e2e shares the fixture circuit. */
+	public static ItemStack fixtureCircuit(int aConfig) {
 		return GT6Circuits.selector(Items.BRICKS, aConfig);
 	}
 
@@ -169,7 +170,7 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 	void loadPoursEveryResolvedRowTier() {
 		GT6RecipesImplosion.sMaterialItemResolver = FIXTURE_RESOLVER;
 		GT6RecipesImplosion.sTntResolver = () -> Items.TNT;
-		GT6RecipesImplosion.sCircuitResolver = GT6RecipesImplosionTest::circuit;
+		GT6RecipesImplosion.sCircuitResolver = GT6RecipesImplosionTest::fixtureCircuit;
 		GT6RecipesImplosion.load();
 		assertEquals(GT6RecipesImplosion.table().size() * 4, GT6RecipeMaps.IMPLOSION.mRecipeList.size(),
 				"every table row x every tier resolves over the fixture seams — zero skips");
@@ -185,7 +186,7 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 	void tntCountsAreTheVanillaBranchVerbatim() {
 		GT6RecipesImplosion.sMaterialItemResolver = FIXTURE_RESOLVER;
 		GT6RecipesImplosion.sTntResolver = () -> Items.TNT;
-		GT6RecipesImplosion.sCircuitResolver = GT6RecipesImplosionTest::circuit;
+		GT6RecipesImplosion.sCircuitResolver = GT6RecipesImplosionTest::fixtureCircuit;
 		GT6RecipesImplosion.load();
 		long tEights = GT6RecipeMaps.IMPLOSION.mRecipeList.stream().filter(r -> r.mInputs[1].getCount() == 8).count();
 		long tThirtyTwos = GT6RecipeMaps.IMPLOSION.mRecipeList.stream().filter(r -> r.mInputs[1].getCount() == 32).count();
@@ -204,7 +205,7 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 	private gregtech6.recipes.RecipeMap pour() {
 		GT6RecipesImplosion.sMaterialItemResolver = FIXTURE_RESOLVER;
 		GT6RecipesImplosion.sTntResolver = () -> Items.TNT;
-		GT6RecipesImplosion.sCircuitResolver = GT6RecipesImplosionTest::circuit;
+		GT6RecipesImplosion.sCircuitResolver = GT6RecipesImplosionTest::fixtureCircuit;
 		GT6RecipesImplosion.load();
 		return GT6RecipeMaps.IMPLOSION;
 	}
@@ -216,19 +217,19 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 	void selectorRoutesTheFourTiers() {
 		gregtech6.recipes.RecipeMap tMap = pour();
 		// tag(0) — dust1 + TNT8 → the plateGem stand-in (BRICK)
-		Recipe t0 = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(1), tnt(8), circuit(0));
+		Recipe t0 = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(1), tnt(8), fixtureCircuit(0));
 		assertNotNull(t0, "config 0 finds the :711 arm");
 		assertEquals(Items.BRICK, t0.mOutputs[0].getItem(), "the plateGem arm outputs the plateGem stand-in");
 		// tag(1) — dust1 + TNT8 → the gem stand-in (IRON_INGOT)
-		Recipe t1 = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(1), tnt(8), circuit(1));
+		Recipe t1 = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(1), tnt(8), fixtureCircuit(1));
 		assertNotNull(t1, "config 1 finds the :712 arm");
 		assertEquals(Items.IRON_INGOT, t1.mOutputs[0].getItem());
 		// tag(2) — dust2 + TNT32 → the gemFlawless stand-in (GOLD_INGOT)
-		Recipe t2 = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(2), tnt(32), circuit(2));
+		Recipe t2 = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(2), tnt(32), fixtureCircuit(2));
 		assertNotNull(t2, "config 2 finds the :713 arm");
 		assertEquals(Items.GOLD_INGOT, t2.mOutputs[0].getItem());
 		// tag(3) — dust4 + TNT64 → the gemExquisite stand-in (DIAMOND)
-		Recipe t3 = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(4), tnt(64), circuit(3));
+		Recipe t3 = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(4), tnt(64), fixtureCircuit(3));
 		assertNotNull(t3, "config 3 finds the :714 arm");
 		assertEquals(Items.DIAMOND, t3.mOutputs[0].getItem());
 	}
@@ -237,7 +238,7 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 	void wrongConfigMatchesNothingAndMissingSelectorFailsTheMinimum() {
 		gregtech6.recipes.RecipeMap tMap = pour();
 		// a non-row configuration matches nothing (the Distillery config-routing arm)
-		assertNull(tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(1), tnt(8), circuit(9)),
+		assertNull(tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(1), tnt(8), fixtureCircuit(9)),
 				"config 9 is no Implosion arm");
 		// two inputs fail the map's mMinimalInputItems = 3 gate (the "dust + TNT but no selector" CUT arm)
 		assertNull(tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(1), tnt(8)),
@@ -248,20 +249,20 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 		// consume (aDontCheckStackSizes = F) refuses the config-0 counts... by the tier-2
 		// surplus. What the probe CANNOT do is route config 0 to the tier-2 recipe — the
 		// selector Damage tag is exact-matched (isSameItemAndTag).
-		Recipe tProbed = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(2), tnt(32), circuit(0));
+		Recipe tProbed = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(2), tnt(32), fixtureCircuit(0));
 		assertNotNull(tProbed, "the probe ignores sizes — the tier-0 arm matches the bigger stack");
 		assertEquals(Items.BRICK, tProbed.mOutputs[0].getItem(), "the probe routed to the CONFIG-0 arm (plateGem), not the tier-2 arm");
 		// ...and the config-2 tag on the small stack routes to the tier-2 arm, whose consume then fails short
-		Recipe tSmall = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(1), tnt(8), circuit(2));
+		Recipe tSmall = tMap.findRecipe(null, Long.MAX_VALUE, null, null, dust(1), tnt(8), fixtureCircuit(2));
 		assertNotNull(tSmall, "the config-2 tag routes to the :713 arm even on the smaller stack");
-		assertFalse(tSmall.isRecipeInputEqual(true, false, null, dust(1), tnt(8), circuit(2)),
+		assertFalse(tSmall.isRecipeInputEqual(true, false, null, dust(1), tnt(8), fixtureCircuit(2)),
 				"the tier-2 consume refuses a 1-dust/8-TNT stack (the counts enforce the tier)");
 	}
 
 	@Test
 	void theSelectorIsNeverConsumed() {
 		gregtech6.recipes.RecipeMap tMap = pour();
-		ItemStack tDust = dust(1), tTnt = tnt(8), tSelector = circuit(0);
+		ItemStack tDust = dust(1), tTnt = tnt(8), tSelector = fixtureCircuit(0);
 		Recipe tRecipe = tMap.findRecipe(null, Long.MAX_VALUE, null, null, tDust, tTnt, tSelector);
 		assertNotNull(tRecipe);
 		// the consume pass shrinks the dust and the TNT, never the selector
@@ -274,7 +275,7 @@ public class GT6RecipesImplosionTest extends GTRecipesOfflineTestBase {
 	@Test
 	void theSecondConsumeFailsOnSpentInputs() {
 		gregtech6.recipes.RecipeMap tMap = pour();
-		ItemStack tDust = dust(1), tTnt = tnt(8), tSelector = circuit(0);
+		ItemStack tDust = dust(1), tTnt = tnt(8), tSelector = fixtureCircuit(0);
 		Recipe tRecipe = tMap.findRecipe(null, Long.MAX_VALUE, null, null, tDust, tTnt, tSelector);
 		assertNotNull(tRecipe);
 		assertTrue(tRecipe.isRecipeInputEqual(true, false, null, tDust, tTnt, tSelector), "first consume succeeds");
