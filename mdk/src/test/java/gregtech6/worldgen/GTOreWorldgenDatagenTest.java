@@ -8,8 +8,9 @@
  * <li>Loader_Worldgen.java:800-852 + :875 — the 54 always-on WorldgenOresSmall rows,
  *     ctor order (name, minY, maxY, amount, material) + the row's GEN_* vanilla-dim
  *     projection; every row below cites its upstream line.</li>
- * <li>WorldgenOresSmall.java:61 — the per-chunk count value range
- *     {@code max(1, mAmount/2 + nextInt(1+mAmount)/2)} → [max(1, amount/2), amount].</li>
+ * <li>WorldgenOresSmall.java:61 — the per-chunk count; the declared constant deviation
+ *     pins max(1, amount/2) veins per chunk (the range lower bound; see the
+ *     GTOreWorldgen.veinCount deviation note for the cross-leg dispatch evidence).</li>
  * <li>WD.java:765-780 — setSmallOre host face: stone/deepslate tags + 17 GT stones +
  *     gravel/sand (overworld), netherrack (nether), endstone (end); redsand/mud are
  *     NOT upstream small-ore hosts.</li>
@@ -199,21 +200,16 @@ class GTOreWorldgenDatagenTest {
                 "both rows resolve to the same registration material (the ore-1 collapse)");
     }
 
-    /** WorldgenOresSmall.java:61 count range: [max(1, amount/2), amount] per row, boundaries pinned. */
+    /** The declared count deviation: constant max(1, amount/2) per row (the :61 range lower bound), boundaries pinned. */
     @Test
     void countBoundsArePinned() {
         for (GTOreWorldgen.SmallOreRow tRow : GTOreWorldgen.ROWS) {
-            assertEquals(Math.max(1, tRow.amount() / 2), GTOreWorldgen.countMin(tRow),
-                    tRow.name() + " countMin = max(1, amount/2)");
-            assertEquals(tRow.amount(), GTOreWorldgen.countMax(tRow), tRow.name() + " countMax = amount");
-            assertTrue(GTOreWorldgen.countMin(tRow) <= GTOreWorldgen.countMax(tRow),
-                    tRow.name() + " count range non-empty");
+            assertEquals(Math.max(1, tRow.amount() / 2), GTOreWorldgen.veinCount(tRow),
+                    tRow.name() + " veinCount = max(1, amount/2) (the constant-count deviation)");
         }
-        assertEquals(1, GTOreWorldgen.countMin(rowOf("ore.small.scheelite")), "amount 1 clamps to the [1,1] degenerate range");
-        assertEquals(1, GTOreWorldgen.countMax(rowOf("ore.small.scheelite")), "amount 1 upper bound");
-        assertEquals(18, GTOreWorldgen.countMin(rowOf("ore.small.coal")), "coal 36 → [18, 36]");
-        assertEquals(36, GTOreWorldgen.countMax(rowOf("ore.small.coal")), "coal upper bound");
-        assertEquals(8, GTOreWorldgen.countMin(rowOf("ore.small.copper")), "copper 16 → [8, 16]");
+        assertEquals(1, GTOreWorldgen.veinCount(rowOf("ore.small.scheelite")), "amount 1 clamps to 1");
+        assertEquals(18, GTOreWorldgen.veinCount(rowOf("ore.small.coal")), "coal 36 → 18 veins/chunk");
+        assertEquals(8, GTOreWorldgen.veinCount(rowOf("ore.small.copper")), "copper 16 → 8 veins/chunk");
     }
 
     /** The nether y clamp: maxY>127 clamps at 127 for nether pairs only — exactly craponite/pollucite/zeolite/cinnabar. */

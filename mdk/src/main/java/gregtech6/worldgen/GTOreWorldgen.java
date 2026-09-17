@@ -240,14 +240,22 @@ public final class GTOreWorldgen {
      */
     public static final int ORE_SIZE = 4;
 
-    /** WorldgenOresSmall.java:61 count range lower bound — max(1, amount/2 + rnd(1+amount)/2) >= this. */
-    public static int countMin(SmallOreRow aRow) {
+    /**
+     * The per-chunk vein count of a row, as a CONSTANT = max(1, amount/2) — the lower
+     * bound of the upstream :61 value range. DECLARED DEVIATION from the pinned
+     * count=UniformInt[max(1, amount/2), amount]: the IntProvider dispatch serializes
+     * DIFFERENTLY per leg (1.20.1/DFU 6 wraps the payload in "value", 21.1/DFU 8 is
+     * inline — live evidence: the 21.1 world load of the forge-written canonical tree
+     * threw "Failed to load registries ... Not a number: {type:uniform, value:{...}}"),
+     * and the canonical single-producer tree must stay byte-identical across legs. The
+     * constant keeps the density EXACTLY at the upstream MEAN (j_min × 1 block = amount/2
+     * per chunk with the size=4 vein mean 1.5 → 0.75·amount, the :61 range's
+     * expectation); the chunk-to-chunk variance of j is lost — the datapack count field
+     * stays player-editable, and the exact per-attempt scatter is the L1 custom-feature
+     * card's domain.
+     */
+    public static int veinCount(SmallOreRow aRow) {
         return Math.max(1, aRow.amount() / 2);
-    }
-
-    /** WorldgenOresSmall.java:61 count range upper bound — the raw amount (mAmount >= 1 upstream, :47). */
-    public static int countMax(SmallOreRow aRow) {
-        return aRow.amount();
     }
 
     /** The 1.7.10 nether is 128 tall (y 0..127) — a higher band would be dead attempts. */

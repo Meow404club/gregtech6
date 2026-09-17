@@ -54,7 +54,6 @@ import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.util.valueproviders.UniformInt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -503,8 +502,10 @@ public final class GT6WorldgenDatagen {
             GTOreWorldgen.SmallOreRow tRow = tPair.row();
             PlacementUtils.register(ctx, GTOreWorldgen.placedKey(tRow, tPair.dim()),
                     aFeatures.getOrThrow(GTOreWorldgen.configuredKey(tRow, tPair.dim())),
-                    // count = the WorldgenOresSmall.java:61 value range max(1, amount/2)..amount (mean ~0.75 amount)
-                    CountPlacement.of(UniformInt.of(GTOreWorldgen.countMin(tRow), GTOreWorldgen.countMax(tRow))),
+                    // count = the constant max(1, amount/2) — the :61 range lower bound, the
+                    // density-exact cross-leg face (UniformInt is dispatch-divergent per leg,
+                    // GTOreWorldgen.veinCount javadoc)
+                    CountPlacement.of(GTOreWorldgen.veinCount(tRow)),
                     InSquarePlacement.spread(),
                     HeightRangePlacement.uniform(VerticalAnchor.absolute(tRow.minY()),
                             VerticalAnchor.absolute(GTOreWorldgen.placedMaxY(tRow, tPair.dim()))),
