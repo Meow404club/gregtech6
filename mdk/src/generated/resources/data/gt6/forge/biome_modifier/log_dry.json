@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:surface_log_dry",
+  "features": "gt6:log_dry",
+  "step": "vegetal_decoration"
+}

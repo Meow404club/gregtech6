@@ -27,6 +27,7 @@ import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GT6TreeBlocks;
+import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GTWires;
 
@@ -95,8 +96,29 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addGrassBand(); // task p24-grass-block — the grass family band
 		addShovelBand();
 		addTreeBand(); // task p30-w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
+		addSurfacePlantBand(); // task p30-w6-t2-surface-blocks — the fallen logs (logs/axe) + the soil pair (shovel)
 		// the takeover seam: later cards tail-append their own add*Band() here
 		// (p24-tags-prefix-materials: rolling batches).
+	}
+
+	/**
+	 * The surface-plants band (task p30-w6-t2-surface-blocks): the four fallen-log woods
+	 * join {@code #minecraft:logs} + mineable/axe (the t1 log row — NOTE the coke-oven
+	 * recipe rebuild counts #minecraft:logs, 40 vanilla + 9 gt6 becomes +4 with this
+	 * card, the coordinator-noted census drift), and the soil pair (turf + black sand)
+	 * joins mineable/shovel (the vanilla dirt/sand row). The glowtus and the bush stay
+	 * tool-less (the instant flower row).
+	 */
+	private void addSurfacePlantBand() {
+		var tLogs = tag(BlockTags.LOGS);
+		var tAxe = tag(BlockTags.MINEABLE_WITH_AXE);
+		for (RegistryObject<Block> tHandle : GT6SurfaceBlocks.FALLEN_LOGS) {
+			tLogs.add(tHandle.get());
+			tAxe.add(tHandle.get());
+		}
+		var tShovel = tag(BlockTags.MINEABLE_WITH_SHOVEL);
+		tShovel.add(GT6SurfaceBlocks.TURF.get());
+		tShovel.add(GT6SurfaceBlocks.BLACK_SAND.get());
 	}
 
 	/**

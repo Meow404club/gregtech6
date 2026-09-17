@@ -139,5 +139,45 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
         tag(GT6Worldgen.STICKS_SPARSE_BIOMES)
                 .addTag(BiomeTags.IS_TAIGA)
                 .addTag(BiomeTags.IS_BADLANDS);
+
+        // task p30-w6-t2-surface-blocks — the surface-plants + soil bands. The
+        // BIOMES_* vanilla-subset discipline (the class javadoc): 1.7.10 sets
+        // carry the 1.18-removed hills names, the survivors + the vanilla tag
+        // families stand in, modded names are the datapack extension face.
+        // WorldgenGlowtus.java:49 — jungle | Fire Swamp (twilight, no vanilla).
+        tag(GT6Worldgen.GLOWTUS_BIOMES)
+                .add(Biomes.JUNGLE, Biomes.SPARSE_JUNGLE, Biomes.BAMBOO_JUNGLE);
+        // WorldgenBushes.java:56 — plains|woods MINUS the frozen set.
+        tag(GT6Worldgen.BUSH_BIOMES)
+                .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS)
+                .addTag(BiomeTags.IS_FOREST);
+        // WorldgenBlackSand.java:49-51 — river minus ocean/beach/swamp (the river
+        // tag never intersects those families; modded exclusions are the pack face).
+        tag(GT6Worldgen.BLACKSAND_BIOMES)
+                .addTag(BiomeTags.IS_RIVER);
+        // WorldgenTurf.java:51 — swamp (no vanilla swamp tag: the explicit pair).
+        tag(GT6Worldgen.TURF_BIOMES)
+                .add(Biomes.SWAMP, Biomes.MANGROVE_SWAMP);
+        // WorldgenPit.java:58 — plains|savanna (the chunk-centre gate).
+        tag(GT6Worldgen.PIT_CLAY_BIOMES)
+                .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS)
+                .addTag(BiomeTags.IS_SAVANNA);
+        // WorldgenLogDry.java:50 — plains|woods|savanna|desert|mesa|wastelands.
+        tag(GT6Worldgen.LOG_DRY_BIOMES)
+                .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.DESERT)
+                .addTag(BiomeTags.IS_FOREST)
+                .addTag(BiomeTags.IS_SAVANNA)
+                .addTag(BiomeTags.IS_BADLANDS);
+        // WorldgenLogRotten.java:49 — swamp|jungle.
+        tag(GT6Worldgen.LOG_ROTTEN_BIOMES)
+                .add(Biomes.SWAMP, Biomes.MANGROVE_SWAMP)
+                .addTag(BiomeTags.IS_JUNGLE);
+        // WorldgenLogMossy.java:52 — plains|woods|swamp.
+        tag(GT6Worldgen.LOG_MOSSY_BIOMES)
+                .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SWAMP, Biomes.MANGROVE_SWAMP)
+                .addTag(BiomeTags.IS_FOREST);
+        // WorldgenLogFrozen.java:50 — frozen (no vanilla snowy tag: the explicit trio).
+        tag(GT6Worldgen.LOG_FROZEN_BIOMES)
+                .add(Biomes.SNOWY_PLAINS, Biomes.ICE_SPIKES, Biomes.SNOWY_TAIGA);
     }
 }

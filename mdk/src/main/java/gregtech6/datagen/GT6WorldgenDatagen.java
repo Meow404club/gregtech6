@@ -38,7 +38,9 @@ import net.minecraft.world.level.levelgen.feature.WeightedPlacedFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.DiskConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.feature.stateproviders.RuleBasedBlockStateProvider;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
@@ -50,6 +52,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
+import net.minecraft.world.level.material.Fluids;
 
 import java.util.List;
 import gregtech6.block.stone.StoneVariant;
@@ -57,6 +60,7 @@ import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GT6SurfaceBlocks;
+import gregtech6.worldgen.GT6FallenLogFeature;
 import gregtech6.worldgen.GT6Features;
 import gregtech6.worldgen.GT6Worldgen;
 
@@ -211,6 +215,7 @@ public final class GT6WorldgenDatagen {
                     NoneFeatureConfiguration.INSTANCE);
         }
         bootstrapSurfaceConfigured(ctx); // task p30-w6-rocks-sticks — tail-append
+        bootstrapPlantsConfigured(ctx); // task p30-w6-t2-surface-blocks — tail-append
     }
 
     /**
@@ -252,6 +257,7 @@ public final class GT6WorldgenDatagen {
                             GT6TreeBlocks.SAPLINGS.get(i).get()));
         }
         bootstrapSurfacePlaced(ctx, tFeatures); // task p30-w6-rocks-sticks — tail-append
+        bootstrapPlantsPlaced(ctx, tFeatures); // task p30-w6-t2-surface-blocks — tail-append
     }
 
     /**
@@ -285,6 +291,7 @@ public final class GT6WorldgenDatagen {
                     GenerationStep.Decoration.VEGETAL_DECORATION));
         }
         bootstrapSurfaceBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-rocks-sticks — tail-append
+        bootstrapPlantsBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-t2-surface-blocks — tail-append
     }
 
     // ------------------------------------------------------------------
@@ -410,5 +417,170 @@ public final class GT6WorldgenDatagen {
                     HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.placedKeyOf(GT6Worldgen.STICKS_GROUP_PATHS.get(i)))),
                     GenerationStep.Decoration.VEGETAL_DECORATION));
         }
+    }
+
+    // ------------------------------------------------------------------
+    // The surface-plants + soil band (task p30-w6-t2-surface-blocks):
+    // - glowtus / bush = SIMPLE_BLOCK over the WorldgenOnSurface ray gates
+    //   (amount x probability -> Count+RarityFilter); glowtus anchors on the
+    //   water surface (HEIGHTMAP + the below-is-water predicate, the
+    //   WorldgenGlowtus.java:55 anywater face), the bush on the ground
+    //   contact (the sticks surfaceRayChain(false) shape);
+    // - black sand / turf / the clay pit = Feature.DISK over the vanilla
+    //   DISK_CLAY idiom (MiscOverworldFeatures.java:69-75 + the OCEAN_FLOOR
+    //   anchor + matchesFluids filter, MiscOverworldPlacements.java:113-122),
+    //   the upstream nextInt(divider) chunk gates -> RarityFilter verbatim;
+    // - the 4 fallen logs = the GT6FallenLogFeature instances over the
+    //   Loader_Worldgen.java:603-606 gates (the ground/water/snow faces ride
+    //   INSIDE the feature — the multi-block shapes own them);
+    // - 9 biome modifiers: the plant+log rows at VEGETAL_DECORATION, the soil
+    //   disks at LOCAL_MODIFICATIONS (the vanilla disk pass).
+    // ------------------------------------------------------------------
+
+    /** The band's nine biome-modifier keys, worldgen order (glowtus/bush/blacksand/turf/pit + the 4 logs). */
+    public static final List<ResourceKey<BiomeModifier>> PLANT_BIOME_MODIFIER_KEYS = List.of(
+            biomeModifierKeyOf(GT6Worldgen.GLOWTUS_PATH),
+            biomeModifierKeyOf(GT6Worldgen.BUSH_PATH),
+            biomeModifierKeyOf(GT6Worldgen.BLACKSAND_PATH),
+            biomeModifierKeyOf(GT6Worldgen.TURF_PATH),
+            biomeModifierKeyOf(GT6Worldgen.PIT_CLAY_PATH),
+            biomeModifierKeyOf("log_dry"),
+            biomeModifierKeyOf("log_rotten"),
+            biomeModifierKeyOf("log_mossy"),
+            biomeModifierKeyOf("log_frozen"));
+
+    private static void bootstrapPlantsConfigured(
+        //? if forge {
+        BootstapContext<ConfiguredFeature<?, ?>> ctx
+        //?} else {
+        /*BootstrapContext<ConfiguredFeature<?, ?>> ctx
+        *///?}
+    ) {
+        FeatureUtils.register(ctx, GT6Worldgen.GLOWTUS_CONFIGURED, Feature.SIMPLE_BLOCK,
+                new SimpleBlockConfiguration(BlockStateProvider.simple(GT6SurfaceBlocks.GLOWTUS.get().defaultBlockState())));
+        FeatureUtils.register(ctx, GT6Worldgen.BUSH_CONFIGURED, Feature.SIMPLE_BLOCK,
+                new SimpleBlockConfiguration(BlockStateProvider.simple(GT6SurfaceBlocks.BERRY_BUSH.get().defaultBlockState())));
+        BlockPredicate tSoil = BlockPredicate.matchesBlocks(Blocks.DIRT, Blocks.SAND, Blocks.RED_SAND,
+                Blocks.GRAVEL, Blocks.CLAY); // the WorldgenBlackSand.java:62 / WorldgenPit.java:67-69 replaceable set
+        FeatureUtils.register(ctx, GT6Worldgen.BLACKSAND_CONFIGURED, Feature.DISK, new DiskConfiguration(
+                RuleBasedBlockStateProvider.simple(GT6SurfaceBlocks.BLACK_SAND.get()), tSoil,
+                GT6Worldgen.SOIL_DISK_RADIUS, GT6Worldgen.BLACKSAND_HALF_HEIGHT));
+        FeatureUtils.register(ctx, GT6Worldgen.TURF_CONFIGURED, Feature.DISK, new DiskConfiguration(
+                RuleBasedBlockStateProvider.simple(GT6SurfaceBlocks.TURF.get()),
+                BlockPredicate.matchesBlocks(Blocks.DIRT, Blocks.GRASS_BLOCK), // the grass top joins the pair (declared)
+                GT6Worldgen.SOIL_DISK_RADIUS, GT6Worldgen.TURF_HALF_HEIGHT));
+        FeatureUtils.register(ctx, GT6Worldgen.PIT_CLAY_CONFIGURED, Feature.DISK, new DiskConfiguration(
+                RuleBasedBlockStateProvider.simple(Blocks.CLAY), tSoil, // the upstream pit places Blocks.clay verbatim
+                GT6Worldgen.SOIL_DISK_RADIUS, GT6Worldgen.PIT_CLAY_HALF_HEIGHT));
+        for (int i = 0; i < GT6Worldgen.FALLEN_LOG_CONFIGURED_KEYS.size(); i++) {
+            @SuppressWarnings("unchecked")
+            Feature<NoneFeatureConfiguration> tFeature =
+                    (Feature<NoneFeatureConfiguration>) GT6Features.FALLEN_LOG_FEATURES.get(i);
+            FeatureUtils.register(ctx, GT6Worldgen.FALLEN_LOG_CONFIGURED_KEYS.get(i), tFeature,
+                    NoneFeatureConfiguration.INSTANCE);
+        }
+    }
+
+    private static void bootstrapPlantsPlaced(
+        //? if forge {
+        BootstapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        //?} else {
+        /*BootstrapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        *///?}
+    ) {
+        // The glowtus: 16 ray targets x the 1/2 gate; the anchor is the free slot
+        // above the WATER surface (MOTION_BLOCKING counts water) and the below-is-water
+        // predicate is the WorldgenGlowtus.java:55 anywater face.
+        PlacementUtils.register(ctx, GT6Worldgen.GLOWTUS_PLACED,
+                aFeatures.getOrThrow(GT6Worldgen.GLOWTUS_CONFIGURED),
+                RarityFilter.onAverageOnceEvery(GT6Worldgen.GLOWTUS_PROBABILITY),
+                CountPlacement.of(GT6Worldgen.GLOWTUS_AMOUNT),
+                InSquarePlacement.spread(),
+                PlacementUtils.HEIGHTMAP,
+                BlockPredicateFilter.forPredicate(
+                        BlockPredicate.matchesBlocks(new Vec3i(0, -1, 0), Blocks.WATER)),
+                BiomeFilter.biome());
+        // The bush: 1 target x the 1/4 gate over the ground contact (the sticks chain shape).
+        PlacementModifier[] tRay = surfaceRayChain(false);
+        PlacementUtils.register(ctx, GT6Worldgen.BUSH_PLACED,
+                aFeatures.getOrThrow(GT6Worldgen.BUSH_CONFIGURED),
+                RarityFilter.onAverageOnceEvery(GT6Worldgen.BUSH_PROBABILITY),
+                CountPlacement.of(GT6Worldgen.BUSH_AMOUNT),
+                tRay[0], tRay[1], tRay[2],
+                BiomeFilter.biome());
+        // The three soil disks: the chunk gates verbatim, the vanilla DISK_CLAY anchor
+        // chain (square + OCEAN_FLOOR + the water filter where the upstream scan starts
+        // at the fluid surface).
+        PlacementUtils.register(ctx, GT6Worldgen.BLACKSAND_PLACED,
+                aFeatures.getOrThrow(GT6Worldgen.BLACKSAND_CONFIGURED),
+                RarityFilter.onAverageOnceEvery(GT6Worldgen.BLACKSAND_DIVIDER),
+                InSquarePlacement.spread(),
+                PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                BlockPredicateFilter.forPredicate(BlockPredicate.matchesFluids(Fluids.WATER)),
+                BiomeFilter.biome());
+        PlacementUtils.register(ctx, GT6Worldgen.TURF_PLACED,
+                aFeatures.getOrThrow(GT6Worldgen.TURF_CONFIGURED),
+                RarityFilter.onAverageOnceEvery(GT6Worldgen.TURF_DIVIDER),
+                InSquarePlacement.spread(),
+                PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                BiomeFilter.biome());
+        PlacementUtils.register(ctx, GT6Worldgen.PIT_CLAY_PLACED,
+                aFeatures.getOrThrow(GT6Worldgen.PIT_CLAY_CONFIGURED),
+                RarityFilter.onAverageOnceEvery(GT6Worldgen.PIT_CLAY_DIVIDER),
+                InSquarePlacement.spread(),
+                PlacementUtils.HEIGHTMAP,
+                BiomeFilter.biome());
+        // The fallen logs: the four gates (Loader_Worldgen.java:603-606); the ground
+        // checks ride INSIDE the feature (the shapes need the water/snow arms).
+        for (int i = 0; i < GT6Worldgen.FALLEN_LOG_PLACED_KEYS.size(); i++) {
+            PlacementUtils.register(ctx, GT6Worldgen.FALLEN_LOG_PLACED_KEYS.get(i),
+                    aFeatures.getOrThrow(GT6Worldgen.FALLEN_LOG_CONFIGURED_KEYS.get(i)),
+                    RarityFilter.onAverageOnceEvery(GT6Worldgen.FALLEN_LOG_PROBABILITY.get(i)),
+                    CountPlacement.of(1),
+                    InSquarePlacement.spread(),
+                    PlacementUtils.HEIGHTMAP,
+                    BiomeFilter.biome());
+        }
+    }
+
+    private static void bootstrapPlantsBiomeModifiers(
+        //? if forge {
+        BootstapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
+        //?} else {
+        /*BootstrapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
+        *///?}
+    ) {
+        HolderSet<PlacedFeature>[] tPlaced = new HolderSet[] {
+                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.GLOWTUS_PLACED)),
+                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.BUSH_PLACED)),
+                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.BLACKSAND_PLACED)),
+                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.TURF_PLACED)),
+                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.PIT_CLAY_PLACED))};
+        TagKey<Biome>[] tTags = new TagKey[] {GT6Worldgen.GLOWTUS_BIOMES, GT6Worldgen.BUSH_BIOMES,
+                GT6Worldgen.BLACKSAND_BIOMES, GT6Worldgen.TURF_BIOMES, GT6Worldgen.PIT_CLAY_BIOMES};
+        for (int i = 0; i < 5; i++) {
+            ctx.register(PLANT_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(tTags[i]), tPlaced[i],
+                    i < 2 ? GenerationStep.Decoration.VEGETAL_DECORATION // the plant rows ride the deco pass
+                          : GenerationStep.Decoration.LOCAL_MODIFICATIONS)); // the soil disks ride the vanilla disk pass
+        }
+        for (int i = 0; i < GT6Worldgen.FALLEN_LOG_PLACED_KEYS.size(); i++) {
+            TagKey<Biome> tLogTag = new TagKey[] {GT6Worldgen.LOG_DRY_BIOMES, GT6Worldgen.LOG_ROTTEN_BIOMES,
+                    GT6Worldgen.LOG_MOSSY_BIOMES, GT6Worldgen.LOG_FROZEN_BIOMES}[i];
+            // the frozen row rides TOP_LAYER_MODIFICATION (appends AFTER the vanilla
+            // FREEZE_TOP_LAYER in the same step list): its contact face needs the snow
+            // layer ALREADY on the ground — the vegetal step runs before the freeze and
+            // the snow arm could never fire (the forge-leg live-scan finding, 0 hits).
+            GenerationStep.Decoration tStep = mKindOf(i) == GT6FallenLogFeature.Kind.FROZEN
+                    ? GenerationStep.Decoration.TOP_LAYER_MODIFICATION
+                    : GenerationStep.Decoration.VEGETAL_DECORATION;
+            ctx.register(PLANT_BIOME_MODIFIER_KEYS.get(5 + i), addFeatures(aBiomes.getOrThrow(tLogTag),
+                    HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.FALLEN_LOG_PLACED_KEYS.get(i))),
+                    tStep));
+        }
+    }
+
+    /** The fallen-log kind of a FALLEN_LOG_PATHS index (the step face above). */
+    private static GT6FallenLogFeature.Kind mKindOf(int aIndex) {
+        return GT6FallenLogFeature.Kind.values()[aIndex];
     }
 }

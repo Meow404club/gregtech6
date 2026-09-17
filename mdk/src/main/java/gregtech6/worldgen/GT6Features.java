@@ -64,6 +64,27 @@ public final class GT6Features {
         return (GT6TreeFeature) TREE_FEATURES.get(aKind.ordinal());
     }
 
+    /**
+     * The 4 fallen-log feature instances (task p30-w6-t2-surface-blocks), dry/rotten/mossy
+     * /frozen — registry ids {@code log_<kind>} ({@link GT6Worldgen#FALLEN_LOG_PATHS}).
+     * The blocks resolve through the supplier at worldgen/datagen use time (the
+     * DeferredRegister entries are NOT up at this class's static init).
+     */
+    public static final List<Feature<?>> FALLEN_LOG_FEATURES = registerFallenLogFeatures();
+
+    private static List<Feature<?>> registerFallenLogFeatures() {
+        List<Feature<?>> rList = new ArrayList<>(GT6Worldgen.FALLEN_LOG_PATHS.size());
+        GT6FallenLogFeature.Kind[] tKinds = GT6FallenLogFeature.Kind.values();
+        for (int i = 0; i < GT6Worldgen.FALLEN_LOG_PATHS.size(); i++) {
+            int tIndex = i;
+            Feature<?> tFeature = new GT6FallenLogFeature(
+                    () -> gregtech6.registry.GT6SurfaceBlocks.FALLEN_LOGS.get(tIndex).get(), tKinds[i]);
+            FEATURES.register(GT6Worldgen.FALLEN_LOG_PATHS.get(i), () -> tFeature);
+            rList.add(tFeature);
+        }
+        return List.copyOf(rList);
+    }
+
     private GT6Features() {
     }
 

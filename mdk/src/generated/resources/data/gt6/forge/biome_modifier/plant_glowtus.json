@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:surface_glowtus",
+  "features": "gt6:plant_glowtus",
+  "step": "vegetal_decoration"
+}

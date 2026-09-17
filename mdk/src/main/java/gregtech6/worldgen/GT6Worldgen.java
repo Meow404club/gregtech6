@@ -156,6 +156,104 @@ public final class GT6Worldgen {
     /** WorldgenSticks.java:55 taiga/mesa/wasteland = mAmount*1 = 2 rays. */
     public static final int STICKS_SPARSE_COUNT = 2;
 
+    // ------------------------------------------------------------------
+    // The surface-plants + soil band (task p30-w6-t2-surface-blocks). The
+    // WorldgenOnSurface ray gates (Amount targets x the nextInt(Probability)
+    // gate, WorldgenOnSurface.java:49-76) translate to Count+RarityFilter; the
+    // WorldgenPit/BlackSand/Turf chunk gates (nextInt(divider)) translate to
+    // RarityFilter verbatim.
+    // ------------------------------------------------------------------
+
+    /** Loader_Worldgen.java:632 plant.glowtus amount=16 (the per-chunk ray targets). */
+    public static final int GLOWTUS_AMOUNT = 16;
+    /** Loader_Worldgen.java:632 plant.glowtus probability=2. */
+    public static final int GLOWTUS_PROBABILITY = 2;
+    /** Loader_Worldgen.java:633 plant.bush amount=1. */
+    public static final int BUSH_AMOUNT = 1;
+    /** Loader_Worldgen.java:633 plant.bush probability=4. */
+    public static final int BUSH_PROBABILITY = 4;
+    /** WorldgenBlackSand.java:48 {@code nextInt(64) > 0} — the 1/64 chunk gate. */
+    public static final int BLACKSAND_DIVIDER = 64;
+    /** WorldgenTurf.java:49 {@code nextInt(32) > 0} — the 1/32 chunk gate. */
+    public static final int TURF_DIVIDER = 32;
+    /**
+     * WorldgenPit.java:58 {@code nextInt(mDivider) > mChance} with mChance=bindInt(1-1)=0
+     * (the pit ctor's aChance=1, Loader_Worldgen.java:592) — the 1/320 chunk gate.
+     */
+    public static final int PIT_CLAY_DIVIDER = 320;
+    /** Loader_Worldgen.java:603-606 — the four fallen-log gates, dry/rotten/mossy/frozen (amount=1 all four). */
+    public static final List<Integer> FALLEN_LOG_PROBABILITY = List.of(8, 3, 8, 8);
+
+    /**
+     * The vanilla DiskConfiguration radius for the three soil disks (black sand /
+     * turf / the clay pit): the upstream 48x48 SHAPE is a radius ~23 disk (WorldgenPit
+     * .java:83-131), but the DiskConfiguration codec caps radius at 8
+     * (DiskConfiguration.java:15 {@code Codec.intRange(0, 8)}) — the declared areal
+     * deviation; the chunk gates stay verbatim. CONSTANT 7 (not a uniform band): the
+     * IntProvider JSON face is leg-forked for uniform (1.20.1 wraps {@code value},
+     * 1.21.1 flat) while the constant form is shape-identical — the datagen_tree_check
+     * byte-equality gate holds without a declared-fork entry.
+     */
+    public static final net.minecraft.util.valueproviders.ConstantInt SOIL_DISK_RADIUS =
+            net.minecraft.util.valueproviders.ConstantInt.of(7);
+    /** The pit's vertical face: half_height 4 (the codec cap, DiskConfiguration.java:16) — 5 replaced layers vs the upstream 7. */
+    public static final int PIT_CLAY_HALF_HEIGHT = 4;
+    /** The black-sand face: half_height 0 = exactly the 2-layer replacement (WorldgenBlackSand.java:57 {@code tGenerated < 2}). */
+    public static final int BLACKSAND_HALF_HEIGHT = 0;
+    /** The turf face: half_height 1 = the top soil pair plus the surface block (WorldgenTurf.java:57 {@code tGenerated < 2}). */
+    public static final int TURF_HALF_HEIGHT = 1;
+
+    /** The modern entry ids (the dot-flattened upstream config names, the {@link #entryPath} rule). */
+    public static final String GLOWTUS_PATH = "plant_glowtus";
+    public static final String BUSH_PATH = "plant_bush";
+    public static final String BLACKSAND_PATH = "river_magnetite";
+    public static final String TURF_PATH = "swamp_turf";
+    public static final String PIT_CLAY_PATH = "pit_clay_vanilla";
+    /** The four fallen-log paths, upstream log.dry/rotten/mossy/frozen (Loader_Worldgen.java:603-606). */
+    public static final List<String> FALLEN_LOG_PATHS = List.of("log_dry", "log_rotten", "log_mossy", "log_frozen");
+
+    /** The configured/placed keys of this band (path-direct, the {@link #configKey} form). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GLOWTUS_CONFIGURED = configKey(GLOWTUS_PATH);
+    public static final ResourceKey<PlacedFeature> GLOWTUS_PLACED = placedKeyOf(GLOWTUS_PATH);
+    public static final ResourceKey<ConfiguredFeature<?, ?>> BUSH_CONFIGURED = configKey(BUSH_PATH);
+    public static final ResourceKey<PlacedFeature> BUSH_PLACED = placedKeyOf(BUSH_PATH);
+    public static final ResourceKey<ConfiguredFeature<?, ?>> BLACKSAND_CONFIGURED = configKey(BLACKSAND_PATH);
+    public static final ResourceKey<PlacedFeature> BLACKSAND_PLACED = placedKeyOf(BLACKSAND_PATH);
+    public static final ResourceKey<ConfiguredFeature<?, ?>> TURF_CONFIGURED = configKey(TURF_PATH);
+    public static final ResourceKey<PlacedFeature> TURF_PLACED = placedKeyOf(TURF_PATH);
+    public static final ResourceKey<ConfiguredFeature<?, ?>> PIT_CLAY_CONFIGURED = configKey(PIT_CLAY_PATH);
+    public static final ResourceKey<PlacedFeature> PIT_CLAY_PLACED = placedKeyOf(PIT_CLAY_PATH);
+
+    /** The 4 fallen-log configured keys, {@link #FALLEN_LOG_PATHS} order. */
+    public static final List<ResourceKey<ConfiguredFeature<?, ?>>> FALLEN_LOG_CONFIGURED_KEYS =
+            FALLEN_LOG_PATHS.stream().map(GT6Worldgen::configKey).toList();
+    /** The 4 fallen-log placed keys, same order. */
+    public static final List<ResourceKey<PlacedFeature>> FALLEN_LOG_PLACED_KEYS =
+            FALLEN_LOG_PATHS.stream().map(GT6Worldgen::placedKeyOf).toList();
+
+    /** The biome tags this band's biome modifiers hang off (gt6 biome tag datagen, the t1-card form). */
+    public static final TagKey<Biome> GLOWTUS_BIOMES = biomeTag("surface_glowtus");
+    /** WorldgenBushes.java:56 plains|woods minus the frozen set. */
+    public static final TagKey<Biome> BUSH_BIOMES = biomeTag("surface_bush");
+    /** WorldgenBlackSand.java:51 river minus ocean/beach/swamp — the river tag is the vanilla face. */
+    public static final TagKey<Biome> BLACKSAND_BIOMES = biomeTag("surface_blacksand");
+    /** WorldgenTurf.java:51 swamp. */
+    public static final TagKey<Biome> TURF_BIOMES = biomeTag("surface_turf");
+    /** WorldgenPit.java:58 plains|savanna at the chunk centre. */
+    public static final TagKey<Biome> PIT_CLAY_BIOMES = biomeTag("surface_pit_clay");
+    /** WorldgenLogDry.java:50 plains|woods|savanna|desert|mesa|wastelands. */
+    public static final TagKey<Biome> LOG_DRY_BIOMES = biomeTag("surface_log_dry");
+    /** WorldgenLogRotten.java:49 swamp|jungle. */
+    public static final TagKey<Biome> LOG_ROTTEN_BIOMES = biomeTag("surface_log_rotten");
+    /** WorldgenLogMossy.java:52 plains|woods|swamp. */
+    public static final TagKey<Biome> LOG_MOSSY_BIOMES = biomeTag("surface_log_mossy");
+    /** WorldgenLogFrozen.java:50 frozen. */
+    public static final TagKey<Biome> LOG_FROZEN_BIOMES = biomeTag("surface_log_frozen");
+
+    private static TagKey<Biome> biomeTag(String aPath) {
+        return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("gt6", aPath));
+    }
+
     /**
      * The rock-type lottery of WorldgenRocks.java:63, as the RANDOM_SELECTOR chances:
      * the NBT-less half (nextInt(2)!=0) is the stone default rock; of the NBT half

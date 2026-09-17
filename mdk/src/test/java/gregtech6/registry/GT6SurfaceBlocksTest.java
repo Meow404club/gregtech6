@@ -40,9 +40,34 @@ class GT6SurfaceBlocksTest {
         assertEquals(List.of("surface_rock_stone", "surface_rock_flint", "surface_rock_meteorite", "surface_stick"),
                 GT6SurfaceBlocks.ALL.stream().map(tRow -> tRow.getId().getPath()).toList(),
                 "the four surface deco blocks, rocks first (the WorldgenRocks first-batch set + the stick)");
-        // the zero-BlockItem ruling: the class registers ONLY blocks (no ITEMS register)
-        assertEquals(4, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
-                "the DeferredRegister holds exactly the four rows");
+        // +8 (task p30-w6-t2-surface-blocks): the plant quartet + the 4 fallen-log woods.
+        // The pickup-only rock/stick ruling stays for ALL; the obtainable band adds the
+        // ITEMS register (8 block items).
+        assertEquals(12, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
+                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows");
+        assertEquals(8, GT6SurfaceBlocks.ITEMS.getEntries().size(),
+                "the obtainable band's block items (the rocks/sticks stay zero-item)");
+    }
+
+    /** The obtainable band paths + item pairing (task p30-w6-t2-surface-blocks). */
+    @Test
+    void surfacePlantPathsArePinned() {
+        assertEquals(List.of("glowtus", "berry_bush", "black_sand", "turf"),
+                GT6SurfaceBlocks.PLANT_BAND.stream().map(tRow -> tRow.getId().getPath()).toList(),
+                "the plant quartet, registration order");
+        assertEquals(List.of("dead_log", "rotten_log", "mossy_log", "frozen_log"),
+                GT6SurfaceBlocks.FALLEN_LOGS.stream().map(tRow -> tRow.getId().getPath()).toList(),
+                "the fallen-log woods, Log1 meta order (BlockTreeLog1.java:46-62)");
+        for (int i = 0; i < GT6SurfaceBlocks.PLANT_BAND.size(); i++) {
+            assertEquals(GT6SurfaceBlocks.PLANT_TAB_ITEMS.get(i).getId().getPath(),
+                    GT6SurfaceBlocks.PLANT_BAND.get(i).getId().getPath(),
+                    "plant block item i pairs plant block i");
+        }
+        for (int i = 0; i < GT6SurfaceBlocks.FALLEN_LOGS.size(); i++) {
+            assertEquals(GT6SurfaceBlocks.LOG_TAB_ITEMS.get(i).getId().getPath(),
+                    GT6SurfaceBlocks.FALLEN_LOGS.get(i).getId().getPath(),
+                    "log block item i pairs fallen-log block i");
+        }
     }
 
     /** The WorldgenOnSurface binds, transcribed into the constant table. */

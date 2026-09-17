@@ -197,14 +197,17 @@ class GT6TagsDatagenTest {
     /**
      * The axe band: the wood fluid barrel + the 9 GT6 tree logs (task p30-w6-t1-trees-nine
      * — the addTreeBand walk order appended after the barrel; the census material mapping
-     * keeps wood out of pickaxe).
+     * keeps wood out of pickaxe) + the 4 fallen-log woods (task p30-w6-t2-surface-blocks,
+     * the addSurfacePlantBand tail-append).
      */
     @Test
     void axeBandIsExactlyTheWoodBarrelAndTheTreeLogs() throws Exception {
         assertEquals(List.of("gt6:barrel_wood",
                 "gt6:rubber_log", "gt6:maple_log", "gt6:willow_log", "gt6:blue_mahoe_log",
                 "gt6:hazel_log", "gt6:cinnamon_log", "gt6:coconut_log", "gt6:rainbowood_log",
-                "gt6:blue_spruce_log"), tagValues("minecraft/tags/blocks/mineable/axe.json"));
+                "gt6:blue_spruce_log",
+                "gt6:dead_log", "gt6:rotten_log", "gt6:mossy_log", "gt6:frozen_log"),
+                tagValues("minecraft/tags/blocks/mineable/axe.json"));
     }
 
     /**
@@ -220,7 +223,9 @@ class GT6TagsDatagenTest {
         List<String> tLogs = List.of(
                 "gt6:rubber_log", "gt6:maple_log", "gt6:willow_log", "gt6:blue_mahoe_log",
                 "gt6:hazel_log", "gt6:cinnamon_log", "gt6:coconut_log", "gt6:rainbowood_log",
-                "gt6:blue_spruce_log");
+                "gt6:blue_spruce_log",
+                // task p30-w6-t2-surface-blocks — the 4 fallen-log woods join the band
+                "gt6:dead_log", "gt6:rotten_log", "gt6:mossy_log", "gt6:frozen_log");
         assertEquals(tLogs, tagValues("minecraft/tags/items/logs.json"));
         assertEquals(tLogs, tagValues("minecraft/tags/blocks/logs.json"));
         List<String> tLeaves = List.of(
@@ -256,8 +261,9 @@ class GT6TagsDatagenTest {
             tDustPairs++;
         }
         assertEquals(1096, tDustPairs, "3773 storage pairs - 2677 pickaxe-band pairs");
-        assertEquals(tDustPairs + 6, tValues.size(),
-                "the shovel band = the blockDust family + the 6 GT grass variants (p24-grass-block merged first)");
+        // +2 (task p30-w6-t2-surface-blocks: turf + black_sand, the addSurfacePlantBand tail)
+        assertEquals(tDustPairs + 6 + 2, tValues.size(),
+                "the shovel band = the blockDust family + the 6 GT grass variants (p24-grass-block merged first) + the 2 soil pair");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 

@@ -195,6 +195,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addSensors(); // task p26-sensors-core — the three pioneer sensor blocks
         addAnvils(); // task p28-c-anvil — the stone anvil pair
         addSurfaceBand(); // task p30-w6-rocks-sticks — the surface rock trio + the stick (shared models, no items)
+        addSurfacePlants(); // task p30-w6-t2-surface-blocks — the plant quartet + the four fallen-log woods
     }
 
     /**
@@ -1969,6 +1970,57 @@ public final class GT6BlockStates extends BlockStateProvider {
             itemModels().withExistingParent(tSnake + "_leaves", modLoc("block/" + tSnake + "_leaves"));
         }
         LOGGER.info("GT6 tree blocks: 27 per-pair blockstates over 9 cross + 9 column + 9 leaves models");
+    }
+
+    /**
+     * Task p30-w6-t2-surface-blocks — the obtainable surface band ({@link GT6SurfaceBlocks}
+     * PLANT_BAND + FALLEN_LOGS, 8 per-pair Block+Item blocks). The glowtus renders the
+     * lily-pad face (BlockGlowtus = BlockBaseLilyPad): a hand-built 1px flat plate over the
+     * borrowed GLOWTUS_RED.png (cutout — the texture carries transparency; the tintedSlab
+     * element grammar), the bush/sand/turf are cube_all over the borrowed PNGs (the bush
+     * grayscale pre-coloured at borrow time, the grass-card precedent), and the four
+     * fallen-log woods ride the t1 log idiom verbatim (axis variants + cube_column over
+     * the borrowed LOG_SIDE/TOP iconsets, renamed to the block ids at borrow time). All
+     * 13 textures are upstream iconsets byte-borrows (assets/README.md rows this card).
+     */
+    private void addSurfacePlants() {
+        // glowtus: the flat water plate (the vanilla lily-pad form)
+        BlockModelBuilder tGlowtus = models().getBuilder("glowtus")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("pad", modLoc("block/glowtus"))
+                .texture("particle", "#pad")
+                .renderType("cutout");
+        tGlowtus.element()
+                .from(1.0F, 0.0F, 1.0F).to(15.0F, 1.0F, 15.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#pad"))
+                .end();
+        simpleBlock(GT6SurfaceBlocks.GLOWTUS.get(), tGlowtus);
+        itemModels().withExistingParent("glowtus", modLoc("block/glowtus"));
+        // the three cubes: bush (the leafy ball), black sand, turf
+        for (String tPath : new String[] {"berry_bush", "black_sand", "turf"}) {
+            Block tBlock = tPath.equals("berry_bush") ? GT6SurfaceBlocks.BERRY_BUSH.get()
+                    : tPath.equals("black_sand") ? GT6SurfaceBlocks.BLACK_SAND.get() : GT6SurfaceBlocks.TURF.get();
+            simpleBlock(tBlock, models().cubeAll(tPath, modLoc("block/" + tPath)));
+            itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
+        }
+        // the four fallen-log woods: the t1 log idiom (axis blockstate + cube_column)
+        for (int i = 0; i < GT6SurfaceBlocks.FALLEN_LOGS.size(); i++) {
+            String tPath = GT6SurfaceBlocks.FALLEN_LOGS.get(i).getId().getPath();
+            String tWood = new String[] {"dead", "rotten", "mossy", "frozen"}[i];
+            ModelFile tLogModel = models().cubeColumn(tPath,
+                    modLoc("block/tree/log_side_" + tWood), modLoc("block/tree/log_top_" + tWood));
+            net.minecraft.world.level.block.RotatedPillarBlock tLog =
+                    (net.minecraft.world.level.block.RotatedPillarBlock) GT6SurfaceBlocks.FALLEN_LOGS.get(i).get();
+            getVariantBuilder(tLog).forAllStates(tState -> ConfiguredModel.builder()
+                    .modelFile(tLogModel)
+                    .rotationX(tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)
+                            == net.minecraft.core.Direction.Axis.X ? 90 : 0)
+                    .rotationY(tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)
+                            == net.minecraft.core.Direction.Axis.Z ? 90 : 0)
+                    .build());
+            itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
+        }
+        LOGGER.info("GT6 surface plants: 8 blockstate bands (1 plate + 3 cubes + 4 axis columns), 8 models");
     }
 
     /**
