@@ -1101,6 +1101,8 @@
     "gt6:block_dust_oil_sand",
     "gt6:block_dust_crude_oil",
     "gt6:block_dust_oil_shale",
-    "gt6:block_dust_construction_foam"
+    "gt6:block_dust_construction_foam",
+    "gt6:turf",
+    "gt6:black_sand"
   ]
 }

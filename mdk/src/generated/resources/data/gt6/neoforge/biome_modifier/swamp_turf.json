@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#gt6:surface_turf",
+  "features": "gt6:swamp_turf",
+  "step": "local_modifications"
+}

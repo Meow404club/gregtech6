@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#gt6:surface_log_rotten",
+  "features": "gt6:log_rotten",
+  "step": "vegetal_decoration"
+}

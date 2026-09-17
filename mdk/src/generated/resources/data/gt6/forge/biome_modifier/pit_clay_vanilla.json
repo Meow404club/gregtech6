@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:surface_pit_clay",
+  "features": "gt6:pit_clay_vanilla",
+  "step": "local_modifications"
+}
