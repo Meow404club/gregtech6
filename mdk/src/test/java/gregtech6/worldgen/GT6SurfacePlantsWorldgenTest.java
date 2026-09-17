@@ -45,8 +45,9 @@ class GT6SurfacePlantsWorldgenTest {
     /** The disk-face constants: the codec caps documented as the areal deviation. */
     @Test
     void diskFacesArePinned() {
-        assertEquals(6, GT6Worldgen.SOIL_DISK_RADIUS.getMinValue(), "radius floor 6 (codec cap 8, DiskConfiguration.java:15)");
-        assertEquals(8, GT6Worldgen.SOIL_DISK_RADIUS.getMaxValue(), "radius ceiling = the codec cap");
+        assertEquals(7, GT6Worldgen.SOIL_DISK_RADIUS.getMaxValue(),
+                "radius 7 constant (codec cap 8, DiskConfiguration.java:15) — constant, NOT uniform: "
+                        + "the uniform IntProvider JSON face is leg-forked (1.20.1 value-wrapper)");
         assertEquals(4, GT6Worldgen.PIT_CLAY_HALF_HEIGHT, "the pit rides the half_height cap (DiskConfiguration.java:16)");
         assertEquals(0, GT6Worldgen.BLACKSAND_HALF_HEIGHT, "the black-sand face is exactly the 2-layer replacement");
         assertEquals(1, GT6Worldgen.TURF_HALF_HEIGHT, "the turf face covers the top soil pair");

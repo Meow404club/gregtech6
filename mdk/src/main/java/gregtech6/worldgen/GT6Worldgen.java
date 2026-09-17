@@ -185,14 +185,17 @@ public final class GT6Worldgen {
     public static final List<Integer> FALLEN_LOG_PROBABILITY = List.of(8, 3, 8, 8);
 
     /**
-     * The vanilla DiskConfiguration radius band for the three soil disks (black sand /
+     * The vanilla DiskConfiguration radius for the three soil disks (black sand /
      * turf / the clay pit): the upstream 48x48 SHAPE is a radius ~23 disk (WorldgenPit
      * .java:83-131), but the DiskConfiguration codec caps radius at 8
      * (DiskConfiguration.java:15 {@code Codec.intRange(0, 8)}) — the declared areal
-     * deviation; the chunk gates stay verbatim.
+     * deviation; the chunk gates stay verbatim. CONSTANT 7 (not a uniform band): the
+     * IntProvider JSON face is leg-forked for uniform (1.20.1 wraps {@code value},
+     * 1.21.1 flat) while the constant form is shape-identical — the datagen_tree_check
+     * byte-equality gate holds without a declared-fork entry.
      */
-    public static final net.minecraft.util.valueproviders.UniformInt SOIL_DISK_RADIUS =
-            net.minecraft.util.valueproviders.UniformInt.of(6, 8);
+    public static final net.minecraft.util.valueproviders.ConstantInt SOIL_DISK_RADIUS =
+            net.minecraft.util.valueproviders.ConstantInt.of(7);
     /** The pit's vertical face: half_height 4 (the codec cap, DiskConfiguration.java:16) — 5 replaced layers vs the upstream 7. */
     public static final int PIT_CLAY_HALF_HEIGHT = 4;
     /** The black-sand face: half_height 0 = exactly the 2-layer replacement (WorldgenBlackSand.java:57 {@code tGenerated < 2}). */
