@@ -468,6 +468,12 @@ SESSION_GROUPS = (
     # no fresh_boot / mutates member — the /gt6tool prospect arms are band-local fills).
     # --group p30_pool_prospector matches through the chain's embedded name prefix.
     ("p30_pool_prospector",),
+    # P31 card ① (p31-implosion): the Implosion Compressor chain — one fresh z=380 band
+    # (x385..391: the controller at 388 + the shell band 387..389/65..67/380..382 with the
+    # wrong-part cell), admission mirroring the p29 W1 cluster form (bbox-registered, no
+    # fresh_boot / mutates member — the TU self-gen + the data-merge inventory feed need
+    # no fakesource). --group p31_implosion matches through the chain's embedded name prefix.
+    ("p31_implosion",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
