@@ -46,6 +46,17 @@ public class GT6ItemDataNeoRegistrationTest {
 	}
 
 	@Test
+	void materialToolRecipeSerializerIsRegistered() {
+		// task p31-dig-ladder: the gt6:material_tool serializer rides the same
+		// mod-construct DeferredRegister attach — the FML JVM pins the registry truth
+		// (the lesson id686 form: cleanTest green does not prove a registration face alive)
+		ResourceLocation tId = ResourceLocation.fromNamespaceAndPath("gt6", "material_tool");
+		assertTrue(BuiltInRegistries.RECIPE_SERIALIZER.containsKey(tId),
+				"gt6:material_tool must sit in the recipe serializer registry after the mod construct");
+		assertNotNull(BuiltInRegistries.RECIPE_SERIALIZER.get(tId), "the registered serializer resolves");
+	}
+
+	@Test
 	void toolStatsComponentIsRegistered() {
 		ResourceLocation tId = ResourceLocation.fromNamespaceAndPath("gt6", "tool_stats");
 		assertTrue(BuiltInRegistries.DATA_COMPONENT_TYPE.containsKey(tId),

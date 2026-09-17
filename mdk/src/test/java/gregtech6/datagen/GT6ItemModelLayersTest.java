@@ -204,6 +204,8 @@ class GT6ItemModelLayersTest {
     private static final Set<String> TOOL_MODEL_IDS = Set.of(
         "crowbar", "cutter", "chisel", "file", "saw", "builder_wand", "screwdriver", "hammer",
         "sword", "knife", "butchery_knife", "club", "axe", "axe_double", // task p29-w5-t2-blade-six — the blade rows carry their own multi-layer pins
+        // task p31-dig-ladder — the dig band's restored 4-layer rows (head pair + stick pair):
+        "pickaxe", "pickaxe_gem", "pickaxe_construction", "shovel", "spade", "universal_spade", "hoe",
         "soft_hammer", // task p29-w5-t3-machine-face-four — the 4-layer rubber-head pin
         // task p29-w5-t6-electric-nineteen — the electric rows whose layer0 rides the
         // material_sets head sprite: their layer1 is the POWER-UNIT/HANDLE pass (the
