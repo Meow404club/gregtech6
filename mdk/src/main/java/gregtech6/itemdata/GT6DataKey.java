@@ -11,8 +11,6 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 
-import javax.annotation.Nullable;
-
 /**
  * One registered key of the {@link GT6ItemData} keyed access seam (task
  * p31-identity-seam) — the per-key half of the project-level item data contract,
@@ -53,6 +51,10 @@ public final class GT6DataKey<T> {
 		if (tPrior != null) throw new IllegalStateException(
 				"GT6ItemData key \"" + aNbtName + "\" registered twice: " + tPrior.path() + " vs " + aPath);
 		REGISTRY.put(aNbtName, this);
+		// eager carrier construction (S31-1): the key is self-carrying — on the 1.21.1 leg
+		// its DataComponentType object exists the moment the key does, so the registration
+		// only ever waits on the key-holder CLASS being loaded (the GT6ItemData manifest)
+		GT6ItemData.onKeyCreated(this);
 	}
 
 	public String nbtName() {
@@ -88,13 +90,8 @@ public final class GT6DataKey<T> {
 				.orElseThrow(() -> new NoSuchElementException(tMessage[0]));
 	}
 
-	/** The registry view, keyed by NBT name in registration order. */
+	/** The registry view, keyed by NBT name in registration order (the read-only lookup face). */
 	public static Map<String, GT6DataKey<?>> registry() {
 		return Collections.unmodifiableMap(REGISTRY);
-	}
-
-	@Nullable
-	public static GT6DataKey<?> byNbtName(String aNbtName) {
-		return REGISTRY.get(aNbtName);
 	}
 }

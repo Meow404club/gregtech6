@@ -236,9 +236,9 @@ public class GT6ItemDataTest {
 	@Test
 	void keyRegistryIsNameUnique() {
 		assertTrue(GT6DataKey.registry().containsKey("GT.ToolStats"), "the first key is registered");
-		assertSame(GT6ToolStats.KEY, GT6DataKey.byNbtName("GT.ToolStats"));
+		assertSame(GT6ToolStats.KEY, GT6DataKey.registry().get("GT.ToolStats"));
 		assertThrows(IllegalStateException.class, () -> new GT6DataKey<>("GT.ToolStats", "another_path", GT6ToolStats.CODEC),
 				"a duplicate key name fails loudly — never a silent second slot");
-		assertSame(GT6ToolStats.KEY, GT6DataKey.byNbtName("GT.ToolStats"), "the original key keeps its slot");
+		assertSame(GT6ToolStats.KEY, GT6DataKey.registry().get("GT.ToolStats"), "the original key keeps its slot");
 	}
 }

@@ -139,8 +139,16 @@ public final class GT6ItemData {
 	private static final Map<GT6DataKey<?>, net.minecraft.core.component.DataComponentType<?>> sComponentTypes = new HashMap<>();
 
 	static {
-		// static-init safe: keys and codecs touch no MC registry (the RegisterEvent below does the registering)
-		for (GT6DataKey<?> tKey : GT6DataKey.registry().values()) sComponentTypes.put(tKey, componentTypeOf(tKey));
+		// THE KEY-HOLDER MANIFEST (S31-1 review): direct field references force <clinit>
+		// of every key-holding class HERE, at GT6ItemData's own construction — which the
+		// @EventBusSubscriber scan runs at mod construct, BEFORE any consumer ever touched
+		// a key holder. Each GT6DataKey ctor eagerly builds its DataComponentType through
+		// {@link #onKeyCreated}, so this list is the load-bearing registration surface:
+		// every future key-holding class (dig/blade ladder, the hives) MUST be added here,
+		// a key created after the RegisterEvent would carry an unregistered component.
+		// (Same-thread recursive init is JVM-legal: the ctor's onKeyCreated call re-enters
+		// this in-progress <clinit> and finds sComponentTypes already assigned above.)
+		Object tKeyManifest = GT6ToolStats.KEY;
 	}
 
 	private static <T> net.minecraft.core.component.DataComponentType<T> componentTypeOf(GT6DataKey<T> aKey) {
@@ -152,16 +160,33 @@ public final class GT6ItemData {
 
 	@SuppressWarnings("unchecked")
 	private static <T> net.minecraft.core.component.DataComponentType<T> componentType(GT6DataKey<T> aKey) {
-		return (net.minecraft.core.component.DataComponentType<T>) sComponentTypes.get(aKey);
+		net.minecraft.core.component.DataComponentType<?> tType = sComponentTypes.get(aKey);
+		if (tType == null) throw new IllegalStateException("GT6ItemData key \"" + aKey.nbtName()
+				+ "\" has no DataComponentType — its holder class is missing from the GT6ItemData manifest");
+		return (net.minecraft.core.component.DataComponentType<T>) tType;
 	}
 
 	@SubscribeEvent
 	public static void onRegister(RegisterEvent aEvent) {
-		for (Map.Entry<GT6DataKey<?>, net.minecraft.core.component.DataComponentType<?>> tEntry : sComponentTypes.entrySet()) {
+		// live iteration at event time — never a snapshot (S31-1)
+		for (GT6DataKey<?> tKey : GT6DataKey.registry().values()) {
 			aEvent.register(net.minecraft.core.registries.Registries.DATA_COMPONENT_TYPE,
-					net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tEntry.getKey().path()),
-					tEntry::getValue);
+					net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tKey.path()),
+					() -> componentType(tKey));
 		}
 	}
 	*///?}
+
+	/**
+	 * The eager per-key carrier hook, fired from the {@link GT6DataKey} constructor.
+	 * Forge: a no-op — the root tag needs no carrier object. Neoforge: eagerly builds
+	 * and maps the key's {@code DataComponentType} at key-creation time, so the map can
+	 * never be a stale snapshot (S31-1) and the manifest above only has to guarantee
+	 * the class LOAD order, not the object graph.
+	 */
+	static <T> void onKeyCreated(GT6DataKey<T> aKey) {
+		//? if neoforge {
+		/*sComponentTypes.put(aKey, componentTypeOf(aKey));
+		*///?}
+	}
 }
