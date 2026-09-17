@@ -282,7 +282,8 @@ public class GT6DualDirectoryFacesTest {
 		assertNotNull(tNeoforgeBand, "the neoforge brand face ships on the classpath (the r2 structural fix)");
 		assertEquals(countJson(tForgeBand), countJson(tNeoforgeBand),
 				"the brand faces are same-source twins: equal member counts");
-		assertTrue(countJson(tForgeBand) >= 17, "the 17 stone-blob modifiers ship (got " + countJson(tForgeBand) + ")");
+		assertTrue(countJson(tForgeBand) >= 12, "the 12 stone-blob modifiers ship (task p31-strata-lens: the 5 marker"
+				+ " stones ride the one strata_lenses modifier; got " + countJson(tForgeBand) + ")");
 	}
 
 	/**
