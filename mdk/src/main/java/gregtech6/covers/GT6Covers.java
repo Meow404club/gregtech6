@@ -26,6 +26,7 @@ import gregtech6.covers.covers.CoverPump;
 import gregtech6.covers.covers.CoverRedstoneConductorIN;
 import gregtech6.covers.covers.CoverRedstoneConductorOUT;
 import gregtech6.covers.covers.CoverRedstoneEmitter;
+import gregtech6.covers.covers.CoverRetrieverItem;
 import gregtech6.covers.covers.CoverRobotArm;
 import gregtech6.covers.covers.CoverShutter;
 import gregtech6.covers.covers.CoverTextureSimple;
@@ -124,6 +125,17 @@ public final class GT6Covers {
 	 * Same card-local ITEMS DeferredRegister as the rest of the cover family.
 	 */
 	public static final RegistryObject<Item> COVER_ITEM_FILTER = ITEMS.register("cover_item_filter",
+			() -> new Item(new Item.Properties()));
+
+	/**
+	 * The p31 item-retriever cover item — the pipe-network puller storing its filter item
+	 * in the CoverData mNBTs lane (task p31-retriever-cover; upstream
+	 * MultiItemTechnological.java:90 meta 1031 "Item Retriever Cover", class
+	 * CoverRetrieverItem). Mounts only on item pipes; pulls through the pipe network into
+	 * the container at the covered face. Same card-local ITEMS DeferredRegister as the
+	 * rest of the cover family.
+	 */
+	public static final RegistryObject<Item> COVER_ITEM_RETRIEVER = ITEMS.register("cover_item_retriever",
 			() -> new Item(new Item.Properties()));
 
 	/**
@@ -229,7 +241,7 @@ public final class GT6Covers {
 		aEvent.enqueueWork(GT6Covers::init);
 	}
 
-	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter + the p10 conductor pair + the p10 machine switch + the p11 shutter/filter pair + the p11 controller pair + the p11 conveyor/arm tiers). */
+	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter + the p10 conductor pair + the p10 machine switch + the p11 shutter/filter pair + the p11 controller pair + the p11 conveyor/arm tiers + the p31 retriever). */
 	public static void init() {
 		if (sInitialized) return;
 		sInitialized = true;
@@ -242,6 +254,7 @@ public final class GT6Covers {
 		CoverRegistry.put(COVER_REDSTONE_MACHINE_SWITCH.get(), new CoverControllerRedstone()); // p10 — the redstone on/off machine switch
 		CoverRegistry.put(COVER_SHUTTER.get(), new CoverShutter()); // p11 — the open/closed face gate
 		CoverRegistry.put(COVER_ITEM_FILTER.get(), new CoverFilterItem()); // p11 — the whitelist/blacklist face filter
+		CoverRegistry.put(COVER_ITEM_RETRIEVER.get(), new CoverRetrieverItem()); // p31 — the pipe-network retriever
 		CoverRegistry.put(COVER_AUTO_REDSTONE_MACHINE_SWITCH.get(), new CoverControllerAutoRedstone()); // p11 — the lets-it-finish machine switch
 		CoverRegistry.put(COVER_CONTROLLER.get(), new CoverControllerCovers()); // p11 — the cover-layer stop switch + cross-face relay
 		for (int i = 0; i < CoverConveyor.TIMING_TIERS.length; i++) {

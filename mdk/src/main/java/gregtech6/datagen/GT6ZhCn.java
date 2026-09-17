@@ -1128,6 +1128,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.cover_redstone_machine_switch");
 		addDirect("item.gt6.cover_shutter");
 		addDirect("item.gt6.cover_item_filter");
+		addDirect("item.gt6.cover_item_retriever");
 		addDirect("item.gt6.cover_auto_redstone_machine_switch");
 		addDirect("item.gt6.cover_controller");
 		addDirect("item.gt6.integrated_circuit");

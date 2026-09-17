@@ -374,6 +374,11 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("block/shutter/normal"));
         withExistingParent("cover_item_filter", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/filteritem/normal"));
+        // the p31 item-retriever cover (task p31-retriever-cover) — the item shows the
+        // normal plate art, a byte-identical upstream borrow living in
+        // textures/block/retrieveritem/ (assets/README.md attribution)
+        withExistingParent("cover_item_retriever", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/retrieveritem/normal"));
         // the p11 controller pair (task p11-cover-controllers) — the items show their
         // own plate art, byte-identical upstream borrows living in
         // textures/block/auto_redstone_switch/ and textures/block/cover_switch/

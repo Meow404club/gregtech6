@@ -96,7 +96,8 @@ public class CoverFilterItem extends AbstractCoverDefault {
 	//? if neoforge {
 	/*// 21.1: the ItemStack save/parse face needs a HolderLookup.Provider — the frozen builtin
 	//registry view serves the offline tests and the live cover click alike (item id only).
-	private static net.minecraft.core.HolderLookup.Provider nbtAccess() {
+	//Package-private: the retriever filter lane (CoverRetrieverItem.filterOf) shares it.
+	static net.minecraft.core.HolderLookup.Provider nbtAccess() {
 		return net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY);
 	}
 	*///?}

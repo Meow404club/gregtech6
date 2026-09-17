@@ -532,6 +532,7 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_redstone_machine_switch", "Redstone Machine Switch");
         add("item.gt6.cover_shutter", "Shutter Cover");
         add("item.gt6.cover_item_filter", "Item Filter");
+        add("item.gt6.cover_item_retriever", "Item Retriever Cover");
         add("item.gt6.cover_auto_redstone_machine_switch", "Auto Redstone Machine Switch");
         add("item.gt6.cover_controller", "Cover Controller");
         add(GT6Covers.CONVEYOR_DISPLAY_KEY, "Compact Electric Conveyor (%s)");
