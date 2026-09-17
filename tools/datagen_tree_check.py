@@ -357,6 +357,43 @@ def _band(rel: PurePosixPath, dir_name: str) -> bool:
             and rel.parts[2] == dir_name)
 
 
+def _norm_uniform_int_value(o: dict) -> bool:
+    """IntProvider uniform dispatch 包裹形：1.20.1 {"type":T,"value":{min,max}} →
+    1.21.1 内联 {"type":T,"min_inclusive":X,"max_inclusive":Y}（node 侧归一到
+    canonical 的包裹形，即把扁平字段收回 "value"）。
+
+    出处：DFU dispatch 序列化双腿形差——1.20.1（DFU 6，forge datagen 实测）IntProvider
+    dispatch 产 "value" 嵌套，1.21.1（DFU 8，neoforge datagen 实测）同 dispatch 内联；
+    两腿 UniformInt 字段名同为 min_inclusive/max_inclusive（UniformInt.java
+    1.20.1:13-14 / 1.21.1:14-15）。census 实测（2026-09-17，p30-w6-small-ore-datagen）：
+    worldgen/placed_feature/ore_small_overworld/tin.json（ore band 全量 91 文件，
+    canonical 600B vs node 567B，first diff @165="value" 键位）。
+    """
+    if set(o.keys()) != {"type", "max_inclusive", "min_inclusive"}:
+        return False
+    if o.get("type") != "minecraft:uniform":
+        return False
+    mi, ma = o["min_inclusive"], o["max_inclusive"]
+    if not (isinstance(mi, int) and isinstance(ma, int)):
+        return False
+    o.clear()
+    o["type"] = "minecraft:uniform"
+    o["value"] = {"max_inclusive": ma, "min_inclusive": mi}
+    return True
+
+
+def _band(rel: PurePosixPath, dir_name: str) -> bool:
+    """产物带判定：data/<ns>/<dir_name>/ 前缀（canonical 形相对路径）。"""
+    return (len(rel.parts) >= 4 and rel.parts[0] == "data"
+            and rel.parts[2] == dir_name)
+
+
+def _band_worldgen_placed(rel: PurePosixPath) -> bool:
+    """placed_feature 带判定（坐深一层）：data/<ns>/worldgen/placed_feature/。"""
+    return (len(rel.parts) >= 5 and rel.parts[0] == "data"
+            and rel.parts[2] == "worldgen" and rel.parts[3] == "placed_feature")
+
+
 VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]]] = [
     ("data/*/loot_tables", "loot_tables", [
         ("copy-custom-data→copy-nbt", _norm_copy_custom_data),
@@ -375,6 +412,16 @@ VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]
         ("result-id→item(+drop count==1)", _norm_recipe_result),
         ("tag-c:→forge:", _norm_tag_c_to_forge),
         ("show_notification(1.20.1-shaped)", _norm_show_notification),
+    ]),
+]
+
+# 坐深一层的特判带（worldgen/placed_feature——_band 只辖 parts[2]，placed_feature 在
+# parts[3]，与 biome_modifier 双目录带同属深带族）：p30-w6-small-ore-datagen 注册。
+# 归一器自限形态（恰 {type,max_inclusive,min_inclusive} 且 type=minecraft:uniform），
+# 零施用原样返回 → 字节比对兜底 FAIL（fail-visible 不放宽）。
+DEEP_VALUE_NORMALIZERS: list[tuple[str, Callable[[PurePosixPath], bool], list[tuple[str, Callable[[dict], bool]]]]] = [
+    ("data/*/worldgen/placed_feature", _band_worldgen_placed, [
+        ("uniform-int-value-unwrap(1.21.1)", _norm_uniform_int_value),
     ]),
 ]
 
@@ -403,6 +450,9 @@ def _registered_band(rel: PurePosixPath) -> list[tuple[str, Callable[[dict], boo
         return None
     for _, dir_name, regs in VALUE_NORMALIZERS:
         if _band(rel, dir_name):
+            return regs
+    for _, _matcher, regs in DEEP_VALUE_NORMALIZERS:
+        if _matcher(rel):
             return regs
     return None
 

@@ -343,5 +343,41 @@ class TestStaleGuardEndToEnd(unittest.TestCase):
             self.assertIn("STALE-CHECK OK", out)
 
 
+class TestUniformIntValueNormalizer(unittest.TestCase):
+    """p30-w6-small-ore-datagen：placed_feature 带的 uniform IntProvider 包裹形归一
+    （DFU dispatch 双腿形差，node 1.21.1 内联 → canonical 1.20.1 "value" 嵌套）。"""
+
+    def test_placed_feature_band_registered(self):
+        rel = PurePosixPath("data/gt6/worldgen/placed_feature/ore_small_overworld/tin.json")
+        self.assertIsNotNone(mod._registered_band(rel))
+        # configured_feature 同 worldgen 段但不在此带（零注册 → 仅字节比对）
+        self.assertIsNone(mod._registered_band(
+            PurePosixPath("data/gt6/worldgen/configured_feature/ore_small_overworld/tin.json")))
+
+    def test_uniform_value_wrap_applies(self):
+        rel = PurePosixPath("data/gt6/worldgen/placed_feature/ore_small_overworld/copper.json")
+        c = _gson({"feature": "gt6:x", "placement": [
+            {"type": "minecraft:count", "count": {"type": "minecraft:uniform",
+             "value": {"max_inclusive": 16, "min_inclusive": 8}}}]})
+        n = _gson({"feature": "gt6:x", "placement": [
+            {"type": "minecraft:count", "count": {"type": "minecraft:uniform",
+             "max_inclusive": 16, "min_inclusive": 8}}]})
+        out = mod.try_value_normalize(rel, c, n)
+        self.assertIsNotNone(out)
+        self.assertEqual(out[0], c)
+
+    def test_uniform_nonuniform_shape_stays_fail_visible(self):
+        rel = PurePosixPath("data/gt6/worldgen/placed_feature/ore_small_overworld/copper.json")
+        c = _gson({"feature": "gt6:x", "placement": [{"type": "minecraft:in_square"}]})
+        n = _gson({"feature": "gt6:x", "placement": [{"type": "minecraft:in_square"}]})
+        # 字节同 → 无需归一（try_value_normalize 施用零变换返回 None 走字节比对）
+        self.assertIsNone(mod.try_value_normalize(rel, c, n))
+        # 形态外的真实漂移不吞：type 键不同形 → 原样 FAIL
+        c2 = _gson({"placement": [{"type": "minecraft:uniform",
+                                    "value": {"min_inclusive": 1}}]})
+        n2 = _gson({"placement": [{"type": "minecraft:uniform", "min_inclusive": 1}]})
+        self.assertIsNone(mod.try_value_normalize(rel, c2, n2))
+
+
 if __name__ == "__main__":
     unittest.main()
