@@ -2935,6 +2935,7 @@
   "item.gt6.food_can_rotten_tiny": "迷你食物罐头 (腐肉)",
   "item.gt6.food_can_rotten_wide": "宽食物罐头 (腐肉)",
   "item.gt6.hammer": "锤",
+  "item.gt6.hammer.tooltip_prospector": "勘探周围的矿石",
   "item.gt6.hand_drill": "手钻",
   "item.gt6.hand_drill_lv": "手钻 (LV)",
   "item.gt6.hand_mixer_lv": "手持搅拌器 (LV)",

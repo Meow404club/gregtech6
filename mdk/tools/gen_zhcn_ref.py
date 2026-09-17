@@ -674,6 +674,7 @@ HAND_TRANSLATIONS = {
     "item.gt6.food_can_rotten_tiny": ("迷你食物罐头 (腐肉)", "hand"),
     "item.gt6.food_can_rotten_wide": ("宽食物罐头 (腐肉)", "hand"),
     "item.gt6.hammer": ("锤", "hand"),
+    "item.gt6.hammer.tooltip_prospector": ("勘探周围的矿石", "hand"),
     "item.gt6.saw": ("锯", "hand"),
     "item.gt6.screwdriver": ("螺丝刀", "hand"),
     "item.gt6.wrench": ("扳手", "hand"),

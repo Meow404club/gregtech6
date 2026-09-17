@@ -409,6 +409,10 @@ public class GT6EnUs extends LanguageProvider {
         // verbatim, matching the TOOL_LOCALISER faces CS.java:1096/:1083)
         add("item.gt6.hammer", "Hammer");
         add("item.gt6.wrench", "Wrench");
+        // task p30-pool-prospector — the prospector second-behavior tooltip the hammer
+        // carries (the Behavior_Tool.java:76-78 additional-tooltip face), the CS.java:1154
+        // row verbatim
+        add("item.gt6.hammer.tooltip_prospector", "Prospecting for Ores in an Area");
         // task p29-w5-t1-dig-six — the six dig-tool display names (the upstream
         // registration-row wordings verbatim: "Construction Pick" Loader_Tools.java:147,
         // "Gem tipped Pickaxe" :151, "Pickaxe"/"Shovel"/"Spade" the TOOL_LOCALISER rows
