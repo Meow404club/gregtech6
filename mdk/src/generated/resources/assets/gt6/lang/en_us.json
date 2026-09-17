@@ -2872,6 +2872,7 @@
   "item.gt6.cover_auto_redstone_machine_switch": "Auto Redstone Machine Switch",
   "item.gt6.cover_controller": "Cover Controller",
   "item.gt6.cover_item_filter": "Item Filter",
+  "item.gt6.cover_item_retriever": "Item Retriever Cover",
   "item.gt6.cover_redstone_conductor_in": "Redstone Conductor Cover (Accept)",
   "item.gt6.cover_redstone_conductor_out": "Redstone Conductor Cover (Emit)",
   "item.gt6.cover_redstone_emitter": "Redstone Emitter",
