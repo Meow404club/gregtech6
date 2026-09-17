@@ -96,13 +96,15 @@ steps += [
     Step(f"place feature gt6:log_frozen {CELLS['frozen']} 102 {Z}", expect="Placed"),
     Step(f"execute if block {CELLS['frozen']} 101 {Z} gt6:frozen_log", expect="Test passed"),
 ]
-# the soil disks: the platform top row (half_height 0/1/4 all cover y=100)
+# the soil disks: the /place anchor IS the surface row (the disk column walks
+# y+half_height down EXCLUSIVE of y-half_height-1 — half_height 0 = the anchor
+# row only, so the anchor sits ON the dirt top, not the free slot above)
 steps += [
-    Step(f"place feature gt6:river_magnetite {CELLS['blacksand']} 101 {Z}", expect="Placed"),
+    Step(f"place feature gt6:river_magnetite {CELLS['blacksand']} 100 {Z}", expect="Placed"),
     Step(f"execute if block {CELLS['blacksand']} 100 {Z} gt6:black_sand", expect="Test passed"),
-    Step(f"place feature gt6:swamp_turf {CELLS['turf']} 101 {Z}", expect="Placed"),
+    Step(f"place feature gt6:swamp_turf {CELLS['turf']} 100 {Z}", expect="Placed"),
     Step(f"execute if block {CELLS['turf']} 100 {Z} gt6:turf", expect="Test passed"),
-    Step(f"place feature gt6:pit_clay_vanilla {CELLS['clay']} 101 {Z}", expect="Placed"),
+    Step(f"place feature gt6:pit_clay_vanilla {CELLS['clay']} 100 {Z}", expect="Placed"),
     Step(f"execute if block {CELLS['clay']} 100 {Z} minecraft:clay", expect="Test passed"),
 ]
 
