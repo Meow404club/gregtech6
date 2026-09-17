@@ -44,7 +44,7 @@ F = gt6world.fmt
 A = gt6world.Site(470, 65, 248, dz=1)  # the south chest rides the site footprint
 B = gt6world.Site(476, 65, 248, dz=1)
 
-PIPE = "brass_item_pipe_medium"
+PIPE = "brass_item_pipe_large"  # the invSize=2 row (GTItemPipes.ItemPipeVariant LARGE 2,1,2) — the capacity arm's window budget
 CHEST = "minecraft:chest"
 
 
@@ -93,7 +93,8 @@ CHAIN = Chain(
         _feed(_south(B), 0, "dirt", 64),
         Step(f"data get block {F(_north(B))} Items", expect='id: "minecraft:dirt"', poll=30.0,
              label="the live :61 phase gate pulled the stack (timer % 20 == 15) with no manual drive"),
-        Step(f"gt6itempipe stat {F(B)}", expect="transferred 1", label="one stack = one counter unit (:73)"),
+        Step(f"gt6itempipe stat {F(B)}", expect="(empty)",
+             label="the pipe holds nothing after the pull; the window counter is transient by design (:193 resets it every 20t — the deterministic counter arms live in column A)"),
         Step(f"gt6cover dismantle {F(B)} north", expect="toolDamage=10000", label="拆盖 — the hoe relay"),
         Step(f"gt6cover check {F(B)}", expect="store=null", label="恢复原状 — the store dissolved"),
     ],
