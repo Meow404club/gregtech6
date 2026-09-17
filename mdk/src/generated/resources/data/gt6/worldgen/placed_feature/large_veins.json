@@ -1,0 +1,11 @@
+{
+  "feature": "gt6:large_veins",
+  "placement": [
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

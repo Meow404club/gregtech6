@@ -55,6 +55,8 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import net.minecraft.world.level.material.Fluids;
 
 import java.util.List;
+import gregapi.data.MT;
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.registry.GT6TreeBlocks;
@@ -63,6 +65,7 @@ import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.worldgen.GT6FallenLogFeature;
 import gregtech6.worldgen.GT6Features;
 import gregtech6.worldgen.GT6Worldgen;
+import gregtech6.worldgen.GTVeinConfig;
 
 /**
  * The worldgen datagen band (task p26-worldgen-pipeline-skeleton): one
@@ -216,6 +219,11 @@ public final class GT6WorldgenDatagen {
         }
         bootstrapSurfaceConfigured(ctx); // task p30-w6-rocks-sticks — tail-append
         bootstrapPlantsConfigured(ctx); // task p30-w6-t2-surface-blocks — tail-append
+        // task p30-w6-t3-large-veins — the ONE large-vein configured feature: the registered
+        // GT6LargeVeinFeature instance over the 40-row vein table ({@link #LARGE_VEIN_TABLE};
+        // the table rides the config JSON — the card spec ② tier-a face).
+        FeatureUtils.register(ctx, GT6Worldgen.LARGE_VEINS_CONFIGURED, GT6Features.LARGE_VEINS,
+                new GTVeinConfig.Table(LARGE_VEIN_TABLE));
     }
 
     /**
@@ -258,6 +266,12 @@ public final class GT6WorldgenDatagen {
         }
         bootstrapSurfacePlaced(ctx, tFeatures); // task p30-w6-rocks-sticks — tail-append
         bootstrapPlantsPlaced(ctx, tFeatures); // task p30-w6-t2-surface-blocks — tail-append
+        // task p30-w6-t3-large-veins — the large-vein placed feature: ONE attempt per chunk
+        // (the default count — the per-chunk origin-grid 5x5 scan lives in the Feature,
+        // GT6WorldGenerator.java:95-105), square spread + biome filter as the form.
+        PlacementUtils.register(ctx, GT6Worldgen.LARGE_VEINS_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.LARGE_VEINS_CONFIGURED),
+                InSquarePlacement.spread(), BiomeFilter.biome());
     }
 
     /**
@@ -292,6 +306,13 @@ public final class GT6WorldgenDatagen {
         }
         bootstrapSurfaceBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-rocks-sticks — tail-append
         bootstrapPlantsBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-t2-surface-blocks — tail-append
+        // task p30-w6-t3-large-veins — the large-vein biome modifier: EVERY overworld biome
+        // (the research.p30-w6-vein-boundary impl note: upstream large veins have NO biome
+        // gate — the generate signature has no biome parameter — and a per-biome split would
+        // carve holes into any vein crossing a biome border), at the UNDERGROUND_ORES step.
+        ctx.register(biomeModifierKeyOf("large_veins"), addFeatures(tOverworld,
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
     }
 
     // ------------------------------------------------------------------
@@ -404,8 +425,7 @@ public final class GT6WorldgenDatagen {
         //?} else {
         /*BootstrapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
         *///?}
-    ) {
-        // VEGETAL_DECORATION — the surface deco step (the upstream surface pass rides
+    ) {        // VEGETAL_DECORATION — the surface deco step (the upstream surface pass rides
         // the per-chunk decoration, not the ore pass the blobs use).
         ctx.register(SURFACE_BIOME_MODIFIER_KEYS.get(0), addFeatures(aBiomes.getOrThrow(GT6Worldgen.SURFACE_ROCKS_BIOMES),
                 HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.SURFACE_ROCKS_PLACED)),
@@ -583,4 +603,70 @@ public final class GT6WorldgenDatagen {
     private static GT6FallenLogFeature.Kind mKindOf(int aIndex) {
         return GT6FallenLogFeature.Kind.values()[aIndex];
     }
+    // The large-vein band (task p30-w6-t3-large-veins) — the 40-row vein table,
+    // Loader_Worldgen.java:886-925 row-for-row. Column order (WorldgenOresLarge.java:54
+    // ctor): name / minY / maxY / weight / density / size / OreTop / OreBottom /
+    // OreBetween / OreSpread. The "overworld" column = the row listed ORE_OVERWORLD
+    // (:886-916 true; the :917-925 Mars/End/Moon/Betweenlands rows false — the draw
+    // must sum over the dimension's own rows, GT6WorldGenerator.java:93). spawnDistance
+    // is 0 on every row (no row passes the DistanceFromSpawn arg) and the indicator
+    // flag is true on every row (the :886 ctor's first T). The materials reference the
+    // MT constants directly, so the JSON carries the canonical mNameInternal strings.
+    // ------------------------------------------------------------------
+
+    /** The row helper: an overworld row (indicator on, distance 0). */
+    private static GTVeinConfig vein(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
+            OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, true, aTop, aBottom, aBetween, aSpread);
+    }
+
+    /** The row helper for the offworld rows (:917-925 — never drawn overworld, kept for the table census). */
+    private static GTVeinConfig veinOffworld(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
+            OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, false, aTop, aBottom, aBetween, aSpread);
+    }
+
+    /** The ONE 40-row large-vein table — the card spec ② "40 脉合一张 JSON 脉表". */
+    public static final List<GTVeinConfig> LARGE_VEIN_TABLE = List.of(
+        vein("ore.large.lignite"     , 50, 130, 160, 8, 32, MT.Lignite                     , MT.Lignite                     , MT.Lignite                     , MT.Coal               ), // :886
+        vein("ore.large.coal"        , 50,  80,  80, 6, 32, MT.Coal                         , MT.Coal                         , MT.Coal                         , MT.Lignite            ), // :887
+        vein("ore.large.apatite"     , 40,  60,  60, 3, 16, MT.Apatite                      , MT.Apatite                      , MT.PhosphorusBlue               , MT.PO4                ), // :888
+        vein("ore.large.lapis"       , 20,  50,  40, 5, 16, MT.Lazurite                     , MT.Sodalite                     , MT.Lapis                        , MT.Azurite            ), // :889
+        vein("ore.large.bauxite"     , 50,  90,  80, 4, 24, MT.OREMATS.Bauxite              , MT.OREMATS.Bauxite              , MT.OREMATS.Bauxite              , MT.OREMATS.Ilmenite   ), // :890
+        vein("ore.large.iodinesalt"  , 50,  60,  30, 3, 24, MT.KIO3                         , MT.NaCl                         , MT.OREMATS.Borax                , MT.OREMATS.Zeolite    ), // :891
+        vein("ore.large.rocksalt"    , 50,  60,  30, 3, 24, MT.KCl                          , MT.OREMATS.Coltan               , MT.OREMATS.Lepidolite           , MT.OREMATS.Spodumene  ), // :892
+        vein("ore.large.asbestos"    , 10,  40,  30, 3, 16, MT.OREMATS.Chromite             , MT.Talc                         , MT.Gypsum                       , MT.Asbestos           ), // :893
+        vein("ore.large.sapphire"    , 10,  40,  30, 3, 16, MT.BlueSapphire                 , MT.OrangeSapphire               , MT.YellowSapphire               , MT.Ruby               ), // :894
+        vein("ore.large.sapphire2"   , 10,  40,  30, 3, 16, MT.GreenSapphire                , MT.Ruby                         , MT.BlueSapphire                 , MT.PurpleSapphire     ), // :895
+        vein("ore.large.garnet"      , 10,  40,  60, 3, 16, MT.Almandine                    , MT.Pyrope                       , MT.Andradite                    , MT.Uvarovite          ), // :896
+        vein("ore.large.pitchblende" , 10,  40,  40, 3, 16, MT.OREMATS.Pitchblende          , MT.OREMATS.Pitchblende          , MT.OREMATS.Uraninite            , MT.OREMATS.Uraninite  ), // :897
+        vein("ore.large.monazite"    , 10,  40,  30, 3, 16, MT.OREMATS.Bastnasite           , MT.OREMATS.Bastnasite           , MT.Monazite                     , MT.Nd                 ), // :898
+        vein("ore.large.diamond"     ,  5,  20,  40, 2, 16, MT.Graphite                     , MT.Graphite                     , MT.Diamond                      , MT.Graphite           ), // :899
+        vein("ore.large.galena"      , 30,  60,  40, 5, 16, MT.OREMATS.Galena               , MT.OREMATS.Galena               , MT.Ag                           , MT.Pb                 ), // :900
+        vein("ore.large.quartz"      , 40,  80,  60, 3, 16, MT.MilkyQuartz                  , MT.OREMATS.Barite               , MT.CertusQuartz                 , MT.CertusQuartz       ), // :901
+        vein("ore.large.peridot"     , 10,  40,  60, 3, 16, MT.OREMATS.Kyanite              , MT.MgCO3                        , MT.Peridot                      , MT.OREMATS.Glauconite ), // :902
+        vein("ore.large.gold"        , 20,  30,   5, 3, 16, MT.Pyrite                       , MT.OREMATS.Chalcopyrite         , MT.OREMATS.Arsenopyrite         , MT.Au                 ), // :903
+        vein("ore.large.platinum"    , 40,  50,   5, 3, 16, MT.OREMATS.Cooperite            , MT.Pd                           , MT.OREMATS.Sperrylite           , MT.Ir                 ), // :904
+        vein("ore.large.molybdenum"  , 20,  50,   5, 3, 16, MT.OREMATS.Wulfenite            , MT.OREMATS.Molybdenite          , MT.Mo                           , MT.OREMATS.Powellite  ), // :905
+        vein("ore.large.cassiterite" , 40,  90, 170, 5, 24, MT.OREMATS.Stannite             , MT.OREMATS.Kesterite            , MT.OREMATS.Huebnerite           , MT.OREMATS.Cassiterite), // :906
+        vein("ore.large.tungstate"   , 20,  50,  10, 3, 16, MT.OREMATS.Scheelite            , MT.OREMATS.Russellite           , MT.OREMATS.Tungstate            , MT.OREMATS.Pinalite   ), // :907
+        vein("ore.large.manganese"   , 20,  30,  20, 3, 16, MT.Grossular                    , MT.Spessartine                  , MT.MnO2                         , MT.OREMATS.Coltan     ), // :908
+        vein("ore.large.beryllium"   ,  5,  30,  15, 3, 16, MT.Aquamarine                   , MT.Maxixe                       , MT.Emerald                      , MT.Th                 ), // :909
+        vein("ore.large.beryllium2"  ,  5,  30,  15, 3, 16, MT.Bixbite                      , MT.Goshenite                    , MT.Heliodor                     , MT.Morganite          ), // :910
+        vein("ore.large.titanium"    , 10,  40,  40, 3, 16, MT.TiO2                         , MT.TiO2                         , MT.Zircon                       , MT.OREMATS.Ilmenite   ), // :911
+        vein("ore.large.nickel"      , 10,  40,  40, 3, 16, MT.OREMATS.Garnierite           , MT.Ni                           , MT.OREMATS.Cobaltite            , MT.OREMATS.Pentlandite), // :912
+        vein("ore.large.redstone"    , 10,  40,  60, 3, 24, MT.Redstone                     , MT.Redstone                     , MT.Ruby                         , MT.OREMATS.Cinnabar   ), // :913
+        vein("ore.large.tetrahedrite", 70, 120, 150, 4, 24, MT.OREMATS.Tetrahedrite         , MT.OREMATS.Tetrahedrite         , MT.Cu                           , MT.OREMATS.Stibnite   ), // :914
+        vein("ore.large.iron"        , 10,  40, 120, 4, 24, MT.OREMATS.BrownLimonite        , MT.OREMATS.YellowLimonite       , MT.Fe2O3                        , MT.OREMATS.Malachite  ), // :915
+        vein("ore.large.copper"      , 10,  30,  80, 4, 24, MT.OREMATS.Chalcopyrite         , MT.Fe2O3                        , MT.Pyrite                       , MT.Cu                 ), // :916
+        veinOffworld("ore.large.adamantium", 10, 120,   5, 2, 16, MT.OREMATS.BrownLimonite  , MT.OREMATS.YellowLimonite       , MT.Fe2O3                        , MT.Adamantine         ), // :917
+        veinOffworld("ore.large.naquadah"  , 10,  60,  10, 4, 32, MT.Nq                     , MT.Nq                           , MT.Nq                           , MT.Nq                 ), // :918
+        veinOffworld("ore.large.trinium"   , 10,  90, 100, 1, 12, MT.Ke                     , MT.Ke                           , MT.Ke                           , MT.Ke                 ), // :919
+        veinOffworld("ore.large.dolamide"  ,  5,  60,  40, 3, 16, MT.OREMATS.DuraniumHexaiodide, MT.OREMATS.DuraniumHexafluoride, MT.OREMATS.DuraniumHexachloride, MT.Dolamide), // :920
+        veinOffworld("ore.large.moonmars"  , 10,  90, 240, 1,  8, MT.MgCO3                  , MT.MnO2                         , MT.Al2O3                        , MT.TiO2               ), // :921
+        veinOffworld("ore.large.cheese"    , 10,  90, 100, 3, 16, MT.Cheese                 , MT.Cheese                       , MT.Cheese                       , MT.Se                 ), // :922
+        veinOffworld("ore.large.desh"      , 10,  90, 100, 3, 16, MT.OREMATS.TritaniumHexafluoride, MT.OREMATS.DuraniumHexaastatide, MT.OREMATS.DuraniumHexabromide, MT.Desh), // :923
+        veinOffworld("ore.large.syrmorite" , 30,  45, 160, 2, 32, MT.Syrmorite              , MT.Syrmorite                    , MT.Syrmorite                    , MT.Syrmorite          ), // :924
+        veinOffworld("ore.large.octine"    , 10,  25,  40, 1, 32, MT.Octine                 , MT.Octine                       , MT.Octine                       , MT.Octine             )  // :925
+    );
 }
