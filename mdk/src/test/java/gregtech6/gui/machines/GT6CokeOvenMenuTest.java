@@ -1,5 +1,6 @@
 package gregtech6.gui.machines;
 
+import gregapi.util.UT;
 import static org.junit.jupiter.api.Assertions.*;
 
 import net.minecraft.core.BlockPos;
@@ -115,9 +116,9 @@ class GT6CokeOvenMenuTest extends GTRecipesOfflineTestBase {
 		// the normalization is units(min(max, progress), max, 32767, T) — asserted against the
 		// same static units() the production path calls (TileEntityBasicMachine.units :739)
 		tHost.mProgress = 100;
-		assertEquals((int) TileEntityBasicMachine.units(100, 3600, 32767, true), GTBasicMachineMenu.progressValue(tHost));
+		assertEquals((int) UT.Code.units(100, 3600, 32767, true), GTBasicMachineMenu.progressValue(tHost));
 		tHost.mProgress = 1800;
-		assertEquals((int) TileEntityBasicMachine.units(1800, 3600, 32767, true), GTBasicMachineMenu.progressValue(tHost));
+		assertEquals((int) UT.Code.units(1800, 3600, 32767, true), GTBasicMachineMenu.progressValue(tHost));
 		// hand-checked: 1800*32767/3600 = 16383 remainder 1800 → round up → 16384
 		assertEquals(16384, GTBasicMachineMenu.progressValue(tHost));
 		// the min(max, progress) clamp: an over-counted progress reads as the full bar
@@ -191,7 +192,7 @@ class GT6CokeOvenMenuTest extends GTRecipesOfflineTestBase {
 		assertEquals(100, tAdapter.getProgress());
 		assertEquals(3600, tAdapter.getMaxProgress());
 		assertFalse(tAdapter.isSuccessful());
-		assertEquals(GTBasicMachineMenu.progressValue(tAdapter), tMachine.mSuccessful ? 32767 : (int) TileEntityBasicMachine.units(Math.min(tMachine.mMaxProgress, tMachine.mProgress), tMachine.mMaxProgress, 32767, true));
+		assertEquals(GTBasicMachineMenu.progressValue(tAdapter), tMachine.mSuccessful ? 32767 : (int) UT.Code.units(Math.min(tMachine.mMaxProgress, tMachine.mProgress), tMachine.mMaxProgress, 32767, true));
 
 		tMachine.mProgress = 1800;
 		assertEquals(1800, tAdapter.getProgress(), "the adapter reads THROUGH to the live field");

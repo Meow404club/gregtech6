@@ -1,5 +1,6 @@
 package gregtech6.tileentity.machines;
 
+import gregapi.util.UT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -84,7 +85,7 @@ public class TileEntityBasicMachineSlotTest extends TileEntityBasicMachineOfflin
 		assertEquals(-1, tMenu.computeProgressValue(), ":285 — idle");
 		tMachine.mProgress = 64;
 		tMachine.mMaxProgress = 256;
-		assertEquals((int) TileEntityBasicMachine.units(64, 256, Short.MAX_VALUE, true), tMenu.computeProgressValue(), ":283 — normalized running");
+		assertEquals((int) UT.Code.units(64, 256, Short.MAX_VALUE, true), tMenu.computeProgressValue(), ":283 — normalized running");
 		tMachine.mSuccessful = true;
 		assertEquals(GTBasicMachineMenu.PROGRESS_DONE, tMenu.computeProgressValue(), ":281 — success flag wins");
 	}

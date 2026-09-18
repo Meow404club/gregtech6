@@ -1,5 +1,6 @@
 package gregtech6.tileentity.machines;
 
+import gregapi.util.UT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,7 +34,7 @@ public class GTBasicMachineEfficiencyTest extends TileEntityBasicMachineOfflineT
 
 	/** The pre-p29-w1 folded expression — the identity yardstick the default must reproduce. */
 	private static long legacyMaxProgress(long aUnits) {
-		return Math.max(1, TileEntityBasicMachine.units(aUnits, 10000, 10000, true));
+		return Math.max(1, UT.Code.units(aUnits, 10000, 10000, true));
 	}
 
 	/** The Shredder :689 chain (eUt 16 × duration 16 = 256 units at T1, the offline pour). */
