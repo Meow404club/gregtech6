@@ -767,6 +767,11 @@ checker.form aClickedAt=null 一发全成——p27 链的绿灯盖住的是 form
 新簇 `p31_bedrock`；新鲜带 chunk (4,6) x64..79 z96..111 y-64..62=32512≤cap，
 staging x288..319 同 z/y——与全名册零相交，strata z=64 带保持清净）：
 
+**勘正（compile 后 PlaceCommand.java:243-244 源证）**：`/place feature` 在
+`place()` 返回 false 时抛 ERROR_FEATURE_FAILED——拒绝面就是命令错误文本
+`Could not place feature`，B 臂 expect 据此钉（非 strata 的 "Placed"：
+透镜恰一抽必落块，床岩矿 1/P 行滚签绝大多数 chunk 空手）。
+
 - **A 注册活证**（id686 门）：`gt6:ore_bedrock_coal` /
   `gt6:ore_small_bedrock_graphite` / `gt6:ore_bedrock_diamond` 三块
   setblock→`execute if block` 回读（未注册 id 该步直接红）。
