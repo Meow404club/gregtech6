@@ -27,6 +27,7 @@ import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.multiblock.GTCokeOvenBlock;
 import gregtech6.block.multiblock.GTHeatTransmitterBlock;
 import gregtech6.block.multiblock.GTImplosionCompressorBlock;
+import gregtech6.block.multiblock.GTMassfabBlock;
 import gregtech6.block.multiblock.GTLargeBoilerBlock;
 import gregtech6.block.multiblock.GTLightningRodBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
@@ -38,6 +39,7 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 import gregtech6.tileentity.multiblocks.TileEntityImplosionCompressor;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 import gregtech6.tileentity.multiblocks.TileEntityLightningRod;
+import gregtech6.tileentity.multiblocks.TileEntityMassfab;
 import gregtech6.tileentity.multiblocks.TileEntityVonDaGraagg;
 
 /**
@@ -123,6 +125,8 @@ public final class GTMultiBlocks {
 						aOutput.accept(new ItemStack(GTMultiBlocks.IMPLOSION_COMPRESSOR_ITEM.get()));
 						// task p31-graagg — the Von da Graagg controller
 						aOutput.accept(new ItemStack(GTMultiBlocks.VON_DA_GRAAGG_ITEM.get()));
+						// task p31-massfab — the Large Matter Fabricator controller
+						aOutput.accept(new ItemStack(GTMultiBlocks.MASSFAB_ITEM.get()));
 					})
 					.build());
 
@@ -445,6 +449,41 @@ public final class GTMultiBlocks {
 	public static final RegistryObject<BlockEntityType<TileEntityVonDaGraagg>> VON_DA_GRAAGG_BE =
 			BLOCK_ENTITY_TYPES.register("multiblock_von_da_graagg", () -> BlockEntityType.Builder.of(
 					TileEntityVonDaGraagg::new, VON_DA_GRAAGG.get()).build(null));
+
+	// ===========================================================================
+	// task p31-massfab — the Large Matter Fabricator controller (Loader_MultiTileEntities
+	// .java:1241 re-read VERBATIM at implementation time: meta 17199, item 17101, "Large
+	// Matter Fabricator", MT.Pb, NBT_HARDNESS 6.0F == NBT_RESISTANCE 6.0F, NBT_TEXTURE
+	// "largemassfab", NBT_INPUT 1 / MIN 1 / MAX 2097152, NBT_ENERGY_ACCEPTED TD.Energy.QU,
+	// NBT_RECIPEMAP RM.Massfab, NBT_INV/TANK_SIDE_AUTO_OUT SIDE_BOTTOM, NBT_CHEAP_
+	// OVERCLOCKING T, NBT_PARALLEL 64, NBT_PARALLEL_DURATION T, NBT_NO_CONSTANT_POWER T —
+	// the config lands in the TileEntityMassfab constructor, the row-injection form).
+	// The controller crafting row "FFF"/"FMF"/"FFF" ('M' = the item(18031) Dense Lead
+	// Wall, 'F' = IL.FIELD_GENERATORS[5]) is CUT — the 'F' item family has no port
+	// identity (the W3 absent-input pool, the implosion/graagg CUT precedent; the same
+	// absence CUTs the small Massfab T1-T5 crafting rows "RFS"/"FMF"/"RFS" on the
+	// GTMachines side, whose 'R'/'S' Processor_Crystal_Ruby/Sapphire are absent too).
+	// The structure parts are EXISTING rows — dense_wall_lead (18031), large_osmium_coil
+	// (18044), ventilation_unit (18299), processor_unit_versatile/control/conversion
+	// (18200/18202/18204) — zero new part blocks (the p29-w3-nbtdesign-parts census).
+	// ===========================================================================
+
+	/** The Large Matter Fabricator controller block — the FACING+FORMED base owns the visuals. */
+	public static final RegistryObject<GTMassfabBlock> MASSFAB = BLOCKS.register("massfab",
+			() -> new GTMassfabBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL)));
+
+	/** The Large Matter Fabricator controller item (the plain BlockItem — the implosion twelve-row shape). */
+	public static final RegistryObject<Item> MASSFAB_ITEM = ITEMS.register("massfab",
+			() -> new BlockItem(MASSFAB.get(), new Item.Properties()));
+
+	/**
+	 * The Massfab BET: one controller class over its one block (the
+	 * CokeOven/LightningRod BET degenerate shape). Registry path mirrors
+	 * {@link TileEntityMassfab#getTileEntityName()}.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityMassfab>> MASSFAB_BE =
+			BLOCK_ENTITY_TYPES.register("multiblock_massfab", () -> BlockEntityType.Builder.of(
+					TileEntityMassfab::new, MASSFAB.get()).build(null));
 
 	// ===========================================================================
 	// task p29-w3-nbtdesign-parts ③ — the part-family expansion (Loader_MultiTileEntities

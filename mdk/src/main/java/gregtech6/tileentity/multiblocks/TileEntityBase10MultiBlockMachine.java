@@ -299,8 +299,12 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	public void onTick(long aTimer, boolean aIsServerSide) {
 		super.onTick(aTimer, aIsServerSide); // the 10Base 600-tick structure poll (:121-124, includes :463)
 		if (aIsServerSide) {
-			// :454-455 — TU self-generation (the mChargeRequirement branch :456 is cut with charging)
-			if (!mStopped) mEnergy++;
+			// :454-455 verbatim — TU self-generation (the mChargeRequirement branch :456 is
+			// cut with charging). The upstream gate IS the type check: only TU machines
+			// self-generate; QU/EU/RF machines charge from the energy face. The task
+			// p31-massfab QU Massfab is the first non-TU consumer (the unconditional port
+			// increment leaked 1 energy/t into every registered type).
+			if (!mStopped && mEnergyTypeAccepted == gregapi.data.TD.Energy.TU) mEnergy++;
 			// :459 — fluid auto-output (the mDisabledFluidOutput/SIDES_VALID gate folds away with the flags)
 			doOutputFluids();
 			// :461
