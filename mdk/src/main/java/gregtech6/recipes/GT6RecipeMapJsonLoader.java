@@ -198,6 +198,10 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// Loader_Fuels.java:169 is dropped with the unregistered-fluid ruling, the water
 			// leg rides the row verbatim)
 			"gas_fuels",
+			// the P31 card (task p31-bedrock-ore-worldgen): the RM.BedrockOreList display
+			// face — the 48 fake-recipe rows ship with the key (the upstream addFakeRecipe
+			// block, WorldgenOresBedrock.java:87-132 + GT6_Main.java:405-406)
+			"bedrockorelist",
 			// the P29 W3 three (task p29-w3-heat-smelter — the wave's one recipe-batch
 			// card): the two new RM maps + the FM.Hot fuel map, the keys ARE the
 			// snake-case GT6RecipeMaps field names; the smelter/melter/fuels_hot smoke
@@ -534,6 +538,7 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "fluidbed" -> GT6RecipeMaps.FLUIDBED;
 			case "burn" -> GT6RecipeMaps.BURN;
 			case "gas_fuels" -> GT6RecipeMaps.GAS_FUELS; // task p29-w3-turbine-dynamo — the Gas Turbine fuel face
+			case "bedrockorelist" -> GT6RecipeMaps.BEDROCK_ORE_LIST; // task p31-bedrock-ore-worldgen — the Bedrock Drill display face
 			case "distillery" -> GT6RecipeMaps.DISTILLERY;
 			case "drying" -> GT6RecipeMaps.DRYING;
 			case "canner" -> GT6RecipeMaps.CANNER;

@@ -1,0 +1,1597 @@
+{
+  "recipes": [
+    {
+      "comment": "ore.bedrock.diamond \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_diamond",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.tungstate \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_tungstate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tungstate",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.ferberite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_ferberite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferberite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.wolframite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_wolframite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_wolframite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.stolzite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_stolzite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_stolzite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.scheelite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_scheelite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_scheelite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.huebnerite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_huebnerite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_huebnerite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.russellite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_russellite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_russellite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.pinalite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_pinalite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_pinalite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.uraninite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_uraninite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_uraninite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.pitchblende \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_pitchblende",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_pitchblende",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.gold.a \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_gold",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_gold",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.gold.b \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_gold",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_gold",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.cooperite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_cooperite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_cooperite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.copper \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_copper",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_copper",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.monazite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_monazite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_monazite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.powellite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_powellite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_powellite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.bastnasite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_bastnasite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_bastnasite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.stibnite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_arsenopyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_arsenopyrite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.redstone \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_redstone",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.vanadium \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_vanadium_pentoxide",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_vanadium_pentoxide",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.galena \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_galena",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_galena",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.coal \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_coal",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_coal",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.graphite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_graphite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_graphite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.stibnite2 \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_stibnite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_stibnite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.hematite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_hematite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_hematite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.sphalerite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_sphalerite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_sphalerite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.smithsonite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_smithsonite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_smithsonite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.pentlandite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_pentlandite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_pentlandite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.saltpeter \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_niter",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_niter",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.bauxite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_bauxite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_bauxite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.cassiterite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_cassiterite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_cassiterite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.chalcopyrite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_chalcopyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_chalcopyrite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.voidquartz \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_void_quartz",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_void_quartz",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.glowstone \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_glowstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glowstone",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.gloomstone \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_gloomstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_gloomstone",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.efrine \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_efrine",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_efrine",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.netherquartz \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_nether_quartz",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_nether_quartz",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.firestone \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_firestone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_firestone",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.ancientdebris \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_ancient_debris",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_ancient_debris",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.naquadah \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_naquadah",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_naquadah",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.desh \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_desh",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_desh",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.dolamide \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_dolamide",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ore_broken_stone_dolamide",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.adamantine \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_adamantine",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_adamantine",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.octine \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_octine",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_octine",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "ore.bedrock.syrmorite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "inputs": [
+        {
+          "item": "gt6:ore_bedrock_syrmorite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_syrmorite",
+          "count": 1,
+          "chance": 9687
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        },
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 10000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "the generic bedrock row (GT6_Main.java:405 \u2014 plain bedrock -> cobblestone 9990 + bedrock dust 10, lube 100)",
+      "inputs": [
+        {
+          "item": "minecraft:bedrock",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1,
+          "chance": 9990
+        },
+        {
+          "item": "gt6:dust_bedrock",
+          "count": 1,
+          "chance": 10
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lubricant",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    }
+  ]
+}

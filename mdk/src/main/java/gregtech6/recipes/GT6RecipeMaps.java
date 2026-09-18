@@ -459,6 +459,8 @@ public class GT6RecipeMaps {
 
 	/** RM.java:101 — the Squeezer map (1/2/1 items, 0/1/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch C. */
 	public static volatile RecipeMap SQUEEZER;
+	/** RM.java:153 — the RM.BedrockOreList display face (task p31-bedrock-ore-worldgen): the NEI fake-recipe map of the bedrock drill outputs; NO machine consumes it (the 17999 body is a later card), the rows are the datapack JSON's show face. */
+	public static volatile RecipeMap BEDROCK_ORE_LIST;
 
 	/** RM.java:112 — the Cluster Mill map (1/1/1 items, 0/0/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch B. */
 	public static volatile RecipeMap CLUSTER_MILL;
@@ -1018,6 +1020,17 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 1, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		// RM.java:153 — the Bedrock Drill display map: items 1/12/1, fluids 1/0/1, MIN 0,
+		// AMP 1 (the upstream ctor columns verbatim). The GUI texture file is NOT ported —
+		// nothing opens this map (display-only), the path string rides for the census.
+		BEDROCK_ORE_LIST = new RecipeMap(new HashSet<>(),
+				"gt.recipe.bedrockorelist", "Bedrock Drill", null,
+				0, 1,
+				"gt6:textures/gui/machines/bedrockorelist",
+				/*IN-OUT-MIN-ITEM=*/ 1, 12, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 0, 1,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 		// RM.java:112 — items 1/1/1, fluids 0/0/0, MIN 0, AMP 1 (the RollingMill/Wiremill shape two/three lines up)
 		CLUSTER_MILL = new RecipeMap(new HashSet<>(),
 				"gt.recipe.clustermill", "Cluster Mill", null,
@@ -1438,6 +1451,7 @@ public class GT6RecipeMaps {
 		LOOM = null;
 		PRESSURE_WASHER = null;
 		SQUEEZER = null;
+		BEDROCK_ORE_LIST = null;
 		CLUSTER_MILL = null;
 		ROLL_BENDER = null;
 		ROLL_FORMER = null;
