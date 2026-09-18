@@ -1,0 +1,24 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/arsenic_bronze"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "arsenic_bronze",
+  "pattern": [
+    " P ",
+    "fPh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:sword"
+  }
+}

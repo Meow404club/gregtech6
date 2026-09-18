@@ -1,0 +1,25 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_gravitite"
+    },
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "gravitite",
+  "pattern": [
+    "fCC",
+    " CC",
+    "  H"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:butchery_knife"
+  }
+}

@@ -20,7 +20,10 @@ import gregtech6.client.wire.GTWireTint;
 import gregtech6.item.GTMaterialPrefixBlockItem;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.items.tools.GT6ToolLadder;
+import gregtech6.items.tools.GTButcheryKnifeItem;
+import gregtech6.items.tools.GTKnifeItem;
 import gregtech6.items.tools.GTCrowbarItem;
+import gregtech6.items.tools.GTSwordItem;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
@@ -181,6 +184,12 @@ public final class GTClientHandlers {
         event.getItemColors().register(GT6ToolLadder::tintARGB, GT6Tools.PICKAXE.get(), GT6Tools.PICKAXE_GEM.get(),
                 GT6Tools.PICKAXE_CONSTRUCTION.get(), GT6Tools.SHOVEL.get(), GT6Tools.SPADE.get(),
                 GT6Tools.UNIVERSAL_SPADE.get(), GT6Tools.HOE.get(), GT6Tools.AXE.get());
+        // task p31-blade-ladder: the three blade forms carry their OWN tintARGB statics —
+        // the family dispatch over GT6ToolLadder.bladeTintARGB (the sword handle pass and
+        // the knife secondary face; the head-pass-VOID knife renders the secondary).
+        event.getItemColors().register(GTSwordItem::tintARGB, GT6Tools.SWORD.get());
+        event.getItemColors().register(GTKnifeItem::tintARGB, GT6Tools.KNIFE.get());
+        event.getItemColors().register(GTButcheryKnifeItem::tintARGB, GT6Tools.BUTCHERY_KNIFE.get());
     }
 
     /** Translation key existence check (Language.getInstance Language.java:83, has :97). */

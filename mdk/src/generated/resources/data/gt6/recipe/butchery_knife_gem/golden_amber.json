@@ -1,0 +1,25 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_golden_amber"
+    },
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "golden_amber",
+  "pattern": [
+    "fCC",
+    " CC",
+    "  H"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:butchery_knife"
+  }
+}

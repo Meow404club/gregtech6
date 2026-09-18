@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_quartz_black"
+    },
+    "H": {
+      "tag": "forge:rods/wooden"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "quartz_black",
+  "pattern": [
+    "fC",
+    "hH"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:knife"
+  },
+  "show_notification": true
+}

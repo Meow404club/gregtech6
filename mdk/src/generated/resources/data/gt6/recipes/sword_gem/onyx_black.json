@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_onyx_black"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "onyx_black",
+  "pattern": [
+    " C ",
+    "fC "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:sword"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "forge:rods/wooden"
+    },
+    "P": {
+      "tag": "forge:plates/adamantium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "adamantium",
+  "pattern": [
+    "fP",
+    "hH"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:knife"
+  },
+  "show_notification": true
+}

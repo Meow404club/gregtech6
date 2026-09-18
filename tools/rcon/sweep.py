@@ -389,6 +389,13 @@ SESSION_GROUPS = (
     # fresh_boot / mutates member — the chest rigs are band-local setblocks).
     # --group p31_retriever matches through the chains' embedded name prefix.
     ("p31_retriever_cover",),
+    # P31 W2 card (p31-blade-ladder): the blade material-ladder stats chain — the
+    # /gt6blade stats arms (per-material 伤害/耐久/tint verdicts through the vanilla
+    # per-stack attribute map + max-damage read + the tint seam) over the p31_tool_ladder
+    # group the wave plan named for the dig+blade ladder cards (the dig card appends its
+    # chains to this tuple on merge). No sites (pure command channel), no fresh_boot /
+    # mutates member. --group p31_tool_ladder matches the module stem.
+    ("p31_tool_ladder_stats",),
     # P30 W5 card 7 (p29-w5-t7-pocket-eight): the pocket multitool chains — one fresh
     # z=352 band, three x-disjoint columns (ring x384..386 — the give chest + the bare
     # stone walk rig / faces x394..398 — the log|ice|stone|bars|pane probe blocks /

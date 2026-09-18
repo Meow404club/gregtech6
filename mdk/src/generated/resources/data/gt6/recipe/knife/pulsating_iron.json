@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "P": {
+      "tag": "c:plates/pulsating_iron"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "pulsating_iron",
+  "pattern": [
+    "fP",
+    "hH"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:knife"
+  }
+}

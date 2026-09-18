@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_bixbite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "bixbite",
+  "pattern": [
+    " C ",
+    "fC "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:sword"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "P": {
+      "tag": "c:plates/bakelite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "bakelite",
+  "pattern": [
+    "fP",
+    "hH"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:knife"
+  }
+}
