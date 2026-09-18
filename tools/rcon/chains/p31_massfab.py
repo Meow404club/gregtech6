@@ -1,0 +1,177 @@
+#!/usr/bin/env python3
+"""p31-massfab — the Matter Fabricator chain (task p31-massfab, the p31_massfab sweep
+group; Loader_MultiTileEntities.java:1241/:1542-1546).
+
+  the large 17199 controller: 98 dense-lead walls (18031) + 26 osmium coils (18044) +
+  the air core + 16 vents (18299) + the versatile PU (18200) + the 4+4 Control(18202)/
+  Conversion(18204) quota ring — the controller self-cell is the bottom-centre, the
+  structure sits BEHIND the north-facing front (z+0..z+4). The hand-written walk has NO
+  declared pattern, so forming rides the onTickFirst forced check: place the controller
+  LAST (the vanilla build flow); the wrong-part rejection re-places the controller.
+
+  the element-disintegration walk (GT6RecipesMassfab, Loader_Recipes_Other.java:969-987):
+  64 iron ingots -> chargedmatter 64x26 = 1664 mB + neutralmatter 64x30 = 1920 mB — the
+  PARALLEL 64 face (the :1241 NBT_PARALLEL_DURATION T skips the :743 bind). Energy rides
+  the persisted `energy` NBT (the wall->controller relay is the declared energy-domain
+  seam; the Graagg gt.energy precedent) — 500 M QU drives min(mInputMax, mEnergy)/t
+  progress against maxprogress 64 x 7340032 = 469762048.
+
+  the auto-out bottom face (:258-265): a small massfab (T5) sits BELOW the controller;
+  its UP fluid face accepts the matter — the charged tank drains 1000 mB into it (the
+  default input-tank capacity), leaving 664 in the controller tank; the neutral tank has
+  no second sink and stays 1920.
+
+  the small form (20415): 1 iron ingot -> 26 mB + 30 mB in its own output tanks
+  (T5 = INPUT 8192 window, efficiency 10000, no overclock).
+
+acceptance arms this chain carries:
+  1 the wrong-part rejection (formed=false) and the all-green form (formed=true, the
+    FORMED blockstate assert)
+  2 the element walk at parallel 64: maxprogress 469762048, chargedmatter 1664 total
+    (664 after the 1000 mB sink drain), neutralmatter 1920
+  3 the auto-out bottom face: the sink holds chargedmatter 1000
+  4 the small T5 run: 1 ingot -> chargedmatter 26 + neutralmatter 30
+
+Run:  GT6_SESSION=off python3 tools/rcon/chains/p31_massfab.py
+"""
+
+import sys
+from pathlib import Path
+
+_HERE = Path(__file__).resolve().parent
+for _path in (str(_HERE), str(_HERE.parent)):
+    if _path not in sys.path:
+        sys.path.insert(0, _path)
+
+import gt6world
+from framework import Chain, Step, main, phase
+
+CTRL = gt6world.Site(401, 65, 438)                 # the controller: the bottom-centre wall cell
+SINK = gt6world.Site(401, 64, 438)                 # the small massfab BELOW (the auto-out sink)
+T5 = gt6world.Site(406, 65, 438)                   # the small-form T5 run rig
+BAND = (396, 60, 436, 410, 74, 446)                # the fresh band (x396..410, y60..74, z436..446)
+C = gt6world.fmt(CTRL)
+S = gt6world.fmt(SINK)
+T = gt6world.fmt(T5)
+
+WALL = "gt6:dense_wall_lead"
+COIL = "gt6:large_osmium_coil"
+VENT = "gt6:ventilation_unit"
+PU_V = "gt6:processor_unit_versatile"
+PU_C = "gt6:processor_unit_control"
+PU_X = "gt6:processor_unit_conversion"
+BIG = "gt6:large_massfab"
+SMALL = "gt6:massfab_t5"
+
+WRONG = "403 65 442"  # the corner wall cell (dy0) for the rejection arm
+
+
+def merge_inventory(size, items):
+    """The inventory data merge — the count key forks per leg (Count b / count)."""
+    return {
+        k: "data merge block " + C + " {inventory:{Size:%d,Items:[%s]}}" % (
+            size, ",".join(
+                '{Slot:%db,id:"%s",%s:%d%s}' % (slot, iid, "Count" if k == "1.20.1" else "count", n, "b" if k == "1.20.1" else "")
+                for slot, (iid, n) in items))
+        for k in ("1.20.1", "1.21.1")
+    }
+
+
+def small_merge(items):
+    """The small-machine inventory merge (3 slots = items 2/1/0 map shape)."""
+    return {
+        k: "data merge block " + T + " {inventory:{Size:3,Items:[%s]}}" % ",".join(
+            '{Slot:%db,id:"%s",%s:%d%s}' % (slot, iid, "Count" if k == "1.20.1" else "count", n, "b" if k == "1.20.1" else "")
+            for slot, (iid, n) in items)
+        for k in ("1.20.1", "1.21.1")
+    }
+
+
+# the fluid NBT shape forks: 1.20.1 {FluidName:"gt6:x",Amount:n} / 21.1 {amount:n,id:"gt6:x"}
+def tank_expect(node_key, tank_key, fluid, amount):
+    if node_key == "1.21.1":
+        return "%s:{amount:%d,id:\"%s\"}" % (tank_key, amount, fluid)
+    return "%s:{FluidName:\"%s\",Amount:%d}" % (tank_key, fluid, amount)
+
+
+steps = [
+    phase("A: the site — the wrong-part rejection, then the all-green form"),
+    Step("fill %d %d %d %d %d %d air" % BAND, expect="filled"),
+    Step("forceload add 396 436 410 446"),                       # the tick driver
+    # the 98 walls (dy0..dy4, the controller cell re-set below)
+    Step("fill 399 65 438 403 65 442 " + WALL, expect="filled"),
+    # dy1..dy3: the 16-wall rings + the 9/8/9 coils
+    Step("fill 399 66 438 403 66 442 " + WALL, expect="filled"),
+    Step("fill 400 66 439 402 66 441 " + COIL, expect="filled"),
+    Step("fill 399 67 438 403 67 442 " + WALL, expect="filled"),
+    Step("fill 400 67 439 402 67 441 " + COIL, expect="filled"),
+    Step("setblock 401 67 440 air", expect="Changed the block"),  # the :114 core centre
+    Step("fill 399 68 438 403 68 442 " + WALL, expect="filled"),
+    Step("fill 400 68 439 402 68 441 " + COIL, expect="filled"),
+    # dy4: the last 25 walls
+    Step("fill 399 69 438 403 69 442 " + WALL, expect="filled"),
+    # dy5: the 16 vents + the versatile centre + the 4+4 quota ring
+    Step("fill 399 70 438 403 70 442 " + VENT, expect="filled"),
+    Step("setblock 401 70 440 " + PU_V, expect="Changed the block"),
+    Step("setblock 400 70 439 " + PU_C, expect="Changed the block"),
+    Step("setblock 401 70 439 " + PU_C, expect="Changed the block"),
+    Step("setblock 402 70 439 " + PU_C, expect="Changed the block"),
+    Step("setblock 400 70 440 " + PU_C, expect="Changed the block"),
+    Step("setblock 402 70 440 " + PU_X, expect="Changed the block"),
+    Step("setblock 400 70 441 " + PU_X, expect="Changed the block"),
+    Step("setblock 401 70 441 " + PU_X, expect="Changed the block"),
+    Step("setblock 402 70 441 " + PU_X, expect="Changed the block"),
+    # the wrong-part arm: a stone corner wall, then the controller (placed LAST — the
+    # onTickFirst forced check is the forming path of a hand-written walk)
+    Step("setblock " + WRONG + " minecraft:stone", expect="Changed the block"),
+    Step("setblock " + C + " " + BIG, expect="Changed the block"),
+    Step("execute if block " + C + " gt6:large_massfab[formed=false]", expect="Test passed", poll=30),
+    # the fix arm: the right wall back, the controller re-placed (the fresh onTickFirst)
+    Step("setblock " + WRONG + " " + WALL, expect="Changed the block"),
+    Step("setblock " + C + " air", expect="Changed the block"),
+    Step("setblock " + C + " " + BIG, expect="Changed the block"),
+    Step("execute if block " + C + " gt6:large_massfab[formed=true]", expect="Test passed", poll=30),
+
+    phase("B: the element walk at parallel 64 — 64 iron ingots + 500 M QU energy"),
+    Step("setblock " + S + " " + SMALL, expect="Changed the block"),  # the auto-out sink BELOW
+    Step("data merge block " + C + " {energy:500000000}", expect="Modified block data"),
+    Step(merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.20.1"], expect="Modified block data",
+         node_cmds={"1.21.1": merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.21.1"]}),
+    Step("data get block " + C, expect="active: 1b", poll=60),
+    Step("data get block " + C, expect="maxprogress: 469762048L", poll=30),  # 64 x 7340032 — the PARALLEL 64 + DURATION T face
+    Step("data get block " + C, expect=tank_expect("1.20.1", "output_tank_1", "gt6:neutralmatter", 1920),
+         poll=300, node_expects={"1.21.1": tank_expect("1.21.1", "output_tank_1", "gt6:neutralmatter", 1920)}),
+    Step("data get block " + C, expect=tank_expect("1.20.1", "output_tank", "gt6:chargedmatter", 664),
+         poll=60, node_expects={"1.21.1": tank_expect("1.21.1", "output_tank", "gt6:chargedmatter", 664)}),
+
+    phase("C: the auto-out bottom face — the sink holds the drained 1000 mB charge"),
+    Step("data get block " + S, expect=tank_expect("1.20.1", "tanks.in.0", "gt6:chargedmatter", 1000),
+         poll=60, node_expects={"1.21.1": tank_expect("1.21.1", "tanks.in.0", "gt6:chargedmatter", 1000)}),
+
+    phase("D: the small form (20415) — 1 iron ingot -> 26 + 30 mB in its own output tanks"),
+    Step("data merge block " + T + " {energy:10000000}", expect="Modified block data"),
+    Step(small_merge([(0, ("minecraft:iron_ingot", 1))])["1.20.1"], expect="Modified block data",
+         node_cmds={"1.21.1": small_merge([(0, ("minecraft:iron_ingot", 1))])["1.21.1"]}),
+    Step("data get block " + T, expect="active: 1b", poll=60),
+    Step("data get block " + T, expect="maxprogress: 7340032L", poll=30),
+    Step("data get block " + T, expect=tank_expect("1.20.1", "tanks.out.0", "gt6:chargedmatter", 26),
+         poll=300, node_expects={"1.21.1": tank_expect("1.21.1", "tanks.out.0", "gt6:chargedmatter", 26)}),
+    Step("data get block " + T, expect=tank_expect("1.20.1", "tanks.out.1", "gt6:neutralmatter", 30),
+         poll=60, node_expects={"1.21.1": tank_expect("1.21.1", "tanks.out.1", "gt6:neutralmatter", 30)}),
+
+    phase("E: teardown — the explicit band restore"),
+    Step("fill %d %d %d %d %d %d air" % BAND, expect="filled"),
+    Step("forceload remove all"),
+    Step("time query daytime", expect="The time is"),
+]
+
+CHAIN = Chain(
+    name="p31-massfab p31_massfab",
+    slug="p31massfab",
+    sites=gt6world.declare_sites(CTRL, SINK, T5),
+    preferred_ports=(26346, 26356),
+    steps=steps,
+)
+
+if __name__ == "__main__":
+    main(CHAIN)
