@@ -132,8 +132,14 @@ public class MachineLadderTest {
 	@Test
 	public void stampedPayloadKeepsTheSeamShape() {
 		ItemStack tStack = stamped(MT.Bronze, 1.0F);
+		assertEquals(MT.Bronze, GT6ToolLadder.materialOf(tStack), "the seam read face on both legs");
+		//? if forge {
 		CompoundTag tRaw = GT6ItemData.rawTag(tStack);
 		assertTrue(tRaw.contains(GT6ToolStats.KEY.nbtName()), "the identity rides the keyed compound (the GT.ToolStats carrier)");
-		assertEquals(MT.Bronze, GT6ToolLadder.materialOf(tStack));
+		//?} else {
+		/*// the 1.21.1 carrier is the registered DataComponentType (the GT6ItemDataTest fork):
+		//the root-NBT raw read is forge-only, the component presence is the neo face.
+		assertTrue(GT6ItemData.find(tStack, GT6ToolStats.KEY).isPresent(), "the component carries the payload");
+		*///?}
 	}
 }
