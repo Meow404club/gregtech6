@@ -122,6 +122,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DistillCrucibleLoot::new, LootContextParamSets.BLOCK), // task p29-w3-distill-crucible — the towers + the crucible ladder
                 new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-large-12 — the twelve large machines
                 new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-implosion — the Implosion Compressor controller
+                new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -168,6 +169,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DistillCrucibleLoot::new, LootContextParamSets.BLOCK), // task p29-w3-distill-crucible — the towers + the crucible ladder
                 new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-large-12 — the twelve large machines
                 new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-implosion — the Implosion Compressor controller
+                new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -2149,6 +2151,36 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : implosionLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /** The Von da Graagg self-drop list (task p31-graagg — the implosionLootBlocks singleton form). */
+    public static List<Block> graaggLootBlocks() {
+        return List.of(gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.get());
+    }
+
+    /** The Von da Graagg self-drop provider (task p31-graagg; the implosion provider shape). */
+    public static final class GT6GraaggBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6GraaggBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6GraaggBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return graaggLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : graaggLootBlocks()) dropSelf(tBlock);
         }
     }
 

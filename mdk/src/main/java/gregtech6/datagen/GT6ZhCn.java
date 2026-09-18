@@ -911,6 +911,10 @@ public class GT6ZhCn extends LanguageProvider {
 		// task p31-implosion — the Implosion Compressor (the Loader :1228 row; GTCEu Modern
 		// zh 爆破压缩机 lineage, the machine's explosion-driven compression)
 		add("block.gt6.implosion_compressor", "爆破压缩机");
+		// task p31-graagg — the Von da Graagg (the Loader :1280 row; hand zh — the upstream
+		// dump carries zero Graagg rows, the transliteration keeps the "Generator" face of
+		// the name column like the en row)
+		add("block.gt6.von_da_graagg", "冯·达·格拉格发电机");
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_STRUCTURE);
 		for (int i = 1; i <= 9; i++) {
 			addDirect(String.format(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE, i));

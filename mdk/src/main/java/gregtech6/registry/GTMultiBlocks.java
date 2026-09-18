@@ -30,6 +30,7 @@ import gregtech6.block.multiblock.GTImplosionCompressorBlock;
 import gregtech6.block.multiblock.GTLargeBoilerBlock;
 import gregtech6.block.multiblock.GTLightningRodBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
+import gregtech6.block.multiblock.GTVonDaGraaggBlock;
 import gregtech6.fluid.GTFluids;
 import gregtech6.tileentity.multiblocks.HeatTransmitterBlockEntity;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
@@ -37,6 +38,7 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 import gregtech6.tileentity.multiblocks.TileEntityImplosionCompressor;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 import gregtech6.tileentity.multiblocks.TileEntityLightningRod;
+import gregtech6.tileentity.multiblocks.TileEntityVonDaGraagg;
 
 /**
  * Multiblock domain registration, card-owned (ADR-P3-4 self-contained listener form, the
@@ -119,6 +121,8 @@ public final class GTMultiBlocks {
 						for (RegistryObject<Item> tItem : GT6LargeMachines.ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
 						// task p31-implosion — the Implosion Compressor controller
 						aOutput.accept(new ItemStack(GTMultiBlocks.IMPLOSION_COMPRESSOR_ITEM.get()));
+						// task p31-graagg — the Von da Graagg controller
+						aOutput.accept(new ItemStack(GTMultiBlocks.VON_DA_GRAAGG_ITEM.get()));
 					})
 					.build());
 
@@ -408,6 +412,39 @@ public final class GTMultiBlocks {
 	public static final RegistryObject<BlockEntityType<TileEntityImplosionCompressor>> IMPLOSION_COMPRESSOR_BE =
 			BLOCK_ENTITY_TYPES.register("multiblock_implosion_compressor", () -> BlockEntityType.Builder.of(
 					TileEntityImplosionCompressor::new, IMPLOSION_COMPRESSOR.get()).build(null));
+
+	// ===========================================================================
+	// task p31-graagg — the Von da Graagg controller (Loader_MultiTileEntities.java:1280
+	// re-read VERBATIM at implementation time: meta 17996, item 17101, "Von da Graagg
+	// Generator", MT.SteelGalvanized, NBT_HARDNESS 6.0F == NBT_RESISTANCE 6.0F,
+	// NBT_TEXTURE "vondagraagg", NBT_ENERGY_ACCEPTED TD.Energy.EU). The controller
+	// crafting row "CSC"/"PMP"/"CEC" is CUT (the W3 absent-input pool convention, the
+	// implosion CUT precedent): the 'P' IL.Processor_Crystal_Ruby and 'C' OD_CIRCUITS[6]
+	// have no port item identity (and the row is absent-input on 'S' Nether Star gem /
+	// 'E' Eye of Ender identities too — one CUT for the whole row). The structure parts
+	// are EXISTING rows — dense_wall_galvanized_steel (18028, :1162 family),
+	// large_copper_coil (18040, :1170), dense_wall_steel (18029, :1163) — zero new part
+	// blocks (the p29-w3-nbtdesign-parts census). The suppression face rides
+	// EntityJoinLevelEvent (CheckSpawn has no modern counterpart; the deviation ledger
+	// lives on TileEntityVonDaGraagg/GTGraaggSpawnListener).
+	// ===========================================================================
+
+	/** The Von da Graagg controller block — the FACING+FORMED base owns the visuals. */
+	public static final RegistryObject<GTVonDaGraaggBlock> VON_DA_GRAAGG = BLOCKS.register("von_da_graagg",
+			() -> new GTVonDaGraaggBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL)));
+
+	/** The Von da Graagg controller item (the plain BlockItem — the implosion twelve-row shape). */
+	public static final RegistryObject<Item> VON_DA_GRAAGG_ITEM = ITEMS.register("von_da_graagg",
+			() -> new BlockItem(VON_DA_GRAAGG.get(), new Item.Properties()));
+
+	/**
+	 * The Von da Graagg BET: one controller class over its one block (the
+	 * CokeOven/LightningRod BET degenerate shape). Registry path mirrors
+	 * {@link TileEntityVonDaGraagg#getTileEntityName()}.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityVonDaGraagg>> VON_DA_GRAAGG_BE =
+			BLOCK_ENTITY_TYPES.register("multiblock_von_da_graagg", () -> BlockEntityType.Builder.of(
+					TileEntityVonDaGraagg::new, VON_DA_GRAAGG.get()).build(null));
 
 	// ===========================================================================
 	// task p29-w3-nbtdesign-parts ③ — the part-family expansion (Loader_MultiTileEntities
