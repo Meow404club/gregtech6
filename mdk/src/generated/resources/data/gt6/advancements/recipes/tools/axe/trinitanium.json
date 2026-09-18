@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:axe/trinitanium"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_trinitanium": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/trinitanium"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_trinitanium",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:axe/trinitanium"
+    ]
+  },
+  "sends_telemetry_event": false
+}

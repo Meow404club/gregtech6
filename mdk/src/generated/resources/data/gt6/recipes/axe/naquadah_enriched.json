@@ -1,0 +1,29 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/naquadah_enriched"
+    },
+    "P": {
+      "tag": "forge:plates/naquadah_enriched"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "naquadah_enriched",
+  "pattern": [
+    "PIh",
+    "P  ",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:axe"
+  },
+  "show_notification": true
+}

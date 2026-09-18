@@ -39,9 +39,11 @@ import net.minecraft.world.level.block.state.BlockState;
  * <li><b>Damage</b>: base 1.5F (:65-67); per-block 50 / per-attack 200 fold to one point.</li>
  * </ul>
  *
- * <p>Durability 512 (the family value; upstream durability multiplier 1.0).
+ * <p>Durability ladder (task p31-dig-ladder): the {@link GT6ToolLadder} form over the
+ * stack's identity — durability j/100, speed ×1.5 × mToolSpeed, the :482 quality gate;
+ * the identity-less arm = Steel bit-exact (512 / 9.0F, the pre-ladder constants).
  */
-public class GTSpadeItem extends Item {
+public class GTSpadeItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/** The family value (512; 10000 upstream units = 1 point). */
 	public static final int DURABILITY_POINTS = 512;
@@ -51,6 +53,12 @@ public class GTSpadeItem extends Item {
 
 	/** Upstream getSpeedMultiplier :70-73 — the 6.0F anchor × 1.5. */
 	public static final float MINING_SPEED = GTPickaxeItem.MINING_SPEED * 1.5F;
+
+	/** The form durability multiplier (upstream :76-77 = 1.0). */
+	public static final float DURABILITY_MULTIPLIER = 1.0F;
+
+	/** The form speed multiplier (upstream getSpeedMultiplier :70-73 = 1.5). */
+	public static final float SPEED_MULTIPLIER = 1.5F;
 
 	//? if forge {
 	private final Multimap<Attribute, AttributeModifier> mAttackModifiers = ImmutableMultimap.of(
@@ -75,25 +83,61 @@ public class GTSpadeItem extends Item {
 		return GTShovelItem.mines(aState);
 	}
 
-	/** The dig-speed seam — the ×1.5 spade speed on the surface. */
+	/** The dig-speed seam — the ×1.5 spade speed on the surface (the stack-free steel arm). */
 	public static float destroySpeedBonus(BlockState aState) {
 		return mines(aState) ? MINING_SPEED : 1.0F;
 	}
 
-	/** The drop-authorization half (the family iron-tier gate). */
+	/** The ladder dig-speed seam — ×1.5 × the stack's material speed (:70-73 × :483). */
+	public static float destroySpeedBonus(ItemStack aStack, BlockState aState) {
+		return mines(aState) ? GT6ToolLadder.speed(SPEED_MULTIPLIER, GT6ToolLadder.materialOf(aStack)) : 1.0F;
+	}
+
+	/**
+	 * The drop authorization — the stack-aware face (forge 1.20.1 IForgeItem overload,
+	 * 1.21.1 the vanilla signature) over the quality gate.
+	 */
 	@Override
-	//? if forge {
-	public boolean isCorrectToolForDrops(BlockState aState) {
-	//?} else {
-	/*public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
-	//21.1: the stack parameter joined the signature (the GTCrowbarItem fork).
-	*///?}
+	public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
+		return mines(aState) && !GT6ToolLadder.qualityGate(aStack, aState);
+	}
+
+	/** The quality-blind floor (the family iron-tier gate). */
+	static boolean coarseFloor(BlockState aState) {
 		return mines(aState) && !aState.is(BlockTags.NEEDS_DIAMOND_TOOL);
 	}
 
+	//? if forge {
+	/** The stackless floor the 1.20.1 break path consults (the family iron-tier gate). */
+	@Override
+	public boolean isCorrectToolForDrops(BlockState aState) {
+		return coarseFloor(aState);
+	}
+	//?}
+
+	/** The dig-speed half (the level gate first, the upstream :482 order). */
 	@Override
 	public float getDestroySpeed(ItemStack aStack, BlockState aState) {
-		return destroySpeedBonus(aState);
+		if (GT6ToolLadder.qualityGate(aStack, aState)) return 0.0F;
+		return destroySpeedBonus(aStack, aState);
+	}
+
+	/** The form multiplier read (the {@link GT6ToolLadder.LadderTool} face). */
+	@Override
+	public float durabilityMultiplier() {
+		return DURABILITY_MULTIPLIER;
+	}
+
+	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, durabilityMultiplier()));
+	}
+
+	/** The composed display name — "Spade (Bronze)"; bare for identity-less stacks. */
+	@Override
+	public net.minecraft.network.chat.Component getName(ItemStack aStack) {
+		return GT6ToolLadder.displayName(aStack, getDescriptionId());
 	}
 
 	/** Upstream getToolDamagePerBlockBreak :40-43 — 50 units fold into one point. */

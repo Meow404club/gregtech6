@@ -1,0 +1,24 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/tantalum_hafnium_carbide"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "tantalum_hafnium_carbide",
+  "pattern": [
+    "fPh"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:shovel"
+  },
+  "show_notification": true
+}

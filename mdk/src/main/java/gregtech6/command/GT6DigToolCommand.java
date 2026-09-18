@@ -34,7 +34,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
+import gregtech6.items.tools.GT6ToolLadder;
 import gregtech6.registry.GT6Tools;
+
+import gregapi.oredict.OreDictMaterial;
 
 /**
  * {@code /gt6dig} — the dig-tool acceptance command (task p29-w5-t1-dig-six; card-local
@@ -63,6 +66,12 @@ import gregtech6.registry.GT6Tools;
  * universal_spade (the GT6Tools registry paths, snake). The loot-conversion arms ride
  * the GLOBAL loot modifier chain — mine with the right tool and the spawned drops are
  * the converted ones (the seed for the per-tool GLM JSONs).
+ *
+ * <p>MATERIAL ARMS (task p31-dig-ladder): {@code speed <pos> <tool> <material>} and
+ * {@code mine <pos> <tool> <material>} stamp the {@code GT.ToolStats} identity through
+ * the {@link GT6ToolLadder#stampIdentity} seam (the same face the material-tool recipes
+ * assemble through) before the read — the per-material level/speed/durability
+ * assertions. The identity-less three-arg forms stay the steel fallback arms.
  */
 @Mod.EventBusSubscriber(modid = "gt6")
 public final class GT6DigToolCommand {
@@ -90,15 +99,23 @@ public final class GT6DigToolCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.then(Commands.argument("tool", com.mojang.brigadier.arguments.StringArgumentType.word())
 						.executes(aContext -> mine(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-								com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "tool"), false))
+								com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "tool"), false, null))
 						.then(Commands.literal("hand")
 							.executes(aContext -> mine(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-									"bare", true))))))
+									"bare", true, null)))
+						.then(Commands.argument("material", com.mojang.brigadier.arguments.StringArgumentType.word())
+							.executes(aContext -> mine(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "tool"), false,
+									com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "material")))))))
 			.then(Commands.literal("speed")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.then(Commands.argument("tool", com.mojang.brigadier.arguments.StringArgumentType.word())
 						.executes(aContext -> speed(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
-								com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "tool"))))));
+								com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "tool"), null))
+						.then(Commands.argument("material", com.mojang.brigadier.arguments.StringArgumentType.word())
+							.executes(aContext -> speed(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+									com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "tool"),
+									com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "material")))))));
 		aEvent.getDispatcher().register(tDig);
 		LOGGER.info("Registered GT6 dig-tool acceptance command /gt6dig (use | place | mine [hand] | speed)");
 	}
@@ -114,6 +131,23 @@ public final class GT6DigToolCommand {
 			case "universal_spade" -> GT6Tools.UNIVERSAL_SPADE.get();
 			default -> null;
 		};
+	}
+
+	/**
+	 * The tool stack builder: an identity-less stack when no material is named (the
+	 * steel fallback arm), or the {@link GT6ToolLadder#stampIdentity}-stamped ladder
+	 * stack (the form's own durability multiplier through the LadderTool face).
+	 *
+	 * @return null when the material name does not resolve (the caller reports it).
+	 */
+	private static ItemStack identityStack(Item aItem, String aMaterial) {
+		ItemStack tStack = new ItemStack(aItem);
+		if (aMaterial == null) return tStack;
+		// the snake-form resolution (the GT6ToolLadder index — the same face the recipe rows parse through)
+		OreDictMaterial tMaterial = GT6ToolLadder.materialBySnake(aMaterial);
+		if (tMaterial == null || tMaterial == gregapi.data.MT.NULL) return null;
+		float tMultiplier = aItem instanceof GT6ToolLadder.LadderTool tTool ? tTool.durabilityMultiplier() : 1.0F;
+		return GT6ToolLadder.stampIdentity(tStack, tMaterial, tMultiplier);
 	}
 
 	/** The synthetic centre hit the acceptance commands share (the GT6ChiselCommand shape). */
@@ -142,7 +176,7 @@ public final class GT6DigToolCommand {
 		boolean tChanged = !tBefore.equals(tAfter);
 		String tReport = String.format("gt6dig use %s on %s at %s: result=%s, state %s -> %s, toolDamage=%d/%d",
 				tChanged ? "CONVERTED" : "same", aTool, aPos.toShortString(), tResult, tBefore.getBlock(),
-				tAfter.getBlock(), tDamage, 512);
+				tAfter.getBlock(), tDamage, tTool.getMaxDamage());
 		if (!tChanged && tResult == InteractionResult.PASS && tDamage == 0) {
 			aSource.sendFailure(Component.literal("gt6dig use NO-OP: " + tReport));
 			return 0;
@@ -198,7 +232,7 @@ public final class GT6DigToolCommand {
 	}
 
 	/** The mining-drop face (the chisel-mine shape): the drops list IS the verdict. */
-	private static int mine(CommandSourceStack aSource, BlockPos aPos, String aTool, boolean aBareHand) {
+	private static int mine(CommandSourceStack aSource, BlockPos aPos, String aTool, boolean aBareHand, String aMaterial) {
 		ServerLevel tLevel = aSource.getLevel();
 		BlockState tState = tLevel.getBlockState(aPos);
 		String tBlockId = String.valueOf(ForgeRegistries.BLOCKS.getKey(tState.getBlock()));
@@ -209,7 +243,11 @@ public final class GT6DigToolCommand {
 				aSource.sendFailure(Component.literal("gt6dig: unknown tool id: " + aTool));
 				return 0;
 			}
-			tTool = new ItemStack(tItem);
+			tTool = identityStack(tItem, aMaterial);
+			if (tTool == null) {
+				aSource.sendFailure(Component.literal("gt6dig: unknown material: " + aMaterial));
+				return 0;
+			}
 		}
 		var tFakePlayer = FakePlayerFactory.getMinecraft(tLevel);
 		tFakePlayer.getInventory().clearContent(); // a leftover from an earlier command would fake the arm
@@ -234,32 +272,34 @@ public final class GT6DigToolCommand {
 		}
 		tFakePlayer.getInventory().clearContent();
 		String tDropsText = String.join(", ", tDrops);
-		String tReport = String.format("gt6dig mine %s hand=%s on %s at %s: drops=[%s], toolDamage=%d",
-				aBareHand ? "hand" : aTool, aBareHand, tBlockId, aPos.toShortString(), tDropsText, tTool.getDamageValue());
+		String tReport = String.format("gt6dig mine %s hand=%s on %s at %s: drops=[%s], toolDamage=%d/%d",
+				aBareHand ? "hand" : aTool, aBareHand, tBlockId, aPos.toShortString(), tDropsText,
+				tTool.getDamageValue(), tTool.getMaxDamage());
 		aSource.sendSuccess(() -> Component.literal("gt6dig mine check OK: " + tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
 	}
 
 	/** The mining-face read: the dig speed + the drop authorization, live. */
-	private static int speed(CommandSourceStack aSource, BlockPos aPos, String aTool) {
+	private static int speed(CommandSourceStack aSource, BlockPos aPos, String aTool, String aMaterial) {
 		ServerLevel tLevel = aSource.getLevel();
 		Item tItem = toolItem(aTool);
 		if (tItem == null) {
 			aSource.sendFailure(Component.literal("gt6dig: unknown tool id: " + aTool));
 			return 0;
 		}
+		ItemStack tTool = identityStack(tItem, aMaterial);
+		if (tTool == null) {
+			aSource.sendFailure(Component.literal("gt6dig: unknown material: " + aMaterial));
+			return 0;
+		}
 		BlockState tState = tLevel.getBlockState(aPos);
-		ItemStack tTool = new ItemStack(tItem);
 		float tSpeed = tItem.getDestroySpeed(tTool, tState);
-		//? if forge {
-		boolean tCorrect = tItem.isCorrectToolForDrops(tState);
-		//?} else {
-		/*boolean tCorrect = tItem.isCorrectToolForDrops(tTool, tState);
-		//21.1: the stack parameter joined the signature (the GTCrowbarItem fork).
-		*///?}
-		String tReport = String.format("gt6dig speed %s on %s at %s: speed=%s, correctForDrops=%s",
-				aTool, BuiltInRegistries.BLOCK.getKey(tState.getBlock()), aPos.toShortString(), tSpeed, tCorrect);
+		// the stack-aware drop authorization (forge: the IForgeItem overload; 1.21.1: the vanilla signature)
+		boolean tCorrect = tItem.isCorrectToolForDrops(tTool, tState);
+		String tReport = String.format("gt6dig speed %s[%s] on %s at %s: speed=%s, correctForDrops=%s, maxDamage=%d",
+				aTool, aMaterial == null ? "steel-fallback" : aMaterial, BuiltInRegistries.BLOCK.getKey(tState.getBlock()),
+				aPos.toShortString(), tSpeed, tCorrect, tTool.getMaxDamage());
 		aSource.sendSuccess(() -> Component.literal("gt6dig speed check OK: " + tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;

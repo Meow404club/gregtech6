@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:axe/yttrium_barium_cuprate"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_yttrium_barium_cuprate": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/yttrium_barium_cuprate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_yttrium_barium_cuprate",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:axe/yttrium_barium_cuprate"
+    ]
+  },
+  "sends_telemetry_event": false
+}

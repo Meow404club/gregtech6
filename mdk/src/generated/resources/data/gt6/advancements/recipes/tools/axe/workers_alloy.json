@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:axe/workers_alloy"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_workers_alloy": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/workers_alloy"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_workers_alloy",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:axe/workers_alloy"
+    ]
+  },
+  "sends_telemetry_event": false
+}

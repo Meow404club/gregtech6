@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:shovel/ultimet"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_ultimet": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/ultimet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_ultimet",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:shovel/ultimet"
+    ]
+  },
+  "sends_telemetry_event": false
+}

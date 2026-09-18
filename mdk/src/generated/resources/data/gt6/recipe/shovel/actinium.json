@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/actinium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "actinium",
+  "pattern": [
+    "fPh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:shovel"
+  }
+}

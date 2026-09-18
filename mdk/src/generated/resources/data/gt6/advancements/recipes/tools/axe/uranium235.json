@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:axe/uranium235"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_uranium235": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/uranium235"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_uranium235",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:axe/uranium235"
+    ]
+  },
+  "sends_telemetry_event": false
+}

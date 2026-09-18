@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/muspelheim_power"
+    },
+    "P": {
+      "tag": "forge:plates/muspelheim_power"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "muspelheim_power",
+  "pattern": [
+    "PIP",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:pickaxe_construction"
+  },
+  "show_notification": true
+}

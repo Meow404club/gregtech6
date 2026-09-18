@@ -1,0 +1,24 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/hslasteel"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "hslasteel",
+  "pattern": [
+    "fPh"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:shovel"
+  },
+  "show_notification": true
+}

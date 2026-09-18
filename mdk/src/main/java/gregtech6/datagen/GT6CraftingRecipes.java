@@ -307,6 +307,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				armorPieceBuilder(tSuit, i).save(aConsumer, armorRecipeId(tSuit, i));
 			}
 		}
+		// task p31-dig-ladder — the per-material identity-stamped rows (the axis walk)
+		digLadderRows(aConsumer);
 	}
 	//?} else {
 	/*@Override
@@ -408,6 +410,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				armorPieceBuilder(tSuit, i).save(aOutput, armorRecipeId(tSuit, i));
 			}
 		}
+		// task p31-dig-ladder — the per-material identity-stamped rows (the axis walk)
+		digLadderRows(aOutput);
 	}
 	*///?}
 
@@ -2043,4 +2047,188 @@ public class GT6CraftingRecipes extends RecipeProvider {
             default -> throw new IllegalArgumentException("base suit only: " + aSuit.suit());
         };
     }
+
+	// ------------------------------------------------------------------------
+	// The dig ladder material rows (task p31-dig-ladder) — the upstream
+	// OreProcessing_Tool shapes on the toolHead prefixes (Loader_Tools.java:293-300,
+	// the And(ANTIMATTER.NOT, MT.Wood.NOT, COATED.NOT) axis), ONE gt6:material_tool
+	// row per (dig form x plate+ingot material). The plain steel anchors above are the
+	// identity-less steel arm; every other axis material gets its own stamped row (the
+	// upstream P-variant rows — the C/G curved-plate+gem variant is cut: the port has
+	// no plateCurved platform-tag family yet, the rolling-prefix card owns it).
+
+	/** One ladder form: the id prefix + the upstream P/I row shape (Loader_Tools.java:294-300 verbatim). */
+	private static final String[][] DIG_LADDER_FORMS = {
+			{"pickaxe", "PII", "f h"},
+			{"pickaxe_construction", "PIP", "f h"},
+			{"shovel", "fPh"},
+			{"spade", "fPh", " s "},
+			{"hoe", "PIh", "f  "},
+			{"axe", "PIh", "P  ", "f  "},
+	};
+
+	/** The upstream axis filter ∩ the port's plate+ingot item truth; Steel excluded (the anchors above own it). */
+	private static java.util.List<gregapi.oredict.OreDictMaterial> digLadderMaterials() {
+		java.util.List<gregapi.oredict.OreDictMaterial> rMaterials = new ArrayList<>();
+		java.util.Set<gregapi.oredict.OreDictMaterial> tIngots = new java.util.HashSet<>();
+		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialItems.registrationOrder()) {
+			if (tPair.prefix() == gregapi.data.OP.ingot) tIngots.add(tPair.material());
+		}
+		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialItems.registrationOrder()) {
+			gregapi.oredict.OreDictMaterial tMaterial = tPair.material();
+			if (tPair.prefix() != gregapi.data.OP.plate || !tIngots.contains(tMaterial) || tMaterial == gregapi.data.MT.Steel) continue;
+			if (tMaterial.mToThis.contains(gregapi.data.ANY.Wood)) continue; // MT.Wood.NOT
+			if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+			if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+			rMaterials.add(tMaterial);
+		}
+		return rMaterials;
+	}
+
+	/** The result item of a dig ladder form (the GT6Tools registry face). */
+	private static net.minecraft.world.item.Item digLadderResult(String aForm) {
+		return switch (aForm) {
+			case "pickaxe" -> GT6Tools.PICKAXE.get();
+			case "pickaxe_construction" -> GT6Tools.PICKAXE_CONSTRUCTION.get();
+			case "shovel" -> GT6Tools.SHOVEL.get();
+			case "spade" -> GT6Tools.SPADE.get();
+			case "hoe" -> GT6Tools.HOE.get();
+			case "axe" -> GT6Tools.AXE.get();
+			default -> throw new IllegalArgumentException("unknown dig ladder form: " + aForm);
+		};
+	}
+
+	/** The row letters (the upstream OreProcessing_Tool alphabet over the P/I variant). */
+	private static TagKey<Item> digLadderIngredient(char aKey, gregapi.oredict.OreDictMaterial aMaterial) {
+		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(aMaterial.mNameInternal);
+		return switch (aKey) {
+			case 'P' -> GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake);
+			case 'I' -> GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, tSnake);
+			case 'h' -> GT6ItemTags.TOOLS_HARD_HAMMER;
+			case 'f' -> GT6ItemTags.TOOLS_FILE;
+			case 's' -> Tags.Items.RODS_WOODEN;
+			default -> throw new IllegalArgumentException("unknown dig ladder letter: " + aKey);
+		};
+	}
+
+	/** The row id (the result-path convention with the material leaf). */
+	private static ResourceLocation digLadderRowId(String aForm, String aSnake) {
+		String tPath = aForm + "/" + aSnake;
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+//? if forge {
+	private void digLadderRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+		for (gregapi.oredict.OreDictMaterial tMaterial : digLadderMaterials()) {
+			String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
+			TagKey<Item> tPlate = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake);
+			for (String[] tForm : DIG_LADDER_FORMS) {
+				ResourceLocation tId = digLadderRowId(tForm[0], tSnake);
+				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
+				java.util.List<String> tPattern = new ArrayList<>();
+				for (int i = 1; i < tForm.length; i++) {
+					tPattern.add(tForm[i]);
+					for (char tChar : tForm[i].toCharArray()) {
+						if (tChar != ' ') tKey.put(tChar, net.minecraft.world.item.crafting.Ingredient.of(digLadderIngredient(tChar, tMaterial)));
+					}
+				}
+				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+						.recipeAdvancement()
+						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+						.addCriterion("has_" + tSnake, has(tPlate))
+						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
+						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
+						.requirements(net.minecraft.advancements.RequirementsStrategy.OR);
+				aConsumer.accept(new MaterialToolRow(tId, tId.withPrefix("recipes/tools/"),
+						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT, tPattern, tKey,
+						digLadderResult(tForm[0]), tSnake, tAdvancement));
+			}
+		}
+	}
+
+	/**
+	 * The forge FinishedRecipe face — the vanilla shaped JSON (the vanilla "type" field
+	 * rides the default serializeRecipe() over the registered gt6:material_tool
+	 * serializer) + the ONE material field the serializer parses.
+	 */
+	private record MaterialToolRow(ResourceLocation aId, ResourceLocation aAdvancementId,
+			net.minecraft.world.item.crafting.CraftingBookCategory aCategory, java.util.List<String> aPattern,
+			java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> aKey, net.minecraft.world.item.Item aResult, String aMaterial,
+			net.minecraft.advancements.Advancement.Builder aAdvancement)
+			implements net.minecraft.data.recipes.FinishedRecipe {
+
+		@Override
+		public void serializeRecipeData(com.google.gson.JsonObject aJson) {
+			aJson.addProperty("category", aCategory.getSerializedName());
+			com.google.gson.JsonArray tPattern = new com.google.gson.JsonArray();
+			for (String tRow : aPattern) {
+				tPattern.add(tRow);
+			}
+			aJson.add("pattern", tPattern);
+			com.google.gson.JsonObject tKey = new com.google.gson.JsonObject();
+			for (java.util.Map.Entry<Character, net.minecraft.world.item.crafting.Ingredient> tEntry : aKey.entrySet()) {
+				tKey.add(String.valueOf(tEntry.getKey()), tEntry.getValue().toJson());
+			}
+			aJson.add("key", tKey);
+			com.google.gson.JsonObject tResult = new com.google.gson.JsonObject();
+			tResult.addProperty("item", net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(aResult).toString());
+			tResult.addProperty("count", 1);
+			aJson.add("result", tResult);
+			aJson.addProperty("show_notification", true);
+			aJson.addProperty("material", aMaterial);
+		}
+
+		@Override
+		public ResourceLocation getId() {
+			return aId;
+		}
+
+		@Override
+		public net.minecraft.world.item.crafting.RecipeSerializer<?> getType() {
+			return gregtech6.items.tools.GT6MaterialToolRecipe.Registration.SERIALIZER.get();
+		}
+
+		@Override
+		@javax.annotation.Nullable
+		public com.google.gson.JsonObject serializeAdvancement() {
+			return aAdvancement.serializeToJson();
+		}
+
+		@Override
+		@javax.annotation.Nullable
+		public ResourceLocation getAdvancementId() {
+			return aAdvancementId;
+		}
+	}
+	//?} else {
+	/*private void digLadderRows(net.minecraft.data.recipes.RecipeOutput aOutput) {
+		for (gregapi.oredict.OreDictMaterial tMaterial : digLadderMaterials()) {
+			String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
+			TagKey<Item> tPlate = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake);
+			for (String[] tForm : DIG_LADDER_FORMS) {
+				ResourceLocation tId = digLadderRowId(tForm[0], tSnake);
+				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
+				java.util.List<String> tPattern = new ArrayList<>();
+				for (int i = 1; i < tForm.length; i++) {
+					tPattern.add(tForm[i]);
+					for (char tChar : tForm[i].toCharArray()) {
+						if (tChar != ' ') tKey.put(tChar, net.minecraft.world.item.crafting.Ingredient.of(digLadderIngredient(tChar, tMaterial)));
+					}
+				}
+				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+						.recipeAdvancement()
+						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+						.addCriterion("has_" + tSnake, has(tPlate))
+						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
+						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
+						.requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR);
+				gregtech6.items.tools.GT6MaterialToolRecipe tRecipe = new gregtech6.items.tools.GT6MaterialToolRecipe("",
+						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
+						net.minecraft.world.item.crafting.ShapedRecipePattern.of(tKey, tPattern),
+						new net.minecraft.world.item.ItemStack(digLadderResult(tForm[0])), true, tSnake);
+				aOutput.accept(tId, tRecipe, tAdvancement.build(tId.withPrefix("recipes/tools/")));
+			}
+		}
+	}
+	*///?}
 }

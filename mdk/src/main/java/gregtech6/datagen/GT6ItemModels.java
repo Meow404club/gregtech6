@@ -201,6 +201,49 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/metallic/tool_head_axe_double_overlay"))
             .texture("layer2", modLoc("item/material_sets/wood/stick"))
             .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        // the dig-family ladder rows (task p31-dig-ladder): the axe row shape — head =
+        // the toolHead metallic-set pair (layer0 = the TINTED head base, tint index 0,
+        // the GT6ToolLadder material colour), layer1 = the OVERLAY shadow; handle = the
+        // wood stick pair. The dig-six card (p29-w5-t1-dig-six) shipped these six items
+        // WITHOUT model rows (the registered items fell back to the missing model) — this
+        // batch restores the dig band's render face alongside the material ladder.
+        withExistingParent("pickaxe", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_pickaxe"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_pickaxe_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        // the gem pick's head = the FINE set (the Diamond default primary's texture set,
+        // GT_Tool_PickaxeGem.getIcon :34 — the gem identity rides the head texture set).
+        withExistingParent("pickaxe_gem", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/fine/tool_head_pickaxe_gem"))
+            .texture("layer1", modLoc("item/material_sets/fine/tool_head_pickaxe_gem_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        withExistingParent("pickaxe_construction", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_construction_pickaxe"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_construction_pickaxe_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        withExistingParent("shovel", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_shovel"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_shovel_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        withExistingParent("spade", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_spade"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_spade_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        withExistingParent("universal_spade", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_universal_spade"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_universal_spade_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        withExistingParent("hoe", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_hoe"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_hoe_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
         // the formal soft hammer item (task p29-w5-t3-machine-face-four): FOUR layers, the
         // builder-wand row shape — head = the RUBBER-set toolHeadHammer pair (the upstream
         // primary ANY.Rubber default, GT_Tool_SoftHammer.getIcon :120 — SET_RUBBER, not the

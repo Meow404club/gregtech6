@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/carmot"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "s": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "material": "carmot",
+  "pattern": [
+    "fPh",
+    " s "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:spade"
+  },
+  "show_notification": true
+}

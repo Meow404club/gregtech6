@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:hoe/uranium233"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_uranium233": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/uranium233"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_uranium233",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:hoe/uranium233"
+    ]
+  },
+  "sends_telemetry_event": false
+}

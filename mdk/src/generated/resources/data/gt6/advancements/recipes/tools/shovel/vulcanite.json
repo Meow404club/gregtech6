@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:shovel/vulcanite"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_vulcanite": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/vulcanite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_vulcanite",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:shovel/vulcanite"
+    ]
+  },
+  "sends_telemetry_event": false
+}

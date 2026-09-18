@@ -42,11 +42,13 @@ import net.minecraft.world.level.block.state.BlockState;
  *     single point (the family mapping).</li>
  * </ul>
  *
- * <p>Durability 512 (the family value); the vanilla drop-authorization gate rides the
- * pickaxe shape ({@code needs_diamond_tool} refused — no vanilla shovel block sits
- * behind it, the gate is uniform for the family).
+ * <p>Durability ladder (task p31-dig-ladder): the {@link GT6ToolLadder} form over the
+ * stack's identity — durability j/100, speed ×1.0 × mToolSpeed, the :482 quality gate;
+ * the identity-less arm = Steel bit-exact (512 / 6.0F, the pre-ladder constants). The
+ * drop authorization stays the stackless coarse floor on 1.20.1 (no vanilla shovel
+ * block sits behind {@code needs_diamond_tool}, the gate is uniform for the family).
  */
-public class GTShovelItem extends Item {
+public class GTShovelItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/** The family value (512; 10000 upstream units = 1 point). */
 	public static final int DURABILITY_POINTS = 512;
@@ -56,6 +58,12 @@ public class GTShovelItem extends Item {
 
 	/** The iron-tier dig-speed scale (upstream getSpeedMultiplier :69-71 = 1.0 — the anchor). */
 	public static final float MINING_SPEED = 6.0F;
+
+	/** The form durability multiplier (ToolStats.java:71 default 1.0). */
+	public static final float DURABILITY_MULTIPLIER = 1.0F;
+
+	/** The form speed multiplier (upstream getSpeedMultiplier :69-71 = 1.0). */
+	public static final float SPEED_MULTIPLIER = 1.0F;
 
 	/** The upstream {@code Material.fire} arm — fire is shovel-minable upstream, in no tag here. */
 	static final ImmutableSet<Block> FIRE_FAMILY = ImmutableSet.of(Blocks.FIRE, Blocks.SOUL_FIRE);
@@ -83,25 +91,63 @@ public class GTShovelItem extends Item {
 		return aState.is(BlockTags.MINEABLE_WITH_SHOVEL) || FIRE_FAMILY.contains(aState.getBlock());
 	}
 
-	/** The dig-speed seam (the DiggerItem getDestroySpeed shape on the surface). */
+	/** The dig-speed seam (the DiggerItem getDestroySpeed shape on the surface) — the stack-free steel arm. */
 	public static float destroySpeedBonus(BlockState aState) {
 		return mines(aState) ? MINING_SPEED : 1.0F;
 	}
 
-	/** The drop-authorization half (the family iron-tier gate). */
+	/** The ladder dig-speed seam — ×1.0 × the stack's material speed (:483). */
+	public static float destroySpeedBonus(ItemStack aStack, BlockState aState) {
+		return mines(aState) ? GT6ToolLadder.speed(SPEED_MULTIPLIER, GT6ToolLadder.materialOf(aStack)) : 1.0F;
+	}
+
+	/**
+	 * The drop authorization — the stack-aware face (forge 1.20.1 IForgeItem overload,
+	 * 1.21.1 the vanilla signature): the surface minus the blocks the material quality
+	 * cannot harvest (the {@link GT6ToolLadder#qualityGate} ZERO-speed floor backstops
+	 * the 1.20.1 stackless break path).
+	 */
 	@Override
-	//? if forge {
-	public boolean isCorrectToolForDrops(BlockState aState) {
-	//?} else {
-	/*public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
-	//21.1: the stack parameter joined the signature (the GTCrowbarItem fork).
-	*///?}
+	public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
+		return mines(aState) && !GT6ToolLadder.qualityGate(aStack, aState);
+	}
+
+	/** The quality-blind floor (the steel-or-better semantics, shared with the pickaxe). */
+	static boolean coarseFloor(BlockState aState) {
 		return mines(aState) && !aState.is(BlockTags.NEEDS_DIAMOND_TOOL);
 	}
 
+	//? if forge {
+	/** The stackless floor the 1.20.1 break path consults (the family iron-tier gate). */
+	@Override
+	public boolean isCorrectToolForDrops(BlockState aState) {
+		return coarseFloor(aState);
+	}
+	//?}
+
+	/** The dig-speed half (the level gate first, the upstream :482 order). */
 	@Override
 	public float getDestroySpeed(ItemStack aStack, BlockState aState) {
-		return destroySpeedBonus(aState);
+		if (GT6ToolLadder.qualityGate(aStack, aState)) return 0.0F;
+		return destroySpeedBonus(aStack, aState);
+	}
+
+	/** The form multiplier read (the {@link GT6ToolLadder.LadderTool} face). */
+	@Override
+	public float durabilityMultiplier() {
+		return DURABILITY_MULTIPLIER;
+	}
+
+	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, durabilityMultiplier()));
+	}
+
+	/** The composed display name — "Shovel (Bronze)"; bare for identity-less stacks. */
+	@Override
+	public net.minecraft.network.chat.Component getName(ItemStack aStack) {
+		return GT6ToolLadder.displayName(aStack, getDescriptionId());
 	}
 
 	/** Upstream getToolDamagePerBlockBreak :40-42 — 50 units fold into one point. */

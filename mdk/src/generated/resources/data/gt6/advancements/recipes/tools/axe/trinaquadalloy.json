@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:axe/trinaquadalloy"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_trinaquadalloy": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/trinaquadalloy"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_trinaquadalloy",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:axe/trinaquadalloy"
+    ]
+  },
+  "sends_telemetry_event": false
+}

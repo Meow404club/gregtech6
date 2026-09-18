@@ -350,6 +350,16 @@ SESSION_GROUPS = (
     # embedded name prefix (the p29_w1_process form).
     ("p29_w5_t2_blade_six_tree", "p29_w5_t2_blade_six_grass", "p29_w5_t2_blade_six_rock",
      "p29_w5_t2_blade_six_vine", "p29_w5_t2_blade_six_faces"),
+    # P31 W2 ladder cards (p31-dig-ladder + p31-blade-ladder, the shared GT6Tools/datagen
+    # seam = one tool-ladder gate group): the dig MATERIAL chain (z=192 x424..436, the
+    # dig-six sibling band — the /gt6dig <material> arms stamp GT.ToolStats through the
+    # GT6ToolLadder seam and read the per-material speed/level/budget live) + the dig-six
+    # and blade regression legs (the identity-less steel arm must stay bit-exact).
+    # --group p31_tool_ladder matches through the chains' embedded name prefix.
+    ("p31_tool_ladder_dig_materials", "p29_w5_t1_dig_six_torch", "p29_w5_t1_dig_six_path",
+     "p29_w5_t1_dig_six_enderchest", "p29_w5_t1_dig_six_harvest", "p29_w5_t1_dig_six_faces",
+     "p29_w5_t1_dig_six_openable", "p29_w5_t2_blade_six_tree", "p29_w5_t2_blade_six_grass",
+     "p29_w5_t2_blade_six_rock", "p29_w5_t2_blade_six_vine", "p29_w5_t2_blade_six_faces"),
     # P29 W5 card 4 (p29-w5-t4-field-five): the four field-tool chains — one fresh
     # z=224 band (plow 400..402 / sense 405..407 / leaf 410 / hand_drill 413: the
     # 3x3x3 snow cube with the off-surface corner, the 3x3 grass carpet on its floor,

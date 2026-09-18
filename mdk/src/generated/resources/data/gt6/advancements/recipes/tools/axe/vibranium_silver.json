@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:axe/vibranium_silver"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_vibranium_silver": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/vibranium_silver"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_vibranium_silver",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:axe/vibranium_silver"
+    ]
+  },
+  "sends_telemetry_event": false
+}

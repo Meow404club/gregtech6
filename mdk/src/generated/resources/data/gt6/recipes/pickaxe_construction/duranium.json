@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/duranium"
+    },
+    "P": {
+      "tag": "forge:plates/duranium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "duranium",
+  "pattern": [
+    "PIP",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:pickaxe_construction"
+  },
+  "show_notification": true
+}

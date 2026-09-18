@@ -30,8 +30,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 /**
- * The formal GT6 pickaxe — item id {@code gt6:pickaxe} (task p29-w5-t1-dig-six spec,
- * single steel tier ruling d). Upstream GT_Tool_Pickaxe.java:41-72:
+ * The formal GT6 pickaxe — item id {@code gt6:pickaxe} (task p29-w5-t1-dig-six spec;
+ * the MATERIAL LADDER face is task p31-dig-ladder, the {@link GT6ToolLadder} form).
+ * Upstream GT_Tool_Pickaxe.java:41-72:
  * <ul>
  * <li><b>Mining surface</b> (:54-56): the {@code TOOL_pickaxe} harvest arm + the
  *     rock/iron/anvil materials → the vanilla {@code #minecraft:mineable/pickaxe} tag
@@ -62,11 +63,19 @@ import net.minecraft.world.level.gameevent.GameEvent;
  *     precedent, ADR ①).</li>
  * </ul>
  *
- * <p>Durability 512 (the family value); tier semantics = steel ≈ iron tier: the drop
- * authorization refuses {@code #minecraft:needs_diamond_tool} blocks (the
- * DiggerItem.isCorrectToolForDrops tag-gate shape with tier level 2).
+ * <p>Durability ladder (task p31-dig-ladder): the stack's {@code GT.ToolStats} identity
+ * scales durability ({@code j}/100 points), dig speed ({@code mToolSpeed}), mining
+ * level ({@code baseQuality + mToolQuality}, the :482 gate that also returns ZERO speed
+ * on too-hard surfaces) and the head tint; the IDENTITY-LESS arm reproduces Steel
+ * bit-exact ({@code getPrimaryMaterial(stack, MT.Steel)} :60/:65 is the upstream read,
+ * so the pre-ladder 512/6.0F constants ARE the steel fallback). Form parameters
+ * (upstream ToolStats defaults): durability ×1.0, speed ×1.0, base quality 0; the
+ * attack damage stays the flat 3.0F constant (the stack-dependent attack face is cut,
+ * the {@link GT6ToolLadder} javadoc). Tier semantics: the level gate replaces the old
+ * flat {@code needs_diamond_tool} refusal — steel (quality 2) still refuses diamond
+ * and authorizes stone/iron exactly as before, so the legacy arm is zero-migration.
  */
-public class GTPickaxeItem extends Item {
+public class GTPickaxeItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/** The family value (the crowbar/cutter/... pinned 512; 10000 upstream units = 1 point). */
 	public static final int DURABILITY_POINTS = 512;
@@ -79,6 +88,12 @@ public class GTPickaxeItem extends Item {
 	 * MINING_SPEED 6.0F anchor; upstream getSpeedMultiplier is the 1.0 default).
 	 */
 	public static final float MINING_SPEED = 6.0F;
+
+	/** The form durability multiplier (upstream getMaxDurabilityMultiplier, ToolStats.java:71 = 1.0). */
+	public static final float DURABILITY_MULTIPLIER = 1.0F;
+
+	/** The form speed multiplier (upstream getSpeedMultiplier, ToolStats.java:70 = 1.0). */
+	public static final float SPEED_MULTIPLIER = 1.0F;
 
 	/** The upstream {@code Material.glass} arm — the glass block/pane family (incl. tinted). */
 	static final ImmutableSet<Block> GLASS_FAMILY = buildGlassFamily();
@@ -198,31 +213,67 @@ public class GTPickaxeItem extends Item {
 
 	/**
 	 * The dig-speed seam — {@link #MINING_SPEED} on the mineable surface, the vanilla
-	 * 1.0F hand speed elsewhere (the DiggerItem.getDestroySpeed :39-41 shape).
+	 * 1.0F hand speed elsewhere (the DiggerItem.getDestroySpeed :39-41 shape). The
+	 * STACK-FREE steel arm (the legacy fallback and the offline pin); the ladder face
+	 * is {@link #destroySpeedBonus(ItemStack, BlockState)}.
 	 */
 	public static float destroySpeedBonus(BlockState aState) {
 		return mines(aState) ? MINING_SPEED : 1.0F;
 	}
 
+	/** The ladder dig-speed seam — the form multiplier × the stack's material speed (:483). */
+	public static float destroySpeedBonus(ItemStack aStack, BlockState aState) {
+		return mines(aState) ? GT6ToolLadder.speed(SPEED_MULTIPLIER, GT6ToolLadder.materialOf(aStack)) : 1.0F;
+	}
+
+	/** The level gate (upstream :482) — ZERO speed when the material is too soft for the block. */
+	public static boolean qualityGate(ItemStack aStack, BlockState aState) {
+		return GT6ToolLadder.qualityGate(aStack, aState);
+	}
+
 	/**
-	 * The drop-authorization half — steel ≈ iron tier: the surface minus the
-	 * {@code needs_diamond_tool} blocks (the DiggerItem.isCorrectToolForDrops :68-77
-	 * tag-gate shape with tier level 2).
+	 * The drop authorization — the stack-aware face (forge 1.20.1 IForgeItem overload,
+	 * 1.21.1 the vanilla signature): the surface minus the blocks the material quality
+	 * cannot harvest. The LIVE vanilla break path on 1.20.1 reaches only the STACKLESS
+	 * form below (Player.hasCorrectToolForDrops is stack-free there); the quality face
+	 * bites through the ZERO-speed gate, so the coarse floor stays.
 	 */
 	@Override
-	//? if forge {
-	public boolean isCorrectToolForDrops(BlockState aState) {
-	//?} else {
-	/*public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
-	//21.1: the stack parameter joined the signature (the GTCrowbarItem fork).
-	*///?}
+	public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
+		return mines(aState) && !qualityGate(aStack, aState);
+	}
+
+	/** The quality-blind floor (the steel-or-better semantics, shared both legs). */
+	static boolean coarseFloor(BlockState aState) {
 		return mines(aState) && !aState.is(BlockTags.NEEDS_DIAMOND_TOOL);
 	}
 
-	/** The dig-speed half. */
+	//? if forge {
+	/**
+	 * The stackless floor the 1.20.1 break path consults (DiggerItem.isCorrectToolForDrops
+	 * :68-77 tag-gate shape with tier level 2 — quality-correct for every steel-or-better
+	 * material). 1.21.1 has no stackless form (the stack joined the vanilla signature).
+	 */
+	@Override
+	public boolean isCorrectToolForDrops(BlockState aState) {
+		return coarseFloor(aState);
+	}
+	//?}
+
+	/**
+	 * The dig-speed half (the level gate first, the upstream :482 order). The speed
+	 * shape itself is the instance face {@link #destroySpeedLadder} — the construction
+	 * pick re-points it (the ore-stone penalty).
+	 */
 	@Override
 	public float getDestroySpeed(ItemStack aStack, BlockState aState) {
-		return destroySpeedBonus(aState);
+		if (qualityGate(aStack, aState)) return 0.0F;
+		return destroySpeedLadder(aStack, aState);
+	}
+
+	/** The instance ladder-speed face (the construction pick re-points the shape). */
+	protected float destroySpeedLadder(ItemStack aStack, BlockState aState) {
+		return destroySpeedBonus(aStack, aState);
 	}
 
 	/** Upstream getToolDamagePerBlockBreak :42 — 25 units fold into one point. */
@@ -349,4 +400,33 @@ public class GTPickaxeItem extends Item {
 			Blocks.COARSE_DIRT, Blocks.DIRT_PATH,
 			Blocks.MYCELIUM, Blocks.DIRT_PATH,
 			Blocks.ROOTED_DIRT, Blocks.DIRT_PATH);
+
+	// ------------------------------ the GT6ItemData identity seams (task p31-dig-ladder) ------------------------------
+
+	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, durabilityMultiplier()));
+	}
+
+	/** The form durability multiplier (the gem pick re-points it; ToolStats.java:71 default 1.0). */
+	@Override
+	public float durabilityMultiplier() {
+		return DURABILITY_MULTIPLIER;
+	}
+
+	/**
+	 * The runtime tint (upstream GT_Tool_Pickaxe.getRGBa :63-65 — the head pass): tint
+	 * index 0 = the head layer, the material {@code mRGBaSolid} with the VERBATIM steel
+	 * fallback; every other index = the {@code -1} no-tint sentinel.
+	 */
+	public static int tintARGB(ItemStack aStack, int aTintIndex) {
+		return GT6ToolLadder.tintARGB(aStack, aTintIndex);
+	}
+
+	/** The composed display name — "Pickaxe (Bronze)"; bare for identity-less stacks. */
+	@Override
+	public net.minecraft.network.chat.Component getName(ItemStack aStack) {
+		return GT6ToolLadder.displayName(aStack, getDescriptionId());
+	}
 }

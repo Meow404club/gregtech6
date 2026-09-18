@@ -38,11 +38,11 @@ import net.minecraft.world.level.block.state.BlockState;
  *     the machine-interaction pool, zero useOn here.</li>
  * </ul>
  *
- * <p>Durability 512 (the family value; upstream getMaxDurabilityMultiplier 1.0,
- * :75-77). The {@code getDestroySpeed} surface speed stands in for the vanilla
- * hoe-class dig anchor.
+ * <p>Durability ladder (task p31-dig-ladder): the {@link GT6ToolLadder} form over the
+ * stack's identity — durability j/100, speed ×1.0 × mToolSpeed, the :482 quality gate;
+ * the identity-less arm = Steel bit-exact (512 / 6.0F, the pre-ladder constants).
  */
-public class GTHoeItem extends Item {
+public class GTHoeItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/** The family value (512; 10000 upstream units = 1 point). */
 	public static final int DURABILITY_POINTS = 512;
@@ -52,6 +52,12 @@ public class GTHoeItem extends Item {
 
 	/** Upstream getSpeedMultiplier :70-72 = 1.0 — the 6.0F anchor. */
 	public static final float MINING_SPEED = 6.0F;
+
+	/** The form durability multiplier (upstream :75-77 = 1.0). */
+	public static final float DURABILITY_MULTIPLIER = 1.0F;
+
+	/** The form speed multiplier (upstream getSpeedMultiplier :70-72 = 1.0). */
+	public static final float SPEED_MULTIPLIER = 1.0F;
 
 	/**
 	 * The upstream {@code Material.gourd} arm — the 1.7.10 gourd material (pumpkin,
@@ -85,25 +91,61 @@ public class GTHoeItem extends Item {
 		return aState.is(BlockTags.MINEABLE_WITH_HOE) || GOURD_FAMILY.contains(aState.getBlock());
 	}
 
-	/** The dig-speed seam — the full speed on the surface, ZERO off it (the upstream getDigSpeed face: a GT6 tool mines its surface only). */
+	/** The dig-speed seam — the full speed on the surface, ZERO off it (the upstream getDigSpeed face: a GT6 tool mines its surface only) — the stack-free steel arm. */
 	public static float destroySpeedBonus(BlockState aState) {
 		return mines(aState) ? MINING_SPEED : 0.0F;
 	}
 
-	/** The drop-authorization half (the family iron-tier gate). */
+	/** The ladder dig-speed seam — ×1.0 × the stack's material speed on the surface, ZERO off it. */
+	public static float destroySpeedBonus(ItemStack aStack, BlockState aState) {
+		return mines(aState) ? GT6ToolLadder.speed(SPEED_MULTIPLIER, GT6ToolLadder.materialOf(aStack)) : 0.0F;
+	}
+
+	/**
+	 * The drop authorization — the stack-aware face (forge 1.20.1 IForgeItem overload,
+	 * 1.21.1 the vanilla signature) over the quality gate.
+	 */
 	@Override
-	//? if forge {
-	public boolean isCorrectToolForDrops(BlockState aState) {
-	//?} else {
-	/*public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
-	//21.1: the stack parameter joined the signature (the GTCrowbarItem fork).
-	*///?}
+	public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
+		return mines(aState) && !GT6ToolLadder.qualityGate(aStack, aState);
+	}
+
+	/** The quality-blind floor (the family iron-tier gate). */
+	static boolean coarseFloor(BlockState aState) {
 		return mines(aState) && !aState.is(BlockTags.NEEDS_DIAMOND_TOOL);
 	}
 
+	//? if forge {
+	/** The stackless floor the 1.20.1 break path consults (the family iron-tier gate). */
+	@Override
+	public boolean isCorrectToolForDrops(BlockState aState) {
+		return coarseFloor(aState);
+	}
+	//?}
+
+	/** The dig-speed half (the level gate first, the upstream :482 order). */
 	@Override
 	public float getDestroySpeed(ItemStack aStack, BlockState aState) {
-		return destroySpeedBonus(aState);
+		if (GT6ToolLadder.qualityGate(aStack, aState)) return 0.0F;
+		return destroySpeedBonus(aStack, aState);
+	}
+
+	/** The form multiplier read (the {@link GT6ToolLadder.LadderTool} face). */
+	@Override
+	public float durabilityMultiplier() {
+		return DURABILITY_MULTIPLIER;
+	}
+
+	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, durabilityMultiplier()));
+	}
+
+	/** The composed display name — "Hoe (Bronze)"; bare for identity-less stacks. */
+	@Override
+	public net.minecraft.network.chat.Component getName(ItemStack aStack) {
+		return GT6ToolLadder.displayName(aStack, getDescriptionId());
 	}
 
 	/** Upstream getToolDamagePerBlockBreak :40-42 — 50 units fold into one point. */

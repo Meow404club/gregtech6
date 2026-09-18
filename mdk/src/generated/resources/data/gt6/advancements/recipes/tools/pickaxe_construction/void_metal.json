@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:pickaxe_construction/void_metal"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_void_metal": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:plates/void_metal"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_void_metal",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:pickaxe_construction/void_metal"
+    ]
+  },
+  "sends_telemetry_event": false
+}
