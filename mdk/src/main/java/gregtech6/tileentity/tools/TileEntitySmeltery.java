@@ -107,17 +107,34 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	/** Upstream :682 — the single feed slot (top face only, :684). */
 	public final GTItemStackHandler mInventory = new GTItemStackHandler(1, this::setChanged);
 
-	/** The vanilla-ore bridge for the feed ladder (the OM.anydata counterpart for un-oredicted vanilla ores; declared minimal set, the oredict universe rides MaterialPrefixItem). */
-	public static final Map<net.minecraft.world.level.ItemLike, OreDictMaterial> VANILLA_ORES = Map.of(
-			net.minecraft.world.item.Items.IRON_ORE, MT.Fe,
-			net.minecraft.world.item.Items.DEEPSLATE_IRON_ORE, MT.Fe,
-			net.minecraft.world.item.Items.RAW_IRON, MT.Fe,
-			net.minecraft.world.item.Items.GOLD_ORE, MT.Au,
-			net.minecraft.world.item.Items.DEEPSLATE_GOLD_ORE, MT.Au,
-			net.minecraft.world.item.Items.RAW_GOLD, MT.Au,
-			net.minecraft.world.item.Items.COPPER_ORE, MT.Cu,
-			net.minecraft.world.item.Items.DEEPSLATE_COPPER_ORE, MT.Cu,
-			net.minecraft.world.item.Items.RAW_COPPER, MT.Cu);
+	/**
+	 * The vanilla-ore bridge for the feed ladder (the OM.anydata counterpart for
+	 * un-oredicted vanilla ores; declared minimal set, the oredict universe rides
+	 * MaterialPrefixItem). Call-time MT reads (the GTWireSpecs:35 rule, pinned by
+	 * GT6RegistryStaticInitGuardTest): the eager {@code static final Map.of} form read
+	 * MT.Fe/Au/Cu inside {@code <clinit>}, so the table's contents rode the class-init
+	 * order lottery — this class first loads through the {@code GT6Crucibles} BET
+	 * supplier, and any load-point shift toward mod construct (before the enqueueWork
+	 * {@code MT.init()}) would have frozen nine pre-init nulls and dead-dropped the
+	 * bridge with zero noise. The lazy form pins the reads to call time.
+	 */
+	private static volatile Map<net.minecraft.world.level.ItemLike, OreDictMaterial> sVanillaOres = null;
+
+	/** The vanilla-ore bridge, built on first use (one material generation — the lazy form). */
+	private static Map<net.minecraft.world.level.ItemLike, OreDictMaterial> vanillaOres() {
+		Map<net.minecraft.world.level.ItemLike, OreDictMaterial> tTable = sVanillaOres;
+		if (tTable == null) sVanillaOres = tTable = Map.of(
+				net.minecraft.world.item.Items.IRON_ORE, MT.Fe,
+				net.minecraft.world.item.Items.DEEPSLATE_IRON_ORE, MT.Fe,
+				net.minecraft.world.item.Items.RAW_IRON, MT.Fe,
+				net.minecraft.world.item.Items.GOLD_ORE, MT.Au,
+				net.minecraft.world.item.Items.DEEPSLATE_GOLD_ORE, MT.Au,
+				net.minecraft.world.item.Items.RAW_GOLD, MT.Au,
+				net.minecraft.world.item.Items.COPPER_ORE, MT.Cu,
+				net.minecraft.world.item.Items.DEEPSLATE_COPPER_ORE, MT.Cu,
+				net.minecraft.world.item.Items.RAW_COPPER, MT.Cu);
+		return tTable;
+	}
 
 	/**
 	 * The BET-injecting ctor (the GTGeneratorSolidBlockEntity form): the registration
@@ -267,7 +284,7 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	 * The :158-183 feed ladder: a MaterialPrefixItem feeds its prefix amount per item
 	 * (the :179-183 generic arm); ore-family prefixes feed the ore-direct projection
 	 * (:167-183 — mTargetCrushing × mOreMultiplier with the form-factor scaling); a
-	 * vanilla ore rides {@link #VANILLA_ORES}; anything else returns null (the
+	 * vanilla ore rides {@link #vanillaOres()}; anything else returns null (the
 	 * :160-162 trash+fizz arm).
 	 */
 	@Nullable
@@ -287,7 +304,7 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 			rList.removeIf(tStack -> tStack.mAmount <= 0);
 			return rList.isEmpty() ? null : rList;
 		}
-		OreDictMaterial tVanilla = VANILLA_ORES.get(aStack.getItem());
+		OreDictMaterial tVanilla = vanillaOres().get(aStack.getItem());
 		if (tVanilla != null) {
 			List<OreDictMaterialStack> rList = new ArrayList<>();
 			rList.add(CruciblePhysics.oreDirect(tVanilla, 1)); // a vanilla ore block = one standard ore
