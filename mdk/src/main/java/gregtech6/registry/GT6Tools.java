@@ -98,6 +98,15 @@ import gregtech6.items.tools.pocket.GTPocketMultitoolItem;
  *     (GT_Tool_Crowbar.java:146-149, gregtech/items/tools/machine/), registered from
  *     GTClientHandlers.</li>
  * </ol>
+ *
+ * <p>Task p31-single-tier-ruling walked every registration row below and ruled, per
+ * item, either PERMANENT single tier (no material identity, zero {@code GT6ItemData}
+ * seam consumption) or LADDER CANDIDATE (recorded in decisions.p31-single-tier-ruling).
+ * The upstream test: the material axis exists (per-material obtainment rows, the
+ * OreProcessing_Tool table Loader_Tools.java:293-330 and the material-parameterized
+ * recipes around it) and the tool is neither EU-bound (the electric nineteen ride the
+ * voltage axis) nor identity-blind (the flint-and-tinder's closed striker list). The
+ * per-row verdicts sit in the row javadocs below.</p>
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Tools {
@@ -142,7 +151,11 @@ public final class GT6Tools {
 	/**
 	 * The formal file — item id {@code gt6:file} (task p24-tool-system spec ①/⑤). Single
 	 * steel tier, durability 512 (the crowbar/cutter/chisel pinned family value; upstream
-	 * scales per material, the ladder is the same pool cut). Upstream display name "File"
+	 * scales per material — the p31-single-tier-ruling: LADDER CANDIDATE of the
+	 * machine-face family, the per-material rows Loader_Tools.java:304 ("P"/"Pk",
+	 * typemin(2) qualmax(2)), the toolHeadFile amount :127, the AdvancedCraftingTool :347;
+	 * {@code GT6FileItem} carries no seam face until its ladder card). Upstream display
+	 * name "File"
 	 * (CS.java:1095); the crafting-loss face rides
 	 * {@link GT6FileItem#getCraftingRemainingItem} (one point per craft, the
 	 * damage-mapping decision); the crafting INGREDIENT face is the {@code #gt6:tools/file}
@@ -166,9 +179,11 @@ public final class GT6Tools {
 	/**
 	 * The formal builder's wand — item id {@code gt6:builder_wand} (task
 	 * p24-builder-wand). Single tier, durability 512 (the family value; upstream scales
-	 * per material with the ×0.1 multiplier, GT_Tool_Builderwand :42 — the ladder is the
-	 * same pool cut, the declared single-tier ruling: radius 2 ≈ the mid-gem
-	 * quality+1). Upstream display name "Builder Wand" (the :153 registration row and
+	 * per material with the ×0.1 multiplier, GT_Tool_Builderwand :42 — the
+	 * p31-single-tier-ruling: LADDER CANDIDATE (the per-material rows Loader_Tools.java:
+	 * 293, the AdvancedCraftingTool YellowSapphire :336); the radius-2-flat face stays
+	 * the declared port behaviour — a material identity would scale the durability
+	 * budget, not the radius). Upstream display name "Builder Wand" (the :153 registration row and
 	 * the TOOL_LOCALISER row CS.java:1112 verbatim); the scaffold click pays one point
 	 * PER CLICK — the upstream 10-unit return folded through Behavior_Tool :63, with the
 	 * no-creative-exemption ruling ({@link GT6BuilderWandItem#payClick}). The crafting
@@ -194,9 +209,11 @@ public final class GT6Tools {
 
 	/**
 	 * The formal hard hammer — item id {@code gt6:hammer} (task p25-tool-hammer-wrench
-	 * spec ③). Single steel tier, durability 512 (the family value; upstream scales per
-	 * material via {@code toolHeadHammer.mAmount}, Loader_Tools.java:124 — the same pool
-	 * cut). Upstream display name "Hammer" (CS.java:1096, the same :124 registration row);
+	 * spec ③). Single steel tier at the identity-less arm, durability 512 (the family
+	 * value; the material ladder UNLOCKED by task p31-machine-ladder — upstream scales
+	 * per material via {@code toolHeadHammer.mAmount}, Loader_Tools.java:124, and
+	 * {@link GTHammerItem} implements the {@code GT6ToolLadder.LadderTool} face).
+	 * Upstream display name "Hammer" (CS.java:1096, the same :124 registration row);
 	 * the crafting-loss face rides {@link GTHammerItem#getCraftingRemainingItem} (the
 	 * shared one-point mapping, the upstream :70 400-unit row folded); the crafting
 	 * INGREDIENT face is the {@code #gt6:tools/hard_hammer} item tag (GT6ItemTags, the
@@ -223,7 +240,9 @@ public final class GT6Tools {
 	 * The formal small bending cylinder — item id {@code gt6:bending_cylinder_small} (task
 	 * p25-food-can-row0 spec ②, the GT6FileItem form with the census OFF). Single steel
 	 * tier, durability 512 (the family value; upstream scales per material via
-	 * {@code setMaterialAmount(3*U)}, Loader_Tools.java:146 — the same pool cut). Upstream
+	 * {@code setMaterialAmount(3*U)}, Loader_Tools.java:146 — the
+	 * p31-single-tier-ruling: LADDER CANDIDATE, the crafting-consumable axis (the
+	 * per-material ingot rows :313, typemin(2))). Upstream
 	 * display name "Small Bending Cylinder" (the same :146 registration row); the
 	 * crafting-loss face rides {@link GT6BendingCylinderSmallItem#getCraftingRemainingItem}
 	 * (the shared one-point mapping, the upstream 25-unit row folded); the crafting
@@ -244,6 +263,10 @@ public final class GT6Tools {
 	// class, eight registrations (the card's base + form-parameter shape); pure durability
 	// 512 (the family value, ruling d) — NO battery/EU face (the reversal ruling: the :354
 	// recipe row carries no battery slot).
+	// p31-single-tier-ruling: LADDER CANDIDATE, GATED on the tool-piece family — the
+	// upstream material identity is injected by the five tool heads the :354 recipe
+	// consumes (typemin(3) qualmin(1)), and this port cut that head family (the class
+	// javadoc cut ①), so the eight forms stay identity-less until the family lands.
 
 	/** The closed form — item id {@code gt6:pocket_multitool} ("7 useful Tools in one!"). */
 	public static final RegistryObject<Item> POCKET_MULTITOOL = ITEMS.register("pocket_multitool",
@@ -313,9 +336,20 @@ public final class GT6Tools {
 	 * formulas; the identity-less arm = the steel fallback bit-exact). The AXE joins the
 	 * dig ladder per the upstream family table (row :120 sits in the dig rows, harvest
 	 * TOOL_axe, OreDictToolNames.axe — the blade family = sword/universal_spade/knife/
-	 * butchery_knife/sense); the axe_double (:121, likewise TOOL_axe) and the universal
-	 * spade (row :134 carries the blade name) stay single-steel for the W3
-	 * single-tier-ruling audit. The per-material CRAFTING rows ride the shared
+	 * butchery_knife/sense). THE W3 SINGLE-TIER RULING (task p31-single-tier-ruling):
+	 * the axe_double is a LADDER CANDIDATE of THIS dig family — row :121 sits inside the
+	 * dig block :117-122 (between the axe :120 and the hoe :122), the harvest tag is
+	 * TOOL_axe, the oredict name is {@code axe} with no blade (the three-evidence
+	 * attribution; the per-material rows :301 typemin(2), the AdvancedCraftingTool :343)
+	 * and GTAxeDoubleItem already inherits the {@code GT6ToolLadder} faces through
+	 * GTAxeItem — only the {@code gt6:material_tool} row and the ×1.5 multiplier wiring
+	 * are missing; the universal spade is a LADDER CANDIDATE of the BLADE family — the
+	 * blade oredict name LEADS its four names :134 (blade, shovel, crowbar, saw), the row
+	 * sits outside the dig block beside the blade cluster :135-138, and its axis condition
+	 * :298 drops the dig family's COATED.NOT gate (the harvest tag TOOL_crowbar is a
+	 * role tag, not a family marker; the family rule the blade card keyed on is the
+	 * blade oredict name, which this row carries first). The per-material CRAFTING rows
+	 * ride the shared
 	 * gt6:material_tool serializer (GT6MaterialToolRecipe, the Loader_Tools :293-300
 	 * OreProcessing_Tool axis), cut ① above now unlocked for this family.
 	 */
@@ -334,6 +368,12 @@ public final class GT6Tools {
 	public static final RegistryObject<Item> SPADE = ITEMS.register("spade",
 			() -> new GTSpadeItem(new Item.Properties().durability(GTSpadeItem.DURABILITY_POINTS)));
 
+	/**
+	 * The universal spade — item id {@code gt6:universal_spade}. p31-single-tier-ruling:
+	 * LADDER CANDIDATE of the BLADE family (the evidence on the dig block javadoc above;
+	 * the per-material head rows Loader_Tools.java:298, the toolHeadUniversalSpade amount
+	 * :134) — identity-less until its ladder card.
+	 */
 	public static final RegistryObject<Item> UNIVERSAL_SPADE = ITEMS.register("universal_spade",
 			() -> new GTUniversalSpadeItem(new Item.Properties().durability(GTUniversalSpadeItem.DURABILITY_POINTS)));
 
@@ -359,8 +399,13 @@ public final class GT6Tools {
 	 * <p>MATERIAL LADDER (task p31-blade-ladder): the sword/knife/butchery_knife read the
 	 * {@code GT.ToolStats} identity per stack (durability, the MultiItemTool.java:392
 	 * attack fold, the name template, the tint — {@link GT6ToolLadder}); the axe pair and
-	 * the club stay SINGLE-TIER (the p31 family ruling: the axe rows are the dig card's
-	 * judge, the club sits in the single-tier-ruling audit pool).</p>
+	 * the club were ruled by task p31-single-tier-ruling: the axe_double is a DIG-family
+	 * ladder candidate (the dig block javadoc above) and the club is a HAMMER-family
+	 * ladder candidate (upstream GT_Tool_Club extends GT_Tool_HardHammer,
+	 * early/GT_Tool_Club.java:47; the per-material ingot rows Loader_Tools.java:329; the
+	 * harvest tag TOOL_hammer :130; GTClubItem carries no seam face until its ladder
+	 * card). The {@code gt6:axe} itself rides the dig ladder (GTAxeItem, the LadderTool
+	 * face).</p>
 	 */
 	public static final RegistryObject<Item> SWORD = ITEMS.register("sword",
 			() -> new GTSwordItem(new Item.Properties().durability(GTSwordItem.DURABILITY_POINTS)));
@@ -451,6 +496,14 @@ public final class GT6Tools {
 	 * <li>{@code gt6:hand_drill} (upstream GT_Tool_HandDrill — the isMiningTool-F
 	 *     prospecting face, the DECLARED EMPTY surface in this universe).</li>
 	 * </ul>
+	 *
+	 * <p>p31-single-tier-ruling: ALL FOUR un-laddered rows here are LADDER CANDIDATES —
+	 * the plow (the per-material rows Loader_Tools.java:303 typemin(2), the
+	 * AdvancedCraftingTool Spruce handle :346 — the {@code secondaryOf} Spruce fallback
+	 * precedent), the branch_cutter (:325 typemin(2), the 5*U amount :133), the sense
+	 * (:302 typemin(2); the blade oredict name :138 makes it a BLADE-family member for
+	 * the future tint/name dispatch), the hand_drill (:330 typemin(2) qualmin(2) — the
+	 * port face stays declared-EMPTY, a ladder adds numbers, not behaviour).</p>
 	 */
 	public static final RegistryObject<Item> HOE = ITEMS.register("hoe",
 			() -> new GTHoeItem(new Item.Properties().durability(GTHoeItem.DURABILITY_POINTS)));
@@ -487,6 +540,18 @@ public final class GT6Tools {
 	 * <li>{@code gt6:bending_cylinder} (upstream GT_Tool_BendingCylinder, the LARGE form —
 	 *     the Small size landed with p25-food-can-row0; same structure-empty form).</li>
 	 * </ul>
+	 *
+	 * <p>p31-single-tier-ruling: LADDER CANDIDATES = the scissors (the per-material rows
+	 * Loader_Tools.java:326 typemin(2), the screw+ring amount :149), the scoop (:320, the
+	 * material-stick rows, the 3*U amount :132), the plunger (:315 — the WEAKEST axis:
+	 * material sticks only, the registration amount is 0 :140 so the upstream scrap face
+	 * is dead, ToolStats.java:187), the rolling_pin (the wood-plank loop
+	 * Loader_Recipes_Woods.java:237-238 + the plastic family :252-253 — an open family
+	 * axis, no OreProcessing_Tool row), the bending cylinder pair (:312/:313, the per-
+	 * material ingot rows). PERMANENT SINGLE TIER = the flint_and_tinder: no
+	 * OreProcessing_Tool axis row, the obtainment variants are a CLOSED striker
+	 * enumeration (:207-247, the flint secondary pinned) with zero behaviour spread, and
+	 * the registration amount is 0 (:143) — no material identity, zero seam consumption.</p>
 	 */
 	public static final RegistryObject<Item> SCISSORS = ITEMS.register("scissors",
 			() -> new GTScissorsItem(new Item.Properties().durability(GTScissorsItem.DURABILITY_POINTS)));
@@ -514,6 +579,11 @@ public final class GT6Tools {
 	 * upstream capacity-sum face :427-450), the :433 random-wear shell (512 = the family
 	 * value), the sneak bare-target twin swap (:162-166 cross-references), the mining
 	 * surfaces (the upstream isMinableBlock mappings; zero machine face — the RED LINE).
+	 *
+	 * <p>p31-single-tier-ruling: PERMANENT single-material — the tier axis is VOLTAGE
+	 * (the per-voltage rows Loader_Tools.java:156-174; the battery/motor recipes :357-378
+	 * pin the structural materials to the DATA.Electric tables), not the raw-material
+	 * ladder; zero {@code GT6ItemData} seam consumption.</p>
 	 */
 	public static final RegistryObject<Item> MINING_DRILL_LV = ITEMS.register(GT6ElectricToolItem.MINING_DRILL_LV.aPath(),
 			() -> new GT6ElectricToolItem(GT6ElectricToolItem.MINING_DRILL_LV, new Item.Properties().durability(GT6ElectricToolItem.DURABILITY_POINTS)));
