@@ -1290,6 +1290,9 @@ public class GT6EnUs extends LanguageProvider {
         }
         // task p31-implosion — the Implosion Compressor (the Loader :1228 name column)
         add("block.gt6.implosion_compressor", "Implosion Compressor");
+        // task p31-graagg — the Von da Graagg (the Loader :1280 name column verbatim;
+        // "Generator" in name only — the EU-consuming mob-suppression tower)
+        add("block.gt6.von_da_graagg", "Von da Graagg Generator");
     }
 
     /**

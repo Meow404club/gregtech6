@@ -187,6 +187,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addTurbinesDynamo(); // task p29-w3-turbine-dynamo — the Large Turbine + Large Dynamo controllers
         addLargeMachines(); // task p29-w3-large-12 — the twelve large-machine controllers
         addImplosionCompressor(); // task p31-implosion — the Implosion Compressor controller
+        addVonDaGraagg(); // task p31-graagg — the Von da Graagg controller
         addLargeCrucible(); // task p26-crucible-multiblock
         addDistillationTowers(); // task p29-w3-distill-crucible — the twin tower controllers
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
@@ -2245,6 +2246,37 @@ public final class GT6BlockStates extends BlockStateProvider {
             return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
         });
         itemModels().withExistingParent("implosion_compressor", modLoc("block/implosion_compressor"));
+    }
+
+    /**
+     * Task p31-graagg — the Von da Graagg controller: the addImplosionCompressor form over
+     * the upstream NBT_TEXTURE "vondagraagg" family (Loader :1280). The upstream family
+     * carries ONE texture (colored/side == colored_front/side == bottom == top, byte-equal)
+     * so all six faces borrow the same PNG (the autoclave all-faces-equal precedent); the
+     * 8 FACING x FORMED states share the one oriented model (the RCON formed assertion
+     * rides the blockstate property, not the model).
+     */
+    private void addVonDaGraagg() {
+        Block tBlock = gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.get();
+        String tFamily = "vondagraagg";
+        ModelFile tModel = models().cube("von_da_graagg",
+                modLoc("block/" + tFamily + "_colored_bottom"),
+                modLoc("block/" + tFamily + "_colored_top"),
+                modLoc("block/" + tFamily + "_colored_front"),
+                modLoc("block/" + tFamily + "_colored_back"),
+                modLoc("block/" + tFamily + "_colored_left"),
+                modLoc("block/" + tFamily + "_colored_right"));
+        getVariantBuilder(tBlock).forAllStates(aState -> {
+            int tY;
+            switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                case SOUTH -> tY = 180;
+                case WEST -> tY = 270;
+                case EAST -> tY = 90;
+                default -> tY = 0; // NORTH
+            }
+            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+        });
+        itemModels().withExistingParent("von_da_graagg", modLoc("block/von_da_graagg"));
     }
 
     private ModelFile partModel(String aName, String aFamily, int aDesign) {
