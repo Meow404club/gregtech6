@@ -1,0 +1,283 @@
+{
+  "type": "gt6:bedrock_ores",
+  "config": {
+    "rows": [
+      {
+        "name": "ore.bedrock.diamond",
+        "ore": "Diamond",
+        "overworld": true,
+        "probability": 128000
+      },
+      {
+        "name": "ore.bedrock.tungstate",
+        "ore": "Tungstate",
+        "overworld": true,
+        "probability": 96000
+      },
+      {
+        "name": "ore.bedrock.ferberite",
+        "ore": "Ferberite",
+        "overworld": true,
+        "probability": 96000
+      },
+      {
+        "name": "ore.bedrock.wolframite",
+        "ore": "Wolframite",
+        "overworld": true,
+        "probability": 96000
+      },
+      {
+        "name": "ore.bedrock.stolzite",
+        "ore": "Stolzite",
+        "overworld": true,
+        "probability": 96000
+      },
+      {
+        "name": "ore.bedrock.scheelite",
+        "ore": "Scheelite",
+        "overworld": true,
+        "probability": 96000
+      },
+      {
+        "name": "ore.bedrock.huebnerite",
+        "ore": "Huebnerite",
+        "overworld": true,
+        "probability": 96000
+      },
+      {
+        "name": "ore.bedrock.russellite",
+        "ore": "Russellite",
+        "overworld": true,
+        "probability": 96000
+      },
+      {
+        "name": "ore.bedrock.pinalite",
+        "ore": "Pinalite",
+        "overworld": true,
+        "probability": 96000
+      },
+      {
+        "name": "ore.bedrock.uraninite",
+        "ore": "Uraninite",
+        "overworld": true,
+        "probability": 60000
+      },
+      {
+        "name": "ore.bedrock.pitchblende",
+        "ore": "Pitchblende",
+        "overworld": true,
+        "probability": 60000
+      },
+      {
+        "name": "ore.bedrock.gold.a",
+        "ore": "Gold",
+        "overworld": true,
+        "probability": 32000
+      },
+      {
+        "name": "ore.bedrock.gold.b",
+        "ore": "Gold",
+        "overworld": true,
+        "probability": 32000
+      },
+      {
+        "name": "ore.bedrock.cooperite",
+        "ore": "Cooperite",
+        "overworld": true,
+        "probability": 16000
+      },
+      {
+        "name": "ore.bedrock.copper",
+        "ore": "Copper",
+        "overworld": true,
+        "probability": 16000
+      },
+      {
+        "name": "ore.bedrock.monazite",
+        "ore": "Monazite",
+        "overworld": true,
+        "probability": 16000
+      },
+      {
+        "name": "ore.bedrock.powellite",
+        "ore": "Powellite",
+        "overworld": true,
+        "probability": 14000
+      },
+      {
+        "name": "ore.bedrock.bastnasite",
+        "ore": "Bastnasite",
+        "overworld": true,
+        "probability": 8000
+      },
+      {
+        "name": "ore.bedrock.stibnite",
+        "ore": "Arsenopyrite",
+        "overworld": true,
+        "probability": 8000
+      },
+      {
+        "name": "ore.bedrock.redstone",
+        "ore": "Redstone",
+        "overworld": true,
+        "probability": 7000
+      },
+      {
+        "name": "ore.bedrock.vanadium",
+        "ore": "VanadiumPentoxide",
+        "overworld": true,
+        "probability": 6000
+      },
+      {
+        "name": "ore.bedrock.galena",
+        "ore": "Galena",
+        "overworld": true,
+        "probability": 6000
+      },
+      {
+        "name": "ore.bedrock.coal",
+        "ore": "Coal",
+        "overworld": true,
+        "probability": 5000
+      },
+      {
+        "name": "ore.bedrock.graphite",
+        "ore": "Graphite",
+        "overworld": true,
+        "probability": 5000
+      },
+      {
+        "name": "ore.bedrock.stibnite",
+        "ore": "Stibnite",
+        "overworld": true,
+        "probability": 4000
+      },
+      {
+        "name": "ore.bedrock.hematite",
+        "ore": "Hematite",
+        "overworld": true,
+        "probability": 4000
+      },
+      {
+        "name": "ore.bedrock.sphalerite",
+        "ore": "Sphalerite",
+        "overworld": true,
+        "probability": 3000
+      },
+      {
+        "name": "ore.bedrock.smithsonite",
+        "ore": "Smithsonite",
+        "overworld": true,
+        "probability": 3000
+      },
+      {
+        "name": "ore.bedrock.pentlandite",
+        "ore": "Pentlandite",
+        "overworld": true,
+        "probability": 3000
+      },
+      {
+        "name": "ore.bedrock.saltpeter",
+        "ore": "Niter",
+        "overworld": true,
+        "probability": 3000
+      },
+      {
+        "name": "ore.bedrock.bauxite",
+        "ore": "Bauxite",
+        "overworld": true,
+        "probability": 2000
+      },
+      {
+        "name": "ore.bedrock.cassiterite",
+        "ore": "Cassiterite",
+        "overworld": true,
+        "probability": 2000
+      },
+      {
+        "name": "ore.bedrock.chalcopyrite",
+        "ore": "Chalcopyrite",
+        "overworld": true,
+        "probability": 2000
+      },
+      {
+        "name": "ore.bedrock.voidquartz",
+        "ore": "VoidQuartz",
+        "overworld": false,
+        "probability": 4000
+      },
+      {
+        "name": "ore.bedrock.glowstone",
+        "ore": "Glowstone",
+        "overworld": false,
+        "probability": 4000
+      },
+      {
+        "name": "ore.bedrock.gloomstone",
+        "ore": "Gloomstone",
+        "overworld": false,
+        "probability": 4000
+      },
+      {
+        "name": "ore.bedrock.efrine",
+        "ore": "Efrine",
+        "overworld": false,
+        "probability": 2000
+      },
+      {
+        "name": "ore.bedrock.netherquartz",
+        "ore": "NetherQuartz",
+        "overworld": false,
+        "probability": 2000
+      },
+      {
+        "name": "ore.bedrock.firestone",
+        "ore": "Firestone",
+        "overworld": false,
+        "probability": 8000
+      },
+      {
+        "name": "ore.bedrock.ancientdebris",
+        "ore": "AncientDebris",
+        "overworld": false,
+        "probability": 4000
+      },
+      {
+        "name": "ore.bedrock.naquadah",
+        "ore": "Naquadah",
+        "overworld": false,
+        "probability": 10000
+      },
+      {
+        "name": "ore.bedrock.desh",
+        "ore": "Desh",
+        "overworld": false,
+        "probability": 2000
+      },
+      {
+        "name": "ore.bedrock.dolamide",
+        "ore": "Dolamide",
+        "overworld": false,
+        "probability": 5000
+      },
+      {
+        "name": "ore.bedrock.adamantine",
+        "ore": "Adamantine",
+        "overworld": false,
+        "probability": 10000
+      },
+      {
+        "name": "ore.bedrock.octine",
+        "ore": "Octine",
+        "overworld": false,
+        "probability": 5000
+      },
+      {
+        "name": "ore.bedrock.syrmorite",
+        "ore": "Syrmorite",
+        "overworld": false,
+        "probability": 2000
+      }
+    ]
+  }
+}
