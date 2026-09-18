@@ -1,0 +1,47 @@
+{
+  "type": "gt6:strata_lenses",
+  "config": {
+    "lenses": [
+      {
+        "half_height": 10,
+        "max_y": 96,
+        "min_y": 32,
+        "radius": 44,
+        "rarity": 5,
+        "stone": "marble"
+      },
+      {
+        "half_height": 8,
+        "max_y": 80,
+        "min_y": 16,
+        "radius": 40,
+        "rarity": 5,
+        "stone": "basalt"
+      },
+      {
+        "half_height": 14,
+        "max_y": 48,
+        "min_y": 8,
+        "radius": 32,
+        "rarity": 3,
+        "stone": "kimberlite"
+      },
+      {
+        "half_height": 9,
+        "max_y": 104,
+        "min_y": 32,
+        "radius": 48,
+        "rarity": 4,
+        "stone": "granite_red"
+      },
+      {
+        "half_height": 12,
+        "max_y": 64,
+        "min_y": 8,
+        "radius": 36,
+        "rarity": 4,
+        "stone": "komatiite"
+      }
+    ]
+  }
+}

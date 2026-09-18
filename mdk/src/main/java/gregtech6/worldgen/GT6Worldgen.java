@@ -95,13 +95,39 @@ public final class GT6Worldgen {
         return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath("gt6", tPath));
     }
 
-    /** The 17 configured keys, GTStoneBlocks.STONES order (the acceptance key-order audit unit). */
-    public static final List<ResourceKey<ConfiguredFeature<?, ?>>> CONFIGURED_KEYS = GTStoneBlocks.STONES.stream()
+    // ------------------------------------------------------------------
+    // The strata-lens band (task p31-strata-lens) — the option-b ruling
+    // (decisions.2026-09-17-p30-strata-ruling): the 5 marker stones generate as
+    // mountain-scale flattened-blob lenses through the ONE gt6:strata_lenses
+    // feature (the GT6VeinGenerator isomorphic core + row table); the other 12
+    // stones keep the L0 blob above. Registration increment zero (the 272
+    // GTStoneBlocks universe already carries all five).
+    // ------------------------------------------------------------------
+
+    /**
+     * The 5 marker stones (the card spec's settled list, spec order): their per-stone blob
+     * rows are RETIRED (a blob + a lens would double-generate the stone), so the
+     * biome-modifier band ships 12 blob rows + the one lens row.
+     */
+    public static final List<String> LENS_STONE_SNAKES =
+            List.of("marble", "basalt", "kimberlite", "granite_red", "komatiite");
+
+    /** The 12 blob stones: STONES minus the lens band (the option-b "其余 12 石维持 blob" face). */
+    public static final List<GTStoneBlocks.StoneSpec> BLOB_STONES = GTStoneBlocks.STONES.stream()
+            .filter(tStone -> !LENS_STONE_SNAKES.contains(tStone.snake())).toList();
+
+    /** The 12 blob configured keys, BLOB_STONES order (the acceptance key-order audit unit). */
+    public static final List<ResourceKey<ConfiguredFeature<?, ?>>> CONFIGURED_KEYS = BLOB_STONES.stream()
             .map(GTStoneBlocks.StoneSpec::snake).map(GT6Worldgen::configuredKey).toList();
 
-    /** The 17 placed keys, same order (placed[i] hangs off configured[i]). */
-    public static final List<ResourceKey<PlacedFeature>> PLACED_KEYS = GTStoneBlocks.STONES.stream()
+    /** The 12 blob placed keys, same order (placed[i] hangs off configured[i]). */
+    public static final List<ResourceKey<PlacedFeature>> PLACED_KEYS = BLOB_STONES.stream()
             .map(GTStoneBlocks.StoneSpec::snake).map(GT6Worldgen::placedKey).toList();
+
+    /** The strata-lens configured feature (the GT6StrataLensFeature instance + the 5-row lens table). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> STRATA_LENSES_CONFIGURED = configKey("strata_lenses");
+    /** The strata-lens placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk). */
+    public static final ResourceKey<PlacedFeature> STRATA_LENSES_PLACED = placedKeyOf("strata_lenses");
 
     // ------------------------------------------------------------------ the tree band (task p30-w6-t1-trees-nine)
 

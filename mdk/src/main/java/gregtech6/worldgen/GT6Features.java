@@ -74,6 +74,21 @@ public final class GT6Features {
         return tFeature;
     }
 
+    /**
+     * The strata-lens feature (task p31-strata-lens) — ONE registration row
+     * {@code gt6:strata_lenses}, the single Feature over the 5-row marker-stone lens table
+     * (the same single-feature-over-a-row-table shape as LARGE_VEINS: five separate
+     * configured features would lose the exactly-one weighted origin draw). The
+     * configured/placed/biome-modifier rows hang off it in GT6WorldgenDatagen.
+     */
+    public static final GT6StrataLensFeature STRATA_LENSES = registerStrataLensFeature();
+
+    private static GT6StrataLensFeature registerStrataLensFeature() {
+        GT6StrataLensFeature tFeature = new GT6StrataLensFeature();
+        FEATURES.register("strata_lenses", () -> tFeature);
+        return tFeature;
+    }
+
     /** The feature instance of a kind (index-aligned with KINDS). */
     public static GT6TreeFeature treeFeature(GT6TreeKind aKind) {
         return (GT6TreeFeature) TREE_FEATURES.get(aKind.ordinal());

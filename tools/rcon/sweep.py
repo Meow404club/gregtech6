@@ -474,6 +474,15 @@ SESSION_GROUPS = (
     # fresh_boot / mutates member — the TU self-gen + the data-merge inventory feed need
     # no fakesource). --group p31_implosion matches through the chain's embedded name prefix.
     ("p31_implosion",),
+    # P31 strata-lens card (p31-strata-lens): the /place feature live chain — the lens-cell
+    # recompute probe over two fresh stone host boxes (x64..79 + x208..223, z64..79, y0..126;
+    # the 9x9 lattice cells chunk (4,4) and (13,4), staging clones x288..335), the t3 x-band
+    # form. The NATURAL-generation gate (fixed seed 6131000569321125127 + world delete: the
+    # 5 marker stones each >= 1 lens, the boundary convexity seam probe, the same-seed
+    # regenerate per-chunk equality) rides the card's separate scan driver
+    # tools/rcon/scan_strata_lens.py, not this chain. No fresh_boot / mutates member.
+    # --group p31_strata matches through the chain's embedded name prefix.
+    ("p31_strata_lens",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

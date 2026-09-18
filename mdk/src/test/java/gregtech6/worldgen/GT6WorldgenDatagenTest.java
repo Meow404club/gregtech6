@@ -79,48 +79,59 @@ class GT6WorldgenDatagenTest {
         assertEquals("overworld.stone.", GT6Worldgen.UPSTREAM_CATEGORY_PREFIX, "the naming evidence anchor");
     }
 
-    /** The 17 configured keys, GTStoneBlocks.STONES order, all in the CONFIGURED_FEATURE registry. */
+    /**
+     * The 12 blob configured keys, BLOB_STONES order, all in the CONFIGURED_FEATURE
+     * registry. Task p31-strata-lens: the 5 marker stones ride the strata-lens feature
+     * (GT6Worldgen.LENS_STONE_SNAKES), their blob rows retired.
+     */
     @Test
     void configuredKeysOrderIsPinned() {
-        assertEquals(17, GT6Worldgen.CONFIGURED_KEYS.size(), "17 stone blobs (the card pin; upstream is 15 — see the deviation note)");
+        assertEquals(12, GT6Worldgen.CONFIGURED_KEYS.size(),
+                "12 stone blobs (task p31-strata-lens: 17 minus the 5 marker stones, see the lens band)");
         assertEquals(SNAKES, GTStoneBlocks.STONES.stream().map(GTStoneBlocks.StoneSpec::snake).toList(),
                 "precondition: STONES order is the CS.java:1668 order");
-        for (int i = 0; i < SNAKES.size(); i++) {
+        List<String> tBlobSnakes = GT6Worldgen.BLOB_STONES.stream().map(GTStoneBlocks.StoneSpec::snake).toList();
+        assertEquals(SNAKES.stream().filter(tSnake -> !GT6Worldgen.LENS_STONE_SNAKES.contains(tSnake)).toList(),
+                tBlobSnakes, "the blob band = STONES minus the 5 marker stones, order preserved");
+        for (int i = 0; i < tBlobSnakes.size(); i++) {
             assertEquals("minecraft:worldgen/configured_feature",
                     GT6Worldgen.CONFIGURED_KEYS.get(i).registry().toString(),
                     "configured key " + i + " must live in minecraft:configured_feature");
-            assertEquals("gt6:" + GT6Worldgen.entryPath(SNAKES.get(i)),
+            assertEquals("gt6:" + GT6Worldgen.entryPath(tBlobSnakes.get(i)),
                     GT6Worldgen.CONFIGURED_KEYS.get(i).location().toString(),
-                    "configured key " + i + " must be overworld_stone_" + SNAKES.get(i));
+                    "configured key " + i + " must be overworld_stone_" + tBlobSnakes.get(i));
         }
     }
 
-    /** The 17 placed keys, same order/paths as the configured band (placed[i] hangs off configured[i]). */
+    /** The 12 blob placed keys, same order/paths as the configured band (placed[i] hangs off configured[i]). */
     @Test
     void placedKeysOrderIsPinned() {
-        assertEquals(17, GT6Worldgen.PLACED_KEYS.size(), "17 placed features");
-        for (int i = 0; i < SNAKES.size(); i++) {
+        assertEquals(12, GT6Worldgen.PLACED_KEYS.size(), "12 placed features");
+        List<String> tBlobSnakes = GT6Worldgen.BLOB_STONES.stream().map(GTStoneBlocks.StoneSpec::snake).toList();
+        for (int i = 0; i < tBlobSnakes.size(); i++) {
             assertEquals("minecraft:worldgen/placed_feature",
                     GT6Worldgen.PLACED_KEYS.get(i).registry().toString(),
                     "placed key " + i + " must live in minecraft:placed_feature");
-            assertEquals("gt6:" + GT6Worldgen.entryPath(SNAKES.get(i)),
+            assertEquals("gt6:" + GT6Worldgen.entryPath(tBlobSnakes.get(i)),
                     GT6Worldgen.PLACED_KEYS.get(i).location().toString(),
                     "placed key " + i + " shares the configured path (GTCEu blob form)");
         }
     }
 
-    /** The 17 biome-modifier keys, same order/paths, in the leg's biome_modifier registry. */
+    /** The 12 blob biome-modifier keys, same order/paths, in the leg's biome_modifier registry. */
     @Test
     void biomeModifierKeysOrderIsPinned() {
-        assertEquals(17, GT6WorldgenDatagen.BIOME_MODIFIER_KEYS.size(), "17 AddFeaturesBiomeModifier rows");
+        assertEquals(12, GT6WorldgenDatagen.BIOME_MODIFIER_KEYS.size(),
+                "12 AddFeaturesBiomeModifier rows (the 5 marker stones ride the one strata_lenses modifier)");
         ResourceLocation tLegRegistry = GT6WorldgenDatagen.biomeModifierRegistryKey().location();
         assertTrue(tLegRegistry.getPath().equals("biome_modifier") && !tLegRegistry.getNamespace().equals("minecraft"),
                 "the biome-modifier registry key must be the leg's <loader>:biome_modifier, got " + tLegRegistry);
-        for (int i = 0; i < SNAKES.size(); i++) {
+        List<String> tBlobSnakes = GT6Worldgen.BLOB_STONES.stream().map(GTStoneBlocks.StoneSpec::snake).toList();
+        for (int i = 0; i < tBlobSnakes.size(); i++) {
             assertEquals(tLegRegistry.toString(),
                     GT6WorldgenDatagen.BIOME_MODIFIER_KEYS.get(i).registry().toString(),
                     "biome modifier key " + i + " must live in " + tLegRegistry);
-            assertEquals("gt6:" + GT6Worldgen.entryPath(SNAKES.get(i)),
+            assertEquals("gt6:" + GT6Worldgen.entryPath(tBlobSnakes.get(i)),
                     GT6WorldgenDatagen.BIOME_MODIFIER_KEYS.get(i).location().toString(),
                     "biome modifier key " + i + " shares the blob path");
         }
@@ -174,10 +185,11 @@ class GT6WorldgenDatagenTest {
         for (int i = 0; i < GT6Worldgen.CONFIGURED_KEYS.size(); i++) {
             tWorldgenPaths.add(GT6Worldgen.CONFIGURED_KEYS.get(i).location().getPath());
         }
-        assertEquals(tWorldgenPaths.size(), GTStoneBlocks.STONES.size(), "one blob id per stone row");
+        List<String> tBlobSnakes = GT6Worldgen.BLOB_STONES.stream().map(GTStoneBlocks.StoneSpec::snake).toList();
+        assertEquals(tWorldgenPaths.size(), tBlobSnakes.size(), "one blob id per blob-stone row (12 after the lens split)");
         for (int i = 0; i < tWorldgenPaths.size(); i++) {
-            assertEquals(GT6Worldgen.entryPath(SNAKES.get(i)), tWorldgenPaths.get(i),
-                    "blob id " + i + " derives from the STONES row, no invented block id");
+            assertEquals(GT6Worldgen.entryPath(tBlobSnakes.get(i)), tWorldgenPaths.get(i),
+                    "blob id " + i + " derives from the BLOB_STONES row, no invented block id");
         }
     }
 }
