@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/astral_silver"
+    },
+    "S": {
+      "item": "gt6:stick_astral_silver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "astral_silver",
+  "pattern": [
+    "hPf",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:chisel"
+  },
+  "show_notification": true
+}

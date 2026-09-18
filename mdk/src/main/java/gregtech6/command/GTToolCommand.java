@@ -33,11 +33,15 @@ import org.slf4j.Logger;
 
 import gregtech6.covers.ICoverableTE;
 import gregtech6.items.tools.GT6Prospector;
+import gregtech6.items.tools.GT6ToolLadder;
 import gregtech6.items.tools.GTCrowbarItem;
 import gregtech6.items.tools.GTCutterItem;
 import gregtech6.items.tools.GTHammerItem;
 import gregtech6.registry.GT6Tools;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
+
+import gregapi.oredict.MaterialRegistry;
+import gregapi.oredict.OreDictMaterial;
 
 /**
  * {@code /gt6tool} — the tool acceptance command (task p9-tool-crowbar spec ③; the
@@ -77,12 +81,16 @@ public final class GTToolCommand {
 		LiteralArgumentBuilder<CommandSourceStack> tTool = Commands.literal("gt6tool")
 			.requires(source -> source.hasPermission(2))
 			.then(Commands.literal("dismantle")
-				.executes(context -> dismantle(context.getSource(), null, Direction.UP))
+				.executes(context -> dismantle(context.getSource(), null, Direction.UP, null))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
-					.executes(context -> dismantle(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP))
+					.executes(context -> dismantle(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP, null))
 					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
 						.executes(context -> dismantle(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
-								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))))
+								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")), null))
+						.then(Commands.argument("material", com.mojang.brigadier.arguments.StringArgumentType.word())
+							.executes(context -> dismantle(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
+									parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")),
+									com.mojang.brigadier.arguments.StringArgumentType.getString(context, "material")))))))
 			.then(Commands.literal("cut")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(context -> cut(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP))
@@ -95,9 +103,18 @@ public final class GTToolCommand {
 					.executes(context -> prospect(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"), Direction.UP))
 					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
 						.executes(context -> prospect(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
-								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))));
+								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))))
+			// task p31-machine-ladder — the machine-family material-ladder arm (the
+			// GT6BladeToolCommand.stats shape): identity attached THE RECIPE WAY through
+			// GT6ToolLadder.stampIdentity, the item surfaces read BACK.
+			.then(Commands.literal("stats")
+				.then(Commands.argument("tool", com.mojang.brigadier.arguments.StringArgumentType.word())
+					.then(Commands.argument("material", com.mojang.brigadier.arguments.StringArgumentType.word())
+						.executes(context -> stats(context.getSource(),
+								com.mojang.brigadier.arguments.StringArgumentType.getString(context, "tool"),
+								com.mojang.brigadier.arguments.StringArgumentType.getString(context, "material"))))));
 		event.getDispatcher().register(tTool);
-		LOGGER.info("Registered GT6 tool acceptance command /gt6tool (dismantle, cut, prospect)");
+		LOGGER.info("Registered GT6 tool acceptance command /gt6tool (dismantle, cut, prospect, stats)");
 		// task p27-vanilla-tag-dual-tree: the tag-membership debug command — the RCON
 		// face of the dual-tree acceptance (`/gt6tags dump <tag>` lists the bound
 		// runtime members of ANY item tag, so the forge:/c: twin faces are provable
@@ -159,9 +176,12 @@ public final class GTToolCommand {
 	/**
 	 * Crowbar-dismantle the cover through the item's own dispatch: the fake player
 	 * holds a gt6:crowbar, the report asserts the 10000 upstream return, the 1-point
-	 * durability payment and the cover landing in the fake player's inventory.
+	 * durability payment and the cover landing in the fake player's inventory. The
+	 * optional {@code material} argument (task p31-machine-ladder) stamps the
+	 * {@code GT.ToolStats} identity THE RECIPE WAY first, so the per-material crowbar
+	 * (its max-damage read and the payment ceiling) is the asserted surface.
 	 */
-	private static int dismantle(CommandSourceStack source, BlockPos pos, Direction side) {
+	private static int dismantle(CommandSourceStack source, BlockPos pos, Direction side, String aMaterial) {
 		ServerLevel tLevel = source.getLevel();
 		BlockPos tTarget = pos != null ? pos : BlockPos.containing(source.getPosition());
 		if (!(tLevel.getBlockEntity(tTarget) instanceof ICoverableTE tHost)) {
@@ -174,6 +194,16 @@ public final class GTToolCommand {
 		}
 		ItemStack tCoverBefore = tHost.getCoverItem((byte) side.get3DDataValue());
 		ItemStack tCrowbar = new ItemStack(GT6Tools.CROWBAR.get());
+		String tMaterialWord = "";
+		if (aMaterial != null) {
+			OreDictMaterial tMat = resolveMaterial(aMaterial);
+			if (tMat == null) {
+				source.sendFailure(Component.literal("gt6tool dismantle FAILED: unknown material: " + aMaterial));
+				return 0;
+			}
+			GT6ToolLadder.stampIdentity(tCrowbar, tMat, ((GT6ToolLadder.LadderTool) GT6Tools.CROWBAR.get()).durabilityMultiplier());
+			tMaterialWord = ", material=" + tMat.mNameInternal;
+		}
 		var tFakePlayer = FakePlayerFactory.getMinecraft(tLevel);
 		tFakePlayer.getInventory().clearContent(); // a leftover from an earlier command would fake the landing
 		tFakePlayer.setItemInHand(InteractionHand.MAIN_HAND, tCrowbar);
@@ -187,8 +217,8 @@ public final class GTToolCommand {
 		boolean tCoverInInventory = !tCoverBefore.isEmpty() && tFakePlayer.getInventory().items.stream()
 				.anyMatch(t -> !t.isEmpty() && t.getItem() == tCoverBefore.getItem());
 		int tHeldDamage = tCrowbar.getDamageValue();
-		String tReport = String.format("gt6tool dismantle %s face %s at %s: toolDamage=%d, crowbarDamage=%d/%d, coverInInventory=%s",
-				tHost, side, tTarget.toShortString(), tDamage, tHeldDamage, GTCrowbarItem.DURABILITY_POINTS, tCoverInInventory);
+		String tReport = String.format("gt6tool dismantle %s face %s at %s%s: toolDamage=%d, crowbarDamage=%d/%d, coverInInventory=%s",
+				tHost, side, tTarget.toShortString(), tMaterialWord, tDamage, tHeldDamage, tCrowbar.getMaxDamage(), tCoverInInventory);
 		if (tDamage != GTCrowbarItem.TOOL_DAMAGE_PER_DISMANTLE || tHeldDamage != 1 || !tCoverInInventory) {
 			source.sendFailure(Component.literal("gt6tool dismantle FAILED: " + tReport));
 			return 0;
@@ -267,5 +297,70 @@ public final class GTToolCommand {
 		source.sendSuccess(() -> Component.literal("gt6tool prospect check OK: " + tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The machine-family material-ladder arm (task p31-machine-ladder, the
+	 * GT6BladeToolCommand.stats shape): builds a stack, attaches the {@code GT.ToolStats}
+	 * identity THE RECIPE WAY (the {@link GT6ToolLadder#stampIdentity} seam — the same
+	 * face the gt6:material_tool rows assemble through), then reads the item surfaces
+	 * BACK — the vanilla max-damage read, the class tint seam and the composed display
+	 * name. The report IS the per-material verdict.
+	 */
+	private static int stats(CommandSourceStack aSource, String aTool, String aMaterial) {
+		String tTool = aTool.toLowerCase(java.util.Locale.ROOT);
+		Item tItem = switch (tTool) {
+			case "wrench" -> GT6Tools.WRENCH.get();
+			case "monkey_wrench" -> GT6Tools.MONKEY_WRENCH.get();
+			case "screwdriver" -> GT6Tools.SCREWDRIVER.get();
+			case "hammer" -> GT6Tools.HAMMER.get();
+			case "soft_hammer" -> GT6Tools.SOFT_HAMMER.get();
+			case "cutter" -> GT6Tools.CUTTER.get();
+			case "saw" -> GT6Tools.SAW.get();
+			case "chisel" -> GT6Tools.CHISEL.get();
+			case "crowbar" -> GT6Tools.CROWBAR.get();
+			case "pincers" -> GT6Tools.PINCERS.get();
+			case "magnifying_glass" -> GT6Tools.MAGNIFYING_GLASS.get();
+			default -> null;
+		};
+		if (tItem == null) {
+			aSource.sendFailure(Component.literal("gt6tool: not a ladder tool (wrench | monkey_wrench | screwdriver | hammer | soft_hammer | cutter | saw | chisel | crowbar | pincers | magnifying_glass): " + aTool));
+			return 0;
+		}
+		OreDictMaterial tMaterial = resolveMaterial(aMaterial);
+		if (tMaterial == null) {
+			aSource.sendFailure(Component.literal("gt6tool: unknown material: " + aMaterial));
+			return 0;
+		}
+		ItemStack tStack = new ItemStack(tItem);
+		// the identity THE RECIPE WAY — the ONE stamp face the seam pinned (the serializer
+		// and this arm route through it): primary + the form multiplier folded into j
+		float tMultiplier = ((GT6ToolLadder.LadderTool) tItem).durabilityMultiplier();
+		GT6ToolLadder.stampIdentity(tStack, tMaterial, tMultiplier);
+		int tMaxDamage = tStack.getMaxDamage();
+		int tTint = GT6ToolLadder.tintARGB(tStack, 0);
+		String tName = tItem.getName(tStack).getString();
+		String tReport = String.format("gt6tool stats %s@%s: maxDamage=%d, tint=0x%08X, name=%s",
+				tTool, tMaterial.mNameInternal, tMaxDamage, tTint, tName);
+		aSource.sendSuccess(() -> Component.literal("gt6tool stats check OK: " + tReport), false);
+		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The lenient material scan (the GT6BladeToolCommand shape — the RCON word arrives
+	 * lower-case while the registry keys are camel), then the ALIAS MERGE: the alt-name
+	 * slots (TungstenSteel mID -1 → 8635) resolve onto the registration target.
+	 */
+	private static OreDictMaterial resolveMaterial(String aWord) {
+		OreDictMaterial tMaterial = MaterialRegistry.INSTANCE.byName(aWord);
+		if (tMaterial == null) {
+			for (OreDictMaterial tScan : MaterialRegistry.INSTANCE.MATERIAL_MAP.values()) {
+				if (tScan.mNameInternal.equalsIgnoreCase(aWord)) {tMaterial = tScan; break;}
+			}
+		}
+		if (tMaterial != null) tMaterial = MaterialRegistry.INSTANCE.get(tMaterial);
+		if (tMaterial != null && tMaterial.mID < 0) return null;
+		return tMaterial;
 	}
 }

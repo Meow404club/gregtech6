@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/void_metal"
+    },
+    "S": {
+      "item": "gt6:stick_void_metal"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "void_metal",
+  "pattern": [
+    "hPf",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chisel"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "gt6:stick_smokey_quartz"
+    },
+    "V": {
+      "tag": "c:dyes/blue"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "smokey_quartz",
+  "pattern": [
+    "hVS",
+    "VSV",
+    "SVf"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:crowbar"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "gt6:stick_vibranium_silver"
+    },
+    "T": {
+      "item": "gt6:screw_vibranium_silver"
+    },
+    "X": {
+      "item": "gt6:plate_curved_vibranium_silver"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "vibranium_silver",
+  "pattern": [
+    "XhX",
+    " T ",
+    "SdS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pincers"
+  }
+}

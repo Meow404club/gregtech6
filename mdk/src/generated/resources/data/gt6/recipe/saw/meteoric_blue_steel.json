@@ -1,0 +1,24 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/meteoric_blue_steel"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "meteoric_blue_steel",
+  "pattern": [
+    "PP",
+    "fh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:saw"
+  }
+}

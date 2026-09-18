@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "gt6:stick_bismuth_bronze"
+    },
+    "T": {
+      "item": "gt6:screw_bismuth_bronze"
+    },
+    "X": {
+      "item": "gt6:plate_curved_bismuth_bronze"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "bismuth_bronze",
+  "pattern": [
+    "XhX",
+    " T ",
+    "SdS"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:pincers"
+  },
+  "show_notification": true
+}

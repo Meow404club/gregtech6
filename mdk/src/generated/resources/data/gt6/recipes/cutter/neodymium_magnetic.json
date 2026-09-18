@@ -1,0 +1,35 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/neodymium_magnetic"
+    },
+    "S": {
+      "item": "gt6:stick_neodymium_magnetic"
+    },
+    "T": {
+      "item": "gt6:screw_neodymium_magnetic"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "neodymium_magnetic",
+  "pattern": [
+    "PfP",
+    "hPd",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:cutter"
+  },
+  "show_notification": true
+}

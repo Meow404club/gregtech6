@@ -75,18 +75,22 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  *     the BlockStones TE-face chisel arm (BlockStones.java:573-576, the CHISEL_MAPPINGS
  *     direct-meta write paying 1250/octant) stays pooled with them — the port routes every
  *     stone target through the findRecipe gate instead (the p19 architect ruling).</li>
- * <li>the attack face, the material ladder and the runtime tint are the crowbar/cutter
- *     declared deviations: single steel tier 512, the grayscale HANDLE_CHISEL borrow
- *     rendered un-tinted (assets/README.md — the runtime-tint pool; spec ③ resolves to
- *     no-tint, no client listener row).</li>
- * <li>the crafting recipe (Loader_Tools.java:142 {@code toolHeadChisel} material amount)
- *     stays pooled with the crowbar/cutter recipes.</li>
+ * <li>the attack face is the crowbar/cutter declared deviation cut (no attribute map);
+ *     the material ladder and the runtime tint LANDED with task p31-machine-ladder (the
+ *     {@link GT6ToolLadder} faces over the {@code GT.ToolStats} identity — the former
+ *     single-steel/un-tinted deviations retired; the grayscale HANDLE_CHISEL borrow
+ *     stays the un-tinted handle layer, the head pass takes the material colour).</li>
+ * <li>the crafting recipe landed with the same card (the :305 material rows, the
+ *     gt6:material_tool axis).</li>
  * </ul>
  */
-public class GTChiselItem extends Item {
+public class GTChiselItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/** The vanilla durability points — single steel tier (the crowbar/cutter pinned family value). */
 	public static final int DURABILITY_POINTS = 512;
+
+	/** The form durability multiplier (upstream ToolStats.java:71 default 1.0). */
+	public static final float DURABILITY_MULTIPLIER = 1.0F;
 
 	/**
 	 * The upstream behaviour damage scale (GT_Tool_Chisel.java:98 {@code Behavior_Tool}
@@ -345,5 +349,30 @@ public class GTChiselItem extends Item {
 	@Override
 	public boolean canPerformAction(ItemStack aStack, ToolAction aToolAction) {
 		return classifies(aToolAction);
+	}
+
+	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+
+	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, durabilityMultiplier()));
+	}
+
+	/** The form durability multiplier (ToolStats.java:71 default 1.0). */
+	@Override
+	public float durabilityMultiplier() {
+		return DURABILITY_MULTIPLIER;
+	}
+
+	/** The runtime tint (the head pass — the toolHeadChisel layer0 pair, the handle layers stay un-tinted). */
+	public static int tintARGB(ItemStack aStack, int aTintIndex) {
+		return GT6ToolLadder.tintARGB(aStack, aTintIndex);
+	}
+
+	/** The composed display name — "Chisel (Bronze)"; bare for identity-less stacks. */
+	@Override
+	public net.minecraft.network.chat.Component getName(ItemStack aStack) {
+		return GT6ToolLadder.displayName(aStack, getDescriptionId());
 	}
 }

@@ -56,6 +56,10 @@ public class HammerWrenchTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
+		// task p31-machine-ladder: the ladder getMaxDamage read walks the GT.ToolStats
+		// fallback (GT6ToolStats.of(MT.Steel, ...)) — the material flood must be live
+		// (the DigLadderTest boot shape; MT class-load alone registers only NULL).
+		gregapi.data.MT.init();
 	}
 
 	private static ResourceLocation rl(String aPath) {

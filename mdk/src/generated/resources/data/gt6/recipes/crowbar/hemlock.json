@@ -1,0 +1,29 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "gt6:stick_hemlock"
+    },
+    "V": {
+      "tag": "forge:dyes/blue"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "hemlock",
+  "pattern": [
+    "hVS",
+    "VSV",
+    "SVf"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:crowbar"
+  },
+  "show_notification": true
+}

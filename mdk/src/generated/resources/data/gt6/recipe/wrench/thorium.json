@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/thorium"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "thorium",
+  "pattern": [
+    "PhP",
+    " P ",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:wrench"
+  }
+}

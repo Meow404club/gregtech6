@@ -1,0 +1,35 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/bismuth_bronze"
+    },
+    "S": {
+      "item": "gt6:stick_bismuth_bronze"
+    },
+    "T": {
+      "item": "gt6:screw_bismuth_bronze"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "bismuth_bronze",
+  "pattern": [
+    "PfP",
+    "hPd",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:cutter"
+  },
+  "show_notification": true
+}

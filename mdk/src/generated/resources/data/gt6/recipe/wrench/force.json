@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/force"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "force",
+  "pattern": [
+    "PhP",
+    " P ",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:wrench"
+  }
+}

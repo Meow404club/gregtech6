@@ -396,6 +396,14 @@ SESSION_GROUPS = (
     # chains to this tuple on merge). No sites (pure command channel), no fresh_boot /
     # mutates member. --group p31_tool_ladder matches the module stem.
     ("p31_tool_ladder_stats",),
+    # P31 W2 card (p31-machine-ladder): the machine-family ladder chains — the
+    # /gt6tool stats arms (per-material maxDamage/tint/composed-name verdicts across
+    # the 11 machine tools, the ×8 soft-hammer multiplier face) + the per-material
+    # crowbar cover-dismantle rig (oven + shutter, the p11 form; the stamped crowbar
+    # drives the REAL item dispatch — toolDamage/payment/maxDamage asserted per
+    # material) + the dig/blade regression legs above (归一无回归). No fresh_boot /
+    # mutates member. --group p31_tool_ladder matches the module stem.
+    ("p31_tool_ladder_machine_stats",),
     # P30 W5 card 7 (p29-w5-t7-pocket-eight): the pocket multitool chains — one fresh
     # z=352 band, three x-disjoint columns (ring x384..386 — the give chest + the bare
     # stone walk rig / faces x394..398 — the log|ice|stone|bars|pane probe blocks /

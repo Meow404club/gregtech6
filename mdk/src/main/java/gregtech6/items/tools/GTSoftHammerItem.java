@@ -33,11 +33,11 @@ import javax.annotation.Nullable;
  * <p>The stat pins (the card's test literals): {@code getSpeedMultiplier() = 0.1F}
  * (GT_Tool_SoftHammer.java:74-76) ported as the flat {@link #getDestroySpeed} — slower
  * than the bare hand, the {@code isMiningTool() = false} semantics; and
- * {@code getMaxDurabilityMultiplier() = 8.0F} (:79-81) ported as the {@link
- * #MAX_DURABILITY_MULTIPLIER} DECLARATION only — the durability shell stays the single
- * steel tier 512 family value (the standing pool cut; upstream scales
- * {@code toolHeadHammer.mAmount * 8} per material). The crafting-loss face rides the
- * shared one-point mapping (the upstream :49-51 800-unit row folded, the p25 ruling).
+ * {@code getMaxDurabilityMultiplier() = 8.0F} (:79-81) — LIVE since the material ladder
+ * (task p31-machine-ladder): the form multiplier rides the {@link GT6ToolLadder} j/100
+ * budget (Steel 512 ×8 = 4096 points; the pre-ladder flat 512 was the pool-cut shell,
+ * a declared behaviour change). The crafting-loss face rides the shared one-point
+ * mapping (the upstream :49-51 800-unit row folded, the p25 ruling).
  *
  * <p>The vanilla-ish rotation face (the :125 tagline, upstream
  * gregapi/block/ToolCompat.java:260-297): right-click rotates/cycles the 1.20.1 blocks the
@@ -52,16 +52,23 @@ import javax.annotation.Nullable;
  * the minimal vanilla point, the p25 one-point mapping family); the click-sound arm
  * (SFX.IC_TRAMPOLINE — an IC2-namespace sound with no vanilla counterpart) stays pooled
  * with the sounds.json card.
+ *
+ * <p>MATERIAL LADDER (task p31-machine-ladder): the stack's {@code GT.ToolStats} identity
+ * scales durability at the form's ×8 multiplier, the composed display name
+ * ("Soft Hammer (Bronze)") and the head tint ride the same seam; the IDENTITY-LESS arm
+ * is Steel ×8 (the upstream {@code getPrimaryMaterial(stack, MT.Steel)} read over the
+ * :79-81 multiplier — the pre-ladder flat 512 shell was the pool-cut value, the
+ * declared behaviour change).
  */
-public class GTSoftHammerItem extends Item {
+public class GTSoftHammerItem extends Item implements GT6ToolLadder.LadderTool {
 
-	/** The vanilla durability points — single steel tier 512 (the family value, the 8x upstream multiplier declared above). */
+	/** The vanilla durability points — the pre-ladder shell value (the ladder arm is Steel ×8, see the class javadoc). */
 	public static final int DURABILITY_POINTS = 512;
 
 	/** The upstream getSpeedMultiplier literal (GT_Tool_SoftHammer.java:74-76) — the flat dig speed, slower than hand. */
 	public static final float SPEED_MULTIPLIER = 0.1F;
 
-	/** The upstream getMaxDurabilityMultiplier literal (:79-81) — a declaration only, the 512 shell is the standing pool cut. */
+	/** The upstream getMaxDurabilityMultiplier literal (:79-81) — LIVE over the {@link GT6ToolLadder} budget. */
 	public static final float MAX_DURABILITY_MULTIPLIER = 8.0F;
 
 	/** One durability point per successful rotation (the 100-unit click folded, see class doc). */
@@ -103,6 +110,31 @@ public class GTSoftHammerItem extends Item {
 	@Override
 	public boolean canPerformAction(ItemStack aStack, ToolAction aToolAction) {
 		return classifies(aToolAction);
+	}
+
+	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+
+	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — the identity-less arm is Steel ×8 = 4096). */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, durabilityMultiplier()));
+	}
+
+	/** The form durability multiplier — the upstream :79-81 ×8 (MultiItemTool.java:182). */
+	@Override
+	public float durabilityMultiplier() {
+		return MAX_DURABILITY_MULTIPLIER;
+	}
+
+	/** The runtime tint (the head pass, the material mRGBaSolid with the steel fallback). */
+	public static int tintARGB(ItemStack aStack, int aTintIndex) {
+		return GT6ToolLadder.tintARGB(aStack, aTintIndex);
+	}
+
+	/** The composed display name — "Soft Hammer (Bronze)"; bare for identity-less stacks. */
+	@Override
+	public net.minecraft.network.chat.Component getName(ItemStack aStack) {
+		return GT6ToolLadder.displayName(aStack, getDescriptionId());
 	}
 
 	/**

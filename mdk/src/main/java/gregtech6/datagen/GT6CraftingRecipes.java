@@ -310,6 +310,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		// task p31-dig-ladder — the per-material identity-stamped rows (the axis walk)
 		digLadderRows(aConsumer);
+		// task p31-machine-ladder — the machine family material rows (the identity-stamped walk)
+		machineLadderRows(aConsumer);
 	}
 	//?} else {
 	/*@Override
@@ -415,6 +417,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		// task p31-dig-ladder — the per-material identity-stamped rows (the axis walk)
 		digLadderRows(aOutput);
+		machineLadderRows(aOutput);
 	}
 	*///?}
 
@@ -2036,8 +2039,25 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// the And(ANTIMATTER.NOT, MT.Wood.NOT, COATED.NOT) axis), ONE gt6:material_tool
 	// row per (dig form x plate+ingot material). The plain steel anchors above are the
 	// identity-less steel arm; every other axis material gets its own stamped row (the
-	// upstream P-variant rows — the C/G curved-plate+gem variant is cut: the port has
-	// no plateCurved platform-tag family yet, the rolling-prefix card owns it).
+	// upstream second P-variant rows are cut: the C variant rides the plateGem ITEM and
+	// the G variant the gem — the OreProcessing_Tool letter alphabet, Loader_Tools
+	// :393-404 — the blade ladder kept C where its plateGem item truth exists; the dig
+	// family keeps the P/I rows only, the declared cut).
+
+	/**
+	 * M5 unification (task p31-machine-ladder): the upstream {@code MT.Wood.NOT} axis
+	 * gate is the MATERIAL IDENTITY test — {@code OreDictMaterial.isTrue} is
+	 * {@code aObject == this} (OreDictMaterial.java:1507-1509) — so every ladder walk
+	 * (dig/blade/machine) excludes exactly MT.Wood through this ONE expression. The
+	 * upstream tag-level {@code WOOD} conditions (the soft hammer's {@code Or(WOOD,…)}
+	 * row, Loader_Tools.java:328) are a DIFFERENT thing — the TD.Properties.WOOD tag
+	 * test — and stay tag tests. IronWood (WOOD-tagged, ≠ MT.Wood) therefore gets rows
+	 * upstream-true; the wood() helper family is excluded by the item-truth gates (no
+	 * ingots) and COATED.NOT, not by this gate.
+	 */
+	private static boolean woodExcluded(gregapi.oredict.OreDictMaterial aMaterial) {
+		return aMaterial == MT.Wood;
+	}
 
 	/** One ladder form: the id prefix + the upstream P/I row shape (Loader_Tools.java:294-300 verbatim). */
 	private static final String[][] DIG_LADDER_FORMS = {
@@ -2059,7 +2079,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialItems.registrationOrder()) {
 			gregapi.oredict.OreDictMaterial tMaterial = tPair.material();
 			if (tPair.prefix() != gregapi.data.OP.plate || !tIngots.contains(tMaterial) || tMaterial == gregapi.data.MT.Steel) continue;
-			if (tMaterial.mToThis.contains(gregapi.data.ANY.Wood)) continue; // MT.Wood.NOT
+			if (woodExcluded(tMaterial)) continue; // MT.Wood.NOT (the M5 identity form)
 			if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
 			if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
 			rMaterials.add(tMaterial);
@@ -2270,7 +2290,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	private static boolean bladeLadderAxis(gregapi.oredict.OreDictMaterial aMaterial, int aTypeMin, boolean aNoCoated, boolean aGem) {
 		if (aMaterial.mToolTypes < aTypeMin) return false;
 		if (aMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) return false;
-		if (aMaterial.contains(gregapi.data.TD.Properties.WOOD)) return false;
+		if (woodExcluded(aMaterial)) return false; // MT.Wood.NOT — the M5 identity form (was the WOOD-tag test)
 		if (aNoCoated && aMaterial.contains(gregapi.data.TD.Compounds.COATED)) return false;
 		if (aTypeMin >= 2 && (aMaterial.contains(gregapi.data.TD.Properties.BOUNCY)
 				|| aMaterial.contains(gregapi.data.TD.Properties.STRETCHY))) return false;
@@ -2344,6 +2364,235 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 	}
 	*///?}
+
+	// ------------------------------------------------------------------------
+	// The machine ladder material rows (task p31-machine-ladder) — the upstream
+	// OreProcessing_Tool mToolRecipes over the machine rows (Loader_Tools.java:305-316
+	// chisel/screwdriver/saw, :310-311 wrench/monkey wrench, :314 crowbar, :324 cutter,
+	// :327-328 hammer/soft hammer, :316 pincers), ONE gt6:material_tool row per
+	// (machine form x axis material). Letters (the OreProcessing_Tool alphabet
+	// Loader_Tools:393-404 + the CR.java:193-217 lowercase TOOL letters): P = plate,
+	// I = ingot, S = stick, T = screw, X = plateCurved (ALL OF THE MATERIAL); h/f/d/r
+	// = the hammer/file/screwdriver/soft-hammer TOOL tags; V = the blue dye (the
+	// crowbar's :314 special). The C/G (plateGem/gem) SECOND variants stay cut (the
+	// dig-family declared cut; the blade family is the only plateGem consumer). The
+	// axis gates are the upstream And() rows verbatim through the M5 identity form
+	// ({@link #woodExcluded}): the mToolTypes>0 listener gate (:426), typemin,
+	// ANTIMATTER.NOT, COATED.NOT, the hammer's Nor(WOOD,BOUNCY,STRETCHY) and the soft
+	// hammer's Or(...) + EXTRUDER.NOT (TAG tests — TD.Properties/TD.Processing), the
+	// wrench pair's qualmin(1). Forms whose plain steel-route anchors already exist
+	// (hammer/wrench/monkey_wrench/soft_hammer/pincers) EXCLUDE Steel; the forms
+	// landing here FIRST (screwdriver/saw/chisel/crowbar/cutter) INCLUDE it (the
+	// blade-family ruling: the stamped row IS the steel row). The magnifying glass has
+	// NO material row — its upstream route is the AdvancedCraftingTool lens-head row
+	// (Loader_Tools.java:332), not an OreProcessing_Tool walk; its steel anchor stays
+	// the whole crafting face (declared).
+	// The SOFT HAMMER (:328) is the declared EMPTY row: its axis Or(WOOD,BOUNCY,STRETCHY)
+	// + EXTRUDER.NOT ∩ the port item truth = ∅ — every soft-tag material either carries
+	// the EXTRUDER tag (the Rubbers/Plastics AND the machine-alloy IronWood, the probe-
+	// verified TD.Processing.EXTRUDER membership) or lacks the ingot item (the wood()
+	// family), so the walk emits nothing; the :334 AdvancedCraftingTool route is the
+	// steel anchor (softHammerBuilder), and the ×8 form multiplier (GT_Tool_SoftHammer
+	// :79-81) rides the ladder through /give-stamped identities only (no serializer
+	// multiplier field — the dig card's yagni ruling stands: no generated row needs one).
+
+	/** One machine ladder form: the id, the axis gates, the Steel inclusion, the stamp multiplier, the upstream row shape. */
+	private record MachineLadderForm(String aId, int aTypeMin, boolean aNoCoated, boolean aNoSoftTag, boolean aSoftTag,
+			boolean aNoExtruder, int aQualMin, boolean aIncludeSteel, String[] aPattern) {
+	}
+
+	private static final MachineLadderForm[] MACHINE_LADDER_FORMS = {
+			new MachineLadderForm("screwdriver", 2, true, false, false, false, 0, true, new String[] {"hS", "Sf"}), // :306
+			new MachineLadderForm("saw", 2, true, false, false, false, 0, true, new String[] {"PP", "fh"}), // :307
+			new MachineLadderForm("chisel", 2, true, false, false, false, 0, true, new String[] {"hPf", " S "}), // :305
+			new MachineLadderForm("crowbar", 0, false, false, false, false, 0, true, new String[] {"hVS", "VSV", "SVf"}), // :314
+			new MachineLadderForm("cutter", 2, false, true, false, false, 0, true, new String[] {"PfP", "hPd", "STS"}), // :324
+			new MachineLadderForm("hammer", 0, true, true, false, false, 0, false, new String[] {"II ", "IIh", "II "}), // :327
+			new MachineLadderForm("wrench", 2, false, false, false, false, 1, false, new String[] {"PhP", " P ", " P "}), // :310
+			new MachineLadderForm("monkey_wrench", 2, false, false, false, false, 1, false, new String[] {"PPd", "hPT", " P "}), // :311
+			new MachineLadderForm("pincers", 2, false, false, false, false, 0, false, new String[] {"XhX", " T ", "SdS"}), // :316
+	};
+
+	/** The result item of a machine ladder form (the GT6Tools registry face). */
+	private static net.minecraft.world.item.Item machineLadderResult(String aForm) {
+		return switch (aForm) {
+			case "screwdriver" -> GT6Tools.SCREWDRIVER.get();
+			case "saw" -> GT6Tools.SAW.get();
+			case "chisel" -> GT6Tools.CHISEL.get();
+			case "crowbar" -> GT6Tools.CROWBAR.get();
+			case "cutter" -> GT6Tools.CUTTER.get();
+			case "hammer" -> GT6Tools.HAMMER.get();
+			case "soft_hammer" -> GT6Tools.SOFT_HAMMER.get();
+			case "wrench" -> GT6Tools.WRENCH.get();
+			case "monkey_wrench" -> GT6Tools.MONKEY_WRENCH.get();
+			case "pincers" -> GT6Tools.PINCERS.get();
+			default -> throw new IllegalArgumentException("unknown machine ladder form: " + aForm);
+		};
+	}
+
+	/**
+	 * The row letters (the alphabet + TOOL letters). {@code null} = the item-truth miss
+	 * (the material carries no registered item for a material-carrying letter) — the row
+	 * is skipped, never emitted with an unresolvable ingredient.
+	 */
+	private static net.minecraft.world.item.crafting.Ingredient machineLadderIngredient(char aKey, gregapi.oredict.OreDictMaterial aMaterial) {
+		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(aMaterial.mNameInternal);
+		return switch (aKey) {
+			case 'P' -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, aMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake));
+			case 'I' -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.ingot, aMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, tSnake));
+			case 'S' -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, aMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, aMaterial).get());
+			case 'T' -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.screw, aMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.screw, aMaterial).get());
+			case 'X' -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateCurved, aMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateCurved, aMaterial).get());
+			case 'h' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_HARD_HAMMER);
+			case 'f' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_FILE);
+			case 'd' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_SCREWDRIVER);
+			case 'r' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_SOFT_HAMMER);
+			case 'V' -> net.minecraft.world.item.crafting.Ingredient.of(Tags.Items.DYES_BLUE);
+			default -> throw new IllegalArgumentException("unknown machine ladder letter: " + aKey);
+		};
+	}
+
+	/** The per-form axis gate — the upstream And() rows verbatim (see the block javadoc). */
+	private static boolean machineLadderAxis(gregapi.oredict.OreDictMaterial aMaterial, MachineLadderForm aForm) {
+		if (aMaterial.mToolTypes <= 0 || aMaterial.mToolTypes < aForm.aTypeMin()) return false; // the :426 listener gate + typemin
+		if (aMaterial.mToolQuality < aForm.aQualMin()) return false; // qualmin
+		if (aMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) return false; // ANTIMATTER.NOT
+		if (woodExcluded(aMaterial)) return false; // MT.Wood.NOT — the M5 identity form
+		if (aForm.aNoCoated() && aMaterial.contains(gregapi.data.TD.Compounds.COATED)) return false; // COATED.NOT
+		boolean tSoftTag = aMaterial.contains(gregapi.data.TD.Properties.WOOD)
+				|| aMaterial.contains(gregapi.data.TD.Properties.BOUNCY)
+				|| aMaterial.contains(gregapi.data.TD.Properties.STRETCHY);
+		if (aForm.aNoSoftTag() && tSoftTag) return false; // the hammer's Nor(WOOD, BOUNCY, STRETCHY)
+		if (aForm.aSoftTag() && !tSoftTag) return false; // the soft hammer's Or(WOOD, BOUNCY, STRETCHY)
+		if (aForm.aNoExtruder() && aMaterial.contains(gregapi.data.TD.Processing.EXTRUDER)) return false; // EXTRUDER.NOT
+		return true;
+	}
+
+	/** The row's distinct letters (the pattern walk — NOT the id). */
+	private static java.util.Set<Character> machineLadderLetters(MachineLadderForm aForm) {
+		java.util.Set<Character> rLetters = new java.util.HashSet<>();
+		for (String tRow : aForm.aPattern()) {
+			for (char tChar : tRow.toCharArray()) {
+				if (tChar != ' ') rLetters.add(tChar);
+			}
+		}
+		return rLetters;
+	}
+
+	/**
+	 * The advancement anchor — the plates/ingots tag when the row carries P/I, else the
+	 * first material item (stick/screw/curved plate). Leg-agnostic value: a
+	 * {@link TagKey} the forge caller feeds {@code has(TagKey)} and the neo caller feeds
+	 * {@code has(TagKey)} likewise.
+	 */
+	private static Object machineLadderCriterion(MachineLadderForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {
+		java.util.Set<Character> tLetters = machineLadderLetters(aForm);
+		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(aMaterial.mNameInternal);
+		if (tLetters.contains('P')) return GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake);
+		if (tLetters.contains('I')) return GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, tSnake);
+		for (char tKey : new char[] {'S', 'T', 'X'}) {
+			gregapi.oredict.OreDictPrefix tPrefix = tKey == 'S' ? gregapi.data.OP.stick : tKey == 'T' ? gregapi.data.OP.screw : gregapi.data.OP.plateCurved;
+			if (tLetters.contains(tKey) && gregtech6.registry.GTMaterialItems.get(tPrefix, aMaterial) != null) {
+				return gregtech6.registry.GTMaterialItems.get(tPrefix, aMaterial).get();
+			}
+		}
+		throw new IllegalArgumentException("no material-carrying letter to anchor the advancement: " + aForm.aId());
+	}
+
+//? if forge {
+	private void machineLadderRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+		java.util.Set<String> tSeen = new java.util.HashSet<>();
+		for (gregapi.oredict.OreDictMaterial tMaterial : gregapi.oredict.MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+			if (tMaterial == null || tMaterial.mID < 0) continue;
+			tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.get(tMaterial); // the alias merge
+			if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial.mNameInternal)) continue;
+			String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
+			for (MachineLadderForm tForm : MACHINE_LADDER_FORMS) {
+				if (!tForm.aIncludeSteel() && tMaterial == gregapi.data.MT.Steel) continue; // the steel anchors own it
+				if (!machineLadderAxis(tMaterial, tForm)) continue;
+				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
+				java.util.List<String> tPattern = new java.util.ArrayList<>();
+				boolean tResolvable = true;
+				for (String tRow : tForm.aPattern()) {
+					tPattern.add(tRow);
+					for (char tChar : tRow.toCharArray()) {
+						if (tChar == ' ' || tKey.containsKey(tChar)) continue;
+						net.minecraft.world.item.crafting.Ingredient tIngredient = machineLadderIngredient(tChar, tMaterial);
+						if (tIngredient == null) {
+							tResolvable = false;
+							break;
+						}
+						tKey.put(tChar, tIngredient);
+					}
+					if (!tResolvable) break;
+				}
+				if (!tResolvable) continue; // the item-truth miss — no row
+				ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
+				Object tAnchor = machineLadderCriterion(tForm, tMaterial);
+				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+						.recipeAdvancement()
+						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+						.addCriterion("has_head_material", tAnchor instanceof TagKey ? has((TagKey<Item>) tAnchor) : has((net.minecraft.world.item.Item) tAnchor))
+						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
+						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
+						.requirements(net.minecraft.advancements.RequirementsStrategy.OR);
+				aConsumer.accept(new MaterialToolRow(tId, tId.withPrefix("recipes/tools/"),
+						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT, tPattern, tKey,
+						machineLadderResult(tForm.aId()), tSnake, tAdvancement));
+			}
+		}
+	}
+//?} else {
+/*	private void machineLadderRows(net.minecraft.data.recipes.RecipeOutput aOutput) {
+		java.util.Set<String> tSeen = new java.util.HashSet<>();
+		for (gregapi.oredict.OreDictMaterial tMaterial : gregapi.oredict.MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+			if (tMaterial == null || tMaterial.mID < 0) continue;
+			tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.get(tMaterial); // the alias merge
+			if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial.mNameInternal)) continue;
+			String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
+			for (MachineLadderForm tForm : MACHINE_LADDER_FORMS) {
+				if (!tForm.aIncludeSteel() && tMaterial == gregapi.data.MT.Steel) continue; // the steel anchors own it
+				if (!machineLadderAxis(tMaterial, tForm)) continue;
+				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
+				java.util.List<String> tPattern = new java.util.ArrayList<>();
+				boolean tResolvable = true;
+				for (String tRow : tForm.aPattern()) {
+					tPattern.add(tRow);
+					for (char tChar : tRow.toCharArray()) {
+						if (tChar == ' ' || tKey.containsKey(tChar)) continue;
+						net.minecraft.world.item.crafting.Ingredient tIngredient = machineLadderIngredient(tChar, tMaterial);
+						if (tIngredient == null) {
+							tResolvable = false;
+							break;
+						}
+						tKey.put(tChar, tIngredient);
+					}
+					if (!tResolvable) break;
+				}
+				if (!tResolvable) continue; // the item-truth miss — no row
+				ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
+				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+						.recipeAdvancement()
+						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+						.addCriterion("has_head_material", machineLadderCriterion(tForm, tMaterial) instanceof net.minecraft.tags.TagKey ? has((net.minecraft.tags.TagKey<Item>) machineLadderCriterion(tForm, tMaterial)) : has((net.minecraft.world.item.Item) machineLadderCriterion(tForm, tMaterial)))
+						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
+						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
+						.requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR);
+				gregtech6.items.tools.GT6MaterialToolRecipe tRecipe = new gregtech6.items.tools.GT6MaterialToolRecipe("",
+						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
+						net.minecraft.world.item.crafting.ShapedRecipePattern.of(tKey, tPattern),
+						new net.minecraft.world.item.ItemStack(machineLadderResult(tForm.aId())), true, tSnake);
+				aOutput.accept(tId, tRecipe, tAdvancement.build(tId.withPrefix("recipes/tools/")));
+			}
+		}
+	}
+
+*///?}
 
 }
 
