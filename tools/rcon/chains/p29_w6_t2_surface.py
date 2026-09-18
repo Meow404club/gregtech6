@@ -130,9 +130,20 @@ steps += [
 ]
 
 # ---------------------------------------------------------------- T: teardown
+# p31-teardown-fix: the band clear was ONE /fill of 129x24x19 = 58824 blocks —
+# over the vanilla commandModificationBlockLimit gamerule (FillCommand.java:153-156
+# reads RULE_COMMAND_MODIFICATION_BLOCK_LIMIT, default 32768 = gt6world
+# .MAX_FILL_VOLUME), so the server rejected it ("Too many blocks in the specified
+# volume (maximum 32768, found 58824)"), cleared NOTHING, and the air probe below
+# read the still-laid shelf — the P30 full-sweep lone red, product-independent.
+# The assertion's intent is the END STATE (band back to air, proven by the air
+# probe), not big-volume fill capability, so the box is split with the same
+# gt6world.cleanup_commands auto-split the pass-open bbox backstop uses (2 fills,
+# 65x24x19 = 29640 each) rather than a temporary gamerule raise: a raised gamerule
+# is cross-chain global state the session baseline never resets.
 steps += [
     phase("T: teardown — the sky band back to air (the pass-open bbox is the backstop)"),
-    Step("fill 641 98 299 769 121 317 minecraft:air"),
+    *[Step(cmd) for cmd in gt6world.cleanup_commands((641, 98, 299, 769, 121, 317))],
     Step("execute if block 648 100 300 minecraft:air", expect="Test passed"),
     Step("time query daytime", expect="The time is"),
 ]
