@@ -522,6 +522,18 @@ SESSION_GROUPS = (
     # arms ride summoned zombies inside the band bbox). --group p31_graagg matches through
     # the chain's embedded name prefix.
     ("p31_graagg",),
+    # P31 card (p31-bedrock-ore-worldgen): the bedrock-ore live chain — the chunk (4,6)
+    # band (x64..79, z96..111, y-64..62; staging x288..319), the live REGISTRATION face
+    # (three per-pair bedrock ores setblock+read) + the /place 1/P refusal face (the
+    # per-chunk row rolls ride the boot seed, ~0.5%/chunk — the empty arena is the
+    # expected verdict; a freak hit fails the step, rerun-precedence). The
+    # NATURAL-generation gate (fixed seed 6131000569321125127 + world delete: the
+    # calibrated 64x64 window x0..63/z64..127, coal/graphite each >= 1 cross-boot, the
+    # decision-level same-seed regenerate) rides the card's separate scan driver
+    # tools/rcon/scan_bedrock_ore.py, not this chain. No fresh_boot / mutates member.
+    # --group p31_bedrock matches through the chain's embedded name prefix.
+    ("p31_bedrock",),
+
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
