@@ -769,8 +769,9 @@ staging x288..319 同 z/y——与全名册零相交，strata z=64 带保持清�
 
 **勘正（compile 后 PlaceCommand.java:243-244 源证）**：`/place feature` 在
 `place()` 返回 false 时抛 ERROR_FEATURE_FAILED——拒绝面就是命令错误文本
-`Could not place feature`，B 臂 expect 据此钉（非 strata 的 "Placed"：
-透镜恰一抽必落块，床岩矿 1/P 行滚签绝大多数 chunk 空手）。
+`Could not place feature`，B 臂 expect 钉实测文本 `Failed to place feature`
+（首跑钉错 "Could not place feature"——1.20.1 实证为前者；非 strata 的
+"Placed"：透镜恰一抽必落块，床岩矿 1/P 行滚签绝大多数 chunk 空手）。
 
 - **A 注册活证**（id686 门）：`gt6:ore_bedrock_coal` /
   `gt6:ore_small_bedrock_graphite` / `gt6:ore_bedrock_diamond` 三块

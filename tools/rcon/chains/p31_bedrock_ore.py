@@ -79,14 +79,16 @@ steps += [
     Step(f"clone {BOX} 288 -64 96"),   # staging1 = the pristine arena (reply empty, the t1 note)
     # the 1/P refusal IS the command error: vanilla PlaceCommand.placeFeature throws
     # ERROR_FEATURE_FAILED when place() returns false (PlaceCommand.java:243-244) --
-    # the feature rolled its rows on the boot seed and (overwhelmingly likely) placed
-    # nothing; the arena must also equal its pristine snapshot
-    Step("place feature gt6:bedrock_ores 72 -64 104", expect="Could not place feature"),
+    # the live wording on 1.20.1 forge is "Failed to place feature" (the first sweep run
+    # pinned the wrong string, this is the empirical fix). The feature rolled its rows on
+    # the boot seed and (overwhelmingly likely) placed nothing; the arena must also equal
+    # its pristine snapshot
+    Step("place feature gt6:bedrock_ores 72 -64 104", expect="Failed to place feature"),
     Step(f"execute if blocks {BOX} 288 -64 96 all", expect="Test passed"),
     # the deterministic empty face: re-lay the pristine arena, place again, refused again
     Step(f"fill {FLOOR} minecraft:bedrock"),
     Step(f"fill {BODY} minecraft:deepslate"),
-    Step("place feature gt6:bedrock_ores 72 -64 104", expect="Could not place feature"),
+    Step("place feature gt6:bedrock_ores 72 -64 104", expect="Failed to place feature"),
     Step(f"execute if blocks {BOX} 288 -64 96 all", expect="Test passed"),
 ]
 
