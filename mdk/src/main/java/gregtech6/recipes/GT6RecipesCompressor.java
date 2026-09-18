@@ -307,16 +307,18 @@ public final class GT6RecipesCompressor {
 	 * prefixes by NAME (any material registered on gemLegendary/gemExquisite/gemFlawless/
 	 * bouleGt is excluded from the dust→plateGem row). The port asks the same thing of the
 	 * registration walk — a material with a generated item on any of the four prefixes is
-	 * a gem-chain member.
+	 * a gem-chain member. Call-time OP reads (the GTWireSpecs:35 ruling — this class
+	 * class-loads at mod construct, before OP.init()): the eager {@code static final
+	 * OreDictPrefix[]} form froze pre-init nulls and silently dead-dropped the Nor gate
+	 * since the port's first pour — the violation shape
+	 * {@code GT6RegistryStaticInitGuardTest} pins.
 	 */
 	private static boolean hasGemChainItem(OreDictMaterial aMaterial) {
-		for (OreDictPrefix tPrefix : GEM_CHAIN_PREFIXES) {
-			if (GTMaterialItems.get(tPrefix, aMaterial) != null) return true;
-		}
-		return false;
+		return GTMaterialItems.get(OP.gemLegendary, aMaterial) != null
+				|| GTMaterialItems.get(OP.gemExquisite, aMaterial) != null
+				|| GTMaterialItems.get(OP.gemFlawless, aMaterial) != null
+				|| GTMaterialItems.get(OP.bouleGt, aMaterial) != null;
 	}
-
-	private static final OreDictPrefix[] GEM_CHAIN_PREFIXES = {OP.gemLegendary, OP.gemExquisite, OP.gemFlawless, OP.bouleGt};
 
 	/** Fixed-row → Recipe, or null when any segment fails to resolve (the upstream silent-drop semantics). */
 	static Recipe buildFixedRecipe(FixedRow aRow) {
