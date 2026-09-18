@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.logging.LogUtils;
 
+import gregapi.util.UT;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
@@ -194,7 +195,7 @@ public final class GTBurnerCommand {
 		tBox.setChanged();
 		String tLine = "GT6 burning box fuel at " + aPos.toShortString() + ": " + tId + " x" + aCount
 				+ " (burn value " + (tBox.recipeMap() == null ? 0 : tBox.recipeMap().findFuelRecipe(tStack) == null ? 0
-						: gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity.units(
+						: UT.Code.units(
 								tBox.recipeMap().findFuelRecipe(tStack).getAbsoluteTotalPower(), 10000, tBox.mEfficiency, false))
 				+ " HU at eff " + tBox.mEfficiency + ")";
 		aSource.sendSuccess(() -> Component.literal(tLine), false);

@@ -1,5 +1,6 @@
 package gregtech6.gui.machines;
 
+import gregapi.util.UT;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -90,7 +91,7 @@ public class GTOvenMenu extends GTGuiMenu {
 			return PROGRESS_DONE; // :281
 		}
 		if (this.tileEntity.mMaxProgress > 0) { // :282
-			return (int) TileEntityOven.units(
+			return (int) UT.Code.units(
 					Math.min(this.tileEntity.mMaxProgress, this.tileEntity.mProgress),
 					this.tileEntity.mMaxProgress, Short.MAX_VALUE, true); // :283
 		}

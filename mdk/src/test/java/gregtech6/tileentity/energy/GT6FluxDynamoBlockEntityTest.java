@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy;
 
+import gregapi.util.UT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -293,14 +294,14 @@ public class GT6FluxDynamoBlockEntityTest extends GTOfflineTestBase {
 	@Test
 	public void unitsMatchesTheUpstreamDirectionTable() {
 		// hand-derived rows: no reduction (32∤88, 88∤32), floor vs round-up arms
-		assertEquals(0, GT6DynamoBlockEntity.units(0, 32, 88, false));
-		assertEquals(44, GT6DynamoBlockEntity.units(16, 32, 88, false), "floor(16*88/32) = 44");
-		assertEquals(44, GT6DynamoBlockEntity.units(16, 32, 88, true), "16*88 divides by 32 exactly: no round-up even when asked");
-		assertEquals(46, GT6DynamoBlockEntity.units(17, 32, 88, false), "floor(1496/32) = 46");
-		assertEquals(47, GT6DynamoBlockEntity.units(17, 32, 88, true), "1496 % 32 = 24 > 0: the round-up arm fires");
-		assertEquals(134, GT6DynamoBlockEntity.units(49, 32, 88, false), "floor(49*88/32) = 134.75 -> 134");
-		assertEquals(176, GT6DynamoBlockEntity.units(64, 32, 88, false), "the full bucket");
-		assertEquals(5632, GT6DynamoBlockEntity.units(8192, 8192, 5632, false), "the T5 row: identity units reduce");
-		assertEquals(0, GT6DynamoBlockEntity.units(10, 32, 0, true), "the aTargetUnit == 0 guard");
+		assertEquals(0, UT.Code.units(0, 32, 88, false));
+		assertEquals(44, UT.Code.units(16, 32, 88, false), "floor(16*88/32) = 44");
+		assertEquals(44, UT.Code.units(16, 32, 88, true), "16*88 divides by 32 exactly: no round-up even when asked");
+		assertEquals(46, UT.Code.units(17, 32, 88, false), "floor(1496/32) = 46");
+		assertEquals(47, UT.Code.units(17, 32, 88, true), "1496 % 32 = 24 > 0: the round-up arm fires");
+		assertEquals(134, UT.Code.units(49, 32, 88, false), "floor(49*88/32) = 134.75 -> 134");
+		assertEquals(176, UT.Code.units(64, 32, 88, false), "the full bucket");
+		assertEquals(5632, UT.Code.units(8192, 8192, 5632, false), "the T5 row: identity units reduce");
+		assertEquals(0, UT.Code.units(10, 32, 0, true), "the aTargetUnit == 0 guard");
 	}
 }

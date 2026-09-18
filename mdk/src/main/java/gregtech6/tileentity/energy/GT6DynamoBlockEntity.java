@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy;
 
+import gregapi.util.UT;
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -150,7 +151,7 @@ public abstract class GT6DynamoBlockEntity extends TileEntityBase03TicksAndSync 
 	 * readout and the waste burn are this core's, verbatim.
 	 */
 	void doConversion(long aTimer) {
-		long tOutput = units(mStorage, mInput, mOutput, false); // :62 — the UT.Code.units floor direction
+		long tOutput = UT.Code.units(mStorage, mInput, mOutput, false); // :62 — the UT.Code.units floor direction
 		mCanEmitEnergy = tOutput >= mOutput / 2; // :64 (mMin = outRec/2, Base10:77 with emitsAnyLowerSize() = F)
 		mActive = false; // :66
 		if (mCanEmitEnergy) {
@@ -161,7 +162,7 @@ public abstract class GT6DynamoBlockEntity extends TileEntityBase03TicksAndSync 
 		}
 		// the :92 tail, aMode = 0: units(2×inRec, 16, 16, T) = 2×mInput exactly — the vent
 		// clears the whole bucket every tick, idle or loaded (the funnel semantics)
-		if (WASTE_ENERGY) mStorage = Math.max(0, mStorage - units(mInput * 2, 16, 16, true));
+		if (WASTE_ENERGY) mStorage = Math.max(0, mStorage - UT.Code.units(mInput * 2, 16, 16, true));
 	}
 
 	/**
@@ -175,19 +176,6 @@ public abstract class GT6DynamoBlockEntity extends TileEntityBase03TicksAndSync 
 
 	/** The output energy type (TD.Energy.RF for Flux, TD.Energy.EU for Electric). */
 	protected abstract TagData outputType();
-
-	/**
-	 * Upstream {@code UT.Code.units} (UT.java:1682 verbatim) — the root port never needed
-	 * it before this card; reproduced here (the wave-card wall: copy the direction, never
-	 * reinvent the remainder behavior).
-	 */
-	static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit %   aTargetUnit == 0) {aOriginalUnit /=   aTargetUnit;   aTargetUnit = 1;} else
-		if (aTargetUnit   % aOriginalUnit == 0) {  aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
-		return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
-	}
 
 	// ---------------------------------------------------------------------------
 	// the input (Base10EnergyConverter.doInject :130-138 + Stats.doInject :56-66)

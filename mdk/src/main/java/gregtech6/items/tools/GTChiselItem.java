@@ -1,5 +1,6 @@
 package gregtech6.items.tools;
 
+import gregapi.util.UT;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.EquipmentSlot;
@@ -311,7 +312,7 @@ public class GTChiselItem extends Item implements GT6ToolLadder.LadderTool {
 	 * pin the table (the mod-Item wall, CutterTest NOTE).
 	 */
 	public static long durabilityPoints(long aToolDamage) {
-		return GTSteamEngineBlockEntity.units(aToolDamage, TOOL_DAMAGE_UNIT, UPSTREAM_DAMAGE_PER_REPAIR, true);
+		return UT.Code.units(aToolDamage, TOOL_DAMAGE_UNIT, UPSTREAM_DAMAGE_PER_REPAIR, true);
 	}
 
 	/**

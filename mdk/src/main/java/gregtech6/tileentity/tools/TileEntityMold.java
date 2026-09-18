@@ -577,7 +577,7 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 		if (tPrefix != null && mContent == null && mInventory.isEmpty() && isMoldInputSide(aSide) && aMaterial.mAmount > 0) { // :249
 			if (GT6RecipeMapCrucible.matStack(tPrefix, aMaterial.mMaterial.mTargetSolidifying.mMaterial, 1) == null) return 0; // :254 the representable-output gate
 			long tRequiredAmount = getMoldRequiredMaterialUnits();
-			long rAmount = CruciblePhysics.units(tRequiredAmount, CS.U, aMaterial.mMaterial.mTargetSolidifying.mAmount, true); // :255
+			long rAmount = UT.Code.units(tRequiredAmount, CS.U, aMaterial.mMaterial.mTargetSolidifying.mAmount, true); // :255
 			if (aMaterial.mAmount >= rAmount) {
 				mContent = new OreDictMaterialStack(aMaterial.mMaterial, tRequiredAmount); // :257
 				mTemperature = aTemperature; // :258

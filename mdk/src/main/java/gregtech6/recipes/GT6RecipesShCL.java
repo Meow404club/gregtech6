@@ -19,6 +19,7 @@
 
 package gregtech6.recipes;
 
+import gregapi.util.UT;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -700,17 +701,9 @@ public final class GT6RecipesShCL {
 	 */
 	static ItemStack pulverizeOutput(OreDictMaterial aMaterial, long aMaterialAmount) {
 		if (aMaterialAmount <= 0 || aMaterial == null) return null;
-		return dustCascade(aMaterial.mTargetPulver.mMaterial, units(aMaterialAmount, CS.U, aMaterial.mTargetPulver.mAmount, false));
+		return dustCascade(aMaterial.mTargetPulver.mMaterial, UT.Code.units(aMaterialAmount, CS.U, aMaterial.mTargetPulver.mAmount, false));
 	}
 
-	/** Upstream UT.Code.units (UT.java:1677-1683), the generic form (the crusherCosts inline is the specialization). */
-	static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit % aTargetUnit == 0) {aOriginalUnit /= aTargetUnit; aTargetUnit = 1;}
-		else if (aTargetUnit % aOriginalUnit == 0) {aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
-		return Math.max(0, (aAmount * aTargetUnit) / aOriginalUnit + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
-	}
 
 	/** Upstream UT.Code.bindStack (UT.java:1568). */
 	private static int bindStack(long aBoundValue) {

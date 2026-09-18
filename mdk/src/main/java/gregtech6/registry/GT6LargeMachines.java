@@ -1,5 +1,6 @@
 package gregtech6.registry;
 
+import gregapi.util.UT;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -745,12 +746,12 @@ public final class GT6LargeMachines {
 				if (mParallelDuration) {
 					// :766-768 — the duration carries the parallels, the divisor is mEfficiency
 					mMinEnergy = Math.max(1, tRecipe.mEUt);
-					mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, mEfficiency, 10000, true));
+					mMaxProgress = Math.max(1, UT.Code.units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, mEfficiency, 10000, true));
 				} else {
 					// :770-771 — the energy carries the parallels (the TU half keeps a
 					// constant per-process energy)
 					mMinEnergy = Math.max(1, mEnergyTypeAccepted == gregapi.data.TD.Energy.TU ? tRecipe.mEUt : tRecipe.mEUt * tMaxProcessCount);
-					mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration), mEfficiency, 10000, true));
+					mMaxProgress = Math.max(1, UT.Code.units(mMinEnergy * Math.max(1, tRecipe.mDuration), mEfficiency, 10000, true));
 				}
 				// :773 — overclocking: 4x energy, 2x speed; the CHEAP rows refuse the fold
 				if (!mCheapOverclocking) {

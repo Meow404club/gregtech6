@@ -695,10 +695,10 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		} else {
 			if (mParallelDuration) { // :766-768 — the duration scales linearly with the parallel count
 				mMinEnergy = Math.max(1, tRecipe.mEUt); // :767 (RF half cut)
-				mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, mEfficiency, 10000, true)); // :768 (efficiency 10000 = the units() identity, the historical folded form)
+				mMaxProgress = Math.max(1, UT.Code.units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, mEfficiency, 10000, true)); // :768 (efficiency 10000 = the UT.Code.units() identity, the historical folded form)
 			} else { // :770-771 — the energy scales (the speedup); TU keeps its constant per-process energy
 				mMinEnergy = Math.max(1, (mEnergyTypeAccepted == TD.Energy.TU ? tRecipe.mEUt : tRecipe.mEUt * tMaxProcessCount));
-				mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration), mEfficiency, 10000, true)); // :771
+				mMaxProgress = Math.max(1, UT.Code.units(mMinEnergy * Math.max(1, tRecipe.mDuration), mEfficiency, 10000, true)); // :771
 			}
 			// :773 verbatim — 4x energy, 2x speed (mCheapOverclocking cut: no config source, always T)
 			while (mMinEnergy < mInputMin && mMinEnergy * 4 <= mInputMax) {mMinEnergy *= 4; mMaxProgress *= 2;}
@@ -1697,21 +1697,4 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		updateAccessibleSlots(); // :217 — the upstream readFromNBT2 tail (covers an NBT-carried facing too)
 	}
 
-	// ---------------------------------------------------------------------------
-	// upstream UT.Code.units (UT.java:1677-1683) — the root UT port does not carry it yet
-	// (same standalone copy as the oven, TileEntityOven.java:700-711)
-	// ---------------------------------------------------------------------------
-
-	public static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit % aTargetUnit == 0) {
-			aOriginalUnit /= aTargetUnit;
-			aTargetUnit = 1;
-		} else if (aTargetUnit % aOriginalUnit == 0) {
-			aTargetUnit /= aOriginalUnit;
-			aOriginalUnit = 1;
-		}
-		return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
-	}
 }

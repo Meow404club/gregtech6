@@ -1,5 +1,6 @@
 package gregtech6.gui.machines;
 
+import gregapi.util.UT;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -333,7 +334,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 			return PROGRESS_DONE; // :281
 		}
 		if (aHost.getMaxProgress() > 0) { // :282
-			return (int) TileEntityBasicMachine.units(
+			return (int) UT.Code.units(
 					Math.min(aHost.getMaxProgress(), aHost.getProgress()),
 					aHost.getMaxProgress(), Short.MAX_VALUE, true); // :283
 		}

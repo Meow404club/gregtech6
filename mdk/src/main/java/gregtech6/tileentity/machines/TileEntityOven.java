@@ -1,5 +1,6 @@
 package gregtech6.tileentity.machines;
 
+import gregapi.util.UT;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -475,7 +476,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		} else {
 			// :770-771 verbatim (TU branch of :770, mEfficiency = 10000 → units() is the identity)
 			mMinEnergy = Math.max(1, tRecipe.mEUt);
-			mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration), 10000, 10000, true));
+			mMaxProgress = Math.max(1, UT.Code.units(mMinEnergy * Math.max(1, tRecipe.mDuration), 10000, 10000, true));
 			// :773 verbatim — overclocking: 4x energy, 2x speed
 			while (mMinEnergy < mInputMin && mMinEnergy * 4 <= mInputMax) {
 				mMinEnergy *= 4;
@@ -1020,20 +1021,4 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		};
 	}
 
-	// ---------------------------------------------------------------------------
-	// upstream UT.Code.units (UT.java:1677-1683) — the root UT port does not carry it yet
-	// ---------------------------------------------------------------------------
-
-	public static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit % aTargetUnit == 0) {
-			aOriginalUnit /= aTargetUnit;
-			aTargetUnit = 1;
-		} else if (aTargetUnit % aOriginalUnit == 0) {
-			aTargetUnit /= aOriginalUnit;
-			aOriginalUnit = 1;
-		}
-		return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
-	}
 }

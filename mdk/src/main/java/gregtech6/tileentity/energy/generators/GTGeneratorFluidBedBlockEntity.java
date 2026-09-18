@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy.generators;
 
+import gregapi.util.UT;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -159,7 +160,7 @@ public class GTGeneratorFluidBedBlockEntity extends GTGeneratorSolidBlockEntity 
 			else if (ItemStack.isSameItemSameTags(mInventory.getStackInSlot(1), tOut)) mInventory.getStackInSlot(1).grow(tOut.getCount());
 		}
 		// :135 — the efficiency translation
-		mEnergy += units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false);
+		mEnergy += UT.Code.units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false);
 	}
 
 	/** The fuel tank as the probe argument ({@code mTank.AS_ARRAY} upstream). */
