@@ -44,10 +44,11 @@ import gt6world
 from framework import Chain, Step, main, phase
 
 # The sites — x64..79 z64..79 (chunk 4,4), clear of every registered machine band. The
-# staging clones sit at x288..303 (pristine) and x304..319 (post-place), same z/y.
+# staging band x288..415 holds the box clones (S1 pristine / S2 post-place) plus the
+# pristine crystal-hall clone used by the SOME-change face.
 BOX = gt6world.Site(72, 60, 72, dx=8, dy=61, dz=8)      # the main box: y0..120
 CAVE = gt6world.Site(128, 40, 72, dx=64, dy=21, dz=8)   # the crystal hall: x64..191, y30..50
-STAGING = gt6world.Site(320, 45, 72, dx=32, dy=76, dz=8)  # the staging band x288..351
+STAGING = gt6world.Site(352, 60, 72, dx=64, dy=61, dz=8)  # the staging band x288..415
 
 BOXR = "64 0 64 79 120 79"    # the main box (16x121x16 = 30976 <= the 32768 fill/clone cap)
 S1 = "288 0 64 303 120 79"    # the pristine clone of BOX
@@ -62,7 +63,7 @@ steps += [
     # the self-reliant forceload (the t1/strata lesson: the framework's pass-open forceload
     # does not reach the staging area)
     Step("forceload add 64 64 191 79"),   # the main box + the crystal hall (8 chunks)
-    Step("forceload add 288 64 351 79"),  # the staging band (clones + pocket twins)
+    Step("forceload add 288 64 415 79"),  # the staging band (the pristine hall clones)
     Step(f"fill {BOXR} minecraft:netherrack"),
     Step(f"clone {BOXR} 288 0 64"),  # staging1 = the pristine netherrack box
     Step("place feature gt6:nether_lenses 72 60 72", expect="Placed"),
@@ -102,34 +103,42 @@ steps += [
 # eight 16-wide columns): eight /place attempts, eight independent coins, P(all skip) =
 # 1/256 = 0.39% — the SOME-change face then holds with overwhelming probability.
 _CRYSTAL_CHUNKS = [64 + 16 * i for i in range(8)]
+# The SOME-change face window y37..49: the anchor lands at y49 and the walk reaches
+# y49 - 11 = y38, so y37..49 (13 tall) covers EVERY crystal slot while staying under
+# the 32768 volume cap (128x13x16 = 26624; the full pocket y31..49 = 38912 would throw
+# ExecuteCommand.checkRegions' ERROR_AREA_TOO_LARGE — the first-draft bug this window
+# fixes). The clone+compare ride the same window, so the face passes iff at least one
+# of the eight independent coins landed (P(all skip) = 1/256).
+_HALL_LO, _HALL_HI = 37, 49
 steps += [
     phase("D: nether_crystals — the 8-chunk cave hall (ceiling y50, air y31..49, floor y30)"),
     Step("fill 64 50 64 191 50 79 minecraft:netherrack"),   # the ceilings: one slab, 8 chunks
     Step("fill 64 30 64 191 30 79 minecraft:netherrack"),   # the floors
-    Step("fill 64 31 64 191 49 79 minecraft:air"),          # carve the air pockets
+    Step("fill 64 31 64 191 40 79 minecraft:air"),          # carve the air pockets, lower half
+    Step("fill 64 41 64 191 49 79 minecraft:air"),          # upper half (128x19x16 = 38912 > the 32768 fill cap — two fills)
+    # the PRE-PLACE pristine clone of the compare window: the SOME-change face compares
+    # the post-place hall against THIS (cloning before the coins, not carving a clone
+    # after — carving the live hall again would erase the evidence, and carving the
+    # CLONE after the fact left x352..415 as natural terrain = false-positive window)
+    Step(f"clone 64 {_HALL_LO} 64 191 {_HALL_HI} 79 288 {_HALL_LO} 64"),  # 128x13x16 = 26624 <= the cap
 ]
 for _cx in _CRYSTAL_CHUNKS:
     steps.append(Step(f"place feature gt6:nether_crystals {_cx + 8} 40 {_cx + 8}", expect="Placed",
                       allow_failed=True))  # the 50% skip is an UPSTREAM OUTCOME, not a chain failure
 steps += [
-    # SOME pocket slot became a crystal — the SOME-change face against freshly carved
-    # air clones (carve the CLONE only; carving the live hall again would erase the
-    # evidence — the first-draft bug this step order fixes)
-    Step("fill 288 31 64 303 49 79 minecraft:air"),
-    Step("fill 304 31 64 319 49 79 minecraft:air"),
-    Step("fill 320 31 64 335 49 79 minecraft:air"),
-    Step("fill 336 31 64 351 49 79 minecraft:air"),
-    Step("execute unless blocks 64 31 64 191 49 79 288 31 64 all", expect="Test passed"),
+    Step(f"execute unless blocks 64 {_HALL_LO} 64 191 {_HALL_HI} 79 288 {_HALL_LO} 64 all",
+         expect="Test passed"),
 ]
 
 # ------------------------------------------------- T: teardown
 steps += [
     phase("T: teardown — hall + box + staging back to air (the pass-open bbox is the backstop)"),
     Step(f"fill {BOXR} minecraft:air"),
-    Step("fill 64 30 64 191 50 79 minecraft:air"),
-    Step("fill 288 0 64 303 120 79 minecraft:air"),
-    Step("fill 304 0 64 319 120 79 minecraft:air"),
-    Step("fill 288 30 64 351 50 79 minecraft:air"),
+    Step("fill 64 30 64 191 40 79 minecraft:air"),          # the hall, lower half (128x11x16 = 22528)
+    Step("fill 64 41 64 191 50 79 minecraft:air"),          # upper half (128x10x16 = 20480; the one-slab form = 43008 > cap)
+    Step("fill 288 0 64 303 120 79 minecraft:air"),         # S1 (30976)
+    Step("fill 304 0 64 319 120 79 minecraft:air"),         # S2 (30976)
+    Step("fill 320 37 64 415 49 79 minecraft:air"),         # the pristine hall clone band (96x13x16 = 19968)
     Step("execute if block 72 60 72 minecraft:air", expect="Test passed"),
     Step("time query daytime", expect="The time is"),
 ]
