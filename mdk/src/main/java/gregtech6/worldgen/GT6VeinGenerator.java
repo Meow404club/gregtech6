@@ -36,14 +36,19 @@ public final class GT6VeinGenerator {
     }
 
     /**
-     * WD.java:547-560 verbatim (the chunk coords already shifted): seed the stream with the
-     * world seed (the dimension-id XOR rides as 0 — this feature is overworld-only, the
-     * biome modifier hangs on {@code #minecraft:is_overworld}), discard the first 50 draws
-     * twice around the coord reseed. java.util.Random on both legs (the research
-     * determinism ruling).
+     * WD.java:547-560 verbatim (the chunk coords already shifted), with the upstream
+     * dimension salt exposed: {@code WD.random(World)} seeds with
+     * {@code world.getSeed() ^ world.provider.dimensionId} (WD.java:547 — "to prevent
+     * multiple Dimensions from being identical in Ore Generation", the comment verbatim),
+     * so the stream takes the dimension id as a salt — overworld 0, nether -1, end 1
+     * (the 1.7.10 numeric ids; the same numbers vanilla keeps as its dimension keys'
+     * legacy ids). The zero-salt call is the overworld stream BIT-IDENTICAL to the
+     * pre-salt form ({@code seed ^ 0 == seed}), so every existing overworld pin holds.
+     * Discard the first 50 draws twice around the coord reseed. java.util.Random on
+     * both legs (the research determinism ruling).
      */
-    public static Random veinRandom(long aWorldSeed, int aChunkX, int aChunkZ) {
-        Random tRandom = new Random(aWorldSeed);
+    public static Random veinRandom(long aWorldSeed, long aDimSalt, int aChunkX, int aChunkZ) {
+        Random tRandom = new Random(aWorldSeed ^ aDimSalt);
         for (int i = 0; i < 50; i++) tRandom.nextInt(0x00ffffff);
         // upstream precedence: nextLong() >> 2 + 1L binds as >> (2+1)
         tRandom = new Random(aWorldSeed ^ ((tRandom.nextLong() >> 3) * aChunkX + (tRandom.nextLong() >> 3) * aChunkZ));

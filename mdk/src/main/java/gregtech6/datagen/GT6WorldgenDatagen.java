@@ -238,6 +238,11 @@ public final class GT6WorldgenDatagen {
         // face as the vein table).
         FeatureUtils.register(ctx, GT6Worldgen.STRATA_LENSES_CONFIGURED, GT6Features.STRATA_LENSES,
                 new GTLensConfig.Table(STRATA_LENS_TABLE));
+        // task p31-nether-lens-end-yield — the ONE nether-lens configured feature: the
+        // registered GT6NetherLensFeature instance over the 17-stone nether lens table
+        // ({@link #NETHER_LENS_TABLE}; the same tier-a face).
+        FeatureUtils.register(ctx, GT6Worldgen.NETHER_LENSES_CONFIGURED, GT6Features.NETHER_LENSES,
+                new GTLensConfig.Table(NETHER_LENS_TABLE));
         // task p31-bedrock-ore-worldgen — the ONE bedrock-ore configured feature: the
         // registered GT6BedrockOreFeature instance over the 46-row table (the same tier-a
         // face as the vein/lens tables).
@@ -309,6 +314,13 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.BEDROCK_ORES_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.BEDROCK_ORES_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        // task p31-nether-lens-end-yield — the nether-lens placed feature: Count 1 CONSTANT +
+        // InSquare + BiomeFilter (the strata-lens chain shape; the per-chunk 1/200 row rolls
+        // live in the Feature's coordinate-seeded stream, no Y placement — the rows carry
+        // their own Y domains).
+        PlacementUtils.register(ctx, GT6Worldgen.NETHER_LENSES_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.NETHER_LENSES_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         bootstrapOrePlaced(ctx, tFeatures); // task p30-w6-small-ore-datagen — tail-append
     }
 
@@ -363,6 +375,14 @@ public final class GT6WorldgenDatagen {
         // no biome parameter), at the UNDERGROUND_ORES step.
         ctx.register(biomeModifierKeyOf("bedrock_ores"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BEDROCK_ORES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task p31-nether-lens-end-yield — the nether-lens biome modifier: EVERY nether
+        // biome (upstream GEN_NETHER, Loader_Worldgen.java:656 — the dim flag is the modern
+        // biome-tag face, the small-ore band's IS_NETHER convention), at the
+        // UNDERGROUND_ORES step (the stone pass the blob/lens rows ride).
+        ctx.register(biomeModifierKeyOf("nether_lenses"), addFeatures(
+                tBiomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_LENSES_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-small-ore-datagen — tail-append
     }
@@ -847,6 +867,29 @@ public final class GT6WorldgenDatagen {
         new GTLensConfig("kimberlite" , 3,  8,  48, 32, 14),
         new GTLensConfig("granite_red", 4, 32, 104, 48,  9),
         new GTLensConfig("komatiite"  , 4,  8,  64, 36, 12));
+
+    /**
+     * The ONE 17-stone nether-lens table (task p31-nether-lens-end-yield) — every stone of
+     * the upstream nether loop, GTStoneBlocks.STONES order (Loader_Worldgen.java:656 emits
+     * one nether row per loop stone; the overworld prismarine-exclusion note rides the
+     * GT6Worldgen javadoc, the 17-stone port universe). UNIFORM columns, the upstream
+     * uniform ctor face: rarity = probability 200 ({@link GT6Worldgen#NETHER_LENS_PROBABILITY},
+     * the independent per-row 1/200 roll denominator — NOT a weight), Y domain 0..120
+     * (MinHeight/MaxHeight; the center draw reads it inclusively — the strata-lens table
+     * convention, so the band is [0,120] not the upstream [0,119)), radius/halfHeight =
+     * the CLEAN CALIBRATION stand-ins ({@link GT6Worldgen#NETHER_LENS_RADIUS} 40 /
+     * {@link GT6Worldgen#NETHER_LENS_HALF_HEIGHT} 12) for the upstream size-200 sausage
+     * blob (~25-block axis + ~12.5-block random radius, ~13 vertical) — no P30 calibration
+     * curve reused, the radius rides the 48 cap so the Feature's ±3-chunk window stays
+     * mathematically closed.
+     */
+    public static final List<GTLensConfig> NETHER_LENS_TABLE = GTStoneBlocks.STONES.stream()
+            .map(GTStoneBlocks.StoneSpec::snake)
+            .map(tSnake -> new GTLensConfig(tSnake,
+                    GT6Worldgen.NETHER_LENS_PROBABILITY, GT6Worldgen.NETHER_LENS_MIN_Y,
+                    GT6Worldgen.NETHER_LENS_MAX_Y, GT6Worldgen.NETHER_LENS_RADIUS,
+                    GT6Worldgen.NETHER_LENS_HALF_HEIGHT))
+            .toList();
 
     // ------------------------------------------------------------------
     // The bedrock-ore band (task p31-bedrock-ore-worldgen) — the 46-row table,

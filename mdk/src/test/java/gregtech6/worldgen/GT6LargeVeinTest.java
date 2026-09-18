@@ -271,7 +271,7 @@ class GT6LargeVeinTest {
 
     private static void generateAt(long aSeed, int aOriginX, int aOriginZ, RecordingSink aSink,
             int aClipMinX, int aClipMaxX, int aClipMinZ, int aClipMaxZ) {
-        Random tRandom = GT6VeinGenerator.veinRandom(aSeed, aOriginX, aOriginZ);
+        Random tRandom = GT6VeinGenerator.veinRandom(aSeed, 0, aOriginX, aOriginZ); // the overworld salt
         GTVeinConfig tVein = GT6VeinGenerator.drawVein(GT6WorldgenDatagen.LARGE_VEIN_TABLE, tRandom);
         if (tVein == null) return;
         GT6VeinGenerator.generateSlice(tVein, tRandom, aOriginX << 4, aOriginZ << 4,

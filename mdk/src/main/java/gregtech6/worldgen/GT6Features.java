@@ -105,6 +105,20 @@ public final class GT6Features {
         return tFeature;
     }
 
+    /**
+     * The nether stone-lens feature (task p31-nether-lens-end-yield) — ONE registration row
+     * {@code gt6:nether_lenses}, the single Feature over the 17-stone nether lens table (the
+     * strata-lens adapter with the upstream independent per-row 1/200 rolls). The
+     * configured/placed/biome-modifier rows hang off it in GT6WorldgenDatagen.
+     */
+    public static final GT6NetherLensFeature NETHER_LENSES = registerNetherLensFeature();
+
+    private static GT6NetherLensFeature registerNetherLensFeature() {
+        GT6NetherLensFeature tFeature = new GT6NetherLensFeature();
+        FEATURES.register("nether_lenses", () -> tFeature);
+        return tFeature;
+    }
+
     /** The feature instance of a kind (index-aligned with KINDS). */
     public static GT6TreeFeature treeFeature(GT6TreeKind aKind) {
         return (GT6TreeFeature) TREE_FEATURES.get(aKind.ordinal());
