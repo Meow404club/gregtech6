@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy;
 
+import gregapi.util.UT;
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -240,13 +241,13 @@ public class GTDieselEngineBlockEntity extends TileEntityBase03TicksAndSync impl
 					if (consumeFuel(tRecipe)) {
 						mActive = true; // :119
 						mLastRecipe = tRecipe; // :120
-						mEnergy += units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :121
+						mEnergy += UT.Code.units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :121
 						if (co2Mark(fluidPath(tRecipe))) mExhaustCO2++; // the CO2 mark consumption (class doc; upstream mTanks[1].fill)
 						// :123-127 — the while-loop burn-out
 						while (mEnergy < mRate * 2
 								&& (tRecipe.mFluidOutputs.length <= 0 || mTanks[1].amount() + tRecipe.mFluidOutputs[0].getAmount() <= mTanks[1].capacity())
 								&& consumeFuel(tRecipe)) {
-							mEnergy += units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :124
+							mEnergy += UT.Code.units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :124
 							if (co2Mark(fluidPath(tRecipe))) mExhaustCO2++; // :125 the CO2 mark
 							if (mTanks[0].isEmpty()) break; // :126
 						}
@@ -364,18 +365,6 @@ public class GTDieselEngineBlockEntity extends TileEntityBase03TicksAndSync impl
 	private FluidStack[] tankFluids() {
 		FluidStack tFluid = mTanks[0].getFluid();
 		return tFluid != null && !tFluid.isEmpty() ? new FluidStack[] {tFluid} : new FluidStack[0];
-	}
-
-	/**
-	 * Upstream UT.Code.units (UT.java:1677-1683) — the efficiency translation
-	 * {@code units(power, 10000, mEfficiency, F)} of :121/:124.
-	 */
-	public static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit % aTargetUnit == 0) {aOriginalUnit /= aTargetUnit; aTargetUnit = 1;}
-		else if (aTargetUnit % aOriginalUnit == 0) {aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
-		return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
 	}
 
 	/**

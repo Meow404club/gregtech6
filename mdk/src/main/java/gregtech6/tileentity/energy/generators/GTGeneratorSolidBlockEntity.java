@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy.generators;
 
+import gregapi.util.UT;
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -57,9 +58,8 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *     slot can take the container item, the front face has air, is not liquid and has
  *     oxygen (:113), one fuel unit is charged (:151-158): the fresh
  *     {@link RecipeMapFurnaceFuel} row is consumed and the buffer credits
-	 *     {@code units(absoluteTotalPower, 10000, mEfficiency, F)} (:156, the UT.Code.units
-	 *     form, the {@link gregtech6.tileentity.energy.GTDieselEngineBlockEntity#units} port
-	 *     of it). The upstream
+	 *     {@code units(absoluteTotalPower, 10000, mEfficiency, F)} (:156, the
+	 *     {@link gregapi.util.UT.Code#units} form). The upstream
  *     {@code mOutput1} holding field (:62, moved into slot 1 at :112) folds into a
  *     direct guarded slot-1 write in {@link #chargeFuel} — same observable, one less
  *     field (declared).</li>
@@ -226,19 +226,7 @@ public abstract class GTGeneratorSolidBlockEntity extends TileEntityBase03TicksA
 			else if (ItemStack.isSameItemSameTags(mInventory.getStackInSlot(1), tOut)) mInventory.getStackInSlot(1).grow(tOut.getCount());
 		}
 		// :156 — the efficiency translation
-		mEnergy += units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false);
-	}
-
-	/**
-	 * Upstream UT.Code.units (UT.java:1677-1683) — the efficiency translation of :156
-	 * (the GTDieselEngineBlockEntity.units form, verbatim).
-	 */
-	public static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit % aTargetUnit == 0) {aOriginalUnit /= aTargetUnit; aTargetUnit = 1;}
-		else if (aTargetUnit % aOriginalUnit == 0) {aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
-		return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
+		mEnergy += UT.Code.units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false);
 	}
 
 	// ---------------------------------------------------------------------------

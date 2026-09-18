@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy;
 
+import gregapi.util.UT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -175,14 +176,14 @@ public class GTSteamEngineBlockEntityTest extends GTOfflineTestBase {
 		// the pure UT.Code.units form (:123): one whole 200 L batch = 100 EU-units, scaled
 		// by the row efficiency in ten-thousandths → per-batch KU = efficiency / 100 (floor)
 		for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) {
-			long tPerBatch = GTSteamEngineBlockEntity.units(
+			long tPerBatch = UT.Code.units(
 					GTFluids.STEAM_PER_WATER / GTFluids.STEAM_PER_EU, 10000, tRow.efficiency(), false);
 			assertEquals(tRow.efficiency() / 100, tPerBatch, tRow.path() + ": one 200 L batch at eff " + tRow.efficiency());
 		}
 		// the spot rows of the acceptance table (units floors: (100*eff)/10000)
-		assertEquals(30, GTSteamEngineBlockEntity.units(100, 10000, 3000, false), "Lead 3000 → 30 KU per batch");
-		assertEquals(64, GTSteamEngineBlockEntity.units(100, 10000, 6450, false), "IronWood 6450 → the 64.5 floor");
-		assertEquals(0, GTSteamEngineBlockEntity.units(1, 10000, 3000, false), "a fraction of a batch converts nothing");
+		assertEquals(30, UT.Code.units(100, 10000, 3000, false), "Lead 3000 → 30 KU per batch");
+		assertEquals(64, UT.Code.units(100, 10000, 6450, false), "IronWood 6450 → the 64.5 floor");
+		assertEquals(0, UT.Code.units(1, 10000, 3000, false), "a fraction of a batch converts nothing");
 		// the live tick: a full Lead tank (STEAM_PER_WATER * 8 * 2 = 3200 L = 16 batches)
 		// converts to 16 * 30 = 480 KU in ONE tick, the tank drains to empty
 		GTSteamEngineBlockEntity tEngine = leadEngine();

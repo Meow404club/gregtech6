@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy;
 
+import gregapi.util.UT;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -172,7 +173,7 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 		long tOutRec = mReversed ? VOLTAGE_HIGH : VOLTAGE_LOW; // 32 : 8 (Base11 :57 rec / Base10 :77 rec)
 		long tOutMin = mReversed ? OUTPUT_MIN_UP : OUTPUT_MIN_DOWN; // 24 : 4 (Base11 :57 / Base10 :77)
 		long tPackets = mReversed ? 1 : MULTIPLIER; // the :85 amount argument (mMultiplier per mode)
-		long tOutput = units(mStorage, VOLTAGE_HIGH, tOutRec, false); // :62 — the UT.Code.units floor direction
+		long tOutput = UT.Code.units(mStorage, VOLTAGE_HIGH, tOutRec, false); // :62 — the UT.Code.units floor direction
 		mCanEmitEnergy = tOutput >= tOutMin; // :64
 		mActive = false; // :66
 		if (mCanEmitEnergy) {
@@ -185,7 +186,7 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 				// for this row outRec×mult == inRec == 32 in both modes, so the charge is
 				// exactly the EU that left (conservation); kept in the general units() form
 				// so a future ladder row with a different ratio inherits the upstream math
-				mStorage -= units(tUsed * tOutput, tOutRec * tPackets, VOLTAGE_HIGH, true);
+				mStorage -= UT.Code.units(tUsed * tOutput, tOutRec * tPackets, VOLTAGE_HIGH, true);
 				if (mStorage < 0) mStorage = 0;
 			}
 		}
@@ -201,15 +202,6 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 	long emitConverted(long tOutput, long tPackets) {
 		long tSign = mNegativeInput ? -1 : 1;
 		return ITileEntityEnergy.Util.emitEnergyToNetwork(TD.Energy.EU, tSign * tOutput, tPackets, this, adjacency());
-	}
-
-	/**
-	 * Upstream {@code UT.Code.units} (UT.java:1682 verbatim) — the
-	 * {@link GT6DynamoBlockEntity#units} static (same package, shared verbatim — the
-	 * wave-card rule: one units() per port, never a second remainder convention).
-	 */
-	static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		return GT6DynamoBlockEntity.units(aAmount, aOriginalUnit, aTargetUnit, aRoundUp);
 	}
 
 	// ---------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy.generators;
 
+import gregapi.util.UT;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -139,10 +140,10 @@ public class GTGeneratorLiquidBlockEntity extends GTGeneratorSolidBlockEntity im
 						mBurning = true; // :137
 						mCooldown = 100; // :138
 						mLastRecipe = tRecipe; // :139
-						mEnergy += units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :140
+						mEnergy += UT.Code.units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :140
 						// :142-145 — burn as much as needed to keep up the Power per Tick
 						while (mEnergy < mRate * 2 && consumeFuel(tRecipe)) {
-							mEnergy += units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :143
+							mEnergy += UT.Code.units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :143
 							if (mTank.isEmpty()) break; // :144
 						}
 					} else {

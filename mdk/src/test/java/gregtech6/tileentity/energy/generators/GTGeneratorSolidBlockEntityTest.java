@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy.generators;
 
+import gregapi.util.UT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -231,13 +232,13 @@ public class GTGeneratorSolidBlockEntityTest extends GTOfflineTestBase {
 	@Test
 	public void theChargeFormulaIsTheUnitsEfficiencyTranslation() {
 		// the UT.Code.units form of :156 against the Brick box: 40000 raw at eff 2500 = 10000
-		assertEquals(10000, GTGeneratorSolidBlockEntity.units(40000, 10000, 2500, false), "Brick: 1600t coal × 25 × 0.25");
+		assertEquals(10000, UT.Code.units(40000, 10000, 2500, false), "Brick: 1600t coal × 25 × 0.25");
 		// the Steel solid box (eff 7000): 40000 × 0.7 = 28000
-		assertEquals(28000, GTGeneratorSolidBlockEntity.units(40000, 10000, 7000, false), "Steel solid");
+		assertEquals(28000, UT.Code.units(40000, 10000, 7000, false), "Steel solid");
 		// the identity at eff 10000
-		assertEquals(40000, GTGeneratorSolidBlockEntity.units(40000, 10000, 10000, false), "the Invar identity");
+		assertEquals(40000, UT.Code.units(40000, 10000, 10000, false), "the Invar identity");
 		// and the diesel cross-check: the same units() answers the FM.Burn charge
-		assertEquals(320, GTGeneratorSolidBlockEntity.units(320, 10000, 10000, false), "1L diesel-class fuel at eff 10000 (|−64×5| = 320)");
+		assertEquals(320, UT.Code.units(320, 10000, 10000, false), "1L diesel-class fuel at eff 10000 (|−64×5| = 320)");
 	}
 
 	// ---------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy.converters;
 
+import gregapi.util.UT;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -261,7 +262,7 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 			}
 			// :123 — the steam goes IN; the add clamps at capacity (upstream setFluid could
 			// overshoot), the isFull() explosion verdict below is the same either way
-			mTanks[1].add(units(tConversions, 10000, (long)mEfficiency * GTFluids.STEAM_PER_WATER_GLOBAL, false), mSteamMake.apply(tConversions));
+			mTanks[1].add(UT.Code.units(tConversions, 10000, (long)mEfficiency * GTFluids.STEAM_PER_WATER_GLOBAL, false), mSteamMake.apply(tConversions));
 			mEnergy -= tConversions * GTFluids.EU_PER_WATER; // :124
 			mCoolDownResetTimer = 128; // :125
 		}
@@ -319,11 +320,6 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 	/** UT.Code.bind5 (UT.java:1544) — the 5-bit visual bind of :220. */
 	public static byte bind5(byte aValue) {
 		return (byte)Math.max(0, Math.min(31, aValue));
-	}
-
-	/** The statics re-call: UT.Code.units (the engine copy, UT.java:1677-1683 verbatim). */
-	public static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		return GTSteamEngineBlockEntity.units(aAmount, aOriginalUnit, aTargetUnit, aRoundUp);
 	}
 
 	/** The statics re-call: UT.Code.scale (the engine copy, UT.java:1534-1537 verbatim). */
