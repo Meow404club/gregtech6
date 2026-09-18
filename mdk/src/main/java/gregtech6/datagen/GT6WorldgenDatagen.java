@@ -421,6 +421,15 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_CLAY_PLACED)),
                 GenerationStep.Decoration.LOCAL_MODIFICATIONS));
+        // task p31-nether-lens-end-yield — the END large-vein modifier over the SAME
+        // gt6:large_veins placed feature (the Feature's biome probe picks the ORE_END
+        // rows there), at the ore step. The CONDITIONS ride the emission providers
+        // (the neo leg's native conditions map / the forge leg's GT6BiomeModifierConditions
+        // injection) — the bootstrap itself is condition-free, the loader brand keys are
+        // added at emission time.
+        ctx.register(END_YIELD_MODIFIER_KEY, addFeatures(tBiomes.getOrThrow(BiomeTags.IS_END),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
         bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-small-ore-datagen — tail-append
     }
 
@@ -544,6 +553,25 @@ public final class GT6WorldgenDatagen {
             biomeModifierKeyOf("ore_small_overworld"),
             biomeModifierKeyOf("ore_small_nether"),
             biomeModifierKeyOf("ore_small_end"));
+
+    /**
+     * The End large-vein biome-modifier key (task p31-nether-lens-end-yield): the ONE
+     * row carrying the has_planet_veins yield condition — no planet mod: the modifier
+     * applies and the five ORE_END rows generate in the End (the ruling B semantics:
+     * GT6 self-sufficient); planet mod present: the conditions fail and the modifier
+     * entry is skipped at datapack load (the RegistryDataLoader patch's debug-level
+     * skip), yielding the End (the declared deviation from upstream's union-dual-mount,
+     * decisions.2026-09-17-p30-nether-end-rulings).
+     */
+    public static final ResourceKey<BiomeModifier> END_YIELD_MODIFIER_KEY = biomeModifierKeyOf("large_veins_end");
+
+    /**
+     * The planet-mod id of the yield inversion, the SINGLE flip point — the trigger card
+     * MUST verify the target planet mod's actual modern modid before shipping the flip
+     * (coordinator ruling 2026-09-18; "galacticraft" = the GT6 1.7.10 planet-domain
+     * lineage, MD.GC = the ORE_PLANETS flags' original carrier).
+     */
+    public static final String PLANET_VEIN_TRIGGER_MODID = "galacticraft";
 
     private static void bootstrapOreConfigured(
         //? if forge {
@@ -835,13 +863,32 @@ public final class GT6WorldgenDatagen {
     /** The row helper: an overworld row (indicator on, distance 0). */
     private static GTVeinConfig vein(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
             OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
-        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, true, aTop, aBottom, aBetween, aSpread);
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, true, false, aTop, aBottom, aBetween, aSpread);
     }
 
     /** The row helper for the offworld rows (:917-925 — never drawn overworld, kept for the table census). */
     private static GTVeinConfig veinOffworld(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
             OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
-        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, false, aTop, aBottom, aBetween, aSpread);
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, false, false, aTop, aBottom, aBetween, aSpread);
+    }
+
+    /**
+     * The row helper for the ORE_END+ORE_OVERWORLD rows (task p31-nether-lens-end-yield:
+     * platinum :904 / molybdenum :905 / cassiterite :906 — drawn in BOTH dimensions).
+     */
+    private static GTVeinConfig veinEnd(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
+            OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, true, true, aTop, aBottom, aBetween, aSpread);
+    }
+
+    /**
+     * The row helper for the pure-alien ORE_END rows (:918 naquadah / :919 trinium —
+     * MARS+PLANETS+ASTEROIDS+END, no overworld; the END flag IS their vanilla+-pack
+     * lifeline, the yield ruling's subject matter).
+     */
+    private static GTVeinConfig veinOffworldEnd(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
+            OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, false, true, aTop, aBottom, aBetween, aSpread);
     }
 
     /** The ONE 40-row large-vein table — the card spec ② "40 脉合一张 JSON 脉表". */
@@ -864,9 +911,9 @@ public final class GT6WorldgenDatagen {
         vein("ore.large.quartz"      , 40,  80,  60, 3, 16, MT.MilkyQuartz                  , MT.OREMATS.Barite               , MT.CertusQuartz                 , MT.CertusQuartz       ), // :901
         vein("ore.large.peridot"     , 10,  40,  60, 3, 16, MT.OREMATS.Kyanite              , MT.MgCO3                        , MT.Peridot                      , MT.OREMATS.Glauconite ), // :902
         vein("ore.large.gold"        , 20,  30,   5, 3, 16, MT.Pyrite                       , MT.OREMATS.Chalcopyrite         , MT.OREMATS.Arsenopyrite         , MT.Au                 ), // :903
-        vein("ore.large.platinum"    , 40,  50,   5, 3, 16, MT.OREMATS.Cooperite            , MT.Pd                           , MT.OREMATS.Sperrylite           , MT.Ir                 ), // :904
-        vein("ore.large.molybdenum"  , 20,  50,   5, 3, 16, MT.OREMATS.Wulfenite            , MT.OREMATS.Molybdenite          , MT.Mo                           , MT.OREMATS.Powellite  ), // :905
-        vein("ore.large.cassiterite" , 40,  90, 170, 5, 24, MT.OREMATS.Stannite             , MT.OREMATS.Kesterite            , MT.OREMATS.Huebnerite           , MT.OREMATS.Cassiterite), // :906
+        veinEnd("ore.large.platinum"    , 40,  50,   5, 3, 16, MT.OREMATS.Cooperite            , MT.Pd                           , MT.OREMATS.Sperrylite           , MT.Ir                 ), // :904 ORE_END
+        veinEnd("ore.large.molybdenum"  , 20,  50,   5, 3, 16, MT.OREMATS.Wulfenite            , MT.OREMATS.Molybdenite          , MT.Mo                           , MT.OREMATS.Powellite  ), // :905 ORE_END
+        veinEnd("ore.large.cassiterite" , 40,  90, 170, 5, 24, MT.OREMATS.Stannite             , MT.OREMATS.Kesterite            , MT.OREMATS.Huebnerite           , MT.OREMATS.Cassiterite), // :906 ORE_END
         vein("ore.large.tungstate"   , 20,  50,  10, 3, 16, MT.OREMATS.Scheelite            , MT.OREMATS.Russellite           , MT.OREMATS.Tungstate            , MT.OREMATS.Pinalite   ), // :907
         vein("ore.large.manganese"   , 20,  30,  20, 3, 16, MT.Grossular                    , MT.Spessartine                  , MT.MnO2                         , MT.OREMATS.Coltan     ), // :908
         vein("ore.large.beryllium"   ,  5,  30,  15, 3, 16, MT.Aquamarine                   , MT.Maxixe                       , MT.Emerald                      , MT.Th                 ), // :909
@@ -878,8 +925,8 @@ public final class GT6WorldgenDatagen {
         vein("ore.large.iron"        , 10,  40, 120, 4, 24, MT.OREMATS.BrownLimonite        , MT.OREMATS.YellowLimonite       , MT.Fe2O3                        , MT.OREMATS.Malachite  ), // :915
         vein("ore.large.copper"      , 10,  30,  80, 4, 24, MT.OREMATS.Chalcopyrite         , MT.Fe2O3                        , MT.Pyrite                       , MT.Cu                 ), // :916
         veinOffworld("ore.large.adamantium", 10, 120,   5, 2, 16, MT.OREMATS.BrownLimonite  , MT.OREMATS.YellowLimonite       , MT.Fe2O3                        , MT.Adamantine         ), // :917
-        veinOffworld("ore.large.naquadah"  , 10,  60,  10, 4, 32, MT.Nq                     , MT.Nq                           , MT.Nq                           , MT.Nq                 ), // :918
-        veinOffworld("ore.large.trinium"   , 10,  90, 100, 1, 12, MT.Ke                     , MT.Ke                           , MT.Ke                           , MT.Ke                 ), // :919
+        veinOffworldEnd("ore.large.naquadah"  , 10,  60,  10, 4, 32, MT.Nq                     , MT.Nq                           , MT.Nq                           , MT.Nq                 ), // :918 ORE_END
+        veinOffworldEnd("ore.large.trinium"   , 10,  90, 100, 1, 12, MT.Ke                     , MT.Ke                           , MT.Ke                           , MT.Ke                 ), // :919 ORE_END
         veinOffworld("ore.large.dolamide"  ,  5,  60,  40, 3, 16, MT.OREMATS.DuraniumHexaiodide, MT.OREMATS.DuraniumHexafluoride, MT.OREMATS.DuraniumHexachloride, MT.Dolamide), // :920
         veinOffworld("ore.large.moonmars"  , 10,  90, 240, 1,  8, MT.MgCO3                  , MT.MnO2                         , MT.Al2O3                        , MT.TiO2               ), // :921
         veinOffworld("ore.large.cheese"    , 10,  90, 100, 3, 16, MT.Cheese                 , MT.Cheese                       , MT.Cheese                       , MT.Se                 ), // :922

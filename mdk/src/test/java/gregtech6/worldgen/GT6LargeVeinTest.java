@@ -202,9 +202,9 @@ class GT6LargeVeinTest {
         // be write-transparent, a closed gate must suppress everything
         // the materials are read INLINE (post-initMaterials): a static capture would freeze
         // the pre-init MT slot at test-class-load time — the GTStoneBlocksRegistrationTest lesson
-        GTVeinConfig tGated = new GTVeinConfig("test.vein", 20, 40, 10, 4, 24, 32, false, true,
+        GTVeinConfig tGated = new GTVeinConfig("test.vein", 20, 40, 10, 4, 24, 32, false, true, false,
                 gregapi.data.MT.Cu, gregapi.data.MT.Cu, gregapi.data.MT.Cu, gregapi.data.MT.Cu);
-        GTVeinConfig tUngated = new GTVeinConfig("test.vein", 20, 40, 10, 4, 24, 0, false, true,
+        GTVeinConfig tUngated = new GTVeinConfig("test.vein", 20, 40, 10, 4, 24, 0, false, true, false,
                 gregapi.data.MT.Cu, gregapi.data.MT.Cu, gregapi.data.MT.Cu, gregapi.data.MT.Cu);
         // the origin IS each work chunk (chunk min = the origin min block) — the rectangle
         // [min-rand .. min+16+rand] then covers its own chunk for every draw, so the only

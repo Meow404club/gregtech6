@@ -1,0 +1,143 @@
+{
+  "type": "gt6:nether_lenses",
+  "config": {
+    "lenses": [
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "granite_black"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "granite_red"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "basalt"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "marble"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "limestone"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "granite"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "diorite"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "andesite"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "komatiite"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "greenschist"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "blueschist"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "kimberlite"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "quartzite"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "prismarine_light"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "prismarine_dark"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "slate"
+      },
+      {
+        "half_height": 12,
+        "max_y": 120,
+        "min_y": 0,
+        "radius": 40,
+        "rarity": 200,
+        "stone": "shale"
+      }
+    ]
+  }
+}

@@ -12,11 +12,13 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
 /**
  * One large-vein row — the {@code WorldgenOresLarge} ctor read face verbatim
  * (WorldgenOresLarge.java:48-67: mMinY/mMaxY/mWeight/mDensity/mDistance/mSize/mIndicatorRocks
- * + the four OreDictMaterial slots :50), plus the two modern table columns the upstream
+ * + the four OreDictMaterial slots :50), plus the modern table columns the upstream
  * per-dimension registration lists carried ({@code overworld} = the row listed ORE_OVERWORLD —
  * Loader_Worldgen.java:886-916 rows are {@code true}, the :917-925 Mars/End/Moon/BL rows
- * {@code false}; the weighted draw must sum over the dimension's rows only, the
- * GT6WorldGenerator.java:93 tMaxWeight semantics).
+ * {@code false}; {@code end} = the row listed ORE_END — exactly the five rows :904
+ * platinum/:905 molybdenum/:906 cassiterite/:918 naquadah/:919 trinium, task
+ * p31-nether-lens-end-yield; the weighted draw must sum over the dimension's own rows
+ * only, the GT6WorldGenerator.java:93 tMaxWeight semantics).
  *
  * <p>The material slots hold {@link OreDictMaterial} constants (the datagen rows reference
  * {@code MT.*} directly, so the JSON carries the canonical mNameInternal strings —
@@ -33,7 +35,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * a downgrade: the JSON stays canonical either way.
  */
 public record GTVeinConfig(String name, int minY, int maxY, int weight, int density, int size,
-        int spawnDistance, boolean indicator, boolean overworld,
+        int spawnDistance, boolean indicator, boolean overworld, boolean end,
         OreDictMaterial oreTop, OreDictMaterial oreBottom, OreDictMaterial oreBetween, OreDictMaterial oreSpread)
         implements FeatureConfiguration {
 
@@ -51,6 +53,7 @@ public record GTVeinConfig(String name, int minY, int maxY, int weight, int dens
             Codec.INT.fieldOf("spawn_distance").forGetter(GTVeinConfig::spawnDistance),
             Codec.BOOL.fieldOf("indicator").forGetter(GTVeinConfig::indicator),
             Codec.BOOL.fieldOf("overworld").forGetter(GTVeinConfig::overworld),
+            Codec.BOOL.fieldOf("end").forGetter(GTVeinConfig::end),
             MATERIAL_CODEC.fieldOf("ore_top").forGetter(GTVeinConfig::oreTop),
             MATERIAL_CODEC.fieldOf("ore_bottom").forGetter(GTVeinConfig::oreBottom),
             MATERIAL_CODEC.fieldOf("ore_between").forGetter(GTVeinConfig::oreBetween),

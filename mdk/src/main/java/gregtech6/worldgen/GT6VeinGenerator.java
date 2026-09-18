@@ -58,15 +58,29 @@ public final class GT6VeinGenerator {
 
     /**
      * The weighted draw of exactly one vein (GT6WorldGenerator.java:90-103 verbatim):
-     * sum the weights of the drawable rows (overworld && >= 1 valid slot — the mInvalid
+     * sum the weights of the drawable rows (the dimension's own rows — the
+     * {@code aEndRows} face, see the overload — && >= 1 valid slot — the mInvalid
      * gate WorldgenObject.java:60 + WorldgenOresLarge.java:85), then the cumulative
      * nextInt(tMaxWeight) countdown. Consumes exactly one draw when any row is drawable.
      */
     public static GTVeinConfig drawVein(List<GTVeinConfig> aTable, Random aRandom) {
+        return drawVein(aTable, aRandom, false);
+    }
+
+    /**
+     * The dimension-filtered draw (task p31-nether-lens-end-yield): {@code aEndRows}
+     * selects the ORE_END rows (exactly platinum/molybdenum/cassiterite/naquadah/
+     * trinium, Loader_Worldgen.java:904-919) instead of the ORE_OVERWORLD rows — the
+     * draw sum rides the dimension's own rows, the upstream :93 semantics. NOTE the
+     * molybdenum row carries all four slots outside the modern registration axis, so
+     * the validity gate drops it from BOTH draws (the p30-t3 declared mapping, the
+     * axis-extension face — the End drawable set is 4 rows today).
+     */
+    public static GTVeinConfig drawVein(List<GTVeinConfig> aTable, Random aRandom, boolean aEndRows) {
         int tMaxWeight = 0;
         List<GTVeinConfig> tList = new ArrayList<>(aTable.size());
         for (GTVeinConfig tVein : aTable) {
-            if (!tVein.overworld()) continue;
+            if (aEndRows ? !tVein.end() : !tVein.overworld()) continue;
             if (!valid(tVein.oreTop()) && !valid(tVein.oreBottom()) && !valid(tVein.oreBetween())
                     && !valid(tVein.oreSpread())) continue;
             tMaxWeight += tVein.weight();

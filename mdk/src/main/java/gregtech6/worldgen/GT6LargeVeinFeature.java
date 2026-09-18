@@ -76,6 +76,11 @@ public class GT6LargeVeinFeature extends Feature<GTVeinConfig.Table> {
         // the placed-feature call is exactly one per chunk; the InSquare spread keeps the
         // origin inside the work chunk, and /place invocations land the same way
         ChunkPos tWork = new ChunkPos(aContext.origin());
+        // the dimension's row set: the End modifier hangs the SAME placed feature on
+        // #is_end (its conditions are the has_planet_veins yield gate), so the draw
+        // filters ORE_END rows there — the biome probe is the runtime face of the
+        // upstream per-dim flag lists (GT6WorldGenerator.java:93 + the :126-127 switch).
+        boolean tEndRows = tLevel.getBiome(aContext.origin()).is(net.minecraft.tags.BiomeTags.IS_END);
         Map<Block, GT6OreBlocks.OreFamily> tHosts = GT6OreBlocks.stoneToOreFamilies();
         GT6VeinGenerator.SliceSink tSink = levelSink(tLevel, tHosts);
         boolean rPlaced = false;
@@ -83,7 +88,7 @@ public class GT6LargeVeinFeature extends Feature<GTVeinConfig.Table> {
             int tOriginX = tWork.x + tDX, tOriginZ = tWork.z + tDZ;
             if (!GT6VeinGenerator.isOriginCell(tOriginX) || !GT6VeinGenerator.isOriginCell(tOriginZ)) continue;
             Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), GT6NetherLensFeature.dimensionSalt(tLevel), tOriginX, tOriginZ);
-            GTVeinConfig tVein = GT6VeinGenerator.drawVein(aContext.config().veins(), tRandom);
+            GTVeinConfig tVein = GT6VeinGenerator.drawVein(aContext.config().veins(), tRandom, tEndRows);
             if (tVein == null) continue;
             rPlaced |= GT6VeinGenerator.generateSlice(tVein, tRandom, tOriginX << 4, tOriginZ << 4,
                     tWork.getMinBlockX(), tWork.getMinBlockX() + 15, tWork.getMinBlockZ(), tWork.getMinBlockZ() + 15,

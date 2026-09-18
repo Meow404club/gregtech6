@@ -4,6 +4,7 @@
     "veins": [
       {
         "density": 8,
+        "end": false,
         "indicator": true,
         "max_y": 130,
         "min_y": 50,
@@ -19,6 +20,7 @@
       },
       {
         "density": 6,
+        "end": false,
         "indicator": true,
         "max_y": 80,
         "min_y": 50,
@@ -34,6 +36,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 60,
         "min_y": 40,
@@ -49,6 +52,7 @@
       },
       {
         "density": 5,
+        "end": false,
         "indicator": true,
         "max_y": 50,
         "min_y": 20,
@@ -64,6 +68,7 @@
       },
       {
         "density": 4,
+        "end": false,
         "indicator": true,
         "max_y": 90,
         "min_y": 50,
@@ -79,6 +84,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 60,
         "min_y": 50,
@@ -94,6 +100,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 60,
         "min_y": 50,
@@ -109,6 +116,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -124,6 +132,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -139,6 +148,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -154,6 +164,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -169,6 +180,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -184,6 +196,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -199,6 +212,7 @@
       },
       {
         "density": 2,
+        "end": false,
         "indicator": true,
         "max_y": 20,
         "min_y": 5,
@@ -214,6 +228,7 @@
       },
       {
         "density": 5,
+        "end": false,
         "indicator": true,
         "max_y": 60,
         "min_y": 30,
@@ -229,6 +244,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 80,
         "min_y": 40,
@@ -244,6 +260,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -259,6 +276,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 30,
         "min_y": 20,
@@ -274,6 +292,7 @@
       },
       {
         "density": 3,
+        "end": true,
         "indicator": true,
         "max_y": 50,
         "min_y": 40,
@@ -289,6 +308,7 @@
       },
       {
         "density": 3,
+        "end": true,
         "indicator": true,
         "max_y": 50,
         "min_y": 20,
@@ -304,6 +324,7 @@
       },
       {
         "density": 5,
+        "end": true,
         "indicator": true,
         "max_y": 90,
         "min_y": 40,
@@ -319,6 +340,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 50,
         "min_y": 20,
@@ -334,6 +356,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 30,
         "min_y": 20,
@@ -349,6 +372,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 30,
         "min_y": 5,
@@ -364,6 +388,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 30,
         "min_y": 5,
@@ -379,6 +404,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -394,6 +420,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -409,6 +436,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -424,6 +452,7 @@
       },
       {
         "density": 4,
+        "end": false,
         "indicator": true,
         "max_y": 120,
         "min_y": 70,
@@ -439,6 +468,7 @@
       },
       {
         "density": 4,
+        "end": false,
         "indicator": true,
         "max_y": 40,
         "min_y": 10,
@@ -454,6 +484,7 @@
       },
       {
         "density": 4,
+        "end": false,
         "indicator": true,
         "max_y": 30,
         "min_y": 10,
@@ -469,6 +500,7 @@
       },
       {
         "density": 2,
+        "end": false,
         "indicator": true,
         "max_y": 120,
         "min_y": 10,
@@ -484,6 +516,7 @@
       },
       {
         "density": 4,
+        "end": true,
         "indicator": true,
         "max_y": 60,
         "min_y": 10,
@@ -499,6 +532,7 @@
       },
       {
         "density": 1,
+        "end": true,
         "indicator": true,
         "max_y": 90,
         "min_y": 10,
@@ -514,6 +548,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 60,
         "min_y": 5,
@@ -529,6 +564,7 @@
       },
       {
         "density": 1,
+        "end": false,
         "indicator": true,
         "max_y": 90,
         "min_y": 10,
@@ -544,6 +580,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 90,
         "min_y": 10,
@@ -559,6 +596,7 @@
       },
       {
         "density": 3,
+        "end": false,
         "indicator": true,
         "max_y": 90,
         "min_y": 10,
@@ -574,6 +612,7 @@
       },
       {
         "density": 2,
+        "end": false,
         "indicator": true,
         "max_y": 45,
         "min_y": 30,
@@ -589,6 +628,7 @@
       },
       {
         "density": 1,
+        "end": false,
         "indicator": true,
         "max_y": 25,
         "min_y": 10,
