@@ -140,15 +140,6 @@ public class GT6BladeLadderTest {
 		return 0xFF000000 | (aMaterial.mRGBaSolid[0] << 16) | (aMaterial.mRGBaSolid[1] << 8) | aMaterial.mRGBaSolid[2];
 	}
 
-	@Test
-	public void theTintLiteralsAreTheRconChainExpects() {
-		// the /gt6blade stats chain asserts the packed literals — locked here so a
-		// material-colour drift breaks cleanTest BEFORE the RCON run
-		assertEquals(0xFF828282, argbOf(MT.Steel), "Steel 130/130/130");
-		assertEquals(0xFF6E6E6E, argbOf(MT.DamascusSteel), "DamascusSteel 110/110/110");
-		assertEquals(0xFF6464A0, argbOf(MT.TungstenSteel), "TungstenSteel 100/100/160");
-		assertEquals(0xFFD2823C, argbOf(MT.Bronze), "Bronze 210/130/60");
-	}
 
 	@Test
 	public void theTintLiteralsAreTheRconChainExpects() {

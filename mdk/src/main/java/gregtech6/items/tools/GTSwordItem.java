@@ -227,10 +227,15 @@ public class GTSwordItem extends Item implements GT6ToolLadder.LadderTool {
 		return mines(aState) && !aState.is(BlockTags.NEEDS_DIAMOND_TOOL);
 	}
 
-	/** The stack-aware authorization (the dig 567491b97 ruling) — the RCON/test face. */
+	/**
+	 * The stack-aware authorization (the dig 567491b97 ruling) — the forge overload
+	 * face; on 21.1 the vanilla signature below IS the stack-carrying form.
+	 */
+	//? if forge {
 	public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
 		return mines(aState) && !GT6ToolLadder.qualityGate(aStack, aState);
 	}
+	//?}
 
 	/** Upstream getToolDamagePerBlockBreak :44-47 — 200 units fold into one point. */
 	@Override

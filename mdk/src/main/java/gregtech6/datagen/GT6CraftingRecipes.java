@@ -2334,7 +2334,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.addCriterion("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake)))
 						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
 						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
-						.requirements(net.minecraft.advancements.RequirementsStrategy.OR);
+						.requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR);
 				gregtech6.items.tools.GT6MaterialToolRecipe tRecipe = new gregtech6.items.tools.GT6MaterialToolRecipe("",
 						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
 						net.minecraft.world.item.crafting.ShapedRecipePattern.of(tKey, tPattern),

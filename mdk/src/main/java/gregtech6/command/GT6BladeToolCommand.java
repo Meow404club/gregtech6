@@ -28,11 +28,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
 import gregtech6.registry.GT6Tools;
+import gregtech6.items.tools.GT6ToolLadder;
 import gregtech6.items.tools.GTButcheryKnifeItem;
 import gregtech6.items.tools.GTKnifeItem;
 import gregtech6.items.tools.GTSwordItem;
-import gregtech6.itemdata.GT6ItemData;
-import gregtech6.itemdata.GT6ToolStats;
 
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
@@ -58,7 +57,7 @@ import gregapi.oredict.OreDictMaterial;
  * <li>{@code stats <tool> <material>} (task p31-blade-ladder) — the material-ladder
  *     arm: builds a stack, attaches the {@link GT6ToolStats#KEY} identity THE RECIPE WAY
  *     (primary = the material, secondary = {@code mHandleMaterial}, the shape
- *     {@code DURABILITY_MULTIPLIER}) through {@link GT6ItemData#set}, then reads the
+ *     {@code durabilityMultiplier()}) through {@link GT6ToolLadder#stampIdentity}, then reads the
  *     item surfaces BACK (the vanilla max-damage read, the vanilla attribute map, the
  *     class tint seam) — the report IS the per-material 伤害/耐久/tint verdict. Restricted
  *     to the converted family (the p31 card ruling: axe/axe_double stay single-tier).</li>
@@ -147,14 +146,13 @@ public final class GT6BladeToolCommand {
 			return 0;
 		}
 		ItemStack tStack = new ItemStack(tItem);
-		// the identity THE RECIPE WAY: primary, handle = mHandleMaterial (the default = self),
-		// the shape multiplier folded into the j payload (MultiItemTool.java:182)
-		float tMultiplier = switch (tTool) {
-			case "sword" -> GTSwordItem.DURABILITY_MULTIPLIER;
-			case "knife" -> GTKnifeItem.DURABILITY_MULTIPLIER;
-			default -> GTButcheryKnifeItem.DURABILITY_MULTIPLIER;
-		};
-		GT6ItemData.set(tStack, GT6ToolStats.KEY, GT6ToolStats.of(tMaterial, tMaterial.mHandleMaterial, tMultiplier));
+		// the identity THE RECIPE WAY — the ONE stamp face the dig seam pinned (the
+		// serializer and the RCON material arm route through it): primary + the form
+		// multiplier folded into the j payload (MultiItemTool.java:182); the secondary
+		// stays null (the shared serializer face — the blade handle pass renders the
+		// declared Spruce fallback)
+		float tMultiplier = ((GT6ToolLadder.LadderTool) tItem).durabilityMultiplier();
+		GT6ToolLadder.stampIdentity(tStack, tMaterial, tMultiplier);
 		// read the item surfaces BACK (the faces the gameplay code uses)
 		int tMaxDamage = tStack.getMaxDamage();
 		int tTint = switch (tTool) {
