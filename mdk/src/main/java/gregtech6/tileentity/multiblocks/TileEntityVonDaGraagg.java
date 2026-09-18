@@ -92,6 +92,13 @@ public class TileEntityVonDaGraagg extends TileEntityBase10MultiBlockBase implem
 	/** The NBT key (the W3 generator spelling convention — only mEnergy persists, upstream :56). */
 	public static final String NBT_ENERGY = "gt.energy";
 
+	/**
+	 * The live range NBT mirror — upstream did NOT persist mCurrentRange; the port saves it
+	 * as the ops/RCON read face (the headless machines' data-get convention). Re-derived
+	 * every server tick, so a stale saved value self-corrects.
+	 */
+	public static final String NBT_RANGE = "gt.range";
+
 	/** The energy window cap AND the per-tick drain (:149-150 — min(mEnergy, 4096) and -= 4096). */
 	public static final long CAP = 4096;
 	/** The range divisor (:149 — min(mEnergy, 4096) / 16). */
@@ -328,12 +335,14 @@ public class TileEntityVonDaGraagg extends TileEntityBase10MultiBlockBase implem
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
 		aNBT.putLong(NBT_ENERGY, mEnergy);
+		aNBT.putInt(NBT_RANGE, mCurrentRange); // the ops face — see NBT_RANGE
 	}
 
 	@Override
 	public void load(CompoundTag aNBT) {
 		super.load(aNBT);
 		if (aNBT.contains(NBT_ENERGY, Tag.TAG_ANY_NUMERIC)) mEnergy = aNBT.getLong(NBT_ENERGY);
+		if (aNBT.contains(NBT_RANGE, Tag.TAG_ANY_NUMERIC)) mCurrentRange = aNBT.getInt(NBT_RANGE);
 	}
 
 	// the placement sides (:159-160 SIDE_FRONT/SIDES_BOTTOM) ride the ported

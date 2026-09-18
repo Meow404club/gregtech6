@@ -507,6 +507,13 @@ SESSION_GROUPS = (
     # setblocks; the comb/fluid/dust identities ride the give+data-merge faces).
     # --group p31_bees matches through the chain's embedded name prefix.
     ("p31_bees",),
+    # P31 card (p31-graagg): the Von da Graagg spawn-suppression chain — one fresh z=409..
+    # 424 band (x389..399: the tower x390..394/65..73/410..414 + the summon/exemption/
+    # reload column x396..398), admission mirroring the p31 implosion form (bbox-registered,
+    # no fresh_boot / mutates member — the power feed is a data merge, the suppression
+    # arms ride summoned zombies inside the band bbox). --group p31_graagg matches through
+    # the chain's embedded name prefix.
+    ("p31_graagg",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
