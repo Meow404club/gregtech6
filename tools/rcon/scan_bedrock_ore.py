@@ -364,7 +364,10 @@ def scan_world():
                 continue
             counts = {}
             for section in (nbt.get("sections") or []):
-                y_base = (section.get("Y") or 0) * 16
+                y_sec = section.get("Y") or 0
+                if y_sec >= 128:
+                    y_sec -= 256  # the NBT section Y is a SIGNED byte; the minimal reader hands it over unsigned (-4 -> 252)
+                y_base = y_sec * 16
                 if y_base + 15 < Y_MIN or y_base > Y_MAX:
                     continue
                 for index, name in decode_positions(section, PREFIXES):
@@ -414,6 +417,7 @@ def main():
     global LEG, WORKTREE
     LEG = args.leg
     WORKTREE = Path(args.worktree).resolve()
+    globals()["RUN_DIR"] = gt6server.run_dir(str(WORKTREE), node=NODE[LEG])
 
     results = []
     for boot in (1, 2):
