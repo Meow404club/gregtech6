@@ -63,19 +63,22 @@ import gregtech6.util.UT6;
  * isMinableBlock — the cable/wire class-name heuristic and the {@code TOOL_cutter}
  * harvest registry; this repo has no harvest layer and the GT wire family is not
  * minable-by-cutter in the port — pooled with the tool-family card), the tripwire
- * cutting behaviour (:102 Behavior_TripwireCutting) and the material tint (:95-97,
- * the same runtime-tint pool the crowbar declared). Durability 512, single steel tier
- * (upstream {@code 4*U} material-scaled, Loader_Tools.java:131 — the ladder is a pool
- * cut). The crafting recipe ({@code {"PfP","hPd","STS"}}, Loader_Tools.java:323 — needs
- * the h hammer + d tool PIECES) stays pooled with the crowbar recipe.
+ * cutting behaviour (:102 Behavior_TripwireCutting). Durability 512, single steel tier
+ * (upstream {@code 4*U} material-scaled, Loader_Tools.java:131). The crafting recipe
+ * ({@code {"PfP","hPd","STS"}}, Loader_Tools.java:324) landed with the material rows
+ * (task p31-machine-ladder, the gt6:material_tool axis). The material tint (:95-97)
+ * landed with the same card (the former declared deviation retired).
  */
-public class GTCutterItem extends Item {
+public class GTCutterItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/** The successful connection-toggle tool damage (upstream TileEntityBase09Connector:76 return). */
 	public static final long TOOL_DAMAGE_PER_CUT = 10000;
 
 	/** The vanilla durability points — single steel tier (upstream 4*U material-scaled, Loader_Tools:131). */
 	public static final int DURABILITY_POINTS = 512;
+
+	/** The form durability multiplier (upstream ToolStats.java:71 default 1.0). */
+	public static final float DURABILITY_MULTIPLIER = 1.0F;
 
 	public GTCutterItem(Properties aProperties) {
 		super(aProperties);
@@ -200,5 +203,30 @@ public class GTCutterItem extends Item {
 	@Override
 	public boolean canPerformAction(ItemStack aStack, ToolAction aToolAction) {
 		return classifies(aToolAction);
+	}
+
+	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+
+	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, durabilityMultiplier()));
+	}
+
+	/** The form durability multiplier (ToolStats.java:71 default 1.0). */
+	@Override
+	public float durabilityMultiplier() {
+		return DURABILITY_MULTIPLIER;
+	}
+
+	/** The runtime tint (the head pass, the material mRGBaSolid with the steel fallback). */
+	public static int tintARGB(ItemStack aStack, int aTintIndex) {
+		return GT6ToolLadder.tintARGB(aStack, aTintIndex);
+	}
+
+	/** The composed display name — "Wire Cutter (Bronze)"; bare for identity-less stacks. */
+	@Override
+	public net.minecraft.network.chat.Component getName(ItemStack aStack) {
+		return GT6ToolLadder.displayName(aStack, getDescriptionId());
 	}
 }

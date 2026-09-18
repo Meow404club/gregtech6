@@ -36,11 +36,19 @@ import net.minecraftforge.common.ToolAction;
  * (the upstream 100-unit Behavior_Tool click folded to zero — the item stays strictly
  * read-only, the acceptance asserts it); the crafting-loss face keeps the shared one-point
  * mapping (the upstream :47-49 400-unit row folded).
+ *
+ * <p>MATERIAL LADDER (task p31-machine-ladder): the stack's {@code GT.ToolStats} identity
+ * scales durability (the {@link GT6ToolLadder} j/100 points), the composed display name
+ * ("Magnifying Glass (Bronze)") and the lens tint ride the same seam; the IDENTITY-LESS
+ * arm reproduces Steel bit-exact (the pre-ladder 512 constant IS the steel fallback).
  */
-public class GTMagnifyingGlassItem extends Item {
+public class GTMagnifyingGlassItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/** The vanilla durability points — single steel tier 512 (the family value). */
 	public static final int DURABILITY_POINTS = 512;
+
+	/** The form durability multiplier (upstream ToolStats.java:71 default 1.0). */
+	public static final float DURABILITY_MULTIPLIER = 1.0F;
 
 	/** The AHA sound — the 1.7.10 "mob.villager.haggle" modern counterpart (CS.java:2236). */
 	public static final SoundEvent AHA_SOUND = SoundEvents.VILLAGER_YES;
@@ -86,6 +94,31 @@ public class GTMagnifyingGlassItem extends Item {
 	@Override
 	public boolean canPerformAction(ItemStack aStack, ToolAction aToolAction) {
 		return classifies(aToolAction);
+	}
+
+	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+
+	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, durabilityMultiplier()));
+	}
+
+	/** The form durability multiplier (ToolStats.java:71 default 1.0). */
+	@Override
+	public float durabilityMultiplier() {
+		return DURABILITY_MULTIPLIER;
+	}
+
+	/** The runtime tint (the lens pass, the material mRGBaSolid with the steel fallback). */
+	public static int tintARGB(ItemStack aStack, int aTintIndex) {
+		return GT6ToolLadder.tintARGB(aStack, aTintIndex);
+	}
+
+	/** The composed display name — "Magnifying Glass (Bronze)"; bare for identity-less stacks. */
+	@Override
+	public net.minecraft.network.chat.Component getName(ItemStack aStack) {
+		return GT6ToolLadder.displayName(aStack, getDescriptionId());
 	}
 
 	/**

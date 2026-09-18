@@ -29,7 +29,6 @@ import gregtech6.covers.ICoverableTE;
 import gregtech6.itemdata.GT6ItemData;
 import gregtech6.itemdata.GT6ToolStats;
 
-import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 
 /**
@@ -134,7 +133,7 @@ import gregapi.oredict.OreDictMaterial;
  * MultiItemTool :227 {@code ST.instaharvest} Float.MAX_VALUE arm is vanilla
  * behavior now, not ported code.
  */
-public class GTCrowbarItem extends Item {
+public class GTCrowbarItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/** The tool damage the ICoverableTE dispatch returns for a successful dismantle (upstream :151). */
 	public static final long TOOL_DAMAGE_PER_DISMANTLE = 10000;
@@ -278,7 +277,7 @@ public class GTCrowbarItem extends Item {
 		return mines(aState) ? MINING_SPEED : 1.0F;
 	}
 
-	// ------------------------------ the GT6ItemData identity seams (task p31-identity-seam) ------------------------------
+	// ------------------------------ the GT6ItemData identity seams (tasks p31-identity-seam + p31-machine-ladder) ------------------------------
 
 	/**
 	 * The primary material of a stack's {@link GT6ToolStats#KEY} identity, or
@@ -304,25 +303,32 @@ public class GTCrowbarItem extends Item {
 		return aStats == null ? DURABILITY_POINTS : (int) Math.max(1, aStats.maxDamage() / UNITS_PER_POINT);
 	}
 
-	/** The stack-level durability read the vanilla bar renders and pays from. */
+	/**
+	 * The stack-level durability read the vanilla bar renders and pays from — UNIFIED
+	 * onto the {@link GT6ToolLadder} face (task p31-machine-ladder: the same statsOf →
+	 * durabilityPoints route every ladder family runs; the identity-less arm = the Steel
+	 * fallback = the ADR 512, bit-exact).
+	 */
 	@Override
 	public int getMaxDamage(ItemStack aStack) {
-		return durabilityPoints(GT6ItemData.find(aStack, GT6ToolStats.KEY).orElse(null));
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, durabilityMultiplier()));
+	}
+
+	/** The form durability multiplier (the crowbar carries no extra multiplier — ToolStats.java:71 default 1.0). */
+	@Override
+	public float durabilityMultiplier() {
+		return 1.0F;
 	}
 
 	/**
 	 * The runtime tint (upstream GT_Tool_Crowbar.getRGBa :146-149): tint index 0 = the
-	 * head layer (the ItemModelGenerator layers quads by index, so layer1 = the
-	 * overlay pass stays un-tinted — the MaterialPrefixItem.tintColor pattern), the
-	 * material {@code mRGBaSolid} packed ARGB with the VERBATIM upstream
+	 * head layer, the material {@code mRGBaSolid} packed ARGB with the VERBATIM upstream
 	 * {@code getPrimaryMaterial(aStack, MT.Steel)} fallback; every other index = the
-	 * {@code -1} no-tint sentinel like every other GT6 tint seam.
+	 * {@code -1} no-tint sentinel like every other GT6 tint seam. UNIFIED onto the
+	 * {@link GT6ToolLadder} face (task p31-machine-ladder).
 	 */
 	public static int tintARGB(ItemStack aStack, int aTintIndex) {
-		if (aTintIndex != 0) return -1;
-		OreDictMaterial tMaterial = GT6ItemData.find(aStack, GT6ToolStats.KEY)
-				.map(GT6ToolStats::primaryMaterial).orElse(MT.Steel);
-		return 0xFF000000 | (tMaterial.mRGBaSolid[0] << 16) | (tMaterial.mRGBaSolid[1] << 8) | tMaterial.mRGBaSolid[2];
+		return GT6ToolLadder.tintARGB(aStack, aTintIndex);
 	}
 
 	/** The drop-authorization half of isMinableBlock (SwordItem.java:68 shape). */

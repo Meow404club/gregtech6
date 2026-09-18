@@ -22,8 +22,10 @@ import net.minecraftforge.common.ToolAction;
  *
  * <p>The subclass keeps the wrench's crafting-loss face inherited (the has/get pair on
  * {@link GT6FileItem#craftRemaining} — the upstream 800-unit wrench row, the shared
- * one-point mapping) and the 512 single-steel-tier shell. Zero {@code useOn} by the RED
- * LINE — the classifies pin is the same reflection wall the hammer/wrench pair carries.
+ * one-point mapping) and the material-ladder faces (task p31-machine-ladder, the
+ * {@link GT6ToolLadder} seam over the {@code GT.ToolStats} identity — durability,
+ * the composed "Monkey Wrench (Bronze)" name, the head tint). Zero {@code useOn} by the
+ * RED LINE — the classifies pin is the same reflection wall the hammer/wrench pair carries.
  */
 public class GTMonkeyWrenchItem extends GTWrenchItem {
 

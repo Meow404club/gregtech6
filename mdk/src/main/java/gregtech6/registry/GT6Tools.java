@@ -118,7 +118,9 @@ public final class GT6Tools {
 	/**
 	 * The formal wire cutter — item id {@code gt6:cutter} (task p10-tool-cutter spec ③).
 	 * Single steel tier, durability 512 (upstream {@code 4*U} material-scaled,
-	 * Loader_Tools.java:131 — the ladder is a pool cut, the same ruling as the crowbar).
+	 * Loader_Tools.java:131 — the ladder UNLOCKED by task p31-machine-ladder, the
+	 * {@link gregtech6.items.tools.GT6ToolLadder} faces over the {@code GT.ToolStats}
+	 * identity; the identity-less arm keeps the 512).
 	 * Upstream display name "Wire Cutter" (the same :131 registration row); no attack
 	 * attributes — the cutter is not a weapon (GT_Tool_WireCutter :53-65 cut).
 	 */
@@ -127,8 +129,9 @@ public final class GT6Tools {
 
 	/**
 	 * The formal chisel — item id {@code gt6:chisel} (task p16-chisel-decalcify spec ①).
-	 * Single steel tier, durability 512 (the crowbar/cutter pinned family value; upstream
-	 * scales per material, Loader_Tools.java:142 — the ladder is the same pool cut).
+	 * Single steel tier, durability 512 (the crowbar/cutter pinned family value; the
+	 * material ladder UNLOCKED by task p31-machine-ladder, the identity-less arm keeps
+	 * the 512).
 	 * Upstream display name "Chisel" (the same :142 registration row); the decalcify
 	 * durability mapping is the upstream behaviour's mDamage=25 conversion
 	 * (GT_Tool_Chisel.java:98, see {@link GTChiselItem#durabilityPoints}).
@@ -150,8 +153,8 @@ public final class GT6Tools {
 
 	/**
 	 * The formal saw — item id {@code gt6:saw} (task p24-tool-system spec ①/⑤). Single
-	 * steel tier, durability 512 (the family value; upstream scales per material, the
-	 * same pool cut). Upstream display name "Saw" (CS.java:1094); the crafting-loss face
+	 * steel tier, durability 512 (the family value; the material ladder UNLOCKED by
+	 * task p31-machine-ladder). Upstream display name "Saw" (CS.java:1094); the crafting-loss face
 	 * rides {@link GTSawItem#getCraftingRemainingItem} (the shared one-point mapping);
 	 * the crafting INGREDIENT face is the {@code #gt6:tools/saw} item tag (GT6ItemTags,
 	 * the craftingToolSaw oredict translation). The world arms (bark strip, sapling/
@@ -176,9 +179,8 @@ public final class GT6Tools {
 
 	/**
 	 * The formal screwdriver — item id {@code gt6:screwdriver} (task p24-screwdriver-item
-	 * spec ①/③). Single steel tier, durability 512 (the family value; upstream scales per
-	 * material via {@code setMaterialAmount(toolHeadScrewdriver.mAmount)},
-	 * Loader_Tools.java:129 — the same pool cut). Upstream display name "Screwdriver"
+	 * spec ①/③). Single steel tier, durability 512 (the family value; the material
+	 * ladder UNLOCKED by task p31-machine-ladder). Upstream display name "Screwdriver"
 	 * (CS.java:1102); the crafting-loss face rides
 	 * {@link GT6ScrewdriverItem#getCraftingRemainingItem} (the shared one-point mapping,
 	 * the upstream :70-72 400-unit row folded); the crafting INGREDIENT face is the
@@ -206,9 +208,8 @@ public final class GT6Tools {
 
 	/**
 	 * The formal wrench — item id {@code gt6:wrench} (task p25-tool-hammer-wrench spec
-	 * ③). Single steel tier, durability 512 (the family value; upstream scales per
-	 * material via {@code 4*U}, Loader_Tools.java:126 — the same pool cut). Upstream
-	 * display name "Wrench" (CS.java:1083, the same :126 registration row); the
+	 * ③). Single steel tier, durability 512 (the family value; the material ladder
+	 * UNLOCKED by task p31-machine-ladder). Upstream display name "Wrench" (CS.java:1083, the same :126 registration row); the
 	 * crafting-loss face rides {@link GTWrenchItem#getCraftingRemainingItem} (the shared
 	 * one-point mapping, the upstream :59 800-unit row folded); the crafting INGREDIENT
 	 * face is the {@code #gt6:tools/wrench} item tag (GT6ItemTags, the craftingToolWrench
@@ -381,10 +382,11 @@ public final class GT6Tools {
 
 	/**
 	 * The formal soft hammer — item id {@code gt6:soft_hammer} (task p29-w5-t3-machine-face-four
-	 * spec ①). Single steel tier, durability 512 (the family value; the upstream 8.0x
-	 * durability multiplier is the {@link GTSoftHammerItem#MAX_DURABILITY_MULTIPLIER}
-	 * declaration, GT_Tool_SoftHammer.java:79-81 — the ladder is the same pool cut). Upstream
-	 * display name "Soft Hammer" (the :125 registration row); the vanilla-ish rotation face
+	 * spec ①). The 8.0x durability multiplier is LIVE over the material ladder
+	 * (task p31-machine-ladder): {@link GTSoftHammerItem#MAX_DURABILITY_MULTIPLIER}
+	 * (GT_Tool_SoftHammer.java:79-81) rides the {@code GT.ToolStats} j/100 budget —
+	 * a Steel soft hammer is 512 ×8 = 4096 points (the declared behaviour change).
+	 * Upstream display name "Soft Hammer" (the :125 registration row); the vanilla-ish rotation face
 	 * (the :125 tagline) lives on the item — see
 	 * {@link GTSoftHammerItem#rotatedForm}; the crafting INGREDIENT face is the
 	 * {@code #gt6:tools/soft_hammer} item tag (the craftingToolSoftHammer snake, CS.java:1891).
@@ -395,8 +397,8 @@ public final class GT6Tools {
 	/**
 	 * The formal monkey wrench — item id {@code gt6:monkey_wrench} (task
 	 * p29-w5-t3-machine-face-four spec ②, the {@link GTWrenchItem} subclass). Single steel
-	 * tier, durability 512 (the family value; upstream scales per material via {@code 4*U},
-	 * Loader_Tools.java:144 — the same pool cut). Upstream display name "Monkey Wrench" (the
+	 * tier, durability 512 (the family value; the material ladder UNLOCKED by
+	 * task p31-machine-ladder). Upstream display name "Monkey Wrench" (the
 	 * same :144 registration row); the crafting INGREDIENT face is the
 	 * {@code #gt6:tools/monkey_wrench} item tag (the craftingToolMonkeyWrench snake) — the
 	 * upstream wrench double-name folds to the single tag, the card's tag ruling. RED LINE:
@@ -408,8 +410,8 @@ public final class GT6Tools {
 	/**
 	 * The formal magnifying glass — item id {@code gt6:magnifying_glass} (task
 	 * p29-w5-t3-machine-face-four spec ③). Single steel tier, durability 512 (the family
-	 * value; upstream scales per material via the lens amount, Loader_Tools.java:148 — the
-	 * same pool cut). Upstream display name "Magnifying Glass" (the same :148 registration
+	 * value; the material ladder UNLOCKED by task p31-machine-ladder). Upstream display
+	 * name "Magnifying Glass" (the same :148 registration
 	 * row); the pure right-click check face rides {@link GTMagnifyingGlassItem#useOn}
 	 * (AHA/HMM, zero change); the crafting INGREDIENT face is the
 	 * {@code #gt6:tools/magnifying_glass} item tag (the craftingToolMagnifyingglass snake).
@@ -419,9 +421,8 @@ public final class GT6Tools {
 
 	/**
 	 * The formal pincers — item id {@code gt6:pincers} (task p29-w5-t3-machine-face-four spec
-	 * ④). Single steel tier, durability 512 (the family value; upstream scales per material
-	 * via {@code U*2+screw+2*stick}, Loader_Tools.java:150 — the same pool cut). Upstream
-	 * display name "Pincers" (the same :150 registration row); the dragon-egg collect face
+	 * ④). Single steel tier, durability 512 (the family value; the material ladder
+	 * UNLOCKED by task p31-machine-ladder). Upstream display name "Pincers" (the same :150 registration row); the dragon-egg collect face
 	 * (the Material.dragonEgg isMinableBlock arm + canCollect, GT_Tool_Pincers.java:105-110)
 	 * rides {@link GTPincersItem#useOn} — sneak right-click pops the egg; the crafting
 	 * INGREDIENT face is the {@code #gt6:tools/pincers} item tag (the craftingToolPincers

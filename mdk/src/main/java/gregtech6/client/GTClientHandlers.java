@@ -190,6 +190,14 @@ public final class GTClientHandlers {
         event.getItemColors().register(GTSwordItem::tintARGB, GT6Tools.SWORD.get());
         event.getItemColors().register(GTKnifeItem::tintARGB, GT6Tools.KNIFE.get());
         event.getItemColors().register(GTButcheryKnifeItem::tintARGB, GT6Tools.BUTCHERY_KNIFE.get());
+        // task p31-machine-ladder: the machine family rides the ONE GT6ToolLadder head-pass
+        // face (tint index 0, the material mRGBaSolid with the steel fallback). The
+        // screwdriver and the hammer stay UN-tinted — their models are the composed
+        // single-sprite borrows (the census-erratum ruling, GT6ItemModels), a head-pass
+        // tint would recolour the whole composed icon.
+        event.getItemColors().register(GT6ToolLadder::tintARGB, GT6Tools.WRENCH.get(), GT6Tools.MONKEY_WRENCH.get(),
+                GT6Tools.CUTTER.get(), GT6Tools.CHISEL.get(), GT6Tools.SAW.get(), GT6Tools.SOFT_HAMMER.get(),
+                GT6Tools.MAGNIFYING_GLASS.get(), GT6Tools.PINCERS.get());
     }
 
     /** Translation key existence check (Language.getInstance Language.java:83, has :97). */

@@ -55,14 +55,22 @@ import net.minecraftforge.common.ToolAction;
 	 * on the plain click and lets the vanilla block use have everything it wants first
 	 * (stone has no use of its own, the acceptance drives the seam live).
  *
+ * <p>MATERIAL LADDER (task p31-machine-ladder): the stack's {@code GT.ToolStats} identity
+ * scales durability (the {@link GT6ToolLadder} j/100 points), the composed display name
+ * ("Hammer (Bronze)") and the head tint ride the same seam; the IDENTITY-LESS arm
+ * reproduces Steel bit-exact (so the pre-ladder 512 constant IS the steel fallback).
+ *
  * <p>Registration form: the file/saw row shape — {@code Item.Properties().durability(
  * DURABILITY_POINTS)}, single steel tier 512 (the pinned family value; upstream scales
- * per material via {@code toolHeadHammer.mAmount}, the ladder is the standing pool cut).
+ * per material via {@code toolHeadHammer.mAmount}).
  */
-public class GTHammerItem extends Item {
+public class GTHammerItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/** The vanilla durability points — single steel tier (the crowbar/file/saw pinned family value). */
 	public static final int DURABILITY_POINTS = 512;
+
+	/** The form durability multiplier (upstream ToolStats.java:71 default 1.0). */
+	public static final float DURABILITY_MULTIPLIER = 1.0F;
 
 	/**
 	 * The crafting-loss mapping — ONE vanilla point per craft (the shared
@@ -145,5 +153,30 @@ public class GTHammerItem extends Item {
 	@Override
 	public boolean canPerformAction(ItemStack aStack, ToolAction aToolAction) {
 		return classifies(aToolAction);
+	}
+
+	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+
+	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
+	@Override
+	public int getMaxDamage(ItemStack aStack) {
+		return GT6ToolLadder.durabilityPoints(GT6ToolLadder.statsOf(aStack, durabilityMultiplier()));
+	}
+
+	/** The form durability multiplier (ToolStats.java:71 default 1.0). */
+	@Override
+	public float durabilityMultiplier() {
+		return DURABILITY_MULTIPLIER;
+	}
+
+	/** The runtime tint (the head pass, the material mRGBaSolid with the steel fallback). */
+	public static int tintARGB(ItemStack aStack, int aTintIndex) {
+		return GT6ToolLadder.tintARGB(aStack, aTintIndex);
+	}
+
+	/** The composed display name — "Hammer (Bronze)"; bare for identity-less stacks. */
+	@Override
+	public net.minecraft.network.chat.Component getName(ItemStack aStack) {
+		return GT6ToolLadder.displayName(aStack, getDescriptionId());
 	}
 }
