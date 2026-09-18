@@ -130,6 +130,32 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 		assertSame(Items.ENDER_PEARL, tRow.mOutputs[0].getItem(), "the replicated ender pearl (the gem-form stand-in)");
 	}
 
+	/**
+	 * The Ender rows' item ids are the GTMaterialItems id-composition outputs (task
+	 * p31-massfab): every hand-typed id in the shipped massfab.json must equal
+	 * {@code itemIdOf(prefix, material)} so the LIVE pour resolves them — a typo here is
+	 * a LOUD bad row at load and a silently missing NEI row.
+	 */
+	@Test
+	void theMassfabEnderRowItemIdsMatchTheRegistryComposition() {
+		gregtech6.registry.GTMaterialItems.initMaterials(); // idempotent — the offline universe
+		gregapi.oredict.OreDictMaterial[] tMaterials = {gregapi.data.MT.Dilithium, gregapi.data.MT.AncientDebris};
+		// the PATH forms — itemIdOf composes the registry path; the shipped rows carry the
+		// same paths under the gt6: namespace
+		String[][] tArms = {
+				{"dust_div72_dilithium", "dust_tiny_dilithium", "dust_small_dilithium", "dust_dilithium", "gem_dilithium", "block_dust_dilithium", "block_gem_dilithium"},
+				{"dust_div72_ancient_debris", "dust_tiny_ancient_debris", "dust_small_ancient_debris", "dust_ancient_debris", "ingot_ancient_debris", "block_dust_ancient_debris", "block_ingot_ancient_debris"}};
+		gregapi.oredict.OreDictPrefix[][] tPrefixes = {
+				{gregapi.data.OP.dustDiv72, gregapi.data.OP.dustTiny, gregapi.data.OP.dustSmall, gregapi.data.OP.dust, gregapi.data.OP.gem, gregapi.data.OP.blockDust, gregapi.data.OP.blockGem},
+				{gregapi.data.OP.dustDiv72, gregapi.data.OP.dustTiny, gregapi.data.OP.dustSmall, gregapi.data.OP.dust, gregapi.data.OP.ingot, gregapi.data.OP.blockDust, gregapi.data.OP.blockIngot}};
+		for (int m = 0; m < 2; m++) {
+			for (int a = 0; a < 7; a++) {
+				assertEquals(tArms[m][a], gregtech6.registry.GTMaterialItems.itemIdOf(tPrefixes[m][a], tMaterials[m]),
+						"the shipped row id matches the composition (" + tArms[m][a] + ")");
+			}
+		}
+	}
+
 	/** The scannermolecular smoke row = the DECLARED 2-in/1-out stand-in of the runtime USB synthesis. */
 	@Test
 	void theScannerRowKeepsTheTwoInOneOutMapShape() throws Exception {

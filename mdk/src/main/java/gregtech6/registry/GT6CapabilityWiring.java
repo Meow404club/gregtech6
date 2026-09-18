@@ -351,6 +351,14 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCryoMixer,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 
+		// task p31-massfab — the small Massfab 5-ladder joins (tail-append; the same item +
+		// fluid faces; the auto-out sink arm of the RCON chain consumes the UP fluid face)
+		BlockEntityType<TileEntityBasicMachine> tMassfabSmall = GTMachines.MASSFAB_SMALL_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tMassfabSmall,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tMassfabSmall,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+
 		// task p29-w2-eu-core-5tier — the five eu-core families join (tail-append; shared
 		// serial file): the Electrolyzer/Injector/Printer/Scanner(Visuals)/Slicer BETs, the
 		// same item + fluid faces as every TileEntityBasicMachine family above (the

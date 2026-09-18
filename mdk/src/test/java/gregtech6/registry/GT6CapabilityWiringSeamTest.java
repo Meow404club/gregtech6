@@ -159,6 +159,7 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("laser_engraver", "item+fluid"); // task p29-w2-exotic-energy
 		tFaces.put("laser_welder", "item+fluid"); // task p29-w2-exotic-energy — the no-tank-out row keeps the fluid FACE (the seam-② hard constraint)
 		tFaces.put("freezer", "item+fluid"); // task p29-w2-exotic-energy
+		tFaces.put("massfab_small", "item+fluid"); // task p31-massfab — the small Massfab 5-ladder joins (the QU type gate rides the BE)
 		tFaces.put("cryo_mixer", "item+fluid"); // task p29-w2-exotic-energy
 		tFaces.put("electrolyzer", "item+fluid"); // task p29-w2-eu-core-5tier — the five eu-core families join (the first 5-tier ladders)
 		tFaces.put("injector", "item+fluid"); // task p29-w2-eu-core-5tier
