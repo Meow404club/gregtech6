@@ -71,7 +71,7 @@ public class GTPickaxeConstructionItem extends GTPickaxeItem {
 	/** The ladder dig-speed seam — the ore-stone quarter, ×2 × material speed elsewhere (:62-65). */
 	public static float destroySpeedBonus(ItemStack aStack, BlockState aState) {
 		if (ORE_STONE.contains(aState.getBlock())) return GT6ToolLadder.speed(SPEED_MULTIPLIER, GT6ToolLadder.materialOf(aStack)) / 4.0F;
-		return GTPickaxeItem.destroySpeedBonus(aStack, aState);
+		return GTPickaxeItem.mines(aState) ? GT6ToolLadder.speed(SPEED_MULTIPLIER, GT6ToolLadder.materialOf(aStack)) : 1.0F;
 	}
 
 	/** Upstream :62-65 — the ore-stone quarter speed re-point (the instance face). */

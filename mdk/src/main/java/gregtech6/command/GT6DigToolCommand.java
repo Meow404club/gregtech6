@@ -143,7 +143,8 @@ public final class GT6DigToolCommand {
 	private static ItemStack identityStack(Item aItem, String aMaterial) {
 		ItemStack tStack = new ItemStack(aItem);
 		if (aMaterial == null) return tStack;
-		OreDictMaterial tMaterial = OreDictMaterial.get(aMaterial);
+		// the snake-form resolution (the GT6ToolLadder index — the same face the recipe rows parse through)
+		OreDictMaterial tMaterial = GT6ToolLadder.materialBySnake(aMaterial);
 		if (tMaterial == null || tMaterial == gregapi.data.MT.NULL) return null;
 		float tMultiplier = aItem instanceof GT6ToolLadder.LadderTool tTool ? tTool.durabilityMultiplier() : 1.0F;
 		return GT6ToolLadder.stampIdentity(tStack, tMaterial, tMultiplier);
