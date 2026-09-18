@@ -42,6 +42,10 @@ public class TileEntityMassfabTest extends GTMultiBlocksOfflineTestBase {
 	static final BlockPos MFAB_POS = new BlockPos(200, 64, 200);
 
 	static BlockEntityType<TestMassfab> sMassfabType;
+	/** The suite's own part BET — valid over ALL six stand-in blocks (the 21.1
+	 * BlockEntity.validateBlockState rejects a part BE whose state block is outside the
+	 * BET valid list; the shared sPartType fixture is BRICKS-only). */
+	static BlockEntityType<MultiBlockPartBlockEntity> sMassfabPartType;
 
 	/** The concrete test BE — the Massfab controller over a vanilla-block BET, the six roles bound to stand-ins. */
 	public static final class TestMassfab extends TileEntityMassfab {
@@ -73,11 +77,18 @@ public class TileEntityMassfabTest extends GTMultiBlocksOfflineTestBase {
 		tHolder[0] = BlockEntityType.Builder.of(TestMassfab::new,
 				Blocks.BRICKS, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK, Blocks.DIAMOND_BLOCK, Blocks.EMERALD_BLOCK, Blocks.LAPIS_BLOCK).build(null);
 		sMassfabType = tHolder[0];
+		// the SELF-REFERENCING holder (the base selfHolder form): the factory must bind the
+		// THREE-ARG ctor — the (pos, state) two-arg ctor is the PRODUCTION BET carrier, and
+		// 21.1's Builder.of binds it as-is (the frozen registry keeps .get() null offline)
+		BlockEntityType<MultiBlockPartBlockEntity>[] tPartHolder = (BlockEntityType<MultiBlockPartBlockEntity>[]) new BlockEntityType<?>[1];
+		tPartHolder[0] = BlockEntityType.Builder.of((aPos, aState) -> new MultiBlockPartBlockEntity(tPartHolder[0], aPos, aState),
+				Blocks.BRICKS, Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK, Blocks.DIAMOND_BLOCK, Blocks.EMERALD_BLOCK, Blocks.LAPIS_BLOCK).build(null);
+		sMassfabPartType = tPartHolder[0];
 	}
 
 	/** The part-BE factory the stub world runs on setBlock (every stand-in creates a part). */
 	private static void mountPartFactory(MultiBlockLevel aLevel) {
-		aLevel.mBeFactory = (aPos, aState) -> sPartType.create(aPos, aState);
+		aLevel.mBeFactory = (aPos, aState) -> sMassfabPartType.create(aPos, aState);
 	}
 
 	/** The scaffold stock: walls 97 (the 98-wall count includes the controller self-cell), coils 26, vents 16, the versatile 1, 4 + 4 quota PUs = 148 items (150 cells minus the self-cell). */
