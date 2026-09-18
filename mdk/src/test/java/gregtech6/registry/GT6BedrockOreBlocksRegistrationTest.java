@@ -48,6 +48,20 @@ class GT6BedrockOreBlocksRegistrationTest {
     @BeforeAll
     static void initMaterialSystem() {
         GTMaterialItems.initMaterials(); // MT/OP must exist before any field dereference
+        try {
+            net.minecraft.server.Bootstrap.bootStrap();
+        } catch (Throwable ignored) {
+        }
+        // the block-ctor assertions create intrusive holders past the bootstrap freeze —
+        // the GT6OreBlocksRegistrationTest.initMaterialSystem posture, self-sufficient
+        try {
+            java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+                    .getClass().getMethod("unfreeze");
+            tUnfreeze.setAccessible(true);
+            tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+        } catch (Throwable aE) {
+            throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+        }
     }
 
     /** The 45-material axis: first-appearance order spot checks + dedup + no hexorium leakage. */
