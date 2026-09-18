@@ -112,7 +112,8 @@ steps += [
 steps += [
     phase("D: teardown — the site restored to air (the pass-open bbox is the backstop)"),
     Step(f"setblock {CHEST} minecraft:air", expect="Changed the block"),
-    Step(f"setblock {STONE} minecraft:air", expect="Changed the block"),
+    # the STONE probe block is already gone (the mine arm removed it — a setblock-air
+    # on air answers "Could not set the block"; the pass-open bbox is the backstop)
     Step(f"setblock {IRON_ORE} minecraft:air", expect="Changed the block"),
     Step(f"setblock {DIAMOND_ORE} minecraft:air", expect="Changed the block"),
     Step(f"setblock {OBSIDIAN} minecraft:air", expect="Changed the block"),
