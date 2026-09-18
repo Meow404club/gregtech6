@@ -1,5 +1,6 @@
 package gregtech6.registry;
 
+import gregapi.util.UT;
 import java.util.Locale;
 import java.util.Map;
 
@@ -476,10 +477,10 @@ public final class GT6Distillation {
 			} else {
 				if (mParallelDuration) {
 					mMinEnergy = Math.max(1, tRecipe.mEUt);
-					mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, 10000, 10000, true));
+					mMaxProgress = Math.max(1, UT.Code.units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, 10000, 10000, true));
 				} else {
 					mMinEnergy = Math.max(1, mEnergyTypeAccepted == TD.Energy.TU ? tRecipe.mEUt : tRecipe.mEUt * tMaxProcessCount);
-					mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration), 10000, 10000, true));
+					mMaxProgress = Math.max(1, UT.Code.units(mMinEnergy * Math.max(1, tRecipe.mDuration), 10000, 10000, true));
 				}
 				// :773 — the CHEAP_OVERCLOCKING gate: the tower row REFUSES the fold (T)
 				if (!mCheapOverclocking) {

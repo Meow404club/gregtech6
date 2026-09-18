@@ -19,6 +19,7 @@
 
 package gregtech6.recipes;
 
+import gregapi.util.UT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -242,7 +243,7 @@ public final class GT6RecipesOreChain {
 
 	/** The main-output stack count: {@code bindStack(units(mTargetCrushing.mAmount, U, multiplier, F))} (upstream :78-80). */
 	public static long mainOutputCount(OreDictMaterial aMaterial, long aMultiplier) {
-		return bindStack(units(aMaterial.mTargetCrushing.mAmount, CS.U, aMultiplier, false));
+		return bindStack(UT.Code.units(aMaterial.mTargetCrushing.mAmount, CS.U, aMultiplier, false));
 	}
 
 	/**
@@ -274,7 +275,7 @@ public final class GT6RecipesOreChain {
 		if (aPlan.inPrefix() == OP.blockRaw) {rDuration *= 9; rDuration /= 2;} // upstream :101-102
 		if (aPlan.dense()) rDuration *= 2; // upstream :109
 		for (OreDictMaterialStack tByproduct : aPlan.byproducts()) {
-			rDuration += units(tByproduct.mAmount, CS.U, 64L * Math.max(1, tByproduct.mMaterial.mToolQuality + 1), true); // upstream :128
+			rDuration += UT.Code.units(tByproduct.mAmount, CS.U, 64L * Math.max(1, tByproduct.mMaterial.mToolQuality + 1), true); // upstream :128
 		}
 		return rDuration;
 	}
@@ -298,7 +299,7 @@ public final class GT6RecipesOreChain {
 		if (tInput == null) return null; // upstream mat() → null
 		OreDictMaterial tTarget = aPlan.outMaterial();
 		if (aPlan.poorTinyBranch()) { // upstream :68-72
-			long tCount = bindStack(units(tTarget.mTargetCrushing.mAmount, CS.U, aPlan.multiplier(), false)); // :69 — 3x folded into the plan multiplier
+			long tCount = bindStack(UT.Code.units(tTarget.mTargetCrushing.mAmount, CS.U, aPlan.multiplier(), false)); // :69 — 3x folded into the plan multiplier
 			ItemStack tOutput = resolveStack(OP.crushedTiny, tTarget, tCount);
 			if (tOutput == null) tOutput = resolveStack(OP.dustTiny, tTarget, tCount); // :70
 			if (tOutput == null) return null; // :71 ST.valid gate
@@ -323,7 +324,7 @@ public final class GT6RecipesOreChain {
 		for (OreDictMaterialStack tByproduct : aPlan.byproducts()) { // :127-136
 			if (tIndex >= tOutputs.length) break;
 			OreDictMaterial tByproductTarget = tByproduct.mMaterial.mTargetCrushing.mMaterial;
-			long tCount = bindStack(units(tByproduct.mAmount, CS.U, tByproduct.mMaterial.mTargetCrushing.mAmount, false) / CS.U); // OM.dust :460-467 simplified to the plain dust tier per the task card
+			long tCount = bindStack(UT.Code.units(tByproduct.mAmount, CS.U, tByproduct.mMaterial.mTargetCrushing.mAmount, false) / CS.U); // OM.dust :460-467 simplified to the plain dust tier per the task card
 			ItemStack tStack = resolveStack(OP.dust, tByproductTarget, tCount);
 			if (tStack != null) {tChances[tIndex] = 10000; tOutputs[tIndex++] = tStack;} // :132-133
 		}
@@ -345,14 +346,6 @@ public final class GT6RecipesOreChain {
 		return tHandle == null ? null : tHandle.get();
 	}
 
-	/** Upstream UT.Code.units (UT.java:1673-1681 inlined — the ShCL crusherCosts precedent). */
-	static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit % aTargetUnit == 0) {aOriginalUnit /= aTargetUnit; aTargetUnit = 1;}
-		else if (aTargetUnit % aOriginalUnit == 0) {aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
-		return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
-	}
 
 	/** Upstream UT.Code.bindStack (UT.java:1568). */
 	static long bindStack(long aBoundValue) {

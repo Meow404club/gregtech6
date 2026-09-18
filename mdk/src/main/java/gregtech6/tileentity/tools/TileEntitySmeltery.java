@@ -412,7 +412,7 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 			if (tLightest == null || mTemperature < tLightest.mMaterial.mMeltingPoint) return null;
 			net.minecraft.world.level.material.Fluid tMolten = FluidBridge.moltenFluidForMaterial(tLightest.mMaterial.mNameInternal);
 			if (tMolten == null) return null;
-			long tLiters = Math.min(1000, Math.max(1, CruciblePhysics.units(tLightest.mAmount, CS.U, FluidBridge.L_PER_MOLTEN_UNIT, false)));
+			long tLiters = Math.min(1000, Math.max(1, UT.Code.units(tLightest.mAmount, CS.U, FluidBridge.L_PER_MOLTEN_UNIT, false)));
 			FluidStack tFill = new FluidStack(tMolten, (int)tLiters);
 			// the :455 gate — the fluid must not be hotter than the crucible unless cold
 			int tFluidTemp = tFill.getFluid().getFluidType().getTemperature();
@@ -420,14 +420,14 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 			int tFilled = tHandler.fill(tFill, IFluidHandler.FluidAction.EXECUTE);
 			if (tFilled <= 0) return null;
 			ItemStack tContainer = tHandler.getContainer();
-			tLightest.mAmount -= CruciblePhysics.units(tFilled, FluidBridge.L_PER_MOLTEN_UNIT, CS.U, true); // :461 back-conversion
+			tLightest.mAmount -= UT.Code.units(tFilled, FluidBridge.L_PER_MOLTEN_UNIT, CS.U, true); // :461 back-conversion
 			aHeld.shrink(1);
 			return new ContainerArm(aHeld, tContainer);
 		}
 		// :469-490 — POUR the molten fluid back in (the bind(melting+25, boiling-1) temperature gate)
 		OreDictMaterial tFluidMaterial = materialOfFluid(tHeldFluid.getFluid());
 		if (tFluidMaterial == null) return null;
-		long tUnits = CruciblePhysics.units(tHeldFluid.getAmount(), FluidBridge.L_PER_MOLTEN_UNIT, CS.U, false);
+		long tUnits = UT.Code.units(tHeldFluid.getAmount(), FluidBridge.L_PER_MOLTEN_UNIT, CS.U, false);
 		long tPourTemperature = UT.Code.bind(tFluidMaterial.mMeltingPoint + 25, tFluidMaterial.mBoilingPoint - 1, tHeldFluid.getFluid().getFluidType().getTemperature());
 		if (!addStacks(new ArrayList<>(List.of(new OreDictMaterialStack(tFluidMaterial, tUnits))), tPourTemperature)) return null;
 		// the container must leave EMPTY: drain before getContainer — the wrappers answer their

@@ -19,6 +19,7 @@
 
 package gregtech6.recipes.maps;
 
+import gregapi.util.UT;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -150,7 +151,7 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 			OreDictMaterial tMaterial = tData.material();
 			// :87 — MELTING tag + a positive smelting target, else the input is not crucible food
 			if (!tMaterial.contains(TD.Processing.MELTING) || tMaterial.mTargetSmelting.mAmount <= 0) continue;
-			long tAmount = CruciblePhysics.units((long)tInput.getCount() * tData.prefix().mAmount, U, tMaterial.mTargetSmelting.mAmount, false);
+			long tAmount = UT.Code.units((long)tInput.getCount() * tData.prefix().mAmount, U, tMaterial.mTargetSmelting.mAmount, false);
 			OreDictMaterialStack tSmelted = new OreDictMaterialStack(tMaterial.mTargetSmelting.mMaterial, tAmount);
 			ItemStack tOutput = ingotOrDust(tSmelted.mMaterial, tSmelted.mAmount); // :91
 			if (tOutput == null || tOutput.isEmpty()) continue; // :94 — no representable output, no row
