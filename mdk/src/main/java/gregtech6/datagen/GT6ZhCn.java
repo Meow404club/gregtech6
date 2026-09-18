@@ -454,8 +454,9 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("fluid.gt6." + GTFluids.dyeChemicalName(i));
 		}
 		addDirect("fluid.gt6.chlorine");
-		// task p29-w4-f1-chemicals: the 25 chemical display names — the dump carries all 25
-		// faces (S:fluid.liquid_extra_heavy_oil=超重油 tmp/gregtech.lang:388, :389-391 the
+		// task p29-w4-f1-chemicals + p31-qu-b-materials: the 34 chemical display names —
+		// the dump carries every
+		// face (S:fluid.liquid_extra_heavy_oil=超重油 tmp/gregtech.lang:388, :389-391 the
 		// other oils, S:fluid.soulsandoil=灵魂沙油 :865, S:fluid.propane=丙烷 :817,
 		// S:fluid.butane=丁烷 :120, S:fluid.propylene=丙烯 :821, S:fluid.ethylene=乙烯 :289,
 		// S:fluid.methane=甲烷 :413, S:fluid.carbondioxide=二氧化碳 :127,
@@ -464,7 +465,12 @@ public class GT6ZhCn extends LanguageProvider {
 		// S:fluid.helium=氦 :328, S:fluid.neon=氖 :651, S:fluid.argon=氩 :54,
 		// S:fluid.krypton=氪 :381, S:fluid.xenon=氙 :920, S:fluid.radon=氡 :828,
 		// S:fluid.liquidoxygen=液氧 :392, S:fluid.heliumplasma=氦离子 :331,
-		// S:fluid.nitrogenplasma=氮离子 :661); the keys ride the SAME GTFluids.CHEMICAL_SPECS
+		// S:fluid.nitrogenplasma=氮离子 :661; the isotope batch (p31-qu-b-materials)
+		// S:fluid.deuterium=氘 :213, S:fluid.tritium=氚 :898, S:fluid.helium3=氦-3 :329,
+		// S:fluid.molten.lithium6=熔融锂-6 :530, S:fluid.molten.beryllium7=熔融铍-7 :450,
+		// S:fluid.molten.beryllium8=熔融铍-8 :451, S:fluid.molten.boron11=熔融硼-11 :459,
+		// S:fluid.molten.carbon13=熔融碳-13 :467, S:fluid.molten.ancientdebris=熔融远古残骸
+		// :434); the keys ride the SAME GTFluids.CHEMICAL_SPECS
 		// derivation the en walk and the FluidType descriptionIds use. Values are hand rows
 		// in the reference table.
 		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.CHEMICAL_SPECS) {

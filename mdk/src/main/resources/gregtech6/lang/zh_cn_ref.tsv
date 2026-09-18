@@ -8368,6 +8368,16 @@ direct	block.gt6.frozen_log	冰冻原木	hand
 direct	fluid.gt6.chargedmatter	带电物质	hand
 direct	fluid.gt6.neutralmatter	中性物质	hand
 direct	fluid.gt6.enderpearl_molten	熔融末影珍珠	hand
+# task p31-qu-b-materials — the 9 isotope-batch chemical display names (the dump carries every face, borrowed verbatim: S:fluid.deuterium=氘 tmp/gregtech.lang:213, S:fluid.tritium=氚 :898, S:fluid.helium3=氦-3 :329, S:fluid.molten.lithium6=熔融锂-6 :530, S:fluid.molten.beryllium7=熔融铍-7 :450, S:fluid.molten.beryllium8=熔融铍-8 :451, S:fluid.molten.boron11=熔融硼-11 :459, S:fluid.molten.carbon13=熔融碳-13 :467, S:fluid.molten.ancientdebris=熔融远古残骸 :434)
+direct	fluid.gt6.deuterium	氘	hand
+direct	fluid.gt6.tritium	氚	hand
+direct	fluid.gt6.helium3	氦-3	hand
+direct	fluid.gt6.lithium6_molten	熔融锂-6	hand
+direct	fluid.gt6.beryllium7_molten	熔融铍-7	hand
+direct	fluid.gt6.beryllium8_molten	熔融铍-8	hand
+direct	fluid.gt6.boron11_molten	熔融硼-11	hand
+direct	fluid.gt6.carbon13_molten	熔融碳-13	hand
+direct	fluid.gt6.ancientdebris_molten	熔融远古残骸	hand
 direct	itemGroup.gt6.bee	蜜蜂	hand
 direct	item.gt6.comb_honey	蜂蜜蜜脾	hand
 direct	item.gt6.comb_water	水分蜜脾	hand
