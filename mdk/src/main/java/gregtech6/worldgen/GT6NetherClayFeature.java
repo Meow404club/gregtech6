@@ -50,7 +50,7 @@ public class GT6NetherClayFeature extends Feature<NoneFeatureConfiguration> {
                 : new ChunkPos(aContext.origin());
         Level tConcrete = tLevel instanceof Level tLevel2 ? tLevel2 : ((WorldGenRegion) tLevel).getLevel();
         GT6WorleyNoise tNoise = new GT6WorleyNoise(tLevel.getSeed(),
-                (int) (512L * GT6NetherLensFeature.dimensionSalt(tLevel)));
+                (int) (512L * GT6VeinGenerator.dimensionSalt(tLevel)));
         Block tClay = GT6NetherOres.block("nether_red_clay");
         if (tClay == null) return false;
         int tUpperBound = LAVA_SEA_LEVEL + 3, tLowerBound = LAVA_SEA_LEVEL + 2; // :49 — y34/y33

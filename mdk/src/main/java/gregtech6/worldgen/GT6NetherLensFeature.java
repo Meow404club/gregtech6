@@ -59,30 +59,8 @@ public class GT6NetherLensFeature extends Feature<GTLensConfig.Table> {
     /** The origin scan half-width: radius 40 + the 16-block center spread stays inside ±3 chunks (see class javadoc). */
     public static final int SCAN_RADIUS_CHUNKS = 3;
 
-    /** The nether legacy dimension id (the 1.7.10 provider.dimensionId the upstream seed XORed). */
-    public static final long NETHER_DIMENSION_SALT = -1;
-    /** The end legacy dimension id (the End large-vein draw salts the same stream). */
-    public static final long END_DIMENSION_SALT = 1;
-    /** The overworld legacy dimension id — the zero salt, the pre-salt stream verbatim. */
-    public static final long OVERWORLD_DIMENSION_SALT = 0;
-
     public GT6NetherLensFeature() {
         super(GTLensConfig.Table.CODEC);
-    }
-
-    /**
-     * The legacy numeric dimension id of a level, the {@code WD.random(World)} salt face:
-     * overworld 0, nether -1, end 1 (the vanilla dimension keys' legacy ids — any mod
-     * dimension salts 0, matching upstream's dim-type switch default arm). The concrete
-     * level carries {@code dimension()} (Level.java:862): the natural path hands a
-     * WorldGenRegion (getLevel() → the ServerLevel), /place hands the ServerLevel itself.
-     */
-    public static long dimensionSalt(WorldGenLevel aLevel) {
-        Level tConcrete = aLevel instanceof Level tLevel ? tLevel : ((WorldGenRegion) aLevel).getLevel();
-        ResourceKey<Level> tDim = tConcrete.dimension();
-        if (tDim == Level.NETHER) return NETHER_DIMENSION_SALT;
-        if (tDim == Level.END) return END_DIMENSION_SALT;
-        return OVERWORLD_DIMENSION_SALT;
     }
 
     @Override
@@ -90,7 +68,7 @@ public class GT6NetherLensFeature extends Feature<GTLensConfig.Table> {
         WorldGenLevel tLevel = aContext.level();
         ChunkPos tWork = tLevel instanceof WorldGenRegion ? ((WorldGenRegion) tLevel).getCenter()
                 : new ChunkPos(aContext.origin());
-        long tSalt = dimensionSalt(tLevel);
+        long tSalt = GT6VeinGenerator.dimensionSalt(tLevel);
         int tMinBuildY = tLevel.getMinBuildHeight(), tMaxBuildY = tLevel.getMaxBuildHeight() - 1;
         boolean rPlaced = false;
         int tMinX = tWork.getMinBlockX(), tMaxX = tMinX + 15;

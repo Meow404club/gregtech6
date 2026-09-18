@@ -27,6 +27,16 @@ public final class GT6VeinGenerator {
     /** The upstream grid phase constant, verbatim (GT6WorldGenerator.java:97). */
     public static final int ORIGIN_PHASE = 402653184;
 
+    /**
+     * The legacy 1.7.10 numeric dimension ids the upstream seed XORs (WD.java:547):
+     * overworld 0 (the zero salt = the pre-salt stream verbatim), nether -1, end 1.
+     * Kept HERE (vanilla-free) so the offline tests can pin the streams without
+     * class-loading a Feature.
+     */
+    public static final long OVERWORLD_DIMENSION_SALT = 0;
+    public static final long NETHER_DIMENSION_SALT = -1;
+    public static final long END_DIMENSION_SALT = 1;
+
     private GT6VeinGenerator() {
     }
 
@@ -47,6 +57,21 @@ public final class GT6VeinGenerator {
      * Discard the first 50 draws twice around the coord reseed. java.util.Random on
      * both legs (the research determinism ruling).
      */
+    /**
+     * The legacy numeric dimension id of a level, the {@code WD.random(World)} salt face:
+     * overworld 0, nether -1, end 1 (the vanilla dimension keys' legacy ids — any mod
+     * dimension salts 0, matching upstream's dim-type switch default arm). Runtime-only
+     * (needs the concrete Level): the offline tests pass the constants directly.
+     */
+    public static long dimensionSalt(net.minecraft.world.level.WorldGenLevel aLevel) {
+        net.minecraft.world.level.Level tConcrete = aLevel instanceof net.minecraft.world.level.Level tLevel
+                ? tLevel : ((net.minecraft.server.level.WorldGenRegion) aLevel).getLevel();
+        net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> tDim = tConcrete.dimension();
+        if (tDim == net.minecraft.world.level.Level.NETHER) return NETHER_DIMENSION_SALT;
+        if (tDim == net.minecraft.world.level.Level.END) return END_DIMENSION_SALT;
+        return OVERWORLD_DIMENSION_SALT;
+    }
+
     public static Random veinRandom(long aWorldSeed, long aDimSalt, int aChunkX, int aChunkZ) {
         Random tRandom = new Random(aWorldSeed ^ aDimSalt);
         for (int i = 0; i < 50; i++) tRandom.nextInt(0x00ffffff);

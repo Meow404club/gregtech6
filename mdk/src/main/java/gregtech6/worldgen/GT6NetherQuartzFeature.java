@@ -53,7 +53,7 @@ public class GT6NetherQuartzFeature extends Feature<NoneFeatureConfiguration> {
         ChunkPos tWork = tLevel instanceof WorldGenRegion ? ((WorldGenRegion) tLevel).getCenter()
                 : new ChunkPos(aContext.origin());
         Level tConcrete = tLevel instanceof Level tLevel2 ? tLevel2 : ((WorldGenRegion) tLevel).getLevel();
-        GT6WorleyNoise tNoise = new GT6WorleyNoise(tLevel.getSeed(), (int) (512L * GT6NetherLensFeature.dimensionSalt(tLevel)));
+        GT6WorleyNoise tNoise = new GT6WorleyNoise(tLevel.getSeed(), (int) (512L * GT6VeinGenerator.dimensionSalt(tLevel)));
         Block tQuartz = GT6NetherOres.block("dense_nether_quartz_ore");
         if (tQuartz == null) return false;
         int tMinBuildY = tLevel.getMinBuildHeight(), tMaxBuildY = tLevel.getMaxBuildHeight() - 1;

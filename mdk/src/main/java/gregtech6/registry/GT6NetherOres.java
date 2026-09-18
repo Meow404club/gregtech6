@@ -44,25 +44,31 @@ import gregapi.oredict.OreDictMaterial;
 @net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid = "gt6", bus = net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6NetherOres {
 
-    /** One band row: the registry path tail + the carrying material + the vanilla stand-in texture (see the class javadoc). */
-    public record NetherOreKey(String path, OreDictMaterial material, String vanillaTexture) {}
+    /** One band row: the registry path tail + the carrying material (supplier — this class loads pre-OP.init, the GT6BedrockOreBlocks.MaterialSlot lesson) + the vanilla stand-in texture. */
+    public record NetherOreKey(String path, java.util.function.Supplier<OreDictMaterial> material, String vanillaTexture) {
+
+        /** The resolved material (the census/test/runtime face). */
+        public OreDictMaterial resolve() {
+            return material.get();
+        }
+    }
 
     /** The band, upstream identity order: quartz first, then the 12 crystal metas (BlockCrystalOres.java:43 order), then the red clay. */
     public static final List<NetherOreKey> KEYS = List.of(
-            new NetherOreKey("dense_nether_quartz_ore", MT.NetherQuartz, "block/nether_quartz_ore"),
-            new NetherOreKey("crystal_arsenopyrite" , MT.OREMATS.Arsenopyrite , "block/amethyst_block"), // :43 meta 0
-            new NetherOreKey("crystal_chalcopyrite" , MT.OREMATS.Chalcopyrite , "block/amethyst_block"), // :43 meta 1
-            new NetherOreKey("crystal_cinnabar"     , MT.OREMATS.Cinnabar     , "block/amethyst_block"), // :43 meta 2
-            new NetherOreKey("crystal_cobaltite"    , MT.OREMATS.Cobaltite    , "block/amethyst_block"), // :43 meta 3
-            new NetherOreKey("crystal_galena"       , MT.OREMATS.Galena       , "block/amethyst_block"), // :43 meta 4
-            new NetherOreKey("crystal_kesterite"    , MT.OREMATS.Kesterite    , "block/amethyst_block"), // :43 meta 5
-            new NetherOreKey("crystal_molybdenite"  , MT.OREMATS.Molybdenite  , "block/amethyst_block"), // :43 meta 6
-            new NetherOreKey("crystal_pyrite"       , MT.Pyrite               , "block/amethyst_block"), // :43 meta 7
-            new NetherOreKey("crystal_sphalerite"   , MT.OREMATS.Sphalerite   , "block/amethyst_block"), // :43 meta 8
-            new NetherOreKey("crystal_stannite"     , MT.OREMATS.Stannite     , "block/amethyst_block"), // :43 meta 9
-            new NetherOreKey("crystal_stibnite"     , MT.OREMATS.Stibnite     , "block/amethyst_block"), // :43 meta 10
-            new NetherOreKey("crystal_tetrahedrite" , MT.OREMATS.Tetrahedrite , "block/amethyst_block"), // :43 meta 11
-            new NetherOreKey("nether_red_clay"      , MT.Clay                 , "block/packed_mud"));
+            new NetherOreKey("dense_nether_quartz_ore", () -> MT.NetherQuartz, "block/nether_quartz_ore"),
+            new NetherOreKey("crystal_arsenopyrite" , () -> MT.OREMATS.Arsenopyrite, "block/amethyst_block"), // :43 meta 0
+            new NetherOreKey("crystal_chalcopyrite" , () -> MT.OREMATS.Chalcopyrite, "block/amethyst_block"), // :43 meta 1
+            new NetherOreKey("crystal_cinnabar"     , () -> MT.OREMATS.Cinnabar, "block/amethyst_block"), // :43 meta 2
+            new NetherOreKey("crystal_cobaltite"    , () -> MT.OREMATS.Cobaltite, "block/amethyst_block"), // :43 meta 3
+            new NetherOreKey("crystal_galena"       , () -> MT.OREMATS.Galena, "block/amethyst_block"), // :43 meta 4
+            new NetherOreKey("crystal_kesterite"    , () -> MT.OREMATS.Kesterite, "block/amethyst_block"), // :43 meta 5
+            new NetherOreKey("crystal_molybdenite"  , () -> MT.OREMATS.Molybdenite, "block/amethyst_block"), // :43 meta 6
+            new NetherOreKey("crystal_pyrite"       , () -> MT.Pyrite, "block/amethyst_block"), // :43 meta 7
+            new NetherOreKey("crystal_sphalerite"   , () -> MT.OREMATS.Sphalerite, "block/amethyst_block"), // :43 meta 8
+            new NetherOreKey("crystal_stannite"     , () -> MT.OREMATS.Stannite, "block/amethyst_block"), // :43 meta 9
+            new NetherOreKey("crystal_stibnite"     , () -> MT.OREMATS.Stibnite, "block/amethyst_block"), // :43 meta 10
+            new NetherOreKey("crystal_tetrahedrite" , () -> MT.OREMATS.Tetrahedrite, "block/amethyst_block"), // :43 meta 11
+            new NetherOreKey("nether_red_clay"      , () -> MT.Clay, "block/packed_mud"));
 
     /** The runtime handle map, KEYS order. */
     //? if forge {

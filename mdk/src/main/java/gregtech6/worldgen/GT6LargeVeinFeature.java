@@ -87,7 +87,7 @@ public class GT6LargeVeinFeature extends Feature<GTVeinConfig.Table> {
         for (int tDX = -2; tDX <= 2; tDX++) for (int tDZ = -2; tDZ <= 2; tDZ++) {
             int tOriginX = tWork.x + tDX, tOriginZ = tWork.z + tDZ;
             if (!GT6VeinGenerator.isOriginCell(tOriginX) || !GT6VeinGenerator.isOriginCell(tOriginZ)) continue;
-            Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), GT6NetherLensFeature.dimensionSalt(tLevel), tOriginX, tOriginZ);
+            Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), GT6VeinGenerator.dimensionSalt(tLevel), tOriginX, tOriginZ);
             GTVeinConfig tVein = GT6VeinGenerator.drawVein(aContext.config().veins(), tRandom, tEndRows);
             if (tVein == null) continue;
             rPlaced |= GT6VeinGenerator.generateSlice(tVein, tRandom, tOriginX << 4, tOriginZ << 4,

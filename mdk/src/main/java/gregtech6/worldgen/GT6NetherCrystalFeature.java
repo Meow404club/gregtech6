@@ -65,7 +65,7 @@ public class GT6NetherCrystalFeature extends Feature<NoneFeatureConfiguration> {
         ChunkPos tWork = tLevel instanceof WorldGenRegion ? ((WorldGenRegion) tLevel).getCenter()
                 : new ChunkPos(aContext.origin());
         Level tConcrete = tLevel instanceof Level tLevel2 ? tLevel2 : ((WorldGenRegion) tLevel).getLevel();
-        long tSalt = GT6NetherLensFeature.dimensionSalt(tLevel);
+        long tSalt = GT6VeinGenerator.dimensionSalt(tLevel);
         Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), tSalt, tWork.x, tWork.z);
 
         if (tRandom.nextBoolean()) return false; // :50 — half the chunks skip
