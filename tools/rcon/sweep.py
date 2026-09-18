@@ -531,9 +531,8 @@ SESSION_GROUPS = (
     # calibrated 64x64 window x0..63/z64..127, coal/graphite each >= 1 cross-boot, the
     # decision-level same-seed regenerate) rides the card's separate scan driver
     # tools/rcon/scan_bedrock_ore.py, not this chain. No fresh_boot / mutates member.
-    # --group p31_bedrock matches through the chain's embedded name prefix.
-    ("p31_bedrock",),
-
+    # --group p31_bedrock prefix-matches this key (the chain stem is p31_bedrock_ore).
+    ("p31_bedrock_ore",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
