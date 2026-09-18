@@ -760,3 +760,33 @@ checker.form aClickedAt=null 一发全成——p27 链的绿灯盖住的是 form
 - **B form 臂回归锚**（本卡未触碰）：`gt6multiblock form F 24` 照常一发
   全成 + `linked_parts=24/24`。
 - **C 拆除**：显式 fill 归还（声明站点清理是结构兜底）。
+
+### 床岩矿活链 + 自然生成扫描 /place + 区块级注册活证（p31-bedrock-ore-worldgen，README tail-append）
+
+`chains/p31_bedrock_ore.py`（slug p31_bedrock_ore，端口对 26211/26221；
+新簇 `p31_bedrock`；新鲜带 chunk (4,6) x64..79 z96..111 y-64..62=32512≤cap，
+staging x288..319 同 z/y——与全名册零相交，strata z=64 带保持清净）：
+
+**勘正（compile 后 PlaceCommand.java:243-244 源证）**：`/place feature` 在
+`place()` 返回 false 时抛 ERROR_FEATURE_FAILED——拒绝面就是命令错误文本
+`Could not place feature`，B 臂 expect 钉实测文本 `Failed to place feature`
+（首跑钉错 "Could not place feature"——1.20.1 实证为前者；非 strata 的
+"Placed"：透镜恰一抽必落块，床岩矿 1/P 行滚签绝大多数 chunk 空手）。
+
+- **A 注册活证**（id686 门）：`gt6:ore_bedrock_coal` /
+  `gt6:ore_small_bedrock_graphite` / `gt6:ore_bedrock_diamond` 三块
+  setblock→`execute if block` 回读（未注册 id 该步直接红）。
+- **B /place 门面**：基岩地板(y-64)+深板岩体竞技场快照→
+  `place feature gt6:bedrock_ores 72 -64 104`→`execute if blocks` 断言
+  **未变**——1/P 行滚签骑 boot 种子（OW 质量 ~0.5%/chunk），空竞技场是
+  ~200:1 的期望判定（怪 hit 会红，重跑优先判例）；重铺再放再断言
+  （确定性空面）。决策级自然生成活证不在本链：走
+  `tools/rcon/scan_bedrock_ore.py`（固定种子 6131000569321125127+删档
+  双 boot，标定窗 64x64 chunk x0..63/z64..127=parity 投影 27 决策/
+  coal=1/graphite=1；y-64..-54 离线 .mca 扫描；coal/graphite 各≥1
+  跨 boot 门+决策级确定性门=材质并集全等/总数 ±30%/逐 chunk 命中集
+  一致率 ≥80%——块位漂移按管线级漂移声明处理，
+  decisions.2026-09-18-p31-strata-lens-determinism-acceptance 语义）。
+- **C 拆除**：竞技场+staging+探针显式 fill 归还。
+
+`--group p31_bedrock` 匹配链内嵌名前缀。

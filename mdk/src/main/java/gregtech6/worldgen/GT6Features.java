@@ -89,6 +89,22 @@ public final class GT6Features {
         return tFeature;
     }
 
+    /**
+     * The bedrock-ore feature (task p31-bedrock-ore-worldgen) — ONE registration row
+     * {@code gt6:bedrock_ores}, the single Feature over the 46-row bedrock-ore table
+     * (the same single-feature-over-a-row-table shape as LARGE_VEINS/STRATA_LENSES; the
+     * rows roll INDEPENDENTLY in table order, not exactly-one — one WorldgenObject per
+     * row upstream, WorldgenOresBedrock.java:142). The configured/placed/biome-modifier
+     * rows hang off it in GT6WorldgenDatagen.
+     */
+    public static final GT6BedrockOreFeature BEDROCK_ORES = registerBedrockOreFeature();
+
+    private static GT6BedrockOreFeature registerBedrockOreFeature() {
+        GT6BedrockOreFeature tFeature = new GT6BedrockOreFeature();
+        FEATURES.register("bedrock_ores", () -> tFeature);
+        return tFeature;
+    }
+
     /** The feature instance of a kind (index-aligned with KINDS). */
     public static GT6TreeFeature treeFeature(GT6TreeKind aKind) {
         return (GT6TreeFeature) TREE_FEATURES.get(aKind.ordinal());

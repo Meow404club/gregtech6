@@ -12,6 +12,7 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import gregtech6.client.ore.GTOreBakedModel;
+import gregtech6.registry.GT6BedrockOreBlocks;
 import gregtech6.registry.GT6OreBlocks;
 
 /**
@@ -77,6 +78,28 @@ public final class GT6OreBlockStates extends BlockStateProvider {
         }
         LOGGER.info("GT6 ore blocks: {} per-pair blockstates + item models over {} shared base-texture models"
                 + " (the GTOreBakedModel dual-sprite face carries the SET overlay)", tBlocks, tShared.size());
+
+        // ------------------------------------------------------------------
+        // The bedrock band (task p31-bedrock-ore-worldgen): the 90 per-pair bedrock ores
+        // over ONE shared bedrock-cube model — the upstream look IS the plain bedrock
+        // texture copy (Loader_Ores.java:44-45 BlockTextureCopied.get(Blocks.bedrock, 0)),
+        // no ore overlay, no GTOreBlock bake dispatch, no atlas face. 90 blockstates + 90
+        // item models + 1 shared model.
+        // ------------------------------------------------------------------
+        java.util.function.Supplier<ResourceLocation> tBedrockTex =
+                () -> new ResourceLocation("minecraft", "block/bedrock");
+        ModelFile tBedrockModel = tShared.computeIfAbsent(tBedrockTex.get(),
+                tTex -> tintedCubeAll(modelNameOf(tTex), tTex));
+        int tBedrock = 0;
+        for (GT6BedrockOreBlocks.BedrockKey tKey : GT6BedrockOreBlocks.registrationOrder()) {
+            Block tBlock = GT6BedrockOreBlocks.blocks().get(tKey).get();
+            simpleBlock(tBlock, tBedrockModel);
+            itemModels().withExistingParent(GT6BedrockOreBlocks.path(tKey.small(), tKey.material()),
+                    modLoc(modelNameOf(tBedrockTex.get())));
+            tBedrock++;
+        }
+        LOGGER.info("GT6 bedrock ore blocks: {} per-pair blockstates + item models over the 1 shared bedrock cube",
+                tBedrock);
     }
 
     /**
