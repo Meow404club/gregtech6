@@ -533,6 +533,18 @@ SESSION_GROUPS = (
     # tools/rcon/scan_bedrock_ore.py, not this chain. No fresh_boot / mutates member.
     # --group p31_bedrock prefix-matches this key (the chain stem is p31_bedrock_ore).
     ("p31_bedrock_ore",),
+    # P31 card (p31-nether-lens-end-yield): the nether worldgen live chain — the chunk
+    # (4,4) band (x64..79, z64..79; staging x288..319), the four feature arms over
+    # built netherrack geometry (the lens /place bit-exact recompute; the quartz noise
+    # columns; the y33/34 red-clay gate; the crystal cave rig — the WorldgenNether
+    # Crystals ray ceiling/headroom face) + the teardown. The NATURAL-generation gate
+    # (fixed seed 6131000569321125127 + world delete: the NETHER 40x40 region 17-stone
+    # lens + the three forms, the END 24x24 region five-row probe — each placeable
+    # ore_endstone_* >= 1 — and the cross-boot decision determinism) rides the card's
+    # separate scan driver tools/rcon/scan_nether_end.py, not this chain. No
+    # fresh_boot / mutates member. --group p31_nether matches through the chain's
+    # embedded name prefix.
+    ("p31_nether",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
