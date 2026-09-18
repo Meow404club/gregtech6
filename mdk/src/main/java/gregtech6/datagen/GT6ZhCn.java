@@ -800,6 +800,10 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.registry.GTMachines.MACHINE_LASER_WELDER_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_FREEZER_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_CRYO_MIXER_UNIT_KEY);
+		// task p31-massfab — the small Massfab family template + the large controller
+		// (the Loader :1241/:1542-1546 name columns; zh hand words 大型物质制造机/物质制造机)
+		addDirect("block.gt6.large_massfab");
+		addDirect(gregtech6.registry.GTMachines.MACHINE_MASSFAB_UNIT_KEY);
 		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tExoticRows
 				: java.util.List.of(gregtech6.registry.GTMachines.POLARIZER_ROWS, gregtech6.registry.GTMachines.MAGNETIC_SEPARATOR_ROWS,
 						gregtech6.registry.GTMachines.LASER_ENGRAVER_ROWS, gregtech6.registry.GTMachines.LASER_WELDER_ROWS,

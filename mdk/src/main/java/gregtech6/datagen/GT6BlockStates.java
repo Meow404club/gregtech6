@@ -138,6 +138,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addEuSpecialFamilies(); // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families (family textures, the addCanner shape)
         addExoticFamilies(); // task p29-w2-exotic-energy — the six exotic-energy families (family textures, the addCanner shape)
         addEuCoreMachines(); // task p29-w2-eu-core-5tier — the five eu-core families (family textures, the addCanner shape)
+        addMassfabMachines(); // task p31-massfab — the small Matter Fabricator 5-ladder (family textures, the addCanner shape)
         addHuTuFamilies(); // task p29-w2-hu-tu-piggyback — the seven hu-tu families (family textures, the addCanner shape)
         addHeatSmelterFamilies(); // task p29-w3-heat-smelter — the Smelter ladder + the Melter single (family textures, the addCanner shape)
         addRoastingFamilies(); // task p29-w4-eu-bridge — the Roasting Oven ladder (the "roaster" family textures)
@@ -188,6 +189,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addLargeMachines(); // task p29-w3-large-12 — the twelve large-machine controllers
         addImplosionCompressor(); // task p31-implosion — the Implosion Compressor controller
         addVonDaGraagg(); // task p31-graagg — the Von da Graagg controller
+        addLargeMassfab(); // task p31-massfab — the Large Matter Fabricator controller
         addLargeCrucible(); // task p26-crucible-multiblock
         addDistillationTowers(); // task p29-w3-distill-crucible — the twin tower controllers
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
@@ -576,6 +578,19 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CRYO_MIXER_ROWS) {
             addMachine(GTMachines.CRYO_MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p31-massfab — the small Matter Fabricator 5-ladder (Loader_MultiTileEntities
+     * .java:1542-1546, the rows of the family sharing the one NBT_TEXTURE "massfab"): the
+     * addCanner shape verbatim — model names per path, the front textures stay on the
+     * family set (the borrowed upstream basicmachines/massfab fronts, the animated
+     * overlay strips flattened to their frame 0 — the W1 borrow pipeline).
+     */
+    private void addMassfabMachines() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.MASSFAB_SMALL_ROWS) {
+            addMachine(GTMachines.MASSFAB_SMALL_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 
@@ -2215,6 +2230,37 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
         }
+    }
+
+    /**
+     * Task p31-massfab — the Large Matter Fabricator controller: the addImplosionCompressor
+     * form over the upstream NBT_TEXTURE "largemassfab" family (Loader :1241, the six
+     * borrowed basicmachines/largemassfab/colored faces). The 8 FACING x FORMED states
+     * share the one oriented model (the RCON formed assertion rides the blockstate
+     * property, not the model). Overlay/active layers stay unborrowed — the ACTIVE visual
+     * is the render wave's surface.
+     */
+    private void addLargeMassfab() {
+        Block tBlock = gregtech6.registry.GTMultiBlocks.MASSFAB.get();
+        String tFamily = "largemassfab";
+        ModelFile tModel = models().cube("large_massfab",
+                modLoc("block/" + tFamily + "_colored_bottom"),
+                modLoc("block/" + tFamily + "_colored_top"),
+                modLoc("block/" + tFamily + "_colored_front"),
+                modLoc("block/" + tFamily + "_colored_back"),
+                modLoc("block/" + tFamily + "_colored_left"),
+                modLoc("block/" + tFamily + "_colored_right"));
+        getVariantBuilder(tBlock).forAllStates(aState -> {
+            int tY;
+            switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                case SOUTH -> tY = 180;
+                case WEST -> tY = 270;
+                case EAST -> tY = 90;
+                default -> tY = 0; // NORTH
+            }
+            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+        });
+        itemModels().withExistingParent("large_massfab", modLoc("block/large_massfab"));
     }
 
     /**

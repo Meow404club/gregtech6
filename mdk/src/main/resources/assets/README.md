@@ -8323,3 +8323,43 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   c8a0e8 / military 808850 / pyro e87830 / cryo 90c8e8 / aero f0e8a0 / tera 986838.
   Regeneration recipe: the five-cell ellipse grid (rim = tint, cell interior = 55%,
   top edge = 125%, bottom edge = 45%), PIL, RGBA 16×16.
+
+Massfab machine + controller textures, task p31-massfab: the 24 small-family PNGs
+under `gt6/textures/block/massfab_{colored,overlay}_{face}.png` and
+`gt6/textures/block/massfab_overlay_{face}_{active,running}.png` plus the 6
+large-controller PNGs under `gt6/textures/block/largemassfab_colored_{face}.png`
+(face ∈ bottom/top/front/back/left/right) come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/basicmachines/massfab/{colored,overlay,overlay_active,overlay_running}/<face>.png`
+and `.../basicmachines/largemassfab/colored/<face>.png` (the NBT_TEXTURE "massfab" /
+"largemassfab" name form of Loader_MultiTileEntities.java:1542-1546/:1241),
+byte-identical to upstream, sha256 verified per file:
+- `massfab_colored_bottom.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_overlay_bottom.png` — `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`
+- `massfab_overlay_bottom_active.png` — `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`
+- `massfab_overlay_bottom_running.png` — `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`
+- `largemassfab_colored_bottom.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_colored_top.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_overlay_top.png` — `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`
+- `massfab_overlay_top_active.png` — `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`
+- `massfab_overlay_top_running.png` — `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`
+- `largemassfab_colored_top.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_colored_front.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_overlay_front.png` — `1533e6e9610e98ed2ba9163b39d6370be0c97eee9808be971abd8103665d78be`
+- `massfab_overlay_front_active.png` — `2efd0b5fc366ddcfaf89231730e01571ccf91dfcfc0fca8b8749b8483b656c50`
+- `massfab_overlay_front_running.png` — `dc48b3c85dc70970c32d980a10184f918de415336e1f2886a53d891145553999`
+- `largemassfab_colored_front.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_colored_back.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_overlay_back.png` — `d1152f690913d11bc286fec25b44a44cf4ce38ded8c72c3da2b404f353ebdbeb`
+- `massfab_overlay_back_active.png` — `8aa1e3925d65fd057270593e8f56b445ebb8287f872fe12f743c695a28aae8db`
+- `massfab_overlay_back_running.png` — `8aa1e3925d65fd057270593e8f56b445ebb8287f872fe12f743c695a28aae8db`
+- `largemassfab_colored_back.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_colored_left.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_overlay_left.png` — `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`
+- `massfab_overlay_left_active.png` — `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`
+- `massfab_overlay_left_running.png` — `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`
+- `largemassfab_colored_left.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_colored_right.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `massfab_overlay_right.png` — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
+- `massfab_overlay_right_active.png` — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
+- `massfab_overlay_right_running.png` — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
+- `largemassfab_colored_right.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`

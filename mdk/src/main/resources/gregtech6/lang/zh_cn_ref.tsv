@@ -8410,3 +8410,5 @@ direct	fluid.gt6.ice	近冰点水	hand
 direct	fluid.gt6.soup_mushroom	蘑菇煲	hand
 direct	fluid.gt6.latex	胶乳	hand
 direct	fluid.gt6.potion_harm_1	伤害药水	hand
+direct	block.gt6.large_massfab	大型物质制造机	hand
+direct	gt6.row.machine.massfab	物质制造机 (%s)	hand

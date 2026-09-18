@@ -89,11 +89,31 @@ public final class GT6RecipesMassfab {
 	/** The :971 duration constant — (neutrons + protons) × 131072 ticks per unit. */
 	public static final long DURATION_PER_NUCLEON = 131072;
 
-	/** The :971-975 unit-prefix arms, upstream order. */
-	public static final List<OreDictPrefix> UNIT_PREFIXES = List.of(OP.dust, OP.ingot, OP.plate, OP.plateGem, OP.gem);
+	private static volatile List<OreDictPrefix> sUnitPrefixes = null;
 
-	/** The :977-981 block-prefix arms (×9), upstream order. */
-	public static final List<OreDictPrefix> BLOCK_PREFIXES = List.of(OP.blockDust, OP.blockIngot, OP.blockPlate, OP.blockPlateGem, OP.blockGem);
+	/**
+	 * The :971-975 unit-prefix arms, upstream order. LAZILY built — the
+	 * {@code @EventBusSubscriber} scan class-loads this file at MOD CONSTRUCTION, before
+	 * OP.init() (the a9027ac lesson): an eager capture would freeze null prefixes.
+	 */
+	public static List<OreDictPrefix> unitPrefixes() {
+		List<OreDictPrefix> tTable = sUnitPrefixes;
+		if (tTable == null) {
+			sUnitPrefixes = tTable = List.of(OP.dust, OP.ingot, OP.plate, OP.plateGem, OP.gem);
+		}
+		return tTable;
+	}
+
+	private static volatile List<OreDictPrefix> sBlockPrefixes = null;
+
+	/** The :977-981 block-prefix arms (×9), upstream order — lazily built (the a9027ac form). */
+	public static List<OreDictPrefix> blockPrefixes() {
+		List<OreDictPrefix> tTable = sBlockPrefixes;
+		if (tTable == null) {
+			sBlockPrefixes = tTable = List.of(OP.blockDust, OP.blockIngot, OP.blockPlate, OP.blockPlateGem, OP.blockGem);
+		}
+		return tTable;
+	}
 
 	/** The resolution seam: the live registry lookups by default, fixtures injected offline (the implosion form). */
 	public static BiFunction<OreDictPrefix, OreDictMaterial, Item> sMaterialItemResolver = GT6RecipesMassfab::resolveItem;
@@ -143,12 +163,12 @@ public final class GT6RecipesMassfab {
 		if (GT6RecipeMaps.MASSFAB == null) return; // reset() between init and load — a broken lifecycle
 		int tPoured = 0, tSkipped = 0;
 		for (OreDictMaterial tMaterial : elements()) {
-			for (OreDictPrefix tPrefix : UNIT_PREFIXES) {
+			for (OreDictPrefix tPrefix : unitPrefixes()) {
 				Recipe tRecipe = buildRecipe(tMaterial, tPrefix, 1);
 				if (tRecipe == null || GT6RecipeMaps.MASSFAB.addRecipe(tRecipe) == null) {tSkipped++; continue;} // mat() → null / the ghost guard
 				tPoured++;
 			}
-			for (OreDictPrefix tPrefix : BLOCK_PREFIXES) {
+			for (OreDictPrefix tPrefix : blockPrefixes()) {
 				Recipe tRecipe = buildRecipe(tMaterial, tPrefix, 9);
 				if (tRecipe == null || GT6RecipeMaps.MASSFAB.addRecipe(tRecipe) == null) {tSkipped++; continue;} // the ×9 block arms
 				tPoured++;
@@ -201,5 +221,7 @@ public final class GT6RecipesMassfab {
 	public static void resetForTest() {
 		sLoaded = false;
 		sElements = null;
+		sUnitPrefixes = null;
+		sBlockPrefixes = null;
 	}
 }

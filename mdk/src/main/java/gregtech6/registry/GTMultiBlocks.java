@@ -469,11 +469,11 @@ public final class GTMultiBlocks {
 	// ===========================================================================
 
 	/** The Large Matter Fabricator controller block — the FACING+FORMED base owns the visuals. */
-	public static final RegistryObject<GTMassfabBlock> MASSFAB = BLOCKS.register("massfab",
+	public static final RegistryObject<GTMassfabBlock> MASSFAB = BLOCKS.register("large_massfab",
 			() -> new GTMassfabBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL)));
 
 	/** The Large Matter Fabricator controller item (the plain BlockItem — the implosion twelve-row shape). */
-	public static final RegistryObject<Item> MASSFAB_ITEM = ITEMS.register("massfab",
+	public static final RegistryObject<Item> MASSFAB_ITEM = ITEMS.register("large_massfab",
 			() -> new BlockItem(MASSFAB.get(), new Item.Properties()));
 
 	/**

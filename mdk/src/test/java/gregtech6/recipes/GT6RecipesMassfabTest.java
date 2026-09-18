@@ -46,7 +46,7 @@ public class GT6RecipesMassfabTest extends GTRecipesOfflineTestBase {
 
 	/** The offline fixture resolver: every walked arm prefix answers IRON_INGOT (identity), everything else null. */
 	public static final BiFunction<OreDictPrefix, OreDictMaterial, Item> FIXTURE_RESOLVER = (aPrefix, aMaterial) ->
-			GT6RecipesMassfab.UNIT_PREFIXES.contains(aPrefix) || GT6RecipesMassfab.BLOCK_PREFIXES.contains(aPrefix)
+			GT6RecipesMassfab.unitPrefixes().contains(aPrefix) || GT6RecipesMassfab.blockPrefixes().contains(aPrefix)
 					? Items.IRON_INGOT : null;
 
 	/** The offline fixture matter fluids: charged → LAVA, neutral → WATER (identity is all the mechanics compare). */
@@ -109,19 +109,19 @@ public class GT6RecipesMassfabTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	void theArmPrefixTablesPinTheUpstreamOrder() {
-		assertEquals(5, GT6RecipesMassfab.UNIT_PREFIXES.size());
-		assertEquals(5, GT6RecipesMassfab.BLOCK_PREFIXES.size());
+		assertEquals(5, GT6RecipesMassfab.unitPrefixes().size());
+		assertEquals(5, GT6RecipesMassfab.blockPrefixes().size());
 		// :971-975 then :977-981, upstream order verbatim
-		assertEquals(OP.dust     , GT6RecipesMassfab.UNIT_PREFIXES .get(0));
-		assertEquals(OP.ingot    , GT6RecipesMassfab.UNIT_PREFIXES .get(1));
-		assertEquals(OP.plate    , GT6RecipesMassfab.UNIT_PREFIXES .get(2));
-		assertEquals(OP.plateGem , GT6RecipesMassfab.UNIT_PREFIXES .get(3));
-		assertEquals(OP.gem      , GT6RecipesMassfab.UNIT_PREFIXES .get(4));
-		assertEquals(OP.blockDust    , GT6RecipesMassfab.BLOCK_PREFIXES.get(0));
-		assertEquals(OP.blockIngot   , GT6RecipesMassfab.BLOCK_PREFIXES.get(1));
-		assertEquals(OP.blockPlate   , GT6RecipesMassfab.BLOCK_PREFIXES.get(2));
-		assertEquals(OP.blockPlateGem, GT6RecipesMassfab.BLOCK_PREFIXES.get(3));
-		assertEquals(OP.blockGem     , GT6RecipesMassfab.BLOCK_PREFIXES.get(4));
+		assertEquals(OP.dust     , GT6RecipesMassfab.unitPrefixes().get(0));
+		assertEquals(OP.ingot    , GT6RecipesMassfab.unitPrefixes().get(1));
+		assertEquals(OP.plate    , GT6RecipesMassfab.unitPrefixes().get(2));
+		assertEquals(OP.plateGem , GT6RecipesMassfab.unitPrefixes().get(3));
+		assertEquals(OP.gem      , GT6RecipesMassfab.unitPrefixes().get(4));
+		assertEquals(OP.blockDust    , GT6RecipesMassfab.blockPrefixes().get(0));
+		assertEquals(OP.blockIngot   , GT6RecipesMassfab.blockPrefixes().get(1));
+		assertEquals(OP.blockPlate   , GT6RecipesMassfab.blockPrefixes().get(2));
+		assertEquals(OP.blockPlateGem, GT6RecipesMassfab.blockPrefixes().get(3));
+		assertEquals(OP.blockGem     , GT6RecipesMassfab.blockPrefixes().get(4));
 	}
 
 	// ------------------------------------------------------------------
