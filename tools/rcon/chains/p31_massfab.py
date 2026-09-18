@@ -89,9 +89,10 @@ def small_merge(items):
 
 # the fluid NBT shape forks: 1.20.1 {FluidName:"gt6:x",Amount:n} / 21.1 {amount:n,id:"gt6:x"}
 def tank_expect(node_key, tank_key, fluid, amount):
+    # the FluidStack NBT shape forks: 1.20.1 legacy writeToNBT / 21.1 codec save
     if node_key == "1.21.1":
-        return "%s:{amount:%d,id:\"%s\"}" % (tank_key, amount, fluid)
-    return "%s:{FluidName:\"%s\",Amount:%d}" % (tank_key, fluid, amount)
+        return "{amount:%d,id:\"%s\"}" % (amount, fluid)
+    return "{FluidName:\"%s\",Amount:%d}" % (fluid, amount)
 
 
 steps = [
@@ -139,25 +140,26 @@ steps = [
          node_cmds={"1.21.1": merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.21.1"]}),
     Step("data get block " + C, expect="active: 1b", poll=60),
     Step("data get block " + C, expect="maxprogress: 469762048L", poll=30),  # 64 x 7340032 — the PARALLEL 64 + DURATION T face
-    Step("data get block " + C, expect=tank_expect("1.20.1", "output_tank_1", "gt6:neutralmatter", 1920),
-         poll=300, node_expects={"1.21.1": tank_expect("1.21.1", "output_tank_1", "gt6:neutralmatter", 1920)}),
-    Step("data get block " + C, expect=tank_expect("1.20.1", "output_tank", "gt6:chargedmatter", 664),
-         poll=60, node_expects={"1.21.1": tank_expect("1.21.1", "output_tank", "gt6:chargedmatter", 664)}),
+    Step("data get block " + C + " output_tank_1", expect=tank_expect("1.20.1", "x", "gt6:neutralmatter", 1920),
+         poll=300, node_expects={"1.21.1": tank_expect("1.21.1", "x", "gt6:neutralmatter", 1920)}),
+    Step("data get block " + C + " output_tank", expect=tank_expect("1.20.1", "x", "gt6:chargedmatter", 664),
+         poll=60, node_expects={"1.21.1": tank_expect("1.21.1", "x", "gt6:chargedmatter", 664)}),
 
     phase("C: the auto-out bottom face — the sink holds the drained 1000 mB charge"),
-    Step("data get block " + S, expect=tank_expect("1.20.1", "tanks.in.0", "gt6:chargedmatter", 1000),
-         poll=60, node_expects={"1.21.1": tank_expect("1.21.1", "tanks.in.0", "gt6:chargedmatter", 1000)}),
+    Step('data get block ' + S + ' \"tanks.in.0\"', expect=tank_expect("1.20.1", "x", "gt6:chargedmatter", 1000),
+         poll=60, node_expects={"1.21.1": tank_expect("1.21.1", "x", "gt6:chargedmatter", 1000)}),
 
     phase("D: the small form (20415) — 1 iron ingot -> 26 + 30 mB in its own output tanks"),
+    Step("setblock " + T + " " + SMALL, expect="Changed the block"),
     Step("data merge block " + T + " {energy:10000000}", expect="Modified block data"),
     Step(small_merge([(0, ("minecraft:iron_ingot", 1))])["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": small_merge([(0, ("minecraft:iron_ingot", 1))])["1.21.1"]}),
     Step("data get block " + T, expect="active: 1b", poll=60),
     Step("data get block " + T, expect="maxprogress: 7340032L", poll=30),
-    Step("data get block " + T, expect=tank_expect("1.20.1", "tanks.out.0", "gt6:chargedmatter", 26),
-         poll=300, node_expects={"1.21.1": tank_expect("1.21.1", "tanks.out.0", "gt6:chargedmatter", 26)}),
-    Step("data get block " + T, expect=tank_expect("1.20.1", "tanks.out.1", "gt6:neutralmatter", 30),
-         poll=60, node_expects={"1.21.1": tank_expect("1.21.1", "tanks.out.1", "gt6:neutralmatter", 30)}),
+    Step('data get block ' + T + ' \"tanks.out.0\"', expect=tank_expect("1.20.1", "x", "gt6:chargedmatter", 26),
+         poll=300, node_expects={"1.21.1": tank_expect("1.21.1", "x", "gt6:chargedmatter", 26)}),
+    Step('data get block ' + T + ' \"tanks.out.1\"', expect=tank_expect("1.20.1", "x", "gt6:neutralmatter", 30),
+         poll=60, node_expects={"1.21.1": tank_expect("1.21.1", "x", "gt6:neutralmatter", 30)}),
 
     phase("E: teardown — the explicit band restore"),
     Step("fill %d %d %d %d %d %d air" % BAND, expect="filled"),

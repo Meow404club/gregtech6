@@ -6,6 +6,8 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -339,6 +341,34 @@ public class TileEntityMassfab extends TileEntityBase10MultiBlockMachine impleme
 		return getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, getBlockPos().below(), net.minecraft.core.Direction.UP);
 		 *///?}
 	}
+
+	// ---------------------------------------------------------------------------
+	// NBT — the second output tank (the GT6Distillation outputTankKey form)
+	// ---------------------------------------------------------------------------
+
+	/** The second tank's key ({@code output_tank_1}); tank 0 rides the base NBT_OUTPUT_TANK. */
+	public static String outputTankKey(int aIndex) {
+		return TileEntityBase10MultiBlockMachine.NBT_OUTPUT_TANK + "_" + aIndex;
+	}
+
+	//? if forge {
+	@Override
+	protected void saveAdditional(CompoundTag aNBT) {
+		super.saveAdditional(aNBT);
+		for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].writeToNBT(aNBT, outputTankKey(i)); // the Distillation :727-733 form
+	}
+
+	@Override
+	public void load(CompoundTag aNBT) {
+		super.load(aNBT);
+		for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, outputTankKey(i));
+	}
+	//?}
+	//? if neoforge {
+	/* // 21.1: the shared-chain (CompoundTag) signatures ride unchanged — the base
+	   // load/save are the shared-tree methods, so the overrides above are leg-invariant
+	   // apart from the provider-first serialization the base already carries.
+	 *///?}
 
 	// ---------------------------------------------------------------------------
 	// the energy face (MultiTileEntityBasicMachine.java:489-517)
