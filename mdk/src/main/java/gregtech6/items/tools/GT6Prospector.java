@@ -95,28 +95,41 @@ public final class GT6Prospector {
 	/**
 	 * The vanilla-ore trace table (the declared degradation face, class javadoc) —
 	 * both the stone and deepslate hosts per material (the 1.13 flattening doubled the
-	 * rows) plus the two nether rows.
+	 * rows) plus the two nether rows. Call-time MT reads (the GTWireSpecs:35 rule,
+	 * pinned by GT6RegistryStaticInitGuardTest): the eager {@code static {}} block read
+	 * MT.X inside {@code <clinit>}, so the table's contents rode the class-init order
+	 * lottery — this class's first load is the hammer's first {@code useOn} (a
+	 * post-init point today), but any construct-time reference added tomorrow would
+	 * freeze eighteen pre-init nulls and kill the trace arm with zero noise. The lazy
+	 * form pins the reads to call time.
 	 */
-	private static final Map<Block, OreDictMaterial> VANILLA_ORES = new HashMap<>();
-	static {
-		VANILLA_ORES.put(Blocks.IRON_ORE, MT.Fe);
-		VANILLA_ORES.put(Blocks.DEEPSLATE_IRON_ORE, MT.Fe);
-		VANILLA_ORES.put(Blocks.COPPER_ORE, MT.Cu);
-		VANILLA_ORES.put(Blocks.DEEPSLATE_COPPER_ORE, MT.Cu);
-		VANILLA_ORES.put(Blocks.GOLD_ORE, MT.Au);
-		VANILLA_ORES.put(Blocks.DEEPSLATE_GOLD_ORE, MT.Au);
-		VANILLA_ORES.put(Blocks.NETHER_GOLD_ORE, MT.Au);
-		VANILLA_ORES.put(Blocks.REDSTONE_ORE, MT.Redstone);
-		VANILLA_ORES.put(Blocks.DEEPSLATE_REDSTONE_ORE, MT.Redstone);
-		VANILLA_ORES.put(Blocks.DIAMOND_ORE, MT.Diamond);
-		VANILLA_ORES.put(Blocks.DEEPSLATE_DIAMOND_ORE, MT.Diamond);
-		VANILLA_ORES.put(Blocks.LAPIS_ORE, MT.Lapis);
-		VANILLA_ORES.put(Blocks.DEEPSLATE_LAPIS_ORE, MT.Lapis);
-		VANILLA_ORES.put(Blocks.COAL_ORE, MT.Coal);
-		VANILLA_ORES.put(Blocks.DEEPSLATE_COAL_ORE, MT.Coal);
-		VANILLA_ORES.put(Blocks.EMERALD_ORE, MT.Emerald);
-		VANILLA_ORES.put(Blocks.DEEPSLATE_EMERALD_ORE, MT.Emerald);
-		VANILLA_ORES.put(Blocks.NETHER_QUARTZ_ORE, MT.NetherQuartz);
+	private static volatile Map<Block, OreDictMaterial> sVanillaOres = null;
+
+	/** The vanilla-ore trace table, built on first use (one material generation — the lazy form). */
+	private static Map<Block, OreDictMaterial> vanillaOres() {
+		Map<Block, OreDictMaterial> tTable = sVanillaOres;
+		if (tTable == null) {
+			sVanillaOres = tTable = new HashMap<>();
+			tTable.put(Blocks.IRON_ORE, MT.Fe);
+			tTable.put(Blocks.DEEPSLATE_IRON_ORE, MT.Fe);
+			tTable.put(Blocks.COPPER_ORE, MT.Cu);
+			tTable.put(Blocks.DEEPSLATE_COPPER_ORE, MT.Cu);
+			tTable.put(Blocks.GOLD_ORE, MT.Au);
+			tTable.put(Blocks.DEEPSLATE_GOLD_ORE, MT.Au);
+			tTable.put(Blocks.NETHER_GOLD_ORE, MT.Au);
+			tTable.put(Blocks.REDSTONE_ORE, MT.Redstone);
+			tTable.put(Blocks.DEEPSLATE_REDSTONE_ORE, MT.Redstone);
+			tTable.put(Blocks.DIAMOND_ORE, MT.Diamond);
+			tTable.put(Blocks.DEEPSLATE_DIAMOND_ORE, MT.Diamond);
+			tTable.put(Blocks.LAPIS_ORE, MT.Lapis);
+			tTable.put(Blocks.DEEPSLATE_LAPIS_ORE, MT.Lapis);
+			tTable.put(Blocks.COAL_ORE, MT.Coal);
+			tTable.put(Blocks.DEEPSLATE_COAL_ORE, MT.Coal);
+			tTable.put(Blocks.EMERALD_ORE, MT.Emerald);
+			tTable.put(Blocks.DEEPSLATE_EMERALD_ORE, MT.Emerald);
+			tTable.put(Blocks.NETHER_QUARTZ_ORE, MT.NetherQuartz);
+		}
+		return tTable;
 	}
 
 	private GT6Prospector() {
@@ -150,14 +163,14 @@ public final class GT6Prospector {
 
 	/**
 	 * The sampling-arm trace half for one block: the GT6 ore blocks carry their material
-	 * as DATA ({@link GTOreBlock#material}); the vanilla ores ride {@link #VANILLA_ORES}.
+	 * as DATA ({@link GTOreBlock#material}); the vanilla ores ride {@link #vanillaOres()}.
 	 * Null = no trace.
 	 */
 	public static OreDictMaterial traceMaterial(BlockState aState) {
 		Block tBlock = aState.getBlock();
 		if (tBlock instanceof GTOreBlock tOre) return tOre.material;
 		if (tBlock instanceof GTOreFallingBlock tOre) return tOre.material;
-		return VANILLA_ORES.get(tBlock);
+		return vanillaOres().get(tBlock);
 	}
 
 	/**
