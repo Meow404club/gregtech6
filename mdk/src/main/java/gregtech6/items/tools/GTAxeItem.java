@@ -141,7 +141,7 @@ public class GTAxeItem extends Item implements GT6ToolLadder.LadderTool {
 	 */
 	@Override
 	public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
-		return !GT6ToolLadder.qualityGate(aStack, aState) && coarseFloor(aState);
+		return mines(aState) && !GT6ToolLadder.qualityGate(aStack, aState);
 	}
 
 	/** The quality-blind floor (the family iron-tier gate). */

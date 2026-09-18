@@ -240,7 +240,7 @@ public class GTPickaxeItem extends Item implements GT6ToolLadder.LadderTool {
 	 */
 	@Override
 	public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
-		return !qualityGate(aStack, aState) && coarseFloor(aState);
+		return mines(aState) && !qualityGate(aStack, aState);
 	}
 
 	/** The quality-blind floor (the steel-or-better semantics, shared both legs). */

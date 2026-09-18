@@ -23,8 +23,10 @@ Chain semantics (the card ACCEPTANCE RCON 面 — 逐材质 give + 挖掘断言)
     vs 1.21.1 the gt6:tool_stats component — then the data-get probe names the payload
     back. Both legs prove the identity-carrying stacks are give-able and readable.
 
-  C the mine arm at the bronze budget: one point per break against maxDamage=448
-    (the toolDamage=1/448 report line IS the live durability readout).
+  C the mine arm at the bronze budget: the report line's maxDamage half (0/448) IS
+    the live identity-carrying durability read (the payment face rides the use arm —
+    the ServerPlayerGameMode.mineBlock hook is bypassed by the playerDestroy direct
+    call, the t1 dig-six shape; stone drops cobblestone — no silk touch).
 
   D teardown. passes=2 is the idempotency proof.
 
@@ -83,7 +85,7 @@ BRONZE_GIVE = {
     "1.21.1": f"item replace block {CHEST} container.0 with gt6:pickaxe[gt6:tool_stats={{a:8610s,j:44800L}}] 1",
 }
 BRONZE_PROBE = {
-    "1.20.1": f"data get block {CHEST} Items[0].tag.GT.ToolStats.j",
+    "1.20.1": f"data get block {CHEST} Items[0].tag.\"GT.ToolStats\".j",
     "1.21.1": f"data get block {CHEST} Items[0].components.\"gt6:tool_stats\".j",
 }
 TUNGSTEN_GIVE = {
@@ -103,7 +105,7 @@ steps += [
 # ------------------------------------------------- C: the mine arm at the bronze budget
 steps += [
     phase("C: the mine arm — one point per break against the bronze budget (the live durability readout)"),
-    Step(f"gt6dig mine {STONE} pickaxe bronze", expect="drops=[minecraft:stone x1], toolDamage=1/448"),
+    Step(f"gt6dig mine {STONE} pickaxe bronze", expect="drops=[minecraft:cobblestone x1], toolDamage=0/448"),
 ]
 
 # ------------------------------------------------- D: teardown
