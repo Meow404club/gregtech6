@@ -2579,7 +2579,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
 						.recipeAdvancement()
 						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
-						.addCriterion("has_head_material", machineLadderCriterion(tForm, tMaterial))
+						.addCriterion("has_head_material", machineLadderCriterion(tForm, tMaterial) instanceof net.minecraft.tags.TagKey ? has((net.minecraft.tags.TagKey<Item>) machineLadderCriterion(tForm, tMaterial)) : has((net.minecraft.world.item.Item) machineLadderCriterion(tForm, tMaterial)))
 						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
 						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
 						.requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR);

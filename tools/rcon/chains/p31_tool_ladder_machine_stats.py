@@ -95,15 +95,15 @@ steps += [
     Step(f"gt6cover install {F(RIG_OVEN)} up gt6:cover_shutter", expect="OK"),
     phase("D2: Bronze crowbar dismantles the cover — the ladder max 448 on the live payment read"),
     Step(f"gt6tool dismantle {F(RIG_OVEN)} up Bronze",
-         expect="material=Bronze, toolDamage=10000, crowbarDamage=1/448, coverInInventory=true"),
+         expect="material=Bronze: toolDamage=10000, crowbarDamage=1/448, coverInInventory=true"),
     phase("D3: re-install, Steel crowbar — the ADR 512 arm"),
     Step(f"gt6cover install {F(RIG_OVEN)} up gt6:cover_shutter", expect="OK"),
     Step(f"gt6tool dismantle {F(RIG_OVEN)} up Steel",
-         expect="material=Steel, toolDamage=10000, crowbarDamage=1/512, coverInInventory=true"),
+         expect="material=Steel: toolDamage=10000, crowbarDamage=1/512, coverInInventory=true"),
     phase("D4: re-install, TungstenSteel crowbar — 5120"),
     Step(f"gt6cover install {F(RIG_OVEN)} up gt6:cover_shutter", expect="OK"),
     Step(f"gt6tool dismantle {F(RIG_OVEN)} up TungstenSteel",
-         expect="material=TungstenSteel, toolDamage=10000, crowbarDamage=1/5120, coverInInventory=true"),
+         expect="material=Tungstensteel: toolDamage=10000, crowbarDamage=1/5120, coverInInventory=true"),
 ]
 
 # --------------------------------- E: the negative (unknown tool id)
