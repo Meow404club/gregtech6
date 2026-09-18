@@ -490,7 +490,9 @@ SESSION_GROUPS = (
     # setblocks; the comb/fluid/dust identities ride the give+data-merge faces).
     # --group p31_bees matches through the chain's embedded name prefix.
     ("p31_bees",),
-keepfilter_reboot_probe"
+)
+
+PROBE_MODULE = "p15_keepfilter_reboot_probe"
 
 
 def load_chain(stem):
