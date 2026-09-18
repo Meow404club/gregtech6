@@ -50,8 +50,10 @@ class GT6OreCensusTest {
     private static final int PINNED_BLOCKS = 3922;
     /** Ledger 2 — the ore-3 faces: per-pair blockstates + item models, shared base models.
      *  29 since task p31-bedrock-ore-worldgen: the ONE shared bedrock cube
+     *  32 since task p31-nether-lens-end-yield: the THREE nether stand-in cubes
+     *  (nether_quartz_ore / amethyst_block / packed_mud, GT6NetherOres.KEYS)
      *  (gt6:block/ore/bedrock, minecraft:block/bedrock) joins the 28. */
-    private static final int PINNED_BASE_MODELS = 29;
+    private static final int PINNED_BASE_MODELS = 32;
     /** Ledger 3 — the ore-4 loot trees: one table per block, BOTH directory bands. */
     private static final int PINNED_LOOT_TOTAL = 2 * PINNED_BLOCKS;
     /** Ledger 4 — the ore-2 texture batch: 15 SETs x {ore, ore_small, + the two overlays}. */
@@ -180,7 +182,7 @@ class GT6OreCensusTest {
         }
         assertEquals(PINNED_LOOT_TOTAL, tLoot, "ledger 3: both directory bands carry the walk");
         // the shared base models: 11 vanilla-anchor JSONs + the 17 GT-stone models
-        // under ore/stones/ + the p31-bedrock-ore bedrock cube = 29
+        // under ore/stones/ + the p31-bedrock-ore bedrock cube + the 3 p31-nether stand-ins = 32
         int tBase = 0;
         try (Stream<Path> tWalk = Files.walk(tAssets.resolve("models").resolve("block").resolve("ore"))) {
             tBase = (int) tWalk.filter(Files::isRegularFile)
