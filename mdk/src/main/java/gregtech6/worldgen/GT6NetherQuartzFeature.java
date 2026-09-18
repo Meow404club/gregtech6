@@ -57,7 +57,9 @@ public class GT6NetherQuartzFeature extends Feature<NoneFeatureConfiguration> {
         Block tQuartz = GT6NetherOres.block("dense_nether_quartz_ore");
         if (tQuartz == null) return false;
         int tMinBuildY = tLevel.getMinBuildHeight(), tMaxBuildY = tLevel.getMaxBuildHeight() - 1;
-        boolean rPlaced = false;
+        // :56 — upstream returns T unconditionally (the return is the ran-face, not a
+        // conversion count: the per-column conversions are the noise's business); the
+        // /place command relies on it ("Failed to place feature" otherwise)
         for (int i = 0; i < 16; i++) for (int j = 0; j < 16; j++) {
             int tX = tWork.getMinBlockX() + i, tZ = tWork.getMinBlockZ() + j;
             // the two slices, the offset pair (0, 64) verbatim (WorldgenNetherQuartz.java:51/:53)
@@ -67,10 +69,9 @@ public class GT6NetherQuartzFeature extends Feature<NoneFeatureConfiguration> {
                 BlockPos tPos = new BlockPos(tX, tY, tZ);
                 if (tLevel.getBlockState(tPos).getBlock() == Blocks.NETHERRACK) { // :52 — the host face
                     tLevel.setBlock(tPos, tQuartz.defaultBlockState(), 2);
-                    rPlaced = true;
                 }
             }
         }
-        return rPlaced;
+        return true;
     }
 }

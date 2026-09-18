@@ -55,7 +55,6 @@ public class GT6NetherClayFeature extends Feature<NoneFeatureConfiguration> {
         if (tClay == null) return false;
         int tUpperBound = LAVA_SEA_LEVEL + 3, tLowerBound = LAVA_SEA_LEVEL + 2; // :49 — y34/y33
         int tMinBuildY = tLevel.getMinBuildHeight(), tMaxBuildY = tLevel.getMaxBuildHeight() - 1;
-        boolean rPlaced = false;
         for (int i = 0; i < 16; i++) for (int j = 0; j < 16; j++) {
             int tX = tWork.getMinBlockX() + i, tZ = tWork.getMinBlockZ() + j;
             if (tNoise.get(tX, GATE_PROBE_Y, tZ, GATE_CELLS) != 0) continue; // :52 — the 1/8 column gate
@@ -64,10 +63,9 @@ public class GT6NetherClayFeature extends Feature<NoneFeatureConfiguration> {
                 BlockPos tPos = new BlockPos(tX, tY, tZ);
                 if (tLevel.getBlockState(tPos).getBlock() == Blocks.NETHERRACK) { // :53 — the host face
                     tLevel.setBlock(tPos, tClay.defaultBlockState(), 2);
-                    rPlaced = true;
                 }
             }
         }
-        return rPlaced;
+        return true; // :56 — T unconditionally, upstream verbatim (the ran-face semantics)
     }
 }
