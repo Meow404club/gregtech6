@@ -157,6 +157,21 @@ public final class GT6Worldgen {
     /** The nether-lens placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk; the per-chunk row rolls live in the Feature). */
     public static final ResourceKey<PlacedFeature> NETHER_LENSES_PLACED = placedKeyOf("nether_lenses");
 
+    // ------------------------------------------------------------------
+    // The nether three-form band (task p31-nether-lens-end-yield spec ①):
+    // WorldgenNetherQuartz (:600)/WorldgenNetherCrystals (:601)/WorldgenNetherClay
+    // (:599), all default T upstream and all GEN_NETHER — three NoneFeatureConfiguration
+    // features over the GT6WorleyNoise port. The payloads are the GT6NetherOres
+    // band blocks (the minimal-carrier ruling).
+    // ------------------------------------------------------------------
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_QUARTZ_CONFIGURED = configKey("nether_quartz");
+    public static final ResourceKey<PlacedFeature> NETHER_QUARTZ_PLACED = placedKeyOf("nether_quartz");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_CRYSTALS_CONFIGURED = configKey("nether_crystals");
+    public static final ResourceKey<PlacedFeature> NETHER_CRYSTALS_PLACED = placedKeyOf("nether_crystals");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_CLAY_CONFIGURED = configKey("nether_clay");
+    public static final ResourceKey<PlacedFeature> NETHER_CLAY_PLACED = placedKeyOf("nether_clay");
+
     // ------------------------------------------------------------------ the tree band (task p30-w6-t1-trees-nine)
 
     /**

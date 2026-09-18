@@ -119,6 +119,22 @@ public final class GT6Features {
         return tFeature;
     }
 
+    /**
+     * The three nether surface forms (task p31-nether-lens-end-yield spec ①) — quartz /
+     * crystals / clay, one registration row each ({@code gt6:nether_quartz},
+     * {@code gt6:nether_crystals}, {@code gt6:nether_clay}), all NoneFeatureConfiguration
+     * (the upstream constants live in the classes, not a config surface). The
+     * configured/placed/biome-modifier rows hang off them in GT6WorldgenDatagen.
+     */
+    public static final GT6NetherQuartzFeature NETHER_QUARTZ = registerForm("nether_quartz", new GT6NetherQuartzFeature());
+    public static final GT6NetherCrystalFeature NETHER_CRYSTALS = registerForm("nether_crystals", new GT6NetherCrystalFeature());
+    public static final GT6NetherClayFeature NETHER_CLAY = registerForm("nether_clay", new GT6NetherClayFeature());
+
+    private static <T extends Feature<?>> T registerForm(String aPath, T aFeature) {
+        FEATURES.register(aPath, () -> aFeature);
+        return aFeature;
+    }
+
     /** The feature instance of a kind (index-aligned with KINDS). */
     public static GT6TreeFeature treeFeature(GT6TreeKind aKind) {
         return (GT6TreeFeature) TREE_FEATURES.get(aKind.ordinal());

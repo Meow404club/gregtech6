@@ -13,6 +13,8 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import gregtech6.client.ore.GTOreBakedModel;
 import gregtech6.registry.GT6BedrockOreBlocks;
+import gregtech6.registry.GT6NetherOres;
+import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GT6OreBlocks;
 
 /**
@@ -100,6 +102,26 @@ public final class GT6OreBlockStates extends BlockStateProvider {
         }
         LOGGER.info("GT6 bedrock ore blocks: {} per-pair blockstates + item models over the 1 shared bedrock cube",
                 tBedrock);
+
+        // ------------------------------------------------------------------
+        // The nether surface-form band (task p31-nether-lens-end-yield, the coordinator
+        // option A): the 14 minimal carriers over per-TEXTURE shared cube models — the
+        // vanilla stand-ins (GT6NetherOres.NetherOreKey.vanillaTexture), no ore overlay,
+        // no item models (NO BlockItem is the band's whole point), no tint (the carriers
+        // are plain Blocks, no bake dispatch). 14 blockstates + ≤3 shared models.
+        // ------------------------------------------------------------------
+        int tNether = 0;
+        for (GT6NetherOres.NetherOreKey tKey : GT6NetherOres.KEYS) {
+            Block tBlock = GT6NetherOres.block(tKey.path());
+            if (tBlock == null) throw new IllegalStateException("the nether surface-form band requires the "
+                    + tKey.path() + " registry face — GT6NetherOres registration broke");
+            ModelFile tModel = tShared.computeIfAbsent(ResourceLocation.fromNamespaceAndPath("minecraft", tKey.vanillaTexture()),
+                    tTex -> tintedCubeAll(modelNameOf(tTex), tTex));
+            simpleBlock(tBlock, tModel);
+            tNether++;
+        }
+        LOGGER.info("GT6 nether surface blocks: {} blockstates over {} shared stand-in models (no item models — no BlockItem)",
+                tNether, tShared.size());
     }
 
     /**

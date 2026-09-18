@@ -243,6 +243,14 @@ public final class GT6WorldgenDatagen {
         // ({@link #NETHER_LENS_TABLE}; the same tier-a face).
         FeatureUtils.register(ctx, GT6Worldgen.NETHER_LENSES_CONFIGURED, GT6Features.NETHER_LENSES,
                 new GTLensConfig.Table(NETHER_LENS_TABLE));
+        // task p31-nether-lens-end-yield — the three nether surface forms: quartz/crystals/
+        // clay, NoneFeatureConfiguration each (the upstream constants live in the classes).
+        FeatureUtils.register(ctx, GT6Worldgen.NETHER_QUARTZ_CONFIGURED, GT6Features.NETHER_QUARTZ,
+                NoneFeatureConfiguration.INSTANCE);
+        FeatureUtils.register(ctx, GT6Worldgen.NETHER_CRYSTALS_CONFIGURED, GT6Features.NETHER_CRYSTALS,
+                NoneFeatureConfiguration.INSTANCE);
+        FeatureUtils.register(ctx, GT6Worldgen.NETHER_CLAY_CONFIGURED, GT6Features.NETHER_CLAY,
+                NoneFeatureConfiguration.INSTANCE);
         // task p31-bedrock-ore-worldgen — the ONE bedrock-ore configured feature: the
         // registered GT6BedrockOreFeature instance over the 46-row table (the same tier-a
         // face as the vein/lens tables).
@@ -321,6 +329,18 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.NETHER_LENSES_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.NETHER_LENSES_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        // task p31-nether-lens-end-yield — the three form placed features: Count 1 CONSTANT +
+        // InSquare + BiomeFilter (the conflict-audit posture; each Feature walks its own
+        // 16x16 columns / walk on the coordinate-seeded stream — no Y placement).
+        PlacementUtils.register(ctx, GT6Worldgen.NETHER_QUARTZ_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.NETHER_QUARTZ_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        PlacementUtils.register(ctx, GT6Worldgen.NETHER_CRYSTALS_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.NETHER_CRYSTALS_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        PlacementUtils.register(ctx, GT6Worldgen.NETHER_CLAY_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.NETHER_CLAY_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         bootstrapOrePlaced(ctx, tFeatures); // task p30-w6-small-ore-datagen — tail-append
     }
 
@@ -384,6 +404,23 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_LENSES_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task p31-nether-lens-end-yield — the three form biome modifiers (GEN_NETHER,
+        // Loader_Worldgen.java:599-601): quartz rides the ore pass (a netherrack
+        // replacement, the blob convention), the crystals too (ore blocks in caves), the
+        // clay rides LOCAL_MODIFICATIONS (the soil-band disk-pass convention — a surface
+        // band, not an ore).
+        ctx.register(biomeModifierKeyOf("nether_quartz"), addFeatures(
+                tBiomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_QUARTZ_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        ctx.register(biomeModifierKeyOf("nether_crystals"), addFeatures(
+                tBiomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_CRYSTALS_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        ctx.register(biomeModifierKeyOf("nether_clay"), addFeatures(
+                tBiomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_CLAY_PLACED)),
+                GenerationStep.Decoration.LOCAL_MODIFICATIONS));
         bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-small-ore-datagen — tail-append
     }
 
