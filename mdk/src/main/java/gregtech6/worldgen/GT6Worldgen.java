@@ -330,6 +330,20 @@ public final class GT6Worldgen {
     /** The large-vein placed feature (one attempt per chunk — the per-chunk origin-grid scan lives in the Feature). */
     public static final ResourceKey<PlacedFeature> LARGE_VEINS_PLACED = placedKeyOf("large_veins");
 
+    // ------------------------------------------------------------------
+    // The bedrock-ore band (task p31-bedrock-ore-worldgen) — the single Feature over the
+    // 46-row bedrock-ore table; key form = the large-vein band's path-direct shape.
+    // ------------------------------------------------------------------
+
+    /** The bedrock-ore configured feature (the GT6BedrockOreFeature instance + the 46-row table). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> BEDROCK_ORES_CONFIGURED = configKey("bedrock_ores");
+    /**
+     * The bedrock-ore placed feature (Count 1 constant + InSquare + BiomeFilter — one
+     * attempt per chunk; the per-chunk row rolls live in the Feature on the coordinate-
+     * seeded stream, the conflict-audit Count-constant/InSquare/BiomeFilter posture).
+     */
+    public static final ResourceKey<PlacedFeature> BEDROCK_ORES_PLACED = placedKeyOf("bedrock_ores");
+
     private GT6Worldgen() {
     }
 }

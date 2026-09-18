@@ -68,6 +68,7 @@ import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.worldgen.GT6FallenLogFeature;
 import gregtech6.worldgen.GT6Features;
 import gregtech6.worldgen.GT6Worldgen;
+import gregtech6.worldgen.GTBedrockOreConfig;
 import gregtech6.worldgen.GTLensConfig;
 import gregtech6.worldgen.GTVeinConfig;
 import gregtech6.worldgen.GTOreWorldgen;
@@ -237,6 +238,11 @@ public final class GT6WorldgenDatagen {
         // face as the vein table).
         FeatureUtils.register(ctx, GT6Worldgen.STRATA_LENSES_CONFIGURED, GT6Features.STRATA_LENSES,
                 new GTLensConfig.Table(STRATA_LENS_TABLE));
+        // task p31-bedrock-ore-worldgen — the ONE bedrock-ore configured feature: the
+        // registered GT6BedrockOreFeature instance over the 46-row table (the same tier-a
+        // face as the vein/lens tables).
+        FeatureUtils.register(ctx, GT6Worldgen.BEDROCK_ORES_CONFIGURED, GT6Features.BEDROCK_ORES,
+                new GTBedrockOreConfig.Table(BEDROCK_ORE_TABLE));
         bootstrapOreConfigured(ctx); // task p30-w6-small-ore-datagen — tail-append
     }
 
@@ -296,6 +302,13 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.STRATA_LENSES_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.STRATA_LENSES_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        // task p31-bedrock-ore-worldgen — the bedrock-ore placed feature: Count 1 CONSTANT +
+        // InSquare + BiomeFilter (the conflict-audit posture; the 1/P row rolls ride the
+        // Feature's coordinate-seeded stream, no Y placement — the rows carry their own
+        // bedrock-anchored bands).
+        PlacementUtils.register(ctx, GT6Worldgen.BEDROCK_ORES_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.BEDROCK_ORES_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         bootstrapOrePlaced(ctx, tFeatures); // task p30-w6-small-ore-datagen — tail-append
     }
 
@@ -344,6 +357,12 @@ public final class GT6WorldgenDatagen {
         // UNDERGROUND_ORES step.
         ctx.register(biomeModifierKeyOf("strata_lenses"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.STRATA_LENSES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task p31-bedrock-ore-worldgen — the bedrock-ore biome modifier: EVERY overworld
+        // biome (the no-biome-gate impl note carried over: upstream WorldgenOresBedrock has
+        // no biome parameter), at the UNDERGROUND_ORES step.
+        ctx.register(biomeModifierKeyOf("bedrock_ores"), addFeatures(tOverworld,
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BEDROCK_ORES_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-small-ore-datagen — tail-append
     }
@@ -828,4 +847,77 @@ public final class GT6WorldgenDatagen {
         new GTLensConfig("kimberlite" , 3,  8,  48, 32, 14),
         new GTLensConfig("granite_red", 4, 32, 104, 48,  9),
         new GTLensConfig("komatiite"  , 4,  8,  64, 36, 12));
+
+    // ------------------------------------------------------------------
+    // The bedrock-ore band (task p31-bedrock-ore-worldgen) — the 46-row table,
+    // Loader_Worldgen.java:725-770 row-for-row (the :772 hexorium row rides the MD.HEX
+    // mod-gated compat pool, the 53-axis ruling face). Column order
+    // (WorldgenOresBedrock.java:61-65): name / probability / material; the "overworld"
+    // column = the row listed GEN_FLOOR (:725-757 true; the nether/mars/BL rows :758-770
+    // false — the per-chunk independent rolls walk the dimension's own rows only, and the
+    // offworld rows stay table-census data until the dim cards hang modifiers). The rows
+    // roll INDEPENDENTLY (one WorldgenObject per row upstream, the :142 gate each) — NOT a
+    // weighted exactly-one draw. The indicator columns (mIndicatorRocks=T on every row +
+    // the flower pairs) are the declared spec deviation — the GTBedrockOreConfig javadoc.
+    // ------------------------------------------------------------------
+
+    /** The row helper: an overworld (GEN_FLOOR) row. */
+    private static GTBedrockOreConfig bedrock(String aName, int aProbability, OreDictMaterial aMaterial) {
+        return new GTBedrockOreConfig(aName, aMaterial, aProbability, true);
+    }
+
+    /** The row helper for the offworld rows (:758-770 — never drawn overworld, kept for the table census). */
+    private static GTBedrockOreConfig bedrockOffworld(String aName, int aProbability, OreDictMaterial aMaterial) {
+        return new GTBedrockOreConfig(aName, aMaterial, aProbability, false);
+    }
+
+    /** The ONE 46-row bedrock-ore table — the card spec ② "上游行表→Feature 形". */
+    public static final List<GTBedrockOreConfig> BEDROCK_ORE_TABLE = List.of(
+        bedrock("ore.bedrock.diamond"     , 128000, MT.Diamond                    ), // :725
+        bedrock("ore.bedrock.tungstate"   ,  96000, MT.OREMATS.Tungstate          ), // :726
+        bedrock("ore.bedrock.ferberite"   ,  96000, MT.OREMATS.Ferberite          ), // :727
+        bedrock("ore.bedrock.wolframite"  ,  96000, MT.OREMATS.Wolframite         ), // :728
+        bedrock("ore.bedrock.stolzite"    ,  96000, MT.OREMATS.Stolzite           ), // :729
+        bedrock("ore.bedrock.scheelite"   ,  96000, MT.OREMATS.Scheelite          ), // :730
+        bedrock("ore.bedrock.huebnerite"  ,  96000, MT.OREMATS.Huebnerite         ), // :731
+        bedrock("ore.bedrock.russellite"  ,  96000, MT.OREMATS.Russellite         ), // :732
+        bedrock("ore.bedrock.pinalite"    ,  96000, MT.OREMATS.Pinalite           ), // :733
+        bedrock("ore.bedrock.uraninite"   ,  60000, MT.OREMATS.Uraninite          ), // :734
+        bedrock("ore.bedrock.pitchblende" ,  60000, MT.OREMATS.Pitchblende        ), // :735
+        bedrock("ore.bedrock.gold.a"      ,  32000, MT.Au                         ), // :736
+        bedrock("ore.bedrock.gold.b"      ,  32000, MT.Au                         ), // :737
+        bedrock("ore.bedrock.cooperite"   ,  16000, MT.OREMATS.Cooperite          ), // :738
+        bedrock("ore.bedrock.copper"      ,  16000, MT.Cu                         ), // :739
+        bedrock("ore.bedrock.monazite"    ,  16000, MT.Monazite                   ), // :740
+        bedrock("ore.bedrock.powellite"   ,  14000, MT.OREMATS.Powellite          ), // :741
+        bedrock("ore.bedrock.bastnasite"  ,   8000, MT.OREMATS.Bastnasite         ), // :742
+        bedrock("ore.bedrock.stibnite"    ,   8000, MT.OREMATS.Arsenopyrite       ), // :743 (the arsenopyrite-material row)
+        bedrock("ore.bedrock.redstone"    ,   7000, MT.Redstone                   ), // :744
+        bedrock("ore.bedrock.vanadium"    ,   6000, MT.V2O5                       ), // :745
+        bedrock("ore.bedrock.galena"      ,   6000, MT.OREMATS.Galena             ), // :746
+        bedrock("ore.bedrock.coal"        ,   5000, MT.Coal                       ), // :747
+        bedrock("ore.bedrock.graphite"    ,   5000, MT.Graphite                   ), // :748
+        bedrock("ore.bedrock.stibnite"    ,   4000, MT.OREMATS.Stibnite           ), // :749
+        bedrock("ore.bedrock.hematite"    ,   4000, MT.Fe2O3                      ), // :750
+        bedrock("ore.bedrock.sphalerite"  ,   3000, MT.OREMATS.Sphalerite         ), // :751
+        bedrock("ore.bedrock.smithsonite" ,   3000, MT.OREMATS.Smithsonite        ), // :752
+        bedrock("ore.bedrock.pentlandite" ,   3000, MT.OREMATS.Pentlandite        ), // :753
+        bedrock("ore.bedrock.saltpeter"   ,   3000, MT.Niter                      ), // :754
+        bedrock("ore.bedrock.bauxite"     ,   2000, MT.OREMATS.Bauxite            ), // :755
+        bedrock("ore.bedrock.cassiterite" ,   2000, MT.OREMATS.Cassiterite        ), // :756
+        bedrock("ore.bedrock.chalcopyrite",   2000, MT.OREMATS.Chalcopyrite       ), // :757
+        bedrockOffworld("ore.bedrock.voidquartz"   ,  4000, MT.VoidQuartz     ), // :758
+        bedrockOffworld("ore.bedrock.glowstone"    ,  4000, MT.Glowstone      ), // :759
+        bedrockOffworld("ore.bedrock.gloomstone"   ,  4000, MT.Gloomstone     ), // :760
+        bedrockOffworld("ore.bedrock.efrine"       ,  2000, MT.Efrine         ), // :761
+        bedrockOffworld("ore.bedrock.netherquartz" ,  2000, MT.NetherQuartz   ), // :762
+        bedrockOffworld("ore.bedrock.firestone"    ,  8000, MT.Firestone      ), // :763
+        bedrockOffworld("ore.bedrock.ancientdebris",  4000, MT.AncientDebris  ), // :764
+        bedrockOffworld("ore.bedrock.naquadah"     , 10000, MT.Nq             ), // :765
+        bedrockOffworld("ore.bedrock.desh"         ,  2000, MT.Desh           ), // :766
+        bedrockOffworld("ore.bedrock.dolamide"     ,  5000, MT.Dolamide       ), // :767
+        bedrockOffworld("ore.bedrock.adamantine"   , 10000, MT.Adamantine     ), // :768
+        bedrockOffworld("ore.bedrock.octine"       ,  5000, MT.Octine         ), // :769
+        bedrockOffworld("ore.bedrock.syrmorite"    ,  2000, MT.Syrmorite      )  // :770
+    );
 }
