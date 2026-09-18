@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/licorice"
+    },
+    "T": {
+      "item": "gt6:screw_licorice"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "licorice",
+  "pattern": [
+    "PPd",
+    "hPT",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:monkey_wrench"
+  }
+}

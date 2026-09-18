@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/crystal_matrix"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "crystal_matrix",
+  "pattern": [
+    "II ",
+    "IIh",
+    "II "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hammer"
+  }
+}

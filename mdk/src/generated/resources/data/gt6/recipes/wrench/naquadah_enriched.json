@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/naquadah_enriched"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "naquadah_enriched",
+  "pattern": [
+    "PhP",
+    " P ",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:wrench"
+  },
+  "show_notification": true
+}

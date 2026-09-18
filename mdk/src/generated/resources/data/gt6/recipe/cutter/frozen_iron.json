@@ -1,0 +1,34 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/frozen_iron"
+    },
+    "S": {
+      "item": "gt6:stick_frozen_iron"
+    },
+    "T": {
+      "item": "gt6:screw_frozen_iron"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "frozen_iron",
+  "pattern": [
+    "PfP",
+    "hPd",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:cutter"
+  }
+}

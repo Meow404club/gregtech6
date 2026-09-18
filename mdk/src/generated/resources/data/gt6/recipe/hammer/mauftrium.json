@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/mauftrium"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "mauftrium",
+  "pattern": [
+    "II ",
+    "IIh",
+    "II "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hammer"
+  }
+}

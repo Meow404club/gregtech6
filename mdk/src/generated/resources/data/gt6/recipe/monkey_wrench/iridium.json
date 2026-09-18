@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/iridium"
+    },
+    "T": {
+      "item": "gt6:screw_iridium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "iridium",
+  "pattern": [
+    "PPd",
+    "hPT",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:monkey_wrench"
+  }
+}

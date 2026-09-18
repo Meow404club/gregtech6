@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/uranium235"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "uranium235",
+  "pattern": [
+    "II ",
+    "IIh",
+    "II "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hammer"
+  }
+}

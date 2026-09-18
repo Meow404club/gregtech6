@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/osmium_elemental"
+    },
+    "S": {
+      "item": "gt6:stick_osmium_elemental"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "osmium_elemental",
+  "pattern": [
+    "hPf",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:chisel"
+  },
+  "show_notification": true
+}

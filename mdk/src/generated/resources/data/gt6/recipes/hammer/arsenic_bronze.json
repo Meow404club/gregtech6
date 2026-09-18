@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/arsenic_bronze"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "arsenic_bronze",
+  "pattern": [
+    "II ",
+    "IIh",
+    "II "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:hammer"
+  },
+  "show_notification": true
+}

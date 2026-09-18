@@ -1,0 +1,34 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/iron"
+    },
+    "S": {
+      "item": "gt6:stick_iron"
+    },
+    "T": {
+      "item": "gt6:screw_iron"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "iron",
+  "pattern": [
+    "PfP",
+    "hPd",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:cutter"
+  }
+}

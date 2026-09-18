@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/trinaquadalloy"
+    },
+    "S": {
+      "item": "gt6:stick_trinaquadalloy"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "trinaquadalloy",
+  "pattern": [
+    "hPf",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chisel"
+  }
+}

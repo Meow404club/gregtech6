@@ -1,0 +1,34 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/alumite"
+    },
+    "S": {
+      "item": "gt6:stick_alumite"
+    },
+    "T": {
+      "item": "gt6:screw_alumite"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "alumite",
+  "pattern": [
+    "PfP",
+    "hPd",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:cutter"
+  }
+}

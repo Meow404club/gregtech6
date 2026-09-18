@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/cobalt_brass"
+    },
+    "T": {
+      "item": "gt6:screw_cobalt_brass"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "cobalt_brass",
+  "pattern": [
+    "PPd",
+    "hPT",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:monkey_wrench"
+  }
+}

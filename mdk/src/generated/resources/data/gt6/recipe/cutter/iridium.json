@@ -1,0 +1,34 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/iridium"
+    },
+    "S": {
+      "item": "gt6:stick_iridium"
+    },
+    "T": {
+      "item": "gt6:screw_iridium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "iridium",
+  "pattern": [
+    "PfP",
+    "hPd",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:cutter"
+  }
+}

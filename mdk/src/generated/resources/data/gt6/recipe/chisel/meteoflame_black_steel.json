@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/meteoflame_black_steel"
+    },
+    "S": {
+      "item": "gt6:stick_meteoflame_black_steel"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "meteoflame_black_steel",
+  "pattern": [
+    "hPf",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chisel"
+  }
+}

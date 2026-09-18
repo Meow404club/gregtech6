@@ -1,0 +1,34 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/chromium_dioxide"
+    },
+    "S": {
+      "item": "gt6:stick_chromium_dioxide"
+    },
+    "T": {
+      "item": "gt6:screw_chromium_dioxide"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "chromium_dioxide",
+  "pattern": [
+    "PfP",
+    "hPd",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:cutter"
+  }
+}

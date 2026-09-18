@@ -1,0 +1,24 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "gt6:stick_oriharukon"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "oriharukon",
+  "pattern": [
+    "hS",
+    "Sf"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:screwdriver"
+  }
+}

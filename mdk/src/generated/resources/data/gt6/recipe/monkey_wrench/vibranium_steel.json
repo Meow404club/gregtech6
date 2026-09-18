@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/vibranium_steel"
+    },
+    "T": {
+      "item": "gt6:screw_vibranium_steel"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "vibranium_steel",
+  "pattern": [
+    "PPd",
+    "hPT",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:monkey_wrench"
+  }
+}

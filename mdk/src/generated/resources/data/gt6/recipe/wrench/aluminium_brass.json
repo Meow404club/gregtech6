@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/aluminium_brass"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "aluminium_brass",
+  "pattern": [
+    "PhP",
+    " P ",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:wrench"
+  }
+}

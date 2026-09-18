@@ -1,0 +1,35 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/licorice"
+    },
+    "S": {
+      "item": "gt6:stick_licorice"
+    },
+    "T": {
+      "item": "gt6:screw_licorice"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "licorice",
+  "pattern": [
+    "PfP",
+    "hPd",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:cutter"
+  },
+  "show_notification": true
+}

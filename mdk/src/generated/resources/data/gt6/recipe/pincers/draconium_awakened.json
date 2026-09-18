@@ -1,0 +1,31 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "gt6:stick_draconium_awakened"
+    },
+    "T": {
+      "item": "gt6:screw_draconium_awakened"
+    },
+    "X": {
+      "item": "gt6:plate_curved_draconium_awakened"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "draconium_awakened",
+  "pattern": [
+    "XhX",
+    " T ",
+    "SdS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pincers"
+  }
+}

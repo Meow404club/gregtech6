@@ -1,0 +1,31 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "gt6:stick_bedrock_hslaalloy"
+    },
+    "T": {
+      "item": "gt6:screw_bedrock_hslaalloy"
+    },
+    "X": {
+      "item": "gt6:plate_curved_bedrock_hslaalloy"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "bedrock_hslaalloy",
+  "pattern": [
+    "XhX",
+    " T ",
+    "SdS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pincers"
+  }
+}
