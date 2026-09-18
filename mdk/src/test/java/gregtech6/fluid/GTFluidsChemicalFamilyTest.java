@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 import net.minecraft.resources.ResourceLocation;
 
 import gregapi.data.MT;
-import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.registry.GTMaterialItems;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
@@ -248,8 +248,11 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 	 */
 	@Test
 	public void materialSpecBindingRoundTrips() {
-		MaterialRegistry.INSTANCE.reset();
-		MT.init();
+		// the mdk single-JVM probe convention (GTMaterialBlocksRegistrationTest @BeforeAll):
+		// idempotent init only, NEVER a registry reset — on the 21.1 leg the test JVM boots
+		// through FML itself, and a test-time reset races the boot thread's block
+		// registration walk (the getSeamIsNullBeforeRegistration sentinel lives on it).
+		GTMaterialItems.initMaterials();
 		// the gas legs (the D/T/He_3 fusion feedstock, Loader_Recipes_Other.java:949-963 .gas() consumers)
 		for (OreDictMaterial tGas : new OreDictMaterial[] {MT.D, MT.T, MT.He_3}) {
 			GTFluids.ChemicalFluidSpec tSpec = GTFluids.specOf(tGas, false);
