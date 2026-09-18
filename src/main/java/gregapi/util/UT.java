@@ -35,6 +35,15 @@ public class UT {
 			return aNumber / aDivider + (aNumber % aDivider == 0 ? 0 : 1);
 		}
 
+		/** Translates Amount of aUnit1 to Amount of aUnit2. */ // UT.java:1677-1684 verbatim — the single in-repo definition (p31 units convergence; efficiency 5000 = 2x the required progress = half speed)
+		public static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
+			if (aTargetUnit == 0) return 0;
+			if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
+			if (aOriginalUnit %   aTargetUnit == 0) {aOriginalUnit /=   aTargetUnit;   aTargetUnit = 1;} else
+			if (aTargetUnit   % aOriginalUnit == 0) {  aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
+			return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
+		}
+
 		/** Binds a Value between two Boundaries. */ // UT.java:1544-1546 verbatim (added by task gt-material-model)
 		public static long bind(long aMin, long aMax, long aBoundValue) {
 			return aMin > aMax ? Math.max(aMax, Math.min(aMin, aBoundValue)) : Math.max(aMin, Math.min(aMax, aBoundValue));

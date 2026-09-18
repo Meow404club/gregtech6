@@ -56,17 +56,8 @@ public final class CruciblePhysics {
 	}
 
 	// ====================================================================================
-	// the arithmetic primitives (upstream UT.Code units/scale, not yet in root UT.Code)
+	// the arithmetic primitive scale (units lives in UT.Code as the single in-repo definition)
 	// ====================================================================================
-
-	/** Translates Amount of aUnit1 to Amount of aUnit2. UT.java:1677-1684 verbatim. */
-	public static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit %   aTargetUnit == 0) {aOriginalUnit /=   aTargetUnit;   aTargetUnit = 1;} else
-		if (aTargetUnit   % aOriginalUnit == 0) {  aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
-		return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
-	}
 
 	/** A Value for a Scale between 0 and aMax. UT.java:1534-1538 verbatim. */
 	public static long scale(long aValue, long aMax, long aScale, boolean aInvert) {
@@ -130,21 +121,21 @@ public final class CruciblePhysics {
 		long tNewTemperature = aOwnTemperature;
 		if (tWeight1 + tWeight2 > 0) {
 			// :333 verbatim — the +1/-1 sign rides the old-vs-incoming temperature comparison
-			tNewTemperature = aTemperature + (aOwnTemperature > aTemperature ? +1 : -1) * units(Math.abs(aOwnTemperature - aTemperature), (long)(tWeight1 + tWeight2), (long)tWeight1, false);
+			tNewTemperature = aTemperature + (aOwnTemperature > aTemperature ? +1 : -1) * UT.Code.units(Math.abs(aOwnTemperature - aTemperature), (long)(tWeight1 + tWeight2), (long)tWeight1, false);
 		}
 		for (OreDictMaterialStack tMaterial : aIncoming) { // :334-347
 			if (tMaterial == null) continue;
 			if (tNewTemperature >= tMaterial.mMaterial.mMeltingPoint) {
 				if (aTemperature < tMaterial.mMaterial.mMeltingPoint) {
 					// :337 — hot crucible + cold solid: convert to the smelting target
-					new OreDictMaterialStack(tMaterial.mMaterial.mTargetSmelting.mMaterial, units(tMaterial.mAmount, U, tMaterial.mMaterial.mTargetSmelting.mAmount, false)).addToList(aContent);
+					new OreDictMaterialStack(tMaterial.mMaterial.mTargetSmelting.mMaterial, UT.Code.units(tMaterial.mAmount, U, tMaterial.mMaterial.mTargetSmelting.mAmount, false)).addToList(aContent);
 				} else {
 					tMaterial.addToList(aContent); // :339
 				}
 			} else {
 				if (aTemperature >= tMaterial.mMaterial.mMeltingPoint) {
 					// :343 — cold crucible + hot melt: convert to the solidifying target
-					new OreDictMaterialStack(tMaterial.mMaterial.mTargetSolidifying.mMaterial, units(tMaterial.mAmount, U, tMaterial.mMaterial.mTargetSolidifying.mAmount, false)).addToList(aContent);
+					new OreDictMaterialStack(tMaterial.mMaterial.mTargetSolidifying.mMaterial, UT.Code.units(tMaterial.mAmount, U, tMaterial.mMaterial.mTargetSolidifying.mAmount, false)).addToList(aContent);
 				} else {
 					tMaterial.addToList(aContent); // :345
 				}
@@ -320,7 +311,7 @@ public final class CruciblePhysics {
 		for (OreDictMaterialStack tComponent : tComponents) { // :235-242
 			for (OreDictMaterialStack tContent : aContent) {
 				if (tContent != null && tContent.mMaterial == tComponent.mMaterial) {
-					tContent.mAmount -= units(aConversions, U, tComponent.mAmount, true); // :238 UT.Code.units_(maxConversions, U, tComponent.mAmount, T)
+					tContent.mAmount -= UT.Code.units(aConversions, U, tComponent.mAmount, true); // :238 UT.Code.units_(maxConversions, U, tComponent.mAmount, T)
 					break;
 				}
 			}
@@ -403,11 +394,11 @@ public final class CruciblePhysics {
 				tAcidDestroyed = true;
 				break;
 			} else if (aTemperature >= tMaterial.mMaterial.mMeltingPoint && (aOldTemperature < tMaterial.mMaterial.mMeltingPoint || aNewContent)) { // :271
-				OreDictMaterialStack tConverted = new OreDictMaterialStack(tMaterial.mMaterial.mTargetSmelting.mMaterial, units(tMaterial.mAmount, U, tMaterial.mMaterial.mTargetSmelting.mAmount, false)); // :273
+				OreDictMaterialStack tConverted = new OreDictMaterialStack(tMaterial.mMaterial.mTargetSmelting.mMaterial, UT.Code.units(tMaterial.mAmount, U, tMaterial.mMaterial.mTargetSmelting.mAmount, false)); // :273
 				aContent.remove(i--);
 				tConverted.addToList(tToBeAdded);
 			} else if (aTemperature < tMaterial.mMaterial.mMeltingPoint && (aOldTemperature >= tMaterial.mMaterial.mMeltingPoint || aNewContent)) { // :274
-				OreDictMaterialStack tConverted = new OreDictMaterialStack(tMaterial.mMaterial.mTargetSolidifying.mMaterial, units(tMaterial.mAmount, U, tMaterial.mMaterial.mTargetSolidifying.mAmount, false)); // :276
+				OreDictMaterialStack tConverted = new OreDictMaterialStack(tMaterial.mMaterial.mTargetSolidifying.mMaterial, UT.Code.units(tMaterial.mAmount, U, tMaterial.mMaterial.mTargetSolidifying.mAmount, false)); // :276
 				aContent.remove(i--);
 				tConverted.addToList(tToBeAdded);
 			}
