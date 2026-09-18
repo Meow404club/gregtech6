@@ -1,14 +1,89 @@
 {
   "recipes": [
     {
-      "comment": "task p31-qu-a-foundation smoke row — the element-disintegration row shape of Loader_Recipes_Other.java:971-972 verbatim over iron (MT.java:414: Fe protons 26 / neutrons 30): one ingot → MatterCharged 26 mB + MatterNeutral 30 mB (1 mB = 1 proton/neutron), duration (26+30)*131072 = 7340032, eut 1. The input rides minecraft:iron_ingot (concrete and always registered) as the stand-in for the GT6 material-family ingot the card-C dynamic walk will pour; this row is the NEI visibility anchor of the DECLARED-empty map, not the loop itself.",
-      "inputs": [{"item": "minecraft:iron_ingot", "count": 1}],
-      "fluidOutputs": [
-        {"fluid": "gt6:chargedmatter", "amount": 26},
-        {"fluid": "gt6:neutralmatter", "amount": 30}
-      ],
-      "duration": 7340032,
-      "eut": 1
+      "comment": "task p31-massfab — the Ender smoke rows of Loader_Recipes_Other.java:915-928 verbatim (the unconditional FL.Ender family; the :897-914 FL.Ender_TE half is unregistered — the qu-a '144/250 concentration domains do not merge' ruling — so its ST.tag(1) family-select circuit is vestigial and the port rows drop the selector, the declared deviation). Baseline :915 dustDiv72 → 144 mB = one L-unit (the FL.Ender per-unit, the replicator smoke-row constant). eUt 16, the :915 duration 144 scaled by the same factor as the fluid. The element-disintegration rows themselves are NOT here — the card-C dynamic walk (GT6RecipesMassfab) pours those at FMLCommonSetup; the qu-a iron-ingot smoke row retires with it (the walk now covers iron, the JSON row would duplicate).",
+      "inputs": [{"item": "gt6:dust_div72_dilithium", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 144}],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:dust_tiny_dilithium", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 11520}],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:dust_small_dilithium", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 25920}],
+      "duration": 2592,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:dust_dilithium", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 103680}],
+      "duration": 10368,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:gem_dilithium", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 207360}],
+      "duration": 20736,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:block_dust_dilithium", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 933120}],
+      "duration": 93312,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:block_gem_dilithium", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 1866240}],
+      "duration": 186624,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:dust_div72_ancient_debris", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 144}],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:dust_tiny_ancient_debris", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 1152}],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:dust_small_ancient_debris", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 2592}],
+      "duration": 2592,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:dust_ancient_debris", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 10368}],
+      "duration": 10368,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:ingot_ancient_debris", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 10368}],
+      "duration": 10368,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:block_dust_ancient_debris", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 93312}],
+      "duration": 93312,
+      "eut": 16
+    },
+    {
+      "inputs": [{"item": "gt6:block_ingot_ancient_debris", "count": 1}],
+      "fluidOutputs": [{"fluid": "gt6:enderpearl_molten", "amount": 93312}],
+      "duration": 93312,
+      "eut": 16
     }
   ]
 }
