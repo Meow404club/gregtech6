@@ -40,6 +40,7 @@ import org.junit.jupiter.api.Test;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.client.ore.GTOreBakedModel;
+import gregtech6.registry.GT6BedrockOreBlocks;
 import gregtech6.registry.GT6OreBlocks.FormKind;
 import gregtech6.registry.GT6OreBlocks.OreKey;
 
@@ -47,8 +48,10 @@ class GT6OreCensusTest {
 
     /** Ledger 1 — the registration walk (74 form-rows x M=53, the ore-1 pin). */
     private static final int PINNED_BLOCKS = 3922;
-    /** Ledger 2 — the ore-3 faces: per-pair blockstates + item models, shared base models. */
-    private static final int PINNED_BASE_MODELS = 28;
+    /** Ledger 2 — the ore-3 faces: per-pair blockstates + item models, shared base models.
+     *  29 since task p31-bedrock-ore-worldgen: the ONE shared bedrock cube
+     *  (gt6:block/ore/bedrock, minecraft:block/bedrock) joins the 28. */
+    private static final int PINNED_BASE_MODELS = 29;
     /** Ledger 3 — the ore-4 loot trees: one table per block, BOTH directory bands. */
     private static final int PINNED_LOOT_TOTAL = 2 * PINNED_BLOCKS;
     /** Ledger 4 — the ore-2 texture batch: 15 SETs x {ore, ore_small, + the two overlays}. */
@@ -86,6 +89,20 @@ class GT6OreCensusTest {
     private static List<String> walkPaths() {
         List<String> rPaths = new ArrayList<>();
         for (OreKey tKey : GT6OreBlocks.registrationOrder()) rPaths.add(GT6OreBlocks.path(tKey));
+        return rPaths;
+    }
+
+    /**
+     * The bedrock band's blockstate/item-model paths (task p31-bedrock-ore-worldgen, 2 x
+     * 45 = 90) — they share the ore_-prefixed generated directories with ledger 2, so the
+     * no-orphans censuses must count them. They carry NO loot files (noLootTable = the
+     * upstream Drops_None), so the ledger-3 loot faces stay the 3922-only walks.
+     */
+    private static List<String> bedrockPaths() {
+        List<String> rPaths = new ArrayList<>();
+        for (GT6BedrockOreBlocks.BedrockKey tKey : GT6BedrockOreBlocks.registrationOrder()) {
+            rPaths.add(GT6BedrockOreBlocks.path(tKey.small(), tKey.material()));
+        }
         return rPaths;
     }
 
@@ -135,15 +152,17 @@ class GT6OreCensusTest {
     @Test
     void oreFileCensusHasNoOrphans() throws IOException {
         Set<String> tWalk = new HashSet<>(walkPaths());
+        tWalk.addAll(bedrockPaths()); // ledger 2's generated dirs carry the bedrock band too (p31-bedrock-ore)
+        Set<String> tLootWalk = new HashSet<>(walkPaths()); // the loot bands stay 3922-only: the bedrock band is noLootTable
         Path tAssets = mdkRoot().resolve(GENERATED_TREE).resolve("assets").resolve("gt6");
         Path tData = mdkRoot().resolve(GENERATED_TREE).resolve("data").resolve("gt6");
         assertEquals(tWalk, fileStems(tAssets.resolve("blockstates"), "ore_"),
                 "ledger 2: the blockstate ore census is the walk, no drift either way");
         assertEquals(tWalk, fileStemsMinusRaw(tAssets.resolve("models").resolve("item"), "ore_"),
                 "ledger 2: the item-model ore census is the walk, no drift either way (ore_raw_* excluded)");
-        assertEquals(tWalk, fileStems(tData.resolve("loot_tables").resolve("blocks"), "ore_"),
+        assertEquals(tLootWalk, fileStems(tData.resolve("loot_tables").resolve("blocks"), "ore_"),
                 "ledger 3: the loot_tables band ore census is the walk, no drift either way");
-        assertEquals(tWalk, fileStems(tData.resolve("loot_table").resolve("blocks"), "ore_"),
+        assertEquals(tLootWalk, fileStems(tData.resolve("loot_table").resolve("blocks"), "ore_"),
                 "ledger 3: the loot_table band ore census is the walk, no drift either way");
     }
 
@@ -161,7 +180,7 @@ class GT6OreCensusTest {
         }
         assertEquals(PINNED_LOOT_TOTAL, tLoot, "ledger 3: both directory bands carry the walk");
         // the shared base models: 11 vanilla-anchor JSONs + the 17 GT-stone models
-        // under ore/stones/ = 28
+        // under ore/stones/ + the p31-bedrock-ore bedrock cube = 29
         int tBase = 0;
         try (Stream<Path> tWalk = Files.walk(tAssets.resolve("models").resolve("block").resolve("ore"))) {
             tBase = (int) tWalk.filter(Files::isRegularFile)
