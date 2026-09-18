@@ -468,6 +468,14 @@ public final class GT6ItemModels extends ItemModelProvider {
                     .texture("layer0", modLoc("item/armor/" + tSuit.textureName() + "/" + gregtech6.items.armor.GT6ArmorMaterials.PIECE_WORDS[i]));
             }
         }
+        // the bee-comb family (task p31-bees-lv1) — 20 item/generated models over the
+        // port-generated tinted honeycomb icons (item/comb/comb_<name>.png, one base
+        // silhouette per-comb tinted, assets/README.md), walked over the COMB_SPECS table
+        // so the model ids cannot drift (the spray-can band convention)
+        for (gregtech6.registry.GT6BeeCombs.CombSpec tSpec : gregtech6.registry.GT6BeeCombs.COMB_SPECS) {
+            withExistingParent(tSpec.itemId(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/comb/" + tSpec.itemId()));
+        }
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

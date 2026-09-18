@@ -121,6 +121,7 @@ public class GT6ZhCn extends LanguageProvider {
 		// 26x3 逐族模板键（可选）+ 唯一创造栏页签标题 itemGroup.gt6.ore_vanillastone
 		//（GT6OreBlocks.TAB_TITLE_KEY，"石矿"）。
 		addOreTabTitle(); // task p30-ore-3-datagen — ore-1 注记的卡③面（唯一新键，dump itemgroup 家族行 矿石）
+		addBeeUnits();          // task p31-bees-lv1 — the 20 comb names + the Bees tab + the 11 honey/bee-row fluids (hand rows, the tsv direct band; the dump carries no comb faces)
 	}
 
 	/**
@@ -293,6 +294,27 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_sapling"));
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_log"));
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"));
+		}
+	}
+
+	/**
+	 * The bee family zh faces (task p31-bees-lv1, the addTreeUnits shape): the Bees tab
+	 * title, the 20 comb display names and the 11 honey-family + bee-row fluid display
+	 * names, all riding the reference table's hand layer (the dump carries no comb faces —
+	 * the 蜜脾 wording is hand zh over the 黄蜂蜂巢 hive face zh_cn_ref.tsv:6569; the fluid
+	 * words reuse the dump material faces where they exist: 蜂蜜/蜜露/胶乳).
+	 * Hand rows (the TSV regen and this walk land in the SAME commit).
+	 */
+	private void addBeeUnits() {
+		addDirect("itemGroup.gt6.bee");
+		for (gregtech6.registry.GT6BeeCombs.CombSpec tSpec : gregtech6.registry.GT6BeeCombs.COMB_SPECS) {
+			addDirect("item.gt6." + tSpec.itemId());
+		}
+		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.HONEY_FLUID_SPECS) {
+			addDirect(tSpec.descriptionId());
+		}
+		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.BEE_ROW_FLUID_SPECS) {
+			addDirect(tSpec.descriptionId());
 		}
 	}
 

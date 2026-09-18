@@ -483,9 +483,14 @@ SESSION_GROUPS = (
     # tools/rcon/scan_strata_lens.py, not this chain. No fresh_boot / mutates member.
     # --group p31_strata matches through the chain's embedded name prefix.
     ("p31_strata_lens",),
-)
-
-PROBE_MODULE = "p15_keepfilter_reboot_probe"
+    # P31 card (p31-bees-lv1): the bee-comb Lv1 static chain — one fresh z=396 band, two
+    # x-disjoint columns (squeezer x384 — the materialHoneycomb generalization arm /
+    # centrifuge x392 — the :251 row arm), admission mirroring the p29 W1 cluster form
+    # (bbox-registered, no fresh_boot / mutates member — the comb rigs are band-local
+    # setblocks; the comb/fluid/dust identities ride the give+data-merge faces).
+    # --group p31_bees matches through the chain's embedded name prefix.
+    ("p31_bees",),
+keepfilter_reboot_probe"
 
 
 def load_chain(stem):

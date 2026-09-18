@@ -66,6 +66,7 @@ class GT6RecipeGenerationGuardTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesAnvil", // task p28-c-anvil — the anvil grinding/bending pour joins the ledger
 			"gregtech6.recipes.GT6RecipesWelder", // task p29-w3-nbtdesign-parts — the 22 welder wall rows join the ledger
 			"gregtech6.recipes.GT6RecipesImplosion", // task p31-implosion — the Implosion Compressor 4-tier pour joins the ledger
+			"gregtech6.recipes.GT6RecipesBees", // task p31-bees-lv1 — the 20+20 bee comb pour joins the ledger
 		};
 
 	private static Function<String, Fluid> sDefaultFluidResolver;
