@@ -27,6 +27,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 
+import gregapi.oredict.MaterialRegistry;
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.GT6Mod;
 import gregtech6.item.spraycan.GTSprayCanItem;
 import gregtech6.registry.GTFluidPipes;
@@ -1345,11 +1347,62 @@ public final class GTFluids {
 		new ChemicalFluidSpec("xenon"           , "Xenon"            ,   300,      5,  200, 0xFF00FFFF, true ,  0), // MT.Xe 0,255,255 (MT.java:443); 1000×0.005887
 		new ChemicalFluidSpec("radon"           , "Radon"            ,   300,      9,  200, 0xFFFF00FF, true ,  0), // MT.Rn 255,0,255 (MT.java:476); 1000×0.00973
 		// liquid oxygen (:68)
-		new ChemicalFluidSpec("liquidoxygen"    , "Liquid Oxygen"    ,    85,      1, 1000, 0xFF0064C8, false,  0)); // the :1130 formula over O's 0.001429 g/cm³; tint = the O RGBa
+		new ChemicalFluidSpec("liquidoxygen"    , "Liquid Oxygen"    ,    85,      1, 1000, 0xFF0064C8, false,  0), // the :1130 formula over O's 0.001429 g/cm³; tint = the O RGBa
+		// the isotope batch (task p31-qu-b-materials) — the Loader_Fluids.java:658-662
+		// tag-driven loop rows for the fusion isotope materials, in material-id order
+		// (D 11, T 12, He3 21, Li6 31, Be7 41, Be8 42, B11 51, C13 61, Ad 8744). The gas
+		// rows ride the :1080 createGas walk (temp = min(300, plasma−1) = 300 over the
+		// default 10000 K plasma point, density = the :1128-1136 −0.1/g formula), the
+		// molten rows the :1077 createMolten walk (temp = the melting point, density =
+		// 1000·g, the luminosity 10 literal); ids turn the upstream "molten.<mat>" prefix
+		// into the enderpearl_molten suffix form. MT.Dilithium has NO row — the upstream
+		// crystal helper carries no GASES/MOLTEN/LIQUID tag (MT.java:198), so the loop
+		// never reached it (the binding must stay absent).
+		new ChemicalFluidSpec("deuterium"           , "Deuterium"             ,  300, -1112,  200, 0xFFFFFF00, true ,  0), // MT.D 255,255,0 (MT.java:381); −0.1/0.00008988, same g/cm³ as hydrogen
+		new ChemicalFluidSpec("tritium"             , "Tritium"               ,  300, -1112,  200, 0xFFFF0000, true ,  0), // MT.T 255,0,0 (:382)
+		new ChemicalFluidSpec("helium3"             , "Helium-3"              ,  300,  -560,  200, 0xFFFF8C00, true ,  0), // MT.He_3 255,255,140 (:384); −0.1/0.0001785, same g/cm³ as helium
+		new ChemicalFluidSpec("lithium6_molten"     , "Molten Lithium-6"      ,  453,   534, 1000, 0xFFE6E1FF, false, 10), // molten.lithium6 — MT.Li_6 mp 453, 1000×0.534 (:386)
+		new ChemicalFluidSpec("beryllium7_molten"   , "Molten Beryllium-7"    , 1560,  1850, 1000, 0xFF6EBE6E, false, 10), // molten.beryllium7 — MT.Be_7 mp 1560, 1000×1.85 (:388)
+		new ChemicalFluidSpec("beryllium8_molten"   , "Molten Beryllium-8"    , 1560,  1850, 1000, 0xFF6EC86E, false, 10), // molten.beryllium8 — MT.Be_8 mp 1560, 1000×1.85 (:389)
+		new ChemicalFluidSpec("boron11_molten"      , "Molten Boron-11"       , 2349,  2340, 1000, 0xFFF0F0F0, false, 10), // molten.boron11 — MT.B_11 mp 2349, 1000×2.34 (:391)
+		new ChemicalFluidSpec("carbon13_molten"     , "Molten Carbon-13"      , 3800,  2267, 1000, 0xFF191919, false, 10), // molten.carbon13 — MT.C_13 mp 3800, 1000×2.267 (:393)
+		new ChemicalFluidSpec("ancientdebris_molten", "Molten Ancient Debris" , 2011,  1000, 1000, 0xFF6E505A, false, 10)); // molten.ancientdebris — MT.AncientDebris heat(MeteoricIron) = Fe.mp+200 = 2011 (MT.java:1832/:414); the 1.0 g/cm³ field default → 1000
 
 	/** The chemical row for a gt6 id path, or null (the {@link #engineSpec} lookup shape). */
 	public static ChemicalFluidSpec chemicalSpec(String aName) {
 		for (ChemicalFluidSpec tSpec : CHEMICAL_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/**
+	 * The material→spec leg of the isotope binding seam (task p31-qu-b-materials): the id
+	 * convention of the upstream Loader_Fluids.java:658-662 tag-driven loop — a gas row is
+	 * the material's sanitized internal name lowercased (FL.createGas:1080 registers
+	 * {@code mNameInternal.toLowerCase()}), a molten row turns the upstream
+	 * {@code "molten." + name} prefix into the {@code name + "_molten"} suffix (the
+	 * enderpearl_molten port ruling). {@link OreDictMaterial#sanitize} already stripped
+	 * spaces and minuses upstream (createMaterial :147), so the id is the plain lowercase
+	 * internal name plus the suffix. Returns null for materials the tag loop never
+	 * reached — MT.Dilithium carries no GASES/MOLTEN tag and stays unbound.
+	 */
+	public static ChemicalFluidSpec specOf(OreDictMaterial aMaterial, boolean aMolten) {
+		if (aMaterial == null) return null;
+		return chemicalSpec(aMaterial.mNameInternal.toLowerCase() + (aMolten ? "_molten" : ""));
+	}
+
+	/**
+	 * The spec→material reverse leg: strip the molten suffix, match the lowercase internal
+	 * name over the live registry (the {@link MaterialRegistry#MATERIAL_MAP} the root
+	 * keeps in sync with the table). O(n) per call and no cache — the registry reset
+	 * generation would poison one, and the expected consumer (the massfab row generator)
+	 * walks the material side anyway.
+	 */
+	public static OreDictMaterial materialOf(ChemicalFluidSpec aSpec) {
+		if (aSpec == null) return null;
+		String tName = aSpec.name();
+		if (tName.endsWith("_molten")) tName = tName.substring(0, tName.length() - "_molten".length());
+		for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_MAP.values())
+			if (tMaterial.mNameInternal.toLowerCase().equals(tName)) return tMaterial;
 		return null;
 	}
 
@@ -1433,7 +1486,10 @@ public final class GTFluids {
 			chemicalFluid("nitrogen"), chemicalFluid("oxygen"), chemicalFluid("fluorine"),
 			chemicalFluid("helium"), chemicalFluid("neon"), chemicalFluid("argon"),
 			chemicalFluid("krypton"), chemicalFluid("xenon"), chemicalFluid("radon"),
-			chemicalFluid("liquidoxygen"));
+			chemicalFluid("liquidoxygen"),
+			chemicalFluid("deuterium"), chemicalFluid("tritium"), chemicalFluid("helium3"),
+			chemicalFluid("lithium6_molten"), chemicalFluid("beryllium7_molten"), chemicalFluid("beryllium8_molten"),
+			chemicalFluid("boron11_molten"), chemicalFluid("carbon13_molten"), chemicalFluid("ancientdebris_molten"));
 
 	/**
 	 * The hot-family row lookup (the {@link #chemicalSpec} shape) — the fuels_hot consumer

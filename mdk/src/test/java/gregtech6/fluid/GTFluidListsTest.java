@@ -84,14 +84,17 @@ public class GTFluidListsTest {
 		// seat that owns the GTFluids static block.
 		// the p30-pool-gas-seeds-13 reconciliation: the eighteen gaseous chemical seeds join
 		// the two originals (the per-row upstream anchors live in the GTFluidLists static
-		// block; the CHEMICAL_SPECS-side invariant in GTFluidsChemicalFamilyTest)
+		// block; the CHEMICAL_SPECS-side invariant in GTFluidsChemicalFamilyTest); plus the
+		// p31-qu-b-materials isotope trio — the same :660 createGas walk over the
+		// GASES-flag fusion isotopes (diatomicgas/noblegas, MT.java:381/:382/:384)
 		assertEquals(Set.of("steam", "natural_gas",
 				"hydrogen", "nitrogen", "oxygen", "fluorine",
 				"helium", "neon", "argon", "krypton", "xenon", "radon",
 				"methane", "carbondioxide", "carbonmonoxide",
 				"propane", "butane", "propylene", "ethylene",
-				"chlorine"),
-			GTFluidLists.GAS, "GAS = steam + natural_gas + the 18 gaseous chemical seeds");
+				"chlorine",
+				"deuterium", "tritium", "helium3"),
+			GTFluidLists.GAS, "GAS = steam + natural_gas + the 18 gaseous chemical seeds + the 3 fusion isotopes");
 		assertTrue(GTFluidLists.POWER_CONDUCTING.contains("steam"), "the original seed rides");
 	}
 }

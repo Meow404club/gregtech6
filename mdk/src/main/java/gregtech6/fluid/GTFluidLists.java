@@ -90,6 +90,11 @@ public final class GTFluidLists {
 		register("ethylene"       , GAS); // :48
 		// the p24 standalone row — MT.java:405 diatomicgas, the same :660 walk
 		register("chlorine"       , GAS); // density −100, the :1105 gaseous carrier shape
+		// the isotope batch (task p31-qu-b-materials) — the same :660 createGas walk over
+		// the GASES-flag fusion isotopes (diatomicgas/noblegas, MT.java:66/:68)
+		register("deuterium"      , GAS); // MT.java:381 diatomicgas
+		register("tritium"        , GAS); // MT.java:382 diatomicgas
+		register("helium3"        , GAS); // MT.java:384 noblegas
 	}
 
 	private GTFluidLists() {}
