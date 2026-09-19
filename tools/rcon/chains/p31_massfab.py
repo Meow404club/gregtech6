@@ -21,7 +21,9 @@ group; Loader_MultiTileEntities.java:1241/:1542-1546).
   default input-tank capacity), leaving 664 in the controller tank; the neutral tank has
   no second sink and stays 1920.
 
-  the small form (20415): 1 iron ingot -> 26 mB + 30 mB in its own output tanks
+  the small form (20415): 1 iron ingot -> chargedmatter 26 + neutralmatter 30 parked in
+  its output_fluids buffer (no sink below the rig; the auto-out face would push them to
+  a handler that exists — the C-phase sink proves the accept face).
   (T5 = INPUT 8192 window, efficiency 10000, no overclock).
 
 acceptance arms this chain carries:
@@ -30,7 +32,7 @@ acceptance arms this chain carries:
   2 the element walk at parallel 64: maxprogress 469762048, chargedmatter 1664 total
     (664 after the 1000 mB sink drain), neutralmatter 1920
   3 the auto-out bottom face: the sink holds chargedmatter 1000
-  4 the small T5 run: 1 ingot -> chargedmatter 26 + neutralmatter 30
+  4 the small T5 run: 1 ingot -> chargedmatter 26 + neutralmatter 30 in output_fluids
 
 Run:  GT6_SESSION=off python3 tools/rcon/chains/p31_massfab.py
 """
@@ -163,10 +165,14 @@ steps = [
     # the :773 CHEAP_OC face on the small form (live-proven forge): eUt 1 climbs mMinEnergy
     # 1 -> mInputMin 4096 in six x4 steps = x64 duration — 7340032 x 64 = 469762048
     Step("data get block " + T, expect="maxprogress: 469762048L", poll=30),
-    Step('data get block ' + T + ' \"tanks.out.0\"', expect=tank_expect("1.20.1", "x", "gt6:chargedmatter", 26),
-         poll=300, node_expects={"1.21.1": tank_expect("1.21.1", "x", "gt6:chargedmatter", 26)}),
-    Step('data get block ' + T + ' \"tanks.out.1\"', expect=tank_expect("1.20.1", "x", "gt6:neutralmatter", 30),
-         poll=60, node_expects={"1.21.1": tank_expect("1.21.1", "x", "gt6:neutralmatter", 30)}),
+    # the small form parks its outputs in the mOutputFluids buffer (the base :1636
+    # output_fluids face — tanks.out.* keys only exist while a tank HOLDS content, and
+    # with no sink below the buffer is where the matter sits; live-proven forge). forge
+    # prints the GT6 writeToNBT shape, 21.1 the bare codec {id, amount} (the :1638 face).
+    Step("data get block " + T + " output_fluids", expect="FluidName: \"gt6:chargedmatter\", Amount: 26",
+         poll=300, node_expects={"1.21.1": "id: \"gt6:chargedmatter\", amount: 26"}),
+    Step("data get block " + T + " output_fluids", expect="FluidName: \"gt6:neutralmatter\", Amount: 30",
+         poll=60, node_expects={"1.21.1": "id: \"gt6:neutralmatter\", amount: 30"}),
 
     phase("E: teardown — the explicit band restore"),
     Step("fill %d %d %d %d %d %d air" % BAND, expect="filled"),
