@@ -21,7 +21,9 @@ Two execution models, routed by GT6_SESSION (default on):
   3. gt6server.start_server + wait_done — the nohup semantics, Done polled
      (:mdk:<node>:runServer);
   4. per pass: gt6world forceload + bbox cleanup (the declared sites, structurally
-     complete), then the chain's steps judged via gt6rcon.judge_output;
+     complete), then the chain's steps judged via the structured judge_step
+     (p32: the expect is the assertion; gt6rcon.judge_output stays the CLI
+     layer's judge);
   5. gt6server.stop_server — RCON stop, then precise pid kills; daemons untouched.
 
 Exit code: 0 when every pass judged clean, 1 otherwise.
@@ -330,19 +332,63 @@ class Chain:
 POLL_INTERVAL = 1.0      # seconds between poll resends (server ticks pace the state)
 
 
+def _step_judgement(step, body, expect):
+    """The structured judge (p32-ops-judge-literal): (verdict, failure_count).
+
+    The expect is THE assertion — a hit is a PASS even when the body spells
+    FAILED elsewhere. The p31 pool rcon_judge_literal_blindspot: the raw
+    "FAILED" scan used to override the expect, so an expected-rejection line
+    ("FUEL FAILED", "STAT FAILED", "FAILED, connections N" — pinned via
+    expect) counted as a failure, and every such chain had to pin
+    allow_failed just to neutralize the literal — which ALSO disarmed its
+    expect (a missed expect on an allowed step is ALLOWED: the false-green
+    half of the blindspot). The literal scan survives only for expect-less
+    steps, where it is the sole failure signal (the server-side RCON
+    contract: every failure line carries FAILED — GTMultiBlockCommand.java
+    :1046; arms that deliberately don't, like the form arm :463, MUST carry
+    an expect). allow_failed keeps its semantics (gt6rcon.judge_output's
+    contract — that judge remains the CLI layer's face): a missed expect or
+    a bare marker on an allowed step is ALLOWED and does not count.
+    """
+    if expect is not None:
+        if expect in body:
+            return "PASS", 0
+        if step.allow_failed:
+            return "ALLOWED", 0
+        return "FAIL", 1
+    if "FAILED" in body:
+        if step.allow_failed:
+            return "ALLOWED", 0
+        return "FAIL", 1
+    return "PASS", 0
+
+
 def _step_matches(step, body, expect):
     """The single-shot judge's pass condition, without printing — the poll gate."""
-    if "FAILED" in body and not step.allow_failed:
-        return False
-    return expect is None or expect in body
+    if expect is not None:
+        return expect in body
+    return not ("FAILED" in body and not step.allow_failed)
 
 
 def _step_verdict(step, body, expect):
-    """The verdict string for the record: the same two conditions judge_output scores."""
-    missed = "FAILED" in body or (expect is not None and expect not in body)
-    if missed and not step.allow_failed:
-        return "FAIL"
-    return "ALLOWED" if missed else "PASS"
+    """The verdict string for the record: the same judgement run_steps counts."""
+    return _step_judgement(step, body, expect)[0]
+
+
+def judge_step(index, step, body, expect):
+    """Print and score one step's output; return 1 when it counts as a failure.
+
+    The framework's structured face of gt6rcon.judge_output — same printing
+    shapes, same ALLOWED-does-not-count contract, minus the expect-blind
+    literal (see _step_judgement). A clean expect-less step stays silent,
+    as judge_output always did.
+    """
+    verdict, counts = _step_judgement(step, body, expect)
+    if expect is not None:
+        print(f"[expect {index}: {expect!r} -> {verdict}]")
+    elif "FAILED" in body:
+        print(f"[command {index}: FAILED marker in output -> {verdict}]")
+    return counts
 
 
 def _poll_step(client, step, cmd, expect):
@@ -395,7 +441,7 @@ def run_steps(client, steps, verdicts=None, node=None):
             outs = client.run_command(cmd)
             body = "\n".join(outs) if isinstance(outs, list) else str(outs)
             print(f"$ {cmd}\n{body if body else '<no response>'}")
-        failure += gt6rcon.judge_output(index, body, expect, step.allow_failed)
+        failure += judge_step(index, step, body, expect)
         if verdicts is not None:
             verdicts.append({"index": index, "cmd": cmd,
                              "verdict": _step_verdict(step, body, expect)})

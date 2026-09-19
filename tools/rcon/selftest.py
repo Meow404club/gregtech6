@@ -787,6 +787,146 @@ def check_12_sweep_session_lock():
         shutil.rmtree(scratch, ignore_errors=True)
 
 
+class _CannedClient:
+    """run_steps stand-in serving recorded bodies by exact command match."""
+
+    def __init__(self, bodies):
+        self.bodies = bodies
+
+    def run_command(self, cmd):
+        return [self.bodies[cmd]]
+
+
+def check_13_structured_judge():
+    """The structured step judge (p32-ops-judge-literal, the p31 pool
+    rcon_judge_literal_blindspot).
+
+    The raw "FAILED" scan used to override the expect: an expected-rejection
+    line ("FUEL FAILED", "FAILED, connections N") counted as a failure even
+    with the expect hit (false red), and the only escape — allow_failed —
+    ALSO disarmed the expect (a missed expect on an allowed step is ALLOWED:
+    false green). Structured: the expect is the assertion (hit -> PASS
+    whatever the body spells); the literal scan only decides expect-less
+    steps (the server-side RCON contract, GTMultiBlockCommand.java:1046);
+    allow_failed keeps its ALLOWED semantics. ① pins the constructed cases,
+    ② the allow_failed regression, ③ replays real recorded p31_fusion
+    forge-leg bodies (the /tmp/p31fs_sweep_forge2.log transcript, frozen
+    here) through the REAL chain steps — the sweep recorded 1492/1492 PASS,
+    the replay excerpt must judge the same.
+    """
+    print("\n--- 13: structured step judge (p32, judge-literal blindspot)")
+
+    def judge(step, body):
+        expect = framework.step_expect(step, "1.20.1-forge")
+        counts = framework.judge_step(1, step, body, expect)
+        return framework._step_verdict(step, body, expect), counts
+
+    # ① constructed: the literal must not override the expect
+    rejection = framework.Step("gt6pipe toggle 400 64 400 1",
+                               expect="FAILED, connections 1")
+    rejection_body = "GT6 pipe toggle at 400, 64, 400: FAILED, connections 1"
+    check("13a expected-rejection body with the expect hit -> PASS (old code: FAIL)",
+          judge(rejection, rejection_body) == ("PASS", 0))
+    marker_elsewhere = framework.Step(
+        "gt6energy mode 441 65 461 off", expect="emitting false")
+    elsewhere_body = ("GT6 energy source mode at 441, 65, 461: emitting false\n"
+                      "Tried to load invalid fluid FAILED")
+    check("13b FAILED elsewhere in the body, expect hit -> PASS",
+          judge(marker_elsewhere, elsewhere_body) == ("PASS", 0))
+    miss = framework.Step("gt6multiblock check 450 65 462", expect="formed=true")
+    check("13c expect missed -> FAIL (the real-failure red is kept)",
+          judge(miss, "formed=false") == ("FAIL", 1))
+    check("13d expect-less marker -> FAIL (the sole signal an expect-less step has)",
+          judge(framework.Step("gt6machine crusher check 400 64 400"),
+                "STAT FAILED: no machine at 400, 64, 400") == ("FAIL", 1))
+    check("13e expect-less clean -> PASS, silent contract kept",
+          judge(framework.Step("forceload add 438 452 462 478"),
+                "Unmarked all force loaded chunks in minecraft:overworld")
+          == ("PASS", 0))
+
+    # ② allow_failed regression: ALLOWED-does-not-count, byte for byte
+    allowed_miss = framework.Step("gt6machine paint 400 64 400 5",
+                                  expect="No paintable GT6 TileEntity",
+                                  allow_failed=True)
+    check("13f allowed step, expect missed -> ALLOWED (semantics preserved)",
+          judge(allowed_miss, "No machine at 400, 64, 400") == ("ALLOWED", 0))
+    allowed_marker = framework.Step("kill 400 64 400", allow_failed=True)
+    check("13g allowed step, bare marker -> ALLOWED",
+          judge(allowed_marker, "Killed FAILED sentinel") == ("ALLOWED", 0))
+    check("13h allowed step, expect hit -> PASS",
+          judge(allowed_miss, "Painted: No paintable GT6 TileEntity ok")
+          == ("PASS", 0))
+    check("13i poll gate: expect hit with the marker present stops the poll "
+          "(old code polled out the deadline)",
+          framework._step_matches(rejection, rejection_body,
+                                  framework.step_expect(rejection, None)))
+    check("13j poll gate: expect missed keeps polling (allowed or not)",
+          not framework._step_matches(allowed_miss, "No machine at 400, 64, 400",
+                                      framework.step_expect(allowed_miss, None)))
+
+    # end-to-end run_steps exit: the ① GREEN and ② ALLOWED shapes exit 0
+    green = [rejection, marker_elsewhere, allowed_miss]
+    ledger = []
+    check("13k run_steps: marker+hit and allowed-miss chain exits 0",
+          framework.run_steps(_CannedClient({
+                rejection.cmd: rejection_body,
+                marker_elsewhere.cmd: "GT6 energy source mode at 441, 65, 461: "
+                                      "emitting false",
+                allowed_miss.cmd: "No machine at 400, 64, 400"}),
+              green, ledger, node="1.20.1-forge") == 0
+          and [v["verdict"] for v in ledger] == ["PASS", "PASS", "ALLOWED"])
+    red = [framework.Step("execute if block 450 65 462 gt6:fusion_reactor[formed=true]",
+                          expect="Test passed"),
+           framework.Step("gt6machine crusher check 400 64 400")]
+    check("13l run_steps: real failure (expect miss + expect-less marker) counts red",
+          framework.run_steps(_CannedClient({
+                red[0].cmd: "Test failed, predicate was not met",
+                red[1].cmd: "STAT FAILED: no machine at 400, 64, 400"}),
+              red, node="1.20.1-forge") == 2)
+
+    # ③ recorded p31_fusion replay excerpt (forge leg, /tmp/p31fs_sweep_forge2.log):
+    # real Step objects of the chain, real recorded bodies, the recorded verdicts
+    import p31_fusion
+    recorded = [
+        ("fill 438 58 452 462 74 478 air", "No blocks were filled"),
+        ("setblock 448 63 462 gt6:machine_wall_galvanized_steel",
+         "Changed the block at 448, 63, 462"),
+        ("execute if block 450 65 462 gt6:fusion_reactor[formed=true]",
+         "Test passed"),
+        ("data get block 450 65 462",
+         '450, 65, 462 has the following block data: {fake_source: 0b, '
+         'stopped: 0b, te_name: "multiblock_fusion_reactor", '
+         'structure_okay: 1b, facing: 2b, active: 1b, ignited: 0b, '
+         'inventory: {Size: 11, Items: [{Slot: 0, id: "gt6:integrated_circuit", '
+         'Count: 1b, tag: {Damage: 2}}]}, maxprogress: 1760L, running: 1b, '
+         'output_items: [], x: 450, minenergy: 0L, progress: 7L, y: 65, '
+         'z: 462, id: "gt6:multiblock_fusion_reactor", energy: 0L, '
+         'output_fluids: [{FluidName: "gt6:helium", Amount: 1000}]}'),
+        ("gt6energy mode 441 65 461 off",
+         "GT6 energy source mode at 441, 65, 461: emitting false"),
+        ("forceload remove all",
+         "Unmarked all force loaded chunks in minecraft:overworld"),
+        ("time query daytime", "The time is 5422"),
+    ]
+
+    def _chain_step(cmd):
+        matches = [s for s in p31_fusion.steps
+                   if framework.step_cmd(s, "1.20.1-forge") == cmd]
+        return matches[0] if matches else None
+
+    excerpt = [(_chain_step(cmd), cmd, body) for cmd, body in recorded]
+    check("13m every recorded excerpt cmd resolves to a real p31_fusion step",
+          all(step is not None for step, _, _ in excerpt),
+          str([cmd for step, cmd, _ in excerpt if step is None]))
+    ledger = []
+    failure = framework.run_steps(
+        _CannedClient({cmd: body for _, cmd, body in excerpt}),
+        [step for step, _, _ in excerpt], ledger, node="1.20.1-forge")
+    check("13n recorded p31_fusion bodies replay all-PASS, exit 0 "
+          "(the sweep's recorded ledger: 1492/1492 PASS, GREEN)",
+          failure == 0 and len(ledger) == len(recorded)
+          and all(v["verdict"] == "PASS" for v in ledger))
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
@@ -800,6 +940,7 @@ def main():
     check_10_node_expects_fork()
     check_11_stop_ownership()
     check_12_sweep_session_lock()
+    check_13_structured_judge()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 
