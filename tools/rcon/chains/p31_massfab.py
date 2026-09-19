@@ -139,14 +139,21 @@ steps = [
 
     phase("B: the element walk at parallel 64 — 64 iron ingots + 100 G QU energy"),
     Step("setblock " + S + " " + SMALL, expect="Changed the block"),  # the auto-out sink BELOW
-    # the :790-791 burn runs min-free mInputMax/t even while IDLE (doInactive still
-    # burns), so the usable window is energy/mInputMax ticks — a laggy boot once ate
-    # 500 M in ~12 s before the recipe scan fired (the :798 scan gate rides
-    # mInventoryChanged/mIgnited/!mRunning/aTimer%1200==5, none merge-driven). 100 G
-    # = a ~40 min idle window; no assertion reads the leftover energy.
-    Step("data merge block " + C + " {energy:100000000000}", expect="Modified block data"),
+    # MERGE ORDER IS LOAD-BEARING: the :798 recipe scan gate is
+    # (mIgnited>0 || mInventoryChanged || !mRunning || aTimer%1200==5), and the
+    # inventory merge does NOT set mInventoryChanged — Forge ItemStackHandler
+    # .deserializeNBT calls onLoad(), not onContentsChanged() — so with the energy
+    # merged first the very first doWork takes the if-branch, the one-shot scan
+    # finds an EMPTY inventory, mRunning=true shuts the gate for up to 1200 ticks,
+    # and the :790-791 unconditional idle burn (mInputMax/t, mRunning or not) eats
+    # 500 M in ~12 s: a dead rig unless the 1200-tick boundary lands inside the
+    # burn window (the exact flake forgeF/forgeH/neoG-pass2 lived). INVENTORY
+    # FIRST, energy second: the energy's first doWork rides !mRunning=true, the
+    # scan finds the ingots already in place, the machine starts on that tick and
+    # the burn then runs 1:1 with progress to completion (both legs live-proven).
     Step(merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.21.1"]}),
+    Step("data merge block " + C + " {energy:100000000000}", expect="Modified block data"),
     Step("data get block " + C, expect="active: 1b", poll=300),  # wide: a laggy boot once took ~90 s to start (the stale-BE race)
     Step("data get block " + C, expect="maxprogress: 469762048L", poll=120),  # 64 x 7340032 — the PARALLEL 64 + DURATION T face
     Step("data get block " + C + " output_tank_1", expect=tank_expect("1.20.1", "x", "gt6:neutralmatter", 1920),
@@ -160,9 +167,10 @@ steps = [
 
     phase("D: the small form (20415) — 1 iron ingot -> 26 + 30 mB in its own output tanks"),
     Step("setblock " + T + " " + SMALL, expect="Changed the block"),
-    Step("data merge block " + T + " {energy:100000000000}", expect="Modified block data"),  # the same idle-burn window widening
+    # the same inventory-first order as phase B (the deserializeNBT onLoad() gate)
     Step(small_merge([(0, ("minecraft:iron_ingot", 1))])["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": small_merge([(0, ("minecraft:iron_ingot", 1))])["1.21.1"]}),
+    Step("data merge block " + T + " {energy:100000000000}", expect="Modified block data"),
     Step("data get block " + T, expect="active: 1b", poll=60),
     # the :773 CHEAP_OC face on the small form (live-proven forge): eUt 1 climbs mMinEnergy
     # 1 -> mInputMin 4096 in six x4 steps = x64 duration — 7340032 x 64 = 469762048
