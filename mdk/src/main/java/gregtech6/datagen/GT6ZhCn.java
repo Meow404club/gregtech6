@@ -919,9 +919,13 @@ public class GT6ZhCn extends LanguageProvider {
 		add("block.gt6.large_crusher", "大型破碎机");
 		add("block.gt6.large_shredder", "大型研磨机");
 		add("block.gt6.large_squeezer", "大型榨汁机");
-		// task p31-implosion — the Implosion Compressor (the Loader :1228 row; GTCEu Modern
-		// zh 爆破压缩机 lineage, the machine's explosion-driven compression)
-		add("block.gt6.implosion_compressor", "爆破压缩机");
+		// task p31-implosion / p32-hygiene-lang-assets — the Implosion Compressor (the
+		// Loader :1228 row). dump-first corrected p32: the upstream zh dump reads
+		// 聚爆压缩机 (tmp/gregtech.lang:15140 gt.multitileentity.multiblock.implosioncompressor
+		// and :15204 gt.recipe.implosioncompressor; the reference table agrees,
+		// zh_cn_ref.tsv:8134) — the earlier 爆破压缩机 (= "blasting", a different word)
+		// was a hand-layer slip, not a dump face.
+		add("block.gt6.implosion_compressor", "聚爆压缩机");
 		// task p31-graagg — the Von da Graagg (the Loader :1280 row; hand zh — the upstream
 		// dump carries zero Graagg rows, the transliteration keeps the "Generator" face of
 		// the name column like the en row)
