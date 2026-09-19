@@ -190,6 +190,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addImplosionCompressor(); // task p31-implosion — the Implosion Compressor controller
         addVonDaGraagg(); // task p31-graagg — the Von da Graagg controller
         addLargeMassfab(); // task p31-massfab — the Large Matter Fabricator controller
+        addFusionReactor(); // task p31-fusion — the Fusion Reactor controller
         addLargeCrucible(); // task p26-crucible-multiblock
         addDistillationTowers(); // task p29-w3-distill-crucible — the twin tower controllers
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
@@ -2261,6 +2262,37 @@ public final class GT6BlockStates extends BlockStateProvider {
             return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
         });
         itemModels().withExistingParent("large_massfab", modLoc("block/large_massfab"));
+    }
+
+    /**
+     * Task p31-fusion — the Fusion Reactor controller: the addLargeMassfab form over the
+     * upstream NBT_TEXTURE "fusionreactor" family (Loader :1242, the six borrowed
+     * basicmachines/fusionreactor/colored faces). The 8 FACING x FORMED states share the
+     * one oriented model (the RCON formed assertion rides the blockstate property, not
+     * the model). Overlay/active layers stay unborrowed — the ACTIVE visual is the render
+     * wave's surface.
+     */
+    private void addFusionReactor() {
+        Block tBlock = gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get();
+        String tFamily = "fusionreactor";
+        ModelFile tModel = models().cube("fusion_reactor",
+                modLoc("block/" + tFamily + "_colored_bottom"),
+                modLoc("block/" + tFamily + "_colored_top"),
+                modLoc("block/" + tFamily + "_colored_front"),
+                modLoc("block/" + tFamily + "_colored_back"),
+                modLoc("block/" + tFamily + "_colored_left"),
+                modLoc("block/" + tFamily + "_colored_right"));
+        getVariantBuilder(tBlock).forAllStates(aState -> {
+            int tY;
+            switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                case SOUTH -> tY = 180;
+                case WEST -> tY = 270;
+                case EAST -> tY = 90;
+                default -> tY = 0; // NORTH
+            }
+            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+        });
+        itemModels().withExistingParent("fusion_reactor", modLoc("block/fusion_reactor"));
     }
 
     /**

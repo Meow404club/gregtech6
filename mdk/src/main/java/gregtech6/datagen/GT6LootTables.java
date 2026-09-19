@@ -124,6 +124,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-implosion — the Implosion Compressor controller
                 new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
                 new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task p31-massfab — the Large Matter Fabricator controller
+                new SubProviderEntry(GT6FusionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-fusion — the Fusion Reactor controller
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -172,6 +173,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-implosion — the Implosion Compressor controller
                 new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
                 new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task p31-massfab — the Large Matter Fabricator controller
+                new SubProviderEntry(GT6FusionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-fusion — the Fusion Reactor controller
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -2126,6 +2128,36 @@ public final class GT6LootTables extends LootTableProvider {
             rBlocks.add(gregtech6.registry.GT6LargeMachines.BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
+    }
+
+    /** The Fusion Reactor self-drop list (task p31-fusion — the massfabLootBlocks singleton form). */
+    public static List<Block> fusionLootBlocks() {
+        return List.of(gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get());
+    }
+
+    /** The Fusion Reactor self-drop provider (task p31-fusion; the massfab provider shape). */
+    public static final class GT6FusionBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6FusionBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6FusionBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return fusionLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : fusionLootBlocks()) dropSelf(tBlock);
+        }
     }
 
     /** The Large Matter Fabricator self-drop list (task p31-massfab — the graaggLootBlocks singleton form). */
