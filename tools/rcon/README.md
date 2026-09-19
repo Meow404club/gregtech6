@@ -445,6 +445,7 @@ python3 tools/rcon/sweep.py --mode perboot            # 基线模型全集
 python3 tools/rcon/sweep.py --only p14loop,p13bb      # 收窄到指定链
 python3 tools/rcon/sweep.py --group p24_dye           # 收窄到指定簇（整带入选）
 python3 tools/rcon/sweep.py --diff old.json new.json  # 逐 step verdict diff
+python3 tools/rcon/sweep.py --break-lock --node 1.20.1-forge  # 清崩溃残留锁（活锁拒绝，exit 3）
 python3 tools/rcon/sweep.py --mode session --dual ../MGT6GA-trees/<另一节点wt> \
     --other-node 1.21.1-neoforge                      # 双 worktree 双节点，wall=max
 ```
@@ -469,6 +470,25 @@ sweep 不再互踩全局 /tmp 账本。`--dual` 对侧回读按**对侧** worktr
 （对侧子进程以它自己的 tag 写 /tmp；/tmp 全局共享，目录相同、全靠名字分流，对侧
 spawn 日志同样按对侧 tag 命名）。旧裸名 JSON 无活代码读者；`--diff` 走显式路径，
 任意两份历史账本（含旧名）仍可比。
+
+**sweep 会话锁（P32，卡 p32-ops-sweep-lock）**：P31 双会话事故（S31-1/S31-2
+并行审查各自起 sweep，同一节点两 sweep 会话互踩——phase_anchors.p31 已知缺陷
+「并发 sweep session.lock 毒化」）的 sweep 侧机制化。人的纪律是串行化协议
+（phase_anchors.p31 治理沉淀），机器只负责把撞车变成显式失败。每**节点**一把锁
+（碰撞域=节点：SESSION_PORTS 段与 gradle 项目锁都是按节点打架的），
+`/tmp/gt6_rs_sweep_<节点后缀>.lock`，O_EXCL 原子创建，记录 pid + session id
+（worktree tag-pid）+ node + mode + started + worktree：
+
+- **启动即抢锁**：锁被活进程持有 → 第二启 fail-fast（退出非 0，报占用者
+  pid + session id + 锁路径）——P31 的静默毒化变成显式失败；
+- **崩溃残留不自动清**：锁主 pid 死（`os.kill(pid, 0)` 判定）= 残留，同样
+  fail-fast 但不删——`sweep.py --break-lock [--node <节点>]` 显式清除；
+  pid 仍活则拒绝（退出码 3，gt6server stop CLI 同款）——校验 PID 不活才算残留，
+  活锁永远清不掉；
+- 锁作用域=节点：`--dual` 两腿不同节点各持各锁，合法并行不受影响；两腿同节点
+  （配置错误）第二条腿 fail-fast；
+- **不做排队/并发许可（刻意）**：排队会鼓励并行 sweep——恰是事故形态；审查与
+  sweep 串行单实例是人的纪律，锁只提供 fail-fast。
 
 **session 端口策略（P17）**：一次 session 只绑一个 (rcon, query, game) 三元组，链经
 session 的 rcon 端口连接（链自己的 `preferred_ports` 是 per-boot 语义）。裁决
@@ -604,7 +624,7 @@ RECYCLABLE 环行正臂（P26 行回填新行的匹配序演进）；两链双�
 （7e6c2edb，phase C），不另立链——p16 簇成员与带区间不变。
 
 **框架自检（无服干跑，~1s）**：`python3 tools/rcon/selftest.py`——以假 boot 面
-验证九项框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
+验证框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
 名册化、session 端口策略、p16 簇注册、boot 归属门、sweep 结果 JSON worktree 隔离
 （P18）、quiet_window 自适应收敛纯逻辑（P18）、perboot 结果的顶层 exit 聚合键
 （P18：`--dual` 读侧 `mine_json["exit"]` 曾对 perboot 形状 KeyError——run_perboot
@@ -612,8 +632,10 @@ RECYCLABLE 环行正臂（P26 行回填新行的匹配序演进）；两链双�
 framework 自算的顶层 exit 不被踩）、wait_done 单调扫描窗（P19：带病 boot 日志高速
 滚动会把 `Done (` 标记或崩溃 ERROR 行推出旧 8KB 尾窗，前者假超时报"never printed
 Done"、后者丢归因——改为字节偏移增量扫描（见过的标记永记、跨读边界 carry 拼接），
-死亡归因走全日志 error_tail，正常路径总读取量不升）。退出码 0 = 全绿（51 检，
-P23 增 node_expects 分叉三检）。
+死亡归因走全日志 error_tail，正常路径总读取量不升）、stop 归属门（P30）、
+sweep 会话锁（P32：活锁 fail-fast 报占用者 / 死 PID 残留仅 --break-lock 可清 /
+单实例全流程 锁获取→跑→释放）。退出码 0 = 全绿（80 检；P30 增 stop 归属门
+18 检，P32 增会话锁 11 检）。
 
 ### 并发波执行（用户校准 2026-09-04：并发是主杠杆）
 
