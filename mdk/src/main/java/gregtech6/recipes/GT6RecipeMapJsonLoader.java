@@ -268,8 +268,24 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 	/**
 	 * The pour: every whitelisted file's rows replace that map's JSON subset. Visible
 	 * offline and live; the {@code apply} override delegates here with the prepared scan.
+	 *
+	 * <p>The reload window (task p32-rm-phase-gate): a live /reload re-apply lands AFTER
+	 * the ServerStarted freeze, so this registration-phase seam reopens it for the pour and
+	 * re-freezes on the way out (the GTCEu unfreeze/freeze window, GTRecipeTypes.java:54-73).
+	 * An OPEN generation (boot, offline tests) owes no re-freeze — the window is invisible
+	 * to them, which is what keeps the offline suite's pour surface untouched.
 	 */
 	public static void pour(Map<ResourceLocation, JsonElement> aData) {
+		boolean tWasFrozen = GT6RecipeMaps.reopenWindow();
+		try {
+			pourRows(aData);
+		} finally {
+			if (tWasFrozen) GT6RecipeMaps.freeze(); // a crashed reload must not leave the gate open
+		}
+	}
+
+	/** The pour body (the pre-window shape, verbatim). */
+	private static void pourRows(Map<ResourceLocation, JsonElement> aData) {
 		int tFiles = 0;
 		for (Map.Entry<ResourceLocation, JsonElement> tEntry : aData.entrySet()) {
 			ResourceLocation tId = tEntry.getKey();

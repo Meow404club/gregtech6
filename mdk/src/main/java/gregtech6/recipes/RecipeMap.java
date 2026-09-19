@@ -100,6 +100,14 @@ public class RecipeMap {
 	 * Registers a Recipe into this Map. Upstream Recipe.add() feeds three hash
 	 * indexes; the linear-scan port appends to {@code mRecipeList} directly.
 	 *
+	 * <p><b>Late-pour gate (p32-rm-phase-gate)</b>: once the map generation is FROZEN
+	 * ({@link GT6RecipeMaps#freeze()}, live switch = ServerStarted), this is the one place
+	 * a late pour fails loud — the {@link IllegalStateException} message carries the map
+	 * name and the exception's own stack trace carries the offending caller. Registration
+	 * pours (the static loaders at FMLCommonSetup, the JSON reload window) are untouched:
+	 * the phase is OPEN for all of them. This is the single funnel — every pour in the repo
+	 * routes through here, so one guard covers all maps.
+	 *
 	 * <p><b>Double-empty guard (p8-recipe-chances-orechain)</b>: a recipe with neither item
 	 * nor fluid inputs is REJECTED — not added to {@code mRecipeList}, no exception thrown,
 	 * {@code null} returned. Upstream is structurally immune to these ghost recipes at the
@@ -119,6 +127,10 @@ public class RecipeMap {
 	@Nullable
 	public Recipe addRecipe(@Nullable Recipe aRecipe) {
 		if (aRecipe == null) return null;
+		if (GT6RecipeMaps.phase() == GT6RecipeMaps.Phase.FROZEN) throw new IllegalStateException( // fail-loud AFTER the gate, fail-silent only for null (not a pour)
+				"RecipeMap \"" + mNameInternal + "\" is FROZEN — addRecipe rejected outside the registration phase "
+				+ "(pour during registration: the static loaders at FMLCommonSetup or the JSON reload window; "
+				+ "the caller stack above names the offender — task p32-rm-phase-gate)");
 		if (aRecipe.mInputs.length == 0 && aRecipe.mFluidInputs.length == 0) return null; // ghost-recipe guard, see javadoc
 		if (aRecipe.mEnabled && !aRecipe.mFakeRecipe) mRecipeList.add(aRecipe);
 		return aRecipe;
