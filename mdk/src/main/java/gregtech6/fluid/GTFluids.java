@@ -160,6 +160,14 @@ import gregtech6.registry.GTFluidPipes;
  * rows at zero skips). Fluid-only, no blocks, no buckets. KJS surface: REGISTRATION face
  * (the 11 Spec rows) + the comb datapack-domain rows of the same card; NO KubeJS-specific
  * seam.
+ *
+ * <p>The WORLDGEN BLOCK FACE (task p31-fluid-spring): five further LiquidBlocks —
+ * {@code liquid_extra_heavy_oil_block/liquid_heavy_oil_block/liquid_medium_oil_block/
+ * liquid_light_oil_block/water_geothermal_block} (see {@link #SPRING_BLOCK_IDS}) — the
+ * placeable lake bodies of the {@code gt6:fluid_springs} bedrock-spring feature, with
+ * {@code natural_gas} joining through its existing {@link #NATURAL_GAS_BLOCK} (task p5)
+ * and the vanilla lava row needing no registration. See the {@link #SPRING_BLOCK_IDS}
+ * section javadoc for the f1-ruling revision declaration this card pins.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTFluids {
@@ -602,7 +610,7 @@ public final class GTFluids {
 		return null;
 	}
 
-	/** One registered aqua family: the declared spec + the three live handles. Fluid-only — no block, no bucket. */
+	/** One registered aqua family: the declared spec + the three live handles. Fluid-only — no bucket; the block face exists only where the worldgen block seam carries the name (water_geothermal, p31-fluid-spring). */
 	public static final class AquaFluid {
 		/** The declaration row ({@link #AQUA_SPECS}); the offline-readable half. */
 		public final AquaFluidSpec spec;
@@ -629,12 +637,14 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The shared registration body for the AquaFluidSpec tables ({@link #AQUA_SPECS} and
+	 * The shared per-family Properties for the AquaFluidSpec tables ({@link #AQUA_SPECS} and
 	 * {@link #SIMPLE_LIQUID_SPECS}): FluidType carrying the declared
-	 * temperature/density/viscosity, Source/Flowing over one shared Properties, NO
-	 * LiquidBlock and NO bucket (the fluid-only declaration; the bucket container
-	 * behaviour is out of the card scope). Shares the SOURCE_SEAM/FLOWING_SEAM maps —
-	 * the Properties are built at registry-event time (see engineFluid).
+	 * temperature/density/viscosity, Source/Flowing over one shared Properties, NO bucket
+	 * (the bucket container behaviour is out of the card scope) and a LiquidBlock only where
+	 * {@link #withWorldgenBlock} finds one — the fluid-only declaration of p16/p19/p21 held
+	 * until task p31-fluid-spring extended the block face for {@code water_geothermal} (the
+	 * f1-revision declaration, {@link #SPRING_BLOCK_IDS}). Shares the SOURCE_SEAM/
+	 * FLOWING_SEAM maps — the Properties are built at registry-event time (see engineFluid).
 	 */
 	private static AquaFluid registerFluidFamily(AquaFluidSpec tSpec) {
 		RegistryObject<FluidType> tType = FLUID_TYPES.register(tSpec.name(), () -> new FluidType(FluidType.Properties.create()
@@ -670,8 +680,10 @@ public final class GTFluids {
 
 	/** The shared per-family Properties for the aqua rows — called at registry-event time only (see aquaFluid). */
 	private static ForgeFlowingFluid.Properties aquaProperties(AquaFluidSpec aSpec, RegistryObject<FluidType> aType) {
-		// NO .block(...) — the fluid-only declaration of this card
-		return new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aSpec.name()), FLOWING_SEAM.get(aSpec.name()));
+		// the block leg rides the worldgen block face where the seam carries the name (p31-fluid-spring)
+		return withWorldgenBlock(aType,
+				new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aSpec.name()), FLOWING_SEAM.get(aSpec.name())),
+				aSpec.name());
 	}
 
 	/**
@@ -1406,7 +1418,7 @@ public final class GTFluids {
 		return null;
 	}
 
-	/** One registered chemical family: the declared spec + the three live handles. Fluid-only — no block, no bucket. */
+	/** One registered chemical family: the declared spec + the three live handles. Fluid-only — no bucket; the block face exists only where the worldgen block seam carries the name (the four oils, p31-fluid-spring). */
 	public static final class ChemicalFluid {
 		/** The declaration row ({@link #CHEMICAL_SPECS}); the offline-readable half. */
 		public final ChemicalFluidSpec spec;
@@ -1466,8 +1478,10 @@ public final class GTFluids {
 
 	/** The shared per-family Properties for the chemical rows — registry-event time only (see chemicalFluid). */
 	private static ForgeFlowingFluid.Properties chemicalProperties(ChemicalFluidSpec aSpec, RegistryObject<FluidType> aType) {
-		// NO .block(...) — the fluid-only declaration of this family
-		return new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aSpec.name()), FLOWING_SEAM.get(aSpec.name()));
+		// the block leg rides the worldgen block face where the seam carries the name (p31-fluid-spring)
+		return withWorldgenBlock(aType,
+				new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aSpec.name()), FLOWING_SEAM.get(aSpec.name())),
+				aSpec.name());
 	}
 
 	/**
@@ -1828,6 +1842,73 @@ public final class GTFluids {
 		GTFluidLists.register("hotmoltenlicl"    , GTFluidLists.POWER_CONDUCTING);
 		GTFluidLists.register("hotcarbondioxide" , GTFluidLists.POWER_CONDUCTING);
 		GTFluidLists.register("hothelium"        , GTFluidLists.POWER_CONDUCTING);
+	}
+
+	// ------------------------------------------------------------------
+	// The worldgen block face (task p31-fluid-spring spec ①). Upstream the
+	// bedrock-spring lake bodies are BlocksGT.OilExtraHeavy/OilHeavy/OilMedium/
+	// OilLight/GasNatural/WaterGeothermal (Loader_Worldgen.java:782-788) plus the
+	// vanilla Blocks.lava row (:788), written by WorldgenFluidSpring.generate (:75).
+	// natural_gas carries its block since task p5; vanilla lava needs nothing; the
+	// five ids below register the LiquidBlock leg and ride the SHARED Properties
+	// builders through withWorldgenBlock — every other fluid-only row of the
+	// chemical/aqua bodies stays untouched.
+	// ------------------------------------------------------------------
+
+	/**
+	 * The five fluid ids this card gives a LiquidBlock to (the fourth being the
+	 * {@code natural_gas} block face that already exists, {@link #NATURAL_GAS_BLOCK}).
+	 *
+	 * <p><b>THE F1 RULING REVISION, EXPLICIT (the card spec's no-silent-deviation
+	 * clause):</b> decisions.p29-w4-split-rulings card ① (p29-w4-f1-chemicals) ruled the
+	 * chemical batch "无桶无块" (fluid-only). THIS card REVISES THE BLOCK FACE of that
+	 * ruling for exactly the four oil rows of {@link #CHEMICAL_SPECS} and the one aqua row
+	 * {@code water_geothermal} of {@link #AQUA_SPECS}: the bedrock-spring lake needs a
+	 * placeable fluid block per row (upstream WorldgenFluidSpring writes mBlock,
+	 * WorldgenFluidSpring.java:75, the row table :782-788). THE BUCKET FACE IS UNCHANGED —
+	 * zero bucket items, the R6 census (GTFluids registers no items at all) stands. The
+	 * revision is the SPEC-declared deliverable, not a silent drift: the block ids are the
+	 * fluid id + the {@code _block} suffix (the oil/natural_gas/dye-chemical convention).
+	 * Block properties ride the established liquid ramp
+	 * ({@code noCollission().strength(100.0F).noLootTable()}, the iron_molten block form).
+	 *
+	 * <p>Mechanics: the static block below registers the five LiquidBlocks into
+	 * {@link #BLOCK_SEAM} at class-init (AFTER the seam maps' textual position, long before
+	 * the registry event the DeferredRegister lambdas fire on), and the shared
+	 * {@link #chemicalProperties}/{@link #aquaProperties} builders attach the block leg
+	 * through {@link #withWorldgenBlock} only where the seam carries the name. KJS surface:
+	 * REGISTRATION face only (the existing fluid-block seam; the lake placement itself is
+	 * the worldgen JSON domain of the {@code gt6:fluid_springs} feature).
+	 */
+	public static final List<String> SPRING_BLOCK_IDS = List.of(
+			"liquid_extra_heavy_oil", "liquid_heavy_oil", "liquid_medium_oil", "liquid_light_oil",
+			"water_geothermal");
+
+	/** The gt6 BLOCK id of a worldgen spring fluid — the full {@code gt6:} id, the fluid id + {@code _block} (natural_gas included, its block the p5 face). */
+	public static String springBlockId(String aFluidName) {
+		return "gt6:" + ("natural_gas".equals(aFluidName) ? "natural_gas_block" : aFluidName + "_block");
+	}
+
+	/** The block-leg attach: the Properties gain the LiquidBlock only where the seam carries the name, the fluid-only rows stay untouched. */
+	private static ForgeFlowingFluid.Properties withWorldgenBlock(RegistryObject<FluidType> aType,
+			ForgeFlowingFluid.Properties aProps, String aName) {
+		RegistryObject<LiquidBlock> tBlock = BLOCK_SEAM.get(aName);
+		return tBlock == null ? aProps : aProps.block(tBlock);
+	}
+
+	static {
+		for (String tName : SPRING_BLOCK_IDS) {
+			//? if forge {
+			RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
+					() -> new LiquidBlock(SOURCE_SEAM.get(tName), BlockBehaviour.Properties.of()
+							.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
+			//?} else {
+			/*RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
+					() -> new LiquidBlock(SOURCE_SEAM.get(tName).get(), BlockBehaviour.Properties.of()
+							.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp (FLUID before BLOCK, the resolved .get() is live)
+			*///?}
+			BLOCK_SEAM.put(tName, tBlock);
+		}
 	}
 
 	private GTFluids() {}
