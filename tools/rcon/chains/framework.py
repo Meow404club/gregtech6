@@ -193,12 +193,25 @@ def _boxes_disjoint(a, b):
     return any(a[i + 3] < b[i] or b[i + 3] < a[i] for i in range(3))
 
 
+def uses_tick_window(chain):
+    """True when any step carries tick_step (Step.uses_tick_window). A tick
+    window freezes the WHOLE boot for ~N/20 s — concurrent wave-mates' polls
+    and sleeps would starve inside it (the exact false-red family the tick
+    primitive exists to kill), so such chains never share a wave. Applies on
+    both legs: the forge degrade is a plain poll and would be wave-safe, but
+    one conservative rule beats two (ponytail: the freeze, not the leg, is
+    the hazard — and the leg can change without the chain noticing)."""
+    return any(step.tick_step is not None for step in chain.steps)
+
+
 def plan_waves(chains, concurrency=1):
     """Pack a boot group into waves of concurrently-executing chains.
 
     The structural admission rules (user calibration, the strict form):
       - a chain that mutates global state never shares a wave — it becomes an
         exclusive wave of its own (the downgrade);
+      - a chain running tick windows (uses_tick_window) likewise never shares
+        a wave — the freeze halts every co-tenant's timing;
       - a chain joins a wave only when its site bbox (gt6world.region, margins
         included) is disjoint from EVERY member's — overlapping sites are
         structurally refused, never "probably fine";
@@ -211,11 +224,14 @@ def plan_waves(chains, concurrency=1):
     waves = []
     for chain in chains:
         placed = False
-        if concurrency > 1 and not chain.fresh_boot and not chain.mutates:
+        if concurrency > 1 and not chain.fresh_boot and not chain.mutates \
+                and not uses_tick_window(chain):
             box = gt6world.region(chain.sites)
             for wave in waves:
                 if len(wave) >= concurrency:
                     continue
+                if any(uses_tick_window(member) for member in wave):
+                    continue   # a tick-window member owns its wave alone
                 if all(_boxes_disjoint(box, gt6world.region(member.sites))
                        for member in wave):
                     wave.append(chain)
@@ -266,6 +282,23 @@ class Step:
                  byte-identical. Resolved from chain.node at judge time (the
                  same write-back step_cmd reads), so a sweep-level --node
                  override forks exactly like a per-chain boot.
+    tick_step   — the deterministic tick advance (P32, card
+                 p32-ops-neo-tick-primitive; neo-leg only). On the TICK_NODE
+                 leg the window runs: freeze → prove stillness (two gametime
+                 reads) → /tick step N → settle until gametime is exactly
+                 g0+N → run and judge THIS step's cmd+expect ONCE inside the
+                 frozen world → thaw (proved). The single frozen-window read
+                 replaces the poll resend loop — no starvation, no mid-flight
+                 reads; the assert is a terminal value at an exact tick.
+                 Requires cmd (a judged probe; a bare advance has no judge).
+                 Exclusive with poll. Stepping paces at vanilla 20 tps
+                 (MinecraftServer.java:687 — only sprint unpaces, :682-684):
+                 N ticks cost ~N/20 s wall — determinism, not speed.
+    tick_fallback_poll — the DECLARED forge-leg degradation: on a node without
+                 the /tick primitive (1.20.1 has no TickCommand at all) the
+                 step downgrades to poll-to-expect for this many seconds.
+                 Absent → the step is a fail-visible RED (never a silent
+                 downgrade onto a leg that cannot honor it).
     """
     cmd: str = None
     expect: str = None
@@ -275,6 +308,24 @@ class Step:
     label: str = None
     node_cmds: dict = None
     node_expects: dict = None
+    tick_step: int = None
+    tick_fallback_poll: float = None
+
+    def __post_init__(self):
+        if self.tick_step is not None:
+            if self.tick_step < 1:
+                raise ValueError(f"tick_step must be >= 1, got {self.tick_step}")
+            if self.poll:
+                raise ValueError("tick_step and poll are exclusive timing "
+                                 "mechanisms (exact window vs resend loop)")
+            if not self.cmd:
+                raise ValueError("tick_step rides a judged probe (cmd+expect); "
+                                 "a bare advance has no frozen-window judge")
+
+    def uses_tick_window(self):
+        """True when this step runs the deterministic tick window (any leg —
+        plan_waves uses this for the exclusive-wave rule)."""
+        return self.tick_step is not None
 
 
 def step_cmd(step, node=None):
@@ -330,6 +381,119 @@ class Chain:
 
 
 POLL_INTERVAL = 1.0      # seconds between poll resends (server ticks pace the state)
+
+# ---------------------------------------------------------------------------
+# the deterministic tick window (P32, card p32-ops-neo-tick-primitive) —
+# every semantic below is source-proven against the vanilla 1.21.1 tree:
+#   - /tick exists there only: TickCommand.java:21-56 (literal "tick",
+#     requires permission 3; query/rate/step/sprint/freeze/unfreeze). The
+#     1.20.1 tree has no TickCommand at all — no server/commands/TickCommand
+#     and no registration in Commands.java — hence the leg dialect gate.
+#   - stepping REQUIRES frozen: ServerTickRateManager.stepGameIfPaused
+#     (:40-48) returns false unless frozen (TickCommand.java:138 failure);
+#     it just sets frozenTicksToRun=N and returns — the reply is immediate
+#     (TickCommand.java:132-142), so gt6rcon's per-command timeouts are
+#     untouched; the wait is CLIENT-side, until the world settled.
+#   - freezing stops the world: TickRateManager.tick (:56-61) gates
+#     runGameElements; ServerLevel.tick (:337-360) gates tickTime/blockTicks/
+#     fluidTicks on runsNormally() — gametime does not advance while frozen
+#     and advances EXACTLY +N across a step. That arithmetic (read via
+#     `time query gametime`, TimeCommand.java:57 "commands.time.query") is
+#     the only assertion the machinery makes about /tick — no /tick reply
+#     text is matched, nothing is locale- or string-fragile.
+#   - stepping is paced, not blocked, not sped: the loop keeps
+#     nanosecondsPerTick (MinecraftServer.java:687; only SPRINT unpaces,
+#     :682-684) — N ticks cost ~N/20 s wall, deterministically.
+#   - commands still execute while frozen: rcon/console commands are drained
+#     via runAllTasks in waitUntilNextTick (MinecraftServer.java:824-827;
+#     DedicatedServer.java:517-519 executeBlocking) — every loop iteration,
+#     frozen or not. The frozen-window probe is an ordinary command.
+# ---------------------------------------------------------------------------
+TICK_NODE = "1.21.1"                       # node_key that owns /tick (1.20.3+)
+GAMETIME_QUERY = "time query gametime"
+GAMETIME_PREFIX = "The time is "           # commands.time.query rendering
+TICK_SECONDS_PER_TICK = 0.05               # vanilla 20 tps pacing of a step
+TICK_SETTLE_MARGIN = 2.0                   # flat slack over N*0.05s
+FREEZE_GAP = 0.3                           # >3 ticks: two equal reads this far
+                                           # apart prove stillness (and, after
+                                           # thaw, that the world moves again)
+
+
+def _body(outs):
+    """The judged/printable body of one command's response frames."""
+    return "\n".join(outs) if isinstance(outs, list) else str(outs)
+
+
+def _query_gametime(client):
+    """`time query gametime` -> int, or None when the reply isn't parseable
+    (never an exception: a None read drives the proof/red paths instead)."""
+    body = _body(client.run_command(GAMETIME_QUERY))
+    head, sep, tail = body.rpartition(GAMETIME_PREFIX)
+    if not sep:
+        return None
+    token = tail.split(maxsplit=1)[0] if tail else ""
+    try:
+        return int(token)
+    except ValueError:
+        return None
+
+
+def _tick_window(client, step, cmd, expect, index):
+    """freeze → settle exactly N ticks → judge once inside the frozen window
+    → thaw (proved). Returns (body, failure_count).
+
+    Cleanup guarantee: the thaw runs on EVERY path — a session left frozen
+    would stall every later chain's sleeps/polls (the exact false-red family
+    this primitive kills), so a failed thaw reds the step too. Every /tick
+    claim is behavioral: the freeze proof is two equal gametime reads
+    FREEZE_GAP apart, the settle is gametime == g0+N (exact — the frozen gate
+    cannot overshoot, TickRateManager.tick :56-61), the thaw proof is a
+    moving read pair. No /tick reply text is matched anywhere.
+    """
+    failure = 0
+    body = ""
+    try:
+        print("$ tick freeze   # tick_step window: deterministic "
+              f"{step.tick_step}-tick advance")
+        client.run_command("tick freeze")
+        frozen_at = _query_gametime(client)
+        time.sleep(FREEZE_GAP)
+        still = _query_gametime(client)
+        if frozen_at is None or still != frozen_at:
+            print(f"  [tick_step {index}: freeze proof failed (gametime "
+                  f"{frozen_at} -> {still}); /tick step NOT sent]")
+            failure = 1
+        else:
+            target = frozen_at + step.tick_step
+            print(f"$ tick step {step.tick_step}   # settle until gametime {target}")
+            client.run_command(f"tick step {step.tick_step}")
+            deadline = time.monotonic() + step.tick_step * TICK_SECONDS_PER_TICK \
+                + TICK_SETTLE_MARGIN
+            while _query_gametime(client) != target:
+                if time.monotonic() >= deadline:
+                    print(f"  [tick_step {index}: gametime never settled at "
+                          f"{target} within deadline; window red]")
+                    failure = 1
+                    break
+                time.sleep(POLL_INTERVAL)
+            else:
+                outs = client.run_command(cmd)
+                body = _body(outs)
+                print(f"$ {cmd}\n{body if body else '<no response>'}"
+                      f"   # judged frozen at gametime {target}")
+                failure = judge_step(index, step, body, expect)
+    finally:
+        print("$ tick unfreeze   # window cleanup (never leave a frozen session)")
+        client.run_command("tick unfreeze")
+        thawed_at = _query_gametime(client)
+        time.sleep(FREEZE_GAP)
+        moving = _query_gametime(client)
+        if thawed_at is None or moving == thawed_at:
+            print(f"  [tick_step {index}: THAW PROOF FAILED (gametime "
+                  f"{thawed_at} -> {moving}) — the session may stay frozen; "
+                  "every later chain would stall]")
+            failure += 1
+    return body, failure
 
 
 def _step_judgement(step, body, expect):
@@ -391,24 +555,29 @@ def judge_step(index, step, body, expect):
     return counts
 
 
-def _poll_step(client, step, cmd, expect):
+def _poll_step(client, step, cmd, expect, poll=None):
     """Resend the command until it matches or the poll deadline; return the final body.
 
     run_command never raises on a silent server (it returns []), so a resend is
     always safe. Every attempt is a full honest command: probes are read-only
     stats in practice, and the final body — the one judged — is the last one sent.
+    `poll` overrides step.poll (the tick_fallback_poll degrade passes its
+    declared window without cloning the step — replace() would re-run
+    __post_init__ and trip the tick_step/poll exclusivity rule).
     """
-    print(f"$ {cmd}   # poll <= {step.poll:g}s")
-    deadline = time.monotonic() + step.poll
+    if poll is None:
+        poll = step.poll
+    print(f"$ {cmd}   # poll <= {poll:g}s")
+    deadline = time.monotonic() + poll
     attempts = 0
     while True:
         attempts += 1
         outs = client.run_command(cmd)
-        body = "\n".join(outs) if isinstance(outs, list) else str(outs)
+        body = _body(outs)
         if _step_matches(step, body, expect):
             return body
         if time.monotonic() >= deadline:
-            print(f"  [poll: giving up after {step.poll:g}s, {attempts} attempts]")
+            print(f"  [poll: giving up after {poll:g}s, {attempts} attempts]")
             return body
         print(f"  [poll {attempts}: not yet]")
         time.sleep(POLL_INTERVAL)
@@ -424,6 +593,12 @@ def run_steps(client, steps, verdicts=None, node=None):
     between execution models (session vs per-chain boot). `node` resolves the
     per-node command override (Step.node_cmds) AND the per-node expect
     override (Step.node_expects); the recorded cmd is the one actually sent.
+
+    A step carrying tick_step routes by leg: TICK_NODE runs the deterministic
+    freeze/step/judge-frozen/thaw window (_tick_window); a leg without the
+    /tick primitive runs the DECLARED tick_fallback_poll degrade (poll 制,
+    judge-once semantics identical to poll) — or, undeclared, a fail-visible
+    RED that sends nothing (never a silent downgrade).
     """
     failure = 0
     index = 0
@@ -434,17 +609,38 @@ def run_steps(client, steps, verdicts=None, node=None):
         index += 1
         cmd = step_cmd(step, node)
         expect = step_expect(step, node)
-        if step.poll:
+        hard_red = False
+        if step.tick_step is not None and node_key(node) != TICK_NODE:
+            if step.tick_fallback_poll is None:
+                print(f"[tick_step {index}: node {node} lacks the /tick "
+                      "primitive (1.20.1 has no TickCommand at all) and "
+                      "declares no tick_fallback_poll — RED; the forge poll "
+                      "degradation must be declared in the chain]")
+                body = ""
+                failure += 1
+                hard_red = True
+            else:
+                print(f"[tick_step {index}: node {node} lacks /tick — declared "
+                      f"degrade to poll {step.tick_fallback_poll:g}s]")
+                body = _poll_step(client, step, cmd, expect,
+                                  poll=step.tick_fallback_poll)
+                print(body if body else "<no response>")
+                failure += judge_step(index, step, body, expect)
+        elif step.tick_step is not None:
+            body, counts = _tick_window(client, step, cmd, expect, index)
+            failure += counts
+        elif step.poll:
             body = _poll_step(client, step, cmd, expect)
             print(body if body else "<no response>")
+            failure += judge_step(index, step, body, expect)
         else:
             outs = client.run_command(cmd)
-            body = "\n".join(outs) if isinstance(outs, list) else str(outs)
+            body = _body(outs)
             print(f"$ {cmd}\n{body if body else '<no response>'}")
-        failure += judge_step(index, step, body, expect)
+            failure += judge_step(index, step, body, expect)
         if verdicts is not None:
-            verdicts.append({"index": index, "cmd": cmd,
-                             "verdict": _step_verdict(step, body, expect)})
+            verdict = "FAIL" if hard_red else _step_verdict(step, body, expect)
+            verdicts.append({"index": index, "cmd": cmd, "verdict": verdict})
         if step.sleep:
             time.sleep(step.sleep)
     return failure
