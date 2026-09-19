@@ -1,0 +1,103 @@
+{
+  "type": "gt6:fluid_springs",
+  "config": {
+    "rows": [
+      {
+        "block": "gt6:liquid_extra_heavy_oil_block",
+        "name": "overworld.fluid.oil.extraheavy",
+        "overworld": true,
+        "probability": 400
+      },
+      {
+        "block": "gt6:liquid_heavy_oil_block",
+        "name": "overworld.fluid.oil.heavy",
+        "overworld": true,
+        "probability": 400
+      },
+      {
+        "block": "gt6:liquid_medium_oil_block",
+        "name": "overworld.fluid.oil.medium",
+        "overworld": true,
+        "probability": 400
+      },
+      {
+        "block": "gt6:liquid_light_oil_block",
+        "name": "overworld.fluid.oil.light",
+        "overworld": true,
+        "probability": 400
+      },
+      {
+        "block": "gt6:natural_gas_block",
+        "name": "overworld.fluid.gas.natural",
+        "overworld": true,
+        "probability": 200
+      },
+      {
+        "block": "gt6:water_geothermal_block",
+        "name": "overworld.fluid.water",
+        "overworld": true,
+        "probability": 100
+      },
+      {
+        "block": "minecraft:lava",
+        "name": "overworld.fluid.lava",
+        "overworld": true,
+        "probability": 200
+      },
+      {
+        "block": "gt6:liquid_extra_heavy_oil_block",
+        "name": "atum.fluid.oil.extraheavy",
+        "overworld": false,
+        "probability": 200
+      },
+      {
+        "block": "gt6:liquid_heavy_oil_block",
+        "name": "atum.fluid.oil.heavy",
+        "overworld": false,
+        "probability": 200
+      },
+      {
+        "block": "gt6:liquid_medium_oil_block",
+        "name": "atum.fluid.oil.medium",
+        "overworld": false,
+        "probability": 200
+      },
+      {
+        "block": "gt6:liquid_light_oil_block",
+        "name": "atum.fluid.oil.light",
+        "overworld": false,
+        "probability": 200
+      },
+      {
+        "block": "gt6:natural_gas_block",
+        "name": "erebus.fluid.gas.natural",
+        "overworld": false,
+        "probability": 200
+      },
+      {
+        "block": "gt6:natural_gas_block",
+        "name": "betweenlands.fluid.gas.natural",
+        "overworld": false,
+        "probability": 200
+      },
+      {
+        "block": "gt6:natural_gas_block",
+        "name": "twilight.fluid.gas.natural",
+        "overworld": false,
+        "probability": 200
+      },
+      {
+        "block": "gt6:water_geothermal_block",
+        "name": "twilight.fluid.water",
+        "overworld": false,
+        "probability": 100
+      },
+      {
+        "block": "minecraft:lava",
+        "name": "nether.fluid.lava",
+        "overworld": false,
+        "probability": 100
+      }
+    ]
+  }
+}

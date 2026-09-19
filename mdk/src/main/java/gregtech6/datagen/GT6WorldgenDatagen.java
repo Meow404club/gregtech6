@@ -69,6 +69,7 @@ import gregtech6.worldgen.GT6FallenLogFeature;
 import gregtech6.worldgen.GT6Features;
 import gregtech6.worldgen.GT6Worldgen;
 import gregtech6.worldgen.GTBedrockOreConfig;
+import gregtech6.worldgen.GTFluidSpringConfig;
 import gregtech6.worldgen.GTLensConfig;
 import gregtech6.worldgen.GTVeinConfig;
 import gregtech6.worldgen.GTOreWorldgen;
@@ -256,6 +257,11 @@ public final class GT6WorldgenDatagen {
         // face as the vein/lens tables).
         FeatureUtils.register(ctx, GT6Worldgen.BEDROCK_ORES_CONFIGURED, GT6Features.BEDROCK_ORES,
                 new GTBedrockOreConfig.Table(BEDROCK_ORE_TABLE));
+        // task p31-fluid-spring — the ONE bedrock-spring configured feature: the registered
+        // GT6FluidSpringFeature instance over the 16-row table (textually after the bedrock
+        // feature = the upstream "Has to be after Bedrock Ores" source order, :781).
+        FeatureUtils.register(ctx, GT6Worldgen.FLUID_SPRINGS_CONFIGURED, GT6Features.FLUID_SPRINGS,
+                new GTFluidSpringConfig.Table(FLUID_SPRING_TABLE));
         bootstrapOreConfigured(ctx); // task p30-w6-small-ore-datagen — tail-append
     }
 
@@ -321,6 +327,13 @@ public final class GT6WorldgenDatagen {
         // bedrock-anchored bands).
         PlacementUtils.register(ctx, GT6Worldgen.BEDROCK_ORES_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.BEDROCK_ORES_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        // task p31-fluid-spring — the bedrock-spring placed feature: Count 1 CONSTANT +
+        // InSquare + BiomeFilter (the bedrock-ore chain shape; the 1/P row rolls + the
+        // exclusion replay live in the Feature's coordinate-seeded streams, no Y placement
+        // — the rows carry their own bedrock-anchored bands).
+        PlacementUtils.register(ctx, GT6Worldgen.FLUID_SPRINGS_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.FLUID_SPRINGS_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         // task p31-nether-lens-end-yield — the nether-lens placed feature: Count 1 CONSTANT +
         // InSquare + BiomeFilter (the strata-lens chain shape; the per-chunk 1/200 row rolls
@@ -395,6 +408,14 @@ public final class GT6WorldgenDatagen {
         // no biome parameter), at the UNDERGROUND_ORES step.
         ctx.register(biomeModifierKeyOf("bedrock_ores"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BEDROCK_ORES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task p31-fluid-spring — the bedrock-spring biome modifier: EVERY overworld biome,
+        // at the UNDERGROUND_ORES step, registered textually AFTER the bedrock modifier (the
+        // :781 "Has to be after Bedrock Ores" order). The GT6FluidSpringFeature replay seam
+        // keeps the one-bedrock-event-per-chunk exclusion correct under ANY modifier
+        // application order — this ordering is the declared source-order semantics.
+        ctx.register(biomeModifierKeyOf("fluid_springs"), addFeatures(tOverworld,
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.FLUID_SPRINGS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         // task p31-nether-lens-end-yield — the nether-lens biome modifier: EVERY nether
         // biome (upstream GEN_NETHER, Loader_Worldgen.java:656 — the dim flag is the modern
@@ -1046,5 +1067,53 @@ public final class GT6WorldgenDatagen {
         bedrockOffworld("ore.bedrock.adamantine"   , 10000, MT.Adamantine     ), // :768
         bedrockOffworld("ore.bedrock.octine"       ,  5000, MT.Octine         ), // :769
         bedrockOffworld("ore.bedrock.syrmorite"    ,  2000, MT.Syrmorite      )  // :770
+    );
+
+    // ------------------------------------------------------------------
+    // The bedrock-spring band (task p31-fluid-spring) — the 16-row table,
+    // Loader_Worldgen.java:782-797 row-for-row. Column order (WorldgenFluidSpring
+    // .java:50): name / block / probability / overworld; the indicatorType column
+    // (:782-788 literals 2/2/2/2/1/3/1) and the springFluid column (the MTE arm's
+    // fluid stack) are the declared spec ③ deferrals — the GTFluidSpringConfig
+    // javadoc. The block ids are single-sourced: the six GT rows over
+    // GTFluids.springBlockId (the fluid id + _block; natural_gas its existing p5
+    // block face), the two lava rows the bare minecraft:lava. The rows roll
+    // FIRST-HIT-WINS in table order (the WorldgenFluidSpring.java:64 claim blocks
+    // every later spring row — at most one spring per chunk).
+    // ------------------------------------------------------------------
+
+    /** The row helper: an overworld spring row (the GT fluid id through {@code springBlockId} — the single-source face). */
+    private static GTFluidSpringConfig spring(String aName, String aFluidName, int aProbability) {
+        return new GTFluidSpringConfig(aName, gregtech6.fluid.GTFluids.springBlockId(aFluidName), aProbability, true);
+    }
+
+    /** The row helper for the offworld rows (:789-797 — never drawn overworld, kept for the table census). */
+    private static GTFluidSpringConfig springOffworld(String aName, String aBlockId, int aProbability) {
+        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false);
+    }
+
+    /** The lava-row helper (:788/:797 — the vanilla block face, no GT fluid id to single-source). */
+    private static GTFluidSpringConfig springLava(String aName, int aProbability, boolean aOverworld) {
+        return new GTFluidSpringConfig(aName, "minecraft:lava", aProbability, aOverworld);
+    }
+
+    /** The ONE 16-row bedrock-spring table — the card spec ② "上游行表→Feature 形". */
+    public static final List<GTFluidSpringConfig> FLUID_SPRING_TABLE = List.of(
+        spring       ("overworld.fluid.oil.extraheavy", "liquid_extra_heavy_oil", 400), // :782
+        spring       ("overworld.fluid.oil.heavy"     , "liquid_heavy_oil"     , 400), // :783
+        spring       ("overworld.fluid.oil.medium"    , "liquid_medium_oil"    , 400), // :784
+        spring       ("overworld.fluid.oil.light"     , "liquid_light_oil"     , 400), // :785
+        spring       ("overworld.fluid.gas.natural"   , "natural_gas"          , 200), // :786
+        spring       ("overworld.fluid.water"         , "water_geothermal"     , 100), // :787
+        springLava   ("overworld.fluid.lava"          , 200, true),                     // :788 — the OW lava dome, the vanilla block face
+        springOffworld("atum.fluid.oil.extraheavy"    , "gt6:liquid_extra_heavy_oil_block", 200), // :789
+        springOffworld("atum.fluid.oil.heavy"         , "gt6:liquid_heavy_oil_block"     , 200), // :790
+        springOffworld("atum.fluid.oil.medium"        , "gt6:liquid_medium_oil_block"    , 200), // :791
+        springOffworld("atum.fluid.oil.light"         , "gt6:liquid_light_oil_block"     , 200), // :792
+        springOffworld("erebus.fluid.gas.natural"     , "gt6:natural_gas_block"          , 200), // :793
+        springOffworld("betweenlands.fluid.gas.natural", "gt6:natural_gas_block"         , 200), // :794
+        springOffworld("twilight.fluid.gas.natural"   , "gt6:natural_gas_block"          , 200), // :795
+        springOffworld("twilight.fluid.water"         , "gt6:water_geothermal_block"     , 100), // :796
+        springLava   ("nether.fluid.lava"             , 100, false)                    // :797
     );
 }

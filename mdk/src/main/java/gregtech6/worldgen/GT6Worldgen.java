@@ -387,6 +387,30 @@ public final class GT6Worldgen {
      */
     public static final ResourceKey<PlacedFeature> BEDROCK_ORES_PLACED = placedKeyOf("bedrock_ores");
 
+    // ------------------------------------------------------------------
+    // The bedrock-spring band (task p31-fluid-spring) — the single Feature over the
+    // 16-row spring table; key form = the bedrock-ore band's path-direct shape. The
+    // biome modifier ships textually AFTER the bedrock_ores row (the upstream
+    // "Has to be after Bedrock Ores" order, Loader_Worldgen.java:781 — though the
+    // Feature's replay seam keeps the mutual exclusion correct under any application
+    // order, see the GT6FluidSpringFeature javadoc).
+    // ------------------------------------------------------------------
+
+    /** The bedrock-spring configured feature (the GT6FluidSpringFeature instance + the 16-row table). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> FLUID_SPRINGS_CONFIGURED = configKey("fluid_springs");
+    /** The bedrock-spring placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk). */
+    public static final ResourceKey<PlacedFeature> FLUID_SPRINGS_PLACED = placedKeyOf("fluid_springs");
+
+    /**
+     * The port-owned synthetic salt of the spring row stream ({@link GT6VeinGenerator#veinRandom}
+     * face): upstream the spring row gates drew from the SHARED per-chunk random after the
+     * bedrock draws — a stream position this port cannot and need not reproduce (the
+     * declared strengthening, the vein-card face). The legacy dimension salts are 0/-1/1
+     * (GT6VeinGenerator); 2 is outside that set, so the spring stream never collides with
+     * a dimension stream. The exclusion replay itself uses the ORE stream verbatim.
+     */
+    public static final long SPRING_DIMENSION_SALT = 2;
+
     private GT6Worldgen() {
     }
 }
