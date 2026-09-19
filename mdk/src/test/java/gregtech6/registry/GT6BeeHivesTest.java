@@ -1,8 +1,8 @@
 package gregtech6.registry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.List;
 
@@ -41,13 +41,17 @@ class GT6BeeHivesTest {
 				"the BET register holds exactly the hive type");
 	}
 
+	//? if forge {
 	@Test
 	void suppliersAreDeferredNotRun() {
 		// offline the RegistryObjects are NOT resolved (no game registry): .get() must
-		// throw rather than half-construct — the assertion pins the no-supplier-run posture
+		// throw rather than half-construct — the assertion pins the no-supplier-run posture.
+		// FORGE-LEG ONLY: the 21.1 test JVM boots through FML itself (the GTOfflineTestBase
+		// javadoc), so the registry is populated and .get() RESOLVES there.
 		assertThrows(Throwable.class, () -> GT6BeeHives.HIVE.get(),
 				"unregistered .get() throws (the entries-only offline contract)");
 	}
+	//?}
 
 	@Test
 	void noItemFaceIsDeclared() {
