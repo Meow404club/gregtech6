@@ -565,6 +565,14 @@ SESSION_GROUPS = (
     # energy feed is a data merge, the disintegration run rides the dynamic walk pour).
     # --group p31_massfab matches through the chain's embedded name prefix.
     ("p31_massfab",),
+    # P31 card (p31-fusion): the Fusion Reactor chain — one fresh z=452..478 band
+    # (x438..462: the controller x450,65,462 with the core at z+2 + the OCTAGONS rings
+    # x441..459/z455..473 + the +-10 battery-box sink at 450,65,454 + the LU dial at
+    # 441,65,461), admission mirroring the p31 massfab form (bbox-registered, no
+    # fresh_boot / mutates member — the TU self-generation drives the run, the input
+    # tanks ride the input_tank NBT merge, the EU arrival freezes at the sink buffer
+    # cap). --group p31_fusion matches through the chain's embedded name prefix.
+    ("p31_fusion",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
