@@ -587,6 +587,15 @@ SESSION_GROUPS = (
     # merge; machines absent, the W2 scanner/replicator card is the consumer).
     # --group p32_qu_usb matches through the chain's embedded name prefix.
     ("p32_qu_usb",),
+    # P32 W2 card (p32-bees-lv2): the BumbleHive BE + worldgen chain — the fresh
+    # x405..445 z240-adjacent hive cell (x412) + the two chunk probe boxes (chunk (4,4)
+    # embedded x63..80 y8..20, chunk (13,4) hanging x207..224 y48..96) + the staging
+    # clones x296..345. Admission mirroring the p31 strata/borehole form (bbox-registered,
+    # no fresh_boot / mutates member — the /setblock+data-merge hive re-lays per pass,
+    # the /place arms erase-refill-replace for the bit-exact recompute). The z=240 cell
+    # sits x-disjoint of the scene-six band (x401..407). --group p32_bees_hive matches
+    # through the chain's embedded name prefix.
+    ("p32_bees_hive",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
