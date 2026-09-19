@@ -67,10 +67,11 @@ import gregtech6.registry.GTMaterialItems;
  * <li>{@code mSpecialValue} carries the upstream {@code setSpecialNumber} number —
  *     {@code dur*8192*16} for most rows, the {@code 8469}/{@code 94956} outliers verbatim
  *     (:954/:966). Display data only (the port has no NEI face); the ignition gate it once
- *     fed is NOT ported — the dual-layer ruling: the {@code mSpecialIsStartEnergy} flag has
- *     no registration supplier anywhere upstream, so the :755 write is unreachable and the
- *     :809 progress gate runs permanently open (mechanism live, supply broken). The data is
- *     fully carried here, so a future gate card touches ONLY the machine face.</li>
+ *     fed is NOT ported — DECLARED WAIVER (the S31-7 final qualification: the :1242
+ *     NBT_SPECIAL_IS_START_ENERGY flag IS supplied through readFromNBT2 :112-124, the :755
+ *     write is reachable, the :809 gate closes until the :497-500 LU decrement pays it; the
+ *     port ships gateless until the pool-E LU economy). The data is fully carried here, so
+ *     a future gate card touches ONLY the machine face.</li>
  * </ul>
  *
  * <p><b>The resolution seams</b>: the circuit selector rides

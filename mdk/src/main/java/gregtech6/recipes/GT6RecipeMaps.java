@@ -748,10 +748,11 @@ public class GT6RecipeMaps {
 	 * The {@code mSpecialValue} of every row carries the upstream
 	 * {@code setSpecialNumber(dur*8192*16)} ("Start: %s LU", the :8469/:94956 outliers
 	 * verbatim) — display data only: the port has no NEI face, and the ignition gate the
-	 * value once fed is deliberately NOT ported (the dual-layer ruling: the
-	 * mSpecialIsStartEnergy flag has NO registration supplier anywhere upstream, so the
-	 * :755 write is unreachable and the :809 progress gate runs permanently open —
-	 * mechanism live, supply broken; see the TileEntityFusionReactor class doc).
+	 * value once fed is deliberately NOT ported (DECLARED WAIVER, the S31-7 final
+	 * qualification: the :1242 NBT_SPECIAL_IS_START_ENERGY flag IS supplied through
+	 * readFromNBT2 :112-124, the :755 write is reachable, the :809 gate closes until the
+	 * :497-500 LU decrement pays it; the port ships gateless until the pool-E LU
+	 * economy — see the TileEntityFusionReactor class doc).
 	 */
 	public static volatile RecipeMap FUSION;
 

@@ -80,26 +80,26 @@ import gregtech6.registry.GTMultiBlocks;
  * window 1..16384; the :493-496 overcharge arm REFUSES the packet — the declared
  * no-explosion narrowing, the Massfab form). The glass ring ADVERTISES LU acceptance
  * (isEnergyType :510 second arm) through the part relay — but the injection it would
- * charge is the ignition ledger, and that ledger is NOT ported (below), so LU packets
- * fall through to the :501 type check and are refused (0 accepted), exactly as the
- * upstream runtime behaves. The generator emission rides
+ * charge is the ignition ledger, and that ledger is NOT ported (the declared waiver,
+ * below), so LU packets fall through to the :501 type check and are refused
+ * (0 accepted). UPSTREAM the same injection pays the start-LU ledger (:497-500); the
+ * gateless port simply has no use for it. The generator emission rides
  * {@link #doOutputEnergy()} (:233-236): the raw 8192-EU packet pushed
  * ({@code insertEnergyInto}) at each of the four orthogonal ±10 offsets of the core
  * level, first accepting receiver wins — the remote launch seam.
  *
- * <p><b>Port deviation — the ignition gate is NOT implemented (the task-card ⑥ ruling,
- * dual-layer qualification)</b>: upstream semantics = the recipe's
- * {@code mSpecialValue} (dur×8192×16, the "Start: %s LU" NEI figure) is written into
- * {@code mChargeRequirement} at :755 when the {@code mSpecialIsStartEnergy} flag is set;
- * the :809 progress gate and the glass-ring :497-499 LU decrement are LIVE READ PATHS.
- * BUT no registration face anywhere in the upstream tree supplies the flag, so the :755
- * write is unreachable, {@code mChargeRequirement} stays 0 and the :809 gate runs
- * permanently open — mechanism live, supply broken. The port carries the dead-field
- * consequence only: no field, no gate, and the :1242 NBT_SPECIAL_IS_START_ENERGY column
- * is recorded here as documentation. All 18 rows already carry their start-LU payload in
- * {@code Recipe.mSpecialValue} (GT6RecipesFusion), so a future gate card touches ONLY the
- * machine face; its prerequisite is the LU production chain (the Quantum Energizer
- * family, pool E).
+ * <p><b>Port deviation — the ignition gate is NOT implemented (declared waiver, the
+ * S31-7 final qualification)</b>: <b>upstream = full-run ignition gating</b> — the
+ * Loader_MultiTileEntities.java:1242 row carries {@code NBT_SPECIAL_IS_START_ENERGY, T},
+ * the flag is SUPPLIED through readFromNBT2 (:112-124, the registration-config injection
+ * route shared with NBT_INPUT/NBT_RECIPEMAP) → the :755 write IS reachable (on recipe
+ * switch / non-active: {@code mChargeRequirement = mSpecialValue}) → the :809 progress
+ * gate CLOSES until paid → the glass-ring :497-500 LU decrement feeds it. D-D:
+ * 730×8192×16 ≈ 95.6M LU per arm. <b>port = declared waiver</b> — the gate is live
+ * upstream and simply absent here: installing it with no LU economy makes a dead
+ * machine. A future gate card (after the pool-E LU production chain lands) ports the
+ * {@code mSpecialIsStartEnergy} field + the :755/:809/:497 three arms (a one-line
+ * constructor boolean; the 18 rows' startLU data is already in place).
  *
  * <p><b>The IO face</b> (:223-230/:238-239): item and fluid auto-out/in targets are all
  * null upstream — the reactor has NO auto-IO; fluids park in the map-shaped tank bank
@@ -450,9 +450,9 @@ public class TileEntityFusionReactor extends TileEntityBase10MultiBlockMachine {
 		aSize = Math.abs(aSize); // :492
 		// the :493-496 overcharge arm REFUSES the packet (the declared no-explosion
 		// narrowing, the massfab form) — after the type gate so the glass-ring LU face
-		// keeps its upstream refusal semantics (the :497-500 charged arm is the unported
-		// ignition ledger: with the gate not implemented its counter is permanently 0 and
-		// LU falls to the :501 type check — refused, 0 accepted, the upstream runtime value)
+		// keeps its refusal semantics (upstream the :497-500 charged arm would bank the
+		// packet against the start-LU ledger; the gateless port has no ledger, so LU falls
+		// to the :501 type check — refused, 0 accepted)
 		if (aEnergyType != mEnergyTypeAccepted) return 0; // :501
 		if (aSize > mInputMax) return 0;
 		long tInput = Math.min(mInputMax - mEnergy, aSize * aAmount), tConsumed = Math.min(aAmount, (tInput / aSize) + (tInput % aSize != 0 ? 1 : 0)); // :503

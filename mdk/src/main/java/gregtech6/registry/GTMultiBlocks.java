@@ -496,8 +496,11 @@ public final class GTMultiBlocks {
 	// "fusionreactor", NBT_INPUT 8192 / NBT_INPUT_MIN 1 / NBT_INPUT_MAX 16384,
 	// NBT_ENERGY_ACCEPTED TD.Energy.TU, NBT_RECIPEMAP RM.Fusion, NBT_ENERGY_ACCEPTED_2
 	// TD.Energy.LU, NBT_ENERGY_EMITTED TD.Energy.EU, NBT_SPECIAL_IS_START_ENERGY T — the
-	// IGNITION TRAP, deliberately NOT ported (the dead-supply ruling, the dual-layer
-	// qualification on TileEntityFusionReactor), NBT_NO_CONSTANT_POWER T — the config
+	// ignition column is deliberately NOT ported (DECLARED WAIVER, the S31-7 final
+	// qualification: the flag IS supplied through readFromNBT2 :112-124 -> the :755 write
+	// is reachable -> the :809 gate closes until the :497-500 LU decrement pays it, D-D
+	// 730*8192*16 ~= 95.6M LU/arm; the port ships gateless until the pool-E LU economy —
+	// see TileEntityFusionReactor), NBT_NO_CONSTANT_POWER T — the config
 	// lands in the TileEntityFusionReactor constructor, the row-injection form). The
 	// controller crafting row "FFF"/"FMF"/"FFF" ('M' = the item(18003) Tungstensteel
 	// Wall, 'F' = IL.FIELD_GENERATORS[5]) is CUT — the 'F' item family has no port

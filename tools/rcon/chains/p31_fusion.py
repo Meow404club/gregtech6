@@ -22,7 +22,11 @@ Loader_MultiTileEntities.java:1242, upstream FusionReactor.java:47-126).
   - the glass ring y0 (design 5 inactive / 6 active, ONLY_ENERGY_IN) relays LU to the
     controller through the part energy relay; the /gt6energy LU dial parked against a
     ring cell proves the face is reachable, and the controller's :501 type gate
-    refuses LU (the inert ignition ledger) — the dial keeps emitting, harmless.
+    refuses LU — DECLARED WAIVER (the S31-7 final qualification): upstream the gate is
+    live through the whole run (Loader:1242 supplies NBT_SPECIAL_IS_START_ENERGY via
+    the readFromNBT2 :112-124 config injection -> the :755 write is reachable -> the
+    :809 progress gate closes until the :497-500 LU decrement pays it); the port ships
+    gateless until the pool-E LU economy, so the dial keeps emitting, harmless.
   - the EU launch: the battery_box_ev sink at the north +-10 point counts the
     :233-236 packets through its OVERCHARGE arm. No EU box can BUFFER an 8192
     packet (only LU crystals are tier-5 and the EU box rejects foreign-type

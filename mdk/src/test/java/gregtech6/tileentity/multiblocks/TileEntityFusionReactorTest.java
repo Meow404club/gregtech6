@@ -323,9 +323,11 @@ public class TileEntityFusionReactorTest extends GTMultiBlocksOfflineTestBase {
 		long tAcceptedPackets = tInPart.doEnergyInjection(TD.Energy.TU, (byte)3, 1024, 1, true);
 		assertEquals(1, tAcceptedPackets, "one packet accepted through the part relay");
 		assertEquals(1024, tController.mEnergy, "the TU packet landed in the machine buffer through the part");
-		// the LU face probes accepting but the injection refuses (the inert charged ledger)
+		// the LU face probes accepting but the injection refuses (the DECLARED-WAIVER
+		// gateless port: upstream :497-500 would bank the packet against the start-LU
+		// ledger the gateless port does not carry)
 		assertTrue(tInPart.isEnergyAcceptingFrom(TD.Energy.LU, (byte)3, false), "the glass ring advertises LU acceptance");
-		assertEquals(0, tInPart.doEnergyInjection(TD.Energy.LU, (byte)3, 512, 1, true), "the LU injection falls through the :501 type check (the unported ignition ledger)");
+		assertEquals(0, tInPart.doEnergyInjection(TD.Energy.LU, (byte)3, 512, 1, true), "the LU injection falls through the :501 type check (the gateless port refuses)");
 		// a wall part refuses by mask (the X-3 arm wall, mode NOTHING)
 		MultiBlockPartBlockEntity tArmPart = partAt(tLevel, 100 - 3, 64, 42);
 		assertNotNull(tArmPart, "the X- arm wall exists");
