@@ -8416,3 +8416,15 @@ faces are NOT borrowed — the port machines declare the plain colored controlle
 look (the multi-block formed look rides the frame-face blocks, the p31 card
 specs). License: upstream GregTech 6 assets are CC0 (see the Public Domain
 Dedication block above).
+
+## USB Stick item textures (task p32-usb-data)
+
+The four USB Stick item icons under `gt6/textures/item/usb_stick_{1,2,3,4}.png` come
+from upstream `src/main/resources/assets/gregtech/textures/items/gt.multiitem.technological/`
+(item ids 32001-32004, the MultiItemTechnological.java:791-794 rows), byte-identical
+to upstream, sha256 verified per file:
+
+- `usb_stick_1.png` — `07f868d00725f1c738752ca84831b82b939f1a30d667ad29482209e830022cbe` (upstream `32001.png`)
+- `usb_stick_2.png` — `4ec7896cca8accb80512d1dee55b3021cb491c15cd598e73f97a1c4dd287691b` (upstream `32002.png`)
+- `usb_stick_3.png` — `795405d6c96c7a91cc1ed70c38413bab64d7b459051461d97ca93c437302d446` (upstream `32003.png`)
+- `usb_stick_4.png` — `c08a8b8789e8e48b93e0cec5a8f49fb419c968d5fb918f52e3db48ece69180eb` (upstream `32004.png`)

@@ -453,6 +453,14 @@ public final class GT6ItemModels extends ItemModelProvider {
         // rides the fluid-container capability card)
         withExistingParent("lubricant_bucket", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/lubricant_bucket"));
+        // the USB Stick family (task p32-usb-data) — 4 item/generated models over the
+        // byte-identical upstream icon borrows (gt.multiitem.technological metas 32001-32004,
+        // assets/README.md attribution): one model per tier, walked over the tier loop so
+        // the model ids cannot drift from the GT6UsbSticks registry rows
+        for (int tTier = 1; tTier <= 4; tTier++) {
+            withExistingParent("usb_stick_" + tTier, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/usb_stick_" + tTier));
+        }
         // the spray-can family (task p22-spraycan-items) — 18 item/generated models over the
         // byte-identical upstream icon borrows (gt.multiitem.randomtools metas
         // 1000+2i/1096/999, assets/README.md attribution): one model per colour + the remover

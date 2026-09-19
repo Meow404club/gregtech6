@@ -122,6 +122,22 @@ public class GT6ZhCn extends LanguageProvider {
 		//（GT6OreBlocks.TAB_TITLE_KEY，"石矿"）。
 		addOreTabTitle(); // task p30-ore-3-datagen — ore-1 注记的卡③面（唯一新键，dump itemgroup 家族行 矿石）
 		addBeeUnits();          // task p31-bees-lv1 — the 20 comb names + the Bees tab + the 11 honey/bee-row fluids (hand rows, the tsv direct band; the dump carries no comb faces)
+		addUsbStickUnits();     // task p32-usb-data — the 4 stick names + the 4 tooltips (hand rows, the tsv direct band; the dump USB face)
+	}
+
+	/**
+	 * The USB Stick zh faces (task p32-usb-data, the addArmorUnits shape): the 4 display
+	 * names + the 4 per-tier tooltip keys, riding the reference table's hand layer — the
+	 * values are the DUMP faces verbatim (tmp/gregtech.lang:10745-10752: "USB 1.0".."USB
+	 * 4.0", tooltip 储存数据). The data-state tooltip lines stay RUNTIME literals (the
+	 * upstream Behavior_DataStorage hardcoded-en face; the dump carries zero rows for
+	 * them — the GT6EnUs.addUsbSticks note).
+	 */
+	private void addUsbStickUnits() {
+		for (byte tTier = 1; tTier <= 4; tTier++) {
+			addDirect("item.gt6.usb_stick_" + tTier);
+			addDirect("item.gt6.usb_stick_" + tTier + ".tooltip");
+		}
 	}
 
 	/**
