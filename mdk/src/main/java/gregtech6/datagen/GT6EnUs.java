@@ -127,6 +127,7 @@ public class GT6EnUs extends LanguageProvider {
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
+        addUsbSticks(); // task p32-usb-data — table-tail append
         addSurfaceBand(); // task p30-w6-rocks-sticks — table-tail append
         addSurfacePlants(); // task p30-w6-t2-surface-blocks — table-tail append
         // task p30-ore-1-mech — template-pin NOTE, zero keys this card (zh ratchet 0): the
@@ -1716,6 +1717,22 @@ public class GT6EnUs extends LanguageProvider {
             add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_sapling"), tKind.enName() + " Sapling");
             add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_log"), tKind.enName() + " Log");
             add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"), tKind.enName() + " Leaves");
+        }
+    }
+
+    /**
+     * The USB Stick family keys (task p32-usb-data, 8 rows): the 4 display names are the
+     * MultiItemTechnological.java:791-794 registration literals verbatim ("USB 1.0 Stick"
+     * .. "USB 4.0 Stick"), the per-tier tooltip keys the "Stores Data" description column
+     * (the Behavior_DataStorage static line). The data-state lines ("This Stick is Empty",
+     * "Material Data: ...", "Data: USB N.0") stay RUNTIME literals (the upstream
+     * Behavior_DataStorage/UT.NBT.getDataToolTip hardcoded-en face; the 1.7.10 dump
+     * carries zero zh rows for them) — no lang keys for the dynamic face.
+     */
+    private void addUsbSticks() {
+        for (byte tTier = 1; tTier <= 4; tTier++) {
+            add("item.gt6.usb_stick_" + tTier, "USB " + tTier + ".0 Stick");
+            add("item.gt6.usb_stick_" + tTier + ".tooltip", "Stores Data");
         }
     }
 }

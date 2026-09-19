@@ -8418,3 +8418,11 @@ direct	fluid.gt6.latex	胶乳	hand
 direct	fluid.gt6.potion_harm_1	伤害药水	hand
 direct	block.gt6.large_massfab	大型物质制造机	hand
 direct	gt6.row.machine.massfab	物质制造机 (%s)	hand
+direct	item.gt6.usb_stick_1	USB 1.0	hand
+direct	item.gt6.usb_stick_1.tooltip	储存数据	hand
+direct	item.gt6.usb_stick_2	USB 2.0	hand
+direct	item.gt6.usb_stick_2.tooltip	储存数据	hand
+direct	item.gt6.usb_stick_3	USB 3.0	hand
+direct	item.gt6.usb_stick_3.tooltip	储存数据	hand
+direct	item.gt6.usb_stick_4	USB 4.0	hand
+direct	item.gt6.usb_stick_4.tooltip	储存数据	hand

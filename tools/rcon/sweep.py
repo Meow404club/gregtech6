@@ -580,6 +580,13 @@ SESSION_GROUPS = (
     # tanks ride the input_tank NBT merge, the EU arrival freezes at the sink buffer
     # cap). --group p31_fusion matches through the chain's embedded name prefix.
     ("p31_fusion",),
+    # P32 W1 card (p32-usb-data): the USB Stick data-face chain — one fresh z=348
+    # band (single give-chest column at x384, the armor-give chest form), admission
+    # mirroring the p29 W5 give form (bbox-registered, no fresh_boot / mutates member
+    # — the chest rig is a band-local setblock, the data face rides the item NBT
+    # merge; machines absent, the W2 scanner/replicator card is the consumer).
+    # --group p32_qu_usb matches through the chain's embedded name prefix.
+    ("p32_qu_usb",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

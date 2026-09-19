@@ -90,6 +90,20 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> TOOLS_WRENCH = gt6("tools/wrench");
 
 	/**
+	 * The USB Stick tier tags (task p32-usb-data) — the {@code OD_USB_STICKS} array
+	 * translation (CS.java:160, the per-tier oredict names {@code gt:usbstick1..4}): the
+	 * digit splits into the {@code usb_stick_N} snake, one tag per tier over the
+	 * {@link gregtech6.items.GT6UsbSticks} registration rows. The tier INDEX is the
+	 * machine gate face (the scanner/replicator read tier-3 sticks, the
+	 * RecipeMapScannerMolecular.java:52/RecipeMapReplicator.java:63 {@code OD_USB_STICKS[3]}
+	 * rows) — the W2 consumer cards key on these tags, never the items.
+	 */
+	public static final TagKey<Item> USB_STICK_1 = gt6("usb_stick_1");
+	public static final TagKey<Item> USB_STICK_2 = gt6("usb_stick_2");
+	public static final TagKey<Item> USB_STICK_3 = gt6("usb_stick_3");
+	public static final TagKey<Item> USB_STICK_4 = gt6("usb_stick_4");
+
+	/**
 	 * The craftingToolWirecutter oredient translation — #gt6:tools/wire_cutter (task
 	 * p29-w3-nbtdesign-parts ③ — the coil crafting rows' 'x' letter, CR.java:359
 	 * {@code case 'x': OreDictToolNames.wirecutter}; the TOOLS_WRENCH snake shape).
@@ -588,6 +602,12 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_WIRE_CUTTER).add(item(GT6Tools.POCKET_MULTITOOL_WIRE_CUTTER.getId()));
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
+		// task p32-usb-data — the four USB Stick tier tags (one member each, the OD_USB_STICKS
+		// per-tier oredict face: the tier index is the scanner/replicator gate axis)
+		tag(USB_STICK_1).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_1.getId()));
+		tag(USB_STICK_2).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_2.getId()));
+		tag(USB_STICK_3).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_3.getId()));
+		tag(USB_STICK_4).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_4.getId()));
 		// task p26-w1-press-extruder-molds — the mold-family membership face (the row0 pair,
 		// upstream meta 10001/:212; the not-consumable predicate's read side). The entry
 		// handle rides the SIMPLE-NAME import (the stonecutter rewrite touches imports, not
