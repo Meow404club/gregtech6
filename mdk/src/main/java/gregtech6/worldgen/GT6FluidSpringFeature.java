@@ -105,7 +105,7 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
         int tColon = aBlockId.indexOf(':');
         if (tColon <= 0 || tColon == aBlockId.length() - 1) return null;
         Block tBlock = BuiltInRegistries.BLOCK.get(
-                new ResourceLocation(aBlockId.substring(0, tColon), aBlockId.substring(tColon + 1)));
+                ResourceLocation.fromNamespaceAndPath(aBlockId.substring(0, tColon), aBlockId.substring(tColon + 1)));
         return tBlock == Blocks.AIR ? null : tBlock.defaultBlockState();
     }
 
