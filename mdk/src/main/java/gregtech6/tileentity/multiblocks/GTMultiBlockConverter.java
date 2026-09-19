@@ -1,5 +1,6 @@
 package gregtech6.tileentity.multiblocks;
 
+import gregapi.util.UT;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -197,7 +198,7 @@ public abstract class GTMultiBlockConverter extends TileEntityBase10MultiBlockBa
 
 	/** Base11:126-133 — the door, the proxy emit, the waste pair; the gas turbine overrides the fuel half upstream of this. */
 	protected void doConversion(long aTimer) {
-		long tOutput = units(mStorage, mInput, mOutput, false); // Converter:62 — the UT.Code.units floor direction
+		long tOutput = UT.Code.units(mStorage, mInput, mOutput, false); // Converter:62 — the UT.Code.units floor direction
 		mCanEmitEnergy = tOutput >= mOutput / 2; // :64
 		mActive = false; // :66
 		if (mCanEmitEnergy) {
@@ -217,7 +218,7 @@ public abstract class GTMultiBlockConverter extends TileEntityBase10MultiBlockBa
 			if (tUsed > 0) { // :86
 				mActive = true; // :88
 				mLastOut = tOutput;
-				if (!mWasteEnergy) mStorage -= units(tUsed * tOutput, mOutput, mInput, true); // :87 — waste=F deducts
+				if (!mWasteEnergy) mStorage -= UT.Code.units(tUsed * tOutput, mOutput, mInput, true); // :87 — waste=F deducts
 			}
 		}
 		mLastConverted = tOutput; // the door readout (the RCON channel; a no-emit tick still converted)
@@ -287,19 +288,6 @@ public abstract class GTMultiBlockConverter extends TileEntityBase10MultiBlockBa
 		} else {
 			overcharge(aSize, aEnergyType); // the Root explosion family (offline: log-only)
 		}
-	}
-
-	/**
-	 * Upstream {@code UT.Code.units} (UT.java:1682 verbatim) — re-declared from the P28
-	 * core (its copy is package-private in the energy package; both cite the same upstream
-	 * line, the wave-card wall: copy the direction, never reinvent the remainder behavior).
-	 */
-	static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit %   aTargetUnit == 0) {aOriginalUnit /=   aTargetUnit;   aTargetUnit = 1;} else
-		if (aTargetUnit   % aOriginalUnit == 0) {  aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
-		return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
 	}
 
 	// ---------------------------------------------------------------------------

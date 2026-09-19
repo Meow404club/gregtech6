@@ -1,5 +1,6 @@
 package gregtech6.tileentity.energy;
 
+import gregapi.util.UT;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
@@ -258,7 +259,7 @@ public class GTSteamEngineBlockEntity extends TileEntityBase03TicksAndSync imple
 		if (!mStopped) {
 			long tConversions = mTank.amount() / GTFluids.STEAM_PER_WATER;
 			if (tConversions > 0) {
-				mEnergy += units(tConversions * GTFluids.STEAM_PER_WATER / GTFluids.STEAM_PER_EU, 10000, mEfficiency, false); // :123
+				mEnergy += UT.Code.units(tConversions * GTFluids.STEAM_PER_WATER / GTFluids.STEAM_PER_EU, 10000, mEfficiency, false); // :123
 				mTank.remove(tConversions * GTFluids.STEAM_PER_WATER); // :124
 				pushByproduct((int) tConversions); // :125-130
 			}
@@ -346,15 +347,6 @@ public class GTSteamEngineBlockEntity extends TileEntityBase03TicksAndSync imple
 	// statics so the offline tests can pin the truth tables — the
 	// TileEntityBasicMachine.units :854 local-copy precedent)
 	// ---------------------------------------------------------------------------
-
-	/** UT.Code.units (UT.java:1677-1683 verbatim — the root UT.Code copy lacks it; the mdk local-copy precedent). */
-	public static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit %   aTargetUnit == 0) {aOriginalUnit /=   aTargetUnit;   aTargetUnit = 1;} else
-		if (aTargetUnit   % aOriginalUnit == 0) {  aTargetUnit /= aOriginalUnit; aOriginalUnit = 1;}
-		return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
-	}
 
 	/** UT.Code.scale (UT.java:1534-1537 verbatim). */
 	public static long scale(long aValue, long aMax, long aScale, boolean aInvert) {
