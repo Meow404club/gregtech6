@@ -137,6 +137,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	public static final String NBT_OUTPUT_ITEMS = "output_items";
 	public static final String NBT_OUTPUT_FLUIDS = "output_fluids";
 	public static final String NBT_OUTPUT_TANK = "output_tank";
+	public static final String NBT_INPUT_TANK = "input_tank";
 
 	/** Slot count — 1 input + 9 outputs + 1 special (no fluid display slots, the card ruling). */
 	public static final int INVENTORY_SIZE = 11;
@@ -146,6 +147,11 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 
 	// fields (:92-109 trimmed set, the :1193 registration values)
 	public long mEnergy = 0, mInputMin = 1, mInput = 1, mInputMax = 16, mMinEnergy = 0;
+	/** Upstream :98 mOutputEnergy (task p31-fusion) — the generator-row emission rate:
+	 *  the :762 negative-EUt branch sets {@code mOutputEnergy = -mEUt} and the
+	 *  {@link #doActive} :812 spot pushes it through {@link #doOutputEnergy} per active
+	 *  tick while progressing. Zero for every consumer machine (never assigned). */
+	public long mOutputEnergy = 0;
 	public long mProgress = 0, mMaxProgress = 0;
 	public long mParallel = 16;
 	public boolean mSuccessful = false, mActive = false, mRunning = false;
@@ -204,6 +210,16 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	 * is the first consumer (GT6Distillation, the nine-tank library).
 	 */
 	public FluidTankGT[] mTanksOutput = {new FluidTankGT()};
+
+	/**
+	 * The input-tank bank (task p31-fusion) — upstream :103 mTanksInput, EMPTY by default
+	 * (zero behaviour delta: every pre-fusion map carries 0 fluid inputs, so the
+	 * {@link #checkRecipe} fluid half is a no-op). A machine whose map carries
+	 * {@code mInputFluidCount > 0} re-points the bank in its constructor (the fusion:
+	 * 2 tanks, RM.java:146 fluids 2/6/0) — the single-block
+	 * {@code TileEntityBasicMachine.mTanksInput} table-driven form, size = the map row.
+	 */
+	public FluidTankGT[] mTanksInput = new FluidTankGT[0];
 
 	/** Upstream :107 default RM.CokeOven; resolved lazily because the map registers at mod construct. */
 	public RecipeMap mRecipes = null;
@@ -323,9 +339,16 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 
 	@Override
 	public boolean onTickCheck(long aTimer) {
+		// upstream TileEntityBase10MultiBlockMachine :105 — a machine whose
+		// {@link #refreshStructureOnActiveStateChange} returns T re-runs the full
+		// structure walk when the visual pair flips (the fusion's design 5↔6 rewrite)
+		if (refreshStructureOnActiveStateChange() && (mActive != oActive || mRunning != oRunning)) checkStructure(true);
 		// :471-473 verbatim (the visual-data change pair)
 		return mActive != oActive || mRunning != oRunning || super.onTickCheck(aTimer);
 	}
+
+	/** Upstream :140 — T re-runs {@link #checkStructure}(true) on an active/running flip (the fusion override). */
+	public boolean refreshStructureOnActiveStateChange() {return false;}
 
 	@Override
 	public void onTickResetChecks(long aTimer, boolean aIsServerSide) {
@@ -388,6 +411,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		if (mMaxProgress > 0) {
 			rActive = true; // :810 (the mSpecialIsStartEnergy half is cut with special-start-energy)
 			if (mProgress <= mMaxProgress) {
+				if (mOutputEnergy > 0) doOutputEnergy(); // :812 — the generator-row per-tick push
 				mProgress += aEnergy; // :813 — the progress unit IS an energy unit
 			}
 			// :815 — the alternating-energy half (mStateOld && !mStateNew) folds away; TU is not alternating
@@ -466,19 +490,25 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		RecipeMap tRecipes = recipes();
 		if (tRecipes == null) return DID_NOT_FIND_RECIPE; // :685
 
-		int tInputItemsCount = 0; // :689 (the map carries no fluid inputs — mInputFluidCount = 0)
+		int tInputItemsCount = 0, tInputFluidsCount = 0; // :689
 		ItemStack[] tInputs = new ItemStack[tRecipes.mInputItemsCount];
 		for (int i = 0; i < tRecipes.mInputItemsCount; i++) {
 			tInputs[i] = slot(i);
 			if (tInputs[i] != null && !tInputs[i].isEmpty()) tInputItemsCount++;
 		}
-		// :696-706 fluid auto-input and tank counting cut (mMinimalInputFluids = 0)
+		// :696-705 fluid auto-input cut (the auto-IO surface) — the tank counting half :706
+		for (FluidTankGT tTank : mTanksInput) if (tTank.has()) tInputFluidsCount++;
 
 		if (tInputItemsCount                     < tRecipes.mMinimalInputItems ) return DID_NOT_FIND_RECIPE; // :708
-		if (tInputItemsCount                     < tRecipes.mMinimalInputs     ) return DID_NOT_FIND_RECIPE; // :710
+		if (tInputFluidsCount                    < tRecipes.mMinimalInputFluids) return DID_NOT_FIND_RECIPE; // :709
+		if (tInputItemsCount + tInputFluidsCount < tRecipes.mMinimalInputs     ) return DID_NOT_FIND_RECIPE; // :710
 
-		// :712 — mInputMax is the voltage (the TU branch of the RF ternary); the special slot rides along.
-		Recipe tRecipe = tRecipes.findRecipe(mLastRecipe, mInputMax, slot(SLOT_SPECIAL), null, tInputs);
+		// :712 — mInputMax is the voltage (the TU branch of the RF ternary); the special slot rides along;
+		// the fluid half rides the input-tank SNAPSHOT (the single-block :629 adapter — the frozen P4
+		// Recipe takes FluidStack[], the real drain mirrors onto the source tanks after the consume)
+		FluidStack[] tFluids = tankSnapshot(mTanksInput);
+		long[] tFluidBaseline = snapshotAmounts(mTanksInput);
+		Recipe tRecipe = tRecipes.findRecipe(mLastRecipe, mInputMax, slot(SLOT_SPECIAL), tFluids, tInputs);
 		if (tRecipe == null) return DID_NOT_FIND_RECIPE; // :719 shape (the mCanUseOutputTanks fallback :717-718 is the pool)
 
 		if (tRecipe.mCanBeBuffered) mLastRecipe = tRecipe; // :734
@@ -487,7 +517,8 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 
 		// :737 — the ignition gate, verbatim
 		if (aApplyRecipe) aApplyRecipe = !mRequiresIgnition || mIgnited > 0 || mActive;
-		if (!tRecipe.isRecipeInputEqual(aApplyRecipe, false, null, tInputs)) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS; // :738
+		if (!tRecipe.isRecipeInputEqual(aApplyRecipe, false, tFluids, tInputs)) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS; // :738
+		if (aApplyRecipe) applyTankConsumption(mTanksInput, tFluids, tFluidBaseline); // :833's tank.drain leg (the single-block adapter)
 		mCouldUseRecipe = true; // :739
 		if (!aApplyRecipe) return FOUND_AND_COULD_HAVE_USED_RECIPE; // :740
 
@@ -500,8 +531,9 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 				tMaxProcessCount = (int) gregapi.util.UT.Code.bind(1, tMaxProcessCount, mInput / Math.max(1, tRecipe.mEUt)); // :743/:730
 			}
 			int tExtra = 0;
-			while (tExtra < tMaxProcessCount - 1 && tRecipe.isRecipeInputEqual(true, false, null, tInputs)) tExtra++;
+			while (tExtra < tMaxProcessCount - 1 && tRecipe.isRecipeInputEqual(true, false, tFluids, tInputs)) tExtra++;
 			tMaxProcessCount = 1 + tExtra;
+			if (aApplyRecipe) applyTankConsumption(mTanksInput, tFluids, tFluidBaseline);
 		}
 
 		// :748-755 adjacent-inventory notify and mSpecialIsStartEnergy cut
@@ -510,9 +542,10 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		mOutputItems = tRecipe.getOutputs(tMaxProcessCount); // :758
 		mOutputFluids = tRecipe.getFluidOutputs(tMaxProcessCount); // :759
 
-		if (tRecipe.mEUt < 0) { // :761-764 — generator recipes
-			mMaxProgress = tRecipe.mDuration;
-			mMinEnergy = 0;
+		if (tRecipe.mEUt < 0) { // :761-764 — generator rows (task p31-fusion completes the trio)
+			mOutputEnergy = -tRecipe.mEUt; // :762
+			mMaxProgress = tRecipe.mDuration; // :763
+			mMinEnergy = 0; // :764
 		} else {
 			if (mParallelDuration) {
 				// :766-768 — the duration carries the parallels: the energy stays at the
@@ -558,7 +591,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			while (rMaxTimes > 1 && aRecipe.getAbsoluteTotalPower() * rMaxTimes > mInputMax * 600) rMaxTimes--;
 		}
 
-		for (int i = 0, j = SLOT_INPUT + 1; i < recipes().mOutputItemsCount && i < aRecipe.mOutputs.length; i++, j++) { // :631
+		for (int i = 0, j = recipes().mInputItemsCount; i < recipes().mOutputItemsCount && i < aRecipe.mOutputs.length; i++, j++) { // :631 — task p31-fusion: the walk starts at the map's input count (upstream mInputItemsCount+(i%..) :816 shape); identical value for every pre-fusion map (cokeoven in=1 == the old fixed SLOT_INPUT+1 start)
 			ItemStack tOutput = aRecipe.mOutputs[i];
 			if (tOutput == null || tOutput.isEmpty()) continue;
 			ItemStack tSlot = slot(j);
@@ -634,6 +667,64 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	 * {@link #doOutputFluids} skips).
 	 */
 	protected abstract IFluidHandler getFluidOutputTarget(Fluid aOutput);
+
+	/**
+	 * Upstream :998-1000 — the generator emission hook, fired at the {@link #doActive}
+	 * :812 spot while a generator row progresses. The upstream base emits to its configured
+	 * output side through the energy net; the port default is a no-op (the only consumer is
+	 * the fusion's ±10 remote push, task p31-fusion — machines that never set
+	 * {@link #mOutputEnergy} never reach the call).
+	 */
+	public void doOutputEnergy() {/**/}
+
+	// ---------------------------------------------------------------------------
+	// the input-tank snapshot adapter (task p31-fusion — the single-block
+	// TileEntityBasicMachine :629/:667/:1073 form, copied: the frozen P4 Recipe consumes
+	// FluidStack[] snapshots, the real drain mirrors onto the source tanks after)
+	// ---------------------------------------------------------------------------
+
+	/** The single-block tankSnapshot form — the non-empty tanks as plain stacks (bindInt amounts). */
+	protected FluidStack[] tankSnapshot(FluidTankGT[] aTanks) {
+		FluidStack[] rSnapshot = new FluidStack[aTanks.length];
+		for (int i = 0; i < aTanks.length; i++) {
+			FluidStack tFluid = aTanks[i].fluid();
+			//? if forge {
+			if (tFluid != null && !tFluid.isEmpty()) rSnapshot[i] = new FluidStack(tFluid, FluidTankGT.bindInt(aTanks[i].amount()));
+			//?}
+			//? if neoforge {
+			/*if (tFluid != null && !tFluid.isEmpty()) rSnapshot[i] = tFluid.copyWithAmount(FluidTankGT.bindInt(aTanks[i].amount())); // 21.1: no copy ctor — copyWithAmount(int)
+			 *///?}
+		}
+		return rSnapshot;
+	}
+
+	/** The single-block snapshotAmounts form — the pre-consume baseline for the delta drain. */
+	private static long[] snapshotAmounts(FluidTankGT[] aTanks) {
+		long[] rAmounts = new long[aTanks.length];
+		for (int i = 0; i < aTanks.length; i++) rAmounts[i] = aTanks[i].amount();
+		return rAmounts;
+	}
+
+	/**
+	 * The single-block :833 tank.drain mirror — drains from each tank exactly what the
+	 * consume step removed from its snapshot copy, then re-baselines so the :744 count
+	 * loop drains only the delta. Empty baseline rows skip (the default zero-length bank
+	 * makes this a no-op for every consumer machine).
+	 */
+	private void applyTankConsumption(FluidTankGT[] aTanks, FluidStack[] aSnapshot, long[] aBaseline) {
+		boolean tChanged = false;
+		for (int i = 0; i < aTanks.length && i < aSnapshot.length; i++) {
+			if (aBaseline[i] <= 0) continue;
+			long tNow = (aSnapshot[i] == null || aSnapshot[i].isEmpty()) ? 0 : aSnapshot[i].getAmount();
+			long tConsumed = aBaseline[i] - tNow;
+			if (tConsumed > 0) {
+				aTanks[i].remove(tConsumed);
+				tChanged = true;
+			}
+			aBaseline[i] = tNow;
+		}
+		if (tChanged) onInventoryChanged(); // the upstream updateInventory beat (05Inventories.java:103)
+	}
 
 	// ---------------------------------------------------------------------------
 	// ignition (:373-379)
@@ -891,6 +982,11 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		for (FluidStack tStack : mOutputFluids) if (tStack != null && !tStack.isEmpty()) tOutputFluids.add(tStack.writeToNBT(new CompoundTag()));
 		aNBT.put(NBT_OUTPUT_FLUIDS, tOutputFluids);
 		mTanksOutput[0].writeToNBT(aNBT, NBT_OUTPUT_TANK);
+		// task p31-fusion — the extra-bank halves: input tanks (the Distillation outputTankKey
+		// indexing form) and output tanks beyond the base [0]. Zero keys written for the
+		// default empty input bank and the single output tank (the Coke Oven shape unchanged).
+		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].writeToNBT(aNBT, i == 0 ? NBT_INPUT_TANK : NBT_INPUT_TANK + "_" + i);
+		for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].writeToNBT(aNBT, NBT_OUTPUT_TANK + "_" + i);
 	}
 
 	@Override
@@ -917,6 +1013,8 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			for (int i = 0; i < tOutputFluids.size(); i++) mOutputFluids[i] = FluidStack.loadFluidStackFromNBT(tOutputFluids.getCompound(i));
 		}
 		mTanksOutput[0].readFromNBT(aNBT, NBT_OUTPUT_TANK);
+		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].readFromNBT(aNBT, i == 0 ? NBT_INPUT_TANK : NBT_INPUT_TANK + "_" + i); // task p31-fusion
+		for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, NBT_OUTPUT_TANK + "_" + i);
 	}
 	//?}
 	//? if neoforge {
@@ -953,6 +1051,9 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		for (FluidStack tStack : mOutputFluids) if (tStack != null && !tStack.isEmpty()) tOutputFluids.add(tStack.save(aProvider, new CompoundTag()));
 		aNBT.put(NBT_OUTPUT_FLUIDS, tOutputFluids);
 		mTanksOutput[0].writeToNBT(aNBT, NBT_OUTPUT_TANK);
+		// task p31-fusion — the extra-bank halves (the forge block loop, mirrored)
+		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].writeToNBT(aNBT, i == 0 ? NBT_INPUT_TANK : NBT_INPUT_TANK + "_" + i);
+		for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].writeToNBT(aNBT, NBT_OUTPUT_TANK + "_" + i);
 	}
 
 	@Override
@@ -980,6 +1081,8 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			for (int i = 0; i < tOutputFluids.size(); i++) mOutputFluids[i] = FluidStack.parseOptional(aProvider, tOutputFluids.getCompound(i));
 		}
 		mTanksOutput[0].readFromNBT(aNBT, NBT_OUTPUT_TANK);
+		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].readFromNBT(aNBT, i == 0 ? NBT_INPUT_TANK : NBT_INPUT_TANK + "_" + i); // task p31-fusion
+		for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, NBT_OUTPUT_TANK + "_" + i);
 	}
 	 *///?}
 }

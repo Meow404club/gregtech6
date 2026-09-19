@@ -42,13 +42,15 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			"liquidoxygen",
 			"deuterium", "tritium", "helium3",
 			"lithium6_molten", "beryllium7_molten", "beryllium8_molten",
-			"boron11_molten", "carbon13_molten", "ancientdebris_molten");
+			"boron11_molten", "carbon13_molten", "ancientdebris_molten",
+			// task p31-fusion — the fusion-row closure quartet (the C/Li/W/Ad parent molten rows)
+			"carbon_molten", "lithium_molten", "tungsten_molten", "adamantium_molten");
 
 	@Test
-	public void tableCarriesThirtyFourRowsInDeclarationOrder() {
+	public void tableCarriesTheChemicalRowsInDeclarationOrder() {
 		assertEquals(IDS, GTFluids.CHEMICAL_SPECS.stream().map(GTFluids.ChemicalFluidSpec::name).toList());
-		assertEquals(34, GTFluids.CHEMICAL_SPECS.size());
-		assertEquals(34, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
+		assertEquals(38, GTFluids.CHEMICAL_SPECS.size());
+		assertEquals(38, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
 	}
 
 	/** Acceptance ①: the per-fluid declared census, one block per sub-family. */

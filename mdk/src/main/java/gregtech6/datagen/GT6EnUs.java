@@ -1300,6 +1300,7 @@ public class GT6EnUs extends LanguageProvider {
         // "Generator" in name only — the EU-consuming mob-suppression tower)
         add("block.gt6.von_da_graagg", "Von da Graagg Generator");
         add("block.gt6.large_massfab", "Large Matter Fabricator"); // task p31-massfab — the Loader :1241 name column
+        add("block.gt6.fusion_reactor", "Fusion Reactor"); // task p31-fusion — the Loader :1242 name column
     }
 
     /**

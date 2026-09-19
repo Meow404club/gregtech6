@@ -737,6 +737,25 @@ public class GT6RecipeMaps {
 	 */
 	public static volatile RecipeMap REPLICATOR;
 
+	/**
+	 * RM.java:146 — the Fusion Reactor map (task p31-fusion): items 2/6/1, fluids 2/6/0,
+	 * MIN 2, AMP 1. Base-{@link RecipeMap} — RM.Fusion IS a plain RecipeMap upstream. The
+	 * 18 static rows (Loader_Recipes_Other.java:949-966) pour via
+	 * {@link gregtech6.recipes.GT6RecipesFusion} (the implosion static-content form): every
+	 * row is the {@code addRecipe1(aOptimize=F, eUt, dur, ST.tag(n), FL.array(in), FL.array(out), outItems)}
+	 * shape — the tag selector rides item input 0 (count 1, the never-consumed identity,
+	 * Recipe.sNotConsumable), fluids in/out are ordinary gas/molten states (NOT plasmas).
+	 * The {@code mSpecialValue} of every row carries the upstream
+	 * {@code setSpecialNumber(dur*8192*16)} ("Start: %s LU", the :8469/:94956 outliers
+	 * verbatim) — display data only: the port has no NEI face, and the ignition gate the
+	 * value once fed is deliberately NOT ported (DECLARED WAIVER, the S31-7 final
+	 * qualification: the :1242 NBT_SPECIAL_IS_START_ENERGY flag IS supplied through
+	 * readFromNBT2 :112-124, the :755 write is reachable, the :809 gate closes until the
+	 * :497-500 LU decrement pays it; the port ships gateless until the pool-E LU
+	 * economy — see the TileEntityFusionReactor class doc).
+	 */
+	public static volatile RecipeMap FUSION;
+
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
 		if (FURNACE != null) return;
@@ -1412,6 +1431,16 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 3, 3, 0,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
+		// RM.java:146 — the Fusion Reactor map, the base-map row verbatim (items 2/6/1,
+		// fluids 2/6/0, MIN 2, AMP 1); the rows pour via GT6RecipesFusion (task p31-fusion).
+		FUSION = new RecipeMap(new HashSet<>(),
+				"gt.recipe.fusionreactor", "Fusion Reactor", null,
+				0, 1,
+				"gt6:textures/gui/machines/fusion",
+				/*IN-OUT-MIN-ITEM=*/ 2, 6, 1,
+				/*IN-OUT-MIN-FLUID=*/ 2, 6, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -1490,6 +1519,7 @@ public class GT6RecipeMaps {
 		SCANNER_MOLECULAR = null;
 		MASSFAB = null;
 		REPLICATOR = null;
+		FUSION = null;
 		RecipeMap.reset();
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}

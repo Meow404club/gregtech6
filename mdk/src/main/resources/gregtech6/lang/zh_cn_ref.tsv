@@ -8378,6 +8378,12 @@ direct	fluid.gt6.beryllium8_molten	熔融铍-8	hand
 direct	fluid.gt6.boron11_molten	熔融硼-11	hand
 direct	fluid.gt6.carbon13_molten	熔融碳-13	hand
 direct	fluid.gt6.ancientdebris_molten	熔融远古残骸	hand
+# task p31-fusion — the fusion-row closure quartet (the dump carries every face, borrowed verbatim: S:fluid.molten.carbon=熔融碳 tmp/gregtech.lang:466, S:fluid.molten.lithium=熔融锂 :529, S:fluid.molten.tungsten=熔融钨 :624, S:fluid.molten.adamantium=熔融艾德曼合金 :428)
+direct	fluid.gt6.carbon_molten	熔融碳	hand
+direct	fluid.gt6.lithium_molten	熔融锂	hand
+direct	fluid.gt6.tungsten_molten	熔融钨	hand
+direct	fluid.gt6.adamantium_molten	熔融艾德曼合金	hand
+direct	block.gt6.fusion_reactor	聚变反应堆	hand
 direct	itemGroup.gt6.bee	蜜蜂	hand
 direct	item.gt6.comb_honey	蜂蜜蜜脾	hand
 direct	item.gt6.comb_water	水分蜜脾	hand

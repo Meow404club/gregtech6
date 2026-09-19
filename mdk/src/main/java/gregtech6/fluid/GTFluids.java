@@ -1378,7 +1378,17 @@ public final class GTFluids {
 		new ChemicalFluidSpec("beryllium8_molten"   , "Molten Beryllium-8"    , 1560,  1850, 1000, 0xFF6EC86E, false, 10), // molten.beryllium8 — MT.Be_8 mp 1560, 1000×1.85 (:389)
 		new ChemicalFluidSpec("boron11_molten"      , "Molten Boron-11"       , 2349,  2340, 1000, 0xFFF0F0F0, false, 10), // molten.boron11 — MT.B_11 mp 2349, 1000×2.34 (:391)
 		new ChemicalFluidSpec("carbon13_molten"     , "Molten Carbon-13"      , 3800,  2267, 1000, 0xFF191919, false, 10), // molten.carbon13 — MT.C_13 mp 3800, 1000×2.267 (:393)
-		new ChemicalFluidSpec("ancientdebris_molten", "Molten Ancient Debris" , 2011,  1000, 1000, 0xFF6E505A, false, 10)); // molten.ancientdebris — MT.AncientDebris heat(MeteoricIron) = Fe.mp+200 = 2011 (MT.java:1832/:414); the 1.0 g/cm³ field default → 1000
+		new ChemicalFluidSpec("ancientdebris_molten", "Molten Ancient Debris" , 2011,  1000, 1000, 0xFF6E505A, false, 10), // molten.ancientdebris — MT.AncientDebris heat(MeteoricIron) = Fe.mp+200 = 2011 (MT.java:1832/:414); the 1.0 g/cm³ field default → 1000
+		// the fusion-row closure quartet (task p31-fusion) — the four parent-material MOLTEN
+		// rows the fusion recipe rows reference (Loader_Recipes_Other.java:955/:957/:962/:964/
+		// :965/:966 ride MT.C/MT.Li/MT.W/MT.Ad .liquid(), the molten.fluid the :658-662 loop
+		// created for their MOLTEN tags): the same :1077 createMolten walk constants as the
+		// isotope batch. (MT.Ad is ADAMANTIUM upstream — MT.java:794 — NOT Ancient Debris;
+		// the ancientdebris_molten row above is the massfab Ender material.)
+		new ChemicalFluidSpec("carbon_molten"       , "Molten Carbon"         , 3800,  2267, 1000, 0xFF141414, false, 10), // molten.carbon=熔融碳 (tmp/gregtech.lang:466) — MT.C mp 3800, 1000×2.267 (MT.java:392)
+		new ChemicalFluidSpec("lithium_molten"      , "Molten Lithium"        ,  453,   534, 1000, 0xFFE1DCFF, false, 10), // molten.lithium=熔融锂 (:529) — MT.Li mp 453, 1000×0.534 (:385)
+		new ChemicalFluidSpec("tungsten_molten"     , "Molten Tungsten"       , 3695, 19250, 1000, 0xFF323232, false, 10), // molten.tungsten=熔融钨 (:624) — MT.W mp 3695, 1000×19.25 (:463)
+		new ChemicalFluidSpec("adamantium_molten"   , "Molten Adamantium"     , 5225, 13356, 1000, 0xFFFFFFFF, false, 10)); // molten.adamantium=熔融艾德曼合金 (:428) — MT.Ad mp 5225, 1000×13.356 (MT.java:794)
 
 	/** The chemical row for a gt6 id path, or null (the {@link #engineSpec} lookup shape). */
 	public static ChemicalFluidSpec chemicalSpec(String aName) {
@@ -1503,7 +1513,9 @@ public final class GTFluids {
 			chemicalFluid("liquidoxygen"),
 			chemicalFluid("deuterium"), chemicalFluid("tritium"), chemicalFluid("helium3"),
 			chemicalFluid("lithium6_molten"), chemicalFluid("beryllium7_molten"), chemicalFluid("beryllium8_molten"),
-			chemicalFluid("boron11_molten"), chemicalFluid("carbon13_molten"), chemicalFluid("ancientdebris_molten"));
+			chemicalFluid("boron11_molten"), chemicalFluid("carbon13_molten"), chemicalFluid("ancientdebris_molten"),
+			chemicalFluid("carbon_molten"), chemicalFluid("lithium_molten"), chemicalFluid("tungsten_molten"),
+			chemicalFluid("adamantium_molten")); // task p31-fusion — the fusion-row closure quartet
 
 	/**
 	 * The hot-family row lookup (the {@link #chemicalSpec} shape) — the fuels_hot consumer

@@ -17,6 +17,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 //?}
 
+import gregapi.code.TagData;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.TileEntityBase01Root;
 
@@ -296,6 +297,49 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 			return tController;
 		}
 		return null;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the gregapi energy relay (task p31-fusion — the upstream "Relay Energy" block,
+	// MultiTileEntityMultiBlockPart.java:493-548, re-formed: the upstream per-part
+	// IMultiBlockEnergy callbacks collapse onto the controller's own ITileEntityEnergy
+	// face (every controller is a 01Root), because every ported machine routes by packet
+	// TYPE alone — the mMode mask gates at the part, the type gate at the controller).
+	// The validity-checked getTarget(true) is the :498/:514/:530 resolution verbatim.
+	// ---------------------------------------------------------------------------
+
+	/** Upstream :495-501. */
+	@Override
+	public boolean isEnergyType(TagData aEnergyType, byte aSide, boolean aEmitting) {
+		if (aEmitting ? (mMode & NO_ENERGY_OUT) != 0 : (mMode & NO_ENERGY_IN) != 0) return false; // :497
+		ITileEntityMultiBlockController tTarget = getTarget(true); // :498
+		return tTarget instanceof gregapi.tileentity.energy.ITileEntityEnergy tEnergy && tEnergy.isEnergyType(aEnergyType, aSide, aEmitting); // the :499 delegate
+	}
+
+	/** Upstream :511-517. */
+	@Override
+	public boolean isEnergyAcceptingFrom(TagData aEnergyType, byte aSide, boolean aTheoretical) {
+		if ((mMode & NO_ENERGY_IN) != 0) return false; // :513
+		ITileEntityMultiBlockController tTarget = getTarget(true); // :514
+		return tTarget instanceof gregapi.tileentity.energy.ITileEntityEnergy tEnergy && tEnergy.isEnergyAcceptingFrom(aEnergyType, aSide, aTheoretical); // the :515 delegate
+	}
+
+	/** Upstream :527-533 — the injection the glass-ring LU dials (and any part-face source) land on. */
+	@Override
+	public long doEnergyInjection(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
+		if ((mMode & NO_ENERGY_IN) != 0) return 0; // :529
+		ITileEntityMultiBlockController tTarget = getTarget(true); // :530
+		if (!(tTarget instanceof gregapi.tileentity.energy.ITileEntityEnergy tEnergy)) return 0;
+		return tEnergy.doEnergyInjection(aEnergyType, aSide, aSize, aAmount, aDoInject); // the :531 delegate
+	}
+
+	/** Upstream :535+ (the extraction relay) — pull-only, the mirror of the injection. */
+	@Override
+	public long doEnergyExtraction(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoExtract) {
+		if ((mMode & NO_ENERGY_OUT) != 0) return 0; // the :521 mask arm
+		ITileEntityMultiBlockController tTarget = getTarget(true);
+		if (!(tTarget instanceof gregapi.tileentity.energy.ITileEntityEnergy tEnergy)) return 0;
+		return tEnergy.doEnergyExtraction(aEnergyType, aSide, aSize, aAmount, aDoExtract);
 	}
 
 	// ---------------------------------------------------------------------------
