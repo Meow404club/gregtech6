@@ -229,9 +229,19 @@ public class GT6RecipesFusionTest extends GTRecipesOfflineTestBase {
 		Recipe tShortRow = GT6RecipeMaps.FUSION.findRecipe(null, 16384, null, tShort, new ItemStack(Items.PAPER));
 		assertNotNull(tShortRow, "the lookup probe matches (the amounts unchecked)...");
 		assertFalse(tShortRow.isRecipeInputEqual(true, false, tShort, new ItemStack(Items.PAPER)), "...but the consume refuses the 999 mB short supply");
-		// below the |EUt| voltage refuses (absGreaterEqual)
+		// below the |EUt| voltage refuses (absGreaterEqual). ORDER-FREE pin (task
+		// p32-rm-phase-gate ratchet exposed it): the scan is a SET walk over Recipe
+		// IDENTITY hashes (no equals/hashCode), so which shape-match answers first is an
+		// allocation-order coin — and the zero-power :952 (1x2000 water) shape legally
+		// matches this probe and answers at any voltage (|4095| >= 0). The refusal is
+		// therefore pinned on the :959 row itself through the BUFFERED fast path
+		// (RecipeMap.findRecipe :148-151: aLastRecipe probe + the absGreaterEqual gate),
+		// both directions of the gate.
 		FluidStack[] tOk = {new FluidStack(Fluids.WATER, 1000), new FluidStack(Fluids.WATER, 1000)};
-		assertNull(GT6RecipeMaps.FUSION.findRecipe(null, 4095, null, tOk, new ItemStack(Items.PAPER)), "voltage 4095 < |EUt| 8192 refuses");
+		assertNull(GT6RecipeMaps.FUSION.findRecipe(rowByDuration(1760), 4095, null, tOk, new ItemStack(Items.PAPER)),
+				"voltage 4095 < |EUt| 8192 refuses (the :959 row's buffered fast path, order-free)");
+		assertNotNull(GT6RecipeMaps.FUSION.findRecipe(rowByDuration(1760), 16384, null, tOk, new ItemStack(Items.PAPER)),
+				"16384 covers |-8192| — the same fast path answers (the gate pair)");
 	}
 
 	@Test

@@ -105,7 +105,14 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("CANNER", 52);
 		SNAPSHOT.put("MIXER", 56000);
 		SNAPSHOT.put("SIFTING", 1);
+		// the ONE version-sensitive census: the Compressor walk rides the vanilla item
+		// universe, which differs 1.20.1 vs 1.21.1 by 109 compressibles — the per-leg pin
+		// (the stonecutter swap-table convention, GTRecipesOfflineTestBase shape)
+		//? if forge {
 		SNAPSHOT.put("COMPRESSOR", 2630);
+		//?} else {
+		/*SNAPSHOT.put("COMPRESSOR", 2521);
+		*///?}
 		SNAPSHOT.put("WIREMILL", 912);
 		SNAPSHOT.put("ROLLING_MILL", 0);
 		SNAPSHOT.put("BATH", 1089);
