@@ -123,7 +123,10 @@ steps += [
     Step(f"clone 64 {_HALL_LO} 64 191 {_HALL_HI} 79 288 {_HALL_LO} 64"),  # 128x13x16 = 26624 <= the cap
 ]
 for _cx in _CRYSTAL_CHUNKS:
-    steps.append(Step(f"place feature gt6:nether_crystals {_cx + 8} 40 {_cx + 8}", expect="Placed",
+    # the x rides the chunk column, the z is PINNED to 72 (the hall spans z64..79 —
+    # riding _cx+8 on z too put 7 of 8 placements OUTSIDE the hall band (6 silently
+    # no-op coin skips + 1 not-loaded), collapsing the face to ONE coin = 50% flake)
+    steps.append(Step(f"place feature gt6:nether_crystals {_cx + 8} 40 72", expect="Placed",
                       allow_failed=True))  # the 50% skip is an UPSTREAM OUTCOME, not a chain failure
 steps += [
     Step(f"execute unless blocks 64 {_HALL_LO} 64 191 {_HALL_HI} 79 288 {_HALL_LO} 64 all",
