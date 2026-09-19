@@ -120,6 +120,11 @@ public class TileEntityFusionReactorTest extends GTMultiBlocksOfflineTestBase {
 		}
 		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 		gregtech6.registry.GTMaterialItems.initMaterials(); // the MT walk (the fixture resolvers read MT.D/MT.T/MT.Vb)
+		// the 21.1 BlockEntity ctor validates the state against the BET's block set —
+		// the rig places part BEs over NINE distinct stand-in blocks, so the fixture
+		// part BET must bind the union (the base BRICKS-only binding throws on 21.1)
+		sPartType = BlockEntityType.Builder.of((aPos, aState) -> new MultiBlockPartBlockEntity(sPartType, aPos, aState),
+				Blocks.BRICKS, GLASS, WALL, SS, COIL, VENT, PU_V, PU_L, PU_C).build(null);
 		{
 			@SuppressWarnings("unchecked")
 			BlockEntityType<TestFusionReactor>[] tHolder = (BlockEntityType<TestFusionReactor>[]) new BlockEntityType<?>[1];

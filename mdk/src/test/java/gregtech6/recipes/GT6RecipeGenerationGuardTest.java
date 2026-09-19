@@ -68,6 +68,7 @@ class GT6RecipeGenerationGuardTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesImplosion", // task p31-implosion — the Implosion Compressor 4-tier pour joins the ledger
 			"gregtech6.recipes.GT6RecipesBees", // task p31-bees-lv1 — the 20+20 bee comb pour joins the ledger
 			"gregtech6.recipes.GT6RecipesMassfab", // task p31-massfab — the element-disintegration walk joins the ledger
+			"gregtech6.recipes.GT6RecipesFusion", // task p31-fusion — the 18-row :949-966 block joins the ledger
 		};
 
 	private static Function<String, Fluid> sDefaultFluidResolver;
