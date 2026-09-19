@@ -37,6 +37,13 @@ def load_config() -> dict:
     return _config
 
 
+class _ExceedContextError(RuntimeError):
+    """单请求实际 token 超过 llama-server 槽 n_ctx（HTTP 400 exceed_context_size_error）。
+
+    确定性失败，重试无意义——必须切块降级。est 公式对代码/符号密集文本低估约 2 倍，
+    不能用 est 预判，只能按响应体定性后处理（2026-09-20 P32 事故根因）。"""
+
+
 def _post_batch(texts: list[str], retries: int | None = None) -> list[list[float]]:
     cfg = load_config()
     payload = json.dumps({"model": cfg["model"], "input": texts}).encode("utf-8")
@@ -63,13 +70,64 @@ def _post_batch(texts: list[str], retries: int | None = None) -> list[list[float
             with _opener.open(req, timeout=timeout) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
             return [d["embedding"] for d in sorted(data["data"], key=lambda d: d["index"])]
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, OSError,
+        except urllib.error.HTTPError as e:
+            body = ""
+            try:
+                body = e.read().decode("utf-8", "replace")
+            except Exception:
+                pass
+            if e.code == 400 and "exceed_context_size_error" in body:
+                raise _ExceedContextError(body) from e
+            last_err = e
+            time.sleep(min(60, (2 ** attempt) * 2) + random.random() * 2)
+        except (urllib.error.URLError, TimeoutError, OSError,
                 json.JSONDecodeError, KeyError) as e:
             last_err = e
             time.sleep(min(60, (2 ** attempt) * 2) + random.random() * 2)
     raise RuntimeError(
         f"embedding request failed after {retries} retries "
         f"(url={url}, timeout={timeout}s, items={len(texts)}, est_tokens={est}): {last_err}")
+
+
+_FIT_CHUNK_CHARS = 2500  # 起始块长：混合文本 actual ≈ est×2，2500 字符块实测可过 2048 槽
+
+
+def _embed_chunk_vecs(text: str) -> list[list[float]]:
+    """超限单条切块嵌入，返回各块向量。块仍超槽则递归对半（est 对代码密集文本
+    低估，无法预判安全块长，只能以 400 响应为信号收缩）。"""
+    chunks = [text[i:i + _FIT_CHUNK_CHARS] for i in range(0, len(text), _FIT_CHUNK_CHARS)] or [text]
+    vecs: list[list[float]] = []
+    for c in chunks:
+        try:
+            vecs.extend(_post_batch([c]))
+        except _ExceedContextError:
+            if len(c) <= 200:
+                raise
+            half = len(c) // 2
+            vecs.extend(_embed_chunk_vecs(c[:half]))
+            vecs.extend(_embed_chunk_vecs(c[half:]))
+    return vecs
+
+
+def _mean_vector(vecs: list[list[float]]) -> list[float]:
+    n = len(vecs)
+    v = [sum(col) / n for col in zip(*vecs)]
+    norm = math.sqrt(sum(x * x for x in v)) or 1.0
+    return [x / norm for x in v]
+
+
+def _post_batch_fit(texts: list[str]) -> list[list[float]]:
+    """_post_batch 的超限降级壳：批超限→拆条；条超限→切块嵌入后向量均值合并
+    （单向量表示整条，尾部内容以块向量并集近似保召回）。"""
+    try:
+        return _post_batch(texts)
+    except _ExceedContextError:
+        if len(texts) == 1:
+            return [_mean_vector(_embed_chunk_vecs(texts[0]))]
+        out: list[list[float]] = []
+        for t in texts:
+            out.extend(_post_batch_fit([t]))
+        return out
 
 
 def _truncate(v: list[float], dims: int) -> list[float]:
@@ -131,11 +189,11 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
         batches.append(batch)
 
     if workers <= 1 or len(batches) <= 1:
-        raw = [_post_batch(b) for b in batches]
+        raw = [_post_batch_fit(b) for b in batches]
     else:
         import concurrent.futures as _cf
         with _cf.ThreadPoolExecutor(max_workers=workers) as ex:
-            raw = list(ex.map(_post_batch, batches))  # ex.map preserves order
+            raw = list(ex.map(_post_batch_fit, batches))  # ex.map preserves order
 
     out: list[list[float]] = []
     for group in raw:
@@ -148,4 +206,4 @@ def embed_query(text: str) -> list[float]:
     instruction = cfg.get("query_instruction", "")
     dims = int(cfg.get("truncate_dims", 0))
     q = instruction + text if instruction else text
-    return _truncate(_post_batch([q])[0], dims)
+    return _truncate(_post_batch_fit([q])[0], dims)
