@@ -13,7 +13,7 @@ group; Loader_MultiTileEntities.java:1241/:1542-1546).
   64 iron ingots -> chargedmatter 64x26 = 1664 mB + neutralmatter 64x30 = 1920 mB — the
   PARALLEL 64 face (the :1241 NBT_PARALLEL_DURATION T skips the :743 bind). Energy rides
   the persisted `energy` NBT (the wall->controller relay is the declared energy-domain
-  seam; the Graagg gt.energy precedent) — 500 M QU drives min(mInputMax, mEnergy)/t
+  seam; the Graagg gt.energy precedent) — 100 G QU drives min(mInputMax, mEnergy)/t
   progress against maxprogress 64 x 7340032 = 469762048.
 
   the auto-out bottom face (:258-265): a small massfab (T5) sits BELOW the controller;
@@ -137,13 +137,18 @@ steps = [
     Step("setblock " + C + " " + BIG, expect="Changed the block"),
     Step("execute if block " + C + " gt6:large_massfab[formed=true]", expect="Test passed", poll=30),
 
-    phase("B: the element walk at parallel 64 — 64 iron ingots + 500 M QU energy"),
+    phase("B: the element walk at parallel 64 — 64 iron ingots + 100 G QU energy"),
     Step("setblock " + S + " " + SMALL, expect="Changed the block"),  # the auto-out sink BELOW
-    Step("data merge block " + C + " {energy:500000000}", expect="Modified block data"),
+    # the :790-791 burn runs min-free mInputMax/t even while IDLE (doInactive still
+    # burns), so the usable window is energy/mInputMax ticks — a laggy boot once ate
+    # 500 M in ~12 s before the recipe scan fired (the :798 scan gate rides
+    # mInventoryChanged/mIgnited/!mRunning/aTimer%1200==5, none merge-driven). 100 G
+    # = a ~40 min idle window; no assertion reads the leftover energy.
+    Step("data merge block " + C + " {energy:100000000000}", expect="Modified block data"),
     Step(merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.21.1"]}),
-    Step("data get block " + C, expect="active: 1b", poll=60),
-    Step("data get block " + C, expect="maxprogress: 469762048L", poll=30),  # 64 x 7340032 — the PARALLEL 64 + DURATION T face
+    Step("data get block " + C, expect="active: 1b", poll=300),  # wide: a laggy boot once took ~90 s to start (the stale-BE race)
+    Step("data get block " + C, expect="maxprogress: 469762048L", poll=120),  # 64 x 7340032 — the PARALLEL 64 + DURATION T face
     Step("data get block " + C + " output_tank_1", expect=tank_expect("1.20.1", "x", "gt6:neutralmatter", 1920),
          poll=300, node_expects={"1.21.1": tank_expect("1.21.1", "x", "gt6:neutralmatter", 1920)}),
     Step("data get block " + C + " output_tank", expect=tank_expect("1.20.1", "x", "gt6:chargedmatter", 664),
@@ -155,7 +160,7 @@ steps = [
 
     phase("D: the small form (20415) — 1 iron ingot -> 26 + 30 mB in its own output tanks"),
     Step("setblock " + T + " " + SMALL, expect="Changed the block"),
-    Step("data merge block " + T + " {energy:10000000}", expect="Modified block data"),
+    Step("data merge block " + T + " {energy:100000000000}", expect="Modified block data"),  # the same idle-burn window widening
     Step(small_merge([(0, ("minecraft:iron_ingot", 1))])["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": small_merge([(0, ("minecraft:iron_ingot", 1))])["1.21.1"]}),
     Step("data get block " + T, expect="active: 1b", poll=60),
