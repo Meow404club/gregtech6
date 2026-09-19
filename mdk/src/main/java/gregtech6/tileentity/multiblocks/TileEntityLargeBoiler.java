@@ -1,5 +1,6 @@
 package gregtech6.tileentity.multiblocks;
 
+import gregapi.util.UT;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
@@ -397,7 +398,7 @@ public class TileEntityLargeBoiler extends TileEntityBase10MultiBlockBase implem
 			}
 			// :187 — the steam goes IN; the add clamps at capacity (the W3 ruling: the upstream
 			// setFluid could overshoot, the isFull() explosion verdict below is the same either way)
-			mTanks[1].add(GTSteamEngineBlockEntity.units(tConversions, 10000, (long)mEfficiency * GTFluids.STEAM_PER_WATER_GLOBAL, false), mSteamMake.apply(tConversions));
+			mTanks[1].add(UT.Code.units(tConversions, 10000, (long)mEfficiency * GTFluids.STEAM_PER_WATER_GLOBAL, false), mSteamMake.apply(tConversions));
 			mEnergy -= tConversions * GTFluids.EU_PER_WATER; // :188
 			mCoolDownResetTimer = 128; // :189
 		}

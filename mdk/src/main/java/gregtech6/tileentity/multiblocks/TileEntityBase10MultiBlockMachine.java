@@ -1,5 +1,6 @@
 package gregtech6.tileentity.multiblocks;
 
+import gregapi.util.UT;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -517,13 +518,13 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 				// :766-768 — the duration carries the parallels: the energy stays at the
 				// recipe eUt, the max progress scales with the process count (linear time)
 				mMinEnergy = Math.max(1, tRecipe.mEUt);
-				mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, 10000, 10000, true));
+				mMaxProgress = Math.max(1, UT.Code.units(mMinEnergy * Math.max(1, tRecipe.mDuration) * tMaxProcessCount, 10000, 10000, true));
 			} else {
 				// :770-771 — the energy carries the parallels; the TU half (:770 ternary)
 				// keeps a constant per-process energy (the Coke Oven shape), the RF half is
 				// cut with the single-block face; mEfficiency = 10000 → units() is the identity
 				mMinEnergy = Math.max(1, mEnergyTypeAccepted == gregapi.data.TD.Energy.TU ? tRecipe.mEUt : tRecipe.mEUt * tMaxProcessCount);
-				mMaxProgress = Math.max(1, units(mMinEnergy * Math.max(1, tRecipe.mDuration), 10000, 10000, true));
+				mMaxProgress = Math.max(1, UT.Code.units(mMinEnergy * Math.max(1, tRecipe.mDuration), 10000, 10000, true));
 			}
 			// :773 — overclocking: 4x energy, 2x speed. mCheapOverclocking = T (the
 			// NBT_CHEAP_OVERCLOCKING rows) refuses the fold; with the Coke Oven window
@@ -981,21 +982,4 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		mTanksOutput[0].readFromNBT(aNBT, NBT_OUTPUT_TANK);
 	}
 	 *///?}
-
-	// ---------------------------------------------------------------------------
-	// upstream UT.Code.units (UT.java:1677-1683) — the TileEntityOven copy
-	// ---------------------------------------------------------------------------
-
-	public static long units(long aAmount, long aOriginalUnit, long aTargetUnit, boolean aRoundUp) {
-		if (aTargetUnit == 0) return 0;
-		if (aOriginalUnit == aTargetUnit || aOriginalUnit == 0) return aAmount;
-		if (aOriginalUnit % aTargetUnit == 0) {
-			aOriginalUnit /= aTargetUnit;
-			aTargetUnit = 1;
-		} else if (aTargetUnit % aOriginalUnit == 0) {
-			aTargetUnit /= aOriginalUnit;
-			aOriginalUnit = 1;
-		}
-		return Math.max(0, ((aAmount * aTargetUnit) / aOriginalUnit) + (aRoundUp && (aAmount * aTargetUnit) % aOriginalUnit > 0 ? 1 : 0));
-	}
 }

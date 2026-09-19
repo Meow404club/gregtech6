@@ -1,5 +1,6 @@
 package gregtech6.tileentity.multiblocks;
 
+import gregapi.util.UT;
 import java.util.Collection;
 import java.util.List;
 
@@ -321,11 +322,11 @@ public class GT6HeatExchangerBlockEntity extends TileEntityBase10MultiBlockBase 
 						if (consumeFuel(tRecipe)) { // :171 — the probe+consume pair (the frozen-Recipe adapter, the machine's applyTankConsumption form)
 							mActive = true; // :172
 							mLastRecipe = tRecipe; // :173
-							mEnergy += GTSteamEngineBlockEntity.units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :174
+							mEnergy += UT.Code.units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :174
 							fillOverflow(tRecipe); // :175
 							// Use as much as needed to keep up the Power per Tick (:176-181).
 							while (mEnergy < mRate * 2 && overflowAccepts(tRecipe) && consumeFuel(tRecipe)) {
-								mEnergy += GTSteamEngineBlockEntity.units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :178
+								mEnergy += UT.Code.units(tRecipe.getAbsoluteTotalPower(), 10000, mEfficiency, false); // :178
 								fillOverflow(tRecipe); // :179
 								if (mTanks[0].isEmpty()) break; // :180
 							}
