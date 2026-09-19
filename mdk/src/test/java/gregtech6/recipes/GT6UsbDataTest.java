@@ -108,9 +108,22 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 	static GT6UsbSticks.GT6UsbStickItem sStick;
 
 	@BeforeAll
-	static void buildFixture() {
+	static void warmUp() {
 		gregtech6.registry.GTMaterialItems.initMaterials(); // idempotent — the offline material universe (the QuSmokeRowsPourTest posture)
-		sStick = registerFixture("fixture_usb_stick_3", () -> new GT6UsbSticks.GT6UsbStickItem(new Item.Properties(), (byte)3));
+	}
+
+	/**
+	 * The fixture seat, LAZY: the latch's assumeTrue lives here, not in {@link #warmUp} —
+	 * a @BeforeAll assumption aborts the WHOLE class as skipped, which would bench the
+	 * latch-free row/witness tests on the 21.1 leg too. Only the carrier tests pay the
+	 * assume (the GT6BatteryItemTest telemetry doctrine: the 1.20.1 leg gates the carrier
+	 * semantics, the 21.1 leg records).
+	 */
+	static GT6UsbSticks.GT6UsbStickItem stick() {
+		if (sStick == null) {
+			sStick = registerFixture("fixture_usb_stick_3", () -> new GT6UsbSticks.GT6UsbStickItem(new Item.Properties(), (byte)3));
+		}
+		return sStick;
 	}
 
 	// ------------------------------------------------------------------ ③ the row pour (the QuSmokeRowsPourTest posture)
@@ -188,7 +201,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 	@Test
 	public void aFreshStickReadsEmpty() {
 		Assumptions.assumeTrue(ARMED);
-		ItemStack tStack = new ItemStack(sStick);
+		ItemStack tStack = new ItemStack(stick());
 		assertEquals((byte)0, GT6UsbSticks.readTier(tStack), "no tier byte on a fresh stack");
 		assertNull(GT6UsbSticks.readData(tStack), "no data compound on a fresh stack");
 		assertEquals(0, GT6UsbSticks.readMaterialId(tStack), "no material id");
@@ -199,7 +212,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 	@Test
 	public void theMaterialDataRoundTrips() {
 		Assumptions.assumeTrue(ARMED);
-		ItemStack tStack = new ItemStack(sStick);
+		ItemStack tStack = new ItemStack(stick());
 		OreDictMaterial tMaterial = MT.Iron;
 		assertTrue(tMaterial.mID > 0, "the fixture material has a real registry id");
 		GT6UsbSticks.writeMaterialData(tStack, tMaterial);
@@ -222,7 +235,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 	@Test
 	public void theWrittenCompoundCarriesTheShortFace() {
 		Assumptions.assumeTrue(ARMED);
-		ItemStack tStack = new ItemStack(sStick);
+		ItemStack tStack = new ItemStack(stick());
 		GT6UsbSticks.writeMaterialData(tStack, MT.Iron);
 		CompoundTag tData = GT6UsbSticks.readData(tStack);
 		assertNotNull(tData, "the data compound exists after the write");
