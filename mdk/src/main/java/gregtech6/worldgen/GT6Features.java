@@ -120,6 +120,23 @@ public final class GT6Features {
     }
 
     /**
+     * The bedrock-spring feature (task p31-fluid-spring) — ONE registration row
+     * {@code gt6:fluid_springs}, the single Feature over the 16-row spring table (the
+     * single-feature-over-a-row-table shape as LARGE_VEINS/BEDROCK_ORES; the rows roll
+     * first-hit-wins in table order, not exactly-one and not independent — the upstream
+     * CAN_GENERATE_BEDROCK_ORE=F claim of WorldgenFluidSpring.java:64 blocks every later
+     * spring row). The configured/placed/biome-modifier rows hang off it in
+     * GT6WorldgenDatagen, textually after the bedrock_ores row (the :781 order).
+     */
+    public static final GT6FluidSpringFeature FLUID_SPRINGS = registerFluidSpringFeature();
+
+    private static GT6FluidSpringFeature registerFluidSpringFeature() {
+        GT6FluidSpringFeature tFeature = new GT6FluidSpringFeature();
+        FEATURES.register("fluid_springs", () -> tFeature);
+        return tFeature;
+    }
+
+    /**
      * The three nether surface forms (task p31-nether-lens-end-yield spec ①) — quartz /
      * crystals / clay, one registration row each ({@code gt6:nether_quartz},
      * {@code gt6:nether_crystals}, {@code gt6:nether_clay}), all NoneFeatureConfiguration
