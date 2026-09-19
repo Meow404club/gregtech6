@@ -8428,3 +8428,11 @@ to upstream, sha256 verified per file:
 - `usb_stick_2.png` — `4ec7896cca8accb80512d1dee55b3021cb491c15cd598e73f97a1c4dd287691b` (upstream `32002.png`)
 - `usb_stick_3.png` — `795405d6c96c7a91cc1ed70c38413bab64d7b459051461d97ca93c437302d446` (upstream `32003.png`)
 - `usb_stick_4.png` — `c08a8b8789e8e48b93e0cec5a8f49fb419c968d5fb918f52e3db48ece69180eb` (upstream `32004.png`)
+Bumble-hive block art borrowed from **GregTech 6**
+(task p32-bees-lv2, upstream
+`textures/blocks/nature/bumblehive/{colored,overlay}/{bottom,top,side}.png`,
+byte-identical, filenames flattened to `bumblehive_colored_<face>` /
+`bumblehive_overlay_<face>`): the MTE 32755 colored-grayscale + overlay pair —
+the colored layer rides tintindex 0 (the p21 paint seat; worldgen paints the
+biome-family colour, GTMachinePaintTint resolves the BE PAINT), the overlay
+layer is the untinted decal (the machineModel two-layer grammar).

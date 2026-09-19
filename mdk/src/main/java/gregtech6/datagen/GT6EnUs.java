@@ -130,6 +130,7 @@ public class GT6EnUs extends LanguageProvider {
         addUsbSticks(); // task p32-usb-data — table-tail append
         addSurfaceBand(); // task p30-w6-rocks-sticks — table-tail append
         addSurfacePlants(); // task p30-w6-t2-surface-blocks — table-tail append
+        add("block.gt6.bumble_hive", "Bumble Hive"); // task p32-bees-lv2 — the MTE 32755 display name (Loader_MultiTileEntities.java:2041)
         // task p30-ore-1-mech — template-pin NOTE, zero keys this card (zh ratchet 0): the
         // ore universe (GT6OreBlocks, 26 families x 74 form-rows x M=53) needs NO en_us
         // delta — every ore block item composes the EXISTING gt6.tagprefix.<prefix_snake>

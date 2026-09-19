@@ -81,13 +81,13 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
         tag(GT6HiveFeature.hiveTag("end"));       // the EMPTY pack surface (the :161 family)
         tag(GT6HiveFeature.hiveTag("nether"));    // the EMPTY pack surface (the :163 family)
         tag(GT6HiveFeature.hiveTag("shroom"))     // :165 — the mushroom fields biome
-                .add(biome("mushroom_island"));
+                .add(biome("mushroom_fields"));
         tag(GT6HiveFeature.hiveTag("shore"))      // :167 — the OCEAN_BEACH+LAKE pair
                 .addTag(BiomeTags.IS_OCEAN)
                 .addTag(BiomeTags.IS_BEACH)
                 .addTag(BiomeTags.IS_RIVER);
         tag(GT6HiveFeature.hiveTag("jungle"))     // :169 — the jungle family
-                .add(biome("jungle"), biome("jungle_hills"), biome("sparse_jungle"), biome("bamboo_jungle"));
+                .add(biome("jungle"), biome("sparse_jungle"), biome("bamboo_jungle"));
         tag(GT6HiveFeature.hiveTag("frozen"))     // :171 — the snowy family
                 .add(biome("snowy_plains"), biome("ice_spikes"), biome("snowy_taiga"),
                         biome("snowy_slopes"), biome("frozen_peaks"), biome("jagged_peaks"),
