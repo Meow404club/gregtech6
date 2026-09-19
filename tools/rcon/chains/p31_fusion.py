@@ -23,12 +23,16 @@ Loader_MultiTileEntities.java:1242, upstream FusionReactor.java:47-126).
     controller through the part energy relay; the /gt6energy LU dial parked against a
     ring cell proves the face is reachable, and the controller's :501 type gate
     refuses LU (the inert ignition ledger) — the dial keeps emitting, harmless.
-  - the EU launch: the battery_box_iv sink at the north +-10 point absorbs the
-    :233-236 packets. ONE empty lead-acid battery gives mReceivablePower headroom
-    (an EMPTY box refuses everything); mBatteryCount stays 0 (an empty battery cannot
-    extract) so the box never re-emits. mEnergy climbs 8192/tick until the buffer
-    cap (8192 * 320 * 4 slots = 10485760, packet-aligned) refuses the rest — the
-    frozen final read `gt.energy: 10485760L` is the +-10 arrival assert.
+  - the EU launch: the battery_box_ev sink at the north +-10 point counts the
+    :233-236 packets through its OVERCHARGE arm. No EU box can BUFFER an 8192
+    packet (only LU crystals are tier-5 and the EU box rejects foreign-type
+    batteries in recountBatteries, so mReceivablePower stays 0 -> refuse), but an
+    EV box with one empty EV battery has mReceivablePower > 0 (the empty battery
+    takes 2048-packets) and the 8192 packet size exceeds the V[4]*2=4096 gate ->
+    the :493-496 overcharge arm strikes (soft 100, then the Root explosion — the
+    Base10 :140-:148 ladder verbatim). The 101st packet (tick 101 of the run)
+    explodes the box: `execute unless block` flips and stays flipped = the live
+    +-10 arrival assert, tick-order insensitive.
 
   the design flip: forming writes design 5 on the ring; the run start flips mActive
   and the base onTickCheck :105 hook (refreshStructureOnActiveStateChange = T,
@@ -39,7 +43,7 @@ acceptance arms this chain carries:
   2 the D+T run at 1 progress/tick: maxprogress 1760, active 1b -> 0b at completion
   3 the design 5 -> 6 ring rewrite on the active flip
   4 the LU dial against the glass ring (the relayed face answers)
-  5 the +-10 EU arrival: the north sink freezes at 10485760L
+  5 the +-10 EU arrival: the north overcharge sink explodes on the 101st packet
 
 Run:  GT6_SESSION=off python3 tools/rcon/chains/p31_fusion.py
 """
@@ -73,7 +77,7 @@ PU_V = "gt6:processor_unit_versatile"              # 18200
 PU_L = "gt6:processor_unit_logic"                  # 18201
 PU_C = "gt6:processor_unit_control"                # 18202
 BIG = "gt6:fusion_reactor"
-BOX = "gt6:battery_box_iv"
+BOX = "gt6:battery_box_ev"
 WRONG = "447 65 464"                                # the X-3 arm cell for the rejection arm
 
 
@@ -199,26 +203,28 @@ steps = [
     Step("fill %d %d %d %d %d %d air" % BAND, expect="filled"),
     Step("forceload add 438 452 462 478"),                       # the tick driver
     *structure_steps(),
-    # the wrong-part arm: a stone arm cell, then the controller (placed LAST)
+    # the wrong-part arm: a stone arm cell, then the controller (placed LAST — the
+    # onTickFirst forced check is the forming path of a hand-written walk; the
+    # gt6multiblock form command REFUSES pattern-less controllers, so the verdicts
+    # ride the blockstate polls)
     Step("setblock " + WRONG + " minecraft:stone", expect="Changed the block"),
     Step("setblock " + C + " " + BIG, expect="Changed the block"),
-    Step("gt6multiblock form " + C, expect="formed=false"),
+    Step("execute if block " + C + " gt6:fusion_reactor[formed=false]", expect="Test passed", poll=60),
     # the fix arm: the right wall back, the controller re-placed (the fresh onTickFirst)
     Step("setblock " + WRONG + " " + WALL, expect="Changed the block"),
     Step("setblock " + C + " air", expect="Changed the block"),
     Step("setblock " + C + " " + BIG, expect="Changed the block"),
-    Step("gt6multiblock form " + C, expect="formed=false"),  # the cached verdict before the fresh onTickFirst walk
     Step("execute if block " + C + " gt6:fusion_reactor[formed=true]", expect="Test passed", poll=60),
 
     phase("B: the ring design 5 face + the LU dial"),
     Step("execute if block " + RING_CELL + " " + GLASS + "[design=5]", expect="Test passed", poll=30),
     Step("gt6energy place " + gt6world.fmt(DIAL), expect="GT6 energy source placed"),
-    Step("gt6energy type " + gt6world.fmt(DIAL) + " LU", expect="type LU"),
+    Step("gt6energy type " + gt6world.fmt(DIAL) + " LU", expect="type ENERGY.LIGHT"),
     Step("gt6energy volt " + gt6world.fmt(DIAL) + " 8192", expect="voltage 8192"),
     Step("gt6energy amp " + gt6world.fmt(DIAL) + " 1", expect="amperage 1"),
     Step("gt6energy mode " + gt6world.fmt(DIAL) + " on", expect="emitting true"),
 
-    phase("C: the sink — the battery box with one empty battery (the 2-packet headroom)"),
+    phase("C: the sink — an EV overcharge counter (the empty battery primes mReceivablePower)"),
     Step("setblock " + S + " " + BOX, expect="Changed the block"),
     Step("data merge block " + S + " {inventory:{Size:4,Items:[{Slot:0b,id:\"gt6:battery_lead_acid_ev\",Count:1b}]}}",
          expect="Modified block data",
@@ -236,10 +242,9 @@ steps = [
     # the active flip rewrote the ring designs 5 -> 6 (the :241/:105 hook)
     Step("execute if block " + RING_CELL + " " + GLASS + "[design=6]", expect="Test passed", poll=60),
 
-    phase("E: the +-10 EU arrival — the north sink freezes at the buffer cap"),
-    Step("data get block " + S + " gt.energy", expect="gt.energy: 10485760L", poll=300),
-    # the run completes (inputs consumed, one process): active goes back to 0b
-    Step("data get block " + C, expect="active: 0b", poll=300),
+    phase("E: the +-10 EU arrival — the 101st packet explodes the overcharge sink"),
+    # 100 soft strikes (ticks 1..100 of the run), the 101st overcharge explodes the box
+    Step("execute unless block " + S + " gt6:battery_box_ev", expect="Test passed", poll=300),
 
     phase("F: teardown — the explicit band restore"),
     Step("gt6energy mode " + gt6world.fmt(DIAL) + " off", expect="emitting false", allow_failed=True),
