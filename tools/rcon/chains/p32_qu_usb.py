@@ -49,11 +49,14 @@ TAG_1121 = "gt.usb.tier:3b,gt.usb.data:{gt.replicator.data:%ds}" % FE_ID
 
 
 def write_merge(tier_byte):
-    """The carrier write, forked per leg — 1.20.1 merges into the freeform stack tag;
-    21.1 replaces the whole entry through the opaque CUSTOM_DATA envelope (same keys)."""
+    """The carrier write, forked per leg — `data merge` takes NO path argument (it
+    merges a whole compound into the block entity; the 2026-09-20 RED run proved it:
+    `Expected '{{'` at the path), so the nested face rides `data modify ... merge
+    value` (1.20.1: into the freeform Items[0].tag; 21.1: the whole-entry set value
+    through the opaque CUSTOM_DATA envelope — same keys, the GT6BatteryItem fork)."""
     return {
-        "1.20.1": "data merge block %s Items[0].tag {gt.usb.tier:%db,gt.usb.data:{gt.replicator.data:%ds}}" % (C, tier_byte, FE_ID),
-        "1.21.1": 'data merge block %s Items[0] {count:1,id:"gt6:usb_stick_3",components:{"minecraft:custom_data":{gt.usb.tier:%db,gt.usb.data:{gt.replicator.data:%ds}}}}' % (C, tier_byte, FE_ID),
+        "1.20.1": "data modify block %s Items[0].tag merge value {gt.usb.tier:%db,gt.usb.data:{gt.replicator.data:%ds}}" % (C, tier_byte, FE_ID),
+        "1.21.1": 'data modify block %s Items[0] set value {count:1,id:"gt6:usb_stick_3",components:{"minecraft:custom_data":{gt.usb.tier:%db,gt.usb.data:{gt.replicator.data:%ds}}}}' % (C, tier_byte, FE_ID),
     }
 
 
