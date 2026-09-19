@@ -44,6 +44,7 @@ p17-rcon-framework-fixes):
     log, and "no marker anywhere" still times out False.
 """
 
+import json
 import os
 import shutil
 import socket
@@ -691,6 +692,101 @@ def check_11_stop_ownership():
                 path.unlink(missing_ok=True)
 
 
+def check_12_sweep_session_lock():
+    """The sweep session lock (P32, card p32-ops-sweep-lock) — the sweep-side
+    guard of the P31 serialization protocol (S31-1/S31-2 parallel reviews each
+    started a sweep; two concurrent same-node sweep sessions poisoned the
+    shared session state — "并发 sweep session.lock 毒化"). Serverless: the
+    lock dir is swapped to a scratch dir and the run surface faked, so the
+    three acceptance shapes run in-process:
+
+      ① a second starter fails fast naming the occupant (pid + session id);
+      ② a dead-pid residue is never auto-cleared — --break-lock clears it and
+        refuses a live owner (exit 3);
+      ③ a single instance runs the full flow acquire -> run -> release.
+    """
+    print("\n--- 12: sweep session lock (P32, single-instance rule)")
+    import sweep
+    real_lock_dir, real_run = sweep.SWEEP_LOCK_DIR, sweep.run_and_record
+    scratch = Path(tempfile.mkdtemp())
+    sweep.SWEEP_LOCK_DIR = scratch
+    node = "1.20.1-forge"
+    lock_path = sweep.sweep_lock_path(node)
+    invoked = []
+    seen = {}
+
+    def fake_run(args):
+        invoked.append(args.mode)
+        seen["lock_held"] = lock_path.exists()
+        return {"mode": args.mode, "node": args.node, "wall_s": 0.0,
+                "boots": 0, "chains": {}}
+
+    sweep.run_and_record = fake_run
+    try:
+        # ① second start under a live lock: fail-fast naming the occupant
+        lock = sweep.acquire_sweep_lock(node, "session")
+        record = json.loads(lock.read_text(encoding="utf-8"))
+        check("12a acquire O_EXCL-writes the owner record (pid + session id)",
+              record["pid"] == os.getpid() and record["session"]
+              == f"{framework.worktree_tag()}-{os.getpid()}"
+              and lock_path.name == "gt6_rs_sweep_1201-forge.lock", str(record))
+        try:
+            code = sweep.main(["--mode", "session", "--node", node])
+            check("12b second start fails fast under a live lock", False,
+                  f"main returned {code}")
+        except SystemExit as exc:
+            message = str(exc)
+            check("12b second start fails fast under a live lock",
+                  "ALREADY RUNNING" in message and str(os.getpid()) in message
+                  and record["session"] in message, message[:90])
+        check("12c the refusal fired before any run touched the server",
+              not invoked and lock_path.exists())
+        sweep.release_sweep_lock(lock)
+
+        # ② crash residue (dead pid): fail-fast, never auto-cleared, --break-lock
+        residue_pid = _reaped_pid()
+        lock_path.write_text(json.dumps(
+            {"pid": residue_pid, "session": "deadbeef-42", "node": node,
+             "mode": "perboot", "worktree": "/tmp/ghost-wt",
+             "started": "2026-09-19T00:00:00"}), encoding="utf-8")
+        try:
+            sweep.main(["--mode", "perboot", "--node", node])
+            check("12d a stale (dead-pid) lock also fails fast", False)
+        except SystemExit as exc:
+            message = str(exc)
+            check("12d a stale (dead-pid) lock also fails fast",
+                  "STALE" in message and str(residue_pid) in message
+                  and "--break-lock" in message, message[:90])
+        check("12e the stale lock is NOT auto-cleared", lock_path.exists())
+        check("12f --break-lock clears the dead-pid residue (exit 0)",
+              sweep.break_sweep_lock(node) == 0 and not lock_path.exists())
+        lock_path.write_text(json.dumps(
+            {"pid": os.getpid(), "session": "alive-here", "node": node,
+             "mode": "session", "worktree": str(Path.cwd()),
+             "started": "now"}), encoding="utf-8")
+        check("12g --break-lock refuses a LIVE owner (exit 3, lock intact)",
+              sweep.break_sweep_lock(node) == 3 and lock_path.exists())
+        sweep.release_sweep_lock(lock_path)
+        check("12h --break-lock on an absent lock is a clean no-op (exit 0)",
+              sweep.break_sweep_lock(node) == 0 and not lock_path.exists())
+
+        # ③ single instance, full flow: acquire -> run -> release
+        code = sweep.main(["--mode", "session", "--node", node])
+        check("12i full flow: the run happens under the held lock",
+              code == 0 and invoked == ["session"] and seen["lock_held"] is True,
+              f"invoked={invoked} lock_held={seen.get('lock_held')}")
+        check("12j the lock is released after the run", not lock_path.exists())
+
+        # lock scope is per node: --dual's other-node leg stays legal
+        other = sweep.sweep_lock_path("1.21.1-neoforge")
+        check("12k per-node scope: another node's lock is a different file",
+              other != lock_path and other.name == "gt6_rs_sweep_1211-neoforge.lock",
+              other.name)
+    finally:
+        sweep.SWEEP_LOCK_DIR, sweep.run_and_record = real_lock_dir, real_run
+        shutil.rmtree(scratch, ignore_errors=True)
+
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
@@ -703,6 +799,7 @@ def main():
     check_9_waitdone_monotonic_window()
     check_10_node_expects_fork()
     check_11_stop_ownership()
+    check_12_sweep_session_lock()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 

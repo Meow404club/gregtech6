@@ -10,6 +10,7 @@ and records a per-step verdict ledger + wall-clock timings to /tmp JSON:
   python3 tools/rcon/sweep.py --mode session --group p24_dye   # whole cluster(s)
   python3 tools/rcon/sweep.py --mode perboot --probe    # + keepfilter reboot probe
   python3 tools/rcon/sweep.py --diff a.json b.json      # per-step verdict diff
+  python3 tools/rcon/sweep.py --break-lock --node 1.20.1-forge  # clear a stale lock
   python3 tools/rcon/sweep.py --dual ../MGT6GA-trees/<other> --other-node 1.21.1-neoforge
 
 The session model boots once per SESSION_GROUPS cluster (coordinate bands of
@@ -25,12 +26,18 @@ dual boots would serialize — ADR-P15-4) and reports both walls. Every /tmp
 artifact name carries the node suffix AND the worktree tag (P18, the P17
 session_slug mechanism), so parallel worktrees sweeping the identical roster
 never overwrite one another's ledgers or logs.
+
+Every start takes the NODE's sweep lock first (P32): a second same-node
+sweep fails fast naming the occupant (pid + session id) instead of silently
+poisoning the shared state — the P31 dual-session incident's sweep-side
+guard; a crashed sweep leaves residue that only --break-lock clears.
 """
 
 import argparse
 import hashlib
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 import time
@@ -578,6 +585,118 @@ SESSION_GROUPS = (
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
 
 
+# --- sweep session lock (P32, card p32-ops-sweep-lock) ------------------------
+#
+# The mechanism face of the P31 serialization protocol. Incident: S31-1/S31-2
+# parallel reviews each started a sweep — two concurrent sweep sessions on one
+# node stomped each other's boots/artifacts (phase_anchors.p31 known bug
+# "并发 sweep session.lock 毒化"); the human-side fix was the serialization
+# protocol, this lock is the sweep-side guard so a relapse fails LOUD instead
+# of poisoning silently. One lock per NODE in the shared /tmp: --dual's two
+# legs run different nodes and each takes its own; two same-node sweeps
+# cannot. A live owner fails the second starter fast, naming pid + session
+# id; a dead-pid lock is residue only --break-lock may clear (it refuses live
+# pids). No queueing / admission permits BY DESIGN: sweep-vs-sweep
+# serialization stays a human discipline — a queue would invite parallel
+# sweeps, which IS the incident shape.
+
+SWEEP_LOCK_DIR = gt6server.ARTIFACT_DIR
+
+
+def sweep_lock_path(node):
+    """The per-node lock file (the node is the collision domain: SESSION_PORTS
+    segments and gradle's per-project lock are what two sweeps fight over)."""
+    return SWEEP_LOCK_DIR / f"gt6_rs_sweep_{framework.node_suffix(node)}.lock"
+
+
+def _pid_alive(pid):
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        pass  # alive, owned by another user
+    return True
+
+
+def _read_lock(path):
+    """(pid, session, human detail) out of a lock file; pid None = unreadable."""
+    try:
+        record = json.loads(Path(path).read_text(encoding="utf-8"))
+        return int(record["pid"]), str(record.get("session", "?")), \
+            f"node {record.get('node', '?')}, mode {record.get('mode', '?')}, " \
+            f"started {record.get('started', '?')}, worktree {record.get('worktree', '?')}"
+    except Exception as exc:                       # half-written / foreign content
+        return None, None, f"unreadable ({exc})"
+
+
+def acquire_sweep_lock(node, mode):
+    """O_EXCL-create the node's sweep lock, or fail fast naming the occupant."""
+    path = sweep_lock_path(node)
+    record = json.dumps({
+        "pid": os.getpid(),
+        "session": f"{framework.worktree_tag()}-{os.getpid()}",
+        "node": node, "mode": mode,
+        "worktree": str(framework.WORKTREE_ROOT),
+        "started": time.strftime("%Y-%m-%dT%H:%M:%S"),
+    })
+    try:
+        with path.open("x") as handle:
+            handle.write(record + "\n")
+    except FileExistsError:
+        # settle-wait: a same-second second starter (the P31 shape) may catch
+        # the winner's file between create and write — re-read before judging
+        for _ in range(3):
+            if _read_lock(path)[0] is not None:
+                break
+            time.sleep(0.05)
+        _refuse_lock(path, node)
+    print(f"[sweep] lock acquired: {path}")
+    return path
+
+
+def _refuse_lock(path, node):
+    pid, session, detail = _read_lock(path)
+    if pid is None:
+        raise SystemExit(f"sweep: {path} exists but is unreadable ({detail}) — "
+                         f"--break-lock if no sweep is running")
+    if _pid_alive(pid):
+        raise SystemExit(
+            f"sweep: a sweep session is ALREADY RUNNING on node {node} — "
+            f"refusing to start (P31 dual-session incident, single-instance rule)\n"
+            f"  occupant: pid {pid}, session {session}, {detail}\n"
+            f"  lock: {path}\n"
+            f"  wait for it to finish; --break-lock only if pid {pid} is "
+            f"genuinely dead")
+    raise SystemExit(
+        f"sweep: STALE sweep lock on node {node} (owner pid {pid} is dead) — "
+        f"not auto-cleared\n"
+        f"  residue: session {session}, {detail}\n"
+        f"  lock: {path}\n"
+        f"  clear it explicitly: sweep.py --break-lock --node {node}")
+
+
+def release_sweep_lock(path):
+    Path(path).unlink(missing_ok=True)
+
+
+def break_sweep_lock(node, log=print):
+    """--break-lock: clear a residue lock; refuse while the owner pid lives."""
+    path = sweep_lock_path(node)
+    if not path.exists():
+        log(f"[sweep] no sweep lock on node {node}: {path}")
+        return 0
+    pid, session, detail = _read_lock(path)
+    if pid is not None and _pid_alive(pid):
+        log(f"sweep: --break-lock REFUSED — owner pid {pid} (session {session}) "
+            f"is alive: {detail}\n  lock: {path}")
+        return 3
+    release_sweep_lock(path)
+    log(f"[sweep] broke stale sweep lock on node {node}: {path} "
+        f"(owner pid {pid} dead, session {session})")
+    return 0
+
+
 def load_chain(stem):
     """Import chains/<stem>.py and return its module-level CHAIN."""
     path = _HERE / "chains" / f"{stem}.py"
@@ -902,6 +1021,9 @@ def main(argv=None):
     parser.add_argument("--dual", default=None, metavar="OTHER_WORKTREE",
                         help="also run OTHER_NODE there in parallel (same commit enforced)")
     parser.add_argument("--other-node", default="1.21.1-neoforge")
+    parser.add_argument("--break-lock", action="store_true",
+                        help="standalone: clear a STALE sweep lock on --node "
+                             "(owner pid dead); refuses a live owner (exit 3)")
     args = parser.parse_args(argv)
     if args.concurrency is None:
         args.concurrency = framework.concurrency_degree()
@@ -912,18 +1034,25 @@ def main(argv=None):
         show_plan(select_groups(SESSION_GROUPS, args.group))
         return 0
 
-    if args.dual:
-        code = run_dual(args)
-    else:
-        result = run_and_record(args)
-        code = 1 if any(_failed(res) for res in result["chains"].values()) else 0
+    node = args.node or framework.DEFAULT_NODE
+    if args.break_lock:
+        return break_sweep_lock(node)
 
-    if args.probe:
-        node = args.node or framework.DEFAULT_NODE
-        print(f"\n[sweep] keepfilter reboot probe on {node}")
-        code |= subprocess.call([sys.executable,
-                                 str(_HERE / "chains" / f"{PROBE_MODULE}.py"),
-                                 "--node", node])
+    lock = acquire_sweep_lock(node, args.mode)
+    try:
+        if args.dual:
+            code = run_dual(args)
+        else:
+            result = run_and_record(args)
+            code = 1 if any(_failed(res) for res in result["chains"].values()) else 0
+
+        if args.probe:
+            print(f"\n[sweep] keepfilter reboot probe on {node}")
+            code |= subprocess.call([sys.executable,
+                                     str(_HERE / "chains" / f"{PROBE_MODULE}.py"),
+                                     "--node", node])
+    finally:
+        release_sweep_lock(lock)
     return code
 
 
