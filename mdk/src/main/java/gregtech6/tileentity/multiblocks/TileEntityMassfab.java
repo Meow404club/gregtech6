@@ -351,7 +351,14 @@ public class TileEntityMassfab extends TileEntityBase10MultiBlockMachine impleme
 		return TileEntityBase10MultiBlockMachine.NBT_OUTPUT_TANK + "_" + aIndex;
 	}
 
-	//? if forge {
+	// The (CompoundTag) overrides compile on BOTH legs — the shared-tree chain is VIRTUAL:
+	// the 21.1 canonical provider hooks delegate in at the 01Root (loadAdditional/
+	// saveAdditional(CompoundTag, Provider) → the (CompoundTag) chain), and a subclass
+	// without its own (CompoundTag) override silently drops its keys off the 21.1 serialize
+	// (the base writes tank 0 only — the live neo leg proved output_tank_1 never appeared).
+	// FluidTankGT.writeToNBT/readFromNBT carry their own leg forks internally (the 21.1
+	// codec face rides the frozen NBT_ACCESS view, ADR-P18), so the bodies are leg-invariant;
+	// the @Override is valid on both legs (the machine base declares these signatures).
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
@@ -363,12 +370,6 @@ public class TileEntityMassfab extends TileEntityBase10MultiBlockMachine impleme
 		super.load(aNBT);
 		for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, outputTankKey(i));
 	}
-	//?}
-	//? if neoforge {
-	/* // 21.1: the shared-chain (CompoundTag) signatures ride unchanged — the base
-	   // load/save are the shared-tree methods, so the overrides above are leg-invariant
-	   // apart from the provider-first serialization the base already carries.
-	 *///?}
 
 	// ---------------------------------------------------------------------------
 	// the energy face (MultiTileEntityBasicMachine.java:489-517)
