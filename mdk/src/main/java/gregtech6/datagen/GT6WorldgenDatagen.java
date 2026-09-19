@@ -252,6 +252,13 @@ public final class GT6WorldgenDatagen {
                 NoneFeatureConfiguration.INSTANCE);
         FeatureUtils.register(ctx, GT6Worldgen.NETHER_CLAY_CONFIGURED, GT6Features.NETHER_CLAY,
                 NoneFeatureConfiguration.INSTANCE);
+        // task p32-bees-lv2 — the ONE bumble-hive configured feature: the registered
+        // GT6HiveFeature instance, NoneFeatureConfiguration (the nether-form shape — the
+        // WorldgenHives constants live in the class, not a config surface). One Feature
+        // over the three dimensions (upstream WorldgenHives.java:48-193 was three rows
+        // over one generator body).
+        FeatureUtils.register(ctx, GT6Worldgen.BUMBLE_HIVES_CONFIGURED, GT6Features.BUMBLE_HIVES,
+                NoneFeatureConfiguration.INSTANCE);
         // task p31-bedrock-ore-worldgen — the ONE bedrock-ore configured feature: the
         // registered GT6BedrockOreFeature instance over the 46-row table (the same tier-a
         // face as the vein/lens tables).
@@ -351,6 +358,13 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.NETHER_CRYSTALS_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.NETHER_CRYSTALS_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        // task p32-bees-lv2 — the bumble-hive placed feature: Count 1 CONSTANT + InSquare
+        // + BiomeFilter (the conflict-audit posture; the column pick + the dimension rolls
+        // ride the Feature's coordinate-seeded stream, no Y placement — the forms carry
+        // their own Y domains). The hive hangs off THREE biome modifiers (the next method).
+        PlacementUtils.register(ctx, GT6Worldgen.BUMBLE_HIVES_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.BUMBLE_HIVES_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         PlacementUtils.register(ctx, GT6Worldgen.NETHER_CLAY_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.NETHER_CLAY_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
@@ -442,6 +456,25 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_CLAY_PLACED)),
                 GenerationStep.Decoration.LOCAL_MODIFICATIONS));
+        // task p32-bees-lv2 — the THREE bumble-hive biome modifiers over the SAME placed
+        // feature (upstream Loader_Worldgen.java:635-637: overworld.bumblehives /
+        // nether.bumblehives / end.bumblehives; the END_YIELD same-placed-key modifier
+        // precedent). The overworld row rides #minecraft:is_overworld (the small-ore band
+        // convention; upstream also listed the overworld-like mod dims — the Feature routes
+        // every non-nether/end dimension to the overworld shape, the DIM_UNKNOWN face), at
+        // the UNDERGROUND_ORES step (the surface exists pre-decoration; the underground
+        // form is the native rider — one step for both forms).
+        ctx.register(biomeModifierKeyOf("bumble_hives"), addFeatures(tOverworld,
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        ctx.register(biomeModifierKeyOf("nether_bumble_hives"), addFeatures(
+                tBiomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        ctx.register(biomeModifierKeyOf("end_bumble_hives"), addFeatures(
+                tBiomes.getOrThrow(BiomeTags.IS_END),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
         // task p31-nether-lens-end-yield — the END large-vein modifier over the SAME
         // gt6:large_veins placed feature (the Feature's biome probe picks the ORE_END
         // rows there), at the ore step. The CONDITIONS ride the emission providers

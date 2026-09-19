@@ -147,6 +147,15 @@ public final class GT6Features {
     public static final GT6NetherCrystalFeature NETHER_CRYSTALS = registerForm("nether_crystals", new GT6NetherCrystalFeature());
     public static final GT6NetherClayFeature NETHER_CLAY = registerForm("nether_clay", new GT6NetherClayFeature());
 
+    /**
+     * The bumble-hive feature (task p32-bees-lv2) — ONE registration row
+     * {@code gt6:bumble_hives}, NoneFeatureConfiguration (the nether-form shape): the
+     * upstream three WorldgenObject rows (Loader_Worldgen.java:635-637) collapse into
+     * one Feature with in-place dimension routing, hanging off three biome modifiers
+     * (overworld/nether/end) in GT6WorldgenDatagen.
+     */
+    public static final GT6HiveFeature BUMBLE_HIVES = registerForm("bumble_hives", new GT6HiveFeature());
+
     private static <T extends Feature<?>> T registerForm(String aPath, T aFeature) {
         FEATURES.register(aPath, () -> aFeature);
         return aFeature;
