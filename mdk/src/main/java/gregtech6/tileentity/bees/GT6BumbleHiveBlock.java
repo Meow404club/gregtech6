@@ -50,6 +50,12 @@ public class GT6BumbleHiveBlock extends GTEntityBlock {
 		super(aProperties);
 	}
 
+	/** The vanilla BaseEntityBlock INVISIBLE default beaten back to MODEL (the census face, GTEntityBlockRenderShapeCensusTest). */
+	@Override
+	public net.minecraft.world.level.block.RenderShape getRenderShape(BlockState aState) {
+		return net.minecraft.world.level.block.RenderShape.MODEL;
+	}
+
 	//? if neoforge {
 	/*
 	// 21.1 made BaseEntityBlock.codec() abstract (the GTSensorBlock fork shape).
