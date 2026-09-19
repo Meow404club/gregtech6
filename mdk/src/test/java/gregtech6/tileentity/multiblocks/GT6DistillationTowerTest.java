@@ -107,6 +107,34 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 			saveAdditional(tTag);
 			return tTag;
 		}
+
+		/**
+		 * The VANILLA entry-hook shim — drives the hooks the ENGINE calls, not the
+		 * {@code (CompoundTag)} members directly: 1.21.1 vanilla drives
+		 * {@code saveAdditional(CompoundTag, Provider)} (the 01Root delegation into the
+		 * {@code (CompoundTag)} chain — the exact seam the massfab serialization miss rode,
+		 * work/p31-massfab d9dfcfb77), 1.20.1 vanilla drives {@code saveAdditional(CompoundTag)}
+		 * itself. The provider is passed null on 21.1 on purpose: the delegation must not
+		 * depend on it (the (CompoundTag) chain carries the frozen NBT_ACCESS view, ADR-P18).
+		 */
+		public net.minecraft.nbt.CompoundTag saveEntryTag() {
+			net.minecraft.nbt.CompoundTag tTag = new net.minecraft.nbt.CompoundTag();
+			//? if forge {
+			saveAdditional(tTag);
+			//?} else {
+			/*saveAdditional(tTag, (net.minecraft.core.HolderLookup.Provider) null);
+			 *///?}
+			return tTag;
+		}
+
+		/** The entry-hook load twin of {@link #saveEntryTag()} (1.21.1: {@code loadAdditional(CompoundTag, Provider)} → {@code load(CompoundTag)}). */
+		public void loadEntryTag(net.minecraft.nbt.CompoundTag aTag) {
+			//? if forge {
+			load(aTag);
+			//?} else {
+			/*loadAdditional(aTag, (net.minecraft.core.HolderLookup.Provider) null);
+			 *///?}
+		}
 	}
 
 	private static TestTower newTower() {
@@ -488,5 +516,36 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 		assertEquals(300, tOld.mTanksOutput[0].amount(), "the legacy single tank lands in bank slot 0 verbatim");
 		assertEquals(Fluids.WATER, tOld.mTanksOutput[0].fluid().getFluid());
 		assertTrue(tOld.mTanksOutput[5].isEmpty(), "the tail tanks stay empty on a legacy save");
+	}
+
+	/**
+	 * The PRODUCTION-entry round-trip (task p31-distill-21-1-tank-serialization): the
+	 * ENGINE-facing hooks, not the {@code (CompoundTag)} members — 1.21.1 vanilla calls
+	 * {@code loadAdditional/saveAdditional(CompoundTag, Provider)} which the 01Root
+	 * delegates into the {@code (CompoundTag)} chain (TileEntityBase01Root:138-147), and
+	 * the machine base's own 21.1 arm stops at tank 0, so a subclass without its own
+	 * {@code (CompoundTag)} override drops its keys off the 21.1 face (the massfab live
+	 * miss, d9dfcfb77 — this pin is that bug class' teeth for the tower). The bank tank 1,
+	 * the tail tank 8 and the input tank must survive through the entry hooks on BOTH legs.
+	 */
+	@Test
+	public void theVanillaEntryHooksRoundTripTheBankAndInputTanks() {
+		TestTower tTower = newTower();
+		tTower.mTankInput.add(700, new FluidStack(Fluids.LAVA, 700));
+		tTower.mTanksOutput[1].add(400, new FluidStack(Fluids.WATER, 400));
+		tTower.mTanksOutput[8].add(250, new FluidStack(Fluids.LAVA, 250));
+
+		net.minecraft.nbt.CompoundTag tTag = tTower.saveEntryTag();
+		assertTrue(tTag.contains(TileEntityDistillationTower.NBT_INPUT_TANK), "the input-tank key lands through the entry hook");
+		assertTrue(tTag.contains("output_tank_1"), "the bank key lands through the entry hook");
+		assertTrue(tTag.contains("output_tank_8"), "the tail key lands through the entry hook");
+
+		TestTower tLoaded = newTower();
+		tLoaded.loadEntryTag(tTag);
+		assertEquals(700, tLoaded.mTankInput.amount(), "the input tank restored through the entry hooks");
+		assertEquals(Fluids.LAVA, tLoaded.mTankInput.fluid().getFluid());
+		assertEquals(400, tLoaded.mTanksOutput[1].amount(), "bank tank 1 restored through the entry hooks");
+		assertEquals(Fluids.WATER, tLoaded.mTanksOutput[1].fluid().getFluid());
+		assertEquals(250, tLoaded.mTanksOutput[8].amount(), "bank tank 8 restored through the entry hooks");
 	}
 }
