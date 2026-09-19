@@ -231,9 +231,12 @@ steps = [
          node_cmds={"1.21.1": 'data merge block ' + S + ' {inventory:{Size:4,Items:[{Slot:0b,id:"gt6:battery_lead_acid_ev",count:1}]}}'}),
 
     phase("D: the D+T run — the input-tank merge, 1760 ticks, maxprogress 1760"),
+    # the tank merge shape forks per leg: forge = the legacy FluidName/Amount pair,
+    # 21.1 = the codec face (lowercase amount + id — the legacy pair loads nothing and
+    # logs "Tried to load invalid fluid", the 18:49:49 server ERROR the first sweep caught)
     Step("data merge block " + C + ' {input_tank:{FluidName:"gt6:deuterium",Amount:1000},input_tank_1:{FluidName:"gt6:tritium",Amount:1000}}',
          expect="Modified block data",
-         node_cmds={"1.21.1": 'data merge block ' + C + ' {input_tank:{FluidName:"gt6:deuterium",Amount:1000},input_tank_1:{FluidName:"gt6:tritium",Amount:1000}}'}),
+         node_cmds={"1.21.1": 'data merge block ' + C + ' {input_tank:{amount:1000,id:"gt6:deuterium"},input_tank_1:{amount:1000,id:"gt6:tritium"}}'}),
     Step("data merge block " + C + " {inventory:{Size:11,Items:[" + selector_merge(0, 2)["1.20.1"] + "]}}",
          expect="Modified block data",
          node_cmds={"1.21.1": "data merge block " + C + " {inventory:{Size:11,Items:[" + selector_merge(0, 2)["1.21.1"] + "]}}"}),
