@@ -219,6 +219,94 @@ public class GT6RecipeMaps {
 		return List.copyOf(sGenerationResetHooks);
 	}
 
+	/**
+	 * The registration phase of the whole map generation (task p32-rm-phase-gate), the
+	 * GTCEu MaterialRegistry shape reduced to the two states the RM lifecycle has
+	 * (gtceu-modern MaterialRegistry.java:34-45 PRE/OPEN/CLOSED/FROZEN; the PRE/CLOSED
+	 * material-domain refinements have no RM counterpart):
+	 * <ul>
+	 * <li>{@link Phase#OPEN} — registration: {@link #init()} + the static loader pours
+	 * (FMLCommonSetup) + the datapack seams (the JSON reload apply; the CokeOven tag
+	 * listener writes {@code mRecipeList} directly and never routes through
+	 * {@code addRecipe});</li>
+	 * <li>{@link Phase#FROZEN} — gameplay: every {@code addRecipe} on every map throws
+	 * {@link IllegalStateException} carrying the map name (the offending call stack rides
+	 * the exception itself), the late-pour gate the W2+ machine cards pour under.</li>
+	 * </ul>
+	 *
+	 * <p>Switch points: {@link #freeze()} from the {@link RegistrationFreezer} binder
+	 * (ServerStarted — the registration/gameplay boundary, wired per leg: the 1.20.1 forge
+	 * and the 1.21.1 neo dialects each bind their own event class); the
+	 * {@link #reopenWindow()} unfreeze window for the JSON reload seam (a live /reload
+	 * re-apply lands after the freeze and must stay legal — the GTCEu unfreeze/freeze
+	 * window, GTRecipeTypes.java:54-73); and {@link #reset()} rewinds to OPEN with the rest
+	 * of the generation — the phase state joins the P18 ledger discipline (hooks + pour
+	 * flags + phase retire TOGETHER, so a stale FROZEN can never poison a fresh generation,
+	 * the ADR-P18 case-A argument shape). The guard itself lives at the single pour funnel,
+	 * {@link RecipeMap#addRecipe} — the one place every registration pour already routes
+	 * through (43 call sites; the two reload seams are the only other writers, one direct,
+	 * one through the window).
+	 */
+	public enum Phase {OPEN, FROZEN}
+
+	private static volatile Phase sPhase = Phase.OPEN;
+
+	/** The current phase (package-private read — the RecipeMap.addRecipe guard is the reader). */
+	static Phase phase() {return sPhase;}
+
+	/**
+	 * Closes the registration phase (idempotent). Live switch point: ServerStarted via the
+	 * binder below. After this, {@code addRecipe} on any map fails loud until
+	 * {@link #reset()} (the test-generation rewind) or a {@link #reopenWindow()} caller
+	 * reopens the registration surface.
+	 */
+	public static synchronized void freeze() {
+		if (sPhase != Phase.FROZEN) {
+			sPhase = Phase.FROZEN;
+			LOGGER.info("GT6 RecipeMaps: phase OPEN -> FROZEN — the {} registered maps are closed to new rows", RecipeMap.RECIPE_MAPS.size());
+		}
+	}
+
+	/**
+	 * The reload window (package-private — the JSON loader is the only caller): FROZEN →
+	 * OPEN for one registration-phase re-pour, returning whether a re-freeze is owed. An
+	 * OPEN generation (boot, offline tests) owes nothing, so the window is invisible to
+	 * them.
+	 */
+	static synchronized boolean reopenWindow() {
+		if (sPhase != Phase.FROZEN) return false;
+		sPhase = Phase.OPEN;
+		return true;
+	}
+
+	/**
+	 * The live freeze switch, self-contained per leg (the ADR-P3-4 nested
+	 * {@code @EventBusSubscriber} form, TileEntityBase03TicksAndSync.ServerRegistryAccessBinder
+	 * precedent: the annotation scan class-loads only THIS nested class; the outer static
+	 * init it triggers is the empty hook list + the phase field — no registry hazard).
+	 * ServerStarted = the datapack load (JSON apply, tag rebuild) has finished, the server
+	 * is about to tick: everything after is gameplay, and a late pour from there is the
+	 * bug this gate exists to catch. A client JVM that never starts a server stays OPEN —
+	 * it has no pour either (every RM writer is server-side or offline test code).
+	 */
+	//? if forge {
+	@net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid = "gt6", bus = net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.FORGE)
+	public static final class RegistrationFreezer {
+		@net.minecraftforge.eventbus.api.SubscribeEvent
+		public static void onServerStarted(net.minecraftforge.event.server.ServerStartedEvent aEvent) {
+			GT6RecipeMaps.freeze();
+		}
+	}
+	//?} else {
+	/*@net.neoforged.fml.common.EventBusSubscriber(modid = "gt6") // the game bus, routed by event type (the ServerAboutToStart binder dialect)
+	public static final class RegistrationFreezer {
+		@net.neoforged.bus.api.SubscribeEvent
+		public static void onServerStarted(net.neoforged.neoforge.event.server.ServerStartedEvent aEvent) {
+			GT6RecipeMaps.freeze();
+		}
+	}
+	*///?}
+
 	/** RM.java:103 — the Oven/Furnace map backed by the vanilla smelting recipes. */
 
 	public static volatile RecipeMapFurnace FURNACE;
@@ -1521,6 +1609,7 @@ public class GT6RecipeMaps {
 		REPLICATOR = null;
 		FUSION = null;
 		RecipeMap.reset();
+		sPhase = Phase.OPEN; // the phase joins the generation — a fresh generation always registers (task p32-rm-phase-gate)
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}
 			catch (Throwable tThrowable) {LOGGER.warn("GT6 RecipeMaps: a generation-reset hook failed — continuing with the remaining hooks", tThrowable);}
