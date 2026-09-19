@@ -46,6 +46,13 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 			case "iron_ingot" -> Items.IRON_INGOT;
 			case "ender_pearl" -> Items.ENDER_PEARL;
 			case "paper" -> Items.PAPER;
+			// the p31-massfab Ender rows' material items — enumerated EXACTLY so a typo in a
+			// shipped row stays a LOUD bad row (the default miss)
+			case "dust_div72_dilithium", "dust_tiny_dilithium", "dust_small_dilithium", "dust_dilithium",
+					"gem_dilithium", "block_dust_dilithium", "block_gem_dilithium",
+					"dust_div72_ancient_debris", "dust_tiny_ancient_debris", "dust_small_ancient_debris",
+					"dust_ancient_debris", "ingot_ancient_debris", "block_dust_ancient_debris",
+					"block_ingot_ancient_debris" -> Items.IRON_INGOT; // identity stand-ins
 			default -> Items.AIR;
 		};
 		GT6RecipeMapJsonLoader.sFluidResolver = aId -> switch (aId.getPath()) {
@@ -71,9 +78,14 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
+	/** The p31-massfab massfab file = the 14 Ender smoke rows (Loader_Recipes_Other.java:915-928 verbatim constants). */
 	@Test
 	void theThreeShippedSmokeFilesPourIntoTheirMaps() throws Exception {
-		for (String tKey : new String[] {"massfab", "replicator", "scannermolecular"}) {
+		pourShipped("massfab");
+		assertEquals(14, GT6RecipeMapJsonLoader.pouredCount("massfab"), "massfab: the poured row count — the :915-928 Ender walk");
+		assertNotNull(GT6RecipeMapJsonLoader.mapFor("massfab"), "massfab: the whitelist key resolves its map");
+		assertEquals(14, GT6RecipeMapJsonLoader.mapFor("massfab").mRecipeList.size(), "massfab: the map holds its 14 rows");
+		for (String tKey : new String[] {"replicator", "scannermolecular"}) {
 			pourShipped(tKey);
 			assertEquals(1, GT6RecipeMapJsonLoader.pouredCount(tKey), tKey + ": the poured row count");
 			assertNotNull(GT6RecipeMapJsonLoader.mapFor(tKey), tKey + ": the whitelist key resolves its map");
@@ -81,18 +93,28 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
-	/** The massfab smoke row = the iron disintegration stand-in (Loader_Recipes_Other.java:971-972 constants over MT.java:414 Fe 26p/30n). */
+	/**
+	 * The massfab smoke rows = the Ender walk (:915-928): the :915 baseline row (dustDiv72
+	 * Dilithium → 144 mB, dur 144, eut 16) and the :921 blockGem top row (L×12960). The
+	 * qu-a iron-disintegration stand-in retired with the card-C dynamic walk
+	 * (GT6RecipesMassfab) — the JSON rows would have duplicated the walked iron row.
+	 */
 	@Test
-	void theMassfabRowCarriesTheIronDisintegrationConstants() throws Exception {
+	void theMassfabRowsCarryTheEnderConstants() throws Exception {
 		pourShipped("massfab");
-		Recipe tRow = GT6RecipeMaps.MASSFAB.mRecipeList.iterator().next();
-		assertEquals(1L, tRow.mEUt, "the disintegration voltage 1 (Loader_Recipes_Other.java:971)");
-		assertEquals(7340032L, tRow.mDuration, "(protons 26 + neutrons 30) × 131072 — the :971 duration formula over MT.java:414");
-		assertEquals(1, tRow.mInputs.length, "one item input (the iron_ingot stand-in)");
-		assertEquals(0, tRow.mOutputs.length, "zero item outputs — matter only");
-		assertEquals(2, tRow.mFluidOutputs.length, "the two matter carriers out");
-		assertEquals(26, tRow.mFluidOutputs[0].getAmount(), "1 mB = 1 proton: Fe charges to 26 mB");
-		assertEquals(30, tRow.mFluidOutputs[1].getAmount(), "1 mB = 1 neutron: Fe neutrals to 30 mB");
+		Recipe tBaseline = null, tTop = null;
+		for (Recipe tRow : GT6RecipeMaps.MASSFAB.mRecipeList) {
+			if (tRow.mDuration == 144 && tRow.mInputs.length == 1) tBaseline = tRow;
+			if (tRow.mDuration == 186624) tTop = tRow;
+		}
+		assertNotNull(tBaseline, "the :915 baseline row (dustDiv72 → L, dur 144)");
+		assertNotNull(tTop, "the :921 blockGem top row (L*12960, dur 144*1296)");
+		assertEquals(16L, tBaseline.mEUt, "the :915 eut 16");
+		assertEquals(144, tBaseline.mFluidOutputs[0].getAmount(), "one L-unit of molten enderpearls = 144 mB (the FL.Ender per-unit)");
+		assertEquals(0, tBaseline.mOutputs.length, "zero item outputs — ender fluid only (ZL_IS)");
+		assertEquals(1, tBaseline.mFluidOutputs.length, "one fluid output per row");
+		assertEquals(16L, tTop.mEUt, "the :921 eut 16");
+		assertEquals(1866240, tTop.mFluidOutputs[0].getAmount(), "L*12960 = 1866240 mB (the :921 blockGem arm)");
 	}
 
 	/** The replicator smoke row = the :929 molten-enderpearl → ender-pearl row verbatim. */
@@ -106,6 +128,32 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals(144, tRow.mFluidInputs[0].getAmount(), "one L-unit of molten enderpearls = 144 mB (the FL.Ender per-unit)");
 		assertEquals(1, tRow.mOutputs.length, "one item output");
 		assertSame(Items.ENDER_PEARL, tRow.mOutputs[0].getItem(), "the replicated ender pearl (the gem-form stand-in)");
+	}
+
+	/**
+	 * The Ender rows' item ids are the GTMaterialItems id-composition outputs (task
+	 * p31-massfab): every hand-typed id in the shipped massfab.json must equal
+	 * {@code itemIdOf(prefix, material)} so the LIVE pour resolves them — a typo here is
+	 * a LOUD bad row at load and a silently missing NEI row.
+	 */
+	@Test
+	void theMassfabEnderRowItemIdsMatchTheRegistryComposition() {
+		gregtech6.registry.GTMaterialItems.initMaterials(); // idempotent — the offline universe
+		gregapi.oredict.OreDictMaterial[] tMaterials = {gregapi.data.MT.Dilithium, gregapi.data.MT.AncientDebris};
+		// the PATH forms — itemIdOf composes the registry path; the shipped rows carry the
+		// same paths under the gt6: namespace
+		String[][] tArms = {
+				{"dust_div72_dilithium", "dust_tiny_dilithium", "dust_small_dilithium", "dust_dilithium", "gem_dilithium", "block_dust_dilithium", "block_gem_dilithium"},
+				{"dust_div72_ancient_debris", "dust_tiny_ancient_debris", "dust_small_ancient_debris", "dust_ancient_debris", "ingot_ancient_debris", "block_dust_ancient_debris", "block_ingot_ancient_debris"}};
+		gregapi.oredict.OreDictPrefix[][] tPrefixes = {
+				{gregapi.data.OP.dustDiv72, gregapi.data.OP.dustTiny, gregapi.data.OP.dustSmall, gregapi.data.OP.dust, gregapi.data.OP.gem, gregapi.data.OP.blockDust, gregapi.data.OP.blockGem},
+				{gregapi.data.OP.dustDiv72, gregapi.data.OP.dustTiny, gregapi.data.OP.dustSmall, gregapi.data.OP.dust, gregapi.data.OP.ingot, gregapi.data.OP.blockDust, gregapi.data.OP.blockIngot}};
+		for (int m = 0; m < 2; m++) {
+			for (int a = 0; a < 7; a++) {
+				assertEquals(tArms[m][a], gregtech6.registry.GTMaterialItems.itemIdOf(tPrefixes[m][a], tMaterials[m]),
+						"the shipped row id matches the composition (" + tArms[m][a] + ")");
+			}
+		}
 	}
 
 	/** The scannermolecular smoke row = the DECLARED 2-in/1-out stand-in of the runtime USB synthesis. */

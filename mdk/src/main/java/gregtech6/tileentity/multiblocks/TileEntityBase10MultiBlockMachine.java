@@ -149,6 +149,13 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	public long mParallel = 16;
 	public boolean mSuccessful = false, mActive = false, mRunning = false;
 	public boolean mStopped = false, mCouldUseRecipe = false, mInventoryChanged = false;
+	/** The per-instance ops drive (task p31-massfab): NBT {@code fake_source} (the
+	 *  {@code gt6machine fakesource} regime made instance-scoped — the BasicMachine
+	 *  twin is a static the offline test bases leak) refills mEnergy to mInputMax in
+	 *  {@link #doWork} while set, giving the RCON acceptance chains a grid-less,
+	 *  race-free drive. Never persisted as constructor config — the merge writes it
+	 *  per rig and the teardown clears the band. */
+	public boolean mFakeSource = false;
 	/** Upstream :1193 NBT_NO_CONSTANT_POWER = T for the Coke Oven — the :894 reset is skipped. */
 	public boolean mNoConstantEnergy = true;
 	/**
@@ -299,8 +306,12 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	public void onTick(long aTimer, boolean aIsServerSide) {
 		super.onTick(aTimer, aIsServerSide); // the 10Base 600-tick structure poll (:121-124, includes :463)
 		if (aIsServerSide) {
-			// :454-455 — TU self-generation (the mChargeRequirement branch :456 is cut with charging)
-			if (!mStopped) mEnergy++;
+			// :454-455 verbatim — TU self-generation (the mChargeRequirement branch :456 is
+			// cut with charging). The upstream gate IS the type check: only TU machines
+			// self-generate; QU/EU/RF machines charge from the energy face. The task
+			// p31-massfab QU Massfab is the first non-TU consumer (the unconditional port
+			// increment leaked 1 energy/t into every registered type).
+			if (!mStopped && mEnergyTypeAccepted == gregapi.data.TD.Energy.TU) mEnergy++;
 			// :459 — fluid auto-output (the mDisabledFluidOutput/SIDES_VALID gate folds away with the flags)
 			doOutputFluids();
 			// :461
@@ -334,8 +345,15 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	// work (:780-900)
 	// ---------------------------------------------------------------------------
 
-	/** Upstream :780-793 verbatim (checkStructure is the real multiblock template). */
+	/** Upstream :780-793 verbatim (checkStructure is the real multiblock template).
+	 *  The per-instance {@link #mFakeSource} refill mirrors {@link gregtech6.tileentity.machines.TileEntityBasicMachine
+	 *  .supplyEnergy}'s ops regime (the RCON drive seam) extended to the multiblock machines —
+	 *  INSTANCE-scoped on purpose: the BasicMachine twin is a STATIC flag the offline test bases
+	 *  set true and never scope back, and honoring that leak here would rewrite the TU ledger the
+	 *  multiblock tests pin. With the flag off (the default) this is a no-op and the machine is
+	 *  grid/merge-driven exactly as before. */
 	public void doWork(long aTimer) {
+		if (mFakeSource && !mStopped) mEnergy = mInputMax;
 		if (mEnergy >= mInputMin && mEnergy >= mMinEnergy && checkStructure(false)) {
 			mActive = doActive(aTimer, Math.min(mInputMax, mEnergy));
 			mRunning = true;
@@ -861,6 +879,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		aNBT.putLong(NBT_PROGRESS, mProgress);
 		aNBT.putLong(NBT_MAXPROGRESS, mMaxProgress);
 		aNBT.putBoolean(NBT_STOPPED, mStopped);
+		aNBT.putBoolean("fake_source", mFakeSource);
 		aNBT.putByte(NBT_IGNITED, mIgnited);
 		aNBT.putBoolean(NBT_ACTIVE, mActive);
 		aNBT.putBoolean(NBT_RUNNING, mRunning);
@@ -882,6 +901,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		mProgress = aNBT.getLong(NBT_PROGRESS);
 		mMaxProgress = aNBT.getLong(NBT_MAXPROGRESS);
 		if (aNBT.contains(NBT_STOPPED)) mStopped = aNBT.getBoolean(NBT_STOPPED);
+		if (aNBT.contains("fake_source")) mFakeSource = aNBT.getBoolean("fake_source");
 		if (aNBT.contains(NBT_IGNITED, Tag.TAG_ANY_NUMERIC)) mIgnited = aNBT.getByte(NBT_IGNITED);
 		if (aNBT.contains(NBT_ACTIVE)) mActive = aNBT.getBoolean(NBT_ACTIVE);
 		if (aNBT.contains(NBT_RUNNING)) mRunning = aNBT.getBoolean(NBT_RUNNING);
@@ -921,6 +941,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		aNBT.putLong(NBT_PROGRESS, mProgress);
 		aNBT.putLong(NBT_MAXPROGRESS, mMaxProgress);
 		aNBT.putBoolean(NBT_STOPPED, mStopped);
+		aNBT.putBoolean("fake_source", mFakeSource);
 		aNBT.putByte(NBT_IGNITED, mIgnited);
 		aNBT.putBoolean(NBT_ACTIVE, mActive);
 		aNBT.putBoolean(NBT_RUNNING, mRunning);
@@ -943,6 +964,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		mProgress = aNBT.getLong(NBT_PROGRESS);
 		mMaxProgress = aNBT.getLong(NBT_MAXPROGRESS);
 		if (aNBT.contains(NBT_STOPPED)) mStopped = aNBT.getBoolean(NBT_STOPPED);
+		if (aNBT.contains("fake_source")) mFakeSource = aNBT.getBoolean("fake_source");
 		if (aNBT.contains(NBT_IGNITED, Tag.TAG_ANY_NUMERIC)) mIgnited = aNBT.getByte(NBT_IGNITED);
 		if (aNBT.contains(NBT_ACTIVE)) mActive = aNBT.getBoolean(NBT_ACTIVE);
 		if (aNBT.contains(NBT_RUNNING)) mRunning = aNBT.getBoolean(NBT_RUNNING);

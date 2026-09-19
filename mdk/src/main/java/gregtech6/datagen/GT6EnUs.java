@@ -1131,6 +1131,9 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_LASER_WELDER_UNIT_KEY, "Laser Welder (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_FREEZER_UNIT_KEY, "Freezer (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_CRYO_MIXER_UNIT_KEY, "Cryo Mixer (%s)");
+        // task p31-massfab — the small Matter Fabricator family template (the literal
+        // tier-word slot; the upstream name column "Matter Fabricator (T1..T5)", :1542-1546)
+        add(gregtech6.registry.GTMachines.MACHINE_MASSFAB_UNIT_KEY, "Matter Fabricator (%s)");
         // task p29-w2-hu-tu-piggyback — the seven hu-tu family templates: the two Crackers
         // and the Loom ride the one-slot unit-key form (the Kinetic/Heat_T material word,
         // the upstream name columns "Steam Cracker (" :1576-1579 / "Catalytic Cracker ("
@@ -1296,6 +1299,7 @@ public class GT6EnUs extends LanguageProvider {
         // task p31-graagg — the Von da Graagg (the Loader :1280 name column verbatim;
         // "Generator" in name only — the EU-consuming mob-suppression tower)
         add("block.gt6.von_da_graagg", "Von da Graagg Generator");
+        add("block.gt6.large_massfab", "Large Matter Fabricator"); // task p31-massfab — the Loader :1241 name column
     }
 
     /**

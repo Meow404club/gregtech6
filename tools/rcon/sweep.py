@@ -558,6 +558,13 @@ SESSION_GROUPS = (
     # chain. No fresh_boot / mutates member. --group p31_spring matches this key exactly
     # (the chain stem is p31_spring).
     ("p31_spring",),
+    # P31 card (p31-massfab): the Matter Fabricator chain — one fresh z=436..446 band
+    # (x396..410: the large controller x399..403/65..70/438..442 with the 98-wall/26-coil/
+    # 16-vent/PU-quota ring + the T5 sink below + the T5 run rig x406), admission mirroring
+    # the p31 implosion form (bbox-registered, no fresh_boot / mutates member — the QU
+    # energy feed is a data merge, the disintegration run rides the dynamic walk pour).
+    # --group p31_massfab matches through the chain's embedded name prefix.
+    ("p31_massfab",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

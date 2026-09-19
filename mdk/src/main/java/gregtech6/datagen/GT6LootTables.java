@@ -123,6 +123,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-large-12 — the twelve large machines
                 new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-implosion — the Implosion Compressor controller
                 new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
+                new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task p31-massfab — the Large Matter Fabricator controller
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -170,6 +171,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-large-12 — the twelve large machines
                 new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-implosion — the Implosion Compressor controller
                 new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
+                new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task p31-massfab — the Large Matter Fabricator controller
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -787,6 +789,8 @@ public final class GT6LootTables extends LootTableProvider {
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.laserWelderBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.freezerBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.cryoMixerBlockArray());
+        // task p31-massfab — the small Matter Fabricator 5-ladder (the exotic shape)
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.massfabSmallBlockArray());
         return rBlocks;
     }
 
@@ -2122,6 +2126,36 @@ public final class GT6LootTables extends LootTableProvider {
             rBlocks.add(gregtech6.registry.GT6LargeMachines.BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
+    }
+
+    /** The Large Matter Fabricator self-drop list (task p31-massfab — the graaggLootBlocks singleton form). */
+    public static List<Block> massfabLootBlocks() {
+        return List.of(gregtech6.registry.GTMultiBlocks.MASSFAB.get());
+    }
+
+    /** The Large Matter Fabricator self-drop provider (task p31-massfab; the graagg provider shape). */
+    public static final class GT6MassfabBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6MassfabBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6MassfabBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return massfabLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : massfabLootBlocks()) dropSelf(tBlock);
+        }
     }
 
     /** The Implosion Compressor self-drop list (task p31-implosion — the largeMachineLootBlocks singleton form). */

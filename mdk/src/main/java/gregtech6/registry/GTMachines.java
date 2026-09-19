@@ -2217,6 +2217,77 @@ public final class GTMachines {
 				null /*the menu-less carrier*/, true, null, false);
 	}
 
+	// ---------------------------------------------------------------------------
+	// the small Matter Fabricator 5-ladder (task p31-massfab) — the five rows
+	// Loader_MultiTileEntities.java:1542-1546 (MultiTileEntityBasicMachine, MT.Osmiridium
+	// on EVERY rung, NBT_HARDNESS 16.0F == NBT_RESISTANCE, NBT_TEXTURE "massfab",
+	// NBT_ENERGY_ACCEPTED TD.Energy.QU, RM.Massfab, NBT_CHEAP_OVERCLOCKING T,
+	// NBT_NO_CONSTANT_POWER T, NBT_INPUT 32/128/512/2048/8192 through the :126 conversion
+	// = {@link #TIER_INPUTS}[0..3] + {@link #EV_TIER_INPUTS} — the {@link #exoticMachine}
+	// window arm), NBT_EFFICIENCY 5000/6250/7500/8750 and NO key on the T5 rung (the :96
+	// 10000 identity, the 26-arg overload shape), NO NBT_PARALLEL keys → 1/F, and the
+	// LITERAL tier-word display "Matter Fabricator (T1..T5)" (the laser-engraver column
+	// form). The :1542 IO masks: item+tank in = SBIT_L|SBIT_U (auto LEFT / auto TOP
+	// respectively), item+tank out = SBIT_D|SBIT_R (auto RIGHT / auto BOTTOM), energy =
+	// SBIT_B (the :151 read ORs SBIT_A).
+	//
+	// The controller crafting rows "RFS"/"FMF"/"RFS" are CUT — all three component columns
+	// are absent port identities ('R' IL.Processor_Crystal_Ruby, 'S'
+	// IL.Processor_Crystal_Sapphire, 'F' IL.FIELD_GENERATORS[1..5]; only the 'M'
+	// casingMachine Osmiridium exists — a shape adjustment would gut the recipe to the
+	// bare casing, so the whole row rides the W3 absent-input pool, the large
+	// controller's :1241 CUT ledger on GTMultiBlocks). The machines stay reachable via
+	// the machines creative tab (the implosion controller obtainability shape).
+	// ---------------------------------------------------------------------------
+	
+	/** The Matter Fabricator family unit word (the literal tier-word slot; upstream "Matter Fabricator (T1..T5)", :1542-1546). */
+	public static final String MACHINE_MASSFAB_UNIT_KEY = "gt6.row.machine.massfab";
+	
+	/** The housing material of every rung (upstream MT.Osmiridium on all five rows — the lazy-supplier form). */
+	public static final java.util.function.Supplier<OreDictMaterial> MASSFAB_SMALL_MATERIAL = () -> gregapi.data.MT.Osmiridium;
+	
+	/** The NBT_EFFICIENCY column of the :1542-1545 rows; the :1546 T5 rung carries NO key (the :96 10000 identity). */
+	public static final Integer[] MASSFAB_EFFICIENCIES = {5000, 6250, 7500, 8750, null};
+	
+	/** The five small Matter Fabricator rows, upstream line order :1542-1546 (T1-T5, the literal tier-word slot, QU). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> MASSFAB_SMALL_ROWS = java.util.List.of(
+			massfabSmall("massfab"   , 20411, 0),
+			massfabSmall("massfab_t2", 20412, 1),
+			massfabSmall("massfab_t3", 20413, 2),
+			massfabSmall("massfab_t4", 20414, 3),
+			massfabSmall("massfab_t5", 20415, 4));
+	
+	/**
+	 * One small Massfab row factory — the :1542 masks (item+tank in L|U with the item auto
+	 * face LEFT and the tank auto face TOP, out D|R with the item auto face RIGHT and the
+	 * tank auto face BOTTOM, energy back), the QU carrier, RM.Massfab, CHEAP_OC T, the
+	 * per-rung NBT_EFFICIENCY column (null = the 26-arg overload) and the 16.0 hardness.
+	 */
+	private static GTBasicMachineBlock.MachineRow massfabSmall(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, TIER_WORD_SLUGS.get(aTier), TIER_WORD_DISPLAYS.get(aTier), MASSFAB_SMALL_MATERIAL, MACHINE_MASSFAB_UNIT_KEY, aMetaId, 16.0F, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1542-1546*/,
+				() -> GT6RecipeMaps.MASSFAB, TD.Energy.QU, "massfab",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_D|SBIT_R*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D|SBIT_R*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true, null, false, MASSFAB_EFFICIENCIES[aTier]);
+	}
+	
+	/** The registered small Massfab blocks by path (the BET/datagen/loot walkers). */
+	public static final java.util.Map<String, RegistryObject<Block>> MASSFAB_SMALL_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+	
+	/** The registered small Massfab items. */
+	public static final java.util.Map<String, RegistryObject<Item>> MASSFAB_SMALL_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+	
+	/** The small Massfab block list in registration order (the loot/datagen walkers). */
+	public static Block[] massfabSmallBlockArray() {
+		return blockArrayOf(MASSFAB_SMALL_BLOCKS_BY_PATH);
+	}
+	
 	/** The registered Polarizer blocks by path (the BET/datagen/loot walkers). */
 	public static final java.util.Map<String, RegistryObject<Block>> POLARIZER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
 
@@ -2260,6 +2331,7 @@ public final class GTMachines {
 		registerExoticFamily(LASER_WELDER_ROWS, LASER_WELDER_BLOCKS_BY_PATH, LASER_WELDER_ITEMS_BY_PATH, () -> GTMachines.LASER_WELDER_BE);
 		registerExoticFamily(FREEZER_ROWS, FREEZER_BLOCKS_BY_PATH, FREEZER_ITEMS_BY_PATH, () -> GTMachines.FREEZER_BE);
 		registerExoticFamily(CRYO_MIXER_ROWS, CRYO_MIXER_BLOCKS_BY_PATH, CRYO_MIXER_ITEMS_BY_PATH, () -> GTMachines.CRYO_MIXER_BE);
+		registerExoticFamily(MASSFAB_SMALL_ROWS, MASSFAB_SMALL_BLOCKS_BY_PATH, MASSFAB_SMALL_ITEMS_BY_PATH, () -> GTMachines.MASSFAB_SMALL_BE);
 	}
 
 	/**
@@ -2348,6 +2420,14 @@ public final class GTMachines {
 			BLOCK_ENTITY_TYPES.register("cryo_mixer", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> exoticMachine(GTMachines.CRYO_MIXER_BE.get(), aPos, aState),
 					cryoMixerBlockArray()).build(null));
+
+	// the small Massfab BET — the exotic shape; the window arm rides the row QU carrier
+	// and the {@link #exoticMachine} tier window (the :126 conversion = TIER_INPUTS[0..3]
+	// + EV_TIER_INPUTS = the :1542-1546 NBT_INPUT column 32/128/512/2048/8192)
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> MASSFAB_SMALL_BE =
+			BLOCK_ENTITY_TYPES.register("massfab_small", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> exoticMachine(GTMachines.MASSFAB_SMALL_BE.get(), aPos, aState),
+					massfabSmallBlockArray()).build(null));
 
 	/**
 	 * The exotic BET factory body — the kineticMachine body verbatim except the WINDOW
@@ -3773,6 +3853,10 @@ public final class GTMachines {
 							}
 							for (GTBasicMachineBlock.MachineRow tRow : CRYO_MIXER_ROWS) {
 								aOutput.accept(new ItemStack(CRYO_MIXER_ITEMS_BY_PATH.get(tRow.path()).get()));
+							}
+							// task p31-massfab — the small Matter Fabricator 5-ladder
+							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.MASSFAB_SMALL_ROWS) {
+								aOutput.accept(new ItemStack(GTMachines.MASSFAB_SMALL_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
 							// task p29-w2-eu-core-5tier: the five eu-core families, +25 rows
 							// (Electrolyzer/Injector/Printer/ScannerVisuals/Slicer, the first
