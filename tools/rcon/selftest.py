@@ -44,6 +44,7 @@ p17-rcon-framework-fixes):
     log, and "no marker anywhere" still times out False.
 """
 
+import io
 import json
 import os
 import shutil
@@ -927,6 +928,240 @@ def check_13_structured_judge():
           failure == 0 and len(ledger) == len(recorded)
           and all(v["verdict"] == "PASS" for v in ledger))
 
+class _TickServer:
+    """Neo-leg /tick primitive model (P32): wall-clock paced, so the framework's
+    freeze proof / settle loop / thaw proof exercise the same timing they see
+    against a live 1.21.1 server (real sleeps; the suite's fake-paced sections
+    are done by the time this runs).
+
+    Unfrozen, gametime advances with real elapsed time at TICK seconds per
+    tick — the live world ticks between RCON round trips. Frozen, no advance;
+    'tick step N' releases exactly N ticks, unrolled against the same clock,
+    and the world refreezes at exactly g0+N (the vanilla gate cannot overshoot
+    — TickRateManager.tick :56-61). Every command is recorded with the
+    (gametime, frozen) state it executed under, so the checks can assert the
+    probe ran INSIDE the frozen window at exactly g0+N — judged once.
+    """
+
+    TICK = 0.005
+
+    def __init__(self, probe_body="settled", freeze_works=True,
+                 step_works=True, thaw_works=True):
+        self.gametime = 10_000
+        self.frozen = False
+        self.remaining = 0
+        self.last = time.monotonic()
+        self.probe_body = probe_body
+        self.freeze_works = freeze_works
+        self.step_works = step_works
+        self.thaw_works = thaw_works
+        self.sent = []                      # (cmd, gametime, frozen) arrival order
+
+    def _ticks(self):
+        now = time.monotonic()
+        count = int((now - self.last) / self.TICK)
+        self.last += count * self.TICK
+        return count
+
+    def run_command(self, cmd):
+        self.sent.append((cmd, self.gametime, self.frozen))
+        if cmd == "tick freeze":
+            if self.freeze_works:
+                self.frozen = True
+            return ["ok"]
+        if cmd == "tick unfreeze":
+            if self.thaw_works:
+                self.frozen = False
+            return ["ok"]
+        if cmd.startswith("tick step "):
+            n = int(cmd.rsplit(" ", 1)[1])
+            if self.frozen and self.step_works:
+                self.remaining += n
+                return [f"stepped {n}"]
+            return ["tick step failed"]
+        if cmd == framework.GAMETIME_QUERY:
+            ticks = self._ticks()
+            if self.frozen:
+                moved = min(self.remaining, ticks)
+                self.gametime += moved
+                self.remaining -= moved
+            else:
+                self.gametime += ticks
+            return [f"{framework.GAMETIME_PREFIX}{self.gametime}"]
+        return [self.probe_body]            # the judged probe
+
+    def cmds(self):
+        return [cmd for cmd, _, _ in self.sent]
+
+    def probes(self):
+        """Non-machinery commands: (cmd, gametime-at-exec, frozen-at-exec)."""
+        return [(cmd, gametime, frozen) for cmd, gametime, frozen in self.sent
+                if cmd not in ("tick freeze", "tick unfreeze")
+                and not cmd.startswith("tick step ")
+                and cmd != framework.GAMETIME_QUERY]
+
+
+def check_14_tick_primitive():
+    """The deterministic tick window (P32, card p32-ops-neo-tick-primitive).
+
+    Mock face of the neo /tick primitive (1.20.3+; forge 1.20.1 has no
+    TickCommand at all): ① the happy window — freeze proved by two equal
+    gametime reads, exactly N ticks settled, the probe judged ONCE inside the
+    frozen world at exactly g0+N, thaw proved; ② the failure shapes — a
+    freeze that doesn't take (no /tick step sent), a step that never settles
+    (deadline red), a thaw that fails (the step reds even though the probe
+    passed — a session left frozen would stall every later chain); ③ the leg
+    dialect gate — forge 1.20.1 undeclared = fail-visible RED that sends
+    nothing, declared tick_fallback_poll = poll 制 degrade with poll's
+    judge-once semantics; ④ plan_waves refuses tick-window chains a shared
+    wave; ⑤ construction-time validation. Wire assertions only ever touch
+    gametime arithmetic — no /tick reply text is matched (locale-proof).
+    """
+    print("\n--- 14: tick primitive (P32, deterministic neo window / forge gate)")
+    import contextlib
+    real_gap, real_poll, real_margin = (framework.FREEZE_GAP,
+                                        framework.POLL_INTERVAL,
+                                        framework.TICK_SETTLE_MARGIN)
+    framework.FREEZE_GAP = 0.03          # >= 6 mock ticks: real proof gap
+    framework.POLL_INTERVAL = 0.02
+    framework.TICK_SETTLE_MARGIN = 0.1
+    try:
+        # ① the happy window: N=3, probe judged once, frozen, at exactly g0+3
+        server = _TickServer(probe_body="landed")
+        step = framework.Step("execute if block 0 0 0 minecraft:gravel",
+                              expect="landed", tick_step=3)
+        ledger = []
+        with contextlib.redirect_stdout(io.StringIO()):
+            failure = framework.run_steps(_FakeStepClient(server), [step],
+                                          ledger, node="1.21.1-neoforge")
+        check("14a happy window exits 0 with a PASS verdict",
+              failure == 0 and [v["verdict"] for v in ledger] == ["PASS"],
+              str(ledger))
+        check("14b wire order: freeze, proof reads, step, settle reads, "
+              "probe, unfreeze, thaw reads",
+              server.cmds()[0] == "tick freeze"
+              and server.cmds().count("tick freeze") == 1
+              and "tick step 3" in server.cmds()
+              and server.cmds()[-3] == "tick unfreeze"
+              and server.cmds()[-1] == framework.GAMETIME_QUERY
+              and server.cmds().index("tick step 3")
+              < server.cmds().index(step.cmd) < server.cmds().index("tick unfreeze"),
+              str(server.cmds()))
+        step_entry = [(cmd, gametime) for cmd, gametime in
+                      zip(server.cmds(), [g for _, g, _ in server.sent])
+                      if cmd == "tick step 3"]
+        probes = server.probes()
+        check("14c probe judged ONCE inside the frozen window at exactly g0+N",
+              len(probes) == 1 and probes[0][2] is True
+              and probes[0][1] == step_entry[0][1] + 3,
+              f"probes={probes} step@{step_entry}")
+
+        # ②a freeze that doesn't take: /tick step never sent, still red
+        server = _TickServer(freeze_works=False)
+        with contextlib.redirect_stdout(io.StringIO()):
+            failure = framework.run_steps(_FakeStepClient(server), [step],
+                                          None, node="1.21.1-neoforge")
+        check("14d freeze proof failure: red, no /tick step sent, thawed anyway",
+              failure == 1 and not any(c.startswith("tick step") for c in server.cmds())
+              and "tick unfreeze" in server.cmds(), str(server.cmds()))
+
+        # ②b a step that never settles: deadline red, world still thawed
+        server = _TickServer(step_works=False)
+        with contextlib.redirect_stdout(io.StringIO()):
+            failure = framework.run_steps(_FakeStepClient(server), [step],
+                                          None, node="1.21.1-neoforge")
+        check("14e never-settling step: deadline red, thaw cleanup ran",
+              failure == 1 and "tick unfreeze" in server.cmds())
+
+        # ②c a thaw that fails: the probe passed but the step still reds
+        server = _TickServer(probe_body="landed", thaw_works=False)
+        transcript = io.StringIO()
+        with contextlib.redirect_stdout(transcript):
+            failure = framework.run_steps(_FakeStepClient(server), [step],
+                                          None, node="1.21.1-neoforge")
+        check("14f failed thaw reds the step (probe-pass is not enough)",
+              failure == 1 and "THAW PROOF FAILED" in transcript.getvalue(),
+              f"failure={failure}")
+
+        # ③ the forge leg dialect gate: undeclared = fail-visible, sends NOTHING
+        server = _TickServer()
+        with contextlib.redirect_stdout(io.StringIO()):
+            failure = framework.run_steps(_FakeStepClient(server), [step],
+                                          None, node="1.20.1-forge")
+        check("14g forge leg undeclared: red and no wire traffic at all",
+              failure == 1 and server.sent == [], str(server.cmds()))
+
+        # ③ declared degradation: poll 制, expect hit on the first resend
+        server = _TickServer(probe_body="landed")
+        degrade = framework.Step("execute if block 0 0 0 minecraft:gravel",
+                                 expect="landed", tick_step=3,
+                                 tick_fallback_poll=0.2)
+        ledger = []
+        with contextlib.redirect_stdout(io.StringIO()):
+            failure = framework.run_steps(_FakeStepClient(server), [degrade],
+                                          ledger, node="1.20.1-forge")
+        check("14h declared degrade: poll hit, exit 0, PASS verdict, no /tick",
+              failure == 0 and [v["verdict"] for v in ledger] == ["PASS"]
+              and not any(c.startswith("tick") for c in server.cmds()),
+              str(server.cmds()))
+
+        # ③ the degraded poll keeps poll's judge-once semantics (miss = red)
+        server = _TickServer(probe_body="not yet")
+        with contextlib.redirect_stdout(io.StringIO()):
+            failure = framework.run_steps(_FakeStepClient(server), [degrade],
+                                          None, node="1.20.1-forge")
+        check("14i degraded poll miss: red after the declared window",
+              failure == 1)
+
+        # ④ plan_waves: a tick-window chain never shares a concurrent wave
+        window_chain = framework.Chain(
+            name="tickwin", slug="tickwin",
+            sites=gt6world.declare_sites(gt6world.Site(0, 64, 0)),
+            steps=[step])
+        plain_chain = framework.Chain(
+            name="plain", slug="plain",
+            sites=gt6world.declare_sites(gt6world.Site(400, 64, 400)),
+            steps=[framework.Step("say hi")])
+        singleton = framework.plan_waves([window_chain, plain_chain], 2)
+        shared = framework.plan_waves([plain_chain,
+                                       framework.Chain(
+                                           name="plain2", slug="plain2",
+                                           sites=gt6world.declare_sites(
+                                               gt6world.Site(800, 64, 800)))], 2)
+        check("14j tick-window chain gets an exclusive wave even at "
+              "concurrency 2; plain disjoint chains still co-wave",
+              all(len(wave) == 1 for wave in singleton) and len(shared) == 1,
+              f"singleton={[[c.name for c in w] for w in singleton]} "
+              f"shared={[[c.name for c in w] for w in shared]}")
+
+        # ⑤ construction-time validation (fail-fast, no silent step shapes)
+        def _raises(construct):
+            try:
+                construct()
+                return False
+            except ValueError:
+                return True
+
+        check("14k tick_step validation: >=1, exclusive with poll, needs cmd",
+              _raises(lambda: framework.Step("c", tick_step=0))
+              and _raises(lambda: framework.Step("c", tick_step=3, poll=2.0))
+              and _raises(lambda: framework.Step(tick_step=3))
+              and framework.Step("c", tick_step=3).uses_tick_window())
+    finally:
+        framework.FREEZE_GAP, framework.POLL_INTERVAL, framework.TICK_SETTLE_MARGIN = \
+            real_gap, real_poll, real_margin
+
+
+class _FakeStepClient:
+    """run_steps client stand-in forwarding to a shared _TickServer."""
+
+    def __init__(self, server):
+        self.server = server
+
+    def run_command(self, cmd):
+        return self.server.run_command(cmd)
+
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
@@ -941,6 +1176,7 @@ def main():
     check_11_stop_ownership()
     check_12_sweep_session_lock()
     check_13_structured_judge()
+    check_14_tick_primitive()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 

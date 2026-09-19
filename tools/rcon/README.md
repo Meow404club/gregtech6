@@ -634,8 +634,11 @@ framework 自算的顶层 exit 不被踩）、wait_done 单调扫描窗（P19：
 Done"、后者丢归因——改为字节偏移增量扫描（见过的标记永记、跨读边界 carry 拼接），
 死亡归因走全日志 error_tail，正常路径总读取量不升）、stop 归属门（P30）、
 sweep 会话锁（P32：活锁 fail-fast 报占用者 / 死 PID 残留仅 --break-lock 可清 /
-单实例全流程 锁获取→跑→释放）。退出码 0 = 全绿（80 检；P30 增 stop 归属门
-18 检，P32 增会话锁 11 检）。
+单实例全流程 锁获取→跑→释放）、tick 原语（P32，check_14：mock 面双腿分叉 / 窗口
+线上序 / 恰 N settle / 冻结内单发判定 / freeze 拒发 / 超时红 / thaw 泄漏红 /
+forge 零流量门 / 降级 poll 双态 / 波排除 / 构造校验，带真 sleep 的墙钟 mock）。
+退出码 0 = 全绿（现 **105 检**；P30 增 stop 归属门 18 检、P32 会话锁 +11 检、
+P32 tick 原语 +11 检；段耗时 ~6s 来自 check_14 的真时序 mock）。
 
 ### 并发波执行（用户校准 2026-09-04：并发是主杠杆）
 
@@ -812,3 +815,60 @@ staging x288..319 同 z/y——与全名册零相交，strata z=64 带保持清�
 - **C 拆除**：竞技场+staging+探针显式 fill 归还。
 
 `--group p31_bedrock` 匹配链内嵌名前缀。
+
+### tick 原语：neo 确定性 N-tick 窗口 + forge 方言门（p32-ops-neo-tick-primitive，README tail-append）
+
+`Step(cmd, expect=..., tick_step=N)`——neo 腿（node_key `1.21.1`）把「等世界走
+N tick 再断言」从 poll 轮询换成**确定性窗口**（known_bugs pool_neo_tick_primitive；
+治三类实踩 flake：poll 窗饿死假红 p19/p21、gravel 重力竞态、长配方墙钟读数）：
+
+1. `/tick freeze`，**行为自证**：隔 `FREEZE_GAP=0.3s` 两次 `time query gametime`
+   读数相等=世界确已静止；不等=该步红且**不发** `/tick step`；
+2. `/tick step N`，客户端 settle 等 gametime 恰到 `g0+N`（冻结门封顶不能过冲；
+   预算 `N×0.05s+2s` 裕量，超时=红）；
+3. 在**冻结世界**里发送并判定本步 cmd+expect **恰好一次**——终值断言，无重发、
+   无读/写竞态（双腿断言只许锚终值在 neo 腿的兑现形态）；
+4. `/tick unfreeze`，**行为自证**：解冻后两次读数必须重新走动——冻结态泄漏会
+   饿死后续所有链的时序窗，故 thaw 自证失败即使探针 PASS 也判红。
+
+证据（vanilla 1.21.1 源，file:line）：/tick 命令面 `TickCommand.java:21-56`
+（permission 3；query/rate/step/sprint/freeze/unfreeze）；步进**必须先冻结**
+`ServerTickRateManager.stepGameIfPaused:40-48`（未冻结返 false→`TickCommand.java
+:138` 失败）；`/tick step` 回包即时返回 `:132-142`（只设 frozenTicksToRun=N）——
+**gt6rcon 超时/quiet window 零改动**（源证裁定：step 不阻塞 RCON 回包，等待全在
+客户端 settle，卡面「step 同步阻塞服务器线程」被源证修正）；世界停摆=
+`TickRateManager.tick:56-61`（runGameElements 门）+`ServerLevel.tick:337-360`
+（tickTime/blockTicks/fluidTicks 全 gated on runsNormally）→冻结期 gametime 不
+走、步进恰 +N——这就是唯一断言锚（`time query gametime`，`TimeCommand.java:57`，
+回复形 `The time is <n>` 与 1.20.1 实录一致；整个机制**零依赖 /tick 回包文案**，
+不怕本地化/版本措辞漂移）；步进保持 20tps 节拍**不加速**
+`MinecraftServer.java:687`（只有 sprint 解除节拍 `:682-684`——刻意不用，YAGNI）；
+冻结期命令照常执行 `MinecraftServer.java:824-827` runAllTasks +
+`DedicatedServer.java:517-519` executeBlocking。1.20.1 **无 TickCommand**（无
+`server/commands/TickCommand.java`、`Commands.java` 无注册）=方言门根源。
+
+forge 腿（1.20.1）必须**声明降级**：`Step(..., tick_step=N, tick_fallback_poll=秒)`
+→该步在 forge 腿降级为 poll-to-expect（判定语义与 poll 逐字节同源，最终响应单发
+判定；transcript 打印降级注记）；不声明=该步**显式红**且零线上流量（绝不静默
+降级到兑现不了的腿；node_cmds 分叉先例的显式分叉纪律）。
+
+约束与代价：① `tick_step` 与 `poll` 互斥、必须带 cmd（bare advance 无判定面，
+YAGNI）——构造期 `ValueError`；② N 是**预算**：小于 settle 所需 tick 数=确定性
+红（链作者加预算即可），未知时长等待仍用 poll；③ 窗口全程 20tps 节拍，N tick
+≈ N/20 s 墙钟——**买的是确定性不是速度**；④ 带 tick_step 的链永不共享并发波
+（窗口冻结整服，会饿死同波邻居的 poll/sleep 窗——恰是本卡要杀的假红族；
+`plan_waves` 双向排除，双腿同规则）；⑤ freeze/thaw 双自证各付 0.3s 真睡眠。
+
+```python
+Step("setblock 694 92 150 minecraft:gravel", expect="Changed the block at"),
+Step("execute if block 694 91 150 minecraft:gravel", expect="Test passed",
+     tick_step=16,                    # neo: 冻结→恰 16 tick→冻结世界单发判定
+     tick_fallback_poll=10),          # forge: 声明降级 poll 10s（不声明=该腿红）
+```
+
+真服活证（2026-09-19，双腿）：gravel 重力竞态最小链（x694 z150 新鲜带，
+`tick_step=16` 一格坠落预算，passes=2 幂等）neo 腿 GREEN——落地臂
+`execute if block` 冻结窗口单发 `Test passed`、原位负臂 `execute unless block`
+终值全中；forge 腿 `tick_fallback_poll=10` 降级路径同链 GREEN。日志：
+`/tmp/gt6_rs_p32tickneo.log`、`/tmp/gt6_rs_p32tickforge.log`（GT6_SESSION=off
+per-chain boot 形）。
