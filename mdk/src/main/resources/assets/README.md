@@ -8363,3 +8363,56 @@ byte-identical to upstream, sha256 verified per file:
 - `massfab_overlay_right_active.png` — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
 - `massfab_overlay_right_running.png` — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
 - `largemassfab_colored_right.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+
+Fusion reactor / Implosion Compressor / Von da Graagg controller faces, task
+p32-hygiene-lang-assets (attribution backfill for the P31 machine wave): the 18
+controller PNGs `gt6/textures/block/fusionreactor_colored_{face}.png`,
+`gt6/textures/block/implosioncompressor_colored_{face}.png` and
+`gt6/textures/block/vondagraagg_colored_{face}.png` (face ∈
+bottom/top/front/back/left/right; borrow commits p31-implosion 35830a9eb,
+p31-fusion 6f118eef7, p31-graagg d4e418beb) come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/`:
+
+- `basicmachines/fusionreactor/colored/<face>.png` (the NBT_TEXTURE
+  "fusionreactor" name form of Loader_MultiTileEntities.java:1242)
+- `basicmachines/implosioncompressor/colored/<face>.png` (NBT_TEXTURE
+  "implosioncompressor", Loader_MultiTileEntities.java:1228)
+- `multiblockmains/vondagraagg/colored/{side,top,bottom}.png` (NBT_TEXTURE
+  "vondagraagg", Loader_MultiTileEntities.java:1280)
+
+byte-identical to upstream, sha256 verified per file (upstream ships one
+uniform tile per machine, so a family shares one digest):
+
+- `fusionreactor_colored_back.png` —
+  `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `fusionreactor_colored_bottom.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `fusionreactor_colored_front.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `fusionreactor_colored_left.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `fusionreactor_colored_right.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `fusionreactor_colored_top.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `implosioncompressor_colored_back.png` —
+  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `implosioncompressor_colored_bottom.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `implosioncompressor_colored_front.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `implosioncompressor_colored_left.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `implosioncompressor_colored_right.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `implosioncompressor_colored_top.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `vondagraagg_colored_back.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `vondagraagg_colored_bottom.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `vondagraagg_colored_front.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `vondagraagg_colored_left.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `vondagraagg_colored_right.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `vondagraagg_colored_top.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+
+(vondagraagg mapping: back/front/left/right ← upstream `side.png`, top ←
+`top.png`, bottom ← `bottom.png` — upstream's three Graagg tiles are
+byte-identical, one digest covers the six faces.)
+
+Naming follows the massfab precedent: upstream lowercase face names verbatim,
+`<machine>_colored_<face>` flat under `textures/block/`. The upstream
+`overlay`/`overlay_active`/`overlay_running` state bands of the two
+basicmachines families and the Graagg `colored_front`/`overlay_front` formed
+faces are NOT borrowed — the port machines declare the plain colored controller
+look (the multi-block formed look rides the frame-face blocks, the p31 card
+specs). License: upstream GregTech 6 assets are CC0 (see the Public Domain
+Dedication block above).
