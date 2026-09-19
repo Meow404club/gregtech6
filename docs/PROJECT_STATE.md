@@ -5,7 +5,11 @@
 
 ## 当前阶段
 
-### 第 30 阶段详账（2026-09-18 收官，当前阶段）
+### 第 31 阶段详账（2026-09-20 收官，当前阶段）
+
+`第 31 阶段：QU 主线 A→B→C→D 全链（三图地基+同位素材质→Massfab 双形态+解体行生成器→Fusion 19x19 五层八边形+发电型基座+±10 直推）/材质梯全线（GT6ItemData 通用 keyed 缝三条护栏→挖掘七类 2034 行→刃器三类→机器面 11 类→单层裁定池 15 案）/世界生成收尾（strata 5 标志石透镜·床岩矿 90 块 46 行·地狱 17 石透镜+三形态+末地五行让位 galacticraft 条件发射双腿·流体泉 16 行 oreClaims 重放互斥）/杂项簇（Implosion 268 行·Graagg 抑制塔·物流 Lv1 Retriever·蜂域 Lv1）/tier3 卫生（units 收敛终局·supplier ASM 守卫逮 3 真违例·teardown P30 唯一红销账·distill 去 fork+入口钉·TFC curator 批）`（**2026-09-20 收官**：main 93fa6bf→4fe176ca5，22 卡+1 热修全合零悬案；集成门=neo 全量 189 链 66 簇 188 绿/1 红链侧假红复跑绿（p13-large-boiler P30 已知签名），三已知基线零扩大，全量只 neo 腿用户裁定沿袭；lang floor 3217→3267。治理事件：双会话并行事故→串行化协议+金丝雀放行制；提交树≠被测树（sweep.py 热修 c0b37ce7）；ZCode 崩溃×2 继任零损失。方法论七沉淀（注册假绿/单实例铁律正解/点火门三层定性终版=NBT 注册配置注入路径/census 字面 grep 兜底等）全量在 phase_anchors.p31。池 P32 交接：池底 E+点火门补全卡（宽免偏离，实现待用户裁）+ops 卡族四件+卫生 M1-M5+rm-phase-gate 硬性 P32-P33 前）
+
+### 第 30 阶段详账（2026-09-18 收官）
 
 `第 30 阶段：W5 工具波八卡 49 件（挖掘六件+共享 GT6ToolLootModifiers/ToolSweep 基建/刃器/机器面/田野/场景/电动 19/便携 8/盔甲 24）/ore 全量注册五卡（3922 块=26 石族×53 矿材×74 行+datagen 7875+loot 7844×2+贴图 60 四件套+census）/W6 世界生成（biome 双腿目录·九树 27 块·rocks-sticks·大脉 40 行 origin 重算正案·小矿 91 对·地表块）/池卡（水车 neo 缝·21.1 配方键形归一器·蒸馏塔多罐·datagen lang 单写者·18103 钻头·GAS·stop 归属门·链臂修复·prospector）+研究十一路（材质梯/QU/物流/蜂/misc/API 现代化+地形五路）`（**2026-09-18 收官**：main 93fa6bf→c2dac68d 全合；集成门=neo 全量 176 链 175 绿/1 红链侧缺陷（用户裁定全量只 neo 腿且禁 subagent 自发，forge=逐卡组记录）；lang floor 3217；地形设计四裁定+末地让位 B+地狱透镜默认开+strata (b) 透镜+ore 全量展开+GT6ItemData 通用缝。P31 入册：材质梯五卡/QU 线/物流三切片/蜂域/杂项簇/strata/地狱末地/基岩泉/API 绞杀路线。全量锚点=phase_anchors.p30）
 
