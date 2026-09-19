@@ -11,12 +11,11 @@ group; Loader_MultiTileEntities.java:1241/:1542-1546).
 
   the element-disintegration walk (GT6RecipesMassfab, Loader_Recipes_Other.java:969-987):
   64 iron ingots -> chargedmatter 64x26 = 1664 mB + neutralmatter 64x30 = 1920 mB — the
-  PARALLEL 64 face (the :1241 NBT_PARALLEL_DURATION T skips the :743 bind). Energy rides
-  the persisted `energy` NBT (the wall->controller relay is the declared energy-domain
-  seam; the Graagg gt.energy precedent was REPLACED by the fakesource regime
-  (gt6machine fakesource on — ENERGY_FAKE_SOURCE refills mInputMax/t on every
-  machine, now including the multiblock base) after the NBT-merge drive proved
-  environmentally unreliable on the formed rig — see phase B's block comment.
+  PARALLEL 64 face (the :1241 NBT_PARALLEL_DURATION T skips the :743 bind). The drive is
+  the per-instance `fake_source` flag (B) + the class-side fakesource regime (D) — the
+  Graagg gt.energy NBT merge was retired after proving environmentally unreliable on
+  the formed rig (the energy write intermittently never landed while every other key
+  did) — see phase B's block comment for the full mechanics.
 
   the auto-out bottom face (:258-265): a small massfab (T5) sits BELOW the controller;
   its UP fluid face accepts the matter — the charged tank drains 1000 mB into it (the
@@ -139,22 +138,23 @@ steps = [
     Step("setblock " + C + " " + BIG, expect="Changed the block"),
     Step("execute if block " + C + " gt6:large_massfab[formed=true]", expect="Test passed", poll=30),
 
-    phase("B: the element walk at parallel 64 — 64 iron ingots on the fakesource drive"),
+    phase("B: the element walk at parallel 64 — 64 iron ingots on the fake_source drive"),
     Step("setblock " + S + " " + SMALL, expect="Changed the block"),  # the auto-out sink BELOW
-    # THE DRIVE IS THE FAKESOURCE REGIME, NOT AN NBT ENERGY MERGE: two live-proven
-    # dead-ends killed the merge drive. (a) the :798 scan gate is (mIgnited>0 ||
-    # mInventoryChanged || !mRunning || aTimer%1200==5) and the inventory merge does
-    # NOT set mInventoryChanged — Forge ItemStackHandler.deserializeNBT calls onLoad(),
-    # not onContentsChanged() — so the gate rides !mRunning which the energy merge's
-    # tick consumes empty (merge order games follow), and the :790-791 unconditional
-    # idle burn (mInputMax/t) eats any merged budget in energy/mInputMax ticks. (b)
-    # worse, the formed rig intermittently NEVER applies the energy merge at all
-    # (inventory merge sticks, energy reads 0L forever — forgeH/K/L/M, across fresh
-    # world + clean windows). `gt6machine fakesource on` (ENERGY_FAKE_SOURCE, the
-    # p16_side_io regime; extended to the multiblock base in-task) refills
-    # mInputMax/t on EVERY machine unconditionally — progress 2 M/t completes the
-    # 64-row walk (469762048) in 224 ticks with zero race surface. Restored off in E.
-    Step("gt6machine fakesource on", expect="ENERGY_FAKE_SOURCE set true"),
+    # THE CONTROLLER DRIVE IS THE PER-INSTANCE fake_source FLAG, NOT AN NBT ENERGY
+    # MERGE: two live-proven dead-ends killed the merge drive. (a) the :798 scan gate
+    # is (mIgnited>0 || mInventoryChanged || !mRunning || aTimer%1200==5) and the
+    # inventory merge does NOT set mInventoryChanged — Forge ItemStackHandler
+    # .deserializeNBT calls onLoad(), not onContentsChanged() — so the gate rides
+    # !mRunning which the energy merge's first tick consumes empty, and the
+    # :790-791 unconditional idle burn (mInputMax/t) eats any merged budget in
+    # energy/mInputMax ticks. (b) worse, the formed rig intermittently NEVER applies
+    # the energy merge at all (inventory merge sticks, energy reads 0L forever —
+    # forgeH/K/L/M, across a fresh world + clean windows). The instance flag
+    # (TileEntityBase10MultiBlockMachine.mFakeSource) rides the SAME reliable
+    # load face as the inventory (non-energy keys always stuck) and refills
+    # mInputMax/t in doWork on EVERY tick — progress 2 M/t completes the 64-row
+    # walk (469762048) in 224 ticks with zero race surface. Restored by teardown.
+    Step("data merge block " + C + " {fake_source:1b}", expect="Modified block data"),
     Step(merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.21.1"]}),
     Step("data get block " + C, expect="active: 1b", poll=120),
@@ -170,8 +170,10 @@ steps = [
 
     phase("D: the small form (20415) — 1 iron ingot -> 26 + 30 mB in its own output tanks"),
     Step("setblock " + T + " " + SMALL, expect="Changed the block"),
-    # fakesource is still ON (the T5 is a TileEntityBasicMachine — the refill's home
-    # class); the ingot merge is the only feed the rig needs
+    # the T5 is a TileEntityBasicMachine — its drive is the CLASS-side fakesource
+    # regime (gt6machine, the p16_side_io precedent; this arm never flaked in any
+    # boot). Restored off in E.
+    Step("gt6machine fakesource on", expect="ENERGY_FAKE_SOURCE set true"),
     Step(small_merge([(0, ("minecraft:iron_ingot", 1))])["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": small_merge([(0, ("minecraft:iron_ingot", 1))])["1.21.1"]}),
     Step("data get block " + T, expect="active: 1b", poll=60),
