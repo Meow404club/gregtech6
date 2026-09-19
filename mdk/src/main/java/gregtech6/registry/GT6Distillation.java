@@ -723,7 +723,18 @@ public final class GT6Distillation {
 		/** The per-index key of output bank tank i, i >= 1 (tank 0 stays the base's). */
 		public static String outputTankKey(int aIndex) {return TileEntityBase10MultiBlockMachine.NBT_OUTPUT_TANK + "_" + aIndex;}
 
-		//? if forge {
+		// The (CompoundTag) overrides compile on BOTH legs, unguarded — the shared-tree
+		// chain is VIRTUAL: the 21.1 canonical provider hooks delegate in at the 01Root
+		// (loadAdditional/saveAdditional(CompoundTag, Provider) → this chain,
+		// TileEntityBase01Root:138-147), and the machine base's own 21.1 arm stops at
+		// tank 0 — a subclass without its own (CompoundTag) override silently drops its
+		// keys off the 21.1 serialize (the massfab live proof, work/p31-massfab d9dfcfb77).
+		// THIS pair previously rode a //? if forge {…} else {…} duplicate of the same
+		// bodies: behaviorally complete (the else arm rode the 21.1 leg — the 1.21.1
+		// generated tree had it active), but the forge-looking header read as a forge-only
+		// guard and misfired the massfab cross-card audit onto this file. Fork gone:
+		// the bodies are leg-invariant (FluidTankGT read/write carry their own leg forks,
+		// the ADR-P18 frozen NBT_ACCESS view), so ONE copy serves both legs.
 		@Override
 		protected void saveAdditional(CompoundTag aNBT) {
 			super.saveAdditional(aNBT);
@@ -737,21 +748,6 @@ public final class GT6Distillation {
 			mTankInput.readFromNBT(aNBT, NBT_INPUT_TANK);
 			for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, outputTankKey(i));
 		}
-		//?} else {
-		/*@Override
-		protected void saveAdditional(CompoundTag aNBT) {
-			super.saveAdditional(aNBT);
-			mTankInput.writeToNBT(aNBT, NBT_INPUT_TANK);
-			for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].writeToNBT(aNBT, outputTankKey(i));
-		}
-
-		@Override
-		public void load(CompoundTag aNBT) {
-			super.load(aNBT);
-			mTankInput.readFromNBT(aNBT, NBT_INPUT_TANK);
-			for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, outputTankKey(i));
-		}
-		*///?}
 
 		// ---------------------------------------------------------------------------
 		// the offset helpers (the port's getOffset*N(mFacing) has no distance form — the
