@@ -554,7 +554,7 @@ def main():
                              lens_clusters=n_clusters1,
                              each_stone_hit=each_stone_hit,
                              quartz=quartz_hit, clay=clay_hit, crystals=sorted(crystal_ids_hit),
-                             end_ores=end_hits1),
+                             end_ores=end_hits),
                   boot2=dict(nether_chunks_with_gt6=len(boot2["n_per"]),
                              nether_positions=len(boot2["n_pos"]),
                              lens_clusters=n_clusters2,
