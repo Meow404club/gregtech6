@@ -13,8 +13,10 @@ group; Loader_MultiTileEntities.java:1241/:1542-1546).
   64 iron ingots -> chargedmatter 64x26 = 1664 mB + neutralmatter 64x30 = 1920 mB — the
   PARALLEL 64 face (the :1241 NBT_PARALLEL_DURATION T skips the :743 bind). Energy rides
   the persisted `energy` NBT (the wall->controller relay is the declared energy-domain
-  seam; the Graagg gt.energy precedent) — 100 G QU drives min(mInputMax, mEnergy)/t
-  progress against maxprogress 64 x 7340032 = 469762048.
+  seam; the Graagg gt.energy precedent was REPLACED by the fakesource regime
+  (gt6machine fakesource on — ENERGY_FAKE_SOURCE refills mInputMax/t on every
+  machine, now including the multiblock base) after the NBT-merge drive proved
+  environmentally unreliable on the formed rig — see phase B's block comment.
 
   the auto-out bottom face (:258-265): a small massfab (T5) sits BELOW the controller;
   its UP fluid face accepts the matter — the charged tank drains 1000 mB into it (the
@@ -137,24 +139,25 @@ steps = [
     Step("setblock " + C + " " + BIG, expect="Changed the block"),
     Step("execute if block " + C + " gt6:large_massfab[formed=true]", expect="Test passed", poll=30),
 
-    phase("B: the element walk at parallel 64 — 64 iron ingots + 100 G QU energy"),
+    phase("B: the element walk at parallel 64 — 64 iron ingots on the fakesource drive"),
     Step("setblock " + S + " " + SMALL, expect="Changed the block"),  # the auto-out sink BELOW
-    # MERGE ORDER IS LOAD-BEARING: the :798 recipe scan gate is
-    # (mIgnited>0 || mInventoryChanged || !mRunning || aTimer%1200==5), and the
-    # inventory merge does NOT set mInventoryChanged — Forge ItemStackHandler
-    # .deserializeNBT calls onLoad(), not onContentsChanged() — so with the energy
-    # merged first the very first doWork takes the if-branch, the one-shot scan
-    # finds an EMPTY inventory, mRunning=true shuts the gate for up to 1200 ticks,
-    # and the :790-791 unconditional idle burn (mInputMax/t, mRunning or not) eats
-    # 500 M in ~12 s: a dead rig unless the 1200-tick boundary lands inside the
-    # burn window (the exact flake forgeF/forgeH/neoG-pass2 lived). INVENTORY
-    # FIRST, energy second: the energy's first doWork rides !mRunning=true, the
-    # scan finds the ingots already in place, the machine starts on that tick and
-    # the burn then runs 1:1 with progress to completion (both legs live-proven).
+    # THE DRIVE IS THE FAKESOURCE REGIME, NOT AN NBT ENERGY MERGE: two live-proven
+    # dead-ends killed the merge drive. (a) the :798 scan gate is (mIgnited>0 ||
+    # mInventoryChanged || !mRunning || aTimer%1200==5) and the inventory merge does
+    # NOT set mInventoryChanged — Forge ItemStackHandler.deserializeNBT calls onLoad(),
+    # not onContentsChanged() — so the gate rides !mRunning which the energy merge's
+    # tick consumes empty (merge order games follow), and the :790-791 unconditional
+    # idle burn (mInputMax/t) eats any merged budget in energy/mInputMax ticks. (b)
+    # worse, the formed rig intermittently NEVER applies the energy merge at all
+    # (inventory merge sticks, energy reads 0L forever — forgeH/K/L/M, across fresh
+    # world + clean windows). `gt6machine fakesource on` (ENERGY_FAKE_SOURCE, the
+    # p16_side_io regime; extended to the multiblock base in-task) refills
+    # mInputMax/t on EVERY machine unconditionally — progress 2 M/t completes the
+    # 64-row walk (469762048) in 224 ticks with zero race surface. Restored off in E.
+    Step("gt6machine fakesource on", expect="ENERGY_FAKE_SOURCE set true"),
     Step(merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": merge_inventory(11, [(0, ("minecraft:iron_ingot", 64))])["1.21.1"]}),
-    Step("data merge block " + C + " {energy:100000000000}", expect="Modified block data"),
-    Step("data get block " + C, expect="active: 1b", poll=300),  # wide: a laggy boot once took ~90 s to start (the stale-BE race)
+    Step("data get block " + C, expect="active: 1b", poll=120),
     Step("data get block " + C, expect="maxprogress: 469762048L", poll=120),  # 64 x 7340032 — the PARALLEL 64 + DURATION T face
     Step("data get block " + C + " output_tank_1", expect=tank_expect("1.20.1", "x", "gt6:neutralmatter", 1920),
          poll=300, node_expects={"1.21.1": tank_expect("1.21.1", "x", "gt6:neutralmatter", 1920)}),
@@ -167,10 +170,10 @@ steps = [
 
     phase("D: the small form (20415) — 1 iron ingot -> 26 + 30 mB in its own output tanks"),
     Step("setblock " + T + " " + SMALL, expect="Changed the block"),
-    # the same inventory-first order as phase B (the deserializeNBT onLoad() gate)
+    # fakesource is still ON (the T5 is a TileEntityBasicMachine — the refill's home
+    # class); the ingot merge is the only feed the rig needs
     Step(small_merge([(0, ("minecraft:iron_ingot", 1))])["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": small_merge([(0, ("minecraft:iron_ingot", 1))])["1.21.1"]}),
-    Step("data merge block " + T + " {energy:100000000000}", expect="Modified block data"),
     Step("data get block " + T, expect="active: 1b", poll=60),
     # the :773 CHEAP_OC face on the small form (live-proven forge): eUt 1 climbs mMinEnergy
     # 1 -> mInputMin 4096 in six x4 steps = x64 duration — 7340032 x 64 = 469762048
@@ -185,7 +188,8 @@ steps = [
     Step("data get block " + T + " output_fluids", expect="FluidName: \"gt6:neutralmatter\", Amount: 30",
          poll=60, node_expects={"1.21.1": "amount: 30, id: \"gt6:neutralmatter\""}),
 
-    phase("E: teardown — the explicit band restore"),
+    phase("E: teardown — the global-state restore + the explicit band restore"),
+    Step("gt6machine fakesource off", expect="ENERGY_FAKE_SOURCE set false"),
     Step("fill %d %d %d %d %d %d air" % BAND, expect="filled"),
     Step("forceload remove all"),
     Step("time query daytime", expect="The time is"),

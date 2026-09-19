@@ -338,8 +338,13 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	// work (:780-900)
 	// ---------------------------------------------------------------------------
 
-	/** Upstream :780-793 verbatim (checkStructure is the real multiblock template). */
+	/** Upstream :780-793 verbatim (checkStructure is the real multiblock template).
+	 *  The ENERGY_FAKE_SOURCE refill mirrors {@link gregtech6.tileentity.machines.TileEntityBasicMachine
+	 *  .supplyEnergy}: the ops regime (gt6machine fakesource, the RCON drive seam) must reach the
+	 *  multiblock machines too, else no grid-less acceptance drive exists for them — the refill is
+	 *  a no-op while the flag is off (the default), so the grid-fed semantics are untouched. */
 	public void doWork(long aTimer) {
+		if (gregtech6.tileentity.machines.TileEntityBasicMachine.ENERGY_FAKE_SOURCE && !mStopped) mEnergy = mInputMax;
 		if (mEnergy >= mInputMin && mEnergy >= mMinEnergy && checkStructure(false)) {
 			mActive = doActive(aTimer, Math.min(mInputMax, mEnergy));
 			mRunning = true;
