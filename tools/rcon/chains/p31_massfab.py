@@ -87,12 +87,17 @@ def small_merge(items):
     }
 
 
-# the fluid NBT shape forks: 1.20.1 {FluidName:"gt6:x",Amount:n} / 21.1 {amount:n,id:"gt6:x"}
+# the vanilla `data get` print is the SNBT spaced `key: value` form on both legs
+# (SnbtPrinterTagVisitor: NAME_VALUE_SEPARATOR + " ", ELEMENT_SEPARATOR + " ") — the
+# tight `{k:v}` form never matches (forge-leg live proof, the crash-era expect bug).
+# The stored NBT shape forks: 1.20.1 {FluidName, Amount} (FluidStack.writeToNBT) vs
+# 21.1 codec-first {id, amount} + the GT6 contract {FluidName, Amount} appended
+# (FluidTankGT.writeToNBT 21.1 arm, the codec group order id-then-amount). The assert
+# rides the identity+amount adjacency in each leg's own printed order.
 def tank_expect(node_key, tank_key, fluid, amount):
-    # the FluidStack NBT shape forks: 1.20.1 legacy writeToNBT / 21.1 codec save
     if node_key == "1.21.1":
-        return "{amount:%d,id:\"%s\"}" % (amount, fluid)
-    return "{FluidName:\"%s\",Amount:%d}" % (fluid, amount)
+        return "id: \"%s\", amount: %d" % (fluid, amount)
+    return "FluidName: \"%s\", Amount: %d" % (fluid, amount)
 
 
 steps = [
@@ -155,7 +160,9 @@ steps = [
     Step(small_merge([(0, ("minecraft:iron_ingot", 1))])["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": small_merge([(0, ("minecraft:iron_ingot", 1))])["1.21.1"]}),
     Step("data get block " + T, expect="active: 1b", poll=60),
-    Step("data get block " + T, expect="maxprogress: 7340032L", poll=30),
+    # the :773 CHEAP_OC face on the small form (live-proven forge): eUt 1 climbs mMinEnergy
+    # 1 -> mInputMin 4096 in six x4 steps = x64 duration — 7340032 x 64 = 469762048
+    Step("data get block " + T, expect="maxprogress: 469762048L", poll=30),
     Step('data get block ' + T + ' \"tanks.out.0\"', expect=tank_expect("1.20.1", "x", "gt6:chargedmatter", 26),
          poll=300, node_expects={"1.21.1": tank_expect("1.21.1", "x", "gt6:chargedmatter", 26)}),
     Step('data get block ' + T + ' \"tanks.out.1\"', expect=tank_expect("1.20.1", "x", "gt6:neutralmatter", 30),
