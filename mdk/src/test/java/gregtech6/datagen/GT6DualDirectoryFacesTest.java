@@ -337,6 +337,39 @@ public class GT6DualDirectoryFacesTest {
 		}
 	}
 
+	/**
+	 * The conditions key-order canonical face (task p32-ops-biome-keyorder): the end-yield
+	 * row round-trips {@link GT6BiomeModifierConditions#serializeCanonical} BYTE-IDENTICALLY
+	 * on both brand faces. The regression this pins: the 1.21.1 leg
+	 * {@code DataProvider.KEY_COMPARATOR} pins {@code neoforge:conditions} ahead of
+	 * {@code type} (1.21.1 DataProvider.java:30-38 "Neo: conditions go first") while the
+	 * tracked band — the injection provider's {@code CANONICAL_KEY_ORDER} output, the
+	 * 1.20.1 type-first-then-alphabetical form (1.20.1 DataProvider.java:23-27) — holds it
+	 * at the alphabetical slot. A mirror pass re-routed through the leg face (the pre-p32
+	 * GT6DualDirectoryFaces.mirrorBiomeModifiers form) re-emitted the row conditions-head
+	 * on warm runs and the two providers flip-flopped the file across runs (the live node
+	 * repro 2026-09-19: run2 conditions-first, run3 alphabetical). A canonical-face drift
+	 * here is a tracked-tree byte flap on every odd/even datagen run.
+	 */
+	@Test
+	public void conditionsKeyOrderRoundTripsTheCanonicalFace() throws Exception {
+		for (String tBrand : new String[] {"forge", "neoforge"}) {
+			String tText = resource("data/gt6/" + tBrand + "/biome_modifier/large_veins_end.json");
+			assertTrue(tText.indexOf("\"" + tBrand + ":conditions\"") > tText.indexOf("\"features\""),
+					tBrand + " conditions key sits at the alphabetical slot, never the leg-pinned head");
+			assertEquals(tText, new String(
+							GT6BiomeModifierConditions.serializeCanonical(JsonParser.parseString(tText)),
+							StandardCharsets.UTF_8),
+					tBrand + " end-yield face round-trips the canonical serializer byte-identically");
+		}
+		// the two-leg divergence evidence, pinned as live code (the reason saveCanonical
+		// exists — the leg comparator is the ONE face this band must never ride again)
+		assertTrue(GT6BiomeModifierConditions.CANONICAL_KEY_ORDER.compare("neoforge:conditions", "step") < 0,
+				"canonical order sorts the conditions key alphabetically (before step)");
+		assertTrue(GT6BiomeModifierConditions.CANONICAL_KEY_ORDER.compare("type", "neoforge:conditions") < 0,
+				"canonical order keeps type first, the conditions key never pinned ahead of it");
+	}
+
 	/** The .json member count under a band classpath root (the union-FS-safe top-level form). */
 	private static int countJson(URL aBandUrl) throws Exception {
 		try (Stream<Path> tWalk = Files.walk(Paths.get(aBandUrl.toURI()))) {

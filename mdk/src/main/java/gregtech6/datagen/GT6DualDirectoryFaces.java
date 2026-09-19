@@ -229,7 +229,17 @@ public class GT6DualDirectoryFaces implements DataProvider {
 			}
 		}
 		for (BiomeMirrorRow tRow : tRows) {
-			aSaves.add(DataProvider.saveStable(aCache, tRow.mJson, tRow.mTarget));
+			// task p32-ops-biome-keyorder: NOT DataProvider.saveStable — the 1.21.1 leg
+			// comparator pins neoforge:conditions FIRST (1.21.1 DataProvider.java:30-38),
+			// so a warm re-run re-emitted the end-yield row conditions-head while the
+			// injection provider (GT6BiomeModifierConditions) keeps it at the alphabetical
+			// slot: two canonical forms fighting over one file through two providers'
+			// own-cache shouldWrite (vanilla HashCache.java:155-157) = the odd/even run
+			// key-order oscillation (live repro 2026-09-19, node run2 flip). saveCanonical
+			// is saveStable minus the leg-comparator detour: one row, ONE serializer face,
+			// the brand twins byte-identical modulo the brand strings on BOTH legs (byte
+			// shape identical to saveStable on the 1.20.1 leg — zero canonical-tree delta).
+			aSaves.add(GT6BiomeModifierConditions.saveCanonical(aCache, tRow.mJson, tRow.mTarget));
 		}
 	}
 

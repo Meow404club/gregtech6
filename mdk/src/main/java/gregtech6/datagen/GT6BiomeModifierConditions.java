@@ -1,17 +1,23 @@
 package gregtech6.datagen;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
+import com.google.common.hash.Hashing;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
 
+import net.minecraft.Util;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -57,8 +63,15 @@ public class GT6BiomeModifierConditions implements DataProvider {
      * same row into two DIFFERENT member orders and break the datagen_tree_check byte
      * gate. This fixed order is what the 1.20.1 saveStable (the canonical producer's
      * mirror) emits, so every brand twin lands byte-identical modulo the brand strings.
+     *
+     * <p>Package-shared (task p32-ops-biome-keyorder) because the brand mirror rides the
+     * SAME face: on the 21.1 leg the leg saveStable re-pinned {@code neoforge:conditions}
+     * to the head of the re-emitted row while this provider's injection kept it at the
+     * alphabetical slot — two canonical forms fighting over one file, the provider own
+     * cache shouldWrite (HashCache.java:155-157) blind to the sibling's bytes = the
+     * odd/even run oscillation. One row, ONE serializer.
      */
-    private static final java.util.Comparator<String> CANONICAL_KEY_ORDER = new java.util.Comparator<String>() {
+    static final java.util.Comparator<String> CANONICAL_KEY_ORDER = new java.util.Comparator<String>() {
         private final java.util.Map<String, Integer> FIXED = java.util.Map.of("type", 0, "parent", 1);
 
         @Override
@@ -102,17 +115,9 @@ public class GT6BiomeModifierConditions implements DataProvider {
             // providers (the native base writer + this one), so saveStable's per-provider
             // shouldWrite skip would leave a sibling's bytes on disk. The bytes replicate
             // DataProvider.saveStable's serializer verbatim — JsonWriter UTF-8,
-            // serializeNulls(false), two-space indent, the KEY_COMPARATOR normalization
-            // (fixed "type" first, then alphabetical; both legs' saveStable share it, so
-            // the mirror-rebranded twin stays byte-identical).
-            java.io.ByteArrayOutputStream tOut = new java.io.ByteArrayOutputStream();
-            com.google.gson.stream.JsonWriter tWriter = new com.google.gson.stream.JsonWriter(
-                    new java.io.OutputStreamWriter(tOut, java.nio.charset.StandardCharsets.UTF_8));
-            tWriter.setSerializeNulls(false);
-            tWriter.setIndent("  ");
-            net.minecraft.util.GsonHelper.writeValue(tWriter, tRoot, CANONICAL_KEY_ORDER);
-            tWriter.close();
-            byte[] tTarget = tOut.toByteArray();
+            // serializeNulls(false), two-space indent, the CANONICAL_KEY_ORDER
+            // normalization (fixed "type" first, then alphabetical).
+            byte[] tTarget = serializeCanonical(tRoot);
             if (!java.util.Arrays.equals(tTarget, tCurrent)) {
                 Files.write(tFile, tTarget);
             }
@@ -120,6 +125,45 @@ public class GT6BiomeModifierConditions implements DataProvider {
         } catch (IOException tError) {
             throw new RuntimeException("the conditions injection failed processing " + tFile, tError);
         }
+    }
+
+    /**
+     * The ONE biome-modifier serializer face (task p32-ops-biome-keyorder): the byte shape
+     * of the 1.20.1 {@code DataProvider.saveStable} (JsonWriter UTF-8, serializeNulls(false),
+     * two-space indent, GsonHelper.writeValue under {@link #CANONICAL_KEY_ORDER}, recursive
+     * — GsonHelper.java:532-562 both legs) with the LEG-COMPARATOR DETOUR REMOVED. The 1.21.1
+     * saveStable pins {@code neoforge:conditions} ahead of {@code type} (DataProvider.java
+     * :30-38), so any row routed through the leg face carries a DIFFERENT member order than
+     * the injection writes here — the flip this class exists to make impossible.
+     */
+    static byte[] serializeCanonical(JsonElement aJson) throws IOException {
+        ByteArrayOutputStream tOut = new ByteArrayOutputStream();
+        JsonWriter tWriter = new JsonWriter(new OutputStreamWriter(tOut, StandardCharsets.UTF_8));
+        tWriter.setSerializeNulls(false);
+        tWriter.setIndent("  ");
+        net.minecraft.util.GsonHelper.writeValue(tWriter, aJson, CANONICAL_KEY_ORDER);
+        tWriter.close();
+        return tOut.toByteArray();
+    }
+
+    /**
+     * The mirror twin of {@code DataProvider.saveStable} over {@link #serializeCanonical}:
+     * same async contract (Util.backgroundExecutor), same HashCache bookkeeping
+     * (CachedOutput.writeIfNeeded + the sha1 the cache bookkeeps), the comparator alone is
+     * canonical. IOException rides saveStable's log-and-continue parity (a policy change
+     * here is NOT this card's business); GT6DualDirectoryFaces.mirrorBiomeModifiers routes
+     * EVERY brand re-emission through this, so both brands of a row come out of ONE face
+     * byte-identical modulo the brand strings on BOTH legs.
+     */
+    static CompletableFuture<?> saveCanonical(CachedOutput aCache, JsonElement aJson, Path aTarget) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                byte[] tBytes = serializeCanonical(aJson);
+                aCache.writeIfNeeded(aTarget, tBytes, Hashing.sha1().hashBytes(tBytes));
+            } catch (IOException tError) {
+                DataProvider.LOGGER.error("Failed to save file to {}", aTarget, tError);
+            }
+        }, Util.backgroundExecutor());
     }
 
     /**
