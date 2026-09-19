@@ -545,6 +545,19 @@ SESSION_GROUPS = (
     # fresh_boot / mutates member. --group p31_nether matches through the chain's
     # embedded name prefix.
     ("p31_nether",),
+    # P31 card (p31-fluid-spring): the bedrock-spring live chain — the chunk (4,8) band
+    # (x64..79, z128..143, y-64..62; staging x288..319), the live REGISTRATION face (the
+    # six spring block faces setblock+read: the five p31-fluid-spring LiquidBlocks + the
+    # p5 natural_gas face) + the DETERMINISTIC gate-refusal face (a body without the
+    # bedrock floor fails the Feature's :66-67 gate at any roll — place refused at 100%,
+    # arena unchanged) + the bedrock-floored 1/P roll face (~3.5%/chunk refusal — a freak
+    # hit fails the step, rerun-precedence). The NATURAL-generation gate (fixed seed
+    # 6131000569321125127 + world delete: the ~144-spring 64x64 window, the six-kind hits,
+    # the ore/spring mutual exclusion, the dome Y-span, cross-boot decision determinism)
+    # rides the card's separate scan driver tools/rcon/scan_fluid_spring.py, not this
+    # chain. No fresh_boot / mutates member. --group p31_spring matches this key exactly
+    # (the chain stem is p31_spring).
+    ("p31_spring",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
