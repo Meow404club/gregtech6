@@ -91,14 +91,11 @@ def small_merge(items):
 
 # the vanilla `data get` print is the SNBT spaced `key: value` form on both legs
 # (SnbtPrinterTagVisitor: NAME_VALUE_SEPARATOR + " ", ELEMENT_SEPARATOR + " ") — the
-# tight `{k:v}` form never matches (forge-leg live proof, the crash-era expect bug).
-# The stored NBT shape forks: 1.20.1 {FluidName, Amount} (FluidStack.writeToNBT) vs
-# 21.1 codec-first {id, amount} + the GT6 contract {FluidName, Amount} appended
-# (FluidTankGT.writeToNBT 21.1 arm, the codec group order id-then-amount). The assert
-# rides the identity+amount adjacency in each leg's own printed order.
+# tight `{k:v}` form never matches. The leg-neutral assert rides the GT6 contract pair
+# FluidName/Amount — live-proven on both legs: forge stores {FluidName, Amount}; 21.1
+# stores {amount, FluidName, Amount, id} (codec face + the ADR-P15-1 contract keys)
+# and still prints the pair contiguously. (tank_key is vestigial in the call sites.)
 def tank_expect(node_key, tank_key, fluid, amount):
-    if node_key == "1.21.1":
-        return "id: \"%s\", amount: %d" % (fluid, amount)
     return "FluidName: \"%s\", Amount: %d" % (fluid, amount)
 
 
@@ -167,12 +164,13 @@ steps = [
     Step("data get block " + T, expect="maxprogress: 469762048L", poll=30),
     # the small form parks its outputs in the mOutputFluids buffer (the base :1636
     # output_fluids face — tanks.out.* keys only exist while a tank HOLDS content, and
-    # with no sink below the buffer is where the matter sits; live-proven forge). forge
-    # prints the GT6 writeToNBT shape, 21.1 the bare codec {id, amount} (the :1638 face).
+    # with no sink below the buffer is where the matter sits; live-proven both legs).
+    # forge prints the GT6 writeToNBT shape; 21.1 the bare codec face (:1638) with the
+    # live order amount-then-id.
     Step("data get block " + T + " output_fluids", expect="FluidName: \"gt6:chargedmatter\", Amount: 26",
-         poll=300, node_expects={"1.21.1": "id: \"gt6:chargedmatter\", amount: 26"}),
+         poll=300, node_expects={"1.21.1": "amount: 26, id: \"gt6:chargedmatter\""}),
     Step("data get block " + T + " output_fluids", expect="FluidName: \"gt6:neutralmatter\", Amount: 30",
-         poll=60, node_expects={"1.21.1": "id: \"gt6:neutralmatter\", amount: 30"}),
+         poll=60, node_expects={"1.21.1": "amount: 30, id: \"gt6:neutralmatter\""}),
 
     phase("E: teardown — the explicit band restore"),
     Step("fill %d %d %d %d %d %d air" % BAND, expect="filled"),
