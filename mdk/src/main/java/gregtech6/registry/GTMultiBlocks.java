@@ -28,6 +28,7 @@ import gregtech6.block.multiblock.GTCokeOvenBlock;
 import gregtech6.block.multiblock.GTHeatTransmitterBlock;
 import gregtech6.block.multiblock.GTImplosionCompressorBlock;
 import gregtech6.block.multiblock.GTMassfabBlock;
+import gregtech6.block.multiblock.GTFusionReactorBlock;
 import gregtech6.block.multiblock.GTLargeBoilerBlock;
 import gregtech6.block.multiblock.GTLightningRodBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
@@ -39,6 +40,7 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 import gregtech6.tileentity.multiblocks.TileEntityImplosionCompressor;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 import gregtech6.tileentity.multiblocks.TileEntityLightningRod;
+import gregtech6.tileentity.multiblocks.TileEntityFusionReactor;
 import gregtech6.tileentity.multiblocks.TileEntityMassfab;
 import gregtech6.tileentity.multiblocks.TileEntityVonDaGraagg;
 
@@ -127,6 +129,8 @@ public final class GTMultiBlocks {
 						aOutput.accept(new ItemStack(GTMultiBlocks.VON_DA_GRAAGG_ITEM.get()));
 						// task p31-massfab — the Large Matter Fabricator controller
 						aOutput.accept(new ItemStack(GTMultiBlocks.MASSFAB_ITEM.get()));
+						// task p31-fusion — the Fusion Reactor controller
+						aOutput.accept(new ItemStack(GTMultiBlocks.FUSION_REACTOR_ITEM.get()));
 					})
 					.build());
 
@@ -484,6 +488,43 @@ public final class GTMultiBlocks {
 	public static final RegistryObject<BlockEntityType<TileEntityMassfab>> MASSFAB_BE =
 			BLOCK_ENTITY_TYPES.register("multiblock_massfab", () -> BlockEntityType.Builder.of(
 					TileEntityMassfab::new, MASSFAB.get()).build(null));
+
+	// ===========================================================================
+	// task p31-fusion — the Fusion Reactor controller (Loader_MultiTileEntities.java:1242
+	// re-read VERBATIM at implementation time: meta 17198, item 17101, "Fusion Reactor",
+	// MT.SteelGalvanized, NBT_HARDNESS 12.5F == NBT_RESISTANCE 12.5F, NBT_TEXTURE
+	// "fusionreactor", NBT_INPUT 8192 / NBT_INPUT_MIN 1 / NBT_INPUT_MAX 16384,
+	// NBT_ENERGY_ACCEPTED TD.Energy.TU, NBT_RECIPEMAP RM.Fusion, NBT_ENERGY_ACCEPTED_2
+	// TD.Energy.LU, NBT_ENERGY_EMITTED TD.Energy.EU, NBT_SPECIAL_IS_START_ENERGY T — the
+	// IGNITION TRAP, deliberately NOT ported (the dead-supply ruling, the dual-layer
+	// qualification on TileEntityFusionReactor), NBT_NO_CONSTANT_POWER T — the config
+	// lands in the TileEntityFusionReactor constructor, the row-injection form). The
+	// controller crafting row "FFF"/"FMF"/"FFF" ('M' = the item(18003) Tungstensteel
+	// Wall, 'F' = IL.FIELD_GENERATORS[5]) is CUT — the 'F' item family has no port
+	// identity (the W3 absent-input pool, the implosion/graagg/massfab CUT precedent).
+	// The structure parts are EXISTING rows — machine_wall_galvanized_steel (18008),
+	// machine_wall_tungstensteel (18003, the design 0/2/5/6 'glass' ring),
+	// machine_wall_stainless_steel (18002), large_iridium_coil (18045),
+	// ventilation_unit (18299), processor_unit_versatile/logic/control (18200/18201/
+	// 18202) — zero new part blocks (the p29-w3-nbtdesign-parts census).
+	// ===========================================================================
+
+	/** The Fusion Reactor controller block — the FACING+FORMED base owns the visuals. */
+	public static final RegistryObject<GTFusionReactorBlock> FUSION_REACTOR = BLOCKS.register("fusion_reactor",
+			() -> new GTFusionReactorBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL)));
+
+	/** The Fusion Reactor controller item (the plain BlockItem — the massfab twelve-row shape). */
+	public static final RegistryObject<Item> FUSION_REACTOR_ITEM = ITEMS.register("fusion_reactor",
+			() -> new BlockItem(FUSION_REACTOR.get(), new Item.Properties()));
+
+	/**
+	 * The Fusion Reactor BET: one controller class over its one block (the
+	 * CokeOven/LightningRod BET degenerate shape). Registry path mirrors
+	 * {@link TileEntityFusionReactor#getTileEntityName()}.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityFusionReactor>> FUSION_REACTOR_BE =
+			BLOCK_ENTITY_TYPES.register("multiblock_fusion_reactor", () -> BlockEntityType.Builder.of(
+					TileEntityFusionReactor::new, FUSION_REACTOR.get()).build(null));
 
 	// ===========================================================================
 	// task p29-w3-nbtdesign-parts ③ — the part-family expansion (Loader_MultiTileEntities
