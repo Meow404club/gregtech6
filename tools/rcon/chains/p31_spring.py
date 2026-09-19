@@ -79,6 +79,10 @@ steps += [
 # ------------------------------------------------- B: the gate faces
 steps += [
     phase("B1: the deterministic gate refusal — no bedrock floor, the :66-67 gate fails at any roll"),
+    # the wave-open bbox cleanup runs BEFORE the pass forceload (silent no-op on
+    # unloaded chunks — the first pass keeps the natural bedrock floor), so the floor
+    # is cleared HERE, inside the loaded band, to make the gate face honest at every pass
+    Step(f"fill {FLOOR} minecraft:air"),
     Step(f"fill {BODY} minecraft:deepslate"),
     Step(f"clone {BOX} 288 -64 128"),  # staging1 = the pristine body (reply empty, the t1 note)
     Step("place feature gt6:fluid_springs 72 -64 136", expect="Failed to place feature"),
