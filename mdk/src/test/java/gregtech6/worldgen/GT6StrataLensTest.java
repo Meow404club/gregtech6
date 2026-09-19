@@ -120,9 +120,9 @@ class GT6StrataLensTest {
         assertTrue(GT6VeinGenerator.isOriginCell(13), "and the subset is proper-strict: 13 is a vein AND a lens cell (1 of 3 vein cells)");
 
         GTLensConfig.Table tTable = new GTLensConfig.Table(GT6WorldgenDatagen.STRATA_LENS_TABLE);
-        GTLensConfig tFirst = GT6LensGenerator.drawLens(tTable, GT6VeinGenerator.veinRandom(SEED, 4, 4));
+        GTLensConfig tFirst = GT6LensGenerator.drawLens(tTable, GT6VeinGenerator.veinRandom(SEED, 0, 4, 4));
         assertNotNull(tFirst, "the exactly-one draw must pick a row (weights sum 21)");
-        GTLensConfig tSecond = GT6LensGenerator.drawLens(tTable, GT6VeinGenerator.veinRandom(SEED, 4, 4));
+        GTLensConfig tSecond = GT6LensGenerator.drawLens(tTable, GT6VeinGenerator.veinRandom(SEED, 0, 4, 4));
         assertEquals(tFirst, tSecond, "the same (seed, origin) must draw the same row");
         assertTrue(SPEC_ORDER.contains(tFirst.stone()), "the draw must land on a table row");
     }
@@ -179,7 +179,7 @@ class GT6StrataLensTest {
     @Test
     void sliceIsTheCleanEllipsoidOfTheDrawnParameters() {
         int tOriginX = 4, tOriginZ = 4;
-        Random tRandom = GT6VeinGenerator.veinRandom(SEED, tOriginX, tOriginZ);
+        Random tRandom = GT6VeinGenerator.veinRandom(SEED, 0, tOriginX, tOriginZ); // the overworld salt
         GTLensConfig tLens = GT6LensGenerator.drawLens(new GTLensConfig.Table(GT6WorldgenDatagen.STRATA_LENS_TABLE), tRandom);
         int tCenterY = tLens.minY() + tRandom.nextInt(tLens.maxY() - tLens.minY() + 1);
         int tCenterX = (tOriginX << 4) + tRandom.nextInt(16);
@@ -264,7 +264,7 @@ class GT6StrataLensTest {
 
     private static void generateAt(long aSeed, int aOriginX, int aOriginZ, RecordingSink aSink,
             int aClipMinX, int aClipMaxX, int aClipMinZ, int aClipMaxZ) {
-        Random tRandom = GT6VeinGenerator.veinRandom(aSeed, aOriginX, aOriginZ);
+        Random tRandom = GT6VeinGenerator.veinRandom(aSeed, 0, aOriginX, aOriginZ); // the overworld salt
         GTLensConfig tLens = GT6LensGenerator.drawLens(new GTLensConfig.Table(GT6WorldgenDatagen.STRATA_LENS_TABLE), tRandom);
         if (tLens == null) return;
         GT6LensGenerator.generateSlice(tLens, tRandom, aOriginX << 4, aOriginZ << 4,

@@ -129,6 +129,49 @@ public final class GT6Worldgen {
     /** The strata-lens placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk). */
     public static final ResourceKey<PlacedFeature> STRATA_LENSES_PLACED = placedKeyOf("strata_lenses");
 
+    // ------------------------------------------------------------------
+    // The nether stone-lens band (task p31-nether-lens-end-yield). Upstream:
+    // the WorldgenStone loop's nether row per stone —
+    // {@code new WorldgenStone("nether.stone.<mat>", F, stone, 0, 1, 200, 200,
+    // 0, 120, null, F, GEN_NETHER)} (Loader_Worldgen.java:656; the ctor order
+    // binds meta=0, amount=1, size=200, probability=200, MinHeight=0,
+    // MaxHeight=120) — default F, this port ships it DEFAULT ON (the declared
+    // deviation, decisions.2026-09-17-p30-nether-end-rulings "nether-lens-default-on").
+    // All 17 stones ride ONE lens feature (the strata-lens isomorph) with the
+    // INDEPENDENT per-row 1/200 rolls (WorldgenBlob.java:68 shape).
+    // ------------------------------------------------------------------
+
+    /** Loader_Worldgen.java:656 nether row probability 200 — the per-row 1/200 chunk gate. */
+    public static final int NETHER_LENS_PROBABILITY = 200;
+    /** Loader_Worldgen.java:656 nether row MinHeight 0. */
+    public static final int NETHER_LENS_MIN_Y = 0;
+    /** Loader_Worldgen.java:656 nether row MaxHeight 120 (the lens center draw reads it inclusively — the strata-lens table convention). */
+    public static final int NETHER_LENS_MAX_Y = 120;
+    /** The clean-calibration radius stand-in for the upstream size-200 sausage blob (see NETHER_LENS_TABLE). */
+    public static final int NETHER_LENS_RADIUS = 40;
+    /** The clean-calibration vertical half-extent (the upstream blob's ~13-block vertical reach). */
+    public static final int NETHER_LENS_HALF_HEIGHT = 12;
+
+    /** The nether-lens configured feature (the GT6NetherLensFeature instance + the 17-row table). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_LENSES_CONFIGURED = configKey("nether_lenses");
+    /** The nether-lens placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk; the per-chunk row rolls live in the Feature). */
+    public static final ResourceKey<PlacedFeature> NETHER_LENSES_PLACED = placedKeyOf("nether_lenses");
+
+    // ------------------------------------------------------------------
+    // The nether three-form band (task p31-nether-lens-end-yield spec ①):
+    // WorldgenNetherQuartz (:600)/WorldgenNetherCrystals (:601)/WorldgenNetherClay
+    // (:599), all default T upstream and all GEN_NETHER — three NoneFeatureConfiguration
+    // features over the GT6WorleyNoise port. The payloads are the GT6NetherOres
+    // band blocks (the minimal-carrier ruling).
+    // ------------------------------------------------------------------
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_QUARTZ_CONFIGURED = configKey("nether_quartz");
+    public static final ResourceKey<PlacedFeature> NETHER_QUARTZ_PLACED = placedKeyOf("nether_quartz");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_CRYSTALS_CONFIGURED = configKey("nether_crystals");
+    public static final ResourceKey<PlacedFeature> NETHER_CRYSTALS_PLACED = placedKeyOf("nether_crystals");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_CLAY_CONFIGURED = configKey("nether_clay");
+    public static final ResourceKey<PlacedFeature> NETHER_CLAY_PLACED = placedKeyOf("nether_clay");
+
     // ------------------------------------------------------------------ the tree band (task p30-w6-t1-trees-nine)
 
     /**

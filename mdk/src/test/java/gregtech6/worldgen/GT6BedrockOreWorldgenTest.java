@@ -168,7 +168,7 @@ class GT6BedrockOreWorldgenTest {
         assertEquals("a", tHits.get(0).name());
         assertEquals("b", tHits.get(1).name());
         // the same seed replays identically (the drawRows stream is coordinate-seeded in production)
-        assertEquals(2, GT6BedrockOreGenerator.drawRows(tTable, GT6VeinGenerator.veinRandom(SEED, 7, 7)).size(),
+        assertEquals(2, GT6BedrockOreGenerator.drawRows(tTable, GT6VeinGenerator.veinRandom(SEED, 0, 7, 7)).size(),
                 "the same seed must hit the same rows");
         // invalid rows (NULL material) never roll
         List<GTBedrockOreConfig> tNull = GT6BedrockOreGenerator.drawRows(new GTBedrockOreConfig.Table(List.of(
@@ -237,8 +237,8 @@ class GT6BedrockOreWorldgenTest {
     @Test
     void veinReplayIsDeterministic() {
         RecordingSink tA = new RecordingSink(), tB = new RecordingSink();
-        GT6BedrockOreGenerator.generateVein(row("replay", 3, MT.Coal), GT6VeinGenerator.veinRandom(SEED, 9, -4), 0, 0, -64, tA);
-        GT6BedrockOreGenerator.generateVein(row("replay", 3, MT.Coal), GT6VeinGenerator.veinRandom(SEED, 9, -4), 0, 0, -64, tB);
+        GT6BedrockOreGenerator.generateVein(row("replay", 3, MT.Coal), GT6VeinGenerator.veinRandom(SEED, 0, 9, -4), 0, 0, -64, tA);
+        GT6BedrockOreGenerator.generateVein(row("replay", 3, MT.Coal), GT6VeinGenerator.veinRandom(SEED, 0, 9, -4), 0, 0, -64, tB);
         assertEquals(tA.bedrockOres, tB.bedrockOres);
         assertEquals(tA.shells, tB.shells);
         assertEquals(tA.ores, tB.ores);
@@ -284,7 +284,7 @@ class GT6BedrockOreWorldgenTest {
     /** The hit names for one chunk (the material names, in table order). */
     private static List<String> hitNames(GTBedrockOreConfig.Table aTable, int aX, int aZ) {
         List<String> rNames = new ArrayList<>(1);
-        for (GTBedrockOreConfig tRow : GT6BedrockOreGenerator.drawRows(aTable, GT6VeinGenerator.veinRandom(SEED, aX, aZ))) {
+        for (GTBedrockOreConfig tRow : GT6BedrockOreGenerator.drawRows(aTable, GT6VeinGenerator.veinRandom(SEED, 0, aX, aZ))) {
             assertNotNull(tRow.material());
             rNames.add(tRow.material().mNameInternal);
         }

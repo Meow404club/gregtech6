@@ -1,0 +1,15 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_end",
+  "features": "gt6:large_veins",
+  "forge:conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "galacticraft"
+      }
+    }
+  ],
+  "step": "underground_ores"
+}

@@ -236,7 +236,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	/** One collected mirror row — parsed BEFORE any save of the sibling walk is scheduled. */
 	private record BiomeMirrorRow(Path mTarget, JsonObject mJson) {}
 
-	/** Phase 1 of the mirror: read + parse + gate + the {@code type} swap, all synchronous. */
+	/** Phase 1 of the mirror: read + parse + gate + the {@code type} swap (+ the conditions rebrand, p31), all synchronous. */
 	private static BiomeMirrorRow parseBiomeModifier(Path aSource, Path aTarget) {
 		try (Reader tReader = Files.newBufferedReader(aSource)) {
 			JsonElement tJson = JsonParser.parseReader(tReader);
@@ -254,6 +254,9 @@ public class GT6DualDirectoryFaces implements DataProvider {
 						+ " in " + aSource + ") — extend parseBiomeModifier with the codec evidence "
 						+ "before rebranding this shape");
 			}
+			// the conditions rebrand MUST run while the row's own type still names the
+			// source brand — it locates the source conditions key by that type
+			rebrandConditions(tObject, aSource);
 			tObject.addProperty("type", FORGE_ADD_FEATURES.equals(tType.getAsString())
 					? NEOFORGE_ADD_FEATURES : FORGE_ADD_FEATURES);
 			return new BiomeMirrorRow(aTarget, tObject);
@@ -261,6 +264,72 @@ public class GT6DualDirectoryFaces implements DataProvider {
 			throw new RuntimeException("the biome-modifier brand mirror failed reading " + aSource, tError);
 		}
 	}
+
+	/**
+	 * The conditions-root-key rebrand (task p31-nether-lens-end-yield): a row carrying the
+	 * loader conditions key — {@code forge:conditions} / {@code neoforge:conditions}
+	 * (forge ICondition.java:25 / neo ConditionalOps.java:49 DEFAULT_CONDITIONS_KEY) —
+	 * keeps that key at its member position (the end-yield row emits it FIRST, both
+	 * legs' native shapes) and its condition objects keep their member order, while every
+	 * condition-type VALUE string swaps namespace ({@code forge:not} ↔
+	 * {@code neoforge:not}, {@code forge:mod_loaded} ↔ {@code neoforge:mod_loaded},
+	 * {@code forge:item_exists} ↔ {@code neoforge:item_exists}; the JSON key is
+	 * {@code "type"} on BOTH legs — forge IConditionSerializer.getJson:24 writes it, the
+	 * neo ICondition.CODEC dispatch uses the DFU default key). The card spec limits the
+	 * condition types to mod_loaded/item_exists (+ the composite not) — anything else is
+	 * an unverified cross-leg shape and throws (the fail-visible adapter discipline).
+	 */
+	private static void rebrandConditions(JsonObject aObject, Path aSource) {
+		String tFromKey = NEOFORGE_ADD_FEATURES.equals(aObject.get("type").getAsString())
+				? "neoforge:conditions" : "forge:conditions";
+		String tToKey = "forge:conditions".equals(tFromKey) ? "neoforge:conditions" : "forge:conditions";
+		if (!aObject.has(tFromKey)) return; // the plain rows: no conditions face
+		JsonElement tConditions = aObject.get(tFromKey);
+		if (!tConditions.isJsonArray()) {
+			throw new IllegalArgumentException("the conditions rebrand expects a JSON array (got " + tConditions
+					+ " in " + aSource + ")");
+		}
+		for (JsonElement tCondition : tConditions.getAsJsonArray()) {
+			if (!tCondition.isJsonObject()) {
+				throw new IllegalArgumentException("the conditions rebrand expects condition objects (got "
+						+ tCondition + " in " + aSource + ")");
+			}
+			swapConditionTypes(tCondition.getAsJsonObject(), aSource);
+		}
+		// re-add preserving the member positions: the conditions key keeps its slot (the
+		// entry list is snapshotted — clear() before re-add keeps the Gson leg's API face,
+		// which has no JsonObject.addAll)
+		java.util.List<Map.Entry<String, JsonElement>> tEntries = new java.util.ArrayList<>(aObject.entrySet());
+		aObject.entrySet().clear();
+		for (Map.Entry<String, JsonElement> tMember : tEntries) {
+			aObject.add(tFromKey.equals(tMember.getKey()) ? tToKey : tMember.getKey(), tMember.getValue());
+		}
+	}
+
+	/** The recursive {@code type}-value namespace swap (see {@link #rebrandConditions}). */
+	private static void swapConditionTypes(JsonObject aCondition, Path aSource) {
+		for (Map.Entry<String, JsonElement> tMember : aCondition.entrySet()) {
+			JsonElement tValue = tMember.getValue();
+			if ("type".equals(tMember.getKey()) && tValue.isJsonPrimitive()) {
+				String tType = tValue.getAsString();
+				String tSwapped = tType.startsWith("forge:") ? "neoforge:" + tType.substring("forge:".length())
+						: tType.startsWith("neoforge:") ? "forge:" + tType.substring("neoforge:".length()) : tType;
+				if (!KNOWN_CONDITION_TYPES.contains(tSwapped)) {
+					throw new IllegalArgumentException("the conditions rebrand only verifies not/mod_loaded/"
+							+ "item_exists (got " + tType + " in " + aSource
+							+ ") — extend KNOWN_CONDITION_TYPES with the codec evidence before rebranding");
+				}
+				tMember.setValue(new JsonPrimitive(tSwapped));
+			} else if (tValue.isJsonObject()) {
+				swapConditionTypes(tValue.getAsJsonObject(), aSource);
+			}
+		}
+	}
+
+	/** The verified cross-leg condition types (the card spec's mod_loaded/item_exists limit + the composite not). */
+	private static final java.util.Set<String> KNOWN_CONDITION_TYPES = java.util.Set.of(
+			"forge:not", "forge:mod_loaded", "forge:item_exists",
+			"neoforge:not", "neoforge:mod_loaded", "neoforge:item_exists");
 
 	/**
 	 * Re-saves one produced JSON at the singular path — parse + saveStable, the canonical

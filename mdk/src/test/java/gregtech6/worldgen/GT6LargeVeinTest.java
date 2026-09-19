@@ -202,9 +202,9 @@ class GT6LargeVeinTest {
         // be write-transparent, a closed gate must suppress everything
         // the materials are read INLINE (post-initMaterials): a static capture would freeze
         // the pre-init MT slot at test-class-load time — the GTStoneBlocksRegistrationTest lesson
-        GTVeinConfig tGated = new GTVeinConfig("test.vein", 20, 40, 10, 4, 24, 32, false, true,
+        GTVeinConfig tGated = new GTVeinConfig("test.vein", 20, 40, 10, 4, 24, 32, false, true, false,
                 gregapi.data.MT.Cu, gregapi.data.MT.Cu, gregapi.data.MT.Cu, gregapi.data.MT.Cu);
-        GTVeinConfig tUngated = new GTVeinConfig("test.vein", 20, 40, 10, 4, 24, 0, false, true,
+        GTVeinConfig tUngated = new GTVeinConfig("test.vein", 20, 40, 10, 4, 24, 0, false, true, false,
                 gregapi.data.MT.Cu, gregapi.data.MT.Cu, gregapi.data.MT.Cu, gregapi.data.MT.Cu);
         // the origin IS each work chunk (chunk min = the origin min block) — the rectangle
         // [min-rand .. min+16+rand] then covers its own chunk for every draw, so the only
@@ -271,7 +271,7 @@ class GT6LargeVeinTest {
 
     private static void generateAt(long aSeed, int aOriginX, int aOriginZ, RecordingSink aSink,
             int aClipMinX, int aClipMaxX, int aClipMinZ, int aClipMaxZ) {
-        Random tRandom = GT6VeinGenerator.veinRandom(aSeed, aOriginX, aOriginZ);
+        Random tRandom = GT6VeinGenerator.veinRandom(aSeed, 0, aOriginX, aOriginZ); // the overworld salt
         GTVeinConfig tVein = GT6VeinGenerator.drawVein(GT6WorldgenDatagen.LARGE_VEIN_TABLE, tRandom);
         if (tVein == null) return;
         GT6VeinGenerator.generateSlice(tVein, tRandom, aOriginX << 4, aOriginZ << 4,

@@ -53,7 +53,7 @@ public class GT6BedrockOreFeature extends Feature<GTBedrockOreConfig.Table> {
         WorldGenLevel tLevel = aContext.level();
         ChunkPos tWork = tLevel instanceof WorldGenRegion ? ((WorldGenRegion) tLevel).getCenter()
                 : new ChunkPos(aContext.origin());
-        Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), tWork.x, tWork.z);
+        Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), GT6VeinGenerator.OVERWORLD_DIMENSION_SALT, tWork.x, tWork.z);
         List<GTBedrockOreConfig> tHits = GT6BedrockOreGenerator.drawRows(aContext.config(), tRandom);
         if (tHits.isEmpty()) return false;
         Map<Block, GT6OreBlocks.OreFamily> tHosts = GT6OreBlocks.stoneToOreFamilies();

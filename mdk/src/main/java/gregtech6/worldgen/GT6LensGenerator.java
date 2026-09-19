@@ -72,6 +72,24 @@ public final class GT6LensGenerator {
     }
 
     /**
+     * The INDEPENDENT-ROW draw (task p31-nether-lens-end-yield — the upstream nether stone
+     * shape, WorldgenBlob.java:68 {@code if (aRandom.nextInt(mProbability) == 0)}): every
+     * drawable row rolls {@code nextInt(rarity) == 0} in TABLE ORDER and every hit is kept —
+     * one WorldgenObject per row upstream, so several stones can generate from the same
+     * rolling chunk, and the roll count (the stream alignment) is table-order fixed
+     * regardless of hits. A dead-Y row still consumes NO draw (the validity gate reads
+     * before the roll, WorldgenObject.java:60 posture).
+     */
+    public static List<GTLensConfig> drawIndependentLenses(GTLensConfig.Table aTable, Random aRandom) {
+        List<GTLensConfig> rHits = new ArrayList<>(0);
+        for (GTLensConfig tLens : aTable.lenses()) {
+            if (tLens.maxY() <= tLens.minY()) continue;
+            if (aRandom.nextInt(tLens.rarity()) == 0) rHits.add(tLens);
+        }
+        return rHits;
+    }
+
+    /**
      * One origin's slice into the clip rectangle. THE deterministic core: three draws from
      * the passed origin-seeded stream in the pinned order (center Y, center X, center Z —
      * the vein's tMinY-first order in spirit), then the pure-geometry ellipsoid pass.

@@ -130,6 +130,18 @@ public final class GT6DataGenerators {
         // task p26-w1-press-extruder-molds: the 1.21 singular-registry aliases — MUST stay
         // LAST (the sequential per-provider join order is the contract: the mirror walks the
         // earlier providers' on-disk output; see GT6DualDirectoryFaces)
+        // task p31-nether-lens-end-yield: the conditions injection — BOTH legs, BEFORE the
+        // brand mirror (which rebrands the row onto the sibling directory). The neo-leg
+        // native conditions ctor (GatherDataEvent/DatapackBuiltinEntriesProvider
+        // conditions map, ConditionalOps WithConditions wrap) was evaluated and DROPPED:
+        // its serialization is INSERTION-ordered while every saveStable re-serialization
+        // (the mirror, both legs) normalizes to the KEY_COMPARATOR order ("type" fixed
+        // first, then alphabetical) — the native face would make the two trees differ in
+        // member ORDER and fail the datagen_tree_check byte gate. The symmetric injection
+        // writes the leg's own brand key through ONE byte shape on both legs (the
+        // research verdict's "各腿文件内嵌自家品牌条件键沿既有 mirror pass 发射即可").
+        event.getGenerator().addProvider(true,
+            new GT6BiomeModifierConditions(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true,
             new GT6DualDirectoryFaces(event.getGenerator().getPackOutput()));
         // task p29-w5-t1-dig-six ①: the drop-conversion loot seam — one GLM JSON per

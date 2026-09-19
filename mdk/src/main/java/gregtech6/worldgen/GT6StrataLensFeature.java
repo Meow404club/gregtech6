@@ -67,7 +67,7 @@ public class GT6StrataLensFeature extends Feature<GTLensConfig.Table> {
                 if (!GT6LensGenerator.isLensOriginCell(tOriginX) || !GT6LensGenerator.isLensOriginCell(tOriginZ)) {
                     continue;
                 }
-                Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), tOriginX, tOriginZ);
+                Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), GT6VeinGenerator.OVERWORLD_DIMENSION_SALT, tOriginX, tOriginZ);
                 GTLensConfig tLens = GT6LensGenerator.drawLens(aContext.config(), tRandom);
                 if (tLens == null) continue;
                 rPlaced |= placeSlice(tLevel, tLens, tRandom, tOriginX << 4, tOriginZ << 4,

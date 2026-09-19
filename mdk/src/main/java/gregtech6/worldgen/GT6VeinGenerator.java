@@ -27,6 +27,16 @@ public final class GT6VeinGenerator {
     /** The upstream grid phase constant, verbatim (GT6WorldGenerator.java:97). */
     public static final int ORIGIN_PHASE = 402653184;
 
+    /**
+     * The legacy 1.7.10 numeric dimension ids the upstream seed XORs (WD.java:547):
+     * overworld 0 (the zero salt = the pre-salt stream verbatim), nether -1, end 1.
+     * Kept HERE (vanilla-free) so the offline tests can pin the streams without
+     * class-loading a Feature.
+     */
+    public static final long OVERWORLD_DIMENSION_SALT = 0;
+    public static final long NETHER_DIMENSION_SALT = -1;
+    public static final long END_DIMENSION_SALT = 1;
+
     private GT6VeinGenerator() {
     }
 
@@ -36,14 +46,34 @@ public final class GT6VeinGenerator {
     }
 
     /**
-     * WD.java:547-560 verbatim (the chunk coords already shifted): seed the stream with the
-     * world seed (the dimension-id XOR rides as 0 — this feature is overworld-only, the
-     * biome modifier hangs on {@code #minecraft:is_overworld}), discard the first 50 draws
-     * twice around the coord reseed. java.util.Random on both legs (the research
-     * determinism ruling).
+     * WD.java:547-560 verbatim (the chunk coords already shifted), with the upstream
+     * dimension salt exposed: {@code WD.random(World)} seeds with
+     * {@code world.getSeed() ^ world.provider.dimensionId} (WD.java:547 — "to prevent
+     * multiple Dimensions from being identical in Ore Generation", the comment verbatim),
+     * so the stream takes the dimension id as a salt — overworld 0, nether -1, end 1
+     * (the 1.7.10 numeric ids; the same numbers vanilla keeps as its dimension keys'
+     * legacy ids). The zero-salt call is the overworld stream BIT-IDENTICAL to the
+     * pre-salt form ({@code seed ^ 0 == seed}), so every existing overworld pin holds.
+     * Discard the first 50 draws twice around the coord reseed. java.util.Random on
+     * both legs (the research determinism ruling).
      */
-    public static Random veinRandom(long aWorldSeed, int aChunkX, int aChunkZ) {
-        Random tRandom = new Random(aWorldSeed);
+    /**
+     * The legacy numeric dimension id of a level, the {@code WD.random(World)} salt face:
+     * overworld 0, nether -1, end 1 (the vanilla dimension keys' legacy ids — any mod
+     * dimension salts 0, matching upstream's dim-type switch default arm). Runtime-only
+     * (needs the concrete Level): the offline tests pass the constants directly.
+     */
+    public static long dimensionSalt(net.minecraft.world.level.WorldGenLevel aLevel) {
+        net.minecraft.world.level.Level tConcrete = aLevel instanceof net.minecraft.world.level.Level tLevel
+                ? tLevel : ((net.minecraft.server.level.WorldGenRegion) aLevel).getLevel();
+        net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> tDim = tConcrete.dimension();
+        if (tDim == net.minecraft.world.level.Level.NETHER) return NETHER_DIMENSION_SALT;
+        if (tDim == net.minecraft.world.level.Level.END) return END_DIMENSION_SALT;
+        return OVERWORLD_DIMENSION_SALT;
+    }
+
+    public static Random veinRandom(long aWorldSeed, long aDimSalt, int aChunkX, int aChunkZ) {
+        Random tRandom = new Random(aWorldSeed ^ aDimSalt);
         for (int i = 0; i < 50; i++) tRandom.nextInt(0x00ffffff);
         // upstream precedence: nextLong() >> 2 + 1L binds as >> (2+1)
         tRandom = new Random(aWorldSeed ^ ((tRandom.nextLong() >> 3) * aChunkX + (tRandom.nextLong() >> 3) * aChunkZ));
@@ -53,15 +83,29 @@ public final class GT6VeinGenerator {
 
     /**
      * The weighted draw of exactly one vein (GT6WorldGenerator.java:90-103 verbatim):
-     * sum the weights of the drawable rows (overworld && >= 1 valid slot — the mInvalid
+     * sum the weights of the drawable rows (the dimension's own rows — the
+     * {@code aEndRows} face, see the overload — && >= 1 valid slot — the mInvalid
      * gate WorldgenObject.java:60 + WorldgenOresLarge.java:85), then the cumulative
      * nextInt(tMaxWeight) countdown. Consumes exactly one draw when any row is drawable.
      */
     public static GTVeinConfig drawVein(List<GTVeinConfig> aTable, Random aRandom) {
+        return drawVein(aTable, aRandom, false);
+    }
+
+    /**
+     * The dimension-filtered draw (task p31-nether-lens-end-yield): {@code aEndRows}
+     * selects the ORE_END rows (exactly platinum/molybdenum/cassiterite/naquadah/
+     * trinium, Loader_Worldgen.java:904-919) instead of the ORE_OVERWORLD rows — the
+     * draw sum rides the dimension's own rows, the upstream :93 semantics. NOTE the
+     * molybdenum row carries all four slots outside the modern registration axis, so
+     * the validity gate drops it from BOTH draws (the p30-t3 declared mapping, the
+     * axis-extension face — the End drawable set is 4 rows today).
+     */
+    public static GTVeinConfig drawVein(List<GTVeinConfig> aTable, Random aRandom, boolean aEndRows) {
         int tMaxWeight = 0;
         List<GTVeinConfig> tList = new ArrayList<>(aTable.size());
         for (GTVeinConfig tVein : aTable) {
-            if (!tVein.overworld()) continue;
+            if (aEndRows ? !tVein.end() : !tVein.overworld()) continue;
             if (!valid(tVein.oreTop()) && !valid(tVein.oreBottom()) && !valid(tVein.oreBetween())
                     && !valid(tVein.oreSpread())) continue;
             tMaxWeight += tVein.weight();

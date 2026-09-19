@@ -321,8 +321,19 @@ public class GT6DualDirectoryFacesTest {
 			// the neoforge brand itself ("neoforge:add_features".contains("forge:..."))
 			assertFalse(tNeoforgeText.contains("\"forge:add_features\""),
 					tForge.getFileName() + " the neoforge face carries no foreign brand");
-			assertEquals(tForgeText.replace("\"forge:add_features\"", "\"neoforge:add_features\""), tNeoforgeText,
-					tForge.getFileName() + " the brand mirror is the type-key delta alone");
+			// task p31-nether-lens-end-yield: a conditions-carrying row (large_veins_end)
+			// also rebrands the conditions root key + the condition type strings — the
+			// mirror rebrands every "forge:"-prefixed BRAND STRING to its "neoforge:"
+			// twin (GT6DualDirectoryFaces.rebrandConditions), so the comparison
+			// normalizes both directions before the equality
+			String tForgeNormalized = tForgeText
+					.replace("\"forge:add_features\"", "\"neoforge:add_features\"")
+					.replace("\"forge:conditions\"", "\"neoforge:conditions\"")
+					.replace("\"forge:not\"", "\"neoforge:not\"")
+					.replace("\"forge:mod_loaded\"", "\"neoforge:mod_loaded\"")
+					.replace("\"forge:item_exists\"", "\"neoforge:item_exists\"");
+			assertEquals(tForgeNormalized, tNeoforgeText,
+					tForge.getFileName() + " the brand mirror is the brand-strings delta alone");
 		}
 	}
 
