@@ -379,5 +379,102 @@ class TestUniformIntValueNormalizer(unittest.TestCase):
         self.assertIsNone(mod.try_value_normalize(rel, c2, n2))
 
 
+def _material_tool_json(leg: str) -> bytes:
+    """gt6:material_tool 双腿实测形（census 样本 recipes/axe/abyssalnite.json，
+    2026-09-19；双腿仅三处值形差：tag 命名空间 / result 键名 / 两尾键有无）。
+
+    forge(1.20.1 MaterialToolRow.serializeRecipeData，GT6CraftingRecipes.java:2177/:2179)：
+    result {"count":1,"item":X} + show_notification:true 恒写；
+    neoforge(1.21.1 GT6MaterialToolRecipe.Serializer.CODEC:252/:255)：STRICT_CODEC
+    {"count":1,"id":X} + optionalFieldOf 默认不落盘。
+    """
+    tag_ns = "forge:" if leg == "forge" else "c:"
+    result_key = "item" if leg == "forge" else "id"
+    o = {
+        "type": "gt6:material_tool",
+        "category": "equipment",
+        "key": {
+            "I": {"tag": f"{tag_ns}ingots/abyssalnite"},
+            "P": {"tag": f"{tag_ns}plates/abyssalnite"},
+            "f": {"tag": "gt6:tools/file"},
+            "h": {"tag": "gt6:tools/hard_hammer"},
+        },
+        "material": "abyssalnite",
+        "pattern": ["PIh", "P  ", "f  "],
+        "result": {"count": 1, result_key: "gt6:axe"},
+    }
+    if leg == "forge":
+        o["show_notification"] = True
+    return _gson(o)
+
+
+class TestMaterialToolDialectNormalizer(unittest.TestCase):
+    """p32-ops-treecheck-normalizer：recipes 带 gt6:material_tool 方言归一
+    （5685 文件 standing red 的清偿对象；census 残差全带单一形）。"""
+
+    def test_material_tool_full_dialect_normalizes(self):
+        rel = PurePosixPath("data/gt6/recipes/axe/abyssalnite.json")
+        out = mod.try_value_normalize(rel, _material_tool_json("forge"),
+                                      _material_tool_json("neoforge"))
+        self.assertIsNotNone(out)
+        normalized, applied = out
+        self.assertIn("material_tool", applied)
+        self.assertEqual(normalized, _material_tool_json("forge"))
+
+    def test_material_tool_keeps_count1_vanilla_still_drops(self):
+        # 注册序守卫：material_tool 在 _norm_recipe_result 之前消费 {"id":X}，
+        # count==1 保留（GT6 自家面恒写）；vanilla 形仍走 count==1 不落盘路径
+        rel = PurePosixPath("data/gt6/recipes/axe/abyssalnite.json")
+        n = _gson({"type": "gt6:material_tool", "result": {"count": 1, "id": "gt6:axe"}})
+        out = mod.try_value_normalize(rel, _gson({"type": "gt6:material_tool",
+                                                  "result": {"count": 1, "item": "gt6:axe"},
+                                                  "show_notification": True}), n)
+        self.assertIsNotNone(out)
+        self.assertEqual(out[0], _gson({"type": "gt6:material_tool",
+                                        "result": {"count": 1, "item": "gt6:axe"},
+                                        "show_notification": True}))
+        rel_v = PurePosixPath("data/gt6/recipes/grass.json")
+        out_v = mod.try_value_normalize(
+            rel_v,
+            _gson({"type": "minecraft:crafting_shapeless", "result": {"item": "x"}}),
+            _gson({"type": "minecraft:crafting_shapeless", "result": {"count": 1, "id": "x"}}))
+        self.assertIsNotNone(out_v)
+        self.assertEqual(out_v[0],
+                         _gson({"type": "minecraft:crafting_shapeless", "result": {"item": "x"}}))
+
+    def test_material_tool_drift_stays_fail_visible(self):
+        # 归一不是吞差：result item 真漂移 → 归一后字节仍不等（main 走原样 FAIL）
+        rel = PurePosixPath("data/gt6/recipes/axe/abyssalnite.json")
+        n = json.loads(_material_tool_json("neoforge"))
+        n["result"]["id"] = "gt6:pickaxe"
+        out = mod.try_value_normalize(rel, _material_tool_json("forge"), _gson(n))
+        self.assertIsNotNone(out)  # 变换施用了（form 命中）
+        self.assertNotEqual(out[0], _material_tool_json("forge"))  # 但差仍显形
+
+    def test_material_tool_end_to_end_green(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            canon, node = root / "canonical", root / "node"
+            for base in (canon, node):
+                band = base / "data/gt6/recipes/axe"
+                band.mkdir(parents=True)
+                (band / "abyssalnite.json").write_bytes(
+                    _material_tool_json("forge" if base is canon else "neoforge"))
+            argv = sys.argv
+            buf = io.StringIO()
+            try:
+                sys.argv = ["datagen_tree_check.py", "--canonical", str(canon),
+                            "--node-output", str(node)]
+                with contextlib.redirect_stdout(buf):
+                    rc = mod.main()
+            finally:
+                sys.argv = argv
+            out = buf.getvalue()
+            self.assertEqual(rc, 0, msg=out)
+            self.assertIn("NORMALIZED [", out)
+            self.assertIn("material_tool-dialect", out)
+            self.assertIn("RESULT: OK", out)
+
+
 if __name__ == "__main__":
     unittest.main()

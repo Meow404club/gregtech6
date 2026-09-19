@@ -239,6 +239,38 @@ def _norm_smelt_result_str(o: dict) -> bool:
     return True
 
 
+def _norm_material_tool(o: dict) -> bool:
+    """gt6:material_tool 方言（GT6 自定义 serializer 的双腿序列化形差）：
+    result 改键恒写 count（含 ==1，与 vanilla 的 count==1 不落盘相反）+ 尾键
+    show_notification:true 恒写。
+
+    出处：1.20.1 forge 面 GT6CraftingRecipes.MaterialToolRow.serializeRecipeData
+    （mdk/src/main/java/gregtech6/datagen/GT6CraftingRecipes.java:2177
+    `tResult.addProperty("count", 1)` + :2179 `aJson.addProperty("show_notification",
+    true)`，两键无条件写）；1.21.1 codec 面 GT6MaterialToolRecipe.Serializer.CODEC
+    （mdk/src/main/java/gregtech6/items/tools/GT6MaterialToolRecipe.java:252
+    `ItemStack.STRICT_CODEC.fieldOf("result")` → 1.21 单物品 {"count":N,"id":X}
+    恒写 count、:255 `optionalFieldOf("show_notification", true)` 默认值不落盘）。
+    census（2026-09-19，work/p32-ops-treecheck-normalizer，HEAD 2a4521b8d 双腿新鲜
+    树）：recipes 带 content 差 5961 文件 = 276 既有变换可归一 + 5685 全部本形
+    （样本：recipes/axe/abyssalnite.json，count:1 保留 + show_notification 补写
+    后逐字节相等；形差全带单一，零键序/零空容器残差）。必须注册在
+    _norm_recipe_result 之前：本变换消费 result 的 {"id":X} 形并保留 count==1，
+    后者会把同形改写成 {"item":X} 且丢掉 count==1。
+    """
+    if o.get("type") != "gt6:material_tool":
+        return False
+    r = o.get("result")
+    if not isinstance(r, dict) or "id" not in r:
+        return False
+    nr: dict = {"count": r.get("count", 1), "item": r["id"]}
+    r.clear()
+    r.update(nr)
+    if "show_notification" not in o:
+        o["show_notification"] = True
+    return True
+
+
 def _norm_recipe_result(o: dict) -> bool:
     """配方 result 形：1.21 {"count":N,"id":X} → 1.20.1 {"count":N,"item":X}，
     且 count==1 时 1.20.1 侧不写（1.21 侧恒写）。
@@ -382,12 +414,6 @@ def _norm_uniform_int_value(o: dict) -> bool:
     return True
 
 
-def _band(rel: PurePosixPath, dir_name: str) -> bool:
-    """产物带判定：data/<ns>/<dir_name>/ 前缀（canonical 形相对路径）。"""
-    return (len(rel.parts) >= 4 and rel.parts[0] == "data"
-            and rel.parts[2] == dir_name)
-
-
 def _band_worldgen_placed(rel: PurePosixPath) -> bool:
     """placed_feature 带判定（坐深一层）：data/<ns>/worldgen/placed_feature/。"""
     return (len(rel.parts) >= 5 and rel.parts[0] == "data"
@@ -409,6 +435,7 @@ VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]
     ]),
     ("data/*/recipes", "recipes", [
         ("smelt-result-obj→str", _norm_smelt_result_str),
+        ("material_tool-dialect(1.20.1 count+notification)", _norm_material_tool),
         ("result-id→item(+drop count==1)", _norm_recipe_result),
         ("tag-c:→forge:", _norm_tag_c_to_forge),
         ("show_notification(1.20.1-shaped)", _norm_show_notification),
