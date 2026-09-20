@@ -1223,7 +1223,8 @@ public final class GT6LootTables extends LootTableProvider {
      * default self-drop with the paint carry, the smelter shape) + the 15 EU-bridge
      * converter rungs (plain self-drop — the dynamo/transformer shape, the converters
      * carry no paint face) + the 10 laser-domain converter rungs of task
-     * p32-qu-laser-domain (the same plain self-drop posture over the same reused carrier).
+     * p32-qu-laser-domain (the same plain self-drop posture over the same reused carrier)
+     * + the Magic Field Absorber of task p32-magic-absorber (the same plain self-drop).
      */
     public static List<Block> euBridgeLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
@@ -1233,7 +1234,8 @@ public final class GT6LootTables extends LootTableProvider {
                 gregtech6.registry.GTMachines.ELECTRIC_ENGINE_BLOCKS_BY_PATH,
                 gregtech6.registry.GTMachines.ELECTRIC_MOTOR_BLOCKS_BY_PATH,
                 gregtech6.registry.GT6Lasers.CO2_LASER_BLOCKS_BY_PATH,
-                gregtech6.registry.GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH)) {
+                gregtech6.registry.GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH,
+                gregtech6.registry.GT6MagicAbsorbers.MAGIC_ABSORBER_BLOCKS_BY_PATH)) {
             for (RegistryObject<Block> tHandle : tFamily.values()) rBlocks.add(tHandle.get());
         }
         return rBlocks;

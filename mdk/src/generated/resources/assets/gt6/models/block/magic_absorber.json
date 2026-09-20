@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube_directional",
+  "textures": {
+    "down": "gt6:block/magic_absorber_base",
+    "east": "gt6:block/magic_absorber_base",
+    "north": "gt6:block/magic_absorber_base",
+    "particle": "gt6:block/magic_absorber_base",
+    "south": "gt6:block/magic_absorber_base",
+    "up": "gt6:block/magic_absorber_base",
+    "west": "gt6:block/magic_absorber_base"
+  }
+}

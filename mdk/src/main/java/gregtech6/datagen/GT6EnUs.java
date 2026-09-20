@@ -110,6 +110,7 @@ public class GT6EnUs extends LanguageProvider {
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addEuBridgeFamilies(); // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting template
         addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families + the gas emitters
+        addMagicAbsorber(); // task p32-magic-absorber — the Magic Field Absorber name
         addDynamoFamily(); // task p28-c-ulv-dynamo-row — the W1 family's deferred name face + the T0 row
         addBatteryFamily(); // task p29-w4-battery-storage — the 37+5+7+12 storage face
         addKinetics(); // task p12-engine-crank
@@ -1760,5 +1761,13 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.comp_laser_gas_empty.tooltip", "For Electric Lasers");
         add("item.gt6.comp_laser_gas_co2", "Carbon Dioxide Laser Emitter");
         add("item.gt6.comp_laser_gas_co2.tooltip", "Purpose: Strong Material Processing");
+    }
+
+    /**
+     * Task p32-magic-absorber — the Magic Field Absorber name face: the :1005 display
+     * column "Magic Field Absorber" verbatim.
+     */
+    private void addMagicAbsorber() {
+        add("block.gt6.magic_absorber", "Magic Field Absorber");
     }
 }

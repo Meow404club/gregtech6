@@ -23,6 +23,7 @@ import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.registry.GT6BeeHives;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GT6Lasers;
+import gregtech6.registry.GT6MagicAbsorbers; // p32 tail-append
 import gregtech6.block.foam.GT6CFoamOwnedBlock;
 import gregtech6.block.energy.GT6ElectricTransformerBlock;
 import gregtech6.block.energy.GTAxleBlock;
@@ -148,6 +149,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addRoastingFamilies(); // task p29-w4-eu-bridge — the Roasting Oven ladder (the "roaster" family textures)
         addElectricBridges(); // task p29-w4-eu-bridge — the three EU-bridge converter families (the borrowed upstream colored front/side pairs)
         addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families (the borrowed upstream colored front/side pairs)
+        addMagicAbsorber(); // task p32-magic-absorber — the Magic Field Absorber single (the six-way facing cube)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
         // task p21-paintable-tint-render: the datagen-JVM census half — 209 machine blocks x
@@ -1048,6 +1050,39 @@ public final class GT6BlockStates extends BlockStateProvider {
         for (String tPath : aBlocks.keySet()) {
             if (!tPath.equals(aFamily)) itemModels().withExistingParent(tPath, modLoc("item/" + aFamily));
         }
+    }
+
+    /**
+     * Task p32-magic-absorber — the Magic Field Absorber single (Loader :1005, id 10180):
+     * the cube_directional model over the borrowed upstream colored base (assets/README.md
+     * — the four upstream colored faces are one byte-identical grayscale file) with the
+     * SIX-WAY facing rotation map (the vanilla dispenser form: north = identity,
+     * down x=90, up x=270, the horizontal y band) — the FACING face is the output face,
+     * the trophy seat is the TOP. The overlay/overlay_active activity visual is the W2
+     * render pool (the static-face posture).
+     */
+    private void addMagicAbsorber() {
+        BlockModelBuilder tModel = models().getBuilder("magic_absorber")
+                .parent(models().getExistingFile(mcLoc("block/cube_directional")))
+                .texture("particle", modLoc("block/magic_absorber_base"))
+                .texture("down", modLoc("block/magic_absorber_base"))
+                .texture("up", modLoc("block/magic_absorber_base"))
+                .texture("north", modLoc("block/magic_absorber_base"))
+                .texture("south", modLoc("block/magic_absorber_base"))
+                .texture("west", modLoc("block/magic_absorber_base"))
+                .texture("east", modLoc("block/magic_absorber_base"));
+        getVariantBuilder(GT6MagicAbsorbers.MAGIC_ABSORBER_BLOCKS_BY_PATH.get("magic_absorber").get()).forAllStates(aState -> {
+            Direction tFacing = aState.getValue(gregtech6.block.energy.GT6MagicAbsorberBlock.FACING);
+            int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
+            int tY = switch (tFacing) {
+                case SOUTH -> 180;
+                case WEST -> 270;
+                case EAST -> 90;
+                default -> 0; // NORTH and the two verticals carry the x rotation only
+            };
+            return ConfiguredModel.builder().modelFile(tModel).rotationX(tX).rotationY(tY).build();
+        });
+        itemModels().withExistingParent("magic_absorber", modLoc("block/magic_absorber"));
     }
 
     private void addMachine(Block aBlock, String aBase) {

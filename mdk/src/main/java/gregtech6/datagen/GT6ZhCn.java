@@ -1327,6 +1327,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.battery_box_large_hv");
 		addDirect("block.gt6.battery_box_large_ev");
 		addDirect("block.gt6.battery_box_large_iv");
+		// task p32-magic-absorber — the Magic Field Absorber (the dump :10891 face verbatim, tail-append)
+		addDirect("block.gt6.magic_absorber");
     }
 
 	static Map<String, Map<String, RefRow>> loadReference() {
