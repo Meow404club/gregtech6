@@ -186,53 +186,18 @@ def _screen_state(png):
     return "other"
 
 
-def _find_gray_button_row(png, y_from, y_to):
-    """The vanilla button gray band: a row in [y_from, y_to) where the horizontal
-    strip x 220..420 is mostly uniform gray — the Singleplayer/Play buttons."""
-    from PIL import Image
-    img = Image.open(png).convert("RGB")
-    px = img.load()
-    for y in range(y_from, y_to):
-        gray = sum(1 for x in range(220, 420)
-                   if abs(px[x, y][0] - px[x, y][1]) < 14
-                   and abs(px[x, y][1] - px[x, y][2]) < 14
-                   and 80 < px[x, y][0] < 200)
-        if gray > 150:
-            return y
-    return None
-
-
-def _find_list_row_y(png):
-    """The world-list first row: the entry NAME is white text right of the thumbnail.
-    The thumbnail itself is unreliable (a gray village icon carries no colour), so the
-    detector hunts the white name text at x 225..270; return the row centre y or None."""
-    from PIL import Image
-    img = Image.open(png).convert("RGB")
-    px = img.load()
-    for y in range(40, 150):
-        white = sum(1 for x in range(225, 270)
-                    if px[x, y][0] > 190 and px[x, y][1] > 190 and px[x, y][2] > 190)
-        if white > 8:
-            return y + 8          # the name line is the row's upper half
-    return None
-
-
-def cmd_client(leg: str, wait_seconds: float = 30.0, join_only: bool = False) -> int:
-    """One dev-client leg: launch, click into the copied world, turn to the row,
-    screenshot, terminate.
+def cmd_client(leg: str, wait_seconds: float = 45.0, join_only: bool = False) -> int:
+    """One dev-client leg: quickPlay into the copied world, screenshot, terminate.
 
     baseline  = vanilla renderer (no Embeddium on the run classpath)
     embeddium = -Pgt6.embeddium=true (the property-gated modRuntimeOnly slot)
 
-    1.20.1 has NO --quickPlaySingleplayer (Quick Play shipped 1.20.2+; the flag is
-    silently ignored — jstack-verified title-screen idling). The join is a verified
-    click recipe at the 640x360 window with guiScale 2 (logical 320x180): title
-    Singleplayer at (160,103), the world list row 1 at (150,33) — the copied folder
-    shows the level.dat name "world" — and Play Selected World at (120,159). The
-    fresh spawn faces yaw 0 (south) with +-10 blocks of position spread, so the
-    in-game half turns the camera ~180 deg north to face the machine row (the
-    measured llvmpipe rate is ~0.43 deg/px; the exact landing is verified through
-    the screen-state poll, not assumed).
+    1.20.1 DOES ship --quickPlaySingleplayer (Main.java:66 in the vanilla tree — the
+    earlier "1.20.2+" claim was wrong; the original stall was the accessibility
+    onboarding dialog, since fixed by seeding options.txt into the REAL gameDir).
+    The fresh spawn faces yaw 0 (south) and the machine row sits due south of the
+    pinned world spawn, so no camera turn is needed; the pointer-capture jump at
+    world-join injects a downward pitch that the small correction removes.
     """
     xvfb = os.environ.get("GT6_XVFB_DISPLAY", ":97")   # the resident Xvfb, never :0
     shot_dir = NODE_RUN / "screenshots"
@@ -246,7 +211,7 @@ def cmd_client(leg: str, wait_seconds: float = 30.0, join_only: bool = False) ->
     # reaches it; the DISPLAY override must ride the property gate (JavaExec environment)
     gradle_flags.append(f"-Pgt6.display={xvfb}")
 
-    args = "--width 640 --height 360"
+    args = f"--quickPlaySingleplayer {WORLD_NAME} --width 640 --height 360"
     cmd = ["./gradlew", ":mdk:1.20.1-forge:runClient",
            f"-Pgt6.quickplay={args}"] + gradle_flags
     print(f"[p32-client:{leg}] $ {' '.join(cmd)}")
@@ -256,130 +221,38 @@ def cmd_client(leg: str, wait_seconds: float = 30.0, join_only: bool = False) ->
                             stdout=open(NODE_RUN / f"client_{leg}.log", "w"),
                             stderr=subprocess.STDOUT)
     xenv = dict(os.environ, DISPLAY=xvfb)
-    dbg = MDK_RUN / f"dbg_{leg}"
-    dbg.mkdir(parents=True, exist_ok=True)
     try:
         log_path = NODE_RUN / f"client_{leg}.log"
-        # 1. wait for the game window (the loader's final atlas line precedes the title)
+        markers = ("Starting integrated minecraft server version", "Preparing spawn area")
+        joined = False
         deadline = time.time() + 900.0
         while time.time() < deadline:
             time.sleep(5.0)
             if proc.poll() is not None:
                 raise SystemExit(f"client died early (exit {proc.returncode}); see {log_path}")
             try:
-                if "modularui:textures/atlas/gui.png-atlas" in log_path.read_text(errors="ignore"):
-                    break
+                text = log_path.read_text(errors="ignore")
             except OSError:
                 continue
-        else:
-            raise SystemExit("loader never reached the atlas stage")
-        time.sleep(75.0)   # llvmpipe first-frame headroom
-
-        # pin the game window to (0,0): Xvfb has no WM and the X placement drifts
-        # between boots, which would poison every downstream coordinate
-        for wid in subprocess.run(["xdotool", "search", "--name", "Minecraft"],
-                                  capture_output=True, text=True, env=xenv).stdout.split():
-            geo = subprocess.run(["xdotool", "getwindowgeometry", "--shell", wid],
-                                 capture_output=True, text=True, env=xenv).stdout
-            wpos = dict(line.split("=") for line in geo.splitlines() if "=" in line)
-            if wpos.get("WIDTH") == "640" and wpos.get("HEIGHT") == "360":
-                subprocess.run(["xdotool", "windowmove", wid, "0", "0"], env=xenv, check=False)
+            if any(m in text for m in markers):
+                joined = True
                 break
-        time.sleep(2.0)
-
-        def win_pos():
-            # pick the GAME window by size — the Forge early-display window shares the
-            # "Minecraft" name while it lives and poisons a name-only lookup
-            ids = subprocess.run(["xdotool", "search", "--name", "Minecraft"],
-                                 capture_output=True, text=True, env=xenv).stdout.split()
-            for wid in ids:
-                geo = subprocess.run(["xdotool", "getwindowgeometry", "--shell", wid],
-                                     capture_output=True, text=True, env=xenv).stdout
-                wpos = dict(line.split("=") for line in geo.splitlines() if "=" in line)
-                if wpos.get("WIDTH") == "640" and wpos.get("HEIGHT") == "360":
-                    return int(wpos.get("X", 0)), int(wpos.get("Y", 0))
-            return 0, 0
-
-        def click(lx, ly):   # logical -> physical window-relative (live geometry)
-            wx, wy = win_pos()
-            subprocess.run(["xdotool", "mousemove", "--sync",
-                            str(wx + lx * 2), str(wy + ly * 2)], env=xenv, check=False)
-            time.sleep(0.8)
-            subprocess.run(["xdotool", "click", "1"], env=xenv, check=False)
-            time.sleep(1.5)
-
-        # 2. reach the Select World screen (clicks verified on :97; each attempt is
-        # state-checked through the framebuffer, the llvmpipe UI renders into X)
-        joined = False
-        for attempt in range(4):
-            _grab(xvfb, *win_pos(), dbg / f"title_try{attempt}.png")
-            btn = _find_gray_button_row(dbg / f"title_try{attempt}.png", 100, 300)
-            if btn is None:
-                time.sleep(8.0)
-                continue
-            subprocess.run(["xdotool", "mousemove", "--sync", "320", str(btn)],
-                           env=xenv, check=False)
-            time.sleep(0.8)
-            subprocess.run(["xdotool", "click", "1"], env=xenv, check=False)
-            time.sleep(6.0)
-            _grab(xvfb, *win_pos(), dbg / f"select_try{attempt}.png")
-            if _screen_state(dbg / f"select_try{attempt}.png") == "select":
-                break
-        else:
-            raise SystemExit("never reached the Select World screen; see debug grabs")
-
-        # 3. select row 1, Play, and wait for the integrated server in the log
-        for attempt in range(4):
-            _grab(xvfb, *win_pos(), dbg / f"sel_try{attempt}.png")
-            row_y = _find_list_row_y(dbg / f"sel_try{attempt}.png")
-            if row_y is not None:
-                subprocess.run(["xdotool", "mousemove", "--sync", "300", str(row_y)],
-                               env=xenv, check=False)
-                time.sleep(0.8)
-                subprocess.run(["xdotool", "click", "1"], env=xenv, check=False)
-                time.sleep(1.5)
-            btn = _find_gray_button_row(dbg / f"sel_try{attempt}.png", 280, 360)
-            if btn is not None:
-                subprocess.run(["xdotool", "mousemove", "--sync", "240", str(btn)],
-                               env=xenv, check=False)
-                time.sleep(0.8)
-                subprocess.run(["xdotool", "click", "1"], env=xenv, check=False)
-            mark = time.time()
-            while time.time() - mark < 90.0:
-                time.sleep(3.0)
-                if proc.poll() is not None:
-                    raise SystemExit(f"client died early; see {log_path}")
-                try:
-                    text = log_path.read_text(errors="ignore")
-                except OSError:
-                    continue
-                if "Starting integrated minecraft server version" in text:
-                    joined = True
-                    break
-            if joined:
-                break
-            _grab(xvfb, *win_pos(), dbg / f"play_try{attempt}.png")
         if not joined:
-            raise SystemExit("the integrated server never started; see debug grabs")
+            raise SystemExit("world join marker never appeared; see the client log")
         print(f"[p32-client:{leg}] world joining...")
-        time.sleep(45.0)                          # spawn + the llvmpipe chunk build
+        time.sleep(60.0)                          # spawn + the llvmpipe chunk build
         if join_only:
             print(f"[p32-client:{leg}] joined; leaving the game alive for manual aim")
             return 0
 
-        # 4. the turn: spawn faces south, the row is north. Two calibrated relative
-        # moves (yaw ~-320px to 180, then the pitch back up); then verify the sky is
-        # gone from the frame centre? No — verify via F3-free pixels: just take the shot.
-        subprocess.run(["xdotool", "mousemove_relative", "--", "-420", "0"],
-                       env=xenv, check=False)   # ~180 deg at the measured 0.43 deg/px
-        time.sleep(1.5)
-        # the pointer-capture jump at join injects ~40 deg of downward pitch; lift back
-        # to a slight downward aim (mouse up = negative dy = pitch decreases)
+        # the pointer-capture jump at world join injects ~40 deg of downward pitch; lift
+        # back to a slight downward aim (mouse up = negative dy = pitch decreases)
         subprocess.run(["xdotool", "mousemove_relative", "--", "0", "-58"],
                        env=xenv, check=False)
         time.sleep(6.0)
 
-        # 5. F2 and wait for the file (GLFW filters XSendEvent -> plain XTEST key)
+        # F2 = the vanilla screenshot key, delivered through XTEST to the focused window
+        # (GLFW filters XSendEvent, so `key --window` is a no-op — plain XTEST only)
         subprocess.run(["xdotool", "key", "--clearmodifiers", "F2"], env=xenv, check=False)
         for _ in range(10):
             time.sleep(2.0)
@@ -387,7 +260,7 @@ def cmd_client(leg: str, wait_seconds: float = 30.0, join_only: bool = False) ->
             if new:
                 break
         else:
-            _grab(xvfb, wx, wy, MDK_RUN / f"shot_{leg}.png")
+            _grab(xvfb, 0, 60, MDK_RUN / f"shot_{leg}.png")
             print(f"[p32-client:{leg}] F2 produced nothing; x11grab fallback used")
             return 0
         src = shot_dir / new[-1]
@@ -397,7 +270,7 @@ def cmd_client(leg: str, wait_seconds: float = 30.0, join_only: bool = False) ->
         return 0
     finally:
         if join_only:
-            return 0   # the caller aims and shoots manually; the game must stay alive
+            return
         proc.terminate()
         try:
             proc.wait(timeout=30)

@@ -88,24 +88,38 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 	@Override
 	protected List<BakedQuad> getDynamicQuads(@Nullable BlockState aState, @Nullable Direction aSide,
 			RandomSource aRand, ModelData aModelData, @Nullable RenderType aRenderType) {
-		int tTint = 0xFF00FFFF; // p32 DIAGNOSTIC: pure cyan vertex bake
-		List<BakedQuad> tQuads = getFallbackModel().getQuads(aState, aSide, aRand);
-		if (tTint == -1) {
-			// The material-less white identity: the no-tint sentinel IS full-alpha white,
-			// so the fallback quads pass through byte-identical (the P23 barrel contract).
-			return tQuads;
+		// the tint source IS the ModelData the chunk build hands in: PAINT while painted
+		// (the 03 base getModelData), the row material while unpainted, -1 for the
+		// material-less registrations — and every paint change re-enters here through the
+		// block-update rebuild (the GTRenderUpdates pair), so the retint follows live
+		return tintQuads(getFallbackModel().getQuads(aState, aSide, aRand),
+				GTMachinePaintTint.tintARGB(aModelData, GTBasicMachineBlock.materialOf(mBlock), 0),
+				mTintedQuads);
+	}
+
+	/**
+	 * The pure retint the tests drive (and {@link #getDynamicQuads} consumes): the tinted
+	 * body quads ({@code tintIndex == 0}) swap for the cached retinted copies, the P22
+	 * decal overlays ({@code tintIndex != 0}) pass through as the shared instances, and
+	 * the {@code -1} tint identity returns the input list unchanged (the P23 barrel
+	 * contract). {@code aCache} is the per-wrapper retinted-copy table.
+	 */
+	static List<BakedQuad> tintQuads(List<BakedQuad> aQuads, int aTint,
+			Map<Integer, Map<BakedQuad, BakedQuad>> aCache) {
+		if (aTint == -1) {
+			return aQuads;
 		}
-		if (mTintedQuads.size() > CACHE_CAP) {
-			mTintedQuads.clear(); // ponytail: adversarial unlimited spray colours reset the cache; an LRU if it ever matters
+		if (aCache.size() > CACHE_CAP) {
+			aCache.clear(); // ponytail: adversarial unlimited spray colours reset the cache; an LRU if it ever matters
 		}
-		Map<BakedQuad, BakedQuad> tBySource = mTintedQuads.computeIfAbsent(tTint, tT -> new ConcurrentHashMap<>());
-		List<BakedQuad> rOut = new ArrayList<>(tQuads.size());
-		for (BakedQuad tQuad : tQuads) {
+		Map<BakedQuad, BakedQuad> tBySource = aCache.computeIfAbsent(aTint, tT -> new ConcurrentHashMap<>());
+		List<BakedQuad> rOut = new ArrayList<>(aQuads.size());
+		for (BakedQuad tQuad : aQuads) {
 			if (tQuad.getTintIndex() != 0) {
 				rOut.add(tQuad); // the P22 overlay decals: untinted by design, shared instance
 				continue;
 			}
-			rOut.add(tBySource.computeIfAbsent(tQuad, tQuad1 -> retint(tQuad1, tTint)));
+			rOut.add(tBySource.computeIfAbsent(tQuad, tQuad1 -> retint(tQuad1, aTint)));
 		}
 		return rOut;
 	}
