@@ -1,10 +1,52 @@
 {
   "recipes": [
     {
-      "comment": "task p32-usb-data official row — Loader_Recipes_Other.java:929 verbatim: RM.Replicator.addRecipe1(T, 16, 144, ST.tag(0), FL.Ender.make(L), NF, gem.mat(MT.EnderPearl, 1)) — 144 mB (one unit, L) of molten enderpearls replicate one ender pearl, eut 16 / duration 144. The output rides the vanilla ender_pearl (the GT6 gem-form EnderPearl item is not item-registered in the port). DECLARED CUTS (this card): the :912/:934-939 _TE rows stay unmounted (the FL.Ender_TE/FL.Redstone_TE compat fluids do not exist in the port — the GTFluids Ender_TE conditional-mount ruling), the Twilight Forest trophy rows (Compat_Recipes_TwilightForest.java:130-132) are the compat cut per the card spec, and the :941-946 molten-redstone rows are DEFERRED pending a gt6:redstone_molten carrier registration (the GTFluids table is outside this card's file scope). The runtime USB-data face (RecipeMapReplicator.findRecipe, the scanner-written gt.replicator.data short) is the W2 machine card's consumer over the GT6UsbSticks carrier.",
+      "comment": "task p32-usb-data official row — Loader_Recipes_Other.java:929 verbatim: RM.Replicator.addRecipe1(T, 16, 144, ST.tag(0), FL.Ender.make(L), NF, gem.mat(MT.EnderPearl, 1)) — 144 mB (one unit, L) of molten enderpearls replicate one ender pearl, eut 16 / duration 144. The output rides the vanilla ender_pearl (the GT6 gem-form EnderPearl item is not item-registered in the port). DECLARED CUTS: the :912/:934-939 _TE rows stay unmounted (the FL.Ender_TE/FL.Redstone_TE compat fluids do not exist in the port — the GTFluids Ender_TE conditional-mount ruling), the Twilight Forest trophy rows (Compat_Recipes_TwilightForest.java:130-132) are the compat cut per the card spec. The ST.tag selectors ride as nothing in the port row schema (the :929 ruling — the rows differ by fluid amount alone). The runtime USB-data face (the GT6RecipeMapReplicator findRecipe over the scanner-written gt.replicator.data short) is the p32-qu-scanner-replicator synthesis.",
       "fluidInputs": [{"fluid": "gt6:enderpearl_molten", "amount": 144}],
       "outputs": [{"item": "minecraft:ender_pearl", "count": 1}],
       "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "task p32-qu-scanner-replicator — the molten-redstone six, Loader_Recipes_Other.java:941-946 verbatim (NO compat gate): addRecipe1(T, 16, 72/4|72/2|72|72*2|72*4|72*8, ST.tag(0..5), FL.Redstone.make(L/4|L/2|L|L*2|L*4|L*8), NF, gemChipped|gemFlawed|gem|gemFlawless|gemExquisite|gemLegendary.mat(MT.Redstone, 1)). L = 144 (CS.java:129) — 36/72/144/288/576/1152 mB of molten redstone replicate the five gem tiers, eut 16 throughout. The carrier fluid gt6:redstone_molten landed in the same card (the GTFluids :194 row).",
+      "fluidInputs": [{"fluid": "gt6:redstone_molten", "amount": 36}],
+      "outputs": [{"item": "gt6:gem_chipped_redstone", "count": 1}],
+      "duration": 18,
+      "eut": 16
+    },
+    {
+      "comment": ":942 — FL.Redstone.make(L/2) → gemFlawed, duration 72/2",
+      "fluidInputs": [{"fluid": "gt6:redstone_molten", "amount": 72}],
+      "outputs": [{"item": "gt6:gem_flawed_redstone", "count": 1}],
+      "duration": 36,
+      "eut": 16
+    },
+    {
+      "comment": ":943 — FL.Redstone.make(L) → gem, duration 72",
+      "fluidInputs": [{"fluid": "gt6:redstone_molten", "amount": 144}],
+      "outputs": [{"item": "gt6:gem_redstone", "count": 1}],
+      "duration": 72,
+      "eut": 16
+    },
+    {
+      "comment": ":944 — FL.Redstone.make(L*2) → gemFlawless, duration 72*2",
+      "fluidInputs": [{"fluid": "gt6:redstone_molten", "amount": 288}],
+      "outputs": [{"item": "gt6:gem_flawless_redstone", "count": 1}],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": ":945 — FL.Redstone.make(L*4) → gemExquisite, duration 72*4",
+      "fluidInputs": [{"fluid": "gt6:redstone_molten", "amount": 576}],
+      "outputs": [{"item": "gt6:gem_exquisite_redstone", "count": 1}],
+      "duration": 288,
+      "eut": 16
+    },
+    {
+      "comment": ":946 — FL.Redstone.make(L*8) → gemLegendary, duration 72*8",
+      "fluidInputs": [{"fluid": "gt6:redstone_molten", "amount": 1152}],
+      "outputs": [{"item": "gt6:gem_legendary_redstone", "count": 1}],
+      "duration": 576,
       "eut": 16
     }
   ]
