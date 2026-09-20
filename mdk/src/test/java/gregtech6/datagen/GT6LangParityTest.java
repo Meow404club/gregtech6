@@ -963,7 +963,7 @@ private static final int ZH_KEY_FLOOR = 3295; // 2839 +3 (task p29-w2-eu-special
 			// task p32-qu-energizer — the five energizer rungs join the gate (the atomic
 			// quantum_energizer keys; the rebase reconciliation over the merged W2 state:
 			// census 174 -> 179, floor 3290 -> 3295)
-			GT6FoamBlocks.class, GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6QuantumEnergizers.class, GT6Molds.class,
+			GT6QuantumEnergizers.class,
 			GT6SurfaceBlocks.class, // task p30-w6-rocks-sticks — the surface deco blocks (all four composed-name, EXEMPT below)
 			// task p29-w3-turbine-dynamo — the turbine + dynamo controller carriers (ATOMIC
 			// vanilla-key names, so they ride the CHECKED leg, no exemptions)
