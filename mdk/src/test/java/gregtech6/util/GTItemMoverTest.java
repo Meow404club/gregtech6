@@ -372,4 +372,52 @@ public class GTItemMoverTest extends GTOfflineTestBase {
 		assertEquals(10, GTItemMover.move(tFrom, tTo, tFilter, false));
 		assertEquals(0, tFrom.getStackInSlot(0).getCount());
 	}
+
+	// ---------------------------------------------------------------------------
+	// the quantity-parameter fold (task p32-ops-census-mover): the upstream quadruple
+	// (aMaxSize, aMinSize, aMaxMove, aMinMove — ST.java:457/:483/:513/:537/:561 seat
+	// order) folds to the ported triple (aMaxMove, aMinMove, aMaxSlotSize) — NOT the
+	// upstream seat order, aMinSize trimmed. Class javadoc "The quantity-parameter
+	// fold"; these pins turn the declaration into behavior so no future seat drift
+	// (the p32-logistics-lv3 review-seam bug shape) can land silently.
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void foldSeatOrderIsMoveCapMinMoveThenSlotCap() {
+		// Three mutually-distinct caps so any seat permutation flips the verdict.
+		// Ported reading of (8, 4, 64): movable = min(aMaxMove 8, room 64 - 2) = 8.
+		// The upstream-order misreading of the same positional triple (aMaxSize 8,
+		// aMinSize 4, aMaxMove 64) would return min(64, room 8 - 2) = 6 instead.
+		ItemStackHandler tFrom = handler(1, stone(12));
+		ItemStackHandler tTo = handler(2, stone(2));
+
+		assertEquals(8, GTItemMover.move(tFrom, tTo, 8, 4, 64));
+		assertEquals(4, tFrom.getStackInSlot(0).getCount());
+		assertEquals(10, tTo.getStackInSlot(0).getCount());
+
+		// Seat 2 gates the SOURCE COUNT (the aMinMove role, ST.java:467) — a 12-count
+		// source under a 16 aMinMove moves nothing. The review-seam arm: an import max
+		// mis-seated into this seat silences every partial source slot (upstream
+		// aMinSize never gates the source count, so this verdict also pins that the
+		// second seat is the move floor, not the size floor).
+		ItemStackHandler tPartial = handler(1, stone(12));
+		ItemStackHandler tRoomy = handler(2);
+		assertEquals(0, GTItemMover.move(tPartial, tRoomy, 64, 16, 64));
+		assertEquals(12, tPartial.getStackInSlot(0).getCount());
+		assertTrue(tRoomy.getStackInSlot(0).isEmpty());
+	}
+
+	@Test
+	public void foldTrimsTheMinSizeClause() {
+		// ST.java:471 second clause (tMovable + existing < aMinSize) has NO seat: the
+		// port has no resulting-target-size floor. A one-room transfer that upstream
+		// aMinSize = 1 also accepts still moves — nothing above aMinMove is refused,
+		// and no overload exists to refuse it.
+		ItemStackHandler tFrom = handler(1, stone(5));
+		ItemStackHandler tTo = handler(1, stone(63));
+
+		assertEquals(1, GTItemMover.move(tFrom, tTo, 64, 1, 64));
+		assertEquals(4, tFrom.getStackInSlot(0).getCount());
+		assertEquals(64, tTo.getStackInSlot(0).getCount());
+	}
 }
