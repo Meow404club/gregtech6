@@ -568,7 +568,14 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 	 * Upstream :557-609 — the four branches collapse to: both filters set must be the same
 	 * item (:561), the effective single filter is the import's else the export's else none.
 	 * The per-operation throughput is {@code Conversion} stacks (:561/:572/:585/:596), the
-	 * repeat-until-saturated arm (:567) only fires for unconfigured endpoints.
+	 * repeat-until-saturated arm (:567) only fires for unconfigured endpoints. The ST.move
+	 * trailing quadruple maps (aMaxSize, aMinSize, aMaxMove, aMinMove) = (export||64,
+	 * export||1, import||64, import||1); the GTItemMover seat takes (aMaxMove, aMinMove,
+	 * aMaxSlotSize) = (import, minImport, export) — the aMinSize=export||1 clause is the
+	 * mover's declared dead-at-1 trim. REVIEW SEAM: the first port draft passed
+	 * (maxExport, maxExport, maxImport) — the 64 aMinMove skipped every sub-stack source
+	 * slot (the mover's {@code count < aMinMove} gate) and the export/import max roles
+	 * were swapped; the defragMovesPartialItemStacks arm pins the faithful form.
 	 */
 	public boolean moveStacks(LogisticsData aImport, LogisticsData aExport) {
 		ItemStack tFilter;
@@ -580,11 +587,12 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 		}
 		IItemHandler tFrom = itemHandlerOf(aImport.mTarget), tTo = itemHandlerOf(aExport.mTarget);
 		if (tFrom == null || tTo == null) return false;
-		int tMaxExport = aExport.mStackSize == 0 ? 64 : aExport.mStackSize; // :562 max/min-move pair
-		int tMaxImport = aImport.mStackSize == 0 ? 64 : aImport.mStackSize; // :562 max-slot-size pair
+		int tMaxExport = aExport.mStackSize == 0 ? 64 : aExport.mStackSize; // :562 the aMaxSize pair — the per-slot cap rides the EXPORT endpoint
+		int tMaxImport = aImport.mStackSize == 0 ? 64 : aImport.mStackSize; // :562 the aMaxMove pair — the per-op total rides the IMPORT endpoint
+		int tMinImport = aImport.mStackSize == 0 ? 1 : aImport.mStackSize;  // :562 the aMinMove pair
 		boolean tReturn = false;
 		for (int j = 0; j < mCPU_Conversion; j++) {
-			int tMoved = GTItemMover.move(tFrom, tTo, tMaxExport, tMaxExport, tMaxImport, tFilter, false);
+			int tMoved = GTItemMover.move(tFrom, tTo, tMaxImport, tMinImport, tMaxExport, tFilter, false);
 			if (tMoved > 0) {
 				oCPU_Conversion = Math.max(oCPU_Conversion, j + 1); // :564
 				chargeEnergy(tMoved); // :565

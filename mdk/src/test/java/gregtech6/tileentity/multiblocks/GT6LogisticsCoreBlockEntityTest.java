@@ -370,6 +370,35 @@ public class GT6LogisticsCoreBlockEntityTest extends GTMultiBlocksOfflineTestBas
 	}
 
 	@Test
+	public void defragMovesPartialItemStacks() {
+		// the review seam (:562): the ST.move trailing quadruple is (aMaxSize=export||64,
+		// aMinSize=export||1, aMaxMove=import||64, aMinMove=import||1) — the mover seat takes
+		// aMinMove=1 unconfigured. A PARTIAL source stack must move; the (64, 64) draft form
+		// tripped the mover's count<aMinMove gate and every sub-stack defrag went silent.
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TestCore tCore = placeCore(tLevel);
+		tCore.mCPU_Logic = 1; tCore.mCPU_Control = 1; tCore.mCPU_Storage = 1; tCore.mCPU_Conversion = 1;
+		tCore.mEnergy = 10000;
+
+		TestTankEndpoint tSource = placeTank(tLevel, new BlockPos(300, 64, 299), 1);
+		tSource.mPriorityItem = 1; // generic item storage
+		ItemStackHandler tSourceItems = new ItemStackHandler(4);
+		tSourceItems.setStackInSlot(0, new ItemStack(Items.COBBLESTONE, 8)); // the PARTIAL stack
+		tCore.mItemHandlers.put(tSource, tSourceItems);
+
+		TestTankEndpoint tFiltered = placeTank(tLevel, new BlockPos(300, 63, 299), 3);
+		tFiltered.mPriorityItem = 3; // filtered item storage
+		tFiltered.mItemFilter = new ItemStack(Items.COBBLESTONE, 1); // the cobble identity (:287 face)
+		ItemStackHandler tFilteredItems = new ItemStackHandler(4);
+		tCore.mItemHandlers.put(tFiltered, tFilteredItems);
+
+		tCore.scanAndRoute(); // the defrag arm generic->Filtered (:489)
+		assertEquals(8, tFilteredItems.getStackInSlot(0).getCount(), "the partial stack moved whole into the filtered tier (aMinMove=1)");
+		assertEquals(0, tSourceItems.getStackInSlot(0).getCount(), "the generic source emptied");
+		assertEquals(8, tCore.mMovedLast, "8 items = 8 EU on the move ledger (:565)");
+	}
+
+	@Test
 	public void filteredIdentityGateSpillsIntoTheSemiTier() {
 		MultiBlockLevel tLevel = new MultiBlockLevel();
 		TestCore tCore = placeCore(tLevel);
