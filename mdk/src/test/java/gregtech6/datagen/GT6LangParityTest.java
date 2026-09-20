@@ -1182,6 +1182,7 @@ private static final int ZH_KEY_FLOOR = 3295; // 2839 +3 (task p29-w2-eu-special
 			+ " ; the logistics wire joined at task p32-logistics-lv2 (172 + 1 = 173 — GT6Logistics 1 checked, the atomic block.gt6.logistics_wire key; review seam: the class joins the census walk beside its provider rows)"
 			+ " ; the Magic Field Absorber joined at task p32-magic-absorber (173 + 1 = 174 — GT6MagicAbsorbers 1 checked, the atomic block.gt6.magic_absorber key; the rebase reconciliation over the merged logistics state)"
 			+ " ; the 5 quantum-energizer rungs joined at task p32-qu-energizer (174 + 5 = 179 — GT6QuantumEnergizers 5 checked, the atomic quantum_energizer keys; the REUSED GT6LaserConverterBlockEntity family keeps the vanilla descriptionId, the third type-pair instance)"
+			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"
 			+ " (Jade resolves block.gt6.<path>; a missing key hovers the raw key): " + tMissing);
