@@ -788,9 +788,16 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.REPLICATOR.mPower);
 		assertEquals("gt6:textures/gui/machines/replicator.png", GT6RecipeMaps.REPLICATOR.mGUIPath, "the RM.java:145 machines/Replicator row, lowercased");
 		// the base-RecipeMap carry over both runtime-synthesis subclasses (the judged form)
-		assertEquals(RecipeMap.class, GT6RecipeMaps.SCANNER_MOLECULAR.getClass(), "the RecipeMapScannerMolecular USB-scan arm stays pooled (RecipeMapScannerMolecular.java:46-67)");
+		// task p32-qu-scanner-replicator — the pool note above is LIFTED: the USB-scan arm is
+		// LIVE (the GT6RecipeMapScannerMolecular synthesis over the GT6UsbSticks carrier)
+		assertTrue(gregtech6.recipes.maps.GT6RecipeMapScannerMolecular.class.isInstance(GT6RecipeMaps.SCANNER_MOLECULAR),
+				"the RecipeMapScannerMolecular USB-scan arm is LIVE (RecipeMapScannerMolecular.java:46-67)");
 		assertEquals(RecipeMap.class, GT6RecipeMaps.MASSFAB.getClass(), "RM.Massfab IS the plain RecipeMap upstream");
-		assertEquals(RecipeMap.class, GT6RecipeMaps.REPLICATOR.getClass(), "the RecipeMapReplicator USB-data arm + mMaxFluidInputSize=2000 tweak stay pooled (RecipeMapReplicator.java:50-86)");
+		// task p32-qu-scanner-replicator — the pool note above is LIFTED: the USB-data arm is
+		// LIVE (the GT6RecipeMapReplicator synthesis; the mMaxFluidInputSize=2000 tweak
+		// (:50) stays pooled — the port RecipeMap carries no cap field)
+		assertTrue(gregtech6.recipes.maps.GT6RecipeMapReplicator.class.isInstance(GT6RecipeMaps.REPLICATOR),
+				"the RecipeMapReplicator USB-data arm is LIVE (RecipeMapReplicator.java:50-86)");
 		// DECLARED-empty row0 — the smoke rows ride the tier-b JSON seam, the loops are card-C content
 		assertTrue(GT6RecipeMaps.SCANNER_MOLECULAR.mRecipeList.isEmpty(), "DECLARED-empty: the upstream rows ARE the runtime USB synthesis");
 		assertTrue(GT6RecipeMaps.MASSFAB.mRecipeList.isEmpty(), "DECLARED-empty: the element-disintegration loop is card-C content");
