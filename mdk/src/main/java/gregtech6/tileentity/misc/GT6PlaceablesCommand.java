@@ -57,18 +57,15 @@ public final class GT6PlaceablesCommand {
 		LiteralArgumentBuilder<CommandSourceStack> tCmd = Commands.literal("gt6placeables")
 				.requires(aSource -> aSource.hasPermission(2));
 
-		// place <clicked> <face> <item> [count]
-		LiteralArgumentBuilder<CommandSourceStack> tPlace = Commands.literal("place");
-		com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, String> tPlaceItem =
-				Commands.argument("item", com.mojang.brigadier.arguments.StringArgumentType.word());
-		tPlaceItem.executes(aContext -> place(aContext,
-				com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "item"), 0));
-		tPlaceItem.then(Commands.argument("count", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 64))
-				.executes(aContext -> place(aContext,
-						com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "item"),
-						com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "count"))));
-		tPlace.then(Commands.argument("face", com.mojang.brigadier.arguments.StringArgumentType.word()).then(tPlaceItem));
-		tPlace.then(Commands.argument("clicked", BlockPosArgument.blockPos()).then(tPlace));
+		// place <clicked> <face> <item[:id]> [count] — the item tail is a GREEDY string
+		// (brigadier word() cannot carry the "gt6:" colon; the greedy tail parses the
+		// optional count in place())
+		LiteralArgumentBuilder<CommandSourceStack> tPlace = Commands.literal("place")
+				.then(Commands.argument("clicked", BlockPosArgument.blockPos())
+						.then(Commands.argument("face", com.mojang.brigadier.arguments.StringArgumentType.word())
+								.then(Commands.argument("item", com.mojang.brigadier.arguments.StringArgumentType.greedyString())
+										.executes(aContext -> place(aContext,
+												com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "item"), 0)))));
 		tCmd.then(tPlace);
 
 		// stat <pos> / eat <pos>
@@ -82,7 +79,11 @@ public final class GT6PlaceablesCommand {
 	}
 
 	/** The unified-dispatch arm — the sneak-place through GT6PlaceablePlacement.trySneakPlace. */
-	private static int place(CommandContext<CommandSourceStack> aContext, String aItemId, int aCount) throws CommandSyntaxException {
+	private static int place(CommandContext<CommandSourceStack> aContext, String aItemTail, int aIgnored) throws CommandSyntaxException {
+		// the greedy tail: "<itemId> [count]" — word() cannot carry the namespace colon
+		String[] tParts = aItemTail.trim().split("\s+");
+		String aItemId = tParts[0];
+		int aCount = tParts.length > 1 ? Integer.parseInt(tParts[1]) : 0;
 		CommandSourceStack tSource = aContext.getSource();
 		ServerLevel tLevel = tSource.getLevel();
 		BlockPos tClicked = BlockPosArgument.getLoadedBlockPos(aContext, "clicked");
