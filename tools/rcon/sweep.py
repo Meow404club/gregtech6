@@ -639,6 +639,15 @@ SESSION_GROUPS = (
     # against the east wall), x-disjoint from the lv2 band x486..490 with margin.
     # --group p32_logistics_core matches the module stem.
     ("p32_logistics_core",),
+    # p32-ignition-gate (task p32-ignition-gate): the fusion start-LU ignition gate —
+    # a fresh band east of the p31_fusion rig (x490..514, z452..478; x-disjoint from
+    # the p19 probe x470 by 20), the same 17198 rig shifted +52 x plus four T5
+    # laser+dial columns on the orthogonal ring cells. The gate live acceptance:
+    # arm (:755 ledger visible in block NBT) -> freeze (:809, progress 0 with
+    # maxprogress armed, neo /tick step windows) -> 4x8192 LU/tick pay (1260 ticks
+    # exactly) -> start (design 5->6, the EV overcharge sink dies, carbon13_molten
+    # lands). The tick_step members force the exclusive-wave rule (the frozen windows).
+    ("p32_ignition",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
