@@ -21,22 +21,30 @@ import gregtech6.tileentity.energy.GT6DynamoBlockEntity;
  * {@code MultiTileEntityLaserAbsorberElectric} (:34, LU→EU), both riding the shared
  * {@link GT6DynamoBlockEntity} core (the TileEntityBase10EnergyConverter :45-180 port)
  * with BOTH energy arms re-typed (the ElectricBridgeBlockEntity one-arm re-type shape
- * generalized: the input type becomes the second family axis). ONE class over two BETs —
- * the families differ ONLY in the type pair and the input face set:
+ * generalized: the input type becomes the second family axis). ONE class over the family
+ * BETs — the families differ ONLY in the type pair and the input face set:
  * <ul>
  * <li><b>CO2 Laser</b> (Loader_MultiTileEntities.java:930-934, ids 10101-10105): EU in /
  *     LU out, input = ALL-BUT-FRONT (Base10 :176 default), output = FRONT (:177).</li>
  * <li><b>Laser Absorber</b> (:976-980, ids 10151-10155): LU in / EU out, input = BACK
  *     (MultiTileEntityLaserAbsorberElectric :35 {@code mFacing == OPOS[aSide]}), output =
  *     FRONT (:36) — exactly the dynamo-core faces.</li>
+ * <li><b>Quantum Energizer</b> (task p32-qu-energizer; Loader :961-966, ids 10121-10125):
+ *     LU in / QU out, input = BACK / output = FRONT (MultiTileEntityQuantumEnergizerLaser
+ *     :36-:37 — the absorber faces), the THIRD type-pair instance. The ladder columns are
+ *     numerically the same shared rungs (the Loader energizer rows carry the identical
+ *     in/out columns), so the tier read needs no change either — the family differs ONLY
+ *     in the type pair and the registration constants (osmiridium 16.0, {@link
+ *     gregtech6.registry.GT6QuantumEnergizers}).</li>
  * </ul>
  *
  * <p>Everything else is the core verbatim, and the row columns are the SHARED ladder
  * {32, 128, 512, 2048, 8192} → {16, 64, 256, 1024, 4096} (NBT_INPUT/NBT_OUTPUT verbatim
- * on all ten Loader rows — the in column of one family IS the out column of the other):
- * capacitor = 2×in (Base10 :75), the in band min in/2 / rec in / max 2in (:76, every row
- * in &gt; 16), the out band out/2 / out / 2out (:77), the per-tick {@code units(storage,
- * in, out)} conversion (:62), the out/2 emission door (:64) and the WASTE_ENERGY = T vent
+ * on all fifteen Loader rows — the in column of one family IS the out column of the
+ * other): capacitor = 2×in (Base10 :75), the in band min in/2 / rec in / max 2in (:76,
+ * every row in &gt; 16), the out band out/2 / out / 2out (:77), the per-tick {@code
+ * units(storage, in, out)} conversion (:62), the out/2 emission door (:64) and the
+ * WASTE_ENERGY = T vent
  * (:92 — the Loader rows carry {@code NBT_WASTE_ENERGY, T} on every laser and absorber
  * rung: no emit deduction (:81/:87 skipped), the whole bucket vents every tick — the
  * laser chain is lossy at each converter BY DESIGN, the upstream half-rate). The
@@ -95,7 +103,12 @@ public class GT6LaserConverterBlockEntity extends GT6DynamoBlockEntity {
 
 	@Override
 	public String getTileEntityName() {
-		return mBackInputOnly ? "laser_absorber" : "co2_laser"; // the BET id twins (GT6Lasers.CO2_LASER_BE / GT6Lasers.LASER_ABSORBER_BE)
+		// the BET id twins (GT6Lasers.CO2_LASER_BE / GT6Lasers.LASER_ABSORBER_BE /
+		// GT6QuantumEnergizers.QUANTUM_ENERGIZER_BE): the QU emission names the energizer
+		// (the absorber and the energizer SHARE the back-input face set — the input face
+		// alone cannot tell them apart, the type pair can)
+		if (mOutType == TD.Energy.QU) return "quantum_energizer";
+		return mBackInputOnly ? "laser_absorber" : "co2_laser";
 	}
 
 	@Override

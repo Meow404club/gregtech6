@@ -616,6 +616,13 @@ SESSION_GROUPS = (
     # (massfab_t1 sink <- absorber <- Dragon Egg on top) and the TU leg (coagulator
     # sink <- absorber <- skeleton skull), the idle arm clears both trophies.
     ("p32_magic_absorber",),
+    # p32-qu-energizer (task p32-qu-energizer): the EU->LU->QU chain — the same fresh
+    # z=352 band, four x-disjoint columns east of the laser roster (x446/x452/x458/x464):
+    # the T1 + T5 full chains (dial, laser, energizer, small massfab), the T2-T5 door
+    # walk (the 16-sized LU packets the T2+ doors refuse, then the LU dial riding each
+    # door edge exactly) and the QU receiver ladder (the dial QU saturating the massfab
+    # buffers at 64/16384).
+    ("p32_qu_energizer",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
