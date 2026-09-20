@@ -70,21 +70,27 @@ SCANNER_MERGE = {
     "1.21.1": 'data merge block %s {inventory:{Size:3,Items:[{Slot:0b,id:"gt6:usb_stick_3",count:1},{Slot:1b,id:"gt6:chemtube_hydrogen",count:1}]}}' % S,
 }
 
-# the replicator input face — the tagged stick is a FRESH list entry inside one merge on
-# 1.20.1 (the freeform tag rides the item compound); 21.1 needs the proven two-step form
-# (the p32_qu_usb 4c33979c4 lesson: the envelope goes through a whole-entry set value)
+# the replicator input face — the tagged stick is a FRESH list entry inside ONE merge
+# on both legs (the freeform tag rides the 1.20.1 item compound; 21.1 carries the same
+# payload through the CUSTOM_DATA component envelope — the live-probe face: the
+# machine handler nests under inventory/, so a whole-compound merge is the only write
+# that lands, and the Items[0] data-modify form is a machine-BE no-op).
 REPLICATOR_MERGE = {
     "1.20.1": 'data merge block %s {inventory:{Size:6,Items:[{Slot:0b,id:"gt6:usb_stick_3",Count:1b,%s}]}}' % (R, TAG_1201),
-    "1.21.1": 'data merge block %s {inventory:{Size:6,Items:[{Slot:0b,id:"gt6:usb_stick_3",count:1}]}}' % R,
+    "1.21.1": 'data merge block %s {inventory:{Size:6,Items:[{Slot:0b,id:"gt6:usb_stick_3",count:1,components:{%s}}]}}' % (R, CD_1121),
 }
-REPLICATOR_STICK_1121 = 'data modify block %s Items[0] set value {count:1,id:"gt6:usb_stick_3",components:{%s}}' % (R, CD_1121)
 
-# the matter leg (the :90 charged arm; the NF neutral arm is skipped at 0 neutrons) —
-# the FluidName/Amount contract pair (ADR-P15-1). THE KEY IS THE LITERAL top-level
-# "tanks.in.0" (the GT6 dotted-key convention — readFromNBT(aNBT, "tanks.in.0") does
-# getCompound on the LITERAL key, FluidTankGT.java:79), NOT a nested tanks.in.0 path:
-# a nested merge lands keys the load never reads.
-TANK_MERGE = 'data merge block %s {"tanks.in.0":{FluidName:"gt6:chargedmatter",Amount:1}}' % R
+# the matter leg (the :90 charged arm; the NF neutral arm is skipped at 0 neutrons).
+# THE KEY IS THE LITERAL top-level "tanks.in.0" (the GT6 dotted-key convention —
+# readFromNBT(aNBT, "tanks.in.0") does getCompound on the LITERAL key, FluidTankGT
+# .java:79), NOT a nested tanks.in.0 path. The VALUE forks per leg: forge reads the
+# FluidName/Amount contract pair (loadFluidStackFromNBT), 21.1 the codec keys
+# id/amount (FluidStack.parseOptional — a FluidName-only payload lands the
+# unit-amount keepFilter face at mAmount 0, an empty-ish tank the machine refuses).
+TANK_MERGE = {
+    "1.20.1": 'data merge block %s {"tanks.in.0":{FluidName:"gt6:chargedmatter",Amount:1}}' % R,
+    "1.21.1": 'data merge block %s {"tanks.in.0":{id:"gt6:chargedmatter",amount:1}}' % R,
+}
 
 steps = [
     phase("A: the scanner arm — chemtube_hydrogen + a blank stick go in, the data stick comes out"),
@@ -105,10 +111,8 @@ steps = [
     Step("setblock %s gt6:replicator_t3" % R, expect="Changed the block"),
     Step(REPLICATOR_MERGE["1.20.1"], expect="Modified block data",
          node_cmds={"1.21.1": REPLICATOR_MERGE["1.21.1"]}),
-    Step(REPLICATOR_STICK_1121, expect="Modified block data",
-         node_cmds={"1.20.1": "time query daytime"},
-         node_expects={"1.20.1": "The time is"}),  # the 21.1-only envelope step (the 4c33979c4 dialect)
-    Step(TANK_MERGE, expect="Modified block data"),
+    Step(TANK_MERGE["1.20.1"], expect="Modified block data",
+         node_cmds={"1.21.1": TANK_MERGE["1.21.1"]}),
     # no active-flag poll here: the replication is ONE tick (duration 1, progress 256 in
     # a single doActive) — uncatchable at poll cadence; the product + drain faces are
     # the run proof (the scanner arm above carries the active face with its 256-tick
