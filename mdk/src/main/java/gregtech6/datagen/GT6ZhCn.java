@@ -1139,6 +1139,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.hammer"); // task p25-tool-hammer-wrench — the hand row composes from 锤 (toolHeadHammer dump face 锤头 :3290, head-word first)
 		addDirect("item.gt6.hammer.tooltip_prospector"); // task p30-pool-prospector — the prospector second-behavior tooltip, hand word 勘探周围的矿石 (the dump gt.lang.tool.tooltip.prospector :3514 勘探矿物 rides the mismatched-build tooltip family, the t2 ruling — not taken)
 		addDirect("item.gt6.wrench"); // task p25-tool-hammer-wrench — the hand row composes from 扳手 (toolHeadWrench dump face 扳手头 :3319)
+		addDirect("block.gt6.logistics_wire"); // task p32-logistics-lv2 — the dump row tmp/gregtech.lang:11847 物流线缆 (hand, the tsv direct band)
 		addDirect("item.gt6.food_can_empty"); // task p25-food-can-row0 — 空食物罐头 (the dump has no cans.998 face; the 罐头 family word, MultiItemRandomTools.java:234 "Empty Food Can")
 		addDirect("item.gt6.food_can_rotten_tiny"); // task p25-food-can-row0 — dump gt.multiitem.cans.11 迷你食物罐头 (腐肉)
 		addDirect("item.gt6.food_can_rotten_small"); // dump :12

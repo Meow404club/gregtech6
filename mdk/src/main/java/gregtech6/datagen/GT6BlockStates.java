@@ -39,6 +39,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTEnergySources;
 import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTGrassBlocks;
+import gregtech6.registry.GT6Logistics;
 import gregtech6.registry.GTItemPipes;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialItems;
@@ -103,6 +104,7 @@ public final class GT6BlockStates extends BlockStateProvider {
             addItemPipe(GTItemPipes.BLOCKS_BY_PATH.get(tItemRow.path()).get(),
                     tItemRow.variant().suffix.startsWith("restrictive"));
         }
+        addLogisticsWire(GT6Logistics.LOGISTICS_WIRE.get()); // task p32-logistics-lv2 — the single logistics connector row (the pipe placeholder form)
         addWire(GTWires.WIRE_ELECTRIC_1X.get());
         addWire(GTWires.WIRE_ELECTRIC_2X.get());
         // task p10: the two wire loops SHARE one (set -> model) map — models().getBuilder
@@ -1233,6 +1235,19 @@ public final class GT6BlockStates extends BlockStateProvider {
      * path), a variant per CONNECTIONS mask value (0..63), and the BlockItem model
      * parenting the block model — the addFluidPipe shape over the two shared placeholders.
      */
+    /**
+     * Task p32-logistics-lv2 — the logistics wire: the addItemPipe shape (one cube_all
+     * model over the blockstate-name PNG, a variant per CONNECTIONS mask value 0..63
+     * out of forAllStates, the BlockItem model parenting the block model) over its own
+     * placeholder PNG.
+     */
+    private void addLogisticsWire(Block aWire) {
+        String tName = aWire.getDescriptionId().replace("block.gt6.", "");
+        var tModel = models().cubeAll(tName, modLoc("block/logistics_wire"));
+        getVariantBuilder(aWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+        itemModels().withExistingParent(tName, modLoc("block/" + tName));
+    }
+
     private void addItemPipe(Block aPipe, boolean aRestrictive) {
         String tName = aPipe.getDescriptionId().replace("block.gt6.", "");
         var tModel = models().cubeAll(tName, modLoc(aRestrictive ? "block/item_pipe_restrictive" : "block/item_pipe"));

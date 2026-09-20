@@ -1321,6 +1321,7 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addExampleMachine() {
         add("block.gt6.example_chest", "GT Example Chest");
+        add("block.gt6.logistics_wire", "Logistics Wire"); // task p32-logistics-lv2 — the dump row tmp/gregtech.lang:11847 family (en face)
         add("block.gt6.test_machine", "Test Machine");
         add("block.gt6.test_machine_idle", "Test Machine (Passive)");
         add("itemGroup.gt6.chests", "Chests");
