@@ -1139,6 +1139,11 @@ public class GT6EnUs extends LanguageProvider {
         // task p31-massfab — the small Matter Fabricator family template (the literal
         // tier-word slot; the upstream name column "Matter Fabricator (T1..T5)", :1542-1546)
         add(gregtech6.registry.GTMachines.MACHINE_MASSFAB_UNIT_KEY, "Matter Fabricator (%s)");
+        // task p32-qu-scanner-replicator — the QU machine pair templates (the literal
+        // tier-word slot; the upstream name columns "Molecular Scanner (T3)" :1551 and
+        // "Matter Replicator (T1..T3)" :1556-1558)
+        add(gregtech6.registry.GTMachines.MACHINE_MOLECULAR_SCANNER_UNIT_KEY, "Molecular Scanner (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_REPLICATOR_UNIT_KEY, "Matter Replicator (%s)");
         // task p29-w2-hu-tu-piggyback — the seven hu-tu family templates: the two Crackers
         // and the Loom ride the one-slot unit-key form (the Kinetic/Heat_T material word,
         // the upstream name columns "Steam Cracker (" :1576-1579 / "Catalytic Cracker ("

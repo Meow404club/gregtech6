@@ -785,14 +785,14 @@ public class GT6RecipeMaps {
 
 	/**
 	 * RM.java:143 — the Molecular Scanner map (task p31-qu-a-foundation): items 2/1/1,
-	 * fluids 0/0/0, MIN 2. Base-{@link RecipeMap} — the upstream RecipeMapScannerMolecular
+	 * fluids 0/0/0, MIN 2. {@link gregtech6.recipes.maps.GT6RecipeMapScannerMolecular}
+	 * SINCE task p32-qu-scanner-replicator — the upstream RecipeMapScannerMolecular
 	 * subclass synthesizes USB-scan rows at lookup time from SCANNABLE items + a T3 USB
-	 * stick (RecipeMapScannerMolecular.java:46-67, power (protons+neutrons)×512): a
-	 * recipe-POOL feature riding the unported USB chain, so the port carries the base class
-	 * with the identical constants (the RecipeMapShredder judged form). DECLARED-empty —
-	 * the upstream rows ARE that runtime synthesis, there is no static stock to transcribe;
-	 * the shipped {@code scannermolecular.json} smoke row (the vanilla stand-in, declared
-	 * as such) keeps the map visible in NEI.
+	 * stick (RecipeMapScannerMolecular.java:46-67, power (protons+neutrons)×512), writing
+	 * {@code gt.replicator.data} + the tier-3 byte through the GT6UsbSticks carrier (the
+	 * p32-usb-data plane). DECLARED-empty as a static stock — the upstream rows ARE that
+	 * runtime synthesis; the shipped {@code scannermolecular.json} smoke row (the vanilla
+	 * stand-in, declared as such) keeps the map visible.
 	 */
 	public static volatile RecipeMap SCANNER_MOLECULAR;
 
@@ -815,16 +815,17 @@ public class GT6RecipeMaps {
 
 	/**
 	 * RM.java:145 — the Matter Replicator map (task p31-qu-a-foundation): items 3/3/1,
-	 * fluids 3/3/0, MIN 2. Base-{@link RecipeMap} — the upstream RecipeMapReplicator
-	 * subclass replicates from USB-stick/cable data at lookup time
-	 * (RecipeMapReplicator.java:54-86) and its ctor tweaks
-	 * {@code mMaxFluidInputSize = 2000} (:50), a field the port RecipeMap does not carry:
-	 * both the runtime arm and the tank-size tweak stay POOLED (the declared deviation,
-	 * the RecipeMapChisel judged form). The static rows upstream carry real content
-	 * (RM.java:672-676 the trophy/matter rows over the unported Biomass/UUM families and
-	 * :912/:929/:933-946 the Ender/Ender_TE/Redstone rows over card-C machines) — all
-	 * POOLED; the shipped {@code replicator.json} smoke row (the :929 molten-enderpearl →
-	 * ender-pearl row verbatim, now that the fluid is live) keeps the map visible in NEI.
+	 * fluids 3/3/0, MIN 2. {@link gregtech6.recipes.maps.GT6RecipeMapReplicator} SINCE task
+	 * p32-qu-scanner-replicator — the upstream RecipeMapReplicator subclass replicates from
+	 * USB-stick data at lookup time (RecipeMapReplicator.java:54-86, the GT6UsbSticks data
+	 * plane); its ctor tweak {@code mMaxFluidInputSize = 2000} (:50) stays POOLED (a field
+	 * the port RecipeMap does not carry, the machine tanks are the bound) and the USB-cable
+	 * arm (:67-77) stays POOLED (no cable items in port). The static rows upstream carry
+	 * real content: :912/:934-939 the Ender_TE/Redstone_TE compat rows (unmounted, the
+	 * GTFluids Ender_TE ruling), RM.java:672-676 the organic rows over the unported
+	 * Biomass/food families (POOLED — the outputs are MultiItemFood items), the Twilight
+	 * trophy rows (the compat cut); :929 (the Ender row) and :941-946 (the molten-redstone
+	 * six, live since this card) ship as the {@code replicator.json} datapack rows.
 	 */
 	public static volatile RecipeMap REPLICATOR;
 
@@ -1493,8 +1494,8 @@ public class GT6RecipeMaps {
 		// form); the smoke rows ride the tier-b JSON seam; the ignition gate lives on the
 		// machine face, not the maps (task p32-ignition-gate, the class-doc note) ---
 		// RM.java:143 — items 2/1/1, fluids 0/0/0, MIN 2, AMP 1 (the USB-scan synthesis
-		// subclass stays POOLED, RecipeMapScannerMolecular.java:46-67)
-		SCANNER_MOLECULAR = new RecipeMap(new HashSet<>(),
+		// subclass LIVE since task p32-qu-scanner-replicator, RecipeMapScannerMolecular.java:46-67)
+		SCANNER_MOLECULAR = new gregtech6.recipes.maps.GT6RecipeMapScannerMolecular(new HashSet<>(),
 				"gt.recipe.scannermolecular", "Molecular Scanner", null,
 				0, 1,
 				"gt6:textures/gui/machines/scannermolecular",
@@ -1512,9 +1513,11 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
-		// RM.java:145 — items 3/3/1, fluids 3/3/0, MIN 2, AMP 1 (the USB-data subclass stays
-		// POOLED with its mMaxFluidInputSize=2000 ctor tweak, RecipeMapReplicator.java:50)
-		REPLICATOR = new RecipeMap(new HashSet<>(),
+		// RM.java:145 — items 3/3/1, fluids 3/3/0, MIN 2, AMP 1 (the USB-data subclass LIVE
+		// since task p32-qu-scanner-replicator, RecipeMapReplicator.java:54-86; the upstream
+		// mMaxFluidInputSize=2000 ctor tweak (:50) stays POOLED — the port RecipeMap carries
+		// no cap field, the machine tanks are the bound)
+		REPLICATOR = new gregtech6.recipes.maps.GT6RecipeMapReplicator(new HashSet<>(),
 				"gt.recipe.replicator", "Matter Replicator", null,
 				0, 1,
 				"gt6:textures/gui/machines/replicator",

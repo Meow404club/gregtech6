@@ -95,10 +95,15 @@ public class Recipe {
 	 * never-consumed net effect here; the MATCH half is untouched (the {@code Damage} tag
 	 * routes the configuration number exactly). Public as the offline test seam (the machines-package row-test e2e swaps it) —
 	 * the vanilla item registry freezes at bootstrap, so the offline fixture predicate stands
-	 * in for the circuit identity (the GT6RecipesShCLTest synthetic-item convention).
+	 * in for the circuit identity (the GT6RecipesShCLTest synthetic-item convention). The
+	 * third disjunct is the p32-qu-scanner-replicator face: a data-bearing USB stick is the
+	 * replicator's never-consumed data medium (the upstream {@code ST.amount(0, aUSB)}
+	 * zero-consume input, RecipeMapReplicator.java:94/:108) — only the dynamic replication
+	 * rows carry such an input, so the claim stays narrow.
 	 */
 	public static java.util.function.Predicate<ItemStack> sNotConsumable =
-			aStack -> gregtech6.item.GT6Circuits.isSelector(aStack) || gregtech6.registry.GT6ExtruderMolds.isMold(aStack);
+			aStack -> gregtech6.item.GT6Circuits.isSelector(aStack) || gregtech6.registry.GT6ExtruderMolds.isMold(aStack)
+					|| gregtech6.items.GT6UsbSticks.readData(aStack) != null; // task p32-qu-scanner-replicator — the replicator's ST.amount(0, aUSB) data-medium face (RecipeMapReplicator.java:94/:108)
 
 	/**
 	 * The tag-membership seam of the material-tag fallback (task

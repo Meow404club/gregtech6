@@ -121,7 +121,15 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 	@Test
 	void theReplicatorRowCarriesTheEnderReplicationConstants() throws Exception {
 		pourShipped("replicator");
-		Recipe tRow = GT6RecipeMaps.REPLICATOR.mRecipeList.iterator().next();
+		// task p32-qu-scanner-replicator — the map now carries the :929 row PLUS the
+		// :941-946 molten-redstone six; the ender row is found by its output (the set is
+		// unordered, the amount-144 redstone row would be a coin-flip on iterator().next()).
+		// The redstone constants themselves are pinned exhaustively in GT6QuMachinesTest.
+		Recipe tRow = null;
+		for (Recipe tScan : GT6RecipeMaps.REPLICATOR.mRecipeList) {
+			if (tScan.mOutputs.length == 1 && tScan.mOutputs[0].getItem() == Items.ENDER_PEARL) tRow = tScan;
+		}
+		assertNotNull(tRow, "the :929 ender row");
 		assertEquals(16L, tRow.mEUt, "the :929 eut 16");
 		assertEquals(144L, tRow.mDuration, "the :929 duration 144");
 		assertEquals(1, tRow.mFluidInputs.length, "one fluid input");

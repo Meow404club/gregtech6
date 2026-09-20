@@ -860,6 +860,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.logistics_core"); // task p32-logistics-lv3 — the dump mte multiblock.logisticscore row 物流核心 (zh_cn_ref.tsv :8146)
 		addDirect("block.gt6.fusion_reactor"); // task p31-fusion — the Loader :1242 name column (zh: the dump :11253 row)
 		addDirect(gregtech6.registry.GTMachines.MACHINE_MASSFAB_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_MOLECULAR_SCANNER_UNIT_KEY); // task p32-qu-scanner-replicator — the dump :11662 name column (分子扫描仪)
+		addDirect(gregtech6.registry.GTMachines.MACHINE_REPLICATOR_UNIT_KEY); // task p32-qu-scanner-replicator — the dump :11664-11666 name column (物质复制器)
 		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tExoticRows
 				: java.util.List.of(gregtech6.registry.GTMachines.POLARIZER_ROWS, gregtech6.registry.GTMachines.MAGNETIC_SEPARATOR_ROWS,
 						gregtech6.registry.GTMachines.LASER_ENGRAVER_ROWS, gregtech6.registry.GTMachines.LASER_WELDER_ROWS,

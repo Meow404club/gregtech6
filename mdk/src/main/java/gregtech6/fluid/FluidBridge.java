@@ -43,6 +43,11 @@ public final class FluidBridge {
 
 	static {
 		MOLTEN_FLUIDS.put("iron", GTFluids.IRON_MOLTEN);
+		// task p32-qu-scanner-replicator — the molten.redstone carrier lands (the GTFluids
+		// :194 row), so the Smeltery pour-back and any material walker resolve MT.Redstone.
+		// The handle rides the table-driven CHEMICALS registration through the chemicalSource
+		// seam (the bridge map stays material-name keyed).
+		MOLTEN_FLUIDS.put("redstone", GTFluids.chemicalSource("redstone_molten"));
 	}
 
 	private FluidBridge() {}

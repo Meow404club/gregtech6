@@ -44,13 +44,15 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			"lithium6_molten", "beryllium7_molten", "beryllium8_molten",
 			"boron11_molten", "carbon13_molten", "ancientdebris_molten",
 			// task p31-fusion — the fusion-row closure quartet (the C/Li/W/Ad parent molten rows)
-			"carbon_molten", "lithium_molten", "tungsten_molten", "adamantium_molten");
+			"carbon_molten", "lithium_molten", "tungsten_molten", "adamantium_molten",
+			// task p32-qu-scanner-replicator — the :194 molten-redstone replicator carrier
+			"redstone_molten");
 
 	@Test
 	public void tableCarriesTheChemicalRowsInDeclarationOrder() {
 		assertEquals(IDS, GTFluids.CHEMICAL_SPECS.stream().map(GTFluids.ChemicalFluidSpec::name).toList());
-		assertEquals(38, GTFluids.CHEMICAL_SPECS.size());
-		assertEquals(38, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
+		assertEquals(39, GTFluids.CHEMICAL_SPECS.size());
+		assertEquals(39, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
 	}
 
 	/** Acceptance ①: the per-fluid declared census, one block per sub-family. */

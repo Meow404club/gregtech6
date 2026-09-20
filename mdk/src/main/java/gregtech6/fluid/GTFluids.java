@@ -1388,7 +1388,18 @@ public final class GTFluids {
 		new ChemicalFluidSpec("carbon_molten"       , "Molten Carbon"         , 3800,  2267, 1000, 0xFF141414, false, 10), // molten.carbon=熔融碳 (tmp/gregtech.lang:466) — MT.C mp 3800, 1000×2.267 (MT.java:392)
 		new ChemicalFluidSpec("lithium_molten"      , "Molten Lithium"        ,  453,   534, 1000, 0xFFE1DCFF, false, 10), // molten.lithium=熔融锂 (:529) — MT.Li mp 453, 1000×0.534 (:385)
 		new ChemicalFluidSpec("tungsten_molten"     , "Molten Tungsten"       , 3695, 19250, 1000, 0xFF323232, false, 10), // molten.tungsten=熔融钨 (:624) — MT.W mp 3695, 1000×19.25 (:463)
-		new ChemicalFluidSpec("adamantium_molten"   , "Molten Adamantium"     , 5225, 13356, 1000, 0xFFFFFFFF, false, 10)); // molten.adamantium=熔融艾德曼合金 (:428) — MT.Ad mp 5225, 1000×13.356 (MT.java:794)
+		new ChemicalFluidSpec("adamantium_molten"   , "Molten Adamantium"     , 5225, 13356, 1000, 0xFFFFFFFF, false, 10), // molten.adamantium=熔融艾德曼合金 (:428) — MT.Ad mp 5225, 1000×13.356 (MT.java:794)
+		// the replicator-carrier row (task p32-qu-scanner-replicator) — the :194 explicit
+		// FL.create("molten.redstone", "Molten Redstone", MT.Redstone, 1, L, 500)
+		// .setLuminosity(5) literal: STATE_LIQUID carriers (viscosity 1000), temperature 500 K
+		// = the MT.Redstone melting point verbatim (MT.java:2326 heat(500, 1500)), the :1128
+		// density formula over Redstone's field-default 1.0 g/cm³ → 1000, luminosity 5. The
+		// carrier of the six molten-redstone replication rows (Loader_Recipes_Other.java
+		// :941-946, L/4..L*8) — lands FIRST so the rows never reference an unregistered id
+		// (the dead-row class the GTFluids :1798 ruling cuts). The id turns the upstream
+		// "molten.<mat>" literal into the enderpearl_molten suffix form; tint = the material
+		// RGBa (200, 0, 0, MT.java:2326).
+		new ChemicalFluidSpec("redstone_molten"     , "Molten Redstone"       ,  500,  1000, 1000, 0xFFC80000, false,  5)); // molten.redstone=熔融红石 (tmp/gregtech.lang:584)
 
 	/** The chemical row for a gt6 id path, or null (the {@link #engineSpec} lookup shape). */
 	public static ChemicalFluidSpec chemicalSpec(String aName) {
@@ -1515,7 +1526,24 @@ public final class GTFluids {
 			chemicalFluid("lithium6_molten"), chemicalFluid("beryllium7_molten"), chemicalFluid("beryllium8_molten"),
 			chemicalFluid("boron11_molten"), chemicalFluid("carbon13_molten"), chemicalFluid("ancientdebris_molten"),
 			chemicalFluid("carbon_molten"), chemicalFluid("lithium_molten"), chemicalFluid("tungsten_molten"),
-			chemicalFluid("adamantium_molten")); // task p31-fusion — the fusion-row closure quartet
+			chemicalFluid("adamantium_molten"), // task p31-fusion — the fusion-row closure quartet
+			chemicalFluid("redstone_molten")); // task p32-qu-scanner-replicator — the replicator redstone carrier (:194)
+
+	/**
+	 * The source-fluid handle for a chemical-family row name, or null when the name is not a
+	 * CHEMICAL_SPECS row (the {@link gregtech6.fluid.FluidBridge} seam, task
+	 * p32-qu-scanner-replicator: the "redstone" entry resolves here — the bridge map stays
+	 * material-name keyed while the registration stays table-driven).
+	 */
+	//? if forge {
+	public static RegistryObject<? extends net.minecraft.world.level.material.Fluid> chemicalSource(String aName) {
+		return SOURCE_SEAM.get(aName);
+	}
+	//?} else {
+	/*public static net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.material.Fluid, ? extends net.minecraft.world.level.material.Fluid> chemicalSource(String aName) {
+		return SOURCE_SEAM.get(aName);
+	}*/
+	//?}
 
 	/**
 	 * The hot-family row lookup (the {@link #chemicalSpec} shape) — the fuels_hot consumer

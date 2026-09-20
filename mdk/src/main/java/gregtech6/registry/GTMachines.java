@@ -2287,6 +2287,112 @@ public final class GTMachines {
 	public static Block[] massfabSmallBlockArray() {
 		return blockArrayOf(MASSFAB_SMALL_BLOCKS_BY_PATH);
 	}
+
+	// ---------------------------------------------------------------------------
+	// the QU machine pair (task p32-qu-scanner-replicator) — the Molecular Scanner T3
+	// (Loader_MultiTileEntities.java:1551, the ONLY active scanner rung; T1/T2/T4/T5 :1549-
+	// :1550/:1552-1553 are commented out upstream) and the Matter Replicator T1-T3
+	// (:1556-1558; the :1559-1560 T4/T5 rungs are upstream-active but OUTSIDE the card
+	// scope — the declared follow-up). Both families ride aClass = MultiTileEntityBasicMachine
+	// (:1554), MT.Osmiridium on every rung, NBT_HARDNESS 16.0F == NBT_RESISTANCE,
+	// NBT_ENERGY_ACCEPTED TD.Energy.QU and the SBIT_B energy face (the :151 read ORs SBIT_A).
+	//
+	// The :1551 scanner masks: item in L|U auto LEFT, out D|R auto RIGHT, NO tank keys (the
+	// scanner map is fluids 0/0/0 — the scannervisuals 127/-1 zero-tank face), NO
+	// NBT_CHEAP_OVERCLOCKING key, NBT_EFFICIENCY 10000 (the :96 identity).
+	// The :1556-1558 replicator masks: item+tank in L|U (auto LEFT / auto TOP), item+tank
+	// out D|R (auto RIGHT / auto BOTTOM), NBT_CHEAP_OVERCLOCKING T, NBT_EFFICIENCY
+	// 5000/6250/7500. NBT_NO_CONSTANT_POWER T (:1556-1558) stays POOLED — no MachineRow
+	// column (the massfab :1542 note).
+	//
+	// The controller crafting rows "DXE"/"FMF"/"RYS" + "EXE"/"FMF"/"SXS" are CUT — the
+	// same absent-component ruling as the massfab note above (the crystal processors and
+	// the FIELD_GENERATORS/EMITTERS/SENSORS columns are absent port identities). The
+	// machines stay reachable via the machines creative tab.
+	//
+	// The runtime consumption rides the LIVE map subclasses
+	// (GT6RecipeMapScannerMolecular / GT6RecipeMapReplicator) over the p32-usb-data
+	// USB-stick data plane: the scanner writes gt.replicator.data+tier3, the replicator
+	// consumes USB+matter fluids into the replicated material.
+	// ---------------------------------------------------------------------------
+
+	/** The Molecular Scanner family unit word (the literal tier-word slot; upstream "Molecular Scanner (T3)", :1551; zh dump 分子扫描仪 (T3), tmp/gregtech.lang:11662). */
+	public static final String MACHINE_MOLECULAR_SCANNER_UNIT_KEY = "gt6.row.machine.molecular_scanner";
+
+	/** The Matter Replicator family unit word (upstream "Matter Replicator (T1..T3)", :1556-1558; zh dump 物质复制器 (T1..T3), tmp/gregtech.lang:11664-11666). */
+	public static final String MACHINE_REPLICATOR_UNIT_KEY = "gt6.row.machine.replicator";
+
+	/** The housing material of every rung (upstream MT.Osmiridium on all rows — the lazy-supplier form, the massfab convention). */
+	public static final java.util.function.Supplier<OreDictMaterial> QU_MACHINE_MATERIAL = () -> gregapi.data.MT.Osmiridium;
+
+	/** The NBT_EFFICIENCY column of the :1556-1558 replicator rows. */
+	public static final Integer[] REPLICATOR_EFFICIENCIES = {5000, 6250, 7500};
+
+	/** The single Molecular Scanner row, upstream :1551 (T3 only — the NBT_INPUT 512 through the :126 conversion = TIER_INPUTS[2]). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> MOLECULAR_SCANNER_ROWS = java.util.List.of(
+			molecularScanner("molecular_scanner_t3", 20423, 2));
+
+	/** The three Matter Replicator rows, upstream line order :1556-1558 (NBT_INPUT 32/128/512 = TIER_INPUTS[0..2]). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> REPLICATOR_ROWS = java.util.List.of(
+			replicator("replicator"   , 20431, 0),
+			replicator("replicator_t2", 20432, 1),
+			replicator("replicator_t3", 20433, 2));
+
+	/**
+	 * The :1551 scanner row factory — the zero-tank face (the scannervisuals 127/-1 form),
+	 * no cheap overclocking (no upstream key), the :96 10000 efficiency identity, the
+	 * 16.0 hardness.
+	 */
+	private static GTBasicMachineBlock.MachineRow molecularScanner(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, TIER_WORD_SLUGS.get(aTier), TIER_WORD_DISPLAYS.get(aTier), QU_MACHINE_MATERIAL, MACHINE_MOLECULAR_SCANNER_UNIT_KEY, aMetaId, 16.0F, aTier,
+				1, false /*no NBT_PARALLEL :1551*/,
+				() -> GT6RecipeMaps.SCANNER_MOLECULAR, TD.Energy.QU, "scannermolecular",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)127 /*no NBT_TANK_SIDE_IN key → the upstream field default*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D|SBIT_R*/,
+				(byte)-1 /*no NBT_TANK_SIDE_AUTO_IN key → SIDE_UNDEFINED*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, false /*no NBT_CHEAP_OVERCLOCKING :1551*/, null, false, 10000);
+	}
+
+	/** One Matter Replicator row factory — the :1556 masks (item+tank in L|U with the item auto LEFT / tank auto TOP, out D|R with the item auto RIGHT / tank auto BOTTOM), CHEAP_OC T, the per-rung efficiency, 16.0 hardness. */
+	private static GTBasicMachineBlock.MachineRow replicator(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, TIER_WORD_SLUGS.get(aTier), TIER_WORD_DISPLAYS.get(aTier), QU_MACHINE_MATERIAL, MACHINE_REPLICATOR_UNIT_KEY, aMetaId, 16.0F, aTier,
+				1, false /*no NBT_PARALLEL :1556-1558*/,
+				() -> GT6RecipeMaps.REPLICATOR, TD.Energy.QU, "replicator",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_D|SBIT_R*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U*/,
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D|SBIT_R*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING T :1556-1558*/, null, false, REPLICATOR_EFFICIENCIES[aTier]);
+	}
+
+	/** The registered Molecular Scanner blocks by path (the BET/datagen/loot walkers). */
+	public static final java.util.Map<String, RegistryObject<Block>> MOLECULAR_SCANNER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Molecular Scanner items. */
+	public static final java.util.Map<String, RegistryObject<Item>> MOLECULAR_SCANNER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The Molecular Scanner block list in registration order (the loot/datagen walkers). */
+	public static Block[] molecularScannerBlockArray() {
+		return blockArrayOf(MOLECULAR_SCANNER_BLOCKS_BY_PATH);
+	}
+
+	/** The registered Matter Replicator blocks by path (the BET/datagen/loot walkers). */
+	public static final java.util.Map<String, RegistryObject<Block>> REPLICATOR_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Matter Replicator items. */
+	public static final java.util.Map<String, RegistryObject<Item>> REPLICATOR_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The Matter Replicator block list in registration order (the loot/datagen walkers). */
+	public static Block[] replicatorBlockArray() {
+		return blockArrayOf(REPLICATOR_BLOCKS_BY_PATH);
+	}
 	
 	/** The registered Polarizer blocks by path (the BET/datagen/loot walkers). */
 	public static final java.util.Map<String, RegistryObject<Block>> POLARIZER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
@@ -2332,6 +2438,8 @@ public final class GTMachines {
 		registerExoticFamily(FREEZER_ROWS, FREEZER_BLOCKS_BY_PATH, FREEZER_ITEMS_BY_PATH, () -> GTMachines.FREEZER_BE);
 		registerExoticFamily(CRYO_MIXER_ROWS, CRYO_MIXER_BLOCKS_BY_PATH, CRYO_MIXER_ITEMS_BY_PATH, () -> GTMachines.CRYO_MIXER_BE);
 		registerExoticFamily(MASSFAB_SMALL_ROWS, MASSFAB_SMALL_BLOCKS_BY_PATH, MASSFAB_SMALL_ITEMS_BY_PATH, () -> GTMachines.MASSFAB_SMALL_BE);
+		registerExoticFamily(MOLECULAR_SCANNER_ROWS, MOLECULAR_SCANNER_BLOCKS_BY_PATH, MOLECULAR_SCANNER_ITEMS_BY_PATH, () -> GTMachines.MOLECULAR_SCANNER_BE); // task p32-qu-scanner-replicator
+		registerExoticFamily(REPLICATOR_ROWS, REPLICATOR_BLOCKS_BY_PATH, REPLICATOR_ITEMS_BY_PATH, () -> GTMachines.REPLICATOR_BE); // task p32-qu-scanner-replicator
 	}
 
 	/**
@@ -2428,6 +2536,19 @@ public final class GTMachines {
 			BLOCK_ENTITY_TYPES.register("massfab_small", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> exoticMachine(GTMachines.MASSFAB_SMALL_BE.get(), aPos, aState),
 					massfabSmallBlockArray()).build(null));
+
+	// the QU machine pair BETs (task p32-qu-scanner-replicator) — the exotic shape over
+	// the shared {@link #exoticMachine} body; all rungs sit at tiers 0..2, inside the
+	// TIER_INPUTS table (the :126 conversion over NBT_INPUT 32/128/512, :1551/:1556-1558)
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> MOLECULAR_SCANNER_BE =
+			BLOCK_ENTITY_TYPES.register("molecular_scanner", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> exoticMachine(GTMachines.MOLECULAR_SCANNER_BE.get(), aPos, aState),
+					molecularScannerBlockArray()).build(null));
+
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> REPLICATOR_BE =
+			BLOCK_ENTITY_TYPES.register("replicator", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> exoticMachine(GTMachines.REPLICATOR_BE.get(), aPos, aState),
+					replicatorBlockArray()).build(null));
 
 	/**
 	 * The exotic BET factory body — the kineticMachine body verbatim except the WINDOW
@@ -2568,7 +2689,7 @@ public final class GTMachines {
 	 * (connectors/barrels/pipes rendering) stays pooled. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		java.util.List<Block> rBlocks = new java.util.ArrayList<>(213);
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>(217);
 		rBlocks.add(OVEN.get());
 		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
@@ -2657,6 +2778,10 @@ public final class GTMachines {
 		// task p29-w4-eu-bridge — the Roasting 4-ladder, +4 blocks, the census comment and
 		// the datagen-JVM half move together (163 → 188 → 192)
 		java.util.Collections.addAll(rBlocks, roastingBlockArray());
+		// task p32-qu-scanner-replicator — the QU machine pair, +4 blocks (the scanner
+		// single + the replicator three-rung, the census comment moves together 213 → 217)
+		java.util.Collections.addAll(rBlocks, molecularScannerBlockArray());
+		java.util.Collections.addAll(rBlocks, replicatorBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 
