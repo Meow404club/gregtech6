@@ -2,7 +2,7 @@
 """p32-magic-absorber — the Magic Field Absorber live acceptance (sweep group
 p32_magic_absorber; the p32_qu_laser rig geometry, two columns):
 
-  A THE QU LEG (acceptance ②): the T1 small massfab (gt6:massfab_t1, window
+  A THE QU LEG (acceptance ②): the T1 small massfab (gt6:massfab, window
     min 16) is the QU sink — the absorber's size-1 QU packets sit below its
     min door, so the Root white-burn door eats them and the emitter side
     books the out (the p32-qu-laser live lesson: the Root gate counts a
@@ -42,10 +42,12 @@ for _path in (str(_HERE), str(_HERE.parent)):
 import gt6world
 from framework import Chain, Step, main, phase
 
+F = gt6world.fmt
+
 Z = 352  # the fresh band east of the qu-laser columns (x444..458)
 # the QU column: massfab (sink) -> absorber (facing north, output face INTO the
 # massfab's back) with the Dragon Egg on top
-MQ = gt6world.Site(470, 65, Z)           # gt6:massfab_t1[facing=north] — the QU sink
+MQ = gt6world.Site(470, 65, Z)           # gt6:massfab[facing=north] — the QU sink
 ABS_Q = gt6world.Site(470, 65, Z + 1)    # gt6:magic_absorber[facing=north]
 EGG = gt6world.Site(470, 66, Z + 1)      # minecraft:dragon_egg (the trophy seat = TOP)
 # the TU column: coagulator (sink) -> absorber with the skull on top
@@ -61,7 +63,7 @@ steps = [
     Step(f"setblock {F(CHEST)} minecraft:chest", expect="Changed the block"),
     Step(f"item replace block {F(CHEST)} container.0 with gt6:magic_absorber 1", expect="Replaced"),
     Step(f"data get block {F(CHEST)} Items[0]", expect="gt6:magic_absorber"),
-    Step(f"setblock {F(MQ)} gt6:massfab_t1[facing=north]", expect="Changed the block"),
+    Step(f"setblock {F(MQ)} gt6:massfab[facing=north]", expect="Changed the block"),
     Step(f"setblock {F(ABS_Q)} gt6:magic_absorber[facing=north]", expect="Changed the block"),
     Step(f"setblock {F(EGG)} minecraft:dragon_egg", expect="Changed the block"),
     Step(f"gt6magicabsorber stat {F(ABS_Q)}", expect="active true, type QU, out 64, facing 2", sleep=1.5, poll=10.0),
@@ -89,7 +91,7 @@ steps = [
     Step(f"gt6magicabsorber reset {F(ABS_Q)}", expect="GT6 magic absorber accounting reset"),
     Step(f"gt6magicabsorber reset {F(ABS_T)}", expect="GT6 magic absorber accounting reset"),
     Step(f"gt6magicabsorber stat {F(ABS_Q)}", expect="active false, type QU, out 64, facing 2, delivered 0, rate 0", sleep=2.0),
-    Step(f"gt6magicabsorber stat {F(ABS_T)}", expect="active false, type TU, out 1, facing 2, delivered 0, rate 0", sleep=0.5),
+    Step(f"gt6magicabsorber stat {F(ABS_T)}", expect="active false, type TU, out 64, facing 2, delivered 0, rate 0", sleep=0.5),
 
     phase("D: teardown — restore the band"),
     Step(f"fill 468 62 {Z - 2} 476 68 {Z + 5} air", expect="filled"),
