@@ -1753,8 +1753,9 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addPlaceables() {
         add("block.gt6.greg_o_lantern", "Greg o'Lantern");
-        // the sandwich — the Loader :2032 registration word VERBATIM ("Sandwich")
+        // the sandwich — the Loader :2032 registration word VERBATIM ("Sandwich");
         // the BlockItem rides the block description id — no item.gt6.sandwich key exists
+        add("block.gt6.sandwich", "Sandwich");
         // the six placed piles — the Loader :2033-2040 registration words VERBATIM
         add("block.gt6.placed_rock", "Rock");
         add("block.gt6.placed_stick", "Stick");
