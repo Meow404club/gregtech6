@@ -8457,3 +8457,17 @@ Domain Dedication block above).
 - `block/laser_electric_side.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `lasers/laser_electric/colored/side.png`)
 - `block/laser_absorber_front.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `laserabsorbers/electric_laser/colored/front.png`)
 - `block/laser_absorber_side.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `laserabsorbers/electric_laser/colored/side.png`)
+
+## Magic absorber texture (task p32-magic-absorber)
+
+The absorber block face under `gt6/textures/block/` comes from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/magicenergyabsorber/colored/side.png`
+(the Loader:1005 art row), byte-identical to upstream, sha256 verified. The four
+upstream colored faces (side_facing/side/top/bottom) are ONE byte-identical grayscale
+file — the port borrows it once as `magic_absorber_base.png` and maps every cube face
+to it (the in-game look rides the machine tint seat + the overlay trios, both
+unborrowed: the overlay/overlay_active activity visual is the W2 render pool, the
+static-face posture of the bridge/laser families). License: upstream GregTech 6 assets
+are CC0 (see the Public Domain Dedication block above).
+
+- `block/magic_absorber_base.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `magicenergyabsorber/colored/side.png`; side_facing/top/bottom byte-identical)

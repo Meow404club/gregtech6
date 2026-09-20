@@ -610,6 +610,12 @@ SESSION_GROUPS = (
     # band-local setblocks; the /gt6logistics wire stat|gate arms are pure command
     # channels). --group p32_logistics_lv2 matches the module stem.
     ("p32_logistics_lv2",),
+    # p32-magic-absorber (task p32-magic-absorber): the Magic Field Absorber live
+    # acceptance — the fresh z=352 band east of the qu-laser columns (x470/x474
+    # columns, x-disjoint from the laser band x444..458), two columns: the QU leg
+    # (massfab_t1 sink <- absorber <- Dragon Egg on top) and the TU leg (coagulator
+    # sink <- absorber <- skeleton skull), the idle arm clears both trophies.
+    ("p32_magic_absorber",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
