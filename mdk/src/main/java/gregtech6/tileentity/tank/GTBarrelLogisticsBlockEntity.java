@@ -3,9 +3,14 @@ package gregtech6.tileentity.tank;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 
+import gregtech6.tileentity.logistics.ITileEntityLogisticsStorage;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
 
@@ -36,14 +41,12 @@ import gregtech6.registry.GTBarrels;
  *     the logistics barrel's upstream refusal and is the seam the future tool-face card
  *     flips the base to.</li>
  * </ul>
- * {@code canLogistics(byte)} is not transcribed: {@code ITileEntityLogisticsStorage} has
- * no consumer in the port (no logistics pipes — pool cut, card spec ②). Nothing else
- * differs from the metal drum: no cover override (the upstream :37 class takes the cover
- * defaults), the capacity and the 100000 K ceiling ride the {@link GTBarrelBlock} carrier
- * (the W1 registration-NBT-carrier pattern); the upstream row's four-proof flags
- * (PLASMA/GAS/ACID/MAGIC all T) are the P4 quartet pool cut with no port consumer.
+ * {@code canLogistics(byte)} and the storage face joined the port with task
+ * p32-logistics-lv3 (the Core's BFS endpoint face, below) — until the cover family lands
+ * this tank IS the logistics network's storage endpoint (research.p31-logistics
+ * missing_by_cost_asc row 4, the Storage-endpoint slice).
  */
-public class GTBarrelLogisticsBlockEntity extends GTBarrelMetalBlockEntity {
+public class GTBarrelLogisticsBlockEntity extends GTBarrelMetalBlockEntity implements ITileEntityLogisticsStorage {
 
 	/** BET factory for BlockEntityType.Builder.of — resolves the registry type at runtime. */
 	public GTBarrelLogisticsBlockEntity(BlockPos aPos, BlockState aState) {
@@ -93,5 +96,75 @@ public class GTBarrelLogisticsBlockEntity extends GTBarrelMetalBlockEntity {
 	@Override
 	public String getTileEntityName() {
 		return "barrel_logistics"; // BET registry path mirrors it (GTBarrels.BARREL_LOGISTICS_BE)
+	}
+
+	// ---------------------------------------------------------------------------
+	// the logistics endpoint face (task p32-logistics-lv3)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The tier-override NBT key and the override value. Upstream configures endpoint
+	 * tiering through the screwdriver on the COVER family (the AbstractCoverAttachmentLogistics
+	 * mValues bit 0-1) — the port's cover card is a later slice, so the headless
+	 * configuration seam (the /gt6logistics tank priority command, the /gt6itempipe
+	 * retriever place→装盖设滤 precedent) drives this persisted byte. {@code -1} (the
+	 * default) = the upstream content-derived answer below.
+	 */
+	public static final String NBT_LOGISTICS_PRIORITY = "gt.logistics.priority";
+
+	/** {@link #NBT_LOGISTICS_PRIORITY} — a negative value is the auto (content-derived) arm. */
+	public byte mLogisticsPriority = -1;
+
+	/** The command seam for the tier override (clamped to the 0..3 tier window; -1 = auto). */
+	public void setLogisticsPriority(int aPriority) {
+		byte tPriority = aPriority < 0 ? -1 : (byte)Math.min(3, aPriority);
+		if (tPriority != mLogisticsPriority) {
+			mLogisticsPriority = tPriority;
+			setChanged();
+		}
+	}
+
+	/** Upstream MultiTileEntityBarrelLogistics.java:41 verbatim — every side participates. */
+	@Override
+	public boolean canLogistics(byte aSide) {
+		return true;
+	}
+
+	/** Upstream TileEntityBase08Barrel.java:285, with the override arm ahead of it. */
+	@Override
+	public int getLogisticsPriorityFluid() {
+		if (mLogisticsPriority >= 0) return mLogisticsPriority;
+		return mTank.isEmpty() ? 1 : 2;
+	}
+
+	/** Upstream TileEntityBase08Barrel.java:286 — the tank carries no item routing. */
+	@Override
+	public int getLogisticsPriorityItem() {
+		return 0;
+	}
+
+	/** Upstream TileEntityBase08Barrel.java:287 — the tank's fluid identity IS the filter (keepsFilter keeps it at 0 L). */
+	@Override
+	public Fluid getLogisticsFilterFluid() {
+		return mTank.fluid() == null ? null : mTank.fluid().getFluid();
+	}
+
+	/** Upstream TileEntityBase08Barrel.java:288. */
+	@Nullable
+	@Override
+	public ItemStack getLogisticsFilterItem() {
+		return null;
+	}
+
+	@Override
+	public void load(CompoundTag aNBT) {
+		super.load(aNBT);
+		if (aNBT.contains(NBT_LOGISTICS_PRIORITY, Tag.TAG_ANY_NUMERIC)) mLogisticsPriority = aNBT.getByte(NBT_LOGISTICS_PRIORITY);
+	}
+
+	@Override
+	protected void saveAdditional(CompoundTag aNBT) {
+		super.saveAdditional(aNBT);
+		if (mLogisticsPriority >= 0) aNBT.putByte(NBT_LOGISTICS_PRIORITY, mLogisticsPriority);
 	}
 }

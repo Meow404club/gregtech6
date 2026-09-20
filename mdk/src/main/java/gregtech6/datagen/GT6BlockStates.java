@@ -198,6 +198,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addVonDaGraagg(); // task p31-graagg — the Von da Graagg controller
         addLargeMassfab(); // task p31-massfab — the Large Matter Fabricator controller
         addFusionReactor(); // task p31-fusion — the Fusion Reactor controller
+        addLogisticsCore(); // task p32-logistics-lv3 — the Logistics Core controller
         addLargeCrucible(); // task p26-crucible-multiblock
         addDistillationTowers(); // task p29-w3-distill-crucible — the twin tower controllers
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
@@ -2369,6 +2370,33 @@ public final class GT6BlockStates extends BlockStateProvider {
      * property, not the model). Overlay/active layers stay unborrowed — the ACTIVE visual
      * is the render wave's surface.
      */
+    /**
+     * Task p32-logistics-lv3 — the Logistics Core controller (upstream meta 17997, the
+     * NBT_TEXTURE "logisticscore" family). The dedicated textures have no port face yet,
+     * so the model borrows the galvanized-steel wall family (the core's registered
+     * material — the parts-datagen borrow form); the logisticscore wave retextures later.
+     * The 8 FACING x FORMED states share the one oriented model (the massfab form).
+     */
+    private void addLogisticsCore() {
+        Block tBlock = gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get();
+        String tBase = "block/parts/metalwall/0/colored/";
+        ModelFile tModel = models().cube("logistics_core",
+                modLoc(tBase + "bottom"), modLoc(tBase + "top"),
+                modLoc(tBase + "side"), modLoc(tBase + "side"),
+                modLoc(tBase + "side"), modLoc(tBase + "side"));
+        getVariantBuilder(tBlock).forAllStates(aState -> {
+            int tY;
+            switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                case SOUTH -> tY = 180;
+                case WEST -> tY = 270;
+                case EAST -> tY = 90;
+                default -> tY = 0; // NORTH
+            }
+            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+        });
+        itemModels().withExistingParent("logistics_core", modLoc("block/logistics_core"));
+    }
+
     private void addLargeMassfab() {
         Block tBlock = gregtech6.registry.GTMultiBlocks.MASSFAB.get();
         String tFamily = "largemassfab";

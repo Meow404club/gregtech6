@@ -632,6 +632,13 @@ SESSION_GROUPS = (
     # their pedestals per pass, the mines discard the drops). --group p32_placeables
     # matches through the chain's embedded name prefix.
     ("p32_placeables",),
+    # P32 W3 card (p32-logistics-lv3): the Logistics Core chain — the fresh z=236..250
+    # band (x509..531: the 5x5x5 core structure 513..517/63..67/242..246, the controller
+    # at the south face centre 515 65 242; the endpoint row z=241 with the generic /
+    # semi / filtered tanks and the two-wire hop; the copper-4x EU tail at 518 65 244
+    # against the east wall), x-disjoint from the lv2 band x486..490 with margin.
+    # --group p32_logistics_core matches the module stem.
+    ("p32_logistics_core",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

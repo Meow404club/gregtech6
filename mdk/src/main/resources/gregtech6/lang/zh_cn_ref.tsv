@@ -8456,3 +8456,4 @@ direct	block.gt6.placed_ingot	锭	hand
 direct	block.gt6.placed_plate	板	hand
 direct	block.gt6.placed_gem_plate	宝石板	hand
 direct	block.gt6.placed_scrap	废料	hand
+direct	block.gt6.logistics_core	物流核心	hand

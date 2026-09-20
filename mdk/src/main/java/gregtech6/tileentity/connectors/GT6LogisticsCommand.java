@@ -2,6 +2,7 @@ package gregtech6.tileentity.connectors;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.commands.CommandSourceStack;
@@ -10,19 +11,29 @@ import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.Fluid;
+
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import org.slf4j.Logger;
 
 import gregtech6.block.logistics.GTLogisticsWireBlock;
 import gregtech6.covers.covers.AbstractCoverAttachmentLogistics;
 import gregtech6.registry.GT6Logistics;
+import gregtech6.tileentity.logistics.ITileEntityLogisticsStorage;
+import gregtech6.tileentity.multiblocks.GT6LogisticsCoreBlockEntity;
+import gregtech6.tileentity.tank.GTBarrelLogisticsBlockEntity;
 
 /**
  * {@code /gt6logistics} — the automated logistics acceptance command (task
@@ -42,6 +53,15 @@ import gregtech6.registry.GT6Logistics;
  * <li>{@code gate <pos>} — the {@link AbstractCoverAttachmentLogistics} placement gate
  *     driven live against the host at pos (acceptance ③): a member host answers allowed,
  *     everything else refused.</li>
+ * <li><b>task p32-logistics-lv3 — the core subtree</b> (the GTItemPipeCommand
+ *     place|insert|accept|stat shape): {@code core form <pos>} (the forced structure
+ *     check + the four CPU pools), {@code core stat <pos>} (power, the used-op counters,
+ *     the tier registration, the protected-set size, the moved totals), {@code core
+ *     import <pos> &lt;fluid&gt; &lt;amount&gt;} / {@code core export <pos> &lt;amount&gt;}
+ *     (the endpoint intake/outtake drivers through the capability), {@code core accept
+ *     <pos> &lt;fluid&gt;} (the endpoint tier + filter verdict).</li>
+ * <li>{@code tank priority <pos> <auto|0..3>} — the persisted logistics-tier override on
+ *     the logistics tank (the headless form of the cover-card screwdriver face).</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = "gt6")
@@ -85,8 +105,75 @@ public final class GT6LogisticsCommand {
 								.executes(aContext -> gate(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))
 						)
 				)
+				.then(
+					Commands.literal("core")
+						.then(
+							Commands.literal("form")
+								.then(
+									Commands.argument("pos", BlockPosArgument.blockPos())
+										.executes(aContext -> coreForm(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))
+								)
+						)
+						.then(
+							Commands.literal("stat")
+								.then(
+									Commands.argument("pos", BlockPosArgument.blockPos())
+										.executes(aContext -> coreStat(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))
+								)
+						)
+						.then(
+							Commands.literal("import")
+								.then(
+									Commands.argument("pos", BlockPosArgument.blockPos())
+										.then(
+											Commands.argument("fluid", StringArgumentType.string())
+												.then(
+													Commands.argument("amount", IntegerArgumentType.integer(1))
+														.executes(aContext -> coreImport(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+																StringArgumentType.getString(aContext, "fluid"), IntegerArgumentType.getInteger(aContext, "amount")))
+												)
+										)
+								)
+						)
+						.then(
+							Commands.literal("export")
+								.then(
+									Commands.argument("pos", BlockPosArgument.blockPos())
+										.then(
+											Commands.argument("amount", IntegerArgumentType.integer(1))
+												.executes(aContext -> coreExport(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+														IntegerArgumentType.getInteger(aContext, "amount")))
+										)
+								)
+						)
+						.then(
+							Commands.literal("accept")
+								.then(
+									Commands.argument("pos", BlockPosArgument.blockPos())
+										.then(
+											Commands.argument("fluid", StringArgumentType.string())
+												.executes(aContext -> coreAccept(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+														StringArgumentType.getString(aContext, "fluid")))
+										)
+								)
+						)
+				)
+				.then(
+					Commands.literal("tank")
+						.then(
+							Commands.literal("priority")
+								.then(
+									Commands.argument("pos", BlockPosArgument.blockPos())
+										.then(
+											Commands.argument("tier", StringArgumentType.string())
+												.executes(aContext -> tankPriority(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
+														StringArgumentType.getString(aContext, "tier")))
+										)
+								)
+						)
+				)
 		);
-		LOGGER.info("Registered GT6 logistics command /gt6logistics (wire place|wire stat|gate)");
+		LOGGER.info("Registered GT6 logistics command /gt6logistics (wire place|wire stat|gate|core form|core stat|core import|core export|core accept|tank priority)");
 	}
 
 	// ---------------------------------------------------------------------------
@@ -155,6 +242,136 @@ public final class GT6LogisticsCommand {
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	// ---------------------------------------------------------------------------
+	// core form / stat / import / export / accept + tank priority (task p32-logistics-lv3)
+	// ---------------------------------------------------------------------------
+
+	/** The structure driver — the forced checkStructure pass with the four CPU pools as the verdict. */
+	private static int coreForm(CommandSourceStack aSource, BlockPos aPos) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GT6LogisticsCoreBlockEntity tCore)) {
+			aSource.sendFailure(Component.literal("No GT6 logistics core at " + aPos.toShortString()));
+			return 0;
+		}
+		boolean tFormed = tCore.checkStructure(true);
+		String tLine = String.format("GT6 logistics core form at %s: formed=%d logic=%d control=%d storage=%d conversion=%d",
+				aPos.toShortString(), tFormed ? 1 : 0, tCore.mCPU_Logic, tCore.mCPU_Control, tCore.mCPU_Storage, tCore.mCPU_Conversion);
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The scan report: energy, the per-op usage counters, the tier registration and the protected-set size. */
+	private static int coreStat(CommandSourceStack aSource, BlockPos aPos) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GT6LogisticsCoreBlockEntity tCore)) {
+			aSource.sendFailure(Component.literal("No GT6 logistics core at " + aPos.toShortString()));
+			return 0;
+		}
+		tCore.checkStructure(false);
+		String tHead = String.format("GT6 logistics core stat at %s: power=%d formed=%d logic=%d(%d used) control=%d(range %d/%d) storage=%d conversion=%d(%d used)",
+				aPos.toShortString(), tCore.mEnergy, tCore.checkStructure(false) ? 1 : 0,
+				tCore.mCPU_Logic, tCore.oCPU_Logic, tCore.mCPU_Control, tCore.oCPU_Control, tCore.mCPU_Control + 2,
+				tCore.mCPU_Storage, tCore.mCPU_Conversion, tCore.oCPU_Conversion);
+		send(aSource, tHead);
+		send(aSource, String.format("GT6 logistics core network: members=%d | fluid generic=%d semi=%d filtered=%d | item generic=%d semi=%d filtered=%d | filters=%d | moved last=%d total=%d",
+				tCore.mReportMembers,
+				tCore.mReportFluid[0], tCore.mReportFluid[1], tCore.mReportFluid[2],
+				tCore.mReportItem[0], tCore.mReportItem[1], tCore.mReportItem[2],
+				tCore.mReportFilters, tCore.mMovedLast, tCore.mMovedTotal));
+		send(aSource, String.format("GT6 logistics core cost: move cost last=%d total=%d", tCore.mCostLast, tCore.mCostTotal));
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The intake driver — fill the logistics endpoint at pos through its fluid handler (the moved-content source). */
+	private static int coreImport(CommandSourceStack aSource, BlockPos aPos, String aFluidId, int aAmount) {
+		BlockEntity tEndpoint = aSource.getLevel().getBlockEntity(aPos);
+		IFluidHandler tHandler = tEndpoint == null ? null : GT6LogisticsCoreBlockEntity.fluidHandler(tEndpoint);
+		Fluid tFluid = resolveFluid(aFluidId);
+		if (tHandler == null || tFluid == null) {
+			aSource.sendFailure(Component.literal("IMPORT FAILED: no fluid endpoint or unknown fluid " + aFluidId + " at " + aPos.toShortString()));
+			return 0;
+		}
+		int tFilled = tHandler.fill(new FluidStack(tFluid, aAmount), FluidAction.EXECUTE);
+		String tLine = String.format("GT6 logistics import at %s: filled %d/%d L of %s", aPos.toShortString(), tFilled, aAmount, aFluidId);
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The outtake driver — drain the endpoint at pos, the moved-amount observable at the destination. */
+	private static int coreExport(CommandSourceStack aSource, BlockPos aPos, int aAmount) {
+		BlockEntity tEndpoint = aSource.getLevel().getBlockEntity(aPos);
+		IFluidHandler tHandler = tEndpoint == null ? null : GT6LogisticsCoreBlockEntity.fluidHandler(tEndpoint);
+		if (tHandler == null) {
+			aSource.sendFailure(Component.literal("EXPORT FAILED: no fluid endpoint at " + aPos.toShortString()));
+			return 0;
+		}
+		FluidStack tDrawnStack = tHandler.drain(aAmount, FluidAction.EXECUTE);
+		int tDrawn = tDrawnStack == null ? 0 : tDrawnStack.getAmount();
+		String tFluid = tDrawnStack == null || tDrawnStack.getAmount() <= 0 ? "nothing" : String.valueOf(ForgeRegistries.FLUIDS.getKey(tDrawnStack.getFluid()));
+		String tLine = String.format("GT6 logistics export at %s: drained %d/%d L of %s", aPos.toShortString(), tDrawn, aAmount, tFluid);
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** The filter verdict — the endpoint's tier, its filter fluid and whether the queried fluid matches. */
+	private static int coreAccept(CommandSourceStack aSource, BlockPos aPos, String aFluidId) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof ITileEntityLogisticsStorage tStorage)) {
+			aSource.sendFailure(Component.literal("No logistics storage endpoint at " + aPos.toShortString()));
+			return 0;
+		}
+		Fluid tQuery = resolveFluid(aFluidId);
+		Fluid tFilter = tStorage.getLogisticsFilterFluid();
+		boolean tMatch = tQuery != null && (tFilter == null || tFilter == tQuery);
+		String tLine = String.format("GT6 logistics accept at %s: priority=%d filter=%s match=%d (%s)", aPos.toShortString(),
+				tStorage.getLogisticsPriorityFluid(), tFilter == null ? "null" : String.valueOf(ForgeRegistries.FLUIDS.getKey(tFilter)),
+				tMatch ? 1 : 0, aFluidId);
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The endpoint tier-config seam — the persisted {@code gt.logistics.priority} override
+	 * (the headless form of the cover-card screwdriver face): "auto" restores the upstream
+	 * content-derived answer, 0..3 sets the tier.
+	 */
+	private static int tankPriority(CommandSourceStack aSource, BlockPos aPos, String aTier) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof GTBarrelLogisticsBlockEntity tTank)) {
+			aSource.sendFailure(Component.literal("No GT6 logistics tank at " + aPos.toShortString()));
+			return 0;
+		}
+		int tPriority;
+		if ("auto".equals(aTier)) {
+			tPriority = -1;
+		} else {
+			try {
+				tPriority = Integer.parseInt(aTier);
+			} catch (NumberFormatException aE) {
+				aSource.sendFailure(Component.literal("Tier must be auto|0|1|2|3, got " + aTier));
+				return 0;
+			}
+			if (tPriority < 0 || tPriority > 3) {
+				aSource.sendFailure(Component.literal("Tier must be auto|0|1|2|3, got " + aTier));
+				return 0;
+			}
+		}
+		tTank.setLogisticsPriority(tPriority);
+		String tLine = String.format("GT6 logistics tank priority at %s: %s (effective fluid priority %d)",
+				aPos.toShortString(), tPriority < 0 ? "auto" : String.valueOf(tPriority), tTank.getLogisticsPriorityFluid());
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	@javax.annotation.Nullable
+	private static Fluid resolveFluid(String aFluidId) {
+		ResourceLocation tId = ResourceLocation.tryParse(aFluidId);
+		if (tId == null) return null;
+		Fluid tFluid = ForgeRegistries.FLUIDS.getValue(tId);
+		return tFluid != null && tFluid.defaultFluidState() != null && !tFluid.defaultFluidState().isEmpty() ? tFluid : null;
 	}
 
 	private static void send(CommandSourceStack aSource, String aLine) {

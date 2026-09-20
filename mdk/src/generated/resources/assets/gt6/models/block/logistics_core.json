@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/parts/metalwall/0/colored/bottom",
+    "east": "gt6:block/parts/metalwall/0/colored/side",
+    "north": "gt6:block/parts/metalwall/0/colored/side",
+    "south": "gt6:block/parts/metalwall/0/colored/side",
+    "up": "gt6:block/parts/metalwall/0/colored/top",
+    "west": "gt6:block/parts/metalwall/0/colored/side"
+  }
+}
