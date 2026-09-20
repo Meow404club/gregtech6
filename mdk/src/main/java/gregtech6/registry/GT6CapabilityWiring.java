@@ -359,6 +359,20 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tMassfabSmall,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 
+		// task p32-qu-scanner-replicator — the QU machine pair joins (tail-append; the same
+		// item + fluid faces; the replicator arm feeds the matter fluids through the U|L
+		// input faces, the scanner arm is item-only)
+		BlockEntityType<TileEntityBasicMachine> tMolecularScanner = GTMachines.MOLECULAR_SCANNER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tMolecularScanner,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tMolecularScanner,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tReplicator = GTMachines.REPLICATOR_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tReplicator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tReplicator,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+
 		// task p29-w2-eu-core-5tier — the five eu-core families join (tail-append; shared
 		// serial file): the Electrolyzer/Injector/Printer/Scanner(Visuals)/Slicer BETs, the
 		// same item + fluid faces as every TileEntityBasicMachine family above (the

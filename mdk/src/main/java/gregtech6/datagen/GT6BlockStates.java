@@ -144,6 +144,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addExoticFamilies(); // task p29-w2-exotic-energy — the six exotic-energy families (family textures, the addCanner shape)
         addEuCoreMachines(); // task p29-w2-eu-core-5tier — the five eu-core families (family textures, the addCanner shape)
         addMassfabMachines(); // task p31-massfab — the small Matter Fabricator 5-ladder (family textures, the addCanner shape)
+        addQuMachines(); // task p32-qu-scanner-replicator — the Molecular Scanner T3 + the Matter Replicator T1-T3 (family textures, the addCanner shape)
         addHuTuFamilies(); // task p29-w2-hu-tu-piggyback — the seven hu-tu families (family textures, the addCanner shape)
         addHeatSmelterFamilies(); // task p29-w3-heat-smelter — the Smelter ladder + the Melter single (family textures, the addCanner shape)
         addRoastingFamilies(); // task p29-w4-eu-bridge — the Roasting Oven ladder (the "roaster" family textures)
@@ -657,6 +658,24 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addMassfabMachines() {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.MASSFAB_SMALL_ROWS) {
             addMachine(GTMachines.MASSFAB_SMALL_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p32-qu-scanner-replicator — the QU machine pair (Loader_MultiTileEntities.java
+     * :1551 the Molecular Scanner T3 single, :1556-1558 the Matter Replicator T1-T3 rungs;
+     * the rows of each family sharing the one NBT_TEXTURE "scannermolecular"/"replicator"):
+     * the addCanner shape verbatim — model names per path, the front textures stay on the
+     * family set (the borrowed upstream basicmachines/{scannermolecular,replicator} split
+     * fronts, the animated overlay strips flattened to their frame 0 — the W1 borrow
+     * pipeline).
+     */
+    private void addQuMachines() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.MOLECULAR_SCANNER_ROWS) {
+            addMachine(GTMachines.MOLECULAR_SCANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.REPLICATOR_ROWS) {
+            addMachine(GTMachines.REPLICATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

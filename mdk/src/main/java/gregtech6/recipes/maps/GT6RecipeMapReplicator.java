@@ -82,6 +82,11 @@ import gregtech6.registry.GTMaterialItems;
  * <li>the {@code GAPI_POST.mFinishedServerStarted} guard and the
  *     {@code containsInput} wide face (:116-117) ride the same canner-form
  *     deviations;</li>
+ * <li>the voltage WINDOW lives in the stored-row scan only ({@code RecipeMap.findRecipe}'s
+ *     aSize gate): the synthesis answers BEFORE any window consult (upstream :55-57
+ *     verbatim — the override never reads aSize), so a below-recipe rung finds the row and
+ *     gates it on the machine-side energy budget instead; the per-machine budget face
+ *     rides the machine pool (the upstream :743 bind);</li>
  * <li>the fluid arms resolve through the port's material→fluid seam
  *     ({@link GTFluids#specOf}) at the fixed molten L-per-unit / bucket-per-unit amounts —
  *     the upstream per-material fluid factory and its unit bookkeeping have no wider port

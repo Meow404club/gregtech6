@@ -138,10 +138,13 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 		GT6RecipeMapJsonLoader.sItemResolver = aId -> switch (aId.getPath()) {
 			case "ender_pearl" -> Items.ENDER_PEARL;
 			case "paper" -> Items.PAPER; // the scanner stand-in's data medium
+			// task p32-qu-scanner-replicator — the six gem-tier stand-ins of the :941-946 rows
+			case "gem_chipped_redstone", "gem_flawed_redstone", "gem_redstone",
+					"gem_flawless_redstone", "gem_exquisite_redstone", "gem_legendary_redstone" -> Items.DIAMOND;
 			default -> Items.AIR; // a miss is LOUD (the unregistered-id bad row)
 		};
 		GT6RecipeMapJsonLoader.sFluidResolver = aId -> switch (aId.getPath()) {
-			case "enderpearl_molten" -> Fluids.LAVA; // identity stand-in
+			case "enderpearl_molten", "redstone_molten" -> Fluids.LAVA; // identity stand-in
 			default -> Fluids.EMPTY;
 		};
 	}
@@ -164,16 +167,20 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 	}
 
 	/**
-	 * ③ The replicator map holds EXACTLY the official row — Loader_Recipes_Other.java:929
-	 * verbatim (the :912/:934-939 _TE compat rows stay unmounted, the TF trophy rows are
-	 * the card's compat cut, the :941-946 molten-redstone rows are deferred pending the
-	 * gt6:redstone_molten carrier — see the shipped file's comment).
+	 * ③ The replicator map holds the official row PLUS the molten-redstone six (task
+	 * p32-qu-scanner-replicator landed them) — the :929 constants re-pinned here, the
+	 * :941-946 six pinned exhaustively in GT6QuMachinesTest; the :912/:934-939 _TE compat
+	 * rows stay unmounted, the TF trophy rows are the card's compat cut.
 	 */
 	@Test
 	public void theReplicatorMapHoldsExactlyTheOfficialEnderRow() throws Exception {
 		pourShipped("replicator");
-		assertEquals(1, GT6RecipeMaps.REPLICATOR.mRecipeList.size(), "exactly the :929 official row — zero compat rows");
-		Recipe tRow = GT6RecipeMaps.REPLICATOR.mRecipeList.iterator().next();
+		assertEquals(7, GT6RecipeMaps.REPLICATOR.mRecipeList.size(), "the :929 row + the :941-946 six — zero compat rows");
+		Recipe tRow = null;
+		for (Recipe tScan : GT6RecipeMaps.REPLICATOR.mRecipeList) {
+			if (tScan.mOutputs.length == 1 && tScan.mOutputs[0].getItem() == Items.ENDER_PEARL) tRow = tScan;
+		}
+		assertNotNull(tRow, "the :929 official row");
 		assertEquals(16L, tRow.mEUt, "the :929 eut 16");
 		assertEquals(144L, tRow.mDuration, "the :929 duration 144");
 		assertEquals(1, tRow.mFluidInputs.length, "one fluid input");

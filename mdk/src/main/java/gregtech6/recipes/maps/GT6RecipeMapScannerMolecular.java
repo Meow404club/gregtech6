@@ -57,7 +57,11 @@ import gregtech6.recipes.RecipeMap;
  *     counterpart — the only findRecipe consumer is the ticking machine on a live
  *     server, and the offline tests drive the arm directly;</li>
  * <li>the {@code containsInput} wide face (:69) stays unwired — the port RecipeMap
- *     carries no containsInput surface (the p14 declaration, the canner note).</li>
+ *     carries no containsInput surface (the p14 declaration, the canner note);</li>
+ * <li>the voltage WINDOW lives in the stored-row scan only: the synthesis answers BEFORE
+ *     any window consult (upstream :48/:55 verbatim — the override never reads aSize), so
+ *     the scan row rides the machine-side energy budget at a below-recipe rung (the
+ *     replicator map carries the same note).</li>
  * </ul>
  *
  * <p>The material resolution rides the port's item→material seam

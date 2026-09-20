@@ -797,6 +797,9 @@ public final class GT6LootTables extends LootTableProvider {
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.cryoMixerBlockArray());
         // task p31-massfab — the small Matter Fabricator 5-ladder (the exotic shape)
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.massfabSmallBlockArray());
+        // task p32-qu-scanner-replicator — the QU machine pair (the exotic shape)
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.molecularScannerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.replicatorBlockArray());
         return rBlocks;
     }
 
