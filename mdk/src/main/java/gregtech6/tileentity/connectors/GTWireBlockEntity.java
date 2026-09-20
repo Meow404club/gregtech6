@@ -111,6 +111,15 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	/** Upstream :65 — the overload strike counter; 16 strikes burn the wire (mRenderType is a render cut). */
 	public byte mBurnCounter = 0;
 
+	// task p32-qu-laser-domain — the laser family transfer counters (upstream
+	// MultiTileEntityWireLaser :49, mTransferred/mTransferredLast; TRANSIENT like the
+	// electric family's wattage window — upstream writes no NBT on the laser rows)
+
+	/** Upstream :49 — the LU mass booked during the CURRENT tick window (|frequency × used| per hop). */
+	public long mTransferred = 0;
+	/** Upstream :49/:61 — the previous window's booking, lagged by the laser tick arm. */
+	public long mTransferredLast = 0;
+
 	// ---------------------------------------------------------------------------
 	// the redstone family state (task p10 — upstream MultiTileEntityWireRedstoneInsulated :53-57)
 	// ---------------------------------------------------------------------------
@@ -191,12 +200,14 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 
 	/**
 	 * The family flag — a laser-family row (GTWireSpecs.Family.LASER, task
-	 * p10-wire-laser-placeholder) mounted on this shared BE class. The laser family is
-	 * INERT on this port, three ways: it accepts/emit NO energy carrier at all (upstream
-	 * it conducts LU only, MultiTileEntityWireLaser :94 — and this port mounts no LU
-	 * carrier, so the EU probe must refuse too), it cannot burn (nothing can flow, the
-	 * overload strikes are unreachable), and it cannot shock (GTWireBlock.contactDamageOf
-	 * is family-gated false — NBT_CONTACTDAMAGE F on the Loader:1815 registration).
+	 * p10-wire-laser-placeholder) mounted on this shared BE class. INERT at the p10
+	 * placeholder landing; since task p32-qu-laser-domain it carries the LIVE LU carrier
+	 * (the p10 revival condition): the family answers LU on the energy face family
+	 * ({@link #isEnergyType}, MultiTileEntityWireLaser :94), the doEnergyInjection LU arm
+	 * floods {@link #transferLaser} (:66-86), and the canConnect LU probe (:89-92) is live.
+	 * It still cannot burn (nothing strikes the overload counter on a lossless wire) and it
+	 * cannot shock (GTWireBlock.contactDamageOf is family-gated false — NBT_CONTACTDAMAGE F
+	 * on the Loader:1815 registration).
 	 */
 	protected final boolean mLaserFamily;
 
@@ -317,11 +328,12 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * registration carries no overload machinery at all (mBurnCounter stays 0 forever, the
 	 * electric branch is unreachable on redstone rows).
 	 *
-	 * <p>Laser rows (task p10-wire-laser-placeholder): upstream onTick2
-	 * (MultiTileEntityWireLaser :57-64) only lags the mTransferred transfer counter — and
-	 * since this port mounts no LU carrier, NOTHING can ever flow (the family accepts no
-	 * energy type, see {@link #isEnergyType}), the counter would stay 0 forever. The early
-	 * return makes the inertness structural: no wattage window, no burn gate, no state.
+	 * <p>Laser rows (task p10-wire-laser-placeholder, revived by task p32-qu-laser-domain):
+	 * upstream onTick2 (MultiTileEntityWireLaser :57-64) only lags the mTransferred transfer
+	 * counter into mTransferredLast and clears the window (:61-62) — now that the LU carrier
+	 * machines exist the lag is live bookkeeping again. The burn gate stays OUT (the laser
+	 * registration carries no overload machinery — nothing can burn a lossless wire, the
+	 * p10 spec-7 redstone posture).
 	 */
 	@Override
 	public void onTick(long aTimer, boolean aIsServerSide) {
@@ -336,8 +348,12 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 			}
 			return;
 		}
-		if (isLaser()) { // upstream :57-64 trimmed to a no-op — the inert family mounts no tick machinery
-			if (aIsServerSide && mBlockUpdated) validateConnections(); // p11 — the deferred re-check (laser bits prune too)
+		if (isLaser()) { // upstream :57-64 — the transfer window lag (the p32 LU revival)
+			if (aIsServerSide) {
+				if (mBlockUpdated) validateConnections(); // p11 — the deferred re-check (laser bits prune too)
+				mTransferredLast = mTransferred; // :61
+				mTransferred = 0; // :62
+			}
 			return;
 		}
 		if (aIsServerSide) { // upstream :148
@@ -496,55 +512,54 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	}
 
 	// ---------------------------------------------------------------------------
-	// transferLaser (task p10-wire-laser-placeholder — the declared SHELL of upstream
-	// MultiTileEntityWireLaser :66-86; no LU carrier exists on this port, so the flood
-	// stays documentation, not code)
+	// transferLaser (task p32-qu-laser-domain — the LU revival the p10 placeholder
+	// declared, MultiTileEntityWireLaser :66-86 verbatim over the port's pure-data
+	// adjacency form)
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * PLACEHOLDER DECLARATION (task p10-wire-laser-placeholder) — the upstream body this
-	 * shell stands in for, MultiTileEntityWireLaser.transferLaser :66-86: a LOSSLESS
-	 * recursive FLOOD of the LU packet. For every valid side but the packet's own (:69,
-	 * behind {@code canEmitEnergyTo} = the connected-mask passthrough :118), while the
-	 * strength budget lasts (:70): the neighbour enters the {@code aAlreadyPassed}
-	 * HashSetNoNulls cycle guard (:72), WIRE neighbours that accept LU recurse with the
-	 * remaining strength (:73-76) and non-wire endpoints go through
+	 * Upstream MultiTileEntityWireLaser :66-86 — a LOSSLESS recursive FLOOD of the LU
+	 * packet. For every valid side but the packet's own (:69, behind
+	 * {@code canEmitEnergyTo} = the connected-mask passthrough :118), while the strength
+	 * budget lasts (:70): the neighbour enters the {@code aAlreadyPassed} HashSetNoNulls
+	 * cycle guard (:72), WIRE neighbours that accept LU recurse with the remaining
+	 * strength (:73-76) and non-wire endpoints go through
 	 * {@code ITileEntityEnergy.Util.insertEnergyInto(TD.Energy.LU, ...)} (:78); the
 	 * actually-used strength is booked as {@code mTransferred += |frequency * used|}
-	 * (:83) and returned. The entry point is the LU half of doEnergyInjection (:100 —
+	 * (:83) and returned. The entry point is the LU arm of doEnergyInjection (:100 —
 	 * simulate answers {@code aAmount}, the real call seeds a fresh set with
-	 * {@code this}); canConnect (:89-92) attaches ONLY LU-capable neighbours; the ratings
-	 * are {@code Long.MAX_VALUE} across the board (:101-106/:112-113) and the loss is 0
-	 * (:114) — a packet traverses any number of segments undiminished, the frequency
-	 * ({@code aSize}) is the beam strength and {@code aStrength} ({@code aAmount}) the
-	 * per-tick amount in the LU sense (TD.java:110-116).
-	 *
-	 * <p>WHY A SHELL: the D1-D4 energy net of this port mounts exactly three carriers —
-	 * RU/KU/EU — and implements no LU producer or consumer, so a flood here could never
-	 * deliver anything: zero consumers means zero booked strength means zero benefit, and
-	 * the shell returning 0 IS the upstream observable under those world conditions
-	 * (nothing flows, nothing is recorded). The method is deliberately pure (no Level
-	 * access) so the offline test drives the exact placeholder behaviour.
-	 *
-	 * <p>REVIVAL CONDITION: when an LU carrier card lands, implement the :66-86 flood HERE
-	 * verbatim — gated on {@link #isLaser()}, recursing into laser-family BEs through
-	 * {@link #isEnergyAcceptingFrom}(TD.Energy.LU, ...) and ending at
-	 * {@code ITileEntityEnergy.Util.insertEnergyInto(TD.Energy.LU, ...)} — plus the LU
-	 * face family beside it (isEnergyType LU :94, the :100 doEnergyInjection arm) and the
-	 * endpoint machines that give the flood its consumers (the converter pool note:
-	 * upstream gregtech/tileentity/energy/converters/ MultiTileEntityLaserElectric EU→LU
-	 * :38, MultiTileEntityLaserAbsorberElectric LU→EU :34, MultiTileEntityLaserBuildcraft
-	 * :49, MultiTileEntityQuantumEnergizerLaser :35).
+	 * {@code this}); the frequency ({@code aSize}) is the beam strength and
+	 * {@code aStrength} ({@code aAmount}) the per-tick amount in the LU sense
+	 * (TD.java:110-116).
 	 *
 	 * @param aSide         the side the packet came in through (skipped by the :69 loop)
 	 * @param aFrequency    the beam strength in the LU sense (upstream aFrequency)
 	 * @param aStrength     the per-tick amount offered (upstream aStrength)
 	 * @param aChannel      the bundled-channel placeholder (upstream passes -1, :100)
 	 * @param aAlreadyPassed the :72 cycle guard, seeded with the originating wire
-	 * @return the strength actually used downstream — ALWAYS 0 on this port (the shell)
+	 * @return the strength actually used downstream
 	 */
 	public long transferLaser(byte aSide, long aFrequency, long aStrength, long aChannel, HashSetNoNulls<BlockEntity> aAlreadyPassed) {
-		return 0; // the placeholder observable — see the javadoc; the :66-86 flood revives with the LU carrier card
+		long rUsedStrength = 0;
+
+		for (byte tSide : ALL_SIDES_VALID_BUT[aSide]) if (canEmitEnergyTo(tSide)) { // :69
+			if (aStrength <= rUsedStrength) break; // :70
+			BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(Direction.from3DDataValue(tSide)));
+			if (aAlreadyPassed.add(tNeighbor)) { // :72 — HashSetNoNulls silently skips the nulls of unconnected/empty spots
+				byte tOpposite = (byte)Direction.from3DDataValue(tSide).getOpposite().get3DDataValue();
+				if (tNeighbor instanceof GTWireBlockEntity tWire) {
+					if (tWire.isEnergyAcceptingFrom(TD.Energy.LU, tOpposite, false)) { // :74
+						rUsedStrength += tWire.transferLaser(tOpposite, aFrequency, aStrength - rUsedStrength, aChannel, aAlreadyPassed); // :75
+					}
+				} else {
+					rUsedStrength += ITileEntityEnergy.Util.insertEnergyInto(TD.Energy.LU, tOpposite, aFrequency, aStrength - rUsedStrength, this, tNeighbor); // :78
+				}
+			}
+		}
+
+		mTransferred += Math.abs(aFrequency * rUsedStrength); // :83
+
+		return rUsedStrength;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -600,7 +615,8 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	}
 
 	// ---------------------------------------------------------------------------
-	// EU face family (upstream :205-230)
+	// EU face family (upstream :205-230) + the LU face family (task p32-qu-laser-domain,
+	// the MultiTileEntityWireLaser :94-:100 revival the p10 placeholder declared)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -611,39 +627,49 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * electric neighbour from pumping EU into a redstone wire (transferElectricity :207-210
 	 * checks isEnergyAcceptingFrom, which reaches this method).
 	 *
-	 * <p>Laser rows (task p10-wire-laser-placeholder): the same NO-TYPE ruling — upstream
-	 * the laser wire conducts LU only (MultiTileEntityWireLaser :94/:111) and this port
-	 * mounts no LU carrier (the D1-D4 energy net carries RU/KU/EU only), so the family
-	 * mounts no energy type AT ALL: the EU exclusion here is the "no EU" half of the
-	 * inert triad, the LU revival rides {@link #transferLaser}.
+	 * <p>Laser rows (task p32-qu-laser-domain): upstream the laser wire conducts LU only
+	 * (MultiTileEntityWireLaser :94) and REFUSES everything else — the p10 inertness is
+	 * gone now that the LU carrier machines exist (the p10 revival condition): laser rows
+	 * answer LU on this face (the :94 arm) and the electric rows keep answering EU. The EU
+	 * exclusion on laser rows stays exact (the reference-equality gate keeps an electric
+	 * neighbour from pumping EU into a laser wire, the :94 LU-only ruling).
 	 */
 	@Override
 	public boolean isEnergyType(TagData aEnergyType, byte aSide, boolean aEmitting) {
-		return !isRedstone() && !isLaser() && aEnergyType == TD.Energy.EU; // upstream :205
+		if (isLaser()) return aEnergyType == TD.Energy.LU; // MultiTileEntityWireLaser :94
+		return !isRedstone() && aEnergyType == TD.Energy.EU; // upstream :205
 	}
 
 	@Override
 	public Collection<TagData> getEnergyTypes(byte aSide) {
-		return isRedstone() || isLaser() ? List.of() : TD.Energy.EU.AS_LIST; // upstream :206
+		if (isLaser()) return TD.Energy.LU.AS_LIST; // MultiTileEntityWireLaser :95
+		return isRedstone() ? List.of() : TD.Energy.EU.AS_LIST; // upstream :206
 	}
 
 	@Override
 	public boolean isEnergyEmittingTo(TagData aEnergyType, byte aSide, boolean aTheoretical) {
-		return isEnergyType(aEnergyType, aSide, true) && canEmitEnergyTo(aSide); // upstream :208
+		return isEnergyType(aEnergyType, aSide, true) && canEmitEnergyTo(aSide); // upstream :208 / WireLaser :97
 	}
 
 	@Override
 	public boolean isEnergyAcceptingFrom(TagData aEnergyType, byte aSide, boolean aTheoretical) {
-		return isEnergyType(aEnergyType, aSide, false) && canAcceptEnergyFrom(aSide); // upstream :209
+		return isEnergyType(aEnergyType, aSide, false) && canAcceptEnergyFrom(aSide); // upstream :209 / WireLaser :98
 	}
 
 	@Override
 	public synchronized long doEnergyExtraction(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoExtract) {
-		return 0; // upstream :210
+		return 0; // upstream :210 / WireLaser :99
 	}
 
 	@Override
 	public synchronized long doEnergyInjection(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
+		// the WireLaser :100 LU arm beside the upstream :211 EU arm — same shape, the flood
+		// entry; the simulate call (aDoInject=false) reports the full amount taken
+		if (isLaser()) {
+			return aSize != 0 && isEnergyAcceptingFrom(aEnergyType, aSide, false)
+					? aDoInject ? transferLaser(aSide, aSize, aAmount, -1, new HashSetNoNulls<BlockEntity>(false, this)) : aAmount
+					: 0;
+		}
 		// upstream :211 verbatim — the implementor checks its own acceptance; the simulate
 		// call (aDoInject=false) reports the full amount taken without transferring
 		return aSize != 0 && isEnergyAcceptingFrom(aEnergyType, aSide, false)
@@ -651,23 +677,24 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 				: 0;
 	}
 
+	/** Upstream :212 with the WireLaser :101 laser arm — the laser wire's band is the MAX_VALUE carrier (GTWireSpecs.LASER_CAPACITY). */
 	@Override
-	public long getEnergySizeOutputRecommended(TagData aEnergyType, byte aSide) {return mVoltage;} // upstream :212
+	public long getEnergySizeOutputRecommended(TagData aEnergyType, byte aSide) {return isLaser() ? Long.MAX_VALUE : mVoltage;} // upstream :212 / :101
 
 	@Override
-	public long getEnergySizeOutputMin(TagData aEnergyType, byte aSide) {return 0;} // upstream :213
+	public long getEnergySizeOutputMin(TagData aEnergyType, byte aSide) {return 0;} // upstream :213 / :102
 
 	@Override
-	public long getEnergySizeOutputMax(TagData aEnergyType, byte aSide) {return mVoltage;} // upstream :214
+	public long getEnergySizeOutputMax(TagData aEnergyType, byte aSide) {return isLaser() ? Long.MAX_VALUE : mVoltage;} // upstream :214 / :103
 
 	@Override
-	public long getEnergySizeInputRecommended(TagData aEnergyType, byte aSide) {return mVoltage;} // upstream :215
+	public long getEnergySizeInputRecommended(TagData aEnergyType, byte aSide) {return isLaser() ? Long.MAX_VALUE : mVoltage;} // upstream :215 / :104
 
 	@Override
-	public long getEnergySizeInputMin(TagData aEnergyType, byte aSide) {return 0;} // upstream :216
+	public long getEnergySizeInputMin(TagData aEnergyType, byte aSide) {return 0;} // upstream :216 / :102
 
 	@Override
-	public long getEnergySizeInputMax(TagData aEnergyType, byte aSide) {return mVoltage;} // upstream :217
+	public long getEnergySizeInputMax(TagData aEnergyType, byte aSide) {return isLaser() ? Long.MAX_VALUE : mVoltage;} // upstream :217 / :106
 
 	@Override
 	public long getEnergyDemanded(TagData aEnergyType, byte aSide, long aSize) {return 0;} // the Root default, overridden per the card
@@ -751,19 +778,25 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * neighbour BE (visual connection to whatever it feeds; vanilla blocks still need the
 	 * air/liquid slot of the base connect). No ITileEntityEnergy probe on this family.
 	 *
-	 * <p>Laser rows (task p10-wire-laser-placeholder): upstream MultiTileEntityWireLaser
-	 * :89-92 — the probe accepts a neighbour that accepts-or-emits LU. This port mounts no
-	 * LU carrier, so the probe is permanently FALSE and the explicit branch returns false
-	 * before the EU probe below could ever true on the NEIGHBOUR's EU face (an oven or an
-	 * electric wire would otherwise visually attach a laser wire — upstream they do not,
-	 * :89-92 answers the LU question, not the EU one). A laser-to-laser visual chain still
-	 * forms through the connector-type intersection of the base handshake
-	 * ({@link #getConnectorTypes} = WIRE_LASER on both ends).
-	 */
-	@Override
-	public boolean canConnect(byte aSide, @Nullable BlockEntity aNeighbor) {
-		if (isRedstone()) return true; // upstream :172 verbatim
-		if (isLaser()) return false; // upstream :89-92 — the LU probe, permanently false on this port (no LU carrier mounted)
+		 * <p>Laser rows (task p32-qu-laser-domain): upstream MultiTileEntityWireLaser
+		 * :89-92 — the probe accepts a neighbour that accepts-or-emits LU, both probed
+		 * theoretically (the aTheoretical conductor visual connect). The p10 inert posture
+		 * (permanently false) is gone with the LU carrier revival: the probe is LIVE again,
+		 * which is what lets a laser wire visually attach to the CO2 Laser's emission face
+		 * and the Laser Absorber's input face (and refuse EU-only neighbours — the probe
+		 * answers the LU question, not the EU one, exactly upstream :89-92). A
+		 * laser-to-laser visual chain still forms through the connector-type intersection
+		 * of the base handshake ({@link #getConnectorTypes} = WIRE_LASER on both ends).
+		 */
+		@Override
+		public boolean canConnect(byte aSide, @Nullable BlockEntity aNeighbor) {
+			if (isRedstone()) return true; // upstream :172 verbatim
+			if (isLaser()) { // MultiTileEntityWireLaser :89-92 — the LU accept-or-emit double probe
+				if (!(aNeighbor instanceof ITileEntityEnergy tEnergy)) return false;
+				byte tOpposite = (byte)Direction.from3DDataValue(aSide).getOpposite().get3DDataValue();
+				return tEnergy.isEnergyAcceptingFrom(TD.Energy.LU, tOpposite, true)
+						|| tEnergy.isEnergyEmittingTo(TD.Energy.LU, tOpposite, true);
+			}
 		if (!(aNeighbor instanceof ITileEntityEnergy tEnergy)) {
 			// no foreign connections: the EU->FE outbound bridge was cut (task
 			// p28-cut-eu-fe-bridge), the wire attaches to ITileEntityEnergy neighbours only —
