@@ -77,6 +77,21 @@ legacyForge {
         register("client") {
             client()
             gameDirectory = file("run/")
+            // p32-render-embeddium-tint 验证缝：-Pgt6.quickplay="<args>" 把额外程序参数
+            // （--quickPlaySingleplayer/宽高）追加入 runClient——默认缺省零变化。
+            val quickplay = providers.gradleProperty("gt6.quickplay")
+            if (quickplay.isPresent) {
+                programArguments.addAll(quickplay.get().split(" ").filter { it.isNotBlank() })
+            }
+        }
+        // 同缝：-Pgt6.display=:97 显式覆盖 game 进程的 DISPLAY——runClient 由常驻 daemon
+        // 执行，launcher 的 inline env 到不了 game（daemon 环境原样继承）；headless 验收机
+        // 必须钉 Xvfb，物理 :0 禁弹窗（2026-09-20 纠正令）。
+        val display = providers.gradleProperty("gt6.display")
+        if (display.isPresent) {
+            tasks.withType(JavaExec::class).matching { it.name == "runClient" }.configureEach {
+                environment("DISPLAY", display.get())
+            }
         }
         register("server") {
             server()
@@ -143,7 +158,20 @@ dependencies {
     // jade_version（1.20.1 = 11.13.3+forge）；GTCEu 1.20.1 先例 dependencies.gradle:29
     // modCompileOnly(forge.jade)。SRG 泄漏预案：降级 fg.deobf 形（arch 卡 build_wiring.fallback）。
     "modCompileOnly"("maven.modrinth:jade:${jadeVer}")
-    "modRuntimeOnly"("maven.modrinth:jade:${jadeVer}")
+    // p32-render-embeddium-tint 缝：-Pgt6.nojade=true 可把 Jade 摘出 run 类路径——Jade
+    // 11.13.3 在 dev 环境逢 TitleScreen.init 硬断言全部插件 config 翻译在案
+    // （JadeClient.onGui:156 translationChecked + isDevEnv 双门；GT6 的
+    // config.jade.plugin_gt6.* lang 键缺失 = p21-jade 面的既有缝隙，另卡不清）。
+    // 视觉验证腿不需要 Jade；默认缺省 = Jade 照旧 rides 每个 dev client。
+    if (!providers.gradleProperty("gt6.nojade").isPresent) {
+        "modRuntimeOnly"("maven.modrinth:jade:${jadeVer}")
+    }
+    // p32-render-embeddium-tint 验证缝（P26 冒烟钉版 0.3.31+mc1.20.1）：-Pgt6.embeddium=true
+    // 才挂 modRuntimeOnly——mod 只进 runClient 类路径（MDG mod* 重映射 child 配置，JEI 同
+    // 机制），编译面与 jar 产物零触碰；默认缺省 = 全部既有 runClient 行为不变。
+    if (providers.gradleProperty("gt6.embeddium").isPresent) {
+        "modRuntimeOnly"("maven.modrinth:embeddium:0.3.31+mc1.20.1")
+    }
     // mdk 单测（p3-be-framework + p3-fullprefix-creativetab 归一）：BE NBT round-trip /
     // onTick 分发 / 材料适配器 / 注册判定与 first-wins 断言；junit-bom 全模块一份。
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
