@@ -102,7 +102,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("GAS_FUELS", 0);
 		SNAPSHOT.put("DISTILLERY", 8);
 		SNAPSHOT.put("DRYING", 42);
-		SNAPSHOT.put("CANNER", 52);
+		SNAPSHOT.put("CANNER", 53); // +1: the CO2 laser gas fill row (task p32-qu-laser-domain, MultiItemTechnological.java:403)
 		SNAPSHOT.put("MIXER", 56000);
 		SNAPSHOT.put("SIFTING", 1);
 		// the ONE version-sensitive census: the Compressor walk rides the vanilla item
@@ -227,6 +227,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		capture(() -> GT6RecipesCanner.sCfoamOwnedFluidResolver, aV -> GT6RecipesCanner.sCfoamOwnedFluidResolver = aV);
 		capture(() -> GT6RecipesCanner.sFoamSprayResolver, aV -> GT6RecipesCanner.sFoamSprayResolver = aV);
 		capture(() -> GT6RecipesCanner.sFoamSprayOwnedResolver, aV -> GT6RecipesCanner.sFoamSprayOwnedResolver = aV);
+		capture(() -> GT6RecipesCanner.sCarbonDioxideResolver, aV -> GT6RecipesCanner.sCarbonDioxideResolver = aV);
+		capture(() -> GT6RecipesCanner.sLaserGasEmptyResolver, aV -> GT6RecipesCanner.sLaserGasEmptyResolver = aV);
+		capture(() -> GT6RecipesCanner.sLaserGasCo2Resolver, aV -> GT6RecipesCanner.sLaserGasCo2Resolver = aV);
 	}
 
 	private static <T> void capture(Supplier<T> aGetter, Consumer<T> aSetter) {
@@ -307,6 +310,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> Fluids.FLOWING_WATER;
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(Items.CLAY_BALL);
 		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new ItemStack(Items.CLAY_BALL);
+		GT6RecipesCanner.sCarbonDioxideResolver = () -> Fluids.FLOWING_LAVA;
+		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new ItemStack(Items.PAPER);
+		GT6RecipesCanner.sLaserGasCo2Resolver = () -> new ItemStack(Items.CLAY_BALL);
 		GT6RecipeMaps.reset();
 		GT6RecipeMaps.init();
 	}
