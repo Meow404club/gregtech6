@@ -248,7 +248,11 @@ public class GT6LogisticsCoreBlockEntityTest extends GTMultiBlocksOfflineTestBas
 		SimpleContainer tStock = fullStock();
 		tCore2.checkStructure2(null, null, tStock);
 		tCore2.checkStructure2(null, null, tStock);
-		tLevel2.setBlock(new BlockPos(302, 64, 300), Blocks.DIRT.defaultBlockState(), 3); // the (2,0,-2) wall cell
+		// the foreign block lands straight in the maps — the BE factory would mint a part BE
+		// over dirt, which the 1.21.1 validateBlockState rejects at setBlock time
+		BlockPos tWrong = new BlockPos(302, 64, 300); // the (2,0,-2) wall cell
+		tLevel2.mStates.put(tWrong, Blocks.DIRT.defaultBlockState());
+		tLevel2.mBlockEntities.remove(tWrong);
 		assertFalse(tCore2.checkStructure2(null, null, null), "a foreign block in the frame rejects");
 	}
 
