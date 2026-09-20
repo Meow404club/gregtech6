@@ -58,10 +58,13 @@ import gregtech6.recipes.RecipeMap;
  *     server, and the offline tests drive the arm directly;</li>
  * <li>the {@code containsInput} wide face (:69) stays unwired — the port RecipeMap
  *     carries no containsInput surface (the p14 declaration, the canner note);</li>
- * <li>the voltage WINDOW lives in the stored-row scan only: the synthesis answers BEFORE
- *     any window consult (upstream :48/:55 verbatim — the override never reads aSize), so
- *     the scan row rides the machine-side energy budget at a below-recipe rung (the
- *     replicator map carries the same note).</li>
+ * <li>the voltage WINDOW gates the synthesized row (the stored-row
+ *     {@code absGreaterEqual(aSize × mPower, eUt)} face — the upstream :55-57 override
+ *     never consults aSize, but skipping the check turns every over-window scan into a
+ *     consumed-inputs-no-product strand: doWork starves at mMinEnergy &gt; mInputMax.
+ *     Upstream never hits the hole (the T3-only scanner is tuned for the H/D rows), the
+ *     port's scan-nable universe does not share the tuning, so the gate rides the
+ *     machine-supplied window — the 校验不砍 ruling).</li>
  * </ul>
  *
  * <p>The material resolution rides the port's item→material seam
@@ -107,6 +110,18 @@ public class GT6RecipeMapScannerMolecular extends RecipeMap {
 				// :55-56 — the (prefix, material) resolution + the SCANNABLE gate
 				if (!(tScanned.getItem() instanceof MaterialPrefixItem tItem) || tItem.material == null
 						|| tItem.material.mID < 1 || !tItem.prefix.contains(TD.Prefix.SCANNABLE)) return rRecipe;
+				long tEUt = (tItem.material.mProtons + tItem.material.mNeutrons) * SCAN_EUT_PER_NUCLEON;
+				// the voltage-window gate on the SYNTHESIZED row — the machine hands us its
+				// window (aSize = mInputMax, the :712 call) and the stored-row gate
+				// (RecipeMap.findRecipe's absGreaterEqual(aSize × mPower, eUt)) applies to the
+				// dynamic row identically. UPSTREAM NOTE: the :55-57 override never consults
+				// aSize — but upstream's H/D-tuned constants (the T3-only scanner is tuned so
+				// the (p+n)×512 rows land inside 256..1024) never hit the hole, while the
+				// port's bigger-nucleon scans would START, eat both inputs, then starve in
+				// doWork (mMinEnergy = the row eUt > mInputMax → the else-branch never
+				// advances progress): consumed inputs, no product — a data-loss trap. The
+				// window check keeps the refusal LOUD, before any consume (校验不砍).
+				if (!absGreaterEqual(aSize * mPower, tEUt)) return rRecipe;
 				// :57-61 — the one-time row: both inputs consumed, the stick back WITH the data
 				ItemStack tOutput = tUSB.copy();
 				tOutput.setCount(1);
@@ -115,7 +130,7 @@ public class GT6RecipeMapScannerMolecular extends RecipeMap {
 						new ItemStack[] {tScanned.copy(), tUSB.copy()},
 						new ItemStack[] {tOutput},
 						null, null,
-						SCAN_DURATION, (tItem.material.mProtons + tItem.material.mNeutrons) * SCAN_EUT_PER_NUCLEON, 0);
+						SCAN_DURATION, tEUt, 0);
 			}
 		}
 		return rRecipe;

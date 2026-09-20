@@ -171,7 +171,7 @@ public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBa
 		assertNotNull(GT6RecipeMaps.REPLICATOR, "the live map rode the whole chain");
 	}
 
-	/** The probe face of the synthesis at a below-recipe rung: found, not applied, nothing consumed. */
+	/** The window gate: the synthesis refuses at a below-recipe rung (the anti-strand face). */
 	@Test
 	public void replicatorWindowGatesTheSynthesis() {
 		Assumptions.assumeTrue(ARMED);
@@ -186,13 +186,11 @@ public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBa
 		tMachine.getInventory().insertItem(0, tStick, false);
 		tMachine.mTanksInput[0].fill(new FluidStack(Fluids.WATER, 1), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
 
-		// the upstream override answers BEFORE any aSize consult (RecipeMapScannerMolecular
-		// .java:55-57 verbatim shape): the dynamic rows bypass the stored-row window scan —
-		// the recipe is FOUND at the T1 rung and rides the machine-side energy budget (the
-		// machine face pools that budget, the :743 bind). The window gate this test pins is
-		// the probe face: found-but-not-applied at aApplyRecipe F.
-		assertEquals(TileEntityBasicMachine.FOUND_AND_COULD_HAVE_USED_RECIPE, tMachine.checkRecipe(false, false),
-				"the dynamic synthesis is found at any rung — the budget face is the gate");
-		assertTrue(tMachine.getInventory().getStackInSlot(0).getCount() == 1, "the probe consumed nothing");
+		// the p32 window gate (the anti-strand fix): the synthesis refuses BELOW its eUt —
+		// the T1 rung (max 64 < 256) never sees the row, so no inputs can be eaten into a
+		// starving process (the mMinEnergy > mInputMax doWork starvation face)
+		assertEquals(TileEntityBasicMachine.DID_NOT_FIND_RECIPE, tMachine.checkRecipe(false, false),
+				"the T1 rung cannot reach the hydrogen synthesis — the window gate refuses before any consume");
+		assertTrue(tMachine.getInventory().getStackInSlot(0).getCount() == 1, "the refused run consumed nothing");
 	}
 }

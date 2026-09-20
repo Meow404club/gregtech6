@@ -82,11 +82,10 @@ import gregtech6.registry.GTMaterialItems;
  * <li>the {@code GAPI_POST.mFinishedServerStarted} guard and the
  *     {@code containsInput} wide face (:116-117) ride the same canner-form
  *     deviations;</li>
- * <li>the voltage WINDOW lives in the stored-row scan only ({@code RecipeMap.findRecipe}'s
- *     aSize gate): the synthesis answers BEFORE any window consult (upstream :55-57
- *     verbatim — the override never reads aSize), so a below-recipe rung finds the row and
- *     gates it on the machine-side energy budget instead; the per-machine budget face
- *     rides the machine pool (the upstream :743 bind);</li>
+ * <li>the voltage WINDOW gates the synthesized row (the stored-row
+ *     {@code absGreaterEqual(aSize × mPower, eUt)} face — the upstream :55-57 override
+ *     never consults aSize; the strand analysis rides the scanner map's note — the 校验
+ *     不砍 ruling);</li>
  * <li>the fluid arms resolve through the port's material→fluid seam
  *     ({@link GTFluids#specOf}) at the fixed molten L-per-unit / bucket-per-unit amounts —
  *     the upstream per-material fluid factory and its unit bookkeeping have no wider port
@@ -135,6 +134,11 @@ public class GT6RecipeMapReplicator extends RecipeMap {
 			OreDictMaterial tMaterial = GT6UsbSticks.materialOf(aInput); // :81-83 — the id short + the exists gate
 			if (tMaterial == null) return rRecipe;
 			Recipe tRecipe = getReplicatorRecipe(tMaterial, aInput);
+			// the voltage-window gate on the SYNTHESIZED row (the scanner map carries the
+			// full note): a row above the machine window (aSize = mInputMax, the :712 call)
+			// would strand the matter fluids — consumed, no product. Same
+			// absGreaterEqual(aSize × mPower, eUt) face as the stored-row scan.
+			if (tRecipe != null && !absGreaterEqual(aSize * mPower, tRecipe.mEUt)) return rRecipe;
 			return tRecipe != null ? tRecipe : rRecipe;
 		}
 		return rRecipe;
