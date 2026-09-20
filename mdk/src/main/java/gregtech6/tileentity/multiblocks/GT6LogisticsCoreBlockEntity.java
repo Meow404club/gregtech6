@@ -314,6 +314,10 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 	void scanAndRoute() {
 		Level tLevel = getLevel();
 		if (tLevel == null) return;
+		// the :211-214 reset — the onTick arm already ran it before the gate; the head copy
+		// keeps the direct-drive (test) callers on the same reset-then-route contract.
+		oCPU_Logic = 0; oCPU_Control = 0; oCPU_Storage = 0; oCPU_Conversion = 0;
+		mMovedLast = 0;
 		BlockPos tCenter = structureCenter();
 
 		final List<LogisticsData>
@@ -522,7 +526,7 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 	public boolean moveFluids(LogisticsData aImport, LogisticsData aExport) {
 		if (aImport.mFluidFilter != null && aExport.mFluidFilter != null && aImport.mFluidFilter != aExport.mFluidFilter) return false; // :521
 		Fluid tFilter = aImport.mFluidFilter != null ? aImport.mFluidFilter : aExport.mFluidFilter;
-		IFluidHandler tFrom = fluidHandler(aImport.mTarget), tTo = fluidHandler(aExport.mTarget);
+		IFluidHandler tFrom = fluidHandlerOf(aImport.mTarget), tTo = fluidHandlerOf(aExport.mTarget);
 		if (tFrom == null || tTo == null) return false;
 		long tBudget = 16000L * mCPU_Conversion; // :522/:530/:539/:546
 		// FL.move_ :840/:842 — simulate the drain, execute the fill, then the real drain
@@ -558,7 +562,7 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 		} else {
 			tFilter = aImport.mItemFilter != null ? aImport.mItemFilter : aExport.mItemFilter;
 		}
-		IItemHandler tFrom = itemHandler(aImport.mTarget), tTo = itemHandler(aExport.mTarget);
+		IItemHandler tFrom = itemHandlerOf(aImport.mTarget), tTo = itemHandlerOf(aExport.mTarget);
 		if (tFrom == null || tTo == null) return false;
 		int tMaxExport = aExport.mStackSize == 0 ? 64 : aExport.mStackSize; // :562 max/min-move pair
 		int tMaxImport = aImport.mStackSize == 0 ? 64 : aImport.mStackSize; // :562 max-slot-size pair
@@ -586,7 +590,7 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 	 * surface — a saturated dump target just stops the move (declared trim).
 	 */
 	public long moveStacksForDump(LogisticsData aImport, LogisticsData aExport) {
-		IItemHandler tFrom = itemHandler(aImport.mTarget), tTo = itemHandler(aExport.mTarget);
+		IItemHandler tFrom = itemHandlerOf(aImport.mTarget), tTo = itemHandlerOf(aExport.mTarget);
 		if (tFrom == null || tTo == null) return 0;
 		for (int i = 0; i < tFrom.getSlots(); i++) {
 			ItemStack tStack = tFrom.getStackInSlot(i);
@@ -607,6 +611,23 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 	// ---------------------------------------------------------------------------
 	// the targets (the upstream DelegatorTileEntity resolution)
 	// ---------------------------------------------------------------------------
+
+	/**
+	 * The per-target resolution seam — instance methods so the offline fixtures (which cannot
+	 * init ForgeCapabilities, the CapabilityToken:28 transformer wall, the
+	 * MultiBlockPartBlockEntity ruling) substitute per-target handlers in a test subclass.
+	 * The production body IS the static capability query.
+	 */
+	@Nullable
+	public IFluidHandler fluidHandlerOf(BlockEntity aTarget) {
+		return fluidHandler(aTarget);
+	}
+
+	/** The item half of the {@link #fluidHandlerOf} seam. */
+	@Nullable
+	public IItemHandler itemHandlerOf(BlockEntity aTarget) {
+		return itemHandler(aTarget);
+	}
 
 	@Nullable
 	public static IFluidHandler fluidHandler(BlockEntity aTarget) {
