@@ -117,6 +117,7 @@ public class GT6QuMachinesRegistrationTest {
 		boolean tLive = BuiltInRegistries.BLOCK.containsKey(new ResourceLocation("gt6", "replicator"));
 		String[] tPaths = {"molecular_scanner_t3", "replicator", "replicator_t2", "replicator_t3"};
 		if (tLive) { // the FML-booted leg — the id686 guard
+			GT6RecipeMaps.init(); // idempotent — the exoticMachine body reads the row's map supplier at BE creation
 			for (String tPath : tPaths) {
 				ResourceLocation tId = new ResourceLocation("gt6", tPath);
 				assertTrue(BuiltInRegistries.BLOCK.containsKey(tId), "block face registered: " + tPath);
