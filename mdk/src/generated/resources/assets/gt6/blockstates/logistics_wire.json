@@ -1,0 +1,196 @@
+{
+  "variants": {
+    "connections=0": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=1": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=10": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=11": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=12": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=13": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=14": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=15": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=16": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=17": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=18": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=19": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=2": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=20": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=21": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=22": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=23": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=24": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=25": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=26": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=27": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=28": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=29": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=3": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=30": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=31": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=32": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=33": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=34": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=35": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=36": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=37": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=38": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=39": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=4": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=40": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=41": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=42": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=43": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=44": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=45": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=46": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=47": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=48": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=49": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=5": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=50": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=51": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=52": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=53": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=54": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=55": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=56": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=57": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=58": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=59": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=6": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=60": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=61": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=62": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=63": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=7": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=8": {
+      "model": "gt6:block/logistics_wire"
+    },
+    "connections=9": {
+      "model": "gt6:block/logistics_wire"
+    }
+  }
+}
