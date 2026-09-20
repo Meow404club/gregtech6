@@ -798,22 +798,36 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The conflict-audit ⑤ red line (task p31-qu-a-foundation): the upstream
-	 * NBT_SPECIAL_IS_START_ENERGY ignition gate is NOT ported. Upstream the flag feeds
-	 * mChargeRequirement (MultiTileEntityBasicMachine.java:755) which has ZERO read points
-	 * repo-wide — a dead field. The port keeps the whole gate out structurally: neither the
-	 * port Recipe nor the port RecipeMap carries any ignition/charge-requirement field, so
-	 * a reader cannot exist (the reflection pin of the zero-read ruling).
+	 * The FLIPPED conflict-audit ⑤ pin (task p32-ignition-gate; was
+	 * theIgnitionGateStaysUnported, the zero-read ruling of p31-qu-a-foundation): the
+	 * "dead field" reading missed the registration-config supply route — the Loader
+	 * :1242 fusion row carries NBT_SPECIAL_IS_START_ENERGY,T through readFromNBT2
+	 * :112-124, so the :755 write is reachable and the :809 gate is REAL. The port now
+	 * carries the gate on the MACHINE face exactly where upstream :92/:98 put it: the
+	 * mSpecialIsStartEnergy flag + the mChargeRequirement ledger live on
+	 * TileEntityBase10MultiBlockMachine (the fusion's multiblock base, the :755/:809
+	 * arms), the :497 charged arm rides the fusion's doEnergyInjection, and the port
+	 * Recipe carries the mSpecialValue payload the :755 arm reads (the
+	 * GT6RecipesFusion startLU ride). Recipe/RecipeMap still carry NO gate fields —
+	 * the map is data, the gate is the BE.
 	 */
 	@Test
-	void theIgnitionGateStaysUnported() throws Exception {
-		assertThrows(NoSuchFieldException.class, () -> Recipe.class.getDeclaredField("mChargeRequirement"),
-				"the dead-field chain has no port counterpart: no mChargeRequirement on Recipe");
-		assertThrows(NoSuchFieldException.class, () -> RecipeMap.class.getDeclaredField("mChargeRequirement"),
-				"no mChargeRequirement on RecipeMap");
+	void theIgnitionGateIsPortedOnTheMachineFace() throws Exception {
+		assertNotNull(gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine.class.getDeclaredField("mSpecialIsStartEnergy"),
+				"the :92 flag carrier lives on the multiblock machine base");
+		assertNotNull(gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine.class.getDeclaredField("mChargeRequirement"),
+				"the :98 ledger carrier lives on the multiblock machine base");
+		assertNotNull(gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine.class.getDeclaredField("mEnergyTypeCharged"),
+				"the :99 charged-type carrier lives on the multiblock machine base");
+		assertNotNull(Recipe.class.getDeclaredField("mSpecialValue"),
+				"the Recipe payload the :755 arm reads is carried (the startLU ride)");
+		// the map layer stays gate-free — upstream :92/:98 put the gate on the BE, not the
+		// Recipe/RecipeMap (the flipped pin keeps the split, not the absence)
 		assertThrows(NoSuchFieldException.class, () -> Recipe.class.getDeclaredField("mSpecialIsStartEnergy"),
-				"no NBT_SPECIAL_IS_START_ENERGY carrier field on Recipe");
+				"the flag stays off the Recipe (the machine-face split)");
 		assertThrows(NoSuchFieldException.class, () -> RecipeMap.class.getDeclaredField("mSpecialIsStartEnergy"),
-				"no NBT_SPECIAL_IS_START_ENERGY carrier field on RecipeMap");
+				"the flag stays off the RecipeMap");
+		assertThrows(NoSuchFieldException.class, () -> Recipe.class.getDeclaredField("mChargeRequirement"),
+				"the ledger stays off the Recipe");
 	}
 }

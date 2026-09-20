@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -323,11 +324,12 @@ public class TileEntityFusionReactorTest extends GTMultiBlocksOfflineTestBase {
 		long tAcceptedPackets = tInPart.doEnergyInjection(TD.Energy.TU, (byte)3, 1024, 1, true);
 		assertEquals(1, tAcceptedPackets, "one packet accepted through the part relay");
 		assertEquals(1024, tController.mEnergy, "the TU packet landed in the machine buffer through the part");
-		// the LU face probes accepting but the injection refuses (the DECLARED-WAIVER
-		// gateless port: upstream :497-500 would bank the packet against the start-LU
-		// ledger the gateless port does not carry)
+		// the LU face probes accepting but the injection refuses while the ledger is
+		// unarmed (task p32-ignition-gate: the :497 charged arm requires
+		// mChargeRequirement > 0 — an idle fusion falls through to the :501 type check,
+		// the upstream idle shape; the ARMED payment path is the dedicated gate test below)
 		assertTrue(tInPart.isEnergyAcceptingFrom(TD.Energy.LU, (byte)3, false), "the glass ring advertises LU acceptance");
-		assertEquals(0, tInPart.doEnergyInjection(TD.Energy.LU, (byte)3, 512, 1, true), "the LU injection falls through the :501 type check (the gateless port refuses)");
+		assertEquals(0, tInPart.doEnergyInjection(TD.Energy.LU, (byte)3, 512, 1, true), "the LU injection falls through the :501 type check while the ledger is unarmed");
 		// a wall part refuses by mask (the X-3 arm wall, mode NOTHING)
 		MultiBlockPartBlockEntity tArmPart = partAt(tLevel, 100 - 3, 64, 42);
 		assertNotNull(tArmPart, "the X- arm wall exists");
@@ -409,6 +411,112 @@ public class TileEntityFusionReactorTest extends GTMultiBlocksOfflineTestBase {
 		assertEquals(4, tController.mEnergy, "the buffer gains size x packets");
 		assertEquals(0, tController.doEnergyInjection(TD.Energy.TU, (byte)3, 16385, 1, true), "the overcharge face refuses (the declared narrowing)");
 		assertEquals(0, tController.doEnergyInjection(TD.Energy.LU, (byte)3, 512, 1, true), "LU refuses at the body too (the glass ring relay is the LU face)");
+	}
+
+	// ------------------------------------------------------------------
+	// the ignition gate (task p32-ignition-gate — the :755/:809/:497 three arms over the
+	// single-row T+T fixture; the T+T startLU = 1130 * START_LU_PER_TICK)
+	// ------------------------------------------------------------------
+
+	/** The single-row pour + formed rig + armed ledger, the shared arm of the gate tests. */
+	private TestFusionReactor armTheGate(MultiBlockLevel aLevel) {
+		GT6RecipesFusion.sCircuitResolver = aConfig -> new ItemStack(Items.PAPER);
+		GT6RecipesFusion.sFluidResolver = (aMaterial, aMolten) ->
+				aMaterial == MT.T ? Fluids.LAVA : aMaterial == MT.He ? Fluids.WATER : null;
+		GT6RecipesFusion.sMaterialItemResolver = (aPrefix, aMaterial) -> null;
+		GT6RecipeMaps.init();
+		GT6RecipesFusion.load();
+		TestFusionReactor tController = placeRig(aLevel);
+		assertTrue(tController.checkStructure(true));
+		// the flag is the :1242 registration column, constructor-injected
+		assertTrue(tController.mSpecialIsStartEnergy, "NBT_SPECIAL_IS_START_ENERGY = T rides the constructor (the registration-config form)");
+		assertEquals(TD.Energy.LU, tController.mEnergyTypeCharged, "NBT_ENERGY_ACCEPTED_2 = LU (the glass-ring charged type)");
+		tController.getInventory().setStackInSlot(0, new ItemStack(Items.PAPER));
+		tController.mTanksInput[0].fill(new FluidStack(Fluids.LAVA, 2000), FluidAction.EXECUTE);
+		assertEquals(TileEntityBase10MultiBlockMachine.FOUND_AND_SUCCESSFULLY_USED_RECIPE,
+				tController.checkRecipe(true, false), "the T+T row consumes");
+		// the :755 arm — first start arms the ledger with the recipe's mSpecialValue
+		assertEquals(1130L * GT6RecipesFusion.START_LU_PER_TICK, tController.mChargeRequirement, "the :755 arm charged the ledger with the T+T startLU");
+		assertEquals(1130, tController.mMaxProgress, "the recipe is armed");
+		return tController;
+	}
+
+	@Test
+	void theIgnitionGateFreezesProgressUntilTheLedgerIsPaid() {
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TestFusionReactor tController = armTheGate(tLevel);
+
+		// the :809 gate CLOSED — doActive refuses to advance (rActive false, progress frozen)
+		assertFalse(tController.doActive(5, 100), "the closed gate keeps the machine inactive");
+		assertEquals(0, tController.mProgress, "the :809 gate froze the progress");
+		assertFalse(tController.mActive, "the frozen machine reads inactive (the ring stays design 5)");
+
+		// pay the ledger through the :497 charged arm (the direct glass-ring body form;
+		// the whole packet reports consumed and nothing touches the TU buffer)
+		long tLedger = tController.mChargeRequirement;
+		assertEquals(8, tController.doEnergyInjection(TD.Energy.LU, (byte)3, 4096, 8, true), "the charged arm consumed the whole packet count");
+		assertEquals(tLedger - 4096 * 8, tController.mChargeRequirement, "the :497 arm banked size x amount off the ledger");
+		assertEquals(0, tController.mEnergy, "the LU hop never reached the TU buffer");
+
+		// pay the rest — the ledger crosses zero and the :809 gate OPENS (the :497 arm
+		// returns the whole aAmount consumed, upstream verbatim)
+		long tRemaining = tController.mChargeRequirement;
+		assertEquals(tRemaining, tController.doEnergyInjection(TD.Energy.LU, (byte)3, 1, tRemaining, true), "the settling packet is consumed whole");
+		assertEquals(0, tController.mChargeRequirement, "the ledger is paid");
+		assertTrue(tController.doActive(5, 100), "the open gate runs the machine");
+		assertEquals(100, tController.mProgress, "progress advanced by the energy unit once the gate opened");
+	}
+
+	@Test
+	void theLedgerArmsOncePerRecipeAndClearsAtCompletion() {
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TestFusionReactor tController = armTheGate(tLevel);
+
+		// settle the ledger, then run to completion (outputs land: water into the output tanks)
+		tController.doEnergyInjection(TD.Energy.LU, (byte)3, 1, tController.mChargeRequirement, true);
+		tController.mProgress = tController.mMaxProgress;
+		assertTrue(tController.doActive(5, 100), "the run completes");
+		assertEquals(0, tController.mChargeRequirement, "the :847 completion arm cleared the paid ledger");
+		assertEquals(0, tController.mMaxProgress, "the carryover reset");
+
+		// the no-rearm arm: an ACTIVE machine re-running the SAME recipe pays nothing.
+		// mActive = the doWork assignment the direct-call form skips (the live flow keeps
+		// mActive true between the paid run and the follow-up recipe check, :456/:782)
+		tController.mActive = true;
+		tController.getInventory().setStackInSlot(0, new ItemStack(Items.PAPER));
+		tController.mTanksInput[0].fill(new FluidStack(Fluids.LAVA, 2000), FluidAction.EXECUTE);
+		assertEquals(TileEntityBase10MultiBlockMachine.FOUND_AND_SUCCESSFULLY_USED_RECIPE,
+				tController.checkRecipe(true, false), "the same row consumes again");
+		assertEquals(0, tController.mChargeRequirement, "the :755 arm did NOT re-arm (mActive + same recipe)");
+		assertTrue(tController.doActive(5, 100), "the gate stays open for the unpaid repeat");
+		// 200 = the first run's +100 leftover (parked at 1230, the :843 carryover kept
+		// 100) + this run's +100 — no second start-LU payment stood in the way
+		assertEquals(200, tController.mProgress, "progress advances without a second start-LU payment");
+	}
+
+	@Test
+	void theLedgerPersistsAndTheFlagRidesTheRegistrationConfigLeg() {
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TestFusionReactor tController = armTheGate(tLevel);
+
+		// the ledger PERSISTS (upstream NBT_INPUT_EU :228 write / :155 read); the flag
+		// NEVER does (the registration-config family, the upstream writeToNBT2 writes none)
+		CompoundTag tSaved = tController.saveWithoutMetadata();
+		assertEquals(1130L * GT6RecipesFusion.START_LU_PER_TICK, tSaved.getLong("charge_requirement"), "the unpaid ledger survives a save");
+		assertFalse(tSaved.contains("special_is_start_energy"), "the flag is never persisted");
+
+		// the :155 load leg — a fresh controller restores the ledger
+		TestFusionReactor tBack = sFusionType.create(new BlockPos(100, 64, 40), Blocks.BRICKS.defaultBlockState());
+		tBack.mSpecialIsStartEnergy = false; // the hasKey-guard probe: an unarmed flag stays unarmed
+		tBack.load(tSaved);
+		assertEquals(1130L * GT6RecipesFusion.START_LU_PER_TICK, tBack.mChargeRequirement, "the ledger restored");
+		assertFalse(tBack.mSpecialIsStartEnergy, "the absent key keeps the constructor/merge-injected value (the loadKeeps contract)");
+
+		// the :124 leg — a carried key (the /data merge form of the upstream registry
+		// placement-NBT re-feed) flips the flag
+		tSaved.putBoolean("special_is_start_energy", true);
+		tBack.load(tSaved);
+		assertTrue(tBack.mSpecialIsStartEnergy, "the :124 registration-config leg loads the flag");
 	}
 
 	// ------------------------------------------------------------------

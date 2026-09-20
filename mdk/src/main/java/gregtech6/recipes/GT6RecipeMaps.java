@@ -168,14 +168,16 @@ import com.mojang.logging.LogUtils;
  * — the runtime USB-scan synthesis, RecipeMapScannerMolecular.java:46-67) and Replicator
  * ({@code RecipeMapReplicator} — the runtime USB-data replication, :54-86, including the
  * ctor's {@code mMaxFluidInputSize = 2000} tweak, a field the port RecipeMap does not
- * carry) both stay POOLED — the USB chain is not ported (declared card scope). RED LINE,
- * the conflict-audit ⑤ ruling: the upstream {@code NBT_SPECIAL_IS_START_ENERGY} ignition
- * gate is NOT ported — {@code mChargeRequirement} is a dead field upstream
- * (MultiTileEntityBasicMachine.java:755 writes it, zero read points repo-wide), so the
- * port records the semantics here only; the structural pin is the
- * GT6RecipeMapsTest ignition-gate reflection assertion (Recipe/RecipeMap carry no such
- * field). No machine consumer lands with this card — a map without a findRecipe consumer
- * is the CHISEL judged form; the Massfab/Fusion machines are the C/D cards.
+ * carry) both stay POOLED — the USB chain is not ported (declared card scope). The
+ * conflict-audit ⑤ red line is FLIPPED by task p32-ignition-gate: the earlier "dead field"
+ * reading (MultiTileEntityBasicMachine.java:755 write, zero read points) missed the
+ * registration-config supply route — the Loader_MultiTileEntities.java:1242 fusion row
+ * carries {@code NBT_SPECIAL_IS_START_ENERGY, T} through readFromNBT2 :112-124, so the
+ * :755 write IS reachable and the :809 gate is REAL upstream. The port now carries the
+ * gate on the MACHINE face (the TileEntityBase10MultiBlockMachine
+ * mSpecialIsStartEnergy/mChargeRequirement carriers + the :755/:809/:497 arms, the fusion
+ * consumer); the Recipe/RecipeMap classes still carry NO gate fields — upstream :92/:98
+ * put them on the BE, and the GT6RecipeMapsTest reflection pin asserts exactly that split.
  *
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
@@ -803,10 +805,11 @@ public class GT6RecipeMaps {
 	 * (p+n)×131072 per unit ×9 for block forms) are card-C content (the dynamic
 	 * material-walk pour, the RM-shape ruling of research.p31-qu-line); the shipped
 	 * {@code massfab.json} smoke row (the iron-ingot disintegration stand-in, :971-972
-	 * constants verbatim) keeps the map visible in NEI. RED LINE (conflict-audit ⑤):
-	 * the upstream NBT_SPECIAL_IS_START_ENERGY ignition gate is deliberately NOT ported —
-	 * mChargeRequirement is a dead field (MultiTileEntityBasicMachine.java:755 write, zero
-	 * read points repo-wide); semantics recorded here only, see the class doc.
+	 * constants verbatim) keeps the map visible in NEI. The conflict-audit ⑤ note (updated
+	 * task p32-ignition-gate): the ignition gate IS ported on the machine face now (the
+	 * TileEntityBase10MultiBlockMachine carriers + the :755/:809/:497 arms) — the Massfab
+	 * itself carries NO start-energy column (the Loader :1241 row has no
+	 * NBT_SPECIAL_IS_START_ENERGY key), so its behaviour is unchanged; see the class doc.
 	 */
 	public static volatile RecipeMap MASSFAB;
 
@@ -835,12 +838,12 @@ public class GT6RecipeMaps {
 	 * Recipe.sNotConsumable), fluids in/out are ordinary gas/molten states (NOT plasmas).
 	 * The {@code mSpecialValue} of every row carries the upstream
 	 * {@code setSpecialNumber(dur*8192*16)} ("Start: %s LU", the :8469/:94956 outliers
-	 * verbatim) — display data only: the port has no NEI face, and the ignition gate the
-	 * value once fed is deliberately NOT ported (DECLARED WAIVER, the S31-7 final
-	 * qualification: the :1242 NBT_SPECIAL_IS_START_ENERGY flag IS supplied through
-	 * readFromNBT2 :112-124, the :755 write is reachable, the :809 gate closes until the
-	 * :497-500 LU decrement pays it; the port ships gateless until the pool-E LU
-	 * economy — see the TileEntityFusionReactor class doc).
+	 * verbatim) — LIVE gate payload since task p32-ignition-gate (the S31-7 waiver flipped
+	 * once the laser domain landed the LU economy): the :1242 NBT_SPECIAL_IS_START_ENERGY
+	 * flag IS supplied through readFromNBT2 :112-124, the :755 write is reachable, the :809
+	 * gate closes until the :497-500 LU decrement pays it — the fusion machine arms its
+	 * {@code mChargeRequirement} ledger with this exact number (see the
+	 * TileEntityFusionReactor class doc; the port has no NEI face, the data runs the gate).
 	 */
 	public static volatile RecipeMap FUSION;
 
@@ -1487,8 +1490,8 @@ public class GT6RecipeMaps {
 		// --- the P31 QU trio (task p31-qu-a-foundation), upstream declaration order ---
 		// ScannerMolecular :143, Massfab :144, Replicator :145; all three DECLARED-empty,
 		// the base-RecipeMap carry over the two runtime-synthesis subclasses (the judged
-		// form); the smoke rows ride the tier-b JSON seam; the ignition gate stays
-		// unported (the class-doc red line) ---
+		// form); the smoke rows ride the tier-b JSON seam; the ignition gate lives on the
+		// machine face, not the maps (task p32-ignition-gate, the class-doc note) ---
 		// RM.java:143 — items 2/1/1, fluids 0/0/0, MIN 2, AMP 1 (the USB-scan synthesis
 		// subclass stays POOLED, RecipeMapScannerMolecular.java:46-67)
 		SCANNER_MOLECULAR = new RecipeMap(new HashSet<>(),
