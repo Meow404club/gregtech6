@@ -27,7 +27,10 @@ import gregtech6.tileentity.energy.generators.GT6MagicAbsorberBlockEntity;
  *     probe verdict) / {@code type} (the emitted type word) / {@code out} (the per-tick
  *     packet budget) / {@code facing} (the output face) / {@code delivered} (the
  *     cumulative ACCEPTED mass since the last reset — the in-network meter, the
- *     white-burn-door lesson: the Root gate counts a burned offer as used);</li>
+ *     white-burn-door lesson: the Root gate counts a burned offer as used) /
+ *     {@code rate} (delivered/window-ticks — the laser stat's "half true" ratio form,
+ *     exact at 64 with the egg or 1 with a skull while the trophy emits every tick,
+ *     tick-rate-independent for the RCON judge);</li>
  * <li>{@code reset <pos>} — zeroes the delivered meter (the next stat reads exactly the
  *     window since the reset).</li>
  * </ul>
@@ -56,12 +59,15 @@ public final class GT6MagicAbsorberCommand {
 
 	private static int absorberStat(CommandSourceStack aSource, BlockPos aPos) {
 		if (aSource.getLevel().getBlockEntity(aPos) instanceof GT6MagicAbsorberBlockEntity tAbsorber) {
+			// rate = delivered/ticks (the laser stat's "half true" ratio form — exact while the
+			// trophy emits every window tick, tick-rate-independent for the RCON judge)
 			aSource.sendSuccess(() -> Component.literal("GT6 magic absorber at " + aPos.toShortString()
 					+ ": active " + tAbsorber.mActive
 					+ ", type " + GT6MagicAbsorberBlockEntity.shortType(tAbsorber.mEnergyTypeEmitted)
 					+ ", out " + tAbsorber.mOutput
 					+ ", facing " + tAbsorber.mFacing
-					+ ", delivered " + tAbsorber.mLastOut), false);
+					+ ", delivered " + tAbsorber.mLastOut
+					+ ", rate " + tAbsorber.meterRate()), false);
 			return Command.SINGLE_SUCCESS;
 		}
 		aSource.sendFailure(Component.literal("No GT6 magic absorber at " + aPos.toShortString()));

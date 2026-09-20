@@ -100,6 +100,9 @@ public class GT6MagicAbsorberBlockEntity extends TileEntityBase03TicksAndSync im
 	/** The cumulative accepted-emitted mass (the metering face, NOT upstream). */
 	public long mLastOut = 0;
 
+	/** The tick the metering window opened at (the rate denominator base, NOT upstream). */
+	private long mMeterBase = 0;
+
 	/** The vanilla head family (the single 1.7.10 Blocks.skull block split into 14 modern blocks). */
 	public static final Set<Block> SKULL_FAMILY = Set.of(
 			Blocks.SKELETON_SKULL, Blocks.SKELETON_WALL_SKULL,
@@ -183,6 +186,17 @@ public class GT6MagicAbsorberBlockEntity extends TileEntityBase03TicksAndSync im
 	/** The live accounting reset arm (the /gt6magicabsorber reset window form). */
 	public void resetAccounting() {
 		mLastOut = 0;
+		mMeterBase = getTimer();
+	}
+
+	/** The metering window's tick count (the rate denominator; the RCON stat face). */
+	public long meterWindowTicks() {
+		return Math.max(1, getTimer() - mMeterBase);
+	}
+
+	/** The accepted-mass rate over the window (delivered/ticks — exact while emitting every tick). */
+	public long meterRate() {
+		return mLastOut / meterWindowTicks();
 	}
 
 	/** The state-authority facing mirror (the dynamo syncFacingFromState form, six-way here). */
