@@ -885,6 +885,17 @@ HAND_TRANSLATIONS = {
     "item.gt6.monkey_wrench_hv.tooltip": ("潜行右键切换为扳手", "hand"),
     "item.gt6.trimmer_lv": ("修剪器 (LV)", "hand"),
     "item.gt6.mode_switch.tooltip": ("潜行右键切换模式", "hand"),
+
+    # ---- rerun write-back (task p32-qu-energizer 2026-09-19): the five Quantum
+    # Energizer display rows, the dump gt.multitileentity.10121-10125 rows verbatim
+    # (量子充能器 (T1..T5)). Authored into the committed TSV AND here — the p31-massfab
+    # / p32-qu-laser-domain rows skipped this write-back (a faithful rerun washes them;
+    # the same tsv-orphan drift class, NOT re-entered by this card — declared debt).
+    "block.gt6.quantum_energizer": ("量子充能器 (T1)", "hand"),
+    "block.gt6.quantum_energizer_t2": ("量子充能器 (T2)", "hand"),
+    "block.gt6.quantum_energizer_t3": ("量子充能器 (T3)", "hand"),
+    "block.gt6.quantum_energizer_t4": ("量子充能器 (T4)", "hand"),
+    "block.gt6.quantum_energizer_t5": ("量子充能器 (T5)", "hand"),
 }
 
 # ---------------------------------------------------------------------------

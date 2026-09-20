@@ -457,6 +457,13 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.laser_absorber_t3");
 		addDirect("block.gt6.laser_absorber_t4");
 		addDirect("block.gt6.laser_absorber_t5");
+		// task p32-qu-energizer — the dump gt.multitileentity.10121-10125 rows verbatim
+		// (量子充能器 (T1..T5))
+		addDirect("block.gt6.quantum_energizer");
+		addDirect("block.gt6.quantum_energizer_t2");
+		addDirect("block.gt6.quantum_energizer_t3");
+		addDirect("block.gt6.quantum_energizer_t4");
+		addDirect("block.gt6.quantum_energizer_t5");
 		addDirect("block.gt6.lathe");
 		addDirect("block.gt6.multiblock_coke_oven");
 		addDirect("block.gt6.multiblock_coke_oven_bricks");

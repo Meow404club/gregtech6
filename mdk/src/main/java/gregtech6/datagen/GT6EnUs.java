@@ -1757,6 +1757,13 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.laser_absorber_t3", "Laser Absorber (HV)");
         add("block.gt6.laser_absorber_t4", "Laser Absorber (EV)");
         add("block.gt6.laser_absorber_t5", "Laser Absorber (IV)");
+        // task p32-qu-energizer — the Loader :962-966 name column ("Quantum Energizer (T)",
+        // the quantum ladder word, NOT a voltage word)
+        add("block.gt6.quantum_energizer", "Quantum Energizer (T1)");
+        add("block.gt6.quantum_energizer_t2", "Quantum Energizer (T2)");
+        add("block.gt6.quantum_energizer_t3", "Quantum Energizer (T3)");
+        add("block.gt6.quantum_energizer_t4", "Quantum Energizer (T4)");
+        add("block.gt6.quantum_energizer_t5", "Quantum Energizer (T5)");
         add("item.gt6.comp_laser_gas_empty", "Empty Gas Laser Emitter");
         add("item.gt6.comp_laser_gas_empty.tooltip", "For Electric Lasers");
         add("item.gt6.comp_laser_gas_co2", "Carbon Dioxide Laser Emitter");

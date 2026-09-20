@@ -1030,6 +1030,9 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addLaserFamilies() {
         addBridgeFamily(GT6Lasers.CO2_LASER_BLOCKS_BY_PATH, "co2_laser", "laser_electric");
         addBridgeFamily(GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH, "laser_absorber", "laser_absorber");
+        // task p32-qu-energizer — the third laser-converter family rides its own texture
+        // base (the amber-tinted quantum_energizer pair, the assets/README.md face)
+        addBridgeFamily(gregtech6.registry.GT6QuantumEnergizers.QUANTUM_ENERGIZER_BLOCKS_BY_PATH, "quantum_energizer", "quantum_energizer");
     }
 
     /** One bridge family: the orientable cube + the five rung blockstates + the item parents (the transformer form). */

@@ -1235,7 +1235,8 @@ public final class GT6LootTables extends LootTableProvider {
                 gregtech6.registry.GTMachines.ELECTRIC_MOTOR_BLOCKS_BY_PATH,
                 gregtech6.registry.GT6Lasers.CO2_LASER_BLOCKS_BY_PATH,
                 gregtech6.registry.GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH,
-                gregtech6.registry.GT6MagicAbsorbers.MAGIC_ABSORBER_BLOCKS_BY_PATH)) {
+                gregtech6.registry.GT6MagicAbsorbers.MAGIC_ABSORBER_BLOCKS_BY_PATH,
+                gregtech6.registry.GT6QuantumEnergizers.QUANTUM_ENERGIZER_BLOCKS_BY_PATH)) {
             for (RegistryObject<Block> tHandle : tFamily.values()) rBlocks.add(tHandle.get());
         }
         return rBlocks;

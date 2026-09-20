@@ -8471,3 +8471,19 @@ static-face posture of the bridge/laser families). License: upstream GregTech 6 
 are CC0 (see the Public Domain Dedication block above).
 
 - `block/magic_absorber_base.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `magicenergyabsorber/colored/side.png`; side_facing/top/bottom byte-identical)
+
+## Quantum Energizer textures (task p32-qu-energizer)
+
+The two converter block faces under `gt6:textures/block/` are DERIVED, not borrowed:
+both are the committed laser-absorber face (`laser_absorber_{front,side}.png`, the
+upstream `laserabsorbers/electric_laser/colored/` pair) with a per-pixel
+luminance-preserving amber-gold tint (the grayscale noise mapped to r×1.10/g×0.95/
+b×0.52 +38/+18/−12 on the front, ×1.05/×0.98/×0.70 +18/+10/−8 on the side) — the
+upstream quantumenergizer art (`machines/quantumenergizer/quantum_laser/`) is an
+icon-container composite the port's static-face datagen has no seat for (the laser
+card's colored-layer-alone posture). The tint is the rung identity: one machine family,
+one hue. License: the base faces are upstream GregTech 6 CC0 (see above), the tint is
+this project's.
+
+- `block/quantum_energizer_front.png` — `f79d1113d3d95de0466b0eea881a4d8a0fc002b0fd356371e7f12fa125ba48eb` (derived: tinted `laser_absorber_front.png`)
+- `block/quantum_energizer_side.png` — `c257afe7a8678434de349e86f0be010abc78cbcfd4405f2126a784e8715df5d3` (derived: tinted `laser_absorber_side.png`)

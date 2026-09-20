@@ -8428,6 +8428,11 @@ direct	fluid.gt6.soup_mushroom	蘑菇煲	hand
 direct	fluid.gt6.latex	胶乳	hand
 direct	fluid.gt6.potion_harm_1	伤害药水	hand
 direct	block.gt6.large_massfab	大型物质制造机	hand
+direct	block.gt6.quantum_energizer	量子充能器 (T1)	hand
+direct	block.gt6.quantum_energizer_t2	量子充能器 (T2)	hand
+direct	block.gt6.quantum_energizer_t3	量子充能器 (T3)	hand
+direct	block.gt6.quantum_energizer_t4	量子充能器 (T4)	hand
+direct	block.gt6.quantum_energizer_t5	量子充能器 (T5)	hand
 direct	gt6.row.machine.massfab	物质制造机 (%s)	hand
 direct	item.gt6.usb_stick_1	USB 1.0	hand
 direct	item.gt6.usb_stick_1.tooltip	储存数据	hand
