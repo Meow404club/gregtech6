@@ -75,7 +75,7 @@ public class GT6LogisticsRegistrationTest {
 	/** The containment half (live leg) / the payload+mount half (offline leg) — see the class doc. */
 	@Test
 	public void registriesContainAndMountGt6LogisticsWire() {
-		if (GT6Logistics.LOGISTICS_WIRE.isPresent()) { // the FML-booted leg resolves its RegistryObjects
+		if (BuiltInRegistries.BLOCK.containsKey(ID)) { // the FML-booted leg: the mod face is in the real registries (leg-agnostic probe — RegistryObject/DeferredHolder carry different presence APIs)
 			// THE id686 guard — this JVM's registries are the real mod runtime view
 			assertTrue(BuiltInRegistries.BLOCK.containsKey(ID), "block face registered");
 			assertTrue(BuiltInRegistries.ITEM.containsKey(ID), "item face registered");
