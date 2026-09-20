@@ -80,8 +80,11 @@ REPLICATOR_MERGE = {
 REPLICATOR_STICK_1121 = 'data modify block %s Items[0] set value {count:1,id:"gt6:usb_stick_3",components:{%s}}' % (R, CD_1121)
 
 # the matter leg (the :90 charged arm; the NF neutral arm is skipped at 0 neutrons) —
-# the FluidName/Amount contract pair (ADR-P15-1)
-TANK_MERGE = 'data merge block %s {tanks:{in:{"0":{FluidName:"gt6:chargedmatter",Amount:1}}}}' % R
+# the FluidName/Amount contract pair (ADR-P15-1). THE KEY IS THE LITERAL top-level
+# "tanks.in.0" (the GT6 dotted-key convention — readFromNBT(aNBT, "tanks.in.0") does
+# getCompound on the LITERAL key, FluidTankGT.java:79), NOT a nested tanks.in.0 path:
+# a nested merge lands keys the load never reads.
+TANK_MERGE = 'data merge block %s {"tanks.in.0":{FluidName:"gt6:chargedmatter",Amount:1}}' % R
 
 steps = [
     phase("A: the scanner arm — chemtube_hydrogen + a blank stick go in, the data stick comes out"),
@@ -106,16 +109,20 @@ steps = [
          node_cmds={"1.20.1": "time query daytime"},
          node_expects={"1.20.1": "The time is"}),  # the 21.1-only envelope step (the 4c33979c4 dialect)
     Step(TANK_MERGE, expect="Modified block data"),
-    Step("data get block " + R, expect="active: 1b", poll=120),
-    # the replicated product: the item walk misses for hydrogen (zero walk-prefix items
-    # in port), the :104-108 fluid arm answers — ONE BUCKET of hydrogen gas in output
-    # tank 0 (the eUt constant itself is the unit-pinned (1+0)x256 = 256, duration 1)
+    # no active-flag poll here: the replication is ONE tick (duration 1, progress 256 in
+    # a single doActive) — uncatchable at poll cadence; the product + drain faces are
+    # the run proof (the scanner arm above carries the active face with its 256-tick
+    # window). The replicated product: the item walk misses for hydrogen (zero
+    # walk-prefix items in port), the :104-108 fluid arm answers — ONE BUCKET of
+    # hydrogen gas in output tank 0 (the eUt constant itself is the unit-pinned
+    # (1+0)x256 = 256, duration 1).
     Step('data get block %s "tanks.out.0"' % R, expect='FluidName: "gt6:hydrogen", Amount: 1000', poll=300,
          node_expects={"1.21.1": 'id: "gt6:hydrogen"'}),
     # THE NEVER-CONSUMED FACE: the stick is still in slot 0 with its data intact
     Step("data get block %s inventory" % R, expect="gt.replicator.data: 10s", poll=30),
-    Step('data get block %s "tanks.in.0"' % R, expect="Amount: 0", poll=120,
-         node_expects={"1.21.1": "amount: 0"}),
+    # THE DRAIN FACE: the drained input tank VANISHES from the NBT (an unfiltered empty
+    # tank serializes nothing) — the path read comes back with the vanilla miss phrase
+    Step('data get block %s "tanks.in.0"' % R, expect="Found no elements", poll=120),
 
     phase("C: teardown — the global-state restore + the explicit band restore"),
     Step("gt6machine fakesource off", expect="ENERGY_FAKE_SOURCE set false"),
