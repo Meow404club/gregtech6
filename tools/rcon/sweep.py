@@ -648,6 +648,14 @@ SESSION_GROUPS = (
     # exactly) -> start (design 5->6, the EV overcharge sink dies, carbon13_molten
     # lands). The tick_step members force the exclusive-wave rule (the frozen windows).
     ("p32_ignition",),
+    # P32 W2 card (p32-qu-scanner-replicator): the QU machine pair chain — a fresh
+    # z=348 band EAST of the p32_qu_usb chest column (the rigs x458/x466, band
+    # x454..470, x-disjoint from the usb chest x382..398 with margin). Admission
+    # mirroring the p31/p32 form (bbox-registered, no fresh_boot / mutates member —
+    # the scanner/replicator rigs are band-local setblocks; the fakesource regime is
+    # the massfab-chain form restored in teardown). --group p32_qu_machines matches
+    # the module stem.
+    ("p32_qu_machines",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
