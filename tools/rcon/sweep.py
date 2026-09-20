@@ -596,6 +596,12 @@ SESSION_GROUPS = (
     # sits x-disjoint of the scene-six band (x401..407). --group p32_bees_hive matches
     # through the chain's embedded name prefix.
     ("p32_bees_hive",),
+    # p32-qu-laser-domain (task p32-qu-laser-domain): the EU->LU->EU laser chain —
+    # the fresh z=352 band east of the usb-data chest column (x446/x452 columns,
+    # x/z-disjoint from every roster band), the heater-rig geometry (dial at z-1,
+    # the beam flying +z over two fiber wires into the absorber; the T5 wall arm
+    # at x452). The absorber's EU tail eats into a 1x electric wire at z+4.
+    ("p32_qu_laser",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
