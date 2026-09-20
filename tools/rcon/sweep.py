@@ -623,6 +623,15 @@ SESSION_GROUPS = (
     # door edge exactly) and the QU receiver ladder (the dial QU saturating the massfab
     # buffers at 64/16384).
     ("p32_qu_energizer",),
+    # P32 card (p32-placeables): the deco-TE + placed-pile chain — one fresh band
+    # east of the laser rig (x468..484, z346..364, x/z-disjoint from every roster
+    # band): the lantern cell (x470,64,350) + the sandwich cell (x470,64,354) + the
+    # six pedestal columns (x474..479, z348/352, the place arm drives the unified
+    # dispatch via /gt6placeables). Admission mirroring the p32 bees form
+    # (bbox-registered, no fresh_boot / mutates member — the placement arms re-lay
+    # their pedestals per pass, the mines discard the drops). --group p32_placeables
+    # matches through the chain's embedded name prefix.
+    ("p32_placeables",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

@@ -8487,3 +8487,43 @@ this project's.
 
 - `block/quantum_energizer_front.png` — `f79d1113d3d95de0466b0eea881a4d8a0fc002b0fd356371e7f12fa125ba48eb` (derived: tinted `laser_absorber_front.png`)
 - `block/quantum_energizer_side.png` — `c257afe7a8678434de349e86f0be010abc78cbcfd4405f2126a784e8715df5d3` (derived: tinted `laser_absorber_side.png`)
+
+## task p32-placeables (2026-09-19) — the placeables band
+
+Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
+`v6.17.06-22-g3703e4030`, `src/main/resources/assets/gregtech/textures/`:
+
+- `block/greg_o_lantern.png` — the carved GREG face (upstream
+  `blocks/iconsets/GREG_O_LANTERN.png`, Loader_MultiTileEntities.java:2031; sha256
+  `d75a0aac2658b96a42238244dd9f2c5ef4fc9bf35080eee6decc4aa61f3dccfd`). Byte-identical;
+  the other five lantern faces are the vanilla lit_pumpkin (the upstream
+  BlockTextureCopied borrow). Upstream tints the icon with mRGBa; the port ships the
+  UNCOLORED face (no paint face — the declared embeddium-tint no-touch).
+- `block/placeable/ingot_sides.png` / `ingot_top.png` — the placed-ingot pile faces
+  (upstream `blocks/machines/placeables/ingot/{sides,top}.png`; sha256 below).
+- `block/placeable/plate_sides.png` / `plate_top.png` — the placed-plate faces
+  (upstream `blocks/machines/placeables/plate/{sides,top}.png`).
+- `block/placeable/plate_gem_sides.png` / `plate_gem_top.png` — the placed gem-plate faces
+  (upstream `blocks/machines/placeables/plateGem/{sides,top}.png`).
+- `block/placeable/scrap_sides.png` / `scrap_top.png` — the placed-scrap faces
+  (upstream `blocks/machines/placeables/scrap/{sides,top}.png`).
+
+License: upstream GregTech 6 assets are CC0 (see the Public Domain Dedication block
+above). The placed ROCK/STICK piles carry NO new PNG — the upstream copies
+Blocks.stone/Blocks.log verbatim (MultiTileEntityRock.java:55, MultiTileEntityStick
+.java:51), so the port models reference the vanilla textures directly (the W6
+surface-band form). `block/sandwich.png` is PORT-ORIGINAL art (the upstream sandwich
+renders per-ingredient icons; the port collapses to one layered profile — the declared
+render cut), no attribution owed.
+
+Per-file sha256 (byte-identical copies):
+
+- `block/placeable/ingot_sides.png` `c15a59ebd63b49c5a4e031fc1f84f3efd66ca5d4770e4cf3ffad6fe7dbaf3156`
+- `block/placeable/ingot_top.png` `30088271d7b7eef72f1778139dea109942cfec536218dd30e66feb846589fb9b`
+- `block/placeable/plate_sides.png` `4b8045e02d7f7c2af3136ea1cab4b8032f6271c4b4d719f8183bf28f403f7db6`
+- `block/placeable/plate_top.png` `ea1db3d6c20ff3d18b588a9bc9c71a51bb3a361d528ea1a8385e18e33bc9f9d6`
+- `block/placeable/plate_gem_sides.png` `fbe0854aa49345595159f1cc41b998765ec66d7733990ccf3315b9128bbecebb`
+- `block/placeable/plate_gem_top.png` `ea87db37aa367b54b98f4bcb33f460ef55b92f628a80364c8907941c61b963b4`
+- `block/placeable/scrap_sides.png` `f78b93bf6759ddda850e5a5f713b15bcc8d72abd03a5fc965e10cb663c4d9836`
+- `block/placeable/scrap_top.png` `f78b93bf6759ddda850e5a5f713b15bcc8d72abd03a5fc965e10cb663c4d9836` (upstream ships sides==top byte-identical; the port renames the camelCase upstream
+  pair to the modern lowercase-snake resource namespace)

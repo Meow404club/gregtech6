@@ -1,0 +1,47 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#sandwich"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#sandwich"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#sandwich"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#sandwich"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#sandwich"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#sandwich"
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        12,
+        16
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "#sandwich",
+    "sandwich": "gt6:block/sandwich"
+  }
+}

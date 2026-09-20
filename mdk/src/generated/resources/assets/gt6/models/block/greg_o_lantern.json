@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "minecraft:block/jack_o_lantern",
+    "east": "minecraft:block/jack_o_lantern",
+    "north": "gt6:block/greg_o_lantern",
+    "particle": "minecraft:block/jack_o_lantern",
+    "south": "minecraft:block/jack_o_lantern",
+    "up": "minecraft:block/jack_o_lantern",
+    "west": "minecraft:block/jack_o_lantern"
+  }
+}

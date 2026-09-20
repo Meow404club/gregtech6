@@ -534,6 +534,17 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tSpec.itemId(), mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/comb/" + tSpec.itemId()));
         }
+        // the placeables band (task p32-placeables) — the BlockItems ride the block models
+        // (the vanilla jack_o_lantern item form); the block-model providers run LATER in the
+        // generator order, so the parents are the UNCHECKED references (the turbine form)
+        withExistingParentUnchecked("greg_o_lantern", "block/greg_o_lantern");
+        withExistingParentUnchecked("sandwich", "block/sandwich");
+    }
+
+    /** The unchecked parent reference (the GT6BlockStates turbine form) — cross-provider block models generated later. */
+    private void withExistingParentUnchecked(String aItemId, String aBlockModelPath) {
+        getBuilder(aItemId).parent(new net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile(
+                new net.minecraft.resources.ResourceLocation(GT6DataGenerators.MOD_ID, aBlockModelPath)));
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */

@@ -111,6 +111,7 @@ public class GT6EnUs extends LanguageProvider {
         addEuBridgeFamilies(); // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting template
         addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families + the gas emitters
         addMagicAbsorber(); // task p32-magic-absorber — the Magic Field Absorber name
+        addPlaceables(); // task p32-placeables — the lantern + sandwich + the six placed piles
         addDynamoFamily(); // task p28-c-ulv-dynamo-row — the W1 family's deferred name face + the T0 row
         addBatteryFamily(); // task p29-w4-battery-storage — the 37+5+7+12 storage face
         addKinetics(); // task p12-engine-crank
@@ -1746,6 +1747,24 @@ public class GT6EnUs extends LanguageProvider {
      * columns, the voltage words VN[1..5]) + the two gas emitters (the :384/:394 display
      * + description columns).
      */
+    /**
+     * The placeables band (task p32-placeables) — the MTE deco rows' display faces. The
+     * lantern name is the Loader :2031 registration word VERBATIM ("Greg o'Lantern").
+     */
+    private void addPlaceables() {
+        add("block.gt6.greg_o_lantern", "Greg o'Lantern");
+        // the sandwich — the Loader :2032 registration word VERBATIM ("Sandwich");
+        // the BlockItem rides the block description id — no item.gt6.sandwich key exists
+        add("block.gt6.sandwich", "Sandwich");
+        // the six placed piles — the Loader :2033-2040 registration words VERBATIM
+        add("block.gt6.placed_rock", "Rock");
+        add("block.gt6.placed_stick", "Stick");
+        add("block.gt6.placed_ingot", "Ingots");
+        add("block.gt6.placed_plate", "Plates");
+        add("block.gt6.placed_gem_plate", "Gem Plates");
+        add("block.gt6.placed_scrap", "Scrap");
+    }
+
     private void addLaserFamilies() {
         add("block.gt6.co2_laser", "Electric CO2 Laser (LV)");
         add("block.gt6.co2_laser_t2", "Electric CO2 Laser (MV)");

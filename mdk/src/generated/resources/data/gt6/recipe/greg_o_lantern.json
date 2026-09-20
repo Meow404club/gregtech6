@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "minecraft:pumpkin"
+    },
+    "T": {
+      "item": "minecraft:torch"
+    }
+  },
+  "pattern": [
+    "P",
+    "T"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:greg_o_lantern"
+  }
+}
