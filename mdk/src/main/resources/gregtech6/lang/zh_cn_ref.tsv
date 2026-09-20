@@ -8448,3 +8448,11 @@ direct	item.gt6.comp_laser_gas_co2	二氧化碳激光镭射器	hand
 direct	item.gt6.comp_laser_gas_co2.tooltip	用途: 强力材料加工	hand
 direct	block.gt6.logistics_wire	物流线缆	hand
 direct	block.gt6.magic_absorber	魔法力场吸收器	hand
+direct	block.gt6.greg_o_lantern	格雷灯笼	hand
+direct	block.gt6.sandwich	三明治	hand
+direct	block.gt6.placed_rock	石头	hand
+direct	block.gt6.placed_stick	木棍	hand
+direct	block.gt6.placed_ingot	锭	hand
+direct	block.gt6.placed_plate	板	hand
+direct	block.gt6.placed_gem_plate	宝石板	hand
+direct	block.gt6.placed_scrap	废料	hand

@@ -123,6 +123,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addOreTabTitle(); // task p30-ore-3-datagen — ore-1 注记的卡③面（唯一新键，dump itemgroup 家族行 矿石）
 		addBeeUnits();          // task p31-bees-lv1 — the 20 comb names + the Bees tab + the 11 honey/bee-row fluids (hand rows, the tsv direct band; the dump carries no comb faces)
 		addUsbStickUnits();     // task p32-usb-data — the 4 stick names + the 4 tooltips (hand rows, the tsv direct band; the dump USB face)
+		addPlaceablesUnits();   // task p32-placeables — the 9 deco/placed-pile names (hand rows, the tsv direct band)
 		addLaserGasUnits();     // task p32-qu-laser-domain — the 2 gas emitter names + the 2 tooltips (hand rows, the dump :10379/:10395 faces)
 	}
 
@@ -1265,6 +1266,18 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addDirect(String aKey) {
 		RefRow tRow = reference.get("direct") == null ? null : reference.get("direct").get(aKey);
 		if (tRow != null && !tRow.skipped()) add(aKey, tRow.value());
+	}
+
+	/** The placeables band (task p32-placeables) — the deco TE names over the tsv direct rows. */
+	private void addPlaceablesUnits() {
+		addDirect("block.gt6.greg_o_lantern");
+		addDirect("block.gt6.sandwich");
+		addDirect("block.gt6.placed_rock");
+		addDirect("block.gt6.placed_stick");
+		addDirect("block.gt6.placed_ingot");
+		addDirect("block.gt6.placed_plate");
+		addDirect("block.gt6.placed_gem_plate");
+		addDirect("block.gt6.placed_scrap");
 	}
 
 	/**

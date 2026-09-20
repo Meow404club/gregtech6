@@ -209,6 +209,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addSurfaceBand(); // task p30-w6-rocks-sticks — the surface rock trio + the stick (shared models, no items)
         addSurfacePlants(); // task p30-w6-t2-surface-blocks — the plant quartet + the four fallen-log woods
         addHive(); // task p32-bees-lv2 — the bumble hive (the tinted body + the six-overlay two-layer form)
+        addPlaceables(); // task p32-placeables — the Greg o'Lantern (the carved-front cube)
     }
 
     /**
@@ -2609,5 +2610,74 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tRow.getKey(), modLoc("block/turbine_main_" + aFamily));
         }
+    }
+
+    /**
+     * Task p32-placeables — the placeables band, half one: the Greg o'Lantern blockstate
+     * (upstream MTE 32758, Loader_MultiTileEntities.java:2031). ONE model over the four
+     * horizontal facings: the FRONT (facing) face carries the borrowed upstream
+     * GREG_O_LANTERN icon (assets/README.md), the other five faces the vanilla jack_o_lantern
+     * texture (the modern name of the upstream 1.7.10 Blocks.lit_pumpkin copy —
+     * getTexture2 :38 = the GREG icon on mFacing + BlockTextureCopied elsewhere). The rotation table is the vanilla jack_o_lantern.json one (north=0,
+     * east=90, south=180, west=270 — the carved face rotates WITH the facing).
+     */
+    private void addPlaceables() {
+        BlockModelBuilder tModel = models().getBuilder("greg_o_lantern")
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("particle", mcLoc("block/jack_o_lantern"))
+                .texture("north", modLoc("block/greg_o_lantern"))
+                .texture("south", mcLoc("block/jack_o_lantern"))
+                .texture("east", mcLoc("block/jack_o_lantern"))
+                .texture("west", mcLoc("block/jack_o_lantern"))
+                .texture("up", mcLoc("block/jack_o_lantern"))
+                .texture("down", mcLoc("block/jack_o_lantern"));
+        getVariantBuilder(gregtech6.registry.GT6Placeables.GREG_O_LANTERN.get()).forAllStates(aState -> {
+            int tY = switch (aState.getValue(gregtech6.tileentity.misc.GT6GregOLanternBlock.FACING)) {
+                case EAST -> 90;
+                case SOUTH -> 180;
+                case WEST -> 270;
+                default -> 0; // NORTH: the carved face at -z, no rotation
+            };
+            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+        });
+        // the sandwich: ONE fixed 12/16 layered box over the port-original sandwich art
+        // (the per-ingredient display model band is the declared render cut)
+        BlockModelBuilder tSandwich = models().getBuilder("sandwich")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("sandwich", modLoc("block/sandwich"))
+                .texture("particle", "#sandwich");
+        tSandwich.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 12.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#sandwich").cullface(aDir))
+                .end();
+        simpleBlock(gregtech6.registry.GT6Placeables.SANDWICH.get(), tSandwich);
+        // the six placed piles (task p32-placeables, half two): fixed silhouettes over the
+        // borrowed upstream icon pairs (assets/README.md) + the vanilla stone/log borrows;
+        // tintindex 0 on the five material-tinted faces (GT6PlaceableTint reads the BE
+        // material), the stick un-tinted (the W6 oak_log borrow form)
+        placedPile(gregtech6.registry.GT6Placeables.PLACED_INGOT.get(), "placed_ingot", "block/placeable/ingot_sides", "block/placeable/ingot_top", 2, true, false);
+        placedPile(gregtech6.registry.GT6Placeables.PLACED_PLATE.get(), "placed_plate", "block/placeable/plate_sides", "block/placeable/plate_top", 1, true, false);
+        placedPile(gregtech6.registry.GT6Placeables.PLACED_GEM_PLATE.get(), "placed_gem_plate", "block/placeable/plate_gem_sides", "block/placeable/plate_gem_top", 1, true, false);
+        placedPile(gregtech6.registry.GT6Placeables.PLACED_SCRAP.get(), "placed_scrap", "block/placeable/scrap_sides", "block/placeable/scrap_top", 1, true, false);
+        placedPile(gregtech6.registry.GT6Placeables.PLACED_ROCK.get(), "placed_rock", "block/stone", "block/stone", 3, true, true);
+        placedPile(gregtech6.registry.GT6Placeables.PLACED_STICK.get(), "placed_stick", "block/oak_log", "block/oak_log", 2, false, true);
+    }
+
+    /** One placed-pile model: an inset full-footprint box of aHeight/16, tinted per aTinted; aVanilla textures resolve against minecraft. */
+    private void placedPile(Block aBlock, String aName, String aSides, String aTop, int aHeight, boolean aTinted, boolean aVanilla) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("sides", aVanilla ? mcLoc(aSides) : modLoc(aSides))
+                .texture("top", aVanilla ? mcLoc(aTop) : modLoc(aTop))
+                .texture("particle", "#sides");
+        float tTop = aHeight;
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, tTop, 16.0F)
+                .allFaces((aDir, aFace) -> {
+                    aFace.texture(aDir.getAxis() == net.minecraft.core.Direction.Axis.Y ? "#top" : "#sides");
+                    if (aTinted) aFace.tintindex(0);
+                })
+                .end();
+        simpleBlock(aBlock, tModel);
     }
 }

@@ -140,6 +140,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
+                new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK)), // task p30-ore-4-loot — the 3922 ore tables
             lookupProvider);
          *///?} else {
@@ -189,6 +190,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
+                new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK))); // task p30-ore-4-loot — the 3922 ore tables
         //?}
     }
@@ -2379,6 +2381,40 @@ public final class GT6LootTables extends LootTableProvider {
                 add(GT6SurfaceBlocks.INDICATOR_ROCKS.get(i).get(),
                         collectedTable(GTMaterialItems.get(OP.rockGt, GT6SurfaceBlocks.INDICATOR_MATERIALS.get(i).get()).get()));
             }
+        }
+    }
+
+    /**
+     * The placeables-band loot (task p32-placeables): the Greg o'Lantern + the Sandwich
+     * drop themselves (dropSelf — the upstream lantern {@code canDrop F :51} means the MTE
+     * item never drops while the block drops itself via getDrops; the modern item IS that
+     * loot face; the upstream Sandwich getDrops single-stack branch collapses to the item
+     * form). The six placed piles are NOT here — they are noLootTable, the contents drop
+     * through the block's playerDestroy walk (the GT6BumbleHiveBlock loot-shell form).
+     */
+    public static final class GT6PlaceableBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6PlaceableBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6PlaceableBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return List.of(gregtech6.registry.GT6Placeables.GREG_O_LANTERN.get(),
+                    gregtech6.registry.GT6Placeables.SANDWICH.get());
+        }
+
+        @Override
+        protected void generate() {
+            dropSelf(gregtech6.registry.GT6Placeables.GREG_O_LANTERN.get());
+            dropSelf(gregtech6.registry.GT6Placeables.SANDWICH.get());
         }
     }
 }

@@ -30,6 +30,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.datagen.GT6ItemTags;
 import gregtech6.items.armor.GT6ArmorMaterials;
 import gregtech6.registry.GT6Batteries;
+import gregtech6.registry.GT6Placeables;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GTWires;
 import gregtech6.registry.GTWireSpecs;
@@ -155,6 +156,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * port carriers; the result-path vanilla convention.
 	 */
 	public static final ResourceLocation WATER_WHEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "water_wheel");
+	/** The Greg o'Lantern crafting row id (task p32-placeables, the result-path convention). */
+	public static final ResourceLocation GREG_O_LANTERN_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "greg_o_lantern");
 	/**
 	 * The Electric Transformer (ULV-LV) crafting row (task p28-c-ulv-lv-transformer) —
 	 * the Loader_MultiTileEntities.java:881 row SHAPE ("WIW","XMx","WIW" — the unbound
@@ -260,6 +263,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tRow.family().startsWith("energium")) continue; // the crystals carry NO rows (upstream :1079-:1092, the declared cut)
 			batteryRecipeBuilder(tRow).save(aConsumer, batteryRecipeId(tRow));
 		}
+		// task p32-placeables — the Greg o'Lantern row
+		gregOLanternBuilder().save(aConsumer, GREG_O_LANTERN_ID);
 		for (BatteryBoxRecipeRow tRow : batteryBoxRecipeBuilders()) {
 			tRow.builder().save(aConsumer, batteryBoxRecipeId(tRow.row()));
 		}
@@ -367,6 +372,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tRow.family().startsWith("energium")) continue; // the crystals carry NO rows (upstream :1079-:1092, the declared cut)
 			batteryRecipeBuilder(tRow).save(aOutput, batteryRecipeId(tRow));
 		}
+		// task p32-placeables — the Greg o'Lantern row
+		gregOLanternBuilder().save(aOutput, GREG_O_LANTERN_ID);
 		for (BatteryBoxRecipeRow tRow : batteryBoxRecipeBuilders()) {
 			tRow.builder().save(aOutput, batteryBoxRecipeId(tRow.row()));
 		}
@@ -1010,6 +1017,23 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('R', aStone)
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 				.unlockedBy("has_stone", has(aStone));
+	}
+
+	/**
+	 * The Greg o'Lantern crafting row (task p32-placeables) — the upstream
+	 * "Greg o'Lantern" registration tail (Loader_MultiTileEntities.java:2031,
+	 * {@code "Pk", "T ", 'P' Blocks.pumpkin, 'T' OD.blockTorch}): the pumpkin OVER the
+	 * torch. DECLARED FOLD: the 'k' knife tool letter rides the CR tool-letter face the
+	 * port vanilla-crafting bridge has no carrier for (the clay-bowl 'R' rollingpin
+	 * precedent, the dormant-row ruling) — the shape keeps the pumpkin+torch column.
+	 */
+	private ShapedRecipeBuilder gregOLanternBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, GT6Placeables.GREG_O_LANTERN.get())
+				.pattern("P")
+				.pattern("T")
+				.define('P', net.minecraft.world.level.block.Blocks.PUMPKIN)
+				.define('T', net.minecraft.world.item.Items.TORCH)
+				.unlockedBy("has_pumpkin", has(net.minecraft.world.item.Items.PUMPKIN));
 	}
 
 	private ShapedRecipeBuilder bathingPotSteelBuilder() {
