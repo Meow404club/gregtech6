@@ -1535,9 +1535,15 @@ public final class GTFluids {
 	 * p32-qu-scanner-replicator: the "redstone" entry resolves here — the bridge map stays
 	 * material-name keyed while the registration stays table-driven).
 	 */
+	//? if forge {
 	public static RegistryObject<? extends net.minecraft.world.level.material.Fluid> chemicalSource(String aName) {
 		return SOURCE_SEAM.get(aName);
 	}
+	//?} else {
+	/*public static net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.material.Fluid, ? extends net.minecraft.world.level.material.Fluid> chemicalSource(String aName) {
+		return SOURCE_SEAM.get(aName);
+	}*/
+	//?}
 
 	/**
 	 * The hot-family row lookup (the {@link #chemicalSpec} shape) — the fuels_hot consumer
