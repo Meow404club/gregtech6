@@ -31,6 +31,12 @@ Every start takes the NODE's sweep lock first (P32): a second same-node
 sweep fails fast naming the occupant (pid + session id) instead of silently
 poisoning the shared state — the P31 dual-session incident's sweep-side
 guard; a crashed sweep leaves residue that only --break-lock clears.
+
+Every actual sweep run also ends with the census tail step (run_census, card
+p32-ops-census-mover): a literal-grep counting ledger over the port trees
+written next to the result JSON — same tree, byte-identical file, cross-card
+reconciliation by diff (the P31 Converter:221 miss made exhaustive literal
+grep a gate duty; ranked retrieval alone is not a census).
 """
 
 import argparse
@@ -756,6 +762,71 @@ def release_sweep_lock(path):
     Path(path).unlink(missing_ok=True)
 
 
+# --- census tail step (P32, card p32-ops-census-mover) ------------------------
+#
+# The P31 hygiene item "DC census 升门禁" as a standing sweep step. Lesson
+# carrier (phase_anchors.p31.methodology_lessons): ranked retrieval (sym_query)
+# is NON-exhaustive — the units-fold copy census missed the re-route at
+# GTMultiBlockConverter:221 and it only surfaced at compile time. Every sweep
+# therefore ends with a LITERAL grep over the tracked port trees: one tree ->
+# one byte-identical TSV ledger (key<TAB>count, fixed table order), cross-card
+# reconciliation by diff. This table IS the count definitions (口径): a card
+# that changes what is counted changes it in its own commit, never silently.
+# fold_units_defs is the one pinned invariant (p31-units-convergence terminal
+# state: exactly 1 definition, gregapi/util/UT.java:39) — != 1 fails the sweep
+# loud listing the hits: the Converter:221 exposure class, promoted to a gate.
+
+CENSUS_PATHS = ("src/main/java", "mdk/src/main/java")
+
+CENSUS_PATTERNS = (
+    # (ledger key, git grep -E pattern, count mode, authority)
+    ("api_consumer_MT_files", r"^import gregapi\.data\.MT;", "files",
+     "research.p31-api-modernization strangler census (76 files @ 2026-09-17)"),
+    ("api_consumer_TD_files", r"^import gregapi\.data\.TD;", "files",
+     "research.p31-api-modernization strangler census (108 files @ 2026-09-17)"),
+    ("api_consumer_OP_files", r"^import gregapi\.data\.OP;", "files",
+     "research.p31-api-modernization strangler census (51 files @ 2026-09-17)"),
+    ("api_consumer_CS_files", r"^import gregapi\.data\.CS;", "files",
+     "research.p31-api-modernization strangler census (18 files @ 2026-09-17)"),
+    ("fold_units_defs", r"static long units\(", "lines",
+     "p31-units-convergence terminal state == 1 (UT.java:39); the Converter:221 lesson"),
+)
+
+
+def run_census(log=print):
+    """The literal-grep counting ledger; returns the step exit (0 unless a
+    pinned invariant breaks). Deterministic per tree: git grep walks the index,
+    so untracked tmp/ harvest never leaks in and two runs over one tree diff to
+    empty by construction."""
+    root = _HERE.parent.parent
+    ledger_path = gt6server.ARTIFACT_DIR / \
+        f"gt6_rs_census_{framework.worktree_tag()}.txt"
+    rows, hard = [], False
+    for key, pattern, mode, _authority in CENSUS_PATTERNS:
+        out = subprocess.run(["git", "grep", "-E", "-I", pattern, "--", *CENSUS_PATHS],
+                             cwd=root, capture_output=True, text=True)
+        if out.returncode not in (0, 1):       # 1 = no matches, anything else is broken
+            raise SystemExit(f"sweep: census git grep failed ({out.returncode}): "
+                             f"{out.stderr.strip()}")
+        hits = [line for line in out.stdout.splitlines() if line]
+        count = len({hit.rsplit(":", 1)[0] for hit in hits}) if mode == "files" \
+            else len(hits)
+        rows.append(f"{key}\t{count}")
+        if key == "fold_units_defs" and count != 1:
+            hard = True
+            log(f"[census] HARD FAIL: fold_units_defs = {count} (pinned 1, "
+                f"gregapi/util/UT.java:39) — a units-fold copy is back (the P31 "
+                f"Converter:221 miss class):")
+            for hit in hits:
+                log(f"  {hit}")
+    ledger = "\n".join(rows) + "\n"
+    ledger_path.write_text(ledger, encoding="utf-8")
+    log(f"[sweep] census ledger -> {ledger_path}")
+    for row in rows:
+        log(f"[census] {row.replace(chr(9), ' = ')}")
+    return 1 if hard else 0
+
+
 def break_sweep_lock(node, log=print):
     """--break-lock: clear a residue lock; refuse while the owner pid lives."""
     path = sweep_lock_path(node)
@@ -1127,6 +1198,10 @@ def main(argv=None):
             code |= subprocess.call([sys.executable,
                                      str(_HERE / "chains" / f"{PROBE_MODULE}.py"),
                                      "--node", node])
+
+        # the census tail step: every actual sweep run ends with the literal-grep
+        # counting ledger (the --plan/--diff/--break-lock modes exit above).
+        code |= run_census()
     finally:
         release_sweep_lock(lock)
     return code

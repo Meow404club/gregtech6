@@ -70,6 +70,42 @@ import net.minecraftforge.items.ItemHandlerHelper;
  *     the covers run them on a timer, one stack per interval.</li>
  * </ul>
  *
+ * <h2>The quantity-parameter fold — the upstream quadruple to the ported triple</h2>
+ *
+ * <p>Every upstream {@code move}-family signature carries the quantity quadruple in the
+ * fixed seat order {@code (..., int aMaxSize, int aMinSize, int aMaxMove, int aMinMove)}
+ * (ST.java:457, :483, :513, :537, :561). The ported int triple does <b>not</b> keep that
+ * seat order: {@code (aMaxMove, aMinMove, aMaxSlotSize)} — the two move-side caps first,
+ * the per-slot size cap last. This is the fold, declared here because the seats are the
+ * whole interface (task p32-ops-census-mover; the review seam of task p32-logistics-lv3
+ * mis-seated it and shipped the bug shape). The roles ride verbatim:
+ * <ul>
+ * <li><b>Seat 1 {@code aMaxMove}</b> — the per-pair total cap, ST.java:470
+ *     ({@code Math.min(aMaxMove, canPut(...))}).</li>
+ * <li><b>Seat 2 {@code aMinMove}</b> — BOTH of its upstream jobs: the source-count gate
+ *     {@code stackSize < aMinMove} (ST.java:467/:523/:548/:570) and the pair floor
+ *     {@code tMovable < aMinMove} (ST.java:471/:499/:527/:551/:573 first clause). A large
+ *     value here silently skips every sub-count source slot — the exact review-seam bug
+ *     shape (an import max mis-seated into this seat made partial stacks unmovable).</li>
+ * <li><b>Seat 3 {@code aMaxSlotSize}</b> — upstream {@code aMaxSize}, additionally folded
+ *     at the pair line with the source stack's own cap:
+ *     {@code Math.min(aMaxSlotSize, aStackFrom.getMaxStackSize())} (ST.java:470 tail;
+ *     {@link #DEFAULT_MAX_SLOT_SIZE}).</li>
+ * <li><b>{@code aMinSize} has NO seat</b> — the ST.java:471/:499/:527/:551/:573 second
+ *     clause ({@code tMovable + existing < aMinSize}, a floor on the resulting target
+ *     stack size) is trimmed as dead at every upstream call site in the ported subset
+ *     (aMinSize 1 with aMinMove &gt;= 1 implies {@code tMovable + existing >= 1}). The
+ *     port therefore has no resulting-target-size floor and no way to express one.</li>
+ * </ul>
+ * <p>The same three ints feed {@link #move(IItemHandler, IItemHandler, int, int, int)},
+ * {@link #moveFrom(IItemHandler, IItemHandler, int, int, int, int)} and
+ * {@link #moveTo(IItemHandler, IItemHandler, int, int, int, int)} alike. The behavioral
+ * lock lives in GTItemMoverTest's fold group ({@code foldSeatOrderIsMoveCapMinMoveThenSlotCap}
+ * pins the seats with mutually-distinct caps so any permutation flips the verdict;
+ * {@code foldTrimsTheMinSizeClause} pins the no-floor trim). The caller-side seat mapping
+ * for the logistics core is declared at {@code GT6LogisticsCoreBlockEntity.moveStacks}
+ * with its {@code defragMovesPartialItemStacks} regression arm.
+ *
  * <h2>Trimmed upstream surface (out of the cover subset, none reachable from the call sites)</h2>
  * <ul>
  * <li>Filter/invertFilter parameters (ST.java:457) — RESTORED with the retriever cover
@@ -125,8 +161,8 @@ public final class GTItemMover {
 
 	/**
 	 * Core of {@link #move} with the quantity caps exposed (the surviving subset of the
-	 * ST.java:457 parameter list: aMaxMove, aMinMove, aMaxSize; aMinSize trimmed as dead —
-	 * see class javadoc). ST.java:465-477.
+	 * ST.java:457 parameter list in the FOLD seat order (aMaxMove, aMinMove, aMaxSlotSize)
+	 * — not the upstream seat order; aMinSize trimmed as dead — class javadoc). ST.java:465-477.
 	 */
 	public static int move(IItemHandler aFrom, IItemHandler aTo, int aMaxMove, int aMinMove, int aMaxSlotSize) {
 		return move(aFrom, aTo, aMaxMove, aMinMove, aMaxSlotSize, null, false);
@@ -171,7 +207,8 @@ public final class GTItemMover {
 	}
 
 	/**
-	 * Core of {@link #moveFrom} with the quantity caps exposed. ST.java:513-532.
+	 * Core of {@link #moveFrom} with the quantity caps exposed (the fold seat order —
+	 * class javadoc). ST.java:513-532.
 	 */
 	public static int moveFrom(IItemHandler aFrom, IItemHandler aTo, int aSlotFrom, int aMaxMove, int aMinMove, int aMaxSlotSize) {
 		if (aFrom == null || aTo == null) return 0;
@@ -201,7 +238,8 @@ public final class GTItemMover {
 	}
 
 	/**
-	 * Core of {@link #moveTo} with the quantity caps exposed. ST.java:537-556.
+	 * Core of {@link #moveTo} with the quantity caps exposed (the fold seat order —
+	 * class javadoc). ST.java:537-556.
 	 */
 	public static int moveTo(IItemHandler aFrom, IItemHandler aTo, int aSlotTo, int aMaxMove, int aMinMove, int aMaxSlotSize) {
 		if (aFrom == null || aTo == null) return 0;
