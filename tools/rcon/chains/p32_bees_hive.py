@@ -88,7 +88,9 @@ steps += [
     phase("B: the paintable storage — gt.color/gt.painted ride the BE NBT"),
     Step(f"setblock {F(HIVE)} gt6:bumble_hive", expect="Changed the block"),
     Step(merge_paint(F(HIVE))["1.20.1"], expect="Modified block data", node_cmds=merge_paint(F(HIVE))),
-    Step(f"data get block {F(HIVE)} gt.color", expect="16711680"),
+    # the dotted key defeats the data-get path parser (it nests on ".") — the whole-BE
+    # dump substring is the readback face (SNBT prints "gt.color: 16711680" flat)
+    Step(f"data get block {F(HIVE)}", expect="gt.color: 16711680"),
 ]
 
 # --------------------------------- C: the embedded form live place + the bit-exact recompute
