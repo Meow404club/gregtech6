@@ -602,6 +602,14 @@ SESSION_GROUPS = (
     # the beam flying +z over two fiber wires into the absorber; the T5 wall arm
     # at x452). The absorber's EU tail eats into a 1x electric wire at z+4.
     ("p32_qu_laser",),
+    # P32 W2 card (p32-logistics-lv2): the logistics wire chain — a fresh z=248 band
+    # (x486..490: the furnace non-member head 486 / wires 487..489 back-to-back through
+    # the onPlaced handshake / the item-pipe foreign-family tail 490), east of the p31
+    # retriever band x470..478 (x-disjoint with margin). Admission mirroring the p31
+    # form (bbox-registered, no fresh_boot / mutates member — the wire/pipe rigs are
+    # band-local setblocks; the /gt6logistics wire stat|gate arms are pure command
+    # channels). --group p32_logistics_lv2 matches the module stem.
+    ("p32_logistics_lv2",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
