@@ -91,7 +91,9 @@ public class RecipeMap {
 	// reload removeAll, GT6RecipeMapJsonLoader.java:349, and the CokeOven tag listener,
 	// GT6CokeOvenTagListener) bypass the funnel; like upstream's MineTweaker detect/reInit
 	// (:491-494) the read path self-heals on a size mismatch and the probe verifies list
-	// membership, so a removed row can never be served from a stale bucket.
+	// membership, so a removed row can never be served from a stale bucket. The listener's
+	// subset replace can additionally be SIZE-NEUTRAL (runtime /reload, unchanged
+	// #minecraft:logs) — it calls {@link #invalidateIndex()} explicitly (the P1 fix).
 	// Single-server-thread assumption, identical to upstream (:543 catches the concurrent case;
 	// the port keeps the machine-tick/reload serialization the legs already run under).
 	/** Exact-item buckets: a row lands under the Item of every non-empty mInputs entry (upstream addToItemMap :632-640, key folded item+meta+NBT → Item). */
@@ -205,6 +207,21 @@ public class RecipeMap {
 		mKeylessRecipes.clear();
 		for (Recipe tRecipe : mRecipeList) indexRecipe(tRecipe);
 		mIndexedSize = mRecipeList.size();
+	}
+
+	/**
+	 * Forces the next lookup to rebuild the hash indexes (the P1 fix of task
+	 * p32-perf-recipe-hash-index). For the one runtime remove+add seam that can be
+	 * SIZE-NEUTRAL: {@code GT6CokeOvenTagListener.replaceLogRecipes} swaps its tag-derived
+	 * subset on every /reload (TagsUpdatedEvent.shouldUpdateStaticData fires at runtime too)
+	 * — with an unchanged #minecraft:logs that is remove M rows, add M fresh instances, Δ=0,
+	 * so the size-drift rebuild never fires and the fresh instances would sit in no bucket
+	 * (the probe's contains guard only blocks the inverse: bucketed-but-removed — a COKE_OVEN
+	 * log lookup would silently null until restart). Callers invoke this right after their
+	 * direct writes; the next findRecipe pays one rebuild.
+	 */
+	void invalidateIndex() {
+		mIndexedSize = -1;
 	}
 
 	/**

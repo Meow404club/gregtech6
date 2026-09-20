@@ -98,6 +98,13 @@ public final class GT6CokeOvenTagListener {
 	 * The subset replace: remove the previous tag-derived instances, register the fresh
 	 * expansion. Identity-based (Recipe has identity semantics in the HashSet), so repeated
 	 * rebuilds are stable — the idempotence the offline test pins.
+	 *
+	 * <p><b>The index invalidation</b> (task p32-perf-recipe-hash-index P1): the replace is
+	 * a runtime remove+add seam that can be SIZE-NEUTRAL (a /reload re-firing this event with
+	 * an unchanged #minecraft:logs removes M and adds M fresh instances, Δ=0), so the map's
+	 * size-drift self-heal never fires — the fresh instances would live in the list but in no
+	 * hash bucket, and every COKE_OVEN log lookup would silently null until restart. The
+	 * explicit {@link RecipeMap#invalidateIndex()} forces the rebuild on the next lookup.
 	 */
 	static void replaceLogRecipes(List<Recipe> aNewRecipes) {
 		RecipeMap tMap = GT6RecipeMaps.COKE_OVEN;
@@ -105,6 +112,7 @@ public final class GT6CokeOvenTagListener {
 		tMap.mRecipeList.removeAll(sLogRecipes);
 		sLogRecipes = aNewRecipes;
 		tMap.mRecipeList.addAll(sLogRecipes);
+		tMap.invalidateIndex();
 	}
 
 	/** The current subset size (the audit/acceptance read). */

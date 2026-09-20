@@ -225,6 +225,36 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 		assertNull(tMap.findRecipe(null, tSize, ItemStack.EMPTY, null, new ItemStack(Items.SAND, 4)), "a removed row must not be served from its bucket");
 	}
 
+	/**
+	 * The P1 pin (review round 1): the CokeOven tag listener's subset replace is a runtime
+	 * remove+add seam that can be SIZE-NEUTRAL — a /reload re-firing TagsUpdatedEvent with an
+	 * unchanged #minecraft:logs removes M rows and adds M fresh instances (Δ=0), so the
+	 * size-drift rebuild never fires and the fresh instances would sit in no bucket (the
+	 * contains guard only blocks the inverse) — every COKE_OVEN log lookup would silently
+	 * null until restart. The same-size swap through the REAL seam
+	 * ({@code GT6CokeOvenTagListener.replaceLogRecipes}) must leave the fresh instance findable.
+	 */
+	@Test
+	void cokeOvenSameSizeReplaceStaysFindable() {
+		long tSize = Long.MAX_VALUE / 4096;
+		ItemStack[] tLog = {new ItemStack(Items.OAK_LOG, 16)};
+		Recipe tOld = new Recipe(true, new ItemStack[] {new ItemStack(Items.OAK_LOG, 16)}, new ItemStack[] {new ItemStack(Items.CHARCOAL)}, new FluidStack[0], null, 16, 1, 0);
+		Recipe tNew = new Recipe(true, new ItemStack[] {new ItemStack(Items.OAK_LOG, 16)}, new ItemStack[] {new ItemStack(Items.COAL)}, new FluidStack[0], null, 16, 1, 0);
+
+		GT6CokeOvenTagListener.replaceLogRecipes(List.of(tOld)); // first pour: Δ≠0 → the size-drift self-heal answers
+		assertSame(tOld, GT6RecipeMaps.COKE_OVEN.findRecipe(null, tSize, ItemStack.EMPTY, null, tLog));
+
+		GT6CokeOvenTagListener.replaceLogRecipes(List.of(tNew)); // SAME-SIZE swap (1→1, Δ=0) — the runtime /reload face
+		assertSame(tNew, GT6RecipeMaps.COKE_OVEN.findRecipe(null, tSize, ItemStack.EMPTY, null, tLog),
+				"after a size-neutral subset replace the fresh instance must be found (invalidateIndex), not nulled");
+		// the buffer holds the retired tOld: the membership guard skips it, the rebuild answers tNew
+		assertNull(GT6RecipeMaps.COKE_OVEN.findRecipe(null, tSize, ItemStack.EMPTY, null, new ItemStack(Items.SPRUCE_LOG, 16)),
+				"rows outside the subset stay unreachable");
+		// leave the listener's tracked subset EMPTY — sLogRecipes is listener-static and the
+		// sibling CokeOven tests pin its clean-slate count (the seam-restores discipline)
+		GT6CokeOvenTagListener.replaceLogRecipes(List.of());
+	}
+
 	// ------------------------------------------------------------------
 	// acceptance ②: the oRecipe map-level buffer
 	// ------------------------------------------------------------------
