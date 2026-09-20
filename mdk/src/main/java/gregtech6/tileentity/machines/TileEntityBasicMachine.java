@@ -135,8 +135,12 @@ import gregtech6.util.GTSideTables;
  * (GTEnergySourceBlockEntity, upstream EngineSteam :146 form) and retired the port-ism:
  * the default is the upstream truth again and the :815 suspension fold is unwound.
  * {@link #doInject} is the upstream :489-508 body minus the charging branch (:497-500,
- * mEnergyTypeCharged/mChargeRequirement are outside the trimmed field set — declared
- * deviation, the oven :492 same shape); the :511 FACE_CONNECTED receiving gate IS ported
+ * mEnergyTypeCharged/mChargeRequirement are outside the trimmed field set — a
+ * FAMILY-SCOPED deviation since task p32-ignition-gate: the gate IS ported on the
+ * multiblock base TileEntityBase10MultiBlockMachine for the fusion's start-LU ledger
+ * (upstream :92/:98/:124/:497-500/:755/:809), while this single-block family keeps the
+ * cut — no registered row carries a charged-type column, so the arms would be dead code
+ * here, the oven :492 same shape); the :511 FACE_CONNECTED receiving gate IS ported
  * since task p14-machine-fluid-face ({@link #mEnergyInputs} + the rotation lookup, default
  * 127 = the former Root all-sides behaviour bit-for-bit). Side configuration and the RU/KU
  * accepted-energy types are carrier fields; no named energy interface is introduced
@@ -483,7 +487,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		mSuccessful = false; // :807
 
 		if (mMaxProgress > 0) {
-			rActive = true; // :810 (mSpecialIsStartEnergy cut with the special-start-energy path)
+			rActive = true; // :810 — the :809 mSpecialIsStartEnergy half is dead here (no charged-type column on any single-block row); the LIVE port is the multiblock base (task p32-ignition-gate)
 			if (mProgress <= mMaxProgress) {
 				mProgress += aEnergy; // :813 — the progress unit IS an energy unit (ADR-P4)
 			}
@@ -683,7 +687,9 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 			if (aApplyRecipe) applyTankConsumption(tSourceTanks, tFluids, tFluidBaseline);
 		}
 
-		// :748-753 adjacent-inventory notify and :755 mSpecialIsStartEnergy cut (auto-IO pool)
+		// :748-753 adjacent-inventory notify cut (auto-IO pool); :755 mSpecialIsStartEnergy
+		// arm is FAMILY-SCOPED dead here (the live port = the multiblock base, task
+		// p32-ignition-gate)
 
 		mCurrentRecipe = tRecipe; // :757
 		mOutputItems = tRecipe.getOutputs(tMaxProcessCount); // :758
@@ -795,8 +801,9 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 	/**
 	 * Upstream :489-508 verbatim minus the charging branch (:497-500 — mChargeRequirement/
-	 * mEnergyTypeCharged are outside the trimmed field set :137, declared deviation, the
-	 * oven :492 same shape): a stopped machine refuses (0, :490); an over-voltage packet
+	 * mEnergyTypeCharged are outside the trimmed field set :137, the FAMILY-SCOPED
+	 * deviation — the live port is the multiblock base's fusion ledger, task
+	 * p32-ignition-gate): a stopped machine refuses (0, :490); an over-voltage packet
 	 * overcharges ({@code aSize > mInputMax}) and reports the whole amount as used
 	 * (:493-495, the Root overcharge/explode body — D3); an accepted-type packet charges
 	 * {@code min(mInputMax - mEnergy, size * amount)} energy, consuming the corresponding
@@ -816,7 +823,9 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 			if (aDoInject) overcharge(aSize, aEnergyType); // :494 — the Root D3 body (suspend/explode + log)
 			return aAmount; // :495
 		}
-		// :497-500 charging branch cut (mEnergyTypeCharged/mChargeRequirement, declared deviation)
+		// :497-500 charging branch cut — mEnergyTypeCharged/mChargeRequirement are outside
+		// this family's field set (the live port = the multiblock base's fusion ledger,
+		// task p32-ignition-gate; no single-block row registers a charged type)
 		if (aEnergyType == mEnergyTypeAccepted) { // :501
 			if (aDoInject) mStateNew = tPositive; // :502
 			long tInput = Math.min(mInputMax - mEnergy, aSize * aAmount), tConsumed = Math.min(aAmount, (tInput/aSize) + (tInput%aSize!=0?1:0)); // :503

@@ -54,7 +54,9 @@ import gregtech6.tileentity.GTItemStackHandler;
  *     so the net progress rate is 1 energy/tick → 3600 t for the standard recipe;</li>
  * <li>{@link #doWork} :780-793 verbatim (energy gate + {@link #doActive}/
  *     {@link #doInactive} + the drain + the mIgnited decrement :792);</li>
- * <li>{@link #doActive} :795-887 trimmed: the recipe re-check (:800), progress += energy
+ * <li>{@link #doActive} :795-887 trimmed: the recipe re-check (:800), the :809 ignition
+ *     gate (task p32-ignition-gate — LIVE: a {@link #mSpecialIsStartEnergy} machine freezes
+ *     progress while the {@link #mChargeRequirement} ledger is unpaid), progress += energy
  *     (:813 — the progress unit IS an energy unit), item placement i % outCount (:816),
  *     fluid placement merge-then-empty-tank (:817-835), the keep-alive mIgnited = 40
  *     (:816/:822/:831/:851) and the carryover (:843-851); the alternating-energy gate
@@ -138,6 +140,21 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	public static final String NBT_OUTPUT_FLUIDS = "output_fluids";
 	public static final String NBT_OUTPUT_TANK = "output_tank";
 	public static final String NBT_INPUT_TANK = "input_tank";
+	/**
+	 * Upstream NBT_INPUT_EU (task p32-ignition-gate) — the {@link #mChargeRequirement}
+	 * persistence key, PLAIN in-repo form. Unlike the two carrier fields above this one IS
+	 * persisted (the upstream :228 write / :155 read): an unpaid start-LU ledger survives
+	 * a restart.
+	 */
+	public static final String NBT_CHARGE_REQUIREMENT = "charge_requirement";
+	/**
+	 * Upstream NBT_SPECIAL_IS_START_ENERGY (task p32-ignition-gate, the :124 readFromNBT2
+	 * leg) — the {@link #mSpecialIsStartEnergy} registration-config key: hasKey-guarded on
+	 * load (the /data merge override face, the NBT_USE_OUTPUT_TANK family), NEVER persisted
+	 * (the upstream writeToNBT2 writes none of the registration keys either — the flag is
+	 * supplied by the registration row / constructor, not the world).
+	 */
+	public static final String NBT_SPECIAL_IS_START_ENERGY = "special_is_start_energy";
 
 	/** Slot count — 1 input + 9 outputs + 1 special (no fluid display slots, the card ruling). */
 	public static final int INVENTORY_SIZE = 11;
@@ -188,6 +205,38 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	 * :743 bind folds away). Registration config, not persisted.
 	 */
 	public gregapi.code.TagData mEnergyTypeAccepted = gregapi.data.TD.Energy.TU;
+	/**
+	 * Upstream :99 mEnergyTypeCharged (task p32-ignition-gate) — the SECOND accepted type
+	 * (upstream NBT_ENERGY_ACCEPTED_2, the :150 readFromNBT2 load leg): the start-energy
+	 * carrier the fusion's {@code doEnergyInjection} charged arm banks against the {@link
+	 * #mChargeRequirement} ledger (upstream :497-500). Base default TU (the upstream :99
+	 * literal) — zero delta for every pre-ignition consumer: the charged arm requires
+	 * {@code mChargeRequirement > 0}, which only a {@link #mSpecialIsStartEnergy} machine
+	 * ever arms. The fusion re-points it to LU (the :1242 NBT_ENERGY_ACCEPTED_2 column,
+	 * the glass ring). Registration config, not persisted.
+	 */
+	public gregapi.code.TagData mEnergyTypeCharged = gregapi.data.TD.Energy.TU;
+	/**
+	 * Upstream :92 mSpecialIsStartEnergy (task p32-ignition-gate) — the
+	 * NBT_SPECIAL_IS_START_ENERGY flag (the :124 readFromNBT2 registration-config load leg,
+	 * the same route that supplies it upstream: the Loader_MultiTileEntities.java:1242
+	 * fusion row carries {@code NBT_SPECIAL_IS_START_ENERGY, T}): when set, the {@link
+	 * #checkRecipe} :755 arm arms the {@link #mChargeRequirement} ledger with the recipe's
+	 * {@code mSpecialValue} on the FIRST start or a RECIPE SWITCH, and the {@link #doActive}
+	 * :809 gate freezes progress until the charged-type injections pay it down. Default
+	 * false — zero delta for every machine registered before the fusion. Registration
+	 * config, not persisted (the loadKeepsTheConstructorInjectedConfig contract).
+	 */
+	public boolean mSpecialIsStartEnergy = false;
+	/**
+	 * Upstream :98 mChargeRequirement (task p32-ignition-gate) — the start-LU ledger:
+	 * armed by the :755 arm ({@code = tRecipe.mSpecialValue}), banked down by the
+	 * charged-type injection arm (:497-500, the fusion's glass-ring LU), closing the :809
+	 * progress gate while positive; cleared at both :837-841/:843-851 completion arms.
+	 * PERSISTED (the upstream NBT_INPUT_EU :228 write / :155 read — an unpaid ledger
+	 * survives a restart, the upstream shape).
+	 */
+	public long mChargeRequirement = 0;
 	/** The output-blockage counter (upstream :98, the canOutput diagnostic; the :867-884 reader is cut with auto-IO). */
 	public long mOutputBlocked = 0;
 
@@ -408,8 +457,8 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 
 		mSuccessful = false; // :807
 
-		if (mMaxProgress > 0) {
-			rActive = true; // :810 (the mSpecialIsStartEnergy half is cut with special-start-energy)
+		if (mMaxProgress > 0 && !(mSpecialIsStartEnergy && mChargeRequirement > 0)) { // :809 — the ignition gate CLOSED while an armed ledger is unpaid (task p32-ignition-gate)
+			rActive = true; // :810
 			if (mProgress <= mMaxProgress) {
 				if (mOutputEnergy > 0) doOutputEnergy(); // :812 — the generator-row per-tick push
 				mProgress += aEnergy; // :813 — the progress unit IS an energy unit
@@ -446,12 +495,14 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 				if (containsSomething(mOutputItems) || containsSomething(mOutputFluids)) {
 					// :837-841 — outputs blocked: park at max progress and retry the placement next tick
 					mMinEnergy = 0;
+					mChargeRequirement = 0; // :840 — the ledger clears even on the blocked arm (verbatim)
 					mProgress = mMaxProgress;
 				} else {
 					// :843-861 — all outputs placed: carry the leftover energy into the next process
 					mProgress -= mMaxProgress;
 					mMinEnergy = 0;
 					mMaxProgress = 0;
+					mChargeRequirement = 0; // :847 — the paid ledger clears at completion (the same recipe + mActive=T never re-arms it, :755)
 					mOutputItems = new ItemStack[0]; // :848 ZL_IS
 					mOutputFluids = new FluidStack[0]; // :849 ZL_FS
 					mSuccessful = true;
@@ -536,7 +587,12 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			if (aApplyRecipe) applyTankConsumption(mTanksInput, tFluids, tFluidBaseline);
 		}
 
-		// :748-755 adjacent-inventory notify and mSpecialIsStartEnergy cut
+		// :755 — the ignition ledger (task p32-ignition-gate): arms with the recipe's
+		// mSpecialValue on the FIRST start (!mActive) or a RECIPE SWITCH; an active machine
+		// re-running the same recipe pays nothing (the upstream whole-run gate — the D-D
+		// stack pays ~95.6M LU per arm once, id718). The adjacent-inventory notify
+		// (:748-753) stays cut with the auto-IO surface.
+		if (mSpecialIsStartEnergy && (!mActive || (mCurrentRecipe != null && mCurrentRecipe != tRecipe))) mChargeRequirement = tRecipe.mSpecialValue;
 
 		mCurrentRecipe = tRecipe; // :757
 		mOutputItems = tRecipe.getOutputs(tMaxProcessCount); // :758
@@ -970,6 +1026,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		aNBT.putLong(NBT_MINENERGY, mMinEnergy);
 		aNBT.putLong(NBT_PROGRESS, mProgress);
 		aNBT.putLong(NBT_MAXPROGRESS, mMaxProgress);
+		aNBT.putLong(NBT_CHARGE_REQUIREMENT, mChargeRequirement); // upstream NBT_INPUT_EU :228 (task p32-ignition-gate)
 		aNBT.putBoolean(NBT_STOPPED, mStopped);
 		aNBT.putBoolean("fake_source", mFakeSource);
 		aNBT.putByte(NBT_IGNITED, mIgnited);
@@ -997,6 +1054,8 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		mMinEnergy = aNBT.getLong(NBT_MINENERGY);
 		mProgress = aNBT.getLong(NBT_PROGRESS);
 		mMaxProgress = aNBT.getLong(NBT_MAXPROGRESS);
+		mChargeRequirement = aNBT.getLong(NBT_CHARGE_REQUIREMENT); // :155 — the persisted ledger (an unpaid start-LU survives a restart)
+		if (aNBT.contains(NBT_SPECIAL_IS_START_ENERGY)) mSpecialIsStartEnergy = aNBT.getBoolean(NBT_SPECIAL_IS_START_ENERGY); // :124 — registration config, hasKey-guarded, never persisted
 		if (aNBT.contains(NBT_STOPPED)) mStopped = aNBT.getBoolean(NBT_STOPPED);
 		if (aNBT.contains("fake_source")) mFakeSource = aNBT.getBoolean("fake_source");
 		if (aNBT.contains(NBT_IGNITED, Tag.TAG_ANY_NUMERIC)) mIgnited = aNBT.getByte(NBT_IGNITED);
@@ -1039,6 +1098,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		aNBT.putLong(NBT_MINENERGY, mMinEnergy);
 		aNBT.putLong(NBT_PROGRESS, mProgress);
 		aNBT.putLong(NBT_MAXPROGRESS, mMaxProgress);
+		aNBT.putLong(NBT_CHARGE_REQUIREMENT, mChargeRequirement); // upstream NBT_INPUT_EU :228 (task p32-ignition-gate)
 		aNBT.putBoolean(NBT_STOPPED, mStopped);
 		aNBT.putBoolean("fake_source", mFakeSource);
 		aNBT.putByte(NBT_IGNITED, mIgnited);
@@ -1065,6 +1125,8 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		mMinEnergy = aNBT.getLong(NBT_MINENERGY);
 		mProgress = aNBT.getLong(NBT_PROGRESS);
 		mMaxProgress = aNBT.getLong(NBT_MAXPROGRESS);
+		mChargeRequirement = aNBT.getLong(NBT_CHARGE_REQUIREMENT); // :155 — the persisted ledger (an unpaid start-LU survives a restart)
+		if (aNBT.contains(NBT_SPECIAL_IS_START_ENERGY)) mSpecialIsStartEnergy = aNBT.getBoolean(NBT_SPECIAL_IS_START_ENERGY); // :124 — registration config, hasKey-guarded, never persisted
 		if (aNBT.contains(NBT_STOPPED)) mStopped = aNBT.getBoolean(NBT_STOPPED);
 		if (aNBT.contains("fake_source")) mFakeSource = aNBT.getBoolean("fake_source");
 		if (aNBT.contains(NBT_IGNITED, Tag.TAG_ANY_NUMERIC)) mIgnited = aNBT.getByte(NBT_IGNITED);

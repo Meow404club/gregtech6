@@ -79,27 +79,29 @@ import gregtech6.registry.GTMultiBlocks;
  * body is a TU capacitor sink (the {@link #doEnergyInjection} :501-506 arm over the
  * window 1..16384; the :493-496 overcharge arm REFUSES the packet — the declared
  * no-explosion narrowing, the Massfab form). The glass ring ADVERTISES LU acceptance
- * (isEnergyType :510 second arm) through the part relay — but the injection it would
- * charge is the ignition ledger, and that ledger is NOT ported (the declared waiver,
- * below), so LU packets fall through to the :501 type check and are refused
- * (0 accepted). UPSTREAM the same injection pays the start-LU ledger (:497-500); the
- * gateless port simply has no use for it. The generator emission rides
- * {@link #doOutputEnergy()} (:233-236): the raw 8192-EU packet pushed
- * ({@code insertEnergyInto}) at each of the four orthogonal ±10 offsets of the core
- * level, first accepting receiver wins — the remote launch seam.
+ * (isEnergyType :510 second arm) through the part relay, and the injection it carries IS
+ * the ignition ledger (task p32-ignition-gate): a packet whose type is the charged
+ * {@code LU} lands on the :497-500 arm and banks against the {@link #mChargeRequirement}
+ * start-LU ledger the :755 arm armed — the whole packet reports consumed (upstream
+ * verbatim) and nothing reaches the TU buffer. With the ledger unarmed (0) an LU packet
+ * falls through to the :501 type check and is refused (0 accepted) — the idle-machine
+ * shape. The generator emission rides {@link #doOutputEnergy()} (:233-236): the raw
+ * 8192-EU packet pushed ({@code insertEnergyInto}) at each of the four orthogonal ±10
+ * offsets of the core level, first accepting receiver wins — the remote launch seam.
  *
- * <p><b>Port deviation — the ignition gate is NOT implemented (declared waiver, the
- * S31-7 final qualification)</b>: <b>upstream = full-run ignition gating</b> — the
- * Loader_MultiTileEntities.java:1242 row carries {@code NBT_SPECIAL_IS_START_ENERGY, T},
- * the flag is SUPPLIED through readFromNBT2 (:112-124, the registration-config injection
- * route shared with NBT_INPUT/NBT_RECIPEMAP) → the :755 write IS reachable (on recipe
- * switch / non-active: {@code mChargeRequirement = mSpecialValue}) → the :809 progress
- * gate CLOSES until paid → the glass-ring :497-500 LU decrement feeds it. D-D:
- * 730×8192×16 ≈ 95.6M LU per arm. <b>port = declared waiver</b> — the gate is live
- * upstream and simply absent here: installing it with no LU economy makes a dead
- * machine. A future gate card (after the pool-E LU production chain lands) ports the
- * {@code mSpecialIsStartEnergy} field + the :755/:809/:497 three arms (a one-line
- * constructor boolean; the 18 rows' startLU data is already in place).
+ * <p><b>The ignition gate — PORTED (task p32-ignition-gate, the S31-7 waiver flipped)</b>:
+ * <b>upstream = full-run ignition gating</b> — the Loader_MultiTileEntities.java:1242 row
+ * carries {@code NBT_SPECIAL_IS_START_ENERGY, T}, the flag is SUPPLIED through readFromNBT2
+ * (:112-124, the registration-config injection route shared with NBT_INPUT/NBT_RECIPEMAP)
+ * → the :755 write IS reachable (on recipe switch / non-active: {@code mChargeRequirement
+ * = mSpecialValue}) → the :809 progress gate CLOSES until paid → the glass-ring :497-500
+ * LU decrement feeds it. D-D: 730×8192×16 ≈ 95.6M LU per arm. The former port waiver
+ * (gateless until a LU economy) expired with the laser domain (p32-qu-laser-domain: the
+ * CO2 Laser EU→LU bridge IS the LU economy): the three arms live on {@link
+ * TileEntityBase10MultiBlockMachine} (the {@code mSpecialIsStartEnergy} flag — constructor
+ * set here, the registration-config form; the :755 arm; the :809 gate; the persisted
+ * ledger NBT) and the :497 charged arm rides {@link #doEnergyInjection} below. The 18
+ * rows' startLU data ({@link gregtech6.recipes.GT6RecipesFusion}) is the ledger payload.
  *
  * <p><b>The IO face</b> (:223-230/:238-239): item and fluid auto-out/in targets are all
  * null upstream — the reactor has NO auto-IO; fluids park in the map-shaped tank bank
@@ -120,9 +122,6 @@ public class TileEntityFusionReactor extends TileEntityBase10MultiBlockMachine {
 	/** The emitted type (upstream :100 mEnergyTypeEmitted — the :1242 NBT_ENERGY_EMITTED column). Registration config, not persisted. */
 	public final TagData mEnergyTypeEmitted = TD.Energy.EU;
 
-	/** The second accepted type (upstream :98 mEnergyTypeCharged — the :1242 NBT_ENERGY_ACCEPTED_2 column, the glass ring). Registration config, not persisted. */
-	public final TagData mEnergyTypeCharged = TD.Energy.LU;
-
 	/** The registry-path constructor (the BlockEntityType.Builder.of factory form, the massfab precedent). */
 	public TileEntityFusionReactor(BlockPos aPos, BlockState aState) {
 		this(GTMultiBlocks.FUSION_REACTOR_BE.get(), aPos, aState);
@@ -135,9 +134,14 @@ public class TileEntityFusionReactor extends TileEntityBase10MultiBlockMachine {
 		// NBT_NEEDS_IGNITION key. Not persisted (the contract).
 		applyEnergyRowSpec(new EnergyRowSpec(8192L, 1L, 16384L, null, null, null));
 		mRequiresIgnition = false;
-		// the :1242 energy-type columns — the BASE fields assigned (fields do not
-		// virtual-dispatch; the massfab constructor form)
+		// the :1242 energy-type + ignition columns — the BASE fields assigned (fields do
+		// not virtual-dispatch; the massfab constructor form). NBT_ENERGY_ACCEPTED_2 = LU
+		// is the glass-ring charged type (the :497 arm banks LU against the ledger);
+		// NBT_SPECIAL_IS_START_ENERGY = T is the :755/:809 gate arm (task p32-ignition-gate,
+		// the constructor-injected registration-config form).
 		mEnergyTypeAccepted = TD.Energy.TU;
+		mEnergyTypeCharged = TD.Energy.LU;
+		mSpecialIsStartEnergy = true;
 		// RM.java:146 fluids 2/6/0 → TWO input tanks and SIX output tanks (the :161
 		// readFromNBT2 map-size re-point; the base NBT loops cover the extra tanks)
 		mTanksInput = new FluidTankGT[] {new FluidTankGT(), new FluidTankGT()};
@@ -448,11 +452,20 @@ public class TileEntityFusionReactor extends TileEntityBase10MultiBlockMachine {
 	public long doEnergyInjection(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
 		if (mStopped) return 0; // :490
 		aSize = Math.abs(aSize); // :492
+		// :497-500 — the charged (LU) arm (task p32-ignition-gate): a packet of the
+		// mEnergyTypeCharged type banks WHOLE against the armed start-LU ledger (aSize ×
+		// aAmount deducted, the whole aAmount reported consumed — upstream verbatim; no
+		// size gate on this arm, matching the upstream order where :493 already screened
+		// it — the port's declared no-explosion narrowing folds that screen away). An LU
+		// packet with the ledger unarmed falls through to the :501 type check and is
+		// refused — the idle-machine shape.
+		if (aEnergyType == mEnergyTypeCharged && mChargeRequirement > 0) {
+			if (aDoInject) mChargeRequirement -= aSize * aAmount;
+			return aAmount;
+		}
 		// the :493-496 overcharge arm REFUSES the packet (the declared no-explosion
 		// narrowing, the massfab form) — after the type gate so the glass-ring LU face
-		// keeps its refusal semantics (upstream the :497-500 charged arm would bank the
-		// packet against the start-LU ledger; the gateless port has no ledger, so LU falls
-		// to the :501 type check — refused, 0 accepted)
+		// keeps its refusal semantics (an armed ledger is consumed by the :497-500 arm above)
 		if (aEnergyType != mEnergyTypeAccepted) return 0; // :501
 		if (aSize > mInputMax) return 0;
 		long tInput = Math.min(mInputMax - mEnergy, aSize * aAmount), tConsumed = Math.min(aAmount, (tInput / aSize) + (tInput % aSize != 0 ? 1 : 0)); // :503
