@@ -9,7 +9,10 @@ p32_qu_laser; the p29_w4_electric_heater rig geometry, one column per arm):
     the FRONT). /gt6laser reset + the dial on -> the laser stat pins "half true"
     (in == 2*out EXACTLY — the units() half-rate) and the absorber stat pins the EU
     landing (in = the LU hop = the laser's out; the frequency tuning: the 16-sized
-    LU packets ride the absorber's 16 inMin door exactly).
+    LU packets ride the absorber's 16 inMin door exactly). The absorber's EU tail
+    (8-sized packets) lands in a second T1 laser: the white-burn door — no port EU
+    machine accepts 8 without burning it (the p28 ULV-wall census), and the Root
+    gate counts the burned offer as USED, so the emitter side books the out.
 
   B THE TUNING ARMS (acceptance ③ live half): the dial re-volted BELOW the laser's
     inMin (8 < 16) -> the white burn (Root:717): "in 0" on a live dial — the
@@ -43,7 +46,9 @@ L1_SRC = gt6world.Site(446, 65, Z - 1)  # the EU dial (the dynamo-rig source sea
 L1_W1 = gt6world.Site(446, 65, Z + 1)   # fiber wire segment 1 (the FRONT face)
 L1_W2 = gt6world.Site(446, 65, Z + 2)   # fiber wire segment 2
 L1_ABS = gt6world.Site(446, 65, Z + 3)  # the T1 Laser Absorber (the beam on its BACK)
-L1_EUW = gt6world.Site(446, 65, Z + 4)  # the 1x electric wire eating the absorber's 8 EU packets
+L1_SINK = gt6world.Site(446, 65, Z + 4) # the T1 laser EATING the absorber's 8 EU packets — the
+                                        # white-burn door (no port machine accepts 8 without
+                                        # burning it; the emitter side still books the out)
 # the T5 wall arm: laser + dial only (the emission face walled by air-abstention is
 # NOT enough — the flood needs no consumer, so the T5 laser emits into bare air: the
 # WASTE vent clears the bucket regardless; the absorber leg proves the landing on T1)
@@ -59,7 +64,7 @@ steps = [
     Step(f"gt6wire place wire_laser {F(L1_W1)}", expect="GT6 wire placed"),
     Step(f"setblock {F(L1_ABS)} gt6:laser_absorber[facing=south]", expect="Changed the block"),
     Step(f"gt6wire place wire_laser {F(L1_W2)}", expect="GT6 wire placed"),
-    Step(f"gt6wire place 1x {F(L1_EUW)}", expect="GT6 wire placed"),
+    Step(f"setblock {F(L1_SINK)} gt6:co2_laser[facing=south]", expect="Changed the block"),
     Step(f"gt6laser reset {F(L1)}", expect="GT6 laser accounting reset"),
     Step(f"gt6laser reset {F(L1_ABS)}", expect="GT6 laser accounting reset"),
     Step(f"gt6energy mode {F(L1_SRC)} on", expect="emitting true"),
@@ -105,7 +110,7 @@ steps = [
 CHAIN = Chain(
     name="p32_qu_laser laser domain",
     slug="p32qulaser",
-    sites=gt6world.declare_sites(L1, L1_SRC, L1_W1, L1_W2, L1_ABS, L1_EUW, L5, L5_SRC),
+    sites=gt6world.declare_sites(L1, L1_SRC, L1_W1, L1_W2, L1_ABS, L1_SINK, L5, L5_SRC),
     preferred_ports=(26582, 26592),
     game_port=26436,
     steps=steps,
