@@ -959,11 +959,12 @@ private static final int ZH_KEY_FLOOR = 3295; // 2839 +3 (task p29-w2-eu-special
 			GT6Logistics.class,
 			// task p32-magic-absorber — the absorber joins the gate (the atomic key; the
 			// rebase reconciliation counts BOTH W2 singles: census 173 -> 174, floor 3289 -> 3290)
-			GT6MagicAbsorbers.class, GT6Molds.class,
+			GT6MagicAbsorbers.class,
 			// task p32-qu-energizer — the five energizer rungs join the gate (the atomic
 			// quantum_energizer keys; the rebase reconciliation over the merged W2 state:
 			// census 174 -> 179, floor 3290 -> 3295)
-			GT6QuantumEnergizers.class,
+			GT6Molds.class, GT6QuantumEnergizers.class,
+			GT6Sensors.class, GT6StaticStorages.class,
 			GT6SurfaceBlocks.class, // task p30-w6-rocks-sticks — the surface deco blocks (all four composed-name, EXEMPT below)
 			// task p29-w3-turbine-dynamo — the turbine + dynamo controller carriers (ATOMIC
 			// vanilla-key names, so they ride the CHECKED leg, no exemptions)
@@ -1167,7 +1168,7 @@ private static final int ZH_KEY_FLOOR = 3295; // 2839 +3 (task p29-w2-eu-special
 			+ " (+14 task p29-w3-distill-crucible: the seven crucible ladder rung carriers"
 			+ " (the CRUCIBLE_ROWS walk grew 1 -> 8) + the seven dedicated GTCrucibleWallBlock"
 			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5 = 1094); the 4 Roasting row carriers joined at task p29-w4-eu-bridge (1094 + 4 = 1098); the 4 surface deco carriers joined at task p30-w6-rocks-sticks (1098 + 4 = 1102); the 31 vein-indicator rock carriers joined at task p30-w6-t3-large-veins (1102 + 31 = 1133, the spec ⑤ compensation set)");
-		assertEquals(179, tChecked, "the checked block census: every DeferredRegister block NOT"
+		assertEquals(179, tChecked,  "the checked block census: every DeferredRegister block NOT"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"
 			+ " the eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
 			+ " and the transformer joined at 323c4ae4/1e07061d; the 28 p29-w3 part blocks"
