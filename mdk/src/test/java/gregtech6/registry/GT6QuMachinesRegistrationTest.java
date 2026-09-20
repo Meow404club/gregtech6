@@ -121,8 +121,8 @@ public class GT6QuMachinesRegistrationTest {
 				ResourceLocation tId = new ResourceLocation("gt6", tPath);
 				assertTrue(BuiltInRegistries.BLOCK.containsKey(tId), "block face registered: " + tPath);
 				assertTrue(BuiltInRegistries.ITEM.containsKey(tId), "item face registered: " + tPath);
-				BlockEntityType<?> tType = BuiltInRegistries.BLOCK_ENTITY_TYPE.get(new ResourceLocation("gt6",
-						tPath.startsWith("molecular") ? "molecular_scanner" : "replicator"));
+				String tBetPath = tPath.startsWith("molecular") ? "molecular_scanner" : "replicator";
+				BlockEntityType<?> tType = BuiltInRegistries.BLOCK_ENTITY_TYPE.get(new ResourceLocation("gt6", tBetPath));
 				assertNotNull(tType, "BET face registered: " + tPath);
 				BlockEntity tCreated = tType.create(POS, BuiltInRegistries.BLOCK.get(tId).defaultBlockState());
 				assertInstanceOf(TileEntityBasicMachine.class, tCreated, "the BET builds the machine BE: " + tPath);
