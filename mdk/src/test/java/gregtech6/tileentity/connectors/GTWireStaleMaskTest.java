@@ -227,7 +227,7 @@ public class GTWireStaleMaskTest extends GTOfflineTestBase {
 		assertEquals(4, tLaser.getConnections());
 		setNeighbor(tLevel, sType.create(NPOS, block(Family.ELECTRIC).defaultBlockState()), block(Family.ELECTRIC));
 		tLaser.validateConnections();
-		assertEquals(0, tLaser.getConnections(), "laser bits toward a foreign-family wire prune (the LU probe is permanently false on this port)");
+		assertEquals(0, tLaser.getConnections(), "laser bits toward a foreign-family wire prune (the connector-type intersection, WIRE_LASER vs WIRE_ELECTRIC — the revived p32 LU probe answers non-connector BEs only)");
 		// the air swap half: an open end stays
 		setNeighbor(tLevel, null, Blocks.AIR);
 		tLaser.connect((byte)2, true); // re-form the open end through the front door (the base air arm)

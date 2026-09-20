@@ -22,6 +22,7 @@ import gregtech6.block.GTOvenBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.registry.GT6BeeHives;
 import gregtech6.registry.GT6ElectricTransformers;
+import gregtech6.registry.GT6Lasers;
 import gregtech6.block.foam.GT6CFoamOwnedBlock;
 import gregtech6.block.energy.GT6ElectricTransformerBlock;
 import gregtech6.block.energy.GTAxleBlock;
@@ -144,6 +145,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addHeatSmelterFamilies(); // task p29-w3-heat-smelter — the Smelter ladder + the Melter single (family textures, the addCanner shape)
         addRoastingFamilies(); // task p29-w4-eu-bridge — the Roasting Oven ladder (the "roaster" family textures)
         addElectricBridges(); // task p29-w4-eu-bridge — the three EU-bridge converter families (the borrowed upstream colored front/side pairs)
+        addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families (the borrowed upstream colored front/side pairs)
         addStaticStorages(); // task p26-storage-static-batch
         addAdvancedCraftingTable(); // task p24-act-machine
         // task p21-paintable-tint-render: the datagen-JVM census half — 209 machine blocks x
@@ -1009,6 +1011,21 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBridgeFamily(GTMachines.ELECTRIC_HEATER_BLOCKS_BY_PATH, "electric_heater", "bridge_heater");
         addBridgeFamily(GTMachines.ELECTRIC_ENGINE_BLOCKS_BY_PATH, "electric_engine", "bridge_engine");
         addBridgeFamily(GTMachines.ELECTRIC_MOTOR_BLOCKS_BY_PATH, "electric_motor", "bridge_motor");
+    }
+
+    /**
+     * Task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families (Loader
+     * :930-934/:976-980, 10 blocks): the SAME reused-dynamo-carrier orientable form as the
+     * bridges, over the borrowed upstream colored front/side pairs (lasers/laser_electric,
+     * laserabsorbers/electric_laser — the assets/README.md faces). FRONT = the emission
+     * face (the laser pushes LU out the front; the absorber takes the beam on the BACK and
+     * pushes EU out the front — the face geometry rides the BE, the visual is this shared
+     * orientable). The beam itself is NOT rendered (the task card: 光束 defer, visual =
+     * the static block face).
+     */
+    private void addLaserFamilies() {
+        addBridgeFamily(GT6Lasers.CO2_LASER_BLOCKS_BY_PATH, "co2_laser", "laser_electric");
+        addBridgeFamily(GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH, "laser_absorber", "laser_absorber");
     }
 
     /** One bridge family: the orientable cube + the five rung blockstates + the item parents (the transformer form). */

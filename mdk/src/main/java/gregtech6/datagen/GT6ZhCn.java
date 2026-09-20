@@ -123,6 +123,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addOreTabTitle(); // task p30-ore-3-datagen — ore-1 注记的卡③面（唯一新键，dump itemgroup 家族行 矿石）
 		addBeeUnits();          // task p31-bees-lv1 — the 20 comb names + the Bees tab + the 11 honey/bee-row fluids (hand rows, the tsv direct band; the dump carries no comb faces)
 		addUsbStickUnits();     // task p32-usb-data — the 4 stick names + the 4 tooltips (hand rows, the tsv direct band; the dump USB face)
+		addLaserGasUnits();     // task p32-qu-laser-domain — the 2 gas emitter names + the 2 tooltips (hand rows, the dump :10379/:10395 faces)
 	}
 
 	/**
@@ -138,6 +139,20 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("item.gt6.usb_stick_" + tTier);
 			addDirect("item.gt6.usb_stick_" + tTier + ".tooltip");
 		}
+	}
+
+	/**
+	 * The gas laser emitter zh faces (task p32-qu-laser-domain, the addUsbStickUnits
+	 * shape): the 2 display names + the 2 tooltip keys, riding the reference table's hand
+	 * layer — the values are the DUMP faces verbatim (tmp/gregtech.lang :10379/:10395:
+	 * 空的气体-激光镭射器 / 二氧化碳激光镭射器, the tooltips are the :384/:394 description
+	 * columns' hand rows, no dump faces).
+	 */
+	private void addLaserGasUnits() {
+		addDirect("item.gt6.comp_laser_gas_empty");
+		addDirect("item.gt6.comp_laser_gas_empty.tooltip");
+		addDirect("item.gt6.comp_laser_gas_co2");
+		addDirect("item.gt6.comp_laser_gas_co2.tooltip");
 	}
 
 	/**
@@ -367,6 +382,12 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.barrel_tungstensteel");
 		addDirect("block.gt6.barrel_void_metal");
 		addDirect("block.gt6.barrel_wood");
+		// task p32-qu-laser-domain — the CO2 Laser family (the dump :10845-10849 faces verbatim)
+		addDirect("block.gt6.co2_laser");
+		addDirect("block.gt6.co2_laser_t2");
+		addDirect("block.gt6.co2_laser_t3");
+		addDirect("block.gt6.co2_laser_t4");
+		addDirect("block.gt6.co2_laser_t5");
 		// task p26-crucible-multiblock — the LARGE crucible family (the dump :11294/:11364
 		// rows: 17309=大型钢坩埚, 18009=钢壁板)
 		addDirect("block.gt6.crucible_steel");
@@ -428,6 +449,14 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.flux_dynamo_t3");
 		addDirect("block.gt6.flux_dynamo_t4");
 		addDirect("block.gt6.flux_dynamo_t5");
+		// task p32-qu-laser-domain — the laser domain (the dump faces verbatim,
+		// gt.multitileentity.10101-10105 CO2激光器 / 10151-10155 激光接收器,
+		// tmp/gregtech.lang :10845-10849/:10880-10884, the VN word slot)
+		addDirect("block.gt6.laser_absorber");
+		addDirect("block.gt6.laser_absorber_t2");
+		addDirect("block.gt6.laser_absorber_t3");
+		addDirect("block.gt6.laser_absorber_t4");
+		addDirect("block.gt6.laser_absorber_t5");
 		addDirect("block.gt6.lathe");
 		addDirect("block.gt6.multiblock_coke_oven");
 		addDirect("block.gt6.multiblock_coke_oven_bricks");

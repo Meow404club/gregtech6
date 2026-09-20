@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "gt6:block/laser_absorber_front",
+    "side": "gt6:block/laser_absorber_side",
+    "top": "gt6:block/laser_absorber_side"
+  }
+}
