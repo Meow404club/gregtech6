@@ -3,20 +3,17 @@ package gregtech6.tileentity.misc;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * The Sandwich item (task p32-placeables) — the BlockItem of the MTE 32105 port, the
  * upstream "OnlyPlaceableWhenSneaking + OnItemRightClick eat" pair over the modern faces:
  * <ul>
  * <li><b>SNEAK-PLACE</b> — {@code useOn} places ONLY while sneaking (the upstream
- *     {@code IMTE_OnlyPlaceableWhenSneaking}, MultiTileEntitySandwich.java:189 + the
- *     {@code canPlace} :196 solid-floor door stays the block's {@code canSurvive} pool
- *     cut — the vanilla placement already refuses the replaceable-only spots); a
- *     non-sneaking click returns PASS so the vanilla food walk takes over.</li>
+ *     {@code IMTE_OnlyPlaceableWhenSneaking}, MultiTileEntitySandwich.java:189; the
+ *     {@code canPlace} :242-244 solid-floor door rides the block's {@code canSurvive});
+ *     a non-sneaking click returns PASS so the vanilla food walk takes over.</li>
  * <li><b>EAT</b> — the item is food ({@code Item.use} default), nutrition 8 / saturation
  *     0.6 (the upstream item-form eat is the whole-sandwich {@code getTotalFood} sum, the
  *     default ten-layer sandwich ≈ 8 — the ingredient-sum face is the food-domain pool).</li>
@@ -50,11 +47,5 @@ public class GT6SandwichItem extends BlockItem {
 			return InteractionResult.PASS;
 		}
 		return super.useOn(aContext);
-	}
-
-	/** The vanilla BlockItem placement — unchanged; the sneak gate lives in useOn. */
-	@Override
-	protected boolean placeBlock(BlockPlaceContext aContext, BlockState aState) {
-		return super.placeBlock(aContext, aState);
 	}
 }

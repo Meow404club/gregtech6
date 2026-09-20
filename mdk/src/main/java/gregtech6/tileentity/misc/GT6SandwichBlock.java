@@ -1,11 +1,13 @@
 package gregtech6.tileentity.misc;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
@@ -49,11 +51,24 @@ public class GT6SandwichBlock extends GTEntityBlock {
 	*///?}
 
 	/**
-	 * The carrier properties — soft (aUtilWool), the placeable base 0.25 hardness. NOT
-	 * named {@code properties()} — the 21.1 static BlockBehaviour.properties() clash.
+	 * The carrier properties — the aUtilWool row numbers (Loader_MultiTileEntities.java:2032
+	 * = {@code Block.soundTypeCloth}, the modern WOOL seat), the sandwich hardness 0.25F
+	 * (MultiTileEntitySandwich.java:387). NOT named {@code properties()} — the 21.1 static
+	 * BlockBehaviour.properties() clash.
 	 */
 	public static Properties newProperties() {
-		return Block.Properties.of().strength(0.25F).sound(SoundType.WOOD);
+		return Block.Properties.of().strength(0.25F).sound(SoundType.WOOL);
+	}
+
+	/**
+	 * The solid-floor door (upstream {@code canPlace}, MultiTileEntitySandwich.java:242-244:
+	 * the block below must carry a solid TOP side) — the review-seam restore: the card's
+	 * item javadoc had folded this into "the vanilla replaceable walk", which gates a
+	 * different face. The placement refuses mid-air/wall seats exactly like upstream.
+	 */
+	@Override
+	public boolean canSurvive(BlockState aState, LevelReader aLevel, BlockPos aPos) {
+		return aLevel.getBlockState(aPos.below()).isFaceSturdy(aLevel, aPos.below(), Direction.UP);
 	}
 
 	/** The vanilla BaseEntityBlock INVISIBLE default beaten back to MODEL (the GT6BumbleHiveBlock form). */

@@ -43,8 +43,6 @@ import gregtech6.items.behaviors.GT6PlaceablePlacement;
  * <li>{@code stat <pos>} — the census report: the lantern's facing + emitted light (the
  *     光级 assertion), the sandwich's size + bites comparator, the pile's stored stack.</li>
  * <li>{@code eat <pos>} — the sandwich bite face (the BE.bite walk, one bite).</li>
- * <li>{@code mine <pos>} — the pile loot shell: the block's own use face with an EMPTY
- *     hand (the give-one arm) is {@code take}; the full shell rides /gt6scene6 mine.</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = "gt6")
@@ -65,7 +63,7 @@ public final class GT6PlaceablesCommand {
 						.then(Commands.argument("face", com.mojang.brigadier.arguments.StringArgumentType.word())
 								.then(Commands.argument("item", com.mojang.brigadier.arguments.StringArgumentType.greedyString())
 										.executes(aContext -> place(aContext,
-												com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "item"), 0)))));
+												com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "item"))))));
 		tCmd.then(tPlace);
 
 		// stat <pos> / eat <pos>
@@ -79,7 +77,7 @@ public final class GT6PlaceablesCommand {
 	}
 
 	/** The unified-dispatch arm — the sneak-place through GT6PlaceablePlacement.trySneakPlace. */
-	private static int place(CommandContext<CommandSourceStack> aContext, String aItemTail, int aIgnored) throws CommandSyntaxException {
+	private static int place(CommandContext<CommandSourceStack> aContext, String aItemTail) throws CommandSyntaxException {
 		// the greedy tail: "<itemId> [count]" — word() cannot carry the namespace colon
 		String[] tParts = aItemTail.trim().split("\s+");
 		String aItemId = tParts[0];
