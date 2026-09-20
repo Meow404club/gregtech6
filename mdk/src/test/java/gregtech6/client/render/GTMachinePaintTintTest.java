@@ -114,4 +114,39 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		assertEquals(-1, GTMachinePaintTint.blockColor().getColor(null, null, null, 0),
 				"the null level/pos arm is the no-tint sentinel (== full-alpha white)");
 	}
+
+	/**
+	 * Task p32-render-embeddium-tint: the tint BAKED into the baked-quad vertex data —
+	 * per-channel {@code (colour * tint + 127) / 255} over the COLOR slot (stride 8, slot
+	 * 3) of all four vertices, every other slot byte-identical. The retinted copies carry
+	 * tintIndex -1 (set by the wrapper), so the runtime BlockColor can never double-multiply.
+	 */
+	@Test
+	void retintVerticesMultiplyTheBakedColours() {
+		// one quad = 4 vertices x stride 8; vertex colours baked white (0xFFFFFFFF)
+		int[] tVertices = new int[32];
+		java.util.Arrays.fill(tVertices, 0xFFFFFFFF);
+		tVertices[0] = 123; // a non-colour slot keeps its value
+		tVertices[31] = 456;
+		int[] tOut = GTMachineTintModel.retintVertices(tVertices, 0xFFD2823C);
+		assertEquals(32, tOut.length, "the vertex data length is preserved");
+		assertEquals(123, tOut[0], "slot 0 untouched");
+		assertEquals(456, tOut[31], "slot 31 untouched");
+		for (int v = 0; v < 4; v++) {
+			int tColour = tOut[v * 8 + 3];
+			// (255 * 210 + 127) >> 8 = 210-ish per the +127 rounding: R=210, G=130, B=60, A=255
+			assertEquals(210, (tColour >> 16) & 255, "vertex " + v + " R");
+			assertEquals(130, (tColour >> 8) & 255, "vertex " + v + " G");
+			assertEquals(60, tColour & 255, "vertex " + v + " B");
+			assertEquals(255, (tColour >> 24) & 255, "vertex " + v + " A");
+		}
+		// a mid-gray texture pixel half-tints: (128 * 210 + 127) >> 8 = 105
+		int[] tMid = new int[32];
+		java.util.Arrays.fill(tMid, 0xFF808080);
+		int[] tMidOut = GTMachineTintModel.retintVertices(tMid, 0xFFD2823C);
+		int tMidColour = tMidOut[3];
+		assertEquals(105, (tMidColour >> 16) & 255, "mid-gray R (128 -> 105)");
+		assertEquals(65, (tMidColour >> 8) & 255, "mid-gray G (128 -> 65)");
+		assertEquals(30, tMidColour & 255, "mid-gray B (128 -> 30)");
+	}
 }

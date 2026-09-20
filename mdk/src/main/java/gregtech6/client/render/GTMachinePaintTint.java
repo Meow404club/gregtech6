@@ -19,9 +19,19 @@ import net.minecraftforge.client.model.data.ModelData;
  * split; the colour source re-based on the row material by task
  * p27-machine-material-tint-fidelity) — the client consumption half of the paint storage:
  * the machine-domain block models carry {@code tintindex 0} (the GT6BlockStates
- * machineModel element form) and this {@link BlockColor} resolves that index from the
- * BE's {@link GTModelProperties#PAINT} model data (the 03 base supplies it while painted,
+ * machineModel element form) and the tint resolves from the BE's
+ * {@link GTModelProperties#PAINT} model data (the 03 base supplies it while painted,
  * TileEntityBase03TicksAndSync.getModelData).
+ *
+ * <p>Since task p32-render-embeddium-tint this class is the PURE colour-decision seam
+ * only: the WORLD half of the consumption moved to {@link GTMachineTintModel}, which
+ * bakes {@link #tintARGB} into the quads' vertex colours at {@code getQuads} time (the
+ * runtime {@code BlockColor} route rendered achromatic in the live client on both chunk
+ * builders — the investigation record lives in the known_bugs
+ * embeddium_tint_no_shader entry). {@link #blockColor} stays as the unregistered
+ * reference form the tests drive; the ITEM half still rides
+ * {@code GTItemPaintTint} ({@code ItemColor}), a different consumer that was never
+ * implicated.
  *
  * <p>Upstream equivalence: the 1.7.10 machine renders {@code getTexture2 =
  * BlockTextureMulti(BlockTextureDefault(mTexturesMaterial[side], mRGBa), ...)}

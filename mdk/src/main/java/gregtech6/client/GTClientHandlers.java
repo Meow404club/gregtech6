@@ -55,7 +55,6 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterBlockColors); // task p8-prefixblock-render ③: world-side tint
         modBus.addListener(GTClientHandlers::onRegisterWireBlockColors); // task p16-clienthandlers-2111: wire tints, world half (p9-wire-family-w2 semantics)
         modBus.addListener(GTClientHandlers::onRegisterWireItemColors); // task p16-clienthandlers-2111: wire tints, inventory half
-        modBus.addListener(GTClientHandlers::onRegisterMachinePaintBlockColors); // task p21-paintable-tint-render: machine paint tint, world half
         modBus.addListener(GTClientHandlers::onRegisterMachinePaintItemColors); // task p22-painted-item-domain: machine paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintBlockColors); // task p23-barrel-paint-render: barrel paint tint, world half
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintItemColors); // task p23-barrel-paint-render: barrel paint tint, inventory half
@@ -109,16 +108,16 @@ public final class GTClientHandlers {
 
     /**
      * Task p21-paintable-tint-render: the machine paint tint, the world half over the pinned
-     * 21 machine-domain blocks ({@code GTMachines.paintableBlockArray()}) —
-     * {@link GTMachinePaintTint} resolves tint index 0 from the
-     * {@code GTModelProperties.PAINT} model data the 03 base supplies (the card_A storage
-     * half), white = unpainted = no visual change. NO inventory half: per the Forge docs a
-     * BlockColor does NOT colour its BlockItem (the GTMaterialPrefixBlockItem comment
-     * above) — the painted-look item form is the pooled item-domain card.
+     * 21 machine-domain blocks ({@code GTMachines.paintableBlockArray()}).
+     *
+     * <p>REPLACED by task p32-render-embeddium-tint: the world tint now rides
+     * {@code GTMachineTintModel} — the colour is BAKED into the quads at
+     * {@code getQuads} time (the same {@code GTMachinePaintTint.tintARGB} source), because
+     * the runtime {@code BlockColor} route rendered achromatic in the live client with
+     * both chunk builders (the known_bugs embeddium_tint_no_shader report). This
+     * registration is therefore deliberately gone; the inventory half below stays on the
+     * {@code ItemColor} route (a different, field-proven consumer).
      */
-    private static void onRegisterMachinePaintBlockColors(RegisterColorHandlersEvent.Block event) {
-        event.getBlockColors().register(GTMachinePaintTint.blockColor(), GTMachines.paintableBlockArray());
-    }
 
     /**
      * Task p22-painted-item-domain: the machine paint tint, the INVENTORY half over the
