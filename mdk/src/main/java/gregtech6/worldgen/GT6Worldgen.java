@@ -411,6 +411,20 @@ public final class GT6Worldgen {
      */
     public static final long SPRING_DIMENSION_SALT = 2;
 
+    // ------------------------------------------------------------------
+    // The bumble-hive band (task p32-bees-lv2) — ONE feature over the three
+    // dimensions (upstream was three WorldgenObject rows, overworld/nether/end,
+    // Loader_Worldgen.java:635-637; the modern split = three biome modifiers over
+    // ONE placed feature, the END_YIELD modifier face). The in-feature walk rides
+    // the veinRandom coordinate-seeded stream, so no Y placement and no rarity —
+    // every chunk rolls (the upstream per-chunk generate semantics).
+    // ------------------------------------------------------------------
+
+    /** The bumble-hive configured feature (the GT6HiveFeature instance, NoneFeatureConfiguration). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> BUMBLE_HIVES_CONFIGURED = configKey("bumble_hives");
+    /** The bumble-hive placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk). */
+    public static final ResourceKey<PlacedFeature> BUMBLE_HIVES_PLACED = placedKeyOf("bumble_hives");
+
     private GT6Worldgen() {
     }
 }

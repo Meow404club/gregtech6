@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": "gt6:bumble_hives",
+  "step": "underground_ores"
+}

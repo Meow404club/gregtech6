@@ -20,6 +20,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
+import gregtech6.registry.GT6BeeHives;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.block.foam.GT6CFoamOwnedBlock;
 import gregtech6.block.energy.GT6ElectricTransformerBlock;
@@ -201,6 +202,62 @@ public final class GT6BlockStates extends BlockStateProvider {
         addAnvils(); // task p28-c-anvil — the stone anvil pair
         addSurfaceBand(); // task p30-w6-rocks-sticks — the surface rock trio + the stick (shared models, no items)
         addSurfacePlants(); // task p30-w6-t2-surface-blocks — the plant quartet + the four fallen-log woods
+        addHive(); // task p32-bees-lv2 — the bumble hive (the tinted body + the six-overlay two-layer form)
+    }
+
+    /**
+     * Task p32-bees-lv2 — the bumble hive: ONE blockstate over ONE model, the
+     * familyMachineModel two-layer grammar collapsed to the UNFACING cube (the upstream
+     * hive renders {@code BlockTextureMulti(colored[FACES_TBS[side]], overlay[FACES_TBS[side]])},
+     * MultiTileEntityBumbleHive.java:78 — bottom/top/side triples, no facing):
+     * element 0 = the tinted body over the borrowed grayscale colored art (tintindex 0 =
+     * the p21 paint seat; worldgen paints the family colour, the client tint resolves the
+     * BE PAINT), elements 1-6 = the six overlay decals (the p22 0.01-plate form, no
+     * tintindex, cullface synced). No BlockItem model (the loot shell is never an item).
+     */
+    private void addHive() {
+        Block tHive = GT6BeeHives.HIVE.get();
+        BlockModelBuilder tModel = models().getBuilder("bumble_hive")
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc("block/bumblehive_colored_bottom"))
+                .texture("up", modLoc("block/bumblehive_colored_top"))
+                .texture("north", modLoc("block/bumblehive_colored_side"))
+                .texture("south", modLoc("block/bumblehive_colored_side"))
+                .texture("west", modLoc("block/bumblehive_colored_side"))
+                .texture("east", modLoc("block/bumblehive_colored_side"))
+                .texture("particle", modLoc("block/bumblehive_colored_side"))
+                .texture("overlay_side", modLoc("block/bumblehive_overlay_side"))
+                .texture("overlay_top", modLoc("block/bumblehive_overlay_top"))
+                .texture("overlay_bottom", modLoc("block/bumblehive_overlay_bottom"));
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        tModel.element() // north
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_side").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // south
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_side").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // west
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_side").cullface(Direction.WEST)
+                .end();
+        tModel.element() // east
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_side").cullface(Direction.EAST)
+                .end();
+        tModel.element() // bottom
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_bottom").cullface(Direction.DOWN)
+                .end();
+        tModel.element() // top
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_top").cullface(Direction.UP)
+                .end();
+        getVariantBuilder(tHive).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
     }
 
     /**

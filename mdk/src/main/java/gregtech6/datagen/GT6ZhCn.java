@@ -323,6 +323,7 @@ public class GT6ZhCn extends LanguageProvider {
 	 */
 	private void addBeeUnits() {
 		addDirect("itemGroup.gt6.bee");
+		addDirect("block.gt6.bumble_hive"); // task p32-bees-lv2 — the MTE 32755 hive block (hand row, the tsv direct band)
 		for (gregtech6.registry.GT6BeeCombs.CombSpec tSpec : gregtech6.registry.GT6BeeCombs.COMB_SPECS) {
 			addDirect("item.gt6." + tSpec.itemId());
 		}

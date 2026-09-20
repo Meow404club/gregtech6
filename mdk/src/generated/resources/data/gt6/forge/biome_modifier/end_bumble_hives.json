@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_end",
+  "features": "gt6:bumble_hives",
+  "step": "underground_ores"
+}

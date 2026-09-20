@@ -15,6 +15,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biomes;
+import gregtech6.worldgen.GT6HiveFeature;
 import gregtech6.worldgen.GT6Worldgen;
 
 /**
@@ -63,6 +64,37 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
      * TagsProvider strictness validates every name against the live registry at datagen
      * time, so a typo fails runData loudly (the zero-optional discipline).
      */
+    // ------------------------------------------------------------------
+    // The bumble-hive family tags (task p32-bees-lv2) — the WorldgenHives surface
+    // chain's biome-name families (WorldgenHives.java:157-172) onto
+    // {@code #gt6:bumble_hives/<family>}: the vanilla members live, the modded
+    // families (magical/volcanic/end/nether — 1.7.10 modded BiomeNameSets) emit
+    // EMPTY (the rainbowood activation-switch face). Jungle = the 1.7.10 jungle
+    // family's 1.18 survivors; frozen = the snowy family (the BIOMES_FROZEN
+    // vanilla subset); shore = the OCEAN_BEACH+LAKE pair onto the vanilla ocean/
+    // beach/river tags; shroom = the mushroom island biome (the mycelium contact
+    // face covers it at runtime too, WorldgenHives.java:173).
+    // ------------------------------------------------------------------
+    private void addHiveTags() {
+        tag(GT6HiveFeature.hiveTag("magical"));   // the EMPTY pack surface (the :157 family)
+        tag(GT6HiveFeature.hiveTag("volcanic"));  // the EMPTY pack surface (the :159 family)
+        tag(GT6HiveFeature.hiveTag("end"));       // the EMPTY pack surface (the :161 family)
+        tag(GT6HiveFeature.hiveTag("nether"));    // the EMPTY pack surface (the :163 family)
+        tag(GT6HiveFeature.hiveTag("shroom"))     // :165 — the mushroom fields biome
+                .add(biome("mushroom_fields"));
+        tag(GT6HiveFeature.hiveTag("shore"))      // :167 — the OCEAN_BEACH+LAKE pair
+                .addTag(BiomeTags.IS_OCEAN)
+                .addTag(BiomeTags.IS_BEACH)
+                .addTag(BiomeTags.IS_RIVER);
+        tag(GT6HiveFeature.hiveTag("jungle"))     // :169 — the jungle family
+                .add(biome("jungle"), biome("sparse_jungle"), biome("bamboo_jungle"));
+        tag(GT6HiveFeature.hiveTag("frozen"))     // :171 — the snowy family
+                .add(biome("snowy_plains"), biome("ice_spikes"), biome("snowy_taiga"),
+                        biome("snowy_slopes"), biome("frozen_peaks"), biome("jagged_peaks"),
+                        biome("frozen_ocean"), biome("deep_frozen_ocean"), biome("frozen_river"),
+                        biome("snowy_beach"));
+    }
+
     private static ResourceKey<Biome> biome(String aName) {
         return ResourceKey.create(Registries.BIOME, new ResourceLocation("minecraft", aName));
     }
@@ -104,6 +136,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
 
     @Override
     protected void addTags(HolderLookup.Provider aProvider) {
+        addHiveTags(); // task p32-bees-lv2 — the 8 bumble-hive family tags (tail-append)
         for (int i = 0; i < gregtech6.registry.GT6TreeBlocks.KINDS.size(); i++) {
             List<ResourceKey<Biome>> tBiomes = TREE_BIOMES.get(i);
             if (tBiomes.isEmpty()) {
