@@ -118,6 +118,8 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 	public final int[] mReportFluid = new int[3], mReportItem = new int[3];
 	public int mReportFilters = 0;
 	public long mMovedLast = 0, mMovedTotal = 0;
+	/** The EU charged for the last scan's moves (the :525/:565/:485 deductions, idle-draw excluded — the deterministic live EU face). */
+	public long mCostLast = 0, mCostTotal = 0;
 
 	/** The network-wide protected items of the last scan (upstream {@code tFilteredFor}, :219). */
 	protected final Set<ItemStack> mFilteredFor = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -301,6 +303,13 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 		setChanged();
 	}
 
+	/** The move-cost accounting (:525/:565/:485) — the idle draw never enters this ledger. */
+	void chargeEnergy(long aCost) {
+		mEnergy -= aCost;
+		mCostLast += aCost;
+		mCostTotal += aCost;
+	}
+
 	/** The per-scan pair of routing lists: [0] = fluids, [1] = stacks. */
 	@SuppressWarnings("unchecked")
 	private List<LogisticsData>[] pair(List<LogisticsData> aFluids, List<LogisticsData> aStacks) {
@@ -481,7 +490,7 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 						long tMoved = moveStacksForDump(tImport, tExport); // :482
 						if (tMoved > 0) {
 							oCPU_Conversion = Math.max(oCPU_Conversion, j + 1); // :484
-							mEnergy -= tMoved; // :485
+							chargeEnergy(tMoved); // :485
 							mMovedLast += tMoved;
 							tBreak = true;
 							continue;
@@ -543,7 +552,7 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 			tFrom.drain(tFilled, IFluidHandler.FluidAction.EXECUTE);
 		}
 		oCPU_Conversion = (int)Math.max(oCPU_Conversion, gregtech6.util.UT6.divup(tFilled, 16000L)); // :524
-		mEnergy -= gregtech6.util.UT6.divup(tFilled, 250L); // :525
+		chargeEnergy(gregtech6.util.UT6.divup(tFilled, 250L)); // :525
 		mMovedLast += tFilled;
 		return true;
 	}
@@ -571,7 +580,7 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 			int tMoved = GTItemMover.move(tFrom, tTo, tMaxExport, tMaxExport, tMaxImport, tFilter, false);
 			if (tMoved > 0) {
 				oCPU_Conversion = Math.max(oCPU_Conversion, j + 1); // :564
-				mEnergy -= tMoved; // :565
+				chargeEnergy(tMoved); // :565
 				mMovedLast += tMoved;
 				tReturn = true;
 				if (aImport.mStackSize == 0 && aExport.mStackSize == 0) continue; // :567

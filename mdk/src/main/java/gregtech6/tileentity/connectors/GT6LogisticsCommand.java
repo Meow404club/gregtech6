@@ -278,6 +278,7 @@ public final class GT6LogisticsCommand {
 				tCore.mReportFluid[0], tCore.mReportFluid[1], tCore.mReportFluid[2],
 				tCore.mReportItem[0], tCore.mReportItem[1], tCore.mReportItem[2],
 				tCore.mReportFilters, tCore.mMovedLast, tCore.mMovedTotal));
+		send(aSource, String.format("GT6 logistics core cost: move cost last=%d total=%d", tCore.mCostLast, tCore.mCostTotal));
 		return Command.SINGLE_SUCCESS;
 	}
 
