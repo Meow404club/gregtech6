@@ -117,6 +117,8 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 	// answers right-click chat :662-674; the port core carries no use-face, the W2 menu-null form)
 	public final int[] mReportFluid = new int[3], mReportItem = new int[3];
 	public int mReportFilters = 0;
+	/** The scanned member count of the last scan (tanks + wires + cores — the BFS reach observable). */
+	public int mReportMembers = 0;
 	public long mMovedLast = 0, mMovedTotal = 0;
 	/** The EU charged for the last scan's moves (the :525/:565/:485 deductions, idle-draw excluded — the deterministic live EU face). */
 	public long mCostLast = 0, mCostTotal = 0;
@@ -385,6 +387,8 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 		Set<ITileEntityLogistics> tScanning = Collections.newSetFromMap(new IdentityHashMap<>());
 		Set<ITileEntityLogistics> tScanningNext = Collections.newSetFromMap(new IdentityHashMap<>());
 
+		int tMembers = 0;
+
 		// :270-273 — the seed: the centre 5x5x5 cube
 		for (int i = -2; i <= 2; i++) for (int j = -2; j <= 2; j++) for (int k = -2; k <= 2; k++) {
 			BlockPos tPos = tCenter.offset(i, j, k);
@@ -392,6 +396,7 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 			BlockEntity tTileEntity = tLevel.getBlockEntity(tPos);
 			if (tTileEntity != null && tScanned.add(tTileEntity) && tTileEntity instanceof ITileEntityLogistics) {
 				tScanning.add((ITileEntityLogistics)tTileEntity);
+				tMembers++;
 			}
 		}
 
@@ -440,6 +445,7 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 									&& tNext.canLogistics((byte)tDir.getOpposite().get3DDataValue()) // :442
 									&& tScanned.add(tAdjacent)) {
 								tScanningNext.add(tNext);
+								tMembers++;
 							}
 						}
 					}
@@ -451,6 +457,7 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 		}
 
 		// the stat report (port surface)
+		mReportMembers = tMembers;
 		mReportFluid[0] = tFluidStorageGeneric.size(); mReportFluid[1] = tFluidStorageSemi.size(); mReportFluid[2] = tFluidStorageFiltered.size();
 		mReportItem[0] = tStackStorageGeneric.size(); mReportItem[1] = tStackStorageSemi.size(); mReportItem[2] = tStackStorageFiltered.size();
 		mReportFilters = mFilteredFor.size();

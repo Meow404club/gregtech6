@@ -274,7 +274,8 @@ public final class GT6LogisticsCommand {
 				tCore.mCPU_Logic, tCore.oCPU_Logic, tCore.mCPU_Control, tCore.oCPU_Control, tCore.mCPU_Control + 2,
 				tCore.mCPU_Storage, tCore.mCPU_Conversion, tCore.oCPU_Conversion);
 		send(aSource, tHead);
-		send(aSource, String.format("GT6 logistics core network: fluid generic=%d semi=%d filtered=%d | item generic=%d semi=%d filtered=%d | filters=%d | moved last=%d total=%d",
+		send(aSource, String.format("GT6 logistics core network: members=%d | fluid generic=%d semi=%d filtered=%d | item generic=%d semi=%d filtered=%d | filters=%d | moved last=%d total=%d",
+				tCore.mReportMembers,
 				tCore.mReportFluid[0], tCore.mReportFluid[1], tCore.mReportFluid[2],
 				tCore.mReportItem[0], tCore.mReportItem[1], tCore.mReportItem[2],
 				tCore.mReportFilters, tCore.mMovedLast, tCore.mMovedTotal));

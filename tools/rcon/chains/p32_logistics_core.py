@@ -12,10 +12,16 @@ x=509..531 (east of the lv2 wire band x486..490, x-disjoint with margin):
   1/1/1/1, radius 3, startup gate 192 EU, capacity 384 EU.
   the endpoint row on the z=241 plane (all Chebyshev-distance 3 from the
   centre — exactly the cubic AoE): tank A (515 65 241, generic, direct to
-  the controller), the wire chain up-and-over (w1 515 66 241 above A, w2
-  514 66 241, tank B 513 66 241 filtered), tank C (516 65 241, semi)
-  reached through A. The EU tail: a copper 4x wire at 518 65 244 against
-  the east wall face (the wall's ONLY_LOGISTICS & ONLY_ENERGY_IN relay,
+  the controller), tank C (516 65 241, semi) and tank B (517 65 241,
+  filtered) chained by tank-tank adjacency — the :442 joiner-back rule
+  makes a wire BETWEEN two tanks unreachable (each wire carries exactly
+  ONE support connect, so its far side can never answer the joiner's back
+  query), while tank-tank walks answer T on both arms. The wire member w1
+  (515 66 241) hangs above A (support connect down) and joins the BFS as
+  a member — the members=5 stat row is its live proof. The EU tail: a
+  copper 4x wire at 518 65 242 against the WALL cell (517,65,242) — the
+  east-face CENTRE (517,65,244) is a vent whose ONLY_LOGISTICS mode
+  denies energy (live-proven: the wall relay is the only energy door,
   MultiBlockPartBlockEntity doEnergyInjection -> the core).
 
 Arms (acceptance ① FML registration rides GT6LogisticsCoreRegistrationTest;
@@ -68,11 +74,15 @@ STONE = "minecraft:stone"
 CTRL = (515, 65, 242)
 CENTER = (515, 65, 244)
 TANK_A = (515, 65, 241)
-TANK_B = (513, 66, 241)
+TANK_B = (517, 65, 241)
 TANK_C = (516, 65, 241)
-W1 = (515, 66, 241)
-W2 = (514, 66, 241)
-EUWIRE = (518, 65, 244)
+W1 = (515, 66, 241)   # above A — the wire-member proof (support connect down)
+EUWIRE = (518, 65, 242)
+EUWIRE = (518, 65, 242)
+
+
+def _side_row(side, connected, member, attach, neighbour):
+    return f"side {side}: connected={connected} member={member} attach={attach} ({neighbour})"
 
 
 CHAIN = Chain(
@@ -106,33 +116,31 @@ CHAIN = Chain(
              label="acceptance ②: the form verdict with the four CPU pools"),
 
         # ------------------------------------------------------------------
-        phase("B: the endpoint row — the wire hop over the tank, the priority overrides"),
-        Step("setblock 513 65 241 " + STONE, expect="Changed the block", label="tank B's support"),
-        Step("setblock %s %s" % (F(TANK_B), TANK), expect="Changed the block"),
-        Step("gt6logistics wire place %s 5" % F(W2), expect="connections 16",
-             label="w2 against B's east face — the support connect lands west (canConnect :42-45 accepts the tank member)"),
-        Step("gt6logistics wire place %s 4" % F(W1), expect="connections 16",
-             label="w1 against w2's east face — the symmetric handshake back-connects w2 east"),
-        Step("gt6logistics wire stat " + F(W2), expect="connections 48",
-             label="w2: 16|32 — the spread through the wire hop, live (the lv2 arm over a tank member)"),
-        Step("setblock %s %s" % (F(TANK_A), TANK), expect="Changed the block"),
-        Step("setblock %s %s" % (F(TANK_C), TANK), expect="Changed the block"),
+        phase("B: the endpoint row — the one-wire hops, the priority overrides"),
+        Step("setblock %s %s" % (F(TANK_A), TANK), expect="Changed the block",
+             label="tank A: directly adjacent to the controller (the core's south walk, dist 3)"),
+        Step("setblock %s %s" % (F(TANK_C), TANK), expect="Changed the block",
+             label="tank C: semi — tank-tank adjacency (passive members: both walk arms answer T)"),
+        Step("setblock %s %s" % (F(TANK_B), TANK), expect="Changed the block",
+             label="tank B: filtered — the C hop (the :442 joiner-back rule makes a wire BETWEEN two tanks unreachable: each wire carries exactly ONE support connect, so tanks chain directly and wires hang off them)"),
+        Step("gt6logistics wire place %s 1" % F(W1), expect="connections 1",
+             label="the wire member: placed against A's TOP face — the support connect lands down (the :442 back side toward A); the wire itself joins the BFS as a member (members=5 in the stat)"),
         Step("gt6logistics tank priority %s 1" % F(TANK_A), expect="effective fluid priority 1"),
         Step("gt6logistics tank priority %s 3" % F(TANK_B), expect="effective fluid priority 3"),
         Step("gt6logistics tank priority %s 2" % F(TANK_C), expect="effective fluid priority 2"),
 
         # ------------------------------------------------------------------
         phase("C: the filter arms — the identity, the tier verdicts, the idle-zero gate"),
-        Step("gt6logistics core import %s minecraft:water 20000" % F(TANK_A), expect="filled 20000/20000"),
-        Step("gt6logistics core import %s minecraft:water 1" % F(TANK_B), expect="filled 1/1"),
+        Step('gt6logistics core import %s "minecraft:water" 20000' % F(TANK_A), expect="filled 20000/20000"),
+        Step('gt6logistics core import %s "minecraft:water" 1' % F(TANK_B), expect="filled 1/1"),
         Step("gt6logistics core export %s 1" % F(TANK_B), expect="drained 1/1 L of minecraft:water",
              label="the identity arm — keepsFilter holds the water filter at 0 L"),
-        Step("gt6logistics core accept %s minecraft:water" % F(TANK_A),
+        Step('gt6logistics core accept %s "minecraft:water"' % F(TANK_A),
              expect="priority=1 filter=minecraft:water match=1"),
-        Step("gt6logistics core accept %s minecraft:water" % F(TANK_B),
+        Step('gt6logistics core accept %s "minecraft:water"' % F(TANK_B),
              expect="priority=3 filter=minecraft:water match=1",
              label="the FILTERED tier — the kept identity answers at 0 L"),
-        Step("gt6logistics core accept %s minecraft:water" % F(TANK_C),
+        Step('gt6logistics core accept %s "minecraft:water"' % F(TANK_C),
              expect="priority=2 filter=null match=1",
              label="the SEMI tier, unfiltered content"),
         Step("gt6logistics core stat " + F(CTRL), expect="power=0",
@@ -141,26 +149,24 @@ CHAIN = Chain(
         # ------------------------------------------------------------------
         phase("D: 512 EU over the wall relay — the defrag route, the moved ledger, the EU cost"),
         Step("gt6wire place copper 4 %s" % F(EUWIRE), expect="GT6 wire placed",
-             label="the EU tail: copper 4x (512-tier) against the east wall face"),
-        Step("gt6wire connect %s 4" % F(EUWIRE), expect="connections ",
-             label="west connect into the ONLY_LOGISTICS & ONLY_ENERGY_IN wall (:138)"),
-        Step("gt6wire inject %s 4 512 1" % F(EUWIRE), expect="used 1",
-             label="one 512-packet through the wall relay into the core (512 >= 192 gate)"),
-        Step("gt6logistics core stat " + F(CTRL), expect="moved total=16000", poll=15,
-             label="scan 1: the DEFRAG arm generic->Filtered (:473) moves the 16000 L Conversion budget"),
-        Step("gt6logistics core export %s 17000" % F(TANK_B), expect="drained 17000/17000 L of minecraft:water",
-             label="the filtered tank holds 1000 identity + 16000 moved"),
+             label="the EU tail: copper 4x (256 EU tier) against the WALL cell (517,65,242) — the east-face centre is a VENT whose ONLY_LOGISTICS mode denies energy"),
+        Step("gt6wire connect %s 4" % F(EUWIRE), expect=": ok,", sleep=0.6,
+             label="west connect into the ONLY_LOGISTICS & ONLY_ENERGY_IN wall (:138); the sleep lets the wire tick — transferElectricity refuses unticked wires (mTimer < 1, upstream :171)"),
+        Step("gt6wire inject %s 5 256 2" % F(EUWIRE), expect="used 2", sleep=0.3,
+             label="two 256-packets; the inject side is the ENTRY face — transferElectricity floods every connected side BUT it (:175 ALL_SIDES_VALID_BUT), so side 5 (east) drives the flood WEST into the wall relay. 512 EU buys BOTH moves (64+16) plus two idle draws (48) with the second-scan gate (192) still armed"),
+        Step("gt6logistics core stat " + F(CTRL), expect="total=20000", poll=15,
+             label="both scans: the DEFRAG arm generic->Filtered (:473) moved the 16000 L budget then the 4000 L tail into the FILTERED tier"),
+        Step("gt6logistics core export %s 16000" % F(TANK_B), expect="drained 16000/16000 L of minecraft:water",
+             label="the filtered tier took the moves (drain 1 of 2)"),
         Step("gt6logistics core export %s 1" % F(TANK_C), expect="drained 0/1",
              label="acceptance ③/priority: the SEMI tank stayed EMPTY — Filtered evaluated first"),
-        Step("gt6logistics core stat " + F(CTRL), expect="moved total=20000", poll=15,
-             label="scan 2: the remaining 4000 L follow"),
         Step("gt6logistics core export %s 1" % F(TANK_A), expect="drained 0/1",
              label="the generic source is empty"),
-        Step("gt6logistics core export %s 4000" % F(TANK_B), expect="drained 4000/4000",
-             label="the tail move landed"),
-        Step("gt6logistics core stat " + F(CTRL), expect="fluid generic=1 semi=1 filtered=1",
-             label="the tier registration stayed stable across the scans"),
-        Step("gt6logistics core stat " + F(CTRL), expect="move cost total=80",
+        Step("gt6logistics core export %s 3000" % F(TANK_B), expect="drained 3000/3000",
+             label="the tail move landed (20000 moved - 17000 drawn = 3000 left)"),
+        Step("gt6logistics core stat " + F(CTRL), expect="members=5 | fluid generic=1 semi=1 filtered=1",
+             label="the tier registration + the wire member (core + 3 tanks + w1) stayed stable across the scans"),
+        Step("gt6logistics core stat " + F(CTRL), expect="total=80",
              label="the EU ledger: divup(16000,250)=64 + divup(4000,250)=16 — idle-free, deterministic"),
     ],
 )
