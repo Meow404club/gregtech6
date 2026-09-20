@@ -8527,3 +8527,27 @@ Per-file sha256 (byte-identical copies):
 - `block/placeable/scrap_sides.png` `f78b93bf6759ddda850e5a5f713b15bcc8d72abd03a5fc965e10cb663c4d9836`
 - `block/placeable/scrap_top.png` `f78b93bf6759ddda850e5a5f713b15bcc8d72abd03a5fc965e10cb663c4d9836` (upstream ships sides==top byte-identical; the port renames the camelCase upstream
   pair to the modern lowercase-snake resource namespace)
+QU machine pair textures, task p32-qu-scanner-replicator: the 48 PNGs under
+`gt6/textures/block/{scannermolecular,replicator}_{colored,overlay}_{face}.png`
+(face ∈ bottom/top/front/back/left/right; the overlay fronts carry the
+`_active`/`_running` state tails) come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/basicmachines/{scannermolecular,replicator}/{colored,overlay,overlay_active,overlay_running}/<face>.png`
+(the NBT_TEXTURE "scannermolecular"/"replicator" name form of
+Loader_MultiTileEntities.java:1551/:1556-1558), the p22 split-front naming —
+byte-identical to upstream except the 16xN strips cropped to their frame 0 (the
+P20/P22 "animation stays retired" deviation), sha256 verified per file (grouped
+by content — upstream shares the grayscale body and the side decal strips
+across both families and their state layers):
+- every `*_colored_*.png` (12) — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
+- `*_overlay_bottom.png` + `*_overlay_bottom_active.png` + `*_overlay_bottom_running.png` (6) — `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`
+- `*_overlay_top.png` + `*_overlay_top_active.png` + `*_overlay_top_running.png` (6) — `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`
+- `*_overlay_back.png` (2) — `d1152f690913d11bc286fec25b44a44cf4ce38ded8c72c3da2b404f353ebdbeb`
+- `*_overlay_back_active.png` + `*_overlay_back_running.png` (4) — `8aa1e3925d65fd057270593e8f56b445ebb8287f872fe12f743c695a28aae8db`
+- `*_overlay_left*.png` (6) — `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`
+- `*_overlay_right*.png` (6) — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
+- `scannermolecular_overlay_front.png` — `8d007159a7fd52242635fc9be0086b57477386bb9ac4360c2b40617f0ce851f3`
+- `scannermolecular_overlay_front_active.png` — `fdd80a6a847ffd6ba74f1cfa3556b6481d2fd2a754e9edca0ffc203a3988f1a7`
+- `scannermolecular_overlay_front_running.png` — `291662854eb9fc65e1f235713b0281503baa348ccbd93a1193958f0a9f1a0dce`
+- `replicator_overlay_front.png` — `7e104008bd35b377838d1cf1b6422a110a395ea3dfe07ed3cb8cafdf21859c88`
+- `replicator_overlay_front_active.png` — `e7d764c6722b0230aecff5d84cfa8361f9d295336565391f721f571d7da10cf8`
+- `replicator_overlay_front_running.png` — `6a60b16caa227f4b5652ab9444c0818e29a542e69ccd93cae7d00a6a7113d212`
