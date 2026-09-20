@@ -1306,6 +1306,7 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.von_da_graagg", "Von da Graagg Generator");
         add("block.gt6.large_massfab", "Large Matter Fabricator"); // task p31-massfab — the Loader :1241 name column
         add("block.gt6.fusion_reactor", "Fusion Reactor"); // task p31-fusion — the Loader :1242 name column
+        add("block.gt6.logistics_core", "Logistics Core"); // task p32-logistics-lv3 — the Loader :1281 name column
     }
 
     /**

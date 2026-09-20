@@ -857,6 +857,7 @@ public class GT6ZhCn extends LanguageProvider {
 		// task p31-massfab — the small Massfab family template + the large controller
 		// (the Loader :1241/:1542-1546 name columns; zh hand words 大型物质制造机/物质制造机)
 		addDirect("block.gt6.large_massfab");
+		addDirect("block.gt6.logistics_core"); // task p32-logistics-lv3 — the dump mte multiblock.logisticscore row 物流核心 (zh_cn_ref.tsv :8146)
 		addDirect("block.gt6.fusion_reactor"); // task p31-fusion — the Loader :1242 name column (zh: the dump :11253 row)
 		addDirect(gregtech6.registry.GTMachines.MACHINE_MASSFAB_UNIT_KEY);
 		for (java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> tExoticRows

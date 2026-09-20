@@ -125,6 +125,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
                 new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task p31-massfab — the Large Matter Fabricator controller
                 new SubProviderEntry(GT6FusionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-fusion — the Fusion Reactor controller
+                new SubProviderEntry(GT6LogisticsCoreBlockLoot::new, LootContextParamSets.BLOCK), // task p32-logistics-lv3 — the Logistics Core controller
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -175,6 +176,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
                 new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task p31-massfab — the Large Matter Fabricator controller
                 new SubProviderEntry(GT6FusionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-fusion — the Fusion Reactor controller
+                new SubProviderEntry(GT6LogisticsCoreBlockLoot::new, LootContextParamSets.BLOCK), // task p32-logistics-lv3 — the Logistics Core controller
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
@@ -2165,6 +2167,36 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : fusionLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /** The Logistics Core self-drop list (task p32-logistics-lv3 — the massfabLootBlocks singleton form). */
+    public static List<Block> logisticsCoreLootBlocks() {
+        return List.of(gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get());
+    }
+
+    /** The Logistics Core self-drop provider (task p32-logistics-lv3; the massfab provider shape). */
+    public static final class GT6LogisticsCoreBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6LogisticsCoreBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6LogisticsCoreBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return logisticsCoreLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : logisticsCoreLootBlocks()) dropSelf(tBlock);
         }
     }
 
