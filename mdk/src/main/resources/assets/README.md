@@ -8436,3 +8436,24 @@ byte-identical, filenames flattened to `bumblehive_colored_<face>` /
 the colored layer rides tintindex 0 (the p21 paint seat; worldgen paints the
 biome-family colour, GTMachinePaintTint resolves the BE PAINT), the overlay
 layer is the untinted decal (the machineModel two-layer grammar).
+
+## Laser domain textures (task p32-qu-laser-domain)
+
+The two gas laser emitter item icons under `gt6/textures/item/` and the four converter
+block faces under `gt6/textures/block/` come from upstream
+`src/main/resources/assets/gregtech/textures/` (items/gt.multiitem.technological/
+item ids 11000/11008, the MultiItemTechnological.java:384/:394 rows;
+blocks/machines/lasers/laser_electric/colored/ and
+blocks/machines/laserabsorbers/electric_laser/colored/, the Loader:930-934/:976-980
+art rows), byte-identical to upstream, sha256 verified per file. The colored layer is
+landed alone (the overlay/overlay_active trios stay unborrowed — the port machines
+declare the plain colored look, the bridge-family posture; the beam is not rendered,
+the task card 光束 defer). License: upstream GregTech 6 assets are CC0 (see the Public
+Domain Dedication block above).
+
+- `item/comp_laser_gas_empty.png` — `027d334701463e1452c2ac835bde864848b505fe5d8bd43284685f636929620c` (upstream `11000.png`)
+- `item/comp_laser_gas_co2.png` — `29280d669152b8d3b4bd955a75f6bc9919e8afcc8eb655d5171564f91bb03fad` (upstream `11008.png`)
+- `block/laser_electric_front.png` — `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977` (upstream `lasers/laser_electric/colored/front.png`)
+- `block/laser_electric_side.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `lasers/laser_electric/colored/side.png`)
+- `block/laser_absorber_front.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `laserabsorbers/electric_laser/colored/front.png`)
+- `block/laser_absorber_side.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `laserabsorbers/electric_laser/colored/side.png`)

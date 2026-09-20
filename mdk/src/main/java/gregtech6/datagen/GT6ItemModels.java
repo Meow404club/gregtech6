@@ -461,6 +461,13 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("usb_stick_" + tTier, mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/usb_stick_" + tTier));
         }
+        // the gas laser emitter pair (task p32-qu-laser-domain) — 2 item/generated models
+        // over the byte-identical upstream icon borrows (gt.multiitem.technological metas
+        // 11000/11008, assets/README.md attribution)
+        withExistingParent("comp_laser_gas_empty", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/comp_laser_gas_empty"));
+        withExistingParent("comp_laser_gas_co2", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/comp_laser_gas_co2"));
         // the spray-can family (task p22-spraycan-items) — 18 item/generated models over the
         // byte-identical upstream icon borrows (gt.multiitem.randomtools metas
         // 1000+2i/1096/999, assets/README.md attribution): one model per colour + the remover

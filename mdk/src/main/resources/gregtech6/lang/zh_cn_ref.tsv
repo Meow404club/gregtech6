@@ -182,6 +182,16 @@ direct	block.gt6.large_heat_exchanger	大型热交换器	hand
 direct	block.gt6.large_iridium_coil	大型铱线圈	hand
 direct	block.gt6.large_nichrome_coil	大型镍铬合金线圈	hand
 direct	block.gt6.large_osmium_coil	大型锇线圈	hand
+direct	block.gt6.co2_laser	CO2激光器 (LV)	hand
+direct	block.gt6.co2_laser_t2	CO2激光器 (MV)	hand
+direct	block.gt6.co2_laser_t3	CO2激光器 (HV)	hand
+direct	block.gt6.co2_laser_t4	CO2激光器 (EV)	hand
+direct	block.gt6.co2_laser_t5	CO2激光器 (IV)	hand
+direct	block.gt6.laser_absorber	激光接收器 (LV)	hand
+direct	block.gt6.laser_absorber_t2	激光接收器 (MV)	hand
+direct	block.gt6.laser_absorber_t3	激光接收器 (HV)	hand
+direct	block.gt6.laser_absorber_t4	激光接收器 (EV)	hand
+direct	block.gt6.laser_absorber_t5	激光接收器 (IV)	hand
 direct	block.gt6.lathe	车床	hand
 direct	block.gt6.lightning_rod	避雷针	hand
 direct	block.gt6.locker_bronze	青铜储物柜	hand
@@ -8427,3 +8437,7 @@ direct	item.gt6.usb_stick_3	USB 3.0	hand
 direct	item.gt6.usb_stick_3.tooltip	储存数据	hand
 direct	item.gt6.usb_stick_4	USB 4.0	hand
 direct	item.gt6.usb_stick_4.tooltip	储存数据	hand
+direct	item.gt6.comp_laser_gas_empty	空的气体-激光镭射器	hand
+direct	item.gt6.comp_laser_gas_empty.tooltip	用于电力激光器	hand
+direct	item.gt6.comp_laser_gas_co2	二氧化碳激光镭射器	hand
+direct	item.gt6.comp_laser_gas_co2.tooltip	用途: 强力材料加工	hand

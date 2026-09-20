@@ -148,6 +148,35 @@ public final class GT6RecipesCanner {
 	/** The full Advanced spray seam: dye index i → the {@code gt6:foam_spray_owned_<DYE_IDS[i]>} can (upstream IL.SPRAY_CAN_FOAM_OWNED[i] :259, GT6FoamSprays.FOAM_SPRAYS_OWNED), fixtures injected offline. */
 	public static IntFunction<ItemStack> sFoamSprayOwnedResolver = aIndex -> new ItemStack(GT6FoamSprays.FOAM_SPRAYS_OWNED.get(aIndex).get());
 
+	// task p32-qu-laser-domain — the gas laser emitter fill row (MultiItemTechnological.java:403)
+
+	/** The EUt column of the laser-gas fill row (:403, the addRecipe1 second argument). */
+	public static final long LASER_GAS_EUT = 16;
+
+	/** The duration column of the laser-gas fill row (:403, the addRecipe1 third argument). */
+	public static final long LASER_GAS_DURATION = 128;
+
+	/**
+	 * The fill row fluid amount: {@code MT.CO2.gas(U, T)} = ONE unit of material gas. The
+	 * port convention (the f1-chemicals gas closure, the p29 mixer rows' CO2 864 = 6×144):
+	 * one unit = {@code L} = 144 mB (the R4 mB 1:1 ruling, CS.java:129).
+	 */
+	public static final int LASER_GAS_MB = 144;
+
+	/** The empty emitter seam ({@code gt6:comp_laser_gas_empty}, upstream IL.Comp_Laser_Gas_Empty :384), fixtures injected offline. */
+	public static Supplier<ItemStack> sLaserGasEmptyResolver = () -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_EMPTY.get());
+
+	/** The CO2 emitter seam ({@code gt6:comp_laser_gas_co2}, upstream IL.Comp_Laser_Gas_CO2 :394), fixtures injected offline. */
+	public static Supplier<ItemStack> sLaserGasCo2Resolver = () -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_CO2.get());
+
+	/** The CO2 gas seam ({@code gt6:carbondioxide}, the upstream MT.CO2.gas(U, T) of :403 — the f1-chemicals gas closure row), fixtures injected offline. */
+	public static Supplier<Fluid> sCarbonDioxideResolver = () -> {
+		for (GTFluids.ChemicalFluid tChemical : GTFluids.CHEMICALS) {
+			if (tChemical.spec.name().equals("carbondioxide")) return tChemical.source.get();
+		}
+		return null;
+	};
+
 	/** Poured flag — one generation, one pour (upstream loaders run once per JVM). */
 	private static boolean sLoaded = false;
 
@@ -161,11 +190,12 @@ public final class GT6RecipesCanner {
 	}
 
 	/**
-	 * Pours the 52 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
+	 * Pours the 53 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
 	 * colour refills + the chlorine remover, p24), the 3 food-can rows of task
-	 * p25-food-can-row0 (rotten_flesh/spider_eye/cookie) and the 32 C-Foam refills of task
-	 * p26-c-foam-fluid-refill (the :254 dyed + the :262 owned ladders). Idempotent; an
-	 * unresolvable row skips with a count (the upstream FL.exists drops).
+	 * p25-food-can-row0 (rotten_flesh/spider_eye/cookie), the 32 C-Foam refills of task
+	 * p26-c-foam-fluid-refill (the :254 dyed + the :262 owned ladders) and the CO2 laser
+	 * gas fill row of task p32-qu-laser-domain (MultiItemTechnological.java:403).
+	 * Idempotent; an unresolvable row skips with a count (the upstream FL.exists drops).
 	 */
 	public static synchronized void load() {
 		if (sLoaded) {LOGGER.debug("load() skipped: already poured (generation flag set)"); return;}
@@ -216,8 +246,35 @@ public final class GT6RecipesCanner {
 			tMap.addRecipe(tOwned);
 			tPoured++;
 		}
+
+		// the p32-qu-laser-domain fill row — MultiItemTechnological.java:403: empty emitter +
+		// 1 unit of CO2 gas (144 mB) → the Carbon Dioxide Laser Emitter
+		Recipe tLaserGas = laserGasRecipe();
+		if (tLaserGas == null) tSkipped++;
+		else {tMap.addRecipe(tLaserGas); tPoured++;}
 		sLoaded = true;
 		LOGGER.info("GT6 Canner poured: {} loaded, {} skipped (unregistered dye/chlorine/can ids, = upstream FL.exists drops)", tPoured, tSkipped);
+	}
+
+	/**
+	 * The MultiItemTechnological.java:403 row — buffered T, EUt 16, duration 128, the empty
+	 * gas laser emitter in, {@code MT.CO2.gas(U, T)} = 144 mB of {@code gt6:carbondioxide}
+	 * in, the CO2 emitter out. Null when any leg fails to resolve (the silent skip).
+	 */
+	@Nullable
+	static Recipe laserGasRecipe() {
+		Fluid tCo2 = sCarbonDioxideResolver.get();
+		if (tCo2 == null) return null;
+		ItemStack tEmpty = sLaserGasEmptyResolver.get();
+		if (tEmpty == null || tEmpty.isEmpty()) return null;
+		ItemStack tCo2Emitter = sLaserGasCo2Resolver.get();
+		if (tCo2Emitter == null || tCo2Emitter.isEmpty()) return null;
+		// upstream :403 — RM.Canner.addRecipe1(T, 16, 128, IL.Comp_Laser_Gas_Empty.get(1), MT.CO2.gas(U, T), NF, IL.Comp_Laser_Gas_CO2.get(1))
+		return new Recipe(true,
+				new ItemStack[] {tEmpty}, new ItemStack[] {tCo2Emitter},
+				new FluidStack[] {new FluidStack(tCo2, LASER_GAS_MB)},
+				null,
+				LASER_GAS_DURATION, LASER_GAS_EUT, 0);
 	}
 
 	/**

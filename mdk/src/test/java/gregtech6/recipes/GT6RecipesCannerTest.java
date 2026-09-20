@@ -91,6 +91,12 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> Fluids.FLOWING_WATER;
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(SYNTHETIC_FOAM[aIndex], 1);
 		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new ItemStack(SYNTHETIC_FOAM_OWNED[aIndex], 1);
+		// p32: the CO2 gas shares the FLOWING_LAVA identity with the dyed C-Foam rows, but the
+		// laser gas row is the ONLY row whose item leg is LEATHER — the findRecipe lookups
+		// match both legs and cannot collide
+		GT6RecipesCanner.sCarbonDioxideResolver = () -> Fluids.FLOWING_LAVA;
+		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new ItemStack(Items.LEATHER, 1);
+		GT6RecipesCanner.sLaserGasCo2Resolver = () -> new ItemStack(Items.GLOWSTONE_DUST, 1);
 		GT6RecipesCanner.resetForTest();
 	}
 
@@ -110,6 +116,14 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> gregtech6.fluid.GTFluids.cfoam(aIndex, true).source.get();
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(gregtech6.registry.GT6FoamSprays.FOAM_SPRAYS.get(aIndex).get());
 		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new ItemStack(gregtech6.registry.GT6FoamSprays.FOAM_SPRAYS_OWNED.get(aIndex).get());
+		GT6RecipesCanner.sCarbonDioxideResolver = () -> {
+			for (gregtech6.fluid.GTFluids.ChemicalFluid tChemical : gregtech6.fluid.GTFluids.CHEMICALS) {
+				if (tChemical.spec.name().equals("carbondioxide")) return tChemical.source.get();
+			}
+			return null;
+		};
+		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_EMPTY.get());
+		GT6RecipesCanner.sLaserGasCo2Resolver = () -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_CO2.get());
 		GT6RecipeMaps.reset();
 	}
 
@@ -118,10 +132,10 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	// ---------------------------------------------------------------------------
 
 	@Test
-	void pourLandFiftyTwoRows() {
+	void pourLandFiftyThreeRows() {
 		GT6RecipesCanner.load();
-		assertEquals(52, GT6RecipeMaps.CANNER.mRecipeList.size(),
-				"16 colour refills + the chlorine remover + the 3 food-can rows (p25-food-can-row0) + the 32 C-Foam refills (p26, :254/:262)");
+		assertEquals(53, GT6RecipeMaps.CANNER.mRecipeList.size(),
+				"16 colour refills + the chlorine remover + the 3 food-can rows (p25-food-can-row0) + the 32 C-Foam refills (p26, :254/:262) + the CO2 laser gas fill row (p32, :403)");
 		assertEquals(16, sResolvedIndices.size(), "the dye resolver saw exactly the 16 walk indices (the chlorine row rides its own seam)");
 		assertEquals(16, sResolvedIndices.stream().distinct().count(), "each dye index resolved exactly once");
 	}
@@ -130,7 +144,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	void pourIsIdempotentPerGeneration() {
 		GT6RecipesCanner.load();
 		GT6RecipesCanner.load();
-		assertEquals(52, GT6RecipeMaps.CANNER.mRecipeList.size(), "the second load() is a no-op (the generation flag)");
+		assertEquals(53, GT6RecipeMaps.CANNER.mRecipeList.size(), "the second load() is a no-op (the generation flag)");
 	}
 
 	/** The row shape verbatim (MultiItemRandomTools.java:246 — EUt 16, duration 256, 2304 mB, zero fluid output). */
@@ -199,12 +213,32 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, tRow.mFluidOutputs.length, "NF — no fluid output");
 	}
 
+	// ---------------------------------------------------------------------------
+	// the p32-qu-laser-domain fill row (MultiItemTechnological.java:403)
+	// ---------------------------------------------------------------------------
+
+	/** The gas laser emitter row verbatim (:403 — EUt 16, duration 128, one unit of CO2 = 144 mB, empty in / CO2 emitter out). */
+	@Test
+	void laserGasRowIsTheUpstreamLine() {
+		GT6RecipesCanner.load();
+		Recipe tRow = GT6RecipeMaps.CANNER.findRecipe(null, Long.MAX_VALUE, ItemStack.EMPTY,
+				new FluidStack[] {new FluidStack(Fluids.FLOWING_LAVA, 144)}, new ItemStack(Items.LEATHER, 1));
+		assertNotNull(tRow, "the laser gas row resolves for (empty emitter, 144 mB CO2)");
+		assertTrue(tRow.mCanBeBuffered, "addRecipe1(T, ...) — buffered");
+		assertEquals(16, tRow.mEUt, "EUt 16 (:403)");
+		assertEquals(128, tRow.mDuration, "duration 128 (:403) — NOT the 256 of the spray refills");
+		assertEquals(144, tRow.mFluidInputs[0].getAmount(), "MT.CO2.gas(U, T) = one unit = L = 144 mB (the R4 ruling)");
+		assertEquals(1, tRow.mInputs[0].getCount(), "one empty gas laser emitter");
+		assertSame(Items.GLOWSTONE_DUST, tRow.mOutputs[0].getItem(), "the CO2 emitter output (the fixture identity)");
+		assertEquals(0, tRow.mFluidOutputs.length, "NF — no fluid output");
+	}
+
 	/** A row with an unregistered leg skips silently (the upstream FL.exists drop). */
 	@Test
 	void unresolvableLegSkipsSilently() {
 		GT6RecipesCanner.sRemoverResolver = () -> null; // the remover leg fails to resolve
 		GT6RecipesCanner.load();
-		assertEquals(51, GT6RecipeMaps.CANNER.mRecipeList.size(), "the chlorine row drops, the 16 refills + 3 food rows + 32 foam rows pour");
+		assertEquals(52, GT6RecipeMaps.CANNER.mRecipeList.size(), "the chlorine row drops, the 16 refills + 3 food rows + 32 foam rows + the laser gas row pour");
 	}
 
 	// ---------------------------------------------------------------------------

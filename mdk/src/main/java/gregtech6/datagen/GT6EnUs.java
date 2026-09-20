@@ -109,6 +109,7 @@ public class GT6EnUs extends LanguageProvider {
         addFeConverter(); // task p28-b-fe-converter-machine — tail-append
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addEuBridgeFamilies(); // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting template
+        addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families + the gas emitters
         addDynamoFamily(); // task p28-c-ulv-dynamo-row — the W1 family's deferred name face + the T0 row
         addBatteryFamily(); // task p29-w4-battery-storage — the 37+5+7+12 storage face
         addKinetics(); // task p12-engine-crank
@@ -1735,5 +1736,28 @@ public class GT6EnUs extends LanguageProvider {
             add("item.gt6.usb_stick_" + tTier, "USB " + tTier + ".0 Stick");
             add("item.gt6.usb_stick_" + tTier + ".tooltip", "Stores Data");
         }
+    }
+
+    /**
+     * Task p32-qu-laser-domain — the laser domain name face: the ten converter rungs
+     * (the :930-934 "Electric CO2 Laser (VN)" / :976-980 "Laser Absorber (VN)" display
+     * columns, the voltage words VN[1..5]) + the two gas emitters (the :384/:394 display
+     * + description columns).
+     */
+    private void addLaserFamilies() {
+        add("block.gt6.co2_laser", "Electric CO2 Laser (LV)");
+        add("block.gt6.co2_laser_t2", "Electric CO2 Laser (MV)");
+        add("block.gt6.co2_laser_t3", "Electric CO2 Laser (HV)");
+        add("block.gt6.co2_laser_t4", "Electric CO2 Laser (EV)");
+        add("block.gt6.co2_laser_t5", "Electric CO2 Laser (IV)");
+        add("block.gt6.laser_absorber", "Laser Absorber (LV)");
+        add("block.gt6.laser_absorber_t2", "Laser Absorber (MV)");
+        add("block.gt6.laser_absorber_t3", "Laser Absorber (HV)");
+        add("block.gt6.laser_absorber_t4", "Laser Absorber (EV)");
+        add("block.gt6.laser_absorber_t5", "Laser Absorber (IV)");
+        add("item.gt6.comp_laser_gas_empty", "Empty Gas Laser Emitter");
+        add("item.gt6.comp_laser_gas_empty.tooltip", "For Electric Lasers");
+        add("item.gt6.comp_laser_gas_co2", "Carbon Dioxide Laser Emitter");
+        add("item.gt6.comp_laser_gas_co2.tooltip", "Purpose: Strong Material Processing");
     }
 }
