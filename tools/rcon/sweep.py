@@ -773,6 +773,15 @@ SESSION_GROUPS = (
     # stateless placement, no fresh_boot / mutates member).
     # --group p33_bees_a matches through the chain's embedded name prefix.
     ("p33_bees_a",),
+    # p33-bees-lv3-b-bumbliary (task p33-bees-lv3-b-bumbliary): the Bumbliary breeding
+    # live chain — a fresh band x=390 z=368 (z-disjoint from the p33_bees_a band z=360,
+    # the p33_gui_distill band z=356 and the p32_qu_usb band z=348), the placement +
+    # princess-only no-drone window (650 ticks alone never crowns), the princess+drone
+    # pairing (1300 ticks to the crowned queen + the dead drone) and the offspring
+    # array faces. Tick-window chain — owns its wave on both legs. Admission mirroring
+    # the p33_bees_a form (bbox-registered, no fresh_boot / mutates member).
+    # --group p33_bees_b matches through the chain's embedded name prefix.
+    ("p33_bees_b",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
