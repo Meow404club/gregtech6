@@ -782,6 +782,16 @@ SESSION_GROUPS = (
     # the p33_bees_a form (bbox-registered, no fresh_boot / mutates member).
     # --group p33_bees_b matches through the chain's embedded name prefix.
     ("p33_bees_b",),
+    # p33-bees-lv3-c-hive-loot (task p33-bees-lv3-c-hive-loot): the hive LOOT live
+    # chain — a fresh band x=479..520 z=95..130 (the embedded-slab chunk (30,6) +
+    # the loot-walk cell, clear of every registered band), the worldgen place +
+    # fill-count + bit-identical recompute arm (the p32_bees_hive arm-C form, now
+    # covering the gene-roll consumption) and the scoop-mine drops arm carrying
+    # princess/drone/comb with the gt.bumble gene NBT (the dump probe face).
+    # Admission mirroring the p33_bees_b form (bbox-registered, no fresh_boot /
+    # mutates member).
+    # --group p33_bees_c matches through the chain's embedded name prefix.
+    ("p33_bees_c",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
