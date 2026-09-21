@@ -150,10 +150,15 @@ import time
 REPO = _HERE.parent.parent.parent            # tools/rcon/chains → repo root
 WORLD_NAME = "p33oreoverlay"
 
-# the camera tp: feet back on the platform plane, 3 blocks off the south wall —
-# loader-common (the stage Y is common; the earlier hardcoded y=5 tp was the 1.20.1
-# dialect and stranded the 21.1 camera 64 blocks above the fixture).
-CAMERA_TP = "tp 387 16 518"
+# The camera pin, written straight into the copied world's playerdata: the client
+# RESUMES the local player at the saved Pos/Rotation, so the leg needs no chat, no
+# clicks, no pitch correction (the chat arm is retired here: both 17:1x legs' typed
+# commands died as "Unknown or incomplete command" — xdotool typing against GLFW is
+# not trustworthy; a saved rotation is byte-deterministic).
+#   yaw 0 = +Z (south, toward the wall at z521), pitch 15 = slightly down — the eye
+#   at 17.62 puts the 4.5-block-away 3-high wall mid-frame.
+CAMERA_POS = (387.5, 16.0, 516.5)
+CAMERA_ROT = (0.0, 15.0)
 
 
 def _node_run(node):
@@ -169,15 +174,58 @@ def _server_world_dir(node):
     raise SystemExit(f"server world folder not found under {cand} — run the chain first (node {node})")
 
 
+def _patch_camera(dest):
+    """Overwrite the local player's saved Pos/Rotation with the camera pin.
+
+    Same-byte-length NBT surgery on the decompressed buffer: Pos is TAG_LIST(9)
+    (elem type + count + 3 big-endian doubles), Rotation the same shape with 2
+    big-endian floats. The singleplayer client RESUMES this player, so the join
+    lands exactly at the pin with the exact aim — no in-game command surface.
+    """
+    import glob
+    import struct
+    import gzip as _gzip
+    dats = glob.glob(str(dest / "playerdata" / "*.dat"))
+    if not dats:
+        raise SystemExit(f"no playerdata under {dest}/playerdata — join the server chain world once first")
+    raw = bytearray(_gzip.decompress(open(dats[0], "rb").read()))
+    i = raw.find(b"Pos")
+    if i < 0:
+        raise SystemExit("Pos tag not found in the player dat")
+    j = i + len(b"Pos") + 5          # skip the elem-type byte and the 4-byte count
+    raw[j:j+24] = struct.pack(">ddd", *CAMERA_POS)
+    k = raw.find(b"Rotation")
+    if k < 0:
+        raise SystemExit("Rotation tag not found in the player dat")
+    j = k + len(b"Rotation") + 5
+    raw[j:j+8] = struct.pack(">ff", *CAMERA_ROT)
+    open(dats[0], "wb").write(_gzip.compress(raw))
+    print(f"[p33-client] camera pinned in {dats[0]}: pos={CAMERA_POS} rot(yaw,pitch)={CAMERA_ROT}")
+
+
 def cmd_world_copy(node: str) -> int:
     """Copy the staged server world into the node's dev client saves/."""
     src = _server_world_dir(node)
     dest = _node_run(node) / "saves" / WORLD_NAME
+    # salvage the local player's dat from the previous copy (the dedicated server
+    # world never has playerdata — only a played singleplayer session writes it):
+    # it is the resume template the camera patch overwrites below. Without it, a
+    # fresh copy spawns a NEW player at the world spawn — the same pin, yaw 0,
+    # pitch 0 (level view), which also frames the wall.
+    salvaged = None
     if dest.exists():
+        old = sorted((dest / "playerdata").glob("*.dat"))
+        if old:
+            salvaged = old[0].read_bytes()
         shutil.rmtree(dest)
     dest.parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(src, dest)
+    if salvaged is not None:
+        pd = dest / "playerdata"
+        pd.mkdir(exist_ok=True)
+        (pd / "380df991-f603-344c-a090-369bad2a924a.dat").write_bytes(salvaged)
     print(f"[p33-client] world copied: {src} -> {dest}")
+    _patch_camera(dest)
     return 0
 
 
@@ -205,9 +253,10 @@ def _seed_options(node: str) -> None:
 def cmd_client(node: str, wait_seconds: float = 45.0) -> int:
     """One dev-client leg: quickPlay into the copied world, screenshot, terminate.
 
-    The fresh spawn stands at the camera pin on the platform facing +Z (south) — the
-    ore wall is 5 blocks south, in frame; the join pitch-jump correction, the chat-arm
-    re-asserts and the F2 screenshot ride the p32_embeddium_tint form verbatim.
+    The player RESUMES at the pinned camera (the world-copy patched Pos/Rotation),
+    facing the wall — the leg is join, settle, F2. The pointer is centred BEFORE
+    launch so the mouse-capture grab injects no aim jump (the jump is the pointer
+    offset at grab time; a centred pointer has none).
     """
     xvfb = os.environ.get("GT6_XVFB_DISPLAY", ":97")   # the resident Xvfb, never :0
     run = _node_run(node)
@@ -215,6 +264,7 @@ def cmd_client(node: str, wait_seconds: float = 45.0) -> int:
     shot_dir.mkdir(parents=True, exist_ok=True)
     before = {p.name for p in shot_dir.glob("*.png")}
     _seed_options(node)
+    xenv = dict(os.environ, DISPLAY=xvfb)
 
     args = f"--quickPlaySingleplayer {WORLD_NAME} --width 640 --height 360"
     cmd = ["./gradlew", f":mdk:{node}:runClient", f"-Pgt6.quickplay={args}",
@@ -225,8 +275,10 @@ def cmd_client(node: str, wait_seconds: float = 45.0) -> int:
     proc = subprocess.Popen(cmd, cwd=str(REPO), env=env,
                             stdout=open(run / "client_p33.log", "w"),
                             stderr=subprocess.STDOUT)
-    xenv = dict(os.environ, DISPLAY=xvfb)
     try:
+        # centre the pointer on the 640x360 window region BEFORE the game grabs it
+        subprocess.run(["xdotool", "mousemove", "--sync", "320", "180"],
+                       env=xenv, check=False)
         log_path = run / "client_p33.log"
         markers = ("Starting integrated minecraft server version", "Preparing spawn area")
         joined = False
@@ -245,32 +297,7 @@ def cmd_client(node: str, wait_seconds: float = 45.0) -> int:
         if not joined:
             raise SystemExit("world join marker never appeared; see the client log")
         print(f"[p33-client:{node}] world joining...")
-        time.sleep(55.0)                      # spawn + the llvmpipe chunk build
-
-        # the join can land on the DEATH screen (a fall off the platform edge); the
-        # Respawn button sits mid-frame at 640x360. The click is harmless in-world
-        # (a click into the scene) and respawn returns to the platform spawn.
-        subprocess.run(["xdotool", "mousemove", "320", "170", "click", "1"],
-                       env=xenv, check=False)
-        time.sleep(4.0)
-
-        # Deterministic camera + safe world state, via chat (singleplayer commands are
-        # enabled by default in the dev client). Chat opens EMPTY on 't' — the '/'
-        # key opens it PRE-FILLED with '/', so typing "/tp ..." there would run
-        # "//tp ..." (the invalid double-slash; the 15:21 leg's invisible tp). Noon
-        # and peaceful are already staged (the chain) — these are the belt-and-
-        # suspenders re-asserts; the tp is the load-bearing camera pin. The pointer-
-        # capture pitch lift follows the tp.
-        for command in ("difficulty peaceful", "time set noon", CAMERA_TP):
-            subprocess.run(["xdotool", "key", "--clearmodifiers", "t"], env=xenv, check=False)
-            time.sleep(1.0)
-            subprocess.run(["xdotool", "type", "--delay", "40", "/" + command], env=xenv, check=False)
-            time.sleep(0.5)
-            subprocess.run(["xdotool", "key", "--clearmodifiers", "Return"], env=xenv, check=False)
-            time.sleep(2.0)
-        subprocess.run(["xdotool", "mousemove_relative", "--", "0", "-58"],
-                       env=xenv, check=False)
-        time.sleep(10.0)                      # the tp + the chunk build under the new view
+        time.sleep(60.0)                      # spawn + the llvmpipe chunk build
 
         # F2 = the vanilla screenshot key, delivered through XTEST to the focused window
         subprocess.run(["xdotool", "key", "--clearmodifiers", "F2"], env=xenv, check=False)
