@@ -722,6 +722,18 @@ SESSION_GROUPS = (
     # RM.Furnace row, all in the fresh z=340 band (east of the cracker 330 strip).
     # --group p33_food_machines matches through the chain's embedded name prefix.
     ("p33_food_machines",),
+    # P33 card (p33-ore-overlay-impl): the ore OVERLAY baked-model live chain — a
+    # fresh z=508..530 band (x377..397, clear of the roster's z<=475 bands): the
+    # loader-common floating stage (stone platform y=15, both flat grounds far below
+    # the cleanup region y11..21 — zero ground carve on either leg) carrying the four
+    # representative ore cells stone-normal / deepslate-normal / second-SET / small
+    # plus the enclosing 3-high walls and the camera pin — the p32_embeddium_tint
+    # staging form (the baked-model dispatch is client-only code, the server stages
+    # the scene and the dev-client screenshot legs photograph it per node). Admission
+    # mirroring the p32 form (bbox-registered, no fresh_boot / mutates member — the
+    # ore row is the client fixture, passes=1 persists it). --group p33_ore_overlay
+    # matches the module stem.
+    ("p33_ore_overlay",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
