@@ -678,14 +678,25 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 	}
 
 	// -------------------------------------------------------------------------
-	// NBT (:66-85 verbatim key faces)
+	// NBT (:66-85 verbatim key faces; the inventory rides the gt.inv list — the
+	// GT6BumbleHiveBlockEntity ADR ruling 4 key face)
 	// -------------------------------------------------------------------------
+
+	/** The inventory list key (upstream CS.NBT_INV_LIST = "gt.inv", the hive-BE shape). */
+	public static final String NBT_INV = "gt.inv";
 
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
 		aNBT.putLong(NBT_PROGRESS, mLife);
 		aNBT.putLong(NBT_COOLDOWN, mBreedingCountDown);
+		if (mInventory != null) {
+			//? if forge {
+			aNBT.put(NBT_INV, mInventory.serializeNBT());
+			//?} else {
+			/*aNBT.put(NBT_INV, mInventory.serializeNBT(TileEntityBase03TicksAndSync.NBT_ACCESS)); // 21.1: the handler NBT takes the registries
+			*///?}
+		}
 		if (mOffSpring.length > 0) {
 			aNBT.putInt(NBT_INV_OUT, mOffSpring.length); // the upstream count + indexed children
 			for (int i = 0; i < mOffSpring.length; i++) if (!mOffSpring[i].isEmpty()) putItemStack(aNBT, NBT_INV_OUT + "." + i, mOffSpring[i]);
@@ -697,6 +708,13 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 		super.load(aNBT);
 		if (aNBT.contains(NBT_PROGRESS, Tag.TAG_ANY_NUMERIC)) mLife = aNBT.getLong(NBT_PROGRESS);
 		if (aNBT.contains(NBT_COOLDOWN, Tag.TAG_ANY_NUMERIC)) mBreedingCountDown = aNBT.getLong(NBT_COOLDOWN);
+		if (mInventory != null && aNBT.contains(NBT_INV, Tag.TAG_COMPOUND)) {
+			//? if forge {
+			mInventory.deserializeNBT(aNBT.getCompound(NBT_INV));
+			//?} else {
+			/*mInventory.deserializeNBT(TileEntityBase03TicksAndSync.NBT_ACCESS, aNBT.getCompound(NBT_INV)); // 21.1: provider-first
+			*///?}
+		}
 		if (aNBT.contains(NBT_INV_OUT, Tag.TAG_ANY_NUMERIC)) {
 			mOffSpring = new ItemStack[aNBT.getInt(NBT_INV_OUT)];
 			for (int i = 0; i < mOffSpring.length; i++) mOffSpring[i] = getItemStack(aNBT, NBT_INV_OUT + "." + i);
