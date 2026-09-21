@@ -90,7 +90,8 @@ public class GT6EnUs extends LanguageProvider {
         addEngineFluids();
         addAquaFluids();
         addSimpleLiquidFluids(); // task p19-drying-rows-backfill-2
-        addFoodFluids(); // task p21-drying-food-fluids
+        addFoodFluids();
+        addFoodB1Fluids(); // task p21-drying-food-fluids
         addDyeChemicalFluids(); // task p24-dye-chemical-fluids — table-tail append
         addCFoamFluids(); // task p26-c-foam-fluid-refill — table-tail append
         addChemicalFluids(); // task p29-w4-f1-chemicals — table-tail append
@@ -251,6 +252,22 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addFoodFluids() {
         for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_FLUID_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
+
+    /**
+     * Food-fluid batch-1 keys (task p33-food-fluids-b1): the fifth loop over
+     * {@link GTFluids#FOOD_B1_SPECS} — the addFoodFluids shape, walked from the FIFTH table
+     * so the lang face cannot drift from the registered fluids. Values ride the row's
+     * displayName: the upstream {@code FL.create} local names verbatim (Loader_Fluids.java
+     * :376-647 FoodStatDrink block) where GT6 defines the fluid, and the FL-shorthand
+     * spellings for the 68 external-mod ids the census carries no {@code FL.create} for
+     * (the water_boiling "Boiling Water" precedent). The zh faces ride the reference-table
+     * direct band (GT6ZhCn addFoodB1Fluids, the same 220 keys).
+     */
+    private void addFoodB1Fluids() {
+        for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_B1_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
     }

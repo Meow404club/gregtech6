@@ -508,6 +508,14 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("fluid.gt6." + GTFluids.dyeChemicalName(i));
 		}
 		addDirect("fluid.gt6.chlorine");
+		// task p33-food-fluids-b1: the 220 food-fluid display names — the dump carries 153
+		// faces (S:fluid.* rows: the milk/honey/juice/mash/tea/oil/sauce/cream/slime families
+		// + the alcohol verbatim rows), the 67 binnie-external/derived ids are hand rows in
+		// the reference table (果酒/威士忌/利口酒/白酒/白兰地 families); the keys ride the SAME
+		// GTFluids.FOOD_B1_SPECS derivation the en walk and the FluidType descriptionIds use.
+		for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_B1_SPECS) {
+			addDirect("fluid.gt6." + tSpec.name());
+		}
 		// task p29-w4-f1-chemicals + p31-qu-b-materials: the 34 chemical display names —
 		// the dump carries every
 		// face (S:fluid.liquid_extra_heavy_oil=超重油 tmp/gregtech.lang:388, :389-391 the

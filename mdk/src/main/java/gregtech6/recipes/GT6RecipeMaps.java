@@ -549,6 +549,9 @@ public class GT6RecipeMaps {
 
 	/** RM.java:101 — the Squeezer map (1/2/1 items, 0/1/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch C. */
 	public static volatile RecipeMap SQUEEZER;
+
+	/** RM.java:102 — the Juicer map (1/3/1 items, 0/1/0 fluids, minimal inputs 0). DECLARED-empty until task p33-food-fluids-b1 pours the core rows (data/gt6/recipe_maps/juicer.json); the consumer is the kitchen card's manual Juicer (MultiTileEntityJuicer.java:63-65, Loader:2184 id 32722, b2/kitchen scope). */
+	public static volatile RecipeMap JUICER;
 	/** RM.java:153 — the RM.BedrockOreList display face (task p31-bedrock-ore-worldgen): the NEI fake-recipe map of the bedrock drill outputs; NO machine consumes it (the 17999 body is a later card), the rows are the datapack JSON's show face. */
 	public static volatile RecipeMap BEDROCK_ORE_LIST;
 
@@ -1574,6 +1577,7 @@ public class GT6RecipeMaps {
 		LOOM = null;
 		PRESSURE_WASHER = null;
 		SQUEEZER = null;
+		JUICER = null;
 		BEDROCK_ORE_LIST = null;
 		CLUSTER_MILL = null;
 		ROLL_BENDER = null;

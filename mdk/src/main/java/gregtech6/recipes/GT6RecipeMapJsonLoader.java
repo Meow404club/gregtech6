@@ -185,6 +185,9 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			"cutter", "squeezer", "centrifuge", "sluice", "sharpening", "pressurewasher",
 			// the P29 W1 card-D eu-hu four (task p29-w1-eu-hu-families)
 			"loom", "boxinator", "unboxinator", "fermenter",
+			// the P33 food-fluids b1 (task p33-food-fluids-b1): the Juicer map joins with its
+			// core rows (the juice/oil/sauce pours); the Fermenter core rows ride the
+			// existing key above
 			// the P29 W2 nineteen (task p29-w2-energy-types-5tier — the shared-layer card
 			// expands ALL the keys so the consumer cards ②③④⑤ never touch this loader):
 			// the keys ARE the card-① GT6RecipeMaps field names in snake case; no datapack
