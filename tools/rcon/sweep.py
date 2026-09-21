@@ -734,6 +734,15 @@ SESSION_GROUPS = (
     # ore row is the client fixture, passes=1 persists it). --group p33_ore_overlay
     # matches the module stem.
     ("p33_ore_overlay",),
+    # P33 card (p33-fix-forge-ore-invisible): the forge-leg ore-invisibility root-fix
+    # live chain — BYTE-FOR-BYTE reuse of the p33_ore_overlay floating stage (same
+    # z=508..530 band, same wall + pins + camera pin; the fix is client-render-only,
+    # GTOreBakedModel lazy first-render bake, so the staging face is identical). Own
+    # Chain identity purely so the card gate runs its own session group; idempotent
+    # re-stage over the registered band is the no-change safe shape (the shared-column
+    # discipline p19_drying/p26_rm_backfill established).
+    # --group p33_fix_forge_ore matches the module stem.
+    ("p33_fix_forge_ore",),
     # p33-food-fluids-b2 (task p33-food-fluids-b2): the drink-seam live chain — a fresh
     # barrel band x=404 z=20 (x-adjacent-but-disjoint from p33foodb1's bbox 397..399, the
     # wiremill x=404 band sits z=172), the metal-barrel carrier + the /gt6drink real
