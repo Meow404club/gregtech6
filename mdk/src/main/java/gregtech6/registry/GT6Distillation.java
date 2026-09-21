@@ -10,6 +10,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -39,6 +43,8 @@ import gregapi.data.TD;
 import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.multiblock.GTMultiBlockControllerBlock;
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.gui.machines.GT6MuiMachine;
+import gregtech6.gui.machines.GTDistillationTowerMUI;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.recipes.GT6RecipeMaps;
@@ -171,7 +177,7 @@ public final class GT6Distillation {
 	// the controller block
 	// ------------------------------------------------------------------------------------
 
-	/** The tower controller block — the concrete {@link GTMultiBlockControllerBlock} over the shared BET, the row rides it. NO use override (the GUI opens nothing until a MenuType of its own lands — the P26 no-new-MenuType ruling). */
+	/** The tower controller block — the concrete {@link GTMultiBlockControllerBlock} over the shared BET, the row rides it. The use arm (task p33-gui-distill-tower) opens the ModularUI panel through the {@link GT6MuiMachine#tryOpen} factory chain (the ACT :80-96 shape) — no MenuType (the P26 no-new-MenuType ruling holds, the factory carries its own network). */
 	public static final class GTDistillationTowerBlock extends GTMultiBlockControllerBlock {
 
 		private final TowerRow mRow;
@@ -199,6 +205,25 @@ public final class GT6Distillation {
 		protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
 			return GT6Distillation.TOWER_BE.get();
 		}
+
+		@Override
+		//? if forge {
+		public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, net.minecraft.world.phys.BlockHitResult aHit) {
+		//?} else {
+		/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, net.minecraft.world.phys.BlockHitResult aHit) {
+		//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
+		//(the GTAdvancedCraftingTableBlock fork shape).
+		InteractionHand aHand = InteractionHand.MAIN_HAND;
+		*///?}
+			// the MUI open chain — the BE implements GT6MuiMachine, the factory's own network
+			// carries the open (no MenuType, the GTAdvancedCraftingTableBlock :89-96 shape)
+			BlockEntity tBlockEntity = aLevel.getBlockEntity(aPos);
+			if (tBlockEntity instanceof TileEntityDistillationTower tTower && aPlayer instanceof net.minecraft.server.level.ServerPlayer tServerPlayer) {
+				GT6MuiMachine.tryOpen(tServerPlayer, tTower);
+				return InteractionResult.CONSUME; // upstream openGUI
+			}
+			return InteractionResult.CONSUME;
+		}
 	}
 
 	// ------------------------------------------------------------------------------------
@@ -212,7 +237,7 @@ public final class GT6Distillation {
 	 * BE carries: the row config (energy domain + map), the HU/CU energy face, the with-tanks
 	 * recipe check, the back-hole fluid routing and the item auto-out arm.
 	 */
-	public static class TileEntityDistillationTower extends TileEntityBase10MultiBlockMachine {
+	public static class TileEntityDistillationTower extends TileEntityBase10MultiBlockMachine implements GT6MuiMachine {
 
 		/** The shared registration constants: NBT_HARDNESS/NBT_RESISTANCE 6.0 (:1226-1227). */
 		public static final float SHELL_HARDNESS = 6.0F;
@@ -276,6 +301,19 @@ public final class GT6Distillation {
 		@Nullable
 		public TowerRow row() {
 			return getBlockState().getBlock() instanceof GTDistillationTowerBlock tBlock ? tBlock.row() : null;
+		}
+
+		/**
+		 * The MUI panel build (task p33-gui-distill-tower, the IUIHolder.buildUI :21-44
+		 * contract) — the tower's own panel factory, the GTBasicMachineMUI shared panel is
+		 * NOT touched (the shared-face boundary). MUI-only: the inherited base MenuProvider
+		 * (getMenuType default) is dead code on this family — nobody calls it, no MenuType
+		 * is registered for the towers (the P26 no-new-MenuType ruling).
+		 */
+		@Override
+		public brachy.modularui.screen.ModularPanel<?> buildUI(brachy.modularui.factory.PosGuiData aData,
+				brachy.modularui.value.sync.PanelSyncManager aSyncManager, brachy.modularui.screen.UISettings aSettings) {
+			return GTDistillationTowerMUI.buildPanel(this, aSyncManager);
 		}
 
 		@Override

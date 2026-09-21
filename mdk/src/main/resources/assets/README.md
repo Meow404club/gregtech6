@@ -8551,3 +8551,12 @@ across both families and their state layers):
 - `replicator_overlay_front.png` — `7e104008bd35b377838d1cf1b6422a110a395ea3dfe07ed3cb8cafdf21859c88`
 - `replicator_overlay_front_active.png` — `e7d764c6722b0230aecff5d84cfa8361f9d295336565391f721f571d7da10cf8`
 - `replicator_overlay_front_running.png` — `6a60b16caa227f4b5652ab9444c0818e29a542e69ccd93cae7d00a6a7113d212`
+
+Distillation Tower GUI pair textures, task p33-gui-distill-tower:
+`gt6/textures/gui/machines/distillationtower.png` and
+`gt6/textures/gui/machines/cryodistillationtower.png` come from upstream
+`src/main/resources/assets/gregtech/textures/gui/machines/{DistillationTower,CryoDistillationTower}.png`
+(the mGUITexture = mRecipes.mGUIPath fallback, MultiTileEntityBasicMachine.java:114;
+RM.java:65/:66), byte-identical to upstream, sha256 verified:
+- `distillationtower.png` — `3c91fb1c405f64651f2502f44ab2fc0e588c018e0616a5d8d094acf11596c593`
+- `cryodistillationtower.png` — `165f2cb65e4f1d892d6f403327ac9ae33d61084fb73faacaf99385aa5a98bd53`
