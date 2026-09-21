@@ -525,6 +525,18 @@ public class GT6ZhCn extends LanguageProvider {
 		for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_B2_SPECS) {
 			addDirect("fluid.gt6." + tSpec.name());
 		}
+		// task p33-food-tail: the 10 card-block-outside drink-fluid display names (the
+		// golden-apple brews :607-610 + the coffee family :637-642) — the dump carries 9
+		// faces (S:fluid.potion.goldenapplejuice=金苹果汁 tmp/gregtech.lang:725, goldencider
+		// :726 金苹果酒, idunsapplejuice :734 伊顿苹果汁, notchesbrew :758 炖Notch,
+		// darkcoffee :713 清咖啡, darkcafeaulait :711 欧蕾黑咖啡, cafeaulait :702 欧蕾咖啡,
+		// laitaucafe :747 法式牛奶咖啡, darkchocolatemilk :712 苦味巧克力牛奶); plain
+		// potion.coffee has no dump face (the 欧蕾咖啡 row implies the base) — hand row 咖啡;
+		// the keys ride the SAME GTFluids.FOOD_TAIL_SPECS derivation the en walk and the
+		// FluidType descriptionIds use.
+		for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_TAIL_SPECS) {
+			addDirect("fluid.gt6." + tSpec.name());
+		}
 		// task p29-w4-f1-chemicals + p31-qu-b-materials: the 34 chemical display names —
 		// the dump carries every
 		// face (S:fluid.liquid_extra_heavy_oil=超重油 tmp/gregtech.lang:388, :389-391 the

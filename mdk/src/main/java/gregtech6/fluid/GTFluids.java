@@ -979,7 +979,7 @@ public final class GTFluids {
 		new AquaFluidSpec("sweettea"                , "Sweet Tea"                        , 300, 1000, 1000, 0xFFC87C28), // FL.java up "sweettea" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
 		new AquaFluidSpec("icetea"                  , "Ice Tea"                          , 255, 1000, 1000, 0xFFC87C28), // FL.java up "icetea" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
 		new AquaFluidSpec("purpledrink"             , "Purple Drink"                     , 300, 1000, 1000, 0xFF9A48D8), // FL.java up "purpledrink" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
-		new AquaFluidSpec("lemonade"                , "Lemonade"                         , 300, 1000, 1000, 0xFFE8E86A), // FL.java up "potion.lemonade" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("lemonade"                , "Lemonade"                         , 275, 1000, 1000, 0xFFE8E86A), // FL.java up "potion.lemonade" — Loader_Fluids.java:603 the FL.create 275 K carrier verbatim (the p33-food-tail correction: the row shipped the 300 K honest-default before the :603 literal was pinned; tint port-declared, the JetFuel/aqua precedent)
 		new AquaFluidSpec("cavejohnsonsgrenadejuice", "Cave Johnson's Grenade Juice"     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "potion.cavejohnsonsgrenadejuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
 		new AquaFluidSpec("vinegar"                 , "Grape Vinegar"                    , 300, 1000, 1000, 0xFFD8A858), // FL.java up "vinegar" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
 		new AquaFluidSpec("applevinegar"            , "Apple Cider Vinegar"              , 300, 1000, 1000, 0xFFD8A858), // FL.java up "applevinegar" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
@@ -1318,7 +1318,8 @@ public final class GTFluids {
 	 * the drink-seam residual under the research.p33-r-food b1/b2 boundary: the 94 potion
 	 * brews of the card-block FoodStatDrink run (Loader_Fluids.java:230-350, the
 	 * potion.tainted..potion.invisibility.long.lingering census; the gold-apple rows
-	 * :607-610 are OUTSIDE the card block, the p33-food-tail pool) plus the 9 FOOD-flag
+	 * :607-610 are OUTSIDE the card block — they landed on the seventh table,
+	 * {@link #FOOD_TAIL_SPECS}, task p33-food-tail) plus the 9 FOOD-flag
 	 * drink fluids b1's census left unregistered (riverwater :361 / ic2distilledwater
 	 * :363-alias / rottendrink :626 / poison :629 / chocolatemilk :643 / goldencarrotjuice
 	 * :606 / holywater :615 / medicine.heal :649 / medicine.laxative :650). Every value is
@@ -1562,6 +1563,68 @@ public final class GTFluids {
 	public static final AquaFluid CHOCOLATEMILK                          = foodB2Fluid("chocolatemilk");
 	public static final AquaFluid MEDICINE_HEAL                          = foodB2Fluid("medicine.heal");
 	public static final AquaFluid MEDICINE_LAXATIVE                      = foodB2Fluid("medicine.laxative");
+
+
+	/**
+	 * The food-fluid tail (task p33-food-tail): the SEVENTH AquaFluidSpec table — the
+	 * card-block-outside drink fluids the b2 report left in the tail pool (the DrinkStat
+	 * rows were unreachable without a registered carrier): the four ENCHANTED_EFFECT
+	 * golden-apple brews (Loader_Fluids.java:607-610, the goldencarrotjuice :606 family —
+	 * every row carries the upstream {@code .setLuminosity(15)}; the AquaFluidSpec record
+	 * has no luminosity column, so the light value rides the GTDrinks.DrinkStat per the
+	 * :606 precedent) and the six coffee-family drinks (:637-642, the THERMOS-flagged
+	 * runs — the flag has no modern carrier face, the FoodStatDrink extended channels are
+	 * the GTDrinks surface). Every value is the upstream FL.create carrier verbatim: all
+	 * ten rows ride the 300 K literal (:607-610/:637-642). The tints are PORT-OWNED
+	 * DECLARED VALUES (the b2 potion-block precedent: one shared texture upstream, the
+	 * port differentiates per family — coffee browns / golden golds over the vanilla-water
+	 * layers). FLUID-ONLY, NO drink behaviour on this table — same shape as b2, the
+	 * DrinkStat seam is GTDrinks keyed by the SAME gt6 registry paths.
+	 */
+	public static final List<AquaFluidSpec> FOOD_TAIL_SPECS = List.of(
+		new AquaFluidSpec("potion.goldenapplejuice" , "Golden Apple Juice"               , 300, 1000, 1000, 0xFFFFE06A), // Loader_Fluids.java:607 — the .setLuminosity(15) family, light on the DrinkStat row
+		new AquaFluidSpec("potion.goldencider"      , "Golden Cider"                     , 300, 1000, 1000, 0xFFF0C840), // Loader_Fluids.java:608
+		new AquaFluidSpec("potion.idunsapplejuice"  , "Idun's Apple Juice"               , 300, 1000, 1000, 0xFFFFF0B0), // Loader_Fluids.java:609
+		new AquaFluidSpec("potion.notchesbrew"      , "Notches Brew"                     , 300, 1000, 1000, 0xFFD8A838), // Loader_Fluids.java:610
+		new AquaFluidSpec("potion.darkcoffee"       , "Dark Coffee"                      , 300, 1000, 1000, 0xFF2A1A0A), // Loader_Fluids.java:637
+		new AquaFluidSpec("potion.darkcafeaulait"   , "Dark Cafe au lait"                , 300, 1000, 1000, 0xFF3A2A1A), // Loader_Fluids.java:638
+		new AquaFluidSpec("potion.coffee"           , "Coffee"                           , 300, 1000, 1000, 0xFF4A3A20), // Loader_Fluids.java:639
+		new AquaFluidSpec("potion.cafeaulait"       , "Cafe au lait"                     , 300, 1000, 1000, 0xFF8A6A4A), // Loader_Fluids.java:640
+		new AquaFluidSpec("potion.laitaucafe"       , "Lait au cafe"                     , 300, 1000, 1000, 0xFFA8896A), // Loader_Fluids.java:641
+		new AquaFluidSpec("potion.darkchocolatemilk", "Bitter Chocolate Milk"            , 300, 1000, 1000, 0xFF3A2414)  // Loader_Fluids.java:642
+	);
+
+	/** The food-tail row for a gt6 id path, or null (the {@link #foodB2Spec} lookup shape, its own table). */
+	public static AquaFluidSpec foodTailSpec(String aName) {
+		for (AquaFluidSpec tSpec : FOOD_TAIL_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/** The registration helper for one food-tail row (the {@link #foodB2Fluid} shape over the seventh table). */
+	private static AquaFluid foodTailFluid(String aName) {
+		AquaFluidSpec tSpec = foodTailSpec(aName);
+		if (tSpec == null) throw new IllegalArgumentException("no food-tail fluid spec: " + aName);
+		return registerFluidFamily(tSpec);
+	}
+
+	// ponytail: 10 one-line static registrations instead of a loop — the static-init
+	// DeferredRegister accumulation IS the registration mechanism (the b1/b2 precedent).
+
+	public static final AquaFluid POTION_GOLDENAPPLEJUICE                = foodTailFluid("potion.goldenapplejuice");
+	public static final AquaFluid POTION_GOLDENCIDER                     = foodTailFluid("potion.goldencider");
+	public static final AquaFluid POTION_IDUNSAPPLEJUICE                 = foodTailFluid("potion.idunsapplejuice");
+	public static final AquaFluid POTION_NOTCHESBREW                     = foodTailFluid("potion.notchesbrew");
+	public static final AquaFluid POTION_DARKCOFFEE                      = foodTailFluid("potion.darkcoffee");
+	public static final AquaFluid POTION_DARKCAFEAULAIT                  = foodTailFluid("potion.darkcafeaulait");
+	public static final AquaFluid POTION_COFFEE                          = foodTailFluid("potion.coffee");
+	public static final AquaFluid POTION_CAFEAULAIT                      = foodTailFluid("potion.cafeaulait");
+	public static final AquaFluid POTION_LAITAUCAFE                      = foodTailFluid("potion.laitaucafe");
+	public static final AquaFluid POTION_DARKCHOCOLATEMILK               = foodTailFluid("potion.darkchocolatemilk");
+
+	/** The 10 registered food-tail families in {@link #FOOD_TAIL_SPECS} declaration order (the lang/table walkers). */
+	public static List<AquaFluid> foodTailFluids() {
+		return List.of(POTION_GOLDENAPPLEJUICE, POTION_GOLDENCIDER, POTION_IDUNSAPPLEJUICE, POTION_NOTCHESBREW, POTION_DARKCOFFEE, POTION_DARKCAFEAULAIT, POTION_COFFEE, POTION_CAFEAULAIT, POTION_LAITAUCAFE, POTION_DARKCHOCOLATEMILK);
+	}
 
 	/** The 103 registered food-b2 families in {@link #FOOD_B2_SPECS} declaration order (the lang/table walkers). */
 	public static List<AquaFluid> foodB2Fluids() {

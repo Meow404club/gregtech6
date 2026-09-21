@@ -753,6 +753,17 @@ SESSION_GROUPS = (
     # /gt6tank + /gt6drink command channels).
     # --group p33_food_drink matches through the chain's embedded name prefix.
     ("p33_food_drink",),
+    # p33-food-tail (task p33-food-tail): the card-block-outside drink-fluid live
+    # chain — a fresh barrel band x=420 z=20 (bbox 418..422, x-disjoint from
+    # p33fooddrink's 402..406 and the p24act/p26cfoam 408..416 run), the metal-barrel
+    # carrier + the /gt6drink real useItemOn dispatch arms (mnwtr/potion.coffee/
+    # potion.goldenapplejuice/lemonade positives + the chlorine negative — the
+    # lemonade stat arm pins the corrected 275 K carrier) + the 10-row FOOD_TAIL_SPECS
+    # census. Admission mirroring the p33fooddrink form (bbox-registered, no
+    # fresh_boot / mutates member — the tank/drink arms are the /gt6tank + /gt6drink
+    # command channels). --group p33_food_tail matches through the chain's embedded
+    # name prefix.
+    ("p33_food_tail",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
