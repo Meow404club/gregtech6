@@ -681,6 +681,14 @@ SESSION_GROUPS = (
     # item replaces; the /gt6cover /gt6logistics arms are pure command channels).
     # --group p33_logistics_covers matches the module stem.
     ("p33_logistics_covers",),
+    # P33 W2 card (p33-circuits-crafting-c): the circuits C-column crafting chain — a
+    # fresh z=290 band (the chest+ACT column pair on x420/x422, between the
+    # p33_circuits_parts z=284 and the p29_w3_parts z=292 with margin). Admission
+    # mirroring the p33_circuits_parts form (bbox-registered, no fresh_boot /
+    # mutates member — the rig is a band-local setblock pair; /reload re-parses the
+    # 32 new recipe rows and the ACT live-craft is the RecipeManager load proof).
+    # --group p33_circuits_craft matches through the chain's embedded name prefix.
+    ("p33_circuits_craft",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
