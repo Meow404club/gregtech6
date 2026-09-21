@@ -3,6 +3,7 @@ package gregtech6.registry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -32,13 +33,14 @@ class GT6BeeHivesTest {
 
 	@Test
 	void hiveBlockAndBetAreRegisteredUnderPinnedIds() {
-		// acceptance ① — the registry faces exist under the flattened MTE 32755 id
-		assertEquals(List.of("bumble_hive"),
+		// acceptance ① — the registry faces exist under the flattened MTE 32755 id and,
+		// since task p33-bees-lv3-b-bumbliary, under the MTE 32741/32007 Bumbliary pair
+		assertEquals(List.of("bumble_hive", "bumbliary", "bumbliary_advanced"),
 				GT6BeeHives.BLOCKS.getEntries().stream().map(tRow -> tRow.getId().getPath()).toList(),
-				"the block register holds exactly the hive");
-		assertEquals(List.of("bumble_hive"),
+				"the block register holds the hive + the Bumbliary pair");
+		assertEquals(List.of("bumble_hive", "bumbliary", "bumbliary_advanced"),
 				GT6BeeHives.BLOCK_ENTITY_TYPES.getEntries().stream().map(tRow -> tRow.getId().getPath()).toList(),
-				"the BET register holds exactly the hive type");
+				"the BET register holds the hive type + the two Bumbliary layouts");
 	}
 
 	//? if forge {
@@ -54,11 +56,16 @@ class GT6BeeHivesTest {
 	//?}
 
 	@Test
-	void noItemFaceIsDeclared() {
-		// the loot shell is worldgen-only: this home declares NO item register and NO
-		// creative tab (the GT6SurfaceBlocks rock/stick form) — any item face needs a card
-		assertFalse(hasField("ITEMS"), "no ITEMS DeferredRegister in the hive home");
-		assertFalse(hasField("CREATIVE_MODE_TABS"), "no creative tab in the hive home");
+	void itemFaceIsExactlyTheBumbliaryPair() {
+		// the hive loot shell stays worldgen-only (no item under its id, the p32 ruling);
+		// the Bumbliary pair ARE obtainable machines — the ITEMS register holds exactly
+		// their two BlockItems (task p33-bees-lv3-b-bumbliary) and still no creative tab
+		assertFalse(hasField("CREATIVE_MODE_TABS"), "no creative tab in the bee home");
+		assertEquals(List.of("bumbliary", "bumbliary_advanced"),
+				GT6BeeHives.ITEMS.getEntries().stream().map(tRow -> tRow.getId().getPath()).toList(),
+				"the item register holds exactly the Bumbliary BlockItem pair");
+		assertTrue(GT6BeeHives.ITEMS.getEntries().stream().noneMatch(tRow -> tRow.getId().getPath().equals("bumble_hive")),
+				"the hive itself never gains an item face");
 	}
 
 	private static boolean hasField(String aName) {

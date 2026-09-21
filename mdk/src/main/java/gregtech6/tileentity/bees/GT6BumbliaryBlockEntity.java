@@ -239,8 +239,7 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 			byte tRoyalFace = (byte)(tRoyalItem.typeOf() % 5); // the bumbleType%5 fractal
 			CompoundTag tRoyalTag = GT6BumbleGenes.getOrCreateGenes(tRoyalStack, mRng); // the :116 lazy face
 			if (mLife > 0 && tRoyalFace == GT6Bumbles.TYPE_QUEEN) {
-				if (!mAdvanced) mBreedingCountDown = PAIRED_WINDOW; // :119
-				else if (mBreedingCountDown < PAIRED_WINDOW) mBreedingCountDown = PAIRED_WINDOW; // the Advanced soft reset
+				mBreedingCountDown = raisedWindow(mAdvanced, mBreedingCountDown); // :119 — the Advanced soft reset
 				if (checkEnvironment(tRoyalTag)) {
 					if (--mLife <= 0) queenDied(); else produceTick(tRoyalItem, tRoyalStack);
 				} else {
@@ -270,15 +269,13 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 						if (tBreedStack != null) breed(tRoyalStack, tBreedStack, tBreedSlot);
 					}
 				} else {
-					if (!mAdvanced) mBreedingCountDown = PAIRED_WINDOW; // :270
-					else if (mBreedingCountDown < PAIRED_WINDOW) mBreedingCountDown = PAIRED_WINDOW;
+					mBreedingCountDown = raisedWindow(mAdvanced, mBreedingCountDown); // :270
 				}
 			}
 		} else {
 			mLife = 0;
 			mOffSpring = new ItemStack[0];
-			if (!mAdvanced) mBreedingCountDown = PAIRED_WINDOW; // :276
-			else if (mBreedingCountDown < PAIRED_WINDOW) mBreedingCountDown = PAIRED_WINDOW;
+			mBreedingCountDown = raisedWindow(mAdvanced, mBreedingCountDown); // :276
 		}
 		setChanged();
 	}
@@ -351,24 +348,13 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 	private void breed(ItemStack aRoyalStack, ItemStack aBreedStack, int aBreedSlot) {
 		mBreedingCountDown = PAIRED_WINDOW; // :215
 		int tRoyalCode = GT6BumbleGenes.codeOf(aRoyalStack), tBreedCode = GT6BumbleGenes.codeOf(aBreedStack);
-		int tPrincessCount = 1 + mRng.nextInt(5) / 2; // :218
-		mOffSpring = new ItemStack[(int)GT6BumbleGenes.getOffspring(GT6BumbleGenes.getOrCreateGenes(aRoyalStack, mRng)) + tPrincessCount]; // :220
+		long tOffspringGene = GT6BumbleGenes.getOffspring(GT6BumbleGenes.getOrCreateGenes(aRoyalStack, mRng));
+		int tPrincessCount = princessCount(mRng); // :218
+		int[] tCodes = offspringCodes(mRng, tRoyalCode, tBreedCode, tOffspringGene, tPrincessCount); // :220-250 — the code walk
 		CompoundTag tChildGenes = GT6BumbleGenes.childGenes(aRoyalStack, aBreedStack, mRng); // the :252 heredity roll
+		mOffSpring = new ItemStack[tCodes.length];
 		for (int i = 0; i < mOffSpring.length; i++) {
-			boolean tPrincess = i < tPrincessCount;
-			int tCode;
-			if (GT6Bumbles.sameSpecies(tRoyalCode, tBreedCode)) {
-				tCode = tRoyalCode; // :222-231 — the copy with the per-offspring mutation roll
-				if (mRng.nextInt(10000) < GT6Bumbles.mutateChance(tCode)) tCode = GT6Bumbles.mutateCode(tCode, mRng);
-			} else {
-				tCode = switch (mRng.nextInt(4)) { // :233-249 — the four-way split
-					case 0 -> tRoyalCode;
-					case 1 -> tBreedCode;
-					case 2 -> combineCode(tRoyalCode, tBreedCode);
-					default -> combineCode(tBreedCode, tRoyalCode);
-				};
-			}
-			ItemStack tOffSpring = beeStack(tPrincess ? GT6Bumbles.TYPE_PRINCESS : GT6Bumbles.TYPE_DRONE, tCode);
+			ItemStack tOffSpring = beeStack(i < tPrincessCount ? GT6Bumbles.TYPE_PRINCESS : GT6Bumbles.TYPE_DRONE, tCodes[i]);
 			GT6BumbleGenes.setGenes(tOffSpring, tChildGenes.copy()); // :252 — every offspring takes the heredity genes
 			mOffSpring[i] = tOffSpring;
 		}
@@ -444,14 +430,60 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 			{330, 430, 10300}, {330, 10530, 20000}, {430, 10530, 20200}, {530, 10530, 20300},
 			{630, 930, 10500}, {730, 10530, 20100}};
 
-	/** The bumbleCombine face: the pairing-table hit, else the A copy (the :436 default —
-	 *  {@code (aMetaDataA/10)*10} is A's own code; the type rides the face). */
+	/** The :436-437 bumbleCombine face: the pairing-table hit, else the A copy (the :436
+	 *  default — {@code (aMetaDataA/10)*10} is A's own code; the type rides the face). */
 	public static int combineCode(int aCodeA, int aCodeB) {
 		for (int[] tRow : COMBINE_ROWS) {
 			if (tRow[0] == aCodeA && tRow[1] == aCodeB) return tRow[2];
 			if (tRow[0] == aCodeB && tRow[1] == aCodeA) return tRow[2];
 		}
 		return aCodeA;
+	}
+
+	// -------------------------------------------------------------------------
+	// the breeding decision core (the pure code-domain face the tests pin)
+	// -------------------------------------------------------------------------
+
+	/** The :218 princess share of one brood: {@code 1 + rng(5)/2} — 1,1,2,2,3 over rng 0..4. */
+	public static int princessCount(Random aRng) {
+		return 1 + aRng.nextInt(5) / 2;
+	}
+
+	/**
+	 * The :220-250 offspring code walk. The brood size is
+	 * {@code offspringGene + princessCount} (:220 — the gene of the royal carries the
+	 * base count). Same-species pairs copy the royal code with the per-offspring mutation
+	 * roll (:222-231, {@code rng(10000)} against {@link GT6Bumbles#mutateChance}, the
+	 * step through {@link GT6Bumbles#mutateCode}); cross-species pairs split every
+	 * offspring over the rng(4) father/mother/combine-AB/combine-BA walk (:233-249). The
+	 * first {@code princessCount} codes are the princess faces, the rest drones.
+	 */
+	public static int[] offspringCodes(Random aRng, int aRoyalCode, int aDroneCode, long aOffspringGene, int aPrincessCount) {
+		int[] rCodes = new int[(int)aOffspringGene + aPrincessCount]; // :220 — the gene carries the base count
+		boolean tSame = GT6Bumbles.sameSpecies(aRoyalCode, aDroneCode);
+		for (int i = 0; i < rCodes.length; i++) {
+			if (tSame) {
+				rCodes[i] = aRoyalCode; // :222-224 — the copy
+				if (aRng.nextInt(10000) < GT6Bumbles.mutateChance(rCodes[i])) rCodes[i] = GT6Bumbles.mutateCode(rCodes[i], aRng); // :227-229
+			} else {
+				rCodes[i] = switch (aRng.nextInt(4)) { // :233-249 — the four-way split
+					case 0 -> aRoyalCode;
+					case 1 -> aDroneCode;
+					case 2 -> combineCode(aRoyalCode, aDroneCode);
+					default -> combineCode(aDroneCode, aRoyalCode);
+				};
+			}
+		}
+		return rCodes;
+	}
+
+	/**
+	 * The countdown window resets (:119/:270/:276): the primary stomps the window to 1200
+	 * unconditionally, the Advanced only raises it (a running pairing is never interrupted).
+	 */
+	public static long raisedWindow(boolean aAdvanced, long aCurrent) {
+		if (!aAdvanced) return PAIRED_WINDOW;
+		return aCurrent < PAIRED_WINDOW ? PAIRED_WINDOW : aCurrent;
 	}
 
 	// -------------------------------------------------------------------------
