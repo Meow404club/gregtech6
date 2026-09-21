@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
@@ -24,10 +23,16 @@ import net.minecraft.world.level.biome.Biome;
 
 import net.minecraft.server.level.WorldGenRegion;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.levelgen.Heightmap;
+
 import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
-import gregtech6.registry.GT6BeeCombs;
+import gregtech6.items.bees.GT6BumbleGenes;
+import gregtech6.items.bees.GT6Bumbles;
 import gregtech6.registry.GT6BeeHives;
+import gregtech6.tileentity.bees.GT6BumbleHiveBlock;
+import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
 import gregtech6.tileentity.bees.GT6BumbleHiveBlockEntity;
 
 /**
@@ -53,9 +58,9 @@ import gregtech6.tileentity.bees.GT6BumbleHiveBlockEntity;
  * first-hit chain (:155-186). The biome-name families ride the
  * {@code #gt6:bumble_hives/<family>} tags (the tree-tag pattern: vanilla members live,
  * modded biomes are the pack-extension surface — magical/volcanic/end/nether emit
- * EMPTY, the rainbowood precedent). {@code ponytail:} every kind carries the same
- * comb_honey product — the species-comb table (bumbleProductStack) is Lv3 gene/species
- * domain; the species traces stay in the table for that card.
+ * EMPTY, the rainbowood precedent). The species trace wires the loot since
+ * p33-bees-lv3-c-hive-loot: the family picks the comb ({@code bumbleProductStack} :189-213)
+ * and the princess/drone codes ({@link #fillLoot}).
  *
  * <p>KJS face (card declaration): the placed/configured/biome-modifier JSONs are the
  * tier-a datapack surface; the Feature instance is the registry face deferred to the
@@ -273,10 +278,11 @@ public class GT6HiveFeature extends Feature<NoneFeatureConfiguration> {
 
 	/**
 	 * The placeHive collapse (:195-204): the hive block in, the family paint applied
-	 * (NBT_COLOR+NBT_PAINTED, the born-painted face), slot 0 filled with the family comb
-	 * ({@code ponytail:} the comb is always comb_honey — the species-comb table is Lv3;
-	 * princess/drone stay empty). The count roll rides the SAME stream after the
-	 * placement rolls (the getBumbleGenes consumption slot upstream).
+	 * (NBT_COLOR+NBT_PAINTED, the born-painted face), then the loot fill (:203 — task
+	 * p33-bees-lv3-c-hive-loot closes the Lv2 deferral): the family comb, the princess
+	 * and the drones, all sharing the one wild gene roll. The gene rolls ride the SAME
+	 * stream after the placement rolls (the getBumbleGenes consumption slot upstream) —
+	 * the coordinate-deterministic recompute covers the loot too.
 	 */
 	private boolean placeHive(WorldGenLevel aLevel, int aX, int aY, int aZ, HiveKind aKind, Random aRandom) {
 		if (!inBuild(aLevel, aY)) return false;
@@ -285,9 +291,60 @@ public class GT6HiveFeature extends Feature<NoneFeatureConfiguration> {
 		BlockEntity tBE = aLevel.getBlockEntity(tPos);
 		if (!(tBE instanceof GT6BumbleHiveBlockEntity tHive)) return false;
 		tHive.paint(aKind.color); // the born-painted worldgen face (WorldgenHives.java:203)
-		Item tComb = GT6BeeCombs.comb("honey").get();
-		tHive.inventory().setStackInSlot(0, new ItemStack(tComb, 1 + aRandom.nextInt(10)));
+		fillLoot(tHive, aKind, wildGenes(aLevel, aX, aY, aZ, aRandom));
 		return true;
+	}
+
+	/**
+	 * The :197-202 wild gene roll over the card-A climate faces: envTemp/rainfall/the
+	 * desert flip from the placement biome, the sky gate the :198 {@code hasNoSky +
+	 * precipitation height <= y+5} counterpart ({@code hasSkyLight() && the
+	 * MOTION_BLOCKING surface at most five above the hive}). The :201 explicit
+	 * day/night overload (the non-sky dims pass the placement-time {@code isDaytime()})
+	 * folds through the same card-A rollGenes face: the nether/end biomes are the
+	 * no-precipitation desert-flip case, so their hives roll night-active — a
+	 * coordinate-deterministic stand-in that keeps the worldgen stream pure (the p32
+	 * determinism ruling; a one-boolean divergence over the upstream, in the same
+	 * decisions-level spirit as the card-A climate approximation).
+	 */
+	private static CompoundTag wildGenes(WorldGenLevel aLevel, int aX, int aY, int aZ, Random aRandom) {
+		Biome tBiome = aLevel.getBiome(new BlockPos(aX, aY, aZ)).value();
+		boolean tHasSky = aLevel.dimensionType().hasSkyLight()
+				&& aLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, aX, aZ) <= aY + 5;
+		return GT6BumbleGenes.rollGenes(GT6BumbleGenes.envTemp(tBiome),
+				GT6BumbleGenes.rainfallOf(tBiome.hasPrecipitation(), tBiome.getBaseTemperature()),
+				tHasSky,
+				GT6BumbleGenes.isDesertOrMesa(tBiome.hasPrecipitation(), tBiome.getBaseTemperature()),
+				aRandom);
+	}
+
+	/**
+	 * The :203 inventory fill — the loot table the scoop harvest walks ({@link
+	 * GT6BumbleHiveBlock} playerDestroy): slot 0 the family comb (the :189-213
+	 * species-comb table over {@code familyOf(species)}, the count the
+	 * {@link #combCount} fold of the work gene), slot 1 the princess (count 1 — the
+	 * upstream {@code speciesID+1} type digit rides the princess item face now, the
+	 * code stays the species), slot 2 the drones (count = the offspring gene), princess
+	 * and drone each carrying the {@code gt.bumble} gene compound (the upstream
+	 * {@code setBumbleTag} pair; the drone takes a copy, the card-B offspring shape).
+	 */
+	public static void fillLoot(GT6BumbleHiveBlockEntity aHive, HiveKind aKind, CompoundTag aGenes) {
+		int tSpecies = aKind.species;
+		ItemStack tComb = GT6BumbliaryBlockEntity.productStack(GT6Bumbles.familyOf(tSpecies));
+		tComb.setCount(combCount(GT6BumbleGenes.getWorkForce(aGenes)));
+		aHive.inventory().setStackInSlot(0, tComb);
+		ItemStack tPrincess = GT6BumbliaryBlockEntity.beeStack(GT6Bumbles.TYPE_PRINCESS, tSpecies);
+		GT6BumbleGenes.setGenes(tPrincess, aGenes);
+		aHive.inventory().setStackInSlot(1, tPrincess);
+		ItemStack tDrone = GT6BumbliaryBlockEntity.beeStack(GT6Bumbles.TYPE_DRONE, tSpecies);
+		tDrone.setCount((int)GT6BumbleGenes.getOffspring(aGenes));
+		GT6BumbleGenes.setGenes(tDrone, aGenes.copy());
+		aHive.inventory().setStackInSlot(2, tDrone);
+	}
+
+	/** The {@code UT.Code.units(work, 10000, 10, T)} fold = ceil(work/1000) — the :203 comb count (work is gene-bound 1..10000, so 1..10). */
+	public static int combCount(long aWork) {
+		return (int)((aWork + 999) / 1000);
 	}
 
 	/** The mod-dimension /place guard (the GT6NetherClayFeature precedent). */
