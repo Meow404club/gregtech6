@@ -662,6 +662,15 @@ SESSION_GROUPS = (
     # the massfab-chain form restored in teardown). --group p32_qu_machines matches
     # the module stem.
     ("p32_qu_machines",),
+    # P33 W1 card (p33-circuits-parts): the circuits-part registration chain — a
+    # fresh z=284 band (six part blocks on even columns x384..394: the Ventilation
+    # Unit 18299 + the five Quadcore Processor Units 18200-04, the Logistics Core
+    # structure parts; registration landed main fc1feb8c2, the id686 containment
+    # pinned offline by GT6CircuitPartsRegistrationTest), north of the p29_w3_parts
+    # band z=292 with margin. Admission mirroring the p29 form (bbox-registered,
+    # no fresh_boot / mutates member — the rigs are band-local setblocks).
+    # --group p33_circuits_parts matches through the chain's embedded name prefix.
+    ("p33_circuits_parts",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
