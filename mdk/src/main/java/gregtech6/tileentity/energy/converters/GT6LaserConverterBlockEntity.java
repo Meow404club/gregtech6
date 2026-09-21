@@ -84,11 +84,6 @@ public class GT6LaserConverterBlockEntity extends GT6DynamoBlockEntity {
 	/** The offline test seam — the core's {@code setAdjacencyOverride} is package-private to its home package. */
 	private @Nullable IEnergyAdjacency mAdjacencyOverride = null;
 
-	/** BET factory — resolves the shared type through the registry at runtime (the laser defaults). */
-	public GT6LaserConverterBlockEntity(BlockPos aPos, BlockState aState) {
-		this(null, TD.Energy.EU, TD.Energy.LU, false, aPos, aState);
-	}
-
 	/** Full constructor — the type-capturing BET factories and the offline (test) entry point. */
 	public GT6LaserConverterBlockEntity(@Nullable BlockEntityType<?> aType, TagData aInType, TagData aOutType,
 			boolean aBackInputOnly, BlockPos aPos, BlockState aState) {
