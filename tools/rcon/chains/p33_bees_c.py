@@ -88,10 +88,18 @@ steps += [
     Step("fill 496 12 96 496 16 111 minecraft:stone"),
     Step("place feature gt6:bumble_hives 488 14 104", expect="Placed"),
     Step(f"clone {ECORE} {S2}"),                       # staging = the placed (filled-hive) state
-    Step(f"fill {ECORE} air replace gt6:bumble_hive", node_expects={
-        "1.20.1": "1 block(s)",                        # "Successfully filled 1 block(s)"
-        "1.21.1": "1 blocks",                          # the 21.1 fill.success rendering
-    }),
+    Step(f"fill {ECORE} air replace gt6:bumble_hive", expect="1 block(s)"),
+    # the fill.success rendering is "Successfully filled N block(s)" on BOTH legs
+    # (the 1.21.1 sweep log confirms — no node fork needed)
+    # the p32 rebuild form: the second place must run on the PRISTINE slab (the
+    # air-replace punched a hole at the placed cell — the first-passing-y scan
+    # would land one block higher and the compare would rightly fail)
+    Step("fill 479 8 95 496 20 112 air"),
+    Step("fill 480 12 96 495 16 111 minecraft:stone"),
+    Step("fill 479 12 95 496 16 95 minecraft:stone"),
+    Step("fill 479 12 112 496 16 112 minecraft:stone"),
+    Step("fill 479 12 96 479 16 111 minecraft:stone"),
+    Step("fill 496 12 96 496 16 111 minecraft:stone"),
     Step("place feature gt6:bumble_hives 488 14 104", expect="Placed"),
     # THE determinism face: the recomputed slab is bit-identical to the first
     # computation — the walk now includes the gene rolls feeding fillLoot
