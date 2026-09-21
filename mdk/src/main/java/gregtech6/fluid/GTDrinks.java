@@ -88,11 +88,10 @@ public final class GTDrinks {
 		if (!aPlayer.canEat(aStat.food() == 0)) return false;
 		if (aStat.food() > 0 || aStat.saturation() > 0) aPlayer.getFoodData().eat(aStat.food(), aStat.saturation());
 		for (DrinkEffect tEffect : aStat.effects()) {
-			//? if forge {
+			// one line both legs (the p33-food-tail un-fork): the record accessor name IS the
+			// leg seam (MobEffect vs Holder<MobEffect>), so the statement is leg-invariant —
+			// the identical-body //? fork here was dead weight
 			aPlayer.addEffect(new MobEffectInstance(tEffect.effect(), tEffect.duration(), tEffect.amplifier()));
-			//?} else {
-			/*aPlayer.addEffect(new MobEffectInstance(tEffect.effect(), tEffect.duration(), tEffect.amplifier()));
-			 *///?}
 		}
 		return true;
 	}
@@ -108,11 +107,14 @@ public final class GTDrinks {
 
 	// The KEPT rows: the 345-row upstream FoodStatDrink census over the PORTED fluid ids
 	// (b1 + the earlier tables + the p31 honey family) — keyed by the gt6 registry path,
-	// the binnie./dotted upstream names ride the comment. 214 rows (incl. the one
+	// the binnie./dotted upstream names ride the comment. 215 rows (incl. the one
 	// vanilla-carried "water" row — the barrel seam keys bare registry paths, so a
-	// water-filled barrel resolves minecraft:water → "water", the upstream :360 row).
+	// water-filled barrel resolves minecraft:water → "water", the upstream :360 row —
+	// and the p33-food-tail "mnwtr" fill, the census walk had skipped the :371
+	// potion.mineralwater row because its ported id is the dotted-name-abbreviated
+	// p16 aqua id).
 
-	/** The 214 kept-family rows, census order. */
+	/** The 215 kept-family rows, census order. */
 	public static final List<DrinkStat> KEPT_SPECS = List.of(
 
 		new DrinkStat("water", "Water? Lloyd!", 0, 0.0F, 40, 308, 0.50F), // upstream "water" (Loader_Fluids.java:360) — the VANILLA water the barrels hold; no gt6 fluid id, the map key rides the bare registry path
@@ -122,6 +124,7 @@ public final class GTDrinks {
 		new DrinkStat("waterdirty", "Dirty", 0, 0.0F, 10, 310, 0.50F, new DrinkEffect(MobEffects.HUNGER, 200, 1), new DrinkEffect(MobEffects.POISON, 200, 0)), // upstream "waterdirty"
 		new DrinkStat("seawater", "Salty", 0, 0.0F, 10, 308, 0.50F, new DrinkEffect(MobEffects.HUNGER, 400, 2)), // upstream "seawater"
 		new DrinkStat("soda", "Simply carbonated Water", 1, 0.1F, 50, 308, 0.50F), // upstream "soda"
+		new DrinkStat("mnwtr", "Stay hydrated!", 1, 0.1F, 40, 308, 0.50F, new DrinkEffect(MobEffects.REGENERATION, 100, 1)), // upstream "potion.mineralwater" (Loader_Fluids.java:371 — the FL.MnWtr fluid, ported as the p16 aqua id "mnwtr"; the p33-food-tail KEPT fill between the :370/:372 census neighbours)
 		new DrinkStat("mineralsoda", "Stay hydrated!", 1, 0.2F, 50, 308, 0.50F, new DrinkEffect(MobEffects.REGENERATION, 100, 1)), // upstream "mineralsoda"
 		new DrinkStat("water_geothermal", "Fresh from the Geothermal Hot Spring!", 1, 0.1F, 40, 313, 0.50F, new DrinkEffect(MobEffects.REGENERATION, 100, 1)), // upstream "watergeothermal"
 		new DrinkStat("juice_juice", "From a Random Fruit", 3, 0.4F, 20, 310, 0.50F, new DrinkEffect(MobEffects.HUNGER, 100, 1)), // upstream "juice" (Loader_Fluids.java:376) — the b1 "juice_juice" id
@@ -349,7 +352,8 @@ public final class GTDrinks {
 	);
 
 	// The POTION rows: the 94-row card-block brew run, Loader_Fluids.java:230-350 verbatim
-	// semantics (the gold-apple rows :607-610 are OUTSIDE the card block — p33-food-tail).
+	// semantics (the gold-apple rows :607-610 are OUTSIDE the card block — the p33-food-tail
+	// TAIL_SPECS below).
 
 	// 94 potion rows — Loader_Fluids.java:230-350 verbatim semantics (tip = the upstream tooltip verbatim).
 	public static final List<DrinkStat> POTION_SPECS = List.of(
@@ -449,10 +453,53 @@ public final class GTDrinks {
 		new DrinkStat("potion.invisibility.long.lingering", "lingering_potion", 0, 0.0F, 0, 310, 0.00F, 10, new DrinkEffect(MobEffects.INVISIBILITY, 2400, 0))
 	);
 
+	// The TAIL rows: the 10 card-block-outside drink fluids the p33-food-tail table newly
+	// registers — the golden-apple ENCHANTED_EFFECT brews (Loader_Fluids.java:607-610, the
+	// .setLuminosity(15) family) and the coffee-family drinks (:637-642), the census walk
+	// the b2 card could not carry (their fluids did not exist before the tail table).
+
+	/** The 10 tail rows (the p33-food-tail registrations), upstream line order. */
+	public static final List<DrinkStat> TAIL_SPECS = List.of(
+		new DrinkStat("potion.goldenapplejuice", "A golden Apple in liquid form", 4, 0.2F, 100, 310, 0.75F, 15, new DrinkEffect(MobEffects.ABSORPTION, 2400, 0), new DrinkEffect(MobEffects.REGENERATION, 100, 1)), // upstream "potion.goldenapplejuice" (Loader_Fluids.java:607 — field_76444_x = absorption)
+		new DrinkStat("potion.goldencider", "More Resistance, less Regeneration", 4, 0.2F, 100, 310, 0.75F, 15, new DrinkEffect(MobEffects.ABSORPTION, 2400, 1)), // upstream "potion.goldencider" (:608)
+		new DrinkStat("potion.idunsapplejuice", "So you got the Idea of using Notch Apples for a drink?", 4, 0.2F, 100, 310, 0.75F, 15, new DrinkEffect(MobEffects.REGENERATION, 600, 4), new DrinkEffect(MobEffects.ABSORPTION, 2400, 0), new DrinkEffect(MobEffects.DAMAGE_RESISTANCE, 6000, 0), new DrinkEffect(MobEffects.FIRE_RESISTANCE, 6000, 0)), // upstream "potion.idunsapplejuice" (:609)
+		new DrinkStat("potion.notchesbrew", "This is just overpowered", 4, 0.2F, 100, 310, 0.75F, 15, new DrinkEffect(MobEffects.REGENERATION, 700, 4), new DrinkEffect(MobEffects.ABSORPTION, 3000, 1), new DrinkEffect(MobEffects.DAMAGE_RESISTANCE, 7000, 1), new DrinkEffect(MobEffects.FIRE_RESISTANCE, 7000, 0)), // upstream "potion.notchesbrew" (:610)
+		new DrinkStat("potion.darkcoffee", "Coffee, dark, without anything else", 2, 0.2F, 5, 312, 0.50F), // upstream "potion.darkcoffee" (:637 — the C+39 fold, the tea-row shape)
+		new DrinkStat("potion.darkcafeaulait", "Keeping you awake the whole night", 2, 0.2F, 5, 312, 0.50F), // upstream "potion.darkcafeaulait" (:638)
+		new DrinkStat("potion.coffee", "Just the regular morning Coffee", 4, 0.4F, 5, 312, 0.50F), // upstream "potion.coffee" (:639)
+		new DrinkStat("potion.cafeaulait", "Sweet Coffee", 4, 0.4F, 5, 312, 0.50F), // upstream "potion.cafeaulait" (:640)
+		new DrinkStat("potion.laitaucafe", "You want Coffee to your Sugar?", 4, 0.4F, 5, 312, 0.50F), // upstream "potion.laitaucafe" (:641)
+		new DrinkStat("potion.darkchocolatemilk", "A bit bitter, better add a bit Sugar", 4, 0.4F, 10, 310, 0.50F) // upstream "potion.darkchocolatemilk" (:642 — the C+37 fold, the chocolatemilk :643 sibling)
+	);
+
+	// The KEPT fills (task p33-food-tail, the reverse-census closure): the 10 potion.-prefixed
+	// upstream FoodStatDrink rows whose fluids ALREADY rode the b1/p31 registrations — the
+	// b2 census walk stripped only the binnie. prefix, so these slipped the KEPT face exactly
+	// like the :371 mineralwater row. Keyed by the ported b1/p31 ids; the GT-only potion
+	// channels (ID_STICKY/FLAMMABLE/DEHYDRATION/INSANITY/SLIPPERY) have no modern face, the
+	// vanilla MobEffects ride verbatim. Carrier temps stay the b1 honest-default 300 K rows
+	// (the declared carrier/stat split); the C+X folds here are the drink-side face.
+
+	/** The 10 kept-fill rows, upstream line order (the fluid carriers predate this card). */
+	public static final List<DrinkStat> KEPT_FILLS = List.of(
+		new DrinkStat("sake", "Rice Wine", 4, 0.4F, 10, 310, 0.50F, new DrinkEffect(MobEffects.DAMAGE_BOOST, 300, 1)), // upstream "potion.sake" (Loader_Fluids.java:486 — the b1 "sake" id)
+		new DrinkStat("dragonblood", "FUS RO DAH!", 4, 0.4F, 5, 313, 0.50F, new DrinkEffect(MobEffects.DAMAGE_BOOST, 300, 2)), // upstream "potion.dragonblood" (:496, the C+40 fold — the ID_INSANITY channel has no modern face)
+		new DrinkStat("leninade", "Let the Communism flow through you!", 2, 0.2F, 5, 308, 0.50F, new DrinkEffect(MobEffects.DAMAGE_BOOST, 500, 2)), // upstream "potion.leninade" (:552, the C+35 fold)
+		new DrinkStat("alcopops", "Don't let your Children drink this junk!", 2, 0.2F, 10, 303, 0.50F, new DrinkEffect(MobEffects.DIG_SPEED, 900, 1)), // upstream "potion.alcopops" (:553, the C+30 fold)
+		new DrinkStat("hotsauce", "Very Spicy, I guess?", 2, 0.1F, 10, 317, 0.50F, new DrinkEffect(MobEffects.CONFUSION, 2000, 0), new DrinkEffect(MobEffects.FIRE_RESISTANCE, 2000, 0)), // upstream "potion.hotsauce" (:566, the C+44 fold)
+		new DrinkStat("diabolosauce", "As if the Devil made this Sauce", 2, 0.1F, 10, 319, 0.50F, new DrinkEffect(MobEffects.CONFUSION, 3000, 1), new DrinkEffect(MobEffects.FIRE_RESISTANCE, 3000, 0)), // upstream "potion.diabolosauce" (:567, the C+46 fold)
+		new DrinkStat("diablosauce", "Diablo always comes back!", 2, 0.1F, 10, 321, 0.50F, new DrinkEffect(MobEffects.CONFUSION, 4000, 1), new DrinkEffect(MobEffects.FIRE_RESISTANCE, 4000, 0)), // upstream "potion.diablosauce" (:568, the C+48 fold)
+		new DrinkStat("diablosauce_strong", "[Missing No]", 2, 0.1F, 10, 323, 0.50F, 15, new DrinkEffect(MobEffects.CONFUSION, 9999, 2), new DrinkEffect(MobEffects.FIRE_RESISTANCE, 9999, 9)), // upstream "potion.diablosauce.strong" (:569 — the .setLuminosity(15) row, the C+50 fold)
+		new DrinkStat("ambrosia", "It's the Bee Movie, but everytime someone says Bee, it will...", 2, 0.2F, 20, 310, 0.75F, new DrinkEffect(MobEffects.REGENERATION, 150, 0)), // upstream "potion.ambrosia" (:576 — the p31 honey-family id; the ID_STICKY channel has no modern face)
+		new DrinkStat("dressing", "For making yourself a Salad", 1, 0.5F, 5, 309, 0.25F) // upstream "potion.dressing" (:591, the C+36 fold — the ID_SLIPPERY channel has no modern face)
+	);
+
 	static {
 		for (DrinkStat tStat : KEPT_SPECS) REGISTER.put(tStat.fluidId(), tStat);
+		for (DrinkStat tStat : KEPT_FILLS) REGISTER.put(tStat.fluidId(), tStat);
 		for (DrinkStat tStat : RESIDUAL_SPECS) REGISTER.put(tStat.fluidId(), tStat);
 		for (DrinkStat tStat : POTION_SPECS) REGISTER.put(tStat.fluidId(), tStat);
+		for (DrinkStat tStat : TAIL_SPECS) REGISTER.put(tStat.fluidId(), tStat);
 	}
 
 

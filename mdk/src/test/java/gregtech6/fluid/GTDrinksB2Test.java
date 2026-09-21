@@ -101,12 +101,14 @@ public class GTDrinksB2Test extends GTOfflineTestBase {
 	 */
 	@Test
 	public void drinkStatMapClosesOntoRegisteredFluids() {
-		assertEquals(214, GTDrinks.KEPT_SPECS.size(), "the kept census: 210 ported-fluid rows + the juice_juice/lemonade/cavejohnsonsgrenadejuice fillers + the vanilla water row");
+		assertEquals(215, GTDrinks.KEPT_SPECS.size(), "the kept census: 210 ported-fluid rows + the juice_juice/lemonade/cavejohnsonsgrenadejuice fillers + the vanilla water row + the p33-food-tail mnwtr fill");
+		assertEquals(10, GTDrinks.KEPT_FILLS.size(), "the p33-food-tail reverse-census fills — the potion.-prefixed rows over the existing b1/p31 ids");
 		assertEquals(9, GTDrinks.RESIDUAL_SPECS.size(), "the b2 registrations");
 		assertEquals(94, GTDrinks.POTION_SPECS.size(), "the Loader_Fluids.java:230-350 card block (64 main :230-294 + 30 lingering :319-348)");
-		assertEquals(317, GTDrinks.REGISTER.size(), "214 kept + 9 residual + 94 potion — all keys unique (the LinkedHashMap.put mirror)");
+		assertEquals(10, GTDrinks.TAIL_SPECS.size(), "the p33-food-tail registrations (:607-610 the golden-apple brews + :637-642 the coffee family)");
+		assertEquals(338, GTDrinks.REGISTER.size(), "215 kept + 10 kept-fills + 9 residual + 94 potion + 10 tail — all keys unique (the LinkedHashMap.put mirror)");
 		java.util.Set<String> tFluidIds = new java.util.HashSet<>();
-		for (List<GTFluids.AquaFluid> tWalk : List.of(GTFluids.aquaFluids(), GTFluids.simpleLiquids(), GTFluids.foodFluids(), GTFluids.foodB1Fluids(), GTFluids.foodB2Fluids())) {
+		for (List<GTFluids.AquaFluid> tWalk : List.of(GTFluids.aquaFluids(), GTFluids.simpleLiquids(), GTFluids.foodFluids(), GTFluids.foodB1Fluids(), GTFluids.foodB2Fluids(), GTFluids.foodTailFluids())) {
 			for (GTFluids.AquaFluid tFamily : tWalk) tFluidIds.add(tFamily.spec.name());
 		}
 		// the chemical + engine families carry keyed rows too (honey/ice/lubricant/distilled_water/...)
@@ -126,6 +128,9 @@ public class GTDrinksB2Test extends GTOfflineTestBase {
 		assertNotNull(GTDrinks.stat("juice_juice"));
 		assertNotNull(GTDrinks.stat("lemonade"));
 		assertNotNull(GTDrinks.stat("cavejohnsonsgrenadejuice"));
+		assertNotNull(GTDrinks.stat("mnwtr"), "the p33-food-tail KEPT fill — upstream :371 potion.mineralwater over the p16 aqua id");
+		assertNotNull(GTDrinks.stat("potion.coffee"), "the tail coffee family is keyed");
+		assertNotNull(GTDrinks.stat("potion.notchesbrew"), "the tail golden-apple family is keyed");
 		assertNull(GTDrinks.stat(null));
 		assertNull(GTDrinks.stat("not_a_fluid"));
 	}
