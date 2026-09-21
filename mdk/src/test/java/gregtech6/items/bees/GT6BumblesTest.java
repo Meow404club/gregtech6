@@ -218,7 +218,9 @@ class GT6BumblesTest {
 		// the lazy roll face (:97-102): the first use rolls AND persists
 		CompoundTag tFirst = GT6BumbleGenes.getOrCreateGenes(tStack, new Random(3));
 		assertNotNull(GT6BumbleGenes.readGenes(tStack), "the roll persisted");
-		assertSame(tFirst, GT6BumbleGenes.readGenes(tStack), "the second read returns the stored compound");
+		// content equality (the 21.1 CUSTOM_DATA envelope copies the tag on every write,
+		// so the second read returns an equal-content compound, not the same reference)
+		assertEquals(tFirst, GT6BumbleGenes.readGenes(tStack), "the second read returns the stored genes");
 		// the explicit set face (:104-107) reads back through the same seam
 		ItemStack tOther = beeStack();
 		CompoundTag tHand = new CompoundTag();
