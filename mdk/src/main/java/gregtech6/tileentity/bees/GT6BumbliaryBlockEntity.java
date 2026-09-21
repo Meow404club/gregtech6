@@ -179,11 +179,14 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 		return aAdvanced ? ADV_DEAD : SLOTS_DEAD;
 	}
 
-	/** The insert rule (:357-364): the ROYAL slot takes princesses, the DRONE slots take drones, nothing else. */
+	/** The insert rule (:357-364): the ROYAL slot takes princesses, the main DRONE slot and
+	 *  the DRONE slot group take drones (the upstream :333-336 maps — 22/12 is the main slot,
+	 *  the group is the seven side slots), nothing else. */
 	public boolean acceptsInSlot(int aSlot, ItemStack aStack) {
 		if (!(aStack.getItem() instanceof GT6BumbleItem tBee)) return false;
 		byte tFace = (byte)(tBee.typeOf() % 5);
 		if (aSlot == slotRoyal()) return tFace == GT6Bumbles.TYPE_PRINCESS;
+		if (aSlot == slotDrone()) return tFace == GT6Bumbles.TYPE_DRONE;
 		for (int tSlot : dronesOf(mAdvanced)) if (tSlot == aSlot) return tFace == GT6Bumbles.TYPE_DRONE;
 		return false;
 	}
