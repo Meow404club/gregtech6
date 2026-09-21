@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import net.minecraft.resources.ResourceLocation;
@@ -88,6 +89,27 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("boxinator"), "one boxinator smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("unboxinator"), "one unboxinator smoke row");
 		assertEquals(7, GT6RecipeMapJsonLoader.pouredCount("fermenter"), "the fermenter file — 1 smoke row + the 6 p33-food-fluids-b1 core rows");
+
+		// the Ananas row content pin (review fix): the OFFLINE fixture collapses every
+		// fluid id to Fluids.WATER (FLUID_FIXTURE above), so the poured Recipe objects
+		// cannot carry fluid identity — the pin therefore reads the COMMITTED json
+		// resource verbatim. Upstream Loader_Recipes_Food.java:608 ferments Juice_Ananas
+		// ("binnie.juicepineapple" — the GTFluids juicepineapple carrier) into
+		// Cider_Ananas ("binnie.winepineapple") — NOT winepineapple into itself (the
+		// input-id transcription slip this pin guards against).
+		JsonObject tAnanasRow = null;
+		for (JsonElement tElement : resource("fermenter.json").getAsJsonObject().getAsJsonArray("recipes")) {
+			JsonObject tRow = tElement.getAsJsonObject();
+			if (tRow.has("fluidInputs") && tRow.getAsJsonArray("fluidInputs").size() == 1
+				&& "gt6:juicepineapple".equals(tRow.getAsJsonArray("fluidInputs").get(0).getAsJsonObject().get("fluid").getAsString())) {
+				tAnanasRow = tRow;
+			}
+		}
+		assertNotNull(tAnanasRow, "the fermenter file must carry the Ananas fermentation row");
+		assertEquals(50, tAnanasRow.getAsJsonArray("fluidInputs").get(0).getAsJsonObject().get("amount").getAsLong(), "the Ananas input amount");
+		assertEquals(1, tAnanasRow.getAsJsonArray("fluidOutputs").size(), "the Ananas row is a single-fluid-output row");
+		assertEquals("gt6:winepineapple", tAnanasRow.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("fluid").getAsString(), "the Ananas output id — Cider_Ananas (Loader_Recipes_Food.java:608)");
+		assertEquals(25, tAnanasRow.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("amount").getAsLong(), "the Ananas output amount");
 
 		// the rows are LIVE in the maps (the findRecipe stock grew by one each)
 		assertEquals(1, GT6RecipeMaps.LOOM.mRecipeList.size(), "the LOOM map held ONLY the smoke row (the DECLARED-empty card-A state)");
