@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -79,8 +80,15 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	/** The baked fallback (the shared placeholder cube) — static-property delegate + particle ancestry. */
 	private final BakedModel mFallbackModel;
 	private final Params mParams;
-	/** Sprite resolver — runtime: the block atlas (Minecraft.java:2386); tests: a stub. */
-	private final Function<ResourceLocation, TextureAtlasSprite> mSpriteLookup;
+	/**
+	 * Sprite resolver — task p33-ore-overlay-impl 21.1 seam: MATERIAL-keyed on both legs.
+	 * Runtime 1.20.1 Forge: the block atlas over the material's atlas location ({@link
+	 * #defaultSpriteLookup()}); runtime 1.21.1 NeoForge: the bake-time {@code
+	 * ModelEvent.ModifyBakingResult#getTextureGetter()} handed through the listener (the
+	 * event-owned lookup — the research.p32-r-ore-overlay-render delta-4 — no static
+	 * Minecraft dereference on the bake worker threads); tests: a stub.
+	 */
+	private final Function<Material, TextureAtlasSprite> mSpriteLookup;
 	/** The 12 quads (6 base + 6 overlay), baked once per instance. */
 	private final List<BakedQuad> mQuads;
 
@@ -89,16 +97,21 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	}
 
 	public GTOreBakedModel(BakedModel aFallbackModel, Params aParams,
-			Function<ResourceLocation, TextureAtlasSprite> aSpriteLookup) {
+			Function<Material, TextureAtlasSprite> aSpriteLookup) {
 		mFallbackModel = aFallbackModel;
 		mParams = aParams;
 		mSpriteLookup = aSpriteLookup;
 		mQuads = bakeQuads();
 	}
 
-	private static Function<ResourceLocation, TextureAtlasSprite> defaultSpriteLookup() {
-		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(
-				net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
+	/** The material of a sprite id: the blocks atlas + the id (the 1.20.1 lookup's payload split out). */
+	public static Material materialOf(ResourceLocation aSpriteId) {
+		return new Material(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS, aSpriteId);
+	}
+
+	private static Function<Material, TextureAtlasSprite> defaultSpriteLookup() {
+		return aMaterial -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(
+				aMaterial.atlasLocation()).apply(aMaterial.texture());
 	}
 
 	public Params params() {
@@ -130,8 +143,8 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 
 	/** The full 0..1 cube and its epsilon-inflated overlay twin (the planShapesFiber twin form). */
 	private List<BakedQuad> bakeQuads() {
-		TextureAtlasSprite tBase = mSpriteLookup.apply(mParams.baseSprite());
-		TextureAtlasSprite tOverlay = mSpriteLookup.apply(mParams.overlaySprite());
+		TextureAtlasSprite tBase = mSpriteLookup.apply(materialOf(mParams.baseSprite()));
+		TextureAtlasSprite tOverlay = mSpriteLookup.apply(materialOf(mParams.overlaySprite()));
 		List<BakedQuad> rQuads = new ArrayList<>(12);
 		if (tBase != null) {
 			double[] tCore = {0, 0, 0, 1, 1, 1};
@@ -276,7 +289,7 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 
 	@Override
 	public TextureAtlasSprite getParticleIcon() {
-		TextureAtlasSprite tSprite = mSpriteLookup.apply(mParams.baseSprite());
+		TextureAtlasSprite tSprite = mSpriteLookup.apply(materialOf(mParams.baseSprite()));
 		return tSprite != null ? tSprite : mFallbackModel.getParticleIcon();
 	}
 

@@ -2,6 +2,7 @@ package gregtech6.client.ore;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -70,8 +71,10 @@ public final class GTOreClientListener {
 	public static void onModifyBakingResult(ModelEvent.ModifyBakingResult aEvent) {
 		if (!sBuilt) buildParams(); // ordering guard — client setup always ran first; belt and suspenders
 		Map<String, GTOreBakedModel> tModels = new ConcurrentHashMap<>();
-		// the key read through its toString ("ns:path[#variant]" on BOTH legs — the
-		// GTWireClientListener parse), path = the segment before the optional '#' separator
+		//? if forge {
+		// 1.20.1: the map key is a ResourceLocation, read through its toString
+		// ("ns:path[#variant]" — the GTWireClientListener parse), path = the segment
+		// before the optional '#' separator; sprites ride the static block atlas.
 		for (var tEntry : aEvent.getModels().entrySet()) {
 			String tKeyString = tEntry.getKey().toString();
 			if (!tKeyString.startsWith(GTRenderModelListener.MOD_ID + ":")) continue;
@@ -82,6 +85,28 @@ public final class GTOreClientListener {
 			tEntry.setValue(tModels.computeIfAbsent(tPath,
 					tP -> new GTOreBakedModel(tEntry.getValue(), tParams)));
 		}
+		//? } else {
+		/*
+		// 1.21.1 (the research.p32-r-ore-overlay-render deltas 3+4): the key is the typed
+		// ModelResourceLocation record (id, variant) — the namespace/path ride the id()
+		// ResourceLocation (the record has NO getNamespace/getPath of its own — compile-probe
+		// 2026-09-21; getVariant() exists, unused here), no toString split; sprites ride the
+		// event's bake-time getTextureGetter() (worker-thread-safe, no static Minecraft
+		// dereference). ModelEvent.java:48-84 + ModelResourceLocation record, the 1.21.1 sources.
+		Function<net.minecraft.client.resources.model.Material,
+				net.minecraft.client.renderer.texture.TextureAtlasSprite> tGetter = aEvent.getTextureGetter();
+		for (var tEntry : aEvent.getModels().entrySet()) {
+			net.minecraft.client.resources.model.ModelResourceLocation tKey = tEntry.getKey();
+			if (!tKey.id().getNamespace().equals(GTRenderModelListener.MOD_ID)) continue;
+			String tPath = tKey.id().getPath(); // the params table is keyed by the registry path, variant-free
+			GTOreBakedModel.Params tParams = PARAMS.get(tPath);
+			if (tParams == null) continue;
+			// one model instance per block — per-state and item keys share the placeholder ancestry
+			tEntry.setValue(tModels.computeIfAbsent(tPath,
+					tP -> new GTOreBakedModel(tEntry.getValue(), tParams, tGetter)));
+		}
+		*/
+		//? }
 	}
 
 	/** The world-side tint half: index 0 over an ore block = {@code fRGBa[prefix.mState]} (PrefixBlock.java:279-282). */
