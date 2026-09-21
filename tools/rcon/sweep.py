@@ -681,7 +681,6 @@ SESSION_GROUPS = (
     # item replaces; the /gt6cover /gt6logistics arms are pure command channels).
     # --group p33_logistics_covers matches the module stem.
     ("p33_logistics_covers",),
->>>>>>> 13c0c12d5 (feat(rcon): p33 logistics covers live acceptance chain + sweep group)
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

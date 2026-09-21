@@ -169,8 +169,8 @@ CHAIN = Chain(
              allow_failed=True, label="the stick-absence probe: when this ALLOWED arm MISSES (no stick anywhere in the sink NBT) the protected-set exclusion holds — the judged form of the negative assert"),
         Step("data get block %s Items[0].id" % F(SRC_CHEST), expect="minecraft:stick",
              label="the stick NEVER left the source (the protected item, live)"),
-        Step("data get block %s Items[0].Count" % F(SRC_CHEST), expect="16",
-             label="the whole stick stack (16) stayed whole"),
+        Step("data get block %s Items[0]" % F(SRC_CHEST), expect="16",
+             label="the whole stick stack (16) stayed whole — the whole-slot form (21.1 lowercases the ItemStack keys, the per-key .Count path does not resolve there)"),
     ],
 )
 
