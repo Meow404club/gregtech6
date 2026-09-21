@@ -225,7 +225,15 @@ def cmd_world_copy(node: str) -> int:
         pd.mkdir(exist_ok=True)
         (pd / "380df991-f603-344c-a090-369bad2a924a.dat").write_bytes(salvaged)
     print(f"[p33-client] world copied: {src} -> {dest}")
-    _patch_camera(dest)
+    if any((dest / "playerdata").glob("*.dat")):
+        _patch_camera(dest)
+    else:
+        # fresh worktree, no salvaged dat: the chain's `setworldspawn 387 16 516` +
+        # `spawnRadius 0` already ARE the camera pin — a brand-new player spawns at
+        # the pin facing the south wall at yaw 0/pitch 0 (this function's own doc),
+        # which frames the wall identically. No playerdata, nothing to patch.
+        print("[p33-client] no playerdata in the copy — the world-spawn pin stands "
+              "(yaw 0/pitch 0 frames the wall)")
     return 0
 
 
