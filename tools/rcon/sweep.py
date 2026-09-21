@@ -689,6 +689,15 @@ SESSION_GROUPS = (
     # 32 new recipe rows and the ACT live-craft is the RecipeManager load proof).
     # --group p33_circuits_craft matches through the chain's embedded name prefix.
     ("p33_circuits_craft",),
+    # P33 card (p33-cracker-machines): the cracker verification chain — the Steam +
+    # Catalytic Cracker live positive runs on the TRUE rows (steam+propane -> the
+    # four-gas ladder / H2+ethanol+Pt -> ethylene+propylene, the p29_w2 chains'
+    # proven forms) over a fresh z=330 band (x/z-disjoint from the p29_w4 chemicals
+    # band z=320), plus the catalytic Pt-dust feed face (the p29 gap closed) and the
+    # crafting-pattern smoke (the 8 recipe JSON ride runData, pinned by
+    # GT6CrackerCraftingJsonTest). --group p33_cracker_machines matches through the
+    # chain's embedded name prefix.
+    ("p33_cracker_machines",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
