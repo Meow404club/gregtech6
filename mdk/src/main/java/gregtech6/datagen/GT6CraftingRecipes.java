@@ -273,6 +273,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (DieselEngineRecipeRow tRow : dieselEngineRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		for (CrackerRecipeRow tRow : crackerRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
 		pickaxeBuilder().save(aConsumer, PICKAXE_ID);
 		pickaxeGemBuilder().save(aConsumer, PICKAXE_GEM_ID);
@@ -384,6 +387,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aOutput, batteryBoxRecipeId(tRow.row()));
 		}
 		for (DieselEngineRecipeRow tRow : dieselEngineRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		for (CrackerRecipeRow tRow : crackerRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
@@ -943,6 +949,79 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			case "iridium" -> MT.Ir;
 			default -> throw new IllegalStateException("no loader material for diesel slug " + aSlug);
 		};
+	}
+
+	// -------------------------------------------------------------------------
+	// task p33-cracker-machines — the two Cracker crafting families (Loader
+	// MultiTileEntities.java:1570-1579 grids VERBATIM, the 'IwI','PMP','ICI'
+	// SteamCracker / 'IPI','ZMZ','ICI' CatalyticCracker three rows per tier):
+	//   'I' = plateDouble/plateTriple/plateQuadruple/plateQuintuple Invar (per
+	//   tier, the upstream plateD/T/Q/Quint column) — rides the
+	//   gt6material-items face directly (multi-plates carry items, only the
+	//   plateDouble tag family exists, the transformer 'I' column precedent);
+	//   'C' = the same plate ladder over ANY.Cu → Copper (the upstream ANY.Cu
+	//   lowest-price fold, the ANY-material single-representative precedent);
+	//   'Z' = OP.dust Zeolite → gt6:dust_zeolite (the port item exists);
+	//   'w' = the wrench (CR.java tool letter, the #gt6:tools/wrench tag);
+	//   'M' = casingMachineDouble.dat(aMat) → casingSmall (the transformer fold —
+	//   no casingMachineDouble item row in the port);
+	//   'P' = pipeQuadruple/pipeMedium.dat(aMat) → gt6:wood_fluid_pipe_medium
+	//   (the DECLARED FOLD: the pipe prefixes are off the port item path — the
+	//   distill_part/sluice_part 'P' CUT precedent — but this family keeps ONE
+	//   representative pipe item instead of cutting the row; pipeQuadruple
+	//   semantic = 4-pipe stack, the borrowed single item carries count 1 per
+	//   cell and the pipeMedium steam rung is exact — the quadruple rung's
+	//   quantity differential is NOT expressible without a count override, kept
+	//   1:1 with the upstream per-cell count of 1).
+	// One row per tier (T1-T4, the Heat_T ladder), result = the machine item,
+	// ids ride the block path (the diesel result-path convention).
+	// -------------------------------------------------------------------------
+
+	/** One staged cracker row: the shared builder + the id its save face ids from (the DieselEngineRecipeRow shape). */
+	private record CrackerRecipeRow(ShapedRecipeBuilder builder, ResourceLocation id) {}
+
+	/** The tier plate ladder: T1 double, T2 triple, T3 quadruple, T4 quintuple (the upstream plateD/T/Q/Quint column). */
+	private static gregapi.oredict.OreDictPrefix crackerPlate(int aTier) {
+		return switch (aTier) {
+			case 0 -> gregapi.data.OP.plateDouble;
+			case 1 -> gregapi.data.OP.plateTriple;
+			case 2 -> gregapi.data.OP.plateQuadruple;
+			default -> gregapi.data.OP.plateQuintuple;
+		};
+	}
+
+	private java.util.List<CrackerRecipeRow> crackerRecipeBuilders() {
+		gregapi.oredict.OreDictMaterial[] tMats = {MT.Steel, MT.Invar, MT.Ti, MT.TungstenSteel};
+		String[] tPaths = {"steamcracker", "steamcracker_t2", "steamcracker_t3", "steamcracker_t4"};
+		String[] tCatPaths = {"catalyticcracker", "catalyticcracker_t2", "catalyticcracker_t3", "catalyticcracker_t4"};
+		java.util.List<CrackerRecipeRow> rRows = new java.util.ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			gregapi.oredict.OreDictPrefix tPlate = crackerPlate(i);
+			gregapi.oredict.OreDictMaterial tMat = tMats[i];
+			// the Steam Cracker :1576-1579 — "IwI","PMP","ICI"
+			rRows.add(new CrackerRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
+					gregtech6.registry.GTMachines.STEAM_CRACKER_ITEMS_BY_PATH.get(tPaths[i]).get())
+					.pattern("IwI").pattern("PMP").pattern("ICI")
+					.define('I', gregtech6.registry.GTMaterialItems.get(tPlate, MT.Invar).get())
+					.define('w', GT6ItemTags.TOOLS_WRENCH)
+					.define('P', gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get())
+					.define('M', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.casingSmall, tMat).get())
+					.define('C', gregtech6.registry.GTMaterialItems.get(tPlate, MT.Copper).get())
+					.unlockedBy("has_invar_plate", has(gregtech6.registry.GTMaterialItems.get(tPlate, MT.Invar).get())),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tPaths[i])));
+			// the Catalytic Cracker :1570-1573 — "IPI","ZMZ","ICI"
+			rRows.add(new CrackerRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
+					gregtech6.registry.GTMachines.CATALYTIC_CRACKER_ITEMS_BY_PATH.get(tCatPaths[i]).get())
+					.pattern("IPI").pattern("ZMZ").pattern("ICI")
+					.define('I', gregtech6.registry.GTMaterialItems.get(tPlate, MT.Invar).get())
+					.define('P', gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get())
+					.define('Z', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.OREMATS.Zeolite).get())
+					.define('M', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.casingSmall, tMat).get())
+					.define('C', gregtech6.registry.GTMaterialItems.get(tPlate, MT.Copper).get())
+					.unlockedBy("has_invar_plate", has(gregtech6.registry.GTMaterialItems.get(tPlate, MT.Invar).get())),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tCatPaths[i])));
+		}
+		return rRows;
 	}
 
 	private ShapedRecipeBuilder foodCanEmptyBuilder() {

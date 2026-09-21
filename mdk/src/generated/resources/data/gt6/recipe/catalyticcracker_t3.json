@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:plate_quadruple_copper"
+    },
+    "I": {
+      "item": "gt6:plate_quadruple_invar"
+    },
+    "M": {
+      "item": "gt6:casing_small_titanium"
+    },
+    "P": {
+      "item": "gt6:wood_fluid_pipe_medium"
+    },
+    "Z": {
+      "item": "gt6:dust_zeolite"
+    }
+  },
+  "pattern": [
+    "IPI",
+    "ZMZ",
+    "ICI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:catalyticcracker_t3"
+  }
+}

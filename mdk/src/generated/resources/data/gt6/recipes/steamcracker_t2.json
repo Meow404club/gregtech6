@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:plate_triple_copper"
+    },
+    "I": {
+      "item": "gt6:plate_triple_invar"
+    },
+    "M": {
+      "item": "gt6:casing_small_invar"
+    },
+    "P": {
+      "item": "gt6:wood_fluid_pipe_medium"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "IwI",
+    "PMP",
+    "ICI"
+  ],
+  "result": {
+    "item": "gt6:steamcracker_t2"
+  },
+  "show_notification": true
+}

@@ -64,11 +64,16 @@ steps = [
     Step(f"gt6machine steamcracker fluid draw south 1000 {F(SC1)}",
          expect="drawn 19/1000 L of gt6:propylene (ACCEPTED)"),
 
-    phase("B: the catalytic gate — the charcoal feed does NOT match the Pt-dust catalyst row"),
+    phase("B: the catalytic gate — the feed literal is now the TRUE row's Pt dust (p33)"),
     Step(f"gt6machine catalyticcracker place {F(CC1)}", expect="GT6 catalyticcracker placed at 456, 65, 320"),
+    # task p33-cracker-machines closed the p29 gap: the catalytic feed literal is now the
+    # TRUE row's item input gt6:dust_platinum (Loader_Recipes_Chem.java:373-376). The row
+    # still cannot complete here (this arm pins the feed face, not the HU run — the
+    # p29_w2_catalytic_cracker chain owns the positive completion run), so progress=0/0
+    # stays the verdict face.
     Step(f"gt6machine catalyticcracker input 1 {F(CC1)}",
-         expect="1x charcoal into slot 0",
-         node_expects={"1.21.1": "1x minecraft:charcoal into slot 0"}),
+         expect="1x dust_platinum into slot 0",
+         node_expects={"1.21.1": "1x gt6:dust_platinum into slot 0"}),
     Step(f"gt6machine catalyticcracker fluid fill up gt6:hydrogen 100 {F(CC1)}",
          expect="filled 100/100 L of gt6:hydrogen (ACCEPTED)"),
     Step(f"gt6machine catalyticcracker fluid fill up gt6:ethanol 100 {F(CC1)}",
