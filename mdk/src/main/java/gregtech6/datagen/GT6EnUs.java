@@ -100,6 +100,7 @@ public class GT6EnUs extends LanguageProvider {
         addHotFamilyFluids(); // task p29-w4-hot-lube — table-tail append (hot + closure + lubricant)
         addQuFluids(); // task p31-qu-a-foundation — table-tail append (the QU matter/ender trio)
         addBeeFamily(); // task p31-bees-lv1 — table-tail append (honey + bee-row fluids + the 20 combs + the tab)
+        addBumbleFamily(); // task p33-bees-lv3-a-items — table-tail append (the 80 species names + the 8 face formats)
         addCFoamBlocks(); // task p26-c-foam-block-family — table-tail append
         addElectricWires();
         addMachines();
@@ -427,6 +428,24 @@ public class GT6EnUs extends LanguageProvider {
         }
         for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.BEE_ROW_FLUID_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
+
+    /**
+     * The bumblebee family (task p33-bees-lv3-a-items): the 80 species names
+     * ({@code gt6.row.bumble.<code>}, the upstream MultiItemBumbles.java:70-178 display
+     * faces walked over the GT6Bumbles.SPECIES table so the id/name pairs cannot drift)
+     * and the 8 name-format rows ({@code gt6.row.bumble.name.<face>}) — en keeps the bare
+     * species name (the upstream type digit never showed in the display name), the zh
+     * word order rides the format. zh values ride the reference table's direct band (the
+     * dump's {@code gt.multiitem.bumblebee.*} faces verbatim; the GT6ZhCn mirror walk).
+     */
+    private void addBumbleFamily() {
+        for (gregtech6.items.bees.GT6Bumbles.SpeciesRow tRow : gregtech6.items.bees.GT6Bumbles.SPECIES) {
+            add(tRow.langKey(), tRow.display());
+        }
+        for (gregtech6.items.bees.GT6Bumbles.FaceRow tFace : gregtech6.items.bees.GT6Bumbles.FACES) {
+            add(tFace.formatKey(), "%1$s");
         }
     }
 
