@@ -29,10 +29,11 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * harvest ever reaches the drop (the wrong-tool break drops nothing, the
  * TOOL_scoop aHive semantics, Loader_MultiTileEntities.java:111).
  *
- * <p>Lv2 content rule: worldgen fills slot 0 with the family comb — the princess/drone
- * slots stay EMPTY until the bee-item domain lands (Lv3, the GT6_Hives_Deferral slice
- * line); the upstream {@code bumbleProductStack} species-comb table and the
- * {@code gt.bumble} gene tags pool there.
+ * <p>Loot content (the Lv2 deferral closed in p33-bees-lv3-c-hive-loot): worldgen fills
+ * slots 0-2 ({@link gregtech6.worldgen.GT6HiveFeature#fillLoot}, the :203 placeHive
+ * shape) — slot 0 the family comb (the {@code bumbleProductStack} species table), slot 1
+ * the princess, slot 2 the drones (the offspring gene the count), the royals carrying
+ * the {@code gt.bumble} wild gene roll; the scoop harvest walks them all out.
  *
  * <p>Upstream faces folded in: the thermometer tooltip/click face pools with the
  * sensor domain (no thermometer item in the port yet — the tooltip row is the only
