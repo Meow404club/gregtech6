@@ -268,10 +268,14 @@ public final class GTMachineCommand {
 		.then(machine("steamcracker_t2", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t2"), () -> net.minecraft.world.item.Items.COAL))
 		.then(machine("steamcracker_t3", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t3"), () -> net.minecraft.world.item.Items.COAL))
 		.then(machine("steamcracker_t4", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t4"), () -> net.minecraft.world.item.Items.COAL))
-		.then(machine("catalyticcracker", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker"), () -> net.minecraft.world.item.Items.CHARCOAL)) // catalyticcracking.json smoke row (charcoal + water → coal)
-		.then(machine("catalyticcracker_t2", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t2"), () -> net.minecraft.world.item.Items.CHARCOAL))
-		.then(machine("catalyticcracker_t3", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t3"), () -> net.minecraft.world.item.Items.CHARCOAL))
-		.then(machine("catalyticcracker_t4", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t4"), () -> net.minecraft.world.item.Items.CHARCOAL))
+		// task p33-cracker-machines spec ②: the catalytic feed flips to the TRUE row's item
+		// input gt6:dust_platinum (Loader_Recipes_Chem.java:373-376 — the p29 leftover input
+		// gap; the W2 charcoal literal found no live row, the p29_w2_catalytic_cracker merge
+		// workaround retires with the literal). Steam keeps its fluid-only row (no item).
+		.then(machine("catalyticcracker", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker"), GTMachineCommand::firstPlatinumDust))
+		.then(machine("catalyticcracker_t2", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t2"), GTMachineCommand::firstPlatinumDust))
+		.then(machine("catalyticcracker_t3", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t3"), GTMachineCommand::firstPlatinumDust))
+		.then(machine("catalyticcracker_t4", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t4"), GTMachineCommand::firstPlatinumDust))
 		.then(machine("coagulator", GTMachines.COAGULATOR_BLOCKS_BY_PATH.get("coagulator"), () -> net.minecraft.world.item.Items.SNOWBALL)) // coagulator.json is the FLUID-ONLY row (water → snowball); the stub feed is that row's OUTPUT
 		.then(machine("generifier", GTMachines.GENERIFIER_BLOCKS_BY_PATH.get("generifier"), () -> net.minecraft.world.item.Items.SAND)) // generifier.json smoke row (sand + water → clay ball, parallel 100)
 		.then(machine("bath", GTMachines.BATH_BLOCKS_BY_PATH.get("bath"), () -> net.minecraft.world.item.Items.WHITE_WOOL)) // bath.json smoke row (wool + water → string)
@@ -570,6 +574,18 @@ public final class GTMachineCommand {
 	private static net.minecraft.world.item.Item firstCoalDust() {
 		RegistryObject<Item> tDust = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.Coal);
 		return tDust != null ? tDust.get() : net.minecraft.world.item.Items.COAL; // the part-family raw .get() form — isPresent() has no 21.1 swap twin
+	}
+
+	/**
+	 * The Catalytic Cracker acceptance feed (task p33-cracker-machines spec ② — the p29
+	 * leftover gap): the gt6machine input face carries the TRUE row's item input per
+	 * machine literal instead of the retired W2 charcoal smoke literal — the catalyst
+	 * gt6:dust_platinum (the Loader_Recipes_Chem.java:373-376 rows' dust input; the
+	 * firstCoalDust helper shape). The fluid arms ride the fluid fill face unchanged.
+	 */
+	private static net.minecraft.world.item.Item firstPlatinumDust() {
+		RegistryObject<Item> tDust = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.Pt);
+		return tDust != null ? tDust.get() : net.minecraft.world.item.Items.COAL; // the firstCoalDust fallback shape — the merge chain pins the real dust
 	}
 
 	/**
