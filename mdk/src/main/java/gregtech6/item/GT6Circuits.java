@@ -132,6 +132,15 @@ public final class GT6Circuits {
 	}
 
 	/**
+	 * The recipe-serializer face of {@link #applyConfiguration} — the assemble-time stamp
+	 * the gt6:circuit_program rows ride (task p33-circuits-crafting-c). Public so the
+	 * serializer (a different package) can stamp without touching the private carrier.
+	 */
+	public static void applyConfigurationFace(ItemStack aStack, int aConfig) {
+		applyConfiguration(aStack, aConfig);
+	}
+
+	/**
 	 * The configuration number of a circuit stack, default 0 for a payload-less stack (the
 	 * vanilla :291-293 read form). The 1.20.1 carrier is the {@code Damage} NBT key — the
 	 * vanilla getDamageValue/setDamageValue pair works on ANY item regardless of

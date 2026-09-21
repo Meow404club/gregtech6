@@ -1,0 +1,22 @@
+{
+  "type": "gt6:circuit_program",
+  "category": "misc",
+  "configuration": 10,
+  "key": {
+    "P": {
+      "item": "gt6:integrated_circuit"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "P  ",
+    "  d"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:integrated_circuit"
+  },
+  "show_notification": true
+}

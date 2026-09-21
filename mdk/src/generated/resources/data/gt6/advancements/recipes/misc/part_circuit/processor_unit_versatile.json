@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_circuit6": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "gt6:circuit6"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:part_circuit/processor_unit_versatile"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_circuit6",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:part_circuit/processor_unit_versatile"
+    ]
+  },
+  "sends_telemetry_event": false
+}
