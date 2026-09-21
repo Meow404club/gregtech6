@@ -542,6 +542,13 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBowl,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p33-food-machines-kitchen — the Juicer joins the kitchen family (the same
+		// item + fluid faces; the 0-in/1-out JUICER tank array answers through the same BE)
+		BlockEntityType<gregtech6.tileentity.tools.GT6JuicerBlockEntity> tJuicer = GT6Kitchen.JUICER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tJuicer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tJuicer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
 	// -- the coke oven (p8 multiblock controller; the commands-card handoff) --

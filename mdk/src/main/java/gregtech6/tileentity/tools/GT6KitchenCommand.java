@@ -63,7 +63,9 @@ public final class GT6KitchenCommand {
 				.requires(source -> source.hasPermission(2));
 		tKitchen.then(carrier("pot", GT6Kitchen.BATHING_POT_STEEL))
 				.then(carrier("pot_wood", GT6Kitchen.BATHING_POT_WOOD))
-				.then(carrier("bowl", GT6Kitchen.MIXING_BOWL));
+				.then(carrier("bowl", GT6Kitchen.MIXING_BOWL))
+				// task p33-food-machines-kitchen — the Juicer joins (RM.Juicer, the manual top-face round)
+				.then(carrier("juicer", GT6Kitchen.JUICER));
 		event.getDispatcher().register(tKitchen);
 	}
 

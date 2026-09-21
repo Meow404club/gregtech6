@@ -26,6 +26,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.GT6Mod;
 import gregtech6.block.tools.GTKitchenBlock;
 import gregtech6.tileentity.tools.GT6BathingPotBlockEntity;
+import gregtech6.tileentity.tools.GT6JuicerBlockEntity;
 import gregtech6.tileentity.tools.GT6MixingBowlBlockEntity;
 
 /**
@@ -100,6 +101,18 @@ public final class GT6Kitchen {
 					BlockBehaviour.Properties.of().strength(1.0F, 5.0F).sound(SoundType.STONE)));
 
 	/**
+	 * The Juicer — MT.Ceramic, RM.Juicer (upstream Loader_MultiTileEntities.java:2184,
+	 * id 32722, aUtilStone, hardness 1.0 / resistance 5.0; task p33-food-machines-kitchen).
+	 * The tank capacity rides the upstream :75 per-tank litres ({@code new
+	 * FluidTankGT(1000000)}) — 1000000 L through the carrier (the p26 family reads the
+	 * carrier capacity for every tank, so the carrier carries the Juicer's own shape, not
+	 * the pot/bowl 4000/8000).
+	 */
+	public static final RegistryObject<GTKitchenBlock> JUICER = BLOCKS.register("juicer",
+			() -> new GTKitchenBlock(1000000, () -> MT.Ceramic, () -> GT6Kitchen.JUICER_BE.get(),
+					BlockBehaviour.Properties.of().strength(1.0F, 5.0F).sound(SoundType.STONE)));
+
+	/**
 	 * The pot BET — the shared-BET multi-mount (ADR-P3-1): one BE class over the wood +
 	 * steel rows (the upstream wood/steel class split carried no behavioural difference
 	 * beyond the registration NBT the carrier now holds).
@@ -113,6 +126,11 @@ public final class GT6Kitchen {
 			BLOCK_ENTITY_TYPES.register("mixing_bowl", () -> BlockEntityType.Builder.of(
 					GT6MixingBowlBlockEntity::new, MIXING_BOWL.get()).build(null));
 
+	/** The Juicer BET — one BlockEntityType over the ceramic Juicer (task p33-food-machines-kitchen). */
+	public static final RegistryObject<BlockEntityType<GT6JuicerBlockEntity>> JUICER_BE =
+			BLOCK_ENTITY_TYPES.register("juicer", () -> BlockEntityType.Builder.of(
+					GT6JuicerBlockEntity::new, JUICER.get()).build(null));
+
 	/** The pot items (plain BlockItems — the family ships no item-capability face, the manual block has no bucket-item form upstream). */
 	public static final RegistryObject<Item> BATHING_POT_WOOD_ITEM = ITEMS.register("bathing_pot_wood",
 			() -> new BlockItem(BATHING_POT_WOOD.get(), new Item.Properties()));
@@ -120,6 +138,8 @@ public final class GT6Kitchen {
 			() -> new BlockItem(BATHING_POT_STEEL.get(), new Item.Properties()));
 	public static final RegistryObject<Item> MIXING_BOWL_ITEM = ITEMS.register("mixing_bowl",
 			() -> new BlockItem(MIXING_BOWL.get(), new Item.Properties()));
+	public static final RegistryObject<Item> JUICER_ITEM = ITEMS.register("juicer",
+			() -> new BlockItem(JUICER.get(), new Item.Properties()));
 
 	/**
 	 * The Clay Bowl raw item — upstream MultiItemRandomTools.java:119 ("Clay Bowl", "Put
@@ -149,6 +169,7 @@ public final class GT6Kitchen {
 			aEvent.accept(new ItemStack(BATHING_POT_WOOD_ITEM.get()));
 			aEvent.accept(new ItemStack(BATHING_POT_STEEL_ITEM.get()));
 			aEvent.accept(new ItemStack(MIXING_BOWL_ITEM.get()));
+			aEvent.accept(new ItemStack(JUICER_ITEM.get()));
 			aEvent.accept(new ItemStack(CLAY_BOWL_RAW.get()));
 		}
 	}
@@ -175,10 +196,11 @@ public final class GT6Kitchen {
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			GT6Mod.LOGGER.info("GT6 kitchen registered: {} {} L / {} {} L / {} {} L + {} (RM.Bath pot pair + RM.Mixer bowl)",
+			GT6Mod.LOGGER.info("GT6 kitchen registered: {} {} L / {} {} L / {} {} L / {} {} L + {} (RM.Bath pot pair + RM.Mixer bowl + RM.Juicer juicer)",
 					ForgeRegistries.BLOCKS.getKey(BATHING_POT_WOOD.get()), BATHING_POT_WOOD.get().capacityL(),
 					ForgeRegistries.BLOCKS.getKey(BATHING_POT_STEEL.get()), BATHING_POT_STEEL.get().capacityL(),
 					ForgeRegistries.BLOCKS.getKey(MIXING_BOWL.get()), MIXING_BOWL.get().capacityL(),
+					ForgeRegistries.BLOCKS.getKey(JUICER.get()), JUICER.get().capacityL(),
 					ForgeRegistries.ITEMS.getKey(CLAY_BOWL_RAW.get()));
 		});
 	}

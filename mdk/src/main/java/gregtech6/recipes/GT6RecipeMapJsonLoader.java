@@ -187,7 +187,9 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			"loom", "boxinator", "unboxinator", "fermenter",
 			// the P33 food-fluids b1 (task p33-food-fluids-b1): the Juicer map joins with its
 			// core rows (the juice/oil/sauce pours); the Fermenter core rows ride the
-			// existing key above
+			// existing key above — the KEY itself was declared b1 but the set entry + the
+			// loader case + the map ctor only bind at task p33-food-machines-kitchen
+			"juicer",
 			// the P29 W2 nineteen (task p29-w2-energy-types-5tier — the shared-layer card
 			// expands ALL the keys so the consumer cards ②③④⑤ never touch this loader):
 			// the keys ARE the card-① GT6RecipeMaps field names in snake case; no datapack
@@ -572,6 +574,10 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// gt.recipe.sharpener LOCAL name is the upstream GUI word)
 			case "cutter" -> GT6RecipeMaps.CUTTER;
 			case "squeezer" -> GT6RecipeMaps.SQUEEZER;
+			// task p33-food-machines-kitchen — the juicer.json pour joins (the b1 card
+			// declared the key + file; the map ctor + this case + the POURABLE entry are
+			// the seam that actually binds them)
+			case "juicer" -> GT6RecipeMaps.JUICER;
 			case "centrifuge" -> GT6RecipeMaps.CENTRIFUGE;
 			case "sluice" -> GT6RecipeMaps.SLUICE;
 			case "sharpening" -> GT6RecipeMaps.SHARPENING;
