@@ -21,12 +21,15 @@ Loader_MultiTileEntities.java:1242, upstream FusionReactor.java:47-126).
   the energy faces:
   - the glass ring y0 (design 5 inactive / 6 active, ONLY_ENERGY_IN) relays LU to the
     controller through the part energy relay; the /gt6energy LU dial parked against a
-    ring cell proves the face is reachable, and the controller's :501 type gate
-    refuses LU — DECLARED WAIVER (the S31-7 final qualification): upstream the gate is
-    live through the whole run (Loader:1242 supplies NBT_SPECIAL_IS_START_ENERGY via
-    the readFromNBT2 :112-124 config injection -> the :755 write is reachable -> the
-    :809 progress gate closes until the :497-500 LU decrement pays it); the port ships
-    gateless until the pool-E LU economy, so the dial keeps emitting, harmless.
+    ring cell proves the face is reachable. SINCE p32-ignition-gate the gate is LIVE
+    (Loader:1242 supplies NBT_SPECIAL_IS_START_ENERGY via the readFromNBT2 :112-124
+    config injection -> the :755 write is reachable -> the :809 progress gate closes
+    until the :497-500 LU decrement pays it), so phase D arms the ledger (the D+T row
+    startLU 220,643,328 = 26934 x 8192 EXACTLY) and then pays it in one tick by bumping
+    the dial to amperage 26934 (the :497 charged arm banks aSize x aAmount whole with
+    no size gate — TileEntityFusionReactor.doEnergyInjection — and the part relay
+    forwards aAmount verbatim, so one 26934-ampere tick clears it; after pay the
+    surplus LU falls to the :501 type gate and is refused, harmless).
   - the EU launch: the battery_box_ev sink at the north +-10 point counts the
     :233-236 packets through its OVERCHARGE arm. No EU box can BUFFER an 8192
     packet (only LU crystals are tier-5 and the EU box rejects foreign-type
@@ -226,7 +229,10 @@ steps = [
     Step("gt6energy type " + gt6world.fmt(DIAL) + " LU", expect="type ENERGY.LIGHT"),
     Step("gt6energy volt " + gt6world.fmt(DIAL) + " 8192", expect="voltage 8192"),
     Step("gt6energy amp " + gt6world.fmt(DIAL) + " 1", expect="amperage 1"),
-    Step("gt6energy mode " + gt6world.fmt(DIAL) + " on", expect="emitting true"),
+    # the dial stays OFF until the pay: an emitting dial starts draining the ledger
+    # the tick the :755 arm fires, and the exact-value assert below would never see
+    # the freshly armed 220,643,328
+    Step("gt6energy mode " + gt6world.fmt(DIAL) + " off", expect="emitting false"),
 
     phase("C: the sink — an EV overcharge counter (the empty battery primes mReceivablePower)"),
     Step("setblock " + S + " " + BOX, expect="Changed the block"),
@@ -244,6 +250,16 @@ steps = [
     Step("data merge block " + C + " {inventory:{Size:11,Items:[" + selector_merge(0, 2)["1.20.1"] + "]}}",
          expect="Modified block data",
          node_cmds={"1.21.1": "data merge block " + C + " {inventory:{Size:11,Items:[" + selector_merge(0, 2)["1.21.1"] + "]}}"}),
+    # the :755 arm charged the ledger with the row startLU (26934 x 8192 exactly);
+    # the :809 gate is now armed-but-unpaid (active 0b until the pay below)
+    Step("data get block " + C, expect="charge_requirement: 220643328L", poll=60),
+    # the pay (the p32_ignition laser-leg shape, collapsed to the dial): the :497
+    # charged arm banks aSize x aAmount whole with no size gate, and the part relay
+    # forwards aAmount verbatim — one 26934-ampere tick of the existing 8192-LU dial
+    # clears the ledger exactly (the surplus dial LU afterwards falls to the :501
+    # type gate and is refused, harmless)
+    Step("gt6energy amp " + gt6world.fmt(DIAL) + " 26934", expect="amperage 26934"),
+    Step("gt6energy mode " + gt6world.fmt(DIAL) + " on", expect="emitting true"),
     Step("data get block " + C, expect="active: 1b", poll=120),
     Step("data get block " + C, expect="maxprogress: 1760L", poll=60),
     # the active flip rewrote the ring designs 5 -> 6 (the :241/:105 hook)
