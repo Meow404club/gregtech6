@@ -764,6 +764,15 @@ SESSION_GROUPS = (
     # command channels). --group p33_food_tail matches through the chain's embedded
     # name prefix.
     ("p33_food_tail",),
+    # p33-bees-lv3-a-items (task p33-bees-lv3-a-items): the bumblebee item-domain live
+    # chain — a fresh chest band x=384 z=360 (z-disjoint from the p32_qu_usb band z=348
+    # and the p33_gui_distill tower band z=356), the 8-face princess/drone/queen/dead
+    # registration census (the p32_qu_usb chest form) + the gt.bumble 13-key gene
+    # compound + the port species-code int (gt.bumble.meta) carrier arms with the
+    # code-overwrite proof. Admission mirroring the p32quusb form (bbox-registered,
+    # stateless placement, no fresh_boot / mutates member).
+    # --group p33_bees_a matches through the chain's embedded name prefix.
+    ("p33_bees_a",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
