@@ -8324,6 +8324,17 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   Regeneration recipe: the five-cell ellipse grid (rim = tint, cell interior = 55%,
   top edge = 125%, bottom edge = 45%), PIL, RGBA 16×16.
 
+- `gt6/textures/item/bumble/bumble_{drone,princess,queen,dead}.png` (×4) — the
+  bumblebee face icons (task p33-bees-lv3-a-items). PORT-GENERATED ART (not
+  borrowed): one 16×16 bee silhouette per fractal face — the scanned items reuse
+  the base-face sprite (the scan state is the item id, not the art). drone = the
+  yellow/black striped bee (white wings, dark head, antenna), princess = the
+  orange-bodied form, queen = the gold body + the three-pixel gold crown, dead =
+  the grey-brown belly-up form with the X eyes. Regeneration recipe: the wing
+  pair (translucent white ellipses) + the body ellipse with three vertical
+  stripe bands + the dark head ellipse + the antenna pixels; the queen adds the
+  crown pixels, the dead form flips vertically and greys; PIL, RGBA 16×16.
+
 Massfab machine + controller textures, task p31-massfab: the 24 small-family PNGs
 under `gt6/textures/block/massfab_{colored,overlay}_{face}.png` and
 `gt6/textures/block/massfab_overlay_{face}_{active,running}.png` plus the 6

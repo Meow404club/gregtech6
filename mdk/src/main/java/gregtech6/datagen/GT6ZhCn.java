@@ -122,6 +122,7 @@ public class GT6ZhCn extends LanguageProvider {
 		//（GT6OreBlocks.TAB_TITLE_KEY，"石矿"）。
 		addOreTabTitle(); // task p30-ore-3-datagen — ore-1 注记的卡③面（唯一新键，dump itemgroup 家族行 矿石）
 		addBeeUnits();          // task p31-bees-lv1 — the 20 comb names + the Bees tab + the 11 honey/bee-row fluids (hand rows, the tsv direct band; the dump carries no comb faces)
+		addBumbleUnits();       // task p33-bees-lv3-a-items — the 80 species names + the 8 face formats (the dump gt.multiitem.bumblebee.* faces verbatim, the tsv direct band)
 		addUsbStickUnits();     // task p32-usb-data — the 4 stick names + the 4 tooltips (hand rows, the tsv direct band; the dump USB face)
 		addPlaceablesUnits();   // task p32-placeables — the 8 deco/placed-pile names (the lantern + the sandwich + the six placed piles; hand rows, the tsv direct band)
 		addLaserGasUnits();     // task p32-qu-laser-domain — the 2 gas emitter names + the 2 tooltips (hand rows, the dump :10379/:10395 faces)
@@ -349,6 +350,21 @@ public class GT6ZhCn extends LanguageProvider {
 		}
 		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.BEE_ROW_FLUID_SPECS) {
 			addDirect(tSpec.descriptionId());
+		}
+	}
+
+	/**
+	 * The bumblebee family zh faces (task p33-bees-lv3-a-items, the addBeeUnits shape):
+	 * the 80 species names and the 8 name-format rows — the dump's
+	 * {@code gt.multiitem.bumblebee.*} faces verbatim (雄性/雌性 prefix, 蜂后/(死亡)
+	 * suffix, (已扫描) tail), the tsv direct band (hand rows land in the SAME commit).
+	 */
+	private void addBumbleUnits() {
+		for (gregtech6.items.bees.GT6Bumbles.SpeciesRow tRow : gregtech6.items.bees.GT6Bumbles.SPECIES) {
+			addDirect(tRow.langKey());
+		}
+		for (gregtech6.items.bees.GT6Bumbles.FaceRow tFace : gregtech6.items.bees.GT6Bumbles.FACES) {
+			addDirect(tFace.formatKey());
 		}
 	}
 

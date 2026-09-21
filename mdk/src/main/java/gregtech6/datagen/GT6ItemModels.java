@@ -547,6 +547,15 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tSpec.itemId(), mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/comb/" + tSpec.itemId()));
         }
+        // the bumblebee family (task p33-bees-lv3-a-items) — 8 item/generated models over
+        // the port-generated bee icons (item/bumble/bumble_<face>.png, one sprite per
+        // fractal face; the scanned forms share the base-face sprite), walked over the
+        // FACES table so the model ids cannot drift (the comb band convention)
+        for (gregtech6.items.bees.GT6Bumbles.FaceRow tFace : gregtech6.items.bees.GT6Bumbles.FACES) {
+            withExistingParent(tFace.itemId(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/bumble/bumble_"
+                        + tFace.name().substring(0, tFace.name().length() - (tFace.scanned() ? "_scanned" : "").length())));
+        }
         // the placeables band (task p32-placeables) — the BlockItems ride the block models
         // (the vanilla jack_o_lantern item form); the block-model providers run LATER in the
         // generator order, so the parents are the UNCHECKED references (the turbine form)

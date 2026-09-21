@@ -8456,6 +8456,94 @@ direct	block.gt6.placed_scrap	废料	hand
 direct	block.gt6.logistics_core	物流核心	hand
 direct	gt6.row.machine.molecular_scanner	分子扫描仪 (%s)	hand
 direct	gt6.row.machine.replicator	物质复制器 (%s)	hand
+direct	gt6.row.bumble.0	野生大黄蜂	hand
+direct	gt6.row.bumble.10	魅惑大黄蜂	hand
+direct	gt6.row.bumble.100	冲浪大黄蜂	hand
+direct	gt6.row.bumble.10000	创造大黄蜂	hand
+direct	gt6.row.bumble.10010	建筑大黄蜂	hand
+direct	gt6.row.bumble.10020	粘土大黄蜂	hand
+direct	gt6.row.bumble.10030	光明大黄蜂	hand
+direct	gt6.row.bumble.10100	工业大黄蜂	hand
+direct	gt6.row.bumble.10110	监工大黄蜂	hand
+direct	gt6.row.bumble.10120	大亨大黄蜂	hand
+direct	gt6.row.bumble.10130	垄断大黄蜂	hand
+direct	gt6.row.bumble.10200	骑士大黄蜂	hand
+direct	gt6.row.bumble.10210	殖民大黄蜂	hand
+direct	gt6.row.bumble.10220	皇室大黄蜂	hand
+direct	gt6.row.bumble.10230	黑脉金斑大黄蜂	hand
+direct	gt6.row.bumble.10300	哥特大黄蜂	hand
+direct	gt6.row.bumble.10310	神秘大黄蜂	hand
+direct	gt6.row.bumble.10320	叛教大黄蜂	hand
+direct	gt6.row.bumble.10330	撒旦大黄蜂	hand
+direct	gt6.row.bumble.10400	健忘大黄蜂	hand
+direct	gt6.row.bumble.10410	失忆大黄蜂	hand
+direct	gt6.row.bumble.10420	痴呆大黄蜂	hand
+direct	gt6.row.bumble.10430	黑色大黄蜂	hand
+direct	gt6.row.bumble.10500	列兵大黄蜂	hand
+direct	gt6.row.bumble.10510	中尉大黄蜂	hand
+direct	gt6.row.bumble.10520	上校大黄蜂	hand
+direct	gt6.row.bumble.10530	将军大黄蜂	hand
+direct	gt6.row.bumble.110	游泳大黄蜂	hand
+direct	gt6.row.bumble.120	潜水大黄蜂	hand
+direct	gt6.row.bumble.130	深海大黄蜂	hand
+direct	gt6.row.bumble.20	寻常大黄蜂	hand
+direct	gt6.row.bumble.200	学徒大黄蜂	hand
+direct	gt6.row.bumble.20000	烈焰大黄蜂	hand
+direct	gt6.row.bumble.20010	火焰大黄蜂	hand
+direct	gt6.row.bumble.20020	川陀大黄蜂	hand
+direct	gt6.row.bumble.20030	纵火大黄蜂	hand
+direct	gt6.row.bumble.20100	暴雪大黄蜂	hand
+direct	gt6.row.bumble.20110	冷冻大黄蜂	hand
+direct	gt6.row.bumble.20120	冷冻人大黄蜂	hand
+direct	gt6.row.bumble.20130	低温大黄蜂	hand
+direct	gt6.row.bumble.20200	闪击大黄蜂	hand
+direct	gt6.row.bumble.20210	暴雨大黄蜂	hand
+direct	gt6.row.bumble.20220	安昂大黄蜂	hand
+direct	gt6.row.bumble.20230	大气大黄蜂	hand
+direct	gt6.row.bumble.20300	玄武岩大黄蜂	hand
+direct	gt6.row.bumble.20310	震动大黄蜂	hand
+direct	gt6.row.bumble.20320	地球冒险大黄蜂	hand
+direct	gt6.row.bumble.20330	大地大黄蜂	hand
+direct	gt6.row.bumble.210	魔法大黄蜂	hand
+direct	gt6.row.bumble.220	巫术大黄蜂	hand
+direct	gt6.row.bumble.230	知识大黄蜂	hand
+direct	gt6.row.bumble.30	田野大黄蜂	hand
+direct	gt6.row.bumble.300	下界大黄蜂	hand
+direct	gt6.row.bumble.310	地狱大黄蜂	hand
+direct	gt6.row.bumble.320	小鬼大黄蜂	hand
+direct	gt6.row.bumble.330	恶魔大黄蜂	hand
+direct	gt6.row.bumble.400	末地大黄蜂	hand
+direct	gt6.row.bumble.410	虚空大黄蜂	hand
+direct	gt6.row.bumble.420	厌世大黄蜂	hand
+direct	gt6.row.bumble.430	虚无大黄蜂	hand
+direct	gt6.row.bumble.500	石化大黄蜂	hand
+direct	gt6.row.bumble.510	岩化大黄蜂	hand
+direct	gt6.row.bumble.520	硬岩大黄蜂	hand
+direct	gt6.row.bumble.530	基岩大黄蜂	hand
+direct	gt6.row.bumble.600	丛林大黄蜂	hand
+direct	gt6.row.bumble.610	丛林大黄蜂(T2)	hand
+direct	gt6.row.bumble.620	丛林大黄蜂(T3)	hand
+direct	gt6.row.bumble.630	泰山大黄蜂	hand
+direct	gt6.row.bumble.700	冰霜大黄蜂	hand
+direct	gt6.row.bumble.710	北极大黄蜂	hand
+direct	gt6.row.bumble.720	精灵大黄蜂	hand
+direct	gt6.row.bumble.730	圣诞大黄蜂	hand
+direct	gt6.row.bumble.800	蘑菇大黄蜂	hand
+direct	gt6.row.bumble.810	蟾蜍大黄蜂	hand
+direct	gt6.row.bumble.820	兄弟大黄蜂	hand
+direct	gt6.row.bumble.830	桃子大黄蜂	hand
+direct	gt6.row.bumble.900	沙漠大黄蜂	hand
+direct	gt6.row.bumble.910	沙漠大黄蜂(T2)	hand
+direct	gt6.row.bumble.920	沙漠大黄蜂(T3)	hand
+direct	gt6.row.bumble.930	巨鲲大黄蜂	hand
+direct	gt6.row.bumble.name.dead	%1$s (死亡)	hand
+direct	gt6.row.bumble.name.dead_scanned	%1$s (死亡) (已扫描)	hand
+direct	gt6.row.bumble.name.drone	雄性%1$s	hand
+direct	gt6.row.bumble.name.drone_scanned	雄性%1$s (已扫描)	hand
+direct	gt6.row.bumble.name.princess	雌性%1$s	hand
+direct	gt6.row.bumble.name.princess_scanned	雌性%1$s (已扫描)	hand
+direct	gt6.row.bumble.name.queen	%1$s蜂后	hand
+direct	gt6.row.bumble.name.queen_scanned	%1$s蜂后 (已扫描)	hand
 direct	fluid.gt6.redstone_molten	熔融红石	hand
 direct	item.gt6.cover_logistics_display_cpu_logic	物流显示器 (CPU 逻辑)	hand
 direct	item.gt6.cover_logistics_display_cpu_control	物流显示器 (CPU 控制)	hand
