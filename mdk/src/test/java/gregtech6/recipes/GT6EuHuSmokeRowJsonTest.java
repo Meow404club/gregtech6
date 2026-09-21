@@ -87,13 +87,13 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("loom"), "one loom smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("boxinator"), "one boxinator smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("unboxinator"), "one unboxinator smoke row");
-		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("fermenter"), "one fermenter smoke row");
+		assertEquals(7, GT6RecipeMapJsonLoader.pouredCount("fermenter"), "the fermenter file — 1 smoke row + the 6 p33-food-fluids-b1 core rows");
 
 		// the rows are LIVE in the maps (the findRecipe stock grew by one each)
 		assertEquals(1, GT6RecipeMaps.LOOM.mRecipeList.size(), "the LOOM map held ONLY the smoke row (the DECLARED-empty card-A state)");
 		assertEquals(1, GT6RecipeMaps.BOXINATOR.mRecipeList.size());
 		assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size());
-		assertEquals(1, GT6RecipeMaps.FERMENTER.mRecipeList.size());
+		assertEquals(7, GT6RecipeMaps.FERMENTER.mRecipeList.size());
 	}
 
 	/** A repeated pour REPLACES the same-file subset — the idempotence face of the seam. */
@@ -103,7 +103,7 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		tData.put(new ResourceLocation("gt6", "fermenter"), resource("fermenter.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 		GT6RecipeMapJsonLoader.pour(tData);
-		assertEquals(1, GT6RecipeMaps.FERMENTER.mRecipeList.size(), "the subset replace — never a duplicate");
+		assertEquals(7, GT6RecipeMaps.FERMENTER.mRecipeList.size(), "the subset replace — never a duplicate");
 	}
 
 	/** MIXER and SIFTING are NOT in the card-D JSON face — the loader never touches them here. */
