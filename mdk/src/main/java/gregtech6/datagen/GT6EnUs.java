@@ -93,6 +93,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoodFluids();
         addFoodB1Fluids(); // task p21-drying-food-fluids
         addFoodB2Fluids(); // task p33-food-fluids-b2
+        addFoodTailFluids(); // task p33-food-tail
         addDyeChemicalFluids(); // task p24-dye-chemical-fluids — table-tail append
         addCFoamFluids(); // task p26-c-foam-fluid-refill — table-tail append
         addChemicalFluids(); // task p29-w4-f1-chemicals — table-tail append
@@ -285,6 +286,20 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addFoodB2Fluids() {
         for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_B2_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
+
+    /**
+     * Food-fluid tail keys (task p33-food-tail): the seventh loop over
+     * {@link GTFluids#FOOD_TAIL_SPECS} — the addFoodB2Fluids shape, walked from the SEVENTH
+     * table so the lang face cannot drift from the registered fluids. Values ride the
+     * upstream FL.create local names verbatim (Loader_Fluids.java:607-610 the golden-apple
+     * brews, :637-642 the coffee family). The zh faces ride the reference-table direct band
+     * (GT6ZhCn, the same 10 keys; plain potion.coffee is the one hand row).
+     */
+    private void addFoodTailFluids() {
+        for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_TAIL_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
     }
