@@ -826,6 +826,496 @@ public final class GTFluids {
 		return List.of(SAP, MAPLESAP, REEDWATER, CACTUSWATER);
 	}
 
+
+	/**
+	 * The food-fluid batch 1 (task p33-food-fluids-b1): the FIFTH AquaFluidSpec table —
+	 * its own table, NOT an append to {@link #FOOD_FLUID_SPECS} (that four-row table is
+	 * exact-order-pinned by GTFluidsFoodFamilyTest; the architect split
+	 * research.p33-r-food puts the FL.java:110-408 FOOD-flag remainder here). The full
+	 * FL.java FOOD-flag census is 234 rows: 15 already ported on the earlier tables (the
+	 * eleven WATER-tagged aqua rows + Sap/MapleSap/Reedwater/Cactuswater), 2 non-fluid or
+	 * generic-collision shorthands deliberately absent (Sap_Rainbow FL.java:251; the
+	 * "honey" generic id collision HoneyBoP), and the NON-FOOD oil tail
+	 * (Oil_Canola/creosote/soulsand :164-166) outside the FOOD flag, leaving these 216 — the four p31 honey-family ids (honey/honeydew/ambrosia/royaljelly) ride the p31 ChemicalFluid HONEY_FLUID_SPECS registrations and are NOT re-declared here.
+	 *
+	 * <p>Every row carries the SIMPLE+LIQUID+FOOD flags upstream (plus family flags
+	 * MILK/HONEY/JUICE/ALCOHOLIC/WINE/WHISKEY/LIQUEUR/LIQUOR/SPIRIT/BRANDY/CIDER/BEER/RUM/
+	 * TEA/COOKING_OIL/SLIME/VINEGAR/BATH/THERMOS — the flags are NOT machine-readable in
+	 * the port, the display/id/temperature faces are the transcribed surface). Temperature
+	 * is the upstream FL.create carrier where GT6 defines the fluid (Loader_Fluids.java
+	 * :376-647 FoodStatDrink block — 275 K wines/soy milk/royal jelly/BAWLS, 255 K ice
+	 * tea, 400 K hot frying oil, 300 K everything else; the "C" literals fold to 300 via
+	 * CS.java:132); the 68 external-mod ids with no GT6 FL.create (the binnie.* alcohol
+	 * family + 8 vanilla-census ids) ride the HONEST FluidType defaults
+	 * (FluidType.java:924-926) exactly like the sap/seawater precedents. Collision ids
+	 * carry a suffix (grcmilk_milk, juice_wine_fruit, slime_blue, forestry_honey,
+	 * grc_honey, diablosauce_strong).
+	 *
+	 * <p>Density 1000 / viscosity 1000 on every row are the STATE_LIQUID semantics
+	 * (FL.java:1104). The tints are PORT-OWNED DECLARED VALUES (the JetFuel/aqua
+	 * precedent): no dedicated upstream textures exist to borrow, the vanilla-water
+	 * layers take a per-row tint over the shared registration body. FLUID-ONLY: no
+	 * LiquidBlock, no bucket, no bottle (the p21 declaration held). NO drink behaviour —
+	 * the FoodStatDrink seam is b2 (research.p33-r-food drink_seam); this card is
+	 * registration+datagen+lang only.
+	 */
+	public static final List<AquaFluidSpec> FOOD_B1_SPECS = List.of(
+		new AquaFluidSpec("mineralsoda"             , "Mineral Soda"                     , 300, 1000, 1000, 0xFFD8E8F0), // FL.java up "mineralsoda" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("soda"                    , "Soda"                             , 300, 1000, 1000, 0xFFD8E8F0), // FL.java up "soda" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("milk"                    , "Milk"                             , 300, 1000, 1000, 0xFFF8F8F4), // FL.java up "milk" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("soymilk"                 , "Soy Milk"                         , 275, 1000, 1000, 0xFFF8F8F4), // FL.java up "soymilk" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("grcmilk_milk"            , "Milk"                             , 300, 1000, 1000, 0xFFF8F8F4), // FL.java up "grcmilk.milk" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("spoiledmilk"             , "Milk"                             , 300, 1000, 1000, 0xFFE8D040), // FL.java up "spoiledmilk" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("for_honey"               , "Honey (Forestry, most other Mods)", 300, 1000, 1000, 0xFFE8A81A), // FL.java up "for.honey" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("grc_honey"               , "Honey (GrowthCraft)"              , 300, 1000, 1000, 0xFFE8A81A), // FL.java up "grc.honey" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("fruitsmoothie"           , "Froot Smoothie"                   , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "fruitsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("melonsmoothie"           , "Melon Smoothie"                   , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "melonsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("kiwismoothie"            , "Kiwi Smoothie"                    , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "kiwismoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("currantsmoothie"         , "Currant Smoothie"                 , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "currantsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("raspberrysmoothie"       , "Raspberry Smoothie"               , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "raspberrysmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("blackberrysmoothie"      , "Blackberry Smoothie"              , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "blackberrysmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("blueberrysmoothie"       , "Blueberry Smoothie"               , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "blueberrysmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("gooseberrysmoothie"      , "Gooseberry Smoothie"              , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "gooseberrysmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("strawberrysmoothie"      , "Strawberry Smoothie"              , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "strawberrysmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("plumsmoothie"            , "Plum Smoothie"                    , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "plumsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("peachsmoothie"           , "Peach Smoothie"                   , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "peachsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("elderberrysmoothie"      , "Elderberry Smoothie"              , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "elderberrysmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("grapefruitsmoothie"      , "Grapefruit Smoothie"              , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "grapefruitsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("limesmoothie"            , "Lime Smoothie"                    , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "limesmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("orangesmoothie"          , "Orange Smoothie"                  , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "orangesmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("persimmonsmoothie"       , "Persimmon Smoothie"               , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "persimmonsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("apricotsmoothie"         , "Apricot Smoothie"                 , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "apricotsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("pearsmoothie"            , "Pear Smoothie"                    , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "pearsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("redgrapesmoothie"        , "Grape Smoothie"                   , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "redgrapesmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("whitegrapesmoothie"      , "Grape Smoothie"                   , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "whitegrapesmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("grapesmoothie"           , "Grape Smoothie"                   , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "grapesmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("purplegrapesmoothie"     , "Grape Smoothie"                   , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "purplegrapesmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("applesmoothie"           , "Apple Smoothie"                   , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "applesmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("pineapplesmoothie"       , "Ananas Smoothie"                  , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "pineapplesmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("bananasmoothie"          , "Banana Smoothie"                  , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "bananasmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("cherrysmoothie"          , "Cherry Smoothie"                  , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "cherrysmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("cranberrysmoothie"       , "Cranberry Smoothie"               , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "cranberrysmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("lemonsmoothie"           , "Lemon Smoothie"                   , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "lemonsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("mangosmoothie"           , "Mango Smoothie"                   , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "mangosmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("pomegranatesmoothie"     , "Pomegranate Smoothie"             , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "pomegranatesmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("starfruitsmoothie"       , "Starfruit Smoothie"               , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "starfruitsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("papayasmoothie"          , "Papaya Smoothie"                  , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "papayasmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("figsmoothie"             , "Fig Smoothie"                     , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "figsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("coconutsmoothie"         , "Coconut Smoothie"                 , 300, 1000, 1000, 0xFFE89AA8), // FL.java up "coconutsmoothie" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juice_juice"             , "Juice"                            , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "juice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("kiwijuice"               , "Kiwi Juice"                       , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "kiwijuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicelime"               , "Lime Juice"                       , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicelime" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicelemon"              , "Lemon Juice"                      , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicelemon" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juiceorange"             , "Orange Juice"                     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juiceorange" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("persimmonjuice"          , "Persimmon Juice"                  , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "persimmonjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("melonjuice"              , "Melon Juice"                      , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "melonjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("currantjuice"            , "Currant Juice"                    , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "currantjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("raspberryjuice"          , "Raspberry Juice"                  , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "raspberryjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("blackberryjuice"         , "Blackberry Juice"                 , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "blackberryjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("blueberryjuice"          , "Blueberry Juice"                  , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "blueberryjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("gooseberryjuice"         , "Gooseberry Juice"                 , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "gooseberryjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("strawberryjuice"         , "Strawberry Juice"                 , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "strawberryjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juiceplum"               , "Plum Juice"                       , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juiceplum" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicepeach"              , "Peach Juice"                      , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicepeach" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juiceelderberry"         , "Elderberry Juice"                 , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juiceelderberry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("hellderberryjuice"       , "Hellderberry Juice"               , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "hellderberryjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicegrapefruit"         , "Grapefruit Juice"                 , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicegrapefruit" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juiceapricot"            , "Apricot Juice"                    , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juiceapricot" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicepear"               , "Pear Juice"                       , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicepear" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("grapejuice"              , "Green Grape Juice"                , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "grapejuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("grc_grapewine0"          , "Purple Grape Juice"               , 300, 1000, 1000, 0xFF7A2848), // FL.java up "grc.grapewine0" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juiceredgrape"           , "Red Grape Juice"                  , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juiceredgrape" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicewhitegrape"         , "White Grape Juice"                , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicewhitegrape" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juiceapple"              , "Apple Juice"                      , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juiceapple" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("grc_applecider0"         , "Apple Juice"                      , 300, 1000, 1000, 0xFFE0C040), // FL.java up "grc.applecider0" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicepineapple"          , "Ananas Juice"                     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicepineapple" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicebanana"             , "Banana Juice"                     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicebanana" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicecherry"             , "Cherry Juice"                     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicecherry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicecranberry"          , "Cranberry Juice"                  , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicecranberry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("cactusfruitjuice"        , "Cactus Fruit Juice"               , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "cactusfruitjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("mangojuice"              , "Mango Juice"                      , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "mangojuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("pomegranatejuice"        , "Pomegranate Juice"                , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "pomegranatejuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("starfruitjuice"          , "Starfruit Juice"                  , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "starfruitjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("papayajuice"             , "Papaya Juice"                     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "papayajuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("figjuice"                , "Fig Juice"                        , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "figjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("coconutmilk"             , "Coconut Milk"                     , 300, 1000, 1000, 0xFFF8F8F4), // FL.java up "coconutmilk" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("datejuice"               , "Date Juice"                       , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "datejuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicecarrot"             , "Carrot Juice"                     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicecarrot" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juicetomato"             , "Tomato Juice"                     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juicetomato" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("beetjuice"               , "Beet Juice"                       , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "beetjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("pumpkinjuice"            , "Pumpkin Juice"                    , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "pumpkinjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("cucumberjuice"           , "Cucumber Juice"                   , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "cucumberjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("onionjuice"              , "Onion Juice"                      , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "onionjuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("potatojuice"             , "Potato Juice"                     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "potatojuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("ricewater"               , "Ricewater"                        , 300, 1000, 1000, 0xFFD8A858), // FL.java up "ricewater" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("hopsmash"                , "Hops Mash"                        , 300, 1000, 1000, 0xFFD8C890), // FL.java up "hopsmash" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("wheathopsmash"           , "Wheat-Hops Mash"                  , 300, 1000, 1000, 0xFFD8C890), // FL.java up "wheathopsmash" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("mashwheat"               , "Wheat Mash"                       , 300, 1000, 1000, 0xFFD8C890), // FL.java up "binnie.mashwheat" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("mashcorn"                , "Corn Mash"                        , 300, 1000, 1000, 0xFFD8C890), // FL.java up "binnie.mashcorn" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("mashrye"                 , "Rye Mash"                         , 300, 1000, 1000, 0xFFD8C890), // FL.java up "binnie.mashrye" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("mashgrain"               , "Grain Mash"                       , 300, 1000, 1000, 0xFFD8C890), // FL.java up "binnie.mashgrain" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("maplesyrup"              , "Maple Syrup"                      , 300, 1000, 1000, 0xFFB86818), // FL.java up "maplesyrup" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("peanutbutter"            , "Peanut Butter"                    , 300, 1000, 1000, 0xFFD8A850), // FL.java up "peanutbutter" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("grcmilk_cream"           , "Heavy Cream"                      , 300, 1000, 1000, 0xFFF8F0E0), // FL.java up "grcmilk.cream" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("chocolatecream"          , "Chocolate Cream"                  , 300, 1000, 1000, 0xFFF8F0E0), // FL.java up "chocolatecream" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("coconutcream"            , "Coconut Cream"                    , 300, 1000, 1000, 0xFFF8F0E0), // FL.java up "coconutcream" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("nutella"                 , "Nutella"                          , 300, 1000, 1000, 0xFF7A4A20), // FL.java up "nutella" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("ketchup"                 , "Tomato Ketchup"                   , 300, 1000, 1000, 0xFFB82818), // FL.java up "ketchup" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("mayo"                    , "Mayonnaise"                       , 300, 1000, 1000, 0xFFF8F0D8), // FL.java up "mayo" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("dressing"                , "Dressing"                         , 300, 1000, 1000, 0xFFE8D8A0), // FL.java up "potion.dressing" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("mushroomsoup"            , "Mushroom Stew"                    , 300, 1000, 1000, 0xFF9A7848), // FL.java up "mushroomsoup" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("blood"                   , "Blood"                            , 300, 1000, 1000, 0xFF8A1010), // FL.java up "blood" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("chillysauce"             , "Chili Sauce"                      , 300, 1000, 1000, 0xFFB82818), // FL.java up "chillysauce" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("hotsauce"                , "Hot Sauce"                        , 300, 1000, 1000, 0xFFB82818), // FL.java up "potion.hotsauce" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("diabolosauce"            , "Diabolo Sauce"                    , 300, 1000, 1000, 0xFFB82818), // FL.java up "potion.diabolosauce" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("diablosauce"             , "Diablo Sauce"                     , 300, 1000, 1000, 0xFFB82818), // FL.java up "potion.diablosauce" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("diablosauce_strong"      , "There is no Cow Sauce"            , 300, 1000, 1000, 0xFFB82818), // FL.java up "potion.diablosauce.strong" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("bbqsauce"                , "Barbecue Sauce"                   , 300, 1000, 1000, 0xFFB82818), // FL.java up "bbqsauce" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("slime_blue"              , "Blue Slime"                       , 300, 1000, 1000, 0xFF6FA8E8), // FL.java up "slime.blue" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("pinkslime"               , "Pink Slime"                       , 300, 1000, 1000, 0xFFE89AB8), // FL.java up "pinkslime" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("slime"                   , "Slime"                            , 300, 1000, 1000, 0xFF7FC85A), // FL.java up "slime" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("bawls"                   , "BAWLS"                            , 275, 1000, 1000, 0xFFD8E8F8), // FL.java up "bawls" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("tea"                     , "Tea"                              , 300, 1000, 1000, 0xFFC87C28), // FL.java up "tea" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("sweettea"                , "Sweet Tea"                        , 300, 1000, 1000, 0xFFC87C28), // FL.java up "sweettea" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("icetea"                  , "Ice Tea"                          , 255, 1000, 1000, 0xFFC87C28), // FL.java up "icetea" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("purpledrink"             , "Purple Drink"                     , 300, 1000, 1000, 0xFF9A48D8), // FL.java up "purpledrink" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("lemonade"                , "Lemonade"                         , 300, 1000, 1000, 0xFFE8E86A), // FL.java up "potion.lemonade" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("cavejohnsonsgrenadejuice", "Cave Johnson's Grenade Juice"     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "potion.cavejohnsonsgrenadejuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("vinegar"                 , "Grape Vinegar"                    , 300, 1000, 1000, 0xFFD8A858), // FL.java up "vinegar" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("applevinegar"            , "Apple Cider Vinegar"              , 300, 1000, 1000, 0xFFD8A858), // FL.java up "applevinegar" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("canevinegar"             , "Cane Vinegar"                     , 300, 1000, 1000, 0xFFD8A858), // FL.java up "canevinegar" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("ricevinegar"             , "Rice Vinegar"                     , 300, 1000, 1000, 0xFFD8A858), // FL.java up "ricevinegar" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juice_wine_fruit"        , "Fruit Wine"                       , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.juice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("limoncello"              , "Limoncello"                       , 300, 1000, 1000, 0xFFD8A858), // FL.java up "limoncello" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("wineagave"               , "Agave Wine"                       , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.wineagave" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("wineapricot"             , "Apricot Wine"                     , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.wineapricot" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winebanana"              , "Banana Wine"                      , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winebanana" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winecarrot"              , "Carrot Wine"                      , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winecarrot" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winecherry"              , "Cherry Wine"                      , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winecherry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winecitrus"              , "Citrus Wine"                      , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winecitrus" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winecranberry"           , "Cranberry Wine"                   , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winecranberry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("wineelderberry"          , "Elderberry Wine"                  , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.wineelderberry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("wineplum"                , "Plum Wine"                        , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.wineplum" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winesparkling"           , "Sparkling Wine"                   , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winesparkling" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winetomato"              , "Tomato Wine"                      , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winetomato" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("wine"                    , "Wine"                             , 300, 1000, 1000, 0xFF7A2848), // FL.java up "wine" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("ricardosanchez"          , "Ricardo Sanchez"                  , 300, 1000, 1000, 0xFFD8A858), // FL.java up "ricardosanchez" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winered"                 , "Red Wine"                         , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winered" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winewhite"               , "White Wine"                       , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winewhite" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winefortified"           , "Fortified Wine"                   , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winefortified" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("whiskey"                 , "Whiskey"                          , 300, 1000, 1000, 0xFFC89030), // FL.java up "binnie.whiskey" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("whiskeyrye"              , "Rye Whiskey"                      , 300, 1000, 1000, 0xFFC89030), // FL.java up "binnie.whiskeyrye" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("whiskeycorn"             , "Corn Whiskey"                     , 300, 1000, 1000, 0xFFC89030), // FL.java up "binnie.whiskeycorn" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("whiskeywheat"            , "Scotch"                           , 275, 1000, 1000, 0xFFC89030), // FL.java up "binnie.whiskeywheat" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("glenmckenner"            , "Glen McKenner"                    , 275, 1000, 1000, 0xFFD8A858), // FL.java up "glenmckenner" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurchocolate"        , "Chocolate Liqueur"                , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurchocolate" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueuralmond"           , "Almond Liqueur"                   , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueuralmond" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueuranise"            , "Anise Liqueur"                    , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueuranise" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurbanana"           , "Banana Liqueur"                   , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurbanana" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurblackberry"       , "Blackberry Liqueur"               , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurblackberry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurblackcurrant"     , "Blackcurrant Liqueur"             , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurblackcurrant" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurcherry"           , "Cherry Liqueur"                   , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurcherry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurcinnamon"         , "Cinnamon Liqueur"                 , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurcinnamon" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurcoffee"           , "Coffee Liqueur"                   , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurcoffee" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurhazelnut"         , "Hazelnut Liqueur"                 , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurhazelnut" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurherbal"           , "Herbal Liqueur"                   , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurherbal" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurlemon"            , "Lemon Liqueur"                    , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurlemon" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurmelon"            , "Melon Liqueur"                    , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurmelon" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurmint"             , "Mint Liqueur"                     , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurmint" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurorange"           , "Orange Liqueur"                   , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurorange" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurpeach"            , "Peach Liqueur"                    , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurpeach" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liqueurraspberry"        , "Raspberry Liqueur"                , 300, 1000, 1000, 0xFFC86878), // FL.java up "binnie.liqueurraspberry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liquorfruit"             , "Fruit Liquor"                     , 300, 1000, 1000, 0xFFC87840), // FL.java up "binnie.liquorfruit" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liquorapple"             , "Apple Liquor"                     , 300, 1000, 1000, 0xFFC87840), // FL.java up "binnie.liquorapple" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liquorapricot"           , "Apricot Liquor"                   , 300, 1000, 1000, 0xFFC87840), // FL.java up "binnie.liquorapricot" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liquorcherry"            , "Cherry Liquor"                    , 300, 1000, 1000, 0xFFC87840), // FL.java up "binnie.liquorcherry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liquorelderberry"        , "Elderberry Liquor"                , 300, 1000, 1000, 0xFFC87840), // FL.java up "binnie.liquorelderberry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("liquorpear"              , "Pear Liquor"                      , 300, 1000, 1000, 0xFFC87840), // FL.java up "binnie.liquorpear" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("spiritgin"               , "Gin"                              , 300, 1000, 1000, 0xFFE0EDE8), // FL.java up "binnie.spiritgin" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("spiritneutral"           , "Neutral Spirit"                   , 300, 1000, 1000, 0xFFD8A858), // FL.java up "binnie.spiritneutral" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("spiritsugarcane"         , "Cane Spirit"                      , 300, 1000, 1000, 0xFFD8A858), // FL.java up "binnie.spiritsugarcane" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("brandyfruit"             , "Brandy"                           , 300, 1000, 1000, 0xFFB86830), // FL.java up "binnie.brandyfruit" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("brandyapple"             , "Apple Brandy"                     , 300, 1000, 1000, 0xFFB86830), // FL.java up "binnie.brandyapple" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("brandyapricot"           , "Apricot Brandy"                   , 300, 1000, 1000, 0xFFB86830), // FL.java up "binnie.brandyapricot" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("brandycherry"            , "Cherry Brandy"                    , 300, 1000, 1000, 0xFFB86830), // FL.java up "binnie.brandycherry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("brandycitrus"            , "Citrus Brandy"                    , 300, 1000, 1000, 0xFFB86830), // FL.java up "binnie.brandycitrus" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("brandyelderberry"        , "Elderberry Brandy"                , 300, 1000, 1000, 0xFFB86830), // FL.java up "binnie.brandyelderberry" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("brandygrape"             , "Grape Brandy"                     , 300, 1000, 1000, 0xFFB86830), // FL.java up "binnie.brandygrape" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("brandypear"              , "Pear Brandy"                      , 300, 1000, 1000, 0xFFB86830), // FL.java up "binnie.brandypear" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("brandyplum"              , "Plum Brandy"                      , 300, 1000, 1000, 0xFFB86830), // FL.java up "binnie.brandyplum" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("ciderapple"              , "Cider"                            , 300, 1000, 1000, 0xFFE0C040), // FL.java up "binnie.ciderapple" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("ciderpear"               , "Pear Cider"                       , 300, 1000, 1000, 0xFFE0C040), // FL.java up "binnie.ciderpear" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("ciderpeach"              , "Peach Cider"                      , 300, 1000, 1000, 0xFFE0C040), // FL.java up "binnie.ciderpeach" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("winepineapple"           , "Ananas Cider"                     , 300, 1000, 1000, 0xFF7A2848), // FL.java up "binnie.winepineapple" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("beer"                    , "Beer"                             , 300, 1000, 1000, 0xFFE8B428), // FL.java up "beer" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("darkbeer"                , "Dark Beer"                        , 300, 1000, 1000, 0xFFE8B428), // FL.java up "darkbeer" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("dragonblood"             , "Dragon Blood"                     , 300, 1000, 1000, 0xFF8A1010), // FL.java up "potion.dragonblood" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("beerale"                 , "Ale"                              , 300, 1000, 1000, 0xFFE8B428), // FL.java up "binnie.beerale" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("beercorn"                , "Corn Beer"                        , 300, 1000, 1000, 0xFFE8B428), // FL.java up "binnie.beercorn" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("beerlager"               , "Lager"                            , 300, 1000, 1000, 0xFFE8B428), // FL.java up "binnie.beerlager" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("beerrye"                 , "Rye Beer"                         , 300, 1000, 1000, 0xFFE8B428), // FL.java up "binnie.beerrye" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("beerstout"               , "Stout"                            , 300, 1000, 1000, 0xFFE8B428), // FL.java up "binnie.beerstout" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("beerwheat"               , "Wheat Beer"                       , 300, 1000, 1000, 0xFFE8B428), // FL.java up "binnie.beerwheat" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("rumwhite"                , "Rum"                              , 300, 1000, 1000, 0xFF8A5020), // FL.java up "binnie.rumwhite" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("rumdark"                 , "Pirate Brew"                      , 300, 1000, 1000, 0xFF8A5020), // FL.java up "binnie.rumdark" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("pina_colada"             , "Piña Colada"                      , 300, 1000, 1000, 0xFFF8F0E0), // FL.java up "pina.colada" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("vodka"                   , "Vodka"                            , 275, 1000, 1000, 0xFFE8F0F4), // FL.java up "binnie.vodka" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("leninade"                , "Leninade"                         , 300, 1000, 1000, 0xFFD84040), // FL.java up "potion.leninade" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("mead"                    , "Mead"                             , 300, 1000, 1000, 0xFFE8B428), // FL.java up "mead" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("short_mead"              , "Short Mead"                       , 300, 1000, 1000, 0xFFE8B428), // FL.java up "short.mead" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("sake"                    , "Sake"                             , 300, 1000, 1000, 0xFFE8ECE0), // FL.java up "potion.sake" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("tequila"                 , "Tequila"                          , 300, 1000, 1000, 0xFFE8E4C0), // FL.java up "binnie.tequila" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("alcopops"                , "Alcopops"                         , 300, 1000, 1000, 0xFFE8A8C8), // FL.java up "potion.alcopops" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("hotfryingoil"            , "Hot Frying Oil"                   , 400, 1000, 1000, 0xFFE8D040), // FL.java up "hotfryingoil" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("seedoil"                 , "Seed Oil"                         , 300, 1000, 1000, 0xFFE8D040), // FL.java up "seedoil" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("plantoil"                , "Plant Oil"                        , 300, 1000, 1000, 0xFFE8D040), // FL.java up "plantoil" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("sunfloweroil"            , "Sunflower Oil"                    , 300, 1000, 1000, 0xFFE8D040), // FL.java up "sunfloweroil" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("juiceolive"              , "Olive Oil"                        , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "binnie.juiceolive" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("nutoil"                  , "Nut Oil"                          , 300, 1000, 1000, 0xFFE8D040), // FL.java up "nutoil" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("linoil"                  , "Lin Oil"                          , 300, 1000, 1000, 0xFFE8D040), // FL.java up "linoil" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("hempoil"                 , "Hemp Oil"                         , 300, 1000, 1000, 0xFFE8D040), // FL.java up "hempoil" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("fishoil"                 , "Fish Oil"                         , 300, 1000, 1000, 0xFFE8D040), // FL.java up "fishoil" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("whaleoil"                , "Whale Oil"                        , 300, 1000, 1000, 0xFFE8D040)); // FL.java up "whaleoil" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
+
+	/** The food-b1 row for a gt6 id path, or null (the {@link #foodSpec} lookup shape, its own table). */
+	public static AquaFluidSpec foodB1Spec(String aName) {
+		for (AquaFluidSpec tSpec : FOOD_B1_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/** The registration helper for one food-b1 row (the {@link #foodFluid} shape over the fifth table). */
+	private static AquaFluid foodB1Fluid(String aName) {
+		AquaFluidSpec tSpec = foodB1Spec(aName);
+		if (tSpec == null) throw new IllegalArgumentException("no food-b1 fluid spec: " + aName);
+		return registerFluidFamily(tSpec);
+	}
+
+	// ponytail: 220 one-line static registrations instead of a loop — the static-init
+	// DeferredRegister accumulation IS the registration mechanism (the entries fire with
+	// the existing onModConstruct, types before fluids); a lazy loop would register after
+	// the registry events and throw. Upgrade path: a DR-friendly batch API if Forge adds one.
+
+	public static final AquaFluid MINERALSODA              = foodB1Fluid("mineralsoda");
+	public static final AquaFluid SODA                     = foodB1Fluid("soda");
+	public static final AquaFluid MILK                     = foodB1Fluid("milk");
+	public static final AquaFluid SOYMILK                  = foodB1Fluid("soymilk");
+	public static final AquaFluid GRCMILK_MILK             = foodB1Fluid("grcmilk_milk");
+	public static final AquaFluid SPOILEDMILK              = foodB1Fluid("spoiledmilk");
+	public static final AquaFluid FOR_HONEY                = foodB1Fluid("for_honey");
+	public static final AquaFluid GRC_HONEY                = foodB1Fluid("grc_honey");
+	public static final AquaFluid FRUITSMOOTHIE            = foodB1Fluid("fruitsmoothie");
+	public static final AquaFluid MELONSMOOTHIE            = foodB1Fluid("melonsmoothie");
+	public static final AquaFluid KIWISMOOTHIE             = foodB1Fluid("kiwismoothie");
+	public static final AquaFluid CURRANTSMOOTHIE          = foodB1Fluid("currantsmoothie");
+	public static final AquaFluid RASPBERRYSMOOTHIE        = foodB1Fluid("raspberrysmoothie");
+	public static final AquaFluid BLACKBERRYSMOOTHIE       = foodB1Fluid("blackberrysmoothie");
+	public static final AquaFluid BLUEBERRYSMOOTHIE        = foodB1Fluid("blueberrysmoothie");
+	public static final AquaFluid GOOSEBERRYSMOOTHIE       = foodB1Fluid("gooseberrysmoothie");
+	public static final AquaFluid STRAWBERRYSMOOTHIE       = foodB1Fluid("strawberrysmoothie");
+	public static final AquaFluid PLUMSMOOTHIE             = foodB1Fluid("plumsmoothie");
+	public static final AquaFluid PEACHSMOOTHIE            = foodB1Fluid("peachsmoothie");
+	public static final AquaFluid ELDERBERRYSMOOTHIE       = foodB1Fluid("elderberrysmoothie");
+	public static final AquaFluid GRAPEFRUITSMOOTHIE       = foodB1Fluid("grapefruitsmoothie");
+	public static final AquaFluid LIMESMOOTHIE             = foodB1Fluid("limesmoothie");
+	public static final AquaFluid ORANGESMOOTHIE           = foodB1Fluid("orangesmoothie");
+	public static final AquaFluid PERSIMMONSMOOTHIE        = foodB1Fluid("persimmonsmoothie");
+	public static final AquaFluid APRICOTSMOOTHIE          = foodB1Fluid("apricotsmoothie");
+	public static final AquaFluid PEARSMOOTHIE             = foodB1Fluid("pearsmoothie");
+	public static final AquaFluid REDGRAPESMOOTHIE         = foodB1Fluid("redgrapesmoothie");
+	public static final AquaFluid WHITEGRAPESMOOTHIE       = foodB1Fluid("whitegrapesmoothie");
+	public static final AquaFluid GRAPESMOOTHIE            = foodB1Fluid("grapesmoothie");
+	public static final AquaFluid PURPLEGRAPESMOOTHIE      = foodB1Fluid("purplegrapesmoothie");
+	public static final AquaFluid APPLESMOOTHIE            = foodB1Fluid("applesmoothie");
+	public static final AquaFluid PINEAPPLESMOOTHIE        = foodB1Fluid("pineapplesmoothie");
+	public static final AquaFluid BANANASMOOTHIE           = foodB1Fluid("bananasmoothie");
+	public static final AquaFluid CHERRYSMOOTHIE           = foodB1Fluid("cherrysmoothie");
+	public static final AquaFluid CRANBERRYSMOOTHIE        = foodB1Fluid("cranberrysmoothie");
+	public static final AquaFluid LEMONSMOOTHIE            = foodB1Fluid("lemonsmoothie");
+	public static final AquaFluid MANGOSMOOTHIE            = foodB1Fluid("mangosmoothie");
+	public static final AquaFluid POMEGRANATESMOOTHIE      = foodB1Fluid("pomegranatesmoothie");
+	public static final AquaFluid STARFRUITSMOOTHIE        = foodB1Fluid("starfruitsmoothie");
+	public static final AquaFluid PAPAYASMOOTHIE           = foodB1Fluid("papayasmoothie");
+	public static final AquaFluid FIGSMOOTHIE              = foodB1Fluid("figsmoothie");
+	public static final AquaFluid COCONUTSMOOTHIE          = foodB1Fluid("coconutsmoothie");
+	public static final AquaFluid JUICE_JUICE              = foodB1Fluid("juice_juice");
+	public static final AquaFluid KIWIJUICE                = foodB1Fluid("kiwijuice");
+	public static final AquaFluid JUICELIME                = foodB1Fluid("juicelime");
+	public static final AquaFluid JUICELEMON               = foodB1Fluid("juicelemon");
+	public static final AquaFluid JUICEORANGE              = foodB1Fluid("juiceorange");
+	public static final AquaFluid PERSIMMONJUICE           = foodB1Fluid("persimmonjuice");
+	public static final AquaFluid MELONJUICE               = foodB1Fluid("melonjuice");
+	public static final AquaFluid CURRANTJUICE             = foodB1Fluid("currantjuice");
+	public static final AquaFluid RASPBERRYJUICE           = foodB1Fluid("raspberryjuice");
+	public static final AquaFluid BLACKBERRYJUICE          = foodB1Fluid("blackberryjuice");
+	public static final AquaFluid BLUEBERRYJUICE           = foodB1Fluid("blueberryjuice");
+	public static final AquaFluid GOOSEBERRYJUICE          = foodB1Fluid("gooseberryjuice");
+	public static final AquaFluid STRAWBERRYJUICE          = foodB1Fluid("strawberryjuice");
+	public static final AquaFluid JUICEPLUM                = foodB1Fluid("juiceplum");
+	public static final AquaFluid JUICEPEACH               = foodB1Fluid("juicepeach");
+	public static final AquaFluid JUICEELDERBERRY          = foodB1Fluid("juiceelderberry");
+	public static final AquaFluid HELLDERBERRYJUICE        = foodB1Fluid("hellderberryjuice");
+	public static final AquaFluid JUICEGRAPEFRUIT          = foodB1Fluid("juicegrapefruit");
+	public static final AquaFluid JUICEAPRICOT             = foodB1Fluid("juiceapricot");
+	public static final AquaFluid JUICEPEAR                = foodB1Fluid("juicepear");
+	public static final AquaFluid GRAPEJUICE               = foodB1Fluid("grapejuice");
+	public static final AquaFluid GRC_GRAPEWINE0           = foodB1Fluid("grc_grapewine0");
+	public static final AquaFluid JUICEREDGRAPE            = foodB1Fluid("juiceredgrape");
+	public static final AquaFluid JUICEWHITEGRAPE          = foodB1Fluid("juicewhitegrape");
+	public static final AquaFluid JUICEAPPLE               = foodB1Fluid("juiceapple");
+	public static final AquaFluid GRC_APPLECIDER0          = foodB1Fluid("grc_applecider0");
+	public static final AquaFluid JUICEPINEAPPLE           = foodB1Fluid("juicepineapple");
+	public static final AquaFluid JUICEBANANA              = foodB1Fluid("juicebanana");
+	public static final AquaFluid JUICECHERRY              = foodB1Fluid("juicecherry");
+	public static final AquaFluid JUICECRANBERRY           = foodB1Fluid("juicecranberry");
+	public static final AquaFluid CACTUSFRUITJUICE         = foodB1Fluid("cactusfruitjuice");
+	public static final AquaFluid MANGOJUICE               = foodB1Fluid("mangojuice");
+	public static final AquaFluid POMEGRANATEJUICE         = foodB1Fluid("pomegranatejuice");
+	public static final AquaFluid STARFRUITJUICE           = foodB1Fluid("starfruitjuice");
+	public static final AquaFluid PAPAYAJUICE              = foodB1Fluid("papayajuice");
+	public static final AquaFluid FIGJUICE                 = foodB1Fluid("figjuice");
+	public static final AquaFluid COCONUTMILK              = foodB1Fluid("coconutmilk");
+	public static final AquaFluid DATEJUICE                = foodB1Fluid("datejuice");
+	public static final AquaFluid JUICECARROT              = foodB1Fluid("juicecarrot");
+	public static final AquaFluid JUICETOMATO              = foodB1Fluid("juicetomato");
+	public static final AquaFluid BEETJUICE                = foodB1Fluid("beetjuice");
+	public static final AquaFluid PUMPKINJUICE             = foodB1Fluid("pumpkinjuice");
+	public static final AquaFluid CUCUMBERJUICE            = foodB1Fluid("cucumberjuice");
+	public static final AquaFluid ONIONJUICE               = foodB1Fluid("onionjuice");
+	public static final AquaFluid POTATOJUICE              = foodB1Fluid("potatojuice");
+	public static final AquaFluid RICEWATER                = foodB1Fluid("ricewater");
+	public static final AquaFluid HOPSMASH                 = foodB1Fluid("hopsmash");
+	public static final AquaFluid WHEATHOPSMASH            = foodB1Fluid("wheathopsmash");
+	public static final AquaFluid MASHWHEAT                = foodB1Fluid("mashwheat");
+	public static final AquaFluid MASHCORN                 = foodB1Fluid("mashcorn");
+	public static final AquaFluid MASHRYE                  = foodB1Fluid("mashrye");
+	public static final AquaFluid MASHGRAIN                = foodB1Fluid("mashgrain");
+	public static final AquaFluid MAPLESYRUP               = foodB1Fluid("maplesyrup");
+	public static final AquaFluid PEANUTBUTTER             = foodB1Fluid("peanutbutter");
+	public static final AquaFluid GRCMILK_CREAM            = foodB1Fluid("grcmilk_cream");
+	public static final AquaFluid CHOCOLATECREAM           = foodB1Fluid("chocolatecream");
+	public static final AquaFluid COCONUTCREAM             = foodB1Fluid("coconutcream");
+	public static final AquaFluid NUTELLA                  = foodB1Fluid("nutella");
+	public static final AquaFluid KETCHUP                  = foodB1Fluid("ketchup");
+	public static final AquaFluid MAYO                     = foodB1Fluid("mayo");
+	public static final AquaFluid DRESSING                 = foodB1Fluid("dressing");
+	public static final AquaFluid MUSHROOMSOUP             = foodB1Fluid("mushroomsoup");
+	public static final AquaFluid BLOOD                    = foodB1Fluid("blood");
+	public static final AquaFluid CHILLYSAUCE              = foodB1Fluid("chillysauce");
+	public static final AquaFluid HOTSAUCE                 = foodB1Fluid("hotsauce");
+	public static final AquaFluid DIABOLOSAUCE             = foodB1Fluid("diabolosauce");
+	public static final AquaFluid DIABLOSAUCE              = foodB1Fluid("diablosauce");
+	public static final AquaFluid DIABLOSAUCE_STRONG       = foodB1Fluid("diablosauce_strong");
+	public static final AquaFluid BBQSAUCE                 = foodB1Fluid("bbqsauce");
+	public static final AquaFluid SLIME_BLUE               = foodB1Fluid("slime_blue");
+	public static final AquaFluid PINKSLIME                = foodB1Fluid("pinkslime");
+	public static final AquaFluid SLIME                    = foodB1Fluid("slime");
+	public static final AquaFluid BAWLS                    = foodB1Fluid("bawls");
+	public static final AquaFluid TEA                      = foodB1Fluid("tea");
+	public static final AquaFluid SWEETTEA                 = foodB1Fluid("sweettea");
+	public static final AquaFluid ICETEA                   = foodB1Fluid("icetea");
+	public static final AquaFluid PURPLEDRINK              = foodB1Fluid("purpledrink");
+	public static final AquaFluid LEMONADE                 = foodB1Fluid("lemonade");
+	public static final AquaFluid CAVEJOHNSONSGRENADEJUICE = foodB1Fluid("cavejohnsonsgrenadejuice");
+	public static final AquaFluid VINEGAR                  = foodB1Fluid("vinegar");
+	public static final AquaFluid APPLEVINEGAR             = foodB1Fluid("applevinegar");
+	public static final AquaFluid CANEVINEGAR              = foodB1Fluid("canevinegar");
+	public static final AquaFluid RICEVINEGAR              = foodB1Fluid("ricevinegar");
+	public static final AquaFluid JUICE_WINE_FRUIT         = foodB1Fluid("juice_wine_fruit");
+	public static final AquaFluid LIMONCELLO               = foodB1Fluid("limoncello");
+	public static final AquaFluid WINEAGAVE                = foodB1Fluid("wineagave");
+	public static final AquaFluid WINEAPRICOT              = foodB1Fluid("wineapricot");
+	public static final AquaFluid WINEBANANA               = foodB1Fluid("winebanana");
+	public static final AquaFluid WINECARROT               = foodB1Fluid("winecarrot");
+	public static final AquaFluid WINECHERRY               = foodB1Fluid("winecherry");
+	public static final AquaFluid WINECITRUS               = foodB1Fluid("winecitrus");
+	public static final AquaFluid WINECRANBERRY            = foodB1Fluid("winecranberry");
+	public static final AquaFluid WINEELDERBERRY           = foodB1Fluid("wineelderberry");
+	public static final AquaFluid WINEPLUM                 = foodB1Fluid("wineplum");
+	public static final AquaFluid WINESPARKLING            = foodB1Fluid("winesparkling");
+	public static final AquaFluid WINETOMATO               = foodB1Fluid("winetomato");
+	public static final AquaFluid WINE                     = foodB1Fluid("wine");
+	public static final AquaFluid RICARDOSANCHEZ           = foodB1Fluid("ricardosanchez");
+	public static final AquaFluid WINERED                  = foodB1Fluid("winered");
+	public static final AquaFluid WINEWHITE                = foodB1Fluid("winewhite");
+	public static final AquaFluid WINEFORTIFIED            = foodB1Fluid("winefortified");
+	public static final AquaFluid WHISKEY                  = foodB1Fluid("whiskey");
+	public static final AquaFluid WHISKEYRYE               = foodB1Fluid("whiskeyrye");
+	public static final AquaFluid WHISKEYCORN              = foodB1Fluid("whiskeycorn");
+	public static final AquaFluid WHISKEYWHEAT             = foodB1Fluid("whiskeywheat");
+	public static final AquaFluid GLENMCKENNER             = foodB1Fluid("glenmckenner");
+	public static final AquaFluid LIQUEURCHOCOLATE         = foodB1Fluid("liqueurchocolate");
+	public static final AquaFluid LIQUEURALMOND            = foodB1Fluid("liqueuralmond");
+	public static final AquaFluid LIQUEURANISE             = foodB1Fluid("liqueuranise");
+	public static final AquaFluid LIQUEURBANANA            = foodB1Fluid("liqueurbanana");
+	public static final AquaFluid LIQUEURBLACKBERRY        = foodB1Fluid("liqueurblackberry");
+	public static final AquaFluid LIQUEURBLACKCURRANT      = foodB1Fluid("liqueurblackcurrant");
+	public static final AquaFluid LIQUEURCHERRY            = foodB1Fluid("liqueurcherry");
+	public static final AquaFluid LIQUEURCINNAMON          = foodB1Fluid("liqueurcinnamon");
+	public static final AquaFluid LIQUEURCOFFEE            = foodB1Fluid("liqueurcoffee");
+	public static final AquaFluid LIQUEURHAZELNUT          = foodB1Fluid("liqueurhazelnut");
+	public static final AquaFluid LIQUEURHERBAL            = foodB1Fluid("liqueurherbal");
+	public static final AquaFluid LIQUEURLEMON             = foodB1Fluid("liqueurlemon");
+	public static final AquaFluid LIQUEURMELON             = foodB1Fluid("liqueurmelon");
+	public static final AquaFluid LIQUEURMINT              = foodB1Fluid("liqueurmint");
+	public static final AquaFluid LIQUEURORANGE            = foodB1Fluid("liqueurorange");
+	public static final AquaFluid LIQUEURPEACH             = foodB1Fluid("liqueurpeach");
+	public static final AquaFluid LIQUEURRASPBERRY         = foodB1Fluid("liqueurraspberry");
+	public static final AquaFluid LIQUORFRUIT              = foodB1Fluid("liquorfruit");
+	public static final AquaFluid LIQUORAPPLE              = foodB1Fluid("liquorapple");
+	public static final AquaFluid LIQUORAPRICOT            = foodB1Fluid("liquorapricot");
+	public static final AquaFluid LIQUORCHERRY             = foodB1Fluid("liquorcherry");
+	public static final AquaFluid LIQUORELDERBERRY         = foodB1Fluid("liquorelderberry");
+	public static final AquaFluid LIQUORPEAR               = foodB1Fluid("liquorpear");
+	public static final AquaFluid SPIRITGIN                = foodB1Fluid("spiritgin");
+	public static final AquaFluid SPIRITNEUTRAL            = foodB1Fluid("spiritneutral");
+	public static final AquaFluid SPIRITSUGARCANE          = foodB1Fluid("spiritsugarcane");
+	public static final AquaFluid BRANDYFRUIT              = foodB1Fluid("brandyfruit");
+	public static final AquaFluid BRANDYAPPLE              = foodB1Fluid("brandyapple");
+	public static final AquaFluid BRANDYAPRICOT            = foodB1Fluid("brandyapricot");
+	public static final AquaFluid BRANDYCHERRY             = foodB1Fluid("brandycherry");
+	public static final AquaFluid BRANDYCITRUS             = foodB1Fluid("brandycitrus");
+	public static final AquaFluid BRANDYELDERBERRY         = foodB1Fluid("brandyelderberry");
+	public static final AquaFluid BRANDYGRAPE              = foodB1Fluid("brandygrape");
+	public static final AquaFluid BRANDYPEAR               = foodB1Fluid("brandypear");
+	public static final AquaFluid BRANDYPLUM               = foodB1Fluid("brandyplum");
+	public static final AquaFluid CIDERAPPLE               = foodB1Fluid("ciderapple");
+	public static final AquaFluid CIDERPEAR                = foodB1Fluid("ciderpear");
+	public static final AquaFluid CIDERPEACH               = foodB1Fluid("ciderpeach");
+	public static final AquaFluid WINEPINEAPPLE            = foodB1Fluid("winepineapple");
+	public static final AquaFluid BEER                     = foodB1Fluid("beer");
+	public static final AquaFluid DARKBEER                 = foodB1Fluid("darkbeer");
+	public static final AquaFluid DRAGONBLOOD              = foodB1Fluid("dragonblood");
+	public static final AquaFluid BEERALE                  = foodB1Fluid("beerale");
+	public static final AquaFluid BEERCORN                 = foodB1Fluid("beercorn");
+	public static final AquaFluid BEERLAGER                = foodB1Fluid("beerlager");
+	public static final AquaFluid BEERRYE                  = foodB1Fluid("beerrye");
+	public static final AquaFluid BEERSTOUT                = foodB1Fluid("beerstout");
+	public static final AquaFluid BEERWHEAT                = foodB1Fluid("beerwheat");
+	public static final AquaFluid RUMWHITE                 = foodB1Fluid("rumwhite");
+	public static final AquaFluid RUMDARK                  = foodB1Fluid("rumdark");
+	public static final AquaFluid PINA_COLADA              = foodB1Fluid("pina_colada");
+	public static final AquaFluid VODKA                    = foodB1Fluid("vodka");
+	public static final AquaFluid LENINADE                 = foodB1Fluid("leninade");
+	public static final AquaFluid MEAD                     = foodB1Fluid("mead");
+	public static final AquaFluid SHORT_MEAD               = foodB1Fluid("short_mead");
+	public static final AquaFluid SAKE                     = foodB1Fluid("sake");
+	public static final AquaFluid TEQUILA                  = foodB1Fluid("tequila");
+	public static final AquaFluid ALCOPOPS                 = foodB1Fluid("alcopops");
+	public static final AquaFluid HOTFRYINGOIL             = foodB1Fluid("hotfryingoil");
+	public static final AquaFluid SEEDOIL                  = foodB1Fluid("seedoil");
+	public static final AquaFluid PLANTOIL                 = foodB1Fluid("plantoil");
+	public static final AquaFluid SUNFLOWEROIL             = foodB1Fluid("sunfloweroil");
+	public static final AquaFluid JUICEOLIVE               = foodB1Fluid("juiceolive");
+	public static final AquaFluid NUTOIL                   = foodB1Fluid("nutoil");
+	public static final AquaFluid LINOIL                   = foodB1Fluid("linoil");
+	public static final AquaFluid HEMPOIL                  = foodB1Fluid("hempoil");
+	public static final AquaFluid FISHOIL                  = foodB1Fluid("fishoil");
+	public static final AquaFluid WHALEOIL                 = foodB1Fluid("whaleoil");
+
+	/** The 216 registered food-b1 families in {@link #FOOD_B1_SPECS} declaration order (the lang/table walkers). */
+		public static List<AquaFluid> foodB1Fluids() {
+		return List.of(MINERALSODA, SODA, MILK, SOYMILK, GRCMILK_MILK, SPOILEDMILK, FOR_HONEY, GRC_HONEY, FRUITSMOOTHIE, MELONSMOOTHIE, KIWISMOOTHIE, CURRANTSMOOTHIE, RASPBERRYSMOOTHIE, BLACKBERRYSMOOTHIE, BLUEBERRYSMOOTHIE, GOOSEBERRYSMOOTHIE, STRAWBERRYSMOOTHIE, PLUMSMOOTHIE, PEACHSMOOTHIE, ELDERBERRYSMOOTHIE, GRAPEFRUITSMOOTHIE, LIMESMOOTHIE, ORANGESMOOTHIE, PERSIMMONSMOOTHIE, APRICOTSMOOTHIE, PEARSMOOTHIE, REDGRAPESMOOTHIE, WHITEGRAPESMOOTHIE, GRAPESMOOTHIE, PURPLEGRAPESMOOTHIE, APPLESMOOTHIE, PINEAPPLESMOOTHIE, BANANASMOOTHIE, CHERRYSMOOTHIE, CRANBERRYSMOOTHIE, LEMONSMOOTHIE, MANGOSMOOTHIE, POMEGRANATESMOOTHIE, STARFRUITSMOOTHIE, PAPAYASMOOTHIE, FIGSMOOTHIE, COCONUTSMOOTHIE, JUICE_JUICE, KIWIJUICE, JUICELIME, JUICELEMON, JUICEORANGE, PERSIMMONJUICE, MELONJUICE, CURRANTJUICE, RASPBERRYJUICE, BLACKBERRYJUICE, BLUEBERRYJUICE, GOOSEBERRYJUICE, STRAWBERRYJUICE, JUICEPLUM, JUICEPEACH, JUICEELDERBERRY, HELLDERBERRYJUICE, JUICEGRAPEFRUIT, JUICEAPRICOT, JUICEPEAR, GRAPEJUICE, GRC_GRAPEWINE0, JUICEREDGRAPE, JUICEWHITEGRAPE, JUICEAPPLE, GRC_APPLECIDER0, JUICEPINEAPPLE, JUICEBANANA, JUICECHERRY, JUICECRANBERRY, CACTUSFRUITJUICE, MANGOJUICE, POMEGRANATEJUICE, STARFRUITJUICE, PAPAYAJUICE, FIGJUICE, COCONUTMILK, DATEJUICE, JUICECARROT, JUICETOMATO, BEETJUICE, PUMPKINJUICE, CUCUMBERJUICE, ONIONJUICE, POTATOJUICE, RICEWATER, HOPSMASH, WHEATHOPSMASH, MASHWHEAT, MASHCORN, MASHRYE, MASHGRAIN, MAPLESYRUP, PEANUTBUTTER, GRCMILK_CREAM, CHOCOLATECREAM, COCONUTCREAM, NUTELLA, KETCHUP, MAYO, DRESSING, MUSHROOMSOUP, BLOOD, CHILLYSAUCE, HOTSAUCE, DIABOLOSAUCE, DIABLOSAUCE, DIABLOSAUCE_STRONG, BBQSAUCE, SLIME_BLUE, PINKSLIME, SLIME, BAWLS, TEA, SWEETTEA, ICETEA, PURPLEDRINK, LEMONADE, CAVEJOHNSONSGRENADEJUICE, VINEGAR, APPLEVINEGAR, CANEVINEGAR, RICEVINEGAR, JUICE_WINE_FRUIT, LIMONCELLO, WINEAGAVE, WINEAPRICOT, WINEBANANA, WINECARROT, WINECHERRY, WINECITRUS, WINECRANBERRY, WINEELDERBERRY, WINEPLUM, WINESPARKLING, WINETOMATO, WINE, RICARDOSANCHEZ, WINERED, WINEWHITE, WINEFORTIFIED, WHISKEY, WHISKEYRYE, WHISKEYCORN, WHISKEYWHEAT, GLENMCKENNER, LIQUEURCHOCOLATE, LIQUEURALMOND, LIQUEURANISE, LIQUEURBANANA, LIQUEURBLACKBERRY, LIQUEURBLACKCURRANT, LIQUEURCHERRY, LIQUEURCINNAMON, LIQUEURCOFFEE, LIQUEURHAZELNUT, LIQUEURHERBAL, LIQUEURLEMON, LIQUEURMELON, LIQUEURMINT, LIQUEURORANGE, LIQUEURPEACH, LIQUEURRASPBERRY, LIQUORFRUIT, LIQUORAPPLE, LIQUORAPRICOT, LIQUORCHERRY, LIQUORELDERBERRY, LIQUORPEAR, SPIRITGIN, SPIRITNEUTRAL, SPIRITSUGARCANE, BRANDYFRUIT, BRANDYAPPLE, BRANDYAPRICOT, BRANDYCHERRY, BRANDYCITRUS, BRANDYELDERBERRY, BRANDYGRAPE, BRANDYPEAR, BRANDYPLUM, CIDERAPPLE, CIDERPEAR, CIDERPEACH, WINEPINEAPPLE, BEER, DARKBEER, DRAGONBLOOD, BEERALE, BEERCORN, BEERLAGER, BEERRYE, BEERSTOUT, BEERWHEAT, RUMWHITE, RUMDARK, PINA_COLADA, VODKA, LENINADE, MEAD, SHORT_MEAD, SAKE, TEQUILA, ALCOPOPS, HOTFRYINGOIL, SEEDOIL, PLANTOIL, SUNFLOWEROIL, JUICEOLIVE, NUTOIL, LINOIL, HEMPOIL, FISHOIL, WHALEOIL);
+	}
 	/**
 	 * {@code gt6:dye_chemical_<colour>} + {@code gt6:chlorine} — the Canner refill input
 	 * domain (task p24-dye-chemical-fluids, the ruling R3/R4/R6 of
