@@ -1,0 +1,8 @@
+{ "recipes": [
+  { "comment": "Loader_Recipes_Food.java:266 materialHoneycomb — Juicer → 90 mB Honey (the wax-bee dust byproduct face pools with the material-items card)", "inputs": [{ "item": "gt6:comb_honey", "count": 1 }], "fluidOutputs": [{ "fluid": "gt6:honey", "amount": 90 }], "duration": 64, "eut": 16 },
+  { "comment": "Loader_Recipes_OreDict.java:126 slimeballGreen — Juicer 125 mB", "inputs": [{ "item": "minecraft:slime_ball", "count": 1 }], "fluidOutputs": [{ "fluid": "gt6:slime", "amount": 125 }], "duration": 64, "eut": 16 },
+  { "comment": "Loader_Recipes_Crops.java:274 seedWheat family (50 mB; the oredict seed fan folds to the four vanilla seeds at their tier amounts)", "inputs": [{ "item": "minecraft:wheat_seeds", "count": 1 }], "fluidOutputs": [{ "fluid": "gt6:seedoil", "amount": 50 }], "duration": 16, "eut": 16 },
+  { "comment": "Loader_Recipes_Crops.java:264 seedMelon family (30 mB)", "inputs": [{ "item": "minecraft:melon_seeds", "count": 1 }], "fluidOutputs": [{ "fluid": "gt6:seedoil", "amount": 30 }], "duration": 16, "eut": 16 },
+  { "comment": "Loader_Recipes_Crops.java:269 seedRice family (40 mB; beetroot rides the same tier)", "inputs": [{ "item": "minecraft:beetroot_seeds", "count": 1 }], "fluidOutputs": [{ "fluid": "gt6:seedoil", "amount": 40 }], "duration": 16, "eut": 16 },
+  { "comment": "Loader_Recipes_Crops.java:279 seedPumpkin family (60 mB)", "inputs": [{ "item": "minecraft:pumpkin_seeds", "count": 1 }], "fluidOutputs": [{ "fluid": "gt6:seedoil", "amount": 60 }], "duration": 16, "eut": 16 }
+] }

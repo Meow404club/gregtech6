@@ -1,11 +1,122 @@
 {
-  "recipes": [
+ "recipes": [
+  {
+   "inputs": [
     {
-      "inputs": [{ "item": "minecraft:wheat", "count": 1 }],
-      "fluidInputs": [{ "fluid": "minecraft:water", "amount": 1000 }],
-      "outputs": [{ "item": "minecraft:sugar", "count": 1 }],
-      "duration": 128,
-      "eut": 16
+     "item": "minecraft:wheat",
+     "count": 1
     }
-  ]
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:sugar",
+     "count": 1
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "fluidInputs": [
+    {
+     "fluid": "gt6:milk",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:spoiledmilk",
+     "amount": 50
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "fluidInputs": [
+    {
+     "fluid": "gt6:grcmilk_milk",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:spoiledmilk",
+     "amount": 50
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "fluidInputs": [
+    {
+     "fluid": "gt6:honeydew",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:short_mead",
+     "amount": 50
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicepear",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:ciderpear",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicepeach",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:ciderpeach",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winepineapple",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winepineapple",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  }
+ ]
 }
