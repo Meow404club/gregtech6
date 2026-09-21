@@ -53,6 +53,16 @@ java {
     }
 }
 
+// p33-ore-overlay-impl：-Pgt6.display=:97 覆盖 game 进程的 DISPLAY——runClient 由常驻
+// daemon 执行，launcher 的 inline env 到不了 game（daemon 环境原样继承）；headless 验收机
+// 必须钉 Xvfb，物理 :0 禁弹窗（build.forge.gradle.kts 同缝原样移植）。
+val display = providers.gradleProperty("gt6.display")
+if (display.isPresent) {
+    tasks.withType(JavaExec::class).matching { it.name == "runClient" }.configureEach {
+        environment("DISPLAY", display.get())
+    }
+}
+
 tasks.withType(JavaCompile::class).configureEach {
     options.encoding = "UTF-8"
     // 全量诊断协议（M3 门禁口径，decisions.2026-09-03-p15-m1-gate）：javac 默认 maxerrs=100
@@ -96,6 +106,14 @@ neoForge {
         register("client") {
             client()
             gameDirectory = file("run/")
+            // p33-ore-overlay-impl：quickplay/display 缝与 forge 节点同构（build.forge.gradle.kts
+            // client run + runClient JavaExec DISPLAY 门原样移植）——-Pgt6.quickplay="<args>"
+            // 追加程序参数（--quickPlaySingleplayer/宽高），-Pgt6.display 覆盖常驻 daemon
+            // 里 game 进程的 DISPLAY；默认缺省零变化。
+            val quickplay = providers.gradleProperty("gt6.quickplay")
+            if (quickplay.isPresent) {
+                programArguments.addAll(quickplay.get().split(" ").filter { it.isNotBlank() })
+            }
         }
         register("server") {
             server()
