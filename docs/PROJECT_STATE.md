@@ -5,7 +5,11 @@
 
 ## 当前阶段
 
-### 第 31 阶段详账（2026-09-20 收官，当前阶段）
+### 第 32 阶段详账（2026-09-21 收官，当前阶段）
+
+`第 32 阶段：QU 生态全链（LU 经济开张：CO2 Laser/Absorber 五档+Fiber Wire+CO2 组件→Energizer LU→QU 五档=双臂核第三 type-pair→Scanner/Replicator 全链+红石 6 行+molten.redstone 载体闭合）/物流 Lv2→Lv3 全线（root ITileEntityLogistics 接口+Wire 24901+cover 骨架→Core 17997 多方块 BFS+三级登记+路由+碎片整理+Dump 排除+EU 预算）/蜂域 Lv2（hive TE+三维 worldgen 确定性）/杂项（GregOLantern/Sandwich/六放置面+Magic Absorber 龙蛋→QU）/架构硬门（rm-phase-gate：70 图 OPEN→FROZEN+ServerStarted 冻结绑定+reload 再灌注窗+快照棘轮，43 调用点单漏斗）/游戏性收窄（用户批点火门三臂+fusion 供旗，武装→冻结→激光付清→启动全链活证）/性能 P0（findRecipe 哈希索引+oRecipe 缓冲恢复，30-45x）/ops 基建（sweep 会话锁+judge 判定核结构化+treecheck 归一器 5685 文件清偿+biome 键序 canonical 化+embed 切块降级 MCP 根修+census 台账门禁+sweep 尾部步骤）/渲染（embeddium 染色=BakedModel 顶点预染色，诊断翻案 vanilla 基线同消色差）`（**2026-09-21 收官**：main 2a4521b8d→ec67b0b05，22 卡+1 链修全合（1 次打回×2 卡闭环：embeddium 接线/perf 换装洞）；集成门=neo 全量 199 链 198 绿+链修归绿=199/199 闭环（wall 8479s/9 boot，census 台账 MT43/TD65/OP34/CS9/fold_units1）；lang floor 3274→3307。治理事件：MCP 全线卡死（embed 400 确定性失败重试堆积）→切块降级根修；GPG 弹窗根因（pinentry Assuan SETKEYINFO 丢 keygrip）→脚本层 72h 缓存终局；幽灵卡（登记未派）+主检出 WIP 事故+WSL 崩溃×2 继任零损失+宿主不稳 SIGKILL×3。方法论八沉淀（FML-boot 真 containment 标配/审查打回价值实证×2/幽灵卡 dispatch_atomicity/主检出只读/census 门禁/宿主不稳签名等）全量在 phase_anchors.p32。用户裁定：点火门批准/TF 臂剔除+注记/pinentry 脚本层 72h/多方块共用结构不做/Native 下沉纯 Java 独走（封存池三条件）/runClient Xvfb :97/run_in_background 替代 nohup。待办：embeddium 真机三态 field test（用户）。池 P33 交接：蜂 Lv3/12 物流 cover/MassStorage 端点/机器 GUI 家族（MUI 流体座全家族缺口）/食品饮料域/裂解石化域/电路族/Books/Rails/传送门/Loot 注入/rundata loot_table 跨腿写竞争 ops 卡/p13-large-boiler 迁 tick_step）
+
+### 第 31 阶段详账（2026-09-20 收官）
 
 `第 31 阶段：QU 主线 A→B→C→D 全链（三图地基+同位素材质→Massfab 双形态+解体行生成器→Fusion 19x19 五层八边形+发电型基座+±10 直推）/材质梯全线（GT6ItemData 通用 keyed 缝三条护栏→挖掘七类 2034 行→刃器三类→机器面 11 类→单层裁定池 15 案）/世界生成收尾（strata 5 标志石透镜·床岩矿 90 块 46 行·地狱 17 石透镜+三形态+末地五行让位 galacticraft 条件发射双腿·流体泉 16 行 oreClaims 重放互斥）/杂项簇（Implosion 268 行·Graagg 抑制塔·物流 Lv1 Retriever·蜂域 Lv1）/tier3 卫生（units 收敛终局·supplier ASM 守卫逮 3 真违例·teardown P30 唯一红销账·distill 去 fork+入口钉·TFC curator 批）`（**2026-09-20 收官**：main 93fa6bf→4fe176ca5，22 卡+1 热修全合零悬案；集成门=neo 全量 189 链 66 簇 188 绿/1 红链侧假红复跑绿（p13-large-boiler P30 已知签名），三已知基线零扩大，全量只 neo 腿用户裁定沿袭；lang floor 3217→3267。治理事件：双会话并行事故→串行化协议+金丝雀放行制；提交树≠被测树（sweep.py 热修 c0b37ce7）；ZCode 崩溃×2 继任零损失。方法论七沉淀（注册假绿/单实例铁律正解/点火门三层定性终版=NBT 注册配置注入路径/census 字面 grep 兜底等）全量在 phase_anchors.p31。池 P32 交接：池底 E+点火门补全卡（宽免偏离，实现待用户裁）+ops 卡族四件+卫生 M1-M5+rm-phase-gate 硬性 P32-P33 前）
 
