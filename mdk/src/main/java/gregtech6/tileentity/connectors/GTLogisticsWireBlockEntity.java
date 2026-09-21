@@ -9,12 +9,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 
 import gregapi.code.TagData;
 import gregapi.data.TD;
 import gregapi.tileentity.logistics.ITileEntityLogistics;
 import gregtech6.block.logistics.GTLogisticsWireBlock;
+import gregtech6.covers.CoverData;
+import gregtech6.covers.ICoverableTE;
 import gregtech6.registry.GT6Logistics;
 import gregtech6.util.UT6;
 
@@ -53,7 +56,7 @@ import gregtech6.util.UT6;
  * the upstream class overrides no tick phase (pure marker), so this BE mounts
  * non-ticking (the base dispatcher never registers it with the level ticker).
  */
-public class GTLogisticsWireBlockEntity extends TileEntityBase09Connector implements ITileEntityLogistics {
+public class GTLogisticsWireBlockEntity extends TileEntityBase09Connector implements ITileEntityLogistics, ICoverableTE {
 
 	/** BET factory for BlockEntityType.Builder.of — resolves the shared type through the registry at runtime. */
 	public GTLogisticsWireBlockEntity(BlockPos aPos, BlockState aState) {
@@ -76,8 +79,40 @@ public class GTLogisticsWireBlockEntity extends TileEntityBase09Connector implem
 	}
 
 	// ---------------------------------------------------------------------------
+	// covers (task p33-logistics-covers-12 — the composition attachment, the pipe/Oven
+	// precedent: the 12 logistics covers mount on the wire host, the ITileEntityLogistics
+	// placement-gate answer rides canLogistics(SIDE_ANY). Non-ticking BE — the cover tick
+	// pair rides nothing; the Core's BFS reads the covers straight off the wire member.)
+	// ---------------------------------------------------------------------------
+
+	/** Upstream 06Covers :63 mCovers — {@code null} while no face carries a cover. */
+	public CoverData mCovers = null;
+
+	@Override
+	public CoverData getCovers() {
+		return mCovers;
+	}
+
+	@Override
+	public void setCovers(CoverData aCoverData) {
+		mCovers = aCoverData;
+	}
+
+	// ---------------------------------------------------------------------------
 	// the node face (upstream :42-45/:47)
 	// ---------------------------------------------------------------------------
+
+	@Override
+	protected void saveAdditional(CompoundTag aNBT) {
+		super.saveAdditional(aNBT);
+		writeCoversToNBT(aNBT); // upstream 06Covers :74
+	}
+
+	@Override
+	public void load(CompoundTag aNBT) {
+		super.load(aNBT);
+		readCoversFromNBT(aNBT); // upstream 06Covers :68
+	}
 
 	@Override
 	public boolean canLogistics(byte aSide) {

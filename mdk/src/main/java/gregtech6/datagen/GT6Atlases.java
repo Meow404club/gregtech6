@@ -96,5 +96,19 @@ public final class GT6Atlases extends SpriteSourceProvider {
         for (ResourceLocation tOverlay : gregtech6.client.ore.GTOreBakedModel.overlaySprites()) {
             atlas(BLOCKS_ATLAS).addSource(new SingleFile(tOverlay, Optional.empty()));
         }
+        // task p33-logistics-covers-12 — the 4x11 CPU-display bar sprites: queried at
+        // runtime by the cover plate renderer (getCoverTextureSurface) with NO model JSON
+        // (the ore-overlay precedent — the atlas source IS the consumer-side stitching).
+        // The filtered/generic/dump role plates ride the item models' layer0 texture and
+        // resolve through the vanilla directory sources.
+        for (String tFamily : new String[] {"cpu_logic", "cpu_control", "cpu_storage", "cpu_conversion"}) {
+            for (int i = 0; i <= 10; i++) {
+                //? if forge {
+                atlas(BLOCKS_ATLAS).addSource(new SingleFile(new ResourceLocation("gt6", "block/logistics/display/" + tFamily + "/" + i), Optional.empty()));
+                //?} else {
+                /*atlas(BLOCKS_ATLAS).addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/display/" + tFamily + "/" + i), Optional.empty()));
+                 *///?}
+            }
+        }
     }
 }

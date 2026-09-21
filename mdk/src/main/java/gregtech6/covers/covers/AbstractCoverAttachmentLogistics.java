@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 
 import gregapi.tileentity.logistics.ITileEntityLogistics;
 import gregtech6.covers.CoverData;
+import gregtech6.covers.ICover;
 
 /**
  * The logistics attachment base — 1.20.1 counterpart of gregapi/cover/covers/
@@ -48,4 +49,36 @@ public abstract class AbstractCoverAttachmentLogistics extends AbstractCoverDefa
 	public boolean interceptCoverPlacement(byte aCoverSide, CoverData aData, @Nullable Entity aPlayer) {
 		return refusesAttachment(aData.mTileEntity);
 	}
+
+	/** Upstream CS.TOOL_cutter (:71) — the stacksize-lane tool id. */
+	public static final String TOOL_CUTTER = "cutter";
+
+	/**
+	 * Upstream :59-81 — the two value lanes of the family (task p33-logistics-covers-12;
+	 * the p32 skeleton declared them riding this card): the screwdriver cycles the
+	 * PRIORITY bits 0-1 (damage 10000) and the cutter cycles the TARGET STACKSIZE bits
+	 * 2-8 (damage 1000), gated by {@link #usePriorities()}/{@link #useTargetStackSize()}.
+	 * The magnifyingglass readback (:83-101) has no chat channel on the ported ICover
+	 * signature — the CoverRetrieverItem declared cut.
+	 */
+	@Override
+	public long onToolClick(byte aCoverSide, CoverData aData, String aToolId, long aRemainingDurability, Entity aPlayer, boolean aSneaking, byte aSideClicked, float aHitX, float aHitY, float aHitZ) {
+		if (ICover.TOOL_SCREWDRIVER.equals(aToolId) && usePriorities()) { // :59
+			short tValue = aData.mValues[aCoverSide];
+			aData.value(aCoverSide, (short) ((tValue & ~3) | ((tValue + 1) & 3))); // :60
+			return 10000; // :69 (the :62-68 chat switch has no channel)
+		}
+		if (TOOL_CUTTER.equals(aToolId) && useTargetStackSize()) { // :71
+			short tValue = aData.mValues[aCoverSide];
+			aData.value(aCoverSide, (short) ((tValue & 3) | (((((tValue >> 2) + 1) % 65) << 2)))); // :72
+			return 1000; // :81
+		}
+		return super.onToolClick(aCoverSide, aData, aToolId, aRemainingDurability, aPlayer, aSneaking, aSideClicked, aHitX, aHitY, aHitZ);
+	}
+
+	/** Upstream :110 — the priority lane answers by default. */
+	public boolean usePriorities() {return true;}
+
+	/** Upstream :109 — the stacksize lane defaults off (the filtered Export family flips it). */
+	public boolean useTargetStackSize() {return false;}
 }

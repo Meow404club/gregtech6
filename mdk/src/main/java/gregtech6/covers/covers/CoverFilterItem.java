@@ -70,11 +70,20 @@ public class CoverFilterItem extends AbstractCoverDefault {
 	 * deviation collapse — a single identity write.
 	 */
 	public static CompoundTag filterTagFor(ItemStack aHeld) {
+		return filterTagKeyOf(aHeld, FILTER_KEY);
+	}
+
+	/**
+	 * The {@link #filterTagFor} parameterised form — the logistics cover family (task
+	 * p33-logistics-covers-12) stores per-family keys ({@code gt.filter.item} /
+	 * {@code gt.filter.fluid}) in the same single-tag lane shape.
+	 */
+	public static CompoundTag filterTagKeyOf(ItemStack aHeld, String aFilterKey) {
 		CompoundTag tLane = new CompoundTag();
 		//? if forge {
-		tLane.put(FILTER_KEY, new ItemStack(aHeld.getItem(), 1).save(new CompoundTag())); // upstream ST.make(item, 1, meta)
+		tLane.put(aFilterKey, new ItemStack(aHeld.getItem(), 1).save(new CompoundTag())); // upstream ST.make(item, 1, meta)
 		//?} else {
-		/*tLane.put(FILTER_KEY, new ItemStack(aHeld.getItem(), 1).save(nbtAccess(), new CompoundTag())); // 21.1: the save face takes the registries
+		/*tLane.put(aFilterKey, new ItemStack(aHeld.getItem(), 1).save(nbtAccess(), new CompoundTag())); // 21.1: the save face takes the registries
 		*///?}
 		return tLane;
 	}
@@ -97,7 +106,7 @@ public class CoverFilterItem extends AbstractCoverDefault {
 	/*// 21.1: the ItemStack save/parse face needs a HolderLookup.Provider — the frozen builtin
 	//registry view serves the offline tests and the live cover click alike (item id only).
 	//Package-private: the retriever filter lane (CoverRetrieverItem.filterOf) shares it.
-	static net.minecraft.core.HolderLookup.Provider nbtAccess() {
+	public static net.minecraft.core.HolderLookup.Provider nbtAccess() {
 		return net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY);
 	}
 	*///?}

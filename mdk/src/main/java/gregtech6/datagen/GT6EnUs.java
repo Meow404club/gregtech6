@@ -580,6 +580,22 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_shutter", "Shutter Cover");
         add("item.gt6.cover_item_filter", "Item Filter");
         add("item.gt6.cover_item_retriever", "Item Retriever Cover");
+        // task p33-logistics-covers-12 — the 12 logistics covers (upstream
+        // MultiItemTechnological.java:101-114 display names verbatim)
+        add("item.gt6.cover_logistics_display_cpu_logic", "Logistics Display (CPU Logic)");
+        add("item.gt6.cover_logistics_display_cpu_control", "Logistics Display (CPU Control)");
+        add("item.gt6.cover_logistics_display_cpu_storage", "Logistics Display (CPU Storage)");
+        add("item.gt6.cover_logistics_display_cpu_conversion", "Logistics Display (CPU Conversion)");
+        add("item.gt6.cover_logistics_fluid_export", "Filtered Logistics Export Bus (Fluid)");
+        add("item.gt6.cover_logistics_fluid_import", "Filtered Logistics Import Bus (Fluid)");
+        add("item.gt6.cover_logistics_fluid_storage", "Filtered Logistics Storage Bus (Fluid)");
+        add("item.gt6.cover_logistics_item_export", "Filtered Logistics Export Bus (Item)");
+        add("item.gt6.cover_logistics_item_import", "Filtered Logistics Import Bus (Item)");
+        add("item.gt6.cover_logistics_item_storage", "Filtered Logistics Storage Bus (Item)");
+        add("item.gt6.cover_logistics_generic_export", "Generic Logistics Export Bus");
+        add("item.gt6.cover_logistics_generic_import", "Generic Logistics Import Bus");
+        add("item.gt6.cover_logistics_generic_storage", "Generic Logistics Storage Bus");
+        add("item.gt6.cover_logistics_generic_dump", "Logistics Dump Bus (Item)");
         add("item.gt6.cover_auto_redstone_machine_switch", "Auto Redstone Machine Switch");
         add("item.gt6.cover_controller", "Cover Controller");
         add(GT6Covers.CONVEYOR_DISPLAY_KEY, "Compact Electric Conveyor (%s)");

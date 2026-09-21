@@ -32,6 +32,24 @@ import gregapi.code.TagData;
 import gregapi.data.TD;
 import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregapi.tileentity.logistics.ITileEntityLogistics;
+import gregtech6.covers.CoverData;
+import gregtech6.covers.ICover;
+import gregtech6.covers.covers.AbstractCoverAttachmentLogistics;
+import gregtech6.covers.covers.logistics.AbstractCoverLogisticsDisplay;
+import gregtech6.covers.covers.logistics.AbstractCoverLogisticsFiltered;
+import gregtech6.covers.covers.logistics.AbstractCoverLogisticsFluid;
+import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPUControl;
+import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPUConversion;
+import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPULogic;
+import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPUStorage;
+import gregtech6.covers.covers.logistics.CoverLogisticsFluidExport;
+import gregtech6.covers.covers.logistics.CoverLogisticsFluidImport;
+import gregtech6.covers.covers.logistics.CoverLogisticsGenericDump;
+import gregtech6.covers.covers.logistics.CoverLogisticsGenericExport;
+import gregtech6.covers.covers.logistics.CoverLogisticsGenericImport;
+import gregtech6.covers.covers.logistics.CoverLogisticsGenericStorage;
+import gregtech6.covers.covers.logistics.CoverLogisticsItemExport;
+import gregtech6.covers.covers.logistics.CoverLogisticsItemImport;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.logistics.ITileEntityLogisticsSemiFilteredItem;
@@ -427,8 +445,148 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 					}
 				}
 
-				// :297-435 — the cover bus (import/export/storage/dump covers + the CPU displays)
-				// is the declared cover-card slice; the lists above stay EMPTY without covers.
+				// :297-435 — the cover bus (task p33-logistics-covers-12): the 12 logistics
+				// covers on any BFS-reachable member (wire host / core / tank), each face
+				// registering its covered-face adjacency into the routing lists above.
+				CoverData tCovers = tLogistics instanceof gregtech6.covers.ICoverableTE tCoverable ? tCoverable.getCovers() : null;
+				if (tCovers != null && !tCovers.mStopped) { // :298
+					for (byte tSide = 0; tSide < 6; tSide++) { // :299 ALL_SIDES_VALID
+						if (!(tCovers.mBehaviours[tSide] instanceof AbstractCoverAttachmentLogistics)) continue;
+						gregtech6.covers.ICover tCover = tCovers.mBehaviours[tSide];
+
+						// :300-319 — the CPU displays: the four pools drive value (redstone) + visual (bar)
+						if (tCover == CoverLogisticsDisplayCPULogic.INSTANCE) {
+							tCovers.value(tSide, (short) AbstractCoverLogisticsDisplay.displayValue(oCPU_Logic, mCPU_Logic), true);
+							tCovers.visual(tSide, (short) AbstractCoverLogisticsDisplay.displayVisual(oCPU_Logic, mCPU_Logic));
+							continue;
+						}
+						if (tCover == CoverLogisticsDisplayCPUControl.INSTANCE) {
+							tCovers.value(tSide, (short) AbstractCoverLogisticsDisplay.displayValue(oCPU_Control, mCPU_Control), true);
+							tCovers.visual(tSide, (short) AbstractCoverLogisticsDisplay.displayVisual(oCPU_Control, mCPU_Control));
+							continue;
+						}
+						if (tCover == CoverLogisticsDisplayCPUStorage.INSTANCE) {
+							tCovers.value(tSide, (short) AbstractCoverLogisticsDisplay.displayValue(oCPU_Storage, mCPU_Storage), true);
+							tCovers.visual(tSide, (short) AbstractCoverLogisticsDisplay.displayVisual(oCPU_Storage, mCPU_Storage));
+							continue;
+						}
+						if (tCover == CoverLogisticsDisplayCPUConversion.INSTANCE) {
+							tCovers.value(tSide, (short) AbstractCoverLogisticsDisplay.displayValue(oCPU_Conversion, mCPU_Conversion), true);
+							tCovers.visual(tSide, (short) AbstractCoverLogisticsDisplay.displayVisual(oCPU_Conversion, mCPU_Conversion));
+							continue;
+						}
+
+						// :321-323 — the covered-face adjacency; logistics members are IGNORED
+						// (the infinite-loop reduction), the cover targets the NON-member container.
+						BlockEntity tAdjacent = tBE.getLevel() == null ? null
+								: tBE.getLevel().getBlockEntity(tBE.getBlockPos().relative(Direction.from3DDataValue(tSide)));
+						if (tAdjacent instanceof ITileEntityLogistics && ((ITileEntityLogistics)tAdjacent).canLogistics((byte)6)) continue;
+						if (tAdjacent == null) continue;
+
+						// :325-357 — the filtered-fluid trio
+						if (tCover instanceof AbstractCoverLogisticsFluid tFluidCover) {
+							net.minecraft.world.level.material.Fluid tFluid = tFluidCover.filterFluidOf(tCovers, tSide);
+							if (tFluid != null) {
+								int tPriority = tCovers.mValues[tSide] & 3;
+								if (tCover == CoverLogisticsFluidExport.INSTANCE) {
+									switch (tPriority) {
+									case 1: tFluidExportsGeneric .add(new LogisticsData(tAdjacent, tFluid, null, 0)); break;
+									case 2: tFluidExportsSemi    .add(new LogisticsData(tAdjacent, tFluid, null, 0)); break;
+									default: tFluidExportsFiltered.add(new LogisticsData(tAdjacent, tFluid, null, 0)); break;
+									}
+								} else if (tCover == CoverLogisticsFluidImport.INSTANCE) {
+									switch (tPriority) {
+									case 1: tFluidImportsGeneric .add(new LogisticsData(tAdjacent, tFluid, null, 0)); break;
+									case 2: tFluidImportsSemi    .add(new LogisticsData(tAdjacent, tFluid, null, 0)); break;
+									default: tFluidImportsFiltered.add(new LogisticsData(tAdjacent, tFluid, null, 0)); break;
+									}
+								} else { // CoverLogisticsFluidStorage.INSTANCE
+									switch (tPriority) {
+									case 1: tFluidStorageGeneric .add(new LogisticsData(tAdjacent, tFluid, null, 0)); break;
+									case 2: tFluidStorageSemi    .add(new LogisticsData(tAdjacent, tFluid, null, 0)); break;
+									default: tFluidStorageFiltered.add(new LogisticsData(tAdjacent, tFluid, null, 0)); break;
+									}
+								}
+							}
+							continue;
+						}
+
+						// :358-393 — the filtered-item trio
+						if (tCover instanceof AbstractCoverLogisticsFiltered tItemCover) {
+							ItemStack tStack = tItemCover.filterItemOf(tCovers, tSide);
+							if (tStack != null) {
+								mFilteredFor.add(tStack); // :361/:373/:385 — the filter joins the protected set
+								int tStackSize = (tCovers.mValues[tSide] >> 2) & 127; // :363
+								int tPriority = tCovers.mValues[tSide] & 3;
+								if (tCover == CoverLogisticsItemExport.INSTANCE) {
+									switch (tPriority) {
+									case 1: tStackExportsGeneric .add(new LogisticsData(tAdjacent, null, tStack, tStackSize)); break;
+									case 2: tStackExportsSemi    .add(new LogisticsData(tAdjacent, null, tStack, tStackSize)); break;
+									default: tStackExportsFiltered.add(new LogisticsData(tAdjacent, null, tStack, tStackSize)); break;
+									}
+								} else if (tCover == CoverLogisticsItemImport.INSTANCE) {
+									switch (tPriority) {
+									case 1: tStackImportsGeneric .add(new LogisticsData(tAdjacent, null, tStack, tStackSize)); break;
+									case 2: tStackImportsSemi    .add(new LogisticsData(tAdjacent, null, tStack, tStackSize)); break;
+									default: tStackImportsFiltered.add(new LogisticsData(tAdjacent, null, tStack, tStackSize)); break;
+									}
+								} else { // CoverLogisticsItemStorage.INSTANCE
+									switch (tPriority) {
+									case 1: tStackStorageGeneric .add(new LogisticsData(tAdjacent, null, tStack, tStackSize)); break;
+									case 2: tStackStorageSemi    .add(new LogisticsData(tAdjacent, null, tStack, tStackSize)); break;
+									default: tStackStorageFiltered.add(new LogisticsData(tAdjacent, null, tStack, tStackSize)); break;
+									}
+								}
+							}
+							continue;
+						}
+
+						LogisticsData tTarget = new LogisticsData(tAdjacent, null, null, (tCovers.mValues[tSide] >> 2) & 127); // :394
+
+						// :395-398 — the Dump target
+						if (tCover == CoverLogisticsGenericDump.INSTANCE) {
+							tStackDumps.add(tTarget);
+							continue;
+						}
+
+						// :399-432 — the generic trio (both items and fluids; the fluid arm skips
+						// a semi-filtered item adjacency, :401-408 — its filter joins the protected set)
+						int tDefault = tCovers.mValues[tSide] & 3;
+						boolean aAllowFluids = true;
+						if (tAdjacent instanceof ITileEntityLogisticsSemiFilteredItem) {
+							aAllowFluids = false;
+							Collection<ItemStack> tFilter = ((ITileEntityLogisticsSemiFilteredItem)tAdjacent).getLogisticsFilter(tSide);
+							if (tFilter != null) {
+								mFilteredFor.addAll(tFilter);
+								if (tDefault == 0) tDefault = 2; // :406
+							}
+						}
+						if (tCover == CoverLogisticsGenericExport.INSTANCE) {
+							switch (tDefault) {
+							default: if (aAllowFluids) tFluidExportsGeneric .add(tTarget); tStackExportsGeneric .add(tTarget); break;
+							case 2:  if (aAllowFluids) tFluidExportsSemi    .add(tTarget); tStackExportsSemi    .add(tTarget); break;
+							case 3:  if (aAllowFluids) tFluidExportsFiltered.add(tTarget); tStackExportsFiltered.add(tTarget); break;
+							}
+							continue;
+						}
+						if (tCover == CoverLogisticsGenericImport.INSTANCE) {
+							switch (tDefault) {
+							default: if (aAllowFluids) tFluidImportsGeneric .add(tTarget); tStackImportsGeneric .add(tTarget); break;
+							case 2:  if (aAllowFluids) tFluidImportsSemi    .add(tTarget); tStackImportsSemi    .add(tTarget); break;
+							case 3:  if (aAllowFluids) tFluidImportsFiltered.add(tTarget); tStackImportsFiltered.add(tTarget); break;
+							}
+							continue;
+						}
+						if (tCover == CoverLogisticsGenericStorage.INSTANCE) {
+							switch (tDefault) {
+							default: if (aAllowFluids) tFluidStorageGeneric .add(tTarget); tStackStorageGeneric .add(tTarget); break;
+							case 2:  if (aAllowFluids) tFluidStorageSemi    .add(tTarget); tStackStorageSemi    .add(tTarget); break;
+							case 3:  if (aAllowFluids) tFluidStorageFiltered.add(tTarget); tStackStorageFiltered.add(tTarget); break;
+							}
+							continue;
+						}
+					}
+				}
 
 				// :437-444 — the BFS extension
 				if (tBE.getLevel() == tLevel) {

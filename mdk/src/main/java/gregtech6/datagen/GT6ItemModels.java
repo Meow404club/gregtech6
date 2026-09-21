@@ -422,6 +422,19 @@ public final class GT6ItemModels extends ItemModelProvider {
         // textures/block/retrieveritem/ (assets/README.md attribution)
         withExistingParent("cover_item_retriever", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/retrieveritem/normal"));
+        // the p33 logistics cover family (task p33-logistics-covers-12) — 12 items, each
+        // showing its role plate art; the sprites ride the display/fluid/item/generic
+        // texture directories (upstream machines/covers/logistics/*, the visual 0 face)
+        for (String[] tRow : new String[][] {
+                {"cover_logistics_display_cpu_logic", "display/cpu_logic/0"}, {"cover_logistics_display_cpu_control", "display/cpu_control/0"},
+                {"cover_logistics_display_cpu_storage", "display/cpu_storage/0"}, {"cover_logistics_display_cpu_conversion", "display/cpu_conversion/0"},
+                {"cover_logistics_fluid_export", "fluid/export"}, {"cover_logistics_fluid_import", "fluid/import"}, {"cover_logistics_fluid_storage", "fluid/storage"},
+                {"cover_logistics_item_export", "item/export"}, {"cover_logistics_item_import", "item/import"}, {"cover_logistics_item_storage", "item/storage"},
+                {"cover_logistics_generic_export", "generic/export"}, {"cover_logistics_generic_import", "generic/import"}, {"cover_logistics_generic_storage", "generic/storage"},
+                {"cover_logistics_generic_dump", "generic/dump"}}) {
+            withExistingParent(tRow[0], mcLoc("item/generated"))
+                .texture("layer0", modLoc("block/logistics/" + tRow[1]));
+        }
         // the p11 controller pair (task p11-cover-controllers) — the items show their
         // own plate art, byte-identical upstream borrows living in
         // textures/block/auto_redstone_switch/ and textures/block/cover_switch/

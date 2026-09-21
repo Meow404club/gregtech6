@@ -30,7 +30,25 @@ import gregtech6.covers.covers.CoverRetrieverItem;
 import gregtech6.covers.covers.CoverRobotArm;
 import gregtech6.covers.covers.CoverShutter;
 import gregtech6.covers.covers.CoverTextureSimple;
+import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPUControl;
+import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPUConversion;
+import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPULogic;
+import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPUStorage;
+import gregtech6.covers.covers.logistics.CoverLogisticsFluidExport;
+import gregtech6.covers.covers.logistics.CoverLogisticsFluidImport;
+import gregtech6.covers.covers.logistics.CoverLogisticsFluidStorage;
+import gregtech6.covers.covers.logistics.CoverLogisticsGenericDump;
+import gregtech6.covers.covers.logistics.CoverLogisticsGenericExport;
+import gregtech6.covers.covers.logistics.CoverLogisticsGenericImport;
+import gregtech6.covers.covers.logistics.CoverLogisticsGenericStorage;
+import gregtech6.covers.covers.logistics.CoverLogisticsItemExport;
+import gregtech6.covers.covers.logistics.CoverLogisticsItemImport;
+import gregtech6.covers.covers.logistics.CoverLogisticsItemStorage;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.registry.GT6Logistics;
+import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.datagen.GT6ItemModels;
 import gregapi.data.MT;
@@ -139,6 +157,47 @@ public final class GT6Covers {
 			() -> new Item(new Item.Properties()));
 
 	/**
+	 * The p33 logistics cover family — the 12 dead-endpoint covers (task
+	 * p33-logistics-covers-12; upstream MultiItemTechnological.java:101-114 metas
+	 * 1086-1099). The registration PLANE lives here (one item per cover); the BEHAVIOUR
+	 * plane is the pure-Java cover classes + the Core's cover-bus registration arm. Same
+	 * card-local ITEMS DeferredRegister as the rest of the cover family. Upstream id →
+	 * item: 1086 cpu_logic, 1087 cpu_control, 1088 cpu_storage, 1089 cpu_conversion,
+	 * 1090 fluid_export, 1091 fluid_import, 1092 fluid_storage, 1093 item_export,
+	 * 1094 item_import, 1095 item_storage, 1096 generic_export, 1097 generic_import,
+	 * 1098 generic_storage, 1099 generic_dump — 12 classes, generic_export/import/
+	 * storage being the unfiltered pair-transport buses.
+	 */
+	public static final RegistryObject<Item> COVER_LOGISTICS_DISPLAY_CPU_LOGIC = ITEMS.register("cover_logistics_display_cpu_logic",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_DISPLAY_CPU_CONTROL = ITEMS.register("cover_logistics_display_cpu_control",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_DISPLAY_CPU_STORAGE = ITEMS.register("cover_logistics_display_cpu_storage",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_DISPLAY_CPU_CONVERSION = ITEMS.register("cover_logistics_display_cpu_conversion",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_FLUID_EXPORT = ITEMS.register("cover_logistics_fluid_export",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_FLUID_IMPORT = ITEMS.register("cover_logistics_fluid_import",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_FLUID_STORAGE = ITEMS.register("cover_logistics_fluid_storage",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_ITEM_EXPORT = ITEMS.register("cover_logistics_item_export",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_ITEM_IMPORT = ITEMS.register("cover_logistics_item_import",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_ITEM_STORAGE = ITEMS.register("cover_logistics_item_storage",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_GENERIC_EXPORT = ITEMS.register("cover_logistics_generic_export",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_GENERIC_IMPORT = ITEMS.register("cover_logistics_generic_import",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_GENERIC_STORAGE = ITEMS.register("cover_logistics_generic_storage",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_LOGISTICS_GENERIC_DUMP = ITEMS.register("cover_logistics_generic_dump",
+			() -> new Item(new Item.Properties()));
+
+	/**
 	 * The p11 auto redstone machine switch — the "lets it finish" controller (task
 	 * p11-cover-controllers; upstream MultiItemTechnological.java:65 meta 1006,
 	 * "Auto Redstone Machine Switch"). Holds a mid-process machine ON through a
@@ -241,6 +300,36 @@ public final class GT6Covers {
 		aEvent.enqueueWork(GT6Covers::init);
 	}
 
+	/**
+	 * The tab walk (task p33-logistics-covers-12 — the lv2/lv3 遗留账: the logistics
+	 * wire item, the core item and the 14 logistics covers join the machines tab; the
+	 * GT6Placeables.onBuildTabContents verbatim form). The EARLIER cover family stays
+	 * tab-less — its items are cover-placed tool faces, the upstream tab walk never
+	 * listed them (MultiItemTechnological items ride the GT tab list upstream, the port
+	 * keeps the narrower declared scope of the landed cards).
+	 */
+	@net.minecraftforge.eventbus.api.SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			aEvent.accept(new ItemStack(GT6Logistics.LOGISTICS_WIRE_ITEM.get()));
+			aEvent.accept(new ItemStack(GT6Logistics.LOGISTICS_CORE_ITEM.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_DISPLAY_CPU_LOGIC.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_DISPLAY_CPU_CONTROL.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_DISPLAY_CPU_STORAGE.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_DISPLAY_CPU_CONVERSION.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_FLUID_EXPORT.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_FLUID_IMPORT.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_FLUID_STORAGE.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_ITEM_EXPORT.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_ITEM_IMPORT.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_ITEM_STORAGE.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_GENERIC_EXPORT.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_GENERIC_IMPORT.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_GENERIC_STORAGE.get()));
+			aEvent.accept(new ItemStack(COVER_LOGISTICS_GENERIC_DUMP.get()));
+		}
+	}
+
 	/** Idempotent registration of the covers (the iron plate + the p5 pump + the p9 emitter + the p10 conductor pair + the p10 machine switch + the p11 shutter/filter pair + the p11 controller pair + the p11 conveyor/arm tiers + the p31 retriever). */
 	public static void init() {
 		if (sInitialized) return;
@@ -255,6 +344,22 @@ public final class GT6Covers {
 		CoverRegistry.put(COVER_SHUTTER.get(), new CoverShutter()); // p11 — the open/closed face gate
 		CoverRegistry.put(COVER_ITEM_FILTER.get(), new CoverFilterItem()); // p11 — the whitelist/blacklist face filter
 		CoverRegistry.put(COVER_ITEM_RETRIEVER.get(), new CoverRetrieverItem()); // p31 — the pipe-network retriever
+		// p33 — the logistics cover family (upstream MultiItemTechnological.java:101-114):
+		// the 4 CPU displays + the filtered fluid/item trios + the generic trio + the dump
+		CoverRegistry.put(COVER_LOGISTICS_DISPLAY_CPU_LOGIC.get(), CoverLogisticsDisplayCPULogic.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_DISPLAY_CPU_CONTROL.get(), CoverLogisticsDisplayCPUControl.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_DISPLAY_CPU_STORAGE.get(), CoverLogisticsDisplayCPUStorage.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_DISPLAY_CPU_CONVERSION.get(), CoverLogisticsDisplayCPUConversion.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_FLUID_EXPORT.get(), CoverLogisticsFluidExport.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_FLUID_IMPORT.get(), CoverLogisticsFluidImport.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_FLUID_STORAGE.get(), CoverLogisticsFluidStorage.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_ITEM_EXPORT.get(), CoverLogisticsItemExport.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_ITEM_IMPORT.get(), CoverLogisticsItemImport.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_ITEM_STORAGE.get(), CoverLogisticsItemStorage.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_GENERIC_EXPORT.get(), CoverLogisticsGenericExport.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_GENERIC_IMPORT.get(), CoverLogisticsGenericImport.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_GENERIC_STORAGE.get(), CoverLogisticsGenericStorage.INSTANCE);
+		CoverRegistry.put(COVER_LOGISTICS_GENERIC_DUMP.get(), CoverLogisticsGenericDump.INSTANCE);
 		CoverRegistry.put(COVER_AUTO_REDSTONE_MACHINE_SWITCH.get(), new CoverControllerAutoRedstone()); // p11 — the lets-it-finish machine switch
 		CoverRegistry.put(COVER_CONTROLLER.get(), new CoverControllerCovers()); // p11 — the cover-layer stop switch + cross-face relay
 		for (int i = 0; i < CoverConveyor.TIMING_TIERS.length; i++) {
