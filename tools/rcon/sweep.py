@@ -698,6 +698,14 @@ SESSION_GROUPS = (
     # GT6CrackerCraftingJsonTest). --group p33_cracker_machines matches through the
     # chain's embedded name prefix.
     ("p33_cracker_machines",),
+    # P33 W2 card (p33-gui-distill-tower): the distillation-tower GUI chain — a
+    # fresh z=356 strip east of the p29_w5_t7 pocket band (z=352 is taken by the
+    # pocket_ring give/walk columns x384..386; the z=356..366 band is empty).
+    # Admission mirroring the p29 form (bbox-registered, no fresh_boot / mutates
+    # member — the rig is a band-local setblock + fill teardown). The MUI open
+    # chain is client-boundary, so the chain pins the sanctioned open-SKIP face.
+    # --group p33_gui_distill matches through the chain's embedded name prefix.
+    ("p33_gui_distill_tower",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
