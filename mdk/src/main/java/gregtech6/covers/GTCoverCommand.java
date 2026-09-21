@@ -27,6 +27,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
 import gregtech6.client.render.GTModelProperties;
+import gregtech6.covers.covers.CoverFilterItem;
 import gregtech6.covers.covers.CoverRedstoneEmitter;
 import gregtech6.util.UT6;
 
@@ -140,9 +141,19 @@ public final class GTCoverCommand {
 			.then(Commands.literal("check")
 				.executes(context -> check(context.getSource(), null))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
-					.executes(context -> check(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
+					.executes(context -> check(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))))
+			.then(Commands.literal("filter")
+				// the p33 headless filter-set driver (the p31 retriever-command precedent):
+				// the filtered logistics bus family's right-click set needs a live player,
+				// so the acceptance channel writes the lane directly
+				.then(Commands.argument("pos", BlockPosArgument.blockPos())
+					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
+						.then(Commands.argument("itemId", net.minecraft.commands.arguments.ResourceLocationArgument.id())
+							.executes(context -> filter(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
+									parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")),
+									net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "itemId")))))));
 		event.getDispatcher().register(tCover);
-		LOGGER.info("Registered GT6 cover acceptance command /gt6cover (install|dismantle|mode|signal|check)");
+		LOGGER.info("Registered GT6 cover acceptance command /gt6cover (install|dismantle|mode|signal|check|filter)");
 	}
 
 	/** {@code down|up|north|south|west|east} → Direction; 1.20.1 ships no direction argument type. */
@@ -256,6 +267,26 @@ public final class GTCoverCommand {
 			source.sendFailure(Component.literal("GT6 cover mode FAILED: no cover on face " + side + " at " + tHost.pos().toShortString()));
 			return 0;
 		}
+		// the p33 pinned lanes (task p33-logistics-covers-12) — "p0".."p3" writes the
+		// PRIORITY bits and "s0".."s127" the TARGET STACKSIZE bits of the value lane
+		// directly: the RCON chain needs a pass-stable setter (a toggle drifts parity
+		// across sweep passes), the same lane shape the screwdriver/cutter relays cycle.
+		if (aTarget != null && aTarget.matches("[ps]\\d+")) {
+			int tPinned = Integer.parseInt(aTarget.substring(1));
+			if (aTarget.charAt(0) == 'p' && tPinned > 3 || aTarget.charAt(0) == 's' && tPinned > 127) {
+				source.sendFailure(Component.literal("GT6 cover mode FAILED: pinned lane out of range '" + aTarget + "' (p0..p3 / s0..s127)"));
+				return 0;
+			}
+			short tPatched = aTarget.charAt(0) == 'p'
+					? (short) ((tHost.host().getCovers().mValues[tSide] & ~3) | tPinned)
+					: (short) ((tHost.host().getCovers().mValues[tSide] & 3) | (tPinned << 2));
+			tHost.host().getCovers().value(tSide, tPatched, true);
+			String tPinnedLine = String.format("GT6 cover mode %s face %s at %s: pinned %s -> %s (priority=%d, stacksize=%d)",
+					tHost.host(), side, tHost.pos().toShortString(), aTarget, tPatched, tPatched & 3, (tPatched >> 2) & 127);
+			source.sendSuccess(() -> Component.literal("GT6 cover mode OK: " + tPinnedLine), false);
+			LOGGER.info(tPinnedLine);
+			return Command.SINGLE_SUCCESS;
+		}
 		boolean tCutter = aTarget != null && "cutter".equalsIgnoreCase(aTarget);
 		Short tDesired = null;
 		if (aTarget != null && !tCutter) {
@@ -323,6 +354,38 @@ public final class GTCoverCommand {
 		}
 		source.sendSuccess(() -> Component.literal("GT6 cover signal OK: " + tReport), false);
 		LOGGER.info(tReport);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The p33 headless filter-set driver (task p33-logistics-covers-12) — the filtered
+	 * logistics bus family's right-click set (:88-100 upstream) needs a live player, so
+	 * the acceptance channel writes the lane directly: the same
+	 * {@link CoverFilterItem#filterTagKeyOf} single-tag shape under the cover's own key.
+	 * Refuses a face whose cover is not a {@link gregtech6.covers.covers.logistics.AbstractCoverLogisticsFiltered}.
+	 */
+	private static int filter(CommandSourceStack source, BlockPos pos, Direction side, net.minecraft.resources.ResourceLocation aItemId) {
+		CoverableHost tHost = coverableHostAt(source, pos);
+		if (tHost == null) {
+			source.sendFailure(Component.literal("No coverable GT6 BlockEntity at " + pos.toShortString()));
+			return 0;
+		}
+		byte tSide = (byte) side.get3DDataValue();
+		if (!(tHost.host().isCovered(tSide) && tHost.host().getCovers().mBehaviours[tSide]
+				instanceof gregtech6.covers.covers.logistics.AbstractCoverLogisticsFiltered tFiltered)) {
+			source.sendFailure(Component.literal("GT6 cover filter FAILED: no filtered logistics cover on face " + side + " at " + tHost.pos().toShortString()));
+			return 0;
+		}
+		ItemStack tItem = new ItemStack(ForgeRegistries.ITEMS.getValue(aItemId));
+		if (tItem.isEmpty()) {
+			source.sendFailure(Component.literal(aItemId + " not registered"));
+			return 0;
+		}
+		tHost.host().getCovers().mNBTs[tSide] = CoverFilterItem.filterTagKeyOf(tItem, tFiltered.filterKey);
+		String tLine = String.format("GT6 cover filter %s face %s at %s: key=%s, item=%s",
+				tFiltered.getClass().getSimpleName(), side, tHost.pos().toShortString(), tFiltered.filterKey, aItemId);
+		source.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
 	}
 

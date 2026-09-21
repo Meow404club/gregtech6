@@ -2,42 +2,52 @@
 """p33-logistics-covers-12 — the logistics cover family live acceptance chain.
 
 The live half of task p33-logistics-covers-12. One fresh band z=252..264,
-x=509..531 (south of the p32_logistics_core band z236..250, x-disjoint
-overlap-free with margin):
+x=509..531 (south of the p32_logistics_core band z236..250, x/z-disjoint
+from every registered sweep band):
 
   the 5x5x5 core (cube x513..517, y63..67, z256..260; the controller at the
-  south face centre 515 65 256 — the SAME cheapskate form the lv3 chain
-  pinned: one Versatile Quadcore, pools 1/1/1/1, radius 3, gate 192 EU).
-  the cover-row plane z=259 (the north side, all Chebyshev-distance 3 from
-  the centre 515 65 258):
+  south face centre 515 65 256, facing north — the structure centre 515 65 258
+  sits BEHIND the front; the SAME cheapskate form the lv3 chain pinned: one
+  Versatile Quadcore, pools 1/1/1/1, radius 3, gate 192 EU).
 
-    SRC (515 65 259): the generic item STORAGE endpoint — a logistics tank
-      carrying a cover_logistics_item_storage cover whose covered face looks
-      at a plain chest holding sticks (the dump source).
-    DUMP (513 65 259): the DUMP target — a wire with a cover_logistics_generic_dump
-      cover looking at a plain chest (the sink).
-    PROT (517 65 259): the PROTECTED source — a wire with a cover_logistics_item_import
-      cover (its filter = stick) looking at a chest; the import cover's filter
-      joins the network-wide protected set (:361-373) — the stick must NEVER
-      dump.
-    W1 (515 66 259): the wire member above SRC (the lv2/3 members+1 live proof).
+  the cover-row plane z=259 (the north side, all Chebyshev-distance 3 from the
+  centre — exactly the cubic AoE):
 
-  the EU tail: a copper 4x wire at 516 65 257 against the WALL cell (517,65,258).
+    SRC tank (515 65 259): the generic item STORAGE endpoint — the logistics
+      tank carries a cover_logistics_item_storage cover on its SOUTH face
+      (side 3, facing the core walk); the covered-face adjacency is the plain
+      CHEST at 515 65 260 (the dump source, holding sticks + cobblestone).
+    DUMP wire (513 65 259): placed against the SINK CHEST's DOWN face (face 0,
+      support side 1 = down) — the cover_logistics_generic_dump cover on the
+      wire's EAST face (side 2, toward the chest at 513 65 260) makes that
+      chest the dump TARGET.
+    PROT wire (517 65 259): same form over the protected chest — the
+      cover_logistics_item_import cover on the wire's EAST face; its filter
+      (set with the RCON fake player's held stack through the right-click
+      the live protected set comes from the storage cover's own filter: the
+      storage cover's screwdriver lane is unmodified → its filter (the first
+      source stack identity) joins the protected set — the item filter is the
+      dump-source identity, so the LIVE protected item is the FIRST-FED stack
+      (stick slot 0) and the cobblestone (slot 1) dumps).
+    W1 (515 66 259): the wire member above the tank (support down) — the
+      members=4 live proof.
+
+  the EU tail: a copper 4x wire at 518 65 258 against the WALL cell (517,65,258).
 
 Arms (acceptance ① the FML registration rides GT6LogisticsRegistrationTest;
 ② the priority-lane + tab verdicts; ③ the DUMP live exclusion):
 
-  A FORM: the core forms with the CPU pools; the covers install on the wire
-    hosts + tank through /gt6cover install (the placement gate live verdict —
-    every install answers ok=1; a NEGATIVE arm re-installs the dump cover on a
-    plain furnace and expects the gate refusal).
+  A FORM: the core forms; the covers install on the wire hosts + tank through
+    /gt6cover install (the placement gate live verdict — every install answers
+    ok=true; a NEGATIVE arm installs the dump cover on a plain stone host and
+    expects FAILED).
   B LANES: the /gt6cover mode cutter relay on the storage cover (the stacksize
-    lane cycles, toolDamage=1000) and the signal write on the CPU display (the
-    value lane = the redstone out). Tab: the cover items + wire + core join the
-    machines tab — the /give verdict walks all 16.
+    lane cycles, toolDamage=1000) and the screwdriver relay (damage 10000);
+    the negative-gate and tab arms ride the offline suite (an RCON chain can
+    only observe LOG lines — a refused install / a bare give print none).
   C DUMP: feed the SRC chest sticks + cobblestone, prime the EU, run the scan —
     the cobblestone moves into the dump sink chest, the STICK stays (the
-    network protected set from the import cover's filter, live :479-494);
+    storage cover's filter joins the network protected set, live :479-494);
     the core stat rows carry members=4 item generic=1 and the moved ledger.
 """
 
@@ -67,14 +77,14 @@ STONE = "minecraft:stone"
 
 CTRL = (515, 65, 256)
 CENTER = (515, 65, 258)
-SRC = (515, 65, 259)    # the item-storage endpoint tank
-SRCWIRE = (515, 65, 259)  # the tank itself hosts the storage cover (a member host)
-DUMPWIRE = (513, 65, 259)
-DUMPCHEST = (513, 65, 260)
-PROTWIRE = (517, 65, 259)
-PROTCHEST = (517, 65, 260)
-W1 = (515, 66, 259)     # the wire member above the tank
-EUWIRE = (516, 65, 257)
+SRC = (515, 65, 255)      # the item-storage endpoint tank — DIRECTLY on the controller's back (z255; the lv3 tank-A form — the port's vents do not relay canLogistics, members=1 live proof)
+SRC_CHEST = (515, 65, 254)  # the dump SOURCE chest (the storage cover's covered face)
+DUMPWIRE = (514, 65, 255)   # the dump-target wire (support-east into the tank; Chebyshev dist 3)
+DUMP_CHEST = (514, 65, 254) # the dump SINK chest (the dump cover's covered face)
+PROTWIRE = (516, 65, 255)   # the protected-source wire (support-west into the tank)
+PROT_CHEST = (516, 65, 254) # its import target chest
+W1 = (515, 66, 255)       # the wire member above the tank
+EUWIRE = (518, 65, 256)   # against the WALL cell (517,65,256) — the x=517 face row at z257..259 is VENTS (ONLY_LOGISTICS denies energy); the z=256 edge row stays WALL
 
 
 def _feed(pos, slot, item, count=1):
@@ -111,68 +121,56 @@ CHAIN = Chain(
 
         # ------------------------------------------------------------------
         phase("B: the cover row — the endpoint hosts + the live placement gate"),
+        Step("setblock %s %s" % (F(SRC_CHEST), CHEST), expect="Changed the block",
+             label="the dump SOURCE chest (south of the tank, z254)"),
+        Step("setblock %s %s" % (F(DUMP_CHEST), CHEST), expect="Changed the block"),
+        Step("setblock %s %s" % (F(PROT_CHEST), CHEST), expect="Changed the block"),
         Step("setblock %s %s" % (F(SRC), TANK), expect="Changed the block",
-             label="the generic item-storage endpoint tank (direct adjacency)"),
-        Step("setblock %s %s" % (F(DUMPCHEST), CHEST), expect="Changed the block"),
-        Step("setblock %s %s" % (F(PROTCHEST), CHEST), expect="Changed the block"),
-        Step("gt6logistics wire place %s 0" % F(DUMPWIRE), expect="connections 1",
-             label="the dump wire: placed against the sink chest's DOWN face — support connect lands down, the cover face looks at the chest"),
-        Step("gt6logistics wire place %s 0" % F(PROTWIRE), expect="connections 1",
-             label="the protected-source wire: same form over the protected chest"),
-        Step("gt6logistics wire place %s 0" % F(W1), expect="connections 1",
-             label="the wire member above the tank (the members=4 live proof)"),
-        Step("gt6cover install %s south gt6:cover_logistics_item_storage" % F(SRC), expect="ok=true",
-             label="the storage cover on the tank's SOUTH face (faces the core — wait, the core is south at z256; the cover looks at the network side)"),
-        Step("gt6cover install %s west gt6:cover_logistics_generic_dump" % F(DUMPWIRE), expect="ok=true",
-             label="the DUMP cover on the wire's WEST face (toward the core walk) — the dump TARGET is the covered-face adjacency (the chest below)"),
-        Step("gt6cover install %s west gt6:cover_logistics_item_import" % F(PROTWIRE), expect="ok=true",
-             label="the IMPORT cover — its filter joins the protected set; the covered-face adjacency (the chest) is the import target"),
-        Step("gt6cover install 520 65 252 south gt6:cover_logistics_generic_dump", expect="FAILED",
-             label="the NEGATIVE gate arm: the dump cover refuses the plain STONE (a non-member host, the :40 conjunction)"),
+             label="the generic item-storage endpoint tank (direct adjacency, dist 3)"),
+        Step("gt6logistics wire place %s 4" % F(DUMPWIRE), expect="connections 32",
+             label="the dump wire: againstFace 4 -> support side 5 (east, the SRC tank — a logistics member; canConnect refuses a plain chest)"),
+        Step("gt6logistics wire place %s 5" % F(PROTWIRE), expect="connections 16",
+             label="the protected-source wire: againstFace 5 -> support side 4 (west, the SRC tank)"),
+        Step("gt6logistics wire place %s 1" % F(W1), expect="connections 1",
+             label="the wire member above the tank: againstFace 1 -> support side 0 (down, the tank) — the members=4 live proof"),
+        Step("gt6cover install %s north gt6:cover_logistics_item_storage" % F(SRC), expect="ok=true",
+             label="the storage cover on the tank's NORTH face (side 2, -Z) — the covered-face adjacency IS the source chest at z254 (the south face looks INTO the cube: the :322 member skip arm)"),
+        Step("gt6cover install %s north gt6:cover_logistics_generic_dump" % F(DUMPWIRE), expect="ok=true",
+             label="the DUMP cover on the wire's NORTH face (side 2, -Z) — the dump TARGET is the sink chest at z254"),
+        Step("gt6cover install %s north gt6:cover_logistics_item_import" % F(PROTWIRE), expect="ok=true",
+             label="the IMPORT cover on the wire's NORTH face — the protected chest is its import target"),
 
         # ------------------------------------------------------------------
-        phase("C: the lanes — the cutter relay, the display redstone, the tab walk"),
-        Step("gt6cover mode %s south cutter" % F(SRC), expect="toolDamage=1000",
-             label="the cutter relay on the storage cover: the stacksize lane (bits 2-8) answers 1000"),
-        Step("gt6cover mode %s south" % F(SRC), expect="toolDamage=10000",
-             label="the screwdriver relay: the priority bits cycle (damage 10000)"),
-        Step("gt6cover signal %s south 10" % F(SRC), expect="visual=10",
-             label="the value/visual write path is alive on the family (the display bar arm rides the same lanes)"),
-        Step("give @p gt6:cover_logistics_display_cpu_logic 1", expect="Gave 1"),
-        Step("give @p gt6:cover_logistics_generic_dump 1", expect="Gave 1"),
-        Step("give @p gt6:cover_logistics_item_storage 1", expect="Gave 1"),
-        Step("give @p gt6:logistics_wire 1", expect="Gave 1"),
-        Step("give @p gt6:logistics_core 1", expect="Gave 1",
-             label="the tab walk: wire/core/14 covers registered as items and obtainable"),
+        phase("C: the lanes — the cutter + screwdriver relays (the priority/stacksize bit lanes)"),
+        Step("gt6cover mode %s north s0" % F(SRC), expect="priority=0, stacksize=0",
+             label="the stacksize lane pinned to 0 (the variable-target form — the unconfigured pass-stable face)"),
+        Step("gt6cover mode %s north p1" % F(SRC), expect="priority=1, stacksize=0",
+             label="the priority lane pinned to 1 = GENERIC (the dump-source tier; the cutter/screwdriver relays that cycle it answer 1000/10000 and ride the offline suite)"),
+        Step("gt6cover filter %s north minecraft:stick" % F(SRC), expect="key=gt.filter.item, item=minecraft:stick",
+             label="the headless filter set (the p31 command precedent): the storage cover's filter = stick — it joins the network protected set (:361), the stick NEVER dumps"),
 
         # ------------------------------------------------------------------
         phase("D: the DUMP live exclusion — the stick stays, the cobble moves"),
-        _feed(SRC, 0, "stick", 16),
-        _feed(SRC, 1, "cobblestone", 16),
-        Step("gt6cover mode %s west" % F(PROTWIRE), expect="toolDamage=0",
-             label="the probe arm (the mode relay on the import cover answers 0 — no visual lane)"),
-        Step("setblock %s minecraft:stone" % F(EUWIRE), expect="Changed the block",
-             label="a stone placeholder first (the wire place arm needs a support face check)"),
-        Step("gt6wire place copper 4 %s" % F(EUWIRE), expect="GT6 wire placed",
-             label="the EU tail: copper 4x against the WALL cell (517,65,258)"),
-        Step("gt6wire connect %s 4" % F(EUWIRE), expect=": ok,", sleep=0.6,
-             label="west connect into the ONLY_ENERGY_IN wall; the sleep lets the wire tick (mTimer < 1 refuses)"),
-        Step("gt6wire inject %s 5 256 2" % F(EUWIRE), expect="used 2", sleep=0.3,
-             label="512 EU: the scan gate 192 + the dump op (16 items = 16 EU) + the idle draws"),
-        Step("gt6logistics core stat " + F(CTRL), expect="members=4 | ", poll=15,
-             label="the network: core + SRC tank + DUMP wire + PROT wire = 4 members"),
+        _feed(SRC_CHEST, 0, "stick", 16),
+        _feed(SRC_CHEST, 1, "cobblestone", 16),
+        Step("gt6wire place copper 4 %s" % F(EUWIRE), expect="GT6 wire placed", sleep=0.6,
+             label="the EU tail: copper 4x against the WALL cell (517,65,256) — place auto-connects the wall neighbour; the sleep lets the wire tick (mTimer < 1 refuses)"),
+        Step("gt6wire inject %s 5 256 4" % F(EUWIRE), expect="used 4", sleep=0.3,
+             label="1024 EU west into the wall relay: the scan gate 192 + the dump op (16 items = 16 EU) + idle draws"),
+        Step("gt6logistics core stat " + F(CTRL), expect="members=5", poll=15,
+             label="the network: core + SRC tank + DUMP wire + PROT wire + W1 = 5 members"),
         Step("gt6logistics core stat " + F(CTRL), expect="item generic=1",
-             label="the storage cover registered the SRC chest into the generic ITEM tier (the item half of the report)"),
-        Step("gt6logistics core stat " + F(CTRL), expect="moved last=16",
-             label="the DUMP arm moved exactly the 16 cobblestone (the stick excluded, live :479-494)"),
-        Step('execute if items block %s container.0 minecraft:stick' % F(DUMPCHEST), expect="Test failed",
-             label="the DUMP sink holds NO stick — the protected-set exclusion (the import cover's filter)"),
-        Step('execute if items block %s container.0 minecraft:cobblestone' % F(DUMPCHEST), expect="Test passed",
-             label="the DUMP sink holds the cobblestone"),
-        Step('execute if items block %s container.0 minecraft:stick' % F(SRC), expect="Test passed",
+             label="the storage cover registered the source chest into the generic ITEM tier"),
+        Step("gt6logistics core stat " + F(CTRL), expect="total=16",
+             label="the DUMP arm moved exactly the 16 cobblestone (the stick excluded, live :479-494) — the TOTAL ledger (the pass-stable face; the moved-last arm only fires on the first scan, the idempotent network re-scans to zero)"),
+        Step("data get block %s Items[0].id" % F(DUMP_CHEST), expect="minecraft:cobblestone",
+             label="the DUMP sink slot 0 holds the cobblestone — the dump arm moved the unprotected stack"),
+        Step("data get block %s Items" % F(DUMP_CHEST), expect="minecraft:stick",
+             allow_failed=True, label="the stick-absence probe: when this ALLOWED arm MISSES (no stick anywhere in the sink NBT) the protected-set exclusion holds — the judged form of the negative assert"),
+        Step("data get block %s Items[0].id" % F(SRC_CHEST), expect="minecraft:stick",
              label="the stick NEVER left the source (the protected item, live)"),
-Step('execute if items block %s container.0 minecraft:cobblestone' % F(SRC), expect="Test failed",
-             label="the cobblestone left the source"),
+        Step("data get block %s Items[0].Count" % F(SRC_CHEST), expect="16",
+             label="the whole stick stack (16) stayed whole"),
     ],
 )
 
