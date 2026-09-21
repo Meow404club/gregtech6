@@ -113,4 +113,24 @@ class GT6CokeOvenLogExpansionTest extends GTRecipesOfflineTestBase {
 		assertDoesNotThrow(GT6CokeOvenTagListener::rebuild);
 		assertEquals(0, GT6CokeOvenTagListener.logRecipeCount());
 	}
+
+	/**
+	 * The p33 phase-window wrap (the P32 rm-phase-gate): the listener's direct mRecipeList
+	 * write stays legal after the freeze (a /reload re-fires TagsUpdatedEvent post-
+	 * ServerStarted) and the window closes on exit — phase back to FROZEN, the pour landed.
+	 */
+	@Test
+	void replaceWorksAfterFreezeAndReclosesWindow() {
+		GT6RecipeMaps.init();
+		GT6RecipeMaps.freeze();
+		try {
+			assertTrue(GT6RecipeMaps.phase() == GT6RecipeMaps.Phase.FROZEN);
+			GT6CokeOvenTagListener.replaceLogRecipes(GT6CokeOvenLogExpansion.expand(List.of(Items.OAK_LOG), CHARCOAL_GEM, Fluids.WATER));
+			assertEquals(1, GT6RecipeMaps.COKE_OVEN.mRecipeList.size(), "the pour landed through the reopened window");
+			assertEquals(1, GT6CokeOvenTagListener.logRecipeCount());
+			assertNotNull(GT6RecipeMaps.COKE_OVEN.findRecipe(null, 16, ItemStack.EMPTY, null, new ItemStack(Items.OAK_LOG, 1)));
+		} finally {
+			GT6RecipeMaps.reset(); // the test rewind (also restores OPEN for the other tests)
+		}
+	}
 }
