@@ -89,8 +89,19 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	 * Minecraft dereference on the bake worker threads); tests: a stub.
 	 */
 	private final Function<Material, TextureAtlasSprite> mSpriteLookup;
-	/** The 12 quads (6 base + 6 overlay), baked once per instance. */
-	private final List<BakedQuad> mQuads;
+	/**
+	 * The 12 quads (6 base + 6 overlay), baked LAZILY at first {@link #getQuads} — task
+	 * p33-fix-forge-ore-invisible. Eager constructor baking was the forge-leg whole-ore
+	 * invisibility root cause: ModifyBakingResult fires BEFORE the sprite upload
+	 * (ModelManager.java.patch — onModifyBakingResult precedes the dispatch/registry set)
+	 * and its javadoc forbids touching ModelManager (ModelEvent.java:40-43), so the static
+	 * atlas lookup resolved against the EMPTY atlas and baked 0 quads (baked models still
+	 * had collision/tooltip/outline). The GTWireBakedModel mBakedCache lazy form is the
+	 * in-repo precedent — all five sibling dynamic families resolve at render time and
+	 * were never affected. Double-checked-locking volatile: getQuads runs concurrently on
+	 * the chunk-build worker pool; resolution is idempotent and the result immutable.
+	 */
+	private volatile List<BakedQuad> mQuads;
 
 	public GTOreBakedModel(BakedModel aFallbackModel, Params aParams) {
 		this(aFallbackModel, aParams, defaultSpriteLookup());
@@ -101,7 +112,6 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 		mFallbackModel = aFallbackModel;
 		mParams = aParams;
 		mSpriteLookup = aSpriteLookup;
-		mQuads = bakeQuads();
 	}
 
 	/** The material of a sprite id: the blocks atlas + the id (the 1.20.1 lookup's payload split out). */
@@ -130,10 +140,23 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 		if (aRenderType != null && !aRenderType.equals(RenderType.solid()) && !aRenderType.equals(RenderType.cutout())) {
 			return List.of();
 		}
-		if (aSide == null) return mQuads;
+		List<BakedQuad> tQuads = quads();
+		if (aSide == null) return tQuads;
 		List<BakedQuad> rOut = new ArrayList<>(2);
-		for (BakedQuad tQuad : mQuads) if (tQuad.getDirection() == aSide) rOut.add(tQuad);
+		for (BakedQuad tQuad : tQuads) if (tQuad.getDirection() == aSide) rOut.add(tQuad);
 		return rOut;
+	}
+
+	/** The lazy first-render bake (the double-checked-lock form of the field doc). */
+	private List<BakedQuad> quads() {
+		List<BakedQuad> tQuads = mQuads;
+		if (tQuads == null) {
+			synchronized (this) {
+				tQuads = mQuads;
+				if (tQuads == null) mQuads = tQuads = bakeQuads();
+			}
+		}
+		return tQuads;
 	}
 
 	@Override
