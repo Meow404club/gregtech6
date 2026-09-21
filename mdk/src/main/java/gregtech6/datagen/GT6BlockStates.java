@@ -21,6 +21,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.registry.GT6BeeHives;
+import gregtech6.tileentity.bees.GT6BumbliaryBlock;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GT6Lasers;
 import gregtech6.registry.GT6MagicAbsorbers; // p32 tail-append
@@ -211,6 +212,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addSurfaceBand(); // task p30-w6-rocks-sticks — the surface rock trio + the stick (shared models, no items)
         addSurfacePlants(); // task p30-w6-t2-surface-blocks — the plant quartet + the four fallen-log woods
         addHive(); // task p32-bees-lv2 — the bumble hive (the tinted body + the six-overlay two-layer form)
+        addBumbliary(); // task p33-bees-lv3-b-bumbliary — the Bumbliary pair (the hive two-layer grammar over the facing cube)
         addPlaceables(); // task p32-placeables — the Greg o'Lantern (the carved-front cube)
     }
 
@@ -267,6 +269,67 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .face(Direction.UP).texture("#overlay_top").cullface(Direction.UP)
                 .end();
         getVariantBuilder(tHive).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+    }
+
+    /**
+     * Task p33-bees-lv3-b-bumbliary — the Bumbliary pair: the addHive two-layer grammar
+     * (the tinted colored body + the six 0.01-plate overlay decals) over the FACING cube
+     * (the upstream Bumbliary renders the same
+     * {@code BlockTextureMulti(colored[FACES_TBS[side]], overlay[FACES_TBS[side]])}
+     * triple, MultiTileEntityBumbliary.java:317-327 — with the standard horizontal
+     * housing spin). The advanced variant swaps the texture band (the upstream
+     * bumbliary_adv art, :318-324 counterpart).
+     */
+    private void addBumbliary() {
+        bumbliaryModel(GT6BeeHives.BUMBLIARY.get(), "bumbliary");
+        bumbliaryModel(GT6BeeHives.BUMBLIARY_ADVANCED.get(), "bumbliary_adv");
+    }
+
+    private void bumbliaryModel(Block tBlock, String tBand) {
+        BlockModelBuilder tModel = models().getBuilder(tBand)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc("block/" + tBand + "_colored_bottom"))
+                .texture("up", modLoc("block/" + tBand + "_colored_top"))
+                .texture("north", modLoc("block/" + tBand + "_colored_sides"))
+                .texture("south", modLoc("block/" + tBand + "_colored_sides"))
+                .texture("west", modLoc("block/" + tBand + "_colored_sides"))
+                .texture("east", modLoc("block/" + tBand + "_colored_sides"))
+                .texture("particle", modLoc("block/" + tBand + "_colored_sides"))
+                .texture("overlay_side", modLoc("block/" + tBand + "_overlay_sides"))
+                .texture("overlay_top", modLoc("block/" + tBand + "_overlay_top"))
+                .texture("overlay_bottom", modLoc("block/" + tBand + "_overlay_bottom"));
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        tModel.element() // north
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_side").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // south
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_side").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // west
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_side").cullface(Direction.WEST)
+                .end();
+        tModel.element() // east
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_side").cullface(Direction.EAST)
+                .end();
+        tModel.element() // bottom
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_bottom").cullface(Direction.DOWN)
+                .end();
+        tModel.element() // top
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_top").cullface(Direction.UP)
+                .end();
+        getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder()
+                .modelFile(tModel)
+                .rotationY((int) aState.getValue(GT6BumbliaryBlock.FACING).toYRot())
+                .build());
     }
 
     /**

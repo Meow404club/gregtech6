@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gt6:block/bumbliary_adv",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "gt6:block/bumbliary_adv",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "gt6:block/bumbliary_adv"
+    },
+    "facing=west": {
+      "model": "gt6:block/bumbliary_adv",
+      "y": 90
+    }
+  }
+}
