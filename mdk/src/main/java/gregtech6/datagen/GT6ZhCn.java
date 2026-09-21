@@ -260,6 +260,7 @@ public class GT6ZhCn extends LanguageProvider {
 		add("block.gt6.bathing_pot_wood", "木质浸洗盆");
 		add("block.gt6.bathing_pot_steel", "浸洗盆");
 		add("block.gt6.mixing_bowl", "搅拌盆");
+		add("block.gt6.juicer", "榨汁机"); // task p33-food-machines-kitchen — the dump gt.multitileentity.32722 face 榨汁机 verbatim (tmp/gregtech.lang:13543)
 		add("item.gt6.clay_bowl", "粘土碗");
 	}
 

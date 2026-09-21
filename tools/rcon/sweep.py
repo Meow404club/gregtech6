@@ -715,6 +715,13 @@ SESSION_GROUPS = (
     # member — the tank arms are the /gt6tank command channel).
     # --group p33_food_fluids_b1 matches through the chain's embedded name prefix.
     ("p33_food_fluids_b1",),
+    # p33-food-machines-kitchen (task p33-food-machines-kitchen): the kitchen machine
+    # family live chain — the Juicer 32722 manual output arm (gt6kitchen juicer,
+    # the juicer.json honey-comb row), the Fermenter 22003 smoke row on the
+    # burning-box train (the p29_w1_fermenter supply form) and the Oven 20001
+    # RM.Furnace row, all in the fresh z=340 band (east of the cracker 330 strip).
+    # --group p33_food_machines matches through the chain's embedded name prefix.
+    ("p33_food_machines",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

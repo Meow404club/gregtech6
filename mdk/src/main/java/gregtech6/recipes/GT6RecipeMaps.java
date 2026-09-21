@@ -1134,6 +1134,18 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 1, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		// RM.java:102 — items 1/3/1, fluids 0/1/0, MIN 0, AMP 1 (the Juicer map shape; the
+		// b1 card poured the rows via juicer.json, the kitchen card's manual Juicer is the
+		// consumer — the map construction itself is the b1 declared-empty gap this card
+		// closes, the loader pour seam joins the same commit)
+		JUICER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.juicer", "Juicer", null,
+				0, 1,
+				"gt6:textures/gui/machines/juicer",
+				/*IN-OUT-MIN-ITEM=*/ 1, 3, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 1, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 		// RM.java:153 — the Bedrock Drill display map: items 1/12/1, fluids 1/0/1, MIN 0,
 		// AMP 1 (the upstream ctor columns verbatim). The GUI texture file is NOT ported —
 		// nothing opens this map (display-only), the path string rides for the census.

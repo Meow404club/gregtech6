@@ -956,6 +956,7 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.bathing_pot_wood", "Wooden Bathing Pot");
         add("block.gt6.bathing_pot_steel", "Bathing Pot");
         add("block.gt6.mixing_bowl", "Mixing Bowl"); // decisions.p29-mixingbowl-ruling — the en drift corrected
+        add("block.gt6.juicer", "Juicer"); // task p33-food-machines-kitchen — the Loader :2184 name column verbatim
         add("item.gt6.clay_bowl", "Clay Bowl");
     }
 
