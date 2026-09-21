@@ -105,14 +105,28 @@ public final class GT6CokeOvenTagListener {
 	 * size-drift self-heal never fires — the fresh instances would live in the list but in no
 	 * hash bucket, and every COKE_OVEN log lookup would silently null until restart. The
 	 * explicit {@link RecipeMap#invalidateIndex()} forces the rebuild on the next lookup.
+	 *
+	 * <p><b>The phase window</b> (task p33-ops-micro, the P32 rm-phase-gate): this listener is
+	 * a direct {@code mRecipeList} writer (it never routes through the {@code addRecipe} pour
+	 * funnel where the FROZEN guard lives), so a tag update that lands AFTER the
+	 * {@code RegistrationFreezer} ServerStarted freeze (a live /reload re-fires
+	 * TagsUpdatedEvent) would write into the frozen phase ungated. The direct write is wrapped
+	 * in the same {@link GT6RecipeMaps#reopenWindow()} re-pour window the JSON loader uses:
+	 * FROZEN → OPEN for this one replace, re-frozen on exit (freeze is idempotent, so an
+	 * OPEN-generation caller owes nothing and the re-freeze is a no-op).
 	 */
 	static void replaceLogRecipes(List<Recipe> aNewRecipes) {
 		RecipeMap tMap = GT6RecipeMaps.COKE_OVEN;
 		if (tMap == null) return;
-		tMap.mRecipeList.removeAll(sLogRecipes);
-		sLogRecipes = aNewRecipes;
-		tMap.mRecipeList.addAll(sLogRecipes);
-		tMap.invalidateIndex();
+		boolean tReopened = GT6RecipeMaps.reopenWindow();
+		try {
+			tMap.mRecipeList.removeAll(sLogRecipes);
+			sLogRecipes = aNewRecipes;
+			tMap.mRecipeList.addAll(sLogRecipes);
+			tMap.invalidateIndex();
+		} finally {
+			if (tReopened) GT6RecipeMaps.freeze();
+		}
 	}
 
 	/** The current subset size (the audit/acceptance read). */
