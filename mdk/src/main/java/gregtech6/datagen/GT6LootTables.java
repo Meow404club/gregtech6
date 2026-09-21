@@ -142,6 +142,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
+                new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task p33-bees-lv3-b-bumbliary — the Bumbliary pair self-drops
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK)), // task p30-ore-4-loot — the 3922 ore tables
             lookupProvider);
          *///?} else {
@@ -193,6 +194,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
+                new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task p33-bees-lv3-b-bumbliary — the Bumbliary pair self-drops
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK))); // task p30-ore-4-loot — the 3922 ore tables
         //?}
     }
@@ -2450,6 +2452,38 @@ public final class GT6LootTables extends LootTableProvider {
         protected void generate() {
             dropSelf(gregtech6.registry.GT6Placeables.GREG_O_LANTERN.get());
             dropSelf(gregtech6.registry.GT6Placeables.SANDWICH.get());
+        }
+    }
+
+    /**
+     * The Bumbliary pair loot (task p33-bees-lv3-b-bumbliary): both machines drop
+     * themselves (the upstream MTE item form — the assembled machine the :2222-2223
+     * registry rows craft); the contents scatter through the block's vanilla
+     * {@code onRemove} container walk, not the loot table.
+     */
+    public static final class GT6BumbliaryBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6BumbliaryBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6BumbliaryBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return List.of(gregtech6.registry.GT6BeeHives.BUMBLIARY.get(),
+                    gregtech6.registry.GT6BeeHives.BUMBLIARY_ADVANCED.get());
+        }
+
+        @Override
+        protected void generate() {
+            dropSelf(gregtech6.registry.GT6BeeHives.BUMBLIARY.get());
+            dropSelf(gregtech6.registry.GT6BeeHives.BUMBLIARY_ADVANCED.get());
         }
     }
 }

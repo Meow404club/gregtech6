@@ -561,6 +561,10 @@ public final class GT6ItemModels extends ItemModelProvider {
         // generator order, so the parents are the UNCHECKED references (the turbine form)
         withExistingParentUnchecked("greg_o_lantern", "block/greg_o_lantern");
         withExistingParentUnchecked("sandwich", "block/sandwich");
+        // the Bumbliary pair (task p33-bees-lv3-b-bumbliary) — the BlockItems ride the
+        // block models (the same placeables form)
+        withExistingParentUnchecked("bumbliary", "block/bumbliary");
+        withExistingParentUnchecked("bumbliary_advanced", "block/bumbliary_adv");
     }
 
     /** The unchecked parent reference (the GT6BlockStates turbine form) — cross-provider block models generated later. */

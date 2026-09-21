@@ -1,5 +1,7 @@
 package gregtech6.registry;
 
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -18,6 +20,8 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.client.render.GTMachinePaintTint;
 import gregtech6.tileentity.bees.GT6BumbleHiveBlock;
 import gregtech6.tileentity.bees.GT6BumbleHiveBlockEntity;
+import gregtech6.tileentity.bees.GT6BumbliaryBlock;
+import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
 
 /**
  * The GT6 bee-hive registration home — task p32-bees-lv2. Card-owned self-contained
@@ -59,6 +63,57 @@ public final class GT6BeeHives {
 			BLOCK_ENTITY_TYPES.register("bumble_hive",
 					() -> BlockEntityType.Builder.of(GT6BumbleHiveBlockEntity::new, HIVE.get()).build(null));
 
+	// ---------------------------------------------------------------------------
+	// the Bumbliary pair (task p33-bees-lv3-b-bumbliary) — the MTE 32741/32007 ports,
+	// obtainable machines (the BlockItem face the worldgen-only hive never needed).
+	// ---------------------------------------------------------------------------
+
+	/** The Bumbliary ITEMS register (the machine pair; the hive stays itemless). */
+	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "gt6");
+
+	/** The Bumbliary block — id {@code gt6:bumbliary} (the MTE 32741 "Bumbliary" flattened,
+	 *  Loader_MultiTileEntities.java:2222; the wooden hardness/resistance 5.0/5.0 row). */
+	public static final RegistryObject<Block> BUMBLIARY = BLOCKS.register("bumbliary",
+			() -> new GT6BumbliaryBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.WOOD)
+					.strength(5.0F, 5.0F)
+					.sound(SoundType.WOOD), false));
+
+	/** The Bumbliary BlockItem — the obtainable-machine face. */
+	public static final RegistryObject<Item> BUMBLIARY_ITEM =
+			ITEMS.register("bumbliary", () -> new BlockItem(BUMBLIARY.get(), new Item.Properties()));
+
+	/** The Advanced Bumbliary block — id {@code gt6:bumbliary_advanced} (the MTE 32007
+	 *  "Advanced Bumbliary", :2223; the stainless 6.0/6.0 row). */
+	public static final RegistryObject<Block> BUMBLIARY_ADVANCED = BLOCKS.register("bumbliary_advanced",
+			() -> new GT6BumbliaryBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_LIGHT_GRAY)
+					.strength(6.0F, 6.0F)
+					.sound(SoundType.WOOD), true));
+
+	/** The Advanced BlockItem. */
+	public static final RegistryObject<Item> BUMBLIARY_ADVANCED_ITEM =
+			ITEMS.register("bumbliary_advanced", () -> new BlockItem(BUMBLIARY_ADVANCED.get(), new Item.Properties()));
+
+	/** The Bumbliary BET: one class, the flag-picked layout (the ADR-P3-1 form). */
+	public static final RegistryObject<BlockEntityType<GT6BumbliaryBlockEntity>> BUMBLIARY_BE =
+			BLOCK_ENTITY_TYPES.register("bumbliary",
+					() -> BlockEntityType.Builder.of(GT6BumbliaryBlockEntity::new, BUMBLIARY.get()).build(null));
+
+	/** The Advanced BET: the same class over the advanced layout. The factory needs its own
+	 *  BET (the TE carries the type), so the holder routes through an array seam (the
+	 *  GT6BumbleHiveBlockEntityTest fixture shape — the lambda defers the read past init). */
+	public static final RegistryObject<BlockEntityType<GT6BumbliaryBlockEntity>> BUMBLIARY_ADVANCED_BE = registerAdvancedBet();
+
+	private static RegistryObject<BlockEntityType<GT6BumbliaryBlockEntity>> registerAdvancedBet() {
+		final BlockEntityType.BlockEntitySupplier<GT6BumbliaryBlockEntity>[] tFactory =
+				new BlockEntityType.BlockEntitySupplier[1];
+		RegistryObject<BlockEntityType<GT6BumbliaryBlockEntity>> rType = BLOCK_ENTITY_TYPES.register("bumbliary_advanced",
+				() -> BlockEntityType.Builder.<GT6BumbliaryBlockEntity>of(tFactory[0], BUMBLIARY_ADVANCED.get()).build(null));
+		tFactory[0] = (aPos, aState) -> new GT6BumbliaryBlockEntity(true, rType.get(), aPos, aState);
+		return rType;
+	}
+
 	private GT6BeeHives() {
 	}
 
@@ -72,6 +127,7 @@ public final class GT6BeeHives {
 		 *///?}
 		BLOCKS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
+		ITEMS.register(tModBus);
 	}
 
 	/**
@@ -85,6 +141,8 @@ public final class GT6BeeHives {
 		@SubscribeEvent
 		public static void onRegisterBlockColors(net.minecraftforge.client.event.RegisterColorHandlersEvent.Block aEvent) {
 			aEvent.getBlockColors().register(GTMachinePaintTint.blockColor(), HIVE.get());
+			aEvent.getBlockColors().register(GTMachinePaintTint.blockColor(), BUMBLIARY.get());
+			aEvent.getBlockColors().register(GTMachinePaintTint.blockColor(), BUMBLIARY_ADVANCED.get());
 		}
 	}
 }

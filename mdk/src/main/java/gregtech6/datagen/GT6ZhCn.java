@@ -342,6 +342,8 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addBeeUnits() {
 		addDirect("itemGroup.gt6.bee");
 		addDirect("block.gt6.bumble_hive"); // task p32-bees-lv2 — the MTE 32755 hive block (hand row, the tsv direct band)
+		addDirect("block.gt6.bumbliary");          // task p33-bees-lv3-b-bumbliary — the MTE 32741 face (the dump gt.multitileentity.32741 row, tsv auto band)
+		addDirect("block.gt6.bumbliary_advanced"); // the MTE 32007 face (the dump gt.multitileentity.32007 row, tsv auto band)
 		for (gregtech6.registry.GT6BeeCombs.CombSpec tSpec : gregtech6.registry.GT6BeeCombs.COMB_SPECS) {
 			addDirect("item.gt6." + tSpec.itemId());
 		}
