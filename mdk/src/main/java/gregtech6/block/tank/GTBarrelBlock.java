@@ -22,12 +22,14 @@ import gregtech6.registry.GT6DataComponents;
  *///?}
 
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 import gregtech6.block.GTEntityBlock;
+import gregtech6.fluid.GTDrinks;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
@@ -217,6 +219,23 @@ public class GTBarrelBlock extends GTEntityBlock {
 						(float) (aHit.getLocation().x - aPos.getX()), (float) (aHit.getLocation().y - aPos.getY()), (float) (aHit.getLocation().z - aPos.getZ()))) {
 			return InteractionResult.CONSUME;
 		}
+		// p33-food-fluids-b2 — the upstream tank drink seam (TileEntityBase08FluidContainer
+		// :158/:337 + isDrinkable :415-417): an empty MAIN hand on a barrel holding >= 250 mB
+		// of a REGISTER-keyed fluid drains the 250 mB and applies the DrinkStat (hunger/sat
+		// through FoodData.eat, the effects as MobEffectInstance adds — GTDrinks.drink).
+		// CONSUME (no swing) like the cover intercept above. The FluidUtil face below stays
+		// first so a container-carrying hand keeps the bucket behaviour.
+		if (aLevel.getBlockEntity(aPos) instanceof TileEntityBase08Barrel tBarrelDrink
+				&& aPlayer.getItemInHand(aHand).isEmpty() && tBarrelDrink.mTank.has(GTDrinks.DRINK_MB)
+				&& tBarrelDrink.mTank.getFluid() != null) {
+			GTDrinks.DrinkStat tStat = GTDrinks.stat(net.minecraft.core.registries.BuiltInRegistries.FLUID
+					.getKey(tBarrelDrink.mTank.getFluid().getFluid()).getPath());
+			if (tStat != null && GTDrinks.drink(aPlayer, tStat)) {
+				tBarrelDrink.mTank.drain(GTDrinks.DRINK_MB, IFluidHandler.FluidAction.EXECUTE);
+				tBarrelDrink.setChanged();
+				return InteractionResult.CONSUME;
+			}
+		}
 		// spec ② — FluidUtil.java:64 signature; runs on both sides like the documented idiom,
 		// the server pass is authoritative, the client pass is the prediction.
 		return FluidUtil.interactWithFluidHandler(aPlayer, aHand, aLevel, aPos, aHit.getDirection())
@@ -235,6 +254,19 @@ public class GTBarrelBlock extends GTEntityBlock {
 				&& tBarrel.onCoverUse(aPlayer, (byte) aHit.getDirection().get3DDataValue(), aPlayer.getItemInHand(InteractionHand.MAIN_HAND),
 						(float) (aHit.getLocation().x - aPos.getX()), (float) (aHit.getLocation().y - aPos.getY()), (float) (aHit.getLocation().z - aPos.getZ()))) {
 			return InteractionResult.CONSUME;
+		}
+		// p33-food-fluids-b2 — the tank drink seam, the forge-branch shape above (the
+		// MAIN_HAND stand-in is the declared deviation; the empty-hand gate is the same).
+		if (aLevel.getBlockEntity(aPos) instanceof TileEntityBase08Barrel tBarrel2
+				&& aPlayer.getItemInHand(InteractionHand.MAIN_HAND).isEmpty() && tBarrel2.mTank.has(GTDrinks.DRINK_MB)
+				&& tBarrel2.mTank.getFluid() != null) {
+			GTDrinks.DrinkStat tStat = GTDrinks.stat(net.minecraft.core.registries.BuiltInRegistries.FLUID
+					.getKey(tBarrel2.mTank.getFluid().getFluid()).getPath());
+			if (tStat != null && GTDrinks.drink(aPlayer, tStat)) {
+				tBarrel2.mTank.drain(GTDrinks.DRINK_MB, IFluidHandler.FluidAction.EXECUTE);
+				tBarrel2.setChanged();
+				return InteractionResult.CONSUME;
+			}
 		}
 		return FluidUtil.interactWithFluidHandler(aPlayer, InteractionHand.MAIN_HAND, aLevel, aPos, aHit.getDirection())
 				? InteractionResult.SUCCESS
