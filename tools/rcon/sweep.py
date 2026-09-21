@@ -671,6 +671,16 @@ SESSION_GROUPS = (
     # no fresh_boot / mutates member — the rigs are band-local setblocks).
     # --group p33_circuits_parts matches through the chain's embedded name prefix.
     ("p33_circuits_parts",),
+    # p33-logistics-covers-12 (task p33-logistics-covers-12): the logistics cover family
+    # live acceptance — a fresh band SOUTH of the p32_logistics_core band (z252..264,
+    # x509..531, x-aligned with margin from the ignition band x490..514/z452..478 and the
+    # lv3 band z236..250): the same cheapskate core at z256..260, the cover row z=259
+    # (the item-storage tank SRC / the dump wire / the protected-import wire / the wire
+    # member W1), the copper-4x EU tail at 516 65 257. Admission mirroring the lv3 form
+    # (bbox-registered, no fresh_boot / mutates member — the chest feeds are band-local
+    # item replaces; the /gt6cover /gt6logistics arms are pure command channels).
+    # --group p33_logistics_covers matches the module stem.
+    ("p33_logistics_covers",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

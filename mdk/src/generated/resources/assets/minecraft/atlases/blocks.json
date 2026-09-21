@@ -151,6 +151,182 @@
     {
       "type": "minecraft:single",
       "resource": "gt6:block/materialicons/space/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/1"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/2"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/3"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/4"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/5"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/6"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/7"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/8"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/9"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_logic/10"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/1"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/2"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/3"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/4"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/5"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/6"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/7"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/8"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/9"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_control/10"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/1"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/2"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/3"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/4"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/5"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/6"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/7"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/8"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/9"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_storage/10"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/1"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/2"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/3"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/4"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/5"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/6"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/7"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/8"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/9"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/logistics/display/cpu_conversion/10"
     }
   ]
 }

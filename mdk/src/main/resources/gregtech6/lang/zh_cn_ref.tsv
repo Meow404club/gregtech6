@@ -8460,3 +8460,17 @@ direct	block.gt6.logistics_core	物流核心	hand
 direct	gt6.row.machine.molecular_scanner	分子扫描仪 (%s)	hand
 direct	gt6.row.machine.replicator	物质复制器 (%s)	hand
 direct	fluid.gt6.redstone_molten	熔融红石	hand
+direct	item.gt6.cover_logistics_display_cpu_logic	物流显示器 (CPU 逻辑)	hand
+direct	item.gt6.cover_logistics_display_cpu_control	物流显示器 (CPU 控制)	hand
+direct	item.gt6.cover_logistics_display_cpu_storage	物流显示器 (CPU 存储)	hand
+direct	item.gt6.cover_logistics_display_cpu_conversion	物流显示器 (CPU 转换)	hand
+direct	item.gt6.cover_logistics_fluid_export	过滤物流导出总线 (流体)	hand
+direct	item.gt6.cover_logistics_fluid_import	过滤物流导入总线 (流体)	hand
+direct	item.gt6.cover_logistics_fluid_storage	过滤物流存储总线 (流体)	hand
+direct	item.gt6.cover_logistics_item_export	过滤物流导出总线 (物品)	hand
+direct	item.gt6.cover_logistics_item_import	过滤物流导入总线 (物品)	hand
+direct	item.gt6.cover_logistics_item_storage	过滤物流存储总线 (物品)	hand
+direct	item.gt6.cover_logistics_generic_export	通用物流导出总线	hand
+direct	item.gt6.cover_logistics_generic_import	通用物流导入总线	hand
+direct	item.gt6.cover_logistics_generic_storage	通用物流存储总线	hand
+direct	item.gt6.cover_logistics_generic_dump	物流倾倒总线 (物品)	hand

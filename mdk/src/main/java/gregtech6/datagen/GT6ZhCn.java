@@ -1240,6 +1240,22 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.cover_shutter");
 		addDirect("item.gt6.cover_item_filter");
 		addDirect("item.gt6.cover_item_retriever");
+		// task p33-logistics-covers-12 — the 12 logistics covers (zh_cn_ref.tsv 回写行:
+		// 上游 tmp/gregtech.lang 1086-1099 显示名)
+		addDirect("item.gt6.cover_logistics_display_cpu_logic");
+		addDirect("item.gt6.cover_logistics_display_cpu_control");
+		addDirect("item.gt6.cover_logistics_display_cpu_storage");
+		addDirect("item.gt6.cover_logistics_display_cpu_conversion");
+		addDirect("item.gt6.cover_logistics_fluid_export");
+		addDirect("item.gt6.cover_logistics_fluid_import");
+		addDirect("item.gt6.cover_logistics_fluid_storage");
+		addDirect("item.gt6.cover_logistics_item_export");
+		addDirect("item.gt6.cover_logistics_item_import");
+		addDirect("item.gt6.cover_logistics_item_storage");
+		addDirect("item.gt6.cover_logistics_generic_export");
+		addDirect("item.gt6.cover_logistics_generic_import");
+		addDirect("item.gt6.cover_logistics_generic_storage");
+		addDirect("item.gt6.cover_logistics_generic_dump");
 		addDirect("item.gt6.cover_auto_redstone_machine_switch");
 		addDirect("item.gt6.cover_controller");
 		addDirect("item.gt6.integrated_circuit");
