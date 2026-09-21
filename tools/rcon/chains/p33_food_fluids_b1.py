@@ -37,9 +37,9 @@ F = gt6world.fmt
 BARREL_SITE = gt6world.Site(398, 64, 20, dx=1, dy=1, dz=1)
 BARREL = F(BARREL_SITE)  # 398 64 20
 
-steps = []
-
-steps += []
+steps = [
+    Step(f"setblock {BARREL} gt6:barrel_metal", expect="Changed the block"),
+]
 
 phase("A: the temperature-representative arms — 250 mB fill/stat/draw (the p24dyechemical form)")
 steps += [
