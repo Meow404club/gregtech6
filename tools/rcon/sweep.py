@@ -734,6 +734,16 @@ SESSION_GROUPS = (
     # ore row is the client fixture, passes=1 persists it). --group p33_ore_overlay
     # matches the module stem.
     ("p33_ore_overlay",),
+    # p33-food-fluids-b2 (task p33-food-fluids-b2): the drink-seam live chain — a fresh
+    # barrel band x=404 z=20 (x-adjacent-but-disjoint from p33foodb1's bbox 397..399, the
+    # wiremill x=404 band sits z=172), the metal-barrel carrier + the /gt6drink real
+    # useItemOn dispatch arms (vodka/potion.health/water/short_mead positives + the
+    # chlorine negative) + the 103-row FOOD_B2_SPECS census (the four temperature
+    # representatives pinned at 250 mB stat). Admission mirroring the p33foodb1 form
+    # (bbox-registered, no fresh_boot / mutates member — the tank/drink arms are the
+    # /gt6tank + /gt6drink command channels).
+    # --group p33_food_drink matches through the chain's embedded name prefix.
+    ("p33_food_drink",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
