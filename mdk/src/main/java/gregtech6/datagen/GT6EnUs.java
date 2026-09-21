@@ -92,6 +92,7 @@ public class GT6EnUs extends LanguageProvider {
         addSimpleLiquidFluids(); // task p19-drying-rows-backfill-2
         addFoodFluids();
         addFoodB1Fluids(); // task p21-drying-food-fluids
+        addFoodB2Fluids(); // task p33-food-fluids-b2
         addDyeChemicalFluids(); // task p24-dye-chemical-fluids — table-tail append
         addCFoamFluids(); // task p26-c-foam-fluid-refill — table-tail append
         addChemicalFluids(); // task p29-w4-f1-chemicals — table-tail append
@@ -268,6 +269,22 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addFoodB1Fluids() {
         for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_B1_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
+
+    /**
+     * Food-fluid batch-2 keys (task p33-food-fluids-b2): the sixth loop over
+     * {@link GTFluids#FOOD_B2_SPECS} — the addFoodB1Fluids shape, walked from the SIXTH
+     * table so the lang face cannot drift from the registered fluids. Values ride the row's
+     * displayName: the upstream {@code FL.create} local names verbatim (Loader_Fluids.java
+     * :230-350 the potion brews + the residual FOOD-flag rows), the "Distilled Water" local
+     * name for the :75 alias row, "Poison" the bare-string registration face (no FL.create
+     * — the water_boiling precedent). The zh faces ride the reference-table direct band
+     * (GT6ZhCn, the same 103 keys; poison is the one hand row).
+     */
+    private void addFoodB2Fluids() {
+        for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_B2_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
     }

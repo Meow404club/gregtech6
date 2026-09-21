@@ -517,6 +517,14 @@ public class GT6ZhCn extends LanguageProvider {
 		for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_B1_SPECS) {
 			addDirect("fluid.gt6." + tSpec.name());
 		}
+		// task p33-food-fluids-b2: the 103 drink-seam display names (94 potion brews + 9
+		// residual FOOD-flag drink fluids) — the dump carries 102 faces (S:fluid.potion.*
+		// tmp/gregtech.lang:699-845 + the residual rows), poison is the one hand row (毒液,
+		// no S:fluid.poison dump face — the honest-default registration); the keys ride the
+		// SAME GTFluids.FOOD_B2_SPECS derivation the en walk and the FluidType descriptionIds use.
+		for (GTFluids.AquaFluidSpec tSpec : GTFluids.FOOD_B2_SPECS) {
+			addDirect("fluid.gt6." + tSpec.name());
+		}
 		// task p29-w4-f1-chemicals + p31-qu-b-materials: the 34 chemical display names —
 		// the dump carries every
 		// face (S:fluid.liquid_extra_heavy_oil=超重油 tmp/gregtech.lang:388, :389-391 the
