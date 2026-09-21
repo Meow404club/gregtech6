@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "gt6:circuit6"
+    },
+    "M": {
+      "item": "gt6:casing_small_steel_galvanized"
+    },
+    "P": {
+      "tag": "forge:gems/ruby"
+    }
+  },
+  "pattern": [
+    "PCP",
+    "CMC",
+    "PCP"
+  ],
+  "result": {
+    "item": "gt6:processor_unit_control"
+  },
+  "show_notification": true
+}

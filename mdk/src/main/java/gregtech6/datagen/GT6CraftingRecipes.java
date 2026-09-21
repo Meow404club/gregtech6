@@ -29,6 +29,8 @@ import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.datagen.GT6ItemTags;
 import gregtech6.items.armor.GT6ArmorMaterials;
+import gregtech6.item.GT6Circuits;
+import gregtech6.items.GT6CircuitProgramRecipe;
 import gregtech6.registry.GT6Batteries;
 import gregtech6.registry.GT6Placeables;
 import gregtech6.registry.GT6ElectricTransformers;
@@ -317,6 +319,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		digLadderRows(aConsumer);
 		// task p31-machine-ladder — the machine family material rows (the identity-stamped walk)
 		machineLadderRows(aConsumer);
+		// task p33-circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
+		// (gt6:circuit_program) + the ventilation/processor-unit six (gt6 shaped)
+		circuitProgramRows(aConsumer);
+		partCircuitRows(aConsumer);
 	}
 	//?} else {
 	/*@Override
@@ -425,6 +431,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p31-dig-ladder — the per-material identity-stamped rows (the axis walk)
 		digLadderRows(aOutput);
 		machineLadderRows(aOutput);
+		// task p33-circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
+		// (gt6:circuit_program) + the ventilation/processor-unit six (gt6 shaped)
+		circuitProgramRows(aOutput);
+		partCircuitRows(aOutput);
 	}
 	*///?}
 
@@ -1431,8 +1441,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
     //   - electrolyzer_part :18105 ('W' wireGt01 Pt + 'C' OD_CIRCUITS[6] absent);
     //   - distill_part :18102 / sluice_part :18106 ('P' pipeSmall/pipeMedium — the
     //     pipe prefixes are off the port item path);
-    //   - ventilation_unit :1184 ('F' IL.Cover_Vent + 'E' IL.MOTORS[1] absent);
-    //   - processor units :1185-1189 ('S/D/R/E' IL.Processor_Crystal_* absent).
+    //   - ventilation_unit :1184 ('F' IL.Cover_Vent + 'E' IL.MOTORS[1] absent — RESOLVED
+    //     by the p33-circuits-crafting-c band below, the ruling-B substitutions);
+    //   - processor units :1185-1189 ('S/D/R/E' IL.Processor_Crystal_* absent — RESOLVED
+    //     by the p33-circuits-crafting-c band below, the gem-tag substitutions).
     // The coil 'W' fold: wireGt04 has no port items — ONE fine wire per cell (the
     // transformerBuilder fold precedent, the count differential declared).
     // -------------------------------------------------------------------------
@@ -1493,6 +1505,239 @@ public class GT6CraftingRecipes extends RecipeProvider {
         coilBuilder("large_iridium_coil", gregapi.data.MT.Ir)
                 .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/large_iridium_coil"))));
         return rRows;
+    }
+
+    // -------------------------------------------------------------------------
+    // task p33-circuits-crafting-c — the circuits C-column band (coordinator ruling B,
+    // every substitution row DECLARED): the Ventilation Unit (Loader_MultiTileEntities
+    // .java:1184) + the five Quadcore Processor Units (:1185-1189) crafting rows. The
+    // 'M' casingMachine(SteelGalvanized) column folds to casingSmall (the Locker/diesel
+    // fold precedent); the 'C' OD_CIRCUITS[3]/[6] columns key the #gt6:circuit3/6 TAGS
+    // (the battery-box 'X' column precedent, NOT a deviation). The absent-input columns
+    // substitute per the ruling-B map (each DEVIATION declared in-line):
+    //   - 'F' IL.Cover_Vent → 6x iron rods + 1x iron rotor folded IN-PLACE (the upstream
+    //     Cover_Vent crafting row itself, MultiItemTechnological.java:161 "RRR","RXR",
+    //     "RRR" — the cover item has no port identity, its own recipe is the nearest
+    //     semantic carrier);
+    //   - 'E' IL.MOTORS[1] (LV Electric Motor) → gt6:electric_motor_t2 (the port bridge
+    //     ladder T2 = upstream 10022 LV, GTMachines.java:4711);
+    //   - the four IL.Processor_Crystal_* colors → the matching GEM TAGS (ruby/emerald/
+    //     sapphire/diamond — #forge:gems/<color>, the crystal circuits' material carriers;
+    //     the versatile row's S/D/R/E columns map Sapphire/Diamond/Ruby/Emerald per
+    //     upstream :1185, the four ladder rows' 'P' column per :1186-1189).
+    // -------------------------------------------------------------------------
+    private static final ResourceLocation VENTILATION_UNIT_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "part_circuit/ventilation_unit");
+
+    /** The PU ladder row (path, gem tag snake) — the 'P' column per upstream :1186-1189. */
+    private record ProcessorCircuitRow(String path, String gemSnake) {}
+
+    private void partCircuitRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+        TagKey<Item> tGalvPlates = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "steel_galvanized");
+        Item tCasing = itemOrNull(gregapi.data.OP.casingSmall, gregapi.data.MT.SteelGalvanized);
+        Item tRotor = itemOrNull(gregapi.data.OP.rotor, gregapi.data.MT.Iron);
+        Item tStick = itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.Iron);
+        Item tMotorLV = gregtech6.registry.GTMachines.ELECTRIC_MOTOR_ITEMS_BY_PATH.get("electric_motor_t2").get();
+        TagKey<Item> tCircuit6 = GT6ItemTags.gt6("circuit6");
+        TagKey<Item> tCircuit3 = GT6ItemTags.gt6("circuit3");
+        if (tCasing == null || tRotor == null || tStick == null || tMotorLV == null) return; // the silent-skip guard
+
+        // the Ventilation Unit :1184 "FwF"/"CMC"/"EdE" — F = the folded 6-rods+rotor vent
+        // (DEV, see band doc), w = wrench, E = the LV motor bridge item (DEV), C = #gt6:circuit3
+        TagKey<Item> tIronRods = GT6ItemTags.materialTag(GT6ItemTags.RODS_FAMILY, MT.Iron);
+        ShapedRecipeBuilder tVent = ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                        gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get("ventilation_unit").get())
+                .pattern("FFF").pattern("wCw").pattern("EEE")
+                .define('F', tIronRods)                       // DEV: Cover_Vent folds to its own :161 iron-rod field (rotor folded away, the count face)
+                .define('w', GT6ItemTags.TOOLS_WRENCH)
+                .define('C', tCircuit3)
+                .define('E', tMotorLV)                        // DEV: IL.MOTORS[1] → the T2 bridge motor item
+                .unlockedBy("has_circuit3", has(tCircuit3));
+        tVent.save(aConsumer, VENTILATION_UNIT_ID);
+
+        // the Versatile PU :1185 "DCS"/"CMC"/"RCE" — D/S/R/E gems per :1185, C = #gt6:circuit6
+        ShapedRecipeBuilder tVersatile = ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                        gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get("processor_unit_versatile").get())
+                .pattern("DCS").pattern("CMC").pattern("RCE")
+                .define('D', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "diamond"))
+                .define('S', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "sapphire"))
+                .define('R', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "ruby"))
+                .define('E', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "emerald"))
+                .define('C', tCircuit6)
+                .define('M', tCasing)
+                .unlockedBy("has_circuit6", has(tCircuit6));
+        tVersatile.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "part_circuit/processor_unit_versatile"));
+
+        // the four ladder PUs :1186-1189 "PCP"/"CMC"/"PCP" — P = the row's crystal gem tag
+        ProcessorCircuitRow[] tLadder = {
+                new ProcessorCircuitRow("processor_unit_logic"     , "diamond"  ), // :1186 IL.Processor_Crystal_Diamond
+                new ProcessorCircuitRow("processor_unit_control"   , "ruby"     ), // :1187 IL.Processor_Crystal_Ruby
+                new ProcessorCircuitRow("processor_unit_storage"   , "emerald"  ), // :1188 IL.Processor_Crystal_Emerald
+                new ProcessorCircuitRow("processor_unit_conversion", "sapphire" ), // :1189 IL.Processor_Crystal_Sapphire
+        };
+        for (ProcessorCircuitRow tRow : tLadder) {
+            TagKey<Item> tGem = GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, tRow.gemSnake());
+            String tPath = "part_circuit/" + tRow.path(); // the precomputed arg — the swap-table regex note
+            ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+                            gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get(tRow.path()).get())
+                    .pattern("PCP").pattern("CMC").pattern("PCP")
+                    .define('P', tGem)
+                    .define('C', tCircuit6)
+                    .define('M', tCasing)
+                    .unlockedBy("has_circuit6", has(tCircuit6));
+            tBuilder.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, tPath));
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // task p33-circuits-crafting-c — the 26 integrated-circuit rows (the upstream
+    // ItemIntegratedCircuit.java:58-85 self-crafting block, verbatim): the base row
+    // (:58 "GhG"/"SSS"/"GwG" — G = gearGtSmall Iron, S = stick Iron, h/w = the tool
+    // tags, configuration 0), the shapeless reset (:59, configuration 0 over ANY
+    // circuit stack), and the 24 configuration-programming rows (:61-85, each producing
+    // the circuit at the FIXED Damage configuration 1..24; 'P' = the base circuit item,
+    // 'd' = the screwdriver tag). All ride the gt6:circuit_program serializer — vanilla
+    // shaped JSON cannot carry a result data tag (ShapedRecipe.java:274), the
+    // GT6MaterialToolRecipe serializer precedent stamps the configuration at assemble.
+    // -------------------------------------------------------------------------
+    private static final ResourceLocation CIRCUIT_BASE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "integrated_circuit");
+
+    private void circuitProgramRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+        Item tCircuit = GT6Circuits.INTEGRATED_CIRCUIT.get();
+        TagKey<Item> tSmallGears = GT6ItemTags.materialTag(GT6ItemTags.SMALL_GEARS_FAMILY, MT.Iron);
+        TagKey<Item> tIronSticks = GT6ItemTags.materialTag(GT6ItemTags.RODS_FAMILY, MT.Iron);
+
+        // the base row :58 — configuration 0 (the vanilla-shaped grid through the shared seam)
+        var tBaseKey = new java.util.LinkedHashMap<Character, net.minecraft.world.item.crafting.Ingredient>();
+        tBaseKey.put('G', net.minecraft.world.item.crafting.Ingredient.of(tSmallGears));
+        tBaseKey.put('S', net.minecraft.world.item.crafting.Ingredient.of(tIronSticks));
+        tBaseKey.put('h', net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_HARD_HAMMER));
+        tBaseKey.put('w', net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_WRENCH));
+        saveCircuitProgram(aConsumer, "shaped", java.util.List.of("GhG", "SSS", "GwG"), tBaseKey, tCircuit, CIRCUIT_BASE_ID, 0);
+
+        // the shapeless reset :59 — the circuit re-crafted back to configuration 0
+        var tResetKey = new java.util.LinkedHashMap<Character, net.minecraft.world.item.crafting.Ingredient>();
+        tResetKey.put('P', net.minecraft.world.item.crafting.Ingredient.of(tCircuit));
+        saveCircuitProgram(aConsumer, "shapeless", java.util.List.of(), tResetKey, tCircuit, CIRCUIT_BASE_ID.withSuffix("_reset"), 0);
+
+        // the 24 programming rows :61-85
+        for (int i = 1; i <= 24; i++) {
+            java.util.List<String> tPattern = circuitPattern(i - 1);
+            var tKey = new java.util.LinkedHashMap<Character, net.minecraft.world.item.crafting.Ingredient>();
+            for (String tLine : tPattern) {
+                for (char tChar : tLine.toCharArray()) {
+                    if (tChar == ' ') continue;
+                    tKey.put(tChar, tChar == 'P'
+                            ? net.minecraft.world.item.crafting.Ingredient.of(tCircuit)
+                            : net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_SCREWDRIVER));
+                }
+            }
+            String tIdPath = "integrated_circuit/config_" + i; // the precomputed arg — the swap-table regex note
+            saveCircuitProgram(aConsumer, "shaped", tPattern, tKey, tCircuit,
+                    new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath), i);
+        }
+    }
+
+    /** The per-configuration pattern rows (the upstream :61-85 sparse-grid shapes verbatim). */
+    private static java.util.List<String> circuitPattern(int aIndex) {
+        // the upstream grid shapes per configuration (ItemIntegratedCircuit.java:61-85 verbatim)
+        return switch (aIndex) {
+            case 0 -> java.util.List.of("d ", " P");
+            case 1 -> java.util.List.of("d ", "P ");
+            case 2 -> java.util.List.of(" d", "P ");
+            case 3 -> java.util.List.of("Pd", "  ");
+            case 4 -> java.util.List.of("P ", " d");
+            case 5 -> java.util.List.of("P ", "d ");
+            case 6 -> java.util.List.of(" P", "d ");
+            case 7 -> java.util.List.of("dP", "  ");
+            case 8 -> java.util.List.of("P d");
+            case 9 -> java.util.List.of("P  ", "  d");
+            case 10 -> java.util.List.of("P  ", "   ", "  d");
+            case 11 -> java.util.List.of("P  ", "   ", " d ");
+            case 12 -> java.util.List.of("  P", "   ", "  d");
+            case 13 -> java.util.List.of("  P", "   ", " d ");
+            case 14 -> java.util.List.of("  P", "   ", "d  ");
+            case 15 -> java.util.List.of("  P", "d  ", "   ");
+            case 16 -> java.util.List.of("   ", "   ", "d P");
+            case 17 -> java.util.List.of("   ", "d  ", "  P");
+            case 18 -> java.util.List.of("d  ", "   ", "  P");
+            case 19 -> java.util.List.of(" d ", "   ", "  P");
+            case 20 -> java.util.List.of("d  ", "   ", "P  ");
+            case 21 -> java.util.List.of(" d ", "   ", "P  ");
+            case 22 -> java.util.List.of("  d", "   ", "P  ");
+            default -> java.util.List.of("   ", "  d", "P  "); // :85 config 24
+        };
+    }
+
+    /**
+     * The circuit-program save seam — every row emits through the hand-rolled
+     * FinishedRecipe (the MaterialToolRow face): the vanilla shaped/shapeless JSON plus
+     * the ONE configuration field, the gt6:circuit_program serializer type.
+     */
+    private void saveCircuitProgram(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer,
+            String aType, java.util.List<String> aPattern, java.util.LinkedHashMap<Character, net.minecraft.world.item.crafting.Ingredient> aKey,
+            Item aResult, ResourceLocation aId, int aConfiguration) {
+        ResourceLocation tAdvancementId = aId.withPrefix("recipes/misc/");
+        net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+                .recipeAdvancement()
+                .parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+                .addCriterion("has_circuit", has(GT6Circuits.INTEGRATED_CIRCUIT.get()))
+                .addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(aId))
+                .rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(aId))
+                .requirements(net.minecraft.advancements.RequirementsStrategy.OR);
+        aConsumer.accept(new CircuitProgramRow(aId, aType, aPattern, aKey, aResult, aConfiguration, tAdvancement, tAdvancementId));
+    }
+
+    /**
+     * The forge FinishedRecipe face — the vanilla shaped/shapeless JSON + the ONE
+     * configuration field (the MaterialToolRow shape, the gt6:circuit_program serializer).
+     */
+    private record CircuitProgramRow(ResourceLocation aId, String aType, java.util.List<String> aPattern,
+            java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> aKey, Item aResult, int aConfiguration,
+            net.minecraft.advancements.Advancement.Builder aAdvancement, ResourceLocation aAdvancementId)
+            implements net.minecraft.data.recipes.FinishedRecipe {
+
+        @Override
+        public void serializeRecipeData(com.google.gson.JsonObject aJson) {
+            aJson.addProperty("category", net.minecraft.world.item.crafting.CraftingBookCategory.MISC.getSerializedName());
+            if ("shapeless".equals(aType)) {
+                com.google.gson.JsonArray tIngredients = new com.google.gson.JsonArray();
+                for (net.minecraft.world.item.crafting.Ingredient tIngredient : aKey.values()) {
+                    tIngredients.add(tIngredient.toJson());
+                }
+                aJson.add("ingredients", tIngredients);
+            } else {
+                com.google.gson.JsonArray tPattern = new com.google.gson.JsonArray();
+                for (String tRow : aPattern) {
+                    tPattern.add(tRow);
+                }
+                aJson.add("pattern", tPattern);
+                com.google.gson.JsonObject tKey = new com.google.gson.JsonObject();
+                for (java.util.Map.Entry<Character, net.minecraft.world.item.crafting.Ingredient> tEntry : aKey.entrySet()) {
+                    tKey.add(String.valueOf(tEntry.getKey()), tEntry.getValue().toJson());
+                }
+                aJson.add("key", tKey);
+            }
+            com.google.gson.JsonObject tResult = new com.google.gson.JsonObject();
+            tResult.addProperty("item", net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(aResult).toString());
+            tResult.addProperty("count", 1);
+            aJson.add("result", tResult);
+            aJson.addProperty("show_notification", true);
+            aJson.addProperty("configuration", aConfiguration);
+        }
+
+        @Override
+        public ResourceLocation getId() { return aId; }
+
+        @Override
+        public net.minecraft.world.item.crafting.RecipeSerializer<?> getType() {
+            return GT6CircuitProgramRecipe.Registration.SERIALIZER.get();
+        }
+
+        @Override
+        public com.google.gson.JsonObject serializeAdvancement() { return aAdvancement.serializeToJson(); }
+
+        @Override
+        public ResourceLocation getAdvancementId() { return aAdvancementId; }
     }
 
     // -------------------------------------------------------------------------

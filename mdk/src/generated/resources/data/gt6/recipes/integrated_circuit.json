@@ -1,0 +1,29 @@
+{
+  "type": "gt6:circuit_program",
+  "category": "misc",
+  "configuration": 0,
+  "key": {
+    "G": {
+      "tag": "forge:small_gears/iron"
+    },
+    "S": {
+      "tag": "forge:rods/iron"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "GhG",
+    "SSS",
+    "GwG"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:integrated_circuit"
+  },
+  "show_notification": true
+}

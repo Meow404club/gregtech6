@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "gt6:circuit6"
+    },
+    "D": {
+      "tag": "c:gems/diamond"
+    },
+    "E": {
+      "tag": "c:gems/emerald"
+    },
+    "M": {
+      "item": "gt6:casing_small_steel_galvanized"
+    },
+    "R": {
+      "tag": "c:gems/ruby"
+    },
+    "S": {
+      "tag": "c:gems/sapphire"
+    }
+  },
+  "pattern": [
+    "DCS",
+    "CMC",
+    "RCE"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:processor_unit_versatile"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "gt6:circuit_program",
+  "category": "misc",
+  "configuration": 0,
+  "ingredients": [
+    {
+      "item": "gt6:integrated_circuit"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:integrated_circuit"
+  }
+}
