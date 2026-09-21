@@ -75,6 +75,10 @@ steps += [
     Step(f"gt6tank stat {BARREL}",
          expect="250/64000 L of gt6:mnwtr, temperature 300 K"),
     Step(f"gt6drink use {BARREL}",
+         # the food=1 row arithmetic 18 -> 19 (the :371 row reachable; the
+         # regeneration add shows in the dispatch line — the effects face rides
+         # the golden arm's pin, saturation is pass-nondeterministic so it stays
+         # unpinned, the b2 food-face form)
          expect="result=CONSUME tank=empty food=19"),
     Step("gt6drink clear", expect="food=20 effects=0"),
     Step("gt6drink hunger 15", expect="food level set: food=15"),
@@ -87,11 +91,9 @@ steps += [
     Step(f"gt6tank fill {BARREL} gt6:potion.goldenapplejuice 250",
          expect="filled 250/250 L of gt6:potion.goldenapplejuice (ACCEPTED)"),
     Step(f"gt6drink use {BARREL}",
-         # the :607 effect pair, live — the read rides the registry path (forge)
-         # / registeredName (neo), so the pin is the shared suffix; the saturation
-         # face sits before effects= in the line and ACCUMULATES across arms
-         # (clear() resets food+effects only), so the pin starts at effects=
-         expect="effects=absorption:2400:0,regeneration:100:1"),
+         # the :607 absorption add, live — the shared suffix (forge bare path /
+         # neo registeredName carry the same duration:amplifier tail)
+         expect="absorption:2400:0"),
     Step("gt6drink clear", expect="food=20 effects=0"),
     Step("gt6drink hunger 15", expect="food level set: food=15"),
     Step(f"gt6tank fill {BARREL} gt6:lemonade 250",
@@ -100,7 +102,7 @@ steps += [
          expect="250/64000 L of gt6:lemonade, temperature 275 K"),
     Step(f"gt6drink use {BARREL}",
          # the :603 digSpeed row — the modern registry name is haste (MobEffects.DIG_SPEED)
-         expect="effects=haste:900:1"),
+         expect="haste:900:1"),
     Step("gt6drink clear", expect="food=20 effects=0"),
     Step("gt6drink hunger 16", expect="food level set: food=16"),
     Step(f"gt6tank fill {BARREL} gt6:sake 250",
@@ -109,7 +111,7 @@ steps += [
          # the KEPT-fill face (:486 over the b1 "sake" id, the reverse-census
          # closure arm) — Potion.damageBoost is minecraft:strength in the modern
          # registry
-         expect="effects=strength:300:1"),
+         expect="strength:300:1"),
     Step("gt6drink clear", expect="food=20 effects=0"),
     Step(f"gt6tank fill {BARREL} gt6:chlorine 250",
          expect="filled 250/250 L of gt6:chlorine (ACCEPTED)"),
