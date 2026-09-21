@@ -350,7 +350,10 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	private static CompletableFuture<?> saveMirror(CachedOutput aCache, Path aSource, Path aTarget, String aSingularFace) {
 		try (Reader tReader = Files.newBufferedReader(aSource)) {
 			JsonElement tJson = JsonParser.parseReader(tReader);
-			if (LOOT_FACE_SINGULAR.equals(aSingularFace)) adaptLootFunctions21(tJson, aSource);
+			if (LOOT_FACE_SINGULAR.equals(aSingularFace)) {
+				adaptLootFunctions21(tJson, aSource);
+				adaptLootPredicates21(tJson, aSource);
+			}
 			else if (RECIPE_FACE_SINGULAR.equals(aSingularFace)) adaptRecipes21(tJson, aSource);
 			return DataProvider.saveStable(aCache, tJson, aTarget);
 		} catch (IOException tError) {
@@ -391,6 +394,93 @@ public class GT6DualDirectoryFaces implements DataProvider {
 		} else if (aJson.isJsonArray()) {
 			for (JsonElement tElement : aJson.getAsJsonArray()) {
 				adaptLootFunctions21(tElement, aSource);
+			}
+		}
+	}
+
+	/**
+	 * The loot face 1.21.1 predicate-dialect adapter (task p33-ops-rundata-loot) — the two
+	 * census-proven ItemPredicate/MatchTool dialect deltas the 1.20.1 producers emit and
+	 * the 1.21.1 datagen writes natively, i.e. the INVERSE of treecheck's registered
+	 * node→canonical normalizers {@code _norm_items_wrap} / {@code _norm_enchant_pred}
+	 * (tools/datagen_tree_check.py:152-216, each with the vanilla census samples). Without
+	 * it the forge mirror pass re-covered the singular band's committed 21.1 dialect
+	 * (d6633113f, the neo node's native datagen form) with the 1.20.1 plural face's bytes
+	 * on EVERY forge runData — the 1563-file loot_table write race and diff jitter P32
+	 * observed across the legs (dry-run proof: the transform re-derives all 1563 committed
+	 * singular files BYTE-EXACT from the plural face). The two deltas:
+	 *
+	 * <ul>
+	 * <li>{@code items}: the 1.20.1 ItemPredicate serializes the item set — a single-item
+	 * set lands as the 1-element array {@code ["X"]}; the 1.21.x datagen writes the bare
+	 * string {@code "X"} (census: match_tool predicates, 179 files; sample
+	 * loot_table/blocks/andesite.json). The 21.1 codec accepts both (the singular band
+	 * itself carries BOTH shapes — shears leaves vs chisel strings), so only the
+	 * single-element array unwraps; a multi-element array or a {@code #}-prefixed tag
+	 * entry (no census instance) is left untouched.</li>
+	 * <li>{@code match_tool} enchant predicate: the 1.20.1 shape nests under the
+	 * condition's {@code "predicates"} map keyed
+	 * {@code "minecraft:enchantments"} with per-entry key {@code "enchantments"};
+	 * 1.21/24w21a flattened the EnchantmentPredicate array onto the condition object
+	 * directly as {@code "enchantments"} with per-entry key {@code "enchantment"}
+	 * (census: 1393 files; sample loot_table/blocks/grass.json; the codec trail in the
+	 * treecheck normalizer's javadoc). ONLY the exact two-key shapes above transform —
+	 * a {@code levels}-less entry keeps its shape through the same key swap; anything
+	 * else fails visible.</li>
+	 * </ul>
+	 *
+	 * <p>The shape gate is fail-visible (the {@link #adaptLootFunctions21} discipline): a
+	 * predicate object whose key set matches neither verified dialect throws instead of
+	 * emitting a table the 1.21.1 parser may reject. Byte-identity holds after both
+	 * adapters: the Gson map preserves member order, {@code saveStable} re-serializes
+	 * deterministically — the runData 2nd-run {@code written: 0} gate and the singular
+	 * band's committed 21.1 dialect both stay pinned.
+	 */
+	private static void adaptLootPredicates21(JsonElement aJson, Path aSource) {
+		if (aJson.isJsonObject()) {
+			JsonObject tObject = aJson.getAsJsonObject();
+			// the items unwrap — BEFORE the child walk (value replace only, not structural)
+			JsonElement tItems = tObject.get("items");
+			if (tItems != null && tItems.isJsonArray()) {
+				com.google.gson.JsonArray tArray = tItems.getAsJsonArray();
+				if (tArray.size() == 1 && tArray.get(0).isJsonPrimitive()
+						&& tArray.get(0).getAsJsonPrimitive().isString()
+						&& !tArray.get(0).getAsString().startsWith("#")) {
+					tObject.addProperty("items", tArray.get(0).getAsString());
+				}
+				// multi-element / tag entries: the 21.1 codec's array+tag forms, ride untouched
+			}
+			// the match_tool enchant predicate flattening — the exact two-key gate
+			JsonElement tEnch = tObject.get("enchantments");
+			if (tEnch != null && tEnch.isJsonArray() && tObject.size() == 1) {
+				com.google.gson.JsonArray tOut = new com.google.gson.JsonArray();
+				for (JsonElement tEntry : tEnch.getAsJsonArray()) {
+					if (!tEntry.isJsonObject()) {
+						throw new IllegalArgumentException("the loot mirror's predicate adapter only verifies "
+								+ "enchantment objects (got " + tEntry + " in " + aSource
+								+ ") — extend adaptLootPredicates21 with the codec evidence before rewriting");
+					}
+					JsonObject tNew = new JsonObject();
+					for (Map.Entry<String, JsonElement> tMember : tEntry.getAsJsonObject().entrySet()) {
+						if ("enchantment".equals(tMember.getKey()) && tMember.getValue().isJsonPrimitive()) {
+							tNew.add("enchantments", tMember.getValue());
+						} else {
+							tNew.add(tMember.getKey(), tMember.getValue());
+						}
+					}
+					tOut.add(tNew);
+				}
+				JsonObject tPredicates = new JsonObject();
+				tPredicates.add("minecraft:enchantments", tOut);
+				tObject.remove("enchantments");
+				tObject.add("predicates", tPredicates);
+			}
+			for (Map.Entry<String, JsonElement> tMember : tObject.entrySet()) {
+				adaptLootPredicates21(tMember.getValue(), aSource);
+			}
+		} else if (aJson.isJsonArray()) {
+			for (JsonElement tElement : aJson.getAsJsonArray()) {
+				adaptLootPredicates21(tElement, aSource);
 			}
 		}
 	}
