@@ -26,6 +26,7 @@ import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -134,21 +135,55 @@ public class GT6CircuitProgramRecipe implements net.minecraft.world.item.craftin
 
 	public static class Serializer implements RecipeSerializer<GT6CircuitProgramRecipe> {
 
-		/** The vanilla shaped parser — the parse face delegates, the JSON stays the vanilla shaped shape. */
-		private static final ShapedRecipe.Serializer VANILLA = new ShapedRecipe.Serializer();
+		/** The vanilla parsers — the parse face delegates by the row's grid kind (the shapeless reset row :59 rides the shapeless parser). */
+		private static final ShapedRecipe.Serializer SHAPED = new ShapedRecipe.Serializer();
+		private static final net.minecraft.world.item.crafting.ShapelessRecipe.Serializer SHAPELESS = new net.minecraft.world.item.crafting.ShapelessRecipe.Serializer();
 
 		public GT6CircuitProgramRecipe fromJson(ResourceLocation aId, JsonObject aJson) {
-			ShapedRecipe tDelegate = VANILLA.fromJson(aId, aJson);
+			ShapedRecipe tDelegate = aJson.has("pattern")
+					? SHAPED.fromJson(aId, aJson)
+					: shapelessDelegate(aId, aJson);
 			return new GT6CircuitProgramRecipe(tDelegate, configuration(aJson));
 		}
 
+		/** The shapeless reset row parse — the vanilla shapeless recipe re-wrapped as a 1x1 shaped delegate (the CraftingRecipe seam; matches() over one cell = the shapeless membership face). */
+		private ShapedRecipe shapelessDelegate(ResourceLocation aId, JsonObject aJson) {
+			net.minecraft.world.item.crafting.ShapelessRecipe tShapeless = SHAPELESS.fromJson(aId, aJson);
+			NonNullList<net.minecraft.world.item.crafting.Ingredient> tIngredients = NonNullList.withSize(1,
+					tShapeless.getIngredients().isEmpty() ? net.minecraft.world.item.crafting.Ingredient.EMPTY : tShapeless.getIngredients().get(0));
+			ItemStack tResult = tShapeless.assemble(null, net.minecraft.core.RegistryAccess.EMPTY);
+			return new ShapedRecipe(aId, tShapeless.getGroup(), CraftingBookCategory.MISC, 1, 1, tIngredients, tResult, true);
+		}
+
 		public GT6CircuitProgramRecipe fromNetwork(ResourceLocation aId, FriendlyByteBuf aBuffer) {
-			ShapedRecipe tDelegate = VANILLA.fromNetwork(aId, aBuffer);
+			ShapedRecipe tDelegate;
+			if (aBuffer.readBoolean()) {
+				tDelegate = SHAPED.fromNetwork(aId, aBuffer);
+			} else {
+				net.minecraft.world.item.crafting.ShapelessRecipe tShapeless = SHAPELESS.fromNetwork(aId, aBuffer);
+				NonNullList<net.minecraft.world.item.crafting.Ingredient> tIngredients = NonNullList.withSize(1,
+						tShapeless.getIngredients().isEmpty() ? net.minecraft.world.item.crafting.Ingredient.EMPTY : tShapeless.getIngredients().get(0));
+				tDelegate = new ShapedRecipe(aId, tShapeless.getGroup(), CraftingBookCategory.MISC, 1, 1, tIngredients, tShapeless.getResultItem(null), true);
+			}
 			return new GT6CircuitProgramRecipe(tDelegate, aBuffer.readVarInt());
 		}
 
 		public void toNetwork(FriendlyByteBuf aBuffer, GT6CircuitProgramRecipe aRecipe) {
-			VANILLA.toNetwork(aBuffer, aRecipe.mDelegate);
+			// the shapeless reset row networked through the shapeless serializer (the 1x1
+			// single-ingredient delegate reconstructs the membership face on the client)
+			ShapedRecipe tDelegate = aRecipe.mDelegate;
+			net.minecraft.world.item.crafting.Ingredient tOnly = tDelegate.getIngredients().isEmpty()
+					? net.minecraft.world.item.crafting.Ingredient.EMPTY : tDelegate.getIngredients().get(0);
+			boolean tShaped = tDelegate.getRecipeWidth() > 1 || tDelegate.getRecipeHeight() > 1;
+			aBuffer.writeBoolean(tShaped);
+			if (tShaped) {
+				SHAPED.toNetwork(aBuffer, tDelegate);
+			} else {
+				net.minecraft.world.item.crafting.ShapelessRecipe tShapeless = new net.minecraft.world.item.crafting.ShapelessRecipe(
+						tDelegate.getId(), tDelegate.getGroup(), CraftingBookCategory.MISC,
+						tDelegate.getResultItem(null), NonNullList.withSize(1, tOnly));
+				SHAPELESS.toNetwork(aBuffer, tShapeless);
+			}
 			aBuffer.writeVarInt(aRecipe.mConfiguration);
 		}
 	}

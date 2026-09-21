@@ -2,10 +2,13 @@
   "type": "gt6:circuit_program",
   "category": "misc",
   "configuration": 0,
-  "ingredients": [
-    {
+  "key": {
+    "P": {
       "item": "gt6:integrated_circuit"
     }
+  },
+  "pattern": [
+    "P"
   ],
   "result": {
     "count": 1,

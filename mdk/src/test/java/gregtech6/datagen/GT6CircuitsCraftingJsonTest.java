@@ -118,12 +118,13 @@ public class GT6CircuitsCraftingJsonTest {
 		assertEquals("gt6:circuit_program", tRow.get("type").getAsString(), "the shared serializer type");
 	}
 
-	/** The shapeless reset :59 — the circuit back to configuration 0. */
+	/** The reset row :59 — the circuit back to configuration 0 (the 1x1 shaped re-expression: one circuit anywhere in the grid, the 21.1 shared-codec ruling). */
 	@Test
-	public void theResetRowIsShapelessOverTheCircuit() throws Exception {
+	public void theResetRowTakesAnyCircuitBackToZero() throws Exception {
 		JsonObject tRow = generated("integrated_circuit_reset");
-		assertTrue(tRow.has("ingredients") && !tRow.has("pattern"), "the :59 shapeless form");
-		assertEquals(1, tRow.getAsJsonArray("ingredients").size(), "the single circuit input");
+		assertEquals("P", tRow.getAsJsonArray("pattern").get(0).getAsString(), "the 1x1 shaped form");
+		assertEquals(1, tRow.getAsJsonObject("key").size(), "the single circuit key");
+		assertEquals("gt6:integrated_circuit", tRow.getAsJsonObject("key").getAsJsonObject("P").get("item").getAsString());
 		assertEquals(0, tRow.get("configuration").getAsInt());
 	}
 

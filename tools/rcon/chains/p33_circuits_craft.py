@@ -60,22 +60,26 @@ steps = [
     Step(f"setblock {CHEST_POS} minecraft:chest", expect="Changed the block"),
     Step(f"item replace block {CHEST_POS} container.0 with minecraft:iron_ingot 32", expect="Replaced"),
     Step(f"gt6act place {T}", expect="GT6 advanced_crafting_table placed"),
-    # stock the grid: 3x small gears + 9x rods across the 3x3 (the :58 grid needs the
-    # h/w tool tags only as AUX — the vanilla grid consumes the tag members too, so the
-    # ACT grid stocks the REAL carriers: gears/rods, the tools ride the tag ports)
+    # stock the grid: the :58 grid = G/gear_gt_small_iron x3 + S/stick_iron x6 + the h/w
+    # tool slots (the hammer/wrench items — the gt6 tool-tag members). The ACT's direct
+    # fill face rides the SLOTS_CRAFTING band 21..29 in row-major order.
     Step(f"gt6act fill 21 gt6:gear_gt_small_iron 1 {T}", expect="GT6 ACT fill slot 21: 1x"),
-    Step(f"gt6act fill 22 gt6:stick_iron 1 {T}", expect="GT6 ACT fill slot 22: 1x"),
+    Step(f"gt6act fill 22 gt6:hammer 1 {T}", expect="GT6 ACT fill slot 22: 1x"),
     Step(f"gt6act fill 23 gt6:gear_gt_small_iron 1 {T}", expect="GT6 ACT fill slot 23: 1x"),
     Step(f"gt6act fill 24 gt6:stick_iron 1 {T}", expect="GT6 ACT fill slot 24: 1x"),
     Step(f"gt6act fill 25 gt6:stick_iron 1 {T}", expect="GT6 ACT fill slot 25: 1x"),
     Step(f"gt6act fill 26 gt6:stick_iron 1 {T}", expect="GT6 ACT fill slot 26: 1x"),
     Step(f"gt6act fill 27 gt6:gear_gt_small_iron 1 {T}", expect="GT6 ACT fill slot 27: 1x"),
-    Step(f"gt6act fill 28 gt6:stick_iron 1 {T}", expect="GT6 ACT fill slot 28: 1x"),
+    Step(f"gt6act fill 28 gt6:wrench 1 {T}", expect="GT6 ACT fill slot 28: 1x"),
     Step(f"gt6act fill 29 gt6:gear_gt_small_iron 1 {T}", expect="GT6 ACT fill slot 29: 1x"),
     Step(f"gt6act compute {T}", expect="canDo=true"),
     Step(f"gt6act craft once {T}", expect="crafted=true, hold=[1x"),
-    # the stat line pins the crafted stack in the output slot 31 (the stamped base identity)
-    Step(f"gt6act stat {T}", expect="output=1x"),
+    # the craft consumed the grid material (gears/rods — only the worn tools remain,
+    # the vanilla consume-all rule), the crafted circuit left via the hold face; the
+    # 21.1 leg namespaces the item renders (the node_expects drift ruling) — the
+    # substring pin rides the shared "hammer" face only
+    Step(f"gt6act stat {T}", expect="hammer; 28=1x",
+         node_expects={"1.21.1": "1x gt6:hammer; 28=1x gt6:wrench"}),
 
     phase("C: teardown — restore the band"),
     Step(f"fill 418 63 288 426 68 293 air", expect="filled"),
