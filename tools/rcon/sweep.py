@@ -706,6 +706,15 @@ SESSION_GROUPS = (
     # chain is client-boundary, so the chain pins the sanctioned open-SKIP face.
     # --group p33_gui_distill matches through the chain's embedded name prefix.
     ("p33_gui_distill_tower",),
+    # p33-food-fluids-b1 (task p33-food-fluids-b1): the food-fluid batch-1 live
+    # chain — a fresh barrel band x=398 (z=20, the p24 barrel-row x-band; x-disjoint
+    # from the p24 dye barrel x386 and p21's 370/378 with margin), the metal-barrel
+    # carrier + the 216-row FOOD_B1_SPECS census (the temperature-representative
+    # 250 mB fill/stat/draw arms + the 144 mB per-row round-trips). Admission
+    # mirroring the p24dyechemical form (bbox-registered, no fresh_boot / mutates
+    # member — the tank arms are the /gt6tank command channel).
+    # --group p33_food_fluids_b1 matches through the chain's embedded name prefix.
+    ("p33_food_fluids_b1",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
