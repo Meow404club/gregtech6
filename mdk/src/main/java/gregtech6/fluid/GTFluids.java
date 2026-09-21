@@ -1312,6 +1312,262 @@ public final class GTFluids {
 	public static final AquaFluid FISHOIL                  = foodB1Fluid("fishoil");
 	public static final AquaFluid WHALEOIL                 = foodB1Fluid("whaleoil");
 
+
+	/**
+	 * The food-fluid batch 2 (task p33-food-fluids-b2): the SIXTH AquaFluidSpec table —
+	 * the drink-seam residual under the research.p33-r-food b1/b2 boundary: the 94 potion
+	 * brews of the card-block FoodStatDrink run (Loader_Fluids.java:230-350, the
+	 * potion.tainted..potion.invisibility.long.lingering census; the gold-apple rows
+	 * :607-610 are OUTSIDE the card block, the p33-food-tail pool) plus the 9 FOOD-flag
+	 * drink fluids b1's census left unregistered (riverwater :361 / ic2distilledwater
+	 * :363-alias / rottendrink :626 / poison :629 / chocolatemilk :643 / goldencarrotjuice
+	 * :606 / holywater :615 / medicine.heal :649 / medicine.laxative :650). Every value is
+	 * the upstream FL.create carrier where GT6 defines the fluid: the brew block rides the
+	 * 300 K literal (:230-294/:319-348), the fireresistance rows the 375 K literal
+	 * (:271-274/:337-338), riverwater the C constant = 273 K (:361, CS.java:132), rottendrink
+	 * the 275 K literal (:626, the icetea/bawls fold); ic2distilledwater rides the :75
+	 * FL.create "Distilled Water" local name (no temp literal = the 300 K default, the
+	 * engine-family distilled_water twin); poison has no FL.create — the honest-default 300 K
+	 * row, the water_boiling precedent. The DRINK-side temperatures (the C+37 folds) are the
+	 * GTDrinks.DrinkStat surface, NOT this carrier column. The tints are PORT-OWNED DECLARED
+	 * VALUES (the JetFuel/aqua precedent): the potion block shares one texture upstream, the
+	 * port differentiates per effect family over the vanilla-water layers. FLUID-ONLY (the
+	 * p21 declaration): no LiquidBlock, no bucket, no bottle. NO drink behaviour on this
+	 * table — the DrinkStat seam is GTDrinks (the mirror of the upstream DrinksGT.REGISTER,
+	 * FoodStatDrink.java :35-83 semantics), keyed by the SAME gt6 registry paths.
+	 */
+	public static final List<AquaFluidSpec> FOOD_B2_SPECS = List.of(
+		new AquaFluidSpec("potion.tainted", "Tainted Brew", 300, 1000, 1000, 0xFF6A3A8A), // Loader_Fluids.java:230
+		new AquaFluidSpec("potion.awkward", "Awkward Brew", 300, 1000, 1000, 0xFFB070D8), // Loader_Fluids.java:232
+		new AquaFluidSpec("potion.thick", "Thick Brew", 300, 1000, 1000, 0xFFB070D8), // Loader_Fluids.java:233
+		new AquaFluidSpec("potion.mundane", "Mundane Brew", 300, 1000, 1000, 0xFFB070D8), // Loader_Fluids.java:234
+		new AquaFluidSpec("potion.damage", "Harming Brew", 300, 1000, 1000, 0xFF8A2A2A), // Loader_Fluids.java:235
+		new AquaFluidSpec("potion.damage.strong", "Strong Harming Brew", 300, 1000, 1000, 0xFF8A2A2A), // Loader_Fluids.java:236
+		new AquaFluidSpec("potion.damage.splash", "Splash Harming Brew", 300, 1000, 1000, 0xFF8A2A2A), // Loader_Fluids.java:237
+		new AquaFluidSpec("potion.damage.strong.splash", "Strong Splash Harming Brew", 300, 1000, 1000, 0xFF8A2A2A), // Loader_Fluids.java:238
+		new AquaFluidSpec("potion.health", "Healing Brew", 300, 1000, 1000, 0xFFE85A7A), // Loader_Fluids.java:239
+		new AquaFluidSpec("potion.health.strong", "Strong Healing Brew", 300, 1000, 1000, 0xFFE85A7A), // Loader_Fluids.java:240
+		new AquaFluidSpec("potion.health.splash", "Splash Healing Brew", 300, 1000, 1000, 0xFFE85A7A), // Loader_Fluids.java:241
+		new AquaFluidSpec("potion.health.strong.splash", "Strong Splash Healing Brew", 300, 1000, 1000, 0xFFE85A7A), // Loader_Fluids.java:242
+		new AquaFluidSpec("potion.jump", "Jumpy Brew", 300, 1000, 1000, 0xFF9AE84A), // Loader_Fluids.java:243
+		new AquaFluidSpec("potion.jump.strong", "Strong Jumpy Brew", 300, 1000, 1000, 0xFF9AE84A), // Loader_Fluids.java:244
+		new AquaFluidSpec("potion.jump.splash", "Splash Jumpy Brew", 300, 1000, 1000, 0xFF9AE84A), // Loader_Fluids.java:245
+		new AquaFluidSpec("potion.jump.strong.splash", "Strong Splash Jumpy Brew", 300, 1000, 1000, 0xFF9AE84A), // Loader_Fluids.java:246
+		new AquaFluidSpec("potion.speed", "Swiftness Brew", 300, 1000, 1000, 0xFF7ACAE8), // Loader_Fluids.java:247
+		new AquaFluidSpec("potion.speed.strong", "Strong Swiftness Brew", 300, 1000, 1000, 0xFF7ACAE8), // Loader_Fluids.java:248
+		new AquaFluidSpec("potion.speed.long", "Stretched Swiftness Brew", 300, 1000, 1000, 0xFF7ACAE8), // Loader_Fluids.java:249
+		new AquaFluidSpec("potion.speed.splash", "Splash Swiftness Brew", 300, 1000, 1000, 0xFF7ACAE8), // Loader_Fluids.java:250
+		new AquaFluidSpec("potion.speed.strong.splash", "Strong Splash Swiftness Brew", 300, 1000, 1000, 0xFF7ACAE8), // Loader_Fluids.java:251
+		new AquaFluidSpec("potion.speed.long.splash", "Stretched Splash Swiftness Brew", 300, 1000, 1000, 0xFF7ACAE8), // Loader_Fluids.java:252
+		new AquaFluidSpec("potion.strength", "Strength Brew", 300, 1000, 1000, 0xFFC83A3A), // Loader_Fluids.java:253
+		new AquaFluidSpec("potion.strength.strong", "Strong Strength Brew", 300, 1000, 1000, 0xFFC83A3A), // Loader_Fluids.java:254
+		new AquaFluidSpec("potion.strength.long", "Stretched Strength Brew", 300, 1000, 1000, 0xFFC83A3A), // Loader_Fluids.java:255
+		new AquaFluidSpec("potion.strength.splash", "Splash Strength Brew", 300, 1000, 1000, 0xFFC83A3A), // Loader_Fluids.java:256
+		new AquaFluidSpec("potion.strength.strong.splash", "Strong Splash Strength Brew", 300, 1000, 1000, 0xFFC83A3A), // Loader_Fluids.java:257
+		new AquaFluidSpec("potion.strength.long.splash", "Stretched Splash Strength Brew", 300, 1000, 1000, 0xFFC83A3A), // Loader_Fluids.java:258
+		new AquaFluidSpec("potion.regen", "Regenerating Brew", 300, 1000, 1000, 0xFFE86A9A), // Loader_Fluids.java:259
+		new AquaFluidSpec("potion.regen.strong", "Strong Regenerating Brew", 300, 1000, 1000, 0xFFE86A9A), // Loader_Fluids.java:260
+		new AquaFluidSpec("potion.regen.long", "Stretched Regenerating Brew", 300, 1000, 1000, 0xFFE86A9A), // Loader_Fluids.java:261
+		new AquaFluidSpec("potion.regen.splash", "Splash Regenerating Brew", 300, 1000, 1000, 0xFFE86A9A), // Loader_Fluids.java:262
+		new AquaFluidSpec("potion.regen.strong.splash", "Strong Splash Regenerating Brew", 300, 1000, 1000, 0xFFE86A9A), // Loader_Fluids.java:263
+		new AquaFluidSpec("potion.regen.long.splash", "Stretched Splash Regenerating Brew", 300, 1000, 1000, 0xFFE86A9A), // Loader_Fluids.java:264
+		new AquaFluidSpec("potion.poison", "Poisonous Brew", 300, 1000, 1000, 0xFF4A8A2A), // Loader_Fluids.java:265
+		new AquaFluidSpec("potion.poison.strong", "Strong Poisonous Brew", 300, 1000, 1000, 0xFF4A8A2A), // Loader_Fluids.java:266
+		new AquaFluidSpec("potion.poison.long", "Stretched Poisonous Brew", 300, 1000, 1000, 0xFF4A8A2A), // Loader_Fluids.java:267
+		new AquaFluidSpec("potion.poison.splash", "Splash Poisonous Brew", 300, 1000, 1000, 0xFF4A8A2A), // Loader_Fluids.java:268
+		new AquaFluidSpec("potion.poison.strong.splash", "Strong Splash Poisonous Brew", 300, 1000, 1000, 0xFF4A8A2A), // Loader_Fluids.java:269
+		new AquaFluidSpec("potion.poison.long.splash", "Stretched Splash Poisonous Brew", 300, 1000, 1000, 0xFF4A8A2A), // Loader_Fluids.java:270
+		new AquaFluidSpec("potion.fireresistance", "Fire Resistant Brew", 375, 1000, 1000, 0xFFE8902A), // Loader_Fluids.java:271
+		new AquaFluidSpec("potion.fireresistance.long", "Stretched Fire Resistant Brew", 375, 1000, 1000, 0xFFE8902A), // Loader_Fluids.java:272
+		new AquaFluidSpec("potion.fireresistance.splash", "Splash Fire Resistant Brew", 375, 1000, 1000, 0xFFE8902A), // Loader_Fluids.java:273
+		new AquaFluidSpec("potion.fireresistance.long.splash", "Stretched Splash Fire Resistant Brew", 375, 1000, 1000, 0xFFE8902A), // Loader_Fluids.java:274
+		new AquaFluidSpec("potion.nightvision", "Night Vision Brew", 300, 1000, 1000, 0xFF1234C8), // Loader_Fluids.java:275
+		new AquaFluidSpec("potion.nightvision.long", "Stretched Night Vision Brew", 300, 1000, 1000, 0xFF1234C8), // Loader_Fluids.java:276
+		new AquaFluidSpec("potion.nightvision.splash", "Splash Night Vision Brew", 300, 1000, 1000, 0xFF1234C8), // Loader_Fluids.java:277
+		new AquaFluidSpec("potion.nightvision.long.splash", "Stretched Splash Night Vision Brew", 300, 1000, 1000, 0xFF1234C8), // Loader_Fluids.java:278
+		new AquaFluidSpec("potion.weakness", "Weakening Brew", 300, 1000, 1000, 0xFF48484A), // Loader_Fluids.java:279
+		new AquaFluidSpec("potion.weakness.long", "Stretched Weakening Brew", 300, 1000, 1000, 0xFF48484A), // Loader_Fluids.java:280
+		new AquaFluidSpec("potion.weakness.splash", "Splash Weakening Brew", 300, 1000, 1000, 0xFF48484A), // Loader_Fluids.java:281
+		new AquaFluidSpec("potion.weakness.long.splash", "Stretched Splash Weakening Brew", 300, 1000, 1000, 0xFF48484A), // Loader_Fluids.java:282
+		new AquaFluidSpec("potion.slowness", "Lame Brew", 300, 1000, 1000, 0xFF5A6A9A), // Loader_Fluids.java:283
+		new AquaFluidSpec("potion.slowness.long", "Stretched Lame Brew", 300, 1000, 1000, 0xFF5A6A9A), // Loader_Fluids.java:284
+		new AquaFluidSpec("potion.slowness.splash", "Splash Lame Brew", 300, 1000, 1000, 0xFF5A6A9A), // Loader_Fluids.java:285
+		new AquaFluidSpec("potion.slowness.long.splash", "Stretched Splash Lame Brew", 300, 1000, 1000, 0xFF5A6A9A), // Loader_Fluids.java:286
+		new AquaFluidSpec("potion.waterbreathing", "Fishy Brew", 300, 1000, 1000, 0xFF2A5AE8), // Loader_Fluids.java:287
+		new AquaFluidSpec("potion.waterbreathing.long", "Stretched Fishy Brew", 300, 1000, 1000, 0xFF2A5AE8), // Loader_Fluids.java:288
+		new AquaFluidSpec("potion.waterbreathing.splash", "Splash Fishy Brew", 300, 1000, 1000, 0xFF2A5AE8), // Loader_Fluids.java:289
+		new AquaFluidSpec("potion.waterbreathing.long.splash", "Stretched Splash Fishy Brew", 300, 1000, 1000, 0xFF2A5AE8), // Loader_Fluids.java:290
+		new AquaFluidSpec("potion.invisibility", "Invisible Brew", 300, 1000, 1000, 0xFFB8B8C8), // Loader_Fluids.java:291
+		new AquaFluidSpec("potion.invisibility.long", "Stretched Invisible Brew", 300, 1000, 1000, 0xFFB8B8C8), // Loader_Fluids.java:292
+		new AquaFluidSpec("potion.invisibility.splash", "Splash Invisible Brew", 300, 1000, 1000, 0xFFB8B8C8), // Loader_Fluids.java:293
+		new AquaFluidSpec("potion.invisibility.long.splash", "Stretched Splash Invisible Brew", 300, 1000, 1000, 0xFFB8B8C8), // Loader_Fluids.java:294
+		new AquaFluidSpec("potion.damage.lingering", "Lingering Harming Brew", 300, 1000, 1000, 0xFF8A2A2A), // Loader_Fluids.java:319
+		new AquaFluidSpec("potion.damage.strong.lingering", "Strong Lingering Harming Brew", 300, 1000, 1000, 0xFF8A2A2A), // Loader_Fluids.java:320
+		new AquaFluidSpec("potion.health.lingering", "Lingering Healing Brew", 300, 1000, 1000, 0xFFE85A7A), // Loader_Fluids.java:321
+		new AquaFluidSpec("potion.health.strong.lingering", "Strong Lingering Healing Brew", 300, 1000, 1000, 0xFFE85A7A), // Loader_Fluids.java:322
+		new AquaFluidSpec("potion.jump.lingering", "Lingering Jumpy Brew", 300, 1000, 1000, 0xFF9AE84A), // Loader_Fluids.java:323
+		new AquaFluidSpec("potion.jump.strong.lingering", "Strong Lingering Jumpy Brew", 300, 1000, 1000, 0xFF9AE84A), // Loader_Fluids.java:324
+		new AquaFluidSpec("potion.speed.lingering", "Lingering Swiftness Brew", 300, 1000, 1000, 0xFF7ACAE8), // Loader_Fluids.java:325
+		new AquaFluidSpec("potion.speed.strong.lingering", "Strong Lingering Swiftness Brew", 300, 1000, 1000, 0xFF7ACAE8), // Loader_Fluids.java:326
+		new AquaFluidSpec("potion.speed.long.lingering", "Stretched Lingering Swiftness Brew", 300, 1000, 1000, 0xFF7ACAE8), // Loader_Fluids.java:327
+		new AquaFluidSpec("potion.strength.lingering", "Lingering Strength Brew", 300, 1000, 1000, 0xFFC83A3A), // Loader_Fluids.java:328
+		new AquaFluidSpec("potion.strength.strong.lingering", "Strong Lingering Strength Brew", 300, 1000, 1000, 0xFFC83A3A), // Loader_Fluids.java:329
+		new AquaFluidSpec("potion.strength.long.lingering", "Stretched Lingering Strength Brew", 300, 1000, 1000, 0xFFC83A3A), // Loader_Fluids.java:330
+		new AquaFluidSpec("potion.regen.lingering", "Lingering Regenerating Brew", 300, 1000, 1000, 0xFFE86A9A), // Loader_Fluids.java:331
+		new AquaFluidSpec("potion.regen.strong.lingering", "Strong Lingering Regenerating Brew", 300, 1000, 1000, 0xFFE86A9A), // Loader_Fluids.java:332
+		new AquaFluidSpec("potion.regen.long.lingering", "Stretched Lingering Regenerating Brew", 300, 1000, 1000, 0xFFE86A9A), // Loader_Fluids.java:333
+		new AquaFluidSpec("potion.poison.lingering", "Lingering Poisonous Brew", 300, 1000, 1000, 0xFF4A8A2A), // Loader_Fluids.java:334
+		new AquaFluidSpec("potion.poison.strong.lingering", "Strong Lingering Poisonous Brew", 300, 1000, 1000, 0xFF4A8A2A), // Loader_Fluids.java:335
+		new AquaFluidSpec("potion.poison.long.lingering", "Stretched Lingering Poisonous Brew", 300, 1000, 1000, 0xFF4A8A2A), // Loader_Fluids.java:336
+		new AquaFluidSpec("potion.fireresistance.lingering", "Lingering Fire Resistant Brew", 375, 1000, 1000, 0xFFE8902A), // Loader_Fluids.java:337
+		new AquaFluidSpec("potion.fireresistance.long.lingering", "Stretched Lingering Fire Resistant Brew", 375, 1000, 1000, 0xFFE8902A), // Loader_Fluids.java:338
+		new AquaFluidSpec("potion.nightvision.lingering", "Lingering Night Vision Brew", 300, 1000, 1000, 0xFF1234C8), // Loader_Fluids.java:339
+		new AquaFluidSpec("potion.nightvision.long.lingering", "Stretched Lingering Night Vision Brew", 300, 1000, 1000, 0xFF1234C8), // Loader_Fluids.java:340
+		new AquaFluidSpec("potion.weakness.lingering", "Lingering Weakening Brew", 300, 1000, 1000, 0xFF48484A), // Loader_Fluids.java:341
+		new AquaFluidSpec("potion.weakness.long.lingering", "Stretched Lingering Weakening Brew", 300, 1000, 1000, 0xFF48484A), // Loader_Fluids.java:342
+		new AquaFluidSpec("potion.slowness.lingering", "Lingering Lame Brew", 300, 1000, 1000, 0xFF5A6A9A), // Loader_Fluids.java:343
+		new AquaFluidSpec("potion.slowness.long.lingering", "Stretched Lingering Lame Brew", 300, 1000, 1000, 0xFF5A6A9A), // Loader_Fluids.java:344
+		new AquaFluidSpec("potion.waterbreathing.lingering", "Lingering Fishy Brew", 300, 1000, 1000, 0xFF2A5AE8), // Loader_Fluids.java:345
+		new AquaFluidSpec("potion.waterbreathing.long.lingering", "Stretched Lingering Fishy Brew", 300, 1000, 1000, 0xFF2A5AE8), // Loader_Fluids.java:346
+		new AquaFluidSpec("potion.invisibility.lingering", "Lingering Invisible Brew", 300, 1000, 1000, 0xFFB8B8C8), // Loader_Fluids.java:347
+		new AquaFluidSpec("potion.invisibility.long.lingering", "Stretched Lingering Invisible Brew", 300, 1000, 1000, 0xFFB8B8C8), // Loader_Fluids.java:348
+		new AquaFluidSpec("riverwater", "River Water", 273, 1000, 1000, 0xFF4A7A3A), // Loader_Fluids.java:361
+		new AquaFluidSpec("ic2distilledwater", "Distilled Water", 300, 1000, 1000, 0xFF6E6EFF), // Loader_Fluids.java:363
+		new AquaFluidSpec("goldencarrotjuice", "Golden Carrot Juice", 300, 1000, 1000, 0xFFE8C83A), // Loader_Fluids.java:606
+		new AquaFluidSpec("holywater", "Holy Water", 300, 1000, 1000, 0xFFE8E8FF), // Loader_Fluids.java:615
+		new AquaFluidSpec("rottendrink", "Rotten Drink", 275, 1000, 1000, 0xFF5A4A2A), // Loader_Fluids.java:626
+		new AquaFluidSpec("poison", "Poison", 300, 1000, 1000, 0xFF4A8A2A), // Loader_Fluids.java:629
+		new AquaFluidSpec("chocolatemilk", "Chocolate Milk", 300, 1000, 1000, 0xFF6A3A1A), // Loader_Fluids.java:643
+		new AquaFluidSpec("medicine.heal", "Medicine", 300, 1000, 1000, 0xFFE85A7A), // Loader_Fluids.java:649
+		new AquaFluidSpec("medicine.laxative", "Laxative", 300, 1000, 1000, 0xFF8A6A2A) // Loader_Fluids.java:650
+	);
+
+	/** The food-b2 row for a gt6 id path, or null (the {@link #foodB1Spec} lookup shape, its own table). */
+	public static AquaFluidSpec foodB2Spec(String aName) {
+		for (AquaFluidSpec tSpec : FOOD_B2_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/** The registration helper for one food-b2 row (the {@link #foodB1Fluid} shape over the sixth table). */
+	private static AquaFluid foodB2Fluid(String aName) {
+		AquaFluidSpec tSpec = foodB2Spec(aName);
+		if (tSpec == null) throw new IllegalArgumentException("no food-b2 fluid spec: " + aName);
+		return registerFluidFamily(tSpec);
+	}
+
+
+	// ponytail: 103 one-line static registrations instead of a loop — the static-init
+	// DeferredRegister accumulation IS the registration mechanism (the b1 precedent above).
+
+	public static final AquaFluid POTION_TAINTED                         = foodB2Fluid("potion.tainted");
+	public static final AquaFluid POTION_AWKWARD                         = foodB2Fluid("potion.awkward");
+	public static final AquaFluid POTION_THICK                           = foodB2Fluid("potion.thick");
+	public static final AquaFluid POTION_MUNDANE                         = foodB2Fluid("potion.mundane");
+	public static final AquaFluid POTION_DAMAGE                          = foodB2Fluid("potion.damage");
+	public static final AquaFluid POTION_DAMAGE_STRONG                   = foodB2Fluid("potion.damage.strong");
+	public static final AquaFluid POTION_DAMAGE_SPLASH                   = foodB2Fluid("potion.damage.splash");
+	public static final AquaFluid POTION_DAMAGE_STRONG_SPLASH            = foodB2Fluid("potion.damage.strong.splash");
+	public static final AquaFluid POTION_HEALTH                          = foodB2Fluid("potion.health");
+	public static final AquaFluid POTION_HEALTH_STRONG                   = foodB2Fluid("potion.health.strong");
+	public static final AquaFluid POTION_HEALTH_SPLASH                   = foodB2Fluid("potion.health.splash");
+	public static final AquaFluid POTION_HEALTH_STRONG_SPLASH            = foodB2Fluid("potion.health.strong.splash");
+	public static final AquaFluid POTION_JUMP                            = foodB2Fluid("potion.jump");
+	public static final AquaFluid POTION_JUMP_STRONG                     = foodB2Fluid("potion.jump.strong");
+	public static final AquaFluid POTION_JUMP_SPLASH                     = foodB2Fluid("potion.jump.splash");
+	public static final AquaFluid POTION_JUMP_STRONG_SPLASH              = foodB2Fluid("potion.jump.strong.splash");
+	public static final AquaFluid POTION_SPEED                           = foodB2Fluid("potion.speed");
+	public static final AquaFluid POTION_SPEED_STRONG                    = foodB2Fluid("potion.speed.strong");
+	public static final AquaFluid POTION_SPEED_LONG                      = foodB2Fluid("potion.speed.long");
+	public static final AquaFluid POTION_SPEED_SPLASH                    = foodB2Fluid("potion.speed.splash");
+	public static final AquaFluid POTION_SPEED_STRONG_SPLASH             = foodB2Fluid("potion.speed.strong.splash");
+	public static final AquaFluid POTION_SPEED_LONG_SPLASH               = foodB2Fluid("potion.speed.long.splash");
+	public static final AquaFluid POTION_STRENGTH                        = foodB2Fluid("potion.strength");
+	public static final AquaFluid POTION_STRENGTH_STRONG                 = foodB2Fluid("potion.strength.strong");
+	public static final AquaFluid POTION_STRENGTH_LONG                   = foodB2Fluid("potion.strength.long");
+	public static final AquaFluid POTION_STRENGTH_SPLASH                 = foodB2Fluid("potion.strength.splash");
+	public static final AquaFluid POTION_STRENGTH_STRONG_SPLASH          = foodB2Fluid("potion.strength.strong.splash");
+	public static final AquaFluid POTION_STRENGTH_LONG_SPLASH            = foodB2Fluid("potion.strength.long.splash");
+	public static final AquaFluid POTION_REGEN                           = foodB2Fluid("potion.regen");
+	public static final AquaFluid POTION_REGEN_STRONG                    = foodB2Fluid("potion.regen.strong");
+	public static final AquaFluid POTION_REGEN_LONG                      = foodB2Fluid("potion.regen.long");
+	public static final AquaFluid POTION_REGEN_SPLASH                    = foodB2Fluid("potion.regen.splash");
+	public static final AquaFluid POTION_REGEN_STRONG_SPLASH             = foodB2Fluid("potion.regen.strong.splash");
+	public static final AquaFluid POTION_REGEN_LONG_SPLASH               = foodB2Fluid("potion.regen.long.splash");
+	public static final AquaFluid POTION_POISON                          = foodB2Fluid("potion.poison");
+	public static final AquaFluid POTION_POISON_STRONG                   = foodB2Fluid("potion.poison.strong");
+	public static final AquaFluid POTION_POISON_LONG                     = foodB2Fluid("potion.poison.long");
+	public static final AquaFluid POTION_POISON_SPLASH                   = foodB2Fluid("potion.poison.splash");
+	public static final AquaFluid POTION_POISON_STRONG_SPLASH            = foodB2Fluid("potion.poison.strong.splash");
+	public static final AquaFluid POTION_POISON_LONG_SPLASH              = foodB2Fluid("potion.poison.long.splash");
+	public static final AquaFluid POTION_FIRERESISTANCE                  = foodB2Fluid("potion.fireresistance");
+	public static final AquaFluid POTION_FIRERESISTANCE_LONG             = foodB2Fluid("potion.fireresistance.long");
+	public static final AquaFluid POTION_FIRERESISTANCE_SPLASH           = foodB2Fluid("potion.fireresistance.splash");
+	public static final AquaFluid POTION_FIRERESISTANCE_LONG_SPLASH      = foodB2Fluid("potion.fireresistance.long.splash");
+	public static final AquaFluid POTION_NIGHTVISION                     = foodB2Fluid("potion.nightvision");
+	public static final AquaFluid POTION_NIGHTVISION_LONG                = foodB2Fluid("potion.nightvision.long");
+	public static final AquaFluid POTION_NIGHTVISION_SPLASH              = foodB2Fluid("potion.nightvision.splash");
+	public static final AquaFluid POTION_NIGHTVISION_LONG_SPLASH         = foodB2Fluid("potion.nightvision.long.splash");
+	public static final AquaFluid POTION_WEAKNESS                        = foodB2Fluid("potion.weakness");
+	public static final AquaFluid POTION_WEAKNESS_LONG                   = foodB2Fluid("potion.weakness.long");
+	public static final AquaFluid POTION_WEAKNESS_SPLASH                 = foodB2Fluid("potion.weakness.splash");
+	public static final AquaFluid POTION_WEAKNESS_LONG_SPLASH            = foodB2Fluid("potion.weakness.long.splash");
+	public static final AquaFluid POTION_SLOWNESS                        = foodB2Fluid("potion.slowness");
+	public static final AquaFluid POTION_SLOWNESS_LONG                   = foodB2Fluid("potion.slowness.long");
+	public static final AquaFluid POTION_SLOWNESS_SPLASH                 = foodB2Fluid("potion.slowness.splash");
+	public static final AquaFluid POTION_SLOWNESS_LONG_SPLASH            = foodB2Fluid("potion.slowness.long.splash");
+	public static final AquaFluid POTION_WATERBREATHING                  = foodB2Fluid("potion.waterbreathing");
+	public static final AquaFluid POTION_WATERBREATHING_LONG             = foodB2Fluid("potion.waterbreathing.long");
+	public static final AquaFluid POTION_WATERBREATHING_SPLASH           = foodB2Fluid("potion.waterbreathing.splash");
+	public static final AquaFluid POTION_WATERBREATHING_LONG_SPLASH      = foodB2Fluid("potion.waterbreathing.long.splash");
+	public static final AquaFluid POTION_INVISIBILITY                    = foodB2Fluid("potion.invisibility");
+	public static final AquaFluid POTION_INVISIBILITY_LONG               = foodB2Fluid("potion.invisibility.long");
+	public static final AquaFluid POTION_INVISIBILITY_SPLASH             = foodB2Fluid("potion.invisibility.splash");
+	public static final AquaFluid POTION_INVISIBILITY_LONG_SPLASH        = foodB2Fluid("potion.invisibility.long.splash");
+	public static final AquaFluid POTION_DAMAGE_LINGERING                = foodB2Fluid("potion.damage.lingering");
+	public static final AquaFluid POTION_DAMAGE_STRONG_LINGERING         = foodB2Fluid("potion.damage.strong.lingering");
+	public static final AquaFluid POTION_HEALTH_LINGERING                = foodB2Fluid("potion.health.lingering");
+	public static final AquaFluid POTION_HEALTH_STRONG_LINGERING         = foodB2Fluid("potion.health.strong.lingering");
+	public static final AquaFluid POTION_JUMP_LINGERING                  = foodB2Fluid("potion.jump.lingering");
+	public static final AquaFluid POTION_JUMP_STRONG_LINGERING           = foodB2Fluid("potion.jump.strong.lingering");
+	public static final AquaFluid POTION_SPEED_LINGERING                 = foodB2Fluid("potion.speed.lingering");
+	public static final AquaFluid POTION_SPEED_STRONG_LINGERING          = foodB2Fluid("potion.speed.strong.lingering");
+	public static final AquaFluid POTION_SPEED_LONG_LINGERING            = foodB2Fluid("potion.speed.long.lingering");
+	public static final AquaFluid POTION_STRENGTH_LINGERING              = foodB2Fluid("potion.strength.lingering");
+	public static final AquaFluid POTION_STRENGTH_STRONG_LINGERING       = foodB2Fluid("potion.strength.strong.lingering");
+	public static final AquaFluid POTION_STRENGTH_LONG_LINGERING         = foodB2Fluid("potion.strength.long.lingering");
+	public static final AquaFluid POTION_REGEN_LINGERING                 = foodB2Fluid("potion.regen.lingering");
+	public static final AquaFluid POTION_REGEN_STRONG_LINGERING          = foodB2Fluid("potion.regen.strong.lingering");
+	public static final AquaFluid POTION_REGEN_LONG_LINGERING            = foodB2Fluid("potion.regen.long.lingering");
+	public static final AquaFluid POTION_POISON_LINGERING                = foodB2Fluid("potion.poison.lingering");
+	public static final AquaFluid POTION_POISON_STRONG_LINGERING         = foodB2Fluid("potion.poison.strong.lingering");
+	public static final AquaFluid POTION_POISON_LONG_LINGERING           = foodB2Fluid("potion.poison.long.lingering");
+	public static final AquaFluid POTION_FIRERESISTANCE_LINGERING        = foodB2Fluid("potion.fireresistance.lingering");
+	public static final AquaFluid POTION_FIRERESISTANCE_LONG_LINGERING   = foodB2Fluid("potion.fireresistance.long.lingering");
+	public static final AquaFluid POTION_NIGHTVISION_LINGERING           = foodB2Fluid("potion.nightvision.lingering");
+	public static final AquaFluid POTION_NIGHTVISION_LONG_LINGERING      = foodB2Fluid("potion.nightvision.long.lingering");
+	public static final AquaFluid POTION_WEAKNESS_LINGERING              = foodB2Fluid("potion.weakness.lingering");
+	public static final AquaFluid POTION_WEAKNESS_LONG_LINGERING         = foodB2Fluid("potion.weakness.long.lingering");
+	public static final AquaFluid POTION_SLOWNESS_LINGERING              = foodB2Fluid("potion.slowness.lingering");
+	public static final AquaFluid POTION_SLOWNESS_LONG_LINGERING         = foodB2Fluid("potion.slowness.long.lingering");
+	public static final AquaFluid POTION_WATERBREATHING_LINGERING        = foodB2Fluid("potion.waterbreathing.lingering");
+	public static final AquaFluid POTION_WATERBREATHING_LONG_LINGERING   = foodB2Fluid("potion.waterbreathing.long.lingering");
+	public static final AquaFluid POTION_INVISIBILITY_LINGERING          = foodB2Fluid("potion.invisibility.lingering");
+	public static final AquaFluid POTION_INVISIBILITY_LONG_LINGERING     = foodB2Fluid("potion.invisibility.long.lingering");
+	public static final AquaFluid RIVERWATER                             = foodB2Fluid("riverwater");
+	public static final AquaFluid IC2DISTILLEDWATER                      = foodB2Fluid("ic2distilledwater");
+	public static final AquaFluid GOLDENCARROTJUICE                      = foodB2Fluid("goldencarrotjuice");
+	public static final AquaFluid HOLYWATER                              = foodB2Fluid("holywater");
+	public static final AquaFluid ROTTENDRINK                            = foodB2Fluid("rottendrink");
+	public static final AquaFluid POISON                                 = foodB2Fluid("poison");
+	public static final AquaFluid CHOCOLATEMILK                          = foodB2Fluid("chocolatemilk");
+	public static final AquaFluid MEDICINE_HEAL                          = foodB2Fluid("medicine.heal");
+	public static final AquaFluid MEDICINE_LAXATIVE                      = foodB2Fluid("medicine.laxative");
+
+	/** The 103 registered food-b2 families in {@link #FOOD_B2_SPECS} declaration order (the lang/table walkers). */
+	public static List<AquaFluid> foodB2Fluids() {
+		return List.of(POTION_TAINTED, POTION_AWKWARD, POTION_THICK, POTION_MUNDANE, POTION_DAMAGE, POTION_DAMAGE_STRONG, POTION_DAMAGE_SPLASH, POTION_DAMAGE_STRONG_SPLASH, POTION_HEALTH, POTION_HEALTH_STRONG, POTION_HEALTH_SPLASH, POTION_HEALTH_STRONG_SPLASH, POTION_JUMP, POTION_JUMP_STRONG, POTION_JUMP_SPLASH, POTION_JUMP_STRONG_SPLASH, POTION_SPEED, POTION_SPEED_STRONG, POTION_SPEED_LONG, POTION_SPEED_SPLASH, POTION_SPEED_STRONG_SPLASH, POTION_SPEED_LONG_SPLASH, POTION_STRENGTH, POTION_STRENGTH_STRONG, POTION_STRENGTH_LONG, POTION_STRENGTH_SPLASH, POTION_STRENGTH_STRONG_SPLASH, POTION_STRENGTH_LONG_SPLASH, POTION_REGEN, POTION_REGEN_STRONG, POTION_REGEN_LONG, POTION_REGEN_SPLASH, POTION_REGEN_STRONG_SPLASH, POTION_REGEN_LONG_SPLASH, POTION_POISON, POTION_POISON_STRONG, POTION_POISON_LONG, POTION_POISON_SPLASH, POTION_POISON_STRONG_SPLASH, POTION_POISON_LONG_SPLASH, POTION_FIRERESISTANCE, POTION_FIRERESISTANCE_LONG, POTION_FIRERESISTANCE_SPLASH, POTION_FIRERESISTANCE_LONG_SPLASH, POTION_NIGHTVISION, POTION_NIGHTVISION_LONG, POTION_NIGHTVISION_SPLASH, POTION_NIGHTVISION_LONG_SPLASH, POTION_WEAKNESS, POTION_WEAKNESS_LONG, POTION_WEAKNESS_SPLASH, POTION_WEAKNESS_LONG_SPLASH, POTION_SLOWNESS, POTION_SLOWNESS_LONG, POTION_SLOWNESS_SPLASH, POTION_SLOWNESS_LONG_SPLASH, POTION_WATERBREATHING, POTION_WATERBREATHING_LONG, POTION_WATERBREATHING_SPLASH, POTION_WATERBREATHING_LONG_SPLASH, POTION_INVISIBILITY, POTION_INVISIBILITY_LONG, POTION_INVISIBILITY_SPLASH, POTION_INVISIBILITY_LONG_SPLASH, POTION_DAMAGE_LINGERING, POTION_DAMAGE_STRONG_LINGERING, POTION_HEALTH_LINGERING, POTION_HEALTH_STRONG_LINGERING, POTION_JUMP_LINGERING, POTION_JUMP_STRONG_LINGERING, POTION_SPEED_LINGERING, POTION_SPEED_STRONG_LINGERING, POTION_SPEED_LONG_LINGERING, POTION_STRENGTH_LINGERING, POTION_STRENGTH_STRONG_LINGERING, POTION_STRENGTH_LONG_LINGERING, POTION_REGEN_LINGERING, POTION_REGEN_STRONG_LINGERING, POTION_REGEN_LONG_LINGERING, POTION_POISON_LINGERING, POTION_POISON_STRONG_LINGERING, POTION_POISON_LONG_LINGERING, POTION_FIRERESISTANCE_LINGERING, POTION_FIRERESISTANCE_LONG_LINGERING, POTION_NIGHTVISION_LINGERING, POTION_NIGHTVISION_LONG_LINGERING, POTION_WEAKNESS_LINGERING, POTION_WEAKNESS_LONG_LINGERING, POTION_SLOWNESS_LINGERING, POTION_SLOWNESS_LONG_LINGERING, POTION_WATERBREATHING_LINGERING, POTION_WATERBREATHING_LONG_LINGERING, POTION_INVISIBILITY_LINGERING, POTION_INVISIBILITY_LONG_LINGERING, RIVERWATER, IC2DISTILLEDWATER, GOLDENCARROTJUICE, HOLYWATER, ROTTENDRINK, POISON, CHOCOLATEMILK, MEDICINE_HEAL, MEDICINE_LAXATIVE);
+	}
+
 	/** The 216 registered food-b1 families in {@link #FOOD_B1_SPECS} declaration order (the lang/table walkers). */
 		public static List<AquaFluid> foodB1Fluids() {
 		return List.of(MINERALSODA, SODA, MILK, SOYMILK, GRCMILK_MILK, SPOILEDMILK, FOR_HONEY, GRC_HONEY, FRUITSMOOTHIE, MELONSMOOTHIE, KIWISMOOTHIE, CURRANTSMOOTHIE, RASPBERRYSMOOTHIE, BLACKBERRYSMOOTHIE, BLUEBERRYSMOOTHIE, GOOSEBERRYSMOOTHIE, STRAWBERRYSMOOTHIE, PLUMSMOOTHIE, PEACHSMOOTHIE, ELDERBERRYSMOOTHIE, GRAPEFRUITSMOOTHIE, LIMESMOOTHIE, ORANGESMOOTHIE, PERSIMMONSMOOTHIE, APRICOTSMOOTHIE, PEARSMOOTHIE, REDGRAPESMOOTHIE, WHITEGRAPESMOOTHIE, GRAPESMOOTHIE, PURPLEGRAPESMOOTHIE, APPLESMOOTHIE, PINEAPPLESMOOTHIE, BANANASMOOTHIE, CHERRYSMOOTHIE, CRANBERRYSMOOTHIE, LEMONSMOOTHIE, MANGOSMOOTHIE, POMEGRANATESMOOTHIE, STARFRUITSMOOTHIE, PAPAYASMOOTHIE, FIGSMOOTHIE, COCONUTSMOOTHIE, JUICE_JUICE, KIWIJUICE, JUICELIME, JUICELEMON, JUICEORANGE, PERSIMMONJUICE, MELONJUICE, CURRANTJUICE, RASPBERRYJUICE, BLACKBERRYJUICE, BLUEBERRYJUICE, GOOSEBERRYJUICE, STRAWBERRYJUICE, JUICEPLUM, JUICEPEACH, JUICEELDERBERRY, HELLDERBERRYJUICE, JUICEGRAPEFRUIT, JUICEAPRICOT, JUICEPEAR, GRAPEJUICE, GRC_GRAPEWINE0, JUICEREDGRAPE, JUICEWHITEGRAPE, JUICEAPPLE, GRC_APPLECIDER0, JUICEPINEAPPLE, JUICEBANANA, JUICECHERRY, JUICECRANBERRY, CACTUSFRUITJUICE, MANGOJUICE, POMEGRANATEJUICE, STARFRUITJUICE, PAPAYAJUICE, FIGJUICE, COCONUTMILK, DATEJUICE, JUICECARROT, JUICETOMATO, BEETJUICE, PUMPKINJUICE, CUCUMBERJUICE, ONIONJUICE, POTATOJUICE, RICEWATER, HOPSMASH, WHEATHOPSMASH, MASHWHEAT, MASHCORN, MASHRYE, MASHGRAIN, MAPLESYRUP, PEANUTBUTTER, GRCMILK_CREAM, CHOCOLATECREAM, COCONUTCREAM, NUTELLA, KETCHUP, MAYO, DRESSING, MUSHROOMSOUP, BLOOD, CHILLYSAUCE, HOTSAUCE, DIABOLOSAUCE, DIABLOSAUCE, DIABLOSAUCE_STRONG, BBQSAUCE, SLIME_BLUE, PINKSLIME, SLIME, BAWLS, TEA, SWEETTEA, ICETEA, PURPLEDRINK, LEMONADE, CAVEJOHNSONSGRENADEJUICE, VINEGAR, APPLEVINEGAR, CANEVINEGAR, RICEVINEGAR, JUICE_WINE_FRUIT, LIMONCELLO, WINEAGAVE, WINEAPRICOT, WINEBANANA, WINECARROT, WINECHERRY, WINECITRUS, WINECRANBERRY, WINEELDERBERRY, WINEPLUM, WINESPARKLING, WINETOMATO, WINE, RICARDOSANCHEZ, WINERED, WINEWHITE, WINEFORTIFIED, WHISKEY, WHISKEYRYE, WHISKEYCORN, WHISKEYWHEAT, GLENMCKENNER, LIQUEURCHOCOLATE, LIQUEURALMOND, LIQUEURANISE, LIQUEURBANANA, LIQUEURBLACKBERRY, LIQUEURBLACKCURRANT, LIQUEURCHERRY, LIQUEURCINNAMON, LIQUEURCOFFEE, LIQUEURHAZELNUT, LIQUEURHERBAL, LIQUEURLEMON, LIQUEURMELON, LIQUEURMINT, LIQUEURORANGE, LIQUEURPEACH, LIQUEURRASPBERRY, LIQUORFRUIT, LIQUORAPPLE, LIQUORAPRICOT, LIQUORCHERRY, LIQUORELDERBERRY, LIQUORPEAR, SPIRITGIN, SPIRITNEUTRAL, SPIRITSUGARCANE, BRANDYFRUIT, BRANDYAPPLE, BRANDYAPRICOT, BRANDYCHERRY, BRANDYCITRUS, BRANDYELDERBERRY, BRANDYGRAPE, BRANDYPEAR, BRANDYPLUM, CIDERAPPLE, CIDERPEAR, CIDERPEACH, WINEPINEAPPLE, BEER, DARKBEER, DRAGONBLOOD, BEERALE, BEERCORN, BEERLAGER, BEERRYE, BEERSTOUT, BEERWHEAT, RUMWHITE, RUMDARK, PINA_COLADA, VODKA, LENINADE, MEAD, SHORT_MEAD, SAKE, TEQUILA, ALCOPOPS, HOTFRYINGOIL, SEEDOIL, PLANTOIL, SUNFLOWEROIL, JUICEOLIVE, NUTOIL, LINOIL, HEMPOIL, FISHOIL, WHALEOIL);
