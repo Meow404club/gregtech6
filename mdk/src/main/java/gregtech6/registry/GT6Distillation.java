@@ -847,8 +847,12 @@ public final class GT6Distillation {
 							.then(net.minecraft.commands.Commands.literal("stat")
 									.executes(aContext -> fluidStat(aContext.getSource(),
 											net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
+			tDist.then(net.minecraft.commands.Commands.literal("open")
+					.then(net.minecraft.commands.Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
+							.executes(aContext -> open(aContext.getSource(),
+									net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(aContext, "pos")))));
 			aEvent.getDispatcher().register(tDist);
-			LOGGER.info("Registered GT6 distillation command /gt6distillation (check|fluid fill|fluid stat)");
+			LOGGER.info("Registered GT6 distillation command /gt6distillation (check|fluid fill|fluid stat|open)");
 		}
 
 		@Nullable
@@ -937,6 +941,52 @@ public final class GT6Distillation {
 					tTower.getTileEntityName(), tTower.getBlockPos().toShortString(), tankText(tTower.mTankInput), outBankText(tTower));
 			aSource.sendSuccess(() -> Component.literal(tLine), false);
 			LOGGER.info(tLine);
+			return com.mojang.brigadier.Command.SINGLE_SUCCESS;
+		}
+
+		/**
+		 * The openGUI smoke arm (task p33-gui-distill-tower, the GTAdvancedCraftingTableCommand
+		 * open :289-318 shape): dispatches the ModularUI open chain for a FAKE player — the
+		 * server half (buildUI + the sync-manager construct + the open packet dispatch) runs
+		 * verbatim; a fake connection drops the client packet (the sanctioned SKIP verdict),
+		 * a real exception is not. Real players ride the block use() → factory.open.
+		 */
+		private static int open(net.minecraft.commands.CommandSourceStack aSource, BlockPos aPos) {
+			TileEntityDistillationTower tTower = towerAt(aSource, aPos);
+			if (tTower == null) {
+				aSource.sendFailure(Component.literal("No distillation tower at " + aPos.toShortString()));
+				return 0;
+			}
+			//? if forge {
+			net.minecraft.server.level.ServerPlayer tFake = net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(aSource.getLevel());
+			if (net.minecraftforge.common.util.FakePlayer.class.isAssignableFrom(tFake.getClass())) {
+				String tSkip = "GT6 distillation tower open SKIP for the fake player (the MUI open chain is client-boundary; use() rides factory.open for real players)";
+				aSource.sendSuccess(() -> Component.literal(tSkip), false);
+				LOGGER.info(tSkip);
+				return com.mojang.brigadier.Command.SINGLE_SUCCESS;
+			}
+			//?} else {
+			/*
+			// 21.1: FakePlayerFactory died with the fake-player rework — the chain arm runs
+			// verbatim on the command source's player when one exists (the RCON source has
+			// none, so the SKIP verdict is the headless-legitimate face there too).
+			net.minecraft.server.level.ServerPlayer tFake = aSource.getPlayer();
+			if (tFake == null) {
+				String tSkip = "GT6 distillation tower open SKIP for the fake player (the MUI open chain is client-boundary; use() rides factory.open for real players)";
+				aSource.sendSuccess(() -> Component.literal(tSkip), false);
+				LOGGER.info(tSkip);
+				return com.mojang.brigadier.Command.SINGLE_SUCCESS;
+			}
+			*///?}
+			try {
+				GT6MuiMachine.tryOpen(tFake, tTower);
+				String tLine = "GT6 distillation tower open dispatched (server buildUI + sync construct OK)";
+				aSource.sendSuccess(() -> Component.literal(tLine), false);
+				LOGGER.info(tLine);
+			} catch (Throwable tOpenFailure) {
+				aSource.sendFailure(Component.literal("GT6 distillation tower open failed: " + tOpenFailure));
+				return 0;
+			}
 			return com.mojang.brigadier.Command.SINGLE_SUCCESS;
 		}
 
