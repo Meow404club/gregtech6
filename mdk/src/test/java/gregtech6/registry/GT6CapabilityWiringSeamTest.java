@@ -86,7 +86,7 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 			String tPath = (String) tId.getClass().getMethod("getPath").invoke(tId);
 			tLive.add(tPath);
 		}
-		assertEquals(new LinkedHashSet<>(java.util.List.of("bathing_pot", "mixing_bowl")), tLive,
+		assertEquals(new LinkedHashSet<>(java.util.List.of("bathing_pot", "mixing_bowl", "juicer")), tLive,
 				"the kitchen BET census drifted — declare the new family's item + fluid rows in "
 				+ "GT6CapabilityWiring.registerKitchenFaces in the same change");
 	}
