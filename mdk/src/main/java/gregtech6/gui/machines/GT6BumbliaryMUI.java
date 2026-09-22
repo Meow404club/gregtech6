@@ -105,9 +105,10 @@ public final class GT6BumbliaryMUI {
 		}
 
 		ModularPanel<?> tPanel = ModularPanel.defaultPanel(aScoop ? PANEL_NAME_SCOOP : PANEL_NAME, 176, 166)
-				.background(UITexture.fullImage("gt6", aBumbliary.advanced()
+				// the (mod, path) overload exists on the forge leg only — the ResourceLocation face is the leg-generic one
+				.background(UITexture.fullImage(ResourceLocation.fromNamespaceAndPath("gt6", aBumbliary.advanced()
 						? "textures/gui/machines/bumbliaryadvanced.png" // the Advanced :469
-						: "textures/gui/machines/bumbliary.png")); // the :500/:507 pair
+						: "textures/gui/machines/bumbliary.png"))); // the :500/:507 pair
 
 		for (int i = 0; i < aBumbliary.slotCount(); i++) {
 			GT6BumbliaryBlockEntity.GuiSeat tSeat = aBumbliary.guiSeat(aScoop, i);
@@ -141,7 +142,7 @@ public final class GT6BumbliaryMUI {
 		private final boolean mScoop;
 
 		private Factory(String aName, boolean aScoop) {
-			super(new ResourceLocation("gt6", aName));
+			super(ResourceLocation.fromNamespaceAndPath("gt6", aName)); // the two-arg ctor is private in 1.21.1 (the GTWireBakedModel idiom)
 			mScoop = aScoop;
 		}
 

@@ -95,4 +95,34 @@ public class GT6BumbliaryBlock extends GTEntityBlock {
 		}
 		super.onRemove(aState, aLevel, aPos, aNewState, aMoved);
 	}
+
+	/**
+	 * The top-face use walk (task p34-bumbliary-gui — the upstream onBlockActivated3
+	 * :282-296 plus the onToolClick2 :305-313 scoop arm over one dispatch): the top face
+	 * with the scoop (a shears-action tool — the GTScoopItem) rides
+	 * {@link GT6BumbliaryBlockEntity#scoopUse}, any other top-face poke rides
+	 * {@link GT6BumbliaryBlockEntity#topUse} (the penalty, the sting, the GUI pair); a
+	 * non-top face falls through (the :296 {@code return F}).
+	 */
+	@Override
+	//? if forge {
+	public net.minecraft.world.InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, net.minecraft.world.entity.player.Player aPlayer, net.minecraft.world.InteractionHand aHand, net.minecraft.world.phys.BlockHitResult aHit) {
+	//?} else {
+	/*public net.minecraft.world.InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, net.minecraft.world.entity.player.Player aPlayer, net.minecraft.world.phys.BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
+	//(the GTBarrelBlock fork shape; the MAIN_HAND stand-in is the declared deviation).
+	net.minecraft.world.InteractionHand aHand = net.minecraft.world.InteractionHand.MAIN_HAND;
+	 *///?}
+		if (aHit.getDirection() != net.minecraft.core.Direction.UP) return net.minecraft.world.InteractionResult.PASS; // the :296 face
+		if (aLevel.isClientSide()) return net.minecraft.world.InteractionResult.SUCCESS; // the client arm of the :293 return T
+		if (aLevel.getBlockEntity(aPos) instanceof GT6BumbliaryBlockEntity tBumbliary && aPlayer instanceof net.minecraft.server.level.ServerPlayer tServerPlayer) {
+			boolean tScoop = aPlayer.getItemInHand(aHand).canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST); // the TOOL_scoop face
+			if (tScoop) {
+				tBumbliary.scoopUse(tServerPlayer); // the :305-313 arm
+			} else {
+				tBumbliary.topUse(tServerPlayer); // the :285-291 walk
+			}
+		}
+		return net.minecraft.world.InteractionResult.CONSUME; // the :293 return T
+	}
 }

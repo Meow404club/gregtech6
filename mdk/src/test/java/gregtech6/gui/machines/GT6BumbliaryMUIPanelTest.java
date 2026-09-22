@@ -236,19 +236,19 @@ class GT6BumbliaryMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 
 		ModularPanel<?> tNormal = GT6BumbliaryMUI.buildPanel(tPrimary, headlessSyncManager(), false);
 		UITexture tNormalBackground = assertInstanceOf(UITexture.class, tNormal.getBackground(), "the normal background is a texture");
-		assertEquals(new ResourceLocation("gt6", "textures/gui/machines/bumbliary.png"), tNormalBackground.location(),
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/bumbliary.png"), tNormalBackground.location(),
 				"the :500/:507 primary pair background");
 
 		ModularPanel<?> tAdv = GT6BumbliaryMUI.buildPanel(tAdvanced, headlessSyncManager(), false);
 		UITexture tAdvBackground = assertInstanceOf(UITexture.class, tAdv.getBackground(), "the advanced background is a texture");
-		assertEquals(new ResourceLocation("gt6", "textures/gui/machines/bumbliaryadvanced.png"), tAdvBackground.location(),
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/bumbliaryadvanced.png"), tAdvBackground.location(),
 				"the Advanced :469 background");
 
 		// the factory dispatch — the identity IS the variant (the acceptance ① mAdvanced/scoop arms)
 		assertFalse(GT6BumbliaryMUI.Factory.NORMAL.scoop(), "the normal factory");
 		assertTrue(GT6BumbliaryMUI.Factory.SCOOP.scoop(), "the scoop factory");
-		assertEquals(new ResourceLocation("gt6", "bumbliary"), GT6BumbliaryMUI.Factory.NORMAL.getFactoryName(), "the wire identity (normal)");
-		assertEquals(new ResourceLocation("gt6", "bumbliary_scoop"), GT6BumbliaryMUI.Factory.SCOOP.getFactoryName(), "the wire identity (scoop)");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "bumbliary"), GT6BumbliaryMUI.Factory.NORMAL.getFactoryName(), "the wire identity (normal)");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "bumbliary_scoop"), GT6BumbliaryMUI.Factory.SCOOP.getFactoryName(), "the wire identity (scoop)");
 
 		// the BE implements the GT6MuiMachine chain (the tryOpen bound — the normal open path)
 		assertTrue(GT6MuiMachine.class.isAssignableFrom(GT6BumbliaryBlockEntity.class),
