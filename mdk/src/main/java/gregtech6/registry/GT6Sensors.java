@@ -35,13 +35,22 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * <p>The three pioneer rows (Loader_MultiTileEntities.java:1995/:1986/:1997, category
  * "Sensors", host block aUtilMetal): Progressmeter 31018, Fluidometer 31006,
  * Electrometer 31015 — every live upstream column transcribed: hardness 1, resistance 16,
- * the metal sound (aUtilMetal → METAL). The remaining 16 of the 19 sensor rows are the
- * p26-sensors-batch2 pool card (the base is landed, each body ≈40 lines trivial) and
- * Thermometer/Tachometer/GeigerCounter/Laserometer stay pooled on their missing seams
- * (temperature/rotation/radiation/laser). The row ids and the CR.shapeless self-recast
- * crafting ride the recipe card; the "Sensors" creative tab is upstream's MTE-registry
- * category and stays out (the attachments precedent — /give-reachable, the tab system is
- * the pool card).
+ * the metal sound (aUtilMetal → METAL).
+ *
+ * <p>CENSUS ERRATUM (task p34-sensors-trivial-14, coordinator ruling A): the upstream
+ * sensors() method registers 21 rows (Loader_MultiTileEntities.java:1979-1999, read line
+ * by line), not the 19 the P26/P34 census ledgers carried — the zh MTE dump tops out at
+ * 31022 with no 31023 row, which is where the undercount came from. This card appends
+ * the remaining 15 rows in the upstream anchor order (:1979 → :1994); the Tachometer
+ * 31019 / Geiger Counter 31020 / Laser-O-Meter 31021 rows stay POOLED on their missing
+ * seams (rotation — the axles cut at GtAxleBE / radiation — no domain / laser — no
+ * measurement domain), never implemented outside a seam (the card mandate). The
+ * CR.shapeless self-recast companions ride the ROWS walk automatically
+ * (GT6CraftingRecipes.sensorRecastBuilders — one 1:1 NBT-reset recast per row, the
+ * upstream per-row tails :1979-:1999); the SHAPED rows ride a recipe card (the
+ * electrometer precedent — its 'X' key is a dedicated GT6 item off the port path). The
+ * "Sensors" creative tab is upstream's MTE-registry category and stays out (the
+ * attachments precedent — /give-reachable, the tab system is the pool card).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Sensors {
@@ -61,11 +70,34 @@ public final class GT6Sensors {
 		}
 	}
 
-	/** The three pioneer rows, upstream registration order :1995 → :1986 → :1997. */
+	/**
+	 * The 18 live rows: the three pioneers (upstream registration order :1995 → :1986 →
+	 * :1997) then the p34 batch of 15, in the upstream anchor order :1979 → :1994 (the
+	 * appended subsequence is the anchor's row sequence verbatim — the census 钉测
+	 * contract).
+	 */
 	public static final List<SensorRow> ROWS = List.of(
-			new SensorRow("progressmeter", 31018, () -> GTBlockEntities.PROGRESSMETER_BE.get()),
-			new SensorRow("fluidometer"  , 31006, () -> GTBlockEntities.FLUIDOMETER_BE.get()),
-			new SensorRow("electrometer" , 31015, () -> GTBlockEntities.ELECTROMETER_BE.get()));
+			new SensorRow("progressmeter"          , 31018, () -> GTBlockEntities.PROGRESSMETER_BE.get()),
+			new SensorRow("fluidometer"            , 31006, () -> GTBlockEntities.FLUIDOMETER_BE.get()),
+			new SensorRow("electrometer"           , 31015, () -> GTBlockEntities.ELECTROMETER_BE.get()),
+			// p34-sensors-trivial-14 — Loader_MultiTileEntities.java:1979-1994 order
+			new SensorRow("thermometer"            , 31000, () -> GTBlockEntities.THERMOMETER_BE.get()),            // :1979
+			new SensorRow("luminometer"            , 31002, () -> GTBlockEntities.LUMINOMETER_BE.get()),            // :1980
+			new SensorRow("chronometer"            , 31003, () -> GTBlockEntities.CHRONOMETER_BE.get()),            // :1981
+			new SensorRow("gibblometer"            , 31001, () -> GTBlockEntities.GIBBLOMETER_BE.get()),            // :1982
+			new SensorRow("kilogibblometer"        , 31023, () -> GTBlockEntities.KILOGIBBLOMETER_BE.get()),        // :1983
+			new SensorRow("itemometer"             , 31004, () -> GTBlockEntities.ITEMOMETER_BE.get()),              // :1984
+			new SensorRow("stackometer"            , 31005, () -> GTBlockEntities.STACKOMETER_BE.get()),             // :1985
+			new SensorRow("bucketometer"           , 31007, () -> GTBlockEntities.BUCKETOMETER_BE.get()),            // :1987
+			new SensorRow("kilobucketometer"       , 31022, () -> GTBlockEntities.KILOBUCKETOMETER_BE.get()),        // :1988
+			new SensorRow("lightweightometer"      , 31010, () -> GTBlockEntities.LIGHTWEIGHTOMETER_BE.get()),       // :1989
+			new SensorRow("mediumweightometer"     , 31011, () -> GTBlockEntities.MEDIUMWEIGHTOMETER_BE.get()),      // :1990
+			new SensorRow("heavyweightometer"      , 31012, () -> GTBlockEntities.HEAVYWEIGHTOMETER_BE.get()),       // :1991
+			new SensorRow("superheavyweightometer" , 31013, () -> GTBlockEntities.SUPERHEAVYWEIGHTOMETER_BE.get()),  // :1992
+			new SensorRow("tpsmeter"               , 31016, () -> GTBlockEntities.TPSMETER_BE.get()),                // :1993
+			new SensorRow("playercounter"          , 31017, () -> GTBlockEntities.PLAYERCOUNTER_BE.get()));          // :1994
+	// POOLED (never implemented outside a seam): 31019 tachometer, 31020 geigercounter,
+	// 31021 laserometer — Loader :1996/:1998/:1999.
 
 	/** The blocks/BlockItems, one pair per row (the GT6Attachments static-block form). */
 	public static final java.util.Map<String, RegistryObject<GTSensorBlock>> BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
@@ -100,7 +132,7 @@ public final class GT6Sensors {
 	/** Registration smoke evidence (the GT6Attachments.onCommonSetup log shape). */
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
-		aEvent.enqueueWork(() -> GT6Mod.LOGGER.info("GT6 sensors registered: {} pioneer rows ({} / {} blocks valid)",
+		aEvent.enqueueWork(() -> GT6Mod.LOGGER.info("GT6 sensors registered: {} sensor rows ({} / {} blocks valid)",
 				ROWS.size(), BLOCKS_BY_PATH.size(), ITEMS_BY_PATH.size()));
 	}
 }
