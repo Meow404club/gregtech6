@@ -1163,6 +1163,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.wire.form.wirelamp");
 		addDirect("gt6.cover.conveyor.display");
 		addDirect("gt6.cover.robot_arm.display");
+		addDirect("gt6.cover.selector_tag.display"); // task p34-covers-gameplay-10 — the tag-selector ladder template
 		addDirect("block.gt6.wire_laser");
 	}
 
@@ -1348,6 +1349,18 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.cover_logistics_generic_dump");
 		addDirect("item.gt6.cover_auto_redstone_machine_switch");
 		addDirect("item.gt6.cover_controller");
+		// task p34-covers-gameplay-10 — the 10 gameplay covers (zh faces: the dump
+		// gt.multiitem.technological 1007/1008/1020/1022/1024/1027/2000 name column
+		// verbatim + the hand torch/repeater/template rows)
+		addDirect("item.gt6.cover_vent");
+		addDirect("item.gt6.cover_drain");
+		addDirect("item.gt6.cover_pressure_valve");
+		addDirect("item.gt6.cover_fluid_filter");
+		addDirect("item.gt6.cover_redstone_torch");
+		addDirect("item.gt6.cover_redstone_repeater");
+		addDirect("item.gt6.cover_selector_redstone");
+		addDirect("item.gt6.cover_selector_manual");
+		addDirect("item.gt6.cover_selector_button_panel");
 		addDirect("item.gt6.integrated_circuit");
 		addDirect(GT6Circuits.TOOLTIP_KEY);
 		// task p29-w4-hot-lube ④ — the Lubricant Bucket + the "Industrial Use ONLY!"

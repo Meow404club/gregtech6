@@ -84,7 +84,7 @@ public class CoverDrain extends AbstractCoverDefault {
 			Biome tBiome = tLevel.getBiome(tFront).value();
 			if (tBiome.hasPrecipitation() && tBiome.getBaseTemperature() >= 0.2F) {
 				long tFill = SOURCE_FILL * (tLevel.isThundering() ? 2 : 1); // :81 — the thundering doubling (the rainfall float folds, the class doc)
-				tTank.fill(new FluidStack(Fluids.WATER, (int) tFill), net.minecraftforge.fluids.FluidAction.EXECUTE);
+				tTank.fill(new FluidStack(Fluids.WATER, (int) tFill), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
 			}
 		}
 
@@ -97,14 +97,14 @@ public class CoverDrain extends AbstractCoverDefault {
 			boolean tFaceOkay = aCoverSide != Direction.DOWN.get3DDataValue();
 			if (tFaceOkay && tWater) {
 				if (isInfiniteWater(tLevel, tFront)) { // :126 — the 2+-source pool refills forever
-					tTank.fill(new FluidStack(Fluids.WATER, (int) INFINITE_WATER_FILL), net.minecraftforge.fluids.FluidAction.EXECUTE);
-				} else if (tTank.fill(new FluidStack(Fluids.WATER, (int) SOURCE_FILL), net.minecraftforge.fluids.FluidAction.SIMULATE) == SOURCE_FILL) {
-					tTank.fill(new FluidStack(Fluids.WATER, (int) SOURCE_FILL), net.minecraftforge.fluids.FluidAction.EXECUTE);
+					tTank.fill(new FluidStack(Fluids.WATER, (int) INFINITE_WATER_FILL), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+				} else if (tTank.fill(new FluidStack(Fluids.WATER, (int) SOURCE_FILL), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE) == SOURCE_FILL) {
+					tTank.fill(new FluidStack(Fluids.WATER, (int) SOURCE_FILL), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
 					tLevel.removeBlock(tFront, false); // :152 — setBlockToAir
 				}
 			} else if (tFaceOkay && tLava) {
-				if (tTank.fill(new FluidStack(Fluids.LAVA, (int) SOURCE_FILL), net.minecraftforge.fluids.FluidAction.SIMULATE) == SOURCE_FILL) {
-					tTank.fill(new FluidStack(Fluids.LAVA, (int) SOURCE_FILL), net.minecraftforge.fluids.FluidAction.EXECUTE);
+				if (tTank.fill(new FluidStack(Fluids.LAVA, (int) SOURCE_FILL), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE) == SOURCE_FILL) {
+					tTank.fill(new FluidStack(Fluids.LAVA, (int) SOURCE_FILL), net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
 					tLevel.removeBlock(tFront, false); // :152
 				}
 			}

@@ -16,6 +16,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import gregtech6.covers.CoverData;
+import gregtech6.covers.ICoverableTE;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
@@ -75,7 +76,7 @@ public class CoverPressureValve extends AbstractCoverDefault {
 
 	/** The gas predicate of upstream :57 FL.gas — the port's density proxy (lighter than air). */
 	static boolean isGas(@Nullable FluidStack aFluid) {
-		return aFluid != null && !aFluid.isEmpty() && aFluid.getFluid().getAttributes().isLighterThanAir();
+		return aFluid != null && !aFluid.isEmpty() && aFluid.getFluid().getFluidType().isLighterThanAir(); // the FluidType density proxy (the IForgeFluid 1.20.1 face);
 	}
 
 	/**

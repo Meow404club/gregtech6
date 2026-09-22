@@ -1,5 +1,6 @@
 package gregtech6.covers.covers;
 
+import gregtech6.covers.ICover;
 import javax.annotation.Nullable;
 
 import net.minecraft.resources.ResourceLocation;

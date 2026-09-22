@@ -59,7 +59,7 @@ public class CoverVent extends AbstractCoverDefault {
 	/** The air carrier lookup — {@code null} while the port registers no air fluid (the declared-minimal seam). */
 	@Nullable
 	public static FluidStack airStack() {
-		net.minecraft.world.level.material.Fluid tFluid = ForgeRegistries.FLUIDS().getValue(AIR_FLUID_ID);
+		net.minecraft.world.level.material.Fluid tFluid = ForgeRegistries.FLUIDS.getValue(AIR_FLUID_ID);
 		return tFluid == null || tFluid == Fluids.EMPTY ? null : new FluidStack(tFluid, (int) AIR_FILL_BUDGET);
 	}
 
@@ -82,7 +82,7 @@ public class CoverVent extends AbstractCoverDefault {
 		if (tLevel == null) return;
 		BlockPos tFront = tHost.getBlockPos().relative(Direction.from3DDataValue(aCoverSide));
 		if (!tLevel.getBlockState(tFront).isAir()) return; // WD.collectable_air — the air-in-front gate
-		tTank.fill(tAir, net.minecraftforge.fluids.FluidAction.EXECUTE); // FL.fill_ — the direct-tank form (the p5 ruling)
+		tTank.fill(tAir, net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE); // FL.fill_ — the direct-tank form (the p5 ruling)
 	}
 
 	/** Upstream :77 — the vent plate art (the sides/back stack folds into the single sprite). */

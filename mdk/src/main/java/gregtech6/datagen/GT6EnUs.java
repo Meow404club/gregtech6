@@ -674,6 +674,20 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_controller", "Cover Controller");
         add(GT6Covers.CONVEYOR_DISPLAY_KEY, "Compact Electric Conveyor (%s)");
         add(GT6Covers.ROBOT_ARM_DISPLAY_KEY, "Compact Robot Arm (%s)");
+        // task p34-covers-gameplay-10 — the 10 gameplay covers (upstream
+        // MultiItemTechnological.java display names verbatim: 1020/:66, 1022/:81,
+        // 1024/:83, 1007/:66, 1008/:67, 1027/:86, 2000/:176; the torch/repeater pair is
+        // the hand form — upstream it rode the vanilla item names GT_API.java:799-802)
+        add("item.gt6.cover_vent", "Air Vent");
+        add("item.gt6.cover_drain", "Drain");
+        add("item.gt6.cover_pressure_valve", "Pressure Valve");
+        add("item.gt6.cover_fluid_filter", "Fluid Filter");
+        add("item.gt6.cover_redstone_torch", "Redstone Torch Cover");
+        add("item.gt6.cover_redstone_repeater", "Redstone Repeater Cover");
+        add(GT6Covers.SELECTOR_TAG_DISPLAY_KEY, "Tag Selector (%s)");
+        add("item.gt6.cover_selector_redstone", "Redstone Selector");
+        add("item.gt6.cover_selector_manual", "Manual Selector");
+        add("item.gt6.cover_selector_button_panel", "Button Panel Selector");
     }
 
     /**

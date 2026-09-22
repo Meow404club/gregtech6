@@ -72,7 +72,7 @@ public class CoverFilterFluid extends AbstractCoverDefault {
 	 */
 	public static CompoundTag filterTagFor(Fluid aFluid) {
 		CompoundTag tLane = new CompoundTag();
-		tLane.putString(FILTER_KEY, ForgeRegistries.FLUIDS().getKey(aFluid).toString());
+		tLane.putString(FILTER_KEY, ForgeRegistries.FLUIDS.getKey(aFluid).toString());
 		return tLane;
 	}
 
@@ -82,7 +82,7 @@ public class CoverFilterFluid extends AbstractCoverDefault {
 	 */
 	public static boolean matches(CoverData aData, byte aCoverSide, @Nullable FluidStack aStack) {
 		if (aStack == null || aStack.isEmpty()) return false;
-		Fluid tFilter = ForgeRegistries.FLUIDS().getValue(ResourceLocation.tryParse(aData.mNBTs[aCoverSide].getString(FILTER_KEY)));
+		Fluid tFilter = ForgeRegistries.FLUIDS.getValue(ResourceLocation.tryParse(aData.mNBTs[aCoverSide].getString(FILTER_KEY)));
 		return tFilter != null && tFilter == aStack.getFluid(); // FL.equal(filter, stack, T): fluid yes, NBT no, amount no
 	}
 
