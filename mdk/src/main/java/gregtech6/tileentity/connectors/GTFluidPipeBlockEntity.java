@@ -32,6 +32,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import gregapi.code.TagData;
 import gregapi.data.TD;
 import gregtech6.client.render.GTRenderUpdates;
+import gregtech6.covers.CoverData;
+import gregtech6.covers.ICoverableTE;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.util.UT6;
 
@@ -68,7 +70,13 @@ import gregtech6.util.UT6;
  *     and the live gates (break/use/connect-neighbour; task p24-pipe-owner);</li>
  * <li>C-Foam — the {@code mFoam}/{@code mFoamDried} pair with the applyFoam/dryFoam/
  *     removeFoam write points and the drying ticker (task p25-c-foam-pipe-spray, the
- *     upstream TileEntityBase10ConnectorRendered foam stratum :57/:99-102/:153-183).</li>
+ *     upstream TileEntityBase10ConnectorRendered foam stratum :57/:99-102/:153-183);</li>
+ * <li>Covers — the BE implements {@link ICoverableTE} by composition (task
+ *     p34-pool-cover-hosts, the {@link GTItemPipeBlockEntity} composition precedent):
+ *     the {@link #mCovers} store, the 06Covers :68/:74 NBT round trip, the :191
+ *     validity sweep on the first tick and the :196-205 tick pair around the pipe
+ *     business — CoverPressureValve is the first consumer (its post-tick arm rides
+ *     tickPost, the "after the host ticked" slot).</li>
  * </ul>
  *
  * <p>Cuts (pool, per the card): corrosion leaks, over-temperature ignition and the entity
@@ -76,7 +84,7 @@ import gregtech6.util.UT6;
  * dump (:432-445), the gibbl/temperature/progress telemetry interfaces, the magnifier
  * network dump and the plunger. The bandwidth rule survives inside the leftover push.
  */
-public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
+public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements ICoverableTE {
 
 	/** Distribution rounds per tick-window (GTCEu FluidPipeBlockEntity FREQUENCY=5, :67). */
 	public static final int DISTRIBUTION_PERIOD = 5;
@@ -100,6 +108,29 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 
 	/** Upstream :77. */
 	public FluidTankGT[] mTanks = new FluidTankGT[0];
+
+	// ---------------------------------------------------------------------------
+	// covers (task p34-pool-cover-hosts — the composition attachment, the
+	// GTItemPipeBlockEntity precedent: the store lives here, the 06Covers behaviour
+	// comes from the ICoverableTE defaults; the base-class chain stays untouched.
+	// Admission stays the interface default — the cover-side placement gates
+	// (CoverPressureValve :44, the single-tank + not-facing-a-pipe pair) are the
+	// delivered admission policy, the host adds no narrowing of its own.)
+	// ---------------------------------------------------------------------------
+
+	/** Upstream 06Covers :63 mCovers — {@code null} while no face carries a cover. */
+	@Nullable
+	public CoverData mCovers = null;
+
+	@Override
+	public CoverData getCovers() {
+		return mCovers;
+	}
+
+	@Override
+	public void setCovers(@Nullable CoverData aCoverData) {
+		mCovers = aCoverData;
+	}
 
 	// ---------------------------------------------------------------------------
 	// ownership (task p24-pipe-owner — upstream TileEntityBase10ConnectorRendered:57 +
@@ -352,6 +383,9 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	@Override
 	public void onTickFirst(boolean aIsServerSide) {
 		if (aIsServerSide && hasLevel()) {
+			// upstream 06Covers :191 — the validity sweep rides onTickFirst before the pipe business
+			// (the GTItemPipeBlockEntity shape; self-guards client side and cover-less hosts)
+			checkCoverValidity();
 			// the random stagger of the two-phase upstream tick lists (:128-135) — GTCEu offset style
 			mPhaseOffset = getLevel().random.nextInt(DISTRIBUTION_PERIOD);
 			mPhaseAssigned = true;
@@ -366,6 +400,10 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 
 	@Override
 	public void onTick(long aTimer, boolean aIsServerSide) {
+		// upstream 06Covers :196/:200 — the cover tick pair wraps the pipe business (the
+		// GTItemPipeBlockEntity shape); tickPost runs AFTER the distribution round, the
+		// CoverPressureValve "after the host ticked" slot (:49)
+		if (hasCovers()) getCovers().tickPre(aTimer, aIsServerSide, mBlockUpdated, false);
 		tickFoamDrying(aTimer, aIsServerSide); // upstream 10ConnectorRendered:99-102 — ungated by the distribution phase
 		if (aIsServerSide && mPhaseAssigned && (aTimer + mPhaseOffset) % DISTRIBUTION_PERIOD == 0) {
 			mTransferredAmount = 0; // upstream :258
@@ -374,6 +412,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 				mLastReceivedFrom[tTank.mIndex] = 0; // upstream :331 — the mask guards exactly one round
 			}
 		}
+		if (hasCovers()) getCovers().tickPost(aTimer, aIsServerSide, mBlockUpdated, false);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -743,7 +782,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	*///?}
 
 	private void scheduleFlowRenderRefresh() {
-		if ((mIoMask != 0 || mFoam) && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
+		if ((mIoMask != 0 || mFoam || hasCovers()) && hasLevel() && isClientSide()) GTRenderUpdates.scheduleRenderUpdate(this);
 	}
 
 	/**
@@ -754,20 +793,41 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 	 * GTModelProperties single-valued-property coexistence ruling). A plain pipe keeps
 	 * {@code ModelData.EMPTY} semantics and renders through the plain blockstate model;
 	 * the paint colour rides the 03 base's PAINT supply through the same derived snapshot.
+	 *
+	 * <p>Covers (task p34-pool-cover-hosts): a covered pipe appends the per-face sprite
+	 * snapshot (the TileEntityBase08Barrel template) on the SAME {@code RENDER_SNAPSHOT}
+	 * key the arrows use — a covered face wins over the arrow snapshot
+	 * (ponytail: the single-key shared shape; split the key only if an arrow must
+	 * render underneath a cover plate).
 	 */
 	@Override
 	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		gregtech6.covers.GTCoverRenderSnapshot tCoverSnapshot = coverSnapshot();
 		byte tMask = getIoMask();
-		if (!mFoam && tMask == 0) return super.getModelData();
+		if (!mFoam && tMask == 0 && tCoverSnapshot == null) return super.getModelData();
 		gregtech6.client.render.GTModelProperties.SnapshotBuilder tBuilder =
 				gregtech6.client.render.GTModelProperties.derive(super.getModelData());
-		if (tMask != 0) {
+		if (tCoverSnapshot != null) {
+			tBuilder.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, tCoverSnapshot);
+		} else if (tMask != 0) {
 			tBuilder.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask));
 		}
 		if (mFoam) {
 			tBuilder.with(gregtech6.client.render.GTModelProperties.FOAM_SNAPSHOT, new gregtech6.client.render.PipeFoamSnapshot(mFoamDried, mOwnable));
 		}
 		return tBuilder.build();
+	}
+
+	/** The per-face cover sprite snapshot, the TileEntityBase08Barrel.getModelData body; {@code null} = nothing covered. */
+	private @Nullable gregtech6.covers.GTCoverRenderSnapshot coverSnapshot() {
+		if (!hasCovers()) return null;
+		java.util.Map<Direction, net.minecraft.resources.ResourceLocation> tSprites = new java.util.EnumMap<>(Direction.class);
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			if (getCovers().mBehaviours[tSide] == null) continue;
+			net.minecraft.resources.ResourceLocation tSprite = getCovers().mBehaviours[tSide].getCoverTextureSurface(tSide, getCovers());
+			if (tSprite != null) tSprites.put(Direction.from3DDataValue(tSide), tSprite);
+		}
+		return tSprites.isEmpty() ? null : new gregtech6.covers.GTCoverRenderSnapshot(tSprites);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -815,6 +875,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		aNBT.putBoolean(NBT_FOAMDRIED, mFoamDried);
 		aNBT.putBoolean(NBT_OWNABLE, mOwnable);
 		if (mOwner != null) aNBT.putUUID(NBT_OWNER, mOwner);
+		writeCoversToNBT(aNBT); // upstream 06Covers :74 (task p34-pool-cover-hosts)
 	}
 
 	@Override
@@ -848,5 +909,6 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector {
 		if (aNBT.hasUUID(NBT_OWNER)) {
 			mOwner = aNBT.getUUID(NBT_OWNER);
 		}
+		readCoversFromNBT(aNBT); // upstream 06Covers :68 (task p34-pool-cover-hosts)
 	}
 }
