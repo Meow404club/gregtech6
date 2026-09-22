@@ -81,11 +81,12 @@ steps = [
     Step(f"gt6act fill 29 gt6:screw_iron 1 {F(ACT)}", expect="GT6 ACT fill slot 29: 1x"),
     Step(f"gt6act compute {F(ACT)}", expect="canDo=true"),
     Step(f"gt6act craft once {F(ACT)}", expect="crafted=true, hold=[1x"),
-    # the consumed grid leaves the worn screwdriver (the crafting-remaining face, the
-    # p33_circuits_craft stat form); the 21.1 leg namespaces the item renders — the
-    # substring pin rides the shared "screwdriver" face only
-    Step(f"gt6act stat {F(ACT)}", expect="screwdriver; 28=1x",
-         node_expects={"1.21.1": "1x gt6:screwdriver; 28=1x"}),
+    # the consumed grid leaves the worn screwdriver ALONE at slot 28 (the
+    # crafting-remaining face) — no next-slot boundary exists (the circuits row had
+    # hammer at 27 + wrench at 28, its boundary-spanning pin shape does not apply);
+    # the 21.1 leg namespaces the item renders (the node_expects drift ruling)
+    Step(f"gt6act stat {F(ACT)}", expect="28=1x screwdriver",
+         node_expects={"1.21.1": "28=1x gt6:screwdriver"}),
 
     phase("C: the loot walk — the scoop harvest drops the BOX + the contents"),
     Step(f"setblock {F(HIVE)} gt6:bumble_hive", expect="Changed the block"),
