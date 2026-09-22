@@ -959,12 +959,34 @@ public final class GTMachineCommand {
 	 * the multi-input rows' second leg face. Unknown ids fail the command.
 	 */
 	private static int itemInput(CommandSourceStack source, net.minecraft.resources.ResourceLocation aId, int count, BlockPos pos) {
+		TileEntityBasicMachine tMachine = machineAt(source, pos);
+		if (tMachine == null) {
+			source.sendFailure(Component.literal("No TileEntityBasicMachine at " + (pos != null ? pos.toShortString() : "the source position")));
+			return 0;
+		}
 		Item tItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(aId);
 		if (tItem == null || tItem == net.minecraft.world.item.Items.AIR) {
 			source.sendFailure(Component.literal("Unknown item id: " + aId));
 			return 0;
 		}
-		return input(source, () -> tItem, count, pos);
+		// the multi-leg walk: SLOT_INPUT first, then the family's remaining input slots —
+		// SLOT_INPUT already holds the default feed in the two-leg rows (the scan recipe's
+		// bee + paper pair), so the second leg lands in the first slot that accepts it
+		ItemStack tFeed = new ItemStack(tItem, count);
+		int tInputs = tMachine.mRecipes == null ? 1 : tMachine.mRecipes.mInputItemsCount;
+		for (int tSlot = TileEntityBasicMachine.SLOT_INPUT; tSlot < TileEntityBasicMachine.SLOT_INPUT + tInputs; tSlot++) {
+			ItemStack tLeftover = tMachine.getInventory().insertItem(tSlot, tFeed, false);
+			if (tLeftover.isEmpty()) {
+				final int tLanded = tSlot, tCount = count;
+				source.sendSuccess(() -> Component.literal("GT6 " + tMachine.getTileEntityName() + " input: " + tCount + "x "
+						+ tItem + " into slot " + tLanded), false);
+				return Command.SINGLE_SUCCESS;
+			}
+			tFeed = tLeftover; // a partial accept continues into the next slot
+			count = tLeftover.getCount();
+		}
+		source.sendFailure(Component.literal("Input slots rejected " + tFeed.getCount() + " of the feed (blocked?)"));
+		return 0;
 	}
 
 	/** Drives the dispatcher and samples the three ContainerData states; asserts the acceptance trio + an output. */
