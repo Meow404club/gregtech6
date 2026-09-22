@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.material.Fluids;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import gregtech6.covers.covers.AbstractCoverAttachmentTorch;
 import gregtech6.covers.covers.CoverFilterFluid;
 import gregtech6.covers.covers.CoverRedstoneRepeater;
 import gregtech6.covers.covers.CoverRedstoneTorch;
@@ -131,9 +133,30 @@ public class CoverFilterFluidTorchTest extends GTCoverTestBase {
 	 * it directly (the torch behaviors cast the host to the wire carrier).
 	 */
 	static class WireCoverProbe extends GTWireBlockEntity implements ICoverableTE {
+
+		/** The cover store (the composition contract field). */
+		@javax.annotation.Nullable
+		public CoverData mCovers;
+
 		WireCoverProbe(BlockEntityType<WireCoverProbe> aType) {
 			super(aType, WIRE_POS, Blocks.BRICKS.defaultBlockState());
 			// the self-typed BET via the holder trick (the pump-test barrel form)
+		}
+
+		/** Seeds a raw connection bit (SBIT[side] = 1 << side, the base :33 form) — the protected-mask test seam. */
+		void seedConnection(byte aSide) {
+			mConnections |= (byte) (1 << aSide);
+		}
+
+		@Override
+		@javax.annotation.Nullable
+		public CoverData getCovers() {
+			return mCovers;
+		}
+
+		@Override
+		public void setCovers(@javax.annotation.Nullable CoverData aCoverData) {
+			mCovers = aCoverData;
 		}
 	}
 
@@ -195,8 +218,8 @@ public class CoverFilterFluidTorchTest extends GTCoverTestBase {
 	public void torchPlacementDisconnectsTheWireFace() {
 		WireCoverProbe tWire = wire();
 		CoverRedstoneTorch tTorch = new CoverRedstoneTorch();
-		// seed a connection bit on the torch face directly (SBIT[side] = 1 << side, the base :33 form)
-		tWire.mConnections |= (byte) (1 << 3);
+		// seed a connection bit on the torch face directly (the protected-mask test seam)
+		tWire.seedConnection((byte) 3);
 		assertTrue(tWire.connected((byte) 3), "the fixture wire carries the bit");
 		tTorch.onCoverPlaced((byte) 3, torchData(tWire, tTorch), null, ItemStack.EMPTY);
 		assertFalse(tWire.connected((byte) 3), "placement disconnects the torch face (upstream :39-42)");

@@ -34,7 +34,6 @@ public class CoverFluidTrioTest extends GTCoverTestBase {
 	static final BlockPos PIPE_POS = new BlockPos(4, 4, 4);
 
 	static BlockEntityType<GTBarrelMetalBlockEntity> sBarrelType;
-	static BlockEntityType<GTFluidPipeBlockEntity> sPipeType;
 
 	@SuppressWarnings("unchecked")
 	@BeforeAll
@@ -46,9 +45,11 @@ public class CoverFluidTrioTest extends GTCoverTestBase {
 				(aPos, aState) -> new GTBarrelMetalBlockEntity(tHolder[0], aPos, aState),
 				Blocks.STONE, Blocks.DIRT).build(null);
 		sBarrelType = tHolder[0];
-		sPipeType = BlockEntityType.Builder.of(
-				(aPos, aState) -> new GTFluidPipeBlockEntity(sPipeType, aPos, aState),
+		BlockEntityType<PipeCoverProbe>[] tPipeHolder = (BlockEntityType<PipeCoverProbe>[]) new BlockEntityType<?>[1];
+		tPipeHolder[0] = BlockEntityType.Builder.of(
+				(aPos, aState) -> new PipeCoverProbe(tPipeHolder[0]),
 				Blocks.BRICKS).build(null);
+		sProbePipeType = tPipeHolder[0];
 	}
 
 	/** A leveled metal drum host with the cover mounted on face 3 through the real dispatch. */
@@ -61,9 +62,38 @@ public class CoverFluidTrioTest extends GTCoverTestBase {
 		return tDrum;
 	}
 
-	static GTFluidPipeBlockEntity pipeWith(FluidStack aContent) {
-		GTFluidPipeBlockEntity tPipe = new GTFluidPipeBlockEntity(sPipeType, PIPE_POS, Blocks.BRICKS.defaultBlockState());
-		if (aContent != null && !aContent.isEmpty()) tPipe.mTanks[0].fill(aContent, net.minecraftforge.fluids.FluidAction.EXECUTE);
+	/**
+	 * The pipe carrier plus the cover store — the composition the declared
+	 * host-composition card will land on the production carrier; the offline pins drive
+	 * it directly (the valve behaviors cast the host to the pipe carrier).
+	 */
+	static class PipeCoverProbe extends GTFluidPipeBlockEntity implements ICoverableTE {
+
+		/** The cover store (the composition contract field). */
+		@javax.annotation.Nullable
+		public CoverData mCovers;
+
+		PipeCoverProbe(BlockEntityType<PipeCoverProbe> aType) {
+			super(aType, PIPE_POS, Blocks.BRICKS.defaultBlockState());
+		}
+
+		@Override
+		@javax.annotation.Nullable
+		public CoverData getCovers() {
+			return mCovers;
+		}
+
+		@Override
+		public void setCovers(@javax.annotation.Nullable CoverData aCoverData) {
+			mCovers = aCoverData;
+		}
+	}
+
+	static BlockEntityType<PipeCoverProbe> sProbePipeType;
+
+	static PipeCoverProbe pipeWith(FluidStack aContent) {
+		PipeCoverProbe tPipe = new PipeCoverProbe(sProbePipeType);
+		if (aContent != null && !aContent.isEmpty()) tPipe.mTanks[0].fill(aContent, net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
 		return tPipe;
 	}
 
@@ -125,7 +155,7 @@ public class CoverFluidTrioTest extends GTCoverTestBase {
 	@Test
 	public void pressureValveRefusesMultiTankPipesAndNonPipes() {
 		CoverPressureValve tValve = new CoverPressureValve();
-		GTFluidPipeBlockEntity tPipe = pipeWith(null);
+		PipeCoverProbe tPipe = pipeWith(null);
 		CoverData tCovers = new CoverData(tPipe);
 		assertFalse(tValve.interceptCoverPlacement((byte) 3, tCovers, null),
 				"the single-tank pipe host admits the valve (upstream :44)");
@@ -144,7 +174,7 @@ public class CoverFluidTrioTest extends GTCoverTestBase {
 	@Test
 	public void pressureValveFreshPipeGateKeepsTheTank() {
 		CoverPressureValve tValve = new CoverPressureValve();
-		GTFluidPipeBlockEntity tPipe = pipeWith(new FluidStack(Fluids.WATER, 1000));
+		PipeCoverProbe tPipe = pipeWith(new FluidStack(Fluids.WATER, 1000));
 		CoverData tCovers = new CoverData(tPipe);
 		tCovers.mBehaviours[3] = tValve;
 		tCovers.tickPost(1, true, false, false);
@@ -155,7 +185,7 @@ public class CoverFluidTrioTest extends GTCoverTestBase {
 	@Test
 	public void pressureValveLiquidBacklogStaysWithoutAHandler() {
 		CoverPressureValve tValve = new CoverPressureValve();
-		GTFluidPipeBlockEntity tPipe = pipeWith(new FluidStack(Fluids.WATER, 1000));
+		PipeCoverProbe tPipe = pipeWith(new FluidStack(Fluids.WATER, 1000));
 		CoverData tCovers = new CoverData(tPipe);
 		tCovers.mBehaviours[3] = tValve;
 		tCovers.tickPost(10, true, false, false);

@@ -24,6 +24,10 @@ public class TileEntityModeDialProbe extends BlockEntity implements ICoverableTE
 	/** The redstone answer of {@link #getRedstoneIncoming} (the stub-level override). */
 	public byte mIncoming = 0;
 
+	/** The cover store (the composition contract field — the logistics-wire form). */
+	@Nullable
+	public CoverData mCovers;
+
 	public TileEntityModeDialProbe(BlockEntityType<TileEntityModeDialProbe> aType, BlockPos aPos, BlockState aState) {
 		super(aType, aPos, aState);
 	}

@@ -14,12 +14,12 @@ import org.junit.jupiter.api.Test;
  * landed families verbatim (the pump/emitter/conductor/switch/shutter/filter/retriever
  * singletons + the p33 logistics 14 + the controller pair + the 2x10 conveyor/arm
  * ladders) PLUS precisely this card's 25 rows (the 9 gameplay singletons + the 16
- * tag-selector ladder). The pin freezes the append-only discipline: a renamed, dropped
- * or extra cover item anywhere in the family fails the census.
+ * tag-selector ladder): 69 items total. The pin freezes the append-only discipline: a
+ * renamed, dropped or extra cover item anywhere in the family fails the census.
  */
 public class GT6CoversGameplayCensusTest {
 
-	/** The expected full registry arm, sorted — 48 landed rows + this card's 25. */
+	/** The expected full registry arm — 44 landed rows + this card's 25. */
 	private static final Set<String> EXPECTED = Set.of(
 			// the landed singleton family (p5/p9/p10/p11/p31)
 			"cover_pump", "cover_redstone_emitter", "cover_redstone_conductor_in", "cover_redstone_conductor_out",
@@ -54,7 +54,19 @@ public class GT6CoversGameplayCensusTest {
 		Set<String> tExpectedSorted = new TreeSet<>(EXPECTED);
 		assertEquals(tExpectedSorted, tActual,
 				"the cover registry arm drifted — the census is exact (acceptance ①)");
-		assertEquals(73, tActual.size(), "73 cover items: 48 landed + 25 this card");
+		assertEquals(69, tActual.size(), "69 cover items: 53 landed (10 singletons + 14 logistics + 2x10 ladders + 9 this card) + 16 tag ladder");
+	}
+
+	@Test
+	public void thisCardsRegistrationArmIsTheExactTwentyFiveRows() {
+		Set<String> tActual = GT6Covers.ITEMS.getEntries().stream()
+				.map(tEntry -> tEntry.getId().getPath())
+				.collect(Collectors.toCollection(TreeSet::new));
+		assertEquals(25, tActual.stream().filter(tId ->
+				tId.startsWith("cover_vent") || tId.startsWith("cover_drain") || tId.startsWith("cover_pressure_valve")
+				|| tId.startsWith("cover_fluid_filter") || tId.startsWith("cover_redstone_torch") || tId.startsWith("cover_redstone_repeater")
+				|| tId.startsWith("cover_selector")).count(),
+				"this card's arm: the 9 gameplay singletons + the 16 tag-selector ladder (acceptance ①)");
 	}
 
 	@Test
