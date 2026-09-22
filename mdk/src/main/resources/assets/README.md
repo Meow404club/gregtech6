@@ -8572,6 +8572,46 @@ RM.java:65/:66), byte-identical to upstream, sha256 verified:
 - `distillationtower.png` — `3c91fb1c405f64651f2502f44ab2fc0e588c018e0616a5d8d094acf11596c593`
 - `cryodistillationtower.png` — `165f2cb65e4f1d892d6f403327ac9ae33d61084fb73faacaf99385aa5a98bd53`
 
+
+Burner Mixer + Plantalyzer family textures, task p34-machines-burner-plantalyzer:
+the 48 PNGs under `gt6/textures/block/{burnmixer,plantalyzer}_{colored,overlay}_{face}.png`
+(face ∈ bottom/top/front/back/left/right; the overlay fronts carry the
+`_active`/`_running` state tails) come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/basicmachines/{burnmixer,plantalyzer}/{colored,overlay,overlay_active,overlay_running}/<face>.png`
+(the NBT_TEXTURE "burnmixer"/"plantalyzer" name form of
+Loader_MultiTileEntities.java:1595-1598/:1601-1605), the p22 split-front naming —
+byte-identical to upstream except the 16xN strips cropped to their frame 0 (the
+P20/P22 "animation stays retired" deviation), sha256 verified per file (grouped
+by content):
+- `burnmixer_colored_back.png`, `burnmixer_colored_front.png`, `burnmixer_colored_left.png`, `burnmixer_colored_right.png`, `burnmixer_colored_top.png`, `plantalyzer_colored_back.png`, `plantalyzer_colored_bottom.png`, `plantalyzer_colored_front.png`, `plantalyzer_colored_left.png`, `plantalyzer_colored_right.png`, `plantalyzer_colored_top.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `burnmixer_colored_bottom.png` — `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
+- `burnmixer_overlay_back.png`, `burnmixer_overlay_back_active.png`, `burnmixer_overlay_back_running.png` — `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c`
+- `burnmixer_overlay_bottom.png`, `burnmixer_overlay_bottom_active.png`, `burnmixer_overlay_bottom_running.png` — `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`
+- `burnmixer_overlay_front.png` — `e6fad8d9272518ba9d22ab05985954ae44a18671ecad5226288d310f860909c8`
+- `burnmixer_overlay_front_active.png` — `98ae5f57257e83995807065be84fe45bd4ca94fdb029b67961b69ac5752a6be5`
+- `burnmixer_overlay_front_running.png` — `d2955b05a6fcbc143b07355ff9cfcde63d1f67169d03c17b1b57f5e89c2c0243`
+- `burnmixer_overlay_left.png`, `burnmixer_overlay_left_active.png`, `burnmixer_overlay_left_running.png` — `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`
+- `burnmixer_overlay_right.png`, `burnmixer_overlay_right_active.png`, `burnmixer_overlay_right_running.png` — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
+- `burnmixer_overlay_top.png`, `burnmixer_overlay_top_active.png`, `burnmixer_overlay_top_running.png` — `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f`
+- `plantalyzer_overlay_back.png` — `6f81204cb604b141dc4dc71267e918ccbb424e55ac8877848c971c4416777bae`
+- `plantalyzer_overlay_back_active.png` — `162fa3c071183c7f37b3c76e8e9d60144548ca7b090665334a3d0b0598ce42e5`
+- `plantalyzer_overlay_back_running.png` — `18951f0f17dde4a0687c97d2a8a82c7d79c0a0db51923f73109c84a7e67bcfbd`
+- `plantalyzer_overlay_bottom.png` — `2c23a7b5cb98ff7ebc4e83946a39f35a48f0d57deb531660af73d3cf5636c18d`
+- `plantalyzer_overlay_bottom_active.png` — `b0216b93095885d2f9366ed7b2942a6b266769750576ef912e794db6cfe9225e`
+- `plantalyzer_overlay_bottom_running.png` — `2405a5a3e6ebdb63851e21bbada4aa0cc917b43ee4697958bc18a1bed613e78e`
+- `plantalyzer_overlay_front.png` — `62b2390c4dba8a1e627eed397836dad4cb05a8d261094dba17a4bbe0766a2818`
+- `plantalyzer_overlay_front_active.png` — `fb16103a318fb5d00b9cbc0e779fec1e5de6bbbd2937bad9d971312276b54c28`
+- `plantalyzer_overlay_front_running.png` — `2cb35696d56aebd0ee0f18988ae8826b80ed88142c5d56e60d15293eff6d959c`
+- `plantalyzer_overlay_left.png` — `0e80bbc63cdd37cf55742784232a0f6f9e6fdd2ae1ced3afc5cc8b56004cd8ce`
+- `plantalyzer_overlay_left_active.png` — `465244f8043c67b2b7649ee665bacc196e633b84cd0b8a3e984b47c023b72cab`
+- `plantalyzer_overlay_left_running.png` — `42aed2c29aa8d8c3d1d860f859d4a3cb4c4ffe09b092478a596f31e546460576`
+- `plantalyzer_overlay_right.png` — `57a1f1f9a51d3739c53ee24abf3e4f23efe70239cccf765d2ea656acd5b2042e`
+- `plantalyzer_overlay_right_active.png` — `4e044a132575f4c8c618bb28fe4b3e14c6f8deb0b7ebb7574d9ffbd06dce27e0`
+- `plantalyzer_overlay_right_running.png` — `ea7ddbb40ad0aa2eff7233403e58f71ba4752f2cf829106c66e92e945e5508ac`
+- `plantalyzer_overlay_top.png` — `c6e08c2c22a3ee285f9cf480716bab3506048cfb2e7502cc6f5d4f230bf6fb27`
+- `plantalyzer_overlay_top_active.png` — `c8b55df2525bff5559a4e54090f1a886ed18890191c1c4eac012b5e990bddcb9`
+- `plantalyzer_overlay_top_running.png` — `281b4be07d722a32965bcb7c24b0f83c082f1d70d09337afcbd83b87af5c2d0f`
+
 Sensor block textures, batch 2 (15 rows), task p34-sensors-trivial-14 — same
 borrow/bake recipe as the three pioneer rows above (upstream snapshot
 `v6.17.06-22-g3703e4030`, `src/main/resources/assets/gregtech/textures/blocks

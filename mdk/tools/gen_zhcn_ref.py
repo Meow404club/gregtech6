@@ -575,6 +575,11 @@ HAND_TRANSLATIONS = {
     "gt6.row.machine.catalytic_cracker": ("催化裂解器 (%s)", "hand"),
     "gt6.row.machine.loom": ("织布机 (%s)", "hand"),
     "gt6.row.machine.steam_cracker": ("蒸汽裂解器 (%s)", "hand"),
+    # task p34-machines-burner-plantalyzer -- the two family templates (the mte dump
+    # carries 燃烧反应室 (青铜/钢/钛/钨钢) at gt.multitileentity.20521-20524 verbatim and
+    # 植物分析仪 (LV/MV/HV/EV/IV) at :11705-11709 verbatim)
+    "gt6.row.machine.burner_mixer": ("燃烧反应室 (%s)", "hand"),
+    "gt6.row.machine.plantalyzer": ("植物分析仪 (%s)", "hand"),
     # task p29-w3-heat-smelter -- the two heat families (the mte dump carries 液化炉
     # (钢/殷钢/钛/碳化钨) at gt.multitileentity.20241-20244 verbatim; the Melter 22010
     # dump row is the ASCII "Melter" -- status review -- so the zh word is the hand

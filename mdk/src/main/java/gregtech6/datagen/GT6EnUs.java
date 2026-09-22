@@ -1257,6 +1257,11 @@ public class GT6EnUs extends LanguageProvider {
         // :1653 / "Autoclave" :1655 — the FERMENTER_DISPLAY_KEY no-slot contract)
         add(gregtech6.registry.GTMachines.MACHINE_STEAM_CRACKER_UNIT_KEY, "Steam Cracker (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_CATALYTIC_CRACKER_UNIT_KEY, "Catalytic Cracker (%s)");
+        // task p34-machines-burner-plantalyzer — the two family templates (the upstream
+        // name columns "Burner Mixer ("+aMat.getLocal()+")" :1595-1598 and
+        // "Plantalyzer ("+VN[tier]+")" :1601-1605)
+        add(gregtech6.registry.GTMachines.MACHINE_BURNER_MIXER_UNIT_KEY, "Burner Mixer (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_PLANTALYZER_UNIT_KEY, "Plantalyzer (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_LOOM_UNIT_KEY, "Loom (%s)");
         add(gregtech6.registry.GTMachines.COAGULATOR_DISPLAY_KEY, "Coagulator");
         add(gregtech6.registry.GTMachines.GENERIFIER_DISPLAY_KEY, "Generifier");

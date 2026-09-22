@@ -2783,6 +2783,11 @@ public final class GTMachines {
 		// single + the replicator three-rung, the census comment moves together 213 → 217)
 		java.util.Collections.addAll(rBlocks, molecularScannerBlockArray());
 		java.util.Collections.addAll(rBlocks, replicatorBlockArray());
+		// task p34-machines-burner-plantalyzer — the Burner Mixer 4-ladder + the
+		// Plantalyzer 5-ladder, +9 blocks, the census comment and the datagen-JVM half
+		// move together (217 → 222)
+		java.util.Collections.addAll(rBlocks, burnerMixerBlockArray());
+		java.util.Collections.addAll(rBlocks, plantalyzerBlockArray());
 		return rBlocks.toArray(new Block[0]);
 	}
 

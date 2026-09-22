@@ -146,6 +146,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addEuCoreMachines(); // task p29-w2-eu-core-5tier — the five eu-core families (family textures, the addCanner shape)
         addMassfabMachines(); // task p31-massfab — the small Matter Fabricator 5-ladder (family textures, the addCanner shape)
         addQuMachines(); // task p32-qu-scanner-replicator — the Molecular Scanner T3 + the Matter Replicator T1-T3 (family textures, the addCanner shape)
+        addP34MachinePair(); // task p34-machines-burner-plantalyzer — the Burner Mixer ladder + the Plantalyzer 5-ladder (family textures, the addCanner shape)
         addHuTuFamilies(); // task p29-w2-hu-tu-piggyback — the seven hu-tu families (family textures, the addCanner shape)
         addHeatSmelterFamilies(); // task p29-w3-heat-smelter — the Smelter ladder + the Melter single (family textures, the addCanner shape)
         addRoastingFamilies(); // task p29-w4-eu-bridge — the Roasting Oven ladder (the "roaster" family textures)
@@ -1099,6 +1100,19 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CRYSTALLISATION_ROWS) {
             addMachine(GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+     * Task p34-machines-burner-plantalyzer — the Burner Mixer 4-ladder (20521-20524,
+     * NBT_TEXTURE "burnmixer") + the Plantalyzer 5-ladder (20531-20535, "plantalyzer"):
+     * the addCanner shape verbatim — model names per path, the front textures stay on the
+     * family set (the borrowed upstream basicmachines/{burnmixer,plantalyzer} split
+     * fronts, the animated overlay strips flattened to their frame 0 — the W1 borrow
+     * pipeline).
+     */
+    private void addP34MachinePair() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.BURNER_MIXER_ROWS) {
+            addMachine(GTMachines.BURNER_MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.PLANTALYZER_ROWS) {
+            addMachine(GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

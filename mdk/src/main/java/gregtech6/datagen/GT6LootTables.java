@@ -804,6 +804,10 @@ public final class GT6LootTables extends LootTableProvider {
         // task p32-qu-scanner-replicator — the QU machine pair (the exotic shape)
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.molecularScannerBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.replicatorBlockArray());
+        // task p34-machines-burner-plantalyzer — the Burner Mixer 4-ladder + the
+        // Plantalyzer 5-ladder (the same MTE default self-drop, the tail-append EDIT ruling)
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.burnerMixerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.plantalyzerBlockArray());
         return rBlocks;
     }
 

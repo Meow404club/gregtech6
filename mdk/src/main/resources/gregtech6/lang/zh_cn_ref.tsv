@@ -307,6 +307,7 @@ direct	fluid.gt6.brandyplum	李子白兰地	hand
 direct	fluid.gt6.butane	丁烷	hand
 direct	fluid.gt6.cactusfruitjuice	仙人掌果汁	hand
 direct	fluid.gt6.cactuswater	仙人掌汁	hand
+direct	fluid.gt6.calcite_molten	熔融方解石	hand
 direct	fluid.gt6.canevinegar	甘蔗醋	hand
 direct	fluid.gt6.carbon13_molten	熔融碳-13	hand
 direct	fluid.gt6.carbon_molten	熔融碳	hand
@@ -695,6 +696,7 @@ direct	fluid.gt6.slime	史莱姆粘液	hand
 direct	fluid.gt6.slime_blue	蓝色史莱姆	hand
 direct	fluid.gt6.soda	苏打水	hand
 direct	fluid.gt6.sodium_molten	熔融钠	hand
+direct	fluid.gt6.sodiumcarbonate_molten	熔融碳酸钠	hand
 direct	fluid.gt6.soulsandoil	灵魂沙油	hand
 direct	fluid.gt6.soup_mushroom	蘑菇煲	hand
 direct	fluid.gt6.soymilk	豆浆	hand
@@ -714,6 +716,7 @@ direct	fluid.gt6.tea	茶	hand
 direct	fluid.gt6.tequila	龙舌兰酒	hand
 direct	fluid.gt6.thoriumsalt	熔融钍盐	hand
 direct	fluid.gt6.tin_molten	熔融锡	hand
+direct	fluid.gt6.titaniumtetrachloride	四氯化钛	hand
 direct	fluid.gt6.tritiatedwater	超重水	hand
 direct	fluid.gt6.tritium	氚	hand
 direct	fluid.gt6.tungsten_molten	熔融钨	hand
@@ -951,6 +954,8 @@ direct	gt6.row.machine.sluice	洗矿厂 (%s)	hand
 direct	gt6.row.machine.smelter	液化炉 (%s)	hand
 direct	gt6.row.machine.squeezer	榨汁机 (%s)	hand
 direct	gt6.row.machine.steam_cracker	蒸汽裂解器 (%s)	hand
+direct	gt6.row.machine.burner_mixer	燃烧反应室 (%s)	hand
+direct	gt6.row.machine.plantalyzer	植物分析仪 (%s)	hand
 direct	gt6.row.machine.wiremill	线材机 (%s)	hand
 direct	gt6.row.mat.adamantium	艾德曼合金	hand
 direct	gt6.row.mat.aluminium	铝	hand
