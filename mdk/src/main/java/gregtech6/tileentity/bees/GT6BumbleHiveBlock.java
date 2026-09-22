@@ -41,8 +41,10 @@ import gregtech6.registry.GT6BeeHives;
  *
  * <p>Strength 1.0/1.0 (the upstream getBlockHardness/getExplosionResistance2 lit-pumpkin
  * pair, :80-82 = vanilla jack_o_lantern {@code strength(1.0F)}), wood sound (the aHive
- * row). Not obtainable as an item: no BlockItem, no creative tab — the worldgen-only
- * loot-shell convention (GT6SurfaceBlocks rock/stick form).
+ * row). Obtainable since the R2 containment-contract revision (task p34-bumbliary-recipes,
+ * the GT6BeeHives javadoc): a proper harvest drops the BOX + the contents — the upstream
+ * drop list puts the block item into every break (the base getDrops,
+ * TileEntityBase04MultiTileEntities.java:166-171) beside the mDroppable inventory walk.
  */
 public class GT6BumbleHiveBlock extends GTEntityBlock {
 
@@ -77,12 +79,20 @@ public class GT6BumbleHiveBlock extends GTEntityBlock {
 				|| aPlayer.getMainHandItem().canPerformAction(ToolActions.SHEARS_HARVEST);
 	}
 
-	/** The mDroppable collapse: the whole BE inventory drops on a proper harvest (:97-98). */
+	/**
+	 * The mDroppable collapse: the whole BE inventory drops on a proper harvest (:97-98),
+	 * BESIDE the box itself — the upstream base getDrops always leads the drop list with
+	 * the block item (TileEntityBase04MultiTileEntities.java:166-171), so the harvest
+	 * yield is box + contents (the p34-bumbliary-recipes ③ verdict; the p33-c card's
+	 * contents-only walk predates the BlockItem).
+	 */
 	@Override
 	public void playerDestroy(Level aLevel, Player aPlayer, BlockPos aPos, BlockState aState,
 			@Nullable BlockEntity aBlockEntity, ItemStack aTool) {
 		super.playerDestroy(aLevel, aPlayer, aPos, aState, aBlockEntity, aTool);
-		if (aLevel.isClientSide || !(aBlockEntity instanceof GT6BumbleHiveBlockEntity tHive)) return;
+		if (aLevel.isClientSide) return;
+		popResource(aLevel, aPos, new ItemStack(GT6BeeHives.HIVE_ITEM.get()));
+		if (!(aBlockEntity instanceof GT6BumbleHiveBlockEntity tHive)) return;
 		for (int i = 0; i < tHive.inventory().getSlots(); i++) {
 			ItemStack tStack = tHive.inventory().getStackInSlot(i);
 			if (!tStack.isEmpty()) {

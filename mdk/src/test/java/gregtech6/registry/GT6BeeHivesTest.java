@@ -56,16 +56,17 @@ class GT6BeeHivesTest {
 	//?}
 
 	@Test
-	void itemFaceIsExactlyTheBumbliaryPair() {
-		// the hive loot shell stays worldgen-only (no item under its id, the p32 ruling);
-		// the Bumbliary pair ARE obtainable machines — the ITEMS register holds exactly
-		// their two BlockItems (task p33-bees-lv3-b-bumbliary) and still no creative tab
+	void itemFaceIsTheHivePlusTheBumbliaryPair() {
+		// the R2 containment-contract revision (task p34-bumbliary-recipes): the hive GAINS
+		// its BlockItem (the carryable wild hive — the upstream 32755 item form the 32741
+		// recipe keys on, :2222; the GT6BeeHives javadoc declares the broken-once ruling);
+		// the Bumbliary pair ARE obtainable machines (task p33-bees-lv3-b-bumbliary).
+		// Still no creative tab in the bee home (the hive item rides the gt6:bee tab, the
+		// GT6BeeCombs registration).
 		assertFalse(hasField("CREATIVE_MODE_TABS"), "no creative tab in the bee home");
-		assertEquals(List.of("bumbliary", "bumbliary_advanced"),
+		assertEquals(List.of("bumble_hive", "bumbliary", "bumbliary_advanced"),
 				GT6BeeHives.ITEMS.getEntries().stream().map(tRow -> tRow.getId().getPath()).toList(),
-				"the item register holds exactly the Bumbliary BlockItem pair");
-		assertTrue(GT6BeeHives.ITEMS.getEntries().stream().noneMatch(tRow -> tRow.getId().getPath().equals("bumble_hive")),
-				"the hive itself never gains an item face");
+				"the item register holds the hive BlockItem + the Bumbliary pair");
 	}
 
 	private static boolean hasField(String aName) {

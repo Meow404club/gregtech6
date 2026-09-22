@@ -565,6 +565,8 @@ public final class GT6ItemModels extends ItemModelProvider {
         // block models (the same placeables form)
         withExistingParentUnchecked("bumbliary", "block/bumbliary");
         withExistingParentUnchecked("bumbliary_advanced", "block/bumbliary_adv");
+        // the R2 hive BlockItem (task p34-bumbliary-recipes) — the same BlockItem form
+        withExistingParentUnchecked("bumble_hive", "block/bumble_hive");
     }
 
     /** The unchecked parent reference (the GT6BlockStates turbine form) — cross-provider block models generated later. */
