@@ -2973,55 +2973,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		throw new IllegalArgumentException("no material-carrying letter to anchor the advancement: " + aForm.aId());
 	}
 
-//? if forge {
-	private void machineLadderRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
-		java.util.Set<String> tSeen = new java.util.HashSet<>();
-		for (gregapi.oredict.OreDictMaterial tMaterial : gregapi.oredict.MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
-			if (tMaterial == null || tMaterial.mID < 0) continue;
-			tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.get(tMaterial); // the alias merge
-			if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial.mNameInternal)) continue;
-			String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
-			for (MachineLadderForm tForm : MACHINE_LADDER_FORMS) {
-				if (!tForm.aIncludeSteel() && tMaterial == gregapi.data.MT.Steel) continue; // the steel anchors own it
-				if (!machineLadderAxis(tMaterial, tForm)) continue;
-				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
-				java.util.List<String> tPattern = new java.util.ArrayList<>();
-				boolean tResolvable = true;
-				for (String tRow : tForm.aPattern()) {
-					tPattern.add(tRow);
-					for (char tChar : tRow.toCharArray()) {
-						if (tChar == ' ' || tKey.containsKey(tChar)) continue;
-						net.minecraft.world.item.crafting.Ingredient tIngredient = machineLadderIngredient(tChar, tMaterial);
-						if (tIngredient == null) {
-							tResolvable = false;
-							break;
-						}
-						tKey.put(tChar, tIngredient);
-					}
-					if (!tResolvable) break;
-				}
-				if (!tResolvable) continue; // the item-truth miss — no row
-				ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
-				Object tAnchor = machineLadderCriterion(tForm, tMaterial);
-				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
-						.recipeAdvancement()
-						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
-						.addCriterion("has_head_material", tAnchor instanceof TagKey ? has((TagKey<Item>) tAnchor) : has((net.minecraft.world.item.Item) tAnchor))
-						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
-						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
-						.requirements(net.minecraft.advancements.RequirementsStrategy.OR);
-				aConsumer.accept(new MaterialToolRow(tId, tId.withPrefix("recipes/tools/"),
-						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT, tPattern, tKey,
-						machineLadderResult(tForm.aId()), tSnake, tAdvancement));
-			}
-		}
-	}
 	// ------------------------------------------------------------------
 	// task p34-bumbliary-recipes — the Bumbliary pair rows: the registration-line
 	// varargs transcriptions (Loader_MultiTileEntities.java:2222/:2223). The
 	// NBT_RECIPEMAP RM.BumbleQueens tag upstream rides the same lines — the DISPLAY-only
 	// fold (a null-backend fake-recipe map, MultiItemBumbles.java:614; the port BE has
 	// no RM consumption face — declared in the card account, the gui card owns the face).
+	// SHARED REGION: both builders are leg-neutral (the gregOLantern/bathing-pot builder
+	// form) — only the .save(aConsumer/aOutput, id) call site is forked per leg.
 
 	/**
 	 * The Bumbliary row — the upstream :2222 line-tail varargs VERBATIM
@@ -3069,6 +3028,50 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('R', GT6ItemTags.COMBS_CROSSBRED)
 				.define('H', Items.HONEY_BOTTLE)
 				.unlockedBy("has_bumbliary", has(GT6BeeHives.BUMBLIARY_ITEM.get()));
+	}
+
+//? if forge {
+	private void machineLadderRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+		java.util.Set<String> tSeen = new java.util.HashSet<>();
+		for (gregapi.oredict.OreDictMaterial tMaterial : gregapi.oredict.MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+			if (tMaterial == null || tMaterial.mID < 0) continue;
+			tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.get(tMaterial); // the alias merge
+			if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial.mNameInternal)) continue;
+			String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
+			for (MachineLadderForm tForm : MACHINE_LADDER_FORMS) {
+				if (!tForm.aIncludeSteel() && tMaterial == gregapi.data.MT.Steel) continue; // the steel anchors own it
+				if (!machineLadderAxis(tMaterial, tForm)) continue;
+				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
+				java.util.List<String> tPattern = new java.util.ArrayList<>();
+				boolean tResolvable = true;
+				for (String tRow : tForm.aPattern()) {
+					tPattern.add(tRow);
+					for (char tChar : tRow.toCharArray()) {
+						if (tChar == ' ' || tKey.containsKey(tChar)) continue;
+						net.minecraft.world.item.crafting.Ingredient tIngredient = machineLadderIngredient(tChar, tMaterial);
+						if (tIngredient == null) {
+							tResolvable = false;
+							break;
+						}
+						tKey.put(tChar, tIngredient);
+					}
+					if (!tResolvable) break;
+				}
+				if (!tResolvable) continue; // the item-truth miss — no row
+				ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
+				Object tAnchor = machineLadderCriterion(tForm, tMaterial);
+				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+						.recipeAdvancement()
+						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+						.addCriterion("has_head_material", tAnchor instanceof TagKey ? has((TagKey<Item>) tAnchor) : has((net.minecraft.world.item.Item) tAnchor))
+						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
+						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
+						.requirements(net.minecraft.advancements.RequirementsStrategy.OR);
+				aConsumer.accept(new MaterialToolRow(tId, tId.withPrefix("recipes/tools/"),
+						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT, tPattern, tKey,
+						machineLadderResult(tForm.aId()), tSnake, tAdvancement));
+			}
+		}
 	}
 
 //?} else {
