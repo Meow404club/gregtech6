@@ -180,6 +180,8 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("roasting_oven", "item+fluid"); // task p29-w4-eu-bridge — the Roasting ladder joins (the Boudouard row's CO2 input + CO output are the fluid face)
 		tFaces.put("bumblelyzer", "item+fluid"); // task p34-machines-bumblelyzer-crucible — the scan arm drinks the honey tank leg (the 10 L diluent charge)
 		tFaces.put("crystallisation_crucible", "item+fluid"); // task p34-machines-bumblelyzer-crucible — the key is the BET registry id (the BLOCK_ENTITY_TYPES name), not the block path — the noble-gas + molten legs are the live input face (the boule is the item output)
+		tFaces.put("burner_mixer", "item+fluid"); // task p34-machines-burner-plantalyzer — the ignition 4-ladder joins (the JSON row chemistry's tank-in face is load-bearing)
+		tFaces.put("plantalyzer", "item+fluid"); // task p34-machines-burner-plantalyzer — the 5-ladder joins (the single tank-in face keeps the p34-gui fluid seat live)
 		// the CONVERTER exception (task p29-w4-eu-bridge): the three EU->X bridge families
 		// carry NO capability face at all — no inventory, no tanks, pure TD.Energy push
 		// over the ITileEntityEnergy face (the electric dynamo family posture; they live
