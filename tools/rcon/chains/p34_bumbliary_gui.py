@@ -4,14 +4,18 @@ acceptance ④: place → the scoop-open smoke → the penalty countdown arm, in
 self-reset).
 
   A THE PRIMARY PAIR: the /setblock gt6:bumbliary answers `data get` with its te_name
-    (the :387 face), takes a crowned queen into the ROYAL slot 13 through the vanilla
-    container face, and the /gt6bumbliary use arm runs the :285-291 walk — the survival
+    (the :387 face), takes the princess+drone pair through the vanilla container face
+    (the ROYAL slot 13 accepts only a princess — the :357-364 rule — so the crowned
+    queen is CROWNED LIVE: `data merge {gt.cooldown:1}` forces the :215 pairing on the
+    next tick and the :261 bumbleCrown puts the queen into the ROYAL slot, the p33_bees_b
+    crowning walk), and the /gt6bumbliary use arm runs the :285-291 walk — the survival
     penalty stomp to 6000 (:289), the sting through the crowned ROYAL (:290 → the
     bumbleAttack family table, stung=true) and the panel construct half (the MUI network
     half is the sanctioned fake-player SKIP, the client-boundary face).
 
   B THE ADVANCED PAIR: the 20-slot variant answers its own te_name (the Advanced :388),
-    takes the queen into the ROYAL slot 7, and the :289 penalty SURVIVES the tick walk —
+    takes the princess into the ROYAL slot 7 + the drone into the main slot 12 and the
+    same data-merge crowning runs, and the :289 penalty SURVIVES the tick walk —
     the raisedWindow soft reset (:119) only raises, so the /data get proof reads the full
     6000 after any tick (the primary would stomp to 1200 — the upstream quirk). The
     scoop arm (:307/:308/:309) re-runs the penalty with the exemption gate and opens the
@@ -54,14 +58,20 @@ steps = [
     Step(f"fill {BAND} air", expect="filled"),                       # the band clear (idempotent)
     Step(f"setblock {P1} gt6:bumbliary", expect="Changed the block"),
     Step(dump(P1, "te_name"), expect="gt.multitileentity.bumbliary"),
-    Step(f"item replace block {P1} container.13 with gt6:bumble_queen 1", expect="Replaced"),
+    Step(f"item replace block {P1} container.13 with gt6:bumble_princess 1", expect="Replaced"),
+    Step(f"item replace block {P1} container.22 with gt6:bumble_drone 1", expect="Replaced"),
+    Step(f"data merge block {P1} {{gt.cooldown:1}}", expect="Modified block data"),  # the :215 pairing fires next tick
+    Step(dump(P1), expect="bumble_queen", tick_step=100, tick_fallback_poll=15),  # the :261 live crowning
     Step(f"gt6bumbliary use {P1}", expect="penalty=6000 stung=true panel=bumbliary slots=36"),
     Step(f"gt6bumbliary open {P1}", expect="panel=bumbliary slots=36 advanced=false"),
 
     phase("B: the advanced placement — the 6000 penalty survives the soft reset"),
     Step(f"setblock {P2} gt6:bumbliary_advanced", expect="Changed the block"),
     Step(dump(P2, "te_name"), expect="gt.multitileentity.bumbliary.advanced"),
-    Step(f"item replace block {P2} container.7 with gt6:bumble_queen 1", expect="Replaced"),
+    Step(f"item replace block {P2} container.7 with gt6:bumble_princess 1", expect="Replaced"),
+    Step(f"item replace block {P2} container.12 with gt6:bumble_drone 1", expect="Replaced"),
+    Step(f"data merge block {P2} {{gt.cooldown:1}}", expect="Modified block data"),
+    Step(dump(P2), expect="bumble_queen", tick_step=100, tick_fallback_poll=15),  # the same live crowning
     Step(f"gt6bumbliary use {P2}", expect="penalty=6000 stung=true panel=bumbliary slots=20"),
     Step(dump(P2, "gt.cooldown"), expect="6000"),                    # the :119 raisedWindow face — never lowers
     Step(f"gt6bumbliary scoop {P2}", expect="penalty=6000 stung=true panel=bumbliary_scoop"),
