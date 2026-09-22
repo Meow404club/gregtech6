@@ -15,18 +15,19 @@ Chain semantics (task p16-pattern-checker ACCEPTANCE):
     three report fields byte-exactly.
 
   B the /gt6oven regression arm (the machine face the switch must not touch),
-    grid-fed since p8-d3 (ENERGY_FAKE_SOURCE defaults false) — the p8 e2e
-    gen->wire->oven idiom, all through the existing command faces:
+    grid-fed since p8-d3 (ENERGY_FAKE_SOURCE defaults false) — HU-adjacent since
+    p34-oven-hu-conversion (the oven books HU per the upstream 20001-04
+    NBT_ENERGY_ACCEPTED; gt6wire carries EU only — GTWireBlockEntity isEnergyType,
+    upstream :205 — so the wire hop is gone), all through the existing command faces:
     place -> input 8 -> check energy=0 (the no-fake-source regime nail) ->
-    gen place/volt -> 2x wire (placed LAST: GTWireBlock has no retro-scan,
-    so the energy neighbours must exist first) -> neighbors asserts BOTH
-    sides connected -> mode on -> poll check until output=stonex8. The poll
+    gen place/type HU/volt at the oven-adjacent site -> mode on ->
+    poll check until output=stonex8. The poll
     is THE hard assertion: the continuous source must finish all eight
     smelts on natural ticks or the chain is RED (the diagnostic's 8x stone
     discriminator, no NBT priming). The old `run 200` trio assertion
     (progress=true done=true idle=true) was a fake-source-era artifact and
     is unsatisfiable on grid-fed: `run` drives ONLY the oven's own
-    dispatcher (GTOvenCommand.java:143), the gen/wire pumps ride the real
+    dispatcher (GTOvenCommand.java:143), the gen pumps ride the real
     ticker, and done (mSuccessful) is a completion instant that cannot
     co-occur with idle (input exhausted, mMaxProgress cleared) inside one
     run loop — probed live both ways (mode-on-immediate and post-smelt run,
@@ -95,23 +96,23 @@ steps += [
 
 # ------------------------------------------------- B: the gt6oven regression
 steps += [
-    phase("B: the /gt6oven machine face regression (grid-fed, the p8 e2e idiom)"),
+    phase("B: the /gt6oven machine face regression (grid-fed HU, the p13 e2e idiom)"),
     Step(f"gt6oven place {F(OVEN)}", expect="GT6 oven placed"),
     Step(f"gt6oven input 8 {F(OVEN)}", expect="8 cobblestone into slot 0"),
     # the regime nail: before ANY feed exists the oven reports energy=0 —
     # the ENERGY_FAKE_SOURCE=false default is what makes this chain honest.
     Step(f"gt6oven check {F(OVEN)}",
          expect="progress=0/0 energy=0 minenergy=0"),
-    # the feed rig: energy neighbours BEFORE the wire (no retro-scan), and
-    # the neighbors report proves the chain is wired, not NBT-primed.
-    Step(f"gt6energy place {F(GEN)}", expect="GT6 energy source placed"),
-    Step(f"gt6energy volt {F(GEN)} 32", expect="voltage 32"),
-    Step(f"gt6wire place 2x {F(WIRE)}", expect="GT6 wire placed"),
-    Step(f"gt6wire neighbors {F(WIRE)}",
-         expect="west=TileEntityOven(connected) east=GTEnergySourceBlockEntity(connected)"),
-    Step(f"gt6energy mode {F(GEN)} on", expect="emitting true"),
+    # the feed rig (task p34-oven-hu-conversion): the oven books HU (the upstream
+    # 20001-04 NBT_ENERGY_ACCEPTED), and HU does not ride gt6wire (GTWireBlockEntity
+    # isEnergyType = EU only, upstream :205) — so the source sits ADJACENT to the
+    # oven (the p13 rig form), the wire steps are gone.
+    Step(f"gt6energy place {F(WIRE)}", expect="GT6 energy source placed"),
+    Step(f"gt6energy type {F(WIRE)} HU", expect="type ENERGY.HEAT"),
+    Step(f"gt6energy volt {F(WIRE)} 32", expect="voltage 32"),
+    Step(f"gt6energy mode {F(WIRE)} on", expect="emitting true"),
     # THE hard assertion: the continuous source must finish all eight smelts
-    # (32 EU x 1 A through the 2x wire = 32 progress/tick, 8 x 256 = 2048
+    # (32 HU x 1 A adjacent = 32 progress/tick, 8 x 256 = 2048
     # progress = ~64 ticks). Poll-to-expect, chain RED on timeout.
     # The spanning expect pins input exhausted AND output full in one substring,
     # so the mid-run line (input=cobblestoneNx ...) cannot shadow it. The out

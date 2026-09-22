@@ -16,11 +16,11 @@ p33-food-machines-kitchen, RCON group p33_food_machines):
 
   C the Oven (20001, the RM.Furnace HU tier — the p4 machine) — a REAL row runs:
     place → input 8 cobblestone (the Loader_Recipes_Vanilla :692 stone-family row's
-    furnace idiom: cobblestone → stone) → the ADJACENT EU emitter rig (the
-    p13_hu_steam_foundation form: the oven's doInject gate is EU-only —
-    TileEntityOven isEnergyType :553 — so a burning box's HU books NOTHING; the
-    first forge sweep's stonex8 pin rode the cobblestonex8 substring and masked
-    this) → the poll pins output=stonex8.
+    furnace idiom: cobblestone → stone) → the ADJACENT HU emitter rig (task
+    p34-oven-hu-conversion rebased the oven to its upstream 20001-04 type,
+    NBT_ENERGY_ACCEPTED = TD.Energy.HU — the p33-era EU rig adaptation is retired;
+    the p13_hu_steam_foundation source form stays, retyped HU) → the poll pins
+    output=stonex8.
 
   D teardown: the explicit fill-air over the band.
 
@@ -80,9 +80,11 @@ steps = [
          node_expects={"1.21.1": "out[0]=1x minecraft:sugar"},
          poll=300.0),
 
-    phase("C: the Oven — the RM.Furnace row (cobblestone -> stone) on the p13 EU-rig form"),
+    phase("C: the Oven — the RM.Furnace row (cobblestone -> stone) on the p13 HU-rig form"),
     Step(f"gt6energy place {F(OVEN_RIG)}", expect="GT6 energy source placed"),
-    Step(f"gt6energy type {F(OVEN_RIG)} EU", expect="type ENERGY.ELECTRICITY"),
+    # p34-oven-hu-conversion: the oven books HU (its upstream 20001-04 type,
+    # NBT_ENERGY_ACCEPTED = TD.Energy.HU) — the p33-era EU rig retires with it.
+    Step(f"gt6energy type {F(OVEN_RIG)} HU", expect="type ENERGY.HEAT"),
     Step(f"gt6energy volt {F(OVEN_RIG)} 32", expect="voltage 32"),  # under the oven mInputMax 64
     Step(f"gt6oven place {F(OVEN)}", expect="placed"),
     Step(f"gt6oven input 8 {F(OVEN)}", expect="cobblestone"),
