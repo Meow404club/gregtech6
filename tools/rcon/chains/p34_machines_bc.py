@@ -44,7 +44,7 @@ steps = [
     # consume removes bee + paper, the :583-584 input pair) — the item-override arm of the
     # input command (the BE carries no vanilla Container face, the /item replace route is
     # structurally unavailable — "Target position is not a container", the first sweep run)
-    Step(f"gt6machine bumblelyzer input 1 minecraft:paper {F(BL1)}", expect="1x minecraft:paper into slot"),
+    Step(f"gt6machine bumblelyzer input item minecraft:paper 1 {F(BL1)}", expect="1x minecraft:paper into slot"),
     Step(f"gt6machine bumblelyzer fluid fill up gt6:honey 100 {F(BL1)}",
          expect="filled 100/100 L of gt6:honey (ACCEPTED), input tanks hold 100 L"),
     Step(f"gt6machine bumblelyzer check {F(BL1)}", expect="minIn=16 recIn=32 maxIn=64"),
@@ -69,10 +69,10 @@ steps = [
     # So: one small inject LOCKS the recipe (the consume fires at start), the fake source
     # keeps the machine active, the merge parks progress one tick short, and the live
     # ticking walks the last two ticks through the :502 completion + output wrap.
-    Step(f"gt6machine fakesource on {F(CC1)}", expect="ENERGY_FAKE_SOURCE set true"),
+    Step("gt6machine fakesource on", expect="ENERGY_FAKE_SOURCE set true"),
     Step(f"data merge block {F(CC1)} {{progress: 1151900}}", expect="Modified block data"),
     Step(f"gt6machine crystallisationcrucible check {F(CC1)}", expect="boule_gt_silicon", tick_step=40, tick_fallback_poll=10),
-    Step(f"gt6machine fakesource off {F(CC1)}", expect="ENERGY_FAKE_SOURCE set false"),
+    Step("gt6machine fakesource off", expect="ENERGY_FAKE_SOURCE set false"),
 
     phase("E: teardown — the explicit band restore (no global state was touched)"),
     Step(f"fill 406 63 382 414 67 386 air", expect="filled"),

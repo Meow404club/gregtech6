@@ -392,23 +392,30 @@ public final class GTMachineCommand {
 			.then(Commands.argument("count", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 64))
 				.executes(context -> input(context.getSource(), aFeed,
 						com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"), null))
-				// task p34-machines-bumblelyzer-crucible — the item override arm: the
-				// multi-input rows' SECOND leg (the scan recipe's paper tiny) needs a
-				// non-default feed; the BE carries no vanilla Container face, so the
-				// /item replace write-point is structurally unavailable here
-				.then(Commands.argument("item", com.mojang.brigadier.arguments.StringArgumentType.string())
-					.executes(context -> itemInput(context.getSource(),
-							com.mojang.brigadier.arguments.StringArgumentType.getString(context, "item"),
-							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"), null))
-					.then(Commands.argument("pos", BlockPosArgument.blockPos())
-						.executes(context -> itemInput(context.getSource(),
-								com.mojang.brigadier.arguments.StringArgumentType.getString(context, "item"),
-								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"),
-								BlockPosArgument.getLoadedBlockPos(context, "pos"))))))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(context -> input(context.getSource(), aFeed,
 							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"),
-							BlockPosArgument.getLoadedBlockPos(context, "pos")))));
+							BlockPosArgument.getLoadedBlockPos(context, "pos")))))
+			// task p34-machines-bumblelyzer-crucible — the item override arm: the multi-input
+			// rows' SECOND leg (the scan recipe's paper tiny) needs a non-default feed; the BE
+			// carries no vanilla Container face, so the /item replace write-point is
+			// structurally unavailable here ("Target position is not a container"). The
+			// literal-keyed form keeps the legacy count/pos parses unambiguous (the word arg
+			// would swallow the pos's first int, and brigadier does not backtrack past an
+			// executed-parse sibling).
+			.then(Commands.literal("item")
+				.then(Commands.argument("id", com.mojang.brigadier.arguments.StringArgumentType.word())
+					.executes(context -> itemInput(context.getSource(),
+							com.mojang.brigadier.arguments.StringArgumentType.getString(context, "id"), DEFAULT_INPUT_COUNT, null))
+					.then(Commands.argument("count", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 64))
+						.executes(context -> itemInput(context.getSource(),
+								com.mojang.brigadier.arguments.StringArgumentType.getString(context, "id"),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"), null))
+						.then(Commands.argument("pos", BlockPosArgument.blockPos())
+							.executes(context -> itemInput(context.getSource(),
+									com.mojang.brigadier.arguments.StringArgumentType.getString(context, "id"),
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"),
+									BlockPosArgument.getLoadedBlockPos(context, "pos"))))))));
 		tMachine.then(Commands.literal("run")
 			.then(Commands.argument("ticks", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 20000))
 				.executes(context -> run(context.getSource(),
