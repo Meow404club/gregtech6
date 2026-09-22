@@ -35,6 +35,9 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.recipes.Recipe;
+import gregtech6.recipes.maps.GT6RecipeMapBumblelyzer;
+
 /**
  * The bumblebee ITEM domain (task p33-bees-lv3-a-items) — the port of the upstream
  * {@code MultiItemBumbles} 640-variant meta item (MultiItemBumbles.java:61-692).
@@ -302,6 +305,116 @@ public final class GT6Bumbles {
 		/*IEventBus tModBus = net.neoforged.fml.ModList.get().getModContainerById("gt6").orElseThrow().getEventBus();
 		 *///?}
 		ITEMS.register(tModBus);
+	}
+
+	// -------------------------------------------------------------------------
+	// the Bumblelyzer scan display stock (task p34-machines-bumblelyzer-crucible —
+	// MultiItemBumbles.make :581-588, the RM.Bumblelyzer.addFakeRecipe walk): the fill
+	// hook this card owns. The rows are DISPLAY/CENSUS only — the port RecipeMap.addRecipe
+	// (:177, the upstream :293 "findRecipe wont find fake Recipes" javadoc) keeps fake rows
+	// out of the findable stock, so they land in the map's {@code sFakeRecipes} list (the
+	// JEI display bridge stays pooled, the P12 category card's surface).
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The fill/scan seams: the live {@code BEE_ITEMS}/honey-family lookups by default, fixtures
+	 * injected offline (offline cannot touch the Forge registries — the GT6RecipesBees
+	 * resolver convention; the {@link GT6RecipeMapBumblelyzer#sPaperResolver} paper seam
+	 * rides the map class).
+	 */
+	public static java.util.function.IntFunction<net.minecraft.world.item.Item> sBeeItemResolver = aIndex -> BEE_ITEMS.get(aIndex).get();
+	public static java.util.function.Function<String, net.minecraft.world.level.material.Fluid> sHoneyFluidResolver = aId -> gregtech6.fluid.GTFluids.liveFluidSource(aId);
+
+	/**
+	 * The {@code bumbleType} face (:568) as a seam: the type byte of a stack, or null (a
+	 * foreign item) — the live form is the {@code instanceof GT6BumbleItem} walk, the offline
+	 * fixtures alias vanilla stand-ins (the frozen registry forbids new mod items).
+	 */
+	public static java.util.function.Function<ItemStack, Byte> sBumbleType = aStack -> {
+		net.minecraft.world.item.Item tItem = aStack.getItem();
+		return tItem instanceof GT6BumbleItem tBee ? Byte.valueOf(tBee.typeOf()) : null;
+	};
+
+	/**
+	 * The {@code bumbleScan} face (:564): the meta+5 copy — the stack flips to the SCANNED
+	 * face of its own type with the NBT (the gt.bumble genes) carried over, count preserved.
+	 * An already-scanned/foreign stack copies unchanged. Rides the seams above.
+	 */
+	public static ItemStack bumbleScan(ItemStack aBee) {
+		Byte tType = sBumbleType.apply(aBee);
+		if (tType == null) return aBee.copy();
+		ItemStack rStack = new ItemStack(sBeeItemResolver.apply(faceIndexOf((byte)(tType % 5), true)), aBee.getCount());
+		//? if forge {
+		if (aBee.getTag() != null) rStack.setTag(aBee.getTag().copy());
+		//?} else {
+		/*net.minecraft.nbt.CompoundTag tTag = aBee.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+				net.minecraft.world.item.component.CustomData.EMPTY).copyTag(); // the GT6BumbleGenes:113 form
+		if (!tTag.isEmpty()) rStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tTag));
+		 *///?}
+		return rStack;
+	}
+
+	/**
+	 * Builds the scan display stock: one {@code {honey, honeydew} scan set + the pass-through
+	 * duplicate pair} per TYPE face ({@code drone, princess, dead}) per SPECIES (the
+	 * {@link #SPECIES} 80-row table = the upstream make() per-speciesID walk; the census is
+	 * 80 × 3 × (2 diluents + 2 pass-throughs) = 960 rows).
+	 *
+	 * <p>The species identity rides the stack NBT ({@code gt.bumble.meta}, the meta
+	 * flattening) — the display row for a code carries that code's tag, which is what keeps
+	 * the upstream per-species row census meaningful under the flattening.
+	 *
+	 * <p>Idempotent per generation: an already-filled stock short-circuits (the
+	 * upstream per-JVM load flag folded into the stock itself — the map's generation-reset
+	 * hook clears it, so a fresh generation refills). Called from GT6RecipesBees.load (the
+	 * FMLCommonSetup timing: the maps exist, the items/fluids are registered).
+	 */
+	public static synchronized void addScanFakeRecipes() {
+		if (!GT6RecipeMapBumblelyzer.sFakeRecipes.isEmpty()) return;
+		net.minecraft.world.item.Item tPaper = GT6RecipeMapBumblelyzer.sPaperResolver.get();
+		List<Recipe> tRows = new java.util.ArrayList<>(SPECIES.size() * 3 * 4);
+		for (SpeciesRow tSpecies : SPECIES) {
+			for (byte tType : new byte[] {TYPE_DRONE, TYPE_PRINCESS, TYPE_DEAD}) {
+				int tUnscanned = faceIndexOf(tType, false), tScanned = faceIndexOf(tType, true);
+				if (tUnscanned < 0 || tScanned < 0) continue; // every fractal digit pair exists — unreachable
+				net.minecraft.world.item.Item tBee = sBeeItemResolver.apply(tUnscanned), tScannedItem = sBeeItemResolver.apply(tScanned);
+				// the :583-585 scan rows — one per honey diluent (the port accept set carries
+				// honeydew as a member, so the HONEY loop + the separate Honeydew row fold)
+				for (String tFluidId : GT6RecipeMapBumblelyzer.HONEY_ACCEPT) {
+					net.minecraft.world.level.material.Fluid tFluid = sHoneyFluidResolver.apply(tFluidId);
+					if (tFluid == null || tPaper == null) continue; // :583 FL.exists gate + the paper leg
+					tRows.add(new Recipe(false,
+							new ItemStack[] {beeStack(tBee, tSpecies), new ItemStack(tPaper, 1)},
+							new ItemStack[] {beeStack(tScannedItem, tSpecies)},
+							new net.minecraftforge.fluids.FluidStack[] {new net.minecraftforge.fluids.FluidStack(tFluid, GT6RecipeMapBumblelyzer.SCAN_FLUID_L)},
+							null, GT6RecipeMapBumblelyzer.SCAN_DURATION, GT6RecipeMapBumblelyzer.SCAN_EUT, 0));
+				}
+				// the :586-587 pass-through pair — "Was already scanned, auto-skipping" (1 @ 16, no legs)
+				for (int i = 0; i < 2; i++) {
+					tRows.add(new Recipe(false,
+							new ItemStack[] {beeStack(tScannedItem, tSpecies)},
+							new ItemStack[] {beeStack(tScannedItem, tSpecies)},
+							null, null, GT6RecipeMapBumblelyzer.PASS_DURATION, GT6RecipeMapBumblelyzer.PASS_EUT, 0));
+				}
+			}
+		}
+		GT6RecipeMapBumblelyzer.setFakeRecipes(tRows);
+	}
+
+	/** The FACES index of a face/scanned pair, or -1 (unreachable — the 8-face table is total). */
+	private static int faceIndexOf(byte aFace, boolean aScanned) {
+		for (int i = 0; i < FACES.size(); i++) {
+			FaceRow tFace = FACES.get(i);
+			if (tFace.face() == aFace && tFace.scanned() == aScanned) return i;
+		}
+		return -1;
+	}
+
+	/** One display stack of the species code (the {@code gt.bumble.meta} tag — the flattened meta). */
+	private static ItemStack beeStack(net.minecraft.world.item.Item aItem, SpeciesRow aSpecies) {
+		ItemStack rStack = new ItemStack(aItem, 1);
+		GT6BumbleGenes.setCode(rStack, aSpecies.code());
+		return rStack;
 	}
 
 	private GT6Bumbles() {

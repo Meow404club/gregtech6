@@ -46,6 +46,8 @@ import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.fluid.GTFluids;
+import gregtech6.items.bees.GT6Bumbles;
+import gregtech6.recipes.maps.GT6RecipeMapBumblelyzer;
 import gregtech6.registry.GT6BeeCombs;
 import gregtech6.registry.GTMaterialItems;
 
@@ -278,6 +280,19 @@ public final class GT6RecipesBees {
 			tPoured++;
 		}
 		LOGGER.info("GT6 Bee squeezer poured: {} loaded, {} skipped (unresolvable comb/fluid/items, = upstream mat() null drops)", tPoured, tSkipped);
+		// task p34-machines-bumblelyzer-crucible — the Bumblelyzer scan display stock joins
+		// the bee loader (the same timing: the maps exist, the bee items/fluids registered;
+		// the display stock census is the acceptance's 行数对账 read). The try face keeps the
+		// OFFLINE legs alive (the frozen registry forbids the live RegistryObject walk — the
+		// GT6RecipesBeesTest posture; the census test swaps the seams and drives the fill
+		// directly, and a live throw would surface in the RCON arm).
+		try {
+			GT6Bumbles.addScanFakeRecipes();
+			LOGGER.info("GT6 Bee bumblelyzer display stock: {} fake rows (the :581-588 make() walk over {} species)",
+					GT6RecipeMapBumblelyzer.sFakeRecipes.size(), GT6Bumbles.SPECIES.size());
+		} catch (RuntimeException tOffline) {
+			LOGGER.info("GT6 Bee bumblelyzer display stock skipped: the live item/fluid seams are unbound in this JVM ({})", tOffline.toString());
+		}
 		sLoaded = true;
 	}
 
